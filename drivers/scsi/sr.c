@@ -3065,6 +3065,10 @@ op_star
 id|SDp
 )paren
 (brace
+id|SDp-&gt;scsi_request_fn
+op_assign
+id|do_sr_request
+suffix:semicolon
 id|scsi_CDs
 (braket
 id|NR_SR

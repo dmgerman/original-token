@@ -7,7 +7,7 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/if_ether.h&gt;
-macro_line|#include &lt;memory.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &quot;dev.h&quot;
 macro_line|#include &quot;eth.h&quot;
 multiline_comment|/* The network devices currently exist only in the socket namespace, so these&n;   entries are unused.  The only ones that make sense are&n;    open&t;start the ethercard&n;    close&t;stop  the ethercard&n;    ioctl&t;To get statistics, perhaps set the interface port (AUI, BNC, etc.)&n;   One can also imagine getting raw packets using&n;    read &amp; write&n;   but this is probably better handled by a raw packet socket.&n;&n;   Given that almost all of these functions are handled in the current&n;   socket-based scheme, putting ethercard devices in /dev/ seems pointless.&n;*/

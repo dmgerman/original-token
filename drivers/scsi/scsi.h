@@ -321,6 +321,17 @@ id|Scsi_Host
 op_star
 id|host
 suffix:semicolon
+DECL|member|scsi_request_fn
+r_void
+(paren
+op_star
+id|scsi_request_fn
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
+multiline_comment|/* Used to jumpstart things after an ioctl */
 DECL|member|type
 r_char
 id|type
@@ -471,6 +482,8 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|ISA_DMA_THRESHOLD
 mdefine_line|#define ISA_DMA_THRESHOLD (0x00ffffff)
+DECL|macro|CONTIGUOUS_BUFFERS
+mdefine_line|#define CONTIGUOUS_BUFFERS(X,Y) ((X-&gt;b_data+X-&gt;b_size) == Y-&gt;b_data)
 r_void
 op_star
 id|scsi_malloc

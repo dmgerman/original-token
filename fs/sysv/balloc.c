@@ -426,9 +426,13 @@ id|sysv_zone_t
 )paren
 )paren
 suffix:semicolon
-id|bh-&gt;b_dirt
-op_assign
+id|dirtify_buffer
+c_func
+(paren
+id|bh
+comma
 l_int|1
+)paren
 suffix:semicolon
 id|bh-&gt;b_uptodate
 op_assign
@@ -548,9 +552,13 @@ id|sb-&gt;sv_block_size
 )paren
 suffix:semicolon
 multiline_comment|/* this implies ((struct ..._freelist_chunk *) bh_data)-&gt;flc_count = 0; */
-id|bh-&gt;b_dirt
-op_assign
+id|dirtify_buffer
+c_func
+(paren
+id|bh
+comma
 l_int|1
+)paren
 suffix:semicolon
 id|bh-&gt;b_uptodate
 op_assign
@@ -665,9 +673,13 @@ id|sb-&gt;sv_sb_total_free_blocks
 op_plus
 l_int|1
 suffix:semicolon
-id|sb-&gt;sv_bh-&gt;b_dirt
-op_assign
+id|dirtify_buffer
+c_func
+(paren
+id|sb-&gt;sv_bh
+comma
 l_int|1
+)paren
 suffix:semicolon
 multiline_comment|/* super-block has been modified */
 id|sb-&gt;s_dirt
@@ -1238,9 +1250,13 @@ comma
 id|sb-&gt;sv_block_size
 )paren
 suffix:semicolon
-id|bh-&gt;b_dirt
-op_assign
+id|dirtify_buffer
+c_func
+(paren
+id|bh
+comma
 l_int|1
+)paren
 suffix:semicolon
 id|bh-&gt;b_uptodate
 op_assign
@@ -1282,9 +1298,13 @@ id|sb-&gt;sv_sb_total_free_blocks
 op_minus
 l_int|1
 suffix:semicolon
-id|sb-&gt;sv_bh-&gt;b_dirt
-op_assign
+id|dirtify_buffer
+c_func
+(paren
+id|sb-&gt;sv_bh
+comma
 l_int|1
+)paren
 suffix:semicolon
 multiline_comment|/* super-block has been modified */
 id|sb-&gt;s_dirt
@@ -1827,9 +1847,13 @@ suffix:colon
 id|count
 )paren
 suffix:semicolon
-id|sb-&gt;sv_bh-&gt;b_dirt
-op_assign
+id|dirtify_buffer
+c_func
+(paren
+id|sb-&gt;sv_bh
+comma
 l_int|1
+)paren
 suffix:semicolon
 multiline_comment|/* super-block has been modified */
 id|sb-&gt;s_dirt

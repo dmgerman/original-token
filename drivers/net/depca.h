@@ -33,7 +33,7 @@ mdefine_line|#define BUF      &t;0x0020&t;/* BUFfer size (1-&gt;32k, 0-&gt;64k) 
 DECL|macro|RBE
 mdefine_line|#define RBE      &t;0x0010&t;/* Remote Boot Enable (1-&gt;net boot) */
 DECL|macro|AAC
-mdefine_line|#define AAC      &t;0x0008  /* for DEPCA family compatability */
+mdefine_line|#define AAC      &t;0x0008  /* Address ROM Address Counter (1-&gt;enable) */
 DECL|macro|IM
 mdefine_line|#define IM       &t;0x0004&t;/* Interrupt Mask (1-&gt;mask) */
 DECL|macro|IEN

@@ -5,6 +5,23 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 DECL|macro|X
 mdefine_line|#define X(name)&t;{ (void *) &amp;name, &quot;_&quot; #name }
+macro_line|#ifdef CONFIG_FTAPE
+r_extern
+r_char
+op_star
+id|ftape_big_buffer
+suffix:semicolon
+r_extern
+r_void
+(paren
+op_star
+id|do_floppy
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 r_struct
 (brace
 DECL|member|addr

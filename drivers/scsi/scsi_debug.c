@@ -12,6 +12,14 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;../block/blk.h&quot;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
+multiline_comment|/* A few options that we want selected */
+multiline_comment|/* Do not attempt to use a timer to simulate a real disk with latency */
+multiline_comment|/* Only use this in the actual kernel, not in the simulator. */
+DECL|macro|IMMEDIATE
+mdefine_line|#define IMMEDIATE
+multiline_comment|/* Skip some consistency checking.  Good for benchmarking */
+DECL|macro|SPEEDY
+mdefine_line|#define SPEEDY
 multiline_comment|/* Number of real scsi disks that will be detected ahead of time */
 DECL|variable|NR_REAL
 r_static
@@ -21,8 +29,12 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
+DECL|macro|NR_BLK_DEV
+mdefine_line|#define NR_BLK_DEV&t;12
+macro_line|#ifndef MAJOR_NR
 DECL|macro|MAJOR_NR
-mdefine_line|#define MAJOR_NR SCSI_DISK_MAJOR
+mdefine_line|#define MAJOR_NR 8
+macro_line|#endif
 DECL|macro|START_PARTITION
 mdefine_line|#define START_PARTITION 4
 DECL|macro|SCSI_DEBUG_TIMER
@@ -66,6 +78,12 @@ macro_line|#else
 DECL|macro|DEB
 mdefine_line|#define DEB(x)
 macro_line|#endif
+macro_line|#ifdef SPEEDY
+DECL|macro|VERIFY1_DEBUG
+mdefine_line|#define VERIFY1_DEBUG(RW) 1
+DECL|macro|VERIFY_DEBUG
+mdefine_line|#define VERIFY_DEBUG(RW) 1
+macro_line|#else
 DECL|macro|VERIFY1_DEBUG
 mdefine_line|#define VERIFY1_DEBUG(RW)&t;&t;&t;       &t;&t;&t;&bslash;&n;      if (bufflen != 1024) {printk(&quot;%d&quot;, bufflen); panic(&quot;(1)Bad bufflen&quot;);};&t;&t;&t;&bslash;&n;      start = 0;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;      if ((SCpnt-&gt;request.dev &amp; 0xf) != 0) start = starts[(SCpnt-&gt;request.dev &amp; 0xf) - 1];&t;&t;&bslash;&n;      if (bh){&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (bh-&gt;b_size != 1024) panic (&quot;Wrong bh size&quot;);&t;&bslash;&n;&t;if ((bh-&gt;b_blocknr &lt;&lt; 1) + start != block)&t;       &t;&bslash;&n;&t;  {  printk(&quot;Wrong bh block# %d %d &quot;,bh-&gt;b_blocknr, block);  &bslash;&n;&t;  panic (&quot;Wrong bh block#&quot;);};  &bslash;&n;&t;if (bh-&gt;b_dev != SCpnt-&gt;request.dev) panic (&quot;Bad bh target&quot;);&bslash;&n;      };
 macro_line|#if 0
@@ -119,6 +137,7 @@ suffix:semicolon
 macro_line|#endif
 DECL|macro|VERIFY_DEBUG
 mdefine_line|#define VERIFY_DEBUG(RW)&t;&t;&t;       &t;&t;&t;&bslash;&n;      if (bufflen != 1024 &amp;&amp; (!SCpnt-&gt;use_sg)) {printk(&quot;%x %d&bslash;n &quot;,bufflen, SCpnt-&gt;use_sg); panic(&quot;Bad bufflen&quot;);};   &t;&bslash;&n;      start = 0;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;      if ((SCpnt-&gt;request.dev &amp; 0xf) &gt; npart) panic (&quot;Bad partition&quot;);&t;&bslash;&n;      if ((SCpnt-&gt;request.dev &amp; 0xf) != 0) start = starts[(SCpnt-&gt;request.dev &amp; 0xf) - 1];&t;&t;&bslash;&n;      if (SCpnt-&gt;request.cmd != RW) panic (&quot;Wrong  operation&quot;);&t;&t;&bslash;&n;      if (SCpnt-&gt;request.sector + start != block) panic(&quot;Wrong block.&quot;);&t;&bslash;&n;      if (SCpnt-&gt;request.current_nr_sectors != 2 &amp;&amp; (!SCpnt-&gt;use_sg)) panic (&quot;Wrong # blocks&quot;);&t;&bslash;&n;      if (SCpnt-&gt;request.bh){&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (SCpnt-&gt;request.bh-&gt;b_size != 1024) panic (&quot;Wrong bh size&quot;);&t;&bslash;&n;&t;if ((SCpnt-&gt;request.bh-&gt;b_blocknr &lt;&lt; 1) + start != block)&t;       &t;&bslash;&n;&t;  {  printk(&quot;Wrong bh block# %d %d &quot;,SCpnt-&gt;request.bh-&gt;b_blocknr, block);  &bslash;&n;&t;  panic (&quot;Wrong bh block#&quot;);};  &bslash;&n;&t;if (SCpnt-&gt;request.bh-&gt;b_dev != SCpnt-&gt;request.dev) panic (&quot;Bad bh target&quot;);&bslash;&n;      };
+macro_line|#endif
 DECL|variable|do_done
 r_static
 r_volatile
@@ -724,7 +743,7 @@ c_cond
 (paren
 id|target
 op_ge
-l_int|2
+l_int|1
 op_logical_or
 id|SCpnt-&gt;lun
 op_ne
@@ -941,6 +960,15 @@ l_int|2
 )braket
 op_assign
 l_int|1
+suffix:semicolon
+id|buff
+(braket
+l_int|4
+)braket
+op_assign
+l_int|33
+op_minus
+l_int|5
 suffix:semicolon
 id|memcpy
 c_func
@@ -1212,6 +1240,53 @@ c_func
 id|READ
 )paren
 suffix:semicolon
+macro_line|#if defined(SCSI_SETUP_LATENCY) || defined(SCSI_DATARATE)
+(brace
+r_int
+id|delay
+op_assign
+id|SCSI_SETUP_LATENCY
+suffix:semicolon
+r_float
+id|usec
+suffix:semicolon
+id|usec
+op_assign
+l_float|0.0
+suffix:semicolon
+id|usec
+op_assign
+(paren
+id|SCpnt-&gt;request.nr_sectors
+op_lshift
+l_int|9
+)paren
+op_star
+l_float|1.0e6
+op_div
+id|SCSI_DATARATE
+suffix:semicolon
+id|delay
+op_add_assign
+id|usec
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|delay
+)paren
+(brace
+id|usleep
+c_func
+(paren
+id|delay
+)paren
+suffix:semicolon
+)brace
+)brace
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
@@ -1220,6 +1295,7 @@ comma
 id|SCpnt-&gt;request.nr_sectors
 )paren
 suffix:semicolon
+macro_line|#endif
 id|nbytes
 op_assign
 id|bufflen
@@ -1279,6 +1355,8 @@ c_func
 id|READ
 )paren
 suffix:semicolon
+multiline_comment|/* For the speedy test, we do not even want to fill the buffer with anything */
+macro_line|#ifndef SPEEDY
 id|memset
 c_func
 (paren
@@ -1289,6 +1367,7 @@ comma
 id|bufflen
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* If this is block 0, then we want to read the partition table for this&n;   device.  Let&squot;s make one up */
 r_if
 c_cond
@@ -1407,6 +1486,7 @@ id|SCpnt-&gt;request.current_nr_sectors
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#if 0
 multiline_comment|/* Simulate a disk change */
 r_if
 c_cond
@@ -1516,16 +1596,8 @@ r_break
 suffix:semicolon
 )brace
 multiline_comment|/* End phony disk change code */
-id|memset
-c_func
-(paren
-id|buff
-comma
-l_int|0
-comma
-id|bufflen
-)paren
-suffix:semicolon
+macro_line|#endif
+macro_line|#ifndef SPEEDY
 id|memcpy
 c_func
 (paren
@@ -1586,6 +1658,7 @@ id|Scsi_Cmnd
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif
 id|nbytes
 op_sub_assign
 id|bufflen
@@ -1596,6 +1669,7 @@ c_cond
 id|SCpnt-&gt;use_sg
 )paren
 (brace
+macro_line|#ifndef SPEEDY
 id|memcpy
 c_func
 (paren
@@ -1612,6 +1686,7 @@ id|buffer_head
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif
 id|block
 op_add_assign
 id|bufflen
@@ -1675,6 +1750,19 @@ id|nbytes
 (brace
 suffix:semicolon
 )brace
+id|SCpnt-&gt;result
+op_assign
+l_int|0
+suffix:semicolon
+(paren
+id|done
+)paren
+(paren
+id|SCpnt
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1794,14 +1882,7 @@ c_func
 id|WRITE
 )paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;(w%d)&quot;
-comma
-id|SCpnt-&gt;request.nr_sectors
-)paren
-suffix:semicolon
+multiline_comment|/*      printk(&quot;(w%d)&quot;,SCpnt-&gt;request.nr_sectors); */
 r_if
 c_cond
 (paren
@@ -2046,6 +2127,18 @@ c_func
 l_string|&quot;scsi_debug_queuecommand: done cant be NULL&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef IMMEDIATE
+id|SCpnt-&gt;result
+op_assign
+id|scsi_debug_errsts
+suffix:semicolon
+id|scsi_debug_intr_handle
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* No timer - do this one right away */
+macro_line|#else
 id|timeout
 (braket
 id|i
@@ -2119,6 +2212,7 @@ comma
 id|jiffies
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 r_return
 l_int|0
@@ -2234,6 +2328,7 @@ suffix:semicolon
 r_int
 id|to
 suffix:semicolon
+macro_line|#ifndef IMMEDIATE
 id|timer_table
 (braket
 id|SCSI_DEBUG_TIMER
@@ -2252,6 +2347,7 @@ op_lshift
 id|SCSI_DEBUG_TIMER
 )paren
 suffix:semicolon
+macro_line|#endif
 id|repeat
 suffix:colon
 id|cli
@@ -2286,6 +2382,7 @@ l_int|0
 )paren
 r_continue
 suffix:semicolon
+macro_line|#ifndef IMMEDIATE
 r_if
 c_cond
 (paren
@@ -2310,6 +2407,10 @@ id|jiffies
 )paren
 r_break
 suffix:semicolon
+macro_line|#else
+r_break
+suffix:semicolon
+macro_line|#endif
 )brace
 suffix:semicolon
 r_if
@@ -2320,6 +2421,7 @@ op_eq
 id|SCSI_DEBUG_MAILBOXES
 )paren
 (brace
+macro_line|#ifndef IMMEDIATE
 id|pending
 op_assign
 id|INT_MAX
@@ -2461,6 +2563,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 r_return
 suffix:semicolon
 )brace
@@ -2614,6 +2717,7 @@ id|scsi_debug_host
 op_assign
 id|hostnum
 suffix:semicolon
+macro_line|#ifndef IMMEDIATE
 id|timer_table
 (braket
 id|SCSI_DEBUG_TIMER
@@ -2632,6 +2736,7 @@ id|expires
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#endif
 r_return
 l_int|1
 suffix:semicolon
@@ -2764,6 +2869,9 @@ c_func
 (paren
 r_int
 id|size
+comma
+r_int
+id|dev
 comma
 r_int
 op_star
@@ -2944,6 +3052,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|scsi_debug_info
+r_const
 r_char
 op_star
 id|scsi_debug_info

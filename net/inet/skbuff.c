@@ -8,6 +8,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &quot;inet.h&quot;
 macro_line|#include &quot;dev.h&quot;
 macro_line|#include &quot;ip.h&quot;

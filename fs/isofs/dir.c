@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/isofs/dir.c&n; *&n; *  (C) 1992  Eric Youngdale Modified for ISO9660 filesystem.&n; *&n; *  (C) 1991  Linus Torvalds - minix filesystem&n; *&n; *  isofs directory handling functions&n; */
+multiline_comment|/*&n; *  linux/fs/isofs/dir.c&n; *&n; *  (C) 1992, 1993, 1994  Eric Youngdale Modified for ISO9660 filesystem.&n; *&n; *  (C) 1991  Linus Torvalds - minix filesystem&n; *&n; *  isofs directory handling functions&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -8,6 +8,8 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/locks.h&gt;
 r_static
 r_int
 id|isofs_readdir
@@ -264,12 +266,20 @@ c_cond
 (paren
 op_logical_neg
 id|block
-op_logical_or
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 op_logical_neg
 (paren
 id|bh
 op_assign
-id|bread
+id|breada
 c_func
 (paren
 id|inode-&gt;i_dev
@@ -277,12 +287,18 @@ comma
 id|block
 comma
 id|bufsize
+comma
+id|filp-&gt;f_pos
+comma
+id|inode-&gt;i_size
 )paren
 )paren
 )paren
+(brace
 r_return
 l_int|0
 suffix:semicolon
+)brace
 r_while
 c_loop
 (paren
@@ -404,7 +420,7 @@ op_logical_neg
 (paren
 id|bh
 op_assign
-id|bread
+id|breada
 c_func
 (paren
 id|inode-&gt;i_dev
@@ -412,6 +428,10 @@ comma
 id|block
 comma
 id|bufsize
+comma
+id|filp-&gt;f_pos
+comma
+id|inode-&gt;i_size
 )paren
 )paren
 )paren
@@ -537,7 +557,7 @@ op_logical_neg
 (paren
 id|bh
 op_assign
-id|bread
+id|breada
 c_func
 (paren
 id|inode-&gt;i_dev
@@ -545,6 +565,10 @@ comma
 id|block
 comma
 id|bufsize
+comma
+id|filp-&gt;f_pos
+comma
+id|inode-&gt;i_size
 )paren
 )paren
 )paren

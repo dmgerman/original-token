@@ -1209,9 +1209,13 @@ id|bh-&gt;b_uptodate
 op_assign
 l_int|1
 suffix:semicolon
-id|bh-&gt;b_dirt
-op_assign
-l_int|1
+id|dirtify_buffer
+c_func
+(paren
+id|bh
+comma
+l_int|0
+)paren
 suffix:semicolon
 id|brelse
 c_func

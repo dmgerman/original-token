@@ -2828,9 +2828,13 @@ c_func
 id|raw_entry-&gt;date
 )paren
 suffix:semicolon
-id|bh-&gt;b_dirt
-op_assign
+id|dirtify_buffer
+c_func
+(paren
+id|bh
+comma
 l_int|1
+)paren
 suffix:semicolon
 id|brelse
 c_func

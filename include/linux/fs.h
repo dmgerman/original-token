@@ -143,6 +143,8 @@ DECL|macro|BLKGETSIZE
 mdefine_line|#define BLKGETSIZE 4704 /* return device size */
 DECL|macro|BLKFLSBUF
 mdefine_line|#define BLKFLSBUF 4705 /* flush buffer cache */
+DECL|macro|BLKRASET
+mdefine_line|#define BLKRASET 4706 /* Set read ahead for block device */
 multiline_comment|/* These are a few other constants  only used by scsi  devices */
 DECL|macro|SCSI_IOCTL_GET_IDLUN
 mdefine_line|#define SCSI_IOCTL_GET_IDLUN 0x5382
@@ -550,8 +552,7 @@ r_int
 id|f_count
 suffix:semicolon
 DECL|member|f_reada
-r_int
-r_int
+id|off_t
 id|f_reada
 suffix:semicolon
 DECL|member|f_next
@@ -1710,6 +1711,28 @@ r_extern
 r_int
 id|nr_buffer_heads
 suffix:semicolon
+multiline_comment|/* Once the full cluster diffs are in place, this will be filled out a bit. */
+DECL|function|dirtify_buffer
+r_extern
+r_inline
+r_void
+id|dirtify_buffer
+c_func
+(paren
+r_struct
+id|buffer_head
+op_star
+id|bh
+comma
+r_int
+id|flag
+)paren
+(brace
+id|bh-&gt;b_dirt
+op_assign
+l_int|1
+suffix:semicolon
+)brace
 r_extern
 r_void
 id|check_disk_change
@@ -2175,9 +2198,16 @@ comma
 r_int
 id|block
 comma
-dot
-dot
-dot
+r_int
+id|size
+comma
+r_int
+r_int
+id|pos
+comma
+r_int
+r_int
+id|filesize
 )paren
 suffix:semicolon
 r_extern

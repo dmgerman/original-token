@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/isofs/inode.c&n; * &n; *  (C) 1992  Eric Youngdale Modified for ISO9660 filesystem.&n; *&n; *  (C) 1991  Linus Torvalds - minix filesystem&n; */
+multiline_comment|/*&n; *  linux/fs/isofs/inode.c&n; * &n; *  (C) 1992, 1993, 1994  Eric Youngdale Modified for ISO9660 filesystem.&n; *&n; *  (C) 1991  Linus Torvalds - minix filesystem&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1801,7 +1801,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;NoMem ISO inode %d&bslash;n&quot;
+l_string|&quot;NoMem ISO inode %lu&bslash;n&quot;
 comma
 id|inode-&gt;i_ino
 )paren
@@ -2871,9 +2871,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|block
 op_amp
 l_int|1
+)paren
+op_logical_and
+(paren
+id|ISOFS_BLOCK_BITS
+op_minus
+id|bufbits
+)paren
 )paren
 (brace
 r_return

@@ -3,6 +3,7 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/hpfs_fs.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
@@ -5815,20 +5816,11 @@ id|dev
 comma
 id|secno
 comma
-id|secno
-op_plus
-l_int|1
+l_int|512
 comma
-id|secno
-op_plus
-l_int|2
+l_int|0
 comma
-id|secno
-op_plus
-l_int|3
-comma
-op_minus
-l_int|1
+id|UINT_MAX
 )paren
 suffix:semicolon
 r_if

@@ -256,9 +256,13 @@ id|sb-&gt;sv_sb_total_free_inodes
 )paren
 op_increment
 suffix:semicolon
-id|sb-&gt;sv_bh-&gt;b_dirt
-op_assign
+id|dirtify_buffer
+c_func
+(paren
+id|sb-&gt;sv_bh
+comma
 l_int|1
+)paren
 suffix:semicolon
 multiline_comment|/* super-block has been modified */
 id|sb-&gt;s_dirt
@@ -280,9 +284,13 @@ id|sysv_inode
 )paren
 )paren
 suffix:semicolon
-id|bh-&gt;b_dirt
-op_assign
+id|dirtify_buffer
+c_func
+(paren
+id|bh
+comma
 l_int|1
+)paren
 suffix:semicolon
 id|unlock_super
 c_func
@@ -594,9 +602,13 @@ id|sb-&gt;sv_sb_fic_count
 )paren
 )braket
 suffix:semicolon
-id|sb-&gt;sv_bh-&gt;b_dirt
-op_assign
+id|dirtify_buffer
+c_func
+(paren
+id|sb-&gt;sv_bh
+comma
 l_int|1
+)paren
 suffix:semicolon
 multiline_comment|/* super-block has been modified */
 id|sb-&gt;s_dirt
@@ -704,9 +716,13 @@ id|sb-&gt;sv_sb_total_free_inodes
 )paren
 op_decrement
 suffix:semicolon
-id|sb-&gt;sv_bh-&gt;b_dirt
-op_assign
+id|dirtify_buffer
+c_func
+(paren
+id|sb-&gt;sv_bh
+comma
 l_int|1
+)paren
 suffix:semicolon
 multiline_comment|/* super-block has been modified again */
 id|sb-&gt;s_dirt
@@ -918,9 +934,13 @@ id|sb-&gt;sv_sb_total_free_inodes
 op_assign
 id|count
 suffix:semicolon
-id|sb-&gt;sv_bh-&gt;b_dirt
-op_assign
+id|dirtify_buffer
+c_func
+(paren
+id|sb-&gt;sv_bh
+comma
 l_int|1
+)paren
 suffix:semicolon
 multiline_comment|/* super-block has been modified */
 id|sb-&gt;s_dirt

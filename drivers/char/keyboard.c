@@ -2319,6 +2319,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -2340,7 +2341,6 @@ id|base
 op_eq
 id|ch
 )paren
-(brace
 r_return
 id|accent_table
 (braket

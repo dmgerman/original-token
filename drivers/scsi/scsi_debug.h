@@ -50,9 +50,13 @@ c_func
 r_int
 comma
 r_int
-op_star
+comma
+r_int
+(braket
+)braket
 )paren
 suffix:semicolon
+r_const
 r_char
 op_star
 id|scsi_debug_info
