@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: byteorder.h,v 1.5 1997/05/28 11:35:41 jj Exp $ */
+multiline_comment|/* $Id: byteorder.h,v 1.6 1997/06/14 17:35:07 davem Exp $ */
 macro_line|#ifndef _SPARC64_BYTEORDER_H
 DECL|macro|_SPARC64_BYTEORDER_H
 mdefine_line|#define _SPARC64_BYTEORDER_H

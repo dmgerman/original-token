@@ -1,6 +1,6 @@
-macro_line|#ifndef _MIPS_INIT_H
-DECL|macro|_MIPS_INIT_H
-mdefine_line|#define _MIPS_INIT_H
+macro_line|#ifndef __ASM_MIPS_INIT_H
+DECL|macro|__ASM_MIPS_INIT_H
+mdefine_line|#define __ASM_MIPS_INIT_H
 multiline_comment|/* Throwing the initialization code and data out is not supported yet... */
 DECL|macro|__init
 mdefine_line|#define&t;__init
@@ -15,5 +15,5 @@ DECL|macro|__FINIT
 mdefine_line|#define __FINIT
 DECL|macro|__INITDATA
 mdefine_line|#define __INITDATA
-macro_line|#endif
+macro_line|#endif /* __ASM_MIPS_INIT_H */
 eof

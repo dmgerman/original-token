@@ -1,16 +1,27 @@
 multiline_comment|/*&n; *  linux/arch/mips/kernel/time.c&n; *&n; *  Copyright (C) 1991, 1992, 1995  Linus Torvalds&n; *&n; * This file contains the time handling details for PC-style clocks as&n; * found in some MIPS systems.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/param.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;asm/bootinfo.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
 macro_line|#include &lt;linux/timex.h&gt;
-DECL|macro|TIMER_IRQ
-mdefine_line|#define TIMER_IRQ 0
+r_extern
+r_volatile
+r_int
+r_int
+id|lost_ticks
+suffix:semicolon
+multiline_comment|/* change this if you have some constant time drift */
+DECL|macro|USECS_PER_JIFFY
+mdefine_line|#define USECS_PER_JIFFY (1000020/HZ)
 multiline_comment|/* This function must be called with interrupts disabled &n; * It was inspired by Steve McCanne&squot;s microtime-i386 for BSD.  -- jrs&n; * &n; * However, the pc-audio speaker driver changes the divisor so that&n; * it gets interrupted rather more often - it loads 64 into the&n; * counter rather than 11932! This has an adverse impact on&n; * do_gettimeoffset() -- it stops working! What is also not&n; * good is that the interval that our timer function gets called&n; * is no longer 10.0002 ms, but 9.9767 ms. To get around this&n; * would require using a different timing source. Maybe someone&n; * could use the RTC - I know that this can interrupt at frequencies&n; * ranging from 8192Hz to 2Hz. If I had the energy, I&squot;d somehow fix&n; * it so that at startup, the timer code in sched.c would select&n; * using either the RTC or the 8253 timer. The decision would be&n; * based on whether there was any other device around that needed&n; * to trample on the 8253. I&squot;d set up the RTC to interrupt at 1024 Hz,&n; * and then do some jiggery to have a version of do_timer that &n; * advanced the clock by 1/1024 s. Every time that reached over 1/100&n; * of a second, then do all the old code. If the time was kept correct&n; * then do_gettimeoffset could just return 0 - there is no low order&n; * divider that can be accessed.&n; *&n; * Ideally, you would be able to use the RTC for the speaker driver,&n; * but it appears that the speaker driver really needs interrupt more&n; * often than every 120 us or so.&n; *&n; * Anyway, this needs more thought....&t;&t;pjsg (1993-08-28)&n; * &n; * If you are really that interested, you should be reading&n; * comp.protocols.time.ntp!&n; */
 DECL|macro|TICK_SIZE
 mdefine_line|#define TICK_SIZE tick
@@ -27,11 +38,24 @@ r_void
 r_int
 id|count
 suffix:semicolon
+r_static
+r_int
+id|count_p
+op_assign
+id|LATCH
+suffix:semicolon
+multiline_comment|/* for the first call after boot */
+r_static
 r_int
 r_int
-id|offset
+id|jiffies_p
 op_assign
 l_int|0
+suffix:semicolon
+multiline_comment|/*&n;&t; * cache volatile jiffies temporarily; we have IRQs turned off. &n;&t; */
+r_int
+r_int
+id|jiffies_t
 suffix:semicolon
 multiline_comment|/* timer count may underflow right here */
 id|outb_p
@@ -52,9 +76,14 @@ l_int|0x40
 )paren
 suffix:semicolon
 multiline_comment|/* read the latched count */
+multiline_comment|/*&n;&t; * We do this guaranteed double memory access instead of a _p &n;&t; * postfix in the previous port access. Wheee, hackady hack&n;&t; */
+id|jiffies_t
+op_assign
+id|jiffies
+suffix:semicolon
 id|count
 op_or_assign
-id|inb
+id|inb_p
 c_func
 (paren
 l_int|0x40
@@ -62,30 +91,33 @@ l_int|0x40
 op_lshift
 l_int|8
 suffix:semicolon
-multiline_comment|/* we know probability of underflow is always MUCH less than 1% */
+multiline_comment|/*&n;&t; * avoiding timer inconsistencies (they are rare, but they happen)...&n;&t; * there are two kinds of problems that must be avoided here:&n;&t; *  1. the timer counter underflows&n;&t; *  2. hardware problem with the timer, not giving us continuous time,&n;&t; *     the counter does small &quot;jumps&quot; upwards on some Pentium systems,&n;&t; *     (see c&squot;t 95/10 page 335 for Neptun bug.)&n;&t; */
+r_if
+c_cond
+(paren
+id|jiffies_t
+op_eq
+id|jiffies_p
+)paren
+(brace
 r_if
 c_cond
 (paren
 id|count
 OG
-(paren
-id|LATCH
-op_minus
-id|LATCH
-op_div
-l_int|100
-)paren
+id|count_p
 )paren
 (brace
-multiline_comment|/* check for pending timer interrupt */
+multiline_comment|/* the nutcase */
 id|outb_p
 c_func
 (paren
-l_int|0x0a
+l_int|0x0A
 comma
 l_int|0x20
 )paren
 suffix:semicolon
+multiline_comment|/* assumption about timer being IRQ1 */
 r_if
 c_cond
 (paren
@@ -95,13 +127,35 @@ c_func
 l_int|0x20
 )paren
 op_amp
-l_int|1
+l_int|0x01
 )paren
-id|offset
-op_assign
-id|TICK_SIZE
+(brace
+multiline_comment|/*&n;&t;&t;&t;&t; * We cannot detect lost timer interrupts ... &n;&t;&t;&t;&t; * well, thats why we call them lost, dont we? :)&n;&t;&t;&t;&t; * [hmm, on the Pentium and Alpha we can ... sort of]&n;&t;&t;&t;&t; */
+id|count
+op_sub_assign
+id|LATCH
 suffix:semicolon
 )brace
+r_else
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;do_slow_gettimeoffset(): hardware timer problem?&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+)brace
+)brace
+r_else
+id|jiffies_p
+op_assign
+id|jiffies_t
+suffix:semicolon
+id|count_p
+op_assign
+id|count
+suffix:semicolon
 id|count
 op_assign
 (paren
@@ -129,8 +183,6 @@ op_div
 id|LATCH
 suffix:semicolon
 r_return
-id|offset
-op_plus
 id|count
 suffix:semicolon
 )brace
@@ -187,6 +239,22 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * xtime is atomically updated in timer_bh. lost_ticks is&n;&t; * nonzero if the timer bottom half hasnt executed yet.&n;&t; */
+r_if
+c_cond
+(paren
+id|lost_ticks
+)paren
+id|tv-&gt;tv_usec
+op_add_assign
+id|USECS_PER_JIFFY
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -203,12 +271,6 @@ id|tv-&gt;tv_sec
 op_increment
 suffix:semicolon
 )brace
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 )brace
 DECL|function|do_settimeofday
 r_void
@@ -261,11 +323,11 @@ id|TIME_BAD
 suffix:semicolon
 id|time_maxerror
 op_assign
-l_int|0x70000000
+id|MAXPHASE
 suffix:semicolon
 id|time_esterror
 op_assign
-l_int|0x70000000
+id|MAXPHASE
 suffix:semicolon
 id|sti
 c_func
@@ -477,7 +539,7 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
-multiline_comment|/* The following flags have to be released exactly in this order,&n;&t; * otherwise the DS12887 (popular MC146818A clone with integrated&n;&t; * battery and crystal) will not reset the oscillator and will not&n;&t; * update precisely 500 ms later. You won&squot;t find this mentioned in&n;&t; * the Dallas Semiconductor data sheets, but who believes data&n;&t; * sheets anyway ...                           -- Markus Kuhn&n;&t; */
+multiline_comment|/* The following flags have to be released exactly in this order,&n;&t; * otherwise the DS12887 (popular MC146818A clone with integrated&n;&t; * battery and quartz) will not reset the oscillator and will not&n;&t; * update precisely 500 ms later. You won&squot;t find this mentioned in&n;&t; * the Dallas Semiconductor data sheets, but who believes data&n;&t; * sheets anyway ...                           -- Markus Kuhn&n;&t; */
 id|CMOS_WRITE
 c_func
 (paren
@@ -515,6 +577,10 @@ c_func
 (paren
 r_int
 id|irq
+comma
+r_void
+op_star
+id|dev_id
 comma
 r_struct
 id|pt_regs
@@ -586,18 +652,7 @@ l_int|600
 suffix:semicolon
 multiline_comment|/* do it again in 60 s */
 multiline_comment|/* As we return to user mode fire off the other CPU schedulers.. this is &n;&t;   basically because we don&squot;t yet share IRQ&squot;s around. This message is&n;&t;   rigged to be safe on the 386 - basically it&squot;s a hack, so don&squot;t look&n;&t;   closely for now.. */
-id|smp_message_pass
-c_func
-(paren
-id|MSG_ALL_BUT_SELF
-comma
-id|MSG_RESCHEDULE
-comma
-l_int|0L
-comma
-l_int|0
-)paren
-suffix:semicolon
+multiline_comment|/*smp_message_pass(MSG_ALL_BUT_SELF, MSG_RESCHEDULE, 0L, 0); */
 )brace
 multiline_comment|/* Converts Gregorian date to seconds since 1970-01-01 00:00:00.&n; * Assumes input in normal date format, i.e. 1980-12-31 23:59:59&n; * =&gt; year=1980, mon=12, day=31, hour=23, min=59, sec=59.&n; *&n; * [For the Julian calendar (which was used in Russia before 1917,&n; * Britain &amp; colonies before 1752, anywhere else before 1582,&n; * and is still in use by some communities) leave out the&n; * -year/100+year/400 terms, and add 10.]&n; *&n; * This algorithm was first published by Gauss (I think).&n; *&n; * WARNING: this function will overflow on 2106-02-07 06:28:16 on&n; * machines were long is 32-bit! (However, as time_t is signed, we&n; * will already get problems at other places on 2038-01-19 03:14:08)&n; */
 DECL|function|mktime
@@ -714,27 +769,51 @@ id|sec
 suffix:semicolon
 multiline_comment|/* finally seconds */
 )brace
-DECL|function|time_init
+DECL|variable|irq0
+r_static
+r_struct
+id|irqaction
+id|irq0
+op_assign
+(brace
+id|timer_interrupt
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_string|&quot;timer&quot;
+comma
+l_int|NULL
+comma
+l_int|NULL
+)brace
+suffix:semicolon
+DECL|variable|board_time_init
+r_void
+(paren
+op_star
+id|board_time_init
+)paren
+(paren
+r_struct
+id|irqaction
+op_star
+id|irq
+)paren
+suffix:semicolon
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|time_init
 c_func
 (paren
 r_void
 )paren
+)paren
 (brace
-r_void
-(paren
-op_star
-id|irq_handler
-)paren
-(paren
-r_int
-comma
-r_struct
-id|pt_regs
-op_star
-)paren
-suffix:semicolon
 r_int
 r_int
 id|year
@@ -931,6 +1010,7 @@ id|year
 )paren
 suffix:semicolon
 )brace
+macro_line|#if 0&t;/* the IBM way */
 r_if
 c_cond
 (paren
@@ -946,6 +1026,13 @@ id|year
 op_add_assign
 l_int|100
 suffix:semicolon
+macro_line|#else
+multiline_comment|/* Acer PICA clock starts from 1980.  True for all MIPS machines?  */
+id|year
+op_add_assign
+l_int|1980
+suffix:semicolon
+macro_line|#endif
 id|xtime.tv_sec
 op_assign
 id|mktime
@@ -969,31 +1056,11 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* FIXME: If we have the CPU hardware time counters, use them */
-id|irq_handler
-op_assign
-id|timer_interrupt
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|request_irq
+id|board_time_init
 c_func
 (paren
-id|TIMER_IRQ
-comma
-id|irq_handler
-comma
-l_int|0
-comma
-l_string|&quot;timer&quot;
-)paren
-op_ne
-l_int|0
-)paren
-id|panic
-c_func
-(paren
-l_string|&quot;Could not allocate timer IRQ!&quot;
+op_amp
+id|irq0
 )paren
 suffix:semicolon
 )brace

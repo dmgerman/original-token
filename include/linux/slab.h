@@ -37,8 +37,8 @@ DECL|macro|SLAB_DEBUG_INITIAL
 mdefine_line|#define&t;SLAB_DEBUG_INITIAL&t;0x00000200UL&t;/* Call constructor (as verifier) */
 DECL|macro|SLAB_RED_ZONE
 mdefine_line|#define&t;SLAB_RED_ZONE&t;&t;0x00000400UL&t;/* Red zone objs in a cache */
-DECL|macro|SLAB_POISION
-mdefine_line|#define&t;SLAB_POISION&t;&t;0x00000800UL&t;/* Poision objects */
+DECL|macro|SLAB_POISON
+mdefine_line|#define&t;SLAB_POISON&t;&t;0x00000800UL&t;/* Poison objects */
 DECL|macro|SLAB_NO_REAP
 mdefine_line|#define&t;SLAB_NO_REAP&t;&t;0x00001000UL&t;/* never reap from the cache */
 DECL|macro|SLAB_HWCACHE_ALIGN

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: mmu_context.h,v 1.10 1997/05/23 09:35:55 jj Exp $ */
+multiline_comment|/* $Id: mmu_context.h,v 1.11 1997/06/13 14:03:04 davem Exp $ */
 macro_line|#ifndef __SPARC64_MMU_CONTEXT_H
 DECL|macro|__SPARC64_MMU_CONTEXT_H
 mdefine_line|#define __SPARC64_MMU_CONTEXT_H
@@ -132,10 +132,11 @@ c_func
 l_string|&quot;#Sync&quot;
 )paren
 suffix:semicolon
-id|flushi
+id|__asm__
+id|__volatile__
 c_func
 (paren
-id|PAGE_OFFSET
+l_string|&quot;flush %g4&quot;
 )paren
 suffix:semicolon
 id|restore_flags
@@ -157,10 +158,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|ctx
+op_eq
+l_int|1
 )paren
 (brace
+multiline_comment|/* _not_ zero! */
 id|ctx
 op_assign
 id|CTX_FIRST_VERSION
@@ -191,6 +194,16 @@ op_star
 id|tsk
 )paren
 (brace
+r_register
+r_int
+r_int
+id|paddr
+id|asm
+c_func
+(paren
+l_string|&quot;o5&quot;
+)paren
+suffix:semicolon
 r_struct
 id|mm_struct
 op_star
@@ -198,11 +211,14 @@ id|mm
 op_assign
 id|tsk-&gt;mm
 suffix:semicolon
+id|flushw_user
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|mm
-op_logical_and
 op_logical_neg
 (paren
 id|tsk-&gt;tss.flags
@@ -223,21 +239,6 @@ r_int
 id|ctx
 op_assign
 id|tlb_context_cache
-suffix:semicolon
-r_register
-r_int
-r_int
-id|paddr
-id|asm
-c_func
-(paren
-l_string|&quot;o5&quot;
-)paren
-suffix:semicolon
-id|flushw_user
-c_func
-(paren
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -260,23 +261,39 @@ id|ctx
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Don&squot;t worry, set_fs() will restore it... */
 id|tsk-&gt;tss.ctx
 op_assign
+(paren
+id|tsk-&gt;tss.current_ds
+ques
+c_cond
 (paren
 id|mm-&gt;context
 op_amp
 l_int|0x1fff
 )paren
+suffix:colon
+l_int|0
+)paren
+suffix:semicolon
+)brace
+r_else
+id|tsk-&gt;tss.ctx
+op_assign
+l_int|0
 suffix:semicolon
 id|spitfire_set_secondary_context
 c_func
 (paren
-id|tsk-&gt;tss.current_ds
-ques
-c_cond
-id|mm-&gt;context
-suffix:colon
-l_int|0
+id|tsk-&gt;tss.ctx
+)paren
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;flush %g4&quot;
 )paren
 suffix:semicolon
 id|paddr
@@ -347,7 +364,6 @@ suffix:colon
 l_string|&quot;o4&quot;
 )paren
 suffix:semicolon
-)brace
 )brace
 macro_line|#endif /* !(__ASSEMBLY__) */
 macro_line|#endif /* !(__SPARC64_MMU_CONTEXT_H) */

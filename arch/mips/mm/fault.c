@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  arch/mips/mm/fault.c&n; *&n; *  Copyright (C) 1995 by Ralf Baechle&n; */
+multiline_comment|/*&n; *  arch/mips/mm/fault.c&n; *&n; *  Copyright (C) 1995, 1996, 1997 by Ralf Baechle&n; */
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/head.h&gt;
@@ -9,9 +9,12 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/mmu_context.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 r_extern
 r_void
 id|die_if_kernel
@@ -27,10 +30,20 @@ comma
 r_int
 )paren
 suffix:semicolon
+DECL|variable|asid_cache
+r_int
+r_int
+id|asid_cache
+op_assign
+id|ASID_FIRST_VERSION
+suffix:semicolon
+multiline_comment|/*&n; * Macro for exception fixup code to access integer registers.&n; */
+DECL|macro|dpf_reg
+mdefine_line|#define dpf_reg(r) (regs-&gt;regs[r])
 multiline_comment|/*&n; * This routine handles page faults.  It determines the address,&n; * and the problem, and then passes it off to one of the appropriate&n; * routines.&n; */
+DECL|function|do_page_fault
 id|asmlinkage
 r_void
-DECL|function|do_page_fault
 id|do_page_fault
 c_func
 (paren
@@ -53,33 +66,60 @@ id|vm_area_struct
 op_star
 id|vma
 suffix:semicolon
+r_struct
+id|task_struct
+op_star
+id|tsk
+op_assign
+id|current
+suffix:semicolon
+r_struct
+id|mm_struct
+op_star
+id|mm
+op_assign
+id|tsk-&gt;mm
+suffix:semicolon
+r_int
+r_int
+id|fixup
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 macro_line|#if 0
 id|printk
 c_func
 (paren
-l_string|&quot;do_page_fault() #1: %s %08lx (epc == %08lx, ra == %08lx)&bslash;n&quot;
+l_string|&quot;[%s:%d:%08lx:%ld:%08lx]&bslash;n&quot;
 comma
-id|writeaccess
-ques
-c_cond
-l_string|&quot;writeaccess to&quot;
-suffix:colon
-l_string|&quot;readaccess from&quot;
+id|current-&gt;comm
+comma
+id|current-&gt;pid
 comma
 id|address
 comma
-id|regs-&gt;cp0_epc
+id|writeaccess
 comma
-id|regs-&gt;reg31
+id|regs-&gt;cp0_epc
 )paren
 suffix:semicolon
 macro_line|#endif
+id|down
+c_func
+(paren
+op_amp
+id|mm-&gt;mmap_sem
+)paren
+suffix:semicolon
 id|vma
 op_assign
 id|find_vma
 c_func
 (paren
-id|current
+id|mm
 comma
 id|address
 )paren
@@ -176,6 +216,8 @@ suffix:semicolon
 id|handle_mm_fault
 c_func
 (paren
+id|tsk
+comma
 id|vma
 comma
 id|address
@@ -183,22 +225,75 @@ comma
 id|writeaccess
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME: This flushes the cache far to often */
-id|sys_cacheflush
+id|up
 c_func
 (paren
-id|address
-comma
-id|PAGE_SIZE
-comma
-id|BCACHE
+op_amp
+id|mm-&gt;mmap_sem
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 multiline_comment|/*&n; * Something tried to access memory that isn&squot;t in our memory map..&n; * Fix it, but check if it&squot;s kernel or user first..&n; */
 id|bad_area
 suffix:colon
+id|up
+c_func
+(paren
+op_amp
+id|mm-&gt;mmap_sem
+)paren
+suffix:semicolon
+multiline_comment|/* Did we have an exception handler installed? */
+id|fixup
+op_assign
+id|search_exception_table
+c_func
+(paren
+id|regs-&gt;cp0_epc
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|fixup
+)paren
+(brace
+r_int
+id|new_epc
+suffix:semicolon
+id|new_epc
+op_assign
+id|fixup_exception
+c_func
+(paren
+id|dpf_reg
+comma
+id|fixup
+comma
+id|regs-&gt;cp0_epc
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;Exception at [&lt;%lx&gt;] (%lx)&bslash;n&quot;
+comma
+id|regs-&gt;cp0_epc
+comma
+id|new_epc
+)paren
+suffix:semicolon
+id|regs-&gt;cp0_epc
+op_assign
+id|new_epc
+suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -209,6 +304,49 @@ id|regs
 )paren
 )paren
 (brace
+id|tsk-&gt;tss.cp0_badvaddr
+op_assign
+id|address
+suffix:semicolon
+id|tsk-&gt;tss.error_code
+op_assign
+id|writeaccess
+suffix:semicolon
+macro_line|#if 1
+id|printk
+c_func
+(paren
+l_string|&quot;do_page_fault() #2: sending SIGSEGV to %s for illegal %s&bslash;n&quot;
+l_string|&quot;%08lx (epc == %08lx, ra == %08lx)&bslash;n&quot;
+comma
+id|tsk-&gt;comm
+comma
+id|writeaccess
+ques
+c_cond
+l_string|&quot;writeaccess to&quot;
+suffix:colon
+l_string|&quot;readaccess from&quot;
+comma
+id|address
+comma
+(paren
+r_int
+r_int
+)paren
+id|regs-&gt;cp0_epc
+comma
+(paren
+r_int
+r_int
+)paren
+id|regs-&gt;regs
+(braket
+l_int|31
+)braket
+)paren
+suffix:semicolon
+macro_line|#endif
 id|current-&gt;tss.cp0_badvaddr
 op_assign
 id|address
@@ -217,17 +355,16 @@ id|current-&gt;tss.error_code
 op_assign
 id|writeaccess
 suffix:semicolon
-id|send_sig
+id|force_sig
 c_func
 (paren
 id|SIGSEGV
 comma
-id|current
-comma
-l_int|1
+id|tsk
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Oops. The kernel tried to access some bad page. We&squot;ll have to&n;&t; * terminate things with extreme prejudice.&n;&t; */
@@ -236,9 +373,11 @@ c_func
 (paren
 id|KERN_ALERT
 l_string|&quot;Unable to handle kernel paging request at virtual &quot;
-l_string|&quot;address %08lx&bslash;n&quot;
+l_string|&quot;address %08lx, epc == %08lx&bslash;n&quot;
 comma
 id|address
+comma
+id|regs-&gt;cp0_epc
 )paren
 suffix:semicolon
 id|die_if_kernel
@@ -255,6 +394,13 @@ id|do_exit
 c_func
 (paren
 id|SIGKILL
+)paren
+suffix:semicolon
+id|out
+suffix:colon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;TCP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: tcp_ipv6.c,v 1.32 1997/06/04 08:28:58 davem Exp $&n; *&n; *&t;Based on: &n; *&t;linux/net/ipv4/tcp.c&n; *&t;linux/net/ipv4/tcp_input.c&n; *&t;linux/net/ipv4/tcp_output.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;TCP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: tcp_ipv6.c,v 1.33 1997/06/06 20:38:10 freitag Exp $&n; *&n; *&t;Based on: &n; *&t;linux/net/ipv4/tcp.c&n; *&t;linux/net/ipv4/tcp_input.c&n; *&t;linux/net/ipv4/tcp_output.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -3136,6 +3136,23 @@ comma
 id|isn
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|isn
+op_eq
+l_int|0
+)paren
+id|isn
+op_assign
+id|tcp_v6_init_sequence
+c_func
+(paren
+id|sk
+comma
+id|skb
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; *&t;There are no SYN attacks on IPv6, yet...&n;&t; */
 r_if
 c_cond
@@ -3222,6 +3239,8 @@ id|skb-&gt;h.th
 comma
 op_amp
 id|tp
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_if
@@ -3447,17 +3466,17 @@ r_struct
 id|open_request
 op_star
 id|req
+comma
+r_struct
+id|dst_entry
+op_star
+id|dst
 )paren
 (brace
 r_struct
 id|ipv6_pinfo
 op_star
 id|np
-suffix:semicolon
-r_struct
-id|dst_entry
-op_star
-id|dst
 suffix:semicolon
 r_struct
 id|flowi
@@ -3496,6 +3515,8 @@ comma
 id|skb
 comma
 id|req
+comma
+id|dst
 )paren
 suffix:semicolon
 r_if
@@ -3589,9 +3610,22 @@ id|newsk
 op_eq
 l_int|NULL
 )paren
+(brace
+r_if
+c_cond
+(paren
+id|dst
+)paren
+id|dst_release
+c_func
+(paren
+id|dst
+)paren
+suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
+)brace
 id|memcpy
 c_func
 (paren
@@ -3916,7 +3950,15 @@ id|np-&gt;oif
 op_assign
 id|req-&gt;af.v6_req.dev
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;options / mss / route cache&n;&t; */
+r_if
+c_cond
+(paren
+id|dst
+op_eq
+l_int|NULL
+)paren
+(brace
+multiline_comment|/*&n;&t;     *&t;options / mss / route cache&n;&t;     */
 id|fl.proto
 op_assign
 id|IPPROTO_TCP
@@ -3954,6 +3996,7 @@ op_amp
 id|fl
 )paren
 suffix:semicolon
+)brace
 id|ip6_dst_store
 c_func
 (paren
@@ -4554,6 +4597,8 @@ comma
 id|skb
 comma
 id|req
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 id|tcp_dec_slow_timer
@@ -5510,8 +5555,6 @@ id|tcp_v6_conn_request
 comma
 id|tcp_v6_syn_recv_sock
 comma
-id|tcp_v6_init_sequence
-comma
 id|tcp_v6_get_sock
 comma
 id|ipv6_setsockopt
@@ -5548,8 +5591,6 @@ comma
 id|tcp_v6_conn_request
 comma
 id|tcp_v6_syn_recv_sock
-comma
-id|tcp_v6_init_sequence
 comma
 id|tcp_v6_get_sock
 comma

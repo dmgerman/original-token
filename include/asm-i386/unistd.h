@@ -342,6 +342,10 @@ DECL|macro|__NR_poll
 mdefine_line|#define __NR_poll&t;&t;168
 DECL|macro|__NR_nfsservctl
 mdefine_line|#define __NR_nfsservctl&t;&t;169
+DECL|macro|__NR_setresgid
+mdefine_line|#define __NR_setresgid&t;&t;170
+DECL|macro|__NR_getresgid
+mdefine_line|#define __NR_getresgid&t;&t;171
 multiline_comment|/* user-visible error numbers are in the range -1 - -122: see &lt;asm-i386/errno.h&gt; */
 DECL|macro|__syscall_return
 mdefine_line|#define __syscall_return(type, res) &bslash;&n;do { &bslash;&n;&t;if ((unsigned long)(res) &gt;= (unsigned long)(-125)) { &bslash;&n;&t;&t;errno = -(res); &bslash;&n;&t;&t;res = -1; &bslash;&n;&t;} &bslash;&n;&t;return (type) (res); &bslash;&n;} while (0)

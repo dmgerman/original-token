@@ -143,6 +143,15 @@ suffix:semicolon
 id|outb
 c_func
 (paren
+l_int|0x62
+comma
+l_int|0x20
+)paren
+suffix:semicolon
+multiline_comment|/* Specific EOI to cascade */
+id|outb
+c_func
+(paren
 l_int|0x20
 comma
 l_int|0xA0
@@ -166,7 +175,6 @@ comma
 l_int|0x21
 )paren
 suffix:semicolon
-)brace
 id|outb
 c_func
 (paren
@@ -175,6 +183,7 @@ comma
 l_int|0x20
 )paren
 suffix:semicolon
+)brace
 id|spin_unlock
 c_func
 (paren

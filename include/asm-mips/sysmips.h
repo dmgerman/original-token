@@ -9,6 +9,8 @@ DECL|macro|FLUSH_CACHE
 mdefine_line|#define FLUSH_CACHE&t;&t;   3&t;/* writeback and invalidate caches */
 DECL|macro|MIPS_FIXADE
 mdefine_line|#define MIPS_FIXADE                7&t;/* control address error fixing  */
+DECL|macro|MIPS_RDNVRAM
+mdefine_line|#define MIPS_RDNVRAM              10&t;/* read NVRAM */
 DECL|macro|MIPS_ATOMIC_SET
 mdefine_line|#define MIPS_ATOMIC_SET&t;&t;2001&t;/* atomically set variable       */
 macro_line|#endif /* __ASM_MIPS_SYSMIPS_H */

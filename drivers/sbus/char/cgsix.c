@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: cgsix.c,v 1.30 1997/06/04 08:27:28 davem Exp $&n; * cgsix.c: cgsix frame buffer driver&n; *&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: cgsix.c,v 1.32 1997/06/14 15:26:08 davem Exp $&n; * cgsix.c: cgsix frame buffer driver&n; *&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -895,7 +895,8 @@ id|r
 comma
 id|map_size
 suffix:semicolon
-id|uint
+r_int
+r_int
 id|map_offset
 op_assign
 l_int|0
@@ -962,6 +963,8 @@ r_int
 )paren
 id|fb-&gt;info.cg6.tec
 )paren
+op_amp
+id|PAGE_MASK
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -1022,6 +1025,8 @@ r_int
 )paren
 id|fb-&gt;info.cg6.thc
 )paren
+op_amp
+id|PAGE_MASK
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -1045,14 +1050,18 @@ id|fb-&gt;info.cg6.bt
 suffix:semicolon
 r_break
 suffix:semicolon
+multiline_comment|/* For Ultra, make sure the following two are right.&n;&t;&t; * The above two happen to work out (for example FBC and&n;&t;&t; * TEC will get mapped by one I/O page mapping because&n;&t;&t; * of the 8192 byte page size, same for FHC/THC.  -DaveM&n;&t;&t; */
 r_case
 id|CG6_DHC
 suffix:colon
 id|map_size
 op_assign
-id|PAGE_SIZE
+multiline_comment|/* PAGE_SIZE * 40 */
+(paren
+l_int|4096
 op_star
 l_int|40
+)paren
 suffix:semicolon
 id|map_offset
 op_assign
@@ -1072,9 +1081,12 @@ id|CG6_ROM
 suffix:colon
 id|map_size
 op_assign
-id|PAGE_SIZE
+multiline_comment|/* PAGE_SIZE * 16 */
+(paren
+l_int|4096
 op_star
 l_int|16
+)paren
 suffix:semicolon
 id|map_offset
 op_assign
@@ -1917,6 +1929,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+macro_line|#if PAGE_SHIFT &lt;= 12&t;&t; 
 id|cg6info-&gt;thc
 op_assign
 id|sparc_alloc_io
@@ -1940,6 +1953,47 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+macro_line|#else
+id|cg6info-&gt;thc
+op_assign
+(paren
+r_struct
+id|cg6_thc
+op_star
+)paren
+(paren
+(paren
+(paren
+r_char
+op_star
+)paren
+id|cg6info-&gt;fhc
+)paren
+op_plus
+l_int|0x1000
+)paren
+suffix:semicolon
+macro_line|#endif
+id|cg6info-&gt;fbc
+op_assign
+id|sparc_alloc_io
+(paren
+id|cg6
+op_plus
+id|CG6_FBC_OFFSET
+comma
+l_int|0
+comma
+l_int|0x1000
+comma
+l_string|&quot;cgsix_fbc&quot;
+comma
+id|cg6_io
+comma
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#if PAGE_SHIFT &lt;= 12&t;&t; 
 id|cg6info-&gt;tec
 op_assign
 id|sparc_alloc_io
@@ -1963,6 +2017,27 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+macro_line|#else
+id|cg6info-&gt;tec
+op_assign
+(paren
+r_struct
+id|cg6_tec
+op_star
+)paren
+(paren
+(paren
+(paren
+r_char
+op_star
+)paren
+id|cg6info-&gt;fbc
+)paren
+op_plus
+l_int|0x1000
+)paren
+suffix:semicolon
+macro_line|#endif
 id|cg6info-&gt;dhc
 op_assign
 id|sparc_alloc_io
@@ -1976,25 +2051,6 @@ comma
 l_int|0x40000
 comma
 l_string|&quot;cgsix_dhc&quot;
-comma
-id|cg6_io
-comma
-l_int|0
-)paren
-suffix:semicolon
-id|cg6info-&gt;fbc
-op_assign
-id|sparc_alloc_io
-(paren
-id|cg6
-op_plus
-id|CG6_FBC_OFFSET
-comma
-l_int|0
-comma
-l_int|0x1000
-comma
-l_string|&quot;cgsix_fbc&quot;
 comma
 id|cg6_io
 comma

@@ -1,6 +1,6 @@
-macro_line|#ifndef _MIPS_SCATTERLIST_H
-DECL|macro|_MIPS_SCATTERLIST_H
-mdefine_line|#define _MIPS_SCATTERLIST_H
+macro_line|#ifndef __ASM_MIPS_SCATTERLIST_H
+DECL|macro|__ASM_MIPS_SCATTERLIST_H
+mdefine_line|#define __ASM_MIPS_SCATTERLIST_H
 DECL|struct|scatterlist
 r_struct
 id|scatterlist
@@ -26,5 +26,5 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|ISA_DMA_THRESHOLD
 mdefine_line|#define ISA_DMA_THRESHOLD (0x00ffffff)
-macro_line|#endif /* !(_MIPS_SCATTERLIST_H) */
+macro_line|#endif /* __ASM_MIPS_SCATTERLIST_H */
 eof

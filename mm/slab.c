@@ -15,7 +15,7 @@ multiline_comment|/* If there is a different PAGE_SIZE around, and it works with
 macro_line|#if&t;(PAGE_SIZE != 8192 &amp;&amp; PAGE_SIZE != 4096)
 macro_line|#error&t;Your page size is probably not correctly supported - please check
 macro_line|#endif
-multiline_comment|/* SLAB_MGMT_CHECKS&t;- 1 to enable extra checks in kmem_cache_create().&n; *&t;&t;&t;  0 if you wish to reduce memory usage.&n; *&n; * SLAB_DEBUG_SUPPORT&t;- 1 for kmem_cache_create() to honour; SLAB_DEBUG_FREE,&n; *&t;&t;&t;  SLAB_DEBUG_INITIAL, SLAB_RED_ZONE &amp; SLAB_POISION.&n; *&t;&t;&t;  0 for faster, smaller, code (espically in the critical paths).&n; *&n; * SLAB_STATS&t;&t;- 1 to collect stats for /proc/slabinfo.&n; *&t;&t;&t;  0 for faster, smaller, code (espically in the critical paths).&n; *&n; * SLAB_SELFTEST&t;- 1 to perform a few tests, mainly for developement.&n; */
+multiline_comment|/* SLAB_MGMT_CHECKS&t;- 1 to enable extra checks in kmem_cache_create().&n; *&t;&t;&t;  0 if you wish to reduce memory usage.&n; *&n; * SLAB_DEBUG_SUPPORT&t;- 1 for kmem_cache_create() to honour; SLAB_DEBUG_FREE,&n; *&t;&t;&t;  SLAB_DEBUG_INITIAL, SLAB_RED_ZONE &amp; SLAB_POISON.&n; *&t;&t;&t;  0 for faster, smaller, code (espically in the critical paths).&n; *&n; * SLAB_STATS&t;&t;- 1 to collect stats for /proc/slabinfo.&n; *&t;&t;&t;  0 for faster, smaller, code (espically in the critical paths).&n; *&n; * SLAB_SELFTEST&t;- 1 to perform a few tests, mainly for developement.&n; */
 DECL|macro|SLAB_MGMT_CHECKS
 mdefine_line|#define&t;&t;SLAB_MGMT_CHECKS&t;1
 DECL|macro|SLAB_DEBUG_SUPPORT
@@ -30,10 +30,10 @@ mdefine_line|#define&t;BYTES_PER_WORD&t;&t;sizeof(void *)
 multiline_comment|/* Legal flag mask for kmem_cache_create(). */
 macro_line|#if&t;SLAB_DEBUG_SUPPORT
 macro_line|#if&t;0
-mdefine_line|#define&t;SLAB_C_MASK&t;&t;(SLAB_DEBUG_FREE|SLAB_DEBUG_INITIAL|SLAB_RED_ZONE| &bslash;&n;&t;&t;&t;&t; SLAB_POISION|SLAB_HWCACHE_ALIGN|SLAB_NO_REAP| &bslash;&n;&t;&t;&t;&t; SLAB_HIGH_PACK)
+mdefine_line|#define&t;SLAB_C_MASK&t;&t;(SLAB_DEBUG_FREE|SLAB_DEBUG_INITIAL|SLAB_RED_ZONE| &bslash;&n;&t;&t;&t;&t; SLAB_POISON|SLAB_HWCACHE_ALIGN|SLAB_NO_REAP| &bslash;&n;&t;&t;&t;&t; SLAB_HIGH_PACK)
 macro_line|#endif
 DECL|macro|SLAB_C_MASK
-mdefine_line|#define&t;SLAB_C_MASK&t;&t;(SLAB_DEBUG_FREE|SLAB_DEBUG_INITIAL|SLAB_RED_ZONE| &bslash;&n;&t;&t;&t;&t; SLAB_POISION|SLAB_HWCACHE_ALIGN|SLAB_NO_REAP)
+mdefine_line|#define&t;SLAB_C_MASK&t;&t;(SLAB_DEBUG_FREE|SLAB_DEBUG_INITIAL|SLAB_RED_ZONE| &bslash;&n;&t;&t;&t;&t; SLAB_POISON|SLAB_HWCACHE_ALIGN|SLAB_NO_REAP)
 macro_line|#else
 macro_line|#if&t;0
 mdefine_line|#define&t;SLAB_C_MASK&t;&t;(SLAB_HWCACHE_ALIGN|SLAB_NO_REAP|SLAB_HIGH_PACK)
@@ -164,11 +164,11 @@ DECL|macro|SLAB_RED_MAGIC1
 mdefine_line|#define&t;SLAB_RED_MAGIC1&t;&t;0x5A2CF071UL&t;/* when obj is active */
 DECL|macro|SLAB_RED_MAGIC2
 mdefine_line|#define&t;SLAB_RED_MAGIC2&t;&t;0x170FC2A5UL&t;/* when obj is inactive */
-multiline_comment|/* ...and for poisioning */
-DECL|macro|SLAB_POISION_BYTE
-mdefine_line|#define&t;SLAB_POISION_BYTE&t;0x5a&t;&t;/* byte value for poisioning */
-DECL|macro|SLAB_POISION_END
-mdefine_line|#define&t;SLAB_POISION_END&t;0xa5&t;&t;/* end-byte of poisioning */
+multiline_comment|/* ...and for poisoning */
+DECL|macro|SLAB_POISON_BYTE
+mdefine_line|#define&t;SLAB_POISON_BYTE&t;0x5a&t;&t;/* byte value for poisoning */
+DECL|macro|SLAB_POISON_END
+mdefine_line|#define&t;SLAB_POISON_END&t;0xa5&t;&t;/* end-byte of poisoning */
 macro_line|#endif&t;/* SLAB_DEBUG_SUPPORT */
 multiline_comment|/* Cache struct - manages a cache.&n; * First four members are commonly referenced during an alloc/free operation.&n; */
 DECL|struct|kmem_cache_s
@@ -1280,8 +1280,8 @@ macro_line|#if&t;SLAB_DEBUG_SUPPORT
 r_static
 r_inline
 r_void
-DECL|function|kmem_poision_obj
-id|kmem_poision_obj
+DECL|function|kmem_poison_obj
+id|kmem_poison_obj
 c_func
 (paren
 id|kmem_cache_t
@@ -1298,7 +1298,7 @@ c_func
 (paren
 id|addr
 comma
-id|SLAB_POISION_BYTE
+id|SLAB_POISON_BYTE
 comma
 id|cachep-&gt;c_org_size
 )paren
@@ -1317,14 +1317,14 @@ op_minus
 l_int|1
 )paren
 op_assign
-id|SLAB_POISION_END
+id|SLAB_POISON_END
 suffix:semicolon
 )brace
 r_static
 r_inline
 r_int
-DECL|function|kmem_check_poision_obj
-id|kmem_check_poision_obj
+DECL|function|kmem_check_poison_obj
+id|kmem_check_poison_obj
 c_func
 (paren
 id|kmem_cache_t
@@ -1347,7 +1347,7 @@ c_func
 (paren
 id|addr
 comma
-id|SLAB_POISION_END
+id|SLAB_POISON_END
 comma
 id|cachep-&gt;c_org_size
 )paren
@@ -1520,7 +1520,7 @@ op_logical_or
 id|cachep-&gt;c_flags
 op_amp
 (paren
-id|SLAB_POISION
+id|SLAB_POISON
 op_logical_or
 id|SLAB_RED_ZONE
 )paren
@@ -1636,13 +1636,13 @@ c_cond
 (paren
 id|cachep-&gt;c_flags
 op_amp
-id|SLAB_POISION
+id|SLAB_POISON
 )paren
 (brace
 r_if
 c_cond
 (paren
-id|kmem_check_poision_obj
+id|kmem_check_poison_obj
 c_func
 (paren
 id|cachep
@@ -1655,7 +1655,7 @@ c_func
 (paren
 id|KERN_ERR
 l_string|&quot;kmem_slab_destory: &quot;
-l_string|&quot;Bad poision - %s&bslash;n&quot;
+l_string|&quot;Bad poison - %s&bslash;n&quot;
 comma
 id|cachep-&gt;c_name
 )paren
@@ -2119,17 +2119,17 @@ c_cond
 (paren
 id|flags
 op_amp
-id|SLAB_POISION
+id|SLAB_POISON
 )paren
 op_logical_and
 id|ctor
 )paren
 (brace
-multiline_comment|/* request for poisioning, but we can&squot;t do that with a constructor */
+multiline_comment|/* request for poisoning, but we can&squot;t do that with a constructor */
 id|printk
 c_func
 (paren
-l_string|&quot;%sPoisioning requested, but con given - %s&bslash;n&quot;
+l_string|&quot;%sPoisoning requested, but con given - %s&bslash;n&quot;
 comma
 id|func_nm
 comma
@@ -2139,7 +2139,7 @@ suffix:semicolon
 id|flags
 op_and_assign
 op_complement
-id|SLAB_POISION
+id|SLAB_POISON
 suffix:semicolon
 )brace
 macro_line|#if&t;0
@@ -2184,7 +2184,7 @@ op_logical_and
 id|flags
 op_amp
 (paren
-id|SLAB_POISION
+id|SLAB_POISON
 op_or
 id|SLAB_RED_ZONE
 )paren
@@ -2194,7 +2194,7 @@ id|SLAB_RED_ZONE
 id|printk
 c_func
 (paren
-l_string|&quot;%sHigh pack requested, but with poisioning/red-zoning - %s&bslash;n&quot;
+l_string|&quot;%sHigh pack requested, but with poisoning/red-zoning - %s&bslash;n&quot;
 comma
 id|func_nm
 comma
@@ -3641,11 +3641,11 @@ c_cond
 (paren
 id|cachep-&gt;c_flags
 op_amp
-id|SLAB_POISION
+id|SLAB_POISON
 )paren
 (brace
-multiline_comment|/* need to poision the objs */
-id|kmem_poision_obj
+multiline_comment|/* need to poison the objs */
+id|kmem_poison_obj
 c_func
 (paren
 id|cachep
@@ -4814,7 +4814,7 @@ id|cachep-&gt;c_offset
 suffix:semicolon
 id|finished
 suffix:colon
-multiline_comment|/* The lock is not needed by the red-zone or poision ops, and the&n;&t;&t;&t; * obj has been removed from the slab.  Should be safe to drop&n;&t;&t;&t; * the lock here.&n;&t;&t;&t; */
+multiline_comment|/* The lock is not needed by the red-zone or poison ops, and the&n;&t;&t;&t; * obj has been removed from the slab.  Should be safe to drop&n;&t;&t;&t; * the lock here.&n;&t;&t;&t; */
 id|spin_unlock_irqrestore
 c_func
 (paren
@@ -4843,10 +4843,10 @@ c_cond
 (paren
 id|cachep-&gt;c_flags
 op_amp
-id|SLAB_POISION
+id|SLAB_POISON
 )paren
 op_logical_and
-id|kmem_check_poision_obj
+id|kmem_check_poison_obj
 c_func
 (paren
 id|cachep
@@ -4857,7 +4857,7 @@ id|objp
 id|kmem_report_alloc_err
 c_func
 (paren
-l_string|&quot;Bad poision&quot;
+l_string|&quot;Bad poison&quot;
 comma
 id|cachep
 )paren
@@ -5309,7 +5309,7 @@ c_cond
 (paren
 id|cachep-&gt;c_flags
 op_amp
-id|SLAB_POISION
+id|SLAB_POISON
 )paren
 (brace
 r_if
@@ -5323,7 +5323,7 @@ id|objp
 op_add_assign
 id|BYTES_PER_WORD
 suffix:semicolon
-id|kmem_poision_obj
+id|kmem_poison_obj
 c_func
 (paren
 id|cachep
@@ -6625,7 +6625,7 @@ l_int|0
 comma
 id|SLAB_RED_ZONE
 op_or
-id|SLAB_POISION
+id|SLAB_POISON
 comma
 l_int|NULL
 comma
@@ -6683,7 +6683,7 @@ comma
 id|objp
 )paren
 suffix:semicolon
-multiline_comment|/* Mess up poisioning. */
+multiline_comment|/* Mess up poisoning. */
 op_star
 id|objp
 op_assign
@@ -6707,7 +6707,7 @@ comma
 id|objp
 )paren
 suffix:semicolon
-multiline_comment|/* Mess up poisioning (again). */
+multiline_comment|/* Mess up poisoning (again). */
 op_star
 id|objp
 op_assign

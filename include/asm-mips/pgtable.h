@@ -1,50 +1,160 @@
 macro_line|#ifndef __ASM_MIPS_PGTABLE_H
 DECL|macro|__ASM_MIPS_PGTABLE_H
 mdefine_line|#define __ASM_MIPS_PGTABLE_H
+macro_line|#include &lt;asm/addrspace.h&gt;
+macro_line|#include &lt;asm/mipsconfig.h&gt;
 macro_line|#ifndef __LANGUAGE_ASSEMBLY__
 macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;asm/cachectl.h&gt;
-multiline_comment|/*&n; * The Linux memory management assumes a three-level page table setup. In&n; * 32 bit mode we use that, but &quot;fold&quot; the mid level into the top-level page&n; * table, so that we physically have the same two-level page table as the&n; * i386 mmu expects. The 64 bit version uses a three level setup.&n; *&n; * This file contains the functions and defines necessary to modify and use&n; * the MIPS page table tree.  Note the frequent conversion between addresses&n; * in KSEG0 and KSEG1.&n; *&n; * This is required due to the cache aliasing problem of the R4xx0 series.&n; * Sometimes doing uncached accesses also to improve the cache performance&n; * slightly.  The R10000 caching mode &quot;uncached accelerated&quot; will help even&n; * further.&n; */
-multiline_comment|/*&n; * TLB invalidation:&n; *&n; *  - invalidate() invalidates the current mm struct TLBs&n; *  - invalidate_all() invalidates all processes TLBs&n; *  - invalidate_mm(mm) invalidates the specified mm context TLB&squot;s&n; *  - invalidate_page(mm, vmaddr) invalidates one page&n; *  - invalidate_range(mm, start, end) invalidates a range of pages&n; *&n; * FIXME: MIPS has full control of all TLB activity in the CPU.  Though&n; * we just stick with complete flushing of TLBs for now.&n; */
+multiline_comment|/* Cache flushing:&n; *&n; *  - flush_cache_all() flushes entire cache&n; *  - flush_cache_mm(mm) flushes the specified mm context&squot;s cache lines&n; *  - flush_cache_page(mm, vmaddr) flushes a single page&n; *  - flush_cache_range(mm, start, end) flushes a range of pages&n; *  - flush_page_to_ram(page) write back kernel page to ram&n; */
 r_extern
-id|asmlinkage
 r_void
-id|tlbflush
-c_func
+(paren
+op_star
+id|flush_cache_all
+)paren
 (paren
 r_void
 )paren
 suffix:semicolon
-DECL|macro|invalidate
-mdefine_line|#define invalidate()&t;({sys_cacheflush(0, ~0, BCACHE);tlbflush();})
-DECL|macro|invalidate_all
-mdefine_line|#define invalidate_all() invalidate()
-DECL|macro|invalidate_mm
-mdefine_line|#define invalidate_mm(mm_struct) &bslash;&n;do { if ((mm_struct) == current-&gt;mm) invalidate(); } while (0)
-DECL|macro|invalidate_page
-mdefine_line|#define invalidate_page(mm_struct,addr) &bslash;&n;do { if ((mm_struct) == current-&gt;mm) invalidate(); } while (0)
-DECL|macro|invalidate_range
-mdefine_line|#define invalidate_range(mm_struct,start,end) &bslash;&n;do { if ((mm_struct) == current-&gt;mm) invalidate(); } while (0)
-multiline_comment|/*&n; * We need a special version of copy_page that can handle virtual caches.&n; * While we&squot;re at tweaking with caches we can use that to make it faster.&n; * The R10000&squot;s accelerated caching mode will further accelerate it.&n; */
 r_extern
 r_void
-id|__copy_page
-c_func
 (paren
-r_int
-r_int
-id|from
+op_star
+id|flush_cache_mm
+)paren
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+)paren
+suffix:semicolon
+r_extern
+r_void
+(paren
+op_star
+id|flush_cache_range
+)paren
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
 comma
 r_int
 r_int
-id|to
+id|start
+comma
+r_int
+r_int
+id|end
 )paren
 suffix:semicolon
-DECL|macro|copy_page
-mdefine_line|#define copy_page(from,to) __copy_page((unsigned long)from, (unsigned long)to)
-multiline_comment|/* Certain architectures need to do special things when pte&squot;s&n; * within a page table are directly modified.  Thus, the following&n; * hook is made available.&n; */
-DECL|macro|set_pte
-mdefine_line|#define set_pte(pteptr, pteval) ((*(pteptr)) = (pteval))
+r_extern
+r_void
+(paren
+op_star
+id|flush_cache_page
+)paren
+(paren
+r_struct
+id|vm_area_struct
+op_star
+id|vma
+comma
+r_int
+r_int
+id|page
+)paren
+suffix:semicolon
+r_extern
+r_void
+(paren
+op_star
+id|flush_cache_sigtramp
+)paren
+(paren
+r_int
+r_int
+id|addr
+)paren
+suffix:semicolon
+r_extern
+r_void
+(paren
+op_star
+id|flush_page_to_ram
+)paren
+(paren
+r_int
+r_int
+id|page
+)paren
+suffix:semicolon
+multiline_comment|/* TLB flushing:&n; *&n; *  - flush_tlb_all() flushes all processes TLB entries&n; *  - flush_tlb_mm(mm) flushes the specified mm context TLB entries&n; *  - flush_tlb_page(mm, vmaddr) flushes a single page&n; *  - flush_tlb_range(mm, start, end) flushes a range of pages&n; */
+r_extern
+r_void
+(paren
+op_star
+id|flush_tlb_all
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+(paren
+op_star
+id|flush_tlb_mm
+)paren
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+)paren
+suffix:semicolon
+r_extern
+r_void
+(paren
+op_star
+id|flush_tlb_range
+)paren
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+comma
+r_int
+r_int
+id|start
+comma
+r_int
+r_int
+id|end
+)paren
+suffix:semicolon
+r_extern
+r_void
+(paren
+op_star
+id|flush_tlb_page
+)paren
+(paren
+r_struct
+id|vm_area_struct
+op_star
+id|vma
+comma
+r_int
+r_int
+id|page
+)paren
+suffix:semicolon
+multiline_comment|/* Basically we have the same two-level (which is the logical three level&n; * Linux page table layout folded) page tables as the i386.  Some day&n; * when we have proper page coloring support we can have a 1% quicker&n; * tlb refill handling mechanism, but for now it is a bit slower but&n; * works even with the cache aliasing problem the R4k and above have.&n; */
 macro_line|#endif /* !defined (__LANGUAGE_ASSEMBLY__) */
 multiline_comment|/* PMD_SHIFT determines the size of the area a second-level page table can map */
 DECL|macro|PMD_SHIFT
@@ -60,7 +170,7 @@ DECL|macro|PGDIR_SIZE
 mdefine_line|#define PGDIR_SIZE&t;(1UL &lt;&lt; PGDIR_SHIFT)
 DECL|macro|PGDIR_MASK
 mdefine_line|#define PGDIR_MASK&t;(~(PGDIR_SIZE-1))
-multiline_comment|/*&n; * entries per page directory level: we use two-level, so&n; * we don&squot;t really have any PMD directory physically.&n; */
+multiline_comment|/* Entries per page directory level: we use two-level, so&n; * we don&squot;t really have any PMD directory physically.&n; */
 DECL|macro|PTRS_PER_PTE
 mdefine_line|#define PTRS_PER_PTE&t;1024
 DECL|macro|PTRS_PER_PMD
@@ -71,19 +181,19 @@ DECL|macro|VMALLOC_START
 mdefine_line|#define VMALLOC_START     KSEG2
 DECL|macro|VMALLOC_VMADDR
 mdefine_line|#define VMALLOC_VMADDR(x) ((unsigned long)(x))
-multiline_comment|/*&n; * Note that we shift the lower 32bits of each EntryLo[01] entry&n; * 6 bits to the left. That way we can convert the PFN into the&n; * physical address by a single &squot;and&squot; operation and gain 6 additional&n; * bits for storing information which isn&squot;t present in a normal&n; * MIPS page table.&n; * Since the Mips has chosen some quite misleading names for the&n; * valid and dirty bits they&squot;re defined here but only their synonyms&n; * will be used.&n; */
+multiline_comment|/* Note that we shift the lower 32bits of each EntryLo[01] entry&n; * 6 bits to the left. That way we can convert the PFN into the&n; * physical address by a single &squot;and&squot; operation and gain 6 additional&n; * bits for storing information which isn&squot;t present in a normal&n; * MIPS page table.&n; *&n; * Similar to the Alpha port, we need to keep track of the ref&n; * and mod bits in software.  We have a software &quot;yeah you can read&n; * from this page&quot; bit, and a hardware one which actually lets the&n; * process read from the page.  On the same token we have a software&n; * writable bit and the real hardware one which actually lets the&n; * process write to the page, this keeps a mod bit via the hardware&n; * dirty bit.&n; *&n; * Certain revisions of the R4000 and R5000 have a bug where if a&n; * certain sequence occurs in the last 3 instructions of an executable&n; * page, and the following page is not mapped, the cpu can do&n; * unpredictable things.  The code (when it is written) to deal with&n; * this problem will be in the update_mmu_cache() code for the r4k.&n; */
 DECL|macro|_PAGE_PRESENT
 mdefine_line|#define _PAGE_PRESENT               (1&lt;&lt;0)  /* implemented in software */
-DECL|macro|_PAGE_COW
-mdefine_line|#define _PAGE_COW                   (1&lt;&lt;1)  /* implemented in software */
 DECL|macro|_PAGE_READ
-mdefine_line|#define _PAGE_READ                  (1&lt;&lt;2)  /* implemented in software */
+mdefine_line|#define _PAGE_READ                  (1&lt;&lt;1)  /* implemented in software */
 DECL|macro|_PAGE_WRITE
-mdefine_line|#define _PAGE_WRITE                 (1&lt;&lt;3)  /* implemented in software */
+mdefine_line|#define _PAGE_WRITE                 (1&lt;&lt;2)  /* implemented in software */
 DECL|macro|_PAGE_ACCESSED
-mdefine_line|#define _PAGE_ACCESSED              (1&lt;&lt;4)  /* implemented in software */
+mdefine_line|#define _PAGE_ACCESSED              (1&lt;&lt;3)  /* implemented in software */
 DECL|macro|_PAGE_MODIFIED
-mdefine_line|#define _PAGE_MODIFIED              (1&lt;&lt;5)  /* implemented in software */
+mdefine_line|#define _PAGE_MODIFIED              (1&lt;&lt;4)  /* implemented in software */
+DECL|macro|_PAGE_R4KBUG
+mdefine_line|#define _PAGE_R4KBUG                (1&lt;&lt;5)  /* workaround for r4k bug  */
 DECL|macro|_PAGE_GLOBAL
 mdefine_line|#define _PAGE_GLOBAL                (1&lt;&lt;6)
 DECL|macro|_PAGE_VALID
@@ -116,18 +226,16 @@ DECL|macro|__READABLE
 mdefine_line|#define __READABLE&t;(_PAGE_READ|_PAGE_SILENT_READ|_PAGE_ACCESSED)
 DECL|macro|__WRITEABLE
 mdefine_line|#define __WRITEABLE&t;(_PAGE_WRITE|_PAGE_SILENT_WRITE|_PAGE_MODIFIED)
-DECL|macro|_PAGE_TABLE
-mdefine_line|#define _PAGE_TABLE&t;(_PAGE_PRESENT | __READABLE | __WRITEABLE | &bslash;&n;&t;&t;&t;_PAGE_DIRTY | _CACHE_UNCACHED)
 DECL|macro|_PAGE_CHG_MASK
-mdefine_line|#define _PAGE_CHG_MASK  (PAGE_MASK | _PAGE_ACCESSED | _PAGE_DIRTY | _CACHE_MASK)
+mdefine_line|#define _PAGE_CHG_MASK  (PAGE_MASK | __READABLE | __WRITEABLE | _CACHE_MASK)
 DECL|macro|PAGE_NONE
-mdefine_line|#define PAGE_NONE&t;__pgprot(_PAGE_PRESENT | __READABLE | _CACHE_UNCACHED)
+mdefine_line|#define PAGE_NONE&t;__pgprot(_PAGE_PRESENT | _PAGE_ACCESSED | &bslash;&n;                        _CACHE_CACHABLE_NONCOHERENT)
 DECL|macro|PAGE_SHARED
-mdefine_line|#define PAGE_SHARED     __pgprot(_PAGE_PRESENT | __READABLE | _PAGE_WRITE | &bslash;&n;&t;&t;&t;_PAGE_ACCESSED | _CACHE_CACHABLE_NONCOHERENT)
+mdefine_line|#define PAGE_SHARED     __pgprot(_PAGE_PRESENT | _PAGE_READ | _PAGE_WRITE | &bslash;&n;&t;&t;&t;_PAGE_ACCESSED | _CACHE_CACHABLE_NONCOHERENT)
 DECL|macro|PAGE_COPY
-mdefine_line|#define PAGE_COPY       __pgprot(_PAGE_PRESENT | __READABLE | _PAGE_COW | &bslash;&n;&t;&t;&t;_CACHE_CACHABLE_NONCOHERENT)
+mdefine_line|#define PAGE_COPY       __pgprot(_PAGE_PRESENT | _PAGE_READ | &bslash;&n;&t;&t;&t;_CACHE_CACHABLE_NONCOHERENT)
 DECL|macro|PAGE_READONLY
-mdefine_line|#define PAGE_READONLY   __pgprot(_PAGE_PRESENT | __READABLE | &bslash;&n;&t;&t;&t;_CACHE_CACHABLE_NONCOHERENT)
+mdefine_line|#define PAGE_READONLY   __pgprot(_PAGE_PRESENT | _PAGE_READ | &bslash;&n;&t;&t;&t;_CACHE_CACHABLE_NONCOHERENT)
 DECL|macro|PAGE_KERNEL
 mdefine_line|#define PAGE_KERNEL&t;__pgprot(_PAGE_PRESENT | __READABLE | __WRITEABLE | &bslash;&n;&t;&t;&t;_CACHE_CACHABLE_NONCOHERENT)
 multiline_comment|/*&n; * MIPS can&squot;t do page protection for execute, and considers that the same like&n; * read. Also, write permissions imply read permissions. This is the closest&n; * we can get by reasonable means..&n; */
@@ -164,15 +272,6 @@ mdefine_line|#define __S110&t;PAGE_SHARED
 DECL|macro|__S111
 mdefine_line|#define __S111&t;PAGE_SHARED
 macro_line|#if !defined (__LANGUAGE_ASSEMBLY__)
-multiline_comment|/* page table for 0-4MB for everybody */
-r_extern
-r_int
-r_int
-id|pg0
-(braket
-l_int|1024
-)braket
-suffix:semicolon
 multiline_comment|/*&n; * BAD_PAGETABLE is used when we need a bogus page-table, while&n; * BAD_PAGE is used for a bogus page.&n; *&n; * ZERO_PAGE is a global shared page that is always zero: used&n; * for zero-mapped memory areas etc..&n; */
 r_extern
 id|pte_t
@@ -200,37 +299,47 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_int
+r_int
+id|empty_zero_page
+(braket
+l_int|1024
+)braket
+suffix:semicolon
 DECL|macro|BAD_PAGETABLE
 mdefine_line|#define BAD_PAGETABLE __bad_pagetable()
 DECL|macro|BAD_PAGE
 mdefine_line|#define BAD_PAGE __bad_page()
 DECL|macro|ZERO_PAGE
-mdefine_line|#define ZERO_PAGE __zero_page()
+mdefine_line|#define ZERO_PAGE ((unsigned long)empty_zero_page)
 multiline_comment|/* number of bits that fit into a memory pointer */
 DECL|macro|BITS_PER_PTR
 mdefine_line|#define BITS_PER_PTR&t;&t;&t;(8*sizeof(unsigned long))
 multiline_comment|/* to align the pointer to a pointer address */
 DECL|macro|PTR_MASK
 mdefine_line|#define PTR_MASK&t;&t;&t;(~(sizeof(void*)-1))
-multiline_comment|/*&n; * sizeof(void*)==1&lt;&lt;SIZEOF_PTR_LOG2&n; */
-macro_line|#if __mips == 3
-DECL|macro|SIZEOF_PTR_LOG2
-mdefine_line|#define SIZEOF_PTR_LOG2&t;&t;&t;3
-macro_line|#else
+multiline_comment|/*&n; * sizeof(void*) == (1 &lt;&lt; SIZEOF_PTR_LOG2)&n; */
 DECL|macro|SIZEOF_PTR_LOG2
 mdefine_line|#define SIZEOF_PTR_LOG2&t;&t;&t;2
-macro_line|#endif
 multiline_comment|/* to find an entry in a page-table */
 DECL|macro|PAGE_PTR
 mdefine_line|#define PAGE_PTR(address) &bslash;&n;((unsigned long)(address)&gt;&gt;(PAGE_SHIFT-SIZEOF_PTR_LOG2)&amp;PTR_MASK&amp;~PAGE_MASK)
+r_extern
+r_void
+(paren
+op_star
+id|load_pgd
+)paren
+(paren
+r_int
+r_int
+id|pg_dir
+)paren
+suffix:semicolon
 multiline_comment|/* to set the page-dir */
 DECL|macro|SET_PAGE_DIR
-mdefine_line|#define SET_PAGE_DIR(tsk,pgdir) &bslash;&n;do { &bslash;&n;&t;(tsk)-&gt;tss.pg_dir = ((unsigned long) (pgdir)) - PT_OFFSET; &bslash;&n;&t;if ((tsk) == current) &bslash;&n;&t;{ &bslash;&n;&t;&t;void load_pgd(unsigned long pg_dir); &bslash;&n; &bslash;&n;&t;&t;load_pgd((tsk)-&gt;tss.pg_dir); &bslash;&n;&t;} &bslash;&n;} while (0)
-r_extern
-r_int
-r_int
-id|high_memory
-suffix:semicolon
+mdefine_line|#define SET_PAGE_DIR(tsk,pgdir) (tsk)-&gt;tss.pg_dir = ((unsigned long) (pgdir))
 r_extern
 id|pmd_t
 id|invalid_pte_table
@@ -283,16 +392,10 @@ id|pmd
 )paren
 (brace
 r_return
-id|PAGE_OFFSET
-op_plus
-(paren
 id|pmd_val
 c_func
 (paren
 id|pmd
-)paren
-op_amp
-id|PAGE_MASK
 )paren
 suffix:semicolon
 )brace
@@ -319,16 +422,16 @@ op_star
 id|pmdp
 )paren
 op_assign
-id|_PAGE_TABLE
-op_or
+(paren
 (paren
 (paren
 r_int
 r_int
 )paren
 id|ptep
-op_minus
-id|PT_OFFSET
+)paren
+op_amp
+id|PAGE_MASK
 )paren
 suffix:semicolon
 )brace
@@ -373,42 +476,26 @@ op_amp
 id|_PAGE_PRESENT
 suffix:semicolon
 )brace
-DECL|function|pte_inuse
+multiline_comment|/* Certain architectures need to do special things when pte&squot;s&n; * within a page table are directly modified.  Thus, the following&n; * hook is made available.&n; */
+DECL|function|set_pte
 r_extern
 r_inline
-r_int
-id|pte_inuse
+r_void
+id|set_pte
 c_func
 (paren
 id|pte_t
 op_star
 id|ptep
+comma
+id|pte_t
+id|pteval
 )paren
 (brace
-r_return
-id|mem_map
-(braket
-id|MAP_NR
-c_func
-(paren
+op_star
 id|ptep
-)paren
-)braket
-dot
-id|reserved
-op_logical_or
-id|mem_map
-(braket
-id|MAP_NR
-c_func
-(paren
-id|ptep
-)paren
-)braket
-dot
-id|count
-op_ne
-l_int|1
+op_assign
+id|pteval
 suffix:semicolon
 )brace
 DECL|function|pte_clear
@@ -423,54 +510,17 @@ op_star
 id|ptep
 )paren
 (brace
-id|pte_val
+id|set_pte
 c_func
 (paren
-op_star
 id|ptep
-)paren
-op_assign
+comma
+id|__pte
+c_func
+(paren
 l_int|0
-suffix:semicolon
-)brace
-DECL|function|pte_reuse
-r_extern
-r_inline
-r_void
-id|pte_reuse
-c_func
-(paren
-id|pte_t
-op_star
-id|ptep
 )paren
-(brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|mem_map
-(braket
-id|MAP_NR
-c_func
-(paren
-id|ptep
 )paren
-)braket
-dot
-id|reserved
-)paren
-id|mem_map
-(braket
-id|MAP_NR
-c_func
-(paren
-id|ptep
-)paren
-)braket
-dot
-id|count
-op_increment
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Empty pgd/pmd entries point to the invalid_pte_table.&n; */
@@ -486,14 +536,10 @@ id|pmd
 )paren
 (brace
 r_return
-(paren
 id|pmd_val
 c_func
 (paren
 id|pmd
-)paren
-op_amp
-id|PAGE_MASK
 )paren
 op_eq
 (paren
@@ -502,8 +548,6 @@ r_int
 r_int
 )paren
 id|invalid_pte_table
-op_minus
-id|PAGE_OFFSET
 )paren
 suffix:semicolon
 )brace
@@ -520,26 +564,21 @@ id|pmd
 (brace
 r_return
 (paren
-id|pmd_val
-c_func
 (paren
-id|pmd
-)paren
-op_amp
-op_complement
-id|PAGE_MASK
-)paren
-op_ne
-id|_PAGE_TABLE
-op_logical_or
 id|pmd_page
 c_func
 (paren
 id|pmd
 )paren
 OG
+(paren
+r_int
+r_int
+)paren
 id|high_memory
+)paren
 op_logical_or
+(paren
 id|pmd_page
 c_func
 (paren
@@ -547,6 +586,8 @@ id|pmd
 )paren
 OL
 id|PAGE_OFFSET
+)paren
+)paren
 suffix:semicolon
 )brace
 DECL|function|pmd_present
@@ -566,24 +607,6 @@ c_func
 (paren
 id|pmd
 )paren
-op_amp
-id|_PAGE_PRESENT
-suffix:semicolon
-)brace
-DECL|function|pmd_inuse
-r_extern
-r_inline
-r_int
-id|pmd_inuse
-c_func
-(paren
-id|pmd_t
-op_star
-id|pmdp
-)paren
-(brace
-r_return
-l_int|0
 suffix:semicolon
 )brace
 DECL|function|pmd_clear
@@ -611,23 +634,8 @@ r_int
 r_int
 )paren
 id|invalid_pte_table
-op_minus
-id|PAGE_OFFSET
 )paren
 suffix:semicolon
-)brace
-DECL|function|pmd_reuse
-r_extern
-r_inline
-r_void
-id|pmd_reuse
-c_func
-(paren
-id|pmd_t
-op_star
-id|pmdp
-)paren
-(brace
 )brace
 multiline_comment|/*&n; * The &quot;pgd_xxx()&quot; functions here are trivial for a folded two-level&n; * setup: the pgd is never bad, and a pmd always exists (as it&squot;s folded&n; * into the pgd entry)&n; */
 DECL|function|pgd_none
@@ -673,31 +681,6 @@ id|pgd
 (brace
 r_return
 l_int|1
-suffix:semicolon
-)brace
-DECL|function|pgd_inuse
-r_extern
-r_inline
-r_int
-id|pgd_inuse
-c_func
-(paren
-id|pgd_t
-op_star
-id|pgdp
-)paren
-(brace
-r_return
-id|mem_map
-(braket
-id|MAP_NR
-c_func
-(paren
-id|pgdp
-)paren
-)braket
-dot
-id|reserved
 suffix:semicolon
 )brace
 DECL|function|pgd_clear
@@ -756,27 +739,6 @@ op_amp
 id|_PAGE_WRITE
 suffix:semicolon
 )brace
-DECL|function|pte_exec
-r_extern
-r_inline
-r_int
-id|pte_exec
-c_func
-(paren
-id|pte_t
-id|pte
-)paren
-(brace
-r_return
-id|pte_val
-c_func
-(paren
-id|pte
-)paren
-op_amp
-id|_PAGE_READ
-suffix:semicolon
-)brace
 DECL|function|pte_dirty
 r_extern
 r_inline
@@ -819,27 +781,6 @@ op_amp
 id|_PAGE_ACCESSED
 suffix:semicolon
 )brace
-DECL|function|pte_cow
-r_extern
-r_inline
-r_int
-id|pte_cow
-c_func
-(paren
-id|pte_t
-id|pte
-)paren
-(brace
-r_return
-id|pte_val
-c_func
-(paren
-id|pte
-)paren
-op_amp
-id|_PAGE_COW
-suffix:semicolon
-)brace
 DECL|function|pte_wrprotect
 r_extern
 r_inline
@@ -873,34 +814,6 @@ r_extern
 r_inline
 id|pte_t
 id|pte_rdprotect
-c_func
-(paren
-id|pte_t
-id|pte
-)paren
-(brace
-id|pte_val
-c_func
-(paren
-id|pte
-)paren
-op_and_assign
-op_complement
-(paren
-id|_PAGE_READ
-op_or
-id|_PAGE_SILENT_READ
-)paren
-suffix:semicolon
-r_return
-id|pte
-suffix:semicolon
-)brace
-DECL|function|pte_exprotect
-r_extern
-r_inline
-id|pte_t
-id|pte_exprotect
 c_func
 (paren
 id|pte_t
@@ -982,30 +895,6 @@ r_return
 id|pte
 suffix:semicolon
 )brace
-DECL|function|pte_uncow
-r_extern
-r_inline
-id|pte_t
-id|pte_uncow
-c_func
-(paren
-id|pte_t
-id|pte
-)paren
-(brace
-id|pte_val
-c_func
-(paren
-id|pte
-)paren
-op_and_assign
-op_complement
-id|_PAGE_COW
-suffix:semicolon
-r_return
-id|pte
-suffix:semicolon
-)brace
 DECL|function|pte_mkwrite
 r_extern
 r_inline
@@ -1053,48 +942,6 @@ r_extern
 r_inline
 id|pte_t
 id|pte_mkread
-c_func
-(paren
-id|pte_t
-id|pte
-)paren
-(brace
-id|pte_val
-c_func
-(paren
-id|pte
-)paren
-op_or_assign
-id|_PAGE_READ
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|pte_val
-c_func
-(paren
-id|pte
-)paren
-op_amp
-id|_PAGE_ACCESSED
-)paren
-id|pte_val
-c_func
-(paren
-id|pte
-)paren
-op_or_assign
-id|_PAGE_SILENT_READ
-suffix:semicolon
-r_return
-id|pte
-suffix:semicolon
-)brace
-DECL|function|pte_mkexec
-r_extern
-r_inline
-id|pte_t
-id|pte_mkexec
 c_func
 (paren
 id|pte_t
@@ -1249,29 +1096,6 @@ r_return
 id|pte
 suffix:semicolon
 )brace
-DECL|function|pte_mkcow
-r_extern
-r_inline
-id|pte_t
-id|pte_mkcow
-c_func
-(paren
-id|pte_t
-id|pte
-)paren
-(brace
-id|pte_val
-c_func
-(paren
-id|pte
-)paren
-op_or_assign
-id|_PAGE_COW
-suffix:semicolon
-r_return
-id|pte
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * Conversion functions: convert a page and protection to a page entry,&n; * and a page entry and page directory to the page they refer to.&n; */
 DECL|function|mk_pte
 r_extern
@@ -1288,17 +1112,16 @@ id|pgprot_t
 id|pgprot
 )paren
 (brace
-id|pte_t
-id|pte
-suffix:semicolon
-id|pte_val
+r_return
+id|__pte
 c_func
 (paren
-id|pte
-)paren
-op_assign
+(paren
 (paren
 id|page
+op_amp
+id|PAGE_MASK
+)paren
 op_minus
 id|PAGE_OFFSET
 )paren
@@ -1308,9 +1131,40 @@ c_func
 (paren
 id|pgprot
 )paren
+)paren
 suffix:semicolon
+)brace
+DECL|function|mk_pte_phys
+r_extern
+r_inline
+id|pte_t
+id|mk_pte_phys
+c_func
+(paren
+r_int
+r_int
+id|physpage
+comma
+id|pgprot_t
+id|pgprot
+)paren
+(brace
 r_return
-id|pte
+id|__pte
+c_func
+(paren
+(paren
+id|physpage
+op_minus
+id|PAGE_OFFSET
+)paren
+op_or
+id|pgprot_val
+c_func
+(paren
+id|pgprot
+)paren
+)paren
 suffix:semicolon
 )brace
 DECL|function|pte_modify
@@ -1327,12 +1181,10 @@ id|pgprot_t
 id|newprot
 )paren
 (brace
-id|pte_val
+r_return
+id|__pte
 c_func
 (paren
-id|pte
-)paren
-op_assign
 (paren
 id|pte_val
 c_func
@@ -1348,11 +1200,12 @@ c_func
 (paren
 id|newprot
 )paren
-suffix:semicolon
-r_return
-id|pte
+)paren
 suffix:semicolon
 )brace
+multiline_comment|/* to find an entry in a kernel page-table-directory */
+DECL|macro|pgd_offset_k
+mdefine_line|#define pgd_offset_k(address) pgd_offset(&amp;init_mm, address)
 multiline_comment|/* to find an entry in a page-table-directory */
 DECL|function|pgd_offset
 r_extern
@@ -1438,12 +1291,6 @@ c_func
 op_star
 id|dir
 )paren
-op_plus
-(paren
-id|PT_OFFSET
-op_minus
-id|PAGE_OFFSET
-)paren
 )paren
 op_plus
 (paren
@@ -1461,7 +1308,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Allocate and free page tables. The xxx_kernel() versions are&n; * used to allocate a kernel page table - this turns on ASN bits&n; * if any, and marks the page tables reserved.&n; */
+multiline_comment|/*&n; * Allocate and free page tables. The xxx_kernel() versions are&n; * used to allocate a kernel page table - this turns on ASN bits&n; * if any.&n; */
 DECL|function|pte_free_kernel
 r_extern
 r_inline
@@ -1474,54 +1321,24 @@ op_star
 id|pte
 )paren
 (brace
-r_int
-r_int
-id|page
-op_assign
-(paren
-r_int
-r_int
-)paren
-id|pte
-suffix:semicolon
-id|mem_map
-(braket
-id|MAP_NR
-c_func
-(paren
-id|pte
-)paren
-)braket
-dot
-id|reserved
-op_assign
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|page
-)paren
-(brace
-r_return
-suffix:semicolon
-)brace
-id|page
-op_sub_assign
-(paren
-id|PT_OFFSET
-op_minus
-id|PAGE_OFFSET
-)paren
-suffix:semicolon
 id|free_page
 c_func
 (paren
-id|page
+(paren
+r_int
+r_int
+)paren
+id|pte
 )paren
 suffix:semicolon
 )brace
+r_extern
+r_const
+r_char
+id|bad_pmd_string
+(braket
+)braket
+suffix:semicolon
 DECL|function|pte_alloc_kernel
 r_extern
 r_inline
@@ -1564,11 +1381,15 @@ id|pmd
 )paren
 )paren
 (brace
-r_int
-r_int
+id|pte_t
+op_star
 id|page
 op_assign
-id|__get_free_page
+(paren
+id|pte_t
+op_star
+)paren
+id|get_free_page
 c_func
 (paren
 id|GFP_KERNEL
@@ -1591,80 +1412,16 @@ c_cond
 id|page
 )paren
 (brace
-id|mem_map
-(braket
-id|MAP_NR
-c_func
-(paren
-id|page
-)paren
-)braket
-dot
-id|reserved
-op_assign
-l_int|1
-suffix:semicolon
-id|memset
-c_func
-(paren
-(paren
-r_void
-op_star
-)paren
-id|page
-comma
-l_int|0
-comma
-id|PAGE_SIZE
-)paren
-suffix:semicolon
-id|sys_cacheflush
-c_func
-(paren
-(paren
-r_void
-op_star
-)paren
-id|page
-comma
-id|PAGE_SIZE
-comma
-id|DCACHE
-)paren
-suffix:semicolon
-id|sync_mem
-c_func
-(paren
-)paren
-suffix:semicolon
-id|page
-op_add_assign
-(paren
-id|PT_OFFSET
-op_minus
-id|PAGE_OFFSET
-)paren
-suffix:semicolon
 id|pmd_set
 c_func
 (paren
 id|pmd
 comma
-(paren
-id|pte_t
-op_star
-)paren
 id|page
 )paren
 suffix:semicolon
 r_return
-(paren
-(paren
-id|pte_t
-op_star
-)paren
 id|page
-)paren
 op_plus
 id|address
 suffix:semicolon
@@ -1688,6 +1445,10 @@ suffix:semicolon
 id|free_page
 c_func
 (paren
+(paren
+r_int
+r_int
+)paren
 id|page
 )paren
 suffix:semicolon
@@ -1706,7 +1467,7 @@ id|pmd
 id|printk
 c_func
 (paren
-l_string|&quot;Bad pmd in pte_alloc_kernel: %08lx&bslash;n&quot;
+id|bad_pmd_string
 comma
 id|pmd_val
 c_func
@@ -1737,19 +1498,11 @@ r_return
 id|pte_t
 op_star
 )paren
-(paren
 id|pmd_page
 c_func
 (paren
 op_star
 id|pmd
-)paren
-op_plus
-(paren
-id|PT_OFFSET
-op_minus
-id|PAGE_OFFSET
-)paren
 )paren
 op_plus
 id|address
@@ -1768,6 +1521,21 @@ op_star
 id|pmd
 )paren
 (brace
+id|pmd_val
+c_func
+(paren
+op_star
+id|pmd
+)paren
+op_assign
+(paren
+(paren
+r_int
+r_int
+)paren
+id|invalid_pte_table
+)paren
+suffix:semicolon
 )brace
 DECL|function|pmd_alloc_kernel
 r_extern
@@ -1806,38 +1574,14 @@ op_star
 id|pte
 )paren
 (brace
-r_int
-r_int
-id|page
-op_assign
+id|free_page
+c_func
+(paren
 (paren
 r_int
 r_int
 )paren
 id|pte
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|page
-)paren
-(brace
-r_return
-suffix:semicolon
-)brace
-id|page
-op_sub_assign
-(paren
-id|PT_OFFSET
-op_minus
-id|PAGE_OFFSET
-)paren
-suffix:semicolon
-id|free_page
-c_func
-(paren
-id|page
 )paren
 suffix:semicolon
 )brace
@@ -1883,11 +1627,15 @@ id|pmd
 )paren
 )paren
 (brace
-r_int
-r_int
+id|pte_t
+op_star
 id|page
 op_assign
-id|__get_free_page
+(paren
+id|pte_t
+op_star
+)paren
+id|get_free_page
 c_func
 (paren
 id|GFP_KERNEL
@@ -1910,67 +1658,16 @@ c_cond
 id|page
 )paren
 (brace
-id|memset
-c_func
-(paren
-(paren
-r_void
-op_star
-)paren
-id|page
-comma
-l_int|0
-comma
-id|PAGE_SIZE
-)paren
-suffix:semicolon
-id|sys_cacheflush
-c_func
-(paren
-(paren
-r_void
-op_star
-)paren
-id|page
-comma
-id|PAGE_SIZE
-comma
-id|DCACHE
-)paren
-suffix:semicolon
-id|sync_mem
-c_func
-(paren
-)paren
-suffix:semicolon
-id|page
-op_add_assign
-(paren
-id|PT_OFFSET
-op_minus
-id|PAGE_OFFSET
-)paren
-suffix:semicolon
 id|pmd_set
 c_func
 (paren
 id|pmd
 comma
-(paren
-id|pte_t
-op_star
-)paren
 id|page
 )paren
 suffix:semicolon
 r_return
-(paren
-(paren
-id|pte_t
-op_star
-)paren
 id|page
-)paren
 op_plus
 id|address
 suffix:semicolon
@@ -1994,6 +1691,10 @@ suffix:semicolon
 id|free_page
 c_func
 (paren
+(paren
+r_int
+r_int
+)paren
 id|page
 )paren
 suffix:semicolon
@@ -2012,7 +1713,7 @@ id|pmd
 id|printk
 c_func
 (paren
-l_string|&quot;Bad pmd in pte_alloc: %08lx&bslash;n&quot;
+id|bad_pmd_string
 comma
 id|pmd_val
 c_func
@@ -2043,19 +1744,11 @@ r_return
 id|pte_t
 op_star
 )paren
-(paren
 id|pmd_page
 c_func
 (paren
 op_star
 id|pmd
-)paren
-op_plus
-(paren
-id|PT_OFFSET
-op_minus
-id|PAGE_OFFSET
-)paren
 )paren
 op_plus
 id|address
@@ -2074,6 +1767,21 @@ op_star
 id|pmd
 )paren
 (brace
+id|pmd_val
+c_func
+(paren
+op_star
+id|pmd
+)paren
+op_assign
+(paren
+(paren
+r_int
+r_int
+)paren
+id|invalid_pte_table
+)paren
+suffix:semicolon
 )brace
 DECL|function|pmd_alloc
 r_extern
@@ -2112,190 +1820,30 @@ op_star
 id|pgd
 )paren
 (brace
-r_int
-r_int
-id|page
-op_assign
+id|free_page
+c_func
+(paren
 (paren
 r_int
 r_int
 )paren
 id|pgd
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|page
-)paren
-(brace
-r_return
-suffix:semicolon
-)brace
-id|page
-op_sub_assign
-(paren
-id|PT_OFFSET
-op_minus
-id|PAGE_OFFSET
-)paren
-suffix:semicolon
-id|free_page
-c_func
-(paren
-id|page
 )paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Initialize new page directory with pointers to invalid ptes&n; */
-DECL|function|pgd_init
 r_extern
-r_inline
 r_void
-id|pgd_init
-c_func
 (paren
-r_int
-r_int
-id|page
-)paren
-(brace
-r_int
-r_int
-id|dummy1
-comma
-id|dummy2
-suffix:semicolon
-id|page
-op_add_assign
-(paren
-id|PT_OFFSET
-op_minus
-id|PAGE_OFFSET
-)paren
-suffix:semicolon
-macro_line|#if __mips &gt;= 3
-multiline_comment|/*&n;&t; * Ich will Spass - ich geb Gas ich geb Gas...&n;&t; */
-id|__asm__
-id|__volatile__
-c_func
-(paren
-l_string|&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot;
-l_string|&quot;.set&bslash;tnoat&bslash;n&bslash;t&quot;
-l_string|&quot;.set&bslash;tmips3&bslash;n&bslash;t&quot;
-l_string|&quot;dsll32&bslash;t$1,%2,0&bslash;n&bslash;t&quot;
-l_string|&quot;dsrl32&bslash;t%2,$1,0&bslash;n&bslash;t&quot;
-l_string|&quot;or&bslash;t%2,$1&bslash;n&quot;
-l_string|&quot;1:&bslash;tsd&bslash;t%2,(%0)&bslash;n&bslash;t&quot;
-l_string|&quot;subu&bslash;t%1,1&bslash;n&bslash;t&quot;
-l_string|&quot;bnez&bslash;t%1,1b&bslash;n&bslash;t&quot;
-l_string|&quot;addiu&bslash;t%0,8&bslash;n&bslash;t&quot;
-l_string|&quot;.set&bslash;tmips0&bslash;n&bslash;t&quot;
-l_string|&quot;.set&bslash;tat&bslash;n&bslash;t&quot;
-l_string|&quot;.set&bslash;treorder&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|dummy1
-)paren
-comma
-l_string|&quot;=r&quot;
-(paren
-id|dummy2
-)paren
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-(paren
-(paren
-r_int
-r_int
-)paren
-id|invalid_pte_table
-op_minus
-id|PAGE_OFFSET
-)paren
-op_or
-id|_PAGE_TABLE
-)paren
-comma
-l_string|&quot;0&quot;
-(paren
-id|page
-)paren
-comma
-l_string|&quot;1&quot;
-(paren
-id|PAGE_SIZE
-op_div
-(paren
-r_sizeof
-(paren
-id|pmd_t
-)paren
 op_star
-l_int|2
+id|pgd_init
 )paren
-)paren
-suffix:colon
-l_string|&quot;$1&quot;
-)paren
-suffix:semicolon
-macro_line|#else
-id|__asm__
-id|__volatile__
-c_func
-(paren
-l_string|&quot;.set&bslash;tnoreorder&bslash;n&quot;
-l_string|&quot;1:&bslash;tsw&bslash;t%2,(%0)&bslash;n&bslash;t&quot;
-l_string|&quot;subu&bslash;t%1,1&bslash;n&bslash;t&quot;
-l_string|&quot;bnez&bslash;t%1,1b&bslash;n&bslash;t&quot;
-l_string|&quot;addiu&bslash;t%0,4&bslash;n&bslash;t&quot;
-l_string|&quot;.set&bslash;treorder&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|dummy1
-)paren
-comma
-l_string|&quot;=r&quot;
-(paren
-id|dummy2
-)paren
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-(paren
 (paren
 r_int
 r_int
-)paren
-id|invalid_pte_table
-op_minus
-id|PAGE_OFFSET
-)paren
-op_or
-id|_PAGE_TABLE
-)paren
-comma
-l_string|&quot;0&quot;
-(paren
 id|page
 )paren
-comma
-l_string|&quot;1&quot;
-(paren
-id|PAGE_SIZE
-op_div
-r_sizeof
-(paren
-id|pmd_t
-)paren
-)paren
-)paren
 suffix:semicolon
-macro_line|#endif
-)brace
 DECL|function|pgd_alloc
 r_extern
 r_inline
@@ -2330,25 +1878,6 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-id|sys_cacheflush
-c_func
-(paren
-(paren
-r_void
-op_star
-)paren
-id|page
-comma
-id|PAGE_SIZE
-comma
-id|DCACHE
-)paren
-suffix:semicolon
-id|sync_mem
-c_func
-(paren
-)paren
-suffix:semicolon
 id|pgd_init
 c_func
 (paren
@@ -2360,15 +1889,7 @@ r_return
 id|pgd_t
 op_star
 )paren
-(paren
 id|page
-op_plus
-(paren
-id|PT_OFFSET
-op_minus
-id|PAGE_OFFSET
-)paren
-)paren
 suffix:semicolon
 )brace
 r_extern
@@ -2378,11 +1899,12 @@ id|swapper_pg_dir
 l_int|1024
 )braket
 suffix:semicolon
-multiline_comment|/*&n; * MIPS doesn&squot;t need any external MMU info: the kernel page tables contain&n; * all the necessary information.  We use this hook though to load the&n; * TLB as early as possible with uptodate information avoiding unnecessary&n; * exceptions.&n; */
 r_extern
 r_void
+(paren
+op_star
 id|update_mmu_cache
-c_func
+)paren
 (paren
 r_struct
 id|vm_area_struct
@@ -2397,21 +1919,687 @@ id|pte_t
 id|pte
 )paren
 suffix:semicolon
-macro_line|#if __mips &gt;= 3
+multiline_comment|/*&n; * Kernel with 32 bit address space&n; */
 DECL|macro|SWP_TYPE
-mdefine_line|#define SWP_TYPE(entry) (((entry) &gt;&gt; 32) &amp; 0xff)
+mdefine_line|#define SWP_TYPE(entry) (((entry) &gt;&gt; 8) &amp; 0x7f)
 DECL|macro|SWP_OFFSET
-mdefine_line|#define SWP_OFFSET(entry) ((entry) &gt;&gt; 40)
+mdefine_line|#define SWP_OFFSET(entry) ((entry) &gt;&gt; 15)
 DECL|macro|SWP_ENTRY
-mdefine_line|#define SWP_ENTRY(type,offset) pte_val(mk_swap_pte((type),(offset)))
-macro_line|#else
-DECL|macro|SWP_TYPE
-mdefine_line|#define SWP_TYPE(entry) (((entry) &gt;&gt; 1) &amp; 0x7f)
-DECL|macro|SWP_OFFSET
-mdefine_line|#define SWP_OFFSET(entry) ((entry) &gt;&gt; 8)
-DECL|macro|SWP_ENTRY
-mdefine_line|#define SWP_ENTRY(type,offset) (((type) &lt;&lt; 1) | ((offset) &lt;&lt; 8))
-macro_line|#endif
+mdefine_line|#define SWP_ENTRY(type,offset) (((type) &lt;&lt; 8) | ((offset) &lt;&lt; 15))
+multiline_comment|/* TLB operations. */
+DECL|function|tlb_probe
+r_extern
+r_inline
+r_void
+id|tlb_probe
+c_func
+(paren
+r_void
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
+l_string|&quot;tlbp&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&quot;
+)paren
+suffix:semicolon
+)brace
+DECL|function|tlb_read
+r_extern
+r_inline
+r_void
+id|tlb_read
+c_func
+(paren
+r_void
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
+l_string|&quot;tlbr&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&quot;
+)paren
+suffix:semicolon
+)brace
+DECL|function|tlb_write_indexed
+r_extern
+r_inline
+r_void
+id|tlb_write_indexed
+c_func
+(paren
+r_void
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
+l_string|&quot;tlbwi&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&quot;
+)paren
+suffix:semicolon
+)brace
+DECL|function|tlb_write_random
+r_extern
+r_inline
+r_void
+id|tlb_write_random
+c_func
+(paren
+r_void
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
+l_string|&quot;tlbwr&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&quot;
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* Dealing with various CP0 mmu/cache related registers. */
+multiline_comment|/* CP0_PAGEMASK register */
+DECL|function|get_pagemask
+r_extern
+r_inline
+r_int
+r_int
+id|get_pagemask
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+r_int
+id|val
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
+l_string|&quot;mfc0 %0, $5&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips2&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|val
+)paren
+)paren
+suffix:semicolon
+r_return
+id|val
+suffix:semicolon
+)brace
+DECL|function|set_pagemask
+r_extern
+r_inline
+r_void
+id|set_pagemask
+c_func
+(paren
+r_int
+r_int
+id|val
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
+l_string|&quot;mtc0 %0, $5&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips2&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|val
+)paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* CP0_ENTRYLO0 and CP0_ENTRYLO1 registers */
+DECL|function|get_entrylo0
+r_extern
+r_inline
+r_int
+r_int
+id|get_entrylo0
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+r_int
+id|val
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
+l_string|&quot;mfc0 %0, $2&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips2&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|val
+)paren
+)paren
+suffix:semicolon
+r_return
+id|val
+suffix:semicolon
+)brace
+DECL|function|set_entrylo0
+r_extern
+r_inline
+r_void
+id|set_entrylo0
+c_func
+(paren
+r_int
+r_int
+id|val
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
+l_string|&quot;mtc0 %0, $2&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips2&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|val
+)paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|get_entrylo1
+r_extern
+r_inline
+r_int
+r_int
+id|get_entrylo1
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+r_int
+id|val
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
+l_string|&quot;mfc0 %0, $3&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips2&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|val
+)paren
+)paren
+suffix:semicolon
+r_return
+id|val
+suffix:semicolon
+)brace
+DECL|function|set_entrylo1
+r_extern
+r_inline
+r_void
+id|set_entrylo1
+c_func
+(paren
+r_int
+r_int
+id|val
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
+l_string|&quot;mtc0 %0, $3&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips2&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|val
+)paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* CP0_ENTRYHI register */
+DECL|function|get_entryhi
+r_extern
+r_inline
+r_int
+r_int
+id|get_entryhi
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+r_int
+id|val
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
+l_string|&quot;mfc0 %0, $10&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips2&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|val
+)paren
+)paren
+suffix:semicolon
+r_return
+id|val
+suffix:semicolon
+)brace
+DECL|function|set_entryhi
+r_extern
+r_inline
+r_void
+id|set_entryhi
+c_func
+(paren
+r_int
+r_int
+id|val
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
+l_string|&quot;mtc0 %0, $10&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips2&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|val
+)paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* CP0_INDEX register */
+DECL|function|get_index
+r_extern
+r_inline
+r_int
+r_int
+id|get_index
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+r_int
+id|val
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
+l_string|&quot;mfc0 %0, $0&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips2&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|val
+)paren
+)paren
+suffix:semicolon
+r_return
+id|val
+suffix:semicolon
+)brace
+DECL|function|set_index
+r_extern
+r_inline
+r_void
+id|set_index
+c_func
+(paren
+r_int
+r_int
+id|val
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
+l_string|&quot;mtc0 %0, $0&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips2&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&bslash;n&bslash;t&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|val
+)paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* CP0_WIRED register */
+DECL|function|get_wired
+r_extern
+r_inline
+r_int
+r_int
+id|get_wired
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+r_int
+id|val
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
+l_string|&quot;mfc0 %0, $6&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips2&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&bslash;n&bslash;t&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|val
+)paren
+)paren
+suffix:semicolon
+r_return
+id|val
+suffix:semicolon
+)brace
+DECL|function|set_wired
+r_extern
+r_inline
+r_void
+id|set_wired
+c_func
+(paren
+r_int
+r_int
+id|val
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;&bslash;n&bslash;t.set noreorder&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
+l_string|&quot;mtc0 %0, $6&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips2&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|val
+)paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* CP0_TAGLO and CP0_TAGHI registers */
+DECL|function|get_taglo
+r_extern
+r_inline
+r_int
+r_int
+id|get_taglo
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+r_int
+id|val
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
+l_string|&quot;mfc0 %0, $28&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips2&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|val
+)paren
+)paren
+suffix:semicolon
+r_return
+id|val
+suffix:semicolon
+)brace
+DECL|function|set_taglo
+r_extern
+r_inline
+r_void
+id|set_taglo
+c_func
+(paren
+r_int
+r_int
+id|val
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
+l_string|&quot;mtc0 %0, $28&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips2&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|val
+)paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|get_taghi
+r_extern
+r_inline
+r_int
+r_int
+id|get_taghi
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+r_int
+id|val
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
+l_string|&quot;mfc0 %0, $29&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips2&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|val
+)paren
+)paren
+suffix:semicolon
+r_return
+id|val
+suffix:semicolon
+)brace
+DECL|function|set_taghi
+r_extern
+r_inline
+r_void
+id|set_taghi
+c_func
+(paren
+r_int
+r_int
+id|val
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
+l_string|&quot;mtc0 %0, $29&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips2&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|val
+)paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* CP0_CONTEXT register */
+DECL|function|get_context
+r_extern
+r_inline
+r_int
+r_int
+id|get_context
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+r_int
+id|val
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
+l_string|&quot;mfc0 %0, $4&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips2&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|val
+)paren
+)paren
+suffix:semicolon
+r_return
+id|val
+suffix:semicolon
+)brace
+DECL|function|set_context
+r_extern
+r_inline
+r_void
+id|set_context
+c_func
+(paren
+r_int
+r_int
+id|val
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
+l_string|&quot;mtc0 %0, $4&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips2&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|val
+)paren
+)paren
+suffix:semicolon
+)brace
 macro_line|#endif /* !defined (__LANGUAGE_ASSEMBLY__) */
 macro_line|#endif /* __ASM_MIPS_PGTABLE_H */
 eof

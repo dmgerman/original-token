@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: uaccess.h,v 1.13 1997/05/29 12:45:04 jj Exp $ */
+multiline_comment|/* $Id: uaccess.h,v 1.14 1997/06/13 14:03:11 davem Exp $ */
 macro_line|#ifndef _ASM_UACCESS_H
 DECL|macro|_ASM_UACCESS_H
 mdefine_line|#define _ASM_UACCESS_H
@@ -14,9 +14,9 @@ macro_line|#endif
 macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/* Sparc is not segmented, however we need to be able to fool verify_area()&n; * when doing system calls from kernel mode legitimately.&n; *&n; * &quot;For historical reasons, these macros are grossly misnamed.&quot; -Linus&n; */
 DECL|macro|KERNEL_DS
-mdefine_line|#define KERNEL_DS   0
+mdefine_line|#define KERNEL_DS   0x00
 DECL|macro|USER_DS
-mdefine_line|#define USER_DS     -1
+mdefine_line|#define USER_DS     0x2B /* har har har */
 DECL|macro|VERIFY_READ
 mdefine_line|#define VERIFY_READ&t;0
 DECL|macro|VERIFY_WRITE
@@ -25,57 +25,8 @@ DECL|macro|get_fs
 mdefine_line|#define get_fs() (current-&gt;tss.current_ds)
 DECL|macro|get_ds
 mdefine_line|#define get_ds() (KERNEL_DS)
-DECL|function|set_fs
-r_extern
-id|__inline__
-r_void
-id|set_fs
-c_func
-(paren
-r_int
-id|val
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|val
-op_ne
-id|current-&gt;tss.current_ds
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|val
-op_eq
-id|KERNEL_DS
-)paren
-(brace
-id|flushw_user
-(paren
-)paren
-suffix:semicolon
-id|spitfire_set_secondary_context
-(paren
-l_int|0
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|spitfire_set_secondary_context
-(paren
-id|current-&gt;mm-&gt;context
-)paren
-suffix:semicolon
-)brace
-id|current-&gt;tss.current_ds
-op_assign
-id|val
-suffix:semicolon
-)brace
-)brace
+DECL|macro|set_fs
+mdefine_line|#define set_fs(val)&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;current-&gt;tss.current_ds = (val);&t;&bslash;&n;&t;if ((val) == KERNEL_DS) {&t;&t;&bslash;&n;&t;&t;flushw_user ();&t;&t;&t;&bslash;&n;&t;&t;current-&gt;tss.ctx = 0;&t;&t;&bslash;&n;&t;} else {&t;&t;&t;&t;&bslash;&n;&t;&t;current-&gt;tss.ctx = (current-&gt;mm-&gt;context &amp; 0x1fff); &bslash;&n;&t;}&t;&t;&t;&t;&t;&bslash;&n;&t;spitfire_set_secondary_context(current-&gt;tss.ctx); &bslash;&n;&t;__asm__ __volatile__(&quot;flush %g4&quot;);&t;&bslash;&n;} while(0)
 DECL|macro|__user_ok
 mdefine_line|#define __user_ok(addr,size) 1
 DECL|macro|__kernel_ok

@@ -15,11 +15,9 @@ id|loops
 id|__asm__
 id|__volatile__
 (paren
-l_string|&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot;
-l_string|&quot;.set&bslash;tnoat&bslash;n&bslash;t&quot;
-l_string|&quot;1:&bslash;tbne&bslash;t$0,%0,1b&bslash;n&bslash;t&quot;
-l_string|&quot;subu&bslash;t%0,%0,1&bslash;n&bslash;t&quot;
-l_string|&quot;.set&bslash;tat&bslash;n&bslash;t&quot;
+l_string|&quot;.set&bslash;tnoreorder&bslash;n&quot;
+l_string|&quot;1:&bslash;tbnez&bslash;t%0,1b&bslash;n&bslash;t&quot;
+l_string|&quot;subu&bslash;t%0,1&bslash;n&bslash;t&quot;
 l_string|&quot;.set&bslash;treorder&quot;
 suffix:colon
 l_string|&quot;=r&quot;
@@ -35,16 +33,20 @@ id|loops
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * division by multiplication: you don&squot;t have to worry about&n; * loss of precision.&n; *&n; * Use only for very small delays ( &lt; 1 msec).  Should probably use a&n; * lookup table, really, as the multiplications take much too long with&n; * short delays.  This is a &quot;reasonable&quot; implementation, though (and the&n; * first constant multiplications gets optimized away if the delay is&n; * a constant)&n; */
-DECL|function|udelay
+DECL|function|__udelay
 r_extern
 id|__inline__
 r_void
-id|udelay
+id|__udelay
 c_func
 (paren
 r_int
 r_int
 id|usecs
+comma
+r_int
+r_int
+id|lps
 )paren
 (brace
 id|usecs
@@ -70,7 +72,7 @@ id|usecs
 comma
 l_string|&quot;r&quot;
 (paren
-id|loops_per_sec
+id|lps
 )paren
 )paren
 suffix:semicolon
@@ -81,6 +83,15 @@ id|usecs
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef __SMP__
+DECL|macro|__udelay_val
+mdefine_line|#define __udelay_val cpu_data[smp_processor_id()].udelay_val
+macro_line|#else
+DECL|macro|__udelay_val
+mdefine_line|#define __udelay_val loops_per_sec
+macro_line|#endif
+DECL|macro|udelay
+mdefine_line|#define udelay(usecs) __udelay((usecs),__udelay_val)
 multiline_comment|/*&n; * The different variants for 32/64 bit are pure paranoia. The typical&n; * range of numbers that appears for MIPS machines avoids overflows.&n; */
 DECL|function|muldiv
 r_extern

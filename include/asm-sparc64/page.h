@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: page.h,v 1.8 1997/03/26 12:24:21 davem Exp $ */
+multiline_comment|/* $Id: page.h,v 1.9 1997/06/14 21:28:09 davem Exp $ */
 macro_line|#ifndef _SPARC64_PAGE_H
 DECL|macro|_SPARC64_PAGE_H
 mdefine_line|#define _SPARC64_PAGE_H
@@ -17,7 +17,7 @@ DECL|macro|PAGE_MASK
 mdefine_line|#define PAGE_MASK    (~(PAGE_SIZE-1))
 macro_line|#ifndef __ASSEMBLY__
 DECL|macro|clear_page
-mdefine_line|#define clear_page(page)&t;memset((void *)(page), 0, PAGE_SIZE)
+mdefine_line|#define clear_page(page)&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&quot;mov&t;%%o7, %%g3&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&t;&t;&t;&quot;call&t;__bzero_1page&bslash;n&bslash;t&quot;&t;&bslash;&n;&t;&t;&t;&t;&quot; mov&t;%0, %%g2&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&t;&t;&t;: /* No outputs */&t;&t;&bslash;&n;&t;&t;&t;&t;: &quot;r&quot; (page)&t;&t;&t;&bslash;&n;&t;&t;&t;&t;: &quot;g1&quot;, &quot;g2&quot;, &quot;g3&quot;)
 DECL|macro|copy_page
 mdefine_line|#define copy_page(to,from)&t;memcpy((void *)(to), (void *)(from), PAGE_SIZE)
 DECL|macro|STRICT_MM_TYPECHECKS

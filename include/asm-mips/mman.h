@@ -30,6 +30,8 @@ mdefine_line|#define MAP_LOCAL&t;0x080&t;&t;/* Copy on fork/sproc */
 DECL|macro|MAP_AUTORSRV
 mdefine_line|#define MAP_AUTORSRV&t;0x100&t;&t;/* Logical swap reserved on demand */
 multiline_comment|/* These are linux-specific */
+DECL|macro|MAP_NORESERVE
+mdefine_line|#define MAP_NORESERVE&t;0x0400&t;&t;/* don&squot;t check for reservations */
 DECL|macro|MAP_ANONYMOUS
 mdefine_line|#define MAP_ANONYMOUS&t;0x0800&t;&t;/* don&squot;t use a file */
 DECL|macro|MAP_GROWSDOWN

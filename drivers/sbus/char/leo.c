@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: leo.c,v 1.18 1997/06/04 08:27:30 davem Exp $&n; * leo.c: SUNW,leo 24/8bit frame buffer driver&n; *&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1997 Michal Rehacek (Michal.Rehacek@st.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: leo.c,v 1.19 1997/06/06 10:56:30 jj Exp $&n; * leo.c: SUNW,leo 24/8bit frame buffer driver&n; *&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1997 Michal Rehacek (Michal.Rehacek@st.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -453,7 +453,8 @@ id|map_size
 op_assign
 l_int|0
 suffix:semicolon
-id|uint
+r_int
+r_int
 id|map_offset
 op_assign
 l_int|0

@@ -4,7 +4,26 @@ DECL|macro|__ASM_MIPS_IRQ_H
 mdefine_line|#define __ASM_MIPS_IRQ_H
 multiline_comment|/*&n; * Actually this is a lie but we hide the local device&squot;s interrupts ...&n; */
 DECL|macro|NR_IRQS
-mdefine_line|#define NR_IRQS 16
+mdefine_line|#define NR_IRQS 64
+DECL|macro|TIMER_IRQ
+mdefine_line|#define TIMER_IRQ 0
+r_struct
+id|irqaction
+suffix:semicolon
+r_extern
+r_int
+id|setup_x86_irq
+c_func
+(paren
+r_int
+id|irq
+comma
+r_struct
+id|irqaction
+op_star
+r_new
+)paren
+suffix:semicolon
 r_extern
 r_void
 id|disable_irq

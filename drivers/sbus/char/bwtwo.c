@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: bwtwo.c,v 1.16 1997/06/04 08:27:26 davem Exp $&n; * bwtwo.c: bwtwo console driver&n; *&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: bwtwo.c,v 1.17 1997/06/06 10:56:28 jj Exp $&n; * bwtwo.c: bwtwo console driver&n; *&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -176,9 +176,11 @@ id|fb
 id|uint
 id|size
 comma
-id|map_offset
-comma
 id|r
+suffix:semicolon
+r_int
+r_int
+id|map_offset
 suffix:semicolon
 r_int
 id|map_size

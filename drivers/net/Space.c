@@ -349,6 +349,16 @@ op_star
 suffix:semicolon
 r_extern
 r_int
+id|sonic_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|SK_init
 c_func
 (paren
@@ -430,6 +440,16 @@ suffix:semicolon
 r_extern
 r_int
 id|myri_sbus_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|sgiseeq_probe
 c_func
 (paren
 r_struct
@@ -956,6 +976,22 @@ c_func
 id|dev
 )paren
 macro_line|#endif
+macro_line|#ifdef CONFIG_SGISEEQ
+op_logical_and
+id|sgiseeq_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#ifdef CONFIG_MIPS_JAZZ_SONIC
+op_logical_and
+id|sonic_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif&t;
 op_logical_and
 l_int|1
 )paren
@@ -1157,6 +1193,54 @@ macro_line|#   undef NEXT_DEV
 DECL|macro|NEXT_DEV
 macro_line|#   define NEXT_DEV&t;(&amp;dev_ltpc)
 macro_line|#endif  /* LTPC */
+macro_line|#if defined(CONFIG_COPS)
+r_extern
+r_int
+id|cops_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+DECL|variable|dev_cops
+r_static
+r_struct
+id|device
+id|dev_cops
+op_assign
+(brace
+l_string|&quot;lt0&quot;
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0x0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|NEXT_DEV
+comma
+id|cops_probe
+)brace
+suffix:semicolon
+DECL|macro|NEXT_DEV
+macro_line|#   undef NEXT_DEV
+DECL|macro|NEXT_DEV
+macro_line|#   define NEXT_DEV     (&amp;dev_cops)
+macro_line|#endif  /* COPS */
 multiline_comment|/* The first device defaults to I/O base &squot;0&squot;, which means autoprobe. */
 macro_line|#ifndef ETH0_ADDR
 DECL|macro|ETH0_ADDR

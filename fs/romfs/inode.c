@@ -2534,13 +2534,8 @@ op_assign
 (brace
 l_string|&quot;romfs&quot;
 comma
-(paren
 id|FS_REQUIRES_DEV
-op_or
-id|FS_NO_DCACHE
-)paren
 comma
-multiline_comment|/* Can dcache be used? */
 id|romfs_read_super
 comma
 l_int|NULL

@@ -719,6 +719,13 @@ r_int
 id|size
 )paren
 suffix:semicolon
+r_int
+id|net_ratelimit
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif&t;/* _LINUX_NET_H */
 eof

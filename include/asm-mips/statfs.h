@@ -1,20 +1,16 @@
+multiline_comment|/*&n; * Definitions for the statfs(2) call.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995 by Ralf Baechle&n; */
 macro_line|#ifndef __ASM_MIPS_STATFS_H
 DECL|macro|__ASM_MIPS_STATFS_H
 mdefine_line|#define __ASM_MIPS_STATFS_H
-r_typedef
-r_struct
-(brace
-DECL|member|val
-r_int
-id|val
-(braket
-l_int|2
-)braket
-suffix:semicolon
+macro_line|#include &lt;linux/posix_types.h&gt;
+macro_line|#ifndef __KERNEL_STRICT_NAMES
+macro_line|#include &lt;linux/types.h&gt;
 DECL|typedef|fsid_t
-)brace
+r_typedef
+id|__kernel_fsid_t
 id|fsid_t
 suffix:semicolon
+macro_line|#endif
 DECL|struct|statfs
 r_struct
 id|statfs
@@ -56,7 +52,7 @@ r_int
 id|f_bavail
 suffix:semicolon
 DECL|member|f_fsid
-id|fsid_t
+id|__kernel_fsid_t
 id|f_fsid
 suffix:semicolon
 DECL|member|f_namelen

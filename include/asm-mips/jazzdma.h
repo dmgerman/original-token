@@ -1,7 +1,7 @@
 multiline_comment|/*&n; * Helpfile for jazzdma.c -- Mips Jazz R4030 DMA controller support&n; */
-macro_line|#ifndef __ASM_JAZZDMA_H
-DECL|macro|__ASM_JAZZDMA_H
-mdefine_line|#define __ASM_JAZZDMA_H
+macro_line|#ifndef __ASM_MIPS_JAZZDMA_H
+DECL|macro|__ASM_MIPS_JAZZDMA_H
+mdefine_line|#define __ASM_MIPS_JAZZDMA_H
 multiline_comment|/*&n; * Prototypes and macros&n; */
 r_int
 r_int
@@ -206,7 +206,7 @@ DECL|macro|R4030_MEM_INTR
 mdefine_line|#define R4030_MEM_INTR           (1&lt;&lt;9)
 DECL|macro|R4030_ADDR_INTR
 mdefine_line|#define R4030_ADDR_INTR          (1&lt;&lt;10)
-multiline_comment|/* channel mode register bits */
+multiline_comment|/*&n; * Channel mode register bits&n; */
 DECL|macro|R4030_MODE_ATIME_40
 mdefine_line|#define R4030_MODE_ATIME_40      (0) /* device access time on remote bus */
 DECL|macro|R4030_MODE_ATIME_80
@@ -235,5 +235,5 @@ DECL|macro|R4030_MODE_BURST
 mdefine_line|#define R4030_MODE_BURST         (1&lt;&lt;6)&t;/* Rev. 2 only */
 DECL|macro|R4030_MODE_FAST_ACK
 mdefine_line|#define R4030_MODE_FAST_ACK      (1&lt;&lt;7)&t;/* Rev. 2 only */
-macro_line|#endif /* __ASM_JAZZDMA_H */
+macro_line|#endif /* __ASM_MIPS_JAZZDMA_H */
 eof

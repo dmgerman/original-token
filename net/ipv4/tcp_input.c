@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_input.c,v 1.52 1997/05/31 12:36:42 freitag Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_input.c,v 1.53 1997/06/06 20:38:00 freitag Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
 multiline_comment|/*&n; * Changes:&n; *&t;&t;Pedro Roque&t;:&t;Fast Retransmit/Recovery.&n; *&t;&t;&t;&t;&t;Two receive queues.&n; *&t;&t;&t;&t;&t;Retransmit queue handled by TCP.&n; *&t;&t;&t;&t;&t;Better retransmit timer handling.&n; *&t;&t;&t;&t;&t;New congestion avoidance.&n; *&t;&t;&t;&t;&t;Header prediction.&n; *&t;&t;&t;&t;&t;Variable renaming.&n; *&n; *&t;&t;Eric&t;&t;:&t;Fast Retransmit.&n; *&t;&t;Randy Scott&t;:&t;MSS option defines.&n; *&t;&t;Eric Schenk&t;:&t;Fixes to slow start algorithm.&n; *&t;&t;Eric Schenk&t;:&t;Yet another double ACK bug.&n; *&t;&t;Eric Schenk&t;:&t;Delayed ACK bug fixes.&n; *&t;&t;Eric Schenk&t;:&t;Floyd style fast retrans war avoidance.&n; *&t;&t;David S. Miller&t;:&t;Don&squot;t allow zero congestion window.&n; *&t;&t;Eric Schenk&t;:&t;Fix retransmitter so that it sends&n; *&t;&t;&t;&t;&t;next packet on ack of previous packet.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -105,6 +105,10 @@ r_int
 id|sysctl_tcp_max_delay_acks
 op_assign
 id|MAX_DELAY_ACK
+suffix:semicolon
+DECL|variable|sysctl_tcp_stdurg
+r_int
+id|sysctl_tcp_stdurg
 suffix:semicolon
 DECL|variable|tcp_sys_cong_ctl_f
 r_static
@@ -766,6 +770,9 @@ r_struct
 id|tcp_opt
 op_star
 id|tp
+comma
+r_int
+id|no_fancy
 )paren
 (brace
 r_int
@@ -944,6 +951,9 @@ id|th-&gt;syn
 r_if
 c_cond
 (paren
+op_logical_neg
+id|no_fancy
+op_logical_and
 id|sysctl_tcp_window_scaling
 )paren
 (brace
@@ -979,6 +989,9 @@ r_if
 c_cond
 (paren
 id|sysctl_tcp_sack
+op_logical_and
+op_logical_neg
+id|no_fancy
 )paren
 id|tp-&gt;sack_ok
 op_assign
@@ -1000,6 +1013,9 @@ r_if
 c_cond
 (paren
 id|sysctl_tcp_timestamps
+op_logical_and
+op_logical_neg
+id|no_fancy
 )paren
 id|tp-&gt;tstamp_ok
 op_assign
@@ -1045,6 +1061,13 @@ suffix:semicolon
 r_case
 id|TCPOPT_SACK
 suffix:colon
+r_if
+c_cond
+(paren
+id|no_fancy
+)paren
+r_break
+suffix:semicolon
 id|tp-&gt;sacks
 op_assign
 (paren
@@ -1315,6 +1338,8 @@ c_func
 id|th
 comma
 id|tp
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_return
@@ -3963,7 +3988,7 @@ l_int|2
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;This routine is only called when we have urgent data&n; *&t;signalled. Its the &squot;slow&squot; part of tcp_urg. It could be&n; *&t;moved inline now as tcp_urg is only called from one&n; *&t;place. We handle URGent data wrong. We have to - as&n; *&t;BSD still doesn&squot;t use the correction from RFC961.&n; *&t;For 1003.1g we should support a new option TCP_STDURG to permit&n; *&t;either form.&n; */
+multiline_comment|/*&n; *&t;This routine is only called when we have urgent data&n; *&t;signalled. Its the &squot;slow&squot; part of tcp_urg. It could be&n; *&t;moved inline now as tcp_urg is only called from one&n; *&t;place. We handle URGent data wrong. We have to - as&n; *&t;BSD still doesn&squot;t use the correction from RFC961.&n; *&t;For 1003.1g we should support a new option TCP_STDURG to permit&n; *&t;either form (or just set the sysctl tcp_stdurg).&n; */
 DECL|function|tcp_check_urg
 r_static
 r_void
@@ -4004,6 +4029,9 @@ r_if
 c_cond
 (paren
 id|ptr
+op_logical_and
+op_logical_neg
+id|sysctl_tcp_stdurg
 )paren
 id|ptr
 op_decrement
@@ -4859,19 +4887,6 @@ c_cond
 id|th-&gt;syn
 )paren
 (brace
-id|__u32
-id|isn
-op_assign
-id|tp-&gt;af_specific
-op_member_access_from_pointer
-id|init_sequence
-c_func
-(paren
-id|sk
-comma
-id|skb
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4886,7 +4901,7 @@ id|skb
 comma
 id|opt
 comma
-id|isn
+l_int|0
 )paren
 OL
 l_int|0
@@ -5029,6 +5044,8 @@ c_func
 id|th
 comma
 id|tp
+comma
+l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* FIXME: need to make room for SACK still */
@@ -5200,6 +5217,8 @@ c_func
 id|th
 comma
 id|tp
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_if
@@ -5305,6 +5324,16 @@ op_assign
 id|tp-&gt;rcv_nxt
 op_plus
 l_int|128000
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|isn
+op_eq
+l_int|0
+)paren
+id|isn
+op_increment
 suffix:semicolon
 id|sk
 op_assign
@@ -5611,9 +5640,19 @@ id|skb-&gt;ack_seq
 suffix:semicolon
 )brace
 r_else
+(brace
+id|SOCK_DEBUG
+c_func
+(paren
+id|sk
+comma
+l_string|&quot;bad ack&bslash;n&quot;
+)paren
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 r_case

@@ -5760,6 +5760,32 @@ id|ddp
 suffix:semicolon
 multiline_comment|/* Mend the byte order */
 multiline_comment|/*&n;&t;&t; *&t;Send the buffer onwards&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;Now we must always be careful. If it&squot;s come from &n;&t;&t; *&t;localtalk to ethertalk it might not fit&n;&t;&t; *&n;&t;&t; *&t;Order matters here: If a packet has to be copied&n;&t;&t; *&t;to make a new headroom (rare hopefully) then it&n;&t;&t; *&t;won&squot;t need unsharing.&n;&t;&t; *&n;&t;&t; *&t;Note. ddp-&gt; becomes invalid at the realloc.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|skb_headroom
+c_func
+(paren
+id|skb
+)paren
+OL
+l_int|22
+)paren
+(brace
+multiline_comment|/* 22 bytes - 12 ether, 2 len, 3 802.2 5 snap */
+id|skb
+op_assign
+id|skb_realloc_headroom
+c_func
+(paren
+id|skb
+comma
+l_int|32
+)paren
+suffix:semicolon
+)brace
+r_else
 id|skb
 op_assign
 id|skb_unshare
@@ -5772,6 +5798,7 @@ comma
 id|FREE_READ
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;If the buffer didnt vanish into the lack of&n;&t;&t; *&t;space bitbucket we can send it.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -6330,7 +6357,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-macro_line|#if 0         /* netatalk doesn&squot;t implement this check */
+multiline_comment|/* netatalk doesn&squot;t implement this check */
 r_if
 c_cond
 (paren
@@ -6342,12 +6369,20 @@ op_logical_neg
 id|sk-&gt;broadcast
 )paren
 (brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;SO_BROADCAST: Fix your netatalk as it will break before 2.2&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#if 0
 r_return
 op_minus
 id|EPERM
 suffix:semicolon
-)brace
 macro_line|#endif
+)brace
 )brace
 r_else
 (brace

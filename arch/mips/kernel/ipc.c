@@ -1,5 +1,4 @@
-multiline_comment|/*&n; * linux/arch/mips/kernel/ipc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/i386&n; * platform.&n; */
-macro_line|#include &lt;linux/config.h&gt;
+multiline_comment|/*&n; * linux/arch/mips/kernel/ipc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/MIPS&n; * platform.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -8,8 +7,9 @@ macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/sem.h&gt;
 macro_line|#include &lt;linux/msg.h&gt;
 macro_line|#include &lt;linux/shm.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
-multiline_comment|/*&n; * sys_ipc() is the de-multiplexer for the SysV IPC calls..&n; *&n; * This is really horribly ugly;  removing this will need some minor&n; * changes in libc.&n; */
+macro_line|#include &lt;asm/ipc.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
+multiline_comment|/*&n; * sys_ipc() is the de-multiplexer for the SysV IPC calls..&n; *&n; * This is really horribly ugly.  FIXME: Get rid of this wrapper.&n; */
 DECL|function|sys_ipc
 id|asmlinkage
 r_int
@@ -35,7 +35,6 @@ r_int
 id|fifth
 )paren
 (brace
-macro_line|#ifdef CONFIG_SYSVIPC
 r_int
 id|version
 comma
@@ -131,39 +130,29 @@ id|ptr
 r_goto
 id|out
 suffix:semicolon
+id|ret
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
 r_if
 c_cond
 (paren
+id|get_user
+c_func
 (paren
-id|ret
-op_assign
-id|verify_area
-(paren
-id|VERIFY_READ
+id|fourth.__pad
 comma
+(paren
+r_void
+op_star
+op_star
+)paren
 id|ptr
-comma
-r_sizeof
-(paren
-r_int
-)paren
-)paren
 )paren
 )paren
 r_goto
 id|out
-suffix:semicolon
-id|fourth.__pad
-op_assign
-(paren
-r_void
-op_star
-)paren
-id|get_fs_long
-c_func
-(paren
-id|ptr
-)paren
 suffix:semicolon
 id|ret
 op_assign
@@ -247,39 +236,30 @@ r_struct
 id|ipc_kludge
 id|tmp
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|ptr
-)paren
-r_return
+id|ret
+op_assign
 op_minus
 id|EINVAL
 suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
-id|ret
-op_assign
-id|verify_area
-(paren
-id|VERIFY_READ
-comma
+op_logical_neg
 id|ptr
-comma
-r_sizeof
-(paren
-id|tmp
-)paren
-)paren
-)paren
 )paren
 r_goto
 id|out
 suffix:semicolon
-id|memcpy_fromfs
+id|ret
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|copy_from_user
+c_func
 (paren
 op_amp
 id|tmp
@@ -296,6 +276,9 @@ r_sizeof
 id|tmp
 )paren
 )paren
+)paren
+r_goto
+id|out
 suffix:semicolon
 id|ret
 op_assign
@@ -429,33 +412,6 @@ suffix:colon
 id|ulong
 id|raddr
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|ret
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-(paren
-id|ulong
-op_star
-)paren
-id|third
-comma
-r_sizeof
-(paren
-id|ulong
-)paren
-)paren
-)paren
-)paren
-r_goto
-id|out
-suffix:semicolon
 id|ret
 op_assign
 id|sys_shmat
@@ -482,7 +438,9 @@ id|ret
 r_goto
 id|out
 suffix:semicolon
-id|put_fs_long
+id|ret
+op_assign
+id|put_user
 (paren
 id|raddr
 comma
@@ -492,10 +450,6 @@ op_star
 )paren
 id|third
 )paren
-suffix:semicolon
-id|ret
-op_assign
-l_int|0
 suffix:semicolon
 r_goto
 id|out
@@ -634,11 +588,5 @@ suffix:semicolon
 r_return
 id|ret
 suffix:semicolon
-macro_line|#else /* CONFIG_SYSVIPC */
-r_return
-op_minus
-id|ENOSYS
-suffix:semicolon
-macro_line|#endif /* CONFIG_SYSVIPC */
 )brace
 eof

@@ -1592,6 +1592,13 @@ c_func
 id|file_fsync
 )paren
 suffix:semicolon
+DECL|variable|_free_ibasket
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|_free_ibasket
+)paren
+suffix:semicolon
 DECL|variable|_clear_inode
 id|EXPORT_SYMBOL
 c_func

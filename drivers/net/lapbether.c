@@ -1479,10 +1479,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|lapbeth_dev_init
 r_static
 r_int
 id|lapbeth_dev_init
@@ -1492,7 +1489,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_return

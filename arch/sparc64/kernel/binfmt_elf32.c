@@ -5,6 +5,8 @@ DECL|macro|ELF_CLASS
 mdefine_line|#define ELF_CLASS&t;&t;ELFCLASS32
 DECL|macro|ELF_DATA
 mdefine_line|#define ELF_DATA&t;&t;ELFDATA2MSB;
+DECL|macro|elf_check_arch
+mdefine_line|#define elf_check_arch(x)&t;(((x) == EM_SPARC) || ((x) == EM_SPARC32PLUS))
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;

@@ -81,6 +81,12 @@ id|bits
 suffix:semicolon
 )brace
 macro_line|#endif
+multiline_comment|/*&n; * Base address of the Sonic Ethernet adapter in Jazz machines.&n; */
+DECL|macro|JAZZ_ETHERNET_BASE
+mdefine_line|#define JAZZ_ETHERNET_BASE  0xe0001000
+multiline_comment|/*&n; * Base address of the 53C94 SCSI hostadapter in Jazz machines.&n; */
+DECL|macro|JAZZ_SCSI_BASE
+mdefine_line|#define JAZZ_SCSI_BASE&t;&t;0xe0002000
 multiline_comment|/*&n; * i8042 keyboard controller for JAZZ and PICA chipsets.&n; * This address is just a guess and seems to differ from&n; * other mips machines such as RC3xxx...&n; */
 DECL|macro|JAZZ_KEYBOARD_ADDRESS
 mdefine_line|#define JAZZ_KEYBOARD_ADDRESS   0xe0005000
@@ -303,7 +309,7 @@ mdefine_line|#define JAZZ_TIMER_IRQ          0
 DECL|macro|JAZZ_KEYBOARD_IRQ
 mdefine_line|#define JAZZ_KEYBOARD_IRQ       1
 DECL|macro|JAZZ_ETHERNET_IRQ
-mdefine_line|#define JAZZ_ETHERNET_IRQ       2 /* 15 */
+mdefine_line|#define JAZZ_ETHERNET_IRQ       13
 DECL|macro|JAZZ_SERIAL1_IRQ
 mdefine_line|#define JAZZ_SERIAL1_IRQ        3
 DECL|macro|JAZZ_SERIAL2_IRQ
@@ -354,12 +360,40 @@ mdefine_line|#define JAZZ_R4030_REM_SPEED&t;0xE0000070&t;/* 16 Remote Speed Regi
 multiline_comment|/* 0xE0000070,78,80... 0xE00000E8 */
 DECL|macro|JAZZ_R4030_IRQ_ENABLE
 mdefine_line|#define JAZZ_R4030_IRQ_ENABLE   0xE00000E8&t;/* Internal Interrupt Enable */
+DECL|macro|JAZZ_R4030_INVAL_ADDR
+mdefine_line|#define JAZZ_R4030_INVAL_ADDR   0xE0000010&t;/* Invalid address Register */
 DECL|macro|JAZZ_R4030_IRQ_SOURCE
-mdefine_line|#define JAZZ_R4030_IRQ_SOURCE   0xE0000200&t;/* Interrupt Source Reg */
+mdefine_line|#define JAZZ_R4030_IRQ_SOURCE   0xE0000200&t;/* Interrupt Source Register */
 DECL|macro|JAZZ_R4030_I386_ERROR
 mdefine_line|#define JAZZ_R4030_I386_ERROR   0xE0000208&t;/* i386/EISA Bus Error */
+multiline_comment|/*&n; * Virtual (E)ISA controller address&n; */
+DECL|macro|JAZZ_EISA_IRQ_ACK
+mdefine_line|#define JAZZ_EISA_IRQ_ACK&t;0xE0000238&t;/* EISA interrupt acknowledge */
 multiline_comment|/*&n; * Access the R4030 DMA and I/O Controller&n; */
 macro_line|#ifndef __LANGUAGE_ASSEMBLY__
+DECL|function|r4030_delay
+r_extern
+r_inline
+r_void
+id|r4030_delay
+c_func
+(paren
+r_void
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot;
+l_string|&quot;nop&bslash;n&bslash;t&quot;
+l_string|&quot;nop&bslash;n&bslash;t&quot;
+l_string|&quot;nop&bslash;n&bslash;t&quot;
+l_string|&quot;nop&bslash;n&bslash;t&quot;
+l_string|&quot;.set&bslash;treorder&quot;
+)paren
+suffix:semicolon
+)brace
 DECL|function|r4030_read_reg16
 r_extern
 r_inline
@@ -387,16 +421,9 @@ op_star
 id|addr
 )paren
 suffix:semicolon
-id|__asm__
-id|__volatile__
+id|r4030_delay
 c_func
 (paren
-l_string|&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot;
-l_string|&quot;nop&bslash;n&bslash;t&quot;
-l_string|&quot;nop&bslash;n&bslash;t&quot;
-l_string|&quot;nop&bslash;n&bslash;t&quot;
-l_string|&quot;nop&bslash;n&bslash;t&quot;
-l_string|&quot;.set&bslash;treorder&quot;
 )paren
 suffix:semicolon
 r_return
@@ -430,16 +457,9 @@ op_star
 id|addr
 )paren
 suffix:semicolon
-id|__asm__
-id|__volatile__
+id|r4030_delay
 c_func
 (paren
-l_string|&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot;
-l_string|&quot;nop&bslash;n&bslash;t&quot;
-l_string|&quot;nop&bslash;n&bslash;t&quot;
-l_string|&quot;nop&bslash;n&bslash;t&quot;
-l_string|&quot;nop&bslash;n&bslash;t&quot;
-l_string|&quot;.set&bslash;treorder&quot;
 )paren
 suffix:semicolon
 r_return
@@ -473,16 +493,9 @@ id|addr
 op_assign
 id|val
 suffix:semicolon
-id|__asm__
-id|__volatile__
+id|r4030_delay
 c_func
 (paren
-l_string|&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot;
-l_string|&quot;nop&bslash;n&bslash;t&quot;
-l_string|&quot;nop&bslash;n&bslash;t&quot;
-l_string|&quot;nop&bslash;n&bslash;t&quot;
-l_string|&quot;nop&bslash;n&bslash;t&quot;
-l_string|&quot;.set&bslash;treorder&quot;
 )paren
 suffix:semicolon
 )brace
@@ -514,23 +527,20 @@ id|addr
 op_assign
 id|val
 suffix:semicolon
-id|__asm__
-id|__volatile__
+id|r4030_delay
 c_func
 (paren
-l_string|&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot;
-l_string|&quot;nop&bslash;n&bslash;t&quot;
-l_string|&quot;nop&bslash;n&bslash;t&quot;
-l_string|&quot;nop&bslash;n&bslash;t&quot;
-l_string|&quot;nop&bslash;n&bslash;t&quot;
-l_string|&quot;.set&bslash;treorder&quot;
 )paren
 suffix:semicolon
 )brace
 macro_line|#endif /* !LANGUAGE_ASSEMBLY__ */
 DECL|macro|JAZZ_FDC_BASE
-mdefine_line|#define JAZZ_FDC_BASE 0xe0003000
+mdefine_line|#define JAZZ_FDC_BASE&t;0xe0003000
 DECL|macro|JAZZ_RTC_BASE
-mdefine_line|#define JAZZ_RTC_BASE 0xe0004000
+mdefine_line|#define JAZZ_RTC_BASE&t;0xe0004000
+DECL|macro|JAZZ_PORT_BASE
+mdefine_line|#define JAZZ_PORT_BASE&t;0xe2000000
+DECL|macro|JAZZ_EISA_BASE
+mdefine_line|#define JAZZ_EISA_BASE&t;0xe3000000
 macro_line|#endif /* __ASM_MIPS_JAZZ_H */
 eof

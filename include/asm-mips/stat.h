@@ -2,9 +2,9 @@ macro_line|#ifndef __ASM_MIPS_STAT_H
 DECL|macro|__ASM_MIPS_STAT_H
 mdefine_line|#define __ASM_MIPS_STAT_H
 macro_line|#include &lt;linux/types.h&gt;
-DECL|struct|old_stat
+DECL|struct|__old_kernel_stat
 r_struct
-id|old_stat
+id|__old_kernel_stat
 (brace
 DECL|member|st_dev
 r_int
@@ -90,9 +90,9 @@ id|st_gen
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|new_stat
+DECL|struct|stat
 r_struct
-id|new_stat
+id|stat
 (brace
 DECL|member|st_dev
 id|dev_t

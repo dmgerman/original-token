@@ -241,12 +241,25 @@ r_struct
 id|buffer_head
 (brace
 multiline_comment|/* First cache line: */
+DECL|member|b_next
+r_struct
+id|buffer_head
+op_star
+id|b_next
+suffix:semicolon
+multiline_comment|/* Hash queue list */
 DECL|member|b_blocknr
 r_int
 r_int
 id|b_blocknr
 suffix:semicolon
 multiline_comment|/* block number */
+DECL|member|b_size
+r_int
+r_int
+id|b_size
+suffix:semicolon
+multiline_comment|/* block size */
 DECL|member|b_dev
 id|kdev_t
 id|b_dev
@@ -263,13 +276,6 @@ r_int
 id|b_rsector
 suffix:semicolon
 multiline_comment|/* Real buffer location on disk */
-DECL|member|b_next
-r_struct
-id|buffer_head
-op_star
-id|b_next
-suffix:semicolon
-multiline_comment|/* Hash queue list */
 DECL|member|b_this_page
 r_struct
 id|buffer_head
@@ -277,7 +283,6 @@ op_star
 id|b_this_page
 suffix:semicolon
 multiline_comment|/* circular list of buffers in one page */
-multiline_comment|/* Second cache line: */
 DECL|member|b_state
 r_int
 r_int
@@ -296,12 +301,6 @@ r_int
 id|b_count
 suffix:semicolon
 multiline_comment|/* users using this block */
-DECL|member|b_size
-r_int
-r_int
-id|b_size
-suffix:semicolon
-multiline_comment|/* block size */
 multiline_comment|/* Non-performance-critical data follows. */
 DECL|member|b_data
 r_char
@@ -3633,6 +3632,18 @@ r_int
 id|i_ino
 )paren
 suffix:semicolon
+r_extern
+id|blocking
+r_int
+id|_free_ibasket
+c_func
+(paren
+r_struct
+id|super_block
+op_star
+id|sb
+)paren
+suffix:semicolon
 DECL|function|free_ibasket
 r_extern
 r_inline
@@ -3647,18 +3658,6 @@ op_star
 id|sb
 )paren
 (brace
-r_extern
-id|blocking
-r_int
-id|_free_ibasket
-c_func
-(paren
-r_struct
-id|super_block
-op_star
-id|sb
-)paren
-suffix:semicolon
 r_int
 id|res
 suffix:semicolon

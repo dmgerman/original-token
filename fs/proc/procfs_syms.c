@@ -154,7 +154,8 @@ op_assign
 (brace
 l_string|&quot;proc&quot;
 comma
-id|FS_NO_DCACHE
+l_int|0
+multiline_comment|/* FS_NO_DCACHE doesn&squot;t work correctly */
 comma
 id|proc_read_super
 comma

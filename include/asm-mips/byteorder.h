@@ -1,28 +1,7 @@
+multiline_comment|/*&n; * Functions depending of the byteorder.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997 by Ralf Baechle&n; */
 macro_line|#ifndef __ASM_MIPS_BYTEORDER_H
 DECL|macro|__ASM_MIPS_BYTEORDER_H
 mdefine_line|#define __ASM_MIPS_BYTEORDER_H
-multiline_comment|/*&n; * FIXME: Add big endian support&n; */
-DECL|macro|ntohl
-macro_line|#undef ntohl
-DECL|macro|ntohs
-macro_line|#undef ntohs
-DECL|macro|htonl
-macro_line|#undef htonl
-DECL|macro|htons
-macro_line|#undef htons
-macro_line|#if defined (__MIPSEL__)
-DECL|macro|__LITTLE_ENDIAN
-mdefine_line|#define __LITTLE_ENDIAN
-DECL|macro|__LITTLE_ENDIAN_BITFIELD
-mdefine_line|#define __LITTLE_ENDIAN_BITFIELD
-macro_line|#elif defined (__MIPSEB__)
-DECL|macro|__BIG_ENDIAN
-mdefine_line|#define __BIG_ENDIAN
-DECL|macro|__BIG_ENDIAN_BITFIELD
-mdefine_line|#define __BIG_ENDIAN_BITFIELD
-macro_line|#else
-macro_line|#error &quot;MIPS but neither __MIPSEL__ nor __MIPSEB__?&quot;
-macro_line|#endif
 r_extern
 r_int
 r_int
@@ -33,6 +12,7 @@ c_func
 r_int
 r_int
 r_int
+id|__x
 )paren
 suffix:semicolon
 r_extern
@@ -45,18 +25,7 @@ c_func
 r_int
 r_int
 r_int
-)paren
-suffix:semicolon
-r_extern
-r_int
-r_int
-r_int
-id|htonl
-c_func
-(paren
-r_int
-r_int
-r_int
+id|__x
 )paren
 suffix:semicolon
 r_extern
@@ -69,180 +38,192 @@ c_func
 r_int
 r_int
 r_int
+id|__x
 )paren
 suffix:semicolon
 r_extern
-id|__inline__
 r_int
 r_int
 r_int
-id|__ntohl
+id|htonl
 c_func
 (paren
 r_int
 r_int
 r_int
+id|__x
 )paren
 suffix:semicolon
+DECL|macro|__swap32
+mdefine_line|#define __swap32(x) &bslash;&n;&t;((unsigned long int)((((unsigned long int)(x) &amp; 0x000000ffU) &lt;&lt; 24) | &bslash;&n;&t;&t;&t;     (((unsigned long int)(x) &amp; 0x0000ff00U) &lt;&lt;  8) | &bslash;&n;&t;&t;&t;     (((unsigned long int)(x) &amp; 0x00ff0000U) &gt;&gt;  8) | &bslash;&n;&t;&t;&t;     (((unsigned long int)(x) &amp; 0xff000000U) &gt;&gt; 24)))
+DECL|macro|__swap16
+mdefine_line|#define __swap16(x) &bslash;&n;&t;((unsigned short int)((((unsigned short int)(x) &amp; 0x00ff) &lt;&lt; 8) | &bslash;&n;&t;&t;&t;      (((unsigned short int)(x) &amp; 0xff00) &gt;&gt; 8)))
+macro_line|#if defined (__MIPSEB__)
+macro_line|#ifndef __BIG_ENDIAN
+DECL|macro|__BIG_ENDIAN
+mdefine_line|#define __BIG_ENDIAN
+macro_line|#endif
+macro_line|#ifndef __BIG_ENDIAN_BITFIELD
+DECL|macro|__BIG_ENDIAN_BITFIELD
+mdefine_line|#define __BIG_ENDIAN_BITFIELD
+macro_line|#endif
+DECL|macro|__constant_ntohl
+mdefine_line|#define __constant_ntohl(x) (x)
+DECL|macro|__constant_ntohs
+mdefine_line|#define __constant_ntohs(x) (x)
+DECL|macro|__constant_htonl
+mdefine_line|#define __constant_htonl(x) (x)
+DECL|macro|__constant_htons
+mdefine_line|#define __constant_htons(x) (x)
+macro_line|#ifdef __KERNEL__
+multiline_comment|/*&n; * In-kernel byte order macros to handle stuff like&n; * byte-order-dependent filesystems etc.&n; */
+DECL|macro|cpu_to_le32
+mdefine_line|#define cpu_to_le32(x) __swap32((x))
+DECL|macro|le32_to_cpu
+mdefine_line|#define le32_to_cpu(x) __swap32((x))
+DECL|macro|cpu_to_le16
+mdefine_line|#define cpu_to_le16(x) __swap16((x))
+DECL|macro|le16_to_cpu
+mdefine_line|#define le16_to_cpu(x) __swap16((x))
+DECL|macro|cpu_to_be32
+mdefine_line|#define cpu_to_be32(x) (x)
+DECL|macro|be32_to_cpu
+mdefine_line|#define be32_to_cpu(x) (x)
+DECL|macro|cpu_to_be16
+mdefine_line|#define cpu_to_be16(x) (x)
+DECL|macro|be16_to_cpu
+mdefine_line|#define be16_to_cpu(x) (x)
+macro_line|#endif /* __KERNEL__ */
+macro_line|#elif defined (__MIPSEL__)
+macro_line|#ifndef __LITTLE_ENDIAN
+DECL|macro|__LITTLE_ENDIAN
+mdefine_line|#define __LITTLE_ENDIAN
+macro_line|#endif
+macro_line|#ifndef __LITTLE_ENDIAN_BITFIELD
+DECL|macro|__LITTLE_ENDIAN_BITFIELD
+mdefine_line|#define __LITTLE_ENDIAN_BITFIELD
+macro_line|#endif
+DECL|macro|__constant_ntohl
+mdefine_line|#define __constant_ntohl(x) __swap32(x)
+DECL|macro|__constant_ntohs
+mdefine_line|#define __constant_ntohs(x) __swap16(x)
+DECL|macro|__constant_htonl
+mdefine_line|#define __constant_htonl(x) __swap32(x)
+DECL|macro|__constant_htons
+mdefine_line|#define __constant_htons(x) __swap16(x)
+macro_line|#ifdef __KERNEL__
+multiline_comment|/*&n; * In-kernel byte order macros to handle stuff like&n; * byte-order-dependent filesystems etc.&n; */
+DECL|macro|cpu_to_le32
+mdefine_line|#define cpu_to_le32(x) (x)
+DECL|macro|le32_to_cpu
+mdefine_line|#define le32_to_cpu(x) (x)
+DECL|macro|cpu_to_le16
+mdefine_line|#define cpu_to_le16(x) (x)
+DECL|macro|le16_to_cpu
+mdefine_line|#define le16_to_cpu(x) (x)
+DECL|macro|cpu_to_be32
+mdefine_line|#define cpu_to_be32(x) __swap32((x))
+DECL|macro|be32_to_cpu
+mdefine_line|#define be32_to_cpu(x) __swap32((x))
+DECL|macro|cpu_to_be16
+mdefine_line|#define cpu_to_be16(x) __swap16((x))
+DECL|macro|be16_to_cpu
+mdefine_line|#define be16_to_cpu(x) __swap16((x))
+macro_line|#endif /* __KERNEL__ */
+macro_line|#else
+macro_line|#error &quot;MIPS but neither __MIPSEL__ nor __MIPSEB__?&quot;
+macro_line|#endif
+DECL|function|ntohl
 r_extern
 id|__inline__
 r_int
 r_int
 r_int
-id|__ntohs
+id|ntohl
 c_func
 (paren
 r_int
 r_int
 r_int
+id|__x
 )paren
-suffix:semicolon
-r_extern
-id|__inline__
-r_int
-r_int
-r_int
+(brace
+r_return
 id|__constant_ntohl
 c_func
 (paren
-r_int
-r_int
-r_int
+id|__x
 )paren
 suffix:semicolon
+)brace
+DECL|function|ntohs
 r_extern
 id|__inline__
 r_int
 r_int
 r_int
+id|ntohs
+c_func
+(paren
+r_int
+r_int
+r_int
+id|__x
+)paren
+(brace
+r_return
 id|__constant_ntohs
 c_func
 (paren
-r_int
-r_int
-r_int
+id|__x
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * The constant and non-constant versions here are the same.&n; * Maybe I&squot;ll come up with an mips-optimized routine for the&n; * non-constant ones (the constant ones don&squot;t need it: gcc&n; * will optimize it to the correct constant).  Oh, and the&n; * big endian routines that are still missing will be fairly&n; * easy to write :-)&n; */
+)brace
+DECL|function|htonl
 r_extern
 id|__inline__
 r_int
 r_int
 r_int
-DECL|function|__ntohl
-id|__ntohl
+id|htonl
 c_func
 (paren
 r_int
 r_int
 r_int
-id|x
+id|__x
 )paren
 (brace
 r_return
+id|__constant_htonl
+c_func
 (paren
-(paren
-(paren
-id|x
-op_amp
-l_int|0x000000ffU
-)paren
-op_lshift
-l_int|24
-)paren
-op_or
-(paren
-(paren
-id|x
-op_amp
-l_int|0x0000ff00U
-)paren
-op_lshift
-l_int|8
-)paren
-op_or
-(paren
-(paren
-id|x
-op_amp
-l_int|0x00ff0000U
-)paren
-op_rshift
-l_int|8
-)paren
-op_or
-(paren
-(paren
-id|x
-op_amp
-l_int|0xff000000U
-)paren
-op_rshift
-l_int|24
-)paren
+id|__x
 )paren
 suffix:semicolon
 )brace
-DECL|macro|__constant_ntohl
-mdefine_line|#define __constant_ntohl(x) &bslash;&n;&t;((unsigned long int)((((unsigned long int)(x) &amp; 0x000000ffU) &lt;&lt; 24) | &bslash;&n;&t;&t;&t;     (((unsigned long int)(x) &amp; 0x0000ff00U) &lt;&lt;  8) | &bslash;&n;&t;&t;&t;     (((unsigned long int)(x) &amp; 0x00ff0000U) &gt;&gt;  8) | &bslash;&n;&t;&t;&t;     (((unsigned long int)(x) &amp; 0xff000000U) &gt;&gt; 24)))
+DECL|function|htons
 r_extern
 id|__inline__
 r_int
 r_int
 r_int
-DECL|function|__ntohs
-id|__ntohs
+id|htons
 c_func
 (paren
 r_int
 r_int
 r_int
-id|x
+id|__x
 )paren
 (brace
 r_return
+id|__constant_htons
+c_func
 (paren
-(paren
-(paren
-id|x
-op_amp
-l_int|0x00ff
-)paren
-op_lshift
-l_int|8
-)paren
-op_or
-(paren
-(paren
-id|x
-op_amp
-l_int|0xff00
-)paren
-op_rshift
-l_int|8
-)paren
+id|__x
 )paren
 suffix:semicolon
 )brace
-DECL|macro|__constant_ntohs
-mdefine_line|#define __constant_ntohs(x) &bslash;&n;&t;((unsigned short int)((((unsigned short int)(x) &amp; 0x00ff) &lt;&lt; 8) | &bslash;&n;&t;&t;&t;      (((unsigned short int)(x) &amp; 0xff00) &gt;&gt; 8))) &bslash;&n;
-DECL|macro|__htonl
-mdefine_line|#define __htonl(x) __ntohl(x)
-DECL|macro|__htons
-mdefine_line|#define __htons(x) __ntohs(x)
-DECL|macro|__constant_htonl
-mdefine_line|#define __constant_htonl(x) __constant_ntohl(x)
-DECL|macro|__constant_htons
-mdefine_line|#define __constant_htons(x) __constant_ntohs(x)
-macro_line|#ifdef  __OPTIMIZE__
-DECL|macro|ntohl
-macro_line|#  define ntohl(x) &bslash;&n;(__builtin_constant_p((long)(x)) ? &bslash;&n; __constant_ntohl((x)) : &bslash;&n; __ntohl((x)))
-DECL|macro|ntohs
-macro_line|#  define ntohs(x) &bslash;&n;(__builtin_constant_p((short)(x)) ? &bslash;&n; __constant_ntohs((x)) : &bslash;&n; __ntohs((x)))
-DECL|macro|htonl
-macro_line|#  define htonl(x) &bslash;&n;(__builtin_constant_p((long)(x)) ? &bslash;&n; __constant_htonl((x)) : &bslash;&n; __htonl((x)))
-DECL|macro|htons
-macro_line|#  define htons(x) &bslash;&n;(__builtin_constant_p((short)(x)) ? &bslash;&n; __constant_htons((x)) : &bslash;&n; __htons((x)))
-macro_line|#endif
 macro_line|#endif /* __ASM_MIPS_BYTEORDER_H */
 eof

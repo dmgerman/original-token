@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: signal.c,v 1.6 1997/05/29 12:44:48 jj Exp $&n; *  arch/sparc64/kernel/signal.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; *  Copyright (C) 1997 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: signal.c,v 1.7 1997/06/16 06:49:59 davem Exp $&n; *  arch/sparc64/kernel/signal.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; *  Copyright (C) 1997 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -460,10 +460,14 @@ r_struct
 id|new_signal_frame
 op_star
 )paren
+(paren
 id|regs-&gt;u_regs
 (braket
 id|UREG_FP
 )braket
+op_plus
+id|STACK_BIAS
+)paren
 suffix:semicolon
 multiline_comment|/* 1. Make sure we are not getting garbage from the user */
 r_if
@@ -482,11 +486,9 @@ id|sf
 )paren
 )paren
 )paren
-(brace
 r_goto
 id|segv
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -500,11 +502,9 @@ id|sf
 op_amp
 l_int|3
 )paren
-(brace
 r_goto
 id|segv
 suffix:semicolon
-)brace
 id|get_user
 c_func
 (paren
@@ -534,11 +534,9 @@ id|tnpc
 op_amp
 l_int|3
 )paren
-(brace
 r_goto
 id|segv
 suffix:semicolon
-)brace
 id|regs-&gt;tpc
 op_assign
 id|tpc
@@ -930,6 +928,8 @@ id|regs-&gt;u_regs
 (braket
 id|UREG_FP
 )braket
+op_plus
+id|STACK_BIAS
 op_minus
 id|sigframe_size
 )paren
@@ -1065,7 +1065,10 @@ r_struct
 id|reg_window
 )paren
 op_div
-l_int|8
+r_sizeof
+(paren
+id|u64
+)paren
 suffix:semicolon
 id|i
 op_increment
@@ -1082,10 +1085,14 @@ comma
 id|u64
 op_star
 )paren
+(paren
 id|regs-&gt;u_regs
 (braket
 id|UREG_FP
 )braket
+op_plus
+id|STACK_BIAS
+)paren
 )paren
 op_plus
 id|i
@@ -1145,10 +1152,14 @@ id|UREG_FP
 )braket
 op_assign
 (paren
+(paren
 r_int
 r_int
 )paren
 id|sf
+)paren
+op_minus
+id|STACK_BIAS
 suffix:semicolon
 id|regs-&gt;u_regs
 (braket

@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: process.c,v 1.17 1997/06/02 06:33:32 davem Exp $&n; *  arch/sparc64/kernel/process.c&n; *&n; *  Copyright (C) 1995, 1996 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; *  Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: process.c,v 1.18 1997/06/13 14:02:42 davem Exp $&n; *  arch/sparc64/kernel/process.c&n; *&n; *  Copyright (C) 1995, 1996 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; *  Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
@@ -1811,6 +1811,10 @@ suffix:semicolon
 macro_line|#endif
 )brace
 multiline_comment|/* Now, this task is no longer a kernel thread. */
+id|current-&gt;tss.current_ds
+op_assign
+id|USER_DS
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1832,13 +1836,15 @@ id|current
 )paren
 suffix:semicolon
 )brace
-id|current-&gt;tss.current_ds
+id|current-&gt;tss.ctx
 op_assign
-id|USER_DS
+id|current-&gt;mm-&gt;context
+op_amp
+l_int|0x1fff
 suffix:semicolon
 id|spitfire_set_secondary_context
 (paren
-id|current-&gt;mm-&gt;context
+id|current-&gt;tss.ctx
 )paren
 suffix:semicolon
 )brace
@@ -2702,6 +2708,10 @@ id|p-&gt;tss.current_ds
 op_assign
 id|KERNEL_DS
 suffix:semicolon
+id|p-&gt;tss.ctx
+op_assign
+l_int|0
+suffix:semicolon
 id|childregs-&gt;u_regs
 (braket
 id|UREG_G6
@@ -2731,6 +2741,14 @@ suffix:semicolon
 id|p-&gt;tss.current_ds
 op_assign
 id|USER_DS
+suffix:semicolon
+id|p-&gt;tss.ctx
+op_assign
+(paren
+id|p-&gt;mm-&gt;context
+op_amp
+l_int|0x1fff
+)paren
 suffix:semicolon
 macro_line|#if 0
 r_if

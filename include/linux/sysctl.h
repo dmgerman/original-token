@@ -434,6 +434,9 @@ comma
 DECL|enumerator|NET_TCP_ALWAYS_SYNCOOKIE
 id|NET_TCP_ALWAYS_SYNCOOKIE
 comma
+DECL|enumerator|NET_TCP_STDURG
+id|NET_TCP_STDURG
+comma
 )brace
 suffix:semicolon
 multiline_comment|/* /proc/sys/net/ipv6 */

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * include/asm-mips/processor.h&n; *&n; * Copyright (C) 1994  Waldorf Electronics&n; * written by Ralf Baechle&n; */
+multiline_comment|/*&n; * include/asm-mips/processor.h&n; *&n; * Copyright (C) 1994  Waldorf Electronics&n; * written by Ralf Baechle&n; * Modified further for R[236]000 compatibility by Paul M. Antoine&n; */
 macro_line|#ifndef __ASM_MIPS_PROCESSOR_H
 DECL|macro|__ASM_MIPS_PROCESSOR_H
 mdefine_line|#define __ASM_MIPS_PROCESSOR_H
@@ -13,15 +13,6 @@ r_char
 id|wait_available
 suffix:semicolon
 multiline_comment|/* only available on R4[26]00 */
-r_extern
-id|atomic_t
-id|intr_count
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|event
-suffix:semicolon
 multiline_comment|/*&n; * Bus types (default is ISA, but people can check others with these..)&n; * MCA_bus hardcoded to 0 for now.&n; *&n; * This needs to be extended since MIPS systems are being delivered with&n; * numerous different types of bus systems.&n; */
 r_extern
 r_int
@@ -36,7 +27,7 @@ DECL|macro|wp_works_ok
 mdefine_line|#define wp_works_ok 1
 DECL|macro|wp_works_ok__is_a_macro
 mdefine_line|#define wp_works_ok__is_a_macro /* for versions in ksyms.c */
-multiline_comment|/*&n; * User space process size: 2GB. This is hardcoded into a few places,&n; * so don&squot;t change it unless you know what you are doing.&n; */
+multiline_comment|/*&n; * User space process size: 2GB. This is hardcoded into a few places,&n; * so don&squot;t change it unless you know what you are doing.  TASK_SIZE&n; * for a 64 bit kernel expandable to 8192EB, of which the current MIPS&n; * implementations will &quot;only&quot; be able to use 1TB ...&n; */
 DECL|macro|TASK_SIZE
 mdefine_line|#define TASK_SIZE&t;(0x80000000UL)
 multiline_comment|/* This decides where the kernel will search for a free chunk of vm&n; * space during mmap&squot;s.&n; */
@@ -99,8 +90,21 @@ DECL|struct|thread_struct
 r_struct
 id|thread_struct
 (brace
-multiline_comment|/*&n;         * saved main processor registers&n;         */
+multiline_comment|/* Saved main processor registers. */
 DECL|member|reg16
+r_int
+r_int
+id|reg16
+id|__attribute__
+(paren
+(paren
+id|aligned
+(paren
+l_int|8
+)paren
+)paren
+)paren
+suffix:semicolon
 DECL|member|reg17
 DECL|member|reg18
 DECL|member|reg19
@@ -110,8 +114,6 @@ DECL|member|reg22
 DECL|member|reg23
 r_int
 r_int
-id|reg16
-comma
 id|reg17
 comma
 id|reg18
@@ -140,19 +142,28 @@ id|reg30
 comma
 id|reg31
 suffix:semicolon
-multiline_comment|/*&n;&t; * saved cp0 stuff&n;&t; */
+multiline_comment|/* Saved cp0 stuff. */
 DECL|member|cp0_status
 r_int
 r_int
 id|cp0_status
 suffix:semicolon
-multiline_comment|/*&n;&t; * saved fpu/fpu emulator stuff&n;&t; */
+multiline_comment|/* Saved fpu/fpu emulator stuff. */
 DECL|member|fpu
 r_union
 id|mips_fpu_union
 id|fpu
+id|__attribute__
+(paren
+(paren
+id|aligned
+(paren
+l_int|8
+)paren
+)paren
+)paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Other stuff associated with the thread&n;&t; */
+multiline_comment|/* Other stuff associated with the thread. */
 DECL|member|cp0_badvaddr
 r_int
 r_int
@@ -179,64 +190,53 @@ r_int
 r_int
 id|pg_dir
 suffix:semicolon
-multiline_comment|/* L1 page table pointer */
+multiline_comment|/* used in tlb refill    */
 DECL|macro|MF_FIXADE
-mdefine_line|#define MF_FIXADE 1
+mdefine_line|#define MF_FIXADE 1&t;&t;&t;/* Fix address errors in software */
+DECL|macro|MF_LOGADE
+mdefine_line|#define MF_LOGADE 2&t;&t;&t;/* Log address errors to syslog */
 DECL|member|mflags
 r_int
 r_int
 id|mflags
 suffix:semicolon
+DECL|member|current_ds
+r_int
+id|current_ds
+suffix:semicolon
+DECL|member|irix_trampoline
+r_int
+r_int
+id|irix_trampoline
+suffix:semicolon
+multiline_comment|/* Wheee... */
+DECL|member|irix_oldctx
+r_int
+r_int
+id|irix_oldctx
+suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#endif /* !defined (__LANGUAGE_ASSEMBLY__) */
-multiline_comment|/*&n; * If you change the #defines remember to change thread_struct above too!&n; */
-DECL|macro|TOFF_REG16
-mdefine_line|#define TOFF_REG16&t;&t;0
-DECL|macro|TOFF_REG17
-mdefine_line|#define TOFF_REG17&t;&t;(TOFF_REG16+4)
-DECL|macro|TOFF_REG18
-mdefine_line|#define TOFF_REG18&t;&t;(TOFF_REG17+4)
-DECL|macro|TOFF_REG19
-mdefine_line|#define TOFF_REG19&t;&t;(TOFF_REG18+4)
-DECL|macro|TOFF_REG20
-mdefine_line|#define TOFF_REG20&t;&t;(TOFF_REG19+4)
-DECL|macro|TOFF_REG21
-mdefine_line|#define TOFF_REG21&t;&t;(TOFF_REG20+4)
-DECL|macro|TOFF_REG22
-mdefine_line|#define TOFF_REG22&t;&t;(TOFF_REG21+4)
-DECL|macro|TOFF_REG23
-mdefine_line|#define TOFF_REG23&t;&t;(TOFF_REG22+4)
-DECL|macro|TOFF_REG28
-mdefine_line|#define TOFF_REG28&t;&t;(TOFF_REG23+4)
-DECL|macro|TOFF_REG29
-mdefine_line|#define TOFF_REG29&t;&t;(TOFF_REG28+4)
-DECL|macro|TOFF_REG30
-mdefine_line|#define TOFF_REG30&t;&t;(TOFF_REG29+4)
-DECL|macro|TOFF_REG31
-mdefine_line|#define TOFF_REG31&t;&t;(TOFF_REG30+4)
-DECL|macro|TOFF_CP0_STATUS
-mdefine_line|#define TOFF_CP0_STATUS&t;&t;(TOFF_REG31+4)
-multiline_comment|/*&n; * Pad for 8 byte boundary!&n; */
-DECL|macro|TOFF_FPU
-mdefine_line|#define TOFF_FPU&t;&t;(((TOFF_CP0_STATUS+4)+(8-1))&amp;~(8-1))
-DECL|macro|TOFF_CP0_BADVADDR
-mdefine_line|#define TOFF_CP0_BADVADDR&t;(TOFF_FPU+264)
-DECL|macro|TOFF_ERROR_CODE
-mdefine_line|#define TOFF_ERROR_CODE&t;&t;(TOFF_CP0_BADVADDR+4)
-DECL|macro|TOFF_TRAP_NO
-mdefine_line|#define TOFF_TRAP_NO&t;&t;(TOFF_ERROR_CODE+4)
-DECL|macro|TOFF_KSP
-mdefine_line|#define TOFF_KSP&t;&t;(TOFF_TRAP_NO+4)
-DECL|macro|TOFF_PG_DIR
-mdefine_line|#define TOFF_PG_DIR&t;&t;(TOFF_KSP+4)
-DECL|macro|TOFF_MFLAGS
-mdefine_line|#define TOFF_MFLAGS&t;&t;(TOFF_PG_DIR+4)
-macro_line|#if !defined (__LANGUAGE_ASSEMBLY__)
 DECL|macro|INIT_MMAP
 mdefine_line|#define INIT_MMAP { &amp;init_mm, KSEG0, KSEG1, PAGE_SHARED, &bslash;&n;                    VM_READ | VM_WRITE | VM_EXEC, NULL, &amp;init_mm.mmap }
 DECL|macro|INIT_TSS
-mdefine_line|#define INIT_TSS  { &bslash;&n;        /* &bslash;&n;         * saved main processor registers &bslash;&n;         */ &bslash;&n;&t;0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;&t;            0, 0, 0, 0, &bslash;&n;&t;/* &bslash;&n;&t; * saved cp0 stuff &bslash;&n;&t; */ &bslash;&n;&t;0, &bslash;&n;&t;/* &bslash;&n;&t; * saved fpu/fpu emulator stuff &bslash;&n;&t; */ &bslash;&n;&t;INIT_FPU, &bslash;&n;&t;/* &bslash;&n;&t; * Other stuff associated with the process&bslash;&n;&t; */ &bslash;&n;&t;0, 0, 0, sizeof(init_kernel_stack) + (unsigned long)init_kernel_stack - 8, &bslash;&n;&t;(unsigned long) swapper_pg_dir - PT_OFFSET, 0 &bslash;&n;}
+mdefine_line|#define INIT_TSS  { &bslash;&n;        /* &bslash;&n;         * saved main processor registers &bslash;&n;         */ &bslash;&n;&t;0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;&t;            0, 0, 0, 0, &bslash;&n;&t;/* &bslash;&n;&t; * saved cp0 stuff &bslash;&n;&t; */ &bslash;&n;&t;0, &bslash;&n;&t;/* &bslash;&n;&t; * saved fpu/fpu emulator stuff &bslash;&n;&t; */ &bslash;&n;&t;INIT_FPU, &bslash;&n;&t;/* &bslash;&n;&t; * Other stuff associated with the process &bslash;&n;&t; */ &bslash;&n;&t;0, 0, 0, (unsigned long)&amp;init_task_union + KERNEL_STACK_SIZE - 8, &bslash;&n;&t;(unsigned long) swapper_pg_dir, &bslash;&n;&t;/* &bslash;&n;&t; * For now the default is to fix address errors &bslash;&n;&t; */ &bslash;&n;&t;MF_FIXADE, 0, 0, 0 &bslash;&n;}
+macro_line|#ifdef __KERNEL__
+DECL|macro|KERNEL_STACK_SIZE
+mdefine_line|#define KERNEL_STACK_SIZE 8192
+macro_line|#if !defined (__LANGUAGE_ASSEMBLY__)
+multiline_comment|/* Free all resources held by a thread. */
+r_extern
+r_void
+id|release_thread
+c_func
+(paren
+r_struct
+id|task_struct
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Return saved PC of a blocked thread.&n; */
 DECL|function|thread_saved_pc
 r_extern
@@ -255,21 +255,21 @@ id|t
 r_return
 (paren
 (paren
-r_int
-r_int
+r_struct
+id|pt_regs
 op_star
+)paren
+(paren
+r_int
 )paren
 id|t-&gt;reg29
 )paren
-(braket
-id|EF_CP0_EPC
-)braket
+op_member_access_from_pointer
+id|cp0_epc
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Do necessary setup to start up a newly executed thread.&n; */
-r_static
-id|__inline__
-DECL|function|start_thread
+r_extern
 r_void
 id|start_thread
 c_func
@@ -287,93 +287,31 @@ r_int
 r_int
 id|sp
 )paren
-(brace
-multiline_comment|/*&n;&t; * Pure paranoia; probably not needed.&n;&t; */
-id|sys_cacheflush
-c_func
-(paren
-l_int|0
-comma
-op_complement
-l_int|0
-comma
-id|BCACHE
-)paren
 suffix:semicolon
-id|sync_mem
-c_func
-(paren
-)paren
-suffix:semicolon
-id|regs-&gt;cp0_epc
-op_assign
-id|pc
-suffix:semicolon
-multiline_comment|/*&n;&t; * New thread loses kernel privileges.&n;&t; */
-id|regs-&gt;cp0_status
-op_assign
-(paren
-id|regs-&gt;cp0_status
-op_amp
-op_complement
-(paren
-id|ST0_CU0
-op_or
-id|ST0_KSU
-)paren
-)paren
-op_or
-id|KSU_USER
-suffix:semicolon
-multiline_comment|/*&n;&t; * Reserve argument save space for registers a0 - a3.&n;&t;regs-&gt;reg29 = sp - 4 * sizeof(unsigned long);&n;&t; */
-id|regs-&gt;reg29
-op_assign
-id|sp
-suffix:semicolon
-)brace
-multiline_comment|/* Free all resources held by a thread. */
-r_extern
-r_void
-id|release_thread
-c_func
-(paren
-r_struct
-id|task_struct
-op_star
-)paren
-suffix:semicolon
-macro_line|#ifdef __KERNEL__
-multiline_comment|/*&n; * switch_to(n) should switch tasks to task nr n, first&n; * checking that n isn&squot;t the current task, in which case it does nothing.&n; */
-id|asmlinkage
-r_void
-id|resume
-c_func
-(paren
-r_struct
-id|task_struct
-op_star
-id|tsk
-comma
-r_int
-id|offset
-)paren
-suffix:semicolon
-DECL|macro|switch_to
-mdefine_line|#define switch_to(n) &bslash;&n;&t;resume(n, ((int)(&amp;((struct task_struct *)0)-&gt;tss)))
 multiline_comment|/*&n; * Does the process account for user or for system time?&n; */
-macro_line|#if defined (__R4000__)
 DECL|macro|USES_USER_TIME
 mdefine_line|#define USES_USER_TIME(regs) (!((regs)-&gt;cp0_status &amp; 0x18))
-macro_line|#else /* !defined (__R4000__) */
-DECL|macro|USES_USER_TIME
-mdefine_line|#define USES_USER_TIME(regs) (!((regs)-&gt;cp0_status &amp; 0x4))
-macro_line|#endif /* !defined (__R4000__) */
-macro_line|#endif /* __KERNEL__ */
+multiline_comment|/* Allocation and freeing of basic task resources. */
+multiline_comment|/*&n; * NOTE! The task struct and the stack go together&n; */
+DECL|macro|alloc_task_struct
+mdefine_line|#define alloc_task_struct() &bslash;&n;&t;((struct task_struct *) __get_free_pages(GFP_KERNEL,1,0))
+DECL|macro|free_task_struct
+mdefine_line|#define free_task_struct(p)&t;free_pages((unsigned long)(p),1)
+DECL|macro|init_task
+mdefine_line|#define init_task&t;(init_task_union.task)
+DECL|macro|init_stack
+mdefine_line|#define init_stack&t;(init_task_union.stack)
 macro_line|#endif /* !defined (__LANGUAGE_ASSEMBLY__) */
-multiline_comment|/*&n; * ELF support&n; *&n; * Using EM_MIPS is actually wrong - this one is reserved for big endian&n; * machines only&n; */
-DECL|macro|INCOMPATIBLE_MACHINE
-mdefine_line|#define INCOMPATIBLE_MACHINE(m) ((m) != EM_MIPS &amp;&amp; (m) != EM_MIPS_RS4_BE)
-DECL|macro|ELF_EM_CPU
-mdefine_line|#define ELF_EM_CPU EM_MIPS
+macro_line|#endif /* __KERNEL__ */
+multiline_comment|/*&n; * Return_address is a replacement for __builtin_return_address(count)&n; * which on certain architectures cannot reasonably be implemented in GCC&n; * (MIPS, Alpha) or is unuseable with -fomit-frame-pointer (i386).&n; * Note that __builtin_return_address(x&gt;=1) is forbidden because GCC&n; * aborts compilation on some CPUs.  It&squot;s simply not possible to unwind&n; * some CPU&squot;s stackframes.&n; */
+macro_line|#if (__GNUC__ &gt; 2 || (__GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &gt;= 8))
+multiline_comment|/*&n; * __builtin_return_address works only for non-leaf functions.  We avoid the&n; * overhead of a function call by forcing the compiler to save the return&n; * address register on the stack.&n; */
+DECL|macro|return_address
+mdefine_line|#define return_address() ({__asm__ __volatile__(&quot;&quot;:::&quot;$31&quot;);__builtin_return_address(0);})
+macro_line|#else
+multiline_comment|/*&n; * __builtin_return_address is not implemented at all.  Calling it&n; * will return senseless values.  Return NULL which at least is an obviously&n; * senseless value.&n; */
+DECL|macro|return_address
+mdefine_line|#define return_address() NULL
+macro_line|#endif
 macro_line|#endif /* __ASM_MIPS_PROCESSOR_H */
 eof

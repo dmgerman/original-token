@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: weitek.c,v 1.12 1997/06/04 08:27:34 davem Exp $&n; * weitek.c: Tadpole P9100/P9000 console driver&n; *&n; * Copyright (C) 1996 David Redman (djhr@tadpole.co.uk)&n; */
+multiline_comment|/* $Id: weitek.c,v 1.13 1997/06/06 10:56:31 jj Exp $&n; * weitek.c: Tadpole P9100/P9000 console driver&n; *&n; * Copyright (C) 1996 David Redman (djhr@tadpole.co.uk)&n; */
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: resource.h,v 1.2 1997/04/04 00:50:27 davem Exp $&n; * resource.h: Resource definitions.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: resource.h,v 1.3 1997/06/14 17:35:09 davem Exp $&n; * resource.h: Resource definitions.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC64_RESOURCE_H
 DECL|macro|_SPARC64_RESOURCE_H
 mdefine_line|#define _SPARC64_RESOURCE_H
@@ -26,7 +26,6 @@ mdefine_line|#define RLIMIT_AS       9               /* address space limit */
 DECL|macro|RLIM_NLIMITS
 mdefine_line|#define RLIM_NLIMITS&t;10
 macro_line|#ifdef __KERNEL__
-multiline_comment|/* XXX 32-bit binary compatability... */
 DECL|macro|INIT_RLIMITS
 mdefine_line|#define INIT_RLIMITS&t;&t;&t;&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    {LONG_MAX, LONG_MAX}, {LONG_MAX, LONG_MAX},&t;&t;&t;&t;&bslash;&n;    {LONG_MAX, LONG_MAX}, {_STK_LIM, _STK_LIM},&t;&t;&t;&t;&bslash;&n;    {       0, LONG_MAX}, {LONG_MAX, LONG_MAX},&t;&t;&t;&t;&bslash;&n;    {NR_OPEN, NR_OPEN}, {MAX_TASKS_PER_USER, MAX_TASKS_PER_USER},&t;&bslash;&n;    {LONG_MAX, LONG_MAX}, {LONG_MAX, LONG_MAX}                          &bslash;&n;}
 macro_line|#endif /* __KERNEL__ */

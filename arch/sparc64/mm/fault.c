@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fault.c,v 1.11 1997/06/01 05:46:15 davem Exp $&n; * arch/sparc64/mm/fault.c: Page fault handlers for the 64-bit Sparc.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: fault.c,v 1.12 1997/06/13 14:02:52 davem Exp $&n; * arch/sparc64/mm/fault.c: Page fault handlers for the 64-bit Sparc.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;asm/head.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -527,6 +527,16 @@ suffix:semicolon
 )brace
 multiline_comment|/* #define FAULT_TRACER */
 multiline_comment|/* #define FAULT_TRACER_VERBOSE */
+macro_line|#ifdef FAULT_TRACER
+multiline_comment|/* Set and clear this elsewhere at critical moment, for oodles of debugging fun. */
+DECL|variable|fault_trace_enable
+r_int
+id|fault_trace_enable
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
+macro_line|#include &lt;asm/hardirq.h&gt;
 DECL|function|do_sparc64_fault
 id|asmlinkage
 r_void
@@ -608,6 +618,12 @@ id|rcnt
 op_assign
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|fault_trace_enable
+)paren
+(brace
 macro_line|#ifdef FAULT_TRACER_VERBOSE
 id|printk
 c_func
@@ -657,7 +673,36 @@ l_int|15
 id|printk
 c_func
 (paren
-l_string|&quot;Wheee lotsa bogus faults, something wrong, spinning&bslash;n&quot;
+l_string|&quot;Wheee lotsa bogus faults, something wrong, &quot;
+l_string|&quot;spinning&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;pctx[%016lx]sctx[%016lx]mmctx[%016lx]DS(%x)&quot;
+l_string|&quot;tctx[%016lx] flgs[%016lx]&bslash;n&quot;
+comma
+id|spitfire_get_primary_context
+c_func
+(paren
+)paren
+comma
+id|spitfire_get_secondary_context
+c_func
+(paren
+)paren
+comma
+id|mm-&gt;context
+comma
+(paren
+r_int
+)paren
+id|current-&gt;tss.current_ds
+comma
+id|current-&gt;tss.ctx
+comma
+id|current-&gt;tss.flags
 )paren
 suffix:semicolon
 id|__asm__
@@ -727,6 +772,7 @@ id|last_addr
 op_assign
 id|address
 suffix:semicolon
+)brace
 macro_line|#endif
 id|lock_kernel
 (paren
@@ -1037,6 +1083,12 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#ifdef FAULT_TRACER
+r_if
+c_cond
+(paren
+id|fault_trace_enable
+)paren
+(brace
 macro_line|#ifdef FAULT_TRACER_VERBOSE
 id|printk
 c_func
@@ -1052,6 +1104,7 @@ l_string|&quot;]&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+)brace
 macro_line|#endif
 )brace
 eof

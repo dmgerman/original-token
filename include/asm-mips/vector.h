@@ -1,22 +1,40 @@
-multiline_comment|/*&n; * include/asm-mips/vector.h&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995 by Ralf Baechle&n; */
+multiline_comment|/*&n; * include/asm-mips/vector.h&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997 by Ralf Baechle&n; */
 macro_line|#ifndef __ASM_MIPS_VECTOR_H
 DECL|macro|__ASM_MIPS_VECTOR_H
 mdefine_line|#define __ASM_MIPS_VECTOR_H
-multiline_comment|/*&n; * This structure defines how to access various features of&n; * different machine types and how to access them.&n; *&n; * FIXME: More things need to be accessed via this vector.&n; */
-DECL|struct|feature
-r_struct
-id|feature
-(brace
-DECL|member|handle_int
+multiline_comment|/*&n; * These vector structures are not very good to maintain - they&squot;d probably&n; * grow to at leat three times the size - so I&squot;ll remove &squot;em and replace&n; * the with lots of ordinary variables.&n; */
+r_extern
 r_void
 (paren
 op_star
-id|handle_int
+id|irq_setup
 )paren
 (paren
 r_void
 )paren
 suffix:semicolon
+r_extern
+id|asmlinkage
+r_void
+(paren
+op_star
+id|fd_cacheflush
+)paren
+(paren
+r_const
+r_void
+op_star
+id|addr
+comma
+r_int
+id|size
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * This structure defines how to access various features of&n; * different machine types and how to access them.&n; */
+DECL|struct|feature
+r_struct
+id|feature
+(brace
 multiline_comment|/*&n;&t; * How to access the floppy controller&squot;s ports.&n;&t; */
 DECL|member|fd_inb
 r_int
@@ -163,24 +181,7 @@ id|fd_disable_irq
 r_void
 )paren
 suffix:semicolon
-DECL|member|fd_cacheflush
-r_void
-(paren
-op_star
-id|fd_cacheflush
-)paren
-(paren
-r_int
-r_char
-op_star
-id|addr
-comma
-r_int
-r_int
-id|size
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * How to access the RTC register of DS1287&n;&t; */
+multiline_comment|/*&n;&t; * How to access the RTC register of the DS1287?&n;&t; */
 DECL|member|rtc_read_data
 r_int
 r_char
@@ -189,7 +190,9 @@ op_star
 id|rtc_read_data
 )paren
 (paren
-r_void
+r_int
+r_int
+id|addr
 )paren
 suffix:semicolon
 DECL|member|rtc_write_data
@@ -201,33 +204,20 @@ id|rtc_write_data
 (paren
 r_int
 r_char
+id|data
+comma
+r_int
+r_int
+id|addr
 )paren
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Similar to the above this is a structure that describes various&n; * CPU dependent features.&n; *&n; * FIXME: This vector isn&squot;t being used yet&n; */
-DECL|struct|cpu
-r_struct
-id|cpu
-(brace
-DECL|member|dummy
-r_int
-id|dummy
-suffix:semicolon
-multiline_comment|/* keep GCC from complaining */
-)brace
-suffix:semicolon
 r_extern
 r_struct
 id|feature
 op_star
 id|feature
-suffix:semicolon
-r_extern
-r_struct
-id|cpu
-op_star
-id|cpu
 suffix:semicolon
 macro_line|#endif /* __ASM_MIPS_VECTOR_H */
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: system.h,v 1.22 1997/06/01 10:27:28 davem Exp $ */
+multiline_comment|/* $Id: system.h,v 1.23 1997/06/16 06:17:06 davem Exp $ */
 macro_line|#ifndef __SPARC64_SYSTEM_H
 DECL|macro|__SPARC64_SYSTEM_H
 mdefine_line|#define __SPARC64_SYSTEM_H
@@ -349,6 +349,15 @@ id|__volatile__
 c_func
 (paren
 "&quot;"
+id|mov
+op_mod
+l_int|0
+comma
+op_mod
+op_mod
+id|g1
+l_int|1
+suffix:colon
 id|ldx
 (braket
 op_mod
@@ -357,8 +366,6 @@ l_int|3
 comma
 op_mod
 l_int|1
-l_int|1
-suffix:colon
 id|casx
 (braket
 op_mod
@@ -387,14 +394,13 @@ id|xcc
 comma
 l_int|1
 id|b
-id|ldx
-(braket
+id|mov
 op_mod
-l_int|3
-)braket
+op_mod
+id|g1
 comma
 op_mod
-l_int|1
+l_int|0
 l_string|&quot;&t;: &quot;
 op_assign
 op_amp
@@ -418,6 +424,8 @@ l_string|&quot;r&quot;
 id|m
 )paren
 suffix:colon
+l_string|&quot;g1&quot;
+comma
 l_string|&quot;cc&quot;
 )paren
 suffix:semicolon

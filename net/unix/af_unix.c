@@ -1602,6 +1602,7 @@ id|error
 )paren
 (brace
 r_int
+r_int
 id|old_fs
 suffix:semicolon
 r_int

@@ -144,11 +144,11 @@ id|sysctl_tcp_syncookies
 suffix:semicolon
 r_extern
 r_int
-id|sysctl_tcp_always_syncookie
+id|sysctl_tcp_syn_retries
 suffix:semicolon
 r_extern
 r_int
-id|sysctl_tcp_syn_retries
+id|sysctl_tcp_stdurg
 suffix:semicolon
 r_extern
 r_int
@@ -1187,6 +1187,7 @@ id|proc_dointvec
 )brace
 comma
 macro_line|#endif
+macro_line|#ifdef CONFIG_SYN_COOKIES
 (brace
 id|NET_TCP_SYNCOOKIES
 comma
@@ -1208,13 +1209,14 @@ op_amp
 id|proc_dointvec
 )brace
 comma
+macro_line|#endif
 (brace
-id|NET_TCP_ALWAYS_SYNCOOKIE
+id|NET_TCP_STDURG
 comma
-l_string|&quot;tcp_always_syncookie&quot;
+l_string|&quot;tcp_stdurg&quot;
 comma
 op_amp
-id|sysctl_tcp_always_syncookie
+id|sysctl_tcp_stdurg
 comma
 r_sizeof
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtable.h,v 1.34 1997/06/02 06:33:41 davem Exp $&n; * pgtable.h: SpitFire page table operations.&n; *&n; * Copyright 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: pgtable.h,v 1.37 1997/06/13 14:03:06 davem Exp $&n; * pgtable.h: SpitFire page table operations.&n; *&n; * Copyright 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC64_PGTABLE_H
 DECL|macro|_SPARC64_PGTABLE_H
 mdefine_line|#define _SPARC64_PGTABLE_H
@@ -101,8 +101,6 @@ DECL|macro|_PAGE_READ
 mdefine_line|#define _PAGE_READ&t;0x0000000000000200&t;/* Readable SW Bit                    */
 DECL|macro|_PAGE_WRITE
 mdefine_line|#define _PAGE_WRITE&t;0x0000000000000100&t;/* Writable SW Bit                    */
-DECL|macro|_PAGE_PRIV
-mdefine_line|#define _PAGE_PRIV&t;0x0000000000000080&t;/* Software privilege bit&t;      */
 DECL|macro|_PAGE_CACHE
 mdefine_line|#define _PAGE_CACHE&t;(_PAGE_CP | _PAGE_CV)
 DECL|macro|__DIRTY_BITS
@@ -110,7 +108,7 @@ mdefine_line|#define __DIRTY_BITS&t;(_PAGE_MODIFIED | _PAGE_WRITE | _PAGE_W)
 DECL|macro|__ACCESS_BITS
 mdefine_line|#define __ACCESS_BITS&t;(_PAGE_ACCESSED | _PAGE_READ | _PAGE_R)
 DECL|macro|__PRIV_BITS
-mdefine_line|#define __PRIV_BITS&t;(_PAGE_P | _PAGE_PRIV)
+mdefine_line|#define __PRIV_BITS&t;_PAGE_P
 DECL|macro|PAGE_NONE
 mdefine_line|#define PAGE_NONE&t;__pgprot (_PAGE_PRESENT | _PAGE_VALID | _PAGE_CACHE | &bslash;&n;&t;&t;&t;&t;  __PRIV_BITS | __ACCESS_BITS)
 DECL|macro|PAGE_SHARED
@@ -128,7 +126,7 @@ mdefine_line|#define _PFN_MASK&t;_PAGE_PADDR
 DECL|macro|_PAGE_CHG_MASK
 mdefine_line|#define _PAGE_CHG_MASK&t;(_PFN_MASK | _PAGE_MODIFIED | _PAGE_ACCESSED | _PAGE_PRESENT)
 DECL|macro|pg_iobits
-mdefine_line|#define pg_iobits (_PAGE_VALID | __PRIV_BITS | __ACCESS_BITS | _PAGE_E)
+mdefine_line|#define pg_iobits (_PAGE_VALID | _PAGE_PRESENT | __DIRTY_BITS | __ACCESS_BITS | _PAGE_E)
 DECL|macro|__P000
 mdefine_line|#define __P000&t;PAGE_NONE
 DECL|macro|__P001
@@ -709,8 +707,6 @@ op_mod
 l_int|4
 id|be
 comma
-id|a
-comma
 id|pt
 op_mod
 op_mod
@@ -863,7 +859,7 @@ id|old_ctx
 id|spitfire_set_secondary_context
 c_func
 (paren
-id|mm-&gt;context
+id|new_ctx
 )paren
 suffix:semicolon
 )brace
@@ -1059,8 +1055,6 @@ id|g3
 op_mod
 l_int|4
 id|be
-comma
-id|a
 comma
 id|pt
 op_mod
@@ -3634,6 +3628,7 @@ id|pte
 )paren
 op_assign
 (paren
+(paren
 id|page
 )paren
 op_or
@@ -3642,6 +3637,16 @@ c_func
 (paren
 id|prot
 )paren
+op_or
+id|_PAGE_E
+)paren
+op_amp
+op_complement
+(paren
+r_int
+r_int
+)paren
+id|_PAGE_CACHE
 suffix:semicolon
 r_return
 id|pte
@@ -3679,10 +3684,8 @@ id|ptep
 suffix:semicolon
 id|pgdp
 op_assign
-id|pgd_offset
+id|pgd_offset_k
 (paren
-id|current-&gt;mm
-comma
 id|addr
 )paren
 suffix:semicolon
@@ -3727,13 +3730,9 @@ id|addr
 )paren
 (brace
 r_return
-(paren
 id|sun4u_get_pte
 (paren
 id|addr
-)paren
-op_amp
-l_int|0x0fffffff
 )paren
 suffix:semicolon
 )brace

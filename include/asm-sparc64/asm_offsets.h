@@ -206,22 +206,10 @@ DECL|macro|AOFF_task_real_timer
 mdefine_line|#define AOFF_task_real_timer&t;0x000001f8
 DECL|macro|ASIZ_task_real_timer
 mdefine_line|#define ASIZ_task_real_timer&t;0x00000028
-DECL|macro|AOFF_task_utime
-mdefine_line|#define AOFF_task_utime&t;0x00000220
-DECL|macro|ASIZ_task_utime
-mdefine_line|#define ASIZ_task_utime&t;0x00000008
-DECL|macro|AOFF_task_stime
-mdefine_line|#define AOFF_task_stime&t;0x00000228
-DECL|macro|ASIZ_task_stime
-mdefine_line|#define ASIZ_task_stime&t;0x00000008
-DECL|macro|AOFF_task_cutime
-mdefine_line|#define AOFF_task_cutime&t;0x00000230
-DECL|macro|ASIZ_task_cutime
-mdefine_line|#define ASIZ_task_cutime&t;0x00000008
-DECL|macro|AOFF_task_cstime
-mdefine_line|#define AOFF_task_cstime&t;0x00000238
-DECL|macro|ASIZ_task_cstime
-mdefine_line|#define ASIZ_task_cstime&t;0x00000008
+DECL|macro|AOFF_task_times
+mdefine_line|#define AOFF_task_times&t;0x00000220
+DECL|macro|ASIZ_task_times
+mdefine_line|#define ASIZ_task_times&t;0x00000020
 DECL|macro|AOFF_task_start_time
 mdefine_line|#define AOFF_task_start_time&t;0x00000240
 DECL|macro|ASIZ_task_start_time
@@ -489,17 +477,17 @@ mdefine_line|#define ASIZ_thread_sstk_info&t;0x00000010
 DECL|macro|AOFF_thread_current_ds
 mdefine_line|#define AOFF_thread_current_ds&t;0x000005a0
 DECL|macro|ASIZ_thread_current_ds
-mdefine_line|#define ASIZ_thread_current_ds&t;0x00000004
+mdefine_line|#define ASIZ_thread_current_ds&t;0x00000008
 DECL|macro|AOFF_thread_new_signal
-mdefine_line|#define AOFF_thread_new_signal&t;0x000005a4
+mdefine_line|#define AOFF_thread_new_signal&t;0x000005a8
 DECL|macro|ASIZ_thread_new_signal
-mdefine_line|#define ASIZ_thread_new_signal&t;0x00000004
+mdefine_line|#define ASIZ_thread_new_signal&t;0x00000008
 DECL|macro|AOFF_thread_kregs
-mdefine_line|#define AOFF_thread_kregs&t;0x000005a8
+mdefine_line|#define AOFF_thread_kregs&t;0x000005b0
 DECL|macro|ASIZ_thread_kregs
 mdefine_line|#define ASIZ_thread_kregs&t;0x00000008
 DECL|macro|AOFF_thread_core_exec
-mdefine_line|#define AOFF_thread_core_exec&t;0x000005b0
+mdefine_line|#define AOFF_thread_core_exec&t;0x000005b8
 DECL|macro|ASIZ_thread_core_exec
 mdefine_line|#define ASIZ_thread_core_exec&t;0x00000020
 macro_line|#endif /* __ASM_OFFSETS_H__ */

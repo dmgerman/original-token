@@ -1,7 +1,8 @@
-multiline_comment|/*&n; * include/asm-mips/mipsregs.h&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994, 1995 by Ralf Baechle&n; */
+multiline_comment|/*&n; * include/asm-mips/mipsregs.h&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994, 1995, 1996 by Ralf Baechle&n; * Modified for further R[236]000 support by Paul M. Antoine, 1996.&n; */
 macro_line|#ifndef __ASM_MIPS_MIPSREGS_H
 DECL|macro|__ASM_MIPS_MIPSREGS_H
 mdefine_line|#define __ASM_MIPS_MIPSREGS_H
+macro_line|#include &lt;linux/linkage.h&gt;
 multiline_comment|/*&n; * The following macros are especially useful for __asm__&n; * inline assembler.&n; */
 macro_line|#ifndef __STR
 DECL|macro|__STR
@@ -10,14 +11,6 @@ macro_line|#endif
 macro_line|#ifndef STR
 DECL|macro|STR
 mdefine_line|#define STR(x) __STR(x)
-macro_line|#endif
-multiline_comment|/*&n; * On the R2000/3000 load instructions are not interlocked -&n; * we therefore sometimes need to fill load delay slots with a nop&n; * which would be useless for ISA &gt;= 2.&n; */
-macro_line|#if !defined (__R4000__)
-DECL|macro|FILL_LDS
-mdefine_line|#define FILL_LDS nop
-macro_line|#else
-DECL|macro|FILL_LDS
-mdefine_line|#define FILL_LDS
 macro_line|#endif
 multiline_comment|/*&n; * Coprocessor 0 register names&n; */
 DECL|macro|CP0_INDEX
@@ -76,6 +69,21 @@ DECL|macro|CP0_TAGHI
 mdefine_line|#define CP0_TAGHI $29
 DECL|macro|CP0_ERROREPC
 mdefine_line|#define CP0_ERROREPC $30
+multiline_comment|/*&n; * R4640/R4650 cp0 register names.  These registers are listed&n; * here only for completeness; without MMU these CPUs are not useable&n; * by Linux.  A future ELKS port might take make Linux run on them&n; * though ...&n; */
+DECL|macro|CP0_IBASE
+mdefine_line|#define CP0_IBASE $0
+DECL|macro|CP0_IBOUND
+mdefine_line|#define CP0_IBOUND $1
+DECL|macro|CP0_DBASE
+mdefine_line|#define CP0_DBASE $2
+DECL|macro|CP0_DBOUND
+mdefine_line|#define CP0_DBOUND $3
+DECL|macro|CP0_CALG
+mdefine_line|#define CP0_CALG $17
+DECL|macro|CP0_IWATCH
+mdefine_line|#define CP0_IWATCH $18
+DECL|macro|CP0_DWATCH
+mdefine_line|#define CP0_DWATCH $19
 multiline_comment|/*&n; * Coprocessor 1 (FPU) register names&n; */
 DECL|macro|CP1_REVISION
 mdefine_line|#define CP1_REVISION   $0
@@ -114,6 +122,7 @@ mdefine_line|#define PL_16M  24
 multiline_comment|/*&n; * Macros to access the system control coprocessor&n; */
 DECL|macro|read_32bit_cp0_register
 mdefine_line|#define read_32bit_cp0_register(source)                         &bslash;&n;({ int __res;                                                   &bslash;&n;        __asm__ __volatile__(                                   &bslash;&n;        &quot;mfc0&bslash;t%0,&quot;STR(source)                                  &bslash;&n;        : &quot;=r&quot; (__res));                                        &bslash;&n;        __res;})
+multiline_comment|/*&n; * For now use this only with interrupts disabled!&n; */
 DECL|macro|read_64bit_cp0_register
 mdefine_line|#define read_64bit_cp0_register(source)                         &bslash;&n;({ int __res;                                                   &bslash;&n;        __asm__ __volatile__(                                   &bslash;&n;        &quot;.set&bslash;tmips3&bslash;n&bslash;t&quot;                                       &bslash;&n;        &quot;dmfc0&bslash;t%0,&quot;STR(source)&quot;&bslash;n&bslash;t&quot;                           &bslash;&n;        &quot;.set&bslash;tmips0&quot;                                           &bslash;&n;        : &quot;=r&quot; (__res));                                        &bslash;&n;        __res;})
 DECL|macro|write_32bit_cp0_register
@@ -173,60 +182,80 @@ comma
 id|CP0_CAUSE
 )paren
 macro_line|#endif /* defined (__LANGUAGE_ASSEMBLY__) */
-multiline_comment|/*&n; * Inline code for use of the ll and sc instructions&n; *&n; * FIXME: This instruction is only available on MIPS ISA &gt;=3.&n; * Since these operations are only being used for atomic operations&n; * the easiest workaround for the R[23]00 is to disable interrupts.&n; */
+multiline_comment|/*&n; * Inline code for use of the ll and sc instructions&n; *&n; * FIXME: This instruction is only available on MIPS ISA &gt;=2.&n; * Since these operations are only being used for atomic operations&n; * the easiest workaround for the R[23]00 is to disable interrupts.&n; * This fails for R3000 SMP machines which use that many different&n; * technologies as replacement that it is difficult to create even&n; * just a hook for for all machines to hook into.  The only good&n; * thing is that there is currently no R3000 SMP machine on the&n; * Linux/MIPS target list ...&n; */
 DECL|macro|load_linked
-mdefine_line|#define load_linked(addr)                                       &bslash;&n;({                                                              &bslash;&n;&t;unsigned int __res;                                     &bslash;&n;                                                                &bslash;&n;&t;__asm__ __volatile__(                                   &bslash;&n;&t;&quot;ll&bslash;t%0,(%1)&quot;                                           &bslash;&n;&t;: &quot;=r&quot; (__res)                                          &bslash;&n;&t;: &quot;r&quot; ((unsigned int) (addr)));                         &bslash;&n;                                                                &bslash;&n;&t;__res;                                                  &bslash;&n;})
+mdefine_line|#define load_linked(addr)                                       &bslash;&n;({                                                              &bslash;&n;&t;unsigned int __res;                                     &bslash;&n;                                                                &bslash;&n;&t;__asm__ __volatile__(                                   &bslash;&n;&t;&quot;ll&bslash;t%0,(%1)&quot;                                           &bslash;&n;&t;: &quot;=r&quot; (__res)                                          &bslash;&n;&t;: &quot;r&quot; ((unsigned long) (addr)));                        &bslash;&n;                                                                &bslash;&n;&t;__res;                                                  &bslash;&n;})
 DECL|macro|store_conditional
 mdefine_line|#define store_conditional(addr,value)                           &bslash;&n;({                                                              &bslash;&n;&t;int&t;__res;                                          &bslash;&n;                                                                &bslash;&n;&t;__asm__ __volatile__(                                   &bslash;&n;&t;&quot;sc&bslash;t%0,(%2)&quot;                                           &bslash;&n;&t;: &quot;=r&quot; (__res)                                          &bslash;&n;&t;: &quot;0&quot; (value), &quot;r&quot; (addr));                             &bslash;&n;                                                                &bslash;&n;&t;__res;                                                  &bslash;&n;})
-multiline_comment|/*&n; * Bitfields in the cp0 status register&n; *&n; * Refer to the MIPS R4xx0 manuals, chapter 5 for explanation.&n; * FIXME: This doesn&squot;t cover all R4xx0 processors.&n; */
+multiline_comment|/*&n; * Bitfields in the R4xx0 cp0 status register&n; */
 DECL|macro|ST0_IE
-mdefine_line|#define ST0_IE&t;&t;&t;(1   &lt;&lt;  0)
+mdefine_line|#define ST0_IE&t;&t;&t;0x00000001
 DECL|macro|ST0_EXL
-mdefine_line|#define ST0_EXL&t;&t;&t;(1   &lt;&lt;  1)
+mdefine_line|#define ST0_EXL&t;&t;&t;0x00000002
 DECL|macro|ST0_ERL
-mdefine_line|#define ST0_ERL&t;&t;&t;(1   &lt;&lt;  2)
+mdefine_line|#define ST0_ERL&t;&t;&t;0x00000004
 DECL|macro|ST0_KSU
-mdefine_line|#define ST0_KSU&t;&t;&t;(3   &lt;&lt;  3)
+mdefine_line|#define ST0_KSU&t;&t;&t;0x00000018
 DECL|macro|KSU_USER
-macro_line|#  define KSU_USER&t;&t;(2  &lt;&lt;   3)
+macro_line|#  define KSU_USER&t;&t;0x00000010
 DECL|macro|KSU_SUPERVISOR
-macro_line|#  define KSU_SUPERVISOR&t;(1  &lt;&lt;   3)
+macro_line|#  define KSU_SUPERVISOR&t;0x00000008
 DECL|macro|KSU_KERNEL
-macro_line|#  define KSU_KERNEL&t;&t;(0  &lt;&lt;   3)
+macro_line|#  define KSU_KERNEL&t;&t;0x00000000
 DECL|macro|ST0_UX
-mdefine_line|#define ST0_UX&t;&t;&t;(1   &lt;&lt;  5)
+mdefine_line|#define ST0_UX&t;&t;&t;0x00000020
 DECL|macro|ST0_SX
-mdefine_line|#define ST0_SX&t;&t;&t;(1   &lt;&lt;  6)
+mdefine_line|#define ST0_SX&t;&t;&t;0x00000040
 DECL|macro|ST0_KX
-mdefine_line|#define ST0_KX &t;&t;&t;(1   &lt;&lt;  7)
+mdefine_line|#define ST0_KX &t;&t;&t;0x00000080
+multiline_comment|/*&n; * Bitfields in the R[23]000 cp0 status register.&n; */
+DECL|macro|ST0_KUC
+mdefine_line|#define ST0_KUC&t;&t;&t;0x00000001
+DECL|macro|ST0_IEP
+mdefine_line|#define ST0_IEP&t;&t;&t;0x00000002
+DECL|macro|ST0_KUP
+mdefine_line|#define ST0_KUP&t;&t;&t;0x00000004
+DECL|macro|ST0_IEO
+mdefine_line|#define ST0_IEO&t;&t;&t;0x00000008
+DECL|macro|ST0_KUO
+mdefine_line|#define ST0_KUO&t;&t;&t;0x00000010
+multiline_comment|/* bits 6 &amp; 7 are reserved on R[23]000 */
+multiline_comment|/*&n; * Bits specific to the R4640/R4650&n; */
+DECL|macro|ST0_UM
+mdefine_line|#define ST0_UM                 &lt;1   &lt;&lt;  4)
+DECL|macro|ST0_IL
+mdefine_line|#define ST0_IL                 (1   &lt;&lt; 23)
+DECL|macro|ST0_DL
+mdefine_line|#define ST0_DL                 (1   &lt;&lt; 24)
+multiline_comment|/*&n; * Status register bits available in all MIPS CPUs.&n; */
 DECL|macro|ST0_IM
-mdefine_line|#define ST0_IM&t;&t;&t;(255 &lt;&lt;  8)
+mdefine_line|#define ST0_IM&t;&t;&t;0x0000ff00
 DECL|macro|ST0_DE
-mdefine_line|#define ST0_DE&t;&t;&t;(1   &lt;&lt; 16)
+mdefine_line|#define ST0_DE&t;&t;&t;0x00010000
 DECL|macro|ST0_CE
-mdefine_line|#define ST0_CE&t;&t;&t;(1   &lt;&lt; 17)
+mdefine_line|#define ST0_CE&t;&t;&t;0x00020000
 DECL|macro|ST0_CH
-mdefine_line|#define ST0_CH&t;&t;&t;(1   &lt;&lt; 18)
+mdefine_line|#define ST0_CH&t;&t;&t;0x00040000
 DECL|macro|ST0_SR
-mdefine_line|#define ST0_SR&t;&t;&t;(1   &lt;&lt; 20)
+mdefine_line|#define ST0_SR&t;&t;&t;0x00100000
 DECL|macro|ST0_BEV
-mdefine_line|#define ST0_BEV&t;&t;&t;(1   &lt;&lt; 22)
+mdefine_line|#define ST0_BEV&t;&t;&t;0x00400000
 DECL|macro|ST0_RE
-mdefine_line|#define ST0_RE&t;&t;&t;(1   &lt;&lt; 25)
+mdefine_line|#define ST0_RE&t;&t;&t;0x02000000
 DECL|macro|ST0_FR
-mdefine_line|#define ST0_FR&t;&t;&t;(1   &lt;&lt; 26)
+mdefine_line|#define ST0_FR&t;&t;&t;0x04000000
 DECL|macro|ST0_CU
-mdefine_line|#define ST0_CU&t;&t;&t;(15  &lt;&lt; 28)
+mdefine_line|#define ST0_CU&t;&t;&t;0xf0000000
 DECL|macro|ST0_CU0
-mdefine_line|#define ST0_CU0&t;&t;&t;(1   &lt;&lt; 28)
+mdefine_line|#define ST0_CU0&t;&t;&t;0x10000000
 DECL|macro|ST0_CU1
-mdefine_line|#define ST0_CU1&t;&t;&t;(1   &lt;&lt; 29)
+mdefine_line|#define ST0_CU1&t;&t;&t;0x20000000
 DECL|macro|ST0_CU2
-mdefine_line|#define ST0_CU2&t;&t;&t;(1   &lt;&lt; 30)
+mdefine_line|#define ST0_CU2&t;&t;&t;0x40000000
 DECL|macro|ST0_CU3
-mdefine_line|#define ST0_CU3&t;&t;&t;(1   &lt;&lt; 31)
+mdefine_line|#define ST0_CU3&t;&t;&t;0x80000000
 DECL|macro|ST0_XX
-mdefine_line|#define ST0_XX&t;&t;&t;(1   &lt;&lt; 31)&t;/* R8000/R10000 naming */
+mdefine_line|#define ST0_XX&t;&t;&t;0x80000000&t;/* MIPS IV naming */
 multiline_comment|/*&n; * Bitfields and bit numbers in the coprocessor 0 cause register.&n; *&n; * Refer to to your MIPS R4xx0 manual, chapter 5 for explanation.&n; */
 DECL|macro|CAUSEB_EXCCODE
 mdefine_line|#define  CAUSEB_EXCCODE&t;&t;2
@@ -276,5 +305,145 @@ DECL|macro|CAUSEB_BD
 mdefine_line|#define  CAUSEB_BD&t;&t;31
 DECL|macro|CAUSEF_BD
 mdefine_line|#define  CAUSEF_BD&t;&t;(1   &lt;&lt; 31)
+multiline_comment|/*&n; * Bits in the coprozessor 0 config register.&n; */
+DECL|macro|CONFIG_DB
+mdefine_line|#define CONFIG_DB&t;&t;(1 &lt;&lt;  4)
+DECL|macro|CONFIG_IB
+mdefine_line|#define CONFIG_IB&t;&t;(1 &lt;&lt;  5)
+DECL|macro|CONFIG_SC
+mdefine_line|#define CONFIG_SC&t;&t;(1 &lt;&lt; 17)
+multiline_comment|/*&n; * R10000 performance counter definitions.&n; *&n; * FIXME: The R10000 performance counter opens a nice way to implement CPU&n; *        time accounting with a precission of one cycle.  I don&squot;t have&n; *        R10000 silicon but just a manual, so ...&n; */
+multiline_comment|/*&n; * Events counted by counter #0&n; */
+DECL|macro|CE0_CYCLES
+mdefine_line|#define CE0_CYCLES&t;&t;&t;0
+DECL|macro|CE0_INSN_ISSUED
+mdefine_line|#define CE0_INSN_ISSUED&t;&t;&t;1
+DECL|macro|CE0_LPSC_ISSUED
+mdefine_line|#define CE0_LPSC_ISSUED&t;&t;&t;2
+DECL|macro|CE0_S_ISSUED
+mdefine_line|#define CE0_S_ISSUED&t;&t;&t;3
+DECL|macro|CE0_SC_ISSUED
+mdefine_line|#define CE0_SC_ISSUED&t;&t;&t;4
+DECL|macro|CE0_SC_FAILED
+mdefine_line|#define CE0_SC_FAILED&t;&t;&t;5
+DECL|macro|CE0_BRANCH_DECODED
+mdefine_line|#define CE0_BRANCH_DECODED&t;&t;6
+DECL|macro|CE0_QW_WB_SECONDARY
+mdefine_line|#define CE0_QW_WB_SECONDARY&t;&t;7
+DECL|macro|CE0_CORRECTED_ECC_ERRORS
+mdefine_line|#define CE0_CORRECTED_ECC_ERRORS&t;8
+DECL|macro|CE0_ICACHE_MISSES
+mdefine_line|#define CE0_ICACHE_MISSES&t;&t;9
+DECL|macro|CE0_SCACHE_I_MISSES
+mdefine_line|#define CE0_SCACHE_I_MISSES&t;&t;10
+DECL|macro|CE0_SCACHE_I_WAY_MISSPREDICTED
+mdefine_line|#define CE0_SCACHE_I_WAY_MISSPREDICTED&t;11
+DECL|macro|CE0_EXT_INTERVENTIONS_REQ
+mdefine_line|#define CE0_EXT_INTERVENTIONS_REQ&t;12
+DECL|macro|CE0_EXT_INVALIDATE_REQ
+mdefine_line|#define CE0_EXT_INVALIDATE_REQ&t;&t;13
+DECL|macro|CE0_VIRTUAL_COHERENCY_COND
+mdefine_line|#define CE0_VIRTUAL_COHERENCY_COND&t;14
+DECL|macro|CE0_INSN_GRADUATED
+mdefine_line|#define CE0_INSN_GRADUATED&t;&t;15
+multiline_comment|/*&n; * Events counted by counter #1&n; */
+DECL|macro|CE1_CYCLES
+mdefine_line|#define CE1_CYCLES&t;&t;&t;0
+DECL|macro|CE1_INSN_GRADUATED
+mdefine_line|#define CE1_INSN_GRADUATED&t;&t;1
+DECL|macro|CE1_LPSC_GRADUATED
+mdefine_line|#define CE1_LPSC_GRADUATED&t;&t;2
+DECL|macro|CE1_S_GRADUATED
+mdefine_line|#define CE1_S_GRADUATED&t;&t;&t;3
+DECL|macro|CE1_SC_GRADUATED
+mdefine_line|#define CE1_SC_GRADUATED&t;&t;4
+DECL|macro|CE1_FP_INSN_GRADUATED
+mdefine_line|#define CE1_FP_INSN_GRADUATED&t;&t;5
+DECL|macro|CE1_QW_WB_PRIMARY
+mdefine_line|#define CE1_QW_WB_PRIMARY&t;&t;6
+DECL|macro|CE1_TLB_REFILL
+mdefine_line|#define CE1_TLB_REFILL&t;&t;&t;7
+DECL|macro|CE1_BRANCH_MISSPREDICTED
+mdefine_line|#define CE1_BRANCH_MISSPREDICTED&t;8
+DECL|macro|CE1_DCACHE_MISS
+mdefine_line|#define CE1_DCACHE_MISS&t;&t;&t;9
+DECL|macro|CE1_SCACHE_D_MISSES
+mdefine_line|#define CE1_SCACHE_D_MISSES&t;&t;10
+DECL|macro|CE1_SCACHE_D_WAY_MISSPREDICTED
+mdefine_line|#define CE1_SCACHE_D_WAY_MISSPREDICTED&t;11
+DECL|macro|CE1_EXT_INTERVENTION_HITS
+mdefine_line|#define CE1_EXT_INTERVENTION_HITS&t;12
+DECL|macro|CE1_EXT_INVALIDATE_REQ
+mdefine_line|#define CE1_EXT_INVALIDATE_REQ&t;&t;13
+DECL|macro|CE1_SP_HINT_TO_CEXCL_SC_BLOCKS
+mdefine_line|#define CE1_SP_HINT_TO_CEXCL_SC_BLOCKS&t;14
+DECL|macro|CE1_SP_HINT_TO_SHARED_SC_BLOCKS
+mdefine_line|#define CE1_SP_HINT_TO_SHARED_SC_BLOCKS&t;15
+multiline_comment|/*&n; * These flags define in which priviledge mode the counters count events&n; */
+DECL|macro|CEB_USER
+mdefine_line|#define CEB_USER&t;8&t;/* Count events in user mode, EXL = ERL = 0 */
+DECL|macro|CEB_SUPERVISOR
+mdefine_line|#define CEB_SUPERVISOR&t;4&t;/* Count events in supvervisor mode EXL = ERL = 0 */
+DECL|macro|CEB_KERNEL
+mdefine_line|#define CEB_KERNEL&t;2&t;/* Count events in kernel mode EXL = ERL = 0 */
+DECL|macro|CEB_EXL
+mdefine_line|#define CEB_EXL&t;&t;1&t;/* Count events with EXL = 1, ERL = 0 */
+macro_line|#ifndef __LANGUAGE_ASSEMBLY__
+multiline_comment|/*&n; * Functions to access the performance counter and control registers&n; */
+r_extern
+id|asmlinkage
+r_int
+r_int
+id|read_perf_cntr
+c_func
+(paren
+r_int
+r_int
+id|counter
+)paren
+suffix:semicolon
+r_extern
+id|asmlinkage
+r_void
+id|write_perf_cntr
+c_func
+(paren
+r_int
+r_int
+id|counter
+comma
+r_int
+r_int
+id|val
+)paren
+suffix:semicolon
+r_extern
+id|asmlinkage
+r_int
+r_int
+id|read_perf_cntl
+c_func
+(paren
+r_int
+r_int
+id|counter
+)paren
+suffix:semicolon
+r_extern
+id|asmlinkage
+r_void
+id|write_perf_cntl
+c_func
+(paren
+r_int
+r_int
+id|counter
+comma
+r_int
+r_int
+id|val
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif /* __ASM_MIPS_MIPSREGS_H */
 eof

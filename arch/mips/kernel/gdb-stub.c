@@ -5,7 +5,6 @@ macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/asm.h&gt;
 macro_line|#include &lt;asm/mipsregs.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/cachectl.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/gdb-stub.h&gt;
@@ -990,6 +989,25 @@ id|hard_trap_info
 op_star
 id|ht
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+r_int
+r_char
+id|c
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1013,14 +1031,72 @@ id|trap_low
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * In case GDB is started before us, ack any packets&n;&t; * (presumably &quot;$?#xx&quot;) sitting there.&n;&t; */
+r_while
+c_loop
+(paren
+(paren
+id|c
+op_assign
+id|getDebugChar
+c_func
+(paren
+)paren
+)paren
+op_ne
+l_char|&squot;$&squot;
+)paren
+(brace
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+(paren
+id|c
+op_assign
+id|getDebugChar
+c_func
+(paren
+)paren
+)paren
+op_ne
+l_char|&squot;#&squot;
+)paren
+(brace
+suffix:semicolon
+)brace
+id|c
+op_assign
+id|getDebugChar
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* eat first csum byte */
+id|c
+op_assign
+id|getDebugChar
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* eat second csum byte */
 id|putDebugChar
+c_func
 (paren
 l_char|&squot;+&squot;
 )paren
 suffix:semicolon
+multiline_comment|/* ack it */
 id|initialized
 op_assign
 l_int|1
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 id|breakpoint
 c_func
@@ -2061,20 +2137,9 @@ op_assign
 id|addr
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; * Need to flush the instruction cache here, as we may&n;&t;&t;&t; * have deposited a breakpoint, and the icache probably&n;&t;&t;&t; * has no way of knowing that a data ref to some location&n;&t;&t;&t; * may have changed something that is in the instruction&n;&t;&t;&t; * cache.&n;&t;&t;&t; * NB: We flush both caches, just to be sure...&n;&t;&t;&t; */
-id|sys_cacheflush
+id|flush_cache_all
 c_func
 (paren
-(paren
-r_void
-op_star
-)paren
-id|KSEG0
-comma
-id|KSEG1
-op_minus
-id|KSEG0
-comma
-id|BCACHE
 )paren
 suffix:semicolon
 r_return

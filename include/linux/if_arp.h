@@ -45,6 +45,10 @@ DECL|macro|ARPHRD_X25
 mdefine_line|#define ARPHRD_X25&t;271&t;&t;/* CCITT X.25&t;&t;&t;*/
 DECL|macro|ARPHRD_PPP
 mdefine_line|#define ARPHRD_PPP&t;512
+DECL|macro|ARPHRD_HDLC
+mdefine_line|#define ARPHRD_HDLC&t;513&t;&t;/* (Cisco) HDLC &t;&t;*/
+DECL|macro|ARPHRD_LAPB
+mdefine_line|#define ARPHRD_LAPB&t;516&t;&t;/* LAPB&t;&t;&t;&t;*/
 DECL|macro|ARPHRD_TUNNEL
 mdefine_line|#define ARPHRD_TUNNEL&t;768&t;&t;/* IPIP tunnel&t;&t;&t;*/
 DECL|macro|ARPHRD_TUNNEL6

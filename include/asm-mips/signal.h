@@ -1,33 +1,34 @@
+multiline_comment|/*&n; * Linux/MIPS specific definitions for signals.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996 by Ralf Baechle&n; */
 macro_line|#ifndef __ASM_MIPS_SIGNAL_H
+macro_line|#include &lt;asm/sgidefs.h&gt;
+multiline_comment|/* Any one of these symbols __need_* means that GNU libc&n;   wants us just to define one data type.  So don&squot;t define&n;   the symbols that indicate this file&squot;s entire job has been done.  */
+macro_line|#if !defined(__need_signums) &amp;&amp; !defined(__need_fake_sigfuns) &amp;&amp; &bslash;&n;    !defined(__need__nsig)
 DECL|macro|__ASM_MIPS_SIGNAL_H
 mdefine_line|#define __ASM_MIPS_SIGNAL_H
-multiline_comment|/*&n; * For now ...&n; */
-macro_line|#include &lt;linux/types.h&gt;
+macro_line|#endif
+macro_line|#ifdef __ASM_MIPS_SIGNAL_H
 DECL|typedef|sigset_t
 r_typedef
-id|__u64
-id|sigset_t
-suffix:semicolon
-macro_line|#if 0
-multiline_comment|/*&n; * This is what we should really use but the kernel can&squot;t handle&n; * a non-scalar type yet.  Since we use 64 signals only anyway we&n; * just use __u64 and pad another 64 bits in the kernel for now ...&n; */
-r_typedef
-r_struct
-(brace
 r_int
 r_int
-id|sigbits
-(braket
-l_int|4
-)braket
-suffix:semicolon
-)brace
 id|sigset_t
 suffix:semicolon
-macro_line|#endif
+macro_line|#endif /* __ASM_MIPS_SIGNAL_H */
+macro_line|#if !defined (___nsig_defined) &amp;&amp; &bslash;&n;    (defined (__ASM_MIPS_SIGNAL_H) || defined (__need__nsig))
+DECL|macro|___nsig_defined
+mdefine_line|#define ___nsig_defined
 DECL|macro|_NSIG
 mdefine_line|#define _NSIG&t;&t;65
+macro_line|#endif
+DECL|macro|__need__nsig
+macro_line|#undef __need__nsig
+macro_line|#ifdef __KERNEL__
 DECL|macro|NSIG
 mdefine_line|#define NSIG&t;&t;_NSIG
+macro_line|#endif
+macro_line|#if !defined (__signums_defined) &amp;&amp; &bslash;&n;    (defined (__ASM_MIPS_SIGNAL_H) || defined (__need_signums))
+DECL|macro|__signums_defined
+mdefine_line|#define __signums_defined
 multiline_comment|/*&n; * For 1.3.0 Linux/MIPS changed the signal numbers to be compatible the ABI.&n; */
 DECL|macro|SIGHUP
 mdefine_line|#define SIGHUP&t;&t; 1&t;/* Hangup (POSIX).  */
@@ -97,6 +98,10 @@ DECL|macro|SIGXCPU
 mdefine_line|#define SIGXCPU&t;&t;30&t;/* CPU limit exceeded (4.2 BSD).  */
 DECL|macro|SIGXFSZ
 mdefine_line|#define SIGXFSZ&t;&t;31&t;/* File size limit exceeded (4.2 BSD).  */
+macro_line|#endif /* need signums */
+DECL|macro|__need_signums
+macro_line|#undef __need_signums
+macro_line|#ifdef __ASM_MIPS_SIGNAL_H
 multiline_comment|/*&n; * sa_flags values: SA_STACK is not currently supported, but will allow the&n; * usage of signal stacks by using the (now obsolete) sa_restorer field in&n; * the sigaction structure as a stack pointer. This is now possible due to&n; * the changes in signal handling. LBT 010493.&n; * SA_INTERRUPT is a no-op, but left due to historical reasons. Use the&n; * SA_RESTART flag to get restarting signals (which were the default long ago)&n; * SA_SHIRQ flag is for shared interrupt support on PCI and EISA.&n; */
 DECL|macro|SA_STACK
 mdefine_line|#define SA_STACK&t;0x1
@@ -121,13 +126,18 @@ DECL|macro|SA_PROBE
 mdefine_line|#define SA_PROBE SA_ONESHOT
 DECL|macro|SA_SAMPLE_RANDOM
 mdefine_line|#define SA_SAMPLE_RANDOM SA_RESTART
-macro_line|#endif
+macro_line|#endif /* __KERNEL__ */
 DECL|macro|SIG_BLOCK
-mdefine_line|#define SIG_BLOCK          1&t;/* for blocking signals */
+mdefine_line|#define SIG_BLOCK&t;1&t;/* for blocking signals */
 DECL|macro|SIG_UNBLOCK
-mdefine_line|#define SIG_UNBLOCK        2&t;/* for unblocking signals */
+mdefine_line|#define SIG_UNBLOCK&t;2&t;/* for unblocking signals */
 DECL|macro|SIG_SETMASK
-mdefine_line|#define SIG_SETMASK        3&t;/* for setting the signal mask */
+mdefine_line|#define SIG_SETMASK&t;3&t;/* for setting the signal mask */
+DECL|macro|SIG_SETMASK32
+mdefine_line|#define SIG_SETMASK32&t;256&t;/* Goodie from SGI for BSD compatibility:&n;&t;&t;&t;&t;   set only the low 32 bit of the sigset.  */
+macro_line|#ifndef __sighandler_t_defined
+DECL|macro|__sighandler_t_defined
+mdefine_line|#define __sighandler_t_defined
 multiline_comment|/* Type of a signal handler.  */
 DECL|typedef|__sighandler_t
 r_typedef
@@ -140,6 +150,11 @@ id|__sighandler_t
 r_int
 )paren
 suffix:semicolon
+macro_line|#endif
+macro_line|#endif
+macro_line|#if !defined (__fake_sigfuns_defined) &amp;&amp; &bslash;&n;    (defined (__ASM_MIPS_SIGNAL_H) || defined (__need_fake_sigfuns))
+DECL|macro|__fake_sigfuns_defined
+mdefine_line|#define __fake_sigfuns_defined
 multiline_comment|/* Fake signal functions */
 DECL|macro|SIG_DFL
 mdefine_line|#define SIG_DFL&t;((__sighandler_t)0)&t;/* default signal handling */
@@ -147,6 +162,10 @@ DECL|macro|SIG_IGN
 mdefine_line|#define SIG_IGN&t;((__sighandler_t)1)&t;/* ignore signal */
 DECL|macro|SIG_ERR
 mdefine_line|#define SIG_ERR&t;((__sighandler_t)-1)&t;/* error return from signal */
+macro_line|#endif
+DECL|macro|__need_fake_sigfuns
+macro_line|#undef __need_fake_sigfuns
+macro_line|#ifdef __ASM_MIPS_SIGNAL_H
 DECL|struct|sigaction
 r_struct
 id|sigaction
@@ -164,15 +183,15 @@ DECL|member|sa_mask
 id|sigset_t
 id|sa_mask
 suffix:semicolon
-multiline_comment|/*&n;&t; * To keep the ABI structure size we have to fill a little gap ...&n;&t; */
-DECL|member|sa_mask_pad
+DECL|member|__pad0
 r_int
 r_int
-id|sa_mask_pad
+id|__pad0
 (braket
-l_int|2
+l_int|3
 )braket
 suffix:semicolon
+multiline_comment|/* reserved, keep size constant */
 multiline_comment|/* Abi says here follows reserved int[2] */
 DECL|member|sa_restorer
 r_void
@@ -184,11 +203,11 @@ id|sa_restorer
 r_void
 )paren
 suffix:semicolon
-macro_line|#if __mips &lt; 3
+macro_line|#if (_MIPS_ISA == _MIPS_ISA_MIPS1) || (_MIPS_ISA == _MIPS_ISA_MIPS2)
 multiline_comment|/*&n;&t; * For 32 bit code we have to pad struct sigaction to get&n;&t; * constant size for the ABI&n;&t; */
-DECL|member|pad0
+DECL|member|__pad1
 r_int
-id|pad0
+id|__pad1
 (braket
 l_int|1
 )braket
@@ -200,5 +219,35 @@ suffix:semicolon
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;asm/sigcontext.h&gt;
 macro_line|#endif
-macro_line|#endif /* __ASM_MIPS_SIGNAL_H */
+macro_line|#if defined (__KERNEL__) || defined (__USE_MISC)
+multiline_comment|/*&n; * The following break codes are or were in use for specific purposes in&n; * other MIPS operating systems.  Linux/MIPS doesn&squot;t use all of them.  The&n; * unused ones are here as placeholders; we might encounter them in&n; * non-Linux/MIPS object files or make use of them in the future.&n; */
+DECL|macro|BRK_USERBP
+mdefine_line|#define BRK_USERBP&t;0&t;/* User bp (used by debuggers) */
+DECL|macro|BRK_KERNELBP
+mdefine_line|#define BRK_KERNELBP&t;1&t;/* Break in the kernel */
+DECL|macro|BRK_ABORT
+mdefine_line|#define BRK_ABORT&t;2&t;/* Sometimes used by abort(3) to SIGIOT */
+DECL|macro|BRK_BD_TAKEN
+mdefine_line|#define BRK_BD_TAKEN&t;3&t;/* For bd slot emulation - not implemented */
+DECL|macro|BRK_BD_NOTTAKEN
+mdefine_line|#define BRK_BD_NOTTAKEN&t;4&t;/* For bd slot emulation - not implemented */
+DECL|macro|BRK_SSTEPBP
+mdefine_line|#define BRK_SSTEPBP&t;5&t;/* User bp (used by debuggers) */
+DECL|macro|BRK_OVERFLOW
+mdefine_line|#define BRK_OVERFLOW&t;6&t;/* Overflow check */
+DECL|macro|BRK_DIVZERO
+mdefine_line|#define BRK_DIVZERO&t;7&t;/* Divide by zero check */
+DECL|macro|BRK_RANGE
+mdefine_line|#define BRK_RANGE&t;8&t;/* Range error check */
+DECL|macro|BRK_STACKOVERFLOW
+mdefine_line|#define BRK_STACKOVERFLOW 9&t;/* For Ada stackchecking */
+DECL|macro|BRK_NORLD
+mdefine_line|#define BRK_NORLD&t;10&t;/* No rld found - not used by Linux/MIPS */
+DECL|macro|_BRK_THREADBP
+mdefine_line|#define _BRK_THREADBP&t;11&t;/* For threads, user bp (used by debuggers) */
+DECL|macro|BRK_MULOVF
+mdefine_line|#define BRK_MULOVF&t;1023&t;/* Multiply overflow */
+macro_line|#endif /* defined (__KERNEL__) || defined (__USE_MISC) */
+macro_line|#endif /* defined (__ASM_MIPS_SIGNAL_H) */
+macro_line|#endif /* !defined (__ASM_MIPS_SIGNAL_H) */
 eof

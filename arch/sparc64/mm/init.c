@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: init.c,v 1.29 1997/05/27 06:28:13 davem Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: init.c,v 1.30 1997/06/06 10:56:21 jj Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
@@ -2158,6 +2158,8 @@ id|__pgprot
 c_func
 (paren
 id|pg_iobits
+op_or
+id|__PRIV_BITS
 )paren
 )paren
 suffix:semicolon
@@ -2176,6 +2178,8 @@ c_func
 id|pg_iobits
 op_or
 id|__DIRTY_BITS
+op_or
+id|__PRIV_BITS
 )paren
 )paren
 suffix:semicolon

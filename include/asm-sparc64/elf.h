@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: elf.h,v 1.6 1997/05/17 11:51:27 davem Exp $ */
+multiline_comment|/* $Id: elf.h,v 1.7 1997/06/14 21:28:07 davem Exp $ */
 macro_line|#ifndef __ASM_SPARC64_ELF_H
 DECL|macro|__ASM_SPARC64_ELF_H
 mdefine_line|#define __ASM_SPARC64_ELF_H
@@ -41,8 +41,10 @@ DECL|macro|ELF_FLAGS_INIT
 mdefine_line|#define ELF_FLAGS_INIT current-&gt;tss.flags &amp;= ~SPARC_FLAG_32BIT
 macro_line|#endif
 multiline_comment|/*&n; * This is used to ensure we don&squot;t load something for the wrong architecture.&n; */
+macro_line|#ifndef elf_check_arch
 DECL|macro|elf_check_arch
 mdefine_line|#define elf_check_arch(x) ((x) == ELF_ARCH)&t;/* Might be EM_SPARC64 or EM_SPARC */
+macro_line|#endif
 DECL|macro|USE_ELF_CORE_DUMP
 mdefine_line|#define USE_ELF_CORE_DUMP
 DECL|macro|ELF_EXEC_PAGESIZE

@@ -86,11 +86,11 @@ r_int
 id|l_whence
 suffix:semicolon
 DECL|member|l_start
-id|off_t
+id|__kernel_off_t
 id|l_start
 suffix:semicolon
 DECL|member|l_len
-id|off_t
+id|__kernel_off_t
 id|l_len
 suffix:semicolon
 DECL|member|l_sysid
@@ -99,7 +99,7 @@ id|l_sysid
 suffix:semicolon
 multiline_comment|/* XXXXXXXXXXXXXXXXXXXXXXXXX */
 DECL|member|l_pid
-id|pid_t
+id|__kernel_pid_t
 id|l_pid
 suffix:semicolon
 DECL|member|pad

@@ -94,7 +94,6 @@ multiline_comment|/* fb size in bytes */
 suffix:semicolon
 DECL|macro|FBIOGTYPE
 mdefine_line|#define FBIOGTYPE _IOR(&squot;F&squot;, 0, struct fbtype)
-multiline_comment|/* Used by FBIOPUTCMAP&n; *&n; * XXX 32-bit binary compatability item... -DaveM&n; */
 DECL|struct|fbcmap
 r_struct
 id|fbcmap
@@ -238,7 +237,6 @@ DECL|macro|FB_CUR_SETSHAPE
 mdefine_line|#define FB_CUR_SETSHAPE 0x10&t;/* set shape */
 DECL|macro|FB_CUR_SETALL
 mdefine_line|#define FB_CUR_SETALL   0x1F&t;/* all of the above */
-multiline_comment|/* XXX 32-bit binary compatability item... -DaveM */
 DECL|struct|fbcursor
 r_struct
 id|fbcursor

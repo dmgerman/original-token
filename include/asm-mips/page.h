@@ -1,3 +1,4 @@
+multiline_comment|/*&n; * Definitions for page handling&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994, 1995, 1996 by Ralf Baechle&n; */
 macro_line|#ifndef __ASM_MIPS_PAGE_H
 DECL|macro|__ASM_MIPS_PAGE_H
 mdefine_line|#define __ASM_MIPS_PAGE_H
@@ -12,6 +13,34 @@ macro_line|#ifdef __KERNEL__
 DECL|macro|STRICT_MM_TYPECHECKS
 mdefine_line|#define STRICT_MM_TYPECHECKS
 macro_line|#ifndef __LANGUAGE_ASSEMBLY__
+r_extern
+r_void
+(paren
+op_star
+id|clear_page
+)paren
+(paren
+r_int
+r_int
+id|page
+)paren
+suffix:semicolon
+r_extern
+r_void
+(paren
+op_star
+id|copy_page
+)paren
+(paren
+r_int
+r_int
+id|to
+comma
+r_int
+r_int
+id|from
+)paren
+suffix:semicolon
 macro_line|#ifdef STRICT_MM_TYPECHECKS
 multiline_comment|/*&n; * These are used to make use of C type-checking..&n; */
 DECL|member|pte
@@ -121,73 +150,21 @@ mdefine_line|#define __pgd(x)&t;(x)
 DECL|macro|__pgprot
 mdefine_line|#define __pgprot(x)&t;(x)
 macro_line|#endif /* !defined (STRICT_MM_TYPECHECKS) */
-multiline_comment|/*&n; * We need a special version of copy_page that can handle virtual caches.&n; * While we&squot;re at tweaking with caches we can use that to make it even&n; * faster.  The R10000 accelerated caching mode will further accelerate it.&n; */
-r_extern
-r_void
-id|__copy_page
-c_func
-(paren
-r_int
-r_int
-id|from
-comma
-r_int
-r_int
-id|to
-)paren
-suffix:semicolon
-DECL|macro|copy_page
-mdefine_line|#define copy_page(from,to) __copy_page((unsigned long)from, (unsigned long)to)
 macro_line|#endif /* __LANGUAGE_ASSEMBLY__ */
 multiline_comment|/* to align the pointer to the (next) page boundary */
 DECL|macro|PAGE_ALIGN
 mdefine_line|#define PAGE_ALIGN(addr)&t;(((addr)+PAGE_SIZE-1)&amp;PAGE_MASK)
-multiline_comment|/* This handles the memory map */
-macro_line|#if __mips == 3
-multiline_comment|/*&n; * We handle pages at XKPHYS + 0x1800000000000000 (cachable, noncoherent)&n; * Pagetables are at  XKPHYS + 0x1000000000000000 (uncached)&n; */
+multiline_comment|/*&n; * This handles the memory map.&n; * We handle pages at KSEG0 for kernels with 32 bit address space.&n; */
 DECL|macro|PAGE_OFFSET
-mdefine_line|#define PAGE_OFFSET&t;0x9800000000000000UL
-DECL|macro|PT_OFFSET
-mdefine_line|#define PT_OFFSET&t;0x9000000000000000UL
+mdefine_line|#define PAGE_OFFSET&t;0x80000000UL
+DECL|macro|__pa
+mdefine_line|#define __pa(x)&t;&t;((unsigned long) (x) - PAGE_OFFSET)
+DECL|macro|__va
+mdefine_line|#define __va(x)&t;&t;((void *)((unsigned long) (x) + PAGE_OFFSET))
 DECL|macro|MAP_MASK
-mdefine_line|#define MAP_MASK        0x07ffffffffffffffUL
-macro_line|#else
-multiline_comment|/*&n; * We handle pages at KSEG0 (cachable, noncoherent)&n; * Pagetables are at  KSEG1 (uncached)&n; */
-DECL|macro|PAGE_OFFSET
-mdefine_line|#define PAGE_OFFSET&t;0x80000000
-DECL|macro|PT_OFFSET
-mdefine_line|#define PT_OFFSET&t;0xa0000000
-DECL|macro|MAP_MASK
-mdefine_line|#define MAP_MASK        0x1fffffff
-macro_line|#endif
+mdefine_line|#define MAP_MASK        0x1fffffffUL
 DECL|macro|MAP_NR
 mdefine_line|#define MAP_NR(addr)&t;((((unsigned long)(addr)) &amp; MAP_MASK) &gt;&gt; PAGE_SHIFT)
-macro_line|#ifndef __LANGUAGE_ASSEMBLY__
-r_extern
-r_int
-r_int
-id|page_colour_mask
-suffix:semicolon
-r_extern
-r_inline
-r_int
-r_int
-DECL|function|page_colour
-id|page_colour
-c_func
-(paren
-r_int
-r_int
-id|page
-)paren
-(brace
-r_return
-id|page
-op_amp
-id|page_colour_mask
-suffix:semicolon
-)brace
-macro_line|#endif /* defined (__LANGUAGE_ASSEMBLY__) */
 macro_line|#endif /* defined (__KERNEL__) */
 macro_line|#endif /* __ASM_MIPS_PAGE_H */
 eof

@@ -1,9 +1,8 @@
-multiline_comment|/* $Id: sigcontext.h,v 1.4 1997/04/04 00:50:28 davem Exp $ */
+multiline_comment|/* $Id: sigcontext.h,v 1.6 1997/06/16 00:29:25 richard Exp $ */
 macro_line|#ifndef __SPARC64_SIGCONTEXT_H
 DECL|macro|__SPARC64_SIGCONTEXT_H
 mdefine_line|#define __SPARC64_SIGCONTEXT_H
 macro_line|#include &lt;asm/ptrace.h&gt;
-multiline_comment|/* XXX This gets exported to userland as well as kernel, it is probably&n; * XXX riddled with many hard to find 32-bit binary compatability issues.&n; * XXX Signals and this file need to be investigated heavily. -DaveM&n; */
 DECL|macro|SUNOS_MAXWIN
 mdefine_line|#define SUNOS_MAXWIN   31
 macro_line|#ifndef __ASSEMBLY__
@@ -111,30 +110,36 @@ suffix:semicolon
 multiline_comment|/* sigmask to restore */
 DECL|member|sigc_sp
 r_int
+r_int
 id|sigc_sp
 suffix:semicolon
 multiline_comment|/* stack pointer */
 DECL|member|sigc_pc
+r_int
 r_int
 id|sigc_pc
 suffix:semicolon
 multiline_comment|/* program counter */
 DECL|member|sigc_npc
 r_int
+r_int
 id|sigc_npc
 suffix:semicolon
 multiline_comment|/* next program counter */
 DECL|member|sigc_psr
+r_int
 r_int
 id|sigc_psr
 suffix:semicolon
 multiline_comment|/* for condition codes etc */
 DECL|member|sigc_g1
 r_int
+r_int
 id|sigc_g1
 suffix:semicolon
 multiline_comment|/* User uses these two registers */
 DECL|member|sigc_o0
+r_int
 r_int
 id|sigc_o0
 suffix:semicolon

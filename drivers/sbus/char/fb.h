@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fb.h,v 1.26 1997/04/17 02:29:33 miguel Exp $&n; * fb.h: contains the definitions of the structures that various sun&n; *       frame buffer can use to do console driver stuff.&n; *&n; * (C) 1996 Dave Redman     (djhr@tadpole.co.uk)&n; * (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * (C) 1996 David Miller    (davem@rutgers.edu)&n; * (C) 1996 Peter Zaitcev   (zaitcev@lab.ipmce.su)&n; * (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; * (C) 1996 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: fb.h,v 1.27 1997/06/06 10:56:28 jj Exp $&n; * fb.h: contains the definitions of the structures that various sun&n; *       frame buffer can use to do console driver stuff.&n; *&n; * (C) 1996 Dave Redman     (djhr@tadpole.co.uk)&n; * (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * (C) 1996 David Miller    (davem@rutgers.edu)&n; * (C) 1996 Peter Zaitcev   (zaitcev@lab.ipmce.su)&n; * (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; * (C) 1996 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#ifndef __SPARC_FB_H_
 DECL|macro|__SPARC_FB_H_
 mdefine_line|#define __SPARC_FB_H_

@@ -1,8 +1,8 @@
-multiline_comment|/*&n; * This file contains the system call numbers.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995 by Ralf Baechle&n; */
+multiline_comment|/*&n; * This file contains the system call numbers.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997 by Ralf Baechle&n; *&n; * Changed system calls macros _syscall5 - _syscall7 to push args 5 to 7 onto&n; * the stack. Robin Farine for ACN S.A, Copyright (C) 1996 by ACN S.A&n; */
 macro_line|#ifndef __ASM_MIPS_UNISTD_H
 DECL|macro|__ASM_MIPS_UNISTD_H
 mdefine_line|#define __ASM_MIPS_UNISTD_H
-multiline_comment|/*&n; * The syscalls 0 - 3999 are reserved for a down to the root syscall&n; * compatibility with Risc/OS and IRIX.  None of these syscalls has yet been&n; * implemented.  We&squot;ll see how to deal with the various &quot;real&quot; BSD variants&n; * like Ultrix, NetBSD ...&n; */
+multiline_comment|/*&n; * The syscalls 0 - 3999 are reserved for a down to the root syscall&n; * compatibility with RISC/os and IRIX.  We&squot;ll see how to deal with the&n; * various &quot;real&quot; BSD variants like Ultrix, NetBSD ...&n; */
 multiline_comment|/*&n; * SVR4 syscalls are in the range from 1 to 999&n; */
 DECL|macro|__NR_SVR4
 mdefine_line|#define __NR_SVR4&t;&t;&t;0
@@ -2066,8 +2066,8 @@ DECL|macro|__NR_getgroups
 mdefine_line|#define __NR_getgroups&t;&t;&t;(__NR_Linux +  80)
 DECL|macro|__NR_setgroups
 mdefine_line|#define __NR_setgroups&t;&t;&t;(__NR_Linux +  81)
-DECL|macro|__NR_select
-mdefine_line|#define __NR_select&t;&t;&t;(__NR_Linux +  82)
+DECL|macro|__NR_reserved82
+mdefine_line|#define __NR_reserved82&t;&t;&t;(__NR_Linux +  82)
 DECL|macro|__NR_symlink
 mdefine_line|#define __NR_symlink&t;&t;&t;(__NR_Linux +  83)
 DECL|macro|__NR_oldlstat
@@ -2206,10 +2206,10 @@ DECL|macro|__NR_setup
 mdefine_line|#define __NR_setup&t;&t;&t;(__NR_Linux + 150)&t;/* used only by init, to get system going */
 DECL|macro|__NR_getsid
 mdefine_line|#define __NR_getsid&t;&t;&t;(__NR_Linux + 151)
-DECL|macro|__NR_reserved1
-mdefine_line|#define __NR_reserved1&t;&t;&t;(__NR_Linux + 152)
-DECL|macro|__NR_reserved2
-mdefine_line|#define __NR_reserved2&t;&t;&t;(__NR_Linux + 153)
+DECL|macro|__NR_fdatasync
+mdefine_line|#define __NR_fdatasync&t;&t;&t;(__NR_Linux + 152)
+DECL|macro|__NR__sysctl
+mdefine_line|#define __NR__sysctl&t;&t;&t;(__NR_Linux + 153)
 DECL|macro|__NR_mlock
 mdefine_line|#define __NR_mlock&t;&t;&t;(__NR_Linux + 154)
 DECL|macro|__NR_munlock
@@ -2218,11 +2218,73 @@ DECL|macro|__NR_mlockall
 mdefine_line|#define __NR_mlockall&t;&t;&t;(__NR_Linux + 156)
 DECL|macro|__NR_munlockall
 mdefine_line|#define __NR_munlockall&t;&t;&t;(__NR_Linux + 157)
+DECL|macro|__NR_sched_setparam
+mdefine_line|#define __NR_sched_setparam&t;&t;(__NR_Linux + 158)
+DECL|macro|__NR_sched_getparam
+mdefine_line|#define __NR_sched_getparam&t;&t;(__NR_Linux + 159)
+DECL|macro|__NR_sched_setscheduler
+mdefine_line|#define __NR_sched_setscheduler&t;&t;(__NR_Linux + 160)
+DECL|macro|__NR_sched_getscheduler
+mdefine_line|#define __NR_sched_getscheduler&t;&t;(__NR_Linux + 161)
+DECL|macro|__NR_sched_yield
+mdefine_line|#define __NR_sched_yield&t;&t;(__NR_Linux + 162)
+DECL|macro|__NR_sched_get_priority_max
+mdefine_line|#define __NR_sched_get_priority_max&t;(__NR_Linux + 163)
+DECL|macro|__NR_sched_get_priority_min
+mdefine_line|#define __NR_sched_get_priority_min&t;(__NR_Linux + 164)
+DECL|macro|__NR_sched_rr_get_interval
+mdefine_line|#define __NR_sched_rr_get_interval&t;(__NR_Linux + 165)
+DECL|macro|__NR_nanosleep
+mdefine_line|#define __NR_nanosleep&t;&t;&t;(__NR_Linux + 166)
+DECL|macro|__NR_mremap
+mdefine_line|#define __NR_mremap&t;&t;&t;(__NR_Linux + 167)
+DECL|macro|__NR_accept
+mdefine_line|#define __NR_accept&t;&t;&t;(__NR_Linux + 168)
+DECL|macro|__NR_bind
+mdefine_line|#define __NR_bind&t;&t;&t;(__NR_Linux + 169)
+DECL|macro|__NR_connect
+mdefine_line|#define __NR_connect&t;&t;&t;(__NR_Linux + 170)
+DECL|macro|__NR_getpeername
+mdefine_line|#define __NR_getpeername&t;&t;(__NR_Linux + 171)
+DECL|macro|__NR_getsockname
+mdefine_line|#define __NR_getsockname&t;&t;(__NR_Linux + 172)
+DECL|macro|__NR_getsockopt
+mdefine_line|#define __NR_getsockopt&t;&t;&t;(__NR_Linux + 173)
+DECL|macro|__NR_listen
+mdefine_line|#define __NR_listen&t;&t;&t;(__NR_Linux + 174)
+DECL|macro|__NR_recv
+mdefine_line|#define __NR_recv&t;&t;&t;(__NR_Linux + 175)
+DECL|macro|__NR_recvfrom
+mdefine_line|#define __NR_recvfrom&t;&t;&t;(__NR_Linux + 176)
+DECL|macro|__NR_recvmsg
+mdefine_line|#define __NR_recvmsg&t;&t;&t;(__NR_Linux + 177)
+DECL|macro|__NR_send
+mdefine_line|#define __NR_send&t;&t;&t;(__NR_Linux + 178)
+DECL|macro|__NR_sendmsg
+mdefine_line|#define __NR_sendmsg&t;&t;&t;(__NR_Linux + 179)
+DECL|macro|__NR_sendto
+mdefine_line|#define __NR_sendto&t;&t;&t;(__NR_Linux + 180)
+DECL|macro|__NR_setsockopt
+mdefine_line|#define __NR_setsockopt&t;&t;&t;(__NR_Linux + 181)
+DECL|macro|__NR_shutdown
+mdefine_line|#define __NR_shutdown&t;&t;&t;(__NR_Linux + 182)
+DECL|macro|__NR_socket
+mdefine_line|#define __NR_socket&t;&t;&t;(__NR_Linux + 183)
+DECL|macro|__NR_socketpair
+mdefine_line|#define __NR_socketpair&t;&t;&t;(__NR_Linux + 184)
+DECL|macro|__NR_setresuid
+mdefine_line|#define __NR_setresuid&t;&t;&t;(__NR_Linux + 185)
+DECL|macro|__NR_getresuid
+mdefine_line|#define __NR_getresuid&t;&t;&t;(__NR_Linux + 186)
+DECL|macro|__NR_query_module
+mdefine_line|#define __NR_query_module&t;&t;(__NR_Linux + 187)
+DECL|macro|__NR_poll
+mdefine_line|#define __NR_poll&t;&t;&t;(__NR_Linux + 188)
 DECL|macro|__NR_nfsservctl
-mdefine_line|#define __NR_nfsservctl&t;&t;&t;(__NR_Linux + 158)
+mdefine_line|#define __NR_nfsservctl&t;&t;&t;(__NR_Linux + 189)
 multiline_comment|/*&n; * Offset of the last Linux flavoured syscall&n; */
 DECL|macro|__NR_Linux_syscalls
-mdefine_line|#define __NR_Linux_syscalls&t;&t;158
+mdefine_line|#define __NR_Linux_syscalls&t;&t;189
 macro_line|#ifndef __LANGUAGE_ASSEMBLY__
 multiline_comment|/* XXX - _foo needs to be __foo, while __NR_bar could be _NR_bar. */
 DECL|macro|_syscall0
@@ -2237,7 +2299,11 @@ mdefine_line|#define _syscall3(type,name,atype,a,btype,b,ctype,c) &bslash;&n;typ
 DECL|macro|_syscall4
 mdefine_line|#define _syscall4(type,name,atype,a,btype,b,ctype,c,dtype,d) &bslash;&n;type name (atype a, btype b, ctype c, dtype d) &bslash;&n;{ &bslash;&n;register long __res __asm__ (&quot;$2&quot;); &bslash;&n;register long __err __asm__ (&quot;$7&quot;); &bslash;&n;__asm__ volatile (&quot;move&bslash;t$4,%3&bslash;n&bslash;t&quot; &bslash;&n;                  &quot;move&bslash;t$5,%4&bslash;n&bslash;t&quot; &bslash;&n;                  &quot;move&bslash;t$6,%5&bslash;n&bslash;t&quot; &bslash;&n;                  &quot;move&bslash;t$7,%6&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;  &quot;li&bslash;t$2,%2&bslash;n&bslash;t&quot; &bslash;&n;                  &quot;syscall&quot; &bslash;&n;                  : &quot;=r&quot; (__res), &quot;=r&quot; (__err) &bslash;&n;                  : &quot;i&quot; (__NR_##name),&quot;r&quot; ((long)(a)), &bslash;&n;                                      &quot;r&quot; ((long)(b)), &bslash;&n;                                      &quot;r&quot; ((long)(c)), &bslash;&n;                                      &quot;r&quot; ((long)(d)) &bslash;&n;                  : &quot;$4&quot;,&quot;$5&quot;,&quot;$6&quot;); &bslash;&n;if (__err == 0) &bslash;&n;&t;return (type) __res; &bslash;&n;errno = __res; &bslash;&n;return -1; &bslash;&n;}
 DECL|macro|_syscall5
-mdefine_line|#define _syscall5(type,name,atype,a,btype,b,ctype,c,dtype,d,etype,e) &bslash;&n;type name (atype a,btype b,ctype c,dtype d,etype e) &bslash;&n;{ &bslash;&n;register long __res __asm__ (&quot;$2&quot;); &bslash;&n;register long __err __asm__ (&quot;$7&quot;); &bslash;&n;__asm__ volatile (&quot;move&bslash;t$4,%3&bslash;n&bslash;t&quot; &bslash;&n;                  &quot;move&bslash;t$5,%4&bslash;n&bslash;t&quot; &bslash;&n;                  &quot;move&bslash;t$6,%5&bslash;n&bslash;t&quot; &bslash;&n;                  &quot;move&bslash;t$7,%6&bslash;n&bslash;t&quot; &bslash;&n;                  &quot;move&bslash;t$3,%7&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;  &quot;li&bslash;t$2,%2&bslash;n&bslash;t&quot; &bslash;&n;                  &quot;syscall&quot; &bslash;&n;                  : &quot;=r&quot; (__res), &quot;=r&quot; (__err) &bslash;&n;                  : &quot;i&quot; (__NR_##name),&quot;r&quot; ((long)(a)), &bslash;&n;                                      &quot;r&quot; ((long)(b)), &bslash;&n;                                      &quot;r&quot; ((long)(c)), &bslash;&n;                                      &quot;r&quot; ((long)(d)), &bslash;&n;                                      &quot;r&quot; ((long)(e)) &bslash;&n;                  : &quot;$3&quot;,&quot;$4&quot;,&quot;$5&quot;,&quot;$6&quot;); &bslash;&n;if (__err == 0) &bslash;&n;&t;return (type) __res; &bslash;&n;errno = __res; &bslash;&n;return -1; &bslash;&n;}
+mdefine_line|#define _syscall5(type,name,atype,a,btype,b,ctype,c,dtype,d,etype,e) &bslash;&n;type name (atype a,btype b,ctype c,dtype d,etype e) &bslash;&n;{ &bslash;&n;register long __res __asm__ (&quot;$2&quot;); &bslash;&n;register long __err __asm__ (&quot;$7&quot;); &bslash;&n;__asm__ volatile (&quot;move&bslash;t$4,%3&bslash;n&bslash;t&quot; &bslash;&n;                  &quot;move&bslash;t$5,%4&bslash;n&bslash;t&quot; &bslash;&n;                  &quot;move&bslash;t$6,%5&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;  &quot;lw&bslash;t$2,%7&bslash;n&bslash;t&quot; &bslash;&n;                  &quot;move&bslash;t$7,%6&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;  &quot;subu&bslash;t$29,24&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;  &quot;sw&bslash;t$2,16($29)&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;  &quot;li&bslash;t$2,%2&bslash;n&bslash;t&quot; &bslash;&n;                  &quot;syscall&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;  &quot;addiu&bslash;t$29,24&quot; &bslash;&n;                  : &quot;=r&quot; (__res), &quot;=r&quot; (__err) &bslash;&n;                  : &quot;i&quot; (__NR_##name),&quot;r&quot; ((long)(a)), &bslash;&n;                                      &quot;r&quot; ((long)(b)), &bslash;&n;                                      &quot;r&quot; ((long)(c)), &bslash;&n;                                      &quot;r&quot; ((long)(d)), &bslash;&n;                                      &quot;m&quot; ((long)(e)) &bslash;&n;                  : &quot;$2&quot;,&quot;$4&quot;,&quot;$5&quot;,&quot;$6&quot;,&quot;$7&quot;); &bslash;&n;if (__err == 0) &bslash;&n;&t;return (type) __res; &bslash;&n;errno = __res; &bslash;&n;return -1; &bslash;&n;}
+DECL|macro|_syscall6
+mdefine_line|#define _syscall6(type,name,atype,a,btype,b,ctype,c,dtype,d,etype,e,ftype,f) &bslash;&n;type name (atype a,btype b,ctype c,dtype d,etype e,ftype f) &bslash;&n;{ &bslash;&n;register long __res __asm__ (&quot;$2&quot;); &bslash;&n;register long __err __asm__ (&quot;$7&quot;); &bslash;&n;__asm__ volatile (&quot;move&bslash;t$4,%3&bslash;n&bslash;t&quot; &bslash;&n;                  &quot;move&bslash;t$5,%4&bslash;n&bslash;t&quot; &bslash;&n;                  &quot;move&bslash;t$6,%5&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;  &quot;lw&bslash;t$2,%7&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;  &quot;lw&bslash;t$3,%8&bslash;n&bslash;t&quot; &bslash;&n;                  &quot;move&bslash;t$7,%6&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;  &quot;subu&bslash;t$29,24&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;  &quot;sw&bslash;t$2,16($29)&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;  &quot;sw&bslash;t$3,20($29)&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;  &quot;li&bslash;t$2,%2&bslash;n&bslash;t&quot; &bslash;&n;                  &quot;syscall&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;  &quot;addiu&bslash;t$29,24&quot; &bslash;&n;                  : &quot;=r&quot; (__res), &quot;=r&quot; (__err) &bslash;&n;                  : &quot;i&quot; (__NR_##name),&quot;r&quot; ((long)(a)), &bslash;&n;                                      &quot;r&quot; ((long)(b)), &bslash;&n;                                      &quot;r&quot; ((long)(c)), &bslash;&n;                                      &quot;r&quot; ((long)(d)), &bslash;&n;                                      &quot;m&quot; ((long)(e)), &bslash;&n;                                      &quot;m&quot; ((long)(f)) &bslash;&n;                  : &quot;$2&quot;,&quot;$3&quot;,&quot;$4&quot;,&quot;$5&quot;,&quot;$6&quot;,&quot;$7&quot;); &bslash;&n;if (__err == 0) &bslash;&n;&t;return (type) __res; &bslash;&n;errno = __res; &bslash;&n;return -1; &bslash;&n;}
+DECL|macro|_syscall7
+mdefine_line|#define _syscall7(type,name,atype,a,btype,b,ctype,c,dtype,d,etype,e,ftype,f,gtype,g) &bslash;&n;type name (atype a,btype b,ctype c,dtype d,etype e,ftype f,gtype g) &bslash;&n;{ &bslash;&n;register long __res __asm__ (&quot;$2&quot;); &bslash;&n;register long __err __asm__ (&quot;$7&quot;); &bslash;&n;__asm__ volatile (&quot;move&bslash;t$4,%3&bslash;n&bslash;t&quot; &bslash;&n;                  &quot;move&bslash;t$5,%4&bslash;n&bslash;t&quot; &bslash;&n;                  &quot;move&bslash;t$6,%5&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;  &quot;lw&bslash;t$2,%7&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;  &quot;lw&bslash;t$3,%8&bslash;n&bslash;t&quot; &bslash;&n;                  &quot;move&bslash;t$7,%6&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;  &quot;subu&bslash;t$29,32&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;  &quot;sw&bslash;t$2,16($29)&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;  &quot;lw&bslash;t$2,%9&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;  &quot;sw&bslash;t$3,20($29)&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;  &quot;sw&bslash;t$2,24($29)&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;  &quot;li&bslash;t$2,%2&bslash;n&bslash;t&quot; &bslash;&n;                  &quot;syscall&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;  &quot;addiu&bslash;t$29,32&quot; &bslash;&n;                  : &quot;=r&quot; (__res), &quot;=r&quot; (__err) &bslash;&n;                  : &quot;i&quot; (__NR_##name),&quot;r&quot; ((long)(a)), &bslash;&n;                                      &quot;r&quot; ((long)(b)), &bslash;&n;                                      &quot;r&quot; ((long)(c)), &bslash;&n;                                      &quot;r&quot; ((long)(d)), &bslash;&n;                                      &quot;m&quot; ((long)(e)), &bslash;&n;                                      &quot;m&quot; ((long)(f)), &bslash;&n;                                      &quot;m&quot; ((long)(g)) &bslash;&n;                  : &quot;$2&quot;,&quot;$3&quot;,&quot;$4&quot;,&quot;$5&quot;,&quot;$6&quot;,&quot;$7&quot;); &bslash;&n;if (__err == 0) &bslash;&n;&t;return (type) __res; &bslash;&n;errno = __res; &bslash;&n;return -1; &bslash;&n;}
 macro_line|#ifdef __KERNEL_SYSCALLS__
 multiline_comment|/*&n; * we need this inline - forking from kernel space will result&n; * in NO COPY ON WRITE (!!!), until an execve is executed. This&n; * is no problem, but for the stack. This is handled by not letting&n; * main() use the stack at all after fork(). Thus, no function&n; * calls - which means inline code for fork too, as otherwise we&n; * would use the stack upon exit from &squot;fork()&squot;.&n; *&n; * Actually only pause and fork are needed inline, so that there&n; * won&squot;t be any messing with the stack from main(), but we define&n; * some others too.&n; */
 DECL|macro|__NR__exit
@@ -2518,7 +2584,7 @@ l_string|&quot;move&bslash;t$4,%5&bslash;n&bslash;t&quot;
 l_string|&quot;li&bslash;t$2,%1&bslash;n&bslash;t&quot;
 l_string|&quot;syscall&bslash;n&bslash;t&quot;
 l_string|&quot;beq&bslash;t$8,$sp,1f&bslash;n&bslash;t&quot;
-l_string|&quot;subu&bslash;t$sp,16&bslash;n&bslash;t&quot;
+l_string|&quot;subu&bslash;t$sp,32&bslash;n&bslash;t&quot;
 multiline_comment|/* delay slot */
 l_string|&quot;jalr&bslash;t%4&bslash;n&bslash;t&quot;
 l_string|&quot;move&bslash;t$4,%3&bslash;n&bslash;t&quot;
@@ -2526,7 +2592,7 @@ multiline_comment|/* delay slot */
 l_string|&quot;move&bslash;t$4,$2&bslash;n&bslash;t&quot;
 l_string|&quot;li&bslash;t$2,%2&bslash;n&bslash;t&quot;
 l_string|&quot;syscall&bslash;n&quot;
-l_string|&quot;1:&bslash;taddiu&bslash;t$sp,16&bslash;n&bslash;t&quot;
+l_string|&quot;1:&bslash;taddiu&bslash;t$sp,32&bslash;n&bslash;t&quot;
 l_string|&quot;move&bslash;t%0,$2&bslash;n&bslash;t&quot;
 l_string|&quot;.set&bslash;treorder&quot;
 suffix:colon

@@ -251,6 +251,13 @@ DECL|macro|ESTALE
 mdefine_line|#define&t;ESTALE&t;&t;151&t;/* Stale NFS file handle */
 DECL|macro|ECANCELED
 mdefine_line|#define ECANCELED&t;158&t;/* AIO operation canceled */
+multiline_comment|/*&n; * These error are Linux extensions.&n; */
+DECL|macro|ENOMEDIUM
+mdefine_line|#define ENOMEDIUM&t;159&t;/* No medium found */
+DECL|macro|EMEDIUMTYPE
+mdefine_line|#define EMEDIUMTYPE&t;160&t;/* Wrong medium type */
+multiline_comment|/*&n; * IRIX 5 error number start from 1000.&n; * Stupid enough; ECANCELED gets redefined with a different value ...&n;#define ECANCELED       1000&n; */
+multiline_comment|/*&n; * IRIX 4 compatibility error numbers.&n; */
 DECL|macro|EDQUOT
 mdefine_line|#define&t;EDQUOT&t;&t;1133&t;/* Quota exceeded */
 DECL|macro|ENFSREMOTE

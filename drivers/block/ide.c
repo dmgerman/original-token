@@ -10710,7 +10710,6 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_BLK_DEV_TRITON */
 id|ide_probe_pci
 (paren
 id|PCI_VENDOR_ID_VIA
@@ -10723,6 +10722,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_TRITON */
 macro_line|#ifdef CONFIG_BLK_DEV_OPTI621
 id|ide_probe_pci
 (paren

@@ -1,11 +1,11 @@
 macro_line|#ifndef __ASM_MIPS_ELF_H
 DECL|macro|__ASM_MIPS_ELF_H
 mdefine_line|#define __ASM_MIPS_ELF_H
-multiline_comment|/*&n; * ELF register definitions&n; * This is &quot;make it compile&quot; stuff!&n; */
+multiline_comment|/* ELF register definitions */
 DECL|macro|ELF_NGREG
-mdefine_line|#define ELF_NGREG&t;32
+mdefine_line|#define ELF_NGREG&t;45
 DECL|macro|ELF_NFPREG
-mdefine_line|#define ELF_NFPREG&t;32
+mdefine_line|#define ELF_NFPREG&t;33
 DECL|typedef|elf_greg_t
 r_typedef
 r_int
@@ -35,17 +35,27 @@ id|ELF_NFPREG
 suffix:semicolon
 multiline_comment|/*&n; * This is used to ensure we don&squot;t load something for the wrong architecture.&n; */
 DECL|macro|elf_check_arch
-mdefine_line|#define elf_check_arch(x) ((x) == EM_MIPS)
+mdefine_line|#define elf_check_arch(x) ((x) == EM_MIPS || (x) == EM_MIPS_RS4_BE)
 multiline_comment|/*&n; * These are used to set parameters in the core dumps.&n; * FIXME(eric) I don&squot;t know what the correct endianness to use is.&n; */
 DECL|macro|ELF_CLASS
 mdefine_line|#define ELF_CLASS&t;ELFCLASS32
+macro_line|#ifdef __MIPSEB__
 DECL|macro|ELF_DATA
-mdefine_line|#define ELF_DATA&t;ELFDATA2MSB;
+mdefine_line|#define ELF_DATA       ELFDATA2MSB;
+macro_line|#elif __MIPSEL__
+DECL|macro|ELF_DATA
+mdefine_line|#define ELF_DATA       ELFDATA2LSB;
+macro_line|#endif
 DECL|macro|ELF_ARCH
 mdefine_line|#define ELF_ARCH&t;EM_MIPS
 DECL|macro|USE_ELF_CORE_DUMP
 mdefine_line|#define USE_ELF_CORE_DUMP
 DECL|macro|ELF_EXEC_PAGESIZE
 mdefine_line|#define ELF_EXEC_PAGESIZE&t;4096
+DECL|macro|ELF_CORE_COPY_REGS
+mdefine_line|#define ELF_CORE_COPY_REGS(_dest,_regs)&t;&t;&t;&t;&bslash;&n;&t;memcpy((char *) &amp;_dest, (char *) _regs,&t;&t;&t;&bslash;&n;&t;       sizeof(struct pt_regs));
+multiline_comment|/* See comments in asm-alpha/elf.h, this is the same thing&n; * on the MIPS.&n; */
+DECL|macro|ELF_PLAT_INIT
+mdefine_line|#define ELF_PLAT_INIT(_r)&t;_r-&gt;regs[2] = 0;
 macro_line|#endif /* __ASM_MIPS_ELF_H */
 eof

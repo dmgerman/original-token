@@ -2,6 +2,7 @@ multiline_comment|/*&n; * Architecture specific parts of the Floppy driver&n; *&
 macro_line|#ifndef __ASM_MIPS_FLOPPY_H
 DECL|macro|__ASM_MIPS_FLOPPY_H
 mdefine_line|#define __ASM_MIPS_FLOPPY_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/jazz.h&gt;
 macro_line|#include &lt;asm/jazzdma.h&gt;
@@ -33,16 +34,70 @@ DECL|macro|fd_enable_irq
 mdefine_line|#define fd_enable_irq()&t;&t;&t;feature-&gt;fd_enable_irq()
 DECL|macro|fd_disable_irq
 mdefine_line|#define fd_disable_irq()&t;&t;feature-&gt;fd_disable_irq()
-DECL|macro|fd_cacheflush
-mdefine_line|#define fd_cacheflush(addr, size)&t;feature-&gt;fd_cacheflush((void *)addr, size)
 DECL|macro|fd_request_irq
 mdefine_line|#define fd_request_irq()        request_irq(FLOPPY_IRQ, floppy_interrupt, &bslash;&n;&t;&t;&t;&t;&t;    SA_INTERRUPT|SA_SAMPLE_RANDOM, &bslash;&n;&t;&t;&t;&t;            &quot;floppy&quot;, NULL)
 DECL|macro|fd_free_irq
 mdefine_line|#define fd_free_irq()           free_irq(FLOPPY_IRQ, NULL);
 DECL|macro|MAX_BUFFER_SECTORS
 mdefine_line|#define MAX_BUFFER_SECTORS 24
+multiline_comment|/* Pure 2^n version of get_order */
+DECL|function|__get_order
+r_extern
+id|__inline__
+r_int
+id|__get_order
+c_func
+(paren
+r_int
+r_int
+id|size
+)paren
+(brace
+r_int
+id|order
+suffix:semicolon
+id|size
+op_assign
+(paren
+id|size
+op_minus
+l_int|1
+)paren
+op_rshift
+(paren
+id|PAGE_SHIFT
+op_minus
+l_int|1
+)paren
+suffix:semicolon
+id|order
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+r_do
+(brace
+id|size
+op_rshift_assign
+l_int|1
+suffix:semicolon
+id|order
+op_increment
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+id|size
+)paren
+suffix:semicolon
+r_return
+id|order
+suffix:semicolon
+)brace
 DECL|function|mips_dma_mem_alloc
-r_static
+r_extern
+id|__inline__
 r_int
 r_int
 id|mips_dma_mem_alloc
@@ -87,20 +142,13 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_MIPS_JAZZ
 r_if
 c_cond
 (paren
-id|boot_info.machtype
+id|mips_machgroup
 op_eq
-id|MACH_ACER_PICA_61
-op_logical_or
-id|boot_info.machtype
-op_eq
-id|MACH_MIPS_MAGNUM_4000
-op_logical_or
-id|boot_info.machtype
-op_eq
-id|MACH_OLIVETTI_M700
+id|MACH_GROUP_JAZZ
 )paren
 id|vdma_alloc
 c_func
@@ -114,12 +162,14 @@ comma
 id|size
 )paren
 suffix:semicolon
+macro_line|#endif
 r_return
 id|mem
 suffix:semicolon
 )brace
 DECL|function|mips_dma_mem_free
-r_static
+r_extern
+id|__inline__
 r_void
 id|mips_dma_mem_free
 c_func
@@ -133,20 +183,13 @@ r_int
 id|size
 )paren
 (brace
+macro_line|#ifdef CONFIG_MIPS_JAZZ
 r_if
 c_cond
 (paren
-id|boot_info.machtype
+id|mips_machgroup
 op_eq
-id|MACH_ACER_PICA_61
-op_logical_or
-id|boot_info.machtype
-op_eq
-id|MACH_MIPS_MAGNUM_4000
-op_logical_or
-id|boot_info.machtype
-op_eq
-id|MACH_OLIVETTI_M700
+id|MACH_GROUP_JAZZ
 )paren
 id|vdma_free
 c_func
@@ -158,6 +201,7 @@ id|addr
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif
 id|free_pages
 c_func
 (paren
@@ -172,16 +216,16 @@ id|size
 suffix:semicolon
 )brace
 DECL|macro|fd_dma_mem_alloc
-mdefine_line|#define fd_dma_mem_alloc(mem,size) mips_dma_mem_alloc(mem,size)
+mdefine_line|#define fd_dma_mem_alloc(size) mips_dma_mem_alloc(size)
 DECL|macro|fd_dma_mem_free
-mdefine_line|#define fd_dma_mem_free(mem) mips_dma_mem_free(mem)
-multiline_comment|/*&n; * And on Mips&squot;s the CMOS info fails also ...&n; *&n; * FIXME: This information should come from the ARC configuration tree&n; *        or wherever a particular machine has stored this ...&n; */
+mdefine_line|#define fd_dma_mem_free(mem,size) mips_dma_mem_free(mem,size)
+multiline_comment|/*&n; * And on Mips&squot;s the CMOS info fails also ...&n; *&n; * FIXME: This information should come from the ARC configuration tree&n; *        or whereever a particular machine has stored this ...&n; */
 DECL|macro|FLOPPY0_TYPE
 mdefine_line|#define FLOPPY0_TYPE 4&t;&t;/* this is wrong for the Olli M700, but who cares... */
 DECL|macro|FLOPPY1_TYPE
 mdefine_line|#define FLOPPY1_TYPE 0
 DECL|macro|FDC1
-mdefine_line|#define FDC1&t;&t;&t;((boot_info.machtype == MACH_ACER_PICA_61 || &bslash;&n;&t;&t;&t;&t;boot_info.machtype == MACH_MIPS_MAGNUM_4000 || &bslash;&n;&t;&t;&t;&t;boot_info.machtype == MACH_OLIVETTI_M700) ? &bslash;&n;&t;&t;&t;&t;0xe0003000 : 0x3f0)
+mdefine_line|#define FDC1&t;&t;&t;((mips_machgroup == MACH_GROUP_JAZZ) ? &bslash;&n;&t;&t;&t;&t;JAZZ_FDC_BASE : 0x3f0)
 DECL|variable|FDC2
 r_static
 r_int
