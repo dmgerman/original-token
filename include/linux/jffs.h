@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * JFFS -- Journalling Flash File System, Linux implementation.&n; *&n; * Copyright (C) 1999, 2000  Finn Hakansson, Axis Communications, Inc.&n; *&n; * This is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * $Id: jffs.h,v 1.5 2000/06/13 14:22:48 alex Exp $&n; *&n; * Ported to Linux 2.3.x and MTD:&n; * Copyright (C) 2000  Alexander Larsson (alex@cendio.se), Cendio Systems AB&n; *&n; */
+multiline_comment|/*&n; * JFFS -- Journalling Flash File System, Linux implementation.&n; *&n; * Copyright (C) 1999, 2000  Axis Communications AB.&n; *&n; * Created by Finn Hakansson &lt;finn@axis.com&gt;.&n; *&n; * This is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * $Id: jffs.h,v 1.11 2000/08/04 12:46:34 dwmw2 Exp $&n; *&n; * Ported to Linux 2.3.x and MTD:&n; * Copyright (C) 2000  Alexander Larsson (alex@cendio.se), Cendio Systems AB&n; *&n; */
 macro_line|#ifndef __LINUX_JFFS_H__
 DECL|macro|__LINUX_JFFS_H__
 mdefine_line|#define __LINUX_JFFS_H__
@@ -42,9 +42,6 @@ DECL|macro|JFFS_MODIFY_DATA
 mdefine_line|#define JFFS_MODIFY_DATA  0x04
 DECL|macro|JFFS_MODIFY_EXIST
 mdefine_line|#define JFFS_MODIFY_EXIST 0x08
-multiline_comment|/* Using the garbage collection mechanism.  */
-DECL|macro|USE_GC
-mdefine_line|#define USE_GC
 r_struct
 id|jffs_control
 suffix:semicolon
@@ -142,7 +139,7 @@ id|rename
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* Is this a special rename?  */
+multiline_comment|/* Rename to a name of an already existing file?  */
 DECL|member|deleted
 id|__u8
 id|deleted
@@ -399,6 +396,23 @@ suffix:semicolon
 multiline_comment|/* The oldest node.  */
 )brace
 suffix:semicolon
+multiline_comment|/* This is just a definition of a simple list used for keeping track of&n;   files deleted due to a rename.  This list is only used during the&n;   mounting of the file system and only if there have been rename operations&n;   earlier.  */
+DECL|struct|jffs_delete_list
+r_struct
+id|jffs_delete_list
+(brace
+DECL|member|ino
+id|__u32
+id|ino
+suffix:semicolon
+DECL|member|next
+r_struct
+id|jffs_delete_list
+op_star
+id|next
+suffix:semicolon
+)brace
+suffix:semicolon
 multiline_comment|/* A struct for the overall file system control.  Pointers to&n;   jffs_control structs are named `c&squot; in the source code.  */
 DECL|struct|jffs_control
 r_struct
@@ -447,6 +461,40 @@ id|__u16
 id|building_fs
 suffix:semicolon
 multiline_comment|/* Is the file system being built right now?  */
+DECL|member|delete_list
+r_struct
+id|jffs_delete_list
+op_star
+id|delete_list
+suffix:semicolon
+multiline_comment|/* Track deleted files.  */
+DECL|member|thread_pid
+id|pid_t
+id|thread_pid
+suffix:semicolon
+multiline_comment|/* GC thread&squot;s PID */
+DECL|member|gc_task
+r_struct
+id|task_struct
+op_star
+id|gc_task
+suffix:semicolon
+multiline_comment|/* GC task struct */
+DECL|member|gc_thread_sem
+r_struct
+id|semaphore
+id|gc_thread_sem
+suffix:semicolon
+multiline_comment|/* GC thread exit mutex */
+DECL|member|gc_minfree_threshold
+id|__u32
+id|gc_minfree_threshold
+suffix:semicolon
+multiline_comment|/* GC trigger thresholds */
+DECL|member|gc_maxdirty_threshold
+id|__u32
+id|gc_maxdirty_threshold
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* Used to inform about flash status.  */

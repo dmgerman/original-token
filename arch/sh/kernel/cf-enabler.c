@@ -3,13 +3,13 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
-macro_line|#ifdef CONFIG_SH_SOLUTION_ENGINE
 macro_line|#include &lt;asm/hitachi_se.h&gt;
-multiline_comment|/*&n; * 0xB8400000 : Common Memory&n; * 0xB8500000 : Attribute&n; * 0xB8600000 : I/O&n; */
-DECL|function|cf_init
+multiline_comment|/*&n; * SolutionEngine&n; *&n; * 0xB8400000 : Common Memory&n; * 0xB8500000 : Attribute&n; * 0xB8600000 : I/O&n; */
+DECL|function|cf_init_se
+r_static
 r_int
 id|__init
-id|cf_init
+id|cf_init_se
 c_func
 (paren
 r_void
@@ -248,15 +248,15 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#else /* then generic system type */
 DECL|macro|CF_CIS_BASE
 mdefine_line|#define CF_CIS_BASE&t;0xb8000000
-multiline_comment|/*&n; * You can connect Compact Flash directly to the bus of SuperH.&n; * This is the enabler for that.&n; */
+multiline_comment|/*&n; * You can connect Compact Flash directly to the bus of SuperH.&n; * This is the enabler for that.&n; *&n; * SIM: How generic is this really? It looks pretty board, or at&n; * least SH sub-type, specific to me.&n; * I know it doesn&squot;t work on the Overdrive!&n; */
 multiline_comment|/*&n; * 0xB8000000 : Attribute&n; * 0xB8001000 : Common Memory&n; * 0xBA000000 : I/O&n; */
-DECL|function|cf_init
+DECL|function|cf_init_default
+r_static
 r_int
 id|__init
-id|cf_init
+id|cf_init_default
 c_func
 (paren
 r_void
@@ -289,7 +289,35 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif
+DECL|function|cf_init
+r_int
+id|__init
+id|cf_init
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|MACH_SE
+)paren
+(brace
+r_return
+id|cf_init_se
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+r_return
+id|cf_init_default
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 DECL|variable|cf_init
 id|__initcall
 (paren

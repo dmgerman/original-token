@@ -6909,11 +6909,13 @@ comma
 id|DEFAULT_BPP
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * If we didn&squot;t find an exact match, try the&n;&t; * generic database.&n;&t; */
 r_if
 c_cond
 (paren
-op_logical_neg
 id|rc
+op_ne
+l_int|1
 op_logical_and
 id|fb_find_mode
 c_func

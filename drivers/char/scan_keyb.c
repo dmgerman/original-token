@@ -405,7 +405,7 @@ l_int|NULL
 )paren
 (brace
 r_goto
-id|error_out
+id|error_mem_free
 suffix:semicolon
 )brace
 r_if
@@ -427,7 +427,7 @@ l_int|NULL
 )paren
 (brace
 r_goto
-id|error_out
+id|error_mem_free
 suffix:semicolon
 )brace
 id|kbd

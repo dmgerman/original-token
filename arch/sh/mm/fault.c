@@ -442,6 +442,11 @@ suffix:semicolon
 )brace
 macro_line|#if defined(__SH4__)
 multiline_comment|/*&n;&t; * ITLB is not affected by &quot;ldtlb&quot; instruction.&n;&t; * So, we need to flush the entry by ourselves.&n;&t; */
+r_if
+c_cond
+(paren
+id|mm
+)paren
 id|__flush_tlb_page
 c_func
 (paren
@@ -1054,6 +1059,8 @@ macro_line|#if defined(__SH4__)
 r_if
 c_cond
 (paren
+id|vma
+op_logical_and
 (paren
 id|vma-&gt;vm_flags
 op_amp
@@ -1061,6 +1068,11 @@ id|VM_SHARED
 )paren
 )paren
 (brace
+r_struct
+id|page
+op_star
+id|pg
+suffix:semicolon
 id|pteval
 op_assign
 id|pte_val
@@ -1082,15 +1094,22 @@ comma
 id|pteval
 )paren
 suffix:semicolon
-multiline_comment|/* It would be good we had routine which takes&n;&t;&t;   physical memory as argument */
-id|flush_cache_page
+id|pg
+op_assign
+id|virt_to_page
 c_func
 (paren
-id|vma
-comma
-id|address
-op_amp
-id|PAGE_MASK
+id|__va
+c_func
+(paren
+id|pteval
+)paren
+)paren
+suffix:semicolon
+id|flush_dcache_page
+c_func
+(paren
+id|pg
 )paren
 suffix:semicolon
 )brace

@@ -1,7 +1,11 @@
-multiline_comment|/*&n; * JFFS -- Journalling Flash File System, Linux implementation.&n; *&n; * Copyright (C) 1999, 2000  Finn Hakansson, Axis Communications, Inc.&n; *&n; * This is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * $Id: inode-v23.c,v 1.17 2000/07/06 20:35:19 prumpf Exp $&n; *&n; *&n; * Ported to Linux 2.3.x and MTD:&n; * Copyright (C) 2000  Alexander Larsson (alex@cendio.se), Cendio Systems AB&n; * &n; */
+multiline_comment|/*&n; * JFFS -- Journalling Flash File System, Linux implementation.&n; *&n; * Copyright (C) 1999, 2000  Axis Communications AB.&n; *&n; * Created by Finn Hakansson &lt;finn@axis.com&gt;.&n; *&n; * This is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * $Id: inode-v23.c,v 1.33 2000/08/09 15:59:06 dwmw2 Exp $&n; *&n; *&n; * Ported to Linux 2.3.x and MTD:&n; * Copyright (C) 2000  Alexander Larsson (alex@cendio.se), Cendio Systems AB&n; *&n; */
 multiline_comment|/* inode.c -- Contains the code that is called from the VFS.  */
 multiline_comment|/* TODO-ALEX:&n; * uid and gid are just 16 bit.&n; * jffs_file_write reads from user-space pointers without xx_from_user&n; * maybe other stuff do to.&n; */
-macro_line|#include &lt;linux/config.h&gt;
+multiline_comment|/* Argh. Some architectures have kernel_thread in asm/processor.h&n;   Some have it in unistd.h and you need to define __KERNEL_SYSCALLS__&n;   Pass me a baseball bat and the person responsible.&n;   dwmw2&n;*/
+DECL|macro|__KERNEL_SYSCALLS__
+mdefine_line|#define __KERNEL_SYSCALLS__
+macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -21,21 +25,6 @@ macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &quot;jffs_fm.h&quot;
 macro_line|#include &quot;intrep.h&quot;
-macro_line|#if defined(CONFIG_JFFS_FS_VERBOSE) &amp;&amp; CONFIG_JFFS_FS_VERBOSE
-DECL|macro|D
-mdefine_line|#define D(x) x
-macro_line|#else
-DECL|macro|D
-mdefine_line|#define D(x)
-macro_line|#endif
-DECL|macro|D1
-mdefine_line|#define D1(x) D(x)
-DECL|macro|D2
-mdefine_line|#define D2(x) 
-DECL|macro|D3
-mdefine_line|#define D3(x) 
-DECL|macro|ASSERT
-mdefine_line|#define ASSERT(x) x
 r_static
 r_int
 id|jffs_remove
@@ -123,6 +112,14 @@ id|inode
 op_star
 id|root_inode
 suffix:semicolon
+r_struct
+id|jffs_control
+op_star
+id|c
+suffix:semicolon
+id|D1
+c_func
+(paren
 id|printk
 c_func
 (paren
@@ -133,6 +130,7 @@ id|kdevname
 c_func
 (paren
 id|dev
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -152,21 +150,14 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;JFFS: Trying to mount non-mtd device.&bslash;n&quot;
+l_string|&quot;JFFS: Trying to mount a &quot;
+l_string|&quot;non-mtd device.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
-id|set_blocksize
-c_func
-(paren
-id|dev
-comma
-id|PAGE_CACHE_SIZE
-)paren
-suffix:semicolon
 id|sb-&gt;s_blocksize
 op_assign
 id|PAGE_CACHE_SIZE
@@ -249,20 +240,90 @@ r_goto
 id|jffs_sb_err3
 suffix:semicolon
 )brace
-macro_line|#ifdef USE_GC
-multiline_comment|/* Do a garbage collect every time we mount.  */
-id|jffs_garbage_collect
-c_func
-(paren
+id|c
+op_assign
 (paren
 r_struct
 id|jffs_control
 op_star
 )paren
 id|sb-&gt;u.generic_sbp
+suffix:semicolon
+multiline_comment|/* Set the Garbage Collection thresholds */
+multiline_comment|/* GC if free space goes below 5% of the total size */
+id|c-&gt;gc_minfree_threshold
+op_assign
+id|c-&gt;fmc-&gt;flash_size
+op_div
+l_int|20
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|c-&gt;gc_minfree_threshold
+OL
+id|c-&gt;fmc-&gt;sector_size
+)paren
+id|c-&gt;gc_minfree_threshold
+op_assign
+id|c-&gt;fmc-&gt;sector_size
+suffix:semicolon
+multiline_comment|/* GC if dirty space exceeds 33% of the total size. */
+id|c-&gt;gc_maxdirty_threshold
+op_assign
+id|c-&gt;fmc-&gt;flash_size
+op_div
+l_int|3
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|c-&gt;gc_maxdirty_threshold
+OL
+id|c-&gt;fmc-&gt;sector_size
+)paren
+id|c-&gt;gc_maxdirty_threshold
+op_assign
+id|c-&gt;fmc-&gt;sector_size
+suffix:semicolon
+id|c-&gt;thread_pid
+op_assign
+id|kernel_thread
+(paren
+id|jffs_garbage_collect_thread
+comma
+(paren
+r_void
+op_star
+)paren
+id|c
+comma
+id|CLONE_FS
+op_or
+id|CLONE_FILES
+op_or
+id|CLONE_SIGHAND
 )paren
 suffix:semicolon
-macro_line|#endif
+id|D1
+c_func
+(paren
+id|printk
+c_func
+(paren
+id|KERN_NOTICE
+l_string|&quot;JFFS: GC thread pid=%d.&bslash;n&quot;
+comma
+(paren
+r_int
+)paren
+id|c-&gt;thread_pid
+)paren
+)paren
+suffix:semicolon
+id|D1
+c_func
+(paren
 id|printk
 c_func
 (paren
@@ -273,6 +334,7 @@ id|kdevname
 c_func
 (paren
 id|dev
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -332,10 +394,26 @@ op_star
 id|sb
 )paren
 (brace
+r_struct
+id|jffs_control
+op_star
+id|c
+op_assign
+(paren
+r_struct
+id|jffs_control
+op_star
+)paren
+id|sb-&gt;u.generic_sbp
+suffix:semicolon
+id|D1
+c_func
+(paren
 id|kdev_t
 id|dev
 op_assign
 id|sb-&gt;s_dev
+)paren
 suffix:semicolon
 id|D2
 c_func
@@ -344,6 +422,59 @@ id|printk
 c_func
 (paren
 l_string|&quot;jffs_put_super()&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+id|D1
+c_func
+(paren
+id|printk
+(paren
+id|KERN_NOTICE
+l_string|&quot;jffs_put_super(): Telling gc thread to die.&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|c-&gt;gc_task
+)paren
+(brace
+id|send_sig
+c_func
+(paren
+id|SIGQUIT
+comma
+id|c-&gt;gc_task
+comma
+l_int|1
+)paren
+suffix:semicolon
+id|send_sig
+c_func
+(paren
+id|SIGCONT
+comma
+id|c-&gt;gc_task
+comma
+l_int|1
+)paren
+suffix:semicolon
+)brace
+id|down
+(paren
+op_amp
+id|c-&gt;gc_thread_sem
+)paren
+suffix:semicolon
+id|D1
+c_func
+(paren
+id|printk
+(paren
+id|KERN_NOTICE
+l_string|&quot;jffs_put_super(): Successfully waited on thread.&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -362,6 +493,9 @@ op_star
 id|sb-&gt;u.generic_sbp
 )paren
 suffix:semicolon
+id|D1
+c_func
+(paren
 id|printk
 c_func
 (paren
@@ -372,6 +506,7 @@ id|kdevname
 c_func
 (paren
 id|dev
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -505,7 +640,7 @@ op_logical_neg
 id|JFFS_ENOUGH_SPACE
 c_func
 (paren
-id|fmc
+id|c
 )paren
 )paren
 (brace
@@ -1003,10 +1138,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* jffs_notify_change()  */
-DECL|function|jffs_new_inode
 r_struct
 id|inode
 op_star
+DECL|function|jffs_new_inode
 id|jffs_new_inode
 c_func
 (paren
@@ -1130,10 +1265,17 @@ id|inode-&gt;i_blksize
 op_assign
 id|PAGE_SIZE
 suffix:semicolon
-multiline_comment|/* This is the optimal IO size (for stat), not the fs block size */
 id|inode-&gt;i_blocks
 op_assign
-l_int|0
+(paren
+id|raw_inode-&gt;dsize
+op_plus
+id|PAGE_SIZE
+op_minus
+l_int|1
+)paren
+op_rshift
+id|PAGE_SHIFT
 suffix:semicolon
 id|inode-&gt;i_version
 op_assign
@@ -1434,7 +1576,7 @@ op_logical_neg
 id|JFFS_ENOUGH_SPACE
 c_func
 (paren
-id|c-&gt;fmc
+id|c
 )paren
 )paren
 (brace
@@ -1476,7 +1618,7 @@ op_minus
 id|ENOSPC
 suffix:semicolon
 )brace
-multiline_comment|/* Find the the old directory.  */
+multiline_comment|/* Find the old directory.  */
 id|result
 op_assign
 op_minus
@@ -1541,7 +1683,7 @@ r_goto
 id|jffs_rename_end
 suffix:semicolon
 )brace
-multiline_comment|/* Try to find the new directory&squot;s node.  */
+multiline_comment|/* Find the new directory.  */
 id|result
 op_assign
 op_minus
@@ -1746,7 +1888,17 @@ id|raw_inode.rename
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/*raw_inode.mode = del_f-&gt;ino;*/
+id|raw_inode.dsize
+op_assign
+r_sizeof
+(paren
+id|__u32
+)paren
+suffix:semicolon
+id|rename_data
+op_assign
+id|del_f-&gt;ino
+suffix:semicolon
 )brace
 multiline_comment|/* Write the new node to the flash memory.  */
 r_if
@@ -1807,6 +1959,10 @@ r_goto
 id|jffs_rename_end
 suffix:semicolon
 )brace
+id|raw_inode.dsize
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1814,11 +1970,13 @@ id|raw_inode.rename
 )paren
 (brace
 multiline_comment|/* The file with the same name must be deleted.  */
-id|c-&gt;fmc-&gt;no_call_gc
-op_assign
-l_int|1
+id|down
+c_func
+(paren
+op_amp
+id|c-&gt;fmc-&gt;gclock
+)paren
 suffix:semicolon
-multiline_comment|/* TODO: What kind of locking is this? */
 r_if
 c_cond
 (paren
@@ -1849,9 +2007,12 @@ l_string|&quot;rename().&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-id|c-&gt;fmc-&gt;no_call_gc
-op_assign
-l_int|0
+id|up
+c_func
+(paren
+op_amp
+id|c-&gt;fmc-&gt;gclock
+)paren
 suffix:semicolon
 )brace
 r_if
@@ -3075,7 +3236,7 @@ op_logical_neg
 id|JFFS_ENOUGH_SPACE
 c_func
 (paren
-id|c-&gt;fmc
+id|c
 )paren
 )paren
 (brace
@@ -3374,9 +3535,11 @@ id|node
 OL
 l_int|0
 )paren
+(brace
 r_goto
 id|jffs_mkdir_end
 suffix:semicolon
+)brace
 id|inode
 op_assign
 id|jffs_new_inode
@@ -4151,7 +4314,7 @@ op_logical_neg
 id|JFFS_ENOUGH_SPACE
 c_func
 (paren
-id|c-&gt;fmc
+id|c
 )paren
 )paren
 (brace
@@ -4649,7 +4812,8 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;***jffs_symlink(): dir = 0x%p, dentry-&gt;dname.name = &bslash;&quot;%s&bslash;&quot;, &quot;
+l_string|&quot;***jffs_symlink(): dir = 0x%p, &quot;
+l_string|&quot;dentry-&gt;dname.name = &bslash;&quot;%s&bslash;&quot;, &quot;
 l_string|&quot;symname = &bslash;&quot;%s&bslash;&quot;&bslash;n&quot;
 comma
 id|dir
@@ -4718,7 +4882,7 @@ op_logical_neg
 id|JFFS_ENOUGH_SPACE
 c_func
 (paren
-id|c-&gt;fmc
+id|c
 )paren
 )paren
 (brace
@@ -4793,7 +4957,7 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;jffs_symlink(): Allocation failed: node == NULL&bslash;n&quot;
+l_string|&quot;jffs_symlink(): Allocation failed: node = NULL&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -5040,7 +5204,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* jffs_symlink()  */
-multiline_comment|/* Create an inode inside a JFFS directory (dir) and return it.  &n; *&n; * By the time this is called, we already have created&n; * the directory cache entry for the new file, but it&n; * is so far negative - it has no inode.&n; *&n; * If the create succeeds, we fill in the inode information&n; * with d_instantiate(). &n; */
+multiline_comment|/* Create an inode inside a JFFS directory (dir) and return it.&n; *&n; * By the time this is called, we already have created&n; * the directory cache entry for the new file, but it&n; * is so far negative - it has no inode.&n; *&n; * If the create succeeds, we fill in the inode information&n; * with d_instantiate().&n; */
 r_static
 r_int
 DECL|function|jffs_create
@@ -5196,7 +5360,7 @@ op_logical_neg
 id|JFFS_ENOUGH_SPACE
 c_func
 (paren
-id|c-&gt;fmc
+id|c
 )paren
 )paren
 (brace
@@ -5579,6 +5743,11 @@ op_assign
 id|dentry-&gt;d_inode
 suffix:semicolon
 r_int
+r_char
+op_star
+id|vbuf
+suffix:semicolon
+r_int
 id|written
 op_assign
 l_int|0
@@ -5766,7 +5935,7 @@ op_logical_neg
 id|JFFS_ENOUGH_SPACE
 c_func
 (paren
-id|c-&gt;fmc
+id|c
 )paren
 )paren
 (brace
@@ -5823,6 +5992,68 @@ id|pos
 op_assign
 id|inode-&gt;i_size
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|vbuf
+op_assign
+id|kmalloc
+c_func
+(paren
+id|count
+comma
+id|GFP_KERNEL
+)paren
+)paren
+)paren
+(brace
+id|D
+c_func
+(paren
+id|printk
+c_func
+(paren
+l_string|&quot;jffs_file_write(): failed to allocate bounce buffer. Fix me to use page cache&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+id|err
+op_assign
+op_minus
+id|ENOMEM
+suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
+)brace
+multiline_comment|/* FIXME: This is entirely gratuitous use of bounce buffers.&n;&t;   Get a clue and use the page cache. &n;&t;   /me wanders off to get a crash course on Linux VFS&n;&t;   dwmw2&n;&t;*/
+r_if
+c_cond
+(paren
+id|copy_from_user
+c_func
+(paren
+id|vbuf
+comma
+id|buf
+comma
+id|count
+)paren
+)paren
+(brace
+id|kfree
+c_func
+(paren
+id|vbuf
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EFAULT
+suffix:semicolon
+)brace
 multiline_comment|/* Things are going to be written so we could allocate and&n;&t;   initialize the necessary data structures now.  */
 r_if
 c_cond
@@ -5865,6 +6096,12 @@ op_assign
 op_minus
 id|ENOMEM
 suffix:semicolon
+id|kfree
+c_func
+(paren
+id|vbuf
+)paren
+suffix:semicolon
 r_goto
 id|out
 suffix:semicolon
@@ -5878,7 +6115,7 @@ op_increment
 suffix:semicolon
 id|node-&gt;data_offset
 op_assign
-id|f-&gt;size
+id|pos
 suffix:semicolon
 id|node-&gt;removed_size
 op_assign
@@ -5930,7 +6167,7 @@ id|f-&gt;ctime
 suffix:semicolon
 id|raw_inode.offset
 op_assign
-id|f-&gt;size
+id|pos
 suffix:semicolon
 id|raw_inode.dsize
 op_assign
@@ -5960,7 +6197,29 @@ id|raw_inode.deleted
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* TODO: BAAAAAAAAD! buf is a userspace-pointer, and should be&n;&t;         treated as such, with copy_from_user etc...&n;         */
+r_if
+c_cond
+(paren
+id|pos
+OL
+id|f-&gt;size
+)paren
+(brace
+id|node-&gt;removed_size
+op_assign
+id|raw_inode.rsize
+op_assign
+id|jffs_min
+c_func
+(paren
+id|count
+comma
+id|f-&gt;size
+op_minus
+id|pos
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* Write the new node to the flash.  */
 r_if
 c_cond
@@ -5986,7 +6245,7 @@ r_int
 r_char
 op_star
 )paren
-id|buf
+id|vbuf
 )paren
 )paren
 OL
@@ -6009,6 +6268,12 @@ c_func
 id|node
 )paren
 suffix:semicolon
+id|kfree
+c_func
+(paren
+id|vbuf
+)paren
+suffix:semicolon
 id|DJM
 c_func
 (paren
@@ -6024,6 +6289,12 @@ r_goto
 id|out
 suffix:semicolon
 )brace
+id|kfree
+c_func
+(paren
+id|vbuf
+)paren
+suffix:semicolon
 multiline_comment|/* Insert the new node into the file system.  */
 r_if
 c_cond
@@ -6391,6 +6662,31 @@ id|jffs_readpage
 comma
 )brace
 suffix:semicolon
+DECL|function|jffs_fsync
+r_static
+r_int
+id|jffs_fsync
+c_func
+(paren
+r_struct
+id|file
+op_star
+id|f
+comma
+r_struct
+id|dentry
+op_star
+id|d
+comma
+r_int
+id|datasync
+)paren
+(brace
+multiline_comment|/* We currently have O_SYNC operations at all times. &n;&t;   Do nothing&n;&t;*/
+r_return
+l_int|0
+suffix:semicolon
+)brace
 DECL|variable|jffs_file_operations
 r_static
 r_struct
@@ -6418,6 +6714,10 @@ suffix:colon
 id|generic_file_mmap
 comma
 multiline_comment|/* mmap */
+id|fsync
+suffix:colon
+id|jffs_fsync
+comma
 )brace
 suffix:semicolon
 DECL|variable|jffs_file_inode_operations
@@ -6639,7 +6939,15 @@ id|PAGE_SIZE
 suffix:semicolon
 id|inode-&gt;i_blocks
 op_assign
-l_int|0
+(paren
+id|inode-&gt;i_size
+op_plus
+id|PAGE_SIZE
+op_minus
+l_int|1
+)paren
+op_rshift
+id|PAGE_SHIFT
 suffix:semicolon
 r_if
 c_cond
@@ -6713,7 +7021,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* If the node is a device of some sort, then the number of the&n;&t;     device should be read from the flash memory and then added&n;&t;     to the inode&squot;s i_rdev member.  */
+multiline_comment|/* If the node is a device of some sort, then the number of&n;&t;&t;   the device should be read from the flash memory and then&n;&t;&t;   added to the inode&squot;s i_rdev member.  */
 id|kdev_t
 id|rdev
 suffix:semicolon
@@ -6808,7 +7116,6 @@ op_star
 id|sb
 )paren
 (brace
-macro_line|#ifdef USE_GC
 r_struct
 id|jffs_control
 op_star
@@ -6821,21 +7128,12 @@ op_star
 )paren
 id|sb-&gt;u.generic_sbp
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|c-&gt;fmc-&gt;no_call_gc
-)paren
-(brace
-id|jffs_garbage_collect
+id|jffs_garbage_collect_trigger
 c_func
 (paren
 id|c
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 )brace
 DECL|variable|jffs_ops
 r_static

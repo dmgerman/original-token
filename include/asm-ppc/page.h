@@ -290,10 +290,12 @@ DECL|macro|__pa
 mdefine_line|#define __pa(x) ___pa ((unsigned long)(x))
 DECL|macro|__va
 mdefine_line|#define __va(x) ___va ((unsigned long)(x))
-DECL|macro|MAP_NR
-mdefine_line|#define MAP_NR(addr)&t;&t;(((unsigned long)addr-PAGE_OFFSET) &gt;&gt; PAGE_SHIFT)
 DECL|macro|MAP_PAGE_RESERVED
 mdefine_line|#define MAP_PAGE_RESERVED&t;(1&lt;&lt;15)
+DECL|macro|virt_to_page
+mdefine_line|#define virt_to_page(kaddr)&t;(mem_map + (((unsigned long)kaddr-PAGE_OFFSET) &gt;&gt; PAGE_SHIFT))
+DECL|macro|VALID_PAGE
+mdefine_line|#define VALID_PAGE(page)&t;((page - mem_map) &lt; max_mapnr)
 r_extern
 r_int
 r_int

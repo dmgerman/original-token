@@ -466,10 +466,6 @@ r_void
 id|generic_make_request
 c_func
 (paren
-id|request_queue_t
-op_star
-id|q
-comma
 r_int
 id|rw
 comma

@@ -10972,11 +10972,8 @@ c_func
 (paren
 id|mddev
 comma
-(paren
-r_void
-op_star
-)paren
-id|arg
+op_amp
+id|info
 )paren
 suffix:semicolon
 r_goto

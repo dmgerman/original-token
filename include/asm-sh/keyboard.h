@@ -2,7 +2,7 @@ macro_line|#ifndef&t;__ASM_SH_KEYBOARD_H
 DECL|macro|__ASM_SH_KEYBOARD_H
 mdefine_line|#define&t;__ASM_SH_KEYBOARD_H
 multiline_comment|/*&n; *&t;$Id: keyboard.h,v 1.1 2000/06/10 21:45:48 yaegashi Exp $&n; */
-macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;asm/machvec.h&gt;
 DECL|function|kbd_setkeycode
 r_static
 id|__inline__
@@ -106,18 +106,14 @@ id|leds
 )paren
 (brace
 )brace
-macro_line|#ifdef CONFIG_SH_HP600
+r_extern
 r_void
-id|__init
 id|hp600_kbd_init_hw
 c_func
 (paren
 r_void
 )paren
 suffix:semicolon
-DECL|macro|kbd_init_hw
-mdefine_line|#define kbd_init_hw hp600_kbd_init_hw
-macro_line|#else
 DECL|function|kbd_init_hw
 r_static
 id|__inline__
@@ -128,7 +124,18 @@ c_func
 r_void
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|MACH_HP600
+)paren
+(brace
+id|hp600_kbd_init_hw
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
-macro_line|#endif
+)brace
 macro_line|#endif
 eof

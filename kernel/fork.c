@@ -486,6 +486,10 @@ id|mm-&gt;mmap
 op_assign
 l_int|NULL
 suffix:semicolon
+id|mm-&gt;mmap_avl
+op_assign
+l_int|NULL
+suffix:semicolon
 id|mm-&gt;mmap_cache
 op_assign
 l_int|NULL
@@ -1097,13 +1101,6 @@ id|retval
 op_assign
 op_minus
 id|ENOMEM
-suffix:semicolon
-id|mm
-op_assign
-id|mm_alloc
-c_func
-(paren
-)paren
 suffix:semicolon
 id|mm
 op_assign

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: mmu_context.h,v 1.42 2000/02/08 07:47:03 davem Exp $ */
+multiline_comment|/* $Id: mmu_context.h,v 1.43 2000/08/09 08:04:45 davem Exp $ */
 macro_line|#ifndef __SPARC64_MMU_CONTEXT_H
 DECL|macro|__SPARC64_MMU_CONTEXT_H
 mdefine_line|#define __SPARC64_MMU_CONTEXT_H
@@ -66,9 +66,9 @@ op_star
 id|mm
 )paren
 suffix:semicolon
-multiline_comment|/* Initialize a new mmu context.  This is invoked when a new&n; * address space instance (unique or shared) is instantiated.&n; * A fresh mm_struct is cleared out to zeros, so this need not&n; * do anything on Sparc64 since the only thing we care about&n; * is that mm-&gt;context is an invalid context (ie. zero).&n; */
+multiline_comment|/* Initialize a new mmu context.  This is invoked when a new&n; * address space instance (unique or shared) is instantiated.&n; * This just needs to set mm-&gt;context to an invalid context.&n; */
 DECL|macro|init_new_context
-mdefine_line|#define init_new_context(__tsk, __mm)&t;do { } while(0)
+mdefine_line|#define init_new_context(__tsk, __mm)&t;((__mm)-&gt;context = 0UL)
 multiline_comment|/* Destroy a dead context.  This occurs when mmput drops the&n; * mm_users count to zero, the mmaps have been released, and&n; * all the page tables have been flushed.  Our job is to destroy&n; * any remaining processor-specific state, and in the sparc64&n; * case this just means freeing up the mmu context ID held by&n; * this task if valid.&n; */
 DECL|macro|destroy_context
 mdefine_line|#define destroy_context(__mm)&t;&t;&t;&t;&t;&bslash;&n;do {&t;spin_lock(&amp;ctx_alloc_lock);&t;&t;&t;&t;&bslash;&n;&t;if (CTX_VALID((__mm)-&gt;context)) {&t;&t;&t;&bslash;&n;&t;&t;unsigned long nr = CTX_HWBITS((__mm)-&gt;context);&t;&bslash;&n;&t;&t;mmu_context_bmap[nr&gt;&gt;6] &amp;= ~(1UL &lt;&lt; (nr &amp; 63));&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;spin_unlock(&amp;ctx_alloc_lock);&t;&t;&t;&t;&bslash;&n;} while(0)

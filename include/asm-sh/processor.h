@@ -16,7 +16,7 @@ id|cpu_type
 DECL|enumerator|CPU_SH7708
 id|CPU_SH7708
 comma
-multiline_comment|/* Represents 7708, 7708S, 7708R, 7709 */
+multiline_comment|/* Represents 7707, 7708, 7708S, 7708R, 7709 */
 DECL|enumerator|CPU_SH7729
 id|CPU_SH7729
 comma

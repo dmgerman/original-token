@@ -1,7 +1,8 @@
-multiline_comment|/*&n; * JFFS -- Journaling Flash File System, Linux implementation.&n; *&n; * Copyright (C) 1999, 2000  Axis Communications AB.&n; *&n; * Created by Finn Hakansson &lt;finn@axis.com&gt;.&n; *&n; * This is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * $Id: intrep.h,v 1.2 2000/05/24 13:13:56 alex Exp $&n; *&n; */
+multiline_comment|/*&n; * JFFS -- Journaling Flash File System, Linux implementation.&n; *&n; * Copyright (C) 1999, 2000  Axis Communications AB.&n; *&n; * Created by Finn Hakansson &lt;finn@axis.com&gt;.&n; *&n; * This is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * $Id: intrep.h,v 1.6 2000/08/04 14:29:17 dwmw2 Exp $&n; *&n; */
 macro_line|#ifndef __LINUX_JFFS_INTREP_H__
 DECL|macro|__LINUX_JFFS_INTREP_H__
 mdefine_line|#define __LINUX_JFFS_INTREP_H__
+macro_line|#include &quot;jffs_fm.h&quot;
 r_inline
 r_int
 id|jffs_min
@@ -167,6 +168,16 @@ id|f
 )paren
 suffix:semicolon
 r_int
+id|jffs_free_file
+c_func
+(paren
+r_struct
+id|jffs_file
+op_star
+id|f
+)paren
+suffix:semicolon
+r_int
 id|jffs_possibly_delete_file
 c_func
 (paren
@@ -299,7 +310,16 @@ id|size
 suffix:semicolon
 multiline_comment|/* Garbage collection stuff.  */
 r_int
-id|jffs_garbage_collect
+id|jffs_garbage_collect_thread
+c_func
+(paren
+r_void
+op_star
+id|c
+)paren
+suffix:semicolon
+r_void
+id|jffs_garbage_collect_trigger
 c_func
 (paren
 r_struct
@@ -308,6 +328,81 @@ op_star
 id|c
 )paren
 suffix:semicolon
+r_int
+id|jffs_garbage_collect_now
+c_func
+(paren
+r_struct
+id|jffs_control
+op_star
+id|c
+)paren
+suffix:semicolon
+multiline_comment|/* Is there enough space on the flash?  */
+DECL|function|JFFS_ENOUGH_SPACE
+r_static
+r_inline
+r_int
+id|JFFS_ENOUGH_SPACE
+c_func
+(paren
+r_struct
+id|jffs_control
+op_star
+id|c
+)paren
+(brace
+r_struct
+id|jffs_fmcontrol
+op_star
+id|fmc
+op_assign
+id|c-&gt;fmc
+suffix:semicolon
+r_while
+c_loop
+(paren
+l_int|1
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|fmc-&gt;flash_size
+op_minus
+(paren
+id|fmc-&gt;used_size
+op_plus
+id|fmc-&gt;dirty_size
+)paren
+)paren
+op_ge
+id|fmc-&gt;min_free_size
+)paren
+(brace
+r_return
+l_int|1
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|fmc-&gt;dirty_size
+OL
+id|fmc-&gt;sector_size
+)paren
+r_return
+l_int|0
+suffix:semicolon
+id|jffs_garbage_collect_now
+c_func
+(paren
+id|c
+)paren
+suffix:semicolon
+)brace
+)brace
 multiline_comment|/* For debugging purposes.  */
 r_void
 id|jffs_print_node

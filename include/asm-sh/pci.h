@@ -5,6 +5,13 @@ macro_line|#ifdef __KERNEL__
 multiline_comment|/* Can be used to override the logic in pci_scan_bus for skipping&n;   already-configured bus numbers - to be used for buggy BIOSes&n;   or architectures with incomplete PCI setup by the loader */
 DECL|macro|pcibios_assign_all_busses
 mdefine_line|#define pcibios_assign_all_busses()&t;0
+multiline_comment|/* These are currently the correct values for the STM overdrive board. &n; * We need some way of setting this on a board specific way, it will &n; * not be the same on other boards I think&n; */
+macro_line|#if 1 /* def CONFIG_SH_OVERDRIVE */
+DECL|macro|PCIBIOS_MIN_IO
+mdefine_line|#define PCIBIOS_MIN_IO&t;&t;0x2000
+DECL|macro|PCIBIOS_MIN_MEM
+mdefine_line|#define PCIBIOS_MIN_MEM&t;&t;0x10000000
+macro_line|#endif
 DECL|function|pcibios_set_master
 r_extern
 r_inline
@@ -103,6 +110,9 @@ id|ptr
 comma
 r_int
 id|size
+comma
+r_int
+id|directoin
 )paren
 (brace
 r_return
@@ -131,6 +141,9 @@ id|dma_addr
 comma
 r_int
 id|size
+comma
+r_int
+id|direction
 )paren
 (brace
 multiline_comment|/* Nothing to do */
@@ -155,6 +168,9 @@ id|sg
 comma
 r_int
 id|nents
+comma
+r_int
+id|direction
 )paren
 (brace
 r_return
@@ -181,6 +197,9 @@ id|sg
 comma
 r_int
 id|nents
+comma
+r_int
+id|direction
 )paren
 (brace
 multiline_comment|/* Nothing to do */
@@ -203,6 +222,9 @@ id|dma_handle
 comma
 r_int
 id|size
+comma
+r_int
+id|direction
 )paren
 (brace
 multiline_comment|/* Nothing to do */
@@ -227,6 +249,9 @@ id|sg
 comma
 r_int
 id|nelems
+comma
+r_int
+id|direction
 )paren
 (brace
 multiline_comment|/* Nothing to do */

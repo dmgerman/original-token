@@ -202,14 +202,6 @@ DECL|typedef|XD_SIGNATURE
 )brace
 id|XD_SIGNATURE
 suffix:semicolon
-r_static
-r_int
-id|xd_setup
-(paren
-r_char
-op_star
-)paren
-suffix:semicolon
 macro_line|#ifndef MODULE
 r_static
 r_int

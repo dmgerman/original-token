@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtable.h,v 1.99 2000/08/05 13:30:34 davem Exp $ */
+multiline_comment|/* $Id: pgtable.h,v 1.101 2000/08/09 00:00:17 davem Exp $ */
 macro_line|#ifndef _SPARC_PGTABLE_H
 DECL|macro|_SPARC_PGTABLE_H
 mdefine_line|#define _SPARC_PGTABLE_H
@@ -482,9 +482,6 @@ r_int
 r_int
 id|ptr_in_current_pgd
 suffix:semicolon
-multiline_comment|/* the no. of pointers that fit on a page: this will go away */
-DECL|macro|PTRS_PER_PAGE
-mdefine_line|#define PTRS_PER_PAGE   (PAGE_SIZE/sizeof(void*))
 multiline_comment|/* Here is a trick, since mmap.c need the initializer elements for&n; * protection_map[] to be constant at compile time, I set the following&n; * to all zeros.  I set it to the real values after I link in the&n; * appropriate MMU page table routines at boot time.&n; */
 DECL|macro|__P000
 mdefine_line|#define __P000  __pgprot(0)

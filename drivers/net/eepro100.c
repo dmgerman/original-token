@@ -1815,6 +1815,7 @@ op_star
 id|pdev
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_EEPRO100_PM
 r_static
 r_void
 id|eepro100_suspend
@@ -1835,6 +1836,7 @@ op_star
 id|pdev
 )paren
 suffix:semicolon
+macro_line|#endif /* CONFIG_EEPRO100_PM */
 r_static
 r_int
 id|do_eeprom_cmd
@@ -10665,6 +10667,7 @@ id|new_rx_mode
 suffix:semicolon
 )brace
 "&f;"
+macro_line|#ifdef CONFIG_EEPRO100_PM
 DECL|function|eepro100_suspend
 r_static
 r_void
@@ -10784,6 +10787,7 @@ id|dev
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif /* CONFIG_EEPRO100_PM */
 DECL|function|eepro100_remove_one
 r_static
 r_void
@@ -10996,7 +11000,7 @@ id|remove
 suffix:colon
 id|eepro100_remove_one
 comma
-macro_line|#if 0&t;/* These seem to be broken.. */
+macro_line|#ifdef CONFIG_EEPRO100_PM
 id|suspend
 suffix:colon
 id|eepro100_suspend

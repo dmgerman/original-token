@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Network device driver for the GMAC ethernet controller on&n; * Apple G4 Powermacs.&n; *&n; * Copyright (C) 2000 Paul Mackerras &amp; Ben. Herrenschmidt&n; * &n; * portions based on sunhme.c by David S. Miller&n; * &n; */
+multiline_comment|/*&n; * Network device driver for the GMAC ethernet controller on&n; * Apple G4 Powermacs.&n; *&n; * Copyright (C) 2000 Paul Mackerras &amp; Ben. Herrenschmidt&n; * &n; * portions based on sunhme.c by David S. Miller&n; *&n; * Changes:&n; * Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt; - 08/06/2000&n; * - check init_etherdev return in gmac_probe1&n; * &n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -5317,20 +5317,35 @@ id|gmac
 )paren
 )paren
 suffix:semicolon
-id|memset
+r_if
+c_cond
+(paren
+op_logical_neg
+id|dev
+)paren
+(brace
+id|printk
 c_func
 (paren
-id|dev-&gt;priv
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-r_struct
-id|gmac
-)paren
+id|KERN_ERR
+l_string|&quot;GMAC: init_etherdev failed, out of memory&bslash;n&quot;
 )paren
 suffix:semicolon
+id|free_page
+c_func
+(paren
+id|tx_descpage
+)paren
+suffix:semicolon
+id|free_page
+c_func
+(paren
+id|rx_descpage
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|gm
 op_assign
 (paren

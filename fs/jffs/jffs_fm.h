@@ -1,24 +1,51 @@
-multiline_comment|/*&n; * JFFS -- Journaling Flash File System, Linux implementation.&n; *&n; * Copyright (C) 1999, 2000  Axis Communications AB.&n; *&n; * Created by Finn Hakansson &lt;finn@axis.com&gt;.&n; *&n; * This is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * $Id: jffs_fm.h,v 1.3 2000/07/04 16:15:42 dwmw2 Exp $&n; *&n; * Ported to Linux 2.3.x and MTD:&n; * Copyright (C) 2000  Alexander Larsson (alex@cendio.se), Cendio Systems AB&n; *&n; */
+multiline_comment|/*&n; * JFFS -- Journaling Flash File System, Linux implementation.&n; *&n; * Copyright (C) 1999, 2000  Axis Communications AB.&n; *&n; * Created by Finn Hakansson &lt;finn@axis.com&gt;.&n; *&n; * This is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * $Id: jffs_fm.h,v 1.7 2000/08/08 09:10:39 dwmw2 Exp $&n; *&n; * Ported to Linux 2.3.x and MTD:&n; * Copyright (C) 2000  Alexander Larsson (alex@cendio.se), Cendio Systems AB&n; *&n; */
 macro_line|#ifndef __LINUX_JFFS_FM_H__
 DECL|macro|__LINUX_JFFS_FM_H__
 mdefine_line|#define __LINUX_JFFS_FM_H__
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/jffs.h&gt;
 macro_line|#include &lt;linux/mtd/mtd.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* The alignment between two nodes in the flash memory.  */
 DECL|macro|JFFS_ALIGN_SIZE
 mdefine_line|#define JFFS_ALIGN_SIZE 4
 multiline_comment|/* Mark the on-flash space as obsolete when appropriate.  */
 DECL|macro|JFFS_MARK_OBSOLETE
 mdefine_line|#define JFFS_MARK_OBSOLETE 0
+macro_line|#ifndef CONFIG_JFFS_FS_VERBOSE
 DECL|macro|CONFIG_JFFS_FS_VERBOSE
-mdefine_line|#define CONFIG_JFFS_FS_VERBOSE 0
+mdefine_line|#define CONFIG_JFFS_FS_VERBOSE 1
+macro_line|#endif
+macro_line|#if CONFIG_JFFS_FS_VERBOSE &gt; 0
+DECL|macro|D
+mdefine_line|#define D(x) x
+DECL|macro|D1
+mdefine_line|#define D1(x) D(x)
+macro_line|#else
+DECL|macro|D
+mdefine_line|#define D(x)
+DECL|macro|D1
+mdefine_line|#define D1(x)
+macro_line|#endif
+macro_line|#if CONFIG_JFFS_FS_VERBOSE &gt; 1
+DECL|macro|D2
+mdefine_line|#define D2(x) D(x)
+macro_line|#else
+DECL|macro|D2
+mdefine_line|#define D2(x)
+macro_line|#endif
+macro_line|#if CONFIG_JFFS_FS_VERBOSE &gt; 2
+DECL|macro|D3
+mdefine_line|#define D3(x) D(x)
+macro_line|#else
+DECL|macro|D3
+mdefine_line|#define D3(x)
+macro_line|#endif
+DECL|macro|ASSERT
+mdefine_line|#define ASSERT(x) x
 multiline_comment|/* How many padding bytes should be inserted between two chunks of data&n;   on the flash?  */
 DECL|macro|JFFS_GET_PAD_BYTES
 mdefine_line|#define JFFS_GET_PAD_BYTES(size) ((JFFS_ALIGN_SIZE                     &bslash;&n;&t;&t;&t;&t;  - ((__u32)(size) % JFFS_ALIGN_SIZE)) &bslash;&n;&t;&t;&t;&t;  % JFFS_ALIGN_SIZE)
-multiline_comment|/* Is there enough space on the flash?  */
-DECL|macro|JFFS_ENOUGH_SPACE
-mdefine_line|#define JFFS_ENOUGH_SPACE(fmc) (((fmc)-&gt;flash_size - (fmc)-&gt;used_size &bslash;&n;&t;&t;&t;&t; - (fmc)-&gt;dirty_size) &gt;= (fmc)-&gt;min_free_size)
 DECL|struct|jffs_node_ref
 r_struct
 id|jffs_node_ref
@@ -111,9 +138,10 @@ id|mtd_info
 op_star
 id|mtd
 suffix:semicolon
-DECL|member|no_call_gc
-id|__u32
-id|no_call_gc
+DECL|member|gclock
+r_struct
+id|semaphore
+id|gclock
 suffix:semicolon
 DECL|member|c
 r_struct
@@ -144,6 +172,11 @@ r_struct
 id|jffs_fm
 op_star
 id|tail_extra
+suffix:semicolon
+DECL|member|wlock
+r_struct
+id|semaphore
+id|wlock
 suffix:semicolon
 )brace
 suffix:semicolon

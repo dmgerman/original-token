@@ -231,6 +231,10 @@ mdefine_line|#define __va(x)&t;&t;&t;((void *)__phys_to_virt((unsigned long)(x))
 macro_line|#ifndef CONFIG_DISCONTIGMEM
 DECL|macro|MAP_NR
 mdefine_line|#define MAP_NR(addr)&t;&t;((__pa(addr) - PHYS_OFFSET) &gt;&gt; PAGE_SHIFT)
+DECL|macro|virt_to_page
+mdefine_line|#define virt_to_page(kaddr)&t;(mem_map + ((__pa(kaddr) - PHYS_OFFSET) &gt;&gt; PAGE_SHIFT))
+DECL|macro|VALID_PAGE
+mdefine_line|#define VALID_PAGE(page)&t;((page - mem_map) &lt; max_mapnr)
 macro_line|#endif
 macro_line|#endif
 macro_line|#endif

@@ -5103,11 +5103,6 @@ id|ctl
 )paren
 )paren
 (brace
-id|err
-op_assign
-op_minus
-id|ENOBUFS
-suffix:semicolon
 id|ctl_buf
 op_assign
 id|sock_kmalloc

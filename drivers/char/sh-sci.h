@@ -14,15 +14,15 @@ DECL|macro|SCIx_RXI_IRQ
 mdefine_line|#define SCIx_RXI_IRQ 1
 DECL|macro|SCIx_TXI_IRQ
 mdefine_line|#define SCIx_TXI_IRQ 2
-multiline_comment|/*                     ERI, RXI, TXI,   INTC reg, INTC pos */
+multiline_comment|/*                     ERI, RXI, TXI,  */
 DECL|macro|SCI_IRQS
-mdefine_line|#define SCI_IRQS      { 23,  24,  25 }, INTC_IPRB, 1
+mdefine_line|#define SCI_IRQS      { 23,  24,  25 }
 DECL|macro|SH3_SCIF_IRQS
-mdefine_line|#define SH3_SCIF_IRQS { 56,  57,  59 }, INTC_IPRE, 1
+mdefine_line|#define SH3_SCIF_IRQS { 56,  57,  59 }
 DECL|macro|SH3_IRDA_IRQS
-mdefine_line|#define SH3_IRDA_IRQS { 52,  53,  55 }, INTC_IPRE, 2
+mdefine_line|#define SH3_IRDA_IRQS { 52,  53,  55 }
 DECL|macro|SH4_SCIF_IRQS
-mdefine_line|#define SH4_SCIF_IRQS { 40,  41,  43 }, INTC_IPRC, 1
+mdefine_line|#define SH4_SCIF_IRQS { 40,  41,  43 }
 macro_line|#if defined(CONFIG_CPU_SUBTYPE_SH7708)
 DECL|macro|SCI_NPORTS
 macro_line|# define SCI_NPORTS 1
@@ -34,11 +34,11 @@ DECL|macro|SCSCR_INIT
 macro_line|# define SCSCR_INIT(port)          0x30 /* TIE=0,RIE=0,TE=1,RE=1 */
 DECL|macro|SCI_ONLY
 macro_line|# define SCI_ONLY
-macro_line|#elif defined(CONFIG_CPU_SUBTYPE_SH7709)
+macro_line|#elif defined(CONFIG_CPU_SUBTYPE_SH7707) || defined(CONFIG_CPU_SUBTYPE_SH7709)
 DECL|macro|SCI_NPORTS
 macro_line|# define SCI_NPORTS 3
 DECL|macro|SCI_INIT
-macro_line|# define SCI_INIT { &bslash;&n;  { {}, PORT_SCI,  0xfffffe80, SCI_IRQS,        sci_init_pins_sci  }, &bslash;&n;  { {}, PORT_SCIF, 0xA4000150, SH3_SCIF_IRQS, sci_init_pins_scif },   &bslash;&n;  { {}, PORT_SCIF, 0xA4000140, SH3_IRDA_IRQS, sci_init_pins_irda }    &bslash;&n;}
+macro_line|# define SCI_INIT { &bslash;&n;  { {}, PORT_SCI,  0xfffffe80, SCI_IRQS,      sci_init_pins_sci  }, &bslash;&n;  { {}, PORT_SCIF, 0xA4000150, SH3_SCIF_IRQS, sci_init_pins_scif }, &bslash;&n;  { {}, PORT_SCIF, 0xA4000140, SH3_IRDA_IRQS, sci_init_pins_irda }  &bslash;&n;}
 DECL|macro|SCPCR
 macro_line|# define SCPCR  0xA4000116 /* 16 bit SCI and SCIF */
 DECL|macro|SCPDR
@@ -75,44 +75,44 @@ mdefine_line|#define SCI_CTRL_FLAGS_TE   0x20 /* all */
 DECL|macro|SCI_CTRL_FLAGS_RE
 mdefine_line|#define SCI_CTRL_FLAGS_RE   0x10 /* all */
 multiline_comment|/*      SCI_CTRL_FLAGS_REIE 0x08  * 7750 SCIF */
-multiline_comment|/*      SCI_CTRL_FLAGS_MPIE 0x08  * 7708 SCI, 7709 SCI, 7750 SCI */
-multiline_comment|/*      SCI_CTRL_FLAGS_TEIE 0x04  * 7708 SCI, 7709 SCI, 7750 SCI */
+multiline_comment|/*      SCI_CTRL_FLAGS_MPIE 0x08  * 7707 SCI, 7708 SCI, 7709 SCI, 7750 SCI */
+multiline_comment|/*      SCI_CTRL_FLAGS_TEIE 0x04  * 7707 SCI, 7708 SCI, 7709 SCI, 7750 SCI */
 multiline_comment|/*      SCI_CTRL_FLAGS_CKE1 0x02  * all */
-multiline_comment|/*      SCI_CTRL_FLAGS_CKE0 0x01  * 7708 SCI, 7709 SCI/SCIF, 7750 SCI */
+multiline_comment|/*      SCI_CTRL_FLAGS_CKE0 0x01  * 7707 SCI/SCIF, 7708 SCI, 7709 SCI/SCIF, 7750 SCI */
 multiline_comment|/* SCxSR SCI */
 DECL|macro|SCI_TDRE
-mdefine_line|#define SCI_TDRE  0x80 /* 7708 SCI, 7709 SCI, 7750 SCI */
+mdefine_line|#define SCI_TDRE  0x80 /* 7707 SCI, 7708 SCI, 7709 SCI, 7750 SCI */
 DECL|macro|SCI_RDRF
-mdefine_line|#define SCI_RDRF  0x40 /* 7708 SCI, 7709 SCI, 7750 SCI */
+mdefine_line|#define SCI_RDRF  0x40 /* 7707 SCI, 7708 SCI, 7709 SCI, 7750 SCI */
 DECL|macro|SCI_ORER
-mdefine_line|#define SCI_ORER  0x20 /* 7708 SCI, 7709 SCI, 7750 SCI */
+mdefine_line|#define SCI_ORER  0x20 /* 7707 SCI, 7708 SCI, 7709 SCI, 7750 SCI */
 DECL|macro|SCI_FER
-mdefine_line|#define SCI_FER   0x10 /* 7708 SCI, 7709 SCI, 7750 SCI */
+mdefine_line|#define SCI_FER   0x10 /* 7707 SCI, 7708 SCI, 7709 SCI, 7750 SCI */
 DECL|macro|SCI_PER
-mdefine_line|#define SCI_PER   0x08 /* 7708 SCI, 7709 SCI, 7750 SCI */
+mdefine_line|#define SCI_PER   0x08 /* 7707 SCI, 7708 SCI, 7709 SCI, 7750 SCI */
 DECL|macro|SCI_TEND
-mdefine_line|#define SCI_TEND  0x04 /* 7708 SCI, 7709 SCI, 7750 SCI */
-multiline_comment|/*      SCI_MPB   0x02  * 7708 SCI, 7709 SCI, 7750 SCI */
-multiline_comment|/*      SCI_MPBT  0x01  * 7708 SCI, 7709 SCI, 7750 SCI */
+mdefine_line|#define SCI_TEND  0x04 /* 7707 SCI, 7708 SCI, 7709 SCI, 7750 SCI */
+multiline_comment|/*      SCI_MPB   0x02  * 7707 SCI, 7708 SCI, 7709 SCI, 7750 SCI */
+multiline_comment|/*      SCI_MPBT  0x01  * 7707 SCI, 7708 SCI, 7709 SCI, 7750 SCI */
 DECL|macro|SCI_ERRORS
 mdefine_line|#define SCI_ERRORS ( SCI_PER | SCI_FER | SCI_ORER)
 multiline_comment|/* SCxSR SCIF */
 DECL|macro|SCIF_ER
-mdefine_line|#define SCIF_ER    0x0080 /* 7709 SCIF, 7750 SCIF */
+mdefine_line|#define SCIF_ER    0x0080 /* 7707 SCIF, 7709 SCIF, 7750 SCIF */
 DECL|macro|SCIF_TEND
-mdefine_line|#define SCIF_TEND  0x0040 /* 7709 SCIF, 7750 SCIF */
+mdefine_line|#define SCIF_TEND  0x0040 /* 7707 SCIF, 7709 SCIF, 7750 SCIF */
 DECL|macro|SCIF_TDFE
-mdefine_line|#define SCIF_TDFE  0x0020 /* 7709 SCIF, 7750 SCIF */
+mdefine_line|#define SCIF_TDFE  0x0020 /* 7707 SCIF, 7709 SCIF, 7750 SCIF */
 DECL|macro|SCIF_BRK
-mdefine_line|#define SCIF_BRK   0x0010 /* 7709 SCIF, 7750 SCIF */
+mdefine_line|#define SCIF_BRK   0x0010 /* 7707 SCIF, 7709 SCIF, 7750 SCIF */
 DECL|macro|SCIF_FER
-mdefine_line|#define SCIF_FER   0x0008 /* 7709 SCIF, 7750 SCIF */
+mdefine_line|#define SCIF_FER   0x0008 /* 7707 SCIF, 7709 SCIF, 7750 SCIF */
 DECL|macro|SCIF_PER
-mdefine_line|#define SCIF_PER   0x0004 /* 7709 SCIF, 7750 SCIF */
+mdefine_line|#define SCIF_PER   0x0004 /* 7707 SCIF, 7709 SCIF, 7750 SCIF */
 DECL|macro|SCIF_RDF
-mdefine_line|#define SCIF_RDF   0x0002 /* 7709 SCIF, 7750 SCIF */
+mdefine_line|#define SCIF_RDF   0x0002 /* 7707 SCIF, 7709 SCIF, 7750 SCIF */
 DECL|macro|SCIF_DR
-mdefine_line|#define SCIF_DR    0x0001 /* 7709 SCIF, 7750 SCIF */
+mdefine_line|#define SCIF_DR    0x0001 /* 7707 SCIF, 7709 SCIF, 7750 SCIF */
 DECL|macro|SCIF_ERRORS
 mdefine_line|#define SCIF_ERRORS ( SCIF_PER | SCIF_FER | SCIF_ER | SCIF_BRK)
 macro_line|#if defined(SCI_ONLY)
@@ -168,8 +168,6 @@ DECL|macro|SCFCR_TFRST
 mdefine_line|#define SCFCR_TFRST 0x0004
 DECL|macro|SCFCR_MCE
 mdefine_line|#define SCFCR_MCE   0x0008
-DECL|macro|SCI_PRIORITY
-mdefine_line|#define SCI_PRIORITY&t;3
 DECL|macro|SCI_MAJOR
 mdefine_line|#define SCI_MAJOR&t;&t;204
 DECL|macro|SCI_MINOR_START
@@ -184,6 +182,9 @@ DECL|macro|I_OTHER
 mdefine_line|#define I_OTHER(tty)    &bslash;&n;      ((I_INLCR(tty))  ||&bslash;&n;      (I_IGNCR(tty))   ||&bslash;&n;      (I_ICRNL(tty))   ||&bslash;&n;      (I_IUCLC(tty))   ||&bslash;&n;      (L_ISIG(tty)))
 DECL|macro|SCI_MAGIC
 mdefine_line|#define SCI_MAGIC 0xbabeface
+multiline_comment|/*&n; * Events are used to schedule things to happen at timer-interrupt&n; * time, instead of at rs interrupt time.&n; */
+DECL|macro|SCI_EVENT_WRITE_WAKEUP
+mdefine_line|#define SCI_EVENT_WRITE_WAKEUP&t;0
 DECL|struct|sci_port
 r_struct
 id|sci_port
@@ -211,14 +212,6 @@ l_int|3
 )braket
 suffix:semicolon
 multiline_comment|/* ERI, RXI, TXI */
-DECL|member|intc_addr
-DECL|member|intc_pos
-r_int
-r_int
-id|intc_addr
-comma
-id|intc_pos
-suffix:semicolon
 DECL|member|init_pins
 r_void
 (paren
@@ -240,6 +233,21 @@ DECL|member|old_cflag
 r_int
 r_int
 id|old_cflag
+suffix:semicolon
+DECL|member|icount
+r_struct
+id|async_icount
+id|icount
+suffix:semicolon
+DECL|member|tqueue
+r_struct
+id|tq_struct
+id|tqueue
+suffix:semicolon
+DECL|member|event
+r_int
+r_int
+id|event
 suffix:semicolon
 )brace
 suffix:semicolon

@@ -37,5 +37,14 @@ id|dmanr
 )paren
 suffix:semicolon
 multiline_comment|/* release it again */
+macro_line|#ifdef CONFIG_PCI
+r_extern
+r_int
+id|isa_dma_bridge_buggy
+suffix:semicolon
+macro_line|#else
+DECL|macro|isa_dma_bridge_buggy
+mdefine_line|#define isa_dma_bridge_buggy &t;(0)
+macro_line|#endif
 macro_line|#endif /* __ASM_SH_DMA_H */
 eof

@@ -12788,6 +12788,12 @@ c_func
 l_int|0
 )paren
 suffix:semicolon
+id|set_palette
+c_func
+(paren
+id|currcons
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

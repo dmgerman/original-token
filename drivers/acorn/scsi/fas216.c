@@ -9364,7 +9364,11 @@ suffix:semicolon
 id|scsi_sleep
 c_func
 (paren
-l_int|5
+l_int|25
+op_star
+id|HZ
+op_div
+l_int|100
 )paren
 suffix:semicolon
 id|spin_lock_irq
@@ -9983,7 +9987,11 @@ suffix:semicolon
 id|scsi_sleep
 c_func
 (paren
-l_int|5
+l_int|25
+op_star
+id|HZ
+op_div
+l_int|100
 )paren
 suffix:semicolon
 id|spin_lock_irq

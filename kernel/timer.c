@@ -673,6 +673,7 @@ id|timerlist_lock
 op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
+macro_line|#ifdef CONFIG_SMP
 DECL|variable|running_timer
 r_volatile
 r_struct
@@ -683,7 +684,6 @@ id|running_timer
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#ifdef CONFIG_SMP
 DECL|macro|timer_enter
 mdefine_line|#define timer_enter(t) do { running_timer = t; mb(); } while (0)
 DECL|macro|timer_exit
@@ -697,10 +697,6 @@ DECL|macro|timer_enter
 mdefine_line|#define timer_enter(t)&t;&t;do { } while (0)
 DECL|macro|timer_exit
 mdefine_line|#define timer_exit()&t;&t;do { } while (0)
-DECL|macro|timer_is_running
-mdefine_line|#define timer_is_running(t)&t;(0)
-DECL|macro|timer_synchronize
-mdefine_line|#define timer_synchronize(t)&t;do { (void)(t); barrier(); } while(0)
 macro_line|#endif
 DECL|function|add_timer
 r_void

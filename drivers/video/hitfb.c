@@ -306,6 +306,8 @@ id|fix-&gt;line_length
 op_assign
 id|par-&gt;x
 suffix:semicolon
+r_break
+suffix:semicolon
 r_case
 l_int|16
 suffix:colon
@@ -314,6 +316,8 @@ op_assign
 id|par-&gt;x
 op_star
 l_int|2
+suffix:semicolon
+r_break
 suffix:semicolon
 )brace
 r_return

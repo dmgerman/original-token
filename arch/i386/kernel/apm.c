@@ -461,7 +461,7 @@ DECL|macro|APM_DO_CLI
 macro_line|#&t;define APM_DO_CLI&t;__cli()
 macro_line|#else
 DECL|macro|APM_DO_CLI
-macro_line|#&t;define APM_DO_CLI
+macro_line|#&t;define APM_DO_CLI&t;__sti()
 macro_line|#endif
 macro_line|#ifdef APM_ZERO_SEGS
 DECL|macro|APM_DECL_SEGS

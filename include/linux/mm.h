@@ -695,10 +695,6 @@ DECL|macro|__get_free_page
 mdefine_line|#define __get_free_page(gfp_mask) &bslash;&n;&t;&t;__get_free_pages((gfp_mask),0)
 DECL|macro|__get_dma_pages
 mdefine_line|#define __get_dma_pages(gfp_mask, order) &bslash;&n;&t;&t;__get_free_pages((gfp_mask) | GFP_DMA,(order))
-DECL|macro|virt_to_page
-mdefine_line|#define virt_to_page(kaddr)&t;(mem_map + MAP_NR(kaddr))
-DECL|macro|VALID_PAGE
-mdefine_line|#define VALID_PAGE(page)&t;((page - mem_map) &lt; max_mapnr)
 multiline_comment|/*&n; * The old interface name will be removed in 2.5:&n; */
 DECL|macro|get_free_page
 mdefine_line|#define get_free_page get_zeroed_page

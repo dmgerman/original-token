@@ -166,7 +166,7 @@ mdefine_line|#define __pgd(x)&t;(x)
 DECL|macro|__pgprot
 mdefine_line|#define __pgprot(x)&t;(x)
 macro_line|#  endif /* !STRICT_MM_TYPECHECKS */
-multiline_comment|/*&n; * Note: the MAP_NR() macro can&squot;t use __pa() because MAP_NR(X) MUST&n; * map to something &gt;= max_mapnr if X is outside the identity mapped&n; * kernel space.&n; */
+multiline_comment|/*&n; * Note: the MAP_NR_*() macro can&squot;t use __pa() because MAP_NR_*(X) MUST&n; * map to something &gt;= max_mapnr if X is outside the identity mapped&n; * kernel space.&n; */
 multiline_comment|/*&n; * The dense variant can be used as long as the size of memory holes isn&squot;t&n; * very big.&n; */
 DECL|macro|MAP_NR_DENSE
 mdefine_line|#define MAP_NR_DENSE(addr)&t;(((unsigned long) (addr) - PAGE_OFFSET) &gt;&gt; PAGE_SHIFT)
@@ -174,15 +174,17 @@ multiline_comment|/*&n; * This variant works well for the SGI SN1 architecture (
 DECL|macro|MAP_NR_SN1
 mdefine_line|#define MAP_NR_SN1(addr)&t;(((unsigned long) (addr) - PAGE_OFFSET) &gt;&gt; PAGE_SHIFT)
 macro_line|#ifdef CONFIG_IA64_GENERIC
-DECL|macro|MAP_NR
-macro_line|# define MAP_NR(addr)&t;platform_map_nr(addr)
+DECL|macro|virt_to_page
+macro_line|# define virt_to_page(kaddr)&t;(mem_map + platform_map_nr(kaddr))
 macro_line|#elif defined (CONFIG_IA64_SN_SN1_SIM)
-DECL|macro|MAP_NR
-macro_line|# define MAP_NR(addr)&t;MAP_NR_SN1(addr)
+DECL|macro|virt_to_page
+macro_line|# define virt_to_page(kaddr)&t;(mem_map + MAP_NR_SN1(kaddr))
 macro_line|#else
-DECL|macro|MAP_NR
-macro_line|# define MAP_NR(addr)&t;MAP_NR_DENSE(addr)
+DECL|macro|virt_to_page
+macro_line|# define virt_to_page(kaddr)&t;(mem_map + MAP_NR_DENSE(kaddr))
 macro_line|#endif
+DECL|macro|VALID_PAGE
+mdefine_line|#define VALID_PAGE(page)&t;((page - mem_map) &lt; max_mapnr)
 macro_line|# endif /* __KERNEL__ */
 DECL|union|ia64_va
 r_typedef

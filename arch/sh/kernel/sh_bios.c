@@ -1,4 +1,4 @@
-multiline_comment|/* $Id$&n; *&n; *  linux/arch/sh/kernel/sh_bios.c&n; *  C interface for trapping into the standard LinuxSH BIOS.&n; *&n; *  Copyright (C) 2000 Greg Banks, Mitch Davis&n; *&n; */
+multiline_comment|/* $Id: sh_bios.c,v 1.2 2000/07/26 04:37:32 gniibe Exp $&n; *&n; *  linux/arch/sh/kernel/sh_bios.c&n; *  C interface for trapping into the standard LinuxSH BIOS.&n; *&n; *  Copyright (C) 2000 Greg Banks, Mitch Davis&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/sh_bios.h&gt;
 macro_line|#ifdef CONFIG_SH_STANDARD_BIOS

@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/hitachi_se.h&gt;
+macro_line|#include &lt;asm/machvec.h&gt;
 macro_line|#include &quot;8390.h&quot;
 DECL|macro|byte
 mdefine_line|#define byte&t;unsigned char
@@ -336,6 +337,17 @@ id|dev
 op_assign
 op_amp
 id|tmp
+suffix:semicolon
+multiline_comment|/* If we are not running on a SolutionEngine, give up now */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|MACH_SE
+)paren
+r_return
+op_minus
+id|ENODEV
 suffix:semicolon
 r_if
 c_cond

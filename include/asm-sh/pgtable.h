@@ -23,7 +23,7 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#if defined(__sh3__)
-multiline_comment|/* Cache flushing:&n; *&n; *  - flush_cache_all() flushes entire cache&n; *  - flush_cache_mm(mm) flushes the specified mm context&squot;s cache lines&n; *  - flush_cache_page(mm, vmaddr) flushes a single page&n; *  - flush_cache_range(mm, start, end) flushes a range of pages&n; *&n; *  - flush_page_to_ram(page) write back kernel page to ram&n; *  - flush_icache_range(start, end) flushes(invalidates) a range for icache&n; *  - flush_icache_page(vma, pg) flushes(invalidates) a page for icache&n; *&n; *  Caches are indexed (effectively) by physical address on SH-3, so&n; *  we don&squot;t need them.&n; */
+multiline_comment|/* Cache flushing:&n; *&n; *  - flush_cache_all() flushes entire cache&n; *  - flush_cache_mm(mm) flushes the specified mm context&squot;s cache lines&n; *  - flush_cache_page(mm, vmaddr) flushes a single page&n; *  - flush_cache_range(mm, start, end) flushes a range of pages&n; *&n; *  - flush_dcache_page(pg) flushes(wback&amp;invalidates) a page for dcache&n; *  - flush_page_to_ram(page) write back kernel page to ram&n; *  - flush_icache_range(start, end) flushes(invalidates) a range for icache&n; *  - flush_icache_page(vma, pg) flushes(invalidates) a page for icache&n; *&n; *  Caches are indexed (effectively) by physical address on SH-3, so&n; *  we don&squot;t need them.&n; */
 DECL|macro|flush_cache_all
 mdefine_line|#define flush_cache_all()&t;&t;&t;do { } while (0)
 DECL|macro|flush_cache_mm
@@ -104,6 +104,17 @@ r_struct
 id|page
 op_star
 id|page
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|flush_dcache_page
+c_func
+(paren
+r_struct
+id|page
+op_star
+id|pg
 )paren
 suffix:semicolon
 r_extern
@@ -198,6 +209,9 @@ mdefine_line|#define _PAGE_USER&t;0x040  /* PR1-bit : user space access allowed 
 DECL|macro|_PAGE_PROTNONE
 mdefine_line|#define _PAGE_PROTNONE&t;0x080  /* software: if not present */
 multiline_comment|/*&t;&t;&t;0x100     V-bit   : page is valid */
+multiline_comment|/*&t;&t;&t;0x200     can be used as software flag */
+multiline_comment|/*&t;&t;&t;0x400     can be used as software flag */
+multiline_comment|/*&t;&t;&t;0x800     can be used as software flag */
 macro_line|#if defined(__sh3__)
 multiline_comment|/* Mask which drop software flags */
 DECL|macro|_PAGE_FLAGS_HARDWARE_MASK

@@ -94,7 +94,7 @@ r_void
 suffix:semicolon
 macro_line|#ifdef __BRLOCK_USE_ATOMICS
 DECL|function|br_read_lock
-r_extern
+r_static
 r_inline
 r_void
 id|br_read_lock
@@ -135,7 +135,7 @@ id|idx
 suffix:semicolon
 )brace
 DECL|function|br_read_unlock
-r_extern
+r_static
 r_inline
 r_void
 id|br_read_unlock
@@ -176,7 +176,7 @@ suffix:semicolon
 )brace
 macro_line|#else /* ! __BRLOCK_USE_ATOMICS */
 DECL|function|br_read_lock
-r_extern
+r_static
 r_inline
 r_void
 id|br_read_lock
@@ -286,7 +286,7 @@ suffix:semicolon
 )brace
 )brace
 DECL|function|br_read_unlock
-r_extern
+r_static
 r_inline
 r_void
 id|br_read_unlock
@@ -368,7 +368,7 @@ id|idx
 )paren
 suffix:semicolon
 DECL|function|br_write_lock
-r_extern
+r_static
 r_inline
 r_void
 id|br_write_lock
@@ -398,7 +398,7 @@ id|idx
 suffix:semicolon
 )brace
 DECL|function|br_write_unlock
-r_extern
+r_static
 r_inline
 r_void
 id|br_write_unlock

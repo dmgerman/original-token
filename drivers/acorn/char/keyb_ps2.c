@@ -1762,20 +1762,6 @@ id|restore_flags
 id|flags
 )paren
 suffix:semicolon
-id|printk
-(paren
-id|KERN_INFO
-l_string|&quot;PS/2 keyboard driver v%d.%02d&bslash;n&quot;
-comma
-id|VERSION
-op_div
-l_int|100
-comma
-id|VERSION
-op_mod
-l_int|100
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

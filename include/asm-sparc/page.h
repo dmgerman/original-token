@@ -364,8 +364,10 @@ DECL|macro|__pa
 mdefine_line|#define __pa(x)                 ((unsigned long)(x) - PAGE_OFFSET)
 DECL|macro|__va
 mdefine_line|#define __va(x)                 ((void *)((unsigned long) (x) + PAGE_OFFSET))
-DECL|macro|MAP_NR
-mdefine_line|#define MAP_NR(addr)            (__pa(addr) &gt;&gt; PAGE_SHIFT)
+DECL|macro|virt_to_page
+mdefine_line|#define virt_to_page(kaddr)&t;(mem_map + (__pa(kaddr) &gt;&gt; PAGE_SHIFT))
+DECL|macro|VALID_PAGE
+mdefine_line|#define VALID_PAGE(page)&t;((page - mem_map) &lt; max_mapnr)
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _SPARC_PAGE_H */
 eof

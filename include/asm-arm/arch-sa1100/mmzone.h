@@ -35,4 +35,8 @@ mdefine_line|#define LOCAL_MAP_NR(kvaddr) &bslash;&n;&t;(((unsigned long)(kvaddr
 multiline_comment|/* &n; * With discontigmem, the conceptual mem_map array starts from PAGE_OFFSET.&n; * Given a kaddr, MAP_NR returns the appropriate global mem_map index so &n; * it matches the corresponding node&squot;s local mem_map.&n; */
 DECL|macro|MAP_NR
 mdefine_line|#define MAP_NR(kaddr)&t;(LOCAL_MAP_NR((kaddr)) + &bslash;&n;&t;&t;(((unsigned long)ADDR_TO_MAPBASE((kaddr)) - PAGE_OFFSET) / &bslash;&n;&t;&t;sizeof(mem_map_t)))
+DECL|macro|virt_to_page
+mdefine_line|#define virt_to_page(kaddr)&t;(mem_map + MAP_NR(kaddr))
+DECL|macro|VALID_PAGE
+mdefine_line|#define VALID_PAGE(page)&t;((page - mem_map) &lt; max_mapnr)
 eof

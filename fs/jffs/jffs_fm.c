@@ -1,26 +1,10 @@
-multiline_comment|/*&n; * JFFS -- Journaling Flash File System, Linux implementation.&n; *&n; * Copyright (C) 1999, 2000  Axis Communications AB.&n; *&n; * Created by Finn Hakansson &lt;finn@axis.com&gt;.&n; *&n; * This is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * $Id: jffs_fm.c,v 1.8 2000/07/13 13:15:33 scote1 Exp $&n; *&n; * Ported to Linux 2.3.x and MTD:&n; * Copyright (C) 2000  Alexander Larsson (alex@cendio.se), Cendio Systems AB&n; *&n; */
+multiline_comment|/*&n; * JFFS -- Journaling Flash File System, Linux implementation.&n; *&n; * Copyright (C) 1999, 2000  Axis Communications AB.&n; *&n; * Created by Finn Hakansson &lt;finn@axis.com&gt;.&n; *&n; * This is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * $Id: jffs_fm.c,v 1.14 2000/08/09 14:26:35 dwmw2 Exp $&n; *&n; * Ported to Linux 2.3.x and MTD:&n; * Copyright (C) 2000  Alexander Larsson (alex@cendio.se), Cendio Systems AB&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/jffs.h&gt;
 macro_line|#include &quot;jffs_fm.h&quot;
-macro_line|#if defined(CONFIG_JFFS_FS_VERBOSE) &amp;&amp; CONFIG_JFFS_FS_VERBOSE
-DECL|macro|D
-mdefine_line|#define D(x) x
-macro_line|#else
-DECL|macro|D
-mdefine_line|#define D(x)
-macro_line|#endif
-DECL|macro|D1
-mdefine_line|#define D1(x) D(x)
-DECL|macro|D2
-mdefine_line|#define D2(x) 
-DECL|macro|D3
-mdefine_line|#define D3(x) 
-DECL|macro|ASSERT
-mdefine_line|#define ASSERT(x) x
 macro_line|#if defined(JFFS_MARK_OBSOLETE) &amp;&amp; JFFS_MARK_OBSOLETE
 r_static
 r_int
@@ -215,9 +199,12 @@ id|fmc-&gt;mtd
 op_assign
 id|mtd
 suffix:semicolon
-id|fmc-&gt;no_call_gc
-op_assign
-l_int|0
+id|init_MUTEX
+c_func
+(paren
+op_amp
+id|fmc-&gt;gclock
+)paren
 suffix:semicolon
 id|fmc-&gt;c
 op_assign
@@ -238,6 +225,13 @@ suffix:semicolon
 id|fmc-&gt;tail_extra
 op_assign
 l_int|0
+suffix:semicolon
+id|init_MUTEX
+c_func
+(paren
+op_amp
+id|fmc-&gt;wlock
+)paren
 suffix:semicolon
 r_return
 id|fmc
@@ -1554,22 +1548,6 @@ id|jffs_node_ref
 op_star
 id|ref
 suffix:semicolon
-r_struct
-id|jffs_fm
-op_star
-id|fm
-op_assign
-id|node-&gt;fm
-suffix:semicolon
-r_int
-id|s
-op_assign
-r_sizeof
-(paren
-r_struct
-id|jffs_node_ref
-)paren
-suffix:semicolon
 id|D3
 c_func
 (paren
@@ -1582,11 +1560,6 @@ id|node-&gt;ino
 )paren
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
 id|ref
 op_assign
 (paren
@@ -1597,18 +1570,25 @@ op_star
 id|kmalloc
 c_func
 (paren
-id|s
+r_sizeof
+(paren
+r_struct
+id|jffs_node_ref
+)paren
 comma
 id|GFP_KERNEL
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ref
 )paren
-)paren
-(brace
 r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
-)brace
 id|DJM
 c_func
 (paren
@@ -1622,9 +1602,9 @@ id|node
 suffix:semicolon
 id|ref-&gt;next
 op_assign
-id|fm-&gt;nodes
+id|node-&gt;fm-&gt;nodes
 suffix:semicolon
-id|fm-&gt;nodes
+id|node-&gt;fm-&gt;nodes
 op_assign
 id|ref
 suffix:semicolon
@@ -2240,7 +2220,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;jffs_flash_erasable_size() given non-aligned offset %lx (erasesize %lx)&bslash;n&quot;
+l_string|&quot;jffs_flash_erasable_size() given non-aligned offset %x (erasesize %lx)&bslash;n&quot;
 comma
 id|offset
 comma
@@ -2266,7 +2246,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;jffs_flash_erasable_size given offset off the end of device (%lx &gt; %lx)&bslash;n&quot;
+l_string|&quot;jffs_flash_erasable_size given offset off the end of device (%x &gt; %lx)&bslash;n&quot;
 comma
 id|offset
 comma
@@ -2293,7 +2273,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;jffs_flash_erasable_size() given length which runs off the end of device (ofs %lx + len %lx = %lx, &gt; %lx)&bslash;n&quot;
+l_string|&quot;jffs_flash_erasable_size() given length which runs off the end of device (ofs %x + len %x = %x, &gt; %lx)&bslash;n&quot;
 comma
 id|offset
 comma

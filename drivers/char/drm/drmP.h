@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/wrapper.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;&t;/* For (un)lock_kernel */
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/mman.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -145,7 +146,7 @@ DECL|macro|module_exit
 mdefine_line|#define module_exit(x)  void cleanup_module(void) { x(); }
 macro_line|#endif
 multiline_comment|/* virt_to_page added in 2.4.0-test6 */
-macro_line|#ifndef virt_to_page
+macro_line|#if LINUX_VERSION_CODE &lt; 0x020400
 DECL|macro|virt_to_page
 mdefine_line|#define virt_to_page(kaddr) (mem_map + MAP_NR(kaddr))
 macro_line|#endif

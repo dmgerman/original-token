@@ -16,6 +16,7 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
+macro_line|#include &lt;asm/machvec.h&gt;
 macro_line|#include &lt;linux/timex.h&gt;
 macro_line|#include &lt;linux/irq.h&gt;
 DECL|macro|TMU_TOCR_INIT
@@ -564,6 +565,22 @@ id|sh_do_profile
 c_func
 (paren
 id|regs-&gt;pc
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_HEARTBEAT
+r_if
+c_cond
+(paren
+id|sh_mv.mv_heartbeat
+op_ne
+l_int|NULL
+)paren
+id|sh_mv
+dot
+id|mv_heartbeat
+c_func
+(paren
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1648,19 +1665,26 @@ id|pfc_table
 id|tmp
 )braket
 suffix:semicolon
-macro_line|#ifdef CONFIG_SH_HP600
+r_if
+c_cond
+(paren
+id|MACH_HP600
+)paren
+(brace
 id|master_clock
 op_assign
 id|cpu_clock
 op_div
 l_int|6
 suffix:semicolon
-macro_line|#else
+)brace
+r_else
+(brace
 id|master_clock
 op_assign
 id|cpu_clock
 suffix:semicolon
-macro_line|#endif
+)brace
 id|bus_clock
 op_assign
 id|master_clock

@@ -95,7 +95,7 @@ DECL|macro|__udelay_val
 mdefine_line|#define __udelay_val cpu_data[smp_processor_id()].udelay_val
 macro_line|#else
 DECL|macro|__udelay_val
-mdefine_line|#define __udelay_val loops_per_sec
+mdefine_line|#define __udelay_val (current_cpu_data.loops_per_sec)
 macro_line|#endif
 DECL|macro|udelay
 mdefine_line|#define udelay(usecs) __udelay((usecs),__udelay_val)

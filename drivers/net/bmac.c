@@ -6928,6 +6928,25 @@ comma
 id|PRIV_BYTES
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|dev
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;init_etherdev failed, out of memory for BMAC %s&bslash;n&quot;
+comma
+id|bmac-&gt;full_name
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|dev-&gt;base_addr
 op_assign
 (paren

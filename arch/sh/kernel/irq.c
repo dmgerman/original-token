@@ -22,9 +22,6 @@ macro_line|#include &lt;asm/pgalloc.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;linux/irq.h&gt;
-macro_line|#ifdef CONFIG_HD64461
-macro_line|#include &lt;asm/hd64461.h&gt;
-macro_line|#endif
 multiline_comment|/*&n; * Micro-access to controllers is serialized over the whole&n; * system. We never hold this lock when we call the actual&n; * IRQ handler.&n; */
 DECL|variable|irq_controller_lock
 id|spinlock_t
@@ -170,6 +167,7 @@ id|end_none
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Generic, controller-independent functions:&n; */
+macro_line|#if defined(CONFIG_PROC_FS)
 DECL|function|get_irq_list
 r_int
 id|get_irq_list
@@ -247,7 +245,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|NR_IRQS
+id|ACTUAL_NR_IRQS
 suffix:semicolon
 id|i
 op_increment
@@ -367,6 +365,7 @@ op_minus
 id|buf
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*&n; * This should really return information about whether&n; * we should do bottom half handling etc. Right now we&n; * end up _always_ checking the bottom half, which is a&n; * waste of time and is not what some drivers would&n; * prefer.&n; */
 DECL|function|handle_IRQ_event
 r_int
@@ -834,93 +833,14 @@ id|irq
 )paren
 )paren
 suffix:semicolon
-macro_line|#if defined(CONFIG_HD64461)
-r_if
-c_cond
-(paren
 id|irq
-op_eq
-id|CONFIG_HD64461_IRQ
-)paren
-(brace
-r_int
-r_int
-id|bit
-suffix:semicolon
-r_int
-r_int
-id|nirr
 op_assign
-id|inw
+id|irq_demux
 c_func
 (paren
-id|HD64461_NIRR
+id|irq
 )paren
 suffix:semicolon
-r_int
-r_int
-id|nimr
-op_assign
-id|inw
-c_func
-(paren
-id|HD64461_NIMR
-)paren
-suffix:semicolon
-id|nirr
-op_and_assign
-op_complement
-id|nimr
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|bit
-op_assign
-l_int|1
-comma
-id|irq
-op_assign
-l_int|0
-suffix:semicolon
-id|irq
-OL
-l_int|16
-suffix:semicolon
-id|bit
-op_lshift_assign
-l_int|1
-comma
-id|irq
-op_increment
-)paren
-r_if
-c_cond
-(paren
-id|nirr
-op_amp
-id|bit
-)paren
-r_break
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|irq
-op_eq
-l_int|16
-)paren
-id|irq
-op_assign
-id|CONFIG_HD64461_IRQ
-suffix:semicolon
-r_else
-id|irq
-op_add_assign
-id|HD64461_IRQBASE
-suffix:semicolon
-)brace
-macro_line|#endif
 id|kstat.irqs
 (braket
 id|cpu
@@ -1189,7 +1109,7 @@ c_cond
 (paren
 id|irq
 op_ge
-id|NR_IRQS
+id|ACTUAL_NR_IRQS
 )paren
 r_return
 op_minus
@@ -1312,7 +1232,7 @@ c_cond
 (paren
 id|irq
 op_ge
-id|NR_IRQS
+id|ACTUAL_NR_IRQS
 )paren
 r_return
 suffix:semicolon
@@ -1544,7 +1464,6 @@ c_func
 id|i
 )paren
 )paren
-(brace
 id|irq_desc
 (braket
 id|i
@@ -1554,7 +1473,6 @@ id|status
 op_or_assign
 id|IRQ_PENDING
 suffix:semicolon
-)brace
 )brace
 )brace
 id|spin_unlock_irq

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtable.h,v 1.128 2000/08/05 13:30:34 davem Exp $&n; * pgtable.h: SpitFire page table operations.&n; *&n; * Copyright 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: pgtable.h,v 1.130 2000/08/09 00:00:17 davem Exp $&n; * pgtable.h: SpitFire page table operations.&n; *&n; * Copyright 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#ifndef _SPARC64_PGTABLE_H
 DECL|macro|_SPARC64_PGTABLE_H
 mdefine_line|#define _SPARC64_PGTABLE_H
@@ -47,9 +47,6 @@ DECL|macro|PMD_TABLE_SIZE
 mdefine_line|#define PMD_TABLE_SIZE&t;0x2000&t;/* 2048 entries 4 bytes each */
 DECL|macro|PGD_TABLE_SIZE
 mdefine_line|#define PGD_TABLE_SIZE&t;0x1000&t;/* 1024 entries 4 bytes each */
-multiline_comment|/* the no. of pointers that fit on a page */
-DECL|macro|PTRS_PER_PAGE
-mdefine_line|#define PTRS_PER_PAGE&t;(1UL &lt;&lt; (PAGE_SHIFT-3))
 multiline_comment|/* NOTE: TLB miss handlers depend heavily upon where this is. */
 DECL|macro|VMALLOC_START
 mdefine_line|#define VMALLOC_START&t;&t;0x0000000140000000UL

@@ -22,6 +22,11 @@ macro_line|#include &lt;asm/ioc.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &quot;../../char/busmouse.h&quot;
 r_extern
+r_struct
+id|tasklet_struct
+id|keyboard_tasklet
+suffix:semicolon
+r_extern
 r_void
 id|kbd_reset_kdown
 c_func
@@ -1754,9 +1759,11 @@ id|IOC_KARTRX
 )paren
 )paren
 )paren
-id|mark_bh
+id|tasklet_schedule
+c_func
 (paren
-id|KEYBOARD_BH
+op_amp
+id|keyboard_tasklet
 )paren
 suffix:semicolon
 )brace

@@ -693,7 +693,7 @@ c_func
 r_sizeof
 (paren
 r_struct
-id|atm_qos
+id|atm_mpoa_qos
 )paren
 comma
 id|GFP_KERNEL

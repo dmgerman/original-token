@@ -115,7 +115,7 @@ mdefine_line|#define kunmap(page) do { } while (0)
 macro_line|#endif /* CONFIG_HIGHMEM */
 multiline_comment|/* when CONFIG_HIGHMEM is not set these will be plain clear/copy_page */
 DECL|function|clear_user_highpage
-r_extern
+r_static
 r_inline
 r_void
 id|clear_user_highpage
@@ -163,7 +163,7 @@ id|page
 suffix:semicolon
 )brace
 DECL|function|clear_highpage
-r_extern
+r_static
 r_inline
 r_void
 id|clear_highpage
@@ -205,7 +205,7 @@ id|page
 suffix:semicolon
 )brace
 DECL|function|memclear_highpage
-r_extern
+r_static
 r_inline
 r_void
 id|memclear_highpage
@@ -278,7 +278,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Same but also flushes aliased cache contents to RAM.&n; */
 DECL|function|memclear_highpage_flush
-r_extern
+r_static
 r_inline
 r_void
 id|memclear_highpage_flush
@@ -356,7 +356,7 @@ id|page
 suffix:semicolon
 )brace
 DECL|function|copy_user_highpage
-r_extern
+r_static
 r_inline
 r_void
 id|copy_user_highpage
@@ -431,7 +431,7 @@ id|to
 suffix:semicolon
 )brace
 DECL|function|copy_highpage
-r_extern
+r_static
 r_inline
 r_void
 id|copy_highpage

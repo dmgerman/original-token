@@ -1,4 +1,5 @@
 multiline_comment|/* $Id: irq_imask.c,v 1.6 2000/03/06 14:11:32 gniibe Exp $&n; *&n; * linux/arch/sh/kernel/irq_imask.c&n; *&n; * Copyright (C) 1999, 2000  Niibe Yutaka&n; *&n; * Simple interrupt handling using IMASK of SR register.&n; *&n; */
+multiline_comment|/* NOTE: Will not work on level 15 */
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
@@ -175,6 +176,7 @@ l_int|4
 suffix:semicolon
 )brace
 DECL|function|disable_imask_irq
+r_static
 r_void
 id|disable_imask_irq
 c_func

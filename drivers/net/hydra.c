@@ -10,6 +10,11 @@ multiline_comment|/* Linux distribution for more details.                       
 multiline_comment|/* The Amiganet is a Zorro-II board made by Hydra Systems. It contains a    */
 multiline_comment|/* NS8390 NIC (network interface controller) clone, 16 or 64K on-board RAM  */
 multiline_comment|/* and 10BASE-2 (thin coax) and AUI connectors.                             */
+multiline_comment|/*                                                                          */
+multiline_comment|/* Changes                                                                  */
+multiline_comment|/* Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt; - 08/06/2000            */
+multiline_comment|/* - check init_etherdev in hydra_probe                                     */
+multiline_comment|/* - dev-&gt;priv is already zeroed by init_etherdev                           */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -458,20 +463,32 @@ id|hydra_private
 )paren
 )paren
 suffix:semicolon
-id|memset
+r_if
+c_cond
+(paren
+op_logical_neg
+id|dev
+)paren
+(brace
+id|release_mem_region
 c_func
 (paren
-id|dev-&gt;priv
+id|base_addr
 comma
-l_int|0
-comma
-r_sizeof
-(paren
-r_struct
-id|hydra_private
-)paren
+l_int|0x20
 )paren
 suffix:semicolon
+id|release_mem_region
+c_func
+(paren
+id|board
+comma
+l_int|0x4000
+)paren
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
 r_for
 c_loop
 (paren

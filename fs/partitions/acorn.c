@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/arch/arm/drivers/block/adfspart.c&n; *&n; * Copyright (c) 1996,1997 Russell King.&n; *&n; * Scan ADFS partitions on hard disk drives.&n; */
+multiline_comment|/*&n; * linux/arch/arm/drivers/block/adfspart.c&n; *&n; * Copyright (c) 1996-2000 Russell King.&n; *&n; * Scan ADFS partitions on hard disk drives.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/kdev_t.h&gt;
@@ -79,36 +79,11 @@ l_int|1
 suffix:semicolon
 macro_line|#endif
 )brace
-DECL|macro|LINUX_NATIVE_MAGIC
-mdefine_line|#define LINUX_NATIVE_MAGIC 0xdeafa1de
-DECL|macro|LINUX_SWAP_MAGIC
-mdefine_line|#define LINUX_SWAP_MAGIC   0xdeafab1e
-DECL|struct|linux_part
-r_struct
-id|linux_part
-(brace
-DECL|member|magic
-r_int
-r_int
-id|magic
-suffix:semicolon
-DECL|member|start_sect
-r_int
-r_int
-id|start_sect
-suffix:semicolon
-DECL|member|nr_sects
-r_int
-r_int
-id|nr_sects
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|function|adfs_partition
 r_static
 r_struct
 id|adfs_discrecord
 op_star
+DECL|function|adfs_partition
 id|adfs_partition
 c_func
 (paren
@@ -129,7 +104,6 @@ r_int
 r_int
 id|first_sector
 comma
-r_int
 r_int
 id|minor
 )paren
@@ -234,9 +208,9 @@ id|dr
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_ACORN_PARTITION_RISCIX
-DECL|function|riscix_partition
 r_static
 r_int
+DECL|function|riscix_partition
 id|riscix_partition
 c_func
 (paren
@@ -252,7 +226,6 @@ r_int
 r_int
 id|first_sect
 comma
-r_int
 r_int
 id|minor
 comma
@@ -514,9 +487,9 @@ id|minor
 suffix:semicolon
 )brace
 macro_line|#endif
-DECL|function|linux_partition
 r_static
 r_int
+DECL|function|linux_partition
 id|linux_partition
 c_func
 (paren
@@ -532,7 +505,6 @@ r_int
 r_int
 id|first_sect
 comma
-r_int
 r_int
 id|minor
 comma
@@ -767,9 +739,9 @@ id|minor
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_ACORN_PARTITION_CUMANA
-DECL|function|adfspart_check_CUMANA
 r_static
 r_int
+DECL|function|adfspart_check_CUMANA
 id|adfspart_check_CUMANA
 c_func
 (paren
@@ -785,7 +757,6 @@ r_int
 r_int
 id|first_sector
 comma
-r_int
 r_int
 id|minor
 )paren
@@ -840,7 +811,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Try Cumana style partitions - sector 3 contains ADFS boot block with pointer&n;&t; * to next &squot;drive&squot;.&n;&t; *&n;&t; * There are unknowns in this code - is the &squot;cylinder number&squot; of the next&n;&t; * partition relative to the start of this one - I&squot;m assuming it is.&n;&t; *&n;&t; * Also, which ID did Cumana use?&n;&t; *&n;&t; * This is totally unfinished, and will require more work to get it going.&n;&t; * Hence it is totally untested.&n;&t; */
+multiline_comment|/*&n;&t; * Try Cumana style partitions - sector 3 contains ADFS boot block&n;&t; * with pointer to next &squot;drive&squot;.&n;&t; *&n;&t; * There are unknowns in this code - is the &squot;cylinder number&squot; of the&n;&t; * next partition relative to the start of this one - I&squot;m assuming&n;&t; * it is.&n;&t; *&n;&t; * Also, which ID did Cumana use?&n;&t; *&n;&t; * This is totally unfinished, and will require more work to get it&n;&t; * going. Hence it is totally untested.&n;&t; */
 r_do
 (brace
 r_struct
@@ -1004,7 +975,7 @@ macro_line|#ifdef CONFIG_ACORN_PARTITION_RISCIX
 r_case
 id|PARTITION_RISCIX_SCSI
 suffix:colon
-multiline_comment|/* RiscIX - we don&squot;t know how to find the next one. */
+multiline_comment|/* RISCiX - we don&squot;t know how to find the next one. */
 id|minor
 op_assign
 id|riscix_partition
@@ -1079,7 +1050,7 @@ c_cond
 (paren
 id|bh
 )paren
-id|brelse
+id|bforget
 c_func
 (paren
 id|bh
@@ -1097,9 +1068,9 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_ACORN_PARTITION_ADFS
 multiline_comment|/*&n; * Purpose: allocate ADFS partitions.&n; *&n; * Params : hd&t;&t;- pointer to gendisk structure to store partition info.&n; *&t;    dev&t;&t;- device number to access.&n; *&t;    first_sector- first readable sector on the device.&n; *&t;    minor&t;- first available minor on device.&n; *&n; * Returns: -1 on error, 0 for no ADFS boot sector, 1 for ok.&n; *&n; * Alloc  : hda  = whole drive&n; *&t;    hda1 = ADFS partition on first drive.&n; *&t;    hda2 = non-ADFS partition.&n; */
-DECL|function|adfspart_check_ADFS
 r_static
 r_int
+DECL|function|adfspart_check_ADFS
 id|adfspart_check_ADFS
 c_func
 (paren
@@ -1115,7 +1086,6 @@ r_int
 r_int
 id|first_sector
 comma
-r_int
 r_int
 id|minor
 )paren
@@ -1202,7 +1172,7 @@ op_logical_neg
 id|dr
 )paren
 (brace
-id|brelse
+id|bforget
 c_func
 (paren
 id|bh
@@ -1299,7 +1269,6 @@ id|first_sector
 op_add_assign
 id|start_sect
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * we now have a problem - how to set the origional disk size if the&n;&t;&t; * disk doesn&squot;t report it, since there is no standard way of getting&n;&t;&t; * that info.&n;&t;&t; */
 r_switch
 c_cond
 (paren
@@ -1464,9 +1433,9 @@ id|result
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Purpose: allocate ICS partitions.&n; * Params : hd&t;&t;- pointer to gendisk structure to store partition info.&n; *&t;    dev&t;&t;- device number to access.&n; *&t;    first_sector- first readable sector on the device.&n; *&t;    minor&t;- first available minor on device.&n; * Returns: -1 on error, 0 for no ICS table, 1 for partitions ok.&n; * Alloc  : hda  = whole drive&n; *&t;    hda1 = ADFS partition 0 on first drive.&n; *&t;    hda2 = ADFS partition 1 on first drive.&n; *&t;&t;..etc..&n; */
-DECL|function|adfspart_check_ICS
 r_static
 r_int
+DECL|function|adfspart_check_ICS
 id|adfspart_check_ICS
 c_func
 (paren
@@ -1482,7 +1451,6 @@ r_int
 r_int
 id|first_sector
 comma
-r_int
 r_int
 id|minor
 )paren
@@ -1512,16 +1480,6 @@ l_int|1
 suffix:semicolon
 r_struct
 id|ics_part
-(brace
-r_int
-r_int
-id|start
-suffix:semicolon
-r_int
-r_int
-id|size
-suffix:semicolon
-)brace
 op_star
 id|p
 suffix:semicolon
@@ -1597,8 +1555,7 @@ c_func
 (paren
 op_star
 (paren
-r_int
-r_int
+id|__u32
 op_star
 )paren
 (paren
@@ -1616,7 +1573,7 @@ c_cond
 id|sum
 )paren
 (brace
-id|brelse
+id|bforget
 c_func
 (paren
 id|bh
@@ -1764,43 +1721,10 @@ suffix:semicolon
 )brace
 macro_line|#endif
 macro_line|#ifdef CONFIG_ACORN_PARTITION_POWERTEC
-DECL|struct|ptec_partition
-r_struct
-id|ptec_partition
-(brace
-DECL|member|unused1
-id|u32
-id|unused1
-suffix:semicolon
-DECL|member|unused2
-id|u32
-id|unused2
-suffix:semicolon
-DECL|member|start
-id|u32
-id|start
-suffix:semicolon
-DECL|member|size
-id|u32
-id|size
-suffix:semicolon
-DECL|member|unused5
-id|u32
-id|unused5
-suffix:semicolon
-DECL|member|type
-r_char
-id|type
-(braket
-l_int|8
-)braket
-suffix:semicolon
-)brace
-suffix:semicolon
 multiline_comment|/*&n; * Purpose: allocate ICS partitions.&n; * Params : hd&t;&t;- pointer to gendisk structure to store partition info.&n; *&t;    dev&t;&t;- device number to access.&n; *&t;    first_sector- first readable sector on the device.&n; *&t;    minor&t;- first available minor on device.&n; * Returns: -1 on error, 0 for no ICS table, 1 for partitions ok.&n; * Alloc  : hda  = whole drive&n; *&t;    hda1 = ADFS partition 0 on first drive.&n; *&t;    hda2 = ADFS partition 1 on first drive.&n; *&t;&t;..etc..&n; */
-DECL|function|adfspart_check_POWERTEC
 r_static
 r_int
+DECL|function|adfspart_check_POWERTEC
 id|adfspart_check_POWERTEC
 c_func
 (paren
@@ -1816,7 +1740,6 @@ r_int
 r_int
 id|first_sector
 comma
-r_int
 r_int
 id|minor
 )paren
@@ -1896,7 +1819,7 @@ l_int|511
 )braket
 )paren
 (brace
-id|brelse
+id|bforget
 c_func
 (paren
 id|bh
@@ -1997,7 +1920,49 @@ l_int|1
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/*&n; * Purpose: initialise all the partitions on an ADFS drive.&n; *          These may be other ADFS partitions or a Linux/RiscBSD/RiscIX&n; *&t;    partition.&n; *&n; * Params : hd&t;&t; - pointer to gendisk structure to store devices partitions.&n; *          dev&t;&t; - device number to access&n; *&t;    first_sector - first available sector on the disk.&n; *&t;    minor&t; - first available minor on this device.&n; *&n; * Returns: -1 on error, 0 if not ADFS format, 1 if ok.&n; */
+DECL|variable|partfn
+r_static
+r_int
+(paren
+op_star
+id|partfn
+(braket
+)braket
+)paren
+(paren
+r_struct
+id|gendisk
+op_star
+comma
+id|kdev_t
+comma
+r_int
+r_int
+comma
+r_int
+)paren
+op_assign
+(brace
+macro_line|#ifdef CONFIG_ACORN_PARTITION_ICS
+id|adfspart_check_ICS
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_ACORN_PARTITION_CUMANA
+id|adfspart_check_CUMANA
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_ACORN_PARTITION_ADFS
+id|adfspart_check_ADFS
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_ACORN_PARTITION_POWERTEC
+id|adfspart_check_POWERTEC
+comma
+macro_line|#endif
+l_int|NULL
+)brace
+suffix:semicolon
+multiline_comment|/*&n; * Purpose: initialise all the partitions on an ADFS drive.&n; *          These may be other ADFS partitions or a Linux/RiscBSD/RISCiX&n; *&t;    partition.&n; *&n; * Params : hd&t;&t;- pointer to gendisk structure&n; *          dev&t;&t;- device number to access&n; *&t;    first_sect  - first available sector on the disk.&n; *&t;    first_minor&t;- first available minor on this device.&n; *&n; * Returns: -1 on error, 0 if not ADFS format, 1 if ok.&n; */
 DECL|function|acorn_partition
 r_int
 id|acorn_partition
@@ -2013,120 +1978,61 @@ id|dev
 comma
 r_int
 r_int
-id|first_sector
+id|first_sect
 comma
 r_int
-id|first_part_minor
+id|first_minor
 )paren
 (brace
 r_int
 id|r
 op_assign
 l_int|0
+comma
+id|i
 suffix:semicolon
-macro_line|#ifdef CONFIG_ACORN_PARTITION_ICS
-r_if
-c_cond
+r_for
+c_loop
 (paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|partfn
+(braket
+id|i
+)braket
+op_logical_and
 id|r
 op_eq
 l_int|0
+suffix:semicolon
+id|i
+op_increment
 )paren
 id|r
 op_assign
-id|adfspart_check_ICS
-c_func
+id|partfn
+(braket
+id|i
+)braket
 (paren
 id|hd
 comma
 id|dev
 comma
-id|first_sector
+id|first_sect
 comma
-id|first_part_minor
+id|first_minor
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_ACORN_PARTITION_CUMANA
-r_if
-c_cond
-(paren
-id|r
-op_eq
-l_int|0
-)paren
-id|r
-op_assign
-id|adfspart_check_CUMANA
-c_func
-(paren
-id|hd
-comma
-id|dev
-comma
-id|first_sector
-comma
-id|first_part_minor
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_ACORN_PARTITION_ADFS
-r_if
-c_cond
-(paren
-id|r
-op_eq
-l_int|0
-)paren
-id|r
-op_assign
-id|adfspart_check_ADFS
-c_func
-(paren
-id|hd
-comma
-id|dev
-comma
-id|first_sector
-comma
-id|first_part_minor
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_ACORN_PARTITION_POWERTEC
-r_if
-c_cond
-(paren
-id|r
-op_eq
-l_int|0
-)paren
-id|r
-op_assign
-id|adfspart_check_POWERTEC
-c_func
-(paren
-id|hd
-comma
-id|dev
-comma
-id|first_sector
-comma
-id|first_part_minor
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
 id|r
 OL
 l_int|0
-)paren
-(brace
-r_if
-c_cond
-(paren
+op_logical_and
 id|warn_no_part
 )paren
 id|printk
@@ -2135,21 +2041,19 @@ c_func
 l_string|&quot; unable to read boot sectors / partition sectors&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
-r_else
 r_if
 c_cond
 (paren
 id|r
+OG
+l_int|0
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
 r_return
 id|r
 suffix:semicolon

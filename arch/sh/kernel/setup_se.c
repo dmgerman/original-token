@@ -266,7 +266,6 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Initialize IRQ setting&n; */
 DECL|function|init_se_IRQ
-r_static
 r_void
 id|__init
 id|init_se_IRQ
@@ -275,11 +274,8 @@ c_func
 r_void
 )paren
 (brace
-r_int
-id|i
-suffix:semicolon
 multiline_comment|/*&n;&t; * Super I/O (Just mimic PC):&n;&t; *  1: keyboard&n;&t; *  3: serial 0&n;&t; *  4: serial 1&n;&t; *  5: printer&n;&t; *  6: floppy&n;&t; *  8: rtc&n;&t; * 12: mouse&n;&t; * 14: ide0&n;&t; */
-id|set_ipr_data
+id|make_ipr_irq
 c_func
 (paren
 l_int|14
@@ -293,7 +289,7 @@ op_minus
 l_int|14
 )paren
 suffix:semicolon
-id|set_ipr_data
+id|make_ipr_irq
 c_func
 (paren
 l_int|12
@@ -307,7 +303,7 @@ op_minus
 l_int|12
 )paren
 suffix:semicolon
-id|set_ipr_data
+id|make_ipr_irq
 c_func
 (paren
 l_int|8
@@ -321,7 +317,7 @@ op_minus
 l_int|8
 )paren
 suffix:semicolon
-id|set_ipr_data
+id|make_ipr_irq
 c_func
 (paren
 l_int|6
@@ -335,7 +331,7 @@ op_minus
 l_int|6
 )paren
 suffix:semicolon
-id|set_ipr_data
+id|make_ipr_irq
 c_func
 (paren
 l_int|5
@@ -349,7 +345,7 @@ op_minus
 l_int|5
 )paren
 suffix:semicolon
-id|set_ipr_data
+id|make_ipr_irq
 c_func
 (paren
 l_int|4
@@ -363,7 +359,7 @@ op_minus
 l_int|4
 )paren
 suffix:semicolon
-id|set_ipr_data
+id|make_ipr_irq
 c_func
 (paren
 l_int|3
@@ -377,7 +373,7 @@ op_minus
 l_int|3
 )paren
 suffix:semicolon
-id|set_ipr_data
+id|make_ipr_irq
 c_func
 (paren
 l_int|1
@@ -391,7 +387,7 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
-id|set_ipr_data
+id|make_ipr_irq
 c_func
 (paren
 l_int|10
@@ -406,7 +402,7 @@ l_int|10
 )paren
 suffix:semicolon
 multiline_comment|/* LAN */
-id|set_ipr_data
+id|make_ipr_irq
 c_func
 (paren
 l_int|0
@@ -421,7 +417,7 @@ l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* PCIRQ3 */
-id|set_ipr_data
+id|make_ipr_irq
 c_func
 (paren
 l_int|11
@@ -436,7 +432,7 @@ l_int|11
 )paren
 suffix:semicolon
 multiline_comment|/* PCIRQ2 */
-id|set_ipr_data
+id|make_ipr_irq
 c_func
 (paren
 l_int|9
@@ -451,7 +447,7 @@ l_int|9
 )paren
 suffix:semicolon
 multiline_comment|/* PCIRQ1 */
-id|set_ipr_data
+id|make_ipr_irq
 c_func
 (paren
 l_int|7
@@ -468,7 +464,7 @@ suffix:semicolon
 multiline_comment|/* PCIRQ0 */
 multiline_comment|/* #2, #13 are allocated for SLOT IRQ #1 and #2 (for now) */
 multiline_comment|/* NOTE: #2 and #13 are not used on PC */
-id|set_ipr_data
+id|make_ipr_irq
 c_func
 (paren
 l_int|13
@@ -483,7 +479,7 @@ l_int|13
 )paren
 suffix:semicolon
 multiline_comment|/* SLOTIRQ2 */
-id|set_ipr_data
+id|make_ipr_irq
 c_func
 (paren
 l_int|2
@@ -498,32 +494,10 @@ l_int|2
 )paren
 suffix:semicolon
 multiline_comment|/* SLOTIRQ1 */
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|15
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|make_ipr_irq
-c_func
-(paren
-id|i
-)paren
-suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n; * Initialize the board&n; */
 DECL|function|setup_se
-r_int
+r_void
 id|__init
 id|setup_se
 c_func
@@ -531,33 +505,11 @@ c_func
 r_void
 )paren
 (brace
-id|init_se_IRQ
-c_func
-(paren
-)paren
-suffix:semicolon
 id|init_smsc
 c_func
 (paren
 )paren
 suffix:semicolon
 multiline_comment|/* XXX: RTC setting comes here */
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;Hitach SolutionEngine Setup...done&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
 )brace
-DECL|variable|setup_se
-id|module_init
-c_func
-(paren
-id|setup_se
-)paren
-suffix:semicolon
 eof

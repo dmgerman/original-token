@@ -1,9 +1,8 @@
-multiline_comment|/*&n; * JFFS -- Journaling Flash File System, Linux implementation.&n; *&n; * Copyright (C) 1999, 2000  Axis Communications, Inc.&n; *&n; * Created by Finn Hakansson &lt;finn@axis.com&gt;.&n; *&n; * This is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * $Id: intrep.c,v 1.15 2000/06/27 15:33:43 dwmw2 Exp $&n; *&n; * Ported to Linux 2.3.x and MTD:&n; * Copyright (C) 2000  Alexander Larsson (alex@cendio.se), Cendio Systems AB&n; *&n; */
+multiline_comment|/*&n; * JFFS -- Journaling Flash File System, Linux implementation.&n; *&n; * Copyright (C) 1999, 2000  Axis Communications, Inc.&n; *&n; * Created by Finn Hakansson &lt;finn@axis.com&gt;.&n; *&n; * This is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * $Id: intrep.c,v 1.39 2000/08/09 13:23:36 dwmw2 Exp $&n; *&n; * Ported to Linux 2.3.x and MTD:&n; * Copyright (C) 2000  Alexander Larsson (alex@cendio.se), Cendio Systems AB&n; *&n; */
 multiline_comment|/* This file contains the code for the internal structure of the&n;   Journaling Flash File System, JFFS.  */
-multiline_comment|/*&n; * Todo list:&n; *&n; * memcpy_to_flash() and memcpy_from_flash()-functions.&n; *&n; * Implementation of hard links.&n; *&n; * Organize the source code in a better way. Against the VFS we could&n; * have jffs_ext.c, and against the block device jffs_int.c.&n; * A better file-internal organization too.&n; *&n; * A better checksum algorithm.&n; *&n; * Consider endianness stuff. ntohl() etc.&n; *&n; * Are we handling the atime, mtime, ctime members of the inode right?&n; *&n; * Remove some duplicated code. Take a look at jffs_write_node() and&n; * jffs_rewrite_data() for instance.&n; *&n; * Implement more meaning of the nlink member in various data structures.&n; * nlink could be used in conjunction with hard links for instance.&n; *&n; * Fix the rename stuff. (I.e. if we have two files `a&squot; and `b&squot; and we&n; * do a `mv b a&squot;.) Half of this is already implemented.&n; *&n; * Better memory management. Allocate data structures in larger chunks&n; * if possible.&n; *&n; * If too much meta data is stored, a garbage collect should be issued.&n; * We have experienced problems with too much meta data with for instance&n; * log files.&n; *&n; * Improve the calls to jffs_ioctl(). We would like to retrieve more&n; * information to be able to debug (or to supervise) JFFS during run-time.&n; *&n; */
+multiline_comment|/*&n; * Todo list:&n; *&n; * memcpy_to_flash() and memcpy_from_flash() functions.&n; *&n; * Implementation of hard links.&n; *&n; * Organize the source code in a better way. Against the VFS we could&n; * have jffs_ext.c, and against the block device jffs_int.c.&n; * A better file-internal organization too.&n; *&n; * A better checksum algorithm.&n; *&n; * Consider endianness stuff. ntohl() etc.&n; *&n; * Are we handling the atime, mtime, ctime members of the inode right?&n; *&n; * Remove some duplicated code. Take a look at jffs_write_node() and&n; * jffs_rewrite_data() for instance.&n; *&n; * Implement more meaning of the nlink member in various data structures.&n; * nlink could be used in conjunction with hard links for instance.&n; *&n; * Better memory management. Allocate data structures in larger chunks&n; * if possible.&n; *&n; * If too much meta data is stored, a garbage collect should be issued.&n; * We have experienced problems with too much meta data with for instance&n; * log files.&n; *&n; * Improve the calls to jffs_ioctl(). We would like to retrieve more&n; * information to be able to debug (or to supervise) JFFS during run-time.&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/jffs.h&gt;
@@ -14,27 +13,14 @@ macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &quot;intrep.h&quot;
 macro_line|#include &quot;jffs_fm.h&quot;
 macro_line|#if LINUX_VERSION_CODE &lt; 0x20300
 DECL|macro|set_current_state
 mdefine_line|#define set_current_state(x) do{current-&gt;state = x;} while (0)
 macro_line|#endif
-macro_line|#if defined(CONFIG_JFFS_FS_VERBOSE) &amp;&amp; CONFIG_JFFS_FS_VERBOSE
-DECL|macro|D
-mdefine_line|#define D(x) x
-macro_line|#else
-DECL|macro|D
-mdefine_line|#define D(x)
-macro_line|#endif
-DECL|macro|D1
-mdefine_line|#define D1(x) D(x)
-DECL|macro|D2
-mdefine_line|#define D2(x) 
-DECL|macro|D3
-mdefine_line|#define D3(x) 
-DECL|macro|ASSERT
-mdefine_line|#define ASSERT(x) x
 macro_line|#if defined(JFFS_MEMORY_DEBUG) &amp;&amp; JFFS_MEMORY_DEBUG
 DECL|variable|no_jffs_file
 r_int
@@ -726,9 +712,9 @@ suffix:semicolon
 )brace
 macro_line|#endif
 DECL|macro|flash_safe_acquire
-mdefine_line|#define flash_safe_acquire(arg) 
+mdefine_line|#define flash_safe_acquire(arg)
 DECL|macro|flash_safe_release
-mdefine_line|#define flash_safe_release(arg) 
+mdefine_line|#define flash_safe_release(arg)
 r_static
 r_int
 DECL|function|flash_safe_read
@@ -900,7 +886,7 @@ l_int|1
 id|printk
 c_func
 (paren
-l_string|&quot;Didn&squot;t read all bytes in flash_read_u32()&bslash;n&quot;
+l_string|&quot;Didn&squot;t read a byte in flash_read_u8()&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1082,9 +1068,9 @@ r_return
 id|size
 suffix:semicolon
 )brace
-DECL|function|intrep_erase_callback
 r_static
 r_void
+DECL|function|intrep_erase_callback
 id|intrep_erase_callback
 c_func
 (paren
@@ -1258,7 +1244,8 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;flash: erase of region [0x%ld, 0x%ld] totally failed&bslash;n&quot;
+l_string|&quot;flash: erase of region [0x%lx, 0x%lx] &quot;
+l_string|&quot;totally failed&bslash;n&quot;
 comma
 (paren
 r_int
@@ -1481,6 +1468,48 @@ id|sum
 suffix:semicolon
 r_return
 id|sum
+suffix:semicolon
+)brace
+DECL|function|jffs_fm_write_lock
+r_static
+id|__inline__
+r_void
+id|jffs_fm_write_lock
+c_func
+(paren
+r_struct
+id|jffs_fmcontrol
+op_star
+id|fmc
+)paren
+(brace
+id|down
+c_func
+(paren
+op_amp
+id|fmc-&gt;wlock
+)paren
+suffix:semicolon
+)brace
+DECL|function|jffs_fm_write_unlock
+r_static
+id|__inline__
+r_void
+id|jffs_fm_write_unlock
+c_func
+(paren
+r_struct
+id|jffs_fmcontrol
+op_star
+id|fmc
+)paren
+(brace
+id|up
+c_func
+(paren
+op_amp
+id|fmc-&gt;wlock
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Create and initialize a new struct jffs_file.  */
@@ -1780,6 +1809,15 @@ id|JFFS_MIN_INO
 op_plus
 l_int|1
 suffix:semicolon
+id|c-&gt;delete_list
+op_assign
+(paren
+r_struct
+id|jffs_delete_list
+op_star
+)paren
+l_int|0
+suffix:semicolon
 r_return
 id|c
 suffix:semicolon
@@ -1899,6 +1937,32 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+r_while
+c_loop
+(paren
+id|c-&gt;delete_list
+)paren
+(brace
+r_struct
+id|jffs_delete_list
+op_star
+id|delete_list_element
+suffix:semicolon
+id|delete_list_element
+op_assign
+id|c-&gt;delete_list
+suffix:semicolon
+id|c-&gt;delete_list
+op_assign
+id|c-&gt;delete_list-&gt;next
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|delete_list_element
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* Free all files and nodes.  */
 r_if
 c_cond
@@ -1912,6 +1976,14 @@ c_func
 id|c
 comma
 id|jffs_free_node_list
+)paren
+suffix:semicolon
+id|jffs_foreach_file
+c_func
+(paren
+id|c
+comma
+id|jffs_free_file
 )paren
 suffix:semicolon
 id|kfree
@@ -2278,6 +2350,58 @@ id|jffs_build_fs_fail
 suffix:semicolon
 )brace
 )brace
+r_while
+c_loop
+(paren
+id|c-&gt;delete_list
+)paren
+(brace
+r_struct
+id|jffs_file
+op_star
+id|f
+suffix:semicolon
+r_struct
+id|jffs_delete_list
+op_star
+id|delete_list_element
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|f
+op_assign
+id|jffs_find_file
+c_func
+(paren
+id|c
+comma
+id|c-&gt;delete_list-&gt;ino
+)paren
+)paren
+)paren
+(brace
+id|f-&gt;deleted
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+id|delete_list_element
+op_assign
+id|c-&gt;delete_list
+suffix:semicolon
+id|c-&gt;delete_list
+op_assign
+id|c-&gt;delete_list-&gt;next
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|delete_list_element
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* Remove deleted nodes.  */
 r_if
 c_cond
@@ -2473,6 +2597,9 @@ suffix:semicolon
 id|__u16
 id|tmp_chksum
 suffix:semicolon
+id|__u32
+id|deleted_file
+suffix:semicolon
 id|loff_t
 id|pos
 op_assign
@@ -2494,7 +2621,7 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;jffs_scan_flash(): start pos = 0x%ld, end = 0x%ld&bslash;n&quot;
+l_string|&quot;jffs_scan_flash(): start pos = 0x%lx, end = 0x%lx&bslash;n&quot;
 comma
 (paren
 r_int
@@ -2523,6 +2650,10 @@ OL
 id|end
 )paren
 (brace
+id|deleted_file
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/* Remember the position from where we started this scan.  */
 id|start
 op_assign
@@ -2543,14 +2674,14 @@ id|pos
 r_case
 id|JFFS_EMPTY_BITMASK
 suffix:colon
-multiline_comment|/* We have found 0xff on this block.  We have to&n;&t;&t;&t;   scan the rest of the block to be sure it is&n;&t;&t;&t;   filled with 0xff.  */
+multiline_comment|/* We have found 0xff at this position.  We have to&n;&t;&t;&t;   scan the rest of the flash till the end or till&n;&t;&t;&t;   something else than 0xff is found.  */
 id|D1
 c_func
 (paren
 id|printk
 c_func
 (paren
-l_string|&quot;jffs_scan_flash(): 0xff at pos 0x%ld.&bslash;n&quot;
+l_string|&quot;jffs_scan_flash(): 0xff at pos 0x%lx.&bslash;n&quot;
 comma
 (paren
 r_int
@@ -2589,7 +2720,7 @@ id|printk
 c_func
 (paren
 l_string|&quot;jffs_scan_flash(): 0xff ended at &quot;
-l_string|&quot;pos 0x%ld.&bslash;n&quot;
+l_string|&quot;pos 0x%lx.&bslash;n&quot;
 comma
 (paren
 r_int
@@ -2598,19 +2729,54 @@ id|pos
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* If some free space ends in the middle of a sector,&n;&t;&t;&t;&t;treat it as dirty rather than clean.&n;&t;&t;&t;   This is to handle the case where one thread &n;&t;&t;&t;   allocated space for a node, but didn&squot;t get to&n;&t;&t;&t;   actually _write_ it before power was lost, leaving&n;&t;&t;&t;   a gap in the log. Shifting all node writes into&n;&t;&t;&t;   a single kernel thread will fix the original problem.&n;&t;&t;&t;*/
+r_if
+c_cond
+(paren
+(paren
+id|__u32
+)paren
+id|pos
+op_mod
+id|fmc-&gt;sector_size
+)paren
+(brace
+id|jffs_fmalloced
+c_func
+(paren
+id|fmc
+comma
+(paren
+id|__u32
+)paren
+id|start
+comma
+(paren
+id|__u32
+)paren
+(paren
+id|pos
+op_minus
+id|start
+)paren
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
 r_continue
 suffix:semicolon
 r_case
 id|JFFS_DIRTY_BITMASK
 suffix:colon
-multiline_comment|/* We have found 0x00 on this block.  We have to&n;&t;&t;&t;   scan as far as possible to find out how much&n;&t;&t;&t;   is dirty.  */
+multiline_comment|/* We have found 0x00 at this position.  Scan as far&n;&t;&t;&t;   as possible to find out how much is dirty.  */
 id|D1
 c_func
 (paren
 id|printk
 c_func
 (paren
-l_string|&quot;jffs_scan_flash(): 0x00 at pos 0x%ld.&bslash;n&quot;
+l_string|&quot;jffs_scan_flash(): 0x00 at pos 0x%lx.&bslash;n&quot;
 comma
 (paren
 r_int
@@ -2649,7 +2815,7 @@ id|printk
 c_func
 (paren
 l_string|&quot;jffs_scan_flash(): 0x00 ended at &quot;
-l_string|&quot;pos 0x%ld.&bslash;n&quot;
+l_string|&quot;pos 0x%lx.&bslash;n&quot;
 comma
 (paren
 r_int
@@ -2699,8 +2865,9 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;*************** Dirty flash memory or bad inode: &quot;
-l_string|&quot;hexdump(pos = 0x%ld, len = 128):&bslash;n&quot;
+l_string|&quot;*************** Dirty flash memory or &quot;
+l_string|&quot;bad inode: &quot;
+l_string|&quot;hexdump(pos = 0x%lx, len = 128):&bslash;n&quot;
 comma
 (paren
 r_int
@@ -2790,7 +2957,7 @@ suffix:colon
 r_continue
 suffix:semicolon
 )brace
-multiline_comment|/* We have found the beginning of an inode.  Create a&n;&t;&t;   node for it.  */
+multiline_comment|/* We have found the beginning of an inode.  Create a&n;&t;&t;   node for it unless there already is one available.  */
 r_if
 c_cond
 (paren
@@ -2911,7 +3078,7 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;*** We have found this raw inode at pos 0x%ld &quot;
+l_string|&quot;*** We have found this raw inode at pos 0x%lx &quot;
 l_string|&quot;on the flash:&bslash;n&quot;
 comma
 (paren
@@ -2999,6 +3166,40 @@ OG
 id|JFFS_MAX_NAME_LEN
 )paren
 (brace
+r_goto
+id|bad_inode
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|raw_inode.rename
+op_logical_and
+id|raw_inode.dsize
+op_ne
+r_sizeof
+(paren
+id|__u32
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;jffs_scan_flash: Found a &quot;
+l_string|&quot;rename node with dsize %u.&bslash;n&quot;
+comma
+id|raw_inode.dsize
+)paren
+suffix:semicolon
+id|jffs_print_raw_inode
+c_func
+(paren
+op_amp
+id|raw_inode
+)paren
+suffix:semicolon
 r_goto
 id|bad_inode
 suffix:semicolon
@@ -3163,7 +3364,30 @@ id|check_node
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* Read the data in order to be sure it matches the&n;&t;&t;   checksum.  */
+multiline_comment|/* Read the data, if it exists, in order to be sure it&n;&t;&t;   matches the checksum.  */
+r_if
+c_cond
+(paren
+id|raw_inode.dsize
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|raw_inode.rename
+)paren
+(brace
+id|deleted_file
+op_assign
+id|flash_read_u32
+c_func
+(paren
+id|fmc-&gt;mtd
+comma
+id|pos
+)paren
+suffix:semicolon
+)brace
 id|checksum
 op_assign
 id|jffs_checksum_flash
@@ -3235,6 +3459,7 @@ suffix:semicolon
 multiline_comment|/* Reuse this unused struct jffs_node.  */
 r_continue
 suffix:semicolon
+)brace
 )brace
 id|check_node
 suffix:colon
@@ -3394,6 +3619,92 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|raw_inode.rename
+)paren
+(brace
+r_struct
+id|jffs_delete_list
+op_star
+id|dl
+op_assign
+(paren
+r_struct
+id|jffs_delete_list
+op_star
+)paren
+id|kmalloc
+c_func
+(paren
+r_sizeof
+(paren
+r_struct
+id|jffs_delete_list
+)paren
+comma
+id|GFP_KERNEL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|dl
+)paren
+(brace
+id|D
+c_func
+(paren
+id|printk
+c_func
+(paren
+l_string|&quot;jffs_scan_flash: !dl&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|node
+)paren
+suffix:semicolon
+id|DJM
+c_func
+(paren
+id|no_jffs_node
+op_decrement
+)paren
+suffix:semicolon
+id|flash_safe_release
+c_func
+(paren
+id|fmc-&gt;flash_part
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
+)brace
+id|dl-&gt;ino
+op_assign
+id|deleted_file
+suffix:semicolon
+id|dl-&gt;next
+op_assign
+id|c-&gt;delete_list
+suffix:semicolon
+id|c-&gt;delete_list
+op_assign
+id|dl
+suffix:semicolon
+id|node-&gt;data_size
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 id|D3
 c_func
 (paren
@@ -3544,7 +3855,8 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;jffs_insert_node(): ino = %u, version = %u, name = &bslash;&quot;%s&bslash;&quot;&bslash;n&quot;
+l_string|&quot;jffs_insert_node(): ino = %u, version = %u, &quot;
+l_string|&quot;name = &bslash;&quot;%s&bslash;&quot;&bslash;n&quot;
 comma
 id|raw_inode-&gt;ino
 comma
@@ -4099,22 +4411,12 @@ id|f
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef USE_GC
-r_if
-c_cond
-(paren
-op_logical_neg
-id|c-&gt;fmc-&gt;no_call_gc
-)paren
-(brace
-id|jffs_garbage_collect
+id|jffs_garbage_collect_trigger
 c_func
 (paren
 id|c
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 id|D3
 c_func
 (paren
@@ -5372,6 +5674,8 @@ r_struct
 id|jffs_fm
 op_star
 id|fm
+op_assign
+l_int|NULL
 suffix:semicolon
 id|__u32
 id|pos
@@ -5491,11 +5795,20 @@ id|total_size
 )paren
 )paren
 suffix:semicolon
+id|jffs_fm_write_lock
+c_func
+(paren
+id|fmc
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+op_logical_neg
+id|fm
+)paren
+(brace
 multiline_comment|/* First try to allocate some flash memory.  */
-r_if
-c_cond
-(paren
-(paren
 id|err
 op_assign
 id|jffs_fmalloc
@@ -5510,11 +5823,112 @@ comma
 op_amp
 id|fm
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+op_eq
+op_minus
+id|ENOSPC
 )paren
+(brace
+multiline_comment|/* Just out of space. GC and try again */
+r_if
+c_cond
+(paren
+id|fmc-&gt;dirty_size
+OL
+id|fmc-&gt;sector_size
+)paren
+(brace
+id|D
+c_func
+(paren
+id|printk
+c_func
+(paren
+l_string|&quot;jffs_write_node(): jffs_fmalloc(0x%p, %u) &quot;
+l_string|&quot;failed, no dirty space to GC&bslash;n&quot;
+comma
+id|fmc
+comma
+id|total_size
+)paren
+)paren
+suffix:semicolon
+r_return
+id|err
+suffix:semicolon
+)brace
+id|D1
+c_func
+(paren
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;jffs_write_node(): Calling jffs_garbage_collect_now()&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+id|jffs_fm_write_unlock
+c_func
+(paren
+id|fmc
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|err
+op_assign
+id|jffs_garbage_collect_now
+c_func
+(paren
+id|c
+)paren
+)paren
+)paren
+(brace
+id|D
+c_func
+(paren
+id|printk
+c_func
+(paren
+l_string|&quot;jffs_write_node(): jffs_garbage_collect_now() failed&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+r_return
+id|err
+suffix:semicolon
+)brace
+id|jffs_fm_write_lock
+c_func
+(paren
+id|fmc
+)paren
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|err
 OL
 l_int|0
 )paren
 (brace
+id|jffs_fm_write_unlock
+c_func
+(paren
+id|fmc
+)paren
+suffix:semicolon
 id|D
 c_func
 (paren
@@ -5534,7 +5948,6 @@ r_return
 id|err
 suffix:semicolon
 )brace
-r_else
 r_if
 c_cond
 (paren
@@ -5542,7 +5955,7 @@ op_logical_neg
 id|fm-&gt;nodes
 )paren
 (brace
-multiline_comment|/* The jffs_fm struct that we got is not good enough.&n;&t;&t;   Make that space dirty.  */
+multiline_comment|/* The jffs_fm struct that we got is not good enough.&n;&t;&t;&t;   Make that space dirty and try again  */
 r_if
 c_cond
 (paren
@@ -5561,17 +5974,6 @@ OL
 l_int|0
 )paren
 (brace
-id|D
-c_func
-(paren
-id|printk
-c_func
-(paren
-l_string|&quot;jffs_write_node(): &quot;
-l_string|&quot;jffs_write_dummy_node(): Failed!&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
 id|kfree
 c_func
 (paren
@@ -5585,46 +5987,20 @@ id|no_jffs_fm
 op_decrement
 )paren
 suffix:semicolon
-r_return
-id|err
-suffix:semicolon
-)brace
-multiline_comment|/* Get a new one.  */
-r_if
-c_cond
-(paren
-(paren
-id|err
-op_assign
-id|jffs_fmalloc
+id|jffs_fm_write_unlock
 c_func
 (paren
 id|fmc
-comma
-id|total_size
-comma
-id|node
-comma
-op_amp
-id|fm
 )paren
-)paren
-OL
-l_int|0
-)paren
-(brace
+suffix:semicolon
 id|D
 c_func
 (paren
 id|printk
 c_func
 (paren
-l_string|&quot;jffs_write_node(): Second &quot;
-l_string|&quot;jffs_fmalloc(0x%p, %u) failed!&bslash;n&quot;
-comma
-id|fmc
-comma
-id|total_size
+l_string|&quot;jffs_write_node(): &quot;
+l_string|&quot;jffs_write_dummy_node(): Failed!&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -5632,7 +6008,13 @@ r_return
 id|err
 suffix:semicolon
 )brace
+id|fm
+op_assign
+l_int|NULL
+suffix:semicolon
 )brace
+)brace
+multiline_comment|/* while(!fm) */
 id|node-&gt;fm
 op_assign
 id|fm
@@ -5716,7 +6098,7 @@ id|printk
 c_func
 (paren
 l_string|&quot;jffs_write_node(): About to write this raw inode to the &quot;
-l_string|&quot;flash at pos 0x%ld:&bslash;n&quot;
+l_string|&quot;flash at pos 0x%lx:&bslash;n&quot;
 comma
 (paren
 r_int
@@ -5776,6 +6158,12 @@ comma
 id|total_name_size
 op_plus
 id|total_data_size
+)paren
+suffix:semicolon
+id|jffs_fm_write_unlock
+c_func
+(paren
+id|fmc
 )paren
 suffix:semicolon
 id|printk
@@ -5841,6 +6229,12 @@ comma
 id|total_data_size
 )paren
 suffix:semicolon
+id|jffs_fm_write_unlock
+c_func
+(paren
+id|fmc
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -5897,6 +6291,12 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|jffs_fm_write_unlock
+c_func
+(paren
+id|fmc
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -5910,6 +6310,12 @@ id|err
 suffix:semicolon
 )brace
 )brace
+id|jffs_fm_write_unlock
+c_func
+(paren
+id|fmc
+)paren
+suffix:semicolon
 id|D3
 c_func
 (paren
@@ -6428,7 +6834,7 @@ r_return
 id|result
 suffix:semicolon
 )brace
-multiline_comment|/* Free all memory associated with a file.  */
+multiline_comment|/* Free all nodes associated with a file.  */
 r_int
 DECL|function|jffs_free_node_list
 id|jffs_free_node_list
@@ -6507,6 +6913,76 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* Free a file and its name.  */
+r_int
+DECL|function|jffs_free_file
+id|jffs_free_file
+c_func
+(paren
+r_struct
+id|jffs_file
+op_star
+id|f
+)paren
+(brace
+id|D3
+c_func
+(paren
+id|printk
+c_func
+(paren
+l_string|&quot;jffs_free_file: f #%u, &bslash;&quot;%s&bslash;&quot;&bslash;n&quot;
+comma
+id|f-&gt;ino
+comma
+(paren
+id|f-&gt;name
+ques
+c_cond
+id|f-&gt;name
+suffix:colon
+l_string|&quot;&quot;
+)paren
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|f-&gt;name
+)paren
+(brace
+id|kfree
+c_func
+(paren
+id|f-&gt;name
+)paren
+suffix:semicolon
+id|DJM
+c_func
+(paren
+id|no_name
+op_decrement
+)paren
+suffix:semicolon
+)brace
+id|kfree
+c_func
+(paren
+id|f
+)paren
+suffix:semicolon
+id|DJM
+c_func
+(paren
+id|no_jffs_file
+op_decrement
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 multiline_comment|/* See if a file is deleted. If so, mark that file&squot;s nodes as obsolete.  */
 r_int
 DECL|function|jffs_possibly_delete_file
@@ -6565,7 +7041,7 @@ c_cond
 id|f-&gt;deleted
 )paren
 (brace
-multiline_comment|/* First try to remove all older versions.  */
+multiline_comment|/* First try to remove all older versions.  Commence with&n;&t;&t;   the oldest node.  */
 r_for
 c_loop
 (paren
@@ -6611,12 +7087,20 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* Unlink the file from the filesystem.  */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|f-&gt;c-&gt;building_fs
+)paren
+(brace
 id|jffs_unlink_file_from_tree
 c_func
 (paren
 id|f
 )paren
 suffix:semicolon
+)brace
 id|jffs_unlink_file_from_hash
 c_func
 (paren
@@ -6629,37 +7113,10 @@ c_func
 id|f
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|f-&gt;name
-)paren
-(brace
-id|kfree
-c_func
-(paren
-id|f-&gt;name
-)paren
-suffix:semicolon
-id|DJM
-c_func
-(paren
-id|no_name
-op_decrement
-)paren
-suffix:semicolon
-)brace
-id|kfree
+id|jffs_free_file
 c_func
 (paren
 id|f
-)paren
-suffix:semicolon
-id|DJM
-c_func
-(paren
-id|no_jffs_file
-op_decrement
 )paren
 suffix:semicolon
 )brace
@@ -6750,7 +7207,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* Remove an amount of data from a file. If this amount of data is&n;   zero, that could mean that a node should be split in two parts.&n;   We remove or change the appropriate nodes in the lists.&n;&n;   Starting offset of area to be removed is node-&gt;data_offset,&n;   and the length of the area is in node-&gt;removed_size.   */
 r_static
-r_void
+r_int
 DECL|function|jffs_delete_data
 id|jffs_delete_data
 c_func
@@ -6813,6 +7270,7 @@ id|offset
 (brace
 multiline_comment|/* A simple append; nothing to remove or no node to split.  */
 r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Find the node where we should begin the removal.  */
@@ -6853,6 +7311,7 @@ id|n
 (brace
 multiline_comment|/* If there&squot;s no data in the file there&squot;s no data to&n;&t;&t;   remove either.  */
 r_return
+l_int|0
 suffix:semicolon
 )brace
 r_if
@@ -6889,7 +7348,7 @@ c_cond
 id|n-&gt;data_offset
 op_plus
 id|n-&gt;data_size
-OL
+OG
 id|offset
 op_plus
 id|remove_size
@@ -6951,6 +7410,8 @@ l_string|&quot;jffs_delete_data(): -ENOMEM&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
+id|ENOMEM
 suffix:semicolon
 )brace
 id|DJM
@@ -6990,9 +7451,15 @@ id|new_node-&gt;fm_offset
 op_assign
 id|n-&gt;fm_offset
 op_plus
-id|n-&gt;data_size
-op_plus
+(paren
 id|remove_size
+op_plus
+(paren
+id|offset
+op_minus
+id|n-&gt;data_offset
+)paren
+)paren
 suffix:semicolon
 id|new_node-&gt;name_size
 op_assign
@@ -7069,12 +7536,42 @@ id|offset
 op_minus
 id|n-&gt;data_offset
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|new_node-&gt;fm
+)paren
 id|jffs_add_node
 c_func
 (paren
 id|new_node
 )paren
 suffix:semicolon
+r_else
+(brace
+id|D1
+c_func
+(paren
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;jffs_delete_data(): Splitting an empty node (file hold).&bslash;n!&quot;
+)paren
+)paren
+suffix:semicolon
+id|D1
+c_func
+(paren
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;FIXME: Did dwmw2 do the right thing here?&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+)brace
 id|n
 op_assign
 id|new_node-&gt;range_next
@@ -7155,11 +7652,20 @@ id|printk
 c_func
 (paren
 l_string|&quot;jffs_delete_data(): Removing node: &quot;
-l_string|&quot;ino: %u, version: %u&bslash;n&quot;
+l_string|&quot;ino: %u, version: %u%s&bslash;n&quot;
 comma
 id|p-&gt;ino
 comma
 id|p-&gt;version
+comma
+(paren
+id|p-&gt;fm
+ques
+c_cond
+l_string|&quot;&quot;
+suffix:colon
+l_string|&quot; (virtual)&quot;
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -7270,11 +7776,14 @@ id|f-&gt;size
 )paren
 )paren
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
 )brace
 multiline_comment|/* jffs_delete_data()  */
-multiline_comment|/* Insert some data into a file.  Prior to the call to this function,&n;   jffs_delete_data() should be called.  */
+multiline_comment|/* Insert some data into a file.  Prior to the call to this function,&n;   jffs_delete_data should be called.  */
 r_static
-r_void
+r_int
 DECL|function|jffs_insert_data
 id|jffs_insert_data
 c_func
@@ -7308,6 +7817,8 @@ id|f-&gt;size
 )paren
 suffix:semicolon
 multiline_comment|/* Find the position where we should insert data.  */
+id|retry
+suffix:colon
 r_if
 c_cond
 (paren
@@ -7461,6 +7972,8 @@ l_string|&quot;the data!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 )paren
@@ -7500,109 +8013,248 @@ OG
 id|f-&gt;size
 )paren
 (brace
-multiline_comment|/* Not implemented yet.  */
-macro_line|#if 0
-multiline_comment|/* Below is some example code for future use if we decide&n;&t;&t;   to implement it.  */
-multiline_comment|/* This is code that isn&squot;t supported by VFS. So there aren&squot;t&n;&t;&t;   really any reasons to implement it yet.  */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|f-&gt;range_head
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|node-&gt;data_offset
-OG
-id|f-&gt;size
-)paren
-(brace
+multiline_comment|/* Okay.  This is tricky.  This means that we want to insert&n;&t;&t;   data at a place that is beyond the limits of the file as&n;&t;&t;   it is constructed right now.  This is actually a common&n;&t;&t;   event that for instance could occur during the mounting&n;&t;&t;   of the file system if a large file have been truncated,&n;&t;&t;   rewritten and then only partially garbage collected.  */
+r_struct
+id|jffs_node
+op_star
+id|n
+suffix:semicolon
+multiline_comment|/* We need a place holder for the data that is missing in&n;&t;&t;   front of this insertion.  This &quot;virtual node&quot; will not&n;&t;&t;   be associated with any space on the flash device.  */
+r_struct
+id|jffs_node
+op_star
+id|virtual_node
+suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
 (paren
-id|nn
+id|virtual_node
 op_assign
-id|jffs_alloc_node
+(paren
+r_struct
+id|jffs_node
+op_star
+)paren
+id|kmalloc
 c_func
 (paren
+r_sizeof
+(paren
+r_struct
+id|jffs_node
+)paren
+comma
+id|GFP_KERNEL
 )paren
 )paren
 )paren
 (brace
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
+)brace
 id|D
 c_func
 (paren
 id|printk
 c_func
 (paren
-l_string|&quot;jffs_insert_data(): &quot;
-l_string|&quot;Allocation failed.&bslash;n&quot;
+l_string|&quot;jffs_insert_data: Inserting a virtual node.&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-id|nn-&gt;version
-op_assign
-id|JFFS_MAGIC_BITMASK
-suffix:semicolon
-id|nn-&gt;data_offset
-op_assign
-l_int|0
-suffix:semicolon
-id|nn-&gt;data_size
-op_assign
+id|D
+c_func
+(paren
+id|printk
+c_func
+(paren
+l_string|&quot;  node-&gt;data_offset = %u&bslash;n&quot;
+comma
 id|node-&gt;data_offset
+)paren
+)paren
 suffix:semicolon
-id|nn-&gt;removed_size
+id|D
+c_func
+(paren
+id|printk
+c_func
+(paren
+l_string|&quot;  f-&gt;size = %u&bslash;n&quot;
+comma
+id|f-&gt;size
+)paren
+)paren
+suffix:semicolon
+id|virtual_node-&gt;ino
+op_assign
+id|node-&gt;ino
+suffix:semicolon
+id|virtual_node-&gt;version
+op_assign
+id|node-&gt;version
+suffix:semicolon
+id|virtual_node-&gt;removed_size
 op_assign
 l_int|0
 suffix:semicolon
-id|nn-&gt;fm_offset
+id|virtual_node-&gt;fm_offset
 op_assign
 l_int|0
 suffix:semicolon
-id|nn-&gt;name_size
+id|virtual_node-&gt;name_size
 op_assign
 l_int|0
 suffix:semicolon
-id|nn-&gt;fm
+id|virtual_node-&gt;fm
 op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* This is a virtual data holder.  */
-id|nn-&gt;version_prev
+id|virtual_node-&gt;version_prev
 op_assign
 l_int|0
 suffix:semicolon
-id|nn-&gt;version_next
+id|virtual_node-&gt;version_next
 op_assign
 l_int|0
 suffix:semicolon
-id|nn-&gt;range_prev
+id|virtual_node-&gt;range_next
 op_assign
 l_int|0
 suffix:semicolon
-id|nn-&gt;range_next
+multiline_comment|/* Are there any data at all in the file yet?  */
+r_if
+c_cond
+(paren
+id|f-&gt;range_head
+)paren
+(brace
+id|virtual_node-&gt;data_offset
+op_assign
+id|f-&gt;range_tail-&gt;data_offset
+op_plus
+id|f-&gt;range_tail-&gt;data_size
+suffix:semicolon
+id|virtual_node-&gt;data_size
+op_assign
+id|node-&gt;data_offset
+op_minus
+id|virtual_node-&gt;data_offset
+suffix:semicolon
+id|virtual_node-&gt;range_prev
+op_assign
+id|f-&gt;range_tail
+suffix:semicolon
+id|f-&gt;range_tail-&gt;range_next
+op_assign
+id|virtual_node
+suffix:semicolon
+)brace
+r_else
+(brace
+id|virtual_node-&gt;data_offset
 op_assign
 l_int|0
 suffix:semicolon
-id|nh-&gt;range_head
+id|virtual_node-&gt;data_size
 op_assign
-id|nn
+id|node-&gt;data_offset
 suffix:semicolon
-id|nh-&gt;range_tail
+id|virtual_node-&gt;range_prev
 op_assign
-id|nn
+l_int|0
+suffix:semicolon
+id|f-&gt;range_head
+op_assign
+id|virtual_node
+suffix:semicolon
+)brace
+id|f-&gt;range_tail
+op_assign
+id|virtual_node
+suffix:semicolon
+id|f-&gt;size
+op_add_assign
+id|virtual_node-&gt;data_size
+suffix:semicolon
+multiline_comment|/* Insert this virtual node in the version list as well.  */
+r_for
+c_loop
+(paren
+id|n
+op_assign
+id|f-&gt;version_head
+suffix:semicolon
+id|n
+suffix:semicolon
+id|n
+op_assign
+id|n-&gt;version_next
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|n-&gt;version
+op_eq
+id|virtual_node-&gt;version
+)paren
+(brace
+id|virtual_node-&gt;version_prev
+op_assign
+id|n-&gt;version_prev
+suffix:semicolon
+id|n-&gt;version_prev
+op_assign
+id|virtual_node
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|virtual_node-&gt;version_prev
+)paren
+(brace
+id|virtual_node-&gt;version_prev
+op_member_access_from_pointer
+id|version_next
+op_assign
+id|virtual_node
+suffix:semicolon
+)brace
+r_else
+(brace
+id|f-&gt;version_head
+op_assign
+id|virtual_node
+suffix:semicolon
+)brace
+id|virtual_node-&gt;version_next
+op_assign
+id|n
+suffix:semicolon
+r_break
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
+id|D
+c_func
+(paren
+id|jffs_print_node
+c_func
+(paren
+id|virtual_node
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* Make a new try to insert the node.  */
+r_goto
+id|retry
+suffix:semicolon
 )brace
 id|D3
 c_func
@@ -7615,6 +8267,9 @@ comma
 id|f-&gt;size
 )paren
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* A new node (with data) has been added to the file and now the range&n;   list has to be modified.  */
@@ -7635,6 +8290,9 @@ op_star
 id|node
 )paren
 (brace
+r_int
+id|err
+suffix:semicolon
 id|D3
 c_func
 (paren
@@ -7674,6 +8332,12 @@ r_else
 multiline_comment|/* data_offset == X  */
 multiline_comment|/* data_size == 0  */
 multiline_comment|/* remove_size != 0  */
+r_if
+c_cond
+(paren
+(paren
+id|err
+op_assign
 id|jffs_delete_data
 c_func
 (paren
@@ -7681,7 +8345,15 @@ id|f
 comma
 id|node
 )paren
+)paren
+OL
+l_int|0
+)paren
+(brace
+r_return
+id|err
 suffix:semicolon
+)brace
 )brace
 )brace
 r_else
@@ -7689,6 +8361,12 @@ r_else
 multiline_comment|/* data_offset == X  */
 multiline_comment|/* data_size != 0  */
 multiline_comment|/* remove_size == Y  */
+r_if
+c_cond
+(paren
+(paren
+id|err
+op_assign
 id|jffs_delete_data
 c_func
 (paren
@@ -7696,7 +8374,21 @@ id|f
 comma
 id|node
 )paren
+)paren
+OL
+l_int|0
+)paren
+(brace
+r_return
+id|err
 suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+(paren
+id|err
+op_assign
 id|jffs_insert_data
 c_func
 (paren
@@ -7704,7 +8396,15 @@ id|f
 comma
 id|node
 )paren
+)paren
+OL
+l_int|0
+)paren
+(brace
+r_return
+id|err
 suffix:semicolon
+)brace
 )brace
 r_return
 l_int|0
@@ -7826,7 +8526,14 @@ l_string|&quot;        0x%p, /* fm,  fm-&gt;offset: %u  */&bslash;n&quot;
 comma
 id|n-&gt;fm
 comma
+(paren
+id|n-&gt;fm
+ques
+c_cond
 id|n-&gt;fm-&gt;offset
+suffix:colon
+l_int|0
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -8734,6 +9441,9 @@ r_char
 op_star
 id|space
 suffix:semicolon
+r_int
+id|dir
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -8807,10 +9517,18 @@ op_assign
 id|f-&gt;sibling_next
 )paren
 (brace
+id|dir
+op_assign
+id|S_ISDIR
+c_func
+(paren
+id|f-&gt;mode
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s%s (ino: %u, highest_version: %u, size: %u)&bslash;n&quot;
+l_string|&quot;%s%s%s (ino: %u, highest_version: %u, size: %u)&bslash;n&quot;
 comma
 id|space
 comma
@@ -8820,7 +9538,16 @@ ques
 c_cond
 id|f-&gt;name
 suffix:colon
+l_string|&quot;&quot;
+)paren
+comma
+(paren
+id|dir
+ques
+c_cond
 l_string|&quot;/&quot;
+suffix:colon
+l_string|&quot;&quot;
 )paren
 comma
 id|f-&gt;ino
@@ -8833,11 +9560,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|S_ISDIR
-c_func
-(paren
-id|f-&gt;mode
-)paren
+id|dir
 )paren
 (brace
 id|jffs_print_tree
@@ -9106,10 +9829,6 @@ id|new_node-&gt;data_offset
 op_assign
 id|node-&gt;data_offset
 suffix:semicolon
-id|new_node-&gt;data_size
-op_assign
-id|size
-suffix:semicolon
 id|new_node-&gt;removed_size
 op_assign
 id|size
@@ -9156,6 +9875,12 @@ id|jffs_raw_inode
 op_plus
 id|total_name_size
 suffix:semicolon
+id|jffs_fm_write_lock
+c_func
+(paren
+id|fmc
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -9179,6 +9904,19 @@ OL
 l_int|0
 )paren
 (brace
+id|DJM
+c_func
+(paren
+id|no_jffs_node
+op_decrement
+)paren
+suffix:semicolon
+id|jffs_fm_write_unlock
+c_func
+(paren
+id|fmc
+)paren
+suffix:semicolon
 id|D
 c_func
 (paren
@@ -9193,13 +9931,6 @@ id|kfree
 c_func
 (paren
 id|new_node
-)paren
-suffix:semicolon
-id|DJM
-c_func
-(paren
-id|no_jffs_node
-op_decrement
 )paren
 suffix:semicolon
 r_return
@@ -9233,6 +9964,19 @@ OL
 l_int|0
 )paren
 (brace
+id|DJM
+c_func
+(paren
+id|no_jffs_fm
+op_decrement
+)paren
+suffix:semicolon
+id|jffs_fm_write_unlock
+c_func
+(paren
+id|fmc
+)paren
+suffix:semicolon
 id|D
 c_func
 (paren
@@ -9248,13 +9992,6 @@ id|kfree
 c_func
 (paren
 id|fm
-)paren
-suffix:semicolon
-id|DJM
-c_func
-(paren
-id|no_jffs_fm
-op_decrement
 )paren
 suffix:semicolon
 r_return
@@ -9285,6 +10022,12 @@ OL
 l_int|0
 )paren
 (brace
+id|jffs_fm_write_unlock
+c_func
+(paren
+id|fmc
+)paren
+suffix:semicolon
 id|D
 c_func
 (paren
@@ -9497,14 +10240,6 @@ OL
 l_int|0
 )paren
 (brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;JFFS: jffs_rewrite_data: Write error during &quot;
-l_string|&quot;rewrite. (raw inode)&bslash;n&quot;
-)paren
-suffix:semicolon
 id|jffs_fmfree_partly
 c_func
 (paren
@@ -9515,6 +10250,20 @@ comma
 id|total_name_size
 op_plus
 id|total_data_size
+)paren
+suffix:semicolon
+id|jffs_fm_write_unlock
+c_func
+(paren
+id|fmc
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;JFFS: jffs_rewrite_data: Write error during &quot;
+l_string|&quot;rewrite. (raw inode)&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -9580,14 +10329,6 @@ OL
 l_int|0
 )paren
 (brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;JFFS: jffs_rewrite_data: Write &quot;
-l_string|&quot;error during rewrite. (name)&bslash;n&quot;
-)paren
-suffix:semicolon
 id|jffs_fmfree_partly
 c_func
 (paren
@@ -9596,6 +10337,20 @@ comma
 id|fm
 comma
 id|total_data_size
+)paren
+suffix:semicolon
+id|jffs_fm_write_unlock
+c_func
+(paren
+id|fmc
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;JFFS: jffs_rewrite_data: Write &quot;
+l_string|&quot;error during rewrite. (name)&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -9715,15 +10470,14 @@ OL
 id|s
 )paren
 (brace
-id|printk
+id|free_page
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;JFFS: jffs_rewrite_data: &quot;
-l_string|&quot;jffs_read_data() &quot;
-l_string|&quot;failed! (r = %d)&bslash;n&quot;
-comma
-id|r
+(paren
+r_int
+r_int
+)paren
+id|page
 )paren
 suffix:semicolon
 id|jffs_fmfree_partly
@@ -9734,6 +10488,23 @@ comma
 id|fm
 comma
 l_int|0
+)paren
+suffix:semicolon
+id|jffs_fm_write_unlock
+c_func
+(paren
+id|fmc
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;JFFS: jffs_rewrite_data: &quot;
+l_string|&quot;jffs_read_data() &quot;
+l_string|&quot;failed! (r = %d)&bslash;n&quot;
+comma
+id|r
 )paren
 suffix:semicolon
 r_return
@@ -9763,15 +10534,6 @@ OL
 l_int|0
 )paren
 (brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;JFFS: jffs_rewrite_data: &quot;
-l_string|&quot;Write error during rewrite. &quot;
-l_string|&quot;(data)&bslash;n&quot;
-)paren
-suffix:semicolon
 id|free_page
 c_func
 (paren
@@ -9790,6 +10552,21 @@ comma
 id|fm
 comma
 l_int|0
+)paren
+suffix:semicolon
+id|jffs_fm_write_unlock
+c_func
+(paren
+id|fmc
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;JFFS: jffs_rewrite_data: &quot;
+l_string|&quot;Write error during rewrite. &quot;
+l_string|&quot;(data)&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -9901,14 +10678,6 @@ OL
 l_int|0
 )paren
 (brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;JFFS: jffs_rewrite_data: Write error during &quot;
-l_string|&quot;rewrite. (checksum)&bslash;n&quot;
-)paren
-suffix:semicolon
 id|jffs_fmfree_partly
 c_func
 (paren
@@ -9917,6 +10686,20 @@ comma
 id|fm
 comma
 l_int|0
+)paren
+suffix:semicolon
+id|jffs_fm_write_unlock
+c_func
+(paren
+id|fmc
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;JFFS: jffs_rewrite_data: Write error during &quot;
+l_string|&quot;rewrite. (checksum)&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -9937,6 +10720,12 @@ comma
 id|f-&gt;name
 comma
 id|new_node
+)paren
+suffix:semicolon
+id|jffs_fm_write_unlock
+c_func
+(paren
+id|fmc
 )paren
 suffix:semicolon
 id|D3
@@ -10221,6 +11010,18 @@ c_func
 id|printk
 c_func
 (paren
+l_string|&quot;  node-&gt;data_offset: %u&bslash;n&quot;
+comma
+id|node-&gt;data_offset
+)paren
+)paren
+suffix:semicolon
+id|D2
+c_func
+(paren
+id|printk
+c_func
+(paren
 l_string|&quot;  free_chunk_size1: %u&bslash;n&quot;
 comma
 id|free_chunk_size1
@@ -10236,6 +11037,18 @@ c_func
 l_string|&quot;  free_chunk_size2: %u&bslash;n&quot;
 comma
 id|free_chunk_size2
+)paren
+)paren
+suffix:semicolon
+id|D2
+c_func
+(paren
+id|printk
+c_func
+(paren
+l_string|&quot;  node-&gt;fm-&gt;offset: 0x%08x&bslash;n&quot;
+comma
+id|node-&gt;fm-&gt;offset
 )paren
 )paren
 suffix:semicolon
@@ -10443,7 +11256,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* jffs_garbage_collect_next */
-multiline_comment|/* If an obsolete node is partly going to be erased due to garbage&n;   collection, the part that isn&squot;t going to be erased must be filled&n;   with zeroes so that the scan of the flash will work smoothly next&n;   time.&n;     There are two phases in this procedure: First, the clearing of&n;   the name and data parts of the node. Second, possibly also clearing&n;   a part of the raw inode as well.  If the box is power cycled during&n;   the first phase, only the checksum of this node-to-be-cleared-at-&n;   the-end will be wrong.  If the box is power cycled during, or after,&n;   the clearing of the raw inode, the information like the length of&n;   the name and data parts are zeroed.  The next time the box is&n;   powered up, the scanning algorithm manages this faulty data too&n;   because:&n;&n;   - The checksum is invalid and thus the raw inode must be discarded&n;     in any case.&n;   - If the lengths of the data part or the name part are zeroed, the&n;     scanning just continues after the raw inode.  But after the inode&n;     the scanning procedure just finds zeroes which is the same as&n;     dirt.&n;&n;   So, in the end, this could never fail. :-)  Even if it does fail,&n;   the scanning algorithm should manage that too.  */
+multiline_comment|/* If an obsolete node is partly going to be erased due to garbage&n;   collection, the part that isn&squot;t going to be erased must be filled&n;   with zeroes so that the scan of the flash will work smoothly next&n;   time.  (The data in the file could for instance be a JFFS image&n;   which could cause enormous confusion during a scan of the flash&n;   device if we didn&squot;t do this.)&n;     There are two phases in this procedure: First, the clearing of&n;   the name and data parts of the node. Second, possibly also clearing&n;   a part of the raw inode as well.  If the box is power cycled during&n;   the first phase, only the checksum of this node-to-be-cleared-at-&n;   the-end will be wrong.  If the box is power cycled during, or after,&n;   the clearing of the raw inode, the information like the length of&n;   the name and data parts are zeroed.  The next time the box is&n;   powered up, the scanning algorithm manages this faulty data too&n;   because:&n;&n;   - The checksum is invalid and thus the raw inode must be discarded&n;     in any case.&n;   - If the lengths of the data part or the name part are zeroed, the&n;     scanning just continues after the raw inode.  But after the inode&n;     the scanning procedure just finds zeroes which is the same as&n;     dirt.&n;&n;   So, in the end, this could never fail. :-)  Even if it does fail,&n;   the scanning algorithm should manage that too.  */
 r_static
 r_int
 DECL|function|jffs_clear_end_of_node
@@ -10879,7 +11692,7 @@ id|JFFS_EMPTY_BITMASK
 id|printk
 c_func
 (paren
-l_string|&quot;JFFS: Erase failed! pos = 0x%ld&bslash;n&quot;
+l_string|&quot;JFFS: Erase failed! pos = 0x%lx&bslash;n&quot;
 comma
 (paren
 r_int
@@ -10960,10 +11773,10 @@ r_return
 id|erase_size
 suffix:semicolon
 )brace
-multiline_comment|/* There are different criteria that should trigger a garbage collect:&n;   &n;   1. There is too much dirt in the memory.&n;   2. The free space is becoming small.&n;   3. There are many versions of a node.&n;&n;   The garbage collect should always be done in a manner that guarantees&n;   that future garbage collects cannot be locked.  E.g. Rewritten chunks&n;   should not be too large (span more than one sector in the flash memory&n;   for exemple).  Of course there is a limit on how intelligent this garbage&n;   collection can be.  */
+multiline_comment|/* There are different criteria that should trigger a garbage collect:&n;&n;   1. There is too much dirt in the memory.&n;   2. The free space is becoming small.&n;   3. There are many versions of a node.&n;&n;   The garbage collect should always be done in a manner that guarantees&n;   that future garbage collects cannot be locked.  E.g. Rewritten chunks&n;   should not be too large (span more than one sector in the flash memory&n;   for exemple).  Of course there is a limit on how intelligent this garbage&n;   collection can be.  */
 r_int
-DECL|function|jffs_garbage_collect
-id|jffs_garbage_collect
+DECL|function|jffs_garbage_collect_now
+id|jffs_garbage_collect_now
 c_func
 (paren
 r_struct
@@ -11007,7 +11820,7 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;***jffs_garbage_collect(): fmc-&gt;dirty_size = %u&bslash;n&quot;
+l_string|&quot;***jffs_garbage_collect_now(): fmc-&gt;dirty_size = %u&bslash;n&quot;
 comma
 id|fmc-&gt;dirty_size
 )paren
@@ -11023,13 +11836,16 @@ id|fmc
 )paren
 )paren
 suffix:semicolon
-id|c-&gt;fmc-&gt;no_call_gc
-op_assign
-l_int|1
+id|down
+c_func
+(paren
+op_amp
+id|fmc-&gt;gclock
+)paren
 suffix:semicolon
-multiline_comment|/* While there is too much dirt left and it is possible&n;&t;   to garbage collect, do so.  */
-r_while
-c_loop
+multiline_comment|/* If it is possible to garbage collect, do so.  */
+r_if
+c_cond
 (paren
 id|fmc-&gt;dirty_size
 op_ge
@@ -11042,7 +11858,701 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;***jffs_garbage_collect(): round #%u, &quot;
+l_string|&quot;***jffs_garbage_collect_now(): round #%u, &quot;
+l_string|&quot;fmc-&gt;dirty_size = %u&bslash;n&quot;
+comma
+id|i
+op_increment
+comma
+id|fmc-&gt;dirty_size
+)paren
+)paren
+suffix:semicolon
+id|D2
+c_func
+(paren
+id|jffs_print_fmcontrol
+c_func
+(paren
+id|fmc
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* At least one sector should be able to free now.  */
+r_if
+c_cond
+(paren
+(paren
+id|erased
+op_assign
+id|jffs_try_to_erase
+c_func
+(paren
+id|c
+)paren
+)paren
+OL
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;JFFS: Error in &quot;
+l_string|&quot;garbage collector.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|result
+op_assign
+id|erased
+suffix:semicolon
+r_goto
+id|gc_end
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|erased
+op_eq
+l_int|0
+)paren
+(brace
+id|__u32
+id|free_size
+op_assign
+id|fmc-&gt;flash_size
+op_minus
+(paren
+id|fmc-&gt;used_size
+op_plus
+id|fmc-&gt;dirty_size
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|free_size
+OG
+l_int|0
+)paren
+(brace
+multiline_comment|/* Let&squot;s dare to make a garbage collect.  */
+r_if
+c_cond
+(paren
+(paren
+id|result
+op_assign
+id|jffs_garbage_collect_next
+c_func
+(paren
+id|c
+)paren
+)paren
+OL
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;JFFS: Something &quot;
+l_string|&quot;has gone seriously wrong &quot;
+l_string|&quot;with a garbage collect.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_goto
+id|gc_end
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
+multiline_comment|/* What should we do here?  */
+id|D
+c_func
+(paren
+id|printk
+c_func
+(paren
+l_string|&quot;   jffs_garbage_collect_now(): &quot;
+l_string|&quot;erased: %ld, free_size: %u&bslash;n&quot;
+comma
+id|erased
+comma
+id|free_size
+)paren
+)paren
+suffix:semicolon
+id|result
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+r_goto
+id|gc_end
+suffix:semicolon
+)brace
+)brace
+id|D1
+c_func
+(paren
+id|printk
+c_func
+(paren
+l_string|&quot;   jffs_garbage_collect_now(): erased: %ld&bslash;n&quot;
+comma
+id|erased
+)paren
+)paren
+suffix:semicolon
+id|erased_total
+op_add_assign
+id|erased
+suffix:semicolon
+id|DJM
+c_func
+(paren
+id|jffs_print_memory_allocation_statistics
+c_func
+(paren
+)paren
+)paren
+suffix:semicolon
+)brace
+id|gc_end
+suffix:colon
+id|up
+c_func
+(paren
+op_amp
+id|fmc-&gt;gclock
+)paren
+suffix:semicolon
+id|D3
+c_func
+(paren
+id|printk
+c_func
+(paren
+l_string|&quot;   jffs_garbage_collect_now(): Leaving...&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+id|D1
+c_func
+(paren
+r_if
+(paren
+id|erased_total
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;erased_total = %ld&bslash;n&quot;
+comma
+id|erased_total
+)paren
+suffix:semicolon
+id|jffs_print_fmcontrol
+c_func
+(paren
+id|fmc
+)paren
+suffix:semicolon
+)brace
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|erased_total
+op_logical_and
+op_logical_neg
+id|result
+)paren
+r_return
+op_minus
+id|ENOSPC
+suffix:semicolon
+r_return
+id|result
+suffix:semicolon
+)brace
+multiline_comment|/* jffs_garbage_collect_now() */
+multiline_comment|/* Determine if it is reasonable to start garbage collection.&n;   We start a gc pass if either:&n;   - The number of free bytes &lt; MIN_FREE_BYTES &amp;&amp; at least one&n;     block is dirty, OR&n;   - The number of dirty bytes &gt; MAX_DIRTY_BYTES&n;*/
+DECL|function|thread_should_wake
+r_static
+r_inline
+r_int
+id|thread_should_wake
+(paren
+r_struct
+id|jffs_control
+op_star
+id|c
+)paren
+(brace
+id|__u32
+id|nfree
+op_assign
+id|c-&gt;fmc-&gt;flash_size
+op_minus
+id|c-&gt;fmc-&gt;used_size
+op_minus
+id|c-&gt;fmc-&gt;dirty_size
+suffix:semicolon
+id|D1
+c_func
+(paren
+id|printk
+(paren
+id|KERN_NOTICE
+l_string|&quot;thread_should_wake(): free=%d, dirty=%d, blocksize=%d.&bslash;n&quot;
+comma
+id|nfree
+comma
+id|c-&gt;fmc-&gt;dirty_size
+comma
+id|c-&gt;fmc-&gt;sector_size
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* If there&squot;s not enough dirty space to free a block, there&squot;s no point. */
+r_if
+c_cond
+(paren
+id|c-&gt;fmc-&gt;dirty_size
+OL
+id|c-&gt;fmc-&gt;sector_size
+)paren
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/* If there are fewer free bytes than the threshold, GC */
+r_if
+c_cond
+(paren
+id|nfree
+OL
+id|c-&gt;gc_minfree_threshold
+)paren
+r_return
+l_int|1
+suffix:semicolon
+multiline_comment|/* If there are more dirty bytes than the threshold, GC */
+r_if
+c_cond
+(paren
+id|c-&gt;fmc-&gt;dirty_size
+OG
+id|c-&gt;gc_maxdirty_threshold
+)paren
+r_return
+l_int|1
+suffix:semicolon
+multiline_comment|/* FIXME: What about the &quot;There are many versions of a node&quot; condition? */
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|jffs_garbage_collect_trigger
+r_void
+id|jffs_garbage_collect_trigger
+c_func
+(paren
+r_struct
+id|jffs_control
+op_star
+id|c
+)paren
+(brace
+multiline_comment|/* NOTE: We rely on the fact that we have the BKL here.&n;&t; * Otherwise, the gc_task could go away between the check&n;&t; * and the wake_up_process()&n;&t; */
+r_if
+c_cond
+(paren
+id|c-&gt;gc_task
+op_logical_and
+id|thread_should_wake
+c_func
+(paren
+id|c
+)paren
+)paren
+id|send_sig
+c_func
+(paren
+id|SIGHUP
+comma
+id|c-&gt;gc_task
+comma
+l_int|1
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* Kernel threads  take (void *) as arguments.   Thus we pass&n;   the jffs_control data as a (void *) and then cast it. */
+r_int
+DECL|function|jffs_garbage_collect_thread
+id|jffs_garbage_collect_thread
+c_func
+(paren
+r_void
+op_star
+id|ptr
+)paren
+(brace
+r_struct
+id|jffs_control
+op_star
+id|c
+op_assign
+(paren
+r_struct
+id|jffs_control
+op_star
+)paren
+id|ptr
+suffix:semicolon
+r_struct
+id|jffs_fmcontrol
+op_star
+id|fmc
+op_assign
+id|c-&gt;fmc
+suffix:semicolon
+r_int
+id|erased_total
+op_assign
+l_int|0
+suffix:semicolon
+r_int
+id|erased
+suffix:semicolon
+r_int
+id|result
+op_assign
+l_int|0
+suffix:semicolon
+id|D1
+c_func
+(paren
+r_int
+id|i
+op_assign
+l_int|1
+)paren
+suffix:semicolon
+id|c-&gt;gc_task
+op_assign
+id|current
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|exit_mm
+c_func
+(paren
+id|c-&gt;gc_task
+)paren
+suffix:semicolon
+id|current-&gt;session
+op_assign
+l_int|1
+suffix:semicolon
+id|current-&gt;pgrp
+op_assign
+l_int|1
+suffix:semicolon
+id|init_MUTEX_LOCKED
+c_func
+(paren
+op_amp
+id|c-&gt;gc_thread_sem
+)paren
+suffix:semicolon
+multiline_comment|/* barrier */
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|current-&gt;sigmask_lock
+)paren
+suffix:semicolon
+id|siginitsetinv
+(paren
+op_amp
+id|current-&gt;blocked
+comma
+id|sigmask
+c_func
+(paren
+id|SIGHUP
+)paren
+op_or
+id|sigmask
+c_func
+(paren
+id|SIGQUIT
+)paren
+op_or
+id|sigmask
+c_func
+(paren
+id|SIGSTOP
+)paren
+op_or
+id|sigmask
+c_func
+(paren
+id|SIGCONT
+)paren
+)paren
+suffix:semicolon
+id|recalc_sigpending
+c_func
+(paren
+id|current
+)paren
+suffix:semicolon
+id|spin_unlock_irq
+c_func
+(paren
+op_amp
+id|current-&gt;sigmask_lock
+)paren
+suffix:semicolon
+id|strcpy
+c_func
+(paren
+id|current-&gt;comm
+comma
+l_string|&quot;jffs_gcd&quot;
+)paren
+suffix:semicolon
+id|D1
+c_func
+(paren
+id|printk
+(paren
+id|KERN_NOTICE
+l_string|&quot;jffs_garbage_collect_thread(): Starting infinite loop.&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+suffix:semicolon
+suffix:semicolon
+)paren
+(brace
+multiline_comment|/* See if we need to start gc.  If we don&squot;t, go to sleep.&n;&t;&t;   &n;&t;&t;   Current implementation is a BAD THING(tm).  If we try &n;&t;&t;   to unmount the FS, the unmount operation will sleep waiting&n;&t;&t;   for this thread to exit.  We need to arrange to send it a&n;&t;&t;   sig before the umount process sleeps.&n;&t;&t;*/
+r_if
+c_cond
+(paren
+op_logical_neg
+id|thread_should_wake
+c_func
+(paren
+id|c
+)paren
+)paren
+id|set_current_state
+(paren
+id|TASK_INTERRUPTIBLE
+)paren
+suffix:semicolon
+id|schedule
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Yes, we do this even if we want to go&n;&t;&t;&t;&t;       on immediately - we&squot;re a low priority &n;&t;&t;&t;&t;       background task. */
+multiline_comment|/* Put_super will send a SIGQUIT and then wait on the sem. &n;&t;&t; */
+r_while
+c_loop
+(paren
+id|signal_pending
+c_func
+(paren
+id|current
+)paren
+)paren
+(brace
+id|siginfo_t
+id|info
+suffix:semicolon
+r_int
+r_int
+id|signr
+suffix:semicolon
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|current-&gt;sigmask_lock
+)paren
+suffix:semicolon
+id|signr
+op_assign
+id|dequeue_signal
+c_func
+(paren
+op_amp
+id|current-&gt;blocked
+comma
+op_amp
+id|info
+)paren
+suffix:semicolon
+id|spin_unlock_irq
+c_func
+(paren
+op_amp
+id|current-&gt;sigmask_lock
+)paren
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|signr
+)paren
+(brace
+r_case
+id|SIGSTOP
+suffix:colon
+id|D1
+c_func
+(paren
+id|printk
+c_func
+(paren
+l_string|&quot;jffs_garbage_collect_thread(): SIGSTOP received.&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+id|set_current_state
+c_func
+(paren
+id|TASK_STOPPED
+)paren
+suffix:semicolon
+id|schedule
+c_func
+(paren
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|SIGQUIT
+suffix:colon
+id|D1
+c_func
+(paren
+id|printk
+c_func
+(paren
+l_string|&quot;jffs_garbage_collect_thread(): SIGQUIT received.&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+id|c-&gt;gc_task
+op_assign
+l_int|NULL
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|c-&gt;gc_thread_sem
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+)brace
+id|D1
+c_func
+(paren
+id|printk
+(paren
+id|KERN_NOTICE
+l_string|&quot;jffs_garbage_collect_thread(): collecting.&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+singleline_comment|//&t;&t;printk (KERN_NOTICE &quot;free=%d, dirty=%d, blocksize=%ld.&bslash;n&quot;, count_free_bytes(c), count_dirty_bytes(c), c-&gt;sb-&gt;s_blocksize);
+id|D2
+c_func
+(paren
+id|printk
+c_func
+(paren
+l_string|&quot;***jffs_garbage_collect_thread(): fmc-&gt;dirty_size = %u&bslash;n&quot;
+comma
+id|fmc-&gt;dirty_size
+)paren
+)paren
+suffix:semicolon
+id|D2
+c_func
+(paren
+id|jffs_print_fmcontrol
+c_func
+(paren
+id|fmc
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|fmc-&gt;dirty_size
+OL
+id|fmc-&gt;sector_size
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;jffs_garbage_collect_thread with insufficient dirty space (0x%x)&bslash;n&quot;
+comma
+id|fmc-&gt;dirty_size
+)paren
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
+id|down
+c_func
+(paren
+op_amp
+id|c-&gt;fmc-&gt;gclock
+)paren
+suffix:semicolon
+id|D1
+c_func
+(paren
+id|printk
+c_func
+(paren
+l_string|&quot;***jffs_garbage_collect_thread(): round #%u, &quot;
 l_string|&quot;fmc-&gt;dirty_size = %u&bslash;n&quot;
 comma
 id|i
@@ -11207,12 +12717,14 @@ c_func
 )paren
 )paren
 suffix:semicolon
-)brace
 id|gc_end
 suffix:colon
-id|c-&gt;fmc-&gt;no_call_gc
-op_assign
-l_int|0
+id|up
+c_func
+(paren
+op_amp
+id|c-&gt;fmc-&gt;gclock
+)paren
 suffix:semicolon
 id|D3
 c_func
@@ -11249,8 +12761,8 @@ suffix:semicolon
 )brace
 )paren
 suffix:semicolon
-r_return
-id|result
-suffix:semicolon
 )brace
+multiline_comment|/* for (;;) */
+)brace
+multiline_comment|/* jffs_garbage_collect_thread() */
 eof
