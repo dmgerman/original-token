@@ -15,12 +15,12 @@ op_star
 id|version
 op_assign
 id|__FILE__
-l_string|&quot;: v0.3.7 2000/03/23 Written by Petko Manolov (petkan@spct.net)&bslash;n&quot;
+l_string|&quot;: v0.3.8 2000/04/04 Written by Petko Manolov (petkan@spct.net)&bslash;n&quot;
 suffix:semicolon
 DECL|macro|PEGASUS_MTU
 mdefine_line|#define&t;PEGASUS_MTU&t;&t;1500
 DECL|macro|PEGASUS_MAX_MTU
-mdefine_line|#define PEGASUS_MAX_MTU&t;&t;1536
+mdefine_line|#define&t;PEGASUS_MAX_MTU&t;&t;1536
 DECL|macro|SROM_WRITE
 mdefine_line|#define&t;SROM_WRITE&t;&t;0x01
 DECL|macro|SROM_READ
@@ -188,11 +188,21 @@ l_int|NULL
 )brace
 comma
 (brace
-l_string|&quot;MELCO LUA-TX&quot;
+l_string|&quot;MELCO/BUFFALO LUA-TX&quot;
 comma
 l_int|0x0411
 comma
 l_int|0x0001
+comma
+l_int|NULL
+)brace
+comma
+(brace
+l_string|&quot;D-Link DSB-650TX&quot;
+comma
+l_int|0x2001
+comma
+l_int|0x4001
 comma
 l_int|NULL
 )brace
@@ -223,6 +233,16 @@ comma
 l_int|0x066b
 comma
 l_int|0x2203
+comma
+l_int|NULL
+)brace
+comma
+(brace
+l_string|&quot;Linksys USB100TX&quot;
+comma
+l_int|0x066b
+comma
+l_int|0x2204
 comma
 l_int|NULL
 )brace
@@ -2016,7 +2036,7 @@ suffix:semicolon
 id|info
 c_func
 (paren
-l_string|&quot;%s: set allmulti&quot;
+l_string|&quot;%s set allmulti&quot;
 comma
 id|net-&gt;name
 )paren

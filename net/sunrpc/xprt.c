@@ -4,6 +4,7 @@ mdefine_line|#define __KERNEL_SYSCALLS__
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/capability.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -6146,12 +6147,15 @@ r_goto
 id|failed
 suffix:semicolon
 )brace
-multiline_comment|/* If the caller has root privs, bind to a reserved port */
+multiline_comment|/* If the caller has the capability, bind to a reserved port */
 r_if
 c_cond
 (paren
-op_logical_neg
-id|current-&gt;fsuid
+id|capable
+c_func
+(paren
+id|CAP_NET_BIND_SERVICE
+)paren
 op_logical_and
 id|xprt_bindresvport
 c_func

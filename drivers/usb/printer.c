@@ -463,6 +463,8 @@ r_return
 op_minus
 id|EBUSY
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -476,11 +478,13 @@ id|usblp
 )paren
 )paren
 )paren
+(brace
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 id|retval
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
+)brace
 id|usblp-&gt;used
 op_assign
 l_int|1
@@ -536,8 +540,6 @@ id|usblp
 op_assign
 id|file-&gt;private_data
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 id|usblp-&gt;used
 op_assign
 l_int|0
@@ -562,6 +564,8 @@ op_amp
 id|usblp-&gt;writeurb
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -578,6 +582,8 @@ c_func
 (paren
 id|usblp
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0

@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * copyright (C) 1999/2000 by Henning Zabel &lt;henning@uni-paderborn.de&gt;&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2 of the License, or (at your&n; * option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY&n; * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License&n; * for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software Foundation,&n; * Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
-multiline_comment|/*&n; *&t;USB-Kernel Driver for the Mustek MDC800 Digital Camera&n; *&t;(c) 1999/2000 Henning Zabel &lt;henning@uni-paderborn.de&gt;&n; *&n; *&n; *&t;The driver brings the USB functions of the MDC800 to Linux.&n; * To use the Camera you must support the USB Protocoll of the camera&n; * to the Kernel Node.&n; * The Driver uses a misc device Node. Create it with :&n; * mknod /dev/mustek c 180 32&n; *&n; * The driver supports only one camera.&n; *&n; * version 0.7.1&n; * The mdc800 driver gets assigned the USB Minor 32-47. The Registration&n; * was updated to use these values.&n; * (26/03/2000)&n; *&n; * The Init und Exit Module Function are updated.&n; * (01/03/2000)&n; *&n; * version 0.7.0&n; * Rewrite of the driver : The driver now uses URB&squot;s. The old stuff&n; * has been removed.&n; *&n; * version 0.6.0&n; * Rewrite of this driver: The Emulation of the rs232 protocoll&n; * has been removed from the driver. A special executeCommand function&n; * for this driver is included to gphoto.&n; * The driver supports two kind of communication to bulk endpoints.&n; * Either with the dev-&gt;bus-&gt;ops-&gt;bulk... or with callback function.&n; * (09/11/1999)&n; *&n; * version 0.5.0:&n; *&t;first Version that gets a version number. Most of the needed&n; * functions work.&n; * (20/10/1999)&n; */
+multiline_comment|/*&n; *&t;USB-Kernel Driver for the Mustek MDC800 Digital Camera&n; *&t;(c) 1999/2000 Henning Zabel &lt;henning@uni-paderborn.de&gt;&n; *&n; *&n; *&t;The driver brings the USB functions of the MDC800 to Linux.&n; * To use the Camera you must support the USB Protocoll of the camera&n; * to the Kernel Node.&n; * The Driver uses a misc device Node. Create it with :&n; * mknod /dev/mustek c 180 32&n; *&n; * The driver supports only one camera.&n; *&n; * version 0.7.1&n; * MOD_INC and MOD_DEC are changed in usb_probe to prevent load/unload&n; * problems when compiled as Module.&n; * (04/04/2000)&n; *&n; * The mdc800 driver gets assigned the USB Minor 32-47. The Registration&n; * was updated to use these values.&n; * (26/03/2000)&n; *&n; * The Init und Exit Module Function are updated.&n; * (01/03/2000)&n; *&n; * version 0.7.0&n; * Rewrite of the driver : The driver now uses URB&squot;s. The old stuff&n; * has been removed.&n; *&n; * version 0.6.0&n; * Rewrite of this driver: The Emulation of the rs232 protocoll&n; * has been removed from the driver. A special executeCommand function&n; * for this driver is included to gphoto.&n; * The driver supports two kind of communication to bulk endpoints.&n; * Either with the dev-&gt;bus-&gt;ops-&gt;bulk... or with callback function.&n; * (09/11/1999)&n; *&n; * version 0.5.0:&n; *&t;first Version that gets a version number. Most of the needed&n; * functions work.&n; * (20/10/1999)&n; */
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -22,17 +22,17 @@ DECL|macro|MDC800_PRODUCT_ID
 mdefine_line|#define MDC800_PRODUCT_ID&t;0xa800
 multiline_comment|/* Timeouts (msec) */
 DECL|macro|TO_READ_FROM_IRQ
-mdefine_line|#define TO_READ_FROM_IRQ &t;&t;&t;4000
+mdefine_line|#define TO_READ_FROM_IRQ &t;&t;4000
 DECL|macro|TO_GET_READY
 mdefine_line|#define TO_GET_READY&t;&t;&t;&t;2000
 DECL|macro|TO_DOWNLOAD_GET_READY
-mdefine_line|#define TO_DOWNLOAD_GET_READY&t;&t;&t;1500
+mdefine_line|#define TO_DOWNLOAD_GET_READY&t;1500
 DECL|macro|TO_DOWNLOAD_GET_BUSY
-mdefine_line|#define TO_DOWNLOAD_GET_BUSY&t;&t;&t;1500
+mdefine_line|#define TO_DOWNLOAD_GET_BUSY&t;1500
 DECL|macro|TO_WRITE_GET_READY
-mdefine_line|#define TO_WRITE_GET_READY&t;&t;&t;3000
+mdefine_line|#define TO_WRITE_GET_READY&t;&t;3000
 DECL|macro|TO_DEFAULT_COMMAND
-mdefine_line|#define TO_DEFAULT_COMMAND&t;&t;&t;5000
+mdefine_line|#define TO_DEFAULT_COMMAND&t;&t;5000
 multiline_comment|/* Minor Number of the device (create with mknod /dev/mustek c 180 32) */
 DECL|macro|MDC800_DEVICE_MINOR_BASE
 mdefine_line|#define MDC800_DEVICE_MINOR_BASE 32
@@ -1429,6 +1429,8 @@ id|retval
 op_assign
 l_int|0
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1436,19 +1438,27 @@ id|mdc800-&gt;state
 op_eq
 id|NOT_CONNECTED
 )paren
+(brace
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 op_minus
 id|EBUSY
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
 id|mdc800-&gt;open
 )paren
+(brace
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 op_minus
 id|EBUSY
 suffix:semicolon
+)brace
 id|mdc800-&gt;rw_lock
 op_assign
 l_int|0
@@ -1508,13 +1518,13 @@ comma
 id|mdc800-&gt;irq_urb-&gt;status
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 op_minus
 id|EIO
 suffix:semicolon
 )brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|mdc800-&gt;open
 op_assign
 l_int|1

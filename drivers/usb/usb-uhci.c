@@ -1,4 +1,4 @@
-multiline_comment|/* &n; * Universal Host Controller Interface driver for USB (take II).&n; *&n; * (c) 1999 Georg Acher, acher@in.tum.de (executive slave) (base guitar)&n; *          Deti Fliegl, deti@fliegl.de (executive slave) (lead voice)&n; *          Thomas Sailer, sailer@ife.ee.ethz.ch (chief consultant) (cheer leader)&n; *          Roman Weissgaerber, weissg@vienna.at (virt root hub) (studio porter)&n; *          &n; * HW-initalization based on material of&n; *&n; * (C) Copyright 1999 Linus Torvalds&n; * (C) Copyright 1999 Johannes Erdfelt&n; * (C) Copyright 1999 Randy Dunlap&n; *&n; * $Id: usb-uhci.c,v 1.222 2000/03/13 21:18:02 fliegl Exp $&n; */
+multiline_comment|/* &n; * Universal Host Controller Interface driver for USB (take II).&n; *&n; * (c) 1999 Georg Acher, acher@in.tum.de (executive slave) (base guitar)&n; *          Deti Fliegl, deti@fliegl.de (executive slave) (lead voice)&n; *          Thomas Sailer, sailer@ife.ee.ethz.ch (chief consultant) (cheer leader)&n; *          Roman Weissgaerber, weissg@vienna.at (virt root hub) (studio porter)&n; *          &n; * HW-initalization based on material of&n; *&n; * (C) Copyright 1999 Linus Torvalds&n; * (C) Copyright 1999 Johannes Erdfelt&n; * (C) Copyright 1999 Randy Dunlap&n; *&n; * $Id: usb-uhci.c,v 1.228 2000/04/02 19:55:51 acher Exp $&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
@@ -30,6 +30,8 @@ singleline_comment|//#define DEBUG_SYMBOLS
 multiline_comment|/* This enables an extra UHCI slab for memory debugging */
 DECL|macro|DEBUG_SLAB
 mdefine_line|#define DEBUG_SLAB
+DECL|macro|VERSTR
+mdefine_line|#define VERSTR &quot;$Revision: 1.228 $ time &quot; __TIME__ &quot; &quot; __DATE__
 macro_line|#include &lt;linux/usb.h&gt;
 macro_line|#include &quot;usb-uhci.h&quot;
 macro_line|#include &quot;usb-uhci-debug.h&quot;
@@ -264,6 +266,68 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*-------------------------------------------------------------------*/
+DECL|function|uhci_switch_timer_int
+id|_static
+r_void
+id|uhci_switch_timer_int
+c_func
+(paren
+id|uhci_t
+op_star
+id|s
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|list_empty
+c_func
+(paren
+op_amp
+id|s-&gt;urb_unlinked
+)paren
+)paren
+(brace
+id|s-&gt;td1ms-&gt;hw.td.status
+op_or_assign
+id|TD_CTRL_IOC
+suffix:semicolon
+)brace
+r_else
+(brace
+id|s-&gt;td1ms-&gt;hw.td.status
+op_and_assign
+op_complement
+id|TD_CTRL_IOC
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|s-&gt;timeout_urbs
+)paren
+(brace
+id|s-&gt;td32ms-&gt;hw.td.status
+op_or_assign
+id|TD_CTRL_IOC
+suffix:semicolon
+)brace
+r_else
+(brace
+id|s-&gt;td32ms-&gt;hw.td.status
+op_and_assign
+op_complement
+id|TD_CTRL_IOC
+suffix:semicolon
+)brace
+id|wmb
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*-------------------------------------------------------------------*/
 macro_line|#ifdef CONFIG_USB_UHCI_HIGH_BANDWIDTH
 DECL|function|enable_desc_loop
 id|_static
@@ -489,6 +553,20 @@ op_amp
 id|s-&gt;urb_list
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|urb-&gt;timeout
+)paren
+id|s-&gt;timeout_urbs
+op_increment
+suffix:semicolon
+id|uhci_switch_timer_int
+c_func
+(paren
+id|s
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*-------------------------------------------------------------------*/
 DECL|function|queue_urb
@@ -591,6 +669,16 @@ id|list_del
 op_amp
 id|urb-&gt;urb_list
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|urb-&gt;timeout
+op_logical_and
+id|s-&gt;timeout_urbs
+)paren
+id|s-&gt;timeout_urbs
+op_decrement
 suffix:semicolon
 )brace
 multiline_comment|/*-------------------------------------------------------------------*/
@@ -1743,6 +1831,29 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|s-&gt;td32ms
+)paren
+(brace
+id|unlink_td
+c_func
+(paren
+id|s
+comma
+id|s-&gt;td32ms
+comma
+l_int|1
+)paren
+suffix:semicolon
+id|delete_desc
+c_func
+(paren
+id|s-&gt;td32ms
+)paren
+suffix:semicolon
+)brace
 r_for
 c_loop
 (paren
@@ -2162,6 +2273,8 @@ id|fill_td
 (paren
 id|td
 comma
+l_int|0
+op_star
 id|TD_CTRL_IOC
 comma
 l_int|0
@@ -2169,7 +2282,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-singleline_comment|// generate 1ms interrupt
+singleline_comment|// generate 1ms interrupt (enabled on demand)
 id|insert_td
 (paren
 id|s
@@ -2180,6 +2293,10 @@ id|td
 comma
 l_int|0
 )paren
+suffix:semicolon
+id|s-&gt;td1ms
+op_assign
+id|td
 suffix:semicolon
 id|dbg
 c_func
@@ -2560,6 +2677,54 @@ id|o
 )paren
 suffix:semicolon
 )brace
+id|ret
+op_assign
+id|alloc_td
+(paren
+op_amp
+id|td
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
+)paren
+r_goto
+id|init_skel_cleanup
+suffix:semicolon
+id|fill_td
+(paren
+id|td
+comma
+l_int|0
+op_star
+id|TD_CTRL_IOC
+comma
+l_int|0
+comma
+l_int|0
+)paren
+suffix:semicolon
+singleline_comment|// generate 32ms interrupt
+id|s-&gt;td32ms
+op_assign
+id|td
+suffix:semicolon
+id|insert_td_horizontal
+(paren
+id|s
+comma
+id|s-&gt;int_chain
+(braket
+l_int|5
+)braket
+comma
+id|td
+)paren
+suffix:semicolon
 id|mb
 c_func
 (paren
@@ -4445,6 +4610,12 @@ comma
 id|urb
 )paren
 suffix:semicolon
+id|uhci_switch_timer_int
+c_func
+(paren
+id|s
+)paren
+suffix:semicolon
 id|s-&gt;unlink_urb_done
 op_assign
 l_int|1
@@ -5024,6 +5195,12 @@ id|s-&gt;urb_unlinked
 )paren
 suffix:semicolon
 singleline_comment|// store urb
+id|uhci_switch_timer_int
+c_func
+(paren
+id|s
+)paren
+suffix:semicolon
 id|s-&gt;unlink_urb_done
 op_assign
 l_int|1
@@ -6867,7 +7044,7 @@ suffix:semicolon
 id|err
 c_func
 (paren
-l_string|&quot;ENXIO1 %08x, flags %x, urb %p, burb %p&quot;
+l_string|&quot;ENXIO %08x, flags %x, urb %p, burb %p&quot;
 comma
 id|urb-&gt;pipe
 comma
@@ -7329,6 +7506,10 @@ id|urb
 suffix:semicolon
 macro_line|#endif
 )brace
+id|s-&gt;timeout_check
+op_assign
+id|jiffies
+suffix:semicolon
 )brace
 multiline_comment|/*-------------------------------------------------------------------&n; Virtual Root Hub&n; -------------------------------------------------------------------*/
 DECL|variable|root_hub_dev_des
@@ -11172,12 +11353,16 @@ r_if
 c_cond
 (paren
 (paren
-id|s-&gt;frame_counter
-op_amp
-l_int|63
+id|jiffies
+op_minus
+id|s-&gt;timeout_check
 )paren
-op_eq
-l_int|0
+OG
+(paren
+id|HZ
+op_div
+l_int|30
+)paren
 )paren
 id|uhci_check_timeouts
 c_func
@@ -11201,14 +11386,17 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|uhci_switch_timer_int
+c_func
+(paren
+id|s
+)paren
+suffix:semicolon
 id|spin_unlock
 (paren
 op_amp
 id|s-&gt;urb_list_lock
 )paren
-suffix:semicolon
-id|s-&gt;frame_counter
-op_increment
 suffix:semicolon
 id|outw
 (paren
@@ -11799,6 +11987,10 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|s-&gt;timeout_urbs
+op_assign
+l_int|0
+suffix:semicolon
 id|s-&gt;irq
 op_assign
 op_minus
@@ -11817,9 +12009,13 @@ op_assign
 id|devs
 suffix:semicolon
 singleline_comment|//chain new uhci device into global list&t;
-id|s-&gt;frame_counter
+id|s-&gt;timeout_check
 op_assign
 l_int|0
+suffix:semicolon
+id|s-&gt;uhci_pci
+op_assign
+id|dev
 suffix:semicolon
 id|bus
 op_assign

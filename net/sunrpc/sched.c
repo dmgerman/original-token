@@ -2396,9 +2396,11 @@ id|RPC_TASK_ASYNC
 r_return
 l_int|NULL
 suffix:semicolon
-id|current-&gt;state
-op_assign
+id|set_current_state
+c_func
+(paren
 id|TASK_INTERRUPTIBLE
+)paren
 suffix:semicolon
 id|schedule_timeout
 c_func
@@ -3650,9 +3652,11 @@ c_func
 l_string|&quot;rpciod_killall: waiting for tasks to exit&bslash;n&quot;
 )paren
 suffix:semicolon
-id|current-&gt;state
-op_assign
+id|set_current_state
+c_func
+(paren
 id|TASK_INTERRUPTIBLE
+)paren
 suffix:semicolon
 id|schedule_timeout
 c_func
@@ -3901,9 +3905,11 @@ id|current-&gt;sigpending
 op_assign
 l_int|0
 suffix:semicolon
-id|current-&gt;state
-op_assign
+id|set_current_state
+c_func
+(paren
 id|TASK_INTERRUPTIBLE
+)paren
 suffix:semicolon
 id|schedule_timeout
 c_func

@@ -15,9 +15,7 @@ suffix:semicolon
 r_union
 (brace
 DECL|member|proc_get_link
-r_struct
-id|dentry
-op_star
+r_int
 (paren
 op_star
 id|proc_get_link
@@ -25,6 +23,11 @@ id|proc_get_link
 (paren
 r_struct
 id|inode
+op_star
+comma
+r_struct
+id|dentry
+op_star
 op_star
 comma
 r_struct

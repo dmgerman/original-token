@@ -329,9 +329,11 @@ suffix:semicolon
 )brace
 multiline_comment|/* Flag definitions */
 DECL|macro|US_FL_IP_STATUS
-mdefine_line|#define US_FL_IP_STATUS&t;      0x00000001         /* status uses interrupt */
+mdefine_line|#define US_FL_IP_STATUS&t;      0x00000001 /* status uses interrupt           */
 DECL|macro|US_FL_FIXED_COMMAND
-mdefine_line|#define US_FL_FIXED_COMMAND   0x00000002 /* expand commands to fixed size */
+mdefine_line|#define US_FL_FIXED_COMMAND   0x00000002 /* expand commands to fixed size   */
 DECL|macro|US_FL_MODE_XLATE
-mdefine_line|#define US_FL_MODE_XLATE      0x00000004 /* translate _6 to _10 comands for&n;&t;&t;&t;&t;&t;    Win/MacOS compatibility */
+mdefine_line|#define US_FL_MODE_XLATE      0x00000004 /* translate _6 to _10 comands for&n;&t;&t;&t;&t;&t;            Win/MacOS compatibility */
+DECL|macro|US_FL_CBI_AS_CB
+mdefine_line|#define US_FL_CBI_AS_CB       0x00000008 /* treat a CBI dev as a CB dev     */
 eof

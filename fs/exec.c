@@ -1335,9 +1335,9 @@ c_func
 (paren
 id|name
 comma
-l_int|NULL
-comma
 id|LOOKUP_FOLLOW
+op_or
+id|LOOKUP_POSITIVE
 )paren
 suffix:semicolon
 id|file
@@ -1372,8 +1372,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dentry-&gt;d_inode
-op_logical_and
 id|S_ISREG
 c_func
 (paren

@@ -6575,9 +6575,9 @@ id|hid-&gt;dev
 comma
 id|hid-&gt;ifnum
 comma
-id|report-&gt;id
-comma
 l_int|0
+comma
+id|report-&gt;id
 )paren
 suffix:semicolon
 id|hid_read_report

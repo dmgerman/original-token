@@ -1,11 +1,9 @@
 macro_line|#ifndef __LINUX_UHCI_H
 DECL|macro|__LINUX_UHCI_H
 mdefine_line|#define __LINUX_UHCI_H
-multiline_comment|/*&n;   $Id: usb-uhci.h,v 1.50 2000/03/13 21:18:04 fliegl Exp $&n; */
+multiline_comment|/*&n;   $Id: usb-uhci.h,v 1.54 2000/04/02 19:55:53 acher Exp $&n; */
 DECL|macro|MODNAME
 mdefine_line|#define MODNAME &quot;usb-uhci&quot;
-DECL|macro|VERSTR
-mdefine_line|#define VERSTR &quot;$Revision: 1.50 $ time &quot; __TIME__ &quot; &quot; __DATE__
 DECL|macro|UHCI_LATENCY_TIMER
 mdefine_line|#define UHCI_LATENCY_TIMER 0
 DECL|function|uhci_wait_ms
@@ -518,6 +516,16 @@ id|uhci_desc_t
 op_star
 id|chain_end
 suffix:semicolon
+DECL|member|td1ms
+id|uhci_desc_t
+op_star
+id|td1ms
+suffix:semicolon
+DECL|member|td32ms
+id|uhci_desc_t
+op_star
+id|td32ms
+suffix:semicolon
 DECL|member|free_desc
 r_struct
 id|list_head
@@ -548,9 +556,19 @@ id|list_head
 id|urb_unlinked
 suffix:semicolon
 singleline_comment|// list of all unlinked  urbs
-DECL|member|frame_counter
+DECL|member|timeout_check
 r_int
-id|frame_counter
+id|timeout_check
+suffix:semicolon
+DECL|member|timeout_urbs
+r_int
+id|timeout_urbs
+suffix:semicolon
+DECL|member|uhci_pci
+r_struct
+id|pci_dev
+op_star
+id|uhci_pci
 suffix:semicolon
 DECL|typedef|uhci_t
 DECL|typedef|puhci_t

@@ -37,7 +37,7 @@ id|tty_struct
 op_star
 id|tty
 suffix:semicolon
-multiline_comment|/* the coresponding tty for this device */
+multiline_comment|/* the coresponding tty for this port */
 DECL|member|minor
 r_int
 r_char
@@ -131,11 +131,20 @@ id|usb_serial_device_type
 op_star
 id|type
 suffix:semicolon
+multiline_comment|/* the type of usb serial device this is */
+DECL|member|tty_driver
+r_struct
+id|tty_driver
+op_star
+id|tty_driver
+suffix:semicolon
+multiline_comment|/* the tty_driver for this device */
 DECL|member|minor
 r_int
 r_char
 id|minor
 suffix:semicolon
+multiline_comment|/* the starting minor number for this device */
 DECL|member|num_ports
 r_int
 r_char

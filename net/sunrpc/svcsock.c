@@ -2830,9 +2830,11 @@ id|rqstp
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * We have to be able to interrupt this wait&n;&t;&t; * to bring down the daemons ...&n;&t;&t; */
-id|current-&gt;state
-op_assign
+id|set_current_state
+c_func
+(paren
 id|TASK_INTERRUPTIBLE
+)paren
 suffix:semicolon
 id|add_wait_queue
 c_func

@@ -11871,9 +11871,7 @@ suffix:semicolon
 multiline_comment|/*  End Function devfs_readlink  */
 DECL|function|devfs_follow_link
 r_static
-r_struct
-id|dentry
-op_star
+r_int
 id|devfs_follow_link
 (paren
 r_struct
@@ -11882,19 +11880,9 @@ op_star
 id|dentry
 comma
 r_struct
-id|dentry
+id|nameidata
 op_star
-id|base
-comma
-r_struct
-id|vfsmount
-op_star
-op_star
-id|mnt
-comma
-r_int
-r_int
-id|follow
+id|nd
 )paren
 (brace
 r_struct
@@ -11934,13 +11922,7 @@ r_return
 id|vfs_follow_link
 c_func
 (paren
-id|dentry
-comma
-id|base
-comma
-id|mnt
-comma
-id|follow
+id|nd
 comma
 id|name
 )paren

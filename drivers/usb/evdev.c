@@ -91,7 +91,7 @@ id|evdev
 op_star
 id|evdev_table
 (braket
-id|BITS_PER_LONG
+id|EVDEV_MINORS
 )braket
 op_assign
 (brace
@@ -449,6 +449,8 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -469,10 +471,14 @@ id|GFP_KERNEL
 )paren
 )paren
 )paren
+(brace
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
+)brace
 id|memset
 c_func
 (paren
@@ -518,8 +524,6 @@ id|list
 suffix:semicolon
 id|list-&gt;evdev-&gt;used
 op_increment
-suffix:semicolon
-id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
