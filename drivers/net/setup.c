@@ -685,7 +685,8 @@ id|net_device
 id|sb1000_dev
 op_assign
 (brace
-l_string|&quot;cm0 __PAD3&quot;
+l_string|&quot;cm0&quot;
+id|__PAD3
 comma
 l_int|0x0
 comma

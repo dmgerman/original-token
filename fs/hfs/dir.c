@@ -1234,11 +1234,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|list_empty
+id|d_unhashed
 c_func
 (paren
-op_amp
-id|dentry-&gt;d_hash
+id|dentry
 )paren
 )paren
 r_goto

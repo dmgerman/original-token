@@ -28,7 +28,6 @@ macro_line|#include &lt;net/dn_nsp.h&gt;
 macro_line|#include &lt;net/dn_route.h&gt;
 macro_line|#include &lt;net/dn_neigh.h&gt;
 macro_line|#include &lt;net/dn_fib.h&gt;
-macro_line|#include &lt;net/dn_raw.h&gt;
 DECL|struct|dn_rt_hash_bucket
 r_struct
 id|dn_rt_hash_bucket
@@ -1720,14 +1719,6 @@ comma
 id|padlen
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_DECNET_RAW
-id|dn_raw_rx_routing
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-macro_line|#endif /* CONFIG_DECNET_RAW */
 r_if
 c_cond
 (paren

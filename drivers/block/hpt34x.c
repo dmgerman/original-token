@@ -20,9 +20,9 @@ DECL|macro|SPLIT_BYTE
 mdefine_line|#define SPLIT_BYTE(B,H,L)&t;((H)=(B&gt;&gt;4), (L)=(B-((B&gt;&gt;4)&lt;&lt;4)))
 macro_line|#endif
 DECL|macro|HPT343_DEBUG_DRIVE_INFO
-mdefine_line|#define HPT343_DEBUG_DRIVE_INFO&t;&t;1
+mdefine_line|#define HPT343_DEBUG_DRIVE_INFO&t;&t;0
 DECL|macro|DISPLAY_HPT34X_TIMINGS
-mdefine_line|#define DISPLAY_HPT34X_TIMINGS
+macro_line|#undef DISPLAY_HPT34X_TIMINGS
 macro_line|#if defined(DISPLAY_HPT34X_TIMINGS) &amp;&amp; defined(CONFIG_PROC_FS)
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;

@@ -2242,8 +2242,6 @@ comma
 r_struct
 id|statfs
 op_star
-comma
-r_int
 )paren
 suffix:semicolon
 r_struct

@@ -5,18 +5,20 @@ mdefine_line|#define LOCKD_XDR_H
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/nfs.h&gt;
 macro_line|#include &lt;linux/sunrpc/xdr.h&gt;
-r_extern
-id|u32
-id|nlm_granted
-comma
-id|nlm_lck_denied
-comma
-id|nlm_lck_denied_nolocks
-comma
-id|nlm_lck_blocked
-comma
-id|nlm_lck_denied_grace_period
-suffix:semicolon
+DECL|macro|NLM_MAXSTRLEN
+mdefine_line|#define NLM_MAXSTRLEN&t;&t;1024
+DECL|macro|QUADLEN
+mdefine_line|#define QUADLEN(len)&t;&t;(((len) + 3) &gt;&gt; 2)
+DECL|macro|nlm_granted
+mdefine_line|#define&t;nlm_granted&t;&t;__constant_htonl(NLM_LCK_GRANTED)
+DECL|macro|nlm_lck_denied
+mdefine_line|#define&t;nlm_lck_denied&t;&t;__constant_htonl(NLM_LCK_DENIED)
+DECL|macro|nlm_lck_denied_nolocks
+mdefine_line|#define&t;nlm_lck_denied_nolocks&t;__constant_htonl(NLM_LCK_DENIED_NOLOCKS)
+DECL|macro|nlm_lck_blocked
+mdefine_line|#define&t;nlm_lck_blocked&t;&t;__constant_htonl(NLM_LCK_BLOCKED)
+DECL|macro|nlm_lck_denied_grace_period
+mdefine_line|#define&t;nlm_lck_denied_grace_period&t;__constant_htonl(NLM_LCK_DENIED_GRACE_PERIOD)
 multiline_comment|/* Lock info passed via NLM */
 DECL|struct|nlm_lock
 r_struct
@@ -104,6 +106,12 @@ id|u32
 id|fsm_mode
 suffix:semicolon
 )brace
+suffix:semicolon
+DECL|typedef|nlm_args
+r_typedef
+r_struct
+id|nlm_args
+id|nlm_args
 suffix:semicolon
 multiline_comment|/*&n; * Generic lockd result&n; */
 DECL|struct|nlm_res

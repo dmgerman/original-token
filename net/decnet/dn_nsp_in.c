@@ -31,7 +31,6 @@ macro_line|#include &lt;net/dst.h&gt;
 macro_line|#include &lt;net/dn_nsp.h&gt;
 macro_line|#include &lt;net/dn_dev.h&gt;
 macro_line|#include &lt;net/dn_route.h&gt;
-macro_line|#include &lt;net/dn_raw.h&gt;
 multiline_comment|/*&n; * For this function we&squot;ve flipped the cross-subchannel bit&n; * if the message is an otherdata or linkservice message. Thus&n; * we can use it to work out what to update.&n; */
 DECL|function|dn_ack
 r_static
@@ -1153,7 +1152,7 @@ r_if
 c_cond
 (paren
 id|skb-&gt;len
-OL
+op_ne
 l_int|2
 )paren
 r_goto
@@ -2197,14 +2196,6 @@ r_int
 id|cb-&gt;nsp_flags
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_DECNET_RAW
-id|dn_raw_rx_nsp
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-macro_line|#endif /* CONFIG_DECNET_RAW */
 r_if
 c_cond
 (paren

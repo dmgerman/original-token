@@ -2169,11 +2169,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|list_empty
+id|d_unhashed
 c_func
 (paren
-op_amp
-id|de-&gt;d_hash
+id|de
 )paren
 )paren
 r_return

@@ -21,7 +21,7 @@ mdefine_line|#define PDC202XX_DEBUG_DRIVE_INFO&t;&t;0
 DECL|macro|PDC202XX_DECODE_REGISTER_INFO
 mdefine_line|#define PDC202XX_DECODE_REGISTER_INFO&t;&t;0
 DECL|macro|DISPLAY_PDC202XX_TIMINGS
-mdefine_line|#define DISPLAY_PDC202XX_TIMINGS
+macro_line|#undef DISPLAY_PDC202XX_TIMINGS
 macro_line|#if defined(DISPLAY_PDC202XX_TIMINGS) &amp;&amp; defined(CONFIG_PROC_FS)
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;

@@ -3783,15 +3783,8 @@ r_struct
 id|statfs
 op_star
 id|sf
-comma
-r_int
-id|bufsize
 )paren
 (brace
-r_struct
-id|statfs
-id|fs
-suffix:semicolon
 r_struct
 id|inode
 op_star
@@ -3823,25 +3816,11 @@ c_func
 id|sb
 )paren
 suffix:semicolon
-id|memset
-c_func
-(paren
-op_amp
-id|fs
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-id|fs
-)paren
-)paren
-suffix:semicolon
-id|fs.f_type
+id|sf-&gt;f_type
 op_assign
 id|NTFS_SUPER_MAGIC
 suffix:semicolon
-id|fs.f_bsize
+id|sf-&gt;f_bsize
 op_assign
 id|vol-&gt;clustersize
 suffix:semicolon
@@ -3871,12 +3850,12 @@ op_minus
 id|error
 suffix:semicolon
 )brace
-id|fs.f_blocks
+id|sf-&gt;f_blocks
 op_assign
 id|size
 suffix:semicolon
 multiline_comment|/* volumesize is in clusters */
-id|fs.f_bfree
+id|sf-&gt;f_bfree
 op_assign
 id|ntfs_get_free_cluster_count
 c_func
@@ -3884,14 +3863,9 @@ c_func
 id|vol-&gt;bitmap
 )paren
 suffix:semicolon
-id|fs.f_bavail
+id|sf-&gt;f_bavail
 op_assign
-id|fs.f_bfree
-suffix:semicolon
-multiline_comment|/* Number of files is limited by free space only, so we lie here */
-id|fs.f_ffree
-op_assign
-l_int|0
+id|sf-&gt;f_bfree
 suffix:semicolon
 id|mft
 op_assign
@@ -3914,7 +3888,7 @@ op_minus
 id|EIO
 suffix:semicolon
 multiline_comment|/* So ... we lie... thus this following cast of loff_t value&n;&t;   is ok here.. */
-id|fs.f_files
+id|sf-&gt;f_files
 op_assign
 (paren
 r_int
@@ -3931,20 +3905,9 @@ id|mft
 )paren
 suffix:semicolon
 multiline_comment|/* should be read from volume */
-id|fs.f_namelen
+id|sf-&gt;f_namelen
 op_assign
 l_int|255
-suffix:semicolon
-id|copy_to_user
-c_func
-(paren
-id|sf
-comma
-op_amp
-id|fs
-comma
-id|bufsize
-)paren
 suffix:semicolon
 r_return
 l_int|0

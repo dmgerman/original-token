@@ -3,6 +3,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/string.h&gt;
+macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &quot;nonstdio.h&quot;
 macro_line|#include &quot;privinst.h&quot;
 DECL|macro|scanhex
@@ -485,7 +486,7 @@ suffix:semicolon
 r_static
 r_char
 op_star
-id|pretty_lookup_name
+id|pretty_print_addr
 c_func
 (paren
 r_int
@@ -748,6 +749,10 @@ l_int|1
 suffix:semicolon
 id|sp
 op_assign
+(paren
+r_int
+op_star
+)paren
 op_amp
 id|excp-&gt;gpr
 (braket
@@ -2695,23 +2700,19 @@ id|fp
 id|printf
 c_func
 (paren
-l_string|&quot;vector: %x at pc = %x %s&quot;
+l_string|&quot;vector: %x at pc = %x&quot;
 comma
 id|fp-&gt;trap
 comma
 id|fp-&gt;nip
-comma
-id|pretty_lookup_name
-c_func
-(paren
-id|fp-&gt;nip
-)paren
 )paren
 suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;, msr = %x, sp = %x [%x]&bslash;n&quot;
+l_string|&quot;, lr = %x, msr = %x, sp = %x [%x]&bslash;n&quot;
+comma
+id|fp-&gt;link
 comma
 id|fp-&gt;msr
 comma
@@ -7270,19 +7271,11 @@ op_assign
 id|str
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * We use this array a lot here.  We assume we don&squot;t have multiple&n; * instances of xmon running and that we don&squot;t use the return value of&n; * any functions other than printing them.&n; *  -- Cort&n; */
-DECL|variable|last
-r_char
-id|last
-(braket
-l_int|64
-)braket
-suffix:semicolon
-DECL|function|pretty_lookup_name
+DECL|function|pretty_print_addr
 r_static
 r_char
 op_star
-id|pretty_lookup_name
+id|pretty_print_addr
 c_func
 (paren
 r_int
@@ -7290,6 +7283,14 @@ r_int
 id|addr
 )paren
 (brace
+id|printf
+c_func
+(paren
+l_string|&quot;%08x&quot;
+comma
+id|addr
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -7299,13 +7300,10 @@ c_func
 id|addr
 )paren
 )paren
-(brace
-id|sprintf
+id|printf
 c_func
 (paren
-id|last
-comma
-l_string|&quot; (%s)&quot;
+l_string|&quot; %s&quot;
 comma
 id|lookup_name
 c_func
@@ -7314,11 +7312,6 @@ id|addr
 )paren
 )paren
 suffix:semicolon
-r_return
-id|last
-suffix:semicolon
-)brace
-r_else
 r_return
 l_int|NULL
 suffix:semicolon
@@ -7367,18 +7360,10 @@ id|sysmap_size
 r_return
 l_int|NULL
 suffix:semicolon
-multiline_comment|/* adjust if addr is relative to kernelbase */
-r_if
-c_cond
-(paren
-id|addr
-OL
-id|PAGE_OFFSET
-)paren
-id|addr
-op_add_assign
-id|PAGE_OFFSET
+r_return
+l_int|NULL
 suffix:semicolon
+macro_line|#if 0
 id|cmp
 op_assign
 id|simple_strtoul
@@ -7458,7 +7443,8 @@ l_string|&quot;&bslash;n&quot;
 suffix:semicolon
 )brace
 r_return
-id|last
+id|NULLlast
 suffix:semicolon
+macro_line|#endif&t;
 )brace
 eof

@@ -868,6 +868,11 @@ id|start
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* fb_info flags */
+DECL|macro|FBINFO_FLAG_MODULE
+mdefine_line|#define FBINFO_FLAG_MODULE      1       /* Low-level driver is a module */
+DECL|macro|FBINFO_FLAG_OPEN
+mdefine_line|#define FBINFO_FLAG_OPEN        2       /* Has this been open already ? */ 
 DECL|struct|fb_info
 r_struct
 id|fb_info
@@ -888,13 +893,11 @@ DECL|member|flags
 r_int
 id|flags
 suffix:semicolon
-DECL|member|open
+DECL|member|count
 r_int
-id|open
+id|count
 suffix:semicolon
-multiline_comment|/* Has this been open already ? */
-DECL|macro|FBINFO_FLAG_MODULE
-mdefine_line|#define FBINFO_FLAG_MODULE&t;1&t;/* Low-level driver is a module */
+multiline_comment|/* How many using the hardware */
 DECL|member|var
 r_struct
 id|fb_var_screeninfo

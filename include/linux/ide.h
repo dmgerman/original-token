@@ -1205,6 +1205,11 @@ id|last_time
 suffix:semicolon
 multiline_comment|/* time when previous rq was done */
 macro_line|#endif
+DECL|member|straight8
+id|byte
+id|straight8
+suffix:semicolon
+multiline_comment|/* Alan&squot;s straight 8 check */
 DECL|typedef|ide_hwif_t
 )brace
 id|ide_hwif_t

@@ -11,7 +11,6 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/highuid.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;linux/minix_fs.h&gt;
 r_static
@@ -50,9 +49,6 @@ r_struct
 id|statfs
 op_star
 id|buf
-comma
-r_int
-id|bufsiz
 )paren
 suffix:semicolon
 r_static
@@ -1528,24 +1524,17 @@ r_struct
 id|statfs
 op_star
 id|buf
-comma
-r_int
-id|bufsiz
 )paren
 (brace
-r_struct
-id|statfs
-id|tmp
-suffix:semicolon
-id|tmp.f_type
+id|buf-&gt;f_type
 op_assign
 id|sb-&gt;s_magic
 suffix:semicolon
-id|tmp.f_bsize
+id|buf-&gt;f_bsize
 op_assign
 id|sb-&gt;s_blocksize
 suffix:semicolon
-id|tmp.f_blocks
+id|buf-&gt;f_blocks
 op_assign
 (paren
 id|sb-&gt;u.minix_sb.s_nzones
@@ -1555,7 +1544,7 @@ id|sb-&gt;u.minix_sb.s_firstdatazone
 op_lshift
 id|sb-&gt;u.minix_sb.s_log_zone_size
 suffix:semicolon
-id|tmp.f_bfree
+id|buf-&gt;f_bfree
 op_assign
 id|minix_count_free_blocks
 c_func
@@ -1563,15 +1552,15 @@ c_func
 id|sb
 )paren
 suffix:semicolon
-id|tmp.f_bavail
+id|buf-&gt;f_bavail
 op_assign
-id|tmp.f_bfree
+id|buf-&gt;f_bfree
 suffix:semicolon
-id|tmp.f_files
+id|buf-&gt;f_files
 op_assign
 id|sb-&gt;u.minix_sb.s_ninodes
 suffix:semicolon
-id|tmp.f_ffree
+id|buf-&gt;f_ffree
 op_assign
 id|minix_count_free_inodes
 c_func
@@ -1579,26 +1568,11 @@ c_func
 id|sb
 )paren
 suffix:semicolon
-id|tmp.f_namelen
+id|buf-&gt;f_namelen
 op_assign
 id|sb-&gt;u.minix_sb.s_namelen
 suffix:semicolon
 r_return
-id|copy_to_user
-c_func
-(paren
-id|buf
-comma
-op_amp
-id|tmp
-comma
-id|bufsiz
-)paren
-ques
-c_cond
-op_minus
-id|EFAULT
-suffix:colon
 l_int|0
 suffix:semicolon
 )brace

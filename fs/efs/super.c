@@ -1019,15 +1019,8 @@ r_struct
 id|statfs
 op_star
 id|buf
-comma
-r_int
-id|bufsiz
 )paren
 (brace
-r_struct
-id|statfs
-id|ret
-suffix:semicolon
 r_struct
 id|efs_sb_info
 op_star
@@ -1039,17 +1032,17 @@ c_func
 id|s
 )paren
 suffix:semicolon
-id|ret.f_type
+id|buf-&gt;f_type
 op_assign
 id|EFS_SUPER_MAGIC
 suffix:semicolon
 multiline_comment|/* efs magic number */
-id|ret.f_bsize
+id|buf-&gt;f_bsize
 op_assign
 id|EFS_BLOCKSIZE
 suffix:semicolon
 multiline_comment|/* blocksize */
-id|ret.f_blocks
+id|buf-&gt;f_blocks
 op_assign
 id|sb-&gt;total_groups
 op_star
@@ -1060,17 +1053,17 @@ op_minus
 id|sb-&gt;inode_blocks
 )paren
 suffix:semicolon
-id|ret.f_bfree
+id|buf-&gt;f_bfree
 op_assign
 id|sb-&gt;data_free
 suffix:semicolon
 multiline_comment|/* free data blocks */
-id|ret.f_bavail
+id|buf-&gt;f_bavail
 op_assign
 id|sb-&gt;data_free
 suffix:semicolon
 multiline_comment|/* free blocks for non-root */
-id|ret.f_files
+id|buf-&gt;f_files
 op_assign
 id|sb-&gt;total_groups
 op_star
@@ -1087,12 +1080,12 @@ id|efs_dinode
 )paren
 )paren
 suffix:semicolon
-id|ret.f_ffree
+id|buf-&gt;f_ffree
 op_assign
 id|sb-&gt;inode_free
 suffix:semicolon
 multiline_comment|/* free inodes */
-id|ret.f_fsid.val
+id|buf-&gt;f_fsid.val
 (braket
 l_int|0
 )braket
@@ -1106,7 +1099,7 @@ op_amp
 l_int|0xffff
 suffix:semicolon
 multiline_comment|/* fs ID */
-id|ret.f_fsid.val
+id|buf-&gt;f_fsid.val
 (braket
 l_int|1
 )braket
@@ -1116,27 +1109,12 @@ op_amp
 l_int|0xffff
 suffix:semicolon
 multiline_comment|/* fs ID */
-id|ret.f_namelen
+id|buf-&gt;f_namelen
 op_assign
 id|EFS_MAXNAMELEN
 suffix:semicolon
 multiline_comment|/* max filename length */
 r_return
-id|copy_to_user
-c_func
-(paren
-id|buf
-comma
-op_amp
-id|ret
-comma
-id|bufsiz
-)paren
-ques
-c_cond
-op_minus
-id|EFAULT
-suffix:colon
 l_int|0
 suffix:semicolon
 )brace

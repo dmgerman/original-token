@@ -16,9 +16,9 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &quot;ide_modes.h&quot;
 DECL|macro|ACARD_DEBUG_DRIVE_INFO
-mdefine_line|#define ACARD_DEBUG_DRIVE_INFO 1
+mdefine_line|#define ACARD_DEBUG_DRIVE_INFO&t;&t;0
 DECL|macro|DISPLAY_AEC6210_TIMINGS
-mdefine_line|#define DISPLAY_AEC6210_TIMINGS
+macro_line|#undef DISPLAY_AEC6210_TIMINGS
 macro_line|#if defined(DISPLAY_AEC6210_TIMINGS) &amp;&amp; defined(CONFIG_PROC_FS)
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;

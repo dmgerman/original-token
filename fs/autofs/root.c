@@ -973,11 +973,10 @@ c_cond
 (paren
 id|dentry-&gt;d_inode
 op_logical_and
-id|list_empty
+id|d_unhashed
 c_func
 (paren
-op_amp
-id|dentry-&gt;d_hash
+id|dentry
 )paren
 )paren
 r_return

@@ -19,8 +19,8 @@ macro_line|#include &lt;linux/nfsd/xdr3.h&gt;
 macro_line|#include &lt;linux/nfs3.h&gt;
 DECL|macro|NFSDDBG_FACILITY
 mdefine_line|#define NFSDDBG_FACILITY&t;&t;NFSDDBG_PROC
-DECL|macro|RETURN
-mdefine_line|#define RETURN(st)&t;{ resp-&gt;status = (st); return (st); }
+DECL|macro|RETURN_STATUS
+mdefine_line|#define RETURN_STATUS(st)&t;{ resp-&gt;status = (st); return (st); }
 DECL|variable|nfs3_ftypes
 r_static
 r_int
@@ -196,7 +196,7 @@ comma
 id|MAY_NOP
 )paren
 suffix:semicolon
-id|RETURN
+id|RETURN_STATUS
 c_func
 (paren
 id|nfserr
@@ -276,7 +276,7 @@ op_amp
 id|argp-&gt;attrs
 )paren
 suffix:semicolon
-id|RETURN
+id|RETURN_STATUS
 c_func
 (paren
 id|nfserr
@@ -362,7 +362,7 @@ op_amp
 id|resp-&gt;fh
 )paren
 suffix:semicolon
-id|RETURN
+id|RETURN_STATUS
 c_func
 (paren
 id|nfserr
@@ -448,7 +448,7 @@ op_amp
 id|resp-&gt;access
 )paren
 suffix:semicolon
-id|RETURN
+id|RETURN_STATUS
 c_func
 (paren
 id|nfserr
@@ -565,7 +565,7 @@ op_amp
 id|resp-&gt;len
 )paren
 suffix:semicolon
-id|RETURN
+id|RETURN_STATUS
 c_func
 (paren
 id|nfserr
@@ -738,7 +738,7 @@ op_ge
 id|inode-&gt;i_size
 suffix:semicolon
 )brace
-id|RETURN
+id|RETURN_STATUS
 c_func
 (paren
 id|nfserr
@@ -819,6 +819,10 @@ op_amp
 id|argp-&gt;fh
 )paren
 suffix:semicolon
+id|resp-&gt;committed
+op_assign
+id|argp-&gt;stable
+suffix:semicolon
 id|nfserr
 op_assign
 id|nfsd_write
@@ -835,18 +839,15 @@ id|argp-&gt;data
 comma
 id|argp-&gt;len
 comma
-id|argp-&gt;stable
-)paren
-suffix:semicolon
+op_amp
 id|resp-&gt;committed
-op_assign
-id|argp-&gt;stable
+)paren
 suffix:semicolon
 id|resp-&gt;count
 op_assign
 id|argp-&gt;count
 suffix:semicolon
-id|RETURN
+id|RETURN_STATUS
 c_func
 (paren
 id|nfserr
@@ -964,7 +965,7 @@ c_cond
 (paren
 id|nfserr
 )paren
-id|RETURN
+id|RETURN_STATUS
 c_func
 (paren
 id|nfserr
@@ -1033,7 +1034,7 @@ comma
 id|argp-&gt;verf
 )paren
 suffix:semicolon
-id|RETURN
+id|RETURN_STATUS
 c_func
 (paren
 id|nfserr
@@ -1138,7 +1139,7 @@ op_amp
 id|resp-&gt;fh
 )paren
 suffix:semicolon
-id|RETURN
+id|RETURN_STATUS
 c_func
 (paren
 id|nfserr
@@ -1239,7 +1240,7 @@ op_amp
 id|argp-&gt;attrs
 )paren
 suffix:semicolon
-id|RETURN
+id|RETURN_STATUS
 c_func
 (paren
 id|nfserr
@@ -1332,8 +1333,11 @@ id|argp-&gt;ftype
 op_ge
 id|NF3BAD
 )paren
-r_return
+id|RETURN_STATUS
+c_func
+(paren
 id|nfserr_inval
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1374,8 +1378,11 @@ id|argp-&gt;minor
 OG
 l_int|0xFF
 )paren
-r_return
+id|RETURN_STATUS
+c_func
+(paren
 id|nfserr_inval
+)paren
 suffix:semicolon
 id|rdev
 op_assign
@@ -1404,8 +1411,11 @@ id|argp-&gt;ftype
 op_ne
 id|NF3FIFO
 )paren
-r_return
+id|RETURN_STATUS
+c_func
+(paren
 id|nfserr_inval
+)paren
 suffix:semicolon
 id|type
 op_assign
@@ -1439,7 +1449,7 @@ op_amp
 id|resp-&gt;fh
 )paren
 suffix:semicolon
-id|RETURN
+id|RETURN_STATUS
 c_func
 (paren
 id|nfserr
@@ -1526,7 +1536,7 @@ comma
 id|argp-&gt;len
 )paren
 suffix:semicolon
-id|RETURN
+id|RETURN_STATUS
 c_func
 (paren
 id|nfserr
@@ -1611,7 +1621,7 @@ comma
 id|argp-&gt;len
 )paren
 suffix:semicolon
-id|RETURN
+id|RETURN_STATUS
 c_func
 (paren
 id|nfserr
@@ -1729,7 +1739,7 @@ comma
 id|argp-&gt;tlen
 )paren
 suffix:semicolon
-id|RETURN
+id|RETURN_STATUS
 c_func
 (paren
 id|nfserr
@@ -1841,7 +1851,7 @@ op_amp
 id|resp-&gt;fh
 )paren
 suffix:semicolon
-id|RETURN
+id|RETURN_STATUS
 c_func
 (paren
 id|nfserr
@@ -2010,7 +2020,7 @@ id|resp-&gt;count
 op_assign
 id|count
 suffix:semicolon
-id|RETURN
+id|RETURN_STATUS
 c_func
 (paren
 id|nfserr
@@ -2173,7 +2183,7 @@ id|resp-&gt;count
 op_assign
 id|count
 suffix:semicolon
-id|RETURN
+id|RETURN_STATUS
 c_func
 (paren
 id|nfserr
@@ -2250,7 +2260,7 @@ op_amp
 id|argp-&gt;fh
 )paren
 suffix:semicolon
-id|RETURN
+id|RETURN_STATUS
 c_func
 (paren
 id|nfserr
@@ -2400,7 +2410,7 @@ op_amp
 id|argp-&gt;fh
 )paren
 suffix:semicolon
-id|RETURN
+id|RETURN_STATUS
 c_func
 (paren
 id|nfserr
@@ -2556,7 +2566,7 @@ op_amp
 id|argp-&gt;fh
 )paren
 suffix:semicolon
-id|RETURN
+id|RETURN_STATUS
 c_func
 (paren
 id|nfserr
@@ -2627,8 +2637,11 @@ id|argp-&gt;offset
 OG
 id|NFS_OFFSET_MAX
 )paren
-r_return
+id|RETURN_STATUS
+c_func
+(paren
 id|nfserr_inval
+)paren
 suffix:semicolon
 id|fh_copy
 c_func
@@ -2655,7 +2668,7 @@ comma
 id|argp-&gt;count
 )paren
 suffix:semicolon
-id|RETURN
+id|RETURN_STATUS
 c_func
 (paren
 id|nfserr

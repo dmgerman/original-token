@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sparc_ksyms.c,v 1.93 2000/02/26 11:02:45 anton Exp $&n; * arch/sparc/kernel/ksyms.c: Sparc specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: sparc_ksyms.c,v 1.94 2000/02/28 04:00:53 anton Exp $&n; * arch/sparc/kernel/ksyms.c: Sparc specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
 multiline_comment|/* Tell string.h we don&squot;t want memcpy etc. as cpp defines */
 DECL|macro|EXPORT_SYMTAB_STROPS
 mdefine_line|#define EXPORT_SYMTAB_STROPS
@@ -367,7 +367,6 @@ id|_rw_write_enter
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef __SMP__
-macro_line|#ifdef DEBUG_IRQLOCK
 DECL|variable|__global_save_flags
 id|EXPORT_SYMBOL
 c_func
@@ -396,29 +395,6 @@ c_func
 id|__global_cli
 )paren
 suffix:semicolon
-macro_line|#else
-DECL|variable|_global_restore_flags
-id|EXPORT_SYMBOL_PRIVATE
-c_func
-(paren
-id|_global_restore_flags
-)paren
-suffix:semicolon
-DECL|variable|_global_sti
-id|EXPORT_SYMBOL_PRIVATE
-c_func
-(paren
-id|_global_sti
-)paren
-suffix:semicolon
-DECL|variable|_global_cli
-id|EXPORT_SYMBOL_PRIVATE
-c_func
-(paren
-id|_global_cli
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#endif
 multiline_comment|/* rw semaphores */
 DECL|variable|___down_read

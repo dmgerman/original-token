@@ -16,7 +16,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &quot;ide_modes.h&quot;
 DECL|macro|DISPLAY_HPT366_TIMINGS
-mdefine_line|#define DISPLAY_HPT366_TIMINGS
+macro_line|#undef DISPLAY_HPT366_TIMINGS
 macro_line|#if defined(DISPLAY_HPT366_TIMINGS) &amp;&amp; defined(CONFIG_PROC_FS)
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
@@ -1092,6 +1092,48 @@ r_break
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Disable on-chip PIO FIFO/buffer (to avoid problems handling I/O errors later)&n;&t; */
+r_if
+c_cond
+(paren
+id|speed
+op_ge
+id|XFER_MW_DMA_0
+)paren
+(brace
+id|reg2
+op_assign
+(paren
+id|reg2
+op_amp
+op_complement
+l_int|0xc0000000
+)paren
+op_or
+(paren
+id|reg1
+op_amp
+l_int|0xc0000000
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|reg2
+op_assign
+(paren
+id|reg2
+op_amp
+op_complement
+l_int|0x30070000
+)paren
+op_or
+(paren
+id|reg1
+op_amp
+l_int|0x30070000
+)paren
+suffix:semicolon
+)brace
 id|reg2
 op_and_assign
 op_complement
@@ -1178,12 +1220,6 @@ l_int|0x00
 suffix:semicolon
 id|byte
 id|reg51h
-op_assign
-l_int|0
-suffix:semicolon
-r_int
-r_int
-id|reg40
 op_assign
 l_int|0
 suffix:semicolon
@@ -1512,39 +1548,6 @@ l_int|0x80
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_HPT366_FIP */
-multiline_comment|/*&n;&t; * Preserve existing PIO settings:&n;&t; */
-id|pci_read_config_dword
-c_func
-(paren
-id|HWIF
-c_func
-(paren
-id|drive
-)paren
-op_member_access_from_pointer
-id|pci_dev
-comma
-l_int|0x40
-comma
-op_amp
-id|reg40
-)paren
-suffix:semicolon
-id|speed
-op_assign
-(paren
-id|speed
-op_amp
-op_complement
-l_int|0xc0000000
-)paren
-op_or
-(paren
-id|reg40
-op_amp
-l_int|0xc0000000
-)paren
-suffix:semicolon
 macro_line|#if HPT366_DEBUG_DRIVE_INFO
 id|printk
 c_func
@@ -1697,12 +1700,6 @@ comma
 id|speed
 comma
 id|pio
-suffix:semicolon
-r_int
-r_int
-id|reg40
-op_assign
-l_int|0
 suffix:semicolon
 macro_line|#if HPT366_DEBUG_DRIVE_INFO
 id|printk
@@ -1894,39 +1891,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Preserve existing DMA settings:&n;&t; */
-id|pci_read_config_dword
-c_func
-(paren
-id|HWIF
-c_func
-(paren
-id|drive
-)paren
-op_member_access_from_pointer
-id|pci_dev
-comma
-l_int|0x40
-comma
-op_amp
-id|reg40
-)paren
-suffix:semicolon
-id|speed
-op_assign
-(paren
-id|speed
-op_amp
-op_complement
-l_int|0x30070000
-)paren
-op_or
-(paren
-id|reg40
-op_amp
-l_int|0x30070000
-)paren
-suffix:semicolon
 macro_line|#if HPT366_DEBUG_DRIVE_INFO
 id|printk
 c_func

@@ -1,12 +1,10 @@
-multiline_comment|/*&n; * Audio Command Interface (ACI) driver (sound/aci.c)&n; *&n; * ACI is a protocol used to communicate with the microcontroller on&n; * some sound cards produced by miro, e.g. the miroSOUND PCM12 and&n; * PCM20. The ACI has been developed for miro by Norberto Pellicci&n; * &lt;pellicci@home.com&gt;. Special thanks to both him and miro for&n; * providing the ACI specification.&n; *&n; * The main function of the ACI is to control the mixer and to get a&n; * product identification. On the PCM20, ACI also controls the radio&n; * tuner on this card, this is supported in the Video for Linux &n; * radio-miropcm20 driver.&n; * &n; * This Voxware ACI driver currently only supports the ACI functions&n; * on the miroSOUND PCM12 and PCM20 card. Support for miro sound cards &n; * with additional ACI functions can easily be added later.&n; *&n; * / NOTE / When compiling as a module, make sure to load the module &n; * after loading the mad16 module. The initialisation code expects the&n; * MAD16 default mixer to be already available.&n; *&n; * / NOTE / When compiling as a module, make sure to load the module &n; * after loading the mad16 module. The initialisation code expects the&n; * MAD16 default mixer to be already available.&n; *&n; * Revision history:&n; *&n; *   1995-11-10  Markus Kuhn &lt;mskuhn@cip.informatik.uni-erlangen.de&gt;&n; *        First version written.&n; *   1995-12-31  Markus Kuhn&n; *        Second revision, general code cleanup.&n; *   1996-05-16&t; Hannu Savolainen&n; *&t;  Integrated with other parts of the driver.&n; *   1996-05-28  Markus Kuhn&n; *        Initialize CS4231A mixer, make ACI first mixer,&n; *        use new private mixer API for solo mode.&n; *   1998-08-18  Ruurd Reitsma &lt;R.A.Reitsma@wbmt.tudelft.nl&gt;&n; *&t;  Small modification to export ACI functions and &n; *&t;  complete modularisation.&n; */
+multiline_comment|/*&n; * Audio Command Interface (ACI) driver (sound/aci.c)&n; *&n; * ACI is a protocol used to communicate with the microcontroller on&n; * some sound cards produced by miro, e.g. the miroSOUND PCM12 and&n; * PCM20. The ACI has been developed for miro by Norberto Pellicci&n; * &lt;pellicci@home.com&gt;. Special thanks to both him and miro for&n; * providing the ACI specification.&n; *&n; * The main function of the ACI is to control the mixer and to get a&n; * product identification. On the PCM20, ACI also controls the radio&n; * tuner on this card, this is supported in the Video for Linux &n; * radio-miropcm20 driver.&n; * &n; * This Voxware ACI driver currently only supports the ACI functions&n; * on the miroSOUND PCM12 and PCM20 card. Support for miro sound cards &n; * with additional ACI functions can easily be added later.&n; *&n; * / NOTE / When compiling as a module, make sure to load the module &n; * after loading the mad16 module. The initialisation code expects the&n; * MAD16 default mixer to be already available.&n; *&n; * Revision history:&n; *&n; *   1995-11-10  Markus Kuhn &lt;mskuhn@cip.informatik.uni-erlangen.de&gt;&n; *        First version written.&n; *   1995-12-31  Markus Kuhn&n; *        Second revision, general code cleanup.&n; *   1996-05-16&t; Hannu Savolainen&n; *&t;  Integrated with other parts of the driver.&n; *   1996-05-28  Markus Kuhn&n; *        Initialize CS4231A mixer, make ACI first mixer,&n; *        use new private mixer API for solo mode.&n; *   1998-08-18  Ruurd Reitsma &lt;R.A.Reitsma@wbmt.tudelft.nl&gt;&n; *&t;  Small modification to export ACI functions and &n; *&t;  complete modularisation.&n; */
 multiline_comment|/*&n; * Some driver specific information and features:&n; *&n; * This mixer driver identifies itself to applications as &quot;ACI&quot; in&n; * mixer_info.id as retrieved by ioctl(fd, SOUND_MIXER_INFO, &amp;mixer_info).&n; *&n; * Proprietary mixer features that go beyond the standard OSS mixer&n; * interface are:&n; * &n; * Full duplex solo configuration:&n; *&n; *   int solo_mode;&n; *   ioctl(fd, SOUND_MIXER_PRIVATE1, &amp;solo_mode);&n; *&n; *   solo_mode = 0: deactivate solo mode (default)&n; *   solo_mode &gt; 0: activate solo mode&n; *                  With activated solo mode, the PCM input can not any&n; *                  longer hear the signals produced by the PCM output.&n; *                  Activating solo mode is important in duplex mode in order&n; *                  to avoid feedback distortions.&n; *   solo_mode &lt; 0: do not change solo mode (just retrieve the status)&n; *&n; *   When the ioctl() returns 0, solo_mode contains the previous&n; *   status (0 = deactivated, 1 = activated). If solo mode is not&n; *   implemented on this card, ioctl() returns -1 and sets errno to&n; *   EINVAL.&n; *&n; */
-macro_line|#include &lt;linux/config.h&gt; /* for CONFIG_ACI_MIXER */
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/module.h&gt; 
-macro_line|#include &quot;lowlevel.h&quot;
-macro_line|#include &quot;../sound_config.h&quot;
-macro_line|#if defined(CONFIG_ACI_MIXER) || defined(CONFIG_ACI_MIXER_MODULE)
+macro_line|#include &quot;sound_config.h&quot;
 DECL|macro|DEBUG
-macro_line|#undef  DEBUG             /* if defined, produce a verbose report via syslog */
+macro_line|#undef  DEBUG&t;&t;/* if defined, produce a verbose report via syslog */
 DECL|variable|aci_port
 r_int
 id|aci_port
@@ -36,12 +34,12 @@ id|aci_version
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* ACI firmware version */
+multiline_comment|/* ACI firmware version&t;*/
 DECL|variable|aci_solo
 r_int
 id|aci_solo
 suffix:semicolon
-multiline_comment|/* status bit of the card that can&squot;t be    *&n;                                   * checked with ACI versions prior to 0xb0 */
+multiline_comment|/* status bit of the card that can&squot;t be&t;&t;*&n;&t;&t;&t; * checked with ACI versions prior to 0xb0&t;*/
 DECL|variable|aci_present
 r_static
 r_int
@@ -2087,7 +2085,9 @@ multiline_comment|/* Read from port */
 )brace
 multiline_comment|/*&n; * Check, whether there actually is any ACI port operational and if&n; * one was found, then initialize the ACI interface, reserve the I/O&n; * addresses and attach the new mixer to the relevant VoxWare data&n; * structures.&n; *&n; * Returns:  1   ACI mixer detected&n; *           0   nothing there&n; *&n; * There is also an internal mixer in the codec (CS4231A or AD1845),&n; * that deserves no purpose in an ACI based system which uses an&n; * external ACI controlled stereo mixer. Make sure that this codec&n; * mixer has the AUX1 input selected as the recording source, that the&n; * input gain is set near maximum and that the other channels going&n; * from the inputs to the codec output are muted.&n; */
 DECL|function|attach_aci
+r_static
 r_int
+id|__init
 id|attach_aci
 c_func
 (paren
@@ -2352,7 +2352,7 @@ l_int|9
 )paren
 )paren
 (brace
-multiline_comment|/*&n;       * The previously registered mixer device is the CS4231A which&n;       * has no function on an ACI card. Make the ACI mixer the first&n;       * of the two mixer devices.&n;       */
+multiline_comment|/*&n;&t;&t;&t; * The previously registered mixer device is the CS4231A which&n;&t;&t;&t; * has no function on an ACI card. Make the ACI mixer the first&n;&t;&t;&t; * of the two mixer devices.&n;&t;&t;&t; */
 id|mixer_devs
 (braket
 id|num_mixers
@@ -2375,7 +2375,7 @@ op_assign
 op_amp
 id|aci_mixer_operations
 suffix:semicolon
-multiline_comment|/*&n;       * Initialize the CS4231A mixer with reasonable values. It is&n;       * unlikely that the user ever will want to change these as all&n;       * channels can be mixed via ACI.&n;       */
+multiline_comment|/*&n;&t;&t;&t; * Initialize the CS4231A mixer with reasonable values. It is&n;&t;&t;&t; * unlikely that the user ever will want to change these as all&n;&t;&t;&t; * channels can be mixed via ACI.&n;&t;&t;&t; */
 id|volume
 op_assign
 l_int|0x6464
@@ -2598,7 +2598,7 @@ op_amp
 id|aci_mixer_operations
 suffix:semicolon
 )brace
-multiline_comment|/* Just do something; otherwise the first write command fails, at&n;   * least with my PCM20.&n;   */
+multiline_comment|/* Just do something; otherwise the first write command fails, at&n;&t; * least with my PCM20.&n;&t; */
 id|aci_mixer_ioctl
 c_func
 (paren
@@ -2792,7 +2792,9 @@ l_int|1
 suffix:semicolon
 )brace
 DECL|function|unload_aci
+r_static
 r_void
+id|__exit
 id|unload_aci
 c_func
 (paren
@@ -2813,38 +2815,18 @@ l_int|3
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
-macro_line|#if defined(MODULE)
-DECL|function|init_module
-r_int
-id|init_module
+DECL|variable|attach_aci
+id|module_init
 c_func
 (paren
-r_void
-)paren
-(brace
 id|attach_aci
-c_func
-(paren
 )paren
 suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
+DECL|variable|unload_aci
+id|module_exit
 c_func
 (paren
-r_void
-)paren
-(brace
 id|unload_aci
-c_func
-(paren
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif /* MODULE */
 eof

@@ -742,7 +742,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;time_init: decrementer frequency = %lu/%d (%d MHz)&bslash;n&quot;
+l_string|&quot;time_init: decrementer frequency = %lu/%d (%ld MHz)&bslash;n&quot;
 comma
 id|freq
 comma

@@ -80,17 +80,6 @@ id|ids-&gt;size
 op_assign
 id|size
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|size
-op_eq
-l_int|0
-)paren
-(brace
-r_return
-suffix:semicolon
-)brace
 id|ids-&gt;in_use
 op_assign
 l_int|0

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;TCP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: tcp_ipv6.c,v 1.120 2000/02/27 19:51:49 davem Exp $&n; *&n; *&t;Based on: &n; *&t;linux/net/ipv4/tcp.c&n; *&t;linux/net/ipv4/tcp_input.c&n; *&t;linux/net/ipv4/tcp_output.c&n; *&n; *&t;Fixes:&n; *&t;Hideaki YOSHIFUJI&t;:&t;sin6_scope_id support&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;TCP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: tcp_ipv6.c,v 1.121 2000/03/08 19:36:47 davem Exp $&n; *&n; *&t;Based on: &n; *&t;linux/net/ipv4/tcp.c&n; *&t;linux/net/ipv4/tcp_input.c&n; *&t;linux/net/ipv4/tcp_output.c&n; *&n; *&t;Fixes:&n; *&t;Hideaki YOSHIFUJI&t;:&t;sin6_scope_id support&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
@@ -514,6 +514,10 @@ op_logical_and
 id|sk-&gt;reuse
 op_ne
 l_int|0
+op_logical_and
+id|sk-&gt;state
+op_ne
+id|TCP_LISTEN
 )paren
 (brace
 r_goto
@@ -561,6 +565,10 @@ id|sk2-&gt;bind_next
 r_if
 c_cond
 (paren
+id|sk
+op_ne
+id|sk2
+op_logical_and
 id|sk-&gt;bound_dev_if
 op_eq
 id|sk2-&gt;bound_dev_if
@@ -729,6 +737,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|sk-&gt;prev
+op_eq
+l_int|NULL
+)paren
+(brace
+r_if
+c_cond
+(paren
 (paren
 id|sk-&gt;bind_next
 op_assign
@@ -760,6 +776,23 @@ op_star
 )paren
 id|tb
 suffix:semicolon
+)brace
+r_else
+(brace
+id|BUG_TRAP
+c_func
+(paren
+id|sk-&gt;prev
+op_eq
+(paren
+r_struct
+id|sock
+op_star
+)paren
+id|tb
+)paren
+suffix:semicolon
+)brace
 id|ret
 op_assign
 l_int|0

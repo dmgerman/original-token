@@ -1,16 +1,21 @@
 multiline_comment|/*&n; * sound/awe_wave.c&n; *&n; * The low level driver for the AWE32/SB32/AWE64 wave table synth.&n; *   version 0.4.3; Feb. 1, 1999&n; *&n; * Copyright (C) 1996-1999 Takashi Iwai&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
-multiline_comment|/* include initial header files and compatibility macros */
-macro_line|#ifdef __FreeBSD__
-macro_line|#  include &lt;i386/isa/sound/awe_compat.h&gt;
-macro_line|#else
-macro_line|#  include &quot;awe_compat.h&quot;
-macro_line|#endif /* FreeBSD */
-macro_line|#ifdef __linux__
-macro_line|#  include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/awe_voice.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &quot;sound_config.h&quot;
+macro_line|#include &quot;soundmodule.h&quot;
+macro_line|#include &quot;awe_wave.h&quot;
+macro_line|#include &quot;awe_hw.h&quot;
+macro_line|#ifdef AWE_HAS_GUS_COMPATIBILITY
+macro_line|#include &quot;tuning.h&quot;
+macro_line|#include &lt;linux/ultrasound.h&gt;
 macro_line|#endif
-multiline_comment|/*----------------------------------------------------------------*/
-macro_line|#if defined(CONFIG_AWE32_SYNTH) || defined(CONFIG_AWE32_SYNTH_MODULE)
-multiline_comment|/*----------------------------------------------------------------&n; * debug message&n; *----------------------------------------------------------------*/
+multiline_comment|/*&n; * debug message&n; */
+multiline_comment|/* do not allocate buffer at beginning */
+DECL|macro|INIT_TABLE
+mdefine_line|#define INIT_TABLE(buffer,index,nums,type) {buffer=NULL; index=0;}
 macro_line|#ifdef AWE_DEBUG_ON
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG(LVL,XXX)&t;{if (ctrls[AWE_MD_DEBUG_MODE] &gt; LVL) { XXX; }}
@@ -26,7 +31,7 @@ mdefine_line|#define ERRMSG(XXX)&t;XXX
 DECL|macro|FATALERR
 mdefine_line|#define FATALERR(XXX)&t;XXX
 macro_line|#endif
-multiline_comment|/*----------------------------------------------------------------&n; * bank and voice record&n; *----------------------------------------------------------------*/
+multiline_comment|/*&n; * bank and voice record&n; */
 multiline_comment|/* soundfont record */
 DECL|struct|_sf_list
 r_typedef
@@ -237,7 +242,7 @@ id|preset_table
 id|AWE_MAX_PRESETS
 )braket
 suffix:semicolon
-multiline_comment|/*----------------------------------------------------------------&n; * voice table&n; *----------------------------------------------------------------*/
+multiline_comment|/*&n; * voice table&n; */
 multiline_comment|/* effects table */
 DECL|struct|FX_Rec
 r_typedef
@@ -485,9 +490,6 @@ macro_line|#ifndef AWE_DEFAULT_MEM_SIZE
 DECL|macro|AWE_DEFAULT_MEM_SIZE
 mdefine_line|#define AWE_DEFAULT_MEM_SIZE&t;-1&t;/* autodetect */
 macro_line|#endif
-multiline_comment|/* set variables */
-macro_line|#if defined(AWE_MODULE_SUPPORT) &amp;&amp; defined(MODULE)
-multiline_comment|/* replace awe_port variable with exported variable */
 DECL|macro|awe_port
 mdefine_line|#define awe_port&t;io
 DECL|macro|awe_mem_size
@@ -506,7 +508,18 @@ op_assign
 id|AWE_DEFAULT_MEM_SIZE
 suffix:semicolon
 multiline_comment|/* memory size in Kbytes */
-macro_line|#ifdef MODULE_PARM
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Takashi Iwai &lt;iwai@ww.uni-erlangen.de&gt;&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;SB AWE32/64 WaveTable driver&quot;
+)paren
+suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
@@ -539,23 +552,8 @@ comma
 l_string|&quot;onboard DRAM size in Kbytes&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#else
-DECL|variable|awe_port
-r_static
-r_int
-id|awe_port
-op_assign
-id|AWE_DEFAULT_BASE_ADDR
+id|EXPORT_NO_SYMBOLS
 suffix:semicolon
-DECL|variable|awe_mem_size
-r_static
-r_int
-id|awe_mem_size
-op_assign
-id|AWE_DEFAULT_MEM_SIZE
-suffix:semicolon
-macro_line|#endif /* module */
 multiline_comment|/* DRAM start offset */
 DECL|variable|awe_mem_start
 r_static
@@ -694,8 +692,7 @@ op_star
 id|voice_alloc
 suffix:semicolon
 multiline_comment|/* set at initialization */
-multiline_comment|/*----------------------------------------------------------------&n; * function prototypes&n; *----------------------------------------------------------------*/
-macro_line|#if defined(linux) &amp;&amp; !defined(AWE_OBSOLETE_VOXWARE)
+multiline_comment|/*&n; * function prototypes&n; */
 r_static
 r_int
 id|awe_check_port
@@ -720,7 +717,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif /* linux &amp; obsolete */
 r_static
 r_void
 id|awe_reset_samples
@@ -1432,22 +1428,6 @@ r_int
 id|mode
 )paren
 suffix:semicolon
-macro_line|#ifndef AWE_NO_PATCHMGR
-r_static
-r_int
-id|awe_patchmgr
-c_func
-(paren
-r_int
-id|dev
-comma
-r_struct
-id|patmgr_info
-op_star
-id|rec
-)paren
-suffix:semicolon
-macro_line|#endif
 r_static
 r_void
 id|awe_bender
@@ -2243,14 +2223,7 @@ suffix:semicolon
 macro_line|#endif
 DECL|macro|limitvalue
 mdefine_line|#define limitvalue(x, a, b) if ((x) &lt; (a)) (x) = (a); else if ((x) &gt; (b)) (x) = (b)
-macro_line|#ifdef __FreeBSD__
-multiline_comment|/* FIXME */
-DECL|macro|MALLOC_LOOP_DATA
-mdefine_line|#define MALLOC_LOOP_DATA
-DECL|macro|WAIT_BY_LOOP
-mdefine_line|#define WAIT_BY_LOOP
-macro_line|#endif
-multiline_comment|/*----------------------------------------------------------------&n; * control parameters&n; *----------------------------------------------------------------*/
+multiline_comment|/*&n; * control parameters&n; */
 macro_line|#ifdef AWE_USE_NEW_VOLUME_CALC
 DECL|macro|DEF_VOLUME_CALC
 mdefine_line|#define DEF_VOLUME_CALC&t;TRUE
@@ -2506,10 +2479,8 @@ id|synth_operations
 id|awe_operations
 op_assign
 (brace
-macro_line|#ifdef AWE_OSS38
 l_string|&quot;EMU8K&quot;
 comma
-macro_line|#endif
 op_amp
 id|awe_info
 comma
@@ -2545,10 +2516,6 @@ id|awe_panning
 comma
 id|awe_volume_method
 comma
-macro_line|#ifndef AWE_NO_PATCHMGR
-id|awe_patchmgr
-comma
-macro_line|#endif
 id|awe_bender
 comma
 id|awe_alloc
@@ -2598,7 +2565,6 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* check AWE32 ports are available */
-macro_line|#if defined(linux) &amp;&amp; !defined(AWE_OBSOLETE_VOXWARE)
 r_if
 c_cond
 (paren
@@ -2619,7 +2585,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif
 multiline_comment|/* set buffers to NULL */
 id|sflists
 op_assign
@@ -2728,14 +2693,12 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if defined(linux) &amp;&amp; !defined(AWE_OBSOLETE_VOXWARE)
 multiline_comment|/* reserve I/O ports for awedrv */
 id|awe_request_region
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* clear all samples */
 id|awe_reset_samples
 c_func
@@ -2776,15 +2739,12 @@ id|awe_present
 op_assign
 id|TRUE
 suffix:semicolon
-macro_line|#if defined(AWE_MODULE_SUPPORT) &amp;&amp; defined(MODULE)
 id|SOUND_LOCK
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#ifdef AWE_DYNAMIC_BUFFER
 DECL|function|free_tables
 r_static
 r_void
@@ -2799,12 +2759,14 @@ c_cond
 (paren
 id|sflists
 )paren
-id|my_free
+(brace
+id|vfree
 c_func
 (paren
 id|sflists
 )paren
 suffix:semicolon
+)brace
 id|sflists
 op_assign
 l_int|NULL
@@ -2818,7 +2780,7 @@ c_cond
 (paren
 id|samples
 )paren
-id|my_free
+id|vfree
 c_func
 (paren
 id|samples
@@ -2837,7 +2799,7 @@ c_cond
 (paren
 id|infos
 )paren
-id|my_free
+id|vfree
 c_func
 (paren
 id|infos
@@ -2890,7 +2852,7 @@ c_cond
 (paren
 id|ptr
 op_assign
-id|my_malloc
+id|vmalloc
 c_func
 (paren
 id|size
@@ -2909,7 +2871,7 @@ id|oldsize
 op_logical_and
 id|size
 )paren
-id|MEMCPY
+id|memcpy
 c_func
 (paren
 id|ptr
@@ -2935,7 +2897,7 @@ c_cond
 (paren
 id|buf
 )paren
-id|my_free
+id|vfree
 c_func
 (paren
 id|buf
@@ -2945,10 +2907,6 @@ r_return
 id|ptr
 suffix:semicolon
 )brace
-macro_line|#else /* dynamic buffer */
-DECL|macro|free_buffers
-mdefine_line|#define free_buffers() /**/
-macro_line|#endif /* dynamic_buffer */
 DECL|function|_unload_awe
 r_static
 r_void
@@ -3003,15 +2961,11 @@ id|awe_present
 op_assign
 id|FALSE
 suffix:semicolon
-macro_line|#if defined(AWE_MODULE_SUPPORT) &amp;&amp; defined(MODULE)
 id|SOUND_LOCK_END
 suffix:semicolon
-macro_line|#endif
 )brace
 )brace
-multiline_comment|/*================================================================&n; * Linux interface&n; *================================================================*/
-macro_line|#ifdef linux
-multiline_comment|/*----------------------------------------------------------------&n; * Linux PnP driver support&n; *----------------------------------------------------------------*/
+multiline_comment|/*&n; * Linux PnP driver support&n; */
 macro_line|#ifdef CONFIG_PNP_DRV
 macro_line|#include &lt;linux/pnp.h&gt;
 DECL|variable|pnp
@@ -3470,265 +3424,7 @@ id|i
 suffix:semicolon
 )brace
 macro_line|#endif /* PnP support */
-multiline_comment|/*----------------------------------------------------------------&n; * device / lowlevel (module) interface&n; *----------------------------------------------------------------*/
-macro_line|#ifdef AWE_OBSOLETEL_VOXWARE
-multiline_comment|/* old type interface */
-DECL|function|attach_awe_obsolete
-r_int
-id|attach_awe_obsolete
-c_func
-(paren
-r_int
-id|mem_start
-comma
-r_struct
-id|address_info
-op_star
-id|hw_config
-)paren
-(brace
-id|my_malloc_init
-c_func
-(paren
-id|mem_start
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|_attach_awe
-c_func
-(paren
-)paren
-)paren
-r_return
-l_int|0
-suffix:semicolon
-r_return
-id|my_malloc_memptr
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|probe_awe_obsolete
-r_int
-id|probe_awe_obsolete
-c_func
-(paren
-r_struct
-id|address_info
-op_star
-id|hw_config
-)paren
-(brace
-r_return
-l_int|1
-suffix:semicolon
-multiline_comment|/*return awe_detect();*/
-)brace
-macro_line|#else /* !obsolete */
-multiline_comment|/* new type interface */
-DECL|function|attach_awe
-r_int
-id|attach_awe
-c_func
-(paren
-r_void
-)paren
-(brace
-macro_line|#ifdef CONFIG_PNP_DRV
-r_if
-c_cond
-(paren
-id|pnp
-)paren
-(brace
-id|awe_initpnp
-c_func
-(paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|awe_pnp_ok
-)paren
-r_return
-l_int|0
-suffix:semicolon
-)brace
-macro_line|#endif /* pnp */
-id|_attach_awe
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-DECL|function|unload_awe
-r_void
-id|unload_awe
-c_func
-(paren
-r_void
-)paren
-(brace
-macro_line|#ifdef CONFIG_PNP_DRV
-r_if
-c_cond
-(paren
-id|pnp
-)paren
-id|awe_unload_pnp
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif /* pnp */
-id|_unload_awe
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* module interface */
-macro_line|#if defined(AWE_MODULE_SUPPORT) &amp;&amp; defined(MODULE)
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
-r_void
-)paren
-(brace
-r_return
-id|attach_awe
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
-c_func
-(paren
-r_void
-)paren
-(brace
-id|unload_awe
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-macro_line|#ifdef MODULE_PARM
-id|EXPORT_NO_SYMBOLS
-suffix:semicolon
-id|MODULE_AUTHOR
-c_func
-(paren
-l_string|&quot;Takashi Iwai &lt;iwai@ww.uni-erlangen.de&gt;&quot;
-)paren
-suffix:semicolon
-id|MODULE_DESCRIPTION
-c_func
-(paren
-l_string|&quot;SB AWE32/64 WaveTable driver&quot;
-)paren
-suffix:semicolon
-id|MODULE_SUPPORTED_DEVICE
-c_func
-(paren
-l_string|&quot;sound&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#endif /* module */
-macro_line|#endif /* AWE_OBSOLETE_VOXWARE */
-macro_line|#endif /* linux */
-multiline_comment|/*================================================================&n; * FreeBSD interface&n; *================================================================*/
-macro_line|#ifdef __FreeBSD__
-macro_line|#ifdef AWE_OBSOLETE_VOXWARE
-DECL|function|attach_awe_obsolete
-r_int
-id|attach_awe_obsolete
-c_func
-(paren
-r_int
-id|mem_start
-comma
-r_struct
-id|address_info
-op_star
-id|hw_config
-)paren
-(brace
-id|_attach_awe
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-DECL|function|probe_awe_obsolete
-r_int
-id|probe_awe_obsolete
-c_func
-(paren
-r_struct
-id|address_info
-op_star
-id|hw_config
-)paren
-(brace
-r_return
-l_int|1
-suffix:semicolon
-)brace
-macro_line|#else /* !obsolete */
-multiline_comment|/* new type interface */
-DECL|function|attach_awe
-r_void
-id|attach_awe
-c_func
-(paren
-r_struct
-id|address_info
-op_star
-id|hw_config
-)paren
-(brace
-id|_attach_awe
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|probe_awe
-r_int
-id|probe_awe
-c_func
-(paren
-r_struct
-id|address_info
-op_star
-id|hw_config
-)paren
-(brace
-r_return
-l_int|1
-suffix:semicolon
-)brace
-macro_line|#endif /* obsolete */
-macro_line|#endif /* FreeBSD */
-multiline_comment|/*================================================================&n; * clear sample tables &n; *================================================================*/
+multiline_comment|/*&n; * clear sample tables &n; */
 r_static
 r_void
 DECL|function|awe_reset_samples
@@ -3782,7 +3478,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*================================================================&n; * EMU register access&n; *================================================================*/
+multiline_comment|/*&n; * EMU register access&n; */
 multiline_comment|/* select a given AWE32 pointer */
 DECL|variable|awe_ports
 r_static
@@ -3808,7 +3504,7 @@ op_minus
 l_int|1
 suffix:semicolon
 DECL|macro|awe_set_cmd
-mdefine_line|#define awe_set_cmd(cmd) &bslash;&n;if (awe_cur_cmd != cmd) { OUTW(cmd, awe_ports[Pointer]); awe_cur_cmd = cmd; }
+mdefine_line|#define awe_set_cmd(cmd) &bslash;&n;if (awe_cur_cmd != cmd) { outw(cmd, awe_ports[Pointer]); awe_cur_cmd = cmd; }
 multiline_comment|/* store values to i/o port array */
 DECL|function|setup_ports
 r_static
@@ -3897,8 +3593,8 @@ id|TRUE
 suffix:semicolon
 )brace
 multiline_comment|/* write 16bit data */
-id|INLINE
 r_static
+r_inline
 r_void
 DECL|function|awe_poke
 id|awe_poke
@@ -3923,7 +3619,7 @@ c_func
 id|cmd
 )paren
 suffix:semicolon
-id|OUTW
+id|outw
 c_func
 (paren
 id|data
@@ -3936,8 +3632,8 @@ id|port
 suffix:semicolon
 )brace
 multiline_comment|/* write 32bit data */
-id|INLINE
 r_static
+r_inline
 r_void
 DECL|function|awe_poke_dw
 id|awe_poke_dw
@@ -3971,7 +3667,7 @@ c_func
 id|cmd
 )paren
 suffix:semicolon
-id|OUTW
+id|outw
 c_func
 (paren
 id|data
@@ -3980,7 +3676,7 @@ id|addr
 )paren
 suffix:semicolon
 multiline_comment|/* write lower 16 bits */
-id|OUTW
+id|outw
 c_func
 (paren
 id|data
@@ -3995,8 +3691,8 @@ suffix:semicolon
 multiline_comment|/* write higher 16 bits */
 )brace
 multiline_comment|/* read 16bit data */
-id|INLINE
 r_static
+r_inline
 r_int
 r_int
 DECL|function|awe_peek
@@ -4038,8 +3734,8 @@ id|k
 suffix:semicolon
 )brace
 multiline_comment|/* read 32bit data */
-id|INLINE
 r_static
+r_inline
 r_int
 r_int
 DECL|function|awe_peek_dw
@@ -4267,8 +3963,8 @@ suffix:semicolon
 )brace
 macro_line|#endif /* wait by loop */
 multiline_comment|/* write a word data */
-id|INLINE
 r_static
+r_inline
 r_void
 DECL|function|awe_write_dram
 id|awe_write_dram
@@ -4288,8 +3984,7 @@ id|c
 )paren
 suffix:semicolon
 )brace
-macro_line|#if defined(linux) &amp;&amp; !defined(AWE_OBSOLETE_VOXWARE)
-multiline_comment|/*================================================================&n; * port check / request&n; *  0x620-623, 0xA20-A23, 0xE20-E23&n; *================================================================*/
+multiline_comment|/*&n; * port check / request&n; *  0x620-623, 0xA20-A23, 0xE20-E23&n; */
 r_static
 r_int
 DECL|function|awe_check_port
@@ -4453,8 +4148,7 @@ l_int|4
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* linux &amp;&amp; !AWE_OBSOLETE_VOXWARE */
-multiline_comment|/*================================================================&n; * AWE32 initialization&n; *================================================================*/
+multiline_comment|/*&n; * AWE32 initialization&n; */
 r_static
 r_void
 DECL|function|awe_initialize
@@ -4572,7 +4266,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*================================================================&n; * AWE32 voice parameters&n; *================================================================*/
+multiline_comment|/*&n; * AWE32 voice parameters&n; */
 multiline_comment|/* initialize voice_info record */
 r_static
 r_void
@@ -5181,7 +4875,7 @@ op_div
 l_int|1200
 suffix:semicolon
 )brace
-multiline_comment|/*----------------------------------------------------------------&n; * convert envelope time parameter to AWE32 raw parameter&n; *----------------------------------------------------------------*/
+multiline_comment|/*&n; * convert envelope time parameter to AWE32 raw parameter&n; */
 multiline_comment|/* attack &amp; decay/release time table (msec) */
 DECL|variable|attack_time_tbl
 r_static
@@ -5885,7 +5579,7 @@ id|left
 suffix:semicolon
 )brace
 macro_line|#endif /* AWE_HAS_GUS_COMPATIBILITY */
-multiline_comment|/*================================================================&n; * effects table&n; *================================================================*/
+multiline_comment|/*&n; * effects table&n; */
 multiline_comment|/* set an effect value */
 DECL|macro|FX_FLAG_OFF
 mdefine_line|#define FX_FLAG_OFF&t;0
@@ -6910,7 +6604,7 @@ r_return
 id|addr
 suffix:semicolon
 )brace
-multiline_comment|/*================================================================&n; * turn on/off sample&n; *================================================================*/
+multiline_comment|/*&n; * turn on/off sample&n; */
 multiline_comment|/* table for volume target calculation */
 DECL|variable|voltarget
 r_static
@@ -8377,7 +8071,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/*================================================================&n; * change the parameters of an audible voice&n; *================================================================*/
+multiline_comment|/*&n; * change the parameters of an audible voice&n; */
 multiline_comment|/* change pitch */
 r_static
 r_void
@@ -11797,7 +11491,7 @@ id|TRUE
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*================================================================&n; * synth operation routines&n; *================================================================*/
+multiline_comment|/*&n; * synth operation routines&n; */
 DECL|macro|AWE_VOICE_KEY
 mdefine_line|#define AWE_VOICE_KEY(v)&t;(0x8000 | (v))
 DECL|macro|AWE_CHAN_KEY
@@ -11944,7 +11638,7 @@ id|AWE_MD_KEEP_EFFECT
 )braket
 )paren
 (brace
-id|BZERO
+id|memset
 c_func
 (paren
 op_amp
@@ -11954,6 +11648,8 @@ id|ch
 )braket
 dot
 id|fx
+comma
+l_int|0
 comma
 r_sizeof
 (paren
@@ -11966,7 +11662,7 @@ id|fx
 )paren
 )paren
 suffix:semicolon
-id|BZERO
+id|memset
 c_func
 (paren
 op_amp
@@ -11976,6 +11672,8 @@ id|ch
 )braket
 dot
 id|fx_layer
+comma
+l_int|0
 comma
 r_sizeof
 (paren
@@ -12121,11 +11819,13 @@ id|AWE_MD_KEEP_EFFECT
 )braket
 )paren
 (brace
-id|BZERO
+id|memset
 c_func
 (paren
 op_amp
 id|cp-&gt;fx
+comma
+l_int|0
 comma
 r_sizeof
 (paren
@@ -12133,11 +11833,13 @@ id|cp-&gt;fx
 )paren
 )paren
 suffix:semicolon
-id|BZERO
+id|memset
 c_func
 (paren
 op_amp
 id|cp-&gt;fx_layer
+comma
+l_int|0
 comma
 r_sizeof
 (paren
@@ -12293,11 +11995,8 @@ c_cond
 id|awe_busy
 )paren
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|EBUSY
-)paren
 suffix:semicolon
 id|awe_busy
 op_assign
@@ -12461,7 +12160,7 @@ id|awe_info.nr_voices
 op_assign
 id|AWE_MAX_CHANNELS
 suffix:semicolon
-id|IOCTL_TO_USER
+id|memcpy
 c_func
 (paren
 (paren
@@ -12470,10 +12169,10 @@ op_star
 )paren
 id|arg
 comma
-l_int|0
-comma
 op_amp
 id|awe_info
+op_plus
+l_int|0
 comma
 r_sizeof
 (paren
@@ -12538,11 +12237,8 @@ id|cmd
 )paren
 suffix:semicolon
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
 )brace
@@ -12780,11 +12476,8 @@ id|voice
 )paren
 )paren
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|EINVAL
-)paren
 suffix:semicolon
 r_switch
 c_cond
@@ -12843,11 +12536,8 @@ op_ge
 id|AWE_MAX_CHANNELS
 )paren
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|EINVAL
-)paren
 suffix:semicolon
 multiline_comment|/* continue to below */
 r_default
@@ -13080,11 +12770,8 @@ id|voice
 )paren
 )paren
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|EINVAL
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -13165,11 +12852,8 @@ op_ge
 id|AWE_MAX_CHANNELS
 )paren
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|EINVAL
-)paren
 suffix:semicolon
 multiline_comment|/* continue to below */
 r_default
@@ -13580,11 +13264,8 @@ op_ge
 id|AWE_MAX_CHANNELS
 )paren
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
 r_return
@@ -13634,11 +13315,8 @@ id|voice
 )paren
 )paren
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|EINVAL
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -13652,11 +13330,8 @@ op_ge
 id|AWE_MAX_PRESETS
 )paren
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|EINVAL
-)paren
 suffix:semicolon
 id|cinfo
 op_assign
@@ -16029,34 +15704,6 @@ id|mode
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifndef AWE_NO_PATCHMGR
-multiline_comment|/* patch manager */
-r_static
-r_int
-DECL|function|awe_patchmgr
-id|awe_patchmgr
-c_func
-(paren
-r_int
-id|dev
-comma
-r_struct
-id|patmgr_info
-op_star
-id|rec
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;AWE32 Warning: patch manager control not supported&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-macro_line|#endif
 multiline_comment|/* pitch wheel change: 0-16384 */
 r_static
 r_void
@@ -16253,11 +15900,8 @@ id|format
 )paren
 suffix:semicolon
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
 r_if
@@ -16275,14 +15919,11 @@ l_string|&quot;AWE32 Error: Patch header too short&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
-id|COPY_FROM_USER
+id|copy_from_user
 c_func
 (paren
 (paren
@@ -16297,7 +15938,7 @@ op_plus
 id|offs
 comma
 id|addr
-comma
+op_plus
 id|offs
 comma
 id|AWE_PATCH_INFO_SIZE
@@ -16328,11 +15969,8 @@ id|patch.len
 )paren
 suffix:semicolon
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
 r_switch
@@ -16534,11 +16172,8 @@ id|patch.type
 suffix:semicolon
 id|rc
 op_assign
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
 r_return
@@ -16579,11 +16214,6 @@ op_ge
 id|max_sfs
 )paren
 (brace
-macro_line|#ifndef AWE_DYNAMIC_BUFFER
-r_return
-l_int|1
-suffix:semicolon
-macro_line|#else
 r_int
 id|newsize
 op_assign
@@ -16633,7 +16263,6 @@ id|max_sfs
 op_assign
 id|newsize
 suffix:semicolon
-macro_line|#endif /* dynamic buffer */
 )brace
 id|rec
 op_assign
@@ -16866,7 +16495,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|MEMCMP
+id|memcmp
 c_func
 (paren
 id|name
@@ -16923,7 +16552,7 @@ c_func
 id|id
 )paren
 op_logical_and
-id|MEMCMP
+id|memcmp
 c_func
 (paren
 id|id
@@ -17088,14 +16717,14 @@ suffix:semicolon
 r_int
 id|shared
 suffix:semicolon
-id|COPY_FROM_USER
+id|copy_from_user
 c_func
 (paren
 op_amp
 id|parm
 comma
 id|addr
-comma
+op_plus
 id|AWE_PATCH_INFO_SIZE
 comma
 r_sizeof
@@ -17189,11 +16818,8 @@ l_string|&quot;AWE32: can&squot;t open: failed to alloc new list&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|ENOSPC
-)paren
 suffix:semicolon
 )brace
 )brace
@@ -17246,11 +16872,8 @@ l_string|&quot;AWE32: failed to alloc new list&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|ENOSPC
-)paren
 suffix:semicolon
 )brace
 id|patch_opened
@@ -17408,21 +17031,6 @@ op_ge
 id|max_infos
 )paren
 (brace
-macro_line|#ifndef AWE_DYNAMIC_BUFFER
-id|printk
-c_func
-(paren
-l_string|&quot;AWE32: can&squot;t alloc info table&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-id|RET_ERROR
-c_func
-(paren
-id|ENOSPC
-)paren
-suffix:semicolon
-macro_line|#else
 r_do
 (brace
 id|newsize
@@ -17479,11 +17087,8 @@ l_string|&quot;AWE32: can&squot;t alloc info table&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|ENOSPC
-)paren
 suffix:semicolon
 )brace
 id|infos
@@ -17494,7 +17099,6 @@ id|max_infos
 op_assign
 id|newsize
 suffix:semicolon
-macro_line|#endif
 )brace
 r_return
 l_int|0
@@ -17534,21 +17138,6 @@ op_ge
 id|max_samples
 )paren
 (brace
-macro_line|#ifndef AWE_DYNAMIC_BUFFER
-id|printk
-c_func
-(paren
-l_string|&quot;AWE32: can&squot;t alloc sample table&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-id|RET_ERROR
-c_func
-(paren
-id|ENOSPC
-)paren
-suffix:semicolon
-macro_line|#else
 id|newsize
 op_assign
 id|max_samples
@@ -17592,11 +17181,8 @@ l_string|&quot;AWE32: can&squot;t alloc sample table&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|ENOSPC
-)paren
 suffix:semicolon
 )brace
 id|samples
@@ -17607,7 +17193,6 @@ id|max_samples
 op_assign
 id|newsize
 suffix:semicolon
-macro_line|#endif
 )brace
 r_return
 l_int|0
@@ -17664,21 +17249,18 @@ l_string|&quot;AWE32 Error: invalid patch info length&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
-id|COPY_FROM_USER
+id|copy_from_user
 c_func
 (paren
 op_amp
 id|map
 comma
 id|addr
-comma
+op_plus
 id|AWE_PATCH_INFO_SIZE
 comma
 r_sizeof
@@ -17787,11 +17369,8 @@ OL
 l_int|0
 )paren
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|ENOSPC
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -17805,11 +17384,8 @@ OL
 l_int|0
 )paren
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|ENOSPC
-)paren
 suffix:semicolon
 id|free_info
 op_assign
@@ -17932,11 +17508,8 @@ op_logical_neg
 id|patch_opened
 )paren
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|EINVAL
-)paren
 suffix:semicolon
 multiline_comment|/* get the link info */
 r_if
@@ -17957,21 +17530,18 @@ l_string|&quot;AWE32 Error: invalid patch info length&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
-id|COPY_FROM_USER
+id|copy_from_user
 c_func
 (paren
 op_amp
 id|map
 comma
 id|addr
-comma
+op_plus
 id|AWE_PATCH_INFO_SIZE
 comma
 r_sizeof
@@ -18063,11 +17633,8 @@ multiline_comment|/* already present! */
 )brace
 macro_line|#endif /* allow sharing */
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
 macro_line|#endif
@@ -18099,11 +17666,8 @@ op_logical_neg
 id|patch_opened
 )paren
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|EINVAL
-)paren
 suffix:semicolon
 multiline_comment|/* search the specified sample by optarg */
 r_if
@@ -18126,11 +17690,8 @@ l_int|0
 suffix:semicolon
 macro_line|#endif /* allow sharing */
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
 multiline_comment|/* load voice information data */
@@ -18180,18 +17741,15 @@ l_string|&quot;AWE32 Error: invalid patch info length&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
 id|offset
 op_assign
 id|AWE_PATCH_INFO_SIZE
 suffix:semicolon
-id|COPY_FROM_USER
+id|copy_from_user
 c_func
 (paren
 (paren
@@ -18202,7 +17760,7 @@ op_amp
 id|hdr
 comma
 id|addr
-comma
+op_plus
 id|offset
 comma
 id|AWE_VOICE_REC_SIZE
@@ -18233,11 +17791,8 @@ id|hdr.nvoices
 )paren
 suffix:semicolon
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
 id|total_size
@@ -18267,11 +17822,8 @@ id|hdr.nvoices
 )paren
 suffix:semicolon
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
 r_if
@@ -18288,11 +17840,8 @@ OL
 l_int|0
 )paren
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|ENOSPC
-)paren
 suffix:semicolon
 macro_line|#if 0 /* it looks like not so useful.. */
 multiline_comment|/* check if the same preset already exists in the info list */
@@ -18414,11 +17963,8 @@ OL
 l_int|0
 )paren
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|ENOSPC
-)paren
 suffix:semicolon
 r_for
 c_loop
@@ -18480,7 +18026,7 @@ op_assign
 id|FALSE
 suffix:semicolon
 multiline_comment|/* copy awe_voice_info parameters */
-id|COPY_FROM_USER
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -18492,7 +18038,7 @@ dot
 id|v
 comma
 id|addr
-comma
+op_plus
 id|offset
 comma
 id|AWE_VOICE_INFO_SIZE
@@ -18645,11 +18191,8 @@ OL
 l_int|0
 )paren
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|ENOSPC
-)paren
 suffix:semicolon
 id|size
 op_assign
@@ -18665,14 +18208,14 @@ id|offset
 op_assign
 id|AWE_PATCH_INFO_SIZE
 suffix:semicolon
-id|COPY_FROM_USER
+id|copy_from_user
 c_func
 (paren
 op_amp
 id|tmprec
 comma
 id|addr
-comma
+op_plus
 id|offset
 comma
 id|AWE_SAMPLE_INFO_SIZE
@@ -18701,11 +18244,8 @@ id|size
 )paren
 suffix:semicolon
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
 r_if
@@ -18759,11 +18299,8 @@ id|tmprec.sample
 )paren
 suffix:semicolon
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
 r_if
@@ -18777,11 +18314,8 @@ OL
 l_int|0
 )paren
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|ENOSPC
-)paren
 suffix:semicolon
 id|free_sample
 op_assign
@@ -18905,11 +18439,8 @@ l_string|&quot;AWE32: replace: patch not opened&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
 id|size
@@ -18926,14 +18457,14 @@ id|offset
 op_assign
 id|AWE_PATCH_INFO_SIZE
 suffix:semicolon
-id|COPY_FROM_USER
+id|copy_from_user
 c_func
 (paren
 op_amp
 id|cursmp
 comma
 id|addr
-comma
+op_plus
 id|offset
 comma
 id|AWE_SAMPLE_INFO_SIZE
@@ -18966,11 +18497,8 @@ id|size
 )paren
 suffix:semicolon
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
 id|channels
@@ -18998,11 +18526,8 @@ id|channels
 )paren
 suffix:semicolon
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
 r_for
@@ -19065,11 +18590,8 @@ id|cursmp.sample
 )paren
 suffix:semicolon
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
 r_if
@@ -19101,11 +18623,8 @@ id|cursmp.size
 )paren
 suffix:semicolon
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
 id|save_mem_ptr
@@ -19133,7 +18652,7 @@ id|v.start
 op_minus
 id|awe_mem_start
 suffix:semicolon
-id|MEMCPY
+id|memcpy
 c_func
 (paren
 op_amp
@@ -19296,7 +18815,7 @@ id|sp-&gt;loopstart
 suffix:semicolon
 id|readbuf_loop
 op_assign
-id|my_malloc
+id|vmalloc
 c_func
 (paren
 id|looplen
@@ -19319,11 +18838,8 @@ l_string|&quot;AWE32: can&squot;t malloc temp buffer&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|ENOSPC
-)paren
 suffix:semicolon
 )brace
 )brace
@@ -19373,16 +18889,25 @@ r_int
 r_char
 id|cc
 suffix:semicolon
-id|GET_BYTE_FROM_USER
+id|get_user
 c_func
 (paren
 id|cc
 comma
+(paren
+r_int
+r_char
+op_star
+)paren
+op_amp
+(paren
 id|readbuf_addr
-comma
+)paren
+(braket
 id|readbuf_offs
 op_plus
 id|pos
+)braket
 )paren
 suffix:semicolon
 id|c
@@ -19395,18 +18920,27 @@ multiline_comment|/* convert 8bit -&gt; 16bit */
 )brace
 r_else
 (brace
-id|GET_SHORT_FROM_USER
+id|get_user
 c_func
 (paren
 id|c
 comma
+(paren
+r_int
+r_int
+op_star
+)paren
+op_amp
+(paren
 id|readbuf_addr
-comma
+)paren
+(braket
 id|readbuf_offs
 op_plus
 id|pos
 op_star
 l_int|2
+)braket
 )paren
 suffix:semicolon
 )brace
@@ -19512,14 +19046,12 @@ c_cond
 (paren
 id|readbuf_loop
 )paren
-(brace
-id|my_free
+id|vfree
 c_func
 (paren
 id|readbuf_loop
 )paren
 suffix:semicolon
-)brace
 id|readbuf_loop
 op_assign
 l_int|NULL
@@ -19652,11 +19184,8 @@ l_string|&quot;AWE32 Error: Sample memory full&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|ENOSPC
-)paren
 suffix:semicolon
 )brace
 multiline_comment|/* recalculate address offset */
@@ -19750,11 +19279,8 @@ OL
 l_int|0
 )paren
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|ENOSPC
-)paren
 suffix:semicolon
 r_for
 c_loop
@@ -20157,14 +19683,11 @@ l_string|&quot;AWE32 Error: Patch header too short&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
-id|COPY_FROM_USER
+id|copy_from_user
 c_func
 (paren
 (paren
@@ -20179,7 +19702,7 @@ op_plus
 id|offs
 comma
 id|addr
-comma
+op_plus
 id|offs
 comma
 id|sizeof_patch
@@ -20210,11 +19733,8 @@ id|patch.len
 )paren
 suffix:semicolon
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
 r_if
@@ -20231,11 +19751,8 @@ OL
 l_int|0
 )paren
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|ENOSPC
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -20248,11 +19765,8 @@ OL
 l_int|0
 )paren
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|ENOSPC
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -20264,11 +19778,8 @@ l_int|1
 )paren
 )paren
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|ENOSPC
-)paren
 suffix:semicolon
 id|free_sample
 op_assign
@@ -20988,7 +20499,7 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif  /* AWE_HAS_GUS_COMPATIBILITY */
-multiline_comment|/*----------------------------------------------------------------&n; * sample and voice list handlers&n; *----------------------------------------------------------------*/
+multiline_comment|/*&n; * sample and voice list handlers&n; */
 multiline_comment|/* append this to the sf list */
 DECL|function|add_sf_info
 r_static
@@ -23493,7 +23004,7 @@ id|info-&gt;pgm_num
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_AWE32_MIXER
-multiline_comment|/*================================================================&n; * AWE32 mixer device control&n; *================================================================*/
+multiline_comment|/*&n; * AWE32 mixer device control&n; */
 r_static
 r_int
 id|awe_mixer_ioctl
@@ -23525,10 +23036,6 @@ id|mixer_operations
 id|awe_mixer_operations
 op_assign
 (brace
-macro_line|#ifndef __FreeBSD__
-l_string|&quot;AWE32&quot;
-comma
-macro_line|#endif
 l_string|&quot;AWE32 Equalizer&quot;
 comma
 id|awe_mixer_ioctl
@@ -23632,22 +23139,20 @@ op_ne
 l_char|&squot;M&squot;
 )paren
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|EINVAL
-)paren
 suffix:semicolon
 id|level
 op_assign
 (paren
 r_int
 )paren
-id|IOCTL_IN
-c_func
+op_star
 (paren
-id|arg
+r_int
+op_star
 )paren
+id|arg
 suffix:semicolon
 id|level
 op_assign
@@ -23688,11 +23193,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|IO_WRITE_CHECK
+id|_SIOC_DIR
 c_func
 (paren
 id|cmd
 )paren
+op_amp
+id|_IOC_WRITE
 )paren
 (brace
 r_switch
@@ -23967,17 +23474,18 @@ r_break
 suffix:semicolon
 )brace
 r_return
-id|IOCTL_OUT
-c_func
+op_star
 (paren
-id|arg
-comma
-id|level
+r_int
+op_star
 )paren
+id|arg
+op_assign
+id|level
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_AWE32_MIXER */
-multiline_comment|/*================================================================&n; * initialization of AWE32&n; *================================================================*/
+multiline_comment|/*&n; * initialization of AWE32&n; */
 multiline_comment|/* intiailize audio channels */
 r_static
 r_void
@@ -26537,11 +26045,8 @@ id|AWE_ST_OFF
 suffix:semicolon
 )brace
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|ENOSPC
-)paren
 suffix:semicolon
 )brace
 multiline_comment|/* set address to write */
@@ -27399,11 +26904,8 @@ id|patch-&gt;optarg
 )paren
 suffix:semicolon
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
 r_if
@@ -27424,14 +26926,11 @@ l_string|&quot;AWE32 Error: too short chorus fx parameters&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
-id|COPY_FROM_USER
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -27441,7 +26940,7 @@ id|patch-&gt;optarg
 )braket
 comma
 id|addr
-comma
+op_plus
 id|AWE_PATCH_INFO_SIZE
 comma
 r_sizeof
@@ -28413,11 +27912,8 @@ id|patch-&gt;optarg
 )paren
 suffix:semicolon
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
 r_if
@@ -28438,14 +27934,11 @@ l_string|&quot;AWE32 Error: too short reverb fx parameters&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-id|RET_ERROR
-c_func
-(paren
+op_minus
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
-id|COPY_FROM_USER
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -28455,7 +27948,7 @@ id|patch-&gt;optarg
 )braket
 comma
 id|addr
-comma
+op_plus
 id|AWE_PATCH_INFO_SIZE
 comma
 r_sizeof
@@ -29800,7 +29293,7 @@ id|my_mididev
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*================================================================&n; * open/close midi device&n; *================================================================*/
+multiline_comment|/*&n; * open/close midi device&n; */
 DECL|variable|midi_opened
 r_static
 r_int
@@ -29993,10 +29486,12 @@ id|curst.chan
 op_assign
 l_int|0
 suffix:semicolon
-id|BZERO
+id|memset
 c_func
 (paren
 id|curst.buf
+comma
+l_int|0
 comma
 r_sizeof
 (paren
@@ -30089,7 +29584,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*================================================================&n; * initialize&n; *================================================================*/
+multiline_comment|/*&n; * initialize&n; */
 DECL|function|init_midi_status
 r_static
 r_void
@@ -30115,7 +29610,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*================================================================&n; * RPN &amp; NRPN&n; *================================================================*/
+multiline_comment|/*&n; * RPN &amp; NRPN&n; */
 DECL|macro|MAX_MIDI_CHANNELS
 mdefine_line|#define MAX_MIDI_CHANNELS&t;16
 multiline_comment|/* RPN &amp; NRPN */
@@ -30221,7 +29716,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*================================================================&n; * process midi queue&n; *================================================================*/
+multiline_comment|/*&n; * process midi queue&n; */
 multiline_comment|/* status event types */
 DECL|typedef|StatusEvent
 r_typedef
@@ -30690,7 +30185,7 @@ id|Q_NONE
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*================================================================&n; * status events&n; *================================================================*/
+multiline_comment|/*&n; * status events&n; */
 multiline_comment|/* note on */
 DECL|function|midi_note_on
 r_static
@@ -31825,7 +31320,7 @@ multiline_comment|/* GM on */
 r_if
 c_cond
 (paren
-id|MEMCMP
+id|memcmp
 c_func
 (paren
 id|st-&gt;buf
@@ -31868,7 +31363,7 @@ r_else
 r_if
 c_cond
 (paren
-id|MEMCMP
+id|memcmp
 c_func
 (paren
 id|st-&gt;buf
@@ -32188,7 +31683,7 @@ r_else
 r_if
 c_cond
 (paren
-id|MEMCMP
+id|memcmp
 c_func
 (paren
 id|st-&gt;buf
@@ -32218,7 +31713,7 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*================================================================&n; * convert NRPN/control values&n; *================================================================*/
+multiline_comment|/*&n; * convert NRPN/control values&n; */
 DECL|function|send_converted_effect
 r_static
 r_int
@@ -32409,7 +31904,7 @@ r_return
 id|FALSE
 suffix:semicolon
 )brace
-multiline_comment|/*----------------------------------------------------------------&n; * AWE32 NRPN effects&n; *----------------------------------------------------------------*/
+multiline_comment|/*&n; * AWE32 NRPN effects&n; */
 r_static
 r_int
 r_int
@@ -32976,7 +32471,7 @@ c_func
 id|awe_effects
 )paren
 suffix:semicolon
-multiline_comment|/*----------------------------------------------------------------&n; * GS(SC88) NRPN effects; still experimental&n; *----------------------------------------------------------------*/
+multiline_comment|/*&n; * GS(SC88) NRPN effects; still experimental&n; */
 multiline_comment|/* cutoff: quarter semitone step, max=255 */
 DECL|function|gs_cutoff
 r_static
@@ -33582,5 +33077,151 @@ id|val
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_AWE32_MIDIEMU */
-macro_line|#endif /* CONFIG_AWE32_SYNTH */
+multiline_comment|/* new type interface */
+DECL|function|attach_awe
+r_static
+r_int
+id|__init
+id|attach_awe
+c_func
+(paren
+r_void
+)paren
+(brace
+macro_line|#ifdef CONFIG_PNP_DRV
+r_if
+c_cond
+(paren
+id|pnp
+)paren
+(brace
+id|awe_initpnp
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|awe_pnp_ok
+)paren
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif /* pnp */
+id|_attach_awe
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|unload_awe
+r_static
+r_void
+id|__exit
+id|unload_awe
+c_func
+(paren
+r_void
+)paren
+(brace
+macro_line|#ifdef CONFIG_PNP_DRV
+r_if
+c_cond
+(paren
+id|pnp
+)paren
+id|awe_unload_pnp
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+id|_unload_awe
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+DECL|variable|attach_awe
+id|module_init
+c_func
+(paren
+id|attach_awe
+)paren
+suffix:semicolon
+DECL|variable|unload_awe
+id|module_exit
+c_func
+(paren
+id|unload_awe
+)paren
+suffix:semicolon
+macro_line|#ifndef MODULE
+DECL|function|setup_awe
+r_static
+r_int
+id|__init
+id|setup_awe
+c_func
+(paren
+r_char
+op_star
+id|str
+)paren
+(brace
+multiline_comment|/* io, memsize */
+r_int
+id|ints
+(braket
+l_int|3
+)braket
+suffix:semicolon
+id|str
+op_assign
+id|get_options
+c_func
+(paren
+id|str
+comma
+id|ARRAY_SIZE
+c_func
+(paren
+id|ints
+)paren
+comma
+id|ints
+)paren
+suffix:semicolon
+id|io
+op_assign
+id|ints
+(braket
+l_int|1
+)braket
+suffix:semicolon
+id|memsize
+op_assign
+id|ints
+(braket
+l_int|2
+)braket
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+id|__setup
+c_func
+(paren
+l_string|&quot;awe=&quot;
+comma
+id|setup_awe
+)paren
+suffix:semicolon
+macro_line|#endif
 eof

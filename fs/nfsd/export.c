@@ -227,10 +227,6 @@ c_func
 id|hash_wait
 )paren
 suffix:semicolon
-DECL|macro|READLOCK
-mdefine_line|#define READLOCK&t;&t;0
-DECL|macro|WRITELOCK
-mdefine_line|#define WRITELOCK&t;&t;1
 multiline_comment|/*&n; * Find a client&squot;s export for a device.&n; */
 r_static
 r_inline

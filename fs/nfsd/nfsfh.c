@@ -2141,7 +2141,6 @@ op_assign
 id|nfserrno
 c_func
 (paren
-op_minus
 id|PTR_ERR
 c_func
 (paren

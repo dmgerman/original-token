@@ -27,19 +27,19 @@ DECL|variable|decnet_dn_count
 r_int
 id|decnet_dn_count
 op_assign
-l_int|3
+l_int|1
 suffix:semicolon
 DECL|variable|decnet_di_count
 r_int
 id|decnet_di_count
 op_assign
-l_int|5
+l_int|3
 suffix:semicolon
 DECL|variable|decnet_dr_count
 r_int
 id|decnet_dr_count
 op_assign
-l_int|5
+l_int|3
 suffix:semicolon
 macro_line|#ifdef CONFIG_SYSCTL
 r_extern

@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: init.c,v 1.81 2000/02/26 11:59:31 anton Exp $&n; *  linux/arch/sparc/mm/init.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Eddie C. Dost (ecd@skynet.be)&n; *  Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *  Copyright (C) 2000 Anton Blanchard (anton@progsoc.uts.edu.au)&n; */
+multiline_comment|/*  $Id: init.c,v 1.83 2000/03/07 23:12:35 anton Exp $&n; *  linux/arch/sparc/mm/init.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Eddie C. Dost (ecd@skynet.be)&n; *  Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *  Copyright (C) 2000 Anton Blanchard (anton@progsoc.uts.edu.au)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -409,13 +409,16 @@ multiline_comment|/* Limit maximum memory until we implement highmem for sparc *
 r_if
 c_cond
 (paren
+op_logical_neg
+id|cmdline_memory_size
+op_logical_or
 id|cmdline_memory_size
 OG
-l_int|0x9000000
+l_int|0x0d000000
 )paren
 id|cmdline_memory_size
 op_assign
-l_int|0x9000000
+l_int|0x0d000000
 suffix:semicolon
 multiline_comment|/* XXX It is a bit ambiguous here, whether we should&n;&t; * XXX treat the user specified mem=xxx as total wanted&n;&t; * XXX physical memory, or as a limit to the upper&n;&t; * XXX physical address we allow.  For now it is the&n;&t; * XXX latter. -DaveM&n;&t; */
 macro_line|#ifdef DEBUG_BOOTMEM
@@ -480,7 +483,7 @@ r_if
 c_cond
 (paren
 id|cmdline_memory_size
-OG
+OL
 id|sp_banks
 (braket
 id|i

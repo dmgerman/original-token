@@ -195,12 +195,6 @@ c_func
 r_void
 )paren
 (brace
-id|nfsd_xdr_init
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* XDR */
 id|nfsd_stat_init
 c_func
 (paren

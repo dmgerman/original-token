@@ -11,8 +11,6 @@ l_string|&quot;tms380tr.c: v1.07 21/01/2000 by Christoph Goos, Adam Fritzler&bsl
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef MODULE
-DECL|macro|EXPORT_SYMTAB
-mdefine_line|#define EXPORT_SYMTAB
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#endif

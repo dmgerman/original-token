@@ -292,6 +292,7 @@ comma
 l_string|&quot;State:&bslash;t%s&bslash;n&quot;
 l_string|&quot;Pid:&bslash;t%d&bslash;n&quot;
 l_string|&quot;PPid:&bslash;t%d&bslash;n&quot;
+l_string|&quot;TracerPid:&bslash;t%d&bslash;n&quot;
 l_string|&quot;Uid:&bslash;t%d&bslash;t%d&bslash;t%d&bslash;t%d&bslash;n&quot;
 l_string|&quot;Gid:&bslash;t%d&bslash;t%d&bslash;t%d&bslash;t%d&bslash;n&quot;
 l_string|&quot;FDSize:&bslash;t%d&bslash;n&quot;
@@ -305,7 +306,16 @@ id|p
 comma
 id|p-&gt;pid
 comma
+id|p-&gt;p_opptr-&gt;pid
+comma
 id|p-&gt;p_pptr-&gt;pid
+op_ne
+id|p-&gt;p_opptr-&gt;pid
+ques
+c_cond
+id|p-&gt;p_opptr-&gt;pid
+suffix:colon
+l_int|0
 comma
 id|p-&gt;uid
 comma
@@ -1188,7 +1198,7 @@ id|task-&gt;comm
 comma
 id|state
 comma
-id|task-&gt;p_pptr-&gt;pid
+id|task-&gt;p_opptr-&gt;pid
 comma
 id|task-&gt;pgrp
 comma

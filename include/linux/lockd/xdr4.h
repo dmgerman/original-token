@@ -7,18 +7,16 @@ macro_line|#include &lt;linux/nfs.h&gt;
 macro_line|#include &lt;linux/sunrpc/xdr.h&gt;
 macro_line|#include &lt;linux/lockd/xdr.h&gt;
 multiline_comment|/* error codes new to NLMv4 */
-r_extern
-id|u32
-id|nlm4_deadlock
-comma
-id|nlm4_rofs
-comma
-id|nlm4_stale_fh
-comma
-id|nlm4_fbig
-comma
-id|nlm4_failed
-suffix:semicolon
+DECL|macro|nlm4_deadlock
+mdefine_line|#define&t;nlm4_deadlock&t;&t;__constant_htonl(NLM_DEADLCK)
+DECL|macro|nlm4_rofs
+mdefine_line|#define&t;nlm4_rofs&t;&t;__constant_htonl(NLM_ROFS)
+DECL|macro|nlm4_stale_fh
+mdefine_line|#define&t;nlm4_stale_fh&t;&t;__constant_htonl(NLM_STALE_FH)
+DECL|macro|nlm4_fbig
+mdefine_line|#define&t;nlm4_fbig&t;&t;__constant_htonl(NLM_FBIG)
+DECL|macro|nlm4_failed
+mdefine_line|#define&t;nlm4_failed&t;&t;__constant_htonl(NLM_FAILED)
 r_int
 id|nlm4svc_decode_testargs
 c_func

@@ -1286,19 +1286,6 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_FB_ATY128
-r_extern
-r_void
-id|aty128fb_of_init
-c_func
-(paren
-r_struct
-id|device_node
-op_star
-id|dp
-)paren
-suffix:semicolon
-macro_line|#endif /* CONFIG_FB_ATY */
 macro_line|#ifdef CONFIG_FB_S3TRIO
 r_extern
 r_void
@@ -1917,33 +1904,6 @@ op_star
 id|dp
 )paren
 (brace
-macro_line|#ifdef CONFIG_FB_ATY128
-r_if
-c_cond
-(paren
-op_logical_neg
-id|strncmp
-c_func
-(paren
-id|dp-&gt;name
-comma
-l_string|&quot;ATY,Rage128&quot;
-comma
-l_int|11
-)paren
-)paren
-(brace
-id|aty128fb_of_init
-c_func
-(paren
-id|dp
-)paren
-suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
-macro_line|#endif
 macro_line|#ifdef CONFIG_FB_S3TRIO
 r_if
 c_cond

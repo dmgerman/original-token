@@ -744,6 +744,21 @@ id|id-&gt;eide_pio
 suffix:semicolon
 )brace
 )brace
+macro_line|#if 0
+r_if
+c_cond
+(paren
+id|drive-&gt;id-&gt;major_rev_num
+op_amp
+l_int|0x0004
+)paren
+id|printf
+c_func
+(paren
+l_string|&quot;ATA-2 &quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t;&t; * Conservative &quot;downgrade&quot; for all pre-ATA2 drives&n;&t;&t; */
 r_if
 c_cond

@@ -1157,13 +1157,6 @@ l_int|NULL
 )paren
 )paren
 (brace
-macro_line|#ifdef CMI8330_DMA0BAD
-r_int
-id|dmahack
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
 id|sb_dev
 op_member_access_from_pointer
 id|prepare
@@ -1172,42 +1165,6 @@ c_func
 id|sb_dev
 )paren
 suffix:semicolon
-multiline_comment|/*  This device doesn&squot;t work with DMA 0, so we must allocate&n;&t;&t; *  it to prevent PnP routines to assign it to the card.&n;&t;&t; *&n;&t;&t; *  I know i could have inlined the following lines, but it&squot;s cleaner&n;&t;&t; *  this way.&n;&t;&t; */
-macro_line|#ifdef CMI8330_DMA0BAD
-r_if
-c_cond
-(paren
-id|sb_dev-&gt;dma_resource
-(braket
-l_int|0
-)braket
-dot
-id|start
-op_eq
-l_int|0
-)paren
-(brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|request_dma
-c_func
-(paren
-l_int|0
-comma
-l_string|&quot;cmi8330 dma hack&quot;
-)paren
-)paren
-(brace
-multiline_comment|/* DMA was free, we now have it */
-id|dmahack
-op_assign
-l_int|1
-suffix:semicolon
-)brace
-)brace
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1277,21 +1234,6 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef CMI8330_DMA0BAD
-r_if
-c_cond
-(paren
-id|dmahack
-)paren
-(brace
-id|free_dma
-c_func
-(paren
-l_int|0
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 r_if
 c_cond
 (paren

@@ -977,11 +977,6 @@ id|nlmsvc_pid
 op_assign
 l_int|0
 suffix:semicolon
-id|nlmxdr_init
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

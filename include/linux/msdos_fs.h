@@ -1115,8 +1115,6 @@ r_struct
 id|statfs
 op_star
 id|buf
-comma
-r_int
 )paren
 suffix:semicolon
 r_extern

@@ -7469,6 +7469,11 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
+r_int
+id|err
+op_assign
+l_int|0
+suffix:semicolon
 macro_line|#ifdef DEBUG_IOCTL_TRACE
 id|printk
 c_func
@@ -7492,8 +7497,6 @@ op_amp
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME: can&squot;t copy*user when cli this is broken! */
-multiline_comment|/* Note : is it still valid ? Jean II */
 multiline_comment|/* Look what is the request */
 r_switch
 c_cond
@@ -8140,10 +8143,19 @@ r_break
 suffix:semicolon
 )brace
 multiline_comment|/* Copy the key in the driver */
-r_if
-c_cond
+id|wv_splx
+c_func
 (paren
+id|lp
+comma
+op_amp
+id|flags
+)paren
+suffix:semicolon
+id|err
+op_assign
 id|copy_from_user
+c_func
 (paren
 id|psa.psa_encryption_key
 comma
@@ -8151,6 +8163,20 @@ id|wrq-&gt;u.encoding.pointer
 comma
 id|wrq-&gt;u.encoding.length
 )paren
+suffix:semicolon
+id|wv_splhi
+c_func
+(paren
+id|lp
+comma
+op_amp
+id|flags
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
 )paren
 (brace
 id|ret
@@ -8461,10 +8487,20 @@ id|wrq-&gt;u.encoding.length
 op_assign
 l_int|8
 suffix:semicolon
+id|wv_splx
+c_func
+(paren
+id|lp
+comma
+op_amp
+id|flags
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|copy_to_user
+c_func
 (paren
 id|wrq-&gt;u.encoding.pointer
 comma
@@ -8477,6 +8513,15 @@ id|ret
 op_assign
 op_minus
 id|EFAULT
+suffix:semicolon
+id|wv_splhi
+c_func
+(paren
+id|lp
+comma
+op_amp
+id|flags
+)paren
 suffix:semicolon
 )brace
 r_break
@@ -8648,10 +8693,20 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Copy structure to the user buffer. */
+id|wv_splx
+c_func
+(paren
+id|lp
+comma
+op_amp
+id|flags
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|copy_to_user
+c_func
 (paren
 id|wrq-&gt;u.data.pointer
 comma
@@ -8669,6 +8724,15 @@ id|ret
 op_assign
 op_minus
 id|EFAULT
+suffix:semicolon
+id|wv_splhi
+c_func
+(paren
+id|lp
+comma
+op_amp
+id|flags
+)paren
 suffix:semicolon
 )brace
 r_break
@@ -8695,7 +8759,7 @@ id|priv
 )braket
 op_assign
 (brace
-multiline_comment|/* cmd,         set_args,       get_args,       name */
+multiline_comment|/* { cmd,&n;&t;&t;&t;&t;     set_args,&n;&t;&t;&t;&t;     get_args,&n;&t;&t;&t;&t;     name } */
 (brace
 id|SIOCSIPQTHR
 comma
@@ -8756,10 +8820,20 @@ op_assign
 l_int|4
 suffix:semicolon
 multiline_comment|/* Copy structure to the user buffer. */
+id|wv_splx
+c_func
+(paren
+id|lp
+comma
+op_amp
+id|flags
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|copy_to_user
+c_func
 (paren
 id|wrq-&gt;u.data.pointer
 comma
@@ -8779,6 +8853,15 @@ id|ret
 op_assign
 op_minus
 id|EFAULT
+suffix:semicolon
+id|wv_splhi
+c_func
+(paren
+id|lp
+comma
+op_amp
+id|flags
+)paren
 suffix:semicolon
 )brace
 r_break
@@ -8829,10 +8912,19 @@ r_int
 id|i
 suffix:semicolon
 multiline_comment|/* Copy addresses to the driver. */
-r_if
-c_cond
+id|wv_splx
+c_func
 (paren
+id|lp
+comma
+op_amp
+id|flags
+)paren
+suffix:semicolon
+id|err
+op_assign
 id|copy_from_user
+c_func
 (paren
 id|address
 comma
@@ -8846,6 +8938,20 @@ id|sockaddr
 op_star
 id|lp-&gt;spy_number
 )paren
+suffix:semicolon
+id|wv_splhi
+c_func
+(paren
+id|lp
+comma
+op_amp
+id|flags
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
 )paren
 (brace
 id|ret
@@ -9072,10 +9178,19 @@ id|AF_UNIX
 suffix:semicolon
 )brace
 multiline_comment|/* Copy addresses to the user buffer. */
-r_if
-c_cond
+id|wv_splx
+c_func
 (paren
+id|lp
+comma
+op_amp
+id|flags
+)paren
+suffix:semicolon
+id|err
+op_assign
 id|copy_to_user
+c_func
 (paren
 id|wrq-&gt;u.data.pointer
 comma
@@ -9089,20 +9204,10 @@ id|sockaddr
 op_star
 id|lp-&gt;spy_number
 )paren
-)paren
-(brace
-id|ret
-op_assign
-op_minus
-id|EFAULT
 suffix:semicolon
-r_break
-suffix:semicolon
-)brace
 multiline_comment|/* Copy stats to the user buffer (just after). */
-r_if
-c_cond
-(paren
+id|err
+op_or_assign
 id|copy_to_user
 c_func
 (paren
@@ -9127,6 +9232,20 @@ id|iw_qual
 op_star
 id|lp-&gt;spy_number
 )paren
+suffix:semicolon
+id|wv_splhi
+c_func
+(paren
+id|lp
+comma
+op_amp
+id|flags
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
 )paren
 (brace
 id|ret
@@ -9358,10 +9477,19 @@ l_int|0
 )paren
 (brace
 multiline_comment|/* Copy interval ranges to the driver */
-r_if
-c_cond
+id|wv_splx
+c_func
 (paren
+id|lp
+comma
+op_amp
+id|flags
+)paren
+suffix:semicolon
+id|err
+op_assign
 id|copy_from_user
+c_func
 (paren
 id|lp-&gt;his_range
 comma
@@ -9374,6 +9502,20 @@ r_char
 op_star
 id|lp-&gt;his_number
 )paren
+suffix:semicolon
+id|wv_splhi
+c_func
+(paren
+id|lp
+comma
+op_amp
+id|flags
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
 )paren
 (brace
 id|ret
@@ -9432,10 +9574,20 @@ l_int|0
 )paren
 (brace
 multiline_comment|/* Copy data to the user buffer. */
+id|wv_splx
+c_func
+(paren
+id|lp
+comma
+op_amp
+id|flags
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|copy_to_user
+c_func
 (paren
 id|wrq-&gt;u.data.pointer
 comma
@@ -9448,11 +9600,20 @@ r_int
 op_star
 id|lp-&gt;his_number
 )paren
-)paren
+suffix:semicolon
 id|ret
 op_assign
 op_minus
 id|EFAULT
+suffix:semicolon
+id|wv_splhi
+c_func
+(paren
+id|lp
+comma
+op_amp
+id|flags
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* if(pointer != NULL) */
@@ -9468,6 +9629,7 @@ op_minus
 id|EOPNOTSUPP
 suffix:semicolon
 )brace
+multiline_comment|/* switch (cmd) */
 multiline_comment|/* Enable interrupts and restore flags. */
 id|wv_splx
 c_func

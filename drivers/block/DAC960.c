@@ -4355,6 +4355,9 @@ id|req-&gt;nr_segments
 op_plus
 id|next-&gt;nr_segments
 suffix:semicolon
+r_int
+id|same_segment
+suffix:semicolon
 id|max_segments
 op_assign
 id|Controller-&gt;MaxSegmentsPerRequest
@@ -4377,6 +4380,10 @@ id|max_segments
 op_assign
 id|__max_segments
 suffix:semicolon
+id|same_segment
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4390,8 +4397,9 @@ id|next-&gt;bh-&gt;b_data
 id|total_segments
 op_decrement
 suffix:semicolon
-id|q-&gt;nr_segments
-op_decrement
+id|same_segment
+op_assign
+l_int|1
 suffix:semicolon
 )brace
 r_if
@@ -4403,6 +4411,10 @@ id|max_segments
 )paren
 r_return
 l_int|0
+suffix:semicolon
+id|q-&gt;nr_segments
+op_sub_assign
+id|same_segment
 suffix:semicolon
 id|req-&gt;nr_segments
 op_assign

@@ -11,34 +11,8 @@ macro_line|#include &lt;linux/lockd/lockd.h&gt;
 macro_line|#include &lt;linux/lockd/sm_inter.h&gt;
 DECL|macro|NLMDBG_FACILITY
 mdefine_line|#define NLMDBG_FACILITY&t;&t;NLMDBG_XDR
-DECL|macro|NLM_MAXSTRLEN
-mdefine_line|#define NLM_MAXSTRLEN&t;&t;1024
 DECL|macro|OFFSET_MAX
 mdefine_line|#define OFFSET_MAX&t;&t;((off_t)LONG_MAX)
-DECL|macro|QUADLEN
-mdefine_line|#define QUADLEN(len)&t;&t;(((len) + 3) &gt;&gt; 2)
-DECL|variable|nlm4_deadlock
-DECL|variable|nlm4_rofs
-DECL|variable|nlm4_stale_fh
-DECL|variable|nlm4_fbig
-id|u32
-id|nlm4_deadlock
-comma
-id|nlm4_rofs
-comma
-id|nlm4_stale_fh
-comma
-id|nlm4_fbig
-comma
-DECL|variable|nlm4_failed
-id|nlm4_failed
-suffix:semicolon
-DECL|typedef|nlm_args
-r_typedef
-r_struct
-id|nlm_args
-id|nlm_args
-suffix:semicolon
 r_static
 r_inline
 id|off_t

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: system.h,v 1.80 1999/12/16 12:58:31 anton Exp $ */
+multiline_comment|/* $Id: system.h,v 1.81 2000/02/28 04:00:44 anton Exp $ */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifndef __SPARC_SYSTEM_H
 DECL|macro|__SPARC_SYSTEM_H
@@ -612,11 +612,6 @@ mdefine_line|#define local_irq_save(flags)&t;&t;__save_and_cli(flags)
 DECL|macro|local_irq_restore
 mdefine_line|#define local_irq_restore(flags)&t;__restore_flags(flags)
 macro_line|#ifdef __SMP__
-multiline_comment|/* This goes away after lockups have been found... */
-macro_line|#ifndef DEBUG_IRQLOCK
-DECL|macro|DEBUG_IRQLOCK
-mdefine_line|#define DEBUG_IRQLOCK
-macro_line|#endif
 r_extern
 r_int
 r_char
@@ -624,7 +619,6 @@ id|global_irq_holder
 suffix:semicolon
 DECL|macro|save_and_cli
 mdefine_line|#define save_and_cli(flags)   do { save_flags(flags); cli(); } while(0)
-macro_line|#ifdef DEBUG_IRQLOCK
 r_extern
 r_void
 id|__global_cli
@@ -668,16 +662,6 @@ DECL|macro|save_flags
 mdefine_line|#define save_flags(flags)&t;((flags)=__global_save_flags())
 DECL|macro|restore_flags
 mdefine_line|#define restore_flags(flags)&t;__global_restore_flags(flags)
-macro_line|#else
-macro_line|#error For combined sun4[md] smp, we need to get rid of the rdtbr.
-multiline_comment|/* Visit arch/sparc/lib/irqlock.S for all the fun details... */
-DECL|macro|cli
-mdefine_line|#define cli()      __asm__ __volatile__(&quot;mov&t;%%o7, %%g4&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&quot;call&t;___f_global_cli&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&quot; rd&t;%%tbr, %%g7&quot; : :&t;&t;&bslash;&n;&t;&t;&t;&t;&t;: &quot;g1&quot;, &quot;g2&quot;, &quot;g3&quot;, &quot;g4&quot;, &quot;g5&quot;, &quot;g7&quot;,&t;&bslash;&n;&t;&t;&t;&t;&t;  &quot;memory&quot;, &quot;cc&quot;)
-DECL|macro|sti
-mdefine_line|#define sti()&t;&t;&t;&t;&t;&t;&t;&bslash;&n;do {&t;register unsigned long bits asm(&quot;g7&quot;);&t;&t;&t;&bslash;&n;&t;bits = 0;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&quot;mov&t;%%o7, %%g4&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&t;&t;     &quot;call&t;___f_global_sti&bslash;n&bslash;t&quot;&t;&bslash;&n;&t;&t;&t;     &quot; rd&t;%%tbr, %%g2&quot;&t;&t;&bslash;&n;&t;&t;&t;     : /* no outputs */&t;&t;&t;&bslash;&n;&t;&t;&t;     : &quot;r&quot; (bits)&t;&t;&t;&bslash;&n;&t;&t;&t;     : &quot;g1&quot;, &quot;g2&quot;, &quot;g3&quot;, &quot;g4&quot;, &quot;g5&quot;,&t;&bslash;&n;&t;&t;&t;       &quot;memory&quot;, &quot;cc&quot;);&t;&t;&t;&bslash;&n;} while(0)
-DECL|macro|restore_flags
-mdefine_line|#define restore_flags(flags)&t;&t;&t;&t;&t;&t;&bslash;&n;do {&t;register unsigned long bits asm(&quot;g7&quot;);&t;&t;&t;&t;&bslash;&n;&t;bits = flags;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&quot;mov&t;%%o7, %%g4&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&t;&t;     &quot;call&t;___f_global_restore_flags&bslash;n&bslash;t&quot;&t;&bslash;&n;&t;&t;&t;     &quot; andcc&t;%%g7, 0x1, %%g0&quot;&t;&t;&bslash;&n;&t;&t;&t;     : &quot;=&amp;r&quot; (bits)&t;&t;&t;&t;&bslash;&n;&t;&t;&t;     : &quot;0&quot; (bits)&t;&t;&t;&t;&bslash;&n;&t;&t;&t;     : &quot;g1&quot;, &quot;g2&quot;, &quot;g3&quot;, &quot;g4&quot;, &quot;g5&quot;,&t;&t;&bslash;&n;&t;&t;&t;       &quot;memory&quot;, &quot;cc&quot;);&t;&t;&t;&t;&bslash;&n;} while(0)
-macro_line|#endif /* DEBUG_IRQLOCK */
 macro_line|#else
 DECL|macro|cli
 mdefine_line|#define cli() __cli()

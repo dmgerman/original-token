@@ -273,7 +273,7 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifdef __DO_I_NEED_THIS
+macro_line|#ifndef CONFIG_BLK_DEV_IDEPCI
 id|hw_regs_t
 id|hw
 suffix:semicolon
@@ -334,7 +334,7 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* __DO_I_NEED_THIS */
+macro_line|#endif /* CONFIG_BLK_DEV_IDEPCI */
 )brace
 r_typedef
 r_union

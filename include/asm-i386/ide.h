@@ -6,8 +6,13 @@ mdefine_line|#define __ASMi386_IDE_H
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifndef MAX_HWIFS
+macro_line|# ifdef CONFIG_BLK_DEV_IDEPCI
 DECL|macro|MAX_HWIFS
 mdefine_line|#define MAX_HWIFS&t;10
+macro_line|# else
+DECL|macro|MAX_HWIFS
+mdefine_line|#define MAX_HWIFS&t;6
+macro_line|# endif
 macro_line|#endif
 DECL|macro|ide__sti
 mdefine_line|#define ide__sti()&t;__sti()

@@ -365,13 +365,6 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|NFSSVC_XDRSIZE
 mdefine_line|#define NFSSVC_XDRSIZE&t;&t;sizeof(union nfsd_xdrstore)
-r_void
-id|nfsd_xdr_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 r_int
 id|nfssvc_decode_void
 c_func

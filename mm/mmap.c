@@ -1106,6 +1106,16 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+id|vma-&gt;vm_file
+op_assign
+id|file
+suffix:semicolon
+id|get_file
+c_func
+(paren
+id|file
+)paren
+suffix:semicolon
 id|error
 op_assign
 id|file-&gt;f_op
@@ -1138,16 +1148,6 @@ id|error
 )paren
 r_goto
 id|unmap_and_free_vma
-suffix:semicolon
-id|vma-&gt;vm_file
-op_assign
-id|file
-suffix:semicolon
-id|get_file
-c_func
-(paren
-id|file
-)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * merge_segments may merge our vma, so we can&squot;t refer to it&n;&t; * after the call.  Save the values we need now ...&n;&t; */
@@ -1226,6 +1226,16 @@ id|addr
 suffix:semicolon
 id|unmap_and_free_vma
 suffix:colon
+id|vma-&gt;vm_file
+op_assign
+l_int|NULL
+suffix:semicolon
+id|fput
+c_func
+(paren
+id|file
+)paren
+suffix:semicolon
 multiline_comment|/* Undo any partial mapping done by a device driver. */
 id|flush_cache_range
 c_func

@@ -342,7 +342,14 @@ DECL|enumerator|KERN_OVERFLOWGID
 id|KERN_OVERFLOWGID
 op_assign
 l_int|47
+comma
 multiline_comment|/* int: overflow GID */
+DECL|enumerator|KERN_SHMPATH
+id|KERN_SHMPATH
+op_assign
+l_int|48
+comma
+multiline_comment|/* string: path to shm fs */
 )brace
 suffix:semicolon
 multiline_comment|/* CTL_VM names: */

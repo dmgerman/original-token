@@ -144,7 +144,6 @@ DECL|macro|check_arg_cpu
 mdefine_line|#define check_arg_cpu(cpu)&t;do {} while (0)
 macro_line|#endif
 DECL|function|no_action
-r_static
 r_void
 id|no_action
 c_func
@@ -1136,6 +1135,10 @@ macro_line|#else
 multiline_comment|/* for non-distributed OpenPIC implementations it&squot;s in the IDU -- Cort */
 id|ISU
 op_assign
+(paren
+id|OpenPIC_Source
+op_star
+)paren
 id|OpenPIC-&gt;Source
 suffix:semicolon
 macro_line|#endif

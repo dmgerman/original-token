@@ -1,5 +1,6 @@
 multiline_comment|/*&n; *  linux/fs/super.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  super.c contains code to handle: - mount structures&n; *                                   - super-block tables.&n; *                                   - mount system call&n; *                                   - umount system call&n; *&n; *  Added options to /proc/mounts&n; *  Torbj&#xfffd;rn Lindh (torbjorn.lindh@gopta.se), April 14, 1996.&n; *&n; * GK 2/5/95  -  Changed to support mounting the root fs via NFS&n; *&n; *  Added kerneld support: Jacques Gelinas and Bjorn Ekwall&n; *  Added change_root: Werner Almesberger &amp; Hans Lermen, Feb &squot;96&n; *  Added devfs support: Richard Gooch &lt;rgooch@atnf.csiro.au&gt;, 13-JAN-1998&n; */
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
@@ -2188,9 +2189,6 @@ r_struct
 id|statfs
 id|sbuf
 suffix:semicolon
-id|mm_segment_t
-id|old_fs
-suffix:semicolon
 r_int
 id|err
 op_assign
@@ -2226,58 +2224,22 @@ id|out
 suffix:semicolon
 id|err
 op_assign
-op_minus
-id|ENOSYS
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|s-&gt;s_op-&gt;statfs
-)paren
-)paren
-r_goto
-id|out
-suffix:semicolon
-id|old_fs
-op_assign
-id|get_fs
-c_func
-(paren
-)paren
-suffix:semicolon
-id|set_fs
-c_func
-(paren
-id|get_ds
-c_func
-(paren
-)paren
-)paren
-suffix:semicolon
-id|s-&gt;s_op
-op_member_access_from_pointer
-id|statfs
+id|vfs_statfs
 c_func
 (paren
 id|s
 comma
 op_amp
 id|sbuf
-comma
-r_sizeof
-(paren
-r_struct
-id|statfs
-)paren
 )paren
 suffix:semicolon
-id|set_fs
-c_func
+r_if
+c_cond
 (paren
-id|old_fs
+id|err
 )paren
+r_goto
+id|out
 suffix:semicolon
 id|memset
 c_func

@@ -2022,6 +2022,13 @@ c_func
 id|do_gettimeofday
 )paren
 suffix:semicolon
+DECL|variable|do_settimeofday
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|do_settimeofday
+)paren
+suffix:semicolon
 macro_line|#ifndef __ia64__
 DECL|variable|loops_per_sec
 id|EXPORT_SYMBOL

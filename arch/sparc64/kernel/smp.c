@@ -1473,6 +1473,8 @@ l_int|7
 )braket
 op_mod
 l_int|3
+id|membar
+macro_line|#Sync
 id|mov
 l_int|0x20
 comma

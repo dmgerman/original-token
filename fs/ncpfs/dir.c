@@ -4580,11 +4580,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|list_empty
+id|d_unhashed
 c_func
 (paren
-op_amp
-id|dentry-&gt;d_hash
+id|dentry
 )paren
 )paren
 r_goto
@@ -5218,7 +5217,6 @@ comma
 id|new_dentry-&gt;d_name.name
 )paren
 suffix:semicolon
-multiline_comment|/* d_move(old_dentry, new_dentry); */
 r_break
 suffix:semicolon
 r_case

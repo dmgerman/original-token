@@ -78,12 +78,16 @@ DECL|variable|idebus_parameter
 r_static
 r_int
 id|idebus_parameter
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/* holds the &quot;idebus=&quot; parameter */
 DECL|variable|system_bus_speed
 r_static
 r_int
 id|system_bus_speed
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/* holds what we think is VESA/PCI bus speed */
 DECL|variable|initializing
@@ -100,7 +104,7 @@ id|ide_scan_direction
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* HELLO, comment me!! */
+multiline_comment|/* THIS was formerly 2.2.x pci=reverse */
 macro_line|#endif /* CONFIG_BLK_DEV_IDEPCI */
 macro_line|#if defined(__mc68000__) || defined(CONFIG_APUS)
 multiline_comment|/*&n; * ide_lock is used by the Atari code to obtain access to the IDE interrupt,&n; * which is shared between several drivers.&n; */
@@ -7878,6 +7882,27 @@ id|hwif
 r_if
 c_cond
 (paren
+id|hwif-&gt;straight8
+)paren
+(brace
+id|ide_release_region
+c_func
+(paren
+id|hwif-&gt;io_ports
+(braket
+id|IDE_DATA_OFFSET
+)braket
+comma
+l_int|8
+)paren
+suffix:semicolon
+r_goto
+id|jump_eight
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 id|hwif-&gt;io_ports
 (braket
 id|IDE_DATA_OFFSET
@@ -8027,6 +8052,8 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+id|jump_eight
+suffix:colon
 r_if
 c_cond
 (paren
@@ -8832,6 +8859,10 @@ op_assign
 id|old_hwif.pci_devid
 suffix:semicolon
 macro_line|#endif /* CONFIG_BLK_DEV_IDEPCI */
+id|hwif-&gt;straight8
+op_assign
+id|old_hwif.straight8
+suffix:semicolon
 m_abort
 suffix:colon
 id|restore_flags
@@ -11589,6 +11620,37 @@ l_int|2
 )paren
 )paren
 (brace
+macro_line|#if 0
+multiline_comment|/* active-retuning-calls future */
+r_if
+c_cond
+(paren
+id|HWIF
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|tune2proc
+)paren
+id|HWIF
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|tune2proc
+c_func
+(paren
+id|drive
+comma
+id|args
+(braket
+l_int|1
+)braket
+)paren
+suffix:semicolon
+macro_line|#endif
 id|ide_driveid_update
 c_func
 (paren
@@ -12512,6 +12574,10 @@ comma
 id|s
 )paren
 suffix:semicolon
+id|init_ide_data
+(paren
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_IDEDOUBLER
 r_if
 c_cond
@@ -12573,12 +12639,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_BLK_DEV_IDEPCI */
-macro_line|#ifndef CONFIG_BLK_DEV_IDEPCI
-id|init_ide_data
-(paren
-)paren
-suffix:semicolon
 macro_line|#endif /* CONFIG_BLK_DEV_IDEPCI */
 multiline_comment|/*&n;&t; * Look for drive options:  &quot;hdx=&quot;&n;&t; */
 r_if
@@ -13457,6 +13517,7 @@ l_int|0
 op_le
 l_int|66
 )paren
+(brace
 id|idebus_parameter
 op_assign
 id|vals
@@ -13464,6 +13525,7 @@ id|vals
 l_int|0
 )braket
 suffix:semicolon
+)brace
 r_else
 id|printk
 c_func
@@ -14407,6 +14469,25 @@ c_func
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_BLK_DEV_BUDDHA */
+macro_line|#if defined(CONFIG_BLK_DEV_ISAPNP) &amp;&amp; defined(CONFIG_ISAPNP)
+(brace
+r_extern
+r_void
+id|pnpide_init
+c_func
+(paren
+r_int
+id|enable
+)paren
+suffix:semicolon
+id|pnpide_init
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_BLK_DEV_ISAPNP */
 )brace
 DECL|function|ide_init_builtin_drivers
 r_void
@@ -15313,6 +15394,14 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+macro_line|#if defined(CONFIG_BLK_DEV_ISAPNP) &amp;&amp; defined(CONFIG_ISAPNP) &amp;&amp; defined(MODULE)
+id|pnpide_init
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_ISAPNP */
 macro_line|#ifdef CONFIG_PROC_FS
 id|ide_remove_proc_entries
 c_func
@@ -15987,6 +16076,14 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
+(paren
+r_void
+)paren
+id|ide_system_bus_speed
+c_func
+(paren
+)paren
+suffix:semicolon
 id|banner_printed
 op_assign
 l_int|1
@@ -16127,6 +16224,17 @@ comma
 l_string|&quot;ide&quot;
 comma
 l_int|3
+)paren
+op_logical_or
+op_logical_neg
+id|strncmp
+c_func
+(paren
+id|line
+comma
+l_string|&quot;idebus&quot;
+comma
+l_int|6
 )paren
 op_logical_or
 macro_line|#ifdef CONFIG_BLK_DEV_VIA82CXXX

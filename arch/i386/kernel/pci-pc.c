@@ -4638,10 +4638,10 @@ id|i
 )paren
 suffix:semicolon
 )brace
-DECL|function|set_level_irq
+DECL|function|ali_set_level_irq
 r_static
 r_void
-id|set_level_irq
+id|ali_set_level_irq
 c_func
 (paren
 r_int
@@ -4690,7 +4690,7 @@ op_amp
 id|mask
 )paren
 (brace
-id|printk
+id|DBG
 c_func
 (paren
 l_string|&quot;PCI irq %d was level&bslash;n&quot;
@@ -4701,7 +4701,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|printk
+id|DBG
 c_func
 (paren
 l_string|&quot;PCI irq %d was edge, turning into level-triggered&bslash;n&quot;
@@ -4843,7 +4843,7 @@ op_amp
 id|byte
 )paren
 suffix:semicolon
-id|printk
+id|DBG
 c_func
 (paren
 l_string|&quot;ALI: old %04x=%02x&bslash;n&quot;
@@ -4868,7 +4868,7 @@ id|val
 op_lshift
 id|shift
 suffix:semicolon
-id|printk
+id|DBG
 c_func
 (paren
 l_string|&quot;ALI: new %04x=%02x&bslash;n&quot;
@@ -4888,7 +4888,7 @@ comma
 id|byte
 )paren
 suffix:semicolon
-id|set_level_irq
+id|ali_set_level_irq
 c_func
 (paren
 id|irq
@@ -6327,8 +6327,6 @@ c_cond
 (paren
 op_logical_neg
 id|dev-&gt;irq
-op_logical_and
-id|pirq_table
 )paren
 (brace
 id|u8
@@ -6354,6 +6352,15 @@ id|pin
 r_char
 op_star
 id|msg
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pirq_table
+op_logical_and
+(paren
+(paren
+id|msg
 op_assign
 id|pcibios_lookup_irq
 c_func
@@ -6366,11 +6373,8 @@ id|pin
 comma
 l_int|1
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|msg
+)paren
+)paren
 )paren
 id|printk
 c_func
@@ -6382,6 +6386,33 @@ comma
 id|dev-&gt;slot_name
 comma
 id|msg
+)paren
+suffix:semicolon
+r_else
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;PCI: No IRQ known for interrupt pin %c of device %s.%s&bslash;n&quot;
+comma
+l_char|&squot;A&squot;
+op_plus
+id|pin
+op_minus
+l_int|1
+comma
+id|dev-&gt;slot_name
+comma
+(paren
+id|pci_probe
+op_amp
+id|PCI_BIOS_IRQ_SCAN
+)paren
+ques
+c_cond
+l_string|&quot;&quot;
+suffix:colon
+l_string|&quot; Please try using pci=biosirq.&quot;
 )paren
 suffix:semicolon
 )brace

@@ -32,7 +32,6 @@ macro_line|#include &lt;net/dn_nsp.h&gt;
 macro_line|#include &lt;net/dn_dev.h&gt;
 macro_line|#include &lt;net/dn_route.h&gt;
 macro_line|#include &lt;net/dn_fib.h&gt;
-macro_line|#include &lt;net/dn_raw.h&gt;
 macro_line|#include &lt;net/dn_neigh.h&gt;
 DECL|macro|MAX
 mdefine_line|#define MAX(a,b) ((a)&gt;(b)?(a):(b))
@@ -1297,21 +1296,6 @@ c_cond
 id|sock
 )paren
 (brace
-macro_line|#ifdef CONFIG_DECNET_RAW
-r_if
-c_cond
-(paren
-id|sock-&gt;type
-op_eq
-id|SOCK_RAW
-)paren
-id|sock-&gt;ops
-op_assign
-op_amp
-id|dn_raw_proto_ops
-suffix:semicolon
-r_else
-macro_line|#endif /* CONFIG_DECNET_RAW */
 id|sock-&gt;ops
 op_assign
 op_amp
@@ -2157,32 +2141,6 @@ id|SOCK_STREAM
 suffix:colon
 r_break
 suffix:semicolon
-macro_line|#ifdef CONFIG_DECNET_RAW
-r_case
-id|SOCK_RAW
-suffix:colon
-r_if
-c_cond
-(paren
-(paren
-id|protocol
-op_ne
-id|DNPROTO_NSP
-)paren
-op_logical_and
-(paren
-id|protocol
-op_ne
-id|DNPROTO_ROU
-)paren
-)paren
-r_return
-op_minus
-id|EPROTONOSUPPORT
-suffix:semicolon
-r_break
-suffix:semicolon
-macro_line|#endif /* CONFIG_DECNET_RAW */
 r_default
 suffix:colon
 r_return
@@ -4133,6 +4091,14 @@ id|sk
 op_assign
 id|sock-&gt;sk
 suffix:semicolon
+r_struct
+id|dn_scp
+op_star
+id|scp
+op_assign
+op_amp
+id|sk-&gt;protinfo.dn
+suffix:semicolon
 r_int
 id|err
 op_assign
@@ -4729,16 +4695,59 @@ id|skb_peek
 c_func
 (paren
 op_amp
-id|sk-&gt;receive_queue
+id|scp-&gt;other_receive_queue
 )paren
 )paren
 op_ne
 l_int|NULL
 )paren
+(brace
 id|amount
 op_assign
 id|skb-&gt;len
 suffix:semicolon
+)brace
+r_else
+(brace
+r_struct
+id|sk_buff
+op_star
+id|skb
+op_assign
+id|sk-&gt;receive_queue.next
+suffix:semicolon
+r_for
+c_loop
+(paren
+suffix:semicolon
+suffix:semicolon
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|skb
+op_eq
+(paren
+r_struct
+id|sk_buff
+op_star
+)paren
+op_amp
+id|sk-&gt;receive_queue
+)paren
+r_break
+suffix:semicolon
+id|amount
+op_add_assign
+id|skb-&gt;len
+suffix:semicolon
+id|skb
+op_assign
+id|skb-&gt;next
+suffix:semicolon
+)brace
+)brace
 id|release_sock
 c_func
 (paren
@@ -8244,25 +8253,6 @@ r_return
 id|len
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_DECNET_RAW
-r_extern
-r_int
-id|dn_raw_get_info
-c_func
-(paren
-r_char
-op_star
-comma
-r_char
-op_star
-op_star
-comma
-id|off_t
-comma
-r_int
-)paren
-suffix:semicolon
-macro_line|#endif /* CONFIG_DECNET_RAW */
 DECL|variable|dn_family_ops
 r_static
 r_struct
@@ -8349,7 +8339,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;NET4: DECnet for Linux: V.2.3.38s (C) 1995-1999 Linux DECnet Project Team&bslash;n&quot;
+l_string|&quot;NET4: DECnet for Linux: V.2.3.49s (C) 1995-2000 Linux DECnet Project Team&bslash;n&quot;
 )paren
 suffix:semicolon
 id|sock_register
@@ -8383,18 +8373,6 @@ comma
 id|dn_get_info
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_DECNET_RAW
-id|proc_net_create
-c_func
-(paren
-l_string|&quot;decnet_raw&quot;
-comma
-l_int|0
-comma
-id|dn_raw_get_info
-)paren
-suffix:semicolon
-macro_line|#endif
 id|dn_neigh_init
 c_func
 (paren
@@ -8720,14 +8698,6 @@ c_func
 l_string|&quot;decnet&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_DECNET_RAW
-id|proc_net_remove
-c_func
-(paren
-l_string|&quot;decnet_raw&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 id|dev_remove_pack
 c_func
 (paren

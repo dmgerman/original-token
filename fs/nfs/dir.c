@@ -2553,11 +2553,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|list_empty
+id|d_unhashed
 c_func
 (paren
-op_amp
-id|dentry-&gt;d_hash
+id|dentry
 )paren
 )paren
 id|unhashed
@@ -3932,11 +3931,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|list_empty
+id|d_unhashed
 c_func
 (paren
-op_amp
-id|dentry-&gt;d_hash
+id|dentry
 )paren
 )paren
 (brace
@@ -4471,7 +4469,16 @@ comma
 id|new_dentry-&gt;d_count
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * First check whether the target is busy ... we can&squot;t&n;&t; * safely do _any_ rename if the target is in use.&n;&t; *&n;&t; * For files, make a copy of the dentry and then do a &n;&t; * silly-rename. If the silly-rename succeeds, the&n;&t; * copied dentry is hashed and becomes the new target.&n;&t; *&n;&t; * With directories check is done in VFS.&n;&t; */
+multiline_comment|/*&n;&t; * First check whether the target is busy ... we can&squot;t&n;&t; * safely do _any_ rename if the target is in use.&n;&t; *&n;&t; * For files, make a copy of the dentry and then do a &n;&t; * silly-rename. If the silly-rename succeeds, the&n;&t; * copied dentry is hashed and becomes the new target.&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|new_inode
+)paren
+r_goto
+id|go_ahead
+suffix:semicolon
 id|error
 op_assign
 op_minus
@@ -4480,11 +4487,22 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|S_ISDIR
+c_func
+(paren
+id|new_inode-&gt;i_mode
+)paren
+)paren
+r_goto
+id|out
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
 id|new_dentry-&gt;d_count
 OG
 l_int|1
-op_logical_and
-id|new_inode
 )paren
 (brace
 r_int
@@ -4575,6 +4593,8 @@ id|out
 suffix:semicolon
 )brace
 )brace
+id|go_ahead
+suffix:colon
 multiline_comment|/*&n;&t; * ... prune child dentries and writebacks if needed.&n;&t; */
 r_if
 c_cond
@@ -4597,44 +4617,15 @@ id|old_dentry
 )paren
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|new_dentry-&gt;d_count
-OG
-l_int|1
-op_logical_and
-id|new_inode
-)paren
-(brace
-macro_line|#ifdef NFS_PARANOIA
-id|printk
-c_func
-(paren
-l_string|&quot;nfs_rename: new dentry %s/%s busy, d_count=%d&bslash;n&quot;
-comma
-id|new_dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|new_dentry-&gt;d_name.name
-comma
-id|new_dentry-&gt;d_count
-)paren
-suffix:semicolon
-macro_line|#endif
-r_goto
-id|out
-suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; * To prevent any new references to the target during the rename,&n;&t; * we unhash the dentry and free the inode in advance.&n;&t; */
 r_if
 c_cond
 (paren
 op_logical_neg
-id|list_empty
+id|d_unhashed
 c_func
 (paren
-op_amp
-id|new_dentry-&gt;d_hash
+id|new_dentry
 )paren
 )paren
 (brace

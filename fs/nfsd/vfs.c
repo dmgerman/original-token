@@ -1,6 +1,7 @@
 multiline_comment|/*&n; * linux/fs/nfsd/vfs.c&n; *&n; * File operations used by nfsd. Some of these have been ripped from&n; * other parts of the kernel because they weren&squot;t in ksyms.c, others&n; * are partial duplicates with added or changed functionality.&n; *&n; * Note that several functions dget() the dentry upon which they want&n; * to act, most notably those that create directory entries. Response&n; * dentry&squot;s are dput()&squot;d if necessary in the release callback.&n; * So if you notice code paths that apparently fail to dput() the&n; * dentry, don&squot;t worry--they have been taken care of.&n; *&n; * Copyright (C) 1995-1999 Olaf Kirch &lt;okir@monad.swb.de&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
@@ -96,7 +97,7 @@ l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n; * We need to do a check-parent every time&n; * after we have locked the parent - to verify&n; * that the parent is still our parent and&n; * that we are still hashed onto it..&n; *&n; * This is required in case two processes race&n; * on removing (or moving) the same entry: the&n; * parent lock will serialize them, but the&n; * other process will be too late..&n; *&n; * Note that this nfsd_check_parent is identical&n; * the check_parent in linux/fs/namei.c.&n; */
 DECL|macro|nfsd_check_parent
-mdefine_line|#define nfsd_check_parent(dir, dentry) &bslash;&n;&t;((dir) == (dentry)-&gt;d_parent &amp;&amp; !list_empty(&amp;dentry-&gt;d_hash))
+mdefine_line|#define nfsd_check_parent(dir, dentry) &bslash;&n;&t;((dir) == (dentry)-&gt;d_parent &amp;&amp; !d_unhashed(dentry))
 multiline_comment|/*&n; * Lock a parent directory following the VFS locking protocol.&n; */
 r_int
 DECL|function|fh_lock_parent
@@ -442,7 +443,6 @@ op_assign
 id|nfserrno
 c_func
 (paren
-op_minus
 id|PTR_ERR
 c_func
 (paren
@@ -671,22 +671,6 @@ op_amp
 id|ATTR_SIZE
 )paren
 (brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|S_ISREG
-c_func
-(paren
-id|inode-&gt;i_mode
-)paren
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;nfsd_setattr: size change??&bslash;n&quot;
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -977,7 +961,6 @@ op_assign
 id|nfserrno
 c_func
 (paren
-op_minus
 id|err
 )paren
 suffix:semicolon
@@ -1259,39 +1242,36 @@ comma
 id|map-&gt;how
 )paren
 suffix:semicolon
-multiline_comment|/* cannot use a &quot;switch&quot; as nfserr_* are variables, even though they are constant :-( */
-r_if
+r_switch
 c_cond
 (paren
 id|err2
-op_eq
-l_int|0
 )paren
+(brace
+r_case
+id|nfs_ok
+suffix:colon
 id|result
 op_or_assign
 id|map-&gt;access
 suffix:semicolon
-multiline_comment|/* the following error codes just mean the access was not allowed,&n;&t;&t;&t; * rather than an error occurred */
-r_else
-r_if
-c_cond
-(paren
-id|err2
-op_eq
-id|nfserr_rofs
-op_logical_or
-id|err2
-op_eq
-id|nfserr_acces
-op_logical_or
-id|err2
-op_eq
-id|nfserr_perm
-)paren
-multiline_comment|/* simply don&squot;t &quot;or&quot; in the access bit. */
+r_break
 suffix:semicolon
-r_else
-(brace
+multiline_comment|/* the following error codes just mean the access was not allowed,&n;&t;&t;&t; * rather than an error occurred */
+r_case
+id|nfserr_rofs
+suffix:colon
+r_case
+id|nfserr_acces
+suffix:colon
+r_case
+id|nfserr_perm
+suffix:colon
+multiline_comment|/* simply don&squot;t &quot;or&quot; in the access bit. */
+r_break
+suffix:semicolon
+r_default
+suffix:colon
 id|error
 op_assign
 id|err2
@@ -1574,7 +1554,6 @@ op_assign
 id|nfserrno
 c_func
 (paren
-op_minus
 id|err
 )paren
 suffix:semicolon
@@ -2160,7 +2139,6 @@ op_assign
 id|nfserrno
 c_func
 (paren
-op_minus
 id|err
 )paren
 suffix:semicolon
@@ -2207,7 +2185,8 @@ r_int
 id|cnt
 comma
 r_int
-id|stable
+op_star
+id|stablep
 )paren
 (brace
 r_struct
@@ -2236,6 +2215,12 @@ r_int
 id|err
 op_assign
 l_int|0
+suffix:semicolon
+r_int
+id|stable
+op_assign
+op_star
+id|stablep
 suffix:semicolon
 macro_line|#ifdef CONFIG_QUOTA
 id|uid_t
@@ -2306,29 +2291,36 @@ macro_line|#ifdef CONFIG_NFSD_V3
 r_if
 c_cond
 (paren
-id|rqstp-&gt;rq_vers
+id|file.f_op-&gt;fsync
 op_eq
-l_int|2
+l_int|0
 )paren
+(brace
+multiline_comment|/* COMMIT3 cannot work */
 id|stable
 op_assign
+l_int|2
+suffix:semicolon
+op_star
+id|stablep
+op_assign
+l_int|2
+suffix:semicolon
+multiline_comment|/* FILE_SYNC */
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
 id|EX_ISSYNC
 c_func
 (paren
 id|exp
 )paren
-suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
-id|file.f_op-&gt;fsync
-op_eq
-l_int|0
 )paren
 id|stable
 op_assign
-l_int|1
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -2702,7 +2694,6 @@ op_assign
 id|nfserrno
 c_func
 (paren
-op_minus
 id|err
 )paren
 suffix:semicolon
@@ -2783,6 +2774,16 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|EX_ISSYNC
+c_func
+(paren
+id|fhp-&gt;fh_export
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
 id|file.f_op
 op_logical_and
 id|file.f_op-&gt;fsync
@@ -2802,6 +2803,7 @@ id|err
 op_assign
 id|nfserr_notsupp
 suffix:semicolon
+)brace
 )brace
 id|nfsd_close
 c_func
@@ -3268,7 +3270,6 @@ op_assign
 id|nfserrno
 c_func
 (paren
-op_minus
 id|err
 )paren
 suffix:semicolon
@@ -3716,7 +3717,6 @@ op_assign
 id|nfserrno
 c_func
 (paren
-op_minus
 id|err
 )paren
 suffix:semicolon
@@ -3884,7 +3884,6 @@ op_assign
 id|nfserrno
 c_func
 (paren
-op_minus
 id|err
 )paren
 suffix:semicolon
@@ -4143,7 +4142,6 @@ op_assign
 id|nfserrno
 c_func
 (paren
-op_minus
 id|err
 )paren
 suffix:semicolon
@@ -4178,7 +4176,6 @@ op_assign
 id|nfserrno
 c_func
 (paren
-op_minus
 id|err
 )paren
 suffix:semicolon
@@ -4433,7 +4430,6 @@ op_assign
 id|nfserrno
 c_func
 (paren
-op_minus
 id|err
 )paren
 suffix:semicolon
@@ -4464,7 +4460,6 @@ op_assign
 id|nfserrno
 c_func
 (paren
-op_minus
 id|err
 )paren
 suffix:semicolon
@@ -5045,7 +5040,6 @@ op_assign
 id|nfserrno
 c_func
 (paren
-op_minus
 id|err
 )paren
 suffix:semicolon
@@ -5205,15 +5199,6 @@ r_goto
 id|out
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|type
-op_ne
-id|S_IFDIR
-)paren
-(brace
-multiline_comment|/* It&squot;s UNLINK */
 id|err
 op_assign
 id|fh_lock_parent
@@ -5232,6 +5217,15 @@ id|err
 r_goto
 id|out
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|type
+op_ne
+id|S_IFDIR
+)paren
+(brace
+multiline_comment|/* It&squot;s UNLINK */
 id|err
 op_assign
 id|vfs_unlink
@@ -5242,6 +5236,21 @@ comma
 id|rdentry
 )paren
 suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* It&squot;s RMDIR */
+id|err
+op_assign
+id|vfs_rmdir
+c_func
+(paren
+id|dirp
+comma
+id|rdentry
+)paren
+suffix:semicolon
+)brace
 id|fh_unlock
 c_func
 (paren
@@ -5254,96 +5263,6 @@ c_func
 id|rdentry
 )paren
 suffix:semicolon
-)brace
-r_else
-(brace
-multiline_comment|/* It&squot;s RMDIR */
-multiline_comment|/* See comments in fs/namei.c:do_rmdir */
-id|rdentry-&gt;d_count
-op_increment
-suffix:semicolon
-id|nfsd_double_down
-c_func
-(paren
-op_amp
-id|dirp-&gt;i_sem
-comma
-op_amp
-id|rdentry-&gt;d_inode-&gt;i_sem
-)paren
-suffix:semicolon
-macro_line|#ifdef CONFIG_NFSD_V3
-id|fill_pre_wcc
-c_func
-(paren
-id|fhp
-)paren
-suffix:semicolon
-macro_line|#else
-id|fhp-&gt;fh_locked
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#endif /* CONFIG_NFSD_V3 */
-id|err
-op_assign
-op_minus
-id|ENOENT
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|nfsd_check_parent
-c_func
-(paren
-id|dentry
-comma
-id|rdentry
-)paren
-)paren
-id|err
-op_assign
-id|vfs_rmdir
-c_func
-(paren
-id|dirp
-comma
-id|rdentry
-)paren
-suffix:semicolon
-id|rdentry-&gt;d_count
-op_decrement
-suffix:semicolon
-macro_line|#ifdef CONFIG_NFSD_V3
-id|fill_post_wcc
-c_func
-(paren
-id|fhp
-)paren
-suffix:semicolon
-macro_line|#else
-id|fhp-&gt;fh_locked
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif /* CONFIG_NFSD_V3 */
-id|nfsd_double_up
-c_func
-(paren
-op_amp
-id|dirp-&gt;i_sem
-comma
-op_amp
-id|rdentry-&gt;d_inode-&gt;i_sem
-)paren
-suffix:semicolon
-id|dput
-c_func
-(paren
-id|rdentry
-)paren
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -5395,7 +5314,6 @@ op_assign
 id|nfserrno
 c_func
 (paren
-op_minus
 id|err
 )paren
 suffix:semicolon
@@ -5758,7 +5676,6 @@ op_assign
 id|nfserrno
 c_func
 (paren
-op_minus
 id|err
 )paren
 suffix:semicolon
@@ -5788,27 +5705,7 @@ op_star
 id|stat
 )paren
 (brace
-r_struct
-id|dentry
-op_star
-id|dentry
-suffix:semicolon
-r_struct
-id|inode
-op_star
-id|inode
-suffix:semicolon
-r_struct
-id|super_block
-op_star
-id|sb
-suffix:semicolon
-id|mm_segment_t
-id|oldfs
-suffix:semicolon
 r_int
-id|err
-suffix:semicolon
 id|err
 op_assign
 id|fh_verify
@@ -5826,78 +5723,21 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|err
+op_logical_and
+id|vfs_statfs
+c_func
+(paren
+id|fhp-&gt;fh_dentry-&gt;d_inode-&gt;i_sb
+comma
+id|stat
 )paren
-r_goto
-id|out
-suffix:semicolon
-id|dentry
-op_assign
-id|fhp-&gt;fh_dentry
-suffix:semicolon
-id|inode
-op_assign
-id|dentry-&gt;d_inode
-suffix:semicolon
+)paren
 id|err
 op_assign
 id|nfserr_io
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|sb
-op_assign
-id|inode-&gt;i_sb
-)paren
-op_logical_or
-op_logical_neg
-id|sb-&gt;s_op-&gt;statfs
-)paren
-r_goto
-id|out
-suffix:semicolon
-id|oldfs
-op_assign
-id|get_fs
-c_func
-(paren
-)paren
-suffix:semicolon
-id|set_fs
-(paren
-id|KERNEL_DS
-)paren
-suffix:semicolon
-id|sb-&gt;s_op
-op_member_access_from_pointer
-id|statfs
-c_func
-(paren
-id|sb
-comma
-id|stat
-comma
-r_sizeof
-(paren
-op_star
-id|stat
-)paren
-)paren
-suffix:semicolon
-id|set_fs
-(paren
-id|oldfs
-)paren
-suffix:semicolon
-id|err
-op_assign
-l_int|0
-suffix:semicolon
-id|out
-suffix:colon
 r_return
 id|err
 suffix:semicolon
@@ -6275,7 +6115,6 @@ c_cond
 id|nfserrno
 c_func
 (paren
-op_minus
 id|err
 )paren
 suffix:colon
