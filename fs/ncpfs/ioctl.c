@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  ioctl.c&n; *&n; *  Copyright (C) 1995 by Volker Lendecke&n; *&n; */
+multiline_comment|/*&n; *  ioctl.c&n; *&n; *  Copyright (C) 1995, 1996 by Volker Lendecke&n; *&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -252,6 +252,43 @@ id|server
 suffix:semicolon
 r_return
 id|server-&gt;reply_size
+suffix:semicolon
+r_case
+id|NCP_IOC_CONN_LOGGED_IN
+suffix:colon
+r_if
+c_cond
+(paren
+(paren
+id|permission
+c_func
+(paren
+id|inode
+comma
+id|MAY_WRITE
+)paren
+op_ne
+l_int|0
+)paren
+op_logical_and
+(paren
+id|current-&gt;uid
+op_ne
+id|server-&gt;m.mounted_uid
+)paren
+)paren
+(brace
+r_return
+op_minus
+id|EACCES
+suffix:semicolon
+)brace
+r_return
+id|ncp_conn_logged_in
+c_func
+(paren
+id|server
+)paren
 suffix:semicolon
 r_case
 id|NCP_IOC_GET_FS_INFO

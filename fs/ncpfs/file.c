@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  file.c&n; *&n; *  Copyright (C) 1995 by Volker Lendecke&n; *&n; */
+multiline_comment|/*&n; *  file.c&n; *&n; *  Copyright (C) 1995, 1996 by Volker Lendecke&n; *&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -877,6 +877,18 @@ id|inode-&gt;i_size
 id|inode-&gt;i_size
 op_assign
 id|pos
+suffix:semicolon
+id|ncp_invalid_dir_cache
+c_func
+(paren
+id|NCP_INOP
+c_func
+(paren
+id|inode
+)paren
+op_member_access_from_pointer
+id|dir-&gt;inode
+)paren
 suffix:semicolon
 )brace
 id|DPRINTK

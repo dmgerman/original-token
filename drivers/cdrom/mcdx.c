@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * The Mitsumi CDROM interface&n; * Copyright (C) 1995 Heiko Schlittermann &lt;heiko@lotte.sax.de&gt;&n; * VERSION: 1.5a&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Thanks to&n; *  The Linux Community at all and ...&n; *  Martin Harriss (he wrote the first Mitsumi Driver)&n; *  Eberhard Moenkeberg (he gave me much support and the initial kick)&n; *  Bernd Huebner, Ruediger Helsch (Unifix-Software GmbH, they&n; *      improved the original driver)&n; *  Jon Tombs, Bjorn Ekwall (module support)&n; *  Daniel v. Mosnenck (he sent me the Technical and Programming Reference)&n; *  Gerd Knorr (he lent me his PhotoCD)&n; *  Nils Faerber and Roger E. Wolff (extensivly tested the LU portion)&n; *  ... somebody forgotten?&n; *  &n; */
+multiline_comment|/*&n; * The Mitsumi CDROM interface&n; * Copyright (C) 1995 Heiko Schlittermann &lt;heiko@lotte.sax.de&gt;&n; * VERSION: 1.7&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Thanks to&n; *  The Linux Community at all and ...&n; *  Martin Harriss (he wrote the first Mitsumi Driver)&n; *  Eberhard Moenkeberg (he gave me much support and the initial kick)&n; *  Bernd Huebner, Ruediger Helsch (Unifix-Software GmbH, they&n; *      improved the original driver)&n; *  Jon Tombs, Bjorn Ekwall (module support)&n; *  Daniel v. Mosnenck (he sent me the Technical and Programming Reference)&n; *  Gerd Knorr (he lent me his PhotoCD)&n; *  Nils Faerber and Roger E. Wolff (extensivly tested the LU portion)&n; *  Andreas Kies (testing the mysterious hang up&squot;s)&n; *  ... somebody forgotten?&n; *  &n; */
 macro_line|#if RCS
 DECL|variable|mcdx_c_version
 r_static
@@ -7,13 +7,12 @@ r_char
 op_star
 id|mcdx_c_version
 op_assign
-l_string|&quot;mcdx.c,v 1.19.2.1 1996/01/13 21:25:55 heiko Exp&quot;
+l_string|&quot;mcdx.c,v 1.31 1996/03/02 00:21:18 heiko Exp&quot;
 suffix:semicolon
 macro_line|#endif
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -109,6 +108,7 @@ id|SINGLE
 op_assign
 l_int|0x01
 suffix:semicolon
+multiline_comment|/* single speed drive (FX001S, LU) */
 DECL|variable|DOUBLE
 r_const
 r_int
@@ -116,6 +116,7 @@ id|DOUBLE
 op_assign
 l_int|0x02
 suffix:semicolon
+multiline_comment|/* double speed drive (FX001D, ..? */
 DECL|variable|DOOR
 r_const
 r_int
@@ -123,6 +124,7 @@ id|DOOR
 op_assign
 l_int|0x04
 suffix:semicolon
+multiline_comment|/* door locking capability */
 DECL|variable|MULTI
 r_const
 r_int
@@ -130,26 +132,20 @@ id|MULTI
 op_assign
 l_int|0x08
 suffix:semicolon
-DECL|variable|READY
-r_const
-r_int
-id|READY
-op_assign
-l_int|0x70
-suffix:semicolon
-DECL|variable|READSSPEED
+multiline_comment|/* multi session capability */
+DECL|variable|READ1X
 r_const
 r_int
 r_char
-id|READSSPEED
+id|READ1X
 op_assign
 l_int|0xc0
 suffix:semicolon
-DECL|variable|READDSPEED
+DECL|variable|READ2X
 r_const
 r_int
 r_char
-id|READDSPEED
+id|READ2X
 op_assign
 l_int|0xc1
 suffix:semicolon
@@ -433,27 +429,29 @@ id|present
 suffix:semicolon
 multiline_comment|/* drive present and its capabilities */
 DECL|member|readcmd
+r_int
 r_char
 id|readcmd
 suffix:semicolon
 multiline_comment|/* read cmd depends on single/double speed */
 DECL|member|playcmd
+r_int
 r_char
 id|playcmd
 suffix:semicolon
 multiline_comment|/* play should always be single speed */
-DECL|member|changed
-r_int
-r_int
-id|changed
-suffix:semicolon
-multiline_comment|/* last jiff the media was changed */
 DECL|member|xxx
 r_int
 r_int
 id|xxx
 suffix:semicolon
-multiline_comment|/* last jiff it was asked for media change */
+multiline_comment|/* set if changed, reset while open */
+DECL|member|yyy
+r_int
+r_int
+id|yyy
+suffix:semicolon
+multiline_comment|/* set if changed, reset by media_changed */
 DECL|member|ejected
 r_int
 r_int
@@ -470,11 +468,16 @@ r_int
 id|lastsector
 suffix:semicolon
 multiline_comment|/* last block accessible */
-DECL|member|errno
+DECL|member|status
 r_int
-id|errno
+id|status
 suffix:semicolon
-multiline_comment|/* last operation&squot;s error */
+multiline_comment|/* last operation&squot;s error / status */
+DECL|member|readerrs
+r_int
+id|readerrs
+suffix:semicolon
+multiline_comment|/* # of blocks read w/o error */
 )brace
 suffix:semicolon
 multiline_comment|/* Prototypes ******************************************************/
@@ -697,6 +700,26 @@ suffix:semicolon
 r_static
 r_int
 id|mcdx_transfer
+c_func
+(paren
+r_struct
+id|s_drive_stuff
+op_star
+comma
+r_char
+op_star
+id|buf
+comma
+r_int
+id|sector
+comma
+r_int
+id|nr_sectors
+)paren
+suffix:semicolon
+r_static
+r_int
+id|mcdx_xfer
 c_func
 (paren
 r_struct
@@ -1016,6 +1039,14 @@ r_int
 )paren
 suffix:semicolon
 multiline_comment|/* static variables ************************************************/
+DECL|variable|mcdx_blocksizes
+r_static
+r_int
+id|mcdx_blocksizes
+(braket
+id|MCDX_NDRIVES
+)braket
+suffix:semicolon
 DECL|variable|mcdx_drive_map
 r_static
 r_int
@@ -2427,7 +2458,9 @@ id|EINVAL
 suffix:semicolon
 id|ms.xa_flag
 op_assign
-id|stuffp-&gt;xa
+op_logical_neg
+op_logical_neg
+id|stuffp-&gt;multi.multi
 suffix:semicolon
 r_if
 c_cond
@@ -2878,7 +2911,7 @@ suffix:semicolon
 r_case
 id|READ
 suffix:colon
-id|stuffp-&gt;errno
+id|stuffp-&gt;status
 op_assign
 l_int|0
 suffix:semicolon
@@ -2914,7 +2947,7 @@ id|CURRENT-&gt;nr_sectors
 )paren
 )paren
 (brace
-id|WARN
+id|INFO
 c_func
 (paren
 (paren
@@ -2925,9 +2958,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|stuffp-&gt;errno
-op_eq
-id|MCDX_EOM
+id|stuffp-&gt;status
+op_amp
+id|MCDX_ST_EOM
 )paren
 (brace
 id|CURRENT-&gt;sector
@@ -2945,6 +2978,7 @@ c_func
 l_int|0
 )paren
 suffix:semicolon
+multiline_comment|/* return; */
 r_goto
 id|again
 suffix:semicolon
@@ -3117,8 +3151,6 @@ r_if
 c_cond
 (paren
 id|stuffp-&gt;xxx
-OL
-id|stuffp-&gt;changed
 )paren
 (brace
 id|TRACE
@@ -3131,16 +3163,12 @@ l_string|&quot;open() media changed&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* but wait - the time of media change will be set at the &n;        very last of this block - it seems, some of the following&n;        talk() will detect a media change ... (I think, config()&n;        is the reason. */
+multiline_comment|/* but wait - the time of media change will be set at the &n;           very last of this block - it seems, some of the following&n;           talk() will detect a media change ... (I think, config()&n;           is the reason. */
 id|stuffp-&gt;audiostatus
 op_assign
 id|CDROM_AUDIO_INVALID
 suffix:semicolon
 multiline_comment|/* get the multisession information */
-(brace
-r_int
-id|ans
-suffix:semicolon
 id|TRACE
 c_func
 (paren
@@ -3151,8 +3179,12 @@ l_string|&quot;open() Request multisession info&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-id|ans
-op_assign
+r_if
+c_cond
+(paren
+op_minus
+l_int|1
+op_eq
 id|mcdx_requestmultidiskinfo
 c_func
 (paren
@@ -3163,38 +3195,29 @@ id|stuffp-&gt;multi
 comma
 l_int|6
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ans
-op_eq
-op_minus
-l_int|1
 )paren
 (brace
+id|INFO
+c_func
+(paren
+(paren
+l_string|&quot;No multidiskinfo&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 id|stuffp-&gt;autoclose
 op_assign
 l_int|0
 suffix:semicolon
-id|mcdx_eject
-c_func
-(paren
-id|stuffp
-comma
-l_int|1
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EIO
-suffix:semicolon
 )brace
-multiline_comment|/* we succeeded, so on next open(2) we could try auto close&n;            again */
+r_else
+(brace
+multiline_comment|/* we succeeded, so on next open(2) we could try auto close&n;&t;&t;&t;again */
 id|stuffp-&gt;autoclose
 op_assign
 l_int|1
 suffix:semicolon
+macro_line|#if !MCDX_QUIET
 r_if
 c_cond
 (paren
@@ -3202,7 +3225,7 @@ id|stuffp-&gt;multi.multi
 OG
 l_int|2
 )paren
-id|WARN
+id|INFO
 c_func
 (paren
 (paren
@@ -3212,6 +3235,7 @@ id|stuffp-&gt;multi.multi
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* multisession ? */
 r_if
 c_cond
@@ -3261,10 +3285,15 @@ comma
 l_int|1
 )paren
 )paren
-r_return
+(brace
+id|stuffp-&gt;lastsector
+op_assign
 op_minus
-id|EIO
+l_int|1
 suffix:semicolon
+)brace
+r_else
+(brace
 id|stuffp-&gt;lastsector
 op_assign
 (paren
@@ -3332,6 +3361,7 @@ id|stuffp-&gt;di.msf_leadout
 )paren
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -3344,7 +3374,7 @@ c_func
 (paren
 id|MALLOC
 comma
-l_string|&quot;open() free toc @ %p&bslash;n&quot;
+l_string|&quot;open() free old toc @ %p&bslash;n&quot;
 comma
 id|stuffp-&gt;toc
 )paren
@@ -3356,11 +3386,11 @@ c_func
 id|stuffp-&gt;toc
 )paren
 suffix:semicolon
-)brace
 id|stuffp-&gt;toc
 op_assign
 l_int|NULL
 suffix:semicolon
+)brace
 id|TRACE
 c_func
 (paren
@@ -3389,7 +3419,58 @@ r_return
 op_minus
 id|EIO
 suffix:semicolon
-multiline_comment|/* try to get the first sector ... */
+macro_line|#if FALLBACK
+multiline_comment|/* Set the read speed */
+id|WARN
+c_func
+(paren
+(paren
+l_string|&quot;AAA %x AAA&bslash;n&quot;
+comma
+id|stuffp-&gt;readcmd
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|stuffp-&gt;readerrs
+)paren
+id|stuffp-&gt;readcmd
+op_assign
+id|READ1X
+suffix:semicolon
+r_else
+id|stuffp-&gt;readcmd
+op_assign
+id|stuffp-&gt;present
+op_or
+id|SINGLE
+ques
+c_cond
+id|READ1X
+suffix:colon
+id|READ2X
+suffix:semicolon
+id|WARN
+c_func
+(paren
+(paren
+l_string|&quot;XXX %x XXX&bslash;n&quot;
+comma
+id|stuffp-&gt;readcmd
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/* try to get the first sector, iff any ... */
+r_if
+c_cond
+(paren
+id|stuffp-&gt;lastsector
+op_ge
+l_int|0
+)paren
 (brace
 r_char
 id|buf
@@ -3424,6 +3505,10 @@ id|tries
 op_decrement
 )paren
 (brace
+id|stuffp-&gt;introk
+op_assign
+l_int|1
+suffix:semicolon
 id|TRACE
 c_func
 (paren
@@ -3467,10 +3552,15 @@ l_int|1
 )paren
 )paren
 )paren
-r_return
-op_minus
-id|EIO
+(brace
+multiline_comment|/* return -EIO; */
+id|stuffp-&gt;xa
+op_assign
+l_int|0
 suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -3523,16 +3613,7 @@ op_logical_neg
 id|stuffp-&gt;xa
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|tries
-)paren
-r_return
-op_minus
-id|EIO
-suffix:semicolon
+multiline_comment|/* if (!tries) return -EIO; */
 )brace
 multiline_comment|/* xa disks will be read in raw mode, others not */
 r_if
@@ -3576,6 +3657,13 @@ l_string|&quot;open() audio disk found&bslash;n&quot;
 suffix:semicolon
 )brace
 r_else
+r_if
+c_cond
+(paren
+id|stuffp-&gt;lastsector
+op_ge
+l_int|0
+)paren
 (brace
 id|INFO
 c_func
@@ -3602,7 +3690,7 @@ suffix:semicolon
 )brace
 id|stuffp-&gt;xxx
 op_assign
-id|jiffies
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* lock the door if not already done */
@@ -3732,6 +3820,17 @@ l_string|&quot;close() Cannot unlock the door&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
+macro_line|#else
+id|mcdx_lockdoor
+c_func
+(paren
+id|stuffp
+comma
+l_int|0
+comma
+l_int|3
+)paren
+suffix:semicolon
 macro_line|#endif
 multiline_comment|/* eject if wished */
 r_if
@@ -3761,8 +3860,13 @@ c_func
 id|kdev_t
 id|full_dev
 )paren
-multiline_comment|/*&t;Return: 1 if media changed since last call to &n;&t;&t;&t;  this function&n;&t;&t;&t;0 else&n;&t;Setting flag to 0 resets the changed state. */
+multiline_comment|/*&t;Return: 1 if media changed since last call to this function&n;&t;&t;&t;0 otherwise */
 (brace
+r_struct
+id|s_drive_stuff
+op_star
+id|stuffp
+suffix:semicolon
 id|INFO
 c_func
 (paren
@@ -3777,8 +3881,59 @@ id|full_dev
 )paren
 )paren
 suffix:semicolon
+id|stuffp
+op_assign
+id|mcdx_stuffp
+(braket
+id|MINOR
+c_func
+(paren
+id|full_dev
+)paren
+)braket
+suffix:semicolon
+id|mcdx_getstatus
+c_func
+(paren
+id|stuffp
+comma
+l_int|1
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|stuffp-&gt;yyy
+op_eq
+l_int|0
+)paren
+(brace
+id|INFO
+c_func
+(paren
+(paren
+l_string|&quot; ... not changed&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
+suffix:semicolon
+)brace
+id|INFO
+c_func
+(paren
+(paren
+l_string|&quot; ... changed&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+id|stuffp-&gt;yyy
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+l_int|1
 suffix:semicolon
 )brace
 DECL|function|mcdx_setup
@@ -3857,7 +4012,7 @@ comma
 r_int
 id|jifs
 )paren
-multiline_comment|/*&t;This routine is used for sleeping while initialisation - it seems that&n; &t;there are no other means available. May be we could use a simple count&n; &t;loop w/ jumps to itself, but I wanna make this independend of cpu&n; &t;speed. [1 jiffie is 1/HZ sec */
+multiline_comment|/*&t;This routine is used for sleeping.&n;&t;May be we could use a simple count loop w/ jumps to itself, but &n;&t;I wanna make this independend of cpu speed. [1 jiffie is 1/HZ] sec */
 (brace
 r_int
 r_int
@@ -3867,47 +4022,16 @@ id|jiffies
 op_plus
 id|jifs
 suffix:semicolon
-id|TRACE
-c_func
-(paren
-(paren
-id|INIT
-comma
-l_string|&quot;mcdx_delay %d&bslash;n&quot;
-comma
-id|jifs
-)paren
-)paren
-suffix:semicolon
+multiline_comment|/* TRACE((INIT, &quot;mcdx_delay %d&bslash;n&quot;, jifs)); */
 r_if
 c_cond
 (paren
 id|jifs
-OL
+op_le
 l_int|0
 )paren
 r_return
 suffix:semicolon
-macro_line|#if 1
-r_while
-c_loop
-(paren
-id|jiffies
-OL
-id|tout
-)paren
-(brace
-id|current-&gt;timeout
-op_assign
-id|jiffies
-suffix:semicolon
-id|schedule
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-macro_line|#else
 r_if
 c_cond
 (paren
@@ -3943,10 +4067,8 @@ id|current-&gt;timeout
 op_assign
 id|tout
 suffix:semicolon
-id|current-&gt;state
-op_assign
-id|TASK_INTERRUPTIBLE
-suffix:semicolon
+multiline_comment|/* current-&gt;state = TASK_INTERRUPTIBLE; */
+multiline_comment|/* And perhaps we should remove the while() { ... } */
 r_while
 c_loop
 (paren
@@ -3960,9 +4082,20 @@ op_amp
 id|stuff-&gt;sleepq
 )paren
 suffix:semicolon
+id|TRACE
+c_func
+(paren
+(paren
+id|SLEEP
+comma
+l_string|&quot;delay: to is %d&bslash;n&quot;
+comma
+id|current-&gt;timeout
+)paren
+)paren
+suffix:semicolon
 )brace
 )brace
-macro_line|#endif
 )brace
 r_static
 r_void
@@ -3990,7 +4123,7 @@ id|stuffp
 suffix:semicolon
 r_int
 r_char
-id|x
+id|b
 suffix:semicolon
 id|stuffp
 op_assign
@@ -4005,18 +4138,13 @@ c_cond
 id|stuffp
 op_eq
 l_int|NULL
-op_logical_or
-op_logical_neg
-id|stuffp-&gt;busy
 )paren
 (brace
-id|TRACE
+id|WARN
 c_func
 (paren
 (paren
-id|IRQ
-comma
-l_string|&quot;intr() unexpected interrupt @ irq %d&bslash;n&quot;
+l_string|&quot;mcdx: no device for intr %d&bslash;n&quot;
 comma
 id|irq
 )paren
@@ -4025,19 +4153,8 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* if not ok read the next byte as the drives status */
-r_if
-c_cond
-(paren
-l_int|0
-op_eq
-(paren
-id|stuffp-&gt;introk
-op_assign
-(paren
-op_complement
-(paren
-id|x
+multiline_comment|/* get the interrupt status */
+id|b
 op_assign
 id|inb
 c_func
@@ -4048,23 +4165,53 @@ r_int
 )paren
 id|stuffp-&gt;rreg_status
 )paren
-)paren
+suffix:semicolon
+id|stuffp-&gt;introk
+op_assign
+op_complement
+id|b
 op_amp
 id|MCDX_RBIT_DTEN
+suffix:semicolon
+multiline_comment|/* NOTE: We only should get interrupts if data were requested.&n;&t;   But the drive seems to generate ``asynchronous&squot;&squot; interrupts&n;&t;   on several error conditions too.  (Despite the err int enable&n;&t;   setting during initialisation) */
+multiline_comment|/* if not ok, read the next byte as the drives status */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|stuffp-&gt;introk
 )paren
-)paren
-)paren
+(brace
 id|TRACE
 c_func
 (paren
 (paren
 id|IRQ
 comma
-l_string|&quot;intr() irq %d failed, status %02x %02x&bslash;n&quot;
+l_string|&quot;intr() irq %d hw status 0x%02x&bslash;n&quot;
 comma
 id|irq
 comma
-id|x
+id|b
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_complement
+id|b
+op_amp
+id|MCDX_RBIT_STEN
+)paren
+(brace
+id|INFO
+c_func
+(paren
+(paren
+l_string|&quot;intr() irq %d    status 0x%02x&bslash;n&quot;
+comma
+id|irq
 comma
 id|inb
 c_func
@@ -4078,6 +4225,21 @@ id|stuffp-&gt;rreg_data
 )paren
 )paren
 suffix:semicolon
+)brace
+r_else
+(brace
+id|INFO
+c_func
+(paren
+(paren
+l_string|&quot;intr() irq %d ambigous hw status&bslash;n&quot;
+comma
+id|irq
+)paren
+)paren
+suffix:semicolon
+)brace
+)brace
 r_else
 (brace
 id|TRACE
@@ -4090,7 +4252,7 @@ l_string|&quot;irq() irq %d ok, status %02x&bslash;n&quot;
 comma
 id|irq
 comma
-id|x
+id|b
 )paren
 )paren
 suffix:semicolon
@@ -4174,6 +4336,7 @@ c_loop
 (paren
 id|stuffp-&gt;lock
 )paren
+(brace
 id|interruptible_sleep_on
 c_func
 (paren
@@ -4181,28 +4344,17 @@ op_amp
 id|stuffp-&gt;lockq
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|current-&gt;signal
-op_logical_and
-op_complement
-id|current-&gt;blocked
-)paren
-(brace
-id|WARN
+id|TRACE
 c_func
 (paren
 (paren
-l_string|&quot;talk() got signal %d&bslash;n&quot;
+id|SLEEP
 comma
-id|current-&gt;signal
+l_string|&quot;talk: lock = %d&bslash;n&quot;
+comma
+id|stuffp-&gt;lock
 )paren
 )paren
-suffix:semicolon
-r_return
-op_minus
-l_int|1
 suffix:semicolon
 )brace
 id|stuffp-&gt;lock
@@ -4297,16 +4449,20 @@ id|tries
 op_decrement
 )paren
 (brace
-r_int
-id|sz
-op_assign
-id|size
-suffix:semicolon
 r_char
 op_star
 id|bp
 op_assign
+(paren
+r_char
+op_star
+)paren
 id|buffer
+suffix:semicolon
+r_int
+id|sz
+op_assign
+id|size
 suffix:semicolon
 id|outsb
 c_func
@@ -4511,9 +4667,11 @@ l_string|&quot;talk() media changed&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-id|stuffp-&gt;changed
+id|stuffp-&gt;xxx
 op_assign
-id|jiffies
+id|stuffp-&gt;yyy
+op_assign
+l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* now actually get the data */
@@ -4606,6 +4764,7 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
+macro_line|#if !MCDX_QUIET
 r_if
 c_cond
 (paren
@@ -4617,7 +4776,7 @@ op_eq
 op_minus
 l_int|1
 )paren
-id|WARN
+id|INFO
 c_func
 (paren
 (paren
@@ -4625,6 +4784,7 @@ l_string|&quot;talk() giving up&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif
 id|stuffp-&gt;lock
 op_assign
 l_int|0
@@ -4752,7 +4912,7 @@ r_void
 r_int
 id|i
 suffix:semicolon
-id|WARN
+id|INFO
 c_func
 (paren
 (paren
@@ -4879,6 +5039,7 @@ id|DEVICE_NAME
 op_ne
 l_int|0
 )paren
+(brace
 id|WARN
 c_func
 (paren
@@ -4887,6 +5048,8 @@ l_string|&quot;cleanup() unregister_blkdev() failed&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
+)brace
+macro_line|#if !MCDX_QUIET
 r_else
 id|INFO
 c_func
@@ -4896,6 +5059,7 @@ l_string|&quot;cleanup() succeeded&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 macro_line|#endif MODULE
 multiline_comment|/* Support functions ************************************************/
@@ -5076,17 +5240,17 @@ id|WARN
 c_func
 (paren
 (paren
-l_string|&quot;Version 1.5a &quot;
-l_string|&quot;mcdx.c,v 1.19.2.1 1996/01/13 21:25:55 heiko Exp&bslash;n&quot;
+l_string|&quot;Version 1.7 for %s&bslash;n&quot;
+comma
+id|kernel_version
 )paren
 )paren
 suffix:semicolon
-id|INFO
+id|WARN
 c_func
 (paren
 (paren
-l_string|&quot;: Version 1.5a &quot;
-l_string|&quot;mcdx.c,v 1.19.2.1 1996/01/13 21:25:55 heiko Exp&bslash;n&quot;
+l_string|&quot;mcdx.c,v 1.31 1996/03/02 00:21:18 heiko Exp&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -5139,6 +5303,13 @@ id|stuffp
 suffix:semicolon
 r_int
 id|size
+suffix:semicolon
+id|mcdx_blocksizes
+(braket
+id|drive
+)braket
+op_assign
+l_int|0
 suffix:semicolon
 id|size
 op_assign
@@ -5258,10 +5429,6 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* this should be NULL already */
-id|stuffp-&gt;changed
-op_assign
-id|jiffies
-suffix:semicolon
 multiline_comment|/* setup our irq and i/o addresses */
 id|stuffp-&gt;irq
 op_assign
@@ -5330,9 +5497,8 @@ id|WARN
 c_func
 (paren
 (paren
-l_string|&quot;%s=0x%3p,%d: &quot;
-l_string|&quot;Init failed. I/O ports (0x%3p..0x3p) already in use.&bslash;n&quot;
-id|MCDX
+l_string|&quot;0x%3p,%d: &quot;
+l_string|&quot;Init failed. I/O ports (0x%3p..0x%3p) already in use.&bslash;n&quot;
 comma
 id|stuffp-&gt;wreg_data
 comma
@@ -5497,7 +5663,7 @@ l_char|&squot;D&squot;
 suffix:colon
 id|stuffp-&gt;readcmd
 op_assign
-id|READDSPEED
+id|READ2X
 suffix:semicolon
 id|stuffp-&gt;present
 op_assign
@@ -5514,7 +5680,7 @@ l_char|&squot;F&squot;
 suffix:colon
 id|stuffp-&gt;readcmd
 op_assign
-id|READSSPEED
+id|READ1X
 suffix:semicolon
 id|stuffp-&gt;present
 op_assign
@@ -5531,7 +5697,7 @@ l_char|&squot;M&squot;
 suffix:colon
 id|stuffp-&gt;readcmd
 op_assign
-id|READSSPEED
+id|READ1X
 suffix:semicolon
 id|stuffp-&gt;present
 op_assign
@@ -5550,7 +5716,7 @@ suffix:semicolon
 )brace
 id|stuffp-&gt;playcmd
 op_assign
-id|READSSPEED
+id|READ1X
 suffix:semicolon
 r_if
 c_cond
@@ -5652,15 +5818,13 @@ id|MAJOR_NR
 op_assign
 id|READ_AHEAD
 suffix:semicolon
-macro_line|#if WE_KNOW_WHY
 id|blksize_size
 (braket
 id|MAJOR_NR
 )braket
 op_assign
-id|BLKSIZES
+id|mcdx_blocksizes
 suffix:semicolon
-macro_line|#endif
 id|TRACE
 c_func
 (paren
@@ -5870,10 +6034,119 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|mcdx_transfer
 r_static
 r_int
+DECL|function|mcdx_transfer
 id|mcdx_transfer
+c_func
+(paren
+r_struct
+id|s_drive_stuff
+op_star
+id|stuffp
+comma
+r_char
+op_star
+id|p
+comma
+r_int
+id|sector
+comma
+r_int
+id|nr_sectors
+)paren
+multiline_comment|/*&t;This seems to do the actually transfer.  But it does more.  It&n;&t;keeps track of errors ocurred and will (if possible) fall back&n;&t;to single speed on error. &n;&t;Return:&t;-1 on timeout or other error&n;&t;&t;&t;else status byte (as in stuff-&gt;st) */
+(brace
+r_int
+id|ans
+suffix:semicolon
+id|ans
+op_assign
+id|mcdx_xfer
+c_func
+(paren
+id|stuffp
+comma
+id|p
+comma
+id|sector
+comma
+id|nr_sectors
+)paren
+suffix:semicolon
+r_return
+id|ans
+suffix:semicolon
+macro_line|#if FALLBACK
+r_if
+c_cond
+(paren
+op_minus
+l_int|1
+op_eq
+id|ans
+)paren
+id|stuffp-&gt;readerrs
+op_increment
+suffix:semicolon
+r_else
+r_return
+id|ans
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|stuffp-&gt;readerrs
+op_logical_and
+id|stuffp-&gt;readcmd
+op_eq
+id|READ1X
+)paren
+(brace
+id|WARN
+c_func
+(paren
+(paren
+l_string|&quot;XXX Alrady reading 1x -- no chance&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+id|WARN
+c_func
+(paren
+(paren
+l_string|&quot;XXX Fallback to 1x&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+id|stuffp-&gt;readcmd
+op_assign
+id|READ1X
+suffix:semicolon
+r_return
+id|mcdx_transfer
+c_func
+(paren
+id|stuffp
+comma
+id|p
+comma
+id|sector
+comma
+id|nr_sectors
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+DECL|function|mcdx_xfer
+r_static
+r_int
+id|mcdx_xfer
 c_func
 (paren
 r_struct
@@ -5939,6 +6212,7 @@ c_loop
 (paren
 id|stuffp-&gt;lock
 )paren
+(brace
 id|interruptible_sleep_on
 c_func
 (paren
@@ -5946,22 +6220,15 @@ op_amp
 id|stuffp-&gt;lockq
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|current-&gt;signal
-op_logical_and
-op_complement
-id|current-&gt;blocked
-)paren
-(brace
-id|WARN
+id|TRACE
 c_func
 (paren
 (paren
-l_string|&quot;talk() got signal %d&bslash;n&quot;
+id|SLEEP
 comma
-id|current-&gt;signal
+l_string|&quot;xfer: lock = %d&bslash;n&quot;
+comma
+id|stuffp-&gt;lock
 )paren
 )paren
 suffix:semicolon
@@ -6007,13 +6274,7 @@ id|current-&gt;pid
 suffix:semicolon
 r_do
 (brace
-multiline_comment|/* int sig = 0; */
-r_int
-id|to
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* wait for the drive become idle */
+multiline_comment|/* wait for the drive become idle, but first&n;&t;&t;   check for possible occured errors --- the drive&n;&t;&t;   seems to report them asynchronously */
 id|current-&gt;timeout
 op_assign
 id|jiffies
@@ -6025,7 +6286,11 @@ suffix:semicolon
 r_while
 c_loop
 (paren
+id|stuffp-&gt;introk
+op_logical_and
 id|stuffp-&gt;busy
+op_logical_and
+id|current-&gt;timeout
 )paren
 (brace
 id|interruptible_sleep_on
@@ -6035,68 +6300,87 @@ op_amp
 id|stuffp-&gt;busyq
 )paren
 suffix:semicolon
-)brace
+id|TRACE
+c_func
+(paren
+(paren
+id|SLEEP
+comma
+l_string|&quot;request: busy = %d, timeout = %d&bslash;n&quot;
+comma
+id|stuffp-&gt;busy
+comma
 id|current-&gt;timeout
-op_assign
-l_int|0
+)paren
+)paren
 suffix:semicolon
+)brace
 multiline_comment|/* test for possible errors */
 r_if
 c_cond
 (paren
-(paren
-(paren
-id|stuffp-&gt;busy
+id|current-&gt;timeout
 op_eq
 l_int|0
-)paren
-op_logical_and
+op_logical_or
 op_logical_neg
 id|stuffp-&gt;introk
-)paren
-op_logical_or
-id|to
 )paren
 (brace
 r_if
 c_cond
 (paren
-(paren
-id|stuffp-&gt;busy
+id|current-&gt;timeout
 op_eq
 l_int|0
 )paren
-op_logical_and
-op_logical_neg
-id|stuffp-&gt;introk
-)paren
+(brace
 id|WARN
 c_func
 (paren
 (paren
-l_string|&quot;mcdx_transfer() failure in data request&bslash;n&quot;
+l_string|&quot;mcdx_transfer() timeout&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
+)brace
 r_else
 r_if
 c_cond
 (paren
-id|to
+op_logical_neg
+id|stuffp-&gt;introk
 )paren
+(brace
 id|WARN
 c_func
 (paren
 (paren
-l_string|&quot;mcdx_transfer(): timeout&bslash;n&quot;
+l_string|&quot;mcdx_transfer() error via irq reported&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
+)brace
+r_else
+(brace
+id|WARN
+c_func
+(paren
+(paren
+l_string|&quot;mcdx_transfer() unknown failure in data request&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+)brace
 id|stuffp-&gt;lock
 op_assign
 l_int|0
 suffix:semicolon
 id|stuffp-&gt;busy
+op_assign
+l_int|0
+suffix:semicolon
+id|stuffp-&gt;valid
 op_assign
 l_int|0
 suffix:semicolon
@@ -6106,17 +6390,6 @@ c_func
 op_amp
 id|stuffp-&gt;lockq
 )paren
-suffix:semicolon
-id|wake_up_interruptible
-c_func
-(paren
-op_amp
-id|stuffp-&gt;busyq
-)paren
-suffix:semicolon
-id|stuffp-&gt;errno
-op_assign
-id|MCDX_E
 suffix:semicolon
 id|TRACE
 c_func
@@ -6393,9 +6666,13 @@ id|stuffp-&gt;pending
 )paren
 )paren
 suffix:semicolon
-id|stuffp-&gt;errno
+id|stuffp-&gt;status
 op_assign
-id|MCDX_EOM
+id|MCDX_ST_EOM
+suffix:semicolon
+id|stuffp-&gt;valid
+op_assign
+l_int|0
 suffix:semicolon
 id|TRACE
 c_func
@@ -8001,7 +8278,7 @@ r_sizeof
 id|buf
 )paren
 comma
-l_int|2
+l_int|1
 op_star
 id|HZ
 comma
@@ -8098,13 +8375,33 @@ r_sizeof
 id|buf
 )paren
 comma
-l_int|2
+l_int|1
 op_star
 id|HZ
 comma
 id|tries
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ans
+op_eq
+op_minus
+l_int|1
+)paren
+(brace
+id|info-&gt;n_first
+op_assign
+l_int|0
+suffix:semicolon
+id|info-&gt;n_last
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_else
+(brace
 id|info-&gt;n_first
 op_assign
 id|bcd2uint
@@ -8169,6 +8466,7 @@ id|buf
 l_int|8
 )braket
 suffix:semicolon
+)brace
 r_return
 id|ans
 suffix:semicolon
@@ -8629,7 +8927,7 @@ r_sizeof
 id|buf
 )paren
 comma
-l_int|2
+l_int|1
 op_star
 id|HZ
 comma
@@ -9040,4 +9338,5 @@ id|tries
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* ex:set ts=4 sw=4: */
 eof

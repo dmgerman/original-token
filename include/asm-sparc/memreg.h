@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: memreg.h,v 1.4 1995/11/25 02:32:02 davem Exp $ */
+multiline_comment|/* $Id: memreg.h,v 1.5 1995/12/02 20:05:25 davem Exp $ */
 macro_line|#ifndef _SPARC_MEMREG_H
 DECL|macro|_SPARC_MEMREG_H
 mdefine_line|#define _SPARC_MEMREG_H
@@ -21,7 +21,7 @@ mdefine_line|#define SUN4C_SYNC_NPRESENT  0x0080  /* pte said that page was not 
 DECL|macro|SUN4C_SYNC_BADWRITE
 mdefine_line|#define SUN4C_SYNC_BADWRITE  0x8000  /* while writing something went bogus */
 DECL|macro|SUN4C_SYNC_BOLIXED
-mdefine_line|#define SUN4C_SYNC_BOLIXED  &bslash;&n;        (SUN4C_SYNC_WDRESET|SUN4C_SYNC_SIZE|SUN4C_SYNC_SBUS|SUN4C_SYNC_NOMEM)
+mdefine_line|#define SUN4C_SYNC_BOLIXED  &bslash;&n;        (SUN4C_SYNC_WDRESET | SUN4C_SYNC_SIZE | SUN4C_SYNC_SBUS | &bslash;&n;         SUN4C_SYNC_NOMEM | SUN4C_SYNC_PARITY)
 multiline_comment|/* Now the asynchronous error codes, these are almost always produced&n; * by the cache writing things back to memory and getting a bad translation.&n; * Bad DVMA transactions can cause these faults too.&n; */
 DECL|macro|SUN4C_ASYNC_BADDVMA
 mdefine_line|#define SUN4C_ASYNC_BADDVMA 0x0010  /* error during DVMA access */

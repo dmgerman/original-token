@@ -1,6 +1,5 @@
 multiline_comment|/*&n; *&t;dev_table.h&n; *&n; *&t;Global definitions for device call tables&n; */
 multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993-1996&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifndef _DEV_TABLE_H_
 DECL|macro|_DEV_TABLE_H_
 mdefine_line|#define _DEV_TABLE_H_
@@ -2279,7 +2278,6 @@ id|SND_DEFAULT_ENABLE
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_MSS
-multiline_comment|/* always define full MSS even for DEC Alphas, just in case... */
 (brace
 id|SNDCARD_MSS
 comma
@@ -2297,26 +2295,6 @@ comma
 id|SND_DEFAULT_ENABLE
 )brace
 comma
-macro_line|#&t;ifdef __alpha__
-multiline_comment|/* MSS without IRQ/DMA config registers (for DEC Alphas) */
-(brace
-id|SNDCARD_PSEUDO_MSS
-comma
-(brace
-id|MSS_BASE
-comma
-id|MSS_IRQ
-comma
-id|MSS_DMA
-comma
-op_minus
-l_int|1
-)brace
-comma
-id|SND_DEFAULT_ENABLE
-)brace
-comma
-macro_line|#&t;endif
 macro_line|#&t;ifdef MSS2_BASE
 (brace
 id|SNDCARD_MSS
@@ -2361,6 +2339,10 @@ macro_line|#&t;ifndef SBC_DMA
 DECL|macro|SBC_DMA
 macro_line|#&t;&t;define SBC_DMA&t;&t;1
 macro_line|#&t;endif
+macro_line|#&t;ifndef SB_DMA2
+DECL|macro|SB_DMA2
+macro_line|#&t;&t;define SB_DMA2&t;&t;-1
+macro_line|#&t;endif
 (brace
 id|SNDCARD_SB
 comma
@@ -2371,8 +2353,7 @@ id|SBC_IRQ
 comma
 id|SBC_DMA
 comma
-op_minus
-l_int|1
+id|SB_DMA2
 )brace
 comma
 id|SND_DEFAULT_ENABLE
@@ -2475,25 +2456,6 @@ id|SND_DEFAULT_ENABLE
 comma
 macro_line|#endif
 macro_line|#if defined(CONFIG_SB) 
-macro_line|#if defined(CONFIG_AUDIO) &amp;&amp; defined(SB_DMA2)
-(brace
-id|SNDCARD_SB16
-comma
-(brace
-id|SBC_BASE
-comma
-id|SBC_IRQ
-comma
-id|SB_DMA2
-comma
-op_minus
-l_int|1
-)brace
-comma
-id|SND_DEFAULT_ENABLE
-)brace
-comma
-macro_line|#endif
 macro_line|#if defined(CONFIG_MIDI) &amp;&amp; defined(SB_MPU_BASE)
 (brace
 id|SNDCARD_SB16MIDI

@@ -348,7 +348,7 @@ op_star
 id|addr
 )paren
 (brace
-multiline_comment|/*&n;        * always deposit the char/attr, then see if it was to &quot;screen&quot; mem.&n;&t; * if so, then render the char/attr onto the real screen.&n;        */
+multiline_comment|/*&n;&t; * always deposit the char/attr, then see if it was to &quot;screen&quot; mem.&n;&t; * if so, then render the char/attr onto the real screen.&n;&t; */
 op_star
 id|addr
 op_assign

@@ -41,6 +41,9 @@ id|handler
 (paren
 r_int
 comma
+r_void
+op_star
+comma
 r_struct
 id|pt_regs
 op_star
@@ -168,5 +171,6 @@ DECL|macro|SUN4M_INT_E14
 mdefine_line|#define SUN4M_INT_E14     0x00000080
 DECL|macro|SUN4M_INT_E10
 mdefine_line|#define SUN4M_INT_E10     0x00080000
+multiline_comment|/* XXX add cross-cpu ipi functions XXX */
 macro_line|#endif
 eof

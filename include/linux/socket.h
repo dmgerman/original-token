@@ -80,6 +80,14 @@ suffix:semicolon
 multiline_comment|/* Length of rights list */
 )brace
 suffix:semicolon
+multiline_comment|/*&n; *&t;4.4BSD changed to these new names for no apparent reason.&n; */
+DECL|macro|msg_control
+mdefine_line|#define msg_control&t;msg_accrights&t;
+DECL|macro|msg_controllen
+mdefine_line|#define msg_controllen&t;msg_accrightslen;&t;
+multiline_comment|/* Control Messages */
+DECL|macro|SCM_RIGHTS
+mdefine_line|#define SCM_RIGHTS&t;&t;1
 multiline_comment|/* Socket types. */
 DECL|macro|SOCK_STREAM
 mdefine_line|#define SOCK_STREAM&t;1&t;&t;/* stream (connection) socket&t;*/
@@ -157,6 +165,7 @@ DECL|macro|MSG_PEEK
 mdefine_line|#define MSG_PEEK&t;2
 DECL|macro|MSG_DONTROUTE
 mdefine_line|#define MSG_DONTROUTE&t;4
+multiline_comment|/*#define MSG_CTRUNC&t;8&t;- We need to support this for BSD oddments */
 multiline_comment|/* Setsockoptions(2) level. Thanks to BSD these must match IPPROTO_xxx */
 DECL|macro|SOL_IP
 mdefine_line|#define SOL_IP&t;&t;0

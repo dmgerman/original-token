@@ -6,6 +6,8 @@ multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993-1996&n; *&n; * Redi
 macro_line|#include &lt;stdio.h&gt;
 macro_line|#include &lt;unistd.h&gt;
 macro_line|#include &lt;stdlib.h&gt;
+macro_line|#include &lt;fcntl.h&gt;
+macro_line|#include &lt;string.h&gt;
 DECL|macro|B
 mdefine_line|#define B(x)&t;(1 &lt;&lt; (x))
 multiline_comment|/*&n; * Option numbers&n; */
@@ -619,7 +621,7 @@ l_string|&quot;Support for Crystal CS4232 based (PnP) cards&quot;
 comma
 l_string|&quot;Support for Turtle Beach Wave Front (Maui, Tropez) synthesizers&quot;
 comma
-l_string|&quot;Support for PnP soundcards (_EXPERIMENTAL_)&quot;
+l_string|&quot;Support for PnP sound cards (_EXPERIMENTAL_)&quot;
 comma
 l_string|&quot;SoundBlaster Pro support&quot;
 comma
@@ -627,7 +629,7 @@ l_string|&quot;SoundBlaster 16 support&quot;
 comma
 l_string|&quot;Audio Excel DSP 16 initialization support&quot;
 comma
-l_string|&quot;/dev/dsp and /dev/audio supports (usually required)&quot;
+l_string|&quot;/dev/dsp and /dev/audio support&quot;
 comma
 l_string|&quot;This should not be asked&quot;
 comma
@@ -638,6 +640,105 @@ comma
 l_string|&quot;FM synthesizer (YM3812/OPL-3) support&quot;
 comma
 l_string|&quot;/dev/sequencer support&quot;
+comma
+l_string|&quot;Is the sky really falling&quot;
+)brace
+suffix:semicolon
+multiline_comment|/* help text for each option */
+DECL|variable|help
+r_char
+op_star
+id|help
+(braket
+)braket
+op_assign
+(brace
+l_string|&quot;Enable this option only if you have a Pro Audio Spectrum 16,&bslash;n&quot;
+l_string|&quot;Pro Audio Studio 16, or Logitech SoundMan 16. Don&squot;t enable this if&bslash;n&quot;
+l_string|&quot;you have some other card made by MediaVision or Logitech as&bslash;n&quot;
+l_string|&quot;they are not PAS16 compatible.&bslash;n&quot;
+comma
+l_string|&quot;Enable this if you have an original SoundBlaster card made by&bslash;n&quot;
+l_string|&quot;Creative Labs or a 100%% hardware compatible clone. For an&bslash;n&quot;
+l_string|&quot;unknown card you may want to try this if it claims to be&bslash;n&quot;
+l_string|&quot;SoundBlaster compatible.&bslash;n&quot;
+comma
+l_string|&quot;Enable this option if your sound card has a Yamaha OPL2 or OPL3&bslash;n&quot;
+l_string|&quot;FM synthesizer chip.&bslash;n&quot;
+comma
+l_string|&quot;Enable this option for any type of Gravis Ultrasound card&bslash;n&quot;
+l_string|&quot;including the GUS or GUS MAX.&bslash;n&quot;
+comma
+l_string|&quot;The MPU401 interface is supported by almost all sound cards. However,&bslash;n&quot;
+l_string|&quot;some natively supported cards have their own driver for&bslash;n&quot;
+l_string|&quot;MPU401. Enabling the MPU401 option with these cards will cause a&bslash;n&quot;
+l_string|&quot;conflict. Also enabling MPU401 on a system that doesn&squot;t really have a&bslash;n&quot;
+l_string|&quot;MPU401 could cause some trouble. It&squot;s safe to enable this if you have a&bslash;n&quot;
+l_string|&quot;true MPU401 MIDI interface card.&bslash;n&quot;
+comma
+l_string|&quot;This option enables support for MIDI interfaces based on the 6850&bslash;n&quot;
+l_string|&quot;UART chip. This interface is rarely found on sound cards.&bslash;n&quot;
+comma
+l_string|&quot;Enable this option if you have an Orchid SW32, Cardinal DSP16 or other&bslash;n&quot;
+l_string|&quot;sound card based on the PSS chipset (AD1848 codec, ADSP-2115 DSP chip,&bslash;n&quot;
+l_string|&quot;and Echo ESC614 ASIC CHIP).&bslash;n&quot;
+comma
+l_string|&quot;Enable this if you have installed the 16-bit sampling daughtercard on&bslash;n&quot;
+l_string|&quot;your GUS card. Do not use if you have a GUS MAX as enabling this option&bslash;n&quot;
+l_string|&quot;disables GUS MAX support.&bslash;n&quot;
+comma
+l_string|&quot;Enable this option if you have a Gravis Ultrasound MAX sound&bslash;n&quot;
+l_string|&quot;card&bslash;n&quot;
+comma
+l_string|&quot;Enable this option if you have the original Windows Sound System&bslash;n&quot;
+l_string|&quot;card made by Microsoft or the Aztech SG 16 Pro or NX16 Pro.&bslash;n&quot;
+comma
+l_string|&quot;Enable this if you have a sound card based on the Ensoniq&bslash;n&quot;
+l_string|&quot;Soundscape chipset. Such cards are being manufactured by Ensoniq,&bslash;n&quot;
+l_string|&quot;Spea and Reveal (Reveal makes other cards as well).&bslash;n&quot;
+comma
+l_string|&quot;Enable this option if you have the AudioTriX Pro sound card&bslash;n&quot;
+l_string|&quot;manufactured by MediaTrix.&bslash;n&quot;
+comma
+l_string|&quot;Enable this if your card has a Mozart (OAK OTI-601) or MAD16 (OPTi&bslash;n&quot;
+l_string|&quot;82C928 or 82C929) audio interface chip. These chips are currently&bslash;n&quot;
+l_string|&quot;quite common so it&squot;s possible that many no-name cards have one of&bslash;n&quot;
+l_string|&quot;them. In addition the MAD16 chip is used in some cards made by known&bslash;n&quot;
+l_string|&quot;manufacturers such as Turtle Beach (Tropez), Reveal (some models) and&bslash;n&quot;
+l_string|&quot;Diamond (latest ones).&bslash;n&quot;
+comma
+l_string|&quot;Enable this if you have a card based on the Crystal CS4232 chip set.&bslash;n&quot;
+comma
+l_string|&quot;Enable this option if you have a Turtle Beach Wave Front, Maui,&bslash;n&quot;
+l_string|&quot;or Tropez sound card.&bslash;n&quot;
+comma
+l_string|&quot;Use this option to enable experimental support for cards that&bslash;n&quot;
+l_string|&quot;use the Plug and Play protocol.&bslash;n&quot;
+comma
+l_string|&quot;Enable this option if your card is a SoundBlaster Pro or&bslash;n&quot;
+l_string|&quot;SoundBlaster 16. It also works with many SoundBlaster Pro clones.&bslash;n&quot;
+comma
+l_string|&quot;Enable this if you have a SoundBlaster 16, including the AWE32.&bslash;n&quot;
+comma
+l_string|&quot;Enable this if you have an Audio Excel DSP16 card. See the file&bslash;n&quot;
+l_string|&quot;Readme.aedsp16 for more information.&bslash;n&quot;
+comma
+l_string|&quot;This option enables the A/D and D/A converter (PCM) devices&bslash;n&quot;
+l_string|&quot;supported by almost all sound cards.&bslash;n&quot;
+comma
+l_string|&quot;This should not be asked&quot;
+comma
+l_string|&quot;This enables the dev/midixx devices and access to any MIDI ports&bslash;n&quot;
+l_string|&quot;using /dev/sequencer and /dev/music. This option also affects any&bslash;n&quot;
+l_string|&quot;MPU401 and/or General MIDI compatible devices.&bslash;n&quot;
+comma
+l_string|&quot;This should not be asked&quot;
+comma
+l_string|&quot;This enables the Yamaha FM synthesizer chip used on many sound&bslash;n&quot;
+l_string|&quot;cards.&bslash;n&quot;
+comma
+l_string|&quot;This enables the /dev/sequencer and /dev/music devices used for&bslash;n&quot;
+l_string|&quot;playing computer music.&bslash;n&quot;
 comma
 l_string|&quot;Is the sky really falling&quot;
 )brace
@@ -827,8 +928,16 @@ r_int
 DECL|function|think_positively
 id|think_positively
 (paren
+r_char
+op_star
+id|prompt
+comma
 r_int
 id|def_answ
+comma
+r_char
+op_star
+id|help
 )paren
 (brace
 r_char
@@ -839,6 +948,35 @@ l_int|512
 suffix:semicolon
 r_int
 id|len
+suffix:semicolon
+id|response
+suffix:colon
+id|fprintf
+(paren
+id|stderr
+comma
+id|prompt
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|def_answ
+)paren
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot; [Y/n/?] &quot;
+)paren
+suffix:semicolon
+r_else
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot; [N/y/?] &quot;
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -897,6 +1035,43 @@ multiline_comment|/*&n;&t;&t;&t;&t; * There is an additional LF at the end&n;&t;
 r_return
 id|def_answ
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|answ
+(braket
+l_int|0
+)braket
+op_eq
+l_char|&squot;?&squot;
+)paren
+(brace
+multiline_comment|/* display help message */
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+id|fprintf
+(paren
+id|stderr
+comma
+id|help
+)paren
+suffix:semicolon
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+r_goto
+id|response
+suffix:semicolon
+)brace
 id|answ
 (braket
 id|len
@@ -1121,6 +1296,7 @@ id|i
 )paren
 (brace
 r_int
+r_int
 id|j
 suffix:semicolon
 r_for
@@ -1233,6 +1409,16 @@ comma
 id|question
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|strcmp
+(paren
+id|choices
+comma
+l_string|&quot;&quot;
+)paren
+)paren
 id|fprintf
 (paren
 id|stderr
@@ -1408,7 +1594,7 @@ op_star
 id|method
 comma
 op_star
-r_new
+id|next
 comma
 op_star
 id|old
@@ -1469,7 +1655,7 @@ op_increment
 op_assign
 l_int|0
 suffix:semicolon
-r_new
+id|next
 op_assign
 id|p
 suffix:semicolon
@@ -1521,9 +1707,9 @@ id|fprintf
 (paren
 id|stderr
 comma
-l_string|&quot;Rebuilding file %s (%s %s)&bslash;n&quot;
+l_string|&quot;Rebuilding file `%s&squot; (%s %s)&bslash;n&quot;
 comma
-r_new
+id|next
 comma
 id|method
 comma
@@ -1551,7 +1737,7 @@ id|bin2hex
 (paren
 id|old
 comma
-r_new
+id|next
 comma
 id|var
 )paren
@@ -1594,7 +1780,7 @@ id|hex2hex
 (paren
 id|old
 comma
-r_new
+id|next
 comma
 id|var
 )paren
@@ -1621,9 +1807,9 @@ id|fprintf
 (paren
 id|stderr
 comma
-l_string|&quot;Failed to build &squot;%s&squot; - unknown method %s&bslash;n&quot;
+l_string|&quot;Failed to build `%s&squot; - unknown method %s&bslash;n&quot;
 comma
-r_new
+id|next
 comma
 id|method
 )paren
@@ -1664,7 +1850,7 @@ id|fprintf
 (paren
 id|stderr
 comma
-l_string|&quot;Copying old configuration from %s&bslash;n&quot;
+l_string|&quot;Copying old configuration from `%s&squot;&bslash;n&quot;
 comma
 id|filename
 )paren
@@ -2655,7 +2841,7 @@ id|FMT_HEX
 comma
 l_int|0x220
 comma
-l_string|&quot;&quot;
+l_string|&quot;Check from manual of the card&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
@@ -2673,7 +2859,7 @@ id|FMT_INT
 comma
 l_int|7
 comma
-l_string|&quot;&quot;
+l_string|&quot;Check from manual of the card&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
@@ -2691,7 +2877,7 @@ id|FMT_INT
 comma
 l_int|1
 comma
-l_string|&quot;&quot;
+l_string|&quot;0, 1 or 3&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
@@ -2703,12 +2889,11 @@ id|OPT_SB
 comma
 l_string|&quot;SB_DMA2&quot;
 comma
-l_string|&quot;SoundBlaster 16 bit DMA (if required)&quot;
+l_string|&quot;SoundBlaster 16 bit DMA (_REQUIRED_for SB16, Jazz16, SMW)&quot;
 comma
 id|FMT_INT
 comma
-op_minus
-l_int|1
+l_int|5
 comma
 l_string|&quot;5, 6 or 7&quot;
 )paren
@@ -2728,7 +2913,7 @@ id|FMT_HEX
 comma
 l_int|0
 comma
-l_string|&quot;&quot;
+l_string|&quot;Check from manual of the card&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
@@ -2747,7 +2932,7 @@ comma
 op_minus
 l_int|1
 comma
-l_string|&quot;&quot;
+l_string|&quot;Check from manual of the card&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
@@ -2765,7 +2950,7 @@ id|FMT_INT
 comma
 l_int|10
 comma
-l_string|&quot;&quot;
+l_string|&quot;3, 4, 5, 7, 9, 10, 11, 12, 14 or 15&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
@@ -2783,7 +2968,7 @@ id|FMT_INT
 comma
 l_int|3
 comma
-l_string|&quot;&quot;
+l_string|&quot;0, 1, 3, 5, 6 or 7&quot;
 )paren
 suffix:semicolon
 r_if
@@ -2797,71 +2982,43 @@ id|OPT_PAS
 )paren
 )paren
 (brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nEnable Joystick port on ProAudioSpectrum (y/N) ? &quot;
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
 id|think_positively
 (paren
+l_string|&quot;Enable Joystick port on ProAudioSpectrum&quot;
+comma
 l_int|0
+comma
+l_string|&quot;Enable this option if you want to use the joystick port provided&bslash;n&quot;
+l_string|&quot;on the PAS sound card.&bslash;n&quot;
 )paren
 )paren
+suffix:semicolon
 id|printf
 (paren
 l_string|&quot;#define PAS_JOYSTICK_ENABLE&bslash;n&quot;
 )paren
 suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;PAS16 could be noisy with some mother boards&bslash;n&quot;
-l_string|&quot;There is a command line switch (was it :T?)&bslash;n&quot;
-l_string|&quot;in the DOS driver for PAS16 which solves this.&bslash;n&quot;
-l_string|&quot;Don&squot;t enable this feature unless you have problems!&bslash;n&quot;
-l_string|&quot;Do you have to use this switch with DOS (Y/n) ?&quot;
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
 id|think_positively
 (paren
+l_string|&quot;Enable PAS16 bus clock option&quot;
+comma
 l_int|0
+comma
+l_string|&quot;The PAS16 can be noisy with some motherboards. There is a command&bslash;n&quot;
+l_string|&quot;line switch (:T?) in the DOS driver for PAS16 which solves this.&bslash;n&quot;
+l_string|&quot;Don&squot;t enable this feature unless you have problems and have to use&bslash;n&quot;
+l_string|&quot;this switch with DOS&bslash;n&quot;
 )paren
 )paren
 id|printf
 (paren
 l_string|&quot;#define BROKEN_BUS_CLOCK&bslash;n&quot;
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;PAS16 has SoundBlaster emulation. You should disable&bslash;n&quot;
-l_string|&quot;this feature if you have another SB compatible card&bslash;n&quot;
-l_string|&quot;on the machine&bslash;n&quot;
-l_string|&quot;Do you want to disable SB emulation of PAS16 (y/N) ?&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|think_positively
-(paren
-l_int|0
-)paren
-)paren
-id|printf
-(paren
-l_string|&quot;#define DISABLE_SB_EMULATION&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -2898,7 +3055,7 @@ id|FMT_INT
 comma
 l_int|15
 comma
-l_string|&quot;&quot;
+l_string|&quot;3, 5, 7, 9, 11, 12 or 15&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
@@ -2916,7 +3073,7 @@ id|FMT_INT
 comma
 l_int|6
 comma
-l_string|&quot;&quot;
+l_string|&quot;1, 3, 5, 6 or 7&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
@@ -2935,7 +3092,7 @@ comma
 op_minus
 l_int|1
 comma
-l_string|&quot;&quot;
+l_string|&quot;1, 3, 5, 6 or 7&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
@@ -3007,7 +3164,7 @@ id|FMT_HEX
 comma
 l_int|0x330
 comma
-l_string|&quot;&quot;
+l_string|&quot;Check from manual of the card&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
@@ -3025,7 +3182,7 @@ id|FMT_INT
 comma
 l_int|9
 comma
-l_string|&quot;&quot;
+l_string|&quot;Check from manual of the card&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
@@ -3385,18 +3542,16 @@ id|OPT_SSCAPE
 r_int
 id|reveal_spea
 suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;Is your SoundScape card made/marketed by Reveal or Spea? &quot;
-)paren
-suffix:semicolon
 id|reveal_spea
 op_assign
 id|think_positively
 (paren
+l_string|&quot;Is your SoundScape card made/marketed by Reveal or Spea&quot;
+comma
 l_int|0
+comma
+l_string|&quot;Enable if you have a SoundScape card with the Reveal or&bslash;n&quot;
+l_string|&quot;Spea name on it.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if
@@ -4088,10 +4243,6 @@ l_int|NULL
 )paren
 (brace
 r_int
-id|n
-op_assign
-l_int|0
-comma
 id|j
 suffix:semicolon
 r_for
@@ -4189,17 +4340,9 @@ id|argv
 r_int
 id|i
 comma
-id|num
-comma
 id|full_driver
 op_assign
 l_int|1
-suffix:semicolon
-r_char
-id|answ
-(braket
-l_int|10
-)braket
 suffix:semicolon
 r_char
 id|old_config_file
@@ -4371,7 +4514,7 @@ id|fprintf
 (paren
 id|stderr
 comma
-l_string|&quot;&bslash;nConfiguring the sound support&bslash;n&bslash;n&quot;
+l_string|&quot;&bslash;nConfiguring Sound Support&bslash;n&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if
@@ -4387,11 +4530,17 @@ op_eq
 l_int|0
 )paren
 (brace
-id|fprintf
+r_char
+id|str
+(braket
+l_int|255
+)braket
+suffix:semicolon
+id|sprintf
 (paren
-id|stderr
+id|str
 comma
-l_string|&quot;Old configuration exists in %s. Use it (Y/n) ? &quot;
+l_string|&quot;Old configuration exists in `%s&squot;. Use it&quot;
 comma
 id|oldconf
 )paren
@@ -4401,7 +4550,12 @@ c_cond
 (paren
 id|think_positively
 (paren
+id|str
+comma
 l_int|1
+comma
+l_string|&quot;Enable this option to load the previously saved configuration file&bslash;n&quot;
+l_string|&quot;for all of the sound driver parameters.&bslash;n&quot;
 )paren
 )paren
 r_if
@@ -4536,29 +4690,22 @@ id|i
 dot
 id|default_answ
 suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-id|def_answ
-ques
-c_cond
-l_string|&quot;  %s (Y/n) ? &quot;
-suffix:colon
-l_string|&quot;  %s (y/N) ? &quot;
-comma
-id|questions
-(braket
-id|i
-)braket
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
 id|think_positively
 (paren
+id|questions
+(braket
+id|i
+)braket
+comma
 id|def_answ
+comma
+id|help
+(braket
+id|i
+)braket
 )paren
 )paren
 r_if
@@ -4605,19 +4752,17 @@ id|OPT_SBPRO
 )paren
 )paren
 (brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;Do you want support for the mixer of SG NX Pro ? &quot;
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
 id|think_positively
 (paren
+l_string|&quot;Support for the SG NX Pro mixer&quot;
+comma
 l_int|0
+comma
+l_string|&quot;Enable this if you want to support the additional mixer functions&bslash;n&quot;
+l_string|&quot;provided on Sound Galaxy NX Pro sound cards.&bslash;n&quot;
 )paren
 )paren
 id|printf
@@ -4637,35 +4782,29 @@ id|OPT_SB
 )paren
 )paren
 (brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;Do you want support for the MV Jazz16 (ProSonic etc.) ? &quot;
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
 id|think_positively
 (paren
+l_string|&quot;Support for the MV Jazz16 (ProSonic etc.)&quot;
+comma
 l_int|0
+comma
+l_string|&quot;Enable this if you have an MV Jazz16 or ProSonic sound card.&bslash;n&quot;
 )paren
 )paren
 (brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;Do you have SoundMan Wave (y/N) ? &quot;
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
 id|think_positively
 (paren
+l_string|&quot;Do you have SoundMan Wave&quot;
+comma
 l_int|0
+comma
+l_string|&quot;Enable this option of you have the Logitech SoundMan Wave sound card.&bslash;n&quot;
 )paren
 )paren
 (brace
@@ -4676,22 +4815,18 @@ l_string|&quot;#define SM_WAVE&bslash;n&quot;
 suffix:semicolon
 id|midi0001_again
 suffix:colon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;Logitech SoundMan Wave has a microcontroller which must be initialized&bslash;n&quot;
-l_string|&quot;before MIDI emulation works. This is possible only if the microcode&bslash;n&quot;
-l_string|&quot;file is compiled into the driver.&bslash;n&quot;
-l_string|&quot;Do you have access to the MIDI0001.BIN file (Y/n) ? &quot;
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
 id|think_positively
 (paren
+l_string|&quot;Do you have access to the MIDI0001.BIN file&quot;
+comma
 l_int|1
+comma
+l_string|&quot;The Logitech SoundMan Wave has a microcontroller which must be&bslash;n&quot;
+l_string|&quot;initialized before MIDI emulation works. This is possible only if the&bslash;n&quot;
+l_string|&quot;microcode file is compiled into the driver.&bslash;n&quot;
 )paren
 )paren
 (brace
@@ -4742,16 +4877,9 @@ id|fprintf
 (paren
 id|stderr
 comma
-l_string|&quot;couldn&squot;t open %s file&bslash;n&quot;
+l_string|&quot;Couldn&squot;t open file %s&bslash;n&quot;
 comma
 id|path
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;try again with correct path? &quot;
 )paren
 suffix:semicolon
 r_if
@@ -4759,7 +4887,12 @@ c_cond
 (paren
 id|think_positively
 (paren
+l_string|&quot;Try again with correct path&quot;
+comma
 l_int|1
+comma
+l_string|&quot;The specified file could not be opened. Enter the correct path to the&bslash;n&quot;
+l_string|&quot;file.&bslash;n&quot;
 )paren
 )paren
 r_goto
@@ -4792,38 +4925,26 @@ id|selected_options
 op_amp
 id|B
 (paren
-id|OPT_SBPRO
+id|OPT_SB
 )paren
 )paren
 (brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;n&bslash;nThe Logitech SoundMan Games supports 44 kHz in stereo&bslash;n&quot;
-l_string|&quot;while the standard SB Pro supports just 22 kHz/stereo&bslash;n&quot;
-l_string|&quot;You have an option to enable the SM Games mode.&bslash;n&quot;
-l_string|&quot;However do enable it only if you are _sure_ that your&bslash;n&quot;
-l_string|&quot;card is a SM Games. Enabling this feature with a&bslash;n&quot;
-l_string|&quot;plain old SB Pro _will_ cause troubles with stereo mode.&bslash;n&quot;
-l_string|&quot;&bslash;n&quot;
-l_string|&quot;DANGER! Read the above once again before answering &squot;y&squot;&bslash;n&quot;
-l_string|&quot;Answer &squot;n&squot; in case you are unsure what to do!&bslash;n&quot;
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;Do you have a Logitech SoundMan Games (y/N) ? &quot;
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
 id|think_positively
 (paren
+l_string|&quot;Do you have a Logitech SoundMan Games&quot;
+comma
 l_int|0
+comma
+l_string|&quot;The Logitech SoundMan Games supports 44 kHz in stereo while the&bslash;n&quot;
+l_string|&quot;standard SB Pro supports just 22 kHz stereo. You have the option of&bslash;n&quot;
+l_string|&quot;enabling SM Games mode.  However, enable it only if you are sure that&bslash;n&quot;
+l_string|&quot;your card is an SM Games. Enabling this feature with a plain old SB&bslash;n&quot;
+l_string|&quot;Pro will cause troubles with stereo mode.&bslash;n&bslash;n&quot;
+l_string|&quot;DANGER! Read the above once again before answering &squot;y&squot;&bslash;n&quot;
+l_string|&quot;Answer &squot;n&squot; if you are unsure what to do!&bslash;n&quot;
 )paren
 )paren
 id|printf
@@ -4876,19 +4997,17 @@ id|OPT_SBPRO
 )paren
 )paren
 (brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;Do you want support for the Audio Excel SoundBlaster pro mode ? &quot;
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
 id|think_positively
 (paren
+l_string|&quot;Do you want support for the Audio Excel SoundBlaster Pro mode&quot;
+comma
 l_int|1
+comma
+l_string|&quot;Enable this option if you want the Audio Excel sound card to operate&bslash;n&quot;
+l_string|&quot;in SoundBlaster Pro mode.&bslash;n&quot;
 )paren
 )paren
 (brace
@@ -4922,19 +5041,17 @@ l_int|0
 )paren
 )paren
 (brace
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;Do you want support for the Audio Excel Microsoft Sound System mode? &quot;
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
 id|think_positively
 (paren
+l_string|&quot;Do you want support for the Audio Excel Microsoft Sound System mode&quot;
+comma
 l_int|1
+comma
+l_string|&quot;Enable this option if you want the Audio Excel sound card to operate&bslash;n&quot;
+l_string|&quot;in Microsoft Sound System mode.&bslash;n&quot;
 )paren
 )paren
 (brace
@@ -5005,21 +5122,17 @@ id|OPT_PSS
 (brace
 id|genld_again
 suffix:colon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;if you wish to emulate the soundblaster and you have a DSPxxx.LD.&bslash;n&quot;
-l_string|&quot;then you must include the LD in the kernel.&bslash;n&quot;
-l_string|&quot;Do you wish to include a LD (Y/n) ? &quot;
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
 id|think_positively
 (paren
+l_string|&quot;Do you wish to include an LD file&quot;
+comma
 l_int|1
+comma
+l_string|&quot;If you want to emulate the SoundBlaster card and you have a DSPxxx.LD&bslash;n&quot;
+l_string|&quot;file then you must include the LD in the kernel.&bslash;n&quot;
 )paren
 )paren
 (brace
@@ -5070,16 +5183,9 @@ id|fprintf
 (paren
 id|stderr
 comma
-l_string|&quot;couldn&squot;t open %s as the ld file&bslash;n&quot;
+l_string|&quot;couldn&squot;t open `%s&squot; as the LD file&bslash;n&quot;
 comma
 id|path
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;try again with correct path? &quot;
 )paren
 suffix:semicolon
 r_if
@@ -5087,7 +5193,11 @@ c_cond
 (paren
 id|think_positively
 (paren
+l_string|&quot;try again with correct path&quot;
+comma
 l_int|1
+comma
+l_string|&quot;The given LD file could not opened.&bslash;n&quot;
 )paren
 )paren
 r_goto
@@ -5158,27 +5268,20 @@ id|OPT_TRIX
 (brace
 id|hex2hex_again
 suffix:colon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;MediaTriX audioTriX Pro has a onboard microcontroller&bslash;n&quot;
-l_string|&quot;which needs to be initialized by downloading&bslash;n&quot;
-l_string|&quot;the code from file TRXPRO.HEX in the DOS driver&bslash;n&quot;
-l_string|&quot;directory. If you don&squot;t have the TRXPRO.HEX handy&bslash;n&quot;
-l_string|&quot;you may skip this step. However SB and MPU-401&bslash;n&quot;
-l_string|&quot;modes of AudioTriX Pro will not work without&bslash;n&quot;
-l_string|&quot;this file!&bslash;n&quot;
-l_string|&quot;&bslash;n&quot;
-l_string|&quot;Do you want to include TRXPRO.HEX in your kernel (Y/n) ? &quot;
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
 id|think_positively
 (paren
+l_string|&quot;Do you want to include TRXPRO.HEX in your kernel&quot;
+comma
 l_int|1
+comma
+l_string|&quot;The MediaTriX AudioTrix Pro has an onboard microcontroller which&bslash;n&quot;
+l_string|&quot;needs to be initialized by downloading the code from the file TRXPRO.HEX&bslash;n&quot;
+l_string|&quot;in the DOS driver directory. If you don&squot;t have the TRXPRO.HEX file handy&bslash;n&quot;
+l_string|&quot;you may skip this step. However, the SB and MPU-401 modes of AudioTriX&bslash;n&quot;
+l_string|&quot;Pro will not work without this file!&bslash;n&quot;
 )paren
 )paren
 (brace
@@ -5206,7 +5309,7 @@ id|fprintf
 (paren
 id|stderr
 comma
-l_string|&quot;including HEX file %s&bslash;n&quot;
+l_string|&quot;including HEX file `%s&squot;&bslash;n&quot;
 comma
 id|path
 )paren
@@ -5244,28 +5347,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|selected_options
-op_amp
-id|B
-(paren
-id|OPT_SB
-)paren
-)paren
-id|selected_options
-op_or_assign
-id|B
-(paren
-id|OPT_SBPRO
-)paren
-op_or
-id|B
-(paren
-id|OPT_SB16
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
 op_logical_neg
 (paren
 id|selected_options
@@ -5283,7 +5364,7 @@ id|fprintf
 (paren
 id|stderr
 comma
-l_string|&quot;&bslash;n*** This combination is useless. Sound driver disabled!!! ***&bslash;n&bslash;n&quot;
+l_string|&quot;&bslash;n*** This combination is useless. Sound driver disabled!!! ***&bslash;n*** You need to enable support for at least one device    ***&bslash;n&bslash;n&quot;
 )paren
 suffix:semicolon
 m_exit
@@ -5426,7 +5507,7 @@ id|ask_parameters
 suffix:semicolon
 id|printf
 (paren
-l_string|&quot;#define SELECTED_SOUND_OPTIONS&bslash;t0x%08x&bslash;n&quot;
+l_string|&quot;#define SELECTED_SOUND_OPTIONS&bslash;t0x%08lx&bslash;n&quot;
 comma
 id|selected_options
 )paren
@@ -5435,7 +5516,7 @@ id|fprintf
 (paren
 id|stderr
 comma
-l_string|&quot;The sound driver is now configured.&bslash;n&quot;
+l_string|&quot;&bslash;nThe sound driver is now configured.&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#if defined(SCO) || defined(ISC) || defined(SYSV)
@@ -5454,11 +5535,17 @@ op_logical_neg
 id|old_config_used
 )paren
 (brace
-id|fprintf
+r_char
+id|str
+(braket
+l_int|255
+)braket
+suffix:semicolon
+id|sprintf
 (paren
-id|stderr
+id|str
 comma
-l_string|&quot;Save copy of this configuration to %s (Y/n)&quot;
+l_string|&quot;Save copy of this configuration to `%s&squot;&quot;
 comma
 id|oldconf
 )paren
@@ -5468,7 +5555,13 @@ c_cond
 (paren
 id|think_positively
 (paren
+id|str
+comma
 l_int|1
+comma
+l_string|&quot;If you enable this option then the sound driver configuration is&bslash;n&quot;
+l_string|&quot;saved to a file. If you later need to recompile the kernel you have&bslash;n&quot;
+l_string|&quot;the option of using the saved configuration.&bslash;n&quot;
 )paren
 )paren
 (brace
@@ -5578,7 +5671,7 @@ id|fprintf
 (paren
 id|sf
 comma
-l_string|&quot;/* automaticaly generated by configure */&bslash;n&quot;
+l_string|&quot;/* automatically generated by configure */&bslash;n&quot;
 )paren
 suffix:semicolon
 id|fprintf
@@ -5643,7 +5736,7 @@ id|fprintf
 (paren
 id|sf
 comma
-l_string|&quot;0x%02x,&quot;
+l_string|&quot;0x%02lx,&quot;
 comma
 id|c
 op_amp

@@ -4564,14 +4564,14 @@ id|skb-&gt;daddr
 op_assign
 id|saddr
 suffix:semicolon
-multiline_comment|/* We may need to add it to the backlog here. */
+multiline_comment|/*&n;&t;&t; * We may need to add it to the backlog here. &n;&t;&t; */
 r_if
 c_cond
 (paren
 id|sk-&gt;users
 )paren
 (brace
-id|skb_queue_tail
+id|__skb_queue_tail
 c_func
 (paren
 op_amp

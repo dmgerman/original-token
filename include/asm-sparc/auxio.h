@@ -1,9 +1,15 @@
-multiline_comment|/* $Id: auxio.h,v 1.8 1995/11/25 02:31:13 davem Exp $&n; * auxio.h:  Definitons and code for the Auxiliary I/O register.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: auxio.h,v 1.10 1996/01/03 03:52:58 davem Exp $&n; * auxio.h:  Definitons and code for the Auxiliary I/O register.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_AUXIO_H
 DECL|macro|_SPARC_AUXIO_H
 mdefine_line|#define _SPARC_AUXIO_H
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/vaddrs.h&gt;
+r_extern
+r_int
+r_char
+op_star
+id|auxio_register
+suffix:semicolon
 multiline_comment|/* This register is an unsigned char in IO space.  It does two things.&n; * First, it is used to control the front panel LED light on machines&n; * that have it (good for testing entry points to trap handlers and irq&squot;s)&n; * Secondly, it controls various floppy drive parameters.&n; */
 DECL|macro|AUXIO_ORMEIN
 mdefine_line|#define AUXIO_ORMEIN      0xf0    /* All writes must set these bits. */
@@ -26,9 +32,7 @@ mdefine_line|#define AUXIO_FLPY_EJCT   0x02    /* Eject floppy disk.  Write only
 DECL|macro|AUXIO_LED
 mdefine_line|#define AUXIO_LED         0x01    /* On if set, off if unset. Read/Write */
 DECL|macro|AUXREG
-mdefine_line|#define AUXREG   ((volatile unsigned char *)(AUXIO_VADDR + 3))
-DECL|macro|AUXREG4M
-mdefine_line|#define AUXREG4M ((volatile unsigned char *)(AUXIO_VADDR))
+mdefine_line|#define AUXREG   ((volatile unsigned char *)(auxio_register))
 DECL|macro|TURN_ON_LED
 mdefine_line|#define TURN_ON_LED   *AUXREG = (*AUXREG | AUXIO_ORMEIN | AUXIO_LED)
 DECL|macro|TURN_OFF_LED
@@ -63,6 +67,16 @@ id|bits_off
 r_int
 r_char
 id|regval
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 id|cli
 c_func
@@ -107,10 +121,10 @@ suffix:colon
 id|regval
 op_assign
 op_star
-id|AUXREG4M
+id|AUXREG
 suffix:semicolon
 op_star
-id|AUXREG4M
+id|AUXREG
 op_assign
 (paren
 (paren
@@ -137,12 +151,11 @@ l_string|&quot;Can&squot;t set AUXIO register on this machine.&quot;
 suffix:semicolon
 )brace
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 macro_line|#endif /* !(__ASSEMBLY__) */

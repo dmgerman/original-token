@@ -2312,7 +2312,7 @@ id|MS_RDONLY
 )paren
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t; * Make sure all quotas are turned off on this device we need to mount&n;&t;&t;&t; * it readonly so no more writes by the quotasystem.&n;&t;&t;&t; * If later on the remount fails to bad there are no quotas running&n;&t;&t;&t; * anymore. Turn them on again by hand.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * Make sure all quotas are turned off on this device we need to mount&n;&t;&t;&t; * it readonly so no more writes by the quotasystem.&n;&t;&t;&t; * If later on the remount fails too bad there are no quotas running&n;&t;&t;&t; * anymore. Turn them on again by hand.&n;&t;&t;&t; */
 id|quota_off
 c_func
 (paren
@@ -2394,7 +2394,7 @@ id|dev
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Before checking if the filesystem is still busy make sure the kernel&n;&t; * doesn&squot;t hold any quotafiles open on that device. If the umount fails&n;&t; * to bad there are no quotas running anymore. Turn them on again by hand.&n;&t; */
+multiline_comment|/*&n;&t; * Before checking if the filesystem is still busy make sure the kernel&n;&t; * doesn&squot;t hold any quotafiles open on that device. If the umount fails&n;&t; * too bad there are no quotas running anymore. Turn them on again by hand.&n;&t; */
 id|quota_off
 c_func
 (paren

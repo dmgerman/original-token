@@ -3,6 +3,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
+macro_line|#include &lt;linux/fs.h&gt;
 DECL|macro|CONFIG_UNIX
 mdefine_line|#define CONFIG_UNIX&t;&t;/* always present...&t;*/
 macro_line|#ifdef&t;CONFIG_UNIX

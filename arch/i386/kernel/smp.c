@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Intel MP v1.1/v1.4 specification support routines for multi-pentium &n; *&t;hosts.&n; *&n; *&t;(c) 1995 Alan Cox, CymruNET Ltd  &lt;alan@cymru.net&gt;&n; *&t;Supported by Caldera http://www.caldera.com.&n; *&t;Much of the core SMP work is based on previous work by Thomas Radke, to&n; *&t;whom a great many thanks are extended.&n; *&n; *&t;Thanks to Intel for testing against several Pentium and Pentium Pro&n; *&t;MP machines.&n; *&n; *&t;This code is released under the GNU public license version 2 or&n; *&t;later.&n; *&n; *&t;Fixes&n; *&t;&t;Felix Koop&t;:&t;NR_CPUS used properly&n; *&t;&t;Jose Renau&t;:&t;Handle single CPU case.&n; *&t;&t;Alan Cox&t;:&t;By repeated request 8) - Total BogoMIP report.&n; *&t;&t;Greg Wright&t;:&t;Fix for kernel stacks panic.&n; *&t;&t;Erich Boleyn&t;:&t;MP v1.4 and additional changes.&n; */
+multiline_comment|/*&n; *&t;Intel MP v1.1/v1.4 specification support routines for multi-pentium &n; *&t;hosts.&n; *&n; *&t;(c) 1995 Alan Cox, CymruNET Ltd  &lt;alan@cymru.net&gt;&n; *&t;Supported by Caldera http://www.caldera.com.&n; *&t;Much of the core SMP work is based on previous work by Thomas Radke, to&n; *&t;whom a great many thanks are extended.&n; *&n; *&t;Thanks to Intel for making available several different Pentium and&n; *&t;Pentium Pro MP machines.&n; *&n; *&t;This code is released under the GNU public license version 2 or&n; *&t;later.&n; *&n; *&t;Fixes&n; *&t;&t;Felix Koop&t;:&t;NR_CPUS used properly&n; *&t;&t;Jose Renau&t;:&t;Handle single CPU case.&n; *&t;&t;Alan Cox&t;:&t;By repeated request 8) - Total BogoMIP report.&n; *&t;&t;Greg Wright&t;:&t;Fix for kernel stacks panic.&n; *&t;&t;Erich Boleyn&t;:&t;MP v1.4 and additional changes.&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -2019,7 +2019,7 @@ op_assign
 id|vremap
 c_func
 (paren
-l_int|0xFEE00000
+id|apic_addr
 comma
 l_int|4096
 )paren
@@ -2277,6 +2277,13 @@ l_string|&quot;Setting warm reset code and vector.&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; *&t;Install a writable page 0 entry.&n;&t;&t;&t; */
+id|cfg
+op_assign
+id|pg0
+(braket
+l_int|0
+)braket
+suffix:semicolon
 id|CMOS_WRITE
 c_func
 (paren
@@ -2305,7 +2312,7 @@ r_int
 r_int
 op_star
 )paren
-l_int|0x467
+l_int|0x469
 )paren
 op_assign
 (paren
@@ -2326,7 +2333,7 @@ r_int
 r_int
 op_star
 )paren
-l_int|0x469
+l_int|0x467
 )paren
 op_assign
 l_int|0
@@ -2337,17 +2344,7 @@ id|pg0
 l_int|0
 )braket
 op_assign
-id|pte_val
-c_func
-(paren
-id|mk_pte
-c_func
-(paren
-l_int|0
-comma
-id|PAGE_READONLY
-)paren
-)paren
+id|cfg
 suffix:semicolon
 id|local_invalidate
 c_func
@@ -3587,10 +3584,6 @@ c_func
 (paren
 r_int
 id|cpl
-comma
-r_void
-op_star
-id|dev_id
 comma
 r_struct
 id|pt_regs

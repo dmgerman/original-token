@@ -14151,6 +14151,11 @@ r_int
 id|io_base
 )paren
 (brace
+r_struct
+id|sound_lowlev_timer
+op_star
+id|tmr
+suffix:semicolon
 id|select_addr
 op_assign
 id|io_base
@@ -14161,6 +14166,12 @@ id|io_base
 op_plus
 l_int|1
 suffix:semicolon
+id|tmr
+op_assign
+op_amp
+id|gus_tmr
+suffix:semicolon
+macro_line|#ifdef THIS_GETS_FIXED
 id|sound_timer_init
 (paren
 op_amp
@@ -14169,6 +14180,7 @@ comma
 l_string|&quot;GUS&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 macro_line|#endif
 macro_line|#endif

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  ncp_fs.h&n; *&n; *  Copyright (C) 1995 by Volker Lendecke&n; *&n; */
+multiline_comment|/*&n; *  ncp.h&n; *&n; *  Copyright (C) 1995 by Volker Lendecke&n; *&n; */
 macro_line|#ifndef _LINUX_NCP_H
 DECL|macro|_LINUX_NCP_H
 mdefine_line|#define _LINUX_NCP_H

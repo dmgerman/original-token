@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtable.h,v 1.25 1995/11/25 02:32:22 davem Exp $ */
+multiline_comment|/* $Id: pgtable.h,v 1.35 1996/02/21 17:57:30 miguel Exp $ */
 macro_line|#ifndef _SPARC_PGTABLE_H
 DECL|macro|_SPARC_PGTABLE_H
 mdefine_line|#define _SPARC_PGTABLE_H
@@ -9,12 +9,24 @@ macro_line|#include &lt;asm/pgtsun4c.h&gt;
 macro_line|#include &lt;asm/pgtsrmmu.h&gt;
 macro_line|#include &lt;asm/vac-ops.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
+macro_line|#include &lt;asm/sbus.h&gt;
 r_extern
 r_void
 id|load_mmu
 c_func
 (paren
 r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+(paren
+op_star
+id|quick_kernel_fault
+)paren
+(paren
+r_int
+r_int
 )paren
 suffix:semicolon
 multiline_comment|/* mmu-specific process creation/cloning/etc hooks. */
@@ -26,32 +38,6 @@ id|mmu_exit_hook
 )paren
 (paren
 r_void
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_void
-(paren
-op_star
-id|mmu_fork_hook
-)paren
-(paren
-r_void
-op_star
-comma
-r_int
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_void
-(paren
-op_star
-id|mmu_release_hook
-)paren
-(paren
-r_void
-op_star
 )paren
 suffix:semicolon
 r_extern
@@ -62,18 +48,6 @@ id|mmu_flush_hook
 )paren
 (paren
 r_void
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_void
-(paren
-op_star
-id|mmu_task_cacheflush
-)paren
-(paren
-r_void
-op_star
 )paren
 suffix:semicolon
 multiline_comment|/* Routines for data transfer buffers. */
@@ -120,6 +94,11 @@ op_star
 comma
 r_int
 r_int
+comma
+r_struct
+id|linux_sbus
+op_star
+id|sbus
 )paren
 suffix:semicolon
 r_extern
@@ -134,6 +113,11 @@ op_star
 comma
 r_int
 r_int
+comma
+r_struct
+id|linux_sbus
+op_star
+id|sbus
 )paren
 suffix:semicolon
 r_extern
@@ -246,10 +230,6 @@ suffix:semicolon
 r_extern
 id|pgprot_t
 id|page_kernel
-suffix:semicolon
-r_extern
-id|pgprot_t
-id|page_invalid
 suffix:semicolon
 DECL|macro|PMD_SHIFT
 mdefine_line|#define PMD_SHIFT      (pmd_shift)
@@ -367,18 +347,14 @@ suffix:semicolon
 r_extern
 r_int
 r_int
-id|__zero_page
-c_func
-(paren
-r_void
-)paren
+id|empty_zero_page
 suffix:semicolon
 DECL|macro|BAD_PAGETABLE
 mdefine_line|#define BAD_PAGETABLE __bad_pagetable()
 DECL|macro|BAD_PAGE
 mdefine_line|#define BAD_PAGE __bad_page()
 DECL|macro|ZERO_PAGE
-mdefine_line|#define ZERO_PAGE __zero_page()
+mdefine_line|#define ZERO_PAGE (&amp;empty_zero_page)
 multiline_comment|/* number of bits that fit into a memory pointer */
 DECL|macro|BITS_PER_PTR
 mdefine_line|#define BITS_PER_PTR      (8*sizeof(unsigned long))
@@ -420,7 +396,6 @@ id|pgd_page
 id|pgd_t
 )paren
 suffix:semicolon
-multiline_comment|/* to set the page-dir&n; *&n; * On the Sparc the page segments hold 64 pte&squot;s which means 256k/segment.&n; * Therefore there is no global idea of &squot;the&squot; page directory, although we&n; * make a virtual one in kernel memory so that we can keep the stats on&n; * all the pages since not all can be loaded at once in the mmu.&n; *&n; * Actually on the SRMMU things do work exactly like the i386, the&n; * page tables live in real physical ram, no funky TLB buisness.&n; */
 r_extern
 r_void
 (paren
@@ -631,27 +606,7 @@ r_extern
 r_int
 (paren
 op_star
-id|pte_read
-)paren
-(paren
-id|pte_t
-)paren
-suffix:semicolon
-r_extern
-r_int
-(paren
-op_star
 id|pte_write
-)paren
-(paren
-id|pte_t
-)paren
-suffix:semicolon
-r_extern
-r_int
-(paren
-op_star
-id|pte_exec
 )paren
 (paren
 id|pte_t
@@ -678,40 +633,10 @@ id|pte_t
 )paren
 suffix:semicolon
 r_extern
-r_int
-(paren
-op_star
-id|pte_cow
-)paren
-(paren
-id|pte_t
-)paren
-suffix:semicolon
-r_extern
 id|pte_t
 (paren
 op_star
 id|pte_wrprotect
-)paren
-(paren
-id|pte_t
-)paren
-suffix:semicolon
-r_extern
-id|pte_t
-(paren
-op_star
-id|pte_rdprotect
-)paren
-(paren
-id|pte_t
-)paren
-suffix:semicolon
-r_extern
-id|pte_t
-(paren
-op_star
-id|pte_exprotect
 )paren
 (paren
 id|pte_t
@@ -741,37 +666,7 @@ r_extern
 id|pte_t
 (paren
 op_star
-id|pte_uncow
-)paren
-(paren
-id|pte_t
-)paren
-suffix:semicolon
-r_extern
-id|pte_t
-(paren
-op_star
 id|pte_mkwrite
-)paren
-(paren
-id|pte_t
-)paren
-suffix:semicolon
-r_extern
-id|pte_t
-(paren
-op_star
-id|pte_mkread
-)paren
-(paren
-id|pte_t
-)paren
-suffix:semicolon
-r_extern
-id|pte_t
-(paren
-op_star
-id|pte_mkexec
 )paren
 (paren
 id|pte_t
@@ -797,22 +692,25 @@ id|pte_mkyoung
 id|pte_t
 )paren
 suffix:semicolon
-r_extern
-id|pte_t
-(paren
-op_star
-id|pte_mkcow
-)paren
-(paren
-id|pte_t
-)paren
-suffix:semicolon
 multiline_comment|/*&n; * Conversion functions: convert a page and protection to a page entry,&n; * and a page entry and page directory to the page they refer to.&n; */
 r_extern
 id|pte_t
 (paren
 op_star
 id|mk_pte
+)paren
+(paren
+r_int
+r_int
+comma
+id|pgprot_t
+)paren
+suffix:semicolon
+r_extern
+id|pte_t
+(paren
+op_star
+id|mk_pte_io
 )paren
 (paren
 r_int
@@ -1025,6 +923,112 @@ id|pgd_alloc
 r_void
 )paren
 suffix:semicolon
+multiline_comment|/* Fine grained invalidation. */
+r_extern
+r_void
+(paren
+op_star
+id|invalidate_all
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+(paren
+op_star
+id|invalidate_mm
+)paren
+(paren
+r_struct
+id|mm_struct
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+(paren
+op_star
+id|invalidate_range
+)paren
+(paren
+r_struct
+id|mm_struct
+op_star
+comma
+r_int
+r_int
+id|start
+comma
+r_int
+r_int
+id|end
+)paren
+suffix:semicolon
+r_extern
+r_void
+(paren
+op_star
+id|invalidate_page
+)paren
+(paren
+r_struct
+id|vm_area_struct
+op_star
+comma
+r_int
+r_int
+id|address
+)paren
+suffix:semicolon
+multiline_comment|/* The permissions for pgprot_val to make a page mapped on the obio space */
+r_extern
+r_int
+r_int
+id|pg_iobits
+suffix:semicolon
+multiline_comment|/* MMU context switching. */
+r_extern
+r_void
+(paren
+op_star
+id|switch_to_context
+)paren
+(paren
+r_struct
+id|task_struct
+op_star
+id|tsk
+)paren
+suffix:semicolon
+multiline_comment|/* Certain architectures need to do special things when pte&squot;s&n; * within a page table are directly modified.  Thus, the following&n; * hook is made available.&n; */
+r_extern
+r_void
+(paren
+op_star
+id|set_pte
+)paren
+(paren
+id|pte_t
+op_star
+id|pteptr
+comma
+id|pte_t
+id|pteval
+)paren
+suffix:semicolon
+r_extern
+r_char
+op_star
+(paren
+op_star
+id|mmu_info
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
 multiline_comment|/* Fault handler stuff... */
 DECL|macro|FAULT_CODE_PROT
 mdefine_line|#define FAULT_CODE_PROT     0x1
@@ -1032,25 +1036,6 @@ DECL|macro|FAULT_CODE_WRITE
 mdefine_line|#define FAULT_CODE_WRITE    0x2
 DECL|macro|FAULT_CODE_USER
 mdefine_line|#define FAULT_CODE_USER     0x4
-r_extern
-r_int
-(paren
-op_star
-id|get_fault_info
-)paren
-(paren
-r_int
-r_int
-op_star
-comma
-r_int
-r_int
-op_star
-comma
-r_int
-r_int
-)paren
-suffix:semicolon
 r_extern
 r_void
 (paren
@@ -1076,11 +1061,11 @@ r_int
 id|invalid_segment
 suffix:semicolon
 DECL|macro|SWP_TYPE
-mdefine_line|#define SWP_TYPE(entry) (((entry) &gt;&gt; 1) &amp; 0x7f)
+mdefine_line|#define SWP_TYPE(entry) (((entry)&gt;&gt;2) &amp; 0x7f)
 DECL|macro|SWP_OFFSET
-mdefine_line|#define SWP_OFFSET(entry) ((entry) &gt;&gt; 8)
+mdefine_line|#define SWP_OFFSET(entry) ((entry) &gt;&gt; 9)
 DECL|macro|SWP_ENTRY
-mdefine_line|#define SWP_ENTRY(type,offset) (((type) &lt;&lt; 1) | ((offset) &lt;&lt; 8))
+mdefine_line|#define SWP_ENTRY(type,offset) (((type) &lt;&lt; 2) | ((offset) &lt;&lt; 9))
 DECL|struct|ctx_list
 r_struct
 id|ctx_list
@@ -1102,13 +1087,12 @@ r_int
 r_char
 id|ctx_number
 suffix:semicolon
-DECL|member|ctx_task
+DECL|member|ctx_mm
 r_struct
-id|task_struct
+id|mm_struct
 op_star
-id|ctx_task
+id|ctx_mm
 suffix:semicolon
-multiline_comment|/* Who has it now, if not free */
 )brace
 suffix:semicolon
 r_extern
@@ -1130,6 +1114,8 @@ id|ctx_list
 id|ctx_used
 suffix:semicolon
 multiline_comment|/* Head of used contexts list */
+DECL|macro|NO_CONTEXT
+mdefine_line|#define NO_CONTEXT     -1
 DECL|function|remove_from_ctx_list
 r_extern
 r_inline

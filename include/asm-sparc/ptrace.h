@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ptrace.h,v 1.14 1995/11/25 02:32:33 davem Exp $ */
+multiline_comment|/* $Id: ptrace.h,v 1.19 1996/01/24 02:33:50 davem Exp $ */
 macro_line|#ifndef _SPARC_PTRACE_H
 DECL|macro|_SPARC_PTRACE_H
 mdefine_line|#define _SPARC_PTRACE_H
@@ -74,6 +74,8 @@ DECL|macro|UREG_I7
 mdefine_line|#define UREG_I7        15
 DECL|macro|UREG_WIM
 mdefine_line|#define UREG_WIM       UREG_G0
+DECL|macro|UREG_FADDR
+mdefine_line|#define UREG_FADDR     UREG_G0
 DECL|macro|UREG_FP
 mdefine_line|#define UREG_FP        UREG_I6
 DECL|macro|UREG_RETPC
@@ -187,7 +189,7 @@ mdefine_line|#define STACKFRAME_SZ     0x60
 DECL|macro|REGWIN_SZ
 mdefine_line|#define REGWIN_SZ         0x40
 macro_line|#endif
-multiline_comment|/* First generic task_struct offsets. sizeof(task_struct)=1536 */
+multiline_comment|/* First generic task_struct offsets. sizeof(task_struct)=1576 */
 DECL|macro|TASK_STATE
 mdefine_line|#define TASK_STATE        0x000
 DECL|macro|TASK_PRIORITY
@@ -217,22 +219,26 @@ DECL|macro|THREAD_KPSR
 mdefine_line|#define THREAD_KPSR       0x228
 DECL|macro|THREAD_KWIM
 mdefine_line|#define THREAD_KWIM       0x22c
+DECL|macro|THREAD_FORK_KPSR
+mdefine_line|#define THREAD_FORK_KPSR  0x230
+DECL|macro|THREAD_FORK_KWIM
+mdefine_line|#define THREAD_FORK_KWIM  0x234
 DECL|macro|THREAD_REG_WINDOW
-mdefine_line|#define THREAD_REG_WINDOW 0x230
+mdefine_line|#define THREAD_REG_WINDOW 0x238
 DECL|macro|THREAD_STACK_PTRS
-mdefine_line|#define THREAD_STACK_PTRS 0x430
+mdefine_line|#define THREAD_STACK_PTRS 0x438
 DECL|macro|THREAD_W_SAVED
-mdefine_line|#define THREAD_W_SAVED    0x450
-DECL|macro|THREAD_PGD_PTR
-mdefine_line|#define THREAD_PGD_PTR    0x454
-DECL|macro|THREAD_CONTEXT
-mdefine_line|#define THREAD_CONTEXT    0x458
+mdefine_line|#define THREAD_W_SAVED    0x458
 DECL|macro|THREAD_FLOAT_REGS
 mdefine_line|#define THREAD_FLOAT_REGS 0x460
 DECL|macro|THREAD_FSR
 mdefine_line|#define THREAD_FSR        0x560
 DECL|macro|THREAD_SIGSTK
 mdefine_line|#define THREAD_SIGSTK     0x5e8
+DECL|macro|THREAD_MM
+mdefine_line|#define THREAD_MM     0x620
+DECL|macro|THREAD_MM_CTX
+mdefine_line|#define THREAD_MM_CTX     0x008
 multiline_comment|/* These are for pt_regs. */
 DECL|macro|PT_PSR
 mdefine_line|#define PT_PSR    0x0
@@ -360,5 +366,34 @@ DECL|macro|SF_XARG5
 mdefine_line|#define SF_XARG5  0x58
 DECL|macro|SF_XXARG
 mdefine_line|#define SF_XXARG  0x5c
+multiline_comment|/* Stuff for the ptrace system call */
+macro_line|#if 0 /* Need to fix the header files a bit... */
+macro_line|#undef PTRACE_ATTACH
+macro_line|#undef PTRACE_DETACH
+mdefine_line|#define PTRACE_ATTACH&t;&t;  10
+mdefine_line|#define PTRACE_DETACH&t;&t;  11
+macro_line|#endif
+DECL|macro|PTRACE_GETREGS
+mdefine_line|#define PTRACE_GETREGS            12
+DECL|macro|PTRACE_SETREGS
+mdefine_line|#define PTRACE_SETREGS            13
+DECL|macro|PTRACE_GETFPREGS
+mdefine_line|#define PTRACE_GETFPREGS          14
+DECL|macro|PTRACE_SETFPREGS
+mdefine_line|#define PTRACE_SETFPREGS          15
+DECL|macro|PTRACE_READDATA
+mdefine_line|#define PTRACE_READDATA           16
+DECL|macro|PTRACE_WRITEDATA
+mdefine_line|#define PTRACE_WRITEDATA          17
+DECL|macro|PTRACE_READTEXT
+mdefine_line|#define PTRACE_READTEXT           18
+DECL|macro|PTRACE_WRITETEXT
+mdefine_line|#define PTRACE_WRITETEXT          19
+DECL|macro|PTRACE_GETFPAREGS
+mdefine_line|#define PTRACE_GETFPAREGS         20
+DECL|macro|PTRACE_SETFPAREGS
+mdefine_line|#define PTRACE_SETFPAREGS         21
+DECL|macro|PTRACE_GETUCODE
+mdefine_line|#define PTRACE_GETUCODE           29  /* stupid bsd-ism */
 macro_line|#endif /* !(_SPARC_PTRACE_H) */
 eof

@@ -1,0 +1,216 @@
+multiline_comment|/*&n; * eth82586.h: Intel EtherExpress defines&n; *&n; * Written 1995 by John Sullivan&n; * See eexpress.c for furthur details&n; * documentation and usage to do.&n; */
+multiline_comment|/*&n; * EtherExpress card register addresses&n; * as offsets from the base IO region (dev-&gt;base_addr)&n; */
+DECL|macro|DATAPORT
+mdefine_line|#define DATAPORT 0x0000
+DECL|macro|WRITE_PTR
+mdefine_line|#define WRITE_PTR 0x0002
+DECL|macro|READ_PTR
+mdefine_line|#define READ_PTR 0x0004
+DECL|macro|SIGNAL_CA
+mdefine_line|#define SIGNAL_CA 0x0006
+DECL|macro|SET_IRQ
+mdefine_line|#define SET_IRQ 0x0007
+DECL|macro|SM_PTR
+mdefine_line|#define SM_PTR 0x0008
+DECL|macro|MEM_Ctrl
+mdefine_line|#define MEM_Ctrl 0x000b
+DECL|macro|MEM_Page_Ctrl
+mdefine_line|#define MEM_Page_Ctrl 0x000c
+DECL|macro|Config
+mdefine_line|#define Config 0x000d
+DECL|macro|EEPROM_Ctrl
+mdefine_line|#define EEPROM_Ctrl 0x000e
+DECL|macro|ID_PORT
+mdefine_line|#define ID_PORT 0x000f
+multiline_comment|/*&n; * offset to shadowed memory, 0 &lt;= x &lt;= 31. We don&squot;t use this yet,&n; * but may in the future. Is shadow memory access any faster than&n; * dataport access?&n; */
+DECL|macro|SM_ADDR
+mdefine_line|#define SM_ADDR(x) (0x4000+((x&amp;0x10)&lt;&lt;10)+(x&amp;0xf))
+multiline_comment|/* Always mirrors eexp-memory at 0x0008-0x000f */
+DECL|macro|SCB_STATUS
+mdefine_line|#define SCB_STATUS 0xc008
+DECL|macro|SCB_CMD
+mdefine_line|#define SCB_CMD 0xc00a
+DECL|macro|SCB_CBL
+mdefine_line|#define SCB_CBL 0xc00c
+DECL|macro|SCB_RFA
+mdefine_line|#define SCB_RFA 0xc00e
+multiline_comment|/*&n; * card register defines&n; */
+multiline_comment|/* SET_IRQ */
+DECL|macro|SIRQ_en
+mdefine_line|#define SIRQ_en 0x08
+DECL|macro|SIRQ_dis
+mdefine_line|#define SIRQ_dis 0x00
+multiline_comment|/* Config */
+DECL|macro|set_loopback
+mdefine_line|#define set_loopback outb(inb(ioaddr+Config)|0x02,ioaddr+Config)
+DECL|macro|clear_loopback
+mdefine_line|#define clear_loopback outb(inb(ioaddr+Config)&amp;0xfd,ioaddr+Config)
+multiline_comment|/* EEPROM_Ctrl */
+DECL|macro|EC_Clk
+mdefine_line|#define EC_Clk 0x01
+DECL|macro|EC_CS
+mdefine_line|#define EC_CS  0x02
+DECL|macro|EC_Wr
+mdefine_line|#define EC_Wr  0x04
+DECL|macro|EC_Rd
+mdefine_line|#define EC_Rd  0x08
+DECL|macro|ASIC_RST
+mdefine_line|#define ASIC_RST 0x40
+DECL|macro|i586_RST
+mdefine_line|#define i586_RST  0x80
+DECL|macro|eeprom_delay
+mdefine_line|#define eeprom_delay() { int _i = 40; while (--_i&gt;0) { __SLOW_DOWN_IO; }}
+multiline_comment|/*&n; * i82586 Memory Configuration&n; */
+multiline_comment|/* (System Configuration Pointer) System start up block, read after 586_RST */
+DECL|macro|SCP_START
+mdefine_line|#define SCP_START 0xfff6
+multiline_comment|/* Intermediate System Configuration Pointer */
+DECL|macro|ISCP_START
+mdefine_line|#define ISCP_START 0x0000
+multiline_comment|/* System Command Block */
+DECL|macro|SCB_START
+mdefine_line|#define SCB_START 0x0008
+multiline_comment|/*&n; * Start of buffer region. If we have 64k memory, eexp_hw_probe() may raise&n; * NUM_TX_BUFS. RX_BUF_END is set to the end of memory, and all space between&n; * the transmit buffer region and end of memory used for as many receive buffers&n; * as we can fit. See eexp_hw_[(rx)(tx)]init().&n; */
+DECL|macro|TX_BUF_START
+mdefine_line|#define TX_BUF_START 0x0100
+DECL|macro|TX_BUF_SIZE
+mdefine_line|#define TX_BUF_SIZE ((24+ETH_FRAME_LEN+31)&amp;~0x1f)
+DECL|variable|NUM_TX_BUFS
+r_int
+r_int
+id|NUM_TX_BUFS
+op_assign
+l_int|4
+suffix:semicolon
+DECL|variable|RX_BUF_START
+r_int
+r_int
+id|RX_BUF_START
+suffix:semicolon
+DECL|macro|RX_BUF_SIZE
+mdefine_line|#define RX_BUF_SIZE ((32+ETH_FRAME_LEN+31)&amp;~0x1f)
+DECL|variable|RX_BUF_END
+r_int
+r_int
+id|RX_BUF_END
+op_assign
+l_int|0x7ff6
+suffix:semicolon
+multiline_comment|/* updated automatically to 0xfff6 on 64k cards */
+DECL|variable|NUM_RX_BUFS
+r_int
+r_int
+id|NUM_RX_BUFS
+op_assign
+l_int|4
+suffix:semicolon
+multiline_comment|/*&n; * SCB defines&n; */
+multiline_comment|/* these functions take the SCB status word and test the relavent status bit */
+DECL|macro|SCB_complete
+mdefine_line|#define SCB_complete(s) ((s&amp;0x8000)!=0)
+DECL|macro|SCB_rxdframe
+mdefine_line|#define SCB_rxdframe(s) ((s&amp;0x4000)!=0)
+DECL|macro|SCB_CUdead
+mdefine_line|#define SCB_CUdead(s) ((s&amp;0x2000)!=0)
+DECL|macro|SCB_RUdead
+mdefine_line|#define SCB_RUdead(s) ((s&amp;0x1000)!=0)
+DECL|macro|SCB_ack
+mdefine_line|#define SCB_ack(s) (s &amp; 0xf000)
+multiline_comment|/* Command unit status: 0=idle, 1=suspended, 2=active */
+DECL|macro|SCB_CUstat
+mdefine_line|#define SCB_CUstat(s) ((s&amp;0x0300)&gt;&gt;8)
+multiline_comment|/* Receive unit status: 0=idle, 1=suspended, 2=out of resources, 4=ready */
+DECL|macro|SCB_RUstat
+mdefine_line|#define SCB_RUstat(s) ((s&amp;0x0070)&gt;&gt;4)
+multiline_comment|/* SCB commands */
+DECL|macro|SCB_CUnop
+mdefine_line|#define SCB_CUnop     0x0000
+DECL|macro|SCB_CUstart
+mdefine_line|#define SCB_CUstart   0x0100
+DECL|macro|SCB_CUresume
+mdefine_line|#define SCB_CUresume  0x0200
+DECL|macro|SCB_CUsuspend
+mdefine_line|#define SCB_CUsuspend 0x0300
+DECL|macro|SCB_CUabort
+mdefine_line|#define SCB_CUabort   0x0400
+multiline_comment|/* ? */
+DECL|macro|SCB_resetchip
+mdefine_line|#define SCB_resetchip 0x0080
+DECL|macro|SCB_RUnop
+mdefine_line|#define SCB_RUnop     0x0000
+DECL|macro|SCB_RUstart
+mdefine_line|#define SCB_RUstart   0x0010
+DECL|macro|SCB_RUresume
+mdefine_line|#define SCB_RUresume  0x0020
+DECL|macro|SCB_RUsuspend
+mdefine_line|#define SCB_RUsuspend 0x0030
+DECL|macro|SCB_RUabort
+mdefine_line|#define SCB_RUabort   0x0040
+multiline_comment|/*&n; * Command block defines&n; */
+DECL|macro|Stat_Done
+mdefine_line|#define Stat_Done(s)   ((s&amp;0x8000)!=0)
+DECL|macro|Stat_Busy
+mdefine_line|#define Stat_Busy(s)   ((s&amp;0x4000)!=0)
+DECL|macro|Stat_OK
+mdefine_line|#define Stat_OK(s)     ((s&amp;0x2000)!=0)
+DECL|macro|Stat_Abort
+mdefine_line|#define Stat_Abort(s)  ((s&amp;0x1000)!=0)
+DECL|macro|Stat_STFail
+mdefine_line|#define Stat_STFail    ((s&amp;0x0800)!=0)
+DECL|macro|Stat_TNoCar
+mdefine_line|#define Stat_TNoCar(s) ((s&amp;0x0400)!=0)
+DECL|macro|Stat_TNoCTS
+mdefine_line|#define Stat_TNoCTS(s) ((s&amp;0x0200)!=0)
+DECL|macro|Stat_TNoDMA
+mdefine_line|#define Stat_TNoDMA(s) ((s&amp;0x0100)!=0)
+DECL|macro|Stat_TDefer
+mdefine_line|#define Stat_TDefer(s) ((s&amp;0x0080)!=0)
+DECL|macro|Stat_TColl
+mdefine_line|#define Stat_TColl(s)  ((s&amp;0x0040)!=0)
+DECL|macro|Stat_TXColl
+mdefine_line|#define Stat_TXColl(s) ((s&amp;0x0020)!=0)
+DECL|macro|Stat_NoColl
+mdefine_line|#define Stat_NoColl(s) (s&amp;0x000f)
+multiline_comment|/* Cmd_END will end AFTER the command if this is the first&n; * command block after an SCB_CUstart, but BEFORE the command&n; * for all subsequent commands. Best strategy is to place&n; * Cmd_INT on the last command in the sequence, followed by a&n; * dummy Cmd_Nop with Cmd_END after this.&n; */
+DECL|macro|Cmd_END
+mdefine_line|#define Cmd_END     0x8000
+DECL|macro|Cmd_SUS
+mdefine_line|#define Cmd_SUS     0x4000
+DECL|macro|Cmd_INT
+mdefine_line|#define Cmd_INT     0x2000
+DECL|macro|Cmd_Nop
+mdefine_line|#define Cmd_Nop     0x0000
+DECL|macro|Cmd_SetAddr
+mdefine_line|#define Cmd_SetAddr 0x0001
+DECL|macro|Cmd_Config
+mdefine_line|#define Cmd_Config  0x0002
+DECL|macro|Cmd_MCast
+mdefine_line|#define Cmd_MCast   0x0003
+DECL|macro|Cmd_Xmit
+mdefine_line|#define Cmd_Xmit    0x0004
+DECL|macro|Cmd_TDR
+mdefine_line|#define Cmd_TDR     0x0005
+DECL|macro|Cmd_Dump
+mdefine_line|#define Cmd_Dump    0x0006
+DECL|macro|Cmd_Diag
+mdefine_line|#define Cmd_Diag    0x0007
+multiline_comment|/*&n; * Frame Descriptor (Receive block) defines&n; */
+DECL|macro|FD_Done
+mdefine_line|#define FD_Done(s)  ((s&amp;0x8000)!=0)
+DECL|macro|FD_Busy
+mdefine_line|#define FD_Busy(s)  ((s&amp;0x4000)!=0)
+DECL|macro|FD_OK
+mdefine_line|#define FD_OK(s)    ((s&amp;0x2000)!=0)
+DECL|macro|FD_CRC
+mdefine_line|#define FD_CRC(s)   ((s&amp;0x0800)!=0)
+DECL|macro|FD_Align
+mdefine_line|#define FD_Align(s) ((s&amp;0x0400)!=0)
+DECL|macro|FD_Resrc
+mdefine_line|#define FD_Resrc(s) ((s&amp;0x0200)!=0)
+DECL|macro|FD_DMA
+mdefine_line|#define FD_DMA(s)   ((s&amp;0x0100)!=0)
+DECL|macro|FD_Short
+mdefine_line|#define FD_Short(s) ((s&amp;0x0080)!=0)
+DECL|macro|FD_NoEOF
+mdefine_line|#define FD_NoEOF(s) ((s&amp;0x0040)!=0)
+eof

@@ -1,17 +1,16 @@
-multiline_comment|/* $Id: system.h,v 1.19 1995/11/25 02:32:59 davem Exp $ */
+multiline_comment|/* $Id: system.h,v 1.24 1996/02/11 00:42:39 davem Exp $ */
 macro_line|#ifndef __SPARC_SYSTEM_H
 DECL|macro|__SPARC_SYSTEM_H
 mdefine_line|#define __SPARC_SYSTEM_H
+macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
-macro_line|#include &lt;asm/openprom.h&gt;
+macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/psr.h&gt;
 DECL|macro|EMPTY_PGT
 mdefine_line|#define EMPTY_PGT       (&amp;empty_bad_page)
 DECL|macro|EMPTY_PGE
 mdefine_line|#define EMPTY_PGE&t;(&amp;empty_bad_page_table)
-DECL|macro|ZERO_PGE
-mdefine_line|#define ZERO_PGE&t;(&amp;empty_zero_page)
 macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/*&n; * Sparc (general) CPU types&n; */
 DECL|enum|sparc_cpu
@@ -95,6 +94,14 @@ r_void
 suffix:semicolon
 r_extern
 r_void
+id|synchronize_user_stack
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|sparc_switch_to
 c_func
 (paren
@@ -104,7 +111,7 @@ id|new_task
 )paren
 suffix:semicolon
 DECL|macro|switch_to
-mdefine_line|#define switch_to(p) do { &bslash;&n;&t;&t;&t;  flush_user_windows(); &bslash;&n;&t;&t;          switch_to_context(p); &bslash;&n;                          sparc_switch_to(p); &bslash;&n;                     } while(0)
+mdefine_line|#define switch_to(p) do { &bslash;&n;&t;&t;&t;  flush_user_windows(); &bslash;&n;&t;&t;          switch_to_context(p); &bslash;&n;&t;&t;&t;  current-&gt;tss.current_ds = active_ds; &bslash;&n;                          active_ds = p-&gt;tss.current_ds; &bslash;&n;                          sparc_switch_to(p); &bslash;&n;                     } while(0)
 multiline_comment|/* Changing the IRQ level on the Sparc. */
 DECL|function|setipl
 r_extern
@@ -234,6 +241,13 @@ r_return
 id|retval
 suffix:semicolon
 )brace
+r_extern
+r_char
+id|spdeb_buf
+(braket
+l_int|256
+)braket
+suffix:semicolon
 DECL|macro|cli
 mdefine_line|#define cli()&t;&t;&t;setipl(15)  /* 15 = no int&squot;s except nmi&squot;s */
 DECL|macro|sti

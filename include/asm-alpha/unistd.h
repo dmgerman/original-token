@@ -139,6 +139,10 @@ DECL|macro|__NR_listen
 mdefine_line|#define __NR_listen&t;&t;106
 DECL|macro|__NR_sigsuspend
 mdefine_line|#define __NR_sigsuspend&t;&t;111
+DECL|macro|__NR_recvmsg
+mdefine_line|#define __NR_recvmsg&t;&t;113
+DECL|macro|__NR_sendmsg
+mdefine_line|#define __NR_sendmsg&t;&t;114
 DECL|macro|__NR_gettimeofday
 mdefine_line|#define __NR_gettimeofday&t;116
 DECL|macro|__NR_getrusage
@@ -308,6 +312,8 @@ DECL|macro|__NR_afs_syscall
 mdefine_line|#define __NR_afs_syscall&t;&t;338
 DECL|macro|__NR_uname
 mdefine_line|#define __NR_uname&t;&t;&t;339
+DECL|macro|__NR_nanosleep
+mdefine_line|#define __NR_nanosleep&t;&t;&t;340
 macro_line|#ifdef __LIBRARY__
 multiline_comment|/*&n; * Duh, the alpha gcc compiler doesn&squot;t allow us to specify regs&n; * yet. I&squot;ll have to see about this later..&n; */
 multiline_comment|/* XXX - _foo needs to be __foo, while __NR_bar could be _NR_bar. */

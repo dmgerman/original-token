@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fcntl.h,v 1.5 1995/11/25 02:31:43 davem Exp $ */
+multiline_comment|/* $Id: fcntl.h,v 1.6 1996/01/28 02:09:23 davem Exp $ */
 macro_line|#ifndef _SPARC_FCNTL_H
 DECL|macro|_SPARC_FCNTL_H
 mdefine_line|#define _SPARC_FCNTL_H
@@ -19,16 +19,16 @@ DECL|macro|FASYNC
 mdefine_line|#define FASYNC&t;&t;0x0040&t;/* fcntl, for BSD compatibility */
 DECL|macro|O_CREAT
 mdefine_line|#define O_CREAT&t;&t;0x0200&t;/* not fcntl */
-DECL|macro|O_EXCL
-mdefine_line|#define O_EXCL&t;&t;0x0800&t;/* not fcntl */
-DECL|macro|O_NOCTTY
-mdefine_line|#define O_NOCTTY&t;0x8000&t;/* not fcntl */
 DECL|macro|O_TRUNC
 mdefine_line|#define O_TRUNC&t;&t;0x0400&t;/* not fcntl */
+DECL|macro|O_EXCL
+mdefine_line|#define O_EXCL&t;&t;0x0800&t;/* not fcntl */
 DECL|macro|O_SYNC
 mdefine_line|#define O_SYNC&t;&t;0x2000
 DECL|macro|O_NONBLOCK
 mdefine_line|#define O_NONBLOCK&t;0x4000
+DECL|macro|O_NOCTTY
+mdefine_line|#define O_NOCTTY&t;0x8000&t;/* not fcntl */
 DECL|macro|F_DUPFD
 mdefine_line|#define F_DUPFD&t;&t;0&t;/* dup */
 DECL|macro|F_GETFD

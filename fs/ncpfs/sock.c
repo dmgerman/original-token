@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/ncp/sock.c&n; *&n; *  Copyright (C) 1992, 1993  Rick Sladkey&n; *&n; *  Modified 1995 by Volker Lendecke to be usable for ncp&n; *&n; */
+multiline_comment|/*&n; *  linux/fs/ncp/sock.c&n; *&n; *  Copyright (C) 1992, 1993  Rick Sladkey&n; *&n; *  Modified 1995, 1996 by Volker Lendecke to be usable for ncp&n; *&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/ncp_fs.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -2559,7 +2559,7 @@ l_int|0
 id|DPRINTK
 c_func
 (paren
-l_string|&quot;ncp_completion_code: %d&bslash;n&quot;
+l_string|&quot;ncp_completion_code: %x&bslash;n&quot;
 comma
 id|result
 )paren

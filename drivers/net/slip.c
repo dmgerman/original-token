@@ -5383,7 +5383,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sls
+id|sl
 op_eq
 l_int|NULL
 )paren

@@ -1,7 +1,8 @@
-multiline_comment|/* $Id: viking.h,v 1.5 1995/11/25 02:33:21 davem Exp $&n; * viking.h:  Defines specific to the TI Viking MBUS module.&n; *            This is SRMMU stuff.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: viking.h,v 1.6 1996/03/01 07:21:05 davem Exp $&n; * viking.h:  Defines specific to the TI Viking MBUS module.&n; *            This is SRMMU stuff.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_VIKING_H
 DECL|macro|_SPARC_VIKING_H
 mdefine_line|#define _SPARC_VIKING_H
+macro_line|#include &lt;asm/mxcc.h&gt;
 multiline_comment|/* Bits in the SRMMU control register for TI Viking modules.&n; *&n; * -------------------------------------------------------------&n; * |implvers| RSV |DP|RSV|TC|AC|SP|BM|PC|MBM|SB|IC|DC|RSV|NF|ME|&n; * -------------------------------------------------------------&n; *  31    24 23-20 19  18 17 16 15 14 13  12 11 10  9 8-2  1  0&n; *&n; * DP: Data Prefetcher Enable -- 0 = DP is off, 1 = DP is on&n; * TC: Tablewalk Cacheable -- 0 = Twalks are not cacheable&n; *                            1 = Twalks are cacheable&n; * AC: Alternate Cacheable -- 0 = Direct physical accesses not cacheable&n; *                            1 = Direct physical accesses are cacheable&n; * SP: SnooP Enable -- 0 = bus snooping off, 1 = bus snooping on&n; * BM: Boot Mode -- 0 = not in boot mode, 1 = in boot mode&n; * MBM: MBus Mode -- 0 = not in MBus mode, 1 = in MBus mode&n; * SB: StoreBuffer enable -- 0 = store buffer off, 1 = store buffer on&n; * IC: Instruction Cache -- 0 = off, 1 = on&n; * DC: Data Cache -- 0 = off, 1 = 0n&n; * NF: No Fault -- 0 = faults generate traps, 1 = faults don&squot;t trap&n; * ME: MMU enable -- 0 = mmu not translating, 1 = mmu translating&n; *&n; */
 DECL|macro|VIKING_DCENABLE
 mdefine_line|#define VIKING_DCENABLE     0x00000100   /* Enable data cache */
@@ -25,5 +26,77 @@ DECL|macro|VIKING_TCENABLE
 mdefine_line|#define VIKING_TCENABLE     0x00010000   /* Enable table-walks to be cached */
 DECL|macro|VIKING_DPENABLE
 mdefine_line|#define VIKING_DPENABLE     0x00040000   /* Enable the data prefetcher */
-macro_line|#endif
+DECL|function|viking_flush_icache
+r_extern
+r_inline
+r_void
+id|viking_flush_icache
+c_func
+(paren
+r_void
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;sta %%g0, [%%g0] %0&bslash;n&bslash;t&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;i&quot;
+(paren
+id|ASI_M_IC_FLCLEAR
+)paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|viking_flush_dcache
+r_extern
+r_inline
+r_void
+id|viking_flush_dcache
+c_func
+(paren
+r_void
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;sta %%g0, [%%g0] %0&bslash;n&bslash;t&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;i&quot;
+(paren
+id|ASI_M_DC_FLCLEAR
+)paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* MXCC stuff... */
+DECL|function|viking_enable_mxcc
+r_extern
+r_inline
+r_void
+id|viking_enable_mxcc
+c_func
+(paren
+r_void
+)paren
+(brace
+)brace
+DECL|function|viking_mxcc_scrape
+r_extern
+r_inline
+r_void
+id|viking_mxcc_scrape
+c_func
+(paren
+r_void
+)paren
+(brace
+multiline_comment|/* David, what did you learn in school today? */
+)brace
+macro_line|#endif /* !(_SPARC_VIKING_H) */
 eof

@@ -844,11 +844,7 @@ op_ne
 id|CMD_ACK
 )paren
 (brace
-id|printk
-(paren
-l_string|&quot;SNDSCAPE: Setting MT32 mode failed&bslash;n&quot;
-)paren
-suffix:semicolon
+multiline_comment|/* printk (&quot;SNDSCAPE: Setting MT32 mode failed&bslash;n&quot;); */
 )brace
 id|host_close
 (paren

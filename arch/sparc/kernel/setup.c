@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: setup.c,v 1.41 1995/11/25 00:58:21 davem Exp $&n; *  linux/arch/sparc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/*  $Id: setup.c,v 1.54 1996/02/25 06:49:18 davem Exp $&n; *  linux/arch/sparc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -11,6 +11,11 @@ macro_line|#include &lt;linux/ldt.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/a.out.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/kdev_t.h&gt;
+macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -22,6 +27,7 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/traps.h&gt;
 macro_line|#include &lt;asm/vaddrs.h&gt;
 macro_line|#include &lt;asm/kdebug.h&gt;
+macro_line|#include &lt;asm/mbus.h&gt;
 DECL|variable|screen_info
 r_struct
 id|screen_info
@@ -73,6 +79,14 @@ id|wp_works_ok
 op_assign
 l_int|0
 suffix:semicolon
+DECL|variable|phys_bytes_of_ram
+DECL|variable|end_of_phys_memory
+r_int
+r_int
+id|phys_bytes_of_ram
+comma
+id|end_of_phys_memory
+suffix:semicolon
 DECL|function|bios32_init
 r_int
 r_int
@@ -98,6 +112,31 @@ r_int
 r_int
 id|trapbase
 suffix:semicolon
+r_extern
+r_void
+id|breakpoint
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|console_restore_palette
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+id|asmlinkage
+r_void
+id|sys_sync
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+multiline_comment|/* it&squot;s really int */
 multiline_comment|/* Pretty sick eh? */
 DECL|function|prom_sync_me
 r_void
@@ -153,6 +192,10 @@ id|trapbase
 )paren
 )paren
 suffix:semicolon
+id|console_restore_palette
+(paren
+)paren
+suffix:semicolon
 id|prom_printf
 c_func
 (paren
@@ -164,6 +207,33 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|current
+op_ne
+id|task
+(braket
+l_int|0
+)braket
+)paren
+(brace
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+id|sys_sync
+c_func
+(paren
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 id|prom_printf
 c_func
 (paren
@@ -502,7 +572,7 @@ r_void
 suffix:semicolon
 r_extern
 r_void
-id|probe_vac
+id|sun4c_probe_vac
 c_func
 (paren
 r_void
@@ -517,11 +587,6 @@ r_void
 )paren
 suffix:semicolon
 r_extern
-r_int
-r_int
-id|end_of_phys_memory
-suffix:semicolon
-r_extern
 r_char
 id|cputypval
 suffix:semicolon
@@ -531,19 +596,19 @@ r_int
 id|start
 comma
 id|end
-comma
-id|bootup_stack
-comma
-id|bootup_kstack
 suffix:semicolon
-DECL|variable|sparc_command_line
+r_extern
+r_void
+id|panic_setup
+c_func
+(paren
 r_char
-id|sparc_command_line
-(braket
-l_int|256
-)braket
+op_star
+comma
+r_int
+op_star
+)paren
 suffix:semicolon
-multiline_comment|/* Should be enough */
 DECL|variable|saved_command_line
 r_char
 id|saved_command_line
@@ -561,6 +626,27 @@ r_struct
 id|tt_entry
 op_star
 id|sparc_ttable
+suffix:semicolon
+DECL|variable|fake_swapper_regs
+r_static
+r_struct
+id|pt_regs
+id|fake_swapper_regs
+op_assign
+(brace
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+(brace
+l_int|0
+comma
+)brace
+)brace
 suffix:semicolon
 DECL|function|setup_arch
 r_void
@@ -587,6 +673,34 @@ r_int
 id|total
 comma
 id|i
+comma
+id|panic_stuff
+(braket
+l_int|2
+)braket
+suffix:semicolon
+multiline_comment|/* Always reboot on panic, but give 5 seconds to hit L1-A&n;&t; * and look at debugging info if desired.&n;&t; */
+id|panic_stuff
+(braket
+l_int|0
+)braket
+op_assign
+l_int|1
+suffix:semicolon
+id|panic_stuff
+(braket
+l_int|1
+)braket
+op_assign
+l_int|5
+suffix:semicolon
+id|panic_setup
+c_func
+(paren
+l_int|0
+comma
+id|panic_stuff
+)paren
 suffix:semicolon
 id|sparc_ttable
 op_assign
@@ -737,7 +851,7 @@ c_func
 l_string|&quot;SUN4C&bslash;n&quot;
 )paren
 suffix:semicolon
-id|probe_vac
+id|sun4c_probe_vac
 c_func
 (paren
 )paren
@@ -905,7 +1019,8 @@ id|end
 )paren
 )paren
 suffix:semicolon
-id|printk
+macro_line|#if 0
+id|prom_printf
 c_func
 (paren
 l_string|&quot;Physical Memory: %d bytes (in hex %08lx)&bslash;n&quot;
@@ -922,6 +1037,7 @@ r_int
 id|total
 )paren
 suffix:semicolon
+macro_line|#endif
 r_for
 c_loop
 (paren
@@ -996,11 +1112,6 @@ c_func
 id|prom_sync_me
 )paren
 suffix:semicolon
-multiline_comment|/* Due to stack alignment restrictions and assumptions... */
-id|init_task.mm-&gt;mmap-&gt;vm_page_prot
-op_assign
-id|PAGE_SHARED
-suffix:semicolon
 op_star
 id|memory_end_p
 op_assign
@@ -1009,6 +1120,40 @@ id|end_of_phys_memory
 op_plus
 id|PAGE_OFFSET
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_star
+id|memory_end_p
+OG
+id|IOBASE_VADDR
+)paren
+(brace
+op_star
+id|memory_end_p
+op_assign
+id|IOBASE_VADDR
+suffix:semicolon
+)brace
+multiline_comment|/* Due to stack alignment restrictions and assumptions... */
+id|init_task.mm-&gt;mmap-&gt;vm_page_prot
+op_assign
+id|PAGE_SHARED
+suffix:semicolon
+id|init_task.mm-&gt;mmap-&gt;vm_start
+op_assign
+id|KERNBASE
+suffix:semicolon
+id|init_task.mm-&gt;mmap-&gt;vm_end
+op_assign
+op_star
+id|memory_end_p
+suffix:semicolon
+id|init_task.tss.kregs
+op_assign
+op_amp
+id|fake_swapper_regs
 suffix:semicolon
 (brace
 r_extern
@@ -1107,6 +1252,28 @@ c_func
 suffix:semicolon
 )brace
 )brace
+macro_line|#if 1
+multiline_comment|/* XXX ROOT_DEV hack for kgdb - davem XXX */
+macro_line|#if 1
+id|ROOT_DEV
+op_assign
+id|MKDEV
+c_func
+(paren
+id|UNNAMED_MAJOR
+comma
+l_int|255
+)paren
+suffix:semicolon
+multiline_comment|/* NFS */
+macro_line|#else
+id|ROOT_DEV
+op_assign
+l_int|0x801
+suffix:semicolon
+multiline_comment|/* SCSI DISK */
+macro_line|#endif
+macro_line|#endif
 )brace
 DECL|function|sys_ioperm
 id|asmlinkage
@@ -1131,7 +1298,21 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * BUFFER is PAGE_SIZE bytes long.&n; *&n; * XXX Need to do better than this! XXX&n; */
+multiline_comment|/* BUFFER is PAGE_SIZE bytes long. */
+r_extern
+r_char
+op_star
+id|sparc_cpu_type
+(braket
+)braket
+suffix:semicolon
+r_extern
+r_char
+op_star
+id|sparc_fpu_type
+(braket
+)braket
+suffix:semicolon
 DECL|function|get_cpuinfo
 r_int
 id|get_cpuinfo
@@ -1142,13 +1323,77 @@ op_star
 id|buffer
 )paren
 (brace
+r_int
+id|cpuid
+op_assign
+id|get_cpuid
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|sprintf
 c_func
 (paren
 id|buffer
 comma
-l_string|&quot;Sparc RISC&bslash;n&quot;
+l_string|&quot;cpu&bslash;t&bslash;t: %s&bslash;n&quot;
+l_string|&quot;fpu&bslash;t&bslash;t: %s&bslash;n&quot;
+l_string|&quot;promlib&bslash;t&bslash;t: Version %d Revision %d&bslash;n&quot;
+l_string|&quot;wp&bslash;t&bslash;t: %s&bslash;n&quot;
+l_string|&quot;type&bslash;t&bslash;t: %s&bslash;n&quot;
+l_string|&quot;Elf Support&bslash;t: %s&bslash;n&quot;
+multiline_comment|/* I can&squot;t remember when I do --ralp */
+l_string|&quot;BogoMips&bslash;t: %lu.%02lu&bslash;n&quot;
+l_string|&quot;%s&quot;
+comma
+id|sparc_cpu_type
+(braket
+id|cpuid
+)braket
+comma
+id|sparc_fpu_type
+(braket
+id|cpuid
+)braket
+comma
+id|romvec-&gt;pv_romvers
+comma
+id|prom_rev
+comma
+id|wp_works_ok
+ques
+c_cond
+l_string|&quot;yes&quot;
+suffix:colon
+l_string|&quot;no&quot;
+comma
+op_amp
+id|cputypval
+comma
+macro_line|#if CONFIG_BINFMT_ELF
+l_string|&quot;yes&quot;
+comma
+macro_line|#else
+l_string|&quot;no&quot;
+comma
+macro_line|#endif
+id|loops_per_sec
+op_div
+l_int|500000
+comma
+(paren
+id|loops_per_sec
+op_div
+l_int|5000
+)paren
+op_mod
+l_int|100
+comma
+id|mmu_info
+c_func
+(paren
+)paren
 )paren
 suffix:semicolon
 )brace

@@ -809,6 +809,24 @@ c_func
 id|unregister_binfmt
 )paren
 comma
+id|X
+c_func
+(paren
+id|get_binfmt_list
+)paren
+comma
+id|X
+c_func
+(paren
+id|search_binary_handler
+)paren
+comma
+id|X
+c_func
+(paren
+id|prepare_binprm
+)paren
+comma
 multiline_comment|/* execution environment registration */
 id|X
 c_func
@@ -1167,12 +1185,6 @@ id|X
 c_func
 (paren
 id|copy_strings
-)paren
-comma
-id|X
-c_func
-(paren
-id|create_tables
 )paren
 comma
 id|X

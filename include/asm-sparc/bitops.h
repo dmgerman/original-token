@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: bitops.h,v 1.17 1995/11/25 02:31:15 davem Exp $&n; * bitops.h: Bit string operations on the Sparc.&n; *&n; * Copyright 1995, David S. Miller (davem@caip.rutgers.edu).&n; */
+multiline_comment|/* $Id: bitops.h,v 1.18 1996/01/03 03:53:00 davem Exp $&n; * bitops.h: Bit string operations on the Sparc.&n; *&n; * Copyright 1995, David S. Miller (davem@caip.rutgers.edu).&n; */
 macro_line|#ifndef _SPARC_BITOPS_H
 DECL|macro|_SPARC_BITOPS_H
 mdefine_line|#define _SPARC_BITOPS_H
@@ -305,6 +305,8 @@ op_amp
 (paren
 (paren
 (paren
+r_const
+r_int
 r_int
 op_star
 )paren

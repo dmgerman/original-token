@@ -48,7 +48,7 @@ mdefine_line|#define SSSID_SPARE&t;0x60&t;/* Unused bits in SSID for standard AX
 DECL|macro|ESSID_SPARE
 mdefine_line|#define ESSID_SPARE&t;0x20&t;/* Unused bits in SSID for extended AX.25 */
 DECL|macro|DAMA_FLAG
-mdefine_line|#define DAMA_FLAG&t;0x40&t;/* Well, it is *NOT* unused! (dl1bke 951121 */
+mdefine_line|#define DAMA_FLAG&t;0x20&t;/* Well, it is *NOT* unused! (dl1bke 951121 */
 DECL|macro|AX25_REPEATED
 mdefine_line|#define AX25_REPEATED&t;0x80
 DECL|macro|ACK_PENDING_CONDITION

@@ -19,6 +19,7 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &quot;8390.h&quot;
 macro_line|#include &quot;3c503.h&quot;
 DECL|macro|WRD_COUNT
@@ -1936,7 +1937,7 @@ id|boguscount
 suffix:semicolon
 multiline_comment|/* timeout counter */
 r_int
-id|shor
+r_int
 id|tmp_rev
 suffix:semicolon
 multiline_comment|/* temporary for reversed values */

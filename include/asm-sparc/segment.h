@@ -1,13 +1,7 @@
-multiline_comment|/* $Id: segment.h,v 1.6 1995/11/25 02:32:40 davem Exp $ */
+multiline_comment|/* $Id: segment.h,v 1.9 1996/01/14 00:05:33 davem Exp $ */
 macro_line|#ifndef _ASM_SEGMENT_H
 DECL|macro|_ASM_SEGMENT_H
 mdefine_line|#define _ASM_SEGMENT_H
-multiline_comment|/* Sparc is not segmented, these are just place holders. */
-DECL|macro|KERNEL_DS
-mdefine_line|#define KERNEL_DS   0
-DECL|macro|USER_DS
-mdefine_line|#define USER_DS     1
-macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/vac-ops.h&gt;
 macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/*&n; * Uh, these should become the main single-value transfer routines..&n; * They automatically use the right size if we just have the right&n; * pointer type..&n; */
@@ -309,14 +303,18 @@ DECL|macro|memcpy_fromfs
 mdefine_line|#define memcpy_fromfs(to, from, n) memcpy((to),(from),(n))
 DECL|macro|memcpy_tofs
 mdefine_line|#define memcpy_tofs(to, from, n) memcpy((to),(from),(n))
+multiline_comment|/* Sparc is not segmented, however we need to be able to fool verify_area()&n; * when doing system calls from kernel mode legitimately.&n; */
+DECL|macro|KERNEL_DS
+mdefine_line|#define KERNEL_DS   0
+DECL|macro|USER_DS
+mdefine_line|#define USER_DS     1
 r_extern
 r_int
-id|current_user_segment
+id|active_ds
 suffix:semicolon
 DECL|function|get_fs
 r_static
 r_inline
-r_int
 r_int
 id|get_fs
 c_func
@@ -325,13 +323,12 @@ r_void
 )paren
 (brace
 r_return
-id|current_user_segment
+id|active_ds
 suffix:semicolon
 )brace
 DECL|function|get_ds
 r_static
 r_inline
-r_int
 r_int
 id|get_ds
 c_func
@@ -351,11 +348,10 @@ id|set_fs
 c_func
 (paren
 r_int
-r_int
 id|val
 )paren
 (brace
-id|current_user_segment
+id|active_ds
 op_assign
 id|val
 suffix:semicolon

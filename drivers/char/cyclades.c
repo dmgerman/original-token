@@ -3190,8 +3190,6 @@ id|do_cyclades_bh
 c_func
 (paren
 r_void
-op_star
-id|unused
 )paren
 (brace
 id|run_task_queue
@@ -11443,19 +11441,12 @@ c_func
 l_string|&quot;Couldn&squot;t register Cyclom callout driver&bslash;n&quot;
 )paren
 suffix:semicolon
-id|bh_base
-(braket
-id|CYCLADES_BH
-)braket
-dot
-id|routine
-op_assign
-id|do_cyclades_bh
-suffix:semicolon
-id|enable_bh
+id|init_bh
 c_func
 (paren
 id|CYCLADES_BH
+comma
+id|do_cyclades_bh
 )paren
 suffix:semicolon
 r_for

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  inode.c&n; *&n; *  Copyright (C) 1995 by Volker Lendecke&n; *&n; */
+multiline_comment|/*&n; *  inode.c&n; *&n; *  Copyright (C) 1995, 1996 by Volker Lendecke&n; *&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -143,95 +143,21 @@ id|ncp_inode_info
 op_star
 id|inode_info
 op_assign
-(paren
-r_struct
-id|ncp_inode_info
-op_star
-)paren
-(paren
-id|inode-&gt;i_ino
-)paren
-suffix:semicolon
-macro_line|#if 1
-r_struct
-id|ncp_inode_info
-op_star
-id|root
-op_assign
-op_amp
-(paren
-id|NCP_SERVER
+id|ncp_find_inode
 c_func
 (paren
 id|inode
 )paren
-op_member_access_from_pointer
-id|root
-)paren
 suffix:semicolon
-r_struct
-id|ncp_inode_info
-op_star
-id|check_info
-op_assign
-id|root
-suffix:semicolon
-r_do
-(brace
 r_if
 c_cond
 (paren
 id|inode_info
 op_eq
-id|check_info
+l_int|NULL
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|check_info-&gt;state
-op_eq
-id|NCP_INODE_LOOKED_UP
-)paren
-(brace
-id|DDPRINTK
-c_func
-(paren
-l_string|&quot;ncp_read_inode: found it!&bslash;n&quot;
-)paren
-suffix:semicolon
-r_goto
-id|good
-suffix:semicolon
-)brace
-r_else
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;ncp_read_inode: &quot;
-l_string|&quot;state != NCP_INODE_LOOKED_UP&bslash;n&quot;
-)paren
-suffix:semicolon
-r_goto
-id|good
-suffix:semicolon
-)brace
-)brace
-id|check_info
-op_assign
-id|check_info-&gt;next
-suffix:semicolon
-)brace
-r_while
-c_loop
-(paren
-id|check_info
-op_ne
-id|root
-)paren
-suffix:semicolon
-multiline_comment|/* Ok, now we&squot;re in trouble. The inode info is not there. What&n;           should we do now??? */
+multiline_comment|/* Ok, now we&squot;re in trouble. The inode info is not there. What&n;&t;&t;   should we do now??? */
 id|printk
 c_func
 (paren
@@ -240,17 +166,7 @@ l_string|&quot;ncp_read_inode: inode info not found&bslash;n&quot;
 suffix:semicolon
 r_return
 suffix:semicolon
-id|good
-suffix:colon
-id|DDPRINTK
-c_func
-(paren
-l_string|&quot;ncp_read_inode: read entry %s&bslash;n&quot;
-comma
-id|inode_info-&gt;finfo.i.entryName
-)paren
-suffix:semicolon
-macro_line|#endif
+)brace
 id|inode_info-&gt;state
 op_assign
 id|NCP_INODE_VALID
@@ -262,6 +178,10 @@ id|inode
 )paren
 op_assign
 id|inode_info
+suffix:semicolon
+id|inode_info-&gt;inode
+op_assign
+id|inode
 suffix:semicolon
 r_if
 c_cond
@@ -287,7 +207,7 @@ id|inode
 op_member_access_from_pointer
 id|m.dir_mode
 suffix:semicolon
-multiline_comment|/* for directories in dataStreamSize seems to be some&n;&t;&t;   Object ID ??? */
+multiline_comment|/* for directories dataStreamSize seems to be some&n;&t;&t;   Object ID ??? */
 id|inode-&gt;i_size
 op_assign
 l_int|512
@@ -590,7 +510,7 @@ suffix:semicolon
 id|ncp_invalid_dir_cache
 c_func
 (paren
-id|inode-&gt;i_ino
+id|inode
 )paren
 suffix:semicolon
 )brace
@@ -1065,12 +985,6 @@ r_goto
 id|fail
 suffix:semicolon
 )brace
-id|ncp_init_root
-c_func
-(paren
-id|server
-)paren
-suffix:semicolon
 multiline_comment|/*&n;         * Make the connection to the server&n;         */
 r_if
 c_cond
@@ -1225,6 +1139,12 @@ id|sb
 )paren
 )paren
 suffix:semicolon
+id|ncp_init_root
+c_func
+(paren
+id|server
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1237,12 +1157,15 @@ c_func
 (paren
 id|sb
 comma
+id|ncp_info_ino
+c_func
 (paren
-r_int
-)paren
+id|server
+comma
 op_amp
 (paren
 id|server-&gt;root
+)paren
 )paren
 )paren
 )paren
@@ -2132,19 +2055,13 @@ suffix:semicolon
 id|ncp_invalid_dir_cache
 c_func
 (paren
-(paren
-r_int
-r_int
-)paren
-(paren
 id|NCP_INOP
 c_func
 (paren
 id|inode
 )paren
 op_member_access_from_pointer
-id|dir
-)paren
+id|dir-&gt;inode
 )paren
 suffix:semicolon
 r_return

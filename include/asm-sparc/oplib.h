@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: oplib.h,v 1.5 1995/11/25 02:32:14 davem Exp $&n; * oplib.h:  Describes the interface and available routines in the&n; *           Linux Prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: oplib.h,v 1.6 1996/01/01 02:47:19 davem Exp $&n; * oplib.h:  Describes the interface and available routines in the&n; *           Linux Prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __SPARC_OPLIB_H
 DECL|macro|__SPARC_OPLIB_H
 mdefine_line|#define __SPARC_OPLIB_H
@@ -667,6 +667,20 @@ comma
 r_char
 op_star
 id|prev_property
+)paren
+suffix:semicolon
+multiline_comment|/* Returns 1 if the specified node has given property. */
+r_extern
+r_int
+id|prom_node_has_property
+c_func
+(paren
+r_int
+id|node
+comma
+r_char
+op_star
+id|property
 )paren
 suffix:semicolon
 multiline_comment|/* Set the indicated property at the given node with the passed value.&n; * Returns the number of bytes of your value that the prom took.&n; */

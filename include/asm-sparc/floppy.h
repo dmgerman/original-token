@@ -704,7 +704,7 @@ id|irq
 comma
 r_void
 op_star
-id|dev_id
+id|unused
 comma
 r_struct
 id|pt_regs
@@ -753,8 +753,6 @@ comma
 id|SA_INTERRUPT
 comma
 l_string|&quot;floppy&quot;
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 r_return

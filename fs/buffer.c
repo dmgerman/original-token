@@ -1678,7 +1678,6 @@ op_assign
 id|bh-&gt;b_next_free
 suffix:semicolon
 )brace
-suffix:semicolon
 id|bh-&gt;b_next_free
 op_assign
 id|bh-&gt;b_prev_free
@@ -1858,7 +1857,6 @@ op_assign
 id|bh
 suffix:semicolon
 )brace
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -7440,11 +7438,9 @@ id|count
 op_ne
 l_int|1
 )paren
-(brace
 id|shared
 op_increment
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -7476,8 +7472,8 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Buffer[%d] mem: %d buffers, %d used (last=%d), %d locked, &quot;
-l_string|&quot;%d protected, %d dirty %d shrd&bslash;n&quot;
+l_string|&quot;Buffer[%d] mem: %d buffers, %d used (last=%d), &quot;
+l_string|&quot;%d locked, %d protected, %d dirty %d shrd&bslash;n&quot;
 comma
 id|nlist
 comma

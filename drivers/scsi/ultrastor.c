@@ -2091,7 +2091,7 @@ c_func
 (paren
 id|buf
 comma
-l_string|&quot;UltraStor 24F SCSI @ Slot %u IRQ%u&bslash;n&quot;
+l_string|&quot;UltraStor 24F SCSI @ Slot %u IRQ%u&quot;
 comma
 id|config.slot
 comma
@@ -2109,7 +2109,7 @@ c_func
 (paren
 id|buf
 comma
-l_string|&quot;UltraStor 34F SCSI @ Port %03X BIOS %05X IRQ%u&bslash;n&quot;
+l_string|&quot;UltraStor 34F SCSI @ Port %03X BIOS %05X IRQ%u&quot;
 comma
 id|config.port_address
 comma
@@ -2127,7 +2127,7 @@ c_func
 (paren
 id|buf
 comma
-l_string|&quot;UltraStor 14F SCSI @ Port %03X BIOS %05X IRQ%u DMA%u&bslash;n&quot;
+l_string|&quot;UltraStor 14F SCSI @ Port %03X BIOS %05X IRQ%u DMA%u&quot;
 comma
 id|config.port_address
 comma
@@ -3156,6 +3156,8 @@ id|ultrastor_interrupt
 c_func
 (paren
 l_int|0
+comma
+l_int|NULL
 comma
 l_int|NULL
 )paren

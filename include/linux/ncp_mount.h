@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  ncp_mount.h&n; *&n; *  Copyright (C) 1995 by Volker Lendecke&n; *&n; */
+multiline_comment|/*&n; *  ncp_mount.h&n; *&n; *  Copyright (C) 1995, 1996 by Volker Lendecke&n; *&n; */
 macro_line|#ifndef _LINUX_NCP_MOUNT_H
 DECL|macro|_LINUX_NCP_MOUNT_H
 mdefine_line|#define _LINUX_NCP_MOUNT_H
@@ -42,7 +42,7 @@ r_int
 r_int
 id|message_fd
 suffix:semicolon
-multiline_comment|/* Not used yet, maybe for messages */
+multiline_comment|/* Message notifications come here */
 DECL|member|mounted_uid
 id|uid_t
 id|mounted_uid

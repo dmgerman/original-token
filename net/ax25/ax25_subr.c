@@ -1466,7 +1466,7 @@ l_int|NULL
 op_star
 id|dama
 op_assign
-op_logical_neg
+op_complement
 (paren
 id|buf
 (braket

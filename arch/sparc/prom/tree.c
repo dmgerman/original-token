@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: tree.c,v 1.6 1995/11/25 01:00:16 davem Exp $&n; * tree.c: Basic device tree traversal/scanning for the Linux&n; *         prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: tree.c,v 1.7 1996/01/01 02:46:24 davem Exp $&n; * tree.c: Basic device tree traversal/scanning for the Linux&n; *         prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
@@ -685,6 +685,66 @@ id|node
 comma
 id|oprop
 )paren
+suffix:semicolon
+)brace
+r_int
+DECL|function|prom_node_has_property
+id|prom_node_has_property
+c_func
+(paren
+r_int
+id|node
+comma
+r_char
+op_star
+id|prop
+)paren
+(brace
+r_char
+op_star
+id|current_property
+op_assign
+l_string|&quot;&quot;
+suffix:semicolon
+r_do
+(brace
+id|current_property
+op_assign
+id|prom_nextprop
+c_func
+(paren
+id|node
+comma
+id|current_property
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strcmp
+c_func
+(paren
+id|current_property
+comma
+id|prop
+)paren
+)paren
+(brace
+r_return
+l_int|1
+suffix:semicolon
+)brace
+)brace
+r_while
+c_loop
+(paren
+op_star
+id|current_property
+)paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Set property &squot;pname&squot; at node &squot;node&squot; to value &squot;value&squot; which has a length&n; * of &squot;size&squot; bytes.  Return the number of bytes the prom accepted.&n; */

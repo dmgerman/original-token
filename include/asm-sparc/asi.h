@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: asi.h,v 1.11 1995/11/25 02:31:11 davem Exp $ */
+multiline_comment|/* $Id: asi.h,v 1.13 1996/03/01 07:20:51 davem Exp $ */
 macro_line|#ifndef _SPARC_ASI_H
 DECL|macro|_SPARC_ASI_H
 mdefine_line|#define _SPARC_ASI_H
@@ -122,6 +122,11 @@ mdefine_line|#define ASI_M_CTL          0x2F   /* Control Space (ECC and MXCC ar
 multiline_comment|/* This is ROSS HyperSparc only. */
 DECL|macro|ASI_M_FLUSH_IWHOLE
 mdefine_line|#define ASI_M_FLUSH_IWHOLE 0x31   /* Flush entire ICACHE; wo, ss */
+multiline_comment|/* Tsunami/Viking i/d cache flash clear. */
+DECL|macro|ASI_M_IC_FLCLEAR
+mdefine_line|#define ASI_M_IC_FLCLEAR   0x36
+DECL|macro|ASI_M_DC_FLCLEAR
+mdefine_line|#define ASI_M_DC_FLCLEAR   0x37
 DECL|macro|ASI_M_DCDR
 mdefine_line|#define ASI_M_DCDR         0x39   /* Data Cache Diagnostics Registerl rw, ss */
 multiline_comment|/* Sparc V9 TI UltraSparc ASI&squot;s (V8 ploos ploos) */

@@ -1,3 +1,4 @@
+multiline_comment|/*&n; *  ncplib_kernel.h&n; *&n; *  Copyright (C) 1995, 1996 by Volker Lendecke&n; *&n; */
 macro_line|#ifndef _NCPLIB_H
 DECL|macro|_NCPLIB_H
 mdefine_line|#define _NCPLIB_H
@@ -495,7 +496,7 @@ id|bytes_written
 )paren
 suffix:semicolon
 r_int
-id|ncp_do_lookup
+id|ncp_obtain_info
 c_func
 (paren
 r_struct
@@ -503,16 +504,36 @@ id|ncp_server
 op_star
 id|server
 comma
-r_struct
-id|nw_info_struct
-op_star
-id|dir
+id|__u8
+id|vol_num
+comma
+id|__u32
+id|dir_base
 comma
 r_char
 op_star
 id|path
 comma
-multiline_comment|/* may only be one component */
+multiline_comment|/* At most 1 component */
+r_struct
+id|nw_info_struct
+op_star
+id|target
+)paren
+suffix:semicolon
+r_int
+id|ncp_lookup_volume
+c_func
+(paren
+r_struct
+id|ncp_server
+op_star
+id|server
+comma
+r_char
+op_star
+id|volname
+comma
 r_struct
 id|nw_info_struct
 op_star

@@ -29,13 +29,13 @@ mdefine_line|#define FLTI_FUNC_ADDS&t;&t;&t;0x000
 DECL|macro|FLTI_FUNC_ADDT
 mdefine_line|#define FLTI_FUNC_ADDT&t;&t;&t;0x020
 DECL|macro|FLTI_FUNC_CMPTEQ
-mdefine_line|#define FLTI_FUNC_CMPTEQ&t;&t;0x0a5
+mdefine_line|#define FLTI_FUNC_CMPTEQ&t;&t;0x025
 DECL|macro|FLTI_FUNC_CMPTLT
-mdefine_line|#define FLTI_FUNC_CMPTLT&t;&t;0x0a6
+mdefine_line|#define FLTI_FUNC_CMPTLT&t;&t;0x026
 DECL|macro|FLTI_FUNC_CMPTLE
-mdefine_line|#define FLTI_FUNC_CMPTLE&t;&t;0x0a7
+mdefine_line|#define FLTI_FUNC_CMPTLE&t;&t;0x027
 DECL|macro|FLTI_FUNC_CMPTUN
-mdefine_line|#define FLTI_FUNC_CMPTUN&t;&t;0x0a4
+mdefine_line|#define FLTI_FUNC_CMPTUN&t;&t;0x024
 DECL|macro|FLTI_FUNC_CVTTS_or_CVTST
 mdefine_line|#define FLTI_FUNC_CVTTS_or_CVTST&t;0x02c
 DECL|macro|FLTI_FUNC_CVTTQ
@@ -1600,9 +1600,11 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;alpha_fp_emul: unexpected function code %#lx at %#lx&quot;
+l_string|&quot;alpha_fp_emul: unexpected function code %#lx at %#lx&bslash;n&quot;
 comma
-id|opcode
+id|func
+op_amp
+l_int|0x3f
 comma
 id|pc
 )paren

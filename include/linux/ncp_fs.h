@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  ncp_fs.h&n; *&n; *  Copyright (C) 1995 by Volker Lendecke&n; *&n; */
+multiline_comment|/*&n; *  ncp_fs.h&n; *&n; *  Copyright (C) 1995, 1996 by Volker Lendecke&n; *&n; */
 macro_line|#ifndef _LINUX_NCP_FS_H
 DECL|macro|_LINUX_NCP_FS_H
 mdefine_line|#define _LINUX_NCP_FS_H
@@ -72,6 +72,8 @@ DECL|macro|NCP_IOC_NCPREQUEST
 mdefine_line|#define&t;NCP_IOC_NCPREQUEST&t;&t;_IOR(&squot;n&squot;, 1, unsigned char *)
 DECL|macro|NCP_IOC_GETMOUNTUID
 mdefine_line|#define&t;NCP_IOC_GETMOUNTUID&t;&t;_IOR(&squot;u&squot;, 1, uid_t)
+DECL|macro|NCP_IOC_CONN_LOGGED_IN
+mdefine_line|#define NCP_IOC_CONN_LOGGED_IN          _IO(&squot;l&squot;, 1)
 DECL|macro|NCP_GET_FS_INFO_VERSION
 mdefine_line|#define NCP_GET_FS_INFO_VERSION (1)
 DECL|macro|NCP_IOC_GET_FS_INFO
@@ -252,7 +254,7 @@ id|server
 )paren
 suffix:semicolon
 r_int
-id|ncp_stat_root
+id|ncp_conn_logged_in
 c_func
 (paren
 r_struct
@@ -272,19 +274,37 @@ r_void
 id|ncp_invalid_dir_cache
 c_func
 (paren
-r_int
-r_int
+r_struct
+id|inode
+op_star
 id|ino
 )paren
 suffix:semicolon
-r_void
-id|ncp_invalidate_all_inodes
+r_struct
+id|ncp_inode_info
+op_star
+id|ncp_find_inode
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+)paren
+suffix:semicolon
+id|ino_t
+id|ncp_info_ino
 c_func
 (paren
 r_struct
 id|ncp_server
 op_star
 id|server
+comma
+r_struct
+id|ncp_inode_info
+op_star
+id|info
 )paren
 suffix:semicolon
 r_void
@@ -370,26 +390,6 @@ id|init_ncp_fs
 c_func
 (paren
 r_void
-)paren
-suffix:semicolon
-r_void
-id|ncp_invalidate_connection
-c_func
-(paren
-r_struct
-id|ncp_server
-op_star
-id|server
-)paren
-suffix:semicolon
-r_int
-id|ncp_conn_is_valid
-c_func
-(paren
-r_struct
-id|ncp_server
-op_star
-id|server
 )paren
 suffix:semicolon
 r_void

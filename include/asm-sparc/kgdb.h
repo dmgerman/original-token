@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: kgdb.h,v 1.6 1995/11/25 02:31:57 davem Exp $&n; * kgdb.h: Defines and declarations for serial line source level&n; *         remote debugging of the Linux kernel using gdb.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: kgdb.h,v 1.7 1995/11/27 02:43:18 davem Exp $&n; * kgdb.h: Defines and declarations for serial line source level&n; *         remote debugging of the Linux kernel using gdb.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_KGDB_H
 DECL|macro|_SPARC_KGDB_H
 mdefine_line|#define _SPARC_KGDB_H
@@ -141,16 +141,16 @@ mdefine_line|#define KGDB_PC     0x110
 DECL|macro|KGDB_NPC
 mdefine_line|#define KGDB_NPC    0x114
 DECL|macro|SAVE_KGDB_GLOBALS
-mdefine_line|#define SAVE_KGDB_GLOBALS(reg) &bslash;&n;        std     %g0, [%reg + STACKFRAME_SZ + KGDB_G0]; &bslash;&n;        std     %g2, [%reg + STACKFRAME_SZ + KGDB_G2]; &bslash;&n;        std     %g4, [%reg + STACKFRAME_SZ + KGDB_G4]; &bslash;&n;        std     %g6, [%reg + STACKFRAME_SZ + KGDB_G6];
+mdefine_line|#define SAVE_KGDB_GLOBALS(reg) &bslash;&n;        std     %g0, [%reg + REGWIN_SZ + KGDB_G0]; &bslash;&n;        std     %g2, [%reg + REGWIN_SZ + KGDB_G2]; &bslash;&n;        std     %g4, [%reg + REGWIN_SZ + KGDB_G4]; &bslash;&n;        std     %g6, [%reg + REGWIN_SZ + KGDB_G6];
 DECL|macro|SAVE_KGDB_INS
-mdefine_line|#define SAVE_KGDB_INS(reg) &bslash;&n;        std     %i0, [%reg + STACKFRAME_SZ + KGDB_I0]; &bslash;&n;        std     %i2, [%reg + STACKFRAME_SZ + KGDB_I2]; &bslash;&n;        std     %i4, [%reg + STACKFRAME_SZ + KGDB_I4]; &bslash;&n;        std     %i6, [%reg + STACKFRAME_SZ + KGDB_I6];
+mdefine_line|#define SAVE_KGDB_INS(reg) &bslash;&n;        std     %i0, [%reg + REGWIN_SZ + KGDB_I0]; &bslash;&n;        std     %i2, [%reg + REGWIN_SZ + KGDB_I2]; &bslash;&n;        std     %i4, [%reg + REGWIN_SZ + KGDB_I4]; &bslash;&n;        std     %i6, [%reg + REGWIN_SZ + KGDB_I6];
 DECL|macro|SAVE_KGDB_SREGS
-mdefine_line|#define SAVE_KGDB_SREGS(reg, reg_y, reg_psr, reg_wim, reg_tbr, reg_pc, reg_npc) &bslash;&n;        st      %reg_y, [%reg + STACKFRAME_SZ + KGDB_Y]; &bslash;&n;        st      %reg_psr, [%reg + STACKFRAME_SZ + KGDB_PSR]; &bslash;&n;        st      %reg_wim, [%reg + STACKFRAME_SZ + KGDB_WIM]; &bslash;&n;        st      %reg_tbr, [%reg + STACKFRAME_SZ + KGDB_TBR]; &bslash;&n;        st      %reg_pc, [%reg + STACKFRAME_SZ + KGDB_PC]; &bslash;&n;        st      %reg_npc, [%reg + STACKFRAME_SZ + KGDB_NPC];
+mdefine_line|#define SAVE_KGDB_SREGS(reg, reg_y, reg_psr, reg_wim, reg_tbr, reg_pc, reg_npc) &bslash;&n;        st      %reg_y, [%reg + REGWIN_SZ + KGDB_Y]; &bslash;&n;        st      %reg_psr, [%reg + REGWIN_SZ + KGDB_PSR]; &bslash;&n;        st      %reg_wim, [%reg + REGWIN_SZ + KGDB_WIM]; &bslash;&n;        st      %reg_tbr, [%reg + REGWIN_SZ + KGDB_TBR]; &bslash;&n;        st      %reg_pc, [%reg + REGWIN_SZ + KGDB_PC]; &bslash;&n;        st      %reg_npc, [%reg + REGWIN_SZ + KGDB_NPC];
 DECL|macro|LOAD_KGDB_GLOBALS
-mdefine_line|#define LOAD_KGDB_GLOBALS(reg) &bslash;&n;        ld      [%reg + STACKFRAME_SZ + KGDB_G1], %g1; &bslash;&n;        ldd     [%reg + STACKFRAME_SZ + KGDB_G2], %g2; &bslash;&n;        ldd     [%reg + STACKFRAME_SZ + KGDB_G4], %g4; &bslash;&n;        ldd     [%reg + STACKFRAME_SZ + KGDB_G6], %g6;
+mdefine_line|#define LOAD_KGDB_GLOBALS(reg) &bslash;&n;        ld      [%reg + REGWIN_SZ + KGDB_G1], %g1; &bslash;&n;        ldd     [%reg + REGWIN_SZ + KGDB_G2], %g2; &bslash;&n;        ldd     [%reg + REGWIN_SZ + KGDB_G4], %g4; &bslash;&n;        ldd     [%reg + REGWIN_SZ + KGDB_G6], %g6;
 DECL|macro|LOAD_KGDB_INS
-mdefine_line|#define LOAD_KGDB_INS(reg) &bslash;&n;        ldd     [%reg + STACKFRAME_SZ + KGDB_I0], %i0; &bslash;&n;        ldd     [%reg + STACKFRAME_SZ + KGDB_I2], %i2; &bslash;&n;        ldd     [%reg + STACKFRAME_SZ + KGDB_I4], %i4; &bslash;&n;        ldd     [%reg + STACKFRAME_SZ + KGDB_I6], %i6;
+mdefine_line|#define LOAD_KGDB_INS(reg) &bslash;&n;        ldd     [%reg + REGWIN_SZ + KGDB_I0], %i0; &bslash;&n;        ldd     [%reg + REGWIN_SZ + KGDB_I2], %i2; &bslash;&n;        ldd     [%reg + REGWIN_SZ + KGDB_I4], %i4; &bslash;&n;        ldd     [%reg + REGWIN_SZ + KGDB_I6], %i6;
 DECL|macro|LOAD_KGDB_SREGS
-mdefine_line|#define LOAD_KGDB_SREGS(reg, reg_y_and_psr, reg_pc_and_npc) &bslash;&n;        ldd     [%reg + STACKFRAME_SZ + KGDB_Y], %reg_y_and_psr; &bslash;&n;        ldd     [%reg + STACKFRAME_SZ + KGDB_PC], %reg_pc_and_npc;
+mdefine_line|#define LOAD_KGDB_SREGS(reg, reg_y_and_psr, reg_pc_and_npc) &bslash;&n;        ldd     [%reg + REGWIN_SZ + KGDB_Y], %reg_y_and_psr; &bslash;&n;        ldd     [%reg + REGWIN_SZ + KGDB_PC], %reg_pc_and_npc;
 macro_line|#endif /* !(_SPARC_KGDB_H) */
 eof

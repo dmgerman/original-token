@@ -1,6 +1,10 @@
 multiline_comment|/*&n; * sound/ad1848.c&n; *&n; * The low level driver for the AD1848/CS4248 codec chip which&n; * is used for example in the MS Sound System.&n; *&n; * The CS4231 which is used in the GUS MAX and some other cards is&n; * upwards compatible with AD1848 and this driver is able to drive it.&n; *&n; * CS4231A and AD1845 are upward compatible with CS4231. However&n; * the new features of these chips are different.&n; *&n; * CS4232 is a PnP audio chip which contains a CS4231A (and SB, MPU).&n; * CS4232A is an improved version of CS4232.&n; */
 multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993-1996&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; */
 macro_line|#include &lt;linux/config.h&gt;
+DECL|macro|DEB
+mdefine_line|#define DEB(x)
+DECL|macro|DEB1
+mdefine_line|#define DEB1(x)
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#if defined(CONFIG_AD1848)
 macro_line|#include &quot;ad1848_mixer.h&quot;
@@ -580,7 +584,7 @@ suffix:semicolon
 r_int
 id|timeout
 op_assign
-l_int|90000
+l_int|900000
 suffix:semicolon
 r_while
 c_loop
@@ -685,7 +689,7 @@ id|inb
 (paren
 id|devc-&gt;base
 )paren
-op_amp
+op_eq
 l_int|0x80
 )paren
 id|timeout
@@ -751,7 +755,7 @@ r_return
 suffix:semicolon
 id|timeout
 op_assign
-l_int|20000
+l_int|40000
 suffix:semicolon
 r_while
 c_loop
@@ -800,55 +804,6 @@ op_star
 id|devc
 )paren
 (brace
-r_int
-id|i
-suffix:semicolon
-r_int
-r_char
-id|prev
-suffix:semicolon
-multiline_comment|/*&n;     * Save old register settings and mute output channels&n;   */
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|6
-suffix:semicolon
-id|i
-OL
-l_int|8
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|prev
-op_assign
-id|devc-&gt;saved_regs
-(braket
-id|i
-)braket
-op_assign
-id|ad_read
-(paren
-id|devc
-comma
-id|i
-)paren
-suffix:semicolon
-id|ad_write
-(paren
-id|devc
-comma
-id|i
-comma
-id|prev
-op_or
-l_int|0x80
-)paren
-suffix:semicolon
-)brace
 )brace
 r_static
 r_void
@@ -860,41 +815,6 @@ op_star
 id|devc
 )paren
 (brace
-r_int
-id|i
-suffix:semicolon
-multiline_comment|/*&n;     * Restore back old volume registers (unmute)&n;   */
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|6
-suffix:semicolon
-id|i
-OL
-l_int|8
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|ad_write
-(paren
-id|devc
-comma
-id|i
-comma
-id|devc-&gt;saved_regs
-(braket
-id|i
-)braket
-op_amp
-op_complement
-l_int|0x80
-)paren
-suffix:semicolon
-)brace
 )brace
 r_static
 r_void
@@ -1837,6 +1757,12 @@ id|devc-&gt;mode
 r_case
 id|MD_4231
 suffix:colon
+r_case
+id|MD_4231A
+suffix:colon
+r_case
+id|MD_1845
+suffix:colon
 id|devc-&gt;supported_devices
 op_assign
 id|MODE2_MIXER_DEVICES
@@ -2375,7 +2301,7 @@ id|restore_flags
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Mute output until the playback really starts. This decreases clicking.&n; */
+multiline_comment|/*&n; * Mute output until the playback really starts. This decreases clicking (hope so).&n; */
 id|ad_mute
 (paren
 id|devc
@@ -2413,7 +2339,7 @@ id|dev
 op_member_access_from_pointer
 id|devc
 suffix:semicolon
-id|DDB
+id|DEB
 (paren
 id|printk
 (paren
@@ -5750,9 +5676,9 @@ l_int|0x08
 comma
 l_int|0x08
 comma
-l_int|0x80
+l_int|0x00
 comma
-l_int|0x80
+l_int|0x00
 comma
 l_int|0x00
 comma
@@ -6502,7 +6428,7 @@ l_string|&quot;Sound System&quot;
 )paren
 id|printk
 (paren
-l_string|&quot;ad1848.c: Can&squot;t allocate DMA%d for playback&bslash;n&quot;
+l_string|&quot;ad1848.c: Can&squot;t allocate DMA%d&bslash;n&quot;
 comma
 id|dma_playback
 )paren
@@ -6513,11 +6439,6 @@ c_cond
 id|dma_capture
 op_ne
 id|dma_playback
-op_logical_and
-id|dma_capture
-op_ne
-op_minus
-l_int|1
 )paren
 r_if
 c_cond
@@ -6531,7 +6452,7 @@ l_string|&quot;Sound System (capture)&quot;
 )paren
 id|printk
 (paren
-l_string|&quot;ad1848.c: Can&squot;t allocate DMA%d for capture&bslash;n&quot;
+l_string|&quot;ad1848.c: Can&squot;t allocate DMA%d&bslash;n&quot;
 comma
 id|dma_capture
 )paren
@@ -7220,6 +7141,9 @@ l_int|0xff
 )paren
 multiline_comment|/* Bus float */
 (brace
+r_int
+id|ret
+suffix:semicolon
 id|DDB
 (paren
 id|printk
@@ -7230,8 +7154,30 @@ id|tmp
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|ret
+op_assign
+id|ad1848_detect
+(paren
+id|hw_config-&gt;io_base
+op_plus
+l_int|4
+comma
+l_int|NULL
+comma
+id|hw_config-&gt;osp
+)paren
+)paren
+)paren
 r_return
 l_int|0
+suffix:semicolon
+r_return
+l_int|1
 suffix:semicolon
 )brace
 r_if
@@ -7262,6 +7208,9 @@ op_ne
 l_int|0x00
 )paren
 (brace
+r_int
+id|ret
+suffix:semicolon
 id|DDB
 (paren
 id|printk
@@ -7279,8 +7228,38 @@ l_int|3
 )paren
 )paren
 suffix:semicolon
+id|DDB
+(paren
+id|printk
+(paren
+l_string|&quot;Trying to detect codec anyway but IRQ/DMA may not work&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|ret
+op_assign
+id|ad1848_detect
+(paren
+id|hw_config-&gt;io_base
+op_plus
+l_int|4
+comma
+l_int|NULL
+comma
+id|hw_config-&gt;osp
+)paren
+)paren
+)paren
 r_return
 l_int|0
+suffix:semicolon
+r_return
+l_int|1
 suffix:semicolon
 )brace
 r_if

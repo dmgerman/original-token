@@ -18482,6 +18482,7 @@ op_star
 )paren
 (brace
 r_int
+r_int
 id|i
 suffix:semicolon
 r_char

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: misc.c,v 1.3 1995/11/25 01:00:04 davem Exp $&n; * misc.c:  Miscellaneous prom functions that don&squot;t belong&n; *          anywhere else.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: misc.c,v 1.5 1996/02/02 03:37:44 davem Exp $&n; * misc.c:  Miscellaneous prom functions that don&squot;t belong&n; *          anywhere else.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 multiline_comment|/* Reset and reboot the machine with the command &squot;bcommand&squot;. */
@@ -93,6 +93,23 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/* We want to do this more nicely some day. */
+r_extern
+r_void
+id|console_restore_palette
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|set_palette
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 multiline_comment|/* Drop into the prom, with the chance to continue with the &squot;go&squot;&n; * prom command.&n; */
 r_void
 DECL|function|prom_halt
@@ -102,12 +119,20 @@ c_func
 r_void
 )paren
 (brace
+id|console_restore_palette
+(paren
+)paren
+suffix:semicolon
 (paren
 op_star
 (paren
 id|romvec-&gt;pv_abort
 )paren
 )paren
+(paren
+)paren
+suffix:semicolon
+id|set_palette
 (paren
 )paren
 suffix:semicolon

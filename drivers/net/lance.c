@@ -4383,7 +4383,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* Malloc up new buffer, compatible with net-2e. */
+multiline_comment|/* Malloc up new buffer, compatible with net3. */
 r_int
 id|pkt_len
 op_assign

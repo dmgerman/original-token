@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: mman.h,v 1.5 1995/11/25 02:32:03 davem Exp $ */
+multiline_comment|/* $Id: mman.h,v 1.6 1996/01/03 03:53:05 davem Exp $ */
 macro_line|#ifndef __SPARC_MMAN_H__
 DECL|macro|__SPARC_MMAN_H__
 mdefine_line|#define __SPARC_MMAN_H__
@@ -59,5 +59,10 @@ DECL|macro|MC_LOCKAS
 mdefine_line|#define MC_LOCKAS       5  /* Lock an entire address space of the calling process */
 DECL|macro|MC_UNLOCKAS
 mdefine_line|#define MC_UNLOCKAS     6  /* Unlock entire address space of calling process */
+multiline_comment|/* compatibility flags */
+DECL|macro|MAP_ANON
+mdefine_line|#define MAP_ANON&t;MAP_ANONYMOUS
+DECL|macro|MAP_FILE
+mdefine_line|#define MAP_FILE&t;0
 macro_line|#endif /* __SPARC_MMAN_H__ */
 eof

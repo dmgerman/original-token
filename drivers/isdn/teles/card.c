@@ -3162,6 +3162,10 @@ c_func
 r_int
 id|intno
 comma
+r_void
+op_star
+id|dev_id
+comma
 r_struct
 id|pt_regs
 op_star
@@ -7842,6 +7846,8 @@ comma
 id|SA_INTERRUPT
 comma
 l_string|&quot;teles&quot;
+comma
+l_int|NULL
 )paren
 )paren
 (brace
@@ -7920,6 +7926,8 @@ id|free_irq
 c_func
 (paren
 id|card-&gt;interrupt
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 )brace

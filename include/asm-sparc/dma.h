@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: dma.h,v 1.12 1995/11/25 02:31:34 davem Exp $&n; * include/asm-sparc/dma.h&n; *&n; * Copyright 1995 (C) David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: dma.h,v 1.13 1996/02/17 17:32:33 miguel Exp $&n; * include/asm-sparc/dma.h&n; *&n; * Copyright 1995 (C) David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _ASM_SPARC_DMA_H
 DECL|macro|_ASM_SPARC_DMA_H
 mdefine_line|#define _ASM_SPARC_DMA_H
@@ -212,6 +212,8 @@ DECL|macro|DMA_FIFO_STDRAIN
 mdefine_line|#define DMA_FIFO_STDRAIN 0x00000040        /* DMA_VERS1 Drain the FIFO */
 DECL|macro|DMA_RST_SCSI
 mdefine_line|#define DMA_RST_SCSI     0x00000080        /* Reset the SCSI controller */
+DECL|macro|DMA_RST_ENET
+mdefine_line|#define DMA_RST_ENET     DMA_RST_SCSI      /* Reset the ENET controller */
 DECL|macro|DMA_ST_WRITE
 mdefine_line|#define DMA_ST_WRITE     0x00000100        /* write from device to memory */
 DECL|macro|DMA_ENABLE

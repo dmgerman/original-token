@@ -30,14 +30,12 @@ DECL|member|next
 r_struct
 id|sk_buff
 op_star
-r_volatile
 id|next
 suffix:semicolon
 DECL|member|prev
 r_struct
 id|sk_buff
 op_star
-r_volatile
 id|prev
 suffix:semicolon
 DECL|member|qlen
@@ -61,7 +59,6 @@ DECL|member|next
 r_struct
 id|sk_buff
 op_star
-r_volatile
 id|next
 suffix:semicolon
 multiline_comment|/* Next buffer in list &t;&t;&t;&t;*/
@@ -69,7 +66,6 @@ DECL|member|prev
 r_struct
 id|sk_buff
 op_star
-r_volatile
 id|prev
 suffix:semicolon
 multiline_comment|/* Previous buffer in list &t;&t;&t;*/
@@ -152,10 +148,9 @@ r_char
 op_star
 id|raw
 suffix:semicolon
-multiline_comment|/* for passing an fd in a unix domain socket */
+multiline_comment|/* for passing file handles in a unix domain socket */
 DECL|member|filp
-r_struct
-id|file
+r_void
 op_star
 id|filp
 suffix:semicolon
@@ -748,6 +743,32 @@ r_int
 id|len
 )paren
 suffix:semicolon
+DECL|function|skb_queue_empty
+r_extern
+id|__inline__
+r_int
+id|skb_queue_empty
+c_func
+(paren
+r_struct
+id|sk_buff_head
+op_star
+id|list
+)paren
+(brace
+r_return
+(paren
+id|list-&gt;next
+op_eq
+(paren
+r_struct
+id|sk_buff
+op_star
+)paren
+id|list
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; *&t;Peek an sk_buff. Unlike most other operations you _MUST_&n; *&t;be careful with this one. A peek leaves the buffer on the&n; *&t;list and someone else may run off with it. For an interrupt&n; *&t;type system cli() peek the buffer copy the data and sti();&n; */
 DECL|function|skb_peek
 r_extern

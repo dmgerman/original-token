@@ -57,6 +57,12 @@ comma
 op_star
 id|prev
 suffix:semicolon
+DECL|member|inode
+r_struct
+id|inode
+op_star
+id|inode
+suffix:semicolon
 DECL|member|finfo
 r_struct
 id|nw_file_info

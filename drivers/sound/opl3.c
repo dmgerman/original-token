@@ -5102,6 +5102,10 @@ id|devc-&gt;fm_info.nr_drums
 op_assign
 l_int|0
 suffix:semicolon
+id|devc-&gt;fm_info.synth_subtype
+op_assign
+id|FM_TYPE_OPL3
+suffix:semicolon
 id|devc-&gt;fm_info.capabilities
 op_or_assign
 id|SYNTH_CAP_OPL3

@@ -1,8 +1,11 @@
-multiline_comment|/* $Id: sigcontext.h,v 1.7 1995/11/25 02:32:44 davem Exp $ */
+multiline_comment|/* $Id: sigcontext.h,v 1.8 1996/03/01 07:20:59 davem Exp $ */
 macro_line|#ifndef _ASMsparc_SIGCONTEXT_H
 DECL|macro|_ASMsparc_SIGCONTEXT_H
 mdefine_line|#define _ASMsparc_SIGCONTEXT_H
 macro_line|#include &lt;asm/ptrace.h&gt;
+DECL|macro|SUNOS_MAXWIN
+mdefine_line|#define SUNOS_MAXWIN   31
+macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/* SunOS system call sigstack() uses this arg. */
 DECL|struct|sunos_sigstack
 r_struct
@@ -20,8 +23,6 @@ suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* This is what SunOS does, so shall I. */
-DECL|macro|SUNOS_MAXWIN
-mdefine_line|#define SUNOS_MAXWIN   31
 DECL|struct|sigcontext_struct
 r_struct
 id|sigcontext_struct
@@ -92,5 +93,6 @@ id|SUNOS_MAXWIN
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#endif /* !(__ASSEMBLY__) */
 macro_line|#endif /* !(_ASMsparc_SIGCONTEXT_H) */
 eof

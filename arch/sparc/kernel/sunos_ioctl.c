@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunos_ioctl.c,v 1.8 1995/11/26 04:07:39 davem Exp $&n; * sunos_ioctl.c: The Linux Operating system: SunOS ioctl compatibility.&n; * &n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: sunos_ioctl.c,v 1.17 1996/02/10 04:29:20 davem Exp $&n; * sunos_ioctl.c: The Linux Operating system: SunOS ioctl compatibility.&n; * &n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -10,6 +10,18 @@ macro_line|#include &lt;linux/sockios.h&gt;
 macro_line|#include &lt;linux/if.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;asm/kbio.h&gt;
+macro_line|#if 0
+r_extern
+r_char
+id|sunkbd_type
+suffix:semicolon
+r_extern
+r_char
+id|sunkbd_layout
+suffix:semicolon
+macro_line|#endif
 r_extern
 id|asmlinkage
 r_int
@@ -24,6 +36,15 @@ r_int
 comma
 r_int
 r_int
+)paren
+suffix:semicolon
+r_extern
+id|asmlinkage
+r_int
+id|sys_setsid
+c_func
+(paren
+r_void
 )paren
 suffix:semicolon
 DECL|function|sunos_ioctl
@@ -48,6 +69,9 @@ id|file
 op_star
 id|filp
 suffix:semicolon
+r_int
+id|foo
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -69,6 +93,134 @@ r_return
 op_minus
 id|EBADF
 suffix:semicolon
+multiline_comment|/* First handle an easy compat. case for tty ldisc. */
+r_if
+c_cond
+(paren
+id|cmd
+op_eq
+id|TIOCSETD
+)paren
+(brace
+r_int
+op_star
+id|p
+comma
+id|ntty
+op_assign
+id|N_TTY
+comma
+id|old_fs
+suffix:semicolon
+id|p
+op_assign
+(paren
+r_int
+op_star
+)paren
+id|arg
+suffix:semicolon
+id|foo
+op_assign
+id|verify_area
+c_func
+(paren
+id|VERIFY_WRITE
+comma
+id|p
+comma
+r_sizeof
+(paren
+r_int
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|foo
+)paren
+(brace
+r_return
+id|foo
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_star
+id|p
+op_eq
+l_int|2
+)paren
+(brace
+id|old_fs
+op_assign
+id|get_fs
+c_func
+(paren
+)paren
+suffix:semicolon
+id|set_fs
+c_func
+(paren
+id|KERNEL_DS
+)paren
+suffix:semicolon
+id|foo
+op_assign
+id|sys_ioctl
+c_func
+(paren
+id|fd
+comma
+id|cmd
+comma
+(paren
+r_int
+)paren
+op_amp
+id|ntty
+)paren
+suffix:semicolon
+id|set_fs
+c_func
+(paren
+id|old_fs
+)paren
+suffix:semicolon
+r_return
+(paren
+id|foo
+op_eq
+op_minus
+id|EINVAL
+ques
+c_cond
+op_minus
+id|EOPNOTSUPP
+suffix:colon
+id|foo
+)paren
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/* Binary compatability is good American knowhow fuckin&squot; up. */
+r_if
+c_cond
+(paren
+id|cmd
+op_eq
+id|TIOCNOTTY
+)paren
+(brace
+r_return
+id|sys_setsid
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* SunOS networking ioctls. */
 r_switch
 c_cond
@@ -315,7 +467,7 @@ comma
 l_int|20
 comma
 r_struct
-id|ifreq
+id|ifconf
 )paren
 suffix:colon
 r_return
@@ -677,7 +829,7 @@ suffix:colon
 multiline_comment|/* SIOCSPROMISC */
 r_return
 op_minus
-id|EINVAL
+id|EOPNOTSUPP
 suffix:semicolon
 r_case
 id|_IOW
@@ -843,19 +995,101 @@ id|ifreq
 )paren
 suffix:colon
 multiline_comment|/* SIOCFDGIOCTL */
+id|printk
+c_func
+(paren
+l_string|&quot;FDDI ioctl, returning EOPNOTSUPP&bslash;n&quot;
+)paren
+suffix:semicolon
 r_return
 op_minus
-id|EINVAL
+id|EOPNOTSUPP
+suffix:semicolon
+r_case
+id|_IOW
+c_func
+(paren
+l_char|&squot;t&squot;
+comma
+l_int|125
+comma
+r_int
+)paren
+suffix:colon
+multiline_comment|/* More stupid tty sunos ioctls, just&n;&t;&t; * say it worked.&n;&t;&t; */
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/* Non posix grp */
+r_case
+id|_IOR
+c_func
+(paren
+l_char|&squot;t&squot;
+comma
+l_int|119
+comma
+r_int
+)paren
+suffix:colon
+r_return
+op_minus
+id|EIO
 suffix:semicolon
 )brace
-r_return
+macro_line|#if 0
+r_if
+c_cond
+(paren
+id|cmd
+op_amp
+l_int|0xff00
+op_eq
+(paren
+l_char|&squot;k&squot;
+op_lshift
+l_int|8
+)paren
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;[[KBIO: %8.8x&bslash;n&quot;
+comma
+(paren
+r_int
+r_int
+)paren
+id|cmd
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+id|foo
+op_assign
 id|sys_ioctl
+c_func
 (paren
 id|fd
 comma
 id|cmd
 comma
 id|arg
+)paren
+suffix:semicolon
+multiline_comment|/* so stupid... */
+r_return
+(paren
+id|foo
+op_eq
+op_minus
+id|EINVAL
+ques
+c_cond
+op_minus
+id|EOPNOTSUPP
+suffix:colon
+id|foo
 )paren
 suffix:semicolon
 )brace

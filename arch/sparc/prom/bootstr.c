@@ -1,11 +1,11 @@
-multiline_comment|/* $Id: bootstr.c,v 1.3 1995/11/25 00:59:51 davem Exp $&n; * bootstr.c:  Boot string/argument acquisition from the PROM.&n; *&n; * Copyright(C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: bootstr.c,v 1.4 1996/02/08 07:06:43 zaitcev Exp $&n; * bootstr.c:  Boot string/argument acquisition from the PROM.&n; *&n; * Copyright(C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;asm/oplib.h&gt;
 DECL|variable|barg_buf
 r_static
 r_char
 id|barg_buf
 (braket
-l_int|128
+l_int|256
 )braket
 suffix:semicolon
 r_char

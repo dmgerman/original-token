@@ -111,6 +111,7 @@ l_int|16
 suffix:semicolon
 id|sb_dsp_unload
 (paren
+id|hw_config
 )paren
 suffix:semicolon
 )brace

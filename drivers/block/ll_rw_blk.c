@@ -1446,6 +1446,10 @@ op_logical_and
 id|major
 op_ne
 id|SCSI_CDROM_MAJOR
+op_logical_and
+id|major
+op_ne
+id|MD_MAJOR
 )paren
 id|req
 op_assign

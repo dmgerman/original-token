@@ -4,7 +4,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
-multiline_comment|/* Define this is you want slow routines that try to trip errors */
+multiline_comment|/* Define this if you want slow routines that try to trip errors */
 DECL|macro|SADISTIC_KMALLOC
 macro_line|#undef SADISTIC_KMALLOC
 multiline_comment|/* Private flags. */
@@ -129,7 +129,7 @@ suffix:semicolon
 multiline_comment|/* number of pages in the area required */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * For now it is unsafe to allocate bucket sizes between n and n-16 where n is&n; * 4096 * any power of two&n; */
+multiline_comment|/*&n; * For now it is unsafe to allocate bucket sizes between n and&n; * n-sizeof(page_descriptor) where n is PAGE_SIZE * any power of two&n; */
 macro_line|#if PAGE_SIZE == 4096
 DECL|variable|sizes
 r_struct

@@ -3977,7 +3977,7 @@ id|ipx_internal_net
 )paren
 r_return
 op_minus
-id|EINVAL
+id|EEXIST
 suffix:semicolon
 id|rt-&gt;ir_net
 op_assign

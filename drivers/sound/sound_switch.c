@@ -274,6 +274,61 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+id|put_status
+(paren
+l_string|&quot;Kernel: &quot;
+)paren
+suffix:semicolon
+id|put_status
+(paren
+id|system_utsname.sysname
+)paren
+suffix:semicolon
+id|put_status
+(paren
+l_string|&quot; &quot;
+)paren
+suffix:semicolon
+id|put_status
+(paren
+id|system_utsname.nodename
+)paren
+suffix:semicolon
+id|put_status
+(paren
+l_string|&quot; &quot;
+)paren
+suffix:semicolon
+id|put_status
+(paren
+id|system_utsname.release
+)paren
+suffix:semicolon
+id|put_status
+(paren
+l_string|&quot; &quot;
+)paren
+suffix:semicolon
+id|put_status
+(paren
+id|system_utsname.version
+)paren
+suffix:semicolon
+id|put_status
+(paren
+l_string|&quot; &quot;
+)paren
+suffix:semicolon
+id|put_status
+(paren
+id|system_utsname.machine
+)paren
+suffix:semicolon
+id|put_status
+(paren
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -410,7 +465,7 @@ c_cond
 op_logical_neg
 id|put_status
 (paren
-l_string|&quot;&bslash;n&bslash;nCard config: &bslash;n&quot;
+l_string|&quot;&bslash;nCard config: &bslash;n&quot;
 )paren
 )paren
 r_return
@@ -1612,6 +1667,31 @@ suffix:semicolon
 r_case
 id|SND_DEV_CTL
 suffix:colon
+r_if
+c_cond
+(paren
+(paren
+id|dev
+op_amp
+l_int|0xf0
+)paren
+op_logical_and
+(paren
+(paren
+id|dev
+op_amp
+l_int|0xf0
+)paren
+op_rshift
+l_int|4
+)paren
+op_ge
+id|num_mixers
+)paren
+r_return
+op_minus
+id|ENXIO
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

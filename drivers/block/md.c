@@ -669,10 +669,15 @@ id|dev
 )paren
 )braket
 op_amp
+op_complement
 (paren
-id|PAGE_MASK
+(paren
+id|PAGE_SIZE
 op_rshift
 l_int|10
+)paren
+op_minus
+l_int|1
 )paren
 suffix:semicolon
 id|devices
@@ -2190,19 +2195,18 @@ id|current_request
 )paren
 )paren
 (brace
-macro_line|#ifdef CONFIG_BLK_DEV_HD
+multiline_comment|/*&n;       * Thanx to Gadi Oxman &lt;gadio@netvision.net.il&gt;&n;       * (He reads my own code better than I do... ;-)&n;       */
 r_if
 c_cond
 (paren
 id|major
-op_eq
-id|HD_MAJOR
+op_ne
+id|SCSI_DISK_MAJOR
 )paren
 id|req
 op_assign
 id|req-&gt;next
 suffix:semicolon
-macro_line|#endif CONFIG_BLK_DEV_HD
 r_while
 c_loop
 (paren

@@ -1816,8 +1816,6 @@ id|cm206_bh
 c_func
 (paren
 r_void
-op_star
-id|unused
 )paren
 (brace
 id|debug
@@ -5840,19 +5838,12 @@ op_assign
 l_int|16
 suffix:semicolon
 multiline_comment|/* reads ahead what? */
-id|bh_base
-(braket
-id|CM206_BH
-)braket
-dot
-id|routine
-op_assign
-id|cm206_bh
-suffix:semicolon
-id|enable_bh
+id|init_bh
 c_func
 (paren
 id|CM206_BH
+comma
+id|cm206_bh
 )paren
 suffix:semicolon
 id|memset

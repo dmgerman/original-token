@@ -1,7 +1,8 @@
-multiline_comment|/* $Id: signal.h,v 1.14 1995/11/25 02:32:46 davem Exp $ */
+multiline_comment|/* $Id: signal.h,v 1.17 1996/03/01 07:21:02 davem Exp $ */
 macro_line|#ifndef _ASMSPARC_SIGNAL_H
 DECL|macro|_ASMSPARC_SIGNAL_H
 mdefine_line|#define _ASMSPARC_SIGNAL_H
+macro_line|#include &lt;asm/sigcontext.h&gt;
 multiline_comment|/* On the Sparc the signal handlers get passed a &squot;sub-signal&squot; code&n; * for certain signal types, which we document here.&n; */
 DECL|macro|_NSIG
 mdefine_line|#define _NSIG             32
@@ -22,7 +23,7 @@ mdefine_line|#define    SUBSIG_ILLINST     2
 DECL|macro|SUBSIG_PRIVINST
 mdefine_line|#define    SUBSIG_PRIVINST    3
 DECL|macro|SUBSIG_BADTRAP
-mdefine_line|#define    SUBSIG_BADTRAP(t)  (0x80 + (n))
+mdefine_line|#define    SUBSIG_BADTRAP(t)  (0x80 + (t))
 DECL|macro|SIGTRAP
 mdefine_line|#define SIGTRAP&t;&t; 5
 DECL|macro|SIGABRT
@@ -146,7 +147,7 @@ multiline_comment|/* Sigvec flags */
 DECL|macro|SV_SSTACK
 mdefine_line|#define SV_SSTACK    1     /* This signal handler should use sig-stack */
 DECL|macro|SV_INTR
-mdefine_line|#define SV_INTR      2     /* Sig return should not restart system ??? */
+mdefine_line|#define SV_INTR      2     /* Sig return should not restart system call */
 DECL|macro|SV_RESET
 mdefine_line|#define SV_RESET     4     /* Set handler to SIG_DFL upon taken signal */
 DECL|macro|SV_IGNCHILD
@@ -157,21 +158,21 @@ mdefine_line|#define SA_NOCLDSTOP&t;SV_IGNCHILD
 DECL|macro|SA_STACK
 mdefine_line|#define SA_STACK&t;SV_SSTACK
 DECL|macro|SA_RESTART
-mdefine_line|#define SA_RESTART&t;SV_RESET
-DECL|macro|SA_INTERRUPT
-mdefine_line|#define SA_INTERRUPT&t;SV_INTR
-DECL|macro|SA_NOMASK
-mdefine_line|#define SA_NOMASK&t;0x10
+mdefine_line|#define SA_RESTART&t;SV_INTR
 DECL|macro|SA_ONESHOT
-mdefine_line|#define SA_ONESHOT&t;0x20
+mdefine_line|#define SA_ONESHOT&t;SV_RESET
+DECL|macro|SA_INTERRUPT
+mdefine_line|#define SA_INTERRUPT&t;0x10
+DECL|macro|SA_NOMASK
+mdefine_line|#define SA_NOMASK&t;0x20
 DECL|macro|SA_SHIRQ
 mdefine_line|#define SA_SHIRQ&t;0x40
 DECL|macro|SIG_BLOCK
-mdefine_line|#define SIG_BLOCK          0x00&t;/* for blocking signals */
+mdefine_line|#define SIG_BLOCK          0x01&t;/* for blocking signals */
 DECL|macro|SIG_UNBLOCK
-mdefine_line|#define SIG_UNBLOCK        0x40&t;/* for unblocking signals */
+mdefine_line|#define SIG_UNBLOCK        0x02&t;/* for unblocking signals */
 DECL|macro|SIG_SETMASK
-mdefine_line|#define SIG_SETMASK        0x80&t;/* for setting the signal mask */
+mdefine_line|#define SIG_SETMASK        0x04&t;/* for setting the signal mask */
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * These values of sa_flags are used only by the kernel as part of the&n; * irq handling routines.&n; *&n; * SA_INTERRUPT is also used by the irq handling routines.&n; */
 DECL|macro|SA_PROBE

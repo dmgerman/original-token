@@ -33,6 +33,19 @@ l_int|0
 )brace
 suffix:semicolon
 macro_line|#endif
+DECL|variable|mcd_blocksizes
+r_static
+r_int
+id|mcd_blocksizes
+(braket
+l_int|1
+)braket
+op_assign
+(brace
+l_int|0
+comma
+)brace
+suffix:semicolon
 multiline_comment|/* I know putting defines in this file is probably stupid, but it should be */
 multiline_comment|/* the only place that they are really needed... I HOPE! :) */
 multiline_comment|/* How many sectors to read at 1x when an error at 2x speed occurs. */
@@ -4345,6 +4358,13 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
+id|blksize_size
+(braket
+id|MAJOR_NR
+)braket
+op_assign
+id|mcd_blocksizes
+suffix:semicolon
 id|blk_dev
 (braket
 id|MAJOR_NR

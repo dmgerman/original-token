@@ -1,12 +1,13 @@
-multiline_comment|/* $Id: processor.h,v 1.29 1995/11/26 05:01:29 davem Exp $&n; * include/asm-sparc/processor.h&n; *&n; * Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: processor.h,v 1.40 1996/02/03 10:06:01 davem Exp $&n; * include/asm-sparc/processor.h&n; *&n; * Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __ASM_SPARC_PROCESSOR_H
 DECL|macro|__ASM_SPARC_PROCESSOR_H
 mdefine_line|#define __ASM_SPARC_PROCESSOR_H
-macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/a.out.h&gt;
 macro_line|#include &lt;asm/psr.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/head.h&gt;
 macro_line|#include &lt;asm/signal.h&gt;
+macro_line|#include &lt;asm/segment.h&gt;
 multiline_comment|/*&n; * Bus types&n; */
 DECL|macro|EISA_bus
 mdefine_line|#define EISA_bus 0
@@ -42,6 +43,12 @@ l_int|8
 )paren
 )paren
 )paren
+suffix:semicolon
+DECL|member|kregs
+r_struct
+id|pt_regs
+op_star
+id|kregs
 suffix:semicolon
 multiline_comment|/* For signal handling */
 DECL|member|sig_address
@@ -93,6 +100,26 @@ r_int
 r_int
 id|kwim
 suffix:semicolon
+multiline_comment|/* Special child fork kpsr/kwim values. */
+DECL|member|fork_kpsr
+r_int
+r_int
+id|fork_kpsr
+id|__attribute__
+(paren
+(paren
+id|aligned
+(paren
+l_int|8
+)paren
+)paren
+)paren
+suffix:semicolon
+DECL|member|fork_kwim
+r_int
+r_int
+id|fork_kwim
+suffix:semicolon
 multiline_comment|/* A place to store user windows and stack pointers&n;&t; * when the stack needs inspection.&n;&t; */
 DECL|macro|NSWINS
 mdefine_line|#define NSWINS 8
@@ -134,17 +161,6 @@ DECL|member|w_saved
 r_int
 r_int
 id|w_saved
-suffix:semicolon
-multiline_comment|/* Where our page table lives. */
-DECL|member|pgd_ptr
-r_int
-r_int
-id|pgd_ptr
-suffix:semicolon
-multiline_comment|/* The context currently allocated to this process&n;&t; * or -1 if no context has been allocated to this&n;&t; * task yet.&n;&t; */
-DECL|member|context
-r_int
-id|context
 suffix:semicolon
 multiline_comment|/* Floating point regs */
 DECL|member|float_regs
@@ -201,12 +217,29 @@ r_struct
 id|sigstack
 id|sstk_info
 suffix:semicolon
+DECL|member|flags
+r_int
+r_int
+id|flags
+suffix:semicolon
+DECL|member|current_ds
+r_int
+id|current_ds
+suffix:semicolon
+DECL|member|core_exec
+r_struct
+id|exec
+id|core_exec
+suffix:semicolon
+multiline_comment|/* just what it says. */
 )brace
 suffix:semicolon
+DECL|macro|SPARC_FLAG_KTHREAD
+mdefine_line|#define SPARC_FLAG_KTHREAD      0x1    /* task is a kernel thread */
 DECL|macro|INIT_MMAP
-mdefine_line|#define INIT_MMAP { &amp;init_mm, (0xf0000000UL), (0xfe100000UL), &bslash;&n;&t;&t;    __pgprot(0x0) , VM_READ | VM_WRITE | VM_EXEC }
+mdefine_line|#define INIT_MMAP { &amp;init_mm, (0), (0), &bslash;&n;&t;&t;    __pgprot(0x0) , VM_READ | VM_WRITE | VM_EXEC }
 DECL|macro|INIT_TSS
-mdefine_line|#define INIT_TSS  { &bslash;&n;/* uwinmask, sig_address, sig_desc, ksp, kpc, kpsr, kwim */ &bslash;&n;   0,        0,           0,        0,   0,   0,    0, &bslash;&n;/* reg_window */  &bslash;&n;{ { { 0, }, { 0, } }, }, &bslash;&n;/* rwbuf_stkptrs */  &bslash;&n;{ 0, 0, 0, 0, 0, 0, 0, 0, }, &bslash;&n;/* w_saved, pgd_ptr,                context */  &bslash;&n;   0,       (long) &amp;swapper_pg_dir, -1, &bslash;&n;/* FPU regs */   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, }, &bslash;&n;/* FPU status, FPU qdepth, FPU queue */ &bslash;&n;   0,          0,  { { 0, 0, }, }, &bslash;&n;/* sstk_info */ &bslash;&n;{ 0, 0, }, &bslash;&n;}
+mdefine_line|#define INIT_TSS  { &bslash;&n;/* uwinmask, kregs, sig_address, sig_desc, ksp, kpc, kpsr, kwim */ &bslash;&n;   0,        0,     0,           0,        0,   0,   0,    0, &bslash;&n;/* fork_kpsr, fork_kwim */ &bslash;&n;   0,         0, &bslash;&n;/* reg_window */  &bslash;&n;{ { { 0, }, { 0, } }, }, &bslash;&n;/* rwbuf_stkptrs */  &bslash;&n;{ 0, 0, 0, 0, 0, 0, 0, 0, }, &bslash;&n;/* w_saved */ &bslash;&n;   0, &bslash;&n;/* FPU regs */   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, }, &bslash;&n;/* FPU status, FPU qdepth, FPU queue */ &bslash;&n;   0,          0,  { { 0, 0, }, }, &bslash;&n;/* sstk_info */ &bslash;&n;{ 0, 0, }, &bslash;&n;/* flags,              current_ds, */ &bslash;&n;   SPARC_FLAG_KTHREAD, USER_DS, &bslash;&n;/* core_exec */ &bslash;&n;{ 0, }, &bslash;&n;}
 multiline_comment|/* Return saved PC of a blocked thread. */
 DECL|function|thread_saved_pc
 r_extern
@@ -223,35 +256,13 @@ id|t
 )paren
 (brace
 r_return
-(paren
-(paren
-r_struct
-id|pt_regs
-op_star
-)paren
-(paren
-(paren
-id|t-&gt;ksp
-op_amp
-(paren
-op_complement
-l_int|0xfff
-)paren
-)paren
-op_plus
-(paren
-l_int|0x1000
-op_minus
-id|TRACEREG_SZ
-)paren
-)paren
-)paren
-op_member_access_from_pointer
-id|pc
+id|t-&gt;kregs-&gt;pc
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Do necessary setup to start up a newly executed thread.&n; */
+DECL|function|start_thread
 r_extern
+r_inline
 r_void
 id|start_thread
 c_func
@@ -268,6 +279,158 @@ comma
 r_int
 r_int
 id|sp
+)paren
+(brace
+r_int
+r_int
+id|saved_psr
+op_assign
+(paren
+id|regs-&gt;psr
+op_amp
+(paren
+id|PSR_CWP
+)paren
+)paren
+op_or
+id|PSR_S
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|16
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|regs-&gt;u_regs
+(braket
+id|i
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+id|regs-&gt;y
+op_assign
+l_int|0
+suffix:semicolon
+id|regs-&gt;pc
+op_assign
+(paren
+(paren
+id|pc
+op_amp
+(paren
+op_complement
+l_int|3
+)paren
+)paren
+op_minus
+l_int|4
+)paren
+suffix:semicolon
+id|regs-&gt;npc
+op_assign
+id|regs-&gt;pc
+op_plus
+l_int|4
+suffix:semicolon
+id|regs-&gt;psr
+op_assign
+id|saved_psr
+suffix:semicolon
+id|regs-&gt;u_regs
+(braket
+id|UREG_G1
+)braket
+op_assign
+id|sp
+suffix:semicolon
+multiline_comment|/* Base of arg/env stack area */
+id|regs-&gt;u_regs
+(braket
+id|UREG_G2
+)braket
+op_assign
+id|regs-&gt;u_regs
+(braket
+id|UREG_G7
+)braket
+op_assign
+id|regs-&gt;npc
+suffix:semicolon
+id|regs-&gt;u_regs
+(braket
+id|UREG_FP
+)braket
+op_assign
+(paren
+id|sp
+op_minus
+id|REGWIN_SZ
+)paren
+suffix:semicolon
+)brace
+r_extern
+r_int
+r_int
+(paren
+op_star
+id|alloc_kernel_stack
+)paren
+(paren
+r_struct
+id|task_struct
+op_star
+id|tsk
+)paren
+suffix:semicolon
+r_extern
+r_void
+(paren
+op_star
+id|free_kernel_stack
+)paren
+(paren
+r_int
+r_int
+id|stack
+)paren
+suffix:semicolon
+r_extern
+r_struct
+id|task_struct
+op_star
+(paren
+op_star
+id|alloc_task_struct
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+(paren
+op_star
+id|free_task_struct
+)paren
+(paren
+r_struct
+id|task_struct
+op_star
+id|tsk
 )paren
 suffix:semicolon
 macro_line|#endif /* __ASM_SPARC_PROCESSOR_H */

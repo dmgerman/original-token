@@ -1,7 +1,8 @@
-multiline_comment|/* $Id: ross.h,v 1.3 1995/11/25 02:32:37 davem Exp $&n; * ross.h: Ross module specific definitions and defines.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: ross.h,v 1.4 1996/01/03 03:53:20 davem Exp $&n; * ross.h: Ross module specific definitions and defines.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_ROSS_H
 DECL|macro|_SPARC_ROSS_H
 mdefine_line|#define _SPARC_ROSS_H
+macro_line|#include &lt;asm/asi.h&gt;
 multiline_comment|/* Ross made Hypersparcs have a %psr &squot;impl&squot; field of &squot;0001&squot;.  The &squot;vers&squot;&n; * field has &squot;1111&squot;.&n; */
 multiline_comment|/* The MMU control register fields on the HyperSparc.&n; *&n; * -----------------------------------------------------------------&n; * |implvers| RSV |CWR|SE|WBE| MID |BM| C|CS|MR|CM|RSV|CE|RSV|NF|ME|&n; * -----------------------------------------------------------------&n; *  31    24 23-22 21  20  19 18-15 14 13 12 11 10  9   8 7-2  1  0&n; *&n; * Phew, lots of fields there ;-)&n; *&n; * CWR: Cache Wrapping Enabled, if one cache wrapping is on.&n; * SE: Snoop Enable, turns on bus snooping for cache activity if one.&n; * WBE: Write Buffer Enable, one turns it on.&n; * MID: The ModuleID of the chip for MBus transactions.&n; * BM: Boot-Mode. One indicates the MMU is in boot mode.&n; * C: Indicates whether accesses are cachable while the MMU is&n; *    disabled.&n; * CS: Cache Size -- 0 = 128k, 1 = 256k&n; * MR: Memory Reflection, one indicates that the memory bus connected&n; *     to the MBus supports memory reflection.&n; * CM: Cache Mode -- 0 = write-through, 1 = copy-back&n; * CE: Cache Enable -- 0 = no caching, 1 = cache is on&n; * NF: No Fault -- 0 = faults trap the CPU from supervisor mode&n; *                 1 = faults from supervisor mode do not generate traps&n; * ME: MMU Enable -- 0 = MMU is off, 1 = MMU is on&n; */
 DECL|macro|HYPERSPARC_CWENABLE
@@ -29,11 +30,11 @@ mdefine_line|#define HYPERSPARC_NFAULT     0x00000002
 DECL|macro|HYPERSPARC_MENABLE
 mdefine_line|#define HYPERSPARC_MENABLE    0x00000001
 multiline_comment|/* Flushes which clear out only the on-chip Ross HyperSparc ICACHE. */
-DECL|function|flush_i_page
+DECL|function|hyper_flush_i_page
 r_extern
 r_inline
 r_void
-id|flush_i_page
+id|hyper_flush_i_page
 c_func
 (paren
 r_int
@@ -64,11 +65,11 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-DECL|function|flush_i_seg
+DECL|function|hyper_flush_i_seg
 r_extern
 r_inline
 r_void
-id|flush_i_seg
+id|hyper_flush_i_seg
 c_func
 (paren
 r_int
@@ -99,11 +100,11 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-DECL|function|flush_i_region
+DECL|function|hyper_flush_i_region
 r_extern
 r_inline
 r_void
-id|flush_i_region
+id|hyper_flush_i_region
 c_func
 (paren
 r_int
@@ -134,11 +135,11 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-DECL|function|flush_i_ctx
+DECL|function|hyper_flush_i_ctx
 r_extern
 r_inline
 r_void
-id|flush_i_ctx
+id|hyper_flush_i_ctx
 c_func
 (paren
 r_int
@@ -169,11 +170,11 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-DECL|function|flush_i_user
+DECL|function|hyper_flush_i_user
 r_extern
 r_inline
 r_void
-id|flush_i_user
+id|hyper_flush_i_user
 c_func
 (paren
 r_int
@@ -205,11 +206,11 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/* Finally, flush the entire ICACHE. */
-DECL|function|flush_whole_icache
+DECL|function|hyper_flush_whole_icache
 r_extern
 r_inline
 r_void
-id|flush_whole_icache
+id|hyper_flush_whole_icache
 c_func
 (paren
 r_void
@@ -305,6 +306,56 @@ l_string|&quot;memory&quot;
 suffix:semicolon
 r_return
 suffix:semicolon
+)brace
+multiline_comment|/* HyperSparc specific cache flushing. */
+r_extern
+r_int
+id|hyper_cache_size
+suffix:semicolon
+DECL|function|hyper_flush_all_combined
+r_extern
+r_inline
+r_void
+id|hyper_flush_all_combined
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+r_int
+id|addr
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|addr
+op_assign
+l_int|0
+suffix:semicolon
+id|addr
+OL
+id|hyper_cache_size
+suffix:semicolon
+id|addr
+op_add_assign
+l_int|32
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;sta %%g0, [%0] 0xe&bslash;n&bslash;t&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|addr
+)paren
+)paren
+suffix:semicolon
+)brace
 )brace
 macro_line|#endif /* !(_SPARC_ROSS_H) */
 eof

@@ -2113,6 +2113,15 @@ id|clock_slowed
 )paren
 r_return
 suffix:semicolon
+macro_line|#else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|apm_enabled
+)paren
+r_return
+suffix:semicolon
 macro_line|#endif
 id|APM_SET_CPU_BUSY
 c_func

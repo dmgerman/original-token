@@ -8546,7 +8546,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;%s: -&gt;wavelan_set_multicast_list(dev=0x%x)&quot;
+l_string|&quot;%s: -&gt;wavelan_set_multicast_list(dev=%p)&quot;
 comma
 id|dev-&gt;name
 comma

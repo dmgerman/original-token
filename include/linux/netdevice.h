@@ -908,8 +908,6 @@ id|net_bh
 c_func
 (paren
 r_void
-op_star
-id|tmp
 )paren
 suffix:semicolon
 r_extern

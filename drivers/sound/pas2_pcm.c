@@ -1222,6 +1222,22 @@ comma
 id|FILTER_FREQUENCY
 )paren
 suffix:semicolon
+macro_line|#ifdef NO_TRIGGER
+id|pas_write
+(paren
+id|pas_read
+(paren
+id|PCM_CONTROL
+)paren
+op_or
+id|P_C_PCM_ENABLE
+op_or
+id|P_C_PCM_DAC_MODE
+comma
+id|PCM_CONTROL
+)paren
+suffix:semicolon
+macro_line|#endif
 id|pcm_mode
 op_assign
 id|PCM_DAC
@@ -1440,6 +1456,25 @@ comma
 id|FILTER_FREQUENCY
 )paren
 suffix:semicolon
+macro_line|#ifdef NO_TRIGGER
+id|pas_write
+(paren
+(paren
+id|pas_read
+(paren
+id|PCM_CONTROL
+)paren
+op_or
+id|P_C_PCM_ENABLE
+)paren
+op_amp
+op_complement
+id|P_C_PCM_DAC_MODE
+comma
+id|PCM_CONTROL
+)paren
+suffix:semicolon
+macro_line|#endif
 id|pcm_mode
 op_assign
 id|PCM_ADC
@@ -1450,6 +1485,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifndef NO_TRIGGER
 r_static
 r_void
 DECL|function|pas_pcm_trigger
@@ -1545,6 +1581,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 r_static
 r_int
 DECL|function|pas_pcm_prepare_for_input
@@ -1626,7 +1663,11 @@ l_int|NULL
 comma
 l_int|NULL
 comma
+macro_line|#ifndef NO_TRIGGER
 id|pas_pcm_trigger
+macro_line|#else
+l_int|NULL
+macro_line|#endif
 )brace
 suffix:semicolon
 r_int

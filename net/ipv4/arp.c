@@ -4474,10 +4474,13 @@ id|offset
 op_plus
 id|length
 )paren
-r_break
+r_goto
+id|done
 suffix:semicolon
 )brace
 )brace
+id|done
+suffix:colon
 id|arp_unlock
 c_func
 (paren

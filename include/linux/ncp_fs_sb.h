@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  ncp_fs_sb.h&n; *&n; *  Copyright (C) 1995 by Volker Lendecke&n; *&n; */
+multiline_comment|/*&n; *  ncp_fs_sb.h&n; *&n; *  Copyright (C) 1995, 1996 by Volker Lendecke&n; *&n; */
 macro_line|#ifndef _NCP_FS_SB
 DECL|macro|_NCP_FS_SB
 mdefine_line|#define _NCP_FS_SB

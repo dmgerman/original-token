@@ -977,7 +977,9 @@ r_void
 id|sb_dsp_unload
 c_func
 (paren
-r_void
+r_struct
+id|address_info
+op_star
 )paren
 suffix:semicolon
 multiline_comment|/*&t;From sb16_dsp.c&t;*/

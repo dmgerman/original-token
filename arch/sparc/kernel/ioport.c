@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ioport.c,v 1.12 1995/11/25 00:58:07 davem Exp $&n; * ioport.c:  Simple io mapping allocator.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * The routines in this file should be changed for a memory allocator&n; * that would be setup just like NetBSD does : you create regions that&n; * are administered by a general purpose allocator, and then you call&n; * that allocator with your handle and the block size instead of this&n; * weak stuff.&n; *&n; * XXX No joke, this needs to be rewritten badly. XXX&n; */
+multiline_comment|/* $Id: ioport.c,v 1.14 1996/01/03 03:34:41 davem Exp $&n; * ioport.c:  Simple io mapping allocator.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * The routines in this file should be changed for a memory allocator&n; * that would be setup just like NetBSD does : you create regions that&n; * are administered by a general purpose allocator, and then you call&n; * that allocator with your handle and the block size instead of this&n; * weak stuff.&n; *&n; * XXX No joke, this needs to be rewritten badly. XXX&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -87,7 +87,6 @@ c_cond
 (paren
 r_virtual
 )paren
-(brace
 id|vaddr
 op_assign
 (paren
@@ -96,14 +95,11 @@ r_int
 )paren
 r_virtual
 suffix:semicolon
-)brace
 r_else
-(brace
 id|vaddr
 op_assign
 id|next_free_region
 suffix:semicolon
-)brace
 id|len
 op_add_assign
 id|offset
@@ -128,12 +124,14 @@ id|IOBASE_LEN
 )paren
 )paren
 (brace
-id|printk
+id|prom_printf
+c_func
 (paren
 l_string|&quot;alloc_io: Mapping ouside IOBASE area&bslash;n&quot;
 )paren
 suffix:semicolon
 id|prom_halt
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -153,7 +151,8 @@ id|len
 )paren
 )paren
 (brace
-id|printk
+id|prom_printf
+c_func
 (paren
 l_string|&quot;alloc_io: 0x%lx is already in use&bslash;n&quot;
 comma
@@ -161,6 +160,7 @@ id|vaddr
 )paren
 suffix:semicolon
 id|prom_halt
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -198,6 +198,7 @@ id|PAGE_SIZE
 )paren
 (brace
 id|mapioaddr
+c_func
 (paren
 id|addr
 comma
@@ -274,7 +275,8 @@ id|len
 )paren
 )paren
 (brace
-id|printk
+id|prom_printf
+c_func
 (paren
 l_string|&quot;alloc_dma: 0x%lx is already in use&bslash;n&quot;
 comma
@@ -282,6 +284,7 @@ id|vaddr
 )paren
 suffix:semicolon
 id|prom_halt
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -300,12 +303,14 @@ id|DVMA_LEN
 )paren
 )paren
 (brace
-id|printk
+id|prom_printf
+c_func
 (paren
 l_string|&quot;alloc_dvma: out of dvma memory&bslash;n&quot;
 )paren
 suffix:semicolon
 id|prom_halt
+c_func
 (paren
 )paren
 suffix:semicolon

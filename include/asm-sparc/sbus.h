@@ -1,8 +1,9 @@
-multiline_comment|/* $Id: sbus.h,v 1.8 1995/11/25 02:32:38 davem Exp $&n; * sbus.h:  Defines for the Sun SBus.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: sbus.h,v 1.9 1996/02/15 09:13:03 davem Exp $&n; * sbus.h:  Defines for the Sun SBus.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_SBUS_H
 DECL|macro|_SPARC_SBUS_H
 mdefine_line|#define _SPARC_SBUS_H
 macro_line|#include &lt;asm/oplib.h&gt;
+macro_line|#include &lt;asm/iommu.h&gt;
 multiline_comment|/* We scan which devices are on the SBus using the PROM node device&n; * tree.  SBus devices are described in two different ways.  You can&n; * either get an absolute address at which to access the device, or&n; * you can get a SBus &squot;slot&squot; number and an offset within that slot.&n; */
 multiline_comment|/* The base address at which to calculate device OBIO addresses. */
 DECL|macro|SUN_SBUS_BVADDR
@@ -232,6 +233,13 @@ op_star
 id|devices
 suffix:semicolon
 multiline_comment|/* Link to devices on this SBus */
+DECL|member|iommu
+r_struct
+id|iommu_struct
+op_star
+id|iommu
+suffix:semicolon
+multiline_comment|/* IOMMU for this sbus if applicable */
 DECL|member|prom_node
 r_int
 id|prom_node

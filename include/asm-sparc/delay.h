@@ -1,7 +1,12 @@
-multiline_comment|/* $Id: delay.h,v 1.7 1995/11/25 02:31:32 davem Exp $&n; * delay.h: Linux delay routines on the Sparc.&n; *&n; * Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu).&n; */
+multiline_comment|/* $Id: delay.h,v 1.8 1996/01/28 02:09:21 davem Exp $&n; * delay.h: Linux delay routines on the Sparc.&n; *&n; * Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu).&n; */
 macro_line|#ifndef __SPARC_DELAY_H
 DECL|macro|__SPARC_DELAY_H
 mdefine_line|#define __SPARC_DELAY_H
+r_extern
+r_int
+r_int
+id|loops_per_sec
+suffix:semicolon
 DECL|function|__delay
 r_extern
 id|__inline__
@@ -34,17 +39,8 @@ id|loops
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* udelay(usecs) is used for very short delays up to 1 millisecond. On&n; * the Sparc (both sun4c and sun4m) we have a free running usec counter&n; * available to us already.&n; */
+multiline_comment|/* This is too messy with inline asm on the Sparc. */
 r_extern
-r_volatile
-r_int
-r_int
-op_star
-id|master_l10_counter
-suffix:semicolon
-DECL|function|udelay
-r_extern
-id|__inline__
 r_void
 id|udelay
 c_func
@@ -53,64 +49,7 @@ r_int
 r_int
 id|usecs
 )paren
-(brace
-r_int
-r_int
-id|ccnt
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|master_l10_counter
-)paren
-(brace
-r_return
-suffix:semicolon
-)brace
-id|ccnt
-op_assign
-op_star
-id|master_l10_counter
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|usecs
-op_add_assign
-l_int|1
-suffix:semicolon
-id|usecs
-suffix:semicolon
-id|usecs
-op_decrement
-comma
-id|ccnt
-op_assign
-op_star
-id|master_l10_counter
-)paren
-r_while
-c_loop
-(paren
-op_star
-id|master_l10_counter
-op_eq
-id|ccnt
-)paren
-(brace
-id|__asm__
-c_func
-(paren
-l_string|&quot;&quot;
-suffix:colon
-suffix:colon
-suffix:colon
-l_string|&quot;memory&quot;
-)paren
-suffix:semicolon
-)brace
-)brace
 multiline_comment|/* calibrate_delay() wants this... */
 DECL|macro|muldiv
 mdefine_line|#define muldiv(a, b, c)    (((a)*(b))/(c))

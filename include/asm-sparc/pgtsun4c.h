@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtsun4c.h,v 1.16 1995/11/25 02:32:28 davem Exp $&n; * pgtsun4c.h:  Sun4c specific pgtable.h defines and code.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: pgtsun4c.h,v 1.22 1996/01/24 02:33:45 davem Exp $&n; * pgtsun4c.h:  Sun4c specific pgtable.h defines and code.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_PGTSUN4C_H
 DECL|macro|_SPARC_PGTSUN4C_H
 mdefine_line|#define _SPARC_PGTSUN4C_H
@@ -22,7 +22,7 @@ DECL|macro|SUN4C_PGDIR_ALIGN
 mdefine_line|#define SUN4C_PGDIR_ALIGN(addr) (((addr)+SUN4C_PGDIR_SIZE-1)&amp;SUN4C_PGDIR_MASK)
 multiline_comment|/* To represent how the sun4c mmu really lays things out. */
 DECL|macro|SUN4C_REAL_PGDIR_SHIFT
-mdefine_line|#define SUN4C_REAL_PGDIR_SHIFT  18
+mdefine_line|#define SUN4C_REAL_PGDIR_SHIFT       18
 DECL|macro|SUN4C_REAL_PGDIR_SIZE
 mdefine_line|#define SUN4C_REAL_PGDIR_SIZE        (1UL &lt;&lt; SUN4C_REAL_PGDIR_SHIFT)
 DECL|macro|SUN4C_REAL_PGDIR_MASK
@@ -56,9 +56,6 @@ DECL|macro|_SUN4C_PAGE_REF
 mdefine_line|#define _SUN4C_PAGE_REF       0x02000000   /* Page has been accessed/referenced */
 DECL|macro|_SUN4C_PAGE_DIRTY
 mdefine_line|#define _SUN4C_PAGE_DIRTY     0x01000000   /* Page has been modified, is dirty */
-DECL|macro|_SUN4C_PAGE_COW
-mdefine_line|#define _SUN4C_PAGE_COW       0x00800000   /* COW page */
-multiline_comment|/* Note that the &squot;non-cacheable&squot; bit is not set in any of these settings,&n; * you may want to turn it on for debugging the flushing of the virtual&n; * cache on the SUN4C MMU.&n; */
 DECL|macro|_SUN4C_PAGE_CHG_MASK
 mdefine_line|#define _SUN4C_PAGE_CHG_MASK  (0xffff | _SUN4C_PAGE_REF | _SUN4C_PAGE_DIRTY)
 DECL|macro|SUN4C_PAGE_NONE
@@ -66,72 +63,11 @@ mdefine_line|#define SUN4C_PAGE_NONE     __pgprot(_SUN4C_PAGE_VALID | _SUN4C_PAG
 DECL|macro|SUN4C_PAGE_SHARED
 mdefine_line|#define SUN4C_PAGE_SHARED   __pgprot(_SUN4C_PAGE_VALID | _SUN4C_PAGE_WRITE | &bslash;&n;&t;&t;&t;&t;     _SUN4C_PAGE_USER | _SUN4C_PAGE_REF)
 DECL|macro|SUN4C_PAGE_COPY
-mdefine_line|#define SUN4C_PAGE_COPY     __pgprot(_SUN4C_PAGE_VALID | _SUN4C_PAGE_USER | &bslash;&n;&t;&t;&t;&t;     _SUN4C_PAGE_REF | _SUN4C_PAGE_COW)
+mdefine_line|#define SUN4C_PAGE_COPY     __pgprot(_SUN4C_PAGE_VALID | _SUN4C_PAGE_USER | &bslash;&n;&t;&t;&t;&t;     _SUN4C_PAGE_REF)
 DECL|macro|SUN4C_PAGE_READONLY
 mdefine_line|#define SUN4C_PAGE_READONLY __pgprot(_SUN4C_PAGE_VALID | _SUN4C_PAGE_USER | &bslash;&n;&t;&t;&t;&t;     _SUN4C_PAGE_REF)
 DECL|macro|SUN4C_PAGE_KERNEL
-mdefine_line|#define SUN4C_PAGE_KERNEL   __pgprot(_SUN4C_PAGE_VALID | _SUN4C_PAGE_WRITE | &bslash;&n;&t;&t;&t;&t;     _SUN4C_PAGE_PRIV | _SUN4C_PAGE_DIRTY | &bslash;&n;&t;&t;&t;&t;     _SUN4C_PAGE_REF)
-DECL|macro|SUN4C_PAGE_INVALID
-mdefine_line|#define SUN4C_PAGE_INVALID  __pgprot(0)
-DECL|struct|pseg_list
-r_struct
-id|pseg_list
-(brace
-DECL|member|next
-r_struct
-id|pseg_list
-op_star
-id|next
-suffix:semicolon
-DECL|member|prev
-r_struct
-id|pseg_list
-op_star
-id|prev
-suffix:semicolon
-DECL|member|ctx_next
-r_struct
-id|pseg_list
-op_star
-id|ctx_next
-suffix:semicolon
-DECL|member|ctx_prev
-r_struct
-id|pseg_list
-op_star
-id|ctx_prev
-suffix:semicolon
-DECL|member|vaddr
-r_int
-r_int
-id|vaddr
-suffix:semicolon
-multiline_comment|/* Where the pseg is mapped. */
-DECL|member|context
-r_int
-r_char
-id|context
-suffix:semicolon
-multiline_comment|/* The context in which it is mapped. */
-DECL|member|pseg
-r_int
-r_char
-id|pseg
-suffix:semicolon
-multiline_comment|/* The pseg itself. */
-DECL|member|ref_cnt
-r_int
-id|ref_cnt
-suffix:colon
-l_int|21
-comma
-DECL|member|hardlock
-id|hardlock
-suffix:colon
-l_int|1
-suffix:semicolon
-)brace
-suffix:semicolon
+mdefine_line|#define SUN4C_PAGE_KERNEL   __pgprot(_SUN4C_PAGE_VALID | _SUN4C_PAGE_WRITE | &bslash;&n;&t;&t;&t;&t;     _SUN4C_PAGE_PRIV | _SUN4C_PAGE_DIRTY | &bslash;&n;&t;&t;&t;&t;     _SUN4C_PAGE_REF | _SUN4C_PAGE_NOCACHE)
 r_extern
 r_char
 op_star
@@ -241,6 +177,257 @@ id|ASI_CONTROL
 suffix:semicolon
 r_return
 id|sync_addr
+suffix:semicolon
+)brace
+multiline_comment|/* SUN4C pte, segmap, and context manipulation */
+DECL|function|sun4c_get_segmap
+r_extern
+id|__inline__
+r_int
+r_int
+id|sun4c_get_segmap
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+(brace
+r_register
+r_int
+r_int
+id|entry
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;&bslash;n&bslash;tlduba [%1] %2, %0&bslash;n&bslash;t&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|entry
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|addr
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_SEGMAP
+)paren
+)paren
+suffix:semicolon
+r_return
+id|entry
+suffix:semicolon
+)brace
+DECL|function|sun4c_put_segmap
+r_extern
+id|__inline__
+r_void
+id|sun4c_put_segmap
+c_func
+(paren
+r_int
+r_int
+id|addr
+comma
+r_int
+r_int
+id|entry
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;&bslash;n&bslash;tstba %1, [%0] %2&bslash;n&bslash;t&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|addr
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|entry
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_SEGMAP
+)paren
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+DECL|function|sun4c_get_pte
+r_extern
+id|__inline__
+r_int
+r_int
+id|sun4c_get_pte
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+(brace
+r_register
+r_int
+r_int
+id|entry
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;&bslash;n&bslash;tlda [%1] %2, %0&bslash;n&bslash;t&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|entry
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|addr
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_PTE
+)paren
+)paren
+suffix:semicolon
+r_return
+id|entry
+suffix:semicolon
+)brace
+DECL|function|sun4c_put_pte
+r_extern
+id|__inline__
+r_void
+id|sun4c_put_pte
+c_func
+(paren
+r_int
+r_int
+id|addr
+comma
+r_int
+r_int
+id|entry
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;&bslash;n&bslash;tsta %1, [%0] %2&bslash;n&bslash;t&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|addr
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|entry
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_PTE
+)paren
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+DECL|function|sun4c_get_context
+r_extern
+id|__inline__
+r_int
+id|sun4c_get_context
+c_func
+(paren
+r_void
+)paren
+(brace
+r_register
+r_int
+id|ctx
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;&bslash;n&bslash;tlduba [%1] %2, %0&bslash;n&bslash;t&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|ctx
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|AC_CONTEXT
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_CONTROL
+)paren
+)paren
+suffix:semicolon
+r_return
+id|ctx
+suffix:semicolon
+)brace
+DECL|function|sun4c_set_context
+r_extern
+id|__inline__
+r_int
+id|sun4c_set_context
+c_func
+(paren
+r_int
+id|ctx
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;&bslash;n&bslash;tstba %0, [%1] %2&bslash;n&bslash;t&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|ctx
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|AC_CONTEXT
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_CONTROL
+)paren
+)paren
+suffix:semicolon
+r_return
+id|ctx
 suffix:semicolon
 )brace
 macro_line|#endif /* !(_SPARC_PGTSUN4C_H) */

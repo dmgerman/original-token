@@ -1,27 +1,15 @@
 multiline_comment|/*&n; *  linux/drivers/block/loop.c&n; *&n; *  Written by Theodore Ts&squot;o, 3/29/93&n; * &n; * Copyright 1993 by Theodore Ts&squot;o.  Redistribution of this file is&n; * permitted under the GNU Public License.&n; *&n; * DES encryption plus some minor changes by Werner Almesberger, 30-MAY-1993&n; *&n; * Modularized and updated for 1.1.16 kernel - Mitch Dsouza 28th May 1994&n; *&n; * Adapted for 1.3.59 kernel - Andries Brouwer, 1 Feb 1996&n; */
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
-macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
-macro_line|#include &quot;loop.h&quot;
+macro_line|#include &lt;linux/major.h&gt;
 macro_line|#ifdef DES_AVAILABLE
 macro_line|#include &quot;des.h&quot;
 macro_line|#endif
-DECL|macro|DEFAULT_MAJOR_NR
-mdefine_line|#define DEFAULT_MAJOR_NR 10
-DECL|variable|loop_major
-r_int
-id|loop_major
-op_assign
-id|DEFAULT_MAJOR_NR
-suffix:semicolon
+macro_line|#include &lt;linux/loop.h&gt;&t;&t;/* must follow des.h */
 DECL|macro|MAJOR_NR
-mdefine_line|#define MAJOR_NR loop_major&t;/* not necessarily constant */
+mdefine_line|#define MAJOR_NR LOOP_MAJOR
 DECL|macro|DEVICE_NAME
 mdefine_line|#define DEVICE_NAME &quot;loop&quot;
 DECL|macro|DEVICE_REQUEST
@@ -1279,6 +1267,11 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+id|invalidate_inode_pages
+(paren
+id|inode
+)paren
+suffix:semicolon
 id|lo-&gt;lo_inode
 op_assign
 id|inode
@@ -1295,6 +1288,8 @@ c_func
 (paren
 id|lo
 )paren
+suffix:semicolon
+id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -1394,6 +1389,8 @@ c_func
 (paren
 id|dev
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -1792,7 +1789,7 @@ c_func
 id|inode-&gt;i_rdev
 )paren
 op_ne
-id|loop_major
+id|MAJOR_NR
 )paren
 (brace
 id|printk
@@ -1800,7 +1797,7 @@ c_func
 (paren
 l_string|&quot;lo_ioctl: pseudo-major != %d&bslash;n&quot;
 comma
-id|loop_major
+id|MAJOR_NR
 )paren
 suffix:semicolon
 r_return
@@ -2025,7 +2022,7 @@ c_func
 id|inode-&gt;i_rdev
 )paren
 op_ne
-id|loop_major
+id|MAJOR_NR
 )paren
 (brace
 id|printk
@@ -2033,7 +2030,7 @@ c_func
 (paren
 l_string|&quot;lo_open: pseudo-major != %d&bslash;n&quot;
 comma
-id|loop_major
+id|MAJOR_NR
 )paren
 suffix:semicolon
 r_return
@@ -2119,7 +2116,7 @@ c_func
 id|inode-&gt;i_rdev
 )paren
 op_ne
-id|loop_major
+id|MAJOR_NR
 )paren
 (brace
 id|printk
@@ -2127,7 +2124,7 @@ c_func
 (paren
 l_string|&quot;lo_release: pseudo-major != %d&bslash;n&quot;
 comma
-id|loop_major
+id|MAJOR_NR
 )paren
 suffix:semicolon
 r_return
@@ -2150,7 +2147,7 @@ id|MAX_LOOP
 )paren
 r_return
 suffix:semicolon
-id|sync_dev
+id|fsync_dev
 c_func
 (paren
 id|inode-&gt;i_rdev
@@ -2240,15 +2237,6 @@ r_void
 (brace
 r_int
 id|i
-op_assign
-(paren
-id|loop_major
-ques
-c_cond
-id|loop_major
-suffix:colon
-id|DEFAULT_MAJOR_NR
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -2256,36 +2244,21 @@ c_cond
 id|register_blkdev
 c_func
 (paren
-id|i
+id|MAJOR_NR
 comma
 l_string|&quot;loop&quot;
 comma
 op_amp
 id|lo_fops
 )paren
-op_logical_and
-(paren
-id|i
-op_assign
-id|register_blkdev
-c_func
-(paren
-l_int|0
-comma
-l_string|&quot;loop&quot;
-comma
-op_amp
-id|lo_fops
-)paren
-)paren
-op_le
-l_int|0
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;Unable to get major number for loop device&bslash;n&quot;
+l_string|&quot;Unable to get major number %d for loop device&bslash;n&quot;
+comma
+id|MAJOR_NR
 )paren
 suffix:semicolon
 r_return
@@ -2293,30 +2266,19 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
-id|loop_major
-op_assign
-id|i
-suffix:semicolon
-macro_line|#ifdef MODULE
-r_if
-c_cond
-(paren
-id|i
-op_ne
-id|DEFAULT_MAJOR_NR
-)paren
-macro_line|#endif
+macro_line|#ifndef MODULE
 id|printk
 c_func
 (paren
 l_string|&quot;loop: registered device at major %d&bslash;n&quot;
 comma
-id|loop_major
+id|MAJOR_NR
 )paren
 suffix:semicolon
+macro_line|#endif
 id|blk_dev
 (braket
-id|loop_major
+id|MAJOR_NR
 )braket
 dot
 id|request_fn
@@ -2382,7 +2344,7 @@ id|loop_sizes
 suffix:semicolon
 id|blk_size
 (braket
-id|loop_major
+id|MAJOR_NR
 )braket
 op_assign
 id|loop_sizes
@@ -2406,7 +2368,7 @@ c_cond
 id|unregister_blkdev
 c_func
 (paren
-id|loop_major
+id|MAJOR_NR
 comma
 l_string|&quot;loop&quot;
 )paren
