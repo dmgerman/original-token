@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: suncons.c,v 1.79 1998/01/30 10:59:23 jj Exp $&n; * suncons.c: Sparc platform console generic layer.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: suncons.c,v 1.80 1998/04/13 07:27:01 davem Exp $&n; * suncons.c: Sparc platform console generic layer.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/vt.h&gt;
 macro_line|#include &lt;linux/selection.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/sbus.h&gt;
@@ -280,15 +281,10 @@ r_void
 )brace
 DECL|function|nop_con_type_init
 r_static
-r_int
-r_int
+r_void
 id|nop_con_type_init
 c_func
 (paren
-r_int
-r_int
-id|mem_start
-comma
 r_const
 r_char
 op_star
@@ -296,9 +292,6 @@ op_star
 id|display_desc
 )paren
 (brace
-r_return
-id|mem_start
-suffix:semicolon
 )brace
 DECL|function|nop_con_type_init_finish
 r_static
@@ -660,15 +653,10 @@ c_func
 suffix:semicolon
 )brace
 DECL|function|con_type_init
-r_int
-r_int
+r_void
 id|con_type_init
 c_func
 (paren
-r_int
-r_int
-id|mem_start
-comma
 r_const
 r_char
 op_star
@@ -682,8 +670,6 @@ dot
 id|con_type_init
 c_func
 (paren
-id|mem_start
-comma
 id|disp_desc
 )paren
 suffix:semicolon
@@ -928,14 +914,11 @@ id|__initfunc
 c_func
 (paren
 r_static
-r_int
-r_int
+r_void
 id|finish_console_init
 c_func
 (paren
-r_int
-r_int
-id|memory_start
+r_void
 )paren
 )paren
 (brace
@@ -965,7 +948,6 @@ l_string|&quot;finish_console_init: Someone tries to run me twice.&bslash;n&quot
 )paren
 suffix:semicolon
 r_return
-id|memory_start
 suffix:semicolon
 )brace
 r_for
@@ -1028,8 +1010,6 @@ id|j
 dot
 id|postsetup
 )paren
-id|memory_start
-op_assign
 (paren
 op_star
 id|fbinfo
@@ -1043,8 +1023,6 @@ id|postsetup
 id|fbinfo
 op_plus
 id|j
-comma
-id|memory_start
 )paren
 suffix:semicolon
 id|suncons_ops
@@ -1147,20 +1125,7 @@ id|confinish_has_run
 op_assign
 l_int|1
 suffix:semicolon
-r_return
-id|memory_start
-suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_PCI
-r_extern
-r_void
-id|pci_console_inithook
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -1182,18 +1147,100 @@ suffix:colon
 l_int|1
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_PCI
+r_extern
+r_int
+id|pci_console_probe
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|pci_console_inithook
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 DECL|function|__initfunc
 id|__initfunc
 c_func
 (paren
-r_int
-r_int
+r_void
+id|pci_console_init
+c_func
+(paren
+r_void
+)paren
+)paren
+(brace
+multiline_comment|/* Nothing to do in this case. */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|con_is_present
+c_func
+(paren
+)paren
+)paren
+r_return
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|cons_type
+)paren
+(brace
+multiline_comment|/* Some console was already found on SBUS or UPA */
+r_return
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|pci_console_probe
+c_func
+(paren
+)paren
+)paren
+(brace
+id|prom_printf
+c_func
+(paren
+l_string|&quot;Could not probe PCI console, bailing out...&bslash;n&quot;
+)paren
+suffix:semicolon
+id|prom_halt
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+id|finish_console_init
+c_func
+(paren
+)paren
+suffix:semicolon
+id|con_type_init_finish
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_PCI */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_void
 id|sun_console_init
 c_func
 (paren
-r_int
-r_int
-id|memory_start
+r_void
 )paren
 )paren
 (brace
@@ -1211,15 +1258,21 @@ c_func
 )paren
 )paren
 r_return
-id|memory_start
 suffix:semicolon
 id|fbinfo
 op_assign
+id|kmalloc
+c_func
+(paren
+r_sizeof
 (paren
 id|fbinfo_t
-op_star
 )paren
-id|memory_start
+op_star
+id|FRAME_BUFFERS
+comma
+id|GFP_ATOMIC
+)paren
 suffix:semicolon
 id|memset
 c_func
@@ -1228,17 +1281,6 @@ id|fbinfo
 comma
 l_int|0
 comma
-id|FRAME_BUFFERS
-op_star
-r_sizeof
-(paren
-id|fbinfo_t
-)paren
-)paren
-suffix:semicolon
-id|memory_start
-op_add_assign
-(paren
 id|FRAME_BUFFERS
 op_star
 r_sizeof
@@ -1288,13 +1330,11 @@ id|cons_type
 op_assign
 l_int|1
 suffix:semicolon
+r_return
 id|pci_console_inithook
 c_func
 (paren
 )paren
-suffix:semicolon
-r_return
-id|memory_start
 suffix:semicolon
 macro_line|#else
 multiline_comment|/* XXX We need to write PROM console fallback driver... */
@@ -1315,96 +1355,7 @@ r_return
 id|finish_console_init
 c_func
 (paren
-id|memory_start
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_PCI
-r_extern
-r_int
-id|pci_console_probe
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
-r_int
-r_int
-id|pci_console_init
-c_func
-(paren
-r_int
-r_int
-id|memory_start
-)paren
-)paren
-(brace
-multiline_comment|/* Nothing to do in this case. */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|con_is_present
-c_func
-(paren
-)paren
-)paren
-r_return
-id|memory_start
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|cons_type
-)paren
-(brace
-multiline_comment|/* Some console was already found on SBUS or UPA */
-r_return
-id|memory_start
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|pci_console_probe
-c_func
-(paren
-)paren
-)paren
-(brace
-id|prom_printf
-c_func
-(paren
-l_string|&quot;Could not probe PCI console, bailing out...&bslash;n&quot;
-)paren
-suffix:semicolon
-id|prom_halt
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-id|memory_start
-op_assign
-id|finish_console_init
-c_func
-(paren
-id|memory_start
-)paren
-suffix:semicolon
-id|con_type_init_finish
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-id|memory_start
-suffix:semicolon
-)brace
-macro_line|#endif
 eof

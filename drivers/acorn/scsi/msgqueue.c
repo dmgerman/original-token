@@ -3,13 +3,14 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &quot;msgqueue.h&quot;
-multiline_comment|/*&n; * Function: struct msgqueue_entry *mqe_alloc (MsgQueue_t *msgq)&n; * Purpose : Allocate a message queue entry&n; * Params  : msgq - message queue to claim entry for&n; * Returns : message queue entry or NULL.&n; */
+multiline_comment|/*&n; * Function: struct msgqueue_entry *mqe_alloc(MsgQueue_t *msgq)&n; * Purpose : Allocate a message queue entry&n; * Params  : msgq - message queue to claim entry for&n; * Returns : message queue entry or NULL.&n; */
 DECL|function|mqe_alloc
 r_static
 r_struct
 id|msgqueue_entry
 op_star
 id|mqe_alloc
+c_func
 (paren
 id|MsgQueue_t
 op_star
@@ -40,11 +41,12 @@ r_return
 id|mq
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function: void mqe_free (MsgQueue_t *msgq, struct msgqueue_entry *mq)&n; * Purpose : free a message queue entry&n; * Params  : msgq - message queue to free entry from&n; *&t;     mq   - message queue entry to free&n; */
+multiline_comment|/*&n; * Function: void mqe_free(MsgQueue_t *msgq, struct msgqueue_entry *mq)&n; * Purpose : free a message queue entry&n; * Params  : msgq - message queue to free entry from&n; *&t;     mq   - message queue entry to free&n; */
 DECL|function|mqe_free
 r_static
 r_void
 id|mqe_free
+c_func
 (paren
 id|MsgQueue_t
 op_star
@@ -72,10 +74,11 @@ id|mq
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Function: void msgqueue_initialise (MsgQueue_t *msgq)&n; * Purpose : initialise a message queue&n; * Params  : msgq - queue to initialise&n; */
+multiline_comment|/*&n; * Function: void msgqueue_initialise(MsgQueue_t *msgq)&n; * Purpose : initialise a message queue&n; * Params  : msgq - queue to initialise&n; */
 DECL|function|msgqueue_initialise
 r_void
 id|msgqueue_initialise
+c_func
 (paren
 id|MsgQueue_t
 op_star
@@ -138,10 +141,11 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function: void msgqueue_free (MsgQueue_t *msgq)&n; * Purpose : free a queue&n; * Params  : msgq - queue to free&n; */
+multiline_comment|/*&n; * Function: void msgqueue_free(MsgQueue_t *msgq)&n; * Purpose : free a queue&n; * Params  : msgq - queue to free&n; */
 DECL|function|msgqueue_free
 r_void
 id|msgqueue_free
+c_func
 (paren
 id|MsgQueue_t
 op_star
@@ -149,10 +153,11 @@ id|msgq
 )paren
 (brace
 )brace
-multiline_comment|/*&n; * Function: int msgqueue_msglength (MsgQueue_t *msgq)&n; * Purpose : calculate the total length of all messages on the message queue&n; * Params  : msgq - queue to examine&n; * Returns : number of bytes of messages in queue&n; */
+multiline_comment|/*&n; * Function: int msgqueue_msglength(MsgQueue_t *msgq)&n; * Purpose : calculate the total length of all messages on the message queue&n; * Params  : msgq - queue to examine&n; * Returns : number of bytes of messages in queue&n; */
 DECL|function|msgqueue_msglength
 r_int
 id|msgqueue_msglength
+c_func
 (paren
 id|MsgQueue_t
 op_star
@@ -192,11 +197,12 @@ r_return
 id|length
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function: char *msgqueue_getnextmsg (MsgQueue_t *msgq, int *length)&n; * Purpose : return a message &amp; its length&n; * Params  : msgq   - queue to obtain message from&n; *&t;     length - pointer to int for message length&n; * Returns : pointer to message string&n; */
+multiline_comment|/*&n; * Function: char *msgqueue_getnextmsg(MsgQueue_t *msgq, int *length)&n; * Purpose : return a message &amp; its length&n; * Params  : msgq   - queue to obtain message from&n; *&t;     length - pointer to int for message length&n; * Returns : pointer to message string, or NULL&n; */
 DECL|function|msgqueue_getnextmsg
 r_char
 op_star
 id|msgqueue_getnextmsg
+c_func
 (paren
 id|MsgQueue_t
 op_star
@@ -229,6 +235,7 @@ op_assign
 id|mq-&gt;next
 suffix:semicolon
 id|mqe_free
+c_func
 (paren
 id|msgq
 comma
@@ -250,10 +257,53 @@ suffix:colon
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function: int msgqueue_addmsg (MsgQueue_t *msgq, int length, ...)&n; * Purpose : add a message onto a message queue&n; * Params  : msgq   - queue to add message on&n; *&t;     length - length of message&n; *&t;     ...    - message bytes&n; * Returns : != 0 if successful&n; */
+multiline_comment|/*&n; * Function: char *msgqueue_peeknextmsg(MsgQueue_t *msgq, int *length)&n; * Purpose : return next message &amp; length without removing it from the list&n; * Params  : msgq   - queue to obtain message from&n; *         : length - pointer to int for message length&n; * Returns : pointer to message string, or NULL&n; */
+DECL|function|msgqueue_peeknextmsg
+r_char
+op_star
+id|msgqueue_peeknextmsg
+c_func
+(paren
+id|MsgQueue_t
+op_star
+id|msgq
+comma
+r_int
+op_star
+id|length
+)paren
+(brace
+r_struct
+id|msgqueue_entry
+op_star
+id|mq
+op_assign
+id|msgq-&gt;qe
+suffix:semicolon
+op_star
+id|length
+op_assign
+id|mq
+ques
+c_cond
+id|mq-&gt;length
+suffix:colon
+l_int|0
+suffix:semicolon
+r_return
+id|mq
+ques
+c_cond
+id|mq-&gt;msg
+suffix:colon
+l_int|NULL
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Function: int msgqueue_addmsg(MsgQueue_t *msgq, int length, ...)&n; * Purpose : add a message onto a message queue&n; * Params  : msgq   - queue to add message on&n; *&t;     length - length of message&n; *&t;     ...    - message bytes&n; * Returns : != 0 if successful&n; */
 DECL|function|msgqueue_addmsg
 r_int
 id|msgqueue_addmsg
+c_func
 (paren
 id|MsgQueue_t
 op_star
@@ -273,6 +323,7 @@ op_star
 id|mq
 op_assign
 id|mqe_alloc
+c_func
 (paren
 id|msgq
 )paren
@@ -296,6 +347,7 @@ r_int
 id|i
 suffix:semicolon
 id|va_start
+c_func
 (paren
 id|ap
 comma
@@ -322,6 +374,7 @@ id|i
 )braket
 op_assign
 id|va_arg
+c_func
 (paren
 id|ap
 comma
@@ -330,6 +383,7 @@ r_char
 )paren
 suffix:semicolon
 id|va_end
+c_func
 (paren
 id|ap
 )paren
@@ -375,10 +429,11 @@ op_ne
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function: void msgqueue_flush (MsgQueue_t *msgq)&n; * Purpose : flush all messages from message queue&n; * Params  : msgq - queue to flush&n; */
+multiline_comment|/*&n; * Function: void msgqueue_flush(MsgQueue_t *msgq)&n; * Purpose : flush all messages from message queue&n; * Params  : msgq - queue to flush&n; */
 DECL|function|msgqueue_flush
 r_void
 id|msgqueue_flush
+c_func
 (paren
 id|MsgQueue_t
 op_star
@@ -412,6 +467,7 @@ op_assign
 id|mq-&gt;next
 suffix:semicolon
 id|mqe_free
+c_func
 (paren
 id|msgq
 comma
@@ -452,6 +508,13 @@ c_func
 id|msgqueue_getnextmsg
 )paren
 suffix:semicolon
+DECL|variable|msgqueue_peeknextmsg
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|msgqueue_peeknextmsg
+)paren
+suffix:semicolon
 DECL|variable|msgqueue_addmsg
 id|EXPORT_SYMBOL
 c_func
@@ -470,6 +533,7 @@ macro_line|#ifdef MODULE
 DECL|function|init_module
 r_int
 id|init_module
+c_func
 (paren
 r_void
 )paren
@@ -481,6 +545,7 @@ suffix:semicolon
 DECL|function|cleanup_module
 r_void
 id|cleanup_module
+c_func
 (paren
 r_void
 )paren

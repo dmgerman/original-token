@@ -1,6 +1,10 @@
-multiline_comment|/* $Id: time.c,v 1.1.1.1 1997/06/01 03:16:40 ralf Exp $&n; * time.c: Extracting time information from ARCS prom.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/*&n; * time.c: Extracting time information from ARCS prom.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: time.c,v 1.2 1998/05/01 01:35:29 ralf Exp $&n; */
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;
-DECL|function|prom_gettinfo
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_struct
 id|linux_tinfo
 op_star
@@ -8,6 +12,7 @@ id|prom_gettinfo
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_return
@@ -19,13 +24,17 @@ c_func
 )paren
 suffix:semicolon
 )brace
-DECL|function|prom_getrtime
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 r_int
 id|prom_getrtime
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_return

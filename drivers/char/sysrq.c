@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/reboot.h&gt;
 macro_line|#include &lt;linux/sysrq.h&gt;
 macro_line|#include &lt;linux/kbd_kern.h&gt;
+macro_line|#include &lt;linux/quotaops.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/smp_lock.h&gt;
 macro_line|#ifdef CONFIG_APM
@@ -685,13 +686,10 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|quota_off
+id|DQUOT_OFF
 c_func
 (paren
 id|dev
-comma
-op_minus
-l_int|1
 )paren
 suffix:semicolon
 id|fsync_dev

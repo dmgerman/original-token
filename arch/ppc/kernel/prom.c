@@ -397,6 +397,7 @@ DECL|macro|RELOC
 mdefine_line|#define RELOC(x)&t;(*PTRRELOC(&amp;(x)))
 DECL|macro|ALIGN
 mdefine_line|#define ALIGN(x) (((x) + sizeof(unsigned long)-1) &amp; -sizeof(unsigned long))
+id|__pmac
 r_static
 r_void
 DECL|function|prom_exit

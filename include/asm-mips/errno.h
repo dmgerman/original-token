@@ -262,5 +262,8 @@ DECL|macro|EDQUOT
 mdefine_line|#define&t;EDQUOT&t;&t;1133&t;/* Quota exceeded */
 DECL|macro|ENFSREMOTE
 mdefine_line|#define ENFSREMOTE&t;1134&t;/* ??? */
+multiline_comment|/* The biggest error number defined here or in &lt;linux/errno.h&gt;. */
+DECL|macro|EMAXERRNO
+mdefine_line|#define EMAXERRNO&t;1134
 macro_line|#endif /* __ASM_MIPS_ERRNO_H */
 eof

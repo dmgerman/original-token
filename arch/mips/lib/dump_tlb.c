@@ -27,31 +27,6 @@ comma
 l_string|&quot;!&quot;
 )brace
 suffix:semicolon
-DECL|variable|cache_map
-r_static
-r_char
-op_star
-id|cache_map
-(braket
-)braket
-op_assign
-(brace
-l_string|&quot;c/nc/wt/nwa,&quot;
-comma
-l_string|&quot;c/nc/wt/wa, &quot;
-comma
-l_string|&quot;uncached,   &quot;
-comma
-l_string|&quot;c/nc/wb,    &quot;
-l_string|&quot;unknown,    &quot;
-comma
-l_string|&quot;unknown,    &quot;
-comma
-l_string|&quot;unknown,    &quot;
-comma
-l_string|&quot;unknown,    &quot;
-)brace
-suffix:semicolon
 r_void
 DECL|function|dump_tlb
 id|dump_tlb
@@ -225,9 +200,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s vpn2=%08x &quot;
-l_string|&quot;[pfn=%06x c=%d d=%d v=%d g=%d]&quot;
-l_string|&quot;[pfn=%06x c=%d d=%d v=%d g=%d]&quot;
+l_string|&quot;%s vpn2=%08Lx &quot;
+l_string|&quot;[pfn=%06Lx c=%d d=%d v=%d g=%Ld]&quot;
+l_string|&quot;[pfn=%06Lx c=%d d=%d v=%d g=%Ld]&quot;
 comma
 id|region_map
 (braket

@@ -9,7 +9,9 @@ DECL|macro|TASK_SIZE
 mdefine_line|#define TASK_SIZE&t;(0xF0000000UL)
 multiline_comment|/* This decides where the kernel will search for a free chunk of vm&n; * space during mmap&squot;s.&n; */
 DECL|macro|TASK_UNMAPPED_BASE
-mdefine_line|#define TASK_UNMAPPED_BASE&t;0xC0000000UL
+mdefine_line|#define TASK_UNMAPPED_BASE(off)&t;0xC0000000UL
+DECL|macro|TASK_UNMAPPED_ALIGN
+mdefine_line|#define TASK_UNMAPPED_ALIGN(addr, off)&t;PAGE_ALIGN(addr)
 multiline_comment|/*&n; * Bus types&n; */
 DECL|macro|EISA_bus
 mdefine_line|#define EISA_bus 0
@@ -246,6 +248,10 @@ r_return
 id|sw-&gt;retpc
 suffix:semicolon
 )brace
+DECL|macro|copy_segments
+mdefine_line|#define copy_segments(nr, tsk, mm)&t;do { } while (0)
+DECL|macro|release_segments
+mdefine_line|#define release_segments(mm)&t;&t;do { } while (0)
 multiline_comment|/* Allocation and freeing of basic task resources. */
 DECL|macro|alloc_task_struct
 mdefine_line|#define alloc_task_struct() &bslash;&n;&t;((struct task_struct *) __get_free_pages(GFP_KERNEL,1))

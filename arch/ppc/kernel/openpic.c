@@ -862,7 +862,7 @@ id|no_action
 comma
 id|SA_INTERRUPT
 comma
-l_string|&quot;OpenPIC cascade&quot;
+l_string|&quot;82c59 cascade&quot;
 comma
 l_int|NULL
 )paren

@@ -9,6 +9,9 @@ macro_line|#include &lt;linux/trdevice.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;net/neighbour.h&gt;
 macro_line|#include &lt;net/snmp.h&gt;
+macro_line|#ifdef CONFIG_BRIDGE
+macro_line|#include &lt;net/br.h&gt;
+macro_line|#endif
 macro_line|#ifdef CONFIG_INET
 macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
@@ -728,6 +731,15 @@ c_func
 id|scm_detach_fds
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_BRIDGE 
+DECL|variable|br_ioctl
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|br_ioctl
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_INET
 multiline_comment|/* Internet layer registration */
 DECL|variable|inet_add_protocol

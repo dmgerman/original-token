@@ -445,63 +445,6 @@ c_func
 id|__bad_pmd_kernel
 )paren
 suffix:semicolon
-multiline_comment|/* dma */
-DECL|variable|dma_str
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|dma_str
-)paren
-suffix:semicolon
-DECL|variable|enable_dma
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|enable_dma
-)paren
-suffix:semicolon
-DECL|variable|disable_dma
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|disable_dma
-)paren
-suffix:semicolon
-DECL|variable|set_dma_addr
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|set_dma_addr
-)paren
-suffix:semicolon
-DECL|variable|set_dma_count
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|set_dma_count
-)paren
-suffix:semicolon
-DECL|variable|set_dma_mode
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|set_dma_mode
-)paren
-suffix:semicolon
-DECL|variable|get_dma_residue
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|get_dma_residue
-)paren
-suffix:semicolon
-DECL|variable|set_dma_sg
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|set_dma_sg
-)paren
-suffix:semicolon
 multiline_comment|/*&n; * floating point math emulator support.&n; * These symbols will never change their calling convention...&n; */
 DECL|variable|fpreturn
 id|EXPORT_SYMBOL_NOVERS
@@ -785,7 +728,7 @@ id|memzero
 )paren
 suffix:semicolon
 multiline_comment|/* user mem (segment) */
-macro_line|#if defined(CONFIG_CPU_ARM6) || defined(CONFIG_CPU_SA110)
+macro_line|#if defined(CONFIG_CPU_32)
 DECL|variable|__arch_copy_from_user
 id|EXPORT_SYMBOL
 c_func
@@ -814,7 +757,7 @@ c_func
 id|__arch_strlen_user
 )paren
 suffix:semicolon
-macro_line|#elif defined(CONFIG_CPU_ARM2) || defined(CONFIG_CPU_ARM3)
+macro_line|#elif defined(CONFIG_CPU_26)
 DECL|variable|uaccess_kernel
 id|EXPORT_SYMBOL
 c_func

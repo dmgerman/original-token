@@ -1265,6 +1265,11 @@ id|dir-&gt;i_mtime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
+id|dir-&gt;i_version
+op_assign
+op_increment
+id|event
+suffix:semicolon
 id|mark_inode_dirty
 c_func
 (paren
@@ -1368,7 +1373,7 @@ suffix:semicolon
 id|pr_debug
 c_func
 (paren
-l_string|&quot; -- ino=%lu&bslash;n&quot;
+l_string|&quot;AFFS: ino=%lu&bslash;n&quot;
 comma
 id|inode-&gt;i_ino
 )paren
@@ -1926,6 +1931,11 @@ suffix:semicolon
 id|retval
 op_assign
 l_int|0
+suffix:semicolon
+id|dir-&gt;i_version
+op_assign
+op_increment
+id|event
 suffix:semicolon
 id|mark_inode_dirty
 c_func
@@ -2744,7 +2754,7 @@ suffix:semicolon
 id|pr_debug
 c_func
 (paren
-l_string|&quot;AFFS: rename(old=%lu,&bslash;&quot;%*s&bslash;&quot; (inode=%p) to new=%lu,&bslash;&quot;%*s&bslash;&quot; (inode=%p) )&bslash;n&quot;
+l_string|&quot;AFFS: rename(old=%lu,&bslash;&quot;%*s&bslash;&quot; (inode=%p) to new=%lu,&bslash;&quot;%*s&bslash;&quot; (inode=%p))&bslash;n&quot;
 comma
 id|old_dir-&gt;i_ino
 comma

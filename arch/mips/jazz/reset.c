@@ -1,7 +1,56 @@
-multiline_comment|/*&n; *  linux/arch/mips/jazz/process.c&n; *&n; *  Reset a Jazz machine.&n; */
+multiline_comment|/*&n; *  linux/arch/mips/jazz/process.c&n; *&n; *  Reset a Jazz machine.&n; *&n; *  $Id: reset.c,v 1.2 1998/05/01 01:33:40 ralf Exp $&n; */
+macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;asm/jazz.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/reboot.h&gt;
+macro_line|#include &lt;asm/delay.h&gt;
+macro_line|#include &lt;asm/keyboard.h&gt;
+DECL|function|kb_wait
+r_static
+r_inline
+r_void
+id|kb_wait
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+r_int
+id|start
+op_assign
+id|jiffies
+suffix:semicolon
+r_do
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|kbd_read_status
+c_func
+(paren
+)paren
+op_amp
+l_int|0x02
+)paren
+)paren
+r_return
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+id|jiffies
+op_minus
+id|start
+OL
+l_int|50
+)paren
+suffix:semicolon
+)brace
 DECL|function|jazz_machine_restart
 r_void
 id|jazz_machine_restart
@@ -12,24 +61,29 @@ op_star
 id|command
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;Implement jazz_machine_restart().&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;Press reset to continue.&bslash;n&quot;
-)paren
-suffix:semicolon
 r_while
 c_loop
 (paren
 l_int|1
 )paren
 (brace
+id|kb_wait
+(paren
+)paren
+suffix:semicolon
+id|kbd_write_command
+(paren
+l_int|0xd1
+)paren
+suffix:semicolon
+id|kb_wait
+(paren
+)paren
+suffix:semicolon
+id|kbd_write_output
+(paren
+l_int|0x00
+)paren
 suffix:semicolon
 )brace
 )brace

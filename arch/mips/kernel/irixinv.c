@@ -1,5 +1,6 @@
-multiline_comment|/*&n; * Support the inventory interface for IRIX binaries&n; * This is invoked before the mm layer is working, so we do not&n; * use the linked lists for the inventory yet. &n; *&n; * Miguel de Icaza, 1997.&n; *&n; * $Id: irixinv.c,v 1.2 1997/12/06 21:29:58 ralf Exp $&n; */
+multiline_comment|/*&n; * Support the inventory interface for IRIX binaries&n; * This is invoked before the mm layer is working, so we do not&n; * use the linked lists for the inventory yet. &n; *&n; * Miguel de Icaza, 1997.&n; *&n; * $Id: irixinv.c,v 1.2 1998/05/01 01:33:58 ralf Exp $&n; */
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/inventory.h&gt;
@@ -184,11 +185,15 @@ id|inventory_t
 )paren
 suffix:semicolon
 )brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
-DECL|function|init_inventory
 id|init_inventory
 (paren
 r_void
+)paren
 )paren
 (brace
 multiline_comment|/* gross hack while we put the right bits all over the kernel&n;&t; * most likely this will not let just anyone run the X server&n;&t; * until we put the right values all over the place&n;&t; */

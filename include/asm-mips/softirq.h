@@ -1,3 +1,4 @@
+multiline_comment|/*&n; * include/asm-mips/softirq.h&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1997, 1998 by Ralf Baechle&n; *&n; * $Id: softirq.h,v 1.2 1998/05/01 01:36:13 ralf Exp $&n; */
 macro_line|#ifndef __ASM_MIPS_SOFTIRQ_H
 DECL|macro|__ASM_MIPS_SOFTIRQ_H
 mdefine_line|#define __ASM_MIPS_SOFTIRQ_H
@@ -5,6 +6,14 @@ multiline_comment|/* The locking mechanism for base handlers, to prevent re-entr
 r_extern
 id|atomic_t
 id|__mips_bh_counter
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|local_bh_count
+(braket
+id|NR_CPUS
+)braket
 suffix:semicolon
 DECL|macro|get_active_bhs
 mdefine_line|#define get_active_bhs()&t;(bh_mask &amp; bh_active)
@@ -45,6 +54,7 @@ id|bh_active
 suffix:colon
 l_string|&quot;Ir&quot;
 (paren
+op_complement
 id|x
 )paren
 comma
@@ -201,7 +211,6 @@ op_lshift
 id|nr
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * start_bh_atomic/end_bh_atomic also nest&n; * naturally by using a counter&n; */
 DECL|function|start_bh_atomic
 r_extern
 r_inline
@@ -212,28 +221,20 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifdef __SMP__
-id|atomic_inc
-c_func
-(paren
-op_amp
-id|__mips_bh_counter
-)paren
-suffix:semicolon
-id|synchronize_irq
+id|local_bh_count
+(braket
+id|smp_processor_id
 c_func
 (paren
 )paren
+)braket
+op_increment
 suffix:semicolon
-macro_line|#else
-id|atomic_inc
+id|barrier
 c_func
 (paren
-op_amp
-id|__mips_bh_counter
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|end_bh_atomic
 r_extern
@@ -245,22 +246,27 @@ c_func
 r_void
 )paren
 (brace
-id|atomic_dec
+id|barrier
 c_func
 (paren
-op_amp
-id|__mips_bh_counter
 )paren
 suffix:semicolon
+id|local_bh_count
+(braket
+id|smp_processor_id
+c_func
+(paren
+)paren
+)braket
+op_decrement
+suffix:semicolon
 )brace
-macro_line|#ifndef __SMP__
 multiline_comment|/* These are for the irq&squot;s testing the lock */
 DECL|macro|softirq_trylock
-mdefine_line|#define softirq_trylock()&t;(atomic_read(&amp;__mips_bh_counter) ? &bslash;&n;&t;&t;&t;&t;0 : &bslash;&n;&t;&t;&t;&t;((atomic_set(&amp;__mips_bh_counter,1)),1))
+mdefine_line|#define softirq_trylock(cpu)&t;(local_bh_count[cpu] ? 0 : (local_bh_count[cpu] = 1))
 DECL|macro|softirq_endlock
-mdefine_line|#define softirq_endlock()&t;(atomic_set(&amp;__mips_bh_counter, 0))
-macro_line|#else
-macro_line|#error FIXME
-macro_line|#endif /* __SMP__ */
+mdefine_line|#define softirq_endlock(cpu)&t;(local_bh_count[cpu] = 0)
+DECL|macro|synchronize_bh
+mdefine_line|#define synchronize_bh()&t;do { } while (0)
 macro_line|#endif /* __ASM_MIPS_SOFTIRQ_H */
 eof

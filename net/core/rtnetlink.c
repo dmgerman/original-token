@@ -1187,7 +1187,7 @@ id|s_idx
 op_logical_or
 id|idx
 op_eq
-id|AF_PACKET
+id|PF_PACKET
 )paren
 r_continue
 suffix:semicolon
@@ -1624,7 +1624,7 @@ id|link_tab
 op_assign
 id|rtnetlink_links
 (braket
-id|AF_UNSPEC
+id|PF_UNSPEC
 )braket
 suffix:semicolon
 id|link
@@ -1699,7 +1699,7 @@ op_amp
 (paren
 id|rtnetlink_links
 (braket
-id|AF_UNSPEC
+id|PF_UNSPEC
 )braket
 (braket
 id|type
@@ -1982,7 +1982,7 @@ op_amp
 (paren
 id|rtnetlink_links
 (braket
-id|AF_UNSPEC
+id|PF_UNSPEC
 )braket
 (braket
 id|type
@@ -2590,14 +2590,14 @@ id|rtnetlink_dev_notifier
 suffix:semicolon
 id|rtnetlink_links
 (braket
-id|AF_UNSPEC
+id|PF_UNSPEC
 )braket
 op_assign
 id|link_rtnetlink_table
 suffix:semicolon
 id|rtnetlink_links
 (braket
-id|AF_PACKET
+id|PF_PACKET
 )braket
 op_assign
 id|link_rtnetlink_table

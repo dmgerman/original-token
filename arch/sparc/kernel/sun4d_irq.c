@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: sun4d_irq.c,v 1.12 1998/03/19 15:36:36 jj Exp $&n; *  arch/sparc/kernel/sun4d_irq.c:&n; *&t;&t;&t;SS1000/SC2000 interrupt handling.&n; *&n; *  Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *  Heavily based on arch/sparc/kernel/irq.c.&n; */
+multiline_comment|/*  $Id: sun4d_irq.c,v 1.13 1998/04/15 14:58:33 jj Exp $&n; *  arch/sparc/kernel/sun4d_irq.c:&n; *&t;&t;&t;SS1000/SC2000 interrupt handling.&n; *&n; *  Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *  Heavily based on arch/sparc/kernel/irq.c.&n; */
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/linkage.h&gt;
@@ -2545,14 +2545,11 @@ DECL|function|__initfunc
 id|__initfunc
 c_func
 (paren
-r_int
-r_int
+r_void
 id|sun4d_init_sbi_irq
 c_func
 (paren
-r_int
-r_int
-id|memory_start
+r_void
 )paren
 )paren
 (brace
@@ -2576,19 +2573,6 @@ id|sbus
 id|nsbi
 op_increment
 suffix:semicolon
-id|memory_start
-op_assign
-(paren
-(paren
-id|memory_start
-op_plus
-l_int|7
-)paren
-op_amp
-op_complement
-l_int|7
-)paren
-suffix:semicolon
 id|sbus_actions
 op_assign
 (paren
@@ -2596,10 +2580,7 @@ r_struct
 id|sbus_action
 op_star
 )paren
-id|memory_start
-suffix:semicolon
-id|memory_start
-op_add_assign
+id|kmalloc
 (paren
 id|nsbi
 op_star
@@ -2612,6 +2593,8 @@ r_sizeof
 r_struct
 id|sbus_action
 )paren
+comma
+id|GFP_ATOMIC
 )paren
 suffix:semicolon
 id|memset
@@ -2701,9 +2684,6 @@ id|mask
 suffix:semicolon
 )brace
 )brace
-r_return
-id|memory_start
-suffix:semicolon
 )brace
 DECL|function|__initfunc
 id|__initfunc

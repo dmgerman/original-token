@@ -1,7 +1,63 @@
-multiline_comment|/*&n; *&n; * Definitions for mount interface. This describes the in the kernel build &n; * linkedlist with mounted filesystems.&n; *&n; * Author:  Marco van Wieringen &lt;mvw@mcs.ow.nl&gt; &lt;mvw@tnix.net&gt; &lt;mvw@cistron.nl&gt;&n; *&n; * Version: $Id: mount.h,v 1.3 1994/07/20 22:01:00 mvw Exp mvw $&n; *&n; */
+multiline_comment|/*&n; *&n; * Definitions for mount interface. This describes the in the kernel build &n; * linkedlist with mounted filesystems.&n; *&n; * Author:  Marco van Wieringen &lt;mvw@planets.elm.net&gt;&n; *&n; * Version: $Id: mount.h,v 2.0 1996/11/17 16:48:14 mvw Exp mvw $&n; *&n; */
 macro_line|#ifndef _LINUX_MOUNT_H
 DECL|macro|_LINUX_MOUNT_H
 mdefine_line|#define _LINUX_MOUNT_H
+DECL|macro|DQUOT_USR_ENABLED
+mdefine_line|#define DQUOT_USR_ENABLED&t;0x01&t;&t;/* User diskquotas enabled */
+DECL|macro|DQUOT_GRP_ENABLED
+mdefine_line|#define DQUOT_GRP_ENABLED&t;0x02&t;&t;/* Group diskquotas enabled */
+DECL|struct|quota_mount_options
+r_struct
+id|quota_mount_options
+(brace
+DECL|member|flags
+r_int
+r_int
+id|flags
+suffix:semicolon
+multiline_comment|/* Flags for diskquotas on this device */
+DECL|member|semaphore
+r_struct
+id|semaphore
+id|semaphore
+suffix:semicolon
+multiline_comment|/* lock device while I/O in progress */
+DECL|member|files
+r_struct
+id|file
+op_star
+id|files
+(braket
+id|MAXQUOTAS
+)braket
+suffix:semicolon
+multiline_comment|/* fp&squot;s to quotafiles */
+DECL|member|inode_expire
+id|time_t
+id|inode_expire
+(braket
+id|MAXQUOTAS
+)braket
+suffix:semicolon
+multiline_comment|/* expiretime for inode-quota */
+DECL|member|block_expire
+id|time_t
+id|block_expire
+(braket
+id|MAXQUOTAS
+)braket
+suffix:semicolon
+multiline_comment|/* expiretime for block-quota */
+DECL|member|rsquash
+r_char
+id|rsquash
+(braket
+id|MAXQUOTAS
+)braket
+suffix:semicolon
+multiline_comment|/* for quotas threath root as any other user */
+)brace
+suffix:semicolon
 DECL|struct|vfsmount
 r_struct
 id|vfsmount
@@ -29,12 +85,6 @@ r_int
 id|mnt_flags
 suffix:semicolon
 multiline_comment|/* Flags of this device */
-DECL|member|mnt_sem
-r_struct
-id|semaphore
-id|mnt_sem
-suffix:semicolon
-multiline_comment|/* lock device while I/O in progress */
 DECL|member|mnt_sb
 r_struct
 id|super_block
@@ -42,32 +92,12 @@ op_star
 id|mnt_sb
 suffix:semicolon
 multiline_comment|/* pointer to superblock */
-DECL|member|mnt_quotas
+DECL|member|mnt_dquot
 r_struct
-id|file
-op_star
-id|mnt_quotas
-(braket
-id|MAXQUOTAS
-)braket
+id|quota_mount_options
+id|mnt_dquot
 suffix:semicolon
-multiline_comment|/* fp&squot;s to quotafiles */
-DECL|member|mnt_iexp
-id|time_t
-id|mnt_iexp
-(braket
-id|MAXQUOTAS
-)braket
-suffix:semicolon
-multiline_comment|/* expiretime for inodes */
-DECL|member|mnt_bexp
-id|time_t
-id|mnt_bexp
-(braket
-id|MAXQUOTAS
-)braket
-suffix:semicolon
-multiline_comment|/* expiretime for blocks */
+multiline_comment|/* Diskquota specific mount options */
 DECL|member|mnt_next
 r_struct
 id|vfsmount

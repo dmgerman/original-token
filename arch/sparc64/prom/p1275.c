@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: p1275.c,v 1.12 1997/07/26 18:39:01 davem Exp $&n; * p1275.c: Sun IEEE 1275 PROM low level interface routines&n; *&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: p1275.c,v 1.13 1998/04/24 15:45:35 jj Exp $&n; * p1275.c: Sun IEEE 1275 PROM low level interface routines&n; *&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -53,6 +53,14 @@ suffix:semicolon
 DECL|variable|p1275buf
 )brace
 id|p1275buf
+suffix:semicolon
+r_extern
+r_void
+id|prom_world
+c_func
+(paren
+r_int
+)paren
 suffix:semicolon
 DECL|function|prom_cif_interface
 r_void
@@ -829,9 +837,21 @@ c_func
 id|list
 )paren
 suffix:semicolon
+id|prom_world
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
 id|prom_cif_interface
 c_func
 (paren
+)paren
+suffix:semicolon
+id|prom_world
+c_func
+(paren
+l_int|0
 )paren
 suffix:semicolon
 id|attrs

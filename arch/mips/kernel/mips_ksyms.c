@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Export MIPS-specific functions needed for loadable modules.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997 by Ralf Baechle&n; *&n; * $Id: mips_ksyms.c,v 1.4 1997/08/11 04:17:18 ralf Exp $&n; */
+multiline_comment|/*&n; * Export MIPS-specific functions needed for loadable modules.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997 by Ralf Baechle&n; *&n; * $Id: mips_ksyms.c,v 1.7 1998/05/04 09:17:52 ralf Exp $&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -23,13 +23,6 @@ id|EISA_bus
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * String functions&n; */
-DECL|variable|bcopy
-id|EXPORT_SYMBOL_NOVERS
-c_func
-(paren
-id|bcopy
-)paren
-suffix:semicolon
 DECL|variable|memcmp
 id|EXPORT_SYMBOL_NOVERS
 c_func
@@ -121,6 +114,13 @@ c_func
 id|__mips_bh_counter
 )paren
 suffix:semicolon
+DECL|variable|local_bh_count
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|local_bh_count
+)paren
+suffix:semicolon
 DECL|variable|local_irq_count
 id|EXPORT_SYMBOL
 c_func
@@ -134,13 +134,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|__copy_user
-)paren
-suffix:semicolon
-DECL|variable|active_ds
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|active_ds
 )paren
 suffix:semicolon
 multiline_comment|/* Networking helper routines. */

@@ -1,4 +1,3 @@
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -175,6 +174,20 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|local_bh_count
+)paren
+suffix:semicolon
+DECL|variable|enable_irq
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|enable_irq
+)paren
+suffix:semicolon
+DECL|variable|disable_irq
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|disable_irq
 )paren
 suffix:semicolon
 multiline_comment|/* Networking helper routines. */

@@ -23,28 +23,33 @@ r_int
 r_int
 id|id
 suffix:semicolon
+multiline_comment|/* Processor ID&t;&t;&t;*/
 DECL|member|mask
 r_int
 r_int
 id|mask
 suffix:semicolon
+multiline_comment|/* Processor ID mask&t;&t;*/
 DECL|member|features
 r_int
 r_int
 id|features
 suffix:semicolon
+multiline_comment|/* Features (see above)&t;&t;*/
 DECL|member|manu
 r_const
 r_char
 op_star
 id|manu
 suffix:semicolon
+multiline_comment|/* Manufacturer&t;&t;&t;*/
 DECL|member|name
 r_const
 r_char
 op_star
 id|name
 suffix:semicolon
+multiline_comment|/* Processor name&t;&t;*/
 DECL|member|proc
 r_const
 r_struct
@@ -52,7 +57,26 @@ id|processor
 op_star
 id|proc
 suffix:semicolon
+multiline_comment|/* Processor-specific ASM&t;*/
+DECL|member|optname
+r_const
+r_char
+op_star
+id|optname
+suffix:semicolon
+multiline_comment|/* Optimisation name&t;&t;*/
 )brace
+suffix:semicolon
+r_extern
+r_struct
+id|armversions
+id|armidlist
+(braket
+)braket
+suffix:semicolon
+r_extern
+r_int
+id|armidindex
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif

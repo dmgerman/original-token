@@ -84,11 +84,27 @@ op_star
 id|msgq
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Function: char *msgqueue_getnextmsg (MsgQueue_t *msgq, int *length)&n; * Purpose : return a message &amp; its length&n; * Params  : msgq   - queue to obtain message from&n; *&t;     length - pointer to int for message length&n; * Returns : pointer to message string&n; */
+multiline_comment|/*&n; * Function: char *msgqueue_getnextmsg (MsgQueue_t *msgq, int *length)&n; * Purpose : return a message &amp; its length&n; * Params  : msgq   - queue to obtain message from&n; *&t;     length - pointer to int for message length&n; * Returns : pointer to message string, or NULL&n; */
 r_extern
 r_char
 op_star
 id|msgqueue_getnextmsg
+(paren
+id|MsgQueue_t
+op_star
+id|msgq
+comma
+r_int
+op_star
+id|length
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * Function: char *msgqueue_peeknextmsg(MsgQueue_t *msgq, int *length)&n; * Purpose : return next message &amp; length without removing it from the list&n; * Params  : msgq   - queue to obtain message from&n; *         : length - pointer to int for message length&n; * Returns : pointer to message string, or NULL&n; */
+r_extern
+r_char
+op_star
+id|msgqueue_peeknextmsg
+c_func
 (paren
 id|MsgQueue_t
 op_star

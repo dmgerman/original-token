@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
+macro_line|#include &lt;linux/quotaops.h&gt;
 multiline_comment|/*&n; * define how far ahead to read directories while searching them.&n; */
 DECL|macro|NAMEI_RA_CHUNKS
 mdefine_line|#define NAMEI_RA_CHUNKS  2
@@ -3077,17 +3078,10 @@ id|inode
 op_assign
 id|dentry-&gt;d_inode
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|inode-&gt;i_sb-&gt;dq_op
-)paren
-id|inode-&gt;i_sb-&gt;dq_op-&gt;initialize
+id|DQUOT_INIT
+c_func
 (paren
 id|inode
-comma
-op_minus
-l_int|1
 )paren
 suffix:semicolon
 id|retval
@@ -3467,17 +3461,10 @@ id|inode
 op_assign
 id|dentry-&gt;d_inode
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|inode-&gt;i_sb-&gt;dq_op
-)paren
-id|inode-&gt;i_sb-&gt;dq_op-&gt;initialize
+id|DQUOT_INIT
+c_func
 (paren
 id|inode
-comma
-op_minus
-l_int|1
 )paren
 suffix:semicolon
 id|retval
@@ -4581,17 +4568,10 @@ suffix:semicolon
 )brace
 r_else
 (brace
-r_if
-c_cond
-(paren
-id|new_inode-&gt;i_sb-&gt;dq_op
-)paren
-id|new_inode-&gt;i_sb-&gt;dq_op-&gt;initialize
+id|DQUOT_INIT
+c_func
 (paren
 id|new_inode
-comma
-op_minus
-l_int|1
 )paren
 suffix:semicolon
 )brace

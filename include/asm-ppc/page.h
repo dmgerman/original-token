@@ -130,6 +130,10 @@ mdefine_line|#define _ALIGN(addr,size)&t;(((addr)+size-1)&amp;(~(size-1)))
 multiline_comment|/* to align the pointer to the (next) page boundary */
 DECL|macro|PAGE_ALIGN
 mdefine_line|#define PAGE_ALIGN(addr)&t;(((addr)+PAGE_SIZE-1)&amp;PAGE_MASK)
+DECL|macro|get_user_page
+mdefine_line|#define get_user_page(vaddr)&t;&t;__get_free_page(GFP_KERNEL)
+DECL|macro|free_user_page
+mdefine_line|#define free_user_page(page, addr)&t;free_page(addr)
 DECL|macro|clear_page
 mdefine_line|#define clear_page(page)        memset((void *)(page), 0, PAGE_SIZE)
 DECL|macro|copy_page

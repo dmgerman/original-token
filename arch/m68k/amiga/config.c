@@ -386,11 +386,6 @@ id|co
 )paren
 suffix:semicolon
 r_extern
-r_struct
-id|consw
-id|fb_con
-suffix:semicolon
-r_extern
 r_void
 id|zorro_init
 c_func

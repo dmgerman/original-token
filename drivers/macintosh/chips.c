@@ -13,6 +13,7 @@ macro_line|#include &lt;asm/adb.h&gt;
 macro_line|#include &lt;asm/cuda.h&gt;
 macro_line|#include &lt;asm/pmu.h&gt;
 macro_line|#include &lt;asm/pci-bridge.h&gt;
+macro_line|#include &lt;asm/init.h&gt;
 macro_line|#include &quot;pmac-cons.h&quot;
 macro_line|#include &quot;chips.h&quot;
 DECL|variable|frame_buffer
@@ -48,6 +49,7 @@ r_int
 r_int
 id|chips_io_phys
 suffix:semicolon
+id|__openfirmware
 r_void
 DECL|function|map_chips_display
 id|map_chips_display

@@ -260,8 +260,6 @@ op_star
 id|module_name
 comma
 id|CLONE_FS
-op_or
-id|SIGCHLD
 )paren
 suffix:semicolon
 r_if
@@ -295,7 +293,7 @@ id|pid
 comma
 l_int|NULL
 comma
-l_int|0
+id|__WCLONE
 )paren
 suffix:semicolon
 r_if

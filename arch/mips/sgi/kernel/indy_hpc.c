@@ -1,4 +1,5 @@
-multiline_comment|/* $Id: indy_hpc.c,v 1.1.1.1 1997/06/01 03:16:40 ralf Exp $&n; * indy_hpc.c: Routines for generic manipulation of the HPC controllers.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/*&n; * indy_hpc.c: Routines for generic manipulation of the HPC controllers.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: indy_hpc.c,v 1.2 1998/05/01 01:35:14 ralf Exp $&n; */
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/addrspace.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
@@ -101,12 +102,16 @@ op_assign
 id|write2
 suffix:semicolon
 )brace
-DECL|function|sgihpc_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|sgihpc_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

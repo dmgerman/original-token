@@ -58,15 +58,15 @@ r_int
 r_int
 id|counter
 suffix:semicolon
-DECL|member|last_tlbversion_seen
-r_int
-r_int
-id|last_tlbversion_seen
-suffix:semicolon
 DECL|member|pgcache_size
 r_int
 r_int
 id|pgcache_size
+suffix:semicolon
+DECL|member|pgdcache_size
+r_int
+r_int
+id|pgdcache_size
 suffix:semicolon
 multiline_comment|/* Dcache line 2 */
 DECL|member|pgd_cache

@@ -1,4 +1,5 @@
-multiline_comment|/* $Id: printf.c,v 1.1.1.1 1997/06/01 03:16:40 ralf Exp $&n; * printf.c: Putting things on the screen using SGI arcs&n; *           PROM facilities.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@sgi.com)&n; */
+multiline_comment|/*&n; * printf.c: Putting things on the screen using SGI arcs&n; *           PROM facilities.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@sgi.com)&n; *&n; * $Id: printf.c,v 1.2 1998/05/01 01:35:27 ralf Exp $&n; */
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;
 DECL|variable|ppbuf
@@ -9,8 +10,11 @@ id|ppbuf
 l_int|1024
 )braket
 suffix:semicolon
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
-DECL|function|prom_printf
 id|prom_printf
 c_func
 (paren
@@ -21,6 +25,7 @@ comma
 dot
 dot
 dot
+)paren
 )paren
 (brace
 id|va_list

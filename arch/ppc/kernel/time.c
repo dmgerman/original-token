@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: time.c,v 1.28 1998/04/07 18:49:49 cort Exp $&n; * Common time routines among all ppc machines.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu) to merge&n; * Paul Mackerras&squot; version and mine for PReP and Pmac.&n; * MPC8xx/MBX changes by Dan Malek (dmalek@jlc.net).&n; *&n; * Since the MPC8xx has a programmable interrupt timer, I decided to&n; * use that rather than the decrementer.  Two reasons: 1.) the clock&n; * frequency is low, causing 2.) a long wait in the timer interrupt&n; *&t;&t;while ((d = get_dec()) == dval)&n; * loop.  The MPC8xx can be driven from a variety of input clocks,&n; * so a number of assumptions have been made here because the kernel&n; * parameter HZ is a constant.  We assume (correctly, today :-) that&n; * the MPC8xx on the MBX board is driven from a 32.768 kHz crystal.&n; * This is then divided by 4, providing a 8192 Hz clock into the PIT.&n; * Since it is not possible to get a nice 100 Hz clock out of this, without&n; * creating a software PLL, I have set HZ to 128.  -- Dan&n; */
+multiline_comment|/*&n; * $Id: time.c,v 1.32 1998/04/24 12:29:38 davem Exp $&n; * Common time routines among all ppc machines.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu) to merge&n; * Paul Mackerras&squot; version and mine for PReP and Pmac.&n; * MPC8xx/MBX changes by Dan Malek (dmalek@jlc.net).&n; *&n; * Since the MPC8xx has a programmable interrupt timer, I decided to&n; * use that rather than the decrementer.  Two reasons: 1.) the clock&n; * frequency is low, causing 2.) a long wait in the timer interrupt&n; *&t;&t;while ((d = get_dec()) == dval)&n; * loop.  The MPC8xx can be driven from a variety of input clocks,&n; * so a number of assumptions have been made here because the kernel&n; * parameter HZ is a constant.  We assume (correctly, today :-) that&n; * the MPC8xx on the MBX board is driven from a 32.768 kHz crystal.&n; * This is then divided by 4, providing a 8192 Hz clock into the PIT.&n; * Since it is not possible to get a nice 100 Hz clock out of this, without&n; * creating a software PLL, I have set HZ to 128.  -- Dan&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/timex.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
 macro_line|#include &lt;linux/time.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
@@ -107,20 +108,6 @@ op_assign
 id|unlock_dcache
 c_func
 (paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|smp_processor_id
-c_func
-(paren
-)paren
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;SMP 1: timer intr&bslash;n&quot;
 )paren
 suffix:semicolon
 id|hardirq_enter
@@ -261,6 +248,12 @@ op_star
 id|regs
 )paren
 (brace
+id|printk
+c_func
+(paren
+l_string|&quot;timebase_interrupt()&bslash;n&quot;
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/* The RTC on the MPC8xx is an internal register.&n; * We want to protect this during power down, so we need to unlock,&n; * modify, and re-lock.&n; */
 r_static
@@ -457,12 +450,16 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
-DECL|function|time_init
 id|time_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 macro_line|#ifndef CONFIG_MBX
@@ -504,7 +501,13 @@ id|_machine
 r_case
 id|_MACH_Pmac
 suffix:colon
-multiline_comment|/* can&squot;t call pmac_get_rtc_time() yet,&n;&t;&t;   because via-cuda isn&squot;t initialized yet. */
+id|xtime.tv_sec
+op_assign
+id|pmac_get_rtc_time
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -639,13 +642,7 @@ id|xtime.tv_usec
 op_assign
 l_int|0
 suffix:semicolon
-id|set_dec
-c_func
-(paren
-id|decrementer_count
-)paren
-suffix:semicolon
-macro_line|#else
+macro_line|#else /* CONFIG_MBX */
 id|mbx_calibrate_decr
 c_func
 (paren
@@ -770,6 +767,12 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#endif /* CONFIG_MBX */
+id|set_dec
+c_func
+(paren
+id|decrementer_count
+)paren
+suffix:semicolon
 multiline_comment|/* mark the rtc/on-chip timer as in sync&n;&t; * so we don&squot;t update right away&n;&t; */
 id|last_rtc_update
 op_assign
@@ -793,12 +796,16 @@ op_assign
 op_amp
 id|calibrate_done
 suffix:semicolon
-DECL|function|prep_calibrate_decr
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|prep_calibrate_decr
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int
@@ -993,7 +1000,10 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
-DECL|function|prep_calibrate_decr_handler
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|prep_calibrate_decr_handler
 c_func
@@ -1009,6 +1019,7 @@ r_struct
 id|pt_regs
 op_star
 id|regs
+)paren
 )paren
 (brace
 r_int
@@ -1122,14 +1133,29 @@ suffix:semicolon
 )brace
 macro_line|#else /* CONFIG_MBX */
 multiline_comment|/* The decrementer counts at the system (internal) clock frequency divided by&n; * sixteen, or external oscillator divided by four.  Currently, we only&n; * support the MBX, which is system clock divided by sixteen.&n; */
-DECL|function|mbx_calibrate_decr
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|mbx_calibrate_decr
 c_func
 (paren
 r_void
 )paren
+)paren
 (brace
+id|bd_t
+op_star
+id|binfo
+op_assign
+(paren
+id|bd_t
+op_star
+)paren
+op_amp
+id|res
+suffix:semicolon
 r_int
 id|freq
 comma
@@ -1163,7 +1189,16 @@ l_string|&quot;WARNING: Wrong decrementer source clock.&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* The manual says the frequency is in Hz, but it is really&n;&t; * as MHz.  The value &squot;fp&squot; is the number of decrementer ticks&n;&t; * per second.&n;&t; */
-multiline_comment|/*fp = (mbx_board_info.bi_intfreq * 1000000) / 16;*/
+id|fp
+op_assign
+(paren
+id|binfo-&gt;bi_intfreq
+op_star
+l_int|1000000
+)paren
+op_div
+l_int|16
+suffix:semicolon
 id|freq
 op_assign
 id|fp

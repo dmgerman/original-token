@@ -33,6 +33,21 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_GVP11_SCSI
 macro_line|#include &quot;gvp11.h&quot;
 macro_line|#endif
+macro_line|#ifdef CONFIG_CYBERSTORM_SCSI
+macro_line|#include &quot;cyberstorm.h&quot;
+macro_line|#endif
+macro_line|#ifdef CONFIG_CYBERSTORMII_SCSI
+macro_line|#include &quot;cyberstormII.h&quot;
+macro_line|#endif
+macro_line|#ifdef CONFIG_BLZ2060_SCSI
+macro_line|#include &quot;blz2060.h&quot;
+macro_line|#endif
+macro_line|#ifdef CONFIG_BLZ1230_SCSI
+macro_line|#include &quot;blz1230.h&quot;
+macro_line|#endif
+macro_line|#ifdef CONFIG_FASTLANE_SCSI
+macro_line|#include &quot;fastlane.h&quot;
+macro_line|#endif
 macro_line|#ifdef CONFIG_ATARI_SCSI
 macro_line|#include &quot;atari_scsi.h&quot;
 macro_line|#endif
@@ -189,6 +204,26 @@ comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_GVP11_SCSI
 id|GVP11_SCSI
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_CYBERSTORM_SCSI
+id|SCSI_CYBERSTORM
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_CYBERSTORMII_SCSI
+id|SCSI_CYBERSTORMII
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_BLZ2060_SCSI
+id|SCSI_BLZ2060
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_BLZ1230_SCSI
+id|SCSI_BLZ1230
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_FASTLANE_SCSI
+id|SCSI_FASTLANE
 comma
 macro_line|#endif
 macro_line|#endif

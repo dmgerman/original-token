@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pbm.h,v 1.12 1998/04/10 12:29:55 ecd Exp $&n; * pbm.h: U2P PCI bus module pseudo driver software state.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: pbm.h,v 1.13 1998/04/20 07:15:11 ecd Exp $&n; * pbm.h: U2P PCI bus module pseudo driver software state.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __SPARC64_PBM_H
 DECL|macro|__SPARC64_PBM_H
 mdefine_line|#define __SPARC64_PBM_H
@@ -267,19 +267,21 @@ suffix:semicolon
 )brace
 multiline_comment|/* Special PCI IRQ encoding, this just makes life easier for the generic&n; * irq registry layer, there is already enough crap in there due to sbus,&n; * fhc, and dcookies.&n; */
 DECL|macro|PCI_IRQ_IDENT
-mdefine_line|#define PCI_IRQ_IDENT&t;&t;0x80000000&t;/* This tells irq.c what we are        */
+mdefine_line|#define PCI_IRQ_IDENT&t;&t;0x80000000&t;/* This tells irq.c what we are       */
 DECL|macro|PCI_IRQ_IMAP_OFF
-mdefine_line|#define PCI_IRQ_IMAP_OFF&t;0x7ff00000&t;/* Offset from first PSYCHO imap       */
+mdefine_line|#define PCI_IRQ_IMAP_OFF&t;0x7ff00000&t;/* Offset from first PSYCHO imap      */
 DECL|macro|PCI_IRQ_IMAP_OFF_SHFT
 mdefine_line|#define PCI_IRQ_IMAP_OFF_SHFT&t;20
 DECL|macro|PCI_IRQ_BUSNO
-mdefine_line|#define PCI_IRQ_BUSNO&t;&t;0x000fc000&t;/* PSYCHO instance                     */
+mdefine_line|#define PCI_IRQ_BUSNO&t;&t;0x000fc000&t;/* PSYCHO instance                    */
 DECL|macro|PCI_IRQ_BUSNO_SHFT
 mdefine_line|#define PCI_IRQ_BUSNO_SHFT&t;14
+DECL|macro|PCI_IRQ_DMA_SYNC
+mdefine_line|#define PCI_IRQ_DMA_SYNC&t;0x00001000&t;/* IRQ needs DMA sync for APB&t;      */
 DECL|macro|PCI_IRQ_IGN
-mdefine_line|#define PCI_IRQ_IGN&t;&t;0x000007c0&t;/* PSYCHO &quot;Int Group Number&quot;           */
+mdefine_line|#define PCI_IRQ_IGN&t;&t;0x000007c0&t;/* PSYCHO &quot;Int Group Number&quot;          */
 DECL|macro|PCI_IRQ_INO
-mdefine_line|#define PCI_IRQ_INO&t;&t;0x0000003f&t;/* PSYCHO INO                          */
+mdefine_line|#define PCI_IRQ_INO&t;&t;0x0000003f&t;/* PSYCHO INO                         */
 DECL|macro|PCI_IRQ_P
 mdefine_line|#define PCI_IRQ_P(__irq)&t;(((__irq) &amp; PCI_IRQ_IDENT) != 0)
 DECL|function|pci_irq_encode
@@ -305,6 +307,9 @@ comma
 r_int
 r_int
 id|ino
+comma
+r_int
+id|dma_sync
 )paren
 (brace
 r_int
@@ -359,9 +364,40 @@ op_amp
 id|PCI_IRQ_INO
 )paren
 suffix:semicolon
+id|irq
+op_or_assign
+id|dma_sync
+ques
+c_cond
+id|PCI_IRQ_DMA_SYNC
+suffix:colon
+l_int|0
+suffix:semicolon
 r_return
 id|irq
 suffix:semicolon
 )brace
+multiline_comment|/* Used by EBus */
+r_extern
+r_int
+r_int
+id|psycho_irq_build
+c_func
+(paren
+r_struct
+id|linux_pbm_info
+op_star
+id|pbm
+comma
+r_struct
+id|pci_dev
+op_star
+id|pdev
+comma
+r_int
+r_int
+id|full_ino
+)paren
+suffix:semicolon
 macro_line|#endif /* !(__SPARC64_PBM_H) */
 eof

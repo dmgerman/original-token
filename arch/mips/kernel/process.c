@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/mips/kernel/process.c&n; *&n; *  Copyright (C) 1995 Ralf Baechle&n; *&n; *  Modified for R3000/DECStation support by Paul M. Antoine 1995, 1996&n; *&n; * This file handles the architecture-dependent parts of initialization,&n; * though it does not yet currently fully support the DECStation,&n; * or R3000 - PMA.&n; */
+multiline_comment|/*&n; * linux/arch/mips/kernel/process.c&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 - 1998 by Ralf Baechle and others.&n; *&n; * $Id: process.c,v 1.10 1998/05/04 09:17:53 ralf Exp $&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -21,15 +21,6 @@ macro_line|#include &lt;asm/stackframe.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/elf.h&gt;
-macro_line|#ifdef CONFIG_SGI
-macro_line|#include &lt;asm/sgialib.h&gt;
-macro_line|#endif
-DECL|variable|active_ds
-r_int
-id|active_ds
-op_assign
-id|USER_DS
-suffix:semicolon
 id|asmlinkage
 r_void
 id|ret_from_sys_call
@@ -98,6 +89,35 @@ c_func
 r_void
 )paren
 (brace
+multiline_comment|/* Forget lazy fpu state */
+r_if
+c_cond
+(paren
+id|last_task_used_math
+op_eq
+id|current
+)paren
+(brace
+id|set_cp0_status
+c_func
+(paren
+id|ST0_CU1
+comma
+id|ST0_CU1
+)paren
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;cfc1&bslash;t$0,$31&quot;
+)paren
+suffix:semicolon
+id|last_task_used_math
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
 )brace
 DECL|function|flush_thread
 r_void
@@ -107,6 +127,35 @@ c_func
 r_void
 )paren
 (brace
+multiline_comment|/* Forget lazy fpu state */
+r_if
+c_cond
+(paren
+id|last_task_used_math
+op_eq
+id|current
+)paren
+(brace
+id|set_cp0_status
+c_func
+(paren
+id|ST0_CU1
+comma
+id|ST0_CU1
+)paren
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;cfc1&bslash;t$0,$31&quot;
+)paren
+suffix:semicolon
+id|last_task_used_math
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
 )brace
 DECL|function|release_thread
 r_void
@@ -167,6 +216,29 @@ id|KERNEL_STACK_SIZE
 op_minus
 l_int|32
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|last_task_used_math
+op_eq
+id|current
+)paren
+(brace
+id|set_cp0_status
+c_func
+(paren
+id|ST0_CU1
+comma
+id|ST0_CU1
+)paren
+suffix:semicolon
+id|r4xx0_save_fp
+c_func
+(paren
+id|p
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* set up new TSS. */
 id|childregs
 op_assign
@@ -259,6 +331,17 @@ id|ST0_CU0
 (brace
 id|childregs-&gt;regs
 (braket
+l_int|28
+)braket
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|p
+suffix:semicolon
+id|childregs-&gt;regs
+(braket
 l_int|29
 )braket
 op_assign
@@ -283,10 +366,6 @@ op_assign
 id|USER_DS
 suffix:semicolon
 )brace
-id|p-&gt;tss.ksp
-op_assign
-id|childksp
-suffix:semicolon
 id|p-&gt;tss.reg29
 op_assign
 (paren
@@ -321,10 +400,6 @@ op_or
 id|ST0_CU1
 op_or
 id|ST0_KSU
-op_or
-id|ST0_ERL
-op_or
-id|ST0_EXL
 )paren
 suffix:semicolon
 id|childregs-&gt;cp0_status

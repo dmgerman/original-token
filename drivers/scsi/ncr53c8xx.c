@@ -11645,6 +11645,8 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_do
+(brace
 r_if
 c_cond
 (paren
@@ -11664,7 +11666,8 @@ l_int|0
 id|printf
 c_func
 (paren
-l_string|&quot;%s: FATAL ERROR: CHECK SCSI BUS - CABLES, TERMINATION, DEVICE POWER etc.!&bslash;n&quot;
+l_string|&quot;%s: FATAL ERROR: CHECK SCSI BUS - CABLES, &quot;
+l_string|&quot;TERMINATION, DEVICE POWER etc.!&bslash;n&quot;
 comma
 id|ncr_name
 c_func
@@ -11683,9 +11686,40 @@ r_goto
 id|attach_error
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t;&t;** On Ultra/AXi, the NCR53C876 sometimes does not get the&n;&t;&t;** RST bit set in SIST the first time, so retry resetting&n;&t;&t;** the SCSI bus until the chip is properly initialized.&n;&t;&t;*/
+id|np-&gt;disc
+op_assign
+l_int|1
+suffix:semicolon
 id|ncr_exception
 (paren
 id|np
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|np-&gt;disc
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s: Chip not responding to CRST, retrying&bslash;n&quot;
+comma
+id|ncr_name
+c_func
+(paren
+id|np
+)paren
+)paren
+suffix:semicolon
+)brace
+)brace
+r_while
+c_loop
+(paren
+id|np-&gt;disc
 )paren
 suffix:semicolon
 id|restore_flags

@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/fd.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/quotaops.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -343,10 +344,14 @@ id|sema_init
 c_func
 (paren
 op_amp
-id|lptr-&gt;mnt_sem
+id|lptr-&gt;mnt_dquot.semaphore
 comma
 l_int|1
 )paren
+suffix:semicolon
+id|lptr-&gt;mnt_dquot.flags
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/* N.B. Is it really OK to have a vfsmount without names? */
 r_if
@@ -2876,15 +2881,23 @@ r_goto
 id|out
 suffix:semicolon
 multiline_comment|/*&n;&t; * Before checking whether the filesystem is still busy,&n;&t; * make sure the kernel doesn&squot;t hold any quotafiles open&n;&t; * on the device. If the umount fails, too bad -- there&n;&t; * are no quotas running anymore. Just turn them on again.&n;&t; */
-id|quota_off
+id|DQUOT_OFF
 c_func
 (paren
 id|dev
-comma
-op_minus
-l_int|1
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_BSD_PROCESS_ACCT
+(paren
+r_void
+)paren
+id|acct_auto_close
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t; * Shrink dcache, then fsync. This guarantees that if the&n;&t; * filesystem is quiescent at this point, then (a) only the&n;&t; * root entry should be in use and (b) that root entry is&n;&t; * clean.&n;&t; */
 id|shrink_dcache_sb
 c_func

@@ -346,6 +346,13 @@ r_struct
 id|net_device_stats
 id|stat
 suffix:semicolon
+DECL|member|reg_offset
+r_int
+r_char
+op_star
+id|reg_offset
+suffix:semicolon
+multiline_comment|/* Register mapping table */
 )brace
 suffix:semicolon
 multiline_comment|/* The maximum number of 8390 interrupt service routines called per IRQ. */
@@ -388,61 +395,68 @@ DECL|macro|E8390_PAGE1
 mdefine_line|#define E8390_PAGE1&t;0x40&t;/* using the two high-order bits */
 DECL|macro|E8390_PAGE2
 mdefine_line|#define E8390_PAGE2&t;0x80&t;/* Page 3 is invalid. */
+macro_line|#ifndef CONFIG_MAC
+DECL|macro|EI_SHIFT
+mdefine_line|#define EI_SHIFT(x)&t;(x)
+macro_line|#else
+DECL|macro|EI_SHIFT
+mdefine_line|#define EI_SHIFT(x)&t;(ei_local-&gt;reg_offset[x])
+macro_line|#endif
 DECL|macro|E8390_CMD
-mdefine_line|#define E8390_CMD&t;0x00&t;/* The command register (for all pages) */
+mdefine_line|#define E8390_CMD&t;EI_SHIFT(0x00)  /* The command register (for all pages) */
 multiline_comment|/* Page 0 register offsets. */
 DECL|macro|EN0_CLDALO
-mdefine_line|#define EN0_CLDALO&t;0x01&t;/* Low byte of current local dma addr  RD */
+mdefine_line|#define EN0_CLDALO&t;EI_SHIFT(0x01)&t;/* Low byte of current local dma addr  RD */
 DECL|macro|EN0_STARTPG
-mdefine_line|#define EN0_STARTPG&t;0x01&t;/* Starting page of ring bfr WR */
+mdefine_line|#define EN0_STARTPG&t;EI_SHIFT(0x01)&t;/* Starting page of ring bfr WR */
 DECL|macro|EN0_CLDAHI
-mdefine_line|#define EN0_CLDAHI&t;0x02&t;/* High byte of current local dma addr  RD */
+mdefine_line|#define EN0_CLDAHI&t;EI_SHIFT(0x02)&t;/* High byte of current local dma addr  RD */
 DECL|macro|EN0_STOPPG
-mdefine_line|#define EN0_STOPPG&t;0x02&t;/* Ending page +1 of ring bfr WR */
+mdefine_line|#define EN0_STOPPG&t;EI_SHIFT(0x02)&t;/* Ending page +1 of ring bfr WR */
 DECL|macro|EN0_BOUNDARY
-mdefine_line|#define EN0_BOUNDARY&t;0x03&t;/* Boundary page of ring bfr RD WR */
+mdefine_line|#define EN0_BOUNDARY&t;EI_SHIFT(0x03)&t;/* Boundary page of ring bfr RD WR */
 DECL|macro|EN0_TSR
-mdefine_line|#define EN0_TSR&t;&t;0x04&t;/* Transmit status reg RD */
+mdefine_line|#define EN0_TSR&t;&t;EI_SHIFT(0x04)&t;/* Transmit status reg RD */
 DECL|macro|EN0_TPSR
-mdefine_line|#define EN0_TPSR&t;0x04&t;/* Transmit starting page WR */
+mdefine_line|#define EN0_TPSR&t;EI_SHIFT(0x04)&t;/* Transmit starting page WR */
 DECL|macro|EN0_NCR
-mdefine_line|#define EN0_NCR&t;&t;0x05&t;/* Number of collision reg RD */
+mdefine_line|#define EN0_NCR&t;&t;EI_SHIFT(0x05)&t;/* Number of collision reg RD */
 DECL|macro|EN0_TCNTLO
-mdefine_line|#define EN0_TCNTLO&t;0x05&t;/* Low  byte of tx byte count WR */
+mdefine_line|#define EN0_TCNTLO&t;EI_SHIFT(0x05)&t;/* Low  byte of tx byte count WR */
 DECL|macro|EN0_FIFO
-mdefine_line|#define EN0_FIFO&t;0x06&t;/* FIFO RD */
+mdefine_line|#define EN0_FIFO&t;EI_SHIFT(0x06)&t;/* FIFO RD */
 DECL|macro|EN0_TCNTHI
-mdefine_line|#define EN0_TCNTHI&t;0x06&t;/* High byte of tx byte count WR */
+mdefine_line|#define EN0_TCNTHI&t;EI_SHIFT(0x06)&t;/* High byte of tx byte count WR */
 DECL|macro|EN0_ISR
-mdefine_line|#define EN0_ISR&t;&t;0x07&t;/* Interrupt status reg RD WR */
+mdefine_line|#define EN0_ISR&t;&t;EI_SHIFT(0x07)&t;/* Interrupt status reg RD WR */
 DECL|macro|EN0_CRDALO
-mdefine_line|#define EN0_CRDALO&t;0x08&t;/* low byte of current remote dma address RD */
+mdefine_line|#define EN0_CRDALO&t;EI_SHIFT(0x08)&t;/* low byte of current remote dma address RD */
 DECL|macro|EN0_RSARLO
-mdefine_line|#define EN0_RSARLO&t;0x08&t;/* Remote start address reg 0 */
+mdefine_line|#define EN0_RSARLO&t;EI_SHIFT(0x08)&t;/* Remote start address reg 0 */
 DECL|macro|EN0_CRDAHI
-mdefine_line|#define EN0_CRDAHI&t;0x09&t;/* high byte, current remote dma address RD */
+mdefine_line|#define EN0_CRDAHI&t;EI_SHIFT(0x09)&t;/* high byte, current remote dma address RD */
 DECL|macro|EN0_RSARHI
-mdefine_line|#define EN0_RSARHI&t;0x09&t;/* Remote start address reg 1 */
+mdefine_line|#define EN0_RSARHI&t;EI_SHIFT(0x09)&t;/* Remote start address reg 1 */
 DECL|macro|EN0_RCNTLO
-mdefine_line|#define EN0_RCNTLO&t;0x0a&t;/* Remote byte count reg WR */
+mdefine_line|#define EN0_RCNTLO&t;EI_SHIFT(0x0a)&t;/* Remote byte count reg WR */
 DECL|macro|EN0_RCNTHI
-mdefine_line|#define EN0_RCNTHI&t;0x0b&t;/* Remote byte count reg WR */
+mdefine_line|#define EN0_RCNTHI&t;EI_SHIFT(0x0b)&t;/* Remote byte count reg WR */
 DECL|macro|EN0_RSR
-mdefine_line|#define EN0_RSR&t;&t;0x0c&t;/* rx status reg RD */
+mdefine_line|#define EN0_RSR&t;&t;EI_SHIFT(0x0c)&t;/* rx status reg RD */
 DECL|macro|EN0_RXCR
-mdefine_line|#define EN0_RXCR&t;0x0c&t;/* RX configuration reg WR */
+mdefine_line|#define EN0_RXCR&t;EI_SHIFT(0x0c)&t;/* RX configuration reg WR */
 DECL|macro|EN0_TXCR
-mdefine_line|#define EN0_TXCR&t;0x0d&t;/* TX configuration reg WR */
+mdefine_line|#define EN0_TXCR&t;EI_SHIFT(0x0d)&t;/* TX configuration reg WR */
 DECL|macro|EN0_COUNTER0
-mdefine_line|#define EN0_COUNTER0&t;0x0d&t;/* Rcv alignment error counter RD */
+mdefine_line|#define EN0_COUNTER0&t;EI_SHIFT(0x0d)&t;/* Rcv alignment error counter RD */
 DECL|macro|EN0_DCFG
-mdefine_line|#define EN0_DCFG&t;0x0e&t;/* Data configuration reg WR */
+mdefine_line|#define EN0_DCFG&t;EI_SHIFT(0x0e)&t;/* Data configuration reg WR */
 DECL|macro|EN0_COUNTER1
-mdefine_line|#define EN0_COUNTER1&t;0x0e&t;/* Rcv CRC error counter RD */
+mdefine_line|#define EN0_COUNTER1&t;EI_SHIFT(0x0e)&t;/* Rcv CRC error counter RD */
 DECL|macro|EN0_IMR
-mdefine_line|#define EN0_IMR&t;&t;0x0f&t;/* Interrupt mask reg WR */
+mdefine_line|#define EN0_IMR&t;&t;EI_SHIFT(0x0f)&t;/* Interrupt mask reg WR */
 DECL|macro|EN0_COUNTER2
-mdefine_line|#define EN0_COUNTER2&t;0x0f&t;/* Rcv missed frame error counter RD */
+mdefine_line|#define EN0_COUNTER2&t;EI_SHIFT(0x0f)&t;/* Rcv missed frame error counter RD */
 multiline_comment|/* Bits in EN0_ISR - Interrupt status register */
 DECL|macro|ENISR_RX
 mdefine_line|#define ENISR_RX&t;0x01&t;/* Receiver, no error */
@@ -467,11 +481,15 @@ DECL|macro|ENDCFG_WTS
 mdefine_line|#define ENDCFG_WTS&t;0x01&t;/* word transfer mode selection */
 multiline_comment|/* Page 1 register offsets. */
 DECL|macro|EN1_PHYS
-mdefine_line|#define EN1_PHYS   0x01&t;/* This board&squot;s physical enet addr RD WR */
+mdefine_line|#define EN1_PHYS   EI_SHIFT(0x01)&t;/* This board&squot;s physical enet addr RD WR */
+DECL|macro|EN1_PHYS_SHIFT
+mdefine_line|#define EN1_PHYS_SHIFT(i)  EI_SHIFT(i+1) /* Get and set mac address */
 DECL|macro|EN1_CURPAG
-mdefine_line|#define EN1_CURPAG 0x07&t;/* Current memory page RD WR */
+mdefine_line|#define EN1_CURPAG EI_SHIFT(0x07)&t;/* Current memory page RD WR */
 DECL|macro|EN1_MULT
-mdefine_line|#define EN1_MULT   0x08&t;/* Multicast filter mask array (8 bytes) RD WR */
+mdefine_line|#define EN1_MULT   EI_SHIFT(0x08)&t;/* Multicast filter mask array (8 bytes) RD WR */
+DECL|macro|EN1_MULT_SHIFT
+mdefine_line|#define EN1_MULT_SHIFT(i)  EI_SHIFT(8+i) /* Get and set multicast filter */
 multiline_comment|/* Bits in received packet status byte and EN0_RSR*/
 DECL|macro|ENRSR_RXOK
 mdefine_line|#define ENRSR_RXOK&t;0x01&t;/* Received a good packet */
@@ -484,7 +502,7 @@ mdefine_line|#define ENRSR_FO&t;0x08&t;/* FIFO overrun */
 DECL|macro|ENRSR_MPA
 mdefine_line|#define ENRSR_MPA&t;0x10&t;/* missed pkt */
 DECL|macro|ENRSR_PHY
-mdefine_line|#define ENRSR_PHY&t;0x20&t;/* physical/multicase address */
+mdefine_line|#define ENRSR_PHY&t;0x20&t;/* physical/multicast address */
 DECL|macro|ENRSR_DIS
 mdefine_line|#define ENRSR_DIS&t;0x40&t;/* receiver disable. set in monitor mode */
 DECL|macro|ENRSR_DEF

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: io-unit.c,v 1.10 1998/03/03 12:31:14 jj Exp $&n; * io-unit.c:  IO-UNIT specific routines for memory management.&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek    (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: io-unit.c,v 1.11 1998/04/13 07:26:37 davem Exp $&n; * io-unit.c:  IO-UNIT specific routines for memory management.&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek    (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -18,8 +18,6 @@ macro_line|#else
 DECL|macro|IOD
 mdefine_line|#define IOD(x) do { } while (0)
 macro_line|#endif
-DECL|macro|LONG_ALIGN
-mdefine_line|#define LONG_ALIGN(x) (((x)+(sizeof(long))-1)&amp;~((sizeof(long))-1))
 DECL|macro|IOPERM
 mdefine_line|#define IOPERM        (IOUPTE_CACHE | IOUPTE_WRITE | IOUPTE_VALID)
 DECL|macro|MKIOPTE
@@ -28,8 +26,7 @@ DECL|function|__initfunc
 id|__initfunc
 c_func
 (paren
-r_int
-r_int
+r_void
 id|iounit_init
 c_func
 (paren
@@ -38,14 +35,6 @@ id|sbi_node
 comma
 r_int
 id|io_node
-comma
-r_int
-r_int
-id|memory_start
-comma
-r_int
-r_int
-id|memory_end
 comma
 r_struct
 id|linux_sbus
@@ -73,35 +62,18 @@ id|iommu_promregs
 id|PROMREG_MAX
 )braket
 suffix:semicolon
-id|memory_start
-op_assign
-id|LONG_ALIGN
-c_func
-(paren
-id|memory_start
-)paren
-suffix:semicolon
 id|iounit
 op_assign
-(paren
-r_struct
-id|iounit_struct
-op_star
-)paren
-id|memory_start
-suffix:semicolon
-id|memory_start
-op_assign
-id|LONG_ALIGN
+id|kmalloc
 c_func
 (paren
-id|memory_start
-op_plus
 r_sizeof
 (paren
 r_struct
 id|iounit_struct
 )paren
+comma
+id|GFP_ATOMIC
 )paren
 suffix:semicolon
 id|memset
@@ -282,9 +254,6 @@ id|xpt
 op_increment
 op_assign
 l_int|0
-suffix:semicolon
-r_return
-id|memory_start
 suffix:semicolon
 )brace
 multiline_comment|/* One has to hold iounit-&gt;lock to call this */

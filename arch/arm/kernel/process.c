@@ -259,9 +259,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;n&quot;
-l_string|&quot;pc : [&lt;%08lx&gt;]&bslash;n&quot;
-l_string|&quot;lr : [&lt;%08lx&gt;]&bslash;n&quot;
+l_string|&quot;pc : [&lt;%08lx&gt;]    lr : [&lt;%08lx&gt;]&bslash;n&quot;
 l_string|&quot;sp : %08lx  ip : %08lx  fp : %08lx&bslash;n&quot;
 comma
 id|instruction_pointer
@@ -364,7 +362,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;  IRQs %s  FIQs %s  Mode %s&bslash;n&quot;
+l_string|&quot;  IRQs %s  FIQs %s  Mode %s  Segment %s&bslash;n&quot;
 comma
 id|interrupts_enabled
 c_func
@@ -396,9 +394,24 @@ c_func
 id|regs
 )paren
 )braket
+comma
+id|get_fs
+c_func
+(paren
+)paren
+op_eq
+id|get_ds
+c_func
+(paren
+)paren
+ques
+c_cond
+l_string|&quot;kernel&quot;
+suffix:colon
+l_string|&quot;user&quot;
 )paren
 suffix:semicolon
-macro_line|#if defined(CONFIG_CPU_ARM6) || defined(CONFIG_CPU_SA110)
+macro_line|#if defined(CONFIG_CPU_32)
 (brace
 r_int
 id|ctrl
@@ -432,7 +445,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Control: %04X  Table: %08X  DAC: %08X  &quot;
+l_string|&quot;Control: %04X  Table: %08X  DAC: %08X&bslash;n&quot;
 comma
 id|ctrl
 comma
@@ -443,26 +456,6 @@ id|dac
 suffix:semicolon
 )brace
 macro_line|#endif
-id|printk
-(paren
-l_string|&quot;Segment %s&bslash;n&quot;
-comma
-id|get_fs
-c_func
-(paren
-)paren
-op_eq
-id|get_ds
-c_func
-(paren
-)paren
-ques
-c_cond
-l_string|&quot;kernel&quot;
-suffix:colon
-l_string|&quot;user&quot;
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/*&n; * Free current thread data structures etc..&n; */
 DECL|function|exit_thread
@@ -538,6 +531,18 @@ op_complement
 id|PF_USEDFPU
 suffix:semicolon
 )brace
+DECL|function|release_segments
+r_void
+id|release_segments
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+)paren
+(brace
+)brace
 DECL|function|release_thread
 r_void
 id|release_thread
@@ -547,6 +552,26 @@ r_struct
 id|task_struct
 op_star
 id|dead_task
+)paren
+(brace
+)brace
+DECL|function|copy_segments
+r_void
+id|copy_segments
+c_func
+(paren
+r_int
+id|nr
+comma
+r_struct
+id|task_struct
+op_star
+id|p
+comma
+r_struct
+id|mm_struct
+op_star
+id|new_mm
 )paren
 (brace
 )brace

@@ -11,6 +11,7 @@ macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/pci-bridge.h&gt;
+macro_line|#include &lt;asm/init.h&gt;
 macro_line|#include &lt;linux/selection.h&gt;
 macro_line|#include &lt;linux/vt_kern.h&gt;
 macro_line|#include &quot;pmac-cons.h&quot;
@@ -2000,6 +2001,7 @@ r_int
 id|cmode
 )paren
 suffix:semicolon
+id|__openfirmware
 macro_line|#if 0
 r_static
 r_int

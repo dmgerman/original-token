@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Code to handle x86 style IRQs plus some generic interrupt stuff.&n; *&n; * Copyright (C) 1992 Linus Torvalds&n; * Copyright (C) 1994, 1995, 1996, 1997 Ralf Baechle&n; *&n; * $Id: irq.c,v 1.7 1997/09/26 11:51:33 ralf Exp $&n; */
+multiline_comment|/*&n; * Code to handle x86 style IRQs plus some generic interrupt stuff.&n; *&n; * Copyright (C) 1992 Linus Torvalds&n; * Copyright (C) 1994, 1995, 1996, 1997 Ralf Baechle&n; *&n; * $Id: irq.c,v 1.11 1998/05/01 01:34:02 ralf Exp $&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
@@ -30,6 +30,14 @@ r_char
 id|cache_A1
 op_assign
 l_int|0xff
+suffix:semicolon
+DECL|variable|local_bh_count
+r_int
+r_int
+id|local_bh_count
+(braket
+id|NR_CPUS
+)braket
 suffix:semicolon
 DECL|variable|local_irq_count
 r_int
@@ -392,7 +400,10 @@ l_string|&quot;%2d: %8d %c %s&quot;
 comma
 id|i
 comma
-id|kstat.interrupts
+id|kstat.irqs
+(braket
+l_int|0
+)braket
 (braket
 id|i
 )braket
@@ -513,7 +524,10 @@ comma
 id|irq
 )paren
 suffix:semicolon
-id|kstat.interrupts
+id|kstat.irqs
+(braket
+id|cpu
+)braket
 (braket
 id|irq
 )braket
@@ -602,6 +616,11 @@ id|SA_SAMPLE_RANDOM
 )paren
 id|add_interrupt_randomness
 c_func
+(paren
+id|irq
+)paren
+suffix:semicolon
+id|unmask_irq
 (paren
 id|irq
 )paren

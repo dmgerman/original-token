@@ -63,9 +63,9 @@ multiline_comment|/* status register (read) */
 DECL|macro|REG_STAT
 mdefine_line|#define REG_STAT(x)&t;&t;((x)-&gt;scsi.io_port + (4 &lt;&lt; (x)-&gt;scsi.io_shift))
 DECL|macro|STAT_IO
-mdefine_line|#define STAT_IO&t;&t;(1 &lt;&lt; 0)&t;&t;&t;&t;/* IO phase&t;&t;*/
+mdefine_line|#define STAT_IO&t;&t;&t;(1 &lt;&lt; 0)&t;&t;&t;/* IO phase&t;&t;*/
 DECL|macro|STAT_CD
-mdefine_line|#define STAT_CD&t;&t;(1 &lt;&lt; 1)&t;&t;&t;&t;/* CD phase&t;&t;*/
+mdefine_line|#define STAT_CD&t;&t;&t;(1 &lt;&lt; 1)&t;&t;&t;/* CD phase&t;&t;*/
 DECL|macro|STAT_MSG
 mdefine_line|#define STAT_MSG&t;&t;(1 &lt;&lt; 2)&t;&t;&t;/* MSG phase&t;&t;*/
 DECL|macro|STAT_TRANSFERDONE
@@ -134,6 +134,8 @@ DECL|macro|IS_EARLYPHASE
 mdefine_line|#define IS_EARLYPHASE&t;&t;0x03&t;&t;&t;&t;/* Early phase change&t;*/
 DECL|macro|IS_COMPLETE
 mdefine_line|#define IS_COMPLETE&t;&t;0x04&t;&t;&t;&t;/* Command ok&t;&t;*/
+DECL|macro|IS_SOF
+mdefine_line|#define IS_SOF&t;&t;&t;0x08&t;&t;&t;&t;/* Sync off flag&t;*/
 multiline_comment|/* Transfer period step (write) */
 DECL|macro|REG_STP
 mdefine_line|#define REG_STP(x)&t;&t;((x)-&gt;scsi.io_port + (6 &lt;&lt; (x)-&gt;scsi.io_shift))
@@ -248,6 +250,10 @@ DECL|enumerator|PHASE_SELECTION
 id|PHASE_SELECTION
 comma
 multiline_comment|/* selecting a device&t;&t;&t;*/
+DECL|enumerator|PHASE_MESSAGESENT
+id|PHASE_MESSAGESENT
+comma
+multiline_comment|/* selected, and we&squot;re sending cmd&t;*/
 DECL|enumerator|PHASE_RECONNECTED
 id|PHASE_RECONNECTED
 comma
@@ -308,6 +314,10 @@ DECL|enumerator|fasdma_none
 id|fasdma_none
 comma
 multiline_comment|/* No dma&t;&t;&t;&t;*/
+DECL|enumerator|fasdma_pio
+id|fasdma_pio
+comma
+multiline_comment|/* PIO mode&t;&t;&t;&t;*/
 DECL|enumerator|fasdma_pseudo
 id|fasdma_pseudo
 comma
@@ -336,14 +346,25 @@ comma
 multiline_comment|/* Sync Xfer negociation sent&t;&t;*/
 DECL|enumerator|syncneg_complete
 id|syncneg_complete
+comma
 multiline_comment|/* Sync Xfer complete&t;&t;&t;*/
+DECL|enumerator|syncneg_invalid
+id|syncneg_invalid
+multiline_comment|/* Sync Xfer not supported&t;&t;*/
 DECL|typedef|syncneg_t
 )brace
 id|syncneg_t
 suffix:semicolon
+DECL|macro|MAGIC
+mdefine_line|#define MAGIC&t;0x441296bdUL
 r_typedef
 r_struct
 (brace
+DECL|member|magic_start
+r_int
+r_int
+id|magic_start
+suffix:semicolon
 DECL|member|host
 r_struct
 id|Scsi_Host
@@ -380,7 +401,7 @@ suffix:semicolon
 multiline_comment|/* shift to adjust reg offsets by&t;*/
 DECL|member|irq
 r_int
-r_char
+r_int
 id|irq
 suffix:semicolon
 multiline_comment|/* interrupt&t;&t;&t;&t;*/
@@ -439,6 +460,12 @@ id|MsgQueue_t
 id|msgs
 suffix:semicolon
 multiline_comment|/* message queue for connected device&t;*/
+DECL|member|async_stp
+r_int
+r_int
+id|async_stp
+suffix:semicolon
+multiline_comment|/* Async transfer STP value&t;&t;*/
 DECL|member|last_message
 r_int
 r_int
@@ -532,18 +559,24 @@ r_char
 id|select_timeout
 suffix:semicolon
 multiline_comment|/* timeout (R5)&t;&t;&t;&t;*/
-DECL|member|asyncperiod
-r_int
-r_int
-id|asyncperiod
-suffix:semicolon
-multiline_comment|/* Async transfer period (ns)&t;&t;*/
 DECL|member|sync_max_depth
 r_int
 r_char
 id|sync_max_depth
 suffix:semicolon
 multiline_comment|/* Synchronous xfer max fifo depth&t;*/
+DECL|member|cntl3
+r_int
+r_char
+id|cntl3
+suffix:semicolon
+multiline_comment|/* Control Reg 3&t;&t;&t;*/
+DECL|member|asyncperiod
+r_int
+r_int
+id|asyncperiod
+suffix:semicolon
+multiline_comment|/* Async transfer period (ns)&t;&t;*/
 DECL|member|ifcfg
 )brace
 id|ifcfg
@@ -635,10 +668,13 @@ id|SCp
 comma
 id|fasdmadir_t
 id|direction
+comma
+id|fasdmatype_t
+id|min_dma
 )paren
 suffix:semicolon
 DECL|member|pseudo
-r_int
+r_void
 (paren
 op_star
 id|pseudo
@@ -687,6 +723,11 @@ r_int
 id|internal_done
 suffix:semicolon
 multiline_comment|/* flag to indicate request done */
+DECL|member|magic_end
+r_int
+r_int
+id|magic_end
+suffix:semicolon
 DECL|typedef|FAS216_Info
 )brace
 id|FAS216_Info

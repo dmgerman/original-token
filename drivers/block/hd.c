@@ -139,6 +139,8 @@ id|hd_error
 op_assign
 l_int|0
 suffix:semicolon
+DECL|macro|SUBSECTOR
+mdefine_line|#define SUBSECTOR(block) (CURRENT-&gt;current_nr_sectors &gt; 0)
 multiline_comment|/*&n; *  This struct defines the HD&squot;s and their types.&n; */
 DECL|struct|hd_i_struct
 r_struct

@@ -55,6 +55,13 @@ DECL|macro|CUDA_GET_SET_IIC
 mdefine_line|#define CUDA_GET_SET_IIC&t;0x22
 macro_line|#ifdef __KERNEL__
 r_void
+id|find_via_cuda
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_void
 id|via_cuda_init
 c_func
 (paren

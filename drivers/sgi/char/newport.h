@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: newport.h,v 1.2 1996/06/10 16:38:34 dm Exp $&n; * newport.h: Defines and register layout for NEWPORT graphics&n; *            hardware.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/* $Id: newport.h,v 1.1 1998/01/10 19:05:58 ecd Exp $&n; * newport.h: Defines and register layout for NEWPORT graphics&n; *            hardware.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
 macro_line|#ifndef _SGI_NEWPORT_H
 DECL|macro|_SGI_NEWPORT_H
 mdefine_line|#define _SGI_NEWPORT_H

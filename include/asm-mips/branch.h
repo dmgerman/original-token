@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Branch and jump emulation.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997 by Ralf Baechle&n; */
+multiline_comment|/*&n; * Branch and jump emulation.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997, 1998 by Ralf Baechle&n; *&n; * $Id: branch.h,v 1.2 1998/05/04 09:18:56 ralf Exp $&n; */
 macro_line|#include &lt;asm/ptrace.h&gt;
 DECL|function|delay_slot
 r_extern
@@ -46,6 +46,7 @@ id|regs
 r_if
 c_cond
 (paren
+op_logical_neg
 id|delay_slot
 c_func
 (paren
@@ -53,20 +54,20 @@ id|regs
 )paren
 )paren
 (brace
-r_return
-id|__compute_return_epc
-c_func
-(paren
-id|regs
-)paren
-suffix:semicolon
-)brace
 id|regs-&gt;cp0_epc
 op_add_assign
 l_int|4
 suffix:semicolon
 r_return
 l_int|0
+suffix:semicolon
+)brace
+r_return
+id|__compute_return_epc
+c_func
+(paren
+id|regs
+)paren
 suffix:semicolon
 )brace
 eof

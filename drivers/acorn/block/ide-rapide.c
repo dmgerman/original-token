@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/arch/arm/drivers/block/ide-ics.c&n; *&n; * Copyright (c) 1996 Russell King.&n; *&n; * Changelog:&n; *  08-06-1996&t;RMK&t;Created&n; */
+multiline_comment|/*&n; * linux/arch/arm/drivers/block/ide-rapide.c&n; *&n; * Copyright (c) 1996-1998 Russell King.&n; *&n; * Changelog:&n; *  08-06-1996&t;RMK&t;Created&n; *  13-04-1998&t;RMK&t;Added manufacturer and product IDs&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
@@ -14,6 +14,12 @@ id|rapide_cids
 )braket
 op_assign
 (brace
+(brace
+id|MANU_YELLOWSTONE
+comma
+id|PROD_YELLOWSTONE_RAPIDE32
+)brace
+comma
 (brace
 l_int|0xffff
 comma
@@ -44,6 +50,7 @@ r_static
 r_inline
 r_int
 id|rapide_register
+c_func
 (paren
 r_struct
 id|expansion_card
@@ -66,6 +73,7 @@ l_int|0
 suffix:semicolon
 r_return
 id|ide_register_port
+c_func
 (paren
 id|port
 comma
@@ -82,6 +90,7 @@ suffix:semicolon
 DECL|function|rapide_init
 r_int
 id|rapide_init
+c_func
 (paren
 r_void
 )paren
@@ -111,6 +120,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 id|ecard_startfind
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -136,6 +146,7 @@ id|i
 )braket
 op_assign
 id|ecard_find
+c_func
 (paren
 l_int|0
 comma
@@ -148,6 +159,7 @@ l_int|NULL
 r_break
 suffix:semicolon
 id|ecard_claim
+c_func
 (paren
 id|ec
 (braket
@@ -161,6 +173,7 @@ id|i
 )braket
 op_assign
 id|rapide_register
+c_func
 (paren
 id|ec
 (braket
@@ -200,6 +213,7 @@ l_int|0
 )paren
 (brace
 id|ecard_release
+c_func
 (paren
 id|ec
 (braket
@@ -274,6 +288,7 @@ suffix:semicolon
 id|port
 op_assign
 id|ecard_address
+c_func
 (paren
 id|ec
 (braket
@@ -286,6 +301,7 @@ l_int|0
 )paren
 suffix:semicolon
 id|ide_unregister_port
+c_func
 (paren
 id|port
 comma
@@ -300,6 +316,7 @@ l_int|16
 )paren
 suffix:semicolon
 id|ecard_release
+c_func
 (paren
 id|ec
 (braket

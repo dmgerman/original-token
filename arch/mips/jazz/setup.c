@@ -1,16 +1,21 @@
-multiline_comment|/*&n; * Setup pointers to hardware dependand routines.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997 by Ralf Baechle&n; *&n; * $Id: setup.c,v 1.5 1997/12/02 05:51:05 ralf Exp $&n; */
+multiline_comment|/*&n; * Setup pointers to hardware dependant routines.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997 by Ralf Baechle&n; *&n; * $Id: setup.c,v 1.6 1998/05/04 09:17:45 ralf Exp $&n; */
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/keyboard.h&gt;
+macro_line|#include &lt;asm/ide.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/jazz.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/reboot.h&gt;
 macro_line|#include &lt;asm/vector.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 multiline_comment|/*&n; * Initial irq handlers.&n; */
 DECL|function|no_action
 r_static
@@ -115,6 +120,11 @@ c_func
 (paren
 r_void
 )paren
+suffix:semicolon
+r_extern
+r_struct
+id|ide_ops
+id|std_ide_ops
 suffix:semicolon
 DECL|variable|board_time_init
 r_void
@@ -498,5 +508,12 @@ id|_machine_power_off
 op_assign
 id|jazz_machine_power_off
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_IDE
+id|ide_ops
+op_assign
+op_amp
+id|std_ide_ops
+suffix:semicolon
+macro_line|#endif
 )brace
 eof

@@ -12,10 +12,13 @@ macro_line|#include &lt;asm/cuda.h&gt;
 macro_line|#include &lt;asm/pmu.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/hydra.h&gt;
+macro_line|#include &lt;asm/init.h&gt;
 DECL|variable|adb_hardware
 r_enum
 id|adb_hw
 id|adb_hardware
+op_assign
+id|ADB_NONE
 suffix:semicolon
 DECL|variable|adb_send_request
 r_int
@@ -92,6 +95,7 @@ id|adb_handler
 l_int|16
 )braket
 suffix:semicolon
+id|__openfirmware
 DECL|function|adb_nodev
 r_static
 r_int
@@ -580,10 +584,6 @@ c_func
 r_void
 )paren
 (brace
-id|adb_hardware
-op_assign
-id|ADB_NONE
-suffix:semicolon
 id|adb_send_request
 op_assign
 (paren

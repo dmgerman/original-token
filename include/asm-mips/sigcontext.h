@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * include/asm-mips/sigcontext.h&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997 by Ralf Baechle&n; *&n; * $Id: sigcontext.h,v 1.4 1997/12/01 16:46:19 ralf Exp $&n; */
+multiline_comment|/*&n; * include/asm-mips/sigcontext.h&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997 by Ralf Baechle&n; *&n; * $Id: sigcontext.h,v 1.6 1998/05/01 01:36:10 ralf Exp $&n; */
 macro_line|#ifndef __ASM_MIPS_SIGCONTEXT_H
 DECL|macro|__ASM_MIPS_SIGCONTEXT_H
 mdefine_line|#define __ASM_MIPS_SIGCONTEXT_H
@@ -94,17 +94,11 @@ DECL|member|sc_sigset
 r_int
 r_int
 id|sc_sigset
-suffix:semicolon
-multiline_comment|/* kernel&squot;s sigset_t */
-DECL|member|__pad0
-r_int
-r_int
-id|__pad0
 (braket
-l_int|3
+l_int|4
 )braket
 suffix:semicolon
-multiline_comment|/* pad for constant size */
+multiline_comment|/* kernel&squot;s sigset_t */
 )brace
 suffix:semicolon
 macro_line|#endif /* __ASM_MIPS_SIGCONTEXT_H */

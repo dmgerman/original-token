@@ -511,7 +511,7 @@ op_assign
 id|sk_alloc
 c_func
 (paren
-id|AF_NETLINK
+id|PF_NETLINK
 comma
 id|GFP_KERNEL
 comma
@@ -4396,7 +4396,7 @@ id|proto_ops
 id|netlink_ops
 op_assign
 (brace
-id|AF_NETLINK
+id|PF_NETLINK
 comma
 id|sock_no_dup
 comma
@@ -4437,7 +4437,7 @@ id|net_proto_family
 id|netlink_family_ops
 op_assign
 (brace
-id|AF_NETLINK
+id|PF_NETLINK
 comma
 id|netlink_create
 )brace

@@ -13,11 +13,6 @@ macro_line|#include &lt;asm/apollohw.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
 r_extern
-r_struct
-id|consw
-id|fb_con
-suffix:semicolon
-r_extern
 r_void
 id|dn_sched_init
 c_func

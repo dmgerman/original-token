@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Helpfile for jazzdma.c -- Mips Jazz R4030 DMA controller support&n; */
+multiline_comment|/*&n; * Helpfile for jazzdma.c -- Mips Jazz R4030 DMA controller support&n; *&n; * $Id: jazzdma.h,v 1.6 1998/05/01 01:35:57 ralf Exp $&n; */
 macro_line|#ifndef __ASM_MIPS_JAZZDMA_H
 DECL|macro|__ASM_MIPS_JAZZDMA_H
 mdefine_line|#define __ASM_MIPS_JAZZDMA_H
@@ -136,6 +136,14 @@ id|count
 suffix:semicolon
 r_int
 id|vdma_get_residue
+c_func
+(paren
+r_int
+id|channel
+)paren
+suffix:semicolon
+r_int
+id|vdma_get_enable
 c_func
 (paren
 r_int

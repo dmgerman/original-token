@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Architecture specific parts of the Floppy driver&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997 Ralf Baechle&n; *&n; * $Id: floppy.h,v 1.3 1997/09/07 03:59:02 ralf Exp $&n; */
+multiline_comment|/*&n; * Architecture specific parts of the Floppy driver&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997 Ralf Baechle&n; *&n; * $Id: floppy.h,v 1.14 1998/05/01 01:35:52 ralf Exp $&n; */
 macro_line|#ifndef __ASM_MIPS_FLOPPY_H
 DECL|macro|__ASM_MIPS_FLOPPY_H
 mdefine_line|#define __ASM_MIPS_FLOPPY_H

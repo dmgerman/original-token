@@ -1,12 +1,17 @@
-multiline_comment|/* $Id: console.c,v 1.1.1.1 1997/06/01 03:16:40 ralf Exp $&n; * console.c: SGI arcs console code.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@sgi.com)&n; */
+multiline_comment|/*&n; * console.c: SGI arcs console code.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@sgi.com)&n; *&n; * $Id: console.c,v 1.2 1998/05/01 01:35:23 ralf Exp $&n; */
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;
-DECL|function|prom_putchar
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|prom_putchar
 c_func
 (paren
 r_char
 id|c
+)paren
 )paren
 (brace
 r_int
@@ -34,12 +39,16 @@ id|cnt
 )paren
 suffix:semicolon
 )brace
-DECL|function|prom_getchar
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_char
 id|prom_getchar
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

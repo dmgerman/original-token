@@ -15,6 +15,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/sunrpc/svc.h&gt;
 macro_line|#include &lt;linux/nfsd/nfsd.h&gt;
+macro_line|#include &lt;linux/quotaops.h&gt;
 macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#endif
@@ -998,6 +999,17 @@ id|filp-&gt;f_dentry
 op_assign
 id|dentry
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|wflag
+)paren
+id|DQUOT_INIT
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
 id|err
 op_assign
 l_int|0
@@ -1147,12 +1159,20 @@ id|filp-&gt;f_mode
 op_amp
 id|FMODE_WRITE
 )paren
+(brace
 id|put_write_access
 c_func
 (paren
 id|inode
 )paren
 suffix:semicolon
+id|DQUOT_DROP
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; * Sync a file&n; */
 r_void
@@ -2338,6 +2358,12 @@ c_func
 id|fhp
 )paren
 suffix:semicolon
+id|DQUOT_INIT
+c_func
+(paren
+id|dirp
+)paren
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -2410,6 +2436,12 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+id|DQUOT_DROP
+c_func
+(paren
+id|dirp
+)paren
+suffix:semicolon
 id|fh_unlock
 c_func
 (paren
@@ -2595,6 +2627,12 @@ c_func
 id|fhp
 )paren
 suffix:semicolon
+id|DQUOT_INIT
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
 id|newattrs.ia_size
 op_assign
 id|size
@@ -2648,6 +2686,12 @@ id|inode
 suffix:semicolon
 )brace
 id|put_write_access
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
+id|DQUOT_DROP
 c_func
 (paren
 id|inode
@@ -3030,6 +3074,12 @@ c_func
 id|fhp
 )paren
 suffix:semicolon
+id|DQUOT_INIT
+c_func
+(paren
+id|dirp
+)paren
+suffix:semicolon
 id|err
 op_assign
 id|dirp-&gt;i_op
@@ -3042,6 +3092,12 @@ comma
 id|dnew
 comma
 id|path
+)paren
+suffix:semicolon
+id|DQUOT_DROP
+c_func
+(paren
+id|dirp
 )paren
 suffix:semicolon
 id|fh_unlock
@@ -3352,6 +3408,12 @@ c_func
 id|ffhp
 )paren
 suffix:semicolon
+id|DQUOT_INIT
+c_func
+(paren
+id|dirp
+)paren
+suffix:semicolon
 id|err
 op_assign
 id|dirp-&gt;i_op
@@ -3364,6 +3426,12 @@ comma
 id|dirp
 comma
 id|dnew
+)paren
+suffix:semicolon
+id|DQUOT_DROP
+c_func
+(paren
+id|dirp
 )paren
 suffix:semicolon
 id|fh_unlock
@@ -3855,6 +3923,18 @@ id|fdir-&gt;i_sem
 )paren
 suffix:semicolon
 multiline_comment|/* N.B. check for parent changes after locking?? */
+id|DQUOT_INIT
+c_func
+(paren
+id|fdir
+)paren
+suffix:semicolon
+id|DQUOT_INIT
+c_func
+(paren
+id|tdir
+)paren
+suffix:semicolon
 id|err
 op_assign
 id|fdir-&gt;i_op
@@ -3897,6 +3977,18 @@ id|tdir
 )paren
 suffix:semicolon
 )brace
+id|DQUOT_DROP
+c_func
+(paren
+id|fdir
+)paren
+suffix:semicolon
+id|DQUOT_DROP
+c_func
+(paren
+id|tdir
+)paren
+suffix:semicolon
 id|nfsd_double_up
 c_func
 (paren
@@ -4086,6 +4178,12 @@ c_func
 id|fhp
 )paren
 suffix:semicolon
+id|DQUOT_INIT
+c_func
+(paren
+id|dirp
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4146,6 +4244,12 @@ id|rdentry
 )paren
 suffix:semicolon
 )brace
+id|DQUOT_DROP
+c_func
+(paren
+id|dirp
+)paren
+suffix:semicolon
 id|fh_unlock
 c_func
 (paren

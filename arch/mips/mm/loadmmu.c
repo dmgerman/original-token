@@ -1,4 +1,5 @@
-multiline_comment|/*&n; * loadmmu.c: Setup cpu/cache specific function ptrs at boot time.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: loadmmu.c,v 1.4 1997/12/02 05:51:07 ralf Exp $&n; */
+multiline_comment|/*&n; * loadmmu.c: Setup cpu/cache specific function ptrs at boot time.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: loadmmu.c,v 1.6 1998/05/01 01:34:54 ralf Exp $&n; */
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -123,11 +124,11 @@ id|page
 )paren
 suffix:semicolon
 multiline_comment|/* DMA cache operations. */
-DECL|variable|flush_cache_pre_dma_out
+DECL|variable|dma_cache_wback_inv
 r_void
 (paren
 op_star
-id|flush_cache_pre_dma_out
+id|dma_cache_wback_inv
 )paren
 (paren
 r_int
@@ -139,11 +140,11 @@ r_int
 id|size
 )paren
 suffix:semicolon
-DECL|variable|flush_cache_post_dma_in
+DECL|variable|dma_cache_inv
 r_void
 (paren
 op_star
-id|flush_cache_post_dma_in
+id|dma_cache_inv
 )paren
 (paren
 r_int
@@ -298,6 +299,18 @@ r_int
 id|pagemask
 )paren
 suffix:semicolon
+DECL|variable|user_mode
+r_int
+(paren
+op_star
+id|user_mode
+)paren
+(paren
+r_struct
+id|pt_regs
+op_star
+)paren
+suffix:semicolon
 DECL|variable|resume
 id|asmlinkage
 r_void
@@ -351,12 +364,16 @@ c_func
 r_void
 )paren
 suffix:semicolon
-DECL|function|loadmmu
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|loadmmu
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_switch

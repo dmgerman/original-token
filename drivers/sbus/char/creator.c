@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: creator.c,v 1.14 1998/03/10 20:18:32 jj Exp $&n; * creator.c: Creator/Creator3D frame buffer driver&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: creator.c,v 1.15 1998/04/13 07:26:55 davem Exp $&n; * creator.c: Creator/Creator3D frame buffer driver&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -2648,54 +2648,38 @@ id|__initfunc
 c_func
 (paren
 r_static
-r_int
-r_int
+r_void
 id|ffb_postsetup
 (paren
 id|fbinfo_t
 op_star
 id|fb
-comma
-r_int
-r_int
-id|memory_start
 )paren
 )paren
 (brace
 id|fb-&gt;info.ffb.clut
 op_assign
+id|kmalloc
+c_func
 (paren
-id|u32
+l_int|256
 op_star
-)paren
-(paren
-id|memory_start
+l_int|4
+comma
+id|GFP_ATOMIC
 )paren
 suffix:semicolon
 id|fb-&gt;color_map
 op_assign
+id|kmalloc
+c_func
 (paren
-id|u8
-op_star
-)paren
-(paren
-id|memory_start
-op_plus
-l_int|256
-op_star
-l_int|4
-)paren
-suffix:semicolon
-r_return
-id|memory_start
-op_plus
-l_int|256
-op_star
-l_int|4
-op_plus
 l_int|256
 op_star
 l_int|3
+comma
+id|GFP_ATOMIC
+)paren
 suffix:semicolon
 )brace
 DECL|function|__initfunc

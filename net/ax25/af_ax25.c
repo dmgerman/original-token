@@ -2650,7 +2650,7 @@ l_int|0
 op_logical_or
 id|protocol
 op_eq
-id|AF_AX25
+id|PF_AX25
 )paren
 id|protocol
 op_assign
@@ -2671,7 +2671,7 @@ r_case
 l_int|0
 suffix:colon
 r_case
-id|AF_AX25
+id|PF_AX25
 suffix:colon
 multiline_comment|/* For CLX */
 id|protocol
@@ -2769,7 +2769,7 @@ op_assign
 id|sk_alloc
 c_func
 (paren
-id|AF_AX25
+id|PF_AX25
 comma
 id|GFP_ATOMIC
 comma
@@ -2883,7 +2883,7 @@ op_assign
 id|sk_alloc
 c_func
 (paren
-id|AF_AX25
+id|PF_AX25
 comma
 id|GFP_ATOMIC
 comma
@@ -6669,7 +6669,7 @@ id|net_proto_family
 id|ax25_family_ops
 op_assign
 (brace
-id|AF_AX25
+id|PF_AX25
 comma
 id|ax25_create
 )brace
@@ -6681,7 +6681,7 @@ id|proto_ops
 id|ax25_proto_ops
 op_assign
 (brace
-id|AF_AX25
+id|PF_AX25
 comma
 id|sock_no_dup
 comma
@@ -7158,7 +7158,7 @@ suffix:semicolon
 id|sock_unregister
 c_func
 (paren
-id|AF_AX25
+id|PF_AX25
 )paren
 suffix:semicolon
 )brace

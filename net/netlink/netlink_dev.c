@@ -408,7 +408,7 @@ c_cond
 (paren
 id|net_families
 (braket
-id|AF_NETLINK
+id|PF_NETLINK
 )braket
 op_eq
 l_int|NULL
@@ -449,7 +449,7 @@ id|err
 op_assign
 id|net_families
 (braket
-id|AF_NETLINK
+id|PF_NETLINK
 )braket
 op_member_access_from_pointer
 id|create

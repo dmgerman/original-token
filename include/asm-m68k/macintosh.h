@@ -232,6 +232,10 @@ DECL|macro|MAC_ADB_IISI
 mdefine_line|#define MAC_ADB_IISI&t;&t;2
 DECL|macro|MAC_ADB_CUDA
 mdefine_line|#define MAC_ADB_CUDA&t;&t;3
+DECL|macro|MAC_ADB_PB1
+mdefine_line|#define MAC_ADB_PB1&t;&t;4
+DECL|macro|MAC_ADB_PB2
+mdefine_line|#define MAC_ADB_PB2&t;&t;5
 DECL|macro|MAC_VIA_II
 mdefine_line|#define MAC_VIA_II&t;&t;1
 DECL|macro|MAC_VIA_IIci
@@ -286,7 +290,7 @@ mdefine_line|#define MAC_MODEL_IISI&t;&t;18
 DECL|macro|MAC_MODEL_Q900
 mdefine_line|#define MAC_MODEL_Q900&t;&t;20
 DECL|macro|MAC_MODEL_PB170
-mdefine_line|#define MAC_MODEL_PB170&t;&t;25
+mdefine_line|#define MAC_MODEL_PB170&t;&t;21
 DECL|macro|MAC_MODEL_Q700
 mdefine_line|#define MAC_MODEL_Q700&t;&t;22
 DECL|macro|MAC_MODEL_CLII
@@ -317,6 +321,8 @@ DECL|macro|MAC_MODEL_PB250
 mdefine_line|#define MAC_MODEL_PB250&t;&t;38
 DECL|macro|MAC_MODEL_IIVI
 mdefine_line|#define MAC_MODEL_IIVI&t;&t;44
+DECL|macro|MAC_MODEL_P600
+mdefine_line|#define MAC_MODEL_P600&t;&t;45
 DECL|macro|MAC_MODEL_IIVX
 mdefine_line|#define MAC_MODEL_IIVX&t;&t;48
 DECL|macro|MAC_MODEL_CCL
@@ -345,6 +351,8 @@ DECL|macro|MAC_MODEL_Q840
 mdefine_line|#define MAC_MODEL_Q840&t;&t;78
 DECL|macro|MAC_MODEL_P550
 mdefine_line|#define MAC_MODEL_P550&t;&t;80
+DECL|macro|MAC_MODEL_CCLII
+mdefine_line|#define MAC_MODEL_CCLII&t;&t;83
 DECL|macro|MAC_MODEL_PB165
 mdefine_line|#define MAC_MODEL_PB165&t;&t;84
 DECL|macro|MAC_MODEL_PB190

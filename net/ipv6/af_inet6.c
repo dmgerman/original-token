@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;AF_INET6 socket family&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Adapted from linux/net/ipv4/af_inet.c&n; *&n; *&t;$Id: af_inet6.c,v 1.30 1998/03/25 00:23:05 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;PF_INET6 socket protocol family&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Adapted from linux/net/ipv4/af_inet.c&n; *&n; *&t;$Id: af_inet6.c,v 1.31 1998/05/03 14:31:06 alan Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -152,7 +152,7 @@ op_assign
 id|sk_alloc
 c_func
 (paren
-id|AF_INET6
+id|PF_INET6
 comma
 id|GFP_KERNEL
 comma
@@ -322,7 +322,7 @@ l_int|0
 suffix:semicolon
 id|sk-&gt;family
 op_assign
-id|AF_INET6
+id|PF_INET6
 suffix:semicolon
 id|sk-&gt;protocol
 op_assign
@@ -1400,7 +1400,7 @@ id|proto_ops
 id|inet6_stream_ops
 op_assign
 (brace
-id|AF_INET6
+id|PF_INET6
 comma
 id|sock_no_dup
 comma
@@ -1453,7 +1453,7 @@ id|proto_ops
 id|inet6_dgram_ops
 op_assign
 (brace
-id|AF_INET6
+id|PF_INET6
 comma
 id|sock_no_dup
 comma
@@ -1506,7 +1506,7 @@ id|net_proto_family
 id|inet6_family_ops
 op_assign
 (brace
-id|AF_INET6
+id|PF_INET6
 comma
 id|inet6_create
 )brace
@@ -1847,7 +1847,7 @@ suffix:semicolon
 id|sock_unregister
 c_func
 (paren
-id|AF_INET6
+id|PF_INET6
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS

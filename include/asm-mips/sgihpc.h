@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sgihpc.h,v 1.1.1.1 1997/06/01 03:17:12 ralf Exp $&n; * sgihpc.h: Various HPC I/O controller defines.  The HPC is basically&n; *           the approximate functional equivalent of the Sun SYSIO&n; *           on SGI INDY machines.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/* $Id: sgihpc.h,v 1.2 1998/05/01 01:36:07 ralf Exp $&n; * sgihpc.h: Various HPC I/O controller defines.  The HPC is basically&n; *           the approximate functional equivalent of the Sun SYSIO&n; *           on SGI INDY machines.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
 macro_line|#ifndef _MIPS_SGIHPC_H
 DECL|macro|_MIPS_SGIHPC_H
 mdefine_line|#define _MIPS_SGIHPC_H

@@ -775,9 +775,9 @@ mdefine_line|#define TX_BUFFS_AVAIL(qp)                                    &bsla
 DECL|macro|SUN4C_TX_BUFFS_AVAIL
 mdefine_line|#define SUN4C_TX_BUFFS_AVAIL(qp)                                    &bslash;&n;        (((qp)-&gt;tx_old &lt;= (qp)-&gt;tx_new) ?                           &bslash;&n;&t;  (qp)-&gt;tx_old + (SUN4C_TX_RING_SIZE - 1) - (qp)-&gt;tx_new :  &bslash;&n;&t;  (qp)-&gt;tx_old - (qp)-&gt;tx_new - (TX_RING_SIZE - SUN4C_TX_RING_SIZE))
 DECL|macro|RX_COPY_THRESHOLD
-mdefine_line|#define RX_COPY_THRESHOLD  128
+mdefine_line|#define RX_COPY_THRESHOLD  256
 DECL|macro|RX_BUF_ALLOC_SIZE
-mdefine_line|#define RX_BUF_ALLOC_SIZE  (ETH_FRAME_LEN + (64 * 3))
+mdefine_line|#define RX_BUF_ALLOC_SIZE  (1546 + 64)
 DECL|struct|qe_init_block
 r_struct
 id|qe_init_block

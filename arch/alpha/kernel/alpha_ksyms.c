@@ -16,6 +16,7 @@ macro_line|#include &lt;asm/checksum.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/softirq.h&gt;
 macro_line|#include &lt;asm/fpu.h&gt;
+macro_line|#include &lt;asm/irq.h&gt;
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
 macro_line|#include &lt;asm/unistd.h&gt;
@@ -121,6 +122,20 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|local_irq_count
+)paren
+suffix:semicolon
+DECL|variable|enable_irq
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|enable_irq
+)paren
+suffix:semicolon
+DECL|variable|disable_irq
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|disable_irq
 )paren
 suffix:semicolon
 multiline_comment|/* platform dependent support */

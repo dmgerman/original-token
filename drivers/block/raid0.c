@@ -456,8 +456,11 @@ l_int|0
 suffix:semicolon
 id|printk
 (paren
-l_string|&quot;raid0 : Allocating %d bytes for hash.&bslash;n&quot;
+l_string|&quot;raid0 : Allocating %ld bytes for hash.&bslash;n&quot;
 comma
+(paren
+r_int
+)paren
 r_sizeof
 (paren
 r_struct

@@ -3,6 +3,7 @@ DECL|macro|__ASMARM_ELF_H
 mdefine_line|#define __ASMARM_ELF_H
 multiline_comment|/*&n; * ELF register definitions..&n; */
 macro_line|#include &lt;asm/ptrace.h&gt;
+macro_line|#include &lt;asm/procinfo.h&gt;
 DECL|typedef|elf_greg_t
 r_typedef
 r_int
@@ -54,8 +55,9 @@ multiline_comment|/* This yields a mask that user programs can use to figure out
 DECL|macro|ELF_HWCAP
 mdefine_line|#define ELF_HWCAP&t;(0)
 multiline_comment|/* This yields a string that ld.so will use to load implementation&n;   specific libraries for optimization.  This is more specific in&n;   intent than poking at uname or /proc/cpuinfo. */
+multiline_comment|/* For now we just provide a fairly general string that describes the&n;   processor family.  This could be made more specific later if someone&n;   implemented optimisations that require it.  26-bit CPUs give you&n;   &quot;arm2&quot; for ARM2 (no SWP) and &quot;arm3&quot; for anything else (ARM1 isn&squot;t&n;   supported).  32-bit CPUs give you &quot;arm6&quot; for anything based on an&n;   ARM6 or ARM7 core and &quot;sa1x&quot; for anything based on a StrongARM-1&n;   core.  */
 DECL|macro|ELF_PLATFORM
-mdefine_line|#define ELF_PLATFORM&t;(NULL)
+mdefine_line|#define ELF_PLATFORM&t;(armidlist[armidindex].optname)
 macro_line|#ifdef __KERNEL__
 DECL|macro|SET_PERSONALITY
 mdefine_line|#define SET_PERSONALITY(ex,ibcs2) &bslash;&n;&t;current-&gt;personality = PER_LINUX_32BIT

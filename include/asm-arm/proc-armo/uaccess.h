@@ -46,7 +46,7 @@ id|uaccess_kernel
 suffix:semicolon
 )brace
 DECL|macro|__range_ok
-mdefine_line|#define __range_ok(addr,size) ({&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long flag, sum;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&quot;adds %1, %2, %3; cmpls %1, %0; movls %0, #0&quot; &bslash;&n;&t;&t;: &quot;=&amp;r&quot; (flag), &quot;=&amp;r&quot; (sum)&t;&t;&t;&t;&bslash;&n;&t;&t;: &quot;r&quot; (addr), &quot;Ir&quot; (size), &quot;0&quot; (current-&gt;addr_limit)&t;&bslash;&n;&t;&t;: &quot;cc&quot;);&t;&t;&t;&t;&t;&t;&bslash;&n;&t;flag; })
+mdefine_line|#define __range_ok(addr,size) ({&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long flag, sum;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&quot;subs %1, %0, %3; cmpcs %1, %2; movcs %0, #0&quot; &bslash;&n;&t;&t;: &quot;=&amp;r&quot; (flag), &quot;=&amp;r&quot; (sum)&t;&t;&t;&t;&bslash;&n;&t;&t;: &quot;r&quot; (addr), &quot;Ir&quot; (size), &quot;0&quot; (current-&gt;addr_limit)&t;&bslash;&n;&t;&t;: &quot;cc&quot;);&t;&t;&t;&t;&t;&t;&bslash;&n;&t;flag; })
 DECL|macro|__addr_ok
 mdefine_line|#define __addr_ok(addr) ({&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long flag;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&quot;cmp %2, %0; movlo %0, #0&quot;&t;&t;&t;&bslash;&n;&t;&t;: &quot;=&amp;r&quot; (flag)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;: &quot;0&quot; (current-&gt;addr_limit), &quot;r&quot; (addr)&t;&t;&t;&bslash;&n;&t;&t;: &quot;cc&quot;);&t;&t;&t;&t;&t;&t;&bslash;&n;&t;(flag == 0); })
 DECL|macro|access_ok

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;AF_INET protocol family socket handler.&n; *&n; * Version:&t;$Id: af_inet.c,v 1.71 1998/04/16 05:38:16 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Alan Cox, &lt;A.Cox@swansea.ac.uk&gt;&n; *&n; * Changes (see also sock.c)&n; *&n; *&t;&t;A.N.Kuznetsov&t;:&t;Socket death error in accept().&n; *&t;&t;John Richardson :&t;Fix non blocking error in connect()&n; *&t;&t;&t;&t;&t;so sockets that fail to connect&n; *&t;&t;&t;&t;&t;don&squot;t return -EINPROGRESS.&n; *&t;&t;Alan Cox&t;:&t;Asynchronous I/O support&n; *&t;&t;Alan Cox&t;:&t;Keep correct socket pointer on sock structures&n; *&t;&t;&t;&t;&t;when accept() ed&n; *&t;&t;Alan Cox&t;:&t;Semantics of SO_LINGER aren&squot;t state moved&n; *&t;&t;&t;&t;&t;to close when you look carefully. With&n; *&t;&t;&t;&t;&t;this fixed and the accept bug fixed &n; *&t;&t;&t;&t;&t;some RPC stuff seems happier.&n; *&t;&t;Niibe Yutaka&t;:&t;4.4BSD style write async I/O&n; *&t;&t;Alan Cox, &n; *&t;&t;Tony Gale &t;:&t;Fixed reuse semantics.&n; *&t;&t;Alan Cox&t;:&t;bind() shouldn&squot;t abort existing but dead&n; *&t;&t;&t;&t;&t;sockets. Stops FTP netin:.. I hope.&n; *&t;&t;Alan Cox&t;:&t;bind() works correctly for RAW sockets. Note&n; *&t;&t;&t;&t;&t;that FreeBSD at least was broken in this respect&n; *&t;&t;&t;&t;&t;so be careful with compatibility tests...&n; *&t;&t;Alan Cox&t;:&t;routing cache support&n; *&t;&t;Alan Cox&t;:&t;memzero the socket structure for compactness.&n; *&t;&t;Matt Day&t;:&t;nonblock connect error handler&n; *&t;&t;Alan Cox&t;:&t;Allow large numbers of pending sockets&n; *&t;&t;&t;&t;&t;(eg for big web sites), but only if&n; *&t;&t;&t;&t;&t;specifically application requested.&n; *&t;&t;Alan Cox&t;:&t;New buffering throughout IP. Used dumbly.&n; *&t;&t;Alan Cox&t;:&t;New buffering now used smartly.&n; *&t;&t;Alan Cox&t;:&t;BSD rather than common sense interpretation of&n; *&t;&t;&t;&t;&t;listen.&n; *&t;&t;Germano Caronni&t;:&t;Assorted small races.&n; *&t;&t;Alan Cox&t;:&t;sendmsg/recvmsg basic support.&n; *&t;&t;Alan Cox&t;:&t;Only sendmsg/recvmsg now supported.&n; *&t;&t;Alan Cox&t;:&t;Locked down bind (see security list).&n; *&t;&t;Alan Cox&t;:&t;Loosened bind a little.&n; *&t;&t;Mike McLagan&t;:&t;ADD/DEL DLCI Ioctls&n; *&t;Willy Konynenberg&t;:&t;Transparent proxying support.&n; *&t;&t;David S. Miller&t;:&t;New socket lookup architecture.&n; *&t;&t;&t;&t;&t;Some other random speedups.&n; *&t;&t;Cyrus Durgin&t;:&t;Cleaned up file for kmod hacks.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;PF_INET protocol family socket handler.&n; *&n; * Version:&t;$Id: af_inet.c,v 1.72 1998/05/03 14:30:49 alan Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Alan Cox, &lt;A.Cox@swansea.ac.uk&gt;&n; *&n; * Changes (see also sock.c)&n; *&n; *&t;&t;A.N.Kuznetsov&t;:&t;Socket death error in accept().&n; *&t;&t;John Richardson :&t;Fix non blocking error in connect()&n; *&t;&t;&t;&t;&t;so sockets that fail to connect&n; *&t;&t;&t;&t;&t;don&squot;t return -EINPROGRESS.&n; *&t;&t;Alan Cox&t;:&t;Asynchronous I/O support&n; *&t;&t;Alan Cox&t;:&t;Keep correct socket pointer on sock structures&n; *&t;&t;&t;&t;&t;when accept() ed&n; *&t;&t;Alan Cox&t;:&t;Semantics of SO_LINGER aren&squot;t state moved&n; *&t;&t;&t;&t;&t;to close when you look carefully. With&n; *&t;&t;&t;&t;&t;this fixed and the accept bug fixed &n; *&t;&t;&t;&t;&t;some RPC stuff seems happier.&n; *&t;&t;Niibe Yutaka&t;:&t;4.4BSD style write async I/O&n; *&t;&t;Alan Cox, &n; *&t;&t;Tony Gale &t;:&t;Fixed reuse semantics.&n; *&t;&t;Alan Cox&t;:&t;bind() shouldn&squot;t abort existing but dead&n; *&t;&t;&t;&t;&t;sockets. Stops FTP netin:.. I hope.&n; *&t;&t;Alan Cox&t;:&t;bind() works correctly for RAW sockets. Note&n; *&t;&t;&t;&t;&t;that FreeBSD at least was broken in this respect&n; *&t;&t;&t;&t;&t;so be careful with compatibility tests...&n; *&t;&t;Alan Cox&t;:&t;routing cache support&n; *&t;&t;Alan Cox&t;:&t;memzero the socket structure for compactness.&n; *&t;&t;Matt Day&t;:&t;nonblock connect error handler&n; *&t;&t;Alan Cox&t;:&t;Allow large numbers of pending sockets&n; *&t;&t;&t;&t;&t;(eg for big web sites), but only if&n; *&t;&t;&t;&t;&t;specifically application requested.&n; *&t;&t;Alan Cox&t;:&t;New buffering throughout IP. Used dumbly.&n; *&t;&t;Alan Cox&t;:&t;New buffering now used smartly.&n; *&t;&t;Alan Cox&t;:&t;BSD rather than common sense interpretation of&n; *&t;&t;&t;&t;&t;listen.&n; *&t;&t;Germano Caronni&t;:&t;Assorted small races.&n; *&t;&t;Alan Cox&t;:&t;sendmsg/recvmsg basic support.&n; *&t;&t;Alan Cox&t;:&t;Only sendmsg/recvmsg now supported.&n; *&t;&t;Alan Cox&t;:&t;Locked down bind (see security list).&n; *&t;&t;Alan Cox&t;:&t;Loosened bind a little.&n; *&t;&t;Mike McLagan&t;:&t;ADD/DEL DLCI Ioctls&n; *&t;Willy Konynenberg&t;:&t;Transparent proxying support.&n; *&t;&t;David S. Miller&t;:&t;New socket lookup architecture.&n; *&t;&t;&t;&t;&t;Some other random speedups.&n; *&t;&t;Cyrus Durgin&t;:&t;Cleaned up file for kmod hacks.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -946,7 +946,7 @@ c_cond
 (paren
 id|net_families
 (braket
-id|AF_PACKET
+id|PF_PACKET
 )braket
 op_eq
 l_int|NULL
@@ -966,7 +966,7 @@ id|module_name
 comma
 l_string|&quot;net-pf-%d&quot;
 comma
-id|AF_PACKET
+id|PF_PACKET
 )paren
 suffix:semicolon
 id|request_module
@@ -980,7 +980,7 @@ c_cond
 (paren
 id|net_families
 (braket
-id|AF_PACKET
+id|PF_PACKET
 )braket
 op_eq
 l_int|NULL
@@ -1002,7 +1002,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;%s uses obsolete (AF_INET,SOCK_PACKET)&bslash;n&quot;
+l_string|&quot;%s uses obsolete (PF_INET,SOCK_PACKET)&bslash;n&quot;
 comma
 id|current-&gt;comm
 )paren
@@ -1010,7 +1010,7 @@ suffix:semicolon
 r_return
 id|net_families
 (braket
-id|AF_PACKET
+id|PF_PACKET
 )braket
 op_member_access_from_pointer
 id|create
@@ -1031,7 +1031,7 @@ op_assign
 id|sk_alloc
 c_func
 (paren
-id|AF_INET
+id|PF_INET
 comma
 id|GFP_KERNEL
 comma
@@ -1234,7 +1234,7 @@ suffix:semicolon
 macro_line|#endif  
 id|sk-&gt;family
 op_assign
-id|AF_INET
+id|PF_INET
 suffix:semicolon
 id|sk-&gt;protocol
 op_assign
@@ -3624,7 +3624,7 @@ id|proto_ops
 id|inet_stream_ops
 op_assign
 (brace
-id|AF_INET
+id|PF_INET
 comma
 id|sock_no_dup
 comma
@@ -3665,7 +3665,7 @@ id|proto_ops
 id|inet_dgram_ops
 op_assign
 (brace
-id|AF_INET
+id|PF_INET
 comma
 id|sock_no_dup
 comma
@@ -3706,7 +3706,7 @@ id|net_proto_family
 id|inet_family_ops
 op_assign
 (brace
-id|AF_INET
+id|PF_INET
 comma
 id|inet_create
 )brace

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunserial.c,v 1.56 1997/12/19 07:33:07 ecd Exp $&n; * serial.c: Serial port driver infrastructure for the Sparc.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: sunserial.c,v 1.57 1998/04/13 07:27:02 davem Exp $&n; * serial.c: Serial port driver infrastructure for the Sparc.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -245,15 +245,11 @@ DECL|function|__initfunc
 id|__initfunc
 c_func
 (paren
-r_int
+r_void
 id|serial_console_init
 c_func
 (paren
-r_int
-id|kmem_start
-comma
-r_int
-id|kmem_end
+r_void
 )paren
 )paren
 (brace
@@ -261,9 +257,6 @@ id|sun_serial_finish_init
 c_func
 (paren
 )paren
-suffix:semicolon
-r_return
-id|kmem_start
 suffix:semicolon
 )brace
 DECL|function|rs_change_mouse_baud

@@ -1,8 +1,12 @@
-multiline_comment|/* $Id: tree.c,v 1.1.1.1 1997/06/01 03:16:40 ralf Exp $&n; * tree.c: PROM component device tree code.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/*&n; * tree.c: PROM component device tree code.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: tree.c,v 1.2 1998/05/01 01:35:30 ralf Exp $&n; */
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;
 DECL|macro|DEBUG_PROM_TREE
 mdefine_line|#define DEBUG_PROM_TREE
 DECL|function|prom_getsibling
+id|__initfunc
+c_func
+(paren
 id|pcomponent
 op_star
 id|prom_getsibling
@@ -11,6 +15,7 @@ c_func
 id|pcomponent
 op_star
 id|this
+)paren
 )paren
 (brace
 r_if
@@ -36,6 +41,9 @@ id|this
 suffix:semicolon
 )brace
 DECL|function|prom_getchild
+id|__initfunc
+c_func
+(paren
 id|pcomponent
 op_star
 id|prom_getchild
@@ -44,6 +52,7 @@ c_func
 id|pcomponent
 op_star
 id|this
+)paren
 )paren
 (brace
 r_return
@@ -57,6 +66,9 @@ id|this
 suffix:semicolon
 )brace
 DECL|function|prom_getparent
+id|__initfunc
+c_func
+(paren
 id|pcomponent
 op_star
 id|prom_getparent
@@ -65,6 +77,7 @@ c_func
 id|pcomponent
 op_star
 id|child
+)paren
 )paren
 (brace
 r_if
@@ -89,7 +102,10 @@ id|child
 )paren
 suffix:semicolon
 )brace
-DECL|function|prom_getcdata
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|prom_getcdata
 c_func
@@ -101,6 +117,7 @@ comma
 id|pcomponent
 op_star
 id|this
+)paren
 )paren
 (brace
 r_return
@@ -116,6 +133,9 @@ id|this
 suffix:semicolon
 )brace
 DECL|function|prom_childadd
+id|__initfunc
+c_func
+(paren
 id|pcomponent
 op_star
 id|prom_childadd
@@ -133,6 +153,7 @@ r_void
 op_star
 id|data
 )paren
+)paren
 (brace
 r_return
 id|romvec
@@ -148,7 +169,10 @@ id|data
 )paren
 suffix:semicolon
 )brace
-DECL|function|prom_delcomponent
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|prom_delcomponent
 c_func
@@ -156,6 +180,7 @@ c_func
 id|pcomponent
 op_star
 id|this
+)paren
 )paren
 (brace
 r_return
@@ -169,6 +194,9 @@ id|this
 suffix:semicolon
 )brace
 DECL|function|prom_componentbypath
+id|__initfunc
+c_func
+(paren
 id|pcomponent
 op_star
 id|prom_componentbypath
@@ -177,6 +205,7 @@ c_func
 r_char
 op_star
 id|path
+)paren
 )paren
 (brace
 r_return
@@ -326,7 +355,10 @@ comma
 l_string|&quot;output&quot;
 )brace
 suffix:semicolon
-DECL|function|dump_component
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|dump_component
@@ -335,6 +367,7 @@ c_func
 id|pcomponent
 op_star
 id|p
+)paren
 )paren
 (brace
 id|prom_printf
@@ -389,7 +422,10 @@ id|p-&gt;iname
 )paren
 suffix:semicolon
 )brace
-DECL|function|traverse
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|traverse
@@ -401,6 +437,7 @@ id|p
 comma
 r_int
 id|op
+)paren
 )paren
 (brace
 id|dump_component
@@ -458,12 +495,16 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
-DECL|function|prom_testtree
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|prom_testtree
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|pcomponent

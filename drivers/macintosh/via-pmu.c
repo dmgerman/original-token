@@ -12,6 +12,7 @@ macro_line|#include &lt;asm/cuda.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/init.h&gt;
 DECL|variable|via
 r_static
 r_volatile
@@ -172,6 +173,13 @@ id|adb_request
 id|bright_req_1
 comma
 id|bright_req_2
+suffix:semicolon
+DECL|variable|vias
+r_static
+r_struct
+id|device_node
+op_star
+id|vias
 suffix:semicolon
 r_static
 r_int
@@ -2175,18 +2183,14 @@ l_int|1
 comma
 )brace
 suffix:semicolon
+id|__openfirmware
 r_void
-DECL|function|via_pmu_init
-id|via_pmu_init
+DECL|function|find_via_pmu
+id|find_via_pmu
 c_func
 (paren
 )paren
 (brace
-r_struct
-id|device_node
-op_star
-id|vias
-suffix:semicolon
 id|vias
 op_assign
 id|find_devices
@@ -2387,7 +2391,39 @@ c_func
 (paren
 )paren
 )paren
+id|via
+op_assign
+l_int|NULL
+suffix:semicolon
+id|adb_hardware
+op_assign
+id|ADB_VIAPMU
+suffix:semicolon
+)brace
+r_void
+DECL|function|via_pmu_init
+id|via_pmu_init
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|vias
+op_eq
+l_int|NULL
+)paren
 r_return
+suffix:semicolon
+id|bright_req_1.complete
+op_assign
+l_int|1
+suffix:semicolon
+id|bright_req_2.complete
+op_assign
+l_int|1
 suffix:semicolon
 r_if
 c_cond
@@ -2451,10 +2487,6 @@ id|CB1_INT
 )paren
 suffix:semicolon
 multiline_comment|/* Set function pointers */
-id|adb_hardware
-op_assign
-id|ADB_VIAPMU
-suffix:semicolon
 id|adb_send_request
 op_assign
 id|pmu_adb_send_request
@@ -2462,14 +2494,6 @@ suffix:semicolon
 id|adb_autopoll
 op_assign
 id|pmu_adb_autopoll
-suffix:semicolon
-id|bright_req_1.complete
-op_assign
-l_int|1
-suffix:semicolon
-id|bright_req_2.complete
-op_assign
-l_int|1
 suffix:semicolon
 )brace
 r_static

@@ -98,7 +98,10 @@ id|rd_image_start
 suffix:semicolon
 multiline_comment|/* starting block # of image */
 macro_line|#endif
-DECL|function|prep_ide_init_hwif_ports
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|prep_ide_init_hwif_ports
 (paren
@@ -112,6 +115,7 @@ comma
 r_int
 op_star
 id|irq
+)paren
 )paren
 (brace
 id|ide_ioreg_t
@@ -676,7 +680,7 @@ multiline_comment|/* sda1 */
 r_break
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_BLK_DEV_RAM
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
 multiline_comment|/* initrd_start and size are setup by boot/head.S and kernel/head.S */
 r_if
 c_cond

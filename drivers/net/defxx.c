@@ -3941,6 +3941,14 @@ id|bp-&gt;stats.tx_packets
 op_assign
 id|bp-&gt;xmt_total_frames
 suffix:semicolon
+id|bp-&gt;stats.rx_bytes
+op_assign
+id|bp-&gt;rcv_total_bytes
+suffix:semicolon
+id|bp-&gt;stats.tx_bytes
+op_assign
+id|bp-&gt;xmt_total_bytes
+suffix:semicolon
 id|bp-&gt;stats.rx_errors
 op_assign
 (paren
@@ -6792,6 +6800,10 @@ l_int|0x01
 id|bp-&gt;rcv_multicast_frames
 op_increment
 suffix:semicolon
+id|bp-&gt;rcv_total_bytes
+op_add_assign
+id|skb-&gt;len
+suffix:semicolon
 )brace
 )brace
 )brace
@@ -7138,16 +7150,20 @@ id|bp-&gt;rcv_xmt_reg.index.xmt_comp
 )braket
 )paren
 suffix:semicolon
+multiline_comment|/* Increment transmit counters */
+id|bp-&gt;xmt_total_frames
+op_increment
+suffix:semicolon
+id|bp-&gt;xmt_total_bytes
+op_add_assign
+id|p_xmt_drv_descr-&gt;p_skb-&gt;len
+suffix:semicolon
 multiline_comment|/* Return skb to operating system */
 id|dev_kfree_skb
 c_func
 (paren
 id|p_xmt_drv_descr-&gt;p_skb
 )paren
-suffix:semicolon
-multiline_comment|/* Increment transmit counters */
-id|bp-&gt;xmt_total_frames
-op_increment
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Move to start of next packet by updating completion index&n;&t;&t; *&n;&t;&t; * Here we assume that a transmit packet request is always&n;&t;&t; * serviced by posting one fragment.  We can therefore&n;&t;&t; * simplify the completion code by incrementing the&n;&t;&t; * completion index by one.  This code will need to be&n;&t;&t; * modified if this assumption changes.  See comments&n;&t;&t; * in dfx_xmt_queue_pkt for more details.&n;&t;&t; */
 id|bp-&gt;rcv_xmt_reg.index.xmt_comp

@@ -86,14 +86,6 @@ r_void
 suffix:semicolon
 r_extern
 r_void
-id|dquot_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
 id|init_IRQ
 c_func
 (paren
@@ -1643,6 +1635,16 @@ macro_line|#if defined(CONFIG_SYSVIPC)
 r_extern
 r_void
 id|ipc_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#if defined(CONFIG_QUOTA)
+r_extern
+r_void
+id|dquot_init_hash
 c_func
 (paren
 r_void
@@ -4530,11 +4532,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-id|dquot_init
+macro_line|#if defined(CONFIG_QUOTA)
+id|dquot_init_hash
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 id|check_bugs
 c_func
 (paren

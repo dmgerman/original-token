@@ -344,7 +344,7 @@ id|floppy_drive_struct
 (brace
 DECL|member|flags
 r_int
-r_char
+r_int
 id|flags
 suffix:semicolon
 multiline_comment|/* values for these flags */

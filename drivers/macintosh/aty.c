@@ -13,6 +13,7 @@ macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/pci-bridge.h&gt;
+macro_line|#include &lt;asm/init.h&gt;
 macro_line|#include &quot;pmac-cons.h&quot;
 macro_line|#include &quot;aty.h&quot;
 DECL|struct|aty_cmap_regs
@@ -595,6 +596,7 @@ op_amp
 id|aty_vt_reg_init_20
 )brace
 suffix:semicolon
+id|__openfirmware
 r_static
 r_inline
 r_int

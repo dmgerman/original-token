@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/md.h&gt;
 macro_line|#include &lt;linux/raid5.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
+macro_line|#include &lt;asm/md.h&gt;
 DECL|variable|raid5_personality
 r_static
 r_struct
@@ -3734,6 +3735,44 @@ r_return
 id|blocknr
 suffix:semicolon
 )brace
+macro_line|#ifdef HAVE_ARCH_XORBLOCK
+DECL|function|xor_block
+r_static
+r_void
+id|xor_block
+c_func
+(paren
+r_struct
+id|buffer_head
+op_star
+id|dest
+comma
+r_struct
+id|buffer_head
+op_star
+id|source
+)paren
+(brace
+id|__xor_block
+c_func
+(paren
+(paren
+r_char
+op_star
+)paren
+id|dest-&gt;b_data
+comma
+(paren
+r_char
+op_star
+)paren
+id|source-&gt;b_data
+comma
+id|dest-&gt;b_size
+)paren
+suffix:semicolon
+)brace
+macro_line|#else
 DECL|function|xor_block
 r_static
 r_void
@@ -3923,6 +3962,7 @@ l_int|8
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 DECL|function|compute_block
 r_static
 r_void

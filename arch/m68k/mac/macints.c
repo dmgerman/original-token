@@ -366,12 +366,6 @@ r_void
 r_int
 id|i
 suffix:semicolon
-id|mac_debugging_penguin
-c_func
-(paren
-l_int|6
-)paren
-suffix:semicolon
 macro_line|#ifdef DEBUG_MACINTS
 id|printk
 c_func
@@ -894,12 +888,6 @@ id|nubus_param
 (braket
 l_int|0
 )braket
-suffix:semicolon
-id|mac_debugging_penguin
-c_func
-(paren
-l_int|7
-)paren
 suffix:semicolon
 macro_line|#ifdef DEBUG_MACINTS
 id|printk
@@ -2498,7 +2486,12 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;via_irq: nothing pending!&bslash;n&quot;
+l_string|&quot;via%d_irq: nothing pending!&bslash;n&quot;
+comma
+op_star
+id|viaidx
+op_plus
+l_int|1
 )paren
 suffix:semicolon
 r_return
@@ -3520,6 +3513,10 @@ r_int
 id|slot
 comma
 r_void
+op_star
+id|dev_id
+comma
+r_void
 (paren
 op_star
 id|handler
@@ -3575,7 +3572,7 @@ id|slot
 dot
 id|dev_id
 op_assign
-id|handler
+id|dev_id
 suffix:semicolon
 id|nubus_param
 (braket
@@ -4020,7 +4017,12 @@ id|i
 op_plus
 l_int|9
 comma
-id|via
+id|nubus_handler
+(braket
+id|i
+)braket
+dot
+id|dev_id
 comma
 id|regs
 )paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: elf.h,v 1.4 1997/12/16 05:36:40 ralf Exp $&n; */
+multiline_comment|/*&n; * $Id: elf.h,v 1.10 1998/05/01 01:35:51 ralf Exp $&n; */
 macro_line|#ifndef __ASM_MIPS_ELF_H
 DECL|macro|__ASM_MIPS_ELF_H
 mdefine_line|#define __ASM_MIPS_ELF_H
@@ -55,11 +55,21 @@ DECL|macro|ELF_EXEC_PAGESIZE
 mdefine_line|#define ELF_EXEC_PAGESIZE&t;4096
 DECL|macro|ELF_CORE_COPY_REGS
 mdefine_line|#define ELF_CORE_COPY_REGS(_dest,_regs)&t;&t;&t;&t;&bslash;&n;&t;memcpy((char *) &amp;_dest, (char *) _regs,&t;&t;&t;&bslash;&n;&t;       sizeof(struct pt_regs));
+multiline_comment|/* This yields a mask that user programs can use to figure out what&n;   instruction set this cpu supports.  This could be done in userspace,&n;   but it&squot;s not easy, and we&squot;ve already done it here.  */
+DECL|macro|ELF_HWCAP
+mdefine_line|#define ELF_HWCAP       (0)
+multiline_comment|/* This yields a string that ld.so will use to load implementation&n;   specific libraries for optimization.  This is more specific in&n;   intent than poking at uname or /proc/cpuinfo.&n;&n;   For the moment, we have only optimizations for the Intel generations,&n;   but that could change... */
+DECL|macro|ELF_PLATFORM
+mdefine_line|#define ELF_PLATFORM  (NULL)
 multiline_comment|/* See comments in asm-alpha/elf.h, this is the same thing&n; * on the MIPS.&n; */
 DECL|macro|ELF_PLAT_INIT
 mdefine_line|#define ELF_PLAT_INIT(_r)&t;_r-&gt;regs[2] = 0;
 multiline_comment|/* This is the location that an ET_DYN program is loaded if exec&squot;ed.  Typical&n;   use of this is to invoke &quot;./ld.so someprog&quot; to test out a new version of&n;   the loader.  We need to make sure that it is out of the way of the program&n;   that it will &quot;exec&quot;, and that there is sufficient room for the brk.  */
 DECL|macro|ELF_ET_DYN_BASE
 mdefine_line|#define ELF_ET_DYN_BASE         (2 * TASK_SIZE / 3)
+macro_line|#ifdef __KERNEL__
+DECL|macro|SET_PERSONALITY
+mdefine_line|#define SET_PERSONALITY(ex,ibcs2) &bslash;&n;&t;current-&gt;personality = (ibcs2 ? PER_SVR4 : PER_LINUX)
+macro_line|#endif
 macro_line|#endif /* __ASM_MIPS_ELF_H */
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * CPU specific parts of the keyboard driver&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * $Id: keyboard.h,v 1.8 1997/12/02 05:51:14 ralf Exp $&n; */
+multiline_comment|/*&n; * CPU specific parts of the keyboard driver&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * $Id: keyboard.h,v 1.7 1998/05/01 01:35:57 ralf Exp $&n; */
 macro_line|#ifndef __ASM_MIPS_KEYBOARD_H
 DECL|macro|__ASM_MIPS_KEYBOARD_H
 mdefine_line|#define __ASM_MIPS_KEYBOARD_H

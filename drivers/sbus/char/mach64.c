@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: mach64.c,v 1.17 1998/04/06 06:42:23 davem Exp $&n; * mach64.c: Ultra/PCI Mach64 console driver.&n; *&n; * Just about all of this is from the PPC/mac driver, see that for&n; * author info.  I&squot;m only responsible for grafting it into working&n; * on PCI Ultra&squot;s.  The two drivers should be merged.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: mach64.c,v 1.18 1998/05/03 21:56:07 davem Exp $&n; * mach64.c: Ultra/PCI Mach64 console driver.&n; *&n; * Just about all of this is from the PPC/mac driver, see that for&n; * author info.  I&squot;m only responsible for grafting it into working&n; * on PCI Ultra&squot;s.  The two drivers should be merged.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/config.h&gt; /* for CONFIG_CHIP_ID */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -17,10 +17,13 @@ macro_line|#include &quot;pcicons.h&quot;
 macro_line|#include &quot;mach64.h&quot;
 macro_line|#include &quot;fb.h&quot;
 DECL|variable|mach64_pci_membase
+DECL|variable|mach64_pci_membase2
 r_static
 r_int
 r_int
 id|mach64_pci_membase
+comma
+id|mach64_pci_membase2
 suffix:semicolon
 DECL|variable|mach64_pci_iobase
 r_static
@@ -352,6 +355,36 @@ suffix:semicolon
 id|size
 op_assign
 id|PAGE_SIZE
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|mach64_pci_membase2
+op_logical_and
+(paren
+id|vma-&gt;vm_offset
+op_eq
+(paren
+id|mach64_pci_membase2
+op_amp
+id|PAGE_MASK
+)paren
+)paren
+)paren
+(brace
+id|addr
+op_assign
+id|__pa
+c_func
+(paren
+(paren
+id|pcivga_membase2
+op_amp
+id|PAGE_MASK
+)paren
+)paren
 suffix:semicolon
 )brace
 r_else
@@ -978,6 +1011,17 @@ id|addr
 op_amp
 id|PCI_BASE_ADDRESS_MEM_MASK
 suffix:semicolon
+id|pcivga_membase2
+op_assign
+(paren
+id|pdev-&gt;base_address
+(braket
+l_int|2
+)braket
+op_amp
+id|PCI_BASE_ADDRESS_MEM_MASK
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1050,14 +1094,33 @@ id|mach64_pci_iobase
 op_and_assign
 id|PCI_BASE_ADDRESS_IO_MASK
 suffix:semicolon
+id|pcibios_read_config_dword
+c_func
+(paren
+id|pdev-&gt;bus-&gt;number
+comma
+id|pdev-&gt;devfn
+comma
+id|PCI_BASE_ADDRESS_2
+comma
+op_amp
+id|mach64_pci_membase2
+)paren
+suffix:semicolon
+id|mach64_pci_membase2
+op_and_assign
+id|PCI_BASE_ADDRESS_MEM_MASK
+suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;mach64_init: IOBASE[%016lx] MEMBASE[%016lx]&bslash;n&quot;
+l_string|&quot;mach64_init: IOBASE[%016lx] M1[%016lx] M2[%016lx]&bslash;n&quot;
 comma
 id|pcivga_iobase
 comma
 id|pcivga_membase
+comma
+id|pcivga_membase2
 )paren
 suffix:semicolon
 id|cookie

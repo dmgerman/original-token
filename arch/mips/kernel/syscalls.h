@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * List of Linux/MIPS syscalls.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996 by Ralf Baechle&n; *&n; * $Id: syscalls.h,v 1.6 1997/12/06 09:57:39 ralf Exp $&n; */
+multiline_comment|/*&n; * List of Linux/MIPS syscalls.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996 by Ralf Baechle&n; *&n; * $Id: syscalls.h,v 1.13 1998/05/01 01:34:34 ralf Exp $&n; */
 multiline_comment|/*&n; * This file is being included twice - once to build a list of all&n; * syscalls and once to build a table of how many arguments each syscall&n; * accepts.  Syscalls that receive a pointer to the saved registers are&n; * marked as having zero arguments.&n; *&n; * The binary compatibility calls are still missing in this list.&n; */
 id|SYS
 c_func
@@ -349,10 +349,11 @@ l_int|0
 id|SYS
 c_func
 (paren
-id|sys_signal
+id|sys_ni_syscall
 comma
-l_int|2
+l_int|0
 )paren
+multiline_comment|/* was signal(2) */
 id|SYS
 c_func
 (paren
@@ -1393,5 +1394,77 @@ c_func
 id|sys_prctl
 comma
 l_int|5
+)paren
+id|SYS
+c_func
+(paren
+id|sys_rt_sigreturn
+comma
+l_int|0
+)paren
+id|SYS
+c_func
+(paren
+id|sys_rt_sigaction
+comma
+l_int|4
+)paren
+id|SYS
+c_func
+(paren
+id|sys_rt_sigprocmask
+comma
+l_int|4
+)paren
+multiline_comment|/* 4195 */
+id|SYS
+c_func
+(paren
+id|sys_rt_sigpending
+comma
+l_int|2
+)paren
+id|SYS
+c_func
+(paren
+id|sys_rt_sigtimedwait
+comma
+l_int|4
+)paren
+id|SYS
+c_func
+(paren
+id|sys_rt_sigqueueinfo
+comma
+l_int|3
+)paren
+id|SYS
+c_func
+(paren
+id|sys_rt_sigsuspend
+comma
+l_int|2
+)paren
+id|SYS
+c_func
+(paren
+id|sys_pread
+comma
+l_int|4
+)paren
+multiline_comment|/* 4200 */
+id|SYS
+c_func
+(paren
+id|sys_pwrite
+comma
+l_int|4
+)paren
+id|SYS
+c_func
+(paren
+id|sys_lchown
+comma
+l_int|3
 )paren
 eof

@@ -1,5 +1,6 @@
-multiline_comment|/*&n; * indy_int.c: Routines for generic manipulation of the INT[23] ASIC&n; *             found on INDY workstations..&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: indy_int.c,v 1.4 1997/09/20 19:20:15 root Exp $&n; */
+multiline_comment|/*&n; * indy_int.c: Routines for generic manipulation of the INT[23] ASIC&n; *             found on INDY workstations..&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: indy_int.c,v 1.6 1998/05/01 01:35:15 ralf Exp $&n; */
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -108,6 +109,14 @@ r_int
 )paren
 suffix:semicolon
 macro_line|#endif
+DECL|variable|local_bh_count
+r_int
+r_int
+id|local_bh_count
+(braket
+id|NR_CPUS
+)braket
+suffix:semicolon
 DECL|variable|local_irq_count
 r_int
 r_int
@@ -1033,7 +1042,10 @@ l_string|&quot;%2d: %8d %c %s&quot;
 comma
 id|num
 comma
-id|kstat.interrupts
+id|kstat.irqs
+(braket
+l_int|0
+)braket
 (braket
 id|num
 )braket
@@ -1151,7 +1163,10 @@ l_string|&quot;%2d: %8d %c %s&quot;
 comma
 id|num
 comma
-id|kstat.interrupts
+id|kstat.irqs
+(braket
+l_int|0
+)braket
 (braket
 id|num
 )braket
@@ -1272,7 +1287,10 @@ comma
 id|irq
 )paren
 suffix:semicolon
-id|kstat.interrupts
+id|kstat.irqs
+(braket
+l_int|0
+)braket
 (braket
 id|irq
 )braket
@@ -1932,12 +1950,16 @@ id|irq
 )paren
 suffix:semicolon
 )brace
-DECL|function|init_IRQ
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|init_IRQ
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|irq_setup
@@ -2045,7 +2067,10 @@ comma
 id|irq
 )paren
 suffix:semicolon
-id|kstat.interrupts
+id|kstat.irqs
+(braket
+l_int|0
+)braket
 (braket
 id|irq
 op_plus
@@ -2179,7 +2204,10 @@ comma
 id|irq
 )paren
 suffix:semicolon
-id|kstat.interrupts
+id|kstat.irqs
+(braket
+l_int|0
+)braket
 (braket
 id|irq
 op_plus
@@ -2240,7 +2268,10 @@ comma
 id|irq
 )paren
 suffix:semicolon
-id|kstat.interrupts
+id|kstat.irqs
+(braket
+l_int|0
+)braket
 (braket
 id|irq
 )braket
@@ -2307,12 +2338,16 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|sgint_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|sgint_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

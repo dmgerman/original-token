@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pcicons.h,v 1.2 1997/08/24 12:13:11 ecd Exp $&n; * pcicons.h: Stuff which is generic across all PCI console drivers.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: pcicons.h,v 1.3 1998/05/03 21:56:12 davem Exp $&n; * pcicons.h: Stuff which is generic across all PCI console drivers.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef PCICONS_H
 DECL|macro|PCICONS_H
 mdefine_line|#define PCICONS_H
@@ -14,6 +14,11 @@ r_extern
 r_int
 r_int
 id|pcivga_membase
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|pcivga_membase2
 suffix:semicolon
 r_extern
 r_int

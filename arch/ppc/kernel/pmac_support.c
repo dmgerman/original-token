@@ -3,6 +3,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/reboot.h&gt;
 macro_line|#include &lt;linux/nvram.h&gt;
+macro_line|#include &lt;asm/init.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
@@ -39,6 +40,7 @@ id|nvram_mult
 suffix:semicolon
 DECL|macro|NVRAM_SIZE
 mdefine_line|#define NVRAM_SIZE&t;0x2000&t;/* 8kB of non-volatile RAM */
+id|__pmac
 DECL|function|pmac_nvram_init
 r_void
 id|pmac_nvram_init

@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/timex.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
@@ -36,12 +37,16 @@ id|nvram_data
 op_assign
 id|NVRAM_DATA
 suffix:semicolon
-DECL|function|chrp_time_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|chrp_time_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_struct
@@ -644,12 +649,16 @@ id|sec
 )paren
 suffix:semicolon
 )brace
-DECL|function|chrp_calibrate_decr
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|chrp_calibrate_decr
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_struct

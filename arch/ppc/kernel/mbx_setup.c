@@ -171,118 +171,6 @@ l_int|13
 suffix:semicolon
 macro_line|#endif
 )brace
-r_int
-DECL|function|mbx_get_cpuinfo
-id|mbx_get_cpuinfo
-c_func
-(paren
-r_char
-op_star
-id|buffer
-)paren
-(brace
-r_int
-id|pvr
-op_assign
-id|_get_PVR
-c_func
-(paren
-)paren
-suffix:semicolon
-r_int
-id|len
-suffix:semicolon
-r_char
-op_star
-id|model
-suffix:semicolon
-id|bd_t
-op_star
-id|bp
-suffix:semicolon
-r_extern
-id|RESIDUAL
-id|res
-suffix:semicolon
-multiline_comment|/* I know the MPC860 is 0x50.  I don&squot;t have the book handy&n;&t; * to check the others.&n;&t; */
-r_if
-c_cond
-(paren
-(paren
-id|pvr
-op_rshift
-l_int|16
-)paren
-op_eq
-l_int|0x50
-)paren
-id|model
-op_assign
-l_string|&quot;MPC860&quot;
-suffix:semicolon
-r_else
-id|model
-op_assign
-l_string|&quot;unknown&quot;
-suffix:semicolon
-macro_line|#ifdef __SMP__
-DECL|macro|CD
-mdefine_line|#define CD(X)&t;&t;(cpu_data[n].X)  
-macro_line|#else
-mdefine_line|#define CD(X) (X)
-mdefine_line|#define CPUN 0
-macro_line|#endif
-id|bp
-op_assign
-(paren
-id|bd_t
-op_star
-)paren
-op_amp
-id|res
-suffix:semicolon
-id|len
-op_assign
-id|sprintf
-c_func
-(paren
-id|buffer
-comma
-l_string|&quot;processor&bslash;t: %d&bslash;n&quot;
-l_string|&quot;cpu&bslash;t&bslash;t: %s&bslash;n&quot;
-l_string|&quot;revision&bslash;t: %d.%d&bslash;n&quot;
-l_string|&quot;clock&bslash;t&bslash;t: %d MHz&bslash;n&quot;
-l_string|&quot;bus clock&bslash;t: %d MHz&bslash;n&quot;
-comma
-id|CPUN
-comma
-id|model
-comma
-id|MAJOR
-c_func
-(paren
-id|pvr
-)paren
-comma
-id|MINOR
-c_func
-(paren
-id|pvr
-)paren
-comma
-id|bp-&gt;bi_intfreq
-op_div
-l_int|1000000
-comma
-id|bp-&gt;bi_busfreq
-op_div
-l_int|1000000
-)paren
-suffix:semicolon
-r_return
-id|len
-suffix:semicolon
-)brace
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -306,6 +194,12 @@ id|memory_end_p
 r_int
 id|cpm_page
 suffix:semicolon
+r_extern
+r_char
+id|cmd_line
+(braket
+)braket
+suffix:semicolon
 id|cpm_page
 op_assign
 op_star
@@ -315,6 +209,24 @@ op_star
 id|memory_start_p
 op_add_assign
 id|PAGE_SIZE
+suffix:semicolon
+id|sprintf
+c_func
+(paren
+id|cmd_line
+comma
+l_string|&quot;%s root=/dev/nfs nfsroot=/sys/mbxroot&quot;
+comma
+id|cmd_line
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Boot arguments: %s&bslash;n&quot;
+comma
+id|cmd_line
+)paren
 suffix:semicolon
 multiline_comment|/* Reset the Communication Processor Module.&n;&t;*/
 id|mbx_cpm_reset
@@ -334,7 +246,7 @@ l_int|0x0301
 suffix:semicolon
 multiline_comment|/* hda1 */
 macro_line|#endif
-macro_line|#ifdef CONFIG_BLK_DEV_RAM
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
 macro_line|#if 0
 id|ROOT_DEV
 op_assign

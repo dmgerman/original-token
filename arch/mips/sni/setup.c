@@ -1,13 +1,17 @@
-multiline_comment|/*&n; * Setup pointers to hardware dependand routines.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997 by Ralf Baechle&n; *&n; * $Id: setup.c,v 1.5 1997/12/01 16:19:12 ralf Exp $&n; */
+multiline_comment|/*&n; * Setup pointers to hardware dependant routines.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997 by Ralf Baechle&n; *&n; * $Id: setup.c,v 1.5 1998/05/04 09:18:42 ralf Exp $&n; */
 macro_line|#include &lt;asm/ptrace.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/timex.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#include &lt;asm/bcache.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/keyboard.h&gt;
+macro_line|#include &lt;asm/ide.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
@@ -119,6 +123,11 @@ c_func
 (paren
 r_void
 )paren
+suffix:semicolon
+r_extern
+r_struct
+id|ide_ops
+id|std_ide_ops
 suffix:semicolon
 DECL|function|__initfunc
 id|__initfunc
@@ -409,100 +418,6 @@ comma
 id|boardtype
 )paren
 suffix:semicolon
-id|cacheconf
-op_assign
-op_star
-(paren
-r_volatile
-r_int
-r_int
-op_star
-)paren
-id|PCIMT_CACHECONF
-suffix:semicolon
-r_switch
-c_cond
-(paren
-id|cacheconf
-op_amp
-l_int|7
-)paren
-(brace
-r_case
-l_int|0
-suffix:colon
-id|printk
-c_func
-(paren
-l_string|&quot;Secondary cache disabled&bslash;n&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|1
-suffix:colon
-id|printk
-c_func
-(paren
-l_string|&quot;256kb secondary cache&bslash;n&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|2
-suffix:colon
-id|printk
-c_func
-(paren
-l_string|&quot;512kb secondary cache&bslash;n&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|3
-suffix:colon
-id|printk
-c_func
-(paren
-l_string|&quot;1mb secondary cache&bslash;n&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|4
-suffix:colon
-id|printk
-c_func
-(paren
-l_string|&quot;2mb secondary cache&bslash;n&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|5
-suffix:colon
-id|printk
-c_func
-(paren
-l_string|&quot;4mb secondary cache&bslash;n&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_default
-suffix:colon
-id|panic
-c_func
-(paren
-l_string|&quot;invalid secondary cache size&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
 )brace
 DECL|function|__initfunc
 id|__initfunc
@@ -618,6 +533,11 @@ suffix:semicolon
 )brace
 )brace
 id|sni_pcimt_detect
+c_func
+(paren
+)paren
+suffix:semicolon
+id|sni_pcimt_sc_init
 c_func
 (paren
 )paren
@@ -741,5 +661,12 @@ op_assign
 op_amp
 id|sni_pci_ops
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_IDE
+id|ide_ops
+op_assign
+op_amp
+id|std_ide_ops
+suffix:semicolon
+macro_line|#endif
 )brace
 eof

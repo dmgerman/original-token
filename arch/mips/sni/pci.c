@@ -1,60 +1,14 @@
-multiline_comment|/*&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * SNI specific PCI support for RM200/RM300.&n; */
+multiline_comment|/*&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * SNI specific PCI support for RM200/RM300.&n; *&n; * $Id: pci.c,v 1.4 1998/05/01 01:35:34 ralf Exp $&n; */
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/pci.h&gt;
 macro_line|#include &lt;asm/sni.h&gt;
 macro_line|#ifdef CONFIG_PCI
-DECL|function|mkaddr
-r_extern
-r_inline
-id|u32
-id|mkaddr
-c_func
-(paren
-r_int
-r_char
-id|bus
-comma
-r_int
-r_char
-id|dev_fn
-comma
-r_int
-r_char
-id|where
-)paren
-(brace
-r_return
-(paren
-(paren
-id|bus
-op_amp
-l_int|0xff
-)paren
-op_lshift
-l_int|0x10
-)paren
-op_or
-(paren
-(paren
-id|dev_fn
-op_amp
-l_int|0xff
-)paren
-op_lshift
-l_int|0x08
-)paren
-op_or
-(paren
-id|where
-op_amp
-l_int|0xfc
-)paren
-suffix:semicolon
-)brace
+DECL|macro|mkaddr
+mdefine_line|#define mkaddr(bus, dev_fn, where)                                           &bslash;&n;do {                                                                         &bslash;&n;&t;if (bus == 0 &amp;&amp; dev_fn &gt;= PCI_DEVFN(8, 0))                           &bslash;&n;&t;&t;return -1;                                                   &bslash;&n;&t;*(volatile u32 *)PCIMT_CONFIG_ADDRESS = ((bus    &amp; 0xff) &lt;&lt; 0x10) |  &bslash;&n;&t;                                        ((dev_fn &amp; 0xff) &lt;&lt; 0x08) |  &bslash;&n;&t;                                        (where  &amp; 0xfc);             &bslash;&n;} while(0);
 DECL|function|sni_rm200_pcibios_fixup
 r_static
 r_int
@@ -71,6 +25,24 @@ id|memory_end
 )paren
 (brace
 multiline_comment|/*&n;&t; * TODO: Fix PCI_INTERRUPT_LINE register for onboard cards.&n;&t; * Take care of RM300 revision D boards for where the network&n;&t; * slot became an ordinary PCI slot.&n;&t; */
+id|pcibios_write_config_byte
+c_func
+(paren
+l_int|0
+comma
+id|PCI_DEVFN
+c_func
+(paren
+l_int|1
+comma
+l_int|0
+)paren
+comma
+id|PCI_INTERRUPT_LINE
+comma
+id|PCIMT_IRQ_SCSI
+)paren
+suffix:semicolon
 r_return
 id|memory_start
 suffix:semicolon
@@ -102,14 +74,6 @@ id|val
 id|u32
 id|res
 suffix:semicolon
-op_star
-(paren
-r_volatile
-id|u32
-op_star
-)paren
-id|PCIMT_CONFIG_ADDRESS
-op_assign
 id|mkaddr
 c_func
 (paren
@@ -197,14 +161,6 @@ l_int|1
 r_return
 id|PCIBIOS_BAD_REGISTER_NUMBER
 suffix:semicolon
-op_star
-(paren
-r_volatile
-id|u32
-op_star
-)paren
-id|PCIMT_CONFIG_ADDRESS
-op_assign
 id|mkaddr
 c_func
 (paren
@@ -292,14 +248,6 @@ l_int|3
 r_return
 id|PCIBIOS_BAD_REGISTER_NUMBER
 suffix:semicolon
-op_star
-(paren
-r_volatile
-id|u32
-op_star
-)paren
-id|PCIMT_CONFIG_ADDRESS
-op_assign
 id|mkaddr
 c_func
 (paren
@@ -359,7 +307,34 @@ r_char
 id|val
 )paren
 (brace
-multiline_comment|/* To do */
+id|mkaddr
+c_func
+(paren
+id|bus
+comma
+id|dev_fn
+comma
+id|where
+)paren
+suffix:semicolon
+op_star
+(paren
+r_volatile
+id|u8
+op_star
+)paren
+(paren
+id|PCIMT_CONFIG_DATA
+op_plus
+(paren
+id|where
+op_amp
+l_int|3
+)paren
+)paren
+op_assign
+id|val
+suffix:semicolon
 r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
@@ -386,7 +361,48 @@ r_int
 id|val
 )paren
 (brace
-multiline_comment|/* To do */
+r_if
+c_cond
+(paren
+id|where
+op_amp
+l_int|1
+)paren
+r_return
+id|PCIBIOS_BAD_REGISTER_NUMBER
+suffix:semicolon
+id|mkaddr
+c_func
+(paren
+id|bus
+comma
+id|dev_fn
+comma
+id|where
+)paren
+suffix:semicolon
+op_star
+(paren
+r_volatile
+id|u16
+op_star
+)paren
+(paren
+id|PCIMT_CONFIG_DATA
+op_plus
+(paren
+id|where
+op_amp
+l_int|3
+)paren
+)paren
+op_assign
+id|le16_to_cpu
+c_func
+(paren
+id|val
+)paren
+suffix:semicolon
 r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
@@ -423,14 +439,6 @@ l_int|3
 r_return
 id|PCIBIOS_BAD_REGISTER_NUMBER
 suffix:semicolon
-op_star
-(paren
-r_volatile
-id|u32
-op_star
-)paren
-id|PCIMT_CONFIG_ADDRESS
-op_assign
 id|mkaddr
 c_func
 (paren

@@ -1,4 +1,5 @@
-multiline_comment|/* $Id: cmdline.c,v 1.2 1997/12/02 05:51:09 ralf Exp $&n; * cmdline.c: Kernel command line creation using ARCS argc/argv.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/*&n; * cmdline.c: Kernel command line creation using ARCS argc/argv.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: cmdline.c,v 1.3 1998/05/01 01:35:22 ralf Exp $&n; */
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;
@@ -11,13 +12,17 @@ id|arcs_cmdline
 id|CL_SIZE
 )braket
 suffix:semicolon
-DECL|function|prom_getcmdline
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_char
 op_star
 id|prom_getcmdline
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_return
@@ -54,12 +59,16 @@ l_string|&quot;OSLoadFilename=&quot;
 suffix:semicolon
 DECL|macro|NENTS
 mdefine_line|#define NENTS(foo) ((sizeof((foo)) / (sizeof((foo[0])))))
-DECL|function|prom_init_cmdline
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|prom_init_cmdline
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_char

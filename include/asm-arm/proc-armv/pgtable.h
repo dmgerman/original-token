@@ -17,15 +17,15 @@ DECL|macro|flush_cache_page
 mdefine_line|#define flush_cache_page(_vma,_vmaddr)&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;if ((_vma)-&gt;vm_mm == current-&gt;mm)&t;&t;&t;&bslash;&n;&t;&t;&t;processor.u.armv3v4._flush_cache_area&t;&t;&bslash;&n;&t;&t;&t;&t;((_vmaddr), (_vmaddr) + PAGE_SIZE,&t;&bslash;&n;&t;&t;&t;&t; ((_vma)-&gt;vm_flags &amp; VM_EXEC) ? 1 : 0);&t;&bslash;&n;&t;} while (0)
 DECL|macro|flush_icache_range
 mdefine_line|#define flush_icache_range(_start,_end)&t;&t;&t;&t;&t;&bslash;&n;&t;processor.u.armv3v4._flush_icache_area((_start), (_end))
-multiline_comment|/*&n; * We don&squot;t have a mem map cache...&n; */
-DECL|macro|update_mm_cache_all
-mdefine_line|#define update_mm_cache_all()&t;&t;&t;do { } while (0)
-DECL|macro|update_mm_cache_task
-mdefine_line|#define update_mm_cache_task(tsk)&t;&t;do { } while (0)
-DECL|macro|update_mm_cache_mm
-mdefine_line|#define update_mm_cache_mm(mm)&t;&t;&t;do { } while (0)
-DECL|macro|update_mm_cache_mm_addr
-mdefine_line|#define update_mm_cache_mm_addr(mm,addr,pte)&t;do { } while (0)
+multiline_comment|/*&n; * We don&squot;t have a MEMC chip...&n; */
+DECL|macro|update_memc_all
+mdefine_line|#define update_memc_all()&t;&t;do { } while (0)
+DECL|macro|update_memc_task
+mdefine_line|#define update_memc_task(tsk)&t;&t;do { } while (0)
+DECL|macro|update_memc_mm
+mdefine_line|#define update_memc_mm(mm)&t;&t;do { } while (0)
+DECL|macro|update_memc_addr
+mdefine_line|#define update_memc_addr(mm,addr,pte)&t;do { } while (0)
 multiline_comment|/*&n; * This flushes back any buffered write data.  We have to clean and flush the entries&n; * in the cache for this page.  Is it necessary to invalidate the I-cache?&n; */
 DECL|macro|flush_page_to_ram
 mdefine_line|#define flush_page_to_ram(_page)&t;&t;&t;&t;&t;&bslash;&n;&t;processor.u.armv3v4._flush_ram_page ((_page) &amp; PAGE_MASK);
@@ -69,8 +69,6 @@ DECL|macro|PTRS_PER_PMD
 mdefine_line|#define PTRS_PER_PMD    1
 DECL|macro|PTRS_PER_PGD
 mdefine_line|#define PTRS_PER_PGD    4096
-DECL|macro|USER_PTRS_PER_PGD
-mdefine_line|#define USER_PTRS_PER_PGD&t;(TASK_SIZE / PGDIR_SIZE)
 multiline_comment|/* Just any arbitrary offset to the start of the vmalloc VM area: the&n; * current 8MB value just means that there will be a 8MB &quot;hole&quot; after the&n; * physical memory until the kernel virtual memory starts.  That means that&n; * any out-of-bounds memory accesses will hopefully be caught.&n; * The vmalloc() routines leaves a hole of 4kB between each vmalloced&n; * area for the same reason. ;)&n; */
 DECL|macro|VMALLOC_OFFSET
 mdefine_line|#define VMALLOC_OFFSET&t;  (8*1024*1024)

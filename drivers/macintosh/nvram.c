@@ -7,8 +7,10 @@ macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/nvram.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;asm/init.h&gt;
 DECL|macro|NVRAM_SIZE
 mdefine_line|#define NVRAM_SIZE&t;8192
+id|__openfirmware
 DECL|function|nvram_llseek
 r_static
 r_int

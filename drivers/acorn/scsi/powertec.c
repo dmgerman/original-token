@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/arch/arm/drivers/scsi/powertec.c&n; *&n; * Copyright (C) 1997 Russell King&n; *&n; * This driver is based on experimentation.  Hence, it may have made&n; * assumptions about the particular card that I have available, and&n; * may not be reliable!&n; *&n; * Changelog:&n; *  01-10-1997&t;RMK&t;Created, READONLY version&n; *  15-02-1998&t;RMK&t;Added DMA support and hardware definitions&n; */
+multiline_comment|/*&n; * linux/arch/arm/drivers/scsi/powertec.c&n; *&n; * Copyright (C) 1997-1998 Russell King&n; *&n; * This driver is based on experimentation.  Hence, it may have made&n; * assumptions about the particular card that I have available, and&n; * may not be reliable!&n; *&n; * Changelog:&n; *  01-10-1997&t;RMK&t;Created, READONLY version.&n; *  15-02-1998&t;RMK&t;Added DMA support and hardware definitions.&n; *  15-04-1998&t;RMK&t;Only do PIO if FAS216 will allow it.&n; *  02-05-1998&t;RMK&t;Moved DMA sg list into per-interface structure.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -9,10 +9,10 @@ macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
-macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/ecard.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &quot;../../scsi/sd.h&quot;
 macro_line|#include &quot;../../scsi/hosts.h&quot;
@@ -23,7 +23,7 @@ mdefine_line|#define POWERTEC_XTALFREQ&t;40
 DECL|macro|POWERTEC_ASYNC_PERIOD
 mdefine_line|#define POWERTEC_ASYNC_PERIOD&t;200
 DECL|macro|POWERTEC_SYNC_DEPTH
-mdefine_line|#define POWERTEC_SYNC_DEPTH&t;16
+mdefine_line|#define POWERTEC_SYNC_DEPTH&t;7
 multiline_comment|/*&n; * List of devices that the driver will recognise&n; */
 DECL|macro|POWERTECSCSI_LIST
 mdefine_line|#define POWERTECSCSI_LIST&t;{ MANU_ALSYSTEMS, PROD_ALSYS_SCSIATAPI }
@@ -35,6 +35,14 @@ DECL|macro|POWERTEC_INTR_STATUS
 mdefine_line|#define POWERTEC_INTR_STATUS&t;0x800
 DECL|macro|POWERTEC_INTR_BIT
 mdefine_line|#define POWERTEC_INTR_BIT&t;0x80
+DECL|macro|POWERTEC_RESET_CONTROL
+mdefine_line|#define POWERTEC_RESET_CONTROL&t;0x406
+DECL|macro|POWERTEC_RESET_BIT
+mdefine_line|#define POWERTEC_RESET_BIT&t;1
+DECL|macro|POWERTEC_TERM_CONTROL
+mdefine_line|#define POWERTEC_TERM_CONTROL&t;0x806
+DECL|macro|POWERTEC_TERM_ENABLE
+mdefine_line|#define POWERTEC_TERM_ENABLE&t;1
 DECL|macro|POWERTEC_INTR_CONTROL
 mdefine_line|#define POWERTEC_INTR_CONTROL&t;0x407
 DECL|macro|POWERTEC_INTR_ENABLE
@@ -47,7 +55,7 @@ mdefine_line|#define VER_MAJOR&t;0
 DECL|macro|VER_MINOR
 mdefine_line|#define VER_MINOR&t;0
 DECL|macro|VER_PATCH
-mdefine_line|#define VER_PATCH&t;1
+mdefine_line|#define VER_PATCH&t;2
 DECL|variable|ecs
 r_static
 r_struct
@@ -57,6 +65,32 @@ id|ecs
 (braket
 id|MAX_ECARDS
 )braket
+suffix:semicolon
+multiline_comment|/*&n; * Use term=0,1,0,0,0 to turn terminators on/off&n; */
+DECL|variable|term
+r_int
+id|term
+(braket
+id|MAX_ECARDS
+)braket
+op_assign
+(brace
+l_int|1
+comma
+l_int|1
+comma
+l_int|1
+comma
+l_int|1
+comma
+l_int|1
+comma
+l_int|1
+comma
+l_int|1
+comma
+l_int|1
+)brace
 suffix:semicolon
 DECL|variable|proc_scsi_powertec
 r_static
@@ -80,7 +114,7 @@ comma
 l_int|2
 )brace
 suffix:semicolon
-multiline_comment|/* Function: void powertecscsi_irqenable(ec, irqnr)&n; * Purpose : Enable interrupts on powertec SCSI card&n; * Params  : ec    - expansion card structure&n; *         : irqnr - interrupt number&n; */
+multiline_comment|/* Prototype: void powertecscsi_irqenable(ec, irqnr)&n; * Purpose  : Enable interrupts on Powertec SCSI card&n; * Params   : ec    - expansion card structure&n; *          : irqnr - interrupt number&n; */
 r_static
 r_void
 DECL|function|powertecscsi_irqenable
@@ -115,7 +149,7 @@ id|port
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Function: void powertecscsi_irqdisable(ec, irqnr)&n; * Purpose : Disable interrupts on powertec SCSI card&n; * Params  : ec    - expansion card structure&n; *         : irqnr - interrupt number&n; */
+multiline_comment|/* Prototype: void powertecscsi_irqdisable(ec, irqnr)&n; * Purpose  : Disable interrupts on Powertec SCSI card&n; * Params   : ec    - expansion card structure&n; *          : irqnr - interrupt number&n; */
 r_static
 r_void
 DECL|function|powertecscsi_irqdisable
@@ -166,7 +200,56 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
-multiline_comment|/* Function: void powertecscsi_intr(int irq, void *dev_id,&n; *&t;&t;&t;&t;    struct pt_regs *regs)&n; * Purpose : handle interrupts from Powertec SCSI card&n; * Params  : irq - interrupt number&n; *&t;     dev_id - user-defined (Scsi_Host structure)&n; *&t;     regs - processor registers at interrupt&n; */
+multiline_comment|/* Prototype: void powertecscsi_terminator_ctl(host, on_off)&n; * Purpose  : Turn the Powertec SCSI terminators on or off&n; * Params   : host   - card to turn on/off&n; *          : on_off - !0 to turn on, 0 to turn off&n; */
+r_static
+r_void
+DECL|function|powertecscsi_terminator_ctl
+id|powertecscsi_terminator_ctl
+c_func
+(paren
+r_struct
+id|Scsi_Host
+op_star
+id|host
+comma
+r_int
+id|on_off
+)paren
+(brace
+id|PowerTecScsi_Info
+op_star
+id|info
+op_assign
+(paren
+id|PowerTecScsi_Info
+op_star
+)paren
+id|host-&gt;hostdata
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|on_off
+)paren
+id|info-&gt;control.terms
+op_assign
+id|POWERTEC_TERM_ENABLE
+suffix:semicolon
+r_else
+id|info-&gt;control.terms
+op_assign
+l_int|0
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|info-&gt;control.terms
+comma
+id|info-&gt;control.term_port
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* Prototype: void powertecscsi_intr(irq, *dev_id, *regs)&n; * Purpose  : handle interrupts from Powertec SCSI card&n; * Params   : irq    - interrupt number&n; *&t;      dev_id - user-defined (Scsi_Host structure)&n; *&t;      regs   - processor registers at interrupt&n; */
 r_static
 r_void
 DECL|function|powertecscsi_intr
@@ -189,7 +272,7 @@ id|regs
 r_struct
 id|Scsi_Host
 op_star
-id|instance
+id|host
 op_assign
 (paren
 r_struct
@@ -201,7 +284,7 @@ suffix:semicolon
 id|fas216_intr
 c_func
 (paren
-id|instance
+id|host
 )paren
 suffix:semicolon
 )brace
@@ -286,7 +369,7 @@ id|len
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Function: fasdmatype_t powertecscsi_dma_setup(instance, SCpnt, direction)&n; * Purpose : initialises DMA/PIO&n; * Params  : instance  - host&n; *&t;     SCpnt     - command&n; *&t;     direction - DMA on to/off of card&n; * Returns : type of transfer to be performed&n; */
+multiline_comment|/* Prototype: fasdmatype_t powertecscsi_dma_setup(host, SCpnt, direction, min_type)&n; * Purpose  : initialises DMA/PIO&n; * Params   : host      - host&n; *&t;      SCpnt     - command&n; *&t;      direction - DMA on to/off of card&n; *&t;      min_type  - minimum DMA support that we must have for this transfer&n; * Returns  : type of transfer to be performed&n; */
 r_static
 id|fasdmatype_t
 DECL|function|powertecscsi_dma_setup
@@ -296,7 +379,7 @@ c_func
 r_struct
 id|Scsi_Host
 op_star
-id|instance
+id|host
 comma
 id|Scsi_Pointer
 op_star
@@ -304,29 +387,46 @@ id|SCp
 comma
 id|fasdmadir_t
 id|direction
+comma
+id|fasdmatype_t
+id|min_type
 )paren
 (brace
+id|PowerTecScsi_Info
+op_star
+id|info
+op_assign
+(paren
+id|PowerTecScsi_Info
+op_star
+)paren
+id|host-&gt;hostdata
+suffix:semicolon
+r_int
+id|dmach
+op_assign
+id|host-&gt;dma_channel
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|instance-&gt;dma_channel
+id|dmach
 op_ne
 id|NO_DMA
 op_logical_and
+(paren
+id|min_type
+op_eq
+id|fasdma_real_all
+op_logical_or
 id|SCp-&gt;this_residual
 op_ge
 l_int|512
 )paren
+)paren
 (brace
 r_int
 id|buf
-suffix:semicolon
-r_static
-id|dmasg_t
-id|dmasg
-(braket
-l_int|256
-)braket
 suffix:semicolon
 r_for
 c_loop
@@ -338,12 +438,16 @@ suffix:semicolon
 id|buf
 op_le
 id|SCp-&gt;buffers_residual
+op_logical_and
+id|buf
+OL
+id|NR_SG
 suffix:semicolon
 id|buf
 op_increment
 )paren
 (brace
-id|dmasg
+id|info-&gt;dmasg
 (braket
 id|buf
 )braket
@@ -365,7 +469,7 @@ dot
 id|address
 )paren
 suffix:semicolon
-id|dmasg
+id|info-&gt;dmasg
 (braket
 id|buf
 )braket
@@ -400,7 +504,7 @@ id|direction
 )paren
 suffix:semicolon
 )brace
-id|dmasg
+id|info-&gt;dmasg
 (braket
 l_int|0
 )braket
@@ -417,7 +521,7 @@ r_int
 id|SCp-&gt;ptr
 )paren
 suffix:semicolon
-id|dmasg
+id|info-&gt;dmasg
 (braket
 l_int|0
 )braket
@@ -439,15 +543,15 @@ suffix:semicolon
 id|disable_dma
 c_func
 (paren
-id|instance-&gt;dma_channel
+id|dmach
 )paren
 suffix:semicolon
 id|set_dma_sg
 c_func
 (paren
-id|instance-&gt;dma_channel
+id|dmach
 comma
-id|dmasg
+id|info-&gt;dmasg
 comma
 id|buf
 )paren
@@ -455,7 +559,7 @@ suffix:semicolon
 id|set_dma_mode
 c_func
 (paren
-id|instance-&gt;dma_channel
+id|dmach
 comma
 id|direction
 op_eq
@@ -470,19 +574,19 @@ suffix:semicolon
 id|enable_dma
 c_func
 (paren
-id|instance-&gt;dma_channel
+id|dmach
 )paren
 suffix:semicolon
 r_return
 id|fasdma_real_all
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * We don&squot;t do DMA, we only do slow PIO&n;&t; */
+multiline_comment|/*&n;&t; * If we&squot;re not doing DMA,&n;&t; *  we&squot;ll do slow PIO&n;&t; */
 r_return
-id|fasdma_none
+id|fasdma_pio
 suffix:semicolon
 )brace
-multiline_comment|/* Function: int powertecscsi_dma_stop(instance, SCpnt)&n; * Purpose : stops DMA/PIO&n; * Params  : instance  - host&n; *&t;     SCpnt     - command&n; */
+multiline_comment|/* Prototype: int powertecscsi_dma_stop(host, SCpnt)&n; * Purpose  : stops DMA/PIO&n; * Params   : host  - host&n; *&t;      SCpnt - command&n; */
 r_static
 r_void
 DECL|function|powertecscsi_dma_stop
@@ -492,7 +596,7 @@ c_func
 r_struct
 id|Scsi_Host
 op_star
-id|instance
+id|host
 comma
 id|Scsi_Pointer
 op_star
@@ -502,18 +606,18 @@ id|SCp
 r_if
 c_cond
 (paren
-id|instance-&gt;dma_channel
+id|host-&gt;dma_channel
 op_ne
 id|NO_DMA
 )paren
 id|disable_dma
 c_func
 (paren
-id|instance-&gt;dma_channel
+id|host-&gt;dma_channel
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Function: int powertecscsi_detect(Scsi_Host_Template * tpnt)&n; * Purpose : initialises PowerTec SCSI driver&n; * Params  : tpnt - template for this SCSI adapter&n; * Returns : &gt;0 if host found, 0 otherwise.&n; */
+multiline_comment|/* Prototype: int powertecscsi_detect(Scsi_Host_Template * tpnt)&n; * Purpose  : initialises PowerTec SCSI driver&n; * Params   : tpnt - template for this SCSI adapter&n; * Returns  : &gt;0 if host found, 0 otherwise.&n; */
 r_int
 DECL|function|powertecscsi_detect
 id|powertecscsi_detect
@@ -549,7 +653,7 @@ suffix:semicolon
 r_struct
 id|Scsi_Host
 op_star
-id|instance
+id|host
 suffix:semicolon
 id|tpnt-&gt;proc_dir
 op_assign
@@ -617,7 +721,7 @@ id|count
 )braket
 )paren
 suffix:semicolon
-id|instance
+id|host
 op_assign
 id|scsi_register
 c_func
@@ -634,7 +738,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|instance
+id|host
 )paren
 (brace
 id|ecard_release
@@ -649,7 +753,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|instance-&gt;io_port
+id|host-&gt;io_port
 op_assign
 id|ecard_address
 c_func
@@ -661,10 +765,10 @@ id|count
 comma
 id|ECARD_IOC
 comma
-l_int|0
+id|ECARD_FAST
 )paren
 suffix:semicolon
-id|instance-&gt;irq
+id|host-&gt;irq
 op_assign
 id|ecs
 (braket
@@ -672,6 +776,99 @@ id|count
 )braket
 op_member_access_from_pointer
 id|irq
+suffix:semicolon
+id|host-&gt;dma_channel
+op_assign
+id|ecs
+(braket
+id|count
+)braket
+op_member_access_from_pointer
+id|dma
+suffix:semicolon
+id|info
+op_assign
+(paren
+id|PowerTecScsi_Info
+op_star
+)paren
+id|host-&gt;hostdata
+suffix:semicolon
+id|info-&gt;control.term_port
+op_assign
+id|host-&gt;io_port
+op_plus
+id|POWERTEC_TERM_CONTROL
+suffix:semicolon
+id|info-&gt;control.terms
+op_assign
+id|term
+(braket
+id|count
+)braket
+ques
+c_cond
+id|POWERTEC_TERM_ENABLE
+suffix:colon
+l_int|0
+suffix:semicolon
+id|powertecscsi_terminator_ctl
+c_func
+(paren
+id|host
+comma
+id|info-&gt;control.terms
+)paren
+suffix:semicolon
+id|info-&gt;info.scsi.io_port
+op_assign
+id|host-&gt;io_port
+op_plus
+id|POWERTEC_FAS216_OFFSET
+suffix:semicolon
+id|info-&gt;info.scsi.io_shift
+op_assign
+id|POWERTEC_FAS216_SHIFT
+suffix:semicolon
+id|info-&gt;info.scsi.irq
+op_assign
+id|host-&gt;irq
+suffix:semicolon
+id|info-&gt;info.ifcfg.clockrate
+op_assign
+id|POWERTEC_XTALFREQ
+suffix:semicolon
+id|info-&gt;info.ifcfg.select_timeout
+op_assign
+l_int|255
+suffix:semicolon
+id|info-&gt;info.ifcfg.asyncperiod
+op_assign
+id|POWERTEC_ASYNC_PERIOD
+suffix:semicolon
+id|info-&gt;info.ifcfg.sync_max_depth
+op_assign
+id|POWERTEC_SYNC_DEPTH
+suffix:semicolon
+id|info-&gt;info.ifcfg.cntl3
+op_assign
+id|CNTL3_BS8
+op_or
+id|CNTL3_FASTSCSI
+op_or
+id|CNTL3_FASTCLK
+suffix:semicolon
+id|info-&gt;info.dma.setup
+op_assign
+id|powertecscsi_dma_setup
+suffix:semicolon
+id|info-&gt;info.dma.pseudo
+op_assign
+l_int|NULL
+suffix:semicolon
+id|info-&gt;info.dma.stop
+op_assign
+id|powertecscsi_dma_stop
 suffix:semicolon
 id|ecs
 (braket
@@ -688,7 +885,7 @@ op_star
 id|ioaddr
 c_func
 (paren
-id|instance-&gt;io_port
+id|host-&gt;io_port
 op_plus
 id|POWERTEC_INTR_STATUS
 )paren
@@ -714,7 +911,7 @@ r_void
 op_star
 )paren
 (paren
-id|instance-&gt;io_port
+id|host-&gt;io_port
 op_plus
 id|POWERTEC_INTR_CONTROL
 )paren
@@ -736,7 +933,7 @@ suffix:semicolon
 id|request_region
 c_func
 (paren
-id|instance-&gt;io_port
+id|host-&gt;io_port
 op_plus
 id|POWERTEC_FAS216_OFFSET
 comma
@@ -750,10 +947,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|host-&gt;irq
+op_ne
+id|NO_IRQ
+op_logical_and
 id|request_irq
 c_func
 (paren
-id|instance-&gt;irq
+id|host-&gt;irq
 comma
 id|powertecscsi_intr
 comma
@@ -761,7 +962,7 @@ id|SA_INTERRUPT
 comma
 l_string|&quot;powertec&quot;
 comma
-id|instance
+id|host
 )paren
 )paren
 (brace
@@ -770,36 +971,31 @@ c_func
 (paren
 l_string|&quot;scsi%d: IRQ%d not free, interrupts disabled&bslash;n&quot;
 comma
-id|instance-&gt;host_no
+id|host-&gt;host_no
 comma
-id|instance-&gt;irq
+id|host-&gt;irq
 )paren
 suffix:semicolon
-id|instance-&gt;irq
+id|host-&gt;irq
+op_assign
+id|NO_IRQ
+suffix:semicolon
+id|info-&gt;info.scsi.irq
 op_assign
 id|NO_IRQ
 suffix:semicolon
 )brace
-id|info
-op_assign
-(paren
-id|PowerTecScsi_Info
-op_star
-)paren
-id|instance-&gt;hostdata
-suffix:semicolon
-id|instance-&gt;dma_channel
-op_assign
-l_int|3
-suffix:semicolon
-multiline_comment|/* slot 1 */
 r_if
 c_cond
 (paren
+id|host-&gt;dma_channel
+op_ne
+id|NO_DMA
+op_logical_and
 id|request_dma
 c_func
 (paren
-id|instance-&gt;dma_channel
+id|host-&gt;dma_channel
 comma
 l_string|&quot;powertec&quot;
 )paren
@@ -810,62 +1006,20 @@ c_func
 (paren
 l_string|&quot;scsi%d: DMA%d not free, DMA disabled&bslash;n&quot;
 comma
-id|instance-&gt;host_no
+id|host-&gt;host_no
 comma
-id|instance-&gt;dma_channel
+id|host-&gt;dma_channel
 )paren
 suffix:semicolon
-id|instance-&gt;dma_channel
+id|host-&gt;dma_channel
 op_assign
 id|NO_DMA
 suffix:semicolon
 )brace
-id|info-&gt;info.scsi.io_port
-op_assign
-id|instance-&gt;io_port
-op_plus
-id|POWERTEC_FAS216_OFFSET
-suffix:semicolon
-id|info-&gt;info.scsi.io_shift
-op_assign
-id|POWERTEC_FAS216_SHIFT
-suffix:semicolon
-id|info-&gt;info.scsi.irq
-op_assign
-id|instance-&gt;irq
-suffix:semicolon
-id|info-&gt;info.ifcfg.clockrate
-op_assign
-id|POWERTEC_XTALFREQ
-suffix:semicolon
-id|info-&gt;info.ifcfg.select_timeout
-op_assign
-l_int|255
-suffix:semicolon
-id|info-&gt;info.ifcfg.asyncperiod
-op_assign
-id|POWERTEC_ASYNC_PERIOD
-suffix:semicolon
-id|info-&gt;info.ifcfg.sync_max_depth
-op_assign
-id|POWERTEC_SYNC_DEPTH
-suffix:semicolon
-id|info-&gt;info.dma.setup
-op_assign
-id|powertecscsi_dma_setup
-suffix:semicolon
-id|info-&gt;info.dma.pseudo
-op_assign
-l_int|NULL
-suffix:semicolon
-id|info-&gt;info.dma.stop
-op_assign
-id|powertecscsi_dma_stop
-suffix:semicolon
 id|fas216_init
 c_func
 (paren
-id|instance
+id|host
 )paren
 suffix:semicolon
 op_increment
@@ -876,7 +1030,7 @@ r_return
 id|count
 suffix:semicolon
 )brace
-multiline_comment|/* Function: int powertecscsi_release(struct Scsi_Host * host)&n; * Purpose : releases all resources used by this adapter&n; * Params  : host - driver host structure to return info for.&n; * Returns : nothing&n; */
+multiline_comment|/* Prototype: int powertecscsi_release(struct Scsi_Host * host)&n; * Purpose  : releases all resources used by this adapter&n; * Params   : host - driver host structure to return info for.&n; */
 DECL|function|powertecscsi_release
 r_int
 id|powertecscsi_release
@@ -885,7 +1039,7 @@ c_func
 r_struct
 id|Scsi_Host
 op_star
-id|instance
+id|host
 )paren
 (brace
 r_int
@@ -894,41 +1048,41 @@ suffix:semicolon
 id|fas216_release
 c_func
 (paren
-id|instance
+id|host
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|instance-&gt;irq
+id|host-&gt;irq
 op_ne
 id|NO_IRQ
 )paren
 id|free_irq
 c_func
 (paren
-id|instance-&gt;irq
+id|host-&gt;irq
 comma
-id|instance
+id|host
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|instance-&gt;dma_channel
+id|host-&gt;dma_channel
 op_ne
 id|NO_DMA
 )paren
 id|free_dma
 c_func
 (paren
-id|instance-&gt;dma_channel
+id|host-&gt;dma_channel
 )paren
 suffix:semicolon
 id|release_region
 c_func
 (paren
-id|instance-&gt;io_port
+id|host-&gt;io_port
 op_plus
 id|POWERTEC_FAS216_OFFSET
 comma
@@ -959,7 +1113,7 @@ id|ecs
 id|i
 )braket
 op_logical_and
-id|instance-&gt;io_port
+id|host-&gt;io_port
 op_eq
 id|ecard_address
 c_func
@@ -971,7 +1125,7 @@ id|i
 comma
 id|ECARD_IOC
 comma
-l_int|0
+id|ECARD_FAST
 )paren
 )paren
 id|ecard_release
@@ -987,7 +1141,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Function: const char *powertecscsi_info(struct Scsi_Host * host)&n; * Purpose : returns a descriptive string about this interface,&n; * Params  : host - driver host structure to return info for.&n; * Returns : pointer to a static buffer containing null terminated string.&n; */
+multiline_comment|/* Prototype: const char *powertecscsi_info(struct Scsi_Host * host)&n; * Purpose  : returns a descriptive string about this interface,&n; * Params   : host - driver host structure to return info for.&n; * Returns  : pointer to a static buffer containing null terminated string.&n; */
 DECL|function|powertecscsi_info
 r_const
 r_char
@@ -1032,7 +1186,7 @@ c_func
 (paren
 id|string
 comma
-l_string|&quot;%s at port %X &quot;
+l_string|&quot;%s at port %lX &quot;
 comma
 id|host-&gt;hostt-&gt;name
 comma
@@ -1117,11 +1271,162 @@ comma
 id|info-&gt;info.scsi.type
 )paren
 suffix:semicolon
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot; terminators %s&quot;
+comma
+id|info-&gt;control.terms
+ques
+c_cond
+l_string|&quot;on&quot;
+suffix:colon
+l_string|&quot;off&quot;
+)paren
+suffix:semicolon
 r_return
 id|string
 suffix:semicolon
 )brace
-multiline_comment|/* Function: int powertecscsi_proc_info(char *buffer, char **start, off_t offset,&n; *&t;&t;&t;&t;&t;int length, int host_no, int inout)&n; * Purpose : Return information about the driver to a user process accessing&n; *&t;     the /proc filesystem.&n; * Params  : buffer - a buffer to write information to&n; *&t;     start  - a pointer into this buffer set by this routine to the start&n; *&t;&t;      of the required information.&n; *&t;     offset - offset into information that we have read upto.&n; *&t;     length - length of buffer&n; *&t;     host_no - host number to return information for&n; *&t;     inout  - 0 for reading, 1 for writing.&n; * Returns : length of data written to buffer.&n; */
+multiline_comment|/* Prototype: int powertecscsi_set_proc_info(struct Scsi_Host *host, char *buffer, int length)&n; * Purpose  : Set a driver specific function&n; * Params   : host   - host to setup&n; *          : buffer - buffer containing string describing operation&n; *          : length - length of string&n; * Returns  : -EINVAL, or 0&n; */
+r_static
+r_int
+DECL|function|powertecscsi_set_proc_info
+id|powertecscsi_set_proc_info
+c_func
+(paren
+r_struct
+id|Scsi_Host
+op_star
+id|host
+comma
+r_char
+op_star
+id|buffer
+comma
+r_int
+id|length
+)paren
+(brace
+r_int
+id|ret
+op_assign
+id|length
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|length
+op_ge
+l_int|12
+op_logical_and
+id|strncmp
+c_func
+(paren
+id|buffer
+comma
+l_string|&quot;POWERTECSCSI&quot;
+comma
+l_int|12
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+id|buffer
+op_add_assign
+l_int|12
+suffix:semicolon
+id|length
+op_sub_assign
+l_int|12
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|length
+op_ge
+l_int|5
+op_logical_and
+id|strncmp
+c_func
+(paren
+id|buffer
+comma
+l_string|&quot;term=&quot;
+comma
+l_int|5
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|buffer
+(braket
+l_int|5
+)braket
+op_eq
+l_char|&squot;1&squot;
+)paren
+id|powertecscsi_terminator_ctl
+c_func
+(paren
+id|host
+comma
+l_int|1
+)paren
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|buffer
+(braket
+l_int|5
+)braket
+op_eq
+l_char|&squot;0&squot;
+)paren
+id|powertecscsi_terminator_ctl
+c_func
+(paren
+id|host
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_else
+id|ret
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+r_else
+id|ret
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+r_else
+id|ret
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
+)brace
+multiline_comment|/* Prototype: int powertecscsi_proc_info(char *buffer, char **start, off_t offset,&n; *&t;&t;&t;&t;&t;int length, int host_no, int inout)&n; * Purpose  : Return information about the driver to a user process accessing&n; *&t;      the /proc filesystem.&n; * Params   : buffer - a buffer to write information to&n; *&t;      start  - a pointer into this buffer set by this routine to the start&n; *&t;&t;       of the required information.&n; *&t;      offset - offset into information that we have read upto.&n; *&t;      length - length of buffer&n; *&t;      host_no - host number to return information for&n; *&t;      inout  - 0 for reading, 1 for writing.&n; * Returns  : length of data written to buffer.&n; */
 DECL|function|powertecscsi_proc_info
 r_int
 id|powertecscsi_proc_info
@@ -1198,14 +1503,6 @@ id|host
 r_return
 l_int|0
 suffix:semicolon
-id|info
-op_assign
-(paren
-id|PowerTecScsi_Info
-op_star
-)paren
-id|host-&gt;hostdata
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1214,8 +1511,23 @@ op_eq
 l_int|1
 )paren
 r_return
-op_minus
-id|EINVAL
+id|powertecscsi_set_proc_info
+c_func
+(paren
+id|host
+comma
+id|buffer
+comma
+id|length
+)paren
+suffix:semicolon
+id|info
+op_assign
+(paren
+id|PowerTecScsi_Info
+op_star
+)paren
+id|host-&gt;hostdata
 suffix:semicolon
 id|begin
 op_assign
@@ -1246,8 +1558,8 @@ id|buffer
 op_plus
 id|pos
 comma
-l_string|&quot;Address: %08X    IRQ : %d     DMA : %d&bslash;n&quot;
-l_string|&quot;FAS    : %s&bslash;n&bslash;n&quot;
+l_string|&quot;Address: %08lX    IRQ : %d     DMA : %d&bslash;n&quot;
+l_string|&quot;FAS    : %-10s  TERM: %-3s&bslash;n&bslash;n&quot;
 l_string|&quot;Statistics:&bslash;n&quot;
 comma
 id|host-&gt;io_port
@@ -1257,6 +1569,13 @@ comma
 id|host-&gt;dma_channel
 comma
 id|info-&gt;info.scsi.type
+comma
+id|info-&gt;control.terms
+ques
+c_cond
+l_string|&quot;on&quot;
+suffix:colon
+l_string|&quot;off&quot;
 )paren
 suffix:semicolon
 id|pos
@@ -1268,11 +1587,11 @@ id|buffer
 op_plus
 id|pos
 comma
-l_string|&quot;Queued commands: %-10d   Issued commands: %-10d&bslash;n&quot;
-l_string|&quot;Done commands  : %-10d   Reads          : %-10d&bslash;n&quot;
-l_string|&quot;Writes         : %-10d   Others         : %-10d&bslash;n&quot;
-l_string|&quot;Disconnects    : %-10d   Aborts         : %-10d&bslash;n&quot;
-l_string|&quot;Resets         : %-10d&bslash;n&quot;
+l_string|&quot;Queued commands: %-10u   Issued commands: %-10u&bslash;n&quot;
+l_string|&quot;Done commands  : %-10u   Reads          : %-10u&bslash;n&quot;
+l_string|&quot;Writes         : %-10u   Others         : %-10u&bslash;n&quot;
+l_string|&quot;Disconnects    : %-10u   Aborts         : %-10u&bslash;n&quot;
+l_string|&quot;Resets         : %-10u&bslash;n&quot;
 comma
 id|info-&gt;info.stats.queues
 comma

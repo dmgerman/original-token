@@ -1258,6 +1258,12 @@ comma
 id|inode-&gt;i_nlink
 )paren
 suffix:semicolon
+id|affs_free_prealloc
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1552,6 +1558,7 @@ r_return
 id|inode
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Add an entry to a directory. Create the header block&n; * and insert it into the hash table.&n; */
 r_int
 DECL|function|affs_add_entry
 id|affs_add_entry

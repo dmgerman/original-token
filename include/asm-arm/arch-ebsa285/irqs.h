@@ -61,4 +61,6 @@ mdefine_line|#define IRQ_PCIPARITY&t;&t;31
 multiline_comment|/*&n; * Now map them to the Linux interrupts&n; */
 DECL|macro|IRQ_TIMER
 mdefine_line|#define IRQ_TIMER&t;&t;IRQ_TIMER1
+DECL|macro|irq_cannonicalize
+mdefine_line|#define irq_cannonicalize(i)&t;(i)
 eof

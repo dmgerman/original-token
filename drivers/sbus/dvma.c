@@ -242,8 +242,7 @@ DECL|function|__initfunc
 id|__initfunc
 c_func
 (paren
-r_int
-r_int
+r_void
 id|dvma_init
 c_func
 (paren
@@ -251,10 +250,6 @@ r_struct
 id|linux_sbus
 op_star
 id|sbus
-comma
-r_int
-r_int
-id|memory_start
 )paren
 )paren
 (brace
@@ -345,19 +340,16 @@ suffix:semicolon
 multiline_comment|/* Found one... */
 id|dma
 op_assign
+id|kmalloc
+c_func
 (paren
-r_struct
-id|Linux_SBus_DMA
-op_star
-)paren
-id|memory_start
-suffix:semicolon
-id|memory_start
-op_add_assign
 r_sizeof
 (paren
 r_struct
 id|Linux_SBus_DMA
+)paren
+comma
+id|GFP_ATOMIC
 )paren
 suffix:semicolon
 id|dma-&gt;SBus_dev
@@ -482,9 +474,6 @@ suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* while(this_dev) */
-r_return
-id|memory_start
-suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_SUN4
 macro_line|#include &lt;asm/sun4paddr.h&gt;
@@ -492,14 +481,11 @@ DECL|function|__initfunc
 id|__initfunc
 c_func
 (paren
-r_int
-r_int
+r_void
 id|sun4_dvma_init
 c_func
 (paren
-r_int
-r_int
-id|memory_start
+r_void
 )paren
 )paren
 (brace
@@ -515,19 +501,16 @@ id|dchain
 suffix:semicolon
 id|dma
 op_assign
+id|kmalloc
+c_func
 (paren
-r_struct
-id|Linux_SBus_DMA
-op_star
-)paren
-id|memory_start
-suffix:semicolon
-id|memory_start
-op_add_assign
 r_sizeof
 (paren
 r_struct
 id|Linux_SBus_DMA
+)paren
+comma
+id|GFP_ATOMIC
 )paren
 suffix:semicolon
 multiline_comment|/* No SBUS */
@@ -574,9 +557,6 @@ id|dma
 comma
 l_int|0
 )paren
-suffix:semicolon
-r_return
-id|memory_start
 suffix:semicolon
 )brace
 macro_line|#endif

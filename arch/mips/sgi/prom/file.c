@@ -1,6 +1,10 @@
-multiline_comment|/* $Id: file.c,v 1.1.1.1 1997/06/01 03:16:40 ralf Exp $&n; * file.c: ARCS firmware interface to files.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/*&n; * file.c: ARCS firmware interface to files.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: file.c,v 1.2 1998/05/01 01:35:24 ralf Exp $&n; */
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;
-DECL|function|prom_getvdirent
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|prom_getvdirent
 c_func
@@ -23,6 +27,7 @@ r_int
 op_star
 id|cnt
 )paren
+)paren
 (brace
 r_return
 id|romvec
@@ -40,7 +45,10 @@ id|cnt
 )paren
 suffix:semicolon
 )brace
-DECL|function|prom_open
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|prom_open
 c_func
@@ -58,6 +66,7 @@ r_int
 op_star
 id|fd
 )paren
+)paren
 (brace
 r_return
 id|romvec
@@ -73,7 +82,10 @@ id|fd
 )paren
 suffix:semicolon
 )brace
-DECL|function|prom_close
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|prom_close
 c_func
@@ -81,6 +93,7 @@ c_func
 r_int
 r_int
 id|fd
+)paren
 )paren
 (brace
 r_return
@@ -93,7 +106,10 @@ id|fd
 )paren
 suffix:semicolon
 )brace
-DECL|function|prom_read
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|prom_read
 c_func
@@ -115,6 +131,7 @@ r_int
 op_star
 id|cnt
 )paren
+)paren
 (brace
 r_return
 id|romvec
@@ -132,7 +149,10 @@ id|cnt
 )paren
 suffix:semicolon
 )brace
-DECL|function|prom_getrstatus
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|prom_getrstatus
 c_func
@@ -140,6 +160,7 @@ c_func
 r_int
 r_int
 id|fd
+)paren
 )paren
 (brace
 r_return
@@ -152,7 +173,10 @@ id|fd
 )paren
 suffix:semicolon
 )brace
-DECL|function|prom_write
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|prom_write
 c_func
@@ -174,6 +198,7 @@ r_int
 op_star
 id|cnt
 )paren
+)paren
 (brace
 r_return
 id|romvec
@@ -191,7 +216,10 @@ id|cnt
 )paren
 suffix:semicolon
 )brace
-DECL|function|prom_seek
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|prom_seek
 c_func
@@ -209,6 +237,7 @@ r_enum
 id|linux_seekmode
 id|sm
 )paren
+)paren
 (brace
 r_return
 id|romvec
@@ -224,7 +253,10 @@ id|sm
 )paren
 suffix:semicolon
 )brace
-DECL|function|prom_mount
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|prom_mount
 c_func
@@ -236,6 +268,7 @@ comma
 r_enum
 id|linux_mountops
 id|op
+)paren
 )paren
 (brace
 r_return
@@ -250,7 +283,10 @@ id|op
 )paren
 suffix:semicolon
 )brace
-DECL|function|prom_getfinfo
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|prom_getfinfo
 c_func
@@ -263,6 +299,7 @@ r_struct
 id|linux_finfo
 op_star
 id|buf
+)paren
 )paren
 (brace
 r_return
@@ -277,7 +314,10 @@ id|buf
 )paren
 suffix:semicolon
 )brace
-DECL|function|prom_setfinfo
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|prom_setfinfo
 c_func
@@ -293,6 +333,7 @@ comma
 r_int
 r_int
 id|msk
+)paren
 )paren
 (brace
 r_return

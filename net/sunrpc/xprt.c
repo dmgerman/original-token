@@ -4903,7 +4903,7 @@ c_cond
 (paren
 id|sock-&gt;ops-&gt;family
 op_ne
-id|AF_INET
+id|PF_INET
 )paren
 (brace
 id|printk
@@ -5163,7 +5163,7 @@ op_assign
 id|sock_create
 c_func
 (paren
-id|AF_INET
+id|PF_INET
 comma
 id|type
 comma

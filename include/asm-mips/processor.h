@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * include/asm-mips/processor.h&n; *&n; * Copyright (C) 1994  Waldorf Electronics&n; * written by Ralf Baechle&n; * Modified further for R[236]000 compatibility by Paul M. Antoine&n; *&n; * $Id: processor.h,v 1.5 1997/12/01 16:48:39 ralf Exp $&n; */
+multiline_comment|/*&n; * include/asm-mips/processor.h&n; *&n; * Copyright (C) 1994  Waldorf Electronics&n; * written by Ralf Baechle&n; * Modified further for R[236]000 compatibility by Paul M. Antoine&n; *&n; * $Id: processor.h,v 1.20 1998/05/04 09:18:59 ralf Exp $&n; */
 macro_line|#ifndef __ASM_MIPS_PROCESSOR_H
 DECL|macro|__ASM_MIPS_PROCESSOR_H
 mdefine_line|#define __ASM_MIPS_PROCESSOR_H
@@ -42,7 +42,9 @@ DECL|macro|TASK_SIZE
 mdefine_line|#define TASK_SIZE&t;(0x80000000UL)
 multiline_comment|/* This decides where the kernel will search for a free chunk of vm&n; * space during mmap&squot;s.&n; */
 DECL|macro|TASK_UNMAPPED_BASE
-mdefine_line|#define TASK_UNMAPPED_BASE&t;(TASK_SIZE / 3)
+mdefine_line|#define TASK_UNMAPPED_BASE(off)&t;(TASK_SIZE / 3)
+DECL|macro|TASK_UNMAPPED_ALIGN
+mdefine_line|#define TASK_UNMAPPED_ALIGN(addr, off)&t;PAGE_ALIGN(addr)
 multiline_comment|/*&n; * Size of io_bitmap in longwords: 32 is ports 0-0x3ff.&n; */
 DECL|macro|IO_BITMAP_SIZE
 mdefine_line|#define IO_BITMAP_SIZE&t;32
@@ -117,15 +119,6 @@ DECL|member|reg16
 r_int
 r_int
 id|reg16
-id|__attribute__
-(paren
-(paren
-id|aligned
-(paren
-l_int|8
-)paren
-)paren
-)paren
 suffix:semicolon
 DECL|member|reg17
 DECL|member|reg18
@@ -150,14 +143,11 @@ id|reg22
 comma
 id|reg23
 suffix:semicolon
-DECL|member|reg28
 DECL|member|reg29
 DECL|member|reg30
 DECL|member|reg31
 r_int
 r_int
-id|reg28
-comma
 id|reg29
 comma
 id|reg30
@@ -175,15 +165,6 @@ DECL|member|fpu
 r_union
 id|mips_fpu_union
 id|fpu
-id|__attribute__
-(paren
-(paren
-id|aligned
-(paren
-l_int|8
-)paren
-)paren
-)paren
 suffix:semicolon
 multiline_comment|/* Other stuff associated with the thread. */
 DECL|member|cp0_badvaddr
@@ -191,6 +172,13 @@ r_int
 r_int
 id|cp0_badvaddr
 suffix:semicolon
+multiline_comment|/* Last user fault */
+DECL|member|cp0_baduaddr
+r_int
+r_int
+id|cp0_baduaddr
+suffix:semicolon
+multiline_comment|/* Last kernel fault accessing USEG */
 DECL|member|error_code
 r_int
 r_int
@@ -201,12 +189,6 @@ r_int
 r_int
 id|trap_no
 suffix:semicolon
-DECL|member|ksp
-r_int
-r_int
-id|ksp
-suffix:semicolon
-multiline_comment|/* Top of kernel stack   */
 DECL|member|pg_dir
 r_int
 r_int
@@ -243,7 +225,7 @@ macro_line|#endif /* !defined (__LANGUAGE_ASSEMBLY__) */
 DECL|macro|INIT_MMAP
 mdefine_line|#define INIT_MMAP { &amp;init_mm, KSEG0, KSEG1, PAGE_SHARED, &bslash;&n;                    VM_READ | VM_WRITE | VM_EXEC, NULL, &amp;init_mm.mmap }
 DECL|macro|INIT_TSS
-mdefine_line|#define INIT_TSS  { &bslash;&n;        /* &bslash;&n;         * saved main processor registers &bslash;&n;         */ &bslash;&n;&t;0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;&t;            0, 0, 0, 0, &bslash;&n;&t;/* &bslash;&n;&t; * saved cp0 stuff &bslash;&n;&t; */ &bslash;&n;&t;0, &bslash;&n;&t;/* &bslash;&n;&t; * saved fpu/fpu emulator stuff &bslash;&n;&t; */ &bslash;&n;&t;INIT_FPU, &bslash;&n;&t;/* &bslash;&n;&t; * Other stuff associated with the process &bslash;&n;&t; */ &bslash;&n;&t;0, 0, 0, (unsigned long)&amp;init_task_union + KERNEL_STACK_SIZE - 32, &bslash;&n;&t;(unsigned long) swapper_pg_dir, &bslash;&n;&t;/* &bslash;&n;&t; * For now the default is to fix address errors &bslash;&n;&t; */ &bslash;&n;&t;MF_FIXADE, 0, 0, 0 &bslash;&n;}
+mdefine_line|#define INIT_TSS  { &bslash;&n;        /* &bslash;&n;         * saved main processor registers &bslash;&n;         */ &bslash;&n;&t;0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;&t;               0, 0, 0, &bslash;&n;&t;/* &bslash;&n;&t; * saved cp0 stuff &bslash;&n;&t; */ &bslash;&n;&t;0, &bslash;&n;&t;/* &bslash;&n;&t; * saved fpu/fpu emulator stuff &bslash;&n;&t; */ &bslash;&n;&t;INIT_FPU, &bslash;&n;&t;/* &bslash;&n;&t; * Other stuff associated with the process &bslash;&n;&t; */ &bslash;&n;&t;0, 0, 0, 0, (unsigned long) swapper_pg_dir, &bslash;&n;&t;/* &bslash;&n;&t; * For now the default is to fix address errors &bslash;&n;&t; */ &bslash;&n;&t;MF_FIXADE, { 0 }, 0, 0 &bslash;&n;}
 macro_line|#ifdef __KERNEL__
 DECL|macro|KERNEL_STACK_SIZE
 mdefine_line|#define KERNEL_STACK_SIZE 8192
@@ -311,6 +293,18 @@ l_int|17
 )braket
 suffix:semicolon
 )brace
+r_extern
+r_int
+(paren
+op_star
+id|user_mode
+)paren
+(paren
+r_struct
+id|pt_regs
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Do necessary setup to start up a newly executed thread.&n; */
 r_extern
 r_void
@@ -331,19 +325,6 @@ r_int
 id|sp
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Does the process account for user or for system time?&n; */
-r_extern
-r_int
-(paren
-op_star
-id|running_in_user_mode
-)paren
-(paren
-r_void
-)paren
-suffix:semicolon
-DECL|macro|USES_USER_TIME
-mdefine_line|#define USES_USER_TIME(regs) running_in_user_mode()
 multiline_comment|/* Allocation and freeing of basic task resources. */
 multiline_comment|/*&n; * NOTE! The task struct and the stack go together&n; */
 DECL|macro|alloc_task_struct

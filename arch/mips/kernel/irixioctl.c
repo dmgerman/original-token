@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: irixioctl.c,v 1.2 1997/12/02 05:51:06 ralf Exp $&n; * irixioctl.c: A fucking mess...&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/* $Id: irixioctl.c,v 1.6 1998/05/01 01:33:59 ralf Exp $&n; * irixioctl.c: A fucking mess...&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -237,13 +237,13 @@ comma
 op_star
 id|rtp
 suffix:semicolon
+id|mm_segment_t
+id|old_fs
+suffix:semicolon
 r_int
 id|error
 op_assign
 l_int|0
-suffix:semicolon
-r_int
-id|old_fs
 suffix:semicolon
 id|lock_kernel
 c_func
@@ -1171,7 +1171,7 @@ r_char
 op_star
 id|msg
 op_assign
-l_string|&quot;Unimplemented IOCTL cmd tell dm@engr.sgi.com&bslash;n&quot;
+l_string|&quot;Unimplemented IOCTL cmd tell linux@engr.sgi.com&bslash;n&quot;
 suffix:semicolon
 macro_line|#ifdef DEBUG_IOCTLS
 id|printk

@@ -24,16 +24,6 @@ id|xchg_str
 op_assign
 l_string|&quot;xchg&quot;
 suffix:semicolon
-multiline_comment|/* arch/dma.h */
-DECL|variable|dma_str
-r_const
-r_char
-id|dma_str
-(braket
-)braket
-op_assign
-l_string|&quot;%s: dma %d not supported&bslash;n&quot;
-suffix:semicolon
 multiline_comment|/*&n; * sys_pipe() is the normal C calling standard for creating&n; * a pipe. It&squot;s not the way unix traditionally does this, though.&n; */
 DECL|function|sys_pipe
 id|asmlinkage

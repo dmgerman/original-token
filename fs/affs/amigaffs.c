@@ -22,7 +22,7 @@ id|ErrorBuffer
 l_int|256
 )braket
 suffix:semicolon
-multiline_comment|/*&n; * Functions for accessing Amiga-FFS structures.&n; *&n; */
+multiline_comment|/*&n; * Functions for accessing Amiga-FFS structures.&n; */
 multiline_comment|/* Set *NAME to point to the file name in a file header block in memory&n;   pointed to by FH_DATA.  The length of the name is returned. */
 r_int
 DECL|function|affs_get_file_name
@@ -386,7 +386,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Remove a header block from it&squot;s hash table (directory).&n; * &squot;inode&squot; may be any inode on the partition, it&squot;s only&n; * used for calculating the block size and superblock&n; * reference.&n; */
+multiline_comment|/* Remove a header block from its hash table (directory).&n; * &squot;inode&squot; may be any inode on the partition, it&squot;s only&n; * used for calculating the block size and superblock&n; * reference.&n; */
 r_int
 DECL|function|affs_remove_hash
 id|affs_remove_hash
@@ -1171,7 +1171,7 @@ multiline_comment|/* This is just a link. Nothing much to do. */
 id|pr_debug
 c_func
 (paren
-l_string|&quot;      Removing link.&bslash;n&quot;
+l_string|&quot;AFFS: Removing link.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if
@@ -1258,7 +1258,7 @@ multiline_comment|/* This is the complicated case. Yuck. */
 id|pr_debug
 c_func
 (paren
-l_string|&quot;      Removing original with links to it.&bslash;n&quot;
+l_string|&quot;AFFS: Removing original with links to it.&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Unlink the object and its first link from their directories. */
@@ -1517,7 +1517,7 @@ multiline_comment|/* Plain file/dir. This is the simplest case. */
 id|pr_debug
 c_func
 (paren
-l_string|&quot;      Removing plain file/dir.&bslash;n&quot;
+l_string|&quot;AFFS: Removing plain file/dir.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if
@@ -1651,6 +1651,7 @@ r_return
 id|sum
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Calculate the checksum of a disk block and store it&n; * at the indicated position.&n; */
 r_void
 DECL|function|affs_fix_checksum
 id|affs_fix_checksum

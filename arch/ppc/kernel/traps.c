@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/a.out.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -283,15 +284,6 @@ macro_line|#endif
 macro_line|#endif
 multiline_comment|/*&n; * Trap &amp; Exception support&n; */
 r_void
-DECL|function|trap_init
-id|trap_init
-c_func
-(paren
-r_void
-)paren
-(brace
-)brace
-r_void
 DECL|function|_exception
 id|_exception
 c_func
@@ -386,6 +378,19 @@ id|regs
 )paren
 )paren
 (brace
+macro_line|#ifdef CONFIG_MBX
+multiline_comment|/* the mbx pci read routines can cause machine checks -- Cort */
+id|bad_page_fault
+c_func
+(paren
+id|regs
+comma
+id|regs-&gt;dar
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+macro_line|#endif /* CONFIG_MBX */
 macro_line|#if defined(CONFIG_XMON) || defined(CONFIG_KGDB)
 r_if
 c_cond
@@ -968,6 +973,19 @@ op_star
 id|regs
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|print_8xx_pte
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -978,24 +996,9 @@ id|regs
 )paren
 )paren
 (brace
-macro_line|#if 0
-id|printk
-c_func
-(paren
-l_string|&quot;(user mode)&bslash;n&quot;
-)paren
-suffix:semicolon
-id|_exception
-c_func
-(paren
-id|SIGTRAP
-comma
-id|regs
-)paren
-suffix:semicolon
-macro_line|#else
 r_if
 c_cond
+(paren
 (paren
 id|errcode
 op_assign
@@ -1005,11 +1008,16 @@ c_func
 id|regs
 )paren
 )paren
+)paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;Software Emulation 0x%x: 0x%x &quot;
+l_string|&quot;Software Emulation %s/%d NIP: %lx *NIP: 0x%x code: %x&quot;
+comma
+id|current-&gt;comm
+comma
+id|current-&gt;pid
 comma
 id|regs-&gt;nip
 comma
@@ -1021,16 +1029,11 @@ op_star
 )paren
 id|regs-&gt;nip
 )paren
-)paren
-suffix:semicolon
-id|print_8xx_pte
-c_func
-(paren
-id|current-&gt;mm
 comma
-id|regs-&gt;nip
+id|errcode
 )paren
 suffix:semicolon
+multiline_comment|/*print_8xx_pte(current-&gt;mm, regs-&gt;nip);*/
 r_if
 c_cond
 (paren
@@ -1056,20 +1059,13 @@ id|regs
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 )brace
 r_else
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;(kernel mode)&bslash;n&quot;
-)paren
-suffix:semicolon
 id|panic
 c_func
 (paren
-l_string|&quot;Kernel Mode Software Emulation&quot;
+l_string|&quot;Kernel Mode Software FPU Emulation&quot;
 )paren
 suffix:semicolon
 )brace
@@ -1098,5 +1094,18 @@ comma
 id|regs-&gt;trap
 )paren
 suffix:semicolon
+)brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_void
+id|trap_init
+c_func
+(paren
+r_void
+)paren
+)paren
+(brace
 )brace
 eof

@@ -2,6 +2,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifndef _ASM_IRQ_H
 DECL|macro|_ASM_IRQ_H
 mdefine_line|#define _ASM_IRQ_H
+macro_line|#include &lt;asm/processor.h&gt;&t;&t;/* for is_prep() */
 macro_line|#ifndef CONFIG_8xx
 multiline_comment|/*&n; * this is the # irq&squot;s for all ppc arch&squot;s (pmac/chrp/prep)&n; * so it is the max of them all - which happens to be chrp&n; * -- Cort&n; */
 DECL|macro|NR_IRQS
@@ -18,21 +19,6 @@ DECL|macro|irq_to_openpic
 mdefine_line|#define irq_to_openpic(n)&t;((n)-NUM_8259_INTERRUPTS)
 DECL|macro|IRQ_8259_CASCADE
 mdefine_line|#define IRQ_8259_CASCADE&t;NUM_8259_INTERRUPTS
-DECL|function|irq_cannonicalize
-r_static
-id|__inline__
-r_int
-id|irq_cannonicalize
-c_func
-(paren
-r_int
-id|irq
-)paren
-(brace
-r_return
-id|irq
-suffix:semicolon
-)brace
 r_extern
 r_void
 id|disable_irq
@@ -51,6 +37,39 @@ r_int
 r_int
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * This gets called from serial.c, which is now used on&n; * powermacs as well as prep/chrp boxes.&n; * Prep and chrp both have cascaded 8259 PICs.&n; */
+DECL|function|irq_cannonicalize
+r_static
+id|__inline__
+r_int
+id|irq_cannonicalize
+c_func
+(paren
+r_int
+id|irq
+)paren
+(brace
+r_return
+(paren
+(paren
+(paren
+id|is_prep
+op_logical_or
+id|is_chrp
+)paren
+op_logical_and
+id|irq
+op_eq
+l_int|2
+)paren
+ques
+c_cond
+l_int|9
+suffix:colon
+id|irq
+)paren
+suffix:semicolon
+)brace
 macro_line|#else /* CONFIG_8xx */
 multiline_comment|/* The MPC8xx cores have 16 possible interrupts.  There are eight&n; * possible level sensitive interrupts assigned and generated internally&n; * from such devices as CPM, PCMCIA, RTC, PIT, TimeBase and Decrementer.&n; * There are eight external interrupts (IRQs) that can be configured&n; * as either level or edge sensitive. &n; * On the MBX implementation, there is also the possibility of an 8259&n; * through the PCI and PCI-ISA bridges.  All 8259 interrupts appear&n; * on the 8xx as IRQ3, but I may eventually add some of the 8259 code&n; * back into this port to handle that controller.&n; */
 DECL|macro|NR_IRQS
@@ -112,6 +131,22 @@ mdefine_line|#define COMM_L_INT&t;SIU_IRQ6&t;/* MBX Comm expansion connector pin
 DECL|macro|STOP_ABRT_INT
 mdefine_line|#define STOP_ABRT_INT&t;SIU_IRQ7&t;/* Stop/Abort header pin */
 macro_line|#endif /* CONFIG_MBX */
+multiline_comment|/* always the same on MBX -- Cort */
+DECL|function|irq_cannonicalize
+r_static
+id|__inline__
+r_int
+id|irq_cannonicalize
+c_func
+(paren
+r_int
+id|irq
+)paren
+(brace
+r_return
+id|irq
+suffix:semicolon
+)brace
 macro_line|#endif /* CONFIG_8xx */
 macro_line|#endif
 eof

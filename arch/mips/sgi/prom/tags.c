@@ -1,4 +1,5 @@
-multiline_comment|/* $Id: tags.c,v 1.1.1.1 1997/06/01 03:16:40 ralf Exp $&n; * tags.c: Initialize the arch tags the way the MIPS kernel setup&n; *         expects.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/*&n; * tags.c: Initialize the arch tags the way the MIPS kernel setup&n; *         expects.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: tags.c,v 1.2 1998/05/01 01:35:28 ralf Exp $&n; */
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/addrspace.h&gt;
@@ -251,12 +252,16 @@ l_int|NULL
 multiline_comment|/* XXX COLOSTOMY BAG!!!! XXX */
 )brace
 suffix:semicolon
-DECL|function|prom_setup_archtags
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|prom_setup_archtags
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|tag_def

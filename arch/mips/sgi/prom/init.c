@@ -1,4 +1,5 @@
-multiline_comment|/* $Id: init.c,v 1.1.1.1 1997/06/01 03:16:40 ralf Exp $&n; * init.c: PROM library initialisation code.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/*&n; * init.c: PROM library initialisation code.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: init.c,v 1.2 1998/05/01 01:35:25 ralf Exp $&n; */
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;
 multiline_comment|/* #define DEBUG_PROM_INIT */
@@ -46,7 +47,10 @@ c_func
 r_void
 )paren
 suffix:semicolon
-DECL|function|prom_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|prom_init
 c_func
@@ -63,6 +67,7 @@ r_char
 op_star
 op_star
 id|envp
+)paren
 )paren
 (brace
 r_struct

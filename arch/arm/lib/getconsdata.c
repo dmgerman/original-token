@@ -5,6 +5,8 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+DECL|macro|PAGE_READONLY
+macro_line|#undef PAGE_READONLY
 DECL|macro|OFF_TSK
 mdefine_line|#define OFF_TSK(n) (unsigned long)&amp;(((struct task_struct *)0)-&gt;n)
 DECL|macro|OFF_MM
@@ -126,7 +128,7 @@ c_func
 id|tss.fpstate.soft.save
 )paren
 suffix:semicolon
-macro_line|#if defined(CONFIG_CPU_ARM2) || defined(CONFIG_CPU_ARM3)
+macro_line|#ifdef CONFIG_CPU_26
 DECL|variable|TSS_MEMCMAP
 r_int
 r_int

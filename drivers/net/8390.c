@@ -1,5 +1,5 @@
 multiline_comment|/* 8390.c: A general NS8390 ethernet driver core for linux. */
-multiline_comment|/*&n;&t;Written 1992-94 by Donald Becker.&n;  &n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;  &n;  This is the chip-specific code for many 8390-based ethernet adaptors.&n;  This is not a complete driver, it must be combined with board-specific&n;  code such as ne.c, wd.c, 3c503.c, etc.&n;&n;  Seeing how at least eight drivers use this code, (not counting the&n;  PCMCIA ones either) it is easy to break some card by what seems like&n;  a simple innocent change. Please contact me or Donald if you think&n;  you have found something that needs changing. -- PG&n;&n;&n;  Changelog:&n;&n;  Paul Gortmaker&t;: remove set_bit lock, other cleanups.&n;  Paul Gortmaker&t;: add ei_get_8390_hdr() so we can pass skb&squot;s to &n;&t;&t;&t;  ei_block_input() for eth_io_copy_and_sum().&n;  Paul Gortmaker&t;: exchange static int ei_pingpong for a #define,&n;&t;&t;&t;  also add better Tx error handling.&n;  Paul Gortmaker&t;: rewrite Rx overrun handling as per NS specs.&n;  Alexey Kuznetsov&t;: use the 8390&squot;s six bit hash multicast filter.&n;  Paul Gortmaker&t;: tweak ANK&squot;s above multicast changes a bit.&n;  Paul Gortmaker&t;: update packet statistics for v2.1.x&n;&n;&n;  Sources:&n;  The National Semiconductor LAN Databook, and the 3Com 3c503 databook.&n;&n;  */
+multiline_comment|/*&n;&t;Written 1992-94 by Donald Becker.&n;  &n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;  &n;  This is the chip-specific code for many 8390-based ethernet adaptors.&n;  This is not a complete driver, it must be combined with board-specific&n;  code such as ne.c, wd.c, 3c503.c, etc.&n;&n;  Seeing how at least eight drivers use this code, (not counting the&n;  PCMCIA ones either) it is easy to break some card by what seems like&n;  a simple innocent change. Please contact me or Donald if you think&n;  you have found something that needs changing. -- PG&n;&n;&n;  Changelog:&n;&n;  Paul Gortmaker&t;: remove set_bit lock, other cleanups.&n;  Paul Gortmaker&t;: add ei_get_8390_hdr() so we can pass skb&squot;s to &n;&t;&t;&t;  ei_block_input() for eth_io_copy_and_sum().&n;  Paul Gortmaker&t;: exchange static int ei_pingpong for a #define,&n;&t;&t;&t;  also add better Tx error handling.&n;  Paul Gortmaker&t;: rewrite Rx overrun handling as per NS specs.&n;  Alexey Kuznetsov&t;: use the 8390&squot;s six bit hash multicast filter.&n;  Paul Gortmaker&t;: tweak ANK&squot;s above multicast changes a bit.&n;  Paul Gortmaker&t;: update packet statistics for v2.1.x&n;  Alan Cox&t;&t;: support arbitary stupid port mappings on the&n;  &t;&t;&t;  68K Macintosh. Support &gt;16bit I/O spaces&n;&n;&n;  Sources:&n;  The National Semiconductor LAN Databook, and the 3Com 3c503 databook.&n;&n;  */
 DECL|variable|version
 r_static
 r_const
@@ -7,8 +7,9 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;8390.c:v1.10 9/23/94 Donald Becker (becker@cesdis.gsfc.nasa.gov)&bslash;n&quot;
+l_string|&quot;8390.c:v1.10cvs 9/23/94 Donald Becker (becker@cesdis.gsfc.nasa.gov)&bslash;n&quot;
 suffix:semicolon
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -21,7 +22,7 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
-macro_line|#include &lt;asm/delay.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
@@ -267,7 +268,7 @@ id|send_length
 comma
 id|output_page
 suffix:semicolon
-multiline_comment|/*&n; *  We normally shouldn&squot;t be called if dev-&gt;tbusy is set, but the&n; *  existing code does anyway. If it has been too long since the&n; *  last Tx, we assume the board has died and kick it.&n; */
+multiline_comment|/*&n;&t; *  We normally shouldn&squot;t be called if dev-&gt;tbusy is set, but the&n;&t; *  existing code does anyway. If it has been too long since the&n;&t; *  last Tx, we assume the board has died and kick it.&n;&t; */
 r_if
 c_cond
 (paren
@@ -319,11 +320,9 @@ id|ENTSR_PTX
 )paren
 )paren
 )paren
-(brace
 r_return
 l_int|1
 suffix:semicolon
-)brace
 id|ei_local-&gt;stat.tx_errors
 op_increment
 suffix:semicolon
@@ -348,6 +347,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: xmit on stopped card&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -463,6 +463,7 @@ id|dev-&gt;interrupt
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: Tx request while isr active.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -513,7 +514,7 @@ suffix:colon
 id|ETH_ZLEN
 suffix:semicolon
 macro_line|#ifdef EI_PINGPONG
-multiline_comment|/*&n;     * We have two Tx slots available for use. Find the first free&n;     * slot, and then perform some sanity checks. With two Tx bufs,&n;     * you get very close to transmitting back-to-back packets. With&n;     * only one Tx buf, the transmitter sits idle while you reload the&n;     * card, leaving a substantial gap between each transmitted packet.&n;     */
+multiline_comment|/*&n;&t; * We have two Tx slots available for use. Find the first free&n;&t; * slot, and then perform some sanity checks. With two Tx bufs,&n;&t; * you get very close to transmitting back-to-back packets. With&n;&t; * only one Tx buf, the transmitter sits idle while you reload the&n;&t; * card, leaving a substantial gap between each transmitted packet.&n;&t; */
 r_if
 c_cond
 (paren
@@ -542,6 +543,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;%s: idle transmitter tx2=%d, lasttx=%d, txing=%d.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -585,6 +587,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;%s: idle transmitter, tx1=%d, lasttx=%d, txing=%d.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -608,6 +611,7 @@ id|ei_debug
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;%s: No Tx buffers free! irq=%d tx1=%d tx2=%d last=%d&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -652,7 +656,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     * Okay, now upload the packet and trigger a send if the transmitter&n;     * isn&squot;t already sending. If it is busy, the interrupt handler will&n;     * trigger the send later, upon receiving a Tx done interrupt.&n;     */
+multiline_comment|/*&n;&t; * Okay, now upload the packet and trigger a send if the transmitter&n;&t; * isn&squot;t already sending. If it is busy, the interrupt handler will&n;&t; * trigger the send later, upon receiving a Tx done interrupt.&n;&t; */
 id|ei_block_output
 c_func
 (paren
@@ -736,7 +740,7 @@ id|ei_local-&gt;tx2
 )paren
 suffix:semicolon
 macro_line|#else&t;/* EI_PINGPONG */
-multiline_comment|/*&n;     * Only one Tx buffer in use. You need two Tx bufs to come close to&n;     * back-to-back transmits. Expect a 20 -&gt; 25% performance hit on&n;     * reasonable hardware if you only use one Tx buffer.&n;     */
+multiline_comment|/*&n;&t; * Only one Tx buffer in use. You need two Tx bufs to come close to&n;&t; * back-to-back transmits. Expect a 20 -&gt; 25% performance hit on&n;&t; * reasonable hardware if you only use one Tx buffer.&n;&t; */
 id|ei_block_output
 c_func
 (paren
@@ -1002,6 +1006,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: interrupt from stopped card&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -1021,14 +1026,12 @@ id|interrupts
 op_amp
 id|ENISR_OVER
 )paren
-(brace
 id|ei_rx_overrun
 c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
-)brace
 r_else
 r_if
 c_cond
@@ -1058,14 +1061,12 @@ id|interrupts
 op_amp
 id|ENISR_TX
 )paren
-(brace
 id|ei_tx_intr
 c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
-)brace
 r_else
 r_if
 c_cond
@@ -1074,14 +1075,12 @@ id|interrupts
 op_amp
 id|ENISR_TX_ERR
 )paren
-(brace
 id|ei_tx_err
 c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1269,6 +1268,18 @@ id|e8390_base
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
+r_struct
+id|ei_device
+op_star
+id|ei_local
+op_assign
+(paren
+r_struct
+id|ei_device
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
 r_int
 r_char
 id|txsr
@@ -1292,18 +1303,6 @@ id|ENTSR_ABT
 op_plus
 id|ENTSR_FU
 )paren
-suffix:semicolon
-r_struct
-id|ei_device
-op_star
-id|ei_local
-op_assign
-(paren
-r_struct
-id|ei_device
-op_star
-)paren
-id|dev-&gt;priv
 suffix:semicolon
 macro_line|#ifdef VERBOSE_ERROR_DUMP
 id|printk
@@ -1466,17 +1465,6 @@ id|e8390_base
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
-r_int
-id|status
-op_assign
-id|inb
-c_func
-(paren
-id|e8390_base
-op_plus
-id|EN0_TSR
-)paren
-suffix:semicolon
 r_struct
 id|ei_device
 op_star
@@ -1488,6 +1476,17 @@ id|ei_device
 op_star
 )paren
 id|dev-&gt;priv
+suffix:semicolon
+r_int
+id|status
+op_assign
+id|inb
+c_func
+(paren
+id|e8390_base
+op_plus
+id|EN0_TSR
+)paren
 suffix:semicolon
 id|outb_p
 c_func
@@ -1501,7 +1500,7 @@ id|EN0_ISR
 suffix:semicolon
 multiline_comment|/* Ack intr. */
 macro_line|#ifdef EI_PINGPONG
-multiline_comment|/*&n;     * There are two Tx buffers, see which one finished, and trigger&n;     * the send of another one if it exists.&n;     */
+multiline_comment|/*&n;&t; * There are two Tx buffers, see which one finished, and trigger&n;&t; * the send of another one if it exists.&n;&t; */
 id|ei_local-&gt;txqueue
 op_decrement
 suffix:semicolon
@@ -1528,6 +1527,7 @@ l_int|1
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;%s: bogus last_tx_buffer %d, tx1=%d.&bslash;n&quot;
 comma
 id|ei_local-&gt;name
@@ -1684,6 +1684,7 @@ r_else
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: unexpected TX-done interrupt, lasttx=%d.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -1692,7 +1693,7 @@ id|ei_local-&gt;lasttx
 )paren
 suffix:semicolon
 macro_line|#else&t;/* EI_PINGPONG */
-multiline_comment|/*&n;     *  Single Tx buffer: mark it free so another packet can be loaded.&n;     */
+multiline_comment|/*&n;&t; *  Single Tx buffer: mark it free so another packet can be loaded.&n;&t; */
 id|ei_local-&gt;txing
 op_assign
 l_int|0
@@ -1937,6 +1938,7 @@ id|ei_local-&gt;current_page
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;%s: mismatched read page pointers %2x vs %2x.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -2071,6 +2073,7 @@ id|ei_debug
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;%s: bogus packet size: %d, status=%#2x nxpg=%#2x.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -2135,6 +2138,7 @@ l_int|1
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;%s: Couldn&squot;t allocate a sk_buff of size %d.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -2234,6 +2238,7 @@ id|ei_debug
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;%s: bogus packet: status=%#2x nxpg=%#2x size=%d&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -2305,7 +2310,7 @@ id|EN0_BOUNDARY
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* We used to also ack ENISR_OVER here, but that would sometimes mask&n;    a real overrun, leaving the 8390 in a stopped state with rec&squot;vr off. */
+multiline_comment|/* We used to also ack ENISR_OVER here, but that would sometimes mask&n;&t;   a real overrun, leaving the 8390 in a stopped state with rec&squot;vr off. */
 id|outb_p
 c_func
 (paren
@@ -2359,7 +2364,7 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-multiline_comment|/*&n;     * Record whether a Tx was in progress and then issue the&n;     * stop command.&n;     */
+multiline_comment|/*&n;&t; * Record whether a Tx was in progress and then issue the&n;&t; * stop command.&n;&t; */
 id|was_txing
 op_assign
 id|inb_p
@@ -2396,6 +2401,7 @@ l_int|1
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;%s: Receiver overrun.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -2404,7 +2410,7 @@ suffix:semicolon
 id|ei_local-&gt;stat.rx_over_errors
 op_increment
 suffix:semicolon
-multiline_comment|/* &n;     * Wait a full Tx time (1.2ms) + some guard time, NS says 1.6ms total.&n;     * Early datasheets said to poll the reset bit, but now they say that&n;     * it &quot;is not a reliable indicator and subsequently should be ignored.&quot;&n;     * We wait at least 10ms.&n;     */
+multiline_comment|/* &n;&t; * Wait a full Tx time (1.2ms) + some guard time, NS says 1.6ms total.&n;&t; * Early datasheets said to poll the reset bit, but now they say that&n;&t; * it &quot;is not a reliable indicator and subsequently should be ignored.&quot;&n;&t; * We wait at least 10ms.&n;&t; */
 id|udelay
 c_func
 (paren
@@ -2413,7 +2419,7 @@ op_star
 l_int|1000
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * Reset RBCR[01] back to zero as per magic incantation.&n;     */
+multiline_comment|/*&n;&t; * Reset RBCR[01] back to zero as per magic incantation.&n;&t; */
 id|outb_p
 c_func
 (paren
@@ -2434,7 +2440,7 @@ op_plus
 id|EN0_RCNTHI
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * See if any Tx was interrupted or not. According to NS, this&n;     * step is vital, and skipping it will cause no end of havoc.&n;     */
+multiline_comment|/*&n;&t; * See if any Tx was interrupted or not. According to NS, this&n;&t; * step is vital, and skipping it will cause no end of havoc.&n;&t; */
 r_if
 c_cond
 (paren
@@ -2470,7 +2476,7 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     * Have to enter loopback mode and then restart the NIC before&n;     * you are allowed to slurp packets up off the ring.&n;     */
+multiline_comment|/*&n;&t; * Have to enter loopback mode and then restart the NIC before&n;&t; * you are allowed to slurp packets up off the ring.&n;&t; */
 id|outb_p
 c_func
 (paren
@@ -2495,7 +2501,7 @@ op_plus
 id|E8390_CMD
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * Clear the Rx ring of all the debris, and ack the interrupt.&n;     */
+multiline_comment|/*&n;&t; * Clear the Rx ring of all the debris, and ack the interrupt.&n;&t; */
 id|ei_receive
 c_func
 (paren
@@ -2512,7 +2518,7 @@ op_plus
 id|EN0_ISR
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * Leave loopback mode, and resend any packet that got stopped.&n;     */
+multiline_comment|/*&n;&t; * Leave loopback mode, and resend any packet that got stopped.&n;&t; */
 id|outb_p
 c_func
 (paren
@@ -2847,7 +2853,7 @@ id|dev
 )paren
 (brace
 r_int
-id|ioaddr
+id|e8390_base
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
@@ -2861,7 +2867,7 @@ suffix:semicolon
 r_struct
 id|ei_device
 op_star
-id|ei
+id|ei_local
 op_assign
 (paren
 r_struct
@@ -2888,7 +2894,7 @@ id|IFF_ALLMULTI
 id|memset
 c_func
 (paren
-id|ei-&gt;mcfilter
+id|ei_local-&gt;mcfilter
 comma
 l_int|0
 comma
@@ -2903,7 +2909,7 @@ id|dev-&gt;mc_list
 id|make_mc_bits
 c_func
 (paren
-id|ei-&gt;mcfilter
+id|ei_local-&gt;mcfilter
 comma
 id|dev
 )paren
@@ -2913,7 +2919,7 @@ r_else
 id|memset
 c_func
 (paren
-id|ei-&gt;mcfilter
+id|ei_local-&gt;mcfilter
 comma
 l_int|0xFF
 comma
@@ -2932,7 +2938,7 @@ c_func
 (paren
 id|E8390_RXCONFIG
 comma
-id|ioaddr
+id|e8390_base
 op_plus
 id|EN0_RXCR
 )paren
@@ -2955,7 +2961,7 @@ id|E8390_NODMA
 op_plus
 id|E8390_PAGE1
 comma
-id|ioaddr
+id|e8390_base
 op_plus
 id|E8390_CMD
 )paren
@@ -2978,18 +2984,51 @@ op_increment
 id|outb_p
 c_func
 (paren
-id|ei-&gt;mcfilter
+id|ei_local-&gt;mcfilter
 (braket
 id|i
 )braket
 comma
-id|ioaddr
+id|e8390_base
 op_plus
-id|EN1_MULT
+id|EN1_MULT_SHIFT
+c_func
+(paren
+id|i
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|inb_p
+c_func
+(paren
+id|e8390_base
 op_plus
+id|EN1_MULT_SHIFT
+c_func
+(paren
+id|i
+)paren
+)paren
+op_ne
+id|ei_local-&gt;mcfilter
+(braket
+id|i
+)braket
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;Multicast filter read/write mismap %d&bslash;n&quot;
+comma
 id|i
 )paren
 suffix:semicolon
+)brace
 )brace
 id|outb_p
 c_func
@@ -2998,7 +3037,7 @@ id|E8390_NODMA
 op_plus
 id|E8390_PAGE0
 comma
-id|ioaddr
+id|e8390_base
 op_plus
 id|E8390_CMD
 )paren
@@ -3024,7 +3063,7 @@ id|E8390_RXCONFIG
 op_or
 l_int|0x18
 comma
-id|ioaddr
+id|e8390_base
 op_plus
 id|EN0_RXCR
 )paren
@@ -3048,7 +3087,7 @@ id|E8390_RXCONFIG
 op_or
 l_int|0x08
 comma
-id|ioaddr
+id|e8390_base
 op_plus
 id|EN0_RXCR
 )paren
@@ -3060,7 +3099,7 @@ c_func
 (paren
 id|E8390_RXCONFIG
 comma
-id|ioaddr
+id|e8390_base
 op_plus
 id|EN0_RXCR
 )paren
@@ -3236,6 +3275,25 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+r_if
+c_cond
+(paren
+r_sizeof
+(paren
+r_struct
+id|e8390_pkt_hdr
+)paren
+op_ne
+l_int|4
+)paren
+(brace
+id|panic
+c_func
+(paren
+l_string|&quot;8390.c: header struct mispacked&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* Follow National Semi&squot;s recommendations for initing the DP83902. */
 id|outb_p
 c_func
@@ -3247,6 +3305,8 @@ op_plus
 id|E8390_STOP
 comma
 id|e8390_base
+op_plus
+id|E8390_CMD
 )paren
 suffix:semicolon
 multiline_comment|/* 0x21 */
@@ -3403,6 +3463,8 @@ op_plus
 id|E8390_STOP
 comma
 id|e8390_base
+op_plus
+id|E8390_CMD
 )paren
 suffix:semicolon
 multiline_comment|/* 0x61 */
@@ -3431,11 +3493,44 @@ id|i
 comma
 id|e8390_base
 op_plus
-id|EN1_PHYS
+id|EN1_PHYS_SHIFT
+c_func
+(paren
+id|i
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|inb_p
+c_func
+(paren
+id|e8390_base
 op_plus
+id|EN1_PHYS_SHIFT
+c_func
+(paren
+id|i
+)paren
+)paren
+op_ne
+id|dev-&gt;dev_addr
+(braket
+id|i
+)braket
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;Hw. address read/write mismap %d&bslash;n&quot;
+comma
 id|i
 )paren
 suffix:semicolon
+)brace
 )brace
 id|outb_p
 c_func
@@ -3457,6 +3552,8 @@ op_plus
 id|E8390_STOP
 comma
 id|e8390_base
+op_plus
+id|E8390_CMD
 )paren
 suffix:semicolon
 id|restore_flags
@@ -3519,6 +3616,8 @@ op_plus
 id|E8390_START
 comma
 id|e8390_base
+op_plus
+id|E8390_CMD
 )paren
 suffix:semicolon
 id|outb_p
@@ -3575,6 +3674,18 @@ r_int
 id|start_page
 )paren
 (brace
+r_struct
+id|ei_device
+op_star
+id|ei_local
+op_assign
+(paren
+r_struct
+id|ei_device
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
 r_int
 id|e8390_base
 op_assign
@@ -3588,6 +3699,8 @@ op_plus
 id|E8390_PAGE0
 comma
 id|e8390_base
+op_plus
+id|E8390_CMD
 )paren
 suffix:semicolon
 r_if
@@ -3605,6 +3718,7 @@ id|E8390_TRANS
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: trigger_send() called with the transmitter busy.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -3657,9 +3771,9 @@ op_plus
 id|E8390_START
 comma
 id|e8390_base
+op_plus
+id|E8390_CMD
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
@@ -3675,8 +3789,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_void
 DECL|function|cleanup_module
+r_void
 id|cleanup_module
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/include/asm-arm/arch-a5k/irqs.h&n; *&n; * Copyright (C) 1996 Russell King&n; */
+multiline_comment|/*&n; * linux/include/asm-arm/arch-rpc/irqs.h&n; *&n; * Copyright (C) 1996 Russell King&n; */
 DECL|macro|IRQ_PRINTER
 mdefine_line|#define IRQ_PRINTER&t;&t;0
 DECL|macro|IRQ_BATLOW
@@ -17,12 +17,10 @@ DECL|macro|IRQ_IMMEDIATE
 mdefine_line|#define IRQ_IMMEDIATE&t;&t;7
 DECL|macro|IRQ_EXPCARDFIQ
 mdefine_line|#define IRQ_EXPCARDFIQ&t;&t;8
-DECL|macro|IRQ_SOUNDCHANGE
-mdefine_line|#define IRQ_SOUNDCHANGE&t;&t;9
+DECL|macro|IRQ_HARDDISK
+mdefine_line|#define IRQ_HARDDISK&t;&t;9
 DECL|macro|IRQ_SERIALPORT
 mdefine_line|#define IRQ_SERIALPORT&t;&t;10
-DECL|macro|IRQ_HARDDISK
-mdefine_line|#define IRQ_HARDDISK&t;&t;11
 DECL|macro|IRQ_FLOPPYDISK
 mdefine_line|#define IRQ_FLOPPYDISK&t;&t;12
 DECL|macro|IRQ_EXPANSIONCARD
@@ -55,4 +53,6 @@ DECL|macro|FIQ_FORCE
 mdefine_line|#define FIQ_FORCE&t;&t;7
 DECL|macro|IRQ_TIMER
 mdefine_line|#define IRQ_TIMER&t;&t;IRQ_TIMER0
+DECL|macro|irq_cannonicalize
+mdefine_line|#define irq_cannonicalize(i)&t;(i)
 eof

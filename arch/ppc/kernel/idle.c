@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: idle.c,v 1.35 1998/04/07 20:24:23 cort Exp $&n; *&n; * Idle daemon for PowerPC.  Idle daemon will handle any action&n; * that needs to be taken when the system becomes idle.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu)&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * $Id: idle.c,v 1.37 1998/04/26 06:59:12 cort Exp $&n; *&n; * Idle daemon for PowerPC.  Idle daemon will handle any action&n; * that needs to be taken when the system becomes idle.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu)&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
 macro_line|#include &lt;linux/config.h&gt;
@@ -919,13 +919,6 @@ r_case
 l_int|8
 suffix:colon
 multiline_comment|/* 750 */
-r_break
-suffix:semicolon
-r_default
-suffix:colon
-r_return
-suffix:semicolon
-)brace
 id|save_flags
 c_func
 (paren
@@ -996,5 +989,10 @@ c_func
 id|msr
 )paren
 suffix:semicolon
+r_default
+suffix:colon
+r_return
+suffix:semicolon
+)brace
 )brace
 eof

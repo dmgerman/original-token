@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: irq.c,v 1.52 1998/03/19 00:22:54 ecd Exp $&n; * irq.c: UltraSparc IRQ handling/init/registry.&n; *&n; * Copyright (C) 1997  David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1998  Eddie C. Dost    (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: irq.c,v 1.53 1998/04/20 07:14:58 ecd Exp $&n; * irq.c: UltraSparc IRQ handling/init/registry.&n; *&n; * Copyright (C) 1997  David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1998  Eddie C. Dost    (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -28,6 +28,8 @@ macro_line|#endif
 multiline_comment|/* Internal flag, should not be visible elsewhere at all. */
 DECL|macro|SA_IMAP_MASKED
 mdefine_line|#define SA_IMAP_MASKED&t;&t;0x100
+DECL|macro|SA_DMA_SYNC
+mdefine_line|#define SA_DMA_SYNC&t;&t;0x200
 macro_line|#ifdef __SMP__
 r_void
 id|distribute_irqs
@@ -2752,6 +2754,17 @@ id|iclr
 comma
 id|irq
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|irq
+op_amp
+id|PCI_IRQ_DMA_SYNC
+)paren
+id|irqflags
+op_or_assign
+id|SA_DMA_SYNC
 suffix:semicolon
 )brace
 r_else

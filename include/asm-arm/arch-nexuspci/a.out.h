@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/include/asm-arm/arch-ebsa/a.out.h&n; *&n; * Copyright (C) 1996 Russell King&n; */
+multiline_comment|/*&n; * linux/include/asm-arm/arch-nexuspci/a.out.h&n; *&n; * Copyright (C) 1996 Russell King&n; */
 macro_line|#ifndef __ASM_ARCH_A_OUT_H
 DECL|macro|__ASM_ARCH_A_OUT_H
 mdefine_line|#define __ASM_ARCH_A_OUT_H

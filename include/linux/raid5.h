@@ -155,7 +155,8 @@ id|nr_pending
 suffix:semicolon
 multiline_comment|/* nr of pending cmds */
 DECL|member|state
-id|__u32
+r_int
+r_int
 id|state
 suffix:semicolon
 multiline_comment|/* state flags */

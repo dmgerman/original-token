@@ -27,6 +27,7 @@ macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#ifdef CONFIG_KGDB
 macro_line|#include &lt;asm/kgdb.h&gt;
 macro_line|#endif
+macro_line|#include &lt;asm/init.h&gt;
 macro_line|#include &quot;macserial.h&quot;
 multiline_comment|/*&n; * It would be nice to dynamically allocate everything that&n; * depends on NUM_SERIAL, so we could support any number of&n; * Z8530s, but for now...&n; */
 DECL|macro|NUM_SERIAL
@@ -139,7 +140,7 @@ suffix:semicolon
 macro_line|#endif
 DECL|macro|ZS_CLOCK
 mdefine_line|#define ZS_CLOCK         3686400 &t;/* Z8530 RTxC input clock rate */
-DECL|variable|tq_serial
+r_static
 id|DECLARE_TASK_QUEUE
 c_func
 (paren
@@ -148,6 +149,7 @@ id|tq_serial
 suffix:semicolon
 DECL|variable|serial_driver
 DECL|variable|callout_driver
+r_static
 r_struct
 id|tty_driver
 id|serial_driver
@@ -266,6 +268,7 @@ id|tmp_buf_sem
 op_assign
 id|MUTEX
 suffix:semicolon
+id|__openfirmware
 DECL|function|serial_paranoia_check
 r_static
 r_inline
@@ -1020,7 +1023,7 @@ suffix:semicolon
 id|mark_bh
 c_func
 (paren
-id|SERIAL_BH
+id|MACSERIAL_BH
 )paren
 suffix:semicolon
 )brace
@@ -1560,6 +1563,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * This is the serial driver&squot;s generic interrupt routine&n; */
 DECL|function|rs_interrupt
+r_static
 r_void
 id|rs_interrupt
 c_func
@@ -5815,6 +5819,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * rs_hangup() --- called by tty_hangup() when a hangup is signaled.&n; */
 DECL|function|rs_hangup
+r_static
 r_void
 id|rs_hangup
 c_func
@@ -6400,6 +6405,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * This routine is called whenever a serial port is opened.  It&n; * enables interrupts for a serial port, linking in its ZILOG structure into&n; * the IRQ chain.   It also performs the serial-specific&n; * initialization for the tty structure.&n; */
 DECL|function|rs_open
+r_static
 r_int
 id|rs_open
 c_func
@@ -7031,9 +7037,9 @@ id|n
 suffix:semicolon
 )brace
 multiline_comment|/* rs_init inits the driver */
-DECL|function|rs_init
+DECL|function|macserial_init
 r_int
-id|rs_init
+id|macserial_init
 c_func
 (paren
 r_void
@@ -7057,7 +7063,7 @@ multiline_comment|/* Setup base handler, and timer table. */
 id|init_bh
 c_func
 (paren
-id|SERIAL_BH
+id|MACSERIAL_BH
 comma
 id|do_serial_bh
 )paren
@@ -7547,9 +7553,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#if 0
 multiline_comment|/*&n; * register_serial and unregister_serial allows for serial ports to be&n; * configured at run-time, to support PCMCIA modems.&n; */
 multiline_comment|/* PowerMac: Unused at this time, just here to make things link. */
-DECL|function|register_serial
 r_int
 id|register_serial
 c_func
@@ -7565,7 +7571,6 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-DECL|function|unregister_serial
 r_void
 id|unregister_serial
 c_func
@@ -7577,6 +7582,7 @@ id|line
 r_return
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*&n; * ------------------------------------------------------------&n; * Serial console driver&n; * ------------------------------------------------------------&n; */
 macro_line|#ifdef CONFIG_SERIAL_CONSOLE
 multiline_comment|/*&n; *&t;Print a string to the serial port trying not to disturb&n; *&t;any possible real use of the port...&n; */
@@ -7953,15 +7959,11 @@ multiline_comment|/*&n; *&t;Register console.&n; */
 DECL|function|__initfunc
 id|__initfunc
 (paren
-r_int
+r_void
 id|serial_console_init
 c_func
 (paren
-r_int
-id|kmem_start
-comma
-r_int
-id|kmem_end
+r_void
 )paren
 )paren
 (brace
@@ -7971,9 +7973,6 @@ c_func
 op_amp
 id|sercons
 )paren
-suffix:semicolon
-r_return
-id|kmem_start
 suffix:semicolon
 )brace
 macro_line|#endif /* ifdef CONFIG_SERIAL_CONSOLE */

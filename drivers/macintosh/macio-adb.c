@@ -12,6 +12,7 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/hydra.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/init.h&gt;
 DECL|struct|preg
 r_struct
 id|preg
@@ -201,6 +202,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
+id|__openfirmware
 DECL|function|macio_adb_init
 r_void
 id|macio_adb_init

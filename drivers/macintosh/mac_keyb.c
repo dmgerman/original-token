@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/adb.h&gt;
 macro_line|#include &lt;asm/cuda.h&gt;
+macro_line|#include &lt;asm/init.h&gt;
 macro_line|#include &lt;linux/kbd_kern.h&gt;
 macro_line|#include &lt;linux/kbd_ll.h&gt;
 DECL|macro|KEYB_KEYREG
@@ -17,15 +18,15 @@ DECL|macro|KEYB_LEDREG
 mdefine_line|#define KEYB_LEDREG&t;2&t;/* register # for leds on ADB keyboard */
 DECL|macro|MOUSE_DATAREG
 mdefine_line|#define MOUSE_DATAREG&t;0&t;/* reg# for movement/button codes from mouse */
-DECL|variable|macplain_map
+DECL|variable|__initdata
 r_static
 id|u_short
 id|macplain_map
 (braket
 id|NR_KEYS
 )braket
-op_assign
 id|__initdata
+op_assign
 (brace
 l_int|0xfb61
 comma
@@ -2296,6 +2297,7 @@ l_int|0
 comma
 )brace
 suffix:semicolon
+id|__openfirmware
 DECL|function|mackbd_setkeycode
 r_int
 id|mackbd_setkeycode

@@ -189,7 +189,9 @@ id|pid_subdirectory_inos
 DECL|enumerator|PROC_PID_FD_DIR
 id|PROC_PID_FD_DIR
 op_assign
-l_int|1
+l_int|0x8000
+comma
+multiline_comment|/* 0x8000-0xffff */
 )brace
 suffix:semicolon
 DECL|enum|net_directory_inos

@@ -13,6 +13,10 @@ macro_line|#ifdef __KERNEL__
 DECL|macro|STRICT_MM_TYPECHECKS
 mdefine_line|#define STRICT_MM_TYPECHECKS
 macro_line|#ifndef __LANGUAGE_ASSEMBLY__
+DECL|macro|get_user_page
+mdefine_line|#define get_user_page(vaddr)&t;&t;__get_free_page(GFP_KERNEL)
+DECL|macro|free_user_page
+mdefine_line|#define free_user_page(page, addr)&t;free_page(addr)
 r_extern
 r_void
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/proc/fd.c&n; *&n; *  Copyright (C) 1991, 1992 Linus Torvalds&n; *&n; *  proc fd directory handling functions&n; */
+multiline_comment|/*&n; *  linux/fs/proc/fd.c&n; *&n; *  Copyright (C) 1991, 1992 Linus Torvalds&n; *&n; *  proc fd directory handling functions&n; *&n; *  01-May-98 Edgar Toernig &lt;froese@gmx.de&gt;&n; *&t;Added support for more than 256 fds.&n; *&t;Limit raised to 32768.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
@@ -287,7 +287,7 @@ c_cond
 (paren
 id|fd
 op_amp
-l_int|0xffff0000
+l_int|0xffff8000
 )paren
 r_goto
 id|out
@@ -347,7 +347,6 @@ id|file-&gt;f_dentry
 r_goto
 id|out
 suffix:semicolon
-multiline_comment|/* N.B. What happens if fd &gt; 255?? */
 id|ino
 op_assign
 (paren
@@ -356,11 +355,7 @@ op_lshift
 l_int|16
 )paren
 op_plus
-(paren
 id|PROC_PID_FD_DIR
-op_lshift
-l_int|8
-)paren
 op_plus
 id|fd
 suffix:semicolon
@@ -522,8 +517,6 @@ id|filp-&gt;f_pos
 op_increment
 )paren
 (brace
-r_int
-r_int
 id|ino
 op_assign
 id|inode-&gt;i_ino
@@ -699,11 +692,7 @@ op_lshift
 l_int|16
 )paren
 op_plus
-(paren
 id|PROC_PID_FD_DIR
-op_lshift
-l_int|8
-)paren
 op_plus
 id|fd
 suffix:semicolon

@@ -219,6 +219,10 @@ r_int
 id|slot
 comma
 r_void
+op_star
+id|dev_id
+comma
+r_void
 (paren
 op_star
 id|handler

@@ -174,7 +174,7 @@ id|mm
 op_assign
 id|current-&gt;mm
 suffix:semicolon
-multiline_comment|/*printk(&quot;address: %08lx code: %08lx %s%s%s%s%s%s&bslash;n&quot;,&n;&t;       address,error_code,&n;&t;       (error_code&amp;0x40000000)?&quot;604 tlb&amp;htab miss &quot;:&quot;&quot;,&n;&t;       (error_code&amp;0x20000000)?&quot;603 tlbmiss &quot;:&quot;&quot;,&n;&t;       (error_code&amp;0x02000000)?&quot;write &quot;:&quot;&quot;,&n;&t;       (error_code&amp;0x08000000)?&quot;prot &quot;:&quot;&quot;,&n;&t;       (error_code&amp;0x95700000)?&quot;I/O &quot;:&quot;&quot;,&n;&t;       (regs-&gt;trap == 0x400)?&quot;instr&quot;:&quot;data&quot;&n;&t;       );*/
+multiline_comment|/*printk(&quot;address: %08lx nip:%08lx code: %08lx %s%s%s%s%s%s&bslash;n&quot;,&n;&t;       address,regs-&gt;nip,error_code,&n;&t;       (error_code&amp;0x40000000)?&quot;604 tlb&amp;htab miss &quot;:&quot;&quot;,&n;&t;       (error_code&amp;0x20000000)?&quot;603 tlbmiss &quot;:&quot;&quot;,&n;&t;       (error_code&amp;0x02000000)?&quot;write &quot;:&quot;&quot;,&n;&t;       (error_code&amp;0x08000000)?&quot;prot &quot;:&quot;&quot;,&n;&t;       (error_code&amp;0x80000000)?&quot;I/O &quot;:&quot;&quot;,&n;&t;       (regs-&gt;trap == 0x400)?&quot;instr&quot;:&quot;data&quot;&n;&t;       );*/
 macro_line|#if defined(CONFIG_XMON) || defined(CONFIG_KGDB)
 r_if
 c_cond
@@ -500,88 +500,6 @@ r_int
 r_int
 id|fixup
 suffix:semicolon
-macro_line|#if 0&t;
-r_extern
-r_int
-r_int
-id|video_mem_base
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|video_mem_term
-suffix:semicolon
-multiline_comment|/*&n;&t; * Remap video IO areas for buggy X servers.&n;&t; * The S3 server wants direct access to video memory&n;&t; * at 0x8000 0000 and 0xc000 0000 on prep systems, but&n;&t; * we don&squot;t allow that AND we remap the io areas so it&squot;s not&n;&t; * even there!&n;&t; * So, for this task only give a virtual=physical mapping of the&n;&t; * video mem.&n;&t; * -- Cort&n;&t; */
-r_if
-c_cond
-(paren
-id|is_prep
-op_logical_and
-id|user_mode
-c_func
-(paren
-id|regs
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;%s/%d: fault on %x&bslash;n&quot;
-comma
-id|current-&gt;comm
-comma
-id|current-&gt;pid
-comma
-id|address
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;mapping: %x -&gt; %x&bslash;n&quot;
-comma
-id|address
-op_amp
-id|PAGE_MASK
-comma
-id|address
-op_amp
-id|PAGE_MASK
-)paren
-suffix:semicolon
-id|map_page
-c_func
-(paren
-id|current
-comma
-id|address
-op_amp
-id|PAGE_MASK
-comma
-id|address
-op_amp
-id|PAGE_MASK
-comma
-id|_PAGE_PRESENT
-op_or
-id|_PAGE_ACCESSED
-op_or
-id|_PAGE_RW
-op_or
-id|_PAGE_DIRTY
-op_or
-id|_PAGE_HWWRITE
-op_or
-id|_PAGE_NO_CACHE
-op_or
-id|_PAGE_WRITETHRU
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-macro_line|#endif&t;
 r_if
 c_cond
 (paren
@@ -678,6 +596,7 @@ id|current-&gt;pid
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_8xx
 multiline_comment|/*&n; * I need a va to pte function for the MPC8xx so I can set the cache&n; * attributes on individual pages used by the Communication Processor&n; * Module.&n; */
 DECL|function|va_to_pte
 id|pte_t
@@ -1060,6 +979,63 @@ id|pte
 )paren
 )paren
 suffix:semicolon
+DECL|macro|pp
+mdefine_line|#define pp ((long)pte_val(*pte))&t;&t;&t;&t;
+id|printk
+c_func
+(paren
+l_string|&quot; RPN: %05x PP: %x SPS: %x SH: %x &quot;
+l_string|&quot;CI: %x v: %x&bslash;n&quot;
+comma
+id|pp
+op_rshift
+l_int|12
+comma
+multiline_comment|/* rpn */
+(paren
+id|pp
+op_rshift
+l_int|10
+)paren
+op_amp
+l_int|3
+comma
+multiline_comment|/* pp */
+(paren
+id|pp
+op_rshift
+l_int|3
+)paren
+op_amp
+l_int|1
+comma
+multiline_comment|/* small */
+(paren
+id|pp
+op_rshift
+l_int|2
+)paren
+op_amp
+l_int|1
+comma
+multiline_comment|/* shared */
+(paren
+id|pp
+op_rshift
+l_int|1
+)paren
+op_amp
+l_int|1
+comma
+multiline_comment|/* cache inhibit */
+id|pp
+op_amp
+l_int|1
+multiline_comment|/* valid */
+)paren
+suffix:semicolon
+DECL|macro|pp
+macro_line|#undef pp&t;&t;&t;&t;
 )brace
 r_else
 (brace
@@ -1203,6 +1179,7 @@ r_return
 id|retval
 suffix:semicolon
 )brace
+macro_line|#endif /* CONFIG_8xx */
 macro_line|#if 0
 multiline_comment|/*&n; * Misc debugging functions.  Please leave them here. -- Cort&n; */
 r_void

@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/nvram.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/init.h&gt;
 macro_line|#include &lt;linux/selection.h&gt;
 macro_line|#include &quot;pmac-cons.h&quot;
 macro_line|#include &quot;platinum.h&quot;
@@ -2610,6 +2611,7 @@ op_amp
 id|platinum_reg_init_20
 )brace
 suffix:semicolon
+id|__openfirmware
 multiline_comment|/*&n; * Get the monitor sense value.&n; */
 r_static
 r_int

@@ -3957,6 +3957,10 @@ DECL|member|rcv_multicast_frames
 id|u32
 id|rcv_multicast_frames
 suffix:semicolon
+DECL|member|rcv_total_bytes
+id|u32
+id|rcv_total_bytes
+suffix:semicolon
 DECL|member|xmt_discards
 id|u32
 id|xmt_discards
@@ -3968,6 +3972,10 @@ suffix:semicolon
 DECL|member|xmt_total_frames
 id|u32
 id|xmt_total_frames
+suffix:semicolon
+DECL|member|xmt_total_bytes
+id|u32
+id|xmt_total_bytes
 suffix:semicolon
 DECL|typedef|DFX_board_t
 )brace

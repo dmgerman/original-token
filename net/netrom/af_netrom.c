@@ -178,7 +178,7 @@ op_assign
 id|sk_alloc
 c_func
 (paren
-id|AF_NETROM
+id|PF_NETROM
 comma
 id|GFP_ATOMIC
 comma
@@ -4844,7 +4844,7 @@ id|net_proto_family
 id|nr_family_ops
 op_assign
 (brace
-id|AF_NETROM
+id|PF_NETROM
 comma
 id|nr_create
 )brace
@@ -4856,7 +4856,7 @@ id|proto_ops
 id|nr_proto_ops
 op_assign
 (brace
-id|AF_NETROM
+id|PF_NETROM
 comma
 id|sock_no_dup
 comma
@@ -5328,7 +5328,7 @@ macro_line|#endif
 id|sock_unregister
 c_func
 (paren
-id|AF_NETROM
+id|PF_NETROM
 )paren
 suffix:semicolon
 r_for

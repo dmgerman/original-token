@@ -16,6 +16,10 @@ macro_line|#include &lt;linux/dcache.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
+macro_line|#include &lt;asm/cache.h&gt;
+r_struct
+id|poll_table_struct
+suffix:semicolon
 multiline_comment|/*&n; * It&squot;s silly to have NR_OPEN bigger than NR_FILE, but I&squot;ll fix&n; * that later. Anyway, now the file code is no longer dependent&n; * on bitmaps in unsigned longs, but uses the new fd_set structure..&n; *&n; * Some programs (notably those using select()) may have to be &n; * recompiled to take full advantage of the new limits..&n; */
 multiline_comment|/* Fixed constants first: */
 DECL|macro|NR_OPEN
@@ -101,8 +105,8 @@ DECL|macro|MS_REMOUNT
 mdefine_line|#define MS_REMOUNT&t;32&t;/* Alter flags of a mounted FS */
 DECL|macro|MS_MANDLOCK
 mdefine_line|#define MS_MANDLOCK&t;64&t;/* Allow mandatory locks on an FS */
-DECL|macro|S_WRITE
-mdefine_line|#define S_WRITE&t;&t;128&t;/* Write on file/directory/symlink */
+DECL|macro|S_QUOTA
+mdefine_line|#define S_QUOTA&t;&t;128&t;/* Quota initialized for file/directory/symlink */
 DECL|macro|S_APPEND
 mdefine_line|#define S_APPEND&t;256&t;/* Append-only file */
 DECL|macro|S_IMMUTABLE
@@ -132,8 +136,8 @@ DECL|macro|IS_SYNC
 mdefine_line|#define IS_SYNC(inode) ((inode)-&gt;i_flags &amp; MS_SYNCHRONOUS)
 DECL|macro|IS_MANDLOCK
 mdefine_line|#define IS_MANDLOCK(inode) ((inode)-&gt;i_flags &amp; MS_MANDLOCK)
-DECL|macro|IS_WRITABLE
-mdefine_line|#define IS_WRITABLE(inode) ((inode)-&gt;i_flags &amp; S_WRITE)
+DECL|macro|IS_QUOTAINIT
+mdefine_line|#define IS_QUOTAINIT(inode) ((inode)-&gt;i_flags &amp; S_QUOTA)
 DECL|macro|IS_APPEND
 mdefine_line|#define IS_APPEND(inode) ((inode)-&gt;i_flags &amp; S_APPEND)
 DECL|macro|IS_IMMUTABLE
@@ -689,7 +693,9 @@ DECL|macro|ATTR_FLAG_IMMUTABLE
 mdefine_line|#define ATTR_FLAG_IMMUTABLE&t;8 &t;/* Immutable file */
 DECL|macro|ATTR_FLAG_NODIRATIME
 mdefine_line|#define ATTR_FLAG_NODIRATIME&t;16 &t;/* Don&squot;t update atime for directory */
+multiline_comment|/*&n; * Includes for diskquotas and mount structures.&n; */
 macro_line|#include &lt;linux/quota.h&gt;
+macro_line|#include &lt;linux/mount.h&gt;
 DECL|struct|inode
 r_struct
 id|inode
@@ -2553,6 +2559,10 @@ op_star
 comma
 r_int
 r_int
+comma
+id|uid_t
+comma
+r_char
 )paren
 suffix:semicolon
 DECL|member|alloc_inode
@@ -2569,6 +2579,8 @@ op_star
 comma
 r_int
 r_int
+comma
+id|uid_t
 )paren
 suffix:semicolon
 DECL|member|free_block
@@ -2619,6 +2631,8 @@ id|iattr
 op_star
 comma
 r_char
+comma
+id|uid_t
 )paren
 suffix:semicolon
 )brace

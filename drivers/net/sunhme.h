@@ -1187,9 +1187,9 @@ mdefine_line|#define TX_BUFFS_AVAIL(hp)                                    &bsla
 DECL|macro|RX_OFFSET
 mdefine_line|#define RX_OFFSET          2
 DECL|macro|RX_BUF_ALLOC_SIZE
-mdefine_line|#define RX_BUF_ALLOC_SIZE  (ETH_FRAME_LEN + RX_OFFSET + (64 * 3))
+mdefine_line|#define RX_BUF_ALLOC_SIZE  (1546 + RX_OFFSET + 64)
 DECL|macro|RX_COPY_THRESHOLD
-mdefine_line|#define RX_COPY_THRESHOLD  128
+mdefine_line|#define RX_COPY_THRESHOLD  256
 DECL|struct|hmeal_init_block
 r_struct
 id|hmeal_init_block

@@ -65,6 +65,10 @@ macro_line|#include &lt;asm/arch/processor.h&gt;
 macro_line|#include &lt;asm/proc/processor.h&gt;
 DECL|macro|INIT_TSS
 mdefine_line|#define INIT_TSS  {&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;&bslash;&n;&t;{ { { 0, }, }, },&t;&t;&bslash;&n;&t;EXTRA_THREAD_STRUCT_INIT&t;&bslash;&n;}
+multiline_comment|/* Forward declaration, a strange C thing */
+r_struct
+id|mm_struct
+suffix:semicolon
 multiline_comment|/* Free all resources held by a thread. */
 r_extern
 r_void
@@ -76,6 +80,41 @@ id|task_struct
 op_star
 )paren
 suffix:semicolon
+multiline_comment|/* Copy and release all segment info associated with a VM */
+r_extern
+r_void
+id|copy_segments
+c_func
+(paren
+r_int
+id|nr
+comma
+r_struct
+id|task_struct
+op_star
+id|p
+comma
+r_struct
+id|mm_struct
+op_star
+id|mm
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|release_segments
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+)paren
+suffix:semicolon
+DECL|macro|copy_segments
+mdefine_line|#define copy_segments(nr, tsk, mm)&t;do { } while (0)
+DECL|macro|release_segments
+mdefine_line|#define release_segments(mm)&t;&t;do { } while (0)
 DECL|macro|init_task
 mdefine_line|#define init_task&t;(init_task_union.task)
 DECL|macro|init_stack

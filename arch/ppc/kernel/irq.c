@@ -1218,6 +1218,23 @@ l_string|&quot;  OpenPIC &quot;
 suffix:semicolon
 r_break
 suffix:semicolon
+r_case
+id|_MACH_mbx
+suffix:colon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;   MPC8xx &quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
 )brace
 id|len
 op_add_assign

@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &quot;dma.h&quot;
 DECL|function|arch_request_dma
 r_int
@@ -16,6 +17,11 @@ comma
 id|dma_t
 op_star
 id|dma
+comma
+r_const
+r_char
+op_star
+id|dev_id
 )paren
 (brace
 r_if
@@ -23,7 +29,7 @@ c_cond
 (paren
 id|channel
 op_eq
-id|DMA_VIRTUAL_FLOPPY0
+id|DMA_VIRTUAL_FLOPPY
 )paren
 r_return
 l_int|0
@@ -52,7 +58,7 @@ c_cond
 (paren
 id|channel
 op_ne
-id|DMA_VIRTUAL_FLOPPY0
+id|DMA_VIRTUAL_FLOPPY
 )paren
 id|printk
 (paren
@@ -80,13 +86,13 @@ c_cond
 (paren
 id|channel
 op_ne
-id|DMA_VIRTUAL_FLOPPY0
+id|DMA_VIRTUAL_FLOPPY
 )paren
 id|printk
 (paren
 l_string|&quot;arch_dma_count: invalid channel %d&bslash;n&quot;
 comma
-id|dmanr
+id|channel
 )paren
 suffix:semicolon
 r_else
@@ -128,7 +134,7 @@ c_cond
 (paren
 id|channel
 op_ne
-id|DMA_VIRTUAL_FLOPPY0
+id|DMA_VIRTUAL_FLOPPY
 )paren
 id|printk
 (paren
@@ -276,7 +282,7 @@ c_cond
 (paren
 id|channel
 op_ne
-id|DMA_VIRTUAL_FLOPPY0
+id|DMA_VIRTUAL_FLOPPY
 )paren
 id|printk
 (paren
@@ -308,7 +314,7 @@ id|dma
 (brace
 id|dma
 (braket
-id|DMA_VIRTUAL_FLOPPY0
+id|DMA_VIRTUAL_FLOPPY
 )braket
 dot
 id|dma_irq

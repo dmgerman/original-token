@@ -1,7 +1,8 @@
-multiline_comment|/*&n; * arch/mips/kernel/traps.c&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright 1994, 1995, 1996, 1997 by Ralf Baechle&n; * Modified for R3000 by Paul M. Antoine, 1995, 1996&n; *&n; * $Id: traps.c,v 1.7 1997/12/01 16:33:28 ralf Exp $&n; */
+multiline_comment|/*&n; * arch/mips/kernel/traps.c&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright 1994, 1995, 1996, 1997 by Ralf Baechle&n; * Modified for R3000 by Paul M. Antoine, 1995, 1996&n; *&n; * $Id: traps.c,v 1.10 1998/05/04 09:17:57 ralf Exp $&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/branch.h&gt;
@@ -14,9 +15,6 @@ macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/watch.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#ifdef CONFIG_SGI
-macro_line|#include &lt;asm/sgialib.h&gt;
-macro_line|#endif
 DECL|macro|CONF_DEBUG_EXCEPTIONS
 macro_line|#undef CONF_DEBUG_EXCEPTIONS
 DECL|function|console_verbose
@@ -404,7 +402,7 @@ multiline_comment|/*&n;&t; * Dump the stack&n;&t; */
 id|printk
 c_func
 (paren
-l_string|&quot;Process %s (pid: %d, stackpage=%08lx)&bslash;nStack: &quot;
+l_string|&quot;Process %s (pid: %ld, stackpage=%08lx)&bslash;nStack: &quot;
 comma
 id|current-&gt;comm
 comma
@@ -799,38 +797,18 @@ r_int
 id|err
 )paren
 (brace
-multiline_comment|/*&n;&t; * Just return if in user mode.&n;&t; * XXX&n;&t; */
-macro_line|#if (_MIPS_ISA == _MIPS_ISA_MIPS1) || (_MIPS_ISA == _MIPS_ISA_MIPS2)
 r_if
 c_cond
 (paren
-op_logical_neg
-(paren
+id|user_mode
+c_func
 (paren
 id|regs
 )paren
-op_member_access_from_pointer
-id|cp0_status
-op_amp
-l_int|0x4
 )paren
-)paren
+multiline_comment|/* Just return if in user mode.  */
 r_return
 suffix:semicolon
-macro_line|#endif
-macro_line|#if (_MIPS_ISA == _MIPS_ISA_MIPS3) || (_MIPS_ISA == _MIPS_ISA_MIPS4)
-r_if
-c_cond
-(paren
-id|regs-&gt;cp0_status
-op_amp
-id|ST0_KSU
-op_eq
-id|KSU_USER
-)paren
-r_return
-suffix:semicolon
-macro_line|#endif
 id|console_verbose
 c_func
 (paren
@@ -899,6 +877,20 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|show_regs
+c_func
+(paren
+id|regs
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+l_int|1
+)paren
+(brace
+suffix:semicolon
+)brace
 id|ibe_board_handler
 c_func
 (paren
@@ -927,6 +919,20 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|show_regs
+c_func
+(paren
+id|regs
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+l_int|1
+)paren
+(brace
+suffix:semicolon
+)brace
 id|dbe_board_handler
 c_func
 (paren
@@ -1072,6 +1078,7 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
+multiline_comment|/*&n; * XXX Delayed fp exceptions when doing a lazy ctx switch XXX&n; */
 DECL|function|do_fpe
 r_void
 id|do_fpe
@@ -1121,16 +1128,80 @@ id|regs
 )paren
 suffix:semicolon
 macro_line|#endif
+r_if
+c_cond
+(paren
+id|fcr31
+op_amp
+l_int|0x20000
+)paren
+(brace
+multiline_comment|/* Retry instruction with flush to zero ...  */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|fcr31
+op_amp
+(paren
+l_int|1
+op_lshift
+l_int|24
+)paren
+)paren
+)paren
+(brace
 id|printk
 c_func
 (paren
-l_string|&quot;Caught floating exception at epc == %08lx, fcr31 == %08x&bslash;n&quot;
+l_string|&quot;Setting flush to zero for %s.&bslash;n&quot;
+comma
+id|current-&gt;comm
+)paren
+suffix:semicolon
+id|fcr31
+op_and_assign
+op_complement
+l_int|0x20000
+suffix:semicolon
+id|fcr31
+op_or_assign
+(paren
+l_int|1
+op_lshift
+l_int|24
+)paren
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;ctc1&bslash;t%0,$31&quot;
+suffix:colon
+multiline_comment|/* No outputs */
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|fcr31
+)paren
+)paren
+suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;Unimplemented exception at 0x%08lx in %s.&bslash;n&quot;
 comma
 id|regs-&gt;cp0_epc
 comma
-id|fcr31
+id|current-&gt;comm
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1481,7 +1552,7 @@ macro_line|#endif
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%d] Illegal instruction at %08lx ra=%08lx&bslash;n&quot;
+l_string|&quot;[%s:%ld] Illegal instruction at %08lx ra=%08lx&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -1538,11 +1609,6 @@ r_int
 r_int
 id|cpid
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|cpid
 op_assign
 (paren
@@ -1557,18 +1623,66 @@ r_if
 c_cond
 (paren
 id|cpid
-op_eq
+op_ne
 l_int|1
 )paren
-(brace
+r_goto
+id|bad_cid
+suffix:semicolon
 id|regs-&gt;cp0_status
 op_or_assign
 id|ST0_CU1
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|last_task_used_math
+op_eq
+id|current
+)paren
 r_goto
 id|out
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|current-&gt;used_math
+)paren
+(brace
+multiline_comment|/* Using the FPU again.  */
+id|r4xx0_lazy_fpu_switch
+c_func
+(paren
+id|last_task_used_math
+)paren
+suffix:semicolon
 )brace
+r_else
+(brace
+multiline_comment|/* First time FPU user.  */
+id|r4xx0_init_fpu
+c_func
+(paren
+)paren
+suffix:semicolon
+id|current-&gt;used_math
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+id|last_task_used_math
+op_assign
+id|current
+suffix:semicolon
+r_return
+suffix:semicolon
+id|bad_cid
+suffix:colon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|force_sig
 c_func
 (paren
@@ -1577,13 +1691,13 @@ comma
 id|current
 )paren
 suffix:semicolon
-id|out
-suffix:colon
 id|unlock_kernel
 c_func
 (paren
 )paren
 suffix:semicolon
+id|out
+suffix:colon
 )brace
 DECL|function|do_vcei
 r_void
@@ -1914,80 +2028,6 @@ l_int|0x204
 suffix:semicolon
 )brace
 )brace
-DECL|typedef|syscall_t
-r_typedef
-id|asmlinkage
-r_int
-(paren
-op_star
-id|syscall_t
-)paren
-(paren
-r_void
-op_star
-id|a0
-comma
-dot
-dot
-dot
-)paren
-suffix:semicolon
-DECL|variable|do_syscalls
-id|asmlinkage
-r_int
-(paren
-op_star
-id|do_syscalls
-)paren
-(paren
-r_struct
-id|pt_regs
-op_star
-id|regs
-comma
-id|syscall_t
-id|fun
-comma
-r_int
-id|narg
-)paren
-suffix:semicolon
-r_extern
-id|asmlinkage
-r_int
-id|r4k_do_syscalls
-c_func
-(paren
-r_struct
-id|pt_regs
-op_star
-id|regs
-comma
-id|syscall_t
-id|fun
-comma
-r_int
-id|narg
-)paren
-suffix:semicolon
-r_extern
-id|asmlinkage
-r_int
-id|r2300_do_syscalls
-c_func
-(paren
-r_struct
-id|pt_regs
-op_star
-id|regs
-comma
-id|syscall_t
-id|fun
-comma
-r_int
-id|narg
-)paren
-suffix:semicolon
 DECL|variable|save_fp_context
 id|asmlinkage
 r_void
@@ -2156,10 +2196,6 @@ c_cond
 id|mips_machtype
 op_eq
 id|MACH_MIPS_MAGNUM_4000
-op_logical_or
-id|mips_machtype
-op_eq
-id|MACH_DESKSTATION_RPC44
 op_logical_or
 id|mips_machtype
 op_eq
@@ -2458,10 +2494,6 @@ comma
 l_int|0x80
 )paren
 suffix:semicolon
-id|do_syscalls
-op_assign
-id|r4k_do_syscalls
-suffix:semicolon
 id|save_fp_context
 op_assign
 id|r4k_save_fp_context
@@ -2645,10 +2677,6 @@ id|except_vec0_r2300
 comma
 l_int|0x80
 )paren
-suffix:semicolon
-id|do_syscalls
-op_assign
-id|r2300_do_syscalls
 suffix:semicolon
 id|save_fp_context
 op_assign

@@ -3,6 +3,7 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/dcache.h&gt;
+macro_line|#include &lt;linux/quotaops.h&gt;
 multiline_comment|/*&n; * New inode.c implementation.&n; *&n; * This implementation has the basic premise of trying&n; * to be extremely low-overhead and SMP-safe, yet be&n; * simple enough to be &quot;obviously correct&quot;.&n; *&n; * Famous last words.&n; */
 DECL|macro|INODE_PARANOIA
 mdefine_line|#define INODE_PARANOIA 1
@@ -707,19 +708,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|IS_WRITABLE
+id|IS_QUOTAINIT
 c_func
 (paren
 id|inode
 )paren
-op_logical_and
-id|inode-&gt;i_sb
-op_logical_and
-id|inode-&gt;i_sb-&gt;dq_op
 )paren
-id|inode-&gt;i_sb-&gt;dq_op
-op_member_access_from_pointer
-id|drop
+id|DQUOT_DROP
 c_func
 (paren
 id|inode

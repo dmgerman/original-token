@@ -16,16 +16,6 @@ mdefine_line|#define NR_REQUEST&t;64
 multiline_comment|/*&n; * This is used in the elevator algorithm.  We don&squot;t prioritise reads&n; * over writes any more --- although reads are more time-critical than&n; * writes, by treating them equally we increase filesystem throughput.&n; * This turns out to give better overall performance.  -- sct&n; */
 DECL|macro|IN_ORDER
 mdefine_line|#define IN_ORDER(s1,s2) &bslash;&n;((s1)-&gt;rq_dev &lt; (s2)-&gt;rq_dev || (((s1)-&gt;rq_dev == (s2)-&gt;rq_dev &amp;&amp; &bslash;&n;(s1)-&gt;sector &lt; (s2)-&gt;sector)))
-multiline_comment|/*&n; * These will have to be changed to be aware of different buffer&n; * sizes etc.. It actually needs a major cleanup.&n; */
-macro_line|#if defined(IDE_DRIVER) || defined(MD_DRIVER)
-DECL|macro|SECTOR_MASK
-mdefine_line|#define SECTOR_MASK ((BLOCK_SIZE &gt;&gt; 9) - 1)
-macro_line|#else
-DECL|macro|SECTOR_MASK
-mdefine_line|#define SECTOR_MASK (blksize_size[MAJOR_NR] &amp;&amp;     &bslash;&n;&t;blksize_size[MAJOR_NR][MINOR(CURRENT-&gt;rq_dev)] ? &bslash;&n;&t;((blksize_size[MAJOR_NR][MINOR(CURRENT-&gt;rq_dev)] &gt;&gt; 9) - 1) :  &bslash;&n;&t;((BLOCK_SIZE &gt;&gt; 9)  -  1))
-macro_line|#endif /* IDE_DRIVER */
-DECL|macro|SUBSECTOR
-mdefine_line|#define SUBSECTOR(block) (CURRENT-&gt;current_nr_sectors &gt; 0)
 multiline_comment|/*&n; * Initialization functions.&n; */
 r_extern
 r_int
@@ -157,6 +147,14 @@ r_void
 suffix:semicolon
 r_extern
 r_int
+id|mfm_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|loop_init
 c_func
 (paren
@@ -198,6 +196,46 @@ suffix:semicolon
 r_extern
 r_int
 id|swim3_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|amiga_floppy_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|atari_floppy_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|nbd_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|ez_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|bpcd_init
 c_func
 (paren
 r_void
@@ -309,6 +347,8 @@ DECL|macro|DEVICE_ON
 mdefine_line|#define DEVICE_ON(device)&t;/* nothing */
 DECL|macro|DEVICE_OFF
 mdefine_line|#define DEVICE_OFF(device)&t;/* nothing */
+DECL|macro|DEVICE_NAME
+mdefine_line|#define DEVICE_NAME &quot;ide&quot;
 macro_line|#elif (MAJOR_NR == RAMDISK_MAJOR)
 multiline_comment|/* ram disk */
 DECL|macro|DEVICE_NAME
@@ -631,12 +671,40 @@ DECL|macro|DEVICE_ON
 mdefine_line|#define DEVICE_ON(device) 
 DECL|macro|DEVICE_OFF
 mdefine_line|#define DEVICE_OFF(device)
+macro_line|#elif (MAJOR_NR == MFM_ACORN_MAJOR)
+DECL|macro|DEVICE_NAME
+mdefine_line|#define DEVICE_NAME &quot;mfm disk&quot;
+DECL|macro|DEVICE_INTR
+mdefine_line|#define DEVICE_INTR do_mfm
+DECL|macro|DEVICE_REQUEST
+mdefine_line|#define DEVICE_REQUEST do_mfm_request
+DECL|macro|DEVICE_NR
+mdefine_line|#define DEVICE_NR(device) (MINOR(device) &gt;&gt; 6)
+DECL|macro|DEVICE_ON
+mdefine_line|#define DEVICE_ON(device)
+DECL|macro|DEVICE_OFF
+mdefine_line|#define DEVICE_OFF(device)
+macro_line|#elif (MAJOR_NR == NBD_MAJOR)
+DECL|macro|DEVICE_NAME
+mdefine_line|#define DEVICE_NAME &quot;nbd&quot;
+DECL|macro|DEVICE_REQUEST
+mdefine_line|#define DEVICE_REQUEST do_nbd_request
+DECL|macro|DEVICE_NR
+mdefine_line|#define DEVICE_NR(device) (MINOR(device))
+DECL|macro|DEVICE_ON
+mdefine_line|#define DEVICE_ON(device) 
+DECL|macro|DEVICE_OFF
+mdefine_line|#define DEVICE_OFF(device)
 macro_line|#endif /* MAJOR_NR == whatever */
 macro_line|#if (MAJOR_NR != SCSI_TAPE_MAJOR)
 macro_line|#if !defined(IDE_DRIVER)
 macro_line|#ifndef CURRENT
 DECL|macro|CURRENT
 mdefine_line|#define CURRENT (blk_dev[MAJOR_NR].current_request)
+macro_line|#endif
+macro_line|#ifndef DEVICE_NAME
+DECL|macro|DEVICE_NAME
+mdefine_line|#define DEVICE_NAME &quot;unknown&quot;
 macro_line|#endif
 DECL|macro|CURRENT_DEV
 mdefine_line|#define CURRENT_DEV DEVICE_NR(CURRENT-&gt;rq_dev)
@@ -685,69 +753,37 @@ macro_line|#endif
 DECL|macro|INIT_REQUEST
 mdefine_line|#define INIT_REQUEST &bslash;&n;&t;if (!CURRENT) {&bslash;&n;&t;&t;CLEAR_INTR; &bslash;&n;&t;&t;return; &bslash;&n;&t;} &bslash;&n;&t;if (MAJOR(CURRENT-&gt;rq_dev) != MAJOR_NR) &bslash;&n;&t;&t;panic(DEVICE_NAME &quot;: request list destroyed&quot;); &bslash;&n;&t;if (CURRENT-&gt;bh) { &bslash;&n;&t;&t;if (!buffer_locked(CURRENT-&gt;bh)) &bslash;&n;&t;&t;&t;panic(DEVICE_NAME &quot;: block not locked&quot;); &bslash;&n;&t;}
 macro_line|#endif /* !defined(IDE_DRIVER) */
-multiline_comment|/* end_request() - SCSI devices have their own version */
-multiline_comment|/*               - IDE drivers have their own copy too */
-macro_line|#if ! SCSI_BLK_MAJOR(MAJOR_NR)
-multiline_comment|/*&n; * The [*_]end_request() handler has to be called with the request queue&n; * spinlock aquired. All functions called within end_request() _must be_&n; * atomic.&n; */
-macro_line|#if defined(IDE_DRIVER) &amp;&amp; !defined(_IDE_C) /* shared copy for IDE modules */
-r_void
-id|ide_end_request
-c_func
-(paren
-id|byte
-id|uptodate
-comma
-id|ide_hwgroup_t
-op_star
-id|hwgroup
-)paren
-suffix:semicolon
-macro_line|#else
-macro_line|#ifdef IDE_DRIVER
-DECL|function|ide_end_request
-r_void
-id|ide_end_request
-c_func
-(paren
-id|byte
-id|uptodate
-comma
-id|ide_hwgroup_t
-op_star
-id|hwgroup
-)paren
-(brace
+multiline_comment|/*&n; * end_request() and friends. Must be called with the request queue spinlock&n; * acquired. All functions called within end_request() _must_be_ atomic.&n; *&n; * Several drivers define their own end_request and call end_that_request_first()&n; * and end_that_request_last() for parts of the original function. This prevents&n; * code duplication in drivers.&n; */
 r_int
-id|nsect
-suffix:semicolon
-r_struct
-id|buffer_head
-op_star
-id|bh
-suffix:semicolon
+id|end_that_request_first
+c_func
+(paren
 r_struct
 id|request
 op_star
 id|req
-suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|io_request_lock
 comma
-id|flags
+r_int
+id|uptodate
+comma
+r_char
+op_star
+id|name
 )paren
 suffix:semicolon
+r_void
+id|end_that_request_last
+c_func
+(paren
+r_struct
+id|request
+op_star
 id|req
-op_assign
-id|hwgroup-&gt;rq
+)paren
 suffix:semicolon
-macro_line|#else
+macro_line|#ifndef LOCAL_END_REQUEST&t;/* If we have our own end_request, we do not want to include this mess */
+macro_line|#if ! SCSI_BLK_MAJOR(MAJOR_NR)
+DECL|function|end_request
 r_static
 r_void
 id|end_request
@@ -757,14 +793,6 @@ r_int
 id|uptodate
 )paren
 (brace
-r_int
-id|nsect
-suffix:semicolon
-r_struct
-id|buffer_head
-op_star
-id|bh
-suffix:semicolon
 r_struct
 id|request
 op_star
@@ -772,163 +800,21 @@ id|req
 op_assign
 id|CURRENT
 suffix:semicolon
-macro_line|#endif /* IDE_DRIVER */
-id|req-&gt;errors
-op_assign
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|uptodate
-)paren
-(brace
-id|printk
+id|end_that_request_first
 c_func
 (paren
-l_string|&quot;end_request: I/O error, dev %s, sector %lu&bslash;n&quot;
-comma
-id|kdevname
-c_func
-(paren
-id|req-&gt;rq_dev
-)paren
-comma
-id|req-&gt;sector
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|bh
-op_assign
-id|req-&gt;bh
-)paren
-op_ne
-l_int|NULL
-)paren
-(brace
-id|nsect
-op_assign
-id|bh-&gt;b_size
-op_rshift
-l_int|9
-suffix:semicolon
-id|req-&gt;nr_sectors
-op_decrement
-suffix:semicolon
-id|req-&gt;nr_sectors
-op_and_assign
-op_complement
-(paren
-id|nsect
-op_minus
-l_int|1
-)paren
-suffix:semicolon
-id|req-&gt;sector
-op_add_assign
-id|nsect
-suffix:semicolon
-id|req-&gt;sector
-op_and_assign
-op_complement
-(paren
-id|nsect
-op_minus
-l_int|1
-)paren
-suffix:semicolon
-)brace
-)brace
-r_if
-c_cond
-(paren
-(paren
-id|bh
-op_assign
-id|req-&gt;bh
-)paren
-op_ne
-l_int|NULL
-)paren
-(brace
-id|req-&gt;bh
-op_assign
-id|bh-&gt;b_reqnext
-suffix:semicolon
-id|bh-&gt;b_reqnext
-op_assign
-l_int|NULL
-suffix:semicolon
-id|bh
-op_member_access_from_pointer
-id|b_end_io
-c_func
-(paren
-id|bh
+id|req
 comma
 id|uptodate
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|bh
-op_assign
-id|req-&gt;bh
-)paren
-op_ne
-l_int|NULL
-)paren
-(brace
-id|req-&gt;current_nr_sectors
-op_assign
-id|bh-&gt;b_size
-op_rshift
-l_int|9
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|req-&gt;nr_sectors
-OL
-id|req-&gt;current_nr_sectors
-)paren
-(brace
-id|req-&gt;nr_sectors
-op_assign
-id|req-&gt;current_nr_sectors
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;end_request: buffer-list destroyed&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-id|req-&gt;buffer
-op_assign
-id|bh-&gt;b_data
-suffix:semicolon
-macro_line|#ifdef IDE_DRIVER
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|io_request_lock
 comma
-id|flags
+id|DEVICE_NAME
 )paren
-suffix:semicolon
-macro_line|#endif /* IDE_DRIVER */
+)paren
 r_return
 suffix:semicolon
-)brace
-)brace
 macro_line|#ifndef DEVICE_NO_RANDOM
 id|add_blkdev_randomness
 c_func
@@ -941,29 +827,6 @@ id|req-&gt;rq_dev
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef IDE_DRIVER
-id|hwgroup-&gt;drive-&gt;queue
-op_assign
-id|req-&gt;next
-suffix:semicolon
-id|blk_dev
-(braket
-id|MAJOR
-c_func
-(paren
-id|req-&gt;rq_dev
-)paren
-)braket
-dot
-id|current_request
-op_assign
-l_int|NULL
-suffix:semicolon
-id|hwgroup-&gt;rq
-op_assign
-l_int|NULL
-suffix:semicolon
-macro_line|#else
 id|DEVICE_OFF
 c_func
 (paren
@@ -974,45 +837,15 @@ id|CURRENT
 op_assign
 id|req-&gt;next
 suffix:semicolon
-macro_line|#endif /* IDE_DRIVER */
-r_if
-c_cond
-(paren
-id|req-&gt;sem
-op_ne
-l_int|NULL
-)paren
-id|up
+id|end_that_request_last
 c_func
 (paren
-id|req-&gt;sem
+id|req
 )paren
 suffix:semicolon
-id|req-&gt;rq_status
-op_assign
-id|RQ_INACTIVE
-suffix:semicolon
-id|wake_up
-c_func
-(paren
-op_amp
-id|wait_for_request
-)paren
-suffix:semicolon
-macro_line|#ifdef IDE_DRIVER
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|io_request_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-macro_line|#endif /* IDE_DRIVER */
 )brace
-macro_line|#endif /* defined(IDE_DRIVER) &amp;&amp; !defined(_IDE_C) */
 macro_line|#endif /* ! SCSI_BLK_MAJOR(MAJOR_NR) */
+macro_line|#endif /* LOCAL_END_REQUEST */
 macro_line|#endif /* (MAJOR_NR != SCSI_TAPE_MAJOR) */
 macro_line|#endif /* defined(MAJOR_NR) || defined(IDE_DRIVER) */
 macro_line|#endif /* _BLK_H */

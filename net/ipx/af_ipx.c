@@ -6700,7 +6700,7 @@ op_assign
 id|sk_alloc
 c_func
 (paren
-id|AF_IPX
+id|PF_IPX
 comma
 id|GFP_KERNEL
 comma
@@ -9291,7 +9291,7 @@ id|net_proto_family
 id|ipx_family_ops
 op_assign
 (brace
-id|AF_IPX
+id|PF_IPX
 comma
 id|ipx_create
 )brace
@@ -9303,7 +9303,7 @@ id|proto_ops
 id|ipx_dgram_ops
 op_assign
 (brace
-id|AF_IPX
+id|PF_IPX
 comma
 id|sock_no_dup
 comma

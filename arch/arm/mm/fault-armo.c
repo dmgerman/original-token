@@ -22,14 +22,16 @@ DECL|macro|FAULT_CODE_WRITE
 mdefine_line|#define FAULT_CODE_WRITE&t;0x02
 DECL|macro|FAULT_CODE_USER
 mdefine_line|#define FAULT_CODE_USER&t;&t;0x01
+DECL|macro|USER_PTRS_PER_PGD
+mdefine_line|#define USER_PTRS_PER_PGD (TASK_SIZE / PGDIR_SIZE)
 DECL|variable|quicklists
 r_struct
 id|pgtable_cache_struct
 id|quicklists
 suffix:semicolon
-DECL|function|__bad_pte
+DECL|function|__bad_pmd
 r_void
-id|__bad_pte
+id|__bad_pmd
 c_func
 (paren
 id|pmd_t
@@ -50,6 +52,56 @@ id|pmd
 )paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_DEBUG_ERRORS
+id|__backtrace
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+id|set_pmd
+c_func
+(paren
+id|pmd
+comma
+id|mk_pmd
+c_func
+(paren
+id|BAD_PAGETABLE
+)paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|__bad_pmd_kernel
+r_void
+id|__bad_pmd_kernel
+c_func
+(paren
+id|pmd_t
+op_star
+id|pmd
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Bad pmd in pte_alloc_kernel: %08lx&bslash;n&quot;
+comma
+id|pmd_val
+c_func
+(paren
+op_star
+id|pmd
+)paren
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_DEBUG_ERRORS
+id|__backtrace
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 id|set_pmd
 c_func
 (paren
@@ -254,7 +306,7 @@ id|pmd
 )paren
 )paren
 (brace
-id|__bad_pte
+id|__bad_pmd
 c_func
 (paren
 id|pmd
@@ -674,15 +726,8 @@ op_amp
 id|FAULT_CODE_USER
 )paren
 (brace
-r_extern
-r_int
-id|console_loglevel
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
+singleline_comment|//extern int console_loglevel;
+singleline_comment|//cli();
 id|tsk-&gt;tss.error_code
 op_assign
 id|mode
@@ -691,10 +736,7 @@ id|tsk-&gt;tss.trap_no
 op_assign
 l_int|14
 suffix:semicolon
-id|console_loglevel
-op_assign
-l_int|9
-suffix:semicolon
+singleline_comment|//console_loglevel = 9;
 id|printk
 (paren
 l_string|&quot;%s: memory violation at pc=0x%08lx, lr=0x%08lx (bad address=0x%08lx, code %d)&bslash;n&quot;
@@ -732,12 +774,7 @@ comma
 id|tsk
 )paren
 suffix:semicolon
-r_while
-c_loop
-(paren
-l_int|1
-)paren
-suffix:semicolon
+singleline_comment|//while (1);
 r_goto
 id|out
 suffix:semicolon

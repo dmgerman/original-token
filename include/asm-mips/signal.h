@@ -1,18 +1,36 @@
-multiline_comment|/*&n; * Linux/MIPS specific definitions for signals.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997 by Ralf Baechle&n; *&n; * $Id: signal.h,v 1.2 1997/09/07 05:27:50 ralf Exp $&n; */
+multiline_comment|/*&n; * Linux/MIPS specific definitions for signals.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997 by Ralf Baechle&n; *&n; * $Id: signal.h,v 1.8 1998/05/01 01:36:11 ralf Exp $&n; */
 macro_line|#ifndef __ASM_MIPS_SIGNAL_H
 DECL|macro|__ASM_MIPS_SIGNAL_H
 mdefine_line|#define __ASM_MIPS_SIGNAL_H
-macro_line|#include &lt;asm/sgidefs.h&gt;
+macro_line|#include &lt;linux/types.h&gt;
+DECL|macro|_NSIG
+mdefine_line|#define _NSIG&t;&t;128
+DECL|macro|_NSIG_BPW
+mdefine_line|#define _NSIG_BPW&t;32
+DECL|macro|_NSIG_WORDS
+mdefine_line|#define _NSIG_WORDS&t;(_NSIG / _NSIG_BPW)
+r_typedef
+r_struct
+(brace
+DECL|member|sig
+r_int
+r_int
+id|sig
+(braket
+id|_NSIG_WORDS
+)braket
+suffix:semicolon
 DECL|typedef|sigset_t
+)brace
+id|sigset_t
+suffix:semicolon
+DECL|typedef|old_sigset_t
 r_typedef
 r_int
 r_int
-id|sigset_t
+id|old_sigset_t
 suffix:semicolon
-DECL|macro|_NSIG
-mdefine_line|#define _NSIG&t;&t;32
-DECL|macro|NSIG
-mdefine_line|#define NSIG&t;&t;_NSIG
+multiline_comment|/* at least 32 bits */
 DECL|macro|SIGHUP
 mdefine_line|#define SIGHUP&t;&t; 1&t;/* Hangup (POSIX).  */
 DECL|macro|SIGINT
@@ -81,30 +99,40 @@ DECL|macro|SIGXCPU
 mdefine_line|#define SIGXCPU&t;&t;30&t;/* CPU limit exceeded (4.2 BSD).  */
 DECL|macro|SIGXFSZ
 mdefine_line|#define SIGXFSZ&t;&t;31&t;/* File size limit exceeded (4.2 BSD).  */
-multiline_comment|/*&n; * sa_flags values: SA_STACK is not currently supported, but will allow the&n; * usage of signal stacks by using the (now obsolete) sa_restorer field in&n; * the sigaction structure as a stack pointer. This is now possible due to&n; * the changes in signal handling. LBT 010493.&n; * SA_INTERRUPT is a no-op, but left due to historical reasons. Use the&n; * SA_RESTART flag to get restarting signals (which were the default long ago)&n; * SA_SHIRQ flag is for shared interrupt support on PCI and EISA.&n; */
+multiline_comment|/* These should not be considered constants from userland.  */
+DECL|macro|SIGRTMIN
+mdefine_line|#define SIGRTMIN&t;32
+DECL|macro|SIGRTMAX
+mdefine_line|#define SIGRTMAX&t;(_NSIG-1)
+multiline_comment|/*&n; * SA_FLAGS values:&n; *&n; * SA_ONSTACK is not currently supported, but will allow sigaltstack(2).&n; * SA_INTERRUPT is a no-op, but left due to historical reasons. Use the&n; * SA_RESTART flag to get restarting signals (which were the default long ago)&n; * SA_NOCLDSTOP flag to turn off SIGCHLD when children stop.&n; * SA_RESETHAND clears the handler when the signal is delivered.&n; * SA_NOCLDWAIT flag on SIGCHLD to inhibit zombies.&n; * SA_NODEFER prevents the current signal from being masked in the handler.&n; *&n; * SA_ONESHOT and SA_NOMASK are the historical Linux names for the Single&n; * Unix names RESETHAND and NODEFER respectively.&n; */
 DECL|macro|SA_STACK
-mdefine_line|#define SA_STACK&t;0x1
-DECL|macro|SA_ONSTACK
-mdefine_line|#define SA_ONSTACK&t;SA_STACK
+mdefine_line|#define SA_STACK&t;0x00000001
+DECL|macro|SA_RESETHAND
+mdefine_line|#define SA_RESETHAND&t;0x00000002
 DECL|macro|SA_RESTART
-mdefine_line|#define SA_RESTART&t;0x4
+mdefine_line|#define SA_RESTART&t;0x00000004
+DECL|macro|SA_SIGINFO
+mdefine_line|#define SA_SIGINFO&t;0x00000008
+DECL|macro|SA_NODEFER
+mdefine_line|#define SA_NODEFER&t;0x00000010
+DECL|macro|SA_NOCLDWAIT
+mdefine_line|#define SA_NOCLDWAIT&t;0x00010000&t;/* Not supported yet */
 DECL|macro|SA_NOCLDSTOP
-mdefine_line|#define SA_NOCLDSTOP&t;0x20000
-multiline_comment|/* Non ABI signals */
-DECL|macro|SA_INTERRUPT
-mdefine_line|#define SA_INTERRUPT&t;0x01000000
+mdefine_line|#define SA_NOCLDSTOP&t;0x00020000
 DECL|macro|SA_NOMASK
-mdefine_line|#define SA_NOMASK&t;0x02000000
+mdefine_line|#define SA_NOMASK&t;SA_NODEFER&t;/* DANGER: was 0x02000000 */
 DECL|macro|SA_ONESHOT
-mdefine_line|#define SA_ONESHOT&t;0x04000000
-DECL|macro|SA_SHIRQ
-mdefine_line|#define SA_SHIRQ&t;0x08000000
+mdefine_line|#define SA_ONESHOT&t;SA_RESETHAND&t;/* DANGER: was 0x04000000 */
 macro_line|#ifdef __KERNEL__
-multiline_comment|/*&n; * These values of sa_flags are used only by the kernel as part of the&n; * irq handling routines.&n; *&n; * SA_INTERRUPT is also used by the irq handling routines.&n; */
+multiline_comment|/*&n; * These values of sa_flags are used only by the kernel as part of the&n; * irq handling routines.&n; *&n; * SA_INTERRUPT is a no-op, but left due to historical reasons. Use the&n; * SA_RESTART flag to get restarting signals (which were the default long ago)&n; * SA_SHIRQ flag is for shared interrupt support on PCI and EISA.&n; */
+DECL|macro|SA_INTERRUPT
+mdefine_line|#define SA_INTERRUPT&t;&t;0x01000000&t;/* interrupt handling */
+DECL|macro|SA_SHIRQ
+mdefine_line|#define SA_SHIRQ&t;&t;0x08000000
 DECL|macro|SA_PROBE
-mdefine_line|#define SA_PROBE SA_ONESHOT
+mdefine_line|#define SA_PROBE&t;&t;SA_ONESHOT
 DECL|macro|SA_SAMPLE_RANDOM
-mdefine_line|#define SA_SAMPLE_RANDOM SA_RESTART
+mdefine_line|#define SA_SAMPLE_RANDOM&t;SA_RESTART
 macro_line|#endif /* __KERNEL__ */
 DECL|macro|SIG_BLOCK
 mdefine_line|#define SIG_BLOCK&t;1&t;/* for blocking signals */
@@ -150,37 +178,36 @@ DECL|member|sa_mask
 id|sigset_t
 id|sa_mask
 suffix:semicolon
-DECL|member|__pad0
+DECL|member|sa_resv
 r_int
-r_int
-id|__pad0
+id|sa_resv
 (braket
-l_int|3
-)braket
-suffix:semicolon
-multiline_comment|/* reserved, keep size constant */
-multiline_comment|/* Abi says here follows reserved int[2] */
-DECL|member|sa_restorer
-r_void
-(paren
-op_star
-id|sa_restorer
-)paren
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#if (_MIPS_ISA == _MIPS_ISA_MIPS1) || (_MIPS_ISA == _MIPS_ISA_MIPS2)
-multiline_comment|/*&n;&t; * For 32 bit code we have to pad struct sigaction to get&n;&t; * constant size for the ABI&n;&t; */
-DECL|member|__pad1
-r_int
-id|__pad1
-(braket
-l_int|1
+l_int|2
 )braket
 suffix:semicolon
 multiline_comment|/* reserved */
-macro_line|#endif
+)brace
+suffix:semicolon
+multiline_comment|/* XXX use sa_rev for storing ka_restorer */
+DECL|struct|k_sigaction
+r_struct
+id|k_sigaction
+(brace
+DECL|member|sa
+r_struct
+id|sigaction
+id|sa
+suffix:semicolon
+DECL|member|ka_restorer
+r_void
+(paren
+op_star
+id|ka_restorer
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#ifdef __KERNEL__

@@ -110,7 +110,7 @@ macro_line|#    error &quot;PPC and Sparc platforms are only support under 2.1.x
 macro_line|#  endif
 macro_line|#  include &lt;linux/bios32.h&gt;
 macro_line|#endif
-macro_line|#if !defined(__alpha__)
+macro_line|#if !defined(__alpha__) &amp;&amp; !defined(__sparc__)
 DECL|macro|MMAPIO
 macro_line|#  define MMAPIO
 macro_line|#endif
@@ -1626,6 +1626,12 @@ r_int
 id|bios_control
 suffix:semicolon
 multiline_comment|/* bios control - SEEPROM */
+DECL|member|irq
+r_int
+r_int
+id|irq
+suffix:semicolon
+multiline_comment|/* IRQ for this adapter */
 DECL|member|adapter_control
 r_int
 r_int
@@ -1642,12 +1648,6 @@ r_int
 r_char
 id|pci_device_fn
 suffix:semicolon
-DECL|member|irq
-r_int
-r_char
-id|irq
-suffix:semicolon
-multiline_comment|/* IRQ for this adapter */
 macro_line|#ifdef AIC7XXX_PROC_STATS
 multiline_comment|/*&n;   * Statistics Kept:&n;   *&n;   * Total Xfers (count for each command that has a data xfer),&n;   * broken down further by reads &amp;&amp; writes.&n;   *&n;   * Binned sizes, writes &amp;&amp; reads:&n;   *    &lt; 512, 512, 1-2K, 2-4K, 4-8K, 8-16K, 16-32K, 32-64K, 64K-128K, &gt; 128K&n;   *&n;   * Total amounts read/written above 512 bytes (amts under ignored)&n;   *&n;   * NOTE: Enabling this feature is likely to cause a noticeable performance&n;   * decrease as the accesses into the stats structures blows apart multiple&n;   * cache lines and is CPU time consuming.&n;   */
 DECL|struct|aic7xxx_xferstats
@@ -18258,6 +18258,7 @@ r_return
 suffix:semicolon
 )brace
 )brace
+macro_line|#if defined(__i386__) || defined(__alpha__)
 multiline_comment|/*+F*************************************************************************&n; * Function:&n; *   aic7xxx_probe&n; *&n; * Description:&n; *   Probing for EISA boards: it looks like the first two bytes&n; *   are a manufacturer code - three characters, five bits each:&n; *&n; *               BYTE 0   BYTE 1   BYTE 2   BYTE 3&n; *              ?1111122 22233333 PPPPPPPP RRRRRRRR&n; *&n; *   The characters are baselined off ASCII &squot;@&squot;, so add that value&n; *   to each to get the real ASCII code for it. The next two bytes&n; *   appear to be a product and revision number, probably vendor-&n; *   specific. This is what is being searched for at each port,&n; *   and what should probably correspond to the ID= field in the&n; *   ECU&squot;s .cfg file for the card - if your card is not detected,&n; *   make sure your signature is listed in the array.&n; *&n; *   The fourth byte&squot;s lowest bit seems to be an enabled/disabled&n; *   flag (rest of the bits are reserved?).&n; *-F*************************************************************************/
 r_static
 id|ahc_type
@@ -18546,6 +18547,7 @@ id|AHC_NONE
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif /* __i386__ || __alpha__ */
 multiline_comment|/*+F*************************************************************************&n; * Function:&n; *   read_2840_seeprom&n; *&n; * Description:&n; *   Reads the 2840 serial EEPROM and returns 1 if successful and 0 if&n; *   not successful.&n; *&n; *   See read_seeprom (for the 2940) for the instruction set of the 93C46&n; *   chip.&n; *&n; *   The 2840 interface to the 93C46 serial EEPROM is through the&n; *   STATUS_2840 and SEECTL_2840 registers.  The CS_2840, CK_2840, and&n; *   DO_2840 bits of the SEECTL_2840 register are connected to the chip&n; *   select, clock, and data out lines respectively of the serial EEPROM.&n; *   The DI_2840 bit of the STATUS_2840 is connected to the data in line&n; *   of the serial EEPROM.  The EEPROM_TF bit of STATUS_2840 register is&n; *   useful in that it gives us an 800 nsec timer.  After a read from the&n; *   SEECTL_2840 register the timing flag is cleared and goes high 800 nsec&n; *   later.&n; *-F*************************************************************************/
 r_static
 r_int
@@ -25928,6 +25930,8 @@ macro_line|#ifdef MMAPIO
 r_int
 r_int
 id|page_offset
+comma
+id|base
 suffix:semicolon
 macro_line|#endif
 r_struct

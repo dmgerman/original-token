@@ -2,9 +2,18 @@ multiline_comment|/*&n; * linux/include/asm-arm/proc-armo/page.h&n; *&n; * Copyr
 macro_line|#ifndef __ASM_PROC_PAGE_H
 DECL|macro|__ASM_PROC_PAGE_H
 mdefine_line|#define __ASM_PROC_PAGE_H
-multiline_comment|/* PAGE_SHIFT determines the page size */
+macro_line|#include &lt;linux/config.h&gt;
+multiline_comment|/* PAGE_SHIFT determines the page size.  This is configurable. */
+macro_line|#if defined(CONFIG_PAGESIZE_8)
 DECL|macro|PAGE_SHIFT
-mdefine_line|#define PAGE_SHIFT&t;15
+mdefine_line|#define PAGE_SHIFT&t;13&t;&t;/* 8K */
+macro_line|#elif defined(CONFIG_PAGESIZE_16)
+DECL|macro|PAGE_SHIFT
+mdefine_line|#define PAGE_SHIFT&t;14&t;&t;/* 16K */
+macro_line|#else&t;&t;/* default */
+DECL|macro|PAGE_SHIFT
+mdefine_line|#define PAGE_SHIFT&t;15&t;&t;/* 32K */
+macro_line|#endif
 DECL|macro|PAGE_SIZE
 mdefine_line|#define PAGE_SIZE       (1UL &lt;&lt; PAGE_SHIFT)
 DECL|macro|PAGE_MASK

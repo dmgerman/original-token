@@ -210,6 +210,9 @@ r_void
 )paren
 (brace
 )brace
+id|__initfunc
+c_func
+(paren
 r_void
 id|chrp_ide_init_hwif_ports
 c_func
@@ -224,6 +227,7 @@ comma
 r_int
 op_star
 id|irq
+)paren
 )paren
 (brace
 r_int
@@ -895,7 +899,7 @@ l_int|0x0802
 )paren
 suffix:semicolon
 multiline_comment|/* sda2 (sda1 is for the kernel) */
-macro_line|#ifdef CONFIG_BLK_DEV_RAM
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
 multiline_comment|/* initrd_start and size are setup by boot/head.S and kernel/head.S */
 r_if
 c_cond

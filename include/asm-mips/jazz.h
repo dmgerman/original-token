@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Hardware info about Mips JAZZ and similar systems&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995 by Andreas Busse and Ralf Baechle&n; *&n; * This file is a mess. It really needs some reorganisation!&n; *&n; * $Id: jazz.h,v 1.5 1997/12/01 21:26:48 ralf Exp $&n; */
+multiline_comment|/*&n; * Hardware info about Mips JAZZ and similar systems&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995 by Andreas Busse and Ralf Baechle&n; *&n; * This file is a mess. It really needs some reorganisation!&n; *&n; * $Id: jazz.h,v 1.6 1998/05/01 01:35:56 ralf Exp $&n; */
 macro_line|#ifndef __ASM_MIPS_JAZZ_H 
 DECL|macro|__ASM_MIPS_JAZZ_H
 mdefine_line|#define __ASM_MIPS_JAZZ_H 

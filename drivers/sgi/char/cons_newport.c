@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * cons_newport.c: Newport graphics console code for the SGI.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: cons_newport.c,v 1.1 1997/12/02 02:28:23 ralf Exp $&n; */
+multiline_comment|/*&n; * cons_newport.c: Newport graphics console code for the SGI.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: cons_newport.c,v 1.1 1998/01/10 19:05:47 ecd Exp $&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

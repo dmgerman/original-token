@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * include/asm-mips/system.h&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994, 1995 by Ralf Baechle&n; * Modified further for R[236]000 by Paul M. Antoine, 1996&n; */
+multiline_comment|/*&n; * include/asm-mips/system.h&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994, 1995 by Ralf Baechle&n; * Modified further for R[236]000 by Paul M. Antoine, 1996&n; *&n; * $Id: system.h,v 1.7 1998/05/04 09:19:03 ralf Exp $&n; */
 macro_line|#ifndef __ASM_MIPS_SYSTEM_H
 DECL|macro|__ASM_MIPS_SYSTEM_H
 mdefine_line|#define __ASM_MIPS_SYSTEM_H
@@ -123,7 +123,7 @@ mdefine_line|#define save_and_cli(x) __save_and_cli(x)
 DECL|macro|restore_flags
 mdefine_line|#define restore_flags(x) __restore_flags(x)
 DECL|macro|mb
-mdefine_line|#define mb()&t;&t;&t;&t;&t;&t;&bslash;&n;__asm__ __volatile__(&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;# prevent instructions being moved around&bslash;n&bslash;t&quot;&t;&bslash;&n;&t;&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;.set&bslash;treorder&quot;&t;&t;&t;&t;&t;&bslash;&n;        : /* no output */&t;&t;&t;&t;&bslash;&n;&t;: /* no input */&t;&t;&t;&t;&bslash;&n;&t;: &quot;memory&quot;)
+mdefine_line|#define mb()&t;&t;&t;&t;&t;&t;&bslash;&n;__asm__ __volatile__(&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;# prevent instructions being moved around&bslash;n&bslash;t&quot;&t;&bslash;&n;&t;&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;.set&bslash;treorder&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;: /* no output */&t;&t;&t;&t;&bslash;&n;&t;: /* no input */&t;&t;&t;&t;&bslash;&n;&t;: &quot;memory&quot;)
 macro_line|#if !defined (__LANGUAGE_ASSEMBLY__)
 multiline_comment|/*&n; * switch_to(n) should switch tasks to task nr n, first&n; * checking that n isn&squot;t the current task, in which case it does nothing.&n; */
 r_extern
@@ -140,120 +140,8 @@ id|tsk
 )paren
 suffix:semicolon
 macro_line|#endif /* !defined (__LANGUAGE_ASSEMBLY__) */
-multiline_comment|/*&n; * FIXME: resume() assumes current == prev&n; */
 DECL|macro|switch_to
-mdefine_line|#define switch_to(prev,next) &bslash;&n;do { &bslash;&n;&t;prev-&gt;tss.current_ds = active_ds; &bslash;&n;        active_ds = next-&gt;tss.current_ds; &bslash;&n;        resume(next); &bslash;&n;} while(0)
-multiline_comment|/*&n; * The 8 and 16 bit variants have to disable interrupts temporarily.&n; * Both are currently unused.&n; */
-DECL|function|xchg_u8
-r_extern
-id|__inline__
-r_int
-r_int
-id|xchg_u8
-c_func
-(paren
-r_volatile
-r_char
-op_star
-id|m
-comma
-r_int
-r_int
-id|val
-)paren
-(brace
-r_int
-r_int
-id|flags
-comma
-id|retval
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-id|retval
-op_assign
-op_star
-id|m
-suffix:semicolon
-op_star
-id|m
-op_assign
-id|val
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-r_return
-id|retval
-suffix:semicolon
-)brace
-DECL|function|xchg_u16
-r_extern
-id|__inline__
-r_int
-r_int
-id|xchg_u16
-c_func
-(paren
-r_volatile
-r_int
-op_star
-id|m
-comma
-r_int
-r_int
-id|val
-)paren
-(brace
-r_int
-r_int
-id|flags
-comma
-id|retval
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-id|retval
-op_assign
-op_star
-id|m
-suffix:semicolon
-op_star
-id|m
-op_assign
-id|val
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-r_return
-id|retval
-suffix:semicolon
-)brace
+mdefine_line|#define switch_to(prev,next) &bslash;&n;do { &bslash;&n;&t;resume(next); &bslash;&n;} while(0)
 multiline_comment|/*&n; * For 32 and 64 bit operands we can take advantage of ll and sc.&n; * FIXME: This doesn&squot;t work for R3000 machines.&n; */
 DECL|function|xchg_u32
 r_extern
@@ -316,9 +204,11 @@ l_string|&quot;2&quot;
 (paren
 id|val
 )paren
+suffix:colon
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
-macro_line|#else /* FIXME: Brain-dead approach, but then again, I AM hacking - PMA */
+macro_line|#else
 r_int
 r_int
 id|flags
@@ -418,6 +308,8 @@ l_string|&quot;2&quot;
 (paren
 id|val
 )paren
+suffix:colon
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 r_return
@@ -465,30 +357,6 @@ id|size
 )paren
 (brace
 r_case
-l_int|1
-suffix:colon
-r_return
-id|xchg_u8
-c_func
-(paren
-id|ptr
-comma
-id|x
-)paren
-suffix:semicolon
-r_case
-l_int|2
-suffix:colon
-r_return
-id|xchg_u16
-c_func
-(paren
-id|ptr
-comma
-id|x
-)paren
-suffix:semicolon
-r_case
 l_int|4
 suffix:colon
 r_return
@@ -500,6 +368,7 @@ comma
 id|x
 )paren
 suffix:semicolon
+macro_line|#if defined(__mips64)
 r_case
 l_int|8
 suffix:colon
@@ -512,6 +381,7 @@ comma
 id|x
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 id|__xchg_called_with_bad_pointer
 c_func

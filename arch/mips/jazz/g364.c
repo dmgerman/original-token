@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/drivers/char/g364.c&n; *&n; *  Copyright (C) 1996  Wayne Hodgen&n; *&n; *  Based on and using chunks of Jay Estabrooks tga.c&n; *&n; * This module exports the console io support for Inmos&squot;s G364 controller&n; * used in Mips Magnums and clones. Based on the hardware desc for the&n; * Olivetti M700-10 ie. an Inmos G364 based card in a dedicated video slot,&n; * 2MB dual ported VRAM with a 64 bit data path, 256 color lookup table,&n; * palette of 16.7M and a user definable 64x64 hardware cursor.&n; */
+multiline_comment|/*&n; *  linux/drivers/char/g364.c&n; *&n; *  Copyright (C) 1996  Wayne Hodgen&n; *&n; *  Based on and using chunks of Jay Estabrooks tga.c&n; *&n; * This module exports the console io support for Inmos&squot;s G364 controller&n; * used in Mips Magnums and clones. Based on the hardware desc for the&n; * Olivetti M700-10 ie. an Inmos G364 based card in a dedicated video slot,&n; * 2MB dual ported VRAM with a 64 bit data path, 256 color lookup table,&n; * palette of 16.7M and a user definable 64x64 hardware cursor.&n; *&n; * $Id: g364.c,v 1.7 1998/05/01 01:33:35 ralf Exp $&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
@@ -1585,5 +1585,20 @@ r_int
 id|arg
 )paren
 (brace
+)brace
+multiline_comment|/*&n; * FIXME: how can we probe for the video board?&n; */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_int
+id|con_is_present
+c_func
+(paren
+)paren
+)paren
+(brace
+r_return
+suffix:semicolon
 )brace
 eof

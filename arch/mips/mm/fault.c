@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#include &lt;asm/hardirq.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/mmu_context.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -83,6 +84,29 @@ suffix:semicolon
 r_int
 r_int
 id|fixup
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|local_irq_count
+(braket
+id|smp_processor_id
+c_func
+(paren
+)paren
+)braket
+op_ne
+l_int|0
+)paren
+id|die_if_kernel
+c_func
+(paren
+l_string|&quot;page fault from irq handler&quot;
+comma
+id|regs
+comma
+id|writeaccess
+)paren
 suffix:semicolon
 id|lock_kernel
 c_func
@@ -263,7 +287,7 @@ id|tsk-&gt;tss.error_code
 op_assign
 id|writeaccess
 suffix:semicolon
-macro_line|#if 1
+macro_line|#if 0
 id|printk
 c_func
 (paren
@@ -298,14 +322,6 @@ l_int|31
 )paren
 suffix:semicolon
 macro_line|#endif
-id|current-&gt;tss.cp0_badvaddr
-op_assign
-id|address
-suffix:semicolon
-id|current-&gt;tss.error_code
-op_assign
-id|writeaccess
-suffix:semicolon
 id|force_sig
 c_func
 (paren
@@ -335,6 +351,10 @@ id|fixup
 (brace
 r_int
 id|new_epc
+suffix:semicolon
+id|tsk-&gt;tss.cp0_baduaddr
+op_assign
+id|address
 suffix:semicolon
 id|new_epc
 op_assign

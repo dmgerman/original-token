@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: signal.h,v 1.2 1997/09/03 12:29:21 jj Exp $&n; * signal.h: Signal emulation for Solaris&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: signal.h,v 1.3 1998/04/12 06:20:33 davem Exp $&n; * signal.h: Signal emulation for Solaris&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 DECL|macro|SOLARIS_SIGHUP
 mdefine_line|#define SOLARIS_SIGHUP&t;&t;1
 DECL|macro|SOLARIS_SIGINT

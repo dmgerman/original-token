@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;
@@ -139,6 +140,43 @@ op_star
 id|zs_consinfo
 op_assign
 l_int|0
+suffix:semicolon
+DECL|variable|sgi_console_driver
+r_static
+r_struct
+id|console
+id|sgi_console_driver
+op_assign
+(brace
+l_string|&quot;debug&quot;
+comma
+l_int|NULL
+comma
+multiline_comment|/* write */
+l_int|NULL
+comma
+multiline_comment|/* read */
+l_int|NULL
+comma
+multiline_comment|/* device */
+l_int|NULL
+comma
+multiline_comment|/* wait_key */
+l_int|NULL
+comma
+multiline_comment|/* unblank */
+l_int|NULL
+comma
+multiline_comment|/* setup */
+id|CON_PRINTBUFFER
+comma
+op_minus
+l_int|1
+comma
+l_int|0
+comma
+l_int|NULL
+)brace
 suffix:semicolon
 DECL|variable|kgdb_regs
 r_static
@@ -3871,35 +3909,33 @@ r_void
 id|zs_console_print
 c_func
 (paren
+r_struct
+id|console
+op_star
+id|co
+comma
 r_const
 r_char
 op_star
-id|p
+id|str
+comma
+r_int
+r_int
+id|count
 )paren
 (brace
-r_char
-id|c
-suffix:semicolon
 r_while
 c_loop
 (paren
-(paren
-id|c
-op_assign
-op_star
-(paren
-id|p
-op_increment
-)paren
-)paren
-op_ne
-l_int|0
+id|count
+op_decrement
 )paren
 (brace
 r_if
 c_cond
 (paren
-id|c
+op_star
+id|str
 op_eq
 l_char|&squot;&bslash;n&squot;
 )paren
@@ -3914,7 +3950,9 @@ suffix:semicolon
 id|rs_put_char
 c_func
 (paren
-id|c
+op_star
+id|str
+op_increment
 )paren
 suffix:semicolon
 )brace
@@ -7193,23 +7231,6 @@ id|hpc3mregs-&gt;ser1cmd
 )paren
 suffix:semicolon
 )brace
-r_extern
-r_void
-id|register_console
-c_func
-(paren
-r_void
-(paren
-op_star
-id|proc
-)paren
-(paren
-r_const
-r_char
-op_star
-)paren
-)paren
-suffix:semicolon
 r_static
 r_inline
 r_void
@@ -7302,10 +7323,15 @@ op_logical_neg
 id|consout_registered
 )paren
 (brace
+id|sgi_console_driver.write
+op_assign
+id|zs_console_print
+suffix:semicolon
 id|register_console
 c_func
 (paren
-id|zs_console_print
+op_amp
+id|sgi_console_driver
 )paren
 suffix:semicolon
 id|consout_registered

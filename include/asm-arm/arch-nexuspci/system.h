@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/include/asm-arm/arch-ebsa110/system.h&n; *&n; * Copyright (c) 1996,1997,1998 Russell King.&n; */
+multiline_comment|/*&n; * linux/include/asm-arm/arch-nexuspci/system.h&n; *&n; * Copyright (c) 1996,1997,1998 Russell King.&n; */
 macro_line|#ifndef __ASM_ARCH_SYSTEM_H
 DECL|macro|__ASM_ARCH_SYSTEM_H
 mdefine_line|#define __ASM_ARCH_SYSTEM_H
@@ -11,7 +11,7 @@ id|arch_hard_reset
 r_void
 )paren
 (brace
-multiline_comment|/*&n;&t; * loop endlessly&n;&t; */
+multiline_comment|/*&n;&t; * loop endlessly - the watchdog will reset us if it&squot;s enabled.&n;&t; */
 id|cli
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: system.h,v 1.68 1998/03/09 14:04:51 jj Exp $ */
+multiline_comment|/* $Id: system.h,v 1.69 1998/04/24 12:30:19 davem Exp $ */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifndef __SPARC_SYSTEM_H
 DECL|macro|__SPARC_SYSTEM_H

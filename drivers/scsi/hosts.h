@@ -502,15 +502,15 @@ r_int
 r_char
 id|n_io_port
 suffix:semicolon
-DECL|member|irq
-r_int
-r_char
-id|irq
-suffix:semicolon
 DECL|member|dma_channel
 r_int
 r_char
 id|dma_channel
+suffix:semicolon
+DECL|member|irq
+r_int
+r_int
+id|irq
 suffix:semicolon
 multiline_comment|/*&n;     * This is a unique identifier that must be assigned so that we&n;     * have some way of identifying each detected host adapter properly&n;     * and uniquely.  For hosts that do not support more than one card&n;     * in the system at one time, this does not need to be set.  It is&n;     * initialized to 0 in scsi_register.&n;     */
 DECL|member|unique_id

@@ -12,6 +12,7 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/ohare.h&gt;
 macro_line|#include &lt;asm/mediabay.h&gt;
+macro_line|#include &lt;asm/init.h&gt;
 DECL|struct|media_bay_hw
 r_struct
 id|media_bay_hw
@@ -129,6 +130,8 @@ id|id
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * It seems that the bit for the media-bay interrupt in the IRQ_LEVEL&n; * register is always set when there is something in the media bay.&n; * This causes problems for the interrupt code if we attach an interrupt&n; * handler to the media-bay interrupt, because it tends to go into&n; * an infinite loop calling the media bay interrupt handler.&n; * Therefore we do it all by polling the media bay once each tick.&n; */
+id|__pmac
+multiline_comment|/* I don&squot;t know of any chrp with a mediabay -- Cort */
 r_void
 DECL|function|media_bay_init
 id|media_bay_init

@@ -486,6 +486,7 @@ id|sb
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Allocate a block in the given allocation zone.&n; * Since we have to byte-swap the bitmap on little-endian&n; * machines, this is rather expensive. Therefor we will&n; * preallocate up to 16 blocks from the same word, if&n; * possible. We are not doing preallocations in the&n; * header zone, though.&n; */
 r_static
 id|s32
 DECL|function|affs_balloc
@@ -874,6 +875,7 @@ r_return
 id|block
 suffix:semicolon
 )brace
+multiline_comment|/* Find a new allocation zone, starting at zone_no. */
 r_static
 r_int
 DECL|function|affs_find_new_zone
@@ -1285,7 +1287,7 @@ suffix:semicolon
 id|pr_debug
 c_func
 (paren
-l_string|&quot;  ++ found zone (%d) in bm %d at lw offset %d with %d free blocks&bslash;n&quot;
+l_string|&quot;AFFS: found zone (%d) in bm %d at lw offset %d with %d free blocks&bslash;n&quot;
 comma
 id|i
 comma
@@ -1314,6 +1316,7 @@ r_return
 id|az-&gt;az_free
 suffix:semicolon
 )brace
+multiline_comment|/* Allocate a new header block. */
 id|s32
 DECL|function|affs_new_header
 id|affs_new_header
@@ -1479,6 +1482,7 @@ r_return
 id|block
 suffix:semicolon
 )brace
+multiline_comment|/* Allocate a new data block. */
 id|s32
 DECL|function|affs_new_data
 id|affs_new_data
@@ -1898,29 +1902,12 @@ l_int|1
 op_div
 l_int|2
 suffix:semicolon
-id|sb-&gt;u.affs_sb.s_zones
-(braket
-l_int|0
-)braket
-dot
-id|z_az_no
-op_assign
-id|mid
-suffix:semicolon
-id|affs_find_new_zone
-c_func
-(paren
-id|sb
-comma
-l_int|0
-)paren
-suffix:semicolon
 r_for
 c_loop
 (paren
 id|i
 op_assign
-l_int|1
+l_int|0
 suffix:semicolon
 id|i
 OL

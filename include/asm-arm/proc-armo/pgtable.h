@@ -32,11 +32,11 @@ mdefine_line|#define flush_tlb_range(mm, start, end) do { } while (0)
 DECL|macro|flush_tlb_page
 mdefine_line|#define flush_tlb_page(vma, vmaddr)&t;do { } while (0)
 multiline_comment|/*&n; * We have a mem map cache...&n; */
-DECL|function|update_mm_cache_all
+DECL|function|update_memc_all
 r_extern
 id|__inline__
 r_void
-id|update_mm_cache_all
+id|update_memc_all
 c_func
 (paren
 r_void
@@ -82,11 +82,11 @@ id|current
 )paren
 suffix:semicolon
 )brace
-DECL|function|update_mm_cache_task
+DECL|function|update_memc_task
 r_extern
 id|__inline__
 r_void
-id|update_mm_cache_task
+id|update_memc_task
 c_func
 (paren
 r_struct
@@ -116,11 +116,11 @@ id|tsk
 )paren
 suffix:semicolon
 )brace
-DECL|function|update_mm_cache_mm
+DECL|function|update_memc_mm
 r_extern
 id|__inline__
 r_void
-id|update_mm_cache_mm
+id|update_memc_mm
 c_func
 (paren
 r_struct
@@ -183,11 +183,11 @@ id|current
 )paren
 suffix:semicolon
 )brace
-DECL|function|update_mm_cache_mm_addr
+DECL|function|update_memc_addr
 r_extern
 id|__inline__
 r_void
-id|update_mm_cache_mm_addr
+id|update_memc_addr
 c_func
 (paren
 r_struct
@@ -285,8 +285,6 @@ DECL|macro|PTRS_PER_PMD
 mdefine_line|#define PTRS_PER_PMD    1
 DECL|macro|PTRS_PER_PGD
 mdefine_line|#define PTRS_PER_PGD    32
-DECL|macro|USER_PTRS_PER_PGD
-mdefine_line|#define USER_PTRS_PER_PGD&t;(TASK_SIZE / PGDIR_SHIFT)
 multiline_comment|/* Just any arbitrary offset to the start of the vmalloc VM area: the&n; * current 8MB value just means that there will be a 8MB &quot;hole&quot; after the&n; * physical memory until the kernel virtual memory starts.  That means that&n; * any out-of-bounds memory accesses will hopefully be caught.&n; * The vmalloc() routines leaves a hole of 4kB between each vmalloced&n; * area for the same reason. ;)&n; */
 DECL|macro|VMALLOC_START
 mdefine_line|#define VMALLOC_START&t;0x01a00000
@@ -1464,7 +1462,17 @@ id|pmd
 )brace
 r_extern
 r_void
-id|__bad_pte
+id|__bad_pmd
+c_func
+(paren
+id|pmd_t
+op_star
+id|pmd
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|__bad_pmd_kernel
 c_func
 (paren
 id|pmd_t
@@ -1577,7 +1585,7 @@ id|pmd
 )paren
 )paren
 (brace
-id|__bad_pte
+id|__bad_pmd
 c_func
 (paren
 id|pmd
@@ -1647,7 +1655,7 @@ DECL|macro|pmd_alloc_kernel
 mdefine_line|#define pmd_alloc_kernel        pmd_alloc
 DECL|macro|pte_alloc_kernel
 mdefine_line|#define pte_alloc_kernel        pte_alloc
-DECL|function|set_pgdir
+macro_line|#if 0
 r_extern
 id|__inline__
 r_void
@@ -1743,12 +1751,12 @@ id|pgd
 id|address
 op_rshift
 id|PGDIR_SHIFT
-)paren
 )braket
 op_assign
 id|entry
 suffix:semicolon
 )brace
+macro_line|#endif
 r_extern
 id|pgd_t
 id|swapper_pg_dir

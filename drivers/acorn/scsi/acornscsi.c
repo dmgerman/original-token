@@ -10068,7 +10068,7 @@ id|sprintf
 (paren
 id|string
 comma
-l_string|&quot;%s at port %X irq %d v%d.%d.%d&quot;
+l_string|&quot;%s at port %lX irq %d v%d.%d.%d&quot;
 macro_line|#ifdef CONFIG_SCSI_ACORNSCSI_SYNC
 l_string|&quot; SYNC&quot;
 macro_line|#endif
@@ -10263,12 +10263,11 @@ id|sprintf
 id|p
 comma
 l_string|&quot;Statistics:&bslash;n&quot;
-comma
-l_string|&quot;Queued commands: %-10d    Issued commands: %-10d&bslash;n&quot;
-l_string|&quot;Done commands  : %-10d    Reads          : %-10d&bslash;n&quot;
-l_string|&quot;Writes         : %-10d    Others         : %-10d&bslash;n&quot;
-l_string|&quot;Disconnects    : %-10d    Aborts         : %-10d&bslash;n&quot;
-l_string|&quot;Resets         : %-10d&bslash;n&bslash;nLast phases:&quot;
+l_string|&quot;Queued commands: %-10u    Issued commands: %-10u&bslash;n&quot;
+l_string|&quot;Done commands  : %-10u    Reads          : %-10u&bslash;n&quot;
+l_string|&quot;Writes         : %-10u    Others         : %-10u&bslash;n&quot;
+l_string|&quot;Disconnects    : %-10u    Aborts         : %-10u&bslash;n&quot;
+l_string|&quot;Resets         : %-10u&bslash;n&bslash;nLast phases:&quot;
 comma
 id|host-&gt;stats.queues
 comma

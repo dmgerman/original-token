@@ -14,8 +14,16 @@ DECL|macro|PMU_SET_RTC
 mdefine_line|#define PMU_SET_RTC&t;&t;0x30&t;/* set real-time clock */
 DECL|macro|PMU_READ_RTC
 mdefine_line|#define PMU_READ_RTC&t;&t;0x38&t;/* read real-time clock */
+DECL|macro|PMU_SET_VOLBUTTON
+mdefine_line|#define PMU_SET_VOLBUTTON&t;0x40&t;/* set volume up/down position */
 DECL|macro|PMU_BACKLIGHT_BRIGHT
 mdefine_line|#define PMU_BACKLIGHT_BRIGHT&t;0x41&t;/* set backlight brightness */
+DECL|macro|PMU_GET_VOLBUTTON
+mdefine_line|#define PMU_GET_VOLBUTTON&t;0x48&t;/* get volume up/down position */
+DECL|macro|PMU_PCEJECT
+mdefine_line|#define PMU_PCEJECT&t;&t;0x4c&t;/* eject PC-card from slot */
+DECL|macro|PMU_BATTERY_STATE
+mdefine_line|#define PMU_BATTERY_STATE&t;0x6b&t;/* report battery state etc. */
 DECL|macro|PMU_SET_INTR_MASK
 mdefine_line|#define PMU_SET_INTR_MASK&t;0x70&t;/* set PMU interrupt mask */
 DECL|macro|PMU_INT_ACK
@@ -26,6 +34,10 @@ DECL|macro|PMU_SLEEP
 mdefine_line|#define PMU_SLEEP&t;&t;0x7f&t;/* put CPU to sleep */
 DECL|macro|PMU_RESET
 mdefine_line|#define PMU_RESET&t;&t;0xd0&t;/* reset CPU */
+DECL|macro|PMU_GET_BRIGHTBUTTON
+mdefine_line|#define PMU_GET_BRIGHTBUTTON&t;0xd9&t;/* report brightness up/down pos */
+DECL|macro|PMU_GET_COVER
+mdefine_line|#define PMU_GET_COVER&t;&t;0xdc&t;/* report cover open/closed */
 multiline_comment|/* Bits in PMU interrupt and interrupt mask bytes */
 DECL|macro|PMU_INT_ADB_AUTO
 mdefine_line|#define PMU_INT_ADB_AUTO&t;0x04&t;/* ADB autopoll, when PMU_INT_ADB */
@@ -38,6 +50,13 @@ mdefine_line|#define PMU_INT_ADB&t;&t;0x10&t;/* ADB autopoll or reply data */
 DECL|macro|PMU_INT_TICK
 mdefine_line|#define PMU_INT_TICK&t;&t;0x80&t;/* 1-second tick interrupt */
 macro_line|#ifdef __KERNEL__
+r_void
+id|find_via_pmu
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 r_void
 id|via_pmu_init
 c_func

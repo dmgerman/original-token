@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * linux/include/asm-arm/arch-rpc/ide.h&n; *&n; * Copyright (c) 1997 Russell King&n; */
+macro_line|#include &lt;asm/irq.h&gt;
 r_static
 id|__inline__
 r_int
@@ -18,7 +19,7 @@ op_eq
 l_int|0x1f0
 )paren
 r_return
-l_int|9
+id|IRQ_HARDDISK
 suffix:semicolon
 r_return
 l_int|0
@@ -137,6 +138,7 @@ id|irq
 op_ne
 l_int|NULL
 )paren
+op_star
 id|irq
 op_assign
 l_int|0

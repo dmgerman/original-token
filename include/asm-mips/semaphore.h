@@ -2,7 +2,9 @@ multiline_comment|/*&n; * SMP- and interrupt-safe semaphores..&n; *&n; * This fi
 macro_line|#ifndef __ASM_MIPS_SEMAPHORE_H
 DECL|macro|__ASM_MIPS_SEMAPHORE_H
 mdefine_line|#define __ASM_MIPS_SEMAPHORE_H
+macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
 DECL|struct|semaphore
 r_struct
 id|semaphore
@@ -59,6 +61,10 @@ id|semaphore
 op_star
 id|sem
 )paren
+suffix:semicolon
+r_extern
+id|spinlock_t
+id|semaphore_wake_lock
 suffix:semicolon
 DECL|macro|sema_init
 mdefine_line|#define sema_init(sem, val)&t;atomic_set(&amp;((sem)-&gt;count), val)

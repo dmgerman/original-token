@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sgint23.h,v 1.1.1.1 1997/06/01 03:17:12 ralf Exp $&n; * sgint23.h: Defines for the SGI INT2 and INT3 chipsets.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/* $Id: sgint23.h,v 1.2 1998/05/01 01:36:09 ralf Exp $&n; * sgint23.h: Defines for the SGI INT2 and INT3 chipsets.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
 macro_line|#ifndef _MIPS_SGINT23_H
 DECL|macro|_MIPS_SGINT23_H
 mdefine_line|#define _MIPS_SGINT23_H
@@ -464,7 +464,7 @@ mdefine_line|#define SGINT_TCWORD_CNT2   0x80 /* Select counter two */
 DECL|macro|SGINT_TCWORD_CRBCK
 mdefine_line|#define SGINT_TCWORD_CRBCK  0xc0 /* Readback command */
 DECL|macro|SGINT_TCSAMP_COUNTER
-mdefine_line|#define SGINT_TCSAMP_COUNTER  0x164
+mdefine_line|#define SGINT_TCSAMP_COUNTER  10255
 DECL|struct|sgi_int2_regs
 r_struct
 id|sgi_int2_regs

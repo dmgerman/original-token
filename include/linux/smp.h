@@ -4,26 +4,7 @@ mdefine_line|#define __LINUX_SMP_H
 multiline_comment|/*&n; *&t;Generic SMP support&n; *&t;&t;Alan Cox. &lt;alan@cymru.net&gt;&n; */
 macro_line|#ifdef __SMP__
 macro_line|#include &lt;asm/smp.h&gt;
-multiline_comment|/*&n; * main IPI interface, handles INIT, TLB flush, STOP, etc.:&n; */
-r_extern
-r_void
-id|smp_message_pass
-c_func
-(paren
-r_int
-id|target
-comma
-r_int
-id|msg
-comma
-r_int
-r_int
-id|data
-comma
-r_int
-id|wait
-)paren
-suffix:semicolon
+multiline_comment|/*&n; * main IPI interface, handles INIT, TLB flush, STOP, etc. (defined in asm header):&n; *&n; * extern void smp_message_pass(int target, int msg, unsigned long data, int wait);&n; */
 multiline_comment|/*&n; * Boot processor call to load the other CPU&squot;s&n; */
 r_extern
 r_void

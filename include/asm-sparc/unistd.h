@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: unistd.h,v 1.38 1998/03/27 07:01:56 davem Exp $ */
+multiline_comment|/* $Id: unistd.h,v 1.40 1998/04/14 13:49:55 jj Exp $ */
 macro_line|#ifndef _SPARC_UNISTD_H
 DECL|macro|_SPARC_UNISTD_H
 mdefine_line|#define _SPARC_UNISTD_H
@@ -229,7 +229,8 @@ DECL|macro|__NR_getrusage
 mdefine_line|#define __NR_getrusage          117 /* Common                                      */
 DECL|macro|__NR_getsockopt
 mdefine_line|#define __NR_getsockopt         118 /* Common                                      */
-multiline_comment|/* #define __NR_ni_syscall      119    ENOSYS under SunOS                          */
+DECL|macro|__NR_getcwd
+mdefine_line|#define __NR_getcwd      &t;119 /* Linux Specific                              */
 DECL|macro|__NR_readv
 mdefine_line|#define __NR_readv              120 /* Common                                      */
 DECL|macro|__NR_writev

@@ -3749,7 +3749,7 @@ op_assign
 id|sk_alloc
 c_func
 (paren
-id|AF_APPLETALK
+id|PF_APPLETALK
 comma
 id|GFP_KERNEL
 comma
@@ -4881,7 +4881,7 @@ c_cond
 id|call_in_firewall
 c_func
 (paren
-id|AF_APPLETALK
+id|PF_APPLETALK
 comma
 id|skb-&gt;dev
 comma
@@ -4990,7 +4990,7 @@ c_cond
 id|call_fw_firewall
 c_func
 (paren
-id|AF_APPLETALK
+id|PF_APPLETALK
 comma
 id|skb-&gt;dev
 comma
@@ -5370,10 +5370,6 @@ OL
 l_int|0
 )paren
 (brace
-id|skb-&gt;sk
-op_assign
-l_int|NULL
-suffix:semicolon
 id|kfree_skb
 c_func
 (paren
@@ -6190,7 +6186,7 @@ c_cond
 id|call_out_firewall
 c_func
 (paren
-id|AF_APPLETALK
+id|PF_APPLETALK
 comma
 id|skb-&gt;dev
 comma
@@ -7111,7 +7107,7 @@ id|net_proto_family
 id|atalk_family_ops
 op_assign
 (brace
-id|AF_APPLETALK
+id|PF_APPLETALK
 comma
 id|atalk_create
 )brace
@@ -7123,7 +7119,7 @@ id|proto_ops
 id|atalk_dgram_ops
 op_assign
 (brace
-id|AF_APPLETALK
+id|PF_APPLETALK
 comma
 id|sock_no_dup
 comma
@@ -7567,7 +7563,7 @@ suffix:semicolon
 id|sock_unregister
 c_func
 (paren
-id|atalk_family_ops.family
+id|PF_APPLETALK
 )paren
 suffix:semicolon
 r_return

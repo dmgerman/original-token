@@ -1,10 +1,11 @@
-multiline_comment|/* $Id: mmu_context.h,v 1.20 1997/09/18 10:42:08 rth Exp $ */
+multiline_comment|/* $Id: mmu_context.h,v 1.24 1998/05/06 02:07:54 paulus Exp $ */
 macro_line|#ifndef __SPARC64_MMU_CONTEXT_H
 DECL|macro|__SPARC64_MMU_CONTEXT_H
 mdefine_line|#define __SPARC64_MMU_CONTEXT_H
 multiline_comment|/* Derived heavily from Linus&squot;s Alpha/AXP ASN code... */
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/spitfire.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
 DECL|macro|NO_CONTEXT
 mdefine_line|#define NO_CONTEXT     0
 macro_line|#ifndef __ASSEMBLY__
@@ -13,8 +14,19 @@ r_int
 r_int
 id|tlb_context_cache
 suffix:semicolon
+r_extern
+id|spinlock_t
+id|scheduler_lock
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|mmu_context_bmap
+(braket
+)braket
+suffix:semicolon
 DECL|macro|CTX_VERSION_SHIFT
-mdefine_line|#define CTX_VERSION_SHIFT&t;PAGE_SHIFT
+mdefine_line|#define CTX_VERSION_SHIFT&t;(PAGE_SHIFT - 3)
 DECL|macro|CTX_VERSION_MASK
 mdefine_line|#define CTX_VERSION_MASK&t;((~0UL) &lt;&lt; CTX_VERSION_SHIFT)
 DECL|macro|CTX_FIRST_VERSION
@@ -28,37 +40,13 @@ r_struct
 id|mm_struct
 op_star
 id|mm
-comma
-r_int
-r_int
-op_star
-id|ctx
 )paren
 suffix:semicolon
 multiline_comment|/* Initialize/destroy the context related info for a new mm_struct&n; * instance.&n; */
 DECL|macro|init_new_context
 mdefine_line|#define init_new_context(mm)&t;((mm)-&gt;context = NO_CONTEXT)
 DECL|macro|destroy_context
-mdefine_line|#define destroy_context(mm)&t;((mm)-&gt;context = NO_CONTEXT)
-macro_line|#ifdef __SMP__
-DECL|macro|LOCAL_FLUSH_PENDING
-mdefine_line|#define LOCAL_FLUSH_PENDING(cpu)&t;&bslash;&n;&t;((cpu_data[(cpu)].last_tlbversion_seen ^ tlb_context_cache) &amp; CTX_VERSION_MASK)
-DECL|macro|DO_LOCAL_FLUSH
-mdefine_line|#define DO_LOCAL_FLUSH(cpu)&t;&t;do { __flush_tlb_all();&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;     cpu_data[cpu].last_tlbversion_seen =&t;&bslash;&n;&t;&t;&t;&t;&t;     tlb_context_cache &amp; CTX_VERSION_MASK;&t;&bslash;&n;&t;&t;&t;&t;&t;} while(0)
-macro_line|#else
-DECL|macro|LOCAL_FLUSH_PENDING
-mdefine_line|#define LOCAL_FLUSH_PENDING(cpu)&t;0
-DECL|macro|DO_LOCAL_FLUSH
-mdefine_line|#define DO_LOCAL_FLUSH(cpu)&t;&t;do { __flush_tlb_all(); } while(0)
-macro_line|#endif
-r_extern
-r_void
-id|__flush_tlb_all
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
+mdefine_line|#define destroy_context(mm)&t;do { &t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if ((mm)-&gt;context != NO_CONTEXT) { &t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;spin_lock(&amp;scheduler_lock); &t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;if (!(((mm)-&gt;context ^ tlb_context_cache) &amp; CTX_VERSION_MASK))&t;&t;&t;&bslash;&n;&t;&t;&t;clear_bit((mm)-&gt;context &amp; ~(CTX_VERSION_MASK), mmu_context_bmap);&t;&bslash;&n;&t;&t;spin_unlock(&amp;scheduler_lock); &t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;(mm)-&gt;context = NO_CONTEXT; &t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;} &t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;} while (0)
 DECL|function|get_mmu_context
 r_extern
 id|__inline__
@@ -94,23 +82,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|LOCAL_FLUSH_PENDING
-c_func
-(paren
-id|current-&gt;processor
-)paren
-)paren
-(brace
-id|DO_LOCAL_FLUSH
-c_func
-(paren
-id|current-&gt;processor
-)paren
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -151,9 +122,57 @@ id|get_new_mmu_context
 c_func
 (paren
 id|mm
-comma
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|mm-&gt;cpu_vm_mask
 op_amp
-id|tlb_context_cache
+(paren
+l_int|1UL
+op_lshift
+id|smp_processor_id
+c_func
+(paren
+)paren
+)paren
+)paren
+)paren
+(brace
+id|spitfire_set_secondary_context
+c_func
+(paren
+id|mm-&gt;context
+op_amp
+l_int|0x3ff
+)paren
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;flush %g6&quot;
+)paren
+suffix:semicolon
+id|spitfire_flush_dtlb_secondary_context
+c_func
+(paren
+)paren
+suffix:semicolon
+id|spitfire_flush_itlb_secondary_context
+c_func
+(paren
+)paren
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;flush %g6&quot;
 )paren
 suffix:semicolon
 )brace
@@ -168,7 +187,7 @@ c_cond
 (paren
 id|mm-&gt;context
 op_amp
-l_int|0x1fff
+l_int|0x3ff
 )paren
 suffix:colon
 l_int|0

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sbuscons.c,v 1.15 1998/03/31 01:49:50 davem Exp $&n; * sbuscons.c: Routines specific to SBUS frame buffer consoles.&n; *&n; * Copyright (C) 1995 Peter Zaitcev (zaitcev@lab.ipmce.su)&n; * Copyright (C) 1995,1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995, 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Dave Redman (djhr@tadpole.co.uk)&n; * Copyright (C) 1996,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; *&n; * Added font loading Nov/21, Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Added render_screen and faster scrolling Nov/27, miguel&n; * Added console palette code for cg6 Dec/13/95, miguel&n; * Added generic frame buffer support Dec/14/95, miguel&n; * Added cgsix and bwtwo drivers Jan/96, miguel&n; * Added 4m, and cg3 driver Feb/96, miguel&n; * Fixed the cursor on color displays Feb/96, miguel.&n; * Cleaned up the detection code, generic 8bit depth display &n; *   code, Mar/96 miguel&n; * Hacked support for cg14 video cards -- Apr/96, miguel.&n; * Color support for cg14 video cards -- May/96, miguel.&n; * Code split, Dave Redman, May/96&n; * Be more VT change friendly, May/96, miguel.&n; * Support for hw cursor and graphics acceleration, Jun/96, jj.&n; * Added TurboGX+ detection (cgthree+), Aug/96, Iain Lea (iain@sbs.de)&n; * Added TCX support (8/24bit), Aug/96, jj.&n; * Support for multiple framebuffers, Sep/96, jj.&n; * Fix bwtwo inversion and handle inverse monochrome cells in&n; *   sun_blitc, Nov/96, ecd.&n; * Fix sun_blitc and screen size on displays other than 1152x900, &n; *   128x54 chars, Nov/96, jj.&n; * Fix cursor spots left on some non-accelerated fbs, changed&n; *   software cursor to be like the hw one, Nov/96, jj.&n; * &n; * Much of this driver is derived from the DEC TGA driver by&n; * Jay Estabrook who has done a nice job with the console&n; * driver abstraction btw.&n; *&n; * We try to make everything a power of two if possible to&n; * speed up the bit blit.  Doing multiplies, divides, and&n; * remainder routines end up calling software library routines&n; * since not all Sparcs have the hardware to do it.&n; *&n; * TODO:&n; * do not blank the screen when frame buffer is mapped.&n; *&n; */
+multiline_comment|/* $Id: sbuscons.c,v 1.17 1998/04/24 12:29:54 davem Exp $&n; * sbuscons.c: Routines specific to SBUS frame buffer consoles.&n; *&n; * Copyright (C) 1995 Peter Zaitcev (zaitcev@lab.ipmce.su)&n; * Copyright (C) 1995,1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995, 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Dave Redman (djhr@tadpole.co.uk)&n; * Copyright (C) 1996,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; *&n; * Added font loading Nov/21, Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Added render_screen and faster scrolling Nov/27, miguel&n; * Added console palette code for cg6 Dec/13/95, miguel&n; * Added generic frame buffer support Dec/14/95, miguel&n; * Added cgsix and bwtwo drivers Jan/96, miguel&n; * Added 4m, and cg3 driver Feb/96, miguel&n; * Fixed the cursor on color displays Feb/96, miguel.&n; * Cleaned up the detection code, generic 8bit depth display &n; *   code, Mar/96 miguel&n; * Hacked support for cg14 video cards -- Apr/96, miguel.&n; * Color support for cg14 video cards -- May/96, miguel.&n; * Code split, Dave Redman, May/96&n; * Be more VT change friendly, May/96, miguel.&n; * Support for hw cursor and graphics acceleration, Jun/96, jj.&n; * Added TurboGX+ detection (cgthree+), Aug/96, Iain Lea (iain@sbs.de)&n; * Added TCX support (8/24bit), Aug/96, jj.&n; * Support for multiple framebuffers, Sep/96, jj.&n; * Fix bwtwo inversion and handle inverse monochrome cells in&n; *   sun_blitc, Nov/96, ecd.&n; * Fix sun_blitc and screen size on displays other than 1152x900, &n; *   128x54 chars, Nov/96, jj.&n; * Fix cursor spots left on some non-accelerated fbs, changed&n; *   software cursor to be like the hw one, Nov/96, jj.&n; * &n; * Much of this driver is derived from the DEC TGA driver by&n; * Jay Estabrook who has done a nice job with the console&n; * driver abstraction btw.&n; *&n; * We try to make everything a power of two if possible to&n; * speed up the bit blit.  Doing multiplies, divides, and&n; * remainder routines end up calling software library routines&n; * since not all Sparcs have the hardware to do it.&n; *&n; * TODO:&n; * do not blank the screen when frame buffer is mapped.&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
@@ -1321,15 +1321,10 @@ id|__initfunc
 c_func
 (paren
 r_static
-r_int
-r_int
+r_void
 id|sbus_con_type_init
 c_func
 (paren
-r_int
-r_int
-id|kmem_start
-comma
 r_const
 r_char
 op_star
@@ -1384,20 +1379,27 @@ suffix:semicolon
 multiline_comment|/*&n;&t;&t; * fake the screen memory with some CPU memory&n;&t;&t; */
 id|video_mem_base
 op_assign
-id|kmem_start
-suffix:semicolon
-id|kmem_start
-op_add_assign
+(paren
+r_int
+r_int
+)paren
+id|kmalloc
+c_func
+(paren
 id|video_screen_size
+comma
+id|GFP_ATOMIC
+)paren
 suffix:semicolon
 id|video_mem_term
 op_assign
-id|kmem_start
+(paren
+id|video_mem_base
+op_plus
+id|video_screen_size
+)paren
 suffix:semicolon
 )brace
-r_return
-id|kmem_start
-suffix:semicolon
 )brace
 DECL|function|__initfunc
 id|__initfunc
@@ -3540,35 +3542,27 @@ DECL|function|__initfunc
 id|__initfunc
 c_func
 (paren
-r_int
-r_int
+r_void
 id|cg_postsetup
 c_func
 (paren
 id|fbinfo_t
 op_star
 id|fb
-comma
-r_int
-r_int
-id|start_mem
 )paren
 )paren
 (brace
 id|fb-&gt;color_map
 op_assign
+id|kmalloc
+c_func
 (paren
-r_char
-op_star
-)paren
-id|start_mem
-suffix:semicolon
-r_return
-id|start_mem
-op_plus
 l_int|256
 op_star
 l_int|3
+comma
+id|GFP_ATOMIC
+)paren
 suffix:semicolon
 )brace
 DECL|variable|__initdata

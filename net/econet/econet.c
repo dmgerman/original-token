@@ -1978,7 +1978,7 @@ op_assign
 id|sk_alloc
 c_func
 (paren
-id|AF_ECONET
+id|PF_ECONET
 comma
 id|GFP_KERNEL
 comma
@@ -2056,7 +2056,7 @@ l_int|0
 suffix:semicolon
 id|sk-&gt;family
 op_assign
-id|AF_ECONET
+id|PF_ECONET
 suffix:semicolon
 id|sk-&gt;num
 op_assign
@@ -2766,7 +2766,7 @@ id|net_proto_family
 id|econet_family_ops
 op_assign
 (brace
-id|AF_ECONET
+id|PF_ECONET
 comma
 id|econet_create
 )brace
@@ -2778,7 +2778,7 @@ id|proto_ops
 id|econet_ops
 op_assign
 (brace
-id|AF_ECONET
+id|PF_ECONET
 comma
 id|sock_no_dup
 comma
@@ -3973,7 +3973,7 @@ op_assign
 id|sock_create
 c_func
 (paren
-id|AF_INET
+id|PF_INET
 comma
 id|SOCK_DGRAM
 comma

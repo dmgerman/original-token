@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * offset.c: Calculate pt_regs and task_struct offsets.&n; *&n; * Copyright (C) 1996 David S. Miller&n; * Made portable by Ralf Baechle&n; *&n; * $Id: offset.c,v 1.3 1997/07/29 18:57:11 ralf Exp $&n; */
+multiline_comment|/*&n; * offset.c: Calculate pt_regs and task_struct offsets.&n; *&n; * Copyright (C) 1996 David S. Miller&n; * Made portable by Ralf Baechle&n; *&n; * $Id: offset.c,v 1.6 1998/05/04 09:18:45 ralf Exp $&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
@@ -522,28 +522,6 @@ suffix:semicolon
 id|offset
 c_func
 (paren
-l_string|&quot;#define PT_OR2    &quot;
-comma
-r_struct
-id|pt_regs
-comma
-id|orig_reg2
-)paren
-suffix:semicolon
-id|offset
-c_func
-(paren
-l_string|&quot;#define PT_OR7    &quot;
-comma
-r_struct
-id|pt_regs
-comma
-id|orig_reg7
-)paren
-suffix:semicolon
-id|offset
-c_func
-(paren
 l_string|&quot;#define PT_EPC    &quot;
 comma
 r_struct
@@ -647,34 +625,23 @@ suffix:semicolon
 id|offset
 c_func
 (paren
-l_string|&quot;#define TASK_SIGNAL        &quot;
-comma
-r_struct
-id|task_struct
-comma
-id|signal
-)paren
-suffix:semicolon
-id|offset
-c_func
-(paren
-l_string|&quot;#define TASK_BLOCKED       &quot;
-comma
-r_struct
-id|task_struct
-comma
-id|blocked
-)paren
-suffix:semicolon
-id|offset
-c_func
-(paren
 l_string|&quot;#define TASK_FLAGS         &quot;
 comma
 r_struct
 id|task_struct
 comma
 id|flags
+)paren
+suffix:semicolon
+id|offset
+c_func
+(paren
+l_string|&quot;#define TASK_SIGPENDING    &quot;
+comma
+r_struct
+id|task_struct
+comma
+id|sigpending
 )paren
 suffix:semicolon
 id|offset
@@ -796,17 +763,6 @@ suffix:semicolon
 id|offset
 c_func
 (paren
-l_string|&quot;#define THREAD_REG28   &quot;
-comma
-r_struct
-id|task_struct
-comma
-id|tss.reg28
-)paren
-suffix:semicolon
-id|offset
-c_func
-(paren
 l_string|&quot;#define THREAD_REG29   &quot;
 comma
 r_struct
@@ -873,6 +829,17 @@ suffix:semicolon
 id|offset
 c_func
 (paren
+l_string|&quot;#define THREAD_BUADDR  &quot;
+comma
+r_struct
+id|task_struct
+comma
+id|tss.cp0_baduaddr
+)paren
+suffix:semicolon
+id|offset
+c_func
+(paren
 l_string|&quot;#define THREAD_ECODE   &quot;
 comma
 r_struct
@@ -890,17 +857,6 @@ r_struct
 id|task_struct
 comma
 id|tss.trap_no
-)paren
-suffix:semicolon
-id|offset
-c_func
-(paren
-l_string|&quot;#define THREAD_KSP     &quot;
-comma
-r_struct
-id|task_struct
-comma
-id|tss.ksp
 )paren
 suffix:semicolon
 id|offset

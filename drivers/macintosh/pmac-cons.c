@@ -1,6 +1,7 @@
 multiline_comment|/*&n; * pmac-cons.c: Console support for PowerMac (PCI-based).&n; *&n; * Copyright (C) 1996 Paul Mackerras.&n; * 7200/Platinum code hacked by Mark Abene.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -19,6 +20,7 @@ macro_line|#include &lt;asm/cuda.h&gt;
 DECL|macro|INCLUDE_LINUX_LOGO_DATA
 mdefine_line|#define INCLUDE_LINUX_LOGO_DATA
 macro_line|#include &lt;asm/linux_logo.h&gt;
+macro_line|#include &lt;asm/init.h&gt;
 macro_line|#include &lt;linux/selection.h&gt;
 macro_line|#include &lt;linux/console_struct.h&gt;
 macro_line|#include &lt;linux/vt_kern.h&gt;
@@ -853,6 +855,20 @@ comma
 id|aty_set_blanking
 )brace
 comma
+(brace
+l_string|&quot;ATY,XCLAIM3DPro&quot;
+comma
+id|map_aty_display
+comma
+id|aty_init
+comma
+id|aty_setmode
+comma
+id|aty_set_palette
+comma
+id|aty_set_blanking
+)brace
+comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_IMSTT_VIDEO
 (brace
@@ -992,6 +1008,7 @@ id|vga_font
 id|cmapsz
 )braket
 suffix:semicolon
+id|__openfirmware
 DECL|function|pixel32
 r_static
 r_inline
@@ -3203,16 +3220,11 @@ l_int|2
 )braket
 suffix:semicolon
 )brace
-r_int
-r_int
+r_void
 DECL|function|con_type_init
 id|con_type_init
 c_func
 (paren
-r_int
-r_int
-id|mem_start
-comma
 r_const
 r_char
 op_star
@@ -3220,6 +3232,16 @@ op_star
 id|type_p
 )paren
 (brace
+r_int
+r_int
+id|nb
+op_assign
+id|MAX_TEXT_COLS
+op_star
+id|MAX_TEXT_ROWS
+op_star
+l_int|2
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3228,7 +3250,6 @@ op_eq
 l_int|NULL
 )paren
 r_return
-id|mem_start
 suffix:semicolon
 id|current_display
 op_member_access_from_pointer
@@ -3252,19 +3273,23 @@ id|display_info.name
 suffix:semicolon
 id|video_mem_base
 op_assign
-id|mem_start
-suffix:semicolon
-id|mem_start
-op_add_assign
-id|MAX_TEXT_COLS
-op_star
-id|MAX_TEXT_ROWS
-op_star
-l_int|2
+(paren
+r_int
+r_int
+)paren
+id|kmalloc
+c_func
+(paren
+id|nb
+comma
+id|GFP_ATOMIC
+)paren
 suffix:semicolon
 id|video_mem_term
 op_assign
-id|mem_start
+id|video_mem_base
+op_plus
+id|nb
 suffix:semicolon
 id|memset
 c_func
@@ -3279,9 +3304,6 @@ l_int|0
 comma
 id|video_screen_size
 )paren
-suffix:semicolon
-r_return
-id|mem_start
 suffix:semicolon
 )brace
 r_int

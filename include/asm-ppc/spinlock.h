@@ -91,7 +91,7 @@ suffix:semicolon
 DECL|macro|SPIN_LOCK_UNLOCKED
 mdefine_line|#define SPIN_LOCK_UNLOCKED&t;{ 0, 0, 0 }
 DECL|macro|spin_lock_init
-mdefine_line|#define spin_lock_init(lp) &bslash;&n;do { spinlock_t *p = (lp); p-&gt;owner_pc = p-&gt;owner_cpu = p-&gt;lock = 0; } while(0)
+mdefine_line|#define spin_lock_init(lp) do { (lp)-&gt;lock = 0; } while(0)
 DECL|macro|spin_unlock_wait
 mdefine_line|#define spin_unlock_wait(lp)&t;do { barrier(); } while((lp)-&gt;lock)
 r_extern

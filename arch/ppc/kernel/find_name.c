@@ -1,9 +1,10 @@
 macro_line|#include &lt;stdio.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;sys/mman.h&gt;
+macro_line|#include &lt;strings.h&gt;
 multiline_comment|/*&n; * Finds a given address in the System.map and prints it out&n; * with its neighbors.  -- Cort&n; */
 DECL|function|main
-r_void
+r_int
 id|main
 c_func
 (paren
@@ -27,10 +28,6 @@ suffix:semicolon
 id|FILE
 op_star
 id|f
-suffix:semicolon
-r_char
-op_star
-id|ptr
 suffix:semicolon
 r_char
 id|s
@@ -95,7 +92,7 @@ id|argv
 id|i
 )braket
 comma
-l_string|&quot;%0x&quot;
+l_string|&quot;%0lx&quot;
 comma
 op_amp
 id|addr
@@ -170,7 +167,7 @@ c_func
 (paren
 id|s
 comma
-l_string|&quot;%0x&quot;
+l_string|&quot;%0lx&quot;
 comma
 op_amp
 id|cmp
@@ -208,6 +205,9 @@ c_func
 (paren
 id|f
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 eof

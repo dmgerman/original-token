@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * bootinfo.h -- Definition of the Linux/MIPS boot information structure&n; *&n; * Copyright (C) 1995, 1996 by Ralf Baechle, Andreas Busse,&n; *                             Stoned Elipot and Paul M. Antoine.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; *&n; * $Id: bootinfo.h,v 1.3 1997/09/19 08:37:44 ralf Exp $&n; */
+multiline_comment|/*&n; * bootinfo.h -- Definition of the Linux/MIPS boot information structure&n; *&n; * Copyright (C) 1995, 1996 by Ralf Baechle, Andreas Busse,&n; *                             Stoned Elipot and Paul M. Antoine.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; *&n; * $Id: bootinfo.h,v 1.7 1998/05/01 01:35:46 ralf Exp $&n; */
 macro_line|#ifndef __ASM_MIPS_BOOTINFO_H
 DECL|macro|__ASM_MIPS_BOOTINFO_H
 mdefine_line|#define __ASM_MIPS_BOOTINFO_H
@@ -19,8 +19,10 @@ DECL|macro|MACH_GROUP_ACN
 mdefine_line|#define MACH_GROUP_ACN&t;&t;5
 DECL|macro|MACH_GROUP_SGI
 mdefine_line|#define MACH_GROUP_SGI          6 /* Silicon Graphics workstations and servers */
+DECL|macro|MACH_GROUP_RESERVED
+mdefine_line|#define MACH_GROUP_RESERVED     7 /* No Such Architecture&t; &t;      */
 DECL|macro|GROUP_NAMES
-mdefine_line|#define GROUP_NAMES { &quot;unknown&quot;, &quot;Jazz&quot;, &quot;Digital&quot;, &quot;ARC&quot;, &bslash;&n;                      &quot;SNI&quot;, &quot;ACN&quot;, &quot;SGI&quot; }
+mdefine_line|#define GROUP_NAMES { &quot;unknown&quot;, &quot;Jazz&quot;, &quot;Digital&quot;, &quot;ARC&quot;, &bslash;&n;                      &quot;SNI&quot;, &quot;ACN&quot;, &quot;SGI&quot;, &quot;NSA&quot; }
 multiline_comment|/*&n; * Valid machtype values for group unknown (low order halfword of mips_machtype)&n; */
 DECL|macro|MACH_UNKNOWN
 mdefine_line|#define MACH_UNKNOWN&t;&t;0&t;/* whatever...&t;&t;&t;*/
@@ -62,8 +64,6 @@ mdefine_line|#define GROUP_ACN_NAMES { &quot;ACN&quot; }
 multiline_comment|/*&n; * Valid machtype for group SGI&n; */
 DECL|macro|MACH_SGI_INDY
 mdefine_line|#define MACH_SGI_INDY&t;&t;0&t;/* R4?K and R5K Indy workstaions */
-DECL|macro|GROUP_SGI_NAMES
-mdefine_line|#define GROUP_SGI_NAMES { &quot;Indy&quot; }
 DECL|macro|GROUP_SGI_NAMES
 mdefine_line|#define GROUP_SGI_NAMES { &quot;Indy&quot; }
 multiline_comment|/*&n; * Valid cputype values&n; */

@@ -15,7 +15,9 @@ macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
+macro_line|#ifdef CONFIG_BSD_PROCESS_ACCT
 macro_line|#include &lt;linux/acct.h&gt;
+macro_line|#endif
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/mmu_context.h&gt;
@@ -1296,12 +1298,14 @@ id|current-&gt;flags
 op_or_assign
 id|PF_EXITING
 suffix:semicolon
+macro_line|#ifdef CONFIG_BSD_PROCESS_ACCT
 id|acct_process
 c_func
 (paren
 id|code
 )paren
 suffix:semicolon
+macro_line|#endif
 id|del_timer
 c_func
 (paren

@@ -3409,7 +3409,7 @@ op_assign
 id|sock_create
 c_func
 (paren
-id|AF_INET
+id|PF_INET
 comma
 id|type
 comma

@@ -1,5 +1,6 @@
 multiline_comment|/*&n; * linux/arch/arm/kernel/dma.c&n; *&n; * Copyright (C) 1995-1998 Russell King&n; *&n; * Front-end to the DMA handling.  You must provide the following&n; * architecture-specific routines:&n; *&n; *  int arch_request_dma(dmach_t channel, dma_t *dma, const char *dev_id);&n; *  void arch_free_dma(dmach_t channel, dma_t *dma);&n; *  void arch_enable_dma(dmach_t channel, dma_t *dma);&n; *  void arch_disable_dma(dmach_t channel, dma_t *dma);&n; *  int arch_get_dma_residue(dmach_t channel, dma_t *dma);&n; *&n; * Moved DMA resource allocation here...&n; */
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -10,6 +11,15 @@ macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &quot;dma.h&quot;
+DECL|variable|dma_str
+r_const
+r_char
+id|dma_str
+(braket
+)braket
+op_assign
+l_string|&quot;%s: dma %d not supported&bslash;n&quot;
+suffix:semicolon
 DECL|variable|dma_chan
 r_static
 id|dma_t
@@ -738,6 +748,62 @@ id|channel
 )paren
 suffix:semicolon
 )brace
+DECL|variable|dma_str
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|dma_str
+)paren
+suffix:semicolon
+DECL|variable|enable_dma
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|enable_dma
+)paren
+suffix:semicolon
+DECL|variable|disable_dma
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|disable_dma
+)paren
+suffix:semicolon
+DECL|variable|set_dma_addr
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|set_dma_addr
+)paren
+suffix:semicolon
+DECL|variable|set_dma_count
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|set_dma_count
+)paren
+suffix:semicolon
+DECL|variable|set_dma_mode
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|set_dma_mode
+)paren
+suffix:semicolon
+DECL|variable|get_dma_residue
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|get_dma_residue
+)paren
+suffix:semicolon
+DECL|variable|set_dma_sg
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|set_dma_sg
+)paren
+suffix:semicolon
 DECL|function|__initfunc
 id|__initfunc
 c_func

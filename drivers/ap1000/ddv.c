@@ -50,6 +50,8 @@ mdefine_line|#define REQUEST_HIGH 4
 multiline_comment|/* we fake up a block size larger than the physical block size to try&n;   to make things a bit more efficient */
 DECL|macro|SECTOR_BLOCK_SHIFT
 mdefine_line|#define SECTOR_BLOCK_SHIFT 9
+DECL|macro|SECTOR_MASK
+mdefine_line|#define SECTOR_MASK ((BLOCK_SIZE &gt;&gt; 9) - 1)
 multiline_comment|/* try to read ahead a bit */
 DECL|macro|DDV_READ_AHEAD
 mdefine_line|#define DDV_READ_AHEAD 64

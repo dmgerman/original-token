@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
+macro_line|#include &lt;linux/quotaops.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 multiline_comment|/*&n; * Read the inode allocation bitmap for a given block_group, reading&n; * into the specified slot in the superblock&squot;s bitmap cache.&n; *&n; * Return &gt;=0 on success or a -ve error code.&n; */
@@ -725,16 +726,12 @@ id|inode-&gt;i_mode
 )paren
 suffix:semicolon
 multiline_comment|/* Do this BEFORE marking the inode not in use */
-r_if
-c_cond
+id|DQUOT_FREE_INODE
+c_func
 (paren
-id|sb-&gt;dq_op
-)paren
-id|sb-&gt;dq_op-&gt;free_inode
-(paren
-id|inode
+id|sb
 comma
-l_int|1
+id|inode
 )paren
 suffix:semicolon
 id|clear_inode
@@ -1862,60 +1859,14 @@ id|unlock_super
 id|sb
 )paren
 suffix:semicolon
-r_if
-c_cond
+id|DQUOT_ALLOC_INODE
+c_func
 (paren
-id|sb-&gt;dq_op
-)paren
-(brace
-id|sb-&gt;dq_op-&gt;initialize
-(paren
-id|inode
+id|sb
 comma
-op_minus
-l_int|1
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|sb-&gt;dq_op-&gt;alloc_inode
-(paren
-id|inode
-comma
-l_int|1
-)paren
-)paren
-(brace
-id|sb-&gt;dq_op-&gt;drop
-(paren
 id|inode
 )paren
 suffix:semicolon
-id|inode-&gt;i_nlink
-op_assign
-l_int|0
-suffix:semicolon
-id|iput
-(paren
-id|inode
-)paren
-suffix:semicolon
-op_star
-id|err
-op_assign
-op_minus
-id|EDQUOT
-suffix:semicolon
-r_return
-l_int|NULL
-suffix:semicolon
-)brace
-id|inode-&gt;i_flags
-op_or_assign
-id|S_WRITE
-suffix:semicolon
-)brace
 id|ext2_debug
 (paren
 l_string|&quot;allocating inode %lu&bslash;n&quot;

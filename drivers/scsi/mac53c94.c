@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;asm/dbdma.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
@@ -389,12 +390,18 @@ r_struct
 id|mac53c94_regs
 op_star
 )paren
+id|ioremap
+c_func
+(paren
 id|node-&gt;addrs
 (braket
 l_int|0
 )braket
 dot
 id|address
+comma
+l_int|0x1000
+)paren
 suffix:semicolon
 id|state-&gt;intr
 op_assign
@@ -402,6 +409,8 @@ id|node-&gt;intrs
 (braket
 l_int|0
 )braket
+dot
+id|line
 suffix:semicolon
 id|state-&gt;dma
 op_assign
@@ -411,12 +420,18 @@ r_struct
 id|dbdma_regs
 op_star
 )paren
+id|ioremap
+c_func
+(paren
 id|node-&gt;addrs
 (braket
 l_int|1
 )braket
 dot
 id|address
+comma
+l_int|0x1000
+)paren
 suffix:semicolon
 id|state-&gt;dmaintr
 op_assign
@@ -424,6 +439,8 @@ id|node-&gt;intrs
 (braket
 l_int|1
 )braket
+dot
+id|line
 suffix:semicolon
 id|clkprop
 op_assign
@@ -2399,6 +2416,72 @@ l_int|0
 )paren
 (brace
 r_case
+id|CHANGE_DEFINITION
+suffix:colon
+r_case
+id|COMPARE
+suffix:colon
+r_case
+id|COPY
+suffix:colon
+r_case
+id|COPY_VERIFY
+suffix:colon
+r_case
+id|FORMAT_UNIT
+suffix:colon
+r_case
+id|LOG_SELECT
+suffix:colon
+r_case
+id|MEDIUM_SCAN
+suffix:colon
+r_case
+id|MODE_SELECT
+suffix:colon
+r_case
+id|MODE_SELECT_10
+suffix:colon
+r_case
+id|REASSIGN_BLOCKS
+suffix:colon
+r_case
+id|RESERVE
+suffix:colon
+r_case
+id|SEARCH_EQUAL
+suffix:colon
+r_case
+id|SEARCH_EQUAL_12
+suffix:colon
+r_case
+id|SEARCH_HIGH
+suffix:colon
+r_case
+id|SEARCH_HIGH_12
+suffix:colon
+r_case
+id|SEARCH_LOW
+suffix:colon
+r_case
+id|SEARCH_LOW_12
+suffix:colon
+r_case
+id|SEND_DIAGNOSTIC
+suffix:colon
+r_case
+id|SEND_VOLUME_TAG
+suffix:colon
+r_case
+id|SET_WINDOW
+suffix:colon
+r_case
+id|UPDATE_BLOCK
+suffix:colon
+r_case
+id|WRITE_BUFFER
+suffix:colon
+r_case
 id|WRITE_6
 suffix:colon
 r_case
@@ -2407,7 +2490,22 @@ suffix:colon
 r_case
 id|WRITE_12
 suffix:colon
-multiline_comment|/* any others? */
+r_case
+id|WRITE_LONG
+suffix:colon
+r_case
+id|WRITE_LONG_2
+suffix:colon
+multiline_comment|/* alternate code for WRITE_LONG */
+r_case
+id|WRITE_SAME
+suffix:colon
+r_case
+id|WRITE_VERIFY
+suffix:colon
+r_case
+id|WRITE_VERIFY_12
+suffix:colon
 r_return
 l_int|1
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: processor.h,v 1.42 1998/01/28 10:00:04 ecd Exp $&n; * include/asm-sparc64/processor.h&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: processor.h,v 1.43 1998/04/23 08:26:30 davem Exp $&n; * include/asm-sparc64/processor.h&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __ASM_SPARC64_PROCESSOR_H
 DECL|macro|__ASM_SPARC64_PROCESSOR_H
 mdefine_line|#define __ASM_SPARC64_PROCESSOR_H
@@ -236,6 +236,10 @@ mdefine_line|#define start_thread32(regs, pc, sp) &bslash;&n;do { &bslash;&n;&t;
 multiline_comment|/* Free all resources held by a thread. */
 DECL|macro|release_thread
 mdefine_line|#define release_thread(tsk)&t;&t;do { } while(0)
+DECL|macro|copy_segments
+mdefine_line|#define copy_segments(nr, tsk, mm)&t;do { } while (0)
+DECL|macro|release_segments
+mdefine_line|#define release_segments(mm)&t;&t;do { } while (0)
 macro_line|#ifdef __KERNEL__
 multiline_comment|/* Allocation and freeing of task_struct and kernel stack. */
 DECL|macro|alloc_task_struct

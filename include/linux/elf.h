@@ -115,14 +115,14 @@ DECL|macro|EM_MIPS
 mdefine_line|#define EM_MIPS&t;&t;8&t;/* MIPS R3000 (officially, big-endian only) */
 DECL|macro|EM_MIPS_RS4_BE
 mdefine_line|#define EM_MIPS_RS4_BE 10&t;/* MIPS R4000 big-endian */
-DECL|macro|EM_SPARC64
-mdefine_line|#define EM_SPARC64     11&t;/* SPARC v9 (not official) 64-bit */
 DECL|macro|EM_PARISC
 mdefine_line|#define EM_PARISC      15&t;/* HPPA */
 DECL|macro|EM_SPARC32PLUS
 mdefine_line|#define EM_SPARC32PLUS 18&t;/* Sun&squot;s &quot;v8plus&quot; */
 DECL|macro|EM_PPC
 mdefine_line|#define EM_PPC&t;       20&t;/* PowerPC */
+DECL|macro|EM_SPARCV9
+mdefine_line|#define EM_SPARCV9     43&t;/* SPARC v9 64-bit */
 multiline_comment|/*&n; * This is an interim value that we will use until the committee comes&n; * up with a final number.&n; */
 DECL|macro|EM_ALPHA
 mdefine_line|#define EM_ALPHA&t;0x9026
@@ -403,6 +403,8 @@ DECL|macro|HWCAP_SPARC_SWAP
 mdefine_line|#define HWCAP_SPARC_SWAP        4
 DECL|macro|HWCAP_SPARC_MULDIV
 mdefine_line|#define HWCAP_SPARC_MULDIV      8
+DECL|macro|HWCAP_SPARC_V9
+mdefine_line|#define HWCAP_SPARC_V9&t;&t;16
 multiline_comment|/*&n; * 68k ELF relocation types&n; */
 DECL|macro|R_68K_NONE
 mdefine_line|#define R_68K_NONE&t;0

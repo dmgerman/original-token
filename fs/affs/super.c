@@ -89,7 +89,7 @@ suffix:semicolon
 id|pr_debug
 c_func
 (paren
-l_string|&quot;affs_put_super()&bslash;n&quot;
+l_string|&quot;AFFS: put_super()&bslash;n&quot;
 )paren
 suffix:semicolon
 r_for
@@ -1395,7 +1395,7 @@ suffix:semicolon
 id|pr_debug
 c_func
 (paren
-l_string|&quot;affs_read_super(%s)&bslash;n&quot;
+l_string|&quot;AFFS: read_super(%s)&bslash;n&quot;
 comma
 id|data
 ques
@@ -1994,6 +1994,10 @@ id|s-&gt;u.affs_sb.s_flags
 op_or_assign
 id|SF_OFS
 suffix:semicolon
+id|s-&gt;s_flags
+op_or_assign
+id|MS_NOEXEC
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -2017,6 +2021,10 @@ op_or_assign
 id|SF_INTL
 op_or
 id|SF_OFS
+suffix:semicolon
+id|s-&gt;s_flags
+op_or_assign
+id|MS_NOEXEC
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -2213,7 +2221,7 @@ suffix:semicolon
 id|pr_debug
 c_func
 (paren
-l_string|&quot;num_bm=%d, az_no=%d, sum=%d&bslash;n&quot;
+l_string|&quot;AFFS: num_bm=%d, az_no=%d, sum=%d&bslash;n&quot;
 comma
 id|num_bm
 comma
@@ -3124,7 +3132,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;AFFS: get root inode failed&bslash;n&quot;
+l_string|&quot;AFFS: Get root inode failed&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Begin the cascaded cleanup ...&n;&t; */

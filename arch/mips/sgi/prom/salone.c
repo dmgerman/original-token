@@ -1,6 +1,10 @@
-multiline_comment|/* $Id: salone.c,v 1.1.1.1 1997/06/01 03:16:40 ralf Exp $&n; * salone.c: Routines to load into memory and execute stand-along&n; *           program images using ARCS PROM firmware.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/*&n; * salone.c: Routines to load into memory and execute stand-along&n; *           program images using ARCS PROM firmware.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: salone.c,v 1.2 1998/05/01 01:35:27 ralf Exp $&n; */
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;
-DECL|function|prom_load
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|prom_load
 c_func
@@ -23,6 +27,7 @@ r_int
 op_star
 id|eaddr
 )paren
+)paren
 (brace
 r_return
 id|romvec
@@ -40,7 +45,10 @@ id|eaddr
 )paren
 suffix:semicolon
 )brace
-DECL|function|prom_invoke
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|prom_invoke
 c_func
@@ -66,6 +74,7 @@ op_star
 op_star
 id|envp
 )paren
+)paren
 (brace
 r_return
 id|romvec
@@ -85,7 +94,10 @@ id|envp
 )paren
 suffix:semicolon
 )brace
-DECL|function|prom_exec
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|prom_exec
 c_func
@@ -106,6 +118,7 @@ r_char
 op_star
 op_star
 id|envp
+)paren
 )paren
 (brace
 r_return

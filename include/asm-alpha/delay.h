@@ -85,37 +85,5 @@ id|usecs
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * 64-bit integers means we don&squot;t have to worry about overflow as&n; * on some other architectures..&n; */
-DECL|function|muldiv
-r_extern
-id|__inline__
-r_int
-r_int
-id|muldiv
-c_func
-(paren
-r_int
-r_int
-id|a
-comma
-r_int
-r_int
-id|b
-comma
-r_int
-r_int
-id|c
-)paren
-(brace
-r_return
-(paren
-id|a
-op_star
-id|b
-)paren
-op_div
-id|c
-suffix:semicolon
-)brace
 macro_line|#endif /* defined(__ALPHA_DELAY_H) */
 eof

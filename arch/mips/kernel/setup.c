@@ -1,6 +1,7 @@
-multiline_comment|/*&n; *  linux/arch/mips/kernel/setup.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *  Copyright (C) 1995, 1996  Ralf Baechle&n; *  Copyright (C) 1996  Stoned Elipot&n; *&n; * $Id: setup.c,v 1.5 1997/12/06 08:55:42 ralf Exp $&n; */
+multiline_comment|/*&n; *  linux/arch/mips/kernel/setup.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *  Copyright (C) 1995, 1996  Ralf Baechle&n; *  Copyright (C) 1996  Stoned Elipot&n; *&n; * $Id: setup.c,v 1.9 1998/05/04 09:17:56 ralf Exp $&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -25,6 +26,7 @@ macro_line|#endif
 macro_line|#include &lt;asm/asm.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/cachectl.h&gt;
+macro_line|#include &lt;asm/ide.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/vector.h&gt;
 macro_line|#include &lt;asm/stackframe.h&gt;
@@ -88,6 +90,19 @@ id|screen_info
 op_assign
 id|DEFAULT_SCREEN_INFO
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_IDE
+r_extern
+r_struct
+id|ide_ops
+id|no_ide_ops
+suffix:semicolon
+DECL|variable|ide_ops
+r_struct
+id|ide_ops
+op_star
+id|ide_ops
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; * setup informations&n; *&n; * These are intialized so they are in the .data section&n; */
 DECL|variable|mips_memory_upper
 r_int
@@ -390,6 +405,7 @@ comma
 id|atag-&gt;size
 )paren
 suffix:semicolon
+multiline_comment|/* Save defaults for configuration dependand routines.  */
 id|irq_setup
 op_assign
 id|default_irq_setup
@@ -398,37 +414,19 @@ id|fd_cacheflush
 op_assign
 id|default_fd_cacheflush
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_IDE
+id|ide_ops
+op_assign
+op_amp
+id|no_ide_ops
+suffix:semicolon
+macro_line|#endif
 r_switch
 c_cond
 (paren
 id|mips_machgroup
 )paren
 (brace
-macro_line|#ifdef CONFIG_MIPS_DECSTATION
-r_case
-id|MACH_GROUP_DEC
-suffix:colon
-id|decstation_setup
-c_func
-(paren
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-macro_line|#endif
-macro_line|#if defined(CONFIG_MIPS_ARC) 
-multiline_comment|/*&n;&t; * Perhaps arch/mips/deskstation should be renamed to arch/mips/arc.&n;&t; * For now CONFIG_MIPS_ARC means DeskStation. -Stoned.&n;&t; */
-r_case
-id|MACH_GROUP_ARC
-suffix:colon
-id|deskstation_setup
-c_func
-(paren
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_MIPS_JAZZ
 r_case
 id|MACH_GROUP_JAZZ

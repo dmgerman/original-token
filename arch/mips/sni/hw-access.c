@@ -1,5 +1,6 @@
-multiline_comment|/*&n; * Low-level hardware access stuff for SNI RM200 PCI&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997 by Ralf Baechle&n; *&n; * $Id: hw-access.c,v 1.3 1997/07/29 17:46:46 ralf Exp $&n; */
+multiline_comment|/*&n; * Low-level hardware access stuff for SNI RM200 PCI&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997, 1998 by Ralf Baechle&n; *&n; * $Id: hw-access.c,v 1.4 1998/05/01 01:35:32 ralf Exp $&n; */
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kbdcntrlr.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/linkage.h&gt;
@@ -489,12 +490,16 @@ id|KBD_STATUS_REG
 )paren
 suffix:semicolon
 )brace
-DECL|function|sni_rm200_keyboard_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|sni_rm200_keyboard_setup
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|kbd_read_input

@@ -38,16 +38,6 @@ r_int
 r_int
 id|hi
 suffix:semicolon
-DECL|member|orig_reg2
-r_int
-r_int
-id|orig_reg2
-suffix:semicolon
-DECL|member|orig_reg7
-r_int
-r_int
-id|orig_reg7
-suffix:semicolon
 multiline_comment|/*&n;&t; * saved cp0 registers&n;&t; */
 DECL|member|cp0_epc
 r_int

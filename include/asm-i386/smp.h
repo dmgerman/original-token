@@ -607,6 +607,25 @@ id|id
 suffix:semicolon
 multiline_comment|/* Store per cpu info (like the initial udelay numbers */
 r_extern
+r_void
+id|smp_message_pass
+c_func
+(paren
+r_int
+id|target
+comma
+r_int
+id|msg
+comma
+r_int
+r_int
+id|data
+comma
+r_int
+id|wait
+)paren
+suffix:semicolon
+r_extern
 r_volatile
 r_int
 r_int

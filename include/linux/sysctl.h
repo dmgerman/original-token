@@ -52,7 +52,7 @@ multiline_comment|/* Top-level names: */
 multiline_comment|/* For internal pattern-matching use only: */
 macro_line|#ifdef __KERNEL__
 DECL|macro|CTL_ANY
-mdefine_line|#define CTL_ANY&t;&t;-1&t;/* Matches any name */
+mdefine_line|#define CTL_ANY&t;&t;-1&t;&t;/* Matches any name */
 DECL|macro|CTL_NONE
 mdefine_line|#define CTL_NONE&t;0
 macro_line|#endif
@@ -125,18 +125,6 @@ comma
 DECL|enumerator|KERN_DOMAINNAME
 id|KERN_DOMAINNAME
 comma
-DECL|enumerator|KERN_NRINODE
-id|KERN_NRINODE
-comma
-DECL|enumerator|KERN_MAXINODE
-id|KERN_MAXINODE
-comma
-DECL|enumerator|KERN_NRFILE
-id|KERN_NRFILE
-comma
-DECL|enumerator|KERN_MAXFILE
-id|KERN_MAXFILE
-comma
 DECL|enumerator|KERN_SECURELVL
 id|KERN_SECURELVL
 comma
@@ -149,14 +137,6 @@ DECL|enumerator|KERN_REALROOTDEV
 id|KERN_REALROOTDEV
 comma
 multiline_comment|/* real root device to mount after initrd */
-DECL|enumerator|KERN_NFSRNAME
-id|KERN_NFSRNAME
-comma
-multiline_comment|/* NFS root name */
-DECL|enumerator|KERN_NFSRADDRS
-id|KERN_NFSRADDRS
-comma
-multiline_comment|/* NFS root addresses */
 DECL|enumerator|KERN_JAVA_INTERPRETER
 id|KERN_JAVA_INTERPRETER
 comma
@@ -181,16 +161,19 @@ DECL|enumerator|KERN_NAMETRANS
 id|KERN_NAMETRANS
 comma
 multiline_comment|/* Name translation */
-DECL|enumerator|KERN_STATINODE
-id|KERN_STATINODE
+DECL|enumerator|KERN_PPC_HTABRECLAIM
+id|KERN_PPC_HTABRECLAIM
 comma
-DECL|enumerator|KERN_DENTRY
-id|KERN_DENTRY
+multiline_comment|/* turn htab reclaimation on/off on PPC */
+DECL|enumerator|KERN_PPC_ZEROPAGED
+id|KERN_PPC_ZEROPAGED
 comma
-multiline_comment|/* dentry statistics */
+multiline_comment|/* turn idle page zeroing on/off on PPC */
 DECL|enumerator|KERN_MODPROBE
 id|KERN_MODPROBE
 comma
+DECL|enumerator|KERN_SG_BIG_BUFF
+id|KERN_SG_BIG_BUFF
 )brace
 suffix:semicolon
 multiline_comment|/* CTL_VM names: */
@@ -908,6 +891,42 @@ id|NET_DECNET_DEBUG_LEVEL
 suffix:semicolon
 multiline_comment|/* CTL_PROC names: */
 multiline_comment|/* CTL_FS names: */
+r_enum
+(brace
+DECL|enumerator|FS_NRINODE
+id|FS_NRINODE
+op_assign
+l_int|1
+comma
+multiline_comment|/* int: current number of allocated inodes */
+DECL|enumerator|FS_STATINODE
+id|FS_STATINODE
+comma
+DECL|enumerator|FS_MAXINODE
+id|FS_MAXINODE
+comma
+multiline_comment|/* int: maximum number of inodes that can be allocated */
+DECL|enumerator|FS_NRDQUOT
+id|FS_NRDQUOT
+comma
+multiline_comment|/* int: current number of allocated dquots */
+DECL|enumerator|FS_MAXDQUOT
+id|FS_MAXDQUOT
+comma
+multiline_comment|/* int: maximum number of dquots that can be allocated */
+DECL|enumerator|FS_NRFILE
+id|FS_NRFILE
+comma
+multiline_comment|/* int: current number of allocated filedescriptors */
+DECL|enumerator|FS_MAXFILE
+id|FS_MAXFILE
+comma
+multiline_comment|/* int: maximum number of filedescriptors that can be allocated */
+DECL|enumerator|FS_DENTRY
+id|FS_DENTRY
+comma
+)brace
+suffix:semicolon
 multiline_comment|/* CTL_DEBUG names: */
 multiline_comment|/* CTL_DEV names: */
 r_enum

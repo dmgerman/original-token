@@ -90,7 +90,7 @@ id|s
 op_assign
 id|sock-&gt;sk
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; *&t;AF_UNIX ?&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;PF_UNIX ?&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -100,7 +100,7 @@ id|sock-&gt;ops
 op_logical_and
 id|sock-&gt;ops-&gt;family
 op_eq
-id|AF_UNIX
+id|PF_UNIX
 )paren
 id|u_sock
 op_assign

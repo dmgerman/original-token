@@ -2783,7 +2783,7 @@ suffix:semicolon
 id|DPRINT
 c_func
 (paren
-l_string|&quot;flags=%x&bslash;n&quot;
+l_string|&quot;flags=%lx&bslash;n&quot;
 comma
 id|UDRS-&gt;flags
 )paren

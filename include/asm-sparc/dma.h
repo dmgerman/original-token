@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: dma.h,v 1.25 1998/02/09 13:27:01 jj Exp $&n; * include/asm-sparc/dma.h&n; *&n; * Copyright 1995 (C) David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: dma.h,v 1.26 1998/04/13 07:27:05 davem Exp $&n; * include/asm-sparc/dma.h&n; *&n; * Copyright 1995 (C) David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _ASM_SPARC_DMA_H
 DECL|macro|_ASM_SPARC_DMA_H
 mdefine_line|#define _ASM_SPARC_DMA_H
@@ -166,17 +166,13 @@ DECL|macro|DMA_ISESC1
 mdefine_line|#define DMA_ISESC1(dma)      ((dma)-&gt;revision == dvmaesc1)
 multiline_comment|/* Main routines in dma.c */
 r_extern
-r_int
-r_int
+r_void
 id|dvma_init
 c_func
 (paren
 r_struct
 id|linux_sbus
 op_star
-comma
-r_int
-r_int
 )paren
 suffix:semicolon
 multiline_comment|/* Fields in the cond_reg register */

@@ -3,6 +3,7 @@ macro_line|#include &quot;../coffboot/zlib.h&quot;
 macro_line|#include &quot;asm/residual.h&quot;
 macro_line|#include &lt;elf.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;asm/page.h&gt;
 macro_line|#ifdef CONFIG_MBX
 macro_line|#include &lt;asm/mbx.h&gt;
 DECL|variable|hold_board_info
@@ -10,59 +11,17 @@ id|bd_t
 id|hold_board_info
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* this is where the INITRD gets moved to for safe keeping */
-DECL|macro|INITRD_DESTINATION
-mdefine_line|#define INITRD_DESTINATION /*0x00f00000*/ 0x01800000
-macro_line|#ifdef CONFIG_8xx
+multiline_comment|/*&n; * MBX: loads at:      &t;0x00200000&n; *      board data at: &t;end of ram&n; * PREP:&n; *  powerstack 1:&n; *      network load at:   configurable - should set to link addr-0x400&n; *                         exec. addr set to link addr&n; *            such as load: 0x005ffc00 exec 0x00600000&n; *      hd/floppy/tape load at:&n; *  powerstack 2:&n; *      loads at:       0x00400000&n; *  IBM 830 (carolina):&n; *      loads at:&t;???&n; *&n; * Please send me load/board info and such data for hardware not&n; * listed here so I can keep track since things are getting tricky&n; * with the different load addrs with different firmware.  This will&n; * help to avoid breaking the load/boot process.&n; * -- Cort&n; */
 DECL|variable|avail_ram
 r_char
 op_star
 id|avail_ram
-op_assign
-(paren
-r_char
-op_star
-)paren
-l_int|0x00200000
 suffix:semicolon
 DECL|variable|end_avail
 r_char
 op_star
 id|end_avail
-op_assign
-(paren
-r_char
-op_star
-)paren
-l_int|0x00400000
 suffix:semicolon
-macro_line|#else /* CONFIG_8xx */
-multiline_comment|/* this will do for now - Cort */
-DECL|variable|avail_ram
-r_char
-op_star
-id|avail_ram
-op_assign
-(paren
-r_char
-op_star
-)paren
-l_int|0x00800000
-suffix:semicolon
-multiline_comment|/* start with 8M */
-multiline_comment|/* assume 15M max since this is where we copy the initrd to -- Cort */
-DECL|variable|end_avail
-r_char
-op_star
-id|end_avail
-op_assign
-(paren
-r_char
-op_star
-)paren
-id|INITRD_DESTINATION
-suffix:semicolon
-macro_line|#endif /* CONFIG_8xx */
 DECL|variable|cmd_line
 r_char
 id|cmd_line
@@ -1472,7 +1431,7 @@ id|orig_y
 op_assign
 l_int|24
 suffix:semicolon
-macro_line|#ifndef CONFIG_8xx
+macro_line|#ifndef CONFIG_MBX
 id|vga_init
 c_func
 (paren
@@ -1499,8 +1458,7 @@ id|RESIDUAL
 )paren
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_8xx */
-macro_line|#ifdef CONFIG_MBX&t;
+macro_line|#else /* CONFIG_MBX */
 multiline_comment|/* copy board data */
 r_if
 c_cond
@@ -1529,7 +1487,39 @@ id|hold_board_info
 )paren
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_8xx */
+macro_line|#endif /* CONFIG_MBX */
+multiline_comment|/* MBX/prep put the board/residual data at the end of memory */
+r_if
+c_cond
+(paren
+id|residual
+)paren
+id|end_avail
+op_assign
+(paren
+r_char
+op_star
+)paren
+id|PAGE_ALIGN
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|residual
+)paren
+suffix:semicolon
+multiline_comment|/* prep netboot looses the residual */
+r_else
+id|end_avail
+op_assign
+(paren
+r_char
+op_star
+)paren
+l_int|0x00800000
+suffix:semicolon
 id|puts
 c_func
 (paren
@@ -1572,6 +1562,23 @@ c_func
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+r_int
+r_int
+)paren
+id|load_addr
+op_ne
+(paren
+r_int
+r_int
+)paren
+op_amp
+id|start
+)paren
+(brace
 id|puts
 c_func
 (paren
@@ -1624,6 +1631,7 @@ c_func
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1794,6 +1802,7 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* we have to subtract 0x10000 here to correct for objdump including the&n;&t;   size of the elf header which we strip -- Cort */
 id|zimage_start
 op_assign
 (paren
@@ -1878,6 +1887,105 @@ id|INITRD_SIZE
 op_plus
 id|initrd_start
 suffix:semicolon
+multiline_comment|/*&n;&t; * setup avail_ram - this is the first part of ram usable&n;&t; * by the uncompress code. -- Cort&n;&t; */
+id|avail_ram
+op_assign
+(paren
+r_char
+op_star
+)paren
+id|PAGE_ALIGN
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|zimage_start
+op_plus
+id|zimage_size
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|load_addr
+op_plus
+(paren
+id|num_words
+op_star
+l_int|4
+)paren
+)paren
+OG
+(paren
+r_int
+r_int
+)paren
+id|avail_ram
+)paren
+id|avail_ram
+op_assign
+(paren
+r_char
+op_star
+)paren
+(paren
+id|load_addr
+op_plus
+(paren
+id|num_words
+op_star
+l_int|4
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+(paren
+r_int
+r_int
+)paren
+op_amp
+id|start
+op_plus
+(paren
+id|num_words
+op_star
+l_int|4
+)paren
+)paren
+OG
+(paren
+r_int
+r_int
+)paren
+id|avail_ram
+)paren
+id|avail_ram
+op_assign
+(paren
+r_char
+op_star
+)paren
+(paren
+(paren
+r_int
+r_int
+)paren
+op_amp
+id|start
+op_plus
+(paren
+id|num_words
+op_star
+l_int|4
+)paren
+)paren
+suffix:semicolon
 multiline_comment|/* relocate initrd */
 r_if
 c_cond
@@ -1915,13 +2023,27 @@ c_func
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Memory is really tight on the MBX (we can assume 4M)&n;&t;&t; * so put the initrd at the TOP of ram, and set end_avail&n;&t;&t; * to right after that.&n;&t;&t; *&n;&t;&t; * I should do something like this for prep, too and keep&n;&t;&t; * a variable end_of_DRAM to keep track of what we think the&n;&t;&t; * max ram is.&n;&t;&t; * -- Cort&n;&t;&t; */
 id|memcpy
 (paren
 (paren
 r_void
 op_star
 )paren
-id|INITRD_DESTINATION
+id|PAGE_ALIGN
+c_func
+(paren
+op_minus
+id|PAGE_SIZE
+op_plus
+(paren
+r_int
+r_int
+)paren
+id|end_avail
+op_minus
+id|INITRD_SIZE
+)paren
 comma
 (paren
 r_void
@@ -1932,20 +2054,41 @@ comma
 id|INITRD_SIZE
 )paren
 suffix:semicolon
+id|initrd_start
+op_assign
+id|PAGE_ALIGN
+c_func
+(paren
+op_minus
+id|PAGE_SIZE
+op_plus
+(paren
+r_int
+r_int
+)paren
+id|end_avail
+op_minus
+id|INITRD_SIZE
+)paren
+suffix:semicolon
 id|initrd_end
 op_assign
-id|INITRD_DESTINATION
+id|initrd_start
 op_plus
 id|INITRD_SIZE
 suffix:semicolon
-id|initrd_start
+id|end_avail
 op_assign
-id|INITRD_DESTINATION
+(paren
+r_char
+op_star
+)paren
+id|initrd_start
 suffix:semicolon
 id|puts
 c_func
 (paren
-l_string|&quot;Moved initrd to:  &quot;
+l_string|&quot;relocated to:  &quot;
 )paren
 suffix:semicolon
 id|puthex
@@ -1973,6 +2116,44 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+id|puts
+c_func
+(paren
+l_string|&quot;avail ram:     &quot;
+)paren
+suffix:semicolon
+id|puthex
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|avail_ram
+)paren
+suffix:semicolon
+id|puts
+c_func
+(paren
+l_string|&quot; &quot;
+)paren
+suffix:semicolon
+id|puthex
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|end_avail
+)paren
+suffix:semicolon
+id|puts
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
 macro_line|#ifndef CONFIG_MBX
 id|CRT_tstc
 c_func
@@ -2171,8 +2352,6 @@ c_func
 l_string|&quot;Uncompressing Linux...&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* these _bcopy() calls are here so I can add breakpoints to the boot for mbx -- Cort */
-multiline_comment|/*_bcopy( (char *)0x100,(char *)&amp;sanity, 0x2000-0x100);*/
 id|gunzip
 c_func
 (paren
@@ -2186,7 +2365,6 @@ op_amp
 id|zimage_size
 )paren
 suffix:semicolon
-multiline_comment|/*_bcopy( (char *)&amp;sanity,(char *)0x100,0x2000-0x100);*/
 id|puts
 c_func
 (paren
@@ -2199,6 +2377,7 @@ c_func
 l_string|&quot;Now booting the kernel&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#ifndef CONFIG_MBX&t;
 r_return
 (paren
 r_int
@@ -2207,6 +2386,16 @@ r_int
 op_amp
 id|hold_residual
 suffix:semicolon
+macro_line|#else
+r_return
+(paren
+r_int
+r_int
+)paren
+op_amp
+id|hold_board_info
+suffix:semicolon
+macro_line|#endif&t;
 )brace
 DECL|function|puthex
 r_void

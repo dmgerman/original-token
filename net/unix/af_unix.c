@@ -1098,7 +1098,7 @@ op_assign
 id|sk_alloc
 c_func
 (paren
-id|AF_UNIX
+id|PF_UNIX
 comma
 id|GFP_KERNEL
 comma
@@ -1129,7 +1129,7 @@ id|unix_destruct_addr
 suffix:semicolon
 id|sk-&gt;protinfo.af_unix.family
 op_assign
-id|AF_UNIX
+id|PF_UNIX
 suffix:semicolon
 id|sk-&gt;protinfo.af_unix.dentry
 op_assign
@@ -5828,7 +5828,7 @@ id|proto_ops
 id|unix_stream_ops
 op_assign
 (brace
-id|AF_UNIX
+id|PF_UNIX
 comma
 id|sock_no_dup
 comma
@@ -5869,7 +5869,7 @@ id|proto_ops
 id|unix_dgram_ops
 op_assign
 (brace
-id|AF_UNIX
+id|PF_UNIX
 comma
 id|sock_no_dup
 comma
@@ -5910,7 +5910,7 @@ id|net_proto_family
 id|unix_family_ops
 op_assign
 (brace
-id|AF_UNIX
+id|PF_UNIX
 comma
 id|unix_create
 )brace
@@ -6056,7 +6056,7 @@ r_void
 id|sock_unregister
 c_func
 (paren
-id|AF_UNIX
+id|PF_UNIX
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_SYSCTL

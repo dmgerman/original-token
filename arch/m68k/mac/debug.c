@@ -1,6 +1,7 @@
 multiline_comment|/*&n; * linux/arch/m68k/mac/debug.c&n; *&n; * Shamelessly stolen (SCC code and general framework) from:&n; *&n; * linux/arch/m68k/atari/debug.c&n; *&n; * Atari debugging and serial console stuff&n; *&n; * Assembled of parts of former atari/config.c 97-12-18 by Roman Hodek&n; *  &n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -381,7 +382,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|compat_boot_info.bi_mac.videodepth
+id|mac_videodepth
 op_eq
 l_int|1
 )paren
@@ -514,7 +515,7 @@ id|boomoffset
 r_if
 c_cond
 (paren
-id|compat_boot_info.bi_mac.videodepth
+id|mac_videodepth
 op_eq
 l_int|1
 )paren
@@ -557,7 +558,7 @@ r_else
 r_if
 c_cond
 (paren
-id|compat_boot_info.bi_mac.videodepth
+id|mac_videodepth
 op_eq
 l_int|1
 )paren

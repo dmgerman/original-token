@@ -1,5 +1,6 @@
-multiline_comment|/*&n; * indy_timer.c: Setting up the clock on the INDY 8254 controller.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: indy_timer.c,v 1.3 1997/08/11 04:37:09 ralf Exp $&n; */
+multiline_comment|/*&n; * indy_timer.c: Setting up the clock on the INDY 8254 controller.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: indy_timer.c,v 1.5 1998/05/01 01:35:17 ralf Exp $&n; */
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/param.h&gt;
@@ -323,6 +324,13 @@ id|last_rtc_update
 op_assign
 l_int|0
 suffix:semicolon
+DECL|variable|missed_heart_beats
+r_int
+r_int
+id|missed_heart_beats
+op_assign
+l_int|0
+suffix:semicolon
 DECL|function|indy_timer_interrupt
 r_void
 id|indy_timer_interrupt
@@ -335,22 +343,51 @@ id|regs
 )paren
 (brace
 r_int
+r_int
+id|count
+suffix:semicolon
+r_int
 id|irq
 op_assign
 l_int|7
 suffix:semicolon
 multiline_comment|/* Ack timer and compute new compare. */
-id|r4k_cur
+id|count
 op_assign
-(paren
 id|read_32bit_cp0_register
 c_func
 (paren
 id|CP0_COUNT
 )paren
-op_plus
+suffix:semicolon
+multiline_comment|/* This has races.  */
+r_if
+c_cond
+(paren
+(paren
+id|count
+op_minus
+id|r4k_cur
+)paren
+op_ge
 id|r4k_offset
 )paren
+(brace
+multiline_comment|/* If this happens to often we&squot;ll need to compensate.  */
+id|missed_heart_beats
+op_increment
+suffix:semicolon
+id|r4k_cur
+op_assign
+id|count
+op_plus
+id|r4k_offset
+suffix:semicolon
+)brace
+r_else
+id|r4k_cur
+op_add_assign
+id|r4k_offset
 suffix:semicolon
 id|ack_r4ktimer
 c_func
@@ -358,7 +395,10 @@ c_func
 id|r4k_cur
 )paren
 suffix:semicolon
-id|kstat.interrupts
+id|kstat.irqs
+(braket
+l_int|0
+)braket
 (braket
 id|irq
 )braket
@@ -430,7 +470,6 @@ multiline_comment|/* do it again in 60 s */
 )brace
 DECL|function|dosample
 r_static
-r_inline
 r_int
 r_int
 id|dosample
@@ -501,38 +540,7 @@ id|CP0_COUNT
 )paren
 suffix:semicolon
 multiline_comment|/* Latch and spin until top byte of counter2 is zero */
-op_star
-id|tcwp
-op_assign
-(paren
-id|SGINT_TCWORD_CNT2
-op_or
-id|SGINT_TCWORD_CLAT
-)paren
-suffix:semicolon
-id|ct1
-op_assign
-id|read_32bit_cp0_register
-c_func
-(paren
-id|CP0_COUNT
-)paren
-suffix:semicolon
-id|lsb
-op_assign
-op_star
-id|tc2p
-suffix:semicolon
-id|msb
-op_assign
-op_star
-id|tc2p
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|msb
-)paren
+r_do
 (brace
 op_star
 id|tcwp
@@ -543,14 +551,6 @@ op_or
 id|SGINT_TCWORD_CLAT
 )paren
 suffix:semicolon
-id|ct1
-op_assign
-id|read_32bit_cp0_register
-c_func
-(paren
-id|CP0_COUNT
-)paren
-suffix:semicolon
 id|lsb
 op_assign
 op_star
@@ -560,6 +560,22 @@ id|msb
 op_assign
 op_star
 id|tc2p
+suffix:semicolon
+id|ct1
+op_assign
+id|read_32bit_cp0_register
+c_func
+(paren
+id|CP0_COUNT
+)paren
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+id|msb
+)paren
+(brace
 suffix:semicolon
 )brace
 multiline_comment|/* Stop the counter. */
@@ -696,13 +712,18 @@ id|sec
 suffix:semicolon
 multiline_comment|/* finally seconds */
 )brace
-DECL|function|get_indy_time
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_static
 r_int
 r_int
 id|get_indy_time
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_struct
@@ -883,12 +904,16 @@ suffix:semicolon
 )brace
 DECL|macro|ALLINTS
 mdefine_line|#define ALLINTS (IE_IRQ0 | IE_IRQ1 | IE_IRQ2 | IE_IRQ3 | IE_IRQ4 | IE_IRQ5)
-DECL|function|indy_timer_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|indy_timer_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_struct
@@ -926,8 +951,6 @@ c_func
 l_string|&quot;calculating r4koff... &quot;
 )paren
 suffix:semicolon
-id|r4k_offset
-op_assign
 id|dosample
 c_func
 (paren
@@ -945,9 +968,9 @@ comma
 id|tc2p
 )paren
 suffix:semicolon
-multiline_comment|/* Eat one... */
+multiline_comment|/* Eat one.&t;*/
 id|r4k_offset
-op_add_assign
+op_assign
 id|dosample
 c_func
 (paren
@@ -957,22 +980,6 @@ id|tc2p
 )paren
 suffix:semicolon
 multiline_comment|/* Second sample. */
-id|r4k_offset
-op_assign
-(paren
-id|r4k_offset
-op_rshift
-l_int|1
-)paren
-suffix:semicolon
-multiline_comment|/* Get average. */
-id|r4k_offset
-op_assign
-id|HZ
-op_star
-id|r4k_offset
-suffix:semicolon
-multiline_comment|/* Multiply by HZ */
 id|printk
 c_func
 (paren
@@ -1061,7 +1068,10 @@ comma
 id|irq
 )paren
 suffix:semicolon
-id|kstat.interrupts
+id|kstat.irqs
+(braket
+l_int|0
+)braket
 (braket
 id|irq
 )braket

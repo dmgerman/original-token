@@ -290,7 +290,7 @@ r_return
 id|retval
 suffix:semicolon
 )brace
-macro_line|#if !defined(__alpha__) &amp;&amp; !defined(__sparc_v9__)
+macro_line|#if !defined(__alpha__)
 DECL|function|sys_llseek
 id|asmlinkage
 r_int
@@ -559,11 +559,6 @@ id|file
 )paren
 r_goto
 id|bad_file
-suffix:semicolon
-id|ret
-op_assign
-op_minus
-id|EBADF
 suffix:semicolon
 r_if
 c_cond

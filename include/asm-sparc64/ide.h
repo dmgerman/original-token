@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ide.h,v 1.6 1998/03/15 13:29:13 ecd Exp $&n; * ide.h: Ultra/PCI specific IDE glue.&n; *&n; * Copyright (C) 1997  David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998  Eddie C. Dost   (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: ide.h,v 1.8 1998/04/23 05:04:14 davem Exp $&n; * ide.h: Ultra/PCI specific IDE glue.&n; *&n; * Copyright (C) 1997  David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998  Eddie C. Dost   (ecd@skynet.be)&n; */
 macro_line|#ifndef _SPARC64_IDE_H
 DECL|macro|_SPARC64_IDE_H
 mdefine_line|#define _SPARC64_IDE_H
@@ -369,6 +369,22 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* From m68k code... */
+macro_line|#ifdef insl
+DECL|macro|insl
+macro_line|#undef insl
+macro_line|#endif
+macro_line|#ifdef outsl
+DECL|macro|outsl
+macro_line|#undef outsl
+macro_line|#endif
+macro_line|#ifdef insw
+DECL|macro|insw
+macro_line|#undef insw
+macro_line|#endif
+macro_line|#ifdef outsw
+DECL|macro|outsw
+macro_line|#undef outsw
+macro_line|#endif
 DECL|macro|insl
 mdefine_line|#define insl(data_reg, buffer, wcount) insw(data_reg, buffer, (wcount)&lt;&lt;1)
 DECL|macro|outsl
@@ -377,6 +393,7 @@ DECL|macro|insw
 mdefine_line|#define insw(port, buf, nr) ide_insw((port), (buf), (nr))
 DECL|macro|outsw
 mdefine_line|#define outsw(port, buf, nr) ide_outsw((port), (buf), (nr))
+multiline_comment|/* We need to use L1 cache bypassing to prevent dcache alias&n; * inconsistencies with user space.  -DaveM&n; */
 DECL|function|ide_insw
 r_static
 id|__inline__
@@ -407,7 +424,15 @@ id|u16
 op_star
 id|ps
 op_assign
+(paren
+id|u16
+op_star
+)paren
+id|__pa
+c_func
+(paren
 id|dst
+)paren
 suffix:semicolon
 id|u32
 op_star
@@ -436,12 +461,31 @@ op_amp
 l_int|0x2
 )paren
 (brace
-op_star
-id|ps
-op_increment
-op_assign
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;stha %0, [%1] %2&quot;
+suffix:colon
+multiline_comment|/* no outputs */
+suffix:colon
+l_string|&quot;r&quot;
+(paren
 op_star
 id|data_port
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|ps
+op_increment
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_PHYS_USE_EC
+)paren
+)paren
 suffix:semicolon
 id|count
 op_decrement
@@ -482,11 +526,30 @@ op_star
 id|data_port
 )paren
 suffix:semicolon
-op_star
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;stwa %0, [%1] %2&quot;
+suffix:colon
+multiline_comment|/* no outputs */
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|w
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
 id|pi
 op_increment
-op_assign
-id|w
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_PHYS_USE_EC
+)paren
+)paren
 suffix:semicolon
 id|count
 op_sub_assign
@@ -507,11 +570,30 @@ c_cond
 id|count
 )paren
 (brace
-op_star
-id|ps
-op_assign
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;stha %0, [%1] %2&quot;
+suffix:colon
+multiline_comment|/* no outputs */
+suffix:colon
+l_string|&quot;r&quot;
+(paren
 op_star
 id|data_port
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|ps
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_PHYS_USE_EC
+)paren
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -547,7 +629,16 @@ id|u16
 op_star
 id|ps
 op_assign
+(paren
+r_const
+id|u16
+op_star
+)paren
+id|__pa
+c_func
+(paren
 id|src
+)paren
 suffix:semicolon
 r_const
 id|u32
@@ -577,12 +668,36 @@ op_amp
 l_int|0x2
 )paren
 (brace
+id|u16
+id|w
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;lduha [%1] %2, %0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|w
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|ps
+op_increment
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_PHYS_USE_EC
+)paren
+)paren
+suffix:semicolon
 op_star
 id|data_port
 op_assign
-op_star
-id|ps
-op_increment
+id|w
 suffix:semicolon
 id|count
 op_decrement
@@ -608,11 +723,28 @@ l_int|2
 id|u32
 id|w
 suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;lduwa [%1] %2, %0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
 id|w
-op_assign
-op_star
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
 id|pi
 op_increment
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_PHYS_USE_EC
+)paren
+)paren
 suffix:semicolon
 op_star
 id|data_port
@@ -648,11 +780,36 @@ c_cond
 id|count
 )paren
 (brace
+id|u16
+id|w
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;lduha [%1] %2, %0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|w
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|ps
+op_increment
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_PHYS_USE_EC
+)paren
+)paren
+suffix:semicolon
 op_star
 id|data_port
 op_assign
-op_star
-id|ps
+id|w
 suffix:semicolon
 )brace
 )brace

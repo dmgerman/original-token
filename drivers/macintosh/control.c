@@ -10,6 +10,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/adb.h&gt;
 macro_line|#include &lt;asm/cuda.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/init.h&gt;
 macro_line|#include &lt;linux/selection.h&gt;
 macro_line|#include &quot;pmac-cons.h&quot;
 macro_line|#include &quot;control.h&quot;
@@ -1554,6 +1555,7 @@ op_amp
 id|control_reg_init_20
 )brace
 suffix:semicolon
+id|__openfirmware
 multiline_comment|/*&n; * Get the monitor sense value.&n; * Note that this can be called before calibrate_delay,&n; * so we can&squot;t use udelay.&n; */
 r_static
 r_int

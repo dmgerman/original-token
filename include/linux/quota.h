@@ -1,9 +1,9 @@
-multiline_comment|/*&n; * Copyright (c) 1982, 1986 Regents of the University of California.&n; * All rights reserved.&n; *&n; * This code is derived from software contributed to Berkeley by&n; * Robert Elz at The University of Melbourne.&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions&n; * are met:&n; * 1. Redistributions of source code must retain the above copyright&n; *    notice, this list of conditions and the following disclaimer.&n; * 2. Redistributions in binary form must reproduce the above copyright&n; *    notice, this list of conditions and the following disclaimer in the&n; *    documentation and/or other materials provided with the distribution.&n; * 3. All advertising materials mentioning features or use of this software&n; *    must display the following acknowledgement:&n; *   This product includes software developed by the University of&n; *   California, Berkeley and its contributors.&n; * 4. Neither the name of the University nor the names of its contributors&n; *    may be used to endorse or promote products derived from this software&n; *    without specific prior written permission.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS&squot;&squot; AND&n; * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE&n; * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE&n; * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE&n; * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS&n; * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)&n; * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; * Version: $Id: quota.h,v 1.8 1995/03/11 11:43:07 mvw Exp mvw $&n; */
+multiline_comment|/*&n; * Copyright (c) 1982, 1986 Regents of the University of California.&n; * All rights reserved.&n; *&n; * This code is derived from software contributed to Berkeley by&n; * Robert Elz at The University of Melbourne.&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions&n; * are met:&n; * 1. Redistributions of source code must retain the above copyright&n; *    notice, this list of conditions and the following disclaimer.&n; * 2. Redistributions in binary form must reproduce the above copyright&n; *    notice, this list of conditions and the following disclaimer in the&n; *    documentation and/or other materials provided with the distribution.&n; * 3. All advertising materials mentioning features or use of this software&n; *    must display the following acknowledgement:&n; *   This product includes software developed by the University of&n; *   California, Berkeley and its contributors.&n; * 4. Neither the name of the University nor the names of its contributors&n; *    may be used to endorse or promote products derived from this software&n; *    without specific prior written permission.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS&squot;&squot; AND&n; * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE&n; * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE&n; * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE&n; * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS&n; * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)&n; * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; * Version: $Id: quota.h,v 2.0 1996/11/17 16:48:14 mvw Exp mvw $&n; */
 macro_line|#ifndef _LINUX_QUOTA_
 DECL|macro|_LINUX_QUOTA_
 mdefine_line|#define _LINUX_QUOTA_
 macro_line|#include &lt;linux/errno.h&gt;
-multiline_comment|/*&n; * Convert diskblocks to blocks and the other way around.&n; * currently only to fool the BSD source. :-)&n; */
+multiline_comment|/*&n; * Convert diskblocks to blocks and the other way around.&n; */
 DECL|macro|dbtob
 mdefine_line|#define dbtob(num) (num &lt;&lt; 10)
 DECL|macro|btodb
@@ -24,15 +24,29 @@ DECL|macro|GRPQUOTA
 mdefine_line|#define GRPQUOTA  1&t;&t;/* element used for group quotas */
 multiline_comment|/*&n; * Definitions for the default names of the quotas files.&n; */
 DECL|macro|INITQFNAMES
-mdefine_line|#define INITQFNAMES { &bslash;&n;   &quot;user&quot;,      /* USRQUOTA */ &bslash;&n;   &quot;group&quot;,   /* GRPQUOTA */ &bslash;&n;   &quot;undefined&quot;, &bslash;&n;};
+mdefine_line|#define INITQFNAMES { &bslash;&n;&t;&quot;user&quot;,    /* USRQUOTA */ &bslash;&n;&t;&quot;group&quot;,   /* GRPQUOTA */ &bslash;&n;&t;&quot;undefined&quot;, &bslash;&n;};
 DECL|macro|QUOTAFILENAME
 mdefine_line|#define QUOTAFILENAME &quot;quota&quot;
 DECL|macro|QUOTAGROUP
 mdefine_line|#define QUOTAGROUP &quot;staff&quot;
+r_extern
+r_int
+id|nr_dquots
+comma
+id|nr_free_dquots
+suffix:semicolon
+r_extern
+r_int
+id|max_dquots
+suffix:semicolon
+r_extern
+r_int
+id|dquot_root_squash
+suffix:semicolon
 DECL|macro|NR_DQHASH
-mdefine_line|#define NR_DQHASH 43            /* Just an arbitrary number any suggestions ? */
+mdefine_line|#define NR_DQHASH 43            /* Just an arbitrary number */
 DECL|macro|NR_DQUOTS
-mdefine_line|#define NR_DQUOTS 256           /* Number of quotas active at one time */
+mdefine_line|#define NR_DQUOTS 256           /* Maximum number of quotas active at one time (Configurable from /proc/sys/fs) */
 multiline_comment|/*&n; * Command definitions for the &squot;quotactl&squot; system call.&n; * The commands are broken into a main command defined below&n; * and a subcommand that is used to convey the type of&n; * quota that is being manipulated (see above).&n; */
 DECL|macro|SUBCMDMASK
 mdefine_line|#define SUBCMDMASK  0x00ff
@@ -56,6 +70,8 @@ DECL|macro|Q_SETQLIM
 mdefine_line|#define Q_SETQLIM  0x0700&t;/* set limits */
 DECL|macro|Q_GETSTATS
 mdefine_line|#define Q_GETSTATS 0x0800&t;/* get collected stats */
+DECL|macro|Q_RSQUASH
+mdefine_line|#define Q_RSQUASH  0x1000&t;/* set root_squash option */
 multiline_comment|/*&n; * The following structure defines the format of the disk quota file&n; * (as it appears on disk) - the file is an array of these structures&n; * indexed by user or group number.&n; */
 DECL|struct|dqblk
 r_struct
@@ -80,7 +96,7 @@ DECL|member|dqb_ihardlimit
 id|__u32
 id|dqb_ihardlimit
 suffix:semicolon
-multiline_comment|/* maximum # allocated inodes */
+multiline_comment|/* absolute limit on allocated inodes */
 DECL|member|dqb_isoftlimit
 id|__u32
 id|dqb_isoftlimit
@@ -100,7 +116,7 @@ DECL|member|dqb_itime
 id|time_t
 id|dqb_itime
 suffix:semicolon
-multiline_comment|/* time limit for excessive files */
+multiline_comment|/* time limit for excessive inode use */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Shorthand notation.&n; */
@@ -146,10 +162,6 @@ DECL|member|cache_hits
 id|__u32
 id|cache_hits
 suffix:semicolon
-DECL|member|pages_allocated
-id|__u32
-id|pages_allocated
-suffix:semicolon
 DECL|member|allocated_dquots
 id|__u32
 id|allocated_dquots
@@ -165,7 +177,6 @@ suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#ifdef __KERNEL__
-macro_line|#include &lt;linux/mount.h&gt;
 multiline_comment|/*&n; * Maximum length of a message generated in the quota system,&n; * that needs to be kicked onto the tty.&n; */
 DECL|macro|MAX_QUOTA_MESSAGE
 mdefine_line|#define MAX_QUOTA_MESSAGE 75
@@ -190,12 +201,12 @@ r_int
 r_int
 id|dq_id
 suffix:semicolon
-multiline_comment|/* id this applies to (uid, gid) */
+multiline_comment|/* ID this applies to (uid, gid) */
 DECL|member|dq_type
 r_int
 id|dq_type
 suffix:semicolon
-multiline_comment|/* type of quota */
+multiline_comment|/* Type of quota */
 DECL|member|dq_dev
 id|kdev_t
 id|dq_dev
@@ -205,60 +216,67 @@ DECL|member|dq_flags
 r_int
 id|dq_flags
 suffix:semicolon
-multiline_comment|/* see DQ_* */
+multiline_comment|/* See DQ_* */
 DECL|member|dq_count
 r_int
 id|dq_count
 suffix:semicolon
-multiline_comment|/* reference count */
+multiline_comment|/* Reference count */
+DECL|member|dq_referenced
+r_int
+r_int
+id|dq_referenced
+suffix:semicolon
+multiline_comment|/* Number of times this dquot was referenced during its lifetime */
 DECL|member|dq_mnt
 r_struct
 id|vfsmount
 op_star
 id|dq_mnt
 suffix:semicolon
-multiline_comment|/* vfsmountpoint this applies to */
+multiline_comment|/* VFS_mount_point this applies to */
 DECL|member|dq_dqb
 r_struct
 id|dqblk
 id|dq_dqb
 suffix:semicolon
-multiline_comment|/* diskquota usage */
+multiline_comment|/* Diskquota usage */
 DECL|member|dq_wait
 r_struct
 id|wait_queue
 op_star
 id|dq_wait
 suffix:semicolon
-multiline_comment|/* pointer to waitqueue */
-DECL|member|dq_prev
-r_struct
-id|dquot
-op_star
-id|dq_prev
-suffix:semicolon
-multiline_comment|/* pointer to prev dquot */
+multiline_comment|/* Pointer to waitqueue */
 DECL|member|dq_next
 r_struct
 id|dquot
 op_star
 id|dq_next
 suffix:semicolon
-multiline_comment|/* pointer to next dquot */
-DECL|member|dq_hash_prev
-r_struct
-id|dquot
-op_star
-id|dq_hash_prev
-suffix:semicolon
-multiline_comment|/* pointer to prev dquot */
+multiline_comment|/* Pointer to next dquot */
 DECL|member|dq_hash_next
 r_struct
 id|dquot
 op_star
 id|dq_hash_next
 suffix:semicolon
-multiline_comment|/* pointer to next dquot */
+multiline_comment|/* Pointer to next in dquot_hash */
+DECL|member|dq_hash_pprev
+r_struct
+id|dquot
+op_star
+op_star
+id|dq_hash_pprev
+suffix:semicolon
+multiline_comment|/* Pointer to previous in dquot_hash */
+DECL|member|dq_pprev
+r_struct
+id|dquot
+op_star
+op_star
+id|dq_pprev
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|NODQUOT
@@ -276,151 +294,6 @@ DECL|macro|QUOTA_OK
 mdefine_line|#define QUOTA_OK          0
 DECL|macro|NO_QUOTA
 mdefine_line|#define NO_QUOTA          1
-multiline_comment|/*&n; * declaration of quota_function calls in kernel.&n; */
-r_extern
-r_void
-id|dquot_initialize
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_int
-id|type
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|dquot_drop
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|dquot_alloc_block
-c_func
-(paren
-r_const
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_int
-r_int
-id|number
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|dquot_alloc_inode
-c_func
-(paren
-r_const
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_int
-r_int
-id|number
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|dquot_free_block
-c_func
-(paren
-r_const
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_int
-r_int
-id|number
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|dquot_free_inode
-c_func
-(paren
-r_const
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_int
-r_int
-id|number
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|dquot_transfer
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|iattr
-op_star
-id|iattr
-comma
-r_char
-id|direction
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|invalidate_dquots
-c_func
-(paren
-id|kdev_t
-id|dev
-comma
-r_int
-id|type
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|quota_off
-c_func
-(paren
-id|kdev_t
-id|dev
-comma
-r_int
-id|type
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|sync_dquots
-c_func
-(paren
-id|kdev_t
-id|dev
-comma
-r_int
-id|type
-)paren
-suffix:semicolon
 macro_line|#else
 macro_line|# /* nodep */ include &lt;sys/cdefs.h&gt;
 id|__BEGIN_DECLS

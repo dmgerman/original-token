@@ -382,7 +382,9 @@ DECL|macro|TASK_SIZE
 mdefine_line|#define TASK_SIZE&t;(0x80000000UL)
 multiline_comment|/* This decides where the kernel will search for a free chunk of vm&n; * space during mmap&squot;s.&n; */
 DECL|macro|TASK_UNMAPPED_BASE
-mdefine_line|#define TASK_UNMAPPED_BASE     (TASK_SIZE / 8 * 3)
+mdefine_line|#define TASK_UNMAPPED_BASE(off)&t;(TASK_SIZE / 8 * 3)
+DECL|macro|TASK_UNMAPPED_ALIGN
+mdefine_line|#define TASK_UNMAPPED_ALIGN(addr, off)&t;PAGE_ALIGN(addr)
 DECL|macro|COPY_TASK_STRUCT
 mdefine_line|#define COPY_TASK_STRUCT(dst, src) &t;&bslash;&n;do {&t;&t;&t;&t;&t;&bslash;&n;&t;*dst = *src;&t;&t;&t;&bslash;&n;} while (0)
 r_typedef
@@ -497,6 +499,10 @@ suffix:colon
 l_int|0
 suffix:semicolon
 )brace
+DECL|macro|copy_segments
+mdefine_line|#define copy_segments(nr, tsk, mm)&t;do { } while (0)
+DECL|macro|release_segments
+mdefine_line|#define release_segments(mm)&t;&t;do { } while (0)
 multiline_comment|/*&n; * NOTE! The task struct and the stack go together&n; */
 DECL|macro|alloc_task_struct
 mdefine_line|#define alloc_task_struct() &bslash;&n;&t;((struct task_struct *) __get_free_pages(GFP_KERNEL,1))

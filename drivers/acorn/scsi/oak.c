@@ -3,7 +3,7 @@ mdefine_line|#define AUTOSENSE
 multiline_comment|/*#define PSEUDO_DMA*/
 multiline_comment|/*&n; * Oak Generic NCR5380 driver&n; *&n; * Copyright 1995, Russell King&n; *&n; * ALPHA RELEASE 1.&n; *&n; * For more information, please consult&n; *&n; * NCR 5380 Family&n; * SCSI Protocol Controller&n; * Databook&n; *&n; * NCR Microelectronics&n; * 1635 Aeroplaza Drive&n; * Colorado Springs, CO 80916&n; * 1+ (719) 578-3400&n; * 1+ (800) 334-5454&n; */
 multiline_comment|/*&n; * Options :&n; *&n; * PARITY - enable parity checking.  Not supported.&n; *&n; * SCSI2 - enable support for SCSI-II tagged queueing.  Untested.&n; *&n; * USLEEP - enable support for devices that don&squot;t disconnect.  Untested.&n; */
-multiline_comment|/*&n; * $Log: oak.c,v $&n; * Revision 1.2  1998/03/08 05:49:48  davem&n; * Merge to 2.1.89&n; *&n; * Revision 1.1  1998/02/23 02:45:27  davem&n; * Merge to 2.1.88&n; *&n; */
+multiline_comment|/*&n; * $Log: oak.c,v $&n; * Revision 1.3  1998/05/03 20:45:37  alan&n; * ARM SCSI update. This adds the eesox driver and massively updates the&n; * Cumana driver. The folks who bought cumana arent anal retentive all&n; * docs are secret weenies so now there are docs ..&n; *&n; * Revision 1.2  1998/03/08 05:49:48  davem&n; * Merge to 2.1.89&n; *&n; * Revision 1.1  1998/02/23 02:45:27  davem&n; * Merge to 2.1.88&n; *&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -283,7 +283,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;scsi%d: at port %X irq&quot;
+l_string|&quot;scsi%d: at port %lX irq&quot;
 comma
 id|instance-&gt;host_no
 comma

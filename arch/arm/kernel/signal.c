@@ -735,7 +735,7 @@ id|sc-&gt;arm_pc
 )paren
 suffix:semicolon
 multiline_comment|/* security! */
-macro_line|#if defined(CONFIG_CPU_ARM6) || defined(CONFIG_CPU_SA110)
+macro_line|#ifdef CONFIG_CPU_32
 id|__get_user
 c_func
 (paren
@@ -1197,7 +1197,7 @@ id|sc-&gt;arm_pc
 )paren
 suffix:semicolon
 multiline_comment|/* security! */
-macro_line|#if defined(CONFIG_CPU_ARM6) || defined(CONFIG_CPU_SA110)
+macro_line|#ifdef CONFIG_CPU_32
 id|__put_user
 (paren
 id|regs-&gt;ARM_cpsr

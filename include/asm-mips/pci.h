@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Declarations for the MIPS specific implementation of the PCI BIOS32 services.&n; *&n; * $Id: pci.h,v 1.2 1997/09/20 21:16:37 ralf Exp $&n; */
+multiline_comment|/*&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Declarations for the MIPS specific implementation of the PCI BIOS32 services.&n; *&n; * $Id: pci.h,v 1.3 1998/05/01 01:36:00 ralf Exp $&n; */
 macro_line|#ifndef __ASM_MIPS_PCI_H
 DECL|macro|__ASM_MIPS_PCI_H
 mdefine_line|#define __ASM_MIPS_PCI_H

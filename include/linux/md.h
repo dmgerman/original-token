@@ -16,11 +16,13 @@ DECL|macro|MD_DEFAULT_DISK_READAHEAD
 mdefine_line|#define MD_DEFAULT_DISK_READAHEAD&t;(256 * 1024)
 multiline_comment|/* ioctls */
 DECL|macro|REGISTER_DEV
-mdefine_line|#define REGISTER_DEV _IO (MD_MAJOR, 1)
+mdefine_line|#define REGISTER_DEV &t;&t;_IO (MD_MAJOR, 1)
 DECL|macro|START_MD
-mdefine_line|#define START_MD     _IO (MD_MAJOR, 2)
+mdefine_line|#define START_MD     &t;&t;_IO (MD_MAJOR, 2)
 DECL|macro|STOP_MD
-mdefine_line|#define STOP_MD      _IO (MD_MAJOR, 3)
+mdefine_line|#define STOP_MD      &t;&t;_IO (MD_MAJOR, 3)
+DECL|macro|REGISTER_DEV_NEW
+mdefine_line|#define REGISTER_DEV_NEW&t;_IO (MD_MAJOR, 4)
 multiline_comment|/*&n;   personalities :&n;   Byte 0 : Chunk size factor&n;   Byte 1 : Fault tolerance count for each physical device&n;            (   0 means no fault tolerance,&n;             0xFF means always tolerate faults), not used by now.&n;   Byte 2 : Personality&n;   Byte 3 : Reserved.&n; */
 DECL|macro|FAULT_SHIFT
 mdefine_line|#define FAULT_SHIFT       8
@@ -307,6 +309,7 @@ macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
+macro_line|#include &lt;asm/semaphore.h&gt;
 multiline_comment|/*&n; * Kernel-based reconstruction is mostly working, but still requires&n; * some additional work.&n; */
 DECL|macro|SUPPORT_RECONSTRUCTION
 mdefine_line|#define SUPPORT_RECONSTRUCTION&t;0
@@ -314,13 +317,6 @@ DECL|macro|MAX_REAL
 mdefine_line|#define MAX_REAL     8&t;&t;/* Max number of physical dev per md dev */
 DECL|macro|MAX_MD_DEV
 mdefine_line|#define MAX_MD_DEV   4&t;&t;/* Max number of md dev */
-macro_line|#if SUPPORT_RECONSTRUCTION
-DECL|macro|MAX_MD_THREADS
-mdefine_line|#define MAX_MD_THREADS (MAX_MD_DEV * 3)&t;/* Max number of kernel threads */
-macro_line|#else
-DECL|macro|MAX_MD_THREADS
-mdefine_line|#define MAX_MD_THREADS (MAX_MD_DEV)&t;/* Max number of kernel threads */
-macro_line|#endif /* SUPPORT_RECONSTRUCTION */
 DECL|macro|FACTOR
 mdefine_line|#define FACTOR(a)         ((a)-&gt;repartition &amp; FACTOR_MASK)
 DECL|macro|MAX_FAULT
@@ -674,13 +670,26 @@ op_star
 id|wqueue
 suffix:semicolon
 DECL|member|flags
-id|__u32
+r_int
+r_int
 id|flags
+suffix:semicolon
+DECL|member|sem
+r_struct
+id|semaphore
+op_star
+id|sem
+suffix:semicolon
+DECL|member|tsk
+r_struct
+id|task_struct
+op_star
+id|tsk
 suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|THREAD_WAKEUP
-mdefine_line|#define THREAD_WAKEUP&t;0
+mdefine_line|#define THREAD_WAKEUP  0
 r_extern
 r_struct
 id|md_dev

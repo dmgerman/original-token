@@ -245,21 +245,6 @@ mdefine_line|#define irq_enter(cpu, irq, regs)&t;(local_irq_count[cpu]++)
 DECL|macro|irq_exit
 mdefine_line|#define irq_exit(cpu, irq)&t;&t;(local_irq_count[cpu]--)
 macro_line|#endif
-DECL|function|irq_cannonicalize
-r_static
-id|__inline__
-r_int
-id|irq_cannonicalize
-c_func
-(paren
-r_int
-id|irq
-)paren
-(brace
-r_return
-id|irq
-suffix:semicolon
-)brace
 multiline_comment|/* Dave Redman (djhr@tadpole.co.uk)&n; * changed these to function pointers.. it saves cycles and will allow&n; * the irq dependencies to be split into different files at a later date&n; * sun4c_irq.c, sun4m_irq.c etc so we could reduce the kernel size.&n; * Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Changed these to btfixup entities... It saves cycles :)&n; */
 id|BTFIXUPDEF_CALL
 c_func

@@ -1874,7 +1874,7 @@ op_assign
 id|sk_alloc
 c_func
 (paren
-id|AF_PACKET
+id|PF_PACKET
 comma
 id|GFP_KERNEL
 comma
@@ -1966,7 +1966,7 @@ l_int|0
 suffix:semicolon
 id|sk-&gt;family
 op_assign
-id|AF_PACKET
+id|PF_PACKET
 suffix:semicolon
 id|sk-&gt;num
 op_assign
@@ -3826,7 +3826,7 @@ id|proto_ops
 id|packet_ops_spkt
 op_assign
 (brace
-id|AF_PACKET
+id|PF_PACKET
 comma
 id|sock_no_dup
 comma
@@ -3868,7 +3868,7 @@ id|proto_ops
 id|packet_ops
 op_assign
 (brace
-id|AF_PACKET
+id|PF_PACKET
 comma
 id|sock_no_dup
 comma
@@ -3915,7 +3915,7 @@ id|net_proto_family
 id|packet_family_ops
 op_assign
 (brace
-id|AF_PACKET
+id|PF_PACKET
 comma
 id|packet_create
 )brace
@@ -3946,7 +3946,7 @@ suffix:semicolon
 id|sock_unregister
 c_func
 (paren
-id|packet_family_ops.family
+id|PF_PACKET
 )paren
 suffix:semicolon
 r_return

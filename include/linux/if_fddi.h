@@ -233,6 +233,16 @@ id|__u32
 id|tx_packets
 suffix:semicolon
 multiline_comment|/* total packets transmitted */
+DECL|member|rx_bytes
+id|__u32
+id|rx_bytes
+suffix:semicolon
+multiline_comment|/* total bytes received&t;*/
+DECL|member|tx_bytes
+id|__u32
+id|tx_bytes
+suffix:semicolon
+multiline_comment|/* total bytes transmitted */
 DECL|member|rx_errors
 id|__u32
 id|rx_errors
@@ -263,6 +273,66 @@ id|__u32
 id|transmit_collision
 suffix:semicolon
 multiline_comment|/* always 0 for FDDI */
+multiline_comment|/* detailed rx_errors */
+DECL|member|rx_length_errors
+id|__u32
+id|rx_length_errors
+suffix:semicolon
+DECL|member|rx_over_errors
+id|__u32
+id|rx_over_errors
+suffix:semicolon
+multiline_comment|/* receiver ring buff overflow&t;*/
+DECL|member|rx_crc_errors
+id|__u32
+id|rx_crc_errors
+suffix:semicolon
+multiline_comment|/* recved pkt with crc error&t;*/
+DECL|member|rx_frame_errors
+id|__u32
+id|rx_frame_errors
+suffix:semicolon
+multiline_comment|/* recv&squot;d frame alignment error */
+DECL|member|rx_fifo_errors
+id|__u32
+id|rx_fifo_errors
+suffix:semicolon
+multiline_comment|/* recv&squot;r fifo overrun&t;&t;*/
+DECL|member|rx_missed_errors
+id|__u32
+id|rx_missed_errors
+suffix:semicolon
+multiline_comment|/* receiver missed packet&t;*/
+multiline_comment|/* detailed tx_errors */
+DECL|member|tx_aborted_errors
+id|__u32
+id|tx_aborted_errors
+suffix:semicolon
+DECL|member|tx_carrier_errors
+id|__u32
+id|tx_carrier_errors
+suffix:semicolon
+DECL|member|tx_fifo_errors
+id|__u32
+id|tx_fifo_errors
+suffix:semicolon
+DECL|member|tx_heartbeat_errors
+id|__u32
+id|tx_heartbeat_errors
+suffix:semicolon
+DECL|member|tx_window_errors
+id|__u32
+id|tx_window_errors
+suffix:semicolon
+multiline_comment|/* for cslip etc */
+DECL|member|rx_compressed
+id|__u32
+id|rx_compressed
+suffix:semicolon
+DECL|member|tx_compressed
+id|__u32
+id|tx_compressed
+suffix:semicolon
 multiline_comment|/* Detailed FDDI statistics.  Adopted from RFC 1512 */
 DECL|member|smt_station_id
 id|__u8

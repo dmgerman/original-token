@@ -11,6 +11,7 @@ macro_line|#include &lt;asm/cuda.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/init.h&gt;
 DECL|variable|via
 r_static
 r_volatile
@@ -141,6 +142,13 @@ r_static
 r_int
 id|data_index
 suffix:semicolon
+DECL|variable|vias
+r_static
+r_struct
+id|device_node
+op_star
+id|vias
+suffix:semicolon
 r_static
 r_int
 id|init_via
@@ -217,18 +225,14 @@ r_int
 id|on
 )paren
 suffix:semicolon
+id|__openfirmware
 r_void
-DECL|function|via_cuda_init
-id|via_cuda_init
+DECL|function|find_via_cuda
+id|find_via_cuda
 c_func
 (paren
 )paren
 (brace
-r_struct
-id|device_node
-op_star
-id|vias
-suffix:semicolon
 id|vias
 op_assign
 id|find_devices
@@ -401,6 +405,10 @@ comma
 l_int|0x2000
 )paren
 suffix:semicolon
+id|cuda_state
+op_assign
+id|idle
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -418,12 +426,32 @@ id|KERN_ERR
 l_string|&quot;init_via failed&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
+id|via
+op_assign
+l_int|NULL
 suffix:semicolon
 )brace
-id|cuda_state
+id|adb_hardware
 op_assign
-id|idle
+id|ADB_VIACUDA
+suffix:semicolon
+)brace
+r_void
+DECL|function|via_cuda_init
+id|via_cuda_init
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|via
+op_eq
+l_int|NULL
+)paren
+r_return
 suffix:semicolon
 r_if
 c_cond
@@ -499,10 +527,6 @@ c_func
 suffix:semicolon
 multiline_comment|/* enable interrupt from SR */
 multiline_comment|/* Set function pointers */
-id|adb_hardware
-op_assign
-id|ADB_VIACUDA
-suffix:semicolon
 id|adb_send_request
 op_assign
 id|cuda_adb_send_request

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: setup.c,v 1.68 1998/04/07 08:20:33 geert Exp $&n; * Common prep/pmac/chrp boot and setup code.&n; */
+multiline_comment|/*&n; * $Id: setup.c,v 1.77 1998/05/04 07:24:38 geert Exp $&n; * Common prep/pmac/chrp boot and setup code.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -158,7 +158,10 @@ multiline_comment|/* orig-video-points */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * I really need to add multiple-console support... -- Cort&n; */
-DECL|function|pmac_display_supported
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|pmac_display_supported
 c_func
@@ -167,17 +170,22 @@ r_char
 op_star
 id|name
 )paren
+)paren
 (brace
 r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|pmac_find_display
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|pmac_find_display
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 )brace
@@ -240,6 +248,7 @@ op_star
 id|cmd
 )paren
 (brace
+macro_line|#ifndef CONFIG_MBX
 r_struct
 id|adb_request
 id|req
@@ -513,6 +522,21 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+macro_line|#else /* CONFIG_MBX */
+r_extern
+r_void
+id|MBX_gorom
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+id|MBX_gorom
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_MBX */
 )brace
 DECL|function|machine_power_off
 r_void
@@ -522,6 +546,7 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#ifndef CONFIG_MBX&t;
 r_struct
 id|adb_request
 id|req
@@ -696,6 +721,14 @@ suffix:semicolon
 suffix:semicolon
 )paren
 suffix:semicolon
+macro_line|#else /* CONFIG_MBX */
+id|machine_restart
+c_func
+(paren
+l_int|NULL
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_MBX */
 )brace
 DECL|function|machine_halt
 r_void
@@ -755,6 +788,7 @@ op_star
 id|irq
 )paren
 (brace
+macro_line|#ifndef CONFIG_MBX
 r_switch
 c_cond
 (paren
@@ -807,6 +841,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+macro_line|#endif
 )brace
 macro_line|#endif
 DECL|function|cpu_temp
@@ -818,6 +853,7 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#if 0&t;
 r_int
 r_int
 id|i
@@ -1128,9 +1164,10 @@ l_int|0
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif&t;
 r_return
-id|temp
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|get_cpuinfo
@@ -1560,6 +1597,38 @@ l_string|&quot;604ev5 (MachV)&bslash;n&quot;
 suffix:semicolon
 r_break
 suffix:semicolon
+r_case
+l_int|50
+suffix:colon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|len
+op_plus
+id|buffer
+comma
+l_string|&quot;821&bslash;n&quot;
+)paren
+suffix:semicolon
+r_case
+l_int|80
+suffix:colon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|len
+op_plus
+id|buffer
+comma
+l_string|&quot;860&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
 r_default
 suffix:colon
 id|len
@@ -1581,6 +1650,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+macro_line|#ifndef CONFIG_MBX
 multiline_comment|/*&n;&t;&t; * Assume here that all clock rates are the same in a&n;&t;&t; * smp system.  -- Cort&n;&t;&t; */
 r_if
 c_cond
@@ -1718,6 +1788,46 @@ l_string|&quot;???&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+macro_line|#else /* CONFIG_MBX */
+(brace
+id|bd_t
+op_star
+id|bp
+suffix:semicolon
+r_extern
+id|RESIDUAL
+id|res
+suffix:semicolon
+id|bp
+op_assign
+(paren
+id|bd_t
+op_star
+)paren
+op_amp
+id|res
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|len
+op_plus
+id|buffer
+comma
+l_string|&quot;clock&bslash;t&bslash;t: %dMHz&bslash;n&quot;
+l_string|&quot;bus clock&bslash;t: %dMHz&bslash;n&quot;
+comma
+id|bp-&gt;bi_intfreq
+multiline_comment|/*/ 1000000*/
+comma
+id|bp-&gt;bi_busfreq
+multiline_comment|/*/ 1000000*/
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_MBX */&t;&t;
 id|len
 op_add_assign
 id|sprintf
@@ -1907,6 +2017,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifndef CONFIG_MBX
 r_switch
 c_cond
 (paren
@@ -1976,6 +2087,7 @@ r_break
 suffix:semicolon
 macro_line|#endif
 )brace
+macro_line|#endif /* ndef CONFIG_MBX */&t;
 r_return
 id|len
 suffix:semicolon
@@ -2013,13 +2125,14 @@ id|r7
 )paren
 (brace
 r_extern
+r_void
 id|setup_pci_ptrs
 c_func
 (paren
 r_void
 )paren
 suffix:semicolon
-macro_line|#ifndef CONFIG_MBX8xx
+macro_line|#ifndef CONFIG_MBX
 macro_line|#ifdef CONFIG_APUS
 r_if
 c_cond
@@ -2087,7 +2200,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif
+macro_line|#endif /* CONFIG_APUS */
 macro_line|#ifndef CONFIG_MACH_SPECIFIC
 multiline_comment|/* prep boot loader tells us if we&squot;re prep or not */
 r_if
@@ -2493,7 +2606,7 @@ id|_prep_type
 op_assign
 id|_PREP_Motorola
 suffix:semicolon
-macro_line|#ifdef CONFIG_BLK_DEV_RAM
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
 multiline_comment|/* take care of initrd if we have one */
 r_if
 c_cond
@@ -2514,7 +2627,7 @@ op_plus
 id|KERNELBASE
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_BLK_DEV_RAM */
+macro_line|#endif /* CONFIG_BLK_DEV_INITRD */
 multiline_comment|/* take care of cmd line */
 r_if
 c_cond
@@ -2557,7 +2670,7 @@ suffix:semicolon
 r_case
 id|_MACH_chrp
 suffix:colon
-macro_line|#ifdef CONFIG_BLK_DEV_RAM
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
 multiline_comment|/* take care of initrd if we have one */
 r_if
 c_cond
@@ -2580,7 +2693,7 @@ op_plus
 id|KERNELBASE
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_BLK_DEV_RAM */
+macro_line|#endif /* CONFIG_BLK_DEV_INITRD */
 macro_line|#if !defined(CONFIG_MACH_SPECIFIC)
 id|isa_io_base
 op_assign
@@ -2619,14 +2732,7 @@ l_string|&quot;Unknown machine type in identify_machine!&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#else /* CONFIG_MBX8xx */
-r_extern
-id|setup_pci_ptrs
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
+macro_line|#else /* CONFIG_MBX */
 r_if
 c_cond
 (paren
@@ -2663,7 +2769,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_BLK_DEV_RAM
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
 multiline_comment|/* take care of initrd if we have one */
 r_if
 c_cond
@@ -2684,7 +2790,7 @@ op_plus
 id|KERNELBASE
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_BLK_DEV_RAM */
+macro_line|#endif /* CONFIG_BLK_DEV_INITRD */
 multiline_comment|/* take care of cmd line */
 r_if
 c_cond
@@ -2813,6 +2919,20 @@ op_star
 )paren
 suffix:semicolon
 r_extern
+r_void
+id|mbx_setup_arch
+c_func
+(paren
+r_int
+r_int
+op_star
+comma
+r_int
+r_int
+op_star
+)paren
+suffix:semicolon
+r_extern
 r_int
 id|panic_timeout
 suffix:semicolon
@@ -2925,6 +3045,16 @@ r_int
 )paren
 id|end_of_DRAM
 suffix:semicolon
+macro_line|#ifdef CONFIG_MBX
+id|mbx_setup_arch
+c_func
+(paren
+id|memory_start_p
+comma
+id|memory_end_p
+)paren
+suffix:semicolon
+macro_line|#else /* CONFIG_MBX */&t;
 r_switch
 c_cond
 (paren
@@ -3002,5 +3132,6 @@ id|_machine
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif /* CONFIG_MBX */&t;
 )brace
 eof

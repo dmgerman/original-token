@@ -2002,7 +2002,7 @@ id|link_p
 op_assign
 id|rtnetlink_links
 (braket
-id|AF_UNSPEC
+id|PF_UNSPEC
 )braket
 suffix:semicolon
 multiline_comment|/* Setup rtnetlink links. It is made here to avoid&n;&t;   exporting large number of public symbols.&n;&t; */

@@ -65,6 +65,10 @@ DECL|macro|MANU_EESOX
 mdefine_line|#define MANU_EESOX&t;&t;0x0064
 DECL|macro|PROD_EESOX_SCSI2
 mdefine_line|#define PROD_EESOX_SCSI2&t;&t;0x008c
+DECL|macro|MANU_YELLOWSTONE
+mdefine_line|#define MANU_YELLOWSTONE&t;0x0096
+DECL|macro|PROD_YELLOWSTONE_RAPIDE32
+mdefine_line|#define PROD_YELLOWSTONE_RAPIDE32&t;0x0120
 macro_line|#ifdef ECARD_C
 DECL|macro|CONST
 mdefine_line|#define CONST

@@ -12,6 +12,10 @@ macro_line|#ifdef __KERNEL__
 macro_line|#include&lt;linux/config.h&gt;
 DECL|macro|STRICT_MM_TYPECHECKS
 mdefine_line|#define STRICT_MM_TYPECHECKS
+DECL|macro|get_user_page
+mdefine_line|#define get_user_page(vaddr)&t;__get_free_page(GFP_KERNEL)
+DECL|macro|free_user_page
+mdefine_line|#define free_user_page(page, addr)&t;free_page(addr)
 multiline_comment|/*&n; * We don&squot;t need to check for alignment etc.&n; */
 macro_line|#if defined(CONFIG_OPTIMIZE_040) || defined(CONFIG_OPTIMIZE_060)
 DECL|function|copy_page

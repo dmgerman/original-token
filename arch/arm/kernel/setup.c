@@ -100,7 +100,7 @@ id|armidlist
 )braket
 op_assign
 (brace
-macro_line|#if defined(CONFIG_CPU_ARM2) || defined(CONFIG_CPU_ARM3)
+macro_line|#if defined(CONFIG_CPU_26)
 (brace
 l_int|0x41560200
 comma
@@ -114,6 +114,8 @@ l_string|&quot;arm2&quot;
 comma
 op_amp
 id|arm2_processor_functions
+comma
+l_string|&quot;arm2&quot;
 )brace
 comma
 (brace
@@ -129,6 +131,8 @@ l_string|&quot;arm250&quot;
 comma
 op_amp
 id|arm250_processor_functions
+comma
+l_string|&quot;arm3&quot;
 )brace
 comma
 (brace
@@ -146,10 +150,11 @@ l_string|&quot;arm3&quot;
 comma
 op_amp
 id|arm3_processor_functions
+comma
+l_string|&quot;arm3&quot;
 )brace
 comma
-macro_line|#endif
-macro_line|#if defined(CONFIG_CPU_ARM6) || defined(CONFIG_CPU_SA110)
+macro_line|#elif defined(CONFIG_CPU_32)
 (brace
 l_int|0x41560600
 comma
@@ -165,6 +170,8 @@ l_string|&quot;arm6&quot;
 comma
 op_amp
 id|arm6_processor_functions
+comma
+l_string|&quot;arm6&quot;
 )brace
 comma
 (brace
@@ -182,6 +189,8 @@ l_string|&quot;arm610&quot;
 comma
 op_amp
 id|arm6_processor_functions
+comma
+l_string|&quot;arm6&quot;
 )brace
 comma
 (brace
@@ -199,6 +208,8 @@ l_string|&quot;arm7&quot;
 comma
 op_amp
 id|arm7_processor_functions
+comma
+l_string|&quot;arm6&quot;
 )brace
 comma
 (brace
@@ -216,6 +227,8 @@ l_string|&quot;arm710&quot;
 comma
 op_amp
 id|arm7_processor_functions
+comma
+l_string|&quot;arm6&quot;
 )brace
 comma
 (brace
@@ -233,6 +246,8 @@ l_string|&quot;sa110&quot;
 comma
 op_amp
 id|sa110_processor_functions
+comma
+l_string|&quot;sa1x&quot;
 )brace
 comma
 macro_line|#endif
@@ -246,6 +261,8 @@ comma
 l_string|&quot;***&quot;
 comma
 l_string|&quot;*unknown*&quot;
+comma
+l_int|NULL
 comma
 l_int|NULL
 )brace

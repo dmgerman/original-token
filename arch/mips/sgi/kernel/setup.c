@@ -1,7 +1,9 @@
-multiline_comment|/*&n; * setup.c: SGI specific setup, including init of the feature struct.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: setup.c,v 1.5 1997/09/13 02:19:18 ralf Exp $&n; */
+multiline_comment|/*&n; * setup.c: SGI specific setup, including init of the feature struct.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: setup.c,v 1.5 1998/05/01 01:35:19 ralf Exp $&n; */
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/addrspace.h&gt;
+macro_line|#include &lt;asm/bcache.h&gt;
 macro_line|#include &lt;asm/keyboard.h&gt;
 macro_line|#include &lt;asm/reboot.h&gt;
 macro_line|#include &lt;asm/vector.h&gt;
@@ -130,13 +132,17 @@ r_return
 id|sgi_kh-&gt;command
 suffix:semicolon
 )brace
-DECL|function|sgi_keyboard_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|sgi_keyboard_setup
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|kbd_read_input
@@ -156,13 +162,17 @@ op_assign
 id|sgi_read_status
 suffix:semicolon
 )brace
-DECL|function|sgi_irq_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|sgi_irq_setup
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|sgint_init
@@ -171,12 +181,16 @@ c_func
 )paren
 suffix:semicolon
 )brace
-DECL|function|sgi_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|sgi_setup
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_char
@@ -216,6 +230,12 @@ c_func
 suffix:semicolon
 multiline_comment|/* Init INDY memory controller. */
 id|sgimc_init
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Now enable boardcaches, if any. */
+id|indy_sc_init
 c_func
 (paren
 )paren

@@ -685,7 +685,7 @@ mdefine_line|#define RX_ALLOC_SIZE      8448
 DECL|macro|MYRI_PAD_LEN
 mdefine_line|#define MYRI_PAD_LEN       2
 DECL|macro|RX_COPY_THRESHOLD
-mdefine_line|#define RX_COPY_THRESHOLD  128
+mdefine_line|#define RX_COPY_THRESHOLD  256
 multiline_comment|/* These numbers are cast in stone, new firmware is needed if&n; * you want to change them.&n; */
 DECL|macro|TX_RING_MAXSIZE
 mdefine_line|#define TX_RING_MAXSIZE    16

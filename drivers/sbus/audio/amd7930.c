@@ -12,7 +12,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/sbus.h&gt;
-macro_line|#include &quot;audio.h&quot;
+macro_line|#include &lt;asm/audioio.h&gt;
 macro_line|#include &quot;amd7930.h&quot;
 DECL|macro|MAX_DRIVERS
 mdefine_line|#define MAX_DRIVERS 1
@@ -1383,12 +1383,6 @@ id|info
 id|__u8
 id|dummy
 suffix:semicolon
-r_int
-id|lbrp
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Last Byte of Received Packet (LBRP) */
 DECL|macro|D_XMIT_ERRORS
 mdefine_line|#define D_XMIT_ERRORS (AMR_DER_COLLISION | AMR_DER_UNRN)
 DECL|macro|D_RECV_ERRORS
@@ -1638,6 +1632,8 @@ id|channel-&gt;output_callback
 )paren
 (paren
 id|channel-&gt;output_callback_arg
+comma
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -2441,7 +2437,7 @@ c_func
 (paren
 id|audinfo-&gt;name
 comma
-l_string|&quot;amd7930&quot;
+l_string|&quot;SUNW,am79c30&quot;
 comma
 r_sizeof
 (paren
@@ -2456,7 +2452,7 @@ c_func
 (paren
 id|audinfo-&gt;version
 comma
-l_string|&quot;x&quot;
+l_string|&quot;a&quot;
 comma
 r_sizeof
 (paren
@@ -2471,7 +2467,7 @@ c_func
 (paren
 id|audinfo-&gt;config
 comma
-l_string|&quot;audio&quot;
+l_string|&quot;onboard1&quot;
 comma
 r_sizeof
 (paren

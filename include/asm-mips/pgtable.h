@@ -94,39 +94,6 @@ id|page
 suffix:semicolon
 DECL|macro|flush_icache_range
 mdefine_line|#define flush_icache_range(start, end) flush_cache_all()
-multiline_comment|/*&n; * Prototype of the DMA related cacheflushing stuff.&n; */
-r_extern
-r_void
-(paren
-op_star
-id|flush_cache_pre_dma_out
-)paren
-(paren
-r_int
-r_int
-id|start
-comma
-r_int
-r_int
-id|size
-)paren
-suffix:semicolon
-r_extern
-r_void
-(paren
-op_star
-id|flush_cache_post_dma_in
-)paren
-(paren
-r_int
-r_int
-id|start
-comma
-r_int
-r_int
-id|size
-)paren
-suffix:semicolon
 multiline_comment|/* TLB flushing:&n; *&n; *  - flush_tlb_all() flushes all processes TLB entries&n; *  - flush_tlb_mm(mm) flushes the specified mm context TLB entries&n; *  - flush_tlb_page(mm, vmaddr) flushes a single page&n; *  - flush_tlb_range(mm, start, end) flushes a range of pages&n; */
 r_extern
 r_void
@@ -289,7 +256,7 @@ mdefine_line|#define __WRITEABLE&t;(_PAGE_WRITE | _PAGE_SILENT_WRITE | _PAGE_MOD
 DECL|macro|_PAGE_CHG_MASK
 mdefine_line|#define _PAGE_CHG_MASK  (PAGE_MASK | __READABLE | __WRITEABLE | _CACHE_MASK)
 DECL|macro|PAGE_NONE
-mdefine_line|#define PAGE_NONE&t;__pgprot(_PAGE_PRESENT | _PAGE_ACCESSED | &bslash;&n;                        _CACHE_CACHABLE_NONCOHERENT)
+mdefine_line|#define PAGE_NONE&t;__pgprot(0)
 DECL|macro|PAGE_SHARED
 mdefine_line|#define PAGE_SHARED     __pgprot(_PAGE_PRESENT | _PAGE_READ | _PAGE_WRITE | &bslash;&n;&t;&t;&t;_CACHE_CACHABLE_NONCOHERENT)
 DECL|macro|PAGE_COPY

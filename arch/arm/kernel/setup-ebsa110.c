@@ -9,7 +9,6 @@ macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#include &lt;linux/ldt.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/a.out.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
@@ -20,6 +19,7 @@ macro_line|#include &lt;linux/utsname.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/procinfo.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -31,6 +31,92 @@ DECL|macro|COMMAND_LINE_SIZE
 mdefine_line|#define COMMAND_LINE_SIZE 256
 DECL|macro|MEM_SIZE
 mdefine_line|#define MEM_SIZE&t;(16*1024*1024)
+DECL|variable|screen_info
+r_struct
+id|screen_info
+id|screen_info
+suffix:semicolon
+DECL|variable|processor
+r_struct
+id|processor
+id|processor
+suffix:semicolon
+DECL|variable|aux_device_present
+r_int
+r_char
+id|aux_device_present
+suffix:semicolon
+r_extern
+r_const
+r_struct
+id|processor
+id|sa110_processor_functions
+suffix:semicolon
+DECL|variable|armidlist
+r_struct
+id|armversions
+id|armidlist
+(braket
+)braket
+op_assign
+(brace
+(brace
+l_int|0x4401a100
+comma
+l_int|0xfffffff0
+comma
+id|F_MMU
+op_or
+id|F_32BIT
+comma
+l_string|&quot;DEC&quot;
+comma
+l_string|&quot;sa110&quot;
+comma
+op_amp
+id|sa110_processor_functions
+comma
+l_string|&quot;sa1x&quot;
+)brace
+comma
+(brace
+l_int|0x00000000
+comma
+l_int|0x00000000
+comma
+l_int|0
+comma
+l_string|&quot;***&quot;
+comma
+l_string|&quot;*unknown*&quot;
+comma
+l_int|NULL
+comma
+l_int|NULL
+)brace
+)brace
+suffix:semicolon
+DECL|variable|arm_id
+r_int
+r_int
+id|arm_id
+suffix:semicolon
+DECL|variable|armidindex
+r_int
+id|armidindex
+suffix:semicolon
+r_extern
+r_int
+id|root_mountflags
+suffix:semicolon
+r_extern
+r_int
+id|_etext
+comma
+id|_edata
+comma
+id|_end
+suffix:semicolon
 DECL|variable|command_line
 r_static
 r_char
@@ -50,44 +136,6 @@ id|saved_command_line
 (braket
 id|COMMAND_LINE_SIZE
 )braket
-suffix:semicolon
-DECL|variable|processor
-r_struct
-id|processor
-id|processor
-suffix:semicolon
-DECL|variable|screen_info
-r_struct
-id|screen_info
-id|screen_info
-suffix:semicolon
-DECL|variable|aux_device_present
-r_int
-r_char
-id|aux_device_present
-suffix:semicolon
-DECL|variable|arm_id
-r_int
-r_int
-id|arm_id
-suffix:semicolon
-r_extern
-r_int
-id|root_mountflags
-suffix:semicolon
-r_extern
-r_int
-id|_etext
-comma
-id|_edata
-comma
-id|_end
-suffix:semicolon
-r_extern
-r_const
-r_struct
-id|processor
-id|sa110_processor_functions
 suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_RAM
 r_extern
@@ -332,6 +380,10 @@ r_int
 )paren
 op_amp
 id|_end
+suffix:semicolon
+id|armidindex
+op_assign
+l_int|0
 suffix:semicolon
 id|processor
 op_assign

@@ -3225,12 +3225,6 @@ id|len
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef CONFIG_TRANS_NAMES
-id|translations_dirty
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -3368,12 +3362,6 @@ id|len
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef CONFIG_TRANS_NAMES
-id|translations_dirty
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon

@@ -592,7 +592,7 @@ OL
 id|end
 )paren
 (brace
-r_char
+r_int
 id|c
 suffix:semicolon
 id|get_user
@@ -601,7 +601,7 @@ c_func
 id|c
 comma
 (paren
-r_char
+r_int
 op_star
 )paren
 id|start

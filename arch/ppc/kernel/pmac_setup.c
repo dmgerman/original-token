@@ -1,6 +1,7 @@
 multiline_comment|/*&n; *  linux/arch/ppc/kernel/setup.c&n; *&n; *  PowerPC version &n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *&n; *  Adapted for Power Macintosh by Paul Mackerras&n; *    Copyright (C) 1996 Paul Mackerras (paulus@cs.anu.edu.au)&n; *&n; *  Derived from &quot;arch/alpha/kernel/setup.c&quot;&n; *    Copyright (C) 1995 Linus Torvalds&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; */
 multiline_comment|/*&n; * bootup setup stuff..&n; */
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -26,6 +27,8 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/ide.h&gt;
 macro_line|#include &lt;asm/pci-bridge.h&gt;
 macro_line|#include &lt;asm/adb.h&gt;
+macro_line|#include &lt;asm/cuda.h&gt;
+macro_line|#include &lt;asm/pmu.h&gt;
 macro_line|#include &lt;asm/mediabay.h&gt;
 macro_line|#include &lt;asm/ohare.h&gt;
 macro_line|#include &lt;asm/mediabay.h&gt;
@@ -41,6 +44,15 @@ id|drive_info
 suffix:semicolon
 DECL|macro|DEFAULT_ROOT_DEVICE
 mdefine_line|#define DEFAULT_ROOT_DEVICE 0x0801&t;/* sda1 - slightly silly choice */
+r_extern
+r_void
+id|zs_kgdb_hook
+c_func
+(paren
+r_int
+id|tty_num
+)paren
+suffix:semicolon
 r_static
 r_void
 id|ohare_init
@@ -49,8 +61,118 @@ c_func
 r_void
 )paren
 suffix:semicolon
+id|__pmac
+r_int
+DECL|function|pmac_get_cpuinfo
+id|pmac_get_cpuinfo
+c_func
+(paren
+r_char
+op_star
+id|buffer
+)paren
+(brace
+r_int
+id|len
+suffix:semicolon
+multiline_comment|/* should find motherboard type here as well */
+id|len
+op_assign
+id|sprintf
+c_func
+(paren
+id|buffer
+comma
+l_string|&quot;machine&bslash;t&bslash;t: PowerMac&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+id|len
+suffix:semicolon
+)brace
+macro_line|#ifdef CONFIG_SCSI
+multiline_comment|/* Find the device number for the disk (if any) at target tgt&n;   on host adaptor host.&n;   XXX this really really should be in drivers/scsi/sd.c. */
+macro_line|#include &lt;linux/blkdev.h&gt;
+macro_line|#include &quot;../../../drivers/scsi/scsi.h&quot;
+macro_line|#include &quot;../../../drivers/scsi/sd.h&quot;
+macro_line|#include &quot;../../../drivers/scsi/hosts.h&quot;
+DECL|function|sd_find_target
+id|kdev_t
+id|sd_find_target
+c_func
+(paren
 r_void
-DECL|function|pmac_setup_arch
+op_star
+id|host
+comma
+r_int
+id|tgt
+)paren
+(brace
+id|Scsi_Disk
+op_star
+id|dp
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|dp
+op_assign
+id|rscsi_disks
+comma
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|sd_template.dev_max
+suffix:semicolon
+op_increment
+id|i
+comma
+op_increment
+id|dp
+)paren
+r_if
+c_cond
+(paren
+id|dp-&gt;device
+op_ne
+l_int|NULL
+op_logical_and
+id|dp-&gt;device-&gt;host
+op_eq
+id|host
+op_logical_and
+id|dp-&gt;device-&gt;id
+op_eq
+id|tgt
+)paren
+r_return
+id|MKDEV
+c_func
+(paren
+id|SCSI_DISK_MAJOR
+comma
+id|i
+op_lshift
+l_int|4
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_void
 id|pmac_setup_arch
 c_func
 (paren
@@ -63,6 +185,7 @@ r_int
 r_int
 op_star
 id|memory_end_p
+)paren
 )paren
 (brace
 r_struct
@@ -194,6 +317,24 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_KGDB
+id|zs_kgdb_hook
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif
+id|find_via_cuda
+c_func
+(paren
+)paren
+suffix:semicolon
+id|find_via_pmu
+c_func
+(paren
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_FB
 multiline_comment|/* Frame buffer device based console */
 id|conswitchp
@@ -210,13 +351,17 @@ id|u32
 op_star
 id|feature_addr
 suffix:semicolon
-DECL|function|ohare_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|ohare_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_struct
@@ -383,38 +528,18 @@ DECL|variable|boot_dev
 id|kdev_t
 id|boot_dev
 suffix:semicolon
-r_int
-r_int
-DECL|function|powermac_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_void
 id|powermac_init
 c_func
 (paren
-r_int
-r_int
-id|mem_start
-comma
-r_int
-r_int
-id|mem_end
+r_void
+)paren
 )paren
 (brace
-macro_line|#ifdef CONFIG_KGDB
-r_extern
-r_void
-id|zs_kgdb_hook
-c_func
-(paren
-r_int
-id|tty_num
-)paren
-suffix:semicolon
-id|zs_kgdb_hook
-c_func
-(paren
-l_int|0
-)paren
-suffix:semicolon
-macro_line|#endif
 id|adb_init
 c_func
 (paren
@@ -433,11 +558,6 @@ op_eq
 id|_MACH_Pmac
 )paren
 (brace
-id|pmac_read_rtc_time
-c_func
-(paren
-)paren
-suffix:semicolon
 id|media_bay_init
 c_func
 (paren
@@ -451,12 +571,12 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-r_return
-id|mem_start
-suffix:semicolon
 )brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
-DECL|function|note_scsi_host
 id|note_scsi_host
 c_func
 (paren
@@ -468,6 +588,7 @@ comma
 r_void
 op_star
 id|host
+)paren
 )paren
 (brace
 r_int
@@ -598,90 +719,16 @@ suffix:semicolon
 )brace
 )brace
 )brace
-macro_line|#ifdef CONFIG_SCSI
-multiline_comment|/* Find the device number for the disk (if any) at target tgt&n;   on host adaptor host.&n;   XXX this really really should be in drivers/scsi/sd.c. */
-macro_line|#include &lt;linux/blkdev.h&gt;
-macro_line|#include &quot;../../../drivers/scsi/scsi.h&quot;
-macro_line|#include &quot;../../../drivers/scsi/sd.h&quot;
-macro_line|#include &quot;../../../drivers/scsi/hosts.h&quot;
-DECL|function|sd_find_target
-id|kdev_t
-id|sd_find_target
+DECL|function|__initfunc
+id|__initfunc
 c_func
 (paren
-r_void
-op_star
-id|host
-comma
-r_int
-id|tgt
-)paren
-(brace
-id|Scsi_Disk
-op_star
-id|dp
-suffix:semicolon
-r_int
-id|i
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|dp
-op_assign
-id|rscsi_disks
-comma
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|sd_template.dev_max
-suffix:semicolon
-op_increment
-id|i
-comma
-op_increment
-id|dp
-)paren
-r_if
-c_cond
-(paren
-id|dp-&gt;device
-op_ne
-l_int|NULL
-op_logical_and
-id|dp-&gt;device-&gt;host
-op_eq
-id|host
-op_logical_and
-id|dp-&gt;device-&gt;id
-op_eq
-id|tgt
-)paren
-r_return
-id|MKDEV
-c_func
-(paren
-id|SCSI_DISK_MAJOR
-comma
-id|i
-op_lshift
-l_int|4
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-macro_line|#endif
-DECL|function|find_boot_device
 r_void
 id|find_boot_device
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|kdev_t
@@ -760,7 +807,10 @@ suffix:semicolon
 macro_line|#endif
 multiline_comment|/* XXX should cope with booting from IDE also */
 )brace
-DECL|function|note_bootable_part
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|note_bootable_part
 c_func
@@ -770,6 +820,7 @@ id|dev
 comma
 r_int
 id|part
+)paren
 )paren
 (brace
 r_static
@@ -854,7 +905,10 @@ id|pmac_ide_irq
 id|MAX_HWIFS
 )braket
 suffix:semicolon
-DECL|function|pmac_ide_init_hwif_ports
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|pmac_ide_init_hwif_ports
 c_func
@@ -869,6 +923,7 @@ comma
 r_int
 op_star
 id|irq
+)paren
 )paren
 (brace
 r_int
@@ -995,12 +1050,16 @@ suffix:semicolon
 )brace
 )brace
 )brace
-DECL|function|pmac_ide_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|pmac_ide_probe
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_struct
@@ -1284,32 +1343,4 @@ l_int|1
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_BLK_DEV_IDE */
-r_int
-DECL|function|pmac_get_cpuinfo
-id|pmac_get_cpuinfo
-c_func
-(paren
-r_char
-op_star
-id|buffer
-)paren
-(brace
-r_int
-id|len
-suffix:semicolon
-multiline_comment|/* should find motherboard type here as well */
-id|len
-op_assign
-id|sprintf
-c_func
-(paren
-id|buffer
-comma
-l_string|&quot;machine&bslash;t&bslash;t: PowerMac&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-id|len
-suffix:semicolon
-)brace
 eof

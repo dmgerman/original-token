@@ -1,4 +1,5 @@
-multiline_comment|/* $Id: andes.c,v 1.2 1997/12/02 05:51:07 ralf Exp $&n; * andes.c: MMU and cache operations for the R10000 (ANDES).&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/*&n; * andes.c: MMU and cache operations for the R10000 (ANDES).&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: andes.c,v 1.5 1998/05/04 09:18:26 ralf Exp $&n; */
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -220,12 +221,38 @@ id|pagemask
 (brace
 multiline_comment|/* XXX */
 )brace
-DECL|function|ld_mmu_andes
+DECL|function|andes_user_mode
+r_static
+r_int
+id|andes_user_mode
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+r_return
+(paren
+id|regs-&gt;cp0_status
+op_amp
+id|ST0_KSU
+)paren
+op_eq
+id|KSU_USER
+suffix:semicolon
+)brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|ld_mmu_andes
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|flush_cache_all
@@ -271,6 +298,10 @@ suffix:semicolon
 id|add_wired_entry
 op_assign
 id|andes_add_wired_entry
+suffix:semicolon
+id|user_mode
+op_assign
+id|andes_user_mode
 suffix:semicolon
 id|load_pgd
 op_assign

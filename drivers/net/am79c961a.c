@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;linux/drivers/net/am79c961.c&n; *&n; *&t;Derived from various things including skeleton.c&n; *&n; *&t;R.M.King 1995.&n; */
+multiline_comment|/*&n; * linux/drivers/net/am79c961.c&n; *&n; * Derived from various things including skeleton.c&n; *&n; * R.M.King 1995.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -51,9 +51,12 @@ id|version
 op_assign
 l_string|&quot;am79c961 ethernet driver (c) 1995 R.M.King v0.00&bslash;n&quot;
 suffix:semicolon
-DECL|function|write_rreg
+DECL|macro|FUNC_PROLOGUE
+mdefine_line|#define FUNC_PROLOGUE &bslash;&n;&t;struct dev_priv *priv = (struct dev_priv *)dev-&gt;priv
+multiline_comment|/* --------------------------------------------------------------------------- */
 r_static
 r_void
+DECL|function|write_rreg
 id|write_rreg
 (paren
 r_int
@@ -159,11 +162,11 @@ l_int|0xf0000464
 suffix:semicolon
 )brace
 DECL|macro|am_writeword
-mdefine_line|#define am_writeword(dev,off,val)&bslash;&n;    __asm__(&quot;&bslash;&n;&t;strh&t;%0, [%1]&bslash;&n;&t;&quot; : : &quot;r&quot; ((val) &amp; 0xffff), &quot;r&quot; (0xe0000000 + ((off) &lt;&lt; 1)));
-DECL|function|am_writebuffer
+mdefine_line|#define am_writeword(dev,off,val)&bslash;&n;&t;__asm__(&quot;&bslash;&n;&t;&t;strh&t;%0, [%1]&bslash;&n;&t;&t;&quot; : : &quot;r&quot; ((val) &amp; 0xffff), &quot;r&quot; (0xe0000000 + ((off) &lt;&lt; 1)));
 r_static
 r_inline
 r_void
+DECL|function|am_writebuffer
 id|am_writebuffer
 c_func
 (paren
@@ -510,11 +513,11 @@ r_return
 id|v
 suffix:semicolon
 )brace
-DECL|function|am_readword
 r_static
 r_inline
 r_int
 r_int
+DECL|function|am_readword
 id|am_readword
 (paren
 r_struct
@@ -570,10 +573,10 @@ r_return
 id|val
 suffix:semicolon
 )brace
-DECL|function|am_readbuffer
 r_static
 r_inline
 r_void
+DECL|function|am_readbuffer
 id|am_readbuffer
 c_func
 (paren
@@ -920,10 +923,9 @@ l_int|2
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; *&t;From here on is mostly non ARM specific. Watch the fact it knows&n; *&t;the chip can hit all memory (kmalloc).&n; */
-DECL|function|am79c961_ramtest
 r_static
 r_int
+DECL|function|am79c961_ramtest
 id|am79c961_ramtest
 c_func
 (paren
@@ -1112,9 +1114,9 @@ r_return
 id|errorcount
 suffix:semicolon
 )brace
-DECL|function|am79c961_init_for_open
 r_static
 r_void
+DECL|function|am79c961_init_for_open
 id|am79c961_init_for_open
 c_func
 (paren
@@ -1571,9 +1573,9 @@ id|CSR0_STRT
 )paren
 suffix:semicolon
 )brace
-DECL|function|am79c961_init
 r_static
 r_int
+DECL|function|am79c961_init
 id|am79c961_init
 c_func
 (paren
@@ -1646,9 +1648,9 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This is the real probe routine.&n; */
-DECL|function|am79c961_probe1
 r_static
 r_int
+DECL|function|am79c961_probe1
 id|am79c961_probe1
 c_func
 (paren
@@ -1944,8 +1946,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|am79c961_probe
 r_int
+DECL|function|am79c961_probe
 id|am79c961_probe
 c_func
 (paren
@@ -1991,9 +1993,9 @@ id|dev
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Open/initialize the board.  This is called (in the current kernel)&n; * sometime after booting when the &squot;ifconfig&squot; program is run.&n; *&n; * This routine should set everything up anew at each open, even&n; * registers that &quot;should&quot; only need to be set once at boot, so that&n; * there is non-reboot way to recover if something goes wrong.&n; */
-DECL|function|am79c961_open
 r_static
 r_int
+DECL|function|am79c961_open
 id|am79c961_open
 c_func
 (paren
@@ -2074,9 +2076,9 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * The inverse routine to am79c961_open().&n; */
-DECL|function|am79c961_close
 r_static
 r_int
+DECL|function|am79c961_close
 id|am79c961_close
 c_func
 (paren
@@ -2203,10 +2205,10 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Transmit a packet&n; */
-DECL|function|am79c961_sendpacket
+multiline_comment|/*&n; * Transmit a packet&n; */
 r_static
 r_int
+DECL|function|am79c961_sendpacket
 id|am79c961_sendpacket
 c_func
 (paren
@@ -2407,8 +2409,6 @@ suffix:semicolon
 id|dev_kfree_skb
 (paren
 id|skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 r_return
@@ -2416,7 +2416,6 @@ l_int|0
 suffix:semicolon
 )brace
 r_else
-(brace
 id|printk
 c_func
 (paren
@@ -2429,7 +2428,6 @@ suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
-)brace
 )brace
 r_else
 (brace
@@ -2472,9 +2470,9 @@ id|again
 suffix:semicolon
 )brace
 )brace
-DECL|function|am79c961_interrupt
 r_static
 r_void
+DECL|function|am79c961_interrupt
 id|am79c961_interrupt
 c_func
 (paren
@@ -2634,9 +2632,9 @@ suffix:semicolon
 macro_line|#endif
 )brace
 multiline_comment|/*&n; * If we have a good packet(s), get it/them out of the buffers.&n; */
-DECL|function|am79c961_rx
 r_static
 r_void
+DECL|function|am79c961_rx
 id|am79c961_rx
 c_func
 (paren
@@ -2932,9 +2930,9 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Update stats for the transmitted packet&n; */
-DECL|function|am79c961_tx
 r_static
 r_void
+DECL|function|am79c961_tx
 id|am79c961_tx
 c_func
 (paren

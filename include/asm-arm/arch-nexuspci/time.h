@@ -1,4 +1,6 @@
 multiline_comment|/*&n; * linux/include/asm-arm/arch-nexuspci/time.h&n; *&n; * Copyright (c) 1997 Phil Blundell.&n; *&n; * Nexus PCI card has no real-time clock.&n; *&n; */
+DECL|macro|update_rtc
+mdefine_line|#define update_rtc()
 DECL|function|gettimeoffset
 r_extern
 id|__inline__

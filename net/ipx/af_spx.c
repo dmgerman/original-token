@@ -236,7 +236,7 @@ op_assign
 id|sk_alloc
 c_func
 (paren
-id|AF_IPX
+id|PF_IPX
 comma
 id|GFP_KERNEL
 comma
@@ -3718,7 +3718,7 @@ id|proto_ops
 id|spx_operations
 op_assign
 (brace
-id|AF_IPX
+id|PF_IPX
 comma
 id|sock_no_dup
 comma
@@ -3761,7 +3761,7 @@ id|net_proto_family
 id|spx_family_ops
 op_assign
 (brace
-id|AF_IPX
+id|PF_IPX
 comma
 id|spx_create
 )brace
@@ -3809,7 +3809,7 @@ id|KERN_ERR
 l_string|&quot;SPX: unable to register with IPX.&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* route socket(AF_IPX, SOCK_SEQPACKET) calls through spx_create() */
+multiline_comment|/* route socket(PF_IPX, SOCK_SEQPACKET) calls through spx_create() */
 id|printk
 c_func
 (paren

@@ -34,8 +34,8 @@ DECL|macro|__NR_mknod
 mdefine_line|#define __NR_mknod&t;&t; 14
 DECL|macro|__NR_chmod
 mdefine_line|#define __NR_chmod&t;&t; 15
-DECL|macro|__NR_chown
-mdefine_line|#define __NR_chown&t;&t; 16
+DECL|macro|__NR_lchown
+mdefine_line|#define __NR_lchown&t;&t; 16
 DECL|macro|__NR_break
 mdefine_line|#define __NR_break&t;&t; 17
 DECL|macro|__NR_oldstat
@@ -346,10 +346,32 @@ DECL|macro|__NR_getresgid
 mdefine_line|#define __NR_getresgid&t;&t;170
 DECL|macro|__NR_prctl
 mdefine_line|#define __NR_prctl&t;&t;171
+DECL|macro|__NR_rt_sigreturn
+mdefine_line|#define __NR_rt_sigreturn&t;172
+DECL|macro|__NR_rt_sigaction
+mdefine_line|#define __NR_rt_sigaction&t;173
+DECL|macro|__NR_rt_sigprocmask
+mdefine_line|#define __NR_rt_sigprocmask&t;174
+DECL|macro|__NR_rt_sigpending
+mdefine_line|#define __NR_rt_sigpending&t;175
+DECL|macro|__NR_rt_sigtimedwait
+mdefine_line|#define __NR_rt_sigtimedwait&t;177
+DECL|macro|__NR_rt_sigqueueinfo
+mdefine_line|#define __NR_rt_sigqueueinfo&t;178
+DECL|macro|__NR_rt_sigsuspend
+mdefine_line|#define __NR_rt_sigsuspend&t;179
+DECL|macro|__NR_pread
+mdefine_line|#define __NR_pread&t;&t;180
+DECL|macro|__NR_pwrite
+mdefine_line|#define __NR_pwrite&t;&t;181
+DECL|macro|__NR_chown
+mdefine_line|#define __NR_chown&t;&t;182
+DECL|macro|__NR_getcwd
+mdefine_line|#define __NR_getcwd&t;&t;183
 DECL|macro|__NR_xstat
-mdefine_line|#define __NR_xstat&t;&t;172
+mdefine_line|#define __NR_xstat&t;&t;184
 DECL|macro|__NR_xmknod
-mdefine_line|#define __NR_xmknod&t;&t;173
+mdefine_line|#define __NR_xmknod&t;&t;185
 DECL|macro|__NR
 mdefine_line|#define __NR(n)&t;#n
 DECL|macro|__do_syscall

@@ -71,89 +71,81 @@ DECL|macro|PT_LO
 mdefine_line|#define PT_LO     152
 DECL|macro|PT_HI
 mdefine_line|#define PT_HI     156
-DECL|macro|PT_OR2
-mdefine_line|#define PT_OR2    160
-DECL|macro|PT_OR7
-mdefine_line|#define PT_OR7    164
 DECL|macro|PT_EPC
-mdefine_line|#define PT_EPC    168
+mdefine_line|#define PT_EPC    160
 DECL|macro|PT_BVADDR
-mdefine_line|#define PT_BVADDR 172
+mdefine_line|#define PT_BVADDR 164
 DECL|macro|PT_STATUS
-mdefine_line|#define PT_STATUS 176
+mdefine_line|#define PT_STATUS 168
 DECL|macro|PT_CAUSE
-mdefine_line|#define PT_CAUSE  180
+mdefine_line|#define PT_CAUSE  172
 DECL|macro|PT_SIZE
-mdefine_line|#define PT_SIZE   184
+mdefine_line|#define PT_SIZE   176
 multiline_comment|/* MIPS task_struct offsets. */
 DECL|macro|TASK_STATE
 mdefine_line|#define TASK_STATE         0
 DECL|macro|TASK_COUNTER
-mdefine_line|#define TASK_COUNTER       4
+mdefine_line|#define TASK_COUNTER       52
 DECL|macro|TASK_PRIORITY
-mdefine_line|#define TASK_PRIORITY      8
-DECL|macro|TASK_SIGNAL
-mdefine_line|#define TASK_SIGNAL        12
-DECL|macro|TASK_BLOCKED
-mdefine_line|#define TASK_BLOCKED       16
+mdefine_line|#define TASK_PRIORITY      56
 DECL|macro|TASK_FLAGS
-mdefine_line|#define TASK_FLAGS         20
+mdefine_line|#define TASK_FLAGS         4
+DECL|macro|TASK_SIGPENDING
+mdefine_line|#define TASK_SIGPENDING    8
 DECL|macro|TASK_MM
-mdefine_line|#define TASK_MM            920
+mdefine_line|#define TASK_MM            928
 multiline_comment|/* MIPS specific thread_struct offsets. */
 DECL|macro|THREAD_REG16
-mdefine_line|#define THREAD_REG16   552
+mdefine_line|#define THREAD_REG16   568
 DECL|macro|THREAD_REG17
-mdefine_line|#define THREAD_REG17   556
+mdefine_line|#define THREAD_REG17   572
 DECL|macro|THREAD_REG18
-mdefine_line|#define THREAD_REG18   560
+mdefine_line|#define THREAD_REG18   576
 DECL|macro|THREAD_REG19
-mdefine_line|#define THREAD_REG19   564
+mdefine_line|#define THREAD_REG19   580
 DECL|macro|THREAD_REG20
-mdefine_line|#define THREAD_REG20   568
+mdefine_line|#define THREAD_REG20   584
 DECL|macro|THREAD_REG21
-mdefine_line|#define THREAD_REG21   572
+mdefine_line|#define THREAD_REG21   588
 DECL|macro|THREAD_REG22
-mdefine_line|#define THREAD_REG22   576
+mdefine_line|#define THREAD_REG22   592
 DECL|macro|THREAD_REG23
-mdefine_line|#define THREAD_REG23   580
-DECL|macro|THREAD_REG28
-mdefine_line|#define THREAD_REG28   584
+mdefine_line|#define THREAD_REG23   596
 DECL|macro|THREAD_REG29
-mdefine_line|#define THREAD_REG29   588
+mdefine_line|#define THREAD_REG29   600
 DECL|macro|THREAD_REG30
-mdefine_line|#define THREAD_REG30   592
+mdefine_line|#define THREAD_REG30   604
 DECL|macro|THREAD_REG31
-mdefine_line|#define THREAD_REG31   596
+mdefine_line|#define THREAD_REG31   608
 DECL|macro|THREAD_STATUS
-mdefine_line|#define THREAD_STATUS  600
+mdefine_line|#define THREAD_STATUS  612
 DECL|macro|THREAD_FPU
-mdefine_line|#define THREAD_FPU     608
+mdefine_line|#define THREAD_FPU     616
 DECL|macro|THREAD_BVADDR
-mdefine_line|#define THREAD_BVADDR  872
+mdefine_line|#define THREAD_BVADDR  880
+DECL|macro|THREAD_BUADDR
+mdefine_line|#define THREAD_BUADDR  884
 DECL|macro|THREAD_ECODE
-mdefine_line|#define THREAD_ECODE   876
+mdefine_line|#define THREAD_ECODE   888
 DECL|macro|THREAD_TRAPNO
-mdefine_line|#define THREAD_TRAPNO  880
-DECL|macro|THREAD_KSP
-mdefine_line|#define THREAD_KSP     884
+mdefine_line|#define THREAD_TRAPNO  892
 DECL|macro|THREAD_PGDIR
-mdefine_line|#define THREAD_PGDIR   888
+mdefine_line|#define THREAD_PGDIR   896
 DECL|macro|THREAD_MFLAGS
-mdefine_line|#define THREAD_MFLAGS  892
+mdefine_line|#define THREAD_MFLAGS  900
 DECL|macro|THREAD_CURDS
-mdefine_line|#define THREAD_CURDS   896
+mdefine_line|#define THREAD_CURDS   904
 DECL|macro|THREAD_TRAMP
-mdefine_line|#define THREAD_TRAMP   900
+mdefine_line|#define THREAD_TRAMP   908
 DECL|macro|THREAD_OLDCTX
-mdefine_line|#define THREAD_OLDCTX  904
+mdefine_line|#define THREAD_OLDCTX  912
 multiline_comment|/* Linux mm_struct offsets. */
 DECL|macro|MM_COUNT
 mdefine_line|#define MM_COUNT      12
 DECL|macro|MM_PGD
 mdefine_line|#define MM_PGD        8
 DECL|macro|MM_CONTEXT
-mdefine_line|#define MM_CONTEXT    28
+mdefine_line|#define MM_CONTEXT    32
 multiline_comment|/* Linux sigcontext offsets. */
 DECL|macro|SC_REGMASK
 mdefine_line|#define SC_REGMASK    0

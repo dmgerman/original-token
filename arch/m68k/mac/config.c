@@ -93,6 +93,18 @@ op_star
 id|mac_env
 suffix:semicolon
 multiline_comment|/* Loaded by the boot asm */
+multiline_comment|/* The locgial video addr. determined by head.S - testing */
+r_extern
+r_int
+r_int
+id|mac_videobase
+suffix:semicolon
+multiline_comment|/* The phys. video addr. - might be bogus on some machines */
+DECL|variable|mac_orig_videoaddr
+r_int
+r_int
+id|mac_orig_videoaddr
+suffix:semicolon
 r_extern
 r_int
 id|mac_keyb_init
@@ -770,22 +782,6 @@ r_void
 suffix:semicolon
 )brace
 r_extern
-r_struct
-id|consw
-id|fb_con
-suffix:semicolon
-r_extern
-r_struct
-id|fb_info
-op_star
-id|mac_fb_init
-c_func
-(paren
-r_int
-op_star
-)paren
-suffix:semicolon
-r_extern
 r_void
 id|mac_video_setup
 c_func
@@ -873,14 +869,6 @@ id|data
 op_assign
 id|record-&gt;data
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|compat_bi
-)paren
-r_return
-id|unknown
-suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -900,10 +888,14 @@ suffix:semicolon
 r_case
 id|BI_MAC_VADDR
 suffix:colon
-id|mac_bi_data.videoaddr
+id|mac_orig_videoaddr
 op_assign
 op_star
 id|data
+suffix:semicolon
+id|mac_bi_data.videoaddr
+op_assign
+id|mac_videobase
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -1013,149 +1005,6 @@ id|__initfunc
 c_func
 (paren
 r_void
-id|mac_copy_compat
-c_func
-(paren
-r_void
-)paren
-)paren
-(brace
-r_int
-id|i
-suffix:semicolon
-id|compat_bi
-op_assign
-l_int|1
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|compat_boot_info.num_memory
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|m68k_memory
-(braket
-id|m68k_num_memory
-)braket
-dot
-id|addr
-op_assign
-id|compat_boot_info.memory
-(braket
-id|i
-)braket
-dot
-id|addr
-suffix:semicolon
-id|m68k_memory
-(braket
-id|m68k_num_memory
-)braket
-dot
-id|size
-op_assign
-id|compat_boot_info.memory
-(braket
-id|i
-)braket
-dot
-id|size
-suffix:semicolon
-id|m68k_num_memory
-op_increment
-suffix:semicolon
-)brace
-id|m68k_ramdisk.addr
-op_assign
-id|compat_boot_info.ramdisk_addr
-suffix:semicolon
-id|m68k_ramdisk.size
-op_assign
-id|compat_boot_info.ramdisk_size
-suffix:semicolon
-id|strncpy
-c_func
-(paren
-id|m68k_command_line
-comma
-(paren
-r_const
-r_char
-op_star
-)paren
-id|compat_boot_info.command_line
-comma
-id|CL_SIZE
-)paren
-suffix:semicolon
-id|m68k_command_line
-(braket
-id|CL_SIZE
-op_minus
-l_int|1
-)braket
-op_assign
-l_char|&squot;&bslash;0&squot;
-suffix:semicolon
-id|mac_bi_data.id
-op_assign
-id|compat_boot_info.bi_mac.id
-suffix:semicolon
-id|mac_bi_data.videoaddr
-op_assign
-id|compat_boot_info.bi_mac.videoaddr
-suffix:semicolon
-id|mac_bi_data.videodepth
-op_assign
-id|compat_boot_info.bi_mac.videodepth
-suffix:semicolon
-id|mac_bi_data.videorow
-op_assign
-id|compat_boot_info.bi_mac.videorow
-suffix:semicolon
-id|mac_bi_data.dimensions
-op_assign
-id|compat_boot_info.bi_mac.dimensions
-suffix:semicolon
-id|mac_bi_data.videological
-op_assign
-id|compat_boot_info.bi_mac.videological
-suffix:semicolon
-id|mac_bi_data.sccbase
-op_assign
-id|compat_boot_info.bi_mac.sccbase
-suffix:semicolon
-id|mac_bi_data.boottime
-op_assign
-id|compat_boot_info.bi_mac.boottime
-suffix:semicolon
-id|mac_bi_data.gmtbias
-op_assign
-id|compat_boot_info.bi_mac.gmtbias
-suffix:semicolon
-id|mac_bi_data.memsize
-op_assign
-id|compat_boot_info.bi_mac.memsize
-suffix:semicolon
-id|mac_bi_data.cpuid
-op_assign
-id|compat_boot_info.bi_mac.cpuid
-suffix:semicolon
-)brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
-r_void
 id|config_mac
 c_func
 (paren
@@ -1258,11 +1107,7 @@ id|mach_reset
 op_assign
 id|mac_reset
 suffix:semicolon
-macro_line|#ifdef CONFIG_BLK_DEV_FD
-id|mach_floppy_init
-op_assign
-id|mac_floppy_init
-suffix:semicolon
+macro_line|#ifdef CONFIG_MAC_FLOPPY
 id|mach_floppy_setup
 op_assign
 id|mac_floppy_setup
@@ -1350,6 +1195,12 @@ multiline_comment|/*&n;     * Check for machine specific fixups.&n;     */
 id|nubus_sweep_video
 c_func
 (paren
+)paren
+suffix:semicolon
+id|mac_debugging_penguin
+c_func
+(paren
+l_int|6
 )paren
 suffix:semicolon
 )brace
@@ -1584,7 +1435,7 @@ comma
 id|MAC_NUBUS
 )brace
 comma
-multiline_comment|/*&n;&t; *&t;Some Mac LC machines. Basically the same as the IIci&n;&t; */
+multiline_comment|/*&n;&t; *&t;Some Mac LC machines. Basically the same as the IIci, ADB like IIsi&n;&t; */
 (brace
 id|MAC_MODEL_LCII
 comma
@@ -1651,7 +1502,7 @@ id|MAC_MODEL_Q610
 comma
 l_string|&quot;Quadra 610&quot;
 comma
-id|MAC_ADB_CUDA
+id|MAC_ADB_II
 comma
 id|MAC_VIA_QUADRA
 comma
@@ -1691,7 +1542,7 @@ id|MAC_MODEL_Q650
 comma
 l_string|&quot;Quadra 650&quot;
 comma
-id|MAC_ADB_CUDA
+id|MAC_ADB_II
 comma
 id|MAC_VIA_QUADRA
 comma
@@ -1707,48 +1558,6 @@ id|MAC_NUBUS
 )brace
 comma
 multiline_comment|/*&t;The Q700 does have a NS Sonic */
-macro_line|#if 0
-(brace
-id|MAC_MODEL_Q700
-comma
-l_string|&quot;Quadra 700&quot;
-comma
-id|MAC_ADB_CUDA
-comma
-id|MAC_VIA_QUADRA
-comma
-id|MAC_SCSI_QUADRA2
-comma
-id|MAC_IDE_NONE
-comma
-id|MAC_SCC_QUADRA2
-comma
-id|MAC_ETHER_SONIC
-comma
-id|MAC_NUBUS
-)brace
-comma
-(brace
-id|MAC_MODEL_Q800
-comma
-l_string|&quot;Quadra 800&quot;
-comma
-id|MAC_ADB_CUDA
-comma
-id|MAC_VIA_QUADRA
-comma
-id|MAC_SCSI_QUADRA
-comma
-id|MAC_IDE_NONE
-comma
-id|MAC_SCC_QUADRA
-comma
-id|MAC_ETHER_SONIC
-comma
-id|MAC_NUBUS
-)brace
-comma
-macro_line|#else
 (brace
 id|MAC_MODEL_Q700
 comma
@@ -1789,7 +1598,6 @@ comma
 id|MAC_NUBUS
 )brace
 comma
-macro_line|#endif
 multiline_comment|/* Does the 840 have ethernet ??? documents seem to indicate its not quite a&n;&t;   Quadra in this respect ? */
 (brace
 id|MAC_MODEL_Q840
@@ -1811,12 +1619,13 @@ comma
 id|MAC_NUBUS
 )brace
 comma
+multiline_comment|/* These might have IOP problems */
 (brace
 id|MAC_MODEL_Q900
 comma
 l_string|&quot;Quadra 900&quot;
 comma
-id|MAC_ADB_CUDA
+id|MAC_ADB_IISI
 comma
 id|MAC_VIA_QUADRA
 comma
@@ -1836,7 +1645,7 @@ id|MAC_MODEL_Q950
 comma
 l_string|&quot;Quadra 950&quot;
 comma
-id|MAC_ADB_CUDA
+id|MAC_ADB_IISI
 comma
 id|MAC_VIA_QUADRA
 comma
@@ -1857,7 +1666,7 @@ id|MAC_MODEL_P460
 comma
 l_string|&quot;Performa 460&quot;
 comma
-id|MAC_ADB_CUDA
+id|MAC_ADB_IISI
 comma
 id|MAC_VIA_QUADRA
 comma
@@ -2000,7 +1809,7 @@ id|MAC_MODEL_C610
 comma
 l_string|&quot;Centris 610&quot;
 comma
-id|MAC_ADB_CUDA
+id|MAC_ADB_II
 comma
 id|MAC_VIA_QUADRA
 comma
@@ -2020,7 +1829,7 @@ id|MAC_MODEL_C650
 comma
 l_string|&quot;Centris 650&quot;
 comma
-id|MAC_ADB_CUDA
+id|MAC_ADB_II
 comma
 id|MAC_VIA_QUADRA
 comma
@@ -2061,7 +1870,7 @@ id|MAC_MODEL_PB140
 comma
 l_string|&quot;PowerBook 140&quot;
 comma
-id|MAC_ADB_CUDA
+id|MAC_ADB_PB1
 comma
 id|MAC_VIA_QUADRA
 comma
@@ -2081,7 +1890,7 @@ id|MAC_MODEL_PB145
 comma
 l_string|&quot;PowerBook 145&quot;
 comma
-id|MAC_ADB_CUDA
+id|MAC_ADB_PB1
 comma
 id|MAC_VIA_QUADRA
 comma
@@ -2102,7 +1911,7 @@ id|MAC_MODEL_PB150
 comma
 l_string|&quot;PowerBook 150&quot;
 comma
-id|MAC_ADB_CUDA
+id|MAC_ADB_PB1
 comma
 id|MAC_VIA_IIci
 comma
@@ -2122,7 +1931,7 @@ id|MAC_MODEL_PB160
 comma
 l_string|&quot;PowerBook 160&quot;
 comma
-id|MAC_ADB_CUDA
+id|MAC_ADB_PB1
 comma
 id|MAC_VIA_QUADRA
 comma
@@ -2142,7 +1951,7 @@ id|MAC_MODEL_PB165
 comma
 l_string|&quot;PowerBook 165&quot;
 comma
-id|MAC_ADB_CUDA
+id|MAC_ADB_PB1
 comma
 id|MAC_VIA_QUADRA
 comma
@@ -2162,7 +1971,7 @@ id|MAC_MODEL_PB165C
 comma
 l_string|&quot;PowerBook 165c&quot;
 comma
-id|MAC_ADB_CUDA
+id|MAC_ADB_PB1
 comma
 id|MAC_VIA_QUADRA
 comma
@@ -2182,7 +1991,7 @@ id|MAC_MODEL_PB170
 comma
 l_string|&quot;PowerBook 170&quot;
 comma
-id|MAC_ADB_CUDA
+id|MAC_ADB_PB1
 comma
 id|MAC_VIA_QUADRA
 comma
@@ -2202,7 +2011,7 @@ id|MAC_MODEL_PB180
 comma
 l_string|&quot;PowerBook 180&quot;
 comma
-id|MAC_ADB_CUDA
+id|MAC_ADB_PB1
 comma
 id|MAC_VIA_QUADRA
 comma
@@ -2222,7 +2031,7 @@ id|MAC_MODEL_PB180C
 comma
 l_string|&quot;PowerBook 180c&quot;
 comma
-id|MAC_ADB_CUDA
+id|MAC_ADB_PB1
 comma
 id|MAC_VIA_QUADRA
 comma
@@ -2242,7 +2051,7 @@ id|MAC_MODEL_PB190
 comma
 l_string|&quot;PowerBook 190cs&quot;
 comma
-id|MAC_ADB_CUDA
+id|MAC_ADB_PB1
 comma
 id|MAC_VIA_QUADRA
 comma
@@ -2262,7 +2071,7 @@ id|MAC_MODEL_PB520
 comma
 l_string|&quot;PowerBook 520&quot;
 comma
-id|MAC_ADB_CUDA
+id|MAC_ADB_PB2
 comma
 id|MAC_VIA_QUADRA
 comma
@@ -2283,7 +2092,7 @@ id|MAC_MODEL_PB210
 comma
 l_string|&quot;PowerBook Duo 210&quot;
 comma
-id|MAC_ADB_CUDA
+id|MAC_ADB_PB2
 comma
 id|MAC_VIA_QUADRA
 comma
@@ -2303,7 +2112,7 @@ id|MAC_MODEL_PB230
 comma
 l_string|&quot;PowerBook Duo 230&quot;
 comma
-id|MAC_ADB_CUDA
+id|MAC_ADB_PB2
 comma
 id|MAC_VIA_QUADRA
 comma
@@ -2323,7 +2132,7 @@ id|MAC_MODEL_PB250
 comma
 l_string|&quot;PowerBook Duo 250&quot;
 comma
-id|MAC_ADB_CUDA
+id|MAC_ADB_PB2
 comma
 id|MAC_VIA_QUADRA
 comma
@@ -2343,7 +2152,7 @@ id|MAC_MODEL_PB270C
 comma
 l_string|&quot;PowerBook Duo 270c&quot;
 comma
-id|MAC_ADB_CUDA
+id|MAC_ADB_PB2
 comma
 id|MAC_VIA_QUADRA
 comma
@@ -2363,7 +2172,7 @@ id|MAC_MODEL_PB280
 comma
 l_string|&quot;PowerBook Duo 280&quot;
 comma
-id|MAC_ADB_CUDA
+id|MAC_ADB_PB2
 comma
 id|MAC_VIA_QUADRA
 comma
@@ -2383,7 +2192,7 @@ id|MAC_MODEL_PB280C
 comma
 l_string|&quot;PowerBook Duo 280c&quot;
 comma
-id|MAC_ADB_CUDA
+id|MAC_ADB_PB2
 comma
 id|MAC_VIA_QUADRA
 comma
@@ -2632,20 +2441,22 @@ l_int|16
 suffix:semicolon
 id|printk
 (paren
+l_string|&quot; Videological 0x%lx phys. 0x%lx, SCC at 0x%lx &bslash;n&quot;
+comma
+id|mac_bi_data.videological
+comma
+id|mac_orig_videoaddr
+comma
+id|mac_bi_data.sccbase
+)paren
+suffix:semicolon
+id|printk
+(paren
 l_string|&quot; Boottime: 0x%lx GMTBias: 0x%lx &bslash;n&quot;
 comma
 id|mac_bi_data.boottime
 comma
 id|mac_bi_data.gmtbias
-)paren
-suffix:semicolon
-id|printk
-(paren
-l_string|&quot; Videological 0x%lx, SCC at 0x%lx &bslash;n&quot;
-comma
-id|mac_bi_data.videological
-comma
-id|mac_bi_data.sccbase
 )paren
 suffix:semicolon
 id|printk
@@ -2659,6 +2470,7 @@ comma
 id|mac_bi_data.memsize
 )paren
 suffix:semicolon
+macro_line|#if 0
 id|printk
 (paren
 l_string|&quot;Ramdisk: addr 0x%lx size 0x%lx&bslash;n&quot;
@@ -2668,6 +2480,7 @@ comma
 id|m68k_ramdisk.size
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t; *&t;Save the pointer&n;&t; */
 id|macintosh_config
 op_assign

@@ -10,6 +10,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/adb.h&gt;
 macro_line|#include &lt;asm/cuda.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/init.h&gt;
 macro_line|#include &lt;linux/selection.h&gt;
 macro_line|#include &quot;pmac-cons.h&quot;
 macro_line|#include &quot;valkyrie.h&quot;
@@ -461,6 +462,7 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
+id|__openfirmware
 multiline_comment|/*&n; * Get the monitor sense value.&n; */
 r_static
 r_int

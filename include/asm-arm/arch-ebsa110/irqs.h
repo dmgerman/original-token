@@ -17,4 +17,6 @@ DECL|macro|IRQ_IMMEDIATE
 mdefine_line|#define IRQ_IMMEDIATE&t;&t;7
 DECL|macro|IRQ_TIMER
 mdefine_line|#define IRQ_TIMER&t;&t;IRQ_TIMER0
+DECL|macro|irq_cannonicalize
+mdefine_line|#define irq_cannonicalize(i)&t;(i)
 eof

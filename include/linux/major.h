@@ -65,6 +65,8 @@ DECL|macro|CYCLADESAUX_MAJOR
 mdefine_line|#define CYCLADESAUX_MAJOR 20
 DECL|macro|MITSUMI_X_CDROM_MAJOR
 mdefine_line|#define MITSUMI_X_CDROM_MAJOR 20
+DECL|macro|MFM_ACORN_MAJOR
+mdefine_line|#define MFM_ACORN_MAJOR 21&t;/* ARM Linux /dev/mfm */
 DECL|macro|SCSI_GENERIC_MAJOR
 mdefine_line|#define SCSI_GENERIC_MAJOR 21
 DECL|macro|Z8530_MAJOR

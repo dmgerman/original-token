@@ -1656,10 +1656,24 @@ op_star
 id|ide_modules
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n; * One final include file, which references some of the data/defns from above&n; */
+multiline_comment|/*&n; * We need blk.h, but we replace its end_request by our own version.&n; */
 DECL|macro|IDE_DRIVER
-mdefine_line|#define IDE_DRIVER&t;/* &quot;parameter&quot; for blk.h */
+mdefine_line|#define IDE_DRIVER&t;&t;/* Toggle some magic bits in blk.h */
+DECL|macro|LOCAL_END_REQUEST
+mdefine_line|#define LOCAL_END_REQUEST&t;/* Don&squot;t generate end_request in blk.h */
 macro_line|#include &lt;linux/blk.h&gt;
+r_void
+id|ide_end_request
+c_func
+(paren
+id|byte
+id|uptodate
+comma
+id|ide_hwgroup_t
+op_star
+id|hwgroup
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * This is used for (nearly) all data transfers from/to the IDE interface&n; */
 r_void
 id|ide_input_data

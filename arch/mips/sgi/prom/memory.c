@@ -1,4 +1,5 @@
-multiline_comment|/* $Id: memory.c,v 1.1.1.1 1997/06/01 03:16:40 ralf Exp $&n; * memory.c: PROM library functions for acquiring/using memory descriptors&n; *           given to us from the ARCS firmware.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/*&n; * memory.c: PROM library functions for acquiring/using memory descriptors&n; *           given to us from the ARCS firmware.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: memory.c,v 1.2 1998/05/01 01:35:25 ralf Exp $&n; */
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -9,7 +10,10 @@ macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
 multiline_comment|/* #define DEBUG */
-DECL|function|prom_getmdesc
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_struct
 id|linux_mdesc
 op_star
@@ -20,6 +24,7 @@ r_struct
 id|linux_mdesc
 op_star
 id|curr
+)paren
 )paren
 (brace
 r_return
@@ -70,7 +75,10 @@ id|prom_pblocks
 id|PROM_MAX_PMEMBLOCKS
 )braket
 suffix:semicolon
-DECL|function|prom_getpblock_array
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_struct
 id|prom_pmemblock
 op_star
@@ -78,6 +86,7 @@ id|prom_getpblock_array
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_return
@@ -88,13 +97,17 @@ l_int|0
 )braket
 suffix:semicolon
 )brace
-DECL|function|prom_setup_memupper
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|prom_setup_memupper
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_struct
@@ -176,12 +189,16 @@ id|mips_memory_upper
 suffix:semicolon
 macro_line|#endif
 )brace
-DECL|function|prom_meminit
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|prom_meminit
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_struct
@@ -407,7 +424,10 @@ c_func
 suffix:semicolon
 )brace
 multiline_comment|/* Called from mem_init() to fixup the mem_map page settings. */
-DECL|function|prom_fixup_mem_map
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|prom_fixup_mem_map
 c_func
@@ -419,6 +439,7 @@ comma
 r_int
 r_int
 id|end
+)paren
 )paren
 (brace
 r_struct

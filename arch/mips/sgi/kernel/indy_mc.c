@@ -1,4 +1,6 @@
-multiline_comment|/* $Id: indy_mc.c,v 1.1.1.1 1997/06/01 03:16:40 ralf Exp $&n; * indy_mc.c: Routines for manipulating the INDY memory controller.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/*&n; * indy_mc.c: Routines for manipulating the INDY memory controller.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: indy_mc.c,v 1.3 1998/05/04 09:18:37 ralf Exp $&n; */
+macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/addrspace.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
@@ -89,12 +91,16 @@ suffix:semicolon
 )brace
 suffix:semicolon
 )brace
-DECL|function|sgimc_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|sgimc_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * include/asm-mips/string.h&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (c) 1994, 1995, 1996, 1997 by Ralf Baechle&n; *&n; * $Id: string.h,v 1.3 1997/08/11 04:11:53 ralf Exp $&n; */
+multiline_comment|/*&n; * include/asm-mips/string.h&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (c) 1994, 1995, 1996, 1997 by Ralf Baechle&n; *&n; * $Id: string.h,v 1.7 1998/05/04 09:19:02 ralf Exp $&n; */
 macro_line|#ifndef __ASM_MIPS_STRING_H
 DECL|macro|__ASM_MIPS_STRING_H
 mdefine_line|#define __ASM_MIPS_STRING_H
@@ -392,7 +392,9 @@ id|__n
 suffix:semicolon
 DECL|macro|__HAVE_ARCH_BCOPY
 mdefine_line|#define __HAVE_ARCH_BCOPY
+DECL|function|bcopy
 r_extern
+id|__inline__
 r_char
 op_star
 id|bcopy
@@ -410,7 +412,18 @@ comma
 r_int
 id|count
 )paren
+(brace
+id|memmove
+c_func
+(paren
+id|dest
+comma
+id|src
+comma
+id|count
+)paren
 suffix:semicolon
+)brace
 DECL|macro|__HAVE_ARCH_MEMSCAN
 mdefine_line|#define __HAVE_ARCH_MEMSCAN
 DECL|function|memscan
@@ -444,35 +457,24 @@ id|__addr
 op_plus
 id|__size
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|__size
-)paren
-r_return
-id|__addr
-suffix:semicolon
 id|__asm__
 c_func
 (paren
-l_string|&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot;
 l_string|&quot;.set&bslash;tnoat&bslash;n&quot;
-l_string|&quot;1:&bslash;tlbu&bslash;t$1,(%0)&bslash;n&bslash;t&quot;
-macro_line|#if _MIPS_ISA == _MIPS_ISA_MIPS1
-l_string|&quot;nop&bslash;n&bslash;t&quot;
-macro_line|#endif
-l_string|&quot;beq&bslash;t$1,%3,2f&bslash;n&bslash;t&quot;
+l_string|&quot;1:&bslash;tbeq&bslash;t%0,%1,2f&bslash;n&bslash;t&quot;
 l_string|&quot;addiu&bslash;t%0,1&bslash;n&bslash;t&quot;
-l_string|&quot;bne&bslash;t%0,%2,1b&bslash;n&bslash;t&quot;
-l_string|&quot;nop&bslash;n&bslash;t&quot;
-l_string|&quot;.set&bslash;tat&bslash;n&bslash;t&quot;
-l_string|&quot;.set&bslash;treorder&bslash;n&quot;
-l_string|&quot;2:&quot;
+l_string|&quot;lb&bslash;t$1,-1(%0)&bslash;n&bslash;t&quot;
+l_string|&quot;bne&bslash;t$1,%4,1b&bslash;n&quot;
+l_string|&quot;2:&bslash;t.set&bslash;tat&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
 id|__addr
+)paren
+comma
+l_string|&quot;=r&quot;
+(paren
+id|__end
 )paren
 suffix:colon
 l_string|&quot;0&quot;

@@ -222,11 +222,6 @@ id|on
 )paren
 suffix:semicolon
 macro_line|#endif
-r_extern
-r_struct
-id|consw
-id|fb_con
-suffix:semicolon
 multiline_comment|/* atari specific timer functions (in time.c) */
 r_extern
 r_void
