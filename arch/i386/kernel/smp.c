@@ -1,22 +1,16 @@
 multiline_comment|/*&n; *&t;Intel MP v1.1/v1.4 specification support routines for multi-pentium&n; *&t;hosts.&n; *&n; *&t;(c) 1995 Alan Cox, CymruNET Ltd  &lt;alan@cymru.net&gt;&n; *&t;Supported by Caldera http://www.caldera.com.&n; *&t;Much of the core SMP work is based on previous work by Thomas Radke, to&n; *&t;whom a great many thanks are extended.&n; *&n; *&t;Thanks to Intel for making available several different Pentium and&n; *&t;Pentium Pro MP machines.&n; *&n; *&t;This code is released under the GNU public license version 2 or&n; *&t;later.&n; *&n; *&t;Fixes&n; *&t;&t;Felix Koop&t;:&t;NR_CPUS used properly&n; *&t;&t;Jose Renau&t;:&t;Handle single CPU case.&n; *&t;&t;Alan Cox&t;:&t;By repeated request 8) - Total BogoMIP report.&n; *&t;&t;Greg Wright&t;:&t;Fix for kernel stacks panic.&n; *&t;&t;Erich Boleyn&t;:&t;MP v1.4 and additional changes.&n; *&t;Matthias Sattler&t;:&t;Changes for 2.1 kernel map.&n; *&t;Michel Lespinasse&t;:&t;Changes for 2.1 kernel map.&n; *&t;Michael Chastain&t;:&t;Change trampoline.S to gnu as.&n; *&t;&t;Alan Cox&t;:&t;Dumb bug: &squot;B&squot; step PPro&squot;s are fine&n; *&t;&t;Ingo Molnar&t;:&t;Added APIC timers, based on code&n; *&t;&t;&t;&t;&t;from Jose Renau&n; *&t;&t;Alan Cox&t;:&t;Added EBDA scanning&n; */
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/timer.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
 macro_line|#include &lt;asm/i82489.h&gt;
-macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
-macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#ifdef CONFIG_MTRR
 macro_line|#  include &lt;asm/mtrr.h&gt;
@@ -375,6 +369,13 @@ id|mp_lapic_addr
 op_assign
 l_int|0
 suffix:semicolon
+DECL|variable|skip_ioapic_setup
+r_int
+id|skip_ioapic_setup
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* 1 if &quot;noapic&quot; boot option passed */
 multiline_comment|/* #define SMP_DEBUG */
 macro_line|#ifdef SMP_DEBUG
 DECL|macro|SMP_PRINTK
@@ -1376,12 +1377,24 @@ id|ioapics
 OG
 l_int|1
 )paren
+(brace
 id|printk
 c_func
 (paren
 l_string|&quot;Warning: Multiple IO-APICs not yet supported.&bslash;n&quot;
 )paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Warning: switching to non APIC mode.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|skip_ioapic_setup
+op_assign
+l_int|1
+suffix:semicolon
+)brace
 r_return
 id|num_processors
 suffix:semicolon
@@ -3963,6 +3976,12 @@ l_string|&quot;Boot done.&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Here we can be sure that there is an IO-APIC in the system. Let&squot;s&n;&t; * go and set it up:&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|skip_ioapic_setup
+)paren
 id|setup_IO_APIC
 c_func
 (paren

@@ -156,6 +156,13 @@ c_func
 id|screen_info
 )paren
 suffix:semicolon
+DECL|variable|perf_irq
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|perf_irq
+)paren
+suffix:semicolon
 multiline_comment|/* platform dependent support */
 DECL|variable|_inb
 id|EXPORT_SYMBOL

@@ -350,6 +350,11 @@ op_and_assign
 op_complement
 id|AX25_COND_OWN_RX_BUSY
 suffix:semicolon
+id|ax25-&gt;condition
+op_and_assign
+op_complement
+id|AX25_COND_ACK_PENDING
+suffix:semicolon
 r_break
 suffix:semicolon
 )brace
@@ -423,23 +428,6 @@ id|ax25-&gt;n2count
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* state 1 or 2 should not happen, but... */
-r_if
-c_cond
-(paren
-id|ax25-&gt;state
-op_eq
-id|AX25_STATE_1
-op_logical_or
-id|ax25-&gt;state
-op_eq
-id|AX25_STATE_2
-)paren
-id|ax25-&gt;state
-op_assign
-id|AX25_STATE_0
-suffix:semicolon
-r_else
 id|ax25-&gt;state
 op_assign
 id|AX25_STATE_2
@@ -456,7 +444,7 @@ c_func
 id|ax25
 )paren
 suffix:semicolon
-id|ax25_start_t3timer
+id|ax25_stop_t3timer
 c_func
 (paren
 id|ax25

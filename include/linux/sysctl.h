@@ -98,7 +98,6 @@ DECL|enumerator|CTL_DEV
 id|CTL_DEV
 op_assign
 l_int|7
-comma
 multiline_comment|/* Devices */
 )brace
 suffix:semicolon
@@ -245,6 +244,41 @@ op_assign
 l_int|31
 comma
 multiline_comment|/* l2cr register on PPC */
+DECL|enumerator|KERN_RTSIGNR
+id|KERN_RTSIGNR
+op_assign
+l_int|32
+comma
+multiline_comment|/* Number of rt sigs queued */
+DECL|enumerator|KERN_RTSIGMAX
+id|KERN_RTSIGMAX
+op_assign
+l_int|33
+comma
+multiline_comment|/* Max queuable */
+DECL|enumerator|KERN_SHMMAX
+id|KERN_SHMMAX
+op_assign
+l_int|34
+comma
+multiline_comment|/* int: Maximum shared memory segment */
+DECL|enumerator|KERN_MSGMAX
+id|KERN_MSGMAX
+op_assign
+l_int|35
+comma
+multiline_comment|/* int: Maximum size of a messege */
+DECL|enumerator|KERN_MSGMNB
+id|KERN_MSGMNB
+op_assign
+l_int|36
+comma
+multiline_comment|/* int: Maximum message queue size */
+DECL|enumerator|KERN_MSGPOOL
+id|KERN_MSGPOOL
+op_assign
+l_int|37
+multiline_comment|/* int: Maximum system message pool size */
 )brace
 suffix:semicolon
 multiline_comment|/* CTL_VM names: */
@@ -302,7 +336,13 @@ DECL|enumerator|VM_PGT_CACHE
 id|VM_PGT_CACHE
 op_assign
 l_int|9
+comma
 multiline_comment|/* struct: Set page table cache parameters */
+DECL|enumerator|VM_PAGE_CLUSTER
+id|VM_PAGE_CLUSTER
+op_assign
+l_int|10
+multiline_comment|/* int: set log2 number of pages to swap together */
 )brace
 suffix:semicolon
 multiline_comment|/* CTL_NET names: */
@@ -432,7 +472,6 @@ DECL|enumerator|NET_CORE_OPTMEM_MAX
 id|NET_CORE_OPTMEM_MAX
 op_assign
 l_int|10
-comma
 )brace
 suffix:semicolon
 multiline_comment|/* /proc/sys/net/ethernet */
@@ -449,7 +488,6 @@ DECL|enumerator|NET_UNIX_DELETE_DELAY
 id|NET_UNIX_DELETE_DELAY
 op_assign
 l_int|2
-comma
 )brace
 suffix:semicolon
 multiline_comment|/* /proc/sys/net/ipv4 */
@@ -641,6 +679,10 @@ id|NET_IPV4_ICMP_ECHOREPLY_RATE
 op_assign
 l_int|63
 comma
+DECL|enumerator|NET_IPV4_ICMP_IGNORE_BOGUS_ERROR_RESPONSES
+id|NET_IPV4_ICMP_IGNORE_BOGUS_ERROR_RESPONSES
+op_assign
+l_int|64
 )brace
 suffix:semicolon
 r_enum
@@ -714,7 +756,6 @@ DECL|enumerator|NET_IPV4_ROUTE_GC_ELASTICITY
 id|NET_IPV4_ROUTE_GC_ELASTICITY
 op_assign
 l_int|14
-comma
 )brace
 suffix:semicolon
 r_enum
@@ -730,7 +771,6 @@ id|NET_PROTO_CONF_DEFAULT
 op_assign
 op_minus
 l_int|3
-comma
 multiline_comment|/* And device ifindices ... */
 )brace
 suffix:semicolon
@@ -790,7 +830,6 @@ DECL|enumerator|NET_IPV4_CONF_LOG_MARTIANS
 id|NET_IPV4_CONF_LOG_MARTIANS
 op_assign
 l_int|11
-comma
 )brace
 suffix:semicolon
 multiline_comment|/* /proc/sys/net/ipv6 */
@@ -810,7 +849,6 @@ DECL|enumerator|NET_IPV6_ROUTE
 id|NET_IPV6_ROUTE
 op_assign
 l_int|18
-comma
 )brace
 suffix:semicolon
 r_enum
@@ -849,7 +887,6 @@ DECL|enumerator|NET_IPV6_ROUTE_GC_ELASTICITY
 id|NET_IPV6_ROUTE_GC_ELASTICITY
 op_assign
 l_int|7
-comma
 )brace
 suffix:semicolon
 r_enum
@@ -903,7 +940,6 @@ DECL|enumerator|NET_IPV6_RTR_SOLICIT_DELAY
 id|NET_IPV6_RTR_SOLICIT_DELAY
 op_assign
 l_int|10
-comma
 )brace
 suffix:semicolon
 multiline_comment|/* /proc/sys/net/&lt;protocol&gt;/neigh/&lt;dev&gt; */
@@ -1013,7 +1049,6 @@ DECL|enumerator|NET_ATALK_AARP_RESOLVE_TIME
 id|NET_ATALK_AARP_RESOLVE_TIME
 op_assign
 l_int|4
-comma
 )brace
 suffix:semicolon
 multiline_comment|/* /proc/sys/net/netrom */
@@ -1201,7 +1236,6 @@ DECL|enumerator|NET_ROSE_NO_ACTIVITY_TIMEOUT
 id|NET_ROSE_NO_ACTIVITY_TIMEOUT
 op_assign
 l_int|10
-comma
 )brace
 suffix:semicolon
 multiline_comment|/* /proc/sys/net/x25 */
@@ -1245,35 +1279,30 @@ suffix:semicolon
 multiline_comment|/* /proc/sys/net/decnet */
 r_enum
 (brace
-DECL|enumerator|NET_DECNET_DEF_T3_BROADCAST
-id|NET_DECNET_DEF_T3_BROADCAST
+DECL|enumerator|NET_DECNET_NODE_TYPE
+id|NET_DECNET_NODE_TYPE
 op_assign
 l_int|1
 comma
-DECL|enumerator|NET_DECNET_DEF_T3_POINTTOPOINT
-id|NET_DECNET_DEF_T3_POINTTOPOINT
+DECL|enumerator|NET_DECNET_NODE_ADDRESS
+id|NET_DECNET_NODE_ADDRESS
 op_assign
 l_int|2
 comma
-DECL|enumerator|NET_DECNET_DEF_T1
-id|NET_DECNET_DEF_T1
+DECL|enumerator|NET_DECNET_NODE_NAME
+id|NET_DECNET_NODE_NAME
 op_assign
 l_int|3
 comma
-DECL|enumerator|NET_DECNET_DEF_BCT1
-id|NET_DECNET_DEF_BCT1
+DECL|enumerator|NET_DECNET_DEFAULT_DEVICE
+id|NET_DECNET_DEFAULT_DEVICE
 op_assign
 l_int|4
-comma
-DECL|enumerator|NET_DECNET_CACHETIMEOUT
-id|NET_DECNET_CACHETIMEOUT
-op_assign
-l_int|5
 comma
 DECL|enumerator|NET_DECNET_DEBUG_LEVEL
 id|NET_DECNET_DEBUG_LEVEL
 op_assign
-l_int|6
+l_int|255
 )brace
 suffix:semicolon
 multiline_comment|/* CTL_PROC names: */
@@ -1336,7 +1365,6 @@ DECL|enumerator|FS_MAXSUPER
 id|FS_MAXSUPER
 op_assign
 l_int|10
-comma
 multiline_comment|/* int:maximum number of super_blocks that can be allocated */
 )brace
 suffix:semicolon
@@ -1353,7 +1381,6 @@ DECL|enumerator|DEV_HWMON
 id|DEV_HWMON
 op_assign
 l_int|2
-comma
 )brace
 suffix:semicolon
 multiline_comment|/* /proc/sys/dev/cdrom */
@@ -1363,7 +1390,6 @@ DECL|enumerator|DEV_CDROM_INFO
 id|DEV_CDROM_INFO
 op_assign
 l_int|1
-comma
 )brace
 suffix:semicolon
 macro_line|#ifdef __KERNEL__

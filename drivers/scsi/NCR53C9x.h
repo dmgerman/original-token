@@ -1,4 +1,4 @@
-multiline_comment|/* NCR53C9x.c:  Defines and structures for the NCR53C9x generic driver.&n; *&n; * Originaly esp.h:  Defines and structures for the Sparc ESP &n; *                   (Enhanced SCSI Processor) driver under Linux.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *&n; * Generalization by Jesper Skov (jskov@cygnus.co.uk)&n; */
+multiline_comment|/* NCR53C9x.h:  Defines and structures for the NCR53C9x generic driver.&n; *&n; * Originaly esp.h:  Defines and structures for the Sparc ESP &n; *                   (Enhanced SCSI Processor) driver under Linux.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *&n; * Generalization by Jesper Skov (jskov@cygnus.co.uk)&n; *&n; * More generalization (for i386 stuff) by Tymm Twillman (tymm@computer.org)&n; */
 macro_line|#ifndef NCR53C9X_H
 DECL|macro|NCR53C9X_H
 mdefine_line|#define NCR53C9X_H
@@ -110,6 +110,12 @@ mdefine_line|#define EREGS_PAD(n)    unchar n[3];
 macro_line|#endif
 multiline_comment|/* The ESP SCSI controllers have their register sets in three&n; * &quot;classes&quot;:&n; *&n; * 1) Registers which are both read and write.&n; * 2) Registers which are read only.&n; * 3) Registers which are write only.&n; *&n; * Yet, they all live within the same IO space.&n; */
 multiline_comment|/* All the ESP registers are one byte each and are accessed longwords&n; * apart with a big-endian ordering to the bytes.&n; */
+multiline_comment|/*&n; * On intel, we must use inb() and outb() for register access, and the registers&n; *  are consecutive; no padding.&n; */
+macro_line|#ifndef __i386__
+DECL|macro|SETREG
+mdefine_line|#define SETREG(reg, val) (reg = val)
+DECL|macro|GETREG
+mdefine_line|#define GETREG(reg)      (reg)
 DECL|struct|ESP_regs
 r_struct
 id|ESP_regs
@@ -151,10 +157,10 @@ c_func
 id|cbpad
 )paren
 suffix:semicolon
-DECL|member|esp_cmd
+DECL|member|esp_cmnd
 r_volatile
 id|unchar
-id|esp_cmd
+id|esp_cmnd
 suffix:semicolon
 multiline_comment|/* rw  SCSI command bits              0x0c   */
 id|EREGS_PAD
@@ -321,6 +327,85 @@ DECL|macro|fas_rhi
 mdefine_line|#define fas_rhi     esp_fgrnd   /* rw  HME extended counter           0x3c  */
 )brace
 suffix:semicolon
+macro_line|#else
+DECL|macro|SETREG
+mdefine_line|#define SETREG(reg, val) outb(val, reg)
+DECL|macro|GETREG
+mdefine_line|#define GETREG(reg)      inb(reg)
+DECL|struct|ESP_regs
+r_struct
+id|ESP_regs
+(brace
+macro_line|#ifdef CONFIG_MCA
+DECL|member|slot
+r_int
+r_int
+id|slot
+suffix:semicolon
+macro_line|#endif
+DECL|member|io_addr
+r_int
+r_int
+id|io_addr
+suffix:semicolon
+multiline_comment|/* Access    Description              Offset */
+DECL|macro|esp_tclow
+mdefine_line|#define esp_tclow   io_addr      /* rw  Low bits of the transfer count 0x00   */
+DECL|macro|esp_tcmed
+mdefine_line|#define esp_tcmed   io_addr + 1  /* rw  Mid bits of the transfer count 0x04   */
+DECL|macro|esp_fdata
+mdefine_line|#define esp_fdata   io_addr + 2  /* rw  FIFO data bits                 0x08   */
+DECL|macro|esp_cmnd
+mdefine_line|#define esp_cmnd     io_addr + 3  /* rw  SCSI command bits              0x0c   */
+DECL|macro|esp_status
+mdefine_line|#define esp_status  io_addr + 4  /* ro  ESP status register            0x10   */
+DECL|macro|esp_busid
+mdefine_line|#define esp_busid    esp_status   /* wo  Bus ID for select/reselect     0x10   */
+DECL|macro|esp_intrpt
+mdefine_line|#define esp_intrpt  io_addr + 5  /* ro  Kind of interrupt              0x14   */
+DECL|macro|esp_timeo
+mdefine_line|#define esp_timeo    esp_intrpt   /* wo  Timeout value for select/resel 0x14   */
+DECL|macro|esp_sstep
+mdefine_line|#define esp_sstep   io_addr + 6  /* ro  Sequence step register         0x18   */
+DECL|macro|esp_stp
+mdefine_line|#define esp_stp      esp_sstep    /* wo  Transfer period per sync       0x18   */
+DECL|macro|esp_fflags
+mdefine_line|#define esp_fflags  io_addr + 7  /* ro  Bits of current FIFO info      0x1c   */
+DECL|macro|esp_soff
+mdefine_line|#define esp_soff     esp_fflags   /* wo  Sync offset                    0x1c   */
+DECL|macro|esp_cfg1
+mdefine_line|#define esp_cfg1    io_addr + 8  /* rw  First configuration register   0x20   */
+DECL|macro|esp_cfact
+mdefine_line|#define esp_cfact   io_addr + 9  /* wo  Clock conversion factor        0x24   */
+DECL|macro|esp_status2
+mdefine_line|#define esp_status2  esp_cfact    /* ro  HME status2 register           0x24   */
+DECL|macro|esp_ctest
+mdefine_line|#define esp_ctest   io_addr + 10 /* wo  Chip test register             0x28   */
+DECL|macro|esp_cfg2
+mdefine_line|#define esp_cfg2    io_addr + 11 /* rw  Second configuration register  0x2c   */
+multiline_comment|/* The following is only found on the 53C9X series SCSI chips */
+DECL|macro|esp_cfg3
+mdefine_line|#define esp_cfg3    io_addr + 12 /* rw  Third configuration register   0x30  */
+DECL|macro|esp_hole
+mdefine_line|#define esp_hole    io_addr + 13 /* hole in register map               0x34  */
+multiline_comment|/* The following is found on all chips except the NCR53C90 (ESP100) */
+DECL|macro|esp_tchi
+mdefine_line|#define esp_tchi    io_addr + 14 /* rw  High bits of transfer count    0x38  */
+DECL|macro|esp_uid
+mdefine_line|#define esp_uid      esp_tchi     /* ro  Unique ID code                 0x38  */
+DECL|macro|fas_rlo
+mdefine_line|#define fas_rlo      esp_tchi     /* rw  HME extended counter           0x38  */
+DECL|macro|esp_fgrnd
+mdefine_line|#define esp_fgrnd   io_addr + 15 /* rw  Data base for fifo             0x3c  */
+DECL|macro|fas_rhi
+mdefine_line|#define fas_rhi      esp_fgrnd    /* rw  HME extended counter           0x3c  */
+)brace
+suffix:semicolon
+macro_line|#ifndef save_and_cli
+DECL|macro|save_and_cli
+mdefine_line|#define save_and_cli(flags)  save_flags(flags); cli();
+macro_line|#endif
+macro_line|#endif
 multiline_comment|/* Various revisions of the ESP board. */
 DECL|enum|esp_rev
 r_enum
@@ -393,6 +478,7 @@ op_star
 id|eregs
 suffix:semicolon
 multiline_comment|/* All esp registers */
+macro_line|#ifndef __i386__
 DECL|member|dma
 r_struct
 id|Linux_DMA
@@ -400,6 +486,12 @@ op_star
 id|dma
 suffix:semicolon
 multiline_comment|/* Who I do transfers with. */
+macro_line|#else
+DECL|member|dma
+r_int
+id|dma
+suffix:semicolon
+macro_line|#endif
 DECL|member|dregs
 r_void
 op_star
@@ -664,6 +756,13 @@ r_int
 id|bursts
 suffix:semicolon
 multiline_comment|/* Burst sizes our DVMA supports */
+macro_line|#ifdef CONFIG_MCA
+DECL|member|slot
+r_int
+id|slot
+suffix:semicolon
+multiline_comment|/* MCA slot the adapter occupies */
+macro_line|#endif
 multiline_comment|/* Our command queues, only one cmd lives in the current_SC queue. */
 DECL|member|issue_SC
 id|Scsi_Cmnd

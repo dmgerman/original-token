@@ -1490,14 +1490,12 @@ suffix:semicolon
 )brace
 multiline_comment|/* *************************************************** */
 macro_line|#endif
-macro_line|#if 0
 multiline_comment|/* IBM/ANSI scsi scan ordering */
 multiline_comment|/* Stick this back in when the scsi.c changes are there */
-id|shpnt-&gt;reverse_scan
+id|shpnt-&gt;reverse_ordering
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* saving info */
 id|hosts
 (braket

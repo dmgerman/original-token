@@ -148,7 +148,7 @@ op_amp
 id|nr_async_pages
 )paren
 OG
-id|SWAP_CLUSTER_MAX
+id|pager_daemon.swap_cluster
 )paren
 id|wait
 op_assign

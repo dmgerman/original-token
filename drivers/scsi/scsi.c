@@ -2041,6 +2041,10 @@ suffix:semicolon
 )brace
 r_else
 (brace
+multiline_comment|/* Actual LUN. PC ordering is 0-&gt;n IBM/spec ordering is n-&gt;0 */
+r_int
+id|order_dev
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -2074,9 +2078,30 @@ id|dev
 r_if
 c_cond
 (paren
+id|shpnt-&gt;reverse_ordering
+)paren
+(brace
+multiline_comment|/* Shift to scanning 15,14,13... or 7,6,5,4, */
+id|order_dev
+op_assign
+id|shpnt-&gt;max_channel
+op_minus
+id|dev
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+r_else
+id|order_dev
+op_assign
+id|dev
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|shpnt-&gt;this_id
 op_ne
-id|dev
+id|order_dev
 )paren
 (brace
 multiline_comment|/*&n;           * We need the for so our continue, etc. work fine. We put this in&n;           * a variable so that we can override it during the scan if we&n;           * detect a device *KNOWN* to have multiple logical units.&n;           */
@@ -2120,7 +2145,7 @@ id|scan_scsis_single
 (paren
 id|channel
 comma
-id|dev
+id|order_dev
 comma
 id|lun
 comma
@@ -10506,7 +10531,11 @@ id|tpnt
 op_logical_and
 id|SDpnt-&gt;host-&gt;hostt-&gt;module
 op_logical_and
-id|SDpnt-&gt;host-&gt;hostt-&gt;module-&gt;usecount
+id|GET_USE_COUNT
+c_func
+(paren
+id|SDpnt-&gt;host-&gt;hostt-&gt;module
+)paren
 )paren
 (brace
 r_return
@@ -11473,7 +11502,11 @@ multiline_comment|/*&n;     * If we are busy, this is not going to fly.&n;     *
 r_if
 c_cond
 (paren
-id|tpnt-&gt;module-&gt;usecount
+id|GET_USE_COUNT
+c_func
+(paren
+id|tpnt-&gt;module
+)paren
 op_ne
 l_int|0
 )paren

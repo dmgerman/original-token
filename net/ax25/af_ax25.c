@@ -4483,14 +4483,9 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;The write queue this time is holding sockets ready to use&n;&t; *&t;hooked into the SABM we saved&n;&t; */
+multiline_comment|/*&n;&t; *&t;The read queue this time is holding sockets ready to use&n;&t; *&t;hooked into the SABM we saved&n;&t; */
 r_do
 (brace
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4515,17 +4510,10 @@ id|flags
 op_amp
 id|O_NONBLOCK
 )paren
-(brace
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 op_minus
 id|EWOULDBLOCK
 suffix:semicolon
-)brace
 id|interruptible_sleep_on
 c_func
 (paren
@@ -4541,17 +4529,10 @@ c_func
 id|current
 )paren
 )paren
-(brace
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 op_minus
 id|ERESTARTSYS
 suffix:semicolon
-)brace
 )brace
 )brace
 r_while
@@ -4579,13 +4560,12 @@ op_assign
 op_amp
 id|newsock-&gt;wait
 suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
 multiline_comment|/* Now attach up the new socket */
 id|skb-&gt;sk
+op_assign
+l_int|NULL
+suffix:semicolon
+id|skb-&gt;destructor
 op_assign
 l_int|NULL
 suffix:semicolon

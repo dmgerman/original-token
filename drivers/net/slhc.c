@@ -1,12 +1,14 @@
 multiline_comment|/*&n; * Routines to compress and uncompress tcp packets (for transmission&n; * over low speed serial lines).&n; *&n; * Copyright (c) 1989 Regents of the University of California.&n; * All rights reserved.&n; *&n; * Redistribution and use in source and binary forms are permitted&n; * provided that the above copyright notice and this paragraph are&n; * duplicated in all such forms and that any documentation,&n; * advertising materials, and other materials related to such&n; * distribution and use acknowledge that the software was developed&n; * by the University of California, Berkeley.  The name of the&n; * University may not be used to endorse or promote products derived&n; * from this software without specific prior written permission.&n; * THIS SOFTWARE IS PROVIDED ``AS IS&squot;&squot; AND WITHOUT ANY EXPRESS OR&n; * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.&n; *&n; *&t;Van Jacobson (van@helios.ee.lbl.gov), Dec 31, 1989:&n; *&t;- Initial distribution.&n; *&n; *&n; * modified for KA9Q Internet Software Package by&n; * Katie Stevens (dkstevens@ucdavis.edu)&n; * University of California, Davis&n; * Computing Services&n; *&t;- 01-31-90&t;initial adaptation (from 1.19)&n; *&t;PPP.05&t;02-15-90 [ks]&n; *&t;PPP.08&t;05-02-90 [ks]&t;use PPP protocol field to signal compression&n; *&t;PPP.15&t;09-90&t; [ks]&t;improve mbuf handling&n; *&t;PPP.16&t;11-02&t; [karn]&t;substantially rewritten to use NOS facilities&n; *&n; *&t;- Feb 1991&t;Bill_Simpson@um.cc.umich.edu&n; *&t;&t;&t;variable number of conversation slots&n; *&t;&t;&t;allow zero or one slots&n; *&t;&t;&t;separate routines&n; *&t;&t;&t;status display&n; *&t;- Jul 1994&t;Dmitry Gorodchanin&n; *&t;&t;&t;Fixes for memory leaks.&n; *      - Oct 1994      Dmitry Gorodchanin&n; *                      Modularization.&n; *&t;- Jan 1995&t;Bjorn Ekwall&n; *&t;&t;&t;Use ip_fast_csum from ip.h&n; *&t;- July 1995&t;Christos A. Polyzols &n; *&t;&t;&t;Spotted bug in tcp option checking&n; *&n; *&n; *&t;This module is a difficult issue. It&squot;s clearly inet code but it&squot;s also clearly&n; *&t;driver code belonging close to PPP and SLIP&n; */
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifdef CONFIG_INET
-multiline_comment|/* Entire module is for IP only */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#ifdef CONFIG_INET
+multiline_comment|/* Entire module is for IP only */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/sockios.h&gt;
 macro_line|#include &lt;linux/termios.h&gt;
@@ -20,7 +22,6 @@ macro_line|#include &lt;net/icmp.h&gt;
 macro_line|#include &lt;net/tcp.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
-macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -2951,5 +2952,224 @@ r_void
 (brace
 )brace
 macro_line|#endif /* MODULE */
+macro_line|#else /* CONFIG_INET */
+DECL|variable|slhc_init
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|slhc_init
+)paren
+suffix:semicolon
+DECL|variable|slhc_free
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|slhc_free
+)paren
+suffix:semicolon
+DECL|variable|slhc_remember
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|slhc_remember
+)paren
+suffix:semicolon
+DECL|variable|slhc_compress
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|slhc_compress
+)paren
+suffix:semicolon
+DECL|variable|slhc_uncompress
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|slhc_uncompress
+)paren
+suffix:semicolon
+DECL|variable|slhc_toss
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|slhc_toss
+)paren
+suffix:semicolon
+r_int
+DECL|function|slhc_toss
+id|slhc_toss
+c_func
+(paren
+r_struct
+id|slcompress
+op_star
+id|comp
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;Called IP function on non IP-system: slhc_toss&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+r_int
+DECL|function|slhc_uncompress
+id|slhc_uncompress
+c_func
+(paren
+r_struct
+id|slcompress
+op_star
+id|comp
+comma
+r_int
+r_char
+op_star
+id|icp
+comma
+r_int
+id|isize
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;Called IP function on non IP-system: slhc_uncompress&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+r_int
+DECL|function|slhc_compress
+id|slhc_compress
+c_func
+(paren
+r_struct
+id|slcompress
+op_star
+id|comp
+comma
+r_int
+r_char
+op_star
+id|icp
+comma
+r_int
+id|isize
+comma
+r_int
+r_char
+op_star
+id|ocp
+comma
+r_int
+r_char
+op_star
+op_star
+id|cpp
+comma
+r_int
+id|compress_cid
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;Called IP function on non IP-system: slhc_compress&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+r_int
+DECL|function|slhc_remember
+id|slhc_remember
+c_func
+(paren
+r_struct
+id|slcompress
+op_star
+id|comp
+comma
+r_int
+r_char
+op_star
+id|icp
+comma
+r_int
+id|isize
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;Called IP function on non IP-system: slhc_remember&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+r_void
+DECL|function|slhc_free
+id|slhc_free
+c_func
+(paren
+r_struct
+id|slcompress
+op_star
+id|comp
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;Called IP function on non IP-system: slhc_free&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+r_struct
+id|slcompress
+op_star
+DECL|function|slhc_init
+id|slhc_init
+c_func
+(paren
+r_int
+id|rslots
+comma
+r_int
+id|tslots
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;Called IP function on non IP-system: slhc_init&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
 macro_line|#endif /* CONFIG_INET */
 eof

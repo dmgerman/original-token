@@ -20,6 +20,10 @@ r_void
 op_star
 id|high_memory
 suffix:semicolon
+r_extern
+r_int
+id|page_cluster
+suffix:semicolon
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 multiline_comment|/*&n; * Linux kernel virtual memory manager primitives.&n; * The idea being to have a &quot;virtual&quot; mm in the same way&n; * we have a virtual fs - giving a cleaner interface to the&n; * mm details, and allowing different kinds of memory mappings&n; * (from shared memory to executable loading to arbitrary&n; * mmap() functions).&n; */

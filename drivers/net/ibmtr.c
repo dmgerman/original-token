@@ -5512,6 +5512,7 @@ r_int
 id|PIOaddr
 suffix:semicolon
 r_int
+r_int
 id|i
 suffix:semicolon
 id|PIOaddr
@@ -5603,9 +5604,13 @@ id|jiffies
 op_plus
 id|TR_RESET_INTERVAL
 suffix:semicolon
+id|time_before_eq
+c_func
+(paren
 id|jiffies
-op_le
+comma
 id|i
+)paren
 suffix:semicolon
 )paren
 suffix:semicolon

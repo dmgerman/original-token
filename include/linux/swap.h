@@ -194,6 +194,33 @@ r_extern
 r_int
 id|buffermem
 suffix:semicolon
+DECL|struct|swap_stats
+r_struct
+id|swap_stats
+(brace
+DECL|member|proc_freepage_attempts
+r_int
+id|proc_freepage_attempts
+suffix:semicolon
+DECL|member|proc_freepage_successes
+r_int
+id|proc_freepage_successes
+suffix:semicolon
+DECL|member|kswap_freepage_attempts
+r_int
+id|kswap_freepage_attempts
+suffix:semicolon
+DECL|member|kswap_freepage_successes
+r_int
+id|kswap_freepage_successes
+suffix:semicolon
+)brace
+suffix:semicolon
+r_extern
+r_struct
+id|swap_stats
+id|swap_stats
+suffix:semicolon
 multiline_comment|/* Incomplete types for prototype declarations: */
 r_struct
 id|task_struct
@@ -212,6 +239,14 @@ id|shm_swap
 r_int
 comma
 r_int
+)paren
+suffix:semicolon
+multiline_comment|/* linux/mm/swap.c */
+r_extern
+r_void
+id|swap_setup
+(paren
+r_void
 )paren
 suffix:semicolon
 multiline_comment|/* linux/mm/vmscan.c */
@@ -325,6 +360,16 @@ suffix:semicolon
 r_extern
 r_int
 id|swap_check_entry
+c_func
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
+r_struct
+id|page
+op_star
+id|lookup_swap_cache
 c_func
 (paren
 r_int

@@ -49,6 +49,24 @@ r_int
 id|shm_nattch
 suffix:semicolon
 multiline_comment|/* no. of current attaches */
+DECL|member|shm_unused
+r_int
+r_int
+id|shm_unused
+suffix:semicolon
+multiline_comment|/* compatibility */
+DECL|member|shm_unused2
+r_void
+op_star
+id|shm_unused2
+suffix:semicolon
+multiline_comment|/* ditto - used by DIPC */
+DECL|member|shm_unused3
+r_void
+op_star
+id|shm_unused3
+suffix:semicolon
+multiline_comment|/* unused */
 )brace
 suffix:semicolon
 DECL|struct|shmid_kernel

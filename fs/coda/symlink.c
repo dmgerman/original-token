@@ -179,11 +179,11 @@ c_cond
 (paren
 id|length
 OG
-id|CFS_MAXPATHLEN
+id|CODA_MAXPATHLEN
 )paren
 id|len
 op_assign
-id|CFS_MAXPATHLEN
+id|CODA_MAXPATHLEN
 suffix:semicolon
 r_else
 id|len
@@ -333,7 +333,7 @@ suffix:semicolon
 r_char
 id|mem
 (braket
-id|CFS_MAXPATHLEN
+id|CODA_MAXPATHLEN
 )braket
 suffix:semicolon
 r_char
@@ -367,7 +367,7 @@ op_increment
 suffix:semicolon
 id|len
 op_assign
-id|CFS_MAXPATHLEN
+id|CODA_MAXPATHLEN
 suffix:semicolon
 id|error
 op_assign

@@ -137,6 +137,47 @@ l_int|0x20
 suffix:semicolon
 )brace
 )brace
+DECL|function|dummy_perf
+r_static
+r_void
+id|dummy_perf
+c_func
+(paren
+r_int
+r_int
+id|vector
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;Performance counter interrupt!&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+DECL|variable|perf_irq
+r_void
+(paren
+op_star
+id|perf_irq
+)paren
+(paren
+r_int
+r_int
+comma
+r_struct
+id|pt_regs
+op_star
+)paren
+op_assign
+id|dummy_perf
+suffix:semicolon
 multiline_comment|/*&n; * Dispatch device interrupts.&n; */
 multiline_comment|/* Handle ISA interrupt via the PICs. */
 macro_line|#if defined(CONFIG_ALPHA_GENERIC)
@@ -3161,13 +3202,16 @@ suffix:semicolon
 r_case
 l_int|4
 suffix:colon
-id|printk
+id|perf_irq
 c_func
 (paren
-l_string|&quot;Performance counter interrupt&bslash;n&quot;
+id|vector
+comma
+op_amp
+id|regs
 )paren
 suffix:semicolon
-r_break
+r_return
 suffix:semicolon
 r_default
 suffix:colon

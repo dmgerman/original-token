@@ -211,6 +211,16 @@ id|Byte
 op_assign
 l_int|0
 suffix:semicolon
+r_int
+r_int
+id|igiveupat
+op_assign
+id|jiffies
+op_plus
+l_int|5
+op_star
+id|HZ
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -218,11 +228,19 @@ id|i
 op_assign
 l_int|0
 suffix:semicolon
+id|time_before
+c_func
+(paren
+id|jiffies
+comma
+id|igiveupat
+)paren
 suffix:semicolon
 id|i
 op_increment
 )paren
 (brace
+multiline_comment|/* if(current-&gt;need_resched) schedule(); */
 id|parport_write_control
 c_func
 (paren

@@ -1518,6 +1518,14 @@ id|ax25
 op_assign
 id|make-&gt;protinfo.ax25
 suffix:semicolon
+id|skb_set_owner_r
+c_func
+(paren
+id|skb
+comma
+id|make
+)paren
+suffix:semicolon
 id|skb_queue_head
 c_func
 (paren
@@ -1526,10 +1534,6 @@ id|sk-&gt;receive_queue
 comma
 id|skb
 )paren
-suffix:semicolon
-id|skb-&gt;sk
-op_assign
-id|make
 suffix:semicolon
 id|make-&gt;state
 op_assign
@@ -1867,6 +1871,11 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* Initially we don&squot;t know who it&squot;s for */
+id|skb-&gt;destructor
+op_assign
+l_int|NULL
+suffix:semicolon
+multiline_comment|/* Who initializes this, dammit?! */
 r_if
 c_cond
 (paren

@@ -574,6 +574,13 @@ id|host_blocked
 suffix:colon
 l_int|1
 suffix:semicolon
+multiline_comment|/*&n;     * Host uses correct SCSI ordering not PC ordering. The bit is&n;     * set for the minority of drivers whose authors actually read the spec ;)&n;     */
+DECL|member|reverse_ordering
+r_int
+id|reverse_ordering
+suffix:colon
+l_int|1
+suffix:semicolon
 DECL|member|select_queue_depths
 r_void
 (paren

@@ -190,7 +190,7 @@ r_else
 (brace
 id|printk
 (paren
-l_string|&quot;coda_read_inode: what&squot;s this? i_mode = %o&bslash;n&quot;
+l_string|&quot;coda_fill_inode: what&squot;s this? i_mode = %o&bslash;n&quot;
 comma
 id|inode-&gt;i_mode
 )paren
@@ -407,13 +407,10 @@ id|cnp-&gt;c_flags
 op_assign
 l_int|0
 suffix:semicolon
-id|CDEBUG
+id|printk
 c_func
 (paren
-id|D_CNODE
-comma
-l_string|&quot;coda_cnode make on initialized&quot;
-l_string|&quot;inode %ld, %s!&bslash;n&quot;
+l_string|&quot;coda_cnode make on initialized inode %ld, %s!&bslash;n&quot;
 comma
 (paren
 op_star

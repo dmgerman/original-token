@@ -180,18 +180,7 @@ multiline_comment|/* Operational parameters that usually are not changed. */
 multiline_comment|/* Time in jiffies before concluding the transmitter is hung. */
 DECL|macro|TX_TIMEOUT
 mdefine_line|#define TX_TIMEOUT  ((2000*HZ)/1000)
-macro_line|#ifdef MODULE
-macro_line|#ifdef MODVERSIONS
-macro_line|#include &lt;linux/modversions.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#else
-DECL|macro|MOD_INC_USE_COUNT
-mdefine_line|#define MOD_INC_USE_COUNT
-DECL|macro|MOD_DEC_USE_COUNT
-mdefine_line|#define MOD_DEC_USE_COUNT
-macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -209,19 +198,9 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 multiline_comment|/* Kernel compatibility defines, most common to the PCCard package. */
-macro_line|#include &lt;linux/version.h&gt;&t;&t;/* Evil, but neccessary */
+macro_line|#include &lt;linux/version.h&gt;&t;&t;/* Evil and unneccessary */
 DECL|macro|RUN_AT
 mdefine_line|#define RUN_AT(x) (jiffies + (x))
-macro_line|#if (LINUX_VERSION_CODE &gt;= 0x20100)
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
-macro_line|#endif
 macro_line|#if (LINUX_VERSION_CODE &lt; 0x20123)
 DECL|macro|test_and_set_bit
 mdefine_line|#define test_and_set_bit(val, addr) set_bit(val, addr)
@@ -294,6 +273,7 @@ l_int|2
 )brace
 suffix:semicolon
 DECL|struct|chip_info
+r_static
 r_struct
 id|chip_info
 (brace

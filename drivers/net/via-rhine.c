@@ -141,19 +141,7 @@ DECL|macro|TX_TIMEOUT
 mdefine_line|#define TX_TIMEOUT  (2*HZ)
 DECL|macro|PKT_BUF_SZ
 mdefine_line|#define PKT_BUF_SZ&t;&t;1536&t;&t;&t;/* Size of each temporary Rx buffer.*/
-multiline_comment|/* Include files, designed to support most kernel versions 2.0.0 and later. */
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#ifdef MODULE
-macro_line|#ifdef MODVERSIONS
-macro_line|#include &lt;linux/modversions.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#else
-DECL|macro|MOD_INC_USE_COUNT
-mdefine_line|#define MOD_INC_USE_COUNT
-DECL|macro|MOD_DEC_USE_COUNT
-mdefine_line|#define MOD_DEC_USE_COUNT
-macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
@@ -201,14 +189,6 @@ multiline_comment|/* Kernel compatibility defines, some common to David Hind&squ
 DECL|macro|RUN_AT
 mdefine_line|#define RUN_AT(x) (jiffies + (x))
 macro_line|#if (LINUX_VERSION_CODE &gt;= 0x20100)
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
 macro_line|#else
 macro_line|#ifndef __alpha__
 DECL|macro|ioremap

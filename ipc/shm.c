@@ -653,6 +653,12 @@ op_plus
 id|id
 suffix:semicolon
 )brace
+DECL|variable|shmmax
+r_int
+id|shmmax
+op_assign
+id|SHMMAX
+suffix:semicolon
 DECL|function|sys_shmget
 id|asmlinkage
 r_int
@@ -697,7 +703,7 @@ c_cond
 (paren
 id|size
 template_param
-id|SHMMAX
+id|shmmax
 )paren
 (brace
 id|err
@@ -1239,7 +1245,7 @@ id|SHMMNI
 suffix:semicolon
 id|shminfo.shmmax
 op_assign
-id|SHMMAX
+id|shmmax
 suffix:semicolon
 id|shminfo.shmmin
 op_assign

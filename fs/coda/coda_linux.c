@@ -97,7 +97,7 @@ r_if
 c_cond
 (paren
 (paren
-id|CFS_CONTROLLEN
+id|CODA_CONTROLLEN
 op_eq
 id|length
 )paren
@@ -108,9 +108,9 @@ c_func
 (paren
 id|name
 comma
-id|CFS_CONTROL
+id|CODA_CONTROL
 comma
-id|CFS_CONTROLLEN
+id|CODA_CONTROLLEN
 )paren
 op_eq
 l_int|0
@@ -322,7 +322,7 @@ id|vuid_t
 )paren
 id|current-&gt;fsuid
 suffix:semicolon
-id|cred-&gt;cr_gid
+id|cred-&gt;cr_groupid
 op_assign
 (paren
 id|vgid_t
@@ -505,6 +505,27 @@ suffix:semicolon
 id|coda_flags
 op_or_assign
 id|C_O_TRUNC
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|flags
+op_amp
+id|O_CREAT
+)paren
+(brace
+id|CDEBUG
+c_func
+(paren
+id|D_FILE
+comma
+l_string|&quot;--&gt; C_O_CREAT added&bslash;n&quot;
+)paren
+suffix:semicolon
+id|coda_flags
+op_or_assign
+id|C_O_CREAT
 suffix:semicolon
 )brace
 r_if

@@ -61,6 +61,15 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_ATARI_SCSI
 macro_line|#include &quot;atari_scsi.h&quot;
 macro_line|#endif
+macro_line|#ifdef CONFIG_MAC_SCSI_OLD
+macro_line|#include &quot;mac_scsi.h&quot;
+macro_line|#endif
+macro_line|#ifdef CONFIG_MAC_SCSI
+macro_line|#include &quot;mac_scsinew.h&quot;
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_MAC_ESP
+macro_line|#include &quot;mac_esp.h&quot;
+macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_ADVANSYS
 macro_line|#include &quot;advansys.h&quot;
 macro_line|#endif
@@ -109,6 +118,9 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_QLOGIC_ISP
 macro_line|#include &quot;qlogicisp.h&quot;
 macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_QLOGIC_FC
+macro_line|#include &quot;qlogicfc.h&quot;
+macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_SEAGATE
 macro_line|#include &quot;seagate.h&quot;
 macro_line|#endif
@@ -130,6 +142,9 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_7000FASST
 macro_line|#include &quot;wd7000.h&quot;
 macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_MCA_53C9X
+macro_line|#include &quot;mca_53c9x.h&quot;
+macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_IBMMCA
 macro_line|#include &quot;ibmmca.h&quot;
 macro_line|#endif
@@ -144,6 +159,12 @@ macro_line|#include &quot;dc390.h&quot;
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_AM53C974
 macro_line|#include &quot;AM53C974.h&quot;
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_MEGARAID
+macro_line|#include &quot;megaraid.h&quot;
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_ACARD
+macro_line|#include &quot;atp870u.h&quot;
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_SUNESP
 macro_line|#include &quot;esp.h&quot;
@@ -174,6 +195,9 @@ macro_line|#include &quot;psi240i.h&quot;
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_PLUTO
 macro_line|#include &quot;pluto.h&quot;
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_INITIO
+macro_line|#include &quot;ini9100u.h&quot;
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_DEBUG
 macro_line|#include &quot;scsi_debug.h&quot;
@@ -271,6 +295,20 @@ id|ATARI_SCSI
 comma
 macro_line|#endif
 macro_line|#endif
+macro_line|#ifdef CONFIG_MAC
+macro_line|#ifdef CONFIG_MAC_SCSI_OLD
+id|MAC_SCSI
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_MAC_ESP
+id|SCSI_MAC_ESP
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_MAC_SCSI
+id|MAC_NCR5380
+comma
+macro_line|#endif
+macro_line|#endif
 macro_line|#ifdef CONFIG_MVME16x_SCSI
 id|MVME16x_SCSI
 comma
@@ -348,6 +386,10 @@ macro_line|#ifdef CONFIG_SCSI_QLOGIC_ISP
 id|QLOGICISP
 comma
 macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_QLOGIC_FC
+id|QLOGICFC
+comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_PAS16
 id|MV_PAS16
 comma
@@ -384,6 +426,10 @@ macro_line|#ifdef CONFIG_SCSI_7000FASST
 id|WD7000
 comma
 macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_MCA_53C9X
+id|MCA_53C9X
+comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_IBMMCA
 id|IBMMCA
 comma
@@ -400,12 +446,24 @@ macro_line|#ifdef CONFIG_SCSI_AM53C974
 id|AM53C974
 comma
 macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_MEGARAID
+id|MEGARAID
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_ACARD
+id|ATP870U
+comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_SUNESP
 id|SCSI_SPARC_ESP
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_GDTH
 id|GDTH
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_INITIO
+id|INI9100U
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_QLOGICPTI

@@ -6095,13 +6095,6 @@ c_func
 suffix:semicolon
 macro_line|#endif&t;
 multiline_comment|/*&n;&t; * This is Very Ugly(tm).&n;&t; *&n;&t; * Some devices want to be initialized early..&n;&t; */
-macro_line|#if defined(CONFIG_LANCE)
-id|lance_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#if defined(CONFIG_SCC)
 id|scc_init
 c_func
@@ -6180,6 +6173,7 @@ c_func
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n;&t; *&t;SLHC if present needs attaching so other people see it&n;&t; *&t;even if not opened.&n;&t; */
+macro_line|#ifdef CONFIG_INET&t; 
 macro_line|#if (defined(CONFIG_SLIP) &amp;&amp; defined(CONFIG_SLIP_COMPRESSED)) &bslash;&n;&t; || defined(CONFIG_PPP) &bslash;&n;    || (defined(CONFIG_ISDN) &amp;&amp; defined(CONFIG_ISDN_PPP))
 id|slhc_install
 c_func
@@ -6187,6 +6181,7 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif&t;
+macro_line|#endif
 macro_line|#ifdef CONFIG_NET_PROFILE
 id|net_profile_init
 c_func

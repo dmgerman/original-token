@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;AX.25 release 037&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Most of this code is based on the SDL diagrams published in the 7th&n; *&t;ARRL Computer Networking Conference papers. The diagrams have mistakes&n; *&t;in them, but are mostly correct. Before you modify the code could you&n; *&t;read the SDL diagrams as the code is not obvious and probably very&n; *&t;easy to break;&n; *&n; *&t;History&n; *&t;AX.25 036&t;Jonathan(G4KLX)&t;Cloned from ax25_in.c&n; *&t;&t;&t;Joerg(DL1BKE)&t;Fixed it.&n; *&t;AX.25 037&t;Jonathan(G4KLX)&t;New timer architecture.&n; */
+multiline_comment|/*&n; *&t;AX.25 release 037&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Most of this code is based on the SDL diagrams published in the 7th&n; *&t;ARRL Computer Networking Conference papers. The diagrams have mistakes&n; *&t;in them, but are mostly correct. Before you modify the code could you&n; *&t;read the SDL diagrams as the code is not obvious and probably very&n; *&t;easy to break;&n; *&n; *&t;History&n; *&t;AX.25 036&t;Jonathan(G4KLX)&t;Cloned from ax25_in.c&n; *&t;&t;&t;Joerg(DL1BKE)&t;Fixed it.&n; *&t;AX.25 037&t;Jonathan(G4KLX)&t;New timer architecture.&n; *&t;&t;&t;Joerg(DL1BKE)&t;ax25-&gt;n2count never got reset&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_AX25_DAMA_SLAVE)
 macro_line|#include &lt;linux/errno.h&gt;
@@ -22,7 +22,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
-multiline_comment|/*&n; *&t;State machine for state 1, Awaiting Connection State.&n; *&t;The handling of the timer(s) is in file ax25_timer.c.&n; *&t;Handling of state 0 and connection release is in ax25.c.&n; */
+multiline_comment|/*&n; *&t;State machine for state 1, Awaiting Connection State.&n; *&t;The handling of the timer(s) is in file ax25_ds_timer.c.&n; *&t;Handling of state 0 and connection release is in ax25.c.&n; */
 DECL|function|ax25_ds_state1_machine
 r_static
 r_int
@@ -66,6 +66,34 @@ op_assign
 id|ax25-&gt;ax25_dev-&gt;values
 (braket
 id|AX25_VALUES_WINDOW
+)braket
+suffix:semicolon
+id|ax25_send_control
+c_func
+(paren
+id|ax25
+comma
+id|AX25_UA
+comma
+id|pf
+comma
+id|AX25_RESPONSE
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|AX25_SABME
+suffix:colon
+id|ax25-&gt;modulus
+op_assign
+id|AX25_EMODULUS
+suffix:semicolon
+id|ax25-&gt;window
+op_assign
+id|ax25-&gt;ax25_dev-&gt;values
+(braket
+id|AX25_VALUES_EWINDOW
 )braket
 suffix:semicolon
 id|ax25_send_control
@@ -180,7 +208,7 @@ c_func
 id|ax25
 )paren
 suffix:semicolon
-multiline_comment|/* according to DK4EG&#xfffd;s spec we are required to&n;&t;&t;&t; * send a RR RESPONSE FINAL NR=0. Please mail&n;&t;&t;&t; * &lt;jr@lykos.oche.de&gt; if this causes problems&n;&t;&t;&t; * with the TheNetNode DAMA Master implementation.&n;&t;&t;&t; */
+multiline_comment|/* according to DK4EG&#xfffd;s spec we are required to&n;&t;&t;&t; * send a RR RESPONSE FINAL NR=0. Please mail&n;&t;&t;&t; * &lt;jreuter@poboxes.com&gt; if this causes problems&n;&t;&t;&t; * with the TheNetNode DAMA Master implementation.&n;&t;&t;&t; */
 id|ax25_std_enquiry_response
 c_func
 (paren
@@ -235,7 +263,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;State machine for state 2, Awaiting Release State.&n; *&t;The handling of the timer(s) is in file ax25_timer.c&n; *&t;Handling of state 0 and connection release is in ax25.c.&n; */
+multiline_comment|/*&n; *&t;State machine for state 2, Awaiting Release State.&n; *&t;The handling of the timer(s) is in file ax25_ds_timer.c&n; *&t;Handling of state 0 and connection release is in ax25.c.&n; */
 DECL|function|ax25_ds_state2_machine
 r_static
 r_int
@@ -269,6 +297,9 @@ id|frametype
 (brace
 r_case
 id|AX25_SABM
+suffix:colon
+r_case
+id|AX25_SABME
 suffix:colon
 id|ax25_send_control
 c_func
@@ -444,6 +475,17 @@ id|frametype
 r_case
 id|AX25_SABM
 suffix:colon
+r_case
+id|AX25_SABME
+suffix:colon
+r_if
+c_cond
+(paren
+id|frametype
+op_eq
+id|AX25_SABM
+)paren
+(brace
 id|ax25-&gt;modulus
 op_assign
 id|AX25_MODULUS
@@ -455,6 +497,21 @@ id|ax25-&gt;ax25_dev-&gt;values
 id|AX25_VALUES_WINDOW
 )braket
 suffix:semicolon
+)brace
+r_else
+(brace
+id|ax25-&gt;modulus
+op_assign
+id|AX25_EMODULUS
+suffix:semicolon
+id|ax25-&gt;window
+op_assign
+id|ax25-&gt;ax25_dev-&gt;values
+(braket
+id|AX25_VALUES_EWINDOW
+)braket
+suffix:semicolon
+)brace
 id|ax25_send_control
 c_func
 (paren
@@ -600,6 +657,9 @@ id|nr
 )paren
 )paren
 (brace
+r_if
+c_cond
+(paren
 id|ax25_check_iframes_acked
 c_func
 (paren
@@ -607,6 +667,10 @@ id|ax25
 comma
 id|nr
 )paren
+)paren
+id|ax25-&gt;n2count
+op_assign
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -659,6 +723,17 @@ id|nr
 )paren
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|ax25-&gt;va
+op_ne
+id|nr
+)paren
+id|ax25-&gt;n2count
+op_assign
+l_int|0
+suffix:semicolon
 id|ax25_frames_acked
 c_func
 (paren
@@ -684,10 +759,6 @@ c_func
 (paren
 id|ax25
 )paren
-suffix:semicolon
-id|ax25-&gt;n2count
-op_assign
-l_int|0
 suffix:semicolon
 id|ax25_requeue_frames
 c_func
@@ -778,6 +849,9 @@ suffix:semicolon
 )brace
 r_else
 (brace
+r_if
+c_cond
+(paren
 id|ax25_check_iframes_acked
 c_func
 (paren
@@ -785,6 +859,10 @@ id|ax25
 comma
 id|nr
 )paren
+)paren
+id|ax25-&gt;n2count
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 r_if
@@ -825,7 +903,7 @@ op_plus
 l_int|1
 )paren
 op_mod
-id|AX25_MODULUS
+id|ax25-&gt;modulus
 suffix:semicolon
 id|queued
 op_assign

@@ -25,6 +25,14 @@ l_int|144
 multiline_comment|/* freepages.high */
 )brace
 suffix:semicolon
+multiline_comment|/* How many pages do we try to swap or page in/out together? */
+DECL|variable|page_cluster
+r_int
+id|page_cluster
+op_assign
+l_int|4
+suffix:semicolon
+multiline_comment|/* Default value modified in swap_setup() */
 multiline_comment|/* We track the number of pages currently being asynchronously swapped&n;   out, so that we don&squot;t try to swap TOO many pages out at once */
 DECL|variable|nr_async_pages
 id|atomic_t
@@ -118,4 +126,64 @@ comma
 multiline_comment|/* do swap I/O in clusters of this size */
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * Perform any setup for the swap system&n; */
+DECL|function|swap_setup
+r_void
+id|__init
+id|swap_setup
+c_func
+(paren
+r_void
+)paren
+(brace
+multiline_comment|/* Use a smaller cluster for memory &lt;16MB or &lt;32MB */
+r_if
+c_cond
+(paren
+id|num_physpages
+OL
+(paren
+(paren
+l_int|16
+op_star
+l_int|1024
+op_star
+l_int|1024
+)paren
+op_rshift
+id|PAGE_SHIFT
+)paren
+)paren
+id|page_cluster
+op_assign
+l_int|2
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|num_physpages
+OL
+(paren
+(paren
+l_int|32
+op_star
+l_int|1024
+op_star
+l_int|1024
+)paren
+op_rshift
+id|PAGE_SHIFT
+)paren
+)paren
+id|page_cluster
+op_assign
+l_int|3
+suffix:semicolon
+r_else
+id|page_cluster
+op_assign
+l_int|4
+suffix:semicolon
+)brace
 eof

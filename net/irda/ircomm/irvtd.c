@@ -1,6 +1,5 @@
 multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irvtd.c&n; * Version:       &n; * Description:   A virtual tty driver implementaion,&n; *                which also may be called as &quot;Port Emulation Entity&quot;&n; *                in IrCOMM specification.&n; * Status:        Experimental.&n; * Author:        Takahide Higuchi &lt;thiguchi@pluto.dti.ne.jp&gt;&n; * Source:        irlpt.c&n; *&n; *     Copyright (c) 1998, Takahide Higuchi, &lt;thiguchi@pluto.dti.ne.jp&gt;,&n; *     All Rights Reserved.&n; *&n; *     This program is free software; you can redistribute it and/or&n; *     modify it under the terms of the GNU General Public License as&n; *     published by the Free Software Foundation; either version 2 of&n; *     the License, or (at your option) any later version.&n; *&n; *     I, Takahide Higuchi, provide no warranty for any of this software.&n; *     This material is provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 multiline_comment|/* #include &lt;linux/module.h&gt; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;net/irda/irda.h&gt;
 macro_line|#include &lt;net/irda/irlmp.h&gt;

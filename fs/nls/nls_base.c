@@ -3384,6 +3384,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_NLS_ISO8859_15
+id|init_nls_iso8859_15
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_NLS_CODEPAGE_437
 id|init_nls_cp437
 c_func

@@ -5541,6 +5541,8 @@ c_func
 (paren
 l_string|&quot;scsi%d: timeout at NCR5380.c:%d&bslash;n&quot;
 comma
+id|instance-&gt;host_no
+comma
 id|__LINE__
 )paren
 suffix:semicolon

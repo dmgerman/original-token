@@ -743,7 +743,7 @@ c_func
 (paren
 id|noname_map_irq
 comma
-l_int|0x0b0a0f09
+l_int|0x0b0a0f0e
 )paren
 suffix:semicolon
 id|sio_fixup_irq_levels

@@ -175,9 +175,9 @@ id|HWEV_ALL_SENT
 suffix:semicolon
 multiline_comment|/* channel grouping */
 DECL|macro|RXGROUP
-mdefine_line|#define RXGROUP&t;&t;0x100&t;/* if set, only tx when all channels clear */
+mdefine_line|#define RXGROUP&t;&t;0100&t;/* if set, only tx when all channels clear */
 DECL|macro|TXGROUP
-mdefine_line|#define TXGROUP&t;&t;0x200&t;/* if set, don&squot;t transmit simultaneously */
+mdefine_line|#define TXGROUP&t;&t;0200&t;/* if set, don&squot;t transmit simultaneously */
 multiline_comment|/* Tx/Rx clock sources */
 DECL|enum|CLOCK_sources
 r_enum
@@ -668,6 +668,12 @@ r_char
 id|status
 suffix:semicolon
 multiline_comment|/* Copy of R0 at last external interrupt */
+DECL|member|dcd
+r_int
+r_char
+id|dcd
+suffix:semicolon
+multiline_comment|/* DCD status */
 DECL|member|kiss
 r_struct
 id|scc_kiss

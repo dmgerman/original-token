@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/i386/kernel/time.c&n; *&n; *  Copyright (C) 1991, 1992, 1995  Linus Torvalds&n; *&n; * This file contains the PC-specific time handling details:&n; * reading the RTC at bootup, etc..&n; * 1994-07-02    Alan Modra&n; *&t;fixed set_rtc_mmss, fixed time.year for &gt;= 2000, new mktime&n; * 1995-03-26    Markus Kuhn&n; *      fixed 500 ms bug at call to set_rtc_mmss, fixed DS12887&n; *      precision CMOS clock update&n; * 1996-05-03    Ingo Molnar&n; *      fixed time warps in do_[slow|fast]_gettimeoffset()&n; * 1998-09-05    (Various)&n; *&t;More robust do_fast_gettimeoffset() algorithm implemented&n; *&t;(works with APM, Cyrix 6x86MX and Centaur C6),&n; *&t;monotonic gettimeofday() with fast_get_timeoffset(),&n; *&t;drift-proof precision TSC calibration on boot&n; *&t;(C. Scott Ananian &lt;cananian@alumni.princeton.edu&gt;, Andrew D.&n; *&t;Balsa &lt;andrebalsa@altern.org&gt;, Philip Gladstone &lt;philip@raptor.com&gt;;&n; *&t;ported from 2.0.35 Jumbo-9 by Michael Krause &lt;m.krause@tu-harburg.de&gt;).&n; */
+multiline_comment|/*&n; *  linux/arch/i386/kernel/time.c&n; *&n; *  Copyright (C) 1991, 1992, 1995  Linus Torvalds&n; *&n; * This file contains the PC-specific time handling details:&n; * reading the RTC at bootup, etc..&n; * 1994-07-02    Alan Modra&n; *&t;fixed set_rtc_mmss, fixed time.year for &gt;= 2000, new mktime&n; * 1995-03-26    Markus Kuhn&n; *      fixed 500 ms bug at call to set_rtc_mmss, fixed DS12887&n; *      precision CMOS clock update&n; * 1996-05-03    Ingo Molnar&n; *      fixed time warps in do_[slow|fast]_gettimeoffset()&n; * 1998-09-05    (Various)&n; *&t;More robust do_fast_gettimeoffset() algorithm implemented&n; *&t;(works with APM, Cyrix 6x86MX and Centaur C6),&n; *&t;monotonic gettimeofday() with fast_get_timeoffset(),&n; *&t;drift-proof precision TSC calibration on boot&n; *&t;(C. Scott Ananian &lt;cananian@alumni.princeton.edu&gt;, Andrew D.&n; *&t;Balsa &lt;andrebalsa@altern.org&gt;, Philip Gladstone &lt;philip@raptor.com&gt;;&n; *&t;ported from 2.0.35 Jumbo-9 by Michael Krause &lt;m.krause@tu-harburg.de&gt;).&n; * 1998-12-16    Andrea Arcangeli&n; *&t;Fixed Jumbo-9 code in 2.1.131: do_gettimeofday was missing 1 jiffy&n; *&t;because was not accounting lost_ticks. I also removed some ugly&n; *&t;not needed global cli() and where needed I used a disable_irq(0).&n; */
 multiline_comment|/* What about the &quot;updated NTP code&quot; stuff in 2.0 time.c? It&squot;s not in&n; * 2.1, perhaps it should be ported, too.&n; *&n; * What about the BUGGY_NEPTUN_TIMER stuff in do_slow_gettimeoffset()?&n; * Whatever it fixes, is it also fixed in the new code from the Jumbo&n; * patch, so that that code can be used instead?&n; *&n; * The CPU Hz should probably be displayed in check_bugs() together&n; * with the CPU vendor and type. Perhaps even only in MHz, though that&n; * takes away some of the fun of the new code :)&n; *&n; * - Michael Krause */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -118,7 +118,7 @@ op_sub_assign
 id|last_tsc_low
 suffix:semicolon
 multiline_comment|/* tsc_low delta */
-multiline_comment|/*&n;         * Time offset = (tsc_low delta) * fast_gettimeoffset_quotient.&n;         *             = (tsc_low delta) / (clocks_per_usec)&n;         *             = (tsc_low delta) / (clocks_per_jiffy / usecs_per_jiffy)&n;&t; *&n;&t; * Using a mull instead of a divl saves up to 31 clock cycles&n;&t; * in the critical path.&n;         */
+multiline_comment|/*&n;         * Time offset = (tsc_low delta) * fast_gettimeoffset_quotient&n;         *             = (tsc_low delta) * (usecs_per_clock)&n;         *             = (tsc_low delta) * (usecs_per_jiffy / clocks_per_jiffy)&n;&t; *&n;&t; * Using a mull instead of a divl saves up to 31 clock cycles&n;&t; * in the critical path.&n;         */
 id|__asm__
 c_func
 (paren
@@ -358,6 +358,12 @@ op_star
 id|tv
 )paren
 (brace
+r_extern
+r_volatile
+r_int
+r_int
+id|lost_ticks
+suffix:semicolon
 r_int
 r_int
 id|flags
@@ -388,6 +394,27 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|lost_ticks
+)paren
+id|tv-&gt;tv_usec
+op_add_assign
+id|lost_ticks
+op_star
+(paren
+l_int|1000000
+op_div
+id|HZ
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
 id|tv-&gt;tv_usec
 op_ge
 l_int|1000000
@@ -401,12 +428,6 @@ id|tv-&gt;tv_sec
 op_increment
 suffix:semicolon
 )brace
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 )brace
 DECL|function|do_settimeofday
 r_void
@@ -432,8 +453,8 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_if
-c_cond
+r_while
+c_loop
 (paren
 id|tv-&gt;tv_usec
 OL
@@ -903,21 +924,9 @@ id|regs
 (brace
 r_int
 id|count
-comma
-id|flags
 suffix:semicolon
-multiline_comment|/* It is important that these two operations happen almost at the&n;&t; * same time. We do the RDTSC stuff first, since it&squot;s faster. To&n;         * avoid any inconsistencies, we disable interrupts locally.&n;         */
-id|__save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|__cli
-c_func
-(paren
-)paren
-suffix:semicolon
+multiline_comment|/* It is important that these two operations happen almost at the&n;&t; * same time. We do the RDTSC stuff first, since it&squot;s faster. To&n;         * avoid any inconsistencies, we need interrupts disabled locally.&n;         */
+multiline_comment|/*&n;&t; * Interrupts are just disabled locally since the timer irq has the&n;&t; * SA_INTERRUPT flag set. -arca&n;&t; */
 multiline_comment|/* read Pentium cycle counter */
 id|__asm__
 c_func
@@ -928,9 +937,8 @@ l_string|&quot;=a&quot;
 (paren
 id|last_tsc_low
 )paren
-op_scope_resolution
-l_string|&quot;eax&quot;
-comma
+suffix:colon
+suffix:colon
 l_string|&quot;edx&quot;
 )paren
 suffix:semicolon
@@ -987,12 +995,6 @@ l_int|2
 )paren
 op_div
 id|LATCH
-suffix:semicolon
-id|__restore_flags
-c_func
-(paren
-id|flags
-)paren
 suffix:semicolon
 id|timer_interrupt
 c_func

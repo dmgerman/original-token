@@ -332,7 +332,7 @@ id|target
 id|lun
 )braket
 dot
-id|xfers
+id|r_total
 op_ne
 l_int|0
 )paren
@@ -1289,7 +1289,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sp-&gt;xfers
+id|sp-&gt;r_total
 op_eq
 l_int|0
 )paren
@@ -1620,6 +1620,7 @@ dot
 id|cur_width
 )paren
 suffix:semicolon
+macro_line|#ifdef AIC7XXX_PROC_STATS
 id|size
 op_add_assign
 id|sprintf
@@ -1650,7 +1651,6 @@ comma
 id|sp-&gt;w_total512
 )paren
 suffix:semicolon
-macro_line|#ifdef AIC7XXX_PROC_STATS
 id|size
 op_add_assign
 id|sprintf
@@ -1763,6 +1763,21 @@ id|i
 )paren
 suffix:semicolon
 )brace
+macro_line|#else
+id|size
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|BLS
+comma
+l_string|&quot;    Total transfers: %ld/%ld read/written)&bslash;n&quot;
+comma
+id|sp-&gt;r_total
+comma
+id|sp-&gt;w_total
+)paren
+suffix:semicolon
 macro_line|#endif /* AIC7XXX_PROC_STATS */
 id|size
 op_add_assign

@@ -747,6 +747,27 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|lance_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|rcpci_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/* Gigabit Ethernet adapters */
 r_extern
 r_int
@@ -985,6 +1006,14 @@ op_assign
 macro_line|#ifdef CONFIG_DGRS
 (brace
 id|dgrs_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_RCPCI
+(brace
+id|rcpci_probe
 comma
 l_int|0
 )brace
@@ -1327,6 +1356,14 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_NE2000&t;&t;/* ISA (use ne2k-pci for PCI cards) */
 (brace
 id|ne_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_LANCE&t;&t;/* ISA/VLB (use pcnet32 for PCI cards) */
+(brace
+id|lance_probe
 comma
 l_int|0
 )brace
@@ -3098,6 +3135,14 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_SKTR
 op_logical_and
 id|sktr_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#ifdef CONFIG_SMCTR
+op_logical_and
+id|smctr_probe
 c_func
 (paren
 id|dev

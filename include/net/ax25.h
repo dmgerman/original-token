@@ -1355,7 +1355,7 @@ op_star
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_int
 id|ax25_check_iframes_acked
 c_func
 (paren

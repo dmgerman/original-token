@@ -409,11 +409,9 @@ r_else
 (brace
 id|printk
 (paren
-(paren
 l_string|&quot; (i_op is UNKNOWN: %p)&bslash;n&quot;
 comma
 id|inode-&gt;i_op
-)paren
 )paren
 suffix:semicolon
 )brace

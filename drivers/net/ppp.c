@@ -7671,7 +7671,7 @@ r_if
 c_cond
 (paren
 id|new_count
-OL
+op_le
 l_int|0
 )paren
 (brace

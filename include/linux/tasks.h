@@ -10,7 +10,7 @@ DECL|macro|NR_CPUS
 mdefine_line|#define NR_CPUS 1
 macro_line|#endif
 DECL|macro|NR_TASKS
-mdefine_line|#define NR_TASKS&t;512
+mdefine_line|#define NR_TASKS&t;512&t;/* On x86 Max 4092, or 4090 w/APM configured. */
 DECL|macro|MAX_TASKS_PER_USER
 mdefine_line|#define MAX_TASKS_PER_USER (NR_TASKS/2)
 DECL|macro|MIN_TASKS_LEFT_FOR_ROOT

@@ -613,25 +613,6 @@ comma
 id|SCC_check_open
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * tmp_buf is used as a temporary buffer by serial_write.  We need to&n; * lock it in case the memcpy_fromfs blocks while swapping in a page,&n; * and some other program tries to do a serial write at the same time.&n; * Since the lock will only come under contention when the system is&n; * swapping and available memory is low, it makes sense to share one&n; * buffer across all the serial ports, since it significantly saves&n; * memory if large numbers of serial ports are open.&n; */
-DECL|variable|tmp_buf
-r_static
-r_int
-r_char
-id|tmp_buf
-(braket
-l_int|4096
-)braket
-suffix:semicolon
-multiline_comment|/* This is cheating */
-DECL|variable|tmp_buf_sem
-r_static
-r_struct
-id|semaphore
-id|tmp_buf_sem
-op_assign
-id|MUTEX
-suffix:semicolon
 multiline_comment|/*&n; * This is used to figure out the divisor speeds and the timeouts&n; */
 DECL|variable|baud_table
 r_static
@@ -3399,9 +3380,9 @@ id|is_cons
 id|printk
 c_func
 (paren
-l_string|&quot;mac_SCC: console line %lx; enabling interrupt!&bslash;n&quot;
+l_string|&quot;mac_SCC: console line %d; enabling interrupt!&bslash;n&quot;
 comma
-id|info
+id|info-&gt;line
 )paren
 suffix:semicolon
 id|write_zsreg
@@ -3509,9 +3490,9 @@ id|kgdb_channel
 id|printk
 c_func
 (paren
-l_string|&quot;mac_SCC: kgdb line %lx; enabling interrupt!&bslash;n&quot;
+l_string|&quot;mac_SCC: kgdb line %d; enabling interrupt!&bslash;n&quot;
 comma
-id|info
+id|info-&gt;line
 )paren
 suffix:semicolon
 id|kgdb_chaninit
@@ -5401,10 +5382,6 @@ op_star
 id|retinfo
 )paren
 (brace
-r_struct
-id|serial_struct
-id|tmp
-suffix:semicolon
 id|retinfo-&gt;baud_base
 op_assign
 id|info-&gt;baud_base
@@ -5601,12 +5578,7 @@ id|new_rts
 )paren
 (brace
 r_int
-id|error
-suffix:semicolon
 r_int
-r_int
-id|arg
-comma
 id|bits
 suffix:semicolon
 id|bits
@@ -5852,9 +5824,6 @@ id|arg
 (brace
 r_int
 id|error
-suffix:semicolon
-r_int
-id|retval
 suffix:semicolon
 r_switch
 c_cond
@@ -6281,6 +6250,7 @@ r_int
 r_char
 op_star
 )paren
+multiline_comment|/* 2, 0 */
 (paren
 id|mac_bi_data.sccbase
 op_plus
@@ -6304,6 +6274,7 @@ r_int
 r_char
 op_star
 )paren
+multiline_comment|/* 6, 4 */
 (paren
 id|mac_bi_data.sccbase
 op_plus
@@ -6811,11 +6782,13 @@ comma
 id|io
 suffix:semicolon
 r_static
+r_int
 id|consout_registered
 op_assign
 l_int|0
 suffix:semicolon
 r_static
+r_int
 id|msg_printed
 op_assign
 l_int|0
@@ -7039,8 +7012,6 @@ comma
 id|nr
 op_assign
 l_int|0
-comma
-id|i
 suffix:semicolon
 r_int
 r_int
@@ -7049,11 +7020,6 @@ suffix:semicolon
 r_struct
 id|serial_struct
 id|req
-suffix:semicolon
-r_struct
-id|m68k_async_struct
-op_star
-id|info
 suffix:semicolon
 id|printk
 c_func
@@ -7121,6 +7087,9 @@ id|SER_SCC_MAC
 suffix:semicolon
 id|req.port
 op_assign
+(paren
+r_int
+)paren
 id|zs_soft
 (braket
 id|channel

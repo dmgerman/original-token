@@ -1,5 +1,6 @@
 multiline_comment|/*&n; * linux/arch/m68k/mac/mackeyb.c&n; *&n; * Keyboard driver for Macintosh computers.&n; *&n; * Adapted from drivers/macintosh/key_mac.c and arch/m68k/atari/akakeyb.c &n; * (see that file for its authors and contributors).&n; *&n; * Copyright (C) 1997 Michael Schmitz.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
 multiline_comment|/*&n; * misc. keyboard stuff (everything not in adb-bus.c or keyb_m68k.c)&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/kd.h&gt;

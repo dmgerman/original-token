@@ -1,6 +1,7 @@
-multiline_comment|/*&n;** z2ram - Amiga pseudo-driver to access 16bit-RAM in ZorroII space&n;**         as a block device, to be used as a RAM disk or swap space&n;** &n;** Copyright (C) 1994 by Ingo Wilken (Ingo.Wilken@informatik.uni-oldenburg.de)&n;**&n;** ++Geert: support for zorro_unused_z2ram, better range checking&n;** ++roman: translate accesses via an array&n;** ++Milan: support for ChipRAM usage&n;** ++yambo: converted to 2.0 kernel&n;** ++yambo: modularized and support added for 3 minor devices including:&n;**          MAJOR  MINOR  DESCRIPTION&n;**          -----  -----  ----------------------------------------------&n;**          37     0       Use Zorro II and Chip ram&n;**          37     1       Use only Zorro II ram&n;**          37     2       Use only Chip ram&n;**&n;** Permission to use, copy, modify, and distribute this software and its&n;** documentation for any purpose and without fee is hereby granted, provided&n;** that the above copyright notice appear in all copies and that both that&n;** copyright notice and this permission notice appear in supporting&n;** documentation.  This software is provided &quot;as is&quot; without express or&n;** implied warranty.&n;*/
+multiline_comment|/*&n;** z2ram - Amiga pseudo-driver to access 16bit-RAM in ZorroII space&n;**         as a block device, to be used as a RAM disk or swap space&n;** &n;** Copyright (C) 1994 by Ingo Wilken (Ingo.Wilken@informatik.uni-oldenburg.de)&n;**&n;** ++Geert: support for zorro_unused_z2ram, better range checking&n;** ++roman: translate accesses via an array&n;** ++Milan: support for ChipRAM usage&n;** ++yambo: converted to 2.0 kernel&n;** ++yambo: modularized and support added for 3 minor devices including:&n;**          MAJOR  MINOR  DESCRIPTION&n;**          -----  -----  ----------------------------------------------&n;**          37     0       Use Zorro II and Chip ram&n;**          37     1       Use only Zorro II ram&n;**          37     2       Use only Chip ram&n;**          37     4-7     Use memory list entry 1-4 (first is 0)&n;** ++jskov: support for 1-4th memory list entry.&n;**&n;** Permission to use, copy, modify, and distribute this software and its&n;** documentation for any purpose and without fee is hereby granted, provided&n;** that the above copyright notice appear in all copies and that both that&n;** copyright notice and this permission notice appear in supporting&n;** documentation.  This software is provided &quot;as is&quot; without express or&n;** implied warranty.&n;*/
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR    Z2RAM_MAJOR
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
@@ -11,7 +12,23 @@ macro_line|#endif
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
+macro_line|#ifdef CONFIG_APUS
+macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/zorro.h&gt;
+r_extern
+r_int
+id|num_memory
+suffix:semicolon
+r_extern
+r_struct
+id|mem_info
+id|memory
+(braket
+id|NUM_MEMINFO
+)braket
+suffix:semicolon
 DECL|macro|TRUE
 mdefine_line|#define TRUE                  (1)
 DECL|macro|FALSE
@@ -22,6 +39,16 @@ DECL|macro|Z2MINOR_Z2ONLY
 mdefine_line|#define Z2MINOR_Z2ONLY        (1)
 DECL|macro|Z2MINOR_CHIPONLY
 mdefine_line|#define Z2MINOR_CHIPONLY      (2)
+DECL|macro|Z2MINOR_MEMLIST1
+mdefine_line|#define Z2MINOR_MEMLIST1      (4)
+DECL|macro|Z2MINOR_MEMLIST2
+mdefine_line|#define Z2MINOR_MEMLIST2      (5)
+DECL|macro|Z2MINOR_MEMLIST3
+mdefine_line|#define Z2MINOR_MEMLIST3      (6)
+DECL|macro|Z2MINOR_MEMLIST4
+mdefine_line|#define Z2MINOR_MEMLIST4      (7)
+DECL|macro|Z2MINOR_COUNT
+mdefine_line|#define Z2MINOR_COUNT         (8) /* Move this down when adding a new minor */
 DECL|macro|Z2RAM_CHUNK1024
 mdefine_line|#define Z2RAM_CHUNK1024       ( Z2RAM_CHUNKSIZE &gt;&gt; 10 )
 DECL|variable|z2ram_map
@@ -44,32 +71,16 @@ r_static
 r_int
 id|z2_blocksizes
 (braket
-l_int|3
+id|Z2MINOR_COUNT
 )braket
-op_assign
-(brace
-l_int|1024
-comma
-l_int|1024
-comma
-l_int|1024
-)brace
 suffix:semicolon
 DECL|variable|z2_sizes
 r_static
 r_int
 id|z2_sizes
 (braket
-l_int|3
+id|Z2MINOR_COUNT
 )braket
-op_assign
-(brace
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-)brace
 suffix:semicolon
 DECL|variable|z2_count
 r_static
@@ -82,6 +93,13 @@ DECL|variable|chip_count
 r_static
 r_int
 id|chip_count
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|list_count
+r_static
+r_int
+id|list_count
 op_assign
 l_int|0
 suffix:semicolon
@@ -524,10 +542,242 @@ id|chip_count
 op_assign
 l_int|0
 suffix:semicolon
+id|list_count
+op_assign
+l_int|0
+suffix:semicolon
 id|z2ram_size
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* Use a specific list entry. */
+r_if
+c_cond
+(paren
+id|device
+op_ge
+id|Z2MINOR_MEMLIST1
+op_logical_and
+id|device
+op_le
+id|Z2MINOR_MEMLIST4
+)paren
+(brace
+r_int
+id|index
+op_assign
+id|device
+op_minus
+id|Z2MINOR_MEMLIST1
+op_plus
+l_int|1
+suffix:semicolon
+r_int
+r_int
+id|size
+comma
+id|paddr
+comma
+id|vaddr
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|index
+op_ge
+id|num_memory
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+id|DEVICE_NAME
+l_string|&quot;: no such entry in z2ram_map&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
+)brace
+id|paddr
+op_assign
+id|memory
+(braket
+id|index
+)braket
+dot
+id|addr
+suffix:semicolon
+id|size
+op_assign
+id|memory
+(braket
+id|index
+)braket
+dot
+id|size
+op_amp
+op_complement
+(paren
+id|Z2RAM_CHUNKSIZE
+op_minus
+l_int|1
+)paren
+suffix:semicolon
+macro_line|#ifdef __powerpc__
+multiline_comment|/* FIXME: ioremap doesn&squot;t build correct memory tables. */
+(brace
+r_extern
+r_void
+op_star
+id|vmalloc
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|vfree
+(paren
+r_void
+op_star
+)paren
+suffix:semicolon
+id|vfree
+c_func
+(paren
+id|vmalloc
+(paren
+id|size
+)paren
+)paren
+suffix:semicolon
+)brace
+id|vaddr
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|__ioremap
+(paren
+id|paddr
+comma
+id|size
+comma
+id|_PAGE_WRITETHRU
+)paren
+suffix:semicolon
+macro_line|#else
+id|vaddr
+op_assign
+id|kernel_map
+(paren
+id|paddr
+comma
+id|size
+comma
+id|KERNELMAP_FULL_CACHING
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+macro_line|#endif
+id|z2ram_map
+op_assign
+id|kmalloc
+c_func
+(paren
+(paren
+id|size
+op_div
+id|Z2RAM_CHUNKSIZE
+)paren
+op_star
+r_sizeof
+(paren
+id|z2ram_map
+(braket
+l_int|0
+)braket
+)paren
+comma
+id|GFP_KERNEL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|z2ram_map
+op_eq
+l_int|NULL
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+id|DEVICE_NAME
+l_string|&quot;: cannot get mem for z2ram_map&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+id|size
+)paren
+(brace
+id|z2ram_map
+(braket
+id|z2ram_size
+op_increment
+)braket
+op_assign
+id|vaddr
+suffix:semicolon
+id|size
+op_sub_assign
+id|Z2RAM_CHUNKSIZE
+suffix:semicolon
+id|vaddr
+op_add_assign
+id|Z2RAM_CHUNKSIZE
+suffix:semicolon
+id|list_count
+op_increment
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|z2ram_size
+op_ne
+l_int|0
+)paren
+id|printk
+c_func
+(paren
+id|KERN_INFO
+id|DEVICE_NAME
+l_string|&quot;: using %iK List Entry %d Memory&bslash;n&quot;
+comma
+id|list_count
+op_star
+id|Z2RAM_CHUNK1024
+comma
+id|index
+)paren
+suffix:semicolon
+)brace
+r_else
 r_switch
 c_cond
 (paren
@@ -801,7 +1051,7 @@ l_int|0
 suffix:semicolon
 )brace
 r_static
-r_void
+r_int
 DECL|function|z2_release
 id|z2_release
 c_func
@@ -826,6 +1076,7 @@ op_minus
 l_int|1
 )paren
 r_return
+l_int|0
 suffix:semicolon
 id|sync_dev
 c_func
@@ -838,6 +1089,7 @@ id|MOD_DEC_USE_COUNT
 suffix:semicolon
 macro_line|#endif
 r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|variable|z2_fops
@@ -878,7 +1130,17 @@ id|z2_release
 comma
 multiline_comment|/* release */
 id|block_fsync
+comma
 multiline_comment|/* fsync */
+l_int|NULL
+comma
+multiline_comment|/* fasync */
+l_int|NULL
+comma
+multiline_comment|/* check_media_change */
+l_int|NULL
+comma
+multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 DECL|function|__initfunc
@@ -932,6 +1194,42 @@ r_return
 op_minus
 id|EBUSY
 suffix:semicolon
+)brace
+(brace
+multiline_comment|/* Initialize size arrays. */
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|Z2MINOR_COUNT
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|z2_blocksizes
+(braket
+id|i
+)braket
+op_assign
+l_int|1024
+suffix:semicolon
+id|z2_sizes
+(braket
+id|i
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 )brace
 id|blk_dev
 (braket

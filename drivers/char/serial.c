@@ -6729,7 +6729,7 @@ id|ASYNC_USR_MASK
 )paren
 op_or
 (paren
-id|info-&gt;flags
+id|new_serial.flags
 op_amp
 id|ASYNC_USR_MASK
 )paren

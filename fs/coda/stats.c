@@ -37,7 +37,7 @@ r_struct
 id|coda_upcall_stats_entry
 id|coda_upcall_stat
 (braket
-id|CFS_NCALLS
+id|CODA_NCALLS
 )braket
 suffix:semicolon
 multiline_comment|/* keep this in sync with coda.h! */
@@ -350,7 +350,7 @@ c_cond
 (paren
 id|opcode
 template_param
-id|CFS_NCALLS
+id|CODA_NCALLS
 op_minus
 l_int|1
 )paren
@@ -1110,7 +1110,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|CFS_NCALLS
+id|CODA_NCALLS
 suffix:semicolon
 id|i
 op_increment

@@ -106,7 +106,7 @@ id|flag
 )paren
 suffix:semicolon
 r_void
-id|coda_flag_alias_children
+id|coda_flag_inode_children
 c_func
 (paren
 r_struct

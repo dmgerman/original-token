@@ -74,17 +74,17 @@ multiline_comment|/* to verify the data structure */
 suffix:semicolon
 multiline_comment|/* flags */
 DECL|macro|C_VATTR
-mdefine_line|#define C_VATTR       0x1         /* Validity of vattr in the cnode */
-DECL|macro|C_SYMLINK
-mdefine_line|#define C_SYMLINK     0x2         /* Validity of symlink pointer in the cnode */
-DECL|macro|C_DYING
-mdefine_line|#define C_DYING       0x4&t;  /* Set for outstanding cnodes from venus (which died) */
+mdefine_line|#define C_VATTR       0x1   /* Validity of vattr in inode */
 DECL|macro|C_PURGE
-mdefine_line|#define C_PURGE      0x8
+mdefine_line|#define C_PURGE       0x8
 DECL|macro|C_ZAPDIR
 mdefine_line|#define C_ZAPDIR      0x10
+DECL|macro|C_DYING
+mdefine_line|#define C_DYING       0x4   /* from venus (which died) */
 DECL|macro|C_INITED
 mdefine_line|#define C_INITED      0x20
+DECL|macro|C_FLUSH
+mdefine_line|#define C_FLUSH       0x2   /* used after a flush */
 r_int
 id|coda_cnode_make
 c_func

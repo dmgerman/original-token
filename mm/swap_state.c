@@ -874,7 +874,6 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Lookup a swap entry in the swap cache.  We need to be careful about&n; * locked pages.  A found page will be returned with its refcount&n; * incremented.&n; */
 DECL|function|lookup_swap_cache
-r_static
 r_struct
 id|page
 op_star
@@ -1046,7 +1045,7 @@ op_assign
 id|__get_free_page
 c_func
 (paren
-id|GFP_KERNEL
+id|GFP_USER
 )paren
 suffix:semicolon
 r_if

@@ -244,6 +244,20 @@ op_star
 id|ints
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|ioapic_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
 macro_line|#endif
 r_extern
 r_void
@@ -2793,6 +2807,12 @@ id|smp_setup
 )brace
 comma
 macro_line|#ifdef __i386__
+(brace
+l_string|&quot;noapic&quot;
+comma
+id|ioapic_setup
+)brace
+comma
 (brace
 l_string|&quot;pirq=&quot;
 comma

@@ -351,6 +351,8 @@ c_func
 r_struct
 id|inode
 op_star
+comma
+r_int
 )paren
 suffix:semicolon
 r_void
@@ -360,6 +362,21 @@ c_func
 r_struct
 id|inode
 op_star
+)paren
+suffix:semicolon
+multiline_comment|/* sysctl.h */
+r_void
+id|coda_sysctl_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_void
+id|coda_sysctl_clean
+c_func
+(paren
+r_void
 )paren
 suffix:semicolon
 multiline_comment|/* debugging masks */

@@ -42,7 +42,6 @@ DECL|macro|TX_FIFO_THRESH
 mdefine_line|#define TX_FIFO_THRESH 256&t;&t;/* Rounded down to 4 byte units. */
 DECL|macro|RX_FIFO_THRESH
 mdefine_line|#define RX_FIFO_THRESH 1&t;&t;/* 0-3, 0==32, 64,96, or 3==128 bytes  */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/version.h&gt;&t;&t;/* Evil, but neccessary */
 macro_line|#ifdef MODULE
 macro_line|#ifdef MODVERSIONS

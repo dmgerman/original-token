@@ -133,6 +133,9 @@ comma
 multiline_comment|/* whether enabled or not */
 DECL|enumerator|PROC_FS
 id|PROC_FS
+comma
+DECL|enumerator|PROC_SWAPSTATS
+id|PROC_SWAPSTATS
 )brace
 suffix:semicolon
 DECL|enum|pid_directory_inos
@@ -476,6 +479,9 @@ comma
 DECL|enumerator|PROC_SCSI_QLOGICISP
 id|PROC_SCSI_QLOGICISP
 comma
+DECL|enumerator|PROC_SCSI_QLOGICFC
+id|PROC_SCSI_QLOGICFC
+comma
 DECL|enumerator|PROC_SCSI_SEAGATE
 id|PROC_SCSI_SEAGATE
 comma
@@ -515,8 +521,14 @@ comma
 DECL|enumerator|PROC_SCSI_NCR53C406A
 id|PROC_SCSI_NCR53C406A
 comma
+DECL|enumerator|PROC_SCSI_MEGARAID
+id|PROC_SCSI_MEGARAID
+comma
 DECL|enumerator|PROC_SCSI_PPA
 id|PROC_SCSI_PPA
+comma
+DECL|enumerator|PROC_SCSI_ATP870U
+id|PROC_SCSI_ATP870U
 comma
 DECL|enumerator|PROC_SCSI_ESP
 id|PROC_SCSI_ESP
@@ -559,6 +571,9 @@ id|PROC_SCSI_53C94
 comma
 DECL|enumerator|PROC_SCSI_PLUTO
 id|PROC_SCSI_PLUTO
+comma
+DECL|enumerator|PROC_SCSI_INI9100U
+id|PROC_SCSI_INI9100U
 comma
 DECL|enumerator|PROC_SCSI_SCSI_DEBUG
 id|PROC_SCSI_SCSI_DEBUG

@@ -1,29 +1,28 @@
 DECL|macro|RCS_ID
-mdefine_line|#define RCS_ID &quot;$Id: scc.c,v 1.73 1998/01/29 17:38:51 jreuter Exp jreuter $&quot;
+mdefine_line|#define RCS_ID &quot;$Id: scc.c,v 1.75 1998/11/04 15:15:01 jreuter Exp jreuter $&quot;
 DECL|macro|VERSION
 mdefine_line|#define VERSION &quot;3.0&quot;
 DECL|macro|BANNER
 mdefine_line|#define BANNER  &quot;Z8530 SCC driver version &quot;VERSION&quot;.dl1bke (experimental) by DL1BKE&bslash;n&quot;
 multiline_comment|/*&n; * Please use z8530drv-utils-3.0 with this version.&n; *            ------------------&n; *&n; * You can find a subset of the documentation in &n; * linux/Documentation/networking/z8530drv.txt.&n; */
-multiline_comment|/*&n;   ********************************************************************&n;   *   SCC.C - Linux driver for Z8530 based HDLC cards for AX.25      *&n;   ********************************************************************&n;&n;&n;   ********************************************************************&n;&n;&t;Copyright (c) 1993, 1998 Joerg Reuter DL1BKE&n;&n;&t;portions (c) 1993 Guido ten Dolle PE1NNZ&n;&n;   ********************************************************************&n;   &n;   The driver and the programs in the archive are UNDER CONSTRUCTION.&n;   The code is likely to fail, and so your kernel could --- even &n;   a whole network. &n;&n;   This driver is intended for Amateur Radio use. If you are running it&n;   for commercial purposes, please drop me a note. I am nosy...&n;&n;   ...BUT:&n; &n;   ! You  m u s t  recognize the appropriate legislations of your country !&n;   ! before you connect a radio to the SCC board and start to transmit or !&n;   ! receive. The GPL allows you to use the  d r i v e r,  NOT the RADIO! !&n;&n;   For non-Amateur-Radio use please note that you might need a special&n;   allowance/licence from the designer of the SCC Board and/or the&n;   MODEM. &n;&n;   This program is free software; you can redistribute it and/or modify &n;   it under the terms of the (modified) GNU General Public License &n;   delivered with the Linux kernel source.&n;   &n;   This program is distributed in the hope that it will be useful,&n;   but WITHOUT ANY WARRANTY; without even the implied warranty of&n;   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;   GNU General Public License for more details.&n;&n;   You should find a copy of the GNU General Public License in &n;   /usr/src/linux/COPYING; &n;   &n;   ******************************************************************** &n;&n;&t;&t;&n;   Incomplete history of z8530drv:&n;   -------------------------------&n;&n;   940913&t;- started to write the driver, rescued most of my own&n;&t;&t;  code (and Hans Alblas&squot; memory buffer pool concept) from &n;&t;&t;  an earlier project &quot;sccdrv&quot; which was initiated by &n;&t;&t;  Guido ten Dolle. Not much of the old driver survived, &n;&t;&t;  though. The first version I put my hands on was sccdrv1.3&n;&t;&t;  from August 1993. The memory buffer pool concept&n;&t;&t;  appeared in an unauthorized sccdrv version (1.5) from&n;&t;&t;  August 1994.&n;&n;   950131&t;- changed copyright notice to GPL without limitations.&n;   &n;     .&n;     .&t;&lt;SNIP&gt;&n;     .&n;   &t;&t;  &n;   961005&t;- New semester, new driver... &n;&n;   &t;&t;  * KISS TNC emulator removed (TTY driver)&n;   &t;&t;  * Source moved to drivers/net/&n;   &t;&t;  * Includes Z8530 defines from drivers/net/z8530.h&n;   &t;&t;  * Uses sk_buffer memory management&n;   &t;&t;  * Reduced overhead of /proc/net/z8530drv output&n;   &t;&t;  * Streamlined quite a lot things&n;   &t;&t;  * Invents brand new bugs... ;-)&n;&n;   &t;&t;  The move to version number 3.0 reflects theses changes.&n;   &t;&t;  You can use &squot;kissbridge&squot; if you need a KISS TNC emulator.&n;&n;   961213&t;- Fixed for Linux networking changes. (G4KLX)&n;   970108&t;- Fixed the remaining problems.&n;   970402&t;- Hopefully fixed the problems with the new *_timer()&n;   &t;&t;  routines, added calibration code.&n;   971012&t;- Made SCC_DELAY a CONFIG option, added CONFIG_SCC_TRXECHO&n;   980129&t;- Small fix to avoid lock-up on initialization&n;&n;   Thanks to all who contributed to this driver with ideas and bug&n;   reports!&n;   &n;   NB -- if you find errors, change something, please let me know&n;      &t; first before you distribute it... And please don&squot;t touch&n;   &t; the version number. Just replace my callsign in&n;   &t; &quot;v3.0.dl1bke&quot; with your own. Just to avoid confusion...&n;&n;   If you want to add your modification to the linux distribution&n;   please (!) contact me first.&n;   &n;   New versions of the driver will be announced on the linux-hams&n;   mailing list on vger.rutgers.edu. To subscribe send an e-mail&n;   to majordomo@vger.rutgers.edu with the following line in&n;   the body of the mail:&n;   &n;&t;   subscribe linux-hams&n;&t;   &n;   The content of the &quot;Subject&quot; field will be ignored.&n;&n;   vy 73,&n;   Joerg Reuter&t;ampr-net: dl1bke@db0pra.ampr.org&n;&t;&t;AX-25   : DL1BKE @ DB0ACH.#NRW.DEU.EU&n;&t;&t;Internet: jreuter@poboxes.com&n;&t;&t;www     : http://www.rat.de/jr&n;*/
+multiline_comment|/*&n;   ********************************************************************&n;   *   SCC.C - Linux driver for Z8530 based HDLC cards for AX.25      *&n;   ********************************************************************&n;&n;&n;   ********************************************************************&n;&n;&t;Copyright (c) 1993, 1998 Joerg Reuter DL1BKE&n;&n;&t;portions (c) 1993 Guido ten Dolle PE1NNZ&n;&n;   ********************************************************************&n;   &n;   The driver and the programs in the archive are UNDER CONSTRUCTION.&n;   The code is likely to fail, and so your kernel could --- even &n;   a whole network. &n;&n;   This driver is intended for Amateur Radio use. If you are running it&n;   for commercial purposes, please drop me a note. I am nosy...&n;&n;   ...BUT:&n; &n;   ! You  m u s t  recognize the appropriate legislations of your country !&n;   ! before you connect a radio to the SCC board and start to transmit or !&n;   ! receive. The GPL allows you to use the  d r i v e r,  NOT the RADIO! !&n;&n;   For non-Amateur-Radio use please note that you might need a special&n;   allowance/licence from the designer of the SCC Board and/or the&n;   MODEM. &n;&n;   This program is free software; you can redistribute it and/or modify &n;   it under the terms of the (modified) GNU General Public License &n;   delivered with the Linux kernel source.&n;   &n;   This program is distributed in the hope that it will be useful,&n;   but WITHOUT ANY WARRANTY; without even the implied warranty of&n;   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;   GNU General Public License for more details.&n;&n;   You should find a copy of the GNU General Public License in &n;   /usr/src/linux/COPYING; &n;   &n;   ******************************************************************** &n;&n;&t;&t;&n;   Incomplete history of z8530drv:&n;   -------------------------------&n;&n;   1994-09-13&t;started to write the driver, rescued most of my own&n;&t;&t;code (and Hans Alblas&squot; memory buffer pool concept) from &n;&t;&t;an earlier project &quot;sccdrv&quot; which was initiated by &n;&t;&t;Guido ten Dolle. Not much of the old driver survived, &n;&t;&t;though. The first version I put my hands on was sccdrv1.3&n;&t;&t;from August 1993. The memory buffer pool concept&n;&t;&t;appeared in an unauthorized sccdrv version (1.5) from&n;&t;&t;August 1994.&n;&n;   1995-01-31&t;changed copyright notice to GPL without limitations.&n;   &n;     .&n;     .&t;&lt;SNIP&gt;&n;     .&n;   &t;&t;  &n;   1996-10-05&t;New semester, new driver... &n;&n;   &t;&t;  * KISS TNC emulator removed (TTY driver)&n;   &t;&t;  * Source moved to drivers/net/&n;   &t;&t;  * Includes Z8530 defines from drivers/net/z8530.h&n;   &t;&t;  * Uses sk_buffer memory management&n;   &t;&t;  * Reduced overhead of /proc/net/z8530drv output&n;   &t;&t;  * Streamlined quite a lot things&n;   &t;&t;  * Invents brand new bugs... ;-)&n;&n;   &t;&t;  The move to version number 3.0 reflects theses changes.&n;   &t;&t;  You can use &squot;kissbridge&squot; if you need a KISS TNC emulator.&n;&n;   1996-12-13&t;Fixed for Linux networking changes. (G4KLX)&n;   1997-01-08&t;Fixed the remaining problems.&n;   1997-04-02&t;Hopefully fixed the problems with the new *_timer()&n;   &t;&t;routines, added calibration code.&n;   1997-10-12&t;Made SCC_DELAY a CONFIG option, added CONFIG_SCC_TRXECHO&n;   1998-01-29&t;Small fix to avoid lock-up on initialization&n;   1998-09-29&t;Fixed the &quot;grouping&quot; bugs, tx_inhibit works again,&n;   &t;&t;using dev-&gt;tx_queue_len now instead of MAXQUEUE now.&n;   1998-10-21&t;Postponed the spinlock changes, would need a lot of&n;   &t;&t;testing I currently don&squot;t have the time to. Softdcd doesn&squot;t&n;   &t;&t;work.&n;   1998-11-04&t;Softdcd does not work correctly in DPLL mode, in fact it &n;   &t;&t;never did. The DPLL locks on noise, the SYNC unit sees&n;   &t;&t;flags that aren&squot;t... Restarting the DPLL does not help&n;   &t;&t;either, it resynchronizes too slow and the first received&n;   &t;&t;frame gets lost.&n;&n;   Thanks to all who contributed to this driver with ideas and bug&n;   reports!&n;   &n;   NB -- if you find errors, change something, please let me know&n;      &t; first before you distribute it... And please don&squot;t touch&n;   &t; the version number. Just replace my callsign in&n;   &t; &quot;v3.0.dl1bke&quot; with your own. Just to avoid confusion...&n;&n;   If you want to add your modification to the linux distribution&n;   please (!) contact me first.&n;   &n;   New versions of the driver will be announced on the linux-hams&n;   mailing list on vger.rutgers.edu. To subscribe send an e-mail&n;   to majordomo@vger.rutgers.edu with the following line in&n;   the body of the mail:&n;   &n;&t;   subscribe linux-hams&n;&t;   &n;   The content of the &quot;Subject&quot; field will be ignored.&n;&n;   vy 73,&n;   Joerg Reuter&t;ampr-net: dl1bke@db0pra.ampr.org&n;&t;&t;AX-25   : DL1BKE @ DB0ACH.#NRW.DEU.EU&n;&t;&t;Internet: jreuter@poboxes.com&n;&t;&t;www     : http://poboxes.com/jreuter/&n;*/
 multiline_comment|/* ----------------------------------------------------------------------- */
 DECL|macro|SCC_LDELAY
 macro_line|#undef  SCC_LDELAY&t;1&t;/* slow it even a bit more down */
-DECL|macro|DONT_CHECK
-macro_line|#undef  DONT_CHECK&t;&t;/* don&squot;t look if the SCCs you specified are available */
-DECL|macro|MAXSCC
-mdefine_line|#define MAXSCC          4       /* number of max. supported chips */
-DECL|macro|BUFSIZE
-mdefine_line|#define BUFSIZE         384     /* must not exceed 4096 */
-DECL|macro|MAXQUEUE
-mdefine_line|#define MAXQUEUE&t;8&t;/* number of buffers we queue ourself */
-DECL|macro|DISABLE_ALL_INTS
-macro_line|#undef  DISABLE_ALL_INTS&t;/* use cli()/sti() in ISR instead of */
+DECL|macro|SCC_DONT_CHECK
+macro_line|#undef  SCC_DONT_CHECK&t;&t;/* don&squot;t look if the SCCs you specified are available */
+DECL|macro|SCC_MAXCHIPS
+mdefine_line|#define SCC_MAXCHIPS&t;4       /* number of max. supported chips */
+DECL|macro|SCC_BUFSIZE
+mdefine_line|#define SCC_BUFSIZE&t;384     /* must not exceed 4096 */
+DECL|macro|SCC_DISABLE_ALL_INTS
+macro_line|#undef  SCC_DISABLE_ALL_INTS&t;/* use cli()/sti() in ISR instead of */
 multiline_comment|/* enable_irq()/disable_irq()        */
 DECL|macro|SCC_DEBUG
 macro_line|#undef&t;SCC_DEBUG
-DECL|macro|DEFAULT_CLOCK
-mdefine_line|#define DEFAULT_CLOCK&t;4915200 /* default pclock if nothing is specified */
+DECL|macro|SCC_DEFAULT_CLOCK
+mdefine_line|#define SCC_DEFAULT_CLOCK&t;4915200 
+multiline_comment|/* default pclock if nothing is specified */
 multiline_comment|/* ----------------------------------------------------------------------- */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -444,7 +443,7 @@ id|SCC_Info
 (braket
 l_int|2
 op_star
-id|MAXSCC
+id|SCC_MAXCHIPS
 )braket
 suffix:semicolon
 multiline_comment|/* information per channel */
@@ -469,7 +468,7 @@ DECL|variable|SCC_ctrl
 )brace
 id|SCC_ctrl
 (braket
-id|MAXSCC
+id|SCC_MAXCHIPS
 op_plus
 l_int|1
 )braket
@@ -519,8 +518,8 @@ multiline_comment|/* *&t;&t;&t;Port Access Functions&t;&t;&t;      * */
 multiline_comment|/* ******************************************************************** */
 multiline_comment|/* These provide interrupt save 2-step access to the Z8530 registers */
 DECL|function|InReg
-r_extern
-id|__inline__
+r_static
+r_inline
 r_int
 r_char
 id|InReg
@@ -611,8 +610,8 @@ id|r
 suffix:semicolon
 )brace
 DECL|function|OutReg
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|OutReg
 c_func
@@ -699,8 +698,8 @@ id|flags
 suffix:semicolon
 )brace
 DECL|function|wr
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|wr
 c_func
@@ -738,8 +737,8 @@ id|val
 suffix:semicolon
 )brace
 DECL|function|or
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 op_logical_or
 (paren
@@ -776,8 +775,8 @@ id|val
 suffix:semicolon
 )brace
 DECL|function|cl
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|cl
 c_func
@@ -815,10 +814,10 @@ id|val
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef DISABLE_ALL_INTS
+macro_line|#ifdef SCC_DISABLE_ALL_INTS
 DECL|function|scc_cli
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|scc_cli
 c_func
@@ -834,8 +833,8 @@ c_func
 suffix:semicolon
 )brace
 DECL|function|scc_sti
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|scc_sti
 c_func
@@ -853,7 +852,7 @@ suffix:semicolon
 macro_line|#else
 DECL|function|scc_cli
 r_static
-id|__inline__
+r_inline
 r_void
 id|scc_cli
 c_func
@@ -871,7 +870,7 @@ suffix:semicolon
 )brace
 DECL|function|scc_sti
 r_static
-id|__inline__
+r_inline
 r_void
 id|scc_sti
 c_func
@@ -892,8 +891,8 @@ multiline_comment|/* ***********************************************************
 multiline_comment|/* *&t;&t;&t;Some useful macros&t;&t;&t;      * */
 multiline_comment|/* ******************************************************************** */
 DECL|function|scc_lock_dev
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|scc_lock_dev
 c_func
@@ -910,8 +909,8 @@ l_int|1
 suffix:semicolon
 )brace
 DECL|function|scc_unlock_dev
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|scc_unlock_dev
 c_func
@@ -928,8 +927,8 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|scc_discard_buffers
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|scc_discard_buffers
 c_func
@@ -1007,8 +1006,8 @@ multiline_comment|/* *&t;&t;&t;Interrupt Service Routines&t;&t;      * */
 multiline_comment|/* ******************************************************************** */
 multiline_comment|/* ----&gt; subroutines for the interrupt handlers &lt;---- */
 DECL|function|scc_notify
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|scc_notify
 c_func
@@ -1093,8 +1092,8 @@ op_increment
 suffix:semicolon
 )brace
 DECL|function|flush_rx_FIFO
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|flush_rx_FIFO
 c_func
@@ -1153,12 +1152,62 @@ l_int|NULL
 suffix:semicolon
 )brace
 )brace
+DECL|function|start_hunt
+r_static
+r_void
+id|start_hunt
+c_func
+(paren
+r_struct
+id|scc_channel
+op_star
+id|scc
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|scc-&gt;modem.clocksrc
+op_ne
+id|CLK_EXTERNAL
+)paren
+)paren
+id|OutReg
+c_func
+(paren
+id|scc-&gt;ctrl
+comma
+id|R14
+comma
+id|SEARCH
+op_or
+id|scc-&gt;wreg
+(braket
+id|R14
+)braket
+)paren
+suffix:semicolon
+multiline_comment|/* DPLL: enter search mode */
+op_logical_or
+(paren
+id|scc
+comma
+id|R3
+comma
+id|ENT_HM
+op_or
+id|RxENABLE
+)paren
+suffix:semicolon
+multiline_comment|/* enable the receiver, hunt mode */
+)brace
 multiline_comment|/* ----&gt; four different interrupt handlers for Tx, Rx, changing of&t;*/
 multiline_comment|/*       DCD/CTS and Rx/Tx errors&t;&t;&t;&t;&t;*/
 multiline_comment|/* Transmitter interrupt handler */
 DECL|function|scc_txint
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|scc_txint
 c_func
@@ -1399,8 +1448,8 @@ suffix:semicolon
 )brace
 multiline_comment|/* External/Status interrupt handler */
 DECL|function|scc_exint
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|scc_exint
 c_func
@@ -1459,32 +1508,45 @@ c_func
 id|scc
 )paren
 suffix:semicolon
-multiline_comment|/* DCD: on = start to receive packet, off = ABORT condition */
-multiline_comment|/* (a successfully received packet generates a special condition int) */
+multiline_comment|/* HUNT: software DCD; on = waiting for SYNC, off = receiving frame */
 r_if
 c_cond
 (paren
+(paren
 id|changes
 op_amp
-id|DCD
+id|SYNC_HUNT
 )paren
-multiline_comment|/* DCD input changed state */
+op_logical_and
+id|scc-&gt;kiss.softdcd
+)paren
 (brace
 r_if
 c_cond
 (paren
 id|status
 op_amp
-id|DCD
+id|SYNC_HUNT
 )paren
-multiline_comment|/* DCD is now ON */
 (brace
+id|scc-&gt;dcd
+op_assign
+l_int|0
+suffix:semicolon
+id|flush_rx_FIFO
+c_func
+(paren
+id|scc
+)paren
+suffix:semicolon
 r_if
 c_cond
+(paren
 (paren
 id|scc-&gt;modem.clocksrc
 op_ne
 id|CLK_EXTERNAL
+)paren
 )paren
 id|OutReg
 c_func
@@ -1502,18 +1564,63 @@ id|R14
 )paren
 suffix:semicolon
 multiline_comment|/* DPLL: enter search mode */
-op_logical_or
+)brace
+r_else
+(brace
+id|scc-&gt;dcd
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+id|scc_notify
+c_func
 (paren
 id|scc
 comma
-id|R3
-comma
-id|ENT_HM
-op_or
-id|RxENABLE
+id|scc-&gt;dcd
+ques
+c_cond
+id|HWEV_DCD_OFF
+suffix:colon
+id|HWEV_DCD_ON
 )paren
 suffix:semicolon
-multiline_comment|/* enable the receiver, hunt mode */
+)brace
+multiline_comment|/* DCD: on = start to receive packet, off = ABORT condition */
+multiline_comment|/* (a successfully received packet generates a special condition int) */
+r_if
+c_cond
+(paren
+(paren
+id|changes
+op_amp
+id|DCD
+)paren
+op_logical_and
+op_logical_neg
+id|scc-&gt;kiss.softdcd
+)paren
+multiline_comment|/* DCD input changed state */
+(brace
+r_if
+c_cond
+(paren
+id|status
+op_amp
+id|DCD
+)paren
+multiline_comment|/* DCD is now ON */
+(brace
+id|start_hunt
+c_func
+(paren
+id|scc
+)paren
+suffix:semicolon
+id|scc-&gt;dcd
+op_assign
+l_int|1
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -1537,23 +1644,17 @@ c_func
 id|scc
 )paren
 suffix:semicolon
+id|scc-&gt;dcd
+op_assign
+l_int|0
+suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|scc-&gt;kiss.softdcd
-)paren
 id|scc_notify
 c_func
 (paren
 id|scc
 comma
-(paren
-id|status
-op_amp
-id|DCD
-)paren
+id|scc-&gt;dcd
 ques
 c_cond
 id|HWEV_DCD_ON
@@ -1561,50 +1662,6 @@ suffix:colon
 id|HWEV_DCD_OFF
 )paren
 suffix:semicolon
-)brace
-multiline_comment|/* HUNT: software DCD; on = waiting for SYNC, off = receiving frame */
-r_if
-c_cond
-(paren
-id|changes
-op_amp
-id|SYNC_HUNT
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|scc-&gt;kiss.softdcd
-)paren
-id|scc_notify
-c_func
-(paren
-id|scc
-comma
-(paren
-id|status
-op_amp
-id|SYNC_HUNT
-)paren
-ques
-c_cond
-id|HWEV_DCD_OFF
-suffix:colon
-id|HWEV_DCD_ON
-)paren
-suffix:semicolon
-r_else
-id|cl
-c_func
-(paren
-id|scc
-comma
-id|R15
-comma
-id|SYNCIE
-)paren
-suffix:semicolon
-multiline_comment|/* oops, we were too lazy to disable this? */
 )brace
 macro_line|#ifdef notdef
 multiline_comment|/* CTS: use external TxDelay (what&squot;s that good for?!)&n;&t; * Anyway: If we _could_ use it (BayCom USCC uses CTS for&n;&t; * own purposes) we _should_ use the &quot;autoenable&quot; feature&n;&t; * of the Z8530 and not this interrupt...&n;&t; */
@@ -1719,8 +1776,8 @@ suffix:semicolon
 )brace
 multiline_comment|/* Receiver interrupt handler */
 DECL|function|scc_rxint
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|scc_rxint
 c_func
@@ -1912,8 +1969,8 @@ suffix:semicolon
 )brace
 multiline_comment|/* Receive Special Condition interrupt handler */
 DECL|function|scc_spint
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|scc_spint
 c_func
@@ -2199,12 +2256,6 @@ suffix:semicolon
 r_int
 id|k
 suffix:semicolon
-id|scc_cli
-c_func
-(paren
-id|irq
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2306,12 +2357,6 @@ id|RES_H_IUS
 suffix:semicolon
 multiline_comment|/* Reset Highest IUS */
 )brace
-id|scc_sti
-c_func
-(paren
-id|irq
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2477,20 +2522,14 @@ id|ctrl
 op_increment
 suffix:semicolon
 )brace
-id|scc_sti
-c_func
-(paren
-id|irq
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/* ******************************************************************** */
 multiline_comment|/* *&t;&t;&t;Init Channel&t;&t;&t;&t;&t;*/
 multiline_comment|/* ******************************************************************** */
 multiline_comment|/* ----&gt; set SCC channel speed &lt;---- */
 DECL|function|set_brg
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|set_brg
 c_func
@@ -2554,8 +2593,8 @@ suffix:semicolon
 multiline_comment|/* enable baudrate generator */
 )brace
 DECL|function|set_speed
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|set_speed
 c_func
@@ -2610,8 +2649,8 @@ suffix:semicolon
 )brace
 multiline_comment|/* ----&gt; initialize a SCC channel &lt;---- */
 DECL|function|init_brg
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|init_brg
 c_func
@@ -2966,6 +3005,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|scc-&gt;kiss.softdcd
+op_logical_or
 (paren
 id|InReg
 c_func
@@ -2974,40 +3015,18 @@ id|scc-&gt;ctrl
 comma
 id|R0
 )paren
-)paren
 op_amp
 id|DCD
 )paren
+)paren
 multiline_comment|/* DCD is now ON */
 (brace
-r_if
-c_cond
-(paren
-id|scc-&gt;modem.clocksrc
-op_ne
-id|CLK_EXTERNAL
-)paren
-op_logical_or
+id|start_hunt
+c_func
 (paren
 id|scc
-comma
-id|R14
-comma
-id|SEARCH
 )paren
 suffix:semicolon
-op_logical_or
-(paren
-id|scc
-comma
-id|R3
-comma
-id|ENT_HM
-op_or
-id|RxENABLE
-)paren
-suffix:semicolon
-multiline_comment|/* enable the receiver, hunt mode */
 )brace
 multiline_comment|/* enable ABORT, DCD &amp; SYNC/HUNT interrupts */
 id|wr
@@ -3021,21 +3040,14 @@ id|BRKIE
 op_or
 id|TxUIE
 op_or
-id|DCDIE
-)paren
-suffix:semicolon
-r_if
-c_cond
 (paren
 id|scc-&gt;kiss.softdcd
-)paren
-op_logical_or
-(paren
-id|scc
-comma
-id|R15
-comma
+ques
+c_cond
 id|SYNCIE
+suffix:colon
+id|DCDIE
+)paren
 )paren
 suffix:semicolon
 id|Outb
@@ -3257,6 +3269,8 @@ comma
 id|R15
 comma
 id|DCDIE
+op_or
+id|SYNCIE
 )paren
 suffix:semicolon
 multiline_comment|/* No DCD changes, please */
@@ -3287,6 +3301,32 @@ op_or
 id|TRxCBR
 )paren
 suffix:semicolon
+multiline_comment|/* By popular demand: tx_inhibit */
+r_if
+c_cond
+(paren
+id|scc-&gt;kiss.tx_inhibit
+)paren
+(brace
+op_logical_or
+(paren
+id|scc
+comma
+id|R5
+comma
+id|TxENAB
+)paren
+suffix:semicolon
+id|scc-&gt;wreg
+(braket
+id|R5
+)braket
+op_or_assign
+id|RTS
+suffix:semicolon
+)brace
+r_else
+(brace
 op_logical_or
 (paren
 id|scc
@@ -3299,6 +3339,7 @@ id|TxENAB
 )paren
 suffix:semicolon
 multiline_comment|/* set the RTS line and enable TX */
+)brace
 )brace
 r_else
 (brace
@@ -3340,28 +3381,35 @@ op_or
 id|TRxCDP
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_SCC_TRXECHO
-op_logical_or
+macro_line|#ifndef CONFIG_SCC_TRXECHO
+r_if
+c_cond
 (paren
-id|scc
-comma
-id|R3
-comma
-id|RxENABLE
-op_or
-id|ENT_HM
+id|scc-&gt;kiss.softdcd
 )paren
-suffix:semicolon
+macro_line|#endif
+(brace
 op_logical_or
 (paren
 id|scc
 comma
 id|R15
 comma
+id|scc-&gt;kiss.softdcd
+ques
+c_cond
+id|SYNCIE
+suffix:colon
 id|DCDIE
 )paren
 suffix:semicolon
-macro_line|#endif
+id|start_hunt
+c_func
+(paren
+id|scc
+)paren
+suffix:semicolon
+)brace
 )brace
 )brace
 r_else
@@ -3399,10 +3447,37 @@ comma
 id|R15
 comma
 id|DCDIE
+op_or
+id|SYNCIE
 )paren
 suffix:semicolon
 )brace
 macro_line|#endif
+r_if
+c_cond
+(paren
+id|scc-&gt;kiss.tx_inhibit
+)paren
+(brace
+op_logical_or
+(paren
+id|scc
+comma
+id|R5
+comma
+id|TxENAB
+)paren
+suffix:semicolon
+id|scc-&gt;wreg
+(braket
+id|R5
+)braket
+op_or_assign
+id|RTS
+suffix:semicolon
+)brace
+r_else
+(brace
 op_logical_or
 (paren
 id|scc
@@ -3415,6 +3490,7 @@ id|TxENAB
 )paren
 suffix:semicolon
 multiline_comment|/* enable tx */
+)brace
 )brace
 r_else
 (brace
@@ -3431,37 +3507,44 @@ id|TxENAB
 )paren
 suffix:semicolon
 multiline_comment|/* disable tx */
-macro_line|#ifdef CONFIG_SCC_TRXECHO
 r_if
 c_cond
+(paren
 (paren
 id|scc-&gt;kiss.fulldup
 op_eq
 id|KISS_DUPLEX_HALF
 )paren
-(brace
-op_logical_or
-(paren
-id|scc
-comma
-id|R3
-comma
-id|RxENABLE
-op_or
-id|ENT_HM
+op_logical_and
+macro_line|#ifndef CONFIG_SCC_TRXECHO
+id|scc-&gt;kiss.softdcd
 )paren
-suffix:semicolon
+macro_line|#else
+l_int|1
+)paren
+macro_line|#endif
+(brace
 op_logical_or
 (paren
 id|scc
 comma
 id|R15
 comma
+id|scc-&gt;kiss.softdcd
+ques
+c_cond
+id|SYNCIE
+suffix:colon
 id|DCDIE
 )paren
 suffix:semicolon
+id|start_hunt
+c_func
+(paren
+id|scc
+)paren
+suffix:semicolon
 )brace
-macro_line|#endif
 )brace
 )brace
 id|enable_irq
@@ -3843,8 +3926,8 @@ op_assign
 l_int|17
 suffix:semicolon
 DECL|function|is_grouped
-r_extern
-id|__inline__
+r_static
+r_inline
 r_int
 id|is_grouped
 c_func
@@ -3966,11 +4049,7 @@ op_amp
 id|RXGROUP
 )paren
 op_logical_and
-(paren
-id|scc2-&gt;status
-op_amp
-id|DCD
-)paren
+id|scc2-&gt;dcd
 )paren
 r_return
 l_int|1
@@ -4066,23 +4145,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
-id|scc-&gt;kiss.softdcd
-ques
-c_cond
-op_logical_neg
-(paren
-id|scc-&gt;status
-op_amp
-id|SYNC_HUNT
-)paren
-suffix:colon
-(paren
-id|scc-&gt;status
-op_amp
-id|DCD
-)paren
-)paren
+id|scc-&gt;dcd
 op_logical_or
 (paren
 id|scc-&gt;kiss.persist
@@ -4644,9 +4707,6 @@ r_int
 id|arg
 )paren
 (brace
-r_int
-id|dcd
-suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -4779,6 +4839,7 @@ c_cond
 (paren
 id|arg
 )paren
+(brace
 op_logical_or
 (paren
 id|scc
@@ -4788,7 +4849,34 @@ comma
 id|SYNCIE
 )paren
 suffix:semicolon
+id|cl
+c_func
+(paren
+id|scc
+comma
+id|R15
+comma
+id|DCDIE
+)paren
+suffix:semicolon
+id|start_hunt
+c_func
+(paren
+id|scc
+)paren
+suffix:semicolon
+)brace
 r_else
+(brace
+op_logical_or
+(paren
+id|scc
+comma
+id|R15
+comma
+id|DCDIE
+)paren
+suffix:semicolon
 id|cl
 c_func
 (paren
@@ -4799,6 +4887,7 @@ comma
 id|SYNCIE
 )paren
 suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 r_case
@@ -4912,32 +5001,12 @@ suffix:semicolon
 r_case
 id|PARAM_HWEVENT
 suffix:colon
-id|dcd
-op_assign
-(paren
-id|scc-&gt;kiss.softdcd
-ques
-c_cond
-op_logical_neg
-(paren
-id|scc-&gt;status
-op_amp
-id|SYNC_HUNT
-)paren
-suffix:colon
-(paren
-id|scc-&gt;status
-op_amp
-id|DCD
-)paren
-)paren
-suffix:semicolon
 id|scc_notify
 c_func
 (paren
 id|scc
 comma
-id|dcd
+id|scc-&gt;dcd
 ques
 c_cond
 id|HWEV_DCD_ON
@@ -5353,7 +5422,7 @@ id|jiffies
 op_plus
 id|HZ
 op_star
-id|scc-&gt;kiss.maxkeyup
+id|duration
 suffix:semicolon
 id|add_timer
 c_func
@@ -5362,6 +5431,7 @@ op_amp
 id|scc-&gt;tx_wdog
 )paren
 suffix:semicolon
+multiline_comment|/* This doesn&squot;t seem to work. Why not? */
 id|wr
 c_func
 (paren
@@ -6283,6 +6353,10 @@ id|skb-&gt;mac.raw
 op_assign
 id|skb-&gt;data
 suffix:semicolon
+id|skb-&gt;pkt_type
+op_assign
+id|PACKET_HOST
+suffix:semicolon
 id|netif_rx
 c_func
 (paren
@@ -6447,10 +6521,8 @@ c_func
 op_amp
 id|scc-&gt;tx_queue
 )paren
-op_ge
-id|MAXQUEUE
-op_minus
-l_int|1
+OG
+id|scc-&gt;dev-&gt;tx_queue_len
 )paren
 (brace
 r_struct
@@ -6680,7 +6752,7 @@ c_cond
 (paren
 id|Nchips
 op_ge
-id|MAXSCC
+id|SCC_MAXCHIPS
 )paren
 r_return
 op_minus
@@ -6787,9 +6859,9 @@ l_int|0
 )paren
 id|hwcfg.clock
 op_assign
-id|DEFAULT_CLOCK
+id|SCC_DEFAULT_CLOCK
 suffix:semicolon
-macro_line|#ifndef DONT_CHECK
+macro_line|#ifndef SCC_DONT_CHECK
 id|disable_irq
 c_func
 (paren
@@ -6812,10 +6884,20 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|OutReg
+c_func
+(paren
+id|hwcfg.ctrl_a
+comma
+id|R9
+comma
+id|FHWRES
+)paren
+suffix:semicolon
 id|udelay
 c_func
 (paren
-l_int|5
+l_int|100
 )paren
 suffix:semicolon
 id|OutReg
@@ -7061,7 +7143,7 @@ id|enhanced
 op_assign
 id|hwcfg.escc
 suffix:semicolon
-macro_line|#ifdef DONT_CHECK
+macro_line|#ifdef SCC_DONT_CHECK
 id|printk
 c_func
 (paren
@@ -7297,7 +7379,7 @@ id|EINVAL
 suffix:semicolon
 id|scc-&gt;stat.bufsize
 op_assign
-id|BUFSIZE
+id|SCC_BUFSIZE
 suffix:semicolon
 r_if
 c_cond
@@ -7707,6 +7789,10 @@ r_sizeof
 id|cal
 )paren
 )paren
+op_logical_or
+id|cal.time
+op_eq
+l_int|0
 )paren
 r_return
 op_minus
@@ -8616,7 +8702,7 @@ l_int|0
 suffix:semicolon
 id|chip
 OL
-id|MAXSCC
+id|SCC_MAXCHIPS
 suffix:semicolon
 id|chip
 op_increment

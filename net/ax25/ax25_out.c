@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;AX.25 release 037&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Most of this code is based on the SDL diagrams published in the 7th&n; *&t;ARRL Computer Networking Conference papers. The diagrams have mistakes&n; *&t;in them, but are mostly correct. Before you modify the code could you&n; *&t;read the SDL diagrams as the code is not obvious and probably very&n; *&t;easy to break;&n; *&n; *&t;History&n; *&t;AX.25 028a&t;Jonathan(G4KLX)&t;New state machine based on SDL diagrams.&n; *&t;AX.25 029&t;Alan(GW4PTS)&t;Switched to KA9Q constant names.&n; *&t;&t;&t;Jonathan(G4KLX)&t;Only poll when window is full.&n; *&t;AX.25 030&t;Jonathan(G4KLX)&t;Added fragmentation to ax25_output.&n; *&t;&t;&t;&t;&t;Added support for extended AX.25.&n; *&t;AX.25 031&t;Joerg(DL1BKE)&t;Added DAMA support&n; *&t;&t;&t;Joerg(DL1BKE)&t;Modified fragmenter to fragment vanilla &n; *&t;&t;&t;&t;&t;AX.25 I-Frames. Added PACLEN parameter.&n; *&t;&t;&t;Joerg(DL1BKE)&t;Fixed a problem with buffer allocation&n; *&t;&t;&t;&t;&t;for fragments.&n; *&t;AX.25 037&t;Jonathan(G4KLX)&t;New timer architecture.&n; *&t;&t;&t;Joerg(DL1BKE)&t;Fixed DAMA Slave mode: will work&n; *&t;&t;&t;&t;&t;on non-DAMA interfaces like AX25L2V2&n; *&t;&t;&t;&t;&t;again (this behaviour is _required_).&n; */
+multiline_comment|/*&n; *&t;AX.25 release 037&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Most of this code is based on the SDL diagrams published in the 7th&n; *&t;ARRL Computer Networking Conference papers. The diagrams have mistakes&n; *&t;in them, but are mostly correct. Before you modify the code could you&n; *&t;read the SDL diagrams as the code is not obvious and probably very&n; *&t;easy to break;&n; *&n; *&t;History&n; *&t;AX.25 028a&t;Jonathan(G4KLX)&t;New state machine based on SDL diagrams.&n; *&t;AX.25 029&t;Alan(GW4PTS)&t;Switched to KA9Q constant names.&n; *&t;&t;&t;Jonathan(G4KLX)&t;Only poll when window is full.&n; *&t;AX.25 030&t;Jonathan(G4KLX)&t;Added fragmentation to ax25_output.&n; *&t;&t;&t;&t;&t;Added support for extended AX.25.&n; *&t;AX.25 031&t;Joerg(DL1BKE)&t;Added DAMA support&n; *&t;&t;&t;Joerg(DL1BKE)&t;Modified fragmenter to fragment vanilla &n; *&t;&t;&t;&t;&t;AX.25 I-Frames. Added PACLEN parameter.&n; *&t;&t;&t;Joerg(DL1BKE)&t;Fixed a problem with buffer allocation&n; *&t;&t;&t;&t;&t;for fragments.&n; *&t;AX.25 037&t;Jonathan(G4KLX)&t;New timer architecture.&n; *&t;&t;&t;Joerg(DL1BKE)&t;Fixed DAMA Slave mode: will work&n; *&t;&t;&t;&t;&t;on non-DAMA interfaces like AX25L2V2&n; *&t;&t;&t;&t;&t;again (this behaviour is _required_).&n; *&t;&t;&t;Joerg(DL1BKE)&t;ax25_check_iframes_acked() returns a &n; *&t;&t;&t;&t;&t;value now (for DAMA n2count handling)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
 macro_line|#include &lt;linux/errno.h&gt;
@@ -1454,7 +1454,7 @@ id|skb
 suffix:semicolon
 )brace
 DECL|function|ax25_check_iframes_acked
-r_void
+r_int
 id|ax25_check_iframes_acked
 c_func
 (paren
@@ -1501,6 +1501,9 @@ c_func
 id|ax25
 )paren
 suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -1532,8 +1535,14 @@ c_func
 id|ax25
 )paren
 suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
 )brace
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 macro_line|#endif
 eof

@@ -22,12 +22,10 @@ op_star
 id|signal_queue_cachep
 suffix:semicolon
 DECL|variable|nr_queued_signals
-r_static
 r_int
 id|nr_queued_signals
 suffix:semicolon
 DECL|variable|max_queued_signals
-r_static
 r_int
 id|max_queued_signals
 op_assign
