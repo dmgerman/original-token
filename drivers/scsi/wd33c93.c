@@ -4878,6 +4878,15 @@ id|prev-&gt;host_scribble
 op_assign
 id|cmd-&gt;host_scribble
 suffix:semicolon
+r_else
+id|hostdata-&gt;input_Q
+op_assign
+(paren
+id|Scsi_Cmnd
+op_star
+)paren
+id|cmd-&gt;host_scribble
+suffix:semicolon
 id|cmd-&gt;host_scribble
 op_assign
 l_int|NULL

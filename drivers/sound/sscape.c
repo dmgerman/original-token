@@ -3716,6 +3716,11 @@ id|mpu_config.io_base
 op_assign
 id|mpu_io
 suffix:semicolon
+multiline_comment|/* WEH - Try to get right dma channel */
+id|mpu_config.dma
+op_assign
+id|dma
+suffix:semicolon
 r_if
 c_cond
 (paren

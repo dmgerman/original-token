@@ -2153,6 +2153,13 @@ op_amp
 id|op-&gt;out_sleeper
 )paren
 suffix:semicolon
+id|init_waitqueue
+c_func
+(paren
+op_amp
+id|op-&gt;poll_sleeper
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

@@ -4468,7 +4468,7 @@ id|c-&gt;netdevice-&gt;tbusy
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Can&squot;t happen */
+multiline_comment|/* Actually this can happen.*/
 r_if
 c_cond
 (paren
@@ -4484,15 +4484,6 @@ op_amp
 id|z8530_buffer_lock
 comma
 id|flags
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;%s: spurious tx done&bslash;n&quot;
-comma
-id|c-&gt;dev-&gt;name
 )paren
 suffix:semicolon
 r_return

@@ -591,6 +591,8 @@ id|tmp
 op_plus
 id|PAGE_SIZE
 op_minus
+l_int|1
+op_minus
 id|path
 suffix:semicolon
 )brace

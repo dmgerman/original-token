@@ -11862,28 +11862,6 @@ id|limit_nframes
 op_assign
 l_int|1
 suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
-op_logical_neg
-id|strcmp
-(paren
-id|drive-&gt;id-&gt;model
-comma
-l_string|&quot;GCD-R580B&quot;
-)paren
-)paren
-id|CDROM_CONFIG_FLAGS
-(paren
-id|drive
-)paren
-op_member_access_from_pointer
-id|limit_nframes
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* 124/SECTORS_PER_FRAME; ? */
 )brace
 macro_line|#if ! STANDARD_ATAPI
 multiline_comment|/* by default Sanyo 3 CD changer support is turned off and&n;           ATAPI Rev 2.2+ standard support for CD changers is used */

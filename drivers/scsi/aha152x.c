@@ -21,6 +21,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &quot;aha152x.h&quot;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;scsi/scsicam.h&gt;
@@ -464,6 +465,10 @@ DECL|member|swint
 r_int
 id|swint
 suffix:semicolon
+DECL|member|service
+r_int
+id|service
+suffix:semicolon
 DECL|member|syncrate
 r_int
 r_char
@@ -492,6 +497,7 @@ suffix:semicolon
 macro_line|#endif
 )brace
 suffix:semicolon
+r_static
 r_void
 id|aha152x_intr
 c_func
@@ -5865,8 +5871,96 @@ l_string|&quot;done() called outside of command&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Interrupts handler (main routine of the driver)&n; */
+r_static
+r_void
+id|aha152x_complete
+c_func
+(paren
+r_struct
+id|Scsi_Host
+op_star
+)paren
+suffix:semicolon
+DECL|variable|aha152x_tq
+r_static
+r_struct
+id|tq_struct
+id|aha152x_tq
+suffix:semicolon
+multiline_comment|/*&n; *&t;Run service completions on the card with interrupts enabled.&n; */
+DECL|function|aha152x_run
+r_static
+r_void
+id|aha152x_run
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|IRQS
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_struct
+id|Scsi_Host
+op_star
+id|shpnt
+op_assign
+id|aha152x_host
+(braket
+id|i
+)braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|shpnt
+op_logical_and
+id|HOSTDATA
+c_func
+(paren
+id|shpnt
+)paren
+op_member_access_from_pointer
+id|service
+)paren
+(brace
+id|HOSTDATA
+c_func
+(paren
+id|shpnt
+)paren
+op_member_access_from_pointer
+id|service
+op_assign
+l_int|0
+suffix:semicolon
+id|aha152x_complete
+c_func
+(paren
+id|shpnt
+)paren
+suffix:semicolon
+)brace
+)brace
+)brace
+multiline_comment|/*&n; *&t;Interrupts handler (main routine of the driver)&n; */
 DECL|function|aha152x_intr
+r_static
 r_void
 id|aha152x_intr
 c_func
@@ -5895,17 +5989,6 @@ id|irqno
 op_minus
 id|IRQ_MIN
 )braket
-suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
-r_int
-id|done
-op_assign
-l_int|0
-comma
-id|phase
 suffix:semicolon
 macro_line|#if defined(DEBUG_RACE)
 id|enter_driver
@@ -5953,7 +6036,7 @@ l_string|&quot;aha152x: catched interrupt for unknown controller.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* no more interrupts from the controller, while we&squot;re busy.&n;     INTEN has to be restored, when we&squot;re ready to leave&n;     intr(). To avoid race conditions, we have to return&n;     immediately afterwards. */
+multiline_comment|/* no more interrupts from the controller, while we&squot;re busy.&n;&t;   INTEN is restored by the BH handler */
 id|CLRBITS
 c_func
 (paren
@@ -5962,8 +6045,66 @@ comma
 id|INTEN
 )paren
 suffix:semicolon
-multiline_comment|/* sti();  FIXME!!! Yes, sti() really needs to be here if we want to lock up */
-multiline_comment|/* disconnected target is trying to reconnect.&n;     Only possible, if we have disconnected nexuses and&n;     nothing is occupying the bus.&n;  */
+multiline_comment|/* Poke the BH handler */
+id|HOSTDATA
+c_func
+(paren
+id|shpnt
+)paren
+op_member_access_from_pointer
+id|service
+op_assign
+l_int|1
+suffix:semicolon
+id|aha152x_tq.routine
+op_assign
+(paren
+r_void
+op_star
+)paren
+id|aha152x_run
+suffix:semicolon
+id|queue_task
+c_func
+(paren
+op_amp
+id|aha152x_tq
+comma
+op_amp
+id|tq_immediate
+)paren
+suffix:semicolon
+id|mark_bh
+c_func
+(paren
+id|IMMEDIATE_BH
+)paren
+suffix:semicolon
+)brace
+DECL|function|aha152x_complete
+r_static
+r_void
+id|aha152x_complete
+c_func
+(paren
+r_struct
+id|Scsi_Host
+op_star
+id|shpnt
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+r_int
+id|done
+op_assign
+l_int|0
+comma
+id|phase
+suffix:semicolon
+multiline_comment|/* disconnected target is trying to reconnect.&n;&t;   Only possible, if we have disconnected nexuses and&n;&t;   nothing is occupying the bus.&n;&t; */
 r_if
 c_cond
 (paren

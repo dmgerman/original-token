@@ -870,7 +870,7 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;DSP version %d.%d&bslash;n&quot;
+l_string|&quot;DSP version %d.%02d&bslash;n&quot;
 comma
 id|devc-&gt;major
 comma
@@ -1900,6 +1900,10 @@ op_eq
 id|SB_PCI_YAMAHA
 )paren
 (brace
+id|devc-&gt;model
+op_assign
+id|MDL_YMPCI
+suffix:semicolon
 id|devc-&gt;caps
 op_or_assign
 id|SB_PCI_IRQ
@@ -1907,6 +1911,16 @@ suffix:semicolon
 id|hw_config-&gt;driver_use_1
 op_or_assign
 id|SB_PCI_IRQ
+suffix:semicolon
+id|hw_config-&gt;card_subtype
+op_assign
+id|MDL_YMPCI
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Yamaha PCI mode.&bslash;n&quot;
+)paren
 suffix:semicolon
 )brace
 r_if
@@ -2241,6 +2255,25 @@ op_assign
 id|MDL_ESSPCI
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|devc-&gt;type
+op_eq
+id|MDL_YMPCI
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;YMPCI selected&bslash;n&quot;
+)paren
+suffix:semicolon
+id|devc-&gt;model
+op_assign
+id|MDL_YMPCI
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; * Save device information for sb_dsp_init()&n;&t; */
 id|detected_devc
 op_assign
@@ -2306,7 +2339,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;SB %d.%d detected OK (%x)&bslash;n&quot;
+l_string|&quot;SB %d.%02d detected OK (%x)&bslash;n&quot;
 comma
 id|devc-&gt;major
 comma
@@ -2432,13 +2465,17 @@ c_cond
 (paren
 op_logical_neg
 (paren
+(paren
 id|devc-&gt;caps
 op_amp
 id|SB_NO_AUDIO
+)paren
 op_logical_and
+(paren
 id|devc-&gt;caps
 op_amp
 id|SB_NO_MIDI
+)paren
 )paren
 op_logical_and
 id|hw_config-&gt;irq
@@ -3185,7 +3222,7 @@ c_func
 (paren
 id|name
 comma
-l_string|&quot;%s (%d.%d)&quot;
+l_string|&quot;%s (%d.%02d)&quot;
 comma
 id|hw_config-&gt;name
 comma
@@ -3269,7 +3306,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;SB DSP version is just %d.%d which means that your card is&bslash;n&quot;
+l_string|&quot;SB DSP version is just %d.%02d which means that your card is&bslash;n&quot;
 comma
 id|devc-&gt;major
 comma
@@ -5006,6 +5043,21 @@ id|hw_config
 )paren
 r_return
 l_int|0
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|MDL_YMPCI
+suffix:colon
+id|hw_config-&gt;name
+op_assign
+l_string|&quot;Yamaha PCI Legacy&quot;
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Yamaha PCI legacy UART401 check.&bslash;n&quot;
+)paren
 suffix:semicolon
 r_break
 suffix:semicolon

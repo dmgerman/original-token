@@ -415,6 +415,70 @@ mdefine_line|#define io_Status(d)&t;&t;((d)-&gt;base+2)
 DECL|macro|io_Polled_IO
 mdefine_line|#define io_Polled_IO(d)&t;&t;((d)-&gt;base+3)
 r_static
+r_struct
+(brace
+DECL|member|flags
+r_int
+r_char
+id|flags
+suffix:semicolon
+DECL|macro|CAP_F_TIMER
+mdefine_line|#define CAP_F_TIMER 0x01     
+DECL|variable|capabilities
+)brace
+id|capabilities
+(braket
+l_int|9
+multiline_comment|/*devc-&gt;model */
+)braket
+op_assign
+(brace
+(brace
+l_int|0
+)brace
+comma
+(brace
+l_int|0
+)brace
+multiline_comment|/* MD_1848  */
+comma
+(brace
+id|CAP_F_TIMER
+)brace
+multiline_comment|/* MD_4231  */
+comma
+(brace
+id|CAP_F_TIMER
+)brace
+multiline_comment|/* MD_4231A */
+comma
+(brace
+id|CAP_F_TIMER
+)brace
+multiline_comment|/* MD_1845  */
+comma
+(brace
+id|CAP_F_TIMER
+)brace
+multiline_comment|/* MD_4232  */
+comma
+(brace
+l_int|0
+)brace
+multiline_comment|/* MD_C930  */
+comma
+(brace
+id|CAP_F_TIMER
+)brace
+multiline_comment|/* MD_IWAVE */
+comma
+(brace
+l_int|0
+)brace
+multiline_comment|/* MD_4235 */
+)brace
+suffix:semicolon
+r_static
 r_int
 id|ad1848_open
 c_func
@@ -8798,13 +8862,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|capabilities
+(braket
 id|devc-&gt;model
-op_ne
-id|MD_1848
-op_logical_and
-id|devc-&gt;model
-op_ne
-id|MD_C930
+)braket
+dot
+id|flags
+op_amp
+id|CAP_F_TIMER
 )paren
 (brace
 macro_line|#ifndef __SMP__
@@ -8966,13 +9031,16 @@ macro_line|#if defined(CONFIG_SEQUENCER) &amp;&amp; !defined(EXCLUDE_TIMERS)
 r_if
 c_cond
 (paren
+(paren
+id|capabilities
+(braket
 id|devc-&gt;model
-op_ne
-id|MD_1848
-op_logical_and
-id|devc-&gt;model
-op_ne
-id|MD_C930
+)braket
+dot
+id|flags
+op_amp
+id|CAP_F_TIMER
+)paren
 op_logical_and
 id|devc-&gt;irq_ok
 )paren

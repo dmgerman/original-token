@@ -77,6 +77,8 @@ DECL|macro|MDL_AEDSP
 mdefine_line|#define MDL_AEDSP&t;15&t;/* Audio Excel DSP 16 */
 DECL|macro|MDL_ESSPCI
 mdefine_line|#define MDL_ESSPCI&t;16&t;/* ESS PCI card */
+DECL|macro|MDL_YMPCI
+mdefine_line|#define MDL_YMPCI&t;17&t;/* Yamaha PCI sb in emulation */
 DECL|macro|SUBMDL_ALS007
 mdefine_line|#define SUBMDL_ALS007&t;42&t;/* ALS-007 differs from SB16 only in mixer */
 multiline_comment|/* register assignment */

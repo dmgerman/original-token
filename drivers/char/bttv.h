@@ -584,6 +584,8 @@ DECL|macro|BTTV_VHX
 mdefine_line|#define BTTV_VHX           0x0e
 DECL|macro|BTTV_ZOLTRIX
 mdefine_line|#define BTTV_ZOLTRIX       0x0f
+DECL|macro|BTTV_PIXVIEWPLAYTV
+mdefine_line|#define BTTV_PIXVIEWPLAYTV 0x10
 DECL|macro|AUDIO_TUNER
 mdefine_line|#define AUDIO_TUNER        0x00
 DECL|macro|AUDIO_RADIO

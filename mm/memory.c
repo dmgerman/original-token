@@ -2655,7 +2655,14 @@ id|pte
 id|printk
 c_func
 (paren
-l_string|&quot;put_dirty_page: page already exists&bslash;n&quot;
+l_string|&quot;put_dirty_page: pte %08lx already exists&bslash;n&quot;
+comma
+id|pte_val
+c_func
+(paren
+op_star
+id|pte
+)paren
 )paren
 suffix:semicolon
 id|free_page

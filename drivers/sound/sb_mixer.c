@@ -3371,6 +3371,9 @@ r_case
 id|MDL_ESSPCI
 suffix:colon
 r_case
+id|MDL_YMPCI
+suffix:colon
+r_case
 id|MDL_SBPRO
 suffix:colon
 r_case

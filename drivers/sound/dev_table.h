@@ -939,6 +939,12 @@ id|wait_queue
 op_star
 id|out_sleeper
 suffix:semicolon
+DECL|member|poll_sleeper
+r_struct
+id|wait_queue
+op_star
+id|poll_sleeper
+suffix:semicolon
 multiline_comment|/* fields formerly in audio.c */
 DECL|member|audio_mode
 r_int

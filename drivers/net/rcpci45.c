@@ -1,11 +1,11 @@
-multiline_comment|/* &n;**  RCpci45.c  &n;**&n;**&n;**&n;**  ---------------------------------------------------------------------&n;**  ---     Copyright (c) 1998, 1999, RedCreek Communications Inc.    ---&n;**  ---                   All rights reserved.                        ---&n;**  ---------------------------------------------------------------------&n;**&n;** Written by Pete Popov and Brian Moyle.&n;**&n;** Known Problems&n;** &n;** None known at this time.&n;**&n;**  TODO:&n;**      -Get rid of the wait loops in the API and replace them&n;**       with system independent delays ...something like&n;**       &quot;delayms(2)&quot;.  However, under normal circumstances, the &n;**       delays are very short so they&squot;re not a problem.&n;**&n;**  This program is free software; you can redistribute it and/or modify&n;**  it under the terms of the GNU General Public License as published by&n;**  the Free Software Foundation; either version 2 of the License, or&n;**  (at your option) any later version.&n;&n;**  This program is distributed in the hope that it will be useful,&n;**  but WITHOUT ANY WARRANTY; without even the implied warranty of&n;**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;**  GNU General Public License for more details.&n;&n;**  You should have received a copy of the GNU General Public License&n;**  along with this program; if not, write to the Free Software&n;**  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;**&n;**   &n;**  Pete Popov, January 11,99: Fixed a couple of 2.1.x problems &n;**  (virt_to_bus() not called), tested it under 2.2pre5, and added a &n;**  #define to enable the use of the same file for both, the 2.0.x kernels &n;**  as well as the 2.1.x.&n;**&n;**  Ported to 2.1.x by Alan Cox 1998/12/9. &n;**&n;***************************************************************************/
+multiline_comment|/* &n;**&n;**  RCpci45.c  &n;**&n;**&n;**&n;**  ---------------------------------------------------------------------&n;**  ---     Copyright (c) 1998, 1999, RedCreek Communications Inc.    ---&n;**  ---                   All rights reserved.                        ---&n;**  ---------------------------------------------------------------------&n;**&n;** Written by Pete Popov and Brian Moyle.&n;**&n;** Known Problems&n;** &n;** None known at this time.&n;**&n;**  TODO:&n;**      -Get rid of the wait loops in the API and replace them&n;**       with system independent delays ...something like&n;**       &quot;delayms(2)&quot;.  However, under normal circumstances, the &n;**       delays are very short so they&squot;re not a problem.&n;**&n;**  This program is free software; you can redistribute it and/or modify&n;**  it under the terms of the GNU General Public License as published by&n;**  the Free Software Foundation; either version 2 of the License, or&n;**  (at your option) any later version.&n;&n;**  This program is distributed in the hope that it will be useful,&n;**  but WITHOUT ANY WARRANTY; without even the implied warranty of&n;**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;**  GNU General Public License for more details.&n;&n;**  You should have received a copy of the GNU General Public License&n;**  along with this program; if not, write to the Free Software&n;**  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;**&n;**   &n;**  Pete Popov, January 11,99: Fixed a couple of 2.1.x problems &n;**  (virt_to_bus() not called), tested it under 2.2pre5 (as a module), and &n;**  added a #define(s) to enable the use of the same file for both, the 2.0.x &n;**  kernels as well as the 2.1.x.&n;**&n;**  Ported to 2.1.x by Alan Cox 1998/12/9. &n;**&n;**  Sometime in mid 1998, written by Pete Popov and Brian Moyle.&n;**&n;***************************************************************************/
 DECL|variable|version
 r_static
 r_char
 op_star
 id|version
 op_assign
-l_string|&quot;RedCreek Communications PCI linux driver version 2.00&bslash;n&quot;
+l_string|&quot;RedCreek Communications PCI linux driver version 2.02&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
@@ -255,16 +255,28 @@ l_int|NULL
 suffix:semicolon
 r_static
 r_int
-id|RCscan
+id|RCinit
 c_func
 (paren
-r_void
-)paren
-suffix:semicolon
-r_static
 r_struct
 id|device
 op_star
+id|dev
+)paren
+suffix:semicolon
+r_static
+r_int
+id|RCscan
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_static
+r_int
 id|RCfound_device
 c_func
 (paren
@@ -283,16 +295,6 @@ comma
 r_int
 comma
 r_int
-)paren
-suffix:semicolon
-r_static
-r_int
-id|RCprobe1
-c_func
-(paren
-r_struct
-id|device
-op_star
 )paren
 suffix:semicolon
 r_static
@@ -481,7 +483,7 @@ id|rcpci_probe
 c_func
 (paren
 r_struct
-id|netdevice
+id|device
 op_star
 id|dev
 )paren
@@ -490,24 +492,36 @@ macro_line|#endif
 r_int
 id|cards_found
 suffix:semicolon
+macro_line|#ifdef MODULE
+id|cards_found
+op_assign
+id|RCscan
+c_func
+(paren
+l_int|NULL
+)paren
+suffix:semicolon
+macro_line|#else
+id|cards_found
+op_assign
+id|RCscan
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+macro_line|#endif
+r_if
+c_cond
+(paren
+id|cards_found
+)paren
 id|printk
 c_func
 (paren
 id|version
 )paren
 suffix:semicolon
-id|root_RCdev
-op_assign
-l_int|NULL
-suffix:semicolon
-id|cards_found
-op_assign
-id|RCscan
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#ifdef MODULE
 r_return
 id|cards_found
 ques
@@ -517,12 +531,6 @@ suffix:colon
 op_minus
 id|ENODEV
 suffix:semicolon
-macro_line|#else
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|RCscan
 r_static
@@ -530,6 +538,10 @@ r_int
 id|RCscan
 c_func
 (paren
+r_struct
+id|device
+op_star
+id|dev
 )paren
 (brace
 r_int
@@ -537,28 +549,36 @@ id|cards_found
 op_assign
 l_int|0
 suffix:semicolon
-r_struct
-id|device
-op_star
-id|dev
-op_assign
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|pcibios_present
-c_func
-(paren
-)paren
-)paren
-(brace
 r_static
 r_int
 id|pci_index
 op_assign
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|pcibios_present
+c_func
+(paren
+)paren
+)paren
+r_return
+id|cards_found
+suffix:semicolon
+r_for
+c_loop
+(paren
+suffix:semicolon
+id|pci_index
+OL
+l_int|0x8
+suffix:semicolon
+id|pci_index
+op_increment
+)paren
+(brace
 r_int
 r_char
 id|pci_bus
@@ -573,18 +593,6 @@ id|board_index
 op_assign
 l_int|0
 suffix:semicolon
-r_for
-c_loop
-(paren
-suffix:semicolon
-id|pci_index
-OL
-l_int|0xff
-suffix:semicolon
-id|pci_index
-op_increment
-)paren
-(brace
 r_int
 r_char
 id|pci_irq_line
@@ -757,7 +765,6 @@ id|pci_ioaddr
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if 1
 r_if
 c_cond
 (paren
@@ -781,6 +788,7 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
+macro_line|#ifdef RCDEBUG
 r_else
 (brace
 id|printk
@@ -791,7 +799,7 @@ l_string|&quot;rc: check_region passed&bslash;n&quot;
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/*&n;             * Get and check the bus-master and latency values.&n;             * Some PCI BIOSes fail to set the master-enable bit.&n;             */
+multiline_comment|/*&n;         * Get and check the bus-master and latency values.&n;         * Some PCI BIOSes fail to set the master-enable bit.&n;         */
 id|pcibios_read_config_word
 c_func
 (paren
@@ -850,7 +858,7 @@ id|PCI_COMMAND_MEMORY
 )paren
 )paren
 (brace
-multiline_comment|/*&n;                 * If the BIOS did not set the memory enable bit, what else&n;                 * did it not initialize?  Skip this adapter.&n;                 */
+multiline_comment|/*&n;             * If the BIOS did not set the memory enable bit, what else&n;             * did it not initialize?  Skip this adapter.&n;             */
 id|printk
 c_func
 (paren
@@ -868,8 +876,10 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-id|dev
-op_assign
+r_if
+c_cond
+(paren
+op_logical_neg
 id|RCfound_device
 c_func
 (paren
@@ -888,11 +898,6 @@ op_increment
 comma
 id|cards_found
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev
 )paren
 (brace
 id|dev
@@ -904,7 +909,7 @@ op_increment
 suffix:semicolon
 )brace
 )brace
-)brace
+macro_line|#ifdef RCDEBUG
 id|printk
 c_func
 (paren
@@ -913,14 +918,59 @@ comma
 id|cards_found
 )paren
 suffix:semicolon
+macro_line|#endif
 r_return
 id|cards_found
 suffix:semicolon
 )brace
+DECL|function|RCinit
 r_static
+r_int
+id|RCinit
+c_func
+(paren
 r_struct
 id|device
 op_star
+id|dev
+)paren
+(brace
+id|dev-&gt;open
+op_assign
+op_amp
+id|RCopen
+suffix:semicolon
+id|dev-&gt;hard_start_xmit
+op_assign
+op_amp
+id|RC_xmit_packet
+suffix:semicolon
+id|dev-&gt;stop
+op_assign
+op_amp
+id|RCclose
+suffix:semicolon
+id|dev-&gt;get_stats
+op_assign
+op_amp
+id|RCget_stats
+suffix:semicolon
+id|dev-&gt;do_ioctl
+op_assign
+op_amp
+id|RCioctl
+suffix:semicolon
+id|dev-&gt;set_config
+op_assign
+op_amp
+id|RCconfig
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_static
+r_int
 DECL|function|RCfound_device
 id|RCfound_device
 c_func
@@ -968,6 +1018,7 @@ r_int
 id|init_status
 suffix:semicolon
 multiline_comment|/* &n;     * Allocate and fill new device structure. &n;     * We need enough for struct device plus DPA plus the LAN API private&n;     * area, which requires a minimum of 16KB.  The top of the allocated&n;     * area will be assigned to struct device; the next chunk will be&n;     * assigned to DPA; and finally, the rest will be assigned to the&n;     * the LAN API layer.&n;     */
+macro_line|#ifdef MODULE
 id|dev
 op_assign
 (paren
@@ -987,6 +1038,23 @@ op_or
 id|GFP_ATOMIC
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|dev
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;rc: unable to kmalloc dev&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
 id|memset
 c_func
 (paren
@@ -997,19 +1065,6 @@ comma
 id|dev_size
 )paren
 suffix:semicolon
-macro_line|#ifdef RCDEBUG
-id|printk
-c_func
-(paren
-l_string|&quot;rc: dev = 0x%08X&bslash;n&quot;
-comma
-(paren
-id|uint
-)paren
-id|dev
-)paren
-suffix:semicolon
-macro_line|#endif 
 multiline_comment|/*&n;     * dev-&gt;priv will point to the start of DPA.&n;     */
 id|dev-&gt;priv
 op_assign
@@ -1037,10 +1092,86 @@ op_complement
 l_int|15
 )paren
 suffix:semicolon
+macro_line|#else
+id|dev-&gt;priv
+op_assign
+l_int|0
+suffix:semicolon
+id|dev-&gt;priv
+op_assign
+(paren
+r_struct
+id|device
+op_star
+)paren
+id|kmalloc
+c_func
+(paren
+id|dev_size
+comma
+id|GFP_DMA
+op_or
+id|GFP_KERNEL
+op_or
+id|GFP_ATOMIC
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|dev-&gt;priv
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;rc: unable to kmalloc private area&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+id|memset
+c_func
+(paren
+id|dev-&gt;priv
+comma
+l_int|0
+comma
+id|dev_size
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef RCDEBUG
+id|printk
+c_func
+(paren
+l_string|&quot;rc: dev = 0x%x, dev-&gt;priv = 0x%x&bslash;n&quot;
+comma
+(paren
+id|uint
+)paren
+id|dev
+comma
+(paren
+id|uint
+)paren
+id|dev-&gt;priv
+)paren
+suffix:semicolon
+macro_line|#endif
 id|pDpa
 op_assign
 id|dev-&gt;priv
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|dev-&gt;name
+)paren
 id|dev-&gt;name
 op_assign
 id|pDpa-&gt;devname
@@ -1240,7 +1371,7 @@ id|dev
 )paren
 suffix:semicolon
 r_return
-l_int|0
+l_int|1
 suffix:semicolon
 )brace
 id|init_status
@@ -1283,16 +1414,6 @@ id|PFNCALLBACK
 id|RCreboot_callback
 )paren
 suffix:semicolon
-macro_line|#ifdef RCDEBUG
-id|printk
-c_func
-(paren
-l_string|&quot;rc: I2O msg initted: status = 0x%x&bslash;n&quot;
-comma
-id|init_status
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1326,7 +1447,7 @@ id|dev
 )paren
 suffix:semicolon
 r_return
-l_int|0
+l_int|1
 suffix:semicolon
 )brace
 r_if
@@ -1370,7 +1491,7 @@ id|dev
 )paren
 suffix:semicolon
 r_return
-l_int|0
+l_int|1
 suffix:semicolon
 )brace
 id|DriverControlWord
@@ -1387,7 +1508,8 @@ id|DriverControlWord
 suffix:semicolon
 id|dev-&gt;init
 op_assign
-id|RCprobe1
+op_amp
+id|RCinit
 suffix:semicolon
 id|ether_setup
 c_func
@@ -1404,6 +1526,7 @@ id|root_RCdev
 op_assign
 id|dev
 suffix:semicolon
+macro_line|#ifdef MODULE
 r_if
 c_cond
 (paren
@@ -1444,52 +1567,29 @@ id|dev
 )paren
 suffix:semicolon
 r_return
-l_int|0
+l_int|1
 suffix:semicolon
 )brace
-r_return
-id|dev
-suffix:semicolon
-)brace
-DECL|function|RCprobe1
-r_static
-r_int
-id|RCprobe1
+macro_line|#else
+id|RCinit
 c_func
 (paren
-r_struct
-id|device
-op_star
 id|dev
 )paren
-(brace
-id|dev-&gt;open
-op_assign
-id|RCopen
 suffix:semicolon
-id|dev-&gt;hard_start_xmit
-op_assign
-id|RC_xmit_packet
-suffix:semicolon
-id|dev-&gt;stop
-op_assign
-id|RCclose
-suffix:semicolon
-id|dev-&gt;get_stats
-op_assign
-id|RCget_stats
-suffix:semicolon
-id|dev-&gt;do_ioctl
-op_assign
-id|RCioctl
-suffix:semicolon
-id|dev-&gt;set_config
-op_assign
-id|RCconfig
+macro_line|#endif
+id|printk
+c_func
+(paren
+l_string|&quot;%s: RedCreek Communications IPSEC VPN adapter&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
 suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+multiline_comment|/* success */
 )brace
 r_static
 r_int
@@ -1736,6 +1836,10 @@ l_string|&quot;rc: RC_xmit_packet: tbusy!&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+id|dev-&gt;tbusy
+op_assign
+l_int|1
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
@@ -2177,7 +2281,7 @@ id|RUN_AT
 c_func
 (paren
 (paren
-l_int|30
+l_int|40
 op_star
 id|HZ
 )paren
@@ -2185,7 +2289,7 @@ op_div
 l_int|10
 )paren
 suffix:semicolon
-multiline_comment|/* 3 sec. */
+multiline_comment|/* 4 sec. */
 id|pDpa-&gt;timer.data
 op_assign
 (paren
@@ -2477,6 +2581,7 @@ id|uint
 id|Status
 )paren
 suffix:semicolon
+macro_line|#ifdef RCDEBUG
 r_else
 id|printk
 c_func
@@ -2491,6 +2596,7 @@ id|uint
 id|Status
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;             * TO DO: check the nature of the failure and put the adapter in&n;             * failed mode if it&squot;s a hard failure.  Send a reset to the adapter&n;             * and free all outstanding memory.&n;             */
 r_if
 c_cond
@@ -2682,6 +2788,7 @@ l_int|5
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef PROMISCUOUS_BY_DEFAULT   /* early 2.x firmware */
 r_if
 c_cond
 (paren
@@ -2787,6 +2894,7 @@ suffix:semicolon
 )brace
 )brace
 r_else
+macro_line|#endif /* PROMISCUOUS_BY_DEFAULT */
 (brace
 id|len
 op_assign
@@ -2915,6 +3023,7 @@ id|PDPA
 id|dev-&gt;priv
 )paren
 suffix:semicolon
+macro_line|#ifdef RCDEBUG
 r_if
 c_cond
 (paren
@@ -2926,7 +3035,6 @@ c_func
 l_string|&quot;rc: shutdown: service irq&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef RCDEBUG
 id|printk
 c_func
 (paren
@@ -2991,7 +3099,7 @@ r_return
 suffix:semicolon
 )brace
 DECL|macro|REBOOT_REINIT_RETRY_LIMIT
-mdefine_line|#define REBOOT_REINIT_RETRY_LIMIT 10
+mdefine_line|#define REBOOT_REINIT_RETRY_LIMIT 4
 DECL|function|rc_timer
 r_static
 r_void
@@ -3066,7 +3174,18 @@ id|dev-&gt;base_addr
 comma
 id|pDpa-&gt;PLanApiPA
 comma
+(paren
+id|PU8
+)paren
+id|virt_to_bus
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
 id|pDpa-&gt;PLanApiPA
+)paren
 comma
 (paren
 id|PFNTXCALLBACK
@@ -3194,6 +3313,14 @@ c_func
 l_string|&quot;rc: Initialization done.&bslash;n&quot;
 )paren
 suffix:semicolon
+id|dev-&gt;tbusy
+op_assign
+l_int|0
+suffix:semicolon
+id|retry
+op_assign
+l_int|0
+suffix:semicolon
 r_return
 suffix:semicolon
 r_case
@@ -3205,7 +3332,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;rc: inbound free q emtpy&bslash;n&quot;
+l_string|&quot;rc: inbound free q empty&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -3218,7 +3345,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;rc: unexpected bad status after reboot&bslash;n&quot;
+l_string|&quot;rc: bad status after reboot: %d&bslash;n&quot;
+comma
+id|init_status
 )paren
 suffix:semicolon
 r_break
@@ -3279,7 +3408,7 @@ id|RUN_AT
 c_func
 (paren
 (paren
-l_int|30
+l_int|40
 op_star
 id|HZ
 )paren
@@ -4769,6 +4898,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
 r_void
 DECL|function|cleanup_module
 id|cleanup_module
@@ -4883,6 +5013,7 @@ id|next
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 r_static
 r_int
 DECL|function|RC_allocate_and_post_buffers

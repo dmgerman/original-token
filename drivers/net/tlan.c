@@ -6285,6 +6285,10 @@ id|priv-&gt;tlanFullDuplex
 op_assign
 id|FALSE
 suffix:semicolon
+id|priv-&gt;phyOnline
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/*  1.&t;Assert reset bit. */
 id|data
 op_assign

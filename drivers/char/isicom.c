@@ -446,6 +446,8 @@ l_string|&quot;ISILoad:Firmware loader Opened!!!&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif&t;
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -477,6 +479,8 @@ comma
 )paren
 suffix:semicolon
 macro_line|#endif&t;
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

@@ -2071,11 +2071,11 @@ c_cond
 (paren
 id|last
 OG
-id|prev-&gt;vm_end
+id|prev-&gt;vm_start
 )paren
 id|last
 op_assign
-id|prev-&gt;vm_end
+id|prev-&gt;vm_start
 suffix:semicolon
 r_goto
 id|no_mmaps

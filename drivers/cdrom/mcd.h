@@ -1,12 +1,4 @@
 multiline_comment|/*&n; * Definitions for a Mitsumi CD-ROM interface&n; *&n; *&t;Copyright (C) 1992  Martin Harriss&n; *&n; *&t;martin@bdsi.com&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; */
-multiline_comment|/* *** change this to set the I/O port address */
-DECL|macro|MCD_BASE_ADDR
-mdefine_line|#define MCD_BASE_ADDR&t;        0x300
-multiline_comment|/* *** change this to set the interrupt number */
-DECL|macro|MCD_INTR_NR
-mdefine_line|#define MCD_INTR_NR     11
-multiline_comment|/* *** make the following line uncommented, if you&squot;re sure,&n; * *** all configuration is done */
-multiline_comment|/* #define I_WAS_HERE */
 multiline_comment|/* Increase this if you get lots of timeouts */
 DECL|macro|MCD_STATUS_DELAY
 mdefine_line|#define MCD_STATUS_DELAY&t;1000
@@ -172,8 +164,4 @@ id|diskTime
 suffix:semicolon
 )brace
 suffix:semicolon
-macro_line|#ifndef I_WAS_HERE
-macro_line|#warning You have not edited mcd.h
-macro_line|#warning Perhaps irq and i/o settings are wrong.
-macro_line|#endif
 eof
