@@ -12,7 +12,6 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;linux/io_trace.h&gt;
 macro_line|#ifdef CONFIG_MTRR
 macro_line|#  include &lt;asm/mtrr.h&gt;
 macro_line|#endif
@@ -4031,19 +4030,6 @@ r_int
 r_int
 id|cfg
 suffix:semicolon
-id|IO_trace
-(paren
-id|IO_smp_wait_apic_start
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-)paren
-suffix:semicolon
 r_while
 c_loop
 (paren
@@ -4071,19 +4057,6 @@ l_int|12
 )paren
 )paren
 (brace
-id|IO_trace
-(paren
-id|IO_smp_wait_apic_end
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4278,19 +4251,6 @@ id|vector
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Send the IPI. The write to APIC_ICR fires this off.&n;&t; */
-id|IO_trace
-(paren
-id|IO_smp_send_ipi
-comma
-id|shortcut
-comma
-id|vector
-comma
-id|cfg
-comma
-l_int|0
-)paren
-suffix:semicolon
 id|apic_write
 c_func
 (paren
@@ -4430,19 +4390,6 @@ id|vector
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Send the IPI. The write to APIC_ICR fires this off.&n;&t; */
-id|IO_trace
-(paren
-id|IO_smp_send_ipi
-comma
-id|dest
-comma
-id|vector
-comma
-id|cfg
-comma
-l_int|0
-)paren
-suffix:semicolon
 id|apic_write
 c_func
 (paren
@@ -4499,19 +4446,6 @@ suffix:semicolon
 id|__cli
 c_func
 (paren
-)paren
-suffix:semicolon
-id|IO_trace
-(paren
-id|IO_smp_message
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
 )paren
 suffix:semicolon
 id|send_IPI_allbutself
@@ -4873,19 +4807,6 @@ c_func
 r_void
 )paren
 (brace
-id|IO_trace
-(paren
-id|IO_smp_reschedule
-comma
-id|current-&gt;need_resched
-comma
-id|current-&gt;priority
-comma
-id|current-&gt;counter
-comma
-l_int|0
-)paren
-suffix:semicolon
 id|ack_APIC_irq
 c_func
 (paren
@@ -4902,28 +4823,6 @@ c_func
 r_void
 )paren
 (brace
-id|IO_trace
-(paren
-id|IO_smp_tlbflush
-comma
-id|atomic_read
-c_func
-(paren
-(paren
-id|atomic_t
-op_star
-)paren
-op_amp
-id|smp_invalidate_needed
-)paren
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren

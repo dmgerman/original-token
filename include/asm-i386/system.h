@@ -317,9 +317,13 @@ r_return
 id|x
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Force strict CPU ordering.&n; * And yes, this is required on UP too when we&squot;re talking&n; * to devices.&n; */
+multiline_comment|/*&n; * Force strict CPU ordering.&n; * And yes, this is required on UP too when we&squot;re talking&n; * to devices.&n; *&n; * For now, &quot;wmb()&quot; doesn&squot;t actually do anything, as all&n; * intel CPU&squot;s follow what intel calls a *Processor Order*,&n; * in which all writes are seen in the program order even&n; * outside the CPU.&n; *&n; * I expect future intel CPU&squot;s to have a weaker ordering,&n; * but I&squot;d also expect them to finally get their act together&n; * and add some real memory barriers if so.&n; */
 DECL|macro|mb
 mdefine_line|#define mb() &t;__asm__ __volatile__ (&quot;lock; addl $0,0(%%esp)&quot;: : :&quot;memory&quot;)
+DECL|macro|rmb
+mdefine_line|#define rmb()&t;mb()
+DECL|macro|wmb
+mdefine_line|#define wmb()&t;__asm__ __volatile__ (&quot;&quot;: : :&quot;memory&quot;)
 multiline_comment|/* interrupt control.. */
 DECL|macro|__sti
 mdefine_line|#define __sti() __asm__ __volatile__ (&quot;sti&quot;: : :&quot;memory&quot;)

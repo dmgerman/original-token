@@ -1826,8 +1826,8 @@ id|current-&gt;need_resched
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/*&n;&t; * Release the previous process ...&n;&t; *&n;&t; * We have dropped all locks, and we must make sure that we&n;&t; * only mark the previous process as no longer having a CPU&n;&t; * after all other state has been seen by other CPU&squot;s. Thus&n;&t; * the memory barrier!&n;&t; */
-id|mb
+multiline_comment|/*&n;&t; * Release the previous process ...&n;&t; *&n;&t; * We have dropped all locks, and we must make sure that we&n;&t; * only mark the previous process as no longer having a CPU&n;&t; * after all other state has been seen by other CPU&squot;s. Thus&n;&t; * the write memory barrier!&n;&t; */
+id|wmb
 c_func
 (paren
 )paren
