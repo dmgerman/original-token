@@ -5767,12 +5767,6 @@ suffix:semicolon
 )brace
 multiline_comment|/* --------------------------------------------------------------------- */
 macro_line|#ifdef MODULE
-DECL|variable|minor
-r_int
-id|minor
-op_assign
-l_int|192
-suffix:semicolon
 DECL|function|init_module
 r_int
 id|init_module
@@ -5781,10 +5775,6 @@ c_func
 r_void
 )paren
 (brace
-id|ezusb_misc.minor
-op_assign
-id|minor
-suffix:semicolon
 r_return
 id|ezusb_init
 c_func

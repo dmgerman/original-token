@@ -101159,6 +101159,9 @@ id|nm256_info
 op_star
 id|card
 comma
+r_int
+id|devnum
+comma
 id|u32
 id|port
 comma
@@ -101208,7 +101211,7 @@ id|nm256_debug
 id|printk
 (paren
 id|KERN_INFO
-l_string|&quot;NM256: Loading coefficient buffer 0x%x-0x%x with coefficient %d&bslash;n&quot;
+l_string|&quot;NM256: Loading coefficient buffer 0x%x-0x%x with coefficient %d, size %d, port 0x%x&bslash;n&quot;
 comma
 id|coeffBuf
 comma
@@ -101219,6 +101222,10 @@ op_minus
 l_int|1
 comma
 id|which
+comma
+id|size
+comma
+id|port
 )paren
 suffix:semicolon
 id|nm256_writeBuffer8
@@ -101249,6 +101256,17 @@ comma
 id|coeffBuf
 )paren
 suffix:semicolon
+multiline_comment|/* ???  Record seems to behave differently than playback.  */
+r_if
+c_cond
+(paren
+id|devnum
+op_eq
+l_int|0
+)paren
+id|size
+op_decrement
+suffix:semicolon
 id|nm256_writePort32
 (paren
 id|card
@@ -101262,8 +101280,6 @@ comma
 id|coeffBuf
 op_plus
 id|size
-op_minus
-l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -101392,6 +101408,8 @@ id|card
 id|nm256_loadOneCoefficient
 (paren
 id|card
+comma
+id|which
 comma
 id|addrs
 (braket

@@ -2091,11 +2091,13 @@ id|acm-&gt;present
 )paren
 r_return
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;disconnecting&bslash;n&quot;
-)paren
+id|acm-&gt;active
+op_assign
+l_int|0
+suffix:semicolon
+id|acm-&gt;present
+op_assign
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -2146,14 +2148,6 @@ id|acm-&gt;ctrlpipe
 )paren
 suffix:semicolon
 singleline_comment|//BUG: What to do if a device is open?? Notify process or not allow cleanup?
-id|acm-&gt;active
-op_assign
-l_int|0
-suffix:semicolon
-id|acm-&gt;present
-op_assign
-l_int|0
-suffix:semicolon
 id|kfree
 c_func
 (paren

@@ -1,12 +1,12 @@
-macro_line|#ifndef _I386_PGTABLE_2LEVEL_H
-DECL|macro|_I386_PGTABLE_2LEVEL_H
-mdefine_line|#define _I386_PGTABLE_2LEVEL_H
-multiline_comment|/*&n; * traditional i386 two-level paging structure:&n; */
+macro_line|#ifndef __ASM_SH_PGTABLE_2LEVEL_H
+DECL|macro|__ASM_SH_PGTABLE_2LEVEL_H
+mdefine_line|#define __ASM_SH_PGTABLE_2LEVEL_H
+multiline_comment|/*&n; * traditional two-level paging structure:&n; */
 DECL|macro|PGDIR_SHIFT
 mdefine_line|#define PGDIR_SHIFT&t;22
 DECL|macro|PTRS_PER_PGD
 mdefine_line|#define PTRS_PER_PGD&t;1024
-multiline_comment|/*&n; * the i386 is two-level, so we don&squot;t really have any&n; * PMD directory physically.&n; */
+multiline_comment|/*&n; * this is two-level, so we don&squot;t really have any&n; * PMD directory physically.&n; */
 DECL|macro|PMD_SHIFT
 mdefine_line|#define PMD_SHIFT&t;22
 DECL|macro|PTRS_PER_PMD
@@ -66,7 +66,7 @@ l_int|1
 suffix:semicolon
 )brace
 DECL|macro|pgd_clear
-mdefine_line|#define pgd_clear(xp)&t;&t;&t;&t;do { } while (0)
+mdefine_line|#define pgd_clear(xp)&t;do { pgd_val(*(xp)) = 0; } while (0)
 DECL|macro|pgd_page
 mdefine_line|#define pgd_page(pgd) &bslash;&n;((unsigned long) __va(pgd_val(pgd) &amp; PAGE_MASK))
 DECL|function|pmd_offset
@@ -177,5 +177,5 @@ suffix:semicolon
 )brace
 DECL|macro|SWP_ENTRY
 mdefine_line|#define SWP_ENTRY(type,offset) __pte((((type) &lt;&lt; 1) | ((offset) &lt;&lt; 8)))
-macro_line|#endif /* _I386_PGTABLE_2LEVEL_H */
+macro_line|#endif /* __ASM_SH_PGTABLE_2LEVEL_H */
 eof

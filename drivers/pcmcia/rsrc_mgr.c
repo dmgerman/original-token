@@ -171,16 +171,6 @@ multiline_comment|/* etc */
 )brace
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*======================================================================&n;&n;    Linux resource management extensions&n;    &n;======================================================================*/
-DECL|variable|rsrc_lock
-r_static
-id|spinlock_t
-id|rsrc_lock
-op_assign
-id|SPIN_LOCK_UNLOCKED
-suffix:semicolon
-DECL|macro|check_io_region
-mdefine_line|#define check_io_region(b,n) (0)
 multiline_comment|/*======================================================================&n;&n;    These manage the internal databases of available resources.&n;    &n;======================================================================*/
 DECL|function|add_interval
 r_static
@@ -600,14 +590,6 @@ id|i
 comma
 l_int|8
 )paren
-op_logical_or
-id|check_io_region
-c_func
-(paren
-id|i
-comma
-l_int|8
-)paren
 )paren
 r_continue
 suffix:semicolon
@@ -721,14 +703,6 @@ r_if
 c_cond
 (paren
 id|check_region
-c_func
-(paren
-id|i
-comma
-l_int|8
-)paren
-op_logical_or
-id|check_io_region
 c_func
 (paren
 id|i
@@ -1766,15 +1740,6 @@ id|base
 comma
 id|num
 )paren
-op_logical_or
-id|check_io_region
-c_func
-(paren
-op_star
-id|base
-comma
-id|num
-)paren
 )paren
 (brace
 r_return
@@ -1879,7 +1844,6 @@ id|align
 r_if
 c_cond
 (paren
-(paren
 id|check_region
 c_func
 (paren
@@ -1890,20 +1854,6 @@ id|num
 )paren
 op_eq
 l_int|0
-)paren
-op_logical_and
-(paren
-id|check_io_region
-c_func
-(paren
-op_star
-id|base
-comma
-id|num
-)paren
-op_eq
-l_int|0
-)paren
 )paren
 (brace
 id|request_region

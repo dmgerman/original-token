@@ -3015,6 +3015,33 @@ c_func
 id|raw_inode-&gt;i_dtime
 )paren
 suffix:semicolon
+multiline_comment|/* We now have enough fields to check if the inode was active or not.&n;&t; * This is needed because nfsd might try to access dead inodes&n;&t; * the test is that same one that e2fsck uses&n;&t; * NeilBrown 1999oct15&n;&t; */
+r_if
+c_cond
+(paren
+id|inode-&gt;i_nlink
+op_eq
+l_int|0
+op_logical_and
+(paren
+id|inode-&gt;i_mode
+op_eq
+l_int|0
+op_logical_or
+id|inode-&gt;u.ext2_i.i_dtime
+)paren
+)paren
+(brace
+multiline_comment|/* this inode is deleted */
+id|brelse
+(paren
+id|bh
+)paren
+suffix:semicolon
+r_goto
+id|bad_inode
+suffix:semicolon
+)brace
 id|inode-&gt;i_blksize
 op_assign
 id|PAGE_SIZE

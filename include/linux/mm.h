@@ -333,11 +333,11 @@ id|swapout
 )paren
 (paren
 r_struct
-id|vm_area_struct
+id|page
 op_star
 comma
 r_struct
-id|page
+id|file
 op_star
 )paren
 suffix:semicolon
@@ -1237,10 +1237,6 @@ id|vma-&gt;vm_end
 op_minus
 id|address
 OG
-(paren
-r_int
-r_int
-)paren
 id|current-&gt;rlim
 (braket
 id|RLIMIT_STACK
@@ -1256,10 +1252,6 @@ id|PAGE_SHIFT
 op_plus
 id|grow
 OG
-(paren
-r_int
-r_int
-)paren
 id|current-&gt;rlim
 (braket
 id|RLIMIT_AS

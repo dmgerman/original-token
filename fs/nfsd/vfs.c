@@ -4555,12 +4555,6 @@ r_goto
 id|out
 suffix:semicolon
 )brace
-id|expire_by_dentry
-c_func
-(paren
-id|rdentry
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren

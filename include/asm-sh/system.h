@@ -114,7 +114,7 @@ l_string|&quot;stc&t;sr,%0&bslash;n&bslash;t&quot;
 l_string|&quot;and&t;%1,%0&bslash;n&bslash;t&quot;
 l_string|&quot;ldc&t;%0,sr&quot;
 suffix:colon
-l_string|&quot;=&amp;z&quot;
+l_string|&quot;=&amp;r&quot;
 (paren
 id|__dummy
 )paren
@@ -150,7 +150,7 @@ l_string|&quot;stc&t;sr,%0&bslash;n&bslash;t&quot;
 l_string|&quot;or&t;%1,%0&bslash;n&bslash;t&quot;
 l_string|&quot;ldc&t;%0,sr&quot;
 suffix:colon
-l_string|&quot;=&amp;z&quot;
+l_string|&quot;=&amp;r&quot;
 (paren
 id|__dummy
 )paren
@@ -165,9 +165,9 @@ l_string|&quot;memory&quot;
 suffix:semicolon
 )brace
 DECL|macro|__save_flags
-mdefine_line|#define __save_flags(x) &bslash;&n;__asm__ __volatile__(&quot;stc&t;sr,%0&bslash;n&bslash;tnop&bslash;n&bslash;tnop&bslash;n&bslash;tnop&bslash;n&bslash;tnop&bslash;n&bslash;tnop&quot;:&quot;=r&quot; (x): /* no inputs */ :&quot;memory&quot;)
+mdefine_line|#define __save_flags(x) &bslash;&n;__asm__ __volatile__(&quot;stc&t;sr,%0&quot;:&quot;=r&quot; (x): /* no inputs */ :&quot;memory&quot;)
 DECL|macro|__save_and_cli
-mdefine_line|#define __save_and_cli(x)               &bslash;&n;({&t;unsigned long __dummy;&t;&t;&bslash;&n;__asm__ __volatile__(                   &bslash;&n;&t;&quot;stc&t;sr,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov&t;%0,%1&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;or&t;%2,%1&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;ldc&t;%1,sr&quot;     &bslash;&n;&t;: &quot;=&amp;r&quot; (x), &quot;=&amp;z&quot; (__dummy) &bslash;&n;&t;: &quot;r&quot; (0x10000000) &bslash;&n;&t;: &quot;memory&quot;); })
+mdefine_line|#define __save_and_cli(x)    &t;&t;&t;&t;&bslash;&n;x = (__extension__ ({&t;unsigned long __dummy,__sr;&t;&bslash;&n;&t;__asm__ __volatile__(                   &t;&bslash;&n;&t;&t;&quot;stc&t;sr,%1&bslash;n&bslash;t&quot; &t;&t;&t;&bslash;&n;&t;&t;&quot;or&t;%0,%1&bslash;n&bslash;t&quot; &t;&t;&t;&bslash;&n;&t;&t;&quot;stc&t;sr,%0&bslash;n&bslash;t&quot; &t;&t;&t;&bslash;&n;&t;&t;&quot;ldc&t;%1,sr&quot;     &t;&t;&t;&bslash;&n;&t;&t;: &quot;=r&quot; (__sr), &quot;=&amp;r&quot; (__dummy) &t;&t;&bslash;&n;&t;&t;: &quot;0&quot; (0x10000000) &t;&t;&t;&bslash;&n;&t;&t;: &quot;memory&quot;); __sr; }))
 DECL|macro|__restore_flags
 mdefine_line|#define __restore_flags(x) &bslash;&n;__asm__ __volatile__(&quot;ldc&t;%0,sr&quot;: /* no output */: &quot;r&quot; (x):&quot;memory&quot;)
 multiline_comment|/* For spinlocks etc */

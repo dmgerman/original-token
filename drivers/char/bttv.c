@@ -243,6 +243,7 @@ op_assign
 op_star
 id|ptep
 suffix:semicolon
+multiline_comment|/* Note; page_address will panic for us if the page is high */
 r_if
 c_cond
 (paren
@@ -255,11 +256,14 @@ id|pte
 (brace
 id|ret
 op_assign
+id|page_address
+c_func
 (paren
 id|pte_page
 c_func
 (paren
 id|pte
+)paren
 )paren
 op_or
 (paren
@@ -269,7 +273,6 @@ op_amp
 id|PAGE_SIZE
 op_minus
 l_int|1
-)paren
 )paren
 )paren
 suffix:semicolon

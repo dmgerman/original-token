@@ -6,8 +6,10 @@ macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
+macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;linux/sysctl.h&gt;
 macro_line|#include &lt;linux/acpi.h&gt;
 multiline_comment|/*&n; * Defines for 2.2.x&n; */
 macro_line|#ifndef __exit
@@ -847,7 +849,12 @@ r_int
 r_int
 id|table_size
 op_assign
+id|readl
+c_func
+(paren
+op_amp
 id|table-&gt;length
+)paren
 suffix:semicolon
 id|iounmap
 c_func
@@ -1106,7 +1113,12 @@ c_cond
 op_logical_neg
 id|rsdt
 op_logical_or
+id|readl
+c_func
+(paren
+op_amp
 id|rsdt-&gt;signature
+)paren
 op_ne
 id|ACPI_RSDT_SIG
 )paren
@@ -1153,7 +1165,12 @@ r_int
 )paren
 (paren
 (paren
+id|readl
+c_func
+(paren
+op_amp
 id|rsdt-&gt;length
+)paren
 op_minus
 r_sizeof
 (paren
@@ -1179,8 +1196,11 @@ op_assign
 id|acpi_map_table
 c_func
 (paren
-op_star
+id|readl
+c_func
+(paren
 id|rsdt_entry
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -1188,41 +1208,84 @@ c_cond
 (paren
 id|dt
 op_logical_and
+id|readl
+c_func
+(paren
+op_amp
 id|dt-&gt;signature
+)paren
 op_eq
 id|ACPI_FACP_SIG
 )paren
 (brace
-id|acpi_facp
+id|acpi_facp_addr
 op_assign
+id|readl
+c_func
+(paren
+id|rsdt_entry
+)paren
+suffix:semicolon
+id|acpi_dsdt_addr
+op_assign
+id|readl
+c_func
+(paren
+op_amp
+(paren
 (paren
 r_struct
 id|acpi_facp
 op_star
 )paren
 id|dt
+)paren
+op_member_access_from_pointer
+id|dsdt
+)paren
 suffix:semicolon
-id|acpi_facp_addr
+id|acpi_facp
 op_assign
+id|kmalloc
+c_func
+(paren
+r_sizeof
+(paren
+r_struct
+id|acpi_facp
+)paren
+comma
+id|GFP_KERNEL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|acpi_facp
+)paren
+(brace
+id|memcpy_fromio
+c_func
+(paren
+id|acpi_facp
+comma
+id|dt
+comma
+r_sizeof
+(paren
 op_star
-id|rsdt_entry
-suffix:semicolon
-id|acpi_dsdt_addr
-op_assign
-id|acpi_facp-&gt;dsdt
-suffix:semicolon
-r_break
+id|acpi_facp
+)paren
+)paren
 suffix:semicolon
 )brace
-r_else
-(brace
+)brace
 id|acpi_unmap_table
 c_func
 (paren
 id|dt
 )paren
 suffix:semicolon
-)brace
 id|rsdt_entry
 op_increment
 suffix:semicolon
@@ -1247,7 +1310,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;ACPI: no FACP found&bslash;n&quot;
+l_string|&quot;ACPI: no FACP&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1281,14 +1344,15 @@ id|acpi_facp_addr
 op_assign
 l_int|0
 suffix:semicolon
-id|acpi_unmap_table
+r_if
+c_cond
+(paren
+id|acpi_facp
+)paren
+(brace
+id|kfree
 c_func
 (paren
-(paren
-r_struct
-id|acpi_table
-op_star
-)paren
 id|acpi_facp
 )paren
 suffix:semicolon
@@ -1296,6 +1360,7 @@ id|acpi_facp
 op_assign
 l_int|NULL
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; * Handle an ACPI SCI (fixed or general purpose event)&n; */
 DECL|function|acpi_irq

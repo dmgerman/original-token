@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/highmem.h&gt;
+macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 multiline_comment|/*&n; * The swap-out functions return 1 if they successfully&n; * threw something out, and we got a free page. It returns&n; * zero if it couldn&squot;t do anything, and any other value&n; * indicates it decreased rss, but the page was shared.&n; *&n; * NOTE! If it sleeps, it *must* return 1 to make sure we&n; * don&squot;t continue with the swap-out. Otherwise we may be&n; * using a process that no longer actually exists (it might&n; * have died while we slept).&n; */
 DECL|function|try_to_swap_out
@@ -41,6 +42,21 @@ r_struct
 id|page
 op_star
 id|page
+suffix:semicolon
+r_int
+(paren
+op_star
+id|swapout
+)paren
+(paren
+r_struct
+id|page
+op_star
+comma
+r_struct
+id|file
+op_star
+)paren
 suffix:semicolon
 id|pte
 op_assign
@@ -271,11 +287,33 @@ c_cond
 (paren
 id|vma-&gt;vm_ops
 op_logical_and
+(paren
+id|swapout
+op_assign
 id|vma-&gt;vm_ops-&gt;swapout
+)paren
 )paren
 (brace
 r_int
 id|error
+suffix:semicolon
+r_struct
+id|file
+op_star
+id|file
+op_assign
+id|vma-&gt;vm_file
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|file
+)paren
+id|get_file
+c_func
+(paren
+id|file
+)paren
 suffix:semicolon
 id|pte_clear
 c_func
@@ -302,14 +340,23 @@ id|vma-&gt;vm_mm
 suffix:semicolon
 id|error
 op_assign
-id|vma-&gt;vm_ops
-op_member_access_from_pointer
 id|swapout
 c_func
 (paren
-id|vma
-comma
 id|page
+comma
+id|file
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|file
+)paren
+id|fput
+c_func
+(paren
+id|file
 )paren
 suffix:semicolon
 r_if

@@ -4,6 +4,10 @@ mdefine_line|#define __ASM_SH_DMA_H
 multiline_comment|/* Don&squot;t define MAX_DMA_ADDRESS; it&squot;s useless on the SuperH and any&n;   occurrence should be flagged as an error.  */
 DECL|macro|MAX_DMA_CHANNELS
 mdefine_line|#define MAX_DMA_CHANNELS 8
+multiline_comment|/* The maximum address that we can perform a DMA transfer to on this platform */
+multiline_comment|/* XXX: This is not applicable to SuperH, just needed for alloc_bootmem */
+DECL|macro|MAX_DMA_ADDRESS
+mdefine_line|#define MAX_DMA_ADDRESS      (PAGE_OFFSET+0x1000000)
 r_extern
 r_int
 id|request_dma

@@ -5,6 +5,11 @@ mdefine_line|#define MO 0
 multiline_comment|/* And for stereo. */
 DECL|macro|ST
 mdefine_line|#define ST 1
+multiline_comment|/* Whether or not the bits in the channel are inverted. */
+DECL|macro|INV
+mdefine_line|#define INV 1
+DECL|macro|NINV
+mdefine_line|#define NINV 0
 DECL|struct|ac97_chn_desc
 r_static
 r_struct
@@ -38,6 +43,10 @@ DECL|member|regmask
 id|u16
 id|regmask
 suffix:semicolon
+DECL|member|is_inverted
+r_int
+id|is_inverted
+suffix:semicolon
 DECL|variable|mixerRegs
 )brace
 id|mixerRegs
@@ -59,6 +68,8 @@ comma
 l_int|5
 comma
 l_int|0x0000
+comma
+id|INV
 )brace
 comma
 (brace
@@ -75,6 +86,8 @@ comma
 l_int|6
 comma
 l_int|0x0000
+comma
+id|INV
 )brace
 comma
 (brace
@@ -92,6 +105,8 @@ op_minus
 l_int|1
 comma
 l_int|0x00ff
+comma
+id|INV
 )brace
 comma
 (brace
@@ -109,6 +124,8 @@ op_minus
 l_int|1
 comma
 l_int|0xff00
+comma
+id|INV
 )brace
 comma
 (brace
@@ -126,6 +143,8 @@ op_minus
 l_int|1
 comma
 l_int|0x001e
+comma
+id|INV
 )brace
 comma
 (brace
@@ -142,6 +161,8 @@ comma
 l_int|7
 comma
 l_int|0x0000
+comma
+id|INV
 )brace
 comma
 (brace
@@ -158,6 +179,8 @@ comma
 l_int|0
 comma
 l_int|0x0000
+comma
+id|INV
 )brace
 comma
 (brace
@@ -174,6 +197,8 @@ comma
 l_int|4
 comma
 l_int|0x0000
+comma
+id|INV
 )brace
 comma
 (brace
@@ -190,6 +215,8 @@ comma
 l_int|1
 comma
 l_int|0x0000
+comma
+id|INV
 )brace
 comma
 (brace
@@ -206,6 +233,8 @@ comma
 l_int|2
 comma
 l_int|0x0000
+comma
+id|INV
 )brace
 comma
 (brace
@@ -222,6 +251,8 @@ comma
 l_int|3
 comma
 l_int|0x0000
+comma
+id|INV
 )brace
 comma
 (brace
@@ -239,6 +270,8 @@ op_minus
 l_int|1
 comma
 l_int|0x0000
+comma
+id|INV
 )brace
 comma
 (brace
@@ -256,6 +289,8 @@ op_minus
 l_int|1
 comma
 l_int|0x0000
+comma
+id|NINV
 )brace
 comma
 (brace
@@ -275,6 +310,8 @@ op_minus
 l_int|1
 comma
 l_int|0x0000
+comma
+l_int|0
 )brace
 comma
 )brace
@@ -592,6 +629,95 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* Reset the mixer to the currently saved settings.  */
+r_int
+DECL|function|ac97_reset
+id|ac97_reset
+(paren
+r_struct
+id|ac97_hwint
+op_star
+id|dev
+)paren
+(brace
+r_int
+id|x
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;reset_device
+(paren
+id|dev
+)paren
+)paren
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+multiline_comment|/* Now set the registers back to their last-written values. */
+r_for
+c_loop
+(paren
+id|x
+op_assign
+l_int|0
+suffix:semicolon
+id|mixerRegs
+(braket
+id|x
+)braket
+dot
+id|ac97_regnum
+op_ne
+op_minus
+l_int|1
+suffix:semicolon
+id|x
+op_increment
+)paren
+(brace
+r_int
+id|regnum
+op_assign
+id|mixerRegs
+(braket
+id|x
+)braket
+dot
+id|ac97_regnum
+suffix:semicolon
+r_int
+id|value
+op_assign
+id|dev-&gt;last_written_mixer_values
+(braket
+id|regnum
+op_div
+l_int|2
+)braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|value
+op_ge
+l_int|0
+)paren
+id|ac97_put_register
+(paren
+id|dev
+comma
+id|regnum
+comma
+id|value
+)paren
+suffix:semicolon
+)brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
 multiline_comment|/* Return the contents of register REG; use the cache if the value in it&n;   is valid.  Returns a negative error code on failure. */
 r_int
 DECL|function|ac97_get_register
@@ -782,6 +908,9 @@ id|maxval
 comma
 r_int
 id|is_stereo
+comma
+r_int
+id|inv
 )paren
 (brace
 multiline_comment|/* Muted?  */
@@ -811,6 +940,8 @@ comma
 id|maxval
 comma
 l_int|0
+comma
+id|inv
 )paren
 op_lshift
 l_int|8
@@ -830,6 +961,8 @@ comma
 id|maxval
 comma
 l_int|0
+comma
+id|inv
 )paren
 op_lshift
 l_int|0
@@ -841,6 +974,11 @@ r_int
 id|i
 suffix:semicolon
 multiline_comment|/* Inverted. */
+r_if
+c_cond
+(paren
+id|inv
+)paren
 id|value
 op_assign
 id|maxval
@@ -874,6 +1012,17 @@ id|i
 op_assign
 l_int|100
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
+OL
+l_int|0
+)paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
 r_return
 id|i
 suffix:semicolon
@@ -892,6 +1041,9 @@ id|maxval
 comma
 r_int
 id|is_stereo
+comma
+r_int
+id|inv
 )paren
 (brace
 r_if
@@ -910,6 +1062,8 @@ comma
 id|maxval
 comma
 l_int|0
+comma
+id|inv
 )paren
 op_lshift
 l_int|8
@@ -929,6 +1083,8 @@ comma
 id|maxval
 comma
 l_int|0
+comma
+id|inv
 )paren
 op_lshift
 l_int|0
@@ -939,8 +1095,6 @@ r_else
 r_int
 id|i
 op_assign
-id|maxval
-op_minus
 (paren
 (paren
 id|value
@@ -958,6 +1112,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|inv
+)paren
+id|i
+op_assign
+id|maxval
+op_minus
+id|i
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|i
 OL
 l_int|0
@@ -965,6 +1130,17 @@ l_int|0
 id|i
 op_assign
 l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
+OG
+id|maxval
+)paren
+id|i
+op_assign
+id|maxval
 suffix:semicolon
 r_return
 id|i
@@ -1040,6 +1216,8 @@ comma
 id|channel-&gt;maxval
 comma
 id|channel-&gt;is_stereo
+comma
+id|channel-&gt;is_inverted
 )paren
 suffix:semicolon
 r_if
@@ -1267,6 +1445,8 @@ comma
 id|channel-&gt;maxval
 comma
 id|channel-&gt;is_stereo
+comma
+id|channel-&gt;is_inverted
 )paren
 suffix:semicolon
 )brace
@@ -1870,6 +2050,12 @@ c_cond
 id|ret
 op_ge
 l_int|0
+op_logical_and
+(paren
+id|dir
+op_amp
+id|_IOC_READ
+)paren
 )paren
 (brace
 r_if

@@ -357,11 +357,11 @@ r_int
 r_int
 id|__pgdir
 op_assign
-id|__pa
-c_func
 (paren
-id|next-&gt;pgd
+r_int
+r_int
 )paren
+id|next-&gt;pgd
 suffix:semicolon
 id|__asm__
 id|__volatile__

@@ -6,7 +6,7 @@ macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;sound_calls.h&quot;
 DECL|macro|AC97_RESET
 mdefine_line|#define  AC97_RESET              0x0000      
-singleline_comment|//  */
+singleline_comment|//
 DECL|macro|AC97_MASTER_VOL_STEREO
 mdefine_line|#define  AC97_MASTER_VOL_STEREO  0x0002      
 singleline_comment|// Line Out
@@ -413,6 +413,17 @@ id|cmd
 comma
 id|caddr_t
 id|arg
+)paren
+suffix:semicolon
+multiline_comment|/* Do a complete reset on the AC97 mixer, restoring all mixer registers to&n;   the current values.  Normally used after an APM resume event.  */
+r_extern
+r_int
+id|ac97_reset
+(paren
+r_struct
+id|ac97_hwint
+op_star
+id|dev
 )paren
 suffix:semicolon
 macro_line|#endif

@@ -217,10 +217,6 @@ op_star
 id|sem
 )paren
 suffix:semicolon
-r_extern
-id|spinlock_t
-id|semaphore_wake_lock
-suffix:semicolon
 multiline_comment|/*&n; * This is ugly, but we want the default case to fall through.&n; * &quot;down_failed&quot; is a special asm handler that calls the C&n; * routine that actually waits. See arch/i386/lib/semaphore.S&n; */
 DECL|function|down
 r_extern

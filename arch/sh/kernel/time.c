@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: time.c,v 1.2 1999/10/11 13:12:02 gniibe Exp $&n; *&n; *  linux/arch/sh/kernel/time.c&n; *&n; *  Copyright (C) 1999  Tetsuya Okada &amp; Niibe Yutaka&n; *&n; *  Some code taken from i386 version.&n; *    Copyright (C) 1991, 1992, 1995  Linus Torvalds&n; */
+multiline_comment|/* $Id: time.c,v 1.3 1999/10/17 10:30:15 gniibe Exp $&n; *&n; *  linux/arch/sh/kernel/time.c&n; *&n; *  Copyright (C) 1999  Tetsuya Okada &amp; Niibe Yutaka&n; *&n; *  Some code taken from i386 version.&n; *    Copyright (C) 1991, 1992, 1995  Linus Torvalds&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

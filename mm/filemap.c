@@ -263,8 +263,6 @@ op_assign
 op_amp
 id|inode-&gt;i_pages
 suffix:semicolon
-id|repeat
-suffix:colon
 id|spin_lock
 c_func
 (paren
@@ -5050,9 +5048,9 @@ id|filemap_write_page
 c_func
 (paren
 r_struct
-id|vm_area_struct
+id|file
 op_star
-id|vma
+id|file
 comma
 r_int
 r_int
@@ -5071,11 +5069,6 @@ r_int
 id|result
 suffix:semicolon
 r_struct
-id|file
-op_star
-id|file
-suffix:semicolon
-r_struct
 id|dentry
 op_star
 id|dentry
@@ -5084,10 +5077,6 @@ r_struct
 id|inode
 op_star
 id|inode
-suffix:semicolon
-id|file
-op_assign
-id|vma-&gt;vm_file
 suffix:semicolon
 id|dentry
 op_assign
@@ -5097,13 +5086,7 @@ id|inode
 op_assign
 id|dentry-&gt;d_inode
 suffix:semicolon
-multiline_comment|/*&n;&t; * If a task terminates while we&squot;re swapping the page, the vma and&n;&t; * and file could be released ... increment the count to be safe.&n;&t; */
-id|get_file
-c_func
-(paren
-id|file
-)paren
-suffix:semicolon
+multiline_comment|/*&n;&t; * If a task terminates while we&squot;re swapping the page, the vma and&n;&t; * and file could be released: try_to_swap_out has done a get_file.&n;&t; * vma/file is guaranteed to exist in the unmap/sync cases because&n;&t; * mmap_sem is held.&n;&t; */
 id|result
 op_assign
 id|do_write_page
@@ -5116,12 +5099,6 @@ comma
 id|page
 comma
 id|offset
-)paren
-suffix:semicolon
-id|fput
-c_func
-(paren
-id|file
 )paren
 suffix:semicolon
 r_return
@@ -5143,14 +5120,14 @@ id|filemap_swapout
 c_func
 (paren
 r_struct
-id|vm_area_struct
+id|page
 op_star
-id|vma
+id|page
 comma
 r_struct
-id|page
+id|file
 op_star
-id|page
+id|file
 )paren
 (brace
 r_int
@@ -5159,7 +5136,7 @@ op_assign
 id|filemap_write_page
 c_func
 (paren
-id|vma
+id|file
 comma
 id|page-&gt;offset
 comma
@@ -5417,7 +5394,7 @@ op_assign
 id|filemap_write_page
 c_func
 (paren
-id|vma
+id|vma-&gt;vm_file
 comma
 id|address
 op_minus

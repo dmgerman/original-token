@@ -2309,6 +2309,14 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|ppp_sync_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 macro_line|#endif
 id|printk
 c_func
@@ -2349,6 +2357,13 @@ suffix:semicolon
 macro_line|#ifndef MODULE
 macro_line|#ifdef CONFIG_PPP_ASYNC
 id|ppp_async_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_PPP_SYNC_TTY
+id|ppp_sync_init
 c_func
 (paren
 )paren

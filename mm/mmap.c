@@ -2649,7 +2649,6 @@ id|end
 op_minus
 id|st
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * The lock_kernel interlocks with kswapd try_to_swap_out&n;&t;&t; * invoking a driver swapout() method, and being able to&n;&t;&t; * guarantee vma existance.&n;&t;&t; */
 id|lock_kernel
 c_func
 (paren

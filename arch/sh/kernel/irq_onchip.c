@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: irq_onchip.c,v 1.3 1999/10/11 13:12:19 gniibe Exp $&n; *&n; * linux/arch/sh/kernel/irq_onchip.c&n; *&n; * Copyright (C) 1999  Niibe Yutaka&n; *&n; * Interrupt handling for on-chip supporting modules (TMU, RTC, etc.).&n; *&n; */
+multiline_comment|/* $Id: irq_onchip.c,v 1.4 1999/10/19 12:22:05 gniibe Exp $&n; *&n; * linux/arch/sh/kernel/irq_onchip.c&n; *&n; * Copyright (C) 1999  Niibe Yutaka&n; *&n; * Interrupt handling for on-chip supporting modules (TMU, RTC, etc.).&n; *&n; */
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
@@ -192,6 +192,12 @@ r_int
 id|irq
 )paren
 (brace
+r_int
+r_int
+id|val
+comma
+id|flags
+suffix:semicolon
 multiline_comment|/* Set priority in IPR to 0 */
 r_int
 id|offset
@@ -235,9 +241,11 @@ l_int|16
 )paren
 )paren
 suffix:semicolon
-r_int
-r_int
-id|val
+id|save_and_cli
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 id|val
 op_assign
@@ -259,6 +267,12 @@ comma
 id|intc_ipr_address
 )paren
 suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 )brace
 DECL|function|enable_onChip_irq
 r_static
@@ -271,6 +285,12 @@ r_int
 id|irq
 )paren
 (brace
+r_int
+r_int
+id|val
+comma
+id|flags
+suffix:semicolon
 multiline_comment|/* Set priority in IPR back to original value */
 r_int
 id|offset
@@ -324,9 +344,11 @@ l_int|16
 )paren
 )paren
 suffix:semicolon
-r_int
-r_int
-id|val
+id|save_and_cli
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 id|val
 op_assign
@@ -346,6 +368,12 @@ c_func
 id|val
 comma
 id|intc_ipr_address
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 )brace

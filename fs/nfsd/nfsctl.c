@@ -33,14 +33,6 @@ macro_line|#endif
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 r_extern
-r_void
-id|nfsd_fh_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
 r_int
 id|sys_call_table
 (braket
@@ -265,12 +257,6 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* lockd-&gt;nfsd callbacks */
-id|nfsd_fh_init
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* FH table */
 id|proc_export_init
 c_func
 (paren

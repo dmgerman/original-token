@@ -2391,13 +2391,34 @@ c_func
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_INITRD
-singleline_comment|// FIXME needs to do the new bootmem alloc stuff
 r_if
 c_cond
 (paren
 id|LOADER_TYPE
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|INITRD_START
+op_plus
+id|INITRD_SIZE
+OL
+(paren
+id|max_low_pfn
+op_lshift
+id|PAGE_SHIFT
+)paren
+)paren
+(brace
+id|reserve_bootmem
+c_func
+(paren
+id|INITRD_START
+comma
+id|INITRD_SIZE
+)paren
+suffix:semicolon
 id|initrd_start
 op_assign
 id|INITRD_START
@@ -2415,17 +2436,8 @@ id|initrd_start
 op_plus
 id|INITRD_SIZE
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|initrd_end
-OG
-(paren
-id|max_low_pfn
-op_lshift
-id|PAGE_SHIFT
-)paren
-)paren
+)brace
+r_else
 (brace
 id|printk
 c_func
@@ -2433,9 +2445,13 @@ c_func
 l_string|&quot;initrd extends beyond end of memory &quot;
 l_string|&quot;(0x%08lx &gt; 0x%08lx)&bslash;ndisabling initrd&bslash;n&quot;
 comma
-id|initrd_end
+id|INITRD_START
+op_plus
+id|INITRD_SIZE
 comma
-id|memory_end
+id|max_low_pfn
+op_lshift
+id|PAGE_SHIFT
 )paren
 suffix:semicolon
 id|initrd_start

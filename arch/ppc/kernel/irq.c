@@ -941,6 +941,19 @@ op_member_access_from_pointer
 r_typename
 )paren
 suffix:semicolon
+r_else
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;  None      &quot;
+)paren
+suffix:semicolon
 id|len
 op_add_assign
 id|sprintf

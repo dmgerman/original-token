@@ -164,29 +164,40 @@ id|page
 suffix:semicolon
 multiline_comment|/*&n; * Basically we have the same two-level (which is the logical three level&n; * Linux page table layout folded) page tables as the i386.&n; */
 macro_line|#endif /* !__ASSEMBLY__ */
-multiline_comment|/* PMD_SHIFT determines the size of the area a second-level page table can map */
-DECL|macro|PMD_SHIFT
-mdefine_line|#define PMD_SHIFT&t;22
+DECL|macro|pgd_quicklist
+mdefine_line|#define pgd_quicklist (current_cpu_data.pgd_quick)
+DECL|macro|pmd_quicklist
+mdefine_line|#define pmd_quicklist ((unsigned long *)0)
+DECL|macro|pte_quicklist
+mdefine_line|#define pte_quicklist (current_cpu_data.pte_quick)
+DECL|macro|pgtable_cache_size
+mdefine_line|#define pgtable_cache_size (current_cpu_data.pgtable_cache_sz)
+macro_line|#include &lt;asm/pgtable-2level.h&gt;
+multiline_comment|/*&n; * Certain architectures need to do special things when PTEs&n; * within a page table are directly modified.  Thus, the following&n; * hook is made available.&n; */
+DECL|macro|set_pte
+mdefine_line|#define set_pte(pteptr, pteval) ((*(pteptr)) = (pteval))
+DECL|macro|__beep
+mdefine_line|#define __beep() asm(&quot;&quot;)
 DECL|macro|PMD_SIZE
 mdefine_line|#define PMD_SIZE&t;(1UL &lt;&lt; PMD_SHIFT)
 DECL|macro|PMD_MASK
 mdefine_line|#define PMD_MASK&t;(~(PMD_SIZE-1))
-multiline_comment|/* PGDIR_SHIFT determines what a third-level page table entry can map */
-DECL|macro|PGDIR_SHIFT
-mdefine_line|#define PGDIR_SHIFT&t;22
 DECL|macro|PGDIR_SIZE
 mdefine_line|#define PGDIR_SIZE&t;(1UL &lt;&lt; PGDIR_SHIFT)
 DECL|macro|PGDIR_MASK
 mdefine_line|#define PGDIR_MASK&t;(~(PGDIR_SIZE-1))
-multiline_comment|/*&n; * Entries per page directory level: we use two-level, so&n; * we don&squot;t really have any PMD directory physically.&n; */
-DECL|macro|PTRS_PER_PTE
-mdefine_line|#define PTRS_PER_PTE&t;1024
-DECL|macro|PTRS_PER_PMD
-mdefine_line|#define PTRS_PER_PMD&t;1
-DECL|macro|PTRS_PER_PGD
-mdefine_line|#define PTRS_PER_PGD&t;1024
 DECL|macro|USER_PTRS_PER_PGD
 mdefine_line|#define USER_PTRS_PER_PGD&t;(TASK_SIZE/PGDIR_SIZE)
+DECL|macro|USER_PGD_PTRS
+mdefine_line|#define USER_PGD_PTRS (PAGE_OFFSET &gt;&gt; PGDIR_SHIFT)
+DECL|macro|KERNEL_PGD_PTRS
+mdefine_line|#define KERNEL_PGD_PTRS (PTRS_PER_PGD-USER_PGD_PTRS)
+DECL|macro|TWOLEVEL_PGDIR_SHIFT
+mdefine_line|#define TWOLEVEL_PGDIR_SHIFT&t;22
+DECL|macro|BOOT_USER_PGD_PTRS
+mdefine_line|#define BOOT_USER_PGD_PTRS (__PAGE_OFFSET &gt;&gt; TWOLEVEL_PGDIR_SHIFT)
+DECL|macro|BOOT_KERNEL_PGD_PTRS
+mdefine_line|#define BOOT_KERNEL_PGD_PTRS (1024-BOOT_USER_PGD_PTRS)
 macro_line|#ifndef __ASSEMBLY__
 DECL|macro|VMALLOC_START
 mdefine_line|#define VMALLOC_START&t;P3SEG
@@ -206,7 +217,8 @@ DECL|macro|_PAGE_RW
 mdefine_line|#define _PAGE_RW&t;0x020  /* PR0-bit : write access allowed */
 DECL|macro|_PAGE_USER
 mdefine_line|#define _PAGE_USER&t;0x040  /* PR1-bit : user space access allowed */
-multiline_comment|/*&t;&t; &t;0x080  */
+DECL|macro|_PAGE_PROTNONE
+mdefine_line|#define _PAGE_PROTNONE&t;0x080  /* software: if not present */
 DECL|macro|_PAGE_PRESENT
 mdefine_line|#define _PAGE_PRESENT&t;0x100  /* V-bit   : page is valid */
 macro_line|#if defined(__sh3__)
@@ -231,7 +243,7 @@ mdefine_line|#define _KERNPG_TABLE&t;(_PAGE_PRESENT | _PAGE_RW | _PAGE_ACCESSED 
 DECL|macro|_PAGE_CHG_MASK
 mdefine_line|#define _PAGE_CHG_MASK&t;(PAGE_MASK | _PAGE_ACCESSED | _PAGE_DIRTY)
 DECL|macro|PAGE_NONE
-mdefine_line|#define PAGE_NONE&t;__pgprot(_PAGE_PRESENT | _PAGE_ACCESSED)
+mdefine_line|#define PAGE_NONE&t;__pgprot(_PAGE_PROTNONE | _PAGE_ACCESSED)
 DECL|macro|PAGE_SHARED
 mdefine_line|#define PAGE_SHARED&t;__pgprot(_PAGE_PRESENT | _PAGE_RW | _PAGE_USER | _PAGE_ACCESSED)
 DECL|macro|PAGE_COPY
@@ -293,6 +305,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * ZERO_PAGE is a global shared page that is always zero: used&n; * for zero-mapped memory areas etc..&n; */
 r_extern
 r_int
 r_int
@@ -301,238 +314,56 @@ id|empty_zero_page
 l_int|1024
 )braket
 suffix:semicolon
-DECL|macro|BAD_PAGETABLE
-mdefine_line|#define BAD_PAGETABLE __bad_pagetable()
-DECL|macro|BAD_PAGE
-mdefine_line|#define BAD_PAGE __bad_page()
 DECL|macro|ZERO_PAGE
-mdefine_line|#define ZERO_PAGE(vaddr) ((unsigned long) empty_zero_page)
-multiline_comment|/* number of bits that fit into a memory pointer */
-DECL|macro|BITS_PER_PTR
-mdefine_line|#define BITS_PER_PTR&t;&t;&t;(8*sizeof(unsigned long))
-multiline_comment|/* to align the pointer to a pointer address */
-DECL|macro|PTR_MASK
-mdefine_line|#define PTR_MASK&t;&t;&t;(~(sizeof(void*)-1))
-multiline_comment|/* sizeof(void*)==1&lt;&lt;SIZEOF_PTR_LOG2 */
-multiline_comment|/* 64-bit machines, beware!  SRB. */
-DECL|macro|SIZEOF_PTR_LOG2
-mdefine_line|#define SIZEOF_PTR_LOG2&t;&t;&t;2
-multiline_comment|/* to find an entry in a page-table */
-DECL|macro|PAGE_PTR
-mdefine_line|#define PAGE_PTR(address) &bslash;&n;((unsigned long)(address)&gt;&gt;(PAGE_SHIFT-SIZEOF_PTR_LOG2)&amp;PTR_MASK&amp;~PAGE_MASK)
-multiline_comment|/* Certain architectures need to do special things when pte&squot;s&n; * within a page table are directly modified.  Thus, the following&n; * hook is made available.&n; */
-DECL|function|set_pte
+mdefine_line|#define ZERO_PAGE(vaddr) (mem_map + MAP_NR(empty_zero_page))
+multiline_comment|/*&n; * Handling allocation failures during page table setup.&n; */
 r_extern
-id|__inline__
 r_void
-id|set_pte
-c_func
-(paren
-id|pte_t
-op_star
-id|ptep
-comma
-id|pte_t
-id|pteval
-)paren
-(brace
-op_star
-id|ptep
-op_assign
-id|pteval
-suffix:semicolon
-)brace
-DECL|function|pte_none
-r_extern
-id|__inline__
-r_int
-id|pte_none
-c_func
-(paren
-id|pte_t
-id|pte
-)paren
-(brace
-r_return
-op_logical_neg
-id|pte_val
-c_func
-(paren
-id|pte
-)paren
-suffix:semicolon
-)brace
-DECL|function|pte_present
-r_extern
-id|__inline__
-r_int
-id|pte_present
-c_func
-(paren
-id|pte_t
-id|pte
-)paren
-(brace
-r_return
-id|pte_val
-c_func
-(paren
-id|pte
-)paren
-op_amp
-id|_PAGE_PRESENT
-suffix:semicolon
-)brace
-DECL|function|pte_clear
-r_extern
-id|__inline__
-r_void
-id|pte_clear
-c_func
-(paren
-id|pte_t
-op_star
-id|ptep
-)paren
-(brace
-id|pte_val
-c_func
-(paren
-op_star
-id|ptep
-)paren
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-DECL|function|pmd_none
-r_extern
-id|__inline__
-r_int
-id|pmd_none
+id|__handle_bad_pmd
 c_func
 (paren
 id|pmd_t
-id|pmd
-)paren
-(brace
-r_return
-op_logical_neg
-id|pmd_val
-c_func
-(paren
+op_star
 id|pmd
 )paren
 suffix:semicolon
-)brace
+r_extern
+r_void
+id|__handle_bad_pmd_kernel
+c_func
+(paren
+id|pmd_t
+op_star
+id|pmd
+)paren
+suffix:semicolon
+DECL|macro|pte_none
+mdefine_line|#define pte_none(x)&t;(!pte_val(x))
+DECL|macro|pte_present
+mdefine_line|#define pte_present(x)&t;(pte_val(x) &amp; (_PAGE_PRESENT | _PAGE_PROTNONE))
+DECL|macro|pte_clear
+mdefine_line|#define pte_clear(xp)&t;do { pte_val(*(xp)) = 0; } while (0)
+DECL|macro|pte_pagenr
+mdefine_line|#define pte_pagenr(x)&t;((unsigned long)((pte_val(x) &gt;&gt; PAGE_SHIFT)))
+DECL|macro|pmd_none
+mdefine_line|#define pmd_none(x)&t;(!pmd_val(x))
 DECL|macro|pmd_bad
 mdefine_line|#define&t;pmd_bad(x)&t;((pmd_val(x) &amp; (~PAGE_MASK &amp; ~_PAGE_USER)) != _KERNPG_TABLE)
-DECL|function|pmd_present
-r_extern
-id|__inline__
-r_int
-id|pmd_present
-c_func
-(paren
-id|pmd_t
-id|pmd
-)paren
-(brace
-r_return
-id|pmd_val
-c_func
-(paren
-id|pmd
-)paren
-op_amp
-id|_PAGE_PRESENT
-suffix:semicolon
-)brace
-DECL|function|pmd_clear
-r_extern
-id|__inline__
-r_void
-id|pmd_clear
-c_func
-(paren
-id|pmd_t
-op_star
-id|pmdp
-)paren
-(brace
-id|pmd_val
-c_func
-(paren
-op_star
-id|pmdp
-)paren
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * The &quot;pgd_xxx()&quot; functions here are trivial for a folded two-level&n; * setup: the pgd is never bad, and a pmd always exists (as it&squot;s folded&n; * into the pgd entry)&n; */
-DECL|function|pgd_none
-r_extern
-id|__inline__
-r_int
-id|pgd_none
-c_func
-(paren
-id|pgd_t
-id|pgd
-)paren
-(brace
-r_return
-l_int|0
-suffix:semicolon
-)brace
-DECL|function|pgd_bad
-r_extern
-id|__inline__
-r_int
-id|pgd_bad
-c_func
-(paren
-id|pgd_t
-id|pgd
-)paren
-(brace
-r_return
-l_int|0
-suffix:semicolon
-)brace
-DECL|function|pgd_present
-r_extern
-id|__inline__
-r_int
-id|pgd_present
-c_func
-(paren
-id|pgd_t
-id|pgd
-)paren
-(brace
-r_return
-l_int|1
-suffix:semicolon
-)brace
-DECL|function|pgd_clear
-r_extern
-id|__inline__
-r_void
-id|pgd_clear
-c_func
-(paren
-id|pgd_t
-op_star
-id|pgdp
-)paren
-(brace
-)brace
+DECL|macro|pmd_present
+mdefine_line|#define pmd_present(x)&t;(pmd_val(x) &amp; _PAGE_PRESENT)
+DECL|macro|pmd_clear
+mdefine_line|#define pmd_clear(xp)&t;do { pmd_val(*(xp)) = 0; } while (0)
+multiline_comment|/*&n; * Permanent address of a page. Obviously must never be&n; * called on a highmem page.&n; */
+DECL|macro|page_address
+mdefine_line|#define page_address(page) ({ if (PageHighMem(page)) BUG(); PAGE_OFFSET + (((page) - mem_map) &lt;&lt; PAGE_SHIFT); })
+DECL|macro|pages_to_mb
+mdefine_line|#define pages_to_mb(x) ((x) &gt;&gt; (20-PAGE_SHIFT))
+DECL|macro|pte_page
+mdefine_line|#define pte_page(x) (mem_map+pte_pagenr(x))
 multiline_comment|/*&n; * The following only work if pte_present() is true.&n; * Undefined behaviour if not..&n; */
 DECL|function|pte_read
 r_extern
-id|__inline__
+r_inline
 r_int
 id|pte_read
 c_func
@@ -553,7 +384,7 @@ suffix:semicolon
 )brace
 DECL|function|pte_exec
 r_extern
-id|__inline__
+r_inline
 r_int
 id|pte_exec
 c_func
@@ -574,7 +405,7 @@ suffix:semicolon
 )brace
 DECL|function|pte_dirty
 r_extern
-id|__inline__
+r_inline
 r_int
 (def_block
 id|pte_dirty
@@ -597,7 +428,7 @@ suffix:semicolon
 )def_block
 DECL|function|pte_young
 r_extern
-id|__inline__
+r_inline
 r_int
 (def_block
 id|pte_young
@@ -620,7 +451,7 @@ suffix:semicolon
 )def_block
 DECL|function|pte_write
 r_extern
-id|__inline__
+r_inline
 r_int
 (def_block
 id|pte_write
@@ -643,7 +474,7 @@ suffix:semicolon
 )def_block
 DECL|function|pte_rdprotect
 r_extern
-id|__inline__
+r_inline
 id|pte_t
 (def_block
 id|pte_rdprotect
@@ -669,7 +500,7 @@ suffix:semicolon
 )def_block
 DECL|function|pte_exprotect
 r_extern
-id|__inline__
+r_inline
 id|pte_t
 (def_block
 id|pte_exprotect
@@ -695,7 +526,7 @@ suffix:semicolon
 )def_block
 DECL|function|pte_mkclean
 r_extern
-id|__inline__
+r_inline
 id|pte_t
 id|pte_mkclean
 c_func
@@ -719,7 +550,7 @@ suffix:semicolon
 )brace
 DECL|function|pte_mkold
 r_extern
-id|__inline__
+r_inline
 id|pte_t
 id|pte_mkold
 c_func
@@ -743,7 +574,7 @@ suffix:semicolon
 )brace
 DECL|function|pte_wrprotect
 r_extern
-id|__inline__
+r_inline
 id|pte_t
 (def_block
 id|pte_wrprotect
@@ -769,7 +600,7 @@ suffix:semicolon
 )def_block
 DECL|function|pte_mkread
 r_extern
-id|__inline__
+r_inline
 id|pte_t
 id|pte_mkread
 c_func
@@ -792,7 +623,7 @@ suffix:semicolon
 )brace
 DECL|function|pte_mkexec
 r_extern
-id|__inline__
+r_inline
 id|pte_t
 id|pte_mkexec
 c_func
@@ -815,7 +646,7 @@ suffix:semicolon
 )brace
 DECL|function|pte_mkdirty
 r_extern
-id|__inline__
+r_inline
 id|pte_t
 id|pte_mkdirty
 c_func
@@ -838,7 +669,7 @@ suffix:semicolon
 )brace
 DECL|function|pte_mkyoung
 r_extern
-id|__inline__
+r_inline
 id|pte_t
 id|pte_mkyoung
 c_func
@@ -861,7 +692,7 @@ suffix:semicolon
 )brace
 DECL|function|pte_mkwrite
 r_extern
-id|__inline__
+r_inline
 id|pte_t
 id|pte_mkwrite
 c_func
@@ -885,70 +716,58 @@ suffix:semicolon
 multiline_comment|/*&n; * Conversion functions: convert a page and protection to a page entry,&n; * and a page entry and page directory to the page they refer to.&n; */
 DECL|function|mk_pte
 r_extern
-id|__inline__
+r_inline
 id|pte_t
 id|mk_pte
 c_func
 (paren
-r_int
-r_int
+r_struct
+id|page
+op_star
 id|page
 comma
 id|pgprot_t
 id|pgprot
 )paren
 (brace
-r_return
+id|pte_t
 id|__pte
+suffix:semicolon
+id|pte_val
 c_func
 (paren
-id|__pa
-c_func
+id|__pte
+)paren
+op_assign
 (paren
 id|page
+op_minus
+id|mem_map
 )paren
-op_or
+op_star
+(paren
+r_int
+r_int
+r_int
+)paren
+id|PAGE_SIZE
+op_plus
 id|pgprot_val
 c_func
 (paren
 id|pgprot
 )paren
-)paren
+suffix:semicolon
+r_return
+id|__pte
 suffix:semicolon
 )brace
 multiline_comment|/* This takes a physical page address that is used by the remapping functions */
-DECL|function|mk_pte_phys
-r_extern
-id|__inline__
-id|pte_t
-id|mk_pte_phys
-c_func
-(paren
-r_int
-r_int
-id|physpage
-comma
-id|pgprot_t
-id|pgprot
-)paren
-(brace
-r_return
-id|__pte
-c_func
-(paren
-id|physpage
-op_or
-id|pgprot_val
-c_func
-(paren
-id|pgprot
-)paren
-)paren
-suffix:semicolon
-)brace
+DECL|macro|mk_pte_phys
+mdefine_line|#define mk_pte_phys(physpage, pgprot) &bslash;&n;({ pte_t __pte; pte_val(__pte) = physpage + pgprot_val(pgprot); __pte; })
 DECL|function|pte_modify
 r_extern
-id|__inline__
+r_inline
 id|pte_t
 id|pte_modify
 c_func
@@ -960,10 +779,12 @@ id|pgprot_t
 id|newprot
 )paren
 (brace
-r_return
-id|__pte
+id|pte_val
 c_func
 (paren
+id|pte
+)paren
+op_assign
 (paren
 id|pte_val
 c_func
@@ -979,223 +800,33 @@ c_func
 (paren
 id|newprot
 )paren
-)paren
 suffix:semicolon
-)brace
-DECL|function|pte_page
-r_extern
-id|__inline__
-r_int
-r_int
-id|pte_page
-c_func
-(paren
-id|pte_t
-id|pte
-)paren
-(brace
 r_return
-(paren
-r_int
-r_int
-)paren
-id|__va
-c_func
-(paren
-id|pte_val
-c_func
-(paren
 id|pte
-)paren
-op_amp
-id|PAGE_MASK
-)paren
 suffix:semicolon
 )brace
-DECL|function|pmd_page
-r_extern
-id|__inline__
-r_int
-r_int
-id|pmd_page
-c_func
-(paren
-id|pmd_t
-id|pmd
-)paren
-(brace
-r_return
-(paren
-r_int
-r_int
-)paren
-id|__va
-c_func
-(paren
-id|pmd_val
-c_func
-(paren
-id|pmd
-)paren
-op_amp
-id|PAGE_MASK
-)paren
-suffix:semicolon
-)brace
-DECL|function|pmd_set
-r_extern
-id|__inline__
-r_void
-id|pmd_set
-c_func
-(paren
-id|pmd_t
-op_star
-id|pmdp
-comma
-id|pte_t
-op_star
-id|ptep
-)paren
-(brace
-id|pmd_val
-c_func
-(paren
-op_star
-id|pmdp
-)paren
-op_assign
-id|__pa
-c_func
-(paren
-(paren
-(paren
-r_int
-r_int
-)paren
-id|ptep
-)paren
-op_amp
-id|PAGE_MASK
-)paren
-op_or
-id|_PAGE_TABLE
-suffix:semicolon
-)brace
+DECL|macro|page_pte_prot
+mdefine_line|#define page_pte_prot(page,prot) mk_pte(page, prot)
+DECL|macro|page_pte
+mdefine_line|#define page_pte(page) page_pte_prot(page, __pgprot(0))
+DECL|macro|pmd_page
+mdefine_line|#define pmd_page(pmd) &bslash;&n;((unsigned long) __va(pmd_val(pmd) &amp; PAGE_MASK))
+multiline_comment|/* to find an entry in a page-table-directory. */
+DECL|macro|__pgd_offset
+mdefine_line|#define __pgd_offset(address) &bslash;&n;&t;&t;((address &gt;&gt; PGDIR_SHIFT) &amp; (PTRS_PER_PGD-1))
+DECL|macro|pgd_offset
+mdefine_line|#define pgd_offset(mm, address) ((mm)-&gt;pgd+__pgd_offset(address))
 multiline_comment|/* to find an entry in a kernel page-table-directory */
 DECL|macro|pgd_offset_k
 mdefine_line|#define pgd_offset_k(address) pgd_offset(&amp;init_mm, address)
-multiline_comment|/* to find an entry in a page-table-directory */
-DECL|function|pgd_offset
-r_extern
-id|__inline__
-id|pgd_t
-op_star
-id|pgd_offset
-c_func
-(paren
-r_struct
-id|mm_struct
-op_star
-id|mm
-comma
-r_int
-r_int
-id|addr
-)paren
-(brace
-r_return
-id|mm-&gt;pgd
-op_plus
-(paren
-id|addr
-op_rshift
-id|PGDIR_SHIFT
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* Find an entry in the second-level page table.. */
-DECL|function|pmd_offset
-r_extern
-id|__inline__
-id|pmd_t
-op_star
-id|pmd_offset
-c_func
-(paren
-id|pgd_t
-op_star
-id|dir
-comma
-r_int
-r_int
-id|addr
-)paren
-(brace
-r_return
-(paren
-id|pmd_t
-op_star
-)paren
-id|dir
-suffix:semicolon
-)brace
+DECL|macro|__pmd_offset
+mdefine_line|#define __pmd_offset(address) &bslash;&n;&t;&t;(((address) &gt;&gt; PMD_SHIFT) &amp; (PTRS_PER_PMD-1))
 multiline_comment|/* Find an entry in the third-level page table.. */
-DECL|function|pte_offset
-r_extern
-id|__inline__
-id|pte_t
-op_star
-id|pte_offset
-c_func
-(paren
-id|pmd_t
-op_star
-id|dir
-comma
-r_int
-r_int
-id|addr
-)paren
-(brace
-r_return
-(paren
-id|pte_t
-op_star
-)paren
-(paren
-id|pmd_page
-c_func
-(paren
-op_star
-id|dir
-)paren
-)paren
-op_plus
-(paren
-(paren
-id|addr
-op_rshift
-id|PAGE_SHIFT
-)paren
-op_amp
-(paren
-id|PTRS_PER_PTE
-op_minus
-l_int|1
-)paren
-)paren
-suffix:semicolon
-)brace
+DECL|macro|__pte_offset
+mdefine_line|#define __pte_offset(address) &bslash;&n;&t;&t;((address &gt;&gt; PAGE_SHIFT) &amp; (PTRS_PER_PTE - 1))
+DECL|macro|pte_offset
+mdefine_line|#define pte_offset(dir, address) ((pte_t *) pmd_page(*(dir)) + &bslash;&n;&t;&t;&t;__pte_offset(address))
 multiline_comment|/*&n; * Allocate and free page tables. The xxx_kernel() versions are&n; * used to allocate a kernel page table - this turns on ASN bits&n; * if any.&n; */
-DECL|macro|pgd_quicklist
-mdefine_line|#define pgd_quicklist (current_cpu_data.pgd_quick)
-DECL|macro|pmd_quicklist
-mdefine_line|#define pmd_quicklist ((unsigned long *)0)
-DECL|macro|pte_quicklist
-mdefine_line|#define pte_quicklist (current_cpu_data.pte_quick)
-DECL|macro|pgtable_cache_size
-mdefine_line|#define pgtable_cache_size (current_cpu_data.pgtable_cache_sz)
 DECL|function|get_pgd_slow
 r_extern
 id|__inline__
@@ -1563,72 +1194,6 @@ id|pte
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* We don&squot;t use pmd cache, so these are dummy routines */
-DECL|function|get_pmd_fast
-r_extern
-id|__inline__
-id|pmd_t
-op_star
-id|get_pmd_fast
-c_func
-(paren
-r_void
-)paren
-(brace
-r_return
-(paren
-id|pmd_t
-op_star
-)paren
-l_int|0
-suffix:semicolon
-)brace
-DECL|function|free_pmd_fast
-r_extern
-id|__inline__
-r_void
-id|free_pmd_fast
-c_func
-(paren
-id|pmd_t
-op_star
-id|pmd
-)paren
-(brace
-)brace
-DECL|function|free_pmd_slow
-r_extern
-id|__inline__
-r_void
-id|free_pmd_slow
-c_func
-(paren
-id|pmd_t
-op_star
-id|pmd
-)paren
-(brace
-)brace
-r_extern
-r_void
-id|__bad_pte
-c_func
-(paren
-id|pmd_t
-op_star
-id|pmd
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|__bad_pte_kernel
-c_func
-(paren
-id|pmd_t
-op_star
-id|pmd
-)paren
-suffix:semicolon
 DECL|macro|pte_free_kernel
 mdefine_line|#define pte_free_kernel(pte)    free_pte_slow(pte)
 DECL|macro|pte_free
@@ -1683,6 +1248,10 @@ id|pte_t
 op_star
 id|page
 op_assign
+(paren
+id|pte_t
+op_star
+)paren
 id|get_pte_fast
 c_func
 (paren
@@ -1703,11 +1272,18 @@ comma
 id|address
 )paren
 suffix:semicolon
-id|pmd_set
+id|pmd_val
 c_func
 (paren
+op_star
 id|pmd
-comma
+)paren
+op_assign
+id|_KERNPG_TABLE
+op_plus
+id|__pa
+c_func
+(paren
 id|page
 )paren
 suffix:semicolon
@@ -1728,7 +1304,7 @@ id|pmd
 )paren
 )paren
 (brace
-id|__bad_pte_kernel
+id|__handle_bad_pmd_kernel
 c_func
 (paren
 id|pmd
@@ -1775,15 +1351,9 @@ op_assign
 (paren
 id|address
 op_rshift
-(paren
 id|PAGE_SHIFT
-op_minus
-l_int|2
-)paren
 )paren
 op_amp
-l_int|4
-op_star
 (paren
 id|PTRS_PER_PTE
 op_minus
@@ -1821,7 +1391,6 @@ r_return
 id|pte_t
 op_star
 )paren
-(paren
 id|pmd_page
 c_func
 (paren
@@ -1830,7 +1399,6 @@ id|pmd
 )paren
 op_plus
 id|address
-)paren
 suffix:semicolon
 id|getnew
 suffix:colon
@@ -1883,16 +1451,14 @@ r_return
 id|pte_t
 op_star
 )paren
-(paren
 id|page
 op_plus
 id|address
-)paren
 suffix:semicolon
 )brace
 id|fix
 suffix:colon
-id|__bad_pte
+id|__handle_bad_pmd
 c_func
 (paren
 id|pmd
@@ -1915,31 +1481,6 @@ op_star
 id|pmd
 )paren
 (brace
-)brace
-DECL|function|pmd_alloc
-r_extern
-r_inline
-id|pmd_t
-op_star
-id|pmd_alloc
-c_func
-(paren
-id|pgd_t
-op_star
-id|pgd
-comma
-r_int
-r_int
-id|address
-)paren
-(brace
-r_return
-(paren
-id|pmd_t
-op_star
-)paren
-id|pgd
-suffix:semicolon
 )brace
 DECL|macro|pmd_free_kernel
 mdefine_line|#define pmd_free_kernel&t;&t;pmd_free
@@ -2082,11 +1623,9 @@ id|pte
 )paren
 suffix:semicolon
 DECL|macro|SWP_TYPE
-mdefine_line|#define SWP_TYPE(entry) (((entry) &gt;&gt; 1) &amp; 0x3f)
+mdefine_line|#define SWP_TYPE(entry) (((pte_val(entry)) &gt;&gt; 1) &amp; 0x3f)
 DECL|macro|SWP_OFFSET
-mdefine_line|#define SWP_OFFSET(entry) ((entry) &gt;&gt; 8)
-DECL|macro|SWP_ENTRY
-mdefine_line|#define SWP_ENTRY(type,offset) (((type) &lt;&lt; 1) | ((offset) &lt;&lt; 8))
+mdefine_line|#define SWP_OFFSET(entry) ((pte_val(entry)) &gt;&gt; 8)
 DECL|macro|module_map
 mdefine_line|#define module_map      vmalloc
 DECL|macro|module_unmap

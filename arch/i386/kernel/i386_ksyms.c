@@ -112,6 +112,13 @@ c_func
 id|iounmap
 )paren
 suffix:semicolon
+DECL|variable|__io_virt_debug
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__io_virt_debug
+)paren
+suffix:semicolon
 DECL|variable|local_bh_count
 id|EXPORT_SYMBOL
 c_func

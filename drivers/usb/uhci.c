@@ -406,12 +406,17 @@ id|rval
 op_add_assign
 id|actlength
 suffix:semicolon
+multiline_comment|/* This check is bogus, at least for acm. It&n;                           always expects 64, but gets as many bytes&n;                           as available (typically 1) -- pavel */
 r_if
 c_cond
+(paren
+l_int|0
+op_logical_and
 (paren
 id|explength
 op_ne
 id|actlength
+)paren
 )paren
 (brace
 multiline_comment|/* Reset the data toggle on error. */

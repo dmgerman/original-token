@@ -2189,7 +2189,7 @@ l_char|&squot;-&squot;
 comma
 id|pgprot
 op_amp
-id|_PAGE_4M
+id|_PAGE_PSE
 ques
 c_cond
 l_char|&squot;m&squot;

@@ -12,6 +12,7 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/hydra.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/gg2.h&gt;
+macro_line|#include &lt;asm/ide.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#include &quot;pci.h&quot;
 multiline_comment|/* LongTrail */
@@ -1668,35 +1669,6 @@ c_func
 id|dev-&gt;irq
 )paren
 suffix:semicolon
-multiline_comment|/* adjust the io_port for the NCR cards for busses other than 0 -- Cort */
-r_if
-c_cond
-(paren
-(paren
-id|dev-&gt;bus-&gt;number
-OG
-l_int|0
-)paren
-op_logical_and
-(paren
-id|dev-&gt;vendor
-op_eq
-id|PCI_VENDOR_ID_NCR
-)paren
-)paren
-id|dev-&gt;resource
-(braket
-l_int|0
-)braket
-dot
-id|start
-op_add_assign
-(paren
-id|dev-&gt;bus-&gt;number
-op_star
-l_int|0x08000000
-)paren
-suffix:semicolon
 multiline_comment|/* these need to be absolute addrs for OF and Matrox FB -- Cort */
 r_if
 c_cond
@@ -1787,6 +1759,42 @@ id|PCI_VENDOR_ID_AMD
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+(paren
+id|dev-&gt;bus-&gt;number
+OG
+l_int|0
+)paren
+op_logical_and
+(paren
+(paren
+id|dev-&gt;vendor
+op_eq
+id|PCI_VENDOR_ID_NCR
+)paren
+op_logical_or
+(paren
+id|dev-&gt;vendor
+op_eq
+id|PCI_VENDOR_ID_AMD
+)paren
+)paren
+)paren
+id|dev-&gt;resource
+(braket
+l_int|0
+)braket
+dot
+id|start
+op_add_assign
+(paren
+id|dev-&gt;bus-&gt;number
+op_star
+l_int|0x08000000
+)paren
+suffix:semicolon
 )brace
 )brace
 DECL|variable|grackle

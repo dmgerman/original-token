@@ -46,7 +46,6 @@ DECL|member|hard_math
 r_char
 id|hard_math
 suffix:semicolon
-multiline_comment|/* Not yet used */
 DECL|member|pgd_quick
 r_int
 r_int

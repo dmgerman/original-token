@@ -33,9 +33,11 @@ mdefine_line|#define NFSEXP_KERBEROS&t;&t;0x0080&t;&t;/* not available */
 DECL|macro|NFSEXP_SUNSECURE
 mdefine_line|#define NFSEXP_SUNSECURE&t;0x0100
 DECL|macro|NFSEXP_CROSSMNT
-mdefine_line|#define NFSEXP_CROSSMNT&t;&t;0x0200&t;&t;/* not available */
+mdefine_line|#define NFSEXP_CROSSMNT&t;&t;0x0200
+DECL|macro|NFSEXP_NOSUBTREECHECK
+mdefine_line|#define NFSEXP_NOSUBTREECHECK&t;0x0400
 DECL|macro|NFSEXP_ALLFLAGS
-mdefine_line|#define NFSEXP_ALLFLAGS&t;&t;0x03FF
+mdefine_line|#define NFSEXP_ALLFLAGS&t;&t;0x07FF
 macro_line|#ifdef __KERNEL__
 multiline_comment|/* The following are hashtable sizes and must be powers of 2 */
 DECL|macro|NFSCLNT_EXPMAX
