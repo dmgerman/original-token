@@ -2420,11 +2420,14 @@ op_or_assign
 id|ATTR_MODE
 suffix:semicolon
 )brace
+id|error
+op_assign
 id|DQUOT_TRANSFER
 c_func
 (paren
 id|dentry
 comma
+op_amp
 id|newattrs
 )paren
 suffix:semicolon

@@ -4966,7 +4966,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * This function sets up the local APIC timer, with a timeout of&n; * &squot;clocks&squot; APIC bus clock. During calibration we actually call&n; * this function twice, once with a bogus timeout value, second&n; * time for real. The other (noncalibrating) CPUs call this&n; * function only once, with the real value.&n; *&n; * We are strictly in irqs off mode here, as we do not want to&n; * get an APIC interrupt go off accidentally.&n; *&n; * We do reads before writes even if unnecessary, to get around the&n; * APIC double write bug.&n; */
 DECL|macro|APIC_DIVISOR
-mdefine_line|#define APIC_DIVISOR 1
+mdefine_line|#define APIC_DIVISOR 16
 DECL|function|setup_APIC_timer
 r_void
 id|setup_APIC_timer
@@ -5028,7 +5028,7 @@ op_complement
 id|APIC_TDR_DIV_1
 )paren
 op_or
-id|APIC_TDR_DIV_1
+id|APIC_TDR_DIV_16
 )paren
 suffix:semicolon
 id|tmp_value

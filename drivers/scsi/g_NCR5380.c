@@ -2057,6 +2057,10 @@ c_func
 )paren
 suffix:semicolon
 r_int
+r_int
+id|flags
+suffix:semicolon
+r_int
 r_char
 id|status
 suffix:semicolon
@@ -2092,7 +2096,13 @@ id|scsi_device_types
 id|MAX_SCSI_DEVICE_CODE
 )braket
 suffix:semicolon
-macro_line|#endif    
+macro_line|#endif
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -2808,9 +2818,10 @@ id|len
 op_assign
 id|length
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 r_return

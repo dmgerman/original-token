@@ -3913,12 +3913,7 @@ r_int
 id|data_count
 suffix:semicolon
 multiline_comment|/* The fdomain_16x0_intr is only called via&n;&t;&t;&t;&t;   the interrupt handler.  The goal of the&n;&t;&t;&t;&t;   sti() here is to allow other&n;&t;&t;&t;&t;   interruptions while this routine is&n;&t;&t;&t;&t;   running. */
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* Yes, we really want sti() here */
+multiline_comment|/* sti();&t;&t;&t; Yes, we really want sti() here if we want to lock up our machine */
 id|outb
 c_func
 (paren

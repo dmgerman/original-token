@@ -6304,6 +6304,11 @@ id|ndev-&gt;addr_len
 op_assign
 id|ETH_ALEN
 suffix:semicolon
+id|ndev-&gt;tx_queue_len
+op_assign
+l_int|10
+suffix:semicolon
+multiline_comment|/* for clients without MPPP 5 is better.  */
 r_for
 c_loop
 (paren

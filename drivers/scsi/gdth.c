@@ -14903,9 +14903,10 @@ l_int|1
 op_lshift
 id|GDTH_TIMER
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 )brace

@@ -1561,6 +1561,10 @@ id|regs
 id|u32
 id|cmd
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_register
 r_struct
 id|soc
@@ -1573,6 +1577,15 @@ id|soc
 op_star
 )paren
 id|dev_id
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
 suffix:semicolon
 id|cmd
 op_assign
@@ -1637,6 +1650,15 @@ id|cmd
 )paren
 suffix:semicolon
 )brace
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 )brace
 DECL|macro|TOKEN
 mdefine_line|#define TOKEN(proto, port, token) (((proto)&lt;&lt;12)|(token)|(port))

@@ -1247,6 +1247,7 @@ id|dev
 comma
 id|error
 suffix:semicolon
+multiline_comment|/* Anyone capable of this syscall can do *real bad* things */
 r_if
 c_cond
 (paren
@@ -1672,6 +1673,30 @@ r_void
 r_int
 id|i
 suffix:semicolon
+r_if
+c_cond
+(paren
+r_sizeof
+(paren
+r_struct
+id|nbd_request
+)paren
+op_ne
+l_int|24
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;Sizeof nbd_request needs to be 24 in order to work!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

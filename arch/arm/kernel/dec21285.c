@@ -1,5 +1,4 @@
 multiline_comment|/*&n; * arch/arm/kernel/dec21285.c: PCI functions for DEC 21285&n; *&n; * Copyright (C) 1998 Russell King&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/init.h&gt;

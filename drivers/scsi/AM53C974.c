@@ -15,7 +15,7 @@ macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;AM53C974.h&quot;
 macro_line|#include &quot;constants.h&quot;
 macro_line|#include &quot;sd.h&quot;
-multiline_comment|/* AM53/79C974 (PCscsi) driver release 0.5&n; *&n; * The architecture and much of the code of this device&n; * driver was originally developed by Drew Eckhardt for&n; * the NCR5380. The following copyrights apply:&n; *  For the architecture and all pieces of code which can also be found &n; *    in the NCR5380 device driver:&n; *   Copyright 1993, Drew Eckhardt&n; *&t;Visionary Computing &n; *&t;(Unix and Linux consulting and custom programming)&n; * &t;drew@colorado.edu&n; *&t;+1 (303) 666-5836&n; *&n; *  The AM53C974_nobios_detect code was originally developed by&n; *   Robin Cutshaw (robin@xfree86.org) and is used here in a &n; *   slightly modified form.&n; *&n; *  PCI detection rewritten by Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&n; *  For the remaining code:&n; *    Copyright 1994, D. Frieauff&n; *    EMail: fri@rsx42sun0.dofn.de&n; *    Phone: x49-7545-8-2256 , x49-7541-42305&n; */
+multiline_comment|/* AM53/79C974 (PCscsi) driver release 0.5&n;&n; * The architecture and much of the code of this device&n; * driver was originally developed by Drew Eckhardt for&n; * the NCR5380. The following copyrights apply:&n; *  For the architecture and all pieces of code which can also be found &n; *    in the NCR5380 device driver:&n; *   Copyright 1993, Drew Eckhardt&n; *      Visionary Computing &n; *      (Unix and Linux consulting and custom programming)&n; *      drew@colorado.edu&n; *      +1 (303) 666-5836&n; *&n; *  The AM53C974_nobios_detect code was originally developed by&n; *   Robin Cutshaw (robin@xfree86.org) and is used here in a &n; *   slightly modified form.&n; *&n; *  PCI detection rewritten by Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&n; *  For the remaining code:&n; *    Copyright 1994, D. Frieauff&n; *    EMail: fri@rsx42sun0.dofn.de&n; *    Phone: x49-7545-8-2256 , x49-7541-42305&n; */
 multiline_comment|/*&n; * $Log: AM53C974.c,v $&n; */
 macro_line|#ifdef AM53C974_DEBUG
 DECL|macro|DEB
@@ -129,11 +129,11 @@ multiline_comment|/*************************************************************
 multiline_comment|/* #define AM53C974_SCSI_ID 7 */
 multiline_comment|/***************************************************************************************&n;* Default settings for sync. negotiation enable, transfer rate and sync. offset.       *&n;* These settings can be replaced by LILO overrides (append) with the following syntax:          *&n;* AM53C974=host-scsi-id, target-scsi-id, max-rate, max-offset                          *&n;* Sync. negotiation is disabled by default and will be enabled for those targets which *&n;* are specified in the LILO override                                                   *&n;****************************************************************************************/
 DECL|macro|DEFAULT_SYNC_NEGOTIATION_ENABLED
-mdefine_line|#define DEFAULT_SYNC_NEGOTIATION_ENABLED 0 /* 0 or 1 */
+mdefine_line|#define DEFAULT_SYNC_NEGOTIATION_ENABLED 0&t;/* 0 or 1 */
 DECL|macro|DEFAULT_RATE
-mdefine_line|#define DEFAULT_RATE&t;&t;&t; 5 /* MHz, min: 3; max: 10 */
+mdefine_line|#define DEFAULT_RATE&t;&t;&t; 5&t;/* MHz, min: 3; max: 10 */
 DECL|macro|DEFAULT_SYNC_OFFSET
-mdefine_line|#define DEFAULT_SYNC_OFFSET&t;&t; 0 /* bytes, min: 0; max: 15; use 0 for async. mode */
+mdefine_line|#define DEFAULT_SYNC_OFFSET&t;&t; 0&t;/* bytes, min: 0; max: 15; use 0 for async. mode */
 multiline_comment|/***************************************************************************************&n;* If defined, don&squot;t allow targets to disconnect during commands.  This will reduce     *&n;* performance, but may be worthwhile if you suspect the driver of corrupting data when *&n;* a disconnect happens.                                                                *&n;***************************************************************************************/
 DECL|macro|AM53C974_PROHIBIT_DISCONNECT
 mdefine_line|#define AM53C974_PROHIBIT_DISCONNECT
@@ -160,245 +160,245 @@ mdefine_line|#define AM53C974_DEBUG_ABORT
 multiline_comment|/* #define AM53C974_OPTION_DEBUG_PROBE_ONLY */
 multiline_comment|/* special options/constants */
 DECL|macro|DEF_CLK
-mdefine_line|#define DEF_CLK                 40   /* chip clock freq. in MHz */
+mdefine_line|#define DEF_CLK                 40&t;/* chip clock freq. in MHz */
 DECL|macro|MIN_PERIOD
-mdefine_line|#define MIN_PERIOD               4   /* for negotiation: min. number of clocks per cycle */
+mdefine_line|#define MIN_PERIOD               4&t;/* for negotiation: min. number of clocks per cycle */
 DECL|macro|MAX_PERIOD
-mdefine_line|#define MAX_PERIOD              13   /* for negotiation: max. number of clocks per cycle */
+mdefine_line|#define MAX_PERIOD              13&t;/* for negotiation: max. number of clocks per cycle */
 DECL|macro|MAX_OFFSET
-mdefine_line|#define MAX_OFFSET              15   /* for negotiation: max. offset (0=async) */
+mdefine_line|#define MAX_OFFSET              15&t;/* for negotiation: max. offset (0=async) */
 DECL|macro|DEF_SCSI_TIMEOUT
-mdefine_line|#define DEF_SCSI_TIMEOUT        245  /* STIMREG value, 40 Mhz */
+mdefine_line|#define DEF_SCSI_TIMEOUT        245&t;/* STIMREG value, 40 Mhz */
 DECL|macro|DEF_STP
-mdefine_line|#define DEF_STP                 8    /* STPREG value assuming 5.0 MB/sec, FASTCLK, FASTSCSI */
+mdefine_line|#define DEF_STP                 8&t;/* STPREG value assuming 5.0 MB/sec, FASTCLK, FASTSCSI */
 DECL|macro|DEF_SOF_RAD
-mdefine_line|#define DEF_SOF_RAD             0    /* REQ/ACK deassertion delay */
+mdefine_line|#define DEF_SOF_RAD             0&t;/* REQ/ACK deassertion delay */
 DECL|macro|DEF_SOF_RAA
-mdefine_line|#define DEF_SOF_RAA             0    /* REQ/ACK assertion delay */
+mdefine_line|#define DEF_SOF_RAA             0&t;/* REQ/ACK assertion delay */
 DECL|macro|DEF_ETM
-mdefine_line|#define DEF_ETM                 0    /* CNTLREG1, ext. timing mode */
+mdefine_line|#define DEF_ETM                 0&t;/* CNTLREG1, ext. timing mode */
 DECL|macro|DEF_PERE
-mdefine_line|#define DEF_PERE                1    /* CNTLREG1, parity error reporting */
+mdefine_line|#define DEF_PERE                1&t;/* CNTLREG1, parity error reporting */
 DECL|macro|DEF_CLKF
-mdefine_line|#define DEF_CLKF                0    /* CLKFREG,  0=40 Mhz */
+mdefine_line|#define DEF_CLKF                0&t;/* CLKFREG,  0=40 Mhz */
 DECL|macro|DEF_ENF
-mdefine_line|#define DEF_ENF                 1    /* CNTLREG2, enable features */
+mdefine_line|#define DEF_ENF                 1&t;/* CNTLREG2, enable features */
 DECL|macro|DEF_ADIDCHK
-mdefine_line|#define DEF_ADIDCHK             0    /* CNTLREG3, additional ID check */
+mdefine_line|#define DEF_ADIDCHK             0&t;/* CNTLREG3, additional ID check */
 DECL|macro|DEF_FASTSCSI
-mdefine_line|#define DEF_FASTSCSI            1    /* CNTLREG3, fast SCSI */
+mdefine_line|#define DEF_FASTSCSI            1&t;/* CNTLREG3, fast SCSI */
 DECL|macro|DEF_FASTCLK
-mdefine_line|#define DEF_FASTCLK             1    /* CNTLREG3, fast clocking, 5 MB/sec at 40MHz chip clk */
+mdefine_line|#define DEF_FASTCLK             1&t;/* CNTLREG3, fast clocking, 5 MB/sec at 40MHz chip clk */
 DECL|macro|DEF_GLITCH
-mdefine_line|#define DEF_GLITCH              1    /* CNTLREG4, glitch eater, 0=12ns, 1=35ns, 2=25ns, 3=off */
+mdefine_line|#define DEF_GLITCH              1&t;/* CNTLREG4, glitch eater, 0=12ns, 1=35ns, 2=25ns, 3=off */
 DECL|macro|DEF_PWD
-mdefine_line|#define DEF_PWD                 0    /* CNTLREG4, reduced power feature */
+mdefine_line|#define DEF_PWD                 0&t;/* CNTLREG4, reduced power feature */
 DECL|macro|DEF_RAE
-mdefine_line|#define DEF_RAE                 0    /* CNTLREG4, RAE active negation on REQ, ACK only */
+mdefine_line|#define DEF_RAE                 0&t;/* CNTLREG4, RAE active negation on REQ, ACK only */
 DECL|macro|DEF_RADE
-mdefine_line|#define DEF_RADE                1    /* 1CNTLREG4, active negation on REQ, ACK and data */
+mdefine_line|#define DEF_RADE                1&t;/* 1CNTLREG4, active negation on REQ, ACK and data */
 multiline_comment|/*** SCSI block ***/
 DECL|macro|CTCLREG
-mdefine_line|#define CTCLREG&t;&t;    &t;0x00&t;/* r&t;current transf. count, low byte    */
+mdefine_line|#define CTCLREG&t;&t;    &t;0x00&t;/* r      current transf. count, low byte    */
 DECL|macro|CTCMREG
-mdefine_line|#define CTCMREG&t;&t;   &t;0x04&t;/* r &t;current transf. count, middle byte */
+mdefine_line|#define CTCMREG&t;&t;   &t;0x04&t;/* r      current transf. count, middle byte */
 DECL|macro|CTCHREG
-mdefine_line|#define CTCHREG&t;&t;    &t;0x38&t;/* r&t;current transf. count, high byte   */
+mdefine_line|#define CTCHREG&t;&t;    &t;0x38&t;/* r      current transf. count, high byte   */
 DECL|macro|STCLREG
-mdefine_line|#define STCLREG&t;&t;    &t;0x00&t;/* w&t;start transf. count, low byte      */
+mdefine_line|#define STCLREG&t;&t;    &t;0x00&t;/* w      start transf. count, low byte      */
 DECL|macro|STCMREG
-mdefine_line|#define STCMREG&t;&t;    &t;0x04&t;/* w&t;start transf. count, middle byte   */
+mdefine_line|#define STCMREG&t;&t;    &t;0x04&t;/* w      start transf. count, middle byte   */
 DECL|macro|STCHREG
-mdefine_line|#define STCHREG&t;&t;    &t;0x38&t;/* w &t;start transf. count, high byte     */
+mdefine_line|#define STCHREG&t;&t;    &t;0x38&t;/* w      start transf. count, high byte     */
 DECL|macro|FFREG
-mdefine_line|#define FFREG&t;&t;    &t;0x08&t;/* rw&t;SCSI FIFO reg.&t;&t;&t;   */
+mdefine_line|#define FFREG&t;&t;    &t;0x08&t;/* rw     SCSI FIFO reg.                     */
 DECL|macro|STIMREG
-mdefine_line|#define STIMREG&t;&t;    &t;0x14&t;/* w&t;SCSI timeout reg.&t;&t;   */
+mdefine_line|#define STIMREG&t;&t;    &t;0x14&t;/* w      SCSI timeout reg.                  */
 DECL|macro|SDIDREG
-mdefine_line|#define SDIDREG&t;&t;    &t;0x10&t;/* w&t;SCSI destination ID reg.&t;   */
+mdefine_line|#define SDIDREG&t;&t;    &t;0x10&t;/* w      SCSI destination ID reg.           */
 DECL|macro|SDIREG_MASK
-mdefine_line|#define SDIREG_MASK&t;&t;0x07&t;/* mask&t;&t;&t;&t;&t;   */
+mdefine_line|#define SDIREG_MASK&t;&t;0x07&t;/* mask                                      */
 DECL|macro|STPREG
-mdefine_line|#define STPREG&t;&t;    &t;0x18&t;/* w&t;synchronous transf. period reg.&t;   */
+mdefine_line|#define STPREG&t;&t;    &t;0x18&t;/* w      synchronous transf. period reg.    */
 DECL|macro|STPREG_STP
-mdefine_line|#define STPREG_STP&t;&t;0x1F&t;/* synchr. transfer period&t;&t;   */
+mdefine_line|#define STPREG_STP&t;&t;0x1F&t;/* synchr. transfer period                   */
 DECL|macro|CLKFREG
-mdefine_line|#define CLKFREG&t;&t;    &t;0x24&t;/* w&t;clock factor reg.&t;&t;   */
+mdefine_line|#define CLKFREG&t;&t;    &t;0x24&t;/* w      clock factor reg.                  */
 DECL|macro|CLKFREG_MASK
-mdefine_line|#define CLKFREG_MASK&t;&t;0x07&t;/* mask&t;&t;&t;&t;&t;   */
+mdefine_line|#define CLKFREG_MASK&t;&t;0x07&t;/* mask                                      */
 DECL|macro|CMDREG
-mdefine_line|#define CMDREG&t;&t;    &t;0x0C&t;/* rw&t;SCSI command reg.&t;&t;   */
+mdefine_line|#define CMDREG&t;&t;    &t;0x0C&t;/* rw     SCSI command reg.                  */
 DECL|macro|CMDREG_DMA
-mdefine_line|#define CMDREG_DMA         &t;0x80    /* set DMA mode (set together with opcodes below) */
+mdefine_line|#define CMDREG_DMA         &t;0x80&t;/* set DMA mode (set together with opcodes below) */
 DECL|macro|CMDREG_IT
-mdefine_line|#define CMDREG_IT          &t;0x10    /* information transfer &t;&t;   */
+mdefine_line|#define CMDREG_IT          &t;0x10&t;/* information transfer              */
 DECL|macro|CMDREG_ICCS
-mdefine_line|#define CMDREG_ICCS&t;&t;0x11&t;/* initiator command complete steps &t;   */
+mdefine_line|#define CMDREG_ICCS&t;&t;0x11&t;/* initiator command complete steps          */
 DECL|macro|CMDREG_MA
-mdefine_line|#define CMDREG_MA&t;&t;0x12&t;/* message accepted &t;&t;&t;   */
+mdefine_line|#define CMDREG_MA&t;&t;0x12&t;/* message accepted                          */
 DECL|macro|CMDREG_TPB
-mdefine_line|#define CMDREG_TPB&t;&t;0x98&t;/* transfer pad bytes, DMA mode only &t;   */
+mdefine_line|#define CMDREG_TPB&t;&t;0x98&t;/* transfer pad bytes, DMA mode only         */
 DECL|macro|CMDREG_SATN
-mdefine_line|#define CMDREG_SATN&t;&t;0x1A&t;/* set ATN &t;&t;&t;&t;   */
+mdefine_line|#define CMDREG_SATN&t;&t;0x1A&t;/* set ATN                                   */
 DECL|macro|CMDREG_RATN
-mdefine_line|#define CMDREG_RATN&t;&t;0x1B&t;/* reset ATN &t;&t;&t;&t;   */
+mdefine_line|#define CMDREG_RATN&t;&t;0x1B&t;/* reset ATN                                 */
 DECL|macro|CMDREG_SOAS
-mdefine_line|#define CMDREG_SOAS&t;&t;0x41&t;/* select without ATN steps &t;&t;   */
+mdefine_line|#define CMDREG_SOAS&t;&t;0x41&t;/* select without ATN steps                  */
 DECL|macro|CMDREG_SAS
-mdefine_line|#define CMDREG_SAS&t;&t;0x42&t;/* select with ATN steps (1 msg byte)&t;   */
+mdefine_line|#define CMDREG_SAS&t;&t;0x42&t;/* select with ATN steps (1 msg byte)        */
 DECL|macro|CMDREG_SASS
-mdefine_line|#define CMDREG_SASS&t;&t;0x43&t;/* select with ATN and stop steps &t;   */
+mdefine_line|#define CMDREG_SASS&t;&t;0x43&t;/* select with ATN and stop steps            */
 DECL|macro|CMDREG_ESR
-mdefine_line|#define CMDREG_ESR&t;&t;0x44&t;/* enable selection/reselection &t;   */
+mdefine_line|#define CMDREG_ESR&t;&t;0x44&t;/* enable selection/reselection      */
 DECL|macro|CMDREG_DSR
-mdefine_line|#define CMDREG_DSR&t;&t;0x45&t;/* disable selection/reselection &t;   */
+mdefine_line|#define CMDREG_DSR&t;&t;0x45&t;/* disable selection/reselection     */
 DECL|macro|CMDREG_SA3S
 mdefine_line|#define CMDREG_SA3S&t;&t;0x46&t;/* select with ATN 3 steps  (3 msg bytes)  */
 DECL|macro|CMDREG_NOP
-mdefine_line|#define CMDREG_NOP&t;&t;0x00&t;/* no operation &t;&t;&t;   */
+mdefine_line|#define CMDREG_NOP&t;&t;0x00&t;/* no operation                      */
 DECL|macro|CMDREG_CFIFO
-mdefine_line|#define CMDREG_CFIFO&t;&t;0x01&t;/* clear FIFO &t;&t;&t;&t;   */
+mdefine_line|#define CMDREG_CFIFO&t;&t;0x01&t;/* clear FIFO                                */
 DECL|macro|CMDREG_RDEV
-mdefine_line|#define CMDREG_RDEV&t;&t;0x02&t;/* reset device &t;&t;&t;   */
+mdefine_line|#define CMDREG_RDEV&t;&t;0x02&t;/* reset device                      */
 DECL|macro|CMDREG_RBUS
-mdefine_line|#define CMDREG_RBUS&t;&t;0x03&t;/* reset SCSI bus &t;&t;&t;   */
+mdefine_line|#define CMDREG_RBUS&t;&t;0x03&t;/* reset SCSI bus                            */
 DECL|macro|STATREG
-mdefine_line|#define STATREG&t;&t;    &t;0x10&t;/* r &t;SCSI status reg.&t;&t;   */
+mdefine_line|#define STATREG&t;&t;    &t;0x10&t;/* r      SCSI status reg.                   */
 DECL|macro|STATREG_INT
-mdefine_line|#define STATREG_INT&t;&t;0x80&t;/* SCSI interrupt condition detected&t;   */
+mdefine_line|#define STATREG_INT&t;&t;0x80&t;/* SCSI interrupt condition detected         */
 DECL|macro|STATREG_IOE
 mdefine_line|#define STATREG_IOE&t;&t;0x40&t;/* SCSI illegal operation error detected   */
 DECL|macro|STATREG_PE
-mdefine_line|#define STATREG_PE&t;&t;0x20&t;/* SCSI parity error detected&t;&t;   */
+mdefine_line|#define STATREG_PE&t;&t;0x20&t;/* SCSI parity error detected                */
 DECL|macro|STATREG_CTZ
-mdefine_line|#define STATREG_CTZ&t;&t;0x10&t;/* CTC reg decremented to zero&t;&t;   */
+mdefine_line|#define STATREG_CTZ&t;&t;0x10&t;/* CTC reg decremented to zero               */
 DECL|macro|STATREG_MSG
-mdefine_line|#define STATREG_MSG&t;&t;0x04&t;/* SCSI MSG phase (latched?)&t;&t;   */
+mdefine_line|#define STATREG_MSG&t;&t;0x04&t;/* SCSI MSG phase (latched?)                 */
 DECL|macro|STATREG_CD
-mdefine_line|#define STATREG_CD&t;&t;0x02&t;/* SCSI C/D phase (latched?)&t;&t;   */
+mdefine_line|#define STATREG_CD&t;&t;0x02&t;/* SCSI C/D phase (latched?)                 */
 DECL|macro|STATREG_IO
-mdefine_line|#define STATREG_IO&t;&t;0x01&t;/* SCSI I/O phase (latched?)&t;&t;   */
+mdefine_line|#define STATREG_IO&t;&t;0x01&t;/* SCSI I/O phase (latched?)                 */
 DECL|macro|STATREG_PHASE
-mdefine_line|#define STATREG_PHASE           0x07    /* SCSI phase mask &t;&t;&t;   */
+mdefine_line|#define STATREG_PHASE           0x07&t;/* SCSI phase mask                           */
 DECL|macro|INSTREG
-mdefine_line|#define INSTREG&t;&t;    &t;0x14&t;/* r&t;interrupt status reg.&t;&t;   */
+mdefine_line|#define INSTREG&t;&t;    &t;0x14&t;/* r      interrupt status reg.              */
 DECL|macro|INSTREG_SRST
-mdefine_line|#define INSTREG_SRST&t;&t;0x80&t;/* SCSI reset detected&t;&t;&t;   */
+mdefine_line|#define INSTREG_SRST&t;&t;0x80&t;/* SCSI reset detected                       */
 DECL|macro|INSTREG_ICMD
-mdefine_line|#define INSTREG_ICMD&t;&t;0x40&t;/* SCSI invalid command detected&t;   */
+mdefine_line|#define INSTREG_ICMD&t;&t;0x40&t;/* SCSI invalid command detected     */
 DECL|macro|INSTREG_DIS
-mdefine_line|#define INSTREG_DIS&t;&t;0x20&t;/* target disconnected or sel/resel timeout*/
+mdefine_line|#define INSTREG_DIS&t;&t;0x20&t;/* target disconnected or sel/resel timeout */
 DECL|macro|INSTREG_SR
 mdefine_line|#define INSTREG_SR&t;&t;0x10&t;/* device on bus has service request       */
 DECL|macro|INSTREG_SO
-mdefine_line|#define INSTREG_SO&t;&t;0x08&t;/* successful operation&t;&t;&t;   */
+mdefine_line|#define INSTREG_SO&t;&t;0x08&t;/* successful operation                      */
 DECL|macro|INSTREG_RESEL
-mdefine_line|#define INSTREG_RESEL&t;&t;0x04&t;/* device reselected as initiator&t;   */
+mdefine_line|#define INSTREG_RESEL&t;&t;0x04&t;/* device reselected as initiator    */
 DECL|macro|ISREG
-mdefine_line|#define ISREG&t;&t;    &t;0x18&t;/* r&t;internal state reg.&t;&t;   */
+mdefine_line|#define ISREG&t;&t;    &t;0x18&t;/* r      internal state reg.                */
 DECL|macro|ISREG_SOF
-mdefine_line|#define ISREG_SOF&t;&t;0x08&t;/* synchronous offset flag (act. low)&t;   */
+mdefine_line|#define ISREG_SOF&t;&t;0x08&t;/* synchronous offset flag (act. low)        */
 DECL|macro|ISREG_IS
-mdefine_line|#define ISREG_IS&t;&t;0x07&t;/* status of intermediate op.&t;&t;   */
+mdefine_line|#define ISREG_IS&t;&t;0x07&t;/* status of intermediate op.                */
 DECL|macro|ISREG_OK_NO_STOP
-mdefine_line|#define ISREG_OK_NO_STOP        0x04    /* selection successful                    */
+mdefine_line|#define ISREG_OK_NO_STOP        0x04&t;/* selection successful                    */
 DECL|macro|ISREG_OK_STOP
-mdefine_line|#define ISREG_OK_STOP           0x01    /* selection successful                    */
+mdefine_line|#define ISREG_OK_STOP           0x01&t;/* selection successful                    */
 DECL|macro|CFIREG
-mdefine_line|#define CFIREG&t;&t;    &t;0x1C&t;/* r&t;current FIFO/internal state reg.   */
+mdefine_line|#define CFIREG&t;&t;    &t;0x1C&t;/* r      current FIFO/internal state reg.   */
 DECL|macro|CFIREG_IS
-mdefine_line|#define CFIREG_IS&t;&t;0xE0&t;/* status of intermediate op.&t;&t;   */
+mdefine_line|#define CFIREG_IS&t;&t;0xE0&t;/* status of intermediate op.                */
 DECL|macro|CFIREG_CF
-mdefine_line|#define CFIREG_CF&t;&t;0x1F&t;/* number of bytes in SCSI FIFO&t;&t;   */
+mdefine_line|#define CFIREG_CF&t;&t;0x1F&t;/* number of bytes in SCSI FIFO              */
 DECL|macro|SOFREG
-mdefine_line|#define SOFREG&t;&t;    &t;0x1C&t;/* w&t;synchr. offset reg.&t;&t;   */
+mdefine_line|#define SOFREG&t;&t;    &t;0x1C&t;/* w      synchr. offset reg.                */
 DECL|macro|SOFREG_RAD
-mdefine_line|#define SOFREG_RAD&t;&t;0xC0&t;/* REQ/ACK deassertion delay (sync.)&t;   */
+mdefine_line|#define SOFREG_RAD&t;&t;0xC0&t;/* REQ/ACK deassertion delay (sync.)         */
 DECL|macro|SOFREG_RAA
-mdefine_line|#define SOFREG_RAA&t;&t;0x30&t;/* REQ/ACK assertion delay (sync.)&t;   */
+mdefine_line|#define SOFREG_RAA&t;&t;0x30&t;/* REQ/ACK assertion delay (sync.)           */
 DECL|macro|SOFREG_SO
-mdefine_line|#define SOFREG_SO&t;&t;0x0F&t;/* synch. offset (sync.)&t;&t;   */
+mdefine_line|#define SOFREG_SO&t;&t;0x0F&t;/* synch. offset (sync.)             */
 DECL|macro|CNTLREG1
-mdefine_line|#define CNTLREG1&t;    &t;0x20&t;/* rw&t;control register one&t;&t;   */
+mdefine_line|#define CNTLREG1&t;    &t;0x20&t;/* rw     control register one               */
 DECL|macro|CNTLREG1_ETM
-mdefine_line|#define CNTLREG1_ETM&t;&t;0x80&t;/* set extended timing mode&t;&t;   */
+mdefine_line|#define CNTLREG1_ETM&t;&t;0x80&t;/* set extended timing mode                  */
 DECL|macro|CNTLREG1_DISR
-mdefine_line|#define CNTLREG1_DISR&t;&t;0x40&t;/* disable interrupt on SCSI reset&t;   */
+mdefine_line|#define CNTLREG1_DISR&t;&t;0x40&t;/* disable interrupt on SCSI reset           */
 DECL|macro|CNTLREG1_PERE
-mdefine_line|#define CNTLREG1_PERE&t;&t;0x10&t;/* enable parity error reporting&t;   */
+mdefine_line|#define CNTLREG1_PERE&t;&t;0x10&t;/* enable parity error reporting     */
 DECL|macro|CNTLREG1_SID
-mdefine_line|#define CNTLREG1_SID&t;&t;0x07&t;/* host adapter SCSI ID&t;&t;&t;   */
+mdefine_line|#define CNTLREG1_SID&t;&t;0x07&t;/* host adapter SCSI ID                      */
 DECL|macro|CNTLREG2
-mdefine_line|#define CNTLREG2&t;    &t;0x2C&t;/* rw&t;control register two&t;&t;   */
+mdefine_line|#define CNTLREG2&t;    &t;0x2C&t;/* rw     control register two               */
 DECL|macro|CNTLREG2_ENF
-mdefine_line|#define CNTLREG2_ENF&t;&t;0x40&t;/* enable features&t;&t;&t;   */
+mdefine_line|#define CNTLREG2_ENF&t;&t;0x40&t;/* enable features                           */
 DECL|macro|CNTLREG3
-mdefine_line|#define CNTLREG3&t;    &t;0x30&t;/* rw&t;control register three&t;&t;   */
+mdefine_line|#define CNTLREG3&t;    &t;0x30&t;/* rw     control register three             */
 DECL|macro|CNTLREG3_ADIDCHK
-mdefine_line|#define CNTLREG3_ADIDCHK&t;0x80&t;/* additional ID check&t;&t;&t;   */
+mdefine_line|#define CNTLREG3_ADIDCHK&t;0x80&t;/* additional ID check                       */
 DECL|macro|CNTLREG3_FASTSCSI
-mdefine_line|#define CNTLREG3_FASTSCSI&t;0x10&t;/* fast SCSI&t;&t;&t;&t;   */
+mdefine_line|#define CNTLREG3_FASTSCSI&t;0x10&t;/* fast SCSI                                 */
 DECL|macro|CNTLREG3_FASTCLK
-mdefine_line|#define CNTLREG3_FASTCLK&t;0x08&t;/* fast SCSI clocking&t;&t;&t;   */
+mdefine_line|#define CNTLREG3_FASTCLK&t;0x08&t;/* fast SCSI clocking                        */
 DECL|macro|CNTLREG4
-mdefine_line|#define CNTLREG4&t;    &t;0x34&t;/* rw&t;control register four&t;&t;   */
+mdefine_line|#define CNTLREG4&t;    &t;0x34&t;/* rw     control register four              */
 DECL|macro|CNTLREG4_GLITCH
-mdefine_line|#define CNTLREG4_GLITCH&t;&t;0xC0&t;/* glitch eater&t;&t;&t;&t;   */
+mdefine_line|#define CNTLREG4_GLITCH&t;&t;0xC0&t;/* glitch eater                              */
 DECL|macro|CNTLREG4_PWD
-mdefine_line|#define CNTLREG4_PWD&t;&t;0x20&t;/* reduced power feature&t;&t;   */
+mdefine_line|#define CNTLREG4_PWD&t;&t;0x20&t;/* reduced power feature             */
 DECL|macro|CNTLREG4_RAE
-mdefine_line|#define CNTLREG4_RAE&t;&t;0x08&t;/* write only, active negot. ctrl.&t;   */
+mdefine_line|#define CNTLREG4_RAE&t;&t;0x08&t;/* write only, active negot. ctrl.           */
 DECL|macro|CNTLREG4_RADE
-mdefine_line|#define CNTLREG4_RADE&t;&t;0x04&t;/* active negot. ctrl.&t;&t;&t;   */
+mdefine_line|#define CNTLREG4_RADE&t;&t;0x04&t;/* active negot. ctrl.                       */
 DECL|macro|CNTLREG4_RES
-mdefine_line|#define CNTLREG4_RES&t;&t;0x10&t;/* reserved bit, must be 1&t;&t;   */
+mdefine_line|#define CNTLREG4_RES&t;&t;0x10&t;/* reserved bit, must be 1                   */
 multiline_comment|/*** DMA block ***/
 DECL|macro|DMACMD
-mdefine_line|#define DMACMD&t;&t;    &t;0x40&t;/* rw&t;command&t;&t;&t;&t;   */
+mdefine_line|#define DMACMD&t;&t;    &t;0x40&t;/* rw     command                            */
 DECL|macro|DMACMD_DIR
 mdefine_line|#define DMACMD_DIR&t;&t;0x80&t;/* transfer direction (1=read from device) */
 DECL|macro|DMACMD_INTE_D
-mdefine_line|#define DMACMD_INTE_D&t;&t;0x40&t;/* DMA transfer interrupt enable &t;   */
+mdefine_line|#define DMACMD_INTE_D&t;&t;0x40&t;/* DMA transfer interrupt enable     */
 DECL|macro|DMACMD_INTE_P
-mdefine_line|#define DMACMD_INTE_P&t;&t;0x20&t;/* page transfer interrupt enable &t;   */
+mdefine_line|#define DMACMD_INTE_P&t;&t;0x20&t;/* page transfer interrupt enable            */
 DECL|macro|DMACMD_MDL
-mdefine_line|#define DMACMD_MDL&t;&t;0x10&t;/* map to memory descriptor list &t;   */
+mdefine_line|#define DMACMD_MDL&t;&t;0x10&t;/* map to memory descriptor list     */
 DECL|macro|DMACMD_DIAG
-mdefine_line|#define DMACMD_DIAG&t;&t;0x04&t;/* diagnostics, set to 0&t;&t;   */
+mdefine_line|#define DMACMD_DIAG&t;&t;0x04&t;/* diagnostics, set to 0             */
 DECL|macro|DMACMD_IDLE
-mdefine_line|#define DMACMD_IDLE &t;&t;0x00&t;/* idle cmd&t;&t;&t; &t;   */
+mdefine_line|#define DMACMD_IDLE &t;&t;0x00&t;/* idle cmd                                  */
 DECL|macro|DMACMD_BLAST
-mdefine_line|#define DMACMD_BLAST&t;&t;0x01&t;/* flush FIFO to memory&t;&t; &t;   */
+mdefine_line|#define DMACMD_BLAST&t;&t;0x01&t;/* flush FIFO to memory                      */
 DECL|macro|DMACMD_ABORT
-mdefine_line|#define DMACMD_ABORT&t;&t;0x02&t;/* terminate DMA&t;&t; &t;   */
+mdefine_line|#define DMACMD_ABORT&t;&t;0x02&t;/* terminate DMA                     */
 DECL|macro|DMACMD_START
-mdefine_line|#define DMACMD_START&t;&t;0x03&t;/* start DMA&t;&t;&t; &t;   */
+mdefine_line|#define DMACMD_START&t;&t;0x03&t;/* start DMA                                 */
 DECL|macro|DMASTATUS
-mdefine_line|#define DMASTATUS&t;      &t;0x54&t;/* r&t;status register&t;&t;&t;   */
+mdefine_line|#define DMASTATUS&t;      &t;0x54&t;/* r      status register                    */
 DECL|macro|DMASTATUS_BCMPLT
-mdefine_line|#define DMASTATUS_BCMPLT&t;0x20&t;/* BLAST complete&t;&t;&t;   */
+mdefine_line|#define DMASTATUS_BCMPLT&t;0x20&t;/* BLAST complete                    */
 DECL|macro|DMASTATUS_SCSIINT
-mdefine_line|#define DMASTATUS_SCSIINT&t;0x10&t;/* SCSI interrupt pending&t;&t;   */
+mdefine_line|#define DMASTATUS_SCSIINT&t;0x10&t;/* SCSI interrupt pending            */
 DECL|macro|DMASTATUS_DONE
-mdefine_line|#define DMASTATUS_DONE&t;&t;0x08&t;/* DMA transfer terminated&t;&t;   */
+mdefine_line|#define DMASTATUS_DONE&t;&t;0x08&t;/* DMA transfer terminated                   */
 DECL|macro|DMASTATUS_ABORT
-mdefine_line|#define DMASTATUS_ABORT&t;&t;0x04&t;/* DMA transfer aborted&t;&t;&t;   */
+mdefine_line|#define DMASTATUS_ABORT&t;&t;0x04&t;/* DMA transfer aborted                      */
 DECL|macro|DMASTATUS_ERROR
-mdefine_line|#define DMASTATUS_ERROR&t;&t;0x02&t;/* DMA transfer error&t;&t;&t;   */
+mdefine_line|#define DMASTATUS_ERROR&t;&t;0x02&t;/* DMA transfer error                        */
 DECL|macro|DMASTATUS_PWDN
-mdefine_line|#define DMASTATUS_PWDN&t;&t;0x02&t;/* power down indicator&t;&t;&t;   */
+mdefine_line|#define DMASTATUS_PWDN&t;&t;0x02&t;/* power down indicator                      */
 DECL|macro|DMASTC
-mdefine_line|#define DMASTC&t;&t;    &t;0x44&t;/* rw&t;starting transfer count&t;&t;   */
+mdefine_line|#define DMASTC&t;&t;    &t;0x44&t;/* rw     starting transfer count            */
 DECL|macro|DMASPA
-mdefine_line|#define DMASPA&t;&t;    &t;0x48&t;/* rw&t;starting physical address&t;   */
+mdefine_line|#define DMASPA&t;&t;    &t;0x48&t;/* rw     starting physical address          */
 DECL|macro|DMAWBC
-mdefine_line|#define DMAWBC&t;&t;    &t;0x4C&t;/* r&t;working byte counter&t;&t;   */
+mdefine_line|#define DMAWBC&t;&t;    &t;0x4C&t;/* r      working byte counter               */
 DECL|macro|DMAWAC
-mdefine_line|#define DMAWAC&t;&t;    &t;0x50&t;/* r&t;working address counter&t;&t;   */
+mdefine_line|#define DMAWAC&t;&t;    &t;0x50&t;/* r      working address counter            */
 DECL|macro|DMASMDLA
-mdefine_line|#define DMASMDLA&t;    &t;0x58&t;/* rw&t;starting MDL address&t;&t;   */
+mdefine_line|#define DMASMDLA&t;    &t;0x58&t;/* rw     starting MDL address               */
 DECL|macro|DMAWMAC
-mdefine_line|#define DMAWMAC&t;&t;    &t;0x5C&t;/* r&t;working MDL counter&t;&t;   */
+mdefine_line|#define DMAWMAC&t;&t;    &t;0x5C&t;/* r      working MDL counter                */
 multiline_comment|/*** SCSI phases ***/
 DECL|macro|PHASE_MSGIN
 mdefine_line|#define PHASE_MSGIN             0x07
@@ -433,14 +433,14 @@ mdefine_line|#define AM53C974_read_32(addr)          inl(io_port + (addr))
 DECL|macro|AM53C974_write_32
 mdefine_line|#define AM53C974_write_32(addr,x)       outl((x), io_port + (addr))
 DECL|macro|AM53C974_poll_int
-mdefine_line|#define AM53C974_poll_int()             { do { statreg = AM53C974_read_8(STATREG); } &bslash;&n;                                             while (!(statreg &amp; STATREG_INT)) ; &bslash;&n;                                          AM53C974_read_8(INSTREG) ; } /* clear int */
+mdefine_line|#define AM53C974_poll_int()             { do { statreg = AM53C974_read_8(STATREG); } &bslash;&n;                                             while (!(statreg &amp; STATREG_INT)) ; &bslash;&n;                                          AM53C974_read_8(INSTREG) ; }&t;/* clear int */
 DECL|macro|AM53C974_cfifo
 mdefine_line|#define AM53C974_cfifo()&t;&t;(AM53C974_read_8(CFIREG) &amp; CFIREG_CF)
 multiline_comment|/* These are &quot;special&quot; values for the tag parameter passed to AM53C974_select. */
 DECL|macro|TAG_NEXT
-mdefine_line|#define TAG_NEXT&t;-1 &t;/* Use next free tag */
+mdefine_line|#define TAG_NEXT&t;-1&t;/* Use next free tag */
 DECL|macro|TAG_NONE
-mdefine_line|#define TAG_NONE&t;-2&t;/* Establish I_T_L nexus instead of I_T_L_Q&n;&t;&t;&t;&t; * even on SCSI-II devices */
+mdefine_line|#define TAG_NONE&t;-2&t;/* Establish I_T_L nexus instead of I_T_L_Q&n;&t;&t;&t;&t;   * even on SCSI-II devices */
 multiline_comment|/************ LILO overrides *************/
 DECL|struct|_override_t
 r_typedef
@@ -494,7 +494,7 @@ op_star
 id|instance
 )paren
 suffix:semicolon
-macro_line|#endif /* AM53C974_DEBUG */
+macro_line|#endif&t;&t;&t;&t;/* AM53C974_DEBUG */
 r_static
 r_void
 id|AM53C974_print
@@ -574,6 +574,7 @@ suffix:semicolon
 r_static
 r_void
 id|AM53C974_main
+c_func
 (paren
 r_void
 )paren
@@ -1112,6 +1113,10 @@ op_star
 id|instance
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_struct
 id|AM53C974_hostdata
 op_star
@@ -1141,6 +1146,12 @@ suffix:colon
 l_string|&quot;n&squot;t&quot;
 )paren
 suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -1154,6 +1165,7 @@ id|hostdata-&gt;connected
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;scsi%d: no currently connected command&bslash;n&quot;
 comma
@@ -1164,6 +1176,7 @@ suffix:semicolon
 r_else
 (brace
 id|print_Scsi_Cmnd
+c_func
 (paren
 (paren
 id|Scsi_Cmnd
@@ -1181,6 +1194,7 @@ id|hostdata-&gt;sel_cmd
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;scsi%d: no currently arbitrating command&bslash;n&quot;
 comma
@@ -1191,6 +1205,7 @@ suffix:semicolon
 r_else
 (brace
 id|print_Scsi_Cmnd
+c_func
 (paren
 (paren
 id|Scsi_Cmnd
@@ -1201,6 +1216,7 @@ id|hostdata-&gt;sel_cmd
 suffix:semicolon
 )brace
 id|printk
+c_func
 (paren
 l_string|&quot;scsi%d: issue_queue &quot;
 comma
@@ -1249,12 +1265,14 @@ op_star
 id|ptr-&gt;host_scribble
 )paren
 id|print_Scsi_Cmnd
+c_func
 (paren
 id|ptr
 )paren
 suffix:semicolon
 )brace
 id|printk
+c_func
 (paren
 l_string|&quot;scsi%d: disconnected_queue &quot;
 comma
@@ -1303,18 +1321,20 @@ op_star
 id|ptr-&gt;host_scribble
 )paren
 id|print_Scsi_Cmnd
+c_func
 (paren
 id|ptr
 )paren
 suffix:semicolon
 )brace
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* AM53C974_DEBUG */
+macro_line|#endif&t;&t;&t;&t;/* AM53C974_DEBUG */
 multiline_comment|/**************************************************************************&n; * Function : void AM53C974_print(struct Scsi_Host *instance)&n; *&n; * Purpose : dump the chip registers for debugging purposes&n; *&n; * Input : instance - which AM53C974&n; **************************************************************************/
 DECL|function|AM53C974_print
 r_static
@@ -1332,6 +1352,10 @@ id|AM53C974_local_declare
 c_func
 (paren
 )paren
+suffix:semicolon
+r_int
+r_int
+id|flags
 suffix:semicolon
 r_int
 r_int
@@ -1368,6 +1392,12 @@ id|AM53C974_setio
 c_func
 (paren
 id|instance
+)paren
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 id|cli
@@ -1527,9 +1557,10 @@ c_func
 id|DMASTATUS
 )paren
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 id|printk
@@ -1623,6 +1654,10 @@ c_func
 r_void
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
 macro_line|#ifdef AM53C974_DEBUG
 r_int
 id|key
@@ -1636,6 +1671,12 @@ id|deb_stop
 r_return
 suffix:semicolon
 macro_line|#endif
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -1679,9 +1720,10 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* don&squot;t stop if &squot;r&squot; was pressed */
 macro_line|#endif
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -1974,7 +2016,7 @@ id|PCI_COMMAND_IO
 )paren
 r_continue
 suffix:semicolon
-multiline_comment|/* PCI Spec 2.1 states that it is either the driver&squot;s or the PCI card&squot;s responsibility&n;       to set the PCI Master Enable Bit if needed. &n;       (from Mark Stockton &lt;marks@schooner.sys.hou.compaq.com&gt;) */
+multiline_comment|/* PCI Spec 2.1 states that it is either the driver&squot;s or the PCI card&squot;s responsibility&n;&t;&t;   to set the PCI Master Enable Bit if needed. &n;&t;&t;   (from Mark Stockton &lt;marks@schooner.sys.hou.compaq.com&gt;) */
 r_if
 c_cond
 (paren
@@ -2126,6 +2168,7 @@ id|hostdata
 suffix:semicolon
 macro_line|#ifdef AM53C974_OPTION_DEBUG_PROBE_ONLY
 id|printk
+c_func
 (paren
 l_string|&quot;AM53C974: probe only enabled, aborting initialization&bslash;n&quot;
 )paren
@@ -2614,7 +2657,9 @@ l_int|500000
 )paren
 suffix:semicolon
 r_return
+(paren
 l_int|1
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*********************************************************************&n;* Function : AM53C974_config_after_reset(struct Scsi_Host *instance) *&n;*                                                                    *&n;* Purpose : initializes chip registers after reset                   *&n;*                                                                    *&n;* Inputs : instance - which AM53C974                                 *&n;*                                                                    *&n;* Returns : nothing                                                  *&n;**********************************************************************/
@@ -2938,6 +2983,16 @@ c_func
 r_void
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -2950,7 +3005,7 @@ op_logical_neg
 id|main_running
 )paren
 (brace
-multiline_comment|/* main_running is cleared in AM53C974_main once it can&squot;t do &n;      more work, and AM53C974_main exits with interrupts disabled. */
+multiline_comment|/* main_running is cleared in AM53C974_main once it can&squot;t do &n;&t;&t;   more work, and AM53C974_main exits with interrupts disabled. */
 id|main_running
 op_assign
 l_int|1
@@ -2960,16 +3015,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
-r_else
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -2994,6 +3044,10 @@ op_star
 )paren
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_struct
 id|Scsi_Host
 op_star
@@ -3016,6 +3070,12 @@ suffix:semicolon
 id|Scsi_Cmnd
 op_star
 id|tmp
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 id|cli
 c_func
@@ -3199,6 +3259,12 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -3217,6 +3283,10 @@ id|AM53C974_local_declare
 c_func
 (paren
 )paren
+suffix:semicolon
+r_int
+r_int
+id|flags
 suffix:semicolon
 id|Scsi_Cmnd
 op_star
@@ -3239,14 +3309,20 @@ r_int
 id|done
 suffix:semicolon
 multiline_comment|/* We run (with interrupts disabled) until we&squot;re sure that none of &n; * the host adapters have anything that can be done, at which point &n; * we set main_running to 0 and exit. */
-r_do
-(brace
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
 )paren
 suffix:semicolon
 multiline_comment|/* Freeze request queues */
+r_do
+(brace
 id|done
 op_assign
 l_int|1
@@ -3284,7 +3360,7 @@ c_func
 id|instance
 )paren
 suffix:semicolon
-multiline_comment|/* start to select target if we are not connected and not in the &n;          selection process */
+multiline_comment|/* start to select target if we are not connected and not in the &n;&t;&t;&t;   selection process */
 r_if
 c_cond
 (paren
@@ -3295,7 +3371,7 @@ op_logical_neg
 id|hostdata-&gt;sel_cmd
 )paren
 (brace
-multiline_comment|/* Search through the issue_queue for a command destined for a target &n;             that is not busy. */
+multiline_comment|/* Search through the issue_queue for a command destined for a target &n;&t;&t;&t;&t;   that is not busy. */
 r_for
 c_loop
 (paren
@@ -3408,7 +3484,7 @@ id|tmp-&gt;host_scribble
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/* go into selection mode, disable reselection and wait for&n;                    SO interrupt which will continue with the selection process */
+multiline_comment|/* go into selection mode, disable reselection and wait for&n;&t;&t;&t;&t;&t;&t;   SO interrupt which will continue with the selection process */
 id|hostdata-&gt;selecting
 op_assign
 l_int|1
@@ -3469,6 +3545,12 @@ suffix:semicolon
 id|main_running
 op_assign
 l_int|0
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/************************************************************************&n;* Function : AM53C974_intr(int irq, void *dev_id, struct pt_regs *regs) *&n;*                                                                       *&n;* Purpose : interrupt handler                                           *&n;*                                                                       *&n;* Inputs : irq - interrupt line, regs - ?                               *&n;*                                                                       *&n;* Returns : nothing                                                     *&n;************************************************************************/
@@ -3605,11 +3687,6 @@ id|the_template
 r_goto
 id|FOUND
 suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
 multiline_comment|/* found; now decode and process */
@@ -3726,6 +3803,16 @@ multiline_comment|/* DMA transfer done */
 r_int
 r_int
 id|residual
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 id|cli
 c_func
@@ -3938,9 +4025,10 @@ id|dmastatus
 )paren
 suffix:semicolon
 )brace
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -3955,11 +4043,6 @@ id|DMASTATUS_SCSIINT
 )paren
 )paren
 (brace
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -4123,6 +4206,10 @@ id|INSTREG_SRST
 )paren
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
 multiline_comment|/* RESET INTERRUPT */
 macro_line|#ifdef AM53C974_DEBUG
 id|deb_stop
@@ -4144,6 +4231,12 @@ id|AM53C974_intr_bus_reset
 c_func
 (paren
 id|instance
+)paren
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 id|cli
@@ -4212,9 +4305,10 @@ l_int|NULL
 suffix:semicolon
 )brace
 )brace
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 r_if
@@ -4296,6 +4390,10 @@ op_amp
 id|INSTREG_DIS
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
 multiline_comment|/* DISCONNECT INTERRUPT */
 id|DEB_INTR
 c_func
@@ -4305,6 +4403,12 @@ c_func
 (paren
 l_string|&quot;Disconnect interrupt received; &quot;
 )paren
+)paren
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 id|cli
@@ -4318,9 +4422,10 @@ c_func
 id|instance
 )paren
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 r_goto
@@ -4335,6 +4440,10 @@ op_amp
 id|INSTREG_RESEL
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
 multiline_comment|/* RESELECTION INTERRUPT */
 id|DEB_INTR
 c_func
@@ -4344,6 +4453,12 @@ c_func
 (paren
 l_string|&quot;Reselection interrupt received&bslash;n&quot;
 )paren
+)paren
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 id|cli
@@ -4359,9 +4474,10 @@ comma
 id|statreg
 )paren
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 r_goto
@@ -4392,6 +4508,10 @@ c_cond
 id|hostdata-&gt;selecting
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|DEB_INTR
 c_func
 (paren
@@ -4400,6 +4520,12 @@ c_func
 (paren
 l_string|&quot;DSR completed, starting select&bslash;n&quot;
 )paren
+)paren
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 id|cli
@@ -4445,9 +4571,10 @@ comma
 id|hostdata-&gt;sel_cmd-&gt;target
 )paren
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 r_return
@@ -4485,6 +4612,10 @@ id|ISREG_OK_STOP
 )paren
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
 multiline_comment|/* UNSUCCESSFUL SELECTION */
 id|DEB_INTR
 c_func
@@ -4494,6 +4625,12 @@ c_func
 (paren
 l_string|&quot;unsuccessful selection&bslash;n&quot;
 )paren
+)paren
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 id|cli
@@ -4534,9 +4671,10 @@ id|hostdata-&gt;selecting
 op_assign
 l_int|0
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 r_goto
@@ -4545,6 +4683,10 @@ suffix:semicolon
 )brace
 r_else
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
 multiline_comment|/* SUCCESSFUL SELECTION */
 id|DEB
 c_func
@@ -4559,6 +4701,12 @@ r_int
 )paren
 id|hostdata-&gt;sel_cmd
 )paren
+)paren
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 id|cli
@@ -4593,7 +4741,7 @@ c_cond
 op_logical_neg
 id|hostdata-&gt;connected-&gt;device-&gt;tagged_queue
 )paren
-macro_line|#endif    
+macro_line|#endif
 id|hostdata-&gt;busy
 (braket
 id|hostdata-&gt;connected-&gt;target
@@ -4673,9 +4821,10 @@ comma
 id|dmastatus
 )paren
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 r_return
@@ -4684,6 +4833,16 @@ suffix:semicolon
 )brace
 r_else
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -4705,9 +4864,10 @@ comma
 id|dmastatus
 )paren
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 r_return
@@ -4738,6 +4898,10 @@ c_cond
 id|hostdata-&gt;connected
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|DEB_INTR
 c_func
 (paren
@@ -4746,6 +4910,12 @@ c_func
 (paren
 l_string|&quot;calling information_transfer&bslash;n&quot;
 )paren
+)paren
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 id|cli
@@ -4769,9 +4939,10 @@ comma
 id|dmastatus
 )paren
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -4910,7 +5081,7 @@ op_logical_neg
 id|hostdata-&gt;connected
 )paren
 (brace
-multiline_comment|/* can happen if controller was reset, a device tried to reconnect,&n;      failed and disconnects now */
+multiline_comment|/* can happen if controller was reset, a device tried to reconnect,&n;&t;&t;   failed and disconnects now */
 id|AM53C974_write_8
 c_func
 (paren
@@ -5673,7 +5844,9 @@ id|offset
 )paren
 )paren
 r_return
+(paren
 l_int|1
+)paren
 suffix:semicolon
 id|rate
 op_assign
@@ -5728,7 +5901,9 @@ id|rate_rem
 )paren
 suffix:semicolon
 r_return
+(paren
 l_int|0
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/************************************************************************** &n;* Function : AM53C974_set_async(struct Scsi_Host *instance, int target)&n;*&n;* Purpose : put controller into async. mode&n;*&n;* Inputs : instance -- which AM53C974&n;*          target -- which SCSI target to deal with&n;* &n;* Returns : nothing&n;**************************************************************************/
@@ -7042,7 +7217,7 @@ id|cmd-&gt;lun
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* Sanity check : A linked command should only terminate with&n;     * one of these messages if there are more linked commands available. */
+multiline_comment|/* Sanity check : A linked command should only terminate with&n;&t;&t; * one of these messages if there are more linked commands available. */
 r_if
 c_cond
 (paren
@@ -7174,7 +7349,7 @@ id|hostdata-&gt;connected
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#endif /* def LINKED */
+macro_line|#endif&t;&t;&t;&t;/* def LINKED */
 r_case
 id|ABORT
 suffix:colon
@@ -7210,7 +7385,7 @@ id|cmd-&gt;device-&gt;disconnect
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* I&squot;m not sure what the correct thing to do here is : &n;     * &n;     * If the command that just executed is NOT a request &n;     * sense, the obvious thing to do is to set the result&n;     * code to the values of the stored parameters.&n;     * If it was a REQUEST SENSE command, we need some way &n;     * to differentiate between the failure code of the original&n;     * and the failure code of the REQUEST sense - the obvious&n;     * case is success, where we fall through and leave the result&n;     * code unchanged.&n;     * &n;     * The non-obvious place is where the REQUEST SENSE failed  */
+multiline_comment|/* I&squot;m not sure what the correct thing to do here is : &n;&n;&t;&t; * If the command that just executed is NOT a request &n;&t;&t; * sense, the obvious thing to do is to set the result&n;&t;&t; * code to the values of the stored parameters.&n;&t;&t; * If it was a REQUEST SENSE command, we need some way &n;&t;&t; * to differentiate between the failure code of the original&n;&t;&t; * and the failure code of the REQUEST sense - the obvious&n;&t;&t; * case is success, where we fall through and leave the result&n;&t;&t; * code unchanged.&n;&t;&t; * &n;&t;&t; * The non-obvious place is where the REQUEST SENSE failed  */
 r_if
 c_cond
 (paren
@@ -7643,7 +7818,7 @@ id|cmd-&gt;lun
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* The SCSI data pointer is *IMPLICITLY* saved on a disconnect&n;     * operation, in violation of the SCSI spec so we can safely &n;     * ignore SAVE/RESTORE pointers calls.&n;     *&n;     * Unfortunately, some disks violate the SCSI spec and &n;     * don&squot;t issue the required SAVE_POINTERS message before&n;     * disconnecting, and we have to break spec to remain &n;     * compatible. */
+multiline_comment|/* The SCSI data pointer is *IMPLICITLY* saved on a disconnect&n;&t;&t; * operation, in violation of the SCSI spec so we can safely &n;&t;&t; * ignore SAVE/RESTORE pointers calls.&n;&t;&t; *&n;&t;&t; * Unfortunately, some disks violate the SCSI spec and &n;&t;&t; * don&squot;t issue the required SAVE_POINTERS message before&n;&t;&t; * disconnecting, and we have to break spec to remain &n;&t;&t; * compatible. */
 r_if
 c_cond
 (paren
@@ -7708,7 +7883,7 @@ id|cmd-&gt;lun
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* Extended messages are sent in the following format :&n;    * Byte &t;&n;    * 0&t;&t;  EXTENDED_MESSAGE == 1&n;    * 1&t;&t;  length (includes one byte for code, doesn&squot;t include first two bytes)&n;    * 2 &t;  code&n;    * 3..length+1 arguments&n;    */
+multiline_comment|/* Extended messages are sent in the following format :&n;&t;&t; * Byte    &n;&t;&t; * 0           EXTENDED_MESSAGE == 1&n;&t;&t; * 1           length (includes one byte for code, doesn&squot;t include first two bytes)&n;&t;&t; * 2           code&n;&t;&t; * 3..length+1 arguments&n;&t;&t; */
 multiline_comment|/* BEWARE!! THIS CODE IS EXTREMELY UGLY */
 id|extended_msg
 (braket
@@ -8002,7 +8177,9 @@ id|CMDREG_MA
 )paren
 suffix:semicolon
 r_return
+(paren
 l_int|0
+)paren
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -8014,7 +8191,9 @@ c_func
 )paren
 suffix:semicolon
 r_return
+(paren
 l_int|1
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/************************************************************************** &n;* Function : AM53C974_select(struct Scsi_Host *instance, Scsi_Cmnd *cmd, int tag)&n;*&n;* Purpose : try to establish nexus for the command;&n;*           start sync negotiation via start stop and transfer the command in &n;*           cmdout phase in case of an inquiry or req. sense command with no &n;*           sync. neg. performed yet&n;*&n;* Inputs : instance -- which AM53C974&n;*          cmd -- command which requires the selection&n;*          tag -- tagged queueing&n;* &n;* Returns : nothing&n;*        &n;* Note: this function initializes the selection process, which is continued &n;*       in the interrupt handler&n;**************************************************************************/
@@ -8258,7 +8437,7 @@ l_int|2
 suffix:semicolon
 )brace
 r_else
-macro_line|#endif /* def SCSI2 */
+macro_line|#endif&t;&t;&t;&t;/* def SCSI2 */
 (brace
 id|len
 op_assign
@@ -8594,7 +8773,7 @@ c_cond
 id|hostdata-&gt;selecting
 )paren
 (brace
-multiline_comment|/* caught reselect interrupt in selection process;&n;      put selecting command back into the issue queue and continue with the&n;      reselecting command */
+multiline_comment|/* caught reselect interrupt in selection process;&n;&t;&t;   put selecting command back into the issue queue and continue with the&n;&t;&t;   reselecting command */
 id|DEB_RESEL
 c_func
 (paren
@@ -9434,9 +9613,7 @@ op_amp
 id|DMASTATUS_BCMPLT
 )paren
 )paren
-(brace
 suffix:semicolon
-)brace
 id|AM53C974_write_8
 c_func
 (paren
@@ -9624,6 +9801,10 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_struct
 id|Scsi_Host
 op_star
@@ -9657,6 +9838,12 @@ op_assign
 l_int|1
 suffix:semicolon
 macro_line|#endif
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -9709,7 +9896,7 @@ c_func
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* Case 1 : If the command is the currently executing command, &n;            we&squot;ll set the aborted flag and return control so that the&n;            information transfer routine can exit cleanly. */
+multiline_comment|/* Case 1 : If the command is the currently executing command, &n;   we&squot;ll set the aborted flag and return control so that the&n;   information transfer routine can exit cleanly. */
 r_if
 c_cond
 (paren
@@ -9749,16 +9936,19 @@ l_int|0
 op_assign
 id|ABORT
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 r_return
+(paren
 id|SCSI_ABORT_PENDING
+)paren
 suffix:semicolon
 )brace
-multiline_comment|/* Case 2 : If the command hasn&squot;t been issued yet,&n;            we simply remove it from the issue queue. */
+multiline_comment|/* Case 2 : If the command hasn&squot;t been issued yet,&n;   we simply remove it from the issue queue. */
 r_for
 c_loop
 (paren
@@ -9859,9 +10049,10 @@ id|DID_ABORT
 op_lshift
 l_int|16
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 id|tmp
@@ -9873,7 +10064,9 @@ id|tmp
 )paren
 suffix:semicolon
 r_return
+(paren
 id|SCSI_ABORT_SUCCESS
+)paren
 suffix:semicolon
 )brace
 macro_line|#ifdef AM53C974_DEBUG_ABORT
@@ -9902,7 +10095,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 )brace
-multiline_comment|/* Case 3 : If any commands are connected, we&squot;re going to fail the abort&n; *&t;    and let the high level SCSI driver retry at a later time or &n; *&t;    issue a reset.&n; *&n; *&t;    Timeouts, and therefore aborted commands, will be highly unlikely&n; *          and handling them cleanly in this situation would make the common&n; *&t;    case of noresets less efficient, and would pollute our code.  So,&n; *&t;    we fail. */
+multiline_comment|/* Case 3 : If any commands are connected, we&squot;re going to fail the abort&n; *        and let the high level SCSI driver retry at a later time or &n; *          issue a reset.&n; *&n; *          Timeouts, and therefore aborted commands, will be highly unlikely&n; *          and handling them cleanly in this situation would make the common&n; *          case of noresets less efficient, and would pollute our code.  So,&n; *          we fail. */
 r_if
 c_cond
 (paren
@@ -9923,16 +10116,19 @@ id|instance-&gt;host_no
 )paren
 )paren
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 r_return
+(paren
 id|SCSI_ABORT_NOT_RUNNING
+)paren
 suffix:semicolon
 )brace
-multiline_comment|/* Case 4: If the command is currently disconnected from the bus, and &n; * &t;   there are no connected commands, we reconnect the I_T_L or &n; *&t;   I_T_L_Q nexus associated with it, go into message out, and send &n; *         an abort message. */
+multiline_comment|/* Case 4: If the command is currently disconnected from the bus, and &n; *       there are no connected commands, we reconnect the I_T_L or &n; *         I_T_L_Q nexus associated with it, go into message out, and send &n; *         an abort message. */
 r_for
 c_loop
 (paren
@@ -10002,17 +10198,20 @@ comma
 id|CMDREG_DSR
 )paren
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 r_return
+(paren
 id|SCSI_ABORT_PENDING
+)paren
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* Case 5 : If we reached this point, the command was not found in any of &n; *&t;    the queues.&n; *&n; * We probably reached this point because of an unlikely race condition&n; * between the command completing successfully and the abortion code,&n; * so we won&squot;t panic, but we will notify the user in case something really&n; * broke. */
+multiline_comment|/* Case 5 : If we reached this point, the command was not found in any of &n; *        the queues.&n; *&n; * We probably reached this point because of an unlikely race condition&n; * between the command completing successfully and the abortion code,&n; * so we won&squot;t panic, but we will notify the user in case something really&n; * broke. */
 id|DEB_ABORT
 c_func
 (paren
@@ -10025,13 +10224,16 @@ id|instance-&gt;host_no
 )paren
 )paren
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 r_return
+(paren
 id|SCSI_ABORT_NOT_RUNNING
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/************************************************************************** &n;* Function : int AM53C974_reset(Scsi_Cmnd *cmd)&n;*&n;* Purpose : reset the SCSI controller and bus&n;*&n;* Inputs : cmd -- which command within the command block was responsible for the reset&n;* &n;* Returns : status (SCSI_ABORT_SUCCESS)&n;* &n;* FIXME(eric) the reset_flags are ignored.&n;**************************************************************************/
@@ -10053,6 +10255,10 @@ id|AM53C974_local_declare
 c_func
 (paren
 )paren
+suffix:semicolon
+r_int
+r_int
+id|flags
 suffix:semicolon
 r_int
 id|i
@@ -10080,6 +10286,12 @@ id|AM53C974_setio
 c_func
 (paren
 id|instance
+)paren
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 id|cli
@@ -10258,9 +10470,10 @@ c_func
 id|instance
 )paren
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 id|cmd-&gt;result
@@ -10282,8 +10495,8 @@ id|SCSI_ABORT_SUCCESS
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * AM53C974_release()&n; *&n; * Release resources allocated for a single AM53C974 adapter.&n; */
-r_int
 DECL|function|AM53C974_release
+r_int
 id|AM53C974_release
 c_func
 (paren

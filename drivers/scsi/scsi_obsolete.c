@@ -185,6 +185,11 @@ comma
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* Set the serial_number_at_timeout to the current serial_number */
+id|SCpnt-&gt;serial_number_at_timeout
+op_assign
+id|SCpnt-&gt;serial_number
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -689,6 +694,10 @@ op_assign
 id|SCpnt-&gt;result
 suffix:semicolon
 id|SCpnt-&gt;serial_number
+op_assign
+l_int|0
+suffix:semicolon
+id|SCpnt-&gt;serial_number_at_timeout
 op_assign
 l_int|0
 suffix:semicolon

@@ -1,5 +1,5 @@
-multiline_comment|/*&n; *  $Id: joystick.c,v 1.6 1998/03/30 11:10:43 mj Exp $&n; *&n; *  Copyright (C) 1997, 1998 Vojtech Pavlik&n; */
-multiline_comment|/*&n; *  This is joystick driver for Linux. It supports up to two analog joysticks&n; *  on a PC compatible machine. See Documentation/joystick.txt for changelog&n; *  and credits.&n; */
+multiline_comment|/*&n; * linux/drivers/char/joystick.c  Version 1.0.9&n; * Copyright (C) 1996-1998 Vojtech Pavlik&n; */
+multiline_comment|/*&n; * This is joystick driver for Linux. It supports up to two analog joysticks&n; * on a PC compatible machine. See Documentation/joystick.txt for changelog&n; * and credits.&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
@@ -22,13 +22,13 @@ mdefine_line|#define JS_BH_MIN_PERIOD&t;HZ/25&t;&t;/* axis min valid time (40 ms
 DECL|macro|JS_BH_MAX_PERIOD
 mdefine_line|#define JS_BH_MAX_PERIOD&t;HZ/25*2&t;&t;/* axis max valid time (80 ms) */
 DECL|macro|JS_FIFO_SIZE
-mdefine_line|#define JS_FIFO_SIZE    &t;16&t;&t;/* number of FIFO entries */
+mdefine_line|#define JS_FIFO_SIZE&t;&t;16&t;&t;/* number of FIFO entries */
 DECL|macro|JS_BUFF_SIZE
 mdefine_line|#define JS_BUFF_SIZE&t;&t;32 &t;&t;/* output buffer size */
 DECL|macro|JS_RETRIES
-mdefine_line|#define JS_RETRIES&t;&t;4&t;&t;/* number of retries */ 
+mdefine_line|#define JS_RETRIES&t;&t;4&t;&t;/* number of retries */
 DECL|macro|JS_DEF_PREC
-mdefine_line|#define JS_DEF_PREC&t;&t;8&t;&t;/* initial precision for all axes */
+mdefine_line|#define JS_DEF_PREC&t;&t;16&t;&t;/* initial precision for all axes */
 DECL|macro|JS_NUM
 mdefine_line|#define JS_NUM&t;&t;&t;2&t;&t;/* number of joysticks */
 DECL|macro|JS_AXES
@@ -42,7 +42,7 @@ mdefine_line|#define PIT_DATA &t;&t;0x40&t;&t;/* timer 0 data port */
 DECL|macro|JS_PORT
 mdefine_line|#define JS_PORT &t;&t;0x201&t;&t;/* joystick port */
 DECL|macro|JS_TRIGGER
-mdefine_line|#define JS_TRIGGER      &t;0xff&t;&t;/* triggers one-shots */
+mdefine_line|#define JS_TRIGGER&t;&t;0xff&t;&t;/* triggers one-shots */
 DECL|macro|PIT_READ_TIMER
 mdefine_line|#define PIT_READ_TIMER&t;&t;0x00&t;&t;/* to read timer 0 */
 DECL|macro|DELTA
@@ -282,7 +282,7 @@ c_func
 (paren
 id|js
 comma
-l_string|&quot;0-1b&quot;
+l_string|&quot;1-2b&quot;
 )paren
 suffix:semicolon
 DECL|variable|js
@@ -450,10 +450,7 @@ l_int|1
 )braket
 ques
 c_cond
-id|corr-&gt;coef
-(braket
 l_int|0
-)braket
 suffix:colon
 id|value
 op_minus
@@ -461,27 +458,14 @@ id|corr-&gt;coef
 (braket
 l_int|1
 )braket
-op_plus
-id|corr-&gt;coef
-(braket
-l_int|0
-)braket
 )paren
 suffix:colon
 id|value
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|t
-op_eq
+op_minus
 id|corr-&gt;coef
 (braket
 l_int|0
 )braket
-)paren
-r_return
-l_int|32768
 suffix:semicolon
 r_switch
 c_cond
@@ -496,10 +480,7 @@ id|t
 op_assign
 id|t
 OL
-id|corr-&gt;coef
-(braket
 l_int|0
-)braket
 ques
 c_cond
 (paren
@@ -514,17 +495,12 @@ id|t
 op_rshift
 l_int|14
 )paren
-op_plus
-id|corr-&gt;coef
-(braket
-l_int|3
-)braket
 suffix:colon
 (paren
 (paren
 id|corr-&gt;coef
 (braket
-l_int|4
+l_int|3
 )braket
 op_star
 id|t
@@ -532,11 +508,6 @@ id|t
 op_rshift
 l_int|14
 )paren
-op_plus
-id|corr-&gt;coef
-(braket
-l_int|5
-)braket
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -551,26 +522,28 @@ c_cond
 (paren
 id|t
 OL
-l_int|0
+op_minus
+l_int|32767
 )paren
 r_return
-l_int|0
+op_minus
+l_int|32767
 suffix:semicolon
 r_if
 c_cond
 (paren
 id|t
 OG
-l_int|65535
+l_int|32767
 )paren
 r_return
-l_int|65535
+l_int|32767
 suffix:semicolon
 r_return
 id|t
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * js_compare() compares two close axis values and decides &n; * whether they are &quot;same&quot;.&n; */
+multiline_comment|/*&n; * js_compare() compares two close axis values and decides&n; * whether they are &quot;same&quot;.&n; */
 DECL|function|js_compare
 r_static
 r_int
@@ -605,7 +578,7 @@ id|prec
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * js_probe() probes for joysticks &n; */
+multiline_comment|/*&n; * js_probe() probes for joysticks&n; */
 DECL|function|js_probe
 r_inline
 r_int
@@ -754,7 +727,7 @@ l_int|0
 dot
 id|exist
 op_assign
-l_int|0x00
+l_int|0xcc
 suffix:semicolon
 id|jsd
 (braket
@@ -763,7 +736,7 @@ l_int|1
 dot
 id|exist
 op_assign
-l_int|0xcc
+l_int|0x00
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -886,7 +859,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * js_do_timer() controls the action by adding entries to the event&n; * fifo each time a button changes its state or axis valid time&n; * expires.&n; */
+multiline_comment|/*&n; * js_do_timer() controls the action by adding entries to the event&n; * fifo each time a button changes its state or axis valid time&n; * expires.&n; */
 DECL|function|js_do_timer
 r_static
 r_void
@@ -1707,9 +1680,6 @@ id|j
 (brace
 id|jsm
 op_assign
-id|js_correct
-c_func
-(paren
 id|DELTA_TX
 c_func
 (paren
@@ -1718,15 +1688,6 @@ comma
 id|t_low
 comma
 id|t_high
-)paren
-comma
-op_amp
-id|js_axis
-(braket
-id|j
-)braket
-dot
-id|corr
 )paren
 suffix:semicolon
 r_if
@@ -2018,8 +1979,10 @@ id|exist
 r_if
 c_cond
 (paren
-op_logical_neg
-id|js_compare
+(paren
+id|t
+op_assign
+id|js_correct
 c_func
 (paren
 id|js_axis
@@ -2029,17 +1992,31 @@ id|j
 dot
 id|value
 comma
-id|old_axis
-(braket
-id|j
-)braket
-comma
+op_amp
 id|js_axis
 (braket
 id|j
 )braket
 dot
-id|corr.prec
+id|corr
+)paren
+)paren
+op_ne
+id|js_correct
+c_func
+(paren
+id|old_axis
+(braket
+id|j
+)braket
+comma
+op_amp
+id|js_axis
+(braket
+id|j
+)braket
+dot
+id|corr
 )paren
 )paren
 id|js_add_event
@@ -2053,12 +2030,7 @@ id|JS_EVENT_AXIS
 comma
 id|k
 comma
-id|js_axis
-(braket
-id|j
-)braket
-dot
-id|value
+id|t
 )paren
 suffix:semicolon
 id|k
@@ -2691,12 +2663,24 @@ id|t
 suffix:semicolon
 id|tmpevent.value
 op_assign
+id|js_correct
+c_func
+(paren
 id|js_axis
 (braket
 id|j
 )braket
 dot
 id|value
+comma
+op_amp
+id|js_axis
+(braket
+id|j
+)braket
+dot
+id|corr
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -3911,7 +3895,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;js%d: %d-axis joystick at %#x&bslash;n&quot;
+l_string|&quot;js%d: %d-axis %d-button joystick at %#x&bslash;n&quot;
 comma
 id|minor
 comma
@@ -3926,6 +3910,19 @@ dot
 id|exist
 op_amp
 id|JS_AXES
+)paren
+comma
+id|count_bits
+c_func
+(paren
+id|jsd
+(braket
+id|minor
+)braket
+dot
+id|exist
+op_amp
+id|JS_BUTTONS
 )paren
 comma
 id|JS_PORT
@@ -4568,7 +4565,7 @@ id|i
 dot
 id|exist
 op_amp
-id|JS_AXES
+id|JS_BUTTONS
 )paren
 comma
 id|JS_PORT

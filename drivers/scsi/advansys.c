@@ -13630,12 +13630,7 @@ c_func
 id|DID_ABORT
 )paren
 suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* Enable interrupts for AscAbortSRB(). */
+multiline_comment|/* sti(); - FIXME!!! Enable interrupts for AscAbortSRB() must be careful about io_lock. */
 id|ASC_DBG1
 c_func
 (paren
@@ -14606,12 +14601,7 @@ comma
 l_string|&quot;advansys_reset: before AscResetSB()&bslash;n&quot;
 )paren
 suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* Enable interrupts for AscResetSB(). */
+multiline_comment|/* sti();    FIXME!!! Enable interrupts for AscResetSB(). */
 id|status
 op_assign
 id|AscResetSB
@@ -14620,11 +14610,7 @@ c_func
 id|asc_dvc_varp
 )paren
 suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
+multiline_comment|/* cli();    FIXME!!! */
 r_switch
 c_cond
 (paren
@@ -14683,12 +14669,7 @@ comma
 id|scp-&gt;target
 )paren
 suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* Enable interrupts for AscResetDevice(). */
+multiline_comment|/* sti();    FIXME!!! Enable interrupts for AscResetDevice(). */
 id|status
 op_assign
 id|AscResetDevice
@@ -14699,11 +14680,7 @@ comma
 id|scp-&gt;target
 )paren
 suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
+multiline_comment|/* cli();    FIXME!!! */
 r_switch
 c_cond
 (paren
@@ -14744,12 +14721,7 @@ comma
 l_string|&quot;advansys_reset: AscResetDevice() failed; Calling AscResetSB()&bslash;n&quot;
 )paren
 suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* Enable interrupts for AscResetSB(). */
+multiline_comment|/* sti();   FIXME!!! Enable interrupts for AscResetSB(). */
 id|status
 op_assign
 id|AscResetSB
@@ -14758,11 +14730,7 @@ c_func
 id|asc_dvc_varp
 )paren
 suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
+multiline_comment|/* cli(); */
 r_switch
 c_cond
 (paren

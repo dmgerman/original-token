@@ -5576,6 +5576,13 @@ id|hwgroup-&gt;handler
 op_assign
 l_int|NULL
 suffix:semicolon
+id|del_timer
+c_func
+(paren
+op_amp
+id|hwgroup-&gt;timer
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5695,13 +5702,6 @@ c_func
 )paren
 suffix:semicolon
 )brace
-id|del_timer
-c_func
-(paren
-op_amp
-id|hwgroup-&gt;timer
-)paren
-suffix:semicolon
 id|start_next_request
 c_func
 (paren

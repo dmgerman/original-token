@@ -4099,11 +4099,6 @@ id|INT_REG
 )paren
 suffix:semicolon
 multiline_comment|/* clear the interrupt register */
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
 id|irqs
 op_assign
 id|probe_irq_on

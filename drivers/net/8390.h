@@ -3,6 +3,7 @@ multiline_comment|/* This file is part of Donald Becker&squot;s 8390 drivers, an
 macro_line|#ifndef _8390_h
 DECL|macro|_8390_h
 mdefine_line|#define _8390_h
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/if_ether.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;

@@ -418,6 +418,11 @@ l_int|NULL
 suffix:semicolon
 )brace
 macro_line|#endif
+multiline_comment|/* Set the serial_number_at_timeout to the current serial_number */
+id|SCpnt-&gt;serial_number_at_timeout
+op_assign
+id|SCpnt-&gt;serial_number
+suffix:semicolon
 id|SCpnt-&gt;state
 op_assign
 id|SCSI_STATE_TIMEOUT

@@ -1,27 +1,27 @@
 macro_line|#ifndef _LINUX_JOYSTICK_H
 DECL|macro|_LINUX_JOYSTICK_H
 mdefine_line|#define _LINUX_JOYSTICK_H
-multiline_comment|/*&n; *  $Id: joystick.h,v 1.3 1998/03/30 11:10:40 mj Exp $&n; *&n; *  Copyright (C) 1997, 1998 Vojtech Pavlik&n; */
+multiline_comment|/*&n; * /usr/include/linux/joystick.h  Version 1.0.9&n; *&n; * Copyright (C) 1996-1998 Vojtech Pavlik&n; */
 macro_line|#include &lt;asm/types.h&gt;
 multiline_comment|/*&n; * Version&n; */
 DECL|macro|JS_VERSION
-mdefine_line|#define JS_VERSION&t;&t;0x00010007L&t;&t;/* 1.0.7 BCD */
+mdefine_line|#define JS_VERSION&t;&t;0x00010008L
 multiline_comment|/*&n; * IOCTL commands for joystick driver&n; */
 DECL|macro|JSIOCGVERSION
-mdefine_line|#define JSIOCGVERSION&t;&t;_IOR(&squot;j&squot;, 0x01, __u32)&t;&t;&t;&t;/* get driver version */
+mdefine_line|#define JSIOCGVERSION&t;&t;_IOR(&squot;j&squot;, 0x01, __u32)&t;&t;&t;/* get driver version */
 DECL|macro|JSIOCGAXES
-mdefine_line|#define JSIOCGAXES&t;&t;_IOR(&squot;j&squot;, 0x11, __u8)&t;&t;&t;&t;/* get number of axes */
+mdefine_line|#define JSIOCGAXES&t;&t;_IOR(&squot;j&squot;, 0x11, __u8)&t;&t;&t;/* get number of axes */
 DECL|macro|JSIOCGBUTTONS
-mdefine_line|#define JSIOCGBUTTONS&t;&t;_IOR(&squot;j&squot;, 0x12, __u8)&t;&t;&t;&t;/* get number of buttons */
+mdefine_line|#define JSIOCGBUTTONS&t;&t;_IOR(&squot;j&squot;, 0x12, __u8)&t;&t;&t;/* get number of buttons */
 DECL|macro|JSIOCSCORR
-mdefine_line|#define JSIOCSCORR&t;&t;_IOW(&squot;j&squot;, 0x21, struct js_corr[4])&t;&t;/* set correction values */
+mdefine_line|#define JSIOCSCORR&t;&t;_IOW(&squot;j&squot;, 0x21, struct js_corr[4])&t;/* set correction values */
 DECL|macro|JSIOCGCORR
-mdefine_line|#define JSIOCGCORR&t;&t;_IOR(&squot;j&squot;, 0x22, struct js_corr[4])&t;&t;/* get correction values */
+mdefine_line|#define JSIOCGCORR&t;&t;_IOR(&squot;j&squot;, 0x22, struct js_corr[4])&t;/* get correction values */
 multiline_comment|/*&n; * Types and constants for get/set correction&n; */
 DECL|macro|JS_CORR_NONE
-mdefine_line|#define JS_CORR_NONE&t;&t;0x00&t;&t;/* returns raw values */
+mdefine_line|#define JS_CORR_NONE&t;&t;0x00&t;/* returns raw values */
 DECL|macro|JS_CORR_BROKEN
-mdefine_line|#define JS_CORR_BROKEN&t;&t;0x01&t;&t;/* broken line */
+mdefine_line|#define JS_CORR_BROKEN&t;&t;0x01&t;/* broken line */
 DECL|struct|js_corr
 r_struct
 id|js_corr
@@ -49,7 +49,7 @@ mdefine_line|#define JS_EVENT_BUTTON&t;&t;0x01&t;/* button pressed/released */
 DECL|macro|JS_EVENT_AXIS
 mdefine_line|#define JS_EVENT_AXIS&t;&t;0x02&t;/* joystick moved */
 DECL|macro|JS_EVENT_INIT
-mdefine_line|#define JS_EVENT_INIT&t;&t;0x80&t;/* initial state of device */
+mdefine_line|#define JS_EVENT_INIT&t;&t;0x80&t;/* initial state of device at open time */
 DECL|struct|js_event
 r_struct
 id|js_event
@@ -58,12 +58,12 @@ DECL|member|time
 id|__u32
 id|time
 suffix:semicolon
-multiline_comment|/* time when event happened in miliseconds since open */
+multiline_comment|/* event timestamp in miliseconds since open */
 DECL|member|value
-id|__u16
+id|__s16
 id|value
 suffix:semicolon
-multiline_comment|/* new value */
+multiline_comment|/* value */
 DECL|member|type
 id|__u8
 id|type
@@ -84,15 +84,15 @@ mdefine_line|#define JS_TRUE &t;1
 DECL|macro|JS_FALSE
 mdefine_line|#define JS_FALSE &t;0
 DECL|macro|JS_X_0
-mdefine_line|#define JS_X_0&t;&t;0x01&t;&t;/* bit mask for x-axis js0 */
+mdefine_line|#define JS_X_0&t;&t;0x01&t;/* bit mask for x-axis js0 */
 DECL|macro|JS_Y_0
-mdefine_line|#define JS_Y_0&t;&t;0x02&t;&t;/* bit mask for y-axis js0 */
+mdefine_line|#define JS_Y_0&t;&t;0x02&t;/* bit mask for y-axis js0 */
 DECL|macro|JS_X_1
-mdefine_line|#define JS_X_1&t;&t;0x04&t;&t;/* bit mask for x-axis js1 */
+mdefine_line|#define JS_X_1&t;&t;0x04&t;/* bit mask for x-axis js1 */
 DECL|macro|JS_Y_1
-mdefine_line|#define JS_Y_1&t;&t;0x08&t;&t;/* bit mask for y-axis js1 */
+mdefine_line|#define JS_Y_1&t;&t;0x08&t;/* bit mask for y-axis js1 */
 DECL|macro|JS_MAX
-mdefine_line|#define JS_MAX &t;&t;2&t;&t;/* max number of joysticks */
+mdefine_line|#define JS_MAX &t;&t;2&t;/* max number of joysticks */
 DECL|struct|JS_DATA_TYPE
 r_struct
 id|JS_DATA_TYPE

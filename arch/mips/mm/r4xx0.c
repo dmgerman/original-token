@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * r4xx0.c: R4000 processor variant specific MMU/Cache routines.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: r4xx0.c,v 1.11 1998/05/04 09:18:31 ralf Exp $&n; *&n; * To do:&n; *&n; *  - this code is a overbloated pig&n; *  - many of the bug workarounds are not efficient at all, but at&n; *    least they are functional ...&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

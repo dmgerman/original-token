@@ -37,15 +37,6 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_PCWATCHDOG
-r_int
-id|pcwatchdog_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_VIDEO_DEV
 r_extern
 r_int

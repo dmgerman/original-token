@@ -4558,12 +4558,12 @@ id|abortion_complete
 op_assign
 l_int|0
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
-multiline_comment|/* Hi Eric, guess what ;-) */
 multiline_comment|/* sleep until the abortion is complete */
 r_while
 c_loop
@@ -5861,12 +5861,7 @@ comma
 id|INTEN
 )paren
 suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* Yes, sti() really needs to be here */
+multiline_comment|/* sti();  FIXME!!! Yes, sti() really needs to be here if we want to lock up */
 multiline_comment|/* disconnected target is trying to reconnect.&n;     Only possible, if we have disconnected nexuses and&n;     nothing is occupying the bus.&n;  */
 r_if
 c_cond

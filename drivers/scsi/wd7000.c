@@ -2460,11 +2460,13 @@ id|busy
 )paren
 (brace
 multiline_comment|/* someone else is allocating */
-id|sti
+id|spin_unlock_irq
+c_func
 (paren
+op_amp
+id|io_request_lock
 )paren
 suffix:semicolon
-multiline_comment|/* Yes this is really needed here */
 r_for
 c_loop
 (paren
@@ -2479,8 +2481,11 @@ suffix:semicolon
 )paren
 suffix:semicolon
 multiline_comment|/* wait a jiffy */
-id|cli
+id|spin_lock_irq
+c_func
 (paren
+op_amp
+id|io_request_lock
 )paren
 suffix:semicolon
 )brace
@@ -2505,11 +2510,13 @@ id|WAITnexttimeout
 suffix:semicolon
 r_do
 (brace
-id|sti
+id|spin_unlock_irq
+c_func
 (paren
+op_amp
+id|io_request_lock
 )paren
 suffix:semicolon
-multiline_comment|/* Yes this is really needed here */
 r_for
 c_loop
 (paren
@@ -2524,8 +2531,11 @@ suffix:semicolon
 )paren
 suffix:semicolon
 multiline_comment|/* wait a jiffy */
-id|cli
+id|spin_lock_irq
+c_func
 (paren
+op_amp
+id|io_request_lock
 )paren
 suffix:semicolon
 )brace

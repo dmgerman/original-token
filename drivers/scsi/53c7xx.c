@@ -4660,9 +4660,10 @@ id|printk
 l_string|&quot; started&bslash;n&quot;
 )paren
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 multiline_comment|/* &n;&t; * This is currently a .5 second timeout, since (in theory) no slow &n;&t; * board will take that long.  In practice, we&squot;ve seen one &n;&t; * pentium which occassionally fails with this, but works with &n;&t; * 10 times as much?&n;&t; */
@@ -5178,9 +5179,10 @@ op_or
 id|DCNTL_STD
 )paren
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 id|timeout
@@ -18844,9 +18846,10 @@ l_int|1
 op_decrement
 id|hostdata-&gt;resets
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 r_for
@@ -20970,7 +20973,7 @@ r_else
 (brace
 id|printk
 (paren
-l_string|&quot;The sti() implicit in a printk() prevents hangs&bslash;n&quot;
+l_string|&quot;Duh? Bad things happening in the NCR driver&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break

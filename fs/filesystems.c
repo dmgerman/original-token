@@ -39,6 +39,16 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_DEVPTS_FS
+r_extern
+r_int
+id|init_devpts_fs
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 r_extern
 r_void
 id|device_setup

@@ -1337,11 +1337,6 @@ id|Scsi_Cmnd
 op_star
 id|SCtmp
 suffix:semicolon
-multiline_comment|/* enable all other interrupts. */
-id|sti
-(paren
-)paren
-suffix:semicolon
 macro_line|#if (DEBUG &amp; PHASE_RESELECT)
 id|printk
 (paren
@@ -2346,6 +2341,16 @@ id|ST0X_SELECTION_DELAY
 suffix:semicolon
 multiline_comment|/*&n; * Arbitration/selection procedure :&n; * 1.  Disable drivers&n; * 2.  Write HOST adapter address bit&n; * 3.  Set start arbitration.&n; * 4.  We get either ARBITRATION COMPLETE or SELECT at this&n; *     point.&n; * 5.  OR our ID and targets on bus.&n; * 6.  Enable SCSI drivers and asserted SEL and ATTN&n; */
 macro_line|#if defined(ARBITRATE)
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|save_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 (paren
 )paren
@@ -2374,10 +2379,12 @@ id|WRITE_CONTROL
 id|CMD_START_ARB
 )paren
 suffix:semicolon
-id|sti
+id|restore_flags
 (paren
+id|flags
 )paren
 suffix:semicolon
+)brace
 r_while
 c_loop
 (paren
@@ -2467,6 +2474,17 @@ macro_line|#endif
 multiline_comment|/*&n; *    When the SCSI device decides that we&squot;re gawking at it, it will&n; *    respond by asserting BUSY on the bus.&n; *&n; *    Note : the Seagate ST-01/02 product manual says that we should&n; *    twiddle the DATA register before the control register.    However,&n; *    this does not work reliably so we do it the other way around.&n; *&n; *    Probably could be a problem with arbitration too, we really should&n; *    try this with a SCSI protocol or logic analyzer to see what is&n; *    going on.&n; */
 macro_line|#ifdef OLDCNTDATASCEME
 macro_line|#ifdef SWAPCNTDATA
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -2516,12 +2534,25 @@ l_int|0x40
 )paren
 )paren
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
+)brace
 macro_line|#else
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 (paren
 )paren
@@ -2570,10 +2601,12 @@ l_int|0
 )paren
 )paren
 suffix:semicolon
-id|sti
+id|restore_flags
 (paren
+id|flags
 )paren
 suffix:semicolon
+)brace
 macro_line|#endif
 macro_line|#else
 id|tmp_data

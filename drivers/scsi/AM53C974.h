@@ -1,4 +1,4 @@
-multiline_comment|/* AM53/79C974 (PCscsi) driver release 0.5&n; *&n; * The architecture and much of the code of this device&n; * driver was originally developed by Drew Eckhardt for&n; * the NCR5380. The following copyrights apply:&n; *  For the architecture and all parts similar to the NCR5380:&n; *    Copyright 1993, Drew Eckhardt&n; *&t;Visionary Computing &n; *&t;(Unix and Linux consulting and custom programming)&n; * &t;drew@colorado.edu&n; *&t;+1 (303) 666-5836&n; *&n; *  The AM53C974_nobios_detect code was originally developed by&n; *   Robin Cutshaw (robin@xfree86.org) and is used here in a &n; *   modified form.&n; *&n; *  For the other parts:&n; *    Copyright 1994, D. Frieauff&n; *    EMail: fri@rsx42sun0.dofn.de&n; *    Phone: x49-7545-8-2256 , x49-7541-42305&n; */
+multiline_comment|/* AM53/79C974 (PCscsi) driver release 0.5&n;&n; * The architecture and much of the code of this device&n; * driver was originally developed by Drew Eckhardt for&n; * the NCR5380. The following copyrights apply:&n; *  For the architecture and all parts similar to the NCR5380:&n; *    Copyright 1993, Drew Eckhardt&n; *      Visionary Computing &n; *      (Unix and Linux consulting and custom programming)&n; *      drew@colorado.edu&n; *      +1 (303) 666-5836&n; *&n; *  The AM53C974_nobios_detect code was originally developed by&n; *   Robin Cutshaw (robin@xfree86.org) and is used here in a &n; *   modified form.&n; *&n; *  For the other parts:&n; *    Copyright 1994, D. Frieauff&n; *    EMail: fri@rsx42sun0.dofn.de&n; *    Phone: x49-7545-8-2256 , x49-7541-42305&n; */
 multiline_comment|/*&n; * $Log: AM53C974.h,v $&n; */
 macro_line|#ifndef AM53C974_H
 DECL|macro|AM53C974_H
@@ -267,6 +267,7 @@ id|cmd
 suffix:semicolon
 r_int
 id|AM53C974_reset
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -276,5 +277,5 @@ r_int
 r_int
 )paren
 suffix:semicolon
-macro_line|#endif /* AM53C974_H */
+macro_line|#endif&t;&t;&t;&t;/* AM53C974_H */
 eof

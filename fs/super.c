@@ -33,6 +33,16 @@ id|mount_sem
 op_assign
 id|MUTEX
 suffix:semicolon
+macro_line|#ifdef CONFIG_BSD_PROCESS_ACCT
+r_extern
+r_void
+id|acct_auto_close
+c_func
+(paren
+id|kdev_t
+)paren
+suffix:semicolon
+macro_line|#endif
 r_extern
 r_void
 id|wait_for_keypress

@@ -1138,6 +1138,10 @@ r_int
 r_int
 id|ldn
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 multiline_comment|/* search for one adapter-response on shared interrupt */
 r_do
 id|shpnt
@@ -1195,6 +1199,12 @@ op_amp
 l_int|0x0f
 suffix:semicolon
 multiline_comment|/*must wait for attention reg not busy, then send EOI to subsystem */
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -1220,8 +1230,10 @@ id|IM_BUSY
 )paren
 r_break
 suffix:semicolon
-id|sti
+id|restore_flags
+c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -1234,8 +1246,9 @@ comma
 id|IM_ATTN_REG
 )paren
 suffix:semicolon
-id|sti
+id|restore_flags
 (paren
+id|flags
 )paren
 suffix:semicolon
 multiline_comment|/*these should never happen (hw fails, or a local programming bug) */
@@ -1594,7 +1607,17 @@ r_char
 id|attn_reg
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
 multiline_comment|/*must wait for attention reg not busy */
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -1620,8 +1643,9 @@ id|IM_BUSY
 )paren
 r_break
 suffix:semicolon
-id|sti
+id|restore_flags
 (paren
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -1640,8 +1664,9 @@ comma
 id|IM_ATTN_REG
 )paren
 suffix:semicolon
-id|sti
+id|restore_flags
 (paren
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -5991,10 +6016,7 @@ dot
 id|cmd
 )paren
 (brace
-id|sti
-(paren
-)paren
-suffix:semicolon
+multiline_comment|/* sti (); */
 r_return
 id|SCSI_ABORT_NOT_RUNNING
 suffix:semicolon
@@ -6697,6 +6719,10 @@ id|Scsi_Host
 op_star
 id|shpnt
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -6754,6 +6780,12 @@ r_return
 id|len
 suffix:semicolon
 )brace
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -7451,9 +7483,10 @@ id|len
 op_assign
 id|length
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 r_return

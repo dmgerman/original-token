@@ -1,37 +1,45 @@
 macro_line|#ifndef _I386_CURRENT_H
 DECL|macro|_I386_CURRENT_H
 mdefine_line|#define _I386_CURRENT_H
-DECL|function|get_esp
+DECL|function|get_current
 r_static
 r_inline
-r_int
-r_int
-id|get_esp
+r_struct
+id|task_struct
+op_star
+id|get_current
 c_func
 (paren
 r_void
 )paren
 (brace
-r_int
-r_int
-id|esp
+r_struct
+id|task_struct
+op_star
+id|current
 suffix:semicolon
 id|__asm__
 c_func
 (paren
-l_string|&quot;movl %%esp,%0&quot;
+l_string|&quot;andl %%esp,%0; &quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
-id|esp
+id|current
+)paren
+suffix:colon
+l_string|&quot;0&quot;
+(paren
+op_complement
+l_int|8191UL
 )paren
 )paren
 suffix:semicolon
 r_return
-id|esp
+id|current
 suffix:semicolon
 )brace
 DECL|macro|current
-mdefine_line|#define current ((struct task_struct *)(get_esp() &amp; ~8191UL))
+mdefine_line|#define current get_current()
 macro_line|#endif /* !(_I386_CURRENT_H) */
 eof

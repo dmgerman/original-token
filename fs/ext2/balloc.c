@@ -1994,6 +1994,9 @@ id|gdp-&gt;bg_free_blocks_count
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Check quota for allocation of this block.&n;&t; */
+r_if
+c_cond
+(paren
 id|DQUOT_ALLOC_BLOCK
 c_func
 (paren
@@ -2003,7 +2006,24 @@ id|inode
 comma
 l_int|1
 )paren
+)paren
+(brace
+id|unlock_super
+c_func
+(paren
+id|sb
+)paren
 suffix:semicolon
+op_star
+id|err
+op_assign
+op_minus
+id|EDQUOT
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 id|tmp
 op_assign
 id|j
@@ -2177,6 +2197,9 @@ id|k
 op_increment
 )paren
 (brace
+r_if
+c_cond
+(paren
 id|DQUOT_PREALLOC_BLOCK
 c_func
 (paren
@@ -2186,6 +2209,8 @@ id|inode
 comma
 l_int|1
 )paren
+)paren
+r_break
 suffix:semicolon
 r_if
 c_cond

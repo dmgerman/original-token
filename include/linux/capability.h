@@ -347,7 +347,7 @@ mdefine_line|#define cap_set_full(c)      do { (c).cap = ~0; } while(0)
 DECL|macro|cap_mask
 mdefine_line|#define cap_mask(c,mask)     do { (c).cap &amp;= (mask).cap; } while(0)
 DECL|macro|cap_is_fs_cap
-mdefine_line|#define cap_is_fs_cap(c)     ((c) &amp; CAP_FS_MASK)
+mdefine_line|#define cap_is_fs_cap(c)     (CAP_TO_MASK(c) &amp; CAP_FS_MASK)
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* !_LINUX_CAPABILITY_H */
 eof

@@ -2305,10 +2305,6 @@ comma
 op_star
 id|cmd
 suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
 id|uchar
 id|asr
 comma
@@ -2391,18 +2387,6 @@ id|IN2000_hostdata
 op_star
 )paren
 id|instance-&gt;hostdata
-suffix:semicolon
-multiline_comment|/* OK - it should now be safe to re-enable system interrupts */
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
 suffix:semicolon
 macro_line|#ifdef PROC_STATISTICS
 id|hostdata-&gt;int_cnt
@@ -2731,12 +2715,6 @@ comma
 id|IO_LED_OFF
 )paren
 suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -2804,12 +2782,6 @@ c_func
 l_int|0
 comma
 id|IO_LED_OFF
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
 )paren
 suffix:semicolon
 r_return
@@ -2999,6 +2971,10 @@ c_cond
 id|sr
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_case
 id|CSR_TIMEOUT
 suffix:colon
@@ -3013,6 +2989,12 @@ c_func
 l_string|&quot;TIMEOUT&quot;
 )paren
 )paren
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -3083,9 +3065,10 @@ id|cmd
 )paren
 suffix:semicolon
 multiline_comment|/* We are not connected to a target - check to see if there&n; * are commands waiting to be executed.&n; */
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 id|in2000_execute
@@ -4180,6 +4163,12 @@ multiline_comment|/* Note: this interrupt will occur only after a LEVEL2 command
 r_case
 id|CSR_SEL_XFER_DONE
 suffix:colon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -4325,9 +4314,10 @@ id|cmd
 )paren
 suffix:semicolon
 multiline_comment|/* We are no longer connected to a target - check to see if&n; * there are commands waiting to be executed.&n; */
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 id|in2000_execute
@@ -4484,6 +4474,12 @@ r_case
 id|CSR_UNEXP_DISC
 suffix:colon
 multiline_comment|/* I think I&squot;ve seen this after a request-sense that was in response&n; * to an error condition, but not sure. We certainly need to do&n; * something when we get this interrupt - the question is &squot;what?&squot;.&n; * Let&squot;s think positively, and assume some command has finished&n; * in a legal manner (like a command that provokes a request-sense),&n; * so we treat it as a normal command-complete-disconnect.&n; */
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -4602,9 +4598,10 @@ id|cmd
 )paren
 suffix:semicolon
 multiline_comment|/* We are no longer connected to a target - check to see if&n; * there are commands waiting to be executed.&n; */
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 id|in2000_execute
@@ -4618,6 +4615,12 @@ suffix:semicolon
 r_case
 id|CSR_DISC
 suffix:colon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -4807,9 +4810,10 @@ id|S_UNCONNECTED
 suffix:semicolon
 )brace
 multiline_comment|/* We are no longer connected to a target - check to see if&n; * there are commands waiting to be executed.&n; */
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 id|in2000_execute
@@ -5211,12 +5215,6 @@ c_func
 l_int|0
 comma
 id|IO_LED_OFF
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
 )paren
 suffix:semicolon
 id|DB
