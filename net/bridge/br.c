@@ -6827,25 +6827,6 @@ c_func
 (paren
 id|dev-&gt;name
 comma
-l_string|&quot;wic&quot;
-comma
-l_int|3
-)paren
-op_eq
-l_int|0
-)paren
-multiline_comment|/* wic */
-r_return
-l_int|1600
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|strncmp
-c_func
-(paren
-id|dev-&gt;name
-comma
 l_string|&quot;plip&quot;
 comma
 l_int|4

@@ -1851,8 +1851,6 @@ suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; * Mark the inode dirty from the very beginning,&n;&t;&t;&t; * that way it will never be moved to the dirty&n;&t;&t;&t; * list because &quot;mark_inode_dirty()&quot; will think&n;&t;&t;&t; * that it already _is_ on the dirty list.&n;&t;&t;&t; */
 id|inode-&gt;i_state
 op_assign
-l_int|1
-op_lshift
 id|I_DIRTY
 suffix:semicolon
 id|inode-&gt;i_mode

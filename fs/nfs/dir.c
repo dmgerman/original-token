@@ -118,10 +118,6 @@ id|nfs_readdir
 c_func
 (paren
 r_struct
-id|inode
-op_star
-comma
-r_struct
 id|file
 op_star
 comma
@@ -471,17 +467,12 @@ id|NFS_MAX_DIRCACHE
 )braket
 suffix:semicolon
 multiline_comment|/*&n; * We need to do caching of directory entries to prevent an&n; * incredible amount of RPC traffic.  Only the most recent open&n; * directory is cached.  This seems sufficient for most purposes.&n; * Technically, we ought to flush the cache on close but this is&n; * not a problem in practice.&n; *&n; * XXX: Do proper directory caching by stuffing data into the&n; * page cache (may require some fiddling for rsize &lt; PAGE_SIZE).&n; */
+DECL|function|nfs_readdir
 r_static
 r_int
-DECL|function|nfs_readdir
 id|nfs_readdir
 c_func
 (paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
 r_struct
 id|file
 op_star
@@ -546,6 +537,13 @@ comma
 id|index
 op_assign
 l_int|0
+suffix:semicolon
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|filp-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
 id|dfprintk
 c_func

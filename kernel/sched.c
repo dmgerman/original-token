@@ -1728,32 +1728,6 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifndef __alpha__
-multiline_comment|/*&n; * For backwards compatibility?  This can be done in libc so Alpha&n; * and all newer ports shouldn&squot;t need it.&n; */
-DECL|function|sys_pause
-id|asmlinkage
-r_int
-id|sys_pause
-c_func
-(paren
-r_void
-)paren
-(brace
-id|current-&gt;state
-op_assign
-id|TASK_INTERRUPTIBLE
-suffix:semicolon
-id|schedule
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|ERESTARTNOHAND
-suffix:semicolon
-)brace
-macro_line|#endif
 DECL|variable|waitqueue_lock
 id|rwlock_t
 id|waitqueue_lock

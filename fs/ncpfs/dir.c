@@ -64,11 +64,6 @@ id|ncp_readdir
 c_func
 (paren
 r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
 id|file
 op_star
 id|filp
@@ -894,11 +889,6 @@ id|ncp_readdir
 c_func
 (paren
 r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
 id|file
 op_star
 id|filp
@@ -925,6 +915,13 @@ r_int
 id|index
 op_assign
 l_int|0
+suffix:semicolon
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|file-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
 r_struct
 id|ncp_dirent

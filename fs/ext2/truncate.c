@@ -1733,13 +1733,10 @@ c_func
 id|inode
 )paren
 op_logical_and
-id|test_bit
-c_func
 (paren
-id|I_DIRTY
-comma
-op_amp
 id|inode-&gt;i_state
+op_amp
+id|I_DIRTY
 )paren
 )paren
 id|ext2_sync_inode

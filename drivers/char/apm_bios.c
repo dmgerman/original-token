@@ -1,4 +1,4 @@
-multiline_comment|/* -*- linux-c -*-&n; * APM BIOS driver for Linux&n; * Copyright 1994, 1995, 1996 Stephen Rothwell&n; *                           (Stephen.Rothwell@canb.auug.org.au)&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * $Id: apm_bios.c,v 0.22 1995/03/09 14:12:02 sfr Exp $&n; *&n; * October 1995, Rik Faith (faith@cs.unc.edu):&n; *    Minor enhancements and updates (to the patch set) for 1.3.x&n; *    Documentation&n; * January 1996, Rik Faith (faith@cs.unc.edu):&n; *    Make /proc/apm easy to format (bump driver version)&n; * March 1996, Rik Faith (faith@cs.unc.edu):&n; *    Prohibit APM BIOS calls unless apm_enabled.&n; *    (Thanks to Ulrich Windl &lt;Ulrich.Windl@rz.uni-regensburg.de&gt;)&n; * April 1996, Stephen Rothwell (Stephen.Rothwell@canb.auug.org.au)&n; *    Version 1.0 and 1.1&n; * May 1996, Version 1.2&n; *&n; * History:&n; *    0.6b: first version in official kernel, Linux 1.3.46&n; *    0.7: changed /proc/apm format, Linux 1.3.58&n; *    0.8: fixed gcc 2.7.[12] compilation problems, Linux 1.3.59&n; *    0.9: only call bios if bios is present, Linux 1.3.72&n; *    1.0: use fixed device number, consolidate /proc/apm into this file,&n; *         Linux 1.3.85&n; *    1.1: support user-space standby and suspend, power off after system&n; *         halted, Linux 1.3.98&n; *    1.2: When resetting RTC after resume, take care so that the the time&n; *         is only incorrect by 30-60mS (vs. 1S previously) (Gabor J. Toth&n; *         &lt;jtoth@princeton.edu&gt;); improve interaction between&n; *         screen-blanking and gpm (Stephen Rothwell); Linux 1.99.4&n; *&n; * Reference:&n; *&n; *   Intel Corporation, Microsoft Corporation. Advanced Power Management&n; *   (APM) BIOS Interface Specification, Revision 1.1, September 1993.&n; *   Intel Order Number 241704-001.  Microsoft Part Number 781-110-X01.&n; *&n; * [This document is available free from Intel by calling 800.628.8686 (fax&n; * 916.356.6100) or 800.548.4725; or via anonymous ftp from&n; * ftp://ftp.intel.com/pub/IAL/software_specs/apmv11.doc.  It is also&n; * available from Microsoft by calling 206.882.8080.]&n; *&n; */
+multiline_comment|/* -*- linux-c -*-&n; * APM BIOS driver for Linux&n; * Copyright 1994, 1995, 1996 Stephen Rothwell&n; *                           (Stephen.Rothwell@canb.auug.org.au)&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * $Id: apm_bios.c,v 0.22 1995/03/09 14:12:02 sfr Exp $&n; *&n; * October 1995, Rik Faith (faith@cs.unc.edu):&n; *    Minor enhancements and updates (to the patch set) for 1.3.x&n; *    Documentation&n; * January 1996, Rik Faith (faith@cs.unc.edu):&n; *    Make /proc/apm easy to format (bump driver version)&n; * March 1996, Rik Faith (faith@cs.unc.edu):&n; *    Prohibit APM BIOS calls unless apm_enabled.&n; *    (Thanks to Ulrich Windl &lt;Ulrich.Windl@rz.uni-regensburg.de&gt;)&n; * April 1996, Stephen Rothwell (Stephen.Rothwell@canb.auug.org.au)&n; *    Version 1.0 and 1.1&n; * May 1996, Version 1.2&n; *&n; * History:&n; *    0.6b: first version in official kernel, Linux 1.3.46&n; *    0.7: changed /proc/apm format, Linux 1.3.58&n; *    0.8: fixed gcc 2.7.[12] compilation problems, Linux 1.3.59&n; *    0.9: only call bios if bios is present, Linux 1.3.72&n; *    1.0: use fixed device number, consolidate /proc/apm into this file,&n; *         Linux 1.3.85&n; *    1.1: support user-space standby and suspend, power off after system&n; *         halted, Linux 1.3.98&n; *    1.2: When resetting RTC after resume, take care so that the the time&n; *         is only incorrect by 30-60mS (vs. 1S previously) (Gabor J. Toth&n; *         &lt;jtoth@princeton.edu&gt;); improve interaction between&n; *         screen-blanking and gpm (Stephen Rothwell); Linux 1.99.4&n; *    1.2a:Simple change to stop mysterious bug reports with SMP also added&n; *&t;   levels to the printk calls. APM is not defined for SMP machines.&n; *         The new replacment for it is, but Linux doesn&squot;t yet support this.&n; *         Alan Cox Linux 2.1.55&n; *&n; * Reference:&n; *&n; *   Intel Corporation, Microsoft Corporation. Advanced Power Management&n; *   (APM) BIOS Interface Specification, Revision 1.1, September 1993.&n; *   Intel Order Number 241704-001.  Microsoft Part Number 781-110-X01.&n; *&n; * [This document is available free from Intel by calling 800.628.8686 (fax&n; * 916.356.6100) or 800.548.4725; or via anonymous ftp from&n; * ftp://ftp.intel.com/pub/IAL/software_specs/apmv11.doc.  It is also&n; * available from Microsoft by calling 206.882.8080.]&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -962,6 +962,7 @@ id|ERROR_COUNT
 id|printk
 c_func
 (paren
+id|KERN_NOTICE
 l_string|&quot;apm_bios: %s: %s&bslash;n&quot;
 comma
 id|str
@@ -978,6 +979,7 @@ r_else
 id|printk
 c_func
 (paren
+id|KERN_NOTICE
 l_string|&quot;apm_bios: %s: unknown error code %#2.2x&bslash;n&quot;
 comma
 id|str
@@ -1953,6 +1955,7 @@ id|NR_APM_EVENT_NAME
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;APM BIOS received %s notify&bslash;n&quot;
 comma
 id|apm_event_name
@@ -1967,6 +1970,7 @@ r_else
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;APM BIOS received unknown event 0x%02x&bslash;n&quot;
 comma
 id|event
@@ -2242,6 +2246,7 @@ id|APM_BIOS_MAGIC
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;apm_bios: %s passed bad filp&quot;
 comma
 id|func
@@ -2911,6 +2916,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;apm_bios: filp not in user list&quot;
 )paren
 suffix:semicolon
@@ -2988,6 +2994,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;apm_bios: cannot allocate struct of size %d bytes&quot;
 comma
 r_sizeof
@@ -3349,6 +3356,17 @@ id|proc_dir_entry
 op_star
 id|ent
 suffix:semicolon
+macro_line|#ifdef __SMP__
+id|printk
+c_func
+(paren
+id|KERN_NOTICE
+l_string|&quot;APM disabled: APM is not SMP safe.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -3360,6 +3378,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;APM BIOS not found.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3369,6 +3388,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;APM BIOS version %c.%c Flags 0x%02x (Driver version %s)&bslash;n&quot;
 comma
 (paren
@@ -3411,6 +3431,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;    No 32 bit BIOS support&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3432,6 +3453,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;    Entry %x:%lx cseg16 %x dseg %x&quot;
 comma
 id|apm_bios_info.cseg
@@ -3770,6 +3792,7 @@ id|error
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;    Power status not available&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3879,6 +3902,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;    AC %s, battery status %s, battery life &quot;
 comma
 id|power_stat

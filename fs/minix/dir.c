@@ -41,10 +41,6 @@ id|minix_readdir
 c_func
 (paren
 r_struct
-id|inode
-op_star
-comma
-r_struct
 id|file
 op_star
 comma
@@ -159,11 +155,6 @@ id|minix_readdir
 c_func
 (paren
 r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
 id|file
 op_star
 id|filp
@@ -194,6 +185,13 @@ r_struct
 id|minix_sb_info
 op_star
 id|info
+suffix:semicolon
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|filp-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
 r_if
 c_cond

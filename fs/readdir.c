@@ -301,8 +301,6 @@ op_member_access_from_pointer
 id|readdir
 c_func
 (paren
-id|inode
-comma
 id|file
 comma
 op_amp
@@ -706,8 +704,6 @@ op_member_access_from_pointer
 id|readdir
 c_func
 (paren
-id|inode
-comma
 id|file
 comma
 op_amp

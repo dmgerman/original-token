@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * NET3:&t;Garbage Collector For AF_UNIX sockets&n; *&n; * Garbage Collector:&n; *&t;Copyright (C) Barak A. Pearlmutter.&n; *&t;Released under the GPL version 2 or later.&n; *&n; * Chopped about by Alan Cox 22/3/96 to make it fit the AF_UNIX socket problem.&n; * If it doesn&squot;t work blame me, it worked when Barak sent it.&n; *&n; * Assumptions:&n; *&n; *  - object w/ a bit&n; *  - free list&n; *&n; * Current optimizations:&n; *&n; *  - explicit stack instead of recursion&n; *  - tail recurse on first born instead of immediate push/pop&n; *&n; *  Future optimizations:&n; *&n; *  - don&squot;t just push entire root set; process in place&n; *  - use linked list for internal stack&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *  Fixes:&n; *&n; */
+multiline_comment|/*&n; * NET3:&t;Garbage Collector For AF_UNIX sockets&n; *&n; * Garbage Collector:&n; *&t;Copyright (C) Barak A. Pearlmutter.&n; *&t;Released under the GPL version 2 or later.&n; *&n; * Chopped about by Alan Cox 22/3/96 to make it fit the AF_UNIX socket problem.&n; * If it doesn&squot;t work blame me, it worked when Barak sent it.&n; *&n; * Assumptions:&n; *&n; *  - object w/ a bit&n; *  - free list&n; *&n; * Current optimizations:&n; *&n; *  - explicit stack instead of recursion&n; *  - tail recurse on first born instead of immediate push/pop&n; *&n; *  Future optimizations:&n; *&n; *  - don&squot;t just push entire root set; process in place&n; *  - use linked list for internal stack&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *  Fixes:&n; *&t;Alan Cox&t;07 Sept&t;1997&t;Vmalloc internal stack as needed.&n; *&t;&t;&t;&t;&t;Cope with changing max_files.&n; *&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
@@ -25,8 +26,6 @@ macro_line|#include &lt;net/af_unix.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;net/scm.h&gt;
 multiline_comment|/* Internal data structures and random procedures: */
-DECL|macro|MAX_STACK
-mdefine_line|#define MAX_STACK 1000&t;&t;/* Maximum depth of tree (about 1 page) */
 DECL|variable|stack
 r_static
 id|unix_socket
@@ -43,6 +42,12 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* first free entry in stack */
+DECL|variable|max_stack
+r_static
+r_int
+id|max_stack
+suffix:semicolon
+multiline_comment|/* Top of stack */
 DECL|function|unix_get_socket
 r_extern
 r_inline
@@ -198,7 +203,7 @@ c_cond
 (paren
 id|in_stack
 op_eq
-id|MAX_STACK
+id|max_stack
 )paren
 id|panic
 c_func
@@ -335,6 +340,31 @@ id|in_unix_gc
 op_assign
 l_int|1
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|stack
+op_eq
+l_int|NULL
+op_logical_or
+id|max_files
+OG
+id|max_stack
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|stack
+)paren
+(brace
+id|vfree
+c_func
+(paren
+id|stack
+)paren
+suffix:semicolon
+)brace
 id|stack
 op_assign
 (paren
@@ -342,12 +372,46 @@ id|unix_socket
 op_star
 op_star
 )paren
-id|get_free_page
+id|vmalloc
 c_func
 (paren
-id|GFP_KERNEL
+id|max_files
+op_star
+r_sizeof
+(paren
+r_struct
+id|unix_socket
+op_star
+)paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|stack
+op_eq
+l_int|NULL
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_NOTICE
+l_string|&quot;unix_gc: deferred due to low memory.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|in_unix_gc
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|max_stack
+op_assign
+id|max_files
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; *&t;Assume everything is now unmarked &n;&t; */
 multiline_comment|/* Invariant to be maintained:&n;&t;&t;- everything marked is either:&n;&t;&t;-- (a) on the stack, or&n;&t;&t;-- (b) has all of its children marked&n;&t;&t;- everything on the stack is always marked&n;&t;&t;- nothing is ever pushed onto the stack twice, because:&n;&t;&t;-- nothing previously marked is ever pushed on the stack&n;&t; */
 multiline_comment|/*&n;&t; *&t;Push root set&n;&t; */

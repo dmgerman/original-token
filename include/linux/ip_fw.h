@@ -52,15 +52,13 @@ id|fw_viadev
 suffix:semicolon
 multiline_comment|/* device of interface &quot;via&quot; */
 DECL|member|fw_flg
-r_int
-r_int
+id|__u16
 id|fw_flg
 suffix:semicolon
 multiline_comment|/* Flags word */
 DECL|member|fw_nsp
 DECL|member|fw_ndp
-r_int
-r_int
+id|__u16
 id|fw_nsp
 comma
 id|fw_ndp
@@ -72,8 +70,7 @@ multiline_comment|/* count of 0 means match all ports) */
 DECL|macro|IP_FW_MAX_PORTS
 mdefine_line|#define IP_FW_MAX_PORTS&t;10      &t;&t;/* A reasonable maximum */
 DECL|member|fw_pts
-r_int
-r_int
+id|__u16
 id|fw_pts
 (braket
 id|IP_FW_MAX_PORTS
@@ -91,8 +88,7 @@ suffix:semicolon
 multiline_comment|/* Packet and byte counters */
 DECL|member|fw_tosand
 DECL|member|fw_tosxor
-r_int
-r_char
+id|__u8
 id|fw_tosand
 comma
 id|fw_tosxor

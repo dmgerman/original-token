@@ -51,7 +51,7 @@ r_int
 id|system
 )paren
 suffix:semicolon
-multiline_comment|/*&n; *&t;Some notes on processor bugs:&n; *&n; *&t;Pentium and Pentium Pro (and all CPU&squot;s) have bugs. The Linux issues&n; *&t;for SMP are handled as follows.&n; *&n; *&t;Pentium Pro&n; *&t;&t;Occasional delivery of &squot;spurious interrupt&squot; as trap #16. This&n; *&t;is very very rare. The kernel logs the event and recovers&n; *&n; *&t;Pentium&n; *&t;&t;There is a marginal case where REP MOVS on 100MHz SMP&n; *&t;machines with B stepping processors can fail. XXX should provide&n; *&t;an L1cache=Writethrough or L1cache=off option.&n; *&n; *&t;&t;B stepping CPU&squot;s may hang. There are hardware work arounds&n; *&t;for this. We warn about it in case your board doesnt have the work&n; *&t;arounds. Basically thats so I can tell anyone with a B stepping&n; *&t;CPU and SMP problems &quot;tough&quot;.&n; *&n; *&t;Specific items [From Pentium Processor Specification Update]&n; *&n; *&t;1AP.&t;Linux doesn&squot;t use remote read&n; *&t;2AP.&t;Linux doesn&squot;t trust APIC errors&n; *&t;3AP.&t;We work around this&n; *&t;4AP.&t;Linux never generated 3 interrupts of the same priority&n; *&t;&t;to cause a lost local interrupt.&n; *&t;5AP.&t;Remote read is never used&n; *&t;9AP.&t;XXX NEED TO CHECK WE HANDLE THIS XXX&n; *&t;10AP.&t;XXX NEED TO CHECK WE HANDLE THIS XXX&n; *&t;11AP.&t;Linux read the APIC between writes to avoid this, as per&n; *&t;&t;the documentation. Make sure you preserve this as it affects&n; *&t;&t;the C stepping chips too.&n; *&n; *&t;If this sounds worrying believe me these bugs are ___RARE___ and&n; *&t;there&squot;s about nothing of note with C stepping upwards.&n; */
+multiline_comment|/*&n; *&t;Some notes on processor bugs:&n; *&n; *&t;Pentium and Pentium Pro (and all CPU&squot;s) have bugs. The Linux issues&n; *&t;for SMP are handled as follows.&n; *&n; *&t;Pentium Pro&n; *&t;&t;Occasional delivery of &squot;spurious interrupt&squot; as trap #16. This&n; *&t;is very very rare. The kernel logs the event and recovers&n; *&n; *&t;Pentium&n; *&t;&t;There is a marginal case where REP MOVS on 100MHz SMP&n; *&t;machines with B stepping processors can fail. XXX should provide&n; *&t;an L1cache=Writethrough or L1cache=off option.&n; *&n; *&t;&t;B stepping CPU&squot;s may hang. There are hardware work arounds&n; *&t;for this. We warn about it in case your board doesnt have the work&n; *&t;arounds. Basically thats so I can tell anyone with a B stepping&n; *&t;CPU and SMP problems &quot;tough&quot;.&n; *&n; *&t;Specific items [From Pentium Processor Specification Update]&n; *&n; *&t;1AP.&t;Linux doesn&squot;t use remote read&n; *&t;2AP.&t;Linux doesn&squot;t trust APIC errors&n; *&t;3AP.&t;We work around this&n; *&t;4AP.&t;Linux never generated 3 interrupts of the same priority&n; *&t;&t;to cause a lost local interrupt.&n; *&t;5AP.&t;Remote read is never used&n; *&t;9AP.&t;XXX NEED TO CHECK WE HANDLE THIS XXX&n; *&t;10AP.&t;XXX NEED TO CHECK WE HANDLE THIS XXX&n; *&t;11AP.&t;Linux reads the APIC between writes to avoid this, as per&n; *&t;&t;the documentation. Make sure you preserve this as it affects&n; *&t;&t;the C stepping chips too.&n; *&n; *&t;If this sounds worrying believe me these bugs are ___RARE___ and&n; *&t;there&squot;s about nothing of note with C stepping upwards.&n; */
 multiline_comment|/*&n; *&t;Why isn&squot;t this somewhere standard ??&n; */
 DECL|function|max
 r_extern
@@ -3208,7 +3208,7 @@ r_int
 r_int
 id|cfg
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Initialize the logical to physical cpu number mapping&n;&t; */
+multiline_comment|/*&n;&t; *&t;Initialize the logical to physical cpu number mapping&n;&t; *&t;and the per-CPU profiling counter/multiplier&n;&t; */
 r_for
 c_loop
 (paren
@@ -3223,6 +3223,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+(brace
 id|cpu_number_map
 (braket
 id|i
@@ -3231,6 +3232,21 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
+id|prof_counter
+(braket
+id|i
+)braket
+op_assign
+l_int|1
+suffix:semicolon
+id|prof_multiplier
+(braket
+id|i
+)braket
+op_assign
+l_int|1
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; *&t;Setup boot CPU information&n;&t; */
 id|smp_store_cpu_info
 c_func
@@ -3289,23 +3305,8 @@ c_cond
 op_logical_neg
 id|smp_found_config
 )paren
-(brace
-multiline_comment|/*&n;&t;&t; * For SMP-simulation on one CPU to work, we must initialize these &n;&t;&t; * values for the single CPU here:&n;                 */
-id|prof_counter
-(braket
-l_int|0
-)braket
-op_assign
-id|prof_multiplier
-(braket
-l_int|0
-)braket
-op_assign
-l_int|1
-suffix:semicolon
 r_return
 suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; *&t;Map the local APIC into kernel space&n;&t; */
 id|apic_reg
 op_assign
@@ -5092,14 +5093,6 @@ r_void
 )paren
 (brace
 r_int
-id|cpu
-op_assign
-id|smp_processor_id
-c_func
-(paren
-)paren
-suffix:semicolon
-r_int
 r_int
 id|flags
 suffix:semicolon
@@ -5183,23 +5176,11 @@ l_string|&quot;done, continuing.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Now set up the timer for real. Profiling multiplier is 1.&n; */
+multiline_comment|/*&n; * Now set up the timer for real.&n; */
 id|setup_APIC_timer
 (paren
 id|calibration_result
 )paren
-suffix:semicolon
-id|prof_counter
-(braket
-id|cpu
-)braket
-op_assign
-id|prof_multiplier
-(braket
-id|cpu
-)braket
-op_assign
-l_int|1
 suffix:semicolon
 multiline_comment|/*&n;&t; * We ACK the APIC, just in case there is something pending.&n;&t; */
 id|ack_APIC_irq

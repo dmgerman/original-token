@@ -18,10 +18,6 @@ id|proc_root_readdir
 c_func
 (paren
 r_struct
-id|inode
-op_star
-comma
-r_struct
 id|file
 op_star
 comma
@@ -3218,11 +3214,6 @@ id|proc_readdir
 c_func
 (paren
 r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
 id|file
 op_star
 id|filp
@@ -3246,6 +3237,13 @@ id|ino
 suffix:semicolon
 r_int
 id|i
+suffix:semicolon
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|filp-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
 r_if
 c_cond
@@ -3462,11 +3460,6 @@ id|proc_root_readdir
 c_func
 (paren
 r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
 id|file
 op_star
 id|filp
@@ -3510,8 +3503,6 @@ op_assign
 id|proc_readdir
 c_func
 (paren
-id|inode
-comma
 id|filp
 comma
 id|dirent

@@ -40,6 +40,7 @@ r_int
 id|ret
 suffix:semicolon
 r_int
+r_int
 id|old_fs
 op_assign
 id|get_fs
@@ -103,6 +104,7 @@ id|count
 r_int
 id|ret
 suffix:semicolon
+r_int
 r_int
 id|old_fs
 op_assign

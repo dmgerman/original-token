@@ -971,11 +971,6 @@ id|romfs_readdir
 c_func
 (paren
 r_struct
-id|inode
-op_star
-id|i
-comma
-r_struct
 id|file
 op_star
 id|filp
@@ -988,6 +983,13 @@ id|filldir_t
 id|filldir
 )paren
 (brace
+r_struct
+id|inode
+op_star
+id|i
+op_assign
+id|filp-&gt;f_dentry-&gt;d_inode
+suffix:semicolon
 r_struct
 id|romfs_inode
 id|ri

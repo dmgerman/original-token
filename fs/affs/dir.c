@@ -14,10 +14,6 @@ id|affs_readdir
 c_func
 (paren
 r_struct
-id|inode
-op_star
-comma
-r_struct
 id|file
 op_star
 comma
@@ -183,11 +179,6 @@ id|affs_readdir
 c_func
 (paren
 r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
 id|file
 op_star
 id|filp
@@ -243,6 +234,13 @@ r_struct
 id|inode
 op_star
 id|dir
+suffix:semicolon
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|file-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
 id|pr_debug
 c_func

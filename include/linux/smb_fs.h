@@ -401,7 +401,7 @@ id|smb_close
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
 )paren
 suffix:semicolon
@@ -410,7 +410,7 @@ id|smb_open
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
 comma
 r_int
@@ -481,7 +481,7 @@ id|smb_proc_create
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
 comma
 r_struct
@@ -498,7 +498,7 @@ id|smb_proc_mv
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
 comma
 r_struct
@@ -506,7 +506,7 @@ id|qstr
 op_star
 comma
 r_struct
-id|inode
+id|dentry
 op_star
 comma
 r_struct
@@ -519,7 +519,7 @@ id|smb_proc_mkdir
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
 comma
 r_struct
@@ -532,7 +532,7 @@ id|smb_proc_rmdir
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
 comma
 r_struct
@@ -545,7 +545,7 @@ id|smb_proc_unlink
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
 id|dir
 comma
@@ -559,7 +559,7 @@ id|smb_proc_readdir
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
 id|dir
 comma
@@ -580,7 +580,7 @@ id|smb_proc_getattr
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
 id|dir
 comma
@@ -605,9 +605,9 @@ op_star
 id|server
 comma
 r_struct
-id|inode
+id|dentry
 op_star
-id|ino
+id|dir
 comma
 r_struct
 id|smb_fattr

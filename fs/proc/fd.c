@@ -10,10 +10,6 @@ id|proc_readfd
 c_func
 (paren
 r_struct
-id|inode
-op_star
-comma
-r_struct
 id|file
 op_star
 comma
@@ -414,11 +410,6 @@ id|proc_readfd
 c_func
 (paren
 r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
 id|file
 op_star
 id|filp
@@ -459,6 +450,13 @@ r_int
 id|i
 comma
 id|j
+suffix:semicolon
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|filp-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
 r_if
 c_cond

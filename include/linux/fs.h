@@ -845,11 +845,11 @@ suffix:semicolon
 suffix:semicolon
 multiline_comment|/* Inode state bits.. */
 DECL|macro|I_DIRTY
-mdefine_line|#define I_DIRTY&t;&t;0
+mdefine_line|#define I_DIRTY&t;&t;1
 DECL|macro|I_LOCK
-mdefine_line|#define I_LOCK&t;&t;1
+mdefine_line|#define I_LOCK&t;&t;2
 DECL|macro|I_FREEING
-mdefine_line|#define I_FREEING&t;2
+mdefine_line|#define I_FREEING&t;4
 r_extern
 r_void
 id|__mark_inode_dirty
@@ -877,13 +877,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|test_and_set_bit
-c_func
 (paren
-id|I_DIRTY
-comma
-op_amp
 id|inode-&gt;i_state
+op_amp
+id|I_DIRTY
 )paren
 )paren
 id|__mark_inode_dirty
@@ -1709,10 +1706,6 @@ op_star
 id|readdir
 )paren
 (paren
-r_struct
-id|inode
-op_star
-comma
 r_struct
 id|file
 op_star

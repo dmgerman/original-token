@@ -1878,14 +1878,9 @@ macro_line|#endif
 r_if
 c_cond
 (paren
-id|test_bit
-c_func
-(paren
-id|I_DIRTY
-comma
-op_amp
 id|inode-&gt;i_state
-)paren
+op_amp
+id|I_DIRTY
 )paren
 (brace
 id|dprintk
@@ -4170,8 +4165,6 @@ op_member_access_from_pointer
 id|readdir
 c_func
 (paren
-id|inode
-comma
 op_amp
 id|file
 comma

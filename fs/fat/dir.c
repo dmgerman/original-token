@@ -1650,11 +1650,6 @@ id|fat_readdir
 c_func
 (paren
 r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
 id|file
 op_star
 id|filp
@@ -1667,6 +1662,13 @@ id|filldir_t
 id|filldir
 )paren
 (brace
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|filp-&gt;f_dentry-&gt;d_inode
+suffix:semicolon
 r_return
 id|fat_readdirx
 c_func

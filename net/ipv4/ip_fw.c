@@ -3838,6 +3838,7 @@ comma
 id|i-&gt;fw_flg
 )paren
 suffix:semicolon
+multiline_comment|/* 9 is enough for a 32 bit box but the counters are 64bit on&n;&t;&t;   the Alpha and Ultrapenguin */
 id|len
 op_add_assign
 id|sprintf
@@ -3847,7 +3848,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;%u %u %-9lu %-9lu&quot;
+l_string|&quot;%u %u %-19lu %-19lu&quot;
 comma
 id|i-&gt;fw_nsp
 comma
