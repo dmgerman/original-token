@@ -1,4 +1,4 @@
-multiline_comment|/* sis900.c: A SiS 900/7016 PCI Fast Ethernet driver for Linux.&n;   Silicon Integrated System Corporation &n;   Revision:&t;1.05&t;Aug 7 1999&n;   &n;   Modified from the driver which is originally written by Donald Becker. &n;   &n;   This software may be used and distributed according to the terms&n;   of the GNU Public License (GPL), incorporated herein by reference.&n;   Drivers based on this skeleton fall under the GPL and must retain&n;   the authorship (implicit copyright) notice.&n;   &n;   References:&n;   SiS 7016 Fast Ethernet PCI Bus 10/100 Mbps LAN Controller with OnNow Support,&n;   preliminary Rev. 1.0 Jan. 14, 1998&n;   SiS 900 Fast Ethernet PCI Bus 10/100 Mbps LAN Single Chip with OnNow Support,&n;   preliminary Rev. 1.0 Nov. 10, 1998&n;   SiS 7014 Single Chip 100BASE-TX/10BASE-T Physical Layer Solution,&n;   preliminary Rev. 1.0 Jan. 18, 1998&n;   http://www.sis.com.tw/support/databook.htm&n;   &n;   Rev 1.06 Nov. 4 1999 Ollie Lho (ollie@sis.com.tw) Second release&n;   Rev 1.05.05 Oct. 29 1999 Ollie Lho (ollie@sis.com.tw) Single buffer Tx/Rx  &n;   Chin-Shan Li (lcs@sis.com.tw) Added AMD Am79c901 HomePNA PHY support&n;   Rev 1.05 Aug. 7 1999 Jim Huang (cmhuang@sis.com.tw) Initial release&n;*/
+multiline_comment|/* sis900.c: A SiS 900/7016 PCI Fast Ethernet driver for Linux.&n;   Copyright 1999 Silicon Integrated System Corporation &n;   Revision:&t;1.06.03&t;Dec 23 1999&n;   &n;   Modified from the driver which is originally written by Donald Becker. &n;   &n;   This software may be used and distributed according to the terms&n;   of the GNU Public License (GPL), incorporated herein by reference.&n;   Drivers based on this skeleton fall under the GPL and must retain&n;   the authorship (implicit copyright) notice.&n;   &n;   References:&n;   SiS 7016 Fast Ethernet PCI Bus 10/100 Mbps LAN Controller with OnNow Support,&n;   preliminary Rev. 1.0 Jan. 14, 1998&n;   SiS 900 Fast Ethernet PCI Bus 10/100 Mbps LAN Single Chip with OnNow Support,&n;   preliminary Rev. 1.0 Nov. 10, 1998&n;   SiS 7014 Single Chip 100BASE-TX/10BASE-T Physical Layer Solution,&n;   preliminary Rev. 1.0 Jan. 18, 1998&n;   http://www.sis.com.tw/support/databook.htm&n;   &n;   Rev 1.06.03 Dec. 23 1999 Ollie Lho Third release&n;   Rev 1.06.02 Nov. 23 1999 Ollie Lho bug in mac probing fixed &n;   Rev 1.06.01 Nov. 16 1999 Ollie Lho CRC calculation provide by Joseph Zbiciak (im14u2c@primenet.com)&n;   Rev 1.06 Nov. 4 1999 Ollie Lho (ollie@sis.com.tw) Second release&n;   Rev 1.05.05 Oct. 29 1999 Ollie Lho (ollie@sis.com.tw) Single buffer Tx/Rx  &n;   Chin-Shan Li (lcs@sis.com.tw) Added AMD Am79c901 HomePNA PHY support&n;   Rev 1.05 Aug. 7 1999 Jim Huang (cmhuang@sis.com.tw) Initial release&n;*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -25,7 +25,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;sis900.c: v1.06  11/04/99&bslash;n&quot;
+l_string|&quot;sis900.c: v1.06.03  12/23/99&bslash;n&quot;
 suffix:semicolon
 DECL|variable|max_interrupt_work
 r_static
@@ -1038,6 +1038,26 @@ comma
 id|version
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|net_dev
+op_assign
+id|init_etherdev
+c_func
+(paren
+id|net_dev
+comma
+l_int|0
+)paren
+)paren
+op_eq
+l_int|NULL
+)paren
+r_return
+l_int|NULL
+suffix:semicolon
 multiline_comment|/* check to see if we have sane EEPROM */
 id|signature
 op_assign
@@ -1078,26 +1098,6 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-(paren
-id|net_dev
-op_assign
-id|init_etherdev
-c_func
-(paren
-id|net_dev
-comma
-l_int|0
-)paren
-)paren
-op_eq
-l_int|NULL
-)paren
-r_return
-l_int|NULL
-suffix:semicolon
 id|printk
 c_func
 (paren
@@ -2535,7 +2535,7 @@ id|TxURN
 op_or
 id|TxERR
 op_or
-id|TxOK
+id|TxIDLE
 )paren
 comma
 id|ioaddr
@@ -4002,6 +4002,9 @@ id|ioaddr
 op_assign
 id|net_dev-&gt;base_addr
 suffix:semicolon
+r_int
+id|i
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -4038,16 +4041,87 @@ op_plus
 id|imr
 )paren
 suffix:semicolon
-id|sis_priv-&gt;cur_rx
+multiline_comment|/* discard unsent packets, should this code section be protected by&n;&t;   cli(), sti() ?? */
+id|sis_priv-&gt;dirty_tx
+op_assign
+id|sis_priv-&gt;cur_tx
 op_assign
 l_int|0
 suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|NUM_TX_DESC
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|sis_priv-&gt;tx_skbuff
+(braket
+id|i
+)braket
+op_ne
+l_int|NULL
+)paren
+(brace
+id|dev_kfree_skb
+c_func
+(paren
+id|sis_priv-&gt;tx_skbuff
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+id|sis_priv-&gt;tx_skbuff
+(braket
+id|i
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+id|sis_priv-&gt;tx_ring
+(braket
+id|i
+)braket
+dot
+id|cmdsts
+op_assign
+l_int|0
+suffix:semicolon
+id|sis_priv-&gt;tx_ring
+(braket
+id|i
+)braket
+dot
+id|bufptr
+op_assign
+l_int|0
+suffix:semicolon
+id|sis_priv-&gt;stats.tx_dropped
+op_increment
+suffix:semicolon
+)brace
+)brace
 id|net_dev-&gt;trans_start
 op_assign
 id|jiffies
 suffix:semicolon
-id|sis_priv-&gt;stats.tx_errors
-op_increment
+id|net_dev-&gt;tbusy
+op_assign
+id|sis_priv-&gt;tx_full
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/* FIXME: Should we restart the transmission thread here  ?? */
 multiline_comment|/* Enable all known interrupts by setting the interrupt mask. */
@@ -4067,7 +4141,7 @@ id|TxURN
 op_or
 id|TxERR
 op_or
-id|TxOK
+id|TxIDLE
 )paren
 comma
 id|ioaddr
@@ -4395,34 +4469,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sis900_debug
-OG
-l_int|3
-)paren
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;%s: entering interrupt, &quot;
-l_string|&quot;original status = %#8.8x, &quot;
-l_string|&quot;new status = %#8.8x.&bslash;n&quot;
-comma
-id|net_dev-&gt;name
-comma
-id|status
-comma
-id|inl
-c_func
-(paren
-id|ioaddr
-op_plus
-id|isr
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
 (paren
 id|status
 op_amp
@@ -4433,7 +4479,7 @@ id|TxURN
 op_or
 id|TxERR
 op_or
-id|TxOK
+id|TxIDLE
 op_or
 id|RxORN
 op_or
@@ -4479,7 +4525,7 @@ id|TxURN
 op_or
 id|TxERR
 op_or
-id|TxOK
+id|TxIDLE
 )paren
 )paren
 multiline_comment|/* Tx interrupt */
@@ -4794,6 +4840,7 @@ id|sk_buff
 op_star
 id|skb
 suffix:semicolon
+multiline_comment|/* This situation should never happen, but due to&n;&t;&t;&t;   some unknow bugs, it is possible that&n;&t;&t;&t;   we are working on NULL sk_buff :-( */
 r_if
 c_cond
 (paren
@@ -5107,7 +5154,7 @@ op_amp
 id|OWN
 )paren
 (brace
-multiline_comment|/* The packet is not transmited yet (owned by hardware) ! */
+multiline_comment|/* The packet is not transmited yet (owned by hardware) !&n;&t;&t;&t;   Note: the interrupt is generated only when Tx Machine&n;&t;&t;&t;   is idle, so this is an almost impossible case */
 r_break
 suffix:semicolon
 )brace
@@ -5192,20 +5239,6 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* packet successfully transmited */
-r_if
-c_cond
-(paren
-id|sis900_debug
-OG
-l_int|3
-)paren
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;Tx Transmit OK&bslash;n&quot;
-)paren
-suffix:semicolon
 id|sis_priv-&gt;stats.collisions
 op_add_assign
 (paren
@@ -5278,7 +5311,7 @@ op_minus
 l_int|4
 )paren
 (brace
-multiline_comment|/* The ring is no longer full, clear tbusy, tx_full and schedule &n;&t;&t;   more transmission by marking NET_BH */
+multiline_comment|/* The ring is no longer full, clear tbusy, tx_full and&n;&t;&t;   schedule more transmission by marking NET_BH */
 id|sis_priv-&gt;tx_full
 op_assign
 l_int|0
@@ -5678,9 +5711,9 @@ op_star
 id|addr
 )paren
 (brace
-multiline_comment|/* what is the correct value of the POLYNOMIAL ??&n;   Donald Becker use 0x04C11DB7U */
+multiline_comment|/* what is the correct value of the POLYNOMIAL ??&n;   Donald Becker use 0x04C11DB7U&n;   Joseph Zbiciak im14u2c@primenet.com gives me the&n;   correct answer, thank you Joe !! */
 DECL|macro|POLYNOMIAL
-mdefine_line|#define POLYNOMIAL 0x04C11DB6L
+mdefine_line|#define POLYNOMIAL 0x04C11DB7L
 id|u32
 id|crc
 op_assign
@@ -5693,7 +5726,7 @@ id|i
 comma
 id|j
 suffix:semicolon
-id|u8
+id|u32
 id|byte
 suffix:semicolon
 r_for
@@ -5757,10 +5790,6 @@ l_int|1
 id|crc
 op_xor_assign
 id|POLYNOMIAL
-suffix:semicolon
-id|crc
-op_or_assign
-l_int|1
 suffix:semicolon
 )brace
 id|byte
@@ -5980,7 +6009,8 @@ id|i
 op_increment
 )paren
 (brace
-multiline_comment|/* why plus 0x04 ??, I don&squot;t know, UNDOCUMENT FEATURE ?? */
+op_plus
+multiline_comment|/* why plus 0x04 ??, That makes the correct value for hash table. */
 id|outl
 c_func
 (paren

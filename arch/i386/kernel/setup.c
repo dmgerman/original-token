@@ -2465,6 +2465,8 @@ r_if
 c_cond
 (paren
 id|LOADER_TYPE
+op_logical_and
+id|INITRD_START
 )paren
 (brace
 r_if

@@ -182,5 +182,16 @@ r_int
 )paren
 suffix:semicolon
 multiline_comment|/* returns 0 or negative on failure */
+r_extern
+r_int
+r_int
+id|probe_irq_mask
+c_func
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
+multiline_comment|/* returns mask of ISA interrupts */
 macro_line|#endif
 eof

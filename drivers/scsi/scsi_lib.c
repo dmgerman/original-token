@@ -1935,6 +1935,13 @@ id|SCpnt
 )paren
 )paren
 (brace
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|io_request_lock
+)paren
+suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
@@ -1952,6 +1959,13 @@ id|SCpnt
 )paren
 )paren
 (brace
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|io_request_lock
+)paren
+suffix:semicolon
 r_continue
 suffix:semicolon
 )brace

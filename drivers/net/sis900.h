@@ -451,9 +451,9 @@ multiline_comment|/* recevie FIFO thresholds */
 DECL|macro|RxDRNT_shift
 mdefine_line|#define RxDRNT_shift     1
 DECL|macro|RxDRNT_100
-mdefine_line|#define RxDRNT_100&t;24&t;/* 3/4 FIFO size */
+mdefine_line|#define RxDRNT_100&t;16&t;/* 1/2 FIFO size */
 DECL|macro|RxDRNT_10
-mdefine_line|#define RxDRNT_10&t;&t;16 &t;/* 1/2 FIFO size */
+mdefine_line|#define RxDRNT_10&t;&t;24 &t;/* 3/4 FIFO size */
 DECL|enum|sis900_reveive_config_register_bits
 r_enum
 id|sis900_reveive_config_register_bits

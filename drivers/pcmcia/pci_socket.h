@@ -13,9 +13,12 @@ id|pci_dev
 op_star
 id|dev
 suffix:semicolon
-DECL|member|irq
+DECL|member|cb_irq
+DECL|member|io_irq
 r_int
-id|irq
+id|cb_irq
+comma
+id|io_irq
 suffix:semicolon
 DECL|member|base
 r_void
@@ -46,6 +49,10 @@ r_struct
 id|pci_socket_ops
 op_star
 id|op
+suffix:semicolon
+DECL|member|cap
+id|socket_cap_t
+id|cap
 suffix:semicolon
 DECL|typedef|pci_socket_t
 )brace

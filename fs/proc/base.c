@@ -2328,7 +2328,7 @@ op_or
 id|S_IRUGO
 )paren
 comma
-macro_line|#ifdef SMP
+macro_line|#ifdef __SMP__
 id|E
 c_func
 (paren
@@ -3836,7 +3836,7 @@ id|proc_maps_inode_operations
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#ifdef SMP
+macro_line|#ifdef __SMP__
 r_case
 id|PROC_PID_CPU
 suffix:colon

@@ -159,6 +159,10 @@ mdefine_line|#define    CB_CLKCTRLEN&t;&t;0x00010000&t;/* Clock control enabled 
 DECL|macro|CB_CLKCTRL
 mdefine_line|#define    CB_CLKCTRL&t;&t;0x00000001&t;/* Stop(0) or slow(1) CB clock (RW) */
 multiline_comment|/*&n; * Cardbus configuration space&n; */
+DECL|macro|CB_BRIDGE_BASE
+mdefine_line|#define CB_BRIDGE_BASE(m)&t;(0x1c + 8*(m))
+DECL|macro|CB_BRIDGE_LIMIT
+mdefine_line|#define CB_BRIDGE_LIMIT(m)&t;(0x20 + 8*(m))
 DECL|macro|CB_BRIDGE_CONTROL
 mdefine_line|#define CB_BRIDGE_CONTROL&t;0x3e
 DECL|macro|CB_BRIDGE_CPERREN

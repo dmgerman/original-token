@@ -458,6 +458,13 @@ op_star
 id|bus
 suffix:semicolon
 multiline_comment|/* bus this device is on */
+DECL|member|subordinate
+r_struct
+id|pci_bus
+op_star
+id|subordinate
+suffix:semicolon
+multiline_comment|/* bus this device bridges to */
 DECL|member|sibling
 r_struct
 id|pci_dev

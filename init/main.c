@@ -1852,6 +1852,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#if 0000
 macro_line|#ifdef CONFIG_BLK_DEV_INITRD
 singleline_comment|// FIXME, use the bootmem.h interface.
 r_if
@@ -1885,6 +1886,7 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
+macro_line|#endif /* 0000 */
 id|mem_init
 c_func
 (paren
