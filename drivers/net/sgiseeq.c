@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sgiseeq.c: Seeq8003 ethernet driver for SGI machines.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: sgiseeq.c,v 1.6 1998/10/14 17:29:44 ralf Exp $&n; */
+multiline_comment|/* $Id: sgiseeq.c,v 1.9 1998/10/14 23:40:46 ralf Exp $&n; *&n; * sgiseeq.c: Seeq8003 ethernet driver for SGI machines.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -3340,11 +3340,27 @@ op_star
 id|dev
 )paren
 (brace
+r_static
+r_int
+id|initialized
+suffix:semicolon
 r_char
 op_star
 id|ep
 suffix:semicolon
-multiline_comment|/* First get the ethernet address of the onboard&n;&t; * interface from ARCS.&n;&t; */
+r_if
+c_cond
+(paren
+id|initialized
+)paren
+multiline_comment|/* Already initialized? */
+r_return
+l_int|0
+suffix:semicolon
+id|initialized
+op_increment
+suffix:semicolon
+multiline_comment|/* First get the ethernet address of the onboard&n;&t; * interface from ARCS.&n;&t; * (This is fragile; PROM doesn&squot;t like running from cache.)&n;&t; */
 id|ep
 op_assign
 id|romvec

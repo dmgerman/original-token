@@ -75,7 +75,6 @@ DECL|enumerator|M_MIPS2
 id|M_MIPS2
 op_assign
 l_int|152
-comma
 multiline_comment|/* MIPS R6000/R4000 binary */
 )brace
 suffix:semicolon

@@ -572,6 +572,9 @@ comma
 DECL|enumerator|PROC_SCSI_IDESCSI
 id|PROC_SCSI_IDESCSI
 comma
+DECL|enumerator|PROC_SCSI_SGIWD93
+id|PROC_SCSI_SGIWD93
+comma
 DECL|enumerator|PROC_SCSI_MESH
 id|PROC_SCSI_MESH
 comma

@@ -19,6 +19,8 @@ DECL|macro|DEVID_PIIX3
 mdefine_line|#define DEVID_PIIX3&t;((ide_pci_devid_t){PCI_VENDOR_ID_INTEL,   PCI_DEVICE_ID_INTEL_82371SB_1})
 DECL|macro|DEVID_PIIX4
 mdefine_line|#define DEVID_PIIX4&t;((ide_pci_devid_t){PCI_VENDOR_ID_INTEL,   PCI_DEVICE_ID_INTEL_82371AB})
+DECL|macro|DEVID_VIA_IDE
+mdefine_line|#define DEVID_VIA_IDE&t;((ide_pci_devid_t){PCI_VENDOR_ID_VIA,     PCI_DEVICE_ID_VIA_82C561})
 DECL|macro|DEVID_VP_IDE
 mdefine_line|#define DEVID_VP_IDE&t;((ide_pci_devid_t){PCI_VENDOR_ID_VIA,     PCI_DEVICE_ID_VIA_82C586_1})
 DECL|macro|DEVID_PDC20246
@@ -613,6 +615,40 @@ comma
 l_int|0x80
 comma
 l_int|0x80
+)brace
+)brace
+comma
+id|ON_BOARD
+comma
+l_int|0
+)brace
+comma
+(brace
+id|DEVID_VIA_IDE
+comma
+l_string|&quot;VIA_IDE&quot;
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+(brace
+(brace
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_int|0x00
+)brace
+comma
+(brace
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_int|0x00
 )brace
 )brace
 comma
@@ -2198,7 +2234,7 @@ id|mate
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#ifdef CONFIG_IDEDMA_PCI_AUTO
+macro_line|#ifdef CONFIG_IDEDMA_AUTO
 id|autodma
 op_assign
 l_int|1
@@ -3274,6 +3310,32 @@ id|PCI_CLASS_STORAGE_IDE
 r_continue
 suffix:semicolon
 multiline_comment|/* CY82C693 is more than only a IDE controller */
+r_else
+r_if
+c_cond
+(paren
+id|IDE_PCI_DEVID_EQ
+c_func
+(paren
+id|d-&gt;devid
+comma
+id|DEVID_UM8886A
+)paren
+op_logical_and
+op_logical_neg
+(paren
+id|PCI_FUNC
+c_func
+(paren
+id|dev-&gt;devfn
+)paren
+op_amp
+l_int|1
+)paren
+)paren
+r_continue
+suffix:semicolon
+multiline_comment|/* UM8886A/BF pair */
 r_else
 r_if
 c_cond

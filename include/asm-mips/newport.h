@@ -1736,5 +1736,13 @@ l_int|0xffffff
 )paren
 suffix:semicolon
 )brace
+DECL|macro|BT445_PROTOCOL
+mdefine_line|#define BT445_PROTOCOL&t;&t;DCB_CYCLES(1,1,3)
+DECL|macro|BT445_CSR_ADDR_REG
+mdefine_line|#define BT445_CSR_ADDR_REG&t;(0 &lt;&lt; DCB_CRS_SHIFT)
+DECL|macro|BT445_CSR_REVISION
+mdefine_line|#define BT445_CSR_REVISION&t;(2 &lt;&lt; DCB_CRS_SHIFT)
+DECL|macro|BT445_REVISION_REG
+mdefine_line|#define BT445_REVISION_REG&t;0x01
 macro_line|#endif /* !(_SGI_NEWPORT_H) */
 eof

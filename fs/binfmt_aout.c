@@ -1467,7 +1467,7 @@ id|ex.a_text
 op_logical_and
 id|bprm-&gt;dentry-&gt;d_inode-&gt;i_op
 op_logical_and
-id|bprm-&gt;dentry-&gt;d_inode-&gt;i_op-&gt;bmap
+id|bprm-&gt;dentry-&gt;d_inode-&gt;i_op-&gt;get_block
 op_logical_and
 (paren
 id|fd_offset

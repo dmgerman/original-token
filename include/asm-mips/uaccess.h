@@ -154,6 +154,14 @@ c_func
 r_void
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * We&squot;re generating jump to subroutines which will be outside the range of&n; * jump instructions&n; */
+macro_line|#ifdef MODULE
+DECL|macro|__MODULE_JAL
+mdefine_line|#define __MODULE_JAL(destination) &bslash;&n;&t;&quot;.set&bslash;tnoat&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;la&bslash;t$1, &quot; #destination &quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jalr&bslash;t$1&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.set&bslash;tat&bslash;n&bslash;t&quot;
+macro_line|#else
+DECL|macro|__MODULE_JAL
+mdefine_line|#define __MODULE_JAL(destination) &bslash;&n;&t;&quot;jal&bslash;t&quot; #destination &quot;&bslash;n&bslash;t&quot;
+macro_line|#endif
 DECL|macro|copy_to_user_ret
 mdefine_line|#define copy_to_user_ret(to,from,n,retval) ({ &bslash;&n;if (copy_to_user(to,from,n)) &bslash;&n;        return retval; &bslash;&n;})
 DECL|macro|copy_from_user_ret
@@ -177,13 +185,13 @@ id|__n
 )paren
 suffix:semicolon
 DECL|macro|__copy_to_user
-mdefine_line|#define __copy_to_user(to,from,n) ({ &bslash;&n;&t;void *__cu_to; &bslash;&n;&t;const void *__cu_from; &bslash;&n;&t;long __cu_len; &bslash;&n;&t;&bslash;&n;&t;__cu_to = (to); &bslash;&n;&t;__cu_from = (from); &bslash;&n;&t;__cu_len = (n); &bslash;&n;&t;__asm__ __volatile__( &bslash;&n;&t;&t;&quot;move&bslash;t$4, %1&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;move&bslash;t$5, %2&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;move&bslash;t$6, %3&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;jal&bslash;t__copy_user&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;move&bslash;t%0, $6&quot; &bslash;&n;&t;&t;: &quot;=r&quot; (__cu_len) &bslash;&n;&t;&t;: &quot;r&quot; (__cu_to), &quot;r&quot; (__cu_from), &quot;r&quot; (__cu_len) &bslash;&n;&t;&t;: &quot;$4&quot;, &quot;$5&quot;, &quot;$6&quot;, &quot;$8&quot;, &quot;$9&quot;, &quot;$10&quot;, &quot;$11&quot;, &quot;$12&quot;, &quot;$15&quot;, &bslash;&n;&t;&t;  &quot;$24&quot;, &quot;$31&quot;,&quot;memory&quot;); &bslash;&n;&t;__cu_len; &bslash;&n;})
+mdefine_line|#define __copy_to_user(to,from,n) ({ &bslash;&n;&t;void *__cu_to; &bslash;&n;&t;const void *__cu_from; &bslash;&n;&t;long __cu_len; &bslash;&n;&t;&bslash;&n;&t;__cu_to = (to); &bslash;&n;&t;__cu_from = (from); &bslash;&n;&t;__cu_len = (n); &bslash;&n;&t;__asm__ __volatile__( &bslash;&n;&t;&t;&quot;move&bslash;t$4, %1&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;move&bslash;t$5, %2&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;move&bslash;t$6, %3&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;__MODULE_JAL(__copy_user) &bslash;&n;&t;&t;&quot;move&bslash;t%0, $6&quot; &bslash;&n;&t;&t;: &quot;=r&quot; (__cu_len) &bslash;&n;&t;&t;: &quot;r&quot; (__cu_to), &quot;r&quot; (__cu_from), &quot;r&quot; (__cu_len) &bslash;&n;&t;&t;: &quot;$4&quot;, &quot;$5&quot;, &quot;$6&quot;, &quot;$8&quot;, &quot;$9&quot;, &quot;$10&quot;, &quot;$11&quot;, &quot;$12&quot;, &quot;$15&quot;, &bslash;&n;&t;&t;  &quot;$24&quot;, &quot;$31&quot;,&quot;memory&quot;); &bslash;&n;&t;__cu_len; &bslash;&n;})
 DECL|macro|__copy_from_user
-mdefine_line|#define __copy_from_user(to,from,n) ({ &bslash;&n;&t;void *__cu_to; &bslash;&n;&t;const void *__cu_from; &bslash;&n;&t;long __cu_len; &bslash;&n;&t;&bslash;&n;&t;__cu_to = (to); &bslash;&n;&t;__cu_from = (from); &bslash;&n;&t;__cu_len = (n); &bslash;&n;&t;__asm__ __volatile__( &bslash;&n;&t;&t;&quot;move&bslash;t$4, %1&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;move&bslash;t$5, %2&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;move&bslash;t$6, %3&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;.set&bslash;tnoat&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;addu&bslash;t$1, %2, %3&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;.set&bslash;tat&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;jal&bslash;t__copy_user&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;move&bslash;t%0, $6&quot; &bslash;&n;&t;&t;: &quot;=r&quot; (__cu_len) &bslash;&n;&t;&t;: &quot;r&quot; (__cu_to), &quot;r&quot; (__cu_from), &quot;r&quot; (__cu_len) &bslash;&n;&t;&t;: &quot;$4&quot;, &quot;$5&quot;, &quot;$6&quot;, &quot;$8&quot;, &quot;$9&quot;, &quot;$10&quot;, &quot;$11&quot;, &quot;$12&quot;, &quot;$15&quot;, &bslash;&n;&t;&t;  &quot;$24&quot;, &quot;$31&quot;,&quot;memory&quot;); &bslash;&n;&t;__cu_len; &bslash;&n;})
+mdefine_line|#define __copy_from_user(to,from,n) ({ &bslash;&n;&t;void *__cu_to; &bslash;&n;&t;const void *__cu_from; &bslash;&n;&t;long __cu_len; &bslash;&n;&t;&bslash;&n;&t;__cu_to = (to); &bslash;&n;&t;__cu_from = (from); &bslash;&n;&t;__cu_len = (n); &bslash;&n;&t;__asm__ __volatile__( &bslash;&n;&t;&t;&quot;move&bslash;t$4, %1&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;move&bslash;t$5, %2&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;move&bslash;t$6, %3&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;.set&bslash;tnoat&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;addu&bslash;t$1, %2, %3&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;.set&bslash;tat&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;__MODULE_JAL(__copy_user) &bslash;&n;&t;&t;&quot;move&bslash;t%0, $6&quot; &bslash;&n;&t;&t;: &quot;=r&quot; (__cu_len) &bslash;&n;&t;&t;: &quot;r&quot; (__cu_to), &quot;r&quot; (__cu_from), &quot;r&quot; (__cu_len) &bslash;&n;&t;&t;: &quot;$4&quot;, &quot;$5&quot;, &quot;$6&quot;, &quot;$8&quot;, &quot;$9&quot;, &quot;$10&quot;, &quot;$11&quot;, &quot;$12&quot;, &quot;$15&quot;, &bslash;&n;&t;&t;  &quot;$24&quot;, &quot;$31&quot;,&quot;memory&quot;); &bslash;&n;&t;__cu_len; &bslash;&n;})
 DECL|macro|copy_to_user
-mdefine_line|#define copy_to_user(to,from,n) ({ &bslash;&n;&t;void *__cu_to; &bslash;&n;&t;const void *__cu_from; &bslash;&n;&t;long __cu_len; &bslash;&n;&t;&bslash;&n;&t;__cu_to = (to); &bslash;&n;&t;__cu_from = (from); &bslash;&n;&t;__cu_len = (n); &bslash;&n;&t;if (access_ok(VERIFY_WRITE, __cu_to, __cu_len)) &bslash;&n;&t;&t;__asm__ __volatile__( &bslash;&n;&t;&t;&t;&quot;move&bslash;t$4, %1&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;&quot;move&bslash;t$5, %2&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;&quot;move&bslash;t$6, %3&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;&quot;jal&bslash;t__copy_user&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;&quot;move&bslash;t%0, $6&quot; &bslash;&n;&t;&t;&t;: &quot;=r&quot; (__cu_len) &bslash;&n;&t;&t;&t;: &quot;r&quot; (__cu_to), &quot;r&quot; (__cu_from), &quot;r&quot; (__cu_len) &bslash;&n;&t;&t;&t;: &quot;$4&quot;, &quot;$5&quot;, &quot;$6&quot;, &quot;$8&quot;, &quot;$9&quot;, &quot;$10&quot;, &quot;$11&quot;, &quot;$12&quot;, &bslash;&n;&t;&t;&t;  &quot;$15&quot;, &quot;$24&quot;, &quot;$31&quot;,&quot;memory&quot;); &bslash;&n;&t;__cu_len; &bslash;&n;})
+mdefine_line|#define copy_to_user(to,from,n) ({ &bslash;&n;&t;void *__cu_to; &bslash;&n;&t;const void *__cu_from; &bslash;&n;&t;long __cu_len; &bslash;&n;&t;&bslash;&n;&t;__cu_to = (to); &bslash;&n;&t;__cu_from = (from); &bslash;&n;&t;__cu_len = (n); &bslash;&n;&t;if (access_ok(VERIFY_WRITE, __cu_to, __cu_len)) &bslash;&n;&t;&t;__asm__ __volatile__( &bslash;&n;&t;&t;&t;&quot;move&bslash;t$4, %1&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;&quot;move&bslash;t$5, %2&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;&quot;move&bslash;t$6, %3&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;__MODULE_JAL(__copy_user) &bslash;&n;&t;&t;&t;&quot;move&bslash;t%0, $6&quot; &bslash;&n;&t;&t;&t;: &quot;=r&quot; (__cu_len) &bslash;&n;&t;&t;&t;: &quot;r&quot; (__cu_to), &quot;r&quot; (__cu_from), &quot;r&quot; (__cu_len) &bslash;&n;&t;&t;&t;: &quot;$4&quot;, &quot;$5&quot;, &quot;$6&quot;, &quot;$8&quot;, &quot;$9&quot;, &quot;$10&quot;, &quot;$11&quot;, &quot;$12&quot;, &bslash;&n;&t;&t;&t;  &quot;$15&quot;, &quot;$24&quot;, &quot;$31&quot;,&quot;memory&quot;); &bslash;&n;&t;__cu_len; &bslash;&n;})
 DECL|macro|copy_from_user
-mdefine_line|#define copy_from_user(to,from,n) ({ &bslash;&n;&t;void *__cu_to; &bslash;&n;&t;const void *__cu_from; &bslash;&n;&t;long __cu_len; &bslash;&n;&t;&bslash;&n;&t;__cu_to = (to); &bslash;&n;&t;__cu_from = (from); &bslash;&n;&t;__cu_len = (n); &bslash;&n;&t;if (access_ok(VERIFY_READ, __cu_from, __cu_len)) &bslash;&n;&t;&t;__asm__ __volatile__( &bslash;&n;&t;&t;&t;&quot;move&bslash;t$4, %1&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;&quot;move&bslash;t$5, %2&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;&quot;move&bslash;t$6, %3&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;&quot;.set&bslash;tnoat&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;&quot;addu&bslash;t$1, %2, %3&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;&quot;.set&bslash;tat&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;&quot;jal&bslash;t__copy_user&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;&quot;move&bslash;t%0, $6&quot; &bslash;&n;&t;&t;&t;: &quot;=r&quot; (__cu_len) &bslash;&n;&t;&t;&t;: &quot;r&quot; (__cu_to), &quot;r&quot; (__cu_from), &quot;r&quot; (__cu_len) &bslash;&n;&t;&t;&t;: &quot;$4&quot;, &quot;$5&quot;, &quot;$6&quot;, &quot;$8&quot;, &quot;$9&quot;, &quot;$10&quot;, &quot;$11&quot;, &quot;$12&quot;, &bslash;&n;&t;&t;&t;  &quot;$15&quot;, &quot;$24&quot;, &quot;$31&quot;,&quot;memory&quot;); &bslash;&n;&t;__cu_len; &bslash;&n;})
+mdefine_line|#define copy_from_user(to,from,n) ({ &bslash;&n;&t;void *__cu_to; &bslash;&n;&t;const void *__cu_from; &bslash;&n;&t;long __cu_len; &bslash;&n;&t;&bslash;&n;&t;__cu_to = (to); &bslash;&n;&t;__cu_from = (from); &bslash;&n;&t;__cu_len = (n); &bslash;&n;&t;if (access_ok(VERIFY_READ, __cu_from, __cu_len)) &bslash;&n;&t;&t;__asm__ __volatile__( &bslash;&n;&t;&t;&t;&quot;move&bslash;t$4, %1&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;&quot;move&bslash;t$5, %2&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;&quot;move&bslash;t$6, %3&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;&quot;.set&bslash;tnoat&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;&quot;addu&bslash;t$1, %2, %3&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;&quot;.set&bslash;tat&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;__MODULE_JAL(__copy_user) &bslash;&n;&t;&t;&t;&quot;move&bslash;t%0, $6&quot; &bslash;&n;&t;&t;&t;: &quot;=r&quot; (__cu_len) &bslash;&n;&t;&t;&t;: &quot;r&quot; (__cu_to), &quot;r&quot; (__cu_from), &quot;r&quot; (__cu_len) &bslash;&n;&t;&t;&t;: &quot;$4&quot;, &quot;$5&quot;, &quot;$6&quot;, &quot;$8&quot;, &quot;$9&quot;, &quot;$10&quot;, &quot;$11&quot;, &quot;$12&quot;, &bslash;&n;&t;&t;&t;  &quot;$15&quot;, &quot;$24&quot;, &quot;$31&quot;,&quot;memory&quot;); &bslash;&n;&t;__cu_len; &bslash;&n;})
 r_extern
 r_inline
 id|__kernel_size_t
@@ -209,7 +217,11 @@ c_func
 l_string|&quot;move&bslash;t$4, %1&bslash;n&bslash;t&quot;
 l_string|&quot;move&bslash;t$5, $0&bslash;n&bslash;t&quot;
 l_string|&quot;move&bslash;t$6, %2&bslash;n&bslash;t&quot;
-l_string|&quot;jal&bslash;t__bzero&bslash;n&bslash;t&quot;
+id|__MODULE_JAL
+c_func
+(paren
+id|__bzero
+)paren
 l_string|&quot;move&bslash;t%0, $6&quot;
 suffix:colon
 l_string|&quot;=r&quot;
@@ -277,7 +289,11 @@ c_func
 l_string|&quot;move&bslash;t$4, %1&bslash;n&bslash;t&quot;
 l_string|&quot;move&bslash;t$5, %2&bslash;n&bslash;t&quot;
 l_string|&quot;move&bslash;t$6, %3&bslash;n&bslash;t&quot;
-l_string|&quot;jal&bslash;t__strncpy_from_user_nocheck_asm&bslash;n&bslash;t&quot;
+id|__MODULE_JAL
+c_func
+(paren
+id|__strncpy_from_user_nocheck_asm
+)paren
 l_string|&quot;move&bslash;t%0, $2&quot;
 suffix:colon
 l_string|&quot;=r&quot;
@@ -351,7 +367,11 @@ c_func
 l_string|&quot;move&bslash;t$4, %1&bslash;n&bslash;t&quot;
 l_string|&quot;move&bslash;t$5, %2&bslash;n&bslash;t&quot;
 l_string|&quot;move&bslash;t$6, %3&bslash;n&bslash;t&quot;
-l_string|&quot;jal&bslash;t__strncpy_from_user_asm&bslash;n&bslash;t&quot;
+id|__MODULE_JAL
+c_func
+(paren
+id|__strncpy_from_user_asm
+)paren
 l_string|&quot;move&bslash;t%0, $2&quot;
 suffix:colon
 l_string|&quot;=r&quot;
@@ -417,7 +437,11 @@ id|__volatile__
 c_func
 (paren
 l_string|&quot;move&bslash;t$4, %1&bslash;n&bslash;t&quot;
-l_string|&quot;jal&bslash;t__strlen_user_nocheck_asm&bslash;n&bslash;t&quot;
+id|__MODULE_JAL
+c_func
+(paren
+id|__strlen_user_nocheck_asm
+)paren
 l_string|&quot;move&bslash;t%0, $2&quot;
 suffix:colon
 l_string|&quot;=r&quot;
@@ -464,7 +488,11 @@ id|__volatile__
 c_func
 (paren
 l_string|&quot;move&bslash;t$4, %1&bslash;n&bslash;t&quot;
-l_string|&quot;jal&bslash;t__strlen_user_asm&bslash;n&bslash;t&quot;
+id|__MODULE_JAL
+c_func
+(paren
+id|__strlen_user_asm
+)paren
 l_string|&quot;move&bslash;t%0, $2&quot;
 suffix:colon
 l_string|&quot;=r&quot;

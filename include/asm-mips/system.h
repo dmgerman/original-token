@@ -94,6 +94,12 @@ id|__volatile__
 c_func
 (paren
 l_string|&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot;
+l_string|&quot;mfc0&bslash;t$8,$12&bslash;n&bslash;t&quot;
+l_string|&quot;li&bslash;t$9,0xff00&bslash;n&bslash;t&quot;
+l_string|&quot;and&bslash;t$8,$9&bslash;n&bslash;t&quot;
+l_string|&quot;nor&bslash;t$9,$0,$9&bslash;n&bslash;t&quot;
+l_string|&quot;and&bslash;t%0,$9&bslash;n&bslash;t&quot;
+l_string|&quot;or&bslash;t%0,$8&bslash;n&bslash;t&quot;
 l_string|&quot;mtc0&bslash;t%0,$12&bslash;n&bslash;t&quot;
 l_string|&quot;nop&bslash;n&bslash;t&quot;
 l_string|&quot;nop&bslash;n&bslash;t&quot;
@@ -107,6 +113,10 @@ l_string|&quot;r&quot;
 id|flags
 )paren
 suffix:colon
+l_string|&quot;$8&quot;
+comma
+l_string|&quot;$9&quot;
+comma
 l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
@@ -122,13 +132,28 @@ DECL|macro|save_and_cli
 mdefine_line|#define save_and_cli(x) __save_and_cli(x)
 DECL|macro|restore_flags
 mdefine_line|#define restore_flags(x) __restore_flags(x)
+multiline_comment|/* For spinlocks etc */
+DECL|macro|local_irq_save
+mdefine_line|#define local_irq_save(x)&t;__save_and_cli(x);
+DECL|macro|local_irq_restore
+mdefine_line|#define local_irq_restore(x)&t;__restore_flags(x);
+DECL|macro|local_irq_disable
+mdefine_line|#define local_irq_disable()&t;__cli();
+DECL|macro|local_irq_enable
+mdefine_line|#define local_irq_enable()&t;__sti();
+multiline_comment|/*&n; * These are probably defined overly paranoid ...&n; */
 DECL|macro|mb
 mdefine_line|#define mb()&t;&t;&t;&t;&t;&t;&bslash;&n;__asm__ __volatile__(&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;# prevent instructions being moved around&bslash;n&bslash;t&quot;&t;&bslash;&n;&t;&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;# 8 nops to fool the R4400 pipeline&bslash;n&bslash;t&quot;&t;&bslash;&n;&t;&quot;nop;nop;nop;nop;nop;nop;nop;nop&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&quot;.set&bslash;treorder&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;: /* no output */&t;&t;&t;&t;&bslash;&n;&t;: /* no input */&t;&t;&t;&t;&bslash;&n;&t;: &quot;memory&quot;)
+DECL|macro|rmb
+mdefine_line|#define rmb() mb()
+DECL|macro|wmb
+mdefine_line|#define wmb() mb()
 macro_line|#if !defined (_LANGUAGE_ASSEMBLY)
 multiline_comment|/*&n; * switch_to(n) should switch tasks to task nr n, first&n; * checking that n isn&squot;t the current task, in which case it does nothing.&n; */
 r_extern
 id|asmlinkage
 r_void
+op_star
 (paren
 op_star
 id|resume
@@ -136,12 +161,16 @@ id|resume
 (paren
 r_void
 op_star
-id|tsk
+id|last
+comma
+r_void
+op_star
+id|next
 )paren
 suffix:semicolon
 macro_line|#endif /* !defined (_LANGUAGE_ASSEMBLY) */
 DECL|macro|switch_to
-mdefine_line|#define switch_to(prev,next) &bslash;&n;do { &bslash;&n;&t;resume(next); &bslash;&n;} while(0)
+mdefine_line|#define switch_to(prev,next,last) &bslash;&n;do { &bslash;&n;&t;(last) = resume(prev, next); &bslash;&n;} while(0)
 multiline_comment|/*&n; * For 32 and 64 bit operands we can take advantage of ll and sc.&n; * FIXME: This doesn&squot;t work for R3000 machines.&n; */
 DECL|function|xchg_u32
 r_extern

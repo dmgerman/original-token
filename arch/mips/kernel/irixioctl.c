@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: irixioctl.c,v 1.4 1998/03/04 12:17:41 ralf Exp $&n; * irixioctl.c: A fucking mess...&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/* $Id: irixioctl.c,v 1.6 1999/02/06 05:12:56 adevries Exp $&n; * irixioctl.c: A fucking mess...&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
+macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/ioctl.h&gt;
 macro_line|#include &lt;asm/ioctls.h&gt;
@@ -105,19 +106,19 @@ id|file
 op_star
 id|filp
 suffix:semicolon
-id|file
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|filp
 op_assign
 id|fcheck
 c_func
 (paren
 id|fd
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|file
+)paren
 )paren
 (brace
 r_return

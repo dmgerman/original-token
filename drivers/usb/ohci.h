@@ -65,9 +65,10 @@ r_int
 id|hcd_flags
 suffix:semicolon
 multiline_comment|/* Flags for the HCD: */
-multiline_comment|/* bit0 = boolean: Is this TD allocated? */
-multiline_comment|/* bit1 = boolean: Is this a dummy (end of list) TD? */
-multiline_comment|/* User or Device class driver specific fields */
+multiline_comment|/* bit0: Is this TD allocated? */
+multiline_comment|/* bit1: Is this a dummy (end of list) TD? */
+multiline_comment|/* bit2: do NOT automatically free this TD on completion */
+multiline_comment|/* bit3: this is NOT the last TD in a contiguious TD chain&n;&t;&t; *       on the indicated ED.  (0 means it is the last) */
 DECL|member|dev_id
 r_void
 op_star
@@ -105,6 +106,8 @@ DECL|macro|OHCI_TD_IOC_DELAY
 mdefine_line|#define OHCI_TD_IOC_DELAY (7 &lt;&lt; 21)&t;/* frame delay allowed before int. */
 DECL|macro|OHCI_TD_IOC_OFF
 mdefine_line|#define OHCI_TD_IOC_OFF&t;(OHCI_TD_IOC_DELAY)&t;/* no interrupt on complete */
+DECL|macro|td_set_ioc_delay
+mdefine_line|#define td_set_ioc_delay(frames)&t;(((frames) &amp; 7) &lt;&lt; 21)
 DECL|macro|OHCI_TD_DT
 mdefine_line|#define OHCI_TD_DT&t;(3 &lt;&lt; 24)&t;/* data toggle bits */
 DECL|macro|TOGGLE_AUTO
@@ -150,6 +153,19 @@ DECL|macro|make_dumb_td
 mdefine_line|#define make_dumb_td(td)&t;((td)-&gt;hcd_flags |= 2)
 DECL|macro|clear_dumb_td
 mdefine_line|#define clear_dumb_td(td)&t;((td)-&gt;hcd_flags &amp;= ~(__u32)2)
+DECL|macro|td_endofchain
+mdefine_line|#define td_endofchain(td)&t;(!((td).hcd_flags &amp; (1 &lt;&lt; 3)))
+DECL|macro|set_td_endofchain
+mdefine_line|#define set_td_endofchain(td)&t;((td)-&gt;hcd_flags &amp;= ~(1 &lt;&lt; 3))
+DECL|macro|clear_td_endofchain
+mdefine_line|#define clear_td_endofchain(td)&t;((td)-&gt;hcd_flags |= (1 &lt;&lt; 3))
+multiline_comment|/*&n; * These control if the IRQ will call ohci_free_td after taking the TDs&n; * off of the donelist (assuming the completion function does not ask&n; * for the TD to be requeued).&n; */
+DECL|macro|can_auto_free
+mdefine_line|#define can_auto_free(td)&t;(!((td).hcd_flags &amp; 4))
+DECL|macro|noauto_free_td
+mdefine_line|#define noauto_free_td(td)&t;((td)-&gt;hcd_flags |= 4)
+DECL|macro|auto_free_td
+mdefine_line|#define auto_free_td(td)&t;((td)-&gt;hcd_flags &amp;= ~(__u32)4)
 multiline_comment|/*&n; * The endpoint descriptors also requires 16-byte alignment&n; */
 DECL|struct|ohci_ed
 r_struct
@@ -629,6 +645,13 @@ id|usb_bus
 op_star
 id|bus
 suffix:semicolon
+DECL|member|root_hub
+r_struct
+id|ohci_device
+op_star
+id|root_hub
+suffix:semicolon
+multiline_comment|/* Root hub &amp; controller */
 DECL|member|interrupt_list
 r_struct
 id|list_head
@@ -656,6 +679,16 @@ id|ed
 suffix:semicolon
 r_void
 id|show_ohci_td
+c_func
+(paren
+r_struct
+id|ohci_td
+op_star
+id|td
+)paren
+suffix:semicolon
+r_void
+id|show_ohci_td_chain
 c_func
 (paren
 r_struct

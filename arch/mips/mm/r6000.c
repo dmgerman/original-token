@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: r6000.c,v 1.6 1998/10/16 19:22:44 ralf Exp $&n; *&n; * r6000.c: MMU and cache routines for the R6000 processors.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/* $Id: r6000.c,v 1.6 1999/01/04 16:03:54 ralf Exp $&n; *&n; * r6000.c: MMU and cache routines for the R6000 processors.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

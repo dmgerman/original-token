@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * indy_mc.c: Routines for manipulating the INDY memory controller.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: indy_mc.c,v 1.3 1998/04/25 15:43:32 ralf Exp $&n; */
+multiline_comment|/*&n; * indy_mc.c: Routines for manipulating the INDY memory controller.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; * Copyright (C) 1999 Andrew R. Baker (andrewb@uab.edu) - Indigo2 changes&n; *&n; * $Id: indy_mc.c,v 1.4 1999/05/07 22:34:32 ulfc Exp $&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/addrspace.h&gt;
@@ -366,6 +366,12 @@ op_or_assign
 id|SGIMC_GIOPARM_MASTEREISA
 suffix:semicolon
 multiline_comment|/* EISA masters */
+multiline_comment|/* someone forgot this poor little guy... */
+id|tmpreg
+op_or_assign
+id|SGIMC_GIOPARM_GFX64
+suffix:semicolon
+multiline_comment|/* GFX at 64 bits */
 )brace
 )brace
 id|mcmisc_regs-&gt;gioparm

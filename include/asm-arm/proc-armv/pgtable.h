@@ -137,7 +137,7 @@ mdefine_line|#define BAD_PAGETABLE&t;__bad_pagetable()
 DECL|macro|BAD_PAGE
 mdefine_line|#define BAD_PAGE&t;__bad_page()
 DECL|macro|ZERO_PAGE
-mdefine_line|#define ZERO_PAGE&t;((unsigned long) empty_zero_page)
+mdefine_line|#define ZERO_PAGE(vaddr)&t;((unsigned long) empty_zero_page)
 multiline_comment|/* number of bits that fit into a memory pointer */
 DECL|macro|BYTES_PER_PTR
 mdefine_line|#define BYTES_PER_PTR&t;(sizeof(unsigned long))

@@ -327,42 +327,97 @@ suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* ARCS prom memory descriptors. */
-DECL|enum|linux_memtypes
+DECL|enum|arcs_memtypes
 r_enum
-id|linux_memtypes
+id|arcs_memtypes
 (brace
-DECL|enumerator|eblock
-id|eblock
+DECL|enumerator|arcs_eblock
+id|arcs_eblock
 comma
 multiline_comment|/* exception block */
-DECL|enumerator|rvpage
-id|rvpage
+DECL|enumerator|arcs_rvpage
+id|arcs_rvpage
 comma
 multiline_comment|/* ARCS romvec page */
-DECL|enumerator|fcontig
-id|fcontig
+DECL|enumerator|arcs_fcontig
+id|arcs_fcontig
 comma
 multiline_comment|/* Contiguous and free */
-DECL|enumerator|free
-id|free
+DECL|enumerator|arcs_free
+id|arcs_free
 comma
 multiline_comment|/* Generic free memory */
-DECL|enumerator|bmem
-id|bmem
+DECL|enumerator|arcs_bmem
+id|arcs_bmem
 comma
 multiline_comment|/* Borken memory, don&squot;t use */
-DECL|enumerator|prog
-id|prog
+DECL|enumerator|arcs_prog
+id|arcs_prog
 comma
 multiline_comment|/* A loaded program resides here */
-DECL|enumerator|atmp
-id|atmp
+DECL|enumerator|arcs_atmp
+id|arcs_atmp
 comma
 multiline_comment|/* ARCS temporary storage area, wish Sparc OpenBoot told this */
-DECL|enumerator|aperm
-id|aperm
+DECL|enumerator|arcs_aperm
+id|arcs_aperm
 comma
 multiline_comment|/* ARCS permanent storage... */
+)brace
+suffix:semicolon
+multiline_comment|/* ARC has slightly different types than ARCS */
+DECL|enum|arc_memtypes
+r_enum
+id|arc_memtypes
+(brace
+DECL|enumerator|arc_eblock
+id|arc_eblock
+comma
+multiline_comment|/* exception block */
+DECL|enumerator|arc_rvpage
+id|arc_rvpage
+comma
+multiline_comment|/* romvec page */
+DECL|enumerator|arc_free
+id|arc_free
+comma
+multiline_comment|/* Generic free memory */
+DECL|enumerator|arc_bmem
+id|arc_bmem
+comma
+multiline_comment|/* Borken memory, don&squot;t use */
+DECL|enumerator|arc_prog
+id|arc_prog
+comma
+multiline_comment|/* A loaded program resides here */
+DECL|enumerator|arc_atmp
+id|arc_atmp
+comma
+multiline_comment|/* temporary storage area */
+DECL|enumerator|arc_aperm
+id|arc_aperm
+comma
+multiline_comment|/* permanent storage */
+DECL|enumerator|arc_fcontig
+id|arc_fcontig
+comma
+multiline_comment|/* Contiguous and free */
+)brace
+suffix:semicolon
+DECL|union|linux_memtypes
+r_union
+id|linux_memtypes
+(brace
+DECL|member|arcs
+r_enum
+id|arcs_memtypes
+id|arcs
+suffix:semicolon
+DECL|member|arc
+r_enum
+id|arc_memtypes
+id|arc
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|linux_mdesc
@@ -370,7 +425,7 @@ r_struct
 id|linux_mdesc
 (brace
 DECL|member|type
-r_enum
+r_union
 id|linux_memtypes
 id|type
 suffix:semicolon

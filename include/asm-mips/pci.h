@@ -7,8 +7,7 @@ r_struct
 id|pci_ops
 (brace
 DECL|member|pcibios_fixup
-r_int
-r_int
+r_void
 (paren
 op_star
 id|pcibios_fixup

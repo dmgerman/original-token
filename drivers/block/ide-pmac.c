@@ -883,12 +883,12 @@ op_assign
 op_amp
 id|pmac_ide_dmaproc
 suffix:semicolon
-macro_line|#ifdef CONFIG_PMAC_IDEDMA_AUTO
+macro_line|#ifdef CONFIG_IDEDMA_PMAC_AUTO
 id|hwif-&gt;autodma
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#endif
+macro_line|#endif /* CONFIG_IDEDMA_PMAC_AUTO */
 )brace
 multiline_comment|/*&n; * pmac_ide_build_dmatable builds the DBDMA command list&n; * for a transfer and sets the DBDMA channel to point to it.&n; */
 r_static

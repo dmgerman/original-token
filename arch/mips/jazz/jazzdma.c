@@ -245,6 +245,10 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 multiline_comment|/* check arguments */
 r_if
 c_cond
@@ -302,6 +306,11 @@ id|VDMA_ERROR
 suffix:semicolon
 multiline_comment|/* invalid physical address */
 )brace
+id|save_and_cli
+(paren
+id|flags
+)paren
+suffix:semicolon
 multiline_comment|/*&n;     * Find free chunk&n;     */
 id|pages
 op_assign
@@ -352,10 +361,17 @@ id|pages
 OG
 id|VDMA_PGTBL_ENTRIES
 )paren
+(brace
 multiline_comment|/* nothing free */
+id|restore_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_return
 id|VDMA_ERROR
 suffix:semicolon
+)brace
 id|last
 op_assign
 id|first
@@ -601,6 +617,12 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_return
 id|laddr
 suffix:semicolon

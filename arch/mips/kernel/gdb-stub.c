@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  arch/mips/kernel/gdb-stub.c&n; *&n; *  Originally written by Glenn Engel, Lake Stevens Instrument Division&n; *&n; *  Contributed by HP Systems&n; *&n; *  Modified for SPARC by Stu Grossman, Cygnus Support.&n; *&n; *  Modified for Linux/MIPS (and MIPS in general) by Andreas Busse&n; *  Send complaints, suggestions etc. to &lt;andy@waldorf-gmbh.de&gt;&n; *&n; *  Copyright (C) 1995 Andreas Busse&n; *&n; * $Id: gdb-stub.c,v 1.4 1997/12/02 05:51:06 ralf Exp $&n; */
+multiline_comment|/*&n; *  arch/mips/kernel/gdb-stub.c&n; *&n; *  Originally written by Glenn Engel, Lake Stevens Instrument Division&n; *&n; *  Contributed by HP Systems&n; *&n; *  Modified for SPARC by Stu Grossman, Cygnus Support.&n; *&n; *  Modified for Linux/MIPS (and MIPS in general) by Andreas Busse&n; *  Send complaints, suggestions etc. to &lt;andy@waldorf-gmbh.de&gt;&n; *&n; *  Copyright (C) 1995 Andreas Busse&n; *&n; * $Id: gdb-stub.c,v 1.7 1999/06/12 18:39:28 ulfc Exp $&n; */
 multiline_comment|/*&n; *  To enable debugger support, two things need to happen.  One, a&n; *  call to set_debug_traps() is necessary in order to allow any breakpoints&n; *  or error conditions to be properly intercepted and reported to gdb.&n; *  Two, a breakpoint needs to be generated to begin communication.  This&n; *  is most easily accomplished by a call to breakpoint().  Breakpoint()&n; *  simulates a breakpoint by executing a BREAK instruction.&n; *&n; *&n; *    The following gdb commands are supported:&n; *&n; * command          function                               Return value&n; *&n; *    g             return the value of the CPU registers  hex data or ENN&n; *    G             set the value of the CPU registers     OK or ENN&n; *&n; *    mAA..AA,LLLL  Read LLLL bytes at address AA..AA      hex data or ENN&n; *    MAA..AA,LLLL: Write LLLL bytes at address AA.AA      OK or ENN&n; *&n; *    c             Resume at current address              SNN   ( signal NN)&n; *    cAA..AA       Continue at address AA..AA             SNN&n; *&n; *    s             Step one instruction                   SNN&n; *    sAA..AA       Step one instruction from AA..AA       SNN&n; *&n; *    k             kill&n; *&n; *    ?             What was the last sigval ?             SNN   (signal NN)&n; *&n; *    bBB..BB&t;    Set baud rate to BB..BB&t;&t;   OK or BNN, then sets&n; *&t;&t;&t;&t;&t;&t;&t;   baud rate&n; *&n; * All commands and responses are sent with a packet which includes a&n; * checksum.  A packet consists of&n; *&n; * $&lt;packet info&gt;#&lt;checksum&gt;.&n; *&n; * where&n; * &lt;packet info&gt; :: &lt;characters representing the command or response&gt;&n; * &lt;checksum&gt;    :: &lt; two hex digits computed as modulo 256 sum of &lt;packetinfo&gt;&gt;&n; *&n; * When a packet is received, it is first acknowledged with either &squot;+&squot; or &squot;-&squot;.&n; * &squot;+&squot; indicates a successful transfer.  &squot;-&squot; indicates a failed transfer.&n; *&n; * Example:&n; *&n; * Host:                  Reply:&n; * $m0,10#2a               +$00010203040506070809101112131415#42&n; *&n; */
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -947,7 +947,7 @@ id|SIGILL
 comma
 multiline_comment|/* reserved instruction */
 multiline_comment|/*&t;{ 11, SIGILL },&t;&t;*/
-multiline_comment|/* cpu unusable */
+multiline_comment|/* CPU unusable */
 (brace
 l_int|12
 comma
@@ -1116,11 +1116,6 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-id|breakpoint
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/*&n; * Trap handler for memory errors.  This just sets mem_err to be non-zero.  It&n; * assumes that %l1 is non-zero.  This should be safe, as it is doubtful that&n; * 0 would ever contain code that could mem fault.  This routine will skip&n; * past the faulting instruction after setting mem_err.&n; */
 DECL|function|fltr_set_mem_err
@@ -1134,7 +1129,7 @@ r_void
 (brace
 multiline_comment|/* FIXME: Needs to be written... */
 )brace
-multiline_comment|/*&n; * Convert the MIPS hardware trap type code to a unix signal number.&n; */
+multiline_comment|/*&n; * Convert the MIPS hardware trap type code to a Unix signal number.&n; */
 DECL|function|computeSignal
 r_static
 r_int

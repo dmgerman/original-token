@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * loadmmu.c: Setup cpu/cache specific function ptrs at boot time.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: loadmmu.c,v 1.7 1998/03/27 08:53:41 ralf Exp $&n; */
+multiline_comment|/*&n; * loadmmu.c: Setup cpu/cache specific function ptrs at boot time.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: loadmmu.c,v 1.10 1999/06/17 13:25:51 ralf Exp $&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -129,6 +129,22 @@ r_void
 (paren
 op_star
 id|dma_cache_wback_inv
+)paren
+(paren
+r_int
+r_int
+id|start
+comma
+r_int
+r_int
+id|size
+)paren
+suffix:semicolon
+DECL|variable|dma_cache_wback
+r_void
+(paren
+op_star
+id|dma_cache_wback
 )paren
 (paren
 r_int
@@ -314,6 +330,7 @@ suffix:semicolon
 DECL|variable|resume
 id|asmlinkage
 r_void
+op_star
 (paren
 op_star
 id|resume
@@ -321,7 +338,11 @@ id|resume
 (paren
 r_void
 op_star
-id|tsk
+id|last
+comma
+r_void
+op_star
+id|next
 )paren
 suffix:semicolon
 r_extern
@@ -387,6 +408,9 @@ id|CPU_R2000
 suffix:colon
 r_case
 id|CPU_R3000
+suffix:colon
+r_case
+id|CPU_R3000A
 suffix:colon
 id|printk
 c_func

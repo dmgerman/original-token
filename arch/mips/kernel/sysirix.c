@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sysirix.c,v 1.12 1998/08/17 10:16:27 ralf Exp $&n; *&n; * sysirix.c: IRIX system call emulation.&n; *&n; * Copyright (C) 1996 David S. Miller&n; * Copyright (C) 1997 Miguel de Icaza&n; * Copyright (C) 1997, 1998 Ralf Baechle&n; */
+multiline_comment|/* $Id: sysirix.c,v 1.20 1999/06/17 13:25:48 ralf Exp $&n; *&n; * sysirix.c: IRIX system call emulation.&n; *&n; * Copyright (C) 1996 David S. Miller&n; * Copyright (C) 1997 Miguel de Icaza&n; * Copyright (C) 1997, 1998 Ralf Baechle&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
@@ -540,7 +540,7 @@ id|error
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Compatability indeed. */
+multiline_comment|/* Compatibility indeed. */
 r_break
 suffix:semicolon
 r_case
@@ -2991,12 +2991,12 @@ id|error
 comma
 id|i
 suffix:semicolon
-multiline_comment|/* We don&squot;t support this feature yet. */
 id|lock_kernel
 c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* We don&squot;t support this feature yet. */
 r_if
 c_cond
 (paren
@@ -7759,34 +7759,18 @@ op_amp
 id|buf-&gt;f_namemax
 )paren
 suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|32
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|__put_user
+id|__clear_user
 c_func
 (paren
-l_int|0
-comma
 op_amp
 id|buf-&gt;f_fstr
-(braket
-id|i
-)braket
+comma
+r_sizeof
+(paren
+id|buf-&gt;f_fstr
+)paren
 )paren
 suffix:semicolon
-)brace
 id|out_f
 suffix:colon
 id|fput
@@ -9530,34 +9514,20 @@ op_amp
 id|buf-&gt;f_namemax
 )paren
 suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|32
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|__put_user
+id|__clear_user
 c_func
 (paren
-l_int|0
+id|buf-&gt;f_fstr
 comma
-op_amp
+r_sizeof
+(paren
 id|buf-&gt;f_fstr
 (braket
 id|i
 )braket
 )paren
+)paren
 suffix:semicolon
-)brace
 id|out_f
 suffix:colon
 id|fput
@@ -9888,9 +9858,6 @@ op_plus
 l_int|1
 )paren
 suffix:semicolon
-r_int
-id|retval
-suffix:semicolon
 macro_line|#ifdef DEBUG_GETDENTS
 id|printk
 c_func
@@ -9918,16 +9885,10 @@ id|reclen
 OG
 id|buf-&gt;count
 )paren
-(brace
-id|retval
-op_assign
+r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-r_goto
-id|out
-suffix:semicolon
-)brace
 id|dirent
 op_assign
 id|buf-&gt;previous
@@ -10012,14 +9973,8 @@ id|buf-&gt;count
 op_sub_assign
 id|reclen
 suffix:semicolon
-id|retval
-op_assign
-l_int|0
-suffix:semicolon
-id|out
-suffix:colon
 r_return
-id|retval
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|irix_ngetdents
@@ -10117,19 +10072,6 @@ suffix:semicolon
 id|inode
 op_assign
 id|file-&gt;f_dentry-&gt;d_inode
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|inode
-)paren
-r_goto
-id|out_putf
-suffix:semicolon
-id|inode
-op_assign
-id|dentry-&gt;d_inode
 suffix:semicolon
 r_if
 c_cond
@@ -10426,9 +10368,6 @@ op_plus
 l_int|1
 )paren
 suffix:semicolon
-r_int
-id|retval
-suffix:semicolon
 id|buf-&gt;error
 op_assign
 op_minus
@@ -10442,16 +10381,10 @@ id|reclen
 OG
 id|buf-&gt;count
 )paren
-(brace
-id|retval
-op_assign
+r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-r_goto
-id|out
-suffix:semicolon
-)brace
 id|dirent
 op_assign
 id|buf-&gt;previous
@@ -10496,7 +10429,7 @@ op_amp
 id|dirent-&gt;d_reclen
 )paren
 suffix:semicolon
-id|copy_to_user
+id|__copy_to_user
 c_func
 (paren
 id|dirent-&gt;d_name
@@ -10536,14 +10469,8 @@ id|buf-&gt;count
 op_sub_assign
 id|reclen
 suffix:semicolon
-id|retval
-op_assign
-l_int|0
-suffix:semicolon
-id|out
-suffix:colon
 r_return
-id|retval
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|irix_getdents64

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: setup.c,v 1.13 1998/08/17 13:57:45 ralf Exp $&n; *&n; * Setup pointers to hardware-dependent routines.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997, 1998 by Ralf Baechle&n; */
+multiline_comment|/* $Id: setup.c,v 1.10 1999/01/04 16:03:59 ralf Exp $&n; *&n; * Setup pointers to hardware-dependent routines.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997, 1998 by Ralf Baechle&n; */
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
@@ -8,6 +8,10 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/timex.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#include &lt;linux/mc146818rtc.h&gt;
+macro_line|#include &lt;linux/console.h&gt;
+macro_line|#include &lt;linux/fb.h&gt;
+macro_line|#include &lt;linux/pc_keyb.h&gt;
 macro_line|#include &lt;asm/bcache.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/keyboard.h&gt;
@@ -71,14 +75,6 @@ r_void
 suffix:semicolon
 r_extern
 r_void
-id|sni_rm200_keyboard_setup
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
 id|sni_machine_restart
 c_func
 (paren
@@ -112,6 +108,11 @@ r_extern
 r_struct
 id|rtc_ops
 id|std_rtc_ops
+suffix:semicolon
+r_extern
+r_struct
+id|kbd_ops
+id|std_kbd_ops
 suffix:semicolon
 DECL|function|__initfunc
 id|__initfunc
@@ -154,7 +155,7 @@ comma
 l_string|&quot;pic2&quot;
 )paren
 suffix:semicolon
-id|setup_x86_irq
+id|i8259_setup_irq
 c_func
 (paren
 l_int|2
@@ -170,6 +171,8 @@ c_func
 id|ST0_IM
 comma
 id|IE_IRQ1
+op_or
+id|IE_IRQ3
 op_or
 id|IE_IRQ4
 )paren
@@ -236,7 +239,7 @@ l_int|0x40
 )paren
 suffix:semicolon
 multiline_comment|/* MSB */
-id|setup_x86_irq
+id|i8259_setup_irq
 c_func
 (paren
 l_int|0
@@ -532,10 +535,6 @@ id|mips_io_port_base
 op_assign
 id|SNI_PORT_BASE
 suffix:semicolon
-id|keyboard_setup
-op_assign
-id|sni_rm200_keyboard_setup
-suffix:semicolon
 multiline_comment|/*&n;&t; * Setup (E)ISA I/O memory access stuff&n;&t; */
 id|isa_slot_offset
 op_assign
@@ -640,10 +639,26 @@ op_amp
 id|std_ide_ops
 suffix:semicolon
 macro_line|#endif
+id|conswitchp
+op_assign
+op_amp
+id|vga_con
+suffix:semicolon
 id|rtc_ops
 op_assign
 op_amp
 id|std_rtc_ops
 suffix:semicolon
+id|kbd_ops
+op_assign
+op_amp
+id|std_kbd_ops
+suffix:semicolon
+macro_line|#ifdef CONFIG_PSMOUSE
+id|aux_device_present
+op_assign
+l_int|0xaa
+suffix:semicolon
+macro_line|#endif
 )brace
 eof

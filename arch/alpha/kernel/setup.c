@@ -119,7 +119,7 @@ op_star
 suffix:semicolon
 multiline_comment|/*&n; * This is setup by the secondary bootstrap loader.  Because&n; * the zero page is zeroed out as soon as the vm system is&n; * initialized, we need to copy things out into a more permanent&n; * place.&n; */
 DECL|macro|PARAM
-mdefine_line|#define PARAM&t;&t;&t;ZERO_PAGE
+mdefine_line|#define PARAM&t;&t;&t;ZERO_PAGE(0)
 DECL|macro|COMMAND_LINE
 mdefine_line|#define COMMAND_LINE&t;&t;((char*)(PARAM + 0x0000))
 DECL|macro|COMMAND_LINE_SIZE

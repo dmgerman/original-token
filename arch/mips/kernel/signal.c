@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: signal.c,v 1.24 1998/09/16 22:50:42 ralf Exp $&n; *&n; *  linux/arch/mips/kernel/signal.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1994, 1995, 1996, 1997, 1998  Ralf Baechle&n; *&n; * XXX Handle lazy fp context switches correctly.&n; */
+multiline_comment|/* $Id: signal.c,v 1.19 1999/06/17 13:25:47 ralf Exp $&n; *&n; *  linux/arch/mips/kernel/signal.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1994, 1995, 1996, 1997, 1998  Ralf Baechle&n; *&n; * XXX Handle lazy fp context switches correctly.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -2122,6 +2122,16 @@ r_case
 id|ERESTARTNOINTR
 suffix:colon
 multiline_comment|/* Userland will reload $v0.  */
+id|regs-&gt;regs
+(braket
+l_int|7
+)braket
+op_assign
+id|regs-&gt;regs
+(braket
+l_int|26
+)braket
+suffix:semicolon
 id|regs-&gt;cp0_epc
 op_sub_assign
 l_int|8
@@ -2545,6 +2555,9 @@ suffix:colon
 r_case
 id|SIGSEGV
 suffix:colon
+r_case
+id|SIGBUS
+suffix:colon
 id|lock_kernel
 c_func
 (paren
@@ -2591,6 +2604,12 @@ op_amp
 id|current-&gt;signal
 comma
 id|signr
+)paren
+suffix:semicolon
+id|recalc_sigpending
+c_func
+(paren
+id|current
 )paren
 suffix:semicolon
 id|current-&gt;flags
@@ -2677,6 +2696,16 @@ op_eq
 id|ERESTARTNOINTR
 )paren
 (brace
+id|regs-&gt;regs
+(braket
+l_int|7
+)braket
+op_assign
+id|regs-&gt;regs
+(braket
+l_int|26
+)braket
+suffix:semicolon
 id|regs-&gt;cp0_epc
 op_sub_assign
 l_int|8

@@ -4335,6 +4335,7 @@ id|failed
 op_ne
 l_int|NULL
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -4354,6 +4355,21 @@ id|drive-&gt;name
 suffix:semicolon
 id|failed
 op_increment
+suffix:semicolon
+)brace
+multiline_comment|/* We must remove proc entries defined in this module.&n;&t;&t;   Otherwise we oops while accessing these entries */
+r_if
+c_cond
+(paren
+id|drive-&gt;proc
+)paren
+id|ide_remove_proc_entries
+c_func
+(paren
+id|drive-&gt;proc
+comma
+id|idedisk_proc
+)paren
 suffix:semicolon
 )brace
 id|ide_unregister_module

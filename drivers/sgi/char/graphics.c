@@ -1,24 +1,39 @@
-multiline_comment|/*&n; * gfx.c: support for SGI&squot;s /dev/graphics, /dev/opengl&n; *&n; * Author: Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * On IRIX, /dev/graphics is [10, 146]&n; *          /dev/opengl   is [10, 147]&n; *&n; * From a mail with Mark J. Kilgard, /dev/opengl and /dev/graphics are&n; * the same thing, the use of /dev/graphics seems deprecated though.&n; *&n; * The reason that the original SGI programmer had to use only one&n; * device for all the graphic cards on the system will remain a&n; * mistery for the rest of our lives.  Why some ioctls take a board&n; * number and some others not?  Mistery.  Why do they map the hardware&n; * registers into the user address space with an ioctl instead of&n; * mmap?  Mistery too.  Why they did not use the standard way of&n; * making ioctl constants and instead sticked a random constant?&n; * Mistery too.&n; *&n; * We implement those misterious things, and tried not to think about&n; * the reasons behind them.&n; */
+multiline_comment|/* $Id: graphics.c,v 1.16 1999/04/01 23:45:00 ulfc Exp $&n; *&n; * gfx.c: support for SGI&squot;s /dev/graphics, /dev/opengl&n; *&n; * Author: Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *         Ralf Baechle (ralf@gnu.org)&n; *         Ulf Carlsson (ulfc@bun.falkenberg.se)&n; *&n; * On IRIX, /dev/graphics is [10, 146]&n; *          /dev/opengl   is [10, 147]&n; *&n; * From a mail with Mark J. Kilgard, /dev/opengl and /dev/graphics are&n; * the same thing, the use of /dev/graphics seems deprecated though.&n; *&n; * The reason that the original SGI programmer had to use only one&n; * device for all the graphic cards on the system will remain a&n; * mistery for the rest of our lives.  Why some ioctls take a board&n; * number and some others not?  Mistery.  Why do they map the hardware&n; * registers into the user address space with an ioctl instead of&n; * mmap?  Mistery too.  Why they did not use the standard way of&n; * making ioctl constants and instead sticked a random constant?&n; * Mistery too.&n; *&n; * We implement those misterious things, and tried not to think about&n; * the reasons behind them.&n; */
+macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
+macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &quot;gconsole.h&quot;
 macro_line|#include &quot;graphics.h&quot;
+macro_line|#include &quot;usema.h&quot;
 macro_line|#include &lt;asm/gfx.h&gt;
 macro_line|#include &lt;asm/rrm.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/newport.h&gt;
+DECL|macro|DEBUG
+mdefine_line|#define DEBUG
 multiline_comment|/* The boards */
-macro_line|#include &quot;newport.h&quot;
-macro_line|#ifdef PRODUCTION_DRIVER
-DECL|macro|enable_gconsole
-mdefine_line|#define enable_gconsole()
-DECL|macro|disable_gconsole
-mdefine_line|#define disable_gconsole()
-macro_line|#endif
+r_extern
+r_struct
+id|graphics_ops
+op_star
+id|newport_probe
+(paren
+r_int
+comma
+r_const
+r_char
+op_star
+op_star
+)paren
+suffix:semicolon
 DECL|variable|cards
 r_static
 r_struct
@@ -35,6 +50,7 @@ id|boards
 suffix:semicolon
 DECL|macro|GRAPHICS_CARD
 mdefine_line|#define GRAPHICS_CARD(inode) 0
+multiline_comment|/*&n;void enable_gconsole(void) {};&n;void disable_gconsole(void) {};&n;*/
 r_int
 DECL|function|sgi_graphics_open
 id|sgi_graphics_open
@@ -50,6 +66,74 @@ op_star
 id|file
 )paren
 (brace
+r_struct
+id|newport_regs
+op_star
+id|nregs
+op_assign
+(paren
+r_struct
+id|newport_regs
+op_star
+)paren
+id|KSEG1ADDR
+c_func
+(paren
+id|cards
+(braket
+l_int|0
+)braket
+dot
+id|g_regs
+)paren
+suffix:semicolon
+id|newport_wait
+c_func
+(paren
+)paren
+suffix:semicolon
+id|nregs-&gt;set.wrmask
+op_assign
+l_int|0xffffffff
+suffix:semicolon
+id|nregs-&gt;set.drawmode0
+op_assign
+(paren
+id|NPORT_DMODE0_DRAW
+op_or
+id|NPORT_DMODE0_BLOCK
+op_or
+id|NPORT_DMODE0_DOSETUP
+op_or
+id|NPORT_DMODE0_STOPX
+op_or
+id|NPORT_DMODE0_STOPY
+)paren
+suffix:semicolon
+id|nregs-&gt;set.colori
+op_assign
+l_int|1
+suffix:semicolon
+id|nregs-&gt;set.xystarti
+op_assign
+(paren
+l_int|0
+op_lshift
+l_int|16
+)paren
+op_or
+l_int|0
+suffix:semicolon
+id|nregs-&gt;go.xyendi
+op_assign
+(paren
+l_int|1280
+op_lshift
+l_int|16
+)paren
+op_or
+l_int|1024
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -612,6 +696,16 @@ id|g_owner
 op_assign
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|cards
+(braket
+id|board
+)braket
+dot
+id|g_reset_console
+)paren
 (paren
 op_star
 id|cards
@@ -649,12 +743,20 @@ r_int
 id|address
 comma
 r_int
-id|write_access
+id|no_share
 )paren
 (brace
-r_int
-r_int
-id|page
+id|pgd_t
+op_star
+id|pgd
+suffix:semicolon
+id|pmd_t
+op_star
+id|pmd
+suffix:semicolon
+id|pte_t
+op_star
+id|pte
 suffix:semicolon
 r_int
 id|board
@@ -664,7 +766,13 @@ id|GRAPHICS_CARD
 id|vma-&gt;vm_dentry-&gt;d_inode-&gt;i_rdev
 )paren
 suffix:semicolon
-macro_line|#ifdef DEBUG_GRAPHICS
+r_int
+r_int
+id|virt_add
+comma
+id|phys_add
+suffix:semicolon
+macro_line|#ifdef DEBUG
 id|printk
 (paren
 l_string|&quot;Got a page fault for board %d address=%lx guser=%lx&bslash;n&quot;
@@ -673,6 +781,10 @@ id|board
 comma
 id|address
 comma
+(paren
+r_int
+r_int
+)paren
 id|cards
 (braket
 id|board
@@ -682,7 +794,7 @@ id|g_user
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* 1. figure out if another process has this mapped,&n;&t; * and revoke the mapping in that case.&n;&t; */
+multiline_comment|/* Figure out if another process has this mapped, and revoke the mapping&n;&t; * in that case. */
 r_if
 c_cond
 (paren
@@ -703,8 +815,9 @@ op_ne
 id|current
 )paren
 (brace
-multiline_comment|/* FIXME: save graphics context here, dump it to rendering node? */
+multiline_comment|/* FIXME: save graphics context here, dump it to rendering&n;&t;&t; * node? */
 id|remove_mapping
+c_func
 (paren
 id|cards
 (braket
@@ -728,93 +841,88 @@ id|g_user
 op_assign
 id|current
 suffix:semicolon
-macro_line|#if DEBUG_GRAPHICS
-id|printk
-(paren
-l_string|&quot;Registers: 0x%lx&bslash;n&quot;
-comma
-id|cards
-(braket
-id|board
-)braket
-dot
-id|g_regs
-)paren
-suffix:semicolon
-id|printk
-(paren
-l_string|&quot;vm_start:  0x%lx&bslash;n&quot;
-comma
-id|vma-&gt;vm_start
-)paren
-suffix:semicolon
-id|printk
-(paren
-l_string|&quot;address:   0x%lx&bslash;n&quot;
-comma
-id|address
-)paren
-suffix:semicolon
-id|printk
-(paren
-l_string|&quot;diff:      0x%lx&bslash;n&quot;
-comma
-(paren
-id|address
-op_minus
-id|vma-&gt;vm_start
-)paren
-)paren
-suffix:semicolon
-id|printk
-(paren
-l_string|&quot;page/pfn:  0x%lx&bslash;n&quot;
-comma
-id|page
-)paren
-suffix:semicolon
-id|printk
-(paren
-l_string|&quot;TLB entry: %lx&bslash;n&quot;
-comma
-id|pte_val
-(paren
-id|mk_pte
-(paren
-id|page
-op_plus
-id|PAGE_OFFSET
-comma
-id|PAGE_USERIO
-)paren
-)paren
-)paren
-suffix:semicolon
-macro_line|#endif
-multiline_comment|/* 2. Map this into the current process address space */
-id|page
+multiline_comment|/* Map the physical address of the newport registers into the address&n;&t; * space of this process */
+id|virt_add
 op_assign
-(paren
-(paren
+id|address
+op_amp
+id|PAGE_MASK
+suffix:semicolon
+id|phys_add
+op_assign
 id|cards
 (braket
 id|board
 )braket
 dot
 id|g_regs
-)paren
 op_plus
-(paren
-id|address
+id|virt_add
 op_minus
 id|vma-&gt;vm_start
+suffix:semicolon
+id|remap_page_range
+c_func
+(paren
+id|virt_add
+comma
+id|phys_add
+comma
+id|PAGE_SIZE
+comma
+id|vma-&gt;vm_page_prot
+)paren
+suffix:semicolon
+id|pgd
+op_assign
+id|pgd_offset
+c_func
+(paren
+id|current-&gt;mm
+comma
+id|address
+)paren
+suffix:semicolon
+id|pmd
+op_assign
+id|pmd_offset
+c_func
+(paren
+id|pgd
+comma
+id|address
+)paren
+suffix:semicolon
+id|pte
+op_assign
+id|pte_offset
+c_func
+(paren
+id|pmd
+comma
+id|address
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;page: %08lx&bslash;n&quot;
+comma
+id|pte_page
+c_func
+(paren
+op_star
+id|pte
 )paren
 )paren
 suffix:semicolon
 r_return
-id|page
-op_plus
-id|PAGE_OFFSET
+id|pte_page
+c_func
+(paren
+op_star
+id|pte
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * We convert a GFX ioctl for mapping hardware registers, in a nice sys_mmap&n; * call, which takes care of everything that must be taken care of.&n; *&n; */
@@ -861,11 +969,6 @@ DECL|function|sgi_graphics_mmap
 id|sgi_graphics_mmap
 (paren
 r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
 id|file
 op_star
 id|file
@@ -909,21 +1012,18 @@ op_assign
 id|PAGE_USERIO
 suffix:semicolon
 multiline_comment|/* final setup */
-id|vma-&gt;vm_dentry
+id|vma-&gt;vm_file
 op_assign
-id|dget
-(paren
-id|file-&gt;f_dentry
-)paren
+id|file
 suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#if 0
 multiline_comment|/* Do any post card-detection setup on graphics_ops */
 r_static
 r_void
-DECL|function|graphics_ops_post_init
 id|graphics_ops_post_init
 (paren
 r_int
@@ -960,6 +1060,7 @@ op_star
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|variable|sgi_graphics_fops
 r_struct
 id|file_operations
@@ -1042,11 +1143,15 @@ id|sgi_graphics_fops
 )brace
 suffix:semicolon
 multiline_comment|/* This is called later from the misc-init routine */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
-DECL|function|gfx_register
 id|gfx_register
 (paren
 r_void
+)paren
 )paren
 (brace
 id|misc_register
@@ -1062,8 +1167,11 @@ id|dev_opengl
 )paren
 suffix:semicolon
 )brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
-DECL|function|gfx_init
 id|gfx_init
 (paren
 r_const
@@ -1072,7 +1180,9 @@ op_star
 op_star
 id|name
 )paren
+)paren
 (brace
+macro_line|#if 0
 r_struct
 id|console_ops
 op_star
@@ -1083,6 +1193,7 @@ id|graphics_ops
 op_star
 id|g
 suffix:semicolon
+macro_line|#endif
 id|printk
 (paren
 l_string|&quot;GFX INIT: &quot;
@@ -1096,6 +1207,10 @@ id|usema_init
 (paren
 )paren
 suffix:semicolon
+id|boards
+op_increment
+suffix:semicolon
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -1136,6 +1251,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* Add more graphic drivers here */
 multiline_comment|/* Keep passing console around */
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1143,16 +1259,140 @@ id|boards
 OG
 id|MAXCARDS
 )paren
-(brace
 id|printk
 (paren
+id|KERN_WARNING
 l_string|&quot;Too many cards found on the system&bslash;n&quot;
 )paren
 suffix:semicolon
-id|prom_halt
+)brace
+macro_line|#ifdef MODULE
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_static
+r_int
+id|initiated
+op_assign
+l_int|0
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;SGI Newport Graphics version %i.%i.%i&bslash;n&quot;
+comma
+l_int|42
+comma
+l_int|54
+comma
+l_int|69
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|initiated
+op_increment
+)paren
+(brace
+id|shmiq_init
+c_func
 (paren
 )paren
 suffix:semicolon
+id|usema_init
+c_func
+(paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Adding first board&bslash;n&quot;
+)paren
+suffix:semicolon
+id|boards
+op_increment
+suffix:semicolon
+id|cards
+(braket
+l_int|0
+)braket
+dot
+id|g_regs
+op_assign
+l_int|0x1f0f0000
+suffix:semicolon
+id|cards
+(braket
+l_int|0
+)braket
+dot
+id|g_regs_size
+op_assign
+r_sizeof
+(paren
+r_struct
+id|newport_regs
+)paren
+suffix:semicolon
 )brace
+id|printk
+c_func
+(paren
+l_string|&quot;Boards: %d&bslash;n&quot;
+comma
+id|boards
+)paren
+suffix:semicolon
+id|misc_register
+(paren
+op_amp
+id|dev_graphics
+)paren
+suffix:semicolon
+id|misc_register
+(paren
+op_amp
+id|dev_opengl
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
 )brace
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Shutting down SGI Newport Graphics&bslash;n&quot;
+)paren
+suffix:semicolon
+id|misc_deregister
+(paren
+op_amp
+id|dev_graphics
+)paren
+suffix:semicolon
+id|misc_deregister
+(paren
+op_amp
+id|dev_opengl
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 eof

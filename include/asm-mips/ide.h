@@ -242,7 +242,7 @@ op_member_access_from_pointer
 id|ide_init_hwif_ports
 c_func
 (paren
-id|hw-&gt;io_ports
+id|hw
 comma
 id|data_port
 comma

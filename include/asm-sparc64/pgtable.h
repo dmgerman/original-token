@@ -188,7 +188,7 @@ r_int
 id|phys_base
 suffix:semicolon
 DECL|macro|ZERO_PAGE
-mdefine_line|#define ZERO_PAGE&t;((unsigned long)__va(phys_base))
+mdefine_line|#define ZERO_PAGE(vaddr)&t;((unsigned long)__va(phys_base))
 multiline_comment|/* Allocate a block of RAM which is aligned to its size.&n; * This procedure can be used until the call to mem_init().&n; */
 r_extern
 r_void

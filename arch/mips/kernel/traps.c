@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: traps.c,v 1.20 1998/10/14 20:26:26 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright 1994, 1995, 1996, 1997, 1998 by Ralf Baechle&n; * Modified for R3000 by Paul M. Antoine, 1995, 1996&n; * Complete output from die() by Ulf Carlsson, 1998&n; */
+multiline_comment|/* $Id: traps.c,v 1.20 1999/06/13 16:30:34 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright 1994, 1995, 1996, 1997, 1998 by Ralf Baechle&n; * Modified for R3000 by Paul M. Antoine, 1995, 1996&n; * Complete output from die() by Ulf Carlsson, 1998&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -883,18 +883,6 @@ comma
 id|current
 )paren
 suffix:semicolon
-)brace
-DECL|function|do_ibe
-r_void
-id|do_ibe
-c_func
-(paren
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-(brace
 id|show_regs
 c_func
 (paren
@@ -909,6 +897,18 @@ l_int|1
 (brace
 suffix:semicolon
 )brace
+)brace
+DECL|function|do_ibe
+r_void
+id|do_ibe
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
 id|ibe_board_handler
 c_func
 (paren
@@ -927,20 +927,6 @@ op_star
 id|regs
 )paren
 (brace
-id|show_regs
-c_func
-(paren
-id|regs
-)paren
-suffix:semicolon
-r_while
-c_loop
-(paren
-l_int|1
-)paren
-(brace
-suffix:semicolon
-)brace
 id|dbe_board_handler
 c_func
 (paren
@@ -1402,7 +1388,7 @@ l_int|1
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * (A short test says that IRIX 5.3 sends SIGTRAP for all break&n;&t; * insns, even for break codes that indicate arithmetic failures.&n;&t; * Wiered ...)&n;&t; */
+multiline_comment|/*&n;&t; * (A short test says that IRIX 5.3 sends SIGTRAP for all break&n;&t; * insns, even for break codes that indicate arithmetic failures.&n;&t; * Weird ...)&n;&t; */
 id|force_sig
 c_func
 (paren
@@ -1977,23 +1963,33 @@ suffix:semicolon
 r_extern
 id|asmlinkage
 r_void
+op_star
 id|r4xx0_resume
 c_func
 (paren
 r_void
 op_star
-id|tsk
+id|last
+comma
+r_void
+op_star
+id|next
 )paren
 suffix:semicolon
 r_extern
 id|asmlinkage
 r_void
+op_star
 id|r2300_resume
 c_func
 (paren
 r_void
 op_star
-id|tsk
+id|last
+comma
+r_void
+op_star
+id|next
 )paren
 suffix:semicolon
 DECL|function|__initfunc

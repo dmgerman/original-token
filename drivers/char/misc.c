@@ -115,6 +115,24 @@ c_func
 r_void
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SGI_NEWPORT_GFX
+r_extern
+r_void
+id|gfx_register
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
+r_extern
+r_void
+id|streamable_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 r_extern
 r_void
 id|watchdog_init
@@ -962,6 +980,18 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_PMAC_PBOOK
 id|pmu_device_init
 c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_SGI_NEWPORT_GFX
+id|gfx_register
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_SGI
+id|streamable_init
 (paren
 )paren
 suffix:semicolon

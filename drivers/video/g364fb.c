@@ -558,7 +558,11 @@ op_assign
 (paren
 id|x
 op_star
-id|p-&gt;fontwidth
+id|fontwidth
+c_func
+(paren
+id|p
+)paren
 )paren
 op_lshift
 l_int|12
@@ -568,7 +572,11 @@ op_or
 (paren
 id|y
 op_star
-id|p-&gt;fontheight
+id|fontheight
+c_func
+(paren
+id|p
+)paren
 )paren
 op_minus
 id|p-&gt;var.yoffset
@@ -2240,8 +2248,7 @@ r_return
 l_int|1
 suffix:semicolon
 id|red
-op_rshift
-op_assign
+op_rshift_assign
 l_int|8
 suffix:semicolon
 id|green

@@ -259,7 +259,7 @@ mdefine_line|#define __READABLE&t;(_PAGE_READ | _PAGE_SILENT_READ | _PAGE_ACCESS
 DECL|macro|__WRITEABLE
 mdefine_line|#define __WRITEABLE&t;(_PAGE_WRITE | _PAGE_SILENT_WRITE | _PAGE_MODIFIED)
 DECL|macro|_PAGE_CHG_MASK
-mdefine_line|#define _PAGE_CHG_MASK  (PAGE_MASK | __READABLE | __WRITEABLE | _CACHE_MASK)
+mdefine_line|#define _PAGE_CHG_MASK  (PAGE_MASK | _PAGE_ACCESSED | _PAGE_MODIFIED | _CACHE_MASK)
 DECL|macro|PAGE_NONE
 mdefine_line|#define PAGE_NONE&t;__pgprot(_PAGE_PRESENT | _CACHE_CACHABLE_NONCOHERENT)
 DECL|macro|PAGE_SHARED
@@ -1145,11 +1145,7 @@ r_return
 id|__pte
 c_func
 (paren
-(paren
 id|physpage
-op_minus
-id|PAGE_OFFSET
-)paren
 op_or
 id|pgprot_val
 c_func
@@ -2265,11 +2261,11 @@ id|pte
 suffix:semicolon
 multiline_comment|/*&n; * Kernel with 32 bit address space&n; */
 DECL|macro|SWP_TYPE
-mdefine_line|#define SWP_TYPE(entry) (((entry) &gt;&gt; 8) &amp; 0x7f)
+mdefine_line|#define SWP_TYPE(entry) (((entry) &gt;&gt; 1) &amp; 0x3f)
 DECL|macro|SWP_OFFSET
-mdefine_line|#define SWP_OFFSET(entry) ((entry) &gt;&gt; 15)
+mdefine_line|#define SWP_OFFSET(entry) ((entry) &gt;&gt; 8)
 DECL|macro|SWP_ENTRY
-mdefine_line|#define SWP_ENTRY(type,offset) (((type) &lt;&lt; 8) | ((offset) &lt;&lt; 15))
+mdefine_line|#define SWP_ENTRY(type,offset) (((type) &lt;&lt; 1) | ((offset) &lt;&lt; 8))
 DECL|macro|module_map
 mdefine_line|#define module_map      vmalloc
 DECL|macro|module_unmap

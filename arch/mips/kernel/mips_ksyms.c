@@ -1,9 +1,10 @@
-multiline_comment|/* $Id: mips_ksyms.c,v 1.12 1998/09/16 22:50:41 ralf Exp $&n; *&n; * Export MIPS-specific functions needed for loadable modules.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997, 1998 by Ralf Baechle&n; */
+multiline_comment|/* $Id: mips_ksyms.c,v 1.19 1999/04/11 18:37:55 harald Exp $&n; *&n; * Export MIPS-specific functions needed for loadable modules.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997, 1998 by Ralf Baechle&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;linux/in6.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;asm/checksum.h&gt;
@@ -172,6 +173,13 @@ c_func
 id|strtok
 )paren
 suffix:semicolon
+DECL|variable|strpbrk
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|strpbrk
+)paren
+suffix:semicolon
 DECL|variable|clear_page
 id|EXPORT_SYMBOL
 c_func
@@ -200,46 +208,65 @@ c_func
 id|local_irq_count
 )paren
 suffix:semicolon
-singleline_comment|//EXPORT_SYMBOL(enable_irq);
-singleline_comment|//EXPORT_SYMBOL(disable_irq);
+DECL|variable|enable_irq
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|enable_irq
+)paren
+suffix:semicolon
+DECL|variable|disable_irq
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|disable_irq
+)paren
+suffix:semicolon
+DECL|variable|kernel_thread
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|kernel_thread
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Userspace access stuff.&n; */
 DECL|variable|__copy_user
-id|EXPORT_SYMBOL
+id|EXPORT_SYMBOL_NOVERS
 c_func
 (paren
 id|__copy_user
 )paren
 suffix:semicolon
 DECL|variable|__bzero
-id|EXPORT_SYMBOL
+id|EXPORT_SYMBOL_NOVERS
 c_func
 (paren
 id|__bzero
 )paren
 suffix:semicolon
 DECL|variable|__strncpy_from_user_nocheck_asm
-id|EXPORT_SYMBOL
+id|EXPORT_SYMBOL_NOVERS
 c_func
 (paren
 id|__strncpy_from_user_nocheck_asm
 )paren
 suffix:semicolon
 DECL|variable|__strncpy_from_user_asm
-id|EXPORT_SYMBOL
+id|EXPORT_SYMBOL_NOVERS
 c_func
 (paren
 id|__strncpy_from_user_asm
 )paren
 suffix:semicolon
 DECL|variable|__strlen_user_nocheck_asm
-id|EXPORT_SYMBOL
+id|EXPORT_SYMBOL_NOVERS
 c_func
 (paren
 id|__strlen_user_nocheck_asm
 )paren
 suffix:semicolon
 DECL|variable|__strlen_user_asm
-id|EXPORT_SYMBOL
+id|EXPORT_SYMBOL_NOVERS
 c_func
 (paren
 id|__strlen_user_asm
@@ -266,6 +293,27 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|flush_cache_all
+)paren
+suffix:semicolon
+DECL|variable|dma_cache_wback_inv
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|dma_cache_wback_inv
+)paren
+suffix:semicolon
+DECL|variable|dma_cache_inv
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|dma_cache_inv
+)paren
+suffix:semicolon
+DECL|variable|invalid_pte_table
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|invalid_pte_table
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Base address of ports for Intel style I/O.&n; */
@@ -355,13 +403,6 @@ id|fcr31
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_MIPS_FPE_MODULE
-DECL|variable|force_sig
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|force_sig
-)paren
-suffix:semicolon
 DECL|variable|__compute_return_epc
 id|EXPORT_SYMBOL
 c_func
@@ -384,12 +425,12 @@ id|unregister_fpe
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if CONFIG_PCI
-DECL|variable|pci_devices
+macro_line|#ifdef CONFIG_VT
+DECL|variable|screen_info
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|pci_devices
+id|screen_info
 )paren
 suffix:semicolon
 macro_line|#endif

@@ -3065,7 +3065,7 @@ op_or
 (paren
 l_int|1
 op_lshift
-id|BH_Allocated
+id|BH_Mapped
 )paren
 suffix:semicolon
 id|bh-&gt;b_size

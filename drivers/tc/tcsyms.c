@@ -1,0 +1,40 @@
+multiline_comment|/*&n; *&t;Turbo Channel Services -- Exported Symbols&n; *&n; */
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;asm/dec/tc.h&gt;
+DECL|variable|get_tc_irq_nr
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|get_tc_irq_nr
+)paren
+suffix:semicolon
+DECL|variable|claim_tc_card
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|claim_tc_card
+)paren
+suffix:semicolon
+DECL|variable|search_tc_card
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|search_tc_card
+)paren
+suffix:semicolon
+DECL|variable|get_tc_speed
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|get_tc_speed
+)paren
+suffix:semicolon
+DECL|variable|get_tc_base_addr
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|get_tc_base_addr
+)paren
+suffix:semicolon
+eof

@@ -18,7 +18,7 @@ DECL|macro|MAX_RETRY_COUNT
 mdefine_line|#define MAX_RETRY_COUNT ((60*60*HZ)/NAK_TIMEOUT)&t;/* should not take 1 minute a page! */
 macro_line|#ifndef USB_PRINTER_MAJOR
 DECL|macro|USB_PRINTER_MAJOR
-mdefine_line|#define USB_PRINTER_MAJOR 0
+mdefine_line|#define USB_PRINTER_MAJOR 63
 macro_line|#endif
 DECL|variable|mymajor
 r_static
@@ -650,6 +650,10 @@ r_int
 r_int
 id|thistime
 suffix:semicolon
+id|partial
+op_assign
+l_int|0
+suffix:semicolon
 id|thistime
 op_assign
 id|copy_size
@@ -750,6 +754,25 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|partial
+)paren
+(brace
+id|obuf
+op_add_assign
+id|partial
+suffix:semicolon
+id|thistime
+op_sub_assign
+id|partial
+suffix:semicolon
+id|maxretry
+op_assign
+id|MAX_RETRY_COUNT
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 id|result
 op_eq
 id|USB_ST_TIMEOUT
@@ -787,22 +810,14 @@ c_cond
 (paren
 op_logical_neg
 id|result
-op_amp
+op_logical_and
+op_logical_neg
 id|partial
 )paren
 (brace
-id|obuf
-op_add_assign
-id|partial
-suffix:semicolon
-id|thistime
-op_sub_assign
-id|partial
-suffix:semicolon
-)brace
-r_else
 r_break
 suffix:semicolon
+)brace
 )brace
 suffix:semicolon
 r_if
@@ -1099,9 +1114,15 @@ multiline_comment|/*&n;&t; * FIXME - this will not cope with combined printer/sc
 r_if
 c_cond
 (paren
+(paren
 id|dev-&gt;descriptor.bDeviceClass
 op_ne
 l_int|7
+op_logical_and
+id|dev-&gt;descriptor.bDeviceClass
+op_ne
+l_int|0
+)paren
 op_logical_or
 id|dev-&gt;descriptor.bNumConfigurations
 op_ne
@@ -1867,7 +1888,7 @@ c_func
 (paren
 id|mymajor
 comma
-l_string|&quot;usblplp&quot;
+l_string|&quot;usblp&quot;
 )paren
 suffix:semicolon
 )brace

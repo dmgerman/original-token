@@ -216,16 +216,18 @@ mdefine_line|#define ST0_SX&t;&t;&t;0x00000040
 DECL|macro|ST0_KX
 mdefine_line|#define ST0_KX &t;&t;&t;0x00000080
 multiline_comment|/*&n; * Bitfields in the R[23]000 cp0 status register.&n; */
+DECL|macro|ST0_IEC
+mdefine_line|#define ST0_IEC                 0x00000001
 DECL|macro|ST0_KUC
-mdefine_line|#define ST0_KUC&t;&t;&t;0x00000001
+mdefine_line|#define ST0_KUC&t;&t;&t;0x00000002
 DECL|macro|ST0_IEP
-mdefine_line|#define ST0_IEP&t;&t;&t;0x00000002
+mdefine_line|#define ST0_IEP&t;&t;&t;0x00000004
 DECL|macro|ST0_KUP
-mdefine_line|#define ST0_KUP&t;&t;&t;0x00000004
+mdefine_line|#define ST0_KUP&t;&t;&t;0x00000008
 DECL|macro|ST0_IEO
-mdefine_line|#define ST0_IEO&t;&t;&t;0x00000008
+mdefine_line|#define ST0_IEO&t;&t;&t;0x00000010
 DECL|macro|ST0_KUO
-mdefine_line|#define ST0_KUO&t;&t;&t;0x00000010
+mdefine_line|#define ST0_KUO&t;&t;&t;0x00000020
 multiline_comment|/* bits 6 &amp; 7 are reserved on R[23]000 */
 multiline_comment|/*&n; * Bits specific to the R4640/R4650&n; */
 DECL|macro|ST0_UM

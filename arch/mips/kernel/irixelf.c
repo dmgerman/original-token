@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * irixelf.c: Code to load IRIX ELF executables which conform to&n; *            the MIPS ABI.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * Based upon work which is:&n; * Copyright 1993, 1994: Eric Youngdale (ericy@cais.com).&n; */
+multiline_comment|/* $Id: irixelf.c,v 1.17 1999/06/17 13:25:45 ralf Exp $&n; *&n; * irixelf.c: Code to load IRIX ELF executables which conform to&n; *            the MIPS ABI.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * Based upon work which is:&n; * Copyright 1993, 1994: Eric Youngdale (ericy@cais.com).&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
@@ -2903,6 +2903,8 @@ id|has_interp
 comma
 id|has_ephdr
 comma
+id|size
+comma
 id|i
 suffix:semicolon
 r_char
@@ -2968,6 +2970,12 @@ id|elf_ex
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Now read in all of the header information */
+id|size
+op_assign
+id|elf_ex.e_phentsize
+op_star
+id|elf_ex.e_phnum
+suffix:semicolon
 id|elf_phdata
 op_assign
 (paren
@@ -2978,9 +2986,7 @@ op_star
 id|kmalloc
 c_func
 (paren
-id|elf_ex.e_phentsize
-op_star
-id|elf_ex.e_phnum
+id|size
 comma
 id|GFP_KERNEL
 )paren
@@ -3011,9 +3017,7 @@ op_star
 )paren
 id|elf_phdata
 comma
-id|elf_ex.e_phentsize
-op_star
-id|elf_ex.e_phnum
+id|size
 comma
 l_int|1
 )paren
@@ -3352,13 +3356,9 @@ id|current-&gt;mm-&gt;rss
 op_assign
 l_int|0
 suffix:semicolon
-id|bprm-&gt;p
-op_assign
 id|setup_arg_pages
 c_func
 (paren
-id|bprm-&gt;p
-comma
 id|bprm
 )paren
 suffix:semicolon
@@ -3673,48 +3673,66 @@ macro_line|#ifdef DEBUG_ELF
 id|printk
 c_func
 (paren
-l_string|&quot;(start_brk) %08lx&bslash;n&quot;
+l_string|&quot;(start_brk) %lx&bslash;n&quot;
 comma
+(paren
+r_int
+)paren
 id|current-&gt;mm-&gt;start_brk
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;(end_code) %08lx&bslash;n&quot;
+l_string|&quot;(end_code) %lx&bslash;n&quot;
 comma
+(paren
+r_int
+)paren
 id|current-&gt;mm-&gt;end_code
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;(start_code) %08lx&bslash;n&quot;
+l_string|&quot;(start_code) %lx&bslash;n&quot;
 comma
+(paren
+r_int
+)paren
 id|current-&gt;mm-&gt;start_code
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;(end_data) %08lx&bslash;n&quot;
+l_string|&quot;(end_data) %lx&bslash;n&quot;
 comma
+(paren
+r_int
+)paren
 id|current-&gt;mm-&gt;end_data
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;(start_stack) %08lx&bslash;n&quot;
+l_string|&quot;(start_stack) %lx&bslash;n&quot;
 comma
+(paren
+r_int
+)paren
 id|current-&gt;mm-&gt;start_stack
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;(brk) %08lx&bslash;n&quot;
+l_string|&quot;(brk) %lx&bslash;n&quot;
 comma
+(paren
+r_int
+)paren
 id|current-&gt;mm-&gt;brk
 )paren
 suffix:semicolon
@@ -5034,9 +5052,9 @@ macro_line|#undef DUMP_WRITE
 DECL|macro|DUMP_SEEK
 macro_line|#undef DUMP_SEEK
 DECL|macro|DUMP_WRITE
-mdefine_line|#define DUMP_WRITE(addr, nr)&t;&bslash;&n;&t;if (!dump_write(&amp;file, (addr), (nr))) &bslash;&n;&t;&t;goto close_coredump;
+mdefine_line|#define DUMP_WRITE(addr, nr)&t;&bslash;&n;&t;if (!dump_write(file, (addr), (nr))) &bslash;&n;&t;&t;goto close_coredump;
 DECL|macro|DUMP_SEEK
-mdefine_line|#define DUMP_SEEK(off)&t;&bslash;&n;&t;if (!dump_seek(&amp;file, (off))) &bslash;&n;&t;&t;goto close_coredump;
+mdefine_line|#define DUMP_SEEK(off)&t;&bslash;&n;&t;if (!dump_seek(file, (off))) &bslash;&n;&t;&t;goto close_coredump;
 multiline_comment|/* Actual dumper.&n; *&n; * This is a two-pass process; first we find the offsets of the bits,&n; * and then they are actually written out.  If we run out of core limit&n; * we just truncate.&n; */
 DECL|function|irix_core_dump
 r_static
@@ -5060,6 +5078,7 @@ l_int|0
 suffix:semicolon
 r_struct
 id|file
+op_star
 id|file
 suffix:semicolon
 r_struct
@@ -5402,9 +5421,9 @@ op_assign
 l_char|&squot;&bslash;0&squot;
 suffix:semicolon
 macro_line|#endif
-id|dentry
+id|file
 op_assign
-id|open_namei
+id|filp_open
 c_func
 (paren
 id|corefile
@@ -5426,22 +5445,31 @@ c_cond
 id|IS_ERR
 c_func
 (paren
-id|dentry
+id|file
 )paren
 )paren
-(brace
-id|inode
-op_assign
-l_int|NULL
-suffix:semicolon
 r_goto
 id|end_coredump
 suffix:semicolon
-)brace
+id|dentry
+op_assign
+id|file-&gt;f_dentry
+suffix:semicolon
 id|inode
 op_assign
 id|dentry-&gt;d_inode
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|inode-&gt;i_nlink
+OG
+l_int|1
+)paren
+r_goto
+id|close_coredump
+suffix:semicolon
+multiline_comment|/* multiple links - don&squot;t dump */
 r_if
 c_cond
 (paren
@@ -5453,7 +5481,7 @@ id|inode-&gt;i_mode
 )paren
 )paren
 r_goto
-id|end_coredump
+id|close_coredump
 suffix:semicolon
 r_if
 c_cond
@@ -5465,30 +5493,13 @@ op_logical_neg
 id|inode-&gt;i_op-&gt;default_file_ops
 )paren
 r_goto
-id|end_coredump
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|init_private_file
-c_func
-(paren
-op_amp
-id|file
-comma
-id|dentry
-comma
-l_int|3
-)paren
-)paren
-r_goto
-id|end_coredump
+id|close_coredump
 suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-id|file.f_op-&gt;write
+id|file-&gt;f_op-&gt;write
 )paren
 r_goto
 id|close_coredump
@@ -6324,7 +6335,6 @@ id|notes
 id|i
 )braket
 comma
-op_amp
 id|file
 )paren
 )paren
@@ -6427,7 +6437,7 @@ c_cond
 (paren
 id|off_t
 )paren
-id|file.f_pos
+id|file-&gt;f_pos
 op_ne
 id|offset
 )paren
@@ -6436,12 +6446,12 @@ multiline_comment|/* Sanity check. */
 id|printk
 c_func
 (paren
-l_string|&quot;elf_core_dump: file.f_pos (%ld) != offset (%ld)&bslash;n&quot;
+l_string|&quot;elf_core_dump: file-&gt;f_pos (%ld) != offset (%ld)&bslash;n&quot;
 comma
 (paren
 id|off_t
 )paren
-id|file.f_pos
+id|file-&gt;f_pos
 comma
 id|offset
 )paren
@@ -6449,20 +6459,12 @@ suffix:semicolon
 )brace
 id|close_coredump
 suffix:colon
-r_if
-c_cond
-(paren
-id|file.f_op-&gt;release
-)paren
-id|file.f_op
-op_member_access_from_pointer
-id|release
+id|filp_close
 c_func
 (paren
-id|inode
-comma
-op_amp
 id|file
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 id|end_coredump
@@ -6471,12 +6473,6 @@ id|set_fs
 c_func
 (paren
 id|fs
-)paren
-suffix:semicolon
-id|dput
-c_func
-(paren
-id|dentry
 )paren
 suffix:semicolon
 macro_line|#ifndef CONFIG_BINFMT_ELF

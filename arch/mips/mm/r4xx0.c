@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: r4xx0.c,v 1.30 1998/10/16 19:22:43 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * r4xx0.c: R4000 processor variant specific MMU/Cache routines.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; * Copyright (C) 1997, 1998 Ralf Baechle ralf@gnu.org&n; *&n; * To do:&n; *&n; *  - this code is a overbloated pig&n; *  - many of the bug workarounds are not efficient at all, but at&n; *    least they are functional ...&n; */
+multiline_comment|/* $Id: r4xx0.c,v 1.22 1999/06/17 13:25:51 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * r4xx0.c: R4000 processor variant specific MMU/Cache routines.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; * Copyright (C) 1997, 1998 Ralf Baechle ralf@gnu.org&n; *&n; * To do:&n; *&n; *  - this code is a overbloated pig&n; *  - many of the bug workarounds are not efficient at all, but at&n; *    least they are functional ...&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -7064,6 +7064,28 @@ id|sc_lsize
 suffix:semicolon
 )brace
 )brace
+r_static
+r_void
+DECL|function|r4k_dma_cache_wback
+id|r4k_dma_cache_wback
+c_func
+(paren
+r_int
+r_int
+id|addr
+comma
+r_int
+r_int
+id|size
+)paren
+(brace
+id|panic
+c_func
+(paren
+l_string|&quot;r4k_dma_cache called - should not happen.&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * While we&squot;re protected against bad userland addresses we don&squot;t care&n; * very much about what happens in that case.  Usually a segmentation&n; * fault will dump the process later on anyway ...&n; */
 DECL|function|r4k_flush_cache_sigtramp
 r_static
@@ -9498,6 +9520,10 @@ id|dma_cache_wback_inv
 op_assign
 id|r4k_dma_cache_wback_inv_pc
 suffix:semicolon
+id|dma_cache_wback
+op_assign
+id|r4k_dma_cache_wback
+suffix:semicolon
 id|dma_cache_inv
 op_assign
 id|r4k_dma_cache_inv_pc
@@ -9794,6 +9820,10 @@ suffix:semicolon
 id|dma_cache_wback_inv
 op_assign
 id|r4k_dma_cache_wback_inv_sc
+suffix:semicolon
+id|dma_cache_wback
+op_assign
+id|r4k_dma_cache_wback
 suffix:semicolon
 id|dma_cache_inv
 op_assign

@@ -1,5 +1,6 @@
-multiline_comment|/* $Id: pci.c,v 1.6 1998/05/07 14:17:48 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * SNI specific PCI support for RM200/RM300.&n; *&n; * Copyright (C) 1997, 1998 Ralf Baechle&n; */
+multiline_comment|/* $Id: pci.c,v 1.7 1999/01/04 16:03:58 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * SNI specific PCI support for RM200/RM300.&n; *&n; * Copyright (C) 1997, 1998 Ralf Baechle&n; */
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
@@ -16,12 +17,31 @@ id|sni_rm200_pcibios_fixup
 r_void
 )paren
 (brace
-multiline_comment|/*&n;&t; * TODO: Fix PCI_INTERRUPT_LINE register for onboard cards.&n;&t; * Take care of RM300 revision D boards for where the network&n;&t; * slot became an ordinary PCI slot.&n;&t; */
-id|pcibios_write_config_byte
-c_func
+r_struct
+id|pci_dev
+op_star
+id|dev
+suffix:semicolon
+r_for
+c_loop
 (paren
-l_int|0
-comma
+id|dev
+op_assign
+id|pci_devices
+suffix:semicolon
+id|dev
+suffix:semicolon
+id|dev
+op_assign
+id|dev-&gt;next
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; * TODO: Take care of RM300 revision D boards for where the&n;&t;&t; * network slot became an ordinary PCI slot.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|dev-&gt;devfn
+op_eq
 id|PCI_DEVFN
 c_func
 (paren
@@ -29,12 +49,96 @@ l_int|1
 comma
 l_int|0
 )paren
+)paren
+(brace
+multiline_comment|/* Evil hack ...  */
+id|set_cp0_config
+c_func
+(paren
+id|CONF_CM_CMASK
 comma
-id|PCI_INTERRUPT_LINE
-comma
-id|PCIMT_IRQ_SCSI
+id|CONF_CM_CACHABLE_NO_WA
 )paren
 suffix:semicolon
+id|dev-&gt;irq
+op_assign
+id|PCIMT_IRQ_SCSI
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|dev-&gt;devfn
+op_eq
+id|PCI_DEVFN
+c_func
+(paren
+l_int|2
+comma
+l_int|0
+)paren
+)paren
+(brace
+id|dev-&gt;irq
+op_assign
+id|PCIMT_IRQ_ETHERNET
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
+r_switch
+c_cond
+(paren
+id|dev-&gt;irq
+)paren
+(brace
+r_case
+l_int|1
+dot
+dot
+dot
+l_int|4
+suffix:colon
+id|dev-&gt;irq
+op_add_assign
+id|PCIMT_IRQ_INTA
+op_minus
+l_int|1
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0
+suffix:colon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;PCI device on bus %d, dev %d, function %d &quot;
+l_string|&quot;impossible interrupt configured.&bslash;n&quot;
+comma
+id|dev-&gt;bus-&gt;number
+comma
+id|PCI_SLOT
+c_func
+(paren
+id|dev-&gt;devfn
+)paren
+comma
+id|PCI_SLOT
+c_func
+(paren
+id|dev-&gt;devfn
+)paren
+)paren
+suffix:semicolon
+)brace
+)brace
 )brace
 multiline_comment|/*&n; * We can&squot;t address 8 and 16 bit words directly.  Instead we have to&n; * read/write a 32bit word and mask/modify the data we actually want.&n; */
 DECL|function|sni_rm200_pcibios_read_config_byte

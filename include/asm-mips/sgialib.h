@@ -29,6 +29,12 @@ op_star
 op_star
 id|prom_envp
 suffix:semicolon
+r_extern
+r_int
+id|prom_flags
+suffix:semicolon
+DECL|macro|PROM_FLAG_ARCS
+mdefine_line|#define PROM_FLAG_ARCS  1
 multiline_comment|/* Init the PROM library and it&squot;s internal data structures.  Called&n; * at boot time from head.S before start_kernel is invoked.&n; */
 r_extern
 r_int
@@ -101,6 +107,12 @@ r_int
 id|size
 suffix:semicolon
 multiline_comment|/* In bytes. */
+DECL|member|type
+r_int
+r_int
+id|type
+suffix:semicolon
+multiline_comment|/* free or prom memory */
 )brace
 suffix:semicolon
 multiline_comment|/* Get next memory descriptor after CURR, returns first descriptor&n; * in chain is CURR is NULL.&n; */
@@ -248,10 +260,10 @@ op_star
 id|path
 )paren
 suffix:semicolon
-multiline_comment|/* This is called at prom_init time to setup the tags which the&n; * MIPS kernel setup code wants to diddle with. &n; */
+multiline_comment|/* This is called at prom_init time to identify the&n; * ARC architecture we are running on&n; */
 r_extern
 r_void
-id|prom_setup_archtags
+id|prom_identify_arch
 c_func
 (paren
 r_void

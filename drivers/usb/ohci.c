@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Open Host Controller Interface driver for USB.&n; *&n; * (C) Copyright 1999 Gregory P. Smith &lt;greg@electricrain.com&gt;&n; *&n; * This is the &quot;other&quot; host controller interface for USB.  You will&n; * find this on many non-Intel based motherboards, and of course the&n; * Mac.  As Linus hacked his UHCI driver together first, I modeled&n; * this after his.. (it should be obvious)&n; *&n; * From the programming standpoint the OHCI interface seems a little&n; * prettier and potentially less CPU intensive.  This remains to be&n; * proven.  In reality, I don&squot;t believe it&squot;ll make one darn bit of&n; * difference.  USB v1.1 is a slow bus by today&squot;s standards.&n; *&n; * OHCI hardware takes care of most of the scheduling of different&n; * transfer types with the correct prioritization for us.&n; *&n; * To get started in USB, I used the &quot;Universal Serial Bus System&n; * Architecture&quot; book by Mindshare, Inc.  It was a reasonable introduction&n; * and overview of USB and the two dominant host controller interfaces&n; * however you&squot;re better off just reading the real specs available&n; * from www.usb.org as you&squot;ll need them to get enough detailt to&n; * actually implement a HCD.  The book has many typos and omissions&n; * Beware, the specs are the victim of a committee.&n; *&n; * This code was written with Guinness on the brain, xsnow on the desktop&n; * and Orbital, Orb, Enya &amp; Massive Attack on the CD player.  What a life!  ;) &n; *&n; * No filesystems were harmed in the development of this code.&n; *&n; * $Id: ohci.c,v 1.43 1999/05/16 22:35:24 greg Exp $&n; */
+multiline_comment|/*&n; * Open Host Controller Interface driver for USB.&n; *&n; * (C) Copyright 1999 Gregory P. Smith &lt;greg@electricrain.com&gt;&n; * Significant code from the following individuals has also been used:&n; * (C) Copyright 1999 Roman Weissgaerber &lt;weissg@vienna.at&gt; [ohci-hcd.c]&n; * (C) Copyright 1999 Linus Torvalds [uhci.c]&n; *&n; * This is the &quot;other&quot; host controller interface for USB.  You will&n; * find this on many non-Intel based motherboards, and of course the&n; * Mac.  As Linus hacked his UHCI driver together first, I originally&n; * modeled this after his.. (it should be obvious)&n; *&n; * To get started in USB, I used the &quot;Universal Serial Bus System&n; * Architecture&quot; book by Mindshare, Inc.  It was a reasonable introduction&n; * and overview of USB and the two dominant host controller interfaces&n; * however you&squot;re better off just reading the real specs available&n; * from www.usb.org as you&squot;ll need them to get enough detailt to&n; * actually implement a HCD.  The book has many typos and omissions&n; * Beware, the specs are the victim of a committee.&n; *&n; * This code was written with Guinness on the brain, xsnow on the desktop&n; * and Orbital, Orb, Enya &amp; Massive Attack on the CD player.  What a life!  ;) &n; *&n; * No filesystems were harmed in the development of this code.&n; *&n; * $Id: ohci.c,v 1.43 1999/05/16 22:35:24 greg Exp $&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
@@ -71,6 +71,7 @@ DECL|macro|FIELDS_OF_ED
 mdefine_line|#define FIELDS_OF_ED(e)&t;le32_to_cpup(&amp;e-&gt;status), le32_to_cpup(&amp;e-&gt;tail_td), &bslash;&n;&t;&t;&t;le32_to_cpup(&amp;e-&gt;_head_td), le32_to_cpup(&amp;e-&gt;next_ed)
 DECL|macro|FIELDS_OF_TD
 mdefine_line|#define FIELDS_OF_TD(t)&t;le32_to_cpup(&amp;t-&gt;info), le32_to_cpup(&amp;t-&gt;cur_buf), &bslash;&n;&t;&t;&t;le32_to_cpup(&amp;t-&gt;next_td), le32_to_cpup(&amp;t-&gt;buf_end)
+macro_line|#ifdef OHCI_DEBUG
 DECL|variable|cc_names
 r_static
 r_const
@@ -115,6 +116,7 @@ comma
 l_string|&quot;not accessed&quot;
 )brace
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; * Add a chain of TDs to the end of the TD list on a given ED.&n; *&n; * This function uses the first TD of the chain as the new dummy TD&n; * for the ED, and uses the old dummy TD instead of the first TD&n; * of the chain.  The reason for this is that this makes it possible&n; * to update the TD chain without needing any locking between the&n; * CPU and the OHCI controller.&n; *&n; * The return value is the pointer to the new first TD (the old&n; * dummy TD).&n; *&n; * Important!  This function is not re-entrant w.r.t. each ED.&n; * Locking ohci_edtd_lock while using the function is a must&n; * if there is any possibility of another CPU or an interrupt routine&n; * calling this function with the same ED.&n; *&n; * This function can be called by the interrupt handler.&n; */
 DECL|function|ohci_add_td_to_ed
 r_static
@@ -261,6 +263,96 @@ suffix:semicolon
 multiline_comment|/* replacement head of chain */
 )brace
 multiline_comment|/* ohci_add_td_to_ed() */
+multiline_comment|/*&n; * Add a whole chain of TDs to an ED using the above function.&n; * The same restrictions apply.&n; *&n; * XXX This function is being removed in the future! XXX&n; */
+DECL|function|ohci_add_td_chain_to_ed
+r_static
+r_struct
+id|ohci_td
+op_star
+id|ohci_add_td_chain_to_ed
+c_func
+(paren
+r_struct
+id|ohci_td
+op_star
+id|td
+comma
+r_struct
+id|ohci_ed
+op_star
+id|ed
+)paren
+(brace
+r_struct
+id|ohci_td
+op_star
+id|cur_td
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|td
+)paren
+r_return
+l_int|NULL
+suffix:semicolon
+multiline_comment|/* Find the last TD in this chain, storing its pointer in cur_td */
+id|cur_td
+op_assign
+id|td
+suffix:semicolon
+r_for
+c_loop
+(paren
+suffix:semicolon
+suffix:semicolon
+)paren
+(brace
+id|__u32
+id|next_td
+op_assign
+id|cur_td-&gt;next_td
+suffix:semicolon
+multiline_comment|/* advance to the next td, exit if there isn&squot;t one */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|next_td
+)paren
+r_break
+suffix:semicolon
+id|cur_td
+op_assign
+id|bus_to_virt
+c_func
+(paren
+id|le32_to_cpup
+c_func
+(paren
+op_amp
+id|next_td
+)paren
+)paren
+suffix:semicolon
+)brace
+r_return
+id|td
+op_assign
+id|ohci_add_td_to_ed
+c_func
+(paren
+id|td
+comma
+id|cur_td
+comma
+id|ed
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* ohci_add_td_chain_to_ed() */
+multiline_comment|/* .......... */
 DECL|function|ohci_start_control
 r_inline
 r_void
@@ -1448,7 +1540,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *  Remove a TD from the given EDs TD list.&n; */
+multiline_comment|/*&n; *  Remove a TD from the given EDs TD list.  The TD is freed as well.&n; */
 DECL|function|ohci_remove_td_from_ed
 r_static
 r_void
@@ -1492,15 +1584,6 @@ l_int|NULL
 )paren
 r_return
 suffix:semicolon
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|ohci_edtd_lock
-comma
-id|flags
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1513,6 +1596,15 @@ op_eq
 l_int|0
 )paren
 r_return
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|ohci_edtd_lock
+comma
+id|flags
+)paren
 suffix:semicolon
 multiline_comment|/* set the &quot;skip me bit&quot; in this ED */
 id|ed-&gt;status
@@ -1815,7 +1907,7 @@ l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/* ohci_get_free_td() */
-multiline_comment|/*&n; * Get a pointer (virtual) to an available TD from the given device&squot;s&n; * pool.  Return NULL if none are left.&n; */
+multiline_comment|/*&n; * Get a pointer (virtual) to an available TD from the given device&squot;s&n; * pool.  Return NULL if none are left.&n; *&n; * NOTE: This function does not allocate and attach the dummy_td.&n; * That is done in ohci_fill_ed().  FIXME: it should probably be moved&n; * into here.&n; */
 DECL|function|ohci_get_free_ed
 r_static
 r_struct
@@ -1922,6 +2014,7 @@ l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/* ohci_get_free_ed() */
+multiline_comment|/*&n; * Free an OHCI ED and all of the TDs on its list.  It is assumed that&n; * this ED is not active.  You should call ohci_wait_for_ed_safe()&n; * beforehand if you can&squot;t guarantee that.&n; */
 DECL|function|ohci_free_ed
 r_void
 id|ohci_free_ed
@@ -2395,6 +2488,487 @@ id|ed
 suffix:semicolon
 )brace
 multiline_comment|/* ohci_fill_ed() */
+multiline_comment|/*&n; *  Create a chain of Normal TDs to be used for a large data transfer&n; *  (bulk or control).&n; *&n; *  Returns the head TD in the chain.&n; */
+DECL|function|ohci_build_td_chain
+r_struct
+id|ohci_td
+op_star
+id|ohci_build_td_chain
+c_func
+(paren
+r_struct
+id|ohci_device
+op_star
+id|dev
+comma
+r_void
+op_star
+id|data
+comma
+r_int
+r_int
+id|len
+comma
+r_int
+id|dir
+comma
+id|__u32
+id|toggle
+comma
+r_int
+id|round
+comma
+r_int
+id|auto_free
+comma
+r_void
+op_star
+id|dev_id
+comma
+id|usb_device_irq
+id|handler
+comma
+id|__u32
+id|next_td
+)paren
+(brace
+r_struct
+id|ohci_td
+op_star
+id|head
+comma
+op_star
+id|cur_td
+suffix:semicolon
+id|__u32
+id|bus_data_start
+comma
+id|bus_data_end
+suffix:semicolon
+r_int
+r_int
+id|max_page0_len
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|data
+op_logical_or
+(paren
+id|len
+op_eq
+l_int|0
+)paren
+)paren
+r_return
+l_int|NULL
+suffix:semicolon
+multiline_comment|/* Setup the first TD, leaving buf_end = 0 */
+id|head
+op_assign
+id|ohci_get_free_td
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|head
+op_eq
+l_int|NULL
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;usb-ohci: out of TDs&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
+id|ohci_fill_new_td
+c_func
+(paren
+id|head
+comma
+id|td_set_dir_out
+c_func
+(paren
+id|dir
+)paren
+comma
+id|toggle
+op_amp
+id|OHCI_TD_DT
+comma
+(paren
+id|round
+ques
+c_cond
+id|OHCI_TD_ROUND
+suffix:colon
+l_int|0
+)paren
+comma
+id|data
+comma
+l_int|0
+comma
+id|dev_id
+comma
+id|handler
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|auto_free
+)paren
+id|noauto_free_td
+c_func
+(paren
+id|head
+)paren
+suffix:semicolon
+id|cur_td
+op_assign
+id|head
+suffix:semicolon
+multiline_comment|/* AFICT, that the OHCI controller takes care of the innards of&n;&t; * bulk &amp; control data transfers by sending zero length&n;&t; * packets as necessary if the transfer falls on an even packet&n;&t; * size boundary, we don&squot;t need a special TD for that. */
+r_while
+c_loop
+(paren
+id|len
+OG
+l_int|0
+)paren
+(brace
+id|bus_data_start
+op_assign
+id|virt_to_bus
+c_func
+(paren
+id|data
+)paren
+suffix:semicolon
+id|bus_data_end
+op_assign
+id|virt_to_bus
+c_func
+(paren
+id|data
+op_plus
+(paren
+id|len
+op_minus
+l_int|1
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* check the 4096 byte alignment of the start of the data */
+id|max_page0_len
+op_assign
+l_int|0x1000
+op_minus
+(paren
+id|bus_data_start
+op_amp
+l_int|0xfff
+)paren
+suffix:semicolon
+multiline_comment|/* check if the remaining data occupies more than two pages */
+r_if
+c_cond
+(paren
+(paren
+id|max_page0_len
+OL
+id|len
+)paren
+op_logical_and
+(paren
+id|len
+op_minus
+id|max_page0_len
+OG
+l_int|0x1000
+)paren
+)paren
+(brace
+r_struct
+id|ohci_td
+op_star
+id|new_td
+suffix:semicolon
+multiline_comment|/* Point this TD to data up through the end of&n;&t;&t;&t; * the second page */
+id|cur_td-&gt;buf_end
+op_assign
+id|bus_data_start
+op_plus
+(paren
+id|max_page0_len
+op_plus
+l_int|0xfff
+)paren
+suffix:semicolon
+multiline_comment|/* adjust the data pointer &amp; remaining length */
+id|data
+op_add_assign
+(paren
+id|max_page0_len
+op_plus
+l_int|0x1000
+)paren
+suffix:semicolon
+id|len
+op_sub_assign
+(paren
+id|max_page0_len
+op_plus
+l_int|0x1000
+)paren
+suffix:semicolon
+multiline_comment|/* TODO lookup effect of rounding bit on&n;&t;&t;&t; * individual TDs vs. whole TD chain transfers;&n;&t;&t;&t; * disable cur_td&squot;s rounding bit here if needed. */
+multiline_comment|/* mark that this is not the last TD... */
+id|clear_td_endofchain
+c_func
+(paren
+id|cur_td
+)paren
+suffix:semicolon
+multiline_comment|/* allocate another td */
+id|new_td
+op_assign
+id|ohci_get_free_td
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|new_td
+op_eq
+l_int|NULL
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;usb-ohci: out of TDs&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* FIXME: free any allocated TDs */
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
+id|ohci_fill_new_td
+c_func
+(paren
+id|new_td
+comma
+id|td_set_dir_out
+c_func
+(paren
+id|dir
+)paren
+comma
+id|TOGGLE_AUTO
+comma
+multiline_comment|/* toggle Data0/1 via the ED */
+id|round
+ques
+c_cond
+id|OHCI_TD_ROUND
+suffix:colon
+l_int|0
+comma
+id|data
+comma
+l_int|0
+comma
+id|dev_id
+comma
+id|handler
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|auto_free
+)paren
+id|noauto_free_td
+c_func
+(paren
+id|new_td
+)paren
+suffix:semicolon
+multiline_comment|/* Link the new TD to the chain &amp; advance */
+id|cur_td-&gt;next_td
+op_assign
+id|virt_to_bus
+c_func
+(paren
+id|new_td
+)paren
+suffix:semicolon
+id|cur_td
+op_assign
+id|new_td
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* Last TD in this chain, normal buf_end is fine */
+id|cur_td-&gt;buf_end
+op_assign
+id|bus_data_end
+suffix:semicolon
+id|set_td_endofchain
+c_func
+(paren
+id|cur_td
+)paren
+suffix:semicolon
+id|len
+op_assign
+l_int|0
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/* while */
+multiline_comment|/* link the given next_td to the end of this chain */
+id|cur_td-&gt;next_td
+op_assign
+id|next_td
+suffix:semicolon
+r_return
+id|head
+suffix:semicolon
+)brace
+multiline_comment|/* ohci_build_td_chain() */
+multiline_comment|/*&n; * Compute the number of bytes that have been transferred on a given&n; * TD.  Do not call this on TDs that are active on the host&n; * controller.&n; */
+DECL|function|ohci_td_bytes_done
+r_static
+id|__u16
+id|ohci_td_bytes_done
+c_func
+(paren
+r_struct
+id|ohci_td
+op_star
+id|td
+)paren
+(brace
+id|__u16
+id|result
+suffix:semicolon
+id|__u32
+id|bus_data_start
+comma
+id|bus_data_end
+suffix:semicolon
+id|bus_data_start
+op_assign
+id|virt_to_bus
+c_func
+(paren
+id|td-&gt;data
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|td-&gt;data
+op_logical_or
+op_logical_neg
+id|bus_data_start
+)paren
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/* if cur_buf is 0, all data has been transferred */
+id|bus_data_end
+op_assign
+id|td-&gt;cur_buf
+ques
+c_cond
+id|td-&gt;cur_buf
+suffix:colon
+id|td-&gt;buf_end
+suffix:semicolon
+multiline_comment|/* is it on the same page? */
+r_if
+c_cond
+(paren
+(paren
+id|bus_data_start
+op_amp
+op_complement
+l_int|0xfff
+)paren
+op_eq
+(paren
+id|bus_data_end
+op_amp
+op_complement
+l_int|0xfff
+)paren
+)paren
+(brace
+id|result
+op_assign
+id|bus_data_end
+op_minus
+id|bus_data_start
+op_plus
+l_int|1
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* compute the amount transferred on the first page */
+id|result
+op_assign
+l_int|0x1000
+op_minus
+(paren
+id|bus_data_start
+op_amp
+l_int|0xfff
+)paren
+suffix:semicolon
+multiline_comment|/* add the amount done in the second page */
+id|result
+op_add_assign
+(paren
+id|bus_data_end
+op_amp
+l_int|0xfff
+)paren
+op_plus
+l_int|1
+suffix:semicolon
+)brace
+r_return
+id|result
+suffix:semicolon
+)brace
+multiline_comment|/* ohci_td_bytes_done() */
 multiline_comment|/**********************************&n; * OHCI interrupt list operations *&n; **********************************/
 multiline_comment|/*&n; * Request an interrupt handler for one &quot;pipe&quot; of a USB device.&n; * (this function is pretty minimal right now)&n; *&n; * At the moment this is only good for input interrupts. (ie: for a&n; * mouse or keyboard)&n; *&n; * Period is desired polling interval in ms.  The closest, shorter&n; * match will be used.  Powers of two from 1-32 are supported by OHCI.&n; */
 DECL|function|ohci_request_irq
@@ -2637,6 +3211,7 @@ comma
 id|period
 )paren
 suffix:semicolon
+multiline_comment|/* FIXME: return a request handle that can be used by the&n;&t; * caller to cancel this request.  Be sure its guaranteed not&n;&t; * to be re-used until the caller is guaranteed to know that&n;&t; * the transfer has ended or been cancelled */
 r_return
 l_int|0
 suffix:semicolon
@@ -2707,7 +3282,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* ohci_control_completed() */
-multiline_comment|/*&n; * Send or receive a control message on a &quot;pipe&quot;&n; *&n; * The cmd parameter is a pointer to the 8 byte setup command to be&n; * sent.  FIXME:  This is a devrequest in usb.h.  The function&n; * should be updated to accept a devrequest* instead of void*..&n; *&n; * A control message contains:&n; *   - The command itself&n; *   - An optional data phase (if len &gt; 0)&n; *   - Status complete phase&n; *&n; * This function can NOT be called from an interrupt.&n; */
+multiline_comment|/*&n; * Send or receive a control message on a &quot;pipe&quot;&n; *&n; * The cmd parameter is a pointer to the 8 byte setup command to be&n; * sent.&n; *&n; * A control message contains:&n; *   - The command itself&n; *   - An optional data phase (if len &gt; 0)&n; *   - Status complete phase&n; *&n; * This function can NOT be called from an interrupt.&n; */
 DECL|function|ohci_control_msg
 r_static
 r_int
@@ -2775,10 +3350,6 @@ id|wait
 comma
 id|current
 )paren
-suffix:semicolon
-r_int
-r_int
-id|flags
 suffix:semicolon
 r_int
 id|completion_status
@@ -2950,13 +3521,14 @@ comma
 l_int|8
 comma
 multiline_comment|/* cmd is always 8 bytes long */
-l_int|NULL
+op_amp
+id|completion_status
 comma
 l_int|NULL
 )paren
 suffix:semicolon
-multiline_comment|/* allocate the next TD */
-id|data_td
+multiline_comment|/* Allocate a TD for the control xfer status */
+id|status_td
 op_assign
 id|ohci_get_free_td
 c_func
@@ -2968,108 +3540,12 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|data_td
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;usb-ohci: couldn&squot;t get TD for dev %p [cntl data]&bslash;n&quot;
-comma
-id|dev
-)paren
-suffix:semicolon
-id|ohci_free_td
-c_func
-(paren
-id|setup_td
-)paren
-suffix:semicolon
-id|ohci_free_ed
-c_func
-(paren
-id|control_ed
-)paren
-suffix:semicolon
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)brace
-multiline_comment|/* link to the next TD */
-id|setup_td-&gt;next_td
-op_assign
-id|cpu_to_le32
-c_func
-(paren
-id|virt_to_bus
-c_func
-(paren
-id|data_td
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|len
-OG
-l_int|0
-)paren
-(brace
-multiline_comment|/* build the Control DATA TD, it starts with a DATA1. */
-id|ohci_fill_new_td
-c_func
-(paren
-id|data_td
-comma
-id|td_set_dir_out
-c_func
-(paren
-id|usb_pipeout
-c_func
-(paren
-id|pipe
-)paren
-)paren
-comma
-id|TOGGLE_DATA1
-comma
-id|OHCI_TD_ROUND
-op_or
-id|OHCI_TD_IOC_OFF
-comma
-id|data
-comma
-id|len
-comma
-l_int|NULL
-comma
-l_int|NULL
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t;&t; * TODO: Normal TDs can transfer up to 8192 bytes on OHCI.&n;&t;&t; * However, for that to happen, the data must -start-&n;&t;&t; * on a nice 4kb page.  We need to check for data&n;&t;&t; * sizes &gt; 4096 and, if they cross more than two 4096&n;&t;&t; * byte pages of memory one or more additional TDs&n;&t;&t; * will need to be created.  (repeat doing this in a&n;&t;&t; * loop until all of the DATA is on a TD)&n;&t;&t; *&n;&t;&t; * Control transfers are -highly unlikely- to need to&n;&t;&t; * transfer this much data.. but who knows.. sadistic&n;&t;&t; * hardware is sure to exist.&n;&t;&t; */
-id|status_td
-op_assign
-id|ohci_get_free_td
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-multiline_comment|/* TODO check for NULL */
-r_if
-c_cond
-(paren
-op_logical_neg
 id|status_td
 )paren
 (brace
 id|printk
 c_func
 (paren
-id|KERN_ERR
 l_string|&quot;usb-ohci: couldn&squot;t get TD for dev %p [cntl status]&bslash;n&quot;
 comma
 id|dev
@@ -3081,12 +3557,6 @@ c_func
 id|setup_td
 )paren
 suffix:semicolon
-id|ohci_free_td
-c_func
-(paren
-id|data_td
-)paren
-suffix:semicolon
 id|ohci_free_ed
 c_func
 (paren
@@ -3097,27 +3567,6 @@ r_return
 op_minus
 l_int|1
 suffix:semicolon
-)brace
-id|data_td-&gt;next_td
-op_assign
-id|cpu_to_le32
-c_func
-(paren
-id|virt_to_bus
-c_func
-(paren
-id|status_td
-)paren
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|status_td
-op_assign
-id|data_td
-suffix:semicolon
-multiline_comment|/* no data_td, use it for status */
 )brace
 multiline_comment|/* The control status packet always uses a DATA1&n;&t; * Give &quot;dev_id&quot; the address of completion_status so that the&n;&t; * TDs status can be passed back to us from the IRQ. */
 id|ohci_fill_new_td
@@ -3163,35 +3612,134 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* end of TDs */
-multiline_comment|/*&n;&t; * Add the chain of 2-3 control TDs to the control ED&squot;s TD list&n;&t; */
-id|spin_lock_irqsave
+multiline_comment|/* If there is data to transfer, create the chain of data TDs&n;&t; * followed by the status TD. */
+r_if
+c_cond
+(paren
+id|len
+OG
+l_int|0
+)paren
+(brace
+id|data_td
+op_assign
+id|ohci_build_td_chain
 c_func
 (paren
-op_amp
-id|ohci_edtd_lock
+id|dev
 comma
-id|flags
+id|data
+comma
+id|len
+comma
+id|usb_pipeout
+c_func
+(paren
+id|pipe
+)paren
+comma
+id|TOGGLE_DATA1
+comma
+l_int|1
+multiline_comment|/* round */
+comma
+l_int|1
+multiline_comment|/* autofree */
+comma
+op_amp
+id|completion_status
+comma
+l_int|NULL
+multiline_comment|/* no handler here */
+comma
+id|virt_to_bus
+c_func
+(paren
+id|status_td
+)paren
 )paren
 suffix:semicolon
-id|setup_td
-op_assign
-id|ohci_add_td_to_ed
+r_if
+c_cond
+(paren
+op_logical_neg
+id|data_td
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;usb-ohci: couldn&squot;t allocate control data TDs for dev %p&bslash;n&quot;
+comma
+id|dev
+)paren
+suffix:semicolon
+id|ohci_free_td
 c_func
 (paren
 id|setup_td
-comma
+)paren
+suffix:semicolon
+id|ohci_free_td
+c_func
+(paren
 id|status_td
+)paren
+suffix:semicolon
+id|ohci_free_ed
+c_func
+(paren
+id|control_ed
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+multiline_comment|/* link the to the data &amp; status TDs */
+id|setup_td-&gt;next_td
+op_assign
+id|virt_to_bus
+c_func
+(paren
+id|data_td
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* no data TDs, link to the status TD */
+id|setup_td-&gt;next_td
+op_assign
+id|virt_to_bus
+c_func
+(paren
+id|status_td
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; * Add the control TDs to the control ED (setup_td is the first)&n;&t; */
+id|setup_td
+op_assign
+id|ohci_add_td_chain_to_ed
+c_func
+(paren
+id|setup_td
 comma
 id|control_ed
 )paren
 suffix:semicolon
-id|spin_unlock_irqrestore
+id|control_ed-&gt;status
+op_and_assign
+op_complement
+id|OHCI_ED_SKIP
+suffix:semicolon
+id|ohci_unhalt_ed
 c_func
 (paren
-op_amp
-id|ohci_edtd_lock
-comma
-id|flags
+id|control_ed
 )paren
 suffix:semicolon
 macro_line|#ifdef OHCI_DEBUG
@@ -3225,73 +3773,20 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot; Setup TD %lx:&bslash;n&quot;
-comma
-id|virt_to_bus
-c_func
-(paren
-id|setup_td
-)paren
+l_string|&quot; Control TD chain:&bslash;n&quot;
 )paren
 suffix:semicolon
-id|show_ohci_td
+id|show_ohci_td_chain
 c_func
 (paren
 id|setup_td
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|data_td
-op_ne
-id|status_td
-)paren
-(brace
 id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot; Data TD %lx:&bslash;n&quot;
-comma
-id|virt_to_bus
-c_func
-(paren
-id|data_td
-)paren
-)paren
-suffix:semicolon
-id|show_ohci_td
-c_func
-(paren
-id|data_td
-)paren
-suffix:semicolon
-)brace
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot; Status TD %lx:&bslash;n&quot;
-comma
-id|virt_to_bus
-c_func
-(paren
-id|status_td
-)paren
-)paren
-suffix:semicolon
-id|show_ohci_td
-c_func
-(paren
-id|status_td
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot; Controller Status:&bslash;n&quot;
+l_string|&quot; OHCI Controller Status:&bslash;n&quot;
 )paren
 suffix:semicolon
 id|show_ohci_status
@@ -3375,73 +3870,20 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot; *after* Setup TD %lx:&bslash;n&quot;
-comma
-id|virt_to_bus
-c_func
-(paren
-id|setup_td
-)paren
+l_string|&quot; *after* Control TD chain:&bslash;n&quot;
 )paren
 suffix:semicolon
-id|show_ohci_td
+id|show_ohci_td_chain
 c_func
 (paren
 id|setup_td
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|data_td
-op_ne
-id|status_td
-)paren
-(brace
 id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot; *after* Data TD %lx:&bslash;n&quot;
-comma
-id|virt_to_bus
-c_func
-(paren
-id|data_td
-)paren
-)paren
-suffix:semicolon
-id|show_ohci_td
-c_func
-(paren
-id|data_td
-)paren
-suffix:semicolon
-)brace
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot; *after* Status TD %lx:&bslash;n&quot;
-comma
-id|virt_to_bus
-c_func
-(paren
-id|status_td
-)paren
-)paren
-suffix:semicolon
-id|show_ohci_td
-c_func
-(paren
-id|status_td
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot; *after* Controller Status:&bslash;n&quot;
+l_string|&quot; *after* OHCI Controller Status:&bslash;n&quot;
 )paren
 suffix:semicolon
 id|show_ohci_status
@@ -3452,6 +3894,7 @@ id|dev-&gt;ohci
 suffix:semicolon
 )brace
 macro_line|#endif
+multiline_comment|/* no TD cleanup, the TDs were auto-freed as they finished */
 multiline_comment|/* remove the control ED from the HC */
 id|ohci_remove_control_ed
 c_func
@@ -3616,6 +4059,762 @@ id|completion_status
 suffix:semicolon
 )brace
 multiline_comment|/* ohci_control_msg() */
+multiline_comment|/**********************************************************************&n; *  Bulk transfer processing&n; **********************************************************************/
+multiline_comment|/*&n; * Internal state for an ohci_bulk_request&n; */
+DECL|struct|ohci_bulk_request_state
+r_struct
+id|ohci_bulk_request_state
+(brace
+DECL|member|usb_dev
+r_struct
+id|usb_device
+op_star
+id|usb_dev
+suffix:semicolon
+DECL|member|pipe
+r_int
+r_int
+id|pipe
+suffix:semicolon
+multiline_comment|/* usb &quot;pipe&quot; */
+DECL|member|data
+r_void
+op_star
+id|data
+suffix:semicolon
+multiline_comment|/* ptr to data */
+DECL|member|length
+r_int
+id|length
+suffix:semicolon
+multiline_comment|/* length to transfer */
+DECL|member|_bytes_done
+r_int
+id|_bytes_done
+suffix:semicolon
+multiline_comment|/* bytes transferred so far */
+DECL|member|bytes_transferred_p
+r_int
+r_int
+op_star
+id|bytes_transferred_p
+suffix:semicolon
+multiline_comment|/* where to increment */
+DECL|member|dev_id
+r_void
+op_star
+id|dev_id
+suffix:semicolon
+multiline_comment|/* pass to the completion handler */
+DECL|member|completion
+id|usb_device_irq
+id|completion
+suffix:semicolon
+multiline_comment|/* completion handler */
+)brace
+suffix:semicolon
+multiline_comment|/*&n; * this handles the individual TDs of a (possibly) larger bulk&n; * request.  It keeps track of the total bytes transferred, calls the&n; * final completion handler, etc.&n; */
+DECL|function|ohci_bulk_td_handler
+r_static
+r_int
+id|ohci_bulk_td_handler
+c_func
+(paren
+r_int
+id|stats
+comma
+r_void
+op_star
+id|buffer
+comma
+r_int
+id|len
+comma
+r_void
+op_star
+id|dev_id
+)paren
+(brace
+r_struct
+id|ohci_bulk_request_state
+op_star
+id|req
+suffix:semicolon
+id|req
+op_assign
+(paren
+r_struct
+id|ohci_bulk_request_state
+op_star
+)paren
+id|dev_id
+suffix:semicolon
+macro_line|#ifdef OHCI_DEBUG
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;ohci_bulk_td_handler stats %x, buffer %p, len %d, req %p&bslash;n&quot;
+comma
+id|stats
+comma
+id|buffer
+comma
+id|len
+comma
+id|req
+)paren
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/* only count TDs that were completed successfully */
+r_if
+c_cond
+(paren
+id|stats
+op_eq
+id|USB_ST_NOERROR
+)paren
+id|req-&gt;_bytes_done
+op_add_assign
+id|len
+suffix:semicolon
+macro_line|#ifdef OHCI_DEBUG
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;ohci_bulk_td_handler %d bytes done&bslash;n&quot;
+comma
+id|req-&gt;_bytes_done
+)paren
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/* call the real completion handler when done or on an error */
+r_if
+c_cond
+(paren
+(paren
+id|stats
+op_ne
+id|USB_ST_NOERROR
+)paren
+op_logical_or
+(paren
+id|req-&gt;_bytes_done
+op_ge
+id|req-&gt;length
+op_logical_and
+id|req-&gt;completion
+op_ne
+l_int|NULL
+)paren
+)paren
+(brace
+op_star
+id|req-&gt;bytes_transferred_p
+op_add_assign
+id|req-&gt;_bytes_done
+suffix:semicolon
+macro_line|#ifdef OHCI_DEBUG
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;usb-ohci: bulk request %p ending after %d bytes&bslash;n&quot;
+comma
+id|req
+comma
+id|req-&gt;_bytes_done
+)paren
+suffix:semicolon
+macro_line|#endif
+id|req
+op_member_access_from_pointer
+id|completion
+c_func
+(paren
+id|stats
+comma
+id|buffer
+comma
+id|req-&gt;_bytes_done
+comma
+id|req-&gt;dev_id
+)paren
+suffix:semicolon
+)brace
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/* do not re-queue the TD */
+)brace
+multiline_comment|/* ohci_bulk_td_handler() */
+multiline_comment|/*&n; * Request to send or receive bulk data.  The completion() function&n; * will be called when the transfer has completed or been aborted due&n; * to an error.&n; *&n; * bytes_transferred_p is a pointer to an integer that will be&n; * -incremented- by the number of bytes that have been successfully&n; * transferred.  The interrupt handler will update it after each&n; * internal TD completes successfully.&n; *&n; * This function can NOT be called from an interrupt (?)&n; * (TODO: verify &amp; fix this if needed).&n; *&n; * Returns: a pointer to the ED being used for this request.  At the&n; * moment, removing &amp; freeing it is the responsibilty of the caller.&n; */
+DECL|function|ohci_request_bulk
+r_static
+r_struct
+id|ohci_ed
+op_star
+id|ohci_request_bulk
+c_func
+(paren
+r_struct
+id|ohci_bulk_request_state
+op_star
+id|bulk_request
+)paren
+(brace
+multiline_comment|/* local names for the readonly fields */
+r_struct
+id|usb_device
+op_star
+id|usb_dev
+op_assign
+id|bulk_request-&gt;usb_dev
+suffix:semicolon
+r_int
+r_int
+id|pipe
+op_assign
+id|bulk_request-&gt;pipe
+suffix:semicolon
+r_void
+op_star
+id|data
+op_assign
+id|bulk_request-&gt;data
+suffix:semicolon
+r_int
+id|len
+op_assign
+id|bulk_request-&gt;length
+suffix:semicolon
+r_struct
+id|ohci_device
+op_star
+id|dev
+op_assign
+id|usb_to_ohci
+c_func
+(paren
+id|usb_dev
+)paren
+suffix:semicolon
+r_struct
+id|ohci_ed
+op_star
+id|bulk_ed
+suffix:semicolon
+r_struct
+id|ohci_td
+op_star
+id|head_td
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+macro_line|#ifdef OHCI_DEBUG 
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;ohci_request_bulk(%p) ohci_dev %p, completion %p, pipe %x, data %p, len %d&bslash;n&quot;
+comma
+id|bulk_request
+comma
+id|dev
+comma
+id|bulk_request-&gt;completion
+comma
+id|pipe
+comma
+id|data
+comma
+id|len
+)paren
+suffix:semicolon
+macro_line|#endif
+id|bulk_ed
+op_assign
+id|ohci_get_free_ed
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|bulk_ed
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;usb-ohci: couldn&squot;t get ED for dev %p&bslash;n&quot;
+comma
+id|dev
+)paren
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
+multiline_comment|/* allocate &amp; fill in the TDs for this request */
+id|head_td
+op_assign
+id|ohci_build_td_chain
+c_func
+(paren
+id|dev
+comma
+id|data
+comma
+id|len
+comma
+id|usb_pipeout
+c_func
+(paren
+id|pipe
+)paren
+comma
+id|TOGGLE_AUTO
+comma
+l_int|0
+multiline_comment|/* round not required */
+comma
+l_int|1
+multiline_comment|/* autofree */
+comma
+id|bulk_request
+comma
+multiline_comment|/* dev_id: the bulk_request  */
+id|ohci_bulk_td_handler
+comma
+l_int|0
+multiline_comment|/* no additional TDs */
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|head_td
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;usb-ohci: couldn&squot;t get TDs for dev %p&bslash;n&quot;
+comma
+id|dev
+)paren
+suffix:semicolon
+id|ohci_free_ed
+c_func
+(paren
+id|bulk_ed
+)paren
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
+multiline_comment|/* Set the max packet size, device speed, endpoint number, usb&n;&t; * device number (function address), and type of TD. */
+id|ohci_fill_ed
+c_func
+(paren
+id|dev
+comma
+id|bulk_ed
+comma
+id|usb_maxpacket
+c_func
+(paren
+id|usb_dev
+comma
+id|pipe
+)paren
+comma
+id|usb_pipeslow
+c_func
+(paren
+id|pipe
+)paren
+comma
+id|usb_pipe_endpdev
+c_func
+(paren
+id|pipe
+)paren
+comma
+l_int|0
+multiline_comment|/* bulk uses normal TDs */
+)paren
+suffix:semicolon
+multiline_comment|/* initialize the internal counter */
+id|bulk_request-&gt;_bytes_done
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/*&n;&t; * Add the TDs to the ED&n;&t; */
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|ohci_edtd_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|bulk_ed-&gt;status
+op_or_assign
+id|OHCI_ED_SKIP
+suffix:semicolon
+id|head_td
+op_assign
+id|ohci_add_td_chain_to_ed
+c_func
+(paren
+id|head_td
+comma
+id|bulk_ed
+)paren
+suffix:semicolon
+id|bulk_ed-&gt;status
+op_and_assign
+op_complement
+id|OHCI_ED_SKIP
+suffix:semicolon
+id|ohci_unhalt_ed
+c_func
+(paren
+id|bulk_ed
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|ohci_edtd_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+macro_line|#ifdef OHCI_DEBUG
+multiline_comment|/*&t;if (MegaDebug) { */
+multiline_comment|/* complete transaction debugging output (before) */
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot; Bulk ED %lx:&bslash;n&quot;
+comma
+id|virt_to_bus
+c_func
+(paren
+id|bulk_ed
+)paren
+)paren
+suffix:semicolon
+id|show_ohci_ed
+c_func
+(paren
+id|bulk_ed
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot; Bulk TDs %lx:&bslash;n&quot;
+comma
+id|virt_to_bus
+c_func
+(paren
+id|head_td
+)paren
+)paren
+suffix:semicolon
+id|show_ohci_td_chain
+c_func
+(paren
+id|head_td
+)paren
+suffix:semicolon
+multiline_comment|/*&t;} */
+macro_line|#endif
+multiline_comment|/* Give the ED to the HC */
+id|ohci_add_bulk_ed
+c_func
+(paren
+id|dev-&gt;ohci
+comma
+id|bulk_ed
+)paren
+suffix:semicolon
+r_return
+id|bulk_ed
+suffix:semicolon
+)brace
+multiline_comment|/* ohci_request_bulk() */
+r_static
+id|DECLARE_WAIT_QUEUE_HEAD
+c_func
+(paren
+id|bulk_wakeup
+)paren
+suffix:semicolon
+DECL|function|ohci_bulk_msg_completed
+r_static
+r_int
+id|ohci_bulk_msg_completed
+c_func
+(paren
+r_int
+id|stats
+comma
+r_void
+op_star
+id|buffer
+comma
+r_int
+id|len
+comma
+r_void
+op_star
+id|dev_id
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|dev_id
+op_ne
+l_int|NULL
+)paren
+(brace
+r_int
+op_star
+id|completion_status
+op_assign
+(paren
+r_int
+op_star
+)paren
+id|dev_id
+suffix:semicolon
+op_star
+id|completion_status
+op_assign
+id|stats
+suffix:semicolon
+)brace
+id|wake_up
+c_func
+(paren
+op_amp
+id|bulk_wakeup
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/* don&squot;t requeue the TD */
+)brace
+multiline_comment|/* ohci_bulk_msg_completed() */
+DECL|function|ohci_bulk_msg
+r_static
+r_int
+id|ohci_bulk_msg
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+id|usb_dev
+comma
+r_int
+r_int
+id|pipe
+comma
+r_void
+op_star
+id|data
+comma
+r_int
+id|len
+comma
+r_int
+r_int
+op_star
+id|bytes_transferred_p
+)paren
+(brace
+id|DECLARE_WAITQUEUE
+c_func
+(paren
+id|wait
+comma
+id|current
+)paren
+suffix:semicolon
+r_int
+id|completion_status
+op_assign
+id|USB_ST_INTERNALERROR
+suffix:semicolon
+r_struct
+id|ohci_bulk_request_state
+id|req
+suffix:semicolon
+r_struct
+id|ohci_ed
+op_star
+id|req_ed
+suffix:semicolon
+multiline_comment|/* ....... */
+macro_line|#ifdef OHCI_DEBUG 
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;ohci_bulk_msg %p pipe %x, data %p, len %d, bytes_transferred %p&bslash;n&quot;
+comma
+id|usb_dev
+comma
+id|pipe
+comma
+id|data
+comma
+id|len
+comma
+id|bytes_transferred_p
+)paren
+suffix:semicolon
+macro_line|#endif
+id|req.usb_dev
+op_assign
+id|usb_dev
+suffix:semicolon
+id|req.pipe
+op_assign
+id|pipe
+suffix:semicolon
+id|req.data
+op_assign
+id|data
+suffix:semicolon
+id|req.length
+op_assign
+id|len
+suffix:semicolon
+id|req.bytes_transferred_p
+op_assign
+id|bytes_transferred_p
+suffix:semicolon
+id|req.dev_id
+op_assign
+op_amp
+id|completion_status
+suffix:semicolon
+id|req.completion
+op_assign
+id|ohci_bulk_msg_completed
+suffix:semicolon
+multiline_comment|/*&n;&t; * Start the transaction..&n;&t; */
+id|current-&gt;state
+op_assign
+id|TASK_UNINTERRUPTIBLE
+suffix:semicolon
+id|add_wait_queue
+c_func
+(paren
+op_amp
+id|bulk_wakeup
+comma
+op_amp
+id|wait
+)paren
+suffix:semicolon
+id|req_ed
+op_assign
+id|ohci_request_bulk
+c_func
+(paren
+op_amp
+id|req
+)paren
+suffix:semicolon
+multiline_comment|/* FIXME this should to wait for a caller specified time... */
+id|schedule_timeout
+c_func
+(paren
+id|HZ
+op_star
+l_int|5
+)paren
+suffix:semicolon
+macro_line|#ifdef OHCI_DEBUG
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;ohci_bulk_msg request completed or timed out w/ status %x&bslash;n&quot;
+comma
+id|completion_status
+)paren
+suffix:semicolon
+macro_line|#endif
+id|remove_wait_queue
+c_func
+(paren
+op_amp
+id|bulk_wakeup
+comma
+op_amp
+id|wait
+)paren
+suffix:semicolon
+multiline_comment|/* remove the ED from the HC */
+id|ohci_remove_bulk_ed
+c_func
+(paren
+id|usb_to_ohci
+c_func
+(paren
+id|usb_dev
+)paren
+op_member_access_from_pointer
+id|ohci
+comma
+id|req_ed
+)paren
+suffix:semicolon
+id|ohci_free_ed
+c_func
+(paren
+id|req_ed
+)paren
+suffix:semicolon
+multiline_comment|/* return it to the pool */
+macro_line|#ifdef OHCI_DEBUG
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;ohci_bulk_msg done.&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+r_return
+id|completion_status
+suffix:semicolon
+)brace
+multiline_comment|/* ohci_bulk_msg() */
+multiline_comment|/* .......... */
 multiline_comment|/*&n; * Allocate a new USB device to be attached to an OHCI controller&n; */
 DECL|function|ohci_usb_allocate
 r_static
@@ -3836,9 +5035,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* FIXME! */
-DECL|macro|ohci_bulk_msg
-mdefine_line|#define ohci_bulk_msg NULL
 multiline_comment|/*&n; * functions for the generic USB driver&n; */
 DECL|variable|ohci_device_operations
 r_struct
@@ -4865,6 +6061,7 @@ op_star
 id|td
 suffix:semicolon
 multiline_comment|/* used for walking the list */
+multiline_comment|/* um... isn&squot;t this dangerous to do in an interrupt handler? -greg */
 id|spin_lock
 c_func
 (paren
@@ -4927,7 +6124,6 @@ id|KERN_ERR
 l_string|&quot;yikes! reaping a dummy TD&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME: munge td-&gt;info into a future standard status format */
 r_if
 c_cond
 (paren
@@ -4941,12 +6137,16 @@ c_func
 id|td-&gt;ed
 )paren
 op_logical_and
-id|td-&gt;completed
-op_eq
-l_int|0
+op_logical_neg
+id|td_endofchain
+c_func
+(paren
+op_star
+id|td
+)paren
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t; * There was an error on this TD and the ED&n;&t;&t;&t; * is halted, and this was not the last TD&n;&t;&t;&t; * of the transaction, so there will be TDs&n;&t;&t;&t; * to clean off the ED.&n;&t;&t;&t; * (We assume that a TD with a non-NULL completed&n;&t;&t;&t; * field is the last one of a transaction.&n;&t;&t;&t; * Ultimately we should have a flag in the TD&n;&t;&t;&t; * to say that it is the last one.)&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * There was an error on this TD and the ED&n;&t;&t;&t; * is halted, and this was not the last TD&n;&t;&t;&t; * of the transaction, so there will be TDs&n;&t;&t;&t; * to clean off the ED.&n;&t;&t;&t; */
 r_struct
 id|ohci_ed
 op_star
@@ -5015,21 +6215,35 @@ id|td-&gt;next_td
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* only deal with TDs from this ED,&n;&t;&t;&t;&t; * the host controller could have&n;&t;&t;&t;&t; * processed other endpoints at the&n;&t;&t;&t;&t; * same time as this one.. */
 r_if
 c_cond
 (paren
-id|td-&gt;completed
-op_ne
-l_int|0
+id|td-&gt;ed
+op_eq
+id|ed
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|td_endofchain
+c_func
+(paren
+op_star
+id|td
+)paren
 )paren
 r_break
 suffix:semicolon
+multiline_comment|/* FIXME: unlink this TD from the&n;&t;&t;&t;&t;&t; * reverse donelist! */
 id|ohci_free_td
 c_func
 (paren
 id|td
 )paren
 suffix:semicolon
+)brace
 id|td
 op_assign
 id|ntd
@@ -5054,7 +6268,7 @@ c_func
 id|ed
 )paren
 suffix:semicolon
-multiline_comment|/* If we didn&squot;t find a TD with a completion&n;&t;&t;&t;   routine, give up */
+multiline_comment|/* If we didn&squot;t find an endofchain TD, give up */
 r_if
 c_cond
 (paren
@@ -5091,9 +6305,11 @@ id|cc
 comma
 id|td-&gt;data
 comma
-op_minus
-l_int|1
-multiline_comment|/* XXX */
+id|ohci_td_bytes_done
+c_func
+(paren
+id|td
+)paren
 comma
 id|td-&gt;dev_id
 )paren
@@ -5153,6 +6369,16 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* return it to the pool of free TDs */
+r_if
+c_cond
+(paren
+id|can_auto_free
+c_func
+(paren
+op_star
+id|td
+)paren
+)paren
 id|ohci_free_td
 c_func
 (paren
@@ -5312,6 +6538,15 @@ op_amp
 id|regs-&gt;intrdisable
 )paren
 suffix:semicolon
+macro_line|#if 0
+multiline_comment|/* Only do this for SERIOUS debugging, be sure kern.debug logs&n;&t; * are not going to the console as this can cause your&n;&t; * machine to lock up if so... -greg */
+id|show_ohci_status
+c_func
+(paren
+id|ohci
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Process the done list */
 r_if
 c_cond
@@ -6644,6 +7879,7 @@ id|SIGUSR2
 )paren
 (brace
 multiline_comment|/* toggle mega TD/ED debugging output */
+macro_line|#ifdef OHCI_DEBUG
 id|MegaDebug
 op_assign
 op_logical_neg
@@ -6663,6 +7899,7 @@ suffix:colon
 l_string|&quot;dis&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 r_else
 (brace
@@ -7346,7 +8583,6 @@ id|retval
 suffix:semicolon
 )brace
 multiline_comment|/* ohci_init */
-multiline_comment|/* vim:sw=8&n; */
 macro_line|#ifdef MODULE
 multiline_comment|/*&n; *  Clean up when unloading the module&n; */
 DECL|function|cleanup_module
@@ -7395,4 +8631,5 @@ suffix:semicolon
 )def_block
 macro_line|#endif 
 singleline_comment|//MODULE
+multiline_comment|/* vim:sw=8&n; */
 eof

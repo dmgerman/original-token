@@ -5,11 +5,11 @@ macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/addrspace.h&gt;
-macro_line|#include &lt;asm/vector.h&gt;
 macro_line|#include &lt;asm/jazz.h&gt;
 macro_line|#include &lt;asm/jazzdma.h&gt;
 macro_line|#include &lt;asm/keyboard.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/floppy.h&gt;
 DECL|function|jazz_fd_inb
 r_static
 r_int
@@ -331,8 +331,7 @@ id|order
 suffix:semicolon
 )brace
 DECL|function|jazz_fd_dma_mem_alloc
-r_extern
-r_inline
+r_static
 r_int
 r_int
 id|jazz_fd_dma_mem_alloc
@@ -395,8 +394,7 @@ id|mem
 suffix:semicolon
 )brace
 DECL|function|jazz_fd_dma_mem_free
-r_extern
-r_inline
+r_static
 r_void
 id|jazz_fd_dma_mem_free
 c_func
@@ -413,10 +411,14 @@ id|size
 id|vdma_free
 c_func
 (paren
+id|vdma_phys2log
+c_func
+(paren
 id|PHYSADDR
 c_func
 (paren
 id|addr
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -433,10 +435,11 @@ id|size
 )paren
 suffix:semicolon
 )brace
-DECL|function|std_fd_drive_type
+DECL|function|jazz_fd_drive_type
 r_static
-r_void
-id|std_fd_drive_type
+r_int
+r_int
+id|jazz_fd_drive_type
 c_func
 (paren
 r_int

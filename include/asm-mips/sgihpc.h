@@ -517,33 +517,13 @@ r_struct
 id|hpc3_regs
 (brace
 multiline_comment|/* First regs for the PBUS 8 dma channels. */
-DECL|member|pbdma0
-DECL|member|pbdma1
-DECL|member|pbdma2
-DECL|member|pbdma3
+DECL|member|pbdma
 r_struct
 id|hpc3_pbus_dmacregs
-id|pbdma0
-comma
-id|pbdma1
-comma
-id|pbdma2
-comma
-id|pbdma3
-suffix:semicolon
-DECL|member|pbdma4
-DECL|member|pbdma5
-DECL|member|pbdma6
-DECL|member|pbdma7
-r_struct
-id|hpc3_pbus_dmacregs
-id|pbdma4
-comma
-id|pbdma5
-comma
-id|pbdma6
-comma
-id|pbdma7
+id|pbdma
+(braket
+l_int|8
+)braket
 suffix:semicolon
 multiline_comment|/* Now the HPC scsi registers, we get two scsi reg sets. */
 DECL|member|scsi_chan0
@@ -567,7 +547,7 @@ id|_unused1
 (braket
 id|PAGE_SIZE
 op_star
-l_int|16
+l_int|24
 )braket
 suffix:semicolon
 multiline_comment|/* HPC3 irq status regs.  Due to a peculiar bug you need to&n;&t; * look at two different register addresses to get at all of&n;&t; * the status bits.  The first reg can only reliably report&n;&t; * bits 4:0 of the status, and the second reg can only&n;&t; * reliably report bits 9:5 of the hpc3 irq status.  I told&n;&t; * you it was a peculiar bug. ;-)&n;&t; */
@@ -627,7 +607,7 @@ DECL|member|_unused2
 r_char
 id|_unused2
 (braket
-l_int|0x13ff0
+l_int|0x13fec
 )braket
 suffix:semicolon
 multiline_comment|/* Trust me... */
@@ -663,15 +643,24 @@ l_int|0x07c00
 )braket
 suffix:semicolon
 multiline_comment|/* It&squot;ll only hurt a little... */
+multiline_comment|/* Did DaveM forget the ethernet external regs?&n;&t; * Anyhow, they&squot;re not here and we need some padding instead.&n;&t; */
+DECL|member|_unused5
+r_char
+id|_unused5
+(braket
+l_int|0x04000
+)braket
+suffix:semicolon
+multiline_comment|/* It&squot;ll hurt a lot if you leave this out */
 multiline_comment|/* Per-peripheral device external registers and dma/pio control. */
 DECL|member|pbus_extregs
 id|hpcreg
 id|pbus_extregs
 (braket
-l_int|256
+l_int|16
 )braket
 (braket
-l_int|10
+l_int|256
 )braket
 suffix:semicolon
 multiline_comment|/* 2nd indice indexes controller */
@@ -679,10 +668,10 @@ DECL|member|pbus_dmacfgs
 id|hpcreg
 id|pbus_dmacfgs
 (braket
-l_int|128
+l_int|8
 )braket
 (braket
-l_int|10
+l_int|128
 )braket
 suffix:semicolon
 multiline_comment|/* 2nd indice indexes controller */
@@ -743,9 +732,9 @@ suffix:semicolon
 multiline_comment|/* PROM write enable register */
 DECL|macro|HPC3_PROM_WENAB
 mdefine_line|#define HPC3_PROM_WENAB     0x1 /* Enable writes to the PROM */
-DECL|member|_unused5
+DECL|member|_unused6
 r_char
-id|_unused5
+id|_unused6
 (braket
 l_int|0x800
 op_minus
@@ -762,9 +751,9 @@ suffix:semicolon
 multiline_comment|/* Chip select swap reg */
 DECL|macro|HPC3_PROM_SWAP
 mdefine_line|#define HPC3_PROM_SWAP      0x1 /* invert GIO addr bit to select prom0 or prom1 */
-DECL|member|_unused6
+DECL|member|_unused7
 r_char
-id|_unused6
+id|_unused7
 (braket
 l_int|0x800
 op_minus
@@ -781,9 +770,9 @@ suffix:semicolon
 multiline_comment|/* PROM general purpose output reg */
 DECL|macro|HPC3_PROM_STAT
 mdefine_line|#define HPC3_PROM_STAT      0x1 /* General purpose status bit in gout */
-DECL|member|_unused7
+DECL|member|_unused8
 r_char
-id|_unused7
+id|_unused8
 (braket
 l_int|0x1000
 op_minus

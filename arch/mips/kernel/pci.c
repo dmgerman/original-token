@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pci.c,v 1.6 1998/08/19 21:53:50 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * MIPS implementation of PCI BIOS services for PCI support.&n; *&n; * Copyright (C) 1997, 1998 Ralf Baechle&n; */
+multiline_comment|/* $Id: pci.c,v 1.8 1999/05/01 22:40:36 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * MIPS implementation of PCI BIOS services for PCI support.&n; *&n; * Copyright (C) 1997, 1998 Ralf Baechle&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -40,7 +40,7 @@ op_ne
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * The functions below are machine specific and must be reimplented for&n; * each PCI chipset configuration.  We just run the hook to the machine&n; * specific implementation.&n; */
+multiline_comment|/*&n; * The functions below are machine specific and must be reimplimented for&n; * each PCI chipset configuration.  We just run the hook to the machine&n; * specific implementation.&n; */
 DECL|function|pcibios_fixup
 r_void
 id|pcibios_fixup
@@ -48,7 +48,6 @@ id|pcibios_fixup
 r_void
 )paren
 (brace
-r_return
 id|pci_ops
 op_member_access_from_pointer
 id|pcibios_fixup
@@ -316,25 +315,6 @@ id|bus
 )paren
 )paren
 (brace
-)brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
-r_char
-op_star
-id|pcibios_setup
-c_func
-(paren
-r_char
-op_star
-id|str
-)paren
-)paren
-(brace
-r_return
-id|str
-suffix:semicolon
 )brace
 macro_line|#endif /* defined(CONFIG_PCI) */
 eof

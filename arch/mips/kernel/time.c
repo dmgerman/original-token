@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/mips/kernel/time.c&n; *&n; *  Copyright (C) 1991, 1992, 1995  Linus Torvalds&n; *&n; * This file contains the time handling details for PC-style clocks as&n; * found in some MIPS systems.&n; *&n; * 1997-09-10&t;Updated NTP code according to technical memorandum Jan &squot;96&n; *&t;&t;&quot;A Kernel Model for Precision Timekeeping&quot; by Dave Mills&n; *&n; * $Id: time.c,v 1.6 1998/08/17 13:57:44 ralf Exp $&n; */
+multiline_comment|/* $Id: time.c,v 1.12 1999/06/13 16:30:34 ralf Exp $&n; *&n; *  Copyright (C) 1991, 1992, 1995  Linus Torvalds&n; *  Copyright (C) 1996, 1997, 1998  Ralf Baechle&n; *&n; * This file contains the time handling details for PC-style clocks as&n; * found in some MIPS systems.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -90,6 +90,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|tmp
+op_logical_and
 id|last_jiffies
 op_ne
 id|tmp
@@ -786,6 +788,82 @@ op_star
 id|regs
 )paren
 (brace
+macro_line|#ifdef CONFIG_PROFILE
+r_if
+c_cond
+(paren
+op_logical_neg
+id|user_mode
+c_func
+(paren
+id|regs
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|prof_buffer
+op_logical_and
+id|current-&gt;pid
+)paren
+(brace
+r_extern
+r_int
+id|_stext
+suffix:semicolon
+r_int
+r_int
+id|pc
+op_assign
+id|regs-&gt;cp0_epc
+suffix:semicolon
+id|pc
+op_sub_assign
+(paren
+r_int
+r_int
+)paren
+op_amp
+id|_stext
+suffix:semicolon
+id|pc
+op_rshift_assign
+id|prof_shift
+suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; * Dont ignore out-of-bounds pc values silently,&n;&t;&t;&t; * put them into the last histogram slot, so if&n;&t;&t;&t; * present, they will show up as a sharp peak.&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|pc
+OG
+id|prof_len
+op_minus
+l_int|1
+)paren
+id|pc
+op_assign
+id|prof_len
+op_minus
+l_int|1
+suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+(paren
+id|atomic_t
+op_star
+)paren
+op_amp
+id|prof_buffer
+(braket
+id|pc
+)braket
+)paren
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif
 id|do_timer
 c_func
 (paren
@@ -917,6 +995,21 @@ comma
 id|regs
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|jiffies
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; * If jiffies has overflowed in this timer_interrupt we must&n;&t;&t; * update the timer[hi]/[lo] to make do_fast_gettimeoffset()&n;&t;&t; * quotient calc still valid. -arca&n;&t;&t; */
+id|timerhi
+op_assign
+id|timerlo
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/* Converts Gregorian date to seconds since 1970-01-01 00:00:00.&n; * Assumes input in normal date format, i.e. 1980-12-31 23:59:59&n; * =&gt; year=1980, mon=12, day=31, hour=23, min=59, sec=59.&n; *&n; * [For the Julian calendar (which was used in Russia before 1917,&n; * Britain &amp; colonies before 1752, anywhere else before 1582,&n; * and is still in use by some communities) leave out the&n; * -year/100+year/400 terms, and add 10.]&n; *&n; * This algorithm was first published by Gauss (I think).&n; *&n; * WARNING: this function will overflow on 2106-02-07 06:28:16 on&n; * machines were long is 32-bit! (However, as time_t is signed, we&n; * will already get problems at other places on 2038-01-19 03:14:08)&n; */
 DECL|function|mktime
@@ -1198,6 +1291,8 @@ r_void
 (brace
 r_int
 r_int
+id|epoch
+comma
 id|year
 comma
 id|mon
@@ -1392,29 +1487,42 @@ id|year
 )paren
 suffix:semicolon
 )brace
-macro_line|#if 0&t;/* the IBM way */
+multiline_comment|/* Attempt to guess the epoch.  This is the same heuristic as in rtc.c so&n;&t;   no stupid things will happen to timekeeping.  Who knows, maybe Ultrix&n;  &t;   also uses 1952 as epoch ...  */
 r_if
 c_cond
 (paren
-(paren
 id|year
-op_add_assign
-l_int|1900
-)paren
+OG
+l_int|10
+op_logical_and
+id|year
 OL
-l_int|1970
+l_int|44
 )paren
-id|year
-op_add_assign
-l_int|100
-suffix:semicolon
-macro_line|#else
-multiline_comment|/* Acer PICA clock starts from 1980.  True for all MIPS machines?  */
-id|year
-op_add_assign
+(brace
+id|epoch
+op_assign
 l_int|1980
 suffix:semicolon
-macro_line|#endif
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|year
+OL
+l_int|96
+)paren
+(brace
+id|epoch
+op_assign
+l_int|1952
+suffix:semicolon
+)brace
+id|year
+op_add_assign
+id|epoch
+suffix:semicolon
 id|xtime.tv_sec
 op_assign
 id|mktime

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: setup.c,v 1.12 1998/08/18 20:45:06 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995  Linus Torvalds&n; * Copyright (C) 1995, 1996, 1997, 1998  Ralf Baechle&n; * Copyright (C) 1996  Stoned Elipot&n; */
+multiline_comment|/* $Id: setup.c,v 1.16 1999/06/17 13:25:47 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995  Linus Torvalds&n; * Copyright (C) 1995, 1996, 1997, 1998  Ralf Baechle&n; * Copyright (C) 1996  Stoned Elipot&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
@@ -19,6 +19,7 @@ macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#ifdef CONFIG_BLK_DEV_RAM
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#endif
+macro_line|#include &lt;linux/ide.h&gt;
 macro_line|#ifdef CONFIG_RTC
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/timex.h&gt;
@@ -26,7 +27,6 @@ macro_line|#endif
 macro_line|#include &lt;asm/asm.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/cachectl.h&gt;
-macro_line|#include &lt;asm/ide.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/stackframe.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -64,13 +64,6 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/*&n; * Milo passes some information to the kernel that looks like as if it&n; * had been returned by a Intel PC BIOS.  Milo doesn&squot;t fill the passed&n; * drive_info and Linux can find out about this anyway, so I&squot;m going to&n; * remove this sometime.  screen_info contains information about the &n; * resolution of the text screen.  For VGA graphics based machine this&n; * information is being use to continue the screen output just below&n; * the BIOS printed text and with the same text resolution.&n; */
-DECL|variable|drive_info
-r_struct
-id|drive_info_struct
-id|drive_info
-op_assign
-id|DEFAULT_DRIVE_INFO
-suffix:semicolon
 DECL|variable|screen_info
 r_struct
 id|screen_info
@@ -115,7 +108,18 @@ id|rtc_ops
 op_star
 id|rtc_ops
 suffix:semicolon
-multiline_comment|/*&n; * Setup information&n; *&n; * These are intialized so they are in the .data section&n; */
+r_extern
+r_struct
+id|kbd_ops
+id|no_kbd_ops
+suffix:semicolon
+DECL|variable|kbd_ops
+r_struct
+id|kbd_ops
+op_star
+id|kbd_ops
+suffix:semicolon
+multiline_comment|/*&n; * Setup information&n; *&n; * These are initialized so they are in the .data section&n; */
 DECL|variable|mips_memory_upper
 r_int
 r_int
@@ -145,29 +149,10 @@ id|mips_machgroup
 op_assign
 id|MACH_GROUP_UNKNOWN
 suffix:semicolon
-DECL|variable|mips_tlb_entries
-r_int
-r_int
-id|mips_tlb_entries
-op_assign
-l_int|48
-suffix:semicolon
-multiline_comment|/* Guess which CPU I&squot;ve got :) */
-DECL|variable|mips_vram_base
-r_int
-r_int
-id|mips_vram_base
-op_assign
-id|KSEG0
-suffix:semicolon
 DECL|variable|aux_device_present
 r_int
 r_char
 id|aux_device_present
-suffix:semicolon
-r_extern
-r_int
-id|root_mountflags
 suffix:semicolon
 r_extern
 r_int
@@ -183,18 +168,6 @@ suffix:semicolon
 multiline_comment|/*&n; * This is set up by the setup-routine at boot-time&n; */
 DECL|macro|PARAM
 mdefine_line|#define PARAM&t;empty_zero_page
-macro_line|#if 0
-mdefine_line|#define ORIG_ROOT_DEV (*(unsigned short *) (PARAM+0x1FC))
-mdefine_line|#define AUX_DEVICE_INFO (*(unsigned char *) (PARAM+0x1FF))
-macro_line|#endif
-DECL|macro|LOADER_TYPE
-mdefine_line|#define LOADER_TYPE (*(unsigned char *) (PARAM+0x210))
-DECL|macro|KERNEL_START
-mdefine_line|#define KERNEL_START (*(unsigned long *) (PARAM+0x214))
-DECL|macro|INITRD_START
-mdefine_line|#define INITRD_START (*(unsigned long *) (PARAM+0x218))
-DECL|macro|INITRD_SIZE
-mdefine_line|#define INITRD_SIZE (*(unsigned long *) (PARAM+0x21c))
 DECL|variable|command_line
 r_static
 r_char
@@ -211,6 +184,13 @@ suffix:semicolon
 DECL|variable|saved_command_line
 r_char
 id|saved_command_line
+(braket
+id|CL_SIZE
+)braket
+suffix:semicolon
+r_extern
+r_char
+id|arcs_cmdline
 (braket
 id|CL_SIZE
 )braket
@@ -287,9 +267,23 @@ r_int
 r_int
 id|memory_end
 suffix:semicolon
-id|tag
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
+r_int
+r_int
+id|tmp
+suffix:semicolon
+r_int
+r_int
 op_star
-id|atag
+id|initrd_header
+suffix:semicolon
+macro_line|#endif
+r_void
+id|baget_setup
+c_func
+(paren
+r_void
+)paren
 suffix:semicolon
 r_void
 id|cobalt_setup
@@ -333,77 +327,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-multiline_comment|/* Perhaps a lot of tags are not getting &squot;snarfed&squot; - */
-multiline_comment|/* please help yourself */
-id|atag
-op_assign
-id|bi_TagFind
-c_func
-(paren
-id|tag_machtype
-)paren
-suffix:semicolon
-id|memcpy
-c_func
-(paren
-op_amp
-id|mips_machtype
-comma
-id|TAGVALPTR
-c_func
-(paren
-id|atag
-)paren
-comma
-id|atag-&gt;size
-)paren
-suffix:semicolon
-id|atag
-op_assign
-id|bi_TagFind
-c_func
-(paren
-id|tag_machgroup
-)paren
-suffix:semicolon
-id|memcpy
-c_func
-(paren
-op_amp
-id|mips_machgroup
-comma
-id|TAGVALPTR
-c_func
-(paren
-id|atag
-)paren
-comma
-id|atag-&gt;size
-)paren
-suffix:semicolon
-id|atag
-op_assign
-id|bi_TagFind
-c_func
-(paren
-id|tag_vram_base
-)paren
-suffix:semicolon
-id|memcpy
-c_func
-(paren
-op_amp
-id|mips_vram_base
-comma
-id|TAGVALPTR
-c_func
-(paren
-id|atag
-)paren
-comma
-id|atag-&gt;size
-)paren
-suffix:semicolon
 multiline_comment|/* Save defaults for configuration-dependent routines.  */
 id|irq_setup
 op_assign
@@ -428,17 +351,46 @@ op_assign
 op_amp
 id|no_rtc_ops
 suffix:semicolon
+id|kbd_ops
+op_assign
+op_amp
+id|no_kbd_ops
+suffix:semicolon
 r_switch
 c_cond
 (paren
 id|mips_machgroup
 )paren
 (brace
+macro_line|#ifdef CONFIG_BAGET_MIPS
+r_case
+id|MACH_GROUP_UNKNOWN
+suffix:colon
+id|baget_setup
+c_func
+(paren
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_COBALT_MICRO_SERVER
 r_case
 id|MACH_GROUP_COBALT
 suffix:colon
 id|cobalt_setup
+c_func
+(paren
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_DECSTATION
+r_case
+id|MACH_GROUP_DEC
+suffix:colon
+id|decstation_setup
 c_func
 (paren
 )paren
@@ -491,29 +443,6 @@ l_string|&quot;Unsupported architecture&quot;
 )paren
 suffix:semicolon
 )brace
-id|atag
-op_assign
-id|bi_TagFind
-c_func
-(paren
-id|tag_drive_info
-)paren
-suffix:semicolon
-id|memcpy
-c_func
-(paren
-op_amp
-id|drive_info
-comma
-id|TAGVALPTR
-c_func
-(paren
-id|atag
-)paren
-comma
-id|atag-&gt;size
-)paren
-suffix:semicolon
 id|memory_end
 op_assign
 id|mips_memory_upper
@@ -527,81 +456,13 @@ id|memory_end
 op_and_assign
 id|PAGE_MASK
 suffix:semicolon
-macro_line|#ifdef CONFIG_BLK_DEV_RAM
-id|rd_image_start
-op_assign
-id|RAMDISK_FLAGS
-op_amp
-id|RAMDISK_IMAGE_START_MASK
-suffix:semicolon
-id|rd_prompt
-op_assign
+id|strncpy
 (paren
-(paren
-id|RAMDISK_FLAGS
-op_amp
-id|RAMDISK_PROMPT_FLAG
-)paren
-op_ne
-l_int|0
-)paren
-suffix:semicolon
-id|rd_doload
-op_assign
-(paren
-(paren
-id|RAMDISK_FLAGS
-op_amp
-id|RAMDISK_LOAD_FLAG
-)paren
-op_ne
-l_int|0
-)paren
-suffix:semicolon
-macro_line|#endif
-id|atag
-op_assign
-id|bi_TagFind
-c_func
-(paren
-id|tag_mount_root_rdonly
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|atag
-)paren
-id|root_mountflags
-op_or_assign
-id|MS_RDONLY
-suffix:semicolon
-id|atag
-op_assign
-id|bi_TagFind
-c_func
-(paren
-id|tag_command_line
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|atag
-)paren
-id|memcpy
-c_func
-(paren
-op_amp
 id|command_line
 comma
-id|TAGVALPTR
-c_func
-(paren
-id|atag
-)paren
+id|arcs_cmdline
 comma
-id|atag-&gt;size
+id|CL_SIZE
 )paren
 suffix:semicolon
 id|memcpy
@@ -644,21 +505,87 @@ op_assign
 id|memory_end
 suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_INITRD
+id|tmp
+op_assign
+(paren
+(paren
+(paren
+r_int
+r_int
+)paren
+op_amp
+id|_end
+op_plus
+id|PAGE_SIZE
+op_minus
+l_int|1
+)paren
+op_amp
+id|PAGE_MASK
+)paren
+op_minus
+l_int|8
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|LOADER_TYPE
+id|tmp
+OL
+(paren
+r_int
+r_int
+)paren
+op_amp
+id|_end
+)paren
+id|tmp
+op_add_assign
+id|PAGE_SIZE
+suffix:semicolon
+id|initrd_header
+op_assign
+(paren
+r_int
+r_int
+op_star
+)paren
+id|tmp
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|initrd_header
+(braket
+l_int|0
+)braket
+op_eq
+l_int|0x494E5244
 )paren
 (brace
 id|initrd_start
 op_assign
-id|INITRD_START
+(paren
+r_int
+r_int
+)paren
+op_amp
+id|initrd_header
+(braket
+l_int|2
+)braket
 suffix:semicolon
 id|initrd_end
 op_assign
-id|INITRD_START
+id|initrd_start
 op_plus
-id|INITRD_SIZE
+id|initrd_header
+(braket
+l_int|1
+)braket
+suffix:semicolon
+id|initrd_below_start_ok
+op_assign
+l_int|1
 suffix:semicolon
 r_if
 c_cond
@@ -684,6 +611,12 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+r_else
+op_star
+id|memory_start_p
+op_assign
+id|initrd_end
+suffix:semicolon
 )brace
 macro_line|#endif
 )brace

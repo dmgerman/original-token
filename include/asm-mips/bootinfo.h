@@ -19,10 +19,10 @@ DECL|macro|MACH_GROUP_ACN
 mdefine_line|#define MACH_GROUP_ACN&t;&t;5
 DECL|macro|MACH_GROUP_SGI
 mdefine_line|#define MACH_GROUP_SGI          6 /* Silicon Graphics workstations and servers */
-DECL|macro|MACH_GROUP_RESERVED
-mdefine_line|#define MACH_GROUP_RESERVED     7 /* No Such Architecture&t; &t;      */
+DECL|macro|MACH_GROUP_COBALT
+mdefine_line|#define MACH_GROUP_COBALT       7 /* Cobalt servers&t;&t; &t;      */
 DECL|macro|GROUP_NAMES
-mdefine_line|#define GROUP_NAMES { &quot;unknown&quot;, &quot;Jazz&quot;, &quot;Digital&quot;, &quot;ARC&quot;, &bslash;&n;                      &quot;SNI&quot;, &quot;ACN&quot;, &quot;SGI&quot;, &quot;NSA&quot; }
+mdefine_line|#define GROUP_NAMES { &quot;unknown&quot;, &quot;Jazz&quot;, &quot;Digital&quot;, &quot;ARC&quot;, &bslash;&n;                      &quot;SNI&quot;, &quot;ACN&quot;, &quot;SGI&quot;, &quot;Cobalt&quot; }
 multiline_comment|/*&n; * Valid machtype values for group unknown (low order halfword of mips_machtype)&n; */
 DECL|macro|MACH_UNKNOWN
 mdefine_line|#define MACH_UNKNOWN&t;&t;0&t;/* whatever...&t;&t;&t;*/
@@ -38,12 +38,28 @@ mdefine_line|#define MACH_OLIVETTI_M700      2&t;/* Olivetti M700-10 (-15 ??)   
 DECL|macro|GROUP_JAZZ_NAMES
 mdefine_line|#define GROUP_JAZZ_NAMES { &quot;Acer PICA 61&quot;, &quot;Mips Magnum 4000&quot;, &quot;Olivetti M700&quot; }
 multiline_comment|/*&n; * Valid machtype for group DEC &n; */
-multiline_comment|/* FIXME: this is a very fuzzy name, and we got a big &quot;name space now&quot; */
-multiline_comment|/* So otiginal DEC codes can be used -Stoned */
-DECL|macro|MACH_DECSTATION
-mdefine_line|#define MACH_DECSTATION&t;&t;0&t;/* DECStation 5000/2x for now */
+DECL|macro|MACH_DSUNKNOWN
+mdefine_line|#define MACH_DSUNKNOWN&t;&t;0
+DECL|macro|MACH_DS23100
+mdefine_line|#define MACH_DS23100&t;&t;1&t;/* DECstation 2100 or 3100&t;*/
+DECL|macro|MACH_DS5100
+mdefine_line|#define MACH_DS5100&t;&t;2&t;/* DECstation 5100&t;&t;*/
+DECL|macro|MACH_DS5000_200
+mdefine_line|#define MACH_DS5000_200&t;&t;3&t;/* DECstation 5000/200&t;&t;*/
+DECL|macro|MACH_DS5000_1XX
+mdefine_line|#define MACH_DS5000_1XX&t;&t;4&t;/* DECstation 5000/120, 125, 133, 150 */
+DECL|macro|MACH_DS5000_XX
+mdefine_line|#define MACH_DS5000_XX&t;&t;5&t;/* DECstation 5000/20, 25, 33, 50 */
+DECL|macro|MACH_DS5000_2X0
+mdefine_line|#define MACH_DS5000_2X0&t;&t;6&t;/* DECstation 5000/240, 260&t;*/
+DECL|macro|MACH_DS5400
+mdefine_line|#define MACH_DS5400&t;&t;7&t;/* DECstation 5400&t;&t;*/
+DECL|macro|MACH_DS5500
+mdefine_line|#define MACH_DS5500&t;&t;8&t;/* DECstation 5500&t;&t;*/
+DECL|macro|MACH_DS5800
+mdefine_line|#define MACH_DS5800&t;&t;9&t;/* DECstation 5800&t;&t;*/
 DECL|macro|GROUP_DEC_NAMES
-mdefine_line|#define GROUP_DEC_NAMES { &quot;3min&quot; }
+mdefine_line|#define GROUP_DEC_NAMES { &quot;unknown&quot;, &quot;DECstation 2100/3100&quot;, &quot;DECstation 5100&quot;, &bslash;&n;&t;&quot;DECstation 5000/200&quot;, &quot;DECstation 5000/1xx&quot;, &quot;Personal DECstation 5000/xx&quot;, &bslash;&n;&t;&quot;DECstation 5000/2x0&quot;, &quot;DECstation 5400&quot;, &quot;DECstation 5500&quot;, &bslash;&n;&t;&quot;DECstation 5800&quot; }
 multiline_comment|/*&n; * Valid machtype for group ARC&n; */
 DECL|macro|MACH_DESKSTATION_RPC44
 mdefine_line|#define MACH_DESKSTATION_RPC44  0&t;/* Deskstation rPC44 */
@@ -66,6 +82,11 @@ DECL|macro|MACH_SGI_INDY
 mdefine_line|#define MACH_SGI_INDY&t;&t;0&t;/* R4?K and R5K Indy workstaions */
 DECL|macro|GROUP_SGI_NAMES
 mdefine_line|#define GROUP_SGI_NAMES { &quot;Indy&quot; }
+multiline_comment|/*&n; * Valid machtype for group COBALT&n; */
+DECL|macro|MACH_COBALT_27
+mdefine_line|#define MACH_COBALT_27 &t;&t; 0&t;/* Proto &quot;27&quot; hardware */
+DECL|macro|GROUP_COBALT_NAMES
+mdefine_line|#define GROUP_COBALT_NAMES { &quot;Microserver 27&quot; }
 multiline_comment|/*&n; * Valid cputype values&n; */
 DECL|macro|CPU_UNKNOWN
 mdefine_line|#define CPU_UNKNOWN&t;&t;0
@@ -176,202 +197,6 @@ DECL|typedef|mips_arc_DisplayInfo
 )brace
 id|mips_arc_DisplayInfo
 suffix:semicolon
-multiline_comment|/*&n; * New style bootinfo&n; *&n; * Add new tags only at the end of the enum; *never* remove any tags&n; * or you&squot;ll break compatibility!&n; */
-DECL|enum|bi_tag
-r_enum
-id|bi_tag
-(brace
-multiline_comment|/*&n; &t; * not a real tag&n; &t; */
-DECL|enumerator|tag_dummy
-id|tag_dummy
-comma
-multiline_comment|/*&n; &t; * machine type&n; &t; */
-DECL|enumerator|tag_machtype
-id|tag_machtype
-comma
-multiline_comment|/*&n; &t; * system CPU &amp; FPU&n; &t; */
-DECL|enumerator|tag_cputype
-id|tag_cputype
-comma
-multiline_comment|/*&n; &t; * Installed RAM&n; &t; */
-DECL|enumerator|tag_memlower
-id|tag_memlower
-comma
-DECL|enumerator|tag_memupper
-id|tag_memupper
-comma
-multiline_comment|/*&n; &t; * Cache Sizes (0xffffffff = unknown)&n; &t; */
-DECL|enumerator|tag_icache_size
-id|tag_icache_size
-comma
-DECL|enumerator|tag_icache_linesize
-id|tag_icache_linesize
-comma
-DECL|enumerator|tag_dcache_size
-id|tag_dcache_size
-comma
-DECL|enumerator|tag_dcache_linesize
-id|tag_dcache_linesize
-comma
-DECL|enumerator|tag_scache_size
-id|tag_scache_size
-comma
-DECL|enumerator|tag_scache_linesize
-id|tag_scache_linesize
-comma
-multiline_comment|/*&n; &t; * TLB Info&n; &t; */
-DECL|enumerator|tag_tlb_entries
-id|tag_tlb_entries
-comma
-multiline_comment|/*&n; &t; * DMA buffer size (Deskstation only)&n; &t; */
-DECL|enumerator|tag_dma_cache_size
-id|tag_dma_cache_size
-comma
-DECL|enumerator|tag_dma_cache_base
-id|tag_dma_cache_base
-comma
-multiline_comment|/*&n;&t; * Ramdisk Info &n; &t; */
-DECL|enumerator|tag_ramdisk_size
-id|tag_ramdisk_size
-comma
-multiline_comment|/* ramdisk size in 1024 byte blocks */
-DECL|enumerator|tag_ramdisk_base
-id|tag_ramdisk_base
-comma
-multiline_comment|/* address of the ram disk in mem */
-multiline_comment|/*&n; &t; * Boot flags for the kernel&n; &t; */
-DECL|enumerator|tag_mount_root_rdonly
-id|tag_mount_root_rdonly
-comma
-DECL|enumerator|tag_drive_info
-id|tag_drive_info
-comma
-multiline_comment|/*&n; &t; * Video ram info (not in tty.h)&n; &t; */
-DECL|enumerator|tag_vram_base
-id|tag_vram_base
-comma
-multiline_comment|/* video ram base address */
-DECL|enumerator|tag_command_line
-id|tag_command_line
-comma
-multiline_comment|/* kernel command line parameters */
-multiline_comment|/*&n;         * machine group&n;         */
-DECL|enumerator|tag_machgroup
-id|tag_machgroup
-comma
-multiline_comment|/*&n;&t; * info on the display from the ARC BIOS&n;&t; */
-DECL|enumerator|tag_arcdisplayinfo
-id|tag_arcdisplayinfo
-comma
-multiline_comment|/*&n;&t; * tag to pass a complete struct screen_info&n;&t; */
-DECL|enumerator|tag_screen_info
-id|tag_screen_info
-)brace
-suffix:semicolon
-multiline_comment|/* struct defining a tag */
-r_typedef
-r_struct
-(brace
-DECL|member|tag
-r_enum
-id|bi_tag
-id|tag
-suffix:semicolon
-DECL|member|size
-r_int
-r_int
-id|size
-suffix:semicolon
-DECL|typedef|tag
-)brace
-id|tag
-suffix:semicolon
-multiline_comment|/* struct to define a tag and it&squot;s data */
-r_typedef
-r_struct
-(brace
-DECL|member|t
-id|tag
-id|t
-suffix:semicolon
-DECL|member|d
-r_void
-op_star
-id|d
-suffix:semicolon
-DECL|typedef|tag_def
-)brace
-id|tag_def
-suffix:semicolon
-multiline_comment|/* macros for parsing tag list */
-DECL|macro|TAGVALPTR
-mdefine_line|#define TAGVALPTR(t) ((void*)(((void*)(t)) - ((t)-&gt;size)))
-DECL|macro|NEXTTAGPTR
-mdefine_line|#define NEXTTAGPTR(t) ((void*)(TAGVALPTR(t) - (sizeof(tag))))
-multiline_comment|/* size macros for tag size field */
-DECL|macro|UCHARSIZE
-mdefine_line|#define UCHARSIZE (sizeof(unsigned char))
-DECL|macro|ULONGSIZE
-mdefine_line|#define ULONGSIZE (sizeof(unsigned long))
-DECL|macro|UINTSIZE
-mdefine_line|#define UINTSIZE  (sizeof(unsigned int))
-DECL|macro|DRVINFOSIZE
-mdefine_line|#define DRVINFOSIZE (sizeof(struct drive_info_struct))
-DECL|macro|CMDLINESIZE
-mdefine_line|#define CMDLINESIZE (sizeof(char[CL_SIZE])
-multiline_comment|/*&n; * For tag readers aka the kernel&n; */
-id|tag
-op_star
-id|bi_TagFind
-c_func
-(paren
-r_enum
-id|bi_tag
-id|type
-)paren
-suffix:semicolon
-r_void
-id|bi_EarlySnarf
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-multiline_comment|/* For tag creators aka bootloaders */
-multiline_comment|/* Now implemented in Milo 0.26 */
-r_int
-id|bi_TagAdd
-c_func
-(paren
-r_enum
-id|bi_tag
-id|type
-comma
-r_int
-r_int
-id|size
-comma
-r_void
-op_star
-id|data
-)paren
-suffix:semicolon
-r_int
-id|bi_TagAddList
-c_func
-(paren
-id|tag_def
-op_star
-id|taglist
-)paren
-suffix:semicolon
-r_void
-id|bi_TagWalk
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 macro_line|#ifdef CONFIG_SGI
 multiline_comment|/* screen info will dissapear... soon */
 singleline_comment|//#define DEFAULT_SCREEN_INFO {0, 0, 0, 0, 0, 158, 0, 0, 0, 62, 0, 16}
@@ -380,9 +205,9 @@ mdefine_line|#define DEFAULT_SCREEN_INFO {0, 0, 0, 0, 0, 160, 0, 0, 0, 64, 0, 16
 DECL|macro|DEFAULT_DRIVE_INFO
 mdefine_line|#define DEFAULT_DRIVE_INFO { {0,}}
 macro_line|#else
-multiline_comment|/* default values for screen_info variable */
+multiline_comment|/* default values for screen_info variable (Colour VGA) */
 DECL|macro|DEFAULT_SCREEN_INFO
-mdefine_line|#define DEFAULT_SCREEN_INFO {0, 0, 0, 52, 3, 80, 4626, 3, 9, 50}
+mdefine_line|#define DEFAULT_SCREEN_INFO {0, 0, 0, 52, 3, 80, 4626, 3, 9, 50, 0x22, 16}
 macro_line|#endif
 multiline_comment|/* default values for drive info */
 DECL|macro|DEFAULT_DRIVE_INFO
@@ -412,21 +237,6 @@ r_extern
 r_int
 r_int
 id|mips_tlb_entries
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|mips_vram_base
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|mips_dma_cache_size
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|mips_dma_cache_base
 suffix:semicolon
 macro_line|#endif /* _LANGUAGE_ASSEMBLY */
 macro_line|#endif /* __ASM_MIPS_BOOTINFO_H */

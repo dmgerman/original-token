@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: indy_hpc.c,v 1.4 1998/07/14 09:12:27 ralf Exp $&n; *&n; * indy_hpc.c: Routines for generic manipulation of the HPC controllers.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; * Copyright (C) 1998 Ralf Baechle&n; */
+multiline_comment|/* $Id: indy_hpc.c,v 1.6 1999/05/07 22:34:31 ulfc Exp $&n; *&n; * indy_hpc.c: Routines for generic manipulation of the HPC controllers.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; * Copyright (C) 1998 Ralf Baechle&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/addrspace.h&gt;
 macro_line|#include &lt;asm/sgihpc.h&gt;
@@ -152,12 +152,17 @@ l_string|&quot;sgihpc_init: &quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* This test works now thanks to William J. Earl */
 r_if
 c_cond
+(paren
 (paren
 id|sid
 op_amp
 l_int|1
+)paren
+op_eq
+l_int|0
 )paren
 (brace
 macro_line|#ifdef DEBUG_SGIHPC

@@ -2,7 +2,6 @@ multiline_comment|/* $Id: irq.h,v 1.4 1998/05/28 03:18:13 ralf Exp $&n; *&n; * T
 macro_line|#ifndef __ASM_MIPS_IRQ_H
 DECL|macro|__ASM_MIPS_IRQ_H
 mdefine_line|#define __ASM_MIPS_IRQ_H
-multiline_comment|/*&n; * Actually this is a lie but we hide the local device&squot;s interrupts ...&n; */
 DECL|macro|NR_IRQS
 mdefine_line|#define NR_IRQS 64
 DECL|macro|TIMER_IRQ
@@ -23,7 +22,7 @@ id|irqaction
 suffix:semicolon
 r_extern
 r_int
-id|setup_x86_irq
+id|i8259_setup_irq
 c_func
 (paren
 r_int
@@ -53,21 +52,6 @@ r_int
 r_int
 )paren
 suffix:semicolon
-r_extern
-r_int
-r_int
-id|local_irq_count
-(braket
-)braket
-suffix:semicolon
-macro_line|#ifdef __SMP__
-macro_line|#error Send superfluous SMP boxes to ralf@uni-koblenz.de
-macro_line|#else
-DECL|macro|irq_enter
-mdefine_line|#define irq_enter(cpu, irq)     (++local_irq_count[cpu])
-DECL|macro|irq_exit
-mdefine_line|#define irq_exit(cpu, irq)      (--local_irq_count[cpu])
-macro_line|#endif
 multiline_comment|/* Machine specific interrupt initialization  */
 r_extern
 r_void

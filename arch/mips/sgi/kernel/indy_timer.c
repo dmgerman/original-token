@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: indy_timer.c,v 1.9 1998/06/25 20:15:02 ralf Exp $&n; *&n; * indy_timer.c: Setting up the clock on the INDY 8254 controller.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; * Copytight (C) 1997, 1998 Ralf Baechle (ralf@gnu.org)&n; */
+multiline_comment|/* $Id: indy_timer.c,v 1.12 1999/06/13 16:30:36 ralf Exp $&n; *&n; * indy_timer.c: Setting up the clock on the INDY 8254 controller.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; * Copytight (C) 1997, 1998 Ralf Baechle (ralf@gnu.org)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -972,12 +972,10 @@ id|irq
 op_assign
 l_int|4
 suffix:semicolon
-id|irq_enter
+id|hardirq_enter
 c_func
 (paren
 id|cpu
-comma
-id|irq
 )paren
 suffix:semicolon
 id|kstat.irqs
@@ -1005,12 +1003,10 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|irq_exit
+id|hardirq_exit
 c_func
 (paren
 id|cpu
-comma
-id|irq
 )paren
 suffix:semicolon
 )brace

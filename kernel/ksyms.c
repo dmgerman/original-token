@@ -740,13 +740,6 @@ c_func
 id|__wait_on_buffer
 )paren
 suffix:semicolon
-DECL|variable|mark_buffer_uptodate
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|mark_buffer_uptodate
-)paren
-suffix:semicolon
 DECL|variable|add_blkdev_randomness
 id|EXPORT_SYMBOL
 c_func

@@ -4,6 +4,7 @@ mdefine_line|#define __ASM_MIPS_IO_H
 multiline_comment|/*&n; * Slowdown I/O port space accesses for antique hardware.&n; */
 DECL|macro|CONF_SLOWDOWN_IO
 macro_line|#undef CONF_SLOWDOWN_IO
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/mipsconfig.h&gt;
 macro_line|#include &lt;asm/addrspace.h&gt;
 multiline_comment|/*&n; * This file contains the definitions for the MIPS counterpart of the&n; * x86 in/out instructions. This heap of macros and C results in much&n; * better code than the approach of doing it in plain C.  The macros&n; * result in code that is to fast for certain hardware.  On the other&n; * side the performance of the string functions should be improved for&n; * sake of certain devices like EIDE disks that do highspeed polled I/O.&n; *&n; *   Ralf&n; *&n; * This file contains the definitions for the x86 IO instructions&n; * inb/inw/inl/outb/outw/outl and the &quot;string versions&quot; of the same&n; * (insb/insw/insl/outsb/outsw/outsl). You can also use &quot;pausing&quot;&n; * versions of the single-IO instructions (inb_p/inw_p/..).&n; *&n; * This file is not meant to be obfuscating: it&squot;s just complicated&n; * to (a) handle it all in a way that makes gcc able to optimize it&n; * as well as possible and (b) trying to avoid writing the same thing&n; * over and over again with slight variations and possibly making a&n; * mistake somewhere.&n; */
@@ -227,25 +228,26 @@ id|addr
 )paren
 (brace
 )brace
-multiline_comment|/*&n; * XXX We need system specific versions of these to handle EISA address bits&n; * 24-31 on SNI.&n; */
+multiline_comment|/*&n; * XXX We need system specific versions of these to handle EISA address bits&n; * 24-31 on SNI.&n; * XXX more SNI hacks.&n; */
 DECL|macro|readb
-mdefine_line|#define readb(addr) (*(volatile unsigned char *) (isa_slot_offset + (unsigned long)(addr)))
+mdefine_line|#define readb(addr) (*(volatile unsigned char *) (0xa0000000 + (unsigned long)(addr)))
 DECL|macro|readw
-mdefine_line|#define readw(addr) (*(volatile unsigned short *) (isa_slot_offset + (unsigned long)(addr)))
+mdefine_line|#define readw(addr) (*(volatile unsigned short *) (0xa0000000 + (unsigned long)(addr)))
 DECL|macro|readl
-mdefine_line|#define readl(addr) (*(volatile unsigned int *) (isa_slot_offset + (unsigned long)(addr)))
+mdefine_line|#define readl(addr) (*(volatile unsigned int *) (0xa0000000 + (unsigned long)(addr)))
 DECL|macro|writeb
-mdefine_line|#define writeb(b,addr) (*(volatile unsigned char *) (isa_slot_offset + (unsigned long)(addr)) = (b))
+mdefine_line|#define writeb(b,addr) (*(volatile unsigned char *) (0xa0000000 + (unsigned long)(addr)) = (b))
 DECL|macro|writew
-mdefine_line|#define writew(b,addr) (*(volatile unsigned short *) (isa_slot_offset + (unsigned long)(addr)) = (b))
+mdefine_line|#define writew(b,addr) (*(volatile unsigned short *) (0xa0000000 + (unsigned long)(addr)) = (b))
 DECL|macro|writel
-mdefine_line|#define writel(b,addr) (*(volatile unsigned int *) (isa_slot_offset + (unsigned long)(addr)) = (b))
+mdefine_line|#define writel(b,addr) (*(volatile unsigned int *) (0xa0000000 + (unsigned long)(addr)) = (b))
 DECL|macro|memset_io
-mdefine_line|#define memset_io(a,b,c)&t;memset((void *)(isa_slot_offset + (unsigned long)a),(b),(c))
+mdefine_line|#define memset_io(a,b,c)&t;memset((void *)(0xa0000000 + (unsigned long)a),(b),(c))
 DECL|macro|memcpy_fromio
-mdefine_line|#define memcpy_fromio(a,b,c)&t;memcpy((a),(void *)(isa_slot_offset + (unsigned long)(b)),(c))
+mdefine_line|#define memcpy_fromio(a,b,c)&t;memcpy((a),(void *)(0xa0000000 + (unsigned long)(b)),(c))
 DECL|macro|memcpy_toio
-mdefine_line|#define memcpy_toio(a,b,c)&t;memcpy((void *)(isa_slot_offset + (unsigned long)(a)),(b),(c))
+mdefine_line|#define memcpy_toio(a,b,c)&t;memcpy((void *)(0xa0000000 + (unsigned long)(a)),(b),(c))
+multiline_comment|/* END SNI HACKS ... */
 multiline_comment|/*&n; * We don&squot;t have csum_partial_copy_fromio() yet, so we cheat here and&n; * just copy it. The net code will then do the checksum later.&n; */
 DECL|macro|eth_io_copy_and_sum
 mdefine_line|#define eth_io_copy_and_sum(skb,src,len,unused)&t;memcpy_fromio((skb)-&gt;data,(src),(len))
@@ -486,12 +488,28 @@ DECL|macro|outsl
 mdefine_line|#define outsl(port,addr,count) &bslash;&n;((__builtin_constant_p((port)) &amp;&amp; (port) &lt; 32768) ? &bslash;&n;&t;__outslc((port),(addr),(count)) : &bslash;&n;&t;__outsl ((port),(addr),(count)))
 DECL|macro|insl
 mdefine_line|#define insl(port,addr,count) &bslash;&n;((__builtin_constant_p((port)) &amp;&amp; (port) &lt; 32768) ? &bslash;&n;&t;__inslc((port),(addr),(count)) : &bslash;&n;&t;__insl((port),(addr),(count)))
-multiline_comment|/*&n; * The caches on some architectures aren&squot;t dma-coherent and have need to&n; * handle this in software.  There are two types of operations that&n; * can be applied to dma buffers.&n; *&n; *  - dma_cache_wback_inv(start, size) makes caches and coherent by&n; *    writing the content of the caches back to memory, if necessary.&n; *    The function also invalidates the affected part of the caches as&n; *    necessary before DMA transfers from outside to memory.&n; *  - dma_cache_inv(start, size) invalidates the affected parts of the&n; *    caches.  Dirty lines of the caches may be written back or simply&n; *    be discarded.  This operation is necessary before dma operations&n; *    to the memory.&n; */
+multiline_comment|/*&n; * The caches on some architectures aren&squot;t dma-coherent and have need to&n; * handle this in software.  There are three types of operations that&n; * can be applied to dma buffers.&n; *&n; *  - dma_cache_wback_inv(start, size) makes caches and coherent by&n; *    writing the content of the caches back to memory, if necessary.&n; *    The function also invalidates the affected part of the caches as&n; *    necessary before DMA transfers from outside to memory.&n; *  - dma_cache_wback(start, size) makes caches and coherent by&n; *    writing the content of the caches back to memory, if necessary.&n; *    The function also invalidates the affected part of the caches as&n; *    necessary before DMA transfers from outside to memory.&n; *  - dma_cache_inv(start, size) invalidates the affected parts of the&n; *    caches.  Dirty lines of the caches may be written back or simply&n; *    be discarded.  This operation is necessary before dma operations&n; *    to the memory.&n; */
 r_extern
 r_void
 (paren
 op_star
 id|dma_cache_wback_inv
+)paren
+(paren
+r_int
+r_int
+id|start
+comma
+r_int
+r_int
+id|size
+)paren
+suffix:semicolon
+r_extern
+r_void
+(paren
+op_star
+id|dma_cache_wback
 )paren
 (paren
 r_int
@@ -519,8 +537,5 @@ r_int
 id|size
 )paren
 suffix:semicolon
-multiline_comment|/* Nothing to do */
-DECL|macro|dma_cache_wback
-mdefine_line|#define dma_cache_wback(_start,_size)&t;&t;do { } while (0)
 macro_line|#endif /* __ASM_MIPS_IO_H */
 eof

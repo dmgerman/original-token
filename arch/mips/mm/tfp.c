@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: tfp.c,v 1.6 1998/10/16 19:22:44 ralf Exp $&n; *&n; * tfp.c: MMU and cache routines specific to the r8000 (TFP).&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; */
+multiline_comment|/* $Id: tfp.c,v 1.6 1999/01/04 16:03:55 ralf Exp $&n; *&n; * tfp.c: MMU and cache routines specific to the r8000 (TFP).&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

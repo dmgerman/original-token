@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: indy_sc.c,v 1.9 1998/08/17 12:14:55 ralf Exp $&n; *&n; * indy_sc.c: Indy cache managment functions.&n; *&n; * Copyright (C) 1997 Ralf Baechle (ralf@gnu.org),&n; * derived from r4xx0.c by David S. Miller (dm@engr.sgi.com).&n; */
+multiline_comment|/* $Id: indy_sc.c,v 1.9 1999/05/12 21:57:49 ulfc Exp $&n; *&n; * indy_sc.c: Indy cache managment functions.&n; *&n; * Copyright (C) 1997 Ralf Baechle (ralf@gnu.org),&n; * derived from r4xx0.c by David S. Miller (dm@engr.sgi.com).&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -62,6 +62,12 @@ id|mips3
 dot
 id|set
 id|noat
+id|mfc0
+"$"
+l_int|2
+comma
+"$"
+l_int|12
 id|li
 "$"
 l_int|1
@@ -123,7 +129,7 @@ comma
 l_int|32
 id|mtc0
 "$"
-l_int|0
+l_int|2
 comma
 "$"
 l_int|12
@@ -144,22 +150,14 @@ id|set
 id|reorder
 "&quot;"
 suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|first
-)paren
-comma
-l_string|&quot;=r&quot;
-(paren
-id|last
-)paren
+multiline_comment|/* no output */
 suffix:colon
-l_string|&quot;0&quot;
+l_string|&quot;r&quot;
 (paren
 id|first
 )paren
 comma
-l_string|&quot;1&quot;
+l_string|&quot;r&quot;
 (paren
 id|last
 )paren
@@ -214,18 +212,32 @@ c_func
 id|addr
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|size
+op_le
+id|SC_LINE
+)paren
 id|last_line
 op_assign
 id|SC_INDEX
 c_func
 (paren
-id|SC_ROUND
+id|addr
+)paren
+suffix:semicolon
+r_else
+id|last_line
+op_assign
+id|SC_INDEX
 c_func
 (paren
 id|addr
 op_plus
 id|size
-)paren
+op_minus
+l_int|1
 )paren
 suffix:semicolon
 id|__save_and_cli
@@ -258,9 +270,11 @@ multiline_comment|/* Cache index wrap around.  Due to the way the buddy system w
 id|indy_sc_wipe
 c_func
 (paren
-id|last_line
+id|first_line
 comma
 id|SC_SIZE
+op_minus
+id|SC_LINE
 )paren
 suffix:semicolon
 id|indy_sc_wipe
@@ -268,7 +282,7 @@ c_func
 (paren
 l_int|0
 comma
-id|first_line
+id|last_line
 )paren
 suffix:semicolon
 id|out

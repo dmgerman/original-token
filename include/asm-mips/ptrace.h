@@ -4,20 +4,22 @@ DECL|macro|__ASM_MIPS_PTRACE_H
 mdefine_line|#define __ASM_MIPS_PTRACE_H
 macro_line|#include &lt;linux/types.h&gt;
 multiline_comment|/* 0 - 31 are integer registers, 32 - 63 are fp registers.  */
+DECL|macro|FPR_BASE
+mdefine_line|#define FPR_BASE&t;32
 DECL|macro|PC
 mdefine_line|#define PC&t;&t;64
 DECL|macro|CAUSE
 mdefine_line|#define CAUSE&t;&t;65
-DECL|macro|MMLO
-mdefine_line|#define MMLO&t;&t;66
+DECL|macro|BADVADDR
+mdefine_line|#define BADVADDR&t;66
 DECL|macro|MMHI
 mdefine_line|#define MMHI&t;&t;67
+DECL|macro|MMLO
+mdefine_line|#define MMLO&t;&t;68
 DECL|macro|FPC_CSR
-mdefine_line|#define FPC_CSR&t;&t;68&t;/* XXX */
+mdefine_line|#define FPC_CSR&t;&t;69
 DECL|macro|FPC_EIR
-mdefine_line|#define FPC_EIR&t;&t;69&t;/* XXX */
-DECL|macro|FPR_BASE
-mdefine_line|#define FPR_BASE&t;70&t;/* XXX */
+mdefine_line|#define FPC_EIR&t;&t;70
 macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/*&n; * This struct defines the way the registers are stored on the stack during a&n; * system call/exception. As usual the registers k0/k1 aren&squot;t being saved.&n; */
 DECL|struct|pt_regs

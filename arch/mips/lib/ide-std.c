@@ -1,8 +1,10 @@
-multiline_comment|/*&n; * include/asm-mips/types.h&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * IDE routines for typical pc-like standard configurations.&n; *&n; * Copyright (C) 1998 by Ralf Baechle&n; */
+multiline_comment|/* $Id: ide-std.c,v 1.4 1999/06/17 13:25:49 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * IDE routines for typical pc-like standard configurations.&n; *&n; * Copyright (C) 1998, 1999 by Ralf Baechle&n; */
+macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/ide.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/hdreg.h&gt;
-macro_line|#include &lt;asm/ide.h&gt;
 DECL|function|std_ide_default_irq
 r_static
 r_int

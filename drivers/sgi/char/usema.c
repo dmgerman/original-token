@@ -4,11 +4,13 @@ macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
+macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/dcache.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#include &quot;usema.h&quot;
 macro_line|#include &lt;asm/usioctl.h&gt;
 macro_line|#include &lt;asm/mman.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -124,7 +126,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%d] wants ioctl 0x%xd (arg 0x%lx)&quot;
+l_string|&quot;[%s:%ld] wants ioctl 0x%xd (arg 0x%lx)&quot;
 comma
 id|current-&gt;comm
 comma
@@ -180,7 +182,7 @@ id|retval
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%d] sgi_usema_ioctl(UIOCATTACHSEMA): &quot;
+l_string|&quot;[%s:%ld] sgi_usema_ioctl(UIOCATTACHSEMA): &quot;
 l_string|&quot;verify_area failure&quot;
 comma
 id|current-&gt;comm
@@ -206,7 +208,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;UIOCATTACHSEMA: attaching usema %p to process %d&bslash;n&quot;
+l_string|&quot;UIOCATTACHSEMA: attaching usema %p to process %ld&bslash;n&quot;
 comma
 id|usema
 comma
@@ -273,7 +275,7 @@ id|retval
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%d] sgi_usema_ioctl(UIOC*BLOCK): &quot;
+l_string|&quot;[%s:%ld] sgi_usema_ioctl(UIOC*BLOCK): &quot;
 l_string|&quot;verify_area failure&quot;
 comma
 id|current-&gt;comm
@@ -288,7 +290,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;UIOC*BLOCK: putting process %d to sleep on usema %p&quot;
+l_string|&quot;UIOC*BLOCK: putting process %ld to sleep on usema %p&quot;
 comma
 id|current-&gt;pid
 comma
@@ -364,7 +366,7 @@ id|retval
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%d] sgi_usema_ioctl(UIOC*BLOCK): &quot;
+l_string|&quot;[%s:%ld] sgi_usema_ioctl(UIOC*BLOCK): &quot;
 l_string|&quot;verify_area failure&quot;
 comma
 id|current-&gt;comm
@@ -379,7 +381,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%d] releasing usema %p&quot;
+l_string|&quot;[%s:%ld] releasing usema %p&quot;
 comma
 id|current-&gt;comm
 comma
@@ -432,7 +434,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%d] wants to poll usema %p&quot;
+l_string|&quot;[%s:%ld] wants to poll usema %p&quot;
 comma
 id|current-&gt;comm
 comma
@@ -494,9 +496,12 @@ id|usema-&gt;filp
 op_assign
 id|filp
 suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
 id|usema-&gt;proc_list
-op_assign
-l_int|NULL
+)paren
 suffix:semicolon
 id|filp-&gt;private_data
 op_assign

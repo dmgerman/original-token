@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: syscall.c,v 1.10 1998/08/20 14:38:40 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995 - 1998 by Ralf Baechle&n; *&n; * TODO:  Implement the compatibility syscalls.&n; *        Don&squot;t waste that much memory for empty entries in the syscall&n; *        table.&n; */
+multiline_comment|/* $Id: syscall.c,v 1.10 1999/02/15 02:16:52 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995 - 1999 by Ralf Baechle&n; *&n; * TODO:  Implement the compatibility syscalls.&n; *        Don&squot;t waste that much memory for empty entries in the syscall&n; *        table.&n; */
 DECL|macro|CONF_PRINT_SYSCALLS
 macro_line|#undef CONF_PRINT_SYSCALLS
 DECL|macro|CONF_DEBUG_IRIX
@@ -314,17 +314,6 @@ id|start_idle
 op_assign
 l_int|0
 suffix:semicolon
-r_int
-id|ret
-op_assign
-op_minus
-id|EPERM
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -332,8 +321,9 @@ id|current-&gt;pid
 op_ne
 l_int|0
 )paren
-r_goto
-id|out
+r_return
+op_minus
+id|EPERM
 suffix:semicolon
 multiline_comment|/* endless idle loop with no priority at all */
 id|current-&gt;priority
@@ -407,19 +397,8 @@ c_func
 )paren
 suffix:semicolon
 )brace
-id|ret
-op_assign
-l_int|0
-suffix:semicolon
-id|out
-suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
-id|ret
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|sys_fork
@@ -443,11 +422,6 @@ op_amp
 id|regs
 )paren
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|res
 op_assign
 id|do_fork
@@ -462,11 +436,6 @@ l_int|29
 comma
 op_amp
 id|regs
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 r_return
@@ -500,11 +469,6 @@ c_func
 (paren
 op_amp
 id|regs
-)paren
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 id|clone_flags
@@ -545,11 +509,6 @@ id|newsp
 comma
 op_amp
 id|regs
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 r_return

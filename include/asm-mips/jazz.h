@@ -304,24 +304,28 @@ mdefine_line|#define JAZZ_IE_SERIAL1             (1 &lt;&lt; 8)
 DECL|macro|JAZZ_IE_SERIAL2
 mdefine_line|#define JAZZ_IE_SERIAL2             (1 &lt;&lt; 9)
 multiline_comment|/*&n; * JAZZ Interrupt Level definitions&n; *&n; * This is somewhat broken.  For reasons which nobody can remember anymore&n; * we remap the Jazz interrupts to the usual ISA style interrupt numbers.&n; */
-DECL|macro|JAZZ_TIMER_IRQ
-mdefine_line|#define JAZZ_TIMER_IRQ          0
-DECL|macro|JAZZ_KEYBOARD_IRQ
-mdefine_line|#define JAZZ_KEYBOARD_IRQ       1
-DECL|macro|JAZZ_FLOPPY_IRQ
-mdefine_line|#define JAZZ_FLOPPY_IRQ         6 /* needs to be consistent with floppy driver! */
-DECL|macro|JAZZ_SCSI_IRQ
-mdefine_line|#define JAZZ_SCSI_IRQ           16
-DECL|macro|JAZZ_ETHERNET_IRQ
-mdefine_line|#define JAZZ_ETHERNET_IRQ       17
-DECL|macro|JAZZ_SERIAL1_IRQ
-mdefine_line|#define JAZZ_SERIAL1_IRQ        18
-DECL|macro|JAZZ_SERIAL2_IRQ
-mdefine_line|#define JAZZ_SERIAL2_IRQ        19
 DECL|macro|JAZZ_PARALLEL_IRQ
-mdefine_line|#define JAZZ_PARALLEL_IRQ       20
+mdefine_line|#define JAZZ_PARALLEL_IRQ       16
+DECL|macro|JAZZ_FLOPPY_IRQ
+mdefine_line|#define JAZZ_FLOPPY_IRQ          6 /* needs to be consistent with floppy driver! */
+DECL|macro|JAZZ_SOUND_IRQ
+mdefine_line|#define JAZZ_SOUND_IRQ          18
+DECL|macro|JAZZ_VIDEO_IRQ
+mdefine_line|#define JAZZ_VIDEO_IRQ          19
+DECL|macro|JAZZ_ETHERNET_IRQ
+mdefine_line|#define JAZZ_ETHERNET_IRQ       20
+DECL|macro|JAZZ_SCSI_IRQ
+mdefine_line|#define JAZZ_SCSI_IRQ           21
+DECL|macro|JAZZ_KEYBOARD_IRQ
+mdefine_line|#define JAZZ_KEYBOARD_IRQ       22
 DECL|macro|JAZZ_MOUSE_IRQ
-mdefine_line|#define JAZZ_MOUSE_IRQ          21
+mdefine_line|#define JAZZ_MOUSE_IRQ          23
+DECL|macro|JAZZ_SERIAL1_IRQ
+mdefine_line|#define JAZZ_SERIAL1_IRQ        24
+DECL|macro|JAZZ_SERIAL2_IRQ
+mdefine_line|#define JAZZ_SERIAL2_IRQ        25
+DECL|macro|JAZZ_TIMER_IRQ
+mdefine_line|#define JAZZ_TIMER_IRQ          31
 multiline_comment|/*&n; * JAZZ DMA Channels&n; * Note: Channels 4...7 are not used with respect to the Acer PICA-61&n; * chipset which does not provide these DMA channels.&n; */
 DECL|macro|JAZZ_SCSI_DMA
 mdefine_line|#define JAZZ_SCSI_DMA           0              /* SCSI */

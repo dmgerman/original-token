@@ -7,6 +7,8 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
+DECL|macro|DISABLE_KBD_DURING_INTERRUPTS
+mdefine_line|#define DISABLE_KBD_DURING_INTERRUPTS 0
 r_extern
 r_int
 id|pckbd_setkeycode
@@ -104,8 +106,82 @@ mdefine_line|#define SYSRQ_KEY 0x54
 multiline_comment|/* Some stoneage hardware needs delays after some operations.  */
 DECL|macro|kbd_pause
 mdefine_line|#define kbd_pause() do { } while(0)
-multiline_comment|/* Pointers to keyboard hardware access and init functions.  */
-DECL|variable|kbd_read_input
+DECL|struct|kbd_ops
+r_struct
+id|kbd_ops
+(brace
+multiline_comment|/* Keyboard driver resource allocation  */
+DECL|member|kbd_request_region
+r_void
+(paren
+op_star
+id|kbd_request_region
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
+DECL|member|kbd_request_irq
+r_int
+(paren
+op_star
+id|kbd_request_irq
+)paren
+(paren
+r_void
+(paren
+op_star
+id|handler
+)paren
+(paren
+r_int
+comma
+r_void
+op_star
+comma
+r_struct
+id|pt_regs
+op_star
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* PSaux driver resource managment  */
+DECL|member|aux_request_irq
+r_int
+(paren
+op_star
+id|aux_request_irq
+)paren
+(paren
+r_void
+(paren
+op_star
+id|handler
+)paren
+(paren
+r_int
+comma
+r_void
+op_star
+comma
+r_struct
+id|pt_regs
+op_star
+)paren
+)paren
+suffix:semicolon
+DECL|member|aux_free_irq
+r_void
+(paren
+op_star
+id|aux_free_irq
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
+multiline_comment|/* Methods to access the keyboard processor&squot;s I/O registers  */
+DECL|member|kbd_read_input
 r_int
 r_char
 (paren
@@ -116,7 +192,7 @@ id|kbd_read_input
 r_void
 )paren
 suffix:semicolon
-DECL|variable|kbd_write_output
+DECL|member|kbd_write_output
 r_void
 (paren
 op_star
@@ -128,7 +204,7 @@ r_char
 id|val
 )paren
 suffix:semicolon
-DECL|variable|kbd_write_command
+DECL|member|kbd_write_command
 r_void
 (paren
 op_star
@@ -140,7 +216,7 @@ r_char
 id|val
 )paren
 suffix:semicolon
-DECL|variable|kbd_read_status
+DECL|member|kbd_read_status
 r_int
 r_char
 (paren
@@ -151,62 +227,31 @@ id|kbd_read_status
 r_void
 )paren
 suffix:semicolon
-DECL|variable|keyboard_setup
-r_void
-(paren
+)brace
+suffix:semicolon
+r_extern
+r_struct
+id|kbd_ops
 op_star
-id|keyboard_setup
-)paren
-(paren
-r_void
-)paren
+id|kbd_ops
 suffix:semicolon
-macro_line|#ifdef CONFIG_MIPS_JAZZ
-r_extern
-r_int
-id|jazz_ps2_request_irq
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|jazz_ps2_free_irq
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-DECL|macro|ps2_request_irq
-mdefine_line|#define ps2_request_irq()      jazz_ps2_request_irq()
-DECL|macro|ps2_free_irq
-mdefine_line|#define ps2_free_irq(inode)    jazz_ps2_free_irq()
-macro_line|#endif /* CONFIG_MIPS_JAZZ */
-macro_line|#ifdef CONFIG_SGI
-DECL|macro|DISABLE_KBD_DURING_INTERRUPTS
-mdefine_line|#define DISABLE_KBD_DURING_INTERRUPTS 1
-multiline_comment|/*&n; * Machine specific bits for the PS/2 driver.&n; * Aux device and keyboard share the interrupt on the Indy.&n; */
-DECL|macro|ps2_request_irq
-mdefine_line|#define ps2_request_irq() 0
-DECL|macro|ps2_free_irq
-mdefine_line|#define ps2_free_irq(void) do { } while(0);
-macro_line|#endif /* CONFIG_SGI */
-macro_line|#if defined(CONFIG_ACER_PICA_61) || defined(CONFIG_SNI_RM200_PCI)
-DECL|macro|CONF_KEYBOARD_USES_IO_PORTS
-mdefine_line|#define CONF_KEYBOARD_USES_IO_PORTS
-macro_line|#endif
-macro_line|#ifdef CONF_KEYBOARD_USES_IO_PORTS
-multiline_comment|/*&n; * Most other MIPS machines access the keyboard controller via&n; * memory mapped I/O ports.&n; */
-macro_line|#include &lt;asm/io.h&gt;
-multiline_comment|/*&n; * Machine specific bits for the PS/2 driver&n; */
-DECL|macro|AUX_IRQ
-mdefine_line|#define AUX_IRQ 12
-DECL|macro|ps2_request_irq
-mdefine_line|#define ps2_request_irq()&t;&t;&t;&t;&t;&t;&bslash;&n;&t;request_irq(AUX_IRQ, aux_interrupt, 0, &quot;PS/2 Mouse&quot;, NULL)
-DECL|macro|ps2_free_irq
-mdefine_line|#define ps2_free_irq(inode) free_irq(AUX_IRQ, NULL)
-macro_line|#endif /* CONF_KEYBOARD_USES_IO_PORTS */
+multiline_comment|/* Do the actual calls via kbd_ops vector  */
+DECL|macro|kbd_request_region
+mdefine_line|#define kbd_request_region() kbd_ops-&gt;kbd_request_region()
+DECL|macro|kbd_request_irq
+mdefine_line|#define kbd_request_irq(handler) kbd_ops-&gt;kbd_request_irq(handler)
+DECL|macro|aux_request_irq
+mdefine_line|#define aux_request_irq(hand, dev_id) kbd_ops-&gt;aux_request_irq(hand)
+DECL|macro|aux_free_irq
+mdefine_line|#define aux_free_irq(dev_id) kbd_ops-&gt;aux_free_irq()
+DECL|macro|kbd_read_input
+mdefine_line|#define kbd_read_input() kbd_ops-&gt;kbd_read_input()
+DECL|macro|kbd_write_output
+mdefine_line|#define kbd_write_output(val) kbd_ops-&gt;kbd_write_output(val)
+DECL|macro|kbd_write_command
+mdefine_line|#define kbd_write_command(val) kbd_ops-&gt;kbd_write_command(val)
+DECL|macro|kbd_read_status
+mdefine_line|#define kbd_read_status() kbd_ops-&gt;kbd_read_status()
 macro_line|#endif /* __KERNEL */
 macro_line|#endif /* __ASM_MIPS_KEYBOARD_H */
 eof

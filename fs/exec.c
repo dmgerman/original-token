@@ -1121,7 +1121,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Read in the complete executable. This is used for &quot;-N&quot; files&n; * that aren&squot;t on a block boundary, and for files on filesystems&n; * without bmap support.&n; */
+multiline_comment|/*&n; * Read in the complete executable. This is used for &quot;-N&quot; files&n; * that aren&squot;t on a block boundary, and for files on filesystems&n; * without get_block support.&n; */
 DECL|function|read_exec
 r_int
 id|read_exec

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Definitions for page handling&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994, 1995, 1996 by Ralf Baechle&n; */
+multiline_comment|/* $Id: page.h,v 1.6 1999/01/04 16:09:24 ralf Exp $&n; *&n; * Definitions for page handling&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 - 1998 by Ralf Baechle&n; */
 macro_line|#ifndef __ASM_MIPS_PAGE_H
 DECL|macro|__ASM_MIPS_PAGE_H
 mdefine_line|#define __ASM_MIPS_PAGE_H
@@ -12,11 +12,7 @@ mdefine_line|#define PAGE_MASK&t;(~(PAGE_SIZE-1))
 macro_line|#ifdef __KERNEL__
 DECL|macro|STRICT_MM_TYPECHECKS
 mdefine_line|#define STRICT_MM_TYPECHECKS
-macro_line|#ifndef __LANGUAGE_ASSEMBLY__
-DECL|macro|get_user_page
-mdefine_line|#define get_user_page(vaddr)&t;&t;__get_free_page(GFP_KERNEL)
-DECL|macro|free_user_page
-mdefine_line|#define free_user_page(page, addr)&t;free_page(addr)
+macro_line|#ifndef _LANGUAGE_ASSEMBLY
 r_extern
 r_void
 (paren
@@ -154,7 +150,7 @@ mdefine_line|#define __pgd(x)&t;(x)
 DECL|macro|__pgprot
 mdefine_line|#define __pgprot(x)&t;(x)
 macro_line|#endif /* !defined (STRICT_MM_TYPECHECKS) */
-macro_line|#endif /* __LANGUAGE_ASSEMBLY__ */
+macro_line|#endif /* _LANGUAGE_ASSEMBLY */
 multiline_comment|/* to align the pointer to the (next) page boundary */
 DECL|macro|PAGE_ALIGN
 mdefine_line|#define PAGE_ALIGN(addr)&t;(((addr)+PAGE_SIZE-1)&amp;PAGE_MASK)
@@ -165,10 +161,8 @@ DECL|macro|__pa
 mdefine_line|#define __pa(x)&t;&t;((unsigned long) (x) - PAGE_OFFSET)
 DECL|macro|__va
 mdefine_line|#define __va(x)&t;&t;((void *)((unsigned long) (x) + PAGE_OFFSET))
-DECL|macro|MAP_MASK
-mdefine_line|#define MAP_MASK        0x1fffffffUL
 DECL|macro|MAP_NR
-mdefine_line|#define MAP_NR(addr)&t;((((unsigned long)(addr)) &amp; MAP_MASK) &gt;&gt; PAGE_SHIFT)
+mdefine_line|#define MAP_NR(addr)&t;(__pa(addr) &gt;&gt; PAGE_SHIFT)
 macro_line|#endif /* defined (__KERNEL__) */
 macro_line|#endif /* __ASM_MIPS_PAGE_H */
 eof

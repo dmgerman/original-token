@@ -102,10 +102,4 @@ id|streamable_init
 r_void
 )paren
 suffix:semicolon
-r_void
-id|usema_init
-(paren
-r_void
-)paren
-suffix:semicolon
 eof

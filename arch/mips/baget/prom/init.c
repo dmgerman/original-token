@@ -1,0 +1,49 @@
+multiline_comment|/*&n; * init.c: PROM library initialisation code.&n; *&n; * Copyright (C) 1998 Gleb Raiko &amp; Vladimir Roganov &n; *&n; * $Id$&n; */
+macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;asm/bootinfo.h&gt;
+DECL|variable|arcs_cmdline
+r_char
+id|arcs_cmdline
+(braket
+id|CL_SIZE
+)braket
+suffix:semicolon
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_int
+id|prom_init
+c_func
+(paren
+r_int
+r_int
+id|mem_upper
+)paren
+)paren
+(brace
+id|mips_memory_upper
+op_assign
+id|mem_upper
+suffix:semicolon
+id|mips_machgroup
+op_assign
+id|MACH_GROUP_UNKNOWN
+suffix:semicolon
+id|mips_machtype
+op_assign
+id|MACH_UNKNOWN
+suffix:semicolon
+id|arcs_cmdline
+(braket
+l_int|0
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+eof

@@ -104,6 +104,10 @@ DECL|macro|AZTECH_CDROM_MAJOR
 mdefine_line|#define AZTECH_CDROM_MAJOR 29
 DECL|macro|GRAPHDEV_MAJOR
 mdefine_line|#define GRAPHDEV_MAJOR&t;29&t;/* SparcLinux &amp; Linux/68k /dev/fb */
+DECL|macro|SHMIQ_MAJOR
+mdefine_line|#define SHMIQ_MAJOR&t;85&t;/* Linux/mips, SGI /dev/shmiq */
+DECL|macro|USEMA_MAJOR
+mdefine_line|#define USEMA_MAJOR&t;86&t;/* Linux/MIPS, SGI /dev/usema */
 DECL|macro|CM206_CDROM_MAJOR
 mdefine_line|#define CM206_CDROM_MAJOR 32
 DECL|macro|IDE2_MAJOR

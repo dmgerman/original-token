@@ -832,6 +832,11 @@ id|channel-&gt;control
 op_assign
 id|ERR_RES
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ioc_icontrol
+)paren
 id|junk
 op_assign
 id|ioc_icontrol-&gt;istat0
@@ -871,6 +876,11 @@ c_func
 l_int|2
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ioc_icontrol
+)paren
 id|junk
 op_assign
 id|ioc_icontrol-&gt;istat0
@@ -885,6 +895,11 @@ c_func
 l_int|2
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ioc_icontrol
+)paren
 id|junk
 op_assign
 id|ioc_icontrol-&gt;istat0
@@ -899,6 +914,11 @@ c_func
 l_int|2
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ioc_icontrol
+)paren
 id|junk
 op_assign
 id|ioc_icontrol-&gt;istat0

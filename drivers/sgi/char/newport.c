@@ -5,7 +5,22 @@ macro_line|#include &lt;asm/types.h&gt;
 macro_line|#include &lt;asm/gfx.h&gt;
 macro_line|#include &lt;asm/ng1.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &quot;newport.h&quot;
+macro_line|#include &lt;asm/newport.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
+DECL|variable|npregs
+r_struct
+id|newport_regs
+op_star
+id|npregs
+suffix:semicolon
+DECL|variable|npregs
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|npregs
+)paren
+suffix:semicolon
 multiline_comment|/* Kernel routines for supporting graphics context switching */
 DECL|function|newport_save
 r_void
@@ -692,9 +707,6 @@ r_case
 id|NG1_SETDISPLAYMODE
 suffix:colon
 (brace
-r_int
-id|i
-suffix:semicolon
 r_struct
 id|ng1_setdisplaymode_args
 id|request

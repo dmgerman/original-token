@@ -1,9 +1,10 @@
-multiline_comment|/*&n; * shmiq.c: shared memory input queue driver&n; * written 1997 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * We implement /dev/shmiq, /dev/qcntlN here&n; * this is different from IRIX that has shmiq as a misc&n; * streams device and the and qcntl devices as a major device.&n; *&n; * minor number 0 implements /dev/shmiq,&n; * any other number implements /dev/qcntl${minor-1}&n; *&n; * /dev/shmiq is used by the X server for two things:&n; * &n; *    1. for I_LINK()ing trough ioctl the file handle of a&n; *       STREAMS device.&n; *&n; *    2. To send STREAMS-commands to the devices with the&n; *       QIO ioctl interface.&n; *&n; * I have not yet figured how to make multiple X servers share&n; * /dev/shmiq for having different servers running.  So, for now&n; * I keep a kernel-global array of inodes that are pushed into&n; * /dev/shmiq.&n; *&n; * /dev/qcntlN is used by the X server for two things:&n; *&n; *    1. Issuing the QIOCATTACH for mapping the shared input&n; *       queue into the address space of the X server (yeah, yeah,&n; *       I did not invent this interface).&n; *&n; *    2. used by select.  I bet it is used for checking for events on&n; *       the queue.&n; *&n; * Now the problem is that there does not seem anything that&n; * establishes a connection between /dev/shmiq and the qcntlN file.  I&n; * need an strace from an X server that runs on a machine with more&n; * than one keyboard.  And this is a problem since the file handles&n; * are pushed in /dev/shmiq, while the events should be dispatched to&n; * the /dev/qcntlN device. &n; *&n; * Until then, I just allow for 1 qcntl device.&n; *&n; */
+multiline_comment|/* $Id: shmiq.c,v 1.12 1999/06/17 13:29:04 ralf Exp $&n; *&n; * shmiq.c: shared memory input queue driver&n; * written 1997 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * We implement /dev/shmiq, /dev/qcntlN here&n; * this is different from IRIX that has shmiq as a misc&n; * streams device and the and qcntl devices as a major device.&n; *&n; * minor number 0 implements /dev/shmiq,&n; * any other number implements /dev/qcntl${minor-1}&n; *&n; * /dev/shmiq is used by the X server for two things:&n; * &n; *    1. for I_LINK()ing trough ioctl the file handle of a&n; *       STREAMS device.&n; *&n; *    2. To send STREAMS-commands to the devices with the&n; *       QIO ioctl interface.&n; *&n; * I have not yet figured how to make multiple X servers share&n; * /dev/shmiq for having different servers running.  So, for now&n; * I keep a kernel-global array of inodes that are pushed into&n; * /dev/shmiq.&n; *&n; * /dev/qcntlN is used by the X server for two things:&n; *&n; *    1. Issuing the QIOCATTACH for mapping the shared input&n; *       queue into the address space of the X server (yeah, yeah,&n; *       I did not invent this interface).&n; *&n; *    2. used by select.  I bet it is used for checking for events on&n; *       the queue.&n; *&n; * Now the problem is that there does not seem anything that&n; * establishes a connection between /dev/shmiq and the qcntlN file.  I&n; * need an strace from an X server that runs on a machine with more&n; * than one keyboard.  And this is a problem since the file handles&n; * are pushed in /dev/shmiq, while the events should be dispatched to&n; * the /dev/qcntlN device. &n; *&n; * Until then, I just allow for 1 qcntl device.&n; *&n; */
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
@@ -738,6 +739,7 @@ id|EBADF
 suffix:semicolon
 )brace
 r_extern
+r_int
 id|sys_munmap
 c_func
 (paren
@@ -1468,6 +1470,9 @@ r_int
 DECL|function|shmiq_qcntl_fasync
 id|shmiq_qcntl_fasync
 (paren
+r_int
+id|fd
+comma
 r_struct
 id|file
 op_star
@@ -1492,6 +1497,8 @@ id|retval
 op_assign
 id|fasync_helper
 (paren
+id|fd
+comma
 id|file
 comma
 id|on
@@ -1608,6 +1615,9 @@ id|lock_kernel
 suffix:semicolon
 id|shmiq_qcntl_fasync
 (paren
+op_minus
+l_int|1
+comma
 id|filp
 comma
 l_int|0

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sgint23.h,v 1.2 1998/03/11 11:58:36 ralf Exp $&n; * sgint23.h: Defines for the SGI INT2 and INT3 chipsets.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/* $Id: sgint23.h,v 1.3 1999/05/07 22:35:37 ulfc Exp $&n; * sgint23.h: Defines for the SGI INT2 and INT3 chipsets.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; * Copyright (C) 1999 Andrew R. Baker (andrewb@uab.edu) - INT2 corrections&n; */
 macro_line|#ifndef _MIPS_SGINT23_H
 DECL|macro|_MIPS_SGINT23_H
 mdefine_line|#define _MIPS_SGINT23_H
@@ -19,7 +19,7 @@ DECL|macro|SGINT_END
 mdefine_line|#define SGINT_END      52  /* End of &squot;spaces&squot; */
 multiline_comment|/* INT2 occupies HPC PBUS slot 4, INT3 uses slot 6. */
 DECL|macro|SGI_INT2_BASE
-mdefine_line|#define SGI_INT2_BASE 0x1fb80100 /* physical */
+mdefine_line|#define SGI_INT2_BASE 0x1fbd9000 /* physical */
 DECL|macro|SGI_INT3_BASE
 mdefine_line|#define SGI_INT3_BASE 0x1fbd9880 /* physical */
 DECL|struct|sgi_ioc_ints
@@ -465,6 +465,7 @@ DECL|macro|SGINT_TCWORD_CRBCK
 mdefine_line|#define SGINT_TCWORD_CRBCK  0xc0 /* Readback command */
 DECL|macro|SGINT_TCSAMP_COUNTER
 mdefine_line|#define SGINT_TCSAMP_COUNTER  10255
+multiline_comment|/* FIXME: What does this really look like?  It was written to have&n; * 17 registers, but there are only 16 in my Indigo2.&n; * I guessed at which one to remove...  &t;- andrewb&n; */
 DECL|struct|sgi_int2_regs
 r_struct
 id|sgi_int2_regs
@@ -528,12 +529,14 @@ DECL|macro|INT2_TCLEAR_T0CLR
 mdefine_line|#define INT2_TCLEAR_T0CLR      0x1        /* Clear timer0 IRQ */
 DECL|macro|INT2_TCLEAR_T1CLR
 mdefine_line|#define INT2_TCLEAR_T1CLR      0x2        /* Clear timer1 IRQ */
+multiline_comment|/* I am guesing there are only two unused registers here &n; * but I could be wrong...&t;&t;&t;- andrewb&n; */
+multiline_comment|/*&t;unsigned long _unused[3]; */
 DECL|member|_unused
 r_int
 r_int
 id|_unused
 (braket
-l_int|3
+l_int|2
 )braket
 suffix:semicolon
 DECL|member|timers

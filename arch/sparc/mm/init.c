@@ -1158,6 +1158,10 @@ r_void
 op_star
 )paren
 id|ZERO_PAGE
+c_func
+(paren
+l_int|0
+)paren
 comma
 l_int|0
 comma

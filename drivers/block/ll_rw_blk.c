@@ -1438,6 +1438,37 @@ id|sector
 op_assign
 id|bh-&gt;b_rsector
 suffix:semicolon
+multiline_comment|/* We&squot;d better have a real physical mapping! */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|buffer_mapped
+c_func
+(paren
+id|bh
+)paren
+)paren
+id|BUG
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* It had better not be a new buffer by the time we see it */
+r_if
+c_cond
+(paren
+id|buffer_new
+c_func
+(paren
+id|bh
+)paren
+)paren
+id|BUG
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/* Only one thread can actually submit the I/O. */
 r_if
 c_cond

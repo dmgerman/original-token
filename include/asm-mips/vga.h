@@ -2,98 +2,12 @@ multiline_comment|/*&n; *&t;Access to VGA videoram&n; *&n; *&t;(c) 1998 Martin M
 macro_line|#ifndef _LINUX_ASM_VGA_H_
 DECL|macro|_LINUX_ASM_VGA_H_
 mdefine_line|#define _LINUX_ASM_VGA_H_
-macro_line|#include &lt;asm/io.h&gt;
-DECL|macro|VT_BUF_HAVE_RW
-mdefine_line|#define VT_BUF_HAVE_RW
-DECL|function|scr_writew
-r_extern
-r_inline
-r_void
-id|scr_writew
-c_func
-(paren
-id|u16
-id|val
-comma
-id|u16
-op_star
-id|addr
-)paren
-(brace
-r_if
-c_cond
-(paren
-(paren
-r_int
-)paren
-id|addr
-OL
-l_int|0
-)paren
-op_star
-id|addr
-op_assign
-id|val
-suffix:semicolon
-r_else
-id|writew
-c_func
-(paren
-id|val
-comma
-(paren
-r_int
-r_int
-)paren
-id|addr
-)paren
-suffix:semicolon
-)brace
-DECL|function|scr_readw
-r_extern
-r_inline
-id|u16
-id|scr_readw
-c_func
-(paren
-r_const
-id|u16
-op_star
-id|addr
-)paren
-(brace
-r_if
-c_cond
-(paren
-(paren
-r_int
-)paren
-id|addr
-OL
-l_int|0
-)paren
-r_return
-op_star
-id|addr
-suffix:semicolon
-r_else
-r_return
-id|readw
-c_func
-(paren
-(paren
-r_int
-r_int
-)paren
-id|addr
-)paren
-suffix:semicolon
-)brace
-DECL|macro|vga_readb
-mdefine_line|#define vga_readb readb
-DECL|macro|vga_writeb
-mdefine_line|#define vga_writeb writeb
+multiline_comment|/*&n; *&t;On the PC, we can just recalculate addresses and then&n; *&t;access the videoram directly without any black magic.&n; */
 DECL|macro|VGA_MAP_MEM
-mdefine_line|#define VGA_MAP_MEM(x) (x)
+mdefine_line|#define VGA_MAP_MEM(x) ((unsigned long)0xb0000000 + (unsigned long)(x))
+DECL|macro|vga_readb
+mdefine_line|#define vga_readb(x) (*(x))
+DECL|macro|vga_writeb
+mdefine_line|#define vga_writeb(x,y) (*(y) = (x))
 macro_line|#endif
 eof

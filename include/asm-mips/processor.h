@@ -305,6 +305,30 @@ id|task_struct
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|kernel_thread
+c_func
+(paren
+r_int
+(paren
+op_star
+id|fn
+)paren
+(paren
+r_void
+op_star
+)paren
+comma
+r_void
+op_star
+id|arg
+comma
+r_int
+r_int
+id|flags
+)paren
+suffix:semicolon
 multiline_comment|/* Copy and release all segment info associated with a VM */
 DECL|macro|copy_segments
 mdefine_line|#define copy_segments(nr, p, mm) do { } while(0)
@@ -364,6 +388,9 @@ l_int|17
 )braket
 suffix:semicolon
 )brace
+r_struct
+id|pt_regs
+suffix:semicolon
 r_extern
 r_int
 (paren

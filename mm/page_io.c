@@ -339,7 +339,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|swapf-&gt;i_op-&gt;bmap
+id|swapf-&gt;i_op-&gt;get_block
 op_eq
 l_int|NULL
 op_logical_and
@@ -348,7 +348,7 @@ op_ne
 l_int|NULL
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t;&t;With MS-DOS, we use msdos_smap which returns&n;&t;&t;&t;&t;a sector number (not a cluster or block number).&n;&t;&t;&t;&t;It is a patch to enable the UMSDOS project.&n;&t;&t;&t;&t;Other people are working on better solution.&n;&n;&t;&t;&t;&t;It sounds like ll_rw_swap_file defined&n;&t;&t;&t;&t;its operation size (sector size) based on&n;&t;&t;&t;&t;PAGE_SIZE and the number of blocks to read.&n;&t;&t;&t;&t;So using bmap or smap should work even if&n;&t;&t;&t;&t;smap will require more blocks.&n;&t;&t;&t;*/
+multiline_comment|/*&n;&t;&t;&t;&t;With MS-DOS, we use msdos_smap which returns&n;&t;&t;&t;&t;a sector number (not a cluster or block number).&n;&t;&t;&t;&t;It is a patch to enable the UMSDOS project.&n;&t;&t;&t;&t;Other people are working on better solution.&n;&n;&t;&t;&t;&t;It sounds like ll_rw_swap_file defined&n;&t;&t;&t;&t;its operation size (sector size) based on&n;&t;&t;&t;&t;PAGE_SIZE and the number of blocks to read.&n;&t;&t;&t;&t;So using get_block or smap should work even if&n;&t;&t;&t;&t;smap will require more blocks.&n;&t;&t;&t;*/
 r_int
 id|j
 suffix:semicolon

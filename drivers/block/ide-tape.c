@@ -13915,9 +13915,11 @@ r_if
 c_cond
 (paren
 id|drive
-op_ne
-l_int|NULL
-op_logical_and
+)paren
+(brace
+r_if
+c_cond
+(paren
 id|idetape_cleanup
 (paren
 id|drive
@@ -13931,6 +13933,21 @@ comma
 id|drive-&gt;name
 )paren
 suffix:semicolon
+multiline_comment|/* We must remove proc entries defined in this module.&n;&t;&t;&t;   Otherwise we oops while accessing these entries */
+r_if
+c_cond
+(paren
+id|drive-&gt;proc
+)paren
+id|ide_remove_proc_entries
+c_func
+(paren
+id|drive-&gt;proc
+comma
+id|idetape_proc
+)paren
+suffix:semicolon
+)brace
 )brace
 id|ide_unregister_module
 c_func

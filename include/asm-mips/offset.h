@@ -143,11 +143,11 @@ DECL|macro|THREAD_OLDCTX
 mdefine_line|#define THREAD_OLDCTX  912
 multiline_comment|/* Linux mm_struct offsets. */
 DECL|macro|MM_COUNT
-mdefine_line|#define MM_COUNT      12
+mdefine_line|#define MM_COUNT      16
 DECL|macro|MM_PGD
-mdefine_line|#define MM_PGD        8
+mdefine_line|#define MM_PGD        12
 DECL|macro|MM_CONTEXT
-mdefine_line|#define MM_CONTEXT    32
+mdefine_line|#define MM_CONTEXT    52
 multiline_comment|/* Linux sigcontext offsets. */
 DECL|macro|SC_REGMASK
 mdefine_line|#define SC_REGMASK    0

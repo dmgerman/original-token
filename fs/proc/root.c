@@ -164,7 +164,7 @@ comma
 multiline_comment|/* follow_link */
 l_int|NULL
 comma
-multiline_comment|/* bmap */
+multiline_comment|/* get_block */
 l_int|NULL
 comma
 multiline_comment|/* readpage */
@@ -233,7 +233,7 @@ comma
 multiline_comment|/* follow_link */
 l_int|NULL
 comma
-multiline_comment|/* bmap */
+multiline_comment|/* get_block */
 l_int|NULL
 comma
 multiline_comment|/* readpage */
@@ -345,7 +345,7 @@ comma
 multiline_comment|/* follow_link */
 l_int|NULL
 comma
-multiline_comment|/* bmap */
+multiline_comment|/* get_block */
 l_int|NULL
 comma
 multiline_comment|/* readpage */
@@ -1037,7 +1037,7 @@ comma
 multiline_comment|/* follow_link */
 l_int|NULL
 comma
-multiline_comment|/* bmap */
+multiline_comment|/* get_block */
 l_int|NULL
 comma
 multiline_comment|/* readpage */
@@ -1918,7 +1918,7 @@ comma
 multiline_comment|/* follow_link */
 l_int|NULL
 comma
-multiline_comment|/* bmap */
+multiline_comment|/* get_block */
 l_int|NULL
 comma
 multiline_comment|/* readpage */
@@ -1986,7 +1986,7 @@ comma
 multiline_comment|/* follow_link */
 l_int|NULL
 comma
-multiline_comment|/* bmap */
+multiline_comment|/* get_block */
 l_int|NULL
 comma
 multiline_comment|/* readpage */

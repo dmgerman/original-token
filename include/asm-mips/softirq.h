@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: softirq.h,v 1.5 1998/08/29 21:20:22 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1997, 1998 by Ralf Baechle&n; */
+multiline_comment|/* $Id: softirq.h,v 1.6 1999/06/17 13:30:38 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1997, 1998, 1999 by Ralf Baechle&n; */
 macro_line|#ifndef __ASM_MIPS_SOFTIRQ_H
 DECL|macro|__ASM_MIPS_SOFTIRQ_H
 mdefine_line|#define __ASM_MIPS_SOFTIRQ_H
@@ -15,6 +15,18 @@ id|local_bh_count
 id|NR_CPUS
 )braket
 suffix:semicolon
+DECL|macro|cpu_bh_disable
+mdefine_line|#define cpu_bh_disable(cpu)    do { local_bh_count[(cpu)]++; barrier(); } while (0)
+DECL|macro|cpu_bh_enable
+mdefine_line|#define cpu_bh_enable(cpu)     do { barrier(); local_bh_count[(cpu)]--; } while (0)
+DECL|macro|cpu_bh_trylock
+mdefine_line|#define cpu_bh_trylock(cpu)    (local_bh_count[(cpu)] ? 0 : (local_bh_count[(cpu)] = 1))
+DECL|macro|cpu_bh_endlock
+mdefine_line|#define cpu_bh_endlock(cpu)    (local_bh_count[(cpu)] = 0)
+DECL|macro|local_bh_disable
+mdefine_line|#define local_bh_disable()     cpu_bh_disable(smp_processor_id())
+DECL|macro|local_bh_enable
+mdefine_line|#define local_bh_enable()      cpu_bh_enable(smp_processor_id())
 DECL|macro|get_active_bhs
 mdefine_line|#define get_active_bhs()&t;(bh_mask &amp; bh_active)
 DECL|function|clear_active_bhs
@@ -92,12 +104,17 @@ id|nr
 op_assign
 id|routine
 suffix:semicolon
+id|atomic_set
+c_func
+(paren
+op_amp
 id|bh_mask_count
 (braket
 id|nr
 )braket
-op_assign
+comma
 l_int|0
+)paren
 suffix:semicolon
 id|bh_mask
 op_or_assign
@@ -117,13 +134,6 @@ r_int
 id|nr
 )paren
 (brace
-id|bh_base
-(braket
-id|nr
-)braket
-op_assign
-l_int|NULL
-suffix:semicolon
 id|bh_mask
 op_and_assign
 op_complement
@@ -132,6 +142,18 @@ l_int|1
 op_lshift
 id|nr
 )paren
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+id|bh_base
+(braket
+id|nr
+)braket
+op_assign
+l_int|NULL
 suffix:semicolon
 )brace
 DECL|function|mark_bh
@@ -176,11 +198,15 @@ op_lshift
 id|nr
 )paren
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|bh_mask_count
 (braket
 id|nr
 )braket
-op_increment
+)paren
 suffix:semicolon
 )brace
 DECL|function|enable_bh
@@ -197,12 +223,15 @@ id|nr
 r_if
 c_cond
 (paren
-op_logical_neg
-op_decrement
+id|atomic_dec_and_test
+c_func
+(paren
+op_amp
 id|bh_mask_count
 (braket
 id|nr
 )braket
+)paren
 )paren
 id|bh_mask
 op_or_assign
@@ -221,14 +250,10 @@ c_func
 r_void
 )paren
 (brace
-id|local_bh_count
-(braket
-id|smp_processor_id
+id|local_bh_disable
 c_func
 (paren
 )paren
-)braket
-op_increment
 suffix:semicolon
 id|barrier
 c_func
@@ -251,21 +276,17 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|local_bh_count
-(braket
-id|smp_processor_id
+id|local_bh_enable
 c_func
 (paren
 )paren
-)braket
-op_decrement
 suffix:semicolon
 )brace
 multiline_comment|/* These are for the irq&squot;s testing the lock */
 DECL|macro|softirq_trylock
-mdefine_line|#define softirq_trylock(cpu)&t;(local_bh_count[cpu] ? 0 : (local_bh_count[cpu] = 1))
+mdefine_line|#define softirq_trylock(cpu)   (cpu_bh_trylock(cpu))
 DECL|macro|softirq_endlock
-mdefine_line|#define softirq_endlock(cpu)&t;(local_bh_count[cpu] = 0)
+mdefine_line|#define softirq_endlock(cpu)   (cpu_bh_endlock(cpu))
 DECL|macro|synchronize_bh
 mdefine_line|#define synchronize_bh()&t;barrier()
 macro_line|#endif /* __ASM_MIPS_SOFTIRQ_H */

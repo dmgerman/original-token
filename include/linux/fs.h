@@ -253,8 +253,10 @@ DECL|macro|BH_Lock
 mdefine_line|#define BH_Lock&t;&t;2&t;/* 1 if the buffer is locked */
 DECL|macro|BH_Req
 mdefine_line|#define BH_Req&t;&t;3&t;/* 0 if the buffer has been invalidated */
-DECL|macro|BH_Allocated
-mdefine_line|#define BH_Allocated&t;4&t;/* 1 if the buffer has allocated backing store */
+DECL|macro|BH_Mapped
+mdefine_line|#define BH_Mapped&t;4&t;/* 1 if the buffer has a disk mapping */
+DECL|macro|BH_New
+mdefine_line|#define BH_New&t;&t;5&t;/* 1 if the buffer is new and not yet written out */
 DECL|macro|BH_Protected
 mdefine_line|#define BH_Protected&t;6&t;/* 1 if the buffer is protected */
 multiline_comment|/*&n; * Try to keep the most commonly used fields in single cache lines (16&n; * bytes) to improve performance.  This ordering should be&n; * particularly beneficial on 32-bit processors.&n; * &n; * We use the first 16 bytes for the data which is used in searches&n; * over the block hash lists (ie. getblk(), find_buffer() and&n; * friends).&n; * &n; * The second 16 bytes we use for lru buffer scans, as used by&n; * sync_buffers() and refill_freelist().  -- sct&n; */
@@ -433,8 +435,10 @@ DECL|macro|buffer_locked
 mdefine_line|#define buffer_locked(bh)&t;__buffer_state(bh,Lock)
 DECL|macro|buffer_req
 mdefine_line|#define buffer_req(bh)&t;&t;__buffer_state(bh,Req)
-DECL|macro|buffer_allocated
-mdefine_line|#define buffer_allocated(bh)&t;__buffer_state(bh,Allocated)
+DECL|macro|buffer_mapped
+mdefine_line|#define buffer_mapped(bh)&t;__buffer_state(bh,Mapped)
+DECL|macro|buffer_new
+mdefine_line|#define buffer_new(bh)&t;&t;__buffer_state(bh,New)
 DECL|macro|buffer_protected
 mdefine_line|#define buffer_protected(bh)&t;__buffer_state(bh,Protected)
 DECL|macro|buffer_page
@@ -2051,16 +2055,23 @@ r_int
 r_int
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * the order of these functions within the VFS template has been&n;&t; * changed because SMP locking has changed: from now on all bmap,&n;&t; * readpage, writepage and flushpage functions are supposed to do&n;&t; * whatever locking they need to get proper SMP operation - for&n;&t; * now in most cases this means a lock/unlock_kernel at entry/exit.&n;&t; * [The new order is also slightly more logical :)]&n;&t; */
-DECL|member|bmap
+multiline_comment|/*&n;&t; * the order of these functions within the VFS template has been&n;&t; * changed because SMP locking has changed: from now on all get_block,&n;&t; * readpage, writepage and flushpage functions are supposed to do&n;&t; * whatever locking they need to get proper SMP operation - for&n;&t; * now in most cases this means a lock/unlock_kernel at entry/exit.&n;&t; * [The new order is also slightly more logical :)]&n;&t; */
+multiline_comment|/*&n;&t; * Generic block allocator exported by the lowlevel fs. All metadata&n;&t; * details are handled by the lowlevel fs, all &squot;logical data content&squot;&n;&t; * details are handled by the highlevel block layer.&n;&t; */
+DECL|member|get_block
 r_int
 (paren
 op_star
-id|bmap
+id|get_block
 )paren
 (paren
 r_struct
 id|inode
+op_star
+comma
+r_int
+comma
+r_struct
+id|buffer_head
 op_star
 comma
 r_int
@@ -3074,6 +3085,10 @@ DECL|macro|BUF_DIRTY
 mdefine_line|#define BUF_DIRTY&t;2&t;/* Dirty buffers, not yet scheduled for write */
 DECL|macro|NR_LIST
 mdefine_line|#define NR_LIST&t;&t;3
+multiline_comment|/*&n; * This is called by bh-&gt;b_end_io() handlers when I/O has completed.&n; */
+DECL|function|mark_buffer_uptodate
+r_extern
+r_inline
 r_void
 id|mark_buffer_uptodate
 c_func
@@ -3081,10 +3096,59 @@ c_func
 r_struct
 id|buffer_head
 op_star
+id|bh
 comma
 r_int
+id|on
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|on
+)paren
+id|set_bit
+c_func
+(paren
+id|BH_Uptodate
+comma
+op_amp
+id|bh-&gt;b_state
 )paren
 suffix:semicolon
+r_else
+id|clear_bit
+c_func
+(paren
+id|BH_Uptodate
+comma
+op_amp
+id|bh-&gt;b_state
+)paren
+suffix:semicolon
+)brace
+DECL|macro|atomic_set_buffer_clean
+mdefine_line|#define atomic_set_buffer_clean(bh) test_and_clear_bit(BH_Dirty, &amp;(bh)-&gt;b_state)
+DECL|function|__mark_buffer_clean
+r_extern
+r_inline
+r_void
+id|__mark_buffer_clean
+c_func
+(paren
+r_struct
+id|buffer_head
+op_star
+id|bh
+)paren
+(brace
+id|refile_buffer
+c_func
+(paren
+id|bh
+)paren
+suffix:semicolon
+)brace
 DECL|function|mark_buffer_clean
 r_extern
 r_inline
@@ -3101,16 +3165,13 @@ id|bh
 r_if
 c_cond
 (paren
-id|test_and_clear_bit
+id|atomic_set_buffer_clean
 c_func
 (paren
-id|BH_Dirty
-comma
-op_amp
-id|bh-&gt;b_state
+id|bh
 )paren
 )paren
-id|refile_buffer
+id|__mark_buffer_clean
 c_func
 (paren
 id|bh
@@ -3840,33 +3901,6 @@ r_char
 op_star
 )paren
 suffix:semicolon
-DECL|typedef|fs_getblock_t
-r_typedef
-r_int
-(paren
-op_star
-id|fs_getblock_t
-)paren
-(paren
-r_struct
-id|inode
-op_star
-comma
-r_int
-r_int
-comma
-r_struct
-id|buffer_head
-op_star
-comma
-r_int
-r_int
-)paren
-suffix:semicolon
-DECL|macro|FS_GETBLK_ALLOCATE
-mdefine_line|#define FS_GETBLK_ALLOCATE&t;1
-DECL|macro|FS_GETBLK_UPDATE
-mdefine_line|#define FS_GETBLK_UPDATE&t;2
 multiline_comment|/* Generic buffer handling for block filesystems.. */
 r_extern
 r_int
@@ -3893,8 +3927,6 @@ comma
 r_struct
 id|page
 op_star
-comma
-id|fs_getblock_t
 )paren
 suffix:semicolon
 r_extern
@@ -3918,8 +3950,6 @@ comma
 r_const
 r_char
 op_star
-comma
-id|fs_getblock_t
 )paren
 suffix:semicolon
 r_extern

@@ -211,7 +211,7 @@ comma
 multiline_comment|/* follow_link &t;*/
 l_int|NULL
 comma
-multiline_comment|/* bmap &t;*/
+multiline_comment|/* get_block &t;*/
 l_int|NULL
 comma
 multiline_comment|/* readpage &t;*/
@@ -280,7 +280,7 @@ comma
 multiline_comment|/* follow_link */
 l_int|NULL
 comma
-multiline_comment|/* bmap */
+multiline_comment|/* get_block */
 l_int|NULL
 comma
 multiline_comment|/* readpage */

@@ -1,3 +1,4 @@
+multiline_comment|/* $Id: delay.h,v 1.2 1999/01/04 16:09:20 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 by Waldorf Electronics&n; * Copyright (C) 1995 - 1998 by Ralf Baechle&n; */
 macro_line|#ifndef __ASM_MIPS_DELAY_H
 DECL|macro|__ASM_MIPS_DELAY_H
 mdefine_line|#define __ASM_MIPS_DELAY_H
@@ -57,7 +58,7 @@ multiline_comment|/* 2**32 / 1000000 */
 id|__asm__
 c_func
 (paren
-l_string|&quot;multu&bslash;t%0,%1&bslash;n&bslash;t&quot;
+l_string|&quot;multu&bslash;t%0,%2&bslash;n&bslash;t&quot;
 l_string|&quot;mfhi&bslash;t%0&quot;
 suffix:colon
 l_string|&quot;=r&quot;
@@ -92,37 +93,5 @@ mdefine_line|#define __udelay_val loops_per_sec
 macro_line|#endif
 DECL|macro|udelay
 mdefine_line|#define udelay(usecs) __udelay((usecs),__udelay_val)
-multiline_comment|/*&n; * The different variants for 32/64 bit are pure paranoia. The typical&n; * range of numbers that appears for MIPS machines avoids overflows.&n; */
-DECL|function|muldiv
-r_extern
-id|__inline__
-r_int
-r_int
-id|muldiv
-c_func
-(paren
-r_int
-r_int
-id|a
-comma
-r_int
-r_int
-id|b
-comma
-r_int
-r_int
-id|c
-)paren
-(brace
-r_return
-(paren
-id|a
-op_star
-id|b
-)paren
-op_div
-id|c
-suffix:semicolon
-)brace
 macro_line|#endif /* __ASM_MIPS_DELAY_H */
 eof

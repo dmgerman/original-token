@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/io.h&gt;&t;&t;&t;/* need byte IO */
 macro_line|#include &lt;asm/spinlock.h&gt;&t;&t;/* And spinlocks */
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
 macro_line|#ifdef HAVE_REALLY_SLOW_DMA_CONTROLLER
 DECL|macro|dma_outb
 mdefine_line|#define dma_outb&t;outb_p
@@ -260,13 +261,6 @@ op_or
 l_int|4
 comma
 id|DMA2_MASK_REG
-)paren
-suffix:semicolon
-multiline_comment|/* I hate voodoo programming but .. */
-id|udelay
-c_func
-(paren
-l_int|20
 )paren
 suffix:semicolon
 )brace
