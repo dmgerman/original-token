@@ -1,6 +1,5 @@
-multiline_comment|/*&n; *  linux/fs/msdos/dir.c&n; *&n; *  Written 1992 by Werner Almesberger&n; *&n; *  MS-DOS directory handling functions&n; */
+multiline_comment|/*&n; *  linux/fs/msdos/dir.c&n; *&n; *  Written 1992,1993 by Werner Almesberger&n; *&n; *  MS-DOS directory handling functions&n; */
 macro_line|#include &lt;asm/segment.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/msdos_fs.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -365,26 +364,12 @@ l_int|1
 r_if
 c_cond
 (paren
-id|de-&gt;name
-(braket
-l_int|0
-)braket
-op_logical_and
-(paren
-(paren
-r_int
-r_char
-op_star
-)paren
+op_logical_neg
+id|IS_FREE
+c_func
 (paren
 id|de-&gt;name
 )paren
-)paren
-(braket
-l_int|0
-)braket
-op_ne
-id|DELETED_FLAG
 op_logical_and
 op_logical_neg
 (paren

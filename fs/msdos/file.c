@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/msdos/file.c&n; *&n; *  Written 1992 by Werner Almesberger&n; *&n; *  MS-DOS regular file handling primitives&n; */
+multiline_comment|/*&n; *  linux/fs/msdos/file.c&n; *&n; *  Written 1992,1993 by Werner Almesberger&n; *&n; *  MS-DOS regular file handling primitives&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

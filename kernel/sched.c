@@ -629,6 +629,8 @@ id|current-&gt;blocked
 op_or_assign
 id|mask
 suffix:semicolon
+r_do
+(brace
 id|current-&gt;state
 op_assign
 id|TASK_INTERRUPTIBLE
@@ -636,6 +638,19 @@ suffix:semicolon
 id|schedule
 c_func
 (paren
+)paren
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+op_logical_neg
+(paren
+id|current-&gt;signal
+op_amp
+op_complement
+id|current-&gt;blocked
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* if a suspending signal interrupted us we must restart */

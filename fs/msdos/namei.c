@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/msdos/namei.c&n; *&n; *  Written 1992 by Werner Almesberger&n; */
+multiline_comment|/*&n; *  linux/fs/msdos/namei.c&n; *&n; *  Written 1992,1993 by Werner Almesberger&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/msdos_fs.h&gt;
@@ -60,7 +60,7 @@ id|bad_if_strict
 (braket
 )braket
 op_assign
-l_string|&quot;+=,;&quot;
+l_string|&quot;+=,; &quot;
 suffix:semicolon
 multiline_comment|/* Formats an MS-DOS file name. Rejects invalid names. */
 DECL|function|msdos_format_name
@@ -83,6 +83,9 @@ comma
 r_char
 op_star
 id|res
+comma
+r_int
+id|dot_dirs
 )paren
 (brace
 r_char
@@ -102,15 +105,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_star
+id|IS_FREE
+c_func
 (paren
-r_int
-r_char
-op_star
-)paren
 id|name
-op_eq
-id|DELETED_FLAG
+)paren
 )paren
 r_return
 op_minus
@@ -146,6 +145,16 @@ l_char|&squot;.&squot;
 )paren
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|dot_dirs
+)paren
+r_return
+op_minus
+id|EEXIST
+suffix:semicolon
 id|memset
 c_func
 (paren
@@ -176,9 +185,9 @@ suffix:semicolon
 )brace
 id|space
 op_assign
-l_int|0
+l_int|1
 suffix:semicolon
-multiline_comment|/* to make GCC happy */
+multiline_comment|/* disallow names starting with a dot */
 id|c
 op_assign
 l_int|0
@@ -205,10 +214,8 @@ op_increment
 id|c
 op_assign
 op_star
-(paren
 id|name
 op_increment
-)paren
 suffix:semicolon
 id|len
 op_decrement
@@ -261,11 +268,7 @@ op_logical_and
 id|c
 op_le
 l_char|&squot;Z&squot;
-)paren
-(brace
-r_if
-c_cond
-(paren
+op_logical_and
 id|conv
 op_eq
 l_char|&squot;s&squot;
@@ -274,11 +277,6 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-id|c
-op_add_assign
-l_int|32
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -358,10 +356,8 @@ l_char|&squot;.&squot;
 id|c
 op_assign
 op_star
-(paren
 id|name
 op_increment
-)paren
 suffix:semicolon
 id|len
 op_decrement
@@ -391,21 +387,8 @@ op_decrement
 id|c
 op_assign
 op_star
-(paren
 id|name
 op_increment
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|walk
-op_eq
-id|res
-)paren
-r_return
-op_minus
-id|EINVAL
 suffix:semicolon
 r_if
 c_cond
@@ -447,10 +430,8 @@ id|MSDOS_NAME
 id|c
 op_assign
 op_star
-(paren
 id|name
 op_increment
-)paren
 suffix:semicolon
 id|len
 op_decrement
@@ -526,11 +507,7 @@ op_logical_and
 id|c
 op_le
 l_char|&squot;Z&squot;
-)paren
-(brace
-r_if
-c_cond
-(paren
+op_logical_and
 id|conv
 op_eq
 l_char|&squot;s&squot;
@@ -539,11 +516,6 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-id|c
-op_add_assign
-l_int|32
-suffix:semicolon
-)brace
 id|space
 op_assign
 id|c
@@ -712,6 +684,8 @@ comma
 id|len
 comma
 id|msdos_name
+comma
+l_int|1
 )paren
 )paren
 OL
@@ -1075,12 +1049,26 @@ id|next-&gt;i_ino
 )paren
 )paren
 )paren
-id|panic
+(brace
+id|fs_panic
 c_func
 (paren
+id|dir-&gt;i_sb
+comma
 l_string|&quot;msdos_lookup: Can&squot;t happen&quot;
 )paren
 suffix:semicolon
+id|iput
+c_func
+(paren
+id|dir
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENOENT
+suffix:semicolon
+)brace
 )brace
 id|iput
 c_func
@@ -1160,6 +1148,17 @@ OL
 l_int|0
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|res
+op_ne
+op_minus
+id|ENOENT
+)paren
+r_return
+id|res
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1421,6 +1420,8 @@ comma
 id|len
 comma
 id|msdos_name
+comma
+l_int|0
 )paren
 )paren
 OL
@@ -1677,6 +1678,8 @@ comma
 id|len
 comma
 id|msdos_name
+comma
+l_int|0
 )paren
 )paren
 OL
@@ -1990,9 +1993,11 @@ id|len
 OL
 l_int|0
 )paren
-id|panic
+id|fs_panic
 c_func
 (paren
+id|dir-&gt;i_sb
+comma
 l_string|&quot;rmdir in mkdir failed&quot;
 )paren
 suffix:semicolon
@@ -2063,7 +2068,7 @@ suffix:semicolon
 id|res
 op_assign
 op_minus
-id|EINVAL
+id|EPERM
 suffix:semicolon
 r_if
 c_cond
@@ -2249,24 +2254,12 @@ l_int|1
 r_if
 c_cond
 (paren
-id|dde-&gt;name
-(braket
-l_int|0
-)braket
-op_logical_and
+op_logical_neg
+id|IS_FREE
+c_func
 (paren
-(paren
-r_int
-r_char
-op_star
-)paren
 id|dde-&gt;name
 )paren
-(braket
-l_int|0
-)braket
-op_ne
-id|DELETED_FLAG
 op_logical_and
 id|strncmp
 c_func
@@ -3037,8 +3030,8 @@ c_func
 id|walk
 )paren
 suffix:semicolon
-r_if
-c_cond
+r_while
+c_loop
 (paren
 (paren
 id|error
@@ -3063,9 +3056,35 @@ id|free_ino
 OL
 l_int|0
 )paren
+(brace
+r_if
+c_cond
+(paren
+id|error
+op_ne
+op_minus
+id|ENOENT
+)paren
 r_return
 id|error
 suffix:semicolon
+id|error
+op_assign
+id|msdos_add_cluster
+c_func
+(paren
+id|new_dir
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+r_return
+id|error
+suffix:semicolon
+)brace
 id|exists
 op_assign
 id|msdos_scan
@@ -3667,6 +3686,8 @@ comma
 id|old_len
 comma
 id|old_msdos_name
+comma
+l_int|1
 )paren
 )paren
 OL
@@ -3697,6 +3718,8 @@ comma
 id|new_len
 comma
 id|new_msdos_name
+comma
+l_int|0
 )paren
 )paren
 OL

@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
+macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#ifdef CONFIG_SCSI
@@ -306,6 +307,20 @@ l_int|0
 suffix:semicolon
 r_return
 l_int|0
+suffix:semicolon
+)brace
+DECL|function|sys_fsync
+r_int
+id|sys_fsync
+c_func
+(paren
+r_int
+id|fd
+)paren
+(brace
+r_return
+op_minus
+id|ENOSYS
 suffix:semicolon
 )brace
 DECL|function|invalidate_buffers
@@ -1391,7 +1406,7 @@ id|bh-&gt;b_dirt
 id|sync_buffers
 c_func
 (paren
-id|bh-&gt;b_dev
+l_int|0
 )paren
 suffix:semicolon
 r_goto

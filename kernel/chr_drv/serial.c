@@ -69,6 +69,7 @@ id|rs_table
 )braket
 op_assign
 (brace
+multiline_comment|/* UART CLK   PORT IRQ     FLAGS        */
 (brace
 id|BASE_BAUD
 comma
@@ -76,10 +77,11 @@ l_int|0x3F8
 comma
 l_int|4
 comma
-l_int|0
+id|ASYNC_SKIP_TEST
 comma
 )brace
 comma
+multiline_comment|/* ttyS0 */
 (brace
 id|BASE_BAUD
 comma
@@ -87,10 +89,11 @@ l_int|0x2F8
 comma
 l_int|3
 comma
-l_int|0
+id|ASYNC_SKIP_TEST
 comma
 )brace
 comma
+multiline_comment|/* ttyS1 */
 (brace
 id|BASE_BAUD
 comma
@@ -98,10 +101,11 @@ l_int|0x3E8
 comma
 l_int|4
 comma
-l_int|0
+id|ASYNC_SKIP_TEST
 comma
 )brace
 comma
+multiline_comment|/* ttyS2 */
 (brace
 id|BASE_BAUD
 comma
@@ -109,51 +113,56 @@ l_int|0x2E8
 comma
 l_int|3
 comma
-l_int|0
+id|ASYNC_SKIP_TEST
 comma
 )brace
 comma
+multiline_comment|/* ttyS3 */
 macro_line|#ifdef CONFIG_AST_FOURPORT
 (brace
 id|BASE_BAUD
 comma
 l_int|0x1A0
 comma
-l_int|2
+l_int|9
 comma
 id|ASYNC_FOURPORT
 )brace
 comma
+multiline_comment|/* ttyS4 */
 (brace
 id|BASE_BAUD
 comma
 l_int|0x1A8
 comma
-l_int|2
+l_int|9
 comma
 id|ASYNC_FOURPORT
 )brace
 comma
+multiline_comment|/* ttyS5 */
 (brace
 id|BASE_BAUD
 comma
 l_int|0x1B0
 comma
-l_int|2
+l_int|9
 comma
 id|ASYNC_FOURPORT
 )brace
 comma
+multiline_comment|/* ttyS6 */
 (brace
 id|BASE_BAUD
 comma
 l_int|0x1B8
 comma
-l_int|2
+l_int|9
 comma
 id|ASYNC_FOURPORT
 )brace
 comma
+multiline_comment|/* ttyS7 */
 (brace
 id|BASE_BAUD
 comma
@@ -164,6 +173,7 @@ comma
 id|ASYNC_FOURPORT
 )brace
 comma
+multiline_comment|/* ttyS8 */
 (brace
 id|BASE_BAUD
 comma
@@ -174,6 +184,7 @@ comma
 id|ASYNC_FOURPORT
 )brace
 comma
+multiline_comment|/* ttyS9 */
 (brace
 id|BASE_BAUD
 comma
@@ -184,6 +195,7 @@ comma
 id|ASYNC_FOURPORT
 )brace
 comma
+multiline_comment|/* ttyS10 */
 (brace
 id|BASE_BAUD
 comma
@@ -194,6 +206,7 @@ comma
 id|ASYNC_FOURPORT
 )brace
 comma
+multiline_comment|/* ttyS11 */
 macro_line|#else /* CONFIG_AST_FOURPORT */
 (brace
 id|BASE_BAUD
@@ -203,6 +216,7 @@ comma
 l_int|0
 )brace
 comma
+multiline_comment|/* ttyS4 */
 (brace
 id|BASE_BAUD
 comma
@@ -211,6 +225,7 @@ comma
 l_int|0
 )brace
 comma
+multiline_comment|/* ttyS5 */
 (brace
 id|BASE_BAUD
 comma
@@ -219,6 +234,7 @@ comma
 l_int|0
 )brace
 comma
+multiline_comment|/* ttyS6 */
 (brace
 id|BASE_BAUD
 comma
@@ -227,6 +243,7 @@ comma
 l_int|0
 )brace
 comma
+multiline_comment|/* ttyS7 */
 (brace
 id|BASE_BAUD
 comma
@@ -235,6 +252,7 @@ comma
 l_int|0
 )brace
 comma
+multiline_comment|/* ttyS8 */
 (brace
 id|BASE_BAUD
 comma
@@ -243,6 +261,7 @@ comma
 l_int|0
 )brace
 comma
+multiline_comment|/* ttyS9 */
 (brace
 id|BASE_BAUD
 comma
@@ -251,6 +270,7 @@ comma
 l_int|0
 )brace
 comma
+multiline_comment|/* ttyS10 */
 (brace
 id|BASE_BAUD
 comma
@@ -259,6 +279,7 @@ comma
 l_int|0
 )brace
 comma
+multiline_comment|/* ttyS11 */
 macro_line|#endif /* CONFIG_AST_FOURPORT */
 macro_line|#ifdef CONFIG_ACCENT_ASYNC
 (brace
@@ -271,6 +292,7 @@ comma
 l_int|0
 )brace
 comma
+multiline_comment|/* ttyS12 */
 (brace
 id|BASE_BAUD
 comma
@@ -281,6 +303,7 @@ comma
 l_int|0
 )brace
 comma
+multiline_comment|/* ttyS13 */
 macro_line|#else /* CONFIG_ACCENT_ASYNC */
 (brace
 id|BASE_BAUD
@@ -290,6 +313,7 @@ comma
 l_int|0
 )brace
 comma
+multiline_comment|/* ttyS12 */
 (brace
 id|BASE_BAUD
 comma
@@ -298,6 +322,7 @@ comma
 l_int|0
 )brace
 comma
+multiline_comment|/* ttyS13 */
 macro_line|#endif /* CONFIG_ACCENT_ASYNC */
 (brace
 id|BASE_BAUD
@@ -307,6 +332,7 @@ comma
 l_int|0
 )brace
 comma
+multiline_comment|/* ttyS14 (spare; user configurable) */
 (brace
 id|BASE_BAUD
 comma
@@ -315,166 +341,183 @@ comma
 l_int|0
 )brace
 comma
+multiline_comment|/* ttyS15 (spare; user configurable) */
 (brace
 id|BASE_BAUD
 comma
 l_int|0x100
 comma
-l_int|4
+l_int|12
 comma
 l_int|0
 )brace
 comma
+multiline_comment|/* ttyS16 */
 (brace
 id|BASE_BAUD
 comma
 l_int|0x108
 comma
-l_int|4
+l_int|12
 comma
 l_int|0
 )brace
 comma
+multiline_comment|/* ttyS17 */
 (brace
 id|BASE_BAUD
 comma
 l_int|0x110
 comma
-l_int|4
+l_int|12
 comma
 l_int|0
 )brace
 comma
+multiline_comment|/* ttyS18 */
 (brace
 id|BASE_BAUD
 comma
 l_int|0x118
 comma
-l_int|4
+l_int|12
 comma
 l_int|0
 )brace
 comma
+multiline_comment|/* ttyS19 */
 (brace
 id|BASE_BAUD
 comma
 l_int|0x120
 comma
-l_int|4
+l_int|12
 comma
 l_int|0
 )brace
 comma
+multiline_comment|/* ttyS20 */
 (brace
 id|BASE_BAUD
 comma
 l_int|0x128
 comma
-l_int|4
+l_int|12
 comma
 l_int|0
 )brace
 comma
+multiline_comment|/* ttyS21 */
 (brace
 id|BASE_BAUD
 comma
 l_int|0x130
 comma
-l_int|4
+l_int|12
 comma
 l_int|0
 )brace
 comma
+multiline_comment|/* ttyS22 */
 (brace
 id|BASE_BAUD
 comma
 l_int|0x138
 comma
-l_int|4
+l_int|12
 comma
 l_int|0
 )brace
 comma
+multiline_comment|/* ttyS23 */
 (brace
 id|BASE_BAUD
 comma
 l_int|0x140
 comma
-l_int|4
+l_int|12
 comma
 l_int|0
 )brace
 comma
+multiline_comment|/* ttyS24 */
 (brace
 id|BASE_BAUD
 comma
 l_int|0x148
 comma
-l_int|4
+l_int|12
 comma
 l_int|0
 )brace
 comma
+multiline_comment|/* ttyS25 */
 (brace
 id|BASE_BAUD
 comma
 l_int|0x150
 comma
-l_int|4
+l_int|12
 comma
 l_int|0
 )brace
 comma
+multiline_comment|/* ttyS26 */
 (brace
 id|BASE_BAUD
 comma
 l_int|0x158
 comma
-l_int|4
+l_int|12
 comma
 l_int|0
 )brace
 comma
+multiline_comment|/* ttyS27 */
 (brace
 id|BASE_BAUD
 comma
 l_int|0x160
 comma
-l_int|4
+l_int|12
 comma
 l_int|0
 )brace
 comma
+multiline_comment|/* ttyS28 */
 (brace
 id|BASE_BAUD
 comma
 l_int|0x168
 comma
-l_int|4
+l_int|12
 comma
 l_int|0
 )brace
 comma
+multiline_comment|/* ttyS29 */
 (brace
 id|BASE_BAUD
 comma
 l_int|0x170
 comma
-l_int|4
+l_int|12
 comma
 l_int|0
 )brace
 comma
+multiline_comment|/* ttyS30 */
 (brace
 id|BASE_BAUD
 comma
 l_int|0x178
 comma
-l_int|4
+l_int|12
 comma
 l_int|0
 )brace
 comma
+multiline_comment|/* ttyS31 */
 )brace
 suffix:semicolon
 DECL|macro|NR_PORTS
@@ -1099,7 +1142,7 @@ suffix:semicolon
 DECL|function|check_modem_status
 r_static
 r_inline
-r_void
+r_int
 id|check_modem_status
 c_func
 (paren
@@ -1107,10 +1150,6 @@ r_struct
 id|async_struct
 op_star
 id|info
-comma
-r_int
-op_star
-id|done_work
 )paren
 (brace
 r_int
@@ -1196,8 +1235,8 @@ id|info-&gt;tty-&gt;stopped
 op_assign
 l_int|0
 suffix:semicolon
-id|done_work
-op_increment
+r_return
+l_int|1
 suffix:semicolon
 )brace
 )brace
@@ -1212,6 +1251,9 @@ id|UART_MSR_CTS
 )paren
 suffix:semicolon
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 DECL|function|figure_RS_timer
 r_static
@@ -1417,6 +1459,8 @@ id|done_work
 op_increment
 suffix:semicolon
 )brace
+id|recheck_write
+suffix:colon
 r_if
 c_cond
 (paren
@@ -1440,14 +1484,17 @@ id|done_work
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
 id|check_modem_status
 c_func
 (paren
 id|info
-comma
-op_amp
-id|done_work
 )paren
+)paren
+r_goto
+id|recheck_write
 suffix:semicolon
 )brace
 id|info
@@ -1540,7 +1587,6 @@ c_func
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_AUTO_IRQ
 multiline_comment|/*&n; * This is the serial driver&squot;s interrupt routine while we are probing&n; * for submarines.&n; */
 DECL|variable|rs_irq_triggered
 r_static
@@ -1577,7 +1623,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#endif
 multiline_comment|/*&n; * -------------------------------------------------------------------&n; * Here ends the serial interrupt routines.&n; * -------------------------------------------------------------------&n; */
 multiline_comment|/*&n; * This routine is called when we receive a break on a serial line.&n; * It is executed out of the software interrupt routine.&n; */
 DECL|function|handle_rs_break
@@ -5663,7 +5708,7 @@ r_void
 id|printk
 c_func
 (paren
-l_string|&quot;Serial driver version 3.93 with&quot;
+l_string|&quot;Serial driver version 3.94 with&quot;
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_AST_FOURPORT
@@ -5713,7 +5758,6 @@ macro_line|#endif
 DECL|macro|SERIAL_OPT
 macro_line|#undef SERIAL_OPT
 )brace
-macro_line|#ifdef CONFIG_AUTO_IRQ
 multiline_comment|/*&n; * This routine is called by init(); it attempts to determine which&n; * interrupt a serial port is configured to use.  It is not&n; * fool-proof, but it works a large part of the time.&n; */
 DECL|function|get_auto_irq
 r_static
@@ -5978,8 +6022,7 @@ r_return
 id|rs_irq_triggered
 suffix:semicolon
 )brace
-macro_line|#endif
-multiline_comment|/*&n; * This routine is called by rs_init() to initialize a specific serial&n; * port.  If CONFIG_AUTO_IRQ is defined, it will attempt to figure out&n; * which IRQ the serial port is on by calling get_auto_irq().  (See&n; * above). a&n; *&n; * It also determines what type of UART ship this serial port is&n; * using: 8250, 16450, 16550, 16550A.  The important question is&n; * whether or not this UART is a 16550A or not, since this will&n; * determine whether or not we can use its FIFO features or not.&n; */
+multiline_comment|/*&n; * This routine is called by rs_init() to initialize a specific serial&n; * port.  If CONFIG_AUTO_IRQ is defined, it will attempt to figure out&n; * which IRQ the serial port is on by calling get_auto_irq().  (See&n; * above).&n; *&n; * It also determines what type of UART ship this serial port is&n; * using: 8250, 16450, 16550, 16550A.  The important question is&n; * whether or not this UART is a 16550A or not, since this will&n; * determine whether or not we can use its FIFO features or not.&n; */
 DECL|function|init
 r_static
 r_void
@@ -6007,11 +6050,9 @@ id|port
 op_assign
 id|info-&gt;port
 suffix:semicolon
-macro_line|#ifdef CONFIG_AUTO_IRQ
 r_int
 id|retries
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -6020,105 +6061,67 @@ id|port
 )paren
 r_return
 suffix:semicolon
-macro_line|#ifdef CONFIG_AUTO_IRQ&t;
-id|scratch2
-op_assign
-l_int|0
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|retries
-op_assign
-l_int|0
-suffix:semicolon
-id|retries
-OL
-l_int|5
-suffix:semicolon
-id|retries
-op_increment
-)paren
-(brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|scratch
-)paren
+multiline_comment|/*&n;&t; * Do a simple existence test first; if we fail this, there&squot;s&n;&t; * no point trying anything else.&n;&t; */
 id|scratch
 op_assign
-id|get_auto_irq
+id|serial_inp
 c_func
 (paren
 id|info
+comma
+id|UART_IER
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|scratch2
-)paren
-id|scratch2
-op_assign
-id|get_auto_irq
+id|serial_outp
 c_func
 (paren
 id|info
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|scratch
-op_logical_and
-id|scratch2
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|scratch
-op_eq
-id|scratch2
-)paren
-r_break
-suffix:semicolon
-id|scratch
-op_assign
-id|scratch2
-op_assign
+comma
+id|UART_IER
+comma
 l_int|0
+)paren
 suffix:semicolon
-)brace
-)brace
+id|scratch2
+op_assign
+id|serial_inp
+c_func
+(paren
+id|info
+comma
+id|UART_IER
+)paren
+suffix:semicolon
+id|serial_outp
+c_func
+(paren
+id|info
+comma
+id|UART_IER
+comma
+id|scratch
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|scratch
-op_logical_and
-(paren
-id|scratch
-op_eq
 id|scratch2
 )paren
-)paren
-id|info-&gt;irq
-op_assign
-id|scratch
-suffix:semicolon
-r_else
-(brace
-id|info-&gt;type
-op_assign
-id|PORT_UNKNOWN
-suffix:semicolon
 r_return
 suffix:semicolon
-)brace
-macro_line|#else /* CONFIG_AUTO_IRQ */
-multiline_comment|/* &n;&t; * Check to see if a UART is really there.  &n;&t; */
+multiline_comment|/* We failed; there&squot;s nothing here */
+multiline_comment|/* &n;&t; * Check to see if a UART is really there.  Certain broken&n;&t; * internal modems based on the Rockwell chipset fail this&n;&t; * test, because they apparently don&squot;t implement the loopback&n;&t; * test mode.  So this test is skipped on the COM 1 through&n;&t; * COM 4 ports.  This *should* be safe, since no board&n;&t; * manufactucturer would be stupid enough to design a board&n;&t; * that conflicts with COM 1-4 --- we hope!&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|info-&gt;flags
+op_amp
+id|ASYNC_SKIP_TEST
+)paren
+)paren
+(brace
 id|scratch
 op_assign
 id|serial_inp
@@ -6210,7 +6213,141 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_AUTO_IRQ */
+)brace
+multiline_comment|/*&n;&t; * Here&squot;s where we do the automatic IRQ detection.  We always&n;&t; * try to do this test; CONFIG_AUTO_IRQ merely determins&n;&t; * whether or not we pay attention to the results.  If&n;&t; * CONFIG_AUTO_IRQ is off, then we merely print a warning&n;&t; * message if the default IRQ does not match the results made&n;&t; * by the automatic IRQ detection system.&n;&t; */
+id|scratch
+op_assign
+id|scratch2
+op_assign
+l_int|0
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|retries
+op_assign
+l_int|0
+suffix:semicolon
+id|retries
+OL
+l_int|5
+suffix:semicolon
+id|retries
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|scratch
+)paren
+id|scratch
+op_assign
+id|get_auto_irq
+c_func
+(paren
+id|info
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|scratch2
+)paren
+id|scratch2
+op_assign
+id|get_auto_irq
+c_func
+(paren
+id|info
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|scratch
+op_logical_and
+id|scratch2
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|scratch
+op_eq
+id|scratch2
+)paren
+r_break
+suffix:semicolon
+id|scratch
+op_assign
+id|scratch2
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+)brace
+r_if
+c_cond
+(paren
+id|scratch
+op_logical_and
+(paren
+id|scratch
+op_eq
+id|scratch2
+)paren
+)paren
+(brace
+macro_line|#ifdef CONFIG_AUTO_IRQ
+id|info-&gt;irq
+op_assign
+id|scratch
+suffix:semicolon
+macro_line|#else
+r_if
+c_cond
+(paren
+id|info-&gt;irq
+op_ne
+id|scratch
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;Warning: auto IRQ detection for tty%d found IRQ %d, not %d.&bslash;n&quot;
+comma
+id|info-&gt;line
+comma
+id|scratch
+comma
+id|info-&gt;irq
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+r_else
+(brace
+macro_line|#ifdef CONFIG_AUTO_IRQ
+id|info-&gt;type
+op_assign
+id|PORT_UNKNOWN
+suffix:semicolon
+r_return
+suffix:semicolon
+macro_line|#else
+id|printk
+c_func
+(paren
+l_string|&quot;Warning: auto IRQ detection for tty%d failed; using default IRQ.&bslash;n&quot;
+comma
+id|info-&gt;line
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
 id|outb_p
 c_func
 (paren
@@ -6397,7 +6534,6 @@ id|async_struct
 op_star
 id|info
 suffix:semicolon
-macro_line|#ifdef CONFIG_AUTO_IRQ
 r_int
 id|irq_lines
 op_assign
@@ -6417,10 +6553,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|rs_triggered
-op_assign
-l_int|0
-suffix:semicolon
 id|sa.sa_handler
 op_assign
 id|rs_probe
@@ -6439,7 +6571,6 @@ id|sa.sa_restorer
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#endif&t;
 id|memset
 c_func
 (paren
@@ -6485,6 +6616,10 @@ id|IRQ_active
 op_assign
 l_int|0
 suffix:semicolon
+id|rs_triggered
+op_assign
+l_int|0
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -6514,7 +6649,6 @@ id|i
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef CONFIG_AUTO_IRQ
 r_if
 c_cond
 (paren
@@ -6534,14 +6668,12 @@ l_int|1
 op_lshift
 id|i
 suffix:semicolon
-macro_line|#endif
 )brace
-macro_line|#ifdef CONFIG_AUTO_IRQ
 id|timeout
 op_assign
 id|jiffies
 op_plus
-l_int|5
+l_int|10
 suffix:semicolon
 r_while
 c_loop
@@ -6615,7 +6747,6 @@ id|i
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
 id|show_serial_version
 c_func
 (paren
@@ -6791,7 +6922,6 @@ r_break
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef CONFIG_AUTO_IRQ
 multiline_comment|/*&n;&t; * Turn interrupts back off, since they were off when we&n;&t; * started this.  See start_kernel() in init/main.c.&n;&t; */
 id|cli
 c_func
@@ -6831,7 +6961,6 @@ id|i
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 r_return
 id|kmem_start
 suffix:semicolon

@@ -400,16 +400,6 @@ id|mask
 suffix:semicolon
 r_extern
 r_void
-id|write_verify
-c_func
-(paren
-r_int
-r_int
-id|address
-)paren
-suffix:semicolon
-r_extern
-r_void
 id|do_wp_page
 c_func
 (paren

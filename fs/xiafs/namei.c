@@ -1073,6 +1073,10 @@ op_le
 id|de-&gt;d_rec_len
 )paren
 (brace
+id|dir-&gt;i_atime
+op_assign
+id|dir-&gt;i_ctime
+op_assign
 id|dir-&gt;i_mtime
 op_assign
 id|CURRENT_TIME
@@ -1676,7 +1680,9 @@ id|inode-&gt;i_rdev
 op_assign
 id|rdev
 suffix:semicolon
-id|inode-&gt;i_mtime
+id|inode-&gt;i_atime
+op_assign
+id|inode-&gt;i_ctime
 op_assign
 id|inode-&gt;i_atime
 op_assign
@@ -1902,9 +1908,11 @@ c_func
 id|dir-&gt;i_sb
 )paren
 suffix:semicolon
-id|inode-&gt;i_mtime
-op_assign
 id|inode-&gt;i_atime
+op_assign
+id|inode-&gt;i_ctime
+op_assign
+id|inode-&gt;i_mtime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
@@ -2836,6 +2844,10 @@ suffix:semicolon
 id|dir-&gt;i_nlink
 op_decrement
 suffix:semicolon
+id|dir-&gt;i_atime
+op_assign
+id|dir-&gt;i_ctime
+op_assign
 id|dir-&gt;i_mtime
 op_assign
 id|CURRENT_TIME
@@ -3077,6 +3089,10 @@ id|bh-&gt;b_dirt
 op_assign
 l_int|1
 suffix:semicolon
+id|dir-&gt;i_atime
+op_assign
+id|dir-&gt;i_ctime
+op_assign
 id|dir-&gt;i_mtime
 op_assign
 id|CURRENT_TIME
@@ -3087,10 +3103,6 @@ l_int|1
 suffix:semicolon
 id|inode-&gt;i_nlink
 op_decrement
-suffix:semicolon
-id|inode-&gt;i_ctime
-op_assign
-id|CURRENT_TIME
 suffix:semicolon
 id|inode-&gt;i_dirt
 op_assign
@@ -3628,6 +3640,8 @@ suffix:semicolon
 id|oldinode-&gt;i_nlink
 op_increment
 suffix:semicolon
+id|oldinode-&gt;i_atime
+op_assign
 id|oldinode-&gt;i_ctime
 op_assign
 id|CURRENT_TIME

@@ -756,6 +756,16 @@ id|filp-&gt;f_reada
 op_assign
 l_int|1
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|IS_RDONLY
+(paren
+id|inode
+)paren
+)paren
+(brace
 id|inode-&gt;i_atime
 op_assign
 id|CURRENT_TIME
@@ -764,6 +774,7 @@ id|inode-&gt;i_dirt
 op_assign
 l_int|1
 suffix:semicolon
+)brace
 r_return
 id|read
 suffix:semicolon
@@ -1090,6 +1101,10 @@ id|bh
 )paren
 suffix:semicolon
 )brace
+id|inode-&gt;i_atime
+op_assign
+id|inode-&gt;i_ctime
+op_assign
 id|inode-&gt;i_mtime
 op_assign
 id|CURRENT_TIME

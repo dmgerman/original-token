@@ -1,6 +1,7 @@
 macro_line|#ifndef _MSDOS_FS_SB
 DECL|macro|_MSDOS_FS_SB
 mdefine_line|#define _MSDOS_FS_SB
+multiline_comment|/*&n; * MS-DOS file system in-core superblock data&n; */
 DECL|struct|msdos_sb_info
 r_struct
 id|msdos_sb_info
@@ -85,6 +86,11 @@ DECL|member|fat_lock
 r_int
 id|fat_lock
 suffix:semicolon
+DECL|member|prev_free
+r_int
+id|prev_free
+suffix:semicolon
+multiline_comment|/* previously returned free cluster number */
 DECL|member|free_clusters
 r_int
 id|free_clusters

@@ -216,6 +216,8 @@ DECL|macro|ASYNC_FOURPORT
 mdefine_line|#define ASYNC_FOURPORT  0x0002&t;/* Set OU1, OUT2 per AST Fourport settings */
 DECL|macro|ASYNC_SAK
 mdefine_line|#define ASYNC_SAK&t;0x0004&t;/* Secure Attention Key (Orange book) */
+DECL|macro|ASYNC_SKIP_TEST
+mdefine_line|#define ASYNC_SKIP_TEST 0x0008&t;/* Skip UART test on bootup */
 DECL|macro|ASYNC_SPD_MASK
 mdefine_line|#define ASYNC_SPD_MASK&t;0x0030
 DECL|macro|ASYNC_SPD_HI

@@ -148,15 +148,11 @@ DECL|member|heads
 r_int
 r_char
 id|heads
-suffix:colon
-l_int|6
 suffix:semicolon
 DECL|member|sectors
 r_int
 r_char
 id|sectors
-suffix:colon
-l_int|6
 suffix:semicolon
 DECL|member|ha_scsi_id
 r_int

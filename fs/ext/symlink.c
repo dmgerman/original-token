@@ -128,10 +128,6 @@ id|res_inode
 r_int
 id|error
 suffix:semicolon
-r_int
-r_int
-id|fs
-suffix:semicolon
 r_struct
 id|buffer_head
 op_star

@@ -39,6 +39,7 @@ id|send_sig
 c_func
 (paren
 r_int
+r_int
 id|sig
 comma
 r_struct
@@ -56,17 +57,9 @@ c_cond
 op_logical_neg
 id|p
 op_logical_or
-(paren
-id|sig
-OL
-l_int|0
-)paren
-op_logical_or
-(paren
 id|sig
 OG
 l_int|32
-)paren
 )paren
 r_return
 op_minus

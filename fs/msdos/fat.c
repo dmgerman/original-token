@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/msdos/fat.c&n; *&n; *  Written 1992 by Werner Almesberger&n; */
+multiline_comment|/*&n; *  linux/fs/msdos/fat.c&n; *&n; *  Written 1992,1993 by Werner Almesberger&n; */
 macro_line|#include &lt;linux/msdos_fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -77,6 +77,29 @@ comma
 id|next
 comma
 id|copy
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+r_int
+)paren
+(paren
+id|this
+op_minus
+l_int|2
+)paren
+op_ge
+id|MSDOS_SB
+c_func
+(paren
+id|sb
+)paren
+op_member_access_from_pointer
+id|clusters
+)paren
+r_return
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -257,6 +280,9 @@ suffix:semicolon
 multiline_comment|/* GCC needs that stuff */
 id|next
 op_assign
+id|CF_LE_W
+c_func
+(paren
 (paren
 (paren
 r_int
@@ -278,13 +304,14 @@ l_int|1
 op_rshift
 l_int|1
 )braket
+)paren
 suffix:semicolon
 r_if
 c_cond
 (paren
 id|next
 op_ge
-l_int|0xfff8
+l_int|0xfff7
 )paren
 id|next
 op_assign
@@ -389,7 +416,7 @@ c_cond
 (paren
 id|next
 op_ge
-l_int|0xff8
+l_int|0xff7
 )paren
 id|next
 op_assign
@@ -441,7 +468,11 @@ op_rshift
 l_int|1
 )braket
 op_assign
+id|CT_LE_W
+c_func
+(paren
 id|new_value
+)paren
 suffix:semicolon
 r_else
 (brace
@@ -1063,12 +1094,22 @@ id|walk-&gt;disk_cluster
 op_ne
 id|d_clu
 )paren
-id|panic
+(brace
+id|printk
 c_func
 (paren
 l_string|&quot;FAT cache corruption&quot;
 )paren
 suffix:semicolon
+id|cache_inval_inode
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 multiline_comment|/* update LRU */
 r_if
 c_cond
@@ -1332,22 +1373,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|MSDOS_I
-c_func
-(paren
-id|inode
-)paren
-op_member_access_from_pointer
-id|i_busy
-op_logical_and
-id|inode-&gt;i_nlink
-)paren
-)paren
 id|cache_add
 c_func
 (paren
@@ -1358,7 +1383,6 @@ comma
 id|this
 )paren
 suffix:semicolon
-multiline_comment|/* don&squot;t add clusters of moved files, because we can&squot;t invalidate them&n;&t;   when this inode is returned. */
 r_return
 id|this
 suffix:semicolon
@@ -1658,12 +1682,18 @@ l_int|0
 )paren
 )paren
 )paren
-id|panic
+(brace
+id|fs_panic
 c_func
 (paren
+id|inode-&gt;i_sb
+comma
 l_string|&quot;fat_free: deleting beyond EOF&quot;
 )paren
 suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

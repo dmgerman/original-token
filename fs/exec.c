@@ -2256,9 +2256,12 @@ op_amp
 id|S_ISGID
 )paren
 op_logical_and
+op_logical_neg
+id|in_group_p
+c_func
+(paren
 id|inode-&gt;i_gid
-op_ne
-id|current-&gt;egid
+)paren
 )paren
 )paren
 op_logical_and

@@ -1611,9 +1611,15 @@ l_int|NULL
 suffix:semicolon
 id|inode-&gt;i_blocks
 op_assign
+l_int|0
+suffix:semicolon
 id|inode-&gt;i_blksize
 op_assign
-l_int|0
+id|XIAFS_ZSIZE
+c_func
+(paren
+id|inode-&gt;i_sb
+)paren
 suffix:semicolon
 r_return
 id|inode

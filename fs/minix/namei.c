@@ -1845,6 +1845,10 @@ id|block
 op_assign
 l_int|0
 suffix:semicolon
+id|bh
+op_assign
+l_int|NULL
+suffix:semicolon
 id|offset
 op_assign
 l_int|2

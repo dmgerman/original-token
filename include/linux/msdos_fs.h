@@ -3,6 +3,8 @@ DECL|macro|_LINUX_MSDOS_FS_H
 mdefine_line|#define _LINUX_MSDOS_FS_H
 multiline_comment|/*&n; * The MS-DOS filesystem constants/structures&n; */
 macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/fd.h&gt;
 DECL|macro|MSDOS_ROOT_INO
 mdefine_line|#define MSDOS_ROOT_INO  1 /* == MINIX_ROOT_INO */
 DECL|macro|SECTOR_SIZE
@@ -42,6 +44,11 @@ mdefine_line|#define ATTR_UNUSED  (ATTR_VOLUME | ATTR_ARCH | ATTR_SYS | ATTR_HID
 multiline_comment|/* attribute bits that are copied &quot;as is&quot; */
 DECL|macro|DELETED_FLAG
 mdefine_line|#define DELETED_FLAG 0xe5 /* marks file as deleted when in name[0] */
+DECL|macro|IS_FREE
+mdefine_line|#define IS_FREE(n) (!*(n) || *(unsigned char *) (n) == DELETED_FLAG || &bslash;&n;  *(unsigned char *) (n) == FD_FILL_BYTE)
+DECL|macro|MSDOS_VALID_MODE
+mdefine_line|#define MSDOS_VALID_MODE (S_IFREG | S_IFDIR | S_IRWXU | S_IRWXG | S_IRWXO)
+multiline_comment|/* valid file mode bits */
 DECL|macro|MSDOS_SB
 mdefine_line|#define MSDOS_SB(s) (&amp;((s)-&gt;u.msdos_sb))
 DECL|macro|MSDOS_I
@@ -53,7 +60,16 @@ mdefine_line|#define MSDOS_DOT    &quot;.          &quot; /* &quot;.&quot;, padd
 DECL|macro|MSDOS_DOTDOT
 mdefine_line|#define MSDOS_DOTDOT &quot;..         &quot; /* &quot;..&quot;, padded to MSDOS_NAME chars */
 DECL|macro|MSDOS_FAT12
-mdefine_line|#define MSDOS_FAT12 4086 /* maximum number of clusters in a 12 bit FAT */
+mdefine_line|#define MSDOS_FAT12 4078 /* maximum number of clusters in a 12 bit FAT */
+multiline_comment|/*&n; * Conversion from and to little-endian byte order. (no-op on i386/i486)&n; *&n; * Naming: Ca_b_c, where a: F = from, T = to, b: LE = little-endian, BE = big-&n; * endian, c: W = word (16 bits), L = longword (32 bits)&n; */
+DECL|macro|CF_LE_W
+mdefine_line|#define CF_LE_W(v) (v)
+DECL|macro|CF_LE_L
+mdefine_line|#define CF_LE_L(v) (v)
+DECL|macro|CT_LE_W
+mdefine_line|#define CT_LE_W(v) (v)
+DECL|macro|CT_LE_L
+mdefine_line|#define CT_LE_L(v) (v)
 DECL|struct|msdos_boot_sector
 r_struct
 id|msdos_boot_sector
@@ -62,9 +78,27 @@ DECL|member|ignored
 r_char
 id|ignored
 (braket
-l_int|13
+l_int|3
 )braket
 suffix:semicolon
+multiline_comment|/* Boot strap short or near jump */
+DECL|member|system_id
+r_char
+id|system_id
+(braket
+l_int|8
+)braket
+suffix:semicolon
+multiline_comment|/* Name - can be used to special case&n;&t;&t;&t;&t;       partition manager volumes */
+DECL|member|sector_size
+r_int
+r_char
+id|sector_size
+(braket
+l_int|2
+)braket
+suffix:semicolon
+multiline_comment|/* bytes per logical sector */
 DECL|member|cluster_size
 r_int
 r_char
@@ -118,13 +152,13 @@ r_int
 r_int
 id|secs_track
 suffix:semicolon
-multiline_comment|/* sectors per track (unused) */
+multiline_comment|/* sectors per track */
 DECL|member|heads
 r_int
 r_int
 id|heads
 suffix:semicolon
-multiline_comment|/* number of heads (unused) */
+multiline_comment|/* number of heads */
 DECL|member|hidden
 r_int
 r_int
@@ -228,10 +262,10 @@ DECL|macro|MSDOS_CAN_BMAP
 mdefine_line|#define MSDOS_CAN_BMAP(mib) (!(((mib)-&gt;cluster_size &amp; 1) || &bslash;&n;    ((mib)-&gt;data_start &amp; 1)))
 multiline_comment|/* Convert attribute bits and a mask to the UNIX mode. */
 DECL|macro|MSDOS_MKMODE
-mdefine_line|#define MSDOS_MKMODE(a,m) (m &amp; (a &amp; ATTR_RO ? 0444 : 0777))
+mdefine_line|#define MSDOS_MKMODE(a,m) (m &amp; (a &amp; ATTR_RO ? 0555 : 0777))
 multiline_comment|/* Convert the UNIX mode to MS-DOS attribute bits. */
 DECL|macro|MSDOS_MKATTR
-mdefine_line|#define MSDOS_MKATTR(m) (!(m &amp; 0200) ? ATTR_RO : ATTR_NONE)
+mdefine_line|#define MSDOS_MKATTR(m) ((m &amp; 0200) ? ATTR_NONE : ATTR_RO)
 DECL|function|msdos_sread
 r_static
 r_inline
@@ -301,6 +335,21 @@ id|bh
 suffix:semicolon
 )brace
 multiline_comment|/* misc.c */
+r_extern
+r_void
+id|fs_panic
+c_func
+(paren
+r_struct
+id|super_block
+op_star
+id|s
+comma
+r_char
+op_star
+id|msg
+)paren
+suffix:semicolon
 r_extern
 r_int
 id|is_binary
@@ -833,6 +882,20 @@ r_void
 id|msdos_write_inode
 c_func
 (paren
+r_struct
+id|inode
+op_star
+id|inode
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|msdos_notify_change
+c_func
+(paren
+r_int
+id|flags
+comma
 r_struct
 id|inode
 op_star

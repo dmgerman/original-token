@@ -2783,9 +2783,13 @@ suffix:semicolon
 id|read_swap_page
 c_func
 (paren
+id|SWP_ENTRY
+c_func
+(paren
 id|type
-OL
-l_int|1
+comma
+l_int|0
+)paren
 comma
 id|tmp
 )paren

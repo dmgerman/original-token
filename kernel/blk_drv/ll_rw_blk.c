@@ -1923,6 +1923,18 @@ id|mem_end
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_XD
+id|mem_start
+op_assign
+id|xd_init
+c_func
+(paren
+id|mem_start
+comma
+id|mem_end
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren

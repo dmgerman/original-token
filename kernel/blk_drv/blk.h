@@ -213,6 +213,21 @@ r_extern
 r_int
 id|ramdisk_size
 suffix:semicolon
+r_extern
+r_int
+r_int
+id|xd_init
+c_func
+(paren
+r_int
+r_int
+id|mem_start
+comma
+r_int
+r_int
+id|mem_end
+)paren
+suffix:semicolon
 DECL|macro|RO_IOCTLS
 mdefine_line|#define RO_IOCTLS(dev,where) &bslash;&n;  case BLKROSET: if (!suser()) return -EPERM; &bslash;&n;&t;&t; set_device_ro((dev),get_fs_long((long *) (where))); return 0; &bslash;&n;  case BLKROGET: { int __err = verify_area(VERIFY_WRITE, (void *) (where), sizeof(long)); &bslash;&n;&t;&t;   if (!__err) put_fs_long(is_read_only(dev),(long *) (where)); return __err; }
 macro_line|#ifdef MAJOR_NR
@@ -301,6 +316,18 @@ DECL|macro|DEVICE_REQUEST
 mdefine_line|#define DEVICE_REQUEST do_sr_request
 DECL|macro|DEVICE_NR
 mdefine_line|#define DEVICE_NR(device) (MINOR(device))
+DECL|macro|DEVICE_ON
+mdefine_line|#define DEVICE_ON(device)
+DECL|macro|DEVICE_OFF
+mdefine_line|#define DEVICE_OFF(device)
+macro_line|#elif (MAJOR_NR == 13)
+multiline_comment|/* xt hard disk */
+DECL|macro|DEVICE_NAME
+mdefine_line|#define DEVICE_NAME &quot;xt disk&quot;
+DECL|macro|DEVICE_REQUEST
+mdefine_line|#define DEVICE_REQUEST do_xd_request
+DECL|macro|DEVICE_NR
+mdefine_line|#define DEVICE_NR(device) (MINOR(device) &gt;&gt; 6)
 DECL|macro|DEVICE_ON
 mdefine_line|#define DEVICE_ON(device)
 DECL|macro|DEVICE_OFF

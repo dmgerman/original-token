@@ -458,6 +458,11 @@ r_int
 r_int
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * returned by my_ip_addr..&n; */
+DECL|macro|IS_MYADDR
+mdefine_line|#define IS_MYADDR 1
+DECL|macro|IS_BROADCAST
+mdefine_line|#define IS_BROADCAST 2
 macro_line|#include &quot;eth.h&quot;
 r_void
 id|print_iph

@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/timer.h&gt;
 r_extern
 r_int
 r_int
@@ -908,6 +909,44 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
+DECL|function|copro_timeout
+r_static
+r_void
+id|copro_timeout
+c_func
+(paren
+r_void
+)paren
+(brace
+macro_line|#ifdef CONFIG_MATH_EMULATION
+id|printk
+c_func
+(paren
+l_string|&quot; Trying to use software floating point&bslash;n&quot;
+)paren
+suffix:semicolon
+id|hard_math
+op_assign
+l_int|0
+suffix:semicolon
+id|__asm__
+c_func
+(paren
+l_string|&quot;movl %%cr0,%%eax ; xorl $6,%%eax ; movl %%eax,%%cr0&quot;
+op_scope_resolution
+suffix:colon
+l_string|&quot;ax&quot;
+)paren
+suffix:semicolon
+macro_line|#else
+id|printk
+c_func
+(paren
+l_string|&quot; No software floating point - tough cookies&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
 DECL|function|start_kernel
 r_void
 id|start_kernel
@@ -1203,10 +1242,36 @@ r_int
 r_int
 id|control_word
 suffix:semicolon
+id|timer_table
+(braket
+id|MISC_TIMER
+)braket
+dot
+id|expires
+op_assign
+id|jiffies
+op_plus
+l_int|100
+suffix:semicolon
+id|timer_table
+(braket
+id|MISC_TIMER
+)braket
+dot
+id|fn
+op_assign
+id|copro_timeout
+suffix:semicolon
+id|timer_active
+op_or_assign
+l_int|1
+op_lshift
+id|MISC_TIMER
+suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Checking for 387 error mechanism ...&quot;
+l_string|&quot;You have a bad 386/387 coupling.&quot;
 )paren
 suffix:semicolon
 id|__asm__
@@ -1263,10 +1328,24 @@ c_func
 l_string|&quot;fldz ; fld1 ; fdiv %st,%st(1) ; fwait&quot;
 )paren
 suffix:semicolon
+id|timer_active
+op_and_assign
+op_complement
+(paren
+l_int|1
+op_lshift
+id|MISC_TIMER
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|hard_math
+)paren
 id|printk
 c_func
 (paren
-l_string|&quot; ok, using %s.&bslash;n&quot;
+l_string|&quot;&bslash;rMath coprocessor using %s error reporting.&bslash;n&quot;
 comma
 id|ignore_irq13
 ques
