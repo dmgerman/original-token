@@ -1,40 +1,58 @@
-multiline_comment|/* $Id: bootstr.c,v 1.3 1997/03/04 16:27:06 jj Exp $&n; * bootstr.c:  Boot string/argument acquisition from the PROM.&n; *&n; * Copyright(C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright(C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: bootstr.c,v 1.4 1997/06/17 13:25:35 jj Exp $&n; * bootstr.c:  Boot string/argument acquisition from the PROM.&n; *&n; * Copyright(C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright(C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 DECL|macro|BARG_LEN
 mdefine_line|#define BARG_LEN  256
-DECL|variable|barg_buf
-r_static
-r_char
-id|barg_buf
-(braket
+DECL|variable|__initdata
+r_int
+id|bootstr_len
+id|__initdata
+op_assign
 id|BARG_LEN
-)braket
 suffix:semicolon
-DECL|variable|fetched
+DECL|variable|__initdata
 r_static
-r_char
-id|fetched
+r_int
+id|bootstr_valid
+id|__initdata
 op_assign
 l_int|0
 suffix:semicolon
+DECL|variable|__initdata
+r_static
+r_char
+id|bootstr_buf
+(braket
+id|BARG_LEN
+)braket
+id|__initdata
+op_assign
+(brace
+l_int|0
+)brace
+suffix:semicolon
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_char
 op_star
-DECL|function|prom_getbootargs
 id|prom_getbootargs
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 multiline_comment|/* This check saves us from a panic when bootfd patches args. */
 r_if
 c_cond
 (paren
-id|fetched
+id|bootstr_valid
 )paren
 r_return
-id|barg_buf
+id|bootstr_buf
 suffix:semicolon
 id|prom_getstring
 c_func
@@ -43,17 +61,17 @@ id|prom_chosen_node
 comma
 l_string|&quot;bootargs&quot;
 comma
-id|barg_buf
+id|bootstr_buf
 comma
 id|BARG_LEN
 )paren
 suffix:semicolon
-id|fetched
+id|bootstr_valid
 op_assign
 l_int|1
 suffix:semicolon
 r_return
-id|barg_buf
+id|bootstr_buf
 suffix:semicolon
 )brace
 eof

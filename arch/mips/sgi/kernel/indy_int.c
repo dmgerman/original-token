@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: indy_int.c,v 1.1 1997/06/06 09:36:21 ralf Exp $&n; * indy_int.c: Routines for generic manipulation of the INT[23] ASIC&n; *             found on INDY workstations..&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/*&n; * indy_int.c: Routines for generic manipulation of the INT[23] ASIC&n; *             found on INDY workstations..&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: indy_int.c,v 1.2 1997/06/30 15:53:01 ralf Exp $&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
@@ -138,15 +138,10 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|save_and_cli
 c_func
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 r_switch
@@ -308,15 +303,10 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|save_and_cli
 c_func
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 r_switch
@@ -1942,15 +1932,10 @@ id|dev_id
 r_continue
 suffix:semicolon
 multiline_comment|/* Found it - now free it */
-id|save_flags
+id|save_and_cli
 c_func
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 op_star

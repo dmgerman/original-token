@@ -223,6 +223,12 @@ r_int
 id|user_name
 op_ge
 id|TASK_SIZE
+op_logical_and
+id|get_fs
+(paren
+)paren
+op_ne
+id|KERNEL_DS
 )paren
 r_return
 op_minus
@@ -479,7 +485,7 @@ r_struct
 id|module
 op_star
 )paren
-id|vmalloc
+id|module_map
 c_func
 (paren
 id|size
@@ -3108,6 +3114,10 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+r_struct
+id|kernel_sym
+id|ksym
+suffix:semicolon
 id|lock_kernel
 c_func
 (paren
@@ -3149,6 +3159,20 @@ l_int|NULL
 r_goto
 id|out
 suffix:semicolon
+multiline_comment|/* So that we don&squot;t give the user our stack content */
+id|memset
+(paren
+op_amp
+id|ksym
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|ksym
+)paren
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -3167,10 +3191,6 @@ op_assign
 id|mod-&gt;next
 )paren
 (brace
-r_struct
-id|kernel_sym
-id|ksym
-suffix:semicolon
 r_struct
 id|module_symbol
 op_star
@@ -3584,7 +3604,7 @@ id|mod-&gt;next
 suffix:semicolon
 )brace
 multiline_comment|/* And free the memory.  */
-id|vfree
+id|module_unmap
 c_func
 (paren
 id|mod

@@ -110,20 +110,6 @@ op_star
 id|mm
 )paren
 (brace
-macro_line|#if FLUSH_VIRTUAL_CACHE_040
-r_if
-c_cond
-(paren
-id|mm
-op_eq
-id|current-&gt;mm
-)paren
-id|__flush_cache_all
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#else
 r_if
 c_cond
 (paren
@@ -136,7 +122,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|flush_cache_range
 r_extern
@@ -166,31 +151,11 @@ id|mm
 op_eq
 id|current-&gt;mm
 )paren
-(brace
-macro_line|#if FLUSH_VIRTUAL_CACHE_040
-r_if
-c_cond
-(paren
-id|CPU_IS_040_OR_060
-)paren
-id|cache_push_v
-c_func
-(paren
-id|start
-comma
-id|end
-op_minus
-id|start
-)paren
-suffix:semicolon
-r_else
-macro_line|#endif
 id|__flush_cache_030
 c_func
 (paren
 )paren
 suffix:semicolon
-)brace
 )brace
 DECL|function|flush_cache_page
 r_extern
@@ -216,29 +181,11 @@ id|vma-&gt;vm_mm
 op_eq
 id|current-&gt;mm
 )paren
-(brace
-macro_line|#if FLUSH_VIRTUAL_CACHE_040
-r_if
-c_cond
-(paren
-id|CPU_IS_040_OR_060
-)paren
-id|cache_push_v
-c_func
-(paren
-id|vmaddr
-comma
-id|PAGE_SIZE
-)paren
-suffix:semicolon
-r_else
-macro_line|#endif
 id|__flush_cache_030
 c_func
 (paren
 )paren
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/* Push the page at kernel virtual address and clear the icache */
 DECL|function|flush_page_to_ram
@@ -3236,5 +3183,9 @@ DECL|macro|SWP_ENTRY
 mdefine_line|#define SWP_ENTRY(type,offset) (((type) &lt;&lt; 2) | ((offset) &lt;&lt; PAGE_SHIFT))
 macro_line|#endif
 macro_line|#endif /* __ASSEMBLY__ */
+DECL|macro|module_map
+mdefine_line|#define module_map      vmalloc
+DECL|macro|module_unmap
+mdefine_line|#define module_unmap    vfree
 macro_line|#endif /* _M68K_PGTABLE_H */
 eof

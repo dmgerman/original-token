@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: r2300.c,v 1.1 1997/06/06 09:35:14 ralf Exp $&n; * r2300.c: R2000 and R3000 specific mmu/cache code.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/*&n; * r2300.c: R2000 and R3000 specific mmu/cache code.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: r2300.c,v 1.2 1997/06/30 15:52:51 ralf Exp $&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -292,15 +292,10 @@ suffix:semicolon
 r_int
 id|entry
 suffix:semicolon
-id|save_flags
+id|save_and_cli
 c_func
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|write_32bit_cp0_register
@@ -474,15 +469,10 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|save_and_cli
 c_func
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|write_32bit_cp0_register

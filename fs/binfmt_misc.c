@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  binfmt_misc.c&n; *&n; *  Copyright (C) 1997 Richard G&#xfffd;nther&n; *&n; *  binfmt_misc detects binaries via a magic or filename extension and invokes&n; *  a specified wrapper. This should obsolete binfmt_java, binfmt_em86 and&n; *  binfmt_mz.&n; *&n; *  25.4.97 first version&n; *    [...]&n; *  19.5.97 cleanup&n; */
+multiline_comment|/*&n; *  binfmt_misc.c&n; *&n; *  Copyright (C) 1997 Richard G&#xfffd;nther&n; *&n; *  binfmt_misc detects binaries via a magic or filename extension and invokes&n; *  a specified wrapper. This should obsolete binfmt_java, binfmt_em86 and&n; *  binfmt_mz.&n; *&n; *  1997-04-25 first version&n; *  [...]&n; *  1997-05-19 cleanup&n; *  1997-06-26 hpa: pass the real filename rather than argv[0]&n; *  1997-06-30 minor cleanup&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -280,8 +280,6 @@ c_func
 id|e
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 )brace
 id|write_unlock
 c_func
@@ -338,8 +336,6 @@ c_func
 (paren
 id|e
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
 id|write_unlock
@@ -585,8 +581,6 @@ id|fmt_flags
 op_assign
 l_int|0
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -702,7 +696,6 @@ l_char|&squot;.&squot;
 )paren
 )paren
 )paren
-(brace
 op_star
 id|p
 op_assign
@@ -734,7 +727,6 @@ suffix:semicolon
 id|bprm-&gt;argc
 op_increment
 suffix:semicolon
-)brace
 id|bprm-&gt;p
 op_assign
 id|copy_strings
@@ -832,8 +824,6 @@ id|regs
 suffix:semicolon
 id|_ret
 suffix:colon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 id|retval
 suffix:semicolon
@@ -1172,8 +1162,6 @@ id|err
 op_assign
 l_int|0
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 multiline_comment|/* some sanity checks */
 r_if
 c_cond
@@ -1190,16 +1178,10 @@ OG
 l_int|256
 )paren
 )paren
-(brace
-id|err
-op_assign
+r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-r_goto
-id|_err
-suffix:semicolon
-)brace
 id|memsize
 op_assign
 r_sizeof
@@ -1231,16 +1213,10 @@ id|GFP_USER
 )paren
 )paren
 )paren
-(brace
-id|err
-op_assign
+r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
-r_goto
-id|_err
-suffix:semicolon
-)brace
 id|sp
 op_assign
 id|buffer
@@ -1549,13 +1525,9 @@ c_func
 id|e
 )paren
 suffix:semicolon
-id|err
-op_assign
+r_return
 op_minus
 id|EINVAL
-suffix:semicolon
-r_goto
-id|_err
 suffix:semicolon
 )brace
 id|write_lock
@@ -1582,13 +1554,6 @@ id|entries_lock
 suffix:semicolon
 r_return
 id|count
-suffix:semicolon
-id|_err
-suffix:colon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
-r_return
-id|err
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Get status of entry/binfmt_misc&n; * FIXME? should an entry be marked disabled if binfmt_misc is disabled though&n; *        entry is enabled?&n; */
@@ -1635,8 +1600,6 @@ r_int
 id|elen
 comma
 id|i
-suffix:semicolon
-id|MOD_INC_USE_COUNT
 suffix:semicolon
 macro_line|#ifndef VERBOSE_STATUS
 r_if
@@ -2036,8 +1999,6 @@ id|page
 op_plus
 id|off
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 id|elen
 suffix:semicolon
@@ -2077,8 +2038,6 @@ r_int
 id|res
 op_assign
 id|count
-suffix:semicolon
-id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_if
 c_cond
@@ -2277,8 +2236,6 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 id|res
 suffix:semicolon
@@ -2542,6 +2499,11 @@ c_func
 l_string|&quot;status&quot;
 comma
 id|bm_dir
+)paren
+suffix:semicolon
+id|clear_entries
+c_func
+(paren
 )paren
 suffix:semicolon
 id|remove_proc_entry

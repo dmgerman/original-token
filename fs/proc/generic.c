@@ -78,6 +78,60 @@ r_int
 id|orig
 )paren
 suffix:semicolon
+DECL|function|proc_match
+r_int
+id|proc_match
+c_func
+(paren
+r_int
+id|len
+comma
+r_const
+r_char
+op_star
+id|name
+comma
+r_struct
+id|proc_dir_entry
+op_star
+id|de
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|de
+op_logical_or
+op_logical_neg
+id|de-&gt;low_ino
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|de-&gt;namelen
+op_ne
+id|len
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_return
+op_logical_neg
+id|memcmp
+c_func
+(paren
+id|name
+comma
+id|de-&gt;name
+comma
+id|len
+)paren
+suffix:semicolon
+)brace
 DECL|variable|proc_file_operations
 r_static
 r_struct
@@ -159,6 +213,9 @@ comma
 multiline_comment|/* readlink&t;   */
 l_int|NULL
 comma
+multiline_comment|/* follow_link */
+l_int|NULL
+comma
 multiline_comment|/* readpage&t;   */
 l_int|NULL
 comma
@@ -214,6 +271,9 @@ multiline_comment|/* rename */
 l_int|NULL
 comma
 multiline_comment|/* readlink */
+l_int|NULL
+comma
+multiline_comment|/* follow_link */
 l_int|NULL
 comma
 multiline_comment|/* readpage */

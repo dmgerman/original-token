@@ -6967,6 +6967,10 @@ id|tty-&gt;flip.tqueue.data
 op_assign
 id|tty
 suffix:semicolon
+id|tty-&gt;flip.pty_sem
+op_assign
+id|MUTEX
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * The default put_char routine if the driver did not define one.&n; */
 DECL|function|tty_default_put_char

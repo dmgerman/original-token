@@ -122,7 +122,6 @@ DECL|macro|get_video_num_lines
 mdefine_line|#define get_video_num_lines(dummy) video_num_lines
 DECL|macro|get_video_size_row
 mdefine_line|#define get_video_size_row(dummy) video_size_row
-macro_line|#endif
 r_extern
 r_int
 r_int
@@ -138,6 +137,7 @@ r_int
 r_int
 id|video_size_row
 suffix:semicolon
+macro_line|#endif
 r_extern
 r_int
 r_char
@@ -357,6 +357,7 @@ id|p
 )paren
 suffix:semicolon
 multiline_comment|/* how to access screen memory */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_TGA_CONSOLE)
 r_extern
 r_int

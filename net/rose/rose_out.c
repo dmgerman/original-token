@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;ROSE release 002&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;ROSE 001&t;Jonathan(G4KLX)&t;Cloned from nr_out.c&n; */
+multiline_comment|/*&n; *&t;ROSE release 003&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;ROSE 001&t;Jonathan(G4KLX)&t;Cloned from nr_out.c&n; *&t;ROSE 003&t;Jonathan(G4KLX)&t;New timer architecture.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_ROSE) || defined(CONFIG_ROSE_MODULE)
 macro_line|#include &lt;linux/errno.h&gt;
@@ -243,13 +243,6 @@ id|skb
 suffix:semicolon
 multiline_comment|/* Throw it on the queue */
 )brace
-r_if
-c_cond
-(paren
-id|sk-&gt;protinfo.rose-&gt;state
-op_eq
-id|ROSE_STATE_3
-)paren
 id|rose_kick
 c_func
 (paren
@@ -310,6 +303,12 @@ l_int|1
 op_amp
 l_int|0x0E
 suffix:semicolon
+id|rose_start_idletimer
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
 id|rose_transmit_link
 c_func
 (paren
@@ -339,12 +338,37 @@ r_int
 r_int
 id|end
 suffix:semicolon
-id|del_timer
+r_if
+c_cond
+(paren
+id|sk-&gt;protinfo.rose-&gt;state
+op_ne
+id|ROSE_STATE_3
+)paren
+r_return
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sk-&gt;protinfo.rose-&gt;condition
+op_amp
+id|ROSE_COND_PEER_RX_BUSY
+)paren
+r_return
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|skb_peek
 c_func
 (paren
 op_amp
-id|sk-&gt;timer
+id|sk-&gt;write_queue
 )paren
+op_eq
+l_int|NULL
+)paren
+r_return
 suffix:semicolon
 id|end
 op_assign
@@ -359,28 +383,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-(paren
-id|sk-&gt;protinfo.rose-&gt;condition
-op_amp
-id|ROSE_COND_PEER_RX_BUSY
-)paren
-op_logical_and
 id|sk-&gt;protinfo.rose-&gt;vs
-op_ne
+op_eq
 id|end
-op_logical_and
-id|skb_peek
-c_func
-(paren
-op_amp
-id|sk-&gt;write_queue
 )paren
-op_ne
-l_int|NULL
-)paren
-(brace
-multiline_comment|/*&n;&t;&t; * Transmit data until either we&squot;re out of data to send or&n;&t;&t; * the window is full.&n;&t;&t; */
+r_return
+suffix:semicolon
+multiline_comment|/*&n;&t; * Transmit data until either we&squot;re out of data to send or&n;&t; * the window is full.&n;&t; */
 id|skb
 op_assign
 id|skb_dequeue
@@ -392,7 +401,7 @@ id|sk-&gt;write_queue
 suffix:semicolon
 r_do
 (brace
-multiline_comment|/*&n;&t;&t;&t; * Transmit the frame.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Transmit the frame.&n;&t;&t; */
 id|rose_send_iframe
 c_func
 (paren
@@ -442,12 +451,7 @@ op_and_assign
 op_complement
 id|ROSE_COND_ACK_PENDING
 suffix:semicolon
-id|sk-&gt;protinfo.rose-&gt;timer
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-id|rose_set_timer
+id|rose_stop_timer
 c_func
 (paren
 id|sk
@@ -499,9 +503,11 @@ op_and_assign
 op_complement
 id|ROSE_COND_ACK_PENDING
 suffix:semicolon
-id|sk-&gt;protinfo.rose-&gt;timer
-op_assign
-l_int|0
+id|rose_stop_timer
+c_func
+(paren
+id|sk
+)paren
 suffix:semicolon
 )brace
 DECL|function|rose_check_iframes_acked

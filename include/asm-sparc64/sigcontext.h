@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sigcontext.h,v 1.6 1997/06/16 00:29:25 richard Exp $ */
+multiline_comment|/* $Id: sigcontext.h,v 1.8 1997/06/20 11:54:41 davem Exp $ */
 macro_line|#ifndef __SPARC64_SIGCONTEXT_H
 DECL|macro|__SPARC64_SIGCONTEXT_H
 mdefine_line|#define __SPARC64_SIGCONTEXT_H
@@ -189,51 +189,6 @@ suffix:semicolon
 r_typedef
 r_struct
 (brace
-DECL|member|si_float_regs
-r_int
-r_int
-id|si_float_regs
-(braket
-l_int|32
-)braket
-suffix:semicolon
-DECL|member|si_fsr
-r_int
-r_int
-id|si_fsr
-suffix:semicolon
-DECL|member|si_fpqdepth
-r_int
-r_int
-id|si_fpqdepth
-suffix:semicolon
-r_struct
-(brace
-DECL|member|insn_addr
-r_int
-r_int
-op_star
-id|insn_addr
-suffix:semicolon
-DECL|member|insn
-r_int
-r_int
-id|insn
-suffix:semicolon
-DECL|member|si_fpqueue
-)brace
-id|si_fpqueue
-(braket
-l_int|16
-)braket
-suffix:semicolon
-DECL|typedef|__siginfo_fpu32_t
-)brace
-id|__siginfo_fpu32_t
-suffix:semicolon
-r_typedef
-r_struct
-(brace
 DECL|member|si_regs
 r_struct
 id|pt_regs
@@ -262,6 +217,11 @@ DECL|member|si_fsr
 r_int
 r_int
 id|si_fsr
+suffix:semicolon
+DECL|member|si_gsr
+r_int
+r_int
+id|si_gsr
 suffix:semicolon
 DECL|member|si_fpqdepth
 r_int

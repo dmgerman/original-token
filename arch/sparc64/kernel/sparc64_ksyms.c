@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sparc64_ksyms.c,v 1.4 1997/04/14 17:04:43 jj Exp $&n; * arch/sparc/kernel/ksyms.c: Sparc specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: sparc64_ksyms.c,v 1.8 1997/07/07 04:58:14 davem Exp $&n; * arch/sparc64/kernel/sparc64_ksyms.c: Sparc64 specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
 DECL|macro|PROMLIB_INTERNAL
 mdefine_line|#define PROMLIB_INTERNAL
 macro_line|#include &lt;linux/config.h&gt;
@@ -44,30 +44,6 @@ suffix:semicolon
 suffix:semicolon
 r_extern
 r_int
-id|svr4_getcontext
-(paren
-id|svr4_ucontext_t
-op_star
-comma
-r_struct
-id|pt_regs
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|svr4_setcontext
-(paren
-id|svr4_ucontext_t
-op_star
-comma
-r_struct
-id|pt_regs
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
 r_int
 id|sunos_mmap
 c_func
@@ -105,21 +81,8 @@ op_star
 suffix:semicolon
 r_extern
 r_void
-id|__copy_1page
-c_func
-(paren
-r_void
 op_star
-comma
-r_const
-r_void
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_void
-op_star
-id|bzero_1page
+id|__bzero_1page
 c_func
 (paren
 r_void
@@ -210,6 +173,12 @@ op_star
 )paren
 suffix:semicolon
 r_extern
+r_char
+id|saved_command_line
+(braket
+)braket
+suffix:semicolon
+r_extern
 r_void
 id|bcopy
 (paren
@@ -272,6 +241,13 @@ id|EXPORT_SYMBOL_PRIVATE
 c_func
 (paren
 id|_unlock_kernel
+)paren
+suffix:semicolon
+DECL|variable|flushw_user
+id|EXPORT_SYMBOL_PRIVATE
+c_func
+(paren
+id|flushw_user
 )paren
 suffix:semicolon
 DECL|variable|mstk48t02_regs
@@ -384,20 +360,6 @@ id|dma_chain
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Solaris/SunOS binary compatibility */
-DECL|variable|svr4_setcontext
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|svr4_setcontext
-)paren
-suffix:semicolon
-DECL|variable|svr4_getcontext
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|svr4_getcontext
-)paren
-suffix:semicolon
 DECL|variable|_sigpause_common
 id|EXPORT_SYMBOL
 c_func
@@ -498,11 +460,11 @@ c_func
 id|prom_setprop
 )paren
 suffix:semicolon
-DECL|variable|prom_getbootargs
+DECL|variable|saved_command_line
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|prom_getbootargs
+id|saved_command_line
 )paren
 suffix:semicolon
 DECL|variable|prom_getname
@@ -675,13 +637,6 @@ id|strspn
 )paren
 suffix:semicolon
 multiline_comment|/* Special internal versions of library functions. */
-DECL|variable|__copy_1page
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|__copy_1page
-)paren
-suffix:semicolon
 DECL|variable|__memcpy
 id|EXPORT_SYMBOL
 c_func
@@ -696,11 +651,11 @@ c_func
 id|__memset
 )paren
 suffix:semicolon
-DECL|variable|bzero_1page
+DECL|variable|__bzero_1page
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|bzero_1page
+id|__bzero_1page
 )paren
 suffix:semicolon
 DECL|variable|__bzero

@@ -1,7 +1,9 @@
 multiline_comment|/* cpu.c: Dinky routines to look for the kind of Sparc cpu&n; *        we are on.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;asm/asi.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/fpumacro.h&gt;
 DECL|struct|cpu_iu_info
 r_struct
 id|cpu_iu_info
@@ -193,11 +195,27 @@ id|ver
 comma
 id|fpu_vers
 suffix:semicolon
+r_int
+id|fprs
+suffix:semicolon
+macro_line|#ifndef __SMP__
 id|cpuid
 op_assign
-id|get_cpuid
-c_func
+l_int|0
+suffix:semicolon
+macro_line|#else
+macro_line|#error SMP not supported on sparc64 yet
+multiline_comment|/* cpuid = get_cpuid(); */
+macro_line|#endif
+id|fprs
+op_assign
+id|fprs_read
 (paren
+)paren
+suffix:semicolon
+id|fprs_write
+(paren
+id|FPRS_FEF
 )paren
 suffix:semicolon
 id|__asm__
@@ -215,6 +233,11 @@ l_string|&quot;r&quot;
 op_amp
 id|fpu_vers
 )paren
+)paren
+suffix:semicolon
+id|fprs_write
+(paren
+id|fprs
 )paren
 suffix:semicolon
 id|manuf

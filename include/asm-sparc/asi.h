@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: asi.h,v 1.16 1996/04/25 06:12:43 davem Exp $ */
+multiline_comment|/* $Id: asi.h,v 1.17 1997/06/24 15:48:10 jj Exp $ */
 macro_line|#ifndef _SPARC_ASI_H
 DECL|macro|_SPARC_ASI_H
 mdefine_line|#define _SPARC_ASI_H
@@ -88,7 +88,7 @@ mdefine_line|#define ASI_M_FLUSH_USER    0x14   /* Flush I&amp;D Cache Line (use
 multiline_comment|/* Block-copy operations are available only on certain V8 cpus. */
 DECL|macro|ASI_M_BCOPY
 mdefine_line|#define ASI_M_BCOPY         0x17   /* Block copy */
-multiline_comment|/* These affect only the ICACHE and are Ross HyperSparc specific. */
+multiline_comment|/* These affect only the ICACHE and are Ross HyperSparc and TurboSparc specific. */
 DECL|macro|ASI_M_IFLUSH_PAGE
 mdefine_line|#define ASI_M_IFLUSH_PAGE   0x18   /* Flush I Cache Line (page); wo, ss */
 DECL|macro|ASI_M_IFLUSH_SEG
@@ -122,7 +122,7 @@ mdefine_line|#define ASI_M_CTL          0x2F   /* Control Space (ECC and MXCC ar
 multiline_comment|/* This is ROSS HyperSparc only. */
 DECL|macro|ASI_M_FLUSH_IWHOLE
 mdefine_line|#define ASI_M_FLUSH_IWHOLE 0x31   /* Flush entire ICACHE; wo, ss */
-multiline_comment|/* Tsunami/Viking i/d cache flash clear. */
+multiline_comment|/* Tsunami/Viking/TurboSparc i/d cache flash clear. */
 DECL|macro|ASI_M_IC_FLCLEAR
 mdefine_line|#define ASI_M_IC_FLCLEAR   0x36
 DECL|macro|ASI_M_DC_FLCLEAR

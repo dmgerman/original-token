@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * List of Linux/MIPS syscalls.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996 by Ralf Baechle&n; */
+multiline_comment|/*&n; * List of Linux/MIPS syscalls.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996 by Ralf Baechle&n; *&n; * $Id: syscalls.h,v 1.5 1997/06/25 17:08:35 ralf Exp $&n; */
 multiline_comment|/*&n; * This file is being included twice - once to build a list of all&n; * syscalls and once to build a table of how many arguments each syscall&n; * accepts.  Syscalls that receive a pointer to the saved registers are&n; * marked as having zero arguments.&n; *&n; * The binary compatibility calls are still missing in this list.&n; */
 id|SYS
 c_func
@@ -1141,13 +1141,6 @@ c_func
 id|sys_munlockall
 comma
 l_int|0
-)paren
-id|SYS
-c_func
-(paren
-id|sys_nfsservctl
-comma
-l_int|3
 )paren
 id|SYS
 c_func

@@ -1,10 +1,10 @@
-multiline_comment|/* $Id: head.h,v 1.23 1997/06/14 13:25:50 davem Exp $ */
+multiline_comment|/* $Id: head.h,v 1.26 1997/07/07 03:05:23 davem Exp $ */
 macro_line|#ifndef _SPARC64_HEAD_H
 DECL|macro|_SPARC64_HEAD_H
 mdefine_line|#define _SPARC64_HEAD_H
 macro_line|#include &lt;asm/pstate.h&gt;
 DECL|macro|KERNBASE
-mdefine_line|#define KERNBASE    0xFFFFF80000000000
+mdefine_line|#define KERNBASE    0x400000
 DECL|macro|BOOT_KERNEL
 mdefine_line|#define BOOT_KERNEL b sparc64_boot; nop; nop; nop; nop; nop; nop; nop;
 multiline_comment|/* We need a &quot;cleaned&quot; instruction... */
@@ -16,9 +16,6 @@ DECL|macro|TRAP_NOSAVE
 mdefine_line|#define TRAP_NOSAVE(routine)&t;&t;&t;&t;&bslash;&n;&t;ba,pt&t;%xcc, routine;&t;&t;&t;&t;&bslash;&n;&t; nop;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;nop; nop; nop; nop; nop; nop;
 DECL|macro|TRAPTL1
 mdefine_line|#define TRAPTL1(routine)&t;&t;&t;&t;&bslash;&n;&t;ba,pt&t;%xcc, etraptl1;&t;&t;&t;&t;&bslash;&n;&t; rd&t;%pc, %g7;&t;&t;&t;&t;&bslash;&n;&t;call&t;routine;&t;&t;&t;&t;&bslash;&n;&t; add&t;%sp, STACK_BIAS + REGWIN_SZ, %o0;&t;&bslash;&n;&t;ba,pt&t;%xcc, rtrap;&t;&t;&t;&t;&bslash;&n;&t; clr&t;%l6;&t;&t;&t;&t;&t;&bslash;&n;&t;nop;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;nop;
-multiline_comment|/* Just for testing */
-DECL|macro|PROM_TRAP
-mdefine_line|#define PROM_TRAP&t;&t;&t;&t;&t;&bslash;&n;&t;rd&t;%pc, %g1;&t;&t;&t;&t;&bslash;&n;&t;sethi&t;%uhi(KERNBASE), %g4;&t;&t;&t;&bslash;&n;&t;sethi&t;%hi(0xf0000000-0x8000), %g2;&t;&t;&bslash;&n;&t;sllx&t;%g4, 32, %g4;&t;&t;&t;&t;&bslash;&n;&t;add&t;%g1, %g2, %g1;&t;&t;&t;&t;&bslash;&n;&t;sub&t;%g1, %g4, %g1;&t;&t;&t;&t;&bslash;&n;&t;jmpl&t;%g1 + %g0, %g0;&t;&t;&t;&t;&bslash;&n;&t;nop;
 DECL|macro|TRAP_ARG
 mdefine_line|#define TRAP_ARG(routine, arg)&t;&t;&t;&t;&bslash;&n;&t;ba,pt&t;%xcc, etrap;&t;&t;&t;&t;&bslash;&n;&t; rd&t;%pc, %g7;&t;&t;&t;&t;&bslash;&n;&t;add&t;%sp, STACK_BIAS + REGWIN_SZ, %o0;&t;&bslash;&n;&t;call&t;routine;&t;&t;&t;&t;&bslash;&n;&t; mov&t;arg, %o1;&t;&t;&t;&t;&bslash;&n;&t;ba,pt&t;%xcc, rtrap;&t;&t;&t;&t;&bslash;&n;&t; clr&t;%l6;&t;&t;&t;&t;&t;&bslash;&n;&t;nop;
 DECL|macro|TRAPTL1_ARG
@@ -35,6 +32,10 @@ DECL|macro|LINUX_32BIT_SYSCALL_TRAP
 mdefine_line|#define&t;LINUX_32BIT_SYSCALL_TRAP SYSCALL_TRAP(linux_sparc_syscall, sys_call_table32)
 DECL|macro|LINUX_64BIT_SYSCALL_TRAP
 mdefine_line|#define LINUX_64BIT_SYSCALL_TRAP SYSCALL_TRAP(linux_sparc_syscall, sys_call_table64)
+DECL|macro|GETCC_TRAP
+mdefine_line|#define GETCC_TRAP TRAP(getcc)
+DECL|macro|SETCC_TRAP
+mdefine_line|#define SETCC_TRAP TRAP(setcc)
 multiline_comment|/* FIXME: Write these actually */
 DECL|macro|NETBSD_SYSCALL_TRAP
 mdefine_line|#define NETBSD_SYSCALL_TRAP TRAP(netbsd_syscall)
@@ -42,10 +43,6 @@ DECL|macro|SOLARIS_SYSCALL_TRAP
 mdefine_line|#define SOLARIS_SYSCALL_TRAP TRAP(solaris_syscall)
 DECL|macro|BREAKPOINT_TRAP
 mdefine_line|#define BREAKPOINT_TRAP TRAP(breakpoint_trap)
-DECL|macro|GETCC_TRAP
-mdefine_line|#define GETCC_TRAP TRAP(getcc)
-DECL|macro|SETCC_TRAP
-mdefine_line|#define SETCC_TRAP TRAP(setcc)
 DECL|macro|INDIRECT_SOLARIS_SYSCALL
 mdefine_line|#define INDIRECT_SOLARIS_SYSCALL(tlvl) TRAP_ARG(indirect_syscall, tlvl)
 DECL|macro|TRAP_IRQ

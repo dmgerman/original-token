@@ -16,6 +16,8 @@ DECL|macro|SIOCX25GCALLUSERDATA
 mdefine_line|#define&t;SIOCX25GCALLUSERDATA&t;(SIOCPROTOPRIVATE + 4)
 DECL|macro|SIOCX25SCALLUSERDATA
 mdefine_line|#define&t;SIOCX25SCALLUSERDATA&t;(SIOCPROTOPRIVATE + 5)
+DECL|macro|SIOCX25GCAUSEDIAG
+mdefine_line|#define&t;SIOCX25GCAUSEDIAG&t;(SIOCPROTOPRIVATE + 6)
 multiline_comment|/*&n; *&t;Values for {get,set}sockopt.&n; */
 DECL|macro|X25_QBITINCL
 mdefine_line|#define&t;X25_QBITINCL&t;&t;1
@@ -38,54 +40,6 @@ DECL|macro|X25_PS2048
 mdefine_line|#define&t;X25_PS2048&t;&t;11
 DECL|macro|X25_PS4096
 mdefine_line|#define&t;X25_PS4096&t;&t;12
-multiline_comment|/*&n; *&t;X.25 Reset error and diagnostic codes.&n; */
-DECL|macro|X25_ERR_RESET
-mdefine_line|#define&t;X25_ERR_RESET&t;&t;100&t;/* Call Reset&t;&t;&t;*/
-DECL|macro|X25_ERR_ROUT
-mdefine_line|#define&t;X25_ERR_ROUT&t;&t;101&t;/* Out of Order&t;&t;&t;*/
-DECL|macro|X25_ERR_RRPE
-mdefine_line|#define&t;X25_ERR_RRPE&t;&t;102&t;/* Remote Procedure Error&t;*/
-DECL|macro|X25_ERR_RLPE
-mdefine_line|#define&t;X25_ERR_RLPE&t;&t;103&t;/* Local Procedure Error&t;*/
-DECL|macro|X25_ERR_RNCG
-mdefine_line|#define&t;X25_ERR_RNCG&t;&t;104&t;/* Network Congestion&t;&t;*/
-DECL|macro|X25_ERR_RRDO
-mdefine_line|#define&t;X25_ERR_RRDO&t;&t;105&t;/* Remote DTE Operational&t;*/
-DECL|macro|X25_ERR_RNOP
-mdefine_line|#define&t;X25_ERR_RNOP&t;&t;106&t;/* Network Operational&t;&t;*/
-DECL|macro|X25_ERR_RINV
-mdefine_line|#define&t;X25_ERR_RINV&t;&t;107&t;/* Invalid Call&t;&t;&t;*/
-DECL|macro|X25_ERR_RNOO
-mdefine_line|#define&t;X25_ERR_RNOO&t;&t;108&t;/* Network Out of Order&t;&t;*/
-multiline_comment|/*&n; *&t;X.25 Clear error and diagnostic codes.&n; */
-DECL|macro|X25_ERR_CLEAR
-mdefine_line|#define&t;X25_ERR_CLEAR&t;&t;110&t;/* Call Cleared&t;&t;&t;*/
-DECL|macro|X25_ERR_CBUSY
-mdefine_line|#define&t;X25_ERR_CBUSY&t;&t;111&t;/* Number Busy&t;&t;&t;*/
-DECL|macro|X25_ERR_COUT
-mdefine_line|#define&t;X25_ERR_COUT&t;&t;112&t;/* Out of Order&t;&t;&t;*/
-DECL|macro|X25_ERR_CRPE
-mdefine_line|#define&t;X25_ERR_CRPE&t;&t;113&t;/* Remote Procedure Error&t;*/
-DECL|macro|X25_ERR_CRRC
-mdefine_line|#define&t;X25_ERR_CRRC&t;&t;114&t;/* Collect Call Refused&t;&t;*/
-DECL|macro|X25_ERR_CINV
-mdefine_line|#define&t;X25_ERR_CINV&t;&t;115&t;/* Invalid Call&t;&t;&t;*/
-DECL|macro|X25_ERR_CNFS
-mdefine_line|#define&t;X25_ERR_CNFS&t;&t;116&t;/* Invalid Fast Select&t;&t;*/
-DECL|macro|X25_ERR_CSA
-mdefine_line|#define&t;X25_ERR_CSA&t;&t;117&t;/* Ship Absent&t;&t;&t;*/
-DECL|macro|X25_ERR_CIFR
-mdefine_line|#define&t;X25_ERR_CIFR&t;&t;118&t;/* Invalid Facility Request&t;*/
-DECL|macro|X25_ERR_CAB
-mdefine_line|#define&t;X25_ERR_CAB&t;&t;119&t;/* Access Barred&t;&t;*/
-DECL|macro|X25_ERR_CLPE
-mdefine_line|#define&t;X25_ERR_CLPE&t;&t;120&t;/* Local Procedure Error&t;*/
-DECL|macro|X25_ERR_CNCG
-mdefine_line|#define&t;X25_ERR_CNCG&t;&t;121&t;/* Network Congestion&t;&t;*/
-DECL|macro|X25_ERR_CNOB
-mdefine_line|#define&t;X25_ERR_CNOB&t;&t;122&t;/* Not Obtainable&t;&t;*/
-DECL|macro|X25_ERR_CROO
-mdefine_line|#define&t;X25_ERR_CROO&t;&t;123&t;/* RPOA Out of Order&t;&t;*/
 multiline_comment|/*&n; * An X.121 address, it is held as ASCII text, null terminated, up to 15&n; * digits and a null terminator.&n; */
 r_typedef
 r_struct
@@ -210,6 +164,23 @@ id|cuddata
 (braket
 l_int|128
 )braket
+suffix:semicolon
+)brace
+suffix:semicolon
+multiline_comment|/*&n; *&t;Call clearing Cause and Diagnostic structure.&n; */
+DECL|struct|x25_causediag
+r_struct
+id|x25_causediag
+(brace
+DECL|member|cause
+r_int
+r_char
+id|cause
+suffix:semicolon
+DECL|member|diagnostic
+r_int
+r_char
+id|diagnostic
 suffix:semicolon
 )brace
 suffix:semicolon

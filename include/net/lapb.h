@@ -2,8 +2,6 @@ macro_line|#ifndef _LAPB_H
 DECL|macro|_LAPB_H
 mdefine_line|#define _LAPB_H 
 macro_line|#include &lt;linux/lapb.h&gt;
-DECL|macro|LAPB_SLOWHZ
-mdefine_line|#define LAPB_SLOWHZ&t;10&t;&t;/* Run timing at 1/10 second */
 DECL|macro|LAPB_HEADER_LEN
 mdefine_line|#define&t;LAPB_HEADER_LEN&t;20&t;&t;/* LAPB over Ethernet + a bit more */
 DECL|macro|LAPB_ACK_PENDING_CONDITION
@@ -95,13 +93,13 @@ suffix:semicolon
 DECL|macro|LAPB_DEFAULT_MODE
 mdefine_line|#define&t;LAPB_DEFAULT_MODE&t;&t;(LAPB_STANDARD | LAPB_SLP | LAPB_DTE)
 DECL|macro|LAPB_DEFAULT_WINDOW
-mdefine_line|#define&t;LAPB_DEFAULT_WINDOW&t;&t;7&t;&t;&t;/* Window=7 */
+mdefine_line|#define&t;LAPB_DEFAULT_WINDOW&t;&t;7&t;&t;/* Window=7 */
 DECL|macro|LAPB_DEFAULT_T1
-mdefine_line|#define&t;LAPB_DEFAULT_T1&t;&t;&t;(5 * LAPB_SLOWHZ)&t;/* T1=5s    */
+mdefine_line|#define&t;LAPB_DEFAULT_T1&t;&t;&t;(5 * HZ)&t;/* T1=5s    */
 DECL|macro|LAPB_DEFAULT_T2
-mdefine_line|#define&t;LAPB_DEFAULT_T2&t;&t;&t;(1 * LAPB_SLOWHZ)&t;/* T2=1s    */
+mdefine_line|#define&t;LAPB_DEFAULT_T2&t;&t;&t;(1 * HZ)&t;/* T2=1s    */
 DECL|macro|LAPB_DEFAULT_N2
-mdefine_line|#define&t;LAPB_DEFAULT_N2&t;&t;&t;20&t;&t;&t;/* N2=20    */
+mdefine_line|#define&t;LAPB_DEFAULT_N2&t;&t;&t;20&t;&t;/* N2=20    */
 DECL|macro|LAPB_SMODULUS
 mdefine_line|#define&t;LAPB_SMODULUS&t;8
 DECL|macro|LAPB_EMODULUS
@@ -211,18 +209,13 @@ id|t2
 suffix:semicolon
 DECL|member|t1timer
 DECL|member|t2timer
-r_int
-r_int
+r_struct
+id|timer_list
 id|t1timer
 comma
 id|t2timer
 suffix:semicolon
 multiline_comment|/* Internal control information */
-DECL|member|input_queue
-r_struct
-id|sk_buff_head
-id|input_queue
-suffix:semicolon
 DECL|member|write_queue
 r_struct
 id|sk_buff_head
@@ -237,11 +230,6 @@ DECL|member|window
 r_int
 r_char
 id|window
-suffix:semicolon
-DECL|member|timer
-r_struct
-id|timer_list
-id|timer
 suffix:semicolon
 DECL|member|callbacks
 r_struct
@@ -512,7 +500,43 @@ suffix:semicolon
 multiline_comment|/* lapb_timer.c */
 r_extern
 r_void
-id|lapb_set_timer
+id|lapb_start_t1timer
+c_func
+(paren
+id|lapb_cb
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|lapb_start_t2timer
+c_func
+(paren
+id|lapb_cb
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|lapb_stop_t1timer
+c_func
+(paren
+id|lapb_cb
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|lapb_stop_t2timer
+c_func
+(paren
+id|lapb_cb
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|lapb_t1timer_running
 c_func
 (paren
 id|lapb_cb

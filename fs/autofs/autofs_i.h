@@ -146,18 +146,12 @@ mdefine_line|#define AUTOFS_SUPER_MAGIC 0x0187
 multiline_comment|/* Structures associated with the root directory hash */
 DECL|macro|AUTOFS_HASH_SIZE
 mdefine_line|#define AUTOFS_HASH_SIZE 67
-DECL|typedef|autofs_hash_t
-r_typedef
-id|u32
-id|autofs_hash_t
-suffix:semicolon
-multiline_comment|/* Type returned by autofs_hash() */
 DECL|struct|autofs_dir_ent
 r_struct
 id|autofs_dir_ent
 (brace
 DECL|member|hash
-id|autofs_hash_t
+r_int
 id|hash
 suffix:semicolon
 DECL|member|next
@@ -249,7 +243,7 @@ id|next
 suffix:semicolon
 multiline_comment|/* We use the following to see what we are waiting for */
 DECL|member|hash
-id|autofs_hash_t
+r_int
 id|hash
 suffix:semicolon
 DECL|member|len
@@ -411,17 +405,6 @@ DECL|macro|CHECK_WAITLIST
 mdefine_line|#define CHECK_WAITLIST(S,O)
 macro_line|#endif
 multiline_comment|/* Hash operations */
-id|autofs_hash_t
-id|autofs_hash
-c_func
-(paren
-r_const
-r_char
-op_star
-comma
-r_int
-)paren
-suffix:semicolon
 r_void
 id|autofs_initialize_hash
 c_func
@@ -442,13 +425,9 @@ r_struct
 id|autofs_dirhash
 op_star
 comma
-id|autofs_hash_t
-comma
-r_const
-r_char
+r_struct
+id|qstr
 op_star
-comma
-r_int
 )paren
 suffix:semicolon
 r_void
@@ -567,13 +546,9 @@ r_struct
 id|autofs_sb_info
 op_star
 comma
-id|autofs_hash_t
-comma
-r_const
-r_char
+r_struct
+id|qstr
 op_star
-comma
-r_int
 )paren
 suffix:semicolon
 r_int

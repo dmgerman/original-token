@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: indy_timer.c,v 1.1 1997/06/06 09:36:28 ralf Exp $&n; * indy_timer.c: Setting up the clock on the INDY 8254 controller.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/*&n; * indy_timer.c: Setting up the clock on the INDY 8254 controller.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: indy_timer.c,v 1.2 1997/06/30 15:53:04 ralf Exp $&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1073,15 +1073,10 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|save_and_cli
 c_func
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 op_star

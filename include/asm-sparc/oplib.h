@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: oplib.h,v 1.15 1997/03/18 18:00:18 jj Exp $&n; * oplib.h:  Describes the interface and available routines in the&n; *           Linux Prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: oplib.h,v 1.16 1997/06/27 14:55:04 jj Exp $&n; * oplib.h:  Describes the interface and available routines in the&n; *           Linux Prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __SPARC_OPLIB_H
 DECL|macro|__SPARC_OPLIB_H
 mdefine_line|#define __SPARC_OPLIB_H
@@ -708,6 +708,10 @@ c_func
 (paren
 r_int
 id|node
+comma
+r_char
+op_star
+id|buffer
 )paren
 suffix:semicolon
 multiline_comment|/* Returns the next property after the passed property for the given&n; * node.  Returns null string on failure.&n; */
@@ -723,6 +727,10 @@ comma
 r_char
 op_star
 id|prev_property
+comma
+r_char
+op_star
+id|buffer
 )paren
 suffix:semicolon
 multiline_comment|/* Returns 1 if the specified node has given property. */

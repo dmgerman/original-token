@@ -2470,5 +2470,9 @@ DECL|macro|SWP_OFFSET
 mdefine_line|#define SWP_OFFSET(entry) ((entry) &gt;&gt; 40)
 DECL|macro|SWP_ENTRY
 mdefine_line|#define SWP_ENTRY(type,offset) pte_val(mk_swap_pte((type),(offset)))
+DECL|macro|module_map
+mdefine_line|#define module_map&t;vmalloc
+DECL|macro|module_unmap
+mdefine_line|#define module_unmap&t;vfree
 macro_line|#endif /* _ALPHA_PGTABLE_H */
 eof

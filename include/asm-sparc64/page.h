@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: page.h,v 1.9 1997/06/14 21:28:09 davem Exp $ */
+multiline_comment|/* $Id: page.h,v 1.14 1997/06/26 22:32:03 davem Exp $ */
 macro_line|#ifndef _SPARC64_PAGE_H
 DECL|macro|_SPARC64_PAGE_H
 mdefine_line|#define _SPARC64_PAGE_H
@@ -17,11 +17,23 @@ DECL|macro|PAGE_MASK
 mdefine_line|#define PAGE_MASK    (~(PAGE_SIZE-1))
 macro_line|#ifndef __ASSEMBLY__
 DECL|macro|clear_page
-mdefine_line|#define clear_page(page)&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&quot;mov&t;%%o7, %%g3&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&t;&t;&t;&quot;call&t;__bzero_1page&bslash;n&bslash;t&quot;&t;&bslash;&n;&t;&t;&t;&t;&quot; mov&t;%0, %%g2&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&t;&t;&t;: /* No outputs */&t;&t;&bslash;&n;&t;&t;&t;&t;: &quot;r&quot; (page)&t;&t;&t;&bslash;&n;&t;&t;&t;&t;: &quot;g1&quot;, &quot;g2&quot;, &quot;g3&quot;)
-DECL|macro|copy_page
-mdefine_line|#define copy_page(to,from)&t;memcpy((void *)(to), (void *)(from), PAGE_SIZE)
-DECL|macro|STRICT_MM_TYPECHECKS
-mdefine_line|#define STRICT_MM_TYPECHECKS
+mdefine_line|#define clear_page(page) memset((void *)(page), 0, PAGE_SIZE)
+r_extern
+r_void
+id|copy_page
+c_func
+(paren
+r_int
+r_int
+id|to
+comma
+r_int
+r_int
+id|from
+)paren
+suffix:semicolon
+multiline_comment|/* GROSS, defining this makes gcc pass these types as aggregates,&n; * and thus on the stack, turn this crap off... -DaveM&n; */
+multiline_comment|/* #define STRICT_MM_TYPECHECKS */
 macro_line|#ifdef STRICT_MM_TYPECHECKS
 multiline_comment|/* These are used to make use of C type-checking.. */
 DECL|member|pte
@@ -221,8 +233,19 @@ multiline_comment|/* to align the pointer to the (next) page boundary */
 DECL|macro|PAGE_ALIGN
 mdefine_line|#define PAGE_ALIGN(addr)&t;(((addr)+PAGE_SIZE-1)&amp;PAGE_MASK)
 macro_line|#ifndef __ASSEMBLY__
+multiline_comment|/* Do prdele, look what happens to be in %g4... */
+r_register
+r_int
+r_int
+id|page_offset
+id|asm
+c_func
+(paren
+l_string|&quot;g4&quot;
+)paren
+suffix:semicolon
 DECL|macro|PAGE_OFFSET
-mdefine_line|#define PAGE_OFFSET&t;&t;0xFFFFF80000000000UL
+mdefine_line|#define PAGE_OFFSET&t;&t;page_offset
 macro_line|#else
 DECL|macro|PAGE_OFFSET
 mdefine_line|#define PAGE_OFFSET&t;&t;0xFFFFF80000000000

@@ -3514,11 +3514,8 @@ c_func
 id|old_dir-&gt;i_sb
 comma
 id|old_de-&gt;inode
-comma
-l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/* don&squot;t cross mnt-points */
 r_if
 c_cond
 (paren
@@ -3588,8 +3585,6 @@ c_func
 id|new_dir-&gt;i_sb
 comma
 id|new_de-&gt;inode
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_if

@@ -3,8 +3,6 @@ macro_line|#ifndef _NETROM_H
 DECL|macro|_NETROM_H
 mdefine_line|#define _NETROM_H 
 macro_line|#include &lt;linux/netrom.h&gt;
-DECL|macro|NR_SLOWHZ
-mdefine_line|#define&t;NR_SLOWHZ&t;&t;&t;10&t;/* Run timing at 1/10 second */
 DECL|macro|NR_NETWORK_LEN
 mdefine_line|#define&t;NR_NETWORK_LEN&t;&t;&t;15
 DECL|macro|NR_TRANSPORT_LEN
@@ -56,27 +54,27 @@ mdefine_line|#define&t;NR_COND_PEER_RX_BUSY&t;&t;0x04
 DECL|macro|NR_COND_OWN_RX_BUSY
 mdefine_line|#define&t;NR_COND_OWN_RX_BUSY&t;&t;0x08
 DECL|macro|NR_DEFAULT_T1
-mdefine_line|#define NR_DEFAULT_T1&t;&t;&t;(120 * NR_SLOWHZ)&t;/* Outstanding frames - 120 seconds */
+mdefine_line|#define NR_DEFAULT_T1&t;&t;&t;(120 * HZ)&t;/* Outstanding frames - 120 seconds */
 DECL|macro|NR_DEFAULT_T2
-mdefine_line|#define NR_DEFAULT_T2&t;&t;&t;(5   * NR_SLOWHZ)&t;/* Response delay     - 5 seconds */
+mdefine_line|#define NR_DEFAULT_T2&t;&t;&t;(5   * HZ)&t;/* Response delay     - 5 seconds */
 DECL|macro|NR_DEFAULT_N2
-mdefine_line|#define NR_DEFAULT_N2&t;&t;&t;3&t;&t;&t;/* Number of Retries - 3 */
+mdefine_line|#define NR_DEFAULT_N2&t;&t;&t;3&t;&t;/* Number of Retries - 3 */
 DECL|macro|NR_DEFAULT_T4
-mdefine_line|#define&t;NR_DEFAULT_T4&t;&t;&t;(180 * NR_SLOWHZ)&t;/* Busy Delay - 180 seconds */
+mdefine_line|#define&t;NR_DEFAULT_T4&t;&t;&t;(180 * HZ)&t;/* Busy Delay - 180 seconds */
 DECL|macro|NR_DEFAULT_IDLE
-mdefine_line|#define&t;NR_DEFAULT_IDLE&t;&t;&t;(20* 60 * NR_SLOWHZ)&t;/* No Activuty Timeout - 900 seconds*/
+mdefine_line|#define&t;NR_DEFAULT_IDLE&t;&t;&t;(0 * 60 * HZ)&t;/* No Activity Timeout - none */
 DECL|macro|NR_DEFAULT_WINDOW
-mdefine_line|#define&t;NR_DEFAULT_WINDOW&t;&t;4&t;&t;&t;/* Default Window Size - 4 */
+mdefine_line|#define&t;NR_DEFAULT_WINDOW&t;&t;4&t;&t;/* Default Window Size - 4 */
 DECL|macro|NR_DEFAULT_OBS
-mdefine_line|#define&t;NR_DEFAULT_OBS&t;&t;&t;6&t;&t;&t;/* Default Obsolescence Count - 6 */
+mdefine_line|#define&t;NR_DEFAULT_OBS&t;&t;&t;6&t;&t;/* Default Obsolescence Count - 6 */
 DECL|macro|NR_DEFAULT_QUAL
-mdefine_line|#define&t;NR_DEFAULT_QUAL&t;&t;&t;10&t;&t;&t;/* Default Neighbour Quality - 10 */
+mdefine_line|#define&t;NR_DEFAULT_QUAL&t;&t;&t;10&t;&t;/* Default Neighbour Quality - 10 */
 DECL|macro|NR_DEFAULT_TTL
-mdefine_line|#define&t;NR_DEFAULT_TTL&t;&t;&t;16&t;&t;&t;/* Default Time To Live - 16 */
+mdefine_line|#define&t;NR_DEFAULT_TTL&t;&t;&t;16&t;&t;/* Default Time To Live - 16 */
 DECL|macro|NR_DEFAULT_ROUTING
-mdefine_line|#define&t;NR_DEFAULT_ROUTING&t;&t;1&t;&t;&t;/* Is routing enabled ? */
+mdefine_line|#define&t;NR_DEFAULT_ROUTING&t;&t;1&t;&t;/* Is routing enabled ? */
 DECL|macro|NR_DEFAULT_FAILS
-mdefine_line|#define&t;NR_DEFAULT_FAILS&t;&t;2&t;&t;&t;/* Link fails until route fails */
+mdefine_line|#define&t;NR_DEFAULT_FAILS&t;&t;2&t;&t;/* Link fails until route fails */
 DECL|macro|NR_MODULUS
 mdefine_line|#define NR_MODULUS &t;&t;&t;256
 DECL|macro|NR_MAX_WINDOW_SIZE
@@ -168,24 +166,30 @@ id|t4
 comma
 id|idle
 suffix:semicolon
-DECL|member|t1timer
-DECL|member|t2timer
-DECL|member|t4timer
-DECL|member|idletimer
-r_int
-r_int
-id|t1timer
-comma
-id|t2timer
-comma
-id|t4timer
-comma
-id|idletimer
-suffix:semicolon
 DECL|member|fraglen
 r_int
 r_int
 id|fraglen
+suffix:semicolon
+DECL|member|t1timer
+r_struct
+id|timer_list
+id|t1timer
+suffix:semicolon
+DECL|member|t2timer
+r_struct
+id|timer_list
+id|t2timer
+suffix:semicolon
+DECL|member|t4timer
+r_struct
+id|timer_list
+id|t4timer
+suffix:semicolon
+DECL|member|idletimer
+r_struct
+id|timer_list
+id|idletimer
 suffix:semicolon
 DECL|member|ack_queue
 r_struct
@@ -231,6 +235,11 @@ DECL|member|digipeat
 id|ax25_digi
 op_star
 id|digipeat
+suffix:semicolon
+DECL|member|ax25
+id|ax25_cb
+op_star
+id|ax25
 suffix:semicolon
 DECL|member|dev
 r_struct
@@ -569,12 +578,10 @@ r_void
 id|nr_link_failed
 c_func
 (paren
-id|ax25_address
+id|ax25_cb
 op_star
 comma
-r_struct
-id|device
-op_star
+r_int
 )paren
 suffix:semicolon
 r_extern
@@ -718,10 +725,122 @@ id|sk_buff
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|nr_disconnect
+c_func
+(paren
+r_struct
+id|sock
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
 multiline_comment|/* nr_timer.c */
 r_extern
 r_void
-id|nr_set_timer
+id|nr_start_heartbeat
+c_func
+(paren
+r_struct
+id|sock
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|nr_start_t1timer
+c_func
+(paren
+r_struct
+id|sock
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|nr_start_t2timer
+c_func
+(paren
+r_struct
+id|sock
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|nr_start_t4timer
+c_func
+(paren
+r_struct
+id|sock
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|nr_start_idletimer
+c_func
+(paren
+r_struct
+id|sock
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|nr_stop_heartbeat
+c_func
+(paren
+r_struct
+id|sock
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|nr_stop_t1timer
+c_func
+(paren
+r_struct
+id|sock
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|nr_stop_t2timer
+c_func
+(paren
+r_struct
+id|sock
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|nr_stop_t4timer
+c_func
+(paren
+r_struct
+id|sock
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|nr_stop_idletimer
+c_func
+(paren
+r_struct
+id|sock
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|nr_t1timer_running
 c_func
 (paren
 r_struct

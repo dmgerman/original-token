@@ -1,4 +1,4 @@
-multiline_comment|/* -*- linux-c -*-&n; *&n; *&t;$Id: sysrq.c,v 1.2 1997/05/31 18:33:11 mj Exp $&n; *&n; *&t;Linux Magic System Request Key Hacks&n; *&n; *&t;(c) 1997 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&t;based on ideas by Pavel Machek &lt;pavel@atrey.karlin.mff.cuni.cz&gt;&n; */
+multiline_comment|/* -*- linux-c -*-&n; *&n; *&t;$Id: sysrq.c,v 1.3 1997/06/18 09:42:12 mj Exp $&n; *&n; *&t;Linux Magic System Request Key Hacks&n; *&n; *&t;(c) 1997 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&t;based on ideas by Pavel Machek &lt;pavel@atrey.karlin.mff.cuni.cz&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
@@ -368,8 +368,7 @@ l_int|11
 suffix:colon
 multiline_comment|/* 0-9 -- set console logging level */
 id|key
-op_sub_assign
-l_int|2
+op_decrement
 suffix:semicolon
 r_if
 c_cond

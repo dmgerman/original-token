@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunserial.c,v 1.42 1997/05/26 20:10:20 davem Exp $&n; * serial.c: Serial port driver for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; * Fixes by Pete A. Zaitcev &lt;zaitcev@ipmce.su&gt;.&n; */
+multiline_comment|/* $Id: sunserial.c,v 1.43 1997/07/05 09:53:23 davem Exp $&n; * serial.c: Serial port driver for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; * Fixes by Pete A. Zaitcev &lt;zaitcev@ipmce.su&gt;.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1583,6 +1583,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifndef __sparc_v9__
 r_if
 c_cond
 (paren
@@ -1618,6 +1619,7 @@ c_func
 suffix:semicolon
 )brace
 r_else
+macro_line|#endif
 id|prom_cmdline
 c_func
 (paren
@@ -1668,6 +1670,7 @@ id|SERIAL_BH
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifndef __sparc_v9__
 r_extern
 r_void
 id|breakpoint
@@ -1677,6 +1680,7 @@ r_void
 )paren
 suffix:semicolon
 multiline_comment|/* For the KGDB frame character */
+macro_line|#endif
 DECL|function|receive_chars
 r_static
 id|_INLINE_
@@ -1916,6 +1920,7 @@ id|keypress_wait
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifndef __sparc_v9__
 multiline_comment|/* Look for kgdb &squot;stop&squot; character, consult the gdb&n;&t;&t; * documentation for remote target debugging and&n;&t;&t; * arch/sparc/kernel/sparc-stub.c to see how all this works.&n;&t;&t; */
 r_if
 c_cond
@@ -1939,6 +1944,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -7966,7 +7972,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.42 $&quot;
+l_string|&quot;$Revision: 1.43 $&quot;
 suffix:semicolon
 r_char
 op_star

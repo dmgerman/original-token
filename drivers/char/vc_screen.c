@@ -1197,6 +1197,22 @@ id|org
 suffix:semicolon
 )brace
 )brace
+macro_line|#ifdef CONFIG_FB_CONSOLE
+r_if
+c_cond
+(paren
+id|currcons
+op_eq
+id|fg_console
+)paren
+multiline_comment|/* Horribly inefficient if count &lt; screen size.  */
+id|update_screen
+c_func
+(paren
+id|currcons
+)paren
+suffix:semicolon
+macro_line|#endif
 id|written
 op_assign
 id|buf

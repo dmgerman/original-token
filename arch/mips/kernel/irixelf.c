@@ -2169,6 +2169,8 @@ op_assign
 id|namei
 c_func
 (paren
+id|NAM_FOLLOW_LINK
+comma
 op_star
 id|name
 comma
@@ -4624,6 +4626,10 @@ r_int
 id|nr
 )paren
 (brace
+id|file-&gt;f_inode-&gt;i_status
+op_or_assign
+id|ST_MODIFIED
+suffix:semicolon
 r_return
 id|file-&gt;f_op
 op_member_access_from_pointer

@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * console_struct.h&n; *&n; * Data structure and defines shared between console.c, vga.c and tga.c&n; */
+macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|NPAR
 mdefine_line|#define NPAR 16
 DECL|struct|vc_data
@@ -64,11 +65,6 @@ r_int
 id|vc_scr_end
 suffix:semicolon
 multiline_comment|/* Used for EGA/VGA fast scroll&t;*/
-DECL|member|vc_pos
-r_int
-r_int
-id|vc_pos
-suffix:semicolon
 DECL|member|vc_x
 DECL|member|vc_y
 r_int
@@ -101,12 +97,33 @@ id|vc_par
 id|NPAR
 )braket
 suffix:semicolon
+macro_line|#ifdef CONFIG_FB_CONSOLE
+DECL|member|vc_video_mem_start
+r_int
+r_int
+op_star
+id|vc_video_mem_start
+suffix:semicolon
+multiline_comment|/* Start of video RAM&t;&t;*/
+DECL|member|vc_pos
+r_int
+r_int
+op_star
+id|vc_pos
+suffix:semicolon
+macro_line|#else
+DECL|member|vc_pos
+r_int
+r_int
+id|vc_pos
+suffix:semicolon
 DECL|member|vc_video_mem_start
 r_int
 r_int
 id|vc_video_mem_start
 suffix:semicolon
 multiline_comment|/* Start of video RAM&t;&t;*/
+macro_line|#endif
 DECL|member|vc_video_mem_end
 r_int
 r_int

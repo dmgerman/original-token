@@ -326,10 +326,9 @@ op_increment
 suffix:semicolon
 )brace
 )brace
-DECL|function|free_area_pages
-r_static
+DECL|function|vmfree_area_pages
 r_void
-id|free_area_pages
+id|vmfree_area_pages
 c_func
 (paren
 r_int
@@ -638,10 +637,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|alloc_area_pages
-r_static
+DECL|function|vmalloc_area_pages
 r_int
-id|alloc_area_pages
+id|vmalloc_area_pages
 c_func
 (paren
 r_int
@@ -996,7 +994,7 @@ id|p
 op_assign
 id|tmp-&gt;next
 suffix:semicolon
-id|free_area_pages
+id|vmfree_area_pages
 c_func
 (paren
 id|VMALLOC_VMADDR
@@ -1096,7 +1094,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|alloc_area_pages
+id|vmalloc_area_pages
 c_func
 (paren
 id|VMALLOC_VMADDR

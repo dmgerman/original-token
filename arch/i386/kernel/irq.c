@@ -669,7 +669,7 @@ l_int|0
 comma
 l_int|0
 comma
-l_string|&quot;math error&quot;
+l_string|&quot;fpu&quot;
 comma
 l_int|NULL
 comma

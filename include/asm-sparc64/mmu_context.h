@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: mmu_context.h,v 1.11 1997/06/13 14:03:04 davem Exp $ */
+multiline_comment|/* $Id: mmu_context.h,v 1.16 1997/07/05 09:54:46 davem Exp $ */
 macro_line|#ifndef __SPARC64_MMU_CONTEXT_H
 DECL|macro|__SPARC64_MMU_CONTEXT_H
 mdefine_line|#define __SPARC64_MMU_CONTEXT_H
@@ -24,9 +24,7 @@ DECL|macro|CTX_VERSION_MASK
 mdefine_line|#define CTX_VERSION_MASK&t;((~0UL) &lt;&lt; CTX_VERSION_SHIFT)
 DECL|macro|CTX_FIRST_VERSION
 mdefine_line|#define CTX_FIRST_VERSION&t;((1UL &lt;&lt; CTX_VERSION_SHIFT) + 1UL)
-DECL|function|get_new_mmu_context
 r_extern
-id|__inline__
 r_void
 id|get_new_mmu_context
 c_func
@@ -40,147 +38,7 @@ r_int
 r_int
 id|ctx
 )paren
-(brace
-r_if
-c_cond
-(paren
-(paren
-id|ctx
-op_amp
-op_complement
-(paren
-id|CTX_VERSION_MASK
-)paren
-)paren
-op_eq
-l_int|0
-)paren
-(brace
-r_int
-r_int
-id|flags
 suffix:semicolon
-r_int
-id|entry
-suffix:semicolon
-id|save_and_cli
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|__asm__
-id|__volatile__
-c_func
-(paren
-l_string|&quot;stxa&t;%%g0, [%0] %1&bslash;n&bslash;t&quot;
-l_string|&quot;stxa&t;%%g0, [%0] %2&quot;
-suffix:colon
-multiline_comment|/* No outputs */
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-id|TLB_TAG_ACCESS
-)paren
-comma
-l_string|&quot;i&quot;
-(paren
-id|ASI_IMMU
-)paren
-comma
-l_string|&quot;i&quot;
-(paren
-id|ASI_DMMU
-)paren
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|entry
-op_assign
-l_int|0
-suffix:semicolon
-id|entry
-OL
-l_int|62
-suffix:semicolon
-id|entry
-op_increment
-)paren
-(brace
-id|spitfire_put_dtlb_data
-c_func
-(paren
-id|entry
-comma
-l_int|0x0UL
-)paren
-suffix:semicolon
-id|spitfire_put_itlb_data
-c_func
-(paren
-id|entry
-comma
-l_int|0x0UL
-)paren
-suffix:semicolon
-)brace
-id|membar
-c_func
-(paren
-l_string|&quot;#Sync&quot;
-)paren
-suffix:semicolon
-id|__asm__
-id|__volatile__
-c_func
-(paren
-l_string|&quot;flush %g4&quot;
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|ctx
-op_assign
-(paren
-id|ctx
-op_amp
-id|CTX_VERSION_MASK
-)paren
-op_plus
-id|CTX_FIRST_VERSION
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ctx
-op_eq
-l_int|1
-)paren
-(brace
-multiline_comment|/* _not_ zero! */
-id|ctx
-op_assign
-id|CTX_FIRST_VERSION
-suffix:semicolon
-)brace
-)brace
-id|tlb_context_cache
-op_assign
-id|ctx
-op_plus
-l_int|1
-suffix:semicolon
-id|mm-&gt;context
-op_assign
-id|ctx
-suffix:semicolon
-)brace
 DECL|function|get_mmu_context
 r_extern
 id|__inline__
@@ -293,7 +151,7 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;flush %g4&quot;
+l_string|&quot;flush %g6&quot;
 )paren
 suffix:semicolon
 id|paddr

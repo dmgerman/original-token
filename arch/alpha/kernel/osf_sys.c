@@ -1229,8 +1229,6 @@ op_assign
 id|namei
 c_func
 (paren
-id|NAM_FOLLOW_LINK
-comma
 id|path
 comma
 op_amp
@@ -1592,8 +1590,6 @@ op_assign
 id|namei
 c_func
 (paren
-id|NAM_FOLLOW_LINK
-comma
 id|name
 comma
 op_amp
@@ -3881,6 +3877,11 @@ op_minus
 id|EOPNOTSUPP
 suffix:semicolon
 )brace
+multiline_comment|/* Dummy functions for now */
+DECL|macro|wrfpcr
+mdefine_line|#define wrfpcr(x)&t;do { } while (0)
+DECL|macro|rdfpcr
+mdefine_line|#define rdfpcr()&t;0
 DECL|function|osf_setsysinfo
 id|asmlinkage
 r_int

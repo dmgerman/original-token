@@ -470,6 +470,7 @@ l_int|1
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;sunmouse: Successfully adjusted to %d baud.&bslash;n&quot;
 comma
 id|mouse_baud

@@ -21,6 +21,7 @@ macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/tty_flip.h&gt;
+macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -274,21 +275,21 @@ c_func
 r_int
 )paren
 suffix:semicolon
-DECL|variable|video_num_lines
+macro_line|#if 0
+multiline_comment|/* Make sure there are no references left to this variables.  */
 r_int
 r_int
 id|video_num_lines
 suffix:semicolon
-DECL|variable|video_num_columns
 r_int
 r_int
 id|video_num_columns
 suffix:semicolon
-DECL|variable|video_size_row
 r_int
 r_int
 id|video_size_row
 suffix:semicolon
+macro_line|#endif
 DECL|variable|printable
 r_static
 r_int

@@ -237,12 +237,6 @@ suffix:semicolon
 )brace
 id|done
 suffix:colon
-id|iput
-c_func
-(paren
-id|dir
-)paren
-suffix:semicolon
 r_return
 id|error
 suffix:semicolon

@@ -866,7 +866,7 @@ l_int|0xf0
 comma
 l_int|0x10
 comma
-l_string|&quot;npu&quot;
+l_string|&quot;fpu&quot;
 )paren
 suffix:semicolon
 )brace

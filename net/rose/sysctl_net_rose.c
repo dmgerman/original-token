@@ -14,7 +14,7 @@ op_assign
 (brace
 l_int|1
 op_star
-id|ROSE_SLOWHZ
+id|HZ
 )brace
 suffix:semicolon
 DECL|variable|max_timer
@@ -27,7 +27,7 @@ op_assign
 (brace
 l_int|300
 op_star
-id|ROSE_SLOWHZ
+id|HZ
 )brace
 suffix:semicolon
 DECL|variable|min_idle
@@ -40,7 +40,7 @@ op_assign
 (brace
 l_int|0
 op_star
-id|ROSE_SLOWHZ
+id|HZ
 )brace
 suffix:semicolon
 DECL|variable|max_idle
@@ -53,7 +53,7 @@ op_assign
 (brace
 l_int|65535
 op_star
-id|ROSE_SLOWHZ
+id|HZ
 )brace
 suffix:semicolon
 DECL|variable|min_route
@@ -86,7 +86,7 @@ op_assign
 (brace
 l_int|60
 op_star
-id|ROSE_SLOWHZ
+id|HZ
 )brace
 suffix:semicolon
 DECL|variable|max_ftimer
@@ -99,7 +99,7 @@ op_assign
 (brace
 l_int|600
 op_star
-id|ROSE_SLOWHZ
+id|HZ
 )brace
 suffix:semicolon
 DECL|variable|min_maxvcs

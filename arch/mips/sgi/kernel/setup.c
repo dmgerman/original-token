@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: setup.c,v 1.1 1997/06/06 09:36:33 ralf Exp $&n; * setup.c: SGI specific setup, including init of the feature struct.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/* $Id: setup.c,v 1.2 1997/06/30 15:26:24 ralf Exp $&n; * setup.c: SGI specific setup, including init of the feature struct.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
 macro_line|#ifndef __GOGOGO__
 macro_line|#error &quot;... about to fuckup your Indy?&quot;
 macro_line|#endif
@@ -169,11 +169,6 @@ op_assign
 id|sgi_machine_power_off
 suffix:semicolon
 multiline_comment|/* register_console(sgi_print); */
-id|sgi_sysinit
-c_func
-(paren
-)paren
-suffix:semicolon
 multiline_comment|/* Init the INDY HPC I/O controller.  Need to call this before&n;&t; * fucking with the memory controller because it needs to know the&n;&t; * boardID and whether this is a Guiness or a FullHouse machine.&n;&t; */
 id|sgihpc_init
 c_func

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: p1275.c,v 1.8 1997/04/03 09:29:21 davem Exp $&n; * p1275.c: Sun IEEE 1275 PROM low level interface routines&n; *&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: p1275.c,v 1.10 1997/06/27 04:18:30 davem Exp $&n; * p1275.c: Sun IEEE 1275 PROM low level interface routines&n; *&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -7,23 +7,13 @@ macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/spitfire.h&gt;
 macro_line|#include &lt;asm/pstate.h&gt;
-multiline_comment|/* If you change layout of this structure, please change the prom_doit&n;   function below as well. */
-r_typedef
 r_struct
 (brace
-DECL|member|prom_doit_code
-r_int
-id|prom_doit_code
-(braket
-l_int|24
-)braket
-suffix:semicolon
-multiline_comment|/* 0x8000 */
 DECL|member|prom_sync_routine
 r_int
 id|prom_sync_routine
 suffix:semicolon
-multiline_comment|/* 0x8060 */
+multiline_comment|/* 0x00 */
 DECL|member|prom_cif_handler
 r_void
 (paren
@@ -35,13 +25,13 @@ r_int
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/* 0x8068 */
+multiline_comment|/* 0x08 */
 DECL|member|prom_cif_stack
 r_int
 r_int
 id|prom_cif_stack
 suffix:semicolon
-multiline_comment|/* 0x8070 */
+multiline_comment|/* 0x10 */
 DECL|member|prom_args
 r_int
 r_int
@@ -50,45 +40,18 @@ id|prom_args
 l_int|23
 )braket
 suffix:semicolon
-multiline_comment|/* 0x8078 */
+multiline_comment|/* 0x18 */
 DECL|member|prom_buffer
 r_char
 id|prom_buffer
 (braket
-l_int|7888
+l_int|3000
 )braket
 suffix:semicolon
-DECL|typedef|at0x8000
+DECL|variable|p1275buf
 )brace
-id|at0x8000
+id|p1275buf
 suffix:semicolon
-DECL|variable|prom_do_it
-r_static
-r_void
-(paren
-op_star
-id|prom_do_it
-)paren
-(paren
-r_void
-)paren
-suffix:semicolon
-r_void
-id|prom_cif_interface
-(paren
-r_void
-)paren
-id|__attribute__
-(paren
-(paren
-id|__section__
-(paren
-l_string|&quot;.p1275&quot;
-)paren
-)paren
-)paren
-suffix:semicolon
-multiline_comment|/* At most 14 insns */
 DECL|function|prom_cif_interface
 r_void
 id|prom_cif_interface
@@ -100,14 +63,9 @@ id|__asm__
 id|__volatile__
 (paren
 "&quot;"
-id|sethi
+id|mov
 op_mod
-op_mod
-id|hi
-c_func
-(paren
-l_int|0x8000
-)paren
+l_int|0
 comma
 op_mod
 op_mod
@@ -118,7 +76,7 @@ op_mod
 op_mod
 id|o0
 op_plus
-l_int|0x070
+l_int|0x010
 )braket
 comma
 op_mod
@@ -143,7 +101,7 @@ op_mod
 op_mod
 id|i0
 op_plus
-l_int|0x068
+l_int|0x008
 )braket
 comma
 op_mod
@@ -181,7 +139,7 @@ op_mod
 id|l4
 comma
 op_mod
-l_int|0
+l_int|1
 comma
 op_mod
 op_mod
@@ -195,12 +153,12 @@ id|call
 op_mod
 op_mod
 id|l2
-op_logical_or
+id|add
 op_mod
 op_mod
 id|i0
 comma
-l_int|0x078
+l_int|0x018
 comma
 op_mod
 op_mod
@@ -281,7 +239,7 @@ op_mod
 id|l4
 comma
 op_mod
-l_int|0
+l_int|1
 comma
 op_mod
 op_mod
@@ -305,7 +263,7 @@ op_mod
 op_mod
 id|o0
 op_plus
-l_int|0x060
+l_int|0x000
 )braket
 comma
 op_mod
@@ -329,10 +287,13 @@ id|pstate
 id|ret
 id|restore
 l_string|&quot; : : &quot;
+id|r
+l_string|&quot; (&amp;p1275buf), &quot;
 id|i
 "&quot;"
 (paren
-id|PSTATE_AM
+l_int|0
+multiline_comment|/* PSTATE_AM */
 )paren
 )paren
 suffix:semicolon
@@ -384,21 +345,9 @@ id|ctx
 op_assign
 l_int|0
 suffix:semicolon
-id|at0x8000
-op_star
-id|low
-op_assign
-(paren
-id|at0x8000
-op_star
-)paren
-(paren
-l_int|0x8000
-)paren
-suffix:semicolon
 id|p
 op_assign
-id|low-&gt;prom_buffer
+id|p1275buf.prom_buffer
 suffix:semicolon
 id|save_and_cli
 c_func
@@ -428,7 +377,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-id|low-&gt;prom_args
+id|p1275buf.prom_args
 (braket
 l_int|0
 )braket
@@ -474,7 +423,7 @@ op_complement
 l_int|7
 )paren
 suffix:semicolon
-id|low-&gt;prom_args
+id|p1275buf.prom_args
 (braket
 l_int|1
 )braket
@@ -488,7 +437,7 @@ l_int|0x0f
 )paren
 suffix:semicolon
 multiline_comment|/* nargs */
-id|low-&gt;prom_args
+id|p1275buf.prom_args
 (braket
 l_int|2
 )braket
@@ -550,7 +499,7 @@ l_int|0x7
 r_case
 id|P1275_ARG_NUMBER
 suffix:colon
-id|low-&gt;prom_args
+id|p1275buf.prom_args
 (braket
 id|i
 op_plus
@@ -587,7 +536,7 @@ op_star
 )paren
 )paren
 suffix:semicolon
-id|low-&gt;prom_args
+id|p1275buf.prom_args
 (braket
 id|i
 op_plus
@@ -644,7 +593,7 @@ r_char
 op_star
 )paren
 suffix:semicolon
-id|low-&gt;prom_args
+id|p1275buf.prom_args
 (braket
 id|i
 op_plus
@@ -701,7 +650,7 @@ op_complement
 l_int|7
 )paren
 suffix:semicolon
-id|low-&gt;prom_args
+id|p1275buf.prom_args
 (braket
 id|i
 op_plus
@@ -726,7 +675,7 @@ r_char
 op_star
 )paren
 suffix:semicolon
-id|low-&gt;prom_args
+id|p1275buf.prom_args
 (braket
 id|i
 op_plus
@@ -795,7 +744,7 @@ op_complement
 l_int|7
 )paren
 suffix:semicolon
-id|low-&gt;prom_args
+id|p1275buf.prom_args
 (braket
 id|i
 op_plus
@@ -821,7 +770,7 @@ r_char
 op_star
 )paren
 suffix:semicolon
-id|low-&gt;prom_args
+id|p1275buf.prom_args
 (braket
 id|i
 op_plus
@@ -843,16 +792,22 @@ suffix:semicolon
 r_case
 id|P1275_ARG_IN_FUNCTION
 suffix:colon
-id|low-&gt;prom_args
+id|p1275buf.prom_args
 (braket
 id|i
 op_plus
 l_int|3
 )braket
 op_assign
-l_int|0x8038
+(paren
+r_int
+r_int
+)paren
+id|prom_cif_interface
+op_plus
+l_int|0x38
 suffix:semicolon
-id|low-&gt;prom_sync_routine
+id|p1275buf.prom_sync_routine
 op_assign
 id|va_arg
 c_func
@@ -872,10 +827,8 @@ c_func
 id|list
 )paren
 suffix:semicolon
-(paren
-op_star
-id|prom_do_it
-)paren
+id|prom_cif_interface
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -1037,7 +990,7 @@ r_char
 op_star
 )paren
 (paren
-id|low-&gt;prom_args
+id|p1275buf.prom_args
 (braket
 id|i
 op_plus
@@ -1083,7 +1036,7 @@ r_char
 op_star
 )paren
 (paren
-id|low-&gt;prom_args
+id|p1275buf.prom_args
 (braket
 id|i
 op_plus
@@ -1106,7 +1059,7 @@ id|list
 suffix:semicolon
 id|x
 op_assign
-id|low-&gt;prom_args
+id|p1275buf.prom_args
 (braket
 id|nargs
 op_plus
@@ -1147,19 +1100,7 @@ op_star
 id|cif_stack
 )paren
 (brace
-id|at0x8000
-op_star
-id|low
-op_assign
-(paren
-id|at0x8000
-op_star
-)paren
-(paren
-l_int|0x8000
-)paren
-suffix:semicolon
-id|low-&gt;prom_cif_handler
+id|p1275buf.prom_cif_handler
 op_assign
 (paren
 r_void
@@ -1173,28 +1114,13 @@ op_star
 )paren
 id|cif_handler
 suffix:semicolon
-id|low-&gt;prom_cif_stack
+id|p1275buf.prom_cif_stack
 op_assign
 (paren
 r_int
 r_int
 )paren
 id|cif_stack
-suffix:semicolon
-id|prom_do_it
-op_assign
-(paren
-r_void
-(paren
-op_star
-)paren
-(paren
-r_void
-)paren
-)paren
-(paren
-l_int|0x8000
-)paren
 suffix:semicolon
 )brace
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: irq.c,v 1.13 1997/05/27 07:54:28 davem Exp $&n; * irq.c: UltraSparc IRQ handling/init/registry.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: irq.c,v 1.14 1997/06/24 17:30:26 davem Exp $&n; * irq.c: UltraSparc IRQ handling/init/registry.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -2558,6 +2558,14 @@ DECL|variable|prom_timers
 op_star
 id|prom_timers
 suffix:semicolon
+DECL|variable|prom_limit0
+DECL|variable|prom_limit1
+r_static
+id|u32
+id|prom_limit0
+comma
+id|prom_limit1
+suffix:semicolon
 DECL|function|map_prom_timers
 r_static
 r_void
@@ -2696,6 +2704,15 @@ id|prom_timers
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/* Save them away for later. */
+id|prom_limit0
+op_assign
+id|prom_timers-&gt;limit0
+suffix:semicolon
+id|prom_limit1
+op_assign
+id|prom_timers-&gt;limit1
+suffix:semicolon
 multiline_comment|/* Just as in sun4c/sun4m PROM uses timer which ticks at IRQ 14.&n;&t; * We turn both off here just to be paranoid.&n;&t; */
 id|prom_timers-&gt;limit0
 op_assign
@@ -2705,9 +2722,77 @@ id|prom_timers-&gt;limit1
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* Wheee, eat the interrupt packet too... */
+id|__asm__
+id|__volatile__
+c_func
+(paren
+"&quot;"
+id|mov
+l_int|0x40
+comma
+op_mod
+op_mod
+id|g2
+id|ldxa
+(braket
+op_mod
+op_mod
+id|g0
+)braket
+op_mod
+l_int|0
+comma
+op_mod
+op_mod
+id|g1
+id|ldxa
+(braket
+op_mod
+op_mod
+id|g2
+)braket
+op_mod
+l_int|1
+comma
+op_mod
+op_mod
+id|g1
+id|stxa
+op_mod
+op_mod
+id|g0
+comma
+(braket
+op_mod
+op_mod
+id|g0
+)braket
+op_mod
+l_int|0
+id|membar
+macro_line|#Sync
+"&quot;"
+suffix:colon
+multiline_comment|/* no outputs */
+suffix:colon
+l_string|&quot;i&quot;
+(paren
+id|ASI_INTR_RECEIVE
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_UDB_INTR_R
+)paren
+suffix:colon
+l_string|&quot;g1&quot;
+comma
+l_string|&quot;g2&quot;
+)paren
+suffix:semicolon
 )brace
-macro_line|#if 0 /* Unused at this time. -DaveM */
-r_static
+DECL|function|enable_prom_timer
 r_void
 id|enable_prom_timer
 c_func
@@ -2725,17 +2810,24 @@ id|prom_timers
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* Set it to fire off every 10ms. */
+multiline_comment|/* Set it to whatever was there before. */
 id|prom_timers-&gt;limit1
 op_assign
-l_int|0xa000270f
+id|prom_limit1
 suffix:semicolon
 id|prom_timers-&gt;count1
 op_assign
 l_int|0
 suffix:semicolon
+id|prom_timers-&gt;limit0
+op_assign
+id|prom_limit0
+suffix:semicolon
+id|prom_timers-&gt;count0
+op_assign
+l_int|0
+suffix:semicolon
 )brace
-macro_line|#endif
 DECL|function|__initfunc
 id|__initfunc
 c_func

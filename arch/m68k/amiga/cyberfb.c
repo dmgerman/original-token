@@ -3084,7 +3084,7 @@ id|u_short
 id|mode
 comma
 id|u_short
-id|color
+id|fcolor
 )paren
 (brace
 id|u_short

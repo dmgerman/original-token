@@ -5307,8 +5307,6 @@ op_assign
 id|namei
 c_func
 (paren
-id|NAM_FOLLOW_LINK
-comma
 id|special
 comma
 op_amp

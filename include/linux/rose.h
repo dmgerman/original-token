@@ -5,7 +5,9 @@ mdefine_line|#define&t;ROSE_KERNEL_H
 DECL|macro|PF_ROSE
 mdefine_line|#define PF_ROSE&t;&t;AF_ROSE
 DECL|macro|ROSE_MTU
-mdefine_line|#define ROSE_MTU&t;128
+mdefine_line|#define ROSE_MTU&t;251
+DECL|macro|ROSE_DEFER
+mdefine_line|#define&t;ROSE_DEFER&t;1
 DECL|macro|ROSE_T1
 mdefine_line|#define ROSE_T1&t;&t;2
 DECL|macro|ROSE_T2
@@ -18,8 +20,36 @@ DECL|macro|ROSE_QBITINCL
 mdefine_line|#define&t;ROSE_QBITINCL&t;6
 DECL|macro|ROSE_HOLDBACK
 mdefine_line|#define&t;ROSE_HOLDBACK&t;7
+DECL|macro|SIOCRSGCAUSE
+mdefine_line|#define&t;SIOCRSGCAUSE&t;&t;(SIOCPROTOPRIVATE+0)
+DECL|macro|SIOCRSSCAUSE
+mdefine_line|#define&t;SIOCRSSCAUSE&t;&t;(SIOCPROTOPRIVATE+1)
 DECL|macro|SIOCRSL2CALL
 mdefine_line|#define&t;SIOCRSL2CALL&t;&t;(SIOCPROTOPRIVATE+2)
+DECL|macro|SIOCRSACCEPT
+mdefine_line|#define&t;SIOCRSACCEPT&t;&t;(SIOCPROTOPRIVATE+3)
+DECL|macro|SIOCRSCLRRT
+mdefine_line|#define&t;SIOCRSCLRRT&t;&t;(SIOCPROTOPRIVATE+4)
+DECL|macro|ROSE_DTE_ORIGINATED
+mdefine_line|#define&t;ROSE_DTE_ORIGINATED&t;0x00
+DECL|macro|ROSE_NUMBER_BUSY
+mdefine_line|#define&t;ROSE_NUMBER_BUSY&t;0x01
+DECL|macro|ROSE_INVALID_FACILITY
+mdefine_line|#define&t;ROSE_INVALID_FACILITY&t;0x03
+DECL|macro|ROSE_NETWORK_CONGESTION
+mdefine_line|#define&t;ROSE_NETWORK_CONGESTION&t;0x05
+DECL|macro|ROSE_OUT_OF_ORDER
+mdefine_line|#define&t;ROSE_OUT_OF_ORDER&t;0x09
+DECL|macro|ROSE_ACCESS_BARRED
+mdefine_line|#define&t;ROSE_ACCESS_BARRED&t;0x0B
+DECL|macro|ROSE_NOT_OBTAINABLE
+mdefine_line|#define&t;ROSE_NOT_OBTAINABLE&t;0x0D
+DECL|macro|ROSE_REMOTE_PROCEDURE
+mdefine_line|#define&t;ROSE_REMOTE_PROCEDURE&t;0x11
+DECL|macro|ROSE_LOCAL_PROCEDURE
+mdefine_line|#define&t;ROSE_LOCAL_PROCEDURE&t;0x13
+DECL|macro|ROSE_SHIP_ABSENT
+mdefine_line|#define&t;ROSE_SHIP_ABSENT&t;0x39
 r_typedef
 r_struct
 (brace
@@ -95,6 +125,22 @@ id|digipeaters
 (braket
 id|AX25_MAX_DIGIS
 )braket
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|rose_cause_struct
+r_struct
+id|rose_cause_struct
+(brace
+DECL|member|cause
+r_int
+r_char
+id|cause
+suffix:semicolon
+DECL|member|diagnostic
+r_int
+r_char
+id|diagnostic
 suffix:semicolon
 )brace
 suffix:semicolon

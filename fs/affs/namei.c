@@ -2986,8 +2986,6 @@ c_func
 id|old_dir-&gt;i_sb
 comma
 id|old_ino
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_if
@@ -3028,8 +3026,6 @@ c_func
 id|new_dir-&gt;i_sb
 comma
 id|new_ino
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_if

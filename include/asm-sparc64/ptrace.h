@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ptrace.h,v 1.8 1997/05/27 19:30:27 jj Exp $ */
+multiline_comment|/* $Id: ptrace.h,v 1.12 1997/06/24 16:30:35 davem Exp $ */
 macro_line|#ifndef _SPARC64_PTRACE_H
 DECL|macro|_SPARC64_PTRACE_H
 mdefine_line|#define _SPARC64_PTRACE_H
@@ -37,6 +37,11 @@ DECL|member|y
 r_int
 r_int
 id|y
+suffix:semicolon
+DECL|member|fprs
+r_int
+r_int
+id|fprs
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -388,6 +393,8 @@ DECL|macro|PT_V9_TNPC
 mdefine_line|#define PT_V9_TNPC   0x90
 DECL|macro|PT_V9_Y
 mdefine_line|#define PT_V9_Y      0x98
+DECL|macro|PT_V9_FPRS
+mdefine_line|#define PT_V9_FPRS   0x9c
 DECL|macro|PT_TSTATE
 mdefine_line|#define PT_TSTATE&t;PT_V9_TSTATE
 DECL|macro|PT_TPC
@@ -626,7 +633,34 @@ DECL|macro|PTRACE_GETFPAREGS
 mdefine_line|#define PTRACE_GETFPAREGS         20
 DECL|macro|PTRACE_SETFPAREGS
 mdefine_line|#define PTRACE_SETFPAREGS         21
+multiline_comment|/* There are for debugging 64-bit processes, either from a 32 or 64 bit&n; * parent.  Thus their compliments are for debugging 32-bit processes only.&n; */
+DECL|macro|PTRACE_GETREGS64
+mdefine_line|#define PTRACE_GETREGS64&t;  22
+DECL|macro|PTRACE_SETREGS64
+mdefine_line|#define PTRACE_SETREGS64&t;  23
+multiline_comment|/* PTRACE_SYSCALL is 24 */
+DECL|macro|PTRACE_GETFPREGS64
+mdefine_line|#define PTRACE_GETFPREGS64&t;  25
+DECL|macro|PTRACE_SETFPREGS64
+mdefine_line|#define PTRACE_SETFPREGS64&t;  26
 DECL|macro|PTRACE_GETUCODE
 mdefine_line|#define PTRACE_GETUCODE           29  /* stupid bsd-ism */
+multiline_comment|/* These are for 32-bit processes debugging 64-bit ones.&n; * Here addr and addr2 are passed in %g2 and %g3 respectively.&n; */
+DECL|macro|PTRACE_PEEKTEXT64
+mdefine_line|#define PTRACE_PEEKTEXT64         (30 + PTRACE_PEEKTEXT)
+DECL|macro|PTRACE_POKETEXT64
+mdefine_line|#define PTRACE_POKETEXT64         (30 + PTRACE_POKETEXT)
+DECL|macro|PTRACE_PEEKDATA64
+mdefine_line|#define PTRACE_PEEKDATA64         (30 + PTRACE_PEEKDATA)
+DECL|macro|PTRACE_POKEDATA64
+mdefine_line|#define PTRACE_POKEDATA64         (30 + PTRACE_POKEDATA)
+DECL|macro|PTRACE_READDATA64
+mdefine_line|#define PTRACE_READDATA64         (30 + PTRACE_READDATA)
+DECL|macro|PTRACE_WRITEDATA64
+mdefine_line|#define PTRACE_WRITEDATA64        (30 + PTRACE_WRITEDATA)
+DECL|macro|PTRACE_READTEXT64
+mdefine_line|#define PTRACE_READTEXT64         (30 + PTRACE_READTEXT)
+DECL|macro|PTRACE_WRITETEXT64
+mdefine_line|#define PTRACE_WRITETEXT64        (30 + PTRACE_WRITETEXT)
 macro_line|#endif /* !(_SPARC64_PTRACE_H) */
 eof

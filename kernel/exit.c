@@ -1780,13 +1780,13 @@ op_decrement
 id|fs-&gt;count
 )paren
 (brace
-id|iput
+id|dput
 c_func
 (paren
 id|fs-&gt;root
 )paren
 suffix:semicolon
-id|iput
+id|dput
 c_func
 (paren
 id|fs-&gt;pwd

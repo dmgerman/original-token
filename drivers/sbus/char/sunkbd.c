@@ -1829,7 +1829,8 @@ id|kbd_reset_pending
 op_assign
 l_int|1
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_if
@@ -1844,7 +1845,8 @@ id|kbd_layout_pending
 op_assign
 l_int|1
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_if
@@ -1876,7 +1878,8 @@ id|SKBDCMD_GLAYOUT
 )paren
 suffix:semicolon
 )brace
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_else
@@ -1894,7 +1897,8 @@ id|kbd_layout_pending
 op_assign
 l_int|0
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_else
@@ -1930,7 +1934,8 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 macro_line|#ifdef SKBD_DEBUG
@@ -1997,18 +2002,6 @@ op_assign
 id|ch
 suffix:semicolon
 )brace
-id|add_keyboard_randomness
-c_func
-(paren
-id|keycode
-)paren
-suffix:semicolon
-id|mark_bh
-c_func
-(paren
-id|KEYBOARD_BH
-)paren
-suffix:semicolon
 id|do_poke_blanked_console
 op_assign
 l_int|1
@@ -2017,6 +2010,12 @@ id|mark_bh
 c_func
 (paren
 id|CONSOLE_BH
+)paren
+suffix:semicolon
+id|add_keyboard_randomness
+c_func
+(paren
+id|keycode
 )paren
 suffix:semicolon
 id|kbd
@@ -2157,7 +2156,8 @@ c_cond
 id|raw_mode
 )paren
 (brace
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 r_if
@@ -2176,7 +2176,8 @@ op_plus
 id|up_flag
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Small change in philosophy: earlier we defined repetition by&n;&t; *&t; rep = keycode == prev_keycode;&n;&t; *&t; prev_keycode = keycode;&n;&t; * but now by the fact that the depressed key was down already.&n;&t; * Does this ever make a difference? Yes.&n;&t; */
@@ -2368,6 +2369,14 @@ c_func
 suffix:semicolon
 )brace
 )brace
+id|out
+suffix:colon
+id|mark_bh
+c_func
+(paren
+id|KEYBOARD_BH
+)paren
+suffix:semicolon
 )brace
 DECL|function|put_queue
 r_static

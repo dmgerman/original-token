@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sparc_ksyms.c,v 1.59 1997/05/08 17:45:20 davem Exp $&n; * arch/sparc/kernel/ksyms.c: Sparc specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: sparc_ksyms.c,v 1.60 1997/06/17 13:25:13 jj Exp $&n; * arch/sparc/kernel/ksyms.c: Sparc specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
 DECL|macro|PROMLIB_INTERNAL
 mdefine_line|#define PROMLIB_INTERNAL
 macro_line|#include &lt;linux/config.h&gt;
@@ -221,6 +221,12 @@ op_star
 comma
 id|__kernel_size_t
 )paren
+suffix:semicolon
+r_extern
+r_char
+id|saved_command_line
+(braket
+)braket
 suffix:semicolon
 r_extern
 r_void
@@ -911,11 +917,11 @@ c_func
 id|prom_setprop
 )paren
 suffix:semicolon
-DECL|variable|prom_getbootargs
+DECL|variable|saved_command_line
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|prom_getbootargs
+id|saved_command_line
 )paren
 suffix:semicolon
 DECL|variable|prom_apply_obio_ranges

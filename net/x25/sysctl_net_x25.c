@@ -16,7 +16,7 @@ op_assign
 (brace
 l_int|1
 op_star
-id|X25_SLOWHZ
+id|HZ
 )brace
 suffix:semicolon
 DECL|variable|max_timer
@@ -29,7 +29,7 @@ op_assign
 (brace
 l_int|300
 op_star
-id|X25_SLOWHZ
+id|HZ
 )brace
 suffix:semicolon
 DECL|variable|x25_table_header

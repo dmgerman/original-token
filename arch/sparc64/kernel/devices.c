@@ -1,7 +1,6 @@
 multiline_comment|/* devices.c: Initial scan of the prom device tree for important&n; *            Sparc device nodes which we need to find.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/tasks.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
@@ -18,6 +17,8 @@ suffix:semicolon
 DECL|variable|linux_num_cpus
 r_int
 id|linux_num_cpus
+op_assign
+l_int|0
 suffix:semicolon
 r_extern
 r_void
@@ -278,7 +279,7 @@ c_func
 l_string|&quot;No CPU nodes found, cannot continue.&bslash;n&quot;
 )paren
 suffix:semicolon
-id|halt
+id|prom_halt
 c_func
 (paren
 )paren

@@ -289,41 +289,41 @@ mdefine_line|#define ASIZ_task_ldt&t;0x00000008
 DECL|macro|AOFF_task_tss
 mdefine_line|#define AOFF_task_tss&t;0x00000380
 DECL|macro|ASIZ_task_tss
-mdefine_line|#define ASIZ_task_tss&t;0x00000600
+mdefine_line|#define ASIZ_task_tss&t;0x000004c0
 DECL|macro|AOFF_task_fs
-mdefine_line|#define AOFF_task_fs&t;0x00000980
+mdefine_line|#define AOFF_task_fs&t;0x00000840
 DECL|macro|ASIZ_task_fs
 mdefine_line|#define ASIZ_task_fs&t;0x00000008
 DECL|macro|AOFF_task_files
-mdefine_line|#define AOFF_task_files&t;0x00000988
+mdefine_line|#define AOFF_task_files&t;0x00000848
 DECL|macro|ASIZ_task_files
 mdefine_line|#define ASIZ_task_files&t;0x00000008
 DECL|macro|AOFF_task_mm
-mdefine_line|#define AOFF_task_mm&t;0x00000990
+mdefine_line|#define AOFF_task_mm&t;0x00000850
 DECL|macro|ASIZ_task_mm
 mdefine_line|#define ASIZ_task_mm&t;0x00000008
 DECL|macro|AOFF_task_sig
-mdefine_line|#define AOFF_task_sig&t;0x00000998
+mdefine_line|#define AOFF_task_sig&t;0x00000858
 DECL|macro|ASIZ_task_sig
 mdefine_line|#define ASIZ_task_sig&t;0x00000008
 DECL|macro|AOFF_task_has_cpu
-mdefine_line|#define AOFF_task_has_cpu&t;0x000009a0
+mdefine_line|#define AOFF_task_has_cpu&t;0x00000860
 DECL|macro|ASIZ_task_has_cpu
 mdefine_line|#define ASIZ_task_has_cpu&t;0x00000004
 DECL|macro|AOFF_task_processor
-mdefine_line|#define AOFF_task_processor&t;0x000009a4
+mdefine_line|#define AOFF_task_processor&t;0x00000864
 DECL|macro|ASIZ_task_processor
 mdefine_line|#define ASIZ_task_processor&t;0x00000004
 DECL|macro|AOFF_task_last_processor
-mdefine_line|#define AOFF_task_last_processor&t;0x000009a8
+mdefine_line|#define AOFF_task_last_processor&t;0x00000868
 DECL|macro|ASIZ_task_last_processor
 mdefine_line|#define ASIZ_task_last_processor&t;0x00000004
 DECL|macro|AOFF_task_lock_depth
-mdefine_line|#define AOFF_task_lock_depth&t;0x000009ac
+mdefine_line|#define AOFF_task_lock_depth&t;0x0000086c
 DECL|macro|ASIZ_task_lock_depth
 mdefine_line|#define ASIZ_task_lock_depth&t;0x00000004
 DECL|macro|AOFF_task_sigmask_lock
-mdefine_line|#define AOFF_task_sigmask_lock&t;0x000009b0
+mdefine_line|#define AOFF_task_sigmask_lock&t;0x00000870
 DECL|macro|ASIZ_task_sigmask_lock
 mdefine_line|#define ASIZ_task_sigmask_lock&t;0x00000000
 DECL|macro|AOFF_mm_mmap
@@ -418,76 +418,68 @@ DECL|macro|AOFF_mm_cpu_vm_mask
 mdefine_line|#define AOFF_mm_cpu_vm_mask&t;0x000000b8
 DECL|macro|ASIZ_mm_cpu_vm_mask
 mdefine_line|#define ASIZ_mm_cpu_vm_mask&t;0x00000008
-DECL|macro|AOFF_thread_float_regs
-mdefine_line|#define AOFF_thread_float_regs&t;0x00000000
-DECL|macro|ASIZ_thread_float_regs
-mdefine_line|#define ASIZ_thread_float_regs&t;0x00000100
-DECL|macro|AOFF_thread_fsr
-mdefine_line|#define AOFF_thread_fsr&t;0x00000100
-DECL|macro|ASIZ_thread_fsr
-mdefine_line|#define ASIZ_thread_fsr&t;0x00000008
 DECL|macro|AOFF_thread_ksp
-mdefine_line|#define AOFF_thread_ksp&t;0x00000108
+mdefine_line|#define AOFF_thread_ksp&t;0x00000000
 DECL|macro|ASIZ_thread_ksp
 mdefine_line|#define ASIZ_thread_ksp&t;0x00000008
 DECL|macro|AOFF_thread_kpc
-mdefine_line|#define AOFF_thread_kpc&t;0x00000110
+mdefine_line|#define AOFF_thread_kpc&t;0x00000008
 DECL|macro|ASIZ_thread_kpc
 mdefine_line|#define ASIZ_thread_kpc&t;0x00000008
 DECL|macro|AOFF_thread_wstate
-mdefine_line|#define AOFF_thread_wstate&t;0x00000118
+mdefine_line|#define AOFF_thread_wstate&t;0x00000010
 DECL|macro|ASIZ_thread_wstate
 mdefine_line|#define ASIZ_thread_wstate&t;0x00000008
 DECL|macro|AOFF_thread_cwp
-mdefine_line|#define AOFF_thread_cwp&t;0x00000120
+mdefine_line|#define AOFF_thread_cwp&t;0x00000018
 DECL|macro|ASIZ_thread_cwp
-mdefine_line|#define ASIZ_thread_cwp&t;0x00000008
+mdefine_line|#define ASIZ_thread_cwp&t;0x00000004
 DECL|macro|AOFF_thread_ctx
-mdefine_line|#define AOFF_thread_ctx&t;0x00000128
+mdefine_line|#define AOFF_thread_ctx&t;0x0000001c
 DECL|macro|ASIZ_thread_ctx
-mdefine_line|#define ASIZ_thread_ctx&t;0x00000008
+mdefine_line|#define ASIZ_thread_ctx&t;0x00000004
+DECL|macro|AOFF_thread_flags
+mdefine_line|#define AOFF_thread_flags&t;0x00000020
+DECL|macro|ASIZ_thread_flags
+mdefine_line|#define ASIZ_thread_flags&t;0x00000004
+DECL|macro|AOFF_thread_new_signal
+mdefine_line|#define AOFF_thread_new_signal&t;0x00000024
+DECL|macro|ASIZ_thread_new_signal
+mdefine_line|#define ASIZ_thread_new_signal&t;0x00000004
+DECL|macro|AOFF_thread_current_ds
+mdefine_line|#define AOFF_thread_current_ds&t;0x00000028
+DECL|macro|ASIZ_thread_current_ds
+mdefine_line|#define ASIZ_thread_current_ds&t;0x00000008
+DECL|macro|AOFF_thread_w_saved
+mdefine_line|#define AOFF_thread_w_saved&t;0x00000030
+DECL|macro|ASIZ_thread_w_saved
+mdefine_line|#define ASIZ_thread_w_saved&t;0x00000008
+DECL|macro|AOFF_thread_kregs
+mdefine_line|#define AOFF_thread_kregs&t;0x00000038
+DECL|macro|ASIZ_thread_kregs
+mdefine_line|#define ASIZ_thread_kregs&t;0x00000008
 DECL|macro|AOFF_thread_reg_window
-mdefine_line|#define AOFF_thread_reg_window&t;0x00000130
+mdefine_line|#define AOFF_thread_reg_window&t;0x00000040
 DECL|macro|ASIZ_thread_reg_window
 mdefine_line|#define ASIZ_thread_reg_window&t;0x00000400
 DECL|macro|AOFF_thread_rwbuf_stkptrs
-mdefine_line|#define AOFF_thread_rwbuf_stkptrs&t;0x00000530
+mdefine_line|#define AOFF_thread_rwbuf_stkptrs&t;0x00000440
 DECL|macro|ASIZ_thread_rwbuf_stkptrs
 mdefine_line|#define ASIZ_thread_rwbuf_stkptrs&t;0x00000040
-DECL|macro|AOFF_thread_w_saved
-mdefine_line|#define AOFF_thread_w_saved&t;0x00000570
-DECL|macro|ASIZ_thread_w_saved
-mdefine_line|#define ASIZ_thread_w_saved&t;0x00000008
-DECL|macro|AOFF_thread_flags
-mdefine_line|#define AOFF_thread_flags&t;0x00000578
-DECL|macro|ASIZ_thread_flags
-mdefine_line|#define ASIZ_thread_flags&t;0x00000008
 DECL|macro|AOFF_thread_sig_address
-mdefine_line|#define AOFF_thread_sig_address&t;0x00000580
+mdefine_line|#define AOFF_thread_sig_address&t;0x00000480
 DECL|macro|ASIZ_thread_sig_address
 mdefine_line|#define ASIZ_thread_sig_address&t;0x00000008
 DECL|macro|AOFF_thread_sig_desc
-mdefine_line|#define AOFF_thread_sig_desc&t;0x00000588
+mdefine_line|#define AOFF_thread_sig_desc&t;0x00000488
 DECL|macro|ASIZ_thread_sig_desc
 mdefine_line|#define ASIZ_thread_sig_desc&t;0x00000008
 DECL|macro|AOFF_thread_sstk_info
-mdefine_line|#define AOFF_thread_sstk_info&t;0x00000590
+mdefine_line|#define AOFF_thread_sstk_info&t;0x00000490
 DECL|macro|ASIZ_thread_sstk_info
 mdefine_line|#define ASIZ_thread_sstk_info&t;0x00000010
-DECL|macro|AOFF_thread_current_ds
-mdefine_line|#define AOFF_thread_current_ds&t;0x000005a0
-DECL|macro|ASIZ_thread_current_ds
-mdefine_line|#define ASIZ_thread_current_ds&t;0x00000008
-DECL|macro|AOFF_thread_new_signal
-mdefine_line|#define AOFF_thread_new_signal&t;0x000005a8
-DECL|macro|ASIZ_thread_new_signal
-mdefine_line|#define ASIZ_thread_new_signal&t;0x00000008
-DECL|macro|AOFF_thread_kregs
-mdefine_line|#define AOFF_thread_kregs&t;0x000005b0
-DECL|macro|ASIZ_thread_kregs
-mdefine_line|#define ASIZ_thread_kregs&t;0x00000008
 DECL|macro|AOFF_thread_core_exec
-mdefine_line|#define AOFF_thread_core_exec&t;0x000005b8
+mdefine_line|#define AOFF_thread_core_exec&t;0x000004a0
 DECL|macro|ASIZ_thread_core_exec
 mdefine_line|#define ASIZ_thread_core_exec&t;0x00000020
 macro_line|#endif /* __ASM_OFFSETS_H__ */

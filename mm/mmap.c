@@ -1168,6 +1168,10 @@ comma
 id|vma-&gt;vm_end
 )paren
 suffix:semicolon
+id|addr
+op_assign
+id|vma-&gt;vm_start
+suffix:semicolon
 multiline_comment|/* merge_segments might have merged our vma, so we can&squot;t use it any more */
 id|mm-&gt;total_vm
 op_add_assign

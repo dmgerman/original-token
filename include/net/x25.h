@@ -3,8 +3,6 @@ macro_line|#ifndef _X25_H
 DECL|macro|_X25_H
 mdefine_line|#define _X25_H 
 macro_line|#include &lt;linux/x25.h&gt;
-DECL|macro|X25_SLOWHZ
-mdefine_line|#define&t;X25_SLOWHZ&t;&t;&t;1&t;/* Run timing at 1 Hz */
 DECL|macro|X25_ADDR_LEN
 mdefine_line|#define&t;X25_ADDR_LEN&t;&t;&t;16
 DECL|macro|X25_MAX_L2_LEN
@@ -110,15 +108,15 @@ id|X25_LINK_STATE_3
 )brace
 suffix:semicolon
 DECL|macro|X25_DEFAULT_T20
-mdefine_line|#define X25_DEFAULT_T20&t;&t;(180 * X25_SLOWHZ)&t;/* Default T20 value */
+mdefine_line|#define X25_DEFAULT_T20&t;&t;(180 * HZ)&t;&t;/* Default T20 value */
 DECL|macro|X25_DEFAULT_T21
-mdefine_line|#define X25_DEFAULT_T21&t;&t;(200 * X25_SLOWHZ)&t;/* Default T21 value */
+mdefine_line|#define X25_DEFAULT_T21&t;&t;(200 * HZ)&t;&t;/* Default T21 value */
 DECL|macro|X25_DEFAULT_T22
-mdefine_line|#define X25_DEFAULT_T22&t;&t;(180 * X25_SLOWHZ)&t;/* Default T22 value */
+mdefine_line|#define X25_DEFAULT_T22&t;&t;(180 * HZ)&t;&t;/* Default T22 value */
 DECL|macro|X25_DEFAULT_T23
-mdefine_line|#define&t;X25_DEFAULT_T23&t;&t;(180 * X25_SLOWHZ)&t;/* Default T23 value */
+mdefine_line|#define&t;X25_DEFAULT_T23&t;&t;(180 * HZ)&t;&t;/* Default T23 value */
 DECL|macro|X25_DEFAULT_T2
-mdefine_line|#define&t;X25_DEFAULT_T2&t;&t;(3   * X25_SLOWHZ)&t;/* Default ack holdback value */
+mdefine_line|#define&t;X25_DEFAULT_T2&t;&t;(3   * HZ)&t;&t;/* Default ack holdback value */
 DECL|macro|X25_DEFAULT_WINDOW_SIZE
 mdefine_line|#define&t;X25_DEFAULT_WINDOW_SIZE&t;2&t;&t;&t;/* Default Window Size&t;*/
 DECL|macro|X25_DEFAULT_PACKET_SIZE
@@ -216,17 +214,14 @@ id|sk_buff_head
 id|queue
 suffix:semicolon
 DECL|member|t20
-DECL|member|t20timer
 r_int
 r_int
 id|t20
-comma
-id|t20timer
 suffix:semicolon
-DECL|member|timer
+DECL|member|t20timer
 r_struct
 id|timer_list
-id|timer
+id|t20timer
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -279,11 +274,6 @@ id|va
 comma
 id|vl
 suffix:semicolon
-DECL|member|timer
-r_int
-r_int
-id|timer
-suffix:semicolon
 DECL|member|t2
 DECL|member|t21
 DECL|member|t22
@@ -325,6 +315,16 @@ op_star
 id|sk
 suffix:semicolon
 multiline_comment|/* Backlink to socket */
+DECL|member|timer
+r_struct
+id|timer_list
+id|timer
+suffix:semicolon
+DECL|member|causediag
+r_struct
+id|x25_causediag
+id|causediag
+suffix:semicolon
 DECL|member|facilities
 r_struct
 id|x25_facilities
@@ -398,7 +398,9 @@ r_int
 id|x25_new_lci
 c_func
 (paren
-r_void
+r_struct
+id|x25_neigh
+op_star
 )paren
 suffix:semicolon
 r_extern
@@ -410,6 +412,10 @@ c_func
 (paren
 r_int
 r_int
+comma
+r_struct
+id|x25_neigh
+op_star
 )paren
 suffix:semicolon
 r_extern
@@ -911,10 +917,99 @@ r_int
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|x25_disconnect
+c_func
+(paren
+r_struct
+id|sock
+op_star
+comma
+r_int
+comma
+r_int
+r_char
+comma
+r_int
+r_char
+)paren
+suffix:semicolon
 multiline_comment|/* x25_timer.c */
 r_extern
 r_void
-id|x25_set_timer
+id|x25_start_heartbeat
+c_func
+(paren
+r_struct
+id|sock
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|x25_start_t2timer
+c_func
+(paren
+r_struct
+id|sock
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|x25_start_t21timer
+c_func
+(paren
+r_struct
+id|sock
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|x25_start_t22timer
+c_func
+(paren
+r_struct
+id|sock
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|x25_start_t23timer
+c_func
+(paren
+r_struct
+id|sock
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|x25_stop_heartbeat
+c_func
+(paren
+r_struct
+id|sock
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|x25_stop_timer
+c_func
+(paren
+r_struct
+id|sock
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|x25_display_timer
 c_func
 (paren
 r_struct

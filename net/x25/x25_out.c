@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;X.25 Packet Layer release 001&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 2.1.15 or higher&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;X.25 001&t;Jonathan Naylor&t;Started coding.&n; */
+multiline_comment|/*&n; *&t;X.25 Packet Layer release 002&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 2.1.15 or higher&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;X.25 001&t;Jonathan Naylor&t;Started coding.&n; *&t;X.25 002&t;Jonathan Naylor&t;New timer architecture.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_X25) || defined(CONFIG_X25_MODULE)
 macro_line|#include &lt;linux/errno.h&gt;
@@ -442,12 +442,14 @@ suffix:semicolon
 r_int
 id|modulus
 suffix:semicolon
-id|del_timer
-c_func
+r_if
+c_cond
 (paren
-op_amp
-id|sk-&gt;timer
+id|sk-&gt;protinfo.x25-&gt;state
+op_ne
+id|X25_STATE_3
 )paren
+r_return
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Transmit interrupt data.&n;&t; */
 r_if
@@ -488,6 +490,29 @@ id|sk-&gt;protinfo.x25-&gt;neighbour
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|sk-&gt;protinfo.x25-&gt;condition
+op_amp
+id|X25_COND_PEER_RX_BUSY
+)paren
+r_return
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|skb_peek
+c_func
+(paren
+op_amp
+id|sk-&gt;write_queue
+)paren
+op_eq
+l_int|NULL
+)paren
+r_return
+suffix:semicolon
 id|modulus
 op_assign
 (paren
@@ -509,32 +534,16 @@ id|sk-&gt;protinfo.x25-&gt;facilities.winsize_out
 op_mod
 id|modulus
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Transmit normal stream data.&n;&t; */
 r_if
 c_cond
 (paren
-op_logical_neg
-(paren
-id|sk-&gt;protinfo.x25-&gt;condition
-op_amp
-id|X25_COND_PEER_RX_BUSY
-)paren
-op_logical_and
 id|sk-&gt;protinfo.x25-&gt;vs
-op_ne
+op_eq
 id|end
-op_logical_and
-id|skb_peek
-c_func
-(paren
-op_amp
-id|sk-&gt;write_queue
 )paren
-op_ne
-l_int|NULL
-)paren
-(brace
-multiline_comment|/*&n;&t;&t; * Transmit data until either we&squot;re out of data to send or&n;&t;&t; * the window is full.&n;&t;&t; */
+r_return
+suffix:semicolon
+multiline_comment|/*&n;&t; * Transmit data until either we&squot;re out of data to send or&n;&t; * the window is full.&n;&t; */
 id|skb
 op_assign
 id|skb_dequeue
@@ -546,7 +555,7 @@ id|sk-&gt;write_queue
 suffix:semicolon
 r_do
 (brace
-multiline_comment|/*&n;&t;&t;&t; * Transmit the frame.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Transmit the frame.&n;&t;&t; */
 id|x25_send_iframe
 c_func
 (paren
@@ -596,12 +605,7 @@ op_and_assign
 op_complement
 id|X25_COND_ACK_PENDING
 suffix:semicolon
-id|sk-&gt;protinfo.x25-&gt;timer
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-id|x25_set_timer
+id|x25_stop_timer
 c_func
 (paren
 id|sk
@@ -653,9 +657,11 @@ op_and_assign
 op_complement
 id|X25_COND_ACK_PENDING
 suffix:semicolon
-id|sk-&gt;protinfo.x25-&gt;timer
-op_assign
-l_int|0
+id|x25_stop_timer
+c_func
+(paren
+id|sk
+)paren
 suffix:semicolon
 )brace
 DECL|function|x25_check_iframes_acked

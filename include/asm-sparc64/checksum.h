@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: checksum.h,v 1.8 1997/05/29 12:45:03 jj Exp $ */
+multiline_comment|/* $Id: checksum.h,v 1.9 1997/06/26 04:05:17 davem Exp $ */
 macro_line|#ifndef __SPARC64_CHECKSUM_H
 DECL|macro|__SPARC64_CHECKSUM_H
 mdefine_line|#define __SPARC64_CHECKSUM_H
@@ -440,6 +440,8 @@ comma
 op_mod
 op_mod
 id|g7
+op_logical_neg
+id|IEU0
 id|lduw
 (braket
 op_mod
@@ -450,6 +452,9 @@ l_int|0x00
 comma
 op_mod
 l_int|0
+op_logical_neg
+id|Load
+id|Group
 id|lduw
 (braket
 op_mod
@@ -461,6 +466,9 @@ comma
 op_mod
 op_mod
 id|g2
+op_logical_neg
+id|Load
+id|Group
 id|lduw
 (braket
 op_mod
@@ -472,6 +480,9 @@ comma
 op_mod
 op_mod
 id|g3
+op_logical_neg
+id|Load
+id|Group
 id|addcc
 op_mod
 op_mod
@@ -482,16 +493,13 @@ l_int|0
 comma
 op_mod
 l_int|0
-id|addccc
-op_mod
-op_mod
-id|g3
-comma
-op_mod
-l_int|0
-comma
-op_mod
-l_int|0
+op_logical_neg
+id|IEU1
+l_int|1
+id|Load
+id|Bubble
+op_plus
+id|Group
 id|lduw
 (braket
 op_mod
@@ -503,6 +511,23 @@ comma
 op_mod
 op_mod
 id|g2
+op_logical_neg
+id|Load
+id|addccc
+op_mod
+op_mod
+id|g3
+comma
+op_mod
+l_int|0
+comma
+op_mod
+l_int|0
+op_logical_neg
+id|Sngle
+id|Group
+id|no
+id|Bubble
 id|lduw
 (braket
 op_mod
@@ -514,6 +539,9 @@ comma
 op_mod
 op_mod
 id|g3
+op_logical_neg
+id|Load
+id|Group
 id|addccc
 op_mod
 op_mod
@@ -524,6 +552,11 @@ l_int|0
 comma
 op_mod
 l_int|0
+op_logical_neg
+id|Sngle
+id|Group
+id|no
+id|Bubble
 id|addc
 op_mod
 l_int|0
@@ -534,6 +567,9 @@ id|g0
 comma
 op_mod
 l_int|0
+op_logical_neg
+id|Sngle
+id|Group
 l_int|1
 suffix:colon
 id|addcc
@@ -546,6 +582,11 @@ l_int|0
 comma
 op_mod
 l_int|0
+op_logical_neg
+id|IEU1
+id|Group
+id|no
+id|Bubble
 id|add
 op_mod
 l_int|1
@@ -554,6 +595,8 @@ l_int|4
 comma
 op_mod
 l_int|1
+op_logical_neg
+id|IEU0
 id|addccc
 op_mod
 l_int|0
@@ -564,6 +607,11 @@ id|g0
 comma
 op_mod
 l_int|0
+op_logical_neg
+id|Sngle
+id|Group
+id|no
+id|Bubble
 id|subcc
 op_mod
 op_mod
@@ -574,6 +622,9 @@ comma
 op_mod
 op_mod
 id|g7
+op_logical_neg
+id|IEU1
+id|Group
 id|be
 comma
 id|a
@@ -584,6 +635,8 @@ op_mod
 id|icc
 comma
 l_float|2f
+op_logical_neg
+id|CTI
 id|sll
 op_mod
 l_int|0
@@ -593,15 +646,8 @@ comma
 op_mod
 op_mod
 id|g2
-id|ba
-comma
-id|pt
-op_mod
-op_mod
-id|xcc
-comma
-l_int|1
-id|b
+op_logical_neg
+id|IEU0
 id|lduw
 (braket
 op_mod
@@ -613,6 +659,23 @@ comma
 op_mod
 op_mod
 id|g3
+op_logical_neg
+id|Load
+id|Group
+id|ba
+comma
+id|pt
+op_mod
+op_mod
+id|xcc
+comma
+l_int|1
+id|b
+op_logical_neg
+id|CTI
+id|nop
+op_logical_neg
+id|IEU0
 l_int|2
 suffix:colon
 id|addcc
@@ -626,6 +689,9 @@ comma
 op_mod
 op_mod
 id|g2
+op_logical_neg
+id|IEU1
+id|Group
 id|srl
 op_mod
 op_mod
@@ -635,6 +701,13 @@ l_int|16
 comma
 op_mod
 l_int|0
+op_logical_neg
+id|IEU0
+id|Group
+id|regdep
+id|XXX
+id|Scheisse
+op_logical_neg
 id|addc
 op_mod
 l_int|0
@@ -645,6 +718,9 @@ id|g0
 comma
 op_mod
 l_int|0
+op_logical_neg
+id|Sngle
+id|Group
 id|xnor
 op_mod
 op_mod
@@ -655,6 +731,9 @@ l_int|0
 comma
 op_mod
 l_int|0
+op_logical_neg
+id|IEU0
+id|Group
 id|srl
 op_mod
 l_int|0
@@ -663,6 +742,12 @@ l_int|0
 comma
 op_mod
 l_int|0
+op_logical_neg
+id|IEU0
+id|Group
+id|XXX
+id|Scheisse
+op_logical_neg
 l_string|&quot;&t;: &quot;
 op_assign
 id|r

@@ -1,32 +1,8 @@
+multiline_comment|/*&n; * include/asm-mips/uaccess.h&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997 by Ralf Baechle&n; *&n; * $Id: sigcontext.h,v 1.3 1997/06/25 16:57:31 ralf Exp $&n; */
 macro_line|#ifndef __ASM_MIPS_SIGCONTEXT_H
 DECL|macro|__ASM_MIPS_SIGCONTEXT_H
 mdefine_line|#define __ASM_MIPS_SIGCONTEXT_H
-macro_line|#ifdef __LANGUAGE_ASSEMBLY__
-DECL|macro|SC_REGMASK
-mdefine_line|#define SC_REGMASK&t;0
-DECL|macro|SC_STATUS
-mdefine_line|#define SC_STATUS&t;4
-DECL|macro|SC_PC
-mdefine_line|#define SC_PC&t;&t;8
-DECL|macro|SC_REGS
-mdefine_line|#define SC_REGS&t;&t;16
-DECL|macro|SC_FPREGS
-mdefine_line|#define SC_FPREGS&t;272
-DECL|macro|SC_OWNEDFP
-mdefine_line|#define SC_OWNEDFP&t;528
-DECL|macro|SC_FPC_CSR
-mdefine_line|#define SC_FPC_CSR&t;532
-DECL|macro|SC_FPC_EIR
-mdefine_line|#define SC_FPC_EIR&t;536
-DECL|macro|SC_SSFLAGS
-mdefine_line|#define SC_SSFLAGS&t;540
-DECL|macro|SC_MDHI
-mdefine_line|#define SC_MDHI&t;&t;544
-DECL|macro|SC_MDLO
-mdefine_line|#define SC_MDLO&t;&t;552
-macro_line|#endif
-macro_line|#if defined(__LANGUAGE_C__) || &bslash;&n;    defined(_LANGUAGE_C) || &bslash;&n;    defined(__LANGUAGE_C_PLUS_PLUS__) || &bslash;&n;    defined(__LANGUAGE_OBJECTIVE_C__)
-multiline_comment|/*&n; * Whenever this structure is changed you must update the offsets in&n; * arch/mips/mips&lt;isa&gt;/fp-context.S.&n; */
+multiline_comment|/*&n; * Keep this struct definition in sync with the sigcontext fragment&n; * in arch/mips/tools/offset.c&n; */
 DECL|struct|sigcontext
 r_struct
 id|sigcontext
@@ -129,6 +105,5 @@ suffix:semicolon
 multiline_comment|/* pad for constant size */
 )brace
 suffix:semicolon
-macro_line|#endif
 macro_line|#endif /* __ASM_MIPS_SIGCONTEXT_H */
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/m68k/boot/amiga/linuxboot.c -- Generic routine to boot Linux/m68k&n; *&t;&t;&t;&t;&t;      on Amiga, used by both Amiboot and&n; *&t;&t;&t;&t;&t;      Amiga-Lilo.&n; *&n; *&t;Created 1996 by Geert Uytterhoeven&n; *&n; *&n; *  This file is based on the original bootstrap code (bootstrap.c):&n; *&n; *&t;Copyright (C) 1993, 1994 Hamish Macdonald&n; *&t;&t;&t;&t; Greg Harp&n; *&n; *&t;&t;    with work by Michael Rausch&n; *&t;&t;&t;&t; Geert Uytterhoeven&n; *&t;&t;&t;&t; Frank Neumann&n; *&t;&t;&t;&t; Andreas Schwab&n; *&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file COPYING in the main directory of this archive&n; *  for more details.&n; *&n; *  History:&n; *&t;27 Mar 1997 FPU-less machines couldn&squot;t boot kernels that use bootinfo&n; *&t;&t;    interface version 1.0 (Geert)&n; *&t;03 Feb 1997 Implemented kernel decompression (Geert, based on Roman&squot;s&n; *&t;&t;    code for ataboot)&n; *&t;30 Dec 1996 Reverted the CPU detection to the old scheme&n; *&t;&t;    New boot parameter override scheme (Geert)&n; *      27 Nov 1996 Compatibility with bootinfo interface version 1.0 (Geert)&n; *       9 Sep 1996 Rewritten option parsing&n; *&t;&t;    New parameter passing to linuxboot() (linuxboot_args)&n; *&t;&t;    (Geert)&n; *&t;18 Aug 1996 Updated for the new boot information structure (Geert)&n; *&t;10 Jan 1996 The real Linux/m68k boot code moved to linuxboot.[ch]&n; *&t;&t;    (Geert)&n; *&t;11 Jul 1995 Support for ELF kernel (untested!) (Andreas)&n; *&t; 7 Mar 1995 Memory block sizes are rounded to a multiple of 256K&n; *&t;&t;    instead of 1M (Geert)&n; *&t;31 May 1994 Memory thrash problem solved (Geert)&n; *&t;11 May 1994 A3640 MapROM check (Geert)&n; */
+multiline_comment|/*&n; *  linux/arch/m68k/boot/amiga/linuxboot.c -- Generic routine to boot Linux/m68k&n; *&t;&t;&t;&t;&t;      on Amiga, used by both Amiboot and&n; *&t;&t;&t;&t;&t;      Amiga-Lilo.&n; *&n; *&t;Created 1996 by Geert Uytterhoeven&n; *&n; *&n; *  This file is based on the original bootstrap code (bootstrap.c):&n; *&n; *&t;Copyright (C) 1993, 1994 Hamish Macdonald&n; *&t;&t;&t;&t; Greg Harp&n; *&n; *&t;&t;    with work by Michael Rausch&n; *&t;&t;&t;&t; Geert Uytterhoeven&n; *&t;&t;&t;&t; Frank Neumann&n; *&t;&t;&t;&t; Andreas Schwab&n; *&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file COPYING in the main directory of this archive&n; *  for more details.&n; *&n; *  History:&n; *&t;11 Jun 1997 Fix for unpadded gzipped ramdisks with bootinfo interface&n; *&t;&t;    version 1.0&n; *&t;27 Mar 1997 FPU-less machines couldn&squot;t boot kernels that use bootinfo&n; *&t;&t;    interface version 1.0 (Geert)&n; *&t; 3 Feb 1997 Implemented kernel decompression (Geert, based on Roman&squot;s&n; *&t;&t;    code for ataboot)&n; *&t;30 Dec 1996 Reverted the CPU detection to the old scheme&n; *&t;&t;    New boot parameter override scheme (Geert)&n; *      27 Nov 1996 Compatibility with bootinfo interface version 1.0 (Geert)&n; *       9 Sep 1996 Rewritten option parsing&n; *&t;&t;    New parameter passing to linuxboot() (linuxboot_args)&n; *&t;&t;    (Geert)&n; *&t;18 Aug 1996 Updated for the new boot information structure (Geert)&n; *&t;10 Jan 1996 The real Linux/m68k boot code moved to linuxboot.[ch]&n; *&t;&t;    (Geert)&n; *&t;11 Jul 1995 Support for ELF kernel (untested!) (Andreas)&n; *&t; 7 Mar 1995 Memory block sizes are rounded to a multiple of 256K&n; *&t;&t;    instead of 1M (Geert)&n; *&t;31 May 1994 Memory thrash problem solved (Geert)&n; *&t;11 May 1994 A3640 MapROM check (Geert)&n; */
 macro_line|#ifndef __GNUC__
 macro_line|#error GNU CC is required to compile this program
 macro_line|#endif /* __GNUC__ */
@@ -10,7 +10,6 @@ mdefine_line|#define ZKERNEL
 macro_line|#include &lt;stddef.h&gt;
 macro_line|#include &lt;string.h&gt;
 macro_line|#include &lt;errno.h&gt;
-macro_line|#include &lt;sys/types.h&gt;
 macro_line|#include &lt;linux/a.out.h&gt;
 macro_line|#include &lt;linux/elf.h&gt;
 macro_line|#include &lt;linux/linkage.h&gt;
@@ -22,6 +21,11 @@ DECL|macro|custom
 macro_line|#undef custom
 DECL|macro|custom
 mdefine_line|#define custom ((*(volatile struct CUSTOM *)(CUSTOM_PHYSADDR)))
+multiline_comment|/* a.out linkage conventions */
+DECL|macro|SYMBOL_NAME_STR
+macro_line|#undef SYMBOL_NAME_STR
+DECL|macro|SYMBOL_NAME_STR
+mdefine_line|#define SYMBOL_NAME_STR(X) &quot;_&quot;#X
 multiline_comment|/* temporary stack size */
 DECL|macro|TEMP_STACKSIZE
 mdefine_line|#define TEMP_STACKSIZE&t;(256)
@@ -267,13 +271,13 @@ id|u_long
 id|start_mem
 comma
 id|u_long
-id|mem_size
+id|kernel_size
+comma
+id|u_long
+id|rd_dest
 comma
 id|u_long
 id|rd_size
-comma
-id|u_long
-id|kernel_size
 )paren
 id|__attribute__
 (paren
@@ -285,14 +289,6 @@ suffix:semicolon
 id|asmlinkage
 id|u_long
 id|maprommed
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-id|asmlinkage
-id|u_long
-id|check346
 c_func
 (paren
 r_void
@@ -3126,6 +3122,8 @@ id|u_long
 id|memptr
 op_plus
 id|kernel_size
+op_plus
+id|bi_size
 comma
 id|bi.ramdisk.size
 op_rshift
@@ -3260,11 +3258,9 @@ suffix:semicolon
 id|Printf
 c_func
 (paren
-l_string|&quot;ramdisk dest top is 0x%08lx&bslash;n&quot;
+l_string|&quot;ramdisk dest is 0x%08lx&bslash;n&quot;
 comma
-id|start_mem
-op_plus
-id|mem_size
+id|bi.ramdisk.addr
 )paren
 suffix:semicolon
 id|Printf
@@ -3275,11 +3271,11 @@ comma
 (paren
 id|u_long
 )paren
-(paren
 id|memptr
 op_plus
 id|kernel_size
-)paren
+op_plus
+id|bi_size
 )paren
 suffix:semicolon
 id|Printf
@@ -3290,11 +3286,11 @@ comma
 (paren
 id|u_long
 )paren
-(paren
 id|memptr
 op_plus
 id|kernel_size
-)paren
+op_plus
+id|bi_size
 op_plus
 id|rd_size
 )paren
@@ -3429,11 +3425,11 @@ id|memptr
 comma
 id|start_mem
 comma
-id|mem_size
+id|kernel_size
+comma
+id|bi.ramdisk.addr
 comma
 id|rd_size
-comma
-id|kernel_size
 )paren
 suffix:semicolon
 multiline_comment|/* Clean up and exit in case of a failure */
@@ -4978,6 +4974,10 @@ c_cond
 id|bi.ramdisk.size
 )paren
 (brace
+id|bi.ramdisk.addr
+op_and_assign
+l_int|0xfffffc00
+suffix:semicolon
 id|compat_bootinfo.ramdisk_size
 op_assign
 (paren
@@ -5369,13 +5369,13 @@ id|u_long
 id|start_mem
 comma
 id|u_long
-id|mem_size
+id|kernel_size
+comma
+id|u_long
+id|rd_dest
 comma
 id|u_long
 id|rd_size
-comma
-id|u_long
-id|kernel_size
 )paren
 (brace
 r_register
@@ -5438,7 +5438,7 @@ c_func
 l_string|&quot;d0&quot;
 )paren
 op_assign
-id|mem_size
+id|rd_dest
 suffix:semicolon
 r_register
 id|u_long
@@ -5532,7 +5532,7 @@ suffix:semicolon
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     *&t;This assembler code is copied to chip ram, and then executed.&n;     *&t;It copies the kernel to it&squot;s final resting place.&n;     *&n;     *&t;It is called with:&n;     *&n;     *&t;    a3 = memptr&n;     *&t;    a4 = start_mem&n;     *&t;    d0 = mem_size&n;     *&t;    d1 = rd_size&n;     *&t;    d2 = kernel_size&n;     *&t;    d3 = bi_size&n;     */
+multiline_comment|/*&n;     *&t;This assembler code is copied to chip ram, and then executed.&n;     *&t;It copies the kernel to it&squot;s final resting place.&n;     *&n;     *&t;It is called with:&n;     *&n;     *&t;    a3 = memptr&n;     *&t;    a4 = start_mem&n;     *&t;    d0 = rd_dest&n;     *&t;    d1 = rd_size&n;     *&t;    d2 = kernel_size&n;     *&t;    d3 = bi_size&n;     */
 id|asm
 c_func
 (paren
@@ -5710,10 +5710,35 @@ id|src
 op_increment
 op_or
 multiline_comment|/* copy the ramdisk to the top of memory */
-op_or
-multiline_comment|/* (from back to front) */
 id|movel
-id|a4
+id|a3
+comma
+id|a0
+op_or
+id|src
+op_assign
+(paren
+id|u_long
+op_star
+)paren
+(paren
+id|memptr
+op_plus
+id|kernel_size
+op_plus
+id|bi_size
+)paren
+suffix:semicolon
+id|addl
+id|d2
+comma
+id|a0
+id|addl
+id|d3
+comma
+id|a0
+id|movel
+id|d0
 comma
 id|a1
 op_or
@@ -5723,18 +5748,10 @@ op_assign
 id|u_long
 op_star
 )paren
-(paren
-id|start_mem
-op_plus
-id|mem_size
-)paren
+id|rd_dest
 suffix:semicolon
-id|addl
-id|d0
-comma
-id|a1
 id|movel
-id|a3
+id|a0
 comma
 id|a2
 op_or
@@ -5750,48 +5767,22 @@ op_plus
 id|kernel_size
 op_plus
 id|addl
-id|d2
+id|d1
 comma
 id|a2
 op_or
 id|bi_size
-)paren
-suffix:semicolon
-id|addl
-id|d3
-comma
-id|a2
-id|movel
-id|a2
-comma
-id|a0
-op_or
-id|src
-op_assign
-(paren
-id|u_long
-op_star
-)paren
-(paren
-(paren
-id|u_long
-)paren
-id|limit
 op_plus
 id|rd_size
 )paren
 suffix:semicolon
-id|addl
-id|d1
-comma
-id|a0
 l_int|1
 suffix:colon
 id|cmpl
 id|a0
 comma
 id|a2
-id|beqs
+id|jeq
 l_float|2f
 op_or
 r_while
@@ -5803,21 +5794,21 @@ id|limit
 id|moveb
 id|a0
 "@"
-op_minus
+op_plus
 comma
 id|a1
 "@"
-op_minus
+op_plus
 op_or
 op_star
-op_decrement
 id|dest
+op_increment
 op_assign
 op_star
-op_decrement
 id|src
+op_increment
 suffix:semicolon
-id|bras
+id|jra
 l_int|1
 id|b
 l_int|2

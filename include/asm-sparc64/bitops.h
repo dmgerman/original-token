@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: bitops.h,v 1.17 1997/06/14 17:35:05 davem Exp $&n; * bitops.h: Bit string operations on the V9.&n; *&n; * Copyright 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: bitops.h,v 1.18 1997/06/30 12:36:18 davem Exp $&n; * bitops.h: Bit string operations on the V9.&n; *&n; * Copyright 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC64_BITOPS_H
 DECL|macro|_SPARC64_BITOPS_H
 mdefine_line|#define _SPARC64_BITOPS_H
@@ -704,7 +704,7 @@ l_string|&quot;g2&quot;
 )paren
 suffix:semicolon
 macro_line|#else
-macro_line|#ifdef EASY_CHEESE_VERSION
+macro_line|#if 1 /* def EASY_CHEESE_VERSION */
 id|result
 op_assign
 l_int|0
@@ -966,20 +966,13 @@ op_add_assign
 l_int|64
 suffix:semicolon
 )brace
-id|offset
-op_assign
-id|size
-op_rshift
-l_int|6
-suffix:semicolon
-id|size
-op_and_assign
-l_int|63UL
-suffix:semicolon
 r_while
 c_loop
 (paren
-id|offset
+id|size
+op_amp
+op_complement
+l_int|63UL
 )paren
 (brace
 r_if
@@ -1003,8 +996,9 @@ id|result
 op_add_assign
 l_int|64
 suffix:semicolon
-id|offset
-op_decrement
+id|size
+op_sub_assign
+l_int|64
 suffix:semicolon
 )brace
 r_if
@@ -1638,20 +1632,13 @@ op_add_assign
 l_int|64
 suffix:semicolon
 )brace
-id|offset
-op_assign
-id|size
-op_rshift
-l_int|6
-suffix:semicolon
-id|size
-op_and_assign
-l_int|63UL
-suffix:semicolon
 r_while
 c_loop
 (paren
-id|offset
+id|size
+op_amp
+op_complement
+l_int|63
 )paren
 (brace
 r_if
@@ -1678,8 +1665,9 @@ id|result
 op_add_assign
 l_int|64
 suffix:semicolon
-id|offset
-op_decrement
+id|size
+op_sub_assign
+l_int|64
 suffix:semicolon
 )brace
 r_if

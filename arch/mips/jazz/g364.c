@@ -13,17 +13,17 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;linux/kbd_kern.h&gt;
+macro_line|#include &lt;linux/vt_kern.h&gt;
+macro_line|#include &lt;linux/consolemap.h&gt;
+macro_line|#include &lt;linux/selection.h&gt;
+macro_line|#include &lt;linux/console_struct.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/types.h&gt;
-macro_line|#include &quot;../../../drivers/char/kbd_kern.h&quot;
-macro_line|#include &quot;../../../drivers/char/vt_kern.h&quot;
-macro_line|#include &quot;../../../drivers/char/consolemap.h&quot;
-macro_line|#include &quot;../../../drivers/char/selection.h&quot;
-macro_line|#include &quot;../../../drivers/char/console_struct.h&quot;
 r_extern
 r_void
 id|register_console

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;AX.25 release 036&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Most of this code is based on the SDL diagrams published in the 7th&n; *&t;ARRL Computer Networking Conference papers. The diagrams have mistakes&n; *&t;in them, but are mostly correct. Before you modify the code could you&n; *&t;read the SDL diagrams as the code is not obvious and probably very&n; *&t;easy to break;&n; *&n; *&t;History&n; *&t;AX.25 028a&t;Jonathan(G4KLX)&t;New state machine based on SDL diagrams.&n; *&t;AX.25 028b&t;Jonathan(G4KLX) Extracted AX25 control block from&n; *&t;&t;&t;&t;&t;the sock structure.&n; *&t;AX.25 029&t;Alan(GW4PTS)&t;Switched to KA9Q constant names.&n; *&t;&t;&t;Jonathan(G4KLX)&t;Added IP mode registration.&n; *&t;AX.25 030&t;Jonathan(G4KLX)&t;Added AX.25 fragment reception.&n; *&t;&t;&t;&t;&t;Upgraded state machine for SABME.&n; *&t;&t;&t;&t;&t;Added arbitrary protocol id support.&n; *&t;AX.25 031&t;Joerg(DL1BKE)&t;Added DAMA support&n; *&t;&t;&t;HaJo(DD8NE)&t;Added Idle Disc Timer T5&n; *&t;&t;&t;Joerg(DL1BKE)   Renamed it to &quot;IDLE&quot; with a slightly&n; *&t;&t;&t;&t;&t;different behaviour. Fixed defrag&n; *&t;&t;&t;&t;&t;routine (I hope)&n; *&t;AX.25 032&t;Darryl(G7LED)&t;AX.25 segmentation fixed.&n; *&t;AX.25 033&t;Jonathan(G4KLX)&t;Remove auto-router.&n; *&t;&t;&t;&t;&t;Modularisation changes.&n; *&t;AX.25 035&t;Hans(PE1AYX)&t;Fixed interface to IP layer.&n; *&t;AX.25 036&t;Jonathan(G4KLX)&t;Move DAMA code into own file.&n; *&t;&t;&t;Joerg(DL1BKE)&t;Fixed DAMA Slave.&n; */
+multiline_comment|/*&n; *&t;AX.25 release 037&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Most of this code is based on the SDL diagrams published in the 7th&n; *&t;ARRL Computer Networking Conference papers. The diagrams have mistakes&n; *&t;in them, but are mostly correct. Before you modify the code could you&n; *&t;read the SDL diagrams as the code is not obvious and probably very&n; *&t;easy to break;&n; *&n; *&t;History&n; *&t;AX.25 028a&t;Jonathan(G4KLX)&t;New state machine based on SDL diagrams.&n; *&t;AX.25 028b&t;Jonathan(G4KLX) Extracted AX25 control block from&n; *&t;&t;&t;&t;&t;the sock structure.&n; *&t;AX.25 029&t;Alan(GW4PTS)&t;Switched to KA9Q constant names.&n; *&t;&t;&t;Jonathan(G4KLX)&t;Added IP mode registration.&n; *&t;AX.25 030&t;Jonathan(G4KLX)&t;Added AX.25 fragment reception.&n; *&t;&t;&t;&t;&t;Upgraded state machine for SABME.&n; *&t;&t;&t;&t;&t;Added arbitrary protocol id support.&n; *&t;AX.25 031&t;Joerg(DL1BKE)&t;Added DAMA support&n; *&t;&t;&t;HaJo(DD8NE)&t;Added Idle Disc Timer T5&n; *&t;&t;&t;Joerg(DL1BKE)   Renamed it to &quot;IDLE&quot; with a slightly&n; *&t;&t;&t;&t;&t;different behaviour. Fixed defrag&n; *&t;&t;&t;&t;&t;routine (I hope)&n; *&t;AX.25 032&t;Darryl(G7LED)&t;AX.25 segmentation fixed.&n; *&t;AX.25 033&t;Jonathan(G4KLX)&t;Remove auto-router.&n; *&t;&t;&t;&t;&t;Modularisation changes.&n; *&t;AX.25 035&t;Hans(PE1AYX)&t;Fixed interface to IP layer.&n; *&t;AX.25 036&t;Jonathan(G4KLX)&t;Move DAMA code into own file.&n; *&t;&t;&t;Joerg(DL1BKE)&t;Fixed DAMA Slave.&n; *&t;AX.25 037&t;Jonathan(G4KLX)&t;New timer architecture.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
 macro_line|#include &lt;linux/errno.h&gt;
@@ -388,9 +388,11 @@ l_int|NULL
 r_return
 l_int|0
 suffix:semicolon
-id|ax25-&gt;idletimer
-op_assign
-id|ax25-&gt;idle
+id|ax25_start_idletimer
+c_func
+(paren
+id|ax25
+)paren
 suffix:semicolon
 id|pid
 op_assign
@@ -642,13 +644,6 @@ id|AX25_STATE_0
 r_return
 l_int|0
 suffix:semicolon
-id|del_timer
-c_func
-(paren
-op_amp
-id|ax25-&gt;timer
-)paren
-suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -718,12 +713,6 @@ r_break
 suffix:semicolon
 macro_line|#endif
 )brace
-id|ax25_set_timer
-c_func
-(paren
-id|ax25
-)paren
-suffix:semicolon
 r_return
 id|queued
 suffix:semicolon
@@ -1659,10 +1648,6 @@ comma
 id|ax25_dev
 )paren
 suffix:semicolon
-id|ax25-&gt;idletimer
-op_assign
-id|ax25-&gt;idle
-suffix:semicolon
 )brace
 id|ax25-&gt;source_addr
 op_assign
@@ -1829,10 +1814,6 @@ id|ax25
 )paren
 suffix:semicolon
 macro_line|#endif
-id|ax25-&gt;t3timer
-op_assign
-id|ax25-&gt;t3
-suffix:semicolon
 id|ax25-&gt;state
 op_assign
 id|AX25_STATE_3
@@ -1843,7 +1824,19 @@ c_func
 id|ax25
 )paren
 suffix:semicolon
-id|ax25_set_timer
+id|ax25_start_heartbeat
+c_func
+(paren
+id|ax25
+)paren
+suffix:semicolon
+id|ax25_start_t3timer
+c_func
+(paren
+id|ax25
+)paren
+suffix:semicolon
+id|ax25_start_idletimer
 c_func
 (paren
 id|ax25

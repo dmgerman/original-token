@@ -2601,5 +2601,9 @@ id|val
 suffix:semicolon
 )brace
 macro_line|#endif /* !defined (__LANGUAGE_ASSEMBLY__) */
+DECL|macro|module_map
+mdefine_line|#define module_map      vmalloc
+DECL|macro|module_unmap
+mdefine_line|#define module_unmap    vfree
 macro_line|#endif /* __ASM_MIPS_PGTABLE_H */
 eof

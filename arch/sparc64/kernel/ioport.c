@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ioport.c,v 1.7 1997/04/10 05:13:01 davem Exp $&n; * ioport.c:  Simple io mapping allocator.&n; *&n; * Copyright (C) 1995,1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; */
+multiline_comment|/* $Id: ioport.c,v 1.10 1997/06/30 09:24:02 jj Exp $&n; * ioport.c:  Simple io mapping allocator.&n; *&n; * Copyright (C) 1995,1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -209,55 +209,13 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|vaddr
-op_assign
-id|occupy_region
+r_return
+id|__va
 c_func
 (paren
-id|sparc_iobase_vaddr
-comma
-id|IOBASE_END
-comma
-(paren
-id|offset
-op_plus
-id|len
-op_plus
-id|PAGE_SIZE
-op_minus
-l_int|1
-)paren
-op_amp
-id|PAGE_MASK
-comma
-id|PAGE_SIZE
-comma
-id|name
+id|addr
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|vaddr
-op_eq
-l_int|0
-)paren
-(brace
-multiline_comment|/* Usually we cannot see printks in this case. */
-id|prom_printf
-c_func
-(paren
-l_string|&quot;alloc_io: cannot occupy %d region&bslash;n&quot;
-comma
-id|len
-)paren
-suffix:semicolon
-id|prom_halt
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
 )brace
 id|base_address
 op_assign
@@ -358,6 +316,17 @@ l_int|1
 )paren
 op_amp
 id|PAGE_MASK
+suffix:semicolon
+r_if
+c_cond
+(paren
+r_virtual
+op_ge
+id|PAGE_OFFSET
+op_plus
+l_int|0x10000000000UL
+)paren
+r_return
 suffix:semicolon
 id|release_region
 c_func

@@ -39,9 +39,9 @@ l_string|&quot;INC&quot;
 l_string|&quot;BAS&quot;
 multiline_comment|/* programming languages */
 l_string|&quot;BAT&quot;
-l_string|&quot;SH&quot;
+l_string|&quot;SH &quot;
 multiline_comment|/* program code :) */
-l_string|&quot;INI &quot;
+l_string|&quot;INI&quot;
 multiline_comment|/* config files */
 l_string|&quot;PBM&quot;
 l_string|&quot;PGM&quot;

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtable.h,v 1.61 1997/06/06 10:56:34 jj Exp $ */
+multiline_comment|/* $Id: pgtable.h,v 1.62 1997/06/27 14:55:00 jj Exp $ */
 macro_line|#ifndef _SPARC_PGTABLE_H
 DECL|macro|_SPARC_PGTABLE_H
 mdefine_line|#define _SPARC_PGTABLE_H
@@ -1759,5 +1759,9 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
+DECL|macro|module_map
+mdefine_line|#define module_map      vmalloc
+DECL|macro|module_unmap
+mdefine_line|#define module_unmap    vfree
 macro_line|#endif /* !(_SPARC_PGTABLE_H) */
 eof

@@ -6799,6 +6799,13 @@ op_decrement
 suffix:semicolon
 )brace
 )brace
+id|run_task_queue
+c_func
+(paren
+op_amp
+id|tq_disk
+)paren
+suffix:semicolon
 macro_line|#ifdef DEBUG
 r_if
 c_cond

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: time.c,v 1.2 1997/04/10 03:02:35 davem Exp $&n; * time.c: UltraSparc timer and TOD clock support.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; *&n; * Based largely on code which is:&n; *&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; */
+multiline_comment|/* $Id: time.c,v 1.3 1997/06/17 13:25:29 jj Exp $&n; * time.c: UltraSparc timer and TOD clock support.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; *&n; * Based largely on code which is:&n; *&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -546,21 +546,6 @@ id|data2
 suffix:semicolon
 multiline_comment|/* Was the write blocked? */
 )brace
-multiline_comment|/* XXX HACK HACK HACK, delete me soon */
-DECL|variable|XXX_sbus_ranges
-r_static
-r_struct
-id|linux_prom_ranges
-id|XXX_sbus_ranges
-(braket
-id|PROMREG_MAX
-)braket
-suffix:semicolon
-DECL|variable|XXX_sbus_nranges
-r_static
-r_int
-id|XXX_sbus_nranges
-suffix:semicolon
 multiline_comment|/* Probe for the real time clock chip. */
 DECL|function|__initfunc
 id|__initfunc
@@ -594,6 +579,17 @@ comma
 id|sbusnd
 comma
 id|err
+suffix:semicolon
+multiline_comment|/* XXX HACK HACK HACK, delete me soon */
+r_struct
+id|linux_prom_ranges
+id|XXX_sbus_ranges
+(braket
+id|PROMREG_MAX
+)braket
+suffix:semicolon
+r_int
+id|XXX_sbus_nranges
 suffix:semicolon
 id|node
 op_assign

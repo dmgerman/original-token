@@ -1,31 +1,42 @@
-multiline_comment|/* $Id: bootstr.c,v 1.12 1996/12/18 06:46:54 tridge Exp $&n; * bootstr.c:  Boot string/argument acquisition from the PROM.&n; *&n; * Copyright(C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: bootstr.c,v 1.14 1997/06/19 16:28:49 jj Exp $&n; * bootstr.c:  Boot string/argument acquisition from the PROM.&n; *&n; * Copyright(C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 DECL|macro|BARG_LEN
 mdefine_line|#define BARG_LEN  256
-DECL|variable|barg_buf
+DECL|variable|__initdata
 r_static
 r_char
 id|barg_buf
 (braket
 id|BARG_LEN
 )braket
+id|__initdata
+op_assign
+(brace
+l_int|0
+)brace
 suffix:semicolon
-DECL|variable|fetched
+DECL|variable|__initdata
 r_static
 r_char
 id|fetched
+id|__initdata
 op_assign
 l_int|0
 suffix:semicolon
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_char
 op_star
-DECL|function|prom_getbootargs
 id|prom_getbootargs
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: mbus.h,v 1.8 1996/08/29 09:48:21 davem Exp $&n; * mbus.h:  Various defines for MBUS modules.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: mbus.h,v 1.9 1997/06/24 15:48:12 jj Exp $&n; * mbus.h:  Various defines for MBUS modules.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_MBUS_H
 DECL|macro|_SPARC_MBUS_H
 mdefine_line|#define _SPARC_MBUS_H
@@ -74,10 +74,15 @@ id|Viking_new
 op_assign
 l_int|12
 comma
+DECL|enumerator|TurboSparc
+id|TurboSparc
+op_assign
+l_int|13
+comma
 DECL|enumerator|SRMMU_INVAL_MOD
 id|SRMMU_INVAL_MOD
 op_assign
-l_int|13
+l_int|14
 comma
 )brace
 suffix:semicolon
@@ -153,6 +158,8 @@ mdefine_line|#define LSI_L64815&t;&t;0x0
 multiline_comment|/* Fujitsu */
 DECL|macro|FMI_AURORA
 mdefine_line|#define FMI_AURORA&t;&t;0x4   /* MB8690x, a Swift module... */
+DECL|macro|FMI_TURBO
+mdefine_line|#define FMI_TURBO&t;&t;0x5   /* MB86907, a TurboSparc module... */
 multiline_comment|/* For multiprocessor support we need to be able to obtain the CPU id and&n; * the MBUS Module id.&n; */
 multiline_comment|/* The CPU ID is encoded in the trap base register, 20 bits to the left of&n; * bit zero, with 2 bits being significant.&n; */
 DECL|macro|TBR_ID_SHIFT

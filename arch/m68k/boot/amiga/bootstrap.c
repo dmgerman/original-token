@@ -5,9 +5,13 @@ macro_line|#include &lt;stdio.h&gt;
 macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;string.h&gt;
 macro_line|#include &lt;sys/file.h&gt;
-macro_line|#include &lt;sys/types.h&gt;
 macro_line|#include &lt;unistd.h&gt;
 multiline_comment|/* required Linux/m68k include files */
+DECL|macro|__KERNEL_STRICT_NAMES
+mdefine_line|#define __KERNEL_STRICT_NAMES&t;&t;/* This is ugly, I know */
+DECL|macro|_LINUX_POSIX_TYPES_H
+mdefine_line|#define _LINUX_POSIX_TYPES_H
+macro_line|#include &lt;asm/posix_types.h&gt;
 macro_line|#include &lt;linux/a.out.h&gt;
 macro_line|#include &lt;linux/elf.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;

@@ -199,7 +199,7 @@ suffix:semicolon
 DECL|member|root
 DECL|member|pwd
 r_struct
-id|inode
+id|dentry
 op_star
 id|root
 comma

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pstate.h,v 1.4 1997/05/29 12:45:02 jj Exp $ */
+multiline_comment|/* $Id: pstate.h,v 1.6 1997/06/25 07:39:45 jj Exp $ */
 macro_line|#ifndef _SPARC64_PSTATE_H
 DECL|macro|_SPARC64_PSTATE_H
 mdefine_line|#define _SPARC64_PSTATE_H
@@ -13,6 +13,12 @@ DECL|macro|PSTATE_TLE
 mdefine_line|#define PSTATE_TLE&t;0x0000000000000100&t;/* Trap Little Endian.&t;&t;*/
 DECL|macro|PSTATE_MM
 mdefine_line|#define PSTATE_MM&t;0x00000000000000c0&t;/* Memory Model.&t;&t;*/
+DECL|macro|PSTATE_TSO
+mdefine_line|#define PSTATE_TSO&t;0x0000000000000000&t;/* MM: Total Store Order&t;*/
+DECL|macro|PSTATE_PSO
+mdefine_line|#define PSTATE_PSO&t;0x0000000000000040&t;/* MM: Partial Store Order&t;*/
+DECL|macro|PSTATE_RMO
+mdefine_line|#define PSTATE_RMO&t;0x0000000000000080&t;/* MM: Relaxed Memory Order&t;*/
 DECL|macro|PSTATE_RED
 mdefine_line|#define PSTATE_RED&t;0x0000000000000020&t;/* Reset Error Debug State.&t;*/
 DECL|macro|PSTATE_PEF
@@ -64,6 +70,12 @@ DECL|macro|TSTATE_TLE
 mdefine_line|#define TSTATE_TLE&t;0x0000000000010000&t;/* Trap Little Endian.&t;&t;*/
 DECL|macro|TSTATE_MM
 mdefine_line|#define TSTATE_MM&t;0x000000000000c000&t;/* Memory Model.&t;&t;*/
+DECL|macro|TSTATE_TSO
+mdefine_line|#define TSTATE_TSO&t;0x0000000000000000&t;/* MM: Total Store Order&t;*/
+DECL|macro|TSTATE_PSO
+mdefine_line|#define TSTATE_PSO&t;0x0000000000004000&t;/* MM: Partial Store Order&t;*/
+DECL|macro|TSTATE_RMO
+mdefine_line|#define TSTATE_RMO&t;0x0000000000008000&t;/* MM: Relaxed Memory Order&t;*/
 DECL|macro|TSTATE_RED
 mdefine_line|#define TSTATE_RED&t;0x0000000000002000&t;/* Reset Error Debug State.&t;*/
 DECL|macro|TSTATE_PEF

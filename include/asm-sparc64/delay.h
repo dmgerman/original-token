@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: delay.h,v 1.4 1997/04/10 23:32:44 davem Exp $&n; * delay.h: Linux delay routines on the V9.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu).&n; */
+multiline_comment|/* $Id: delay.h,v 1.5 1997/06/18 12:36:23 jj Exp $&n; * delay.h: Linux delay routines on the V9.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu).&n; */
 macro_line|#ifndef __SPARC64_DELAY_H
 DECL|macro|__SPARC64_DELAY_H
 mdefine_line|#define __SPARC64_DELAY_H
@@ -24,11 +24,22 @@ id|__volatile__
 c_func
 (paren
 "&quot;"
+id|b
+comma
+id|pt
+op_mod
+op_mod
+id|xcc
+comma
+l_float|1f
 id|cmp
 op_mod
 l_int|0
 comma
 l_int|0
+dot
+id|align
+l_int|32
 l_int|1
 suffix:colon
 id|bne

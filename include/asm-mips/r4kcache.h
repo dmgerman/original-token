@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: r4kcache.h,v 1.1 1997/06/06 09:39:42 ralf Exp $&n; * r4kcache.h: Inline assembly cache operations.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/* $Id: r4kcache.h,v 1.2 1997/06/25 17:04:19 ralf Exp $&n; * r4kcache.h: Inline assembly cache operations.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
 macro_line|#ifndef _MIPS_R4KCACHE_H
 DECL|macro|_MIPS_R4KCACHE_H
 mdefine_line|#define _MIPS_R4KCACHE_H
@@ -3873,6 +3873,13 @@ op_plus
 id|PAGE_SIZE
 )paren
 suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;nop;nop;nop;nop&quot;
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -5197,7 +5204,7 @@ id|start
 comma
 l_string|&quot;i&quot;
 (paren
-id|Index_Invalidate_I
+id|Index_Writeback_Inv_D
 )paren
 )paren
 suffix:semicolon

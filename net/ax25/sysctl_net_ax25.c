@@ -143,7 +143,7 @@ op_assign
 (brace
 l_int|30
 op_star
-id|AX25_SLOWHZ
+id|HZ
 )brace
 suffix:semicolon
 DECL|variable|min_t2
@@ -165,7 +165,7 @@ op_assign
 (brace
 l_int|20
 op_star
-id|AX25_SLOWHZ
+id|HZ
 )brace
 suffix:semicolon
 DECL|variable|min_t3
@@ -187,7 +187,7 @@ op_assign
 (brace
 l_int|3600
 op_star
-id|AX25_SLOWHZ
+id|HZ
 )brace
 suffix:semicolon
 DECL|variable|min_idle
@@ -209,7 +209,7 @@ op_assign
 (brace
 l_int|65535
 op_star
-id|AX25_SLOWHZ
+id|HZ
 )brace
 suffix:semicolon
 DECL|variable|min_n2
@@ -291,7 +291,7 @@ op_assign
 (brace
 l_int|65535
 op_star
-id|AX25_SLOWHZ
+id|HZ
 )brace
 suffix:semicolon
 DECL|variable|ax25_table_header

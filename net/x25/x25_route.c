@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;X.25 Packet Layer release 001&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 2.1.15 or higher&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;X.25 001&t;Jonathan Naylor&t;Started coding.&n; */
+multiline_comment|/*&n; *&t;X.25 Packet Layer release 002&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 2.1.15 or higher&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;X.25 001&t;Jonathan Naylor&t;Started coding.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_X25) || defined(CONFIG_X25_MODULE)
 macro_line|#include &lt;linux/errno.h&gt;
@@ -620,9 +620,6 @@ id|device
 op_star
 id|dev
 suffix:semicolon
-r_int
-id|err
-suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -635,29 +632,6 @@ suffix:colon
 r_if
 c_cond
 (paren
-(paren
-id|err
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_READ
-comma
-id|arg
-comma
-r_sizeof
-(paren
-r_struct
-id|x25_route_struct
-)paren
-)paren
-)paren
-op_ne
-l_int|0
-)paren
-r_return
-id|err
-suffix:semicolon
 id|copy_from_user
 c_func
 (paren
@@ -672,6 +646,10 @@ r_struct
 id|x25_route_struct
 )paren
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 r_if
 c_cond
@@ -721,29 +699,6 @@ suffix:colon
 r_if
 c_cond
 (paren
-(paren
-id|err
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_READ
-comma
-id|arg
-comma
-r_sizeof
-(paren
-r_struct
-id|x25_route_struct
-)paren
-)paren
-)paren
-op_ne
-l_int|0
-)paren
-r_return
-id|err
-suffix:semicolon
 id|copy_from_user
 c_func
 (paren
@@ -758,6 +713,10 @@ r_struct
 id|x25_route_struct
 )paren
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 r_if
 c_cond

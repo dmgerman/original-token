@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;linux/arch/mips/kernel/irq.c&n; *&n; *&t;Copyright (C) 1992 Linus Torvalds&n; *&n; * This file contains the code used by various IRQ handling routines:&n; * asking for different IRQ&squot;s should be done through these routines&n; * instead of just grabbing them. Thus setups with different IRQ numbers&n; * shouldn&squot;t result in any weird surprises, and installing new handlers&n; * should be easier.&n; *&n; * Mips support by Ralf Baechle and Andreas Busse&n; */
+multiline_comment|/*&n; *&t;linux/arch/mips/kernel/irq.c&n; *&n; *&t;Copyright (C) 1992 Linus Torvalds&n; *&n; * This file contains the code used by various IRQ handling routines:&n; * asking for different IRQ&squot;s should be done through these routines&n; * instead of just grabbing them. Thus setups with different IRQ numbers&n; * shouldn&squot;t result in any weird surprises, and installing new handlers&n; * should be easier.&n; *&n; * Mips support by Ralf Baechle and Andreas Busse&n; *&n; * $Id: irq.c,v 1.6 1997/06/30 15:52:34 ralf Exp $&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -195,15 +195,10 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|save_and_cli
 c_func
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|mask_irq
@@ -233,15 +228,10 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|save_and_cli
 c_func
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|unmask_irq
@@ -862,15 +852,10 @@ c_func
 id|irq
 )paren
 suffix:semicolon
-id|save_flags
+id|save_and_cli
 c_func
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 op_star
@@ -1154,15 +1139,10 @@ id|dev_id
 r_continue
 suffix:semicolon
 multiline_comment|/* Found it - now free it */
-id|save_flags
+id|save_and_cli
 c_func
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 op_star

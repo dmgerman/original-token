@@ -2396,13 +2396,32 @@ id|KBD_CNTL_REG
 )paren
 suffix:semicolon
 multiline_comment|/* Disable Aux device */
-id|aux_write_dev_nosleep
+id|poll_aux_status_nosleep
+c_func
+(paren
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+id|KBD_CCMD_WRITE_MODE
+comma
+id|KBD_CNTL_REG
+)paren
+suffix:semicolon
+id|poll_aux_status_nosleep
+c_func
+(paren
+)paren
+suffix:semicolon
+id|outb_p
 c_func
 (paren
 id|AUX_INTS_OFF
+comma
+id|KBD_DATA_REG
 )paren
 suffix:semicolon
-multiline_comment|/* Disable controller interrupts */
 )brace
 r_return
 l_int|0

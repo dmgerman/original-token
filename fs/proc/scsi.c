@@ -196,6 +196,9 @@ comma
 multiline_comment|/* readlink&t;   */
 l_int|NULL
 comma
+multiline_comment|/* follow_link */
+l_int|NULL
+comma
 multiline_comment|/* readpage&t;   */
 l_int|NULL
 comma

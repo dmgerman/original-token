@@ -368,6 +368,14 @@ comma
 l_string|&quot;Fujitsu  MB86904&quot;
 )brace
 comma
+(brace
+l_int|0
+comma
+l_int|5
+comma
+l_string|&quot;Fujitsu TurboSparc MB86907&quot;
+)brace
+comma
 multiline_comment|/* SparcStation2, SparcServer 490 &amp; 690 */
 (brace
 l_int|1

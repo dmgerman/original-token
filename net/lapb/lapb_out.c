@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;LAPB release 001&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;LAPB 001&t;Jonathan Naylor&t;Started Coding&n; */
+multiline_comment|/*&n; *&t;LAPB release 002&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;LAPB 001&t;Jonathan Naylor&t;Started Coding&n; *&t;LAPB 002&t;Jonathan Naylor&t;New timer architecture.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_LAPB) || defined(CONFIG_LAPB_MODULE)
 macro_line|#include &lt;linux/errno.h&gt;
@@ -220,13 +220,6 @@ id|start
 comma
 id|end
 suffix:semicolon
-id|del_timer
-c_func
-(paren
-op_amp
-id|lapb-&gt;timer
-)paren
-suffix:semicolon
 id|modulus
 op_assign
 (paren
@@ -414,21 +407,20 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|lapb-&gt;t1timer
-op_eq
-l_int|0
+op_logical_neg
+id|lapb_t1timer_running
+c_func
+(paren
+id|lapb
 )paren
-id|lapb-&gt;t1timer
-op_assign
-id|lapb-&gt;t1
-suffix:semicolon
-)brace
-id|lapb_set_timer
+)paren
+id|lapb_start_t1timer
 c_func
 (paren
 id|lapb
 )paren
 suffix:semicolon
+)brace
 )brace
 DECL|function|lapb_transmit_buffer
 r_void
@@ -724,13 +716,17 @@ id|LAPB_COMMAND
 )paren
 suffix:semicolon
 )brace
-id|lapb-&gt;t2timer
-op_assign
-l_int|0
+id|lapb_start_t1timer
+c_func
+(paren
+id|lapb
+)paren
 suffix:semicolon
-id|lapb-&gt;t1timer
-op_assign
-id|lapb-&gt;t1
+id|lapb_stop_t2timer
+c_func
+(paren
+id|lapb
+)paren
 suffix:semicolon
 )brace
 DECL|function|lapb_enquiry_response
@@ -849,9 +845,11 @@ comma
 id|nr
 )paren
 suffix:semicolon
-id|lapb-&gt;t1timer
-op_assign
-l_int|0
+id|lapb_stop_t1timer
+c_func
+(paren
+id|lapb
+)paren
 suffix:semicolon
 id|lapb-&gt;n2count
 op_assign
@@ -876,9 +874,11 @@ comma
 id|nr
 )paren
 suffix:semicolon
-id|lapb-&gt;t1timer
-op_assign
-id|lapb-&gt;t1
+id|lapb_start_t1timer
+c_func
+(paren
+id|lapb
+)paren
 suffix:semicolon
 )brace
 )brace

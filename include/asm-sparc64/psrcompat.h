@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: psrcompat.h,v 1.3 1997/06/05 06:22:54 davem Exp $ */
+multiline_comment|/* $Id: psrcompat.h,v 1.4 1997/06/20 11:54:39 davem Exp $ */
 macro_line|#ifndef _SPARC64_PSRCOMPAT_H
 DECL|macro|_SPARC64_PSRCOMPAT_H
 mdefine_line|#define _SPARC64_PSRCOMPAT_H
@@ -49,44 +49,8 @@ id|tstate
 (brace
 r_int
 r_int
-id|psr
-suffix:semicolon
-r_int
-r_int
 id|vers
 suffix:semicolon
-multiline_comment|/* These fields are in the same place. */
-id|psr
-op_assign
-(paren
-id|tstate
-op_amp
-(paren
-id|TSTATE_CWP
-op_or
-id|TSTATE_PEF
-)paren
-)paren
-suffix:semicolon
-multiline_comment|/* This is what the user would have always seen. */
-id|psr
-op_or_assign
-id|PSR_S
-suffix:semicolon
-multiline_comment|/* Slam in the 32-bit condition codes. */
-id|psr
-op_or_assign
-(paren
-(paren
-id|tstate
-op_amp
-id|TSTATE_ICC
-)paren
-op_rshift
-l_int|12
-)paren
-suffix:semicolon
-multiline_comment|/* This is completely arbitrary. */
 id|__asm__
 id|__volatile__
 c_func
@@ -99,8 +63,27 @@ id|vers
 )paren
 )paren
 suffix:semicolon
-id|psr
-op_or_assign
+r_return
+(paren
+(paren
+id|tstate
+op_amp
+id|TSTATE_CWP
+)paren
+op_or
+id|PSR_S
+op_or
+(paren
+(paren
+id|tstate
+op_amp
+id|TSTATE_ICC
+)paren
+op_rshift
+l_int|12
+)paren
+op_or
+(paren
 (paren
 (paren
 id|vers
@@ -112,9 +95,9 @@ l_int|32
 )paren
 op_amp
 id|PSR_IMPL
-suffix:semicolon
-id|psr
-op_or_assign
+)paren
+op_or
+(paren
 (paren
 (paren
 id|vers
@@ -126,9 +109,8 @@ l_int|36
 )paren
 op_amp
 id|PSR_VERS
-suffix:semicolon
-r_return
-id|psr
+)paren
+)paren
 suffix:semicolon
 )brace
 DECL|function|psr_to_tstate_icc
@@ -144,12 +126,7 @@ r_int
 id|psr
 )paren
 (brace
-r_int
-r_int
-id|tstate
-suffix:semicolon
-id|tstate
-op_assign
+r_return
 (paren
 (paren
 r_int
@@ -163,9 +140,6 @@ id|PSR_ICC
 )paren
 op_lshift
 l_int|12
-suffix:semicolon
-r_return
-id|tstate
 suffix:semicolon
 )brace
 macro_line|#endif /* !(_SPARC64_PSRCOMPAT_H) */

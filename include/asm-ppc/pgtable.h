@@ -1725,5 +1725,9 @@ DECL|macro|SWP_OFFSET
 mdefine_line|#define SWP_OFFSET(entry) ((entry) &gt;&gt; 8)
 DECL|macro|SWP_ENTRY
 mdefine_line|#define SWP_ENTRY(type,offset) (((type) &lt;&lt; 1) | ((offset) &lt;&lt; 8))
+DECL|macro|module_map
+mdefine_line|#define module_map      vmalloc
+DECL|macro|module_unmap
+mdefine_line|#define module_unmap    vfree
 macro_line|#endif /* _PPC_PAGE_H */
 eof

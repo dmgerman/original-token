@@ -6,16 +6,25 @@ DECL|macro|D_MAXLEN
 mdefine_line|#define D_MAXLEN 1024
 multiline_comment|/* public flags for d_add() */
 DECL|macro|D_NORMAL
-mdefine_line|#define D_NORMAL     0
+mdefine_line|#define D_NORMAL&t;  0
 DECL|macro|D_BASKET
-mdefine_line|#define D_BASKET     1 /* put into basket (deleted/unref&squot;d files) */
+mdefine_line|#define D_BASKET&t;  1 /* put into basket (deleted/unref&squot;d files) */
 DECL|macro|D_DUPLICATE
-mdefine_line|#define D_DUPLICATE  2 /* allow duplicate entries */
+mdefine_line|#define D_DUPLICATE&t;  2 /* allow duplicate entries */
 DECL|macro|D_NOCHECKDUP
-mdefine_line|#define D_NOCHECKDUP 4 /* no not check for duplicates */
-multiline_comment|/* public flags for d_flag */
+mdefine_line|#define D_NOCHECKDUP&t;  4 /* no not check for duplicates */
+DECL|macro|D_NEGATIVE
+mdefine_line|#define D_NEGATIVE&t;  8 /* negative entry */
 DECL|macro|D_PRELOADED
-mdefine_line|#define D_PRELOADED 8
+mdefine_line|#define D_PRELOADED&t; 16
+DECL|macro|D_DIR
+mdefine_line|#define D_DIR&t;&t; 32 /* directory entry - look out for allocation issues */
+DECL|macro|D_HASHED
+mdefine_line|#define D_HASHED&t; 64
+DECL|macro|D_ZOMBIE
+mdefine_line|#define D_ZOMBIE&t;128
+DECL|macro|D_INC_DDIR
+mdefine_line|#define D_INC_DDIR&t;512
 multiline_comment|/* public flags for d_del() */
 DECL|macro|D_REMOVE
 mdefine_line|#define D_REMOVE         0
@@ -23,28 +32,139 @@ DECL|macro|D_NO_CLEAR_INODE
 mdefine_line|#define D_NO_CLEAR_INODE 1
 DECL|macro|IS_ROOT
 mdefine_line|#define IS_ROOT(x) ((x) == (x)-&gt;d_parent)
-multiline_comment|/* &quot;quick string&quot; -- I introduced this to shorten the parameter list&n; * of many routines. Think of it as a (str,stlen) pair.&n; * Storing the len instead of doing strlen() very often is performance&n; * critical.&n; */
+multiline_comment|/* &quot;quick string&quot; -- I introduced this to shorten the parameter list&n; * of many routines. Think of it as a (str,stlen,hash) pair.&n; * Storing the len instead of doing strlen() very often is performance&n; * critical.&n; */
 DECL|struct|qstr
 r_struct
 id|qstr
 (brace
 DECL|member|name
+r_const
+r_int
 r_char
 op_star
 id|name
 suffix:semicolon
 DECL|member|len
+DECL|member|hash
 r_int
 id|len
+comma
+id|hash
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* Name hashing routines. Initial hash value */
+DECL|macro|init_name_hash
+mdefine_line|#define init_name_hash()&t;&t;0
+multiline_comment|/* partial hash update function. Assume roughly 4 bits per character */
+DECL|function|partial_name_hash
+r_static
+r_inline
+r_int
+r_int
+id|partial_name_hash
+c_func
+(paren
+r_int
+r_char
+id|c
+comma
+r_int
+r_int
+id|prevhash
+)paren
+(brace
+id|prevhash
+op_assign
+(paren
+id|prevhash
+op_lshift
+l_int|4
+)paren
+op_or
+(paren
+id|prevhash
+op_rshift
+(paren
+l_int|8
+op_star
+r_sizeof
+(paren
+r_int
+r_int
+)paren
+op_minus
+l_int|4
+)paren
+)paren
+suffix:semicolon
+r_return
+id|prevhash
+op_xor
+id|c
+suffix:semicolon
+)brace
+multiline_comment|/* Finally: cut down the number of bits to a int value (and try to avoid losing bits) */
+DECL|function|end_name_hash
+r_static
+r_inline
+r_int
+r_int
+id|end_name_hash
+c_func
+(paren
+r_int
+r_int
+id|hash
+)paren
+(brace
+r_if
+c_cond
+(paren
+r_sizeof
+(paren
+id|hash
+)paren
+OG
+r_sizeof
+(paren
+r_int
+r_int
+)paren
+)paren
+id|hash
+op_add_assign
+id|hash
+op_rshift
+l_int|4
+op_star
+r_sizeof
+(paren
+id|hash
+)paren
+suffix:semicolon
+r_return
+(paren
+r_int
+r_int
+)paren
+id|hash
+suffix:semicolon
+)brace
 DECL|struct|dentry
 r_struct
 id|dentry
 (brace
-r_union
-(brace
+DECL|member|d_flag
+r_int
+r_int
+id|d_flag
+suffix:semicolon
+DECL|member|d_count
+r_int
+r_int
+id|d_count
+suffix:semicolon
 DECL|member|d_inode
 r_struct
 id|inode
@@ -52,16 +172,6 @@ op_star
 id|d_inode
 suffix:semicolon
 multiline_comment|/* Where the name belongs to */
-DECL|member|d_ino
-r_int
-r_int
-id|d_ino
-suffix:semicolon
-multiline_comment|/* for preliminary entries */
-DECL|member|u
-)brace
-id|u
-suffix:semicolon
 DECL|member|d_parent
 r_struct
 id|dentry
@@ -69,6 +179,19 @@ op_star
 id|d_parent
 suffix:semicolon
 multiline_comment|/* parent directory */
+DECL|member|d_mounts
+r_struct
+id|dentry
+op_star
+id|d_mounts
+suffix:semicolon
+multiline_comment|/* mount information */
+DECL|member|d_covers
+r_struct
+id|dentry
+op_star
+id|d_covers
+suffix:semicolon
 DECL|member|d_next
 r_struct
 id|dentry
@@ -112,11 +235,6 @@ r_struct
 id|qstr
 id|d_name
 suffix:semicolon
-DECL|member|d_flag
-r_int
-r_int
-id|d_flag
-suffix:semicolon
 )brace
 suffix:semicolon
 r_extern
@@ -124,6 +242,33 @@ r_struct
 id|dentry
 op_star
 id|the_root
+suffix:semicolon
+multiline_comment|/*&n; * These are the low-level FS interfaces to the dcache..&n; */
+r_extern
+r_void
+id|d_instantiate
+c_func
+(paren
+r_struct
+id|dentry
+op_star
+comma
+r_struct
+id|inode
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|d_delete
+c_func
+(paren
+r_struct
+id|dentry
+op_star
+)paren
 suffix:semicolon
 multiline_comment|/* Note that all these routines must be called with vfs_lock() held */
 multiline_comment|/* get inode, if necessary retrieve it with iget() */
@@ -142,7 +287,17 @@ op_star
 id|changing_entry
 )paren
 suffix:semicolon
-multiline_comment|/* allocate proper space for the len */
+multiline_comment|/* allocate/de-allocate */
+r_extern
+r_void
+id|d_free
+c_func
+(paren
+r_struct
+id|dentry
+op_star
+)paren
+suffix:semicolon
 r_extern
 r_struct
 id|dentry
@@ -155,14 +310,16 @@ id|dentry
 op_star
 id|parent
 comma
-r_int
-id|len
+r_struct
+id|qstr
+op_star
+id|name
 comma
 r_int
 id|isdir
 )paren
 suffix:semicolon
-multiline_comment|/* only used once at mount_root() */
+multiline_comment|/* only used at mount-time */
 r_extern
 id|blocking
 r_struct
@@ -175,9 +332,14 @@ r_struct
 id|inode
 op_star
 id|root_inode
+comma
+r_struct
+id|dentry
+op_star
+id|old_root
 )paren
 suffix:semicolon
-multiline_comment|/* d_inode is connected with inode, and d_name is copied from ininame.&n; * either of them may be NULL, but when ininame is NULL, dname must be&n; * set by the caller prior to calling this. */
+multiline_comment|/*&n; * This adds the entry to the hash queues and initializes &quot;d_inode&quot;.&n; * The entry was actually filled in earlier during &quot;d_alloc()&quot;&n; */
 r_extern
 id|blocking
 r_void
@@ -193,11 +355,6 @@ r_struct
 id|inode
 op_star
 id|inode
-comma
-r_struct
-id|qstr
-op_star
-id|ininame
 comma
 r_int
 id|flags
@@ -278,19 +435,14 @@ op_star
 id|entry
 comma
 r_struct
-id|inode
+id|dentry
 op_star
-id|newdir
+id|newparent
 comma
 r_struct
 id|qstr
 op_star
 id|newname
-comma
-r_struct
-id|qstr
-op_star
-id|newapp
 )paren
 suffix:semicolon
 multiline_comment|/* appendix may either be NULL or be used for transname suffixes */
@@ -302,7 +454,7 @@ id|d_lookup
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
 id|dir
 comma
@@ -310,11 +462,6 @@ r_struct
 id|qstr
 op_star
 id|name
-comma
-r_struct
-id|qstr
-op_star
-id|appendix
 )paren
 suffix:semicolon
 multiline_comment|/* write full pathname into buffer and return length */
@@ -329,7 +476,7 @@ op_star
 id|entry
 comma
 r_struct
-id|inode
+id|dentry
 op_star
 id|chroot
 comma
@@ -362,5 +509,55 @@ op_star
 id|entry
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * Whee..&n; */
+DECL|function|dput
+r_static
+r_inline
+r_void
+id|dput
+c_func
+(paren
+r_struct
+id|dentry
+op_star
+id|dentry
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|dentry
+)paren
+id|dentry-&gt;d_count
+op_decrement
+suffix:semicolon
+)brace
+DECL|function|dget
+r_static
+r_inline
+r_struct
+id|dentry
+op_star
+id|dget
+c_func
+(paren
+r_struct
+id|dentry
+op_star
+id|dentry
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|dentry
+)paren
+id|dentry-&gt;d_count
+op_increment
+suffix:semicolon
+r_return
+id|dentry
+suffix:semicolon
+)brace
 macro_line|#endif
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sysirix.c,v 1.1 1997/06/06 09:33:25 ralf Exp $&n; * sysirix.c: IRIX system call emulation.&n; *&n; * Copyright (C) 1996 David S. Miller&n; */
+multiline_comment|/* $Id: sysirix.c,v 1.2 1997/06/17 15:24:26 ralf Exp $&n; * sysirix.c: IRIX system call emulation.&n; *&n; * Copyright (C) 1996 David S. Miller&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
@@ -2682,6 +2682,8 @@ op_assign
 id|namei
 c_func
 (paren
+id|NAM_FOLLOW_LINK
+comma
 id|path
 comma
 op_amp
@@ -6544,6 +6546,8 @@ op_assign
 id|namei
 c_func
 (paren
+id|NAM_FOLLOW_LINK
+comma
 id|fname
 comma
 op_amp
@@ -7189,9 +7193,9 @@ id|error
 suffix:semicolon
 )brace
 DECL|macro|NOFOLLOW_LINKS
-mdefine_line|#define NOFOLLOW_LINKS  0
+mdefine_line|#define NOFOLLOW_LINKS  NAM_FOLLOW_TRAILSLASH
 DECL|macro|FOLLOW_LINKS
-mdefine_line|#define FOLLOW_LINKS    1
+mdefine_line|#define FOLLOW_LINKS    NAM_FOLLOW_LINK
 DECL|function|chown_common
 r_static
 r_inline
@@ -7225,32 +7229,13 @@ r_struct
 id|iattr
 id|newattrs
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|follow
-op_eq
-id|NOFOLLOW_LINKS
-)paren
-(brace
-id|error
-op_assign
-id|lnamei
-c_func
-(paren
-id|filename
-comma
-op_amp
-id|inode
-)paren
-suffix:semicolon
-)brace
-r_else
 id|error
 op_assign
 id|namei
 c_func
 (paren
+id|follow
+comma
 id|filename
 comma
 op_amp
@@ -8574,6 +8559,8 @@ op_assign
 id|namei
 c_func
 (paren
+id|NAM_FOLLOW_LINK
+comma
 id|fname
 comma
 op_amp

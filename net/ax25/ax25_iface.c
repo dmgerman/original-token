@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;AX.25 release 036&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;AX.25 036&t;Jonathan(G4KLX)&t;Split from ax25_timer.c.&n; */
+multiline_comment|/*&n; *&t;AX.25 release 037&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;AX.25 036&t;Jonathan(G4KLX)&t;Split from ax25_timer.c.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
 macro_line|#include &lt;linux/errno.h&gt;
@@ -77,12 +77,10 @@ op_star
 id|func
 )paren
 (paren
-id|ax25_address
+id|ax25_cb
 op_star
 comma
-r_struct
-id|device
-op_star
+r_int
 )paren
 suffix:semicolon
 DECL|variable|linkfail_list
@@ -381,12 +379,10 @@ op_star
 id|func
 )paren
 (paren
-id|ax25_address
+id|ax25_cb
 op_star
 comma
-r_struct
-id|device
-op_star
+r_int
 )paren
 )paren
 (brace
@@ -467,12 +463,10 @@ op_star
 id|func
 )paren
 (paren
-id|ax25_address
+id|ax25_cb
 op_star
 comma
-r_struct
-id|device
-op_star
+r_int
 )paren
 )paren
 (brace
@@ -971,14 +965,12 @@ r_void
 id|ax25_link_failed
 c_func
 (paren
-id|ax25_address
+id|ax25_cb
 op_star
-id|callsign
+id|ax25
 comma
-r_struct
-id|device
-op_star
-id|dev
+r_int
+id|reason
 )paren
 (brace
 r_struct
@@ -1005,50 +997,10 @@ id|linkfail-&gt;next
 id|linkfail-&gt;func
 )paren
 (paren
-id|callsign
+id|ax25
 comma
-id|dev
+id|reason
 )paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n; *&t;Return the state of an AX.25 link given source, destination, and&n; *&t;device.&n; */
-DECL|function|ax25_link_up
-r_int
-id|ax25_link_up
-c_func
-(paren
-id|ax25_address
-op_star
-id|src
-comma
-id|ax25_address
-op_star
-id|dest
-comma
-id|ax25_digi
-op_star
-id|digi
-comma
-r_struct
-id|device
-op_star
-id|dev
-)paren
-(brace
-r_return
-id|ax25_find_cb
-c_func
-(paren
-id|src
-comma
-id|dest
-comma
-id|digi
-comma
-id|dev
-)paren
-op_ne
-l_int|NULL
 suffix:semicolon
 )brace
 DECL|function|ax25_protocol_is_registered

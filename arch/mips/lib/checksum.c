@@ -1,5 +1,7 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;MIPS specific IP/TCP/UDP checksumming routines&n; *&n; * Authors:&t;Ralf Baechle, &lt;ralf@waldorf-gmbh.de&gt;&n; *&t;&t;Lots of code moved from tcp.c and ip.c; see those files&n; *&t;&t;for more names.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;MIPS specific IP/TCP/UDP checksumming routines&n; *&n; * Authors:&t;Ralf Baechle, &lt;ralf@waldorf-gmbh.de&gt;&n; *&t;&t;Lots of code moved from tcp.c and ip.c; see those files&n; *&t;&t;for more names.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; * $Id: checksum.c,v 1.4 1997/07/03 09:43:16 ralf Exp $&n; */
 macro_line|#include &lt;net/checksum.h&gt;
+macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/string.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|function|from32to16
@@ -106,8 +108,12 @@ id|odd
 (brace
 id|result
 op_assign
+id|be16_to_cpu
+c_func
+(paren
 op_star
 id|buff
+)paren
 suffix:semicolon
 id|len
 op_decrement
@@ -276,11 +282,11 @@ l_int|1
 )paren
 id|result
 op_add_assign
+id|le16_to_cpu
+c_func
 (paren
 op_star
 id|buff
-op_lshift
-l_int|8
 )paren
 suffix:semicolon
 id|result

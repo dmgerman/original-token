@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;AX.25 release 036&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Most of this code is based on the SDL diagrams published in the 7th&n; *&t;ARRL Computer Networking Conference papers. The diagrams have mistakes&n; *&t;in them, but are mostly correct. Before you modify the code could you&n; *&t;read the SDL diagrams as the code is not obvious and probably very&n; *&t;easy to break;&n; *&n; *&t;History&n; *&t;AX.25 036&t;Jonathan(G4KLX)&t;Split from ax25_subr.c.&n; */
+multiline_comment|/*&n; *&t;AX.25 release 037&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Most of this code is based on the SDL diagrams published in the 7th&n; *&t;ARRL Computer Networking Conference papers. The diagrams have mistakes&n; *&t;in them, but are mostly correct. Before you modify the code could you&n; *&t;read the SDL diagrams as the code is not obvious and probably very&n; *&t;easy to break;&n; *&n; *&t;History&n; *&t;AX.25 036&t;Jonathan(G4KLX)&t;Split from ax25_subr.c.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
 macro_line|#include &lt;linux/errno.h&gt;
@@ -578,14 +578,6 @@ l_int|14
 r_return
 l_int|NULL
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|flags
-op_ne
-l_int|NULL
-)paren
-(brace
 op_star
 id|flags
 op_assign
@@ -621,7 +613,6 @@ id|flags
 op_assign
 id|AX25_RESPONSE
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -641,13 +632,6 @@ op_amp
 id|AX25_DAMA_FLAG
 suffix:semicolon
 multiline_comment|/* Copy to, from */
-r_if
-c_cond
-(paren
-id|dest
-op_ne
-l_int|NULL
-)paren
 id|memcpy
 c_func
 (paren
@@ -660,13 +644,6 @@ comma
 id|AX25_ADDR_LEN
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|src
-op_ne
-l_int|NULL
-)paren
 id|memcpy
 c_func
 (paren
@@ -737,14 +714,6 @@ r_return
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* Short packet */
-r_if
-c_cond
-(paren
-id|digi
-op_ne
-l_int|NULL
-)paren
-(brace
 id|memcpy
 c_func
 (paren
@@ -797,7 +766,6 @@ id|d
 op_assign
 l_int|0
 suffix:semicolon
-)brace
 )brace
 id|buf
 op_add_assign
@@ -1140,8 +1108,6 @@ id|out
 (brace
 r_int
 id|ct
-op_assign
-l_int|0
 suffix:semicolon
 id|out-&gt;ndigi
 op_assign
@@ -1156,12 +1122,19 @@ op_minus
 l_int|2
 suffix:semicolon
 multiline_comment|/* Invert the digipeaters */
-r_while
+r_for
 c_loop
 (paren
 id|ct
+op_assign
+l_int|0
+suffix:semicolon
+id|ct
 OL
 id|in-&gt;ndigi
+suffix:semicolon
+id|ct
+op_increment
 )paren
 (brace
 id|out-&gt;calls
@@ -1229,9 +1202,6 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-id|ct
-op_increment
-suffix:semicolon
 )brace
 )brace
 macro_line|#endif

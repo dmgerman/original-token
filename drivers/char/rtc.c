@@ -401,6 +401,8 @@ l_int|NULL
 suffix:semicolon
 r_int
 id|retval
+op_assign
+l_int|0
 suffix:semicolon
 r_if
 c_cond

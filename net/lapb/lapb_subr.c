@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;LAPB release 001&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;LAPB 001&t;Jonathan Naylor&t;Started Coding&n; */
+multiline_comment|/*&n; *&t;LAPB release 002&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;LAPB 001&t;Jonathan Naylor&t;Started Coding&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_LAPB) || defined(CONFIG_LAPB_MODULE)
 macro_line|#include &lt;linux/errno.h&gt;
@@ -35,30 +35,6 @@ r_struct
 id|sk_buff
 op_star
 id|skb
-suffix:semicolon
-r_while
-c_loop
-(paren
-(paren
-id|skb
-op_assign
-id|skb_dequeue
-c_func
-(paren
-op_amp
-id|lapb-&gt;input_queue
-)paren
-)paren
-op_ne
-l_int|NULL
-)paren
-id|kfree_skb
-c_func
-(paren
-id|skb
-comma
-id|FREE_READ
-)paren
 suffix:semicolon
 r_while
 c_loop

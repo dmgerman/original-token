@@ -1,5 +1,6 @@
 multiline_comment|/*&n; * $Id: capiutil.c,v 1.3 1997/05/18 09:24:18 calle Exp $&n; *&n; * CAPI 2.0 convert capi message to capi message struct&n; *&n; * From CAPI 2.0 Development Kit AVM 1995 (msg.c)&n; * Rewritten for Linux 1996 by Carsten Paeth (calle@calle.in-berlin.de)&n; *&n; * $Log: capiutil.c,v $&n; * Revision 1.3  1997/05/18 09:24:18  calle&n; * added verbose disconnect reason reporting to avmb1.&n; * some fixes in capi20 interface.&n; * changed info messages for B1-PCI&n; *&n; * Revision 1.2  1997/03/05 21:22:13  fritz&n; * Fix: Symbols have to be exported unconditionally.&n; *&n; * Revision 1.1  1997/03/04 21:50:34  calle&n; * Frirst version in isdn4linux&n; *&n; * Revision 2.2  1997/02/12 09:31:39  calle&n; * new version&n; *&n; * Revision 1.1  1997/01/31 10:32:20  calle&n; * Initial revision&n; *&n; */
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;

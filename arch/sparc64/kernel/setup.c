@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: setup.c,v 1.7 1997/05/20 07:58:56 jj Exp $&n; *  linux/arch/sparc64/kernel/setup.c&n; *&n; *  Copyright (C) 1995,1996  David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997       Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: setup.c,v 1.9 1997/07/05 09:52:29 davem Exp $&n; *  linux/arch/sparc64/kernel/setup.c&n; *&n; *  Copyright (C) 1995,1996  David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997       Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -105,14 +105,6 @@ r_extern
 r_int
 r_int
 id|sparc64_ttable_tl0
-suffix:semicolon
-r_extern
-r_void
-id|breakpoint
-c_func
-(paren
-r_void
-)paren
 suffix:semicolon
 macro_line|#if CONFIG_SUN_CONSOLE
 r_extern
@@ -296,6 +288,7 @@ id|memory_size
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* XXX Implement this at some point... */
 DECL|function|kernel_enter_debugger
 r_void
 id|kernel_enter_debugger
@@ -304,28 +297,6 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#if 0
-r_if
-c_cond
-(paren
-id|boot_flags
-op_amp
-id|BOOTME_KGDB
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;KGDB: Entered&bslash;n&quot;
-)paren
-suffix:semicolon
-id|breakpoint
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 )brace
 DECL|function|obp_system_intr
 r_int
@@ -335,29 +306,6 @@ c_func
 r_void
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|boot_flags
-op_amp
-id|BOOTME_KGDB
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;KGDB: system interrupted&bslash;n&quot;
-)paren
-suffix:semicolon
-id|breakpoint
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -433,7 +381,7 @@ c_func
 l_string|&quot;boot_flags_init: Halt!&bslash;n&quot;
 )paren
 suffix:semicolon
-id|halt
+id|prom_halt
 c_func
 (paren
 )paren
@@ -995,17 +943,6 @@ op_star
 id|cmdline_p
 )paren
 suffix:semicolon
-id|prom_printf
-c_func
-(paren
-l_string|&quot;BOOT: args[%s] saved[%s]&bslash;n&quot;
-comma
-op_star
-id|cmdline_p
-comma
-id|saved_command_line
-)paren
-suffix:semicolon
 id|printk
 c_func
 (paren
@@ -1019,80 +956,6 @@ op_star
 id|cmdline_p
 )paren
 suffix:semicolon
-macro_line|#if 0&t;
-r_if
-c_cond
-(paren
-(paren
-id|boot_flags
-op_amp
-id|BOOTME_DEBUG
-)paren
-op_logical_and
-(paren
-id|linux_dbvec
-op_ne
-l_int|0
-)paren
-op_logical_and
-(paren
-(paren
-op_star
-(paren
-r_int
-op_star
-)paren
-id|linux_dbvec
-)paren
-op_ne
-op_minus
-l_int|1
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Booted under KADB. Syncing trap table.&bslash;n&quot;
-)paren
-suffix:semicolon
-(paren
-op_star
-(paren
-id|linux_dbvec-&gt;teach_debugger
-)paren
-)paren
-(paren
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-(paren
-id|boot_flags
-op_amp
-id|BOOTME_KGDB
-)paren
-)paren
-(brace
-id|set_debug_traps
-c_func
-(paren
-)paren
-suffix:semicolon
-id|prom_printf
-(paren
-l_string|&quot;Breakpoint!&bslash;n&quot;
-)paren
-suffix:semicolon
-id|breakpoint
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif&t;
 id|idprom_init
 c_func
 (paren
@@ -1812,14 +1675,15 @@ op_star
 id|buffer
 )paren
 (brace
+macro_line|#ifndef __SMP__
 r_int
 id|cpuid
 op_assign
-id|get_cpuid
-c_func
-(paren
-)paren
+l_int|0
 suffix:semicolon
+macro_line|#else
+macro_line|#error SMP not supported on sparc64 yet
+macro_line|#endif
 r_return
 id|sprintf
 c_func

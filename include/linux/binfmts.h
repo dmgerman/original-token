@@ -229,6 +229,14 @@ r_void
 suffix:semicolon
 r_extern
 r_int
+id|init_aout32_binfmt
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|init_script_binfmt
 c_func
 (paren

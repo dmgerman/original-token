@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: system.c,v 1.1 1997/06/06 09:36:36 ralf Exp $&n; * system.c: Probe the system type using ARCS prom interface library.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/*&n; * system.c: Probe the system type using ARCS prom interface library.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: system.c,v 1.2 1997/06/30 15:26:32 ralf Exp $&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -391,6 +391,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * We&squot; call this early before loadmmu().  If we do the other way around&n; * the firmware will crash and burn.&n; */
 DECL|function|sgi_sysinit
 r_void
 id|sgi_sysinit

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;NET/ROM release 006&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;NET/ROM 001&t;Jonathan(G4KLX)&t;Cloned from ax25_out.c&n; *&t;NET/ROM 003&t;Jonathan(G4KLX)&t;Added NET/ROM fragmentation.&n; *&t;&t;&t;Darryl(G7LED)&t;Fixed NAK, to give out correct reponse.&n; */
+multiline_comment|/*&n; *&t;NET/ROM release 007&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;NET/ROM 001&t;Jonathan(G4KLX)&t;Cloned from ax25_out.c&n; *&t;NET/ROM 003&t;Jonathan(G4KLX)&t;Added NET/ROM fragmentation.&n; *&t;&t;&t;Darryl(G7LED)&t;Fixed NAK, to give out correct reponse.&n; *&t;NET/ROM 007&t;Jonathan(G4KLX)&t;New timer architecture.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_NETROM) || defined(CONFIG_NETROM_MODULE)
 macro_line|#include &lt;linux/errno.h&gt;
@@ -243,13 +243,6 @@ id|skb
 suffix:semicolon
 multiline_comment|/* Throw it on the queue */
 )brace
-r_if
-c_cond
-(paren
-id|sk-&gt;protinfo.nr-&gt;state
-op_eq
-id|NR_STATE_3
-)paren
 id|nr_kick
 c_func
 (paren
@@ -311,6 +304,12 @@ l_int|4
 )braket
 op_or_assign
 id|NR_CHOKE_FLAG
+suffix:semicolon
+id|nr_start_idletimer
+c_func
+(paren
+id|sk
+)paren
 suffix:semicolon
 id|nr_transmit_buffer
 c_func
@@ -422,9 +421,11 @@ id|sk-&gt;protinfo.nr-&gt;vl
 op_assign
 id|sk-&gt;protinfo.nr-&gt;vr
 suffix:semicolon
-id|sk-&gt;protinfo.nr-&gt;t1timer
-op_assign
-l_int|0
+id|nr_stop_t1timer
+c_func
+(paren
+id|sk
+)paren
 suffix:semicolon
 )brace
 DECL|function|nr_kick
@@ -452,12 +453,37 @@ id|start
 comma
 id|end
 suffix:semicolon
-id|del_timer
+r_if
+c_cond
+(paren
+id|sk-&gt;protinfo.nr-&gt;state
+op_ne
+id|NR_STATE_3
+)paren
+r_return
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sk-&gt;protinfo.nr-&gt;condition
+op_amp
+id|NR_COND_PEER_RX_BUSY
+)paren
+r_return
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|skb_peek
 c_func
 (paren
 op_amp
-id|sk-&gt;timer
+id|sk-&gt;write_queue
 )paren
+op_eq
+l_int|NULL
+)paren
+r_return
 suffix:semicolon
 id|start
 op_assign
@@ -490,33 +516,18 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-(paren
-id|sk-&gt;protinfo.nr-&gt;condition
-op_amp
-id|NR_COND_PEER_RX_BUSY
-)paren
-op_logical_and
 id|start
-op_ne
+op_eq
 id|end
-op_logical_and
-id|skb_peek
-c_func
-(paren
-op_amp
-id|sk-&gt;write_queue
 )paren
-op_ne
-l_int|NULL
-)paren
-(brace
+r_return
+suffix:semicolon
 id|sk-&gt;protinfo.nr-&gt;vs
 op_assign
 id|start
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Transmit data until either we&squot;re out of data to send or&n;&t;&t; * the window is full.&n;&t;&t; */
-multiline_comment|/*&n;&t;&t; * Dequeue the frame and copy it.&n;&t;&t; */
+multiline_comment|/*&n;&t; * Transmit data until either we&squot;re out of data to send or&n;&t; * the window is full.&n;&t; */
+multiline_comment|/*&n;&t; * Dequeue the frame and copy it.&n;&t; */
 id|skb
 op_assign
 id|skb_dequeue
@@ -566,7 +577,7 @@ comma
 id|sk
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * Transmit the frame copy.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Transmit the frame copy.&n;&t;&t; */
 id|nr_send_iframe
 c_func
 (paren
@@ -585,7 +596,7 @@ l_int|1
 op_mod
 id|NR_MODULUS
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * Requeue the original data frame.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Requeue the original data frame.&n;&t;&t; */
 id|skb_queue_tail
 c_func
 (paren
@@ -629,16 +640,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sk-&gt;protinfo.nr-&gt;t1timer
-op_eq
-l_int|0
+op_logical_neg
+id|nr_t1timer_running
+c_func
+(paren
+id|sk
 )paren
-id|sk-&gt;protinfo.nr-&gt;t1timer
-op_assign
-id|sk-&gt;protinfo.nr-&gt;t1
-suffix:semicolon
-)brace
-id|nr_set_timer
+)paren
+id|nr_start_t1timer
 c_func
 (paren
 id|sk
@@ -779,35 +788,13 @@ comma
 id|FREE_WRITE
 )paren
 suffix:semicolon
-id|sk-&gt;state
-op_assign
-id|TCP_CLOSE
-suffix:semicolon
-id|sk-&gt;err
-op_assign
-id|ENETUNREACH
-suffix:semicolon
-id|sk-&gt;shutdown
-op_or_assign
-id|SEND_SHUTDOWN
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|sk-&gt;dead
-)paren
-id|sk
-op_member_access_from_pointer
-id|state_change
+id|nr_disconnect
 c_func
 (paren
 id|sk
+comma
+id|ENETUNREACH
 )paren
-suffix:semicolon
-id|sk-&gt;dead
-op_assign
-l_int|1
 suffix:semicolon
 )brace
 )brace
@@ -839,13 +826,29 @@ comma
 id|NR_CONNREQ
 )paren
 suffix:semicolon
-id|sk-&gt;protinfo.nr-&gt;t2timer
-op_assign
-l_int|0
+id|nr_stop_t2timer
+c_func
+(paren
+id|sk
+)paren
 suffix:semicolon
-id|sk-&gt;protinfo.nr-&gt;t1timer
-op_assign
-id|sk-&gt;protinfo.nr-&gt;t1
+id|nr_stop_t4timer
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
+id|nr_stop_idletimer
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
+id|nr_start_t1timer
+c_func
+(paren
+id|sk
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Never send a NAK when we are CHOKEd.&n; */
@@ -946,9 +949,11 @@ comma
 id|nr
 )paren
 suffix:semicolon
-id|sk-&gt;protinfo.nr-&gt;t1timer
-op_assign
-l_int|0
+id|nr_stop_t1timer
+c_func
+(paren
+id|sk
+)paren
 suffix:semicolon
 id|sk-&gt;protinfo.nr-&gt;n2count
 op_assign
@@ -973,9 +978,11 @@ comma
 id|nr
 )paren
 suffix:semicolon
-id|sk-&gt;protinfo.nr-&gt;t1timer
-op_assign
-id|sk-&gt;protinfo.nr-&gt;t1
+id|nr_start_t1timer
+c_func
+(paren
+id|sk
+)paren
 suffix:semicolon
 )brace
 )brace

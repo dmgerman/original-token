@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;AX.25 release 036&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Most of this code is based on the SDL diagrams published in the 7th&n; *&t;ARRL Computer Networking Conference papers. The diagrams have mistakes&n; *&t;in them, but are mostly correct. Before you modify the code could you&n; *&t;read the SDL diagrams as the code is not obvious and probably very&n; *&t;easy to break;&n; *&n; *&t;History&n; *&t;AX.25 028a&t;Jonathan(G4KLX)&t;New state machine based on SDL diagrams.&n; *&t;AX.25 029&t;Alan(GW4PTS)&t;Switched to KA9Q constant names.&n; *&t;&t;&t;Jonathan(G4KLX)&t;Only poll when window is full.&n; *&t;AX.25 030&t;Jonathan(G4KLX)&t;Added fragmentation to ax25_output.&n; *&t;&t;&t;&t;&t;Added support for extended AX.25.&n; *&t;AX.25 031&t;Joerg(DL1BKE)&t;Added DAMA support&n; *&t;&t;&t;Joerg(DL1BKE)&t;Modified fragmenter to fragment vanilla &n; *&t;&t;&t;&t;&t;AX.25 I-Frames. Added PACLEN parameter.&n; *&t;&t;&t;Joerg(DL1BKE)&t;Fixed a problem with buffer allocation&n; *&t;&t;&t;&t;&t;for fragments.&n; */
+multiline_comment|/*&n; *&t;AX.25 release 037&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Most of this code is based on the SDL diagrams published in the 7th&n; *&t;ARRL Computer Networking Conference papers. The diagrams have mistakes&n; *&t;in them, but are mostly correct. Before you modify the code could you&n; *&t;read the SDL diagrams as the code is not obvious and probably very&n; *&t;easy to break;&n; *&n; *&t;History&n; *&t;AX.25 028a&t;Jonathan(G4KLX)&t;New state machine based on SDL diagrams.&n; *&t;AX.25 029&t;Alan(GW4PTS)&t;Switched to KA9Q constant names.&n; *&t;&t;&t;Jonathan(G4KLX)&t;Only poll when window is full.&n; *&t;AX.25 030&t;Jonathan(G4KLX)&t;Added fragmentation to ax25_output.&n; *&t;&t;&t;&t;&t;Added support for extended AX.25.&n; *&t;AX.25 031&t;Joerg(DL1BKE)&t;Added DAMA support&n; *&t;&t;&t;Joerg(DL1BKE)&t;Modified fragmenter to fragment vanilla &n; *&t;&t;&t;&t;&t;AX.25 I-Frames. Added PACLEN parameter.&n; *&t;&t;&t;Joerg(DL1BKE)&t;Fixed a problem with buffer allocation&n; *&t;&t;&t;&t;&t;for fragments.&n; *&t;AX.25 037&t;Jonathan(G4KLX)&t;New timer architecture.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_AX25) || defined(CONFIG_AX25_MODULE)
 macro_line|#include &lt;linux/errno.h&gt;
@@ -23,7 +23,8 @@ macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 DECL|function|ax25_send_frame
-r_int
+id|ax25_cb
+op_star
 id|ax25_send_frame
 c_func
 (paren
@@ -104,12 +105,8 @@ comma
 id|skb
 )paren
 suffix:semicolon
-id|ax25-&gt;idletimer
-op_assign
-id|ax25-&gt;idle
-suffix:semicolon
 r_return
-l_int|1
+id|ax25
 suffix:semicolon
 multiline_comment|/* It already existed */
 )brace
@@ -129,7 +126,7 @@ op_eq
 l_int|NULL
 )paren
 r_return
-l_int|0
+l_int|NULL
 suffix:semicolon
 r_if
 c_cond
@@ -146,7 +143,7 @@ op_eq
 l_int|NULL
 )paren
 r_return
-l_int|0
+l_int|NULL
 suffix:semicolon
 id|ax25_fillin_cb
 c_func
@@ -202,7 +199,7 @@ id|ax25
 )paren
 suffix:semicolon
 r_return
-l_int|0
+l_int|NULL
 suffix:semicolon
 )brace
 op_star
@@ -210,19 +207,6 @@ id|ax25-&gt;digipeat
 op_assign
 op_star
 id|digi
-suffix:semicolon
-)brace
-r_else
-(brace
-id|ax25_rt_build_path
-c_func
-(paren
-id|ax25
-comma
-id|dest
-comma
-id|dev
-)paren
 suffix:semicolon
 )brace
 r_switch
@@ -274,11 +258,6 @@ r_break
 suffix:semicolon
 macro_line|#endif
 )brace
-multiline_comment|/* idle timeouts only for mode vc connections */
-id|ax25-&gt;idletimer
-op_assign
-id|ax25-&gt;idle
-suffix:semicolon
 id|ax25_insert_socket
 c_func
 (paren
@@ -289,7 +268,7 @@ id|ax25-&gt;state
 op_assign
 id|AX25_STATE_1
 suffix:semicolon
-id|ax25_set_timer
+id|ax25_start_heartbeat
 c_func
 (paren
 id|ax25
@@ -306,7 +285,7 @@ id|skb
 )paren
 suffix:semicolon
 r_return
-l_int|1
+id|ax25
 suffix:semicolon
 multiline_comment|/* We had to create it */
 )brace
@@ -695,25 +674,12 @@ id|AX25_VALUES_PROTOCOL
 op_eq
 id|AX25_PROTO_STD_DUPLEX
 )paren
-(brace
-r_if
-c_cond
-(paren
-id|ax25-&gt;state
-op_eq
-id|AX25_STATE_3
-op_logical_or
-id|ax25-&gt;state
-op_eq
-id|AX25_STATE_4
-)paren
 id|ax25_kick
 c_func
 (paren
 id|ax25
 )paren
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/* &n; *  This procedure is passed a buffer descriptor for an iframe. It builds&n; *  the rest of the control part of the frame and then writes it out.&n; */
 DECL|function|ax25_send_iframe
@@ -859,6 +825,12 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+id|ax25_start_idletimer
+c_func
+(paren
+id|ax25
+)paren
+suffix:semicolon
 id|ax25_transmit_buffer
 c_func
 (paren
@@ -901,12 +873,41 @@ id|end
 comma
 id|next
 suffix:semicolon
-id|del_timer
+r_if
+c_cond
+(paren
+id|ax25-&gt;state
+op_ne
+id|AX25_STATE_3
+op_logical_and
+id|ax25-&gt;state
+op_ne
+id|AX25_STATE_4
+)paren
+r_return
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ax25-&gt;condition
+op_amp
+id|AX25_COND_PEER_RX_BUSY
+)paren
+r_return
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|skb_peek
 c_func
 (paren
 op_amp
-id|ax25-&gt;timer
+id|ax25-&gt;write_queue
 )paren
+op_eq
+l_int|NULL
+)paren
+r_return
 suffix:semicolon
 id|start
 op_assign
@@ -939,33 +940,18 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-(paren
-id|ax25-&gt;condition
-op_amp
-id|AX25_COND_PEER_RX_BUSY
-)paren
-op_logical_and
 id|start
-op_ne
+op_eq
 id|end
-op_logical_and
-id|skb_peek
-c_func
-(paren
-op_amp
-id|ax25-&gt;write_queue
 )paren
-op_ne
-l_int|NULL
-)paren
-(brace
+r_return
+suffix:semicolon
 id|ax25-&gt;vs
 op_assign
 id|start
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Transmit data until either we&squot;re out of data to send or&n;&t;&t; * the window is full. Send a poll on the final I frame if&n;&t;&t; * the window is filled.&n;&t;&t; */
-multiline_comment|/*&n;&t;&t; * Dequeue the frame and copy it.&n;&t;&t; */
+multiline_comment|/*&n;&t; * Transmit data until either we&squot;re out of data to send or&n;&t; * the window is full. Send a poll on the final I frame if&n;&t; * the window is filled.&n;&t; */
+multiline_comment|/*&n;&t; * Dequeue the frame and copy it.&n;&t; */
 id|skb
 op_assign
 id|skb_dequeue
@@ -1040,7 +1026,7 @@ op_eq
 id|end
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * Transmit the frame copy.&n;&t;&t;&t; * bke 960114: do not set the Poll bit on the last frame&n;&t;&t;&t; * in DAMA mode.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Transmit the frame copy.&n;&t;&t; * bke 960114: do not set the Poll bit on the last frame&n;&t;&t; * in DAMA mode.&n;&t;&t; */
 r_switch
 c_cond
 (paren
@@ -1097,7 +1083,7 @@ id|ax25-&gt;vs
 op_assign
 id|next
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * Requeue the original data frame.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Requeue the original data frame.&n;&t;&t; */
 id|skb_queue_tail
 c_func
 (paren
@@ -1136,33 +1122,33 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|ax25-&gt;t1timer
-op_eq
-l_int|0
+op_logical_neg
+id|ax25_t1timer_running
+c_func
+(paren
+id|ax25
+)paren
 )paren
 (brace
-id|ax25-&gt;t3timer
-op_assign
-l_int|0
+id|ax25_stop_t3timer
+c_func
+(paren
+id|ax25
+)paren
 suffix:semicolon
-id|ax25-&gt;t1timer
-op_assign
-id|ax25-&gt;t1
-op_assign
 id|ax25_calculate_t1
 c_func
 (paren
 id|ax25
 )paren
 suffix:semicolon
-)brace
-)brace
-id|ax25_set_timer
+id|ax25_start_t1timer
 c_func
 (paren
 id|ax25
 )paren
 suffix:semicolon
+)brace
 )brace
 DECL|function|ax25_transmit_buffer
 r_void
@@ -1203,45 +1189,14 @@ op_eq
 l_int|NULL
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|ax25-&gt;sk
-op_ne
-l_int|NULL
-)paren
-(brace
-id|ax25-&gt;sk-&gt;state
-op_assign
-id|TCP_CLOSE
-suffix:semicolon
-id|ax25-&gt;sk-&gt;err
-op_assign
-id|ENETUNREACH
-suffix:semicolon
-id|ax25-&gt;sk-&gt;shutdown
-op_or_assign
-id|SEND_SHUTDOWN
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|ax25-&gt;sk-&gt;dead
-)paren
-id|ax25-&gt;sk
-op_member_access_from_pointer
-id|state_change
+id|ax25_disconnect
 c_func
 (paren
-id|ax25-&gt;sk
+id|ax25
+comma
+id|ENETUNREACH
 )paren
 suffix:semicolon
-id|ax25-&gt;sk-&gt;dead
-op_assign
-l_int|1
-suffix:semicolon
-)brace
 r_return
 suffix:semicolon
 )brace
@@ -1500,13 +1455,17 @@ c_func
 id|ax25
 )paren
 suffix:semicolon
-id|ax25-&gt;t1timer
-op_assign
-l_int|0
+id|ax25_stop_t1timer
+c_func
+(paren
+id|ax25
+)paren
 suffix:semicolon
-id|ax25-&gt;t3timer
-op_assign
-id|ax25-&gt;t3
+id|ax25_start_t3timer
+c_func
+(paren
+id|ax25
+)paren
 suffix:semicolon
 )brace
 r_else
@@ -1527,11 +1486,13 @@ comma
 id|nr
 )paren
 suffix:semicolon
-id|ax25-&gt;t1timer
-op_assign
-id|ax25-&gt;t1
-op_assign
 id|ax25_calculate_t1
+c_func
+(paren
+id|ax25
+)paren
+suffix:semicolon
+id|ax25_start_t1timer
 c_func
 (paren
 id|ax25

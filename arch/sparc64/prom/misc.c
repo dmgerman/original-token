@@ -1,4 +1,5 @@
-multiline_comment|/* $Id: misc.c,v 1.6 1997/04/10 05:13:05 davem Exp $&n; * misc.c:  Miscellaneous prom functions that don&squot;t belong&n; *          anywhere else.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: misc.c,v 1.7 1997/07/05 09:52:51 davem Exp $&n; * misc.c:  Miscellaneous prom functions that don&squot;t belong&n; *          anywhere else.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -132,22 +133,8 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_extern
-r_void
-id|install_obp_ticker
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|install_linux_ticker
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
+multiline_comment|/* extern void install_obp_ticker(void); */
+multiline_comment|/* extern void install_linux_ticker(void); */
 r_int
 r_int
 id|flags

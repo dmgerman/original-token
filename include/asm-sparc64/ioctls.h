@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ioctls.h,v 1.3 1997/06/14 17:35:08 davem Exp $ */
+multiline_comment|/* $Id: ioctls.h,v 1.4 1997/06/23 07:26:03 davem Exp $ */
 macro_line|#ifndef _ASM_SPARC64_IOCTLS_H
 DECL|macro|_ASM_SPARC64_IOCTLS_H
 mdefine_line|#define _ASM_SPARC64_IOCTLS_H
@@ -110,10 +110,10 @@ DECL|macro|__TIOCCDTR
 mdefine_line|#define __TIOCCDTR        _IO(&squot;t&squot;, 120) /* SunOS Specific */
 DECL|macro|__TIOCSDTR
 mdefine_line|#define __TIOCSDTR        _IO(&squot;t&squot;, 121) /* SunOS Specific */
-DECL|macro|__TIOCCBRK
-mdefine_line|#define __TIOCCBRK        _IO(&squot;t&squot;, 122) /* SunOS Specific */
-DECL|macro|__TIOCSBRK
-mdefine_line|#define __TIOCSBRK        _IO(&squot;t&squot;, 123) /* SunOS Specific */
+DECL|macro|TIOCCBRK
+mdefine_line|#define TIOCCBRK        _IO(&squot;t&squot;, 122)
+DECL|macro|TIOCSBRK
+mdefine_line|#define TIOCSBRK        _IO(&squot;t&squot;, 123)
 DECL|macro|__TIOCLGET
 mdefine_line|#define __TIOCLGET        _IOW(&squot;t&squot;, 124, int) /* SunOS Specific */
 DECL|macro|__TIOCLSET

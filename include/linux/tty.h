@@ -142,24 +142,10 @@ r_struct
 id|tq_struct
 id|tqueue
 suffix:semicolon
-DECL|member|char_buf
-r_int
-r_char
-id|char_buf
-(braket
-l_int|2
-op_star
-id|TTY_FLIPBUF_SIZE
-)braket
-suffix:semicolon
-DECL|member|flag_buf
-r_char
-id|flag_buf
-(braket
-l_int|2
-op_star
-id|TTY_FLIPBUF_SIZE
-)braket
+DECL|member|pty_sem
+r_struct
+id|semaphore
+id|pty_sem
 suffix:semicolon
 DECL|member|char_buf_ptr
 r_char
@@ -180,8 +166,39 @@ DECL|member|buf_num
 r_int
 id|buf_num
 suffix:semicolon
+DECL|member|char_buf
+r_int
+r_char
+id|char_buf
+(braket
+l_int|2
+op_star
+id|TTY_FLIPBUF_SIZE
+)braket
+suffix:semicolon
+DECL|member|flag_buf
+r_char
+id|flag_buf
+(braket
+l_int|2
+op_star
+id|TTY_FLIPBUF_SIZE
+)braket
+suffix:semicolon
+DECL|member|slop
+r_int
+r_char
+id|slop
+(braket
+l_int|4
+)braket
+suffix:semicolon
+multiline_comment|/* N.B. bug overwrites buffer by 1 */
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * The pty uses char_buf and flag_buf as a contiguous buffer&n; */
+DECL|macro|PTY_BUF_SIZE
+mdefine_line|#define PTY_BUF_SIZE&t;4*TTY_FLIPBUF_SIZE
 multiline_comment|/*&n; * When a break, frame error, or parity error happens, these codes are&n; * stuffed into the flags buffer.&n; */
 DECL|macro|TTY_NORMAL
 mdefine_line|#define TTY_NORMAL&t;0
@@ -341,7 +358,7 @@ DECL|macro|L_PENDIN
 mdefine_line|#define L_PENDIN(tty)&t;_L_FLAG((tty),PENDIN)
 DECL|macro|L_IEXTEN
 mdefine_line|#define L_IEXTEN(tty)&t;_L_FLAG((tty),IEXTEN)
-multiline_comment|/*&n; * Where all of the state associated with a tty is kept while the tty&n; * is open.  Since the termios state should be kept even if the tty&n; * has been closed --- for things like the baud rate, etc --- it is&n; * not stored here, but rather a pointer to the real state is stored&n; * here.  Possible the winsize structure should have the same&n; * treatment, but (1) the default 80x24 is usually right and (2) it&squot;s&n; * most often used by a windowing system, which will set the correct&n; * size each time the window is created or resized anyway.&n; * IMPORTANT: since this structure is dynamically allocated, it must&n; * be no larger than 4096 bytes.  Changing TTY_BUF_SIZE will change&n; * the size of this structure, and it needs to be done with care.&n; * &t;&t;&t;&t;&t;&t;- TYT, 9/14/92&n; */
+multiline_comment|/*&n; * Where all of the state associated with a tty is kept while the tty&n; * is open.  Since the termios state should be kept even if the tty&n; * has been closed --- for things like the baud rate, etc --- it is&n; * not stored here, but rather a pointer to the real state is stored&n; * here.  Possible the winsize structure should have the same&n; * treatment, but (1) the default 80x24 is usually right and (2) it&squot;s&n; * most often used by a windowing system, which will set the correct&n; * size each time the window is created or resized anyway.&n; * IMPORTANT: since this structure is dynamically allocated, it must&n; * be no larger than 4096 bytes.  Changing TTY_FLIPBUF_SIZE will change&n; * the size of this structure, and it needs to be done with care.&n; * &t;&t;&t;&t;&t;&t;- TYT, 9/14/92&n; */
 DECL|struct|tty_struct
 r_struct
 id|tty_struct

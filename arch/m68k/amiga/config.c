@@ -473,6 +473,14 @@ r_int
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|amiga_init_sound
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 DECL|variable|amiga_console_driver
 r_static
 r_struct
@@ -3441,6 +3449,21 @@ c_func
 (paren
 op_amp
 id|amiga_console_driver
+)paren
+suffix:semicolon
+multiline_comment|/* our beloved beeper */
+r_if
+c_cond
+(paren
+id|AMIGAHW_PRESENT
+c_func
+(paren
+id|AMI_AUDIO
+)paren
+)paren
+id|amiga_init_sound
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace

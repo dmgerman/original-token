@@ -314,8 +314,11 @@ suffix:semicolon
 id|elf_addr_t
 op_star
 id|sp
+comma
+op_star
+id|csp
 suffix:semicolon
-multiline_comment|/*&n;&t; * Force 16 byte alignment here for generality.&n;&t; */
+multiline_comment|/*&n;&t; * Force 16 byte _final_ alignment here for generality.&n;&t; */
 id|sp
 op_assign
 (paren
@@ -332,12 +335,6 @@ r_int
 )paren
 id|p
 )paren
-suffix:semicolon
-macro_line|#ifdef __sparc__
-(brace
-id|elf_addr_t
-op_star
-id|csp
 suffix:semicolon
 id|csp
 op_assign
@@ -366,27 +363,54 @@ id|argc
 op_plus
 l_int|1
 suffix:semicolon
-r_if
-c_cond
+id|csp
+op_sub_assign
 (paren
 op_logical_neg
-(paren
+id|ibcs
+ques
+c_cond
+l_int|3
+suffix:colon
+l_int|1
+)paren
+suffix:semicolon
+multiline_comment|/* argc itself */
+r_if
+c_cond
 (paren
 (paren
 r_int
 r_int
 )paren
 id|csp
-)paren
 op_amp
-l_int|4
+l_int|15UL
 )paren
-)paren
+(brace
 id|sp
-op_decrement
+op_sub_assign
+(paren
+l_int|16UL
+op_minus
+(paren
+(paren
+r_int
+r_int
+)paren
+id|csp
+op_amp
+l_int|15UL
+)paren
+)paren
+op_div
+r_sizeof
+(paren
+op_star
+id|sp
+)paren
 suffix:semicolon
 )brace
-macro_line|#endif
 multiline_comment|/*&n;&t; * Put the ELF interpreter info on the stack&n;&t; */
 DECL|macro|NEW_AUX_ENT
 mdefine_line|#define NEW_AUX_ENT(nr, id, val) &bslash;&n;&t;  __put_user ((id), sp+(nr*2)); &bslash;&n;&t;  __put_user ((val), sp+(nr*2+1)); &bslash;&n;

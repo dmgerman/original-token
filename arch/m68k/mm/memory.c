@@ -1959,7 +1959,7 @@ id|CPU_IS_040_OR_060
 r_int
 id|tmp
 suffix:semicolon
-multiline_comment|/*&n;&t; * cwe need special treatment for the first page, in case it&n;&t; * is not page-aligned.&n;&t; */
+multiline_comment|/*&n;&t; * We need special treatment for the first page, in case it&n;&t; * is not page-aligned. Page align the addresses to work&n;&t; * around bug I17 in the 68060.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1981,6 +1981,8 @@ id|pushcl040
 c_func
 (paren
 id|paddr
+op_amp
+id|PAGE_MASK
 )paren
 suffix:semicolon
 r_if
@@ -2004,6 +2006,10 @@ suffix:semicolon
 id|tmp
 op_assign
 id|PAGE_SIZE
+suffix:semicolon
+id|paddr
+op_and_assign
+id|PAGE_MASK
 suffix:semicolon
 r_while
 c_loop
@@ -2099,6 +2105,11 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * Work around bug I17 in the 68060 affecting some instruction&n;&t; * lines not being invalidated properly.&n;&t; */
+id|paddr
+op_and_assign
+id|PAGE_MASK
+suffix:semicolon
 r_do
 (brace
 id|pushcli040
@@ -2179,6 +2190,11 @@ id|PAGE_SIZE
 op_minus
 l_int|1
 )paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Work around bug I17 in the 68060 affecting some instruction&n;&t; * lines not being invalidated properly.&n;&t; */
+id|vaddr
+op_and_assign
+id|PAGE_MASK
 suffix:semicolon
 r_do
 (brace

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: system.h,v 1.23 1997/06/16 06:17:06 davem Exp $ */
+multiline_comment|/* $Id: system.h,v 1.26 1997/06/28 10:04:03 davem Exp $ */
 macro_line|#ifndef __SPARC64_SYSTEM_H
 DECL|macro|__SPARC64_SYSTEM_H
 mdefine_line|#define __SPARC64_SYSTEM_H
@@ -161,119 +161,38 @@ op_mod
 op_mod
 id|g1
 comma
-l_float|2f
+l_float|1f
+id|mov
+op_mod
+op_mod
+id|o7
+comma
+op_mod
+op_mod
+id|g3
+id|call
+id|__flushw_user
 id|clr
 op_mod
 op_mod
 id|g2
 l_int|1
 suffix:colon
-id|save
-op_mod
-op_mod
-id|sp
-comma
-op_mod
-l_int|0
-comma
-op_mod
-op_mod
-id|sp
-id|rdpr
-op_mod
-op_mod
-id|otherwin
-comma
-op_mod
-op_mod
+l_string|&quot;&t;: : : &quot;
 id|g1
-id|brnz
-comma
-id|pt
-op_mod
-op_mod
-id|g1
-comma
-l_int|1
-id|b
-id|add
-op_mod
-op_mod
+l_string|&quot;, &quot;
 id|g2
-comma
-l_int|1
-comma
-op_mod
-op_mod
-id|g2
-l_int|1
-suffix:colon
-id|subcc
-op_mod
-op_mod
-id|g2
-comma
-l_int|1
-comma
-op_mod
-op_mod
-id|g2
-id|bne
-comma
-id|pt
-op_mod
-op_mod
-id|xcc
-comma
-l_int|1
-id|b
-id|restore
-op_mod
-op_mod
-id|g0
-comma
-op_mod
-op_mod
-id|g0
-comma
-op_mod
-op_mod
-id|g0
-l_int|2
-suffix:colon
-l_string|&quot; : : &quot;
-id|i
+l_string|&quot;, &quot;
+id|g3
 "&quot;"
-(paren
-op_minus
-id|REGWIN_SZ
-)paren
-suffix:colon
-l_string|&quot;g1&quot;
-comma
-l_string|&quot;g2&quot;
-comma
-l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 )brace
 DECL|macro|flush_user_windows
 mdefine_line|#define flush_user_windows flushw_user
-macro_line|#ifdef __SMP__
-macro_line|#include &lt;asm/fpumacro.h&gt;
-DECL|macro|SWITCH_ENTER
-mdefine_line|#define SWITCH_ENTER(prev)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if((prev)-&gt;flags &amp; PF_USEDFPU) { &t;&t;&t;&t;&bslash;&n;&t;&t;fprs_write(FPRS_FEF);&t;&t;&t;&t;&t;&bslash;&n;&t;&t;fpsave((unsigned long *) &amp;(prev)-&gt;tss.float_regs[0],&t;&bslash;&n;&t;&t;       &amp;(prev)-&gt;tss.fsr);&t;&t;&t;&t;&bslash;&n;&t;&t;(prev)-&gt;flags &amp;= ~PF_USEDFPU;&t;&t;&t;&t;&bslash;&n;&t;&t;(prev)-&gt;tss.kregs-&gt;tstate &amp;= ~TSTATE_PEF;&t;&t;&bslash;&n;&t;}
-DECL|macro|SWITCH_DO_LAZY_FPU
-mdefine_line|#define SWITCH_DO_LAZY_FPU(next)
-macro_line|#else
-DECL|macro|SWITCH_ENTER
-mdefine_line|#define SWITCH_ENTER(prev)
-DECL|macro|SWITCH_DO_LAZY_FPU
-mdefine_line|#define SWITCH_DO_LAZY_FPU(next)&t;&t;&t;&bslash;&n;&t;if(last_task_used_math != (next))&t;&t;&bslash;&n;&t;&t;(next)-&gt;tss.kregs-&gt;tstate &amp;= ~TSTATE_PEF
-macro_line|#endif
 multiline_comment|/* See what happens when you design the chip correctly?&n;&t; * NOTE NOTE NOTE this is extremely non-trivial what I&n;&t; * am doing here.  GCC needs only one register to stuff&n;&t; * things into (&squot;next&squot; in particular)  So I &quot;claim&quot; that&n;&t; * I do not clobber it, when in fact I do.  Please,&n;&t; * when modifying this code inspect output of sched.s very&n;&t; * carefully to make sure things still work.  -DaveM&n;&t; */
 DECL|macro|switch_to
-mdefine_line|#define switch_to(prev, next)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__label__ switch_continue;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;register unsigned long task_pc asm(&quot;o7&quot;);&t;&t;&t;&t;&t;&bslash;&n;&t;SWITCH_ENTER(prev)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;SWITCH_DO_LAZY_FPU(next);&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;task_pc = ((unsigned long) &amp;&amp;switch_continue) - 0x8;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;rdpr&t;%%pstate, %%g2&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wrpr&t;%%g2, 0x2, %%pstate&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;flushw&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;stx&t;%%i6, [%%sp + 2047 + 0x70]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;stx&t;%%i7, [%%sp + 2047 + 0x78]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;rdpr&t;%%wstate, %%o5&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;stx&t;%%o6, [%%g6 + %3]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;stx&t;%%o5, [%%g6 + %2]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;rdpr&t;%%cwp, %%o5&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;stx&t;%%o7, [%%g6 + %4]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;stx&t;%%o5, [%%g6 + %5]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;mov&t;%0, %%g6&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldx&t;[%0 + %5], %%g1&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wr&t;%0, 0x0, %%pic&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wrpr&t;%%g1, %%cwp&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldx&t;[%%g6 + %2], %%o5&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldx&t;[%%g6 + %3], %%o6&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldx&t;[%%g6 + %4], %%o7&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wrpr&t;%%o5, 0x0, %%wstate&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldx&t;[%%sp + 2047 + 0x70], %%i6&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldx&t;[%%sp + 2047 + 0x78], %%i7&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;jmpl&t;%%o7 + 0x8, %%g0&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot; wrpr&t;%%g2, 0x0, %%pstate&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;: /* No outputs */&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;: &quot;r&quot; (next), &quot;r&quot; (task_pc),&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  &quot;i&quot; ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;tss.wstate)),&t;&t;&bslash;&n;&t;  &quot;i&quot; ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;tss.ksp)),&t;&t;&bslash;&n;&t;  &quot;i&quot; ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;tss.kpc)),&t;&t;&bslash;&n;&t;  &quot;i&quot; ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;tss.cwp))&t;&t;&bslash;&n;&t;: &quot;cc&quot;, &quot;g1&quot;, &quot;g2&quot;, &quot;g3&quot;, &quot;g5&quot;, &quot;g7&quot;,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  &quot;l1&quot;, &quot;l2&quot;, &quot;l3&quot;, &quot;l4&quot;, &quot;l5&quot;, &quot;l6&quot;, &quot;l7&quot;,&t;&t;&t;&t;&t;&bslash;&n;&t;  &quot;i0&quot;, &quot;i1&quot;, &quot;i2&quot;, &quot;i3&quot;, &quot;i4&quot;, &quot;i5&quot;,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  &quot;o0&quot;, &quot;o1&quot;, &quot;o2&quot;, &quot;o3&quot;, &quot;o4&quot;, &quot;o5&quot;);&t;&t;&t;&t;&t;&t;&bslash;&n;switch_continue: } while(0)
+mdefine_line|#define switch_to(prev, next)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__label__ switch_continue;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;register unsigned long task_pc asm(&quot;o7&quot;);&t;&t;&t;&t;&t;&bslash;&n;&t;(prev)-&gt;tss.kregs-&gt;fprs = 0;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;task_pc = ((unsigned long) &amp;&amp;switch_continue) - 0x8;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;rdpr&t;%%pstate, %%g2&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wrpr&t;%%g2, 0x3, %%pstate&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;flushw&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;/*XXX*/&t;&quot;wr&t;%%g0, 0, %%fprs&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;stx&t;%%i6, [%%sp + 2047 + 0x70]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;stx&t;%%i7, [%%sp + 2047 + 0x78]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;rdpr&t;%%wstate, %%o5&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;stx&t;%%o6, [%%g6 + %3]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;stx&t;%%o5, [%%g6 + %2]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;rdpr&t;%%cwp, %%o5&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;stx&t;%%o7, [%%g6 + %4]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;st&t;%%o5, [%%g6 + %5]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;mov&t;%0, %%g6&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ld&t;[%0 + %5], %%g1&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wrpr&t;%%g1, %%cwp&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldx&t;[%%g6 + %2], %%o5&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldx&t;[%%g6 + %3], %%o6&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldx&t;[%%g6 + %4], %%o7&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;mov&t;%%g6, %0&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wrpr&t;%%o5, 0x0, %%wstate&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldx&t;[%%sp + 2047 + 0x70], %%i6&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldx&t;[%%sp + 2047 + 0x78], %%i7&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wrpr&t;%%g0, 0x96, %%pstate&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;jmpl&t;%%o7 + 0x8, %%g0&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot; mov&t;%0, %%g6&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;: /* No outputs */&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;: &quot;r&quot; (next), &quot;r&quot; (task_pc),&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  &quot;i&quot; ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;tss.wstate)),&t;&t;&bslash;&n;&t;  &quot;i&quot; ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;tss.ksp)),&t;&t;&bslash;&n;&t;  &quot;i&quot; ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;tss.kpc)),&t;&t;&bslash;&n;&t;  &quot;i&quot; ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;tss.cwp))&t;&t;&bslash;&n;&t;: &quot;cc&quot;, &quot;g1&quot;, &quot;g2&quot;, &quot;g3&quot;, &quot;g5&quot;, &quot;g7&quot;,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  &quot;l1&quot;, &quot;l2&quot;, &quot;l3&quot;, &quot;l4&quot;, &quot;l5&quot;, &quot;l6&quot;, &quot;l7&quot;,&t;&t;&t;&t;&t;&bslash;&n;&t;  &quot;i0&quot;, &quot;i1&quot;, &quot;i2&quot;, &quot;i3&quot;, &quot;i4&quot;, &quot;i5&quot;,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  &quot;o0&quot;, &quot;o1&quot;, &quot;o2&quot;, &quot;o3&quot;, &quot;o4&quot;, &quot;o5&quot;);&t;&t;&t;&t;&t;&t;&bslash;&n;switch_continue: } while(0)
 multiline_comment|/* Unlike the hybrid v7/v8 kernel, we can assume swap exists under V9. */
 DECL|function|xchg_u32
 r_extern

@@ -3,8 +3,6 @@ macro_line|#ifndef _ROSE_H
 DECL|macro|_ROSE_H
 mdefine_line|#define _ROSE_H 
 macro_line|#include &lt;linux/rose.h&gt;
-DECL|macro|ROSE_SLOWHZ
-mdefine_line|#define&t;ROSE_SLOWHZ&t;&t;&t;10&t;/* Run timing at 1/10 second */
 DECL|macro|ROSE_ADDR_LEN
 mdefine_line|#define&t;ROSE_ADDR_LEN&t;&t;&t;5
 DECL|macro|ROSE_MIN_LEN
@@ -74,33 +72,37 @@ comma
 multiline_comment|/* Data Transfer */
 DECL|enumerator|ROSE_STATE_4
 id|ROSE_STATE_4
+comma
 multiline_comment|/* Awaiting Reset Confirmation */
+DECL|enumerator|ROSE_STATE_5
+id|ROSE_STATE_5
+multiline_comment|/* Deferred Call Acceptance */
 )brace
 suffix:semicolon
 DECL|macro|ROSE_DEFAULT_T0
-mdefine_line|#define ROSE_DEFAULT_T0&t;&t;&t;(180 * ROSE_SLOWHZ)&t;/* Default T10 T20 value */
+mdefine_line|#define ROSE_DEFAULT_T0&t;&t;&t;(180 * HZ)&t;/* Default T10 T20 value */
 DECL|macro|ROSE_DEFAULT_T1
-mdefine_line|#define ROSE_DEFAULT_T1&t;&t;&t;(200 * ROSE_SLOWHZ)&t;/* Default T11 T21 value */
+mdefine_line|#define ROSE_DEFAULT_T1&t;&t;&t;(200 * HZ)&t;/* Default T11 T21 value */
 DECL|macro|ROSE_DEFAULT_T2
-mdefine_line|#define ROSE_DEFAULT_T2&t;&t;&t;(180 * ROSE_SLOWHZ)&t;/* Default T12 T22 value */
+mdefine_line|#define ROSE_DEFAULT_T2&t;&t;&t;(180 * HZ)&t;/* Default T12 T22 value */
 DECL|macro|ROSE_DEFAULT_T3
-mdefine_line|#define&t;ROSE_DEFAULT_T3&t;&t;&t;(180 * ROSE_SLOWHZ)&t;/* Default T13 T23 value */
+mdefine_line|#define&t;ROSE_DEFAULT_T3&t;&t;&t;(180 * HZ)&t;/* Default T13 T23 value */
 DECL|macro|ROSE_DEFAULT_HB
-mdefine_line|#define&t;ROSE_DEFAULT_HB&t;&t;&t;(5 * ROSE_SLOWHZ)&t;/* Default Holdback value */
+mdefine_line|#define&t;ROSE_DEFAULT_HB&t;&t;&t;(5 * HZ)&t;/* Default Holdback value */
 DECL|macro|ROSE_DEFAULT_IDLE
-mdefine_line|#define&t;ROSE_DEFAULT_IDLE&t;&t;(20 * 60 * ROSE_SLOWHZ)&t;/* Default No Activity value */
+mdefine_line|#define&t;ROSE_DEFAULT_IDLE&t;&t;(0 * 60 * HZ)&t;/* No Activity Timeout - none */
 DECL|macro|ROSE_DEFAULT_ROUTING
-mdefine_line|#define&t;ROSE_DEFAULT_ROUTING&t;&t;1&t;&t;&t;/* Default routing flag */
+mdefine_line|#define&t;ROSE_DEFAULT_ROUTING&t;&t;1&t;&t;/* Default routing flag */
 DECL|macro|ROSE_DEFAULT_FAIL_TIMEOUT
-mdefine_line|#define&t;ROSE_DEFAULT_FAIL_TIMEOUT&t;(120 * ROSE_SLOWHZ)&t;/* Time until link considered usable */
+mdefine_line|#define&t;ROSE_DEFAULT_FAIL_TIMEOUT&t;(120 * HZ)&t;/* Time until link considered usable */
 DECL|macro|ROSE_DEFAULT_MAXVC
-mdefine_line|#define&t;ROSE_DEFAULT_MAXVC&t;&t;50&t;&t;&t;/* Maximum number of VCs per neighbour */
+mdefine_line|#define&t;ROSE_DEFAULT_MAXVC&t;&t;50&t;&t;/* Maximum number of VCs per neighbour */
 DECL|macro|ROSE_DEFAULT_WINDOW_SIZE
-mdefine_line|#define&t;ROSE_DEFAULT_WINDOW_SIZE&t;3&t;&t;&t;/* Default window size */
+mdefine_line|#define&t;ROSE_DEFAULT_WINDOW_SIZE&t;3&t;&t;/* Default window size */
 DECL|macro|ROSE_MODULUS
 mdefine_line|#define ROSE_MODULUS &t;&t;&t;8
 DECL|macro|ROSE_MAX_PACKET_SIZE
-mdefine_line|#define&t;ROSE_MAX_PACKET_SIZE&t;&t;256&t;&t;&t;/* Maximum packet size */
+mdefine_line|#define&t;ROSE_MAX_PACKET_SIZE&t;&t;251&t;&t;/* Maximum packet size */
 DECL|macro|ROSE_COND_ACK_PENDING
 mdefine_line|#define&t;ROSE_COND_ACK_PENDING&t;&t;0x01
 DECL|macro|ROSE_COND_PEER_RX_BUSY
@@ -142,6 +144,11 @@ id|ax25_digi
 op_star
 id|digipeat
 suffix:semicolon
+DECL|member|ax25
+id|ax25_cb
+op_star
+id|ax25
+suffix:semicolon
 DECL|member|dev
 r_struct
 id|device
@@ -152,6 +159,11 @@ DECL|member|count
 r_int
 r_int
 id|count
+suffix:semicolon
+DECL|member|use
+r_int
+r_int
+id|use
 suffix:semicolon
 DECL|member|number
 r_int
@@ -172,17 +184,14 @@ id|sk_buff_head
 id|queue
 suffix:semicolon
 DECL|member|t0timer
-DECL|member|ftimer
-r_int
-r_int
-id|t0timer
-comma
-id|ftimer
-suffix:semicolon
-DECL|member|timer
 r_struct
 id|timer_list
-id|timer
+id|t0timer
+suffix:semicolon
+DECL|member|ftimer
+r_struct
+id|timer_list
+id|ftimer
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -365,6 +374,7 @@ suffix:semicolon
 DECL|member|state
 DECL|member|condition
 DECL|member|qbitincl
+DECL|member|defer
 r_int
 r_char
 id|state
@@ -372,6 +382,16 @@ comma
 id|condition
 comma
 id|qbitincl
+comma
+id|defer
+suffix:semicolon
+DECL|member|cause
+DECL|member|diagnostic
+r_int
+r_char
+id|cause
+comma
+id|diagnostic
 suffix:semicolon
 DECL|member|vs
 DECL|member|vr
@@ -386,11 +406,6 @@ comma
 id|va
 comma
 id|vl
-suffix:semicolon
-DECL|member|timer
-r_int
-r_int
-id|timer
 suffix:semicolon
 DECL|member|t1
 DECL|member|t2
@@ -413,6 +428,16 @@ DECL|member|fraglen
 r_int
 r_int
 id|fraglen
+suffix:semicolon
+DECL|member|timer
+r_struct
+id|timer_list
+id|timer
+suffix:semicolon
+DECL|member|idletimer
+r_struct
+id|timer_list
+id|idletimer
 suffix:semicolon
 DECL|member|frag_queue
 r_struct
@@ -623,7 +648,57 @@ suffix:semicolon
 multiline_comment|/* rose_link.c */
 r_extern
 r_void
-id|rose_link_set_timer
+id|rose_start_ftimer
+c_func
+(paren
+r_struct
+id|rose_neigh
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|rose_start_t0timer
+c_func
+(paren
+r_struct
+id|rose_neigh
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|rose_stop_ftimer
+c_func
+(paren
+r_struct
+id|rose_neigh
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|rose_stop_t0timer
+c_func
+(paren
+r_struct
+id|rose_neigh
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|rose_ftimer_running
+c_func
+(paren
+r_struct
+id|rose_neigh
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|rose_t0timer_running
 c_func
 (paren
 r_struct
@@ -692,6 +767,9 @@ op_star
 comma
 r_int
 r_int
+comma
+r_int
+r_char
 comma
 r_int
 r_char
@@ -836,6 +914,14 @@ c_func
 (paren
 id|rose_address
 op_star
+comma
+r_int
+r_char
+op_star
+comma
+r_int
+r_char
+op_star
 )paren
 suffix:semicolon
 r_extern
@@ -855,12 +941,10 @@ r_void
 id|rose_link_failed
 c_func
 (paren
-id|ax25_address
+id|ax25_cb
 op_star
 comma
-r_struct
-id|device
-op_star
+r_int
 )paren
 suffix:semicolon
 r_extern
@@ -1029,10 +1113,106 @@ id|rose_cb
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|rose_disconnect
+c_func
+(paren
+r_struct
+id|sock
+op_star
+comma
+r_int
+comma
+r_int
+comma
+r_int
+)paren
+suffix:semicolon
 multiline_comment|/* rose_timer.c */
 r_extern
 r_void
-id|rose_set_timer
+id|rose_start_heartbeat
+c_func
+(paren
+r_struct
+id|sock
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|rose_start_t1timer
+c_func
+(paren
+r_struct
+id|sock
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|rose_start_t2timer
+c_func
+(paren
+r_struct
+id|sock
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|rose_start_t3timer
+c_func
+(paren
+r_struct
+id|sock
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|rose_start_hbtimer
+c_func
+(paren
+r_struct
+id|sock
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|rose_start_idletimer
+c_func
+(paren
+r_struct
+id|sock
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|rose_stop_heartbeat
+c_func
+(paren
+r_struct
+id|sock
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|rose_stop_timer
+c_func
+(paren
+r_struct
+id|sock
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|rose_stop_idletimer
 c_func
 (paren
 r_struct

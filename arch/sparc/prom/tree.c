@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: tree.c,v 1.18 1997/05/14 20:45:03 davem Exp $&n; * tree.c: Basic device tree traversal/scanning for the Linux&n; *         prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: tree.c,v 1.19 1997/06/27 14:52:54 jj Exp $&n; * tree.c: Basic device tree traversal/scanning for the Linux&n; *         prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 DECL|macro|PROMLIB_INTERNAL
 mdefine_line|#define PROMLIB_INTERNAL
 macro_line|#include &lt;linux/string.h&gt;
@@ -920,6 +920,10 @@ c_func
 (paren
 r_int
 id|node
+comma
+r_char
+op_star
+id|buffer
 )paren
 (brace
 r_int
@@ -998,6 +1002,10 @@ comma
 r_char
 op_star
 id|oprop
+comma
+r_char
+op_star
+id|buffer
 )paren
 (brace
 r_char
@@ -1292,6 +1300,8 @@ c_func
 id|node
 comma
 id|current_property
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_if

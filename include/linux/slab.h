@@ -178,6 +178,7 @@ r_void
 id|kfree
 c_func
 (paren
+r_const
 r_void
 op_star
 )paren

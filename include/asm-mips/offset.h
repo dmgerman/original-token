@@ -154,5 +154,34 @@ DECL|macro|MM_PGD
 mdefine_line|#define MM_PGD        8
 DECL|macro|MM_CONTEXT
 mdefine_line|#define MM_CONTEXT    28
+multiline_comment|/* Linux sigcontext offsets. */
+DECL|macro|SC_REGMASK
+mdefine_line|#define SC_REGMASK    0
+DECL|macro|SC_STATUS
+mdefine_line|#define SC_STATUS     4
+DECL|macro|SC_PC
+mdefine_line|#define SC_PC         8
+DECL|macro|SC_REGS
+mdefine_line|#define SC_REGS       16
+DECL|macro|SC_FPREGS
+mdefine_line|#define SC_FPREGS     272
+DECL|macro|SC_OWNEDFP
+mdefine_line|#define SC_OWNEDFP    528
+DECL|macro|SC_FPC_CSR
+mdefine_line|#define SC_FPC_CSR    532
+DECL|macro|SC_FPC_EIR
+mdefine_line|#define SC_FPC_EIR    536
+DECL|macro|SC_SSFLAGS
+mdefine_line|#define SC_SSFLAGS    540
+DECL|macro|SC_MDHI
+mdefine_line|#define SC_MDHI       544
+DECL|macro|SC_MDLO
+mdefine_line|#define SC_MDLO       552
+DECL|macro|SC_CAUSE
+mdefine_line|#define SC_CAUSE      560
+DECL|macro|SC_BADVADDR
+mdefine_line|#define SC_BADVADDR   564
+DECL|macro|SC_SIGSET
+mdefine_line|#define SC_SIGSET     568
 macro_line|#endif /* !(_MIPS_OFFSET_H) */
 eof
