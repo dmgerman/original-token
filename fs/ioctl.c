@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/termios.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt; /* for f_flags values */
+macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|function|file_ioctl
 r_static
@@ -236,22 +237,19 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|filp
+op_assign
+id|fget
+c_func
+(paren
+id|fd
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|fd
-op_ge
-id|NR_OPEN
-op_logical_or
 op_logical_neg
-(paren
 id|filp
-op_assign
-id|current-&gt;files-&gt;fd
-(braket
-id|fd
-)braket
-)paren
 )paren
 r_goto
 id|out
@@ -403,15 +401,29 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-(brace
-)brace
+id|error
+op_assign
+op_minus
+id|ENOTTY
+suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|filp-&gt;f_dentry
-op_logical_and
+op_logical_or
+op_logical_neg
 id|filp-&gt;f_dentry-&gt;d_inode
-op_logical_and
+)paren
+id|error
+op_assign
+op_minus
+id|ENOENT
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
 id|S_ISREG
 c_func
 (paren
@@ -454,13 +466,13 @@ comma
 id|arg
 )paren
 suffix:semicolon
-r_else
-id|error
-op_assign
-op_minus
-id|ENOTTY
-suffix:semicolon
 )brace
+id|fput
+c_func
+(paren
+id|filp
+)paren
+suffix:semicolon
 id|out
 suffix:colon
 id|unlock_kernel

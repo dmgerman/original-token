@@ -85,7 +85,7 @@ r_static
 r_int
 id|can_use_virtual_dma
 op_assign
-l_int|0
+l_int|2
 suffix:semicolon
 multiline_comment|/* =======&n; * can use virtual DMA:&n; * 0 = use of virtual DMA disallowed by config&n; * 1 = use of virtual DMA prescribed by config&n; * 2 = no virtual DMA preference configured.  By default try hard DMA,&n; * but fall back on virtual DMA when not enough memory available&n; */
 DECL|variable|use_virtual_dma
@@ -8741,7 +8741,7 @@ mdefine_line|#define CODE2SIZE (ssize = ((1 &lt;&lt; SIZECODE) + 3) &gt;&gt; 2)
 DECL|macro|FM_MODE
 mdefine_line|#define FM_MODE(x,y) ((y) &amp; ~(((x)-&gt;rate &amp; 0x80) &gt;&gt;1))
 DECL|macro|CT
-mdefine_line|#define CT(x) ((x) | 0x40)
+mdefine_line|#define CT(x) ((x) | 0xc0)
 DECL|function|setup_format_params
 r_static
 r_void
@@ -10467,6 +10467,87 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
+multiline_comment|/* work around a bug in pseudo DMA&n; * (on some FDCs) pseudo DMA does not stop when the CPU stops&n; * sending data.  Hence we need a different way to signal the&n; * transfer length:  We use SECT_PER_TRACK.  Unfortunately, this&n; * does not work with MT, hence we can only transfer one head at&n; * a time&n; */
+DECL|function|virtualdmabug_workaround
+r_static
+r_int
+id|virtualdmabug_workaround
+c_func
+(paren
+)paren
+(brace
+r_int
+id|hard_sectors
+comma
+id|end_sector
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|CT
+c_func
+(paren
+id|COMMAND
+)paren
+op_eq
+id|FD_WRITE
+)paren
+(brace
+id|COMMAND
+op_and_assign
+op_complement
+l_int|0x80
+suffix:semicolon
+multiline_comment|/* switch off multiple track mode */
+id|hard_sectors
+op_assign
+id|raw_cmd-&gt;length
+op_rshift
+(paren
+l_int|7
+op_plus
+id|SIZECODE
+)paren
+suffix:semicolon
+id|end_sector
+op_assign
+id|SECTOR
+op_plus
+id|hard_sectors
+op_minus
+l_int|1
+suffix:semicolon
+macro_line|#ifdef FLOPPY_SANITY_CHECK
+r_if
+c_cond
+(paren
+id|end_sector
+OG
+id|SECT_PER_TRACK
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;too many sectors %d &gt; %d&bslash;n&quot;
+comma
+id|end_sector
+comma
+id|SECT_PER_TRACK
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif
+id|SECT_PER_TRACK
+op_assign
+id|end_sector
+suffix:semicolon
+multiline_comment|/* make sure SECT_PER_TRACK points&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;  * to end of transfer */
+)brace
+)brace
 multiline_comment|/*&n; * Formulate a read/write request.&n; * this routine decides where to load the data (directly to buffer, or to&n; * tmp floppy area), how much data to load (the size of the buffer, the whole&n; * track, or a single sector)&n; * All floppy_track_buffer handling goes in here. If we ever add track buffer&n; * allocation on the fly, it should be done here. No other part should need&n; * modification.&n; */
 DECL|function|make_raw_rw_request
 r_static
@@ -10823,6 +10904,7 @@ id|SIZECODE
 op_plus
 l_int|1
 suffix:semicolon
+multiline_comment|/* tracksize describes the size which can be filled up with sectors&n;&t; * of size ssize.&n;&t; */
 id|tracksize
 op_assign
 id|_floppy-&gt;sect
@@ -10854,6 +10936,7 @@ id|_floppy-&gt;sect
 id|SECTOR
 op_decrement
 suffix:semicolon
+multiline_comment|/* if we are beyond tracksize, fill up using smaller sectors */
 r_while
 c_loop
 (paren
@@ -10921,10 +11004,34 @@ id|FD_2M
 op_logical_and
 id|probing
 )paren
+(brace
 id|max_sector
 op_assign
 id|_floppy-&gt;sect
 suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|HEAD
+op_logical_and
+id|CT
+c_func
+(paren
+id|COMMAND
+)paren
+op_eq
+id|FD_WRITE
+)paren
+(brace
+multiline_comment|/* for virtual DMA bug workaround */
+id|max_sector
+op_assign
+id|_floppy-&gt;sect
+suffix:semicolon
+)brace
 id|aligned_sector_t
 op_assign
 id|sector_t
@@ -11285,6 +11392,11 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&t;&t;&t;check_dma_crossing(raw_cmd-&gt;kernel_data, &n;&t;&t;&t;&t;&t;   raw_cmd-&gt;length, &n;&t;&t;&t;&t;&t;   &quot;end of make_raw_request [1]&quot;);*/
+id|virtualdmabug_workaround
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 l_int|2
 suffix:semicolon
@@ -11853,6 +11965,11 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
+id|virtualdmabug_workaround
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 l_int|2
 suffix:semicolon

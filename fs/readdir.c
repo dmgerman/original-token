@@ -1,10 +1,11 @@
 multiline_comment|/*&n; *  linux/fs/readdir.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; */
+macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -217,22 +218,13 @@ op_assign
 op_minus
 id|EBADF
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|fd
-op_ge
-id|NR_OPEN
-)paren
-r_goto
-id|out
-suffix:semicolon
 id|file
 op_assign
-id|current-&gt;files-&gt;fd
-(braket
+id|fget
+c_func
+(paren
 id|fd
-)braket
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -254,7 +246,7 @@ op_logical_neg
 id|dentry
 )paren
 r_goto
-id|out
+id|out_putf
 suffix:semicolon
 id|inode
 op_assign
@@ -267,7 +259,7 @@ op_logical_neg
 id|inode
 )paren
 r_goto
-id|out
+id|out_putf
 suffix:semicolon
 id|buf.count
 op_assign
@@ -292,7 +284,7 @@ op_logical_neg
 id|file-&gt;f_op-&gt;readdir
 )paren
 r_goto
-id|out
+id|out_putf
 suffix:semicolon
 multiline_comment|/*&n;&t; * Get the inode&squot;s semaphore to prevent changes&n;&t; * to the directory while we read it.&n;&t; */
 id|down
@@ -332,11 +324,19 @@ OL
 l_int|0
 )paren
 r_goto
-id|out
+id|out_putf
 suffix:semicolon
 id|error
 op_assign
 id|buf.count
+suffix:semicolon
+id|out_putf
+suffix:colon
+id|fput
+c_func
+(paren
+id|file
+)paren
 suffix:semicolon
 id|out
 suffix:colon
@@ -622,22 +622,13 @@ op_assign
 op_minus
 id|EBADF
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|fd
-op_ge
-id|NR_OPEN
-)paren
-r_goto
-id|out
-suffix:semicolon
 id|file
 op_assign
-id|current-&gt;files-&gt;fd
-(braket
+id|fget
+c_func
+(paren
 id|fd
-)braket
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -659,7 +650,7 @@ op_logical_neg
 id|dentry
 )paren
 r_goto
-id|out
+id|out_putf
 suffix:semicolon
 id|inode
 op_assign
@@ -672,7 +663,7 @@ op_logical_neg
 id|inode
 )paren
 r_goto
-id|out
+id|out_putf
 suffix:semicolon
 id|buf.current_dir
 op_assign
@@ -710,7 +701,7 @@ op_logical_neg
 id|file-&gt;f_op-&gt;readdir
 )paren
 r_goto
-id|out
+id|out_putf
 suffix:semicolon
 multiline_comment|/*&n;&t; * Get the inode&squot;s semaphore to prevent changes&n;&t; * to the directory while we read it.&n;&t; */
 id|down
@@ -750,15 +741,15 @@ OL
 l_int|0
 )paren
 r_goto
-id|out
-suffix:semicolon
-id|lastdirent
-op_assign
-id|buf.previous
+id|out_putf
 suffix:semicolon
 id|error
 op_assign
 id|buf.error
+suffix:semicolon
+id|lastdirent
+op_assign
+id|buf.previous
 suffix:semicolon
 r_if
 c_cond
@@ -782,6 +773,14 @@ op_minus
 id|buf.count
 suffix:semicolon
 )brace
+id|out_putf
+suffix:colon
+id|fput
+c_func
+(paren
+id|file
+)paren
+suffix:semicolon
 id|out
 suffix:colon
 id|unlock_kernel

@@ -1415,6 +1415,15 @@ id|vuip
 )paren
 id|PYXIS_ERR
 suffix:semicolon
+macro_line|#ifdef CONFIG_ALPHA_RUFFIAN
+id|printk
+c_func
+(paren
+l_string|&quot;pyxis_init: Skipping window register rewrites --&quot;
+l_string|&quot; trust DeskStation firmware!&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#else
 multiline_comment|/*&n;&t; * Set up the PCI-&gt;physical memory translation windows.&n;&t; * For now, windows 1,2 and 3 are disabled.  In the future, we may&n;&t; * want to use them to do scatter/gather DMA.  Window 0&n;&t; * goes at 1 GB and is 1 GB large.&n;&t; */
 op_star
 (paren
@@ -1481,6 +1490,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t; * check ASN in HWRPB for validity, report if bad&n;&t; */
 r_if
 c_cond
@@ -1994,4 +2004,132 @@ suffix:semicolon
 )brace
 macro_line|#endif
 )brace
+macro_line|#if defined(CONFIG_ALPHA_RUFFIAN)
+multiline_comment|/* Note: This is only used by MILO, AFAIK... */
+multiline_comment|/*&n; * The DeskStation Ruffian motherboard firmware does not place&n; * the memory size in the PALimpure area.  Therefore, we use&n; * the Bank Configuration Registers in PYXIS to obtain the size.&n; */
+DECL|function|pyxis_get_bank_size
+r_int
+r_int
+id|pyxis_get_bank_size
+c_func
+(paren
+r_int
+r_int
+id|offset
+)paren
+(brace
+r_int
+r_int
+id|bank_addr
+comma
+id|bank
+comma
+id|ret
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Valid offsets are: 0x800, 0x840 and 0x880&n;&t;   since Ruffian only uses three banks.  */
+id|bank_addr
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|PYXIS_MCR
+op_plus
+id|offset
+suffix:semicolon
+id|bank
+op_assign
+op_star
+(paren
+id|vulp
+)paren
+id|bank_addr
+suffix:semicolon
+multiline_comment|/* Check BANK_ENABLE */
+r_if
+c_cond
+(paren
+id|bank
+op_amp
+l_int|0x01
+)paren
+(brace
+r_static
+r_int
+r_int
+id|size
+(braket
+)braket
+op_assign
+(brace
+l_int|0x40000000UL
+comma
+multiline_comment|/* 0x00,   1G */
+l_int|0x20000000UL
+comma
+multiline_comment|/* 0x02, 512M */
+l_int|0x10000000UL
+comma
+multiline_comment|/* 0x04, 256M */
+l_int|0x08000000UL
+comma
+multiline_comment|/* 0x06, 128M */
+l_int|0x04000000UL
+comma
+multiline_comment|/* 0x08,  64M */
+l_int|0x02000000UL
+comma
+multiline_comment|/* 0x0a,  32M */
+l_int|0x01000000UL
+comma
+multiline_comment|/* 0x0c,  16M */
+l_int|0x00800000UL
+comma
+multiline_comment|/* 0x0e,   8M */
+l_int|0x80000000UL
+comma
+multiline_comment|/* 0x10,   2G */
+)brace
+suffix:semicolon
+id|bank
+op_assign
+(paren
+id|bank
+op_amp
+l_int|0x1e
+)paren
+op_rshift
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|bank
+OL
+r_sizeof
+(paren
+id|size
+)paren
+op_div
+r_sizeof
+(paren
+op_star
+id|size
+)paren
+)paren
+id|ret
+op_assign
+id|size
+(braket
+id|bank
+)braket
+suffix:semicolon
+)brace
+r_return
+id|ret
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_ALPHA_RUFFIAN */
 eof

@@ -4,16 +4,16 @@ mdefine_line|#define _ALPHA_IRQ_H
 multiline_comment|/*&n; *&t;linux/include/alpha/irq.h&n; *&n; *&t;(C) 1994 Linus Torvalds&n; */
 macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#if defined(CONFIG_ALPHA_CABRIOLET) || defined(CONFIG_ALPHA_EB66P) || defined(CONFIG_ALPHA_EB164) || defined(CONFIG_ALPHA_PC164)
+macro_line|#if defined(CONFIG_ALPHA_CABRIOLET) || defined(CONFIG_ALPHA_EB66P) || &bslash;&n;&t;defined(CONFIG_ALPHA_EB164) || defined(CONFIG_ALPHA_PC164) || &bslash;&n;&t;defined(CONFIG_ALPHA_LX164)
 DECL|macro|NR_IRQS
 macro_line|# define NR_IRQS&t;33
-macro_line|#elif defined(CONFIG_ALPHA_EB66) || defined(CONFIG_ALPHA_EB64P) || defined(CONFIG_ALPHA_MIKASA)
+macro_line|#elif defined(CONFIG_ALPHA_EB66) || defined(CONFIG_ALPHA_EB64P) || &bslash;&n;&t;defined(CONFIG_ALPHA_MIKASA)
 DECL|macro|NR_IRQS
 macro_line|# define NR_IRQS&t;32
-macro_line|#elif defined(CONFIG_ALPHA_ALCOR) || defined(CONFIG_ALPHA_XLT) || defined(CONFIG_ALPHA_MIATA) || defined(CONFIG_ALPHA_NORITAKE)
+macro_line|#elif defined(CONFIG_ALPHA_ALCOR) || defined(CONFIG_ALPHA_XLT) || &bslash;&n;&t;defined(CONFIG_ALPHA_MIATA) || defined(CONFIG_ALPHA_NORITAKE) || &bslash;&n;&t;defined(CONFIG_ALPHA_RUFFIAN)
 DECL|macro|NR_IRQS
 macro_line|# define NR_IRQS&t;48
-macro_line|#elif defined(CONFIG_ALPHA_SABLE)
+macro_line|#elif defined(CONFIG_ALPHA_SABLE) || defined(CONFIG_ALPHA_SX164)
 DECL|macro|NR_IRQS
 macro_line|# define NR_IRQS&t;40
 macro_line|#else

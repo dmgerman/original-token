@@ -1173,7 +1173,7 @@ suffix:semicolon
 DECL|function|neigh_table_lock
 r_extern
 id|__inline__
-r_int
+r_void
 id|neigh_table_lock
 c_func
 (paren
@@ -1194,7 +1194,7 @@ suffix:semicolon
 DECL|function|neigh_table_unlock
 r_extern
 id|__inline__
-r_int
+r_void
 id|neigh_table_unlock
 c_func
 (paren

@@ -3423,9 +3423,11 @@ id|pte
 )paren
 )paren
 (brace
-id|read_swap_page
+id|rw_swap_page
 c_func
 (paren
+id|READ
+comma
 id|pte_val
 c_func
 (paren
@@ -3437,8 +3439,11 @@ r_char
 op_star
 )paren
 id|page
+comma
+l_int|1
 )paren
 suffix:semicolon
+multiline_comment|/* FIXME */
 id|pte
 op_assign
 id|__pte
@@ -4201,8 +4206,11 @@ id|idx
 op_assign
 id|swap_nr
 suffix:semicolon
-id|write_swap_page
+id|rw_swap_page
+c_func
 (paren
+id|WRITE
+comma
 id|swap_nr
 comma
 (paren
@@ -4214,8 +4222,11 @@ c_func
 (paren
 id|page
 )paren
+comma
+l_int|1
 )paren
 suffix:semicolon
+multiline_comment|/* FIXME */
 id|free_page
 c_func
 (paren

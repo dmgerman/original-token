@@ -5054,6 +5054,7 @@ op_amp
 id|page-&gt;flags
 )paren
 )paren
+(brace
 id|atomic_dec
 c_func
 (paren
@@ -5061,26 +5062,30 @@ op_amp
 id|nr_async_pages
 )paren
 suffix:semicolon
-r_if
-c_cond
+macro_line|#ifdef DEBUG_SWAP
+id|printk
 (paren
-id|test_and_clear_bit
-c_func
-(paren
-id|PG_swap_unlock_after
+l_string|&quot;DebugVM: Finished IO on page %p, nr_async_pages %d&bslash;n&quot;
 comma
-op_amp
-id|page-&gt;flags
+(paren
+r_char
+op_star
 )paren
-)paren
-(brace
-multiline_comment|/*&n;&t;&t; * We&squot;re doing a swap, so check that this page is&n;&t;&t; * swap-cached and do the necessary cleanup. &n;&t;&t; */
-id|swap_after_unlock_page
+id|page_address
 c_func
 (paren
-id|page-&gt;offset
+id|page
+)paren
+comma
+id|atomic_read
+c_func
+(paren
+op_amp
+id|nr_async_pages
+)paren
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 r_if
 c_cond

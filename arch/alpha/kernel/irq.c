@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
@@ -38,6 +39,10 @@ macro_line|#elif defined(CONFIG_ALPHA_ALCOR)
 multiline_comment|/* always mask out unused timer irq 0, &quot;irqs&quot; 20-30, and the EISA cascade: */
 DECL|macro|PROBE_MASK
 macro_line|# define PROBE_MASK (((1UL &lt;&lt; NR_IRQS) - 1) &amp; ~0xfff000000001UL)
+macro_line|#elif defined(CONFIG_ALPHA_RUFFIAN)
+multiline_comment|/* must leave timer irq 0 in the mask */
+DECL|macro|PROBE_MASK
+macro_line|# define PROBE_MASK ((1UL &lt;&lt; NR_IRQS) - 1)
 macro_line|#else
 multiline_comment|/* always mask out unused timer irq 0: */
 DECL|macro|PROBE_MASK
@@ -706,6 +711,216 @@ r_break
 suffix:semicolon
 )brace
 )brace
+macro_line|#ifdef CONFIG_ALPHA_RUFFIAN
+r_static
+r_inline
+r_void
+DECL|function|ruffian_update_hw
+id|ruffian_update_hw
+c_func
+(paren
+r_int
+r_int
+id|irq
+comma
+r_int
+r_int
+id|mask
+)paren
+(brace
+r_switch
+c_cond
+(paren
+id|irq
+)paren
+(brace
+r_case
+l_int|16
+dot
+dot
+dot
+l_int|47
+suffix:colon
+multiline_comment|/* Note inverted sense of mask bits: */
+multiline_comment|/* Make CERTAIN none of the bogus ints get enabled... */
+op_star
+(paren
+id|vulp
+)paren
+id|PYXIS_INT_MASK
+op_assign
+op_complement
+(paren
+(paren
+r_int
+)paren
+id|mask
+op_rshift
+l_int|16
+)paren
+op_amp
+l_int|0x00000000ffffffbfUL
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* ... and read it back to make sure it got written.  */
+op_star
+(paren
+id|vulp
+)paren
+id|PYXIS_INT_MASK
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|8
+dot
+dot
+dot
+l_int|15
+suffix:colon
+multiline_comment|/* ISA PIC2 */
+id|outb
+c_func
+(paren
+id|mask
+op_rshift
+l_int|8
+comma
+l_int|0xA1
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0
+dot
+dot
+dot
+l_int|7
+suffix:colon
+multiline_comment|/* ISA PIC1 */
+id|outb
+c_func
+(paren
+id|mask
+comma
+l_int|0x21
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif
+macro_line|#ifdef CONFIG_ALPHA_SX164
+r_static
+r_inline
+r_void
+DECL|function|sx164_update_hw
+id|sx164_update_hw
+c_func
+(paren
+r_int
+r_int
+id|irq
+comma
+r_int
+r_int
+id|mask
+)paren
+(brace
+r_switch
+c_cond
+(paren
+id|irq
+)paren
+(brace
+r_case
+l_int|16
+dot
+dot
+dot
+l_int|39
+suffix:colon
+multiline_comment|/* Make CERTAIN none of the bogus ints get enabled */
+op_star
+(paren
+id|vulp
+)paren
+id|PYXIS_INT_MASK
+op_assign
+op_complement
+(paren
+(paren
+r_int
+)paren
+id|mask
+op_rshift
+l_int|16
+)paren
+op_amp
+op_complement
+l_int|0x000000000000003bUL
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* ... and read it back to make sure it got written.  */
+op_star
+(paren
+id|vulp
+)paren
+id|PYXIS_INT_MASK
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|8
+dot
+dot
+dot
+l_int|15
+suffix:colon
+multiline_comment|/* ISA PIC2 */
+id|outb
+c_func
+(paren
+id|mask
+op_rshift
+l_int|8
+comma
+l_int|0xA1
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0
+dot
+dot
+dot
+l_int|7
+suffix:colon
+multiline_comment|/* ISA PIC1 */
+id|outb
+c_func
+(paren
+id|mask
+comma
+l_int|0x21
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif
 multiline_comment|/* Unlabeled mechanisms based on the number of irqs.  Someone should&n;   probably document and name these.  */
 r_static
 r_inline
@@ -937,7 +1152,7 @@ r_break
 suffix:semicolon
 )brace
 )brace
-macro_line|#if defined(CONFIG_ALPHA_PC164) &amp;&amp; defined(CONFIG_ALPHA_SRM)
+macro_line|#if (defined(CONFIG_ALPHA_PC164) || defined(CONFIG_ALPHA_LX164)) &bslash;&n;&t;&amp;&amp; defined(CONFIG_ALPHA_SRM)
 multiline_comment|/*&n; * On the pc164, we cannot take over the IRQs from the SRM, &n; * so we call down to do our dirty work.  Too bad the SRM&n; * isn&squot;t consistent across platforms otherwise we could do&n; * this always.&n; */
 r_extern
 r_void
@@ -1121,6 +1336,24 @@ comma
 id|mask
 )paren
 suffix:semicolon
+macro_line|#elif defined(CONFIG_ALPHA_SX164)
+id|sx164_update_hw
+c_func
+(paren
+id|irq
+comma
+id|mask
+)paren
+suffix:semicolon
+macro_line|#elif defined(CONFIG_ALPHA_RUFFIAN)
+id|ruffian_update_hw
+c_func
+(paren
+id|irq
+comma
+id|mask
+)paren
+suffix:semicolon
 macro_line|#elif NR_IRQS == 33
 id|update_hw_33
 c_func
@@ -1295,7 +1528,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* PC164 &amp;&amp; SRM */
+macro_line|#endif /* (PC164 || LX164) &amp;&amp; SRM */
 multiline_comment|/*&n; * Initial irq handlers.&n; */
 DECL|variable|timer_irq
 r_static
@@ -1593,7 +1826,7 @@ multiline_comment|/* slave 2 */
 r_break
 suffix:semicolon
 )brace
-macro_line|#else /* CONFIG_ALPHA_SABLE */
+macro_line|#elif defined(CONFIG_ALPHA_RUFFIAN)
 r_if
 c_cond
 (paren
@@ -1602,7 +1835,83 @@ OL
 l_int|16
 )paren
 (brace
-multiline_comment|/* ACK the interrupt making it the lowest priority */
+multiline_comment|/* Ack PYXIS ISA interrupt.  */
+op_star
+(paren
+id|vulp
+)paren
+id|PYXIS_INT_REQ
+op_assign
+l_int|1
+op_lshift
+l_int|7
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|irq
+OG
+l_int|7
+)paren
+(brace
+id|outb
+c_func
+(paren
+l_int|0x20
+comma
+l_int|0xa0
+)paren
+suffix:semicolon
+)brace
+id|outb
+c_func
+(paren
+l_int|0x20
+comma
+l_int|0x20
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* Ack PYXIS interrupt.  */
+op_star
+(paren
+id|vulp
+)paren
+id|PYXIS_INT_REQ
+op_assign
+(paren
+l_int|1UL
+op_lshift
+(paren
+id|irq
+op_minus
+l_int|16
+)paren
+)paren
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#else
+r_if
+c_cond
+(paren
+id|irq
+OL
+l_int|16
+)paren
+(brace
+multiline_comment|/* Ack the interrupt making it the lowest priority */
 multiline_comment|/*  First the slave .. */
 r_if
 c_cond
@@ -1670,9 +1979,9 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif /* ALCOR || XLT */
+macro_line|#endif
 )brace
-macro_line|#endif /* CONFIG_ALPHA_SABLE */
+macro_line|#endif
 )brace
 DECL|function|check_irq
 r_int
@@ -3398,7 +3707,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-macro_line|#if defined(CONFIG_ALPHA_MIATA)
+macro_line|#if defined(CONFIG_ALPHA_MIATA) || defined(CONFIG_ALPHA_SX164)
 multiline_comment|/* We have to conditionally compile this because of PYXIS_xxx symbols */
 r_static
 r_inline
@@ -3485,12 +3794,21 @@ l_int|8
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if 1
-multiline_comment|/*&n;&t; * For now, AND off any bits we are not interested in:&n;&t; *   HALT (2), timer (6), ISA Bridge (7), 21142/3 (8)&n;&t; * then all the PCI slots/INTXs (12-31).&n;&t; */
+multiline_comment|/* For now, AND off and bits we are not interested in.  */
+macro_line|#if defined(CONFIG_ALPHA_MIATA)
+multiline_comment|/* HALT (2), timer (6), ISA Bridge (7), 21142/3 (8),&n;&t;   then all the PCI slots/INTXs (12-31).  */
 multiline_comment|/* Maybe HALT should only be used for SRM console boots? */
 id|pld
 op_and_assign
 l_int|0x00000000fffff1c4UL
+suffix:semicolon
+macro_line|#endif
+macro_line|#if defined(CONFIG_ALPHA_SX164)
+multiline_comment|/* HALT (2), timer (6), ISA Bridge (7),&n;&t;   then all the PCI slots/INTXs (8-23).  */
+multiline_comment|/* HALT should only be used for SRM console boots.  */
+id|pld
+op_and_assign
+l_int|0x0000000000ffffc0UL
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n;&t; * Now for every possible bit set, work through them and call&n;&t; * the appropriate interrupt handler.&n;&t; */
@@ -3592,7 +3910,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* MIATA */
+macro_line|#endif /* MIATA || SX164 */
 r_static
 r_inline
 r_void
@@ -3761,6 +4079,210 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+macro_line|#if defined(CONFIG_ALPHA_RUFFIAN)
+r_static
+r_inline
+r_void
+DECL|function|ruffian_device_interrupt
+id|ruffian_device_interrupt
+c_func
+(paren
+r_int
+r_int
+id|vector
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+r_int
+r_int
+id|pld
+suffix:semicolon
+r_int
+r_int
+id|i
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Read the interrupt summary register of PYXIS */
+id|pld
+op_assign
+op_star
+(paren
+id|vulp
+)paren
+id|PYXIS_INT_REQ
+suffix:semicolon
+multiline_comment|/* For now, AND off any bits we are not interested in:&n;&t; * HALT (2), timer (6), ISA Bridge (7), 21142 (8)&n;&t; * then all the PCI slots/INTXs (12-31) &n;&t; * flash(5) :DWH:&n;&t; */
+id|pld
+op_and_assign
+l_int|0x00000000ffffff9fUL
+suffix:semicolon
+multiline_comment|/*&n;&t; * Now for every possible bit set, work through them and call&n;&t; * the appropriate interrupt handler.&n;&t; */
+r_while
+c_loop
+(paren
+id|pld
+)paren
+(brace
+id|i
+op_assign
+id|ffz
+c_func
+(paren
+op_complement
+id|pld
+)paren
+suffix:semicolon
+id|pld
+op_and_assign
+id|pld
+op_minus
+l_int|1
+suffix:semicolon
+multiline_comment|/* clear least bit set */
+r_if
+c_cond
+(paren
+id|i
+op_eq
+l_int|7
+)paren
+(brace
+multiline_comment|/* Copy this bit from isa_device_interrupt cause&n;&t;&t;&t;   we need to hook into int 0 for the timer.  I&n;&t;&t;&t;   refuse to soil device_interrupt with ifdefs.  */
+multiline_comment|/* Generate a PCI interrupt acknowledge cycle.&n;&t;&t;&t;   The PIC will respond with the interrupt&n;&t;&t;&t;   vector of the highest priority interrupt&n;&t;&t;&t;   that is pending.  The PALcode sets up the&n;&t;&t;&t;   interrupts vectors such that irq level L&n;&t;&t;&t;   generates vector L.  */
+r_int
+r_int
+id|j
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|PYXIS_IACK_SC
+op_amp
+l_int|0xff
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|j
+op_eq
+l_int|7
+op_logical_and
+op_logical_neg
+(paren
+id|inb
+c_func
+(paren
+l_int|0x20
+)paren
+op_amp
+l_int|0x80
+)paren
+)paren
+(brace
+multiline_comment|/* It&squot;s only a passive release... */
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|j
+op_eq
+l_int|0
+)paren
+(brace
+id|timer_interrupt
+c_func
+(paren
+id|regs
+)paren
+suffix:semicolon
+id|ack_irq
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|device_interrupt
+c_func
+(paren
+id|j
+comma
+id|j
+comma
+id|regs
+)paren
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
+id|device_interrupt
+c_func
+(paren
+l_int|16
+op_plus
+id|i
+comma
+l_int|16
+op_plus
+id|i
+comma
+id|regs
+)paren
+suffix:semicolon
+)brace
+op_star
+(paren
+id|vulp
+)paren
+id|PYXIS_INT_REQ
+op_assign
+l_int|1UL
+op_lshift
+id|i
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+op_star
+(paren
+id|vulp
+)paren
+id|PYXIS_INT_REQ
+suffix:semicolon
+)brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif /* RUFFIAN */
 macro_line|#endif /* CONFIG_PCI */
 multiline_comment|/*&n; * Jensen is special: the vector is 0x8X0 for EISA interrupt X, and&n; * 0x9X0 for the local motherboard interrupts..&n; *&n; *&t;0x660 - NMI&n; *&n; *&t;0x800 - IRQ0  interval timer (not used, as we use the RTC timer)&n; *&t;0x810 - IRQ1  line printer (duh..)&n; *&t;0x860 - IRQ6  floppy disk&n; *&t;0x8E0 - IRQ14 SCSI controller&n; *&n; *&t;0x900 - COM1&n; *&t;0x920 - COM2&n; *&t;0x980 - keyboard&n; *&t;0x990 - mouse&n; *&n; * PCI-based systems are more sane: they don&squot;t have the local&n; * interrupts at all, and have only normal PCI interrupts from&n; * devices.  Happily it&squot;s easy enough to do a sane mapping from the&n; * Jensen..  Note that this means that we may have to do a hardware&n; * &quot;ack&quot; to a different interrupt than we report to the rest of the&n; * world.&n; */
 r_static
@@ -4481,7 +5003,7 @@ op_amp
 id|regs
 )paren
 suffix:semicolon
-macro_line|#elif defined(CONFIG_ALPHA_MIATA)
+macro_line|#elif defined(CONFIG_ALPHA_MIATA) || defined(CONFIG_ALPHA_SX164)
 id|miata_device_interrupt
 c_func
 (paren
@@ -4511,8 +5033,8 @@ op_amp
 id|regs
 )paren
 suffix:semicolon
-macro_line|#elif NR_IRQS == 33
-id|cabriolet_and_eb66p_device_interrupt
+macro_line|#elif defined(CONFIG_ALPHA_RUFFIAN)
+id|ruffian_device_interrupt
 c_func
 (paren
 id|vector
@@ -4523,6 +5045,16 @@ id|regs
 suffix:semicolon
 macro_line|#elif defined(CONFIG_ALPHA_MIKASA)
 id|mikasa_device_interrupt
+c_func
+(paren
+id|vector
+comma
+op_amp
+id|regs
+)paren
+suffix:semicolon
+macro_line|#elif NR_IRQS == 33
+id|cabriolet_and_eb66p_device_interrupt
 c_func
 (paren
 id|vector
@@ -4649,6 +5181,291 @@ l_int|0x535
 suffix:semicolon
 multiline_comment|/* enable cascades in master */
 )brace
+macro_line|#ifdef CONFIG_ALPHA_SX164
+DECL|function|sx164_init_IRQ
+r_static
+r_inline
+r_void
+id|sx164_init_IRQ
+c_func
+(paren
+r_void
+)paren
+(brace
+multiline_comment|/* note invert on MASK bits */
+op_star
+(paren
+id|vulp
+)paren
+id|PYXIS_INT_MASK
+op_assign
+op_complement
+(paren
+(paren
+r_int
+)paren
+id|irq_mask
+op_rshift
+l_int|16
+)paren
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#if 0
+op_star
+(paren
+id|vulp
+)paren
+id|PYXIS_INT_HILO
+op_assign
+l_int|0x000000B2UL
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* ISA/NMI HI */
+op_star
+(paren
+id|vulp
+)paren
+id|PYXIS_RT_COUNT
+op_assign
+l_int|0UL
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* clear count */
+macro_line|#endif
+id|enable_irq
+c_func
+(paren
+l_int|16
+op_plus
+l_int|6
+)paren
+suffix:semicolon
+multiline_comment|/* enable timer */
+id|enable_irq
+c_func
+(paren
+l_int|16
+op_plus
+l_int|7
+)paren
+suffix:semicolon
+multiline_comment|/* enable ISA PIC cascade */
+id|enable_irq
+c_func
+(paren
+l_int|2
+)paren
+suffix:semicolon
+multiline_comment|/* enable cascade */
+)brace
+macro_line|#endif /* SX164 */
+macro_line|#ifdef CONFIG_ALPHA_RUFFIAN
+DECL|function|ruffian_init_IRQ
+r_static
+r_inline
+r_void
+id|ruffian_init_IRQ
+c_func
+(paren
+r_void
+)paren
+(brace
+multiline_comment|/* invert 6&amp;7 for i82371 */
+op_star
+(paren
+id|vulp
+)paren
+id|PYXIS_INT_HILO
+op_assign
+l_int|0x000000c0UL
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+op_star
+(paren
+id|vulp
+)paren
+id|PYXIS_INT_CNFG
+op_assign
+l_int|0x00002064UL
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* all clear */
+op_star
+(paren
+id|vulp
+)paren
+id|PYXIS_INT_MASK
+op_assign
+l_int|0x00000000UL
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+op_star
+(paren
+id|vulp
+)paren
+id|PYXIS_INT_REQ
+op_assign
+l_int|0xffffffffUL
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x11
+comma
+l_int|0xA0
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x08
+comma
+l_int|0xA1
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x02
+comma
+l_int|0xA1
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x01
+comma
+l_int|0xA1
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0xFF
+comma
+l_int|0xA1
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x11
+comma
+l_int|0x20
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x00
+comma
+l_int|0x21
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x04
+comma
+l_int|0x21
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x01
+comma
+l_int|0x21
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0xFF
+comma
+l_int|0x21
+)paren
+suffix:semicolon
+multiline_comment|/* Send -INTA pulses to clear any pending interrupts ...*/
+op_star
+(paren
+id|vuip
+)paren
+id|IACK_SC
+suffix:semicolon
+multiline_comment|/* Finish writing the 82C59A PIC Operation Control Words */
+id|outb
+c_func
+(paren
+l_int|0x20
+comma
+l_int|0xA0
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x20
+comma
+l_int|0x20
+)paren
+suffix:semicolon
+multiline_comment|/* Turn on the interrupt controller, the timer interrupt  */
+id|enable_irq
+c_func
+(paren
+l_int|16
+op_plus
+l_int|7
+)paren
+suffix:semicolon
+multiline_comment|/* enable ISA PIC cascade */
+id|enable_irq
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/* enable timer */
+id|enable_irq
+c_func
+(paren
+l_int|2
+)paren
+suffix:semicolon
+multiline_comment|/* enable 2nd PIC cascade */
+)brace
+macro_line|#endif /* RUFFIAN */
 macro_line|#ifdef CONFIG_ALPHA_MIATA
 DECL|function|miata_init_IRQ
 r_static
@@ -5061,8 +5878,9 @@ l_int|2
 suffix:semicolon
 multiline_comment|/* enable cascade */
 )brace
-DECL|function|init_IRQ
 r_void
+id|__init
+DECL|function|init_IRQ
 id|init_IRQ
 c_func
 (paren
@@ -5093,6 +5911,7 @@ comma
 id|DMA2_RESET_REG
 )paren
 suffix:semicolon
+macro_line|#ifndef CONFIG_ALPHA_SX164
 id|dma_outb
 c_func
 (paren
@@ -5101,6 +5920,7 @@ comma
 id|DMA1_CLR_MASK_REG
 )paren
 suffix:semicolon
+multiline_comment|/* We need to figure out why this fails on the SX164.  */
 id|dma_outb
 c_func
 (paren
@@ -5109,6 +5929,7 @@ comma
 id|DMA2_CLR_MASK_REG
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#if defined(CONFIG_ALPHA_SABLE)
 id|sable_init_IRQ
 c_func
@@ -5117,6 +5938,12 @@ c_func
 suffix:semicolon
 macro_line|#elif defined(CONFIG_ALPHA_MIATA)
 id|miata_init_IRQ
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#elif defined(CONFIG_ALPHA_SX164)
+id|sx164_init_IRQ
 c_func
 (paren
 )paren
@@ -5133,10 +5960,16 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#elif defined(CONFIG_ALPHA_PC164) &amp;&amp; defined(CONFIG_ALPHA_SRM)
+macro_line|#elif (defined(CONFIG_ALPHA_PC164) || defined(CONFIG_ALPHA_LX164)) &bslash;&n;&t;&amp;&amp; defined(CONFIG_ALPHA_SRM)
 multiline_comment|/* Disable all the PCI interrupts?  Otherwise, everthing was&n;&t;   done by SRM already.  */
 macro_line|#elif defined(CONFIG_ALPHA_MIKASA)
 id|mikasa_init_IRQ
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#elif defined(CONFIG_ALPHA_RUFFIAN)
+id|ruffian_init_IRQ
 c_func
 (paren
 )paren

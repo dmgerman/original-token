@@ -791,6 +791,7 @@ DECL|macro|PCI_VENDOR_ID_CONTAQ
 mdefine_line|#define PCI_VENDOR_ID_CONTAQ&t;&t;0x1080
 DECL|macro|PCI_DEVICE_ID_CONTAQ_82C599
 mdefine_line|#define PCI_DEVICE_ID_CONTAQ_82C599&t;0x0600
+multiline_comment|/* ??? Alpha SX164 has reference to device nr 0xc693 as a CYPRESS bridge.  */
 DECL|macro|PCI_VENDOR_ID_FOREX
 mdefine_line|#define PCI_VENDOR_ID_FOREX&t;&t;0x1083
 DECL|macro|PCI_VENDOR_ID_OLICOM

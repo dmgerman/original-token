@@ -18,6 +18,10 @@ DECL|macro|EV56_CPU
 mdefine_line|#define EV56_CPU&t;&t;7&t;/* EV5.6 (21164)&t;*/
 DECL|macro|EV6_CPU
 mdefine_line|#define EV6_CPU&t;&t;&t;8&t;/* EV6 (21164)&t;&t;*/
+DECL|macro|PCA56_CPU
+mdefine_line|#define PCA56_CPU&t;&t;9&t;/* PCA56 (21164PC)&t;*/
+DECL|macro|PCA57_CPU
+mdefine_line|#define PCA57_CPU&t;&t;10&t;/* PCA57 (??)&t;&t;*/
 multiline_comment|/*&n; * DEC system types for Alpha systems.  Found in HWRPB.&n; * These values are architected.&n; */
 DECL|macro|ST_ADU
 mdefine_line|#define ST_ADU&t;&t;&t;  1&t;/* Alpha ADU systype&t;*/
@@ -55,10 +59,41 @@ DECL|macro|ST_DEC_EB66P
 mdefine_line|#define ST_DEC_EB66P&t;&t;-19&t;/* EB66 systype&t;&t;*/
 DECL|macro|ST_DEC_EBPC64
 mdefine_line|#define ST_DEC_EBPC64&t;&t;-20&t;/* Cabriolet (AlphaPC64) systype */
+DECL|macro|ST_DEC_BURNS
+mdefine_line|#define ST_DEC_BURNS&t;&t; 21&t;/* Laptop systype&t;*/
+DECL|macro|ST_DEC_RAWHIDE
+mdefine_line|#define ST_DEC_RAWHIDE&t;&t; 22&t;/* Rawhide systype&t;*/
+DECL|macro|ST_DEC_K2
+mdefine_line|#define ST_DEC_K2&t;&t; 23&t;/* K2 systype&t;&t;*/
+DECL|macro|ST_DEC_LYNX
+mdefine_line|#define ST_DEC_LYNX&t;&t; 24&t;/* Lynx systype&t;&t;*/
+DECL|macro|ST_DEC_XL
+mdefine_line|#define ST_DEC_XL&t;&t; 25&t;/* Alpha XL systype&t;*/
 DECL|macro|ST_DEC_EB164
 mdefine_line|#define ST_DEC_EB164&t;&t; 26&t;/* EB164 systype&t;*/
+DECL|macro|ST_DEC_NORITAKE
+mdefine_line|#define ST_DEC_NORITAKE&t;&t; 27&t;/* Noritake systype&t;*/
+DECL|macro|ST_DEC_CORTEX
+mdefine_line|#define ST_DEC_CORTEX&t;&t; 28&t;/* Cortex systype&t;*/
 DECL|macro|ST_DEC_MIATA
 mdefine_line|#define ST_DEC_MIATA&t;&t; 30&t;/* MIATA systype        */
+DECL|macro|ST_DEC_XXM
+mdefine_line|#define ST_DEC_XXM&t;&t; 31&t;/* XXM systype&t;&t;*/
+DECL|macro|ST_DEC_TAKARA
+mdefine_line|#define ST_DEC_TAKARA&t;&t; 32&t;/* Takara systype&t;*/
+DECL|macro|ST_DEC_YUKON
+mdefine_line|#define ST_DEC_YUKON&t;&t; 33&t;/* Yukon systype&t;*/
+DECL|macro|ST_DEC_TSUNAMI
+mdefine_line|#define ST_DEC_TSUNAMI&t;&t; 34&t;/* Tsunami systype&t;*/
+DECL|macro|ST_DEC_WILDFIRE
+mdefine_line|#define ST_DEC_WILDFIRE&t;&t; 35&t;/* Wildfire systype&t;*/
+DECL|macro|ST_DEC_CUSCO
+mdefine_line|#define ST_DEC_CUSCO&t;&t; 36&t;/* CUSCO systype&t;*/
+multiline_comment|/* UNOFFICIAL!!! */
+DECL|macro|ST_UNOFFICIAL_BIAS
+mdefine_line|#define ST_UNOFFICIAL_BIAS&t;100
+DECL|macro|ST_DTI_RUFFIAN
+mdefine_line|#define ST_DTI_RUFFIAN&t;&t;101&t;/* RUFFIAN systype&t;*/
 DECL|struct|pcb_struct
 r_struct
 id|pcb_struct

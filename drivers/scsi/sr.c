@@ -2000,7 +2000,20 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/* scsi_ioctl may allow CURRENT to change, so start over. *&n;&t;&t;SDev-&gt;was_reset = 0;&n;&t;&t;continue;&n; &t;    }&n; &t;    SDev-&gt;was_reset = 0;&n;&t;}&n;&n;&t;/* we do lazy blocksize switching (when reading XA sectors,&n;&t; * see CDROMREADMODE2 ioctl) */
+multiline_comment|/* scsi_ioctl may allow CURRENT to change, so start over. */
+id|SDev-&gt;was_reset
+op_assign
+l_int|0
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
+id|SDev-&gt;was_reset
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/* we do lazy blocksize switching (when reading XA sectors,&n;&t; * see CDROMREADMODE2 ioctl) */
 r_if
 c_cond
 (paren
@@ -2233,6 +2246,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* While */
 )brace
+DECL|function|requeue_sr_request
 r_void
 id|requeue_sr_request
 (paren

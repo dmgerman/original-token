@@ -10,6 +10,8 @@ mdefine_line|#define SWAP_FLAG_PRIO_SHIFT&t;0
 DECL|macro|MAX_SWAPFILES
 mdefine_line|#define MAX_SWAPFILES 8
 macro_line|#ifdef __KERNEL__
+DECL|macro|DEBUG_SWAP
+macro_line|#undef DEBUG_SWAP
 macro_line|#include &lt;asm/atomic.h&gt;
 DECL|macro|SWP_USED
 mdefine_line|#define SWP_USED&t;1
@@ -41,12 +43,6 @@ r_int
 r_char
 op_star
 id|swap_map
-suffix:semicolon
-DECL|member|swap_lockmap
-r_int
-r_char
-op_star
-id|swap_lockmap
 suffix:semicolon
 DECL|member|lowest_bit
 r_int
@@ -164,17 +160,18 @@ comma
 r_int
 )paren
 suffix:semicolon
-DECL|macro|read_swap_page
-mdefine_line|#define read_swap_page(nr,buf) &bslash;&n;&t;rw_swap_page(READ,(nr),(buf),1)
-DECL|macro|write_swap_page
-mdefine_line|#define write_swap_page(nr,buf) &bslash;&n;&t;rw_swap_page(WRITE,(nr),(buf),1)
 r_extern
 r_void
-id|swap_after_unlock_page
+id|rw_swap_page_nocache
+c_func
 (paren
 r_int
+comma
 r_int
-id|entry
+r_int
+comma
+r_char
+op_star
 )paren
 suffix:semicolon
 multiline_comment|/* linux/mm/page_alloc.c */
@@ -231,6 +228,21 @@ r_int
 r_int
 )paren
 suffix:semicolon
+r_extern
+r_struct
+id|page
+op_star
+id|read_swap_cache_async
+c_func
+(paren
+r_int
+r_int
+comma
+r_int
+)paren
+suffix:semicolon
+DECL|macro|read_swap_cache
+mdefine_line|#define read_swap_cache(entry) read_swap_cache_async(entry, 1);
 multiline_comment|/* linux/mm/swapfile.c */
 r_extern
 r_int
@@ -342,7 +354,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Work out if there are any other processes sharing this page, ignoring&n; * any page reference coming from the page or swap cache.  &n; */
+multiline_comment|/*&n; * Work out if there are any other processes sharing this page, ignoring&n; * any page reference coming from the swap cache, or from outstanding&n; * swap IO on this page.  (The page cache _does_ count as another valid&n; * reference to the page, however.)&n; */
 DECL|function|is_page_shared
 r_static
 r_inline
@@ -369,7 +381,34 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|PageReserved
+c_func
+(paren
+id|page
+)paren
+)paren
+r_return
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|page-&gt;inode
+op_eq
+op_amp
+id|swapper_inode
+)paren
+id|count
+op_decrement
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|PageFreeAfter
+c_func
+(paren
+id|page
+)paren
 )paren
 id|count
 op_decrement

@@ -184,5 +184,9 @@ DECL|macro|RTC_IRQP_READ
 mdefine_line|#define RTC_IRQP_READ&t;_IOR(&squot;p&squot;, 0x0b, unsigned long)&t; /* Read IRQ rate   */
 DECL|macro|RTC_IRQP_SET
 mdefine_line|#define RTC_IRQP_SET&t;_IOW(&squot;p&squot;, 0x0c, unsigned long)&t; /* Set IRQ rate    */
+DECL|macro|RTC_EPOCH_READ
+mdefine_line|#define RTC_EPOCH_READ&t;_IOR(&squot;p&squot;, 0x0d, unsigned long)&t; /* Read epoch      */
+DECL|macro|RTC_EPOCH_SET
+mdefine_line|#define RTC_EPOCH_SET&t;_IOW(&squot;p&squot;, 0x0e, unsigned long)&t; /* Set epoch       */
 macro_line|#endif /* _MC146818RTC_H */
 eof

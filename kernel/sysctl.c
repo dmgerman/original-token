@@ -2553,15 +2553,6 @@ id|de
 )paren
 suffix:semicolon
 )brace
-r_else
-id|printk
-c_func
-(paren
-l_string|&quot;unregister_proc_table: %s not empty!&bslash;n&quot;
-comma
-id|table-&gt;procname
-)paren
-suffix:semicolon
 )brace
 )brace
 DECL|function|do_rw_proc

@@ -553,7 +553,7 @@ id|page-&gt;flags
 )paren
 r_break
 suffix:semicolon
-multiline_comment|/* is it a page cache page? */
+multiline_comment|/* is it a swap-cache or page-cache page? */
 r_if
 c_cond
 (paren
@@ -563,16 +563,23 @@ id|page-&gt;inode
 r_if
 c_cond
 (paren
-id|page-&gt;inode
-op_eq
-op_amp
-id|swapper_inode
-)paren
-id|panic
+id|PageSwapCache
+c_func
 (paren
-l_string|&quot;Shrinking a swap cache page&quot;
+id|page
+)paren
+)paren
+(brace
+id|delete_from_swap_cache
+c_func
+(paren
+id|page
 )paren
 suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
 id|remove_page_from_hash_queue
 c_func
 (paren

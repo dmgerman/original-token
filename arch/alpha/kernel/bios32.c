@@ -3,6 +3,8 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#if 0
 macro_line|# define DBG_DEVS(args)&t;&t;printk args
 macro_line|#else
@@ -79,10 +81,20 @@ op_star
 id|hwrpb
 suffix:semicolon
 multiline_comment|/* Forward declarations for some extra fixup routines for specific hardware. */
-macro_line|#ifdef CONFIG_ALPHA_PC164
-r_static
+macro_line|#if defined(CONFIG_ALPHA_PC164) || defined(CONFIG_ALPHA_LX164)
+r_extern
 r_int
-id|SMCInit
+id|SMC93x_Init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_ALPHA_SX164
+r_extern
+r_int
+id|SMC669_Init
 c_func
 (paren
 r_void
@@ -193,18 +205,18 @@ r_int
 r_int
 id|cmd
 suffix:semicolon
-macro_line|#if defined(CONFIG_ALPHA_EISA)
+macro_line|#ifdef CONFIG_ALPHA_EISA
 multiline_comment|/*&n;&t; * HACK: the PCI-to-EISA bridge does not seem to identify&n;&t; *       itself as a bridge... :-(&n;&t; */
 r_if
 c_cond
 (paren
 id|dev-&gt;vendor
 op_eq
-l_int|0x8086
+id|PCI_VENDOR_ID_INTEL
 op_logical_and
 id|dev-&gt;device
 op_eq
-l_int|0x0482
+id|PCI_DEVICE_ID_INTEL_82375
 )paren
 (brace
 id|DBG_DEVS
@@ -212,6 +224,32 @@ c_func
 (paren
 (paren
 l_string|&quot;disable_dev: ignoring PCEB...&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+macro_line|#endif
+macro_line|#ifdef CONFIG_ALPHA_SX164
+r_if
+c_cond
+(paren
+id|dev-&gt;vendor
+op_eq
+id|PCI_VENDOR_ID_CONTAQ
+op_logical_and
+multiline_comment|/* FIXME: We want a symbolic device name here.  */
+id|dev-&gt;device
+op_eq
+l_int|0xc693
+)paren
+(brace
+id|DBG_DEVS
+c_func
+(paren
+(paren
+l_string|&quot;disable_dev: ignoring CYPRESS bridge...&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -301,6 +339,7 @@ r_int
 r_int
 id|alignto
 suffix:semicolon
+macro_line|#ifdef CONFIG_ALPHA_EISA
 multiline_comment|/*&n;&t; * HACK: the PCI-to-EISA bridge does not seem to identify&n;&t; *       itself as a bridge... :-(&n;&t; */
 r_if
 c_cond
@@ -325,6 +364,32 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#endif
+macro_line|#ifdef CONFIG_ALPHA_SX164
+r_if
+c_cond
+(paren
+id|dev-&gt;vendor
+op_eq
+id|PCI_VENDOR_ID_CONTAQ
+op_logical_and
+id|dev-&gt;device
+op_eq
+l_int|0xc693
+)paren
+(brace
+id|DBG_DEVS
+c_func
+(paren
+(paren
+l_string|&quot;layout_dev: ignoring CYPRESS bridge...&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+macro_line|#endif
 id|bus
 op_assign
 id|dev-&gt;bus
@@ -2083,6 +2148,219 @@ l_int|0x0000000
 suffix:semicolon
 )brace
 )brace
+macro_line|#ifdef CONFIG_ALPHA_SX164
+multiline_comment|/* If it the CYPRESS PCI-ISA bridge, disable IDE&n;&t;&t;   interrupt routing through PCI (ie do through PIC).  */
+r_else
+r_if
+c_cond
+(paren
+id|dev-&gt;vendor
+op_eq
+id|PCI_VENDOR_ID_CONTAQ
+op_logical_and
+id|dev-&gt;device
+op_eq
+l_int|0xc693
+op_logical_and
+id|PCI_FUNC
+c_func
+(paren
+id|dev-&gt;devfn
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+id|pcibios_write_config_word
+c_func
+(paren
+id|dev-&gt;bus-&gt;number
+comma
+id|dev-&gt;devfn
+comma
+l_int|0x04
+comma
+l_int|0x0007
+)paren
+suffix:semicolon
+id|pcibios_write_config_byte
+c_func
+(paren
+id|dev-&gt;bus-&gt;number
+comma
+id|dev-&gt;devfn
+comma
+l_int|0x40
+comma
+l_int|0x80
+)paren
+suffix:semicolon
+id|pcibios_write_config_byte
+c_func
+(paren
+id|dev-&gt;bus-&gt;number
+comma
+id|dev-&gt;devfn
+comma
+l_int|0x41
+comma
+l_int|0x80
+)paren
+suffix:semicolon
+id|pcibios_write_config_byte
+c_func
+(paren
+id|dev-&gt;bus-&gt;number
+comma
+id|dev-&gt;devfn
+comma
+l_int|0x42
+comma
+l_int|0x80
+)paren
+suffix:semicolon
+id|pcibios_write_config_byte
+c_func
+(paren
+id|dev-&gt;bus-&gt;number
+comma
+id|dev-&gt;devfn
+comma
+l_int|0x43
+comma
+l_int|0x80
+)paren
+suffix:semicolon
+id|pcibios_write_config_byte
+c_func
+(paren
+id|dev-&gt;bus-&gt;number
+comma
+id|dev-&gt;devfn
+comma
+l_int|0x44
+comma
+l_int|0x27
+)paren
+suffix:semicolon
+id|pcibios_write_config_byte
+c_func
+(paren
+id|dev-&gt;bus-&gt;number
+comma
+id|dev-&gt;devfn
+comma
+l_int|0x45
+comma
+l_int|0xe0
+)paren
+suffix:semicolon
+id|pcibios_write_config_byte
+c_func
+(paren
+id|dev-&gt;bus-&gt;number
+comma
+id|dev-&gt;devfn
+comma
+l_int|0x48
+comma
+l_int|0xf0
+)paren
+suffix:semicolon
+id|pcibios_write_config_byte
+c_func
+(paren
+id|dev-&gt;bus-&gt;number
+comma
+id|dev-&gt;devfn
+comma
+l_int|0x49
+comma
+l_int|0x40
+)paren
+suffix:semicolon
+id|pcibios_write_config_byte
+c_func
+(paren
+id|dev-&gt;bus-&gt;number
+comma
+id|dev-&gt;devfn
+comma
+l_int|0x4a
+comma
+l_int|0x00
+)paren
+suffix:semicolon
+id|pcibios_write_config_byte
+c_func
+(paren
+id|dev-&gt;bus-&gt;number
+comma
+id|dev-&gt;devfn
+comma
+l_int|0x4b
+comma
+l_int|0x80
+)paren
+suffix:semicolon
+id|pcibios_write_config_byte
+c_func
+(paren
+id|dev-&gt;bus-&gt;number
+comma
+id|dev-&gt;devfn
+comma
+l_int|0x4c
+comma
+l_int|0x80
+)paren
+suffix:semicolon
+id|pcibios_write_config_byte
+c_func
+(paren
+id|dev-&gt;bus-&gt;number
+comma
+id|dev-&gt;devfn
+comma
+l_int|0x4d
+comma
+l_int|0x70
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0
+comma
+id|DMA1_RESET_REG
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0
+comma
+id|DMA2_RESET_REG
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|DMA_MODE_CASCADE
+comma
+id|DMA2_MODE_REG
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0
+comma
+id|DMA2_MASK_REG
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif /* SX164 */
 )brace
 r_if
 c_cond
@@ -2118,6 +2396,7 @@ l_int|5
 (braket
 l_int|5
 )braket
+id|__initdata
 op_assign
 (brace
 (brace
@@ -2246,8 +2525,8 @@ l_int|0x398
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * The PC164 has 19 PCI interrupts, four from each of the four PCI&n; * slots, the SIO, PCI/IDE, and USB.&n; * &n; * Each of the interrupts can be individually masked. This is&n; * accomplished by setting the appropriate bit in the mask register.&n; * A bit is set by writing a &quot;1&quot; to the desired position in the mask&n; * register and cleared by writing a &quot;0&quot;. There are 3 mask registers&n; * located at ISA address 804h, 805h and 806h.&n; * &n; * An I/O read at ISA address 804h, 805h, 806h will return the&n; * state of the 11 PCI interrupts and not the state of the MASKED&n; * interrupts.&n; * &n; * Note: A write to I/O 804h, 805h, and 806h the mask register will be&n; * updated.&n; * &n; * &n; * &t;&t;&t;&t;ISA DATA&lt;7:0&gt;&n; * ISA     +--------------------------------------------------------------+&n; * ADDRESS |   7   |   6   |   5   |   4   |   3   |   2  |   1   |   0   |&n; *         +==============================================================+&n; * 0x804   | INTB0 |  USB  |  IDE  |  SIO  | INTA3 |INTA2 | INTA1 | INTA0 |&n; *         +--------------------------------------------------------------+&n; * 0x805   | INTD0 | INTC3 | INTC2 | INTC1 | INTC0 |INTB3 | INTB2 | INTB1 |&n; *         +--------------------------------------------------------------+&n; * 0x806   | Rsrv  | Rsrv  | Rsrv  | Rsrv  | Rsrv  |INTD3 | INTD2 | INTD1 |&n; *         +--------------------------------------------------------------+&n; *         * Rsrv = reserved bits&n; *         Note: The mask register is write-only.&n; * &n; * IdSel&t;&n; *   5&t; 32 bit PCI option slot 2&n; *   6&t; 64 bit PCI option slot 0&n; *   7&t; 64 bit PCI option slot 1&n; *   8&t; Saturn I/O&n; *   9&t; 32 bit PCI option slot 3&n; *  10&t; USB&n; *  11&t; IDE&n; * &n; */
-macro_line|#ifdef CONFIG_ALPHA_PC164
+multiline_comment|/*&n; * The PC164/LX164 has 19 PCI interrupts, four from each of the four PCI&n; * slots, the SIO, PCI/IDE, and USB.&n; * &n; * Each of the interrupts can be individually masked. This is&n; * accomplished by setting the appropriate bit in the mask register.&n; * A bit is set by writing a &quot;1&quot; to the desired position in the mask&n; * register and cleared by writing a &quot;0&quot;. There are 3 mask registers&n; * located at ISA address 804h, 805h and 806h.&n; * &n; * An I/O read at ISA address 804h, 805h, 806h will return the&n; * state of the 11 PCI interrupts and not the state of the MASKED&n; * interrupts.&n; * &n; * Note: A write to I/O 804h, 805h, and 806h the mask register will be&n; * updated.&n; * &n; * &n; * &t;&t;&t;&t;ISA DATA&lt;7:0&gt;&n; * ISA     +--------------------------------------------------------------+&n; * ADDRESS |   7   |   6   |   5   |   4   |   3   |   2  |   1   |   0   |&n; *         +==============================================================+&n; * 0x804   | INTB0 |  USB  |  IDE  |  SIO  | INTA3 |INTA2 | INTA1 | INTA0 |&n; *         +--------------------------------------------------------------+&n; * 0x805   | INTD0 | INTC3 | INTC2 | INTC1 | INTC0 |INTB3 | INTB2 | INTB1 |&n; *         +--------------------------------------------------------------+&n; * 0x806   | Rsrv  | Rsrv  | Rsrv  | Rsrv  | Rsrv  |INTD3 | INTD2 | INTD1 |&n; *         +--------------------------------------------------------------+&n; *         * Rsrv = reserved bits&n; *         Note: The mask register is write-only.&n; * &n; * IdSel&t;&n; *   5&t; 32 bit PCI option slot 2&n; *   6&t; 64 bit PCI option slot 0&n; *   7&t; 64 bit PCI option slot 1&n; *   8&t; Saturn I/O&n; *   9&t; 32 bit PCI option slot 3&n; *  10&t; USB&n; *  11&t; IDE&n; * &n; */
+macro_line|#if defined(CONFIG_ALPHA_PC164) || defined(CONFIG_ALPHA_LX164)
 DECL|function|alphapc164_fixup
 r_static
 r_inline
@@ -2267,6 +2546,7 @@ l_int|7
 (braket
 l_int|5
 )braket
+id|__initdata
 op_assign
 (brace
 multiline_comment|/*INT   INTA  INTB   INTC   INTD */
@@ -2441,7 +2721,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-id|SMCInit
+id|SMC93x_Init
 c_func
 (paren
 )paren
@@ -2468,6 +2748,7 @@ l_int|5
 (braket
 l_int|5
 )braket
+id|__initdata
 op_assign
 (brace
 (brace
@@ -2616,6 +2897,7 @@ l_int|5
 (braket
 l_int|5
 )braket
+id|__initdata
 op_assign
 (brace
 (brace
@@ -2765,6 +3047,7 @@ l_int|8
 (braket
 l_int|5
 )braket
+id|__initdata
 op_assign
 (brace
 multiline_comment|/*INT    INTA   INTB   INTC   INTD */
@@ -2969,6 +3252,7 @@ l_int|13
 (braket
 l_int|5
 )braket
+id|__initdata
 op_assign
 (brace
 multiline_comment|/*INT    INTA   INTB   INTC   INTD */
@@ -3266,6 +3550,7 @@ l_int|6
 (braket
 l_int|5
 )braket
+id|__initdata
 op_assign
 (brace
 multiline_comment|/*INT    INTA   INTB   INTC   INTD */
@@ -3439,6 +3724,7 @@ l_int|7
 (braket
 l_int|5
 )braket
+id|__initdata
 op_assign
 (brace
 multiline_comment|/*INT    INTA   INTB   INTC   INTD */
@@ -3611,7 +3897,8 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Fixup configuration for ALPHA SABLE (2100) - 2100A is different ??&n; *&n; * Summary Registers (536/53a/53c):&n; * Bit      Meaning&n; *-----------------&n; * 0        PCI slot 0&n; * 1        NCR810 (builtin)&n; * 2        TULIP (builtin)&n; * 3        mouse&n; * 4        PCI slot 1&n; * 5        PCI slot 2&n; * 6        keyboard&n; * 7        floppy&n; * 8        COM2&n; * 9        parallel port&n; *10        EISA irq 3&n; *11        EISA irq 4&n; *12        EISA irq 5&n; *13        EISA irq 6&n; *14        EISA irq 7&n; *15        COM1&n; *16        EISA irq 9&n; *17        EISA irq 10&n; *18        EISA irq 11&n; *19        EISA irq 12&n; *20        EISA irq 13&n; *21        EISA irq 14&n; *22        NC&n; *23        IIC&n; *&n; * The device to slot mapping looks like:&n; *&n; * Slot     Device&n; *  0       TULIP&n; *  1       SCSI&n; *  2       PCI-EISA bridge&n; *  3       none&n; *  4       none&n; *  5       none&n; *  6       PCI on board slot 0&n; *  7       PCI on board slot 1&n; *  8       PCI on board slot 2&n; *   &n; *&n; * This two layered interrupt approach means that we allocate IRQ 16 and &n; * above for PCI interrupts.  The IRQ relates to which bit the interrupt&n; * comes in on.  This makes interrupt processing much easier.&n; */
-multiline_comment|/* NOTE: the IRQ assignments below are arbitrary, but need to be consistent&n;   with the values in the sable_irq_to_mask[] and sable_mask_to_irq[] tables&n;   in irq.c&n; */
+multiline_comment|/*&n; * NOTE: the IRQ assignments below are arbitrary, but need to be consistent&n; * with the values in the sable_irq_to_mask[] and sable_mask_to_irq[] tables&n; * in irq.c&n; */
+macro_line|#ifdef CONFIG_ALPHA_SABLE
 DECL|function|sable_fixup
 r_static
 r_inline
@@ -3631,6 +3918,7 @@ l_int|9
 (braket
 l_int|5
 )braket
+id|__initdata
 op_assign
 (brace
 multiline_comment|/*INT    INTA   INTB   INTC   INTD */
@@ -3838,6 +4126,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*&n; * Fixup configuration for MIATA (EV56+PYXIS)&n; *&n; * Summary @ PYXIS_INT_REQ:&n; * Bit      Meaning&n; * 0        Fan Fault&n; * 1        NMI&n; * 2        Halt/Reset switch&n; * 3        none&n; * 4        CID0 (Riser ID)&n; * 5        CID1 (Riser ID)&n; * 6        Interval timer&n; * 7        PCI-ISA Bridge&n; * 8        Ethernet&n; * 9        EIDE (deprecated, ISA 14/15 used)&n; *10        none&n; *11        USB&n; *12        Interrupt Line A from slot 4&n; *13        Interrupt Line B from slot 4&n; *14        Interrupt Line C from slot 4&n; *15        Interrupt Line D from slot 4&n; *16        Interrupt Line A from slot 5&n; *17        Interrupt line B from slot 5&n; *18        Interrupt Line C from slot 5&n; *19        Interrupt Line D from slot 5&n; *20        Interrupt Line A from slot 1&n; *21        Interrupt Line B from slot 1&n; *22        Interrupt Line C from slot 1&n; *23        Interrupt Line D from slot 1&n; *24        Interrupt Line A from slot 2&n; *25        Interrupt Line B from slot 2&n; *26        Interrupt Line C from slot 2&n; *27        Interrupt Line D from slot 2&n; *27        Interrupt Line A from slot 3&n; *29        Interrupt Line B from slot 3&n; *30        Interrupt Line C from slot 3&n; *31        Interrupt Line D from slot 3&n; *&n; * The device to slot mapping looks like:&n; *&n; * Slot     Device&n; *  3       DC21142 Ethernet&n; *  4       EIDE CMD646&n; *  5       none&n; *  6       USB&n; *  7       PCI-ISA bridge&n; *  8       PCI-PCI Bridge      (SBU Riser)&n; *  9       none&n; * 10       none&n; * 11       PCI on board slot 4 (SBU Riser)&n; * 12       PCI on board slot 5 (SBU Riser)&n; *&n; *  These are behind the bridge, so I&squot;m not sure what to do...&n; *&n; * 13       PCI on board slot 1 (SBU Riser)&n; * 14       PCI on board slot 2 (SBU Riser)&n; * 15       PCI on board slot 3 (SBU Riser)&n; *   &n; *&n; * This two layered interrupt approach means that we allocate IRQ 16 and &n; * above for PCI interrupts.  The IRQ relates to which bit the interrupt&n; * comes in on.  This makes interrupt processing much easier.&n; */
 macro_line|#ifdef CONFIG_ALPHA_MIATA
 DECL|function|miata_fixup
@@ -3859,6 +4148,7 @@ l_int|18
 (braket
 l_int|5
 )braket
+id|__initdata
 op_assign
 (brace
 multiline_comment|/*INT    INTA   INTB   INTC   INTD */
@@ -4242,6 +4532,163 @@ c_func
 suffix:semicolon
 )brace
 macro_line|#endif
+multiline_comment|/*&n; * Fixup configuration for SX164 (PCA56+PYXIS)&n; *&n; * Summary @ PYXIS_INT_REQ:&n; * Bit      Meaning&n; * 0        RSVD&n; * 1        NMI&n; * 2        Halt/Reset switch&n; * 3        MBZ&n; * 4        RAZ&n; * 5        RAZ&n; * 6        Interval timer (RTC)&n; * 7        PCI-ISA Bridge&n; * 8        Interrupt Line A from slot 3&n; * 9        Interrupt Line A from slot 2&n; *10        Interrupt Line A from slot 1&n; *11        Interrupt Line A from slot 0&n; *12        Interrupt Line B from slot 3&n; *13        Interrupt Line B from slot 2&n; *14        Interrupt Line B from slot 1&n; *15        Interrupt line B from slot 0&n; *16        Interrupt Line C from slot 3&n;&n; *17        Interrupt Line C from slot 2&n; *18        Interrupt Line C from slot 1&n; *19        Interrupt Line C from slot 0&n; *20        Interrupt Line D from slot 3&n; *21        Interrupt Line D from slot 2&n; *22        Interrupt Line D from slot 1&n; *23        Interrupt Line D from slot 0&n; *&n; * IdSel       &n; *   5  32 bit PCI option slot 2&n; *   6  64 bit PCI option slot 0&n; *   7  64 bit PCI option slot 1&n; *   8  Cypress I/O&n; *   9  32 bit PCI option slot 3&n; * &n; */
+macro_line|#ifdef CONFIG_ALPHA_SX164
+DECL|function|sx164_fixup
+r_static
+r_inline
+r_void
+id|sx164_fixup
+c_func
+(paren
+r_void
+)paren
+(brace
+r_static
+r_char
+id|irq_tab
+(braket
+l_int|5
+)braket
+(braket
+l_int|5
+)braket
+id|__initdata
+op_assign
+(brace
+multiline_comment|/*INT    INTA   INTB   INTC   INTD */
+(brace
+l_int|16
+op_plus
+l_int|9
+comma
+l_int|16
+op_plus
+l_int|9
+comma
+l_int|16
+op_plus
+l_int|13
+comma
+l_int|16
+op_plus
+l_int|17
+comma
+l_int|16
+op_plus
+l_int|21
+)brace
+comma
+multiline_comment|/* IdSel 5 slot 2 J17 */
+(brace
+l_int|16
+op_plus
+l_int|11
+comma
+l_int|16
+op_plus
+l_int|11
+comma
+l_int|16
+op_plus
+l_int|15
+comma
+l_int|16
+op_plus
+l_int|19
+comma
+l_int|16
+op_plus
+l_int|23
+)brace
+comma
+multiline_comment|/* IdSel 6 slot 0 J19 */
+(brace
+l_int|16
+op_plus
+l_int|10
+comma
+l_int|16
+op_plus
+l_int|10
+comma
+l_int|16
+op_plus
+l_int|14
+comma
+l_int|16
+op_plus
+l_int|18
+comma
+l_int|16
+op_plus
+l_int|22
+)brace
+comma
+multiline_comment|/* IdSel 7 slot 1 J18 */
+(brace
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+)brace
+comma
+multiline_comment|/* IdSel 8 SIO        */
+(brace
+l_int|16
+op_plus
+l_int|8
+comma
+l_int|16
+op_plus
+l_int|8
+comma
+l_int|16
+op_plus
+l_int|12
+comma
+l_int|16
+op_plus
+l_int|16
+comma
+l_int|16
+op_plus
+l_int|20
+)brace
+multiline_comment|/* IdSel 9 slot 3 J15 */
+)brace
+suffix:semicolon
+id|common_fixup
+c_func
+(paren
+l_int|5
+comma
+l_int|9
+comma
+l_int|5
+comma
+id|irq_tab
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|SMC669_Init
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 multiline_comment|/*&n; * Fixup configuration for all boards that route the PCI interrupts&n; * through the SIO PCI/ISA bridge.  This includes Noname (AXPpci33),&n; * Avanti (AlphaStation) and Kenetics&squot;s Platform 2000.&n; */
 DECL|function|sio_fixup
 r_static
@@ -4268,6 +4715,7 @@ id|pirq_tab
 (braket
 l_int|5
 )braket
+id|__initdata
 op_assign
 (brace
 macro_line|#ifdef CONFIG_ALPHA_P2K
@@ -5227,9 +5675,10 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_TGA_CONSOLE */
+r_int
+r_int
+id|__init
 DECL|function|pcibios_fixup
-r_int
-r_int
 id|pcibios_fixup
 c_func
 (paren
@@ -5242,7 +5691,7 @@ r_int
 id|mem_end
 )paren
 (brace
-macro_line|#if PCI_MODIFY
+macro_line|#if PCI_MODIFY &amp;&amp; !defined(CONFIG_ALPHA_RUFFIAN)
 multiline_comment|/*&n;&t; * Scan the tree, allocating PCI memory and I/O space.&n;&t; */
 id|layout_bus
 c_func
@@ -5265,7 +5714,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#elif defined(CONFIG_ALPHA_PC164)
+macro_line|#elif defined(CONFIG_ALPHA_PC164) || defined(CONFIG_ALPHA_LX164)
 id|alphapc164_fixup
 c_func
 (paren
@@ -5325,6 +5774,14 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#elif defined(CONFIG_ALPHA_SX164)
+id|sx164_fixup
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#elif defined(CONFIG_ALPHA_RUFFIAN)
+multiline_comment|/* no fixup needed */
 macro_line|#else
 macro_line|# error &quot;You must tell me what kind of platform you want.&quot;
 macro_line|#endif
@@ -5804,942 +6261,12 @@ r_return
 id|err
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_ALPHA_PC164
-multiline_comment|/* device &quot;activate&quot; register contents */
-DECL|macro|DEVICE_ON
-mdefine_line|#define DEVICE_ON&t;&t;1
-DECL|macro|DEVICE_OFF
-mdefine_line|#define DEVICE_OFF&t;&t;0
-multiline_comment|/* configuration on/off keys */
-DECL|macro|CONFIG_ON_KEY
-mdefine_line|#define CONFIG_ON_KEY&t;&t;0x55
-DECL|macro|CONFIG_OFF_KEY
-mdefine_line|#define CONFIG_OFF_KEY&t;&t;0xaa
-multiline_comment|/* configuration space device definitions */
-DECL|macro|FDC
-mdefine_line|#define FDC&t;&t;&t;0
-DECL|macro|IDE1
-mdefine_line|#define IDE1&t;&t;&t;1
-DECL|macro|IDE2
-mdefine_line|#define IDE2&t;&t;&t;2
-DECL|macro|PARP
-mdefine_line|#define PARP&t;&t;&t;3
-DECL|macro|SER1
-mdefine_line|#define SER1&t;&t;&t;4
-DECL|macro|SER2
-mdefine_line|#define SER2&t;&t;&t;5
-DECL|macro|RTCL
-mdefine_line|#define RTCL&t;&t;&t;6
-DECL|macro|KYBD
-mdefine_line|#define KYBD&t;&t;&t;7
-DECL|macro|AUXIO
-mdefine_line|#define AUXIO&t;&t;&t;8
-multiline_comment|/* Chip register offsets from base */
-DECL|macro|CONFIG_CONTROL
-mdefine_line|#define CONFIG_CONTROL&t;&t;0x02
-DECL|macro|INDEX_ADDRESS
-mdefine_line|#define INDEX_ADDRESS&t;&t;0x03
-DECL|macro|LOGICAL_DEVICE_NUMBER
-mdefine_line|#define LOGICAL_DEVICE_NUMBER&t;0x07
-DECL|macro|DEVICE_ID
-mdefine_line|#define DEVICE_ID&t;&t;0x20
-DECL|macro|DEVICE_REV
-mdefine_line|#define DEVICE_REV&t;&t;0x21
-DECL|macro|POWER_CONTROL
-mdefine_line|#define POWER_CONTROL&t;&t;0x22
-DECL|macro|POWER_MGMT
-mdefine_line|#define POWER_MGMT&t;&t;0x23
-DECL|macro|OSC
-mdefine_line|#define OSC&t;&t;&t;0x24
-DECL|macro|ACTIVATE
-mdefine_line|#define ACTIVATE&t;&t;0x30
-DECL|macro|ADDR_HI
-mdefine_line|#define ADDR_HI&t;&t;&t;0x60
-DECL|macro|ADDR_LO
-mdefine_line|#define ADDR_LO&t;&t;&t;0x61
-DECL|macro|INTERRUPT_SEL
-mdefine_line|#define INTERRUPT_SEL&t;&t;0x70
-DECL|macro|INTERRUPT_SEL_2
-mdefine_line|#define INTERRUPT_SEL_2&t;&t;0x72 /* KYBD/MOUS only */
-DECL|macro|DMA_CHANNEL_SEL
-mdefine_line|#define DMA_CHANNEL_SEL&t;&t;0x74 /* FDC/PARP only */
-DECL|macro|FDD_MODE_REGISTER
-mdefine_line|#define FDD_MODE_REGISTER&t;0x90
-DECL|macro|FDD_OPTION_REGISTER
-mdefine_line|#define FDD_OPTION_REGISTER&t;0x91
-multiline_comment|/* values that we read back that are expected ... */
-DECL|macro|VALID_DEVICE_ID
-mdefine_line|#define VALID_DEVICE_ID&t;&t;2
-multiline_comment|/* default device addresses */
-DECL|macro|KYBD_INTERRUPT
-mdefine_line|#define KYBD_INTERRUPT&t;&t;1
-DECL|macro|MOUS_INTERRUPT
-mdefine_line|#define MOUS_INTERRUPT&t;&t;12
-DECL|macro|COM2_BASE
-mdefine_line|#define COM2_BASE&t;&t;0x2f8
-DECL|macro|COM2_INTERRUPT
-mdefine_line|#define COM2_INTERRUPT&t;&t;3
-DECL|macro|COM1_BASE
-mdefine_line|#define COM1_BASE&t;&t;0x3f8
-DECL|macro|COM1_INTERRUPT
-mdefine_line|#define COM1_INTERRUPT&t;&t;4
-DECL|macro|PARP_BASE
-mdefine_line|#define PARP_BASE&t;&t;0x3bc
-DECL|macro|PARP_INTERRUPT
-mdefine_line|#define PARP_INTERRUPT&t;&t;7
-DECL|macro|SMC_DEBUG
-mdefine_line|#define SMC_DEBUG 0
-DECL|function|SMCConfigState
-r_static
-r_int
-r_int
-id|SMCConfigState
-c_func
-(paren
-r_int
-r_int
-id|baseAddr
-)paren
-(brace
-r_int
-r_char
-id|devId
-suffix:semicolon
-r_int
-r_char
-id|devRev
-suffix:semicolon
-r_int
-r_int
-id|configPort
-suffix:semicolon
-r_int
-r_int
-id|indexPort
-suffix:semicolon
-r_int
-r_int
-id|dataPort
-suffix:semicolon
-id|configPort
-op_assign
-id|indexPort
-op_assign
-id|baseAddr
-suffix:semicolon
-id|dataPort
-op_assign
-id|configPort
-op_plus
-l_int|1
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|CONFIG_ON_KEY
-comma
-id|configPort
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|CONFIG_ON_KEY
-comma
-id|configPort
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|DEVICE_ID
-comma
-id|indexPort
-)paren
-suffix:semicolon
-id|devId
-op_assign
-id|inb
-c_func
-(paren
-id|dataPort
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|devId
-op_eq
-id|VALID_DEVICE_ID
-)paren
-(brace
-id|outb
-c_func
-(paren
-id|DEVICE_REV
-comma
-id|indexPort
-)paren
-suffix:semicolon
-id|devRev
-op_assign
-id|inb
-c_func
-(paren
-id|dataPort
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|baseAddr
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-r_return
-id|baseAddr
-suffix:semicolon
-)brace
-DECL|function|SMCRunState
-r_static
-r_void
-id|SMCRunState
-c_func
-(paren
-r_int
-r_int
-id|baseAddr
-)paren
-(brace
-id|outb
-c_func
-(paren
-id|CONFIG_OFF_KEY
-comma
-id|baseAddr
-)paren
-suffix:semicolon
-)brace
-DECL|function|SMCDetectUltraIO
-r_static
-r_int
-r_int
-id|SMCDetectUltraIO
-c_func
-(paren
-r_void
-)paren
-(brace
-r_int
-r_int
-id|baseAddr
-suffix:semicolon
-id|baseAddr
-op_assign
-l_int|0x3F0
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|baseAddr
-op_assign
-id|SMCConfigState
-c_func
-(paren
-id|baseAddr
-)paren
-)paren
-op_eq
-l_int|0x3F0
-)paren
-(brace
-r_return
-id|baseAddr
-suffix:semicolon
-)brace
-id|baseAddr
-op_assign
-l_int|0x370
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|baseAddr
-op_assign
-id|SMCConfigState
-c_func
-(paren
-id|baseAddr
-)paren
-)paren
-op_eq
-l_int|0x370
-)paren
-(brace
-r_return
-id|baseAddr
-suffix:semicolon
-)brace
-r_return
-(paren
-r_int
-r_int
-)paren
-l_int|0
-suffix:semicolon
-)brace
-DECL|function|SMCEnableDevice
-r_static
-r_void
-id|SMCEnableDevice
-c_func
-(paren
-r_int
-r_int
-id|baseAddr
-comma
-r_int
-r_int
-id|device
-comma
-r_int
-r_int
-id|portaddr
-comma
-r_int
-r_int
-id|interrupt
-)paren
-(brace
-r_int
-r_int
-id|indexPort
-suffix:semicolon
-r_int
-r_int
-id|dataPort
-suffix:semicolon
-id|indexPort
-op_assign
-id|baseAddr
-suffix:semicolon
-id|dataPort
-op_assign
-id|baseAddr
-op_plus
-l_int|1
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|LOGICAL_DEVICE_NUMBER
-comma
-id|indexPort
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|device
-comma
-id|dataPort
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|ADDR_LO
-comma
-id|indexPort
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-(paren
-id|portaddr
-op_amp
-l_int|0xFF
-)paren
-comma
-id|dataPort
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|ADDR_HI
-comma
-id|indexPort
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-(paren
-id|portaddr
-op_rshift
-l_int|8
-)paren
-op_amp
-l_int|0xFF
-comma
-id|dataPort
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|INTERRUPT_SEL
-comma
-id|indexPort
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|interrupt
-comma
-id|dataPort
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|ACTIVATE
-comma
-id|indexPort
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|DEVICE_ON
-comma
-id|dataPort
-)paren
-suffix:semicolon
-)brace
-DECL|function|SMCEnableKYBD
-r_static
-r_void
-id|SMCEnableKYBD
-c_func
-(paren
-r_int
-r_int
-id|baseAddr
-)paren
-(brace
-r_int
-r_int
-id|indexPort
-suffix:semicolon
-r_int
-r_int
-id|dataPort
-suffix:semicolon
-id|indexPort
-op_assign
-id|baseAddr
-suffix:semicolon
-id|dataPort
-op_assign
-id|baseAddr
-op_plus
-l_int|1
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|LOGICAL_DEVICE_NUMBER
-comma
-id|indexPort
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|KYBD
-comma
-id|dataPort
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|INTERRUPT_SEL
-comma
-id|indexPort
-)paren
-suffix:semicolon
-multiline_comment|/* Primary interrupt select */
-id|outb
-c_func
-(paren
-id|KYBD_INTERRUPT
-comma
-id|dataPort
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|INTERRUPT_SEL_2
-comma
-id|indexPort
-)paren
-suffix:semicolon
-multiline_comment|/* Secondary interrupt select */
-id|outb
-c_func
-(paren
-id|MOUS_INTERRUPT
-comma
-id|dataPort
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|ACTIVATE
-comma
-id|indexPort
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|DEVICE_ON
-comma
-id|dataPort
-)paren
-suffix:semicolon
-)brace
-DECL|function|SMCEnableFDC
-r_static
-r_void
-id|SMCEnableFDC
-c_func
-(paren
-r_int
-r_int
-id|baseAddr
-)paren
-(brace
-r_int
-r_int
-id|indexPort
-suffix:semicolon
-r_int
-r_int
-id|dataPort
-suffix:semicolon
-r_int
-r_char
-id|oldValue
-suffix:semicolon
-id|indexPort
-op_assign
-id|baseAddr
-suffix:semicolon
-id|dataPort
-op_assign
-id|baseAddr
-op_plus
-l_int|1
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|LOGICAL_DEVICE_NUMBER
-comma
-id|indexPort
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|FDC
-comma
-id|dataPort
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|FDD_MODE_REGISTER
-comma
-id|indexPort
-)paren
-suffix:semicolon
-id|oldValue
-op_assign
-id|inb
-c_func
-(paren
-id|dataPort
-)paren
-suffix:semicolon
-id|oldValue
-op_or_assign
-l_int|0x0E
-suffix:semicolon
-multiline_comment|/* Enable burst mode */
-id|outb
-c_func
-(paren
-id|oldValue
-comma
-id|dataPort
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|INTERRUPT_SEL
-comma
-id|indexPort
-)paren
-suffix:semicolon
-multiline_comment|/* Primary interrupt select */
-id|outb
-c_func
-(paren
-l_int|0x06
-comma
-id|dataPort
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|DMA_CHANNEL_SEL
-comma
-id|indexPort
-)paren
-suffix:semicolon
-multiline_comment|/* DMA channel select */
-id|outb
-c_func
-(paren
-l_int|0x02
-comma
-id|dataPort
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|ACTIVATE
-comma
-id|indexPort
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|DEVICE_ON
-comma
-id|dataPort
-)paren
-suffix:semicolon
-)brace
-macro_line|#if SMC_DEBUG
-DECL|function|SMCReportDeviceStatus
-r_static
-r_void
-id|SMCReportDeviceStatus
-c_func
-(paren
-r_int
-r_int
-id|baseAddr
-)paren
-(brace
-r_int
-r_int
-id|indexPort
-suffix:semicolon
-r_int
-r_int
-id|dataPort
-suffix:semicolon
-r_int
-r_char
-id|currentControl
-suffix:semicolon
-id|indexPort
-op_assign
-id|baseAddr
-suffix:semicolon
-id|dataPort
-op_assign
-id|baseAddr
-op_plus
-l_int|1
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|POWER_CONTROL
-comma
-id|indexPort
-)paren
-suffix:semicolon
-id|currentControl
-op_assign
-id|inb
-c_func
-(paren
-id|dataPort
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|currentControl
-op_amp
-(paren
-l_int|1
-op_lshift
-id|FDC
-)paren
-ques
-c_cond
-l_string|&quot;&bslash;t+FDC Enabled&bslash;n&quot;
-suffix:colon
-l_string|&quot;&bslash;t-FDC Disabled&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|currentControl
-op_amp
-(paren
-l_int|1
-op_lshift
-id|IDE1
-)paren
-ques
-c_cond
-l_string|&quot;&bslash;t+IDE1 Enabled&bslash;n&quot;
-suffix:colon
-l_string|&quot;&bslash;t-IDE1 Disabled&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|currentControl
-op_amp
-(paren
-l_int|1
-op_lshift
-id|IDE2
-)paren
-ques
-c_cond
-l_string|&quot;&bslash;t+IDE2 Enabled&bslash;n&quot;
-suffix:colon
-l_string|&quot;&bslash;t-IDE2 Disabled&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|currentControl
-op_amp
-(paren
-l_int|1
-op_lshift
-id|PARP
-)paren
-ques
-c_cond
-l_string|&quot;&bslash;t+PARP Enabled&bslash;n&quot;
-suffix:colon
-l_string|&quot;&bslash;t-PARP Disabled&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|currentControl
-op_amp
-(paren
-l_int|1
-op_lshift
-id|SER1
-)paren
-ques
-c_cond
-l_string|&quot;&bslash;t+SER1 Enabled&bslash;n&quot;
-suffix:colon
-l_string|&quot;&bslash;t-SER1 Disabled&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|currentControl
-op_amp
-(paren
-l_int|1
-op_lshift
-id|SER2
-)paren
-ques
-c_cond
-l_string|&quot;&bslash;t+SER2 Enabled&bslash;n&quot;
-suffix:colon
-l_string|&quot;&bslash;t-SER2 Disabled&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
-DECL|function|SMCInit
-r_static
-r_int
-id|SMCInit
-c_func
-(paren
-r_void
-)paren
-(brace
-r_int
-r_int
-id|SMCUltraBase
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|SMCUltraBase
-op_assign
-id|SMCDetectUltraIO
-c_func
-(paren
-)paren
-)paren
-op_ne
-l_int|0UL
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;SMC FDC37C93X Ultra I/O Controller found @ 0x%lx&bslash;n&quot;
-comma
-id|SMCUltraBase
-)paren
-suffix:semicolon
-macro_line|#if SMC_DEBUG
-id|SMCReportDeviceStatus
-c_func
-(paren
-id|SMCUltraBase
-)paren
-suffix:semicolon
-macro_line|#endif
-id|SMCEnableDevice
-c_func
-(paren
-id|SMCUltraBase
-comma
-id|SER1
-comma
-id|COM1_BASE
-comma
-id|COM1_INTERRUPT
-)paren
-suffix:semicolon
-id|SMCEnableDevice
-c_func
-(paren
-id|SMCUltraBase
-comma
-id|SER2
-comma
-id|COM2_BASE
-comma
-id|COM2_INTERRUPT
-)paren
-suffix:semicolon
-id|SMCEnableDevice
-c_func
-(paren
-id|SMCUltraBase
-comma
-id|PARP
-comma
-id|PARP_BASE
-comma
-id|PARP_INTERRUPT
-)paren
-suffix:semicolon
-multiline_comment|/* On PC164, IDE on the SMC is not enabled;&n;&t;&t;   CMD646 (PCI) on MB */
-id|SMCEnableKYBD
-c_func
-(paren
-id|SMCUltraBase
-)paren
-suffix:semicolon
-id|SMCEnableFDC
-c_func
-(paren
-id|SMCUltraBase
-)paren
-suffix:semicolon
-macro_line|#if SMC_DEBUG
-id|SMCReportDeviceStatus
-c_func
-(paren
-id|SMCUltraBase
-)paren
-suffix:semicolon
-macro_line|#endif
-id|SMCRunState
-c_func
-(paren
-id|SMCUltraBase
-)paren
-suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
-r_else
-(brace
-macro_line|#if SMC_DEBUG
-id|printk
-c_func
-(paren
-l_string|&quot;No SMC FDC37C93X Ultra I/O Controller found&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
-r_return
-l_int|0
-suffix:semicolon
-)brace
-)brace
-macro_line|#endif /* CONFIG_ALPHA_PC164 */
 macro_line|#ifdef CONFIG_ALPHA_MIATA
 multiline_comment|/*&n; * Init the built-in ES1888 sound chip (SB16 compatible)&n; */
-DECL|function|es1888_init
 r_static
 r_int
+id|__init
+DECL|function|es1888_init
 id|es1888_init
 c_func
 (paren

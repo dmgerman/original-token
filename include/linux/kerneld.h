@@ -86,6 +86,7 @@ macro_line|#endif /* __KERNEL__ */
 )brace
 suffix:semicolon
 macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;linux/string.h&gt;
 r_extern
 r_int
 id|kerneld_send
@@ -358,8 +359,18 @@ c_func
 r_int
 id|on_off
 )paren
-multiline_comment|/* 0 =&gt; &quot;off&quot;, else &quot;on&quot; */
 (brace
+r_char
+op_star
+id|s
+op_assign
+id|on_off
+ques
+c_cond
+l_string|&quot;on&quot;
+suffix:colon
+l_string|&quot;off&quot;
+suffix:semicolon
 r_return
 id|kerneld_send
 c_func
@@ -380,20 +391,10 @@ comma
 id|strlen
 c_func
 (paren
-id|on_off
-ques
-c_cond
-l_string|&quot;on&quot;
-suffix:colon
-l_string|&quot;off&quot;
+id|s
 )paren
 comma
-id|on_off
-ques
-c_cond
-l_string|&quot;on&quot;
-suffix:colon
-l_string|&quot;off&quot;
+id|s
 comma
 l_int|NULL
 )paren

@@ -335,7 +335,10 @@ id|offset
 suffix:semicolon
 r_int
 id|inode_number
+op_assign
+l_int|0
 suffix:semicolon
+multiline_comment|/* Quiet GCC */
 r_struct
 id|buffer_head
 op_star
@@ -349,8 +352,11 @@ id|map
 suffix:semicolon
 r_int
 id|high_sierra
+suffix:semicolon
+r_int
+id|first_de
 op_assign
-l_int|0
+l_int|1
 suffix:semicolon
 r_char
 op_star
@@ -395,6 +401,10 @@ id|filp-&gt;f_pos
 op_rshift
 id|bufbits
 )paren
+suffix:semicolon
+id|high_sierra
+op_assign
+id|inode-&gt;i_sb-&gt;u.isofs_sb.s_high_sierra
 suffix:semicolon
 r_if
 c_cond
@@ -476,6 +486,12 @@ op_plus
 id|offset
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|first_de
+)paren
+(brace
 id|inode_number
 op_assign
 (paren
@@ -494,6 +510,7 @@ l_int|1
 )paren
 )paren
 suffix:semicolon
+)brace
 id|de_len
 op_assign
 op_star
@@ -665,6 +682,33 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|de-&gt;flags
+(braket
+op_minus
+id|high_sierra
+)braket
+op_amp
+l_int|0x80
+)paren
+(brace
+id|first_de
+op_assign
+l_int|0
+suffix:semicolon
+id|filp-&gt;f_pos
+op_add_assign
+id|de_len
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
+id|first_de
+op_assign
+l_int|1
+suffix:semicolon
 multiline_comment|/* Handle the case of the &squot;.&squot; directory */
 r_if
 c_cond
@@ -777,10 +821,6 @@ l_char|&squot;n&squot;
 )paren
 (brace
 multiline_comment|/* Do not report hidden or associated files */
-id|high_sierra
-op_assign
-id|inode-&gt;i_sb-&gt;u.isofs_sb.s_high_sierra
-suffix:semicolon
 r_if
 c_cond
 (paren

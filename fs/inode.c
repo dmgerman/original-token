@@ -2674,6 +2674,26 @@ macro_line|#ifdef INODE_PARANOIA
 r_if
 c_cond
 (paren
+id|inode-&gt;i_flock
+)paren
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;iput: inode %s/%ld still has locks!&bslash;n&quot;
+comma
+id|kdevname
+c_func
+(paren
+id|inode-&gt;i_dev
+)paren
+comma
+id|inode-&gt;i_ino
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
 op_logical_neg
 id|list_empty
 c_func
@@ -2685,6 +2705,7 @@ id|inode-&gt;i_dentry
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;iput: device %s inode %ld still has aliases!&bslash;n&quot;
 comma
 id|kdevname
@@ -2704,6 +2725,7 @@ id|inode-&gt;i_count
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;iput: device %s inode %ld count changed, count=%d&bslash;n&quot;
 comma
 id|kdevname
@@ -2732,6 +2754,7 @@ l_int|1
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;iput: Aieee, semaphore in use device %s, count=%d&bslash;n&quot;
 comma
 id|kdevname
@@ -2758,14 +2781,15 @@ OG
 (paren
 l_int|1
 op_lshift
-l_int|15
+l_int|31
 )paren
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;iput: device %s inode %ld count wrapped&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;iput: inode %s/%ld count wrapped&bslash;n&quot;
 comma
 id|kdevname
 c_func

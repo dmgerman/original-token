@@ -134,6 +134,51 @@ DECL|macro|HAE_ADDRESS
 mdefine_line|#define HAE_ADDRESS&t;                PYXIS_HAE_MEM
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * Translate physical memory address as seen on (PCI) bus into&n; * a kernel virtual address and vv.&n; */
+macro_line|#if defined(CONFIG_ALPHA_RUFFIAN)
+multiline_comment|/* Ruffian doesn&squot;t do 1G PCI window.  */
+DECL|function|virt_to_bus
+r_extern
+r_inline
+r_int
+r_int
+id|virt_to_bus
+c_func
+(paren
+r_void
+op_star
+id|address
+)paren
+(brace
+r_return
+id|virt_to_phys
+c_func
+(paren
+id|address
+)paren
+suffix:semicolon
+)brace
+DECL|function|bus_to_virt
+r_extern
+r_inline
+r_void
+op_star
+id|bus_to_virt
+c_func
+(paren
+r_int
+r_int
+id|address
+)paren
+(brace
+r_return
+id|phys_to_virt
+c_func
+(paren
+id|address
+)paren
+suffix:semicolon
+)brace
+macro_line|#else
 DECL|function|virt_to_bus
 r_extern
 r_inline
@@ -180,6 +225,7 @@ id|PYXIS_DMA_WIN_BASE
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif /* RUFFIAN */
 multiline_comment|/*&n; * I/O functions:&n; *&n; * PYXIS (the 2117x PCI/memory support chipset for the EV5 (21164)&n; * series of processors uses a sparse address mapping scheme to&n; * get at PCI memory and I/O.&n; */
 DECL|macro|vuip
 mdefine_line|#define vuip&t;volatile unsigned int *
