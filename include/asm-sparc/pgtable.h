@@ -571,7 +571,7 @@ c_func
 r_int
 r_int
 comma
-id|pte_pagenr
+id|sparc_pte_pagenr
 comma
 id|pte_t
 )paren
@@ -595,8 +595,8 @@ id|pgd_page
 comma
 id|pgd_t
 )paren
-DECL|macro|pte_pagenr
-mdefine_line|#define pte_pagenr(pte) BTFIXUP_CALL(pte_pagenr)(pte)
+DECL|macro|sparc_pte_pagenr
+mdefine_line|#define sparc_pte_pagenr(pte) BTFIXUP_CALL(sparc_pte_pagenr)(pte)
 DECL|macro|pmd_page
 mdefine_line|#define pmd_page(pmd) BTFIXUP_CALL(pmd_page)(pmd)
 DECL|macro|pgd_page
@@ -1099,7 +1099,7 @@ multiline_comment|/* Permanent address of a page. */
 DECL|macro|page_address
 mdefine_line|#define page_address(page)  ((page)-&gt;virtual)
 DECL|macro|pte_page
-mdefine_line|#define pte_page(x) (mem_map+pte_pagenr(x))
+mdefine_line|#define pte_page(x) (mem_map+sparc_pte_pagenr(x))
 multiline_comment|/*&n; * Conversion functions: convert a page and protection to a page entry,&n; * and a page entry and page directory to the page they refer to.&n; */
 id|BTFIXUPDEF_CALL_CONST
 c_func

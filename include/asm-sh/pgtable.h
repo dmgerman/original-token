@@ -148,7 +148,7 @@ l_int|1024
 )braket
 suffix:semicolon
 DECL|macro|ZERO_PAGE
-mdefine_line|#define ZERO_PAGE(vaddr) (mem_map + MAP_NR(empty_zero_page))
+mdefine_line|#define ZERO_PAGE(vaddr) (virt_to_page(empty_zero_page))
 macro_line|#endif /* !__ASSEMBLY__ */
 macro_line|#include &lt;asm/pgtable-2level.h&gt;
 DECL|macro|__beep
@@ -291,8 +291,6 @@ DECL|macro|pte_present
 mdefine_line|#define pte_present(x)&t;(pte_val(x) &amp; (_PAGE_PRESENT | _PAGE_PROTNONE))
 DECL|macro|pte_clear
 mdefine_line|#define pte_clear(xp)&t;do { set_pte(xp, __pte(0)); } while (0)
-DECL|macro|pte_pagenr
-mdefine_line|#define pte_pagenr(x)&t;((unsigned long)(((pte_val(x) -__MEMORY_START) &gt;&gt; PAGE_SHIFT)))
 DECL|macro|pmd_none
 mdefine_line|#define pmd_none(x)&t;(!pmd_val(x))
 DECL|macro|pmd_present
@@ -307,7 +305,7 @@ mdefine_line|#define page_address(page)  ((page)-&gt;virtual)
 DECL|macro|pages_to_mb
 mdefine_line|#define pages_to_mb(x) ((x) &gt;&gt; (20-PAGE_SHIFT))
 DECL|macro|pte_page
-mdefine_line|#define pte_page(x) (mem_map+pte_pagenr(x))
+mdefine_line|#define pte_page(x) (mem_map+(unsigned long)(((pte_val(x) -__MEMORY_START) &gt;&gt; PAGE_SHIFT)))
 multiline_comment|/*&n; * The following only work if pte_present() is true.&n; * Undefined behaviour if not..&n; */
 DECL|function|pte_read
 r_extern

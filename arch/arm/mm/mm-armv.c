@@ -1816,9 +1816,7 @@ r_int
 r_int
 )paren
 (paren
-id|mem_map
-op_plus
-id|MAP_NR
+id|virt_to_page
 c_func
 (paren
 id|start
@@ -1834,9 +1832,7 @@ r_int
 r_int
 )paren
 (paren
-id|mem_map
-op_plus
-id|MAP_NR
+id|virt_to_page
 c_func
 (paren
 id|end

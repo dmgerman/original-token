@@ -528,7 +528,7 @@ l_int|1024
 )braket
 suffix:semicolon
 DECL|macro|ZERO_PAGE
-mdefine_line|#define ZERO_PAGE(vaddr) (mem_map + MAP_NR(empty_zero_page))
+mdefine_line|#define ZERO_PAGE(vaddr) (virt_to_page(empty_zero_page))
 multiline_comment|/*&n; * BAD_PAGETABLE is used when we need a bogus page-table, while&n; * BAD_PAGE is used for a bogus page.&n; *&n; * ZERO_PAGE is a global shared page that is always zero: used&n; * for zero-mapped memory areas etc..&n; */
 r_extern
 id|pte_t
@@ -568,8 +568,6 @@ DECL|macro|pte_present
 mdefine_line|#define pte_present(pte)&t;(pte_val(pte) &amp; _PAGE_PRESENT)
 DECL|macro|pte_clear
 mdefine_line|#define pte_clear(ptep)&t;&t;do { pte_val(*(ptep)) = 0; } while (0)
-DECL|macro|pte_pagenr
-mdefine_line|#define pte_pagenr(x)&t;&t;((unsigned long)((pte_val(x) &gt;&gt; PAGE_SHIFT)))
 DECL|macro|pmd_none
 mdefine_line|#define pmd_none(pmd)&t;&t;(!pmd_val(pmd))
 DECL|macro|pmd_bad
@@ -584,7 +582,7 @@ mdefine_line|#define page_address(page)  ((page)-&gt;virtual)
 DECL|macro|pages_to_mb
 mdefine_line|#define pages_to_mb(x)&t;&t;((x) &gt;&gt; (20-PAGE_SHIFT))
 DECL|macro|pte_page
-mdefine_line|#define pte_page(x)&t;&t;(mem_map+pte_pagenr(x))
+mdefine_line|#define pte_page(x)&t;&t;(mem_map+(unsigned long)((pte_val(x) &gt;&gt; PAGE_SHIFT)))
 macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/*&n; * The &quot;pgd_xxx()&quot; functions here are trivial for a folded two-level&n; * setup: the pgd is never bad, and a pmd always exists (as it&squot;s folded&n; * into the pgd entry)&n; */
 DECL|function|pgd_none

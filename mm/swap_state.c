@@ -664,9 +664,7 @@ suffix:semicolon
 multiline_comment|/* Out of memory */
 id|new_page
 op_assign
-id|mem_map
-op_plus
-id|MAP_NR
+id|virt_to_page
 c_func
 (paren
 id|new_page_addr

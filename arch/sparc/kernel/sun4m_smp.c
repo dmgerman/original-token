@@ -1208,9 +1208,7 @@ l_int|1
 id|ClearPageReserved
 c_func
 (paren
-id|mem_map
-op_plus
-id|MAP_NR
+id|virt_to_page
 c_func
 (paren
 id|trapbase_cpu1
@@ -1220,9 +1218,7 @@ suffix:semicolon
 id|set_page_count
 c_func
 (paren
-id|mem_map
-op_plus
-id|MAP_NR
+id|virt_to_page
 c_func
 (paren
 id|trapbase_cpu1
@@ -1266,9 +1262,7 @@ l_int|2
 id|ClearPageReserved
 c_func
 (paren
-id|mem_map
-op_plus
-id|MAP_NR
+id|virt_to_page
 c_func
 (paren
 id|trapbase_cpu2
@@ -1278,9 +1272,7 @@ suffix:semicolon
 id|set_page_count
 c_func
 (paren
-id|mem_map
-op_plus
-id|MAP_NR
+id|virt_to_page
 c_func
 (paren
 id|trapbase_cpu2
@@ -1324,9 +1316,7 @@ l_int|3
 id|ClearPageReserved
 c_func
 (paren
-id|mem_map
-op_plus
-id|MAP_NR
+id|virt_to_page
 c_func
 (paren
 id|trapbase_cpu3
@@ -1336,9 +1326,7 @@ suffix:semicolon
 id|set_page_count
 c_func
 (paren
-id|mem_map
-op_plus
-id|MAP_NR
+id|virt_to_page
 c_func
 (paren
 id|trapbase_cpu3

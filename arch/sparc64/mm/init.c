@@ -6251,9 +6251,7 @@ id|empty_zero_page
 suffix:semicolon
 id|p
 op_assign
-id|mem_map
-op_plus
-id|MAP_NR
+id|virt_to_page
 c_func
 (paren
 id|page
@@ -6337,9 +6335,7 @@ id|page
 op_star
 id|p
 op_assign
-id|mem_map
-op_plus
-id|MAP_NR
+id|virt_to_page
 c_func
 (paren
 id|start

@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/fb.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/wrapper.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
@@ -2883,12 +2884,14 @@ suffix:semicolon
 id|u_int
 id|order
 suffix:semicolon
-id|u_int
-id|i
-suffix:semicolon
 r_char
 op_star
 id|allocated_region
+suffix:semicolon
+r_struct
+id|page
+op_star
+id|page
 suffix:semicolon
 r_if
 c_cond
@@ -3032,17 +3035,17 @@ multiline_comment|/* user space by the common fbmem driver using remap_page_rang
 r_for
 c_loop
 (paren
-id|i
+id|page
 op_assign
-id|MAP_NR
+id|virt_to_page
 c_func
 (paren
 id|VideoMemRegion
 )paren
 suffix:semicolon
-id|i
+id|page
 OL
-id|MAP_NR
+id|virt_to_page
 c_func
 (paren
 id|VideoMemRegion
@@ -3050,22 +3053,14 @@ op_plus
 id|ALLOCATED_FB_MEM_SIZE
 )paren
 suffix:semicolon
-id|i
+id|page
 op_increment
 )paren
 (brace
-id|set_bit
+id|mem_map_reserve
 c_func
 (paren
-id|PG_reserved
-comma
-op_amp
-id|mem_map
-(braket
-id|i
-)braket
-dot
-id|flags
+id|page
 )paren
 suffix:semicolon
 )brace

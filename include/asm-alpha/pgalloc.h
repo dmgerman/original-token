@@ -664,9 +664,7 @@ c_func
 id|mk_pte
 c_func
 (paren
-id|mem_map
-op_plus
-id|MAP_NR
+id|virt_to_page
 c_func
 (paren
 id|ret

@@ -27,7 +27,7 @@ DECL|macro|page_cache_release
 mdefine_line|#define page_cache_release(x)&t;__free_page(x)
 multiline_comment|/*&n; * From a kernel address, get the &quot;struct page *&quot;&n; */
 DECL|macro|page_cache_entry
-mdefine_line|#define page_cache_entry(x)&t;(mem_map + MAP_NR(x))
+mdefine_line|#define page_cache_entry(x)&t;virt_to_page(x)
 r_extern
 r_int
 r_int

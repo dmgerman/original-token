@@ -48,12 +48,12 @@ mdefine_line|#define vma_get_end(v) v-&gt;vm_end
 DECL|macro|vma_get_page_prot
 mdefine_line|#define vma_get_page_prot(v) v-&gt;vm_page_prot
 DECL|macro|mem_map_reserve
-mdefine_line|#define mem_map_reserve(p) set_bit(PG_reserved, &amp;mem_map[p].flags)
+mdefine_line|#define mem_map_reserve(p) set_bit(PG_reserved, &amp;p-&gt;flags)
 DECL|macro|mem_map_unreserve
-mdefine_line|#define mem_map_unreserve(p) clear_bit(PG_reserved, &amp;mem_map[p].flags)
+mdefine_line|#define mem_map_unreserve(p) clear_bit(PG_reserved, &amp;p-&gt;flags)
 DECL|macro|mem_map_inc_count
-mdefine_line|#define mem_map_inc_count(p) atomic_inc(&amp;(mem_map[p].count))
+mdefine_line|#define mem_map_inc_count(p) atomic_inc(&amp;(p-&gt;count))
 DECL|macro|mem_map_dec_count
-mdefine_line|#define mem_map_dec_count(p) atomic_dec(&amp;(mem_map[p].count))
+mdefine_line|#define mem_map_dec_count(p) atomic_dec(&amp;(p-&gt;count))
 macro_line|#endif
 eof

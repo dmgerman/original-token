@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/fb.h&gt;
+macro_line|#include &lt;linux/wrapper.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
@@ -6355,37 +6356,26 @@ id|virtual_end
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; * Clear page reserved bit,&n;&t;&t; * set count to 1, and free&n;&t;&t; * the page.&n;&t;&t; */
-id|clear_bit
+id|mem_map_unreserve
 c_func
 (paren
-id|PG_reserved
-comma
-op_amp
-id|mem_map
-(braket
-id|MAP_NR
+id|virt_to_page
 c_func
 (paren
 id|virtual_start
 )paren
-)braket
-dot
-id|flags
 )paren
 suffix:semicolon
 id|atomic_set
 c_func
 (paren
 op_amp
-id|mem_map
-(braket
-id|MAP_NR
+id|virt_to_page
 c_func
 (paren
 id|virtual_start
 )paren
-)braket
-dot
+op_member_access_from_pointer
 id|count
 comma
 l_int|1
@@ -6801,21 +6791,14 @@ id|page
 op_add_assign
 id|PAGE_SIZE
 )paren
-id|mem_map
-(braket
-id|MAP_NR
+id|mem_map_reserve
+c_func
+(paren
+id|virt_to_page
 c_func
 (paren
 id|page
 )paren
-)braket
-dot
-id|flags
-op_or_assign
-(paren
-l_int|1
-op_lshift
-id|PG_reserved
 )paren
 suffix:semicolon
 multiline_comment|/* Hand back any excess pages that we allocated. */

@@ -18,6 +18,7 @@ macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/ac97_codec.h&gt;
+macro_line|#include &lt;linux/wrapper.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -3389,11 +3390,13 @@ op_star
 id|db
 )paren
 (brace
-r_int
-r_int
-id|map
+r_struct
+id|page
+op_star
+id|page
 comma
-id|mapend
+op_star
+id|pend
 suffix:semicolon
 r_if
 c_cond
@@ -3402,9 +3405,9 @@ id|db-&gt;rawbuf
 )paren
 (brace
 multiline_comment|/* undo marking the pages as reserved */
-id|mapend
+id|pend
 op_assign
-id|MAP_NR
+id|virt_to_page
 c_func
 (paren
 id|db-&gt;rawbuf
@@ -3421,33 +3424,25 @@ suffix:semicolon
 r_for
 c_loop
 (paren
-id|map
+id|page
 op_assign
-id|MAP_NR
+id|virt_to_page
 c_func
 (paren
 id|db-&gt;rawbuf
 )paren
 suffix:semicolon
-id|map
+id|page
 op_le
-id|mapend
+id|pend
 suffix:semicolon
-id|map
+id|page
 op_increment
 )paren
-id|clear_bit
+id|mem_map_unreserve
 c_func
 (paren
-id|PG_reserved
-comma
-op_amp
-id|mem_map
-(braket
-id|map
-)braket
-dot
-id|flags
+id|page
 )paren
 suffix:semicolon
 id|pci_free_consistent
@@ -3511,11 +3506,13 @@ suffix:semicolon
 r_int
 id|bufs
 suffix:semicolon
-r_int
-r_int
-id|map
+r_struct
+id|page
+op_star
+id|page
 comma
-id|mapend
+op_star
+id|pend
 suffix:semicolon
 id|db-&gt;hwptr
 op_assign
@@ -3595,9 +3592,9 @@ op_assign
 id|order
 suffix:semicolon
 multiline_comment|/* now mark the pages as reserved; otherwise remap_page_range doesn&squot;t do what we want */
-id|mapend
+id|pend
 op_assign
-id|MAP_NR
+id|virt_to_page
 c_func
 (paren
 id|db-&gt;rawbuf
@@ -3614,33 +3611,25 @@ suffix:semicolon
 r_for
 c_loop
 (paren
-id|map
+id|page
 op_assign
-id|MAP_NR
+id|virt_to_page
 c_func
 (paren
 id|db-&gt;rawbuf
 )paren
 suffix:semicolon
-id|map
+id|page
 op_le
-id|mapend
+id|pend
 suffix:semicolon
-id|map
+id|page
 op_increment
 )paren
-id|set_bit
+id|mem_map_reserve
 c_func
 (paren
-id|PG_reserved
-comma
-op_amp
-id|mem_map
-(braket
-id|map
-)braket
-dot
-id|flags
+id|page
 )paren
 suffix:semicolon
 )brace

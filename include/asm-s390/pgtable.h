@@ -48,7 +48,7 @@ l_int|1024
 )braket
 suffix:semicolon
 DECL|macro|ZERO_PAGE
-mdefine_line|#define ZERO_PAGE(vaddr) (mem_map + MAP_NR(empty_zero_page))
+mdefine_line|#define ZERO_PAGE(vaddr) (virt_to_page(empty_zero_page))
 macro_line|#endif /* !__ASSEMBLY__ */
 multiline_comment|/* Certain architectures need to do special things when PTEs&n; * within a page table are directly modified.  Thus, the following&n; * hook is made available.&n; */
 DECL|macro|set_pte
@@ -285,37 +285,6 @@ suffix:semicolon
 )brace
 DECL|macro|PTE_INIT
 mdefine_line|#define PTE_INIT(x) pte_clear(x)
-DECL|function|pte_pagenr
-r_extern
-r_inline
-r_int
-id|pte_pagenr
-c_func
-(paren
-id|pte_t
-id|pte
-)paren
-(brace
-r_return
-(paren
-(paren
-r_int
-r_int
-)paren
-(paren
-(paren
-id|pte_val
-c_func
-(paren
-id|pte
-)paren
-op_rshift
-id|PAGE_SHIFT
-)paren
-)paren
-)paren
-suffix:semicolon
-)brace
 DECL|function|pmd_none
 r_extern
 r_inline
@@ -755,7 +724,7 @@ suffix:semicolon
 DECL|macro|page_address
 mdefine_line|#define page_address(page)  ((page)-&gt;virtual)
 DECL|macro|pte_page
-mdefine_line|#define pte_page(x) (mem_map+pte_pagenr(x))
+mdefine_line|#define pte_page(x) (mem_map+(unsigned long)((pte_val(pte) &gt;&gt; PAGE_SHIFT)))
 DECL|macro|pmd_page
 mdefine_line|#define pmd_page(pmd) &bslash;&n;((unsigned long) __va(pmd_val(pmd) &amp; PAGE_MASK))
 multiline_comment|/* to find an entry in a page-table-directory */

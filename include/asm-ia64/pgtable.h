@@ -188,9 +188,6 @@ multiline_comment|/*&n; * Some definitions to translate between mem_map, PTEs, a
 multiline_comment|/*&n; * Given a pointer to an mem_map[] entry, return the kernel virtual&n; * address corresponding to that page.&n; */
 DECL|macro|page_address
 mdefine_line|#define page_address(page)&t;((void *) (PAGE_OFFSET + (((page) - mem_map) &lt;&lt; PAGE_SHIFT)))
-multiline_comment|/*&n; * Given a PTE, return the index of the mem_map[] entry corresponding&n; * to the page frame the PTE.&n; */
-DECL|macro|pte_pagenr
-mdefine_line|#define pte_pagenr(x)&t;&t;((unsigned long) ((pte_val(x) &amp; _PFN_MASK) &gt;&gt; PAGE_SHIFT))
 multiline_comment|/*&n; * Now for some cache flushing routines.  This is the kind of stuff&n; * that can be very expensive, so try to avoid them whenever possible.&n; */
 multiline_comment|/* Caches aren&squot;t brain-dead on the ia-64. */
 DECL|macro|flush_cache_all
@@ -268,7 +265,7 @@ DECL|macro|pte_clear
 mdefine_line|#define pte_clear(pte)&t;&t;&t;(pte_val(*(pte)) = 0UL)
 multiline_comment|/* pte_page() returns the &quot;struct page *&quot; corresponding to the PTE: */
 DECL|macro|pte_page
-mdefine_line|#define pte_page(pte)&t;&t;&t;(mem_map + pte_pagenr(pte))
+mdefine_line|#define pte_page(pte)&t;&t;&t;(mem_map + (unsigned long) ((pte_val(pte) &amp; _PFN_MASK) &gt;&gt; PAGE_SHIFT))
 DECL|macro|pmd_set
 mdefine_line|#define pmd_set(pmdp, ptep) &t;&t;(pmd_val(*(pmdp)) = __pa(ptep))
 DECL|macro|pmd_none
@@ -512,7 +509,7 @@ l_int|1024
 )braket
 suffix:semicolon
 DECL|macro|ZERO_PAGE
-mdefine_line|#define ZERO_PAGE(vaddr) (mem_map + MAP_NR(empty_zero_page))
+mdefine_line|#define ZERO_PAGE(vaddr) (virt_to_page(empty_zero_page))
 macro_line|# endif /* !__ASSEMBLY__ */
 macro_line|#endif /* _ASM_IA64_PGTABLE_H */
 eof

@@ -12,11 +12,6 @@ id|highmem_start_page
 suffix:semicolon
 macro_line|#include &lt;asm/highmem.h&gt;
 multiline_comment|/* declarations for linux/mm/highmem.c */
-r_extern
-r_int
-r_int
-id|highmem_mapnr
-suffix:semicolon
 id|FASTCALL
 c_func
 (paren

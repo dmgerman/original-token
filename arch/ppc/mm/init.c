@@ -3325,7 +3325,7 @@ op_assign
 l_int|0
 suffix:semicolon
 DECL|macro|FREESEC
-mdefine_line|#define FREESEC(START,END,CNT) do { &bslash;&n;&t;a = (unsigned long)(&amp;START); &bslash;&n;&t;for (; a &lt; (unsigned long)(&amp;END); a += PAGE_SIZE) { &bslash;&n;&t;  &t;clear_bit(PG_reserved, &amp;mem_map[MAP_NR(a)].flags); &bslash;&n;&t;&t;set_page_count(mem_map+MAP_NR(a), 1); &bslash;&n;&t;&t;free_page(a); &bslash;&n;&t;&t;CNT++; &bslash;&n;&t;} &bslash;&n;} while (0)
+mdefine_line|#define FREESEC(START,END,CNT) do { &bslash;&n;&t;a = (unsigned long)(&amp;START); &bslash;&n;&t;for (; a &lt; (unsigned long)(&amp;END); a += PAGE_SIZE) { &bslash;&n;&t;  &t;clear_bit(PG_reserved, &amp;virt_to_page(a)-&gt;flags); &bslash;&n;&t;&t;set_page_count(virt_to_page(a), 1); &bslash;&n;&t;&t;free_page(a); &bslash;&n;&t;&t;CNT++; &bslash;&n;&t;} &bslash;&n;} while (0)
 id|FREESEC
 c_func
 (paren
@@ -3723,9 +3723,7 @@ id|PAGE_SIZE
 id|ClearPageReserved
 c_func
 (paren
-id|mem_map
-op_plus
-id|MAP_NR
+id|virt_to_page
 c_func
 (paren
 id|start
@@ -3735,9 +3733,7 @@ suffix:semicolon
 id|set_page_count
 c_func
 (paren
-id|mem_map
-op_plus
-id|MAP_NR
+id|virt_to_page
 c_func
 (paren
 id|start
@@ -4977,15 +4973,12 @@ c_func
 id|PG_reserved
 comma
 op_amp
-id|mem_map
-(braket
-id|MAP_NR
+id|virt_to_page
 c_func
 (paren
 id|addr
 )paren
-)braket
-dot
+op_member_access_from_pointer
 id|flags
 )paren
 suffix:semicolon
@@ -5022,9 +5015,7 @@ id|PAGE_SIZE
 id|SetPageReserved
 c_func
 (paren
-id|mem_map
-op_plus
-id|MAP_NR
+id|virt_to_page
 c_func
 (paren
 id|addr
@@ -5069,9 +5060,7 @@ id|PAGE_SIZE
 id|SetPageReserved
 c_func
 (paren
-id|mem_map
-op_plus
-id|MAP_NR
+id|virt_to_page
 c_func
 (paren
 id|addr
@@ -5105,9 +5094,7 @@ op_logical_neg
 id|PageReserved
 c_func
 (paren
-id|mem_map
-op_plus
-id|MAP_NR
+id|virt_to_page
 c_func
 (paren
 id|addr

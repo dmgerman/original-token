@@ -599,7 +599,7 @@ suffix:semicolon
 id|mem_map_reserve
 c_func
 (paren
-id|MAP_NR
+id|virt_to_page
 c_func
 (paren
 id|__va
@@ -708,7 +708,7 @@ suffix:semicolon
 id|mem_map_unreserve
 c_func
 (paren
-id|MAP_NR
+id|virt_to_page
 c_func
 (paren
 id|__va

@@ -377,7 +377,7 @@ id|ptable_list
 )paren
 suffix:semicolon
 DECL|macro|PD_PTABLE
-mdefine_line|#define PD_PTABLE(page) ((ptable_desc *)&amp;mem_map[MAP_NR(page)])
+mdefine_line|#define PD_PTABLE(page) ((ptable_desc *)virt_to_page(page))
 DECL|macro|PD_PAGE
 mdefine_line|#define PD_PAGE(ptable) (list_entry(ptable, struct page, list))
 DECL|macro|PD_MARKBITS

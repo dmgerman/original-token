@@ -94,11 +94,12 @@ r_if
 c_cond
 (paren
 (paren
+op_logical_neg
+id|VALID_PAGE
+c_func
+(paren
 id|page
-op_minus
-id|mem_map
-op_ge
-id|max_mapnr
+)paren
 )paren
 op_logical_or
 id|PageReserved

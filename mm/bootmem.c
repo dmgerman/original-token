@@ -1060,9 +1060,7 @@ suffix:semicolon
 multiline_comment|/*&n;&t; * Now free the allocator bitmap itself, it&squot;s not&n;&t; * needed anymore:&n;&t; */
 id|page
 op_assign
-id|mem_map
-op_plus
-id|MAP_NR
+id|virt_to_page
 c_func
 (paren
 id|bdata-&gt;node_bootmem_map

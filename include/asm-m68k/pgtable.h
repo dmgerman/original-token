@@ -213,7 +213,7 @@ mdefine_line|#define BAD_PAGETABLE __bad_pagetable()
 DECL|macro|BAD_PAGE
 mdefine_line|#define BAD_PAGE __bad_page()
 DECL|macro|ZERO_PAGE
-mdefine_line|#define ZERO_PAGE(vaddr)&t;(mem_map + MAP_NR(empty_zero_page))
+mdefine_line|#define ZERO_PAGE(vaddr)&t;(virt_to_page(empty_zero_page))
 multiline_comment|/* number of bits that fit into a memory pointer */
 DECL|macro|BITS_PER_PTR
 mdefine_line|#define BITS_PER_PTR&t;&t;&t;(8*sizeof(unsigned long))
@@ -389,8 +389,6 @@ DECL|macro|pte_present
 mdefine_line|#define pte_present(pte)&t;(pte_val(pte) &amp; (_PAGE_PRESENT | _PAGE_FAKE_SUPER))
 DECL|macro|pte_clear
 mdefine_line|#define pte_clear(ptep)&t;&t;({ pte_val(*(ptep)) = 0; })
-DECL|macro|pte_pagenr
-mdefine_line|#define pte_pagenr(pte)&t;&t;((__pte_page(pte) - PAGE_OFFSET) &gt;&gt; PAGE_SHIFT)
 DECL|macro|pmd_none
 mdefine_line|#define pmd_none(pmd)&t;&t;(!pmd_val(pmd))
 DECL|macro|pmd_bad
@@ -413,7 +411,7 @@ mdefine_line|#define page_address(page)&t;((page)-&gt;virtual)
 DECL|macro|__page_address
 mdefine_line|#define __page_address(page)&t;(PAGE_OFFSET + (((page) - mem_map) &lt;&lt; PAGE_SHIFT))
 DECL|macro|pte_page
-mdefine_line|#define pte_page(pte)&t;&t;(mem_map+pte_pagenr(pte))
+mdefine_line|#define pte_page(pte)&t;&t;(mem_map+((__pte_page(pte) - PAGE_OFFSET) &gt;&gt; PAGE_SHIFT))
 DECL|macro|pte_ERROR
 mdefine_line|#define pte_ERROR(e) &bslash;&n;&t;printk(&quot;%s:%d: bad pte %p(%08lx).&bslash;n&quot;, __FILE__, __LINE__, &amp;(e), pte_val(e))
 DECL|macro|pmd_ERROR

@@ -18,6 +18,7 @@ macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/ac97_codec.h&gt;
+macro_line|#include &lt;linux/wrapper.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
 macro_line|#include &lt;linux/bitops.h&gt;
@@ -3629,11 +3630,13 @@ suffix:semicolon
 r_int
 id|order
 suffix:semicolon
-r_int
-r_int
-id|map
+r_struct
+id|page
+op_star
+id|page
 comma
-id|mapend
+op_star
+id|pend
 suffix:semicolon
 multiline_comment|/* alloc as big a chunk as we can, FIXME: is this necessary ?? */
 r_for
@@ -3713,9 +3716,9 @@ op_assign
 id|order
 suffix:semicolon
 multiline_comment|/* now mark the pages as reserved; otherwise remap_page_range doesn&squot;t do what we want */
-id|mapend
+id|pend
 op_assign
-id|MAP_NR
+id|virt_to_page
 c_func
 (paren
 id|rawbuf
@@ -3732,33 +3735,25 @@ suffix:semicolon
 r_for
 c_loop
 (paren
-id|map
+id|page
 op_assign
-id|MAP_NR
+id|virt_to_page
 c_func
 (paren
 id|rawbuf
 )paren
 suffix:semicolon
-id|map
+id|page
 op_le
-id|mapend
+id|pend
 suffix:semicolon
-id|map
+id|page
 op_increment
 )paren
-id|set_bit
+id|mem_map_reserve
 c_func
 (paren
-id|PG_reserved
-comma
-op_amp
-id|mem_map
-(braket
-id|map
-)braket
-dot
-id|flags
+id|page
 )paren
 suffix:semicolon
 r_return
@@ -3786,11 +3781,13 @@ op_assign
 op_amp
 id|state-&gt;dmabuf
 suffix:semicolon
-r_int
-r_int
-id|map
+r_struct
+id|page
+op_star
+id|page
 comma
-id|mapend
+op_star
+id|pend
 suffix:semicolon
 r_if
 c_cond
@@ -3799,9 +3796,9 @@ id|dmabuf-&gt;rawbuf
 )paren
 (brace
 multiline_comment|/* undo marking the pages as reserved */
-id|mapend
+id|pend
 op_assign
-id|MAP_NR
+id|virt_to_page
 c_func
 (paren
 id|dmabuf-&gt;rawbuf
@@ -3818,33 +3815,25 @@ suffix:semicolon
 r_for
 c_loop
 (paren
-id|map
+id|page
 op_assign
-id|MAP_NR
+id|virt_to_page
 c_func
 (paren
 id|dmabuf-&gt;rawbuf
 )paren
 suffix:semicolon
-id|map
+id|page
 op_le
-id|mapend
+id|pend
 suffix:semicolon
-id|map
+id|page
 op_increment
 )paren
-id|clear_bit
+id|mem_map_unreserve
 c_func
 (paren
-id|PG_reserved
-comma
-op_amp
-id|mem_map
-(braket
-id|map
-)braket
-dot
-id|flags
+id|page
 )paren
 suffix:semicolon
 id|pci_free_consistent

@@ -290,9 +290,7 @@ c_func
 (paren
 id|current
 comma
-id|mem_map
-op_plus
-id|MAP_NR
+id|virt_to_page
 c_func
 (paren
 id|ia32_gdt_table
@@ -313,9 +311,7 @@ c_func
 (paren
 id|current
 comma
-id|mem_map
-op_plus
-id|MAP_NR
+id|virt_to_page
 c_func
 (paren
 id|ia32_tss

@@ -4,11 +4,6 @@ macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/highmem.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
-DECL|variable|highmem_mapnr
-r_int
-r_int
-id|highmem_mapnr
-suffix:semicolon
 multiline_comment|/*&n; * Take one locked page, return another low-memory locked page.&n; */
 DECL|function|prepare_highmem_swapout
 r_struct
@@ -113,9 +108,7 @@ id|page
 suffix:semicolon
 id|new_page
 op_assign
-id|mem_map
-op_plus
-id|MAP_NR
+id|virt_to_page
 c_func
 (paren
 id|regular_page

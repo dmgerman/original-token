@@ -1516,9 +1516,7 @@ id|last
 id|ClearPageReserved
 c_func
 (paren
-id|mem_map
-op_plus
-id|MAP_NR
+id|virt_to_page
 c_func
 (paren
 id|first
@@ -1528,9 +1526,7 @@ suffix:semicolon
 id|set_page_count
 c_func
 (paren
-id|mem_map
-op_plus
-id|MAP_NR
+id|virt_to_page
 c_func
 (paren
 id|first
@@ -2412,9 +2408,7 @@ id|phys_base
 suffix:semicolon
 id|p
 op_assign
-id|mem_map
-op_plus
-id|MAP_NR
+id|virt_to_page
 c_func
 (paren
 id|page
@@ -2516,9 +2510,7 @@ id|page
 op_star
 id|p
 op_assign
-id|mem_map
-op_plus
-id|MAP_NR
+id|virt_to_page
 c_func
 (paren
 id|start

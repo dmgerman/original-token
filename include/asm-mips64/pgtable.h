@@ -334,7 +334,7 @@ mdefine_line|#define BAD_PMDTABLE __bad_pmd_table()
 DECL|macro|BAD_PAGE
 mdefine_line|#define BAD_PAGE __bad_page()
 DECL|macro|ZERO_PAGE
-mdefine_line|#define ZERO_PAGE(vaddr) &bslash;&n;&t;(mem_map + MAP_NR(empty_zero_page + (((unsigned long)(vaddr)) &amp; zero_page_mask)))
+mdefine_line|#define ZERO_PAGE(vaddr) &bslash;&n;&t;(virt_to_page(empty_zero_page + (((unsigned long)(vaddr)) &amp; zero_page_mask)))
 multiline_comment|/* number of bits that fit into a memory pointer */
 DECL|macro|BITS_PER_PTR
 mdefine_line|#define BITS_PER_PTR&t;&t;&t;(8*sizeof(unsigned long))
@@ -400,32 +400,6 @@ id|pmd_t
 )braket
 suffix:semicolon
 multiline_comment|/*&n; * Conversion functions: convert a page and protection to a page entry,&n; * and a page entry and page directory to the page they refer to.&n; */
-DECL|function|pte_page
-r_extern
-r_inline
-r_int
-r_int
-id|pte_page
-c_func
-(paren
-id|pte_t
-id|pte
-)paren
-(brace
-r_return
-id|PAGE_OFFSET
-op_plus
-(paren
-id|pte_val
-c_func
-(paren
-id|pte
-)paren
-op_amp
-id|PAGE_MASK
-)paren
-suffix:semicolon
-)brace
 DECL|function|pmd_page
 r_extern
 r_inline
@@ -788,14 +762,14 @@ multiline_comment|/*&n; * Permanent address of a page.  On MIPS64 we never have 
 DECL|macro|page_address
 mdefine_line|#define page_address(page)&t;((page)-&gt;virtual)
 macro_line|#ifndef CONFIG_DISCONTIGMEM
-DECL|macro|pte_pagenr
-mdefine_line|#define pte_pagenr(x)&t;&t;((unsigned long)((pte_val(x) &gt;&gt; PAGE_SHIFT)))
-macro_line|#else
-DECL|macro|pte_pagenr
-mdefine_line|#define pte_pagenr(x) &bslash;&n;&t;(PLAT_NODE_DATA_STARTNR(PHYSADDR_TO_NID(pte_val(x))) + &bslash;&n;&t;PLAT_NODE_DATA_LOCALNR(pte_val(x), PHYSADDR_TO_NID(pte_val(x))))
-macro_line|#endif
 DECL|macro|pte_page
-mdefine_line|#define pte_page(x)&t;&t;(mem_map+pte_pagenr(x))
+mdefine_line|#define pte_page(x)&t;&t;(mem_map+(unsigned long)((pte_val(x) &gt;&gt; PAGE_SHIFT)))
+macro_line|#else
+DECL|macro|mips64_pte_pagenr
+mdefine_line|#define mips64_pte_pagenr(x) &bslash;&n;&t;(PLAT_NODE_DATA_STARTNR(PHYSADDR_TO_NID(pte_val(x))) + &bslash;&n;&t;PLAT_NODE_DATA_LOCALNR(pte_val(x), PHYSADDR_TO_NID(pte_val(x))))
+DECL|macro|pte_page
+mdefine_line|#define pte_page(x)&t;&t;(mem_map+mips64_pte_pagenr(x))
+macro_line|#endif
 multiline_comment|/*&n; * The following only work if pte_present() is true.&n; * Undefined behaviour if not..&n; */
 DECL|function|pte_read
 r_extern

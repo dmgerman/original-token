@@ -1262,7 +1262,7 @@ mdefine_line|#define alloc_task_struct() &bslash;&n;&t;((struct task_struct *) _
 DECL|macro|free_task_struct
 mdefine_line|#define free_task_struct(p)&t;free_pages((unsigned long)(p),1)
 DECL|macro|get_task_struct
-mdefine_line|#define get_task_struct(tsk)      atomic_inc(&amp;mem_map[MAP_NR(tsk)].count)
+mdefine_line|#define get_task_struct(tsk)      atomic_inc(&amp;virt_to_page(tsk)-&gt;count)
 multiline_comment|/* in process.c - for early bootup debug -- Cort */
 r_int
 id|ll_printk

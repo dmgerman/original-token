@@ -6,6 +6,7 @@ macro_line|#include &quot;recmgr.h&quot;
 macro_line|#include &quot;audio.h&quot;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#include &lt;linux/wrapper.h&gt;
 r_static
 r_void
 id|calculate_ofrag
@@ -4196,15 +4197,10 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-id|set_bit
+id|mem_map_reserve
 c_func
 (paren
-id|PG_reserved
-comma
-op_amp
-id|mem_map
-(braket
-id|MAP_NR
+id|virt_to_page
 c_func
 (paren
 id|wave_out-&gt;pagetable
@@ -4212,9 +4208,6 @@ id|wave_out-&gt;pagetable
 id|i
 )braket
 )paren
-)braket
-dot
-id|flags
 )paren
 suffix:semicolon
 )brace
@@ -5202,15 +5195,10 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-id|set_bit
+id|mem_map_reserve
 c_func
 (paren
-id|PG_reserved
-comma
-op_amp
-id|mem_map
-(braket
-id|MAP_NR
+id|virt_to_page
 c_func
 (paren
 id|woinst-&gt;wave_out-&gt;pagetable
@@ -5218,9 +5206,6 @@ id|woinst-&gt;wave_out-&gt;pagetable
 id|i
 )braket
 )paren
-)braket
-dot
-id|flags
 )paren
 suffix:semicolon
 )brace

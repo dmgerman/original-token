@@ -3202,15 +3202,12 @@ id|atomic_inc
 c_func
 (paren
 op_amp
-id|mem_map
-(braket
-id|MAP_NR
+id|virt_to_page
 c_func
 (paren
 id|tsk
 )paren
-)braket
-dot
+op_member_access_from_pointer
 id|count
 )paren
 suffix:semicolon
@@ -10969,7 +10966,7 @@ suffix:semicolon
 id|BTFIXUPSET_CALL
 c_func
 (paren
-id|pte_pagenr
+id|sparc_pte_pagenr
 comma
 id|srmmu_pte_pagenr
 comma

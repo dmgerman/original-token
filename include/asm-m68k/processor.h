@@ -371,7 +371,7 @@ id|p
 )paren
 suffix:semicolon
 DECL|macro|KSTK_EIP
-mdefine_line|#define&t;KSTK_EIP(tsk)&t;&bslash;&n;    ({&t;&t;&t;&bslash;&n;&t;unsigned long eip = 0;&t; &bslash;&n;&t;if ((tsk)-&gt;thread.esp0 &gt; PAGE_SIZE &amp;&amp; &bslash;&n;&t;    MAP_NR((tsk)-&gt;thread.esp0) &lt; max_mapnr) &bslash;&n;&t;      eip = ((struct pt_regs *) (tsk)-&gt;thread.esp0)-&gt;pc; &bslash;&n;&t;eip; })
+mdefine_line|#define&t;KSTK_EIP(tsk)&t;&bslash;&n;    ({&t;&t;&t;&bslash;&n;&t;unsigned long eip = 0;&t; &bslash;&n;&t;if ((tsk)-&gt;thread.esp0 &gt; PAGE_SIZE &amp;&amp; &bslash;&n;&t;    (VALID_PAGE(virt_to_page((tsk)-&gt;thread.esp0)))) &bslash;&n;&t;      eip = ((struct pt_regs *) (tsk)-&gt;thread.esp0)-&gt;pc; &bslash;&n;&t;eip; })
 DECL|macro|KSTK_ESP
 mdefine_line|#define&t;KSTK_ESP(tsk)&t;((tsk) == current ? rdusp() : (tsk)-&gt;thread.usp)
 DECL|macro|THREAD_SIZE
@@ -382,7 +382,7 @@ mdefine_line|#define alloc_task_struct() &bslash;&n;&t;((struct task_struct *) _
 DECL|macro|free_task_struct
 mdefine_line|#define free_task_struct(p)&t;free_pages((unsigned long)(p),1)
 DECL|macro|get_task_struct
-mdefine_line|#define get_task_struct(tsk)      atomic_inc(&amp;mem_map[MAP_NR(tsk)].count)
+mdefine_line|#define get_task_struct(tsk)      atomic_inc(&amp;virt_to_page(tsk)-&gt;count)
 DECL|macro|init_task
 mdefine_line|#define init_task&t;(init_task_union.task)
 DECL|macro|init_stack

@@ -448,7 +448,7 @@ op_star
 )paren
 suffix:semicolon
 DECL|macro|get_task_struct
-mdefine_line|#define get_task_struct(tsk)      atomic_inc(&amp;mem_map[MAP_NR(tsk)].count)
+mdefine_line|#define get_task_struct(tsk)      atomic_inc(&amp;virt_to_page(tsk)-&gt;count)
 DECL|macro|init_task
 mdefine_line|#define init_task&t;(init_task_union.task)
 DECL|macro|init_stack

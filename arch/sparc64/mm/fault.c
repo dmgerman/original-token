@@ -451,7 +451,7 @@ op_assign
 id|phys_base
 op_plus
 (paren
-id|pte_pagenr
+id|sparc64_pte_pagenr
 c_func
 (paren
 id|pte

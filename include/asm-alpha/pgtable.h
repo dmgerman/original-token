@@ -163,7 +163,7 @@ mdefine_line|#define BAD_PAGETABLE&t;__bad_pagetable()
 DECL|macro|BAD_PAGE
 mdefine_line|#define BAD_PAGE&t;__bad_page()
 DECL|macro|ZERO_PAGE
-mdefine_line|#define ZERO_PAGE(vaddr)&t;(mem_map + MAP_NR(ZERO_PGE))
+mdefine_line|#define ZERO_PAGE(vaddr)&t;(virt_to_page(ZERO_PGE))
 multiline_comment|/* number of bits that fit into a memory pointer */
 DECL|macro|BITS_PER_PTR
 mdefine_line|#define BITS_PER_PTR&t;&t;&t;(8*sizeof(unsigned long))
@@ -370,10 +370,8 @@ id|PAGE_SHIFT
 )paren
 suffix:semicolon
 )brace
-DECL|macro|pte_pagenr
-mdefine_line|#define pte_pagenr(x)&t;((unsigned long)((pte_val(x) &gt;&gt; 32)))
 DECL|macro|pte_page
-mdefine_line|#define pte_page(x)&t;(mem_map+pte_pagenr(x))
+mdefine_line|#define pte_page(x)&t;(mem_map+(unsigned long)((pte_val(x) &gt;&gt; 32)))
 DECL|function|pmd_page
 r_extern
 r_inline

@@ -74,7 +74,7 @@ l_int|1024
 )braket
 suffix:semicolon
 DECL|macro|ZERO_PAGE
-mdefine_line|#define ZERO_PAGE(vaddr) (mem_map + MAP_NR(empty_zero_page))
+mdefine_line|#define ZERO_PAGE(vaddr) (virt_to_page(empty_zero_page))
 macro_line|#endif /* !__ASSEMBLY__ */
 multiline_comment|/*&n; * The Linux x86 paging architecture is &squot;compile-time dual-mode&squot;, it&n; * implements both the traditional 2-level x86 page tables and the&n; * newer 3-level PAE-mode page tables.&n; */
 macro_line|#ifndef __ASSEMBLY__
