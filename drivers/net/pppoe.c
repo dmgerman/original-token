@@ -1,4 +1,4 @@
-multiline_comment|/** -*- linux-c -*- ***********************************************************&n; * Linux PPP over Ethernet (PPPoX/PPPoE) Sockets&n; *&n; * PPPoX --- Generic PPP encapsulation socket family&n; * PPPoE --- PPP over Ethernet (RFC 2516)&n; *&n; *&n; * Version:    0.6.3&n; *&n; * 030700 :     Fixed connect logic to allow for disconnect.&n; * 270700 :&t;Fixed potential SMP problems; we must protect against &n; *&t;&t;simultaneous invocation of ppp_input &n; *&t;&t;and ppp_unregister_channel.&n; * 040800 :&t;Respect reference count mechanisms on net-devices.&n; * 200800 :     fix kfree(skb) in pppoe_rcv (acme)&n; *&n; *&t;&t;Module reference count is decremented in the right spot now,&n; *&t;&t;guards against sock_put not actually freeing the sk &n; *&t;&t;in pppoe_release.&n; *&n; * 051000 :&t;Initialization cleanup&n; *&n; * Author:&t;Michal Ostrowski &lt;mostrows@styx.uwaterloo.ca&gt;&n; * Contributors:&n; * &t;&t;Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt;&n; *&n; * License:&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; */
+multiline_comment|/** -*- linux-c -*- ***********************************************************&n; * Linux PPP over Ethernet (PPPoX/PPPoE) Sockets&n; *&n; * PPPoX --- Generic PPP encapsulation socket family&n; * PPPoE --- PPP over Ethernet (RFC 2516)&n; *&n; *&n; * Version:    0.6.4&n; *&n; * 030700 :     Fixed connect logic to allow for disconnect.&n; * 270700 :&t;Fixed potential SMP problems; we must protect against &n; *&t;&t;simultaneous invocation of ppp_input &n; *&t;&t;and ppp_unregister_channel.&n; * 040800 :&t;Respect reference count mechanisms on net-devices.&n; * 200800 :     fix kfree(skb) in pppoe_rcv (acme)&n; *&t;&t;Module reference count is decremented in the right spot now,&n; *&t;&t;guards against sock_put not actually freeing the sk &n; *&t;&t;in pppoe_release.&n; * 051000 :&t;Initialization cleanup.&n; * 111100 :&t;Fix recvmsg.&n; *&n; * Author:&t;Michal Ostrowski &lt;mostrows@styx.uwaterloo.ca&gt;&n; * Contributors:&n; * &t;&t;Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt;&n; *&n; * License:&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; */
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -1792,7 +1792,6 @@ c_func
 id|po-&gt;pppoe_dev
 )paren
 suffix:semicolon
-multiline_comment|/* Should also do a queue purge here */
 id|sock_orphan
 c_func
 (paren
@@ -1919,7 +1918,7 @@ id|sp-&gt;sa_addr.pppoe.sid
 r_goto
 id|end
 suffix:semicolon
-multiline_comment|/* Check for already disconnected sockets, &n;&t;   on attempts to disconnect */
+multiline_comment|/* Check for already disconnected sockets,&n;&t;   on attempts to disconnect */
 id|error
 op_assign
 op_minus
@@ -2530,6 +2529,12 @@ id|relay_po
 )paren
 r_break
 suffix:semicolon
+id|sock_put
+c_func
+(paren
+id|relay_po-&gt;sk
+)paren
+suffix:semicolon
 id|sk-&gt;state
 op_or_assign
 id|PPPOX_RELAY
@@ -2643,11 +2648,6 @@ r_char
 op_star
 id|start
 suffix:semicolon
-r_int
-id|copied
-op_assign
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2696,6 +2696,25 @@ id|dev
 op_assign
 id|sk-&gt;protinfo.pppox-&gt;pppoe_dev
 suffix:semicolon
+id|error
+op_assign
+op_minus
+id|EMSGSIZE
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|total_len
+OG
+id|dev-&gt;mtu
+op_plus
+id|dev-&gt;hard_header_len
+)paren
+(brace
+r_goto
+id|end
+suffix:semicolon
+)brace
 id|skb
 op_assign
 id|sock_wmalloc
@@ -2802,8 +2821,6 @@ l_int|0
 suffix:semicolon
 id|error
 op_assign
-id|copied
-op_assign
 id|memcpy_fromiovec
 c_func
 (paren
@@ -2811,21 +2828,31 @@ id|start
 comma
 id|m-&gt;msg_iov
 comma
-id|m-&gt;msg_iovlen
+id|total_len
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
 id|error
-op_le
+OL
 l_int|0
 )paren
 (brace
+id|kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
 r_goto
 id|end
 suffix:semicolon
 )brace
+id|error
+op_assign
+id|total_len
+suffix:semicolon
 id|dev
 op_member_access_from_pointer
 id|hard_header
@@ -2841,7 +2868,7 @@ id|sk-&gt;protinfo.pppox-&gt;pppoe_pa.remote
 comma
 l_int|NULL
 comma
-id|copied
+id|total_len
 )paren
 suffix:semicolon
 id|memcpy
@@ -2864,7 +2891,7 @@ op_assign
 id|htons
 c_func
 (paren
-id|copied
+id|total_len
 )paren
 suffix:semicolon
 id|dev_queue_xmit
@@ -3800,7 +3827,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Registered PPPoE v0.6.3&bslash;n&quot;
+l_string|&quot;Registered PPPoE v0.6.4&bslash;n&quot;
 )paren
 suffix:semicolon
 id|dev_add_pack

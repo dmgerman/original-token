@@ -376,12 +376,6 @@ id|MainSocket
 )paren
 suffix:semicolon
 )brace
-id|set_current_state
-c_func
-(paren
-id|TASK_INTERRUPTIBLE
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren

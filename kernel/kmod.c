@@ -350,11 +350,15 @@ id|user
 suffix:semicolon
 )brace
 multiline_comment|/* Give kmod all effective privileges.. */
-id|current-&gt;uid
-op_assign
 id|current-&gt;euid
 op_assign
 id|current-&gt;fsuid
+op_assign
+l_int|0
+suffix:semicolon
+id|current-&gt;egid
+op_assign
+id|current-&gt;fsgid
 op_assign
 l_int|0
 suffix:semicolon

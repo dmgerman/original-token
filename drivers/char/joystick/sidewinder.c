@@ -369,6 +369,8 @@ comma
 id|BTN_BASE2
 comma
 id|BTN_BASE3
+comma
+id|BTN_BASE4
 )brace
 )brace
 suffix:semicolon

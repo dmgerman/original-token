@@ -2916,6 +2916,8 @@ r_if
 c_cond
 (paren
 id|rtime
+op_logical_and
+id|rtime
 op_ne
 id|in6_dev-&gt;nd_parms-&gt;base_reachable_time
 )paren

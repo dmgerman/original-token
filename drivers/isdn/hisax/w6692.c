@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: w6692.c,v 1.7 2000/06/26 08:59:15 keil Exp $&n; *&n; * w6692.c   Winbond W6692 specific routines&n; *&n; * Author       Petr Novak &lt;petr.novak@i.cz&gt;&n; *              (based on HiSax driver by Karsten Keil)&n; *&n; *              This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
+multiline_comment|/* $Id: w6692.c,v 1.8 2000/09/07 20:33:30 werner Exp $&n; *&n; * w6692.c   Winbond W6692 specific routines&n; *&n; * Author       Petr Novak &lt;petr.novak@i.cz&gt;&n; *              (based on HiSax driver by Karsten Keil)&n; *&n; *              This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
@@ -103,7 +103,7 @@ r_char
 op_star
 id|w6692_revision
 op_assign
-l_string|&quot;$Revision: 1.7 $&quot;
+l_string|&quot;$Revision: 1.8 $&quot;
 suffix:semicolon
 DECL|macro|DBUSY_TIMER_VALUE
 mdefine_line|#define DBUSY_TIMER_VALUE 80
@@ -5908,6 +5908,10 @@ id|cs-&gt;irq_func
 op_assign
 op_amp
 id|W6692_interrupt
+suffix:semicolon
+id|cs-&gt;irq_flags
+op_or_assign
+id|SA_SHIRQ
 suffix:semicolon
 id|W6692Version
 c_func

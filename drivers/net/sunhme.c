@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunhme.c,v 1.100 2000/11/12 10:23:30 davem Exp $&n; * sunhme.c: Sparc HME/BigMac 10/100baseT half/full duplex auto switching,&n; *           auto carrier detecting ethernet driver.  Also known as the&n; *           &quot;Happy Meal Ethernet&quot; found on SunSwift SBUS cards.&n; *&n; * Copyright (C) 1996, 1998, 1999 David S. Miller (davem@redhat.com)&n; *&n; * Changes :&n; * 2000/11/11 Willy Tarreau &lt;willy AT meta-x.org&gt;&n; *   - port to non-sparc architectures. Tested only on x86 and&n; *     only currently works with QFE PCI cards.&n; *   - ability to specify the MAC address at module load time by passing this&n; *     argument : macaddr=0x00,0x10,0x20,0x30,0x40,0x50&n; */
+multiline_comment|/* $Id: sunhme.c,v 1.104 2000/11/17 01:40:00 davem Exp $&n; * sunhme.c: Sparc HME/BigMac 10/100baseT half/full duplex auto switching,&n; *           auto carrier detecting ethernet driver.  Also known as the&n; *           &quot;Happy Meal Ethernet&quot; found on SunSwift SBUS cards.&n; *&n; * Copyright (C) 1996, 1998, 1999 David S. Miller (davem@redhat.com)&n; *&n; * Changes :&n; * 2000/11/11 Willy Tarreau &lt;willy AT meta-x.org&gt;&n; *   - port to non-sparc architectures. Tested only on x86 and&n; *     only currently works with QFE PCI cards.&n; *   - ability to specify the MAC address at module load time by passing this&n; *     argument : macaddr=0x00,0x10,0x20,0x30,0x40,0x50&n; */
 DECL|variable|version
 r_static
 r_char
@@ -37,8 +37,8 @@ macro_line|#include &lt;asm/auxio.h&gt;
 macro_line|#ifndef __sparc_v9__
 macro_line|#include &lt;asm/io-unit.h&gt;
 macro_line|#endif
-macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#endif
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
@@ -541,6 +541,50 @@ DECL|macro|DEFAULT_IPG2
 mdefine_line|#define DEFAULT_IPG2       4 /* For all modes */
 DECL|macro|DEFAULT_JAMSIZE
 mdefine_line|#define DEFAULT_JAMSIZE    4 /* Toe jam */
+macro_line|#ifdef CONFIG_PCI
+multiline_comment|/* This happy_pci_ids is declared __initdata because it is only used&n;   as an advisory to depmod.  If this is ported to the new PCI interface&n;   where it could be referenced at any time due to hot plugging,&n;   it should be changed to __devinitdata. */
+DECL|variable|__initdata
+r_struct
+id|pci_device_id
+id|happymeal_pci_ids
+(braket
+)braket
+id|__initdata
+op_assign
+(brace
+(brace
+id|vendor
+suffix:colon
+id|PCI_VENDOR_ID_SUN
+comma
+id|device
+suffix:colon
+id|PCI_DEVICE_ID_SUN_HAPPYMEAL
+comma
+id|subvendor
+suffix:colon
+id|PCI_ANY_ID
+comma
+id|subdevice
+suffix:colon
+id|PCI_ANY_ID
+comma
+)brace
+comma
+(brace
+)brace
+multiline_comment|/* Terminating entry */
+)brace
+suffix:semicolon
+id|MODULE_DEVICE_TABLE
+c_func
+(paren
+id|pci
+comma
+id|happymeal_pci_ids
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* NOTE: In the descriptor writes one _must_ write the address&n; *&t; member _first_.  The card must not be allowed to see&n; *&t; the updated descriptor flags until the address is&n; *&t; correct.  I&squot;ve added a write memory barrier between&n; *&t; the two stores so that I can sleep well at night... -DaveM&n; */
 macro_line|#if defined(CONFIG_SBUS) &amp;&amp; defined(CONFIG_PCI)
 DECL|function|sbus_hme_write32
@@ -7257,6 +7301,21 @@ id|GREG_CFG
 )paren
 )paren
 suffix:semicolon
+macro_line|#ifndef __sparc__
+multiline_comment|/* It is always PCI and can handle 64byte bursts. */
+id|hme_write32
+c_func
+(paren
+id|hp
+comma
+id|gregs
+op_plus
+id|GREG_CFG
+comma
+id|GREG_CFG_BURST64
+)paren
+suffix:semicolon
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -7430,6 +7489,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif /* __sparc__ */
 multiline_comment|/* Turn off interrupts we do not want to hear. */
 id|HMD
 c_func
@@ -13647,11 +13707,13 @@ id|hp-&gt;happy_flags
 op_or_assign
 id|HFLAG_PCI
 suffix:semicolon
+macro_line|#ifdef __sparc__
 multiline_comment|/* Assume PCI happy meals can handle all burst sizes. */
 id|hp-&gt;happy_bursts
 op_assign
 id|DMA_BURSTBITS
 suffix:semicolon
+macro_line|#endif
 id|hp-&gt;happy_block
 op_assign
 (paren

@@ -55,6 +55,9 @@ macro_line|#else
 DECL|macro|FASTCALL
 mdefine_line|#define FASTCALL(x)&t;x
 macro_line|#endif
+r_struct
+id|semaphore
+suffix:semicolon
 r_extern
 r_struct
 id|notifier_block
@@ -97,6 +100,19 @@ c_func
 (paren
 r_int
 id|error_code
+)paren
+id|ATTRIB_NORET
+suffix:semicolon
+id|NORET_TYPE
+r_void
+id|up_and_exit
+c_func
+(paren
+r_struct
+id|semaphore
+op_star
+comma
+r_int
 )paren
 id|ATTRIB_NORET
 suffix:semicolon

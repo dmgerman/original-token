@@ -1320,10 +1320,6 @@ id|inode-&gt;i_version
 op_assign
 l_int|0
 suffix:semicolon
-id|inode-&gt;i_flags
-op_assign
-id|sb-&gt;s_flags
-suffix:semicolon
 id|inode-&gt;u.generic_ip
 op_assign
 (paren

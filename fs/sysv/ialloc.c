@@ -692,11 +692,6 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* for sysv_write_inode() */
-id|inode-&gt;i_size
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* ditto */
 id|sysv_write_inode
 c_func
 (paren

@@ -2761,14 +2761,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|inode
-)paren
-r_continue
-suffix:semicolon
-r_if
-c_cond
-(paren
 id|filp-&gt;f_mode
 op_amp
 id|FMODE_WRITE

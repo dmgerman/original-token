@@ -2656,11 +2656,6 @@ op_star
 id|socket
 suffix:semicolon
 r_struct
-id|dentry
-op_star
-id|dentry
-suffix:semicolon
-r_struct
 id|inode
 op_star
 id|inode
@@ -2689,13 +2684,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|dentry
-op_assign
-id|file-&gt;f_dentry
-suffix:semicolon
 id|inode
 op_assign
-id|dentry-&gt;d_inode
+id|file-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
 id|socket
 op_assign

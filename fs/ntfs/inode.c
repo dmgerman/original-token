@@ -5866,8 +5866,8 @@ suffix:semicolon
 multiline_comment|/* We have to skip the 16 metafiles and the 8 reserved entries */
 r_static
 r_int
-DECL|function|new_inode
-id|new_inode
+DECL|function|ntfs_new_inode
+id|ntfs_new_inode
 (paren
 id|ntfs_volume
 op_star
@@ -6835,7 +6835,7 @@ id|bit
 suffix:semicolon
 id|error
 op_assign
-id|new_inode
+id|ntfs_new_inode
 (paren
 id|vol
 comma
@@ -6873,7 +6873,7 @@ suffix:semicolon
 )brace
 id|error
 op_assign
-id|new_inode
+id|ntfs_new_inode
 c_func
 (paren
 id|vol

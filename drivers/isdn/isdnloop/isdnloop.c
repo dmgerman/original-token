@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isdnloop.c,v 1.9 1999/09/06 07:29:36 fritz Exp $&n;&n; * ISDN low-level module implementing a dummy loop driver.&n; *&n; * Copyright 1997 by Fritz Elfert (fritz@isdn4linux.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Log: isdnloop.c,v $&n; * Revision 1.9  1999/09/06 07:29:36  fritz&n; * Changed my mail-address.&n; *&n; * Revision 1.8  1998/11/18 18:59:43  armin&n; * changes for 2.1.127&n; *&n; * Revision 1.7  1998/10/30 18:58:03  he&n; * typecast to suppress a compiler warning&n; *&n; * Revision 1.6  1998/06/17 19:51:37  he&n; * merged with 2.1.10[34] (cosmetics and udelay() -&gt; mdelay())&n; * brute force fix to avoid Ugh&squot;s in isdn_tty_write()&n; * cleaned up some dead code&n; *&n; * Revision 1.5  1998/04/14 20:59:32  he&n; * merged 2.1.94 changes&n; *&n; * Revision 1.4  1998/02/24 21:39:05  he&n; * L2_PROT_X25DTE / DCE&n; * additional state 17 and new internal signal messages &quot;BCON_I&quot;&n; * (for reliable connect confirmation primitive as needed by x.25 upper layer)&n; * Changes for new LL-HL interface&n; *&n; * Revision 1.3  1998/02/20 17:33:30  fritz&n; * Changes for recent kernels.&n; *&n; * Revision 1.2  1997/10/01 09:22:03  fritz&n; * Removed old compatibility stuff for 2.0.X kernels.&n; * From now on, this code is for 2.1.X ONLY!&n; * Old stuff is still in the separate branch.&n; *&n; * Revision 1.1  1997/03/24 23:02:04  fritz&n; * Added isdnloop driver.&n; *&n; */
+multiline_comment|/* $Id: isdnloop.c,v 1.11 2000/11/13 22:51:50 kai Exp $&n;&n; * ISDN low-level module implementing a dummy loop driver.&n; *&n; * Copyright 1997 by Fritz Elfert (fritz@isdn4linux.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;isdnloop.h&quot;
 r_static
@@ -7,7 +7,7 @@ DECL|variable|revision
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.9 $&quot;
+l_string|&quot;$Revision: 1.11 $&quot;
 suffix:semicolon
 r_static
 r_int
@@ -3555,6 +3555,16 @@ l_int|1
 )braket
 op_plus
 l_int|1
+)paren
+suffix:semicolon
+id|isdnloop_fake
+c_func
+(paren
+id|card
+comma
+l_string|&quot;BCON_C&quot;
+comma
+id|ch
 )paren
 suffix:semicolon
 )brace

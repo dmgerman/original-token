@@ -2984,10 +2984,6 @@ id|inode
 r_goto
 id|out
 suffix:semicolon
-id|inode-&gt;i_flags
-op_assign
-l_int|0
-suffix:semicolon
 id|inode-&gt;i_ino
 op_assign
 id|nfs_fattr_to_ino_t

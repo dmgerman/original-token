@@ -1355,11 +1355,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|strlen
-c_func
-(paren
 id|str
-)paren
+op_logical_and
+op_star
+id|str
 )paren
 (brace
 id|strcpy

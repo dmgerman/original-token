@@ -8752,8 +8752,12 @@ id|capi_interface_user
 id|cuser
 op_assign
 (brace
+id|name
+suffix:colon
 l_string|&quot;capi20&quot;
 comma
+id|callback
+suffix:colon
 id|lower_callback
 comma
 )brace

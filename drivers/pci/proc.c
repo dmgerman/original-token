@@ -1371,7 +1371,12 @@ id|dev-&gt;procent
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|e-&gt;count
+)paren
 )paren
 r_return
 op_minus

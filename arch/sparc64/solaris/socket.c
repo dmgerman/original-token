@@ -1682,9 +1682,6 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|inode
-op_logical_or
-op_logical_neg
 id|inode-&gt;i_sock
 op_logical_or
 op_logical_neg

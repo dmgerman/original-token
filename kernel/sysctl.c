@@ -3085,7 +3085,12 @@ multiline_comment|/* Don&squot;t unregister proc entries that are still being us
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|de-&gt;count
+)paren
 )paren
 r_continue
 suffix:semicolon

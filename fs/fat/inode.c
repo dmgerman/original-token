@@ -4363,10 +4363,6 @@ l_int|1
 suffix:semicolon
 )brace
 macro_line|#endif
-id|inode-&gt;i_size
-op_assign
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4542,10 +4538,6 @@ id|inode
 )paren
 op_member_access_from_pointer
 id|i_start
-suffix:semicolon
-id|inode-&gt;i_nlink
-op_assign
-l_int|1
 suffix:semicolon
 id|inode-&gt;i_size
 op_assign

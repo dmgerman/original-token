@@ -217,11 +217,6 @@ id|capifs_root_lookup
 comma
 )brace
 suffix:semicolon
-DECL|variable|capifs_inode_operations
-r_struct
-id|inode_operations
-id|capifs_inode_operations
-suffix:semicolon
 DECL|variable|capifs_dentry_operations
 r_static
 r_struct
@@ -1870,19 +1865,11 @@ c_func
 id|inode-&gt;i_sb
 )paren
 suffix:semicolon
-id|inode-&gt;i_op
-op_assign
-l_int|NULL
-suffix:semicolon
 id|inode-&gt;i_mode
 op_assign
 l_int|0
 suffix:semicolon
 id|inode-&gt;i_nlink
-op_assign
-l_int|0
-suffix:semicolon
-id|inode-&gt;i_size
 op_assign
 l_int|0
 suffix:semicolon
@@ -1943,12 +1930,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* need dummy inode operations .... */
-id|inode-&gt;i_op
-op_assign
-op_amp
-id|capifs_inode_operations
-suffix:semicolon
 id|ino
 op_sub_assign
 l_int|2

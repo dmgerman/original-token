@@ -6798,10 +6798,6 @@ id|de
 )paren
 suffix:semicolon
 macro_line|#endif
-id|inode-&gt;i_size
-op_assign
-l_int|0
-suffix:semicolon
 id|inode-&gt;i_blocks
 op_assign
 l_int|0
@@ -7553,26 +7549,6 @@ id|inode
 op_assign
 id|file-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|inode
-op_eq
-l_int|NULL
-)paren
-(brace
-id|printk
-(paren
-l_string|&quot;%s: readdir(): NULL inode&bslash;n&quot;
-comma
-id|DEVFS_NAME
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EBADF
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren

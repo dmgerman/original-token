@@ -762,16 +762,18 @@ r_struct
 id|inode
 op_star
 id|inode
-op_assign
-id|file-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-id|inode
+id|file-&gt;f_dentry
 )paren
 r_continue
+suffix:semicolon
+id|inode
+op_assign
+id|file-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
 multiline_comment|/* File with pending delete? */
 r_if

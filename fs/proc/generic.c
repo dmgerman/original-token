@@ -961,6 +961,7 @@ comma
 id|follow_link
 suffix:colon
 id|proc_follow_link
+comma
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * As some entries in /proc are volatile, we want to &n; * get rid of unused dentries.  This could be made &n; * smarter: we could keep a &quot;volatile&quot; flag in the &n; * inode to indicate which ones to keep.&n; */
@@ -1650,14 +1651,6 @@ suffix:semicolon
 id|inode
 op_assign
 id|dentry-&gt;d_inode
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|inode
-)paren
-r_continue
 suffix:semicolon
 r_if
 c_cond
@@ -2752,15 +2745,16 @@ id|de-&gt;nlink
 op_assign
 l_int|0
 suffix:semicolon
-id|de-&gt;deleted
-op_assign
-l_int|1
-suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
+id|atomic_read
+c_func
+(paren
+op_amp
 id|de-&gt;count
+)paren
 )paren
 id|free_proc_entry
 c_func
@@ -2770,6 +2764,10 @@ id|de
 suffix:semicolon
 r_else
 (brace
+id|de-&gt;deleted
+op_assign
+l_int|1
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -2779,7 +2777,12 @@ id|parent-&gt;name
 comma
 id|de-&gt;name
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|de-&gt;count
+)paren
 )paren
 suffix:semicolon
 )brace

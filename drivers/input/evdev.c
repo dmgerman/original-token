@@ -464,7 +464,7 @@ r_if
 c_cond
 (paren
 id|i
-OG
+op_ge
 id|EVDEV_MINORS
 op_logical_or
 op_logical_neg
@@ -1629,10 +1629,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|evdev_table
-(braket
 id|minor
-)braket
+op_eq
+id|EVDEV_MINORS
 )paren
 (brace
 id|printk

@@ -625,6 +625,20 @@ id|sk_buff
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|x25_backlog_rcv
+c_func
+(paren
+r_struct
+id|sock
+op_star
+comma
+r_struct
+id|sk_buff
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/* x25_link.c */
 r_extern
 r_void

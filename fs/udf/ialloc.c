@@ -245,10 +245,6 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-id|inode-&gt;i_flags
-op_assign
-l_int|0
-suffix:semicolon
 op_star
 id|err
 op_assign
@@ -529,10 +525,6 @@ op_assign
 id|PAGE_SIZE
 suffix:semicolon
 id|inode-&gt;i_blocks
-op_assign
-l_int|0
-suffix:semicolon
-id|inode-&gt;i_size
 op_assign
 l_int|0
 suffix:semicolon

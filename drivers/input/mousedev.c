@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/input.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#include &lt;linux/random.h&gt;
 macro_line|#ifndef CONFIG_INPUT_MOUSEDEV_SCREEN_X
 DECL|macro|CONFIG_INPUT_MOUSEDEV_SCREEN_X
 mdefine_line|#define CONFIG_INPUT_MOUSEDEV_SCREEN_X&t;1024
@@ -260,6 +261,26 @@ r_int
 id|index
 comma
 id|size
+suffix:semicolon
+id|add_mouse_randomness
+c_func
+(paren
+(paren
+id|type
+op_lshift
+l_int|4
+)paren
+op_xor
+id|code
+op_xor
+(paren
+id|code
+op_rshift
+l_int|4
+)paren
+op_xor
+id|value
+)paren
 suffix:semicolon
 r_while
 c_loop
@@ -939,7 +960,7 @@ r_if
 c_cond
 (paren
 id|i
-OG
+op_ge
 id|MOUSEDEV_MINORS
 op_logical_or
 op_logical_neg
@@ -2032,10 +2053,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|mousedev_table
-(braket
 id|minor
-)braket
+op_eq
+id|MOUSEDEV_MINORS
 )paren
 (brace
 id|printk

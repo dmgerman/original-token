@@ -1620,10 +1620,6 @@ id|id
 op_assign
 id|inode-&gt;i_ino
 suffix:semicolon
-id|inode-&gt;i_op
-op_assign
-l_int|NULL
-suffix:semicolon
 id|inode-&gt;i_mode
 op_assign
 l_int|0
@@ -1657,8 +1653,16 @@ id|id
 )paren
 )paren
 )paren
+(brace
+id|make_bad_inode
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
+)brace
 id|inode-&gt;i_mode
 op_assign
 (paren
@@ -2548,7 +2552,7 @@ id|pte_t
 op_star
 )paren
 comma
-id|GFP_KERNEL
+id|GFP_USER
 )paren
 suffix:semicolon
 r_if
@@ -2586,7 +2590,7 @@ op_star
 )paren
 id|__get_free_page
 (paren
-id|GFP_KERNEL
+id|GFP_USER
 )paren
 suffix:semicolon
 r_if
@@ -2627,7 +2631,7 @@ r_sizeof
 id|pte_t
 )paren
 comma
-id|GFP_KERNEL
+id|GFP_USER
 )paren
 suffix:semicolon
 r_if
@@ -3347,7 +3351,7 @@ id|shp
 op_plus
 id|namelen
 comma
-id|GFP_KERNEL
+id|GFP_USER
 )paren
 suffix:semicolon
 r_if
@@ -5642,6 +5646,10 @@ c_cond
 (paren
 op_logical_neg
 id|shm_sb
+op_logical_or
+id|shmid
+OL
+l_int|0
 op_logical_or
 (paren
 id|shmid

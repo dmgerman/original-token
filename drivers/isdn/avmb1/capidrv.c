@@ -629,10 +629,10 @@ l_int|4
 suffix:semicolon
 )brace
 )brace
-DECL|function|b1config_sync_v110
+DECL|function|b1config_async_v110
 r_static
 id|_cstruct
-id|b1config_sync_v110
+id|b1config_async_v110
 c_func
 (paren
 id|__u16
@@ -684,6 +684,8 @@ id|buf
 l_int|3
 )braket
 op_assign
+l_int|8
+suffix:semicolon
 id|buf
 (braket
 l_int|4
@@ -691,12 +693,14 @@ l_int|4
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* reserved, bits per character */
+multiline_comment|/* 8 bits per character */
 id|buf
 (braket
 l_int|5
 )braket
 op_assign
+l_int|0
+suffix:semicolon
 id|buf
 (braket
 l_int|6
@@ -704,20 +708,22 @@ l_int|6
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* reserved, parity */
+multiline_comment|/* parity none */
 id|buf
 (braket
 l_int|7
 )braket
 op_assign
+l_int|0
+suffix:semicolon
 id|buf
 (braket
-l_int|9
+l_int|8
 )braket
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* reserved, stop bits */
+multiline_comment|/* 1 stop bit */
 r_return
 id|buf
 suffix:semicolon
@@ -765,7 +771,7 @@ r_case
 id|ISDN_PROTO_L2_V11096
 suffix:colon
 r_return
-id|b1config_sync_v110
+id|b1config_async_v110
 c_func
 (paren
 l_int|9600
@@ -775,7 +781,7 @@ r_case
 id|ISDN_PROTO_L2_V11019
 suffix:colon
 r_return
-id|b1config_sync_v110
+id|b1config_async_v110
 c_func
 (paren
 l_int|19200
@@ -785,7 +791,7 @@ r_case
 id|ISDN_PROTO_L2_V11038
 suffix:colon
 r_return
-id|b1config_sync_v110
+id|b1config_async_v110
 c_func
 (paren
 l_int|38400
@@ -11290,8 +11296,12 @@ id|capi_interface_user
 id|cuser
 op_assign
 (brace
+id|name
+suffix:colon
 l_string|&quot;capidrv&quot;
 comma
+id|callback
+suffix:colon
 id|lower_callback
 )brace
 suffix:semicolon

@@ -3032,7 +3032,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-l_int|16
+id|NR_IRQS
 suffix:semicolon
 id|i
 op_increment
@@ -3069,6 +3069,7 @@ op_amp
 id|IRQ_AUTODETECT
 )paren
 (brace
+multiline_comment|/* We only react to ISA interrupts */
 r_if
 c_cond
 (paren
@@ -3079,12 +3080,21 @@ op_amp
 id|IRQ_WAITING
 )paren
 )paren
+(brace
+r_if
+c_cond
+(paren
+id|i
+OL
+l_int|16
+)paren
 id|mask
 op_or_assign
 l_int|1
 op_lshift
 id|i
 suffix:semicolon
+)brace
 id|desc-&gt;status
 op_assign
 id|status

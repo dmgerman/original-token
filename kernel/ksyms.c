@@ -2167,6 +2167,13 @@ id|iomem_resource
 )paren
 suffix:semicolon
 multiline_comment|/* process management */
+DECL|variable|up_and_exit
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|up_and_exit
+)paren
+suffix:semicolon
 DECL|variable|__wake_up
 id|EXPORT_SYMBOL
 c_func

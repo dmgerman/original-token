@@ -281,8 +281,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|inode
-op_logical_and
 id|inode-&gt;i_mapping-&gt;a_ops-&gt;readpage
 )paren
 (brace

@@ -1051,10 +1051,6 @@ id|inode-&gt;i_nlink
 op_assign
 l_int|2
 suffix:semicolon
-id|inode-&gt;i_size
-op_assign
-l_int|0
-suffix:semicolon
 id|inode-&gt;i_mtime
 op_assign
 id|inode-&gt;i_atime

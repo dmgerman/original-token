@@ -195,8 +195,7 @@ op_star
 id|write_proc
 suffix:semicolon
 DECL|member|count
-r_int
-r_int
+id|atomic_t
 id|count
 suffix:semicolon
 multiline_comment|/* use count */

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;&quot;LAPB via ethernet&quot; driver release 001&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;This is a &quot;pseudo&quot; network driver to allow LAPB over Ethernet.&n; *&n; *&t;This driver can use any ethernet destination address, and can be &n; *&t;limited to accept frames from one dedicated ethernet card only.&n; *&n; *&t;History&n; *&t;LAPBETH 001&t;Jonathan Naylor&t;&t;Cloned from bpqether.c&n; *&t;2000-10-29&t;Henner Eisen&t;lapb_data_indication() return status.&n; */
+multiline_comment|/*&n; *&t;&quot;LAPB via ethernet&quot; driver release 001&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;This is a &quot;pseudo&quot; network driver to allow LAPB over Ethernet.&n; *&n; *&t;This driver can use any ethernet destination address, and can be &n; *&t;limited to accept frames from one dedicated ethernet card only.&n; *&n; *&t;History&n; *&t;LAPBETH 001&t;Jonathan Naylor&t;&t;Cloned from bpqether.c&n; *&t;2000-10-29&t;Henner Eisen&t;lapb_data_indication() return status.&n; *&t;2000-11-14&t;Henner Eisen&t;dev_hold/put, NETDEV_GOING_DOWN support&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -149,7 +149,7 @@ l_int|NULL
 suffix:semicolon
 multiline_comment|/* ------------------------------------------------------------------------ */
 multiline_comment|/*&n; *&t;Get the ethernet device for a LAPB device&n; */
-DECL|function|lapbeth_get_ether_dev
+macro_line|#if 0
 r_static
 id|__inline__
 r_struct
@@ -191,6 +191,7 @@ suffix:colon
 l_int|NULL
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*&n; *&t;Get the LAPB device for the ethernet device&n; */
 DECL|function|lapbeth_get_x25_dev
 r_static
@@ -376,6 +377,12 @@ c_func
 (paren
 op_amp
 id|lapbeth-&gt;axdev
+)paren
+suffix:semicolon
+id|dev_put
+c_func
+(paren
+id|lapbeth-&gt;ethdev
 )paren
 suffix:semicolon
 id|kfree
@@ -1535,6 +1542,12 @@ id|lapbethdev
 )paren
 )paren
 suffix:semicolon
+id|dev_hold
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 id|lapbeth-&gt;ethdev
 op_assign
 id|dev
@@ -1643,6 +1656,12 @@ op_eq
 id|MAXLAPBDEV
 )paren
 (brace
+id|dev_put
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 id|kfree
 c_func
 (paren
@@ -1687,6 +1706,12 @@ op_ne
 l_int|0
 )paren
 (brace
+id|dev_put
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 id|kfree
 c_func
 (paren
@@ -1879,6 +1904,9 @@ id|dev
 suffix:semicolon
 r_break
 suffix:semicolon
+r_case
+id|NETDEV_GOING_DOWN
+suffix:colon
 r_case
 id|NETDEV_DOWN
 suffix:colon

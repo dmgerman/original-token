@@ -4283,15 +4283,6 @@ id|out_inode
 op_assign
 id|out_file-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|out_inode
-)paren
-r_goto
-id|fput_out
-suffix:semicolon
 id|retval
 op_assign
 id|locks_verify_area

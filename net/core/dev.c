@@ -8717,6 +8717,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_HOTPLUG
 multiline_comment|/* Notify userspace when a netdevice event occurs,&n; * by running &squot;/sbin/hotplug net&squot; with certain&n; * environment variables set.&n; *&n; * Currently reported events are listed in netdev_event_names[].&n; */
 multiline_comment|/* /sbin/hotplug ONLY executes for events named here */
 DECL|variable|netdev_event_names
@@ -8975,4 +8976,5 @@ l_string|&quot;/sbin/hotplug will not be run.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 eof

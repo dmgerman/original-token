@@ -458,6 +458,10 @@ id|buffer_head
 op_star
 id|rbh
 suffix:semicolon
+r_char
+op_star
+id|bdata
+suffix:semicolon
 id|minor
 op_assign
 id|MINOR
@@ -561,6 +565,15 @@ comma
 id|sbh-&gt;b_size
 )paren
 suffix:semicolon
+multiline_comment|/* I think that it is safe to assume that rbh is not in HighMem, though&n;&t; * sbh might be - NeilBrown&n;&t; */
+id|bdata
+op_assign
+id|bh_kmap
+c_func
+(paren
+id|sbh
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -579,7 +592,7 @@ id|rbh
 id|memcpy
 c_func
 (paren
-id|sbh-&gt;b_data
+id|bdata
 comma
 id|rbh-&gt;b_data
 comma
@@ -600,9 +613,15 @@ c_func
 (paren
 id|rbh-&gt;b_data
 comma
-id|sbh-&gt;b_data
+id|bdata
 comma
 id|rbh-&gt;b_size
+)paren
+suffix:semicolon
+id|bh_kunmap
+c_func
+(paren
+id|sbh
 )paren
 suffix:semicolon
 id|mark_buffer_protected

@@ -1738,24 +1738,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|inode
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;loop_set_fd: NULL inode?!?&bslash;n&quot;
-)paren
-suffix:semicolon
-r_goto
-id|out_putf
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
 id|S_ISBLK
 c_func
 (paren
