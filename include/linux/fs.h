@@ -2778,8 +2778,9 @@ r_int
 id|fs_may_umount
 c_func
 (paren
-id|kdev_t
-id|dev
+r_struct
+id|super_block
+op_star
 comma
 r_struct
 id|dentry
@@ -2792,8 +2793,9 @@ r_int
 id|fs_may_remount_ro
 c_func
 (paren
-id|kdev_t
-id|dev
+r_struct
+id|super_block
+op_star
 )paren
 suffix:semicolon
 r_extern

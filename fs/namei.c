@@ -861,7 +861,21 @@ c_cond
 id|dentry
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; *   FIXME!   We should have something like&n;&n;&t;&t;dentry = dentry-&gt;revalidate(dentry);&n;&n;&t;&t; * here - we need to ask the low-level filesystem permission&n;&t;&t; * to use the cached entry (NFS needs to time them out, and&n;&t;&t; * /proc might go away etc).&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|dentry-&gt;d_revalidate
+)paren
+id|dentry
+op_assign
+id|dentry
+op_member_access_from_pointer
+id|d_revalidate
+c_func
+(paren
+id|dentry
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t;&t; * The parent d_count _should_ be at least 2: one for the&n;&t;&t; * dentry we found, and one for the fact that we are using&n;&t;&t; * it.&n;&t;&t; */
 r_if
 c_cond

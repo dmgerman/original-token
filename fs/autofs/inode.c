@@ -898,7 +898,7 @@ id|maxproto
 )paren
 )paren
 (brace
-id|d_delete
+id|dput
 c_func
 (paren
 id|s-&gt;s_root
@@ -938,7 +938,7 @@ OL
 id|AUTOFS_PROTO_VERSION
 )paren
 (brace
-id|d_delete
+id|dput
 c_func
 (paren
 id|s-&gt;s_root
@@ -1027,7 +1027,7 @@ l_string|&quot;autofs: could not open pipe file descriptor&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-id|d_delete
+id|dput
 c_func
 (paren
 id|s-&gt;s_root

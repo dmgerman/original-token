@@ -501,6 +501,10 @@ id|dentry-&gt;d_name.hash
 op_assign
 id|name-&gt;hash
 suffix:semicolon
+id|dentry-&gt;d_revalidate
+op_assign
+l_int|NULL
+suffix:semicolon
 r_return
 id|dentry
 suffix:semicolon
@@ -953,19 +957,11 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * If not, just unhash us and wait for dput()&n;&t; * to pick up the tab..&n;&t; */
-id|list_del
+multiline_comment|/*&n;&t; * If not, just drop the dentry and let dput&n;&t; * pick up the tab..&n;&t; */
+id|d_drop
 c_func
 (paren
-op_amp
-id|dentry-&gt;d_hash
-)paren
-suffix:semicolon
-id|INIT_LIST_HEAD
-c_func
-(paren
-op_amp
-id|dentry-&gt;d_hash
+id|dentry
 )paren
 suffix:semicolon
 )brace

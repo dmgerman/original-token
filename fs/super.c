@@ -2864,7 +2864,7 @@ op_logical_neg
 id|fs_may_umount
 c_func
 (paren
-id|dev
+id|sb
 comma
 id|sb-&gt;s_root
 )paren
@@ -3552,7 +3552,7 @@ op_logical_neg
 id|fs_may_remount_ro
 c_func
 (paren
-id|sb-&gt;s_dev
+id|sb
 )paren
 )paren
 r_return

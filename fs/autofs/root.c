@@ -1116,6 +1116,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * NOTE!&n; *&n; * Normal filesystems would do a &quot;d_delete()&quot; to tell the VFS dcache&n; * that the file no longer exists. However, doing that means that the&n; * VFS layer can turn the dentry into a negative dentry, which we&n; * obviously do not want (we&squot;re dropping the entry not because it&n; * doesn&squot;t exist, but because it has timed out).&n; *&n; * Also see autofs_root_rmdir()..&n; */
 DECL|function|autofs_root_unlink
 r_static
 r_int
@@ -1249,7 +1250,7 @@ dot
 id|data
 )paren
 suffix:semicolon
-id|d_delete
+id|d_drop
 c_func
 (paren
 id|dentry
@@ -1361,7 +1362,7 @@ suffix:semicolon
 id|dir-&gt;i_nlink
 op_decrement
 suffix:semicolon
-id|d_delete
+id|d_drop
 c_func
 (paren
 id|dentry
