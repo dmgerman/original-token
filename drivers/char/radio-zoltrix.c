@@ -51,6 +51,11 @@ r_int
 r_int
 id|stereo
 suffix:semicolon
+DECL|member|lock
+r_struct
+id|semaphore
+id|lock
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* local things */
@@ -97,6 +102,13 @@ id|dev-&gt;muted
 r_return
 l_int|0
 suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+id|dev-&gt;lock
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -130,6 +142,13 @@ l_int|3
 )paren
 suffix:semicolon
 multiline_comment|/* Zoltrix needs to be read to confirm */
+id|up
+c_func
+(paren
+op_amp
+id|dev-&gt;lock
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -157,6 +176,13 @@ op_plus
 l_int|2
 )paren
 suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|dev-&gt;lock
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -176,6 +202,13 @@ id|dev
 id|dev-&gt;muted
 op_assign
 l_int|1
+suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+id|dev-&gt;lock
+)paren
 suffix:semicolon
 id|outb
 c_func
@@ -202,6 +235,13 @@ l_int|3
 )paren
 suffix:semicolon
 multiline_comment|/* Zoltrix needs to be read to confirm */
+id|up
+c_func
+(paren
+op_amp
+id|dev-&gt;lock
+)paren
+suffix:semicolon
 )brace
 DECL|function|zol_unmute
 r_static
@@ -303,6 +343,13 @@ suffix:semicolon
 id|i
 op_assign
 l_int|45
+suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+id|dev-&gt;lock
+)paren
 suffix:semicolon
 id|outb
 c_func
@@ -571,7 +618,20 @@ l_int|1000
 )paren
 suffix:semicolon
 )brace
-r_else
+id|up
+c_func
+(paren
+op_amp
+id|dev-&gt;lock
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|dev-&gt;muted
+)paren
+(brace
 id|zol_setvol
 c_func
 (paren
@@ -580,6 +640,7 @@ comma
 id|dev-&gt;curvol
 )paren
 suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -600,6 +661,13 @@ r_int
 id|a
 comma
 id|b
+suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+id|dev-&gt;lock
+)paren
 suffix:semicolon
 id|outb
 c_func
@@ -647,6 +715,13 @@ id|inb
 c_func
 (paren
 id|io
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|dev-&gt;lock
 )paren
 suffix:semicolon
 r_if
@@ -710,6 +785,13 @@ id|x1
 comma
 id|x2
 suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+id|dev-&gt;lock
+)paren
+suffix:semicolon
 id|outb
 c_func
 (paren
@@ -755,6 +837,13 @@ id|inb
 c_func
 (paren
 id|io
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|dev-&gt;lock
 )paren
 suffix:semicolon
 r_if
@@ -1517,6 +1606,13 @@ c_func
 (paren
 id|KERN_INFO
 l_string|&quot;Zoltrix Radio Plus card driver.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|init_MUTEX
+c_func
+(paren
+op_amp
+id|zoltrix_unit.lock
 )paren
 suffix:semicolon
 multiline_comment|/* mute card - prevents noisy bootups */

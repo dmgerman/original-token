@@ -7,6 +7,7 @@ macro_line|#include &lt;asm/io.h&gt;&t;&t;/* outb, outb_p&t;&t;&t;*/
 macro_line|#include &lt;asm/uaccess.h&gt;&t;/* copy to/from user&t;&t;*/
 macro_line|#include &lt;linux/videodev.h&gt;&t;/* kernel radio structs&t;&t;*/
 macro_line|#include &lt;linux/config.h&gt;&t;/* CONFIG_RADIO_RTRACK2_PORT &t;*/
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#ifndef CONFIG_RADIO_RTRACK2_PORT
 DECL|macro|CONFIG_RADIO_RTRACK2_PORT
 mdefine_line|#define CONFIG_RADIO_RTRACK2_PORT -1
@@ -24,6 +25,11 @@ r_int
 id|users
 op_assign
 l_int|0
+suffix:semicolon
+DECL|variable|lock
+r_static
+id|spinlock_t
+id|lock
 suffix:semicolon
 DECL|struct|rt_device
 r_struct
@@ -66,12 +72,26 @@ id|dev-&gt;muted
 r_return
 suffix:semicolon
 )brace
+id|spin_lock
+c_func
+(paren
+op_amp
+id|lock
+)paren
+suffix:semicolon
 id|outb
 c_func
 (paren
 l_int|1
 comma
 id|io
+)paren
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|lock
 )paren
 suffix:semicolon
 id|dev-&gt;muted
@@ -102,12 +122,26 @@ l_int|0
 r_return
 suffix:semicolon
 )brace
+id|spin_lock
+c_func
+(paren
+op_amp
+id|lock
+)paren
+suffix:semicolon
 id|outb
 c_func
 (paren
 l_int|0
 comma
 id|io
+)paren
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|lock
 )paren
 suffix:semicolon
 id|dev-&gt;muted
@@ -210,6 +244,13 @@ l_int|200
 op_plus
 l_int|856
 suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|lock
+)paren
+suffix:semicolon
 id|outb_p
 c_func
 (paren
@@ -308,11 +349,19 @@ comma
 id|io
 )paren
 suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|lock
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
 DECL|function|rt_getsigstr
+r_static
 r_int
 id|rt_getsigstr
 c_func
@@ -952,6 +1001,13 @@ id|rtrack2_radio.priv
 op_assign
 op_amp
 id|rtrack2_unit
+suffix:semicolon
+id|spin_lock_init
+c_func
+(paren
+op_amp
+id|lock
+)paren
 suffix:semicolon
 r_if
 c_cond

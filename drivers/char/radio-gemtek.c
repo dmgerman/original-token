@@ -7,6 +7,7 @@ macro_line|#include &lt;asm/io.h&gt;&t;&t;/* outb, outb_p&t;&t;&t;*/
 macro_line|#include &lt;asm/uaccess.h&gt;&t;/* copy to/from user&t;&t;*/
 macro_line|#include &lt;linux/videodev.h&gt;&t;/* kernel radio structs&t;&t;*/
 macro_line|#include &lt;linux/config.h&gt;&t;/* CONFIG_RADIO_GEMTEK_PORT &t;*/
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#ifndef CONFIG_RADIO_GEMTEK_PORT
 DECL|macro|CONFIG_RADIO_GEMTEK_PORT
 mdefine_line|#define CONFIG_RADIO_GEMTEK_PORT -1
@@ -24,6 +25,11 @@ r_int
 id|users
 op_assign
 l_int|0
+suffix:semicolon
+DECL|variable|lock
+r_static
+id|spinlock_t
+id|lock
 suffix:semicolon
 DECL|struct|gemtek_device
 r_struct
@@ -67,12 +73,26 @@ id|dev-&gt;muted
 r_return
 suffix:semicolon
 )brace
+id|spin_lock
+c_func
+(paren
+op_amp
+id|lock
+)paren
+suffix:semicolon
 id|outb
 c_func
 (paren
 l_int|0x10
 comma
 id|io
+)paren
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|lock
 )paren
 suffix:semicolon
 id|dev-&gt;muted
@@ -103,12 +123,26 @@ l_int|0
 r_return
 suffix:semicolon
 )brace
+id|spin_lock
+c_func
+(paren
+op_amp
+id|lock
+)paren
+suffix:semicolon
 id|outb
 c_func
 (paren
 l_int|0x20
 comma
 id|io
+)paren
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|lock
 )paren
 suffix:semicolon
 id|dev-&gt;muted
@@ -227,6 +261,13 @@ suffix:semicolon
 id|freq
 op_div_assign
 l_int|100000
+suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|lock
+)paren
 suffix:semicolon
 multiline_comment|/* 2 start bits */
 id|outb_p
@@ -377,6 +418,13 @@ c_func
 l_int|5
 )paren
 suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|lock
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -392,6 +440,13 @@ op_star
 id|dev
 )paren
 (brace
+id|spin_lock
+c_func
+(paren
+op_amp
+id|lock
+)paren
+suffix:semicolon
 id|inb
 c_func
 (paren
@@ -402,6 +457,13 @@ id|udelay
 c_func
 (paren
 l_int|5
+)paren
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|lock
 )paren
 suffix:semicolon
 r_if
@@ -1001,17 +1063,36 @@ l_int|NULL
 )brace
 suffix:semicolon
 DECL|function|gemtek_init
+r_static
 r_int
 id|__init
 id|gemtek_init
 c_func
 (paren
-r_struct
-id|video_init
-op_star
-id|v
+r_void
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|io
+op_eq
+op_minus
+l_int|1
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;You must set an I/O address with io=0x20c, io=0x30c, io=0x24c or io=0x34c (or io=0x248 for the combined sound/radiocard)&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1081,6 +1162,13 @@ id|KERN_INFO
 l_string|&quot;GemTek Radio Card driver.&bslash;n&quot;
 )paren
 suffix:semicolon
+id|spin_lock_init
+c_func
+(paren
+op_amp
+id|lock
+)paren
+suffix:semicolon
 multiline_comment|/* mute card - prevents noisy bootups */
 id|outb
 c_func
@@ -1113,7 +1201,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
 id|MODULE_AUTHOR
 c_func
 (paren
@@ -1144,46 +1231,11 @@ l_string|&quot;I/O address of the GemTek card (0x20c, 0x30c, 0x24c or 0x34c (or 
 suffix:semicolon
 id|EXPORT_NO_SYMBOLS
 suffix:semicolon
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
+DECL|function|gemtek_cleanup
+r_static
 r_void
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|io
-op_eq
-op_minus
-l_int|1
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;You must set an I/O address with io=0x20c, io=0x30c, io=0x24c or io=0x34c (or io=0x248 for the combined sound/radiocard)&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-)brace
-r_return
-id|gemtek_init
-c_func
-(paren
-l_int|NULL
-)paren
-suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
+id|__exit
+id|gemtek_cleanup
 c_func
 (paren
 r_void
@@ -1205,6 +1257,19 @@ l_int|4
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+DECL|variable|gemtek_init
+id|module_init
+c_func
+(paren
+id|gemtek_init
+)paren
+suffix:semicolon
+DECL|variable|gemtek_cleanup
+id|module_exit
+c_func
+(paren
+id|gemtek_cleanup
+)paren
+suffix:semicolon
 multiline_comment|/*&n;  Local variables:&n;  compile-command: &quot;gcc -c -DMODVERSIONS -D__KERNEL__ -DMODULE -O6 -Wall -Wstrict-prototypes -I /home/blp/tmp/linux-2.1.111-rtrack/include radio-rtrack2.c&quot;&n;  End:&n;*/
 eof

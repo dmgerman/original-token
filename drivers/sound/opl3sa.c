@@ -644,6 +644,7 @@ r_char
 id|conf
 suffix:semicolon
 r_static
+r_int
 r_char
 id|irq_bits
 (braket

@@ -1821,13 +1821,13 @@ id|Reserved3
 l_int|40
 )braket
 suffix:semicolon
-DECL|typedef|INQUIRYDATA
-DECL|typedef|PINQUIRYDATA
+DECL|typedef|IPS_INQUIRYDATA
+DECL|typedef|IPS_PINQUIRYDATA
 )brace
-id|INQUIRYDATA
+id|IPS_INQUIRYDATA
 comma
 op_star
-id|PINQUIRYDATA
+id|IPS_PINQUIRYDATA
 suffix:semicolon
 multiline_comment|/*&n; * Read Capacity Data Format&n; */
 r_typedef

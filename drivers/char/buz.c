@@ -1365,6 +1365,7 @@ l_int|1
 suffix:semicolon
 )brace
 DECL|function|attach_inform
+r_static
 r_void
 id|attach_inform
 c_func
@@ -1411,6 +1412,7 @@ id|id
 suffix:semicolon
 )brace
 DECL|function|detach_inform
+r_static
 r_void
 id|detach_inform
 c_func

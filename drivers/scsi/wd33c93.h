@@ -272,6 +272,15 @@ DECL|member|pad
 r_char
 id|pad
 suffix:semicolon
+macro_line|#ifdef CONFIG_SGI
+DECL|member|pad2
+DECL|member|pad3
+r_char
+id|pad2
+comma
+id|pad3
+suffix:semicolon
+macro_line|#endif
 DECL|member|SCMD
 r_volatile
 r_int

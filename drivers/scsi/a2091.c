@@ -1006,7 +1006,7 @@ id|IRQ_AMIGA_PORTS
 comma
 id|a2091_intr
 comma
-id|SA_SHORQ
+id|SA_SHIRQ
 comma
 l_string|&quot;A2091 SCSI&quot;
 comma

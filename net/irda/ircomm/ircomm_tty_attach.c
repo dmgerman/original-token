@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      ircomm_tty_attach.c&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Jun  5 17:42:00 1999&n; * Modified at:   Wed Aug 25 13:32:00 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      ircomm_tty_attach.c&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Jun  5 17:42:00 1999&n; * Modified at:   Wed Sep  8 11:54:27 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;net/irda/irda.h&gt;
@@ -268,6 +268,10 @@ l_string|&quot;IRCOMM_TTY_CONNECT_CONFIRM&quot;
 comma
 l_string|&quot;IRCOMM_TTY_CONNECT_INDICATION&quot;
 comma
+l_string|&quot;IRCOMM_TTY_DISCONNECT_REQUEST&quot;
+comma
+l_string|&quot;IRCOMM_TTY_DISCONNECT_INDICATION&quot;
+comma
 l_string|&quot;IRCOMM_TTY_WD_TIMER_EXPIRED&quot;
 comma
 l_string|&quot;IRCOMM_TTY_GOT_PARAMETERS&quot;
@@ -506,12 +510,18 @@ c_cond
 (paren
 id|self-&gt;obj
 )paren
+(brace
 id|irias_delete_object
 c_func
 (paren
 id|self-&gt;obj
 )paren
 suffix:semicolon
+id|self-&gt;obj
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
 id|ircomm_tty_do_event
 c_func
 (paren
@@ -657,6 +667,14 @@ id|irlmp_service_to_hint
 c_func
 (paren
 id|S_COMM
+)paren
+suffix:semicolon
+id|hints
+op_or_assign
+id|irlmp_service_to_hint
+c_func
+(paren
+id|S_TELEPHONY
 )paren
 suffix:semicolon
 multiline_comment|/* Register IrCOMM with LM-IAS */
@@ -869,7 +887,6 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Only 9-wire service types continue here */
-macro_line|#if 0
 id|ircomm_param_request
 c_func
 (paren
@@ -880,6 +897,7 @@ comma
 id|FALSE
 )paren
 suffix:semicolon
+macro_line|#if 0
 id|ircomm_param_request
 c_func
 (paren
@@ -1014,6 +1032,93 @@ id|ircomm_tty
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/*&n; * Function ircomm_tty_disconnect_indication (instance, sap, reason, skb)&n; *&n; *    Link disconnected&n; *&n; */
+DECL|function|ircomm_tty_disconnect_indication
+r_void
+id|ircomm_tty_disconnect_indication
+c_func
+(paren
+r_void
+op_star
+id|instance
+comma
+r_void
+op_star
+id|sap
+comma
+id|LM_REASON
+id|reason
+comma
+r_struct
+id|sk_buff
+op_star
+id|skb
+)paren
+(brace
+r_struct
+id|ircomm_tty_cb
+op_star
+id|self
+op_assign
+(paren
+r_struct
+id|ircomm_tty_cb
+op_star
+)paren
+id|instance
+suffix:semicolon
+id|DEBUG
+c_func
+(paren
+l_int|2
+comma
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
+)paren
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|self
+op_ne
+l_int|NULL
+comma
+r_return
+suffix:semicolon
+)paren
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|self-&gt;magic
+op_eq
+id|IRCOMM_TTY_MAGIC
+comma
+r_return
+suffix:semicolon
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|self-&gt;tty
+)paren
+r_return
+suffix:semicolon
+id|ircomm_tty_do_event
+c_func
+(paren
+id|self
+comma
+id|IRCOMM_TTY_DISCONNECT_INDICATION
+comma
+l_int|NULL
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * Function ircomm_tty_getvalue_confirm (result, obj_id, value, priv)&n; *&n; *    Got result from the IAS query we make&n; *&n; */
 DECL|function|ircomm_tty_getvalue_confirm
 r_static
@@ -1092,7 +1197,7 @@ id|IAS_SUCCESS
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
 id|__FUNCTION__
 l_string|&quot;(), got NULL value!&bslash;n&quot;
@@ -1482,7 +1587,7 @@ op_amp
 id|self-&gt;watchdog_timer
 )paren
 suffix:semicolon
-multiline_comment|/*  &n;&t; * IrCOMM link is now up, and if we are not using hardware&n;&t; * flow-control, then declare the hardware as running &n;&t; */
+multiline_comment|/*  &n;&t; * IrCOMM link is now up, and if we are not using hardware&n;&t; * flow-control, then declare the hardware as running. Otherwise&n;&t; * the client will have to wait for the CD to be set.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1515,16 +1620,34 @@ id|self-&gt;tty-&gt;hw_stopped
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Kick client */
-id|ircomm_tty_do_softint
+)brace
+multiline_comment|/* Wake up processes blocked on open */
+id|wake_up_interruptible
 c_func
 (paren
-id|self
+op_amp
+id|self-&gt;open_wait
+)paren
+suffix:semicolon
+multiline_comment|/* &n;&t; * Wake up processes blocked on write, or waiting for a write &n;&t; * wakeup notification&n;&t; */
+id|queue_task
+c_func
+(paren
+op_amp
+id|self-&gt;tqueue
+comma
+op_amp
+id|tq_immediate
+)paren
+suffix:semicolon
+id|mark_bh
+c_func
+(paren
+id|IMMEDIATE_BH
 )paren
 suffix:semicolon
 )brace
-)brace
-multiline_comment|/*&n; * Function irlan_start_watchdog_timer (self, timeout)&n; *&n; *    &n; *&n; */
+multiline_comment|/*&n; * Function irlan_start_watchdog_timer (self, timeout)&n; *&n; *    Start the watchdog timer. This timer is used to make sure that any &n; *    connection attempt is successful, and if not, we will retry after &n; *    the timeout&n; */
 DECL|function|ircomm_tty_start_watchdog_timer
 r_void
 id|ircomm_tty_start_watchdog_timer
@@ -1539,15 +1662,6 @@ r_int
 id|timeout
 )paren
 (brace
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
-suffix:semicolon
 id|irda_start_timer
 c_func
 (paren
@@ -1592,7 +1706,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|1
+l_int|4
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -1667,7 +1781,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|1
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;: state=%s, event=%s&bslash;n&quot;
@@ -1785,18 +1899,25 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-id|ircomm_tty_link_established
-c_func
-(paren
-id|self
-)paren
-suffix:semicolon
 id|ircomm_tty_next_state
 c_func
 (paren
 id|self
 comma
 id|IRCOMM_TTY_READY
+)paren
+suffix:semicolon
+multiline_comment|/* Init connection */
+id|ircomm_tty_send_initial_parameters
+c_func
+(paren
+id|self
+)paren
+suffix:semicolon
+id|ircomm_tty_link_established
+c_func
+(paren
+id|self
 )paren
 suffix:semicolon
 r_break
@@ -1825,7 +1946,7 @@ suffix:colon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;(), unknown event: %s&bslash;n&quot;
@@ -1879,7 +2000,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|1
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;: state=%s, event=%s&bslash;n&quot;
@@ -2003,18 +2124,25 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-id|ircomm_tty_link_established
-c_func
-(paren
-id|self
-)paren
-suffix:semicolon
 id|ircomm_tty_next_state
 c_func
 (paren
 id|self
 comma
 id|IRCOMM_TTY_READY
+)paren
+suffix:semicolon
+multiline_comment|/* Init connection */
+id|ircomm_tty_send_initial_parameters
+c_func
+(paren
+id|self
+)paren
+suffix:semicolon
+id|ircomm_tty_link_established
+c_func
+(paren
+id|self
 )paren
 suffix:semicolon
 r_break
@@ -2059,7 +2187,7 @@ suffix:colon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;(), unknown event: %s&bslash;n&quot;
@@ -2113,7 +2241,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|1
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;: state=%s, event=%s&bslash;n&quot;
@@ -2217,18 +2345,25 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-id|ircomm_tty_link_established
-c_func
-(paren
-id|self
-)paren
-suffix:semicolon
 id|ircomm_tty_next_state
 c_func
 (paren
 id|self
 comma
 id|IRCOMM_TTY_READY
+)paren
+suffix:semicolon
+multiline_comment|/* Init connection */
+id|ircomm_tty_send_initial_parameters
+c_func
+(paren
+id|self
+)paren
+suffix:semicolon
+id|ircomm_tty_link_established
+c_func
+(paren
+id|self
 )paren
 suffix:semicolon
 r_break
@@ -2251,7 +2386,7 @@ suffix:colon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;(), unknown event: %s&bslash;n&quot;
@@ -2305,7 +2440,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|1
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;: state=%s, event=%s&bslash;n&quot;
@@ -2412,18 +2547,25 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-id|ircomm_tty_link_established
-c_func
-(paren
-id|self
-)paren
-suffix:semicolon
 id|ircomm_tty_next_state
 c_func
 (paren
 id|self
 comma
 id|IRCOMM_TTY_READY
+)paren
+suffix:semicolon
+multiline_comment|/* Init connection */
+id|ircomm_tty_send_initial_parameters
+c_func
+(paren
+id|self
+)paren
+suffix:semicolon
+id|ircomm_tty_link_established
+c_func
+(paren
+id|self
 )paren
 suffix:semicolon
 r_break
@@ -2446,7 +2588,7 @@ suffix:colon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;(), unknown event: %s&bslash;n&quot;
@@ -2500,7 +2642,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|1
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;: state=%s, event=%s&bslash;n&quot;
@@ -2525,10 +2667,11 @@ id|event
 r_case
 id|IRCOMM_TTY_CONNECT_CONFIRM
 suffix:colon
-id|ircomm_tty_link_established
+id|del_timer
 c_func
 (paren
-id|self
+op_amp
+id|self-&gt;watchdog_timer
 )paren
 suffix:semicolon
 id|ircomm_tty_next_state
@@ -2546,78 +2689,10 @@ c_func
 id|self
 )paren
 suffix:semicolon
-id|ASSERT
+id|ircomm_tty_link_established
 c_func
 (paren
-id|self-&gt;tty
-op_ne
-l_int|NULL
-comma
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)paren
-suffix:semicolon
-multiline_comment|/* Send queued frames */
-r_while
-c_loop
-(paren
-(paren
-id|skb
-op_assign
-id|skb_dequeue
-c_func
-(paren
-op_amp
-id|self-&gt;tx_queue
-)paren
-)paren
-)paren
-(brace
-id|ret
-op_assign
-id|ircomm_data_request
-c_func
-(paren
-id|self-&gt;ircomm
-comma
-id|skb
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ret
-OL
-l_int|0
-)paren
-r_break
-suffix:semicolon
-)brace
-multiline_comment|/* Wake up processes blocked on open */
-id|wake_up_interruptible
-c_func
-(paren
-op_amp
-id|self-&gt;open_wait
-)paren
-suffix:semicolon
-multiline_comment|/* &n;&t;&t; * Wake up processes blocked on write, or waiting for a write &n;&t;&t; * wakeup notification&n;&t;&t; */
-id|queue_task
-c_func
-(paren
-op_amp
-id|self-&gt;tqueue
-comma
-op_amp
-id|tq_immediate
-)paren
-suffix:semicolon
-id|mark_bh
-c_func
-(paren
-id|IMMEDIATE_BH
+id|self
 )paren
 suffix:semicolon
 r_break
@@ -2647,6 +2722,19 @@ c_func
 id|self
 comma
 id|IRCOMM_TTY_READY
+)paren
+suffix:semicolon
+multiline_comment|/* Init connection */
+id|ircomm_tty_send_initial_parameters
+c_func
+(paren
+id|self
+)paren
+suffix:semicolon
+id|ircomm_tty_link_established
+c_func
+(paren
+id|self
 )paren
 suffix:semicolon
 r_break
@@ -2701,7 +2789,7 @@ suffix:colon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;(), unknown event: %s&bslash;n&quot;
@@ -2774,11 +2862,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-id|IRCOMM_TTY_DATA_INDICATION
-suffix:colon
-r_break
-suffix:semicolon
-r_case
 id|IRCOMM_TTY_DETACH_CABLE
 suffix:colon
 id|ircomm_disconnect_request
@@ -2799,12 +2882,46 @@ id|IRCOMM_TTY_IDLE
 suffix:semicolon
 r_break
 suffix:semicolon
+r_case
+id|IRCOMM_TTY_DISCONNECT_INDICATION
+suffix:colon
+id|ircomm_tty_next_state
+c_func
+(paren
+id|self
+comma
+id|IRCOMM_TTY_SEARCH
+)paren
+suffix:semicolon
+id|ircomm_tty_start_watchdog_timer
+c_func
+(paren
+id|self
+comma
+l_int|3
+op_star
+id|HZ
+)paren
+suffix:semicolon
+multiline_comment|/* Drop carrier */
+id|self-&gt;session.dce
+op_assign
+id|IRCOMM_DELTA_CD
+suffix:semicolon
+id|ircomm_tty_check_modem_status
+c_func
+(paren
+id|self
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
 r_default
 suffix:colon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;(), unknown event: %s&bslash;n&quot;
@@ -2909,7 +3026,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|1
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;: next state=%s, service type=%d&bslash;n&quot;

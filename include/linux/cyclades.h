@@ -1,4 +1,4 @@
-multiline_comment|/* $Revision: 2.6 $$Date: 1998/08/10 16:57:01 $&n; * linux/include/linux/cyclades.h&n; *&n; * This file is maintained by Ivan Passos &lt;ivan@cyclades.com&gt;, &n; * Marcio Saito &lt;marcio@cyclades.com&gt; and&n; * Randolph Bentson &lt;bentson@grieg.seaslug.org&gt;.&n; *&n; * This file contains the general definitions for the cyclades.c driver&n; *$Log: cyclades.h,v $&n; *Revision 2.5  1998/08/03 16:57:01  ivan&n; *added cyclades_idle_stats structure;&n; * &n; *Revision 2.4  1998/06/01 12:09:53  ivan&n; *removed closing_wait2 from cyclades_port structure;&n; *&n; *Revision 2.3  1998/03/16 18:01:12  ivan&n; *changes in the cyclades_port structure to get it closer to the &n; *standard serial port structure;&n; *added constants for new ioctls;&n; *&n; *Revision 2.2  1998/02/17 16:50:00  ivan&n; *changes in the cyclades_port structure (addition of shutdown_wait and &n; *chip_rev variables);&n; *added constants for new ioctls and for CD1400 rev. numbers.&n; *&n; *Revision 2.1&t;1997/10/24 16:03:00  ivan&n; *added rflow (which allows enabling the CD1400 special flow control &n; *feature) and rtsdtr_inv (which allows DTR/RTS pin inversion) to &n; *cyclades_port structure;&n; *added Alpha support&n; *&n; *Revision 2.0  1997/06/30 10:30:00  ivan&n; *added some new doorbell command constants related to IOCTLW and&n; *UART error signaling&n; *&n; *Revision 1.8  1997/06/03 15:30:00  ivan&n; *added constant ZFIRM_HLT&n; *added constant CyPCI_Ze_win ( = 2 * Cy_PCI_Zwin)&n; *&n; *Revision 1.7  1997/03/26 10:30:00  daniel&n; *new entries at the end of cyclades_port struct to reallocate&n; *variables illegally allocated within card memory.&n; *&n; *Revision 1.6  1996/09/09 18:35:30  bentson&n; *fold in changes for Cyclom-Z -- including structures for&n; *communicating with board as well modest changes to original&n; *structures to support new features.&n; *&n; *Revision 1.5  1995/11/13 21:13:31  bentson&n; *changes suggested by Michael Chastain &lt;mec@duracef.shout.net&gt;&n; *to support use of this file in non-kernel applications&n; *&n; *&n; */
+multiline_comment|/* $Revision: 2.6 $$Date: 1998/08/10 16:57:01 $&n; * linux/include/linux/cyclades.h&n; *&n; * This file was initially written by&n; * Randolph Bentson &lt;bentson@grieg.seaslug.org&gt; and is maintained by&n; * Ivan Passos &lt;ivan@cyclades.com&gt;.&n; *&n; * This file contains the general definitions for the cyclades.c driver&n; *$Log: cyclades.h,v $&n; *Revision 2.5  1998/08/03 16:57:01  ivan&n; *added cyclades_idle_stats structure;&n; * &n; *Revision 2.4  1998/06/01 12:09:53  ivan&n; *removed closing_wait2 from cyclades_port structure;&n; *&n; *Revision 2.3  1998/03/16 18:01:12  ivan&n; *changes in the cyclades_port structure to get it closer to the &n; *standard serial port structure;&n; *added constants for new ioctls;&n; *&n; *Revision 2.2  1998/02/17 16:50:00  ivan&n; *changes in the cyclades_port structure (addition of shutdown_wait and &n; *chip_rev variables);&n; *added constants for new ioctls and for CD1400 rev. numbers.&n; *&n; *Revision 2.1&t;1997/10/24 16:03:00  ivan&n; *added rflow (which allows enabling the CD1400 special flow control &n; *feature) and rtsdtr_inv (which allows DTR/RTS pin inversion) to &n; *cyclades_port structure;&n; *added Alpha support&n; *&n; *Revision 2.0  1997/06/30 10:30:00  ivan&n; *added some new doorbell command constants related to IOCTLW and&n; *UART error signaling&n; *&n; *Revision 1.8  1997/06/03 15:30:00  ivan&n; *added constant ZFIRM_HLT&n; *added constant CyPCI_Ze_win ( = 2 * Cy_PCI_Zwin)&n; *&n; *Revision 1.7  1997/03/26 10:30:00  daniel&n; *new entries at the end of cyclades_port struct to reallocate&n; *variables illegally allocated within card memory.&n; *&n; *Revision 1.6  1996/09/09 18:35:30  bentson&n; *fold in changes for Cyclom-Z -- including structures for&n; *communicating with board as well modest changes to original&n; *structures to support new features.&n; *&n; *Revision 1.5  1995/11/13 21:13:31  bentson&n; *changes suggested by Michael Chastain &lt;mec@duracef.shout.net&gt;&n; *to support use of this file in non-kernel applications&n; *&n; *&n; */
 macro_line|#ifndef _LINUX_CYCLADES_H
 DECL|macro|_LINUX_CYCLADES_H
 mdefine_line|#define _LINUX_CYCLADES_H
@@ -618,6 +618,8 @@ DECL|macro|C_IN_IOCTLW
 mdefine_line|#define C_IN_IOCTLW&t;0x00020000      /* I/O control w/ wait */
 DECL|macro|C_IN_MRTS
 mdefine_line|#define C_IN_MRTS&t;0x00040000&t;/* modem RTS drop */
+DECL|macro|C_IN_ICHAR
+mdefine_line|#define C_IN_ICHAR&t;0x00080000
 multiline_comment|/* flow control */
 DECL|macro|C_FL_OXX
 mdefine_line|#define&t;C_FL_OXX&t;0x00000001&t;/* output Xon/Xoff flow control */
@@ -702,6 +704,10 @@ DECL|macro|C_CM_RXHIWM
 mdefine_line|#define&t;C_CM_RXHIWM&t;0x62&t;&t;/* Rx buffer high water mark */
 DECL|macro|C_CM_RXNNDT
 mdefine_line|#define&t;C_CM_RXNNDT&t;0x63&t;&t;/* rx no new data timeout */
+DECL|macro|C_CM_TXFEMPTY
+mdefine_line|#define&t;C_CM_TXFEMPTY&t;0x64
+DECL|macro|C_CM_ICHAR
+mdefine_line|#define&t;C_CM_ICHAR&t;0x65
 DECL|macro|C_CM_MDCD
 mdefine_line|#define&t;C_CM_MDCD&t;0x70&t;&t;/* modem DCD change */
 DECL|macro|C_CM_MDSR
@@ -813,6 +819,17 @@ id|uclong
 id|comm_error
 suffix:semicolon
 multiline_comment|/* frame/parity error counter */
+DECL|member|ichar
+id|uclong
+id|ichar
+suffix:semicolon
+DECL|member|filler
+id|uclong
+id|filler
+(braket
+l_int|7
+)braket
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;BUF_CTRL - This per channel structure contains&n; *&t;all Tx and Rx buffer control for a given channel.&n; */
@@ -1102,6 +1119,49 @@ DECL|macro|cy_readw
 mdefine_line|#define cy_readw(port)  readw(port)
 DECL|macro|cy_readl
 mdefine_line|#define cy_readl(port)  readl(port)
+multiline_comment|/*&n; * Statistics counters&n; */
+DECL|struct|cyclades_icount
+r_struct
+id|cyclades_icount
+(brace
+DECL|member|cts
+DECL|member|dsr
+DECL|member|rng
+DECL|member|dcd
+DECL|member|tx
+DECL|member|rx
+id|__u32
+id|cts
+comma
+id|dsr
+comma
+id|rng
+comma
+id|dcd
+comma
+id|tx
+comma
+id|rx
+suffix:semicolon
+DECL|member|frame
+DECL|member|parity
+DECL|member|overrun
+DECL|member|brk
+id|__u32
+id|frame
+comma
+id|parity
+comma
+id|overrun
+comma
+id|brk
+suffix:semicolon
+DECL|member|buf_overrun
+id|__u32
+id|buf_overrun
+suffix:semicolon
+)brace
+suffix:semicolon
 multiline_comment|/*&n; * This is our internal structure for each serial port&squot;s state.&n; * &n; * Many fields are paralleled by the structure used by the serial_struct&n; * structure.&n; *&n; * For definitions of the flags field, see tty.h&n; */
 DECL|struct|cyclades_port
 r_struct
@@ -1311,6 +1371,11 @@ r_struct
 id|cyclades_idle_stats
 id|idle_stats
 suffix:semicolon
+DECL|member|icount
+r_struct
+id|cyclades_icount
+id|icount
+suffix:semicolon
 DECL|member|tqueue
 r_struct
 id|tq_struct
@@ -1328,6 +1393,10 @@ DECL|member|shutdown_wait
 id|wait_queue_head_t
 id|shutdown_wait
 suffix:semicolon
+DECL|member|delta_msr_wait
+id|wait_queue_head_t
+id|delta_msr_wait
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Events are used to schedule things to happen at timer-interrupt&n; * time, instead of at cy interrupt time.&n; */
@@ -1343,6 +1412,8 @@ DECL|macro|Cy_EVENT_OPEN_WAKEUP
 mdefine_line|#define Cy_EVENT_OPEN_WAKEUP&t;&t;4
 DECL|macro|Cy_EVENT_SHUTDOWN_WAKEUP
 mdefine_line|#define Cy_EVENT_SHUTDOWN_WAKEUP&t;5
+DECL|macro|Cy_EVENT_DELTA_WAKEUP
+mdefine_line|#define&t;Cy_EVENT_DELTA_WAKEUP&t;&t;6
 DECL|macro|CLOSING_WAIT_DELAY
 mdefine_line|#define&t;CLOSING_WAIT_DELAY&t;30*HZ
 DECL|macro|CY_CLOSING_WAIT_NONE
@@ -1656,6 +1727,8 @@ DECL|macro|CyMSVR1
 mdefine_line|#define CyMSVR1&t;&t;(0x6C*2)
 DECL|macro|CyMSVR2
 mdefine_line|#define CyMSVR2&t;&t;(0x6D*2)
+DECL|macro|CyANY_DELTA
+mdefine_line|#define      CyANY_DELTA&t;(0xF0)
 DECL|macro|CyDSR
 mdefine_line|#define      CyDSR&t;&t;(0x80)
 DECL|macro|CyCTS

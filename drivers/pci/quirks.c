@@ -213,13 +213,23 @@ comma
 id|quirk_passive_release
 )brace
 comma
-multiline_comment|/*&n;&t; * Its not totally clear which chipsets are the problematic ones&n;&t; * This is the 82C586 variants. At the moment the 596 is an unknown&n;&t; * quantity.&n;&t; */
+multiline_comment|/*&n;&t; * Its not totally clear which chipsets are the problematic ones&n;&t; * We know 82C586 and 82C596 variants are affected.&n;&t; *&n;&t; */
 (brace
 id|PCI_FIXUP_FINAL
 comma
 id|PCI_VENDOR_ID_VIA
 comma
 id|PCI_DEVICE_ID_VIA_82C586_0
+comma
+id|quirk_isa_dma_hangs
+)brace
+comma
+(brace
+id|PCI_FIXUP_FINAL
+comma
+id|PCI_VENDOR_ID_VIA
+comma
+id|PCI_DEVICE_ID_VIA_82C596
 comma
 id|quirk_isa_dma_hangs
 )brace

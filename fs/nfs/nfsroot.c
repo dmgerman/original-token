@@ -1045,10 +1045,6 @@ c_func
 r_char
 op_star
 id|line
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
 id|ROOT_DEV
@@ -1184,6 +1180,14 @@ id|nfs_root_name
 )paren
 suffix:semicolon
 )brace
+id|__setup
+c_func
+(paren
+l_string|&quot;nfsroot=&quot;
+comma
+id|nfs_root_setup
+)paren
+suffix:semicolon
 multiline_comment|/***************************************************************************&n;&n;&t;       Routines to actually mount the root directory&n;&n; ***************************************************************************/
 multiline_comment|/*&n; *  Construct sockaddr_in from address and port number.&n; */
 r_static

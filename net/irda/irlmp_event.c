@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlmp_event.c&n; * Version:       0.8&n; * Description:   An IrDA LMP event driver for Linux&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Wed Aug 25 14:38:49 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlmp_event.c&n; * Version:       0.8&n; * Description:   An IrDA LMP event driver for Linux&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Tue Sep 21 13:04:33 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;net/irda/irda.h&gt;
 macro_line|#include &lt;net/irda/timer.h&gt;
@@ -1265,16 +1265,6 @@ id|self-&gt;irlap
 )paren
 suffix:semicolon
 )brace
-r_else
-multiline_comment|/* Still not ready, so wait a little bit more */
-id|irlmp_start_idle_timer
-c_func
-(paren
-id|self
-comma
-id|LM_IDLE_TIMEOUT
-)paren
-suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -2381,13 +2371,101 @@ suffix:semicolon
 r_case
 id|LM_DISCONNECT_INDICATION
 suffix:colon
+id|irlmp_next_lsap_state
+c_func
+(paren
+id|self
+comma
+id|LSAP_DISCONNECTED
+)paren
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|self-&gt;lap
+op_ne
+l_int|NULL
+comma
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)paren
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|self-&gt;lap-&gt;magic
+op_eq
+id|LMP_LAP_MAGIC
+comma
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)paren
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|skb
+op_ne
+l_int|NULL
+comma
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)paren
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|skb-&gt;len
+OG
+l_int|3
+comma
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)paren
+suffix:semicolon
+id|reason
+op_assign
+id|skb-&gt;data
+(braket
+l_int|3
+)braket
+suffix:semicolon
+multiline_comment|/* Try to close the LAP connection */
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|4
 comma
 id|__FUNCTION__
-l_string|&quot;(), this should never happen!!&bslash;n&quot;
+l_string|&quot;(), trying to close IrLAP&bslash;n&quot;
+)paren
+suffix:semicolon
+id|irlmp_do_lap_event
+c_func
+(paren
+id|self-&gt;lap
+comma
+id|LM_LAP_DISCONNECT_REQUEST
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+id|irlmp_disconnect_indication
+c_func
+(paren
+id|self
+comma
+id|reason
+comma
+id|skb
 )paren
 suffix:semicolon
 r_break

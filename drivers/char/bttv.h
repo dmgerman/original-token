@@ -181,6 +181,11 @@ id|video_audio
 id|audio_dev
 suffix:semicolon
 multiline_comment|/* Current audio params */
+DECL|member|lock
+r_struct
+id|semaphore
+id|lock
+suffix:semicolon
 DECL|member|user
 r_int
 id|user

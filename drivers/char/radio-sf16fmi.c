@@ -7,6 +7,7 @@ macro_line|#include &lt;asm/io.h&gt;&t;&t;/* outb, outb_p&t;&t;&t;*/
 macro_line|#include &lt;asm/uaccess.h&gt;&t;/* copy to/from user&t;&t;*/
 macro_line|#include &lt;linux/videodev.h&gt;&t;/* kernel radio structs&t;&t;*/
 macro_line|#include &lt;linux/config.h&gt;&t;/* CONFIG_RADIO_SF16MI_PORT &t;*/
+macro_line|#include &lt;asm/semaphore.h&gt;
 DECL|struct|fmi_device
 r_struct
 id|fmi_device
@@ -49,6 +50,12 @@ r_int
 id|users
 op_assign
 l_int|0
+suffix:semicolon
+DECL|variable|lock
+r_static
+r_struct
+id|semaphore
+id|lock
 suffix:semicolon
 multiline_comment|/* freq is in 1/16 kHz to internal number, hw precision is 50 kHz */
 multiline_comment|/* It is only usefull to give freq in intervall of 800 (=0.05Mhz),&n; * other bits will be truncated, e.g 92.7400016 -&gt; 92.7, but &n; * 92.7400017 -&gt; 92.75&n; */
@@ -167,12 +174,26 @@ r_int
 id|port
 )paren
 (brace
+id|down
+c_func
+(paren
+op_amp
+id|lock
+)paren
+suffix:semicolon
 id|outb
 c_func
 (paren
 l_int|0x00
 comma
 id|port
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|lock
 )paren
 suffix:semicolon
 )brace
@@ -187,12 +208,26 @@ r_int
 id|port
 )paren
 (brace
+id|down
+c_func
+(paren
+op_amp
+id|lock
+)paren
+suffix:semicolon
 id|outb
 c_func
 (paren
 l_int|0x08
 comma
 id|port
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|lock
 )paren
 suffix:semicolon
 )brace
@@ -222,6 +257,13 @@ id|dev-&gt;curfreq
 suffix:semicolon
 r_int
 id|i
+suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+id|lock
+)paren
 suffix:semicolon
 id|outbits
 c_func
@@ -282,6 +324,13 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* If this becomes allowed use it ... &t;&n;&t;current-&gt;state = TASK_UNINTERRUPTIBLE;&n;&t;schedule_timeout(HZ/7);&n;*/
+id|up
+c_func
+(paren
+op_amp
+id|lock
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -323,6 +372,13 @@ id|dev-&gt;port
 suffix:semicolon
 r_int
 id|i
+suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+id|lock
+)paren
 suffix:semicolon
 id|val
 op_assign
@@ -406,6 +462,13 @@ c_func
 id|val
 comma
 id|myport
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|lock
 )paren
 suffix:semicolon
 r_return
@@ -1203,6 +1266,13 @@ id|fmi_radio.priv
 op_assign
 op_amp
 id|fmi_unit
+suffix:semicolon
+id|init_MUTEX
+c_func
+(paren
+op_amp
+id|lock
+)paren
 suffix:semicolon
 r_if
 c_cond

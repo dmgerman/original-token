@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      ircomm_param.c&n; * Version:       1.0&n; * Description:   Parameter handling for the IrCOMM protocol&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Jun  7 10:25:11 1999&n; * Modified at:   Wed Aug 25 13:48:14 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      ircomm_param.c&n; * Version:       1.0&n; * Description:   Parameter handling for the IrCOMM protocol&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Jun  7 10:25:11 1999&n; * Modified at:   Fri Sep  3 09:28:20 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
 macro_line|#include &lt;net/irda/irda.h&gt;
 macro_line|#include &lt;net/irda/parameters.h&gt;
 macro_line|#include &lt;net/irda/ircomm_core.h&gt;
@@ -423,6 +423,10 @@ r_int
 id|flush
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_struct
 id|sk_buff
 op_star
@@ -498,6 +502,17 @@ id|IRCOMM_3_WIRE_RAW
 r_return
 l_int|0
 suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 id|skb
 op_assign
 id|self-&gt;ctrl_skb
@@ -523,10 +538,18 @@ c_cond
 op_logical_neg
 id|skb
 )paren
+(brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_return
 op_minus
-l_int|1
+id|ENOMEM
 suffix:semicolon
+)brace
 id|skb_reserve
 c_func
 (paren
@@ -566,15 +589,42 @@ r_if
 c_cond
 (paren
 id|count
-OG
+OL
 l_int|0
 )paren
+(brace
+id|DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), no room for parameter!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
 id|skb_put
 c_func
 (paren
 id|skb
 comma
 id|count
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 r_if
@@ -806,7 +856,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function ircomm_param_port_type (self, param)&n; *&n; *    &n; *&n; */
+multiline_comment|/*&n; * Function ircomm_param_port_type (self, param)&n; *&n; *    The port type parameter tells if the devices are serial or parallel.&n; *    Since we only advertise serial service, this parameter should only&n; *    be equal to IRCOMM_SERIAL.&n; */
 DECL|function|ircomm_param_port_type
 r_static
 r_int
@@ -825,15 +875,71 @@ r_int
 id|get
 )paren
 (brace
+r_struct
+id|ircomm_tty_cb
+op_star
+id|self
+op_assign
+(paren
+r_struct
+id|ircomm_tty_cb
+op_star
+)paren
+id|instance
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|self
+op_ne
+l_int|NULL
+comma
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)paren
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|self-&gt;magic
+op_eq
+id|IRCOMM_TTY_MAGIC
+comma
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|get
+)paren
+id|param-&gt;pv.b
+op_assign
+id|IRCOMM_SERIAL
+suffix:semicolon
+r_else
+(brace
+id|self-&gt;session.port_type
+op_assign
+id|param-&gt;pv.b
+suffix:semicolon
 id|DEBUG
 c_func
 (paren
 l_int|0
 comma
 id|__FUNCTION__
-l_string|&quot;(), not impl.&bslash;n&quot;
+l_string|&quot;(), port type=%d&bslash;n&quot;
+comma
+id|self-&gt;session.port_type
 )paren
 suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -900,6 +1006,7 @@ c_cond
 (paren
 id|get
 )paren
+(brace
 id|DEBUG
 c_func
 (paren
@@ -909,7 +1016,9 @@ id|__FUNCTION__
 l_string|&quot;(), not imp!&bslash;n&quot;
 )paren
 suffix:semicolon
+)brace
 r_else
+(brace
 id|DEBUG
 c_func
 (paren
@@ -921,6 +1030,17 @@ comma
 id|param-&gt;pv.c
 )paren
 suffix:semicolon
+id|strncpy
+c_func
+(paren
+id|self-&gt;session.port_name
+comma
+id|param-&gt;pv.c
+comma
+l_int|32
+)paren
+suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -1081,17 +1201,6 @@ r_else
 id|self-&gt;session.data_format
 op_assign
 id|param-&gt;pv.b
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|1
-comma
-id|__FUNCTION__
-l_string|&quot;(), data format = 0x%02x&bslash;n&quot;
-comma
-id|param-&gt;pv.b
-)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -1354,11 +1463,6 @@ id|dte
 op_assign
 id|param-&gt;pv.b
 suffix:semicolon
-multiline_comment|/* Null modem cable emulator */
-id|self-&gt;session.null_modem
-op_assign
-id|TRUE
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1422,37 +1526,12 @@ c_func
 id|self
 )paren
 suffix:semicolon
-multiline_comment|/* &n;&t;&t; * Send reply, and remember not to set delta values for the&n;&t;&t; * initial parameters &n;&t;&t; */
-id|self-&gt;session.dte
+multiline_comment|/* Null modem cable emulator */
+id|self-&gt;session.null_modem
 op_assign
-(paren
-id|IRCOMM_DTR
-op_or
-id|IRCOMM_RTS
-)paren
-suffix:semicolon
-id|ircomm_param_request
-c_func
-(paren
-id|self
-comma
-id|IRCOMM_DTE
-comma
 id|TRUE
-)paren
 suffix:semicolon
 )brace
-id|DEBUG
-c_func
-(paren
-l_int|1
-comma
-id|__FUNCTION__
-l_string|&quot;(), dte = 0x%02x&bslash;n&quot;
-comma
-id|param-&gt;pv.b
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1574,7 +1653,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function ircomm_param_poll (instance, param)&n; *&n; *    &n; *&n; */
+multiline_comment|/*&n; * Function ircomm_param_poll (instance, param)&n; *&n; *    Called when the peer device is polling for the line settings&n; *&n; */
 DECL|function|ircomm_param_poll
 r_static
 r_int
@@ -1593,15 +1672,64 @@ r_int
 id|get
 )paren
 (brace
-id|DEBUG
+r_struct
+id|ircomm_tty_cb
+op_star
+id|self
+op_assign
+(paren
+r_struct
+id|ircomm_tty_cb
+op_star
+)paren
+id|instance
+suffix:semicolon
+id|ASSERT
 c_func
 (paren
-l_int|0
+id|self
+op_ne
+l_int|NULL
 comma
-id|__FUNCTION__
-l_string|&quot;(), not impl.&bslash;n&quot;
+r_return
+op_minus
+l_int|1
+suffix:semicolon
 )paren
 suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|self-&gt;magic
+op_eq
+id|IRCOMM_TTY_MAGIC
+comma
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)paren
+suffix:semicolon
+multiline_comment|/* Poll parameters are always of lenght 0 (just a signal) */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|get
+)paren
+(brace
+multiline_comment|/* Respond with DTE line settings */
+id|ircomm_param_request
+c_func
+(paren
+id|self
+comma
+id|IRCOMM_DTE
+comma
+id|TRUE
+)paren
+suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon

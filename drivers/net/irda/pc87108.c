@@ -5198,7 +5198,11 @@ suffix:semicolon
 id|schedule_timeout
 c_func
 (paren
-l_int|6
+id|MSECS_TO_JIFFIES
+c_func
+(paren
+l_int|60
+)paren
 )paren
 suffix:semicolon
 )brace

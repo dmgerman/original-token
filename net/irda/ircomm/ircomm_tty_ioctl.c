@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      ircomm_tty_ioctl.c&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Thu Jun 10 14:39:09 1999&n; * Modified at:   Wed Aug 25 14:11:02 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      ircomm_tty_ioctl.c&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Thu Jun 10 14:39:09 1999&n; * Modified at:   Tue Aug 31 10:29:36 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -591,7 +591,7 @@ op_or
 (paren
 id|self-&gt;session.dce
 op_amp
-id|IRCOMM_DELTA_CD
+id|IRCOMM_CD
 )paren
 ques
 c_cond
@@ -604,7 +604,7 @@ op_or
 (paren
 id|self-&gt;session.dce
 op_amp
-id|IRCOMM_DELTA_RI
+id|IRCOMM_RI
 )paren
 ques
 c_cond
@@ -617,7 +617,7 @@ op_or
 (paren
 id|self-&gt;session.dce
 op_amp
-id|IRCOMM_DELTA_DSR
+id|IRCOMM_DSR
 )paren
 ques
 c_cond
@@ -630,7 +630,7 @@ op_or
 (paren
 id|self-&gt;session.dce
 op_amp
-id|IRCOMM_DELTA_CTS
+id|IRCOMM_CTS
 )paren
 ques
 c_cond
@@ -966,21 +966,22 @@ id|info.line
 op_assign
 id|self-&gt;line
 suffix:semicolon
-multiline_comment|/* info.flags = self-&gt;flags; */
+id|info.flags
+op_assign
+id|self-&gt;flags
+suffix:semicolon
 id|info.baud_base
 op_assign
 id|self-&gt;session.data_rate
 suffix:semicolon
-macro_line|#if 0
 id|info.close_delay
 op_assign
-id|driver-&gt;close_delay
+id|self-&gt;close_delay
 suffix:semicolon
 id|info.closing_wait
 op_assign
-id|driver-&gt;closing_wait
+id|self-&gt;closing_wait
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* For compatibility  */
 id|info.type
 op_assign
@@ -1002,12 +1003,10 @@ id|info.hub6
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if 0
 id|info.custom_divisor
 op_assign
-id|driver-&gt;custom_divisor
+l_int|0
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren

@@ -710,8 +710,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|mpu_io
-op_logical_and
 id|probe_sbmpu
 c_func
 (paren

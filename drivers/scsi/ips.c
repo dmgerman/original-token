@@ -8609,7 +8609,7 @@ op_eq
 id|INQUIRY
 )paren
 (brace
-id|INQUIRYDATA
+id|IPS_INQUIRYDATA
 id|inq
 suffix:semicolon
 id|memset
@@ -8622,7 +8622,7 @@ l_int|0
 comma
 r_sizeof
 (paren
-id|INQUIRYDATA
+id|IPS_INQUIRYDATA
 )paren
 )paren
 suffix:semicolon
@@ -10115,7 +10115,7 @@ op_star
 id|scb
 )paren
 (brace
-id|INQUIRYDATA
+id|IPS_INQUIRYDATA
 id|inq
 suffix:semicolon
 id|DBG
@@ -10134,7 +10134,7 @@ l_int|0
 comma
 r_sizeof
 (paren
-id|INQUIRYDATA
+id|IPS_INQUIRYDATA
 )paren
 )paren
 suffix:semicolon

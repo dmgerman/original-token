@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap_event.c&n; * Version:       0.8&n; * Description:   IrLAP state machine implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Aug 16 00:59:29 1997&n; * Modified at:   Wed Aug 25 14:49:47 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;,&n; *                        Thomas Davis &lt;ratbert@radiks.net&gt;&n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap_event.c&n; * Version:       0.8&n; * Description:   IrLAP state machine implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Aug 16 00:59:29 1997&n; * Modified at:   Mon Sep 20 12:30:31 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;,&n; *                        Thomas Davis &lt;ratbert@radiks.net&gt;&n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -961,7 +961,7 @@ op_logical_neg
 id|irda_device_is_media_busy
 c_func
 (paren
-id|self-&gt;irdev
+id|self-&gt;netdev
 )paren
 )paren
 (brace
@@ -1100,15 +1100,6 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
-suffix:semicolon
 id|ASSERT
 c_func
 (paren
@@ -1147,7 +1138,7 @@ suffix:colon
 id|ASSERT
 c_func
 (paren
-id|self-&gt;irdev
+id|self-&gt;netdev
 op_ne
 l_int|NULL
 comma
@@ -1163,7 +1154,7 @@ c_cond
 id|irda_device_is_media_busy
 c_func
 (paren
-id|self-&gt;irdev
+id|self-&gt;netdev
 )paren
 )paren
 (brace
@@ -1232,6 +1223,13 @@ suffix:semicolon
 r_case
 id|RECV_SNRM_CMD
 suffix:colon
+multiline_comment|/* Check if the frame contains and I field */
+r_if
+c_cond
+(paren
+id|info
+)paren
+(brace
 id|self-&gt;daddr
 op_assign
 id|info-&gt;daddr
@@ -1256,6 +1254,26 @@ comma
 id|skb
 )paren
 suffix:semicolon
+)brace
+r_else
+(brace
+id|DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), SNRM frame does not contain&quot;
+l_string|&quot; and I field!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 r_case
@@ -1280,7 +1298,7 @@ c_cond
 id|irda_device_is_media_busy
 c_func
 (paren
-id|self-&gt;irdev
+id|self-&gt;netdev
 )paren
 )paren
 (brace
@@ -1549,6 +1567,17 @@ id|irlap_event
 (braket
 id|event
 )braket
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|skb
+)paren
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
 )paren
 suffix:semicolon
 id|ret
@@ -2198,7 +2227,7 @@ suffix:semicolon
 id|ASSERT
 c_func
 (paren
-id|self-&gt;irdev
+id|self-&gt;netdev
 op_ne
 l_int|NULL
 comma
@@ -2270,30 +2299,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-id|RECV_SNRM_CMD
-suffix:colon
-id|DEBUG
-c_func
-(paren
-l_int|3
-comma
-id|__FUNCTION__
-l_string|&quot;(), event RECV_SNRM_CMD!&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#if 0
-id|irlap_next_state
-c_func
-(paren
-id|self
-comma
-id|LAP_NDM
-)paren
-suffix:semicolon
-macro_line|#endif
-r_break
-suffix:semicolon
-r_case
 id|RECV_DISCOVERY_XID_CMD
 suffix:colon
 id|DEBUG
@@ -2350,6 +2355,17 @@ id|irlap_event
 (braket
 id|event
 )braket
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|skb
+)paren
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
 )paren
 suffix:semicolon
 id|ret
@@ -2554,9 +2570,13 @@ multiline_comment|/*&n;&t;&t; *  The device with the largest device address wins
 r_if
 c_cond
 (paren
+id|info
+op_logical_and
+(paren
 id|info-&gt;daddr
 OG
 id|self-&gt;saddr
+)paren
 )paren
 (brace
 id|del_timer
@@ -2575,7 +2595,7 @@ suffix:semicolon
 id|ASSERT
 c_func
 (paren
-id|self-&gt;irdev
+id|self-&gt;netdev
 op_ne
 l_int|NULL
 comma
@@ -2652,6 +2672,12 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* We just ignore the other device! */
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
 id|irlap_next_state
 c_func
 (paren
@@ -2710,7 +2736,7 @@ suffix:semicolon
 id|ASSERT
 c_func
 (paren
-id|self-&gt;irdev
+id|self-&gt;netdev
 op_ne
 l_int|NULL
 comma
@@ -2799,15 +2825,34 @@ id|LAP_DISC_INDICATION
 suffix:semicolon
 r_break
 suffix:semicolon
-multiline_comment|/* DM handled in irlap_frame.c, irlap_input() */
+multiline_comment|/* DM handled in irlap_frame.c, irlap_driver_rcv() */
 r_default
 suffix:colon
 id|DEBUG
 c_func
 (paren
-l_int|4
+l_int|1
 comma
-l_string|&quot;irlap_state_setup: Unknown event&quot;
+id|__FUNCTION__
+l_string|&quot;(), Unknown event %d, %s&bslash;n&quot;
+comma
+id|event
+comma
+id|irlap_event
+(braket
+id|event
+)braket
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|skb
+)paren
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
 )paren
 suffix:semicolon
 id|ret
@@ -3369,6 +3414,17 @@ id|__FUNCTION__
 l_string|&quot;(), Unknown event %d&bslash;n&quot;
 comma
 id|event
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|skb
+)paren
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
 )paren
 suffix:semicolon
 id|ret
@@ -4425,7 +4481,7 @@ c_cond
 id|irda_device_is_receiving
 c_func
 (paren
-id|self-&gt;irdev
+id|self-&gt;netdev
 )paren
 op_logical_and
 op_logical_neg
@@ -4934,6 +4990,17 @@ id|event
 )braket
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|skb
+)paren
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
 id|ret
 op_assign
 op_minus
@@ -5125,7 +5192,7 @@ suffix:semicolon
 id|ASSERT
 c_func
 (paren
-id|self-&gt;irdev
+id|self-&gt;netdev
 op_ne
 l_int|NULL
 comma
@@ -5143,7 +5210,7 @@ comma
 id|irda_device_get_qos
 c_func
 (paren
-id|self-&gt;irdev
+id|self-&gt;netdev
 )paren
 )paren
 suffix:semicolon
@@ -5206,6 +5273,14 @@ suffix:semicolon
 r_case
 id|RECV_SNRM_CMD
 suffix:colon
+multiline_comment|/* &n;&t;&t; * SNRM frame is not allowed to contain an I-field in this &n;&t;&t; * state&n;&t;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|info
+)paren
+(brace
 id|DEBUG
 c_func
 (paren
@@ -5260,6 +5335,26 @@ comma
 id|LAP_NDM
 )paren
 suffix:semicolon
+)brace
+r_else
+(brace
+id|DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), SNRM frame contained an I &quot;
+l_string|&quot;field!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 r_default
@@ -5276,6 +5371,17 @@ id|irlap_event
 (braket
 id|event
 )braket
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|skb
+)paren
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
 )paren
 suffix:semicolon
 id|ret
@@ -5399,14 +5505,6 @@ OG
 id|self-&gt;bytes_left
 )paren
 (brace
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;IrDA: Not allowed to transmit more bytes!&bslash;n&quot;
-)paren
-suffix:semicolon
 id|skb_queue_head
 c_func
 (paren
@@ -5544,6 +5642,17 @@ id|irlap_event
 (braket
 id|event
 )braket
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|skb
+)paren
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
 )paren
 suffix:semicolon
 id|ret
@@ -5744,7 +5853,7 @@ op_assign
 id|TRUE
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t; *  Starting WD-timer here is optional, but&n;&t;&t;&t;&t; *  not recommended. Note 6 IrLAP p. 83&n;&t;&t;&t;&t; */
-multiline_comment|/* irda_start_timer( WD_TIMER, self-&gt;wd_timeout); */
+multiline_comment|/* irda_start_timer(WD_TIMER, self-&gt;wd_timeout); */
 multiline_comment|/* Keep state, do not move this line */
 id|irlap_next_state
 c_func
@@ -6486,6 +6595,14 @@ suffix:semicolon
 r_case
 id|RECV_SNRM_CMD
 suffix:colon
+multiline_comment|/* SNRM frame is not allowed to contain an I-field */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|info
+)paren
+(brace
 id|del_timer
 c_func
 (paren
@@ -6516,21 +6633,31 @@ c_func
 id|self
 )paren
 suffix:semicolon
+)brace
+r_else
+(brace
+id|DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), SNRM frame contained an &quot;
+l_string|&quot;I-field!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 r_case
 id|WD_TIMER_EXPIRED
 suffix:colon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;WD_TIMER_EXPIRED: %ld&bslash;n&quot;
-comma
-id|jiffies
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t;&t; *  Wait until retry_count * n matches negotiated threshold/&n;&t;&t; *  disconnect time (note 2 in IrLAP p. 82)&n;&t;&t; */
 id|DEBUG
 c_func

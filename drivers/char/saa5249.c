@@ -110,10 +110,10 @@ multiline_comment|/* DISPINS, interlaced */
 )brace
 suffix:semicolon
 DECL|macro|PAGE_WAIT
-mdefine_line|#define PAGE_WAIT 30&t;&t;&t;&t;/* Time in jiffies between requesting page and */
+mdefine_line|#define PAGE_WAIT (300*HZ/1000)&t;&t;&t;/* Time between requesting page and */
 multiline_comment|/* checking status bits */
 DECL|macro|PGBUF_EXPIRE
-mdefine_line|#define PGBUF_EXPIRE 1500&t;&t;&t;/* Time in jiffies to wait before retransmitting */
+mdefine_line|#define PGBUF_EXPIRE (15*HZ)&t;&t;&t;/* Time to wait before retransmitting */
 multiline_comment|/* page regardless of infobits */
 r_typedef
 r_struct
@@ -213,11 +213,11 @@ mdefine_line|#define CCTRD 35
 DECL|macro|NOACK_REPEAT
 mdefine_line|#define NOACK_REPEAT 10&t;&t;/* Retry access this many times on failure */
 DECL|macro|CLEAR_DELAY
-mdefine_line|#define CLEAR_DELAY 5&t;&t;/* Time in jiffies required to clear a page */
+mdefine_line|#define CLEAR_DELAY (HZ/20)&t;/* Time required to clear a page */
 DECL|macro|I2C_TIMEOUT
-mdefine_line|#define I2C_TIMEOUT 300&t;&t;/* open/close/SDA-check timeout in jiffies */
+mdefine_line|#define I2C_TIMEOUT (3*HZ)&t;/* open/close/SDA-check timeout */
 DECL|macro|READY_TIMEOUT
-mdefine_line|#define READY_TIMEOUT 3&t;&t;/* Time in jiffies to wait for ready signal of I&#xfffd;C-bus interface */
+mdefine_line|#define READY_TIMEOUT (30*HZ/1000)&t;/* Time to wait for ready signal of I&#xfffd;C-bus interface */
 DECL|macro|INIT_DELAY
 mdefine_line|#define INIT_DELAY 500&t;&t;/* Time in usec to wait at initialization of CEA interface */
 DECL|macro|START_DELAY

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irda_device.h&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Apr 14 12:41:42 1998&n; * Modified at:   Tue Aug 24 13:58:23 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     Copyright (c) 1998 Thomas Davis, &lt;ratbert@radiks.net&gt;,&n; *     Copyright (c) 1998 Haris Zukanovic, &lt;haris@stud.cs.uit.no&gt;&n; *&n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irda_device.h&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Apr 14 12:41:42 1998&n; * Modified at:   Mon Sep 20 11:21:31 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     Copyright (c) 1998 Thomas Davis, &lt;ratbert@radiks.net&gt;,&n; *     Copyright (c) 1998 Haris Zukanovic, &lt;haris@stud.cs.uit.no&gt;&n; *&n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
 macro_line|#ifndef IRDA_DEVICE_H
 DECL|macro|IRDA_DEVICE_H
 mdefine_line|#define IRDA_DEVICE_H
@@ -10,6 +10,13 @@ macro_line|#include &lt;net/irda/qos.h&gt;
 macro_line|#include &lt;net/irda/dongle.h&gt;
 macro_line|#include &lt;net/irda/irqueue.h&gt;
 macro_line|#include &lt;net/irda/irlap_frame.h&gt;
+multiline_comment|/* Some private IOCTL&squot;s */
+DECL|macro|SIOCSDONGLE
+mdefine_line|#define SIOCSDONGLE    (SIOCDEVPRIVATE + 0)
+DECL|macro|SIOCSBANDWIDTH
+mdefine_line|#define SIOCSBANDWIDTH (SIOCDEVPRIVATE + 1)
+DECL|macro|SIOCSMEDIABUSY
+mdefine_line|#define SIOCSMEDIABUSY (SIOCDEVPRIVATE + 2)
 multiline_comment|/* Some non-standard interface flags (should not conflict with any in if.h) */
 DECL|macro|IFF_SIR
 mdefine_line|#define IFF_SIR &t;0x0001 /* Supports SIR speeds */
@@ -461,40 +468,52 @@ op_star
 )paren
 suffix:semicolon
 multiline_comment|/* Interface to be uses by IrLAP */
-r_inline
 r_void
 id|irda_device_set_media_busy
 c_func
 (paren
 r_struct
-id|irda_device
+id|net_device
 op_star
+id|dev
 comma
 r_int
 id|status
 )paren
 suffix:semicolon
-r_inline
 r_int
 id|irda_device_is_media_busy
 c_func
 (paren
 r_struct
-id|irda_device
+id|net_device
 op_star
+id|dev
 )paren
 suffix:semicolon
-r_inline
 r_int
 id|irda_device_is_receiving
 c_func
 (paren
 r_struct
-id|irda_device
+id|net_device
 op_star
+id|dev
 )paren
 suffix:semicolon
-r_inline
+r_struct
+id|qos_info
+op_star
+id|irda_device_get_qos
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+suffix:semicolon
+multiline_comment|/* Interface for internal use */
 r_void
 id|irda_device_change_speed
 c_func
@@ -504,19 +523,6 @@ id|irda_device
 op_star
 comma
 r_int
-)paren
-suffix:semicolon
-r_inline
-r_struct
-id|qos_info
-op_star
-id|irda_device_get_qos
-c_func
-(paren
-r_struct
-id|irda_device
-op_star
-id|self
 )paren
 suffix:semicolon
 r_int

@@ -864,10 +864,12 @@ DECL|macro|VID_HARDWARE_VINO
 mdefine_line|#define VID_HARDWARE_VINO&t;20&t;/* Reserved for SGI Indy Vino */
 DECL|macro|VID_HARDWARE_CADET
 mdefine_line|#define VID_HARDWARE_CADET&t;21&t;/* Cadet radio */
-DECL|macro|VID_HARDWARE_CPIA
-mdefine_line|#define VID_HARDWARE_CPIA&t;22
+DECL|macro|VID_HARDWARE_TRUST
+mdefine_line|#define VID_HARDWARE_TRUST&t;22&t;/* Trust FM Radio */
 DECL|macro|VID_HARDWARE_TERRATEC
 mdefine_line|#define VID_HARDWARE_TERRATEC&t;23&t;/* TerraTec ActiveRadio */
+DECL|macro|VID_HARDWARE_CPIA
+mdefine_line|#define VID_HARDWARE_CPIA&t;24
 multiline_comment|/*&n; *&t;Initialiser list&n; */
 DECL|struct|video_init
 r_struct

@@ -7083,8 +7083,6 @@ op_or
 (paren
 (paren
 id|skb-&gt;len
-op_plus
-l_int|3
 )paren
 op_lshift
 id|PI_XMT_DESCR_V_SEG_LEN

@@ -7,6 +7,7 @@ macro_line|#include &lt;asm/io.h&gt;&t;&t;/* outb, outb_p&t;&t;&t;*/
 macro_line|#include &lt;asm/uaccess.h&gt;&t;/* copy to/from user&t;&t;*/
 macro_line|#include &lt;linux/videodev.h&gt;&t;/* kernel radio structs&t;&t;*/
 macro_line|#include &lt;linux/config.h&gt;&t;/* CONFIG_RADIO_TERRATEC_PORT &t;*/
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#ifndef CONFIG_RADIO_TERRATEC_PORT
 DECL|macro|CONFIG_RADIO_TERRATEC_PORT
 mdefine_line|#define CONFIG_RADIO_TERRATEC_PORT 0x590
@@ -44,6 +45,11 @@ r_int
 id|users
 op_assign
 l_int|0
+suffix:semicolon
+DECL|variable|lock
+r_static
+id|spinlock_t
+id|lock
 suffix:semicolon
 DECL|struct|tt_device
 r_struct
@@ -93,6 +99,13 @@ l_int|32
 )paren
 suffix:semicolon
 singleline_comment|// change both channels
+id|spin_lock
+c_func
+(paren
+op_amp
+id|lock
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -137,6 +150,13 @@ id|VOLPORT
 )paren
 suffix:semicolon
 )brace
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|lock
+)paren
+suffix:semicolon
 )brace
 DECL|function|tt_mute
 r_static
@@ -399,6 +419,13 @@ op_div
 l_int|2
 suffix:semicolon
 )brace
+id|spin_lock
+c_func
+(paren
+op_amp
+id|lock
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -492,6 +519,13 @@ c_func
 l_int|0x00
 comma
 id|BASEPORT
+)paren
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|lock
 )paren
 suffix:semicolon
 r_return
@@ -1152,6 +1186,13 @@ id|terratec_radio.priv
 op_assign
 op_amp
 id|terratec_unit
+suffix:semicolon
+id|spin_lock_init
+c_func
+(paren
+op_amp
+id|lock
+)paren
 suffix:semicolon
 r_if
 c_cond

@@ -89,10 +89,13 @@ id|start_page
 )paren
 (brace
 multiline_comment|/* This is a little weird: set the shared memory window by doing a&n;&t;   read.  The low address bits specify the starting page. */
+id|readb
+c_func
+(paren
 id|mem_base
-(braket
+op_plus
 id|start_page
-)braket
+)paren
 suffix:semicolon
 id|inb
 c_func

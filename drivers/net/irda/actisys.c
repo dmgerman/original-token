@@ -408,7 +408,11 @@ suffix:semicolon
 id|schedule_timeout
 c_func
 (paren
-l_int|2
+id|MSECS_TO_JIFFIES
+c_func
+(paren
+l_int|20
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* Set DTR, Set RTS */
@@ -430,7 +434,11 @@ suffix:semicolon
 id|schedule_timeout
 c_func
 (paren
-l_int|2
+id|MSECS_TO_JIFFIES
+c_func
+(paren
+l_int|20
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* Go to next baudrate */
@@ -541,7 +549,11 @@ suffix:semicolon
 id|schedule_timeout
 c_func
 (paren
-l_int|2
+id|MSECS_TO_JIFFIES
+c_func
+(paren
+l_int|20
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* Go back to normal mode */

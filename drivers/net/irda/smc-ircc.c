@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      smc-ircc.c&n; * Version:       0.1&n; * Description:   Driver for the SMC Infrared Communications Controller (SMC)&n; * Status:        Experimental.&n; * Author:        Thomas Davis (tadavis@jps.net)&n; * Created at:    &n; * Modified at:   Tue Aug 24 13:33:22 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Thomas Davis, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     I, Thomas Davis, admit no liability nor provide warranty for any&n; *     of this software. This material is provided &quot;AS-IS&quot; and at no charge.&n; *&n; *     Applicable Models : Fujitsu Lifebook 635t&n; *&t;&t;&t;   Sony PCG-505TX (gets DMA wrong.)&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      smc-ircc.c&n; * Version:       0.1&n; * Description:   Driver for the SMC Infrared Communications Controller (SMC)&n; * Status:        Experimental.&n; * Author:        Thomas Davis (tadavis@jps.net)&n; * Created at:    &n; * Modified at:   Wed Sep 22 07:47:19 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Thomas Davis, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     I, Thomas Davis, admit no liability nor provide warranty for any&n; *     of this software. This material is provided &quot;AS-IS&quot; and at no charge.&n; *&n; *     Applicable Models : Fujitsu Lifebook 635t&n; *&t;&t;&t;   Sony PCG-505TX (gets DMA wrong.)&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -41,8 +41,7 @@ l_int|0x2e8
 comma
 l_int|0x140
 comma
-op_complement
-l_int|0
+l_int|0x118
 comma
 op_complement
 l_int|0
@@ -61,7 +60,7 @@ l_int|0x2f8
 comma
 l_int|0x3e8
 comma
-l_int|0
+l_int|0x2e8
 comma
 l_int|0
 )brace
@@ -103,6 +102,7 @@ r_int
 id|board_addr
 )paren
 suffix:semicolon
+macro_line|#ifdef MODULE
 r_static
 r_int
 id|ircc_close
@@ -114,6 +114,7 @@ op_star
 id|idev
 )paren
 suffix:semicolon
+macro_line|#endif /* MODULE */
 r_static
 r_int
 id|ircc_probe
@@ -1039,6 +1040,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function ircc_close (idev)&n; *&n; *    Close driver instance&n; *&n; */
+macro_line|#ifdef MODULE
 DECL|function|ircc_close
 r_static
 r_int
@@ -1225,6 +1227,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif /* MODULE */
 multiline_comment|/*&n; * Function ircc_probe (iobase, board_addr, irq, dma)&n; *&n; *    Returns non-negative on success.&n; *&n; */
 DECL|function|ircc_probe
 r_static
@@ -1349,9 +1352,15 @@ id|low
 op_eq
 l_int|0xb8
 op_logical_and
+(paren
 id|chip
 op_eq
 l_int|0xf1
+op_logical_or
+id|chip
+op_eq
+l_int|0xf2
+)paren
 )paren
 (brace
 id|DEBUG
@@ -1359,8 +1368,12 @@ c_func
 (paren
 l_int|0
 comma
-l_string|&quot;SMC IrDA Controller found; version = %d, &quot;
+l_string|&quot;SMC IrDA Controller found; IrCC version %d.%d, &quot;
 l_string|&quot;port 0x%04x, dma %d, interrupt %d&bslash;n&quot;
+comma
+id|chip
+op_amp
+l_int|0x0f
 comma
 id|version
 comma
@@ -3318,7 +3331,11 @@ suffix:semicolon
 id|schedule_timeout
 c_func
 (paren
-l_int|6
+id|MSECS_TO_JIFFIES
+c_func
+(paren
+l_int|60
+)paren
 )paren
 suffix:semicolon
 id|DEBUG

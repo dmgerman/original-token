@@ -8,6 +8,12 @@ DECL|macro|E820MAX
 mdefine_line|#define E820MAX&t;32&t;&t;/* number of entries in E820MAP */
 DECL|macro|E820NR
 mdefine_line|#define E820NR&t;0x1e8&t;&t;/* # entries in E820MAP */
+DECL|macro|E820_RAM
+mdefine_line|#define E820_RAM&t;1
+DECL|macro|E820_RESERVED
+mdefine_line|#define E820_RESERVED&t;2
+DECL|macro|E820_ACPI
+mdefine_line|#define E820_ACPI&t;3
 DECL|macro|HIGH_MEMORY
 mdefine_line|#define HIGH_MEMORY&t;(1024*1024)
 macro_line|#ifndef __ASSEMBLY__

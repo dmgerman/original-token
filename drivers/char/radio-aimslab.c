@@ -7,6 +7,7 @@ macro_line|#include &lt;asm/io.h&gt;&t;&t;/* outb, outb_p&t;&t;&t;*/
 macro_line|#include &lt;asm/uaccess.h&gt;&t;/* copy to/from user&t;&t;*/
 macro_line|#include &lt;linux/videodev.h&gt;&t;/* kernel radio structs&t;&t;*/
 macro_line|#include &lt;linux/config.h&gt;&t;/* CONFIG_RADIO_RTRACK_PORT &t;*/
+macro_line|#include &lt;asm/semaphore.h&gt;&t;/* Lock for the I/O &t;&t;*/
 macro_line|#ifndef CONFIG_RADIO_RTRACK_PORT
 DECL|macro|CONFIG_RADIO_RTRACK_PORT
 mdefine_line|#define CONFIG_RADIO_RTRACK_PORT -1
@@ -24,6 +25,12 @@ r_int
 id|users
 op_assign
 l_int|0
+suffix:semicolon
+DECL|variable|lock
+r_static
+r_struct
+id|semaphore
+id|lock
 suffix:semicolon
 DECL|struct|rt_device
 r_struct
@@ -198,6 +205,13 @@ id|dev-&gt;muted
 op_assign
 l_int|1
 suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+id|lock
+)paren
+suffix:semicolon
 id|outb
 c_func
 (paren
@@ -207,6 +221,13 @@ id|io
 )paren
 suffix:semicolon
 multiline_comment|/* volume steady, off&t;&t;*/
+id|up
+c_func
+(paren
+op_amp
+id|lock
+)paren
+suffix:semicolon
 )brace
 DECL|function|rt_setvol
 r_static
@@ -225,6 +246,13 @@ id|vol
 (brace
 r_int
 id|i
+suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+id|lock
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -255,6 +283,13 @@ id|io
 suffix:semicolon
 multiline_comment|/* enable card */
 )brace
+id|up
+c_func
+(paren
+op_amp
+id|lock
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -298,6 +333,13 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* track the volume state!&t;*/
+id|up
+c_func
+(paren
+op_amp
+id|lock
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -359,6 +401,13 @@ suffix:semicolon
 id|dev-&gt;curvol
 op_assign
 id|vol
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|lock
+)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -618,6 +667,14 @@ op_div_assign
 l_int|800
 suffix:semicolon
 multiline_comment|/* Convert to 50 kHz units&t;*/
+id|down
+c_func
+(paren
+op_amp
+id|lock
+)paren
+suffix:semicolon
+multiline_comment|/* Stop other ops interfering */
 id|send_0_byte
 (paren
 id|io
@@ -777,11 +834,19 @@ id|io
 )paren
 suffix:semicolon
 multiline_comment|/* volume steady + sigstr + on */
+id|up
+c_func
+(paren
+op_amp
+id|lock
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
 DECL|function|rt_getsigstr
+r_static
 r_int
 id|rt_getsigstr
 c_func
@@ -1392,17 +1457,36 @@ l_int|NULL
 )brace
 suffix:semicolon
 DECL|function|rtrack_init
+r_static
 r_int
 id|__init
 id|rtrack_init
 c_func
 (paren
-r_struct
-id|video_init
-op_star
-id|v
+r_void
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|io
+op_eq
+op_minus
+l_int|1
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;You must set an I/O address with io=0x???&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1472,6 +1556,14 @@ id|KERN_INFO
 l_string|&quot;AIMSlab Radiotrack/radioreveal card driver.&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* Set up the I/O locking */
+id|init_MUTEX
+c_func
+(paren
+op_amp
+id|lock
+)paren
+suffix:semicolon
 multiline_comment|/* mute card - prevents noisy bootups */
 multiline_comment|/* this ensures that the volume is all the way down  */
 id|outb
@@ -1507,7 +1599,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
 id|MODULE_AUTHOR
 c_func
 (paren
@@ -1538,46 +1629,11 @@ l_string|&quot;I/O address of the RadioTrack card (0x20f or 0x30f)&quot;
 suffix:semicolon
 id|EXPORT_NO_SYMBOLS
 suffix:semicolon
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
+DECL|function|cleanup_rtrack_module
+r_static
 r_void
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|io
-op_eq
-op_minus
-l_int|1
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;You must set an I/O address with io=0x???&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-)brace
-r_return
-id|rtrack_init
-c_func
-(paren
-l_int|NULL
-)paren
-suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
+id|__exit
+id|cleanup_rtrack_module
 c_func
 (paren
 r_void
@@ -1599,5 +1655,18 @@ l_int|2
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+DECL|variable|rtrack_init
+id|module_init
+c_func
+(paren
+id|rtrack_init
+)paren
+suffix:semicolon
+DECL|variable|cleanup_rtrack_module
+id|module_exit
+c_func
+(paren
+id|cleanup_rtrack_module
+)paren
+suffix:semicolon
 eof

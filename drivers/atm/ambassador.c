@@ -1756,7 +1756,7 @@ r_else
 id|spin_unlock_irqrestore
 (paren
 op_amp
-id|dev-&gt;lock
+id|txq-&gt;lock
 comma
 id|flags
 )paren

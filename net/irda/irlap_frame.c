@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap_frame.c&n; * Version:       0.9&n; * Description:   Build and transmit IrLAP frames&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Aug 19 10:27:26 1997&n; * Modified at:   Wed Aug 25 13:15:53 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Resrved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap_frame.c&n; * Version:       0.9&n; * Description:   Build and transmit IrLAP frames&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Aug 19 10:27:26 1997&n; * Modified at:   Tue Sep 28 08:49:58 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Resrved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/if.h&gt;
 macro_line|#include &lt;linux/if_ether.h&gt;
@@ -369,37 +369,6 @@ id|snrm_frame
 op_star
 id|frame
 suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|3
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|skb
-op_ne
-l_int|NULL
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|info
-op_ne
-l_int|NULL
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
 id|frame
 op_assign
 (paren
@@ -409,21 +378,24 @@ op_star
 )paren
 id|skb-&gt;data
 suffix:semicolon
-multiline_comment|/* Copy peer device address */
-id|info-&gt;daddr
-op_assign
-id|le32_to_cpu
-c_func
+r_if
+c_cond
 (paren
-id|frame-&gt;saddr
+id|skb-&gt;len
+op_ge
+r_sizeof
+(paren
+r_struct
+id|snrm_frame
 )paren
-suffix:semicolon
-multiline_comment|/* Copy connection address */
+)paren
+(brace
+multiline_comment|/* Copy the new connection address */
 id|info-&gt;caddr
 op_assign
 id|frame-&gt;ncaddr
 suffix:semicolon
-multiline_comment|/* Check if connection address has got a valid value */
+multiline_comment|/* Check if the new connection address is valid */
 r_if
 c_cond
 (paren
@@ -458,6 +430,50 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/* Copy peer device address */
+id|info-&gt;daddr
+op_assign
+id|le32_to_cpu
+c_func
+(paren
+id|frame-&gt;saddr
+)paren
+suffix:semicolon
+id|info-&gt;saddr
+op_assign
+id|le32_to_cpu
+c_func
+(paren
+id|frame-&gt;daddr
+)paren
+suffix:semicolon
+multiline_comment|/* Only accept if addressed directly to us */
+r_if
+c_cond
+(paren
+id|info-&gt;saddr
+op_ne
+id|self-&gt;saddr
+)paren
+(brace
+id|DEBUG
+c_func
+(paren
+l_int|2
+comma
+id|__FUNCTION__
+l_string|&quot;(), not addressed to us!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|irlap_do_event
 c_func
 (paren
@@ -468,6 +484,21 @@ comma
 id|skb
 comma
 id|info
+)paren
+suffix:semicolon
+)brace
+r_else
+multiline_comment|/* Signal that this SNRM frame does not contain and I-field */
+id|irlap_do_event
+c_func
+(paren
+id|self
+comma
+id|RECV_SNRM_CMD
+comma
+id|skb
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 )brace
@@ -1322,6 +1353,66 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
+id|xid
+op_assign
+(paren
+r_struct
+id|xid_frame
+op_star
+)paren
+id|skb-&gt;data
+suffix:semicolon
+id|info-&gt;daddr
+op_assign
+id|le32_to_cpu
+c_func
+(paren
+id|xid-&gt;saddr
+)paren
+suffix:semicolon
+id|info-&gt;saddr
+op_assign
+id|le32_to_cpu
+c_func
+(paren
+id|xid-&gt;daddr
+)paren
+suffix:semicolon
+multiline_comment|/* Make sure frame is addressed to us */
+r_if
+c_cond
+(paren
+(paren
+id|info-&gt;saddr
+op_ne
+id|self-&gt;saddr
+)paren
+op_logical_and
+(paren
+id|info-&gt;saddr
+op_ne
+id|BROADCAST
+)paren
+)paren
+(brace
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+id|DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), frame is not addressed to us!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1343,11 +1434,9 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|DEBUG
+id|WARNING
 c_func
 (paren
-l_int|0
-comma
 id|__FUNCTION__
 l_string|&quot;(), kmalloc failed!&bslash;n&quot;
 )paren
@@ -1366,24 +1455,6 @@ r_sizeof
 (paren
 id|discovery_t
 )paren
-)paren
-suffix:semicolon
-id|xid
-op_assign
-(paren
-r_struct
-id|xid_frame
-op_star
-)paren
-id|skb-&gt;data
-suffix:semicolon
-multiline_comment|/* &n;&t; *  Copy peer device address and set the source address&n;&t; */
-id|info-&gt;daddr
-op_assign
-id|le32_to_cpu
-c_func
-(paren
-id|xid-&gt;saddr
 )paren
 suffix:semicolon
 id|discovery-&gt;daddr
@@ -1597,59 +1668,6 @@ r_char
 op_star
 id|text
 suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self
-op_ne
-l_int|NULL
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self-&gt;magic
-op_eq
-id|LAP_MAGIC
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|skb
-op_ne
-l_int|NULL
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|info
-op_ne
-l_int|NULL
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
 id|xid
 op_assign
 (paren
@@ -1659,7 +1677,6 @@ op_star
 )paren
 id|skb-&gt;data
 suffix:semicolon
-multiline_comment|/* Copy peer device address */
 id|info-&gt;daddr
 op_assign
 id|le32_to_cpu
@@ -1668,6 +1685,49 @@ c_func
 id|xid-&gt;saddr
 )paren
 suffix:semicolon
+id|info-&gt;saddr
+op_assign
+id|le32_to_cpu
+c_func
+(paren
+id|xid-&gt;daddr
+)paren
+suffix:semicolon
+multiline_comment|/* Make sure frame is addressed to us */
+r_if
+c_cond
+(paren
+(paren
+id|info-&gt;saddr
+op_ne
+id|self-&gt;saddr
+)paren
+op_logical_and
+(paren
+id|info-&gt;saddr
+op_ne
+id|BROADCAST
+)paren
+)paren
+(brace
+id|DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), frame is not addressed to us!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 r_switch
 c_cond
 (paren
@@ -2012,7 +2072,7 @@ id|skb
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function irlap_recv_rr_frame (skb, info)&n; *&n; *    Received RR (Receive Ready) frame from peer station, no harm in&n; *    making it inline since its called only from one single place&n; *    (irlap_input).&n; */
+multiline_comment|/*&n; * Function irlap_recv_rr_frame (skb, info)&n; *&n; *    Received RR (Receive Ready) frame from peer station, no harm in&n; *    making it inline since its called only from one single place&n; *    (irlap_driver_rcv).&n; */
 DECL|function|irlap_recv_rr_frame
 r_static
 r_inline
@@ -2345,39 +2405,6 @@ op_star
 id|info
 )paren
 (brace
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;(), &lt;%ld&gt;&bslash;n&quot;
-comma
-id|jiffies
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|skb
-op_ne
-l_int|NULL
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|info
-op_ne
-l_int|NULL
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
 id|irlap_do_event
 c_func
 (paren
@@ -2391,7 +2418,7 @@ id|info
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function irlap_send_data_primary(self, skb)&n; *&n; *    &n; *&n; */
+multiline_comment|/*&n; * Function irlap_send_data_primary(self, skb)&n; *&n; *    Send I-frames as the primary station but without the poll bit set&n; *&n; */
 DECL|function|irlap_send_data_primary
 r_void
 id|irlap_send_data_primary
@@ -2548,7 +2575,7 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Function irlap_send_data_primary_poll ( self, skb)&n; *&n; *    Send I(nformation) frame as primary with poll bit set&n; */
+multiline_comment|/*&n; * Function irlap_send_data_primary_poll (self, skb)&n; *&n; *    Send I(nformation) frame as primary with poll bit set&n; */
 DECL|function|irlap_send_data_primary_poll
 r_void
 id|irlap_send_data_primary_poll
@@ -3052,39 +3079,6 @@ id|tx_skb
 op_assign
 l_int|NULL
 suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self
-op_ne
-l_int|NULL
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self-&gt;magic
-op_eq
-id|LAP_MAGIC
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|skb
-op_ne
-l_int|NULL
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
 multiline_comment|/* Is this reliable or unreliable data? */
 r_if
 c_cond
@@ -3258,17 +3252,6 @@ id|LAP_MAGIC
 comma
 r_return
 suffix:semicolon
-)paren
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|2
-comma
-id|__FUNCTION__
-l_string|&quot;(), retry_count=%d&bslash;n&quot;
-comma
-id|self-&gt;retry_count
 )paren
 suffix:semicolon
 multiline_comment|/* Initialize variables */
@@ -3680,23 +3663,15 @@ r_int
 id|command
 )paren
 (brace
-id|__u8
-op_star
-id|frame
-suffix:semicolon
-id|frame
-op_assign
-id|skb-&gt;data
-suffix:semicolon
 multiline_comment|/* Insert connection address */
-id|frame
+id|skb-&gt;data
 (braket
 l_int|0
 )braket
 op_assign
 id|self-&gt;caddr
 suffix:semicolon
-id|frame
+id|skb-&gt;data
 (braket
 l_int|0
 )braket
@@ -3711,7 +3686,7 @@ suffix:colon
 l_int|0
 suffix:semicolon
 multiline_comment|/* Insert next to receive (Vr) */
-id|frame
+id|skb-&gt;data
 (braket
 l_int|1
 )braket
@@ -3732,7 +3707,7 @@ id|skb
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function irlap_recv_i_frame (skb, frame)&n; *&n; *    Receive and parse an I (Information) frame, no harm in making it inline&n; *    since it&squot;s called only from one single place (irlap_input).&n; */
+multiline_comment|/*&n; * Function irlap_recv_i_frame (skb, frame)&n; *&n; *    Receive and parse an I (Information) frame, no harm in making it inline&n; *    since it&squot;s called only from one single place (irlap_driver_rcv).&n; */
 DECL|function|irlap_recv_i_frame
 r_static
 r_inline
@@ -4312,7 +4287,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -4368,6 +4343,32 @@ c_func
 id|frame-&gt;daddr
 )paren
 suffix:semicolon
+multiline_comment|/* Make sure frame is addressed to us */
+r_if
+c_cond
+(paren
+(paren
+id|info-&gt;saddr
+op_ne
+id|self-&gt;saddr
+)paren
+op_logical_and
+(paren
+id|info-&gt;saddr
+op_ne
+id|BROADCAST
+)paren
+)paren
+(brace
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -4454,19 +4455,56 @@ id|self
 op_assign
 id|idev-&gt;irlap
 suffix:semicolon
-id|ASSERT
+multiline_comment|/* If the net device is down, then IrLAP is gone! */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|self
+op_logical_or
+id|self-&gt;magic
+op_ne
+id|LAP_MAGIC
+)paren
+(brace
+id|dev_kfree_skb
 c_func
 (paren
-id|skb-&gt;len
-OG
-l_int|1
-comma
+id|skb
+)paren
+suffix:semicolon
 r_return
 op_minus
 l_int|1
 suffix:semicolon
+)brace
+multiline_comment|/* Check if frame is large enough for parsing */
+r_if
+c_cond
+(paren
+id|skb-&gt;len
+OL
+l_int|2
+)paren
+(brace
+id|ERROR
+c_func
+(paren
+id|__FUNCTION__
+l_string|&quot;(), frame to short!&bslash;n&quot;
 )paren
 suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
 id|command
 op_assign
 id|skb-&gt;data
@@ -4509,7 +4547,7 @@ id|control
 op_assign
 id|info.control
 suffix:semicolon
-multiline_comment|/*  First check if this frame addressed to us */
+multiline_comment|/*  First we check if this frame has a valid connection address */
 r_if
 c_cond
 (paren
@@ -4529,10 +4567,10 @@ id|CBROADCAST
 id|DEBUG
 c_func
 (paren
-l_int|2
+l_int|0
 comma
 id|__FUNCTION__
-l_string|&quot;(), Received frame is not for us!&bslash;n&quot;
+l_string|&quot;(), wrong connection address!&bslash;n&quot;
 )paren
 suffix:semicolon
 id|dev_kfree_skb
@@ -4666,7 +4704,7 @@ id|WARNING
 c_func
 (paren
 id|__FUNCTION__
-l_string|&quot;() Unknown S frame %02x received!&bslash;n&quot;
+l_string|&quot;() Unknown S-frame %02x received!&bslash;n&quot;
 comma
 id|info.control
 )paren

@@ -1051,7 +1051,7 @@ id|spurious_interrupt
 )paren
 suffix:semicolon
 macro_line|#endif&t;
-multiline_comment|/*&n;&t; * Set the clock to 100 Hz, we already have a valid&n;&t; * vector now:&n;&t; */
+multiline_comment|/*&n;&t; * Set the clock to HZ Hz, we already have a valid&n;&t; * vector now:&n;&t; */
 id|outb_p
 c_func
 (paren

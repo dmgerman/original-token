@@ -5870,6 +5870,10 @@ c_func
 id|skb
 )paren
 suffix:semicolon
+id|stats-&gt;rx_bytes
+op_add_assign
+id|dlen
+suffix:semicolon
 id|stats-&gt;rx_packets
 op_increment
 suffix:semicolon
@@ -7843,7 +7847,7 @@ c_func
 id|devname
 )paren
 op_eq
-l_int|NULL
+l_int|0
 )paren
 r_break
 suffix:semicolon

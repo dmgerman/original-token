@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap.c&n; * Version:       1.0&n; * Description:   IrLAP implementation for Linux&n; * Status:        Stable&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Mon Aug 23 12:05:26 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap.c&n; * Version:       1.0&n; * Description:   IrLAP implementation for Linux&n; * Status:        Stable&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Mon Sep 20 11:04:32 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -217,9 +217,9 @@ id|irlap_open
 c_func
 (paren
 r_struct
-id|irda_device
+id|net_device
 op_star
-id|irdev
+id|dev
 )paren
 (brace
 r_struct
@@ -234,30 +234,6 @@ l_int|4
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|irdev
-op_ne
-l_int|NULL
-comma
-r_return
-l_int|NULL
-suffix:semicolon
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|irdev-&gt;magic
-op_eq
-id|IRDA_DEVICE_MAGIC
-comma
-r_return
-l_int|NULL
-suffix:semicolon
 )paren
 suffix:semicolon
 multiline_comment|/* Initialize the irlap structure. */
@@ -304,14 +280,9 @@ op_assign
 id|LAP_MAGIC
 suffix:semicolon
 multiline_comment|/* Make a binding between the layers */
-id|self-&gt;irdev
-op_assign
-id|irdev
-suffix:semicolon
 id|self-&gt;netdev
 op_assign
-op_amp
-id|irdev-&gt;netdev
+id|dev
 suffix:semicolon
 id|irlap_next_state
 c_func
@@ -567,10 +538,6 @@ c_func
 (paren
 id|self
 )paren
-suffix:semicolon
-id|self-&gt;irdev
-op_assign
-l_int|NULL
 suffix:semicolon
 id|self-&gt;magic
 op_assign
@@ -882,7 +849,7 @@ op_logical_neg
 id|irda_device_is_media_busy
 c_func
 (paren
-id|self-&gt;irdev
+id|self-&gt;netdev
 )paren
 )paren
 id|irlap_do_event
@@ -1957,7 +1924,7 @@ l_int|0
 id|irda_device_set_media_busy
 c_func
 (paren
-id|self-&gt;irdev
+id|self-&gt;netdev
 comma
 id|FALSE
 )paren
@@ -2787,6 +2754,10 @@ id|__u32
 id|speed
 )paren
 (brace
+r_struct
+id|ifreq
+id|req
+suffix:semicolon
 id|DEBUG
 c_func
 (paren
@@ -2824,7 +2795,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|self-&gt;irdev
+id|self-&gt;netdev
 )paren
 (brace
 id|DEBUG
@@ -2839,12 +2810,22 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|irda_device_change_speed
+multiline_comment|/* &n;&t; * Warning, ifr_bandwidth is only 16 bits on architectures where ints&n;         * are 16 bits wide.&n;&t; */
+id|req.ifr_bandwidth
+op_assign
+id|speed
+suffix:semicolon
+id|self-&gt;netdev
+op_member_access_from_pointer
+id|do_ioctl
 c_func
 (paren
-id|self-&gt;irdev
+id|self-&gt;netdev
 comma
-id|speed
+op_amp
+id|req
+comma
+id|SIOCSBANDWIDTH
 )paren
 suffix:semicolon
 id|self-&gt;qos_rx.baud_rate.value
@@ -3082,7 +3063,7 @@ suffix:semicolon
 id|ASSERT
 c_func
 (paren
-id|self-&gt;irdev
+id|self-&gt;netdev
 op_ne
 l_int|NULL
 comma
@@ -3116,7 +3097,7 @@ comma
 id|irda_device_get_qos
 c_func
 (paren
-id|self-&gt;irdev
+id|self-&gt;netdev
 )paren
 )paren
 suffix:semicolon
@@ -3652,12 +3633,10 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;irlap%d &lt;-&gt; %s &quot;
+l_string|&quot;irlap%d &quot;
 comma
 id|i
 op_increment
-comma
-id|self-&gt;irdev-&gt;name
 )paren
 suffix:semicolon
 id|len

@@ -3313,6 +3313,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;This fails on the Cyrix MediaGX. If you don&squot;t have the DMA enabled&n; *&t;before the first sample arrives it locks up. However even if you&n; *&t;do enable the DMA in time you just get DMA timeouts and missing&n; *&t;interrupts and stuff, so for now I&squot;ve not bothered fixing this either.&n; */
 DECL|function|sb16_audio_start_input
 r_static
 r_void

@@ -29,6 +29,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
+macro_line|#include &lt;asm/semaphore.h&gt;
 DECL|macro|VERSION
 mdefine_line|#define VERSION &t;&quot;1.6.1&quot;
 macro_line|#include &quot;digi.h&quot;
@@ -7741,13 +7742,17 @@ id|ch-&gt;normal_termios
 op_assign
 id|pcxe_driver.init_termios
 suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
 id|ch-&gt;open_wait
-op_assign
-l_int|0
+)paren
 suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
 id|ch-&gt;close_wait
-op_assign
-l_int|0
+)paren
 suffix:semicolon
 id|ch-&gt;asyncflags
 op_assign

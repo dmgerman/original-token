@@ -30,6 +30,7 @@ macro_line|#include &lt;asm/cobalt.h&gt;
 macro_line|#include &lt;asm/msr.h&gt;
 macro_line|#include &lt;asm/desc.h&gt;
 macro_line|#include &lt;asm/e820.h&gt;
+macro_line|#include &lt;asm/dma.h&gt;
 multiline_comment|/*&n; * Machine setup..&n; */
 DECL|variable|ignore_irq13
 r_char
@@ -1326,11 +1327,20 @@ c_func
 r_void
 )paren
 (brace
-multiline_comment|/*&n;&t; * If we&squot;re lucky and live on a modern system, the setup code&n;&t; * will have given us a memory map that we can use to properly&n;&t; * set up memory.  If we aren&squot;t, we&squot;ll fake a memory map.&n;&t; */
+DECL|macro|E820_DEBUG
+mdefine_line|#define E820_DEBUG&t;0
+macro_line|#ifdef E820_DEBUG
+r_int
+id|i
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/*&n;&t; * If we&squot;re lucky and live on a modern system, the setup code&n;&t; * will have given us a memory map that we can use to properly&n;&t; * set up memory.  If we aren&squot;t, we&squot;ll fake a memory map.&n;&t; *&n;&t; * We check to see that the memory map contains at least 2 elements&n;&t; * before we&squot;ll use it, because the detection code in setup.S may&n;&t; * not be perfect and most every PC known to man has two memory&n;&t; * regions: one from 0 to 640k, and one from 1mb up.  (The IBM&n;&t; * thinkpad 560x, for example, does not cooperate with the memory&n;&t; * detection code.)&n;&t; */
 r_if
 c_cond
 (paren
 id|E820_MAP_NR
+OG
+l_int|1
 )paren
 (brace
 multiline_comment|/* got a memory map; copy it into a safe place.&n;&t;&t; */
@@ -1365,6 +1375,118 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
+macro_line|#ifdef E820_DEBUG
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|e820.nr_map
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;e820: %ld @ %08lx &quot;
+comma
+(paren
+r_int
+r_int
+)paren
+(paren
+id|e820.map
+(braket
+id|i
+)braket
+dot
+id|size
+)paren
+comma
+(paren
+r_int
+r_int
+)paren
+(paren
+id|e820.map
+(braket
+id|i
+)braket
+dot
+id|addr
+)paren
+)paren
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|e820.map
+(braket
+id|i
+)braket
+dot
+id|type
+)paren
+(brace
+r_case
+id|E820_RAM
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;(usable)&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|E820_RESERVED
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;(reserved)&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|E820_ACPI
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;(ACPI data)&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;type %lu&bslash;n&quot;
+comma
+id|e820.map
+(braket
+id|i
+)braket
+dot
+id|type
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif
 )brace
 r_else
 (brace
@@ -1396,7 +1518,7 @@ c_func
 (paren
 )paren
 comma
-l_int|1
+id|E820_RAM
 )paren
 suffix:semicolon
 id|add_memory_region
@@ -1408,7 +1530,7 @@ id|mem_size
 op_lshift
 l_int|10
 comma
-l_int|1
+id|E820_RAM
 )paren
 suffix:semicolon
 )brace
@@ -1802,7 +1924,7 @@ c_func
 (paren
 )paren
 comma
-l_int|1
+id|E820_RAM
 )paren
 suffix:semicolon
 )brace
@@ -1858,7 +1980,7 @@ id|start_at
 comma
 id|mem_size
 comma
-l_int|1
+id|E820_RAM
 )paren
 suffix:semicolon
 )brace
@@ -1942,7 +2064,7 @@ id|i
 dot
 id|type
 op_eq
-l_int|1
+id|E820_RAM
 )paren
 (brace
 r_int
@@ -3473,6 +3595,20 @@ op_complement
 id|X86_FEATURE_TSC
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_PCI
+multiline_comment|/* It isnt really a PCI quirk directly, but the cure is the&n;&t;&t;   same. The MediaGX has deep magic SMM stuff that handles the&n;&t;&t;   SB emulation. It thows away the fifo on disable_dma() which&n;&t;&t;   is wrong and ruins the audio. */
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;Working around Cyrix MediaGX virtual DMA bug.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|isa_dma_bridge_buggy
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#endif&t;&t;
 r_break
 suffix:semicolon
 r_case
@@ -3620,9 +3756,9 @@ l_int|0
 suffix:semicolon
 r_break
 suffix:semicolon
+)brace
 r_break
 suffix:semicolon
-)brace
 r_default
 suffix:colon
 multiline_comment|/* unknown (shouldn&squot;t happen, we know everyone ;-) */

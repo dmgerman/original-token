@@ -1,10 +1,11 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irtty.c&n; * Version:       1.1&n; * Description:   IrDA line discipline implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Dec  9 21:18:38 1997&n; * Modified at:   Tue Aug 24 13:32:24 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       slip.c by Laurence Culhane,   &lt;loz@holmes.demon.co.uk&gt;&n; *                          Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irtty.c&n; * Version:       1.1&n; * Description:   IrDA line discipline implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Dec  9 21:18:38 1997&n; * Modified at:   Tue Sep 28 08:39:29 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       slip.c by Laurence Culhane,   &lt;loz@holmes.demon.co.uk&gt;&n; *                          Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/skbuff.h&gt;
+macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;net/irda/irda.h&gt;
 macro_line|#include &lt;net/irda/irtty.h&gt;
 macro_line|#include &lt;net/irda/wrapper.h&gt;
@@ -1491,7 +1492,7 @@ id|irda_device_set_media_busy
 c_func
 (paren
 op_amp
-id|self-&gt;idev
+id|self-&gt;idev.netdev
 comma
 id|TRUE
 )paren
@@ -2512,10 +2513,26 @@ op_star
 id|dev
 )paren
 (brace
+r_struct
+id|irda_device
+op_star
+id|idev
+op_assign
+id|dev-&gt;priv
+suffix:semicolon
 id|irda_device_net_open
 c_func
 (paren
 id|dev
+)paren
+suffix:semicolon
+multiline_comment|/* Make sure we can receive more data */
+id|irtty_stop_receiver
+c_func
+(paren
+id|idev
+comma
+id|FALSE
 )paren
 suffix:semicolon
 id|MOD_INC_USE_COUNT
@@ -2536,6 +2553,22 @@ op_star
 id|dev
 )paren
 (brace
+r_struct
+id|irda_device
+op_star
+id|idev
+op_assign
+id|dev-&gt;priv
+suffix:semicolon
+multiline_comment|/* Make sure we don&squot;t receive more data */
+id|irtty_stop_receiver
+c_func
+(paren
+id|idev
+comma
+id|TRUE
+)paren
+suffix:semicolon
 id|irda_device_net_close
 c_func
 (paren

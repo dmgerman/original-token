@@ -2982,6 +2982,22 @@ suffix:semicolon
 r_int
 id|err
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|capable
+c_func
+(paren
+id|CAP_NET_ADMIN
+)paren
+)paren
+(brace
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
+)brace
 id|MOD_INC_USE_COUNT
 suffix:semicolon
 multiline_comment|/* RTnetlink lock is misused here to serialize concurrent&n;&t;   opens of slip channels. There are better ways, but it is&n;&t;   the simplest one.&n;&t; */
