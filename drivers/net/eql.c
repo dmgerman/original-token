@@ -772,11 +772,7 @@ l_int|0
 suffix:semicolon
 id|dev-&gt;pa_alen
 op_assign
-r_sizeof
-(paren
-r_int
-r_int
-)paren
+l_int|4
 suffix:semicolon
 id|dev-&gt;type
 op_assign

@@ -130,68 +130,57 @@ r_struct
 id|ppp_lqp_packet_hdr
 (brace
 DECL|member|LastOutLQRs
-r_int
-r_int
+id|__u32
 id|LastOutLQRs
 suffix:semicolon
 multiline_comment|/* Copied from PeerOutLQRs&t; */
 DECL|member|LastOutPackets
-r_int
-r_int
+id|__u32
 id|LastOutPackets
 suffix:semicolon
 multiline_comment|/* Copied from PeerOutPackets&t; */
 DECL|member|LastOutOctets
-r_int
-r_int
+id|__u32
 id|LastOutOctets
 suffix:semicolon
 multiline_comment|/* Copied from PeerOutOctets&t; */
 DECL|member|PeerInLQRs
-r_int
-r_int
+id|__u32
 id|PeerInLQRs
 suffix:semicolon
 multiline_comment|/* Copied from SavedInLQRs&t; */
 DECL|member|PeerInPackets
-r_int
-r_int
+id|__u32
 id|PeerInPackets
 suffix:semicolon
 multiline_comment|/* Copied from SavedInPackets&t; */
 DECL|member|PeerInDiscards
-r_int
-r_int
+id|__u32
 id|PeerInDiscards
 suffix:semicolon
 multiline_comment|/* Copied from SavedInDiscards&t; */
 DECL|member|PeerInErrors
-r_int
-r_int
+id|__u32
 id|PeerInErrors
 suffix:semicolon
 multiline_comment|/* Copied from SavedInErrors&t; */
 DECL|member|PeerInOctets
-r_int
-r_int
+id|__u32
 id|PeerInOctets
 suffix:semicolon
 multiline_comment|/* Copied from SavedInOctets&t; */
 DECL|member|PeerOutLQRs
-r_int
-r_int
+id|__u32
 id|PeerOutLQRs
 suffix:semicolon
 multiline_comment|/* Copied from OutLQRs, plus 1&t; */
 DECL|member|PeerOutPackets
-r_int
-r_int
+id|__u32
 id|PeerOutPackets
 suffix:semicolon
 multiline_comment|/* Current ifOutUniPackets, + 1&t; */
 DECL|member|PeerOutOctets
-r_int
-r_int
+id|__u32
 id|PeerOutOctets
 suffix:semicolon
 multiline_comment|/* Current ifOutOctets + LQR&t; */
@@ -203,32 +192,27 @@ r_struct
 id|ppp_lqp_packet_trailer
 (brace
 DECL|member|SaveInLQRs
-r_int
-r_int
+id|__u32
 id|SaveInLQRs
 suffix:semicolon
 multiline_comment|/* Current InLQRs on reception&t; */
 DECL|member|SaveInPackets
-r_int
-r_int
+id|__u32
 id|SaveInPackets
 suffix:semicolon
 multiline_comment|/* Current ifInUniPackets&t; */
 DECL|member|SaveInDiscards
-r_int
-r_int
+id|__u32
 id|SaveInDiscards
 suffix:semicolon
 multiline_comment|/* Current ifInDiscards&t;&t; */
 DECL|member|SaveInErrors
-r_int
-r_int
+id|__u32
 id|SaveInErrors
 suffix:semicolon
 multiline_comment|/* Current ifInErrors&t;&t; */
 DECL|member|SaveInOctets
-r_int
-r_int
+id|__u32
 id|SaveInOctets
 suffix:semicolon
 multiline_comment|/* Current ifInOctects&t;&t; */
@@ -240,8 +224,7 @@ r_struct
 id|ppp_lpq_packet
 (brace
 DECL|member|magic
-r_int
-r_int
+id|__u32
 id|magic
 suffix:semicolon
 multiline_comment|/* current magic value&t;&t; */
@@ -265,92 +248,77 @@ r_struct
 id|ppp_stats
 (brace
 DECL|member|rbytes
-r_int
-r_int
+id|__u32
 id|rbytes
 suffix:semicolon
 multiline_comment|/* bytes received&t;&t; */
 DECL|member|rcomp
-r_int
-r_int
+id|__u32
 id|rcomp
 suffix:semicolon
 multiline_comment|/* compressed packets received&t; */
 DECL|member|runcomp
-r_int
-r_int
+id|__u32
 id|runcomp
 suffix:semicolon
 multiline_comment|/* uncompressed packets received */
 DECL|member|rothers
-r_int
-r_int
+id|__u32
 id|rothers
 suffix:semicolon
 multiline_comment|/* non-ip frames received&t; */
 DECL|member|rerrors
-r_int
-r_int
+id|__u32
 id|rerrors
 suffix:semicolon
 multiline_comment|/* received errors&t;&t; */
 DECL|member|roverrun
-r_int
-r_int
+id|__u32
 id|roverrun
 suffix:semicolon
 multiline_comment|/* &quot;buffer overrun&quot; counter&t; */
 DECL|member|tossed
-r_int
-r_int
+id|__u32
 id|tossed
 suffix:semicolon
 multiline_comment|/* packets discarded&t;&t; */
 DECL|member|runts
-r_int
-r_int
+id|__u32
 id|runts
 suffix:semicolon
 multiline_comment|/* frames too short to process&t; */
 DECL|member|rgiants
-r_int
-r_int
+id|__u32
 id|rgiants
 suffix:semicolon
 multiline_comment|/* frames too large to process&t; */
 DECL|member|sbytes
-r_int
-r_int
+id|__u32
 id|sbytes
 suffix:semicolon
 multiline_comment|/* bytes sent&t;&t;&t; */
 DECL|member|scomp
-r_int
-r_int
+id|__u32
 id|scomp
 suffix:semicolon
 multiline_comment|/* compressed packets sent&t; */
 DECL|member|suncomp
-r_int
-r_int
+id|__u32
 id|suncomp
 suffix:semicolon
 multiline_comment|/* uncompressed packets sent&t; */
 DECL|member|sothers
-r_int
-r_int
+id|__u32
 id|sothers
 suffix:semicolon
 multiline_comment|/* non-ip frames sent&t;&t; */
 DECL|member|serrors
-r_int
-r_int
+id|__u32
 id|serrors
 suffix:semicolon
 multiline_comment|/* transmitter errors&t;&t; */
 DECL|member|sbusy
-r_int
-r_int
+id|__u32
 id|sbusy
 suffix:semicolon
 multiline_comment|/* &quot;transmitter busy&quot; counter&t; */
@@ -398,11 +366,6 @@ id|magic
 suffix:semicolon
 multiline_comment|/* magic value for structure&t;*/
 multiline_comment|/* Bitmapped flag fields. */
-DECL|member|inuse
-r_char
-id|inuse
-suffix:semicolon
-multiline_comment|/* are we allocated?&t;&t;*/
 DECL|member|sending
 r_char
 id|sending
@@ -418,6 +381,12 @@ r_char
 id|toss
 suffix:semicolon
 multiline_comment|/* toss this frame&t;&t;*/
+DECL|member|inuse
+r_int
+r_int
+id|inuse
+suffix:semicolon
+multiline_comment|/* are we allocated?&t;&t;*/
 DECL|member|flags
 r_int
 r_int
@@ -425,8 +394,7 @@ id|flags
 suffix:semicolon
 multiline_comment|/* miscellany&t;&t;&t;*/
 DECL|member|xmit_async_map
-r_int
-r_int
+id|__u32
 id|xmit_async_map
 (braket
 l_int|8
@@ -434,8 +402,7 @@ l_int|8
 suffix:semicolon
 multiline_comment|/* 1 bit means that given control &n;&t;&t;&t;&t;&t;   character is quoted on output*/
 DECL|member|recv_async_map
-r_int
-r_int
+id|__u32
 id|recv_async_map
 suffix:semicolon
 multiline_comment|/* 1 bit means that given control &n;&t;&t;&t;&t;&t;   character is ignored on input*/
@@ -483,8 +450,7 @@ id|slcomp
 suffix:semicolon
 multiline_comment|/* for header compression&t;*/
 DECL|member|last_xmit
-r_int
-r_int
+id|__u32
 id|last_xmit
 suffix:semicolon
 multiline_comment|/* time of last transmission&t;*/
@@ -577,7 +543,7 @@ suffix:semicolon
 multiline_comment|/* tail of waiting packets&t;*/
 DECL|member|us_rbuff_lock
 r_int
-r_char
+r_int
 id|us_rbuff_lock
 suffix:semicolon
 multiline_comment|/* lock: bit 0 head bit 1 tail&t;*/

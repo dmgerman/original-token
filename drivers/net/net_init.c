@@ -747,6 +747,10 @@ id|dev-&gt;set_mac_address
 op_assign
 id|eth_mac_addr
 suffix:semicolon
+id|dev-&gt;header_cache
+op_assign
+id|eth_header_cache
+suffix:semicolon
 id|dev-&gt;type
 op_assign
 id|ARPHRD_ETHER
@@ -812,11 +816,7 @@ l_int|0
 suffix:semicolon
 id|dev-&gt;pa_alen
 op_assign
-r_sizeof
-(paren
-r_int
-r_int
-)paren
+l_int|4
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_TR
@@ -930,11 +930,7 @@ l_int|0
 suffix:semicolon
 id|dev-&gt;pa_alen
 op_assign
-r_sizeof
-(paren
-r_int
-r_int
-)paren
+l_int|4
 suffix:semicolon
 )brace
 macro_line|#endif

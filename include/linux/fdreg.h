@@ -50,7 +50,7 @@ mdefine_line|#define ST0_HA&t;&t;0x04&t;&t;/* Head (Address) */
 DECL|macro|ST0_NR
 mdefine_line|#define ST0_NR&t;&t;0x08&t;&t;/* Not Ready */
 DECL|macro|ST0_ECE
-mdefine_line|#define ST0_ECE&t;&t;0x10&t;&t;/* Equipment chech error */
+mdefine_line|#define ST0_ECE&t;&t;0x10&t;&t;/* Equipment check error */
 DECL|macro|ST0_SE
 mdefine_line|#define ST0_SE&t;&t;0x20&t;&t;/* Seek end */
 DECL|macro|ST0_INTR

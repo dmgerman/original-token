@@ -119,7 +119,7 @@ id|dev
 )paren
 suffix:semicolon
 r_extern
-r_int
+r_void
 id|eth_header_cache
 c_func
 (paren

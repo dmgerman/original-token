@@ -296,10 +296,17 @@ suffix:semicolon
 multiline_comment|/* End pointer&t;&t;&t;&t;&t;*/
 )brace
 suffix:semicolon
+macro_line|#ifdef CONFIG_SKB_LARGE
+DECL|macro|SK_WMEM_MAX
+mdefine_line|#define SK_WMEM_MAX&t;65535
+DECL|macro|SK_RMEM_MAX
+mdefine_line|#define SK_RMEM_MAX&t;65535
+macro_line|#else
 DECL|macro|SK_WMEM_MAX
 mdefine_line|#define SK_WMEM_MAX&t;32767
 DECL|macro|SK_RMEM_MAX
 mdefine_line|#define SK_RMEM_MAX&t;32767
+macro_line|#endif
 macro_line|#if CONFIG_SKB_CHECK
 DECL|macro|SK_FREED_SKB
 mdefine_line|#define SK_FREED_SKB&t;0x0DE2C0DE

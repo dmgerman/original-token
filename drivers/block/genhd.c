@@ -466,6 +466,7 @@ id|hd-&gt;minor_shift
 op_minus
 l_int|1
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_IDE
 r_extern
 r_void
 id|ide_xlate_1024
@@ -474,6 +475,7 @@ c_func
 id|dev_t
 )paren
 suffix:semicolon
+macro_line|#endif
 id|read_mbr
 suffix:colon
 r_if
@@ -597,6 +599,7 @@ id|nr_sects
 op_sub_assign
 id|p-&gt;end_sector
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_IDE
 id|ide_xlate_1024
 c_func
 (paren
@@ -604,6 +607,7 @@ id|dev
 )paren
 suffix:semicolon
 multiline_comment|/* harmless if not an IDE drive */
+macro_line|#endif
 id|bh-&gt;b_dirt
 op_assign
 l_int|0
@@ -642,6 +646,7 @@ c_func
 l_string|&quot; [DM6]&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_IDE
 id|ide_xlate_1024
 c_func
 (paren
@@ -649,6 +654,7 @@ id|dev
 )paren
 suffix:semicolon
 multiline_comment|/* harmless if not an IDE drive */
+macro_line|#endif
 )brace
 id|current_minor
 op_add_assign

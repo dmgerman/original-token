@@ -12,7 +12,7 @@ mdefine_line|#define MAX_ACK_SIZE&t;40 + MAX_HEADER + 15
 DECL|macro|MAX_RESET_SIZE
 mdefine_line|#define MAX_RESET_SIZE&t;40 + MAX_HEADER + 15
 DECL|macro|MAX_WINDOW
-mdefine_line|#define MAX_WINDOW&t;16384
+mdefine_line|#define MAX_WINDOW&t;32767&t;&t;/* Never offer a window over 32767 without using&n;&t;&t;&t;&t;&t;   window scaling (not yet supported). Some poor&n;&t;&t;&t;&t;&t;   stacks do signed 16bit maths! */
 DECL|macro|MIN_WINDOW
 mdefine_line|#define MIN_WINDOW&t;2048
 DECL|macro|MAX_ACK_BACKLOG

@@ -403,11 +403,7 @@ l_string|&quot;255.0.0.0&quot;
 suffix:semicolon
 id|dev-&gt;pa_alen
 op_assign
-r_sizeof
-(paren
-r_int
-r_int
-)paren
+l_int|4
 suffix:semicolon
 macro_line|#endif  
 id|dev-&gt;priv

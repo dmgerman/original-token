@@ -1015,10 +1015,52 @@ DECL|macro|inb_p
 mdefine_line|#define inb_p inb
 DECL|macro|outb_p
 mdefine_line|#define outb_p outb
-DECL|macro|readl
-mdefine_line|#define readl(addr)&t;__readl(addr)
-DECL|macro|writel
-mdefine_line|#define writel(b,addr)&t;__writel(b,addr)
+DECL|function|readl
+r_extern
+r_inline
+r_int
+r_int
+id|readl
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+(brace
+r_return
+id|__readl
+c_func
+(paren
+id|addr
+)paren
+suffix:semicolon
+)brace
+DECL|function|writel
+r_extern
+r_inline
+r_void
+id|writel
+c_func
+(paren
+r_int
+r_int
+id|b
+comma
+r_int
+r_int
+id|addr
+)paren
+(brace
+id|__writel
+c_func
+(paren
+id|b
+comma
+id|addr
+)paren
+suffix:semicolon
+)brace
 DECL|macro|vuip
 macro_line|#undef vuip
 r_extern

@@ -639,9 +639,6 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-r_int
-id|nitcount
-suffix:semicolon
 r_struct
 id|packet_type
 op_star
@@ -824,6 +821,8 @@ c_cond
 (paren
 op_logical_neg
 id|where
+op_logical_and
+id|dev_nit
 )paren
 (brace
 id|skb-&gt;stamp
@@ -916,9 +915,6 @@ id|skb-&gt;dev
 comma
 id|ptype
 )paren
-suffix:semicolon
-id|nitcount
-op_decrement
 suffix:semicolon
 )brace
 )brace
@@ -1090,7 +1086,7 @@ op_increment
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;If any packet arrived, mark it for processing after the&n;&t; *&t;hardware interrupt returns.&n;&t; */
 macro_line|#ifdef CONFIG_NET_RUNONIRQ&t;/* Dont enable yet, needs some driver mods */
-id|inet_bh
+id|net_bh
 c_func
 (paren
 )paren
@@ -1503,7 +1499,7 @@ id|in_bh
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Can we send anything now? We want to clear the&n;&t; *&t;decks for any more sends that get done as we&n;&t; *&t;process the input.&n;&t; */
+multiline_comment|/*&n;&t; *&t;Can we send anything now? We want to clear the&n;&t; *&t;decks for any more sends that get done as we&n;&t; *&t;process the input. This also minimises the&n;&t; *&t;latency on a transmit interrupt bh.&n;&t; */
 id|dev_transmit
 c_func
 (paren
@@ -1645,19 +1641,9 @@ id|ptype-&gt;next
 r_if
 c_cond
 (paren
-(paren
 id|ptype-&gt;type
 op_eq
 id|type
-op_logical_or
-id|ptype-&gt;type
-op_eq
-id|htons
-c_func
-(paren
-id|ETH_P_ALL
-)paren
-)paren
 op_logical_and
 (paren
 op_logical_neg

@@ -221,5 +221,12 @@ DECL|macro|INADDR_MAX_LOCAL_GROUP
 mdefine_line|#define INADDR_MAX_LOCAL_GROUP  0xe00000ff      /* 224.0.0.255 */
 multiline_comment|/* &lt;asm/byteorder.h&gt; contains the htonl type stuff.. */
 macro_line|#include &lt;asm/byteorder.h&gt; 
+multiline_comment|/* Some random defines to make it easier in the kernel.. */
+macro_line|#ifdef __KERNEL__
+DECL|macro|LOOPBACK
+mdefine_line|#define LOOPBACK(x)&t;(((x) &amp; htonl(0xff000000)) == htonl(0x7f000000))
+DECL|macro|MULTICAST
+mdefine_line|#define MULTICAST(x)&t;(((x) &amp; htonl(0xf0000000)) == htonl(0xe0000000))
+macro_line|#endif
 macro_line|#endif&t;/* _LINUX_IN_H */
 eof

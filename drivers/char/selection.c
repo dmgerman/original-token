@@ -3,6 +3,7 @@ macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &quot;vt_kern.h&quot;
 macro_line|#include &quot;consolemap.h&quot;
@@ -156,8 +157,7 @@ suffix:semicolon
 multiline_comment|/*&n; * User settable table: what characters are to be considered alphabetic?&n; * 256 bits&n; */
 DECL|variable|inwordLut
 r_static
-r_int
-r_int
+id|u32
 id|inwordLut
 (braket
 l_int|8
@@ -240,8 +240,7 @@ c_func
 id|inwordLut
 comma
 (paren
-r_int
-r_int
+id|u32
 op_star
 )paren
 (paren

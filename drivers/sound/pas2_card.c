@@ -52,6 +52,18 @@ suffix:semicolon
 multiline_comment|/*&n; * pas_read() and pas_write() are equivalents of INB() and OUTB()&n; */
 multiline_comment|/*&n; * These routines perform the I/O address translation required&n; */
 multiline_comment|/*&n; * to support other than the default base address&n; */
+r_extern
+r_void
+id|mix_write
+(paren
+r_int
+r_char
+id|data
+comma
+r_int
+id|ioaddr
+)paren
+suffix:semicolon
 r_int
 r_char
 DECL|function|pas_read
@@ -925,11 +937,13 @@ id|hw_config
 r_if
 c_cond
 (paren
+(paren
 id|pas_model
 op_assign
 id|pas_read
 (paren
 id|CHIP_REV
+)paren
 )paren
 )paren
 (brace

@@ -415,10 +415,6 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* OSF/1 has some strange fork() semantics.. */
-id|regs-&gt;r0
-op_assign
-id|p-&gt;pid
-suffix:semicolon
 id|regs-&gt;r20
 op_assign
 l_int|0

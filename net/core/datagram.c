@@ -113,6 +113,11 @@ c_func
 id|sk
 )paren
 suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 op_star
 id|err
 op_assign
@@ -122,6 +127,12 @@ suffix:semicolon
 id|sk-&gt;err
 op_assign
 l_int|0
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|intflags
+)paren
 suffix:semicolon
 r_return
 l_int|NULL
@@ -467,7 +478,6 @@ r_int
 id|size
 )paren
 (brace
-multiline_comment|/* We will know all about the fraglist options to allow &gt;4K receives&n;&t;   but not this release */
 id|memcpy_tofs
 c_func
 (paren

@@ -290,9 +290,6 @@ r_int
 id|func
 )paren
 (brace
-r_int
-id|retval
-suffix:semicolon
 r_struct
 id|Scsi_Host
 op_star

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;ROUTE - implementation of the IP router.&n; *&n; * Version:&t;@(#)route.c&t;1.0.14&t;05/31/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Linus Torvalds, &lt;Linus.Torvalds@helsinki.fi&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Verify area fixes.&n; *&t;&t;Alan Cox&t;:&t;cli() protects routing changes&n; *&t;&t;Rui Oliveira&t;:&t;ICMP routing table updates&n; *&t;&t;(rco@di.uminho.pt)&t;Routing table insertion and update&n; *&t;&t;Linus Torvalds&t;:&t;Rewrote bits to be sensible&n; *&t;&t;Alan Cox&t;:&t;Added BSD route gw semantics&n; *&t;&t;Alan Cox&t;:&t;Super /proc &gt;4K &n; *&t;&t;Alan Cox&t;:&t;MTU in route table&n; *&t;&t;Alan Cox&t;: &t;MSS actually. Also added the window&n; *&t;&t;&t;&t;&t;clamper.&n; *&t;&t;Sam Lantinga&t;:&t;Fixed route matching in rt_del()&n; *&t;&t;Alan Cox&t;:&t;Routing cache support.&n; *&t;&t;Alan Cox&t;:&t;Removed compatibility cruft.&n; *&t;&t;Alan Cox&t;:&t;RTF_REJECT support.&n; *&t;&t;Alan Cox&t;:&t;TCP irtt support.&n; *&t;&t;Jonathan Naylor&t;:&t;Added Metric support.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;ROUTE - implementation of the IP router.&n; *&n; * Version:&t;@(#)route.c&t;1.0.14&t;05/31/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Linus Torvalds, &lt;Linus.Torvalds@helsinki.fi&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Verify area fixes.&n; *&t;&t;Alan Cox&t;:&t;cli() protects routing changes&n; *&t;&t;Rui Oliveira&t;:&t;ICMP routing table updates&n; *&t;&t;(rco@di.uminho.pt)&t;Routing table insertion and update&n; *&t;&t;Linus Torvalds&t;:&t;Rewrote bits to be sensible&n; *&t;&t;Alan Cox&t;:&t;Added BSD route gw semantics&n; *&t;&t;Alan Cox&t;:&t;Super /proc &gt;4K &n; *&t;&t;Alan Cox&t;:&t;MTU in route table&n; *&t;&t;Alan Cox&t;: &t;MSS actually. Also added the window&n; *&t;&t;&t;&t;&t;clamper.&n; *&t;&t;Sam Lantinga&t;:&t;Fixed route matching in rt_del()&n; *&t;&t;Alan Cox&t;:&t;Routing cache support.&n; *&t;&t;Alan Cox&t;:&t;Removed compatibility cruft.&n; *&t;&t;Alan Cox&t;:&t;RTF_REJECT support.&n; *&t;&t;Alan Cox&t;:&t;TCP irtt support.&n; *&t;&t;Jonathan Naylor&t;:&t;Added Metric support.&n; *&t;Miquel van Smoorenburg&t;:&t;BSD API fixes.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -831,10 +831,6 @@ op_logical_or
 id|r-&gt;rt_mask
 op_ne
 id|mask
-op_logical_or
-id|r-&gt;rt_metric
-OL
-id|metric
 )paren
 (brace
 id|rp
@@ -1047,6 +1043,10 @@ id|mask
 comma
 id|gw
 suffix:semicolon
+r_int
+r_char
+id|metric
+suffix:semicolon
 multiline_comment|/*&n;&t; *&t;If a device is specified find it.&n;&t; */
 r_if
 c_cond
@@ -1116,7 +1116,7 @@ r_return
 op_minus
 id|EAFNOSUPPORT
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Make local copies of the important bits&n;&t; */
+multiline_comment|/*&n;&t; *&t;Make local copies of the important bits&n;&t; *&t;We decrement the metric by one for BSD compatibility.&n;&t; */
 id|flags
 op_assign
 id|r-&gt;rt_flags
@@ -1162,6 +1162,19 @@ id|r-&gt;rt_gateway
 )paren
 op_member_access_from_pointer
 id|sin_addr.s_addr
+suffix:semicolon
+id|metric
+op_assign
+id|r-&gt;rt_metric
+OG
+l_int|0
+ques
+c_cond
+id|r-&gt;rt_metric
+op_minus
+l_int|1
+suffix:colon
+l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;BSD emulation: Permits route add someroute gw one-of-my-addresses&n;&t; *&t;to indicate which iface. Not as clean as the nice Linux dev technique&n;&t; *&t;but people keep using it... &n;&t; */
 r_if
@@ -1350,7 +1363,7 @@ id|r-&gt;rt_window
 comma
 id|r-&gt;rt_irtt
 comma
-id|r-&gt;rt_metric
+id|metric
 )paren
 suffix:semicolon
 r_return

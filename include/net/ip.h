@@ -61,8 +61,6 @@ comma
 r_int
 )paren
 suffix:semicolon
-DECL|macro|MULTICAST
-mdefine_line|#define MULTICAST(x)&t;(IN_MULTICAST(htonl(x)))
 macro_line|#endif
 multiline_comment|/* Describe an IP fragment. */
 DECL|struct|ipfrag
@@ -296,7 +294,7 @@ id|pt
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_int
 id|ip_forward
 c_func
 (paren

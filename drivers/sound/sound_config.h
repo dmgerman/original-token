@@ -62,6 +62,10 @@ DECL|macro|DMA_AUTOINIT
 mdefine_line|#define DMA_AUTOINIT&t;&t;0x10
 DECL|macro|FM_MONO
 mdefine_line|#define FM_MONO&t;&t;0x388&t;/* This is the I/O address used by AdLib */
+macro_line|#ifndef PAS_BASE
+DECL|macro|PAS_BASE
+mdefine_line|#define PAS_BASE&t;0x388
+macro_line|#endif
 multiline_comment|/* SEQ_MAX_QUEUE is the maximum number of sequencer events buffered by the&n;   driver. (There is no need to alter this) */
 DECL|macro|SEQ_MAX_QUEUE
 mdefine_line|#define SEQ_MAX_QUEUE&t;1024

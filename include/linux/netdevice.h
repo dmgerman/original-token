@@ -508,7 +508,7 @@ id|map
 )paren
 suffix:semicolon
 DECL|member|header_cache
-r_int
+r_void
 (paren
 op_star
 id|header_cache

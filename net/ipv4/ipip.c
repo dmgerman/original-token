@@ -82,6 +82,9 @@ l_string|&quot;ipip_rcv: got a packet!&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+r_if
+c_cond
+(paren
 id|ip_forward
 c_func
 (paren
@@ -95,7 +98,8 @@ id|daddr
 comma
 l_int|0
 )paren
-suffix:semicolon
+)paren
+(brace
 id|kfree_skb
 c_func
 (paren
@@ -104,6 +108,7 @@ comma
 id|FREE_READ
 )paren
 suffix:semicolon
+)brace
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Linux NET3:&t;Internet Gateway Management Protocol  [IGMP]&n; *&n; *&t;Authors:&n; *&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&t;&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Fixes:&n; *&t;&n; *&t;&t;Alan Cox&t;:&t;Added lots of __inline__ to optimise&n; *&t;&t;&t;&t;&t;the memory usage of all the tiny little&n; *&t;&t;&t;&t;&t;functions.&n; */
+multiline_comment|/*&n; *&t;Linux NET3:&t;Internet Gateway Management Protocol  [IGMP]&n; *&n; *&t;Authors:&n; *&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&t;&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Fixes:&n; *&t;&n; *&t;&t;Alan Cox&t;:&t;Added lots of __inline__ to optimise&n; *&t;&t;&t;&t;&t;the memory usage of all the tiny little&n; *&t;&t;&t;&t;&t;functions.&n; *&t;&t;Alan Cox&t;:&t;Dumped the header building experiment.&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -18,7 +18,6 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;linux/igmp.h&gt;
 macro_line|#include &lt;net/checksum.h&gt;
-macro_line|#include &lt;net/head_explode.h&gt;
 macro_line|#ifdef CONFIG_IP_MULTICAST
 multiline_comment|/*&n; *&t;Timer management&n; */
 DECL|function|igmp_stop_timer
@@ -171,10 +170,10 @@ suffix:semicolon
 r_int
 id|tmp
 suffix:semicolon
-r_int
-r_char
+r_struct
+id|igmphdr
 op_star
-id|dp
+id|ih
 suffix:semicolon
 r_if
 c_cond
@@ -231,12 +230,13 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|dp
+id|ih
 op_assign
-id|skb-&gt;data
-op_plus
-id|tmp
-suffix:semicolon
+(paren
+r_struct
+id|igmphdr
+op_star
+)paren
 id|skb_put
 c_func
 (paren
@@ -249,61 +249,37 @@ id|igmphdr
 )paren
 )paren
 suffix:semicolon
-op_star
-id|dp
-op_increment
+id|ih-&gt;type
 op_assign
-id|type
+id|IGMP_HOST_MEMBERSHIP_REPORT
 suffix:semicolon
-op_star
-id|dp
-op_increment
+id|ih-&gt;unused
 op_assign
 l_int|0
 suffix:semicolon
-id|skb-&gt;h.raw
+id|ih-&gt;csum
 op_assign
-id|dp
-suffix:semicolon
-id|dp
-op_assign
-id|imp_putu16
-c_func
-(paren
-id|dp
-comma
 l_int|0
-)paren
 suffix:semicolon
-multiline_comment|/* checksum */
-id|dp
+id|ih-&gt;group
 op_assign
-id|imp_putn32
-c_func
-(paren
-id|dp
-comma
 id|address
-)paren
 suffix:semicolon
-multiline_comment|/* Address (already in net order) */
-id|imp_putn16
-c_func
-(paren
-id|skb-&gt;h.raw
-comma
+id|ih-&gt;csum
+op_assign
 id|ip_compute_csum
 c_func
 (paren
-id|skb-&gt;data
-op_plus
-id|tmp
+(paren
+r_void
+op_star
+)paren
+id|ih
 comma
 r_sizeof
 (paren
 r_struct
 id|igmphdr
-)paren
 )paren
 )paren
 suffix:semicolon
@@ -818,18 +794,18 @@ id|protocol
 (brace
 multiline_comment|/* This basically follows the spec line by line -- see RFC1112 */
 r_struct
-id|igmp_header
-id|igh
+id|igmphdr
+op_star
+id|ih
 suffix:semicolon
-multiline_comment|/* Pull the IGMP header */
-id|igmp_explode
-c_func
+id|ih
+op_assign
 (paren
-id|skb-&gt;h.raw
-comma
-op_amp
-id|igh
+r_struct
+id|igmphdr
+op_star
 )paren
+id|skb-&gt;data
 suffix:semicolon
 r_if
 c_cond
@@ -878,7 +854,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|igh.type
+id|ih-&gt;type
 op_eq
 id|IGMP_HOST_MEMBERSHIP_QUERY
 op_logical_and
@@ -897,13 +873,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|igh.type
+id|ih-&gt;type
 op_eq
 id|IGMP_HOST_MEMBERSHIP_REPORT
 op_logical_and
 id|daddr
 op_eq
-id|igh.group
+id|ih-&gt;group
 )paren
 (brace
 id|igmp_heard_report
@@ -911,7 +887,7 @@ c_func
 (paren
 id|dev
 comma
-id|igh.group
+id|ih-&gt;group
 )paren
 suffix:semicolon
 )brace

@@ -792,6 +792,9 @@ l_string|&quot;tunnel: calling ip_forward()&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+r_if
+c_cond
+(paren
 id|ip_forward
 c_func
 (paren
@@ -805,7 +808,17 @@ id|iph-&gt;daddr
 comma
 l_int|0
 )paren
+)paren
+(brace
+id|kfree_skb
+c_func
+(paren
+id|skb2
+comma
+id|FREE_WRITE
+)paren
 suffix:semicolon
+)brace
 macro_line|#ifdef TUNNEL_DEBUG
 id|printk
 c_func
@@ -826,15 +839,6 @@ l_string|&quot;tunnel: Updated usage statistics.&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* Clean up and return okay. */
-id|kfree_skb
-c_func
-(paren
-id|skb2
-comma
-id|FREE_WRITE
-)paren
-suffix:semicolon
 id|dev-&gt;tbusy
 op_assign
 l_int|0

@@ -1474,11 +1474,7 @@ l_int|0
 suffix:semicolon
 id|dev-&gt;pa_alen
 op_assign
-r_sizeof
-(paren
-r_int
-r_int
-)paren
+l_int|4
 suffix:semicolon
 r_return
 l_int|0
@@ -4753,7 +4749,7 @@ id|PRINTK
 (paren
 (paren
 id|KERN_INFO
-l_string|&quot;%s &lt;--    src %lx dst %lx len %d&bslash;n&quot;
+l_string|&quot;%s &lt;--    src %x dst %x len %d&bslash;n&quot;
 comma
 id|ppp-&gt;dev-&gt;name
 comma
@@ -5164,12 +5160,8 @@ l_int|4
 comma
 (paren
 id|KERN_DEBUG
-l_string|&quot;ppp_read: called %x num %u&bslash;n&quot;
+l_string|&quot;ppp_read: called %p num %u&bslash;n&quot;
 comma
-(paren
-r_int
-r_int
-)paren
 id|buf
 comma
 id|nr
@@ -5524,18 +5516,10 @@ id|PRINTK
 (paren
 (paren
 id|KERN_DEBUG
-l_string|&quot;ppp_stuff_char: %x %x %d&bslash;n&quot;
+l_string|&quot;ppp_stuff_char: %p %p %d&bslash;n&quot;
 comma
-(paren
-r_int
-r_int
-)paren
 id|ppp-&gt;xbuff
 comma
-(paren
-r_int
-r_int
-)paren
 id|ppp-&gt;xhead
 comma
 id|curpt
@@ -5904,9 +5888,14 @@ comma
 id|KERN_DEBUG
 l_string|&quot;ppp_write: writing %d chars&bslash;n&quot;
 comma
+(paren
+r_int
+)paren
+(paren
 id|ppp-&gt;xhead
 op_minus
 id|ppp-&gt;xbuff
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -6291,6 +6280,10 @@ l_string|&quot;ppp_ioctl: get asyncmap: addr %lx asyncmap %lx&bslash;n&quot;
 comma
 id|l
 comma
+(paren
+r_int
+r_int
+)paren
 id|ppp-&gt;xmit_async_map
 (braket
 l_int|0
@@ -6366,6 +6359,10 @@ comma
 id|KERN_INFO
 l_string|&quot;ppp_ioctl: set xmit asyncmap %lx&bslash;n&quot;
 comma
+(paren
+r_int
+r_int
+)paren
 id|ppp-&gt;xmit_async_map
 (braket
 l_int|0
@@ -6424,6 +6421,10 @@ comma
 id|KERN_INFO
 l_string|&quot;ppp_ioctl: set recv asyncmap %lx&bslash;n&quot;
 comma
+(paren
+r_int
+r_int
+)paren
 id|ppp-&gt;recv_async_map
 )paren
 )paren
@@ -6934,8 +6935,7 @@ op_eq
 l_int|0
 )paren
 (brace
-r_int
-r_int
+id|__u32
 id|temp_tbl
 (braket
 l_int|8
@@ -8085,9 +8085,14 @@ comma
 id|KERN_DEBUG
 l_string|&quot;ppp_write: writing %d chars&bslash;n&quot;
 comma
+(paren
+r_int
+)paren
+(paren
 id|ppp-&gt;xhead
 op_minus
 id|ppp-&gt;xbuff
+)paren
 )paren
 )paren
 suffix:semicolon

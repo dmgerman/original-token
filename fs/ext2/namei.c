@@ -3774,11 +3774,9 @@ c_cond
 (paren
 id|l
 op_ge
-id|EXT2_N_BLOCKS
-op_star
 r_sizeof
 (paren
-id|__u32
+id|inode-&gt;u.ext2_i.i_data
 )paren
 )paren
 (brace
