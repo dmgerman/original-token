@@ -94,6 +94,10 @@ DECL|member|mft_recordsize
 r_int
 id|mft_recordsize
 suffix:semicolon
+DECL|member|mft_recordbits
+r_int
+id|mft_recordbits
+suffix:semicolon
 DECL|member|mft_clusters_per_record
 r_int
 id|mft_clusters_per_record

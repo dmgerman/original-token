@@ -5968,6 +5968,11 @@ op_minus
 id|to
 )paren
 suffix:semicolon
+r_else
+id|zeroto
+op_assign
+id|to
+suffix:semicolon
 r_if
 c_cond
 (paren

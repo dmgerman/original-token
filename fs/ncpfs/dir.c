@@ -2149,7 +2149,7 @@ suffix:semicolon
 )brace
 id|page
 op_assign
-id|find_lock_page
+id|grab_cache_page
 c_func
 (paren
 op_amp
@@ -2305,7 +2305,7 @@ l_int|0
 (brace
 id|ctl.page
 op_assign
-id|grab_cache_page
+id|find_lock_page
 c_func
 (paren
 op_amp
@@ -3039,7 +3039,7 @@ l_int|1
 suffix:semicolon
 id|ctl.page
 op_assign
-id|find_lock_page
+id|grab_cache_page
 c_func
 (paren
 op_amp

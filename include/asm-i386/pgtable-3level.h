@@ -21,7 +21,7 @@ DECL|macro|pmd_ERROR
 mdefine_line|#define pmd_ERROR(e) &bslash;&n;&t;printk(&quot;%s:%d: bad pmd %p(%016Lx).&bslash;n&quot;, __FILE__, __LINE__, &amp;(e), pmd_val(e))
 DECL|macro|pgd_ERROR
 mdefine_line|#define pgd_ERROR(e) &bslash;&n;&t;printk(&quot;%s:%d: bad pgd %p(%016Lx).&bslash;n&quot;, __FILE__, __LINE__, &amp;(e), pgd_val(e))
-multiline_comment|/*&n; * Subtle, in PAE mode we cannot have zeroes in the top level&n; * page directory, the CPU enforces this.&n; */
+multiline_comment|/*&n; * Subtle, in PAE mode we cannot have zeroes in the top level&n; * page directory, the CPU enforces this. (ie. the PGD entry&n; * always has to have the present bit set.) The CPU caches&n; * the 4 pgd entries internally, so there is no extra memory&n; * load on TLB miss, despite one more level of indirection.&n; */
 DECL|macro|pgd_none
 mdefine_line|#define pgd_none(x)&t;(pgd_val(x) == 1ULL)
 DECL|function|pgd_bad
@@ -59,6 +59,12 @@ id|pgd
 )paren
 suffix:semicolon
 )brace
+DECL|macro|set_pte
+mdefine_line|#define set_pte(pteptr,pteval) &bslash;&n;&t;&t;set_64bit((unsigned long long *)(pteptr),pte_val(pteval))
+DECL|macro|set_pmd
+mdefine_line|#define set_pmd(pmdptr,pmdval) &bslash;&n;&t;&t;set_64bit((unsigned long long *)(pmdptr),pmd_val(pmdval))
+DECL|macro|set_pgd
+mdefine_line|#define set_pgd(pgdptr,pgdval) &bslash;&n;&t;&t;set_64bit((unsigned long long *)(pgdptr),pgd_val(pgdval))
 multiline_comment|/*&n; * Pentium-II errata A13: in PAE mode we explicitly have to flush&n; * the TLB via cr3 if the top-level pgd is changed... This was one tough&n; * thing to find out - guess i should first read all the documentation&n; * next time around ;)&n; */
 DECL|function|__pgd_clear
 r_extern
@@ -71,16 +77,18 @@ op_star
 id|pgd
 )paren
 (brace
-id|pgd_val
+id|set_pgd
 c_func
 (paren
-op_star
 id|pgd
+comma
+id|__pgd
+c_func
+(paren
+l_int|1ULL
 )paren
-op_assign
-l_int|1
+)paren
 suffix:semicolon
-singleline_comment|// no zero allowed!
 )brace
 DECL|function|pgd_clear
 r_extern

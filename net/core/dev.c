@@ -4076,7 +4076,7 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;%6s: %02x  %3d%c %3d%c  %3d%c %5d %5d %5d&bslash;n&quot;
+l_string|&quot;%6s: %04x  %3d%c  %3d%c  %3d%c  %6d %6d %6d&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -4121,6 +4121,10 @@ id|stats-&gt;discard.code
 comma
 id|stats-&gt;discard.misc
 )paren
+suffix:semicolon
+id|stats-&gt;qual.updated
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 r_else
@@ -4185,8 +4189,8 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;Inter-|sta|  Quality       |  Discarded packets&bslash;n&quot;
-l_string|&quot; face |tus|link level noise| nwid crypt  misc&bslash;n&quot;
+l_string|&quot;Inter-| sta-|   Quality        |   Discarded packets&bslash;n&quot;
+l_string|&quot; face | tus | link level noise |  nwid  crypt   misc&bslash;n&quot;
 )paren
 suffix:semicolon
 id|pos

@@ -123,6 +123,12 @@ DECL|macro|pgd_val
 mdefine_line|#define pgd_val(x)&t;((x).pgd)
 DECL|macro|pgprot_val
 mdefine_line|#define pgprot_val(x)&t;((x).pgprot)
+DECL|macro|__pte
+mdefine_line|#define __pte(x) ((pte_t) { (x) } )
+DECL|macro|__pmd
+mdefine_line|#define __pmd(x) ((pmd_t) { (x) } )
+DECL|macro|__pgd
+mdefine_line|#define __pgd(x) ((pgd_t) { (x) } )
 DECL|macro|__pgprot
 mdefine_line|#define __pgprot(x)&t;((pgprot_t) { (x) } )
 macro_line|#endif /* !__ASSEMBLY__ */

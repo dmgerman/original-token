@@ -69,11 +69,11 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* number of concurrent open()s */
-DECL|variable|read_lock
+DECL|variable|reader_lock
 r_static
 r_struct
 id|semaphore
-id|read_lock
+id|reader_lock
 suffix:semicolon
 multiline_comment|/*&n; * Utility to reset a timer to go off some time in the future.&n; */
 DECL|function|set_timer_callback
@@ -1764,7 +1764,7 @@ id|down
 c_func
 (paren
 op_amp
-id|read_lock
+id|reader_lock
 )paren
 suffix:semicolon
 r_for
@@ -1836,7 +1836,7 @@ id|up
 c_func
 (paren
 op_amp
-id|read_lock
+id|reader_lock
 )paren
 suffix:semicolon
 r_return
@@ -2320,7 +2320,7 @@ id|init_MUTEX
 c_func
 (paren
 op_amp
-id|read_lock
+id|reader_lock
 )paren
 suffix:semicolon
 r_return

@@ -3951,8 +3951,8 @@ suffix:semicolon
 id|fs.f_files
 op_assign
 id|mft-&gt;i_size
-op_div
-id|vol-&gt;mft_recordsize
+op_rshift
+id|vol-&gt;mft_recordbits
 suffix:semicolon
 id|iput
 c_func

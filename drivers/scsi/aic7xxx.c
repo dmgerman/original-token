@@ -3717,7 +3717,7 @@ c_func
 (paren
 l_string|&quot;aic7xxx=&quot;
 comma
-id|aix7xxx_setup
+id|aic7xxx_setup
 )paren
 suffix:semicolon
 multiline_comment|/*+F*************************************************************************&n; * Function:&n; *   pause_sequencer&n; *&n; * Description:&n; *   Pause the sequencer and wait for it to actually stop - this&n; *   is important since the sequencer can disable pausing for critical&n; *   sections.&n; *-F*************************************************************************/

@@ -45,9 +45,6 @@ macro_line|#else
 macro_line|# include &lt;asm/pgtable-2level.h&gt;
 macro_line|#endif
 macro_line|#endif
-multiline_comment|/*&n; * Certain architectures need to do special things when PTEs&n; * within a page table are directly modified.  Thus, the following&n; * hook is made available.&n; */
-DECL|macro|set_pte
-mdefine_line|#define set_pte(pteptr, pteval) ((*(pteptr)) = (pteval))
 DECL|macro|__beep
 mdefine_line|#define __beep() asm(&quot;movb $0x3,%al; outb %al,$0x61&quot;)
 DECL|macro|PMD_SIZE
@@ -201,17 +198,17 @@ mdefine_line|#define pte_none(x)&t;(!pte_val(x))
 DECL|macro|pte_present
 mdefine_line|#define pte_present(x)&t;(pte_val(x) &amp; (_PAGE_PRESENT | _PAGE_PROTNONE))
 DECL|macro|pte_clear
-mdefine_line|#define pte_clear(xp)&t;do { pte_val(*(xp)) = 0; } while (0)
+mdefine_line|#define pte_clear(xp)&t;do { set_pte(xp, __pte(0)); } while (0)
 DECL|macro|pte_pagenr
 mdefine_line|#define pte_pagenr(x)&t;((unsigned long)((pte_val(x) &gt;&gt; PAGE_SHIFT)))
 DECL|macro|pmd_none
 mdefine_line|#define pmd_none(x)&t;(!pmd_val(x))
-DECL|macro|pmd_bad
-mdefine_line|#define&t;pmd_bad(x)&t;((pmd_val(x) &amp; (~PAGE_MASK &amp; ~_PAGE_USER)) != _KERNPG_TABLE)
 DECL|macro|pmd_present
 mdefine_line|#define pmd_present(x)&t;(pmd_val(x) &amp; _PAGE_PRESENT)
 DECL|macro|pmd_clear
-mdefine_line|#define pmd_clear(xp)&t;do { pmd_val(*(xp)) = 0; } while (0)
+mdefine_line|#define pmd_clear(xp)&t;do { set_pmd(xp, __pmd(0)); } while (0)
+DECL|macro|pmd_bad
+mdefine_line|#define&t;pmd_bad(x)&t;((pmd_val(x) &amp; (~PAGE_MASK &amp; ~_PAGE_USER)) != _KERNPG_TABLE)
 multiline_comment|/*&n; * Permanent address of a page. Obviously must never be&n; * called on a highmem page.&n; */
 DECL|macro|page_address
 mdefine_line|#define page_address(page) ({ if (!(page)-&gt;virtual) BUG(); (page)-&gt;virtual; })
@@ -338,14 +335,25 @@ id|pte_t
 id|pte
 )paren
 (brace
+id|set_pte
+c_func
+(paren
+op_amp
+id|pte
+comma
+id|__pte
+c_func
+(paren
 id|pte_val
 c_func
 (paren
 id|pte
 )paren
-op_and_assign
+op_amp
 op_complement
 id|_PAGE_USER
+)paren
+)paren
 suffix:semicolon
 r_return
 id|pte
@@ -362,14 +370,25 @@ id|pte_t
 id|pte
 )paren
 (brace
+id|set_pte
+c_func
+(paren
+op_amp
+id|pte
+comma
+id|__pte
+c_func
+(paren
 id|pte_val
 c_func
 (paren
 id|pte
 )paren
-op_and_assign
+op_amp
 op_complement
 id|_PAGE_USER
+)paren
+)paren
 suffix:semicolon
 r_return
 id|pte
@@ -386,14 +405,25 @@ id|pte_t
 id|pte
 )paren
 (brace
+id|set_pte
+c_func
+(paren
+op_amp
+id|pte
+comma
+id|__pte
+c_func
+(paren
 id|pte_val
 c_func
 (paren
 id|pte
 )paren
-op_and_assign
+op_amp
 op_complement
 id|_PAGE_DIRTY
+)paren
+)paren
 suffix:semicolon
 r_return
 id|pte
@@ -410,14 +440,25 @@ id|pte_t
 id|pte
 )paren
 (brace
+id|set_pte
+c_func
+(paren
+op_amp
+id|pte
+comma
+id|__pte
+c_func
+(paren
 id|pte_val
 c_func
 (paren
 id|pte
 )paren
-op_and_assign
+op_amp
 op_complement
 id|_PAGE_ACCESSED
+)paren
+)paren
 suffix:semicolon
 r_return
 id|pte
@@ -434,14 +475,25 @@ id|pte_t
 id|pte
 )paren
 (brace
+id|set_pte
+c_func
+(paren
+op_amp
+id|pte
+comma
+id|__pte
+c_func
+(paren
 id|pte_val
 c_func
 (paren
 id|pte
 )paren
-op_and_assign
+op_amp
 op_complement
 id|_PAGE_RW
+)paren
+)paren
 suffix:semicolon
 r_return
 id|pte
@@ -458,13 +510,24 @@ id|pte_t
 id|pte
 )paren
 (brace
+id|set_pte
+c_func
+(paren
+op_amp
+id|pte
+comma
+id|__pte
+c_func
+(paren
 id|pte_val
 c_func
 (paren
 id|pte
 )paren
-op_or_assign
+op_or
 id|_PAGE_USER
+)paren
+)paren
 suffix:semicolon
 r_return
 id|pte
@@ -481,13 +544,24 @@ id|pte_t
 id|pte
 )paren
 (brace
+id|set_pte
+c_func
+(paren
+op_amp
+id|pte
+comma
+id|__pte
+c_func
+(paren
 id|pte_val
 c_func
 (paren
 id|pte
 )paren
-op_or_assign
+op_or
 id|_PAGE_USER
+)paren
+)paren
 suffix:semicolon
 r_return
 id|pte
@@ -504,13 +578,24 @@ id|pte_t
 id|pte
 )paren
 (brace
+id|set_pte
+c_func
+(paren
+op_amp
+id|pte
+comma
+id|__pte
+c_func
+(paren
 id|pte_val
 c_func
 (paren
 id|pte
 )paren
-op_or_assign
+op_or
 id|_PAGE_DIRTY
+)paren
+)paren
 suffix:semicolon
 r_return
 id|pte
@@ -527,13 +612,24 @@ id|pte_t
 id|pte
 )paren
 (brace
+id|set_pte
+c_func
+(paren
+op_amp
+id|pte
+comma
+id|__pte
+c_func
+(paren
 id|pte_val
 c_func
 (paren
 id|pte
 )paren
-op_or_assign
+op_or
 id|_PAGE_ACCESSED
+)paren
+)paren
 suffix:semicolon
 r_return
 id|pte
@@ -550,13 +646,24 @@ id|pte_t
 id|pte
 )paren
 (brace
+id|set_pte
+c_func
+(paren
+op_amp
+id|pte
+comma
+id|__pte
+c_func
+(paren
 id|pte_val
 c_func
 (paren
 id|pte
 )paren
-op_or_assign
+op_or
 id|_PAGE_RW
+)paren
+)paren
 suffix:semicolon
 r_return
 id|pte
@@ -564,10 +671,10 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Conversion functions: convert a page and protection to a page entry,&n; * and a page entry and page directory to the page they refer to.&n; */
 DECL|macro|mk_pte
-mdefine_line|#define mk_pte(page,pgprot) &bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;pte_t __pte;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;pte_val(__pte) = ((page)-mem_map)*(unsigned long long)PAGE_SIZE + &bslash;&n;&t;&t;&t;&t;pgprot_val(pgprot);&t;&t;&t;&bslash;&n;&t;__pte;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
+mdefine_line|#define mk_pte(page,pgprot) &bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;pte_t __pte;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;set_pte(&amp;__pte, __pte(((page)-mem_map) * &t;&t;&t;&bslash;&n;&t;&t;(unsigned long long)PAGE_SIZE + pgprot_val(pgprot)));&t;&bslash;&n;&t;__pte;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
 multiline_comment|/* This takes a physical page address that is used by the remapping functions */
 DECL|macro|mk_pte_phys
-mdefine_line|#define mk_pte_phys(physpage, pgprot) &bslash;&n;({ pte_t __pte; pte_val(__pte) = physpage + pgprot_val(pgprot); __pte; })
+mdefine_line|#define mk_pte_phys(physpage, pgprot) &bslash;&n;({ pte_t __pte; set_pte(&amp;__pte, __pte(physpage + pgprot_val(pgprot))); __pte; })
 DECL|function|pte_modify
 r_extern
 r_inline
@@ -582,12 +689,15 @@ id|pgprot_t
 id|newprot
 )paren
 (brace
-id|pte_val
+id|set_pte
 c_func
 (paren
+op_amp
 id|pte
-)paren
-op_assign
+comma
+id|__pte
+c_func
+(paren
 (paren
 id|pte_val
 c_func
@@ -602,6 +712,8 @@ id|pgprot_val
 c_func
 (paren
 id|newprot
+)paren
+)paren
 )paren
 suffix:semicolon
 r_return

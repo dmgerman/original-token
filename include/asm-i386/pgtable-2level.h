@@ -67,6 +67,14 @@ suffix:semicolon
 )brace
 DECL|macro|pgd_clear
 mdefine_line|#define pgd_clear(xp)&t;&t;&t;&t;do { } while (0)
+multiline_comment|/*&n; * Certain architectures need to do special things when PTEs&n; * within a page table are directly modified.  Thus, the following&n; * hook is made available.&n; */
+DECL|macro|set_pte
+mdefine_line|#define set_pte(pteptr, pteval) (*(pteptr) = pteval)
+multiline_comment|/*&n; * (pmds are folded into pgds so this doesnt get actually called,&n; * but the define is needed for a generic inline function.)&n; */
+DECL|macro|set_pmd
+mdefine_line|#define set_pmd(pmdptr, pmdval) (*(pmdptr) = pmdval)
+DECL|macro|set_pgd
+mdefine_line|#define set_pgd(pgdptr, pgdval) (*(pgdptr) = pgdval)
 DECL|macro|pgd_page
 mdefine_line|#define pgd_page(pgd) &bslash;&n;((unsigned long) __va(pgd_val(pgd) &amp; PAGE_MASK))
 DECL|function|pmd_offset
