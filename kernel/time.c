@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *  linux/kernel/time.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  This file contains the interface functions for the various&n; *  time related system calls: time, stime, gettimeofday, settimeofday,&n; *&t;&t;&t;       adjtime&n; */
-multiline_comment|/*&n; * Modification history kernel/time.c&n; * &n; * 02 Sep 93    Philip Gladstone&n; *      Created file with time related functions from sched.c and adjtimex() &n; * 08 Oct 93    Torsten Duwe&n; *      adjtime interface update and CMOS clock write code&n; * 02 Jul 94&t;Alan Modra&n; *&t;fixed set_rtc_mmss, fixed time.year for &gt;= 2000, new mktime&n; */
+multiline_comment|/*&n; * Modification history kernel/time.c&n; * &n; * 1993-09-02    Philip Gladstone&n; *      Created file with time related functions from sched.c and adjtimex() &n; * 1993-10-08    Torsten Duwe&n; *      adjtime interface update and CMOS clock write code&n; * 1994-07-02    Alan Modra&n; *&t;fixed set_rtc_mmss, fixed time.year for &gt;= 2000, new mktime&n; * 1995-03-26    Markus Kuhn&n; *      fixed 500 ms bug at call to set_rtc_mmss, fixed DS12887&n; *      precision CMOS clock update&n; *&n; * to do: adjtimex() has to be updated to recent (1994-12-13) revision&n; *        of David Mill&squot;s kernel clock model. For more information, check&n; *        &lt;ftp://louie.udel.edu/pub/ntp/kernel.tar.Z&gt;. &n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -10,7 +10,7 @@ macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
 macro_line|#include &lt;linux/timex.h&gt;
-multiline_comment|/* converts date to days since 1/1/1970&n; * assumes year,mon,day in normal date format&n; * ie. 1/1/1970 =&gt; year=1970, mon=1, day=1&n; *&n; * For the Julian calendar (which was used in Russia before 1917,&n; * Britain &amp; colonies before 1752, anywhere else before 1582,&n; * and is still in use by some communities) leave out the&n; * -year/100+year/400 terms, and add 10.&n; *&n; * This algorithm was first published by Gauss (I think).&n; */
+multiline_comment|/* Converts Gregorian date to seconds since 1970-01-01 00:00:00.&n; * Assumes input in normal date format, i.e. 1980-12-31 23:59:59&n; * =&gt; year=1980, mon=12, day=31, hour=23, min=59, sec=59.&n; *&n; * [For the Julian calendar (which was used in Russia before 1917,&n; * Britain &amp; colonies before 1752, anywhere else before 1582,&n; * and is still in use by some communities) leave out the&n; * -year/100+year/400 terms, and add 10.]&n; *&n; * This algorithm was first published by Gauss (I think).&n; *&n; * WARNING: this function will overflow on 2106-02-07 06:28:16 on&n; * machines were long is 32-bit! (However, as time_t is signed, we&n; * will already get problems at other places on 2038-01-19 03:14:08)&n; */
 DECL|function|mktime
 r_static
 r_inline
@@ -150,7 +150,7 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-multiline_comment|/* checking for Update-In-Progress could be done more elegantly&n;&t; * (using the &quot;update finished&quot;-interrupt for example), but that&n;&t; * would require excessive testing. promise I&squot;ll do that when I find&n;&t; * the time.&t;&t;&t;- Torsten&n;&t; */
+multiline_comment|/* The Linux interpretation of the CMOS clock register contents:&n;&t; * When the Update-In-Progress (UIP) flag goes from 1 to 0, the&n;&t; * RTC registers show the second which has precisely just started.&n;&t; * Let&squot;s hope other operating systems interpret the RTC the same way.&n;&t; */
 multiline_comment|/* read RTC exactly on falling edge of update flag */
 r_for
 c_loop
@@ -194,7 +194,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-multiline_comment|/* must try at least 2.228 ms*/
+multiline_comment|/* must try at least 2.228 ms */
 r_if
 c_cond
 (paren
@@ -541,7 +541,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* This function must be called with interrupts disabled &n; * It was inspired by Steve McCanne&squot;s microtime-i386 for BSD.  -- jrs&n; * &n; * However, the pc-audio speaker driver changes the divisor so that&n; * it gets interrupted rather more often - it loads 64 into the&n; * counter rather than 11932! This has an adverse impact on&n; * do_gettimeoffset() -- it stops working! What is also not&n; * good is that the interval that our timer function gets called&n; * is no longer 10.0002 msecs, but 9.9767 msec. To get around this&n; * would require using a different timing source. Maybe someone&n; * could use the RTC - I know that this can interrupt at frequencies&n; * ranging from 8192Hz to 2Hz. If I had the energy, I&squot;d somehow fix&n; * it so that at startup, the timer code in sched.c would select&n; * using either the RTC or the 8253 timer. The decision would be&n; * based on whether there was any other device around that needed&n; * to trample on the 8253. I&squot;d set up the RTC to interrupt at 1024Hz,&n; * and then do some jiggery to have a version of do_timer that &n; * advanced the clock by 1/1024 sec. Every time that reached over 1/100&n; * of a second, then do all the old code. If the time was kept correct&n; * then do_gettimeoffset could just return 0 - there is no low order&n; * divider that can be accessed.&n; *&n; * Ideally, you would be able to use the RTC for the speaker driver,&n; * but it appears that the speaker driver really needs interrupt more&n; * often than every 120us or so.&n; *&n; * Anyway, this needs more thought....&t;&t;pjsg (28 Aug 93)&n; * &n; * If you are really that interested, you should be reading&n; * comp.protocols.time.ntp!&n; */
+multiline_comment|/* This function must be called with interrupts disabled &n; * It was inspired by Steve McCanne&squot;s microtime-i386 for BSD.  -- jrs&n; * &n; * However, the pc-audio speaker driver changes the divisor so that&n; * it gets interrupted rather more often - it loads 64 into the&n; * counter rather than 11932! This has an adverse impact on&n; * do_gettimeoffset() -- it stops working! What is also not&n; * good is that the interval that our timer function gets called&n; * is no longer 10.0002 ms, but 9.9767 ms. To get around this&n; * would require using a different timing source. Maybe someone&n; * could use the RTC - I know that this can interrupt at frequencies&n; * ranging from 8192Hz to 2Hz. If I had the energy, I&squot;d somehow fix&n; * it so that at startup, the timer code in sched.c would select&n; * using either the RTC or the 8253 timer. The decision would be&n; * based on whether there was any other device around that needed&n; * to trample on the 8253. I&squot;d set up the RTC to interrupt at 1024 Hz,&n; * and then do some jiggery to have a version of do_timer that &n; * advanced the clock by 1/1024 s. Every time that reached over 1/100&n; * of a second, then do all the old code. If the time was kept correct&n; * then do_gettimeoffset could just return 0 - there is no low order&n; * divider that can be accessed.&n; *&n; * Ideally, you would be able to use the RTC for the speaker driver,&n; * but it appears that the speaker driver really needs interrupt more&n; * often than every 120 us or so.&n; *&n; * Anyway, this needs more thought....&t;&t;pjsg (1993-08-28)&n; * &n; * If you are really that interested, you should be reading&n; * comp.protocols.time.ntp!&n; */
 DECL|macro|TICK_SIZE
 mdefine_line|#define TICK_SIZE tick
 DECL|function|do_gettimeoffset
@@ -880,7 +880,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Adjust the time obtained from the CMOS to be GMT time instead of&n; * local time.&n; * &n; * This is ugly, but preferable to the alternatives.  Otherwise we&n; * would either need to write a program to do it in /etc/rc (and risk&n; * confusion if the program gets run more than once; it would also be &n; * hard to make the program warp the clock precisely n hours)  or&n; * compile in the timezone information into the kernel.  Bad, bad....&n; *&n; * XXX Currently does not adjust for daylight savings time.  May not&n; * need to do anything, depending on how smart (dumb?) the BIOS&n; * is.  Blast it all.... the best thing to do not depend on the CMOS&n; * clock at all, but get the time via NTP or timed if you&squot;re on a &n; * network....&t;&t;&t;&t;- TYT, 1/1/92&n; */
+multiline_comment|/*&n; * Adjust the time obtained from the CMOS to be UTC time instead of&n; * local time.&n; * &n; * This is ugly, but preferable to the alternatives.  Otherwise we&n; * would either need to write a program to do it in /etc/rc (and risk&n; * confusion if the program gets run more than once; it would also be &n; * hard to make the program warp the clock precisely n hours)  or&n; * compile in the timezone information into the kernel.  Bad, bad....&n; *&n; *              &t;&t;&t;&t;- TYT, 1992-01-01&n; *&n; * The best thing to do is to keep the CMOS clock in universal time (UTC)&n; * as real UNIX machines always do it. This avoids all headaches about&n; * daylight saving times and warping kernel clocks.&n; */
 DECL|function|warp_clock
 r_inline
 r_static
@@ -908,7 +908,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * The first time we set the timezone, we will warp the clock so that&n; * it is ticking GMT time instead of local time.  Presumably, &n; * if someone is setting the timezone then we are running in an&n; * environment where the programs understand about timezones.&n; * This should be done at boot time in the /etc/rc script, as&n; * soon as possible, so that the clock can be set right.  Otherwise,&n; * various programs will get confused when the clock gets warped.&n; */
+multiline_comment|/*&n; * In case for some reason the CMOS clock has not already been running&n; * in UTC, but in some local time: The first time we set the timezone,&n; * we will warp the clock so that it is ticking UTC time instead of&n; * local time. Presumably, if someone is setting the timezone then we&n; * are running in an environment where the programs understand about&n; * timezones. This should be done at boot time in the /etc/rc script,&n; * as soon as possible, so that the clock can be set right. Otherwise,&n; * various programs will get confused when the clock gets warped.&n; */
 DECL|function|sys_settimeofday
 id|asmlinkage
 r_int
@@ -1616,6 +1616,7 @@ r_return
 id|time_status
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * In order to set the CMOS clock precisely, set_rtc_mmss has to be&n; * called 500 ms after the second nowtime has started, because when&n; * nowtime is written into the registers of the CMOS clock, it will&n; * jump to the next second precisely 500 ms later. Check the Motorola&n; * MC146818A or Dallas DS12887 data sheet for details.&n; */
 DECL|function|set_rtc_mmss
 r_int
 id|set_rtc_mmss
@@ -1818,20 +1819,21 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
-id|CMOS_WRITE
-c_func
-(paren
-id|save_freq_select
-comma
-id|RTC_FREQ_SELECT
-)paren
-suffix:semicolon
+multiline_comment|/* The following flags have to be released exactly in this order,&n;   * otherwise the DS12887 (popular MC146818A clone with integrated&n;   * battery and quartz) will not reset the oscillator and will not&n;   * update precisely 500 ms later. You won&squot;t find this mentioned in&n;   * the Dallas Semiconductor data sheets, but who believes data&n;   * sheets anyway ...                           -- Markus Kuhn&n;   */
 id|CMOS_WRITE
 c_func
 (paren
 id|save_control
 comma
 id|RTC_CONTROL
+)paren
+suffix:semicolon
+id|CMOS_WRITE
+c_func
+(paren
+id|save_freq_select
+comma
+id|RTC_FREQ_SELECT
 )paren
 suffix:semicolon
 r_return

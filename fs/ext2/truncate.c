@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/ext2/truncate.c&n; *&n; *  Copyright (C) 1992, 1993, 1994  Remy Card (card@masi.ibp.fr)&n; *                                  Laboratoire MASI - Institut Blaise Pascal&n; *                                  Universite Pierre et Marie Curie (Paris VI)&n; *&n; *  from&n; *&n; *  linux/fs/minix/truncate.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
+multiline_comment|/*&n; *  linux/fs/ext2/truncate.c&n; *&n; * Copyright (C) 1992, 1993, 1994, 1995&n; * Remy Card (card@masi.ibp.fr)&n; * Laboratoire MASI - Institut Blaise Pascal&n; * Universite Pierre et Marie Curie (Paris VI)&n; *&n; *  from&n; *&n; *  linux/fs/minix/truncate.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
 multiline_comment|/*&n; * Real random numbers for secure rm added 94/02/18&n; * Idea from Pierre del Perugia &lt;delperug@gla.ecoledoc.ibp.fr&gt;&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -1479,6 +1479,17 @@ id|inode
 r_int
 id|retry
 suffix:semicolon
+r_struct
+id|buffer_head
+op_star
+id|bh
+suffix:semicolon
+r_int
+id|err
+suffix:semicolon
+r_int
+id|offset
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1639,6 +1650,68 @@ id|schedule
 (paren
 )paren
 suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; * If the file is not being truncated to a block boundary, the&n;&t; * contents of the partial block following the end of the file must be&n;&t; * zero&squot;ed in case it ever become accessible again because of&n;&t; * subsequent file growth.&n;&t; */
+id|offset
+op_assign
+id|inode-&gt;i_size
+op_mod
+id|inode-&gt;i_sb-&gt;s_blocksize
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|offset
+)paren
+(brace
+id|bh
+op_assign
+id|ext2_bread
+(paren
+id|inode
+comma
+id|inode-&gt;i_size
+op_div
+id|inode-&gt;i_sb-&gt;s_blocksize
+comma
+l_int|0
+comma
+op_amp
+id|err
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|bh
+)paren
+(brace
+id|memset
+(paren
+id|bh-&gt;b_data
+op_plus
+id|offset
+comma
+l_int|0
+comma
+id|inode-&gt;i_sb-&gt;s_blocksize
+op_minus
+id|offset
+)paren
+suffix:semicolon
+id|mark_buffer_dirty
+(paren
+id|bh
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|brelse
+(paren
+id|bh
+)paren
+suffix:semicolon
+)brace
 )brace
 id|inode-&gt;i_mtime
 op_assign

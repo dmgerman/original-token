@@ -324,6 +324,8 @@ DECL|macro|SCSI_MAN_NEC
 mdefine_line|#define SCSI_MAN_NEC         1
 DECL|macro|SCSI_MAN_TOSHIBA
 mdefine_line|#define SCSI_MAN_TOSHIBA     2
+DECL|macro|SCSI_MAN_NEC_OLDCDR
+mdefine_line|#define SCSI_MAN_NEC_OLDCDR  3
 multiline_comment|/*&n;&t;The scsi_device struct contains what we know about each given scsi&n;&t;device.&n;*/
 DECL|struct|scsi_device
 r_typedef

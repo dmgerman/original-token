@@ -5,9 +5,6 @@ DECL|macro|UMSDOS_VERSION
 mdefine_line|#define UMSDOS_VERSION&t;0
 DECL|macro|UMSDOS_RELEASE
 mdefine_line|#define UMSDOS_RELEASE&t;4
-macro_line|#ifndef LINUX_FS_H
-macro_line|#include &lt;linux/fs.h&gt;
-macro_line|#endif
 multiline_comment|/* This is the file acting as a directory extension */
 DECL|macro|UMSDOS_EMD_FILE
 mdefine_line|#define UMSDOS_EMD_FILE&t;&t;&quot;--linux-.---&quot;
@@ -17,6 +14,12 @@ DECL|macro|UMSDOS_PSDROOT_NAME
 mdefine_line|#define UMSDOS_PSDROOT_NAME&t;&quot;linux&quot;
 DECL|macro|UMSDOS_PSDROOT_LEN
 mdefine_line|#define UMSDOS_PSDROOT_LEN&t;5
+macro_line|#ifndef _LINUX_TYPES_H
+macro_line|#include &lt;linux/types.h&gt;
+macro_line|#endif
+macro_line|#ifndef _LINUX_DIRENT_H
+macro_line|#include &lt;linux/dirent.h&gt;
+macro_line|#endif
 DECL|struct|umsdos_fake_info
 r_struct
 id|umsdos_fake_info
@@ -317,6 +320,9 @@ multiline_comment|/* Different macros to access struct umsdos_dirent */
 DECL|macro|EDM_ENTRY_ISUSED
 mdefine_line|#define EDM_ENTRY_ISUSED(e) ((e)-&gt;name_len!=0)
 macro_line|#ifdef __KERNEL__
+macro_line|#ifndef LINUX_FS_H
+macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#endif
 r_extern
 r_struct
 id|inode_operations

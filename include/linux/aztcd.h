@@ -1,7 +1,10 @@
-multiline_comment|/* $Id: aztcd.h,v 0.90 1995/02/02 18:14:28 root Exp $&n; * Definitions for a AztechCD268 CD-ROM interface&n; *&t;Copyright (C) 1994, 1995  Werner Zimmermann&n; *&n; *&t;based on Mitsumi CDROM driver by Martin Harriss&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  History:&t;W.Zimmermann adaption to Aztech CD268-01A Version 1.3&n; *&t;&t;October 1994 Email: zimmerma@rz.fht-esslingen.de&n; */
+multiline_comment|/* $Id: aztcd.h,v 1.0 1995/03/25 08:27:19 root Exp $&n; * Definitions for a AztechCD268 CD-ROM interface&n; *&t;Copyright (C) 1994, 1995  Werner Zimmermann&n; *&n; *&t;based on Mitsumi CDROM driver by Martin Harriss&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  History:&t;W.Zimmermann adaption to Aztech CD268-01A Version 1.3&n; *&t;&t;October 1994 Email: zimmerma@rz.fht-esslingen.de&n; */
 multiline_comment|/* *** change this to set the I/O port address */
 DECL|macro|AZT_BASE_ADDR
 mdefine_line|#define AZT_BASE_ADDR&t;&t;0x320
+multiline_comment|/* Comment this out to prevent tray from locking */
+DECL|macro|AZT_ALLOW_TRAY_LOCK
+mdefine_line|#define AZT_ALLOW_TRAY_LOCK&t;1
 multiline_comment|/* use incompatible ioctls for reading in raw and cooked mode */
 DECL|macro|AZT_PRIVATE_IOCTLS
 mdefine_line|#define AZT_PRIVATE_IOCTLS
@@ -73,6 +76,10 @@ DECL|macro|ACMD_EJECT
 mdefine_line|#define ACMD_EJECT&t;&t;0x60&t;&t;/* eject/open tray */
 DECL|macro|ACMD_CLOSE
 mdefine_line|#define ACMD_CLOSE              0x61            /* close tray */
+DECL|macro|ACMD_LOCK
+mdefine_line|#define ACMD_LOCK&t;&t;0x71&t;&t;/* lock tray closed */
+DECL|macro|ACMD_UNLOCK
+mdefine_line|#define ACMD_UNLOCK&t;&t;0x72&t;&t;/* unlock tray */
 DECL|macro|ACMD_PAUSE
 mdefine_line|#define ACMD_PAUSE&t;&t;0x80&t;&t;/* pause */
 DECL|macro|ACMD_STOP

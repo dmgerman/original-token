@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/ext2/namei.c&n; *&n; *  Copyright (C) 1992, 1993, 1994  Remy Card (card@masi.ibp.fr)&n; *                                  Laboratoire MASI - Institut Blaise Pascal&n; *                                  Universite Pierre et Marie Curie (Paris VI)&n; *&n; *  from&n; *&n; *  linux/fs/minix/namei.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
+multiline_comment|/*&n; *  linux/fs/ext2/namei.c&n; *&n; * Copyright (C) 1992, 1993, 1994, 1995&n; * Remy Card (card@masi.ibp.fr)&n; * Laboratoire MASI - Institut Blaise Pascal&n; * Universite Pierre et Marie Curie (Paris VI)&n; *&n; *  from&n; *&n; *  linux/fs/minix/namei.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;

@@ -1023,6 +1023,9 @@ op_lshift
 id|NCR5380_TIMER
 suffix:semicolon
 id|sti
+c_func
+(paren
+)paren
 suffix:semicolon
 r_return
 l_int|0

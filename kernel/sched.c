@@ -1699,22 +1699,6 @@ r_void
 r_int
 id|ltemp
 suffix:semicolon
-multiline_comment|/* last time the cmos clock got updated */
-r_static
-r_int
-id|last_rtc_update
-op_assign
-l_int|0
-suffix:semicolon
-r_extern
-r_int
-id|set_rtc_mmss
-c_func
-(paren
-r_int
-r_int
-)paren
-suffix:semicolon
 multiline_comment|/* Bump the maxerror field */
 id|time_maxerror
 op_assign
@@ -1904,7 +1888,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Clock: inserting leap second 23:59:60 GMT&bslash;n&quot;
+l_string|&quot;Clock: inserting leap second 23:59:60 UTC&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -1934,7 +1918,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Clock: deleting leap second 23:59:59 GMT&bslash;n&quot;
+l_string|&quot;Clock: deleting leap second 23:59:59 UTC&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -1950,42 +1934,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|time_status
-op_ne
-id|TIME_BAD
-op_logical_and
-id|xtime.tv_sec
-OG
-id|last_rtc_update
-op_plus
-l_int|660
-)paren
-r_if
-c_cond
-(paren
-id|set_rtc_mmss
-c_func
-(paren
-id|xtime.tv_sec
-)paren
-op_eq
-l_int|0
-)paren
-id|last_rtc_update
-op_assign
-id|xtime.tv_sec
-suffix:semicolon
-r_else
-id|last_rtc_update
-op_assign
-id|xtime.tv_sec
-op_minus
-l_int|600
-suffix:semicolon
-multiline_comment|/* do it again in one min */
 )brace
 multiline_comment|/*&n; * disregard lost ticks for now.. We don&squot;t care enough.&n; */
 DECL|function|timer_bh
@@ -2222,6 +2170,22 @@ id|timer_struct
 op_star
 id|tp
 suffix:semicolon
+multiline_comment|/* last time the cmos clock got updated */
+r_static
+r_int
+id|last_rtc_update
+op_assign
+l_int|0
+suffix:semicolon
+r_extern
+r_int
+id|set_rtc_mmss
+c_func
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
 r_int
 id|ltemp
 comma
@@ -2369,6 +2333,63 @@ c_func
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* If we have an externally synchronized Linux clock, then update&n;&t; * CMOS clock accordingly every ~11 minutes. Set_rtc_mmss() has to be&n;&t; * called as close as possible to 500 ms before the new second starts.&n;&t; */
+r_if
+c_cond
+(paren
+id|time_status
+op_ne
+id|TIME_BAD
+op_logical_and
+id|xtime.tv_sec
+OG
+id|last_rtc_update
+op_plus
+l_int|660
+op_logical_and
+id|xtime.tv_usec
+OG
+l_int|500000
+op_minus
+(paren
+id|tick
+op_rshift
+l_int|1
+)paren
+op_logical_and
+id|xtime.tv_usec
+OL
+l_int|500000
+op_plus
+(paren
+id|tick
+op_rshift
+l_int|1
+)paren
+)paren
+r_if
+c_cond
+(paren
+id|set_rtc_mmss
+c_func
+(paren
+id|xtime.tv_sec
+)paren
+op_eq
+l_int|0
+)paren
+id|last_rtc_update
+op_assign
+id|xtime.tv_sec
+suffix:semicolon
+r_else
+id|last_rtc_update
+op_assign
+id|xtime.tv_sec
+op_minus
+l_int|600
+suffix:semicolon
+multiline_comment|/* do it again in 60 s */
 id|jiffies
 op_increment
 suffix:semicolon

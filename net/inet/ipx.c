@@ -1922,6 +1922,12 @@ id|ipx-&gt;ipx_source.net
 op_eq
 id|ipx-&gt;ipx_dest.net
 )paren
+op_logical_and
+(paren
+id|ipx-&gt;ipx_source.net
+op_ne
+l_int|0L
+)paren
 )paren
 (brace
 multiline_comment|/* NB: NetWare servers lie about their hop count so we&n;&t;&t; * dropped the test based on it.  This is the best way&n;&t;&t; * to determine this is a 0 hop count packet.&n;&t;&t; */

@@ -256,6 +256,11 @@ r_return
 op_minus
 id|ENXIO
 suffix:semicolon
+id|clear_selection
+c_func
+(paren
+)paren
+suffix:semicolon
 id|size
 op_assign
 id|vcs_size
@@ -634,6 +639,11 @@ id|cons
 r_return
 op_minus
 id|ENXIO
+suffix:semicolon
+id|clear_selection
+c_func
+(paren
+)paren
 suffix:semicolon
 id|size
 op_assign

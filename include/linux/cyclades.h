@@ -274,7 +274,7 @@ mdefine_line|#define Cy_EVENT_BREAK&t;&t;3
 DECL|macro|Cy_EVENT_OPEN_WAKEUP
 mdefine_line|#define Cy_EVENT_OPEN_WAKEUP&t;4
 DECL|macro|CyMaxChipsPerCard
-mdefine_line|#define CyMaxChipsPerCard 4
+mdefine_line|#define CyMaxChipsPerCard 8
 multiline_comment|/**** CD1400 registers ****/
 DECL|macro|CyRegSize
 mdefine_line|#define CyRegSize  0x0400

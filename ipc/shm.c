@@ -3352,7 +3352,7 @@ id|shmd-&gt;vm_page_prot
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Goes through counter = (shm_rss &lt;&lt; prio) present shm pages.&n; */
+multiline_comment|/*&n; * Goes through counter = (shm_rss &gt;&gt; prio) present shm pages.&n; */
 DECL|variable|swap_id
 r_static
 r_int
@@ -3401,6 +3401,11 @@ r_int
 id|id
 comma
 id|idx
+suffix:semicolon
+r_int
+id|loop
+op_assign
+l_int|0
 comma
 id|invalid
 op_assign
@@ -3459,6 +3464,8 @@ op_amp
 id|SHM_LOCKED
 )paren
 (brace
+id|next_id
+suffix:colon
 id|swap_idx
 op_assign
 l_int|0
@@ -3471,10 +3478,24 @@ id|swap_id
 OG
 id|max_shmid
 )paren
+(brace
+r_if
+c_cond
+(paren
+id|loop
+)paren
+r_goto
+id|failed
+suffix:semicolon
+id|loop
+op_assign
+l_int|1
+suffix:semicolon
 id|swap_id
 op_assign
 l_int|0
 suffix:semicolon
+)brace
 r_goto
 id|check_id
 suffix:semicolon
@@ -3497,27 +3518,9 @@ id|idx
 op_ge
 id|shp-&gt;shm_npages
 )paren
-(brace
-id|swap_idx
-op_assign
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_increment
-id|swap_id
-OG
-id|max_shmid
-)paren
-id|swap_id
-op_assign
-l_int|0
-suffix:semicolon
 r_goto
-id|check_id
+id|next_id
 suffix:semicolon
-)brace
 id|pte_val
 c_func
 (paren
@@ -3555,6 +3558,8 @@ l_int|0
 )paren
 (brace
 multiline_comment|/* failed */
+id|failed
+suffix:colon
 r_if
 c_cond
 (paren

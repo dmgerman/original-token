@@ -4,11 +4,10 @@ DECL|macro|SBPCD_ISSUE
 mdefine_line|#define SBPCD_ISSUE 1
 macro_line|#endif SBPCD_ISSUE
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#ifdef MODULE
-macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
+macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#ifndef CONFIG_MODVERSIONS
 DECL|variable|kernel_version
 r_char
@@ -20,6 +19,7 @@ id|UTS_RELEASE
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif MODULE
+macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
@@ -3795,7 +3795,7 @@ id|i
 suffix:semicolon
 r_return
 (paren
-l_int|0
+id|i
 )paren
 suffix:semicolon
 )brace

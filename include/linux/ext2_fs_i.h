@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/include/linux/ext2_fs_i.h&n; *&n; *  Copyright (C) 1992, 1993, 1994  Remy Card (card@masi.ibp.fr)&n; *                                  Laboratoire MASI - Institut Blaise Pascal&n; *                                  Universite Pierre et Marie Curie (Paris VI)&n; *&n; *  from&n; *&n; *  linux/include/linux/minix_fs_i.h&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
+multiline_comment|/*&n; *  linux/include/linux/ext2_fs_i.h&n; *&n; * Copyright (C) 1992, 1993, 1994, 1995&n; * Remy Card (card@masi.ibp.fr)&n; * Laboratoire MASI - Institut Blaise Pascal&n; * Universite Pierre et Marie Curie (Paris VI)&n; *&n; *  from&n; *&n; *  linux/include/linux/minix_fs_i.h&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
 macro_line|#ifndef _LINUX_EXT2_FS_I
 DECL|macro|_LINUX_EXT2_FS_I
 mdefine_line|#define _LINUX_EXT2_FS_I

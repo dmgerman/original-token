@@ -81,6 +81,7 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI
 macro_line|#include &quot;../drivers/scsi/scsi.h&quot;
 macro_line|#include &quot;../drivers/scsi/hosts.h&quot;
+macro_line|#include &quot;../drivers/scsi/constants.h&quot;
 macro_line|#endif
 r_extern
 r_int
@@ -1225,6 +1226,12 @@ id|X
 c_func
 (paren
 id|scsicam_bios_param
+)paren
+comma
+id|X
+c_func
+(paren
+id|print_command
 )paren
 comma
 macro_line|#endif

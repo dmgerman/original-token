@@ -1,4 +1,4 @@
-multiline_comment|/* arcnet.c&n;&t;Written 1994-95 by Avery Pennarun, derived from skeleton.c by&n;        Donald Becker.&n;&n;&t;Contact Avery at: apenwarr@tourism.807-city.on.ca or&n;&t;RR #5 Pole Line Road, Thunder Bay, ON, Canada P7C 5M9&n;&t;&n;&t;**********************&n;&n;&t;skeleton.c Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the&n;        Director, National Security Agency.  This software may only be used&n;        and distributed according to the terms of the GNU Public License as&n;        modified by SRC, incorporated herein by reference.&n;         &n;&t;**********************&n;&n;&n;&t;v1.0 (95/02/15)&n;&t;  - Initial non-alpha release.&n;&t;&n;         &n;&t;TO DO:&n;&t;&n;         - Test in systems with NON-ARCnet network cards, just to see if&n;           autoprobe kills anything.  With any luck, it won&squot;t.  (It&squot;s pretty&n;           careful.)&n;           &t;- Except some unfriendly NE2000&squot;s die. (0.40)&n;         - cards with shared memory that can be &quot;turned off?&quot;&n;         - NFS mount freezes after several megabytes to SOSS for DOS. &n; &t;   unmount/remount works.  Is this arcnet-specific?  I don&squot;t know.&n; &t; - Add support for the various stupid bugs (&quot;I didn&squot;t read the RFC&quot;&n; &t;   syndrome) in MS Windows for Workgroups and LanMan.&n; &t;   &n; &t; - get the net people to probe last for arcnet, and first for ne2000&n; &t;   in Space.c...  &n; */
+multiline_comment|/* arcnet.c&n;&t;Written 1994-95 by Avery Pennarun, derived from skeleton.c by&n;        Donald Becker.&n;&n;&t;Contact Avery at: apenwarr@tourism.807-city.on.ca or&n;&t;RR #5 Pole Line Road, Thunder Bay, ON, Canada P7C 5M9&n;&t;&n;&t;**********************&n;&n;&t;skeleton.c Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the&n;        Director, National Security Agency.  This software may only be used&n;        and distributed according to the terms of the GNU Public License as&n;        modified by SRC, incorporated herein by reference.&n;         &n;&t;**********************&n;&n;&t;v1.01 (95/03/24)&n;&t;  - Fixed some IPX-related bugs. (Thanks to Tomasz Motylewski&n;            &lt;motyl@tichy.ch.uj.edu.pl&gt; for the patches to make arcnet work&n;            with dosemu!)&n;&t;v1.0 (95/02/15)&n;&t;  - Initial non-alpha release.&n;&t;&n;         &n;&t;TO DO:&n;&t;&n;         - Test in systems with NON-ARCnet network cards, just to see if&n;           autoprobe kills anything.  With any luck, it won&squot;t.  (It&squot;s pretty&n;           careful.)&n;           &t;- Except some unfriendly NE2000&squot;s die. (as of 0.40-ALPHA)&n;         - cards with shared memory that can be &quot;turned off?&quot;&n;         - NFS mount freezes after several megabytes to SOSS for DOS. &n; &t;   unmount/remount works.  Is this arcnet-specific?  I don&squot;t know.&n; &t; - Add support for the various stupid bugs (&quot;I didn&squot;t read the RFC&quot;&n;           syndrome) in Windows for Workgroups and LanMan.&n; */
 multiline_comment|/**************************************************************************/
 multiline_comment|/* define this if you want to use the new but possibly dangerous ioprobe&n; * If you get lockups right after status5, you probably need&n; * to undefine this.  It should make more cards probe correctly,&n; * I hope.&n; */
 DECL|macro|DANGER_PROBE
@@ -28,7 +28,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;arcnet.c:v1.00 95/02/15 Avery Pennarun &lt;apenwarr@tourism.807-city.on.ca&gt;&bslash;n&quot;
+l_string|&quot;arcnet.c:v1.01 95/03/24 Avery Pennarun &lt;apenwarr@tourism.807-city.on.ca&gt;&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/*&n;  Sources:&n;&t;Crynwr arcnet.com/arcether.com packet drivers.&n;&t;arcnet.c v0.00 dated 1/1/94 and apparently by&n;&t;&t;Donald Becker - it didn&squot;t work :)&n;&t;skeleton.c v0.05 dated 11/16/93 by Donald Becker&n;&t;&t;(from Linux Kernel 1.1.45)&n;&t;...I sure wish I had the ARCnet data sheets right about now!&n;&t;RFC&squot;s 1201 and 1051 (mostly 1201) - re: ARCnet IP packets&n;&t;net/inet/eth.c (from kernel 1.1.50) for header-building info...&n;&t;Alternate Linux ARCnet source by V.Shergin &lt;vsher@sao.stavropol.su&gt;&n;&t;Textual information and more alternate source from Joachim Koenig&n;&t;&t;&lt;jojo@repas.de&gt;&n;*/
 macro_line|#include &lt;linux/config.h&gt;
@@ -57,7 +57,7 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &quot;arp.h&quot;
-multiline_comment|/* debug levels:&n; * D_OFF&t;production&n; * D_NORMAL&t;verification&n; * D_INIT&t;show init/detect messages&n; * D_DURING&t;show messages during normal use (ie interrupts)&n; * D_TX&t;&t;show tx packets&n; * D_RX&t;&t;show tx+rx packets&n; */
+multiline_comment|/* debug levels:&n; * D_OFF&t;production&n; * D_NORMAL&t;verification&n; * D_INIT&t;show init/detect messages&n; * D_DURING&t;show messages during normal use (ie interrupts)&n; * D_DATA   show packets data from skb&squot;s, not on Arcnet card&n; * D_TX&t;&t;show tx packets&n; * D_RX&t;&t;show tx+rx packets&n; */
 DECL|macro|D_OFF
 mdefine_line|#define D_OFF&t;&t;0
 DECL|macro|D_NORMAL
@@ -68,10 +68,12 @@ DECL|macro|D_EXTRA
 mdefine_line|#define D_EXTRA&t;&t;3
 DECL|macro|D_DURING
 mdefine_line|#define D_DURING&t;4
+DECL|macro|D_DATA
+mdefine_line|#define D_DATA&t;&t;6
 DECL|macro|D_TX
-mdefine_line|#define D_TX&t;&t;5
+mdefine_line|#define D_TX&t;&t;8
 DECL|macro|D_RX
-mdefine_line|#define D_RX&t;&t;6
+mdefine_line|#define D_RX&t;&t;9
 macro_line|#ifndef NET_DEBUG
 DECL|macro|NET_DEBUG
 mdefine_line|#define NET_DEBUG &t;D_INIT
@@ -285,11 +287,11 @@ id|u_char
 id|daddr
 suffix:semicolon
 multiline_comment|/* Destination address - stored here,&n;&t;&t;&t;&t; *   but WE MUST GET RID OF IT BEFORE SENDING A&n;&t;&t;&t;&t; *   PACKET!!&n;&t;&t;&t;&t; */
-DECL|member|stupid
+DECL|member|saddr
 id|u_char
-id|stupid
+id|saddr
 suffix:semicolon
-multiline_comment|/* filler to make struct an even # of bytes */
+multiline_comment|/* Source address - neccesary for IPX protocol */
 multiline_comment|/* data that IS part of real packet */
 DECL|member|protocol_id
 id|u_char
@@ -982,6 +984,24 @@ id|printk
 c_func
 (paren
 l_string|&quot;arcnet: * Read linux/drivers/net/README.arcnet for important release notes!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;arcnet: *&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;arcnet: * This version should be stable, but e-mail me if you have any&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;arcnet: * questions, comments, or bug reports!&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
@@ -3065,6 +3085,75 @@ id|out-&gt;skb
 op_assign
 id|skb
 suffix:semicolon
+id|BUGLVL
+c_func
+(paren
+id|D_DATA
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|skb-&gt;len
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|i
+op_mod
+l_int|16
+op_eq
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n[%04hX] &quot;
+comma
+id|i
+)paren
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;%02hX &quot;
+comma
+(paren
+(paren
+r_int
+r_char
+op_star
+)paren
+id|skb-&gt;data
+)paren
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
 macro_line|#ifdef IRQ_XMIT
 r_if
 c_cond
@@ -5349,6 +5438,10 @@ id|soft-&gt;daddr
 op_assign
 id|daddr
 suffix:semicolon
+id|soft-&gt;saddr
+op_assign
+id|saddr
+suffix:semicolon
 id|BUGLVL
 c_func
 (paren
@@ -5578,6 +5671,75 @@ id|arp-&gt;ar_pln
 )paren
 suffix:semicolon
 )brace
+)brace
+id|BUGLVL
+c_func
+(paren
+id|D_DATA
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|skb-&gt;len
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|i
+op_mod
+l_int|16
+op_eq
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n[%04hX] &quot;
+comma
+id|i
+)paren
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;%02hX &quot;
+comma
+(paren
+(paren
+r_int
+r_char
+op_star
+)paren
+id|skb-&gt;data
+)paren
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
 )brace
 id|netif_rx
 c_func
@@ -5810,28 +5972,6 @@ id|skb-&gt;free
 op_assign
 l_int|1
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|skb
-op_eq
-l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;%s: Memory squeeze, dropping packet.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-id|lp-&gt;stats.rx_dropped
-op_increment
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 id|soft
 op_assign
 (paren
@@ -6064,6 +6204,10 @@ id|soft-&gt;daddr
 op_assign
 id|daddr
 suffix:semicolon
+id|soft-&gt;saddr
+op_assign
+id|saddr
+suffix:semicolon
 id|BUGLVL
 c_func
 (paren
@@ -6208,6 +6352,75 @@ id|in-&gt;numpackets
 op_assign
 l_int|0
 suffix:semicolon
+id|BUGLVL
+c_func
+(paren
+id|D_DATA
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|skb-&gt;len
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|i
+op_mod
+l_int|16
+op_eq
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n[%04hX] &quot;
+comma
+id|i
+)paren
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;%02hX &quot;
+comma
+(paren
+(paren
+r_int
+r_char
+op_star
+)paren
+id|skb-&gt;data
+)paren
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
 id|netif_rx
 c_func
 (paren
@@ -6753,6 +6966,15 @@ id|ARC_P_IPX
 suffix:semicolon
 r_break
 suffix:semicolon
+r_case
+id|ETH_P_ATALK
+suffix:colon
+id|head-&gt;protocol_id
+op_assign
+id|ARC_P_ATALK
+suffix:semicolon
+r_break
+suffix:semicolon
 r_default
 suffix:colon
 id|printk
@@ -6769,35 +6991,43 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#if 0
-multiline_comment|/*&n;&t; *&t;Set the source hardware address.&n;&t; *&t;AVE: we can&squot;t do this, so we don&squot;t.  Code below is directly&n;&t; *&t;     stolen from eth.c driver and won&squot;t work.&n;&t; */
+macro_line|#if 1
+multiline_comment|/*&n;&t; *&t;Set the source hardware address.&n;&t; *&t;AVE: we can&squot;t do this, so we don&squot;t.  Code below is directly&n;&t; *&t;     stolen from eth.c driver and won&squot;t work.&n;&t; ** TM: but for debugging I would like to have saddr in the header&n;&t; */
 r_if
 c_cond
 (paren
 id|saddr
 )paren
 (brace
-id|memcpy
-c_func
+id|head-&gt;saddr
+op_assign
 (paren
-id|eth-&gt;h_source
-comma
-id|saddr
-comma
-id|dev-&gt;addr_len
+(paren
+id|u_char
+op_star
 )paren
+id|saddr
+)paren
+(braket
+l_int|0
+)braket
 suffix:semicolon
 )brace
 r_else
-id|memcpy
-c_func
+id|head-&gt;saddr
+op_assign
 (paren
-id|eth-&gt;h_source
-comma
-id|dev-&gt;dev_addr
-comma
-id|dev-&gt;addr_len
+(paren
+id|u_char
+op_star
 )paren
+(paren
+id|dev-&gt;dev_addr
+)paren
+)paren
+(braket
+l_int|0
+)braket
 suffix:semicolon
 macro_line|#endif
 macro_line|#if 0
@@ -6810,15 +7040,9 @@ op_amp
 id|IFF_LOOPBACK
 )paren
 (brace
-id|memset
-c_func
-(paren
-id|eth-&gt;h_dest
-comma
+id|head-&gt;daddr
+op_assign
 l_int|0
-comma
-id|dev-&gt;addr_len
-)paren
 suffix:semicolon
 r_return
 id|dev-&gt;hard_header_len
@@ -7120,13 +7344,20 @@ id|ETH_P_IPX
 )paren
 suffix:semicolon
 r_case
+id|ARC_P_ATALK
+suffix:colon
+r_return
+id|htons
+c_func
+(paren
+id|ETH_P_ATALK
+)paren
+suffix:semicolon
+multiline_comment|/* appletalk, not tested */
+r_case
 id|ARC_P_LANSOFT
 suffix:colon
 multiline_comment|/* don&squot;t understand.  fall through. */
-r_case
-id|ARC_P_ATALK
-suffix:colon
-multiline_comment|/* appletalk - don&squot;t understand.  fall through. */
 r_default
 suffix:colon
 id|BUGLVL

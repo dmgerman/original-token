@@ -12,6 +12,8 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &quot;msbuffer.h&quot;
 DECL|macro|PRINTK
 mdefine_line|#define PRINTK(x)
+DECL|macro|Printk
+mdefine_line|#define Printk(x)&t;printk x
 multiline_comment|/* Well-known binary file extensions */
 DECL|variable|bin_extensions
 r_static
@@ -359,6 +361,8 @@ comma
 id|sector
 comma
 id|last_sector
+comma
+id|file_cluster
 suffix:semicolon
 r_struct
 id|buffer_head
@@ -478,6 +482,15 @@ l_int|0
 r_break
 suffix:semicolon
 )brace
+id|PRINTK
+(paren
+(paren
+l_string|&quot;cnt = %d --&quot;
+comma
+id|count
+)paren
+)paren
+suffix:semicolon
 macro_line|#ifdef DEBUG
 id|printk
 c_func
@@ -616,6 +629,11 @@ id|last
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* We must locate the last cluster of the file to add this&n;&t;   new one (nr) to the end of the link list (the FAT).&n;&t;   &n;&t;   Here file_cluster will be the number of the last cluster of the&n;&t;   file (before we add nr).&n;&t;   &n;&t;   last is the corresponding cluster number on the disk. We will&n;&t;   use last to plug the nr cluster. We will use file_cluster to&n;&t;   update the cache.&n;&t;*/
+id|file_cluster
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -648,6 +666,10 @@ op_amp
 id|current
 )paren
 suffix:semicolon
+id|file_cluster
+op_assign
+id|last
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -658,6 +680,17 @@ op_ne
 op_minus
 l_int|1
 )paren
+(brace
+id|PRINTK
+(paren
+(paren
+l_string|&quot;.&quot;
+)paren
+)paren
+suffix:semicolon
+id|file_cluster
+op_increment
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -693,6 +726,14 @@ op_minus
 id|ENOSPC
 suffix:semicolon
 )brace
+)brace
+id|PRINTK
+(paren
+(paren
+l_string|&quot; --  &quot;
+)paren
+)paren
+suffix:semicolon
 )brace
 macro_line|#ifdef DEBUG
 id|printk
@@ -867,6 +908,41 @@ id|bh
 )paren
 suffix:semicolon
 )brace
+)brace
+r_if
+c_cond
+(paren
+id|file_cluster
+op_ne
+id|inode-&gt;i_blocks
+op_div
+id|cluster_size
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;file_cluster badly computed!!! %d &lt;&gt; %ld&bslash;n&quot;
+comma
+id|file_cluster
+comma
+id|inode-&gt;i_blocks
+op_div
+id|cluster_size
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|cache_add
+c_func
+(paren
+id|inode
+comma
+id|file_cluster
+comma
+id|nr
+)paren
+suffix:semicolon
 )brace
 id|inode-&gt;i_blocks
 op_add_assign

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/include/linux/ext2_fs.h&n; *&n; *  Copyright (C) 1992, 1993, 1994  Remy Card (card@masi.ibp.fr)&n; *                                  Laboratoire MASI - Institut Blaise Pascal&n; *                                  Universite Pierre et Marie Curie (Paris VI)&n; *&n; *  from&n; *&n; *  linux/include/linux/minix_fs.h&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
+multiline_comment|/*&n; *  linux/include/linux/ext2_fs.h&n; *&n; * Copyright (C) 1992, 1993, 1994, 1995&n; * Remy Card (card@masi.ibp.fr)&n; * Laboratoire MASI - Institut Blaise Pascal&n; * Universite Pierre et Marie Curie (Paris VI)&n; *&n; *  from&n; *&n; *  linux/include/linux/minix_fs.h&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
 macro_line|#ifndef _LINUX_EXT2_FS_H
 DECL|macro|_LINUX_EXT2_FS_H
 mdefine_line|#define _LINUX_EXT2_FS_H
@@ -21,7 +21,7 @@ DECL|macro|EXT2_PREALLOCATE
 mdefine_line|#define EXT2_PREALLOCATE
 multiline_comment|/*&n; * The second extended file system version&n; */
 DECL|macro|EXT2FS_DATE
-mdefine_line|#define EXT2FS_DATE&t;&t;&quot;94/10/23&quot;
+mdefine_line|#define EXT2FS_DATE&t;&t;&quot;95/03/19&quot;
 DECL|macro|EXT2FS_VERSION
 mdefine_line|#define EXT2FS_VERSION&t;&t;&quot;0.5a&quot;
 multiline_comment|/*&n; * Debug code&n; */

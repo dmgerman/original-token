@@ -2075,6 +2075,17 @@ r_int
 r_int
 id|end
 suffix:semicolon
+multiline_comment|/* Don&squot;t swap out areas like shared memory which have their&n;&t;    own separate swapping mechanism. */
+r_if
+c_cond
+(paren
+id|vma-&gt;vm_flags
+op_amp
+id|VM_SHM
+)paren
+r_return
+l_int|0
+suffix:semicolon
 id|end
 op_assign
 id|vma-&gt;vm_end

@@ -819,6 +819,24 @@ suffix:semicolon
 r_case
 l_int|1
 suffix:colon
+multiline_comment|/* iBCS2 emulator entry point */
+r_if
+c_cond
+(paren
+id|get_fs
+c_func
+(paren
+)paren
+op_ne
+id|get_ds
+c_func
+(paren
+)paren
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
 r_return
 id|sys_shmat
 (paren

@@ -393,6 +393,16 @@ id|FD
 )brace
 comma
 (brace
+l_string|&quot;IBM F1 BIOS V1.1004/30/92&quot;
+comma
+l_int|5
+comma
+l_int|25
+comma
+id|FD
+)brace
+comma
+(brace
 l_string|&quot;FUTURE DOMAIN TMC-950&quot;
 comma
 l_int|5

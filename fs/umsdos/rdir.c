@@ -215,9 +215,10 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-DECL|function|UMSDOS_rlookup
+multiline_comment|/*&n;&t;Lookup into a non promoted directory.&n;&t;If the result is a directory, make sure we find out if it is&n;&t;a promoted one or not (calling umsdos_setup_dir_inode(inode)).&n;*/
+DECL|function|umsdos_rlookup_x
 r_int
-id|UMSDOS_rlookup
+id|umsdos_rlookup_x
 c_func
 (paren
 r_struct
@@ -238,8 +239,13 @@ id|inode
 op_star
 op_star
 id|result
-)paren
+comma
 multiline_comment|/* Will hold inode of the file, if successful */
+r_int
+id|nopseudo
+)paren
+multiline_comment|/* Don&squot;t care about pseudo root mode */
+multiline_comment|/* so locating &quot;linux&quot; will work */
 (brace
 r_int
 id|ret
@@ -329,6 +335,9 @@ c_cond
 id|inode
 op_eq
 id|pseudo_root
+op_logical_and
+op_logical_neg
+id|nopseudo
 )paren
 (brace
 multiline_comment|/* #Specification: pseudo root / DOS/linux&n;&t;&t;&t;&t;&t;Even in the real root directory (c:&bslash;), the directory&n;&t;&t;&t;&t;&t;/linux won&squot;t show&n;&t;&t;&t;&t;*/
@@ -377,6 +386,48 @@ id|dir
 suffix:semicolon
 r_return
 id|ret
+suffix:semicolon
+)brace
+DECL|function|UMSDOS_rlookup
+r_int
+id|UMSDOS_rlookup
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|dir
+comma
+r_const
+r_char
+op_star
+id|name
+comma
+r_int
+id|len
+comma
+r_struct
+id|inode
+op_star
+op_star
+id|result
+)paren
+multiline_comment|/* Will hold inode of the file, if successful */
+(brace
+r_return
+id|umsdos_rlookup_x
+c_func
+(paren
+id|dir
+comma
+id|name
+comma
+id|len
+comma
+id|result
+comma
+l_int|0
+)paren
 suffix:semicolon
 )brace
 DECL|function|UMSDOS_rrmdir

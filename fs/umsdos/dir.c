@@ -2376,7 +2376,7 @@ l_int|0
 multiline_comment|/* This is a DOS directory */
 id|ret
 op_assign
-id|msdos_lookup
+id|umsdos_rlookup_x
 c_func
 (paren
 id|dir
@@ -2386,6 +2386,8 @@ comma
 id|len
 comma
 id|result
+comma
+l_int|1
 )paren
 suffix:semicolon
 )brace

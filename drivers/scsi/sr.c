@@ -1303,7 +1303,7 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;sr_photocd: drive does not support multisession CD&squot;s&quot;
+l_string|&quot;sr_photocd: CDROM and/or the driver does not support multisession CD&squot;s&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2255,18 +2255,21 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
+id|SCSI_MAN_NEC_OLDCDR
+suffix:colon
+r_case
 id|SCSI_MAN_UNKNOWN
 suffix:colon
 r_default
 suffix:colon
-macro_line|#ifdef DEBUG
-id|printk
-c_func
-(paren
-l_string|&quot;sr_photocd: unknown drive, no special multisession code&bslash;n&quot;
-)paren
+id|sector
+op_assign
+l_int|0
 suffix:semicolon
-macro_line|#endif
+id|no_multi
+op_assign
+l_int|1
+suffix:semicolon
 r_break
 suffix:semicolon
 )brace

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/ext2/super.c&n; *&n; *  Copyright (C) 1992, 1993, 1994  Remy Card (card@masi.ibp.fr)&n; *                                  Laboratoire MASI - Institut Blaise Pascal&n; *                                  Universite Pierre et Marie Curie (Paris VI)&n; *&n; *  from&n; *&n; *  linux/fs/minix/inode.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
+multiline_comment|/*&n; *  linux/fs/ext2/super.c&n; *&n; * Copyright (C) 1992, 1993, 1994, 1995&n; * Remy Card (card@masi.ibp.fr)&n; * Laboratoire MASI - Institut Blaise Pascal&n; * Universite Pierre et Marie Curie (Paris VI)&n; *&n; *  from&n; *&n; *  linux/fs/minix/inode.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
 macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -10,6 +10,14 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
+DECL|variable|error_buf
+r_static
+r_char
+id|error_buf
+(braket
+l_int|1024
+)braket
+suffix:semicolon
 DECL|function|ext2_error
 r_void
 id|ext2_error
@@ -34,12 +42,6 @@ dot
 dot
 )paren
 (brace
-r_char
-id|buf
-(braket
-l_int|1024
-)braket
-suffix:semicolon
 id|va_list
 id|args
 suffix:semicolon
@@ -84,7 +86,7 @@ id|fmt
 suffix:semicolon
 id|vsprintf
 (paren
-id|buf
+id|error_buf
 comma
 id|fmt
 comma
@@ -146,7 +148,7 @@ id|sb-&gt;s_dev
 comma
 id|function
 comma
-id|buf
+id|error_buf
 )paren
 suffix:semicolon
 id|printk
@@ -168,7 +170,7 @@ id|sb-&gt;s_dev
 comma
 id|function
 comma
-id|buf
+id|error_buf
 )paren
 suffix:semicolon
 r_if
@@ -240,12 +242,6 @@ dot
 dot
 )paren
 (brace
-r_char
-id|buf
-(braket
-l_int|1024
-)braket
-suffix:semicolon
 id|va_list
 id|args
 suffix:semicolon
@@ -290,7 +286,7 @@ id|fmt
 suffix:semicolon
 id|vsprintf
 (paren
-id|buf
+id|error_buf
 comma
 id|fmt
 comma
@@ -320,7 +316,7 @@ id|sb-&gt;s_dev
 comma
 id|function
 comma
-id|buf
+id|error_buf
 )paren
 suffix:semicolon
 )brace
@@ -348,12 +344,6 @@ dot
 dot
 )paren
 (brace
-r_char
-id|buf
-(braket
-l_int|1024
-)braket
-suffix:semicolon
 id|va_list
 id|args
 suffix:semicolon
@@ -366,7 +356,7 @@ id|fmt
 suffix:semicolon
 id|vsprintf
 (paren
-id|buf
+id|error_buf
 comma
 id|fmt
 comma
@@ -397,7 +387,7 @@ id|sb-&gt;s_dev
 comma
 id|function
 comma
-id|buf
+id|error_buf
 )paren
 suffix:semicolon
 )brace
@@ -2779,6 +2769,111 @@ comma
 id|sb-&gt;u.ext2_sb.s_frag_size
 comma
 id|sb-&gt;s_blocksize
+)paren
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|sb-&gt;u.ext2_sb.s_blocks_per_group
+OG
+id|sb-&gt;s_blocksize
+op_star
+l_int|8
+)paren
+(brace
+id|sb-&gt;s_dev
+op_assign
+l_int|0
+suffix:semicolon
+id|unlock_super
+(paren
+id|sb
+)paren
+suffix:semicolon
+id|brelse
+(paren
+id|bh
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;EXT2-fs: #blocks per group too big: %lu&bslash;n&quot;
+comma
+id|sb-&gt;u.ext2_sb.s_blocks_per_group
+)paren
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|sb-&gt;u.ext2_sb.s_frags_per_group
+OG
+id|sb-&gt;s_blocksize
+op_star
+l_int|8
+)paren
+(brace
+id|sb-&gt;s_dev
+op_assign
+l_int|0
+suffix:semicolon
+id|unlock_super
+(paren
+id|sb
+)paren
+suffix:semicolon
+id|brelse
+(paren
+id|bh
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;EXT2-fs: #fragments per group too big: %lu&bslash;n&quot;
+comma
+id|sb-&gt;u.ext2_sb.s_frags_per_group
+)paren
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|sb-&gt;u.ext2_sb.s_inodes_per_group
+OG
+id|sb-&gt;s_blocksize
+op_star
+l_int|8
+)paren
+(brace
+id|sb-&gt;s_dev
+op_assign
+l_int|0
+suffix:semicolon
+id|unlock_super
+(paren
+id|sb
+)paren
+suffix:semicolon
+id|brelse
+(paren
+id|bh
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;EXT2-fs: #inodes per group too big: %lu&bslash;n&quot;
+comma
+id|sb-&gt;u.ext2_sb.s_inodes_per_group
 )paren
 suffix:semicolon
 r_return
