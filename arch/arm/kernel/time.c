@@ -10,12 +10,12 @@ macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;linux/timex.h&gt;
-macro_line|#include &lt;asm/irq-no.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
 r_extern
 r_int
@@ -342,11 +342,11 @@ id|update_rtc
 )paren
 suffix:semicolon
 )brace
-DECL|variable|irqtimer0
+DECL|variable|irqtimer
 r_static
 r_struct
 id|irqaction
-id|irqtimer0
+id|irqtimer
 op_assign
 (brace
 id|timer_interrupt
@@ -362,12 +362,16 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
-DECL|function|time_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|time_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|xtime.tv_sec
@@ -384,10 +388,10 @@ suffix:semicolon
 id|setup_arm_irq
 c_func
 (paren
-id|IRQ_TIMER0
+id|IRQ_TIMER
 comma
 op_amp
-id|irqtimer0
+id|irqtimer
 )paren
 suffix:semicolon
 )brace

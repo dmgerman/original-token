@@ -40,6 +40,9 @@ macro_line|#else /* version &gt;= v1.3.0 */
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#endif /* version &gt;= v1.3.0 */
+macro_line|#if LINUX_VERSION_CODE &gt;= ASC_LINUX_VERSION(2,1,95)
+macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#endif
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;sd.h&quot;
@@ -11422,7 +11425,7 @@ l_string|&quot;advansys&quot;
 op_ne
 l_int|0
 )paren
-macro_line|#else /* version &gt;= v1.3.70 */
+macro_line|#elif LINUX_VERSION_CODE &lt; ASC_LINUX_VERSION(2,1,95)
 r_if
 c_cond
 (paren
@@ -11435,6 +11438,41 @@ c_func
 id|shp-&gt;irq
 comma
 id|advansys_interrupt
+comma
+id|SA_INTERRUPT
+op_or
+(paren
+id|share_irq
+op_eq
+id|TRUE
+ques
+c_cond
+id|SA_SHIRQ
+suffix:colon
+l_int|0
+)paren
+comma
+l_string|&quot;advansys&quot;
+comma
+id|boardp
+)paren
+)paren
+op_ne
+l_int|0
+)paren
+macro_line|#else /* version &gt;= 2.1.95 */
+r_if
+c_cond
+(paren
+(paren
+id|ret
+op_assign
+id|request_irq
+c_func
+(paren
+id|shp-&gt;irq
+comma
+id|do_advansys_interrupt
 comma
 id|SA_INTERRUPT
 op_or
@@ -16080,6 +16118,60 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#if LINUX_VERSION_CODE &gt;= ASC_LINUX_VERSION(2,1,95)
+r_static
+r_void
+DECL|function|do_advansys_interrupt
+id|do_advansys_interrupt
+c_func
+(paren
+r_int
+id|irq
+comma
+r_void
+op_star
+id|dev_id
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|advansys_interrupt
+c_func
+(paren
+id|irq
+comma
+id|dev_id
+comma
+id|regs
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 macro_line|#if LINUX_VERSION_CODE &gt;= ASC_LINUX_VERSION(1,3,89)
 multiline_comment|/*&n; * Set the number of commands to queue per device for the&n; * specified host adapter.&n; */
 id|STATIC

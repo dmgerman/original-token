@@ -9,7 +9,7 @@ macro_line|#include &lt;linux/in6.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;net/checksum.h&gt;
-multiline_comment|/*&n; *&t;Verify iovec&n; *&n; *&t;Save time not doing verify_area. copy_*_user will make this work&n; *&t;in any case.&n; */
+multiline_comment|/*&n; *&t;Verify iovec. The caller must ensure that the iovec is big enough&n; *&t;to hold the message iovec.&n; *&n; *&t;Save time not doing verify_area. copy_*_user will make this work&n; *&t;in any case.&n; */
 DECL|function|verify_iovec
 r_int
 id|verify_iovec
@@ -35,16 +35,7 @@ id|mode
 (brace
 r_int
 id|size
-op_assign
-id|m-&gt;msg_iovlen
-op_star
-r_sizeof
-(paren
-r_struct
-id|iovec
-)paren
-suffix:semicolon
-r_int
+comma
 id|err
 comma
 id|ct
@@ -98,39 +89,21 @@ id|m-&gt;msg_name
 op_assign
 l_int|NULL
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|m-&gt;msg_iovlen
-OG
-id|UIO_FASTIOV
-)paren
-(brace
 id|err
 op_assign
 op_minus
-id|ENOMEM
+id|EFAULT
 suffix:semicolon
-id|iov
-op_assign
-id|kmalloc
-c_func
-(paren
 id|size
-comma
-id|GFP_KERNEL
-)paren
-suffix:semicolon
-r_if
-c_cond
+op_assign
+id|m-&gt;msg_iovlen
+op_star
+r_sizeof
 (paren
-op_logical_neg
-id|iov
+r_struct
+id|iovec
 )paren
-r_goto
-id|out
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -145,7 +118,7 @@ id|size
 )paren
 )paren
 r_goto
-id|out_free
+id|out
 suffix:semicolon
 id|m-&gt;msg_iov
 op_assign
@@ -182,29 +155,6 @@ id|out
 suffix:colon
 r_return
 id|err
-suffix:semicolon
-id|out_free
-suffix:colon
-id|err
-op_assign
-op_minus
-id|EFAULT
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|m-&gt;msg_iovlen
-OG
-id|UIO_FASTIOV
-)paren
-id|kfree
-c_func
-(paren
-id|iov
-)paren
-suffix:semicolon
-r_goto
-id|out
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Copy kernel to iovec. Returns -EFAULT on error.&n; *&n; *&t;Note: this modifies the original iovec.&n; */

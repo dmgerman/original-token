@@ -5201,7 +5201,7 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;dest_addr  dest_call src_addr   src_call  dev   lci st vs vr va   t  t1  t2  t3  hb    idle Snd-Q Rcv-Q&bslash;n&quot;
+l_string|&quot;dest_addr  dest_call src_addr   src_call  dev   lci st vs vr va   t  t1  t2  t3  hb    idle Snd-Q Rcv-Q inode&bslash;n&quot;
 )paren
 suffix:semicolon
 r_for
@@ -5304,7 +5304,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;%-10s %-9s %-5s %3.3X  %d  %d  %d  %d %3lu %3lu %3lu %3lu %3lu %3lu/%03lu %5d %5d&bslash;n&quot;
+l_string|&quot;%-10s %-9s %-5s %3.3X  %d  %d  %d  %d %3lu %3lu %3lu %3lu %3lu %3lu/%03lu %5d %5d %ld&bslash;n&quot;
 comma
 id|rose2asc
 c_func
@@ -5388,6 +5388,15 @@ c_func
 op_amp
 id|s-&gt;rmem_alloc
 )paren
+comma
+id|s-&gt;socket
+op_ne
+l_int|NULL
+ques
+c_cond
+id|s-&gt;socket-&gt;inode-&gt;i_ino
+suffix:colon
+l_int|0L
 )paren
 suffix:semicolon
 id|pos
@@ -5842,6 +5851,16 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+id|rose_loopback_init
+c_func
+(paren
+)paren
+suffix:semicolon
+id|rose_add_loopback_neigh
+c_func
+(paren
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
 id|proc_net_register
 c_func
@@ -5959,6 +5978,11 @@ id|PROC_NET_RS_ROUTES
 )paren
 suffix:semicolon
 macro_line|#endif
+id|rose_loopback_clear
+c_func
+(paren
+)paren
+suffix:semicolon
 id|rose_rt_free
 c_func
 (paren

@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &quot;scsi.h&quot;
@@ -1260,6 +1261,57 @@ id|SCpnt
 )paren
 suffix:semicolon
 )brace
+DECL|function|do_Irq_Handler
+r_static
+r_void
+id|do_Irq_Handler
+(paren
+r_int
+id|irq
+comma
+r_void
+op_star
+id|dev_id
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|Irq_Handler
+c_func
+(paren
+id|irq
+comma
+id|dev_id
+comma
+id|regs
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/****************************************************************&n; *&t;Name:&t;Psi240i_QueueCommand&n; *&n; *&t;Description:&t;Process a queued command from the SCSI manager.&n; *&n; *&t;Parameters:&t;&t;SCpnt - Pointer to SCSI command structure.&n; *&t;&t;&t;&t;&t;done  - Pointer to done function to call.&n; *&n; *&t;Returns:&t;&t;Status code.&n; *&n; ****************************************************************/
 DECL|function|Psi240i_QueueCommand
 r_int
@@ -2194,7 +2246,7 @@ id|request_irq
 (paren
 id|chipConfig.irq
 comma
-id|Irq_Handler
+id|do_Irq_Handler
 comma
 l_int|0
 comma

@@ -3,6 +3,16 @@ DECL|macro|__ASM_SOFTIRQ_H
 mdefine_line|#define __ASM_SOFTIRQ_H
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
+r_extern
+r_int
+r_int
+id|local_bh_count
+(braket
+id|NR_CPUS
+)braket
+suffix:semicolon
+DECL|macro|in_bh
+mdefine_line|#define in_bh()&t;&t;&t;(local_bh_count[smp_processor_id()] != 0)
 DECL|macro|get_active_bhs
 mdefine_line|#define get_active_bhs()&t;(bh_mask &amp; bh_active)
 DECL|macro|clear_active_bhs
@@ -97,6 +107,67 @@ id|bh_active
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef __SMP__
+macro_line|#error SMP not supported
+macro_line|#else
+DECL|function|start_bh_atomic
+r_extern
+r_inline
+r_void
+id|start_bh_atomic
+c_func
+(paren
+r_void
+)paren
+(brace
+id|local_bh_count
+(braket
+id|smp_processor_id
+c_func
+(paren
+)paren
+)braket
+op_increment
+suffix:semicolon
+id|barrier
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|end_bh_atomic
+r_extern
+r_inline
+r_void
+id|end_bh_atomic
+c_func
+(paren
+r_void
+)paren
+(brace
+id|barrier
+c_func
+(paren
+)paren
+suffix:semicolon
+id|local_bh_count
+(braket
+id|smp_processor_id
+c_func
+(paren
+)paren
+)braket
+op_decrement
+suffix:semicolon
+)brace
+multiline_comment|/* These are for the irq&squot;s testing the lock */
+DECL|macro|softirq_trylock
+mdefine_line|#define softirq_trylock(cpu)&t;(in_bh() ? 0 : (local_bh_count[smp_processor_id()]=1))
+DECL|macro|softirq_endlock
+mdefine_line|#define softirq_endlock(cpu)&t;(local_bh_count[smp_processor_id()] = 0)
+DECL|macro|synchronize_bh
+mdefine_line|#define synchronize_bh()&t;do { } while (0)
+macro_line|#endif&t;/* SMP */
 multiline_comment|/*&n; * These use a mask count to correctly handle&n; * nested disable/enable calls&n; */
 DECL|function|disable_bh
 r_extern
@@ -123,6 +194,11 @@ id|bh_mask_count
 id|nr
 )braket
 op_increment
+suffix:semicolon
+id|synchronize_bh
+c_func
+(paren
+)paren
 suffix:semicolon
 )brace
 DECL|function|enable_bh
@@ -153,56 +229,5 @@ op_lshift
 id|nr
 suffix:semicolon
 )brace
-macro_line|#ifdef __SMP__
-macro_line|#error SMP not supported
-macro_line|#else
-r_extern
-r_int
-id|__arm_bh_counter
-suffix:semicolon
-DECL|function|start_bh_atomic
-r_extern
-r_inline
-r_void
-id|start_bh_atomic
-c_func
-(paren
-r_void
-)paren
-(brace
-id|__arm_bh_counter
-op_increment
-suffix:semicolon
-id|barrier
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|end_bh_atomic
-r_extern
-r_inline
-r_void
-id|end_bh_atomic
-c_func
-(paren
-r_void
-)paren
-(brace
-id|barrier
-c_func
-(paren
-)paren
-suffix:semicolon
-id|__arm_bh_counter
-op_decrement
-suffix:semicolon
-)brace
-multiline_comment|/* These are for the irq&squot;s testing the lock */
-DECL|macro|softirq_trylock
-mdefine_line|#define softirq_trylock()&t;(__arm_bh_counter ? 0 : (__arm_bh_counter=1))
-DECL|macro|softirq_endlock
-mdefine_line|#define softirq_endlock()&t;(__arm_bh_counter = 0)
-macro_line|#endif&t;/* SMP */
 macro_line|#endif&t;/* __ASM_SOFTIRQ_H */
 eof

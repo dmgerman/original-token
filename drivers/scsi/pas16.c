@@ -1120,7 +1120,7 @@ c_func
 (paren
 id|instance-&gt;irq
 comma
-id|pas16_intr
+id|do_pas16_intr
 comma
 id|SA_INTERRUPT
 comma

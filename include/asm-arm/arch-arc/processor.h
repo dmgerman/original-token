@@ -18,6 +18,6 @@ multiline_comment|/* This decides where the kernel will search for a free chunk 
 DECL|macro|TASK_UNMAPPED_BASE
 mdefine_line|#define TASK_UNMAPPED_BASE&t;(TASK_SIZE / 3)
 DECL|macro|INIT_MMAP
-mdefine_line|#define INIT_MMAP &bslash;&n;{ &amp;init_mm, 0, 0x02000000, PAGE_SHARED, VM_READ | VM_WRITE | VM_EXEC, NULL, &amp;init_mm.mmap }
+mdefine_line|#define INIT_MMAP &bslash;&n;{ &amp;init_mm, 0, 0, PAGE_SHARED, VM_READ | VM_WRITE | VM_EXEC, NULL, &amp;init_mm.mmap }
 macro_line|#endif
 eof

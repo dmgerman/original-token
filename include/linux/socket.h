@@ -338,6 +338,8 @@ DECL|macro|AF_PACKET
 mdefine_line|#define AF_PACKET&t;17&t;/* Packet family&t;&t;*/
 DECL|macro|AF_ASH
 mdefine_line|#define AF_ASH&t;&t;18&t;/* Ash&t;&t;&t;&t;*/
+DECL|macro|AF_ECONET
+mdefine_line|#define AF_ECONET&t;19&t;/* Acorn Econet&t;&t;&t;*/
 DECL|macro|AF_MAX
 mdefine_line|#define AF_MAX&t;&t;32&t;/* For now.. */
 multiline_comment|/* Protocol families, same as address families. */

@@ -225,6 +225,8 @@ DECL|macro|NCR5380_setup
 mdefine_line|#define NCR5380_setup(instance) &bslash;&n;    NCR5380_map_name = (NCR5380_map_type)((instance)-&gt;NCR5380_instance_name)
 DECL|macro|NCR5380_intr
 mdefine_line|#define NCR5380_intr generic_NCR5380_intr
+DECL|macro|do_NCR5380_intr
+mdefine_line|#define do_NCR5380_intr do_generic_NCR5380_intr
 DECL|macro|NCR5380_queue_command
 mdefine_line|#define NCR5380_queue_command generic_NCR5380_queue_command
 DECL|macro|NCR5380_abort

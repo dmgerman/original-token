@@ -49,18 +49,6 @@ DECL|macro|ACTNEGEN
 mdefine_line|#define&t;&t;ACTNEGEN        &t;0x02
 DECL|macro|STPWEN
 mdefine_line|#define&t;&t;STPWEN          &t;0x01
-DECL|macro|SCSISIGI
-mdefine_line|#define&t;SCSISIGI        &t;&t;0x03
-DECL|macro|ATNI
-mdefine_line|#define&t;&t;ATNI            &t;0x10
-DECL|macro|SELI
-mdefine_line|#define&t;&t;SELI            &t;0x08
-DECL|macro|BSYI
-mdefine_line|#define&t;&t;BSYI            &t;0x04
-DECL|macro|REQI
-mdefine_line|#define&t;&t;REQI            &t;0x02
-DECL|macro|ACKI
-mdefine_line|#define&t;&t;ACKI            &t;0x01
 DECL|macro|SCSISIGO
 mdefine_line|#define&t;SCSISIGO        &t;&t;0x03
 DECL|macro|CDO
@@ -79,6 +67,18 @@ DECL|macro|REQO
 mdefine_line|#define&t;&t;REQO            &t;0x02
 DECL|macro|ACKO
 mdefine_line|#define&t;&t;ACKO            &t;0x01
+DECL|macro|SCSISIGI
+mdefine_line|#define&t;SCSISIGI        &t;&t;0x03
+DECL|macro|ATNI
+mdefine_line|#define&t;&t;ATNI            &t;0x10
+DECL|macro|SELI
+mdefine_line|#define&t;&t;SELI            &t;0x08
+DECL|macro|BSYI
+mdefine_line|#define&t;&t;BSYI            &t;0x04
+DECL|macro|REQI
+mdefine_line|#define&t;&t;REQI            &t;0x02
+DECL|macro|ACKI
+mdefine_line|#define&t;&t;ACKI            &t;0x01
 DECL|macro|SCSIRATE
 mdefine_line|#define&t;SCSIRATE        &t;&t;0x04
 DECL|macro|WIDEXFER
@@ -241,6 +241,24 @@ DECL|macro|SELID_MASK
 mdefine_line|#define&t;&t;SELID_MASK      &t;0xf0
 DECL|macro|ONEBIT
 mdefine_line|#define&t;&t;ONEBIT          &t;0x08
+DECL|macro|SPIOCAP
+mdefine_line|#define&t;SPIOCAP         &t;&t;0x1b
+DECL|macro|SOFT1
+mdefine_line|#define&t;&t;SOFT1           &t;0x80
+DECL|macro|SOFT0
+mdefine_line|#define&t;&t;SOFT0           &t;0x40
+DECL|macro|SOFTCMDEN
+mdefine_line|#define&t;&t;SOFTCMDEN       &t;0x20
+DECL|macro|HAS_BRDCTL
+mdefine_line|#define&t;&t;HAS_BRDCTL      &t;0x10
+DECL|macro|SEEPROM
+mdefine_line|#define&t;&t;SEEPROM         &t;0x08
+DECL|macro|EEPROM
+mdefine_line|#define&t;&t;EEPROM          &t;0x04
+DECL|macro|ROM
+mdefine_line|#define&t;&t;ROM             &t;0x02
+DECL|macro|SSPIOCPS
+mdefine_line|#define&t;&t;SSPIOCPS        &t;0x01
 DECL|macro|BRDCTL
 mdefine_line|#define&t;BRDCTL          &t;&t;0x1d
 DECL|macro|BRDDAT7
@@ -295,12 +313,10 @@ DECL|macro|ULTRA_ENB
 mdefine_line|#define&t;ULTRA_ENB       &t;&t;0x30
 DECL|macro|DISC_DSB
 mdefine_line|#define&t;DISC_DSB        &t;&t;0x32
-DECL|macro|MSG_LEN
-mdefine_line|#define&t;MSG_LEN         &t;&t;0x34
 DECL|macro|MSG_OUT
-mdefine_line|#define&t;MSG_OUT         &t;&t;0x35
+mdefine_line|#define&t;MSG_OUT         &t;&t;0x34
 DECL|macro|DMAPARAMS
-mdefine_line|#define&t;DMAPARAMS       &t;&t;0x3d
+mdefine_line|#define&t;DMAPARAMS       &t;&t;0x35
 DECL|macro|WIDEODD
 mdefine_line|#define&t;&t;WIDEODD         &t;0x40
 DECL|macro|SCSIEN
@@ -319,44 +335,28 @@ DECL|macro|FIFOFLUSH
 mdefine_line|#define&t;&t;FIFOFLUSH       &t;0x02
 DECL|macro|FIFORESET
 mdefine_line|#define&t;&t;FIFORESET       &t;0x01
-DECL|macro|SCBCOUNT
-mdefine_line|#define&t;SCBCOUNT        &t;&t;0x3e
-DECL|macro|COMP_SCBCOUNT
-mdefine_line|#define&t;COMP_SCBCOUNT   &t;&t;0x3f
-DECL|macro|QCNTMASK
-mdefine_line|#define&t;QCNTMASK        &t;&t;0x40
 DECL|macro|SEQ_FLAGS
-mdefine_line|#define&t;SEQ_FLAGS       &t;&t;0x41
-DECL|macro|RESELECTED
-mdefine_line|#define&t;&t;RESELECTED      &t;0x80
+mdefine_line|#define&t;SEQ_FLAGS       &t;&t;0x36
 DECL|macro|IDENTIFY_SEEN
-mdefine_line|#define&t;&t;IDENTIFY_SEEN   &t;0x40
-DECL|macro|TAGGED_SCB
-mdefine_line|#define&t;&t;TAGGED_SCB      &t;0x20
+mdefine_line|#define&t;&t;IDENTIFY_SEEN   &t;0x80
+DECL|macro|SCBPTR_VALID
+mdefine_line|#define&t;&t;SCBPTR_VALID    &t;0x20
 DECL|macro|DPHASE
 mdefine_line|#define&t;&t;DPHASE          &t;0x10
-DECL|macro|PAGESCBS
-mdefine_line|#define&t;&t;PAGESCBS        &t;0x04
+DECL|macro|AMTARGET
+mdefine_line|#define&t;&t;AMTARGET        &t;0x08
 DECL|macro|WIDE_BUS
 mdefine_line|#define&t;&t;WIDE_BUS        &t;0x02
 DECL|macro|TWIN_BUS
 mdefine_line|#define&t;&t;TWIN_BUS        &t;0x01
 DECL|macro|SAVED_TCL
-mdefine_line|#define&t;SAVED_TCL       &t;&t;0x42
+mdefine_line|#define&t;SAVED_TCL       &t;&t;0x37
 DECL|macro|SG_COUNT
-mdefine_line|#define&t;SG_COUNT        &t;&t;0x43
+mdefine_line|#define&t;SG_COUNT        &t;&t;0x38
 DECL|macro|SG_NEXT
-mdefine_line|#define&t;SG_NEXT         &t;&t;0x44
-DECL|macro|WAITING_SCBH
-mdefine_line|#define&t;WAITING_SCBH    &t;&t;0x48
-DECL|macro|SAVED_LINKPTR
-mdefine_line|#define&t;SAVED_LINKPTR   &t;&t;0x49
-DECL|macro|SAVED_SCBPTR
-mdefine_line|#define&t;SAVED_SCBPTR    &t;&t;0x4a
-DECL|macro|REJBYTE
-mdefine_line|#define&t;REJBYTE         &t;&t;0x4b
+mdefine_line|#define&t;SG_NEXT         &t;&t;0x39
 DECL|macro|LASTPHASE
-mdefine_line|#define&t;LASTPHASE       &t;&t;0x4c
+mdefine_line|#define&t;LASTPHASE       &t;&t;0x3d
 DECL|macro|P_MESGIN
 mdefine_line|#define&t;&t;P_MESGIN        &t;0xe0
 DECL|macro|PHASE_MASK
@@ -379,48 +379,58 @@ DECL|macro|P_BUSFREE
 mdefine_line|#define&t;&t;P_BUSFREE       &t;0x01
 DECL|macro|P_DATAOUT
 mdefine_line|#define&t;&t;P_DATAOUT       &t;0x00
-DECL|macro|MSGIN_EXT_LEN
-mdefine_line|#define&t;MSGIN_EXT_LEN   &t;&t;0x4d
-DECL|macro|MSGIN_EXT_OPCODE
-mdefine_line|#define&t;MSGIN_EXT_OPCODE&t;&t;0x4e
-DECL|macro|MSGIN_EXT_BYTES
-mdefine_line|#define&t;MSGIN_EXT_BYTES &t;&t;0x4f
+DECL|macro|WAITING_SCBH
+mdefine_line|#define&t;WAITING_SCBH    &t;&t;0x3e
 DECL|macro|DISCONNECTED_SCBH
-mdefine_line|#define&t;DISCONNECTED_SCBH&t;&t;0x52
+mdefine_line|#define&t;DISCONNECTED_SCBH&t;&t;0x3f
 DECL|macro|FREE_SCBH
-mdefine_line|#define&t;FREE_SCBH       &t;&t;0x53
+mdefine_line|#define&t;FREE_SCBH       &t;&t;0x40
 DECL|macro|HSCB_ADDR
-mdefine_line|#define&t;HSCB_ADDR       &t;&t;0x54
-DECL|macro|CUR_SCBID
-mdefine_line|#define&t;CUR_SCBID       &t;&t;0x58
+mdefine_line|#define&t;HSCB_ADDR       &t;&t;0x41
+DECL|macro|SCBID_ADDR
+mdefine_line|#define&t;SCBID_ADDR      &t;&t;0x45
+DECL|macro|TMODE_CMDADDR
+mdefine_line|#define&t;TMODE_CMDADDR   &t;&t;0x49
+DECL|macro|KERNEL_QINPOS
+mdefine_line|#define&t;KERNEL_QINPOS   &t;&t;0x4d
+DECL|macro|QINPOS
+mdefine_line|#define&t;QINPOS          &t;&t;0x4e
+DECL|macro|QOUTPOS
+mdefine_line|#define&t;QOUTPOS         &t;&t;0x4f
+DECL|macro|TMODE_CMDADDR_NEXT
+mdefine_line|#define&t;TMODE_CMDADDR_NEXT&t;&t;0x50
 DECL|macro|ARG_1
-mdefine_line|#define&t;ARG_1           &t;&t;0x59
+mdefine_line|#define&t;ARG_1           &t;&t;0x51
 DECL|macro|RETURN_1
-mdefine_line|#define&t;RETURN_1        &t;&t;0x59
+mdefine_line|#define&t;RETURN_1        &t;&t;0x51
 DECL|macro|SEND_MSG
 mdefine_line|#define&t;&t;SEND_MSG        &t;0x80
 DECL|macro|SEND_SENSE
 mdefine_line|#define&t;&t;SEND_SENSE      &t;0x40
 DECL|macro|SEND_REJ
 mdefine_line|#define&t;&t;SEND_REJ        &t;0x20
+DECL|macro|MSGOUT_PHASEMIS
+mdefine_line|#define&t;&t;MSGOUT_PHASEMIS &t;0x10
+DECL|macro|LAST_MSG
+mdefine_line|#define&t;LAST_MSG        &t;&t;0x52
 DECL|macro|SCSICONF
 mdefine_line|#define&t;SCSICONF        &t;&t;0x5a
-DECL|macro|CMDOUTCNT
-mdefine_line|#define&t;CMDOUTCNT       &t;&t;0x5a
-DECL|macro|SCSICONF2
-mdefine_line|#define&t;SCSICONF2       &t;&t;0x5b
+DECL|macro|TERM_ENB
+mdefine_line|#define&t;&t;TERM_ENB        &t;0x80
 DECL|macro|RESET_SCSI
 mdefine_line|#define&t;&t;RESET_SCSI      &t;0x40
-DECL|macro|FIFODEPTH
-mdefine_line|#define&t;FIFODEPTH       &t;&t;0x5b
+DECL|macro|HWSCSIID
+mdefine_line|#define&t;&t;HWSCSIID        &t;0x0f
+DECL|macro|HSCSIID
+mdefine_line|#define&t;&t;HSCSIID         &t;0x07
 DECL|macro|HOSTCONF
 mdefine_line|#define&t;HOSTCONF        &t;&t;0x5d
 DECL|macro|HA_274_BIOSCTRL
 mdefine_line|#define&t;HA_274_BIOSCTRL &t;&t;0x5f
-DECL|macro|BIOSDISABLED
-mdefine_line|#define&t;&t;BIOSDISABLED    &t;0x30
 DECL|macro|BIOSMODE
 mdefine_line|#define&t;&t;BIOSMODE        &t;0x30
+DECL|macro|BIOSDISABLED
+mdefine_line|#define&t;&t;BIOSDISABLED    &t;0x30
 DECL|macro|CHANNEL_B_PRIMARY
 mdefine_line|#define&t;&t;CHANNEL_B_PRIMARY&t;0x08
 DECL|macro|SEQCTL
@@ -475,6 +485,12 @@ DECL|macro|FUNCTION1
 mdefine_line|#define&t;FUNCTION1       &t;&t;0x6e
 DECL|macro|STACK
 mdefine_line|#define&t;STACK           &t;&t;0x6f
+DECL|macro|BCTL
+mdefine_line|#define&t;BCTL            &t;&t;0x84
+DECL|macro|ACE
+mdefine_line|#define&t;&t;ACE             &t;0x08
+DECL|macro|ENABLE
+mdefine_line|#define&t;&t;ENABLE          &t;0x01
 DECL|macro|DSCOMMAND
 mdefine_line|#define&t;DSCOMMAND       &t;&t;0x84
 DECL|macro|CACHETHEN
@@ -485,12 +501,6 @@ DECL|macro|MPARCKEN
 mdefine_line|#define&t;&t;MPARCKEN        &t;0x20
 DECL|macro|EXTREQLCK
 mdefine_line|#define&t;&t;EXTREQLCK       &t;0x10
-DECL|macro|BCTL
-mdefine_line|#define&t;BCTL            &t;&t;0x84
-DECL|macro|ACE
-mdefine_line|#define&t;&t;ACE             &t;0x08
-DECL|macro|ENABLE
-mdefine_line|#define&t;&t;ENABLE          &t;0x01
 DECL|macro|BUSTIME
 mdefine_line|#define&t;BUSTIME         &t;&t;0x85
 DECL|macro|BOFF
@@ -539,20 +549,20 @@ DECL|macro|DATA_OVERRUN
 mdefine_line|#define&t;&t;DATA_OVERRUN    &t;0xe1
 DECL|macro|MSGIN_PHASEMIS
 mdefine_line|#define&t;&t;MSGIN_PHASEMIS  &t;0xd1
-DECL|macro|MSG_BUFFER_BUSY
-mdefine_line|#define&t;&t;MSG_BUFFER_BUSY &t;0xc1
+DECL|macro|TRACEPOINT2
+mdefine_line|#define&t;&t;TRACEPOINT2     &t;0xc1
+DECL|macro|TRACEPOINT
+mdefine_line|#define&t;&t;TRACEPOINT      &t;0xb1
 DECL|macro|AWAITING_MSG
 mdefine_line|#define&t;&t;AWAITING_MSG    &t;0xa1
-DECL|macro|ABORT_CMDCMPLT
-mdefine_line|#define&t;&t;ABORT_CMDCMPLT  &t;0x91
 DECL|macro|RESIDUAL
 mdefine_line|#define&t;&t;RESIDUAL        &t;0x81
 DECL|macro|BAD_STATUS
 mdefine_line|#define&t;&t;BAD_STATUS      &t;0x71
 DECL|macro|REJECT_MSG
 mdefine_line|#define&t;&t;REJECT_MSG      &t;0x61
-DECL|macro|NO_MATCH_BUSY
-mdefine_line|#define&t;&t;NO_MATCH_BUSY   &t;0x51
+DECL|macro|ABORT_REQUESTED
+mdefine_line|#define&t;&t;ABORT_REQUESTED &t;0x51
 DECL|macro|EXTENDED_MSG
 mdefine_line|#define&t;&t;EXTENDED_MSG    &t;0x41
 DECL|macro|NO_MATCH
@@ -573,18 +583,10 @@ DECL|macro|BAD_PHASE
 mdefine_line|#define&t;&t;BAD_PHASE       &t;0x01
 DECL|macro|SEQINT
 mdefine_line|#define&t;&t;SEQINT          &t;0x01
-DECL|macro|ERROR
-mdefine_line|#define&t;ERROR           &t;&t;0x92
-DECL|macro|PARERR
-mdefine_line|#define&t;&t;PARERR          &t;0x08
-DECL|macro|ILLOPCODE
-mdefine_line|#define&t;&t;ILLOPCODE       &t;0x04
-DECL|macro|ILLSADDR
-mdefine_line|#define&t;&t;ILLSADDR        &t;0x02
-DECL|macro|ILLHADDR
-mdefine_line|#define&t;&t;ILLHADDR        &t;0x01
 DECL|macro|CLRINT
 mdefine_line|#define&t;CLRINT          &t;&t;0x92
+DECL|macro|CLRPARERR
+mdefine_line|#define&t;&t;CLRPARERR       &t;0x10
 DECL|macro|CLRBRKADRINT
 mdefine_line|#define&t;&t;CLRBRKADRINT    &t;0x08
 DECL|macro|CLRSCSIINT
@@ -593,6 +595,22 @@ DECL|macro|CLRCMDINT
 mdefine_line|#define&t;&t;CLRCMDINT       &t;0x02
 DECL|macro|CLRSEQINT
 mdefine_line|#define&t;&t;CLRSEQINT       &t;0x01
+DECL|macro|ERROR
+mdefine_line|#define&t;ERROR           &t;&t;0x92
+DECL|macro|PCIERRSTAT
+mdefine_line|#define&t;&t;PCIERRSTAT      &t;0x40
+DECL|macro|MPARERR
+mdefine_line|#define&t;&t;MPARERR         &t;0x20
+DECL|macro|DPARERR
+mdefine_line|#define&t;&t;DPARERR         &t;0x10
+DECL|macro|SQPARERR
+mdefine_line|#define&t;&t;SQPARERR        &t;0x08
+DECL|macro|ILLOPCODE
+mdefine_line|#define&t;&t;ILLOPCODE       &t;0x04
+DECL|macro|ILLSADDR
+mdefine_line|#define&t;&t;ILLSADDR        &t;0x02
+DECL|macro|ILLHADDR
+mdefine_line|#define&t;&t;ILLHADDR        &t;0x01
 DECL|macro|DFCNTRL
 mdefine_line|#define&t;DFCNTRL         &t;&t;0x93
 DECL|macro|DFSTATUS
@@ -625,8 +643,6 @@ DECL|macro|QOUTFIFO
 mdefine_line|#define&t;QOUTFIFO        &t;&t;0x9d
 DECL|macro|QOUTCNT
 mdefine_line|#define&t;QOUTCNT         &t;&t;0x9e
-DECL|macro|SCB_BASE
-mdefine_line|#define&t;SCB_BASE        &t;&t;0xa0
 DECL|macro|SCB_CONTROL
 mdefine_line|#define&t;SCB_CONTROL     &t;&t;0xa0
 DECL|macro|MK_MESSAGE
@@ -635,14 +651,12 @@ DECL|macro|DISCENB
 mdefine_line|#define&t;&t;DISCENB         &t;0x40
 DECL|macro|TAG_ENB
 mdefine_line|#define&t;&t;TAG_ENB         &t;0x20
-DECL|macro|MUST_DMAUP_SCB
-mdefine_line|#define&t;&t;MUST_DMAUP_SCB  &t;0x10
-DECL|macro|ABORT_SCB
-mdefine_line|#define&t;&t;ABORT_SCB       &t;0x08
 DECL|macro|DISCONNECTED
 mdefine_line|#define&t;&t;DISCONNECTED    &t;0x04
 DECL|macro|SCB_TAG_TYPE
 mdefine_line|#define&t;&t;SCB_TAG_TYPE    &t;0x03
+DECL|macro|SCB_BASE
+mdefine_line|#define&t;SCB_BASE        &t;&t;0xa0
 DECL|macro|SCB_TCL
 mdefine_line|#define&t;SCB_TCL         &t;&t;0xa1
 DECL|macro|TID
@@ -665,8 +679,6 @@ DECL|macro|SCB_DATAPTR
 mdefine_line|#define&t;SCB_DATAPTR     &t;&t;0xac
 DECL|macro|SCB_DATACNT
 mdefine_line|#define&t;SCB_DATACNT     &t;&t;0xb0
-DECL|macro|SCB_LINKED_NEXT
-mdefine_line|#define&t;SCB_LINKED_NEXT &t;&t;0xb3
 DECL|macro|SCB_CMDPTR
 mdefine_line|#define&t;SCB_CMDPTR      &t;&t;0xb4
 DECL|macro|SCB_CMDLEN
@@ -697,18 +709,41 @@ DECL|macro|ADSEL
 mdefine_line|#define&t;&t;ADSEL           &t;0x1e
 DECL|macro|DI_2840
 mdefine_line|#define&t;&t;DI_2840         &t;0x01
-DECL|macro|MAX_OFFSET_16BIT
-mdefine_line|#define&t;MAX_OFFSET_16BIT&t;0x08
+DECL|macro|CMD_GROUP_CODE_SHIFT
+mdefine_line|#define&t;CMD_GROUP_CODE_SHIFT&t;0x05
 DECL|macro|BUS_8_BIT
 mdefine_line|#define&t;BUS_8_BIT&t;0x00
+DECL|macro|QOUTFIFO_OFFSET
+mdefine_line|#define&t;QOUTFIFO_OFFSET&t;0x01
+DECL|macro|CMD_GROUP2_BYTE_DELTA
+mdefine_line|#define&t;CMD_GROUP2_BYTE_DELTA&t;0xfa
+DECL|macro|MAX_OFFSET_8BIT
+mdefine_line|#define&t;MAX_OFFSET_8BIT&t;0x0f
+DECL|macro|BUS_16_BIT
+mdefine_line|#define&t;BUS_16_BIT&t;0x01
+DECL|macro|QINFIFO_OFFSET
+mdefine_line|#define&t;QINFIFO_OFFSET&t;0x02
+DECL|macro|CMD_GROUP5_BYTE_DELTA
+mdefine_line|#define&t;CMD_GROUP5_BYTE_DELTA&t;0x0b
+DECL|macro|MAX_OFFSET_16BIT
+mdefine_line|#define&t;MAX_OFFSET_16BIT&t;0x08
+DECL|macro|UNTAGGEDSCB_OFFSET
+mdefine_line|#define&t;UNTAGGEDSCB_OFFSET&t;0x00
 DECL|macro|SCB_LIST_NULL
 mdefine_line|#define&t;SCB_LIST_NULL&t;0xff
 DECL|macro|SG_SIZEOF
 mdefine_line|#define&t;SG_SIZEOF&t;0x08
-DECL|macro|MAX_OFFSET_8BIT
-mdefine_line|#define&t;MAX_OFFSET_8BIT&t;0x0f
+DECL|macro|CMD_GROUP4_BYTE_DELTA
+mdefine_line|#define&t;CMD_GROUP4_BYTE_DELTA&t;0x04
+DECL|macro|CMD_GROUP0_BYTE_DELTA
+mdefine_line|#define&t;CMD_GROUP0_BYTE_DELTA&t;0xfc
+DECL|macro|HOST_MSG
+mdefine_line|#define&t;HOST_MSG&t;0xff
 DECL|macro|BUS_32_BIT
 mdefine_line|#define&t;BUS_32_BIT&t;0x02
-DECL|macro|BUS_16_BIT
-mdefine_line|#define&t;BUS_16_BIT&t;0x01
+multiline_comment|/* Downloaded Constant Definitions */
+DECL|macro|TMODE_NUMCMDS
+mdefine_line|#define&t;TMODE_NUMCMDS&t;0x01
+DECL|macro|QCNTMASK
+mdefine_line|#define&t;QCNTMASK&t;0x00
 eof

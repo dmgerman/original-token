@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
+macro_line|#incldue &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -580,6 +581,24 @@ suffix:semicolon
 r_static
 r_void
 id|AM53C974_intr
+c_func
+(paren
+r_int
+id|irq
+comma
+r_void
+op_star
+id|dev_id
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+suffix:semicolon
+r_static
+r_void
+id|do_AM53C974_intr
 c_func
 (paren
 r_int
@@ -2473,7 +2492,7 @@ c_func
 (paren
 id|instance-&gt;irq
 comma
-id|AM53C974_intr
+id|do_AM53C974_intr
 comma
 id|SA_INTERRUPT
 comma
@@ -3450,6 +3469,59 @@ suffix:semicolon
 id|main_running
 op_assign
 l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/************************************************************************&n;* Function : AM53C974_intr(int irq, void *dev_id, struct pt_regs *regs) *&n;*                                                                       *&n;* Purpose : interrupt handler                                           *&n;*                                                                       *&n;* Inputs : irq - interrupt line, regs - ?                               *&n;*                                                                       *&n;* Returns : nothing                                                     *&n;************************************************************************/
+DECL|function|do_AM53C974_intr
+r_static
+r_void
+id|do_AM53C974_intr
+c_func
+(paren
+r_int
+id|irq
+comma
+r_void
+op_star
+id|dev_id
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|AM53C974_intr
+c_func
+(paren
+id|irq
+comma
+id|dev_id
+comma
+id|regs
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/************************************************************************&n;* Function : AM53C974_intr(int irq, void *dev_id, struct pt_regs *regs) *&n;*                                                                       *&n;* Purpose : interrupt handler                                           *&n;*                                                                       *&n;* Inputs : irq - interrupt line, regs - ?                               *&n;*                                                                       *&n;* Returns : nothing                                                     *&n;************************************************************************/

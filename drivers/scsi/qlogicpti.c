@@ -15,6 +15,7 @@ macro_line|#include &quot;qlogicpti.h&quot;
 macro_line|#include &lt;asm/sbus.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;asm/machines.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
@@ -3021,6 +3022,24 @@ op_star
 id|regs
 )paren
 suffix:semicolon
+r_static
+r_void
+id|do_qlogicpti_intr_handler
+c_func
+(paren
+r_int
+id|irq
+comma
+r_void
+op_star
+id|dev_id
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+suffix:semicolon
 multiline_comment|/* Detect all PTI Qlogic ISP&squot;s in the machine. */
 DECL|function|__initfunc
 id|__initfunc
@@ -3542,7 +3561,7 @@ c_func
 (paren
 id|qpti-&gt;qhost-&gt;irq
 comma
-id|qlogicpti_intr_handler
+id|do_qlogicpti_intr_handler
 comma
 id|SA_SHIRQ
 comma
@@ -3603,7 +3622,7 @@ c_func
 (paren
 id|qpti-&gt;qhost-&gt;irq
 comma
-id|qlogicpti_intr_handler
+id|do_qlogicpti_intr_handler
 comma
 (paren
 id|SA_SHIRQ
@@ -5315,6 +5334,58 @@ op_or
 id|host_status
 op_lshift
 l_int|16
+)paren
+suffix:semicolon
+)brace
+DECL|function|do_qlogicpti_intr_handler
+r_static
+r_void
+id|do_qlogicpti_intr_handler
+c_func
+(paren
+r_int
+id|irq
+comma
+r_void
+op_star
+id|dev_id
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|qlogicpti_intr_handler
+c_func
+(paren
+id|irq
+comma
+id|dev_id
+comma
+id|regs
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 )brace

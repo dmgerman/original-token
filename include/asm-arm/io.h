@@ -7,10 +7,15 @@ macro_line|#include &lt;asm/arch/mmu.h&gt;
 macro_line|#include &lt;asm/arch/io.h&gt;
 multiline_comment|/* unsigned long virt_to_phys(void *x) */
 DECL|macro|virt_to_phys
-mdefine_line|#define virt_to_phys(x)&t;&t;__virt_to_phys((unsigned long)(x))
+mdefine_line|#define virt_to_phys(x)&t;&t;(__virt_to_phys((unsigned long)(x)))
 multiline_comment|/* void *phys_to_virt(unsigned long x) */
 DECL|macro|phys_to_virt
 mdefine_line|#define phys_to_virt(x)&t;&t;((void *)(__phys_to_virt((unsigned long)(x))))
+multiline_comment|/*&n; * Virtual view &lt;-&gt; DMA view memory address translations&n; * virt_to_bus: Used to translate the virtual address to an&n; *              address suitable to be passed to set_dma_addr&n; * bus_to_virt: Used to convert an address for DMA operations&n; *              to an address that the kernel can use.&n; */
+DECL|macro|virt_to_bus
+mdefine_line|#define virt_to_bus(x)&t;(__virt_to_bus((unsigned long)(x)))
+DECL|macro|bus_to_virt
+mdefine_line|#define bus_to_virt(x)&t;((void *)(__bus_to_virt(x)))
 multiline_comment|/*&n; * These macros actually build the multi-value IO function prototypes&n; */
 DECL|macro|__OUTS
 mdefine_line|#define __OUTS(s,i,x)&t;extern void outs##s(unsigned int port, const void *from, int len);

@@ -18,6 +18,7 @@ macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#ifdef __mips__
 macro_line|#include &lt;asm/cachectl.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#endif
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &quot;scsi.h&quot;
@@ -1072,6 +1073,71 @@ op_assign
 id|z
 suffix:semicolon
 )brace
+)brace
+r_void
+id|eata_int_handler
+c_func
+(paren
+r_int
+comma
+r_void
+op_star
+comma
+r_struct
+id|pt_regs
+op_star
+)paren
+suffix:semicolon
+DECL|function|do_eata_int_handler
+r_void
+id|do_eata_int_handler
+c_func
+(paren
+r_int
+id|irq
+comma
+r_void
+op_star
+id|dev_id
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|eata_int_handler
+c_func
+(paren
+id|irq
+comma
+id|dev_id
+comma
+id|regs
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 )brace
 DECL|function|eata_int_handler
 r_void
@@ -8175,7 +8241,7 @@ r_void
 op_star
 )paren
 (paren
-id|eata_int_handler
+id|do_eata_int_handler
 )paren
 comma
 id|SA_INTERRUPT

@@ -1,5 +1,6 @@
 multiline_comment|/*&n; * sound/gus_card.c&n; *&n; * Detection routine for the Gravis Ultrasound.&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Frank van de Pol : Fixed GUS MAX interrupt handling, enabled simultanious&n; *                    usage of CS4231A codec, GUS wave and MIDI for GUS MAX.&n; *&n; * Status:&n; *              Tested... &n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
@@ -39,6 +40,12 @@ id|gus_dma
 op_assign
 l_int|0
 suffix:semicolon
+DECL|variable|gus_no_wave_dma
+r_int
+id|gus_no_wave_dma
+op_assign
+l_int|0
+suffix:semicolon
 r_extern
 r_int
 id|gus_wave_volume
@@ -57,6 +64,16 @@ id|gus_pnp_flag
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef CONFIG_GUS16
+DECL|variable|db16
+r_static
+r_int
+id|db16
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Has a Gus16 AD1848 on it */
+macro_line|#endif
 DECL|function|attach_gus_card
 r_void
 id|attach_gus_card
@@ -535,6 +552,30 @@ op_star
 )paren
 id|hw_config-&gt;slots
 (braket
+l_int|1
+)braket
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_GUS16
+r_if
+c_cond
+(paren
+id|db16
+)paren
+id|adintr
+c_func
+(paren
+id|irq
+comma
+(paren
+r_void
+op_star
+)paren
+id|hw_config-&gt;slots
+(braket
 l_int|3
 )braket
 comma
@@ -827,14 +868,16 @@ id|gus16
 op_assign
 l_int|0
 suffix:semicolon
-DECL|variable|db16
+macro_line|#ifdef CONFIG_GUSMAX
+DECL|variable|no_wave_dma
 r_static
 r_int
-id|db16
+id|no_wave_dma
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Has a Gus16 AD1848 on it */
+multiline_comment|/* Set if no dma is to be used for the &n;&t;&t;&t;&t;   wave table (GF1 chip) */
+macro_line|#endif
 id|MODULE_PARM
 c_func
 (paren
@@ -883,6 +926,17 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_GUSMAX
+id|MODULE_PARM
+c_func
+(paren
+id|no_wave_dma
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_GUS16
 id|MODULE_PARM
 c_func
 (paren
@@ -891,6 +945,7 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 DECL|function|init_module
 r_int
 id|init_module
@@ -957,6 +1012,12 @@ id|config.card_subtype
 op_assign
 id|type
 suffix:semicolon
+macro_line|#ifdef CONFIG_GUSMAX
+id|gus_no_wave_dma
+op_assign
+id|no_wave_dma
+suffix:semicolon
+macro_line|#endif
 macro_line|#if defined(CONFIG_GUS16)
 r_if
 c_cond

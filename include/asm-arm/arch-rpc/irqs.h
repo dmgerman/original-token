@@ -31,6 +31,18 @@ DECL|macro|IRQ_KEYBOARDTX
 mdefine_line|#define IRQ_KEYBOARDTX&t;&t;14
 DECL|macro|IRQ_KEYBOARDRX
 mdefine_line|#define IRQ_KEYBOARDRX&t;&t;15
+DECL|macro|IRQ_DMA0
+mdefine_line|#define IRQ_DMA0&t;&t;16
+DECL|macro|IRQ_DMA1
+mdefine_line|#define IRQ_DMA1&t;&t;17
+DECL|macro|IRQ_DMA2
+mdefine_line|#define IRQ_DMA2&t;&t;18
+DECL|macro|IRQ_DMA3
+mdefine_line|#define IRQ_DMA3&t;&t;19
+DECL|macro|IRQ_DMAS0
+mdefine_line|#define IRQ_DMAS0&t;&t;20
+DECL|macro|IRQ_DMAS1
+mdefine_line|#define IRQ_DMAS1&t;&t;21
 DECL|macro|FIQ_FLOPPYDATA
 mdefine_line|#define FIQ_FLOPPYDATA&t;&t;0
 DECL|macro|FIQ_ECONET
@@ -41,4 +53,6 @@ DECL|macro|FIQ_EXPANSIONCARD
 mdefine_line|#define FIQ_EXPANSIONCARD&t;6
 DECL|macro|FIQ_FORCE
 mdefine_line|#define FIQ_FORCE&t;&t;7
+DECL|macro|IRQ_TIMER
+mdefine_line|#define IRQ_TIMER&t;&t;IRQ_TIMER0
 eof

@@ -966,11 +966,7 @@ id|base
 suffix:semicolon
 id|dev-&gt;base_address
 (braket
-id|PCI_BASE_INDEX
-c_func
-(paren
-id|off
-)paren
+id|idx
 )braket
 op_assign
 id|handle

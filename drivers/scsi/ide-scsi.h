@@ -35,6 +35,22 @@ id|host
 suffix:semicolon
 r_extern
 r_int
+id|idescsi_ioctl
+(paren
+id|Scsi_Device
+op_star
+id|dev
+comma
+r_int
+id|cmd
+comma
+r_void
+op_star
+id|arg
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|idescsi_queue
 (paren
 id|Scsi_Cmnd
@@ -91,6 +107,6 @@ id|parm
 )paren
 suffix:semicolon
 DECL|macro|IDESCSI
-mdefine_line|#define IDESCSI  {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;name:            &quot;idescsi&quot;,&t;&t;/* name&t;&t;*/&t;&t;&bslash;&n;&t;detect:          idescsi_detect,&t;/* detect&t;*/&t;&t;&bslash;&n;&t;release:         idescsi_release,&t;/* release&t;*/&t;&t;&bslash;&n;&t;info:            idescsi_info,&t;&t;/* info&t;&t;*/&t;&t;&bslash;&n;&t;queuecommand:    idescsi_queue,&t;&t;/* queuecommand */&t;&t;&bslash;&n;&t;abort:           idescsi_abort,&t;&t;/* abort&t;*/&t;&t;&bslash;&n;&t;reset:           idescsi_reset,&t;&t;/* reset&t;*/&t;&t;&bslash;&n;&t;bios_param:      idescsi_bios,&t;&t;/* bios_param&t;*/&t;&t;&bslash;&n;&t;can_queue:       10,&t;&t;&t;/* can_queue&t;*/&t;&t;&bslash;&n;&t;this_id:         -1,&t;&t;&t;/* this_id&t;*/&t;&t;&bslash;&n;&t;sg_tablesize:    256,&t;&t;&t;/* sg_tablesize&t;*/&t;&t;&bslash;&n;&t;cmd_per_lun:     5,&t;&t;&t;/* cmd_per_lun&t;*/&t;&t;&bslash;&n;&t;use_clustering:  DISABLE_CLUSTERING&t;/* clustering&t;*/&t;&t;&bslash;&n;}
+mdefine_line|#define IDESCSI  {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;name:            &quot;idescsi&quot;,&t;&t;/* name&t;&t;*/&t;&t;&bslash;&n;&t;detect:          idescsi_detect,&t;/* detect&t;*/&t;&t;&bslash;&n;&t;release:         idescsi_release,&t;/* release&t;*/&t;&t;&bslash;&n;&t;info:            idescsi_info,&t;&t;/* info&t;&t;*/&t;&t;&bslash;&n;&t;ioctl:           idescsi_ioctl,&t;&t;/* ioctl        */&t;&t;&bslash;&n;&t;queuecommand:    idescsi_queue,&t;&t;/* queuecommand */&t;&t;&bslash;&n;&t;abort:           idescsi_abort,&t;&t;/* abort&t;*/&t;&t;&bslash;&n;&t;reset:           idescsi_reset,&t;&t;/* reset&t;*/&t;&t;&bslash;&n;&t;bios_param:      idescsi_bios,&t;&t;/* bios_param&t;*/&t;&t;&bslash;&n;&t;can_queue:       10,&t;&t;&t;/* can_queue&t;*/&t;&t;&bslash;&n;&t;this_id:         -1,&t;&t;&t;/* this_id&t;*/&t;&t;&bslash;&n;&t;sg_tablesize:    256,&t;&t;&t;/* sg_tablesize&t;*/&t;&t;&bslash;&n;&t;cmd_per_lun:     5,&t;&t;&t;/* cmd_per_lun&t;*/&t;&t;&bslash;&n;&t;use_clustering:  DISABLE_CLUSTERING,&t;/* clustering&t;*/&t;&t;&bslash;&n;&t;emulated:        1&t;&t;&t;/* emulated     */&t;&t;&bslash;&n;}
 macro_line|#endif /* IDESCSI_H */
 eof

@@ -132,6 +132,8 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
+macro_line|#if 0 
+singleline_comment|//def ARCH_IDLE_OK
 r_if
 c_cond
 (paren
@@ -145,6 +147,7 @@ id|proc_idle
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 id|run_task_queue
 c_func
 (paren
@@ -429,7 +432,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Control: %04X  Table: %08X  DAC: %08X&quot;
+l_string|&quot;Control: %04X  Table: %08X  DAC: %08X  &quot;
 comma
 id|ctrl
 comma

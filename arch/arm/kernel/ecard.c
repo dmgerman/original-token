@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/arch/arm/kernel/ecard.c&n; *&n; *  Find all installed expansion cards, and handle interrupts from them.&n; *&n; * Copyright 1995,1996,1997 Russell King&n; *&n; * Created from information from Acorns RiscOS3 PRMs&n; *&n; * 08-Dec-1996&t;RMK&t;Added code for the 9&squot;th expansion card - the ether podule slot.&n; * 06-May-1997  RMK&t;Added blacklist for cards whose loader doesn&squot;t work.&n; * 12-Sep-1997&t;RMK&t;Created new handling of interrupt enables/disables - cards can&n; *&t;&t;&t;now register their own routine to control interrupts (recommended).&n; * 29-Sep-1997&t;RMK&t;Expansion card interrupt hardware not being re-enabled on reset from&n; *&t;&t;&t;Linux. (Caused cards not to respond under RiscOS without hard reset).&n; */
+multiline_comment|/*&n; * linux/arch/arm/kernel/ecard.c&n; *&n; *  Find all installed expansion cards, and handle interrupts from them.&n; *&n; * Copyright 1995,1996,1997 Russell King&n; *&n; * Created from information from Acorns RiscOS3 PRMs&n; *&n; * 08-Dec-1996&t;RMK&t;Added code for the 9&squot;th expansion card - the ether podule slot.&n; * 06-May-1997  RMK&t;Added blacklist for cards whose loader doesn&squot;t work.&n; * 12-Sep-1997&t;RMK&t;Created new handling of interrupt enables/disables - cards can&n; *&t;&t;&t;now register their own routine to control interrupts (recommended).&n; * 29-Sep-1997&t;RMK&t;Expansion card interrupt hardware not being re-enabled on reset from&n; *&t;&t;&t;Linux. (Caused cards not to respond under RiscOS without hard reset).&n; * 15-Feb-1998&t;RMK&t;Added DMA support&n; */
 DECL|macro|ECARD_C
 mdefine_line|#define ECARD_C
 macro_line|#include &lt;linux/config.h&gt;
@@ -8,12 +8,13 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#include &lt;asm/irq-no.h&gt;
-macro_line|#include &lt;asm/ecard.h&gt;
-macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/arch/irq.h&gt;
+macro_line|#include &lt;asm/ecard.h&gt;
+macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#ifdef CONFIG_ARCH_ARC
 macro_line|#include &lt;asm/arch/oldlatches.h&gt;
 macro_line|#else
@@ -119,15 +120,18 @@ comma
 id|oak_scsi_loader
 )paren
 comma
-multiline_comment|/* Unsupported cards with no loader */
-id|BLACKLIST_NOLOADER
-c_func
-(paren
+multiline_comment|/* Supported cards with broken loader */
+(brace
 id|MANU_ALSYSTEMS
 comma
 id|PROD_ALSYS_SCSIATAPI
-)paren
 comma
+id|noloader
+comma
+l_string|&quot;AlSystems PowerTec SCSI (loader blacklisted)&quot;
+)brace
+comma
+multiline_comment|/* Unsupported cards with no loader */
 id|BLACKLIST_NOLOADER
 c_func
 (paren
@@ -194,12 +198,6 @@ r_static
 r_int
 r_int
 id|have_expmask
-suffix:semicolon
-DECL|variable|kmem
-r_static
-r_int
-r_int
-id|kmem
 suffix:semicolon
 DECL|function|ecard_def_irq_enable
 r_static
@@ -601,64 +599,6 @@ id|fiqnr
 )paren
 suffix:semicolon
 )brace
-)brace
-DECL|function|ecard_malloc
-r_static
-r_void
-op_star
-id|ecard_malloc
-c_func
-(paren
-r_int
-id|len
-)paren
-(brace
-r_int
-id|r
-suffix:semicolon
-id|len
-op_assign
-(paren
-id|len
-op_plus
-l_int|3
-)paren
-op_amp
-op_complement
-l_int|3
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|kmem
-)paren
-(brace
-id|r
-op_assign
-id|kmem
-suffix:semicolon
-id|kmem
-op_add_assign
-id|len
-suffix:semicolon
-r_return
-(paren
-r_void
-op_star
-)paren
-id|r
-suffix:semicolon
-)brace
-r_else
-r_return
-id|kmalloc
-c_func
-(paren
-id|len
-comma
-id|GFP_KERNEL
-)paren
-suffix:semicolon
 )brace
 DECL|function|ecard_irq_noexpmask
 r_static
@@ -1205,6 +1145,7 @@ id|laddr
 id|byte
 op_assign
 id|inb
+c_func
 (paren
 id|ec-&gt;podaddr
 op_plus
@@ -1238,6 +1179,7 @@ id|len
 id|byte
 op_assign
 id|inb
+c_func
 (paren
 id|ec-&gt;podaddr
 op_plus
@@ -1836,7 +1778,7 @@ op_assign
 (paren
 id|loader_t
 )paren
-id|ecard_malloc
+id|kmalloc
 c_func
 (paren
 id|c_len
@@ -1845,6 +1787,8 @@ c_func
 op_amp
 id|excd
 )paren
+comma
+id|GFP_KERNEL
 )paren
 suffix:semicolon
 id|ecard_readbytes
@@ -2000,7 +1944,7 @@ op_star
 id|ec
 comma
 id|card_type_t
-id|memc
+id|type
 comma
 id|card_speed_t
 id|speed
@@ -2024,20 +1968,34 @@ suffix:colon
 r_case
 l_int|3
 suffix:colon
-r_return
-(paren
-id|memc
-ques
+r_switch
 c_cond
-id|MEMCECIO_BASE
+(paren
+id|type
+)paren
+(brace
+r_case
+id|ECARD_MEMC
 suffix:colon
+r_return
+id|MEMCECIO_BASE
+op_plus
+(paren
+id|ec-&gt;slot_no
+op_lshift
+l_int|12
+)paren
+suffix:semicolon
+r_case
+id|ECARD_IOC
+suffix:colon
+r_return
 id|IOCECIO_BASE
 op_plus
 (paren
 id|speed
 op_lshift
 l_int|17
-)paren
 )paren
 op_plus
 (paren
@@ -2046,6 +2004,12 @@ op_lshift
 l_int|12
 )paren
 suffix:semicolon
+r_default
+suffix:colon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 macro_line|#ifdef IOCEC4IO_BASE
 r_case
 l_int|4
@@ -2059,20 +2023,28 @@ suffix:colon
 r_case
 l_int|7
 suffix:colon
-r_return
-(paren
-id|memc
-ques
+r_switch
 c_cond
-l_int|0
+(paren
+id|type
+)paren
+(brace
+r_case
+id|ECARD_MEMC
 suffix:colon
+r_return
+l_int|0
+suffix:semicolon
+r_case
+id|ECARD_IOC
+suffix:colon
+r_return
 id|IOCEC4IO_BASE
 op_plus
 (paren
 id|speed
 op_lshift
 l_int|17
-)paren
 )paren
 op_plus
 (paren
@@ -2085,6 +2057,12 @@ op_lshift
 l_int|12
 )paren
 suffix:semicolon
+r_default
+suffix:colon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 macro_line|#endif
 macro_line|#ifdef MEMCEC8IO_BASE
 r_case
@@ -2100,7 +2078,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Probe for an expansion card.&n; *&n; * If bit 1 of the first byte of the card is set,&n; * then the card does not exist.&n; */
-DECL|function|ecard_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|ecard_probe
@@ -2110,6 +2091,7 @@ id|card
 comma
 r_int
 id|freeslot
+)paren
 )paren
 (brace
 id|ecard_t
@@ -2156,7 +2138,7 @@ id|ecard_address
 (paren
 id|ec
 comma
-l_int|0
+id|ECARD_IOC
 comma
 id|ECARD_SYNC
 )paren
@@ -2204,13 +2186,15 @@ id|freeslot
 suffix:semicolon
 id|ec-&gt;irq
 op_assign
-op_minus
-l_int|1
+id|NO_IRQ
 suffix:semicolon
 id|ec-&gt;fiq
 op_assign
-op_minus
-l_int|1
+id|NO_IRQ
+suffix:semicolon
+id|ec-&gt;dma
+op_assign
+id|NO_DMA
 suffix:semicolon
 id|ec-&gt;cld.ecld
 op_assign
@@ -2378,6 +2362,22 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+id|ec-&gt;irq
+op_assign
+l_int|32
+op_plus
+id|card
+suffix:semicolon
+macro_line|#if 0
+multiline_comment|/* We don&squot;t support FIQs on expansion cards at the moment */
+id|ec-&gt;fiq
+op_assign
+l_int|96
+op_plus
+id|card
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_ARCH_RPC
 r_if
 c_cond
 (paren
@@ -2386,33 +2386,27 @@ op_ne
 l_int|8
 )paren
 (brace
-id|ec-&gt;irq
+multiline_comment|/* On RiscPC, only first two slots have DMA capability&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|card
+OL
+l_int|2
+)paren
+id|ec-&gt;dma
 op_assign
-l_int|32
+l_int|2
 op_plus
 id|card
 suffix:semicolon
-macro_line|#if 0
-id|ec-&gt;fiq
-op_assign
-l_int|96
-op_plus
-id|card
-suffix:semicolon
-macro_line|#endif
 )brace
 r_else
-(brace
 id|ec-&gt;irq
 op_assign
 l_int|11
 suffix:semicolon
-id|ec-&gt;fiq
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-)brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2572,15 +2566,16 @@ l_int|NULL
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Initialise the expansion card system.&n; * Locate all hardware - interrupt management and&n; * actual cards.&n; */
-DECL|function|ecard_init
-r_int
-r_int
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_void
 id|ecard_init
 c_func
 (paren
-r_int
-r_int
-id|start_mem
+r_void
+)paren
 )paren
 (brace
 r_int
@@ -2589,17 +2584,6 @@ comma
 id|nc
 op_assign
 l_int|0
-suffix:semicolon
-id|kmem
-op_assign
-(paren
-id|start_mem
-op_or
-l_int|3
-)paren
-op_amp
-op_complement
-l_int|3
 suffix:semicolon
 id|memset
 (paren
@@ -2689,7 +2673,7 @@ id|ecard_numirqcards
 op_assign
 id|nc
 suffix:semicolon
-multiline_comment|/*&n;&t; * Now probe other cards with different interrupt lines&n;&t; */
+multiline_comment|/* Now probe other cards with different interrupt lines&n;&t; */
 macro_line|#ifdef MEMCEC8IO_BASE
 r_if
 c_cond
@@ -2737,7 +2721,6 @@ l_string|&quot;Could not allocate interrupt for expansion cards&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-id|kmem
 suffix:semicolon
 )brace
 macro_line|#ifdef HAS_EXPMASK
@@ -2756,17 +2739,6 @@ macro_line|#endif
 id|oldlatch_init
 (paren
 )paren
-suffix:semicolon
-id|start_mem
-op_assign
-id|kmem
-suffix:semicolon
-id|kmem
-op_assign
-l_int|0
-suffix:semicolon
-r_return
-id|start_mem
 suffix:semicolon
 )brace
 eof

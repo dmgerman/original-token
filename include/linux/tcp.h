@@ -171,9 +171,17 @@ id|TCP_LISTEN
 comma
 DECL|enumerator|TCP_CLOSING
 id|TCP_CLOSING
+comma
 multiline_comment|/* now a valid state */
+DECL|enumerator|TCP_MAX_STATES
+id|TCP_MAX_STATES
+multiline_comment|/* Leave at the end! */
 )brace
 suffix:semicolon
+DECL|macro|TCP_STATE_MASK
+mdefine_line|#define TCP_STATE_MASK&t;0xF
+DECL|macro|TCP_ACTION_FIN
+mdefine_line|#define TCP_ACTION_FIN&t;1 &lt;&lt; 7
 r_enum
 (brace
 DECL|enumerator|TCPF_ESTABLISHED

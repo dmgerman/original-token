@@ -17,14 +17,15 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/utsname.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
-macro_line|#include &lt;asm/pgtable.h&gt;
-macro_line|#include &lt;asm/arch/mmu.h&gt;
-macro_line|#include &lt;asm/procinfo.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/procinfo.h&gt;
+macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/arch/mmu.h&gt;
 DECL|struct|drive_info_struct
 DECL|member|dummy
 DECL|variable|drive_info
@@ -500,6 +501,7 @@ macro_line|#else
 DECL|macro|setup_initrd
 mdefine_line|#define setup_initrd(p,m)
 macro_line|#endif
+macro_line|#ifdef IOEB_BASE
 DECL|function|check_ioeb_present
 r_static
 r_inline
@@ -534,8 +536,13 @@ op_or_assign
 id|F_IOEB
 suffix:semicolon
 )brace
+macro_line|#else
+DECL|macro|check_ioeb_present
+mdefine_line|#define check_ioeb_present()
+macro_line|#endif
 DECL|function|get_processor_type
 r_static
+r_inline
 r_void
 id|get_processor_type
 (paren
@@ -643,6 +650,7 @@ suffix:semicolon
 )brace
 DECL|macro|COMMAND_LINE_SIZE
 mdefine_line|#define COMMAND_LINE_SIZE 256
+multiline_comment|/* Can this be initdata?  --pb&n; *  command_line can be, saved_command_line can&squot;t though&n; */
 DECL|variable|command_line
 r_static
 r_char
@@ -663,7 +671,10 @@ id|saved_command_line
 id|COMMAND_LINE_SIZE
 )braket
 suffix:semicolon
-DECL|function|setup_arch
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|setup_arch
 c_func
@@ -682,6 +693,7 @@ r_int
 r_int
 op_star
 id|memory_end_p
+)paren
 )paren
 (brace
 r_static

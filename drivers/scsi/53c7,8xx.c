@@ -73,6 +73,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;53c7,8xx.h&quot;
@@ -301,6 +302,24 @@ suffix:semicolon
 r_static
 r_void
 id|NCR53c7x0_intr
+c_func
+(paren
+r_int
+id|irq
+comma
+r_void
+op_star
+id|dev_id
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+suffix:semicolon
+r_static
+r_void
+id|do_NCR53c7x0_intr
 c_func
 (paren
 r_int
@@ -2735,7 +2754,7 @@ c_func
 (paren
 id|host-&gt;irq
 comma
-id|NCR53c7x0_intr
+id|do_NCR53c7x0_intr
 comma
 id|SA_SHIRQ
 comma
@@ -2753,7 +2772,7 @@ c_func
 (paren
 id|host-&gt;irq
 comma
-id|NCR53c7x0_intr
+id|do_NCR53c7x0_intr
 comma
 id|SA_INTERRUPT
 comma
@@ -16274,6 +16293,59 @@ id|DSTAT_DFE
 suffix:semicolon
 )brace
 )brace
+)brace
+multiline_comment|/*&n; * Function : do_NCR53c7x0_intr()&n; *&n; * Purpose : A quick wrapper function added to grab the io_request_lock&n; *      spin lock prior to entering the real interrupt handler.  Needed&n; *      for 2.1.95 and above.&n; */
+r_static
+r_void
+DECL|function|do_NCR53c7x0_intr
+id|do_NCR53c7x0_intr
+c_func
+(paren
+r_int
+id|irq
+comma
+r_void
+op_star
+id|dev_id
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|NCR53c7x0_intr
+c_func
+(paren
+id|irq
+comma
+id|dev_id
+comma
+id|regs
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function : static void NCR53c7x0_intr (int irq, void *dev_id, struct pt_regs * regs)&n; *&n; * Purpose : handle NCR53c7x0 interrupts for all NCR devices sharing&n; *&t;the same IRQ line.  &n; * &n; * Inputs : Since we&squot;re using the SA_INTERRUPT interrupt handler&n; *&t;semantics, irq indicates the interrupt which invoked &n; *&t;this handler.  &n; */
 r_static

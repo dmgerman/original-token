@@ -344,10 +344,6 @@ id|request
 op_star
 id|rq
 suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -581,10 +577,6 @@ op_star
 id|rq
 op_assign
 id|hwgroup-&gt;rq
-suffix:semicolon
-r_int
-r_int
-id|flags
 suffix:semicolon
 r_int
 id|error
@@ -942,10 +934,6 @@ id|rq
 op_assign
 op_amp
 id|hwgroup-&gt;wrq
-suffix:semicolon
-r_int
-r_int
-id|flags
 suffix:semicolon
 r_int
 id|error

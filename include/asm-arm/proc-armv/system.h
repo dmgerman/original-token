@@ -127,12 +127,8 @@ r_void
 (brace
 )brace
 multiline_comment|/*&n; * We can wait for an interrupt...&n; */
-macro_line|#if 0
-mdefine_line|#define proc_idle()&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&bslash;&n;&quot;&t;mcr&t;p15, 0, %0, c15, c8, 2&quot;&t;&bslash;&n;&t;  : : &quot;r&quot; (0));&t;&t;&t;&bslash;&n;&t;} while (0)
-macro_line|#else
 DECL|macro|proc_idle
-mdefine_line|#define proc_idle()
-macro_line|#endif
+mdefine_line|#define proc_idle()&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&bslash;&n;&quot;&t;mcr&t;p15, 0, %0, c15, c8, 2&quot;&t;&bslash;&n;&t;  : : &quot;r&quot; (0));&t;&t;&t;&bslash;&n;&t;} while (0)
 multiline_comment|/*&n; * A couple of speedups for the ARM&n; */
 multiline_comment|/*&n; * Save the current interrupt enable state &amp; disable IRQs&n; */
 DECL|macro|__save_flags_cli

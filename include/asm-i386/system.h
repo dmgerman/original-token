@@ -34,9 +34,9 @@ mdefine_line|#define _set_base(addr,base) &bslash;&n;__asm__(&quot;movw %%dx,%0&
 DECL|macro|_set_limit
 mdefine_line|#define _set_limit(addr,limit) &bslash;&n;__asm__(&quot;movw %%dx,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;rorl $16,%%edx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %1,%%dh&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;andb $0xf0,%%dh&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;orb %%dh,%%dl&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %%dl,%1&quot; &bslash;&n;&t;: /* no output */ &bslash;&n;&t;:&quot;m&quot; (*(addr)), &bslash;&n;&t; &quot;m&quot; (*((addr)+6)), &bslash;&n;&t; &quot;d&quot; (limit) &bslash;&n;&t;:&quot;dx&quot;)
 DECL|macro|set_base
-mdefine_line|#define set_base(ldt,base) _set_base( ((char *)&amp;(ldt)) , base )
+mdefine_line|#define set_base(ldt,base) _set_base( ((char *)&amp;(ldt)) , (base) )
 DECL|macro|set_limit
-mdefine_line|#define set_limit(ldt,limit) _set_limit( ((char *)&amp;(ldt)) , (limit-1)&gt;&gt;12 )
+mdefine_line|#define set_limit(ldt,limit) _set_limit( ((char *)&amp;(ldt)) , ((limit)-1)&gt;&gt;12 )
 DECL|function|_get_base
 r_static
 r_inline

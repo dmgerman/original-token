@@ -616,7 +616,7 @@ c_func
 (paren
 id|instance-&gt;irq
 comma
-id|t128_intr
+id|do_t128_intr
 comma
 id|SA_INTERRUPT
 comma

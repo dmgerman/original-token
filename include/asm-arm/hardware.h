@@ -189,6 +189,14 @@ DECL|macro|IOMD_ECTCR
 mdefine_line|#define IOMD_ECTCR&t;__IOMD(0x0C8)
 DECL|macro|IOMD_DMAEXT
 mdefine_line|#define IOMD_DMAEXT&t;__IOMD(0x0CC)
+DECL|macro|DMA_EXT_IO0
+mdefine_line|#define DMA_EXT_IO0&t;1
+DECL|macro|DMA_EXT_IO1
+mdefine_line|#define DMA_EXT_IO1&t;2
+DECL|macro|DMA_EXT_IO2
+mdefine_line|#define DMA_EXT_IO2&t;4
+DECL|macro|DMA_EXT_IO3
+mdefine_line|#define DMA_EXT_IO3&t;8
 DECL|macro|IOMD_IO0CURA
 mdefine_line|#define IOMD_IO0CURA&t;__IOMD(0x100)
 DECL|macro|IOMD_IO0ENDA
@@ -281,6 +289,10 @@ DECL|macro|IOMD_DMAREQ
 mdefine_line|#define IOMD_DMAREQ&t;__IOMD(0x1F4)
 DECL|macro|IOMD_DMAMASK
 mdefine_line|#define IOMD_DMAMASK&t;__IOMD(0x1F8)
+DECL|macro|DMA_END_S
+mdefine_line|#define DMA_END_S&t;(1 &lt;&lt; 31)
+DECL|macro|DMA_END_L
+mdefine_line|#define DMA_END_L&t;(1 &lt;&lt; 30)
 DECL|macro|DMA_CR_C
 mdefine_line|#define DMA_CR_C&t;0x80
 DECL|macro|DMA_CR_D

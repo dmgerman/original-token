@@ -6355,7 +6355,7 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;dest_addr src_addr   dev  st  vs  vr  va    t1     t2     t3      idle   n2  rtt wnd paclen   Snd-Q Rcv-Q&bslash;n&quot;
+l_string|&quot;dest_addr src_addr   dev  st  vs  vr  va    t1     t2     t3      idle   n2  rtt wnd paclen   Snd-Q Rcv-Q inode&bslash;n&quot;
 )paren
 suffix:semicolon
 r_for
@@ -6546,7 +6546,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot; %5d %5d&bslash;n&quot;
+l_string|&quot; %5d %5d %ld&bslash;n&quot;
 comma
 id|atomic_read
 c_func
@@ -6561,6 +6561,15 @@ c_func
 op_amp
 id|ax25-&gt;sk-&gt;rmem_alloc
 )paren
+comma
+id|ax25-&gt;sk-&gt;socket
+op_ne
+l_int|NULL
+ques
+c_cond
+id|ax25-&gt;sk-&gt;socket-&gt;inode-&gt;i_ino
+suffix:colon
+l_int|0L
 )paren
 suffix:semicolon
 )brace

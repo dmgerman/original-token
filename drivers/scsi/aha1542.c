@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &quot;scsi.h&quot;
@@ -248,6 +249,42 @@ r_struct
 id|Scsi_Host
 op_star
 id|shost
+)paren
+suffix:semicolon
+r_static
+r_void
+id|aha1542_intr_handle
+c_func
+(paren
+r_int
+id|irq
+comma
+r_void
+op_star
+id|dev_id
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+suffix:semicolon
+r_static
+r_void
+id|do_aha1542_intr_handle
+c_func
+(paren
+r_int
+id|irq
+comma
+r_void
+op_star
+id|dev_id
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 suffix:semicolon
 DECL|macro|aha1542_intr_reset
@@ -1104,6 +1141,59 @@ r_return
 l_int|0
 suffix:semicolon
 multiline_comment|/* 0 = not ok */
+)brace
+multiline_comment|/* A quick wrapper for do_aha1542_intr_handle to grab the spin lock */
+DECL|function|do_aha1542_intr_handle
+r_static
+r_void
+id|do_aha1542_intr_handle
+c_func
+(paren
+r_int
+id|irq
+comma
+r_void
+op_star
+id|dev_id
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|aha1542_intr_handle
+c_func
+(paren
+id|irq
+comma
+id|dev_id
+comma
+id|regs
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/* A &quot;high&quot; level interrupt handler */
 DECL|function|aha1542_intr_handle
@@ -5077,7 +5167,7 @@ c_func
 (paren
 id|irq_level
 comma
-id|aha1542_intr_handle
+id|do_aha1542_intr_handle
 comma
 l_int|0
 comma

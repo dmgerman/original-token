@@ -308,7 +308,7 @@ op_or
 (paren
 id|white
 op_lshift
-l_int|8
+l_int|16
 )paren
 )paren
 suffix:semicolon

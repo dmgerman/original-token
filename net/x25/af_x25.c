@@ -4567,6 +4567,10 @@ c_cond
 id|sk-&gt;state
 op_ne
 id|TCP_LISTEN
+op_logical_and
+id|sk-&gt;state
+op_ne
+id|TCP_CLOSE
 )paren
 r_return
 op_minus
@@ -4597,6 +4601,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|sk-&gt;state
+op_eq
+id|TCP_CLOSE
+op_logical_or
 id|sk-&gt;protinfo.x25-&gt;neighbour-&gt;extended
 )paren
 (brace
@@ -4904,7 +4912,7 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;dest_addr  src_addr   dev   lci st vs vr va   t  t2 t21 t22 t23 Snd-Q Rcv-Q&bslash;n&quot;
+l_string|&quot;dest_addr  src_addr   dev   lci st vs vr va   t  t2 t21 t22 t23 Snd-Q Rcv-Q inode&bslash;n&quot;
 )paren
 suffix:semicolon
 r_for
@@ -4956,7 +4964,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;%-10s %-10s %-5s %3.3X  %d  %d  %d  %d %3lu %3lu %3lu %3lu %3lu %5d %5d&bslash;n&quot;
+l_string|&quot;%-10s %-10s %-5s %3.3X  %d  %d  %d  %d %3lu %3lu %3lu %3lu %3lu %5d %5d %ld&bslash;n&quot;
 comma
 (paren
 id|s-&gt;protinfo.x25-&gt;dest_addr.x25_addr
@@ -5037,6 +5045,15 @@ c_func
 op_amp
 id|s-&gt;rmem_alloc
 )paren
+comma
+id|s-&gt;socket
+op_ne
+l_int|NULL
+ques
+c_cond
+id|s-&gt;socket-&gt;inode-&gt;i_ino
+suffix:colon
+l_int|0L
 )paren
 suffix:semicolon
 id|pos

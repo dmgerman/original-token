@@ -28,6 +28,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#ifdef CONFIG_AMIGA
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
@@ -259,8 +260,27 @@ op_star
 id|host
 )paren
 suffix:semicolon
+r_static
 r_void
 id|NCR53c7x0_intr
+c_func
+(paren
+r_int
+id|irq
+comma
+r_void
+op_star
+id|dev_id
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+suffix:semicolon
+r_static
+r_void
+id|do_NCR53c7x0_intr
 c_func
 (paren
 r_int
@@ -2512,7 +2532,7 @@ c_func
 (paren
 id|IRQ_MVME16x_SCSI
 comma
-id|NCR53c7x0_intr
+id|do_NCR53c7x0_intr
 comma
 l_int|0
 comma
@@ -2536,7 +2556,7 @@ c_func
 (paren
 id|IRQ_MVME16x_FLY
 comma
-id|NCR53c7x0_intr
+id|do_NCR53c7x0_intr
 comma
 l_int|0
 comma
@@ -2597,7 +2617,7 @@ c_func
 (paren
 id|IRQ_AMIGA_PORTS
 comma
-id|NCR53c7x0_intr
+id|do_NCR53c7x0_intr
 comma
 l_int|0
 comma
@@ -2616,7 +2636,7 @@ c_func
 (paren
 id|host-&gt;irq
 comma
-id|NCR53c7x0_intr
+id|do_NCR53c7x0_intr
 comma
 id|SA_INTERRUPT
 comma
@@ -14551,7 +14571,60 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
+multiline_comment|/* Function : NCR53c7x0_intr&n; *&n; * Purpose : grab the global io_request_lock spin lock before entering the&n; *      real interrupt routine.&n; */
+r_static
+r_void
+DECL|function|do_NCR53c7x0_intr
+id|do_NCR53c7x0_intr
+(paren
+r_int
+id|irq
+comma
+r_void
+op_star
+id|dev_id
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|NCR53c7x0_intr
+c_func
+(paren
+id|irq
+comma
+id|dev_id
+comma
+id|regs
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * Function : static void NCR53c7x0_intr (int irq, void *dev_id, struct pt_regs * regs)&n; *&n; * Purpose : handle NCR53c7x0 interrupts for all NCR devices sharing&n; *&t;the same IRQ line.  &n; * &n; * Inputs : Since we&squot;re using the SA_INTERRUPT interrupt handler&n; *&t;semantics, irq indicates the interrupt which invoked &n; *&t;this handler.  &n; *&n; * On the 710 we simualte an INTFLY with a script interrupt, and the&n; * script interrupt handler will call back to this function.&n; */
+r_static
 r_void
 DECL|function|NCR53c7x0_intr
 id|NCR53c7x0_intr

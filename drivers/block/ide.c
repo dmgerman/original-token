@@ -5239,10 +5239,6 @@ op_star
 id|regs
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
 id|ide_hwgroup_t
 op_star
 id|hwgroup

@@ -80,6 +80,8 @@ DECL|macro|PARAMS_BASE
 mdefine_line|#define PARAMS_BASE&t;&t;(PAGE_OFFSET + PARAMS_OFFSET)
 DECL|macro|Z_PARAMS_BASE
 mdefine_line|#define Z_PARAMS_BASE&t;&t;(RAM_START + PARAMS_OFFSET)
+DECL|macro|SAFE_ADDR
+mdefine_line|#define SAFE_ADDR&t;&t;0x00000000&t;/* ROM */
 macro_line|#else
 DECL|macro|VIDC_SND_BASE
 mdefine_line|#define VIDC_SND_BASE&t;&t;0xe0500000

@@ -119,6 +119,26 @@ id|Scsi_Host
 op_star
 )paren
 suffix:semicolon
+multiline_comment|/*&n;     * ioctl interface&n;     */
+DECL|member|ioctl
+r_int
+(paren
+op_star
+id|ioctl
+)paren
+(paren
+id|Scsi_Device
+op_star
+id|dev
+comma
+r_int
+id|cmd
+comma
+r_void
+op_star
+id|arg
+)paren
+suffix:semicolon
 multiline_comment|/*&n;     * The command function takes a target, a command (this is a SCSI&n;     * command formatted as per the SCSI spec, nothing strange), a&n;     * data buffer pointer, and data buffer length pointer.  The return&n;     * is a status int, bit fielded as follows :&n;     * Byte What&n;     * 0    SCSI status code&n;     * 1    SCSI 1 byte message&n;     * 2    host error return.&n;     * 3    mid level error return&n;     */
 DECL|member|command
 r_int
@@ -314,6 +334,13 @@ multiline_comment|/*&n;     * True if this driver uses the new error handling co
 DECL|member|use_new_eh_code
 r_int
 id|use_new_eh_code
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/*&n;     * True for emulated SCSI host adapters (e.g. ATAPI)&n;     */
+DECL|member|emulated
+r_int
+id|emulated
 suffix:colon
 l_int|1
 suffix:semicolon

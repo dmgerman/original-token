@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sysctl_net_ipv4.c: sysctl interface to net IPV4 subsystem.&n; *&n; * $Id: sysctl_net_ipv4.c,v 1.32 1998/04/03 09:49:47 freitag Exp $&n; *&n; * Begun April 1, 1996, Mike Shaver.&n; * Added /proc/sys/net/ipv4 directory entry (empty =) ). [MS]&n; */
+multiline_comment|/*&n; * sysctl_net_ipv4.c: sysctl interface to net IPV4 subsystem.&n; *&n; * $Id: sysctl_net_ipv4.c,v 1.34 1998/04/11 09:38:26 freitag Exp $&n; *&n; * Begun April 1, 1996, Mike Shaver.&n; * Added /proc/sys/net/ipv4 directory entry (empty =) ). [MS]&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sysctl.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -81,6 +81,10 @@ id|sysctl_tcp_sack
 suffix:semicolon
 r_extern
 r_int
+id|sysctl_tcp_retrans_collapse
+suffix:semicolon
+r_extern
+r_int
 id|sysctl_tcp_keepalive_time
 suffix:semicolon
 r_extern
@@ -128,10 +132,6 @@ r_int
 id|sysctl_max_syn_backlog
 suffix:semicolon
 multiline_comment|/* From icmp.c */
-r_extern
-r_int
-id|sysctl_icmp_sourcequench_time
-suffix:semicolon
 r_extern
 r_int
 id|sysctl_icmp_destunreach_time
@@ -312,6 +312,27 @@ l_string|&quot;tcp_sack&quot;
 comma
 op_amp
 id|sysctl_tcp_sack
+comma
+r_sizeof
+(paren
+r_int
+)paren
+comma
+l_int|0644
+comma
+l_int|NULL
+comma
+op_amp
+id|proc_dointvec
+)brace
+comma
+(brace
+id|NET_IPV4_TCP_RETRANS_COLLAPSE
+comma
+l_string|&quot;tcp_retrans_collapse&quot;
+comma
+op_amp
+id|sysctl_tcp_retrans_collapse
 comma
 r_sizeof
 (paren
@@ -809,27 +830,6 @@ l_string|&quot;icmp_echo_ignore_broadcasts&quot;
 comma
 op_amp
 id|sysctl_icmp_echo_ignore_broadcasts
-comma
-r_sizeof
-(paren
-r_int
-)paren
-comma
-l_int|0644
-comma
-l_int|NULL
-comma
-op_amp
-id|proc_dointvec
-)brace
-comma
-(brace
-id|NET_IPV4_ICMP_SOURCEQUENCH_RATE
-comma
-l_string|&quot;icmp_sourcequench_rate&quot;
-comma
-op_amp
-id|sysctl_icmp_sourcequench_time
 comma
 r_sizeof
 (paren

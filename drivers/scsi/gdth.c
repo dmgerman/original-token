@@ -23,6 +23,7 @@ macro_line|#endif
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#if LINUX_VERSION_CODE &gt;= 0x010300
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#else
@@ -36,6 +37,24 @@ macro_line|#if LINUX_VERSION_CODE &gt;= 0x010346
 r_static
 r_void
 id|gdth_interrupt
+c_func
+(paren
+r_int
+id|irq
+comma
+r_void
+op_star
+id|dev_id
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+suffix:semicolon
+r_static
+r_void
+id|do_gdth_interrupt
 c_func
 (paren
 r_int
@@ -12100,6 +12119,58 @@ suffix:semicolon
 )brace
 multiline_comment|/* SCSI interface functions */
 macro_line|#if LINUX_VERSION_CODE &gt;= 0x010346
+DECL|function|do_gdth_interrupt
+r_static
+r_void
+id|do_gdth_interrupt
+c_func
+(paren
+r_int
+id|irq
+comma
+r_void
+op_star
+id|dev_id
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|gdth_interrupt
+c_func
+(paren
+id|irq
+comma
+id|dev_id
+comma
+id|regs
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+)brace
 DECL|function|gdth_interrupt
 r_static
 r_void
@@ -15159,7 +15230,7 @@ c_func
 (paren
 id|ha-&gt;irq
 comma
-id|gdth_interrupt
+id|do_gdth_interrupt
 comma
 id|SA_INTERRUPT
 comma
@@ -15754,7 +15825,7 @@ c_func
 (paren
 id|ha-&gt;irq
 comma
-id|gdth_interrupt
+id|do_gdth_interrupt
 comma
 id|SA_INTERRUPT
 comma
@@ -16369,7 +16440,7 @@ c_func
 (paren
 id|ha-&gt;irq
 comma
-id|gdth_interrupt
+id|do_gdth_interrupt
 comma
 id|SA_INTERRUPT
 comma

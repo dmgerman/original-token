@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;TCP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: tcp_ipv6.c,v 1.74 1998/04/03 09:50:01 freitag Exp $&n; *&n; *&t;Based on: &n; *&t;linux/net/ipv4/tcp.c&n; *&t;linux/net/ipv4/tcp_input.c&n; *&t;linux/net/ipv4/tcp_output.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;TCP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: tcp_ipv6.c,v 1.76 1998/04/06 08:42:34 davem Exp $&n; *&n; *&t;Based on: &n; *&t;linux/net/ipv4/tcp.c&n; *&t;linux/net/ipv4/tcp_input.c&n; *&t;linux/net/ipv4/tcp_output.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -19,6 +19,10 @@ macro_line|#include &lt;net/transp_v6.h&gt;
 macro_line|#include &lt;net/addrconf.h&gt;
 macro_line|#include &lt;net/ip6_route.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+r_extern
+r_int
+id|sysctl_max_syn_backlog
+suffix:semicolon
 r_static
 r_void
 id|tcp_v6_send_reset
@@ -1001,8 +1005,6 @@ r_return
 id|result
 suffix:semicolon
 )brace
-multiline_comment|/* Until this is verified... -DaveM */
-multiline_comment|/* #define USE_QUICKSYNS */
 multiline_comment|/* Sockets in TCP_CLOSE state are _always_ taken out of the hash, so&n; * we need not check it for TCP lookups anymore, thanks Alexey. -DaveM&n; * It is assumed that this code only gets called from within NET_BH.&n; */
 DECL|function|__tcp_v6_lookup
 r_static
@@ -1066,25 +1068,6 @@ suffix:semicolon
 r_int
 id|hash
 suffix:semicolon
-macro_line|#ifdef USE_QUICKSYNS
-multiline_comment|/* Incomming connection short-cut. */
-r_if
-c_cond
-(paren
-id|th
-op_logical_and
-id|th-&gt;syn
-op_eq
-l_int|1
-op_logical_and
-id|th-&gt;ack
-op_eq
-l_int|0
-)paren
-r_goto
-id|listener_shortcut
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Check TCP register quick cache first. */
 id|sk
 op_assign
@@ -1287,10 +1270,6 @@ suffix:semicolon
 )brace
 )brace
 )brace
-macro_line|#ifdef USE_QUICKSYNS
-id|listener_shortcut
-suffix:colon
-macro_line|#endif
 id|sk
 op_assign
 id|tcp_v6_lookup_listener
@@ -2792,6 +2771,9 @@ multiline_comment|/* report error in accept */
 )brace
 r_else
 (brace
+id|tp-&gt;syn_backlog
+op_decrement
+suffix:semicolon
 id|tcp_synq_unlink
 c_func
 (paren
@@ -3111,6 +3093,10 @@ comma
 id|tcp_v6_send_reset
 )brace
 suffix:semicolon
+DECL|macro|BACKLOG
+mdefine_line|#define BACKLOG(sk) ((sk)-&gt;tp_pinfo.af_tcp.syn_backlog) /* lvalue! */
+DECL|macro|BACKLOGMAX
+mdefine_line|#define BACKLOGMAX(sk) sysctl_max_syn_backlog
 multiline_comment|/* FIXME: this is substantially similar to the ipv4 code.&n; * Can some kind of merge be done? -- erics&n; */
 DECL|function|tcp_v6_conn_request
 r_static
@@ -3215,9 +3201,17 @@ multiline_comment|/*&n;&t; *&t;There are no SYN attacks on IPv6, yet...&n;&t; */
 r_if
 c_cond
 (paren
-id|sk-&gt;ack_backlog
+id|BACKLOG
+c_func
+(paren
+id|sk
+)paren
 op_ge
-id|sk-&gt;max_ack_backlog
+id|BACKLOGMAX
+c_func
+(paren
+id|sk
+)paren
 )paren
 (brace
 id|printk
@@ -3226,9 +3220,17 @@ c_func
 id|KERN_DEBUG
 l_string|&quot;droping syn ack:%d max:%d&bslash;n&quot;
 comma
-id|sk-&gt;ack_backlog
+id|BACKLOG
+c_func
+(paren
+id|sk
+)paren
 comma
-id|sk-&gt;max_ack_backlog
+id|BACKLOGMAX
+c_func
+(paren
+id|sk
+)paren
 )paren
 suffix:semicolon
 r_goto
@@ -3254,7 +3256,11 @@ r_goto
 id|drop
 suffix:semicolon
 )brace
-id|sk-&gt;ack_backlog
+id|BACKLOG
+c_func
+(paren
+id|sk
+)paren
 op_increment
 suffix:semicolon
 id|req-&gt;rcv_wnd
@@ -3685,6 +3691,16 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|sk-&gt;ack_backlog
+OG
+id|sk-&gt;max_ack_backlog
+)paren
+r_return
+l_int|NULL
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|dst
 op_eq
 l_int|NULL
@@ -3740,6 +3756,12 @@ l_int|576
 )paren
 r_goto
 id|out
+suffix:semicolon
+id|sk-&gt;tp_pinfo.af_tcp.syn_backlog
+op_decrement
+suffix:semicolon
+id|sk-&gt;ack_backlog
+op_increment
 suffix:semicolon
 id|mss
 op_assign
@@ -4384,6 +4406,20 @@ l_int|1
 )paren
 )paren
 r_return
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|req-&gt;sk
+)paren
+(brace
+id|sk-&gt;ack_backlog
+op_decrement
+suffix:semicolon
+)brace
+r_else
+id|tp-&gt;syn_backlog
+op_decrement
 suffix:semicolon
 id|tcp_synq_unlink
 c_func

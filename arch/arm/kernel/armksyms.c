@@ -11,7 +11,6 @@ macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &lt;asm/irq.h&gt;
 r_extern
 r_void
 id|dump_thread
@@ -313,13 +312,6 @@ c_func
 id|udelay
 )paren
 suffix:semicolon
-DECL|variable|dma_str
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|dma_str
-)paren
-suffix:semicolon
 DECL|variable|xchg_str
 id|EXPORT_SYMBOL
 c_func
@@ -366,21 +358,6 @@ c_func
 id|processor
 )paren
 suffix:semicolon
-multiline_comment|/* irq */
-DECL|variable|enable_irq
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|enable_irq
-)paren
-suffix:semicolon
-DECL|variable|disable_irq
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|disable_irq
-)paren
-suffix:semicolon
 multiline_comment|/* io */
 DECL|variable|outswb
 id|EXPORT_SYMBOL
@@ -410,16 +387,72 @@ c_func
 id|insw
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_ARCH_RPC
-DECL|variable|drambank
+multiline_comment|/* address translation */
+macro_line|#ifndef __virt_to_phys__is_a_macro
+DECL|variable|__virt_to_phys
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|drambank
+id|__virt_to_phys
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifndef __phys_to_virt__is_a_macro
+DECL|variable|__phys_to_virt
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__phys_to_virt
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifndef __virt_to_bus__is_a_macro
+DECL|variable|__virt_to_bus
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__virt_to_bus
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifndef __bus_to_virt__is_a_macro
+DECL|variable|__bus_to_virt
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__bus_to_virt
+)paren
+suffix:semicolon
+macro_line|#endif
+DECL|variable|quicklists
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|quicklists
+)paren
+suffix:semicolon
+DECL|variable|__bad_pmd
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__bad_pmd
+)paren
+suffix:semicolon
+DECL|variable|__bad_pmd_kernel
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__bad_pmd_kernel
+)paren
+suffix:semicolon
 multiline_comment|/* dma */
+DECL|variable|dma_str
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|dma_str
+)paren
+suffix:semicolon
 DECL|variable|enable_dma
 id|EXPORT_SYMBOL
 c_func
@@ -427,11 +460,11 @@ c_func
 id|enable_dma
 )paren
 suffix:semicolon
-DECL|variable|set_dma_mode
+DECL|variable|disable_dma
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|set_dma_mode
+id|disable_dma
 )paren
 suffix:semicolon
 DECL|variable|set_dma_addr
@@ -448,11 +481,25 @@ c_func
 id|set_dma_count
 )paren
 suffix:semicolon
+DECL|variable|set_dma_mode
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|set_dma_mode
+)paren
+suffix:semicolon
 DECL|variable|get_dma_residue
 id|EXPORT_SYMBOL
 c_func
 (paren
 id|get_dma_residue
+)paren
+suffix:semicolon
+DECL|variable|set_dma_sg
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|set_dma_sg
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * floating point math emulator support.&n; * These symbols will never change their calling convention...&n; */
@@ -960,13 +1007,4 @@ c_func
 id|find_next_zero_bit
 )paren
 suffix:semicolon
-macro_line|#if CONFIG_PCI
-DECL|variable|pci_devices
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|pci_devices
-)paren
-suffix:semicolon
-macro_line|#endif
 eof

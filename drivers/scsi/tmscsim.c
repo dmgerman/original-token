@@ -11,6 +11,7 @@ macro_line|#endif
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -4097,7 +4098,7 @@ c_func
 (paren
 id|Irq
 comma
-id|DC390_Interrupt
+id|do_DC390_Interrupt
 comma
 id|SA_INTERRUPT
 op_or

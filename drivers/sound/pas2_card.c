@@ -166,6 +166,23 @@ id|pas_sb_base
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifndef CONFIG_PAS_JOYSTICK
+DECL|variable|joystick
+r_static
+r_int
+id|joystick
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#else
+DECL|variable|joystick
+r_static
+r_int
+id|joystick
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#endif
 DECL|variable|pas_model
 r_char
 id|pas_model
@@ -544,10 +561,13 @@ id|pas_write
 c_func
 (paren
 l_int|0x80
-macro_line|#ifdef PAS_JOYSTICK_ENABLE
 op_or
+id|joystick
+ques
+c_cond
 l_int|0x40
-macro_line|#endif
+suffix:colon
+l_int|0
 comma
 l_int|0xF388
 )paren
@@ -1407,6 +1427,14 @@ id|MODULE_PARM
 c_func
 (paren
 id|sb_dma16
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|joystick
 comma
 l_string|&quot;i&quot;
 )paren

@@ -1,4 +1,5 @@
-multiline_comment|/*&n; * linux/include/asm-arm/arch-arc/ide.h&n; *&n; * Copyright (c) 1997,1998 Russell King&n; */
+multiline_comment|/*&n; * linux/include/asm-arm/arch-arc/ide.h&n; *&n; * Copyright (c) 1997,1998 Russell King&n; *&n; * IDE definitions for the Acorn Archimedes/A5000&n; * architecture&n; *&n; * Modifications:&n; *  04-04-1998&t;PJB&t;Merged `arc&squot; and `a5k&squot; versions&n; */
+macro_line|#include &lt;linux/config.h&gt;
 r_static
 id|__inline__
 r_int
@@ -10,6 +11,18 @@ id|ide_ioreg_t
 id|base
 )paren
 (brace
+macro_line|#ifdef CONFIG_ARCH_A5K
+r_if
+c_cond
+(paren
+id|base
+op_eq
+l_int|0x1f0
+)paren
+r_return
+l_int|11
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -25,6 +38,18 @@ r_int
 id|index
 )paren
 (brace
+macro_line|#ifdef CONFIG_ARCH_A5K
+r_if
+c_cond
+(paren
+id|index
+op_eq
+l_int|0
+)paren
+r_return
+l_int|0x1f0
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon

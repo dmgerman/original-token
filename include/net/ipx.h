@@ -72,7 +72,7 @@ mdefine_line|#define IPX_TYPE_RIP&t;&t;0x01&t;/* may also be 0 */
 DECL|macro|IPX_TYPE_SAP
 mdefine_line|#define IPX_TYPE_SAP&t;&t;0x04&t;/* may also be 0 */
 DECL|macro|IPX_TYPE_SPX
-mdefine_line|#define IPX_TYPE_SPX&t;&t;0x05&t;/* Not yet implemented */
+mdefine_line|#define IPX_TYPE_SPX&t;&t;0x05&t;/* SPX protocol */
 DECL|macro|IPX_TYPE_NCP
 mdefine_line|#define IPX_TYPE_NCP&t;&t;0x11&t;/* $lots for docs on this (SPIT) */
 DECL|macro|IPX_TYPE_PPROP
@@ -214,5 +214,28 @@ DECL|macro|IPX_MIN_EPHEMERAL_SOCKET
 mdefine_line|#define IPX_MIN_EPHEMERAL_SOCKET&t;0x4000
 DECL|macro|IPX_MAX_EPHEMERAL_SOCKET
 mdefine_line|#define IPX_MAX_EPHEMERAL_SOCKET&t;0x7fff
+r_extern
+r_int
+id|ipx_register_spx
+c_func
+(paren
+r_struct
+id|proto_ops
+op_star
+op_star
+comma
+r_struct
+id|net_proto_family
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|ipx_unregister_spx
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 macro_line|#endif /* def _NET_INET_IPX_H_ */
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/include/asm-arm/arch-a5k/uncompress.h&n; *&n; * Copyright (C) 1996 Russell King&n; */
+multiline_comment|/*&n; * linux/include/asm-arm/arch-arc/uncompress.h&n; *&n; * Copyright (C) 1996 Russell King&n; */
 DECL|macro|VIDMEM
 mdefine_line|#define VIDMEM ((char *)0x02000000)
 macro_line|#include &quot;../arch/arm/drivers/char/font.h&quot;

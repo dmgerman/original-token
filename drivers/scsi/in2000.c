@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;sd.h&quot;
 macro_line|#include &quot;hosts.h&quot;
@@ -5230,6 +5231,58 @@ l_string|&quot;} &quot;
 )paren
 )paren
 )brace
+DECL|function|do_in2000_intr
+r_static
+r_void
+id|do_in2000_intr
+c_func
+(paren
+r_int
+id|irq
+comma
+r_void
+op_star
+id|dev_id
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|in2000_intr
+c_func
+(paren
+id|irq
+comma
+id|dev_id
+comma
+id|regs
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+)brace
 DECL|macro|RESET_CARD
 mdefine_line|#define RESET_CARD         0
 DECL|macro|RESET_CARD_AND_BUS
@@ -7039,7 +7092,7 @@ c_func
 (paren
 id|x
 comma
-id|in2000_intr
+id|do_in2000_intr
 comma
 id|SA_INTERRUPT
 comma

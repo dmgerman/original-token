@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &quot;sd.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;qlogicisp.h&quot;
@@ -1574,6 +1575,21 @@ id|pt_regs
 op_star
 )paren
 suffix:semicolon
+r_static
+r_void
+id|do_isp1020_intr_handler
+c_func
+(paren
+r_int
+comma
+r_void
+op_star
+comma
+r_struct
+id|pt_regs
+op_star
+)paren
+suffix:semicolon
 macro_line|#if USE_NVRAM_DEFAULTS
 r_static
 r_int
@@ -1884,7 +1900,7 @@ c_func
 (paren
 id|host-&gt;irq
 comma
-id|isp1020_intr_handler
+id|do_isp1020_intr_handler
 comma
 id|SA_INTERRUPT
 op_or
@@ -2855,6 +2871,57 @@ suffix:semicolon
 )brace
 DECL|macro|ASYNC_EVENT_INTERRUPT
 mdefine_line|#define ASYNC_EVENT_INTERRUPT&t;0x01
+DECL|function|do_isp1020_intr_handler
+r_void
+id|do_isp1020_intr_handler
+c_func
+(paren
+r_int
+id|irq
+comma
+r_void
+op_star
+id|dev_id
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|isp1020_intr_handler
+c_func
+(paren
+id|irq
+comma
+id|dev_id
+comma
+id|regs
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+)brace
 DECL|function|isp1020_intr_handler
 r_void
 id|isp1020_intr_handler

@@ -190,6 +190,8 @@ mdefine_line|#define NCR5380_write(reg, value) &t;&t;&t;&t;&t;&bslash;&n;    (pr
 macro_line|#endif
 DECL|macro|NCR5380_intr
 mdefine_line|#define NCR5380_intr pas16_intr
+DECL|macro|do_NCR5380_intr
+mdefine_line|#define do_NCR5380_intr do_pas16_intr
 DECL|macro|NCR5380_queue_command
 mdefine_line|#define NCR5380_queue_command pas16_queue_command
 DECL|macro|NCR5380_abort

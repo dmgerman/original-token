@@ -17,8 +17,15 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
-macro_line|#include &lt;asm/irq-no.h&gt;
 macro_line|#include &lt;asm/arch/irq.h&gt;
+DECL|variable|local_bh_count
+r_int
+r_int
+id|local_bh_count
+(braket
+id|NR_CPUS
+)braket
+suffix:semicolon
 DECL|variable|local_irq_count
 r_int
 r_int
@@ -27,17 +34,6 @@ id|local_irq_count
 id|NR_CPUS
 )braket
 suffix:semicolon
-macro_line|#ifdef __SMP__
-DECL|variable|__arm_bh_counter
-id|atomic_t
-id|__arm_bh_counter
-suffix:semicolon
-macro_line|#else
-DECL|variable|__arm_bh_counter
-r_int
-id|__arm_bh_counter
-suffix:semicolon
-macro_line|#endif
 DECL|variable|irq_controller_lock
 id|spinlock_t
 id|irq_controller_lock
@@ -162,7 +158,8 @@ id|irq_action
 id|NR_IRQS
 )braket
 suffix:semicolon
-multiline_comment|/*&n; * Bitmask indicating valid interrupt numbers&n; */
+macro_line|#ifdef CONFIG_ARCH_ACORN
+multiline_comment|/* Bitmask indicating valid interrupt numbers&n; * (to be moved to include/asm-arm/arch-*)&n; */
 DECL|variable|validirqs
 r_int
 r_int
@@ -174,7 +171,7 @@ l_int|32
 )braket
 op_assign
 (brace
-l_int|0x003fffff
+l_int|0x003ffe7f
 comma
 l_int|0x000001ff
 comma
@@ -183,6 +180,12 @@ comma
 l_int|0x00000000
 )brace
 suffix:semicolon
+DECL|macro|valid_irq
+mdefine_line|#define valid_irq(x) ((x) &lt; NR_IRQS &amp;&amp; validirqs[(x) &gt;&gt; 5] &amp; (1 &lt;&lt; ((x) &amp; 31)))
+macro_line|#else
+DECL|macro|valid_irq
+mdefine_line|#define valid_irq(x) ((x) &lt; NR_IRQS)
+macro_line|#endif
 DECL|function|get_irq_list
 r_int
 id|get_irq_list
@@ -248,13 +251,11 @@ l_string|&quot;%3d: %10u   %s&quot;
 comma
 id|i
 comma
-id|kstat.irqs
-(braket
-l_int|0
-)braket
-(braket
+id|kstat_irqs
+c_func
+(paren
 id|i
-)braket
+)paren
 comma
 id|action-&gt;name
 )paren
@@ -373,7 +374,7 @@ id|irq
 suffix:semicolon
 id|kstat.irqs
 (braket
-l_int|0
+id|cpu
 )braket
 (braket
 id|irq
@@ -462,20 +463,40 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#if defined(HAS_IOMD) || defined(HAS_IOC)
-r_if
+r_switch
 c_cond
 (paren
 id|irq
-op_ne
-id|IRQ_KEYBOARDTX
-op_logical_and
-id|irq
-op_ne
-id|IRQ_EXPANSIONCARD
 )paren
-macro_line|#endif
 (brace
+macro_line|#if defined(HAS_IOMD) || defined(HAS_IOC)
+r_case
+id|IRQ_KEYBOARDTX
+suffix:colon
+r_case
+id|IRQ_EXPANSIONCARD
+suffix:colon
+r_break
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef HAS_IOMD
+r_case
+id|IRQ_DMA0
+suffix:colon
+r_case
+id|IRQ_DMA1
+suffix:colon
+r_case
+id|IRQ_DMA2
+suffix:colon
+r_case
+id|IRQ_DMA3
+suffix:colon
+r_break
+suffix:semicolon
+macro_line|#endif
+r_default
+suffix:colon
 id|spin_lock
 c_func
 (paren
@@ -495,6 +516,8 @@ c_func
 op_amp
 id|irq_controller_lock
 )paren
+suffix:semicolon
+r_break
 suffix:semicolon
 )brace
 )brace
@@ -828,28 +851,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|irq
-op_ge
-id|NR_IRQS
-op_logical_or
 op_logical_neg
-(paren
-id|validirqs
-(braket
-id|irq
-op_rshift
-l_int|5
-)braket
-op_amp
-(paren
-l_int|1
-op_lshift
+id|valid_irq
+c_func
 (paren
 id|irq
-op_amp
-l_int|31
-)paren
-)paren
 )paren
 )paren
 r_return
@@ -974,28 +980,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|irq
-op_ge
-id|NR_IRQS
-op_logical_or
 op_logical_neg
-(paren
-id|validirqs
-(braket
-id|irq
-op_rshift
-l_int|5
-)braket
-op_amp
-(paren
-l_int|1
-op_lshift
+id|valid_irq
+c_func
 (paren
 id|irq
-op_amp
-l_int|31
-)paren
-)paren
 )paren
 )paren
 (brace
@@ -1137,6 +1126,12 @@ id|irq_action
 (braket
 id|i
 )braket
+op_logical_and
+id|valid_irq
+c_func
+(paren
+id|i
+)paren
 )paren
 (brace
 id|enable_irq
@@ -1256,7 +1251,20 @@ r_void
 )paren
 )paren
 (brace
+r_extern
+r_void
+id|init_dma
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 id|irq_init_irq
+c_func
+(paren
+)paren
+suffix:semicolon
+id|init_dma
 c_func
 (paren
 )paren

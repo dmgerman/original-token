@@ -31,8 +31,12 @@ macro_line|#include &lt;net/rose.h&gt;
 macro_line|#endif
 macro_line|#endif
 macro_line|#if defined(CONFIG_IPX) || defined(CONFIG_IPX_MODULE)
+macro_line|#if defined(CONFIG_SPX) || defined(CONFIG_SPX_MODULE)
+macro_line|#include &lt;net/spx.h&gt;
+macro_line|#else
 macro_line|#include &lt;net/ipx.h&gt;
-macro_line|#endif
+macro_line|#endif /* CONFIG_SPX */
+macro_line|#endif /* CONFIG_IPX */
 macro_line|#if defined(CONFIG_ATALK) || defined(CONFIG_ATALK_MODULE)
 macro_line|#include &lt;linux/atalk.h&gt;
 macro_line|#endif
@@ -978,7 +982,14 @@ r_struct
 id|raw6_opt
 id|tp_raw
 suffix:semicolon
-macro_line|#endif
+macro_line|#endif /* CONFIG_IPV6 */
+macro_line|#if defined(CONFIG_SPX) || defined (CONFIG_SPX_MODULE)
+DECL|member|af_spx
+r_struct
+id|spx_opt
+id|af_spx
+suffix:semicolon
+macro_line|#endif /* CONFIG_SPX */
 DECL|member|tp_pinfo
 )brace
 id|tp_pinfo

@@ -1,5 +1,5 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_ipv4.c,v 1.131 1998/04/03 10:52:04 davem Exp $&n; *&n; *&t;&t;IPv4 specific functions&n; *&n; *&n; *&t;&t;code split from:&n; *&t;&t;linux/ipv4/tcp.c&n; *&t;&t;linux/ipv4/tcp_input.c&n; *&t;&t;linux/ipv4/tcp_output.c&n; *&n; *&t;&t;See tcp.c for author information&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
-multiline_comment|/*&n; * Changes:&n; *&t;&t;David S. Miller&t;:&t;New socket lookup architecture.&n; *&t;&t;&t;&t;&t;This code is dedicated to John Dyson.&n; *&t;&t;David S. Miller :&t;Change semantics of established hash,&n; *&t;&t;&t;&t;&t;half is devoted to TIME_WAIT sockets&n; *&t;&t;&t;&t;&t;and the rest go in the other half.&n; *&t;&t;Andi Kleen :&t;&t;Add support for syncookies and fixed&n; *&t;&t;&t;&t;&t;some bugs: ip options weren&squot;t passed to&n; *&t;&t;&t;&t;&t;the TCP layer, missed a check for an ACK bit.&n; *&t;&t;Andi Kleen :&t;&t;Implemented fast path mtu discovery.&n; *&t;     &t;&t;&t;&t;Fixed many serious bugs in the&n; *&t;&t;&t;&t;&t;open_request handling and moved&n; *&t;&t;&t;&t;&t;most of it into the af independent code.&n; *&t;&t;&t;&t;&t;Added tail drop and some other bugfixes.&n; *&t;&t;&t;&t;&t;Added new listen sematics (ifdefed by&n; *&t;&t;&t;&t;&t;TCP_NEW_LISTEN for now)&n; *&t;&t;Mike McLagan&t;:&t;Routing by source&n; *&t;Juan Jose Ciarlante:&t;&t;ip_dynaddr bits&n; *&t;&t;Andi Kleen:&t;&t;various fixes.&n; *&t;Vitaly E. Lavrov&t;:&t;Transparent proxy revived after year coma.&n; *&t;Andi Kleen&t;&t;:&t;Fix TCP_NEW_LISTEN and make it the default.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_ipv4.c,v 1.133 1998/04/06 08:42:28 davem Exp $&n; *&n; *&t;&t;IPv4 specific functions&n; *&n; *&n; *&t;&t;code split from:&n; *&t;&t;linux/ipv4/tcp.c&n; *&t;&t;linux/ipv4/tcp_input.c&n; *&t;&t;linux/ipv4/tcp_output.c&n; *&n; *&t;&t;See tcp.c for author information&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * Changes:&n; *&t;&t;David S. Miller&t;:&t;New socket lookup architecture.&n; *&t;&t;&t;&t;&t;This code is dedicated to John Dyson.&n; *&t;&t;David S. Miller :&t;Change semantics of established hash,&n; *&t;&t;&t;&t;&t;half is devoted to TIME_WAIT sockets&n; *&t;&t;&t;&t;&t;and the rest go in the other half.&n; *&t;&t;Andi Kleen :&t;&t;Add support for syncookies and fixed&n; *&t;&t;&t;&t;&t;some bugs: ip options weren&squot;t passed to&n; *&t;&t;&t;&t;&t;the TCP layer, missed a check for an ACK bit.&n; *&t;&t;Andi Kleen :&t;&t;Implemented fast path mtu discovery.&n; *&t;     &t;&t;&t;&t;Fixed many serious bugs in the&n; *&t;&t;&t;&t;&t;open_request handling and moved&n; *&t;&t;&t;&t;&t;most of it into the af independent code.&n; *&t;&t;&t;&t;&t;Added tail drop and some other bugfixes.&n; *&t;&t;&t;&t;&t;Added new listen sematics.&n; *&t;&t;Mike McLagan&t;:&t;Routing by source&n; *&t;Juan Jose Ciarlante:&t;&t;ip_dynaddr bits&n; *&t;&t;Andi Kleen:&t;&t;various fixes.&n; *&t;Vitaly E. Lavrov&t;:&t;Transparent proxy revived after year coma.&n; *&t;Andi Kleen&t;&t;:&t;Fix new listen.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
@@ -1269,8 +1269,6 @@ r_return
 id|result
 suffix:semicolon
 )brace
-multiline_comment|/* Until this is verified... -DaveM */
-multiline_comment|/* #define USE_QUICKSYNS */
 multiline_comment|/* Sockets in TCP_CLOSE state are _always_ taken out of the hash, so&n; * we need not check it for TCP lookups anymore, thanks Alexey. -DaveM&n; * It is assumed that this code only gets called from within NET_BH.&n; */
 DECL|function|__tcp_v4_lookup
 r_static
@@ -1339,25 +1337,6 @@ suffix:semicolon
 r_int
 id|hash
 suffix:semicolon
-macro_line|#ifdef USE_QUICKSYNS
-multiline_comment|/* Incomming connection short-cut. */
-r_if
-c_cond
-(paren
-id|th
-op_logical_and
-id|th-&gt;syn
-op_eq
-l_int|1
-op_logical_and
-id|th-&gt;ack
-op_eq
-l_int|0
-)paren
-r_goto
-id|listener_shortcut
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Check TCP register quick cache first. */
 id|sk
 op_assign
@@ -1513,10 +1492,6 @@ r_goto
 id|hit
 suffix:semicolon
 )brace
-macro_line|#ifdef USE_QUICKSYNS
-id|listener_shortcut
-suffix:colon
-macro_line|#endif
 id|sk
 op_assign
 id|tcp_v4_lookup_listener
@@ -3313,15 +3288,9 @@ multiline_comment|/* report error in accept */
 )brace
 r_else
 (brace
-macro_line|#ifdef TCP_NEW_LISTEN
 id|tp-&gt;syn_backlog
 op_decrement
 suffix:semicolon
-macro_line|#else
-id|sk-&gt;ack_backlog
-op_decrement
-suffix:semicolon
-macro_line|#endif
 id|tcp_synq_unlink
 c_func
 (paren
@@ -4228,17 +4197,10 @@ comma
 id|tcp_v4_send_reset
 )brace
 suffix:semicolon
-macro_line|#ifdef TCP_NEW_LISTEN
 DECL|macro|BACKLOG
 mdefine_line|#define BACKLOG(sk) ((sk)-&gt;tp_pinfo.af_tcp.syn_backlog) /* lvalue! */
 DECL|macro|BACKLOGMAX
 mdefine_line|#define BACKLOGMAX(sk) sysctl_max_syn_backlog
-macro_line|#else
-DECL|macro|BACKLOG
-mdefine_line|#define BACKLOG(sk) ((sk)-&gt;ack_backlog)
-DECL|macro|BACKLOGMAX
-mdefine_line|#define BACKLOGMAX(sk) ((sk)-&gt;max_ack_backlog)
-macro_line|#endif
 DECL|function|tcp_v4_conn_request
 r_int
 id|tcp_v4_conn_request
@@ -4366,7 +4328,6 @@ comma
 id|skb
 )paren
 suffix:semicolon
-)brace
 id|BACKLOG
 c_func
 (paren
@@ -4374,6 +4335,7 @@ id|sk
 )paren
 op_increment
 suffix:semicolon
+)brace
 id|req
 op_assign
 id|tcp_openreq_alloc
@@ -5283,7 +5245,6 @@ suffix:semicolon
 r_int
 id|mtu
 suffix:semicolon
-macro_line|#ifdef TCP_NEW_LISTEN
 r_if
 c_cond
 (paren
@@ -5295,7 +5256,6 @@ r_goto
 m_exit
 suffix:semicolon
 multiline_comment|/* head drop */
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -5345,14 +5305,12 @@ op_amp
 id|rt-&gt;u.dst
 suffix:semicolon
 )brace
-macro_line|#ifdef TCP_NEW_LISTEN
 id|sk-&gt;tp_pinfo.af_tcp.syn_backlog
 op_decrement
 suffix:semicolon
 id|sk-&gt;ack_backlog
 op_increment
 suffix:semicolon
-macro_line|#endif
 id|mtu
 op_assign
 id|dst-&gt;pmtu
@@ -5575,7 +5533,6 @@ comma
 id|prev
 )paren
 suffix:semicolon
-macro_line|#ifdef TCP_NEW_LISTEN
 (paren
 id|req-&gt;sk
 ques
@@ -5586,11 +5543,6 @@ id|tp-&gt;syn_backlog
 )paren
 op_decrement
 suffix:semicolon
-macro_line|#else
-id|sk-&gt;ack_backlog
-op_decrement
-suffix:semicolon
-macro_line|#endif
 id|req
 op_member_access_from_pointer
 r_class
@@ -6086,7 +6038,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;TCPv4 bad checksum from %ld.%ld.%ld.%ld:%04x to %ld.%ld.%ld.%ld:%04x, &quot;
+l_string|&quot;TCPv4 bad checksum from %d.%d.%d.%d:%04x to %d.%d.%d.%d:%04x, &quot;
 l_string|&quot;len=%d/%d/%d&bslash;n&quot;
 comma
 id|NIPQUAD

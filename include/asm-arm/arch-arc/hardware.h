@@ -1,8 +1,9 @@
-multiline_comment|/*&n; * linux/include/asm-arm/arch-arc/hardware.h&n; *&n; * Copyright (C) 1996 Russell King.&n; *&n; * This file contains the hardware definitions of the A3/4/5xx series machines.&n; */
+multiline_comment|/*&n; * linux/include/asm-arm/arch-arc/hardware.h&n; *&n; * Copyright (C) 1996 Russell King.&n; *&n; * This file contains the hardware definitions of the&n; * Acorn Archimedes/A5000 machines.&n; *&n; * Modifications:&n; *  04-04-1998&t;PJB/RMK&t;Merged arc and a5k versions&n; */
 macro_line|#ifndef __ASM_ARCH_HARDWARE_H
 DECL|macro|__ASM_ARCH_HARDWARE_H
 mdefine_line|#define __ASM_ARCH_HARDWARE_H
-multiline_comment|/*&n; * What hardware must be present&n; */
+macro_line|#include &lt;linux/config.h&gt;
+multiline_comment|/*&n; * What hardware must be present - these can be tested by the kernel&n; * source.&n; */
 DECL|macro|HAS_IOC
 mdefine_line|#define HAS_IOC
 DECL|macro|HAS_MEMC
@@ -11,6 +12,10 @@ DECL|macro|HAS_MEMC1A
 mdefine_line|#define HAS_MEMC1A
 DECL|macro|HAS_VIDC
 mdefine_line|#define HAS_VIDC
+macro_line|#ifdef CONFIG_ARCH_A5K
+DECL|macro|HAS_PCIO
+mdefine_line|#define HAS_PCIO
+macro_line|#endif
 multiline_comment|/*&n; * Optional hardware&n; */
 DECL|macro|HAS_EXPMASK
 mdefine_line|#define HAS_EXPMASK
@@ -20,10 +25,12 @@ DECL|macro|VIDC_BASE
 mdefine_line|#define VIDC_BASE&t;&t;0x80100000
 DECL|macro|IOCEC4IO_BASE
 mdefine_line|#define IOCEC4IO_BASE&t;&t;0x8009c000
+macro_line|#ifdef CONFIG_ARCH_ARC
 DECL|macro|LATCHAADDR
 mdefine_line|#define LATCHAADDR&t;&t;0x80094010
 DECL|macro|LATCHBADDR
 mdefine_line|#define LATCHBADDR&t;&t;0x80094006
+macro_line|#endif
 DECL|macro|IOCECIO_BASE
 mdefine_line|#define IOCECIO_BASE&t;&t;0x80090000
 DECL|macro|IOC_BASE

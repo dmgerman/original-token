@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Implements an IPX socket layer (badly - but I&squot;m working on it).&n; *&n; *&t;This code is derived from work by&n; *&t;&t;Ross Biro&t;: &t;Writing the original IP stack&n; *&t;&t;Fred Van Kempen :&t;Tidying up the TCP/IP&n; *&n; *&t;Many thanks go to Keith Baker, Institute For Industrial Information&n; *&t;Technology Ltd, Swansea University for allowing me to work on this&n; *&t;in my own time even though it was in some ways related to commercial&n; *&t;work I am currently employed to do there.&n; *&n; *&t;All the material in this file is subject to the Gnu license version 2.&n; *&t;Neither Alan Cox nor the Swansea University Computer Society admit liability&n; *&t;nor provide warranty for any of this software. This material is provided&n; *&t;as is and at no charge.&n; *&n; *&t;Revision 0.21:&t;Uses the new generic socket option code.&n; *&t;Revision 0.22:&t;Gcc clean ups and drop out device registration. Use the&n; *&t;&t;&t;new multi-protocol edition of hard_header&n; *&t;Revision 0.23:  IPX /proc by Mark Evans.&n; *     &t;&t;&t;Adding a route will overwrite any existing route to the same&n; *&t;&t;&t;network.&n; *&t;Revision 0.24:&t;Supports new /proc with no 4K limit&n; *&t;Revision 0.25:&t;Add ephemeral sockets, passive local network&n; *&t;&t;&t;identification, support for local net 0 and&n; *&t;&t;&t;multiple datalinks &lt;Greg Page&gt;&n; *&t;Revision 0.26:  Device drop kills IPX routes via it. (needed for modules)&n; *&t;Revision 0.27:  Autobind &lt;Mark Evans&gt;&n; *&t;Revision 0.28:  Small fix for multiple local networks &lt;Thomas Winder&gt;&n; *&t;Revision 0.29:  Assorted major errors removed &lt;Mark Evans&gt;&n; *&t;&t;&t;Small correction to promisc mode error fix &lt;Alan Cox&gt;&n; *&t;&t;&t;Asynchronous I/O support.&n; *&t;&t;&t;Changed to use notifiers and the newer packet_type stuff.&n; *&t;&t;&t;Assorted major fixes &lt;Alejandro Liu&gt;&n; *&t;Revision 0.30:&t;Moved to net/ipx/...&t;&lt;Alan Cox&gt;&n; *&t;&t;&t;Don&squot;t set address length on recvfrom that errors.&n; *&t;&t;&t;Incorrect verify_area.&n; *&t;Revision 0.31:&t;New sk_buffs. This still needs a lot of testing. &lt;Alan Cox&gt;&n; *&t;Revision 0.32:  Using sock_alloc_send_skb, firewall hooks. &lt;Alan Cox&gt;&n; *&t;&t;&t;Supports sendmsg/recvmsg&n; *&t;Revision 0.33:&t;Internal network support, routing changes, uses a&n; *&t;&t;&t;protocol private area for ipx data.&n; *&t;Revision 0.34:&t;Module support. &lt;Jim Freeman&gt;&n; *&t;Revision 0.35:  Checksum support. &lt;Neil Turton&gt;, hooked in by &lt;Alan Cox&gt;&n; *&t;&t;&t;Handles WIN95 discovery packets &lt;Volker Lendecke&gt;&n; *&t;Revision 0.36:&t;Internal bump up for 2.1&n; *&t;Revision 0.37:&t;Began adding POSIXisms.&n; *&t;Revision 0.38:  Asynchronous socket stuff made current.&n; *&n; *&t;Protect the module by a MOD_INC_USE_COUNT/MOD_DEC_USE_COUNT&n; *&t;pair. Also, now usage count is managed this way&n; *&t;-Count one if the auto_interface mode is on&n; *      -Count one per configured interface&n; *&n; *&t;Jacques Gelinas (jacques@solucorp.qc.ca)&n; *&n; *&n; * &t;Portions Copyright (c) 1995 Caldera, Inc. &lt;greg@caldera.com&gt;&n; *&t;Neither Greg Page nor Caldera, Inc. admit liability nor provide&n; *&t;warranty for any of this software. This material is provided&n; *&t;&quot;AS-IS&quot; and at no charge.&n; */
+multiline_comment|/*&n; *&t;Implements an IPX socket layer.&n; *&n; *&t;This code is derived from work by&n; *&t;&t;Ross Biro&t;: &t;Writing the original IP stack&n; *&t;&t;Fred Van Kempen :&t;Tidying up the TCP/IP&n; *&n; *&t;Many thanks go to Keith Baker, Institute For Industrial Information&n; *&t;Technology Ltd, Swansea University for allowing me to work on this&n; *&t;in my own time even though it was in some ways related to commercial&n; *&t;work I am currently employed to do there.&n; *&n; *&t;All the material in this file is subject to the Gnu license version 2.&n; *&t;Neither Alan Cox nor the Swansea University Computer Society admit liability&n; *&t;nor provide warranty for any of this software. This material is provided&n; *&t;as is and at no charge.&n; *&n; *&t;Revision 0.21:&t;Uses the new generic socket option code.&n; *&t;Revision 0.22:&t;Gcc clean ups and drop out device registration. Use the&n; *&t;&t;&t;new multi-protocol edition of hard_header&n; *&t;Revision 0.23:  IPX /proc by Mark Evans.&n; *     &t;&t;&t;Adding a route will overwrite any existing route to the same&n; *&t;&t;&t;network.&n; *&t;Revision 0.24:&t;Supports new /proc with no 4K limit&n; *&t;Revision 0.25:&t;Add ephemeral sockets, passive local network&n; *&t;&t;&t;identification, support for local net 0 and&n; *&t;&t;&t;multiple datalinks &lt;Greg Page&gt;&n; *&t;Revision 0.26:  Device drop kills IPX routes via it. (needed for modules)&n; *&t;Revision 0.27:  Autobind &lt;Mark Evans&gt;&n; *&t;Revision 0.28:  Small fix for multiple local networks &lt;Thomas Winder&gt;&n; *&t;Revision 0.29:  Assorted major errors removed &lt;Mark Evans&gt;&n; *&t;&t;&t;Small correction to promisc mode error fix &lt;Alan Cox&gt;&n; *&t;&t;&t;Asynchronous I/O support.&n; *&t;&t;&t;Changed to use notifiers and the newer packet_type stuff.&n; *&t;&t;&t;Assorted major fixes &lt;Alejandro Liu&gt;&n; *&t;Revision 0.30:&t;Moved to net/ipx/...&t;&lt;Alan Cox&gt;&n; *&t;&t;&t;Don&squot;t set address length on recvfrom that errors.&n; *&t;&t;&t;Incorrect verify_area.&n; *&t;Revision 0.31:&t;New sk_buffs. This still needs a lot of testing. &lt;Alan Cox&gt;&n; *&t;Revision 0.32:  Using sock_alloc_send_skb, firewall hooks. &lt;Alan Cox&gt;&n; *&t;&t;&t;Supports sendmsg/recvmsg&n; *&t;Revision 0.33:&t;Internal network support, routing changes, uses a&n; *&t;&t;&t;protocol private area for ipx data.&n; *&t;Revision 0.34:&t;Module support. &lt;Jim Freeman&gt;&n; *&t;Revision 0.35:  Checksum support. &lt;Neil Turton&gt;, hooked in by &lt;Alan Cox&gt;&n; *&t;&t;&t;Handles WIN95 discovery packets &lt;Volker Lendecke&gt;&n; *&t;Revision 0.36:&t;Internal bump up for 2.1&n; *&t;Revision 0.37:&t;Began adding POSIXisms.&n; *&t;Revision 0.38:  Asynchronous socket stuff made current.&n; *&t;Revision 0.39: &t;SPX interfaces&n; *&n; *&t;Protect the module by a MOD_INC_USE_COUNT/MOD_DEC_USE_COUNT&n; *&t;pair. Also, now usage count is managed this way&n; *&t;-Count one if the auto_interface mode is on&n; *      -Count one per configured interface&n; *&n; *&t;Jacques Gelinas (jacques@solucorp.qc.ca)&n; *&n; *&n; * &t;Portions Copyright (c) 1995 Caldera, Inc. &lt;greg@caldera.com&gt;&n; *&t;Neither Greg Page nor Caldera, Inc. admit liability nor provide&n; *&t;warranty for any of this software. This material is provided&n; *&t;&quot;AS-IS&quot; and at no charge.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -113,6 +113,13 @@ r_static
 r_struct
 id|proto_ops
 id|ipx_dgram_ops
+suffix:semicolon
+DECL|variable|spx_family_ops
+r_static
+r_struct
+id|net_proto_family
+op_star
+id|spx_family_ops
 suffix:semicolon
 DECL|variable|ipx_routes
 r_static
@@ -267,7 +274,6 @@ suffix:semicolon
 multiline_comment|/***********************************************************************************************************************&bslash;&n;*&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;*&n;*&t;&t;&t;&t;&t;&t;Handlers for the socket list.&t;&t;&t;&t;&t;&t;*&n;*&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;*&n;&bslash;***********************************************************************************************************************/
 multiline_comment|/*&n; *&t;Note: Sockets may not be removed _during_ an interrupt or inet_bh&n; *&t;handler using this technique. They can be added although we do not&n; *&t;use this facility.&n; */
 DECL|function|ipx_remove_socket
-r_static
 r_void
 id|ipx_remove_socket
 c_func
@@ -4549,6 +4555,16 @@ id|length
 op_rshift
 l_int|1
 suffix:semicolon
+r_char
+id|hops
+op_assign
+id|packet-&gt;ipx_tctrl
+suffix:semicolon
+id|packet-&gt;ipx_tctrl
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* hop count excluded from checksum calc */
 multiline_comment|/*&n;&t; *&t;Loop through all complete words except the checksum field&n;&t; */
 r_while
 c_loop
@@ -4589,6 +4605,10 @@ op_star
 id|p
 suffix:semicolon
 )brace
+id|packet-&gt;ipx_tctrl
+op_assign
+id|hops
+suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Do final fixup&n;&t; */
 id|sum
 op_assign
@@ -6640,6 +6660,15 @@ id|sock
 op_star
 id|sk
 suffix:semicolon
+r_switch
+c_cond
+(paren
+id|sock-&gt;type
+)paren
+(brace
+r_case
+id|SOCK_DGRAM
+suffix:colon
 id|sk
 op_assign
 id|sk_alloc
@@ -6665,15 +6694,6 @@ op_minus
 id|ENOMEM
 suffix:semicolon
 )brace
-r_switch
-c_cond
-(paren
-id|sock-&gt;type
-)paren
-(brace
-r_case
-id|SOCK_DGRAM
-suffix:colon
 id|sock-&gt;ops
 op_assign
 op_amp
@@ -6682,27 +6702,34 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
+id|SOCK_SEQPACKET
+suffix:colon
+multiline_comment|/*&n;&t;&t;&t; *&t;From this point on SPX sockets are handled&n;&t;&t;&t; *&t;by af_spx.c and the methods replaced.&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|spx_family_ops
+)paren
+(brace
+r_return
+id|spx_family_ops
+op_member_access_from_pointer
+id|create
+c_func
+(paren
+id|sock
+comma
+id|protocol
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* Fall through if SPX is not loaded */
+r_case
 id|SOCK_STREAM
 suffix:colon
 multiline_comment|/* Allow higher levels to piggyback */
-r_case
-id|SOCK_SEQPACKET
-suffix:colon
-id|printk
-c_func
-(paren
-id|KERN_CRIT
-l_string|&quot;IPX: _create-ing non_DGRAM socket&bslash;n&quot;
-)paren
-suffix:semicolon
 r_default
 suffix:colon
-id|sk_free
-c_func
-(paren
-id|sk
-)paren
-suffix:semicolon
 r_return
 op_minus
 id|ESOCKTNOSUPPORT
@@ -9151,6 +9178,82 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;SPX interface support&n; */
+DECL|function|ipx_register_spx
+r_int
+id|ipx_register_spx
+c_func
+(paren
+r_struct
+id|proto_ops
+op_star
+op_star
+id|p
+comma
+r_struct
+id|net_proto_family
+op_star
+id|spx
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|spx_family_ops
+op_ne
+l_int|NULL
+)paren
+(brace
+r_return
+op_minus
+id|EBUSY
+suffix:semicolon
+)brace
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+op_star
+id|p
+op_assign
+op_amp
+id|ipx_dgram_ops
+suffix:semicolon
+id|spx_family_ops
+op_assign
+id|spx
+suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|ipx_unregister_spx
+r_int
+id|ipx_unregister_spx
+c_func
+(paren
+r_void
+)paren
+(brace
+id|spx_family_ops
+op_assign
+l_int|NULL
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n; *&t;Socket family declarations&n; */
 DECL|variable|ipx_family_ops
 r_static
 r_struct
@@ -9215,7 +9318,7 @@ op_assign
 (brace
 l_int|0
 comma
-multiline_comment|/* MUTTER ntohs(ETH_P_8023),*/
+multiline_comment|/* MUTTER ntohs(ETH_P_802_3),*/
 l_int|NULL
 comma
 multiline_comment|/* All devices */
@@ -9647,6 +9750,27 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|ipx_if_offset
+)paren
+suffix:semicolon
+DECL|variable|ipx_remove_socket
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ipx_remove_socket
+)paren
+suffix:semicolon
+DECL|variable|ipx_register_spx
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ipx_register_spx
+)paren
+suffix:semicolon
+DECL|variable|ipx_unregister_spx
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ipx_unregister_spx
 )paren
 suffix:semicolon
 macro_line|#ifdef MODULE

@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#ifdef CONFIG_BLK_DEV_INITRD
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#endif
@@ -339,7 +340,10 @@ suffix:semicolon
 macro_line|#endif
 )brace
 multiline_comment|/*&n; * paging_init() sets up the page tables...&n; */
-DECL|function|paging_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 r_int
 id|paging_init
@@ -352,6 +356,7 @@ comma
 r_int
 r_int
 id|end_mem
+)paren
 )paren
 (brace
 r_extern
@@ -456,7 +461,10 @@ id|end_mem
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * mem_init() marks the free areas in the mem_map and tells us how much&n; * memory is free.  This is done after various parts of the system have&n; * claimed their memory after the kernel image.&n; */
-DECL|function|mem_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|mem_init
 c_func
@@ -468,6 +476,7 @@ comma
 r_int
 r_int
 id|end_mem
+)paren
 )paren
 (brace
 r_extern

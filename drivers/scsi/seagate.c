@@ -4,6 +4,7 @@ multiline_comment|/*&n; * Configuration :&n; * To use without BIOS -DOVERRIDE=ba
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -560,6 +561,20 @@ id|pt_regs
 op_star
 )paren
 suffix:semicolon
+r_static
+r_void
+id|do_seagate_reconnect_intr
+(paren
+r_int
+comma
+r_void
+op_star
+comma
+r_struct
+id|pt_regs
+op_star
+)paren
+suffix:semicolon
 macro_line|#ifdef FAST
 DECL|variable|fast
 r_static
@@ -993,7 +1008,7 @@ r_int
 )paren
 id|irq
 comma
-id|seagate_reconnect_intr
+id|do_seagate_reconnect_intr
 comma
 id|SA_INTERRUPT
 comma
@@ -1246,6 +1261,57 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/*&n; * The seagate_reconnect_intr routine is called when a target reselects the&n; * host adapter.  This occurs on the interrupt triggered by the target&n; * asserting SEL.&n; */
+DECL|function|do_seagate_reconnect_intr
+r_static
+r_void
+id|do_seagate_reconnect_intr
+(paren
+r_int
+id|irq
+comma
+r_void
+op_star
+id|dev_id
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|seagate_reconnect_intr
+c_func
+(paren
+id|irq
+comma
+id|dev_id
+comma
+id|regs
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+)brace
 DECL|function|seagate_reconnect_intr
 r_static
 r_void

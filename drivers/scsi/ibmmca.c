@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/mca.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;sd.h&quot;
 macro_line|#include &quot;scsi.h&quot;
@@ -862,6 +863,23 @@ id|regs
 suffix:semicolon
 r_static
 r_void
+id|do_interrupt_handler
+(paren
+r_int
+id|irq
+comma
+r_void
+op_star
+id|dev_id
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+suffix:semicolon
+r_static
+r_void
 id|issue_cmd
 (paren
 r_struct
@@ -1029,6 +1047,57 @@ id|shpnt
 )paren
 suffix:semicolon
 multiline_comment|/*--------------------------------------------------------------------*/
+r_static
+r_void
+DECL|function|do_interrupt_handler
+id|do_interrupt_handler
+(paren
+r_int
+id|irq
+comma
+r_void
+op_star
+id|dev_id
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|interrupt_handler
+c_func
+(paren
+id|irq
+comma
+id|dev_id
+comma
+id|regs
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+)brace
 r_static
 r_void
 DECL|function|interrupt_handler
@@ -3893,7 +3962,7 @@ id|request_irq
 (paren
 id|IM_IRQ
 comma
-id|interrupt_handler
+id|do_interrupt_handler
 comma
 id|SA_SHIRQ
 comma

@@ -23,6 +23,7 @@ macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/idprom.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
 DECL|macro|DEBUG_ESP
 mdefine_line|#define DEBUG_ESP
 multiline_comment|/* #define DEBUG_ESP_HME */
@@ -314,6 +315,24 @@ multiline_comment|/* Forward declarations. */
 r_static
 r_void
 id|esp_intr
+c_func
+(paren
+r_int
+id|irq
+comma
+r_void
+op_star
+id|dev_id
+comma
+r_struct
+id|pt_regs
+op_star
+id|pregs
+)paren
+suffix:semicolon
+r_static
+r_void
+id|do_esp_intr
 c_func
 (paren
 r_int
@@ -3167,7 +3186,7 @@ c_func
 (paren
 id|esp-&gt;ehost-&gt;irq
 comma
-id|esp_intr
+id|do_esp_intr
 comma
 id|SA_SHIRQ
 comma
@@ -3225,7 +3244,7 @@ c_func
 (paren
 id|esp-&gt;ehost-&gt;irq
 comma
-id|esp_intr
+id|do_esp_intr
 comma
 (paren
 id|SA_SHIRQ
@@ -17142,6 +17161,58 @@ suffix:semicolon
 id|esp_handle_done
 suffix:colon
 r_return
+suffix:semicolon
+)brace
+DECL|function|do_esp_intr
+r_static
+r_void
+id|do_esp_intr
+c_func
+(paren
+r_int
+id|irq
+comma
+r_void
+op_star
+id|dev_id
+comma
+r_struct
+id|pt_regs
+op_star
+id|pregs
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|esp_intr
+c_func
+(paren
+id|irq
+comma
+id|dev_id
+comma
+id|pregs
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
 suffix:semicolon
 )brace
 macro_line|#ifndef __sparc_v9__

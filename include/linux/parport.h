@@ -17,6 +17,8 @@ DECL|macro|PARPORT_DMA_AUTO
 mdefine_line|#define PARPORT_DMA_AUTO  -2
 DECL|macro|PARPORT_DISABLE
 mdefine_line|#define PARPORT_DISABLE   -2
+DECL|macro|PARPORT_IRQ_PROBEONLY
+mdefine_line|#define PARPORT_IRQ_PROBEONLY -3
 DECL|macro|PARPORT_CONTROL_STROBE
 mdefine_line|#define PARPORT_CONTROL_STROBE    0x1
 DECL|macro|PARPORT_CONTROL_AUTOFD
@@ -1178,6 +1180,23 @@ DECL|macro|PARPORT_DEV_LURK
 mdefine_line|#define PARPORT_DEV_LURK&t;        0x0001  /* We lurk. */
 DECL|macro|PARPORT_FLAG_COMA
 mdefine_line|#define PARPORT_FLAG_COMA&t;&t;1
+r_extern
+r_void
+id|parport_parse_irqs
+c_func
+(paren
+r_int
+comma
+r_const
+r_char
+op_star
+comma
+r_int
+id|irqval
+(braket
+)braket
+)paren
+suffix:semicolon
 r_extern
 r_int
 id|parport_ieee1284_nibble_mode_ok

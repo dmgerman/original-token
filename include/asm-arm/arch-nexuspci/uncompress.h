@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/include/asm-arm/arch-ebsa110/uncompress.h&n; *&n; * Copyright (C) 1996,1997,1998 Russell King&n; */
+multiline_comment|/*&n; * linux/include/asm-arm/arch-nexuspci/uncompress.h&n; *  from linux/include/asm-arm/arch-ebsa110/uncompress.h&n; *&n; * Copyright (C) 1996,1997,1998 Russell King&n; */
 multiline_comment|/*&n; * This does not append a newline&n; */
 DECL|function|puts
 r_static

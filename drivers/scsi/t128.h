@@ -169,6 +169,8 @@ mdefine_line|#define NCR5380_write(reg, value) {&t;&t;&t;&t;&t;&bslash;&n;    pr
 macro_line|#endif
 DECL|macro|NCR5380_intr
 mdefine_line|#define NCR5380_intr t128_intr
+DECL|macro|do_NCR5380_intr
+mdefine_line|#define do_NCR5380_intr do_t128_intr
 DECL|macro|NCR5380_queue_command
 mdefine_line|#define NCR5380_queue_command t128_queue_command
 DECL|macro|NCR5380_abort

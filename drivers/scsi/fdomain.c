@@ -17,6 +17,7 @@ macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;fdomain.h&quot;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
@@ -2769,7 +2770,7 @@ c_func
 (paren
 id|interrupt_level
 comma
-id|fdomain_16x0_intr
+id|do_fdomain_16x0_intr
 comma
 id|SA_INTERRUPT
 comma
@@ -5184,6 +5185,57 @@ l_int|0
 suffix:semicolon
 macro_line|#endif
 r_return
+suffix:semicolon
+)brace
+DECL|function|do_fdomain_16x0_intr
+r_void
+id|do_fdomain_16x0_intr
+c_func
+(paren
+r_int
+id|irq
+comma
+r_void
+op_star
+id|dev_id
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|fdomain_16x0_intr
+c_func
+(paren
+id|irq
+comma
+id|dev_id
+comma
+id|regs
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
 suffix:semicolon
 )brace
 DECL|function|fdomain_16x0_queue

@@ -50,6 +50,16 @@ mdefine_line|#define ELF_EXEC_PAGESIZE&t;32768
 multiline_comment|/* This is the location that an ET_DYN program is loaded if exec&squot;ed.  Typical&n;   use of this is to invoke &quot;./ld.so someprog&quot; to test out a new version of&n;   the loader.  We need to make sure that it is out of the way of the program&n;   that it will &quot;exec&quot;, and that there is sufficient room for the brk.  */
 DECL|macro|ELF_ET_DYN_BASE
 mdefine_line|#define ELF_ET_DYN_BASE&t;(2 * TASK_SIZE / 3)
+multiline_comment|/* This yields a mask that user programs can use to figure out what&n;   instruction set this cpu supports.  This could be done in userspace,&n;   but it&squot;s not easy, and we&squot;ve already done it here.  */
+DECL|macro|ELF_HWCAP
+mdefine_line|#define ELF_HWCAP&t;(0)
+multiline_comment|/* This yields a string that ld.so will use to load implementation&n;   specific libraries for optimization.  This is more specific in&n;   intent than poking at uname or /proc/cpuinfo. */
+DECL|macro|ELF_PLATFORM
+mdefine_line|#define ELF_PLATFORM&t;(NULL)
+macro_line|#ifdef __KERNEL__
+DECL|macro|SET_PERSONALITY
+mdefine_line|#define SET_PERSONALITY(ex,ibcs2) &bslash;&n;&t;current-&gt;personality = PER_LINUX_32BIT
+macro_line|#endif
 DECL|macro|R_ARM_NONE
 mdefine_line|#define R_ARM_NONE&t;(0)
 DECL|macro|R_ARM_32

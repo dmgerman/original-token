@@ -2,11 +2,6 @@ multiline_comment|/*&n; * linux/include/asm-arm/arch-ebsa110/io.h&n; *&n; * Copy
 macro_line|#ifndef __ASM_ARM_ARCH_IO_H
 DECL|macro|__ASM_ARM_ARCH_IO_H
 mdefine_line|#define __ASM_ARM_ARCH_IO_H
-multiline_comment|/*&n; * Virtual view &lt;-&gt; DMA view memory address translations&n; * virt_to_bus: Used to translate the virtual address to an&n; *              address suitable to be passed to set_dma_addr&n; * bus_to_virt: Used to convert an address for DMA operations&n; *              to an address that the kernel can use.&n; */
-DECL|macro|virt_to_bus
-mdefine_line|#define virt_to_bus(x)&t;((unsigned long)(x))
-DECL|macro|bus_to_virt
-mdefine_line|#define bus_to_virt(x)&t;((void *)(x))
 multiline_comment|/*&n; * This architecture does not require any delayed IO, and&n; * has the constant-optimised IO&n; */
 DECL|macro|ARCH_IO_DELAY
 macro_line|#undef&t;ARCH_IO_DELAY
@@ -122,7 +117,7 @@ mdefine_line|#define __outwc(value,port)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;
 DECL|macro|__inwc
 mdefine_line|#define __inwc(port)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned short result;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (__PORT_PCIO((port)))&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;ldr&t;%0, [%1, %2]&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;: &quot;=r&quot; (result) : &quot;r&quot; (PCIO_BASE), &quot;Jr&quot; ((port) &lt;&lt; 2));&t;&t;&bslash;&n;&t;else&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;ldr&t;%0, [%1, %2]&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;: &quot;=r&quot; (result) : &quot;r&quot; (IO_BASE), &quot;r&quot; ((port) &lt;&lt; 2));&t;&t;&bslash;&n;&t;result &amp; 0xffff;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
 DECL|macro|__outlc
-mdefine_line|#define __outlc(v,p) __outwc((v),(p))
+mdefine_line|#define __outlc(v,p)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long v = value;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (__PORT_PCIO((port)))&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;str&t;%0, [%1, %2]&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;: : &quot;r&quot; (v), &quot;r&quot; (PCIO_BASE), &quot;Jr&quot; ((port) &lt;&lt; 2));&t;&t;&bslash;&n;&t;else&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;str&t;%0, [%1, %2]&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;: : &quot;r&quot; (v), &quot;r&quot; (IO_BASE), &quot;r&quot; ((port) &lt;&lt; 2));&t;&t;&t;&bslash;&n;})
 DECL|macro|__inlc
 mdefine_line|#define __inlc(port)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long result;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (__PORT_PCIO((port)))&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;ldr&t;%0, [%1, %2]&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;: &quot;=r&quot; (result) : &quot;r&quot; (PCIO_BASE), &quot;Jr&quot; ((port) &lt;&lt; 2));&t;&t;&bslash;&n;&t;else&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;ldr&t;%0, [%1, %2]&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;: &quot;=r&quot; (result) : &quot;r&quot; (IO_BASE), &quot;r&quot; ((port) &lt;&lt; 2));&t;&t;&bslash;&n;&t;result;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
 DECL|macro|__ioaddrc

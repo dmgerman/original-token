@@ -1,6 +1,6 @@
 multiline_comment|/*&n; * sound/gus_wave.c&n; *&n; * Driver for the Gravis UltraSound wave table synth.&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
-multiline_comment|/*&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; */
+multiline_comment|/*&n; * Thomas Sailer    : ioctl code reworked (vmalloc/vfree removed)&n; * Frank van de Pol : Fixed GUS MAX interrupt handling. Enabled simultanious&n; *                    usage of CS4231A codec, GUS wave and MIDI for GUS MAX.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|GUSPNP_AUTODETECT
 mdefine_line|#define GUSPNP_AUTODETECT
@@ -153,6 +153,13 @@ id|voice_alloc_info
 op_star
 id|voice_alloc
 suffix:semicolon
+DECL|variable|gus_hw_config
+r_static
+r_struct
+id|address_info
+op_star
+id|gus_hw_config
+suffix:semicolon
 r_extern
 r_int
 id|gus_base
@@ -166,6 +173,10 @@ suffix:semicolon
 r_extern
 r_int
 id|gus_pnp_flag
+suffix:semicolon
+r_extern
+r_int
+id|gus_no_wave_dma
 suffix:semicolon
 DECL|variable|gus_dma2
 r_static
@@ -4015,7 +4026,11 @@ c_func
 (paren
 id|gus_irq
 comma
-l_int|NULL
+(paren
+r_void
+op_star
+)paren
+id|gus_hw_config
 comma
 l_int|NULL
 )paren
@@ -8079,6 +8094,19 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|gus_no_wave_dma
+)paren
+(brace
+id|gus_no_dma
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+r_else
+(brace
+r_if
+c_cond
+(paren
 (paren
 id|err
 op_assign
@@ -8104,6 +8132,7 @@ id|gus_no_dma
 op_assign
 l_int|0
 suffix:semicolon
+)brace
 id|init_waitqueue
 c_func
 (paren
@@ -8124,7 +8153,11 @@ c_func
 (paren
 id|gus_irq
 comma
-l_int|NULL
+(paren
+r_void
+op_star
+)paren
+id|gus_hw_config
 comma
 l_int|NULL
 )paren
@@ -8145,7 +8178,11 @@ c_func
 (paren
 id|gus_irq
 comma
-l_int|NULL
+(paren
+r_void
+op_star
+)paren
+id|gus_hw_config
 comma
 l_int|NULL
 )paren
@@ -13544,6 +13581,10 @@ id|gus_dma2
 op_assign
 id|dma2
 suffix:semicolon
+id|gus_hw_config
+op_assign
+id|hw_config
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -14182,9 +14223,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|gus_mem_size
 OG
 l_int|0
+)paren
+op_amp
+op_logical_neg
+id|gus_no_wave_dma
 )paren
 (brace
 r_if

@@ -94,44 +94,6 @@ id|aic7xxx_buffer
 op_assign
 l_int|NULL
 suffix:semicolon
-DECL|variable|bus_names
-r_static
-r_const
-r_char
-op_star
-id|bus_names
-(braket
-)braket
-op_assign
-(brace
-l_string|&quot;Single&quot;
-comma
-l_string|&quot;Twin&quot;
-comma
-l_string|&quot;Wide&quot;
-)brace
-suffix:semicolon
-DECL|variable|chip_names
-r_static
-r_const
-r_char
-op_star
-id|chip_names
-(braket
-)braket
-op_assign
-(brace
-l_string|&quot;AIC-777x&quot;
-comma
-l_string|&quot;AIC-785x&quot;
-comma
-l_string|&quot;AIC-786x&quot;
-comma
-l_string|&quot;AIC-787x&quot;
-comma
-l_string|&quot;AIC-788x&quot;
-)brace
-suffix:semicolon
 multiline_comment|/*+F*************************************************************************&n; * Function:&n; *   aic7xxx_set_info&n; *&n; * Description:&n; *   Set parameters for the driver from the /proc filesystem.&n; *-F*************************************************************************/
 r_int
 DECL|function|aic7xxx_set_info
@@ -209,6 +171,10 @@ id|size
 op_assign
 l_int|0
 suffix:semicolon
+r_int
+r_char
+id|i
+suffix:semicolon
 macro_line|#ifdef AIC7XXX_PROC_STATS
 r_struct
 id|aic7xxx_xferstats
@@ -220,9 +186,6 @@ r_char
 id|target
 comma
 id|lun
-suffix:semicolon
-r_int
-id|i
 suffix:semicolon
 macro_line|#endif
 id|HBAptr
@@ -325,10 +288,10 @@ op_star
 )paren
 id|HBAptr-&gt;hostdata
 suffix:semicolon
-multiline_comment|/*&n;   * It takes roughly 1K of space to hold all relevant card info, not&n;   * counting any proc stats, so we start out with a 1.5k buffer size and&n;   * if proc_stats is defined, then we sweep the stats structure to see&n;   * how many drives we will be printing out for and add 384 bytes per&n;   * device with active stats.&n;   */
+multiline_comment|/*&n;   * It takes roughly 1K of space to hold all relevant card info, not&n;   * counting any proc stats, so we start out with a 1.5k buffer size and&n;   * if proc_stats is defined, then we sweep the stats structure to see&n;   * how many drives we will be printing out for and add 384 bytes per&n;   * device with active stats.&n;   *&n;   * Hmmmm...that 1.5k seems to keep growing as items get added so they&n;   * can be easily viewed for debugging purposes.  So, we bumped that&n;   * 1.5k to 4k so we can quit having to bump it all the time.&n;   */
 id|size
 op_assign
-l_int|1536
+l_int|4096
 suffix:semicolon
 macro_line|#ifdef AIC7XXX_PROC_STATS
 r_for
@@ -378,7 +341,7 @@ l_int|0
 )paren
 id|size
 op_add_assign
-l_int|384
+l_int|512
 suffix:semicolon
 )brace
 )brace
@@ -472,11 +435,7 @@ id|BLS
 comma
 l_string|&quot;%s/&quot;
 comma
-id|rcs_version
-c_func
-(paren
 id|AIC7XXX_C_VERSION
-)paren
 )paren
 suffix:semicolon
 id|size
@@ -488,31 +447,9 @@ id|BLS
 comma
 l_string|&quot;%s&quot;
 comma
-id|rcs_version
-c_func
-(paren
 id|AIC7XXX_H_VERSION
 )paren
-)paren
 suffix:semicolon
-macro_line|#if 0
-id|size
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|BLS
-comma
-l_string|&quot;%s&bslash;n&quot;
-comma
-id|rcs_version
-c_func
-(paren
-id|AIC7XXX_SEQ_VER
-)paren
-)paren
-suffix:semicolon
-macro_line|#endif
 id|size
 op_add_assign
 id|sprintf
@@ -547,7 +484,6 @@ id|AIC7XXX_RESET_DELAY
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef AIC7XXX_CMDS_PER_LUN
 id|size
 op_add_assign
 id|sprintf
@@ -555,13 +491,9 @@ c_func
 (paren
 id|BLS
 comma
-l_string|&quot;  AIC7XXX_CMDS_PER_LUN   : %d&bslash;n&quot;
-comma
-id|AIC7XXX_CMDS_PER_LUN
+l_string|&quot;  AIC7XXX_TAGGED_QUEUEING: Adapter Support Enabled&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef AIC7XXX_TAGGED_QUEUEING
 id|size
 op_add_assign
 id|sprintf
@@ -569,10 +501,12 @@ c_func
 (paren
 id|BLS
 comma
-l_string|&quot;  AIC7XXX_TAGGED_QUEUEING: Enabled&bslash;n&quot;
+l_string|&quot;                             Check below to see &quot;
+l_string|&quot;which&bslash;n&quot;
+l_string|&quot;                             devices use tagged &quot;
+l_string|&quot;queueing&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#else
 id|size
 op_add_assign
 id|sprintf
@@ -580,33 +514,10 @@ c_func
 (paren
 id|BLS
 comma
-l_string|&quot;  AIC7XXX_TAGGED_QUEUEING: Disabled&bslash;n&quot;
+l_string|&quot;  AIC7XXX_PAGE_ENABLE    : Enabled (This is no longer &quot;
+l_string|&quot;an option)&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef AIC7XXX_PAGE_ENABLE
-id|size
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|BLS
-comma
-l_string|&quot;  AIC7XXX_PAGE_ENABLE    : Enabled&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#else
-id|size
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|BLS
-comma
-l_string|&quot;  AIC7XXX_PAGE_ENABLE    : Disabled&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef AIC7XXX_PROC_STATS
 id|size
 op_add_assign
@@ -661,9 +572,105 @@ l_string|&quot;           SCSI Adapter: %s&bslash;n&quot;
 comma
 id|board_names
 (braket
-id|p-&gt;chip_type
+id|p-&gt;board_name_index
 )braket
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|p-&gt;flags
+op_amp
+id|AHC_TWIN
+)paren
+id|size
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|BLS
+comma
+l_string|&quot;                         Twin Channel&bslash;n&quot;
+)paren
+suffix:semicolon
+r_else
+(brace
+r_char
+op_star
+id|channel
+op_assign
+l_string|&quot;&quot;
+suffix:semicolon
+r_char
+op_star
+id|ultra
+op_assign
+l_string|&quot;&quot;
+suffix:semicolon
+r_char
+op_star
+id|wide
+op_assign
+l_string|&quot;Narrow &quot;
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|p-&gt;flags
+op_amp
+id|AHC_MULTI_CHANNEL
+)paren
+(brace
+id|channel
+op_assign
+l_string|&quot; Channel A&quot;
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|p-&gt;flags
+op_amp
+(paren
+id|AHC_CHNLB
+op_or
+id|AHC_CHNLC
+)paren
+)paren
+id|channel
+op_assign
+(paren
+id|p-&gt;flags
+op_amp
+id|AHC_CHNLB
+)paren
+ques
+c_cond
+l_string|&quot; Channel B&quot;
+suffix:colon
+l_string|&quot; Channel C&quot;
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|p-&gt;type
+op_amp
+id|AHC_WIDE
+)paren
+id|wide
+op_assign
+l_string|&quot;Wide &quot;
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|p-&gt;type
+op_amp
+id|AHC_ULTRA
+)paren
+id|ultra
+op_assign
+l_string|&quot;Ultra &quot;
 suffix:semicolon
 id|size
 op_add_assign
@@ -672,14 +679,25 @@ c_func
 (paren
 id|BLS
 comma
-l_string|&quot;                         (%s chipset)&bslash;n&quot;
+l_string|&quot;                           %s%sController%s&bslash;n&quot;
 comma
-id|chip_names
-(braket
-id|p-&gt;chip_class
-)braket
+id|ultra
+comma
+id|wide
+comma
+id|channel
 )paren
 suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|p-&gt;maddr
+)paren
+)paren
+(brace
 id|size
 op_add_assign
 id|sprintf
@@ -687,26 +705,14 @@ c_func
 (paren
 id|BLS
 comma
-l_string|&quot;               Host Bus: %s&bslash;n&quot;
-comma
-id|bus_names
-(braket
-id|p-&gt;bus_type
-)braket
-)paren
-suffix:semicolon
-id|size
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|BLS
-comma
-l_string|&quot;                Base IO: 0x%lx&bslash;n&quot;
+l_string|&quot;    Programmed I/O Base: %lx&bslash;n&quot;
 comma
 id|p-&gt;base
 )paren
 suffix:semicolon
+)brace
+r_else
+(brace
 id|size
 op_add_assign
 id|sprintf
@@ -714,11 +720,81 @@ c_func
 (paren
 id|BLS
 comma
-l_string|&quot;         Base IO Memory: 0x%lx&bslash;n&quot;
+l_string|&quot;    PCI MMAPed I/O Base: 0x%lx&bslash;n&quot;
 comma
 id|p-&gt;mbase
 )paren
 suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|p-&gt;type
+op_amp
+id|AHC_AIC78x0
+)paren
+)paren
+(brace
+id|size
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|BLS
+comma
+l_string|&quot;    BIOS Memory Address: 0x%08x&bslash;n&quot;
+comma
+id|p-&gt;bios_address
+)paren
+suffix:semicolon
+id|size
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|BLS
+comma
+l_string|&quot;                         %s&bslash;n&quot;
+comma
+(paren
+id|p-&gt;flags
+op_amp
+id|AHC_BIOS_ENABLED
+)paren
+ques
+c_cond
+l_string|&quot;Enabled&quot;
+suffix:colon
+l_string|&quot;Disabled&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|size
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|BLS
+comma
+l_string|&quot;      Adaptec SCSI BIOS: %s&bslash;n&quot;
+comma
+(paren
+id|p-&gt;flags
+op_amp
+id|AHC_BIOS_ENABLED
+)paren
+ques
+c_cond
+l_string|&quot;Enabled&quot;
+suffix:colon
+l_string|&quot;Disabled&quot;
+)paren
+suffix:semicolon
+)brace
 id|size
 op_add_assign
 id|sprintf
@@ -738,7 +814,22 @@ c_func
 (paren
 id|BLS
 comma
-l_string|&quot;                   SCBs: Used %d, HW %d, Page %d&bslash;n&quot;
+l_string|&quot;                   SCBs: Active %d, Max Active %d,&bslash;n&quot;
+comma
+id|p-&gt;activescbs
+comma
+id|p-&gt;max_activescbs
+)paren
+suffix:semicolon
+id|size
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|BLS
+comma
+l_string|&quot;                         Allocated %d, HW %d, &quot;
+l_string|&quot;Page %d&bslash;n&quot;
 comma
 id|p-&gt;scb_data-&gt;numscbs
 comma
@@ -754,7 +845,7 @@ c_func
 (paren
 id|BLS
 comma
-l_string|&quot;             Interrupts: %d&quot;
+l_string|&quot;             Interrupts: %ld&quot;
 comma
 id|p-&gt;isr_count
 )paren
@@ -762,9 +853,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|p-&gt;chip_class
-op_eq
-id|AIC_777x
+id|p-&gt;type
+op_amp
+id|AHC_AIC7770
 )paren
 (brace
 id|size
@@ -809,18 +900,21 @@ c_func
 (paren
 id|BLS
 comma
-l_string|&quot;          Serial EEPROM: %s&bslash;n&quot;
+l_string|&quot;      BIOS Control Word: 0x%04x&bslash;n&quot;
 comma
-(paren
-id|p-&gt;flags
-op_amp
-id|HAVE_SEEPROM
+id|p-&gt;bios_control
 )paren
-ques
-c_cond
-l_string|&quot;True&quot;
-suffix:colon
-l_string|&quot;False&quot;
+suffix:semicolon
+id|size
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|BLS
+comma
+l_string|&quot;   Adapter Control Word: 0x%04x&bslash;n&quot;
+comma
+id|p-&gt;adapter_control
 )paren
 suffix:semicolon
 id|size
@@ -835,7 +929,7 @@ comma
 (paren
 id|p-&gt;flags
 op_amp
-id|EXTENDED_TRANSLATION
+id|AHC_EXTEND_TRANS_A
 )paren
 ques
 c_cond
@@ -868,18 +962,42 @@ c_func
 (paren
 id|BLS
 comma
-l_string|&quot;             Ultra SCSI: %sabled&bslash;n&quot;
+l_string|&quot;Disconnect Enable Flags: 0x%04x&bslash;n&quot;
 comma
-(paren
-id|p-&gt;flags
-op_amp
-id|ULTRA_ENABLED
+id|p-&gt;discenable
 )paren
-ques
+suffix:semicolon
+r_if
 c_cond
-l_string|&quot;En&quot;
-suffix:colon
-l_string|&quot;Dis&quot;
+(paren
+id|p-&gt;type
+op_amp
+id|AHC_ULTRA
+)paren
+(brace
+id|size
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|BLS
+comma
+l_string|&quot;     Ultra Enable Flags: 0x%04x&bslash;n&quot;
+comma
+id|p-&gt;ultraenb
+)paren
+suffix:semicolon
+)brace
+id|size
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|BLS
+comma
+l_string|&quot; Tag Queue Enable Flags: 0x%04x&bslash;n&quot;
+comma
+id|p-&gt;tagenable
 )paren
 suffix:semicolon
 id|size
@@ -889,9 +1007,192 @@ c_func
 (paren
 id|BLS
 comma
-l_string|&quot;Disconnect Enable Flags: 0x%x&bslash;n&quot;
+l_string|&quot;Ordered Queue Tag Flags: 0x%04x&bslash;n&quot;
 comma
-id|p-&gt;discenable
+id|p-&gt;orderedtag
+)paren
+suffix:semicolon
+macro_line|#ifdef AIC7XXX_CMDS_PER_LUN
+id|size
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|BLS
+comma
+l_string|&quot;Default Tag Queue Depth: %d&bslash;n&quot;
+comma
+id|AIC7XXX_CMDS_PER_LUN
+)paren
+suffix:semicolon
+macro_line|#else
+id|size
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|BLS
+comma
+l_string|&quot;Default Tag Queue Depth: %d&bslash;n&quot;
+comma
+l_int|8
+)paren
+suffix:semicolon
+macro_line|#endif
+id|size
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|BLS
+comma
+l_string|&quot;    Tagged Queue By Device array for aic7xxx host &quot;
+l_string|&quot;instance %d:&bslash;n&quot;
+comma
+id|p-&gt;instance
+)paren
+suffix:semicolon
+id|size
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|BLS
+comma
+l_string|&quot;      {&quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+(paren
+id|MAX_TARGETS
+op_minus
+l_int|1
+)paren
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|size
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|BLS
+comma
+l_string|&quot;%d,&quot;
+comma
+id|aic7xxx_tag_info
+(braket
+id|p-&gt;instance
+)braket
+dot
+id|tag_commands
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+)brace
+id|size
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|BLS
+comma
+l_string|&quot;%d}&bslash;n&quot;
+comma
+id|aic7xxx_tag_info
+(braket
+id|p-&gt;instance
+)braket
+dot
+id|tag_commands
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+id|size
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|BLS
+comma
+l_string|&quot;    Actual queue depth per device for aic7xxx host &quot;
+l_string|&quot;instance %d:&bslash;n&quot;
+comma
+id|p-&gt;instance
+)paren
+suffix:semicolon
+id|size
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|BLS
+comma
+l_string|&quot;      {&quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+(paren
+id|MAX_TARGETS
+op_minus
+l_int|1
+)paren
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|size
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|BLS
+comma
+l_string|&quot;%d,&quot;
+comma
+id|p-&gt;dev_max_queue_depth
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+)brace
+id|size
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|BLS
+comma
+l_string|&quot;%d}&bslash;n&quot;
+comma
+id|p-&gt;dev_max_queue_depth
+(braket
+id|i
+)braket
 )paren
 suffix:semicolon
 macro_line|#ifdef AIC7XXX_PROC_STATS
@@ -970,9 +1271,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|p-&gt;bus_type
-op_eq
-id|AIC_TWIN
+id|p-&gt;type
+op_amp
+id|AHC_TWIN
 )paren
 (brace
 id|size
@@ -982,10 +1283,10 @@ c_func
 (paren
 id|BLS
 comma
-l_string|&quot;CHAN#%c (TGT %d LUN %d):&bslash;n&quot;
+l_string|&quot;(scsi%d:%d:%d:%d)&bslash;n&quot;
 comma
-l_char|&squot;A&squot;
-op_plus
+id|p-&gt;host_no
+comma
 (paren
 id|target
 op_rshift
@@ -1011,9 +1312,11 @@ c_func
 (paren
 id|BLS
 comma
-l_string|&quot;CHAN#%c (TGT %d LUN %d):&bslash;n&quot;
+l_string|&quot;(scsi%d:%d:%d:%d)&bslash;n&quot;
 comma
-l_char|&squot;A&squot;
+id|p-&gt;host_no
+comma
+l_int|0
 comma
 id|target
 comma

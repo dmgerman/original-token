@@ -11,6 +11,7 @@ macro_line|#include &lt;asm/dbdma.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;mac53c94.h&quot;
@@ -159,6 +160,21 @@ suffix:semicolon
 r_static
 r_void
 id|mac53c94_interrupt
+c_func
+(paren
+r_int
+comma
+r_void
+op_star
+comma
+r_struct
+id|pt_regs
+op_star
+)paren
+suffix:semicolon
+r_static
+r_void
+id|do_mac53c94_interrupt
 c_func
 (paren
 r_int
@@ -546,7 +562,7 @@ c_func
 (paren
 id|state-&gt;intr
 comma
-id|mac53c94_interrupt
+id|do_mac53c94_interrupt
 comma
 l_int|0
 comma
@@ -1207,6 +1223,58 @@ c_func
 id|state
 comma
 id|cmd
+)paren
+suffix:semicolon
+)brace
+r_static
+r_void
+DECL|function|do_mac53c94_interrupt
+id|do_mac53c94_interrupt
+c_func
+(paren
+r_int
+id|irq
+comma
+r_void
+op_star
+id|dev_id
+comma
+r_struct
+id|pt_regs
+op_star
+id|ptregs
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|mac53c94_interrupt
+c_func
+(paren
+id|irq
+comma
+id|dev_id
+comma
+id|ptregs
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 )brace

@@ -915,6 +915,8 @@ id|err
 (brace
 r_char
 id|c
+op_assign
+l_int|0
 comma
 op_star
 id|res

@@ -1246,10 +1246,6 @@ l_int|0
 comma
 id|index
 suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
 r_struct
 id|Scsi_Host
 op_star
@@ -4176,10 +4172,6 @@ suffix:semicolon
 r_int
 id|tablesize
 suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
 r_struct
 id|buffer_head
 op_star
@@ -4928,10 +4920,6 @@ r_int
 id|clock
 suffix:semicolon
 macro_line|#endif
-r_int
-r_int
-id|flags
-suffix:semicolon
 r_struct
 id|Scsi_Host
 op_star
@@ -5228,6 +5216,13 @@ l_int|4
 op_star
 id|HZ
 suffix:semicolon
+id|spin_unlock_irq
+c_func
+(paren
+op_amp
+id|io_request_lock
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -5238,6 +5233,13 @@ id|clock
 id|barrier
 c_func
 (paren
+)paren
+suffix:semicolon
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|io_request_lock
 )paren
 suffix:semicolon
 id|printk
@@ -5330,10 +5332,6 @@ r_int
 id|retries
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
 r_struct
 id|Scsi_Host
 op_star
@@ -6420,10 +6418,6 @@ comma
 id|mask
 suffix:semicolon
 r_int
-r_int
-id|flags
-suffix:semicolon
-r_int
 id|i
 comma
 id|j
@@ -6627,10 +6621,6 @@ comma
 id|nbits
 comma
 id|mask
-suffix:semicolon
-r_int
-r_int
-id|flags
 suffix:semicolon
 macro_line|#ifdef DEBUG
 r_int
@@ -9159,10 +9149,6 @@ id|Scsi_Device
 op_star
 id|SDpnt
 suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
 id|FreeSectorBitmap
 op_star
 id|new_dma_malloc_freelist
@@ -10392,10 +10378,6 @@ op_star
 id|tpnt
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
 r_int
 id|online_status
 suffix:semicolon

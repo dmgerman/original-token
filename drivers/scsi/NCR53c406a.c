@@ -33,6 +33,7 @@ macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;sd.h&quot;
@@ -195,6 +196,21 @@ multiline_comment|/* Static function prototypes */
 r_static
 r_void
 id|NCR53c406a_intr
+c_func
+(paren
+r_int
+comma
+r_void
+op_star
+comma
+r_struct
+id|pt_regs
+op_star
+)paren
+suffix:semicolon
+r_static
+r_void
+id|do_NCR53c406a_intr
 c_func
 (paren
 r_int
@@ -1965,7 +1981,7 @@ c_func
 (paren
 id|irq_level
 comma
-id|NCR53c406a_intr
+id|do_NCR53c406a_intr
 comma
 l_int|0
 comma
@@ -3105,6 +3121,60 @@ suffix:semicolon
 )brace
 r_return
 l_int|0
+suffix:semicolon
+)brace
+)def_block
+r_static
+r_void
+DECL|function|do_NCR53c406a_intr
+(def_block
+id|do_NCR53c406a_intr
+c_func
+(paren
+r_int
+id|unused
+comma
+r_void
+op_star
+id|dev_id
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|NCR53c406a_intr
+c_func
+(paren
+l_int|0
+comma
+id|dev_id
+comma
+id|regs
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
 suffix:semicolon
 )brace
 )def_block

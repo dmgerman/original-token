@@ -13,6 +13,7 @@ macro_line|#endif
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -829,6 +830,24 @@ macro_line|#if LINUX_VERSION_CODE &gt;= LinuxVersionCode(1,3,70)
 r_static
 r_void
 id|ncr53c8xx_intr
+c_func
+(paren
+r_int
+id|irq
+comma
+r_void
+op_star
+id|dev_id
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+suffix:semicolon
+r_static
+r_void
+id|do_ncr53c8xx_intr
 c_func
 (paren
 r_int
@@ -11542,7 +11561,7 @@ c_func
 (paren
 id|device-&gt;slot.irq
 comma
-id|ncr53c8xx_intr
+id|do_ncr53c8xx_intr
 comma
 id|SA_INTERRUPT
 op_or
@@ -11563,7 +11582,7 @@ c_func
 (paren
 id|device-&gt;slot.irq
 comma
-id|ncr53c8xx_intr
+id|do_ncr53c8xx_intr
 comma
 id|SA_INTERRUPT
 comma
@@ -29821,6 +29840,58 @@ id|DEBUG_TINY
 id|printf
 (paren
 l_string|&quot;]&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+DECL|function|do_ncr53c8xx_intr
+r_static
+r_void
+id|do_ncr53c8xx_intr
+c_func
+(paren
+r_int
+id|irq
+comma
+r_void
+op_star
+id|dev_id
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|ncr53c8xx_intr
+c_func
+(paren
+id|irq
+comma
+id|dev_id
+comma
+id|regs
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 )brace

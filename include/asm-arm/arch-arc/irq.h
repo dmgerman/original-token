@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * include/asm-arm/arch-arc/irq.h&n; *&n; * Copyright (C) 1996 Russell King&n; *&n; * Changelog:&n; *   24-09-1996&t;RMK&t;Created&n; *   10-10-1996&t;RMK&t;Brought up to date with arch-sa110eval&n; *   05-11-1996&t;RMK&t;Changed interrupt numbers &amp; uses new inb/outb macros&n; *   11-01-1998&t;RMK&t;Added mask_and_ack_irq&n; */
+multiline_comment|/*&n; * include/asm-arm/arch-arc/irq.h&n; *&n; * Copyright (C) 1996 Russell King&n; *&n; * Changelog:&n; *   24-09-1996&t;RMK&t;Created&n; *   10-10-1996&t;RMK&t;Brought up to date with arch-sa110eval&n; *   22-10-1996&t;RMK&t;Changed interrupt numbers &amp; uses new inb/outb macros&n; *   11-01-1998&t;RMK&t;Added mask_and_ack_irq&n; */
 DECL|macro|BUILD_IRQ
 mdefine_line|#define BUILD_IRQ(s,n,m) &bslash;&n;&t;void IRQ##n##_interrupt(void); &bslash;&n;&t;void fast_IRQ##n##_interrupt(void); &bslash;&n;&t;void bad_IRQ##n##_interrupt(void); &bslash;&n;&t;void probe_IRQ##n##_interrupt(void);
 multiline_comment|/*&n; * The timer is a special interrupt&n; */

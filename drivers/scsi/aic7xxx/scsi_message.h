@@ -1,4 +1,3 @@
-multiline_comment|/*&n; * SCSI messages definitions.&n; */
 multiline_comment|/* Messages (1 byte) */
 multiline_comment|/* I/T (M)andatory or (O)ptional */
 DECL|macro|MSG_CMDCOMPLETE
@@ -50,6 +49,8 @@ multiline_comment|/* Identify message */
 multiline_comment|/* M/M */
 DECL|macro|MSG_IDENTIFYFLAG
 mdefine_line|#define MSG_IDENTIFYFLAG&t;0x80 
+DECL|macro|MSG_IDENTIFY_DISCFLAG
+mdefine_line|#define MSG_IDENTIFY_DISCFLAG&t;0x40 
 DECL|macro|MSG_IDENTIFY
 mdefine_line|#define MSG_IDENTIFY(lun, disc)&t;(((disc) ? 0xc0 : MSG_IDENTIFYFLAG) | (lun))
 DECL|macro|MSG_ISIDENTIFY
@@ -63,4 +64,10 @@ DECL|macro|MSG_EXT_WDTR
 mdefine_line|#define MSG_EXT_WDTR&t;&t;0x03
 DECL|macro|MSG_EXT_WDTR_LEN
 mdefine_line|#define MSG_EXT_WDTR_LEN&t;0x02
+DECL|macro|MSG_EXT_WDTR_BUS_8_BIT
+mdefine_line|#define MSG_EXT_WDTR_BUS_8_BIT&t;0x00
+DECL|macro|MSG_EXT_WDTR_BUS_16_BIT
+mdefine_line|#define MSG_EXT_WDTR_BUS_16_BIT&t;0x01
+DECL|macro|MSG_EXT_WDTR_BUS_32_BIT
+mdefine_line|#define MSG_EXT_WDTR_BUS_32_BIT&t;0x02 
 eof

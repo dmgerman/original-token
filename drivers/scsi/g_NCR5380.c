@@ -637,7 +637,7 @@ c_func
 (paren
 id|instance-&gt;irq
 comma
-id|generic_NCR5380_intr
+id|do_generic_NCR5380_intr
 comma
 id|SA_INTERRUPT
 comma

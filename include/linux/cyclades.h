@@ -1,4 +1,4 @@
-multiline_comment|/* $Revision: 2.1 $$Date: 1997/10/24 16:03:00 $&n; * linux/include/linux/cyclades.h&n; *&n; * This file is maintained by Marcio Saito &lt;marcio@cyclades.com&gt; and&n; * Randolph Bentson &lt;bentson@grieg.seaslug.org&gt;.&n; *&n; * This file contains the general definitions for the cyclades.c driver&n; *$Log: cyclades.h,v $&n; *Revision 2.1&t;1997/10/24 16:03:00  ivan&n; *added rflow (which allows enabling the CD1400 special flow control &n; *feature) and rtsdtr_inv (which allows DTR/RTS pin inversion) to &n; *cyclades_port structure;&n; *added Alpha support&n; *&n; *Revision 2.0  1997/06/30 10:30:00  ivan&n; *added some new doorbell command constants related to IOCTLW and&n; *UART error signaling&n; *&n; *Revision 1.8  1997/06/03 15:30:00  ivan&n; *added constant ZFIRM_HLT&n; *added constant CyPCI_Ze_win ( = 2 * Cy_PCI_Zwin)&n; *&n; *Revision 1.7  1997/03/26 10:30:00  daniel&n; *new entries at the end of cyclades_port struct to reallocate&n; *variables illegally allocated within card memory.&n; *&n; *Revision 1.6  1996/09/09 18:35:30  bentson&n; *fold in changes for Cyclom-Z -- including structures for&n; *communicating with board as well modest changes to original&n; *structures to support new features.&n; *&n; *Revision 1.5  1995/11/13 21:13:31  bentson&n; *changes suggested by Michael Chastain &lt;mec@duracef.shout.net&gt;&n; *to support use of this file in non-kernel applications&n; *&n; *&n; */
+multiline_comment|/* $Revision: 2.3 $$Date: 1998/03/16 18:01:12 $&n; * linux/include/linux/cyclades.h&n; *&n; * This file is maintained by Ivan Passos &lt;ivan@cyclades.com&gt;, &n; * Marcio Saito &lt;marcio@cyclades.com&gt; and&n; * Randolph Bentson &lt;bentson@grieg.seaslug.org&gt;.&n; *&n; * This file contains the general definitions for the cyclades.c driver&n; *$Log: cyclades.h,v $&n; *Revision 2.3  1998/03/16 18:01:12  ivan&n; *changes in the cyclades_port structure to get it closer to the &n; *standard serial port structure;&n; *added constants for new ioctls;&n; *Revision 2.2  1998/02/17 16:50:00  ivan&n; *changes in the cyclades_port structure (addition of shutdown_wait and &n; *chip_rev variables);&n; *added constants for new ioctls and for CD1400 rev. numbers.&n; *&n; *Revision 2.1&t;1997/10/24 16:03:00  ivan&n; *added rflow (which allows enabling the CD1400 special flow control &n; *feature) and rtsdtr_inv (which allows DTR/RTS pin inversion) to &n; *cyclades_port structure;&n; *added Alpha support&n; *&n; *Revision 2.0  1997/06/30 10:30:00  ivan&n; *added some new doorbell command constants related to IOCTLW and&n; *UART error signaling&n; *&n; *Revision 1.8  1997/06/03 15:30:00  ivan&n; *added constant ZFIRM_HLT&n; *added constant CyPCI_Ze_win ( = 2 * Cy_PCI_Zwin)&n; *&n; *Revision 1.7  1997/03/26 10:30:00  daniel&n; *new entries at the end of cyclades_port struct to reallocate&n; *variables illegally allocated within card memory.&n; *&n; *Revision 1.6  1996/09/09 18:35:30  bentson&n; *fold in changes for Cyclom-Z -- including structures for&n; *communicating with board as well modest changes to original&n; *structures to support new features.&n; *&n; *Revision 1.5  1995/11/13 21:13:31  bentson&n; *changes suggested by Michael Chastain &lt;mec@duracef.shout.net&gt;&n; *to support use of this file in non-kernel applications&n; *&n; *&n; */
 macro_line|#ifndef _LINUX_CYCLADES_H
 DECL|macro|_LINUX_CYCLADES_H
 mdefine_line|#define _LINUX_CYCLADES_H
@@ -50,14 +50,22 @@ DECL|macro|CYSETDEFTIMEOUT
 mdefine_line|#define CYSETDEFTIMEOUT         0x435909
 DECL|macro|CYSETRFLOW
 mdefine_line|#define CYSETRFLOW&t;&t;0x43590a
-DECL|macro|CYRESETRFLOW
-mdefine_line|#define CYRESETRFLOW&t;&t;0x43590b
+DECL|macro|CYGETRFLOW
+mdefine_line|#define CYGETRFLOW&t;&t;0x43590b
 DECL|macro|CYSETRTSDTR_INV
 mdefine_line|#define CYSETRTSDTR_INV&t;&t;0x43590c
-DECL|macro|CYRESETRTSDTR_INV
-mdefine_line|#define CYRESETRTSDTR_INV&t;0x43590d
+DECL|macro|CYGETRTSDTR_INV
+mdefine_line|#define CYGETRTSDTR_INV&t;&t;0x43590d
 DECL|macro|CYZPOLLCYCLE
 mdefine_line|#define CYZPOLLCYCLE&t;&t;0x43590e
+DECL|macro|CYGETCD1400VER
+mdefine_line|#define CYGETCD1400VER&t;&t;0x43590f
+DECL|macro|CYGETCARDINFO
+mdefine_line|#define CYGETCARDINFO&t;&t;0x435910
+DECL|macro|CYSETWAIT
+mdefine_line|#define&t;CYSETWAIT&t;&t;0x435911
+DECL|macro|CYGETWAIT
+mdefine_line|#define&t;CYGETWAIT&t;&t;0x435912
 multiline_comment|/*************** CYCLOM-Z ADDITIONS ***************/
 DECL|macro|CZIOC
 mdefine_line|#define CZIOC           (&squot;M&squot; &lt;&lt; 8)
@@ -79,6 +87,8 @@ DECL|macro|MAX_PORT
 mdefine_line|#define MAX_PORT        128     /* Max number of ports per board */
 DECL|macro|MAX_DEV
 mdefine_line|#define MAX_DEV         256     /* Max number of ports total */
+DECL|macro|CYZ_FIFO_SIZE
+mdefine_line|#define&t;CYZ_FIFO_SIZE&t;16
 DECL|macro|CYZ_BOOT_NWORDS
 mdefine_line|#define CYZ_BOOT_NWORDS 0x100
 DECL|struct|CYZ_BOOT_CTRL
@@ -976,10 +986,6 @@ DECL|member|magic
 r_int
 id|magic
 suffix:semicolon
-DECL|member|type
-r_int
-id|type
-suffix:semicolon
 DECL|member|card
 r_int
 id|card
@@ -993,6 +999,11 @@ r_int
 id|flags
 suffix:semicolon
 multiline_comment|/* defined in tty.h */
+DECL|member|type
+r_int
+id|type
+suffix:semicolon
+multiline_comment|/* UART type */
 DECL|member|tty
 r_struct
 id|tty_struct
@@ -1002,6 +1013,10 @@ suffix:semicolon
 DECL|member|read_status_mask
 r_int
 id|read_status_mask
+suffix:semicolon
+DECL|member|ignore_status_mask
+r_int
+id|ignore_status_mask
 suffix:semicolon
 DECL|member|timeout
 r_int
@@ -1052,20 +1067,35 @@ DECL|member|rtsdtr_inv
 r_int
 id|rtsdtr_inv
 suffix:semicolon
-DECL|member|ignore_status_mask
+DECL|member|chip_rev
 r_int
-id|ignore_status_mask
+id|chip_rev
 suffix:semicolon
+DECL|member|custom_divisor
+r_int
+id|custom_divisor
+suffix:semicolon
+DECL|member|x_char
+r_int
+id|x_char
+suffix:semicolon
+multiline_comment|/* to be pushed out ASAP */
 DECL|member|close_delay
 r_int
 id|close_delay
 suffix:semicolon
-DECL|member|IER
+DECL|member|closing_wait
 r_int
-id|IER
+r_int
+id|closing_wait
 suffix:semicolon
-multiline_comment|/* Interrupt Enable Register */
+DECL|member|closing_wait2
+r_int
+r_int
+id|closing_wait2
+suffix:semicolon
 DECL|member|event
+r_int
 r_int
 id|event
 suffix:semicolon
@@ -1079,11 +1109,6 @@ r_int
 id|count
 suffix:semicolon
 multiline_comment|/* # of fd on device */
-DECL|member|x_char
-r_int
-id|x_char
-suffix:semicolon
-multiline_comment|/* to be pushed out ASAP */
 DECL|member|x_break
 r_int
 id|x_break
@@ -1156,6 +1181,12 @@ id|wait_queue
 op_star
 id|close_wait
 suffix:semicolon
+DECL|member|shutdown_wait
+r_struct
+id|wait_queue
+op_star
+id|shutdown_wait
+suffix:semicolon
 DECL|member|mon
 r_struct
 id|cyclades_monitor
@@ -1178,15 +1209,19 @@ suffix:semicolon
 suffix:semicolon
 multiline_comment|/*&n; * Events are used to schedule things to happen at timer-interrupt&n; * time, instead of at cy interrupt time.&n; */
 DECL|macro|Cy_EVENT_READ_PROCESS
-mdefine_line|#define Cy_EVENT_READ_PROCESS&t;0
+mdefine_line|#define Cy_EVENT_READ_PROCESS&t;&t;0
 DECL|macro|Cy_EVENT_WRITE_WAKEUP
-mdefine_line|#define Cy_EVENT_WRITE_WAKEUP&t;1
+mdefine_line|#define Cy_EVENT_WRITE_WAKEUP&t;&t;1
 DECL|macro|Cy_EVENT_HANGUP
-mdefine_line|#define Cy_EVENT_HANGUP&t;&t;2
+mdefine_line|#define Cy_EVENT_HANGUP&t;&t;&t;2
 DECL|macro|Cy_EVENT_BREAK
-mdefine_line|#define Cy_EVENT_BREAK&t;&t;3
+mdefine_line|#define Cy_EVENT_BREAK&t;&t;&t;3
 DECL|macro|Cy_EVENT_OPEN_WAKEUP
-mdefine_line|#define Cy_EVENT_OPEN_WAKEUP&t;4
+mdefine_line|#define Cy_EVENT_OPEN_WAKEUP&t;&t;4
+DECL|macro|Cy_EVENT_SHUTDOWN_WAKEUP
+mdefine_line|#define Cy_EVENT_SHUTDOWN_WAKEUP&t;5
+DECL|macro|CLOSING_WAIT_DELAY
+mdefine_line|#define&t;CLOSING_WAIT_DELAY&t;30
 DECL|macro|CyMAX_CHIPS_PER_CARD
 mdefine_line|#define CyMAX_CHIPS_PER_CARD&t;8
 DECL|macro|CyMAX_CHAR_FIFO
@@ -1204,14 +1239,18 @@ mdefine_line|#define CyPCI_Zwin &t;0x80000
 DECL|macro|CyPCI_Ze_win
 mdefine_line|#define CyPCI_Ze_win &t;(2 * CyPCI_Zwin)
 multiline_comment|/**** CD1400 registers ****/
+DECL|macro|CD1400_REV_G
+mdefine_line|#define CD1400_REV_G&t;0x46
+DECL|macro|CD1400_REV_J
+mdefine_line|#define CD1400_REV_J&t;0x48
 DECL|macro|CyRegSize
-mdefine_line|#define CyRegSize  0x0400
+mdefine_line|#define CyRegSize  &t;0x0400
 DECL|macro|Cy_HwReset
-mdefine_line|#define Cy_HwReset 0x1400
+mdefine_line|#define Cy_HwReset &t;0x1400
 DECL|macro|Cy_ClrIntr
-mdefine_line|#define Cy_ClrIntr 0x1800
+mdefine_line|#define Cy_ClrIntr &t;0x1800
 DECL|macro|Cy_EpldRev
-mdefine_line|#define Cy_EpldRev 0x1e00
+mdefine_line|#define Cy_EpldRev &t;0x1e00
 multiline_comment|/* Global Registers */
 DECL|macro|CyGFRCR
 mdefine_line|#define CyGFRCR&t;&t;(0x40*2)

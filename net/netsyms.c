@@ -96,10 +96,23 @@ id|datalink_proto
 op_star
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SYSCTL
+r_extern
+r_int
+id|sysctl_max_syn_backlog
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_ATALK_MODULE
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#endif
+DECL|variable|dev_lockct
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|dev_lockct
+)paren
+suffix:semicolon
 multiline_comment|/* Skbuff symbols. */
 DECL|variable|skb_push_errstr
 id|EXPORT_SYMBOL
@@ -689,7 +702,6 @@ id|destroy_EII_client
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_ATALK_MODULE
 DECL|variable|sklist_destroy_socket
 id|EXPORT_SYMBOL
 c_func
@@ -697,8 +709,6 @@ c_func
 id|sklist_destroy_socket
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#if defined(CONFIG_ATALK_MODULE) || defined(CONFIG_PACKET_MODULE)
 DECL|variable|sklist_insert_socket
 id|EXPORT_SYMBOL
 c_func
@@ -706,8 +716,6 @@ c_func
 id|sklist_insert_socket
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_SMB_FS_MODULE
 DECL|variable|scm_detach_fds
 id|EXPORT_SYMBOL
 c_func
@@ -715,7 +723,6 @@ c_func
 id|scm_detach_fds
 )paren
 suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_INET
 multiline_comment|/* Internet layer registration */
 DECL|variable|inet_add_protocol
@@ -844,6 +851,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|inet_dgram_ops
+)paren
+suffix:semicolon
+DECL|variable|__release_sock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__release_sock
 )paren
 suffix:semicolon
 multiline_comment|/* needed for ip_gre -cw */
@@ -1011,13 +1025,6 @@ c_func
 id|csum_partial_copy_fromiovecend
 )paren
 suffix:semicolon
-DECL|variable|__release_sock
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|__release_sock
-)paren
-suffix:semicolon
 DECL|variable|net_timer
 id|EXPORT_SYMBOL
 c_func
@@ -1026,20 +1033,6 @@ id|net_timer
 )paren
 suffix:semicolon
 multiline_comment|/* UDP/TCP exported functions for TCPv6 */
-DECL|variable|sysctl_tcp_timestamps
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|sysctl_tcp_timestamps
-)paren
-suffix:semicolon
-DECL|variable|sysctl_tcp_window_scaling
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|sysctl_tcp_window_scaling
-)paren
-suffix:semicolon
 DECL|variable|sock_rspace
 id|EXPORT_SYMBOL
 c_func
@@ -1397,6 +1390,15 @@ c_func
 id|tcp_regs
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SYSCTL
+DECL|variable|sysctl_max_syn_backlog
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sysctl_max_syn_backlog
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_NETLINK
 DECL|variable|netlink_set_err
@@ -1523,7 +1525,6 @@ id|neigh_dump_info
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_PACKET_MODULE
 DECL|variable|dev_set_allmulti
 id|EXPORT_SYMBOL
 c_func
@@ -1559,13 +1560,18 @@ c_func
 id|rtnl_rlockct
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#if defined(CONFIG_IPV6_MODULE) || defined(CONFIG_PACKET_MODULE)
-DECL|variable|dev_lockct
+DECL|variable|rtnl_lock
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|dev_lockct
+id|rtnl_lock
+)paren
+suffix:semicolon
+DECL|variable|rtnl_unlock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|rtnl_unlock
 )paren
 suffix:semicolon
 DECL|variable|sock_wmalloc
@@ -1575,7 +1581,13 @@ c_func
 id|sock_wmalloc
 )paren
 suffix:semicolon
-macro_line|#endif
+DECL|variable|sock_rmalloc
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sock_rmalloc
+)paren
+suffix:semicolon
 macro_line|#if&t;defined(CONFIG_ULTRA)&t;||&t;defined(CONFIG_WD80x3)&t;&t;|| &bslash;&n;&t;defined(CONFIG_EL2)&t;||&t;defined(CONFIG_NE2000)&t;&t;|| &bslash;&n;&t;defined(CONFIG_E2100)&t;||&t;defined(CONFIG_HPLAN_PLUS)&t;|| &bslash;&n;&t;defined(CONFIG_HPLAN)&t;||&t;defined(CONFIG_AC3200)&t;&t;|| &bslash;&n;&t;defined(CONFIG_ES3210)
 multiline_comment|/* If 8390 NIC support is built in, we will need these. */
 DECL|variable|ei_open
@@ -1984,20 +1996,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|dev_mc_delete
-)paren
-suffix:semicolon
-DECL|variable|rtnl_lock
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|rtnl_lock
-)paren
-suffix:semicolon
-DECL|variable|rtnl_unlock
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|rtnl_unlock
 )paren
 suffix:semicolon
 DECL|variable|if_port_text

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/include/asm-arm/arch-sa100eval/irqs.h&n; *&n; * Copyright (C) 1996 Russell King&n; */
+multiline_comment|/*&n; * linux/include/asm-arm/arch-ebsa110/irqs.h&n; *&n; * Copyright (C) 1996 Russell King&n; */
 DECL|macro|IRQ_PRINTER
 mdefine_line|#define IRQ_PRINTER&t;&t;0
 DECL|macro|IRQ_COM1
@@ -15,4 +15,6 @@ DECL|macro|IRQ_PCMCIA
 mdefine_line|#define IRQ_PCMCIA&t;&t;6
 DECL|macro|IRQ_IMMEDIATE
 mdefine_line|#define IRQ_IMMEDIATE&t;&t;7
+DECL|macro|IRQ_TIMER
+mdefine_line|#define IRQ_TIMER&t;&t;IRQ_TIMER0
 eof

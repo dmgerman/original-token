@@ -77,6 +77,8 @@ DECL|macro|ARPHRD_HIPPI
 mdefine_line|#define ARPHRD_HIPPI&t;780&t;&t;/* High Performance Parallel Interface */
 DECL|macro|ARPHRD_ASH
 mdefine_line|#define ARPHRD_ASH&t;781&t;&t;/* Nexus 64Mbps Ash&t;&t;*/
+DECL|macro|ARPHRD_ECONET
+mdefine_line|#define ARPHRD_ECONET&t;782&t;&t;/* Acorn Econet&t;&t;&t;*/
 multiline_comment|/* ARP protocol opcodes. */
 DECL|macro|ARPOP_REQUEST
 mdefine_line|#define&t;ARPOP_REQUEST&t;1&t;&t;/* ARP request&t;&t;&t;*/

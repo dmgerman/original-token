@@ -512,19 +512,6 @@ mdefine_line|#define TCP_IPV4_MATCH(__sk, __cookie, __saddr, __daddr, __ports, _
 macro_line|#endif /* 64-bit arch */
 DECL|macro|TCP_IPV6_MATCH
 mdefine_line|#define TCP_IPV6_MATCH(__sk, __saddr, __daddr, __ports, __dif)&t;&t;&t;   &bslash;&n;&t;(((*((__u32 *)&amp;((__sk)-&gt;dport)))== (__ports))   &t;&t;&t;&amp;&amp; &bslash;&n;&t; ((__sk)-&gt;family&t;&t;== AF_INET6)&t;&t;&t;&t;&amp;&amp; &bslash;&n;&t; !ipv6_addr_cmp(&amp;(__sk)-&gt;net_pinfo.af_inet6.daddr, (__saddr))&t;&t;&amp;&amp; &bslash;&n;&t; !ipv6_addr_cmp(&amp;(__sk)-&gt;net_pinfo.af_inet6.rcv_saddr, (__daddr))&t;&amp;&amp; &bslash;&n;&t; (!((__sk)-&gt;bound_dev_if) || ((__sk)-&gt;bound_dev_if == (__dif))))
-multiline_comment|/* tcp_ipv4.c: These sysctl variables need to be shared between v4 and v6&n; * because the v6 tcp code to intialize a connection needs to interoperate&n; * with the v4 code using the same variables.&n; * FIXME: It would be better to rewrite the connection code to be&n; * address family independent and just leave one copy in the ipv4 section.&n; * This would also clean up some code duplication. -- erics&n; */
-r_extern
-r_int
-id|sysctl_tcp_timestamps
-suffix:semicolon
-r_extern
-r_int
-id|sysctl_tcp_window_scaling
-suffix:semicolon
-r_extern
-r_int
-id|sysctl_tcp_sack
-suffix:semicolon
 multiline_comment|/* These can have wildcards, don&squot;t try too hard. */
 DECL|function|tcp_lhashfn
 r_static
@@ -2389,7 +2376,7 @@ mdefine_line|#define TCP_SKB_CB(__skb)&t;((struct tcp_skb_cb *)&amp;((__skb)-&gt
 multiline_comment|/* We store the congestion window as a packet count, shifted by&n; * a factor so that implementing the 1/2 MSS ssthresh rules&n; * is easy.&n; */
 DECL|macro|TCP_CWND_SHIFT
 mdefine_line|#define TCP_CWND_SHIFT&t;1
-multiline_comment|/* This determines how many packets are &quot;in the network&quot; to the best&n; * or our knowledge.  In many cases it is conservative, but where&n; * detailed information is available from the receiver (via SACK&n; * blocks etc.) we can make more agressive calculations.&n; *&n; * Use this for decisions involving congestion control, use just&n; * tp-&gt;packets_out to determine if the send queue is empty or not.&n; *&n; * Read this equation as:&n; *&n; *&t;&quot;Packets sent once on transmission queue&quot; MINUS&n; *&t;&quot;Packets acknowledged by FACK information&quot; PLUS&n; *&t;&quot;Packets fast retransmitted&quot;&n; */
+multiline_comment|/* This determines how many packets are &quot;in the network&quot; to the best&n; * of our knowledge.  In many cases it is conservative, but where&n; * detailed information is available from the receiver (via SACK&n; * blocks etc.) we can make more aggressive calculations.&n; *&n; * Use this for decisions involving congestion control, use just&n; * tp-&gt;packets_out to determine if the send queue is empty or not.&n; *&n; * Read this equation as:&n; *&n; *&t;&quot;Packets sent once on transmission queue&quot; MINUS&n; *&t;&quot;Packets acknowledged by FACK information&quot; PLUS&n; *&t;&quot;Packets fast retransmitted&quot;&n; */
 DECL|function|tcp_packets_in_flight
 r_static
 id|__inline__
@@ -2636,14 +2623,6 @@ r_int
 id|state
 )paren
 (brace
-r_struct
-id|tcp_opt
-op_star
-id|tp
-op_assign
-op_amp
-id|sk-&gt;tp_pinfo.af_tcp
-suffix:semicolon
 r_int
 id|oldstate
 op_assign
@@ -2699,6 +2678,15 @@ suffix:semicolon
 r_case
 id|TCP_CLOSE
 suffix:colon
+(brace
+r_struct
+id|tcp_opt
+op_star
+id|tp
+op_assign
+op_amp
+id|sk-&gt;tp_pinfo.af_tcp
+suffix:semicolon
 multiline_comment|/* Should be about 2 rtt&squot;s */
 id|net_reset_timer
 c_func
@@ -2727,6 +2715,7 @@ id|sk
 )paren
 suffix:semicolon
 multiline_comment|/* fall through */
+)brace
 r_default
 suffix:colon
 (brace
@@ -3298,9 +3287,6 @@ id|window_clamp
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Do new listen semantics */
-DECL|macro|TCP_NEW_LISTEN
-mdefine_line|#define TCP_NEW_LISTEN
 DECL|function|tcp_synq_unlink
 r_extern
 id|__inline__

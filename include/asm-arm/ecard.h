@@ -2,7 +2,7 @@ multiline_comment|/*&n; * linux/include/asm-arm/ecard.h&n; *&n; * definitions fo
 macro_line|#ifndef __ASM_ECARD_H
 DECL|macro|__ASM_ECARD_H
 mdefine_line|#define __ASM_ECARD_H
-multiline_comment|/*&n; * Currently understood cards&n; *                        Manufacturer  Product ID&n; */
+multiline_comment|/*&n; * Currently understood cards (but not necessarily&n; * supported):&n; *                        Manufacturer  Product ID&n; */
 DECL|macro|MANU_ACORN
 mdefine_line|#define MANU_ACORN&t;&t;0x0000
 DECL|macro|PROD_ACORN_SCSI
@@ -61,6 +61,10 @@ DECL|macro|MANU_MCS
 mdefine_line|#define MANU_MCS&t;&t;0x0063
 DECL|macro|PROD_MCS_CONNECT32
 mdefine_line|#define PROD_MCS_CONNECT32&t;&t;0x0125
+DECL|macro|MANU_EESOX
+mdefine_line|#define MANU_EESOX&t;&t;0x0064
+DECL|macro|PROD_EESOX_SCSI2
+mdefine_line|#define PROD_EESOX_SCSI2&t;&t;0x008c
 macro_line|#ifdef ECARD_C
 DECL|macro|CONST
 mdefine_line|#define CONST
@@ -76,13 +80,12 @@ r_enum
 (brace
 DECL|enumerator|ECARD_IOC
 id|ECARD_IOC
-op_assign
-l_int|0
 comma
 DECL|enumerator|ECARD_MEMC
 id|ECARD_MEMC
-op_assign
-l_int|1
+comma
+DECL|enumerator|ECARD_DEBI
+id|ECARD_DEBI
 DECL|typedef|card_type_t
 )brace
 id|card_type_t
@@ -307,6 +310,13 @@ r_char
 id|slot_no
 suffix:semicolon
 multiline_comment|/* Slot number&t;&t;&t;*/
+DECL|member|dma
+id|CONST
+r_int
+r_char
+id|dma
+suffix:semicolon
+multiline_comment|/* DMA number (for request_dma)&t;*/
 DECL|member|irq
 id|CONST
 r_int
@@ -321,12 +331,6 @@ r_char
 id|fiq
 suffix:semicolon
 multiline_comment|/* FIQ number (for request_irq)&t;*/
-DECL|member|unused
-id|CONST
-r_int
-r_int
-id|unused
-suffix:semicolon
 DECL|member|cld
 id|CONST
 r_struct

@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
@@ -3585,6 +3586,56 @@ l_string|&quot;wd7000_intr_handle: return from interrupt handler&bslash;n&quot;
 suffix:semicolon
 macro_line|#endif
 )brace
+DECL|function|do_wd7000_intr_handle
+r_void
+id|do_wd7000_intr_handle
+(paren
+r_int
+id|irq
+comma
+r_void
+op_star
+id|dev_id
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|wd7000_intr_handle
+c_func
+(paren
+id|irq
+comma
+id|dev_id
+comma
+id|regs
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+)brace
 DECL|function|wd7000_queuecommand
 r_int
 id|wd7000_queuecommand
@@ -4377,7 +4428,7 @@ id|request_irq
 (paren
 id|host-&gt;irq
 comma
-id|wd7000_intr_handle
+id|do_wd7000_intr_handle
 comma
 id|SA_INTERRUPT
 comma

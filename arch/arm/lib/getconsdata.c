@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/arch/arm/lib/getconsdata.c&n; *&n; * Copyright (C) 1995, 1996 Russell King&n; */
+multiline_comment|/*&n; * linux/arch/arm/lib/getconsdata.c&n; *&n; * Copyright (C) 1995-1998 Russell King&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -10,27 +10,60 @@ mdefine_line|#define OFF_TSK(n) (unsigned long)&amp;(((struct task_struct *)0)-&
 DECL|macro|OFF_MM
 mdefine_line|#define OFF_MM(n) (unsigned long)&amp;(((struct mm_struct *)0)-&gt;n)
 macro_line|#ifdef KERNEL_DOMAIN
-DECL|variable|kernel_domain
+DECL|variable|DOM_KERNELDOMAIN
 r_int
 r_int
-id|kernel_domain
+id|DOM_KERNELDOMAIN
 op_assign
 id|KERNEL_DOMAIN
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef USER_DOMAIN
-DECL|variable|user_domain
+DECL|variable|DOM_USERDOMAIN
 r_int
 r_int
-id|user_domain
+id|DOM_USERDOMAIN
 op_assign
 id|USER_DOMAIN
 suffix:semicolon
 macro_line|#endif
-DECL|variable|addr_limit
+DECL|variable|TSK_STATE
 r_int
 r_int
-id|addr_limit
+id|TSK_STATE
+op_assign
+id|OFF_TSK
+c_func
+(paren
+id|state
+)paren
+suffix:semicolon
+DECL|variable|TSK_FLAGS
+r_int
+r_int
+id|TSK_FLAGS
+op_assign
+id|OFF_TSK
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+DECL|variable|TSK_SIGPENDING
+r_int
+r_int
+id|TSK_SIGPENDING
+op_assign
+id|OFF_TSK
+c_func
+(paren
+id|sigpending
+)paren
+suffix:semicolon
+DECL|variable|TSK_ADDR_LIMIT
+r_int
+r_int
+id|TSK_ADDR_LIMIT
 op_assign
 id|OFF_TSK
 c_func
@@ -38,21 +71,10 @@ c_func
 id|addr_limit
 )paren
 suffix:semicolon
-DECL|variable|tss_memmap
+DECL|variable|MM
 r_int
 r_int
-id|tss_memmap
-op_assign
-id|OFF_TSK
-c_func
-(paren
-id|tss.memmap
-)paren
-suffix:semicolon
-DECL|variable|mm
-r_int
-r_int
-id|mm
+id|MM
 op_assign
 id|OFF_TSK
 c_func
@@ -60,10 +82,10 @@ c_func
 id|mm
 )paren
 suffix:semicolon
-DECL|variable|pgd
+DECL|variable|PGD
 r_int
 r_int
-id|pgd
+id|PGD
 op_assign
 id|OFF_MM
 c_func
@@ -71,10 +93,21 @@ c_func
 id|pgd
 )paren
 suffix:semicolon
-DECL|variable|tss_save
+DECL|variable|TSS_MEMMAP
 r_int
 r_int
-id|tss_save
+id|TSS_MEMMAP
+op_assign
+id|OFF_TSK
+c_func
+(paren
+id|tss.memmap
+)paren
+suffix:semicolon
+DECL|variable|TSS_SAVE
+r_int
+r_int
+id|TSS_SAVE
 op_assign
 id|OFF_TSK
 c_func
@@ -82,10 +115,10 @@ c_func
 id|tss.save
 )paren
 suffix:semicolon
-DECL|variable|tss_fpesave
+DECL|variable|TSS_FPESAVE
 r_int
 r_int
-id|tss_fpesave
+id|TSS_FPESAVE
 op_assign
 id|OFF_TSK
 c_func
@@ -94,10 +127,10 @@ id|tss.fpstate.soft.save
 )paren
 suffix:semicolon
 macro_line|#if defined(CONFIG_CPU_ARM2) || defined(CONFIG_CPU_ARM3)
-DECL|variable|tss_memcmap
+DECL|variable|TSS_MEMCMAP
 r_int
 r_int
-id|tss_memcmap
+id|TSS_MEMCMAP
 op_assign
 id|OFF_TSK
 c_func
@@ -106,4 +139,106 @@ id|tss.memcmap
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef _PAGE_PRESENT
+DECL|variable|PAGE_PRESENT
+r_int
+r_int
+id|PAGE_PRESENT
+op_assign
+id|_PAGE_PRESENT
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef _PAGE_RW
+DECL|variable|PAGE_RW
+r_int
+r_int
+id|PAGE_RW
+op_assign
+id|_PAGE_RW
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef _PAGE_USER
+DECL|variable|PAGE_USER
+r_int
+r_int
+id|PAGE_USER
+op_assign
+id|_PAGE_USER
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef _PAGE_ACCESSED
+DECL|variable|PAGE_ACCESSED
+r_int
+r_int
+id|PAGE_ACCESSED
+op_assign
+id|_PAGE_ACCESSED
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef _PAGE_DIRTY
+DECL|variable|PAGE_DIRTY
+r_int
+r_int
+id|PAGE_DIRTY
+op_assign
+id|_PAGE_DIRTY
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef _PAGE_READONLY
+DECL|variable|PAGE_READONLY
+r_int
+r_int
+id|PAGE_READONLY
+op_assign
+id|_PAGE_READONLY
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef _PAGE_NOT_USER
+DECL|variable|PAGE_NOT_USER
+r_int
+r_int
+id|PAGE_NOT_USER
+op_assign
+id|_PAGE_NOT_USER
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef _PAGE_OLD
+DECL|variable|PAGE_OLD
+r_int
+r_int
+id|PAGE_OLD
+op_assign
+id|_PAGE_OLD
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef _PAGE_CLEAN
+DECL|variable|PAGE_CLEAN
+r_int
+r_int
+id|PAGE_CLEAN
+op_assign
+id|_PAGE_CLEAN
+suffix:semicolon
+macro_line|#endif
+DECL|variable|KSWI_BASE
+r_int
+r_int
+id|KSWI_BASE
+op_assign
+l_int|0x900000
+suffix:semicolon
+DECL|variable|KSWI_SYS_BASE
+r_int
+r_int
+id|KSWI_SYS_BASE
+op_assign
+l_int|0x9f0000
+suffix:semicolon
+DECL|variable|SYS_ERROR0
+r_int
+r_int
+id|SYS_ERROR0
+op_assign
+l_int|0x9f0000
+suffix:semicolon
 eof

@@ -236,32 +236,29 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|dump_stack
-r_static
+multiline_comment|/*&n; * Dump out the contents of some memory nicely...&n; */
+DECL|function|dump_mem
 r_void
-id|dump_stack
+id|dump_mem
+c_func
 (paren
 r_int
 r_int
-op_star
-id|start
+id|bottom
 comma
 r_int
 r_int
-op_star
-id|end
-comma
-r_int
-id|offset
-comma
-r_int
-id|max
+id|top
 )paren
 (brace
 r_int
 r_int
-op_star
 id|p
+op_assign
+id|bottom
+op_amp
+op_complement
+l_int|31
 suffix:semicolon
 r_int
 id|i
@@ -271,53 +268,87 @@ c_loop
 (paren
 id|p
 op_assign
-id|start
-op_plus
-id|offset
+id|bottom
+op_amp
+op_complement
+l_int|31
+suffix:semicolon
+id|p
+OL
+id|top
+suffix:semicolon
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%08lx: &quot;
 comma
+id|p
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
 id|i
 op_assign
 l_int|0
 suffix:semicolon
 id|i
 OL
-id|max
-op_logical_and
-id|p
-OL
-id|end
+l_int|8
 suffix:semicolon
 id|i
 op_increment
 comma
 id|p
-op_increment
+op_add_assign
+l_int|4
 )paren
 (brace
 r_if
 c_cond
 (paren
-id|i
-op_logical_and
-(paren
-id|i
-op_amp
-l_int|7
-)paren
-op_eq
-l_int|0
+id|p
+OL
+id|bottom
+op_logical_or
+id|p
+op_ge
+id|top
 )paren
 id|printk
+c_func
 (paren
-l_string|&quot;&bslash;n       &quot;
+l_string|&quot;         &quot;
 )paren
 suffix:semicolon
+r_else
 id|printk
+c_func
 (paren
 l_string|&quot;%08lx &quot;
 comma
 op_star
+(paren
+r_int
+r_int
+op_star
+)paren
 id|p
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
+op_eq
+l_int|3
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot; &quot;
 )paren
 suffix:semicolon
 )brace
@@ -326,6 +357,7 @@ id|printk
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; * These constants are for searching for possible module text&n; * segments.  VMALLOC_OFFSET comes from mm/vmalloc.c; MODULE_RANGE is&n; * a guess of how much space is likely to be vmalloced.&n; */
 DECL|macro|VMALLOC_OFFSET
@@ -655,10 +687,12 @@ r_break
 suffix:semicolon
 )brace
 id|console_verbose
+c_func
 (paren
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 l_string|&quot;Internal error: %s: %x&bslash;n&quot;
 comma
@@ -668,6 +702,7 @@ id|err
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 l_string|&quot;CPU: %d&quot;
 comma
@@ -678,13 +713,15 @@ c_func
 )paren
 suffix:semicolon
 id|show_regs
+c_func
 (paren
 id|regs
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
-l_string|&quot;Process %s (pid: %d, stackpage=%08lx)&bslash;nStack: &quot;
+l_string|&quot;Process %s (pid: %d, stackpage=%08lx)&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -721,28 +758,17 @@ r_int
 )paren
 id|current
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_star
-(paren
-r_int
-r_int
-op_star
-)paren
-id|sstack
-op_ne
-id|STACK_MAGIC
-)paren
 id|printk
+c_func
 (paren
-l_string|&quot;*** corrupted stack page&bslash;n       &quot;
+l_string|&quot;Stack: &quot;
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
 id|verify_stack_pointer
+c_func
 (paren
 id|cstack
 comma
@@ -750,8 +776,9 @@ l_int|4
 )paren
 )paren
 id|printk
+c_func
 (paren
-l_string|&quot;%08lx invalid kernel stack pointer&bslash;n&quot;
+l_string|&quot;invalid kernel stack pointer %08lx&quot;
 comma
 id|cstack
 )paren
@@ -770,7 +797,7 @@ l_int|4096
 id|printk
 c_func
 (paren
-l_string|&quot;(sp overflow)&bslash;n&quot;
+l_string|&quot;(sp overflow)&quot;
 )paren
 suffix:semicolon
 )brace
@@ -786,34 +813,24 @@ id|sstack
 id|printk
 c_func
 (paren
-l_string|&quot;(sp underflow)&bslash;n&quot;
+l_string|&quot;(sp underflow)&quot;
 )paren
 suffix:semicolon
 )brace
-r_else
-id|dump_stack
+id|printk
+c_func
 (paren
-(paren
-r_int
-r_int
-op_star
+l_string|&quot;&bslash;n&quot;
 )paren
-id|sstack
+suffix:semicolon
+id|dump_mem
+c_func
+(paren
+id|cstack
 comma
-(paren
-r_int
-r_int
-op_star
-)paren
 id|sstack
 op_plus
-l_int|1024
-comma
-id|cstack
-op_minus
-id|sstack
-comma
-id|kstack_depth_to_print
+l_int|4096
 )paren
 suffix:semicolon
 id|frameptr
@@ -863,6 +880,7 @@ suffix:semicolon
 )brace
 )brace
 id|dump_instr
+c_func
 (paren
 id|instruction_pointer
 c_func

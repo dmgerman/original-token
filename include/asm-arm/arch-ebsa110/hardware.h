@@ -33,6 +33,8 @@ DECL|macro|KERNTOPHYS
 mdefine_line|#define KERNTOPHYS(a)&t;&t;((unsigned long)(&amp;a))
 DECL|macro|KERNEL_BASE
 mdefine_line|#define KERNEL_BASE&t;&t;(0xc0008000)
+DECL|macro|SAFE_ADDR
+mdefine_line|#define SAFE_ADDR&t;&t;0x40000000
 macro_line|#else
 DECL|macro|PCIO_BASE
 mdefine_line|#define PCIO_BASE&t;&t;0xf0000000

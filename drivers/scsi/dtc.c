@@ -680,7 +680,7 @@ c_func
 (paren
 id|instance-&gt;irq
 comma
-id|dtc_intr
+id|do_dtc_intr
 comma
 id|SA_INTERRUPT
 comma

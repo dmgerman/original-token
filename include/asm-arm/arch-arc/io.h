@@ -2,11 +2,6 @@ multiline_comment|/*&n; * linux/include/asm-arm/arch-arc/io.h&n; *&n; * Copyrigh
 macro_line|#ifndef __ASM_ARM_ARCH_IO_H
 DECL|macro|__ASM_ARM_ARCH_IO_H
 mdefine_line|#define __ASM_ARM_ARCH_IO_H
-multiline_comment|/*&n; * Virtual view &lt;-&gt; DMA view memory address translations&n; * virt_to_bus: Used to translate the virtual address to an&n; *              address suitable to be passed to set_dma_addr&n; * bus_to_virt: Used to convert an address for DMA operations&n; *              to an address that the kernel can use.&n; */
-DECL|macro|virt_to_bus
-mdefine_line|#define virt_to_bus(x)&t;((unsigned long)(x))
-DECL|macro|bus_to_virt
-mdefine_line|#define bus_to_virt(x)&t;((void *)(x))
 multiline_comment|/*&n; * This architecture does not require any delayed IO, and&n; * has the constant-optimised IO&n; */
 DECL|macro|ARCH_IO_DELAY
 macro_line|#undef&t;ARCH_IO_DELAY
@@ -99,7 +94,7 @@ c_func
 l_string|&quot;tst&t;%2, #0x80000000&bslash;n&bslash;t&quot;
 l_string|&quot;mov&t;%0, %4&bslash;n&bslash;t&quot;
 l_string|&quot;addeq&t;%0, %0, %3&bslash;n&bslash;t&quot;
-l_string|&quot;strb&t;%1, [%0, %2, lsl #2]&quot;
+l_string|&quot;str&t;%1, [%0, %2, lsl #2]&quot;
 suffix:colon
 l_string|&quot;=&amp;r&quot;
 (paren
@@ -162,7 +157,7 @@ c_func
 l_string|&quot;tst&t;%2, #0x80000000&bslash;n&bslash;t&quot;
 l_string|&quot;mov&t;%0, %4&bslash;n&bslash;t&quot;
 l_string|&quot;addeq&t;%0, %0, %3&bslash;n&bslash;t&quot;
-l_string|&quot;strb&t;%1, [%0, %2, lsl #2]&quot;
+l_string|&quot;str&t;%1, [%0, %2, lsl #2]&quot;
 suffix:colon
 l_string|&quot;=&amp;r&quot;
 (paren

@@ -10,6 +10,7 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/amigaints.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;wd33c93.h&quot;
@@ -128,6 +129,57 @@ id|status
 )paren
 suffix:semicolon
 )brace
+)brace
+DECL|function|do_a3000_intr
+r_static
+r_void
+id|do_a3000_intr
+(paren
+r_int
+id|irq
+comma
+r_void
+op_star
+id|dummy
+comma
+r_struct
+id|pt_regs
+op_star
+id|fp
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|a3000_intr
+c_func
+(paren
+id|irq
+comma
+id|dummy
+comma
+id|fp
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 )brace
 DECL|function|dma_setup
 r_static
@@ -806,7 +858,7 @@ c_func
 (paren
 id|IRQ_AMIGA_PORTS
 comma
-id|a3000_intr
+id|do_a3000_intr
 comma
 l_int|0
 comma

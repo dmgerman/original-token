@@ -352,7 +352,7 @@ c_func
 (paren
 id|PCI_VENDOR_ID_PCTECH
 comma
-id|PCI_DEVICE_PD_PCTECH_RZ1000
+id|PCI_DEVICE_ID_PCTECH_RZ1000
 comma
 id|dev
 )paren
@@ -374,7 +374,7 @@ c_func
 (paren
 id|PCI_VENDOR_ID_PCTECH
 comma
-id|PCI_DEVICE_PD_PCTECH_RZ1001
+id|PCI_DEVICE_ID_PCTECH_RZ1001
 comma
 id|dev
 )paren

@@ -3686,6 +3686,8 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifndef DONT_USE_INTR
+macro_line|#include &lt;linux/blk.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
 multiline_comment|/*&n; * Function : void NCR5380_intr (int irq)&n; * &n; * Purpose : handle interrupts, reestablishing I_T_L or I_T_L_Q nexuses&n; *&t;from the disconnected queue, and restarting NCR5380_main() &n; *&t;as required.&n; *&n; * Inputs : int irq, irq that caused this interrupt.&n; *&n; */
 DECL|function|NCR5380_intr
 r_static
@@ -4136,6 +4138,57 @@ c_loop
 (paren
 op_logical_neg
 id|done
+)paren
+suffix:semicolon
+)brace
+DECL|function|do_NCR5380_intr
+r_static
+r_void
+id|do_NCR5380_intr
+(paren
+r_int
+id|irq
+comma
+r_void
+op_star
+id|dev_id
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|NCR5380_intr
+c_func
+(paren
+id|irq
+comma
+id|dev_id
+comma
+id|regs
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 )brace

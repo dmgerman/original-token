@@ -46,6 +46,13 @@ DECL|macro|SO_RCVTIMEO
 mdefine_line|#define SO_RCVTIMEO&t;20
 DECL|macro|SO_SNDTIMEO
 mdefine_line|#define SO_SNDTIMEO&t;21
+multiline_comment|/* Security levels - as per NRL IPv6 - don&squot;t actually do anything */
+DECL|macro|SO_SECURITY_AUTHENTICATION
+mdefine_line|#define SO_SECURITY_AUTHENTICATION&t;&t;22
+DECL|macro|SO_SECURITY_ENCRYPTION_TRANSPORT
+mdefine_line|#define SO_SECURITY_ENCRYPTION_TRANSPORT&t;23
+DECL|macro|SO_SECURITY_ENCRYPTION_NETWORK
+mdefine_line|#define SO_SECURITY_ENCRYPTION_NETWORK&t;&t;24
 DECL|macro|SO_BINDTODEVICE
 mdefine_line|#define SO_BINDTODEVICE 25
 macro_line|#endif /* _ASM_SOCKET_H */

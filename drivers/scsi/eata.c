@@ -78,6 +78,7 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &quot;scsi.h&quot;
@@ -1093,7 +1094,7 @@ DECL|macro|DEV2V
 mdefine_line|#define DEV2V(addr) ((addr) ? DEV2H(bus_to_virt((unsigned long)addr)) : 0)
 r_static
 r_void
-id|interrupt_handler
+id|do_interrupt_handler
 c_func
 (paren
 r_int
@@ -2507,7 +2508,7 @@ c_func
 (paren
 id|irq
 comma
-id|interrupt_handler
+id|do_interrupt_handler
 comma
 id|SA_INTERRUPT
 op_or
@@ -9755,10 +9756,10 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-DECL|function|interrupt_handler
+DECL|function|do_interrupt_handler
 r_static
 r_void
-id|interrupt_handler
+id|do_interrupt_handler
 c_func
 (paren
 r_int

@@ -3012,7 +3012,24 @@ id|nr_dest
 op_ne
 l_int|NULL
 )paren
+(brace
 multiline_comment|/* Its for me */
+r_if
+c_cond
+(paren
+id|ax25
+op_eq
+l_int|NULL
+)paren
+multiline_comment|/* Its from me */
+r_return
+id|nr_loopback_queue
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+r_else
 r_return
 id|nr_rx_frame
 c_func
@@ -3022,6 +3039,7 @@ comma
 id|dev
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
