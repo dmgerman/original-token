@@ -21,6 +21,12 @@ id|Scsi_Device
 op_star
 id|device
 suffix:semicolon
+DECL|member|mpcd_sector
+r_int
+r_int
+id|mpcd_sector
+suffix:semicolon
+multiline_comment|/* for reading multisession-CD&squot;s        */
 DECL|member|sector_bit_size
 r_int
 r_char

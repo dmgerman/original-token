@@ -43,12 +43,6 @@ DECL|macro|FDGETDRVSTAT
 mdefine_line|#define FDGETDRVSTAT 22 /* get drive state */
 DECL|macro|FDPOLLDRVSTAT
 mdefine_line|#define FDPOLLDRVSTAT 23 /* get drive state */
-DECL|macro|FDGETFDCSTAT
-mdefine_line|#define FDGETFDCSTAT 25 /* get fdc state */
-DECL|macro|FDWERRORCLR
-mdefine_line|#define FDWERRORCLR  27 /* clear write error and badness information */
-DECL|macro|FDWERRORGET
-mdefine_line|#define FDWERRORGET  28 /* get write error and badness information */
 DECL|macro|FDRESET
 mdefine_line|#define FDRESET 24 /* reset FDC */
 DECL|macro|FD_RESET_IF_NEEDED
@@ -57,14 +51,12 @@ DECL|macro|FD_RESET_IF_RAWCMD
 mdefine_line|#define FD_RESET_IF_RAWCMD 1
 DECL|macro|FD_RESET_ALWAYS
 mdefine_line|#define FD_RESET_ALWAYS 2
-DECL|macro|FDBAILOUT
-mdefine_line|#define FDBAILOUT 26 /* release all fdc locks */
-DECL|macro|FD_CLEAR_RESET
-mdefine_line|#define FD_CLEAR_RESET 0
-DECL|macro|FD_COMPLETE_FORMAT
-mdefine_line|#define FD_COMPLETE_FORMAT 1
-DECL|macro|FD_UNLOCK_FDC
-mdefine_line|#define FD_UNLOCK_FDC 2
+DECL|macro|FDGETFDCSTAT
+mdefine_line|#define FDGETFDCSTAT 25 /* get fdc state */
+DECL|macro|FDWERRORCLR
+mdefine_line|#define FDWERRORCLR  27 /* clear write error and badness information */
+DECL|macro|FDWERRORGET
+mdefine_line|#define FDWERRORGET  28 /* get write error and badness information */
 DECL|macro|FDRAWCMD
 mdefine_line|#define FDRAWCMD 30 /* send a raw command to the fdc */
 DECL|macro|FDTWADDLE
@@ -85,6 +77,7 @@ mdefine_line|#define FD_SECTSIZE(floppy) ( (floppy)-&gt;rate &amp; FD_2M ? &bsla
 DECL|macro|FD_PERP
 mdefine_line|#define FD_PERP 0x40
 macro_line|#ifndef ASSEMBLER
+multiline_comment|/* the following structure is used by FDSETPRM, FDDEFPRM and FDGETPRM */
 DECL|struct|floppy_struct
 r_struct
 id|floppy_struct
@@ -182,6 +175,7 @@ id|reporting
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* the following structure is used by FDSETDRVPRM and FDGETDRVPRM */
 DECL|struct|floppy_drive_params
 r_struct
 id|floppy_drive_params
@@ -277,6 +271,12 @@ multiline_comment|/* various flags, including ftd_msg */
 multiline_comment|/*&n; * Announce successful media type detection and media information loss after&n; * disk changes.&n; * Also used to enable/disable printing of overrun warnings.&n; */
 DECL|macro|FTD_MSG
 mdefine_line|#define FTD_MSG 0x10
+DECL|macro|FD_BROKEN_DCL
+mdefine_line|#define FD_BROKEN_DCL 0x20
+DECL|macro|FD_DEBUG
+mdefine_line|#define FD_DEBUG 0x02
+DECL|macro|FD_SILENT_DCL_CLEAR
+mdefine_line|#define FD_SILENT_DCL_CLEAR 0x4
 DECL|member|read_track
 r_char
 id|read_track
@@ -303,6 +303,45 @@ suffix:semicolon
 multiline_comment|/* native format of this drive */
 )brace
 suffix:semicolon
+r_enum
+(brace
+DECL|enumerator|FD_NEED_TWADDLE_BIT
+id|FD_NEED_TWADDLE_BIT
+comma
+multiline_comment|/* more magic */
+DECL|enumerator|FD_VERIFY_BIT
+id|FD_VERIFY_BIT
+comma
+multiline_comment|/* inquire for write protection */
+DECL|enumerator|FD_DISK_NEWCHANGE_BIT
+id|FD_DISK_NEWCHANGE_BIT
+comma
+multiline_comment|/* change detected, and no action undertaken yet to&n;&t;&t;&t;  clear media change status */
+DECL|enumerator|FD_UNUSED_BIT
+id|FD_UNUSED_BIT
+comma
+DECL|enumerator|FD_DISK_CHANGED_BIT
+id|FD_DISK_CHANGED_BIT
+comma
+multiline_comment|/* disk has been changed since last i/o */
+DECL|enumerator|FD_DISK_WRITABLE_BIT
+id|FD_DISK_WRITABLE_BIT
+multiline_comment|/* disk is writable */
+)brace
+suffix:semicolon
+multiline_comment|/* values for these flags */
+DECL|macro|FD_NEED_TWADDLE
+mdefine_line|#define FD_NEED_TWADDLE (1 &lt;&lt; FD_NEED_TWADDLE_BIT)
+DECL|macro|FD_VERIFY
+mdefine_line|#define FD_VERIFY (1 &lt;&lt; FD_VERIFY_BIT)
+DECL|macro|FD_DISK_NEWCHANGE
+mdefine_line|#define FD_DISK_NEWCHANGE (1 &lt;&lt; FD_DISK_NEWCHANGE_BIT)
+DECL|macro|FD_DISK_CHANGED
+mdefine_line|#define FD_DISK_CHANGED (1 &lt;&lt; FD_DISK_CHANGED_BIT)
+DECL|macro|FD_DISK_WRITABLE
+mdefine_line|#define FD_DISK_WRITABLE (1 &lt;&lt; FD_DISK_WRITABLE_BIT)
+DECL|macro|FD_DRIVE_PRESENT
+mdefine_line|#define FD_DRIVE_PRESENT 0 /* keep fdpatch utils compiling */
 DECL|struct|floppy_drive_struct
 r_struct
 id|floppy_drive_struct
@@ -312,33 +351,19 @@ r_int
 r_char
 id|flags
 suffix:semicolon
-multiline_comment|/* values for these flags */
-DECL|macro|FD_NEED_TWADDLE
-mdefine_line|#define FD_NEED_TWADDLE 1 /* more magic */
-DECL|macro|FD_VERIFY
-mdefine_line|#define FD_VERIFY 2 /* this is set at bootup to force an initial drive status&n;&t;&t;   inquiry*/
-DECL|macro|FD_DISK_NEWCHANGE
-mdefine_line|#define FD_DISK_NEWCHANGE 4 /* change detected, and no action undertaken yet to&n;&t;&t;&t;    clear media change status */
-DECL|macro|FD_DRIVE_PRESENT
-mdefine_line|#define FD_DRIVE_PRESENT 8
-DECL|macro|FD_DISK_WRITABLE
-mdefine_line|#define FD_DISK_WRITABLE 32
 DECL|member|spinup_date
 r_int
 r_int
-r_volatile
 id|spinup_date
 suffix:semicolon
 DECL|member|select_date
 r_int
 r_int
-r_volatile
 id|select_date
 suffix:semicolon
 DECL|member|first_read_date
 r_int
 r_int
-r_volatile
 id|first_read_date
 suffix:semicolon
 DECL|member|probed_format

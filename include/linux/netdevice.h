@@ -455,6 +455,9 @@ r_struct
 id|ifreq
 op_star
 id|ifr
+comma
+r_int
+id|cmd
 )paren
 suffix:semicolon
 DECL|macro|HAVE_SET_CONFIG

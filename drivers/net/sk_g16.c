@@ -106,7 +106,7 @@ multiline_comment|/* &n; * SK_G16 Status/Control Register bits&n; * ------------
 multiline_comment|/* &n; * Register transfer: 0 = no transfer&n; *                    1 = transferring data between LANCE and I/O reg &n; */
 DECL|macro|SK_IORUN
 mdefine_line|#define SK_IORUN        0x20   
-multiline_comment|/* &n; * LANCE interrupt: 0 = LANCE interrupt occured&t;&n; *                  1 = no LANCE interrupt occured&n; */
+multiline_comment|/* &n; * LANCE interrupt: 0 = LANCE interrupt occurred&t;&n; *                  1 = no LANCE interrupt occurred&n; */
 DECL|macro|SK_IRQ
 mdefine_line|#define SK_IRQ          0x10   
 DECL|macro|SK_RESET
@@ -3192,7 +3192,7 @@ id|tmdstat
 op_amp
 id|TX_ERR
 )paren
-multiline_comment|/* Error occured */
+multiline_comment|/* Error occurred */
 (brace
 id|printk
 c_func
@@ -3302,7 +3302,7 @@ id|tmdstat
 op_amp
 id|TX_MORE
 )paren
-multiline_comment|/* Collisions occured ? */
+multiline_comment|/* Collisions occurred ? */
 (brace
 multiline_comment|/* &n;         * Here I have a problem.&n;         * I only know that there must be one or up to 15 collisions.&n;         * Thats why TX_MORE is set, because after 16 attempts TX_RTRY&n;         * will be set which means couldn&squot;t send packet aborted transfer.&n;         *&n;         * First I did not have this in but then I thought at minimum&n;         * we see that something was not ok.&n;         * If anyone knows something better than this to handle this&n;         * please report it. (see Email addresses in the README file)&n;         */
 id|p-&gt;stats.collisions

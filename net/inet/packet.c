@@ -683,7 +683,7 @@ op_amp
 id|err
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;An error occured so return it. Because skb_recv_datagram() &n;&t; *&t;handles the blocking we don&squot;t see and worry about blocking&n;&t; *&t;retries.&n;&t; */
+multiline_comment|/*&n;&t; *&t;An error occurred so return it. Because skb_recv_datagram() &n;&t; *&t;handles the blocking we don&squot;t see and worry about blocking&n;&t; *&t;retries.&n;&t; */
 r_if
 c_cond
 (paren

@@ -1677,7 +1677,7 @@ id|result_size
 op_assign
 l_int|2
 suffix:semicolon
-multiline_comment|/*&n;    * 0x20 means an error occured.  Byte 2 will have the error code.&n;    * Otherwise, the command succeeded, byte 2 will have the count of&n;    * how many more status bytes are coming.&n;    *&n;    * The result register can be read 10 bytes at a time, a wait for&n;    * result ready to be asserted must be done between every 10 bytes.&n;    */
+multiline_comment|/*&n;    * 0x20 means an error occurred.  Byte 2 will have the error code.&n;    * Otherwise, the command succeeded, byte 2 will have the count of&n;    * how many more status bytes are coming.&n;    *&n;    * The result register can be read 10 bytes at a time, a wait for&n;    * result ready to be asserted must be done between every 10 bytes.&n;    */
 r_if
 c_cond
 (paren
@@ -10130,9 +10130,6 @@ c_func
 l_string|&quot;CDU31A: Unknown interface type: %s&bslash;n&quot;
 comma
 id|strings
-(braket
-l_int|3
-)braket
 )paren
 suffix:semicolon
 )brace

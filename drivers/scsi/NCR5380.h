@@ -49,7 +49,7 @@ DECL|macro|NDEBUG_RESTART_SELECT
 mdefine_line|#define NDEBUG_RESTART_SELECT&t;0x40000
 DECL|macro|NDEBUG_EXTENDED
 mdefine_line|#define NDEBUG_EXTENDED&t;&t;0x80000
-multiline_comment|/* &n; * The contents of the OUTPUT DATA register are asserted on the bus when&n; * either arbitration is occuring or the phase-indicating signals (&n; * IO, CD, MSG) in the TARGET COMMAND register and the ASSERT DATA&n; * bit in the INITIATOR COMMAND register is set.&n; */
+multiline_comment|/* &n; * The contents of the OUTPUT DATA register are asserted on the bus when&n; * either arbitration is occurring or the phase-indicating signals (&n; * IO, CD, MSG) in the TARGET COMMAND register and the ASSERT DATA&n; * bit in the INITIATOR COMMAND register is set.&n; */
 DECL|macro|OUTPUT_DATA_REG
 mdefine_line|#define OUTPUT_DATA_REG         0       /* wo DATA lines on SCSI bus */
 DECL|macro|CURRENT_SCSI_DATA_REG

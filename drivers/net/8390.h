@@ -433,7 +433,7 @@ mdefine_line|#define ENTSR_ABT 0x08  /* The transmit collided 16 times, and was 
 DECL|macro|ENTSR_CRS
 mdefine_line|#define ENTSR_CRS 0x10&t;/* The carrier sense was lost. */
 DECL|macro|ENTSR_FU
-mdefine_line|#define ENTSR_FU  0x20  /* A &quot;FIFO underrun&quot; occured during transmit. */
+mdefine_line|#define ENTSR_FU  0x20  /* A &quot;FIFO underrun&quot; occurred during transmit. */
 DECL|macro|ENTSR_CDH
 mdefine_line|#define ENTSR_CDH 0x40&t;/* The collision detect &quot;heartbeat&quot; signal was lost. */
 DECL|macro|ENTSR_OWC

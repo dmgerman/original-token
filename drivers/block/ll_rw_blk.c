@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;blk.h&quot;
 multiline_comment|/*&n; * The request-struct contains all necessary data&n; * to load a nr of sectors into memory&n; */
 DECL|variable|all_requests
@@ -2246,6 +2247,22 @@ c_func
 id|mem_start
 comma
 id|mem_end
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_FD
+id|floppy_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#else
+id|outb_p
+c_func
+(paren
+l_int|0xc
+comma
+l_int|0x3f2
 )paren
 suffix:semicolon
 macro_line|#endif

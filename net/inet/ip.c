@@ -5540,7 +5540,7 @@ op_amp
 id|IFF_UP
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t; *&t;If the packet is still being sent by the device/protocol&n;&t;&t;&t; *&t;below then don&squot;t retransmit. This is both needed, and good -&n;&t;&t;&t; *&t;especially with connected mode AX.25 where it stops resends&n;&t;&t;&t; *&t;occuring of an as yet unsent anyway frame!&n;&t;&t;&t; *&t;We still add up the counts as the round trip time wants&n;&t;&t;&t; *&t;adjusting.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; *&t;If the packet is still being sent by the device/protocol&n;&t;&t;&t; *&t;below then don&squot;t retransmit. This is both needed, and good -&n;&t;&t;&t; *&t;especially with connected mode AX.25 where it stops resends&n;&t;&t;&t; *&t;occurring of an as yet unsent anyway frame!&n;&t;&t;&t; *&t;We still add up the counts as the round trip time wants&n;&t;&t;&t; *&t;adjusting.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren

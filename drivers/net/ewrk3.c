@@ -331,6 +331,9 @@ r_struct
 id|ifreq
 op_star
 id|rq
+comma
+r_int
+id|cmd
 )paren
 suffix:semicolon
 multiline_comment|/*&n;** Private functions&n;*/
@@ -6930,6 +6933,9 @@ r_struct
 id|ifreq
 op_star
 id|rq
+comma
+r_int
+id|cmd
 )paren
 (brace
 r_struct

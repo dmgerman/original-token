@@ -3027,6 +3027,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_FD
 r_if
 c_cond
 (paren
@@ -3052,6 +3053,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 id|memset
 c_func
 (paren

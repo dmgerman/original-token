@@ -12547,7 +12547,7 @@ op_amp
 id|DSTAT_OPC
 )paren
 (brace
-multiline_comment|/* &n;     * Ascertain if this IID interrupts occured before or after a STO &n;     * interrupt.  Since the interrupt handling code now leaves &n;     * DSP unmodified until _after_ all stacked interrupts have been&n;     * processed, reading the DSP returns the original DSP register.&n;     * This means that if dsp lies between the select code, and &n;     * message out following the selection code (where the IID interrupt&n;     * would have to have occurred by due to the implicit wait for REQ),&n;     * we have an IID interrupt resulting from a STO condition and &n;     * can ignore it.&n;     */
+multiline_comment|/* &n;     * Ascertain if this IID interrupts occurred before or after a STO &n;     * interrupt.  Since the interrupt handling code now leaves &n;     * DSP unmodified until _after_ all stacked interrupts have been&n;     * processed, reading the DSP returns the original DSP register.&n;     * This means that if dsp lies between the select code, and &n;     * message out following the selection code (where the IID interrupt&n;     * would have to have occurred by due to the implicit wait for REQ),&n;     * we have an IID interrupt resulting from a STO condition and &n;     * can ignore it.&n;     */
 r_if
 c_cond
 (paren

@@ -1722,7 +1722,7 @@ id|COFF_SCNHSZ
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; *   Generate any needed trap for this process. If an error occured then&n; *   generate a segmentation violation. If the process is being debugged&n; *   then generate the load trap. (Note: If this is a library load then&n; *   do not generate the trap here. Pass the error to the caller who&n; *   will do it for the process in the outer lay of this procedure call.)&n; */
+multiline_comment|/*&n; *   Generate any needed trap for this process. If an error occurred then&n; *   generate a segmentation violation. If the process is being debugged&n; *   then generate the load trap. (Note: If this is a library load then&n; *   do not generate the trap here. Pass the error to the caller who&n; *   will do it for the process in the outer lay of this procedure call.)&n; */
 r_if
 c_cond
 (paren

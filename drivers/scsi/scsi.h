@@ -218,7 +218,7 @@ mdefine_line|#define&t;DID_BAD_INTR&t;&t;0x09
 multiline_comment|/*&n;&t;Driver status&n;*/
 DECL|macro|DRIVER_OK
 mdefine_line|#define DRIVER_OK&t;&t;0x00
-multiline_comment|/*&n;&t;These indicate the error that occured, and what is available.&n;*/
+multiline_comment|/*&n;&t;These indicate the error that occurred, and what is available.&n;*/
 DECL|macro|DRIVER_BUSY
 mdefine_line|#define DRIVER_BUSY&t;&t;0x01
 DECL|macro|DRIVER_SOFT
@@ -303,6 +303,13 @@ mdefine_line|#define&t;SCSI_1_CCS&t;2
 DECL|macro|SCSI_2
 mdefine_line|#define&t;SCSI_2&t;&t;3
 multiline_comment|/*&n;&t;Every SCSI command starts with a one byte OP-code.&n;&t;The next byte&squot;s high three bits are the LUN of the&n;&t;device.  Any multi-byte quantities are stored high byte&n;&t;first, and may have a 5 bit MSB in the same byte&n;&t;as the LUN.&n;*/
+multiline_comment|/*&n;        Manufactors list&n;*/
+DECL|macro|SCSI_MAN_UNKNOWN
+mdefine_line|#define SCSI_MAN_UNKNOWN     0
+DECL|macro|SCSI_MAN_NEC
+mdefine_line|#define SCSI_MAN_NEC         1
+DECL|macro|SCSI_MAN_TOSHIBA
+mdefine_line|#define SCSI_MAN_TOSHIBA     2
 multiline_comment|/*&n;&t;The scsi_device struct contains what we know about each given scsi&n;&t;device.&n;*/
 DECL|struct|scsi_device
 r_typedef
@@ -324,6 +331,12 @@ id|id
 comma
 id|lun
 suffix:semicolon
+DECL|member|manufactor
+r_int
+r_int
+id|manufactor
+suffix:semicolon
+multiline_comment|/* Manufactor of device, for using vendor-specific cmd&squot;s */
 DECL|member|attached
 r_int
 id|attached

@@ -2005,7 +2005,7 @@ id|can_queue
 id|printk
 c_func
 (paren
-l_string|&quot;%s: qcomm, no free mailbox, reseting.&bslash;n&quot;
+l_string|&quot;%s: qcomm, no free mailbox, resetting.&bslash;n&quot;
 comma
 id|BN
 c_func

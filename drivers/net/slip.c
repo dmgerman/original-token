@@ -408,6 +408,7 @@ op_assign
 id|dev-&gt;mtu
 op_plus
 l_int|73
+suffix:semicolon
 macro_line|#else
 id|sl-&gt;mtu
 op_assign
@@ -2026,6 +2027,7 @@ op_assign
 id|dev-&gt;mtu
 op_plus
 l_int|73
+suffix:semicolon
 macro_line|#else    
 id|sl-&gt;mtu
 op_assign

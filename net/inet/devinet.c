@@ -358,7 +358,11 @@ c_cond
 id|IN_MULTICAST
 c_func
 (paren
+id|ntohl
+c_func
+(paren
 id|addr
+)paren
 )paren
 )paren
 (brace

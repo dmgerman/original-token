@@ -4504,7 +4504,7 @@ id|MR_DMA_MODE
 )paren
 suffix:semicolon
 macro_line|#else
-multiline_comment|/*&n;     * Note : on my sample board, watch-dog timeouts occured when interrupts&n;     * were not disabled for the duration of a single DMA transfer, from &n;     * before the setting of DMA mode to after transfer of the last byte.&n;     */
+multiline_comment|/*&n;     * Note : on my sample board, watch-dog timeouts occurred when interrupts&n;     * were not disabled for the duration of a single DMA transfer, from &n;     * before the setting of DMA mode to after transfer of the last byte.&n;     */
 macro_line|#if defined(PSEUDO_DMA) &amp;&amp; !defined(UNSAFE)
 id|cli
 c_func
@@ -5587,7 +5587,7 @@ id|cmd-&gt;SCp.buffers_residual
 suffix:semicolon
 macro_line|#endif
 )brace
-multiline_comment|/*&n;&t;&t; * The prefered transfer method is going to be &n;&t;&t; * PSEUDO-DMA for systems that are strictly PIO,&n;&t;&t; * since we can let the hardware do the handshaking.&n;&t;&t; *&n;&t;&t; * For this to work, we need to know the transfersize&n;&t;&t; * ahead of time, since the pseudo-DMA code will sit&n;&t;&t; * in an unconditional loop.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * The preferred transfer method is going to be &n;&t;&t; * PSEUDO-DMA for systems that are strictly PIO,&n;&t;&t; * since we can let the hardware do the handshaking.&n;&t;&t; *&n;&t;&t; * For this to work, we need to know the transfersize&n;&t;&t; * ahead of time, since the pseudo-DMA code will sit&n;&t;&t; * in an unconditional loop.&n;&t;&t; */
 macro_line|#if defined(PSEUDO_DMA) || defined(REAL_DMA_POLL)
 macro_line|#ifdef NCR5380_dma_xfer_len
 r_if

@@ -1,10 +1,10 @@
 macro_line|#ifndef _AHA152X_H
 DECL|macro|_AHA152X_H
 mdefine_line|#define _AHA152X_H
-multiline_comment|/*&n; * $Id: aha152x.h,v 1.4 1994/09/12 11:32:41 root Exp $&n; */
+multiline_comment|/*&n; * $Id: aha152x.h,v 1.6 1994/11/24 21:35:38 root Exp root $&n; */
+macro_line|#if defined(__KERNEL__)
 macro_line|#include &quot;../block/blk.h&quot;
 macro_line|#include &quot;scsi.h&quot;
-macro_line|#if defined(__KERNEL__)
 macro_line|#include &lt;asm/io.h&gt;
 r_int
 id|aha152x_detect
@@ -82,7 +82,7 @@ multiline_comment|/* number of queueable commands&n;   (unless we support more t
 DECL|macro|AHA152X_MAXQUEUE
 mdefine_line|#define AHA152X_MAXQUEUE&t;7&t;&t;
 DECL|macro|AHA152X_REVID
-mdefine_line|#define AHA152X_REVID &quot;Adaptec 152x SCSI driver; $Revision: 1.4 $&quot;
+mdefine_line|#define AHA152X_REVID &quot;Adaptec 152x SCSI driver; $Revision: 1.6 $&quot;
 multiline_comment|/* Initial value of Scsi_Host entry */
 DECL|macro|AHA152X
 mdefine_line|#define AHA152X       { /* next */&t;&t;NULL,&t;&t;&t;    &bslash;&n;&t;&t;&t;/* name */&t;&t;AHA152X_REVID, &t;&t;    &bslash;&n;&t;&t;&t;/* detect */&t;&t;aha152x_detect,             &bslash;&n;&t;&t;&t;/* release */&t;&t;NULL,&t;&t;&t;    &bslash;&n;&t;&t;&t;/* info */&t;&t;aha152x_info,               &bslash;&n;&t;&t;&t;/* command */&t;&t;aha152x_command,            &bslash;&n;&t;&t;&t;/* queuecommand */&t;aha152x_queue,              &bslash;&n;                        /* abort */&t;&t;aha152x_abort,              &bslash;&n;                        /* reset */&t;&t;aha152x_reset,              &bslash;&n;                        /* slave_attach */&t;/* NULL */  0,              &bslash;&n;                        /* bios_param */&t;aha152x_biosparam,          &bslash;&n;&t;&t;&t;/* can_queue */&t;&t;1,                          &bslash;&n;                        /* this_id */&t;&t;7,                          &bslash;&n;                        /* sg_tablesize */&t;SG_ALL,                     &bslash;&n;                        /* cmd_per_lun */&t;1,                          &bslash;&n;                        /* present */&t;&t;0,                          &bslash;&n;                        /* unchecked_isa_dma */&t;0,&t;&t;&t;    &bslash;&n;&t;&t;&t;/* use_clustering */&t;DISABLE_CLUSTERING }
@@ -575,5 +575,91 @@ DECL|macro|TESTHI
 mdefine_line|#define TESTHI(PORT, BITS)&t;&bslash;&n;&t;((inb(PORT) &amp; (BITS)) == BITS)
 DECL|macro|TESTLO
 mdefine_line|#define TESTLO(PORT, BITS)&t;&bslash;&n;&t;((inb(PORT) &amp; (BITS)) == 0)
+macro_line|#ifdef DEBUG_AHA152X
+r_enum
+(brace
+DECL|enumerator|debug_skipports
+id|debug_skipports
+op_assign
+l_int|0x0001
+comma
+DECL|enumerator|debug_queue
+id|debug_queue
+op_assign
+l_int|0x0002
+comma
+DECL|enumerator|debug_intr
+id|debug_intr
+op_assign
+l_int|0x0004
+comma
+DECL|enumerator|debug_selection
+id|debug_selection
+op_assign
+l_int|0x0008
+comma
+DECL|enumerator|debug_msgo
+id|debug_msgo
+op_assign
+l_int|0x0010
+comma
+DECL|enumerator|debug_msgi
+id|debug_msgi
+op_assign
+l_int|0x0020
+comma
+DECL|enumerator|debug_status
+id|debug_status
+op_assign
+l_int|0x0040
+comma
+DECL|enumerator|debug_cmd
+id|debug_cmd
+op_assign
+l_int|0x0080
+comma
+DECL|enumerator|debug_datai
+id|debug_datai
+op_assign
+l_int|0x0100
+comma
+DECL|enumerator|debug_datao
+id|debug_datao
+op_assign
+l_int|0x0200
+comma
+DECL|enumerator|debug_abort
+id|debug_abort
+op_assign
+l_int|0x0400
+comma
+DECL|enumerator|debug_done
+id|debug_done
+op_assign
+l_int|0x0800
+comma
+DECL|enumerator|debug_biosparam
+id|debug_biosparam
+op_assign
+l_int|0x1000
+comma
+DECL|enumerator|debug_phases
+id|debug_phases
+op_assign
+l_int|0x2000
+comma
+DECL|enumerator|debug_queues
+id|debug_queues
+op_assign
+l_int|0x4000
+comma
+DECL|enumerator|debug_reset
+id|debug_reset
+op_assign
+l_int|0x8000
+comma
+)brace
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif /* _AHA152X_H */
 eof

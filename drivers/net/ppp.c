@@ -124,6 +124,9 @@ r_struct
 id|ifreq
 op_star
 id|ifr
+comma
+r_int
+id|cmd
 )paren
 suffix:semicolon
 r_static
@@ -2681,6 +2684,9 @@ r_struct
 id|ifreq
 op_star
 id|ifr
+comma
+r_int
+id|cmd
 )paren
 (brace
 r_struct

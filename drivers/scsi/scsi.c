@@ -1291,6 +1291,50 @@ l_int|0x80
 suffix:semicolon
 multiline_comment|/* removable */
 )brace
+id|SDpnt-&gt;manufactor
+op_assign
+id|SCSI_MAN_UNKNOWN
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strncmp
+c_func
+(paren
+id|scsi_result
+op_plus
+l_int|8
+comma
+l_string|&quot;NEC&quot;
+comma
+l_int|3
+)paren
+)paren
+id|SDpnt-&gt;manufactor
+op_assign
+id|SCSI_MAN_NEC
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strncmp
+c_func
+(paren
+id|scsi_result
+op_plus
+l_int|8
+comma
+l_string|&quot;TOSHIBA&quot;
+comma
+l_int|7
+)paren
+)paren
+id|SDpnt-&gt;manufactor
+op_assign
+id|SCSI_MAN_TOSHIBA
+suffix:semicolon
 id|SDpnt-&gt;removable
 op_assign
 (paren
@@ -2048,7 +2092,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;SCSI host %d abort() timed out - reseting&bslash;n&quot;
+l_string|&quot;SCSI host %d abort() timed out - resetting&bslash;n&quot;
 comma
 id|SCpnt-&gt;host-&gt;host_no
 )paren
@@ -4687,7 +4731,7 @@ id|WAS_RESET
 id|printk
 c_func
 (paren
-l_string|&quot;scsi%d : reseting for second half of retries.&bslash;n&quot;
+l_string|&quot;scsi%d : resetting for second half of retries.&bslash;n&quot;
 comma
 id|SCpnt-&gt;host-&gt;host_no
 )paren

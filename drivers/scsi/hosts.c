@@ -42,6 +42,9 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_PAS16
 macro_line|#include &quot;pas16.h&quot;
 macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_QLOGIC
+macro_line|#include &quot;qlogic.h&quot;
+macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_SEAGATE
 macro_line|#include &quot;seagate.h&quot;
 macro_line|#endif
@@ -123,6 +126,10 @@ comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_GENERIC_NCR5380
 id|GENERIC_NCR5380
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_QLOGIC
+id|QLOGIC
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_PAS16

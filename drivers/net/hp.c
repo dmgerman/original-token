@@ -1413,7 +1413,7 @@ comma
 id|EN_CMD
 )paren
 suffix:semicolon
-multiline_comment|/* Make certain that the dummy read has occured. */
+multiline_comment|/* Make certain that the dummy read has occurred. */
 id|inb_p
 c_func
 (paren

@@ -1964,7 +1964,7 @@ op_plus
 id|NE_CMD
 )paren
 suffix:semicolon
-multiline_comment|/* Make certain that the dummy read has occured. */
+multiline_comment|/* Make certain that the dummy read has occurred. */
 id|SLOW_DOWN_IO
 suffix:semicolon
 id|SLOW_DOWN_IO
