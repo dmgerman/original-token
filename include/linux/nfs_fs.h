@@ -549,6 +549,14 @@ r_struct
 id|inode_operations
 id|nfs_dir_inode_operations
 suffix:semicolon
+r_extern
+r_void
+id|nfs_kfree_cache
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 multiline_comment|/* linux/fs/nfs/symlink.c */
 r_extern
 r_struct

@@ -203,6 +203,13 @@ id|prof_len
 op_assign
 l_int|0
 suffix:semicolon
+DECL|variable|prof_shift
+r_int
+r_int
+id|prof_shift
+op_assign
+l_int|0
+suffix:semicolon
 DECL|macro|_S
 mdefine_line|#define _S(nr) (1&lt;&lt;((nr)-1))
 r_extern
@@ -2155,7 +2162,7 @@ op_amp
 id|timer_head
 op_logical_and
 id|timer-&gt;expires
-OL
+op_le
 id|jiffies
 )paren
 (brace
@@ -2662,7 +2669,6 @@ id|kstat.cpu_system
 op_increment
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_PROFILE
 r_if
 c_cond
 (paren
@@ -2695,7 +2701,7 @@ id|_stext
 suffix:semicolon
 id|eip
 op_rshift_assign
-id|CONFIG_PROFILE_SHIFT
+id|prof_shift
 suffix:semicolon
 r_if
 c_cond
@@ -2711,7 +2717,6 @@ id|eip
 op_increment
 suffix:semicolon
 )brace
-macro_line|#endif
 )brace
 multiline_comment|/*&n;&t; * check the cpu time limit on the process.&n;&t; */
 r_if
@@ -2985,7 +2990,7 @@ r_if
 c_cond
 (paren
 id|timer_head.next-&gt;expires
-OL
+op_le
 id|jiffies
 )paren
 id|mark_bh

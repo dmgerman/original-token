@@ -1,6 +1,6 @@
 multiline_comment|/* ibmtr.c:  A shared-memory IBM Token Ring 16/4 driver for linux */
 multiline_comment|/*&n;&t;Written 1993 by Mark Swanson and Peter De Schrijver.&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;This device driver should work with Any IBM Token Ring Card that does&n;   not use DMA.&n;&n;&t;I used Donald Becker&squot;s (becker@super.org) device driver work&n;&t;as a base for most of my initial work.&n;*/
-multiline_comment|/*&n;   Changes by Peter De Schrijver (Peter.Deschrijver@linux.cc.kuleuven.ac.be) :&n;&t;&n;&t;+ changed name to ibmtr.c in anticipation of other tr boards.&n;&t;+ changed reset code and adapter open code.&n;&t;+ added SAP open code.&n;&t;+ a first attempt to write interrupt, transmit and receive routines.&n;&n;   Changes by David W. Morris (dwm@shell.portal.com) :&n;     941003 dwm: - Restructure tok_probe for multiple adapters, devices&n;                 - Add comments, misc reorg for clarity&n;                 - Flatten interrupt handler levels&n;&n;   Warnings !!!!!!!!!!!!!!&n;      This driver is only partially sanitized for support of multiple&n;      adapters.  It will almost definately fail if more than one&n;      active adapter is identified.&n;*/
+multiline_comment|/*&n;   Changes by Peter De Schrijver (Peter.Deschrijver@linux.cc.kuleuven.ac.be) :&n;&t;&n;&t;+ changed name to ibmtr.c in anticipation of other tr boards.&n;&t;+ changed reset code and adapter open code.&n;&t;+ added SAP open code.&n;&t;+ a first attempt to write interrupt, transmit and receive routines.&n;&n;   Changes by David W. Morris (dwm@shell.portal.com) :&n;     941003 dwm: - Restructure tok_probe for multiple adapters, devices&n;                 - Add comments, misc reorg for clarity&n;                 - Flatten interrupt handler levels&n;&n;   Changes by Farzad Farid (farzy@zen.via.ecp.fr)&n;   and Pascal Andre (andre@chimay.via.ecp.fr) (March 9 1995) :&n;        - multi ring support clean up&n;        - RFC1042 compliance enhanced&n;&n;   Changes by Pascal Andre (andre@chimay.via.ecp.fr) (September 7 1995) :&n;        - bug correction in tr_tx&n;        - removed redundant information display&n;        - some code reworking&n;&n;   Warnings !!!!!!!!!!!!!!&n;      This driver is only partially sanitized for support of multiple&n;      adapters.  It will almost definately fail if more than one&n;      active adapter is identified.&n;*/
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
@@ -15,6 +15,13 @@ DECL|macro|FALSE
 mdefine_line|#define FALSE 0
 DECL|macro|TRUE
 mdefine_line|#define TRUE (!FALSE)
+multiline_comment|/* changes the output format of driver initialisation */
+DECL|macro|TR_NEWFORMAT
+mdefine_line|#define TR_NEWFORMAT&t;1
+multiline_comment|/* some 95 OS send many non UI frame; this allow removing the warning */
+DECL|macro|TR_FILTERNONUI
+mdefine_line|#define TR_FILTERNONUI&t;1
+multiline_comment|/* version and credits */
 DECL|variable|version
 r_static
 r_const
@@ -22,8 +29,8 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;ibmtr.c:v1.1.48 8/7/94 Peter De Schrijver and Mark Swanson&bslash;n&quot;
-l_string|&quot;           modified 10/3/94 David W. Morris&bslash;n&quot;
+l_string|&quot;ibmtr.c: v1.3.24 8/7/94 Peter De Schrijver and Mark Swanson&bslash;n&quot;
+l_string|&quot;   modified 10/3/94 DW Morris, 3/9/95 F Farid and P Andre, 9/7/95 P Andre&bslash;n&quot;
 suffix:semicolon
 DECL|variable|pcchannelid
 r_static
@@ -66,6 +73,76 @@ DECL|macro|DPRINTK
 mdefine_line|#define DPRINTK(format, args...) printk(&quot;%s: &quot; format, dev-&gt;name , ## args)
 DECL|macro|DPRINTD
 mdefine_line|#define DPRINTD(format, args...) DummyCall(&quot;%s: &quot; format, dev-&gt;name , ## args)
+macro_line|#ifdef TR_NEWFORMAT
+multiline_comment|/* this allows displaying full adapter information */
+DECL|variable|channel_def
+r_const
+r_char
+op_star
+id|channel_def
+(braket
+)braket
+op_assign
+(brace
+l_string|&quot;ISA&quot;
+comma
+l_string|&quot;MCA&quot;
+comma
+l_string|&quot;ISA P&amp;P&quot;
+)brace
+suffix:semicolon
+DECL|function|adapter_def
+r_char
+op_star
+id|adapter_def
+c_func
+(paren
+r_char
+id|type
+)paren
+(brace
+r_switch
+c_cond
+(paren
+id|type
+)paren
+(brace
+r_case
+l_char|&squot;f&squot;
+suffix:colon
+r_case
+l_char|&squot;F&squot;
+suffix:colon
+r_return
+l_string|&quot;Adapter/A&quot;
+suffix:semicolon
+r_case
+l_char|&squot;e&squot;
+suffix:colon
+r_case
+l_char|&squot;E&squot;
+suffix:colon
+r_return
+l_string|&quot;16/4 Adapter/II&quot;
+suffix:semicolon
+r_default
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;Unknow adapter %c&bslash;n&quot;
+comma
+id|type
+)paren
+suffix:semicolon
+r_return
+l_string|&quot;adapter&quot;
+suffix:semicolon
+)brace
+suffix:semicolon
+)brace
+suffix:semicolon
+macro_line|#endif
 macro_line|#if 0
 r_struct
 id|tok_info
@@ -98,6 +175,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifndef TR_NEWFORMAT
 DECL|variable|ibmtr_debug_trace
 r_int
 r_char
@@ -106,6 +184,15 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/*  Patch or otherwise alter to&n;                                         control tokenring tracing.  */
+macro_line|#else
+DECL|variable|ibmtr_debug_trace
+r_int
+r_char
+id|ibmtr_debug_trace
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 DECL|macro|TRC_INIT
 mdefine_line|#define TRC_INIT 0x01              /*  Trace initialization &amp; PROBEs */
 DECL|macro|TRC_INITV
@@ -903,6 +990,7 @@ c_cond
 op_logical_neg
 id|badti
 )paren
+(brace
 id|ti
 op_assign
 (paren
@@ -922,6 +1010,18 @@ comma
 id|GFP_KERNEL
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ti
+op_eq
+l_int|NULL
+)paren
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
+)brace
 r_else
 (brace
 id|ti
@@ -1032,6 +1132,7 @@ id|ti-&gt;sram
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#ifndef TR_NEWFORMAT
 id|DPRINTK
 c_func
 (paren
@@ -1040,6 +1141,7 @@ comma
 id|ti-&gt;global_int_enable
 )paren
 suffix:semicolon
+macro_line|#endif
 r_break
 suffix:semicolon
 r_case
@@ -1266,13 +1368,15 @@ l_string|&quot;.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Get hw address of token ring card */
+macro_line|#ifndef TR_NEWFORMAT 
 id|DPRINTK
 c_func
 (paren
 l_string|&quot;hw address: &quot;
 )paren
 suffix:semicolon
-multiline_comment|/* Get hw address of token ring card */
+macro_line|#endif
 id|j
 op_assign
 l_int|0
@@ -1319,6 +1423,7 @@ op_amp
 l_int|0x0f
 suffix:semicolon
 multiline_comment|/* Tech ref states must do this */
+macro_line|#ifndef TR_NEWFORMAT
 id|printk
 c_func
 (paren
@@ -1332,6 +1437,15 @@ op_assign
 id|temp
 )paren
 suffix:semicolon
+macro_line|#else
+id|ti-&gt;hw_address
+(braket
+id|j
+)braket
+op_assign
+id|temp
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1370,12 +1484,14 @@ op_increment
 id|j
 suffix:semicolon
 )brace
+macro_line|#ifndef TR_NEWFORMAT
 id|printk
 c_func
 (paren
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* get Adapter type:  &squot;F&squot; = Adapter/A, &squot;E&squot; = 16/4 Adapter II,...*/
 id|ti-&gt;adapter_type
 op_assign
@@ -1470,6 +1586,7 @@ op_plus
 id|AIP16MBDHB
 )paren
 suffix:semicolon
+macro_line|#ifndef TR_NEWFORMAT
 id|DPRINTK
 c_func
 (paren
@@ -1492,6 +1609,7 @@ comma
 id|ti-&gt;dhb_size16mb
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* We must figure out how much shared memory space this adapter&n;     will occupy so that if there are two adapters we can fit both&n;     in.  Given a choice, we will limit this adapter to 32K.  The&n;     maximum space will will use for two adapters is 64K so if the&n;     adapter we are working on demands 64K (it also doesn&squot;t support&n;     paging), then only one adapter can be supported.  */
 multiline_comment|/* determine how much of total RAM is mapped into PC space */
 id|ti-&gt;mapped_ram_size
@@ -1550,6 +1668,7 @@ r_char
 id|pg_size
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifndef TR_NEWFORMAT
 id|DPRINTK
 c_func
 (paren
@@ -1560,6 +1679,7 @@ op_div
 l_int|2
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef ENABLE_PAGING
 r_switch
 c_cond
@@ -1877,6 +1997,7 @@ id|badti
 r_return
 id|ENODEV
 suffix:semicolon
+macro_line|#ifndef TR_NEWFORMAT
 id|DPRINTK
 c_func
 (paren
@@ -1887,6 +2008,7 @@ op_div
 l_int|2
 )paren
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1943,6 +2065,7 @@ l_string|&quot;ibmtr&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* record PIOaddr range&n;&t;&t;&t;&t;&t;&t;    as busy */
+macro_line|#ifndef TR_NEWFORMAT
 id|DPRINTK
 c_func
 (paren
@@ -1951,7 +2074,80 @@ comma
 id|version
 )paren
 suffix:semicolon
-multiline_comment|/* As we have passed card identification,&n;                            let the world know we&squot;re here! */
+multiline_comment|/* As we have passed card identification,&n;                             let the world know we&squot;re here! */
+macro_line|#else
+id|printk
+c_func
+(paren
+l_string|&quot;%s&quot;
+comma
+id|version
+)paren
+suffix:semicolon
+id|DPRINTK
+c_func
+(paren
+l_string|&quot;%s %s found using irq %d, PIOaddr %4hx, %dK shared RAM.&bslash;n&quot;
+comma
+id|channel_def
+(braket
+id|cardpresent
+op_minus
+l_int|1
+)braket
+comma
+id|adapter_def
+c_func
+(paren
+id|ti-&gt;adapter_type
+)paren
+comma
+id|irq
+comma
+id|PIOaddr
+comma
+id|ti-&gt;mapped_ram_size
+op_div
+l_int|2
+)paren
+suffix:semicolon
+id|DPRINTK
+c_func
+(paren
+l_string|&quot;Hardware address : %02X:%02X:%02X:%02X:%02X:%02X&bslash;n&quot;
+comma
+id|dev-&gt;dev_addr
+(braket
+l_int|0
+)braket
+comma
+id|dev-&gt;dev_addr
+(braket
+l_int|1
+)braket
+comma
+id|dev-&gt;dev_addr
+(braket
+l_int|2
+)braket
+comma
+id|dev-&gt;dev_addr
+(braket
+l_int|3
+)braket
+comma
+id|dev-&gt;dev_addr
+(braket
+l_int|4
+)braket
+comma
+id|dev-&gt;dev_addr
+(braket
+l_int|5
+)braket
+)paren
+suffix:semicolon
+macro_line|#endif
 id|dev-&gt;base_addr
 op_assign
 id|PIOaddr
@@ -2939,12 +3135,21 @@ op_logical_neg
 id|open_response-&gt;ret_code
 )paren
 (brace
+macro_line|#ifndef TR_NEWFORMAT
 id|DPRINTK
 c_func
 (paren
 l_string|&quot;board opened...&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#else
+id|DPRINTK
+c_func
+(paren
+l_string|&quot;Adapter initialized and opened.&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 op_star
 (paren
 r_int
@@ -3917,9 +4122,11 @@ op_star
 id|dev
 )paren
 (brace
+macro_line|#ifndef TR_NEWFORMAT
 r_int
 id|i
 suffix:semicolon
+macro_line|#endif
 r_int
 r_char
 op_star
@@ -3980,12 +4187,14 @@ id|ti-&gt;do_tok_int
 op_assign
 id|NOT_FIRST
 suffix:semicolon
+macro_line|#ifndef TR_NEWFORMAT
 id|DPRINTK
 c_func
 (paren
 l_string|&quot;Initial tok int received&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -4070,7 +4279,7 @@ id|WRBR_EVEN
 )paren
 )paren
 suffix:semicolon
-macro_line|#if 1
+macro_line|#if 0
 id|DPRINTK
 c_func
 (paren
@@ -4115,6 +4324,7 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifndef TR_NEWFORMAT&t;&t;
 id|DPRINTK
 c_func
 (paren
@@ -4153,6 +4363,7 @@ id|encoded_address
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif
 id|encoded_addr
 op_assign
 (paren
@@ -4179,6 +4390,7 @@ id|encoded_address
 )paren
 )paren
 suffix:semicolon
+macro_line|#ifndef TR_NEWFORMAT
 id|DPRINTK
 c_func
 (paren
@@ -4213,6 +4425,16 @@ comma
 id|encoded_addr
 )paren
 suffix:semicolon
+macro_line|#else
+id|DPRINTK
+c_func
+(paren
+l_string|&quot;Initial interrupt : shared RAM located at %p.&bslash;n&quot;
+comma
+id|encoded_addr
+)paren
+suffix:semicolon
+macro_line|#endif
 id|ti-&gt;auto_ringspeedsave
 op_assign
 (paren
@@ -4233,6 +4455,7 @@ id|TRUE
 suffix:colon
 id|FALSE
 suffix:semicolon
+macro_line|#ifndef TR_NEWFORMAT
 r_for
 c_loop
 (paren
@@ -4284,6 +4507,7 @@ c_func
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 id|tok_open_adapter
 c_func
 (paren
@@ -4401,12 +4625,14 @@ op_complement
 id|INT_ENABLE
 )paren
 suffix:semicolon
+macro_line|#ifndef TR_NEWFORMAT
 id|DPRINTK
 c_func
 (paren
 l_string|&quot;resetting card&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 id|outb
 c_func
 (paren
@@ -4445,12 +4671,14 @@ op_plus
 id|ADAPTRESETREL
 )paren
 suffix:semicolon
+macro_line|#ifndef TR_NEWFORMAT
 id|DPRINTK
 c_func
 (paren
 l_string|&quot;card reset&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 id|ti-&gt;open_status
 op_assign
 id|IN_PROGRESS
@@ -4843,6 +5071,18 @@ op_star
 )paren
 id|ti-&gt;srb
 suffix:semicolon
+r_struct
+id|trh_hdr
+op_star
+id|trhdr
+op_assign
+(paren
+r_struct
+id|trh_hdr
+op_star
+)paren
+id|ti-&gt;current_skb-&gt;data
+suffix:semicolon
 r_int
 r_int
 id|hdr_len
@@ -5028,19 +5268,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-(paren
-(paren
-r_struct
-id|trh_hdr
-op_star
-)paren
-(paren
-op_amp
-id|ti-&gt;current_skb-&gt;data
-)paren
-)paren
-op_member_access_from_pointer
-id|saddr
+id|trhdr-&gt;saddr
 (braket
 l_int|0
 )braket
@@ -5086,19 +5314,7 @@ op_assign
 id|ntohs
 c_func
 (paren
-(paren
-(paren
-r_struct
-id|trh_hdr
-op_star
-)paren
-(paren
-op_amp
-id|ti-&gt;current_skb-&gt;data
-)paren
-)paren
-op_member_access_from_pointer
-id|rcf
+id|trhdr-&gt;rcf
 )paren
 op_amp
 id|TR_RCF_LEN_MASK
@@ -5122,17 +5338,7 @@ c_func
 (paren
 l_string|&quot;rcf: %02X rif_len: %d&bslash;n&quot;
 comma
-(paren
-(paren
-r_struct
-id|trh_hdr
-op_star
-)paren
-op_amp
-id|ti-&gt;current_skb-&gt;data
-)paren
-op_member_access_from_pointer
-id|rcf
+id|trhdr-&gt;rcf
 comma
 id|wrk_len
 )paren
@@ -5479,6 +5685,7 @@ op_ne
 id|UI_CMD
 )paren
 (brace
+macro_line|#ifndef TR_FILTERNONUI&t;&t;
 id|DPRINTK
 c_func
 (paren
@@ -5487,6 +5694,7 @@ comma
 id|llc-&gt;llc
 )paren
 suffix:semicolon
+macro_line|#endif
 id|rec_resp-&gt;ret_code
 op_assign
 id|DATA_LOST

@@ -1310,7 +1310,12 @@ comma
 )brace
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PROFILE
+r_if
+c_cond
+(paren
+id|prof_shift
+)paren
+(brace
 id|proc_register
 c_func
 (paren
@@ -1344,7 +1349,7 @@ comma
 )brace
 )paren
 suffix:semicolon
-macro_line|#endif
+)brace
 )brace
 DECL|function|proc_match
 r_int

@@ -2937,6 +2937,16 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Forwarding result */
+macro_line|#ifdef CONFIG_IP_MASQUERADE&t;
+r_struct
+id|sk_buff
+op_star
+id|skb_in
+op_assign
+id|skb
+suffix:semicolon
+multiline_comment|/* So we can remember if the masquerader did some swaps */
+macro_line|#endif&t;
 multiline_comment|/* &n;&t; *&t;See if we are allowed to forward this.&n; &t; *&t;Note: demasqueraded fragments are always &squot;back&squot;warded.&n;&t; */
 r_if
 c_cond
@@ -3587,6 +3597,29 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_IP_MASQUERADE&t;
+multiline_comment|/*&n;&t; *&t;The original is free. Free our copy and&n;&t; *&t;tell the caller not to free.&n;&t; */
+r_if
+c_cond
+(paren
+id|skb
+op_ne
+id|skb_in
+)paren
+(brace
+id|kfree_skb
+c_func
+(paren
+id|skb_in
+comma
+id|FREE_WRITE
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif&t;
 r_return
 l_int|1
 suffix:semicolon
@@ -7818,6 +7851,11 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
+r_else
+id|skb-&gt;arp
+op_assign
+l_int|1
+suffix:semicolon
 id|skb-&gt;ip_hdr
 op_assign
 id|iph

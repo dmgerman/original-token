@@ -1,3 +1,14 @@
+multiline_comment|/*&n; * linux/include/linux/cyclades.h&n; *&n; * This file is maintained by Marcio Saito &lt;marcio@cyclades.com&gt; and&n; * Randolph Bentson &lt;bentson@grieg.seaslug.org&gt;.&n; *&n; * This file contains the general definitions for the cyclades.c driver&n; */
+multiline_comment|/* PCI vendor and device ID&squot;s */
+macro_line|#ifndef PCI_VENDOR_ID_CYCLADES
+DECL|macro|PCI_VENDOR_ID_CYCLADES
+mdefine_line|#define&t;PCI_VENDOR_ID_CYCLADES&t;0x120e
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_CYCLOMY
+DECL|macro|PCI_DEVICE_ID_CYCLOMY
+mdefine_line|#define&t;PCI_DEVICE_ID_CYCLOMY&t;0x0100
+macro_line|#endif
+multiline_comment|/* Per card data structure */
 DECL|struct|cyclades_card
 r_struct
 id|cyclades_card
@@ -14,12 +25,17 @@ DECL|member|num_chips
 r_int
 id|num_chips
 suffix:semicolon
-multiline_comment|/* implies card type, 0 if card is absent */
+multiline_comment|/* 0 if card is absent */
 DECL|member|first_line
 r_int
 id|first_line
 suffix:semicolon
-multiline_comment|/* line number of first channel of first chip on card */
+multiline_comment|/* minor number of first channel on card */
+DECL|member|bus_index
+r_int
+id|bus_index
+suffix:semicolon
+multiline_comment|/* address shift - 0 for ISA, 1 for PCI */
 )brace
 suffix:semicolon
 DECL|struct|cyclades_chip
@@ -282,6 +298,8 @@ DECL|macro|Cy_HwReset
 mdefine_line|#define Cy_HwReset 0x1400
 DECL|macro|Cy_ClrIntr
 mdefine_line|#define Cy_ClrIntr 0x1800
+DECL|macro|Cy_EpldRev
+mdefine_line|#define Cy_EpldRev 0x1e00
 multiline_comment|/* Global Registers */
 DECL|macro|CyGFRCR
 mdefine_line|#define CyGFRCR&t;&t;(0x40*2)

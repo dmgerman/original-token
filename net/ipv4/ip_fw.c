@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IP firewalling code. This is taken from 4.4BSD. Please note the &n; *&t;copyright message below. As per the GPL it must be maintained&n; *&t;and the licenses thus do not conflict. While this port is subject&n; *&t;to the GPL I also place my modifications under the original &n; *&t;license in recognition of the original copyright. &n; *&t;&t;&t;&t;-- Alan Cox.&n; *&n; *&t;Ported from BSD to Linux,&n; *&t;&t;Alan Cox 22/Nov/1994.&n; *&t;Zeroing /proc and other additions&n; *&t;&t;Jos Vos 4/Feb/1995.&n; *&t;Merged and included the FreeBSD-Current changes at Ugen&squot;s request&n; *&t;(but hey it&squot;s a lot cleaner now). Ugen would prefer in some ways&n; *&t;we waited for his final product but since Linux 1.2.0 is about to&n; *&t;appear it&squot;s not practical - Read: It works, it&squot;s not clean but please&n; *&t;don&squot;t consider it to be his standard of finished work.&n; *&t;&t;Alan Cox 12/Feb/1995&n; *&t;Porting bidirectional entries from BSD, fixing accounting issues,&n; *&t;adding struct ip_fwpkt for checking packets with interface address&n; *&t;&t;Jos Vos 5/Mar/1995.&n; *&t;Established connections (ACK check), ACK check on bidirectional rules,&n; *&t;ICMP type check.&n; *&t;&t;Wilfred Mollenvanger 7/7/1995.&n; *&t;TCP attack protection.&n; *&t;&t;Alan Cox 25/8/95, based on information from bugtraq.&n; *&n; * Masquerading functionality&n; *&n; * Copyright (c) 1994 Pauline Middelink&n; *&n; * The pieces which added masquerading functionality are totaly&n; * my responsibility and have nothing to with the original authors&n; * copyright or doing.&n; *&n; * Parts distributed under GPL.&n; *&n; * Fixes:&n; *&t;Pauline Middelink&t;:&t;Added masquerading.&n; *&t;Alan Cox&t;&t;:&t;Fixed an error in the merge.&n; *&n; * TODO:&n; *&t;Fix the PORT spoof crash.&n; *&n; *&t;All the real work was done by .....&n; *&n; */
+multiline_comment|/*&n; *&t;IP firewalling code. This is taken from 4.4BSD. Please note the &n; *&t;copyright message below. As per the GPL it must be maintained&n; *&t;and the licenses thus do not conflict. While this port is subject&n; *&t;to the GPL I also place my modifications under the original &n; *&t;license in recognition of the original copyright. &n; *&t;&t;&t;&t;-- Alan Cox.&n; *&n; *&t;Ported from BSD to Linux,&n; *&t;&t;Alan Cox 22/Nov/1994.&n; *&t;Zeroing /proc and other additions&n; *&t;&t;Jos Vos 4/Feb/1995.&n; *&t;Merged and included the FreeBSD-Current changes at Ugen&squot;s request&n; *&t;(but hey it&squot;s a lot cleaner now). Ugen would prefer in some ways&n; *&t;we waited for his final product but since Linux 1.2.0 is about to&n; *&t;appear it&squot;s not practical - Read: It works, it&squot;s not clean but please&n; *&t;don&squot;t consider it to be his standard of finished work.&n; *&t;&t;Alan Cox 12/Feb/1995&n; *&t;Porting bidirectional entries from BSD, fixing accounting issues,&n; *&t;adding struct ip_fwpkt for checking packets with interface address&n; *&t;&t;Jos Vos 5/Mar/1995.&n; *&t;Established connections (ACK check), ACK check on bidirectional rules,&n; *&t;ICMP type check.&n; *&t;&t;Wilfred Mollenvanger 7/7/1995.&n; *&t;TCP attack protection.&n; *&t;&t;Alan Cox 25/8/95, based on information from bugtraq.&n; *&n; * Masquerading functionality&n; *&n; * Copyright (c) 1994 Pauline Middelink&n; *&n; * The pieces which added masquerading functionality are totaly&n; * my responsibility and have nothing to with the original authors&n; * copyright or doing.&n; *&n; * Parts distributed under GPL.&n; *&n; * Fixes:&n; *&t;Pauline Middelink&t;:&t;Added masquerading.&n; *&t;Alan Cox&t;&t;:&t;Fixed an error in the merge.&n; *&t;Thomas Quinot&t;&t;:&t;Fixed port spoofing.&n; *&t;Alan Cox&t;&t;:&t;Cleaned up retransmits in spoofing.&n; *&n; *&t;All the real work was done by .....&n; *&n; */
 multiline_comment|/*&n; * Copyright (c) 1993 Daniel Boulet&n; * Copyright (c) 1994 Ugen J.S.Antsilevich&n; *&n; * Redistribution and use in source forms, with and without modification,&n; * are permitted provided that this entire comment appears intact.&n; *&n; * Redistribution in binary form may occur without any restrictions.&n; * Obviously, it would be nice if you gave credit where credit is due&n; * but requiring it would be too onerous.&n; *&n; * This software is provided ``AS IS&squot;&squot; without any warranties of any kind.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
@@ -1731,10 +1731,13 @@ suffix:semicolon
 r_char
 id|buf
 (braket
-l_int|20
+l_int|24
 )braket
 suffix:semicolon
-multiline_comment|/* xxx.xxx.xxx.xxx&bslash;r&bslash;n */
+multiline_comment|/* xxx.xxx.xxx.xxx,ppp,ppp&bslash;000 */
+r_int
+id|diff
+suffix:semicolon
 multiline_comment|/*&n;&t; * Adjust seq and ack_seq with delta-offset for&n;&t; * the packets AFTER this one...&n;&t; */
 r_if
 c_cond
@@ -1787,8 +1790,6 @@ l_string|&quot;PORT &quot;
 comma
 l_int|5
 )paren
-op_ne
-l_int|0
 op_logical_and
 id|memcmp
 c_func
@@ -1799,13 +1800,10 @@ l_string|&quot;port &quot;
 comma
 l_int|5
 )paren
-op_ne
-l_int|0
 )paren
 (brace
 id|data
-op_add_assign
-l_int|5
+op_increment
 suffix:semicolon
 r_continue
 suffix:semicolon
@@ -2137,8 +2135,8 @@ l_int|255
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Calculate required delta-offset to keep TCP happy&n;&t;&t; */
-id|ftp-&gt;delta
-op_add_assign
+id|diff
+op_assign
 id|strlen
 c_func
 (paren
@@ -2151,10 +2149,11 @@ op_minus
 id|p
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;No shift.&n;&t;&t; */
 r_if
 c_cond
 (paren
-id|ftp-&gt;delta
+id|diff
 op_eq
 l_int|0
 )paren
@@ -2180,6 +2179,27 @@ id|buf
 suffix:semicolon
 r_return
 id|skb
+suffix:semicolon
+)brace
+multiline_comment|/*&n; &t;&t; *&t;If the PORT command we have fiddled is the first, or is a&n; &t;&t; *&t;resend don&squot;t do the delta shift again. Doesn&squot;t work for&n; &t;&t; *&t;pathological cases, but we would need a history for that.&n; &t;&t; *&t;Also fails if you send 2^31 bytes of data down the link &n; &t;&t; *&t;after the first port command.&n; &t;&t; *&n; &t;&t; *&t;FIXME: use ftp-&gt;init_seq_valid - 0 is a valid sequence.&n; &t;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ftp-&gt;init_seq
+op_logical_or
+id|after
+c_func
+(paren
+id|ftp-&gt;init_seq
+comma
+id|th-&gt;seq
+)paren
+)paren
+(brace
+id|ftp-&gt;delta
+op_add_assign
+id|diff
 suffix:semicolon
 )brace
 multiline_comment|/*&n; &t;&t; * Sizes differ, make a copy&n; &t;&t; */
@@ -2257,15 +2277,20 @@ op_plus
 id|ftp-&gt;delta
 )paren
 suffix:semicolon
+multiline_comment|/* &t;&t;skb2-&gt;h.raw = &amp;skb2-&gt;data[skb-&gt;h.raw - skb-&gt;data];*/
 id|skb2-&gt;h.raw
 op_assign
-op_amp
 id|skb2-&gt;data
-(braket
+op_plus
+(paren
 id|skb-&gt;h.raw
 op_minus
 id|skb-&gt;data
-)braket
+)paren
+suffix:semicolon
+id|iph
+op_assign
+id|skb2-&gt;h.iph
 suffix:semicolon
 multiline_comment|/*&n; &t;&t; *&t;Copy the packet data into the new buffer.&n; &t;&t; *&t;Thereby replacing the PORT cmd.&n; &t;&t; */
 id|memcpy
@@ -2340,13 +2365,13 @@ comma
 id|skb-&gt;len
 op_minus
 (paren
+id|data
+op_minus
 (paren
 r_char
 op_star
 )paren
-id|skb-&gt;h.raw
-op_minus
-id|data
+id|skb-&gt;data
 )paren
 )paren
 suffix:semicolon
@@ -2807,6 +2832,21 @@ id|iph-&gt;ihl
 op_star
 l_int|4
 )braket
+)paren
+suffix:semicolon
+id|size
+op_assign
+id|skb-&gt;len
+op_minus
+(paren
+(paren
+r_int
+r_char
+op_star
+)paren
+id|portptr
+op_minus
+id|skb-&gt;h.raw
 )paren
 suffix:semicolon
 )brace

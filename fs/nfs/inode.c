@@ -1221,6 +1221,11 @@ op_amp
 id|nfs_fs_type
 )paren
 suffix:semicolon
+id|nfs_kfree_cache
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 macro_line|#endif
 eof

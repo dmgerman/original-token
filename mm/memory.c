@@ -719,10 +719,6 @@ comma
 id|swapper_pg_dir
 )paren
 suffix:semicolon
-id|tsk-&gt;mm-&gt;pgd
-op_assign
-id|swapper_pg_dir
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -742,6 +738,11 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|tsk-&gt;mm-&gt;pgd
+op_assign
+id|swapper_pg_dir
+suffix:semicolon
+multiline_comment|/* or else... */
 r_for
 c_loop
 (paren

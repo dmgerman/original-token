@@ -777,7 +777,8 @@ op_eq
 l_int|NULL
 )paren
 r_return
-id|EAGAIN
+op_minus
+id|ENOMEM
 suffix:semicolon
 id|memset
 c_func

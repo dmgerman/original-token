@@ -2472,6 +2472,17 @@ suffix:colon
 r_int
 id|tmp
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|child-&gt;state
+op_eq
+id|TASK_ZOMBIE
+)paren
+multiline_comment|/* already dead */
+r_return
+l_int|0
+suffix:semicolon
 id|wake_up_process
 c_func
 (paren

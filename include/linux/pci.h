@@ -271,124 +271,17 @@ DECL|macro|PCI_CLASS_SERIAL_FIBER
 mdefine_line|#define PCI_CLASS_SERIAL_FIBER&t;&t;0x0c04
 DECL|macro|PCI_CLASS_OTHERS
 mdefine_line|#define PCI_CLASS_OTHERS&t;&t;0xff
+multiline_comment|/*&n; * Vendor and card ID&squot;s: sort these numerically according to vendor&n; * (and according to card ID within vendor)&n; */
 DECL|macro|PCI_VENDOR_ID_NCR
 mdefine_line|#define PCI_VENDOR_ID_NCR&t;&t;0x1000
 DECL|macro|PCI_DEVICE_ID_NCR_53C810
 mdefine_line|#define PCI_DEVICE_ID_NCR_53C810&t;0x0001
-DECL|macro|PCI_DEVICE_ID_NCR_53C815
-mdefine_line|#define PCI_DEVICE_ID_NCR_53C815&t;0x0004
 DECL|macro|PCI_DEVICE_ID_NCR_53C820
 mdefine_line|#define PCI_DEVICE_ID_NCR_53C820&t;0x0002
 DECL|macro|PCI_DEVICE_ID_NCR_53C825
 mdefine_line|#define PCI_DEVICE_ID_NCR_53C825&t;0x0003
-DECL|macro|PCI_VENDOR_ID_ADAPTEC
-mdefine_line|#define PCI_VENDOR_ID_ADAPTEC&t;&t;0x9004
-DECL|macro|PCI_DEVICE_ID_ADAPTEC_2940
-mdefine_line|#define PCI_DEVICE_ID_ADAPTEC_2940&t;0x7178
-DECL|macro|PCI_DEVICE_ID_ADAPTEC_294x
-mdefine_line|#define PCI_DEVICE_ID_ADAPTEC_294x&t;0x7078
-DECL|macro|PCI_DEVICE_ID_ADAPTEC_7850
-mdefine_line|#define PCI_DEVICE_ID_ADAPTEC_7850&t;0x5078
-DECL|macro|PCI_DEVICE_ID_ADAPTEC_7872
-mdefine_line|#define PCI_DEVICE_ID_ADAPTEC_7872&t;0x7278
-DECL|macro|PCI_VENDOR_ID_DPT
-mdefine_line|#define PCI_VENDOR_ID_DPT               0x1044   
-DECL|macro|PCI_DEVICE_ID_DPT
-mdefine_line|#define PCI_DEVICE_ID_DPT               0xa400  
-DECL|macro|PCI_VENDOR_ID_S3
-mdefine_line|#define PCI_VENDOR_ID_S3&t;&t;0x5333
-DECL|macro|PCI_DEVICE_ID_S3_864_1
-mdefine_line|#define PCI_DEVICE_ID_S3_864_1&t;&t;0x88c0
-DECL|macro|PCI_DEVICE_ID_S3_864_2
-mdefine_line|#define PCI_DEVICE_ID_S3_864_2&t;&t;0x88c1
-DECL|macro|PCI_DEVICE_ID_S3_868
-mdefine_line|#define PCI_DEVICE_ID_S3_868&t;&t;0x8880
-DECL|macro|PCI_DEVICE_ID_S3_928
-mdefine_line|#define PCI_DEVICE_ID_S3_928&t;&t;0x88b0
-DECL|macro|PCI_DEVICE_ID_S3_964_1
-mdefine_line|#define PCI_DEVICE_ID_S3_964_1&t;&t;0x88d0
-DECL|macro|PCI_DEVICE_ID_S3_964_2
-mdefine_line|#define PCI_DEVICE_ID_S3_964_2&t;&t;0x88d1
-DECL|macro|PCI_DEVICE_ID_S3_811
-mdefine_line|#define PCI_DEVICE_ID_S3_811&t;&t;0x8811
-DECL|macro|PCI_DEVICE_ID_S3_968
-mdefine_line|#define PCI_DEVICE_ID_S3_968&t;&t;0x88f0
-DECL|macro|PCI_VENDOR_ID_OPTI
-mdefine_line|#define PCI_VENDOR_ID_OPTI&t;&t;0x1045
-DECL|macro|PCI_DEVICE_ID_OPTI_82C822
-mdefine_line|#define PCI_DEVICE_ID_OPTI_82C822&t;0xc822
-DECL|macro|PCI_DEVICE_ID_OPTI_82C621
-mdefine_line|#define PCI_DEVICE_ID_OPTI_82C621&t;0xc621
-DECL|macro|PCI_DEVICE_ID_OPTI_82C557
-mdefine_line|#define PCI_DEVICE_ID_OPTI_82C557&t;0xc557
-DECL|macro|PCI_DEVICE_ID_OPTI_82C558
-mdefine_line|#define PCI_DEVICE_ID_OPTI_82C558&t;0xc558
-DECL|macro|PCI_VENDOR_ID_UMC
-mdefine_line|#define PCI_VENDOR_ID_UMC&t;&t;0x1060
-DECL|macro|PCI_DEVICE_ID_UMC_UM8881F
-mdefine_line|#define PCI_DEVICE_ID_UMC_UM8881F&t;0x8881
-DECL|macro|PCI_DEVICE_ID_UMC_UM8891A
-mdefine_line|#define PCI_DEVICE_ID_UMC_UM8891A&t;0x0891
-DECL|macro|PCI_DEVICE_ID_UMC_UM8886F
-mdefine_line|#define PCI_DEVICE_ID_UMC_UM8886F&t;0x8886
-DECL|macro|PCI_DEVICE_ID_UMC_UM8886A
-mdefine_line|#define PCI_DEVICE_ID_UMC_UM8886A&t;0x886a
-DECL|macro|PCI_DEVICE_ID_UMC_UM8673F
-mdefine_line|#define PCI_DEVICE_ID_UMC_UM8673F&t;0x0101
-DECL|macro|PCI_VENDOR_ID_DEC
-mdefine_line|#define PCI_VENDOR_ID_DEC&t;&t;0x1011
-DECL|macro|PCI_DEVICE_ID_DEC_TULIP
-mdefine_line|#define PCI_DEVICE_ID_DEC_TULIP&t;&t;0x0002
-DECL|macro|PCI_DEVICE_ID_DEC_TULIP_FAST
-mdefine_line|#define PCI_DEVICE_ID_DEC_TULIP_FAST&t;0x0009
-DECL|macro|PCI_DEVICE_ID_DEC_TULIP_PLUS
-mdefine_line|#define PCI_DEVICE_ID_DEC_TULIP_PLUS&t;0x0014
-DECL|macro|PCI_DEVICE_ID_DEC_FDDI
-mdefine_line|#define PCI_DEVICE_ID_DEC_FDDI&t;&t;0x000F
-DECL|macro|PCI_DEVICE_ID_DEC_BRD
-mdefine_line|#define PCI_DEVICE_ID_DEC_BRD&t;&t;0x0001
-DECL|macro|PCI_VENDOR_ID_MATROX
-mdefine_line|#define PCI_VENDOR_ID_MATROX&t;&t;0x102B
-DECL|macro|PCI_DEVICE_ID_MATROX_MGA_2
-mdefine_line|#define PCI_DEVICE_ID_MATROX_MGA_2&t;0x0518
-DECL|macro|PCI_DEVICE_ID_MATROX_MIL
-mdefine_line|#define PCI_DEVICE_ID_MATROX_MIL&t;0x0519
-DECL|macro|PCI_DEVICE_ID_MATROX_MGA_IMP
-mdefine_line|#define PCI_DEVICE_ID_MATROX_MGA_IMP&t;0x0d10
-DECL|macro|PCI_VENDOR_ID_INTEL
-mdefine_line|#define PCI_VENDOR_ID_INTEL&t;&t;0x8086
-DECL|macro|PCI_DEVICE_ID_INTEL_82378
-mdefine_line|#define PCI_DEVICE_ID_INTEL_82378&t;0x0484
-DECL|macro|PCI_DEVICE_ID_INTEL_82424
-mdefine_line|#define PCI_DEVICE_ID_INTEL_82424&t;0x0483
-DECL|macro|PCI_DEVICE_ID_INTEL_82375
-mdefine_line|#define PCI_DEVICE_ID_INTEL_82375&t;0x0482
-DECL|macro|PCI_DEVICE_ID_INTEL_82434
-mdefine_line|#define PCI_DEVICE_ID_INTEL_82434&t;0x04a3
-DECL|macro|PCI_DEVICE_ID_INTEL_82430
-mdefine_line|#define PCI_DEVICE_ID_INTEL_82430&t;0x0486
-DECL|macro|PCI_DEVICE_ID_INTEL_82437
-mdefine_line|#define PCI_DEVICE_ID_INTEL_82437&t;0x122d
-DECL|macro|PCI_DEVICE_ID_INTEL_82371
-mdefine_line|#define PCI_DEVICE_ID_INTEL_82371&t;0x122e
-DECL|macro|PCI_DEVICE_ID_INTEL_82438
-mdefine_line|#define PCI_DEVICE_ID_INTEL_82438&t;0x1230
-DECL|macro|PCI_DEVICE_ID_INTEL_7116
-mdefine_line|#define PCI_DEVICE_ID_INTEL_7116&t;0x1223
-DECL|macro|PCI_DEVICE_ID_INTEL_82865
-mdefine_line|#define PCI_DEVICE_ID_INTEL_82865&t;0x1227
-DECL|macro|PCI_DEVICE_ID_INTEL_P6
-mdefine_line|#define PCI_DEVICE_ID_INTEL_P6&t;&t;0x84c4
-macro_line|#if 0
-mdefine_line|#define PCI_VENDOR_ID_SMC&t;&t;0x1042&t;/* Is this really correct?? */
-mdefine_line|#define PCI_DEVICE_ID_SMC_37C665&t;0x1000
-mdefine_line|#define PCI_DEVICE_ID_SMC_37C922&t;0x1001
-macro_line|#else
-DECL|macro|PCI_VENDOR_ID_PCTECH
-mdefine_line|#define PCI_VENDOR_ID_PCTECH&t;&t;0x1042&t;/* Known to be correct */
-DECL|macro|PCI_DEVICE_ID_PCTECH_RZ1000
-mdefine_line|#define PCI_DEVICE_ID_PCTECH_RZ1000&t;0x1000
-macro_line|#endif
+DECL|macro|PCI_DEVICE_ID_NCR_53C815
+mdefine_line|#define PCI_DEVICE_ID_NCR_53C815&t;0x0004
 DECL|macro|PCI_VENDOR_ID_ATI
 mdefine_line|#define PCI_VENDOR_ID_ATI&t;&t;0x1002
 DECL|macro|PCI_DEVICE_ID_ATI_68800
@@ -399,12 +292,48 @@ DECL|macro|PCI_DEVICE_ID_ATI_210888CX
 mdefine_line|#define PCI_DEVICE_ID_ATI_210888CX&t;0x4358
 DECL|macro|PCI_DEVICE_ID_ATI_210888GX
 mdefine_line|#define PCI_DEVICE_ID_ATI_210888GX&t;0x4758
+DECL|macro|PCI_VENDOR_ID_VLSI
+mdefine_line|#define PCI_VENDOR_ID_VLSI&t;&t;0x1004
+DECL|macro|PCI_DEVICE_ID_VLSI_82C592
+mdefine_line|#define PCI_DEVICE_ID_VLSI_82C592&t;0x0005
+DECL|macro|PCI_DEVICE_ID_VLSI_82C593
+mdefine_line|#define PCI_DEVICE_ID_VLSI_82C593&t;0x0006
+DECL|macro|PCI_VENDOR_ID_ADL
+mdefine_line|#define PCI_VENDOR_ID_ADL&t;&t;0x1005
+DECL|macro|PCI_DEVICE_ID_ADL_2301
+mdefine_line|#define PCI_DEVICE_ID_ADL_2301&t;&t;0x2301
+DECL|macro|PCI_VENDOR_ID_NS
+mdefine_line|#define PCI_VENDOR_ID_NS&t;&t;0x100b
+DECL|macro|PCI_DEVICE_ID_NS_87410
+mdefine_line|#define PCI_DEVICE_ID_NS_87410&t;&t;0xd001
+DECL|macro|PCI_VENDOR_ID_TSENG
+mdefine_line|#define PCI_VENDOR_ID_TSENG&t;&t;0x100c
+DECL|macro|PCI_DEVICE_ID_TSENG_W32P_2
+mdefine_line|#define PCI_DEVICE_ID_TSENG_W32P_2&t;0x3202
+DECL|macro|PCI_DEVICE_ID_TSENG_W32P_b
+mdefine_line|#define PCI_DEVICE_ID_TSENG_W32P_b&t;0x3205
+DECL|macro|PCI_DEVICE_ID_TSENG_W32P_c
+mdefine_line|#define PCI_DEVICE_ID_TSENG_W32P_c&t;0x3206
+DECL|macro|PCI_DEVICE_ID_TSENG_W32P_d
+mdefine_line|#define PCI_DEVICE_ID_TSENG_W32P_d&t;0x3207
 DECL|macro|PCI_VENDOR_ID_WEITEK
 mdefine_line|#define PCI_VENDOR_ID_WEITEK&t;&t;0x100e
 DECL|macro|PCI_DEVICE_ID_WEITEK_P9000
 mdefine_line|#define PCI_DEVICE_ID_WEITEK_P9000&t;0x9001
 DECL|macro|PCI_DEVICE_ID_WEITEK_P9100
 mdefine_line|#define PCI_DEVICE_ID_WEITEK_P9100&t;0x9100
+DECL|macro|PCI_VENDOR_ID_DEC
+mdefine_line|#define PCI_VENDOR_ID_DEC&t;&t;0x1011
+DECL|macro|PCI_DEVICE_ID_DEC_BRD
+mdefine_line|#define PCI_DEVICE_ID_DEC_BRD&t;&t;0x0001
+DECL|macro|PCI_DEVICE_ID_DEC_TULIP
+mdefine_line|#define PCI_DEVICE_ID_DEC_TULIP&t;&t;0x0002
+DECL|macro|PCI_DEVICE_ID_DEC_TULIP_FAST
+mdefine_line|#define PCI_DEVICE_ID_DEC_TULIP_FAST&t;0x0009
+DECL|macro|PCI_DEVICE_ID_DEC_FDDI
+mdefine_line|#define PCI_DEVICE_ID_DEC_FDDI&t;&t;0x000F
+DECL|macro|PCI_DEVICE_ID_DEC_TULIP_PLUS
+mdefine_line|#define PCI_DEVICE_ID_DEC_TULIP_PLUS&t;0x0014
 DECL|macro|PCI_VENDOR_ID_CIRRUS
 mdefine_line|#define PCI_VENDOR_ID_CIRRUS&t;&t;0x1013
 DECL|macro|PCI_DEVICE_ID_CIRRUS_5430
@@ -417,42 +346,122 @@ DECL|macro|PCI_DEVICE_ID_CIRRUS_6729
 mdefine_line|#define PCI_DEVICE_ID_CIRRUS_6729&t;0x1100
 DECL|macro|PCI_DEVICE_ID_CIRRUS_7542
 mdefine_line|#define PCI_DEVICE_ID_CIRRUS_7542&t;0x1200
-DECL|macro|PCI_VENDOR_ID_BUSLOGIC
-mdefine_line|#define PCI_VENDOR_ID_BUSLOGIC&t;&t;0x104B
-DECL|macro|PCI_DEVICE_ID_BUSLOGIC_946C
-mdefine_line|#define PCI_DEVICE_ID_BUSLOGIC_946C&t;0x1040
-DECL|macro|PCI_DEVICE_ID_BUSLOGIC_946C_2
-mdefine_line|#define PCI_DEVICE_ID_BUSLOGIC_946C_2&t;0x0140
-DECL|macro|PCI_VENDOR_ID_N9
-mdefine_line|#define PCI_VENDOR_ID_N9&t;&t;0x105D
-DECL|macro|PCI_DEVICE_ID_N9_I128
-mdefine_line|#define PCI_DEVICE_ID_N9_I128&t;&t;0x2309
+DECL|macro|PCI_VENDOR_ID_AMD
+mdefine_line|#define PCI_VENDOR_ID_AMD&t;&t;0x1022
+DECL|macro|PCI_DEVICE_ID_AMD_LANCE
+mdefine_line|#define PCI_DEVICE_ID_AMD_LANCE&t;&t;0x2000
+DECL|macro|PCI_DEVICE_ID_AMD_SCSI
+mdefine_line|#define PCI_DEVICE_ID_AMD_SCSI&t;&t;0x2020
+DECL|macro|PCI_VENDOR_ID_TRIDENT
+mdefine_line|#define PCI_VENDOR_ID_TRIDENT&t;&t;0x1023
+DECL|macro|PCI_DEVICE_ID_TRIDENT_9420
+mdefine_line|#define PCI_DEVICE_ID_TRIDENT_9420&t;0x9420
+DECL|macro|PCI_DEVICE_ID_TRIDENT_9440
+mdefine_line|#define PCI_DEVICE_ID_TRIDENT_9440&t;0x9440
 DECL|macro|PCI_VENDOR_ID_AI
 mdefine_line|#define PCI_VENDOR_ID_AI&t;&t;0x1025
 DECL|macro|PCI_DEVICE_ID_AI_M1435
 mdefine_line|#define PCI_DEVICE_ID_AI_M1435&t;&t;0x1435
-DECL|macro|PCI_VENDOR_ID_AL
-mdefine_line|#define PCI_VENDOR_ID_AL&t;&t;0x10b9
-DECL|macro|PCI_DEVICE_ID_AL_M1445
-mdefine_line|#define PCI_DEVICE_ID_AL_M1445&t;&t;0x1445
-DECL|macro|PCI_DEVICE_ID_AL_M1449
-mdefine_line|#define PCI_DEVICE_ID_AL_M1449&t;&t;0x1449
-DECL|macro|PCI_DEVICE_ID_AL_M1451
-mdefine_line|#define PCI_DEVICE_ID_AL_M1451&t;&t;0x1451
-DECL|macro|PCI_DEVICE_ID_AL_M1461
-mdefine_line|#define PCI_DEVICE_ID_AL_M1461&t;&t;0x1461
-DECL|macro|PCI_DEVICE_ID_AL_M4803
-mdefine_line|#define PCI_DEVICE_ID_AL_M4803&t;&t;0x5215
-DECL|macro|PCI_VENDOR_ID_TSENG
-mdefine_line|#define PCI_VENDOR_ID_TSENG&t;&t;0x100c
-DECL|macro|PCI_DEVICE_ID_TSENG_W32P_2
-mdefine_line|#define PCI_DEVICE_ID_TSENG_W32P_2&t;0x3202
-DECL|macro|PCI_DEVICE_ID_TSENG_W32P_b
-mdefine_line|#define PCI_DEVICE_ID_TSENG_W32P_b&t;0x3205
-DECL|macro|PCI_DEVICE_ID_TSENG_W32P_c
-mdefine_line|#define PCI_DEVICE_ID_TSENG_W32P_c&t;0x3206
-DECL|macro|PCI_DEVICE_ID_TSENG_W32P_d
-mdefine_line|#define PCI_DEVICE_ID_TSENG_W32P_d&t;0x3207
+DECL|macro|PCI_VENDOR_ID_MATROX
+mdefine_line|#define PCI_VENDOR_ID_MATROX&t;&t;0x102B
+DECL|macro|PCI_DEVICE_ID_MATROX_MGA_2
+mdefine_line|#define PCI_DEVICE_ID_MATROX_MGA_2&t;0x0518
+DECL|macro|PCI_DEVICE_ID_MATROX_MIL
+mdefine_line|#define PCI_DEVICE_ID_MATROX_MIL&t;0x0519
+DECL|macro|PCI_DEVICE_ID_MATROX_MGA_IMP
+mdefine_line|#define PCI_DEVICE_ID_MATROX_MGA_IMP&t;0x0d10
+DECL|macro|PCI_VENDOR_ID_CT
+mdefine_line|#define PCI_VENDOR_ID_CT&t;&t;0x102c
+DECL|macro|PCI_DEVICE_ID_CT_65545
+mdefine_line|#define PCI_DEVICE_ID_CT_65545&t;&t;0x00d8
+DECL|macro|PCI_VENDOR_ID_FD
+mdefine_line|#define PCI_VENDOR_ID_FD&t;&t;0x1036
+DECL|macro|PCI_DEVICE_ID_FD_36C70
+mdefine_line|#define PCI_DEVICE_ID_FD_36C70&t;&t;0x0000
+DECL|macro|PCI_VENDOR_ID_SI
+mdefine_line|#define PCI_VENDOR_ID_SI&t;&t;0x1039
+DECL|macro|PCI_DEVICE_ID_SI_503
+mdefine_line|#define PCI_DEVICE_ID_SI_503&t;&t;0x0008
+DECL|macro|PCI_DEVICE_ID_SI_501
+mdefine_line|#define PCI_DEVICE_ID_SI_501&t;&t;0x0406
+DECL|macro|PCI_DEVICE_ID_SI_496
+mdefine_line|#define PCI_DEVICE_ID_SI_496&t;&t;0x0496
+DECL|macro|PCI_DEVICE_ID_SI_601
+mdefine_line|#define PCI_DEVICE_ID_SI_601&t;&t;0x0601
+DECL|macro|PCI_VENDOR_ID_HP
+mdefine_line|#define PCI_VENDOR_ID_HP&t;&t;0x103c
+DECL|macro|PCI_DEVICE_ID_HP_J2585A
+mdefine_line|#define PCI_DEVICE_ID_HP_J2585A&t;&t;0x1030
+macro_line|#if 0
+mdefine_line|#define PCI_VENDOR_ID_SMC&t;&t;0x1042&t;/* Is this really correct?? */
+mdefine_line|#define PCI_DEVICE_ID_SMC_37C665&t;0x1000
+mdefine_line|#define PCI_DEVICE_ID_SMC_37C922&t;0x1001
+macro_line|#else
+DECL|macro|PCI_VENDOR_ID_PCTECH
+mdefine_line|#define PCI_VENDOR_ID_PCTECH&t;&t;0x1042&t;/* Known to be correct */
+DECL|macro|PCI_DEVICE_ID_PCTECH_RZ1000
+mdefine_line|#define PCI_DEVICE_ID_PCTECH_RZ1000&t;0x1000
+macro_line|#endif
+DECL|macro|PCI_VENDOR_ID_DPT
+mdefine_line|#define PCI_VENDOR_ID_DPT               0x1044   
+DECL|macro|PCI_DEVICE_ID_DPT
+mdefine_line|#define PCI_DEVICE_ID_DPT               0xa400  
+DECL|macro|PCI_VENDOR_ID_OPTI
+mdefine_line|#define PCI_VENDOR_ID_OPTI&t;&t;0x1045
+DECL|macro|PCI_DEVICE_ID_OPTI_82C557
+mdefine_line|#define PCI_DEVICE_ID_OPTI_82C557&t;0xc557
+DECL|macro|PCI_DEVICE_ID_OPTI_82C558
+mdefine_line|#define PCI_DEVICE_ID_OPTI_82C558&t;0xc558
+DECL|macro|PCI_DEVICE_ID_OPTI_82C621
+mdefine_line|#define PCI_DEVICE_ID_OPTI_82C621&t;0xc621
+DECL|macro|PCI_DEVICE_ID_OPTI_82C822
+mdefine_line|#define PCI_DEVICE_ID_OPTI_82C822&t;0xc822
+DECL|macro|PCI_VENDOR_ID_BUSLOGIC
+mdefine_line|#define PCI_VENDOR_ID_BUSLOGIC&t;&t;0x104B
+DECL|macro|PCI_DEVICE_ID_BUSLOGIC_946C_2
+mdefine_line|#define PCI_DEVICE_ID_BUSLOGIC_946C_2&t;0x0140
+DECL|macro|PCI_DEVICE_ID_BUSLOGIC_946C
+mdefine_line|#define PCI_DEVICE_ID_BUSLOGIC_946C&t;0x1040
+DECL|macro|PCI_VENDOR_ID_PROMISE
+mdefine_line|#define PCI_VENDOR_ID_PROMISE&t;&t;0x105a
+DECL|macro|PCI_DEVICE_ID_PROMISE_5300
+mdefine_line|#define PCI_DEVICE_ID_PROMISE_5300&t;0x5300
+DECL|macro|PCI_VENDOR_ID_N9
+mdefine_line|#define PCI_VENDOR_ID_N9&t;&t;0x105D
+DECL|macro|PCI_DEVICE_ID_N9_I128
+mdefine_line|#define PCI_DEVICE_ID_N9_I128&t;&t;0x2309
+DECL|macro|PCI_VENDOR_ID_UMC
+mdefine_line|#define PCI_VENDOR_ID_UMC&t;&t;0x1060
+DECL|macro|PCI_DEVICE_ID_UMC_UM8673F
+mdefine_line|#define PCI_DEVICE_ID_UMC_UM8673F&t;0x0101
+DECL|macro|PCI_DEVICE_ID_UMC_UM8891A
+mdefine_line|#define PCI_DEVICE_ID_UMC_UM8891A&t;0x0891
+DECL|macro|PCI_DEVICE_ID_UMC_UM8886A
+mdefine_line|#define PCI_DEVICE_ID_UMC_UM8886A&t;0x886a
+DECL|macro|PCI_DEVICE_ID_UMC_UM8881F
+mdefine_line|#define PCI_DEVICE_ID_UMC_UM8881F&t;0x8881
+DECL|macro|PCI_DEVICE_ID_UMC_UM8886F
+mdefine_line|#define PCI_DEVICE_ID_UMC_UM8886F&t;0x8886
+DECL|macro|PCI_VENDOR_ID_X
+mdefine_line|#define PCI_VENDOR_ID_X&t;&t;&t;0x1061
+DECL|macro|PCI_DEVICE_ID_X_AGX016
+mdefine_line|#define PCI_DEVICE_ID_X_AGX016&t;&t;0x0001
+DECL|macro|PCI_VENDOR_ID_QLOGIC
+mdefine_line|#define PCI_VENDOR_ID_QLOGIC&t;&t;0x1077
+DECL|macro|PCI_DEVICE_ID_QLOGIC_ISP1020
+mdefine_line|#define PCI_DEVICE_ID_QLOGIC_ISP1020&t;0x1020
+DECL|macro|PCI_DEVICE_ID_QLOGIC_ISP1022
+mdefine_line|#define PCI_DEVICE_ID_QLOGIC_ISP1022&t;0x1022
+DECL|macro|PCI_VENDOR_ID_LEADTEK
+mdefine_line|#define PCI_VENDOR_ID_LEADTEK&t;&t;0x107d
+DECL|macro|PCI_DEVICE_ID_LEADTEK_805
+mdefine_line|#define PCI_DEVICE_ID_LEADTEK_805&t;0x0000
+DECL|macro|PCI_VENDOR_ID_CONTAQ
+mdefine_line|#define PCI_VENDOR_ID_CONTAQ&t;&t;0x1080
+DECL|macro|PCI_DEVICE_ID_CONTAQ_82C599
+mdefine_line|#define PCI_DEVICE_ID_CONTAQ_82C599&t;0x0600
+DECL|macro|PCI_VENDOR_ID_OLICOM
+mdefine_line|#define PCI_VENDOR_ID_OLICOM&t;&t;0x108d
 DECL|macro|PCI_VENDOR_ID_CMD
 mdefine_line|#define PCI_VENDOR_ID_CMD&t;&t;0x1095
 DECL|macro|PCI_DEVICE_ID_CMD_640
@@ -463,92 +472,8 @@ DECL|macro|PCI_DEVICE_ID_VISION_QD8500
 mdefine_line|#define PCI_DEVICE_ID_VISION_QD8500&t;0x0001
 DECL|macro|PCI_DEVICE_ID_VISION_QD8580
 mdefine_line|#define PCI_DEVICE_ID_VISION_QD8580&t;0x0002
-DECL|macro|PCI_VENDOR_ID_AMD
-mdefine_line|#define PCI_VENDOR_ID_AMD&t;&t;0x1022
-DECL|macro|PCI_DEVICE_ID_AMD_LANCE
-mdefine_line|#define PCI_DEVICE_ID_AMD_LANCE&t;&t;0x2000
-DECL|macro|PCI_DEVICE_ID_AMD_SCSI
-mdefine_line|#define PCI_DEVICE_ID_AMD_SCSI&t;&t;0x2020
-DECL|macro|PCI_VENDOR_ID_VLSI
-mdefine_line|#define PCI_VENDOR_ID_VLSI&t;&t;0x1004
-DECL|macro|PCI_DEVICE_ID_VLSI_82C593
-mdefine_line|#define PCI_DEVICE_ID_VLSI_82C593&t;0x0006
-DECL|macro|PCI_DEVICE_ID_VLSI_82C592
-mdefine_line|#define PCI_DEVICE_ID_VLSI_82C592&t;0x0005
-DECL|macro|PCI_VENDOR_ID_ADL
-mdefine_line|#define PCI_VENDOR_ID_ADL&t;&t;0x1005
-DECL|macro|PCI_DEVICE_ID_ADL_2301
-mdefine_line|#define PCI_DEVICE_ID_ADL_2301&t;&t;0x2301
-DECL|macro|PCI_VENDOR_ID_SYMPHONY
-mdefine_line|#define PCI_VENDOR_ID_SYMPHONY&t;&t;0x1c1c
-DECL|macro|PCI_DEVICE_ID_SYMPHONY_101
-mdefine_line|#define PCI_DEVICE_ID_SYMPHONY_101&t;0x0001
-DECL|macro|PCI_VENDOR_ID_TRIDENT
-mdefine_line|#define PCI_VENDOR_ID_TRIDENT&t;&t;0x1023
-DECL|macro|PCI_DEVICE_ID_TRIDENT_9420
-mdefine_line|#define PCI_DEVICE_ID_TRIDENT_9420&t;0x9420
-DECL|macro|PCI_DEVICE_ID_TRIDENT_9440
-mdefine_line|#define PCI_DEVICE_ID_TRIDENT_9440&t;0x9440
-DECL|macro|PCI_VENDOR_ID_CONTAQ
-mdefine_line|#define PCI_VENDOR_ID_CONTAQ&t;&t;0x1080
-DECL|macro|PCI_DEVICE_ID_CONTAQ_82C599
-mdefine_line|#define PCI_DEVICE_ID_CONTAQ_82C599&t;0x0600
-DECL|macro|PCI_VENDOR_ID_NS
-mdefine_line|#define PCI_VENDOR_ID_NS&t;&t;0x100b
-DECL|macro|PCI_DEVICE_ID_NS_87410
-mdefine_line|#define PCI_DEVICE_ID_NS_87410&t;&t;0xd001
-DECL|macro|PCI_VENDOR_ID_VIA
-mdefine_line|#define PCI_VENDOR_ID_VIA&t;&t;0x1106
-DECL|macro|PCI_DEVICE_ID_VIA_82C505
-mdefine_line|#define PCI_DEVICE_ID_VIA_82C505&t;0x0505
-DECL|macro|PCI_DEVICE_ID_VIA_82C576
-mdefine_line|#define PCI_DEVICE_ID_VIA_82C576&t;0x0576
-DECL|macro|PCI_DEVICE_ID_VIA_82C561
-mdefine_line|#define PCI_DEVICE_ID_VIA_82C561&t;0x0561
-DECL|macro|PCI_VENDOR_ID_SI
-mdefine_line|#define PCI_VENDOR_ID_SI&t;&t;0x1039
-DECL|macro|PCI_DEVICE_ID_SI_496
-mdefine_line|#define PCI_DEVICE_ID_SI_496&t;&t;0x0496
-DECL|macro|PCI_DEVICE_ID_SI_501
-mdefine_line|#define PCI_DEVICE_ID_SI_501&t;&t;0x0406
-DECL|macro|PCI_DEVICE_ID_SI_503
-mdefine_line|#define PCI_DEVICE_ID_SI_503&t;&t;0x0008
-DECL|macro|PCI_DEVICE_ID_SI_601
-mdefine_line|#define PCI_DEVICE_ID_SI_601&t;&t;0x0601
-DECL|macro|PCI_VENDOR_ID_LEADTEK
-mdefine_line|#define PCI_VENDOR_ID_LEADTEK&t;&t;0x107d
-DECL|macro|PCI_DEVICE_ID_LEADTEK_805
-mdefine_line|#define PCI_DEVICE_ID_LEADTEK_805&t;0x0000
-DECL|macro|PCI_VENDOR_ID_IMS
-mdefine_line|#define PCI_VENDOR_ID_IMS&t;&t;0x10e0
-DECL|macro|PCI_DEVICE_ID_IMS_8849
-mdefine_line|#define PCI_DEVICE_ID_IMS_8849&t;&t;0x8849
-DECL|macro|PCI_VENDOR_ID_ZEINET
-mdefine_line|#define PCI_VENDOR_ID_ZEINET&t;&t;0x1193
-DECL|macro|PCI_DEVICE_ID_ZEINET_1221
-mdefine_line|#define PCI_DEVICE_ID_ZEINET_1221&t;0x0001
-DECL|macro|PCI_VENDOR_ID_EF
-mdefine_line|#define PCI_VENDOR_ID_EF&t;&t;0x111a
-DECL|macro|PCI_DEVICE_ID_EF_ATM
-mdefine_line|#define PCI_DEVICE_ID_EF_ATM&t;&t;0x0000
-DECL|macro|PCI_VENDOR_ID_HER
-mdefine_line|#define PCI_VENDOR_ID_HER&t;&t;0xedd8
-DECL|macro|PCI_DEVICE_ID_HER_STING
-mdefine_line|#define PCI_DEVICE_ID_HER_STING&t;&t;0xa091
-DECL|macro|PCI_DEVICE_ID_HER_STINGARK
-mdefine_line|#define PCI_DEVICE_ID_HER_STINGARK&t;0xa099
-DECL|macro|PCI_VENDOR_ID_ATRONICS
-mdefine_line|#define PCI_VENDOR_ID_ATRONICS&t;&t;0x907f
-DECL|macro|PCI_DEVICE_ID_ATRONICS_2015
-mdefine_line|#define PCI_DEVICE_ID_ATRONICS_2015&t;0x2015
-DECL|macro|PCI_VENDOR_ID_CT
-mdefine_line|#define PCI_VENDOR_ID_CT&t;&t;0x102c
-DECL|macro|PCI_DEVICE_ID_CT_65545
-mdefine_line|#define PCI_DEVICE_ID_CT_65545&t;&t;0x00d8
-DECL|macro|PCI_VENDOR_ID_FD
-mdefine_line|#define PCI_VENDOR_ID_FD&t;&t;0x1036
-DECL|macro|PCI_DEVICE_ID_FD_36C70
-mdefine_line|#define PCI_DEVICE_ID_FD_36C70&t;&t;0x0000
+DECL|macro|PCI_VENDOR_ID_ACC
+mdefine_line|#define PCI_VENDOR_ID_ACC&t;&t;0x10aa
 DECL|macro|PCI_VENDOR_ID_WINBOND
 mdefine_line|#define PCI_VENDOR_ID_WINBOND&t;&t;0x10ad
 DECL|macro|PCI_DEVICE_ID_WINBOND_83769
@@ -563,52 +488,128 @@ DECL|macro|PCI_DEVICE_ID_3COM_3C595T4
 mdefine_line|#define PCI_DEVICE_ID_3COM_3C595T4&t;0x5951
 DECL|macro|PCI_DEVICE_ID_3COM_3C595MII
 mdefine_line|#define PCI_DEVICE_ID_3COM_3C595MII&t;0x5952
-DECL|macro|PCI_VENDOR_ID_PROMISE
-mdefine_line|#define PCI_VENDOR_ID_PROMISE&t;&t;0x105a
-DECL|macro|PCI_DEVICE_ID_PROMISE_5300
-mdefine_line|#define PCI_DEVICE_ID_PROMISE_5300&t;0x5300
-DECL|macro|PCI_VENDOR_ID_QLOGIC
-mdefine_line|#define PCI_VENDOR_ID_QLOGIC&t;&t;0x1077
-DECL|macro|PCI_DEVICE_ID_QLOGIC_ISP1020
-mdefine_line|#define PCI_DEVICE_ID_QLOGIC_ISP1020&t;0x1020
-DECL|macro|PCI_DEVICE_ID_QLOGIC_ISP1022
-mdefine_line|#define PCI_DEVICE_ID_QLOGIC_ISP1022&t;0x1022
-DECL|macro|PCI_VENDOR_ID_X
-mdefine_line|#define PCI_VENDOR_ID_X&t;&t;&t;0x1061
-DECL|macro|PCI_DEVICE_ID_X_AGX016
-mdefine_line|#define PCI_DEVICE_ID_X_AGX016&t;&t;0x0001
-DECL|macro|PCI_VENDOR_ID_ACC
-mdefine_line|#define PCI_VENDOR_ID_ACC&t;&t;0x10aa
+DECL|macro|PCI_VENDOR_ID_AL
+mdefine_line|#define PCI_VENDOR_ID_AL&t;&t;0x10b9
+DECL|macro|PCI_DEVICE_ID_AL_M1445
+mdefine_line|#define PCI_DEVICE_ID_AL_M1445&t;&t;0x1445
+DECL|macro|PCI_DEVICE_ID_AL_M1449
+mdefine_line|#define PCI_DEVICE_ID_AL_M1449&t;&t;0x1449
+DECL|macro|PCI_DEVICE_ID_AL_M1451
+mdefine_line|#define PCI_DEVICE_ID_AL_M1451&t;&t;0x1451
+DECL|macro|PCI_DEVICE_ID_AL_M1461
+mdefine_line|#define PCI_DEVICE_ID_AL_M1461&t;&t;0x1461
+DECL|macro|PCI_DEVICE_ID_AL_M4803
+mdefine_line|#define PCI_DEVICE_ID_AL_M4803&t;&t;0x5215
+DECL|macro|PCI_VENDOR_ID_IMS
+mdefine_line|#define PCI_VENDOR_ID_IMS&t;&t;0x10e0
+DECL|macro|PCI_DEVICE_ID_IMS_8849
+mdefine_line|#define PCI_DEVICE_ID_IMS_8849&t;&t;0x8849
+DECL|macro|PCI_VENDOR_ID_VIA
+mdefine_line|#define PCI_VENDOR_ID_VIA&t;&t;0x1106
+DECL|macro|PCI_DEVICE_ID_VIA_82C505
+mdefine_line|#define PCI_DEVICE_ID_VIA_82C505&t;0x0505
+DECL|macro|PCI_DEVICE_ID_VIA_82C561
+mdefine_line|#define PCI_DEVICE_ID_VIA_82C561&t;0x0561
+DECL|macro|PCI_DEVICE_ID_VIA_82C576
+mdefine_line|#define PCI_DEVICE_ID_VIA_82C576&t;0x0576
 DECL|macro|PCI_VENDOR_ID_VORTEX
 mdefine_line|#define PCI_VENDOR_ID_VORTEX&t;&t;0x1119
 DECL|macro|PCI_DEVICE_ID_VORTEX_GDT
 mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT&t;0x0001
-DECL|macro|PCI_VENDOR_ID_HP
-mdefine_line|#define PCI_VENDOR_ID_HP&t;&t;0x103c
-DECL|macro|PCI_DEVICE_ID_HP_J2585A
-mdefine_line|#define PCI_DEVICE_ID_HP_J2585A&t;&t;0x1030
-DECL|macro|PCI_VENDOR_ID_TEKRAM
-mdefine_line|#define PCI_VENDOR_ID_TEKRAM&t;&t;0x1de1
-DECL|macro|PCI_DEVICE_ID_TEKRAM_DC290
-mdefine_line|#define PCI_DEVICE_ID_TEKRAM_DC290&t;0xdc29
-DECL|macro|PCI_VENDOR_ID_MUTECH
-mdefine_line|#define PCI_VENDOR_ID_MUTECH&t;&t;0x1159
-DECL|macro|PCI_DEVICE_ID_MUTECH_MV1000
-mdefine_line|#define PCI_DEVICE_ID_MUTECH_MV1000&t;0x0001
+DECL|macro|PCI_VENDOR_ID_EF
+mdefine_line|#define PCI_VENDOR_ID_EF&t;&t;0x111a
+DECL|macro|PCI_DEVICE_ID_EF_ATM
+mdefine_line|#define PCI_DEVICE_ID_EF_ATM&t;&t;0x0000
 DECL|macro|PCI_VENDOR_ID_IMAGINGTECH
 mdefine_line|#define PCI_VENDOR_ID_IMAGINGTECH&t;0x112f
 DECL|macro|PCI_DEVICE_ID_IMAGINGTECH_ICPCI
 mdefine_line|#define PCI_DEVICE_ID_IMAGINGTECH_ICPCI&t;0x0000
-DECL|macro|PCI_VENDOR_ID_CYCLADES
-mdefine_line|#define PCI_VENDOR_ID_CYCLADES&t;&t;0x120e
-DECL|macro|PCI_DEVICE_ID_CYCLADES_Y
-mdefine_line|#define PCI_DEVICE_ID_CYCLADES_Y&t;0x0100
 DECL|macro|PCI_VENDOR_ID_PLX
 mdefine_line|#define PCI_VENDOR_ID_PLX&t;&t;0x113c
 DECL|macro|PCI_DEVICE_ID_PLX_9060
 mdefine_line|#define PCI_DEVICE_ID_PLX_9060&t;&t;0x0001
-DECL|macro|PCI_VENDOR_ID_OLICOM
-mdefine_line|#define PCI_VENDOR_ID_OLICOM&t;&t;0x108d
+DECL|macro|PCI_VENDOR_ID_MUTECH
+mdefine_line|#define PCI_VENDOR_ID_MUTECH&t;&t;0x1159
+DECL|macro|PCI_DEVICE_ID_MUTECH_MV1000
+mdefine_line|#define PCI_DEVICE_ID_MUTECH_MV1000&t;0x0001
+DECL|macro|PCI_VENDOR_ID_ZEINET
+mdefine_line|#define PCI_VENDOR_ID_ZEINET&t;&t;0x1193
+DECL|macro|PCI_DEVICE_ID_ZEINET_1221
+mdefine_line|#define PCI_DEVICE_ID_ZEINET_1221&t;0x0001
+DECL|macro|PCI_VENDOR_ID_CYCLADES
+mdefine_line|#define PCI_VENDOR_ID_CYCLADES&t;&t;0x120e
+DECL|macro|PCI_DEVICE_ID_CYCLADES_Y
+mdefine_line|#define PCI_DEVICE_ID_CYCLADES_Y&t;0x0100
+DECL|macro|PCI_VENDOR_ID_SYMPHONY
+mdefine_line|#define PCI_VENDOR_ID_SYMPHONY&t;&t;0x1c1c
+DECL|macro|PCI_DEVICE_ID_SYMPHONY_101
+mdefine_line|#define PCI_DEVICE_ID_SYMPHONY_101&t;0x0001
+DECL|macro|PCI_VENDOR_ID_TEKRAM
+mdefine_line|#define PCI_VENDOR_ID_TEKRAM&t;&t;0x1de1
+DECL|macro|PCI_DEVICE_ID_TEKRAM_DC290
+mdefine_line|#define PCI_DEVICE_ID_TEKRAM_DC290&t;0xdc29
+DECL|macro|PCI_VENDOR_ID_S3
+mdefine_line|#define PCI_VENDOR_ID_S3&t;&t;0x5333
+DECL|macro|PCI_DEVICE_ID_S3_811
+mdefine_line|#define PCI_DEVICE_ID_S3_811&t;&t;0x8811
+DECL|macro|PCI_DEVICE_ID_S3_868
+mdefine_line|#define PCI_DEVICE_ID_S3_868&t;&t;0x8880
+DECL|macro|PCI_DEVICE_ID_S3_928
+mdefine_line|#define PCI_DEVICE_ID_S3_928&t;&t;0x88b0
+DECL|macro|PCI_DEVICE_ID_S3_864_1
+mdefine_line|#define PCI_DEVICE_ID_S3_864_1&t;&t;0x88c0
+DECL|macro|PCI_DEVICE_ID_S3_864_2
+mdefine_line|#define PCI_DEVICE_ID_S3_864_2&t;&t;0x88c1
+DECL|macro|PCI_DEVICE_ID_S3_964_1
+mdefine_line|#define PCI_DEVICE_ID_S3_964_1&t;&t;0x88d0
+DECL|macro|PCI_DEVICE_ID_S3_964_2
+mdefine_line|#define PCI_DEVICE_ID_S3_964_2&t;&t;0x88d1
+DECL|macro|PCI_DEVICE_ID_S3_968
+mdefine_line|#define PCI_DEVICE_ID_S3_968&t;&t;0x88f0
+DECL|macro|PCI_VENDOR_ID_INTEL
+mdefine_line|#define PCI_VENDOR_ID_INTEL&t;&t;0x8086
+DECL|macro|PCI_DEVICE_ID_INTEL_82375
+mdefine_line|#define PCI_DEVICE_ID_INTEL_82375&t;0x0482
+DECL|macro|PCI_DEVICE_ID_INTEL_82424
+mdefine_line|#define PCI_DEVICE_ID_INTEL_82424&t;0x0483
+DECL|macro|PCI_DEVICE_ID_INTEL_82378
+mdefine_line|#define PCI_DEVICE_ID_INTEL_82378&t;0x0484
+DECL|macro|PCI_DEVICE_ID_INTEL_82430
+mdefine_line|#define PCI_DEVICE_ID_INTEL_82430&t;0x0486
+DECL|macro|PCI_DEVICE_ID_INTEL_82434
+mdefine_line|#define PCI_DEVICE_ID_INTEL_82434&t;0x04a3
+DECL|macro|PCI_DEVICE_ID_INTEL_7116
+mdefine_line|#define PCI_DEVICE_ID_INTEL_7116&t;0x1223
+DECL|macro|PCI_DEVICE_ID_INTEL_82865
+mdefine_line|#define PCI_DEVICE_ID_INTEL_82865&t;0x1227
+DECL|macro|PCI_DEVICE_ID_INTEL_82437
+mdefine_line|#define PCI_DEVICE_ID_INTEL_82437&t;0x122d
+DECL|macro|PCI_DEVICE_ID_INTEL_82371
+mdefine_line|#define PCI_DEVICE_ID_INTEL_82371&t;0x122e
+DECL|macro|PCI_DEVICE_ID_INTEL_82438
+mdefine_line|#define PCI_DEVICE_ID_INTEL_82438&t;0x1230
+DECL|macro|PCI_DEVICE_ID_INTEL_P6
+mdefine_line|#define PCI_DEVICE_ID_INTEL_P6&t;&t;0x84c4
+DECL|macro|PCI_VENDOR_ID_ADAPTEC
+mdefine_line|#define PCI_VENDOR_ID_ADAPTEC&t;&t;0x9004
+DECL|macro|PCI_DEVICE_ID_ADAPTEC_7850
+mdefine_line|#define PCI_DEVICE_ID_ADAPTEC_7850&t;0x5078
+DECL|macro|PCI_DEVICE_ID_ADAPTEC_294x
+mdefine_line|#define PCI_DEVICE_ID_ADAPTEC_294x&t;0x7078
+DECL|macro|PCI_DEVICE_ID_ADAPTEC_2940
+mdefine_line|#define PCI_DEVICE_ID_ADAPTEC_2940&t;0x7178
+DECL|macro|PCI_DEVICE_ID_ADAPTEC_7872
+mdefine_line|#define PCI_DEVICE_ID_ADAPTEC_7872&t;0x7278
+DECL|macro|PCI_VENDOR_ID_ATRONICS
+mdefine_line|#define PCI_VENDOR_ID_ATRONICS&t;&t;0x907f
+DECL|macro|PCI_DEVICE_ID_ATRONICS_2015
+mdefine_line|#define PCI_DEVICE_ID_ATRONICS_2015&t;0x2015
+DECL|macro|PCI_VENDOR_ID_HER
+mdefine_line|#define PCI_VENDOR_ID_HER&t;&t;0xedd8
+DECL|macro|PCI_DEVICE_ID_HER_STING
+mdefine_line|#define PCI_DEVICE_ID_HER_STING&t;&t;0xa091
+DECL|macro|PCI_DEVICE_ID_HER_STINGARK
+mdefine_line|#define PCI_DEVICE_ID_HER_STINGARK&t;0xa099
 multiline_comment|/*&n; * The PCI interface treats multi-function devices as independent&n; * devices.  The slot/function address of each device is encoded&n; * in a single byte as follows:&n; *&n; *&t;7:4 = slot&n; *&t;3:0 = function&n; */
 DECL|macro|PCI_DEVFN
 mdefine_line|#define PCI_DEVFN(slot,func)&t;((((slot) &amp; 0x1f) &lt;&lt; 3) | ((func) &amp; 0x07))

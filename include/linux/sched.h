@@ -707,6 +707,22 @@ r_extern
 r_int
 id|need_resched
 suffix:semicolon
+r_extern
+r_int
+r_int
+op_star
+id|prof_buffer
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|prof_len
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|prof_shift
+suffix:semicolon
 DECL|macro|CURRENT_TIME
 mdefine_line|#define CURRENT_TIME (xtime.tv_sec)
 r_extern

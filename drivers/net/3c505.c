@@ -4277,6 +4277,17 @@ c_func
 id|adapter
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|adapter
+op_eq
+l_int|NULL
+)paren
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
 id|memset
 c_func
 (paren
@@ -5228,6 +5239,16 @@ c_func
 op_amp
 id|dev_3c505
 )paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|dev_3c505.priv
+)paren
+suffix:semicolon
+id|dev_3c505.priv
+op_assign
+l_int|NULL
 suffix:semicolon
 multiline_comment|/* If we don&squot;t do this, we can&squot;t re-insmod it later. */
 id|release_region

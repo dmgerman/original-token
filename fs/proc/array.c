@@ -319,7 +319,6 @@ id|proc_kcore_operations
 comma
 )brace
 suffix:semicolon
-macro_line|#ifdef CONFIG_PROFILE
 r_extern
 r_int
 r_int
@@ -330,6 +329,11 @@ r_int
 r_int
 op_star
 id|prof_buffer
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|prof_shift
 suffix:semicolon
 multiline_comment|/*&n; * This function accesses profiling information. The returned data is&n; * binary: the sampling step and the actual contents of the profile&n; * buffer. Use of the program readprofile is recommended in order to&n; * get meaningful info out of these data.&n; */
 DECL|function|read_profile
@@ -375,7 +379,7 @@ id|sample_step
 op_assign
 l_int|1
 op_lshift
-id|CONFIG_PROFILE_SHIFT
+id|prof_shift
 suffix:semicolon
 r_if
 c_cond
@@ -605,7 +609,6 @@ id|proc_profile_operations
 comma
 )brace
 suffix:semicolon
-macro_line|#endif /* CONFIG_PROFILE */
 DECL|function|get_loadavg
 r_static
 r_int

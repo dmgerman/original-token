@@ -682,6 +682,11 @@ c_func
 id|ptep
 )paren
 suffix:semicolon
+id|invalidate
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

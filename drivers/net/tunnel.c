@@ -153,6 +153,17 @@ comma
 id|GFP_KERNEL
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;priv
+op_eq
+l_int|NULL
+)paren
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
 id|memset
 c_func
 (paren
@@ -179,6 +190,7 @@ op_amp
 id|tunnel_close
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* Now stomp the bits that are different */
 id|dev-&gt;type
 op_assign
 id|ARPHRD_TUNNEL
@@ -205,6 +217,15 @@ id|dev-&gt;hard_header
 op_assign
 l_int|NULL
 suffix:semicolon
+id|dev-&gt;header_cache
+op_assign
+l_int|NULL
+suffix:semicolon
+id|dev-&gt;rebuild_header
+op_assign
+l_int|NULL
+suffix:semicolon
+multiline_comment|/* End of stomp 8) */
 r_return
 l_int|0
 suffix:semicolon
@@ -684,6 +705,10 @@ id|iphdr
 op_star
 )paren
 id|skb2-&gt;data
+suffix:semicolon
+id|skb2-&gt;ip_hdr
+op_assign
+id|iph
 suffix:semicolon
 id|memcpy
 c_func

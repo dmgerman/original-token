@@ -10,11 +10,6 @@ macro_line|#include &lt;linux/limits.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
-r_extern
-r_int
-r_int
-id|prof_len
-suffix:semicolon
 DECL|function|proc_put_inode
 r_static
 r_void
@@ -976,7 +971,6 @@ id|PAGE_SIZE
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#ifdef CONFIG_PROFILE
 r_case
 id|PROC_PROFILE
 suffix:colon
@@ -1009,7 +1003,6 @@ r_int
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#endif
 r_default
 suffix:colon
 id|inode-&gt;i_mode

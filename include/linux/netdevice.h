@@ -11,8 +11,13 @@ mdefine_line|#define DEV_NUMBUFFS&t;3
 DECL|macro|MAX_ADDR_LEN
 mdefine_line|#define MAX_ADDR_LEN&t;7
 macro_line|#ifndef CONFIG_AX25
+macro_line|#ifndef CONFIG_TR
 DECL|macro|MAX_HEADER
 mdefine_line|#define MAX_HEADER&t;32&t;&t;/* We really need about 18 worst case .. so 32 is aligned */
+macro_line|#else
+DECL|macro|MAX_HEADER
+mdefine_line|#define MAX_HEADER&t;48&t;&t;/* Token Ring header needs 40 bytes ... 48 is aligned */ 
+macro_line|#endif
 macro_line|#else
 DECL|macro|MAX_HEADER
 mdefine_line|#define MAX_HEADER&t;96&t;&t;/* AX.25 + NetROM */
