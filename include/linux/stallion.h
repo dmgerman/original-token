@@ -1,5 +1,5 @@
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *&t;stallion.h  -- stallion multiport serial driver.&n; *&n; *&t;Copyright (C) 1996-1998  Stallion Technologies (support@stallion.oz.au).&n; *&t;Copyright (C) 1994-1996  Greg Ungerer (gerg@stallion.oz.au).&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
+multiline_comment|/*&n; *&t;stallion.h  -- stallion multiport serial driver.&n; *&n; *&t;Copyright (C) 1996-1998  Stallion Technologies (support@stallion.oz.au).&n; *&t;Copyright (C) 1994-1996  Greg Ungerer.&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
 multiline_comment|/*****************************************************************************/
 macro_line|#ifndef&t;_STALLION_H
 DECL|macro|_STALLION_H
@@ -167,6 +167,20 @@ id|tty_struct
 op_star
 id|tty
 suffix:semicolon
+macro_line|#if (LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,3,0))
+DECL|member|open_wait
+r_struct
+id|wait_queue
+op_star
+id|open_wait
+suffix:semicolon
+DECL|member|close_wait
+r_struct
+id|wait_queue
+op_star
+id|close_wait
+suffix:semicolon
+macro_line|#else
 DECL|member|open_wait
 id|wait_queue_head_t
 id|open_wait
@@ -175,6 +189,7 @@ DECL|member|close_wait
 id|wait_queue_head_t
 id|close_wait
 suffix:semicolon
+macro_line|#endif
 DECL|member|normaltermios
 r_struct
 id|termios

@@ -5243,7 +5243,7 @@ id|pipe
 comma
 id|TOGGLE_AUTO
 comma
-l_int|1
+l_int|0
 multiline_comment|/* round */
 comma
 l_int|1
@@ -5416,7 +5416,12 @@ c_cond
 id|stats
 op_eq
 id|USB_ST_NOERROR
+op_logical_or
+id|stats
+op_eq
+id|USB_ST_DATAUNDERRUN
 )paren
+multiline_comment|/*DEN*/
 id|req-&gt;_bytes_done
 op_add_assign
 id|len

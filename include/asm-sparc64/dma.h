@@ -2,6 +2,7 @@ multiline_comment|/* $Id: dma.h,v 1.14 1999/08/30 10:14:36 davem Exp $&n; * incl
 macro_line|#ifndef _ASM_SPARC64_DMA_H
 DECL|macro|_ASM_SPARC64_DMA_H
 mdefine_line|#define _ASM_SPARC64_DMA_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/sbus.h&gt;

@@ -1356,7 +1356,6 @@ id|cmd
 suffix:semicolon
 )brace
 DECL|function|pci_read_bridge_bases
-r_static
 r_void
 id|__init
 id|pci_read_bridge_bases
@@ -2512,14 +2511,6 @@ comma
 l_string|&quot;PCI Bus #%02x&quot;
 comma
 id|child-&gt;number
-)paren
-suffix:semicolon
-id|pci_read_bridge_bases
-c_func
-(paren
-id|dev
-comma
-id|child
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; * Clear all status bits and turn off memory,&n;&t;&t;&t; * I/O and master enables.&n;&t;&t;&t; */

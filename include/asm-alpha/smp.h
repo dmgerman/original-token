@@ -56,7 +56,7 @@ id|__r0
 suffix:semicolon
 )brace
 macro_line|#ifdef __SMP__
-macro_line|#include &lt;linux/tasks.h&gt;
+macro_line|#include &lt;linux/threads.h&gt;
 DECL|struct|cpuinfo_alpha
 r_struct
 id|cpuinfo_alpha

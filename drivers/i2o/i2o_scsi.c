@@ -1249,7 +1249,6 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|i2o_scsi_init
-r_static
 r_void
 id|i2o_scsi_init
 c_func

@@ -80,14 +80,13 @@ macro_line|#ifdef NEW_MODULES
 macro_line|#ifdef MODVERSIONS
 macro_line|#include &lt;linux/modversions.h&gt;
 macro_line|#endif
-macro_line|#include &lt;linux/module.h&gt;
 macro_line|#else /* !NEW_MODULES */
 macro_line|#ifdef MODVERSIONS
 DECL|macro|MODULE
 mdefine_line|#define MODULE
 macro_line|#endif
-macro_line|#include &lt;linux/module.h&gt;
 macro_line|#endif /* NEW_MODULES */
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#ifdef LOCAL_HEADERS
 macro_line|#include &quot;serial_local.h&quot;
 macro_line|#else

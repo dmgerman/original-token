@@ -940,6 +940,7 @@ l_int|1
 )braket
 dot
 id|start
+suffix:semicolon
 multiline_comment|/* Verify port address range is not already being used */
 id|port_len
 op_assign

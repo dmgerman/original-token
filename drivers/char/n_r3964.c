@@ -13,7 +13,6 @@ macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;    /* to get the struct task_struct */
 macro_line|#include &lt;linux/string.h&gt;   /* used in new tty drivers */
 macro_line|#include &lt;linux/signal.h&gt;   /* used in new tty drivers */
 macro_line|#include &lt;linux/ioctl.h&gt;
@@ -705,17 +704,14 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif /* MODULE */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|r3964_init
 r_static
 r_int
+id|__init
 id|r3964_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int

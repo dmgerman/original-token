@@ -106,7 +106,7 @@ l_int|15
 suffix:semicolon
 )brace
 DECL|macro|DO_ERROR
-mdefine_line|#define DO_ERROR(trapnr, signr, str, name, tsk) &bslash;&n;asmlinkage void do_##name(struct pt_regs * regs, long error_code) &bslash;&n;{ &bslash;&n;&t;tsk-&gt;thread.error_code = error_code; &bslash;&n;&t;tsk-&gt;thread.trap_no = trapnr; &bslash;&n;&t;force_sig(signr, tsk); &bslash;&n;&t;die_if_no_fixup(str,regs,error_code); &bslash;&n;}
+mdefine_line|#define DO_ERROR(trapnr, signr, str, name, tsk) &bslash;&n;asmlinkage void do_##name(struct pt_regs * regs, long error_code) &bslash;&n;{ &bslash;&n;&t;tsk-&gt;thread.error_code = error_code; &bslash;&n;&t;tsk-&gt;thread.trap_no = trapnr; &bslash;&n;&t;die_if_no_fixup(str,regs,error_code); &bslash;&n;&t;force_sig(signr, tsk); &bslash;&n;}
 DECL|macro|DO_VM86_ERROR
 mdefine_line|#define DO_VM86_ERROR(trapnr, signr, str, name, tsk) &bslash;&n;asmlinkage void do_##name(struct pt_regs * regs, long error_code) &bslash;&n;{ &bslash;&n;&t;lock_kernel(); &bslash;&n;&t;if (regs-&gt;eflags &amp; VM_MASK) { &bslash;&n;&t;&t;if (!handle_vm86_trap((struct kernel_vm86_regs *) regs, error_code, trapnr)) &bslash;&n;&t;&t;&t;goto out; &bslash;&n;&t;&t;/* else fall through */ &bslash;&n;&t;} &bslash;&n;&t;tsk-&gt;thread.error_code = error_code; &bslash;&n;&t;tsk-&gt;thread.trap_no = trapnr; &bslash;&n;&t;force_sig(signr, tsk); &bslash;&n;&t;die_if_kernel(str,regs,error_code); &bslash;&n;out: &bslash;&n;&t;unlock_kernel(); &bslash;&n;}
 r_void

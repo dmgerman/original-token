@@ -1,7 +1,6 @@
 macro_line|#ifndef __ALPHA_LCA__H__
 DECL|macro|__ALPHA_LCA__H__
 mdefine_line|#define __ALPHA_LCA__H__
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/compiler.h&gt;
 multiline_comment|/*&n; * Low Cost Alpha (LCA) definitions (these apply to 21066 and 21068,&n; * for example).&n; *&n; * This file is based on:&n; *&n; *&t;DECchip 21066 and DECchip 21068 Alpha AXP Microprocessors&n; *&t;Hardware Reference Manual; Digital Equipment Corp.; May 1994;&n; *&t;Maynard, MA; Order Number: EC-N2681-71.&n; */

@@ -698,16 +698,13 @@ suffix:semicolon
 singleline_comment|//&t;printk(&quot;Removing Applicom module&bslash;n&quot;);
 )brace
 macro_line|#endif /* MODULE */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|applicom_init
 r_int
+id|__init
 id|applicom_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int

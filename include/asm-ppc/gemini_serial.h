@@ -1,6 +1,7 @@
 macro_line|#ifndef __ASMPPC_GEMINI_SERIAL_H
 DECL|macro|__ASMPPC_GEMINI_SERIAL_H
 mdefine_line|#define __ASMPPC_GEMINI_SERIAL_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/gemini.h&gt;
 multiline_comment|/* Rate for the 24.576 Mhz clock for the onboard serial chip */
 DECL|macro|BASE_BAUD

@@ -2820,9 +2820,9 @@ id|START_ASAP
 suffix:semicolon
 id|id-&gt;callback_frames
 op_assign
-l_int|1
+l_int|10
 suffix:semicolon
-multiline_comment|/* on every frame */
+multiline_comment|/* on every 10th frame */
 id|id-&gt;callback_fn
 op_assign
 id|cpia_isoc_irq
@@ -2882,9 +2882,9 @@ suffix:semicolon
 multiline_comment|/* will follow the first desc. */
 id|id-&gt;callback_frames
 op_assign
-l_int|1
+l_int|10
 suffix:semicolon
-multiline_comment|/* on every frame */
+multiline_comment|/* on every 10th frame */
 id|id-&gt;callback_fn
 op_assign
 id|cpia_isoc_irq

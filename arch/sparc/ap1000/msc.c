@@ -8,7 +8,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/ap1000/pgtapmmu.h&gt;
-macro_line|#include &lt;linux/tasks.h&gt;
+macro_line|#include &lt;linux/threads.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 r_static

@@ -1,6 +1,5 @@
 multiline_comment|/*&n; *  linux/arch/sh/traps.c&n; *&n; *  SuperH version: Copyright (C) 1999  Niibe Yutaka&n; */
 multiline_comment|/*&n; * &squot;Traps.c&squot; handles hardware traps and faults after we have saved some&n; * state in &squot;entry.S&squot;.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;

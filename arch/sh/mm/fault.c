@@ -15,7 +15,6 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
-macro_line|#include &lt;asm/uaccess.h&gt;&t;/* to get __m() macro */
 macro_line|#include &lt;asm/mmu_context.h&gt;
 r_extern
 r_void

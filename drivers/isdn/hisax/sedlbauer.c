@@ -2188,11 +2188,9 @@ l_int|0
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|setup_sedlbauer
 id|setup_sedlbauer
 c_func
 (paren
@@ -2200,7 +2198,6 @@ r_struct
 id|IsdnCard
 op_star
 id|card
-)paren
 )paren
 (brace
 r_int

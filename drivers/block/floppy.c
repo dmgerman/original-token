@@ -19328,7 +19328,7 @@ r_char
 op_star
 id|pattern
 comma
-r_void
+r_int
 (paren
 op_star
 id|setup

@@ -3836,9 +3836,9 @@ r_goto
 id|out
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * We need to do a check-parent every time&n; * after we have locked the parent - to verify&n; * that the parent is still our parent and&n; * that we are still hashed onto it..&n; *&n; * This is requied in case two processes race&n; * on removing (or moving) the same entry: the&n; * parent lock will serialize them, but the&n; * other process will be too late..&n; */
-DECL|macro|check_parent
-mdefine_line|#define check_parent(dir, dentry) &bslash;&n;&t;((dir) == (dentry)-&gt;d_parent-&gt;d_inode &amp;&amp; !list_empty(&amp;dentry-&gt;d_hash))
+multiline_comment|/*&n; * We need to do a check-parent every time&n; * after we have locked the parent - to verify&n; * that the parent is still our parent and&n; * that we are still hashed onto it..&n; *&n; * This is required in case two processes race&n; * on removing (or moving) the same entry: the&n; * parent lock will serialize them, but the&n; * other process will be too late..&n; *&n; * Note that this nfsd_check_parent is different&n; * than the one in linux/include/dcache_func.h.&n; */
+DECL|macro|nfsd_check_parent
+mdefine_line|#define nfsd_check_parent(dir, dentry) &bslash;&n;&t;((dir) == (dentry)-&gt;d_parent-&gt;d_inode &amp;&amp; !list_empty(&amp;dentry-&gt;d_hash))
 multiline_comment|/*&n; * This follows the model of double_lock() in the VFS.&n; */
 DECL|function|nfsd_double_down
 r_static
@@ -4250,7 +4250,7 @@ multiline_comment|/* GAM3 check for parent changes after locking. */
 r_if
 c_cond
 (paren
-id|check_parent
+id|nfsd_check_parent
 c_func
 (paren
 id|fdir
@@ -4258,7 +4258,7 @@ comma
 id|odentry
 )paren
 op_logical_and
-id|check_parent
+id|nfsd_check_parent
 c_func
 (paren
 id|tdir
@@ -4632,7 +4632,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|check_parent
+id|nfsd_check_parent
 c_func
 (paren
 id|dirp

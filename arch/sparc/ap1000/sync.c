@@ -3,7 +3,7 @@ multiline_comment|/* sync functions using the Tnet */
 macro_line|#include &lt;asm/ap1000/apreg.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/tasks.h&gt;
+macro_line|#include &lt;linux/threads.h&gt;
 r_extern
 r_int
 id|cap_cid0

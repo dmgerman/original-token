@@ -14,7 +14,6 @@ macro_line|#include &lt;asm/mmu_context.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/core_mcpcia.h&gt;
-macro_line|#include &lt;asm/pci.h&gt;
 macro_line|#include &quot;proto.h&quot;
 macro_line|#include &quot;irq_impl.h&quot;
 macro_line|#include &quot;pci_impl.h&quot;

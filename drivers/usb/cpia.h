@@ -135,7 +135,7 @@ mdefine_line|#define STREAM_BUF_SIZE&t;(PAGE_SIZE * 4)
 DECL|macro|SCRATCH_BUF_SIZE
 mdefine_line|#define SCRATCH_BUF_SIZE (STREAM_BUF_SIZE * 2)
 DECL|macro|FRAMES_PER_DESC
-mdefine_line|#define FRAMES_PER_DESC&t;&t;500
+mdefine_line|#define FRAMES_PER_DESC&t;&t;10
 DECL|macro|FRAME_SIZE_PER_DESC
 mdefine_line|#define FRAME_SIZE_PER_DESC&t;960&t;/* Shouldn&squot;t be hardcoded */
 r_enum

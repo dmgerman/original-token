@@ -4610,7 +4610,7 @@ c_cond
 (paren
 id|apm_bios_info.flags
 op_amp
-id|APM_BIOS_DISABLED
+id|APM_BIOS_DISENGAGED
 )paren
 op_eq
 l_int|0

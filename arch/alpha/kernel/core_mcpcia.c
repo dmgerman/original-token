@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *&t;linux/arch/alpha/kernel/core_mcpcia.c&n; *&n; * Based on code written by David A Rusling (david.rusling@reo.mts.dec.com).&n; *&n; * Code common to all MCbus-PCI Adaptor core logic chipsets&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;

@@ -2,7 +2,7 @@ multiline_comment|/* sun4m_smp.c: Sparc SUN4M SMP support.&n; *&n; * Copyright (
 macro_line|#include &lt;asm/head.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/tasks.h&gt;
+macro_line|#include &lt;linux/threads.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;

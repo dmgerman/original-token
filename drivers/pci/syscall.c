@@ -1,37 +1,10 @@
-multiline_comment|/*&n; *&t;pci_syscall.c&n; */
+multiline_comment|/*&n; *&t;pci_syscall.c&n; *&n; * For architectures where we want to allow direct access&n; * to the PCI config stuff - it would probably be preferable&n; * on PCs too, but there people just do it by hand with the&n; * magic northbridge registers..&n; */
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#ifndef CONFIG_PCI
-DECL|function|sys_pciconfig_read
-id|asmlinkage
-r_int
-id|sys_pciconfig_read
-c_func
-(paren
-)paren
-(brace
-r_return
-op_minus
-id|ENOSYS
-suffix:semicolon
-)brace
-DECL|function|sys_pciconfig_write
-id|asmlinkage
-r_int
-id|sys_pciconfig_write
-c_func
-(paren
-)paren
-(brace
-r_return
-op_minus
-id|ENOSYS
-suffix:semicolon
-)brace
-macro_line|#else
 id|asmlinkage
 r_int
 DECL|function|sys_pciconfig_read
@@ -637,5 +610,4 @@ r_return
 id|err
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_PCI */
 eof

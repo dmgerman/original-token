@@ -131,7 +131,7 @@ id|expires
 op_assign
 id|jiffies
 op_plus
-l_int|100
+id|HZ
 suffix:semicolon
 id|timer_active
 op_or_assign

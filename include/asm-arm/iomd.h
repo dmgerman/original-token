@@ -1,3 +1,4 @@
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifndef __ASSEMBLER__
 DECL|macro|__IOMD
 mdefine_line|#define __IOMD(offset)&t;(IO_IOMD_BASE + (offset &gt;&gt; 2))

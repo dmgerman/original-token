@@ -212,8 +212,6 @@ DECL|macro|__init
 mdefine_line|#define __init
 DECL|macro|__initdata
 mdefine_line|#define __initdata
-DECL|macro|__initfunc
-mdefine_line|#define __initfunc(x) x
 macro_line|#endif
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|variable|yam_drvname
@@ -6021,11 +6019,9 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* --------------------------------------------------------------------- */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|yam_init
 r_int
+id|__init
 id|yam_init
 c_func
 (paren
@@ -6033,7 +6029,6 @@ r_struct
 id|net_device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int
@@ -6335,16 +6330,12 @@ l_string|&quot;Yam amateur radio modem driver&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|init_module
 r_int
 id|init_module
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int

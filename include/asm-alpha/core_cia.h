@@ -4,7 +4,6 @@ mdefine_line|#define __ALPHA_CIA__H__
 multiline_comment|/* Define to experiment with fitting everything into one 512MB HAE window.  */
 DECL|macro|CIA_ONE_HAE_WINDOW
 mdefine_line|#define CIA_ONE_HAE_WINDOW 1
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/compiler.h&gt;
 multiline_comment|/*&n; * CIA is the internal name for the 2117x chipset which provides&n; * memory controller and PCI access for the 21164 chip based systems.&n; *&n; * This file is based on:&n; *&n; * DECchip 21171 Core Logic Chipset&n; * Technical Reference Manual&n; *&n; * EC-QE18B-TE&n; *&n; * david.rusling@reo.mts.dec.com Initial Version.&n; *&n; */

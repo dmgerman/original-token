@@ -6128,11 +6128,9 @@ id|done_setup
 op_assign
 l_int|0
 suffix:semicolon
-DECL|function|in2000__INITFUNC
-id|in2000__INITFUNC
-c_func
-(paren
+DECL|function|in2000_setup
 r_void
+id|__init
 id|in2000_setup
 (paren
 r_char
@@ -6142,7 +6140,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_int
@@ -6280,12 +6277,10 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* check_setup_args() returns index if key found, 0 if not&n; */
-DECL|function|in2000__INITFUNC
-id|in2000__INITFUNC
-c_func
-(paren
+DECL|function|check_setup_args
 r_static
 r_int
+id|__init
 id|check_setup_args
 c_func
 (paren
@@ -6304,7 +6299,6 @@ comma
 r_char
 op_star
 id|buf
-)paren
 )paren
 (brace
 r_int
@@ -6528,18 +6522,15 @@ comma
 l_int|10
 )brace
 suffix:semicolon
-DECL|function|in2000__INITFUNC
-id|in2000__INITFUNC
-c_func
-(paren
+DECL|function|in2000_detect
 r_int
+id|__init
 id|in2000_detect
 c_func
 (paren
 id|Scsi_Host_Template
 op_star
 id|tpnt
-)paren
 )paren
 (brace
 r_struct

@@ -164,6 +164,14 @@ r_void
 )paren
 suffix:semicolon
 r_extern
+r_int
+id|pcmcia_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
 r_void
 id|free_initmem
 c_func
@@ -2421,6 +2429,14 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* Must be done after protocol initialization */
+macro_line|#endif
+macro_line|#ifdef CONFIG_PCMCIA
+id|pcmcia_init
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Do this last */
 macro_line|#endif
 multiline_comment|/* Mount the root filesystem.. */
 id|mount_root

@@ -2,7 +2,7 @@ multiline_comment|/* hardirq.h: 64-bit Sparc hard IRQ support.&n; *&n; * Copyrig
 macro_line|#ifndef __SPARC64_HARDIRQ_H
 DECL|macro|__SPARC64_HARDIRQ_H
 mdefine_line|#define __SPARC64_HARDIRQ_H
-macro_line|#include &lt;linux/tasks.h&gt;
+macro_line|#include &lt;linux/threads.h&gt;
 macro_line|#ifndef __SMP__
 r_extern
 r_int

@@ -2,7 +2,7 @@ multiline_comment|/* $Id: hardirq.h,v 1.5 1998/08/29 21:20:21 ralf Exp $&n; *&n;
 macro_line|#ifndef __ASM_MIPS_HARDIRQ_H
 DECL|macro|__ASM_MIPS_HARDIRQ_H
 mdefine_line|#define __ASM_MIPS_HARDIRQ_H
-macro_line|#include &lt;linux/tasks.h&gt;
+macro_line|#include &lt;linux/threads.h&gt;
 r_extern
 r_int
 r_int

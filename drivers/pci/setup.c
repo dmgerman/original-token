@@ -1,8 +1,10 @@
-multiline_comment|/*&n; *&t;linux/arch/alpha/kernel/pci_setup.c&n; *&n; * Extruded from code written by&n; *      Dave Rusling (david.rusling@reo.mts.dec.com)&n; *      David Mosberger (davidm@cs.arizona.edu)&n; *&t;David Miller (davem@redhat.com)&n; */
+multiline_comment|/*&n; *&t;drivers/pci/setup.c&n; *&n; * Extruded from code written by&n; *      Dave Rusling (david.rusling@reo.mts.dec.com)&n; *      David Mosberger (davidm@cs.arizona.edu)&n; *&t;David Miller (davem@redhat.com)&n; *&n; * Support routines for initializing a PCI subsystem.&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;asm/cache.h&gt;
 macro_line|#include &lt;asm/pci.h&gt;
 DECL|macro|DEBUG_CONFIG
 mdefine_line|#define DEBUG_CONFIG 0
@@ -13,10 +15,10 @@ macro_line|#else
 DECL|macro|DBGC
 macro_line|# define DBGC(args)
 macro_line|#endif
-r_void
+r_int
 id|__init
-DECL|function|pci_record_assignment
-id|pci_record_assignment
+DECL|function|pci_claim_resource
+id|pci_claim_resource
 c_func
 (paren
 r_struct
@@ -28,13 +30,6 @@ r_int
 id|resource
 )paren
 (brace
-r_struct
-id|pci_controler
-op_star
-id|hose
-op_assign
-id|dev-&gt;sysdata
-suffix:semicolon
 r_struct
 id|resource
 op_star
@@ -49,83 +44,79 @@ suffix:semicolon
 r_struct
 id|resource
 op_star
-id|base
-suffix:semicolon
-r_int
-id|ok
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|res-&gt;flags
-op_eq
-l_int|0
-)paren
-r_return
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|res-&gt;flags
-op_amp
-id|IORESOURCE_IO
-)paren
-id|base
+id|root
 op_assign
-id|hose-&gt;io_space
-suffix:semicolon
-r_else
-id|base
-op_assign
-id|hose-&gt;mem_space
-suffix:semicolon
-id|res-&gt;start
-op_add_assign
-id|base-&gt;start
-suffix:semicolon
-id|res-&gt;end
-op_add_assign
-id|base-&gt;start
-suffix:semicolon
-id|ok
-op_assign
-id|request_resource
+id|pci_find_parent_resource
 c_func
 (paren
-id|base
+id|dev
 comma
 id|res
 )paren
 suffix:semicolon
-id|DBGC
+r_int
+id|err
+suffix:semicolon
+id|err
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|root
+op_ne
+l_int|NULL
+)paren
+(brace
+multiline_comment|/* If `dev&squot; is on a secondary pci bus, `root&squot; may not be&n;&t;&t;   at the origin.  In that case, adjust the resource into&n;&t;&t;   range.  */
+id|res-&gt;start
+op_add_assign
+id|root-&gt;start
+suffix:semicolon
+id|res-&gt;end
+op_add_assign
+id|root-&gt;start
+suffix:semicolon
+id|err
+op_assign
+id|request_resource
 c_func
 (paren
-(paren
-l_string|&quot;PCI record assignment: (%s) resource %d %s&bslash;n&quot;
+id|root
 comma
-id|dev-&gt;name
+id|res
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|err
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;PCI: Address space collision on region %d &quot;
+l_string|&quot;of device %s&bslash;n&quot;
 comma
 id|resource
 comma
-(paren
-id|ok
-OL
-l_int|0
-ques
-c_cond
-l_string|&quot;failed&quot;
-suffix:colon
-l_string|&quot;ok&quot;
+id|dev-&gt;name
 )paren
-)paren
-)paren
+suffix:semicolon
+)brace
+r_return
+id|err
 suffix:semicolon
 )brace
 r_static
 r_void
-r_inline
-DECL|function|pdev_assign_unassigned
-id|pdev_assign_unassigned
+DECL|function|pdev_assign_unassigned_resources
+id|pdev_assign_unassigned_resources
 c_func
 (paren
 r_struct
@@ -133,10 +124,10 @@ id|pci_dev
 op_star
 id|dev
 comma
-r_int
+id|u32
 id|min_io
 comma
-r_int
+id|u32
 id|min_mem
 )paren
 (brace
@@ -153,7 +144,7 @@ id|DBGC
 c_func
 (paren
 (paren
-l_string|&quot;PCI assign resources : (%s)&bslash;n&quot;
+l_string|&quot;PCI assign unassigned: (%s)&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
@@ -186,11 +177,6 @@ op_increment
 )paren
 (brace
 r_struct
-id|pci_controler
-op_star
-id|hose
-suffix:semicolon
-r_struct
 id|resource
 op_star
 id|root
@@ -203,8 +189,6 @@ r_int
 id|size
 comma
 id|min
-comma
-id|max
 suffix:semicolon
 id|res
 op_assign
@@ -247,55 +231,47 @@ l_int|NULL
 op_logical_or
 id|res-&gt;flags
 op_eq
-l_int|0UL
+l_int|0
 )paren
 r_continue
 suffix:semicolon
-id|hose
-op_assign
-id|dev-&gt;sysdata
-suffix:semicolon
 multiline_comment|/* Determine the root we allocate from.  */
+id|root
+op_assign
+id|pci_find_parent_resource
+c_func
+(paren
+id|dev
+comma
+id|res
+)paren
+suffix:semicolon
 r_if
 c_cond
+(paren
+id|root
+op_eq
+l_int|NULL
+)paren
+r_continue
+suffix:semicolon
+id|min
+op_assign
 (paren
 id|res-&gt;flags
 op_amp
 id|IORESOURCE_IO
-)paren
-(brace
-id|root
-op_assign
-id|hose-&gt;io_space
-suffix:semicolon
-id|min
-op_assign
-id|root-&gt;start
-op_plus
+ques
+c_cond
 id|min_io
-suffix:semicolon
-id|max
-op_assign
-id|root-&gt;end
-suffix:semicolon
-)brace
-r_else
-(brace
-id|root
-op_assign
-id|hose-&gt;mem_space
+suffix:colon
+id|min_mem
+)paren
 suffix:semicolon
 id|min
-op_assign
+op_add_assign
 id|root-&gt;start
-op_plus
-id|min_mem
 suffix:semicolon
-id|max
-op_assign
-id|root-&gt;end
-suffix:semicolon
-)brace
 id|size
 op_assign
 id|res-&gt;end
@@ -308,21 +284,13 @@ id|DBGC
 c_func
 (paren
 (paren
-l_string|&quot;  for root[%016lx:%016lx]&bslash;n&quot;
-l_string|&quot;       res[%016lx:%016lx]&bslash;n&quot;
-l_string|&quot;      span[%016lx:%016lx] size[%lx]&bslash;n&quot;
+l_string|&quot;  for root[%lx:%lx] min[%lx] size[%lx]&bslash;n&quot;
 comma
 id|root-&gt;start
 comma
 id|root-&gt;end
 comma
-id|res-&gt;start
-comma
-id|res-&gt;end
-comma
 id|min
-comma
-id|max
 comma
 id|size
 )paren
@@ -342,7 +310,8 @@ id|size
 comma
 id|min
 comma
-id|max
+op_minus
+l_int|1
 comma
 id|size
 )paren
@@ -361,12 +330,14 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
+r_continue
+suffix:semicolon
 )brace
 id|DBGC
 c_func
 (paren
 (paren
-l_string|&quot;  got res[%016lx:%016lx] for resource %d&bslash;n&quot;
+l_string|&quot;  got res[%lx:%lx] for resource %d&bslash;n&quot;
 comma
 id|res-&gt;start
 comma
@@ -377,10 +348,14 @@ id|i
 )paren
 suffix:semicolon
 multiline_comment|/* Update PCI config space.  */
-id|pcibios_base_address_update
+id|pcibios_update_resource
 c_func
 (paren
 id|dev
+comma
+id|root
+comma
+id|res
 comma
 id|i
 )paren
@@ -413,7 +388,7 @@ comma
 id|reg
 )paren
 suffix:semicolon
-multiline_comment|/* All of these (may) have I/O scattered all around and may not&n;&t;   use IO-base address registers at all.  So we just have to&n;&t;   always enable IO to these devices.  */
+multiline_comment|/* All of these (may) have I/O scattered all around and may not&n;&t;   use I/O base address registers at all.  So we just have to&n;&t;   always enable IO to these devices.  */
 r_if
 c_cond
 (paren
@@ -463,7 +438,7 @@ op_or_assign
 id|PCI_COMMAND_IO
 suffix:semicolon
 )brace
-multiline_comment|/* ??? Always turn on bus mastering.  */
+multiline_comment|/* ??? Always turn on bus mastering.  If the device doesn&squot;t support&n;&t;   it, the bit will go into the bucket. */
 id|cmd
 op_or_assign
 id|PCI_COMMAND_MASTER
@@ -504,7 +479,6 @@ op_eq
 id|PCI_CLASS_BRIDGE_PCI
 )paren
 (brace
-multiline_comment|/* ??? EV4/EV5 cache line is 32 bytes.  */
 id|pci_write_config_byte
 c_func
 (paren
@@ -513,7 +487,7 @@ comma
 id|PCI_CACHE_LINE_SIZE
 comma
 (paren
-l_int|64
+id|L1_CACHE_BYTES
 op_div
 r_sizeof
 (paren
@@ -526,14 +500,14 @@ suffix:semicolon
 )brace
 r_void
 id|__init
-DECL|function|pci_assign_unassigned
-id|pci_assign_unassigned
+DECL|function|pci_assign_unassigned_resources
+id|pci_assign_unassigned_resources
 c_func
 (paren
-r_int
+id|u32
 id|min_io
 comma
-r_int
+id|u32
 id|min_mem
 )paren
 (brace
@@ -555,7 +529,7 @@ id|dev
 op_assign
 id|dev-&gt;next
 )paren
-id|pdev_assign_unassigned
+id|pdev_assign_unassigned_resources
 c_func
 (paren
 id|dev
@@ -592,6 +566,10 @@ id|mem_end
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|ROUND_UP
+mdefine_line|#define ROUND_UP(x, a)&t;&t;(((x) + (a) - 1) &amp; ~((a) - 1))
+DECL|macro|ROUND_DOWN
+mdefine_line|#define ROUND_DOWN(x, a)&t;((x) &amp; ~((a) - 1))
 r_static
 r_void
 id|__init
@@ -792,90 +770,56 @@ id|inner
 suffix:semicolon
 multiline_comment|/* Align the values.  */
 id|inner.io_start
-op_and_assign
-op_complement
+op_assign
+id|ROUND_DOWN
+c_func
 (paren
+id|inner.io_start
+comma
 l_int|4
 op_star
 l_int|1024
-op_minus
-l_int|1
+)paren
+suffix:semicolon
+id|inner.io_end
+op_assign
+id|ROUND_UP
+c_func
+(paren
+id|inner.io_end
+comma
+l_int|4
+op_star
+l_int|1024
 )paren
 suffix:semicolon
 id|inner.mem_start
-op_and_assign
-op_complement
+op_assign
+id|ROUND_DOWN
+c_func
 (paren
+id|inner.mem_start
+comma
 l_int|1
 op_star
 l_int|1024
 op_star
 l_int|1024
-op_minus
-l_int|1
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|inner.io_end
-op_amp
-(paren
-l_int|4
-op_star
-l_int|1024
-op_minus
-l_int|1
-)paren
-)paren
-id|inner.io_end
-op_assign
-(paren
-id|inner.io_end
-op_or
-(paren
-l_int|4
-op_star
-l_int|1024
-op_minus
-l_int|1
-)paren
-)paren
-op_plus
-l_int|1
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|inner.mem_end
-op_amp
-(paren
-l_int|1
-op_star
-l_int|1024
-op_star
-l_int|1024
-op_minus
-l_int|1
-)paren
-)paren
 id|inner.mem_end
 op_assign
+id|ROUND_UP
+c_func
 (paren
 id|inner.mem_end
-op_or
-(paren
+comma
 l_int|1
 op_star
 l_int|1024
 op_star
 l_int|1024
-op_minus
-l_int|1
 )paren
-)paren
-op_plus
-l_int|1
 suffix:semicolon
 multiline_comment|/* Configure the bridge, if possible.  */
 r_if
@@ -1152,7 +1096,6 @@ suffix:semicolon
 )brace
 r_static
 r_void
-r_inline
 DECL|function|pdev_fixup_irq
 id|pdev_fixup_irq
 c_func
@@ -1276,7 +1219,7 @@ id|DBGC
 c_func
 (paren
 (paren
-l_string|&quot;PCI fixup irq : (%s) got %d&bslash;n&quot;
+l_string|&quot;PCI fixup irq: (%s) got %d&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -1285,7 +1228,7 @@ id|dev-&gt;irq
 )paren
 suffix:semicolon
 multiline_comment|/* Always tell the device, so the driver knows what is&n;&t;   the real IRQ to use; the device does not use it. */
-id|pcibios_irq_update
+id|pcibios_update_irq
 c_func
 (paren
 id|dev
@@ -1296,8 +1239,8 @@ suffix:semicolon
 )brace
 r_void
 id|__init
-DECL|function|pci_fixup_irq
-id|pci_fixup_irq
+DECL|function|pci_fixup_irqs
+id|pci_fixup_irqs
 c_func
 (paren
 id|u8

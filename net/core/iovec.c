@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/in6.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;net/checksum.h&gt;
+macro_line|#include &lt;net/sock.h&gt;
 multiline_comment|/*&n; *&t;Verify iovec. The caller must ensure that the iovec is big enough&n; *&t;to hold the message iovec.&n; *&n; *&t;Save time not doing verify_area. copy_*_user will make this work&n; *&t;in any case.&n; */
 DECL|function|verify_iovec
 r_int

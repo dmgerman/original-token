@@ -6,7 +6,6 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/errno.h&gt; 
 macro_line|#include &lt;linux/reboot.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
-macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/kdev_t.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/major.h&gt;

@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * PPP async serial channel driver for Linux.&n; *&n; * Copyright 1999 Paul Mackerras.&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; * This driver provides the encapsulation and framing for sending&n; * and receiving PPP frames over async serial lines.  It relies on&n; * the generic PPP layer to give it frames to send and to process&n; * received frames.  It implements the PPP line discipline.&n; *&n; * Part of the code in this driver was inspired by the old async-only&n; * PPP driver, written by Michael Callahan and Al Longyear, and&n; * subsequently hacked by Paul Mackerras.&n; *&n; * ==FILEVERSION 990806==&n; */
-multiline_comment|/* $Id$ */
+multiline_comment|/* $Id: ppp_async.c,v 1.3 1999/09/02 05:30:10 paulus Exp $ */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
@@ -4192,7 +4192,7 @@ l_int|0
 (brace
 id|skb
 op_assign
-id|alloc_skb
+id|dev_alloc_skb
 c_func
 (paren
 id|ap-&gt;mru
@@ -4200,8 +4200,6 @@ op_plus
 id|PPP_HDRLEN
 op_plus
 l_int|2
-comma
-id|GFP_ATOMIC
 )paren
 suffix:semicolon
 r_if

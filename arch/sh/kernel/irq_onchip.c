@@ -1,5 +1,4 @@
 multiline_comment|/*&n; * linux/arch/sh/kernel/irq_onchip.c&n; *&n; * Copyright (C) 1999  Niibe Yutaka&n; *&n; * Interrupt handling for on-chip supporting modules (TMU, RTC, etc.).&n; *&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;

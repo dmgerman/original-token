@@ -48,6 +48,13 @@ r_void
 )paren
 suffix:semicolon
 r_int
+id|usb_scsi_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_int
 id|proc_usb_init
 (paren
 r_void

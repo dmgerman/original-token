@@ -182,14 +182,6 @@ op_plus
 l_int|0x3ffffff
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;PCI: Re-allocating buggy S3 card at %s: &quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
 id|r-&gt;start
 op_assign
 l_int|0
@@ -197,32 +189,6 @@ suffix:semicolon
 id|r-&gt;end
 op_assign
 l_int|0x3ffffff
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|pcibios_assign_resource
-c_func
-(paren
-id|dev
-comma
-l_int|0
-)paren
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;FAILED&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
-id|printk
-c_func
-(paren
-l_string|&quot;moved to %08lx&bslash;n&quot;
-comma
-id|r-&gt;start
-)paren
 suffix:semicolon
 )brace
 )brace
@@ -259,7 +225,7 @@ id|quirk_isa_dma_hangs
 )brace
 comma
 (brace
-id|PCI_FIXUP_FINAL
+id|PCI_FIXUP_HEADER
 comma
 id|PCI_VENDOR_ID_S3
 comma
@@ -269,7 +235,7 @@ id|quirk_s3_64M
 )brace
 comma
 (brace
-id|PCI_FIXUP_FINAL
+id|PCI_FIXUP_HEADER
 comma
 id|PCI_VENDOR_ID_S3
 comma

@@ -568,7 +568,7 @@ id|NoPerm
 (braket
 )braket
 op_assign
-l_string|&quot;403 Permission denied&bslash;r&bslash;nServer: kHTTPd 0.1.6&bslash;r&bslash;n&bslash;r&bslash;n Permission denied&quot;
+l_string|&quot;HTTP/1.0 403 Forbidden&bslash;r&bslash;nServer: kHTTPd 0.1.6&bslash;r&bslash;n&bslash;r&bslash;n&quot;
 suffix:semicolon
 DECL|variable|TryLater
 r_static
@@ -577,7 +577,7 @@ id|TryLater
 (braket
 )braket
 op_assign
-l_string|&quot;500 Try again later&bslash;r&bslash;nServer: kHTTPd 0.1.6&bslash;r&bslash;n&bslash;r&bslash;n Try again later&quot;
+l_string|&quot;HTTP/1.0 503 Service Unavailable&bslash;r&bslash;nServer: kHTTPd 0.1.6&bslash;r&bslash;nContent-Length: 15&bslash;r&bslash;n&bslash;r&bslash;nTry again later&quot;
 suffix:semicolon
 DECL|variable|NotModified
 r_static
@@ -586,7 +586,7 @@ id|NotModified
 (braket
 )braket
 op_assign
-l_string|&quot;304 Not Modified&bslash;r&bslash;nServer: kHTTPd 0.1.6&bslash;r&bslash;n&bslash;r&bslash;n&quot;
+l_string|&quot;HTTP/1.0 304 Not Modified&bslash;r&bslash;nServer: kHTTPd 0.1.6&bslash;r&bslash;n&bslash;r&bslash;n&quot;
 suffix:semicolon
 DECL|function|Send403
 r_void
@@ -659,7 +659,7 @@ comma
 id|strlen
 c_func
 (paren
-id|NoPerm
+id|NotModified
 )paren
 )paren
 suffix:semicolon

@@ -1,6 +1,5 @@
 multiline_comment|/*&n; *&t;linux/arch/alpha/kernel/core_apecs.c&n; *&n; * Rewritten for Apecs from the lca.c from:&n; *&n; * Written by David Mosberger (davidm@cs.arizona.edu) with some code&n; * taken from Dave Rusling&squot;s (david.rusling@reo.mts.dec.com) 32-bit&n; * bios code.&n; *&n; * Code common to all APECS core logic chips.&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/init.h&gt;

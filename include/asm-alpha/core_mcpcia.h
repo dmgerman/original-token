@@ -4,7 +4,6 @@ mdefine_line|#define __ALPHA_MCPCIA__H__
 multiline_comment|/* Define to experiment with fitting everything into one 128MB HAE window.&n;   One window per bus, that is.  */
 DECL|macro|MCPCIA_ONE_HAE_WINDOW
 mdefine_line|#define MCPCIA_ONE_HAE_WINDOW 1
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;asm/compiler.h&gt;

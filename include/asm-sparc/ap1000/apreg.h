@@ -6,7 +6,7 @@ mdefine_line|#define _AP1000_APREG_H
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/ap1000/apservice.h&gt;
 macro_line|#include &lt;asm/ap1000/apbif.h&gt;
-macro_line|#include &lt;linux/tasks.h&gt;
+macro_line|#include &lt;linux/threads.h&gt;
 multiline_comment|/*&n; * Macros for accessing I/O registers.&n; */
 DECL|macro|BIF_IN
 mdefine_line|#define BIF_IN(reg)&t;(*(volatile unsigned *)(reg))

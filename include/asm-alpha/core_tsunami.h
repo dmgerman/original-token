@@ -1,7 +1,6 @@
 macro_line|#ifndef __ALPHA_TSUNAMI__H__
 DECL|macro|__ALPHA_TSUNAMI__H__
 mdefine_line|#define __ALPHA_TSUNAMI__H__
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/compiler.h&gt;
 multiline_comment|/*&n; * TSUNAMI/TYPHOON are the internal names for the core logic chipset which&n; * provides memory controller and PCI access for the 21264 based systems.&n; *&n; * This file is based on:&n; *&n; * Tsunami System Programmers Manual&n; * Preliminary, Chapters 2-5&n; *&n; */

@@ -650,6 +650,8 @@ comma
 l_int|0x00
 comma
 l_int|0x1f
+comma
+id|IORESOURCE_BUSY
 )brace
 comma
 (brace
@@ -658,6 +660,8 @@ comma
 l_int|0x20
 comma
 l_int|0x3f
+comma
+id|IORESOURCE_BUSY
 )brace
 comma
 (brace
@@ -666,6 +670,8 @@ comma
 l_int|0x40
 comma
 l_int|0x5f
+comma
+id|IORESOURCE_BUSY
 )brace
 comma
 (brace
@@ -674,6 +680,8 @@ comma
 l_int|0x60
 comma
 l_int|0x6f
+comma
+id|IORESOURCE_BUSY
 )brace
 comma
 (brace
@@ -682,6 +690,8 @@ comma
 l_int|0x80
 comma
 l_int|0x8f
+comma
+id|IORESOURCE_BUSY
 )brace
 comma
 (brace
@@ -690,6 +700,8 @@ comma
 l_int|0xa0
 comma
 l_int|0xbf
+comma
+id|IORESOURCE_BUSY
 )brace
 comma
 (brace
@@ -698,6 +710,8 @@ comma
 l_int|0xc0
 comma
 l_int|0xdf
+comma
+id|IORESOURCE_BUSY
 )brace
 comma
 (brace
@@ -706,6 +720,8 @@ comma
 l_int|0xf0
 comma
 l_int|0xff
+comma
+id|IORESOURCE_BUSY
 )brace
 )brace
 suffix:semicolon
@@ -751,6 +767,8 @@ comma
 l_int|0x0a0000
 comma
 l_int|0x0bffff
+comma
+id|IORESOURCE_BUSY
 )brace
 comma
 (brace
@@ -799,6 +817,8 @@ comma
 l_int|0xc0000
 comma
 l_int|0xc7fff
+comma
+id|IORESOURCE_BUSY
 )brace
 )brace
 suffix:semicolon
@@ -1021,6 +1041,15 @@ id|name
 op_assign
 l_string|&quot;Extension ROM&quot;
 suffix:semicolon
+id|rom_resources
+(braket
+id|roms
+)braket
+dot
+id|flags
+op_assign
+id|IORESOURCE_BUSY
+suffix:semicolon
 id|request_resource
 c_func
 (paren
@@ -1098,6 +1127,15 @@ dot
 id|name
 op_assign
 l_string|&quot;Extension ROM&quot;
+suffix:semicolon
+id|rom_resources
+(braket
+id|roms
+)braket
+dot
+id|flags
+op_assign
+id|IORESOURCE_BUSY
 suffix:semicolon
 id|request_resource
 c_func
@@ -1893,6 +1931,33 @@ id|i
 op_increment
 )paren
 (brace
+id|printk
+c_func
+(paren
+l_string|&quot;type=%d, addr=%08x, size=%08x&quot;
+comma
+id|e820.map
+(braket
+id|i
+)braket
+dot
+id|type
+comma
+id|e820.map
+(braket
+id|i
+)braket
+dot
+id|addr
+comma
+id|e820.map
+(braket
+id|i
+)braket
+dot
+id|size
+)paren
+suffix:semicolon
 multiline_comment|/* RAM? */
 r_if
 c_cond

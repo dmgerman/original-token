@@ -1293,7 +1293,7 @@ c_func
 (paren
 id|CD_WARNING
 comma
-l_string|&quot;pid %d is buggy!&bslash;n&quot;
+l_string|&quot;pid %d must open device O_NONBLOCK!&bslash;n&quot;
 comma
 (paren
 r_int
@@ -3021,15 +3021,12 @@ l_int|1
 suffix:semicolon
 id|cgc.buflen
 op_assign
-op_minus
-(paren
 id|cgc.cmd
 (braket
 l_int|9
 )braket
 op_assign
 l_int|16
-)paren
 suffix:semicolon
 id|buf
 (braket
@@ -3099,15 +3096,12 @@ l_int|3
 suffix:semicolon
 id|cgc.buflen
 op_assign
-op_minus
-(paren
 id|cgc.cmd
 (braket
 l_int|9
 )braket
 op_assign
 l_int|12
-)paren
 suffix:semicolon
 id|buf
 (braket
@@ -4498,16 +4492,12 @@ op_assign
 l_int|0x10
 suffix:semicolon
 multiline_comment|/* PF */
-multiline_comment|/* generic_packet() wants the length as seen from the drive, i.e.&n;&t;   it will transfer data _to_ us. The CD-ROM wants the absolute&n;&t;   value, however. */
 id|cgc-&gt;cmd
 (braket
 l_int|7
 )braket
 op_assign
-(paren
-op_minus
 id|cgc-&gt;buflen
-)paren
 op_rshift
 l_int|8
 suffix:semicolon
@@ -4516,10 +4506,7 @@ id|cgc-&gt;cmd
 l_int|8
 )braket
 op_assign
-(paren
-op_minus
 id|cgc-&gt;buflen
-)paren
 op_amp
 l_int|0xff
 suffix:semicolon
@@ -7945,11 +7932,6 @@ l_int|3
 )paren
 suffix:semicolon
 multiline_comment|/* set volume */
-id|cgc.buflen
-op_assign
-op_minus
-id|cgc.buflen
-suffix:semicolon
 id|cgc.buffer
 op_assign
 id|buffer
@@ -10777,5 +10759,4 @@ suffix:semicolon
 macro_line|#endif /* CONFIG_SYSCTL */ 
 )brace
 macro_line|#endif /* endif MODULE */
-multiline_comment|/*&n; * Local variables:&n; * comment-column: 40&n; * compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/include -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -pipe -fno-strength-reduce -m486 -DCPU=486 -DMODULE -DMODVERSIONS -include /usr/src/linux/include/linux/modversions.h  -c -o cdrom.o cdrom.c&quot;&n; * End:&n; */
 eof

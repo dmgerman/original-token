@@ -1079,6 +1079,16 @@ DECL|macro|PCI_DEVICE_ID_MYLEX_DAC960P_V4
 mdefine_line|#define PCI_DEVICE_ID_MYLEX_DAC960P_V4&t;0x0010
 DECL|macro|PCI_DEVICE_ID_MYLEX_DAC960P_V5
 mdefine_line|#define PCI_DEVICE_ID_MYLEX_DAC960P_V5&t;0x0020
+DECL|macro|PCI_VENDOR_ID_MYLEX
+mdefine_line|#define PCI_VENDOR_ID_MYLEX&t;&t;0x1069
+DECL|macro|PCI_DEVICE_ID_MYLEX_DAC960P_V2
+mdefine_line|#define PCI_DEVICE_ID_MYLEX_DAC960P_V2&t;0x0001
+DECL|macro|PCI_DEVICE_ID_MYLEX_DAC960P_V3
+mdefine_line|#define PCI_DEVICE_ID_MYLEX_DAC960P_V3&t;0x0002
+DECL|macro|PCI_DEVICE_ID_MYLEX_DAC960P_V4
+mdefine_line|#define PCI_DEVICE_ID_MYLEX_DAC960P_V4&t;0x0010
+DECL|macro|PCI_DEVICE_ID_MYLEX_DAC960P_V5
+mdefine_line|#define PCI_DEVICE_ID_MYLEX_DAC960P_V5&t;0x0020
 DECL|macro|PCI_VENDOR_ID_PICOP
 mdefine_line|#define PCI_VENDOR_ID_PICOP&t;&t;0x1066
 DECL|macro|PCI_DEVICE_ID_PICOP_PT86C52X
@@ -2225,6 +2235,12 @@ DECL|macro|PCI_DEVICE_ID_INTERPHASE_5526
 mdefine_line|#define PCI_DEVICE_ID_INTERPHASE_5526&t;0x0004
 DECL|macro|PCI_DEVICE_ID_INTERPHASE_55x6
 mdefine_line|#define PCI_DEVICE_ID_INTERPHASE_55x6&t;0x0005
+DECL|macro|PCI_VENDOR_ID_INTERPHASE
+mdefine_line|#define PCI_VENDOR_ID_INTERPHASE&t;&t;0x107e
+DECL|macro|PCI_DEVICE_ID_INTERPHASE_5526
+mdefine_line|#define PCI_DEVICE_ID_INTERPHASE_5526&t;0x0004
+DECL|macro|PCI_DEVICE_ID_INTERPHASE_55x6
+mdefine_line|#define PCI_DEVICE_ID_INTERPHASE_55x6&t;0x0005
 multiline_comment|/*&n; * The PCI interface treats multi-function devices as independent&n; * devices.  The slot/function address of each device is encoded&n; * in a single byte as follows:&n; *&n; *&t;7:3 = slot&n; *&t;2:0 = function&n; */
 DECL|macro|PCI_DEVFN
 mdefine_line|#define PCI_DEVFN(slot,func)&t;((((slot) &amp; 0x1f) &lt;&lt; 3) | ((func) &amp; 0x07))
@@ -2755,8 +2771,27 @@ op_star
 id|str
 )paren
 suffix:semicolon
+r_void
+id|pcibios_update_resource
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+comma
+r_struct
+id|resource
+op_star
+comma
+r_struct
+id|resource
+op_star
+comma
 r_int
-id|pcibios_assign_resource
+)paren
+suffix:semicolon
+r_void
+id|pcibios_update_irq
 c_func
 (paren
 r_struct
@@ -2764,7 +2799,7 @@ id|pci_dev
 op_star
 comma
 r_int
-id|i
+id|irq
 )paren
 suffix:semicolon
 multiline_comment|/* Backward compatibility, don&squot;t use in new code! */
@@ -3116,6 +3151,67 @@ id|dev
 comma
 r_int
 id|cap
+)paren
+suffix:semicolon
+r_int
+id|pci_claim_resource
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+r_void
+id|pci_assign_unassigned_resources
+c_func
+(paren
+id|u32
+id|min_io
+comma
+id|u32
+id|min_mem
+)paren
+suffix:semicolon
+r_void
+id|pci_set_bus_ranges
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_void
+id|pci_fixup_irqs
+c_func
+(paren
+id|u8
+(paren
+op_star
+)paren
+(paren
+r_struct
+id|pci_dev
+op_star
+comma
+id|u8
+op_star
+)paren
+comma
+r_int
+(paren
+op_star
+)paren
+(paren
+r_struct
+id|pci_dev
+op_star
+comma
+id|u8
+comma
+id|u8
+)paren
 )paren
 suffix:semicolon
 DECL|macro|PCI_ANY_ID

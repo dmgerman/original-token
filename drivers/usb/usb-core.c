@@ -70,6 +70,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#&t;endif
+macro_line|#       ifdef CONFIG_USB_HP_SCANNER
+id|usb_hp_scanner_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#       endif
 macro_line|#&t;ifdef CONFIG_USB_KBD
 id|usb_kbd_init
 c_func
@@ -160,6 +167,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#&t;endif
+macro_line|#       ifdef CONFIG_USB_HP_SCANNER
+id|usb_hp_scanner_cleanup
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#       endif
 macro_line|#endif
 )brace
 macro_line|#ifdef MODULE

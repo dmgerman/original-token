@@ -1,6 +1,5 @@
 multiline_comment|/*&n; *&t;linux/arch/alpha/kernel/core_cia.c&n; *&n; * Written by David A Rusling (david.rusling@reo.mts.dec.com).&n; * December 1995.&n; *&n; *&t;Copyright (C) 1995  David A Rusling&n; *&t;Copyright (C) 1997, 1998  Jay Estabrook&n; *&t;Copyright (C) 1998, 1999  Richard Henderson&n; *&n; * Code common to all CIA core logic chips.&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

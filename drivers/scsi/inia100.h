@@ -104,7 +104,7 @@ suffix:semicolon
 multiline_comment|/*for linux v1.13 */
 macro_line|#endif
 DECL|macro|inia100_REVID
-mdefine_line|#define inia100_REVID &quot;Initio INI-A100U2W SCSI device driver; Revision: 1.02a&quot;
+mdefine_line|#define inia100_REVID &quot;Initio INI-A100U2W SCSI device driver; Revision: 1.02c&quot;
 macro_line|#if LINUX_VERSION_CODE &lt; CVT_LINUX_VERSION(1, 3, 0)
 DECL|macro|INIA100
 mdefine_line|#define INIA100&t;{ &bslash;&n;&t;&t;NULL, &bslash;&n;&t;&t;NULL, &bslash;&n;&t;&t;inia100_REVID, &bslash;&n;&t;&t;inia100_detect, &bslash;&n;&t;&t;NULL, &bslash;&n;&t;&t;NULL, &bslash;&n;&t;&t;inia100_command, &bslash;&n;&t;&t;inia100_queue, &bslash;&n;&t;&t;inia100_abort, &bslash;&n;&t;&t;inia100_reset, &bslash;&n;&t;&t;NULL, &bslash;&n;&t;&t;inia100_biosparam, &bslash;&n;&t;&t;1, &bslash;&n;7, &bslash;&n;SG_ALL, &bslash;&n;1, &bslash;&n;0, &bslash;&n;0, &bslash;&n;ENABLE_CLUSTERING &bslash;&n;}

@@ -2415,7 +2415,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dev-&gt;rom_address
+id|dev-&gt;resource
+(braket
+id|PCI_ROM_RESOURCE
+)braket
+dot
+id|start
 )paren
 id|pci_write_config_byte
 c_func
@@ -2424,7 +2429,12 @@ id|dev
 comma
 id|PCI_ROM_ADDRESS
 comma
-id|dev-&gt;rom_address
+id|dev-&gt;resource
+(braket
+id|PCI_ROM_RESOURCE
+)braket
+dot
+id|start
 op_or
 id|PCI_ROM_ADDRESS_ENABLE
 )paren

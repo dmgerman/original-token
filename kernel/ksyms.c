@@ -1633,6 +1633,13 @@ c_func
 id|release_resource
 )paren
 suffix:semicolon
+DECL|variable|allocate_resource
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|allocate_resource
+)paren
+suffix:semicolon
 DECL|variable|__request_region
 id|EXPORT_SYMBOL
 c_func

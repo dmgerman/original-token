@@ -16,7 +16,6 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;linux/timex.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/irq.h&gt;
 DECL|macro|TMU_TOCR
 mdefine_line|#define TMU_TOCR&t;0xfffffe90&t;/* Byte access */

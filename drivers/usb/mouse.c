@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * USB HID boot protocol mouse support based on MS BusMouse driver, psaux &n; * driver, and Linus&squot;s skeleton USB mouse driver. Fixed up a lot by Linus.&n; *&n; * Brad Keryan 4/3/1999&n; *&n; * version 0.20: Linus rewrote read_mouse() to do PS/2 and do it&n; * correctly. Events are added together, not queued, to keep the rodent sober.&n; *&n; * version 0.02: Hmm, the mouse seems drunk because I&squot;m queueing the events.&n; * This is wrong: when an application (like X or gpm) reads the mouse device,&n; * it wants to find out the mouse&squot;s current position, not its recent history.&n; * The button thing turned out to be UHCI not flipping data toggle, so half the&n; * packets were thrown out.&n; *&n; * version 0.01: Switched over to busmouse protocol, and changed the minor&n; * number to 32 (same as uusbd&squot;s hidbp driver). Buttons work more sanely now, &n; * but it still doesn&squot;t generate button events unless you move the mouse.&n; *&n; * version 0.0: Driver emulates a PS/2 mouse, stealing /dev/psaux (sorry, I &n; * know that&squot;s not very nice). Moving in the X and Y axes works. Buttons don&squot;t&n; * work right yet: X sees a lot of MotionNotify/ButtonPress/ButtonRelease &n; * combos when you hold down a button and drag the mouse around. Probably has &n; * some additional bugs on an SMP machine.&n; */
+multiline_comment|/*&n; * USB HID boot protocol mouse support based on MS BusMouse driver, psaux &n; * driver, and Linus&squot;s skeleton USB mouse driver. Fixed up a lot by Linus.&n; *&n; * Brad Keryan 4/3/1999&n; *&n; * version 0.30? Paul Ashton 1999/08/19 - Fixed behaviour on mouse&n; * disconnect and suspend/resume. Added module parameter &quot;force=1&quot;&n; * to allow opening of the mouse driver before mouse has been plugged&n; * in (enables consistent XF86Config settings). Fixed module use count.&n; * Documented missing blocking/non-blocking read handling (not fixed).&n; * &n; * version 0.20: Linus rewrote read_mouse() to do PS/2 and do it&n; * correctly. Events are added together, not queued, to keep the rodent sober.&n; *&n; * version 0.02: Hmm, the mouse seems drunk because I&squot;m queueing the events.&n; * This is wrong: when an application (like X or gpm) reads the mouse device,&n; * it wants to find out the mouse&squot;s current position, not its recent history.&n; * The button thing turned out to be UHCI not flipping data toggle, so half the&n; * packets were thrown out.&n; *&n; * version 0.01: Switched over to busmouse protocol, and changed the minor&n; * number to 32 (same as uusbd&squot;s hidbp driver). Buttons work more sanely now, &n; * but it still doesn&squot;t generate button events unless you move the mouse.&n; *&n; * version 0.0: Driver emulates a PS/2 mouse, stealing /dev/psaux (sorry, I &n; * know that&squot;s not very nice). Moving in the X and Y axes works. Buttons don&squot;t&n; * work right yet: X sees a lot of MotionNotify/ButtonPress/ButtonRelease &n; * combos when you hold down a button and drag the mouse around. Probably has &n; * some additional bugs on an SMP machine.&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -51,6 +51,11 @@ r_int
 id|ready
 suffix:semicolon
 multiline_comment|/* the mouse has changed state since the last read */
+DECL|member|suspended
+r_int
+id|suspended
+suffix:semicolon
+multiline_comment|/* mouse disconnected */
 DECL|member|wait
 id|wait_queue_head_t
 id|wait
@@ -102,6 +107,22 @@ id|usb_mouse_lock
 op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
+DECL|variable|force
+r_static
+r_int
+id|force
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* allow the USB mouse to be opened even if not there (yet) */
+id|MODULE_PARM
+c_func
+(paren
+id|force
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 DECL|function|mouse_irq
 r_static
 r_int
@@ -139,6 +160,74 @@ op_assign
 op_amp
 id|static_mouse_state
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|state
+)paren
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;%s(%d):state %d, bp %p, len %d, dp %p&bslash;n&quot;
+comma
+id|__FILE__
+comma
+id|__LINE__
+comma
+id|state
+comma
+id|__buffer
+comma
+id|len
+comma
+id|dev_id
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * USB_ST_NOERROR is the normal case.&n;&t; * USB_ST_REMOVED occurs if mouse disconnected or suspend/resume&n;&t; * USB_ST_INTERNALERROR occurs if system suspended then mouse removed&n;&t; *    followed by resume. On UHCI could then occur every second&n;&t; * In both cases, suspend the mouse&n;&t; * On other states, ignore&n;&t; */
+r_switch
+c_cond
+(paren
+id|state
+)paren
+(brace
+r_case
+id|USB_ST_REMOVED
+suffix:colon
+r_case
+id|USB_ST_INTERNALERROR
+suffix:colon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;%s(%d): Suspending&bslash;n&quot;
+comma
+id|__FILE__
+comma
+id|__LINE__
+)paren
+suffix:semicolon
+id|mouse-&gt;suspended
+op_assign
+l_int|1
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/* disable */
+r_case
+id|USB_ST_NOERROR
+suffix:colon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+r_return
+l_int|1
+suffix:semicolon
+multiline_comment|/* ignore */
+)brace
 multiline_comment|/* if a mouse moves with no one listening, do we care? no */
 r_if
 c_cond
@@ -330,6 +419,17 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;%s(%d): MOD_DEC&bslash;n&quot;
+comma
+id|__FILE__
+comma
+id|__LINE__
+)paren
+suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_if
@@ -341,6 +441,10 @@ op_eq
 l_int|0
 )paren
 (brace
+id|mouse-&gt;suspended
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/* stop polling the mouse while its not in use */
 id|usb_release_irq
 c_func
@@ -385,15 +489,68 @@ op_assign
 op_amp
 id|static_mouse_state
 suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;%s(%d): open_mouse&bslash;n&quot;
+comma
+id|__FILE__
+comma
+id|__LINE__
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * First open may fail since mouse_probe() may get called after this&n;&t; * if module load is in response to the open&n;&t; * mouse_probe() sets mouse-&gt;present. This open can be delayed by&n;&t; * specifying force=1 in module load&n;&t; * This helps if you want to insert the USB mouse after starting X&n;&t; */
 r_if
 c_cond
 (paren
 op_logical_neg
 id|mouse-&gt;present
 )paren
+(brace
+r_if
+c_cond
+(paren
+id|force
+)paren
+multiline_comment|/* always load the driver even if no mouse (yet) */
+(brace
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;%s(%d): forced open&bslash;n&quot;
+comma
+id|__FILE__
+comma
+id|__LINE__
+)paren
+suffix:semicolon
+id|mouse-&gt;suspended
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+r_else
 r_return
 op_minus
 id|EINVAL
+suffix:semicolon
+)brace
+multiline_comment|/* prevent the driver from being unloaded while its in use */
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;%s(%d): MOD_INC&bslash;n&quot;
+comma
+id|__FILE__
+comma
+id|__LINE__
+)paren
+suffix:semicolon
+multiline_comment|/* Increment use count even if already active */
+id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_if
 c_cond
@@ -415,8 +572,15 @@ id|mouse-&gt;dz
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* prevent the driver from being unloaded while its in use */
-id|MOD_INC_USE_COUNT
+r_if
+c_cond
+(paren
+op_logical_neg
+id|mouse-&gt;present
+)paren
+multiline_comment|/* only get here if force == 1 */
+r_return
+l_int|0
 suffix:semicolon
 multiline_comment|/* start the usb controller&squot;s polling of the mouse */
 id|mouse-&gt;irq_handle
@@ -517,6 +681,7 @@ op_assign
 op_amp
 id|static_mouse_state
 suffix:semicolon
+multiline_comment|/*&n;&t; * FIXME - Other mouse drivers handle blocking and nonblocking reads&n;&t; * differently here...&n;&t; */
 r_if
 c_cond
 (paren
@@ -1036,6 +1201,53 @@ id|mouse-&gt;present
 op_assign
 l_int|1
 suffix:semicolon
+multiline_comment|/* This appears to let USB mouse survive disconnection and */
+multiline_comment|/* APM suspend/resume */
+r_if
+c_cond
+(paren
+id|mouse-&gt;suspended
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;%s(%d): mouse resume&bslash;n&quot;
+comma
+id|__FILE__
+comma
+id|__LINE__
+)paren
+suffix:semicolon
+multiline_comment|/* restart the usb controller&squot;s polling of the mouse */
+id|mouse-&gt;irq_handle
+op_assign
+id|usb_request_irq
+c_func
+(paren
+id|mouse-&gt;dev
+comma
+id|usb_rcvctrlpipe
+c_func
+(paren
+id|mouse-&gt;dev
+comma
+id|mouse-&gt;bEndpointAddress
+)paren
+comma
+id|mouse_irq
+comma
+id|mouse-&gt;bInterval
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+id|mouse-&gt;suspended
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -1076,10 +1288,6 @@ id|mouse-&gt;irq_handle
 )paren
 suffix:semicolon
 multiline_comment|/* never keep a reference to a released IRQ! */
-id|mouse-&gt;irq_handle
-op_assign
-l_int|NULL
-suffix:semicolon
 )brace
 id|mouse-&gt;irq_handle
 op_assign
@@ -1136,6 +1344,8 @@ suffix:semicolon
 id|mouse-&gt;present
 op_assign
 id|mouse-&gt;active
+op_assign
+id|mouse-&gt;suspended
 op_assign
 l_int|0
 suffix:semicolon

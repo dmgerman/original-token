@@ -4296,6 +4296,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -4323,7 +4324,7 @@ dot
 id|capacity
 )paren
 )paren
-(brace
+macro_line|#endif
 id|scsi_CDs
 (braket
 id|i
@@ -4367,7 +4368,6 @@ l_int|3
 )braket
 )paren
 suffix:semicolon
-)brace
 id|scsi_CDs
 (braket
 id|i

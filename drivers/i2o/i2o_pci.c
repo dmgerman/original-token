@@ -299,7 +299,7 @@ id|dev-&gt;resource
 id|i
 )braket
 dot
-id|flags
+id|start
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -320,9 +320,15 @@ id|KERN_ERR
 l_string|&quot;i2o_pci: I2O controller has no memory regions defined.&bslash;n&quot;
 )paren
 suffix:semicolon
+id|kfree
+c_func
+(paren
+id|c
+)paren
+suffix:semicolon
 r_return
 op_minus
-id|ENOMEM
+id|EINVAL
 suffix:semicolon
 )brace
 id|size
@@ -352,7 +358,6 @@ l_string|&quot;PCI I2O controller at 0x%08X size=%d&bslash;n&quot;
 comma
 id|memptr
 comma
-op_minus
 id|size
 )paren
 suffix:semicolon
@@ -363,10 +368,35 @@ c_func
 (paren
 id|memptr
 comma
-op_minus
 id|size
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|mem
+op_eq
+l_int|NULL
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;i2o_pci: Unable to map controller.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|c
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
 id|c-&gt;bus.pci.irq
 op_assign
 op_minus
@@ -482,6 +512,18 @@ id|KERN_ERR
 l_string|&quot;i2o: unable to install controller.&bslash;n&quot;
 )paren
 suffix:semicolon
+id|kfree
+c_func
+(paren
+id|c
+)paren
+suffix:semicolon
+id|iounmap
+c_func
+(paren
+id|mem
+)paren
+suffix:semicolon
 r_return
 id|i
 suffix:semicolon
@@ -551,7 +593,19 @@ c_func
 id|c
 )paren
 suffix:semicolon
-macro_line|#endif /* MODULE */
+macro_line|#endif /* MODULE */&t;
+id|kfree
+c_func
+(paren
+id|c
+)paren
+suffix:semicolon
+id|iofree
+c_func
+(paren
+id|mem
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EBUSY
@@ -656,21 +710,12 @@ comma
 id|dev-&gt;devfn
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|dev-&gt;master
-)paren
-(brace
-id|printk
+id|pci_set_master
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;Controller not master enabled.&bslash;n&quot;
+id|dev
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren

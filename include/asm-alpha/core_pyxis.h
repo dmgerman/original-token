@@ -1,7 +1,6 @@
 macro_line|#ifndef __ALPHA_PYXIS__H__
 DECL|macro|__ALPHA_PYXIS__H__
 mdefine_line|#define __ALPHA_PYXIS__H__
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/compiler.h&gt;
 multiline_comment|/*&n; * PYXIS is the internal name for a core logic chipset which provides&n; * memory controller and PCI access for the 21164A chip based systems.&n; *&n; * This file is based on:&n; *&n; * Pyxis Chipset Spec&n; * 14-Jun-96&n; * Rev. X2.0&n; *&n; */

@@ -5339,16 +5339,13 @@ macro_line|#ifdef MODULE
 DECL|macro|eicon_init
 mdefine_line|#define eicon_init init_module
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|eicon_init
 id|eicon_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int
@@ -5826,10 +5823,8 @@ id|ints
 )paren
 suffix:semicolon
 macro_line|#else
-id|__initfunc
-c_func
-(paren
 r_void
+id|__init
 id|eicon_setup
 c_func
 (paren
@@ -5840,7 +5835,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_int

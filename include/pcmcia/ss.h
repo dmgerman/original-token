@@ -1,0 +1,305 @@
+multiline_comment|/*&n; * ss.h 1.24 1999/08/28 04:12:33&n; *&n; * The contents of this file are subject to the Mozilla Public License&n; * Version 1.1 (the &quot;License&quot;); you may not use this file except in&n; * compliance with the License. You may obtain a copy of the License&n; * at http://www.mozilla.org/MPL/&n; *&n; * Software distributed under the License is distributed on an &quot;AS IS&quot;&n; * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See&n; * the License for the specific language governing rights and&n; * limitations under the License. &n; *&n; * The initial developer of the original code is David A. Hinds&n; * &lt;dhinds@hyper.stanford.edu&gt;.  Portions created by David A. Hinds&n; * are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n; *&n; * Alternatively, the contents of this file may be used under the&n; * terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n; * case the provisions of the GPL are applicable instead of the&n; * above.  If you wish to allow the use of your version of this file&n; * only under the terms of the GPL and not to allow others to use&n; * your version of this file under the MPL, indicate your decision by&n; * deleting the provisions above and replace them with the notice and&n; * other provisions required by the GPL.  If you do not delete the&n; * provisions above, a recipient may use your version of this file&n; * under either the MPL or the GPL.&n; */
+macro_line|#ifndef _LINUX_SS_H
+DECL|macro|_LINUX_SS_H
+mdefine_line|#define _LINUX_SS_H
+multiline_comment|/* For RegisterCallback */
+DECL|struct|ss_callback_t
+r_typedef
+r_struct
+id|ss_callback_t
+(brace
+DECL|member|handler
+r_void
+(paren
+op_star
+id|handler
+)paren
+(paren
+r_void
+op_star
+id|info
+comma
+id|u_int
+id|events
+)paren
+suffix:semicolon
+DECL|member|info
+r_void
+op_star
+id|info
+suffix:semicolon
+DECL|typedef|ss_callback_t
+)brace
+id|ss_callback_t
+suffix:semicolon
+multiline_comment|/* Definitions for card status flags for GetStatus */
+DECL|macro|SS_WRPROT
+mdefine_line|#define SS_WRPROT&t;0x0001
+DECL|macro|SS_CARDLOCK
+mdefine_line|#define SS_CARDLOCK&t;0x0002
+DECL|macro|SS_EJECTION
+mdefine_line|#define SS_EJECTION&t;0x0004
+DECL|macro|SS_INSERTION
+mdefine_line|#define SS_INSERTION&t;0x0008
+DECL|macro|SS_BATDEAD
+mdefine_line|#define SS_BATDEAD&t;0x0010
+DECL|macro|SS_BATWARN
+mdefine_line|#define SS_BATWARN&t;0x0020
+DECL|macro|SS_READY
+mdefine_line|#define SS_READY&t;0x0040
+DECL|macro|SS_DETECT
+mdefine_line|#define SS_DETECT&t;0x0080
+DECL|macro|SS_POWERON
+mdefine_line|#define SS_POWERON&t;0x0100
+DECL|macro|SS_GPI
+mdefine_line|#define SS_GPI&t;&t;0x0200
+DECL|macro|SS_STSCHG
+mdefine_line|#define SS_STSCHG&t;0x0400
+DECL|macro|SS_CARDBUS
+mdefine_line|#define SS_CARDBUS&t;0x0800
+DECL|macro|SS_3VCARD
+mdefine_line|#define SS_3VCARD&t;0x1000
+DECL|macro|SS_XVCARD
+mdefine_line|#define SS_XVCARD&t;0x2000
+multiline_comment|/* for InquireSocket */
+DECL|struct|socket_cap_t
+r_typedef
+r_struct
+id|socket_cap_t
+(brace
+DECL|member|features
+id|u_int
+id|features
+suffix:semicolon
+DECL|member|irq_mask
+id|u_int
+id|irq_mask
+suffix:semicolon
+DECL|member|map_size
+id|u_int
+id|map_size
+suffix:semicolon
+DECL|member|pci_irq
+id|u_char
+id|pci_irq
+suffix:semicolon
+DECL|member|cardbus
+id|u_char
+id|cardbus
+suffix:semicolon
+DECL|member|cb_bus
+r_struct
+id|pci_bus
+op_star
+id|cb_bus
+suffix:semicolon
+DECL|member|bus
+r_struct
+id|bus_operations
+op_star
+id|bus
+suffix:semicolon
+DECL|typedef|socket_cap_t
+)brace
+id|socket_cap_t
+suffix:semicolon
+multiline_comment|/* InquireSocket capabilities */
+DECL|macro|SS_CAP_PAGE_REGS
+mdefine_line|#define SS_CAP_PAGE_REGS&t;0x0001
+DECL|macro|SS_CAP_VIRTUAL_BUS
+mdefine_line|#define SS_CAP_VIRTUAL_BUS&t;0x0002
+DECL|macro|SS_CAP_MEM_ALIGN
+mdefine_line|#define SS_CAP_MEM_ALIGN&t;0x0004
+DECL|macro|SS_CAP_PCCARD
+mdefine_line|#define SS_CAP_PCCARD&t;&t;0x4000
+DECL|macro|SS_CAP_CARDBUS
+mdefine_line|#define SS_CAP_CARDBUS&t;&t;0x8000
+multiline_comment|/* for GetSocket, SetSocket */
+DECL|struct|socket_state_t
+r_typedef
+r_struct
+id|socket_state_t
+(brace
+DECL|member|flags
+id|u_int
+id|flags
+suffix:semicolon
+DECL|member|csc_mask
+id|u_int
+id|csc_mask
+suffix:semicolon
+DECL|member|Vcc
+DECL|member|Vpp
+id|u_char
+id|Vcc
+comma
+id|Vpp
+suffix:semicolon
+DECL|member|io_irq
+id|u_char
+id|io_irq
+suffix:semicolon
+DECL|typedef|socket_state_t
+)brace
+id|socket_state_t
+suffix:semicolon
+multiline_comment|/* Socket configuration flags */
+DECL|macro|SS_PWR_AUTO
+mdefine_line|#define SS_PWR_AUTO&t;0x0010
+DECL|macro|SS_IOCARD
+mdefine_line|#define SS_IOCARD&t;0x0020
+DECL|macro|SS_RESET
+mdefine_line|#define SS_RESET&t;0x0040
+DECL|macro|SS_DMA_MODE
+mdefine_line|#define SS_DMA_MODE&t;0x0080
+DECL|macro|SS_SPKR_ENA
+mdefine_line|#define SS_SPKR_ENA&t;0x0100
+DECL|macro|SS_OUTPUT_ENA
+mdefine_line|#define SS_OUTPUT_ENA&t;0x0200
+multiline_comment|/* Flags for I/O port and memory windows */
+DECL|macro|MAP_ACTIVE
+mdefine_line|#define MAP_ACTIVE&t;0x01
+DECL|macro|MAP_16BIT
+mdefine_line|#define MAP_16BIT&t;0x02
+DECL|macro|MAP_AUTOSZ
+mdefine_line|#define MAP_AUTOSZ&t;0x04
+DECL|macro|MAP_0WS
+mdefine_line|#define MAP_0WS&t;&t;0x08
+DECL|macro|MAP_WRPROT
+mdefine_line|#define MAP_WRPROT&t;0x10
+DECL|macro|MAP_ATTRIB
+mdefine_line|#define MAP_ATTRIB&t;0x20
+DECL|macro|MAP_USE_WAIT
+mdefine_line|#define MAP_USE_WAIT&t;0x40
+DECL|macro|MAP_PREFETCH
+mdefine_line|#define MAP_PREFETCH&t;0x80
+multiline_comment|/* Use this just for bridge windows */
+DECL|macro|MAP_IOSPACE
+mdefine_line|#define MAP_IOSPACE&t;0x20
+DECL|struct|pccard_io_map
+r_typedef
+r_struct
+id|pccard_io_map
+(brace
+DECL|member|map
+id|u_char
+id|map
+suffix:semicolon
+DECL|member|flags
+id|u_char
+id|flags
+suffix:semicolon
+DECL|member|speed
+id|u_short
+id|speed
+suffix:semicolon
+DECL|member|start
+DECL|member|stop
+id|u_short
+id|start
+comma
+id|stop
+suffix:semicolon
+DECL|typedef|pccard_io_map
+)brace
+id|pccard_io_map
+suffix:semicolon
+DECL|struct|pccard_mem_map
+r_typedef
+r_struct
+id|pccard_mem_map
+(brace
+DECL|member|map
+id|u_char
+id|map
+suffix:semicolon
+DECL|member|flags
+id|u_char
+id|flags
+suffix:semicolon
+DECL|member|speed
+id|u_short
+id|speed
+suffix:semicolon
+DECL|member|sys_start
+DECL|member|sys_stop
+id|u_long
+id|sys_start
+comma
+id|sys_stop
+suffix:semicolon
+DECL|member|card_start
+id|u_int
+id|card_start
+suffix:semicolon
+DECL|typedef|pccard_mem_map
+)brace
+id|pccard_mem_map
+suffix:semicolon
+DECL|struct|cb_bridge_map
+r_typedef
+r_struct
+id|cb_bridge_map
+(brace
+DECL|member|map
+id|u_char
+id|map
+suffix:semicolon
+DECL|member|flags
+id|u_char
+id|flags
+suffix:semicolon
+DECL|member|start
+DECL|member|stop
+id|u_int
+id|start
+comma
+id|stop
+suffix:semicolon
+DECL|typedef|cb_bridge_map
+)brace
+id|cb_bridge_map
+suffix:semicolon
+DECL|enum|ss_service
+r_enum
+id|ss_service
+(brace
+DECL|enumerator|SS_RegisterCallback
+DECL|enumerator|SS_InquireSocket
+id|SS_RegisterCallback
+comma
+id|SS_InquireSocket
+comma
+DECL|enumerator|SS_GetStatus
+DECL|enumerator|SS_GetSocket
+DECL|enumerator|SS_SetSocket
+id|SS_GetStatus
+comma
+id|SS_GetSocket
+comma
+id|SS_SetSocket
+comma
+DECL|enumerator|SS_GetIOMap
+DECL|enumerator|SS_SetIOMap
+DECL|enumerator|SS_GetMemMap
+DECL|enumerator|SS_SetMemMap
+id|SS_GetIOMap
+comma
+id|SS_SetIOMap
+comma
+id|SS_GetMemMap
+comma
+id|SS_SetMemMap
+comma
+DECL|enumerator|SS_GetBridge
+DECL|enumerator|SS_SetBridge
+DECL|enumerator|SS_ProcSetup
+id|SS_GetBridge
+comma
+id|SS_SetBridge
+comma
+id|SS_ProcSetup
+)brace
+suffix:semicolon
+macro_line|#endif /* _LINUX_SS_H */
+eof

@@ -3266,11 +3266,9 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|setup_gazel
 id|setup_gazel
 c_func
 (paren
@@ -3278,7 +3276,6 @@ r_struct
 id|IsdnCard
 op_star
 id|card
-)paren
 )paren
 (brace
 r_struct

@@ -214,6 +214,12 @@ op_star
 id|notify
 suffix:semicolon
 multiline_comment|/* wait for thread to begin */
+DECL|member|irq_handle
+r_void
+op_star
+id|irq_handle
+suffix:semicolon
+multiline_comment|/* for USB interrupt requests */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * kernel thread actions&n; */
@@ -1525,6 +1531,10 @@ id|retry
 op_assign
 l_int|5
 suffix:semicolon
+r_void
+op_star
+id|irq_handle
+suffix:semicolon
 id|US_DEBUGP
 c_func
 (paren
@@ -1708,7 +1718,7 @@ id|us-&gt;ip_wanted
 op_assign
 l_int|1
 suffix:semicolon
-id|result
+id|irq_handle
 op_assign
 id|us-&gt;pusb_dev-&gt;bus-&gt;op
 op_member_access_from_pointer
@@ -1739,15 +1749,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|result
+op_logical_neg
+id|irq_handle
 )paren
 (brace
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;No interrupt for CBI %x&bslash;n&quot;
-comma
-id|result
+l_string|&quot;No interrupt for CBI&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1756,6 +1765,10 @@ op_lshift
 l_int|16
 suffix:semicolon
 )brace
+id|us-&gt;irq_handle
+op_assign
+id|irq_handle
+suffix:semicolon
 id|sleep_on
 c_func
 (paren
@@ -2811,6 +2824,25 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|us-&gt;irq_handle
+)paren
+(brace
+id|usb_release_irq
+c_func
+(paren
+id|us-&gt;pusb_dev
+comma
+id|us-&gt;irq_handle
+)paren
+suffix:semicolon
+id|us-&gt;irq_handle
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 id|us-&gt;filter
 )paren
 id|us-&gt;filter
@@ -2834,7 +2866,7 @@ id|scsi_driver
 )paren
 suffix:semicolon
 multiline_comment|/* FIXME - leaves hanging host template copy */
-multiline_comment|/* (bacause scsi layer uses it after removal !!!) */
+multiline_comment|/* (because scsi layer uses it after removal !!!) */
 r_while
 c_loop
 (paren
@@ -5633,6 +5665,10 @@ id|qstat
 l_int|2
 )braket
 suffix:semicolon
+r_void
+op_star
+id|irq_handle
+suffix:semicolon
 multiline_comment|/* shuttle E-USB */
 id|dr.requesttype
 op_assign
@@ -5700,6 +5736,8 @@ op_amp
 id|ss-&gt;ip_waitq
 )paren
 suffix:semicolon
+id|irq_handle
+op_assign
 id|ss-&gt;pusb_dev-&gt;bus-&gt;op
 op_member_access_from_pointer
 id|request_irq
@@ -5725,6 +5763,20 @@ op_star
 )paren
 id|ss
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|irq_handle
+)paren
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+id|ss-&gt;irq_handle
+op_assign
+id|irq_handle
 suffix:semicolon
 id|interruptible_sleep_on_timeout
 c_func

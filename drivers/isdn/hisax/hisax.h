@@ -3429,6 +3429,10 @@ macro_line|#ifndef __initdata
 DECL|macro|__initdata
 mdefine_line|#define __initdata
 macro_line|#endif
+macro_line|#ifndef __init
+DECL|macro|__init
+mdefine_line|#define __init
+macro_line|#endif
 DECL|macro|HISAX_INITFUNC
 mdefine_line|#define HISAX_INITFUNC(__arginit) __initfunc(__arginit)
 DECL|macro|HISAX_INITDATA

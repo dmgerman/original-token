@@ -7873,19 +7873,16 @@ suffix:semicolon
 multiline_comment|/*************************************/
 multiline_comment|/* Alloc memory send data for queues */
 multiline_comment|/*************************************/
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
 r_int
 op_star
+id|__init
+DECL|function|init_send_hfcpci
 id|init_send_hfcpci
 c_func
 (paren
 r_int
 id|cnt
-)paren
 )paren
 (brace
 r_int
@@ -7960,11 +7957,9 @@ suffix:semicolon
 multiline_comment|/********************************/
 multiline_comment|/* called for card init message */
 multiline_comment|/********************************/
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_void
+id|__init
+DECL|function|inithfcpci
 id|inithfcpci
 c_func
 (paren
@@ -7972,7 +7967,6 @@ r_struct
 id|IsdnCardState
 op_star
 id|cs
-)paren
 )paren
 (brace
 id|cs-&gt;setstack_d
@@ -8330,11 +8324,9 @@ l_int|0
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif&t;&t;&t;&t;/* CONFIG_PCI */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|setup_hfcpci
 id|setup_hfcpci
 c_func
 (paren
@@ -8342,7 +8334,6 @@ r_struct
 id|IsdnCard
 op_star
 id|card
-)paren
 )paren
 (brace
 r_struct

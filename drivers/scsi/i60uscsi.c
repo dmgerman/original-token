@@ -1,11 +1,16 @@
-multiline_comment|/**************************************************************************&n; * Initio A100 device driver for Linux.&n; *&n; * Copyright (c) 1994-1998 Initio Corporation&n; * All rights reserved.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * --------------------------------------------------------------------------&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions&n; * are met:&n; * 1. Redistributions of source code must retain the above copyright&n; *    notice, this list of conditions, and the following disclaimer,&n; *    without modification, immediately at the beginning of the file.&n; * 2. Redistributions in binary form must reproduce the above copyright&n; *    notice, this list of conditions and the following disclaimer in the&n; *    documentation and/or other materials provided with the distribution.&n; * 3. The name of the author may not be used to endorse or promote products&n; *    derived from this software without specific prior written permission.&n; *&n; * Where this Software is combined with software released under the terms of &n; * the GNU Public License (&quot;GPL&quot;) and the terms of the GPL would require the &n; * combined work to also be released under the terms of the GPL, the terms&n; * and conditions of this License will apply in addition to those of the&n; * GPL with the exception of any terms or conditions of this License that&n; * conflict with, or are expressly prohibited by, the GPL.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND&n; * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE&n; * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE&n; * ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS&n; * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)&n; * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; *************************************************************************&n; *&n; * module: i60uscsi.c &n; * DESCRIPTION:&n; * &t;This is the Linux low-level SCSI driver for Initio INIA100 SCSI host&n; * adapters&n; *&n; * 07/02/98 hl&t;- v.91n Initial drivers.&n; * 09/14/98 hl - v1.01 Support new Kernel.&n; * 09/22/98 hl - v1.01a Support reset.&n; * 09/24/98 hl - v1.01b Fixed reset.&n; * 10/05/98 hl - v1.02 split the source code and release.&n; * 12/19/98 bv - v1.02a Use spinlocks for 2.1.95 and up&n; **************************************************************************/
+multiline_comment|/**************************************************************************&n; * Initio A100 device driver for Linux.&n; *&n; * Copyright (c) 1994-1998 Initio Corporation&n; * All rights reserved.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * --------------------------------------------------------------------------&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions&n; * are met:&n; * 1. Redistributions of source code must retain the above copyright&n; *    notice, this list of conditions, and the following disclaimer,&n; *    without modification, immediately at the beginning of the file.&n; * 2. Redistributions in binary form must reproduce the above copyright&n; *    notice, this list of conditions and the following disclaimer in the&n; *    documentation and/or other materials provided with the distribution.&n; * 3. The name of the author may not be used to endorse or promote products&n; *    derived from this software without specific prior written permission.&n; *&n; * Where this Software is combined with software released under the terms of &n; * the GNU Public License (&quot;GPL&quot;) and the terms of the GPL would require the &n; * combined work to also be released under the terms of the GPL, the terms&n; * and conditions of this License will apply in addition to those of the&n; * GPL with the exception of any terms or conditions of this License that&n; * conflict with, or are expressly prohibited by, the GPL.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND&n; * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE&n; * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE&n; * ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS&n; * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)&n; * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; *************************************************************************&n; *&n; * module: i60uscsi.c &n; * DESCRIPTION:&n; * &t;This is the Linux low-level SCSI driver for Initio INIA100 SCSI host&n; * adapters&n; *&n; * 07/02/98 hl&t;- v.91n Initial drivers.&n; * 09/14/98 hl - v1.01 Support new Kernel.&n; * 09/22/98 hl - v1.01a Support reset.&n; * 09/24/98 hl - v1.01b Fixed reset.&n; * 10/05/98 hl - v1.02 split the source code and release.&n; * 12/19/98 bv - v1.02a Use spinlocks for 2.1.95 and up&n; * 01/31/99 bv - v1.02b Use mdelay instead of waitForPause&n; * 08/08/99 bv - v1.02c Use waitForPause again.&n; **************************************************************************/
 macro_line|#ifndef CVT_LINUX_VERSION
 DECL|macro|CVT_LINUX_VERSION
 mdefine_line|#define CVT_LINUX_VERSION(V,P,S)        (V * 65536 + P * 256 + S)
 macro_line|#endif
+macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;i60uscsi.h&quot;
+DECL|macro|JIFFIES_TO_MS
+mdefine_line|#define JIFFIES_TO_MS(t) ((t) * 1000 / HZ)
+DECL|macro|MS_TO_JIFFIES
+mdefine_line|#define MS_TO_JIFFIES(j) ((j * HZ) / 1000)
 multiline_comment|/* ---- INTERNAL FUNCTIONS ---- */
 r_static
 id|UCHAR
@@ -431,9 +436,12 @@ id|the_time
 op_assign
 id|jiffies
 op_plus
+id|MS_TO_JIFFIES
+c_func
+(paren
 id|amount
+)paren
 suffix:semicolon
-multiline_comment|/* 0.01 seconds per jiffy */
 macro_line|#if LINUX_VERSION_CODE &gt;= CVT_LINUX_VERSION(2,1,95)
 r_while
 c_loop
@@ -481,7 +489,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-l_int|2000
+l_int|10
 suffix:semicolon
 id|i
 op_increment
@@ -510,10 +518,10 @@ suffix:semicolon
 id|waitForPause
 c_func
 (paren
-l_int|5
+l_int|100
 )paren
 suffix:semicolon
-multiline_comment|/* wait 500ms before try again  */
+multiline_comment|/* wait 100ms before try again  */
 )brace
 r_return
 (paren
@@ -544,7 +552,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-l_int|2000
+l_int|10
 suffix:semicolon
 id|i
 op_increment
@@ -573,10 +581,10 @@ suffix:semicolon
 id|waitForPause
 c_func
 (paren
-l_int|5
+l_int|100
 )paren
 suffix:semicolon
-multiline_comment|/* wait 500ms before try again  */
+multiline_comment|/* wait 100ms before try again  */
 )brace
 r_return
 (paren
@@ -607,7 +615,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-l_int|2000
+l_int|10
 suffix:semicolon
 id|i
 op_increment
@@ -639,10 +647,10 @@ suffix:semicolon
 id|waitForPause
 c_func
 (paren
-l_int|5
+l_int|100
 )paren
 suffix:semicolon
-multiline_comment|/* wait 500ms before try again  */
+multiline_comment|/* wait 100ms before try again  */
 )brace
 r_return
 (paren
@@ -673,7 +681,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-l_int|2000
+l_int|10
 suffix:semicolon
 id|i
 op_increment
@@ -705,10 +713,10 @@ suffix:semicolon
 id|waitForPause
 c_func
 (paren
-l_int|5
+l_int|100
 )paren
 suffix:semicolon
-multiline_comment|/* wait 500ms before try again  */
+multiline_comment|/* wait 100ms before try again  */
 )brace
 r_return
 (paren
@@ -743,7 +751,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-l_int|2000
+l_int|10
 suffix:semicolon
 id|i
 op_increment
@@ -777,10 +785,10 @@ multiline_comment|/* Wait HDI set */
 id|waitForPause
 c_func
 (paren
-l_int|5
+l_int|100
 )paren
 suffix:semicolon
-multiline_comment|/* wait 500ms before try again  */
+multiline_comment|/* wait 100ms before try again  */
 )brace
 r_return
 (paren
@@ -2200,51 +2208,6 @@ id|i
 op_increment
 )paren
 (brace
-macro_line|#if LINUX_VERSION_CODE &gt;= CVT_LINUX_VERSION(1,3,0)
-id|pPhysEscb
-op_assign
-(paren
-id|PVOID
-)paren
-(paren
-(paren
-id|ULONG
-)paren
-id|hcsp-&gt;HCS_virEscbArray
-op_plus
-(paren
-r_sizeof
-(paren
-id|ESCB
-)paren
-op_star
-id|i
-)paren
-)paren
-suffix:semicolon
-id|pVirScb-&gt;SCB_SGPAddr
-op_assign
-(paren
-id|U32
-)paren
-id|VIRT_TO_BUS
-c_func
-(paren
-id|pPhysEscb
-)paren
-suffix:semicolon
-id|pVirScb-&gt;SCB_SensePAddr
-op_assign
-(paren
-id|U32
-)paren
-id|VIRT_TO_BUS
-c_func
-(paren
-id|pPhysEscb
-)paren
-suffix:semicolon
-macro_line|#else
 id|pPhysEscb
 op_assign
 (paren
@@ -2277,7 +2240,6 @@ id|U32
 )paren
 id|pPhysEscb
 suffix:semicolon
-macro_line|#endif
 id|pVirScb-&gt;SCB_EScb
 op_assign
 id|pVirEscb

@@ -544,7 +544,6 @@ suffix:semicolon
 multiline_comment|/* linux /dev name if available */
 )brace
 suffix:semicolon
-macro_line|#ifdef CONFIG_I2O_PCI_MODULE
 multiline_comment|/*&n; *&t;Resource data for each PCI I2O controller&n; */
 DECL|struct|i2o_pci
 r_struct
@@ -556,7 +555,6 @@ id|irq
 suffix:semicolon
 )brace
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n; *&t;Each I2O controller has one of these objects&n; */
 DECL|struct|i2o_controller
 r_struct

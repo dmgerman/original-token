@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *&t;linux/arch/alpha/kernel/core_t2.c&n; *&n; * Written by Jay A Estabrook (jestabro@amt.tay1.dec.com).&n; * December 1996.&n; *&n; * based on CIA code by David A Rusling (david.rusling@reo.mts.dec.com)&n; *&n; * Code common to all T2 core logic chips.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;

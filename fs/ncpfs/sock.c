@@ -639,12 +639,14 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|file-&gt;f_op
+id|sock-&gt;ops
 op_member_access_from_pointer
 id|poll
 c_func
 (paren
 id|file
+comma
+id|sock
 comma
 op_amp
 id|wait_table
