@@ -2243,6 +2243,7 @@ c_func
 (paren
 id|filename
 )paren
+)paren
 r_goto
 id|out
 suffix:semicolon

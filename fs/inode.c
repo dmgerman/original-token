@@ -2123,8 +2123,15 @@ op_star
 id|root
 )paren
 (brace
+id|shrink_dcache
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
-l_int|0
+id|root-&gt;d_count
+op_eq
+l_int|1
 suffix:semicolon
 )brace
 DECL|function|fs_may_remount_ro

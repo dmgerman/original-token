@@ -612,7 +612,7 @@ c_func
 id|KERN_DEBUG
 l_string|&quot;%s: Exception at [&lt;%lx&gt;] (%lx)&bslash;n&quot;
 comma
-id|current-&gt;comm
+id|tsk-&gt;comm
 comma
 id|regs-&gt;eip
 comma

@@ -601,7 +601,7 @@ id|res
 suffix:semicolon
 id|res-&gt;d_count
 op_assign
-l_int|2
+l_int|1
 suffix:semicolon
 id|d_instantiate
 c_func

@@ -1837,12 +1837,16 @@ id|f1-&gt;f_dentry
 op_assign
 id|f2-&gt;f_dentry
 op_assign
+id|dget
+c_func
+(paren
 id|d_alloc_root
 c_func
 (paren
 id|inode
 comma
 l_int|NULL
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* read file */

@@ -1009,8 +1009,6 @@ id|fput
 c_func
 (paren
 id|sbi-&gt;pipe
-comma
-id|sbi-&gt;pipe-&gt;f_inode
 )paren
 suffix:semicolon
 id|printk

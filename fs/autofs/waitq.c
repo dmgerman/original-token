@@ -94,8 +94,6 @@ id|fput
 c_func
 (paren
 id|sbi-&gt;pipe
-comma
-id|sbi-&gt;pipe-&gt;f_inode
 )paren
 suffix:semicolon
 multiline_comment|/* Close the pipe */
@@ -177,7 +175,7 @@ op_member_access_from_pointer
 id|write
 c_func
 (paren
-id|file-&gt;f_inode
+id|file-&gt;f_dentry-&gt;d_inode
 comma
 id|file
 comma

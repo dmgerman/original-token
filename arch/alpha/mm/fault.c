@@ -108,18 +108,11 @@ op_star
 id|vma
 suffix:semicolon
 r_struct
-id|task_struct
-op_star
-id|tsk
-op_assign
-id|current
-suffix:semicolon
-r_struct
 id|mm_struct
 op_star
 id|mm
 op_assign
-id|tsk-&gt;mm
+id|current-&gt;mm
 suffix:semicolon
 r_int
 id|fixup
@@ -258,7 +251,7 @@ suffix:semicolon
 id|handle_mm_fault
 c_func
 (paren
-id|tsk
+id|current
 comma
 id|vma
 comma
@@ -303,7 +296,7 @@ c_func
 (paren
 id|SIGSEGV
 comma
-id|tsk
+id|current
 )paren
 suffix:semicolon
 r_return
@@ -345,7 +338,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Taking exception at [&lt;%lx&gt;] (%lx)&bslash;n&quot;
+l_string|&quot;%s: Exception at [&lt;%lx&gt;] (%lx)&bslash;n&quot;
+comma
+id|current-&gt;comm
 comma
 id|regs-&gt;pc
 comma

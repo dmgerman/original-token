@@ -1371,7 +1371,7 @@ id|EBUSY
 suffix:semicolon
 id|inode
 op_assign
-id|file-&gt;f_inode
+id|file-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
 r_if
 c_cond

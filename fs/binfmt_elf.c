@@ -3002,13 +3002,10 @@ suffix:semicolon
 macro_line|#ifndef VM_STACK_FLAGS
 id|current-&gt;executable
 op_assign
-id|bprm-&gt;dentry
-suffix:semicolon
-id|atomic_inc
+id|dget
 c_func
 (paren
-op_amp
-id|bprm-&gt;dentry-&gt;i_count
+id|bprm-&gt;dentry
 )paren
 suffix:semicolon
 macro_line|#endif

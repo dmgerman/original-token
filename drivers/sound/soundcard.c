@@ -945,7 +945,7 @@ l_int|0
 suffix:semicolon
 id|inode
 op_assign
-id|file-&gt;f_inode
+id|file-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
 r_if
 c_cond
@@ -1243,15 +1243,12 @@ r_return
 op_minus
 id|EAGAIN
 suffix:semicolon
-id|vma-&gt;vm_inode
+id|vma-&gt;vm_dentry
 op_assign
-id|inode
-suffix:semicolon
-id|atomic_inc
+id|dget
 c_func
 (paren
-op_amp
-id|inode-&gt;i_count
+id|file-&gt;f_dentry
 )paren
 suffix:semicolon
 id|dmap-&gt;mapping_flags
