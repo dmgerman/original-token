@@ -5651,36 +5651,23 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif&t;&t; 
+multiline_comment|/*&n;&t; *&t;Attach the routing/device information port.&n;&t; */
+macro_line|#if defined(CONFIG_RTNETLINK)
+id|netlink_attach
+c_func
+(paren
+id|NETLINK_ROUTE
+comma
+id|netlink_donothing
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t; *&t;Initialize the protocols module. &n;&t; */
 id|proto_init
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_NET
-multiline_comment|/* &n;&t; *&t;Initialize the DEV module. &n;&t; */
-id|dev_init
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; *&t;And the bottom half handler &n;&t; */
-id|bh_base
-(braket
-id|NET_BH
-)braket
-dot
-id|routine
-op_assign
-id|net_bh
-suffix:semicolon
-id|enable_bh
-c_func
-(paren
-id|NET_BH
-)paren
-suffix:semicolon
-macro_line|#endif  
 )brace
 DECL|function|socket_get_info
 r_int

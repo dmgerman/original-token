@@ -868,8 +868,7 @@ r_int
 id|pty_init
 c_func
 (paren
-r_int
-id|kmem_start
+r_void
 )paren
 (brace
 id|memset
@@ -1091,7 +1090,7 @@ l_string|&quot;Couldn&squot;t register pty slave driver&quot;
 )paren
 suffix:semicolon
 r_return
-id|kmem_start
+l_int|0
 suffix:semicolon
 )brace
 eof

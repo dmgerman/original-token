@@ -1,87 +1,21 @@
-macro_line|#ifndef _LINUX_IF_PPP_H
-DECL|macro|_LINUX_IF_PPP_H
-mdefine_line|#define _LINUX_IF_PPP_H
-multiline_comment|/* definitions for kernel PPP module&n;   Michael Callahan &lt;callahan@maths.ox.ac.uk&gt;&n;   Nov. 4 1993 */
-multiline_comment|/* how many PPP units? */
-macro_line|#ifdef CONFIG_PPP_LOTS
-DECL|macro|PPP_NRUNIT
-mdefine_line|#define PPP_NRUNIT     16
-macro_line|#else
-DECL|macro|PPP_NRUNIT
-mdefine_line|#define PPP_NRUNIT     4
-macro_line|#endif
-DECL|macro|PPP_VERSION
-mdefine_line|#define PPP_VERSION  &quot;0.2.7&quot;
-multiline_comment|/* line discipline number */
-DECL|macro|N_PPP
-mdefine_line|#define N_PPP&t;       3
-multiline_comment|/* Magic value for the ppp structure */
-DECL|macro|PPP_MAGIC
-mdefine_line|#define PPP_MAGIC 0x5002
-DECL|macro|PPPIOCGFLAGS
-mdefine_line|#define&t;PPPIOCGFLAGS&t; 0x5490&t;/* get configuration flags */
-DECL|macro|PPPIOCSFLAGS
-mdefine_line|#define&t;PPPIOCSFLAGS&t; 0x5491&t;/* set configuration flags */
-DECL|macro|PPPIOCGASYNCMAP
-mdefine_line|#define&t;PPPIOCGASYNCMAP&t; 0x5492&t;/* get async map */
-DECL|macro|PPPIOCSASYNCMAP
-mdefine_line|#define&t;PPPIOCSASYNCMAP&t; 0x5493&t;/* set async map */
-DECL|macro|PPPIOCGUNIT
-mdefine_line|#define&t;PPPIOCGUNIT&t; 0x5494&t;/* get ppp unit number */
-DECL|macro|PPPIOCSINPSIG
-mdefine_line|#define PPPIOCSINPSIG&t; 0x5495&t;/* set input ready signal */
-DECL|macro|PPPIOCSDEBUG
-mdefine_line|#define PPPIOCSDEBUG&t; 0x5497&t;/* set debug level */
-DECL|macro|PPPIOCGDEBUG
-mdefine_line|#define PPPIOCGDEBUG&t; 0x5498&t;/* get debug level */
-DECL|macro|PPPIOCGSTAT
-mdefine_line|#define PPPIOCGSTAT&t; 0x5499&t;/* read PPP statistic information */
-DECL|macro|PPPIOCGTIME
-mdefine_line|#define PPPIOCGTIME&t; 0x549A&t;/* read time delta information */
-DECL|macro|PPPIOCGXASYNCMAP
-mdefine_line|#define&t;PPPIOCGXASYNCMAP 0x549B&t;/* get async table */
-DECL|macro|PPPIOCSXASYNCMAP
-mdefine_line|#define&t;PPPIOCSXASYNCMAP 0x549C&t;/* set async table */
-DECL|macro|PPPIOCSMRU
-mdefine_line|#define PPPIOCSMRU&t; 0x549D&t;/* set receive unit size for PPP */
-DECL|macro|PPPIOCRASYNCMAP
-mdefine_line|#define PPPIOCRASYNCMAP&t; 0x549E&t;/* set receive async map */
-DECL|macro|PPPIOCSMAXCID
-mdefine_line|#define PPPIOCSMAXCID    0x549F /* set the maximum compression slot id */
-multiline_comment|/* special characters in the framing protocol */
-DECL|macro|PPP_ALLSTATIONS
-mdefine_line|#define&t;PPP_ALLSTATIONS&t;0xff&t;/* All-Stations broadcast address */
-DECL|macro|PPP_UI
-mdefine_line|#define&t;PPP_UI&t;&t;0x03&t;/* Unnumbered Information */
-DECL|macro|PPP_FLAG
-mdefine_line|#define PPP_FLAG&t;0x7E&t;/* frame delimiter -- marks frame boundaries */
-DECL|macro|PPP_ADDRESS
-mdefine_line|#define PPP_ADDRESS&t;0xFF&t;/* first character of frame   &lt;--  (may be   */
-DECL|macro|PPP_CONTROL
-mdefine_line|#define PPP_CONTROL&t;0x03&t;/* second character of frame  &lt;-- compressed)*/
-DECL|macro|PPP_TRANS
-mdefine_line|#define&t;PPP_TRANS&t;0x20&t;/* Asynchronous transparency modifier */
-DECL|macro|PPP_ESC
-mdefine_line|#define PPP_ESC&t;&t;0x7d&t;/* escape character -- next character is&n;&t;&t;&t;&t;   data, and the PPP_TRANS bit should be&n;&t;&t;&t;&t;   toggled. PPP_ESC PPP_FLAG is illegal */
-multiline_comment|/* protocol numbers */
-DECL|macro|PROTO_IP
-mdefine_line|#define PROTO_IP       0x0021
-DECL|macro|PROTO_VJCOMP
-mdefine_line|#define PROTO_VJCOMP   0x002d
-DECL|macro|PROTO_VJUNCOMP
-mdefine_line|#define PROTO_VJUNCOMP 0x002f
-multiline_comment|/* FCS support */
-DECL|macro|PPP_FCS_INIT
-mdefine_line|#define PPP_FCS_INIT   0xffff
-DECL|macro|PPP_FCS_GOOD
-mdefine_line|#define PPP_FCS_GOOD   0xf0b8
-multiline_comment|/* initial MTU */
+multiline_comment|/*&t;$Id: if_ppp.h,v 1.3 1995/06/12 11:36:50 paulus Exp $&t;*/
+multiline_comment|/*&n; * if_ppp.h - Point-to-Point Protocol definitions.&n; *&n; * Copyright (c) 1989 Carnegie Mellon University.&n; * All rights reserved.&n; *&n; * Redistribution and use in source and binary forms are permitted&n; * provided that the above copyright notice and this paragraph are&n; * duplicated in all such forms and that any documentation,&n; * advertising materials, and other materials related to such&n; * distribution and use acknowledge that the software was developed&n; * by Carnegie Mellon University.  The name of the&n; * University may not be used to endorse or promote products derived&n; * from this software without specific prior written permission.&n; * THIS SOFTWARE IS PROVIDED ``AS IS&squot;&squot; AND WITHOUT ANY EXPRESS OR&n; * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED&n; * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.&n; *&n; */
+multiline_comment|/*&n; *  ==FILEVERSION 3==&n; *&n; *  NOTE TO MAINTAINERS:&n; *     If you modify this file at all, increment the number above.&n; *     if_ppp.h is shipped with a PPP distribution as well as with the kernel;&n; *     if everyone increases the FILEVERSION number above, then scripts&n; *     can do the right thing when deciding whether to install a new if_ppp.h&n; *     file.  Don&squot;t change the format of that line otherwise, so the&n; *     installation script can recognize it.&n; */
+macro_line|#ifndef _IF_PPP_H_
+DECL|macro|_IF_PPP_H_
+mdefine_line|#define _IF_PPP_H_
+multiline_comment|/*&n; * Packet sizes&n; */
 DECL|macro|PPP_MTU
-mdefine_line|#define PPP_MTU&t;       1500
-multiline_comment|/* initial MRU */
-DECL|macro|PPP_MRU
-mdefine_line|#define PPP_MRU&t;       PPP_MTU
-multiline_comment|/* flags */
+mdefine_line|#define&t;PPP_MTU&t;&t;1500&t;/* Default MTU (size of Info field) */
+DECL|macro|PPP_MAXMRU
+mdefine_line|#define PPP_MAXMRU&t;65000&t;/* Largest MRU we allow */
+DECL|macro|PPP_VERSION
+mdefine_line|#define PPP_VERSION&t;&quot;2.2.0&quot;
+DECL|macro|PPP_MAGIC
+mdefine_line|#define PPP_MAGIC&t;0x5002&t;/* Magic value for the ppp structure */
+DECL|macro|PROTO_IPX
+mdefine_line|#define PROTO_IPX&t;0x002b&t;/* protocol numbers */
+multiline_comment|/*&n; * Bit definitions for flags.&n; */
 DECL|macro|SC_COMP_PROT
 mdefine_line|#define SC_COMP_PROT&t;0x00000001&t;/* protocol compression (output) */
 DECL|macro|SC_COMP_AC
@@ -94,12 +28,16 @@ DECL|macro|SC_REJ_COMP_AC
 mdefine_line|#define SC_REJ_COMP_AC&t;0x00000010&t;/* reject adrs/ctrl comp. on input */
 DECL|macro|SC_REJ_COMP_TCP
 mdefine_line|#define SC_REJ_COMP_TCP&t;0x00000020&t;/* reject TCP (VJ) comp. on input */
+DECL|macro|SC_CCP_OPEN
+mdefine_line|#define SC_CCP_OPEN&t;0x00000040&t;/* Look at CCP packets */
+DECL|macro|SC_CCP_UP
+mdefine_line|#define SC_CCP_UP&t;0x00000080&t;/* May send/recv compressed packets */
 DECL|macro|SC_ENABLE_IP
 mdefine_line|#define SC_ENABLE_IP&t;0x00000100&t;/* IP packets may be exchanged */
-DECL|macro|SC_IP_DOWN
-mdefine_line|#define SC_IP_DOWN&t;0x00000200&t;/* give ip frames to pppd */
-DECL|macro|SC_IP_FLUSH
-mdefine_line|#define SC_IP_FLUSH&t;0x00000400&t;/* &quot;next time&quot; flag for IP_DOWN */
+DECL|macro|SC_COMP_RUN
+mdefine_line|#define SC_COMP_RUN&t;0x00001000&t;/* compressor has been inited */
+DECL|macro|SC_DECOMP_RUN
+mdefine_line|#define SC_DECOMP_RUN&t;0x00002000&t;/* decompressor has been inited */
 DECL|macro|SC_DEBUG
 mdefine_line|#define SC_DEBUG&t;0x00010000&t;/* enable debug messages */
 DECL|macro|SC_LOG_INPKT
@@ -110,485 +48,151 @@ DECL|macro|SC_LOG_RAWIN
 mdefine_line|#define SC_LOG_RAWIN&t;0x00080000&t;/* log all chars received */
 DECL|macro|SC_LOG_FLUSH
 mdefine_line|#define SC_LOG_FLUSH&t;0x00100000&t;/* log all chars flushed */
-multiline_comment|/* Flag bits to determine state of input characters */
-DECL|macro|SC_RCV_B7_0
-mdefine_line|#define SC_RCV_B7_0&t;0x01000000&t;/* have rcvd char with bit 7 = 0 */
-DECL|macro|SC_RCV_B7_1
-mdefine_line|#define SC_RCV_B7_1&t;0x02000000&t;/* have rcvd char with bit 7 = 0 */
-DECL|macro|SC_RCV_EVNP
-mdefine_line|#define SC_RCV_EVNP&t;0x04000000&t;/* have rcvd char with even parity */
-DECL|macro|SC_RCV_ODDP
-mdefine_line|#define SC_RCV_ODDP&t;0x08000000&t;/* have rcvd char with odd parity */
 DECL|macro|SC_MASK
-mdefine_line|#define&t;SC_MASK&t;&t;0x0fffffff&t;/* bits that user can change */
-multiline_comment|/* flag for doing transmitter lockout */
+mdefine_line|#define&t;SC_MASK&t;&t;0x0fE0ffff&t;/* bits that user can change */
+multiline_comment|/* state bits */
+DECL|macro|SC_ESCAPED
+mdefine_line|#define&t;SC_ESCAPED&t;0x80000000&t;/* saw a PPP_ESCAPE */
+DECL|macro|SC_FLUSH
+mdefine_line|#define&t;SC_FLUSH&t;0x40000000&t;/* flush input until next PPP_FLAG */
+DECL|macro|SC_VJ_RESET
+mdefine_line|#define SC_VJ_RESET&t;0x20000000&t;/* Need to reset the VJ decompressor */
 DECL|macro|SC_XMIT_BUSY
 mdefine_line|#define SC_XMIT_BUSY&t;0x10000000&t;/* ppp_write_wakeup is active */
-multiline_comment|/*&n; * This is the format of the data buffer of a LQP packet. The packet data&n; * is sent/received to the peer.&n; */
-DECL|struct|ppp_lqp_packet_hdr
+DECL|macro|SC_RCV_ODDP
+mdefine_line|#define SC_RCV_ODDP&t;0x08000000&t;/* have rcvd char with odd parity */
+DECL|macro|SC_RCV_EVNP
+mdefine_line|#define SC_RCV_EVNP&t;0x04000000&t;/* have rcvd char with even parity */
+DECL|macro|SC_RCV_B7_1
+mdefine_line|#define SC_RCV_B7_1&t;0x02000000&t;/* have rcvd char with bit 7 = 1 */
+DECL|macro|SC_RCV_B7_0
+mdefine_line|#define SC_RCV_B7_0&t;0x01000000&t;/* have rcvd char with bit 7 = 0 */
+DECL|macro|SC_DC_FERROR
+mdefine_line|#define SC_DC_FERROR&t;0x00800000&t;/* fatal decomp error detected */
+DECL|macro|SC_DC_ERROR
+mdefine_line|#define SC_DC_ERROR&t;0x00400000&t;/* non-fatal decomp error detected */
+multiline_comment|/*&n; * Ioctl definitions.&n; */
+DECL|struct|npioctl
 r_struct
-id|ppp_lqp_packet_hdr
+id|npioctl
 (brace
-DECL|member|LastOutLQRs
-id|__u32
-id|LastOutLQRs
+DECL|member|protocol
+r_int
+id|protocol
 suffix:semicolon
-multiline_comment|/* Copied from PeerOutLQRs&t; */
-DECL|member|LastOutPackets
-id|__u32
-id|LastOutPackets
+multiline_comment|/* PPP procotol, e.g. PPP_IP */
+DECL|member|mode
+r_enum
+id|NPmode
+id|mode
 suffix:semicolon
-multiline_comment|/* Copied from PeerOutPackets&t; */
-DECL|member|LastOutOctets
-id|__u32
-id|LastOutOctets
-suffix:semicolon
-multiline_comment|/* Copied from PeerOutOctets&t; */
-DECL|member|PeerInLQRs
-id|__u32
-id|PeerInLQRs
-suffix:semicolon
-multiline_comment|/* Copied from SavedInLQRs&t; */
-DECL|member|PeerInPackets
-id|__u32
-id|PeerInPackets
-suffix:semicolon
-multiline_comment|/* Copied from SavedInPackets&t; */
-DECL|member|PeerInDiscards
-id|__u32
-id|PeerInDiscards
-suffix:semicolon
-multiline_comment|/* Copied from SavedInDiscards&t; */
-DECL|member|PeerInErrors
-id|__u32
-id|PeerInErrors
-suffix:semicolon
-multiline_comment|/* Copied from SavedInErrors&t; */
-DECL|member|PeerInOctets
-id|__u32
-id|PeerInOctets
-suffix:semicolon
-multiline_comment|/* Copied from SavedInOctets&t; */
-DECL|member|PeerOutLQRs
-id|__u32
-id|PeerOutLQRs
-suffix:semicolon
-multiline_comment|/* Copied from OutLQRs, plus 1&t; */
-DECL|member|PeerOutPackets
-id|__u32
-id|PeerOutPackets
-suffix:semicolon
-multiline_comment|/* Current ifOutUniPackets, + 1&t; */
-DECL|member|PeerOutOctets
-id|__u32
-id|PeerOutOctets
-suffix:semicolon
-multiline_comment|/* Current ifOutOctets + LQR&t; */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * This data is not sent to the remote. It is updated by the driver when&n; * a packet is received.&n; */
-DECL|struct|ppp_lqp_packet_trailer
+multiline_comment|/* Structure describing a CCP configuration option, for PPPIOCSCOMPRESS */
+DECL|struct|ppp_option_data
 r_struct
-id|ppp_lqp_packet_trailer
+id|ppp_option_data
 (brace
-DECL|member|SaveInLQRs
-id|__u32
-id|SaveInLQRs
+DECL|member|ptr
+id|u_char
+op_star
+id|ptr
 suffix:semicolon
-multiline_comment|/* Current InLQRs on reception&t; */
-DECL|member|SaveInPackets
-id|__u32
-id|SaveInPackets
+DECL|member|length
+id|u_int
+id|length
 suffix:semicolon
-multiline_comment|/* Current ifInUniPackets&t; */
-DECL|member|SaveInDiscards
-id|__u32
-id|SaveInDiscards
+DECL|member|transmit
+r_int
+id|transmit
 suffix:semicolon
-multiline_comment|/* Current ifInDiscards&t;&t; */
-DECL|member|SaveInErrors
-id|__u32
-id|SaveInErrors
-suffix:semicolon
-multiline_comment|/* Current ifInErrors&t;&t; */
-DECL|member|SaveInOctets
-id|__u32
-id|SaveInOctets
-suffix:semicolon
-multiline_comment|/* Current ifInOctects&t;&t; */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * PPP LQP packet. The packet is changed by the driver immediately prior&n; * to transmission and updated upon reception with the current values.&n; * So, it must be known to the driver as well as the pppd software.&n; */
-DECL|struct|ppp_lpq_packet
+DECL|struct|ifpppstatsreq
 r_struct
-id|ppp_lpq_packet
+id|ifpppstatsreq
 (brace
-DECL|member|magic
-id|__u32
-id|magic
-suffix:semicolon
-multiline_comment|/* current magic value&t;&t; */
-DECL|member|hdr
+DECL|member|b
 r_struct
-id|ppp_lqp_packet_hdr
-id|hdr
+id|ifreq
+id|b
 suffix:semicolon
-multiline_comment|/* Header fields for structure&t; */
-DECL|member|tail
-r_struct
-id|ppp_lqp_packet_trailer
-id|tail
-suffix:semicolon
-multiline_comment|/* Trailer fields (not sent)&t; */
-)brace
-suffix:semicolon
-multiline_comment|/*&n; * PPP interface statistics. (used by LQP / pppstats)&n; */
-DECL|struct|ppp_stats
-r_struct
-id|ppp_stats
-(brace
-DECL|member|rbytes
-id|__u32
-id|rbytes
-suffix:semicolon
-multiline_comment|/* bytes received&t;&t; */
-DECL|member|rcomp
-id|__u32
-id|rcomp
-suffix:semicolon
-multiline_comment|/* compressed packets received&t; */
-DECL|member|runcomp
-id|__u32
-id|runcomp
-suffix:semicolon
-multiline_comment|/* uncompressed packets received */
-DECL|member|rothers
-id|__u32
-id|rothers
-suffix:semicolon
-multiline_comment|/* non-ip frames received&t; */
-DECL|member|rerrors
-id|__u32
-id|rerrors
-suffix:semicolon
-multiline_comment|/* received errors&t;&t; */
-DECL|member|roverrun
-id|__u32
-id|roverrun
-suffix:semicolon
-multiline_comment|/* &quot;buffer overrun&quot; counter&t; */
-DECL|member|tossed
-id|__u32
-id|tossed
-suffix:semicolon
-multiline_comment|/* packets discarded&t;&t; */
-DECL|member|runts
-id|__u32
-id|runts
-suffix:semicolon
-multiline_comment|/* frames too short to process&t; */
-DECL|member|rgiants
-id|__u32
-id|rgiants
-suffix:semicolon
-multiline_comment|/* frames too large to process&t; */
-DECL|member|sbytes
-id|__u32
-id|sbytes
-suffix:semicolon
-multiline_comment|/* bytes sent&t;&t;&t; */
-DECL|member|scomp
-id|__u32
-id|scomp
-suffix:semicolon
-multiline_comment|/* compressed packets sent&t; */
-DECL|member|suncomp
-id|__u32
-id|suncomp
-suffix:semicolon
-multiline_comment|/* uncompressed packets sent&t; */
-DECL|member|sothers
-id|__u32
-id|sothers
-suffix:semicolon
-multiline_comment|/* non-ip frames sent&t;&t; */
-DECL|member|serrors
-id|__u32
-id|serrors
-suffix:semicolon
-multiline_comment|/* transmitter errors&t;&t; */
-DECL|member|sbusy
-id|__u32
-id|sbusy
-suffix:semicolon
-multiline_comment|/* &quot;transmitter busy&quot; counter&t; */
-)brace
-suffix:semicolon
-multiline_comment|/*&n; * Demand dial fields&n; */
-DECL|struct|ppp_ddinfo
-r_struct
-id|ppp_ddinfo
-(brace
-DECL|member|ip_sjiffies
-r_int
-r_int
-id|ip_sjiffies
-suffix:semicolon
-multiline_comment|/* time when last IP frame sent */
-DECL|member|ip_rjiffies
-r_int
-r_int
-id|ip_rjiffies
-suffix:semicolon
-multiline_comment|/* time when last IP frame recvd*/
-DECL|member|nip_sjiffies
-r_int
-r_int
-id|nip_sjiffies
-suffix:semicolon
-multiline_comment|/* time when last NON-IP sent&t;*/
-DECL|member|nip_rjiffies
-r_int
-r_int
-id|nip_rjiffies
-suffix:semicolon
-multiline_comment|/* time when last NON-IP recvd&t;*/
-)brace
-suffix:semicolon
-macro_line|#ifdef __KERNEL__
-DECL|struct|ppp
-r_struct
-id|ppp
-(brace
-DECL|member|magic
-r_int
-id|magic
-suffix:semicolon
-multiline_comment|/* magic value for structure&t;*/
-multiline_comment|/* Bitmapped flag fields. */
-DECL|member|sending
-r_char
-id|sending
-suffix:semicolon
-multiline_comment|/* &quot;channel busy&quot; indicator&t;*/
-DECL|member|escape
-r_char
-id|escape
-suffix:semicolon
-multiline_comment|/* 0x20 if prev char was PPP_ESC*/
-DECL|member|toss
-r_char
-id|toss
-suffix:semicolon
-multiline_comment|/* toss this frame&t;&t;*/
-DECL|member|inuse
-r_int
-r_int
-id|inuse
-suffix:semicolon
-multiline_comment|/* are we allocated?&t;&t;*/
-DECL|member|flags
-r_int
-r_int
-id|flags
-suffix:semicolon
-multiline_comment|/* miscellany&t;&t;&t;*/
-DECL|member|xmit_async_map
-id|__u32
-id|xmit_async_map
-(braket
-l_int|8
-)braket
-suffix:semicolon
-multiline_comment|/* 1 bit means that given control &n;&t;&t;&t;&t;&t;   character is quoted on output*/
-DECL|member|recv_async_map
-id|__u32
-id|recv_async_map
-suffix:semicolon
-multiline_comment|/* 1 bit means that given control &n;&t;&t;&t;&t;&t;   character is ignored on input*/
-DECL|member|mtu
-r_int
-id|mtu
-suffix:semicolon
-multiline_comment|/* maximum xmit frame size&t;*/
-DECL|member|mru
-r_int
-id|mru
-suffix:semicolon
-multiline_comment|/* maximum receive frame size&t;*/
-DECL|member|fcs
-r_int
-r_int
-id|fcs
-suffix:semicolon
-multiline_comment|/* FCS field of current frame&t;*/
-multiline_comment|/* Various fields. */
-DECL|member|line
-r_int
-id|line
-suffix:semicolon
-multiline_comment|/* PPP channel number&t;&t;*/
-DECL|member|tty
-r_struct
-id|tty_struct
-op_star
-id|tty
-suffix:semicolon
-multiline_comment|/* ptr to TTY structure&t;&t;*/
-DECL|member|dev
-r_struct
-id|device
-op_star
-id|dev
-suffix:semicolon
-multiline_comment|/* easy for intr handling&t;*/
-DECL|member|slcomp
-r_struct
-id|slcompress
-op_star
-id|slcomp
-suffix:semicolon
-multiline_comment|/* for header compression&t;*/
-DECL|member|last_xmit
-r_int
-r_int
-id|last_xmit
-suffix:semicolon
-multiline_comment|/* time of last transmission&t;*/
-multiline_comment|/* These are pointers to the malloc()ed frame buffers.&n;     These buffers are used while processing a packet.&t;If a packet&n;     has to hang around for the user process to read it, it lingers in&n;     the user buffers below. */
-DECL|member|rbuff
-r_int
-r_char
-op_star
-id|rbuff
-suffix:semicolon
-multiline_comment|/* receiver buffer&t;&t;*/
-DECL|member|xbuff
-r_int
-r_char
-op_star
-id|xbuff
-suffix:semicolon
-multiline_comment|/* transmitter buffer&t;&t;*/
-DECL|member|cbuff
-r_int
-r_char
-op_star
-id|cbuff
-suffix:semicolon
-multiline_comment|/* compression buffer&t;&t;*/
-multiline_comment|/* These are the various pointers into the buffers. */
-DECL|member|rhead
-r_int
-r_char
-op_star
-id|rhead
-suffix:semicolon
-multiline_comment|/* RECV buffer pointer (head)&t;*/
-DECL|member|rend
-r_int
-r_char
-op_star
-id|rend
-suffix:semicolon
-multiline_comment|/* RECV buffer pointer (end)&t;*/
-DECL|member|rcount
-r_int
-id|rcount
-suffix:semicolon
-multiline_comment|/* PPP receive counter&t;&t;*/
-DECL|member|xhead
-r_int
-r_char
-op_star
-id|xhead
-suffix:semicolon
-multiline_comment|/* XMIT buffer pointer (head)&t;*/
-DECL|member|xtail
-r_int
-r_char
-op_star
-id|xtail
-suffix:semicolon
-multiline_comment|/* XMIT buffer pointer (end) &t;*/
-multiline_comment|/* Structures for interfacing with the user process. */
-DECL|macro|RBUFSIZE
-mdefine_line|#define RBUFSIZE 4000
-DECL|member|us_rbuff
-r_int
-r_char
-op_star
-id|us_rbuff
-suffix:semicolon
-multiline_comment|/* circular incoming packet buf.*/
-DECL|member|us_rbuff_end
-r_int
-r_char
-op_star
-id|us_rbuff_end
-suffix:semicolon
-multiline_comment|/* end of allocated space&t;*/
-DECL|member|us_rbuff_head
-r_int
-r_char
-op_star
-id|us_rbuff_head
-suffix:semicolon
-multiline_comment|/* head of waiting packets&t;*/
-DECL|member|us_rbuff_tail
-r_int
-r_char
-op_star
-id|us_rbuff_tail
-suffix:semicolon
-multiline_comment|/* tail of waiting packets&t;*/
-DECL|member|us_rbuff_lock
-r_int
-r_int
-id|us_rbuff_lock
-suffix:semicolon
-multiline_comment|/* lock: bit 0 head bit 1 tail&t;*/
-DECL|member|inp_sig
-r_int
-id|inp_sig
-suffix:semicolon
-multiline_comment|/* input ready signal for pgrp&t;*/
-DECL|member|inp_sig_pid
-r_int
-id|inp_sig_pid
-suffix:semicolon
-multiline_comment|/* process to get notified&t;*/
-multiline_comment|/* items to support the select() function */
-DECL|member|write_wait
-r_struct
-id|wait_queue
-op_star
-id|write_wait
-suffix:semicolon
-multiline_comment|/* queue for reading processes&t;*/
-DECL|member|read_wait
-r_struct
-id|wait_queue
-op_star
-id|read_wait
-suffix:semicolon
-multiline_comment|/* queue for writing processes&t;*/
-multiline_comment|/* PPP interface statistics. */
 DECL|member|stats
 r_struct
 id|ppp_stats
 id|stats
 suffix:semicolon
-multiline_comment|/* statistic information&t;*/
-multiline_comment|/* PPP demand dial information. */
-DECL|member|ddinfo
-r_struct
-id|ppp_ddinfo
-id|ddinfo
-suffix:semicolon
-multiline_comment|/* demand dial information&t;*/
+multiline_comment|/* statistic information */
 )brace
 suffix:semicolon
-macro_line|#endif&t;/* __KERNEL__ */
-macro_line|#endif&t;/* _LINUX_PPP_H */
+DECL|struct|ifpppcstatsreq
+r_struct
+id|ifpppcstatsreq
+(brace
+DECL|member|b
+r_struct
+id|ifreq
+id|b
+suffix:semicolon
+DECL|member|stats
+r_struct
+id|ppp_comp_stats
+id|stats
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|macro|ifr__name
+mdefine_line|#define ifr__name       b.ifr_ifrn.ifrn_name
+DECL|macro|stats_ptr
+mdefine_line|#define stats_ptr       b.ifr_ifru.ifru_data
+multiline_comment|/*&n; * Ioctl definitions.&n; */
+DECL|macro|PPPIOCGFLAGS
+mdefine_line|#define&t;PPPIOCGFLAGS&t;_IOR(&squot;t&squot;, 90, int)&t;/* get configuration flags */
+DECL|macro|PPPIOCSFLAGS
+mdefine_line|#define&t;PPPIOCSFLAGS&t;_IOW(&squot;t&squot;, 89, int)&t;/* set configuration flags */
+DECL|macro|PPPIOCGASYNCMAP
+mdefine_line|#define&t;PPPIOCGASYNCMAP&t;_IOR(&squot;t&squot;, 88, int)&t;/* get async map */
+DECL|macro|PPPIOCSASYNCMAP
+mdefine_line|#define&t;PPPIOCSASYNCMAP&t;_IOW(&squot;t&squot;, 87, int)&t;/* set async map */
+DECL|macro|PPPIOCGUNIT
+mdefine_line|#define&t;PPPIOCGUNIT&t;_IOR(&squot;t&squot;, 86, int)&t;/* get ppp unit number */
+DECL|macro|PPPIOCGRASYNCMAP
+mdefine_line|#define&t;PPPIOCGRASYNCMAP _IOR(&squot;t&squot;, 85, int)&t;/* get receive async map */
+DECL|macro|PPPIOCSRASYNCMAP
+mdefine_line|#define&t;PPPIOCSRASYNCMAP _IOW(&squot;t&squot;, 84, int)&t;/* set receive async map */
+DECL|macro|PPPIOCGMRU
+mdefine_line|#define&t;PPPIOCGMRU&t;_IOR(&squot;t&squot;, 83, int)&t;/* get max receive unit */
+DECL|macro|PPPIOCSMRU
+mdefine_line|#define&t;PPPIOCSMRU&t;_IOW(&squot;t&squot;, 82, int)&t;/* set max receive unit */
+DECL|macro|PPPIOCSMAXCID
+mdefine_line|#define&t;PPPIOCSMAXCID&t;_IOW(&squot;t&squot;, 81, int)&t;/* set VJ max slot ID */
+DECL|macro|PPPIOCGXASYNCMAP
+mdefine_line|#define PPPIOCGXASYNCMAP _IOR(&squot;t&squot;, 80, ext_accm) /* get extended ACCM */
+DECL|macro|PPPIOCSXASYNCMAP
+mdefine_line|#define PPPIOCSXASYNCMAP _IOW(&squot;t&squot;, 79, ext_accm) /* set extended ACCM */
+DECL|macro|PPPIOCXFERUNIT
+mdefine_line|#define PPPIOCXFERUNIT&t;_IO(&squot;t&squot;, 78)&t;&t;/* transfer PPP unit */
+DECL|macro|PPPIOCSCOMPRESS
+mdefine_line|#define PPPIOCSCOMPRESS&t;_IOW(&squot;t&squot;, 77, struct ppp_option_data)
+DECL|macro|PPPIOCGNPMODE
+mdefine_line|#define PPPIOCGNPMODE&t;_IOWR(&squot;t&squot;, 76, struct npioctl) /* get NP mode */
+DECL|macro|PPPIOCSNPMODE
+mdefine_line|#define PPPIOCSNPMODE&t;_IOW(&squot;t&squot;, 75, struct npioctl)  /* set NP mode */
+DECL|macro|PPPIOCGDEBUG
+mdefine_line|#define PPPIOCGDEBUG&t;_IOR(&squot;t&squot;, 65, int)&t;/* Read debug level */
+DECL|macro|PPPIOCSDEBUG
+mdefine_line|#define PPPIOCSDEBUG&t;_IOW(&squot;t&squot;, 64, int)&t;/* Set debug level */
+DECL|macro|PPPIOCGIDLE
+mdefine_line|#define PPPIOCGIDLE&t;_IOR(&squot;t&squot;, 63, struct ppp_idle) /* get idle time */
+DECL|macro|SIOCGPPPSTATS
+mdefine_line|#define SIOCGPPPSTATS   (SIOCDEVPRIVATE + 0)
+DECL|macro|SIOCGPPPVER
+mdefine_line|#define SIOCGPPPVER     (SIOCDEVPRIVATE + 1)  /* NEVER change this!! */
+DECL|macro|SIOCGPPPCSTATS
+mdefine_line|#define SIOCGPPPCSTATS  (SIOCDEVPRIVATE + 2)
+macro_line|#if !defined(ifr_mtu)
+DECL|macro|ifr_mtu
+mdefine_line|#define ifr_mtu&t;ifr_ifru.ifru_metric
+macro_line|#endif
+macro_line|#endif /* _IF_PPP_H_ */
 eof

@@ -43,8 +43,7 @@ r_int
 id|scc_init
 c_func
 (paren
-r_int
-id|kmem_start
+r_void
 )paren
 suffix:semicolon
 r_int
@@ -9062,8 +9061,7 @@ DECL|function|scc_init
 r_int
 id|scc_init
 (paren
-r_int
-id|kmem_start
+r_void
 )paren
 (brace
 r_int
@@ -9683,7 +9681,7 @@ l_int|2
 suffix:semicolon
 macro_line|#endif
 r_return
-id|kmem_start
+l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif

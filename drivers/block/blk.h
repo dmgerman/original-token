@@ -23,184 +23,130 @@ mdefine_line|#define SUBSECTOR(block) (CURRENT-&gt;current_nr_sectors &gt; 0)
 macro_line|#ifdef CONFIG_CDU31A
 r_extern
 r_int
-r_int
 id|cdu31a_init
 c_func
 (paren
-r_int
-r_int
-comma
-r_int
-r_int
+r_void
 )paren
 suffix:semicolon
 macro_line|#endif CONFIG_CDU31A
 macro_line|#ifdef CONFIG_MCD
 r_extern
 r_int
-r_int
 id|mcd_init
 c_func
 (paren
-r_int
-r_int
-comma
-r_int
-r_int
+r_void
 )paren
 suffix:semicolon
 macro_line|#endif CONFIG_MCD
 macro_line|#ifdef CONFIG_MCDX
 r_extern
 r_int
-r_int
 id|mcdx_init
 c_func
 (paren
-r_int
-r_int
-comma
-r_int
-r_int
+r_void
 )paren
 suffix:semicolon
 macro_line|#endif CONFIG_MCDX
 macro_line|#ifdef CONFIG_SBPCD
 r_extern
 r_int
-r_int
 id|sbpcd_init
 c_func
 (paren
-r_int
-r_int
-comma
-r_int
-r_int
+r_void
 )paren
 suffix:semicolon
 macro_line|#endif CONFIG_SBPCD
 macro_line|#ifdef CONFIG_AZTCD
 r_extern
 r_int
-r_int
 id|aztcd_init
 c_func
 (paren
-r_int
-r_int
-comma
-r_int
-r_int
+r_void
 )paren
 suffix:semicolon
 macro_line|#endif CONFIG_AZTCD
 macro_line|#ifdef CONFIG_CDU535
 r_extern
 r_int
-r_int
 id|sony535_init
 c_func
 (paren
-r_int
-r_int
-comma
-r_int
-r_int
+r_void
 )paren
 suffix:semicolon
 macro_line|#endif CONFIG_CDU535
 macro_line|#ifdef CONFIG_GSCD
 r_extern
 r_int
-r_int
 id|gscd_init
 c_func
 (paren
-r_int
-r_int
-comma
-r_int
-r_int
+r_void
 )paren
 suffix:semicolon
 macro_line|#endif CONFIG_GSCD
 macro_line|#ifdef CONFIG_CM206
 r_extern
 r_int
-r_int
 id|cm206_init
 c_func
 (paren
-r_int
-r_int
-comma
-r_int
-r_int
+r_void
 )paren
 suffix:semicolon
 macro_line|#endif CONFIG_CM206
 macro_line|#ifdef CONFIG_OPTCD
 r_extern
 r_int
-r_int
 id|optcd_init
 c_func
 (paren
-r_int
-r_int
-comma
-r_int
-r_int
+r_void
 )paren
 suffix:semicolon
 macro_line|#endif CONFIG_OPTCD
 macro_line|#ifdef CONFIG_SJCD
 r_extern
 r_int
-r_int
 id|sjcd_init
 c_func
 (paren
-r_int
-r_int
-comma
-r_int
-r_int
+r_void
 )paren
 suffix:semicolon
 macro_line|#endif CONFIG_SJCD
 macro_line|#ifdef CONFIG_BLK_DEV_HD
 r_extern
 r_int
-r_int
 id|hd_init
 c_func
 (paren
-r_int
-r_int
-id|mem_start
-comma
-r_int
-r_int
-id|mem_end
+r_void
 )paren
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_IDE
 r_extern
 r_int
-r_int
 id|ide_init
 c_func
 (paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_XD
+r_extern
 r_int
-r_int
-id|mem_start
-comma
-r_int
-r_int
-id|mem_end
+id|xd_init
+c_func
+(paren
+r_void
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -248,23 +194,6 @@ r_extern
 r_int
 id|ramdisk_size
 suffix:semicolon
-macro_line|#ifdef CONFIG_BLK_DEV_XD
-r_extern
-r_int
-r_int
-id|xd_init
-c_func
-(paren
-r_int
-r_int
-id|mem_start
-comma
-r_int
-r_int
-id|mem_end
-)paren
-suffix:semicolon
-macro_line|#endif
 DECL|macro|RO_IOCTLS
 mdefine_line|#define RO_IOCTLS(dev,where) &bslash;&n;  case BLKROSET: if (!suser()) return -EACCES; &bslash;&n;&t;&t; set_device_ro((dev),get_fs_long((long *) (where))); return 0; &bslash;&n;  case BLKROGET: { int __err = verify_area(VERIFY_WRITE, (void *) (where), sizeof(long)); &bslash;&n;&t;&t;   if (!__err) put_fs_long(0!=is_read_only(dev),(long *) (where)); return __err; }
 macro_line|#if defined(MAJOR_NR) || defined(IDE_DRIVER)

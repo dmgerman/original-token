@@ -14,6 +14,8 @@ op_assign
 id|UTS_RELEASE
 suffix:semicolon
 macro_line|# endif
+DECL|macro|optcd_init
+mdefine_line|#define optcd_init init_module
 macro_line|#else
 DECL|macro|MOD_INC_USE_COUNT
 macro_line|# define MOD_INC_USE_COUNT
@@ -6433,39 +6435,15 @@ l_int|1
 )braket
 suffix:semicolon
 )brace
-macro_line|#ifndef MODULE
-DECL|macro|RETURN_EIO
-mdefine_line|#define RETURN_EIO return mem_start
-macro_line|#else
-DECL|macro|RETURN_EIO
-mdefine_line|#define RETURN_EIO return -EIO
-macro_line|#endif
 multiline_comment|/*&n; * Test for presence of drive and initialize it. Called at boot time.&n; */
-macro_line|#ifndef MODULE
 DECL|function|optcd_init
 r_int
-r_int
 id|optcd_init
-c_func
-(paren
-r_int
-r_int
-id|mem_start
-comma
-r_int
-r_int
-id|mem_end
-)paren
-(brace
-macro_line|#else
-r_int
-id|init_module
 c_func
 (paren
 r_void
 )paren
 (brace
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -6480,7 +6458,9 @@ c_func
 l_string|&quot;optcd: no Optics Storage CDROM Initialization&bslash;n&quot;
 )paren
 suffix:semicolon
-id|RETURN_EIO
+r_return
+op_minus
+id|EIO
 suffix:semicolon
 )brace
 r_if
@@ -6503,7 +6483,9 @@ comma
 id|optcd_port
 )paren
 suffix:semicolon
-id|RETURN_EIO
+r_return
+op_minus
+id|EIO
 suffix:semicolon
 )brace
 r_if
@@ -6597,7 +6579,9 @@ c_func
 l_string|&quot;ISP16 cdrom interface has not been properly configured.&bslash;n&quot;
 )paren
 suffix:semicolon
-id|RETURN_EIO
+r_return
+op_minus
+id|EIO
 suffix:semicolon
 )brace
 )brace
@@ -6620,7 +6604,9 @@ comma
 id|optcd_port
 )paren
 suffix:semicolon
-id|RETURN_EIO
+r_return
+op_minus
+id|EIO
 suffix:semicolon
 )brace
 r_if
@@ -6639,7 +6625,9 @@ c_func
 l_string|&quot;optcd: unknown drive detected; aborting&bslash;n&quot;
 )paren
 suffix:semicolon
-id|RETURN_EIO
+r_return
+op_minus
+id|EIO
 suffix:semicolon
 )brace
 r_if
@@ -6660,7 +6648,9 @@ c_func
 l_string|&quot;optcd: cannot init double speed mode&bslash;n&quot;
 )paren
 suffix:semicolon
-id|RETURN_EIO
+r_return
+op_minus
+id|EIO
 suffix:semicolon
 )brace
 r_if
@@ -6688,7 +6678,9 @@ comma
 id|MAJOR_NR
 )paren
 suffix:semicolon
-id|RETURN_EIO
+r_return
+op_minus
+id|EIO
 suffix:semicolon
 )brace
 id|blk_dev
@@ -6729,15 +6721,9 @@ comma
 id|optcd_port
 )paren
 suffix:semicolon
-macro_line|#ifndef MODULE
-r_return
-id|mem_start
-suffix:semicolon
-macro_line|#else
 r_return
 l_int|0
 suffix:semicolon
-macro_line|#endif
 )brace
 macro_line|#ifdef MODULE
 DECL|function|cleanup_module

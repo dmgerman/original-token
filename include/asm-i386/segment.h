@@ -313,7 +313,7 @@ c_func
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * These are depracated..&n; */
+multiline_comment|/*&n; * These are deprecated..&n; */
 DECL|function|get_user_byte
 r_static
 r_inline

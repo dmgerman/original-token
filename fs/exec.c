@@ -506,6 +506,12 @@ r_struct
 id|user
 id|dump
 suffix:semicolon
+macro_line|#ifdef __alpha__
+DECL|macro|START_DATA
+macro_line|#       define START_DATA(u)&t;(u.start_data)
+macro_line|#else
+macro_line|#       define START_DATA(u)&t;(u.u_tsize &lt;&lt; PAGE_SHIFT)
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -730,8 +736,7 @@ suffix:semicolon
 id|dump.u_ar0
 op_assign
 (paren
-r_struct
-id|pt_regs
+r_void
 op_star
 )paren
 (paren
@@ -838,10 +843,10 @@ comma
 r_void
 op_star
 )paren
+id|START_DATA
+c_func
 (paren
-id|dump.u_tsize
-op_lshift
-id|PAGE_SHIFT
+id|dump
 )paren
 comma
 id|dump.u_dsize
@@ -920,9 +925,11 @@ l_int|0
 (brace
 id|dump_start
 op_assign
-id|dump.u_tsize
-op_lshift
-id|PAGE_SHIFT
+id|START_DATA
+c_func
+(paren
+id|dump
+)paren
 suffix:semicolon
 id|dump_size
 op_assign
@@ -2018,38 +2025,14 @@ id|page
 (brace
 r_int
 r_int
-id|code_limit
-comma
-id|data_limit
-comma
-id|code_base
-comma
 id|data_base
 suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-id|code_limit
-op_assign
-id|STACK_TOP
-suffix:semicolon
-id|data_limit
-op_assign
-id|STACK_TOP
-suffix:semicolon
-id|code_base
-op_assign
 id|data_base
 op_assign
-l_int|0
-suffix:semicolon
-id|current-&gt;mm-&gt;start_code
-op_assign
-id|code_base
-suffix:semicolon
-id|data_base
-op_add_assign
-id|data_limit
+id|STACK_TOP
 suffix:semicolon
 r_for
 c_loop
@@ -2100,7 +2083,7 @@ suffix:semicolon
 )brace
 )brace
 r_return
-id|data_limit
+id|STACK_TOP
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Read in the complete executable. This is used for &quot;-N&quot; files&n; * that aren&squot;t on a block boundary, and for files on filesystems&n; * without bmap support.&n; */

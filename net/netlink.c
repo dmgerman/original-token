@@ -109,6 +109,31 @@ op_minus
 id|EUNATCH
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;Exported do nothing receiver for one way&n; *&t;interfaces.&n; */
+DECL|function|netlink_donothing
+r_int
+id|netlink_donothing
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+)paren
+(brace
+id|kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|FREE_READ
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
 multiline_comment|/*&n; *&t;Write a message to the kernel side of a communication link&n; */
 DECL|function|netlink_write
 r_static
@@ -716,7 +741,21 @@ id|flags
 suffix:semicolon
 r_int
 id|ret
+op_assign
+l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|open_map
+op_amp
+(paren
+l_int|1
+op_lshift
+id|unit
+)paren
+)paren
+(brace
 id|save_flags
 c_func
 (paren
@@ -778,7 +817,7 @@ c_func
 op_amp
 id|read_space_wait
 (braket
-id|MAX_LINKS
+id|unit
 )braket
 )paren
 suffix:semicolon
@@ -789,6 +828,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+)brace
 r_return
 id|ret
 suffix:semicolon
@@ -816,7 +856,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Network Kernel/User communications module 0.01 ALPHA&bslash;n&quot;
+l_string|&quot;Network Kernel/User communications module 0.03&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if

@@ -59,6 +59,12 @@ DECL|macro|VC_CTRLLLOCK
 mdefine_line|#define VC_CTRLLLOCK&t;KG_CTRLL &t;/* ctrll lock mode */
 DECL|macro|VC_CTRLRLOCK
 mdefine_line|#define VC_CTRLRLOCK&t;KG_CTRLR &t;/* ctrlr lock mode */
+DECL|member|slockstate
+r_int
+r_char
+id|slockstate
+suffix:semicolon
+multiline_comment|/* for `sticky&squot; Shift, Ctrl, etc. */
 DECL|member|ledmode
 r_int
 r_char
@@ -138,12 +144,10 @@ id|kbd_table
 suffix:semicolon
 r_extern
 r_int
-r_int
 id|kbd_init
 c_func
 (paren
-r_int
-r_int
+r_void
 )paren
 suffix:semicolon
 r_extern
@@ -358,6 +362,29 @@ id|flag
 )paren
 (brace
 id|kbd-&gt;lockstate
+op_xor_assign
+l_int|1
+op_lshift
+id|flag
+suffix:semicolon
+)brace
+DECL|function|chg_vc_kbd_slock
+r_extern
+r_inline
+r_void
+id|chg_vc_kbd_slock
+c_func
+(paren
+r_struct
+id|kbd_struct
+op_star
+id|kbd
+comma
+r_int
+id|flag
+)paren
+(brace
+id|kbd-&gt;slockstate
 op_xor_assign
 l_int|1
 op_lshift

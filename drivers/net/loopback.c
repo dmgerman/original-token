@@ -326,11 +326,18 @@ id|dev
 r_int
 id|i
 suffix:semicolon
+macro_line|#ifdef CONFIG_SKB_LARGE
 id|dev-&gt;mtu
 op_assign
-l_int|2000
+l_int|7900
 suffix:semicolon
 multiline_comment|/* MTU&t;&t;&t;*/
+macro_line|#else
+id|dev-&gt;mtu
+op_assign
+l_int|3800
+suffix:semicolon
+macro_line|#endif&t;
 id|dev-&gt;tbusy
 op_assign
 l_int|0

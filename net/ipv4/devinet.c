@@ -202,6 +202,7 @@ id|dev-&gt;next
 r_if
 c_cond
 (paren
+(paren
 op_logical_neg
 (paren
 id|dev-&gt;flags
@@ -209,18 +210,20 @@ op_amp
 id|IFF_UP
 )paren
 )paren
+op_logical_or
+id|dev-&gt;family
+op_ne
+id|AF_INET
+)paren
 r_continue
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; *&t;If the protocol address of the device is 0 this is special&n;&t;&t; *&t;and means we are address hunting (eg bootp).&n;&t;&t; */
 r_if
 c_cond
 (paren
-(paren
 id|dev-&gt;pa_addr
 op_eq
 l_int|0
-)paren
-multiline_comment|/* || (dev-&gt;flags&amp;IFF_PROMISC)*/
 )paren
 r_return
 id|IS_MYADDR

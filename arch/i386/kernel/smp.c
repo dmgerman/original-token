@@ -1327,6 +1327,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t;&t;&t;&t; *&t;Read the physical hardware table. If there isn&squot;t one&n;&t;&t;&t;&t; *&t;the processors present are 0 and 1.&n;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1344,6 +1345,11 @@ id|mpf-&gt;mpf_physptr
 )paren
 suffix:semicolon
 )brace
+r_else
+id|cpu_present_map
+op_assign
+l_int|3
+suffix:semicolon
 id|printk
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Global definitions for the IP router interface.&n; *&n; * Version:&t;@(#)route.h&t;1.0.3&t;05/27/93&n; *&n; * Authors:&t;Original taken from Berkeley UNIX 4.3, (c) UCB 1986-1988&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Global definitions for the IP router interface.&n; *&n; * Version:&t;@(#)route.h&t;1.0.3&t;05/27/93&n; *&n; * Authors:&t;Original taken from Berkeley UNIX 4.3, (c) UCB 1986-1988&n; *&t;&t;for the purposes of compatibility only.&n; *&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#ifndef _LINUX_ROUTE_H
 DECL|macro|_LINUX_ROUTE_H
 mdefine_line|#define _LINUX_ROUTE_H
@@ -102,5 +102,55 @@ DECL|macro|RTF_IRTT
 mdefine_line|#define RTF_IRTT&t;0x0100&t;&t;/* Initial round trip time&t;  */
 DECL|macro|RTF_REJECT
 mdefine_line|#define RTF_REJECT&t;0x0200&t;&t;/* Reject route&t;&t;&t;  */
+multiline_comment|/*&n; *&t;This structure is passed from the kernel to user space by netlink&n; *&t;routing/device announcements&n; */
+DECL|struct|netlink_rtinfo
+r_struct
+id|netlink_rtinfo
+(brace
+DECL|member|rtmsg_type
+r_int
+r_int
+id|rtmsg_type
+suffix:semicolon
+DECL|member|rtmsg_dst
+r_struct
+id|sockaddr
+id|rtmsg_dst
+suffix:semicolon
+DECL|member|rtmsg_gateway
+r_struct
+id|sockaddr
+id|rtmsg_gateway
+suffix:semicolon
+DECL|member|rtmsg_genmask
+r_struct
+id|sockaddr
+id|rtmsg_genmask
+suffix:semicolon
+DECL|member|rtmsg_flags
+r_int
+id|rtmsg_flags
+suffix:semicolon
+DECL|member|rtmsg_metric
+r_int
+id|rtmsg_metric
+suffix:semicolon
+DECL|member|rtmsg_device
+r_char
+id|rtmsg_device
+(braket
+l_int|16
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|macro|RTMSG_NEWROUTE
+mdefine_line|#define RTMSG_NEWROUTE&t;&t;0x01
+DECL|macro|RTMSG_DELROUTE
+mdefine_line|#define RTMSG_DELROUTE&t;&t;0x02
+DECL|macro|RTMSG_NEWDEVICE
+mdefine_line|#define RTMSG_NEWDEVICE&t;&t;0x11
+DECL|macro|RTMSG_DELDEVICE
+mdefine_line|#define RTMSG_DELDEVICE&t;&t;0x12
 macro_line|#endif&t;/* _LINUX_ROUTE_H */
 eof

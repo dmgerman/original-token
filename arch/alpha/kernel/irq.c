@@ -2684,7 +2684,7 @@ suffix:semicolon
 r_case
 l_int|3
 suffix:colon
-macro_line|#if defined(CONFIG_ALPHA_JENSEN) || defined(CONFIG_ALPHA_NONAME)
+macro_line|#if defined(CONFIG_ALPHA_JENSEN) || defined(CONFIG_ALPHA_NONAME) || &bslash;&n;    defined(CONFIG_ALPHA_SRM)
 id|srm_device_interrupt
 c_func
 (paren

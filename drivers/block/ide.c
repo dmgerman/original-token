@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
+macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
@@ -1163,6 +1164,23 @@ id|hwif-&gt;drives
 id|unit
 )braket
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_IDECD
+r_if
+c_cond
+(paren
+id|drive-&gt;present
+op_logical_and
+id|drive-&gt;media
+op_eq
+id|cdrom
+)paren
+id|ide_cdrom_setup
+c_func
+(paren
+id|drive
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_IDECD */
 id|drive-&gt;part
 (braket
 l_int|0
@@ -1211,129 +1229,6 @@ dot
 id|name
 suffix:semicolon
 multiline_comment|/* name of first drive */
-)brace
-multiline_comment|/*&n; * ide_alloc(): memory allocation for use *only* during driver initialization.&n; * If &quot;within_area&quot; is non-zero, the memory will be allocated such that&n; * it lies entirely within a &quot;within_area&quot; sized area (eg. 4096).  This is&n; * needed for DMA stuff.  &quot;within_area&quot; must be a power of two (not validated).&n; * All allocations are longword aligned.&n; */
-DECL|variable|ide_mem_start
-r_static
-r_int
-r_int
-id|ide_mem_start
-op_assign
-l_int|0uL
-suffix:semicolon
-multiline_comment|/* used by ide_alloc() */
-DECL|function|ide_alloc
-r_void
-op_star
-id|ide_alloc
-(paren
-r_int
-r_int
-id|bytecount
-comma
-r_int
-r_int
-id|within_area
-)paren
-(brace
-r_const
-r_int
-r_int
-id|longsize_m1
-op_assign
-(paren
-r_sizeof
-(paren
-r_int
-)paren
-op_minus
-l_int|1
-)paren
-suffix:semicolon
-r_void
-op_star
-id|p
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|ide_mem_start
-)paren
-id|panic
-c_func
-(paren
-l_string|&quot;ide: ide_alloc() not valid now&bslash;n&quot;
-)paren
-suffix:semicolon
-id|ide_mem_start
-op_assign
-(paren
-id|ide_mem_start
-op_plus
-id|longsize_m1
-)paren
-op_amp
-op_complement
-id|longsize_m1
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|within_area
-)paren
-(brace
-r_int
-r_int
-id|fraction
-op_assign
-id|within_area
-op_minus
-(paren
-id|ide_mem_start
-op_amp
-(paren
-id|within_area
-op_minus
-l_int|1
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|fraction
-OL
-id|bytecount
-)paren
-id|ide_mem_start
-op_add_assign
-id|fraction
-suffix:semicolon
-multiline_comment|/* realign to a new page */
-)brace
-id|p
-op_assign
-(paren
-r_void
-op_star
-)paren
-id|ide_mem_start
-suffix:semicolon
-id|ide_mem_start
-op_add_assign
-(paren
-id|bytecount
-op_plus
-id|longsize_m1
-)paren
-op_amp
-op_complement
-id|longsize_m1
-suffix:semicolon
-r_return
-id|p
-suffix:semicolon
 )brace
 multiline_comment|/*&n; * init_gendisk() (as opposed to ide_geninit) is called for each major device,&n; * after probing for drives, to allocate partition tables and other data&n; * structures needed for the routines in genhd.c.  ide_geninit() gets called&n; * somewhat later, during the partition check.&n; */
 DECL|function|init_gendisk
@@ -1406,7 +1301,7 @@ id|PARTN_BITS
 suffix:semicolon
 id|gd
 op_assign
-id|ide_alloc
+id|kmalloc
 (paren
 r_sizeof
 (paren
@@ -1414,12 +1309,12 @@ r_struct
 id|gendisk
 )paren
 comma
-l_int|0
+id|GFP_KERNEL
 )paren
 suffix:semicolon
 id|gd-&gt;sizes
 op_assign
-id|ide_alloc
+id|kmalloc
 (paren
 id|minors
 op_star
@@ -1428,12 +1323,12 @@ r_sizeof
 r_int
 )paren
 comma
-l_int|0
+id|GFP_KERNEL
 )paren
 suffix:semicolon
 id|gd-&gt;part
 op_assign
-id|ide_alloc
+id|kmalloc
 (paren
 id|minors
 op_star
@@ -1443,12 +1338,12 @@ r_struct
 id|hd_struct
 )paren
 comma
-l_int|0
+id|GFP_KERNEL
 )paren
 suffix:semicolon
 id|bs
 op_assign
-id|ide_alloc
+id|kmalloc
 (paren
 id|minors
 op_star
@@ -1457,7 +1352,7 @@ r_sizeof
 r_int
 )paren
 comma
-l_int|0
+id|GFP_KERNEL
 )paren
 suffix:semicolon
 multiline_comment|/* cdroms and msdos f/s are examples of non-1024 blocksizes */
@@ -8554,13 +8449,13 @@ id|id
 op_assign
 id|drive-&gt;id
 op_assign
-id|ide_alloc
+id|kmalloc
 (paren
 id|SECTOR_WORDS
 op_star
 l_int|4
 comma
-l_int|0
+id|GFP_KERNEL
 )paren
 suffix:semicolon
 id|ide_input_data
@@ -10119,23 +10014,6 @@ id|probe_for_drive
 id|drive
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_BLK_DEV_IDECD
-r_if
-c_cond
-(paren
-id|drive-&gt;present
-op_logical_and
-id|drive-&gt;media
-op_eq
-id|cdrom
-)paren
-id|ide_cdrom_setup
-c_func
-(paren
-id|drive
-)paren
-suffix:semicolon
-macro_line|#endif /* CONFIG_BLK_DEV_IDECD */
 )brace
 r_for
 c_loop
@@ -12012,14 +11890,14 @@ l_int|NULL
 (brace
 id|hwgroup
 op_assign
-id|ide_alloc
+id|kmalloc
 (paren
 r_sizeof
 (paren
 id|ide_hwgroup_t
 )paren
 comma
-l_int|0
+id|GFP_KERNEL
 )paren
 suffix:semicolon
 id|irq_to_hwgroup
@@ -12762,26 +12640,14 @@ macro_line|#endif /* CONFIG_PCI */
 multiline_comment|/*&n; * This is gets invoked once during initialization, to set *everything* up&n; */
 DECL|function|ide_init
 r_int
-r_int
 id|ide_init
 (paren
-r_int
-r_int
-id|mem_start
-comma
-r_int
-r_int
-id|mem_end
+r_void
 )paren
 (brace
 r_int
 id|h
 suffix:semicolon
-id|ide_mem_start
-op_assign
-id|mem_start
-suffix:semicolon
-multiline_comment|/* for ide_alloc () */
 id|init_ide_data
 (paren
 )paren
@@ -13182,17 +13048,8 @@ suffix:semicolon
 multiline_comment|/* success */
 )brace
 )brace
-id|mem_start
-op_assign
-id|ide_mem_start
-suffix:semicolon
-id|ide_mem_start
-op_assign
-l_int|0uL
-suffix:semicolon
-multiline_comment|/* prevent further use of ide_alloc() */
 r_return
-id|mem_start
+l_int|0
 suffix:semicolon
 )brace
 eof

@@ -18,6 +18,7 @@ macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &quot;ide.h&quot;
 multiline_comment|/*&n; * good_dma_drives() lists the model names (from &quot;hdparm -i&quot;)&n; * of drives which do not support mword2 DMA but which are&n; * known to work fine with this interface under Linux.&n; */
 DECL|variable|good_dma_drives
@@ -1206,19 +1207,16 @@ id|base
 suffix:semicolon
 id|table
 op_assign
-id|ide_alloc
+(paren
+r_void
+op_star
+)paren
+id|__get_dma_pages
 c_func
 (paren
-l_int|2
-op_star
-id|PRD_ENTRIES
-op_star
-r_sizeof
-(paren
-r_int
-)paren
+id|GFP_KERNEL
 comma
-l_int|4096
+l_int|0
 )paren
 suffix:semicolon
 id|hwif-&gt;dmatable
@@ -1228,11 +1226,11 @@ suffix:semicolon
 id|outl
 c_func
 (paren
+id|virt_to_bus
+c_func
 (paren
-r_int
-r_int
-)paren
 id|table
+)paren
 comma
 id|base
 op_plus

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IP multicast routing support for mrouted 3.6&n; *&n; *&t;&t;(c) 1995 Alan Cox, &lt;alan@cymru.net&gt;&n; *&t;  Linux Consultancy and Custom Driver Development&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&n; *&t;Fixes:&n; *&t;Michael Chastain&t;:&t;Incorrect size of copying.&n; *&t;Alan Cox&t;&t;:&t;Added the cache manager code&n; *&n; *&t;Status:&n; *&t;&t;Cache manager under test. Forwarding in vague test mode&n; *&t;Todo:&n; *&t;&t;Flow control&n; *&t;&t;Tunnels&n; *&t;&t;Wipe cache on mrouted exit&n; *&t;&t;Debug cache ttl handling properly&n; *&t;&t;Resolve IFF_ALLMULTI for most cards&n; */
+multiline_comment|/*&n; *&t;IP multicast routing support for mrouted 3.6&n; *&n; *&t;&t;(c) 1995 Alan Cox, &lt;alan@cymru.net&gt;&n; *&t;  Linux Consultancy and Custom Driver Development&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&n; *&t;Fixes:&n; *&t;Michael Chastain&t;:&t;Incorrect size of copying.&n; *&t;Alan Cox&t;&t;:&t;Added the cache manager code&n; *&n; *&t;Status:&n; *&t;&t;Cache manager under test. Forwarding in vague test mode&n; *&t;Todo:&n; *&t;&t;Flow control&n; *&t;&t;Finish Tunnels&n; *&t;&t;Debug cache ttl handling properly&n; *&t;&t;Resolve IFF_ALLMULTI for rest of cards&n; */
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -3385,7 +3385,7 @@ r_void
 id|printk
 c_func
 (paren
-l_string|&quot;Linux IP multicast router 0.02pre-working 8)&bslash;n&quot;
+l_string|&quot;Linux IP multicast router 0.04-might-work 8)&bslash;n&quot;
 )paren
 suffix:semicolon
 id|register_netdevice_notifier

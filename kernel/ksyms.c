@@ -1321,6 +1321,12 @@ comma
 id|X
 c_func
 (paren
+id|eth_copy_and_sum
+)paren
+comma
+id|X
+c_func
+(paren
 id|alloc_skb
 )paren
 comma

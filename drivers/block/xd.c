@@ -398,14 +398,10 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* xd_init: register the block device number and set up pointer tables */
 DECL|function|xd_init
-id|u_long
+r_int
 id|xd_init
 (paren
-id|u_long
-id|mem_start
-comma
-id|u_long
-id|mem_end
+r_void
 )paren
 (brace
 r_if
@@ -432,9 +428,8 @@ id|MAJOR_NR
 )paren
 suffix:semicolon
 r_return
-(paren
-id|mem_start
-)paren
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 id|blk_dev
@@ -464,7 +459,7 @@ op_amp
 id|xd_gendisk
 suffix:semicolon
 r_return
-id|mem_start
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* xd_detect: scan the possible BIOS ROM locations for the signature strings */

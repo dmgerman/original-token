@@ -134,10 +134,6 @@ id|device
 op_star
 comma
 r_int
-comma
-r_int
-r_int
-op_star
 )paren
 suffix:semicolon
 macro_line|#endif

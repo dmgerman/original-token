@@ -5586,18 +5586,11 @@ suffix:semicolon
 multiline_comment|/*&n; * Test for presence of drive and initialize it. Called at boot time.&n; * Probe cdrom, find out version and status.&n; */
 DECL|function|sjcd_init
 r_int
-r_int
 (def_block
 id|sjcd_init
 c_func
 (paren
-r_int
-r_int
-id|mem_start
-comma
-r_int
-r_int
-id|mem_end
+r_void
 )paren
 (brace
 r_int
@@ -5681,7 +5674,8 @@ l_string|&quot;ISP16 cdrom interface has not been properly configured.&bslash;n&
 )paren
 suffix:semicolon
 r_return
-id|mem_start
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 )brace
@@ -5711,7 +5705,8 @@ id|MAJOR_NR
 )paren
 suffix:semicolon
 r_return
-id|mem_start
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 id|blk_dev
@@ -5751,7 +5746,8 @@ id|sjcd_port
 )paren
 suffix:semicolon
 r_return
-id|mem_start
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 id|printk
@@ -5814,7 +5810,8 @@ id|sjcd_port
 )paren
 suffix:semicolon
 r_return
-id|mem_start
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 id|sjcd_send_cmd
@@ -5906,7 +5903,8 @@ l_string|&quot; Read version failed.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-id|mem_start
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n;   * Check and print out the tray state. (if it is needed?).&n;   */
@@ -5954,7 +5952,7 @@ id|sjcd_present
 op_increment
 suffix:semicolon
 r_return
-id|mem_start
+l_int|0
 suffix:semicolon
 )brace
 )def_block

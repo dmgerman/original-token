@@ -420,15 +420,6 @@ id|IFF_RUNNING
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; *&t;Initialise multicasting status &n;&t;&t; */
-macro_line|#ifdef CONFIG_IP_MULTICAST
-multiline_comment|/* &n;&t;&t; *&t;Join the all host group &n;&t;&t; */
-id|ip_mc_allhost
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-macro_line|#endif&t;&t;&t;&t;
 id|dev_mc_upload
 c_func
 (paren
@@ -788,7 +779,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-multiline_comment|/*dev_nit &amp;&amp; */
 op_logical_neg
 id|where
 )paren
@@ -3655,9 +3645,33 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; *&t;Initialize the DEV module. At boot time this walks the device list and&n; *&t;unhooks any devices that fail to initialise (normally hardware not &n; *&t;present) and leaves us with a valid list of present and active devices.&n; *&n; */
-DECL|function|dev_init
+r_extern
+r_int
+id|lance_init
+c_func
+(paren
 r_void
-id|dev_init
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|pi_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|dec21040_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+DECL|function|net_dev_init
+r_int
+id|net_dev_init
 c_func
 (paren
 r_void
@@ -3672,6 +3686,28 @@ op_star
 op_star
 id|dp
 suffix:semicolon
+multiline_comment|/*&n;&t; * This is VeryUgly(tm).&n;&t; *&n;&t; * Some devices want to be initialized eary..&n;&t; */
+macro_line|#if defined(CONFIG_LANCE)
+id|lance_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#if defined(CONFIG_PI)
+id|pi_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif&t;
+macro_line|#if defined(CONFIG_DEC_ELCP)
+id|dec21040_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif&t;
 multiline_comment|/*&n;&t; *&t;Add the devices.&n;&t; *&t;If the call to dev-&gt;init fails, the dev is removed&n;&t; *&t;from the chain disconnecting the device until the&n;&t; *&t;next reboot.&n;&t; */
 id|dp
 op_assign
@@ -3781,6 +3817,24 @@ comma
 id|dev_get_info
 )brace
 )paren
+suffix:semicolon
+id|bh_base
+(braket
+id|NET_BH
+)braket
+dot
+id|routine
+op_assign
+id|net_bh
+suffix:semicolon
+id|enable_bh
+c_func
+(paren
+id|NET_BH
+)paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 eof

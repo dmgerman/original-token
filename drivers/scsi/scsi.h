@@ -388,14 +388,9 @@ suffix:semicolon
 multiline_comment|/*&n; *  Initializes all SCSI devices.  This scans all scsi busses.&n; */
 r_extern
 r_int
-r_int
 id|scsi_dev_init
 (paren
-r_int
-r_int
-comma
-r_int
-r_int
+r_void
 )paren
 suffix:semicolon
 DECL|struct|scatterlist

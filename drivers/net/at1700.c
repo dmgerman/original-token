@@ -652,8 +652,6 @@ r_sizeof
 r_struct
 id|net_local
 )paren
-comma
-l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* Grab the region so that we can find another board if the IRQ request&n;&t;   fails. */
@@ -2698,6 +2696,11 @@ c_cond
 id|num_addrs
 )paren
 (brace
+multiline_comment|/*&n;&t;&t; *&t;We must make the kernel realise we had to move&n;&t;&t; *&t;into promisc mode or we start all out war on&n;&t;&t; *&t;the cable. - AC&n;&t;&t; */
+id|dev-&gt;flags
+op_or_assign
+id|IFF_PROMISC
+suffix:semicolon
 id|outb
 c_func
 (paren

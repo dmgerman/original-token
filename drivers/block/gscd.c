@@ -298,11 +298,7 @@ r_static
 r_int
 id|my_gscd_init
 (paren
-r_int
-r_int
-comma
-r_int
-r_int
+r_void
 )paren
 suffix:semicolon
 multiline_comment|/*      lo-level cmd-Funktionen    */
@@ -2965,14 +2961,11 @@ r_void
 r_int
 id|err
 suffix:semicolon
-multiline_comment|/* call the GoldStar-init with dummys */
+multiline_comment|/* call the GoldStar-init */
 id|err
 op_assign
 id|my_gscd_init
 (paren
-l_int|10
-comma
-l_int|20
 )paren
 suffix:semicolon
 r_if
@@ -2984,8 +2977,7 @@ l_int|0
 )paren
 (brace
 r_return
-op_minus
-id|EIO
+id|err
 suffix:semicolon
 )brace
 r_else
@@ -3067,38 +3059,14 @@ macro_line|#endif
 multiline_comment|/* Test for presence of drive and initialize it.  Called only at boot time. */
 DECL|function|gscd_init
 r_int
-r_int
 id|gscd_init
 (paren
-r_int
-r_int
-id|mem_start
-comma
-r_int
-r_int
-id|mem_end
+r_void
 )paren
 (brace
-r_int
-r_int
-id|err
-suffix:semicolon
-id|err
-op_assign
+r_return
 id|my_gscd_init
 (paren
-id|mem_start
-comma
-id|mem_end
-)paren
-suffix:semicolon
-r_return
-(paren
-id|labs
-c_func
-(paren
-id|err
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -3108,13 +3076,7 @@ DECL|function|my_gscd_init
 r_int
 id|my_gscd_init
 (paren
-r_int
-r_int
-id|mem_start
-comma
-r_int
-r_int
-id|mem_end
+r_void
 )paren
 (brace
 r_int
@@ -3159,7 +3121,7 @@ id|gscd_port
 suffix:semicolon
 r_return
 op_minus
-id|mem_start
+id|EIO
 suffix:semicolon
 )brace
 multiline_comment|/* check for card */
@@ -3184,7 +3146,7 @@ l_string|&quot;GSCD: DMA kann ich noch nicht!&bslash;n&quot;
 suffix:semicolon
 r_return
 op_minus
-id|mem_start
+id|EIO
 suffix:semicolon
 )brace
 r_if
@@ -3220,7 +3182,7 @@ l_string|&quot;GSCD: GoldStar CD-ROM Drive is not found.&bslash;n&quot;
 suffix:semicolon
 r_return
 op_minus
-id|mem_start
+id|EIO
 suffix:semicolon
 )brace
 )brace
@@ -3247,7 +3209,7 @@ l_string|&quot;GSCD: GoldStar Interface Adapter does not exist or H/W error&bsla
 suffix:semicolon
 r_return
 op_minus
-id|mem_start
+id|EIO
 suffix:semicolon
 )brace
 multiline_comment|/* reset all drives */
@@ -3320,7 +3282,7 @@ id|MAJOR_NR
 suffix:semicolon
 r_return
 op_minus
-id|mem_start
+id|EIO
 suffix:semicolon
 )brace
 id|blk_dev
@@ -3363,7 +3325,7 @@ l_string|&quot;GSCD: GoldStar CD-ROM Drive found.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-id|mem_start
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|gscd_hsg2msf

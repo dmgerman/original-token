@@ -9,13 +9,12 @@ DECL|macro|MS_BUSMOUSE_MINOR
 mdefine_line|#define MS_BUSMOUSE_MINOR 2
 DECL|macro|ATIXL_BUSMOUSE_MINOR
 mdefine_line|#define ATIXL_BUSMOUSE_MINOR 3
-r_int
+r_extern
 r_int
 id|mouse_init
 c_func
 (paren
-r_int
-r_int
+r_void
 )paren
 suffix:semicolon
 DECL|struct|mouse

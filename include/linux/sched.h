@@ -32,6 +32,8 @@ DECL|macro|CLONE_FILES
 mdefine_line|#define CLONE_FILES&t;0x00000400&t;/* set if open files shared between processes */
 DECL|macro|CLONE_SIGHAND
 mdefine_line|#define CLONE_SIGHAND&t;0x00000800&t;/* set if signal handlers shared */
+DECL|macro|CLONE_PID
+mdefine_line|#define CLONE_PID&t;0x00001000&t;/* set if pid shared */
 multiline_comment|/*&n; * These are the constant used to fake the fixed-point load-average&n; * counting. Some notes:&n; *  - 11 bit fractions expand to 22 bits by the multiplies: this gives&n; *    a load-average precision of 10 bits integer + 11 bits fractional&n; *  - if you want to count load-averages more often, you need more&n; *    precision, or rounding will get you. With 2-second counting freq,&n; *    the EXP_n values would be 1981, 2034 and 2043 if still using only&n; *    11 bit fractions.&n; */
 r_extern
 r_int

@@ -1123,8 +1123,7 @@ r_int
 id|scc_init
 c_func
 (paren
-r_int
-id|kmem_start
+r_void
 )paren
 suffix:semicolon
 eof

@@ -2,6 +2,16 @@ multiline_comment|/*&n; * Logitech Bus Mouse Driver for Linux&n; * by James Bank
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
+DECL|variable|kernel_version
+r_char
+id|kernel_version
+(braket
+)braket
+op_assign
+id|UTS_RELEASE
+suffix:semicolon
+DECL|macro|bus_mouse_init
+mdefine_line|#define bus_mouse_init init_module
 macro_line|#else
 DECL|macro|MOD_INC_USE_COUNT
 mdefine_line|#define MOD_INC_USE_COUNT
@@ -353,7 +363,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * close access to the mouse (can deal with multiple&n; * opens if allowed in the future)&n; */
+multiline_comment|/*&n; * close access to the mouse&n; */
 DECL|function|close_mouse
 r_static
 r_void
@@ -371,15 +381,24 @@ op_star
 id|file
 )paren
 (brace
+id|fasync_mouse
+c_func
+(paren
+id|inode
+comma
+id|file
+comma
+l_int|0
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
 op_decrement
 id|mouse.active
-op_eq
-l_int|0
 )paren
-(brace
+r_return
+suffix:semicolon
 id|MSE_INT_OFF
 c_func
 (paren
@@ -391,19 +410,10 @@ c_func
 id|mouse_irq
 )paren
 suffix:semicolon
-)brace
-id|fasync_mouse
-c_func
-(paren
-id|inode
-comma
-id|file
-comma
-l_int|0
-)paren
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * open access to the mouse, currently only one open is&n; * allowed.&n; */
+multiline_comment|/*&n; * open access to the mouse&n; */
 DECL|function|open_mouse
 r_static
 r_int
@@ -435,26 +445,10 @@ r_if
 c_cond
 (paren
 id|mouse.active
+op_increment
 )paren
 r_return
-op_minus
-id|EBUSY
-suffix:semicolon
-id|mouse.ready
-op_assign
 l_int|0
-suffix:semicolon
-id|mouse.dx
-op_assign
-l_int|0
-suffix:semicolon
-id|mouse.dy
-op_assign
-l_int|0
-suffix:semicolon
-id|mouse.buttons
-op_assign
-l_int|0x87
 suffix:semicolon
 r_if
 c_cond
@@ -471,13 +465,32 @@ comma
 l_string|&quot;Busmouse&quot;
 )paren
 )paren
+(brace
+id|mouse.active
+op_decrement
+suffix:semicolon
 r_return
 op_minus
 id|EBUSY
 suffix:semicolon
-id|mouse.active
+)brace
+id|mouse.ready
 op_assign
-l_int|1
+l_int|0
+suffix:semicolon
+id|mouse.dx
+op_assign
+l_int|0
+suffix:semicolon
+id|mouse.dy
+op_assign
+l_int|0
+suffix:semicolon
+id|mouse.buttons
+op_assign
+l_int|0x87
+suffix:semicolon
+id|MOD_INC_USE_COUNT
 suffix:semicolon
 id|MSE_INT_ON
 c_func
@@ -745,7 +758,7 @@ r_return
 id|r
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * select for mouse input, must disable the mouse interrupt while checking&n; * mouse.ready/select_wait() to avoid race condition (though in reality&n; * such a condition is not fatal to the proper operation of the mouse since&n; * multiple interrupts generally occur).&n; */
+multiline_comment|/*&n; * select for mouse input&n; */
 DECL|function|mouse_select
 r_static
 r_int
@@ -770,11 +783,6 @@ op_star
 id|wait
 )paren
 (brace
-r_int
-id|r
-op_assign
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -783,24 +791,14 @@ op_eq
 id|SEL_IN
 )paren
 (brace
-id|MSE_INT_OFF
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
 id|mouse.ready
 )paren
-(brace
-id|r
-op_assign
+r_return
 l_int|1
 suffix:semicolon
-)brace
-r_else
-(brace
 id|select_wait
 c_func
 (paren
@@ -811,14 +809,8 @@ id|wait
 )paren
 suffix:semicolon
 )brace
-id|MSE_INT_ON
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
 r_return
-id|r
+l_int|0
 suffix:semicolon
 )brace
 DECL|variable|bus_mouse_fops
@@ -871,33 +863,13 @@ op_amp
 id|bus_mouse_fops
 )brace
 suffix:semicolon
-macro_line|#ifdef MODULE
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
-r_void
-)paren
-macro_line|#else
-r_int
+DECL|function|bus_mouse_init
 r_int
 id|bus_mouse_init
 c_func
 (paren
-r_int
-r_int
-id|kmem_start
+r_void
 )paren
-macro_line|#endif
 (brace
 r_int
 id|i
@@ -950,16 +922,10 @@ id|mouse.present
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef MODULE
 r_return
 op_minus
 id|EIO
 suffix:semicolon
-macro_line|#else
-r_return
-id|kmem_start
-suffix:semicolon
-macro_line|#endif
 )brace
 id|outb
 c_func
@@ -1017,15 +983,9 @@ op_amp
 id|bus_mouse
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
 r_return
 l_int|0
 suffix:semicolon
-macro_line|#else
-r_return
-id|kmem_start
-suffix:semicolon
-macro_line|#endif
 )brace
 macro_line|#ifdef MODULE
 DECL|function|cleanup_module

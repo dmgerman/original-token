@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IP firewalling code. This is taken from 4.4BSD. Please note the &n; *&t;copyright message below. As per the GPL it must be maintained&n; *&t;and the licenses thus do not conflict. While this port is subject&n; *&t;to the GPL I also place my modifications under the original &n; *&t;license in recognition of the original copyright. &n; *&t;&t;&t;&t;-- Alan Cox.&n; *&n; *&t;Ported from BSD to Linux,&n; *&t;&t;Alan Cox 22/Nov/1994.&n; *&t;Zeroing /proc and other additions&n; *&t;&t;Jos Vos 4/Feb/1995.&n; *&t;Merged and included the FreeBSD-Current changes at Ugen&squot;s request&n; *&t;(but hey it&squot;s a lot cleaner now). Ugen would prefer in some ways&n; *&t;we waited for his final product but since Linux 1.2.0 is about to&n; *&t;appear it&squot;s not practical - Read: It works, it&squot;s not clean but please&n; *&t;don&squot;t consider it to be his standard of finished work.&n; *&t;&t;Alan Cox 12/Feb/1995&n; *&t;Porting bidirectional entries from BSD, fixing accounting issues,&n; *&t;adding struct ip_fwpkt for checking packets with interface address&n; *&t;&t;Jos Vos 5/Mar/1995.&n; *&t;Established connections (ACK check), ACK check on bidirectional rules,&n; *&t;ICMP type check.&n; *&t;&t;Wilfred Mollenvanger 7/7/1995.&n; *&t;TCP attack protection.&n; *&t;&t;Alan Cox 25/8/95, based on information from bugtraq.&n; *&n; * Masquerading functionality&n; *&n; * Copyright (c) 1994 Pauline Middelink&n; *&n; * The pieces which added masquerading functionality are totaly&n; * my responsibility and have nothing to with the original authors&n; * copyright or doing.&n; *&n; * Parts distributed under GPL.&n; *&n; * Fixes:&n; *&t;Pauline Middelink&t;:&t;Added masquerading.&n; *&t;Alan Cox&t;&t;:&t;Fixed an error in the merge.&n; *&t;Thomas Quinot&t;&t;:&t;Fixed port spoofing.&n; *&t;Alan Cox&t;&t;:&t;Cleaned up retransmits in spoofing.&n; *&t;Alan Cox&t;&t;:&t;Cleaned up length setting.&n; *&n; *&t;All the real work was done by .....&n; *&n; */
+multiline_comment|/*&n; *&t;IP firewalling code. This is taken from 4.4BSD. Please note the &n; *&t;copyright message below. As per the GPL it must be maintained&n; *&t;and the licenses thus do not conflict. While this port is subject&n; *&t;to the GPL I also place my modifications under the original &n; *&t;license in recognition of the original copyright. &n; *&t;&t;&t;&t;-- Alan Cox.&n; *&n; *&t;Ported from BSD to Linux,&n; *&t;&t;Alan Cox 22/Nov/1994.&n; *&t;Zeroing /proc and other additions&n; *&t;&t;Jos Vos 4/Feb/1995.&n; *&t;Merged and included the FreeBSD-Current changes at Ugen&squot;s request&n; *&t;(but hey it&squot;s a lot cleaner now). Ugen would prefer in some ways&n; *&t;we waited for his final product but since Linux 1.2.0 is about to&n; *&t;appear it&squot;s not practical - Read: It works, it&squot;s not clean but please&n; *&t;don&squot;t consider it to be his standard of finished work.&n; *&t;&t;Alan Cox 12/Feb/1995&n; *&t;Porting bidirectional entries from BSD, fixing accounting issues,&n; *&t;adding struct ip_fwpkt for checking packets with interface address&n; *&t;&t;Jos Vos 5/Mar/1995.&n; *&t;Established connections (ACK check), ACK check on bidirectional rules,&n; *&t;ICMP type check.&n; *&t;&t;Wilfred Mollenvanger 7/7/1995.&n; *&t;TCP attack protection.&n; *&t;&t;Alan Cox 25/8/95, based on information from bugtraq.&n; *&n; * Masquerading functionality&n; *&n; * Copyright (c) 1994 Pauline Middelink&n; *&n; * The pieces which added masquerading functionality are totaly&n; * my responsibility and have nothing to with the original authors&n; * copyright or doing.&n; *&n; * Parts distributed under GPL.&n; *&n; * Fixes:&n; *&t;Pauline Middelink&t;:&t;Added masquerading.&n; *&t;Alan Cox&t;&t;:&t;Fixed an error in the merge.&n; *&t;Thomas Quinot&t;&t;:&t;Fixed port spoofing.&n; *&t;Alan Cox&t;&t;:&t;Cleaned up retransmits in spoofing.&n; *&t;Alan Cox&t;&t;:&t;Cleaned up length setting.&n; *&t;Wouter Gadeyne&t;&t;:&t;Fixed masquerading support of ftp PORT commands&n; *&n; *&t;All the real work was done by .....&n; *&n; */
 multiline_comment|/*&n; * Copyright (c) 1993 Daniel Boulet&n; * Copyright (c) 1994 Ugen J.S.Antsilevich&n; *&n; * Redistribution and use in source forms, with and without modification,&n; * are permitted provided that this entire comment appears intact.&n; *&n; * Redistribution in binary form may occur without any restrictions.&n; * Obviously, it would be nice if you gave credit where credit is due&n; * but requiring it would be too onerous.&n; *&n; * This software is provided ``AS IS&squot;&squot; without any warranties of any kind.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
@@ -1730,26 +1730,83 @@ multiline_comment|/* xxx.xxx.xxx.xxx,ppp,ppp&bslash;000 */
 r_int
 id|diff
 suffix:semicolon
-multiline_comment|/*&n;&t; * Adjust seq and ack_seq with delta-offset for&n;&t; * the packets AFTER this one...&n;&t; */
+id|__u32
+id|seq
+suffix:semicolon
+multiline_comment|/*&n;&t; * Adjust seq with delta-offset for all packets after the most recent resized PORT command&n;&t; * and with previous_delta offset for all packets before most recent resized PORT&n;&t; */
+multiline_comment|/*&n;&t; * seq &amp; seq_ack are in network byte order; need conversion before comparing&n;&t; */
+id|seq
+op_assign
+id|ntohl
+c_func
+(paren
+id|th-&gt;seq
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|ftp-&gt;delta
-op_logical_and
+op_logical_or
+id|ftp-&gt;previous_delta
+)paren
+(brace
+r_if
+c_cond
+(paren
 id|after
 c_func
 (paren
-id|ftp-&gt;init_seq
+id|seq
 comma
-id|th-&gt;seq
+id|ftp-&gt;init_seq
 )paren
 )paren
 (brace
 id|th-&gt;seq
-op_add_assign
+op_assign
+id|htonl
+c_func
+(paren
+id|seq
+op_plus
 id|ftp-&gt;delta
+)paren
 suffix:semicolon
-multiline_comment|/* &t;&t;th-&gt;ack_seq += ftp-&gt;delta;*/
+macro_line|#ifdef DEBUG_MASQ
+id|printk
+c_func
+(paren
+l_string|&quot;masq_revamp : added delta (%d) to seq&bslash;n&quot;
+comma
+id|ftp-&gt;delta
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+r_else
+(brace
+id|th-&gt;seq
+op_assign
+id|htonl
+c_func
+(paren
+id|seq
+op_plus
+id|ftp-&gt;previous_delta
+)paren
+suffix:semicolon
+macro_line|#ifdef DEBUG_MASQ
+id|printk
+c_func
+(paren
+l_string|&quot;masq_revamp : added previous_delta (%d) to seq&bslash;n&quot;
+comma
+id|ftp-&gt;previous_delta
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
 )brace
 r_while
 c_loop
@@ -1993,6 +2050,7 @@ l_int|8
 op_or
 id|p6
 suffix:semicolon
+macro_line|#ifdef MASQ_DEBUG
 id|printk
 c_func
 (paren
@@ -2003,6 +2061,7 @@ comma
 id|port
 )paren
 suffix:semicolon
+macro_line|#endif&t;
 multiline_comment|/*&n;&t;&t; * Now create an masquerade entry for it&n;&t;&t; */
 id|ms
 op_assign
@@ -2047,12 +2106,13 @@ id|ms-&gt;dst
 op_assign
 id|iph-&gt;daddr
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Hardcoding 20 as dport is not always correct&n;&t;&t; * At least 1 Windows ftpd uses a random port number instead of 20&n;&t;&t; * Leave it undefined for now &amp; wait for the first connection request to fill it out&n;&t;&t; */
 id|ms-&gt;dport
 op_assign
 id|htons
 c_func
 (paren
-l_int|20
+id|FTP_DPORT_TBD
 )paren
 suffix:semicolon
 multiline_comment|/* ftp-data */
@@ -2151,10 +2211,6 @@ l_int|0
 )paren
 (brace
 multiline_comment|/*&n;&t;&t;&t; * simple case, just replace the old PORT cmd&n; &t;&t;&t; */
-id|ftp-&gt;init_seq
-op_assign
-l_int|0
-suffix:semicolon
 id|memcpy
 c_func
 (paren
@@ -2183,38 +2239,38 @@ op_logical_or
 id|after
 c_func
 (paren
-id|ftp-&gt;init_seq
+id|seq
 comma
-id|th-&gt;seq
+id|ftp-&gt;init_seq
 )paren
 )paren
 (brace
+id|ftp-&gt;previous_delta
+op_assign
+id|ftp-&gt;delta
+suffix:semicolon
 id|ftp-&gt;delta
 op_add_assign
 id|diff
 suffix:semicolon
+id|ftp-&gt;init_seq
+op_assign
+id|seq
+suffix:semicolon
 )brace
 multiline_comment|/*&n; &t;&t; * Sizes differ, make a copy&n; &t;&t; */
+macro_line|#ifdef DEBUG_MASQ
 id|printk
 c_func
 (paren
 l_string|&quot;MASQUERADE: resizing needed for %d bytes (%ld)&bslash;n&quot;
 comma
-id|ftp-&gt;delta
+id|diff
 comma
 id|skb-&gt;len
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|ftp-&gt;init_seq
-)paren
-id|ftp-&gt;init_seq
-op_assign
-id|th-&gt;seq
-suffix:semicolon
+macro_line|#endif
 id|skb2
 op_assign
 id|alloc_skb
@@ -2224,7 +2280,7 @@ id|MAX_HEADER
 op_plus
 id|skb-&gt;len
 op_plus
-id|ftp-&gt;delta
+id|diff
 comma
 id|GFP_ATOMIC
 )paren
@@ -2266,10 +2322,9 @@ id|skb2
 comma
 id|skb-&gt;len
 op_plus
-id|ftp-&gt;delta
+id|diff
 )paren
 suffix:semicolon
-multiline_comment|/* &t;&t;skb2-&gt;h.raw = &amp;skb2-&gt;data[skb-&gt;h.raw - skb-&gt;data];*/
 id|skb2-&gt;h.raw
 op_assign
 id|skb2-&gt;data
@@ -2399,6 +2454,17 @@ op_star
 )paren
 id|skb-&gt;data
 )paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Update tot_len field in ip header !&n;&t;&t; * Sequence numbers were allready modified in original packet&n;&t;&t; */
+id|iph-&gt;tot_len
+op_assign
+id|htons
+c_func
+(paren
+id|skb-&gt;len
+op_plus
+id|diff
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Problem, how to replace the new skb with old one,&n;&t;&t; * preferably inplace, so all the pointers in the&n;&t;&t; * calling tree keep ok :(&n;&t;&t; */
@@ -3141,12 +3207,22 @@ op_eq
 id|IPPROTO_UDP
 )paren
 op_logical_and
+(paren
+id|ms-&gt;dport
+op_eq
+id|htons
+c_func
+(paren
+id|FTP_DPORT_TBD
+)paren
+op_logical_or
 id|portptr
 (braket
 l_int|0
 )braket
 op_eq
 id|ms-&gt;dport
+)paren
 op_logical_and
 id|portptr
 (braket
@@ -3183,6 +3259,40 @@ l_int|1
 op_assign
 id|ms-&gt;sport
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ms-&gt;dport
+op_eq
+id|htons
+c_func
+(paren
+id|FTP_DPORT_TBD
+)paren
+)paren
+(brace
+id|ms-&gt;dport
+op_assign
+id|portptr
+(braket
+l_int|0
+)braket
+suffix:semicolon
+macro_line|#ifdef DEBUG_MASQ
+id|printk
+c_func
+(paren
+l_string|&quot;demasq : Filled out dport entry (%d) based on initial connect attempt from FTP deamon&bslash;n&quot;
+comma
+id|ntohs
+c_func
+(paren
+id|ms-&gt;dport
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
 multiline_comment|/*&n; &t;&t;&t; * Yug! adjust UDP/TCP and IP checksums&n; &t;&t;&t; */
 r_if
 c_cond
@@ -3210,26 +3320,122 @@ id|size
 suffix:semicolon
 r_else
 (brace
-multiline_comment|/*&n;&t;&t;&t;&t; * Adjust seq and ack_seq with delta-offset for&n;&t;&t;&t;&t; * the packets AFTER this one...&n;&t;&t;&t;&t; */
+id|__u32
+id|ack_seq
+suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t;&t; * Adjust ack_seq with delta-offset for&n;&t;&t;&t;&t; * the packets AFTER most recent PORT command has caused a shift&n;&t;&t;&t;&t; * for packets before most recent PORT command, use previous_delta&n;&t;&t;&t;&t; */
+macro_line|#ifdef DEBUG_MASQ
+id|printk
+c_func
+(paren
+l_string|&quot;demasq : delta=%d ; previous_delta=%d ; init_seq=%lX ; ack_seq=%lX ; after=%d&bslash;n&quot;
+comma
+id|ms-&gt;delta
+comma
+id|ms-&gt;previous_delta
+comma
+id|ntohl
+c_func
+(paren
+id|ms-&gt;init_seq
+)paren
+comma
+id|ntohl
+c_func
+(paren
+id|th-&gt;ack_seq
+)paren
+comma
+id|after
+c_func
+(paren
+id|ntohl
+c_func
+(paren
+id|th-&gt;ack_seq
+)paren
+comma
+id|ntohl
+c_func
+(paren
+id|ms-&gt;init_seq
+)paren
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
+id|ack_seq
+op_assign
+id|ntohl
+c_func
+(paren
+id|th-&gt;ack_seq
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|ms-&gt;delta
-op_logical_and
+op_logical_or
+id|ms-&gt;previous_delta
+)paren
+(brace
+r_if
+c_cond
+(paren
 id|after
 c_func
 (paren
-id|ms-&gt;init_seq
+id|ack_seq
 comma
-id|th-&gt;ack_seq
+id|ms-&gt;init_seq
 )paren
 )paren
 (brace
-multiline_comment|/*&t;&t;&t;&t;&t;th-&gt;seq += ms-&gt;delta;*/
 id|th-&gt;ack_seq
-op_sub_assign
+op_assign
+id|htonl
+c_func
+(paren
+id|ack_seq
+op_minus
 id|ms-&gt;delta
+)paren
 suffix:semicolon
+macro_line|#ifdef DEBUG_MASQ
+id|printk
+c_func
+(paren
+l_string|&quot;demasq : substracted delta (%d) from ack_seq&bslash;n&quot;
+comma
+id|ms-&gt;delta
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+r_else
+(brace
+id|th-&gt;ack_seq
+op_assign
+id|htonl
+c_func
+(paren
+id|ack_seq
+op_minus
+id|ms-&gt;previous_delta
+)paren
+suffix:semicolon
+macro_line|#ifdef DEBUG_MASQ
+id|printk
+c_func
+(paren
+l_string|&quot;demasq : substracted previous_delta (%d) from ack_seq&bslash;n&quot;
+comma
+id|ms-&gt;previous_delta
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
 )brace
 id|tcp_send_check
 c_func
@@ -5841,7 +6047,7 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;Prc FromIP   FPrt ToIP     TPrt Masq Init-seq Delta Expires&bslash;n&quot;
+l_string|&quot;Prc FromIP   FPrt ToIP     TPrt Masq Init-seq Delta PDelta Expires&bslash;n&quot;
 )paren
 suffix:semicolon
 id|save_flags
@@ -5896,7 +6102,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;%s %08lX:%04X %08lX:%04X %04X %08X %5d %lu&bslash;n&quot;
+l_string|&quot;%s %08lX:%04X %08lX:%04X %04X %08X %5d %5d %lu&bslash;n&quot;
 comma
 id|strProt
 (braket
@@ -5938,6 +6144,8 @@ comma
 id|ms-&gt;init_seq
 comma
 id|ms-&gt;delta
+comma
+id|ms-&gt;previous_delta
 comma
 id|ms-&gt;timer.expires
 op_minus

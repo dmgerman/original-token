@@ -805,8 +805,6 @@ r_sizeof
 r_struct
 id|net_local
 )paren
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_if
@@ -1201,6 +1199,12 @@ id|dev
 )paren
 suffix:semicolon
 multiline_comment|/* Generic ethernet behaviour */
+id|dev-&gt;flags
+op_and_assign
+op_complement
+id|IFF_MULTICAST
+suffix:semicolon
+multiline_comment|/* Multicast doesn&squot;t work */
 r_return
 l_int|0
 suffix:semicolon

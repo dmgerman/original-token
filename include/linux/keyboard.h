@@ -83,6 +83,8 @@ DECL|macro|KT_ASCII
 mdefine_line|#define KT_ASCII&t;9
 DECL|macro|KT_LOCK
 mdefine_line|#define KT_LOCK&t;&t;10
+DECL|macro|KT_SLOCK
+mdefine_line|#define KT_SLOCK&t;12
 DECL|macro|K
 mdefine_line|#define K(t,v)&t;&t;(((t)&lt;&lt;8)|(v))
 DECL|macro|KTYP
@@ -791,6 +793,22 @@ DECL|macro|K_CTRLLLOCK
 mdefine_line|#define K_CTRLLLOCK&t;K(KT_LOCK,KG_CTRLL)
 DECL|macro|K_CTRLRLOCK
 mdefine_line|#define K_CTRLRLOCK&t;K(KT_LOCK,KG_CTRLR)
+DECL|macro|K_SHIFT_SLOCK
+mdefine_line|#define K_SHIFT_SLOCK&t;K(KT_SLOCK,KG_SHIFT)
+DECL|macro|K_CTRL_SLOCK
+mdefine_line|#define K_CTRL_SLOCK&t;K(KT_SLOCK,KG_CTRL)
+DECL|macro|K_ALT_SLOCK
+mdefine_line|#define K_ALT_SLOCK&t;K(KT_SLOCK,KG_ALT)
+DECL|macro|K_ALTGR_SLOCK
+mdefine_line|#define K_ALTGR_SLOCK&t;K(KT_SLOCK,KG_ALTGR)
+DECL|macro|K_SHIFTL_SLOCK
+mdefine_line|#define K_SHIFTL_SLOCK&t;K(KT_SLOCK,KG_SHIFTL)
+DECL|macro|K_SHIFTR_SLOCK
+mdefine_line|#define K_SHIFTR_SLOCK&t;K(KT_SLOCK,KG_SHIFTR)
+DECL|macro|K_CTRLL_SLOCK
+mdefine_line|#define K_CTRLL_SLOCK&t;K(KT_SLOCK,KG_CTRLL)
+DECL|macro|K_CTRLR_SLOCK
+mdefine_line|#define K_CTRLR_SLOCK&t;K(KT_SLOCK,KG_CTRLR)
 DECL|macro|NR_LOCK
 mdefine_line|#define NR_LOCK&t;&t;8
 DECL|macro|MAX_DIACR

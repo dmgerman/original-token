@@ -830,7 +830,7 @@ r_int
 id|qic02_tape_init
 c_func
 (paren
-r_int
+r_void
 )paren
 suffix:semicolon
 multiline_comment|/* for mem.c */

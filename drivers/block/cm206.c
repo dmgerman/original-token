@@ -4,7 +4,6 @@ mdefine_line|#define VERSION &quot;0.34&quot;
 macro_line|#ifdef MODULE&t;&t;&t;/* OK, so some of this is stolen */
 macro_line|#include &lt;linux/module.h&gt;&t;
 macro_line|#include &lt;linux/version.h&gt;
-macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#ifndef CONFIG_MODVERSIONS
 DECL|variable|kernel_version
 r_char
@@ -30,6 +29,7 @@ macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/cdrom.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR CM206_CDROM_MAJOR
@@ -5189,14 +5189,12 @@ suffix:colon
 r_case
 l_int|1
 suffix:colon
-macro_line|#ifdef MODULE
 id|kfree
 c_func
 (paren
 id|cd
 )paren
 suffix:semicolon
-macro_line|#endif
 id|release_region
 c_func
 (paren
@@ -5507,10 +5505,6 @@ suffix:semicolon
 )brace
 macro_line|#endif
 macro_line|#ifdef MODULE
-DECL|macro|OK
-mdefine_line|#define OK  0
-DECL|macro|ERROR
-mdefine_line|#define ERROR  -EIO
 DECL|variable|cm206
 r_static
 r_int
@@ -5621,35 +5615,16 @@ suffix:semicolon
 )brace
 )brace
 )brace
-macro_line|#else MODULE
-DECL|macro|OK
-mdefine_line|#define OK  mem_start+size
-DECL|macro|ERROR
-mdefine_line|#define ERROR  mem_start
+DECL|macro|cm206_init
+mdefine_line|#define cm206_init init_module
 macro_line|#endif MODULE
-macro_line|#ifdef MODULE
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
-r_void
-)paren
-macro_line|#else 
-r_int
+DECL|function|cm206_init
 r_int
 id|cm206_init
 c_func
 (paren
-r_int
-r_int
-id|mem_start
-comma
-r_int
-r_int
-id|mem_end
+r_void
 )paren
-macro_line|#endif
 (brace
 id|uch
 id|e
@@ -5713,7 +5688,8 @@ l_string|&quot; can&squot;t find adapter!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-id|ERROR
+op_minus
+id|EIO
 suffix:semicolon
 )brace
 id|printk
@@ -5734,7 +5710,6 @@ comma
 l_string|&quot;cm206&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|cd
 op_assign
 (paren
@@ -5757,19 +5732,9 @@ op_logical_neg
 id|cd
 )paren
 r_return
-id|ERROR
+op_minus
+id|EIO
 suffix:semicolon
-macro_line|#else 
-id|cd
-op_assign
-(paren
-r_struct
-id|cm206_struct
-op_star
-)paren
-id|mem_start
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Now we have found the adaptor card, try to reset it. As we have&n;   * found out earlier, this process generates an interrupt as well,&n;   * so we might just exploit that fact for irq probing! */
 macro_line|#if !defined(MODULE) || defined(AUTO_PROBE_MODULE)
 id|cm206_irq
@@ -5806,7 +5771,8 @@ l_int|1
 )paren
 suffix:semicolon
 r_return
-id|ERROR
+op_minus
+id|EIO
 suffix:semicolon
 )brace
 r_else
@@ -5858,7 +5824,8 @@ l_int|1
 )paren
 suffix:semicolon
 r_return
-id|ERROR
+op_minus
+id|EIO
 suffix:semicolon
 )brace
 id|e
@@ -5947,7 +5914,8 @@ l_int|2
 )paren
 suffix:semicolon
 r_return
-id|ERROR
+op_minus
+id|EIO
 suffix:semicolon
 )brace
 id|printk
@@ -5988,7 +5956,8 @@ l_int|3
 )paren
 suffix:semicolon
 r_return
-id|ERROR
+op_minus
+id|EIO
 suffix:semicolon
 )brace
 id|blk_dev
@@ -6084,13 +6053,9 @@ id|size
 )paren
 suffix:semicolon
 r_return
-id|OK
+l_int|0
 suffix:semicolon
 )brace
-DECL|macro|OK
-macro_line|#undef OK
-DECL|macro|ERROR
-macro_line|#undef ERROR
 macro_line|#ifdef MODULE
 DECL|function|cleanup_module
 r_void

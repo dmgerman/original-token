@@ -2825,8 +2825,9 @@ r_if
 c_cond
 (paren
 id|num_addrs
-OL
-l_int|0
+op_eq
+op_minus
+l_int|1
 )paren
 (brace
 multiline_comment|/* Enable promiscuous mode */
@@ -2866,7 +2867,7 @@ r_if
 c_cond
 (paren
 id|num_addrs
-OG
+op_ne
 l_int|0
 )paren
 (brace

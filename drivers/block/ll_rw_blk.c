@@ -2662,11 +2662,7 @@ r_int
 id|blk_dev_init
 c_func
 (paren
-r_int
-id|mem_start
-comma
-r_int
-id|mem_end
+r_void
 )paren
 (brace
 r_struct
@@ -2712,39 +2708,24 @@ id|ro_bits
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_IDE
-id|mem_start
-op_assign
 id|ide_init
 c_func
 (paren
-id|mem_start
-comma
-id|mem_end
 )paren
 suffix:semicolon
 multiline_comment|/* this MUST preceed hd_init */
 macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_HD
-id|mem_start
-op_assign
 id|hd_init
 c_func
 (paren
-id|mem_start
-comma
-id|mem_end
 )paren
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_XD
-id|mem_start
-op_assign
 id|xd_init
 c_func
 (paren
-id|mem_start
-comma
-id|mem_end
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2765,144 +2746,77 @@ l_int|0x3f2
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_CDU31A
-id|mem_start
-op_assign
 id|cdu31a_init
 c_func
 (paren
-id|mem_start
-comma
-id|mem_end
 )paren
 suffix:semicolon
 macro_line|#endif CONFIG_CDU31A
 macro_line|#ifdef CONFIG_MCD
-id|mem_start
-op_assign
 id|mcd_init
 c_func
 (paren
-id|mem_start
-comma
-id|mem_end
 )paren
 suffix:semicolon
 macro_line|#endif CONFIG_MCD
 macro_line|#ifdef CONFIG_MCDX
-id|mem_start
-op_assign
 id|mcdx_init
 c_func
 (paren
-id|mem_start
-comma
-id|mem_end
 )paren
 suffix:semicolon
 macro_line|#endif CONFIG_MCDX
 macro_line|#ifdef CONFIG_SBPCD
-id|mem_start
-op_assign
 id|sbpcd_init
 c_func
 (paren
-id|mem_start
-comma
-id|mem_end
 )paren
 suffix:semicolon
 macro_line|#endif CONFIG_SBPCD
 macro_line|#ifdef CONFIG_AZTCD
-id|mem_start
-op_assign
 id|aztcd_init
 c_func
 (paren
-id|mem_start
-comma
-id|mem_end
 )paren
 suffix:semicolon
 macro_line|#endif CONFIG_AZTCD
 macro_line|#ifdef CONFIG_CDU535
-id|mem_start
-op_assign
 id|sony535_init
 c_func
 (paren
-id|mem_start
-comma
-id|mem_end
 )paren
 suffix:semicolon
 macro_line|#endif CONFIG_CDU535
 macro_line|#ifdef CONFIG_GSCD
-id|mem_start
-op_assign
 id|gscd_init
 c_func
 (paren
-id|mem_start
-comma
-id|mem_end
 )paren
 suffix:semicolon
 macro_line|#endif CONFIG_GSCD
 macro_line|#ifdef CONFIG_CM206
-id|mem_start
-op_assign
 id|cm206_init
 c_func
 (paren
-id|mem_start
-comma
-id|mem_end
 )paren
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_OPTCD
-id|mem_start
-op_assign
 id|optcd_init
 c_func
 (paren
-id|mem_start
-comma
-id|mem_end
 )paren
 suffix:semicolon
 macro_line|#endif CONFIG_OPTCD
 macro_line|#ifdef CONFIG_SJCD
-id|mem_start
-op_assign
 id|sjcd_init
 c_func
 (paren
-id|mem_start
-comma
-id|mem_end
 )paren
 suffix:semicolon
 macro_line|#endif CONFIG_SJCD
-r_if
-c_cond
-(paren
-id|ramdisk_size
-)paren
-id|mem_start
-op_add_assign
-id|rd_init
-c_func
-(paren
-id|mem_start
-comma
-id|ramdisk_size
-op_star
-l_int|1024
-)paren
-suffix:semicolon
 r_return
-id|mem_start
+l_int|0
 suffix:semicolon
 )brace
 eof

@@ -77,6 +77,12 @@ r_struct
 id|user
 id|dump
 suffix:semicolon
+macro_line|#ifdef __i386__
+DECL|macro|FIRST_MAPPED
+macro_line|#&t;define FIRST_MAPPED&t;PAGE_SIZE&t;/* we don&squot;t have page 0 mapped on x86.. */
+macro_line|#else
+macro_line|#&t;define FIRST_MAPPED&t;0
+macro_line|#endif
 id|memset
 c_func
 (paren
@@ -104,6 +110,12 @@ c_func
 id|high_memory
 )paren
 suffix:semicolon
+macro_line|#ifdef __alpha__
+id|dump.start_data
+op_assign
+id|PAGE_OFFSET
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -236,9 +248,15 @@ suffix:semicolon
 r_while
 c_loop
 (paren
-id|p
-template_param
+id|count
+OG
 l_int|0
+op_logical_and
+id|p
+OL
+id|PAGE_SIZE
+op_plus
+id|FIRST_MAPPED
 )paren
 (brace
 id|put_user

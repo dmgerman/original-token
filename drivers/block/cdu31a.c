@@ -10091,29 +10091,17 @@ r_int
 id|cdu31a_block_size
 suffix:semicolon
 multiline_comment|/*&n; * Initialize the driver.&n; */
-macro_line|#ifndef MODULE
-r_int
+macro_line|#ifdef MODULE
+DECL|macro|cdu31a_init
+mdefine_line|#define cdu31a_init init_module
+macro_line|#endif
 r_int
 DECL|function|cdu31a_init
 id|cdu31a_init
 c_func
 (paren
-r_int
-r_int
-id|mem_start
-comma
-r_int
-r_int
-id|mem_end
-)paren
-macro_line|#else
-r_int
-id|init_module
-c_func
-(paren
 r_void
 )paren
-macro_line|#endif
 (brace
 r_struct
 id|s_sony_drive_config
@@ -10385,16 +10373,10 @@ comma
 id|MAJOR_NR
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
 r_return
 op_minus
 id|EIO
 suffix:semicolon
-macro_line|#else
-r_return
-id|mem_start
-suffix:semicolon
-macro_line|#endif
 )brace
 r_if
 c_cond
@@ -10662,7 +10644,6 @@ id|disk_changed
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#ifdef MODULE
 r_if
 c_cond
 (paren
@@ -10680,11 +10661,6 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
-macro_line|#else
-r_return
-id|mem_start
-suffix:semicolon
-macro_line|#endif
 )brace
 macro_line|#ifdef MODULE
 r_void

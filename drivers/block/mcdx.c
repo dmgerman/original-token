@@ -487,17 +487,10 @@ multiline_comment|/* Prototypes ************************************************
 multiline_comment|/*&t;The following prototypes are already declared elsewhere.  They are&n; &t;repeated here to show what&squot;s going on.  And to sense, if they&squot;re&n;&t;changed elsewhere. */
 multiline_comment|/* declared in blk.h */
 r_int
-r_int
 id|mcdx_init
 c_func
 (paren
-r_int
-r_int
-id|mem_start
-comma
-r_int
-r_int
-id|mem_end
+r_void
 )paren
 suffix:semicolon
 r_void
@@ -1129,13 +1122,6 @@ multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 multiline_comment|/* KERNEL INTERFACE FUNCTIONS **************************************/
-macro_line|#ifdef MODULE
-DECL|macro|free
-mdefine_line|#define     free(x, y)      kfree((x))
-macro_line|#else
-DECL|macro|free
-mdefine_line|#define     free(x, y)      (mem_start -= y)
-macro_line|#endif
 r_static
 r_int
 DECL|function|mcdx_ioctl
@@ -4462,9 +4448,6 @@ suffix:semicolon
 id|mcdx_init
 c_func
 (paren
-l_int|0
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_for
@@ -4847,17 +4830,10 @@ suffix:semicolon
 )brace
 DECL|function|mcdx_init
 r_int
-r_int
 id|mcdx_init
 c_func
 (paren
-r_int
-r_int
-id|mem_start
-comma
-r_int
-r_int
-id|mem_end
+r_void
 )paren
 (brace
 r_int
@@ -4942,7 +4918,6 @@ id|drive
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|TRACE
 c_func
 (paren
@@ -4983,31 +4958,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-macro_line|#else
-id|TRACE
-c_func
-(paren
-(paren
-id|INIT
-comma
-l_string|&quot;adjust mem_start&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
-id|stuffp
-op_assign
-(paren
-r_struct
-id|s_drive_stuff
-op_star
-)paren
-id|mem_start
-suffix:semicolon
-id|mem_start
-op_add_assign
-id|size
-suffix:semicolon
-macro_line|#endif
 id|TRACE
 c_func
 (paren
@@ -5153,12 +5103,10 @@ id|stuffp
 )paren
 )paren
 suffix:semicolon
-id|free
+id|kfree
 c_func
 (paren
 id|stuffp
-comma
-id|size
 )paren
 suffix:semicolon
 id|TRACE
@@ -5262,12 +5210,10 @@ id|stuffp
 )paren
 )paren
 suffix:semicolon
-id|free
+id|kfree
 c_func
 (paren
 id|stuffp
-comma
-id|size
 )paren
 suffix:semicolon
 id|TRACE
@@ -5370,12 +5316,10 @@ id|stuffp-&gt;irq
 )paren
 )paren
 suffix:semicolon
-id|free
+id|kfree
 c_func
 (paren
 id|stuffp
-comma
-id|size
 )paren
 suffix:semicolon
 r_continue
@@ -5425,12 +5369,10 @@ id|MAJOR_NR
 )paren
 )paren
 suffix:semicolon
-id|free
+id|kfree
 c_func
 (paren
 id|stuffp
-comma
-id|size
 )paren
 suffix:semicolon
 r_continue
@@ -5515,12 +5457,10 @@ id|stuffp-&gt;irq
 op_assign
 l_int|0
 suffix:semicolon
-id|free
+id|kfree
 c_func
 (paren
 id|stuffp
-comma
-id|size
 )paren
 suffix:semicolon
 r_continue
@@ -5668,7 +5608,7 @@ id|stuffp
 suffix:semicolon
 )brace
 r_return
-id|mem_start
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|mcdx_transfer

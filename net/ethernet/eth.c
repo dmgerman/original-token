@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Ethernet-type device handling.&n; *&n; * Version:&t;@(#)eth.c&t;1.0.7&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Florian  La Roche, &lt;rzsfl@rz.uni-sb.de&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; * &n; * Fixes:&n; *&t;&t;Mr Linux&t;: Arp problems&n; *&t;&t;Alan Cox&t;: Generic queue tidyup (very tiny here)&n; *&t;&t;Alan Cox&t;: eth_header ntohs should be htons&n; *&t;&t;Alan Cox&t;: eth_rebuild_header missing an htons and&n; *&t;&t;&t;&t;  minor other things.&n; *&t;&t;Tegge&t;&t;: Arp bug fixes. &n; *&t;&t;Florian&t;&t;: Removed many unnecessary functions, code cleanup&n; *&t;&t;&t;&t;  and changes for new arp and skbuff.&n; *&t;&t;Alan Cox&t;: Redid header building to reflect new format.&n; *&t;&t;Alan Cox&t;: ARP only when compiled with CONFIG_INET&n; *&t;&t;Greg Page&t;: 802.2 and SNAP stuff.&n; *&t;&t;Alan Cox&t;: MAC layer pointers/new format.&n; *&t;&t;Paul Gortmaker&t;: eth_copy_and_sum shouldn&squot;t csum padding.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Ethernet-type device handling.&n; *&n; * Version:&t;@(#)eth.c&t;1.0.7&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Florian  La Roche, &lt;rzsfl@rz.uni-sb.de&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; * &n; * Fixes:&n; *&t;&t;Mr Linux&t;: Arp problems&n; *&t;&t;Alan Cox&t;: Generic queue tidyup (very tiny here)&n; *&t;&t;Alan Cox&t;: eth_header ntohs should be htons&n; *&t;&t;Alan Cox&t;: eth_rebuild_header missing an htons and&n; *&t;&t;&t;&t;  minor other things.&n; *&t;&t;Tegge&t;&t;: Arp bug fixes. &n; *&t;&t;Florian&t;&t;: Removed many unnecessary functions, code cleanup&n; *&t;&t;&t;&t;  and changes for new arp and skbuff.&n; *&t;&t;Alan Cox&t;: Redid header building to reflect new format.&n; *&t;&t;Alan Cox&t;: ARP only when compiled with CONFIG_INET&n; *&t;&t;Greg Page&t;: 802.2 and SNAP stuff.&n; *&t;&t;Alan Cox&t;: MAC layer pointers/new format.&n; *&t;&t;Paul Gortmaker&t;: eth_copy_and_sum shouldn&squot;t csum padding.&n; *&t;&t;Alan Cox&t;: Protect against forwarding explosions with&n; *&t;&t;&t;&t;  older network drivers and IFF_ALLMULTI&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -483,13 +483,18 @@ op_assign
 id|PACKET_MULTICAST
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; *&t;This ALLMULTI check should be redundant by 1.4&n;&t; *&t;so don&squot;t forget to remove it.&n;&t; */
 r_else
 r_if
 c_cond
 (paren
 id|dev-&gt;flags
 op_amp
+(paren
 id|IFF_PROMISC
+op_or
+id|IFF_ALLMULTI
+)paren
 )paren
 (brace
 r_if

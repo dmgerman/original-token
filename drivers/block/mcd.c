@@ -13,6 +13,8 @@ op_assign
 id|UTS_RELEASE
 suffix:semicolon
 macro_line|# endif
+DECL|macro|mcd_init
+mdefine_line|#define mcd_init init_module
 macro_line|#else
 DECL|macro|MOD_INC_USE_COUNT
 macro_line|# define MOD_INC_USE_COUNT
@@ -4250,29 +4252,13 @@ multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Test for presence of drive and initialize it.  Called at boot time.&n; */
-macro_line|#ifndef MODULE
-r_int
 r_int
 DECL|function|mcd_init
 id|mcd_init
 c_func
 (paren
-r_int
-r_int
-id|mem_start
-comma
-r_int
-r_int
-id|mem_end
-)paren
-macro_line|#else
-r_int
-id|init_module
-c_func
-(paren
 r_void
 )paren
-macro_line|#endif
 (brace
 r_int
 id|count
@@ -4302,16 +4288,10 @@ c_func
 l_string|&quot;skip mcd_init&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#ifndef MODULE
-r_return
-id|mem_start
-suffix:semicolon
-macro_line|#else
 r_return
 op_minus
 id|EIO
 suffix:semicolon
-macro_line|#endif
 )brace
 id|printk
 c_func
@@ -4348,16 +4328,10 @@ comma
 id|MAJOR_NR
 )paren
 suffix:semicolon
-macro_line|#ifndef MODULE
-r_return
-id|mem_start
-suffix:semicolon
-macro_line|#else
 r_return
 op_minus
 id|EIO
 suffix:semicolon
-macro_line|#endif
 )brace
 r_if
 c_cond
@@ -4379,16 +4353,10 @@ comma
 id|mcd_port
 )paren
 suffix:semicolon
-macro_line|#ifndef MODULE&t;&t; 
-r_return
-id|mem_start
-suffix:semicolon
-macro_line|#else
 r_return
 op_minus
 id|EIO
 suffix:semicolon
-macro_line|#endif&t;  
 )brace
 id|blk_dev
 (braket
@@ -4513,16 +4481,10 @@ comma
 id|mcd_irq
 )paren
 suffix:semicolon
-macro_line|#ifndef MODULE
-r_return
-id|mem_start
-suffix:semicolon
-macro_line|#else
 r_return
 op_minus
 id|EIO
 suffix:semicolon
-macro_line|#endif                
 )brace
 id|count
 op_assign
@@ -4583,16 +4545,10 @@ comma
 id|mcd_port
 )paren
 suffix:semicolon
-macro_line|#ifndef MODULE
-r_return
-id|mem_start
-suffix:semicolon
-macro_line|#else
 r_return
 op_minus
 id|EIO
 suffix:semicolon
-macro_line|#endif
 )brace
 r_if
 c_cond
@@ -4617,16 +4573,10 @@ id|result
 l_int|2
 )braket
 )paren
-macro_line|#ifndef MODULE
-r_return
-id|mem_start
-suffix:semicolon
-macro_line|#else
 r_return
 op_minus
 id|EIO
 suffix:semicolon
-macro_line|#endif
 id|printk
 c_func
 (paren
@@ -4734,16 +4684,10 @@ comma
 id|mcd_irq
 )paren
 suffix:semicolon
-macro_line|#ifndef MODULE
-r_return
-id|mem_start
-suffix:semicolon
-macro_line|#else
 r_return
 op_minus
 id|EIO
 suffix:semicolon
-macro_line|#endif
 )brace
 id|request_region
 c_func
@@ -4848,15 +4792,9 @@ id|mcdPresent
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#ifndef MODULE&t;
-r_return
-id|mem_start
-suffix:semicolon
-macro_line|#else
 r_return
 l_int|0
 suffix:semicolon
-macro_line|#endif
 )brace
 r_static
 r_void

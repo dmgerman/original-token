@@ -222,7 +222,7 @@ id|sport
 comma
 id|dport
 suffix:semicolon
-multiline_comment|/* Source and destoination ports */
+multiline_comment|/* Source and destination ports */
 DECL|member|mport
 id|__u16
 id|mport
@@ -238,6 +238,11 @@ r_int
 id|delta
 suffix:semicolon
 multiline_comment|/* Delta in sequence numbers */
+DECL|member|previous_delta
+r_int
+id|previous_delta
+suffix:semicolon
+multiline_comment|/* Delta in sequence numbers before last resized PORT command */
 DECL|member|sawfin
 r_char
 id|sawfin
@@ -405,6 +410,8 @@ DECL|macro|PORT_MASQ_BEGIN
 mdefine_line|#define PORT_MASQ_BEGIN&t;60000
 DECL|macro|PORT_MASQ_END
 mdefine_line|#define PORT_MASQ_END&t;(PORT_MASQ_BEGIN+4096)
+DECL|macro|FTP_DPORT_TBD
+mdefine_line|#define FTP_DPORT_TBD (PORT_MASQ_END+1) /* Avoid using hardcoded port 20 for ftp data connection */
 macro_line|#endif
 macro_line|#endif /* _IP_FW_H */
 eof

@@ -2854,10 +2854,20 @@ r_if
 c_cond
 (paren
 id|num_addrs
-template_param
+op_le
+op_minus
+l_int|1
+op_logical_or
+id|num_addrs
+OG
 l_int|63
 )paren
 (brace
+multiline_comment|/*&n;&t;&t; *&t;We must make the kernel realise we had to move&n;&t;&t; *&t;into promisc mode or we start all out war on&n;&t;&t; *&t;the cable. If it was a promisc rewquest the&n;&t;&t; *&t;flag is already set. If not we assert it.&n;&t;&t; */
+id|dev-&gt;flags
+op_or_assign
+id|IFF_PROMISC
+suffix:semicolon
 id|outb
 c_func
 (paren

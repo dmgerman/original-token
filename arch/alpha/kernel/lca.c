@@ -1134,6 +1134,15 @@ r_return
 id|mem_start
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Constants used during machine-check handling.  I suppose these&n; * could be moved into lca.h but I don&squot;t see much reason why anybody&n; * else would want to use them.&n; */
+DECL|macro|ESR_EAV
+mdefine_line|#define ESR_EAV&t;(1UL&lt;&lt; 0)&t;/* error address valid */
+DECL|macro|ESR_CEE
+mdefine_line|#define ESR_CEE&t;(1UL&lt;&lt; 1)&t;/* correctable error */
+DECL|macro|ESR_UEE
+mdefine_line|#define ESR_UEE (1UL&lt;&lt; 2)&t;/* uncorrectable error */
+DECL|macro|ESR_NXM
+mdefine_line|#define ESR_NXM (1UL&lt;&lt;12)&t;/* non-existent memory */
 DECL|function|lca_machine_check
 r_void
 id|lca_machine_check
@@ -1160,6 +1169,12 @@ suffix:semicolon
 r_union
 id|el_lca
 id|el
+suffix:semicolon
+r_char
+id|buf
+(braket
+l_int|128
+)braket
 suffix:semicolon
 id|printk
 c_func
@@ -1308,13 +1323,33 @@ id|MCHK_K_UNKNOWN
 suffix:colon
 r_default
 suffix:colon
+id|sprintf
+c_func
+(paren
+id|buf
+comma
+l_string|&quot;reason for machine-check unknown (0x%lx)&quot;
+comma
+id|el.s-&gt;reason
+)paren
+suffix:semicolon
 id|reason
 op_assign
-l_string|&quot;reason for machine-check unknown&quot;
+id|buf
 suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+id|wrmces
+c_func
+(paren
+id|rdmces
+c_func
+(paren
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* reset machine check pending flag */
 r_switch
 c_cond
 (paren
@@ -1335,7 +1370,7 @@ l_string|&quot;  Reason: %s (short frame%s):&bslash;n&quot;
 comma
 id|reason
 comma
-id|el.h-&gt;retry
+id|el.c-&gt;retry
 ques
 c_cond
 l_string|&quot;, retryable&quot;
@@ -1346,7 +1381,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;tesr: %lx  ear: %lx&bslash;n&quot;
+l_string|&quot;    esr: %lx  ear: %lx&bslash;n&quot;
 comma
 id|el.s-&gt;esr
 comma
@@ -1356,7 +1391,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;tdc_stat: %lx  ioc_stat0: %lx  ioc_stat1: %lx&bslash;n&quot;
+l_string|&quot;    dc_stat: %lx  ioc_stat0: %lx  ioc_stat1: %lx&bslash;n&quot;
 comma
 id|el.s-&gt;dc_stat
 comma
@@ -1365,6 +1400,98 @@ comma
 id|el.s-&gt;ioc_stat1
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|el.c-&gt;retry
+op_logical_and
+(paren
+id|el.s-&gt;esr
+op_amp
+(paren
+id|ESR_EAV
+op_or
+id|ESR_CEE
+op_or
+id|ESR_UEE
+op_or
+id|ESR_NXM
+)paren
+)paren
+op_eq
+(paren
+id|ESR_EAV
+op_or
+id|ESR_CEE
+)paren
+)paren
+(brace
+r_int
+r_int
+id|addr
+comma
+id|val
+suffix:semicolon
+multiline_comment|/* temporarily disable processor/system correctable error logging: */
+id|wrmces
+c_func
+(paren
+l_int|0x18
+)paren
+suffix:semicolon
+id|addr
+op_assign
+id|el.s-&gt;ear
+op_amp
+op_complement
+(paren
+l_int|0x7
+op_lshift
+l_int|29
+op_or
+l_int|0x7
+)paren
+suffix:semicolon
+id|addr
+op_add_assign
+id|IDENT_ADDR
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;  correcting quadword at address %lx&bslash;n&quot;
+comma
+id|addr
+)paren
+suffix:semicolon
+id|val
+op_assign
+op_star
+(paren
+r_volatile
+r_int
+op_star
+)paren
+id|addr
+suffix:semicolon
+op_star
+(paren
+r_volatile
+r_int
+op_star
+)paren
+id|addr
+op_assign
+id|val
+suffix:semicolon
+multiline_comment|/* reenable all machine checks: */
+id|wrmces
+c_func
+(paren
+l_int|0x00
+)paren
+suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 r_case
@@ -1381,7 +1508,7 @@ l_string|&quot;  Reason: %s (long frame%s):&bslash;n&quot;
 comma
 id|reason
 comma
-id|el.h-&gt;retry
+id|el.c-&gt;retry
 ques
 c_cond
 l_string|&quot;, retryable&quot;
@@ -1392,7 +1519,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;treason: %lx  exc_addr: %lx  dc_stat: %lx&bslash;n&quot;
+l_string|&quot;    reason: %lx  exc_addr: %lx  dc_stat: %lx&bslash;n&quot;
 comma
 id|el.l-&gt;pt
 (braket
@@ -1407,7 +1534,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;tesr: %lx  ear: %lx  car: %lx&bslash;n&quot;
+l_string|&quot;    esr: %lx  ear: %lx  car: %lx&bslash;n&quot;
 comma
 id|el.l-&gt;esr
 comma
@@ -1419,7 +1546,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;tioc_stat0: %lx  ioc_stat1: %lx&bslash;n&quot;
+l_string|&quot;    ioc_stat0: %lx  ioc_stat1: %lx&bslash;n&quot;
 comma
 id|el.l-&gt;ioc_stat0
 comma
@@ -1439,16 +1566,6 @@ id|el.c-&gt;size
 )paren
 suffix:semicolon
 )brace
-id|wrmces
-c_func
-(paren
-id|rdmces
-c_func
-(paren
-)paren
-)paren
-suffix:semicolon
-multiline_comment|/* reset machine check asap */
 )brace
 macro_line|#endif /* CONFIG_ALPHA_LCA */
 eof

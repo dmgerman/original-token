@@ -215,7 +215,7 @@ r_int
 id|lp_init
 c_func
 (paren
-r_int
+r_void
 )paren
 suffix:semicolon
 macro_line|#endif

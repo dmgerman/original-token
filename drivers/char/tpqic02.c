@@ -10190,8 +10190,7 @@ r_int
 id|qic02_tape_init
 c_func
 (paren
-r_int
-id|kmem_start
+r_void
 )paren
 multiline_comment|/* Shouldn&squot;t this be a caddr_t ? */
 (brace
@@ -10211,7 +10210,8 @@ l_string|&quot;: internal error: tpstatus struct incorrect!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-id|kmem_start
+op_minus
+id|ENODEV
 suffix:semicolon
 )brace
 r_if
@@ -10238,7 +10238,8 @@ l_string|&quot;: internal error: DMA buffer size out of range&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-id|kmem_start
+op_minus
+id|ENODEV
 suffix:semicolon
 )brace
 id|QIC02_TAPE_DEBUG
@@ -10298,7 +10299,8 @@ c_func
 )paren
 )paren
 r_return
-id|kmem_start
+op_minus
+id|ENODEV
 suffix:semicolon
 macro_line|#else
 id|printk
@@ -10377,7 +10379,8 @@ l_string|&quot;: DMA buffer *must* be in lower 16MB&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-id|kmem_start
+op_minus
+id|ENODEV
 suffix:semicolon
 )brace
 macro_line|#endif
@@ -10421,7 +10424,8 @@ id|QIC02_TAPE_DMA
 suffix:semicolon
 macro_line|#endif
 r_return
-id|kmem_start
+op_minus
+id|ENODEV
 suffix:semicolon
 )brace
 multiline_comment|/* prepare timer */
@@ -10504,7 +10508,8 @@ id|TPQIC02_NAME
 )paren
 suffix:semicolon
 r_return
-id|kmem_start
+op_minus
+id|ENODEV
 suffix:semicolon
 )brace
 r_else
@@ -10574,7 +10579,7 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* number of current (logical) block */
 r_return
-id|kmem_start
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* qic02_tape_init */

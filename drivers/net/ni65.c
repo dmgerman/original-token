@@ -899,6 +899,11 @@ c_func
 id|dev
 )paren
 suffix:semicolon
+id|dev-&gt;flags
+op_and_assign
+op_complement
+id|IFF_MULTICAST
+suffix:semicolon
 id|dev-&gt;interrupt
 op_assign
 l_int|0

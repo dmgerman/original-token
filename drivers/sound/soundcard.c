@@ -726,8 +726,7 @@ r_int
 DECL|function|soundcard_init
 id|soundcard_init
 (paren
-r_int
-id|mem_start
+r_void
 )paren
 (brace
 macro_line|#ifndef MODULE
@@ -746,14 +745,11 @@ id|soundcard_configured
 op_assign
 l_int|1
 suffix:semicolon
-id|mem_start
-op_assign
 id|sndtable_init
 (paren
-id|mem_start
 )paren
 suffix:semicolon
-multiline_comment|/* Initialize call tables and&n;&t;&t;&t;&t;&t;&t; * detect cards */
+multiline_comment|/* Initialize call tables and&n;&t;&t;&t;&t; * detect cards */
 r_if
 c_cond
 (paren
@@ -767,7 +763,7 @@ id|sndtable_get_cardcount
 )paren
 )paren
 r_return
-id|mem_start
+l_int|0
 suffix:semicolon
 multiline_comment|/* No cards detected */
 macro_line|#ifndef EXCLUDE_AUDIO
@@ -778,18 +774,12 @@ id|num_audiodevs
 )paren
 multiline_comment|/* Audio devices present */
 (brace
-id|mem_start
-op_assign
 id|DMAbuf_init
 (paren
-id|mem_start
 )paren
 suffix:semicolon
-id|mem_start
-op_assign
 id|audio_init
 (paren
-id|mem_start
 )paren
 suffix:semicolon
 )brace
@@ -800,11 +790,8 @@ c_cond
 (paren
 id|num_midis
 )paren
-id|mem_start
-op_assign
 id|MIDIbuf_init
 (paren
-id|mem_start
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -816,16 +803,13 @@ id|num_midis
 op_plus
 id|num_synths
 )paren
-id|mem_start
-op_assign
 id|sequencer_init
 (paren
-id|mem_start
 )paren
 suffix:semicolon
 macro_line|#endif
 r_return
-id|mem_start
+l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE

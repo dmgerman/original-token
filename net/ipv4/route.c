@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;ROUTE - implementation of the IP router.&n; *&n; * Version:&t;@(#)route.c&t;1.0.14&t;05/31/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Linus Torvalds, &lt;Linus.Torvalds@helsinki.fi&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Verify area fixes.&n; *&t;&t;Alan Cox&t;:&t;cli() protects routing changes&n; *&t;&t;Rui Oliveira&t;:&t;ICMP routing table updates&n; *&t;&t;(rco@di.uminho.pt)&t;Routing table insertion and update&n; *&t;&t;Linus Torvalds&t;:&t;Rewrote bits to be sensible&n; *&t;&t;Alan Cox&t;:&t;Added BSD route gw semantics&n; *&t;&t;Alan Cox&t;:&t;Super /proc &gt;4K &n; *&t;&t;Alan Cox&t;:&t;MTU in route table&n; *&t;&t;Alan Cox&t;: &t;MSS actually. Also added the window&n; *&t;&t;&t;&t;&t;clamper.&n; *&t;&t;Sam Lantinga&t;:&t;Fixed route matching in rt_del()&n; *&t;&t;Alan Cox&t;:&t;Routing cache support.&n; *&t;&t;Alan Cox&t;:&t;Removed compatibility cruft.&n; *&t;&t;Alan Cox&t;:&t;RTF_REJECT support.&n; *&t;&t;Alan Cox&t;:&t;TCP irtt support.&n; *&t;&t;Jonathan Naylor&t;:&t;Added Metric support.&n; *&t;Miquel van Smoorenburg&t;:&t;BSD API fixes.&n; *&t;Miquel van Smoorenburg&t;:&t;Metrics.&n; *&t;&t;Alan Cox&t;:&t;Use __u32 properly&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;ROUTE - implementation of the IP router.&n; *&n; * Version:&t;@(#)route.c&t;1.0.14&t;05/31/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Linus Torvalds, &lt;Linus.Torvalds@helsinki.fi&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Verify area fixes.&n; *&t;&t;Alan Cox&t;:&t;cli() protects routing changes&n; *&t;&t;Rui Oliveira&t;:&t;ICMP routing table updates&n; *&t;&t;(rco@di.uminho.pt)&t;Routing table insertion and update&n; *&t;&t;Linus Torvalds&t;:&t;Rewrote bits to be sensible&n; *&t;&t;Alan Cox&t;:&t;Added BSD route gw semantics&n; *&t;&t;Alan Cox&t;:&t;Super /proc &gt;4K &n; *&t;&t;Alan Cox&t;:&t;MTU in route table&n; *&t;&t;Alan Cox&t;: &t;MSS actually. Also added the window&n; *&t;&t;&t;&t;&t;clamper.&n; *&t;&t;Sam Lantinga&t;:&t;Fixed route matching in rt_del()&n; *&t;&t;Alan Cox&t;:&t;Routing cache support.&n; *&t;&t;Alan Cox&t;:&t;Removed compatibility cruft.&n; *&t;&t;Alan Cox&t;:&t;RTF_REJECT support.&n; *&t;&t;Alan Cox&t;:&t;TCP irtt support.&n; *&t;&t;Jonathan Naylor&t;:&t;Added Metric support.&n; *&t;Miquel van Smoorenburg&t;:&t;BSD API fixes.&n; *&t;Miquel van Smoorenburg&t;:&t;Metrics.&n; *&t;&t;Alan Cox&t;:&t;Use __u32 properly&n; *&t;&t;Alan Cox&t;:&t;Aligned routing errors more closely with BSD&n; *&t;&t;&t;&t;&t;our system is still very different.&n; *&t;&t;Alan Cox&t;:&t;Faster /proc handling&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -19,6 +19,7 @@ macro_line|#include &lt;net/tcp.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/icmp.h&gt;
+macro_line|#include &lt;net/netlink.h&gt;
 multiline_comment|/*&n; *&t;The routing table list&n; */
 DECL|variable|rt_base
 r_static
@@ -47,10 +48,10 @@ id|rt_loopback
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n; *&t;Remove a routing table entry.&n; *&t;Should we return a status value here ?&n; */
+multiline_comment|/*&n; *&t;Remove a routing table entry.&n; */
 DECL|function|rt_del
 r_static
-r_void
+r_int
 id|rt_del
 c_func
 (paren
@@ -86,6 +87,11 @@ suffix:semicolon
 r_int
 r_int
 id|flags
+suffix:semicolon
+r_int
+id|found
+op_assign
+l_int|0
 suffix:semicolon
 id|rp
 op_assign
@@ -195,6 +201,24 @@ id|rt_loopback
 op_assign
 l_int|NULL
 suffix:semicolon
+id|ip_netlink_msg
+c_func
+(paren
+id|RTMSG_DELROUTE
+comma
+id|dst
+comma
+id|gtw
+comma
+id|mask
+comma
+id|rt_flags
+comma
+id|metric
+comma
+id|r-&gt;rt_dev-&gt;name
+)paren
+suffix:semicolon
 id|kfree_s
 c_func
 (paren
@@ -207,6 +231,10 @@ id|rtable
 )paren
 )paren
 suffix:semicolon
+id|found
+op_assign
+l_int|1
+suffix:semicolon
 )brace
 id|rt_stamp
 op_increment
@@ -217,6 +245,20 @@ c_func
 (paren
 id|flags
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|found
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_return
+op_minus
+id|ESRCH
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Remove all routing table entries for a device. This is called when&n; *&t;a device is downed.&n; */
@@ -912,6 +954,24 @@ id|rt_loopback
 op_assign
 l_int|NULL
 suffix:semicolon
+id|ip_netlink_msg
+c_func
+(paren
+id|RTMSG_DELROUTE
+comma
+id|dst
+comma
+id|gw
+comma
+id|mask
+comma
+id|flags
+comma
+id|metric
+comma
+id|rt-&gt;rt_dev-&gt;name
+)paren
+suffix:semicolon
 id|kfree_s
 c_func
 (paren
@@ -1020,6 +1080,24 @@ id|restore_flags
 c_func
 (paren
 id|cpuflags
+)paren
+suffix:semicolon
+id|ip_netlink_msg
+c_func
+(paren
+id|RTMSG_NEWROUTE
+comma
+id|dst
+comma
+id|gw
+comma
+id|mask
+comma
+id|flags
+comma
+id|metric
+comma
+id|rt-&gt;rt_dev-&gt;name
 )paren
 suffix:semicolon
 r_return
@@ -1176,7 +1254,7 @@ id|dev
 )paren
 r_return
 op_minus
-id|EINVAL
+id|ENODEV
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;If the device isn&squot;t INET, don&squot;t allow it&n;&t; */
@@ -1552,6 +1630,8 @@ id|err
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * metric can become negative here if it wasn&squot;t filled in&n;&t; * but that&squot;s a fortunate accident; we really use that in rt_del.&n;&t; */
+id|err
+op_assign
 id|rt_del
 c_func
 (paren
@@ -1593,10 +1673,10 @@ id|devname
 )paren
 suffix:semicolon
 r_return
-l_int|0
+id|err
 suffix:semicolon
 )brace
-multiline_comment|/* &n; *&t;Called from the PROCfs module. This outputs /proc/net/route.&n; */
+multiline_comment|/* &n; *&t;Called from the PROCfs module. This outputs /proc/net/route.&n; *&n; *&t;We preserve the old format but pad the buffers out. This means that&n; *&t;we can spin over the other entries as we read them. Remember the&n; *&t;gated BGP4 code could need to read 60,000+ routes on occasion (thats&n; *&t;about 7Mb of data). To do that ok we will need to also cache the&n; *&t;last route we got to (reads will generally be following on from&n; *&t;one another without gaps).&n; */
 DECL|function|rt_get_info
 r_int
 id|rt_get_info
@@ -1641,24 +1721,35 @@ id|begin
 op_assign
 l_int|0
 suffix:semicolon
-r_int
-id|size
+r_char
+id|temp
+(braket
+l_int|129
+)braket
 suffix:semicolon
-id|len
-op_add_assign
+r_if
+c_cond
+(paren
+id|offset
+OL
+l_int|128
+)paren
+(brace
 id|sprintf
 c_func
 (paren
 id|buffer
 comma
-l_string|&quot;Iface&bslash;tDestination&bslash;tGateway &bslash;tFlags&bslash;tRefCnt&bslash;tUse&bslash;tMetric&bslash;tMask&bslash;t&bslash;tMTU&bslash;tWindow&bslash;tIRTT&bslash;n&quot;
+l_string|&quot;%-127s&bslash;n&quot;
+comma
+l_string|&quot;Iface&bslash;tDestination&bslash;tGateway &bslash;tFlags&bslash;tRefCnt&bslash;tUse&bslash;tMetric&bslash;tMask&bslash;t&bslash;tMTU&bslash;tWindow&bslash;tIRTT&quot;
 )paren
 suffix:semicolon
 id|pos
 op_assign
-id|len
+l_int|128
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;This isn&squot;t quite right -- r-&gt;rt_dst is a struct! &n;&t; */
+)brace
 r_for
 c_loop
 (paren
@@ -1675,16 +1766,30 @@ op_assign
 id|r-&gt;rt_next
 )paren
 (brace
-id|size
-op_assign
+multiline_comment|/*&n;&t;&t; *&t;Spin through entries until we are ready&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|pos
+op_plus
+l_int|128
+OL
+id|offset
+)paren
+(brace
+id|pos
+op_add_assign
+l_int|128
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
 id|sprintf
 c_func
 (paren
-id|buffer
-op_plus
-id|len
+id|temp
 comma
-l_string|&quot;%s&bslash;t%08lX&bslash;t%08lX&bslash;t%02X&bslash;t%d&bslash;t%lu&bslash;t%d&bslash;t%08lX&bslash;t%d&bslash;t%lu&bslash;t%u&bslash;n&quot;
+l_string|&quot;%s&bslash;t%08lX&bslash;t%08lX&bslash;t%02X&bslash;t%d&bslash;t%lu&bslash;t%d&bslash;t%08lX&bslash;t%d&bslash;t%lu&bslash;t%u&quot;
 comma
 id|r-&gt;rt_dev-&gt;name
 comma
@@ -1727,13 +1832,25 @@ r_int
 id|r-&gt;rt_irtt
 )paren
 suffix:semicolon
+id|sprintf
+c_func
+(paren
+id|buffer
+op_plus
+id|len
+comma
+l_string|&quot;%-127s&bslash;n&quot;
+comma
+id|temp
+)paren
+suffix:semicolon
 id|len
 op_add_assign
-id|size
+l_int|128
 suffix:semicolon
 id|pos
 op_add_assign
-id|size
+l_int|128
 suffix:semicolon
 r_if
 c_cond

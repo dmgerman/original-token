@@ -8646,7 +8646,7 @@ op_amp
 id|thisEthwrk
 )paren
 suffix:semicolon
-id|free
+id|kfree
 c_func
 (paren
 id|thisEthwrk.priv

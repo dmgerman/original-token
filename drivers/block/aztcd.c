@@ -16,6 +16,8 @@ op_assign
 id|UTS_RELEASE
 suffix:semicolon
 macro_line|# endif
+DECL|macro|aztcd_init
+mdefine_line|#define aztcd_init init_module
 macro_line|#endif
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -6496,29 +6498,13 @@ multiline_comment|/* revalidate*/
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Test for presence of drive and initialize it.  Called at boot time.&n; */
-macro_line|#ifndef MODULE 
 DECL|function|aztcd_init
-r_int
 r_int
 id|aztcd_init
 c_func
 (paren
-r_int
-r_int
-id|mem_start
-comma
-r_int
-r_int
-id|mem_end
-)paren
-macro_line|#else
-r_int
-id|init_module
-c_func
-(paren
 r_void
 )paren
-macro_line|#endif
 (brace
 r_int
 r_int
@@ -6550,18 +6536,10 @@ c_func
 l_string|&quot;aztcd: no Aztech CD-ROM Initialization&quot;
 )paren
 suffix:semicolon
-macro_line|#ifndef MODULE
-r_return
-(paren
-id|mem_start
-)paren
-suffix:semicolon
-macro_line|#else
 r_return
 op_minus
 id|EIO
 suffix:semicolon
-macro_line|#endif&t;  
 )brace
 id|printk
 c_func
@@ -6599,18 +6577,10 @@ comma
 id|azt_port
 )paren
 suffix:semicolon
-macro_line|#ifndef MODULE
-r_return
-(paren
-id|mem_start
-)paren
-suffix:semicolon
-macro_line|#else
 r_return
 op_minus
 id|EIO
 suffix:semicolon
-macro_line|#endif&t;  
 )brace
 macro_line|#ifdef AZT_SW32   /*CDROM connected to Soundwave32 card*/
 r_if
@@ -6643,18 +6613,10 @@ comma
 id|AZT_SW32_ID_REG
 )paren
 suffix:semicolon
-macro_line|#ifndef MODULE
-r_return
-(paren
-id|mem_start
-)paren
-suffix:semicolon
-macro_line|#else
 r_return
 op_minus
 id|EIO
 suffix:semicolon
-macro_line|#endif&t;  
 )brace
 r_else
 (brace
@@ -6794,9 +6756,8 @@ l_string|&quot;aztcd: no AZTECH CD-ROM drive found-Try boot parameter aztcd=&lt;
 )paren
 suffix:semicolon
 r_return
-(paren
-id|mem_start
-)paren
+op_minus
+id|EIO
 suffix:semicolon
 )brace
 macro_line|#else        
@@ -6902,18 +6863,10 @@ c_func
 l_string|&quot;aztcd: no AZTECH CD-ROM drive found&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#ifndef MODULE
-r_return
-(paren
-id|mem_start
-)paren
-suffix:semicolon
-macro_line|#else
 r_return
 op_minus
 id|EIO
 suffix:semicolon
-macro_line|#endif&t;     
 )brace
 r_for
 c_loop
@@ -6969,18 +6922,10 @@ comma
 id|st
 )paren
 suffix:semicolon
-macro_line|#ifndef MODULE
-r_return
-(paren
-id|mem_start
-)paren
-suffix:semicolon
-macro_line|#else
 r_return
 op_minus
 id|EIO
 suffix:semicolon
-macro_line|#endif&t;      
 )brace
 macro_line|#ifdef AZT_DEBUG
 id|printk
@@ -7328,18 +7273,10 @@ c_func
 l_string|&quot;aztcd: Aborted&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#ifndef MODULE
-r_return
-(paren
-id|mem_start
-)paren
-suffix:semicolon
-macro_line|#else
 r_return
 op_minus
 id|EIO
 suffix:semicolon
-macro_line|#endif &t;          
 )brace
 )brace
 r_if
@@ -7367,18 +7304,10 @@ comma
 id|MAJOR_NR
 )paren
 suffix:semicolon
-macro_line|#ifndef MODULE&t;&t;       
-r_return
-(paren
-id|mem_start
-)paren
-suffix:semicolon
-macro_line|#else
 r_return
 op_minus
 id|EIO
 suffix:semicolon
-macro_line|#endif&t;&t;
 )brace
 id|blk_dev
 (braket
@@ -7426,19 +7355,11 @@ c_func
 l_string|&quot;aztcd: End Init&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#ifndef MODULE
-r_return
-(paren
-id|mem_start
-)paren
-suffix:semicolon
-macro_line|#else
 r_return
 (paren
 l_int|0
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|azt_hsg2msf
 r_static

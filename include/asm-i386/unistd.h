@@ -545,6 +545,92 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * This is the mechanism for creating a new kernel thread.&n; *&n; * NOTE! Only a kernel-only process(ie the swapper or direct descendants&n; * who haven&squot;t done an &quot;execve()&quot;) should use this: it will work within&n; * a system call from a &quot;real&quot; process, but the process memory space will&n; * not be free&squot;d until both the parent and the child have exited.&n; */
+DECL|function|kernel_thread
+r_static
+r_inline
+id|pid_t
+id|kernel_thread
+c_func
+(paren
+r_int
+(paren
+op_star
+id|fn
+)paren
+(paren
+r_void
+op_star
+)paren
+comma
+r_void
+op_star
+id|arg
+comma
+r_int
+r_int
+id|flags
+)paren
+(brace
+r_int
+id|retval
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;int $0x80&bslash;n&bslash;t&quot;
+multiline_comment|/* Linux/i386 system call */
+l_string|&quot;testl %0,%0&bslash;n&bslash;t&quot;
+multiline_comment|/* child or parent? */
+l_string|&quot;jne 1f&bslash;n&bslash;t&quot;
+multiline_comment|/* parent - jump */
+l_string|&quot;pushl %3&bslash;n&bslash;t&quot;
+multiline_comment|/* push argument */
+l_string|&quot;call *%4&bslash;n&bslash;t&quot;
+multiline_comment|/* call fn */
+l_string|&quot;movl %2,%0&bslash;n&bslash;t&quot;
+multiline_comment|/* exit */
+l_string|&quot;int $0x80&bslash;n&quot;
+l_string|&quot;1:&bslash;t&quot;
+suffix:colon
+l_string|&quot;=a&quot;
+(paren
+id|retval
+)paren
+suffix:colon
+l_string|&quot;0&quot;
+(paren
+id|__NR_clone
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|__NR_exit
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|arg
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|fn
+)paren
+comma
+l_string|&quot;b&quot;
+(paren
+id|flags
+op_or
+id|CLONE_VM
+)paren
+)paren
+suffix:semicolon
+r_return
+id|retval
+suffix:semicolon
+)brace
 macro_line|#endif
 macro_line|#endif /* _ASM_I386_UNISTD_H_ */
 eof

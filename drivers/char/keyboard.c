@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/char/keyboard.c&n; *&n; * Keyboard driver for Linux v0.99 using Latin-1.&n; *&n; * Written for linux by Johan Myreen as a translation from&n; * the assembly version by Linus (with diacriticals added)&n; *&n; * Some additional features added by Christoph Niemann (ChN), March 1993&n; *&n; * Loadable keymaps by Risto Kankkunen, May 1993&n; *&n; * Diacriticals redone &amp; other small changes, aeb@cwi.nl, June 1993&n; * Added decr/incr_console, dynamic keymaps, Unicode support,&n; * dynamic function/string keys, led setting,  Sept 1994&n; * &n; */
+multiline_comment|/*&n; * linux/drivers/char/keyboard.c&n; *&n; * Keyboard driver for Linux v0.99 using Latin-1.&n; *&n; * Written for linux by Johan Myreen as a translation from&n; * the assembly version by Linus (with diacriticals added)&n; *&n; * Some additional features added by Christoph Niemann (ChN), March 1993&n; *&n; * Loadable keymaps by Risto Kankkunen, May 1993&n; *&n; * Diacriticals redone &amp; other small changes, aeb@cwi.nl, June 1993&n; * Added decr/incr_console, dynamic keymaps, Unicode support,&n; * dynamic function/string keys, led setting,  Sept 1994&n; * `Sticky&squot; modifier keys, 951006.&n; * &n; */
 DECL|macro|KEYBOARD_IRQ
 mdefine_line|#define KEYBOARD_IRQ 1
 macro_line|#include &lt;linux/sched.h&gt;
@@ -327,6 +327,7 @@ DECL|variable|do_meta
 DECL|variable|do_ascii
 DECL|variable|do_lock
 DECL|variable|do_lowercase
+DECL|variable|do_slock
 DECL|variable|do_ignore
 id|do_meta
 comma
@@ -335,6 +336,8 @@ comma
 id|do_lock
 comma
 id|do_lowercase
+comma
+id|do_slock
 comma
 id|do_ignore
 suffix:semicolon
@@ -371,7 +374,7 @@ id|do_lock
 comma
 id|do_lowercase
 comma
-id|do_ignore
+id|do_slock
 comma
 id|do_ignore
 comma
@@ -560,6 +563,10 @@ op_minus
 l_int|1
 comma
 l_int|255
+comma
+id|NR_LOCK
+op_minus
+l_int|1
 )brace
 suffix:semicolon
 DECL|variable|NR_TYPES
@@ -1976,6 +1983,8 @@ op_assign
 id|shift_state
 op_xor
 id|kbd-&gt;lockstate
+op_xor
+id|kbd-&gt;slockstate
 suffix:semicolon
 id|ushort
 op_star
@@ -2086,6 +2095,17 @@ l_int|0xff
 comma
 id|up_flag
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|type
+op_ne
+id|KT_SLOCK
+)paren
+id|kbd-&gt;slockstate
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 r_else
@@ -4157,6 +4177,38 @@ id|value
 )paren
 suffix:semicolon
 )brace
+DECL|function|do_slock
+r_static
+r_void
+id|do_slock
+c_func
+(paren
+r_int
+r_char
+id|value
+comma
+r_char
+id|up_flag
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|up_flag
+op_logical_or
+id|rep
+)paren
+r_return
+suffix:semicolon
+id|chg_vc_kbd_slock
+c_func
+(paren
+id|kbd
+comma
+id|value
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * send_data sends a character to the keyboard and waits&n; * for a acknowledge, possibly retrying if asked to. Returns&n; * the success status.&n; */
 DECL|function|send_data
 r_static
@@ -4747,13 +4799,10 @@ suffix:semicolon
 )brace
 DECL|function|kbd_init
 r_int
-r_int
 id|kbd_init
 c_func
 (paren
-r_int
-r_int
-id|kmem_start
+r_void
 )paren
 (brace
 r_int
@@ -4781,6 +4830,10 @@ suffix:semicolon
 id|kbd0.lockstate
 op_assign
 id|KBD_DEFLOCK
+suffix:semicolon
+id|kbd0.slockstate
+op_assign
+l_int|0
 suffix:semicolon
 id|kbd0.modeflags
 op_assign
@@ -4938,7 +4991,7 @@ id|KEYBOARD_BH
 )paren
 suffix:semicolon
 r_return
-id|kmem_start
+l_int|0
 suffix:semicolon
 )brace
 eof

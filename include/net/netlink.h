@@ -1,3 +1,6 @@
+macro_line|#ifndef __NET_NETLINK_H
+DECL|macro|__NET_NETLINK_H
+mdefine_line|#define __NET_NETLINK_H
 DECL|macro|NET_MAJOR
 mdefine_line|#define NET_MAJOR 18&t;&t;/* Major 18 is reserved for networking &t;&t;*/
 DECL|macro|MAX_LINKS
@@ -23,6 +26,17 @@ id|sk_buff
 op_star
 id|skb
 )paren
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|netlink_donothing
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
 )paren
 suffix:semicolon
 r_extern
@@ -62,4 +76,34 @@ DECL|macro|NETLINK_SKIP
 mdefine_line|#define NETLINK_SKIP&t;&t;1&t;/* Reserved for ENskip  &t;&t;&t;*/
 DECL|macro|NETLINK_USERSOCK
 mdefine_line|#define NETLINK_USERSOCK&t;2&t;/* Reserved for user mode socket protocols &t;*/
+DECL|macro|NETLINK_FIREWALL
+mdefine_line|#define NETLINK_FIREWALL&t;3&t;/* Firewalling hook&t;&t;&t;&t;*/
+macro_line|#ifdef CONFIG_RTNETLINK
+r_extern
+r_void
+id|ip_netlink_msg
+c_func
+(paren
+r_int
+r_int
+comma
+id|__u32
+comma
+id|__u32
+comma
+id|__u32
+comma
+r_int
+comma
+r_int
+comma
+r_char
+op_star
+)paren
+suffix:semicolon
+macro_line|#else
+DECL|macro|ip_netlink_msg
+mdefine_line|#define ip_netlink_msg(a,b,c,d,e,f,g)
+macro_line|#endif
+macro_line|#endif
 eof

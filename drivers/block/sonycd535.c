@@ -2,7 +2,6 @@ multiline_comment|/*&n; * Sony CDU-535 interface device driver&n; *&n; * This is
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef MODULE
 macro_line|# include &lt;linux/module.h&gt;
-macro_line|# include &lt;linux/malloc.h&gt;
 macro_line|# include &lt;linux/version.h&gt;
 macro_line|# ifndef CONFIG_MODVERSIONS
 DECL|variable|kernel_version
@@ -14,6 +13,8 @@ op_assign
 id|UTS_RELEASE
 suffix:semicolon
 macro_line|# endif
+DECL|macro|sony535_init
+mdefine_line|#define sony535_init init_module
 macro_line|#else
 DECL|macro|MOD_INC_USE_COUNT
 macro_line|# define MOD_INC_USE_COUNT
@@ -30,6 +31,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/malloc.h&gt;
 DECL|macro|REALLY_SLOW_IO
 mdefine_line|#define REALLY_SLOW_IO
 macro_line|#include &lt;asm/system.h&gt;
@@ -220,7 +222,7 @@ id|sony_disc_changed
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* Has the disk been changed&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;   since the last check? */
+multiline_comment|/* Has the disk been changed&n;&t;&t;&t;&t;&t;   since the last check? */
 DECL|variable|sony_toc_read
 r_static
 r_int
@@ -228,21 +230,21 @@ id|sony_toc_read
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Has the table of contents been&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;   read? */
+multiline_comment|/* Has the table of contents been&n;&t;&t;&t;&t;&t;   read? */
 DECL|variable|sony_buffer_size
 r_static
 r_int
 r_int
 id|sony_buffer_size
 suffix:semicolon
-multiline_comment|/* Size in bytes of the read-ahead&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;   buffer. */
+multiline_comment|/* Size in bytes of the read-ahead&n;&t;&t;&t;&t;&t;   buffer. */
 DECL|variable|sony_buffer_sectors
 r_static
 r_int
 r_int
 id|sony_buffer_sectors
 suffix:semicolon
-multiline_comment|/* Size (in 2048 byte records) of&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;   the read-ahead buffer. */
+multiline_comment|/* Size (in 2048 byte records) of&n;&t;&t;&t;&t;&t;&t;   the read-ahead buffer. */
 DECL|variable|sony_usage
 r_static
 r_int
@@ -251,7 +253,7 @@ id|sony_usage
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* How many processes have the&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;   drive open. */
+multiline_comment|/* How many processes have the&n;&t;&t;&t;&t;&t;   drive open. */
 DECL|variable|sony_first_block
 r_static
 r_int
@@ -260,7 +262,7 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
-multiline_comment|/* First OS block (512 byte) in&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;   the read-ahead buffer */
+multiline_comment|/* First OS block (512 byte) in&n;&t;&t;&t;&t;&t;   the read-ahead buffer */
 DECL|variable|sony_last_block
 r_static
 r_int
@@ -269,7 +271,7 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
-multiline_comment|/* Last OS block (512 byte) in&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;   the read-ahead buffer */
+multiline_comment|/* Last OS block (512 byte) in&n;&t;&t;&t;&t;&t;   the read-ahead buffer */
 DECL|variable|sony_toc
 r_static
 r_struct
@@ -277,7 +279,7 @@ id|s535_sony_toc
 op_star
 id|sony_toc
 suffix:semicolon
-multiline_comment|/* Points to the table of&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;   contents. */
+multiline_comment|/* Points to the table of&n;&t;&t;&t;&t;&t;   contents. */
 DECL|variable|last_sony_subcode
 r_static
 r_struct
@@ -285,16 +287,7 @@ id|s535_sony_subcode
 op_star
 id|last_sony_subcode
 suffix:semicolon
-multiline_comment|/* Points to the last&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;   subcode address read */
-macro_line|#ifndef MODULE
-DECL|variable|sony_buffer
-r_static
-id|Byte
-op_star
-id|sony_buffer
-suffix:semicolon
-multiline_comment|/* Points to the read-ahead buffer */
-macro_line|#else
+multiline_comment|/* Points to the last&n;&t;&t;&t;&t;&t;&t;&t;&t;   subcode address read */
 DECL|variable|sony_buffer
 r_static
 id|Byte
@@ -302,8 +295,7 @@ op_star
 op_star
 id|sony_buffer
 suffix:semicolon
-multiline_comment|/* Points to the pointers&n;&t;&t;&t;&t;&t;&t;&t;&t;   to the sector buffers */
-macro_line|#endif
+multiline_comment|/* Points to the pointers&n;&t;&t;&t;&t;&t;   to the sector buffers */
 DECL|variable|sony_inuse
 r_static
 r_int
@@ -311,7 +303,7 @@ id|sony_inuse
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* is the drive in use? Only one&n;&t;&t;&t;&t;&t;&t;&t;&t;   open at a time allowed */
+multiline_comment|/* is the drive in use? Only one&n;&t;&t;&t;&t;&t;   open at a time allowed */
 multiline_comment|/*&n; * The audio status uses the values from read subchannel data as specified&n; * in include/linux/cdrom.h.&n; */
 DECL|variable|sony_audio_status
 r_static
@@ -1459,33 +1451,7 @@ suffix:semicolon
 multiline_comment|/***************************************************************************&n; * int seek_and_read_N_blocks( Byte params[], int n_blocks, Byte status[2],&n; *                             Byte *data_buff, int buff_size )&n; *&n; *  Read n_blocks of data from the CDROM starting at position params[0:2],&n; *  number of blocks in stored in params[3:5] -- both these are already&n; *  int bcd format.&n; *  Transfer the data into the buffer pointed at by data_buff.  buff_size&n; *  gives the number of bytes available in the buffer.&n; *    The routine returns number of bytes read in if successful, otherwise&n; *  it returns one of the standard error returns.&n; ***************************************************************************/
 r_static
 r_int
-macro_line|#ifndef MODULE
 DECL|function|seek_and_read_N_blocks
-id|seek_and_read_N_blocks
-c_func
-(paren
-id|Byte
-id|params
-(braket
-)braket
-comma
-r_int
-id|n_blocks
-comma
-id|Byte
-id|status
-(braket
-l_int|2
-)braket
-comma
-id|Byte
-op_star
-id|data_buff
-comma
-r_int
-id|buf_size
-)paren
-macro_line|#else
 id|seek_and_read_N_blocks
 c_func
 (paren
@@ -1511,7 +1477,6 @@ comma
 r_int
 id|buf_size
 )paren
-macro_line|#endif
 (brace
 r_const
 r_int
@@ -1534,14 +1499,6 @@ suffix:semicolon
 r_int
 id|retry_count
 suffix:semicolon
-macro_line|#ifndef MODULE
-id|Byte
-op_star
-id|start_pos
-op_assign
-id|data_buff
-suffix:semicolon
-macro_line|#else
 id|Byte
 op_star
 id|data_buff
@@ -1551,7 +1508,6 @@ id|sector_count
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1704,7 +1660,6 @@ l_int|0
 )paren
 (brace
 multiline_comment|/* data is ready, read it */
-macro_line|#ifdef MODULE
 id|data_buff
 op_assign
 id|buff
@@ -1713,7 +1668,6 @@ id|sector_count
 op_increment
 )braket
 suffix:semicolon
-macro_line|#endif
 r_for
 c_loop
 (paren
@@ -1781,19 +1735,11 @@ l_int|0
 r_return
 id|i
 suffix:semicolon
-macro_line|#ifndef MODULE
-r_return
-id|data_buff
-op_minus
-id|start_pos
-suffix:semicolon
-macro_line|#else
 r_return
 id|block_size
 op_star
 id|sector_count
 suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/* seek_and_read_N_blocks() */
 multiline_comment|/****************************************************************************&n; * int request_toc_data( Byte status[2], struct s535_sony_toc *toc )&n; *&n; *  Read in the table of contents data.  Converts all the bcd data&n; * into integers in the toc structure.&n; ****************************************************************************/
@@ -2793,30 +2739,6 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n;&t;&t;&t;&t; * The data is in memory now, copy it to the buffer and advance to the&n;&t;&t;&t;&t; * next block to read.&n;&t;&t;&t;&t; */
-macro_line|#ifndef MODULE
-id|copyoff
-op_assign
-(paren
-id|block
-op_minus
-id|sony_first_block
-)paren
-op_star
-l_int|512
-suffix:semicolon
-id|memcpy
-c_func
-(paren
-id|CURRENT-&gt;buffer
-comma
-id|sony_buffer
-op_plus
-id|copyoff
-comma
-l_int|512
-)paren
-suffix:semicolon
-macro_line|#else
 id|copyoff
 op_assign
 id|block
@@ -2846,7 +2768,6 @@ comma
 l_int|512
 )paren
 suffix:semicolon
-macro_line|#endif
 id|block
 op_add_assign
 l_int|1
@@ -5660,29 +5581,13 @@ multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Initialize the driver.&n; */
-macro_line|#ifndef MODULE
-r_int
 r_int
 DECL|function|sony535_init
 id|sony535_init
 c_func
 (paren
-r_int
-r_int
-id|mem_start
-comma
-r_int
-r_int
-id|mem_end
-)paren
-macro_line|#else
-r_int
-id|init_module
-c_func
-(paren
 r_void
 )paren
-macro_line|#endif
 (brace
 r_struct
 id|s535_sony_drive_config
@@ -5712,11 +5617,9 @@ suffix:semicolon
 r_int
 id|tmp_irq
 suffix:semicolon
-macro_line|#ifdef MODULE
 r_int
 id|i
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Setting the base I/O address to 0 will disable it. */
 r_if
 c_cond
@@ -5733,8 +5636,8 @@ op_eq
 l_int|0
 )paren
 )paren
-r_goto
-id|bail
+r_return
+l_int|0
 suffix:semicolon
 multiline_comment|/* Set up all the register locations */
 id|result_reg
@@ -5809,16 +5712,10 @@ id|CDU535_MESSAGE_NAME
 l_string|&quot;: my base address is not free!&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#ifndef MODULE
-r_return
-id|mem_start
-suffix:semicolon
-macro_line|#else
 r_return
 op_minus
 id|EIO
 suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/* look for the CD-ROM, follows the procedure in the DOS driver */
 id|inb
@@ -6205,16 +6102,10 @@ comma
 id|CDU535_MESSAGE_NAME
 )paren
 suffix:semicolon
-macro_line|#ifndef MODULE
-r_return
-id|mem_start
-suffix:semicolon
-macro_line|#else
 r_return
 op_minus
 id|EIO
 suffix:semicolon
-macro_line|#endif
 )brace
 id|blk_dev
 (braket
@@ -6233,50 +6124,6 @@ op_assign
 l_int|8
 suffix:semicolon
 multiline_comment|/* 8 sector (4kB) read-ahead */
-macro_line|#ifndef MODULE
-id|sony_toc
-op_assign
-(paren
-r_struct
-id|s535_sony_toc
-op_star
-)paren
-id|mem_start
-suffix:semicolon
-id|mem_start
-op_add_assign
-r_sizeof
-op_star
-id|sony_toc
-suffix:semicolon
-id|last_sony_subcode
-op_assign
-(paren
-r_struct
-id|s535_sony_subcode
-op_star
-)paren
-id|mem_start
-suffix:semicolon
-id|mem_start
-op_add_assign
-r_sizeof
-op_star
-id|last_sony_subcode
-suffix:semicolon
-id|sony_buffer
-op_assign
-(paren
-id|Byte
-op_star
-)paren
-id|mem_start
-suffix:semicolon
-id|mem_start
-op_add_assign
-id|sony_buffer_size
-suffix:semicolon
-macro_line|#else /* MODULE */
 id|sony_toc
 op_assign
 (paren
@@ -6467,7 +6314,6 @@ id|ENOMEM
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif /* MODULE */
 id|initialized
 op_assign
 l_int|1
@@ -6490,15 +6336,11 @@ id|CDU535_MESSAGE_NAME
 l_string|&quot; drive&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
 r_return
 op_minus
 id|EIO
 suffix:semicolon
-macro_line|#endif
 )brace
-r_else
-(brace
 id|request_region
 c_func
 (paren
@@ -6509,18 +6351,9 @@ comma
 id|CDU535_HANDLE
 )paren
 suffix:semicolon
-)brace
-id|bail
-suffix:colon
-macro_line|#ifndef MODULE
-r_return
-id|mem_start
-suffix:semicolon
-macro_line|#else
 r_return
 l_int|0
 suffix:semicolon
-macro_line|#endif
 )brace
 macro_line|#ifndef MODULE
 multiline_comment|/*&n; * accept &quot;kernel command line&quot; parameters&n; * (added by emoenke@gwdg.de)&n; *&n; * use: tell LILO:&n; *                 sonycd535=0x320&n; *&n; * the address value has to be the existing CDROM port address.&n; */

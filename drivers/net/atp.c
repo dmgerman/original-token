@@ -3465,6 +3465,18 @@ id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;We must make the kernel realise we had to move&n;&t; *&t;into promisc mode or we start all out war on&n;&t; *&t;the cable. - AC&n;&t; */
+r_if
+c_cond
+(paren
+id|num_addrs
+)paren
+(brace
+id|dev-&gt;flags
+op_or_assign
+id|IFF_PROMISC
+suffix:semicolon
+)brace
 id|lp-&gt;addr_mode
 op_assign
 id|num_addrs

@@ -28,26 +28,6 @@ DECL|macro|DEF_B_SQUELDELAY
 mdefine_line|#define DEF_B_SQUELDELAY 3&t;/* 30 mS */
 DECL|macro|DEF_B_CLOCKMODE
 mdefine_line|#define DEF_B_CLOCKMODE 0&t;/* Normal clock mode */
-r_struct
-id|device
-op_star
-id|init_etherdev
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_int
-id|sizeof_private
-comma
-r_int
-r_int
-op_star
-id|mem_startp
-)paren
-suffix:semicolon
 DECL|variable|version
 r_static
 r_const
@@ -5598,17 +5578,10 @@ suffix:semicolon
 )brace
 DECL|function|pi_init
 r_int
-r_int
 id|pi_init
 c_func
 (paren
-r_int
-r_int
-id|mem_start
-comma
-r_int
-r_int
-id|mem_end
+r_void
 )paren
 (brace
 r_int
@@ -5752,7 +5725,8 @@ l_string|&quot;PI: ERROR: No card found&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-id|mem_start
+op_minus
+id|EIO
 suffix:semicolon
 )brace
 multiline_comment|/* Link a couple of device structures into the chain */
@@ -5767,14 +5741,9 @@ id|pi0a
 suffix:semicolon
 id|pi0a.priv
 op_assign
+id|kmalloc
+c_func
 (paren
-r_void
-op_star
-)paren
-id|mem_start
-suffix:semicolon
-id|mem_start
-op_add_assign
 r_sizeof
 (paren
 r_struct
@@ -5792,10 +5761,12 @@ id|mbuf
 )paren
 op_star
 l_int|4
-op_plus
-l_int|8
+comma
+id|GFP_KERNEL
+op_or
+id|GFP_DMA
+)paren
 suffix:semicolon
-multiline_comment|/* for alignment */
 id|pi0a.dma
 op_assign
 id|PI_DMA
@@ -5828,14 +5799,9 @@ l_int|0
 suffix:semicolon
 id|pi0b.priv
 op_assign
+id|kmalloc
+c_func
 (paren
-r_void
-op_star
-)paren
-id|mem_start
-suffix:semicolon
-id|mem_start
-op_add_assign
 r_sizeof
 (paren
 r_struct
@@ -5853,10 +5819,12 @@ id|mbuf
 )paren
 op_star
 l_int|4
-op_plus
-l_int|8
+comma
+id|GFP_KERNEL
+op_or
+id|GFP_DMA
+)paren
 suffix:semicolon
-multiline_comment|/* for alignment */
 multiline_comment|/* Now initialize them */
 id|pi_probe
 c_func
@@ -5882,7 +5850,7 @@ id|pi0a.irq
 suffix:semicolon
 multiline_comment|/* IRQ is shared */
 r_return
-id|mem_start
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|valid_dma_page

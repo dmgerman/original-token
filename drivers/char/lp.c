@@ -3056,22 +3056,16 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
-r_void
-)paren
-macro_line|#else
+DECL|macro|lp_init
+mdefine_line|#define lp_init init_module
+macro_line|#endif
+DECL|function|lp_init
 r_int
 id|lp_init
 c_func
 (paren
-r_int
-id|kmem_start
+r_void
 )paren
-macro_line|#endif
 (brace
 r_int
 id|offset
@@ -3106,16 +3100,10 @@ comma
 id|LP_MAJOR
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
 r_return
 op_minus
 id|EIO
 suffix:semicolon
-macro_line|#else
-r_return
-id|kmem_start
-suffix:semicolon
-macro_line|#endif
 )brace
 macro_line|#ifdef MODULE
 multiline_comment|/* When user feeds parameters, use them */
@@ -3290,15 +3278,9 @@ c_func
 l_string|&quot;lp: Driver configured but no interfaces found.&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
 r_return
 l_int|0
 suffix:semicolon
-macro_line|#else
-r_return
-id|kmem_start
-suffix:semicolon
-macro_line|#endif
 )brace
 macro_line|#ifdef MODULE
 DECL|function|cleanup_module

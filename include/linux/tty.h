@@ -648,10 +648,20 @@ id|keypress_wait
 suffix:semicolon
 r_extern
 r_int
-id|rs_init
+r_int
+id|con_init
 c_func
 (paren
 r_int
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|rs_init
+c_func
+(paren
+r_void
 )paren
 suffix:semicolon
 r_extern
@@ -659,15 +669,7 @@ r_int
 id|lp_init
 c_func
 (paren
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|con_init
-c_func
-(paren
-r_int
+r_void
 )paren
 suffix:semicolon
 r_extern
@@ -675,7 +677,7 @@ r_int
 id|pty_init
 c_func
 (paren
-r_int
+r_void
 )paren
 suffix:semicolon
 r_extern
@@ -683,7 +685,7 @@ r_int
 id|tty_init
 c_func
 (paren
-r_int
+r_void
 )paren
 suffix:semicolon
 r_extern
@@ -691,7 +693,7 @@ r_int
 id|vcs_init
 c_func
 (paren
-r_int
+r_void
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_CYCLADES
@@ -700,7 +702,7 @@ r_int
 id|cy_init
 c_func
 (paren
-r_int
+r_void
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -710,7 +712,7 @@ r_int
 id|stl_init
 c_func
 (paren
-r_int
+r_void
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -720,7 +722,7 @@ r_int
 id|stli_init
 c_func
 (paren
-r_int
+r_void
 )paren
 suffix:semicolon
 macro_line|#endif

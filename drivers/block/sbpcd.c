@@ -63,25 +63,25 @@ macro_line|#if !(SBPCD_ISSUE-1)
 DECL|macro|DO_SBPCD_REQUEST
 mdefine_line|#define DO_SBPCD_REQUEST(a) do_sbpcd_request(a)
 DECL|macro|SBPCD_INIT
-mdefine_line|#define SBPCD_INIT(a,b) sbpcd_init(a,b)
+mdefine_line|#define SBPCD_INIT(a) sbpcd_init(a)
 macro_line|#endif
 macro_line|#if !(SBPCD_ISSUE-2)
 DECL|macro|DO_SBPCD_REQUEST
 mdefine_line|#define DO_SBPCD_REQUEST(a) do_sbpcd2_request(a)
 DECL|macro|SBPCD_INIT
-mdefine_line|#define SBPCD_INIT(a,b) sbpcd2_init(a,b)
+mdefine_line|#define SBPCD_INIT(a) sbpcd2_init(a)
 macro_line|#endif
 macro_line|#if !(SBPCD_ISSUE-3)
 DECL|macro|DO_SBPCD_REQUEST
 mdefine_line|#define DO_SBPCD_REQUEST(a) do_sbpcd3_request(a)
 DECL|macro|SBPCD_INIT
-mdefine_line|#define SBPCD_INIT(a,b) sbpcd3_init(a,b)
+mdefine_line|#define SBPCD_INIT(a) sbpcd3_init(a)
 macro_line|#endif
 macro_line|#if !(SBPCD_ISSUE-4)
 DECL|macro|DO_SBPCD_REQUEST
 mdefine_line|#define DO_SBPCD_REQUEST(a) do_sbpcd4_request(a)
 DECL|macro|SBPCD_INIT
-mdefine_line|#define SBPCD_INIT(a,b) sbpcd4_init(a,b)
+mdefine_line|#define SBPCD_INIT(a) sbpcd4_init(a)
 macro_line|#endif
 multiline_comment|/*==========================================================================*/
 macro_line|#if SBPCD_DIS_IRQ
@@ -268,45 +268,30 @@ macro_line|#if !(SBPCD_ISSUE-1)
 macro_line|#ifdef CONFIG_SBPCD2
 r_extern
 r_int
-r_int
 id|sbpcd2_init
 c_func
 (paren
-r_int
-r_int
-comma
-r_int
-r_int
+r_void
 )paren
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_SBPCD3
 r_extern
 r_int
-r_int
 id|sbpcd3_init
 c_func
 (paren
-r_int
-r_int
-comma
-r_int
-r_int
+r_void
 )paren
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_SBPCD4
 r_extern
 r_int
-r_int
 id|sbpcd4_init
 c_func
 (paren
-r_int
-r_int
-comma
-r_int
-r_int
+r_void
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -29902,15 +29887,10 @@ r_void
 )paren
 macro_line|#else
 r_int
-r_int
 id|SBPCD_INIT
 c_func
 (paren
-id|u_long
-id|mem_start
-comma
-id|u_long
-id|mem_end
+r_void
 )paren
 macro_line|#endif MODULE
 (brace
@@ -30946,7 +30926,6 @@ id|sbp_audsiz
 op_assign
 id|READ_AUDIO
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|D_S
 (braket
 id|j
@@ -31095,70 +31074,6 @@ id|sbp_audsiz
 )paren
 suffix:semicolon
 )brace
-macro_line|#else
-id|D_S
-(braket
-id|j
-)braket
-dot
-id|sbp_buf
-op_assign
-(paren
-id|u_char
-op_star
-)paren
-id|mem_start
-suffix:semicolon
-id|mem_start
-op_add_assign
-id|D_S
-(braket
-id|j
-)braket
-dot
-id|sbp_bufsiz
-op_star
-id|CD_FRAMESIZE
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|D_S
-(braket
-id|j
-)braket
-dot
-id|sbp_audsiz
-OG
-l_int|0
-)paren
-(brace
-id|D_S
-(braket
-id|j
-)braket
-dot
-id|aud_buf
-op_assign
-(paren
-id|u_char
-op_star
-)paren
-id|mem_start
-suffix:semicolon
-id|mem_start
-op_add_assign
-id|D_S
-(braket
-id|j
-)braket
-dot
-id|sbp_audsiz
-op_star
-id|CD_FRAMESIZE_RAW
-suffix:semicolon
-)brace
-macro_line|#endif MODULE
 multiline_comment|/*&n;&t;&t; * set the block size&n;&t;&t; */
 id|sbpcd_blocksizes
 (braket
@@ -31186,46 +31101,29 @@ id|init_done
 suffix:colon
 macro_line|#if !(SBPCD_ISSUE-1)
 macro_line|#ifdef CONFIG_SBPCD2
-id|mem_start
-op_assign
 id|sbpcd2_init
 c_func
 (paren
-id|mem_start
-comma
-id|mem_end
 )paren
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_SBPCD3
-id|mem_start
-op_assign
 id|sbpcd3_init
 c_func
 (paren
-id|mem_start
-comma
-id|mem_end
 )paren
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_SBPCD4
-id|mem_start
-op_assign
 id|sbpcd4_init
 c_func
 (paren
-id|mem_start
-comma
-id|mem_end
 )paren
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif
 r_return
-(paren
-id|mem_start
-)paren
+l_int|0
 suffix:semicolon
 macro_line|#endif MODULE
 )brace

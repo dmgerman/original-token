@@ -768,8 +768,6 @@ r_sizeof
 r_struct
 id|ei_device
 )paren
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_if

@@ -1486,6 +1486,11 @@ c_func
 id|dev
 )paren
 suffix:semicolon
+id|dev-&gt;flags
+op_and_assign
+op_complement
+id|IFF_MULTICAST
+suffix:semicolon
 multiline_comment|/* Initialize private structure */
 id|p-&gt;ram
 op_assign

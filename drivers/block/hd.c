@@ -5822,17 +5822,10 @@ multiline_comment|/* fsync */
 suffix:semicolon
 DECL|function|hd_init
 r_int
-r_int
 id|hd_init
 c_func
 (paren
-r_int
-r_int
-id|mem_start
-comma
-r_int
-r_int
-id|mem_end
+r_void
 )paren
 (brace
 r_if
@@ -5859,7 +5852,8 @@ id|MAJOR_NR
 )paren
 suffix:semicolon
 r_return
-id|mem_start
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 id|blk_dev
@@ -5898,7 +5892,7 @@ op_assign
 id|hd_times_out
 suffix:semicolon
 r_return
-id|mem_start
+l_int|0
 suffix:semicolon
 )brace
 DECL|macro|DEVICE_BUSY

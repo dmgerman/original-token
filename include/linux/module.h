@@ -252,11 +252,20 @@ id|Using_Versions
 suffix:semicolon
 multiline_comment|/* gcc will handle this global (used as a flag) correctly */
 macro_line|#endif
+macro_line|#ifdef MODULE
 DECL|macro|MOD_INC_USE_COUNT
 mdefine_line|#define MOD_INC_USE_COUNT      mod_use_count_++
 DECL|macro|MOD_DEC_USE_COUNT
 mdefine_line|#define MOD_DEC_USE_COUNT      mod_use_count_--
 DECL|macro|MOD_IN_USE
 mdefine_line|#define MOD_IN_USE&t;       (mod_use_count_ != 0)
+macro_line|#else
+DECL|macro|MOD_INC_USE_COUNT
+mdefine_line|#define MOD_INC_USE_COUNT&t;do { } while (0)
+DECL|macro|MOD_DEC_USE_COUNT
+mdefine_line|#define MOD_DEC_USE_COUNT&t;do { } while (0)
+DECL|macro|MOD_IN_USE
+mdefine_line|#define MOD_IN_USE&t;&t;1
+macro_line|#endif
 macro_line|#endif
 eof

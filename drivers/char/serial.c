@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/drivers/char/serial.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  Extensively rewritten by Theodore Ts&squot;o, 8/16/92 -- 9/14/92.  Now&n; *  much more extensible to support other serial cards based on the&n; *  16450/16550A UART&squot;s.  Added support for the AST FourPort and the&n; *  Accent Async board.  &n; *&n; *  set_serial_info fixed to set the flags, custom divisor, and uart&n; * &t;type fields.  Fix suggested by Michael K. Johnson 12/12/92.&n; *&n; * This module exports the following rs232 io functions:&n; *&n; *&t;long rs_init(long);&n; * &t;int  rs_open(struct tty_struct * tty, struct file * filp)&n; */
+multiline_comment|/*&n; *  linux/drivers/char/serial.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  Extensively rewritten by Theodore Ts&squot;o, 8/16/92 -- 9/14/92.  Now&n; *  much more extensible to support other serial cards based on the&n; *  16450/16550A UART&squot;s.  Added support for the AST FourPort and the&n; *  Accent Async board.  &n; *&n; *  set_serial_info fixed to set the flags, custom divisor, and uart&n; * &t;type fields.  Fix suggested by Michael K. Johnson 12/12/92.&n; *&n; * This module exports the following rs232 io functions:&n; *&n; *&t;int rs_init(void);&n; * &t;int rs_open(struct tty_struct * tty, struct file * filp)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -11294,8 +11294,7 @@ r_int
 id|rs_init
 c_func
 (paren
-r_int
-id|kmem_start
+r_void
 )paren
 (brace
 r_int
@@ -11839,7 +11838,7 @@ suffix:semicolon
 )brace
 )brace
 r_return
-id|kmem_start
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * register_serial and unregister_serial allows for serial ports to be&n; * configured at run-time, to support PCMCIA modems.&n; */

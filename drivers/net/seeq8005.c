@@ -31,27 +31,6 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &quot;seeq8005.h&quot;
-r_extern
-r_struct
-id|device
-op_star
-id|init_etherdev
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_int
-id|sizeof_private
-comma
-r_int
-r_int
-op_star
-id|mem_startp
-)paren
-suffix:semicolon
 multiline_comment|/* First, a few definitions that the brave might change. */
 multiline_comment|/* A zero-terminated list of I/O addresses to be probed. */
 DECL|variable|seeq8005_portlist
@@ -1250,8 +1229,6 @@ r_sizeof
 r_struct
 id|net_local
 )paren
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_if
@@ -1513,6 +1490,11 @@ c_func
 (paren
 id|dev
 )paren
+suffix:semicolon
+id|dev-&gt;flags
+op_and_assign
+op_complement
+id|IFF_MULTICAST
 suffix:semicolon
 r_return
 l_int|0

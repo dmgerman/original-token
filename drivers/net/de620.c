@@ -1231,6 +1231,11 @@ id|num_addrs
 )paren
 (brace
 multiline_comment|/* Enable promiscuous mode */
+multiline_comment|/*&n;&t;&t; *&t;We must make the kernel realise we had to move&n;&t;&t; *&t;into promisc mode or we start all out war on&n;&t;&t; *&t;the cable. - AC&n;&t;&t; */
+id|dev-&gt;flags
+op_or_assign
+id|IFF_PROMISC
+suffix:semicolon
 id|de620_set_register
 c_func
 (paren

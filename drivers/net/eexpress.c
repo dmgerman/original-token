@@ -1195,6 +1195,11 @@ c_func
 id|dev
 )paren
 suffix:semicolon
+id|dev-&gt;flags
+op_and_assign
+op_complement
+id|IFF_MULTICAST
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
