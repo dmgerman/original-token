@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/include/linux/ufs_fs.h&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * Clean swab support by Fare &lt;fare@tunes.org&gt;&n; * just hope no one is using NNUUXXI on __?64 structure elements&n; * 64-bit clean thanks to Maciej W. Rozycki &lt;macro@ds2.pg.gda.pl&gt;&n; *&n; * 4.4BSD (FreeBSD) support added on February 1st 1998 by&n; * Niels Kristian Bech Jensen &lt;nkbj@image.dk&gt; partially based&n; * on code by Martin von Loewis &lt;martin@mira.isdn.cs.tu-berlin.de&gt;.&n; *&n; * NeXTstep support added on February 5th 1998 by&n; * Niels Kristian Bech Jensen &lt;nkbj@image.dk&gt;.&n; */
+multiline_comment|/*&n; *  linux/include/linux/ufs_fs.h&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * Clean swab support by Fare &lt;fare@tunes.org&gt;&n; * just hope no one is using NNUUXXI on __?64 structure elements&n; * 64-bit clean thanks to Maciej W. Rozycki &lt;macro@ds2.pg.gda.pl&gt;&n; *&n; * 4.4BSD (FreeBSD) support added on February 1st 1998 by&n; * Niels Kristian Bech Jensen &lt;nkbj@image.dk&gt; partially based&n; * on code by Martin von Loewis &lt;martin@mira.isdn.cs.tu-berlin.de&gt;.&n; *&n; * NeXTstep support added on February 5th 1998 by&n; * Niels Kristian Bech Jensen &lt;nkbj@image.dk&gt;.&n; *&n; * Write support by Daniel Pirkl &lt;daniel.pirkl@email.cz&gt;&n; */
 macro_line|#ifndef __LINUX_UFS_FS_H
 DECL|macro|__LINUX_UFS_FS_H
 mdefine_line|#define __LINUX_UFS_FS_H
@@ -69,7 +69,7 @@ mdefine_line|#define UFS_FSBAD     ((char)0xff)
 multiline_comment|/* From here to next blank line, s_flags for ufs_sb_info */
 multiline_comment|/* endianness */
 DECL|macro|UFS_BYTESEX
-mdefine_line|#define UFS_BYTESEX&t;&t;0x00000001&t;/* mask; leave room to 0xF */
+mdefine_line|#define UFS_BYTESEX             0x00000001      /* mask; leave room to 0xF */
 macro_line|#if defined(__LITTLE_ENDIAN) || defined(__BIG_ENDIAN)
 multiline_comment|/* these are for sane architectures */
 DECL|macro|UFS_NATIVE_ENDIAN
@@ -108,28 +108,47 @@ DECL|macro|UFS_ST_44BSD
 mdefine_line|#define UFS_ST_44BSD&t;&t;0x00000100
 DECL|macro|UFS_ST_SUN
 mdefine_line|#define UFS_ST_SUN&t;&t;0x00000200
-DECL|macro|UFS_ST_NEXT
-mdefine_line|#define UFS_ST_NEXT&t;&t;0x00000400
-multiline_comment|/* filesystem flavors (combo of features) */
-DECL|macro|UFS_FEATURES
-mdefine_line|#define UFS_FEATURES&t;&t;0x00FFFFF0&t;/* room for extension */
-DECL|macro|UFS_VANILLA
-mdefine_line|#define UFS_VANILLA&t;&t;0x00000000
-DECL|macro|UFS_OLD
-mdefine_line|#define UFS_OLD&t;&t;&t;0x00000000&t;/* 4.2BSD */
-DECL|macro|UFS_44BSD
-mdefine_line|#define UFS_44BSD&t;&t;0x00000130
-DECL|macro|UFS_HURD
-mdefine_line|#define UFS_HURD&t;&t;0x00000130
-DECL|macro|UFS_SUN
-mdefine_line|#define UFS_SUN&t;&t;&t;0x00000200
-DECL|macro|UFS_NEXT
-mdefine_line|#define UFS_NEXT&t;&t;0x00000400
+multiline_comment|/*cylinder group encoding */
+DECL|macro|UFS_CG_MASK
+mdefine_line|#define UFS_CG_MASK&t;&t;0x00003000&t;/* mask for the following */
+DECL|macro|UFS_CG_OLD
+mdefine_line|#define UFS_CG_OLD&t;&t;0x00000000
+DECL|macro|UFS_CG_44BSD
+mdefine_line|#define UFS_CG_44BSD&t;&t;0x00002000
+DECL|macro|UFS_CG_SUN
+mdefine_line|#define UFS_CG_SUN&t;&t;0x00001000
 multiline_comment|/* fs_inodefmt options */
 DECL|macro|UFS_42INODEFMT
 mdefine_line|#define UFS_42INODEFMT&t;-1
 DECL|macro|UFS_44INODEFMT
 mdefine_line|#define UFS_44INODEFMT&t;2
+multiline_comment|/* mount options */
+DECL|macro|UFS_MOUNT_ONERROR
+mdefine_line|#define UFS_MOUNT_ONERROR&t;&t;0x0000000F
+DECL|macro|UFS_MOUNT_ONERROR_PANIC
+mdefine_line|#define UFS_MOUNT_ONERROR_PANIC&t;&t;0x00000001
+DECL|macro|UFS_MOUNT_ONERROR_LOCK
+mdefine_line|#define UFS_MOUNT_ONERROR_LOCK&t;&t;0x00000002
+DECL|macro|UFS_MOUNT_ONERROR_UMOUNT
+mdefine_line|#define UFS_MOUNT_ONERROR_UMOUNT&t;0x00000004
+DECL|macro|UFS_MOUNT_ONERROR_REPAIR
+mdefine_line|#define UFS_MOUNT_ONERROR_REPAIR&t;0x00000008
+DECL|macro|UFS_MOUNT_UFSTYPE
+mdefine_line|#define UFS_MOUNT_UFSTYPE&t;&t;0x000000F0
+DECL|macro|UFS_MOUNT_UFSTYPE_OLD
+mdefine_line|#define UFS_MOUNT_UFSTYPE_OLD&t;&t;0x00000010
+DECL|macro|UFS_MOUNT_UFSTYPE_44BSD
+mdefine_line|#define UFS_MOUNT_UFSTYPE_44BSD&t;&t;0x00000020
+DECL|macro|UFS_MOUNT_UFSTYPE_SUN
+mdefine_line|#define UFS_MOUNT_UFSTYPE_SUN&t;&t;0x00000040
+DECL|macro|UFS_MOUNT_UFSTYPE_NEXT
+mdefine_line|#define UFS_MOUNT_UFSTYPE_NEXT&t;&t;0x00000080
+DECL|macro|ufs_clear_opt
+mdefine_line|#define ufs_clear_opt(o,opt)&t;o &amp;= ~UFS_MOUNT_##opt
+DECL|macro|ufs_set_opt
+mdefine_line|#define ufs_set_opt(o,opt)&t;o |= UFS_MOUNT_##opt
+DECL|macro|ufs_test_opt
+mdefine_line|#define ufs_test_opt(o,opt)&t;((o) &amp; UFS_MOUNT_##opt)
 multiline_comment|/*&n; * MINFREE gives the minimum acceptable percentage of file system&n; * blocks which may be free. If the freelist drops below this level&n; * only the superuser may continue to allocate blocks. This may&n; * be set to 0 if no reserve of free blocks is deemed necessary,&n; * however throughput drops by fifty percent if the file system&n; * is run at between 95% and 100% full; thus the minimum default&n; * value of fs_minfree is 5%. However, to get good clustering&n; * performance, 10% is a better choice. hence we use 10% as our&n; * default value. With 10% free space, fragmentation is not a&n; * problem, so we choose to optimize for time.&n; */
 DECL|macro|UFS_MINFREE
 mdefine_line|#define UFS_MINFREE         5
@@ -224,6 +243,25 @@ id|tv_usec
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * File types&n; */
+DECL|macro|DT_UNKNOWN
+mdefine_line|#define DT_UNKNOWN&t;0
+DECL|macro|DT_FIFO
+mdefine_line|#define DT_FIFO&t;&t;1
+DECL|macro|DT_CHR
+mdefine_line|#define DT_CHR&t;&t;2
+DECL|macro|DT_DIR
+mdefine_line|#define DT_DIR&t;&t;4
+DECL|macro|DT_BLK
+mdefine_line|#define DT_BLK&t;&t;6
+DECL|macro|DT_REG
+mdefine_line|#define DT_REG&t;&t;8
+DECL|macro|DT_LNK
+mdefine_line|#define DT_LNK&t;&t;10
+DECL|macro|DT_SOCK
+mdefine_line|#define DT_SOCK&t;&t;12
+DECL|macro|DT_WHT
+mdefine_line|#define DT_WHT&t;&t;14
 DECL|struct|ufs_dir_entry
 r_struct
 id|ufs_dir_entry
@@ -887,6 +925,37 @@ id|__u32
 id|cg_nextfreeoff
 suffix:semicolon
 multiline_comment|/* (u_char) next available space */
+r_union
+(brace
+r_struct
+(brace
+DECL|member|cg_clustersumoff
+id|__u32
+id|cg_clustersumoff
+suffix:semicolon
+multiline_comment|/* (u_int32) counts of avail clusters */
+DECL|member|cg_clusteroff
+id|__u32
+id|cg_clusteroff
+suffix:semicolon
+multiline_comment|/* (u_int8) free cluster map */
+DECL|member|cg_nclusterblks
+id|__u32
+id|cg_nclusterblks
+suffix:semicolon
+multiline_comment|/* number of clusters this cg */
+DECL|member|cg_sparecon
+id|__u32
+id|cg_sparecon
+(braket
+l_int|13
+)braket
+suffix:semicolon
+multiline_comment|/* reserved for future use */
+DECL|member|cg_44
+)brace
+id|cg_44
+suffix:semicolon
 DECL|member|cg_sparecon
 id|__u32
 id|cg_sparecon
@@ -895,6 +964,10 @@ l_int|16
 )braket
 suffix:semicolon
 multiline_comment|/* reserved for future use */
+DECL|member|cg_u
+)brace
+id|cg_u
+suffix:semicolon
 DECL|member|cg_space
 id|__u8
 id|cg_space
@@ -1357,15 +1430,6 @@ op_star
 suffix:semicolon
 r_extern
 r_void
-id|ufs_print_inode
-(paren
-r_struct
-id|inode
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_void
 id|ufs_write_inode
 (paren
 r_struct
@@ -1689,18 +1753,6 @@ id|ufs_write_super
 r_struct
 id|super_block
 op_star
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|ufs_print_cylinder_stuff
-c_func
-(paren
-r_struct
-id|ufs_cylinder_group
-op_star
-comma
-id|__u32
 )paren
 suffix:semicolon
 multiline_comment|/* symlink.c */

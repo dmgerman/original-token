@@ -2137,6 +2137,10 @@ op_star
 id|host
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|host-&gt;control
 op_or_assign
 id|DMA_EN
@@ -2150,6 +2154,13 @@ op_plus
 id|ASC_CONTROL
 )paren
 suffix:semicolon
+id|flags
+op_assign
+id|claim_dma_lock
+c_func
+(paren
+)paren
+suffix:semicolon
 id|set_dma_mode
 (paren
 id|host-&gt;dma
@@ -2160,6 +2171,12 @@ suffix:semicolon
 id|enable_dma
 (paren
 id|host-&gt;dma
+)paren
+suffix:semicolon
+id|release_dma_lock
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 )brace

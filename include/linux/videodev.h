@@ -589,6 +589,11 @@ id|clipcount
 suffix:semicolon
 DECL|macro|VIDEO_WINDOW_INTERLACE
 mdefine_line|#define VIDEO_WINDOW_INTERLACE&t;1
+DECL|macro|VIDEO_CLIP_BITMAP
+mdefine_line|#define VIDEO_CLIP_BITMAP&t;-1
+multiline_comment|/* bitmap is 1024x625, a &squot;1&squot; bit represents a clipped pixel */
+DECL|macro|VIDEO_CLIPMAP_SIZE
+mdefine_line|#define VIDEO_CLIPMAP_SIZE&t;(128 * 625)
 )brace
 suffix:semicolon
 DECL|struct|video_capture

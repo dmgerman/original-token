@@ -1542,8 +1542,15 @@ l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/* This is just like INIT_REQUEST, but we need to be aware of the fact&n; * that an interrupt may start another request, so we run this with interrupts&n; * turned off &n; */
+macro_line|#if MAJOR_NR == SCSI_DISK0_MAJOR
+DECL|macro|CHECK_INITREQ_SD_MAJOR
+mdefine_line|#define CHECK_INITREQ_SD_MAJOR(major) SCSI_DISK_MAJOR(major)
+macro_line|#else
+DECL|macro|CHECK_INITREQ_SD_MAJOR
+mdefine_line|#define CHECK_INITREQ_SD_MAJOR(major) ((major) == MAJOR_NR)
+macro_line|#endif
 DECL|macro|INIT_SCSI_REQUEST
-mdefine_line|#define INIT_SCSI_REQUEST       &bslash;&n;    if (!CURRENT) {             &bslash;&n;&t;CLEAR_INTR;             &bslash;&n;&t;return;                 &bslash;&n;    }                           &bslash;&n;    if (MAJOR(CURRENT-&gt;rq_dev) != MAJOR_NR)           &bslash;&n;&t;panic(DEVICE_NAME &quot;: request list destroyed&quot;);&bslash;&n;    if (CURRENT-&gt;bh) {                                &bslash;&n;&t;if (!buffer_locked(CURRENT-&gt;bh))              &bslash;&n;&t;    panic(DEVICE_NAME &quot;: block not locked&quot;);  &bslash;&n;    }
+mdefine_line|#define INIT_SCSI_REQUEST       &t;&t;&t;&bslash;&n;    if (!CURRENT) {             &t;&t;&t;&bslash;&n;&t;CLEAR_INTR;             &t;&t;&t;&bslash;&n;&t;return;                 &t;&t;&t;&bslash;&n;    }                           &t;&t;&t;&bslash;&n;    if (!CHECK_INITREQ_SD_MAJOR(MAJOR(CURRENT-&gt;rq_dev)))&bslash;&n;&t;panic(DEVICE_NAME &quot;: request list destroyed&quot;);&t;&bslash;&n;    if (CURRENT-&gt;bh) {                                &t;&bslash;&n;&t;if (!buffer_locked(CURRENT-&gt;bh))              &t;&bslash;&n;&t;    panic(DEVICE_NAME &quot;: block not locked&quot;);  &t;&bslash;&n;    }
 macro_line|#endif
 DECL|macro|SCSI_SLEEP
 mdefine_line|#define SCSI_SLEEP(QUEUE, CONDITION) {&t;&t;    &bslash;&n;    if (CONDITION) {&t;&t;&t;            &bslash;&n;&t;struct wait_queue wait = { current, NULL};  &bslash;&n;&t;add_wait_queue(QUEUE, &amp;wait);&t;&t;    &bslash;&n;&t;for(;;) {&t;&t;&t;            &bslash;&n;&t;current-&gt;state = TASK_UNINTERRUPTIBLE;&t;    &bslash;&n;&t;if (CONDITION) {&t;&t;            &bslash;&n;            if (in_interrupt())&t;                    &bslash;&n;&t;        panic(&quot;scsi: trying to call schedule() in interrupt&quot; &bslash;&n;&t;&t;      &quot;, file %s, line %d.&bslash;n&quot;, __FILE__, __LINE__);  &bslash;&n;&t;    schedule();&t;&t;&t;&bslash;&n;        }&t;&t;&t;&t;&bslash;&n;&t;else&t;&t;&t;        &bslash;&n;&t;    break;      &t;&t;&bslash;&n;&t;}&t;&t;&t;        &bslash;&n;&t;remove_wait_queue(QUEUE, &amp;wait);&bslash;&n;&t;current-&gt;state = TASK_RUNNING;&t;&bslash;&n;    }; }

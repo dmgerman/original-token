@@ -2954,7 +2954,7 @@ macro_line|#if IDEFLOPPY_DEBUG_LOG
 id|printk
 (paren
 id|KERN_INFO
-l_string|&quot;ide-floppy: %s: I/O error, &quot;
+l_string|&quot;ide-floppy: %s: I/O error&bslash;n&quot;
 comma
 id|drive-&gt;name
 )paren
@@ -3902,6 +3902,10 @@ id|pc-&gt;c
 (braket
 l_int|8
 )braket
+op_assign
+l_int|255
+suffix:semicolon
+id|pc-&gt;request_transfer
 op_assign
 l_int|255
 suffix:semicolon

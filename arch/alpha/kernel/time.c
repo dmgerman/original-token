@@ -57,6 +57,11 @@ DECL|variable|state
 )brace
 id|state
 suffix:semicolon
+DECL|variable|est_cycle_freq
+r_int
+r_int
+id|est_cycle_freq
+suffix:semicolon
 DECL|function|rpcc
 r_static
 r_inline
@@ -418,7 +423,7 @@ suffix:semicolon
 multiline_comment|/* finally seconds */
 )brace
 multiline_comment|/*&n; * Initialize Programmable Interval Timers with standard values.  Some&n; * drivers depend on them being initialized (e.g., joystick driver).&n; */
-multiline_comment|/* It is (normally) only counter 1 that presents config problems, so&n;   provide this support function to do the rest of the job.  */
+multiline_comment|/* It is (normally) only counter 0 that presents config problems, so&n;   provide this support function to do the rest of the job.  */
 r_void
 r_inline
 DECL|function|init_pit_rest
@@ -484,6 +489,10 @@ id|rtc_init_pit
 r_void
 )paren
 (brace
+r_int
+r_char
+id|control
+suffix:semicolon
 multiline_comment|/* Setup interval timer if /dev/rtc is being used */
 id|outb
 c_func
@@ -527,6 +536,40 @@ l_string|&quot;timer&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* reserve pit */
+multiline_comment|/* Turn off RTC interrupts before /dev/rtc is initialized */
+id|control
+op_assign
+id|CMOS_READ
+c_func
+(paren
+id|RTC_CONTROL
+)paren
+suffix:semicolon
+id|control
+op_and_assign
+op_complement
+(paren
+id|RTC_PIE
+op_or
+id|RTC_AIE
+op_or
+id|RTC_UIE
+)paren
+suffix:semicolon
+id|CMOS_WRITE
+c_func
+(paren
+id|control
+comma
+id|RTC_CONTROL
+)paren
+suffix:semicolon
+id|CMOS_READ
+c_func
+(paren
+id|RTC_INTR_FLAGS
+)paren
+suffix:semicolon
 id|init_pit_rest
 c_func
 (paren
@@ -542,15 +585,12 @@ r_void
 )paren
 (brace
 r_int
+r_char
 id|x
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
+multiline_comment|/* Reset periodic interrupt frequency.  */
 id|x
 op_assign
-(paren
 id|CMOS_READ
 c_func
 (paren
@@ -558,10 +598,21 @@ id|RTC_FREQ_SELECT
 )paren
 op_amp
 l_int|0x3f
-)paren
-)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|x
 op_ne
 l_int|0x26
+op_logical_and
+id|x
+op_ne
+l_int|0x19
+op_logical_and
+id|x
+op_ne
+l_int|0x06
 )paren
 (brace
 id|printk
@@ -581,6 +632,60 @@ id|RTC_FREQ_SELECT
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Turn on periodic interrupts.  */
+id|x
+op_assign
+id|CMOS_READ
+c_func
+(paren
+id|RTC_CONTROL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|x
+op_amp
+id|RTC_PIE
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Turning on RTC interrupts.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|x
+op_or_assign
+id|RTC_PIE
+suffix:semicolon
+id|x
+op_and_assign
+op_complement
+(paren
+id|RTC_AIE
+op_or
+id|RTC_UIE
+)paren
+suffix:semicolon
+id|CMOS_WRITE
+c_func
+(paren
+id|x
+comma
+id|RTC_CONTROL
+)paren
+suffix:semicolon
+)brace
+id|CMOS_READ
+c_func
+(paren
+id|RTC_INTR_FLAGS
+)paren
+suffix:semicolon
 id|request_region
 c_func
 (paren
@@ -644,12 +749,6 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifdef CONFIG_RTC
-r_int
-r_char
-id|save_control
-suffix:semicolon
-macro_line|#endif
 r_void
 (paren
 op_star
@@ -683,6 +782,10 @@ comma
 id|cc1
 comma
 id|cc2
+suffix:semicolon
+r_int
+r_int
+id|cycle_freq
 suffix:semicolon
 multiline_comment|/* Initialize the timers.  */
 id|init_pit
@@ -733,10 +836,14 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* If our cycle frequency isn&squot;t valid, go another round and give&n;&t;   a guess at what it should be.  */
+id|cycle_freq
+op_assign
+id|hwrpb-&gt;cycle_freq
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|hwrpb-&gt;cycle_freq
+id|cycle_freq
 op_eq
 l_int|0
 )paren
@@ -787,7 +894,9 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|hwrpb-&gt;cycle_freq
+id|est_cycle_freq
+op_assign
+id|cycle_freq
 op_assign
 id|cc2
 op_minus
@@ -802,7 +911,7 @@ c_func
 (paren
 l_string|&quot;%lu Hz&bslash;n&quot;
 comma
-id|hwrpb-&gt;cycle_freq
+id|cycle_freq
 )paren
 suffix:semicolon
 )brace
@@ -1000,52 +1109,12 @@ op_lshift
 id|FIX_SHIFT
 )paren
 op_div
-id|hwrpb-&gt;cycle_freq
+id|cycle_freq
 suffix:semicolon
 id|state.last_rtc_update
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef CONFIG_RTC 
-multiline_comment|/* turn off RTC interrupts before /dev/rtc is initialized */
-id|save_control
-op_assign
-id|CMOS_READ
-c_func
-(paren
-id|RTC_CONTROL
-)paren
-suffix:semicolon
-id|save_control
-op_and_assign
-op_complement
-id|RTC_PIE
-suffix:semicolon
-id|save_control
-op_and_assign
-op_complement
-id|RTC_AIE
-suffix:semicolon
-id|save_control
-op_and_assign
-op_complement
-id|RTC_UIE
-suffix:semicolon
-id|CMOS_WRITE
-c_func
-(paren
-id|save_control
-comma
-id|RTC_CONTROL
-)paren
-suffix:semicolon
-id|CMOS_READ
-c_func
-(paren
-id|RTC_INTR_FLAGS
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* setup timer */
 id|irq_handler
 op_assign

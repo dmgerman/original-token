@@ -14,7 +14,7 @@ mdefine_line|#define CAT1(x,y)  x##y
 DECL|macro|CAT
 mdefine_line|#define CAT(x,y)   CAT1(x,y)
 DECL|macro|DO_DEFAULT_RTC
-mdefine_line|#define DO_DEFAULT_RTC&t;&t;&t;&t;&bslash;&n;&t;rtc_port: 0x70, rtc_addr: 0x80, rtc_bcd: 0
+mdefine_line|#define DO_DEFAULT_RTC rtc_port: 0x70
 DECL|macro|DO_EV4_MMU
 mdefine_line|#define DO_EV4_MMU&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;max_asn:&t;&t;&t;EV4_MAX_ASN,&t;&t;&t;&bslash;&n;&t;mmu_context_mask:&t;&t;~0UL,&t;&t;&t;&t;&bslash;&n;&t;mv_get_mmu_context:&t;&t;ev4_get_mmu_context,&t;&t;&bslash;&n;&t;mv_flush_tlb_current:&t;&t;ev4_flush_tlb_current,&t;&t;&bslash;&n;&t;mv_flush_tlb_other:&t;&t;ev4_flush_tlb_other,&t;&t;&bslash;&n;&t;mv_flush_tlb_current_page:&t;ev4_flush_tlb_current_page
 DECL|macro|DO_EV5_MMU

@@ -35,8 +35,6 @@ id|hotkey
 )paren
 (brace
 r_int
-id|i
-comma
 id|j
 suffix:semicolon
 r_char
@@ -47,6 +45,11 @@ op_plus
 l_int|1
 )braket
 suffix:semicolon
+macro_line|#if OLD_NCURSES
+r_int
+id|i
+suffix:semicolon
+macro_line|#endif
 id|strncpy
 c_func
 (paren

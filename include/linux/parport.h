@@ -629,15 +629,20 @@ id|parport
 op_star
 )paren
 suffix:semicolon
-DECL|member|examine_irq
-r_int
+DECL|member|interrupt
+r_void
 (paren
 op_star
-id|examine_irq
+id|interrupt
 )paren
 (paren
+r_int
+comma
+r_void
+op_star
+comma
 r_struct
-id|parport
+id|pt_regs
 op_star
 )paren
 suffix:semicolon
@@ -991,9 +996,17 @@ r_int
 id|number
 suffix:semicolon
 multiline_comment|/* port index - the `n&squot; in `parportn&squot; */
-DECL|member|lock
+DECL|member|pardevice_lock
 id|spinlock_t
-id|lock
+id|pardevice_lock
+suffix:semicolon
+DECL|member|waitlist_lock
+id|spinlock_t
+id|waitlist_lock
+suffix:semicolon
+DECL|member|cad_lock
+id|spinlock_t
+id|cad_lock
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -1056,7 +1069,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
-multiline_comment|/* parport_register_device declares that a device is connected to a port, and &n; * tells the kernel all it needs to know.  &n; * pf is the preemption function (may be NULL for a transient driver)&n; * kf is the wake-up function (may be NULL for a transient driver)&n; * irq_func is the interrupt handler (may be NULL for no interrupts)&n; * Only one lurking driver can be used on a given port. &n; * handle is a user pointer that gets handed to callback functions. &n; */
+multiline_comment|/* parport_register_device declares that a device is connected to a port, and &n; * tells the kernel all it needs to know.  &n; * pf is the preemption function (may be NULL for no callback)&n; * kf is the wake-up function (may be NULL for no callback)&n; * irq_func is the interrupt handler (may be NULL for no interrupts)&n; * handle is a user pointer that gets handed to callback functions. &n; */
 r_struct
 id|pardevice
 op_star
@@ -1279,13 +1292,99 @@ id|dev
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Lowlevel drivers _can_ call this support function to handle irqs.&n; */
+DECL|function|parport_generic_irq
+r_extern
+id|__inline__
+r_void
+id|parport_generic_irq
+c_func
+(paren
+r_int
+id|irq
+comma
+r_struct
+id|parport
+op_star
+id|port
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+id|read_lock
+c_func
+(paren
+op_amp
+id|port-&gt;cad_lock
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|port-&gt;cad
+)paren
+r_goto
+id|out_unlock
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|port-&gt;cad-&gt;irq_func
+)paren
+id|port-&gt;cad
+op_member_access_from_pointer
+id|irq_func
+c_func
+(paren
+id|irq
+comma
+id|port-&gt;cad
+op_member_access_from_pointer
+r_private
+comma
+id|regs
+)paren
+suffix:semicolon
+r_else
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;%s: irq%d happened with irq_func NULL &quot;
+l_string|&quot;with %s as cad!&bslash;n&quot;
+comma
+id|port-&gt;name
+comma
+id|irq
+comma
+id|port-&gt;cad-&gt;name
+)paren
+suffix:semicolon
+id|out_unlock
+suffix:colon
+id|read_unlock
+c_func
+(paren
+op_amp
+id|port-&gt;cad_lock
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* Flags used to identify what a device does. */
 DECL|macro|PARPORT_DEV_TRAN
-mdefine_line|#define PARPORT_DEV_TRAN&t;        0x0000  /* We&squot;re transient. */
+mdefine_line|#define PARPORT_DEV_TRAN&t;&t;0&t;/* WARNING !! DEPRECATED !! */
 DECL|macro|PARPORT_DEV_LURK
-mdefine_line|#define PARPORT_DEV_LURK&t;        0x0001  /* We lurk. */
+mdefine_line|#define PARPORT_DEV_LURK&t;&t;(1&lt;&lt;0)&t;/* WARNING !! DEPRECATED !! */
+DECL|macro|PARPORT_DEV_EXCL
+mdefine_line|#define PARPORT_DEV_EXCL&t;&t;(1&lt;&lt;1)&t;/* Need exclusive access. */
 DECL|macro|PARPORT_FLAG_COMA
-mdefine_line|#define PARPORT_FLAG_COMA&t;&t;1
+mdefine_line|#define PARPORT_FLAG_COMA&t;&t;(1&lt;&lt;0)
+DECL|macro|PARPORT_FLAG_EXCL
+mdefine_line|#define PARPORT_FLAG_EXCL&t;&t;(1&lt;&lt;1)&t;/* EXCL driver registered. */
 r_extern
 r_void
 id|parport_parse_irqs

@@ -254,13 +254,21 @@ suffix:semicolon
 suffix:semicolon
 multiline_comment|/*&n; * Loop filter types&n; */
 DECL|macro|LO_CRYPT_NONE
-mdefine_line|#define LO_CRYPT_NONE&t;0
+mdefine_line|#define LO_CRYPT_NONE&t;  0
 DECL|macro|LO_CRYPT_XOR
-mdefine_line|#define LO_CRYPT_XOR&t;1
+mdefine_line|#define LO_CRYPT_XOR&t;  1
 DECL|macro|LO_CRYPT_DES
-mdefine_line|#define LO_CRYPT_DES&t;2
+mdefine_line|#define LO_CRYPT_DES&t;  2
+DECL|macro|LO_CRYPT_FISH2
+mdefine_line|#define LO_CRYPT_FISH2    3    /* Brand new Twofish encryption */
+DECL|macro|LO_CRYPT_BLOW
+mdefine_line|#define LO_CRYPT_BLOW     4
+DECL|macro|LO_CRYPT_CAST128
+mdefine_line|#define LO_CRYPT_CAST128  5
+DECL|macro|LO_CRYPT_IDEA
+mdefine_line|#define LO_CRYPT_IDEA     6
 DECL|macro|LO_CRYPT_DUMMY
-mdefine_line|#define LO_CRYPT_DUMMY     9
+mdefine_line|#define LO_CRYPT_DUMMY    9
 DECL|macro|LO_CRYPT_SKIPJACK
 mdefine_line|#define LO_CRYPT_SKIPJACK 10
 DECL|macro|MAX_LO_CRYPT

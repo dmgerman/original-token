@@ -785,30 +785,17 @@ multiline_comment|/*&n; * The Alpha Jensen hardware for some rather strange reas
 macro_line|#ifdef CONFIG_ALPHA_GENERIC
 DECL|macro|RTC_PORT
 macro_line|# define RTC_PORT(x)&t;((x) + alpha_mv.rtc_port)
-DECL|macro|RTC_ADDR
-macro_line|# define RTC_ADDR(x)&t;((x) | alpha_mv.rtc_addr)
-DECL|macro|RTC_ALWAYS_BCD
-macro_line|# define RTC_ALWAYS_BCD&t;(alpha_mv.rtc_bcd)
 macro_line|#else
 macro_line|# ifdef CONFIG_ALPHA_JENSEN
 DECL|macro|RTC_PORT
 macro_line|#  define RTC_PORT(x)&t;(0x170+(x))
-DECL|macro|RTC_ADDR
-macro_line|#  define RTC_ADDR(x)&t;(x)
 macro_line|# else
 DECL|macro|RTC_PORT
 macro_line|#  define RTC_PORT(x)&t;(0x70 + (x))
-DECL|macro|RTC_ADDR
-macro_line|#  define RTC_ADDR(x)&t;(0x80 | (x))
-macro_line|# endif
-macro_line|# ifdef CONFIG_ALPHA_RUFFIAN
-DECL|macro|RTC_ALWAYS_BCD
-macro_line|#  define RTC_ALWAYS_BCD&t;1
-macro_line|# else
-DECL|macro|RTC_ALWAYS_BCD
-macro_line|#  define RTC_ALWAYS_BCD&t;0
 macro_line|# endif
 macro_line|#endif
+DECL|macro|RTC_ALWAYS_BCD
+mdefine_line|#define RTC_ALWAYS_BCD&t;0
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* __ALPHA_IO_H */
 eof

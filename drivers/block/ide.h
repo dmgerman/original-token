@@ -850,6 +850,11 @@ r_int
 id|dma_base
 suffix:semicolon
 multiline_comment|/* base addr for dma ports */
+DECL|member|dma_extra
+r_int
+id|dma_extra
+suffix:semicolon
+multiline_comment|/* extra addr for dma ports */
 DECL|member|config_data
 r_int
 r_int
@@ -2237,6 +2242,17 @@ id|driver
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_IDEPCI
+DECL|macro|ON_BOARD
+mdefine_line|#define ON_BOARD&t;&t;1
+DECL|macro|NEVER_BOARD
+mdefine_line|#define NEVER_BOARD&t;&t;0
+macro_line|#ifdef CONFIG_BLK_DEV_OFFBOARD
+DECL|macro|OFF_BOARD
+macro_line|#  define OFF_BOARD&t;&t;ON_BOARD
+macro_line|#else /* CONFIG_BLK_DEV_OFFBOARD */
+DECL|macro|OFF_BOARD
+macro_line|#  define OFF_BOARD&t;&t;NEVER_BOARD
+macro_line|#endif /* CONFIG_BLK_DEV_OFFBOARD */
 r_int
 r_int
 id|ide_find_free_region
@@ -2296,6 +2312,14 @@ comma
 id|ide_drive_t
 op_star
 id|drive
+)paren
+suffix:semicolon
+r_int
+id|ide_release_dma
+(paren
+id|ide_hwif_t
+op_star
+id|hwif
 )paren
 suffix:semicolon
 r_void

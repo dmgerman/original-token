@@ -67,26 +67,6 @@ r_int
 r_int
 )paren
 suffix:semicolon
-r_extern
-r_int
-id|ptrace_set_bpt
-(paren
-r_struct
-id|task_struct
-op_star
-id|child
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|ptrace_cancel_bpt
-(paren
-r_struct
-id|task_struct
-op_star
-id|child
-)paren
-suffix:semicolon
 multiline_comment|/*&n; * The OSF/1 sigprocmask calling sequence is different from the&n; * C sigprocmask() sequence..&n; *&n; * how:&n; * 1 - SIG_BLOCK&n; * 2 - SIG_UNBLOCK&n; * 3 - SIG_SETMASK&n; *&n; * We change the range to -1 .. 1 in order to let gcc easily&n; * use the conditional move instructions.&n; *&n; * Note that we don&squot;t need to acquire the kernel lock for SMP&n; * operation, as all of this is local to this thread.&n; */
 id|asmlinkage
 r_int

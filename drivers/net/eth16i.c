@@ -1,52 +1,82 @@
-multiline_comment|/* eth16i.c An ICL EtherTeam 16i and 32 EISA ethernet driver for Linux&n;&n;   Written 1994-95 by Mika Kuoppala&n;&n;   Copyright (C) 1994, 1995 by Mika Kuoppala&n;   Based on skeleton.c and at1700.c by Donald Becker&n;&n;   This software may be used and distributed according to the terms&n;   of the GNU Public Licence, incorporated herein by reference.&n;&n;   The author may be reached as miku@elt.icl.fi&n;&n;   This driver supports following cards :&n;&t;- ICL EtherTeam 16i&n;&t;- ICL EtherTeam 32 EISA&n;&n;   Sources:&n;     - skeleton.c  a sample network driver core for linux,&n;       written by Donald Becker &lt;becker@CESDIS.gsfc.nasa.gov&gt;&n;     - at1700.c a driver for Allied Telesis AT1700, written&n;       by Donald Becker.&n;     - e16iSRV.asm a Netware 3.X Server Driver for ICL EtherTeam16i&n;       written by Markku Viima&n;     - The Fujitsu MB86965 databook.&n;&n;   Valuable assistance from:&n;&t;Markku Viima (ICL)&n;&t;Ari Valve (ICL)&n;&n;   Revision history:&n;&n;   Version&t;Date&t;&t;Description&n;&n;   0.01&t;&t;15.12-94&t;Initial version (card detection)&n;   0.02         23.01-95        Interrupt is now hooked correctly&n;   0.03         01.02-95        Rewrote initialization part&n;   0.04         07.02-95        Base skeleton done...&n;&t;&t;&t;&t;Made a few changes to signature checking&n;&t;&t;&t;&t;to make it a bit reliable.&n;&t;&t;&t;&t;- fixed bug in tx_buf mapping&n;&t;&t;&t;&t;- fixed bug in initialization (DLC_EN&n;&t;&t;&t;&t;  wasn&squot;t enabled when initialization&n;&t;&t;&t;&t;  was done.)&n;   0.05&t;&t;08.02-95&t;If there were more than one packet to send,&n;&t;&t;&t;&t;transmit was jammed due to invalid&n;&t;&t;&t;&t;register write...now fixed&n;   0.06         19.02-95        Rewrote interrupt handling&n;   0.07         13.04-95        Wrote EEPROM read routines&n;                                Card configuration now set according to&n;&t;&t;&t;&t;data read from EEPROM&n;   0.08         23.06-95        Wrote part that tries to probe used interface&n;                                port if AUTO is selected&n;&n;   0.09         01.09-95&t;Added module support&n;&n;   0.10         04.09-95&t;Fixed receive packet allocation to work&n;        &t;&t;&t;with kernels &gt; 1.3.x&n;&n;   0.20&t;&t;20.09-95&t;Added support for EtherTeam32 EISA&n;&n;   0.21         17.10-95        Removed the unnecessary extern&n;&t;&t;&t;&t;init_etherdev() declaration. Some&n;&t;&t;&t;&t;other cleanups.&n;   Bugs:&n;&t;In some cases the interface autoprobing code doesn&squot;t find&n;&t;the correct interface type. In this case you can&n;&t;manually choose the interface type in DOS with E16IC.EXE which is&n;&t;configuration software for EtherTeam16i and EtherTeam32 cards.&n;&n;   To do:&n;&t;- Real multicast support&n;*/
+multiline_comment|/* eth16i.c An ICL EtherTeam 16i and 32 EISA ethernet driver for Linux&n;   &n;   Written 1994-1998 by Mika Kuoppala&n;   &n;   Copyright (C) 1994-1998 by Mika Kuoppala&n;   Based on skeleton.c and heavily on at1700.c by Donald Becker&n;&n;   This software may be used and distributed according to the terms&n;   of the GNU Public Licence, incorporated herein by reference.&n;&n;   The author may be reached as miku@iki.fi&n;&n;   This driver supports following cards :&n;&t;- ICL EtherTeam 16i&n;&t;- ICL EtherTeam 32 EISA &n;&t;  (Uses true 32 bit transfers rather than 16i compability mode)&n;&n;   Example Module usage:&n;        insmod eth16i.o ioaddr=0x2a0 mediatype=bnc&n;&n;&t;mediatype can be one of the following: bnc,tp,dix,auto,eprom&n;&n;&t;&squot;auto&squot; will try to autoprobe mediatype.&n;&t;&squot;eprom&squot; will use whatever type defined in eprom.&n;&n;   I have benchmarked driver with PII/300Mhz as a ftp client&n;   and 486/33Mhz as a ftp server. Top speed was 1128.37 kilobytes/sec.&n;   &n;   Sources:&n;     - skeleton.c  a sample network driver core for linux,&n;       written by Donald Becker &lt;becker@CESDIS.gsfc.nasa.gov&gt;&n;     - at1700.c a driver for Allied Telesis AT1700, written &n;       by Donald Becker.&n;     - e16iSRV.asm a Netware 3.X Server Driver for ICL EtherTeam16i&n;       written by Markku Viima&n;     - The Fujitsu MB86965 databook.&n;   &n;   Author thanks following persons due to their valueble assistance:    &n;        Markku Viima (ICL)&n;&t;Ari Valve (ICL)      &n;&t;Donald Becker&n;&t;Kurt Huwig &lt;kurt@huwig.de&gt;&n;&n;   Revision history:&n;&n;   Version&t;Date&t;&t;Description&n;   &n;   0.01         15.12-94        Initial version (card detection)&n;   0.02         23.01-95        Interrupt is now hooked correctly&n;   0.03         01.02-95        Rewrote initialization part&n;   0.04         07.02-95        Base skeleton done...&n;                                Made a few changes to signature checking&n;                                to make it a bit reliable.&n;                                - fixed bug in tx_buf mapping&n;                                - fixed bug in initialization (DLC_EN&n;                                  wasn&squot;t enabled when initialization&n;                                  was done.)&n;   0.05         08.02-95        If there were more than one packet to send,&n;                                transmit was jammed due to invalid&n;                                register write...now fixed&n;   0.06         19.02-95        Rewrote interrupt handling        &n;   0.07         13.04-95        Wrote EEPROM read routines&n;                                Card configuration now set according to&n;                                data read from EEPROM&n;   0.08         23.06-95        Wrote part that tries to probe used interface&n;                                port if AUTO is selected&n;&n;   0.09         01.09-95        Added module support&n;   &n;   0.10         04.09-95        Fixed receive packet allocation to work&n;                                with kernels &gt; 1.3.x&n;      &n;   0.20&t;&t;20.09-95&t;Added support for EtherTeam32 EISA&t;&n;&n;   0.21         17.10-95        Removed the unnecessary extern &n;&t;&t;&t;&t;init_etherdev() declaration. Some&n;&t;&t;&t;&t;other cleanups.&n;   &t;&t;&t;&t;&n;   0.22&t;&t;22.02-96&t;Receive buffer was not flushed&n;&t;&t;&t;&t;correctly when faulty packet was&n;&t;&t;&t;&t;received. Now fixed.&n;&n;   0.23&t;&t;26.02-96&t;Made resetting the adapter&t;&n;&t;&t;&t; &t;more reliable.&n;   &n;   0.24&t;&t;27.02-96&t;Rewrote faulty packet handling in eth16i_rx&n;&n;   0.25&t;&t;22.05-96&t;kfree() was missing from cleanup_module.&n;&n;   0.26&t;&t;11.06-96&t;Sometimes card was not found by &n;&t;&t;&t;&t;check_signature(). Now made more reliable.&n;   &n;   0.27&t;&t;23.06-96&t;Oops. 16 consecutive collisions halted &n;&t;&t;&t;&t;adapter. Now will try to retransmit &n;&t;&t;&t;&t;MAX_COL_16 times before finally giving up.&n;   &n;   0.28&t;        28.10-97&t;Added dev_id parameter (NULL) for free_irq&n;&n;   0.29         29.10-97        Multiple card support for module users&n;&n;   0.30         30.10-97        Fixed irq allocation bug.&n;                                (request_irq moved from probe to open)&n;&n;   0.30a        21.08-98        Card detection made more relaxed. Driver&n;                                had problems with some TCP/IP-PROM boots&n;&t;&t;&t;&t;to find the card. Suggested by &n;&t;&t;&t;&t;Kurt Huwig &lt;kurt@huwig.de&gt;&n;&n;   0.31         28.08-98        Media interface port can now be selected&n;                                with module parameters or kernel&n;&t;&t;&t;&t;boot parameters. &n;&n;   0.32         31.08-98        IRQ was never freed if open/close &n;                                pair wasn&squot;t called. Now fixed.&n;   &n;   0.33         10.09-98        When eth16i_open() was called after&n;                                eth16i_close() chip never recovered.&n;&t;&t;&t;&t;Now more shallow reset is made on&n;&t;&t;&t;&t;close.&n;&n;   Bugs:&n;&t;In some cases the media interface autoprobing code doesn&squot;t find &n;&t;the correct interface type. In this case you can &n;&t;manually choose the interface type in DOS with E16IC.EXE which is &n;&t;configuration software for EtherTeam16i and EtherTeam32 cards.&n;&t;This is also true for IRQ setting. You cannot use module&n;&t;parameter to configure IRQ of the card (yet). &n;&n;   To do:&n;&t;- Real multicast support&n;&t;- Rewrite the media interface autoprobing code. Its _horrible_ !&n;&t;- Possibly merge all the MB86965 specific code to external&n;&t;  module for use by eth16.c and Donald&squot;s at1700.c&n;&t;- IRQ configuration with module parameter. I will do&n;&t;  this when i will get enough info about setting&n;&t;  irq without configuration utility.&n;*/
 DECL|variable|version
 r_static
 r_char
 op_star
 id|version
 op_assign
-l_string|&quot;eth16i.c: v0.21 17-10-95 Mika Kuoppala (miku@elt.icl.fi)&bslash;n&quot;
+l_string|&quot;eth16i.c: v0.33 10-09-98 Mika Kuoppala (miku@iki.fi)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/types.h&gt;
-macro_line|#include &lt;linux/fcntl.h&gt;
-macro_line|#include &lt;linux/interrupt.h&gt;
-macro_line|#include &lt;linux/ptrace.h&gt;
-macro_line|#include &lt;linux/ioport.h&gt;
-macro_line|#include &lt;linux/in.h&gt;
-macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/types.h&gt;&t;&t;  
+macro_line|#include &lt;linux/fcntl.h&gt;&t;&t;  
+macro_line|#include &lt;linux/interrupt.h&gt;&t;&t;  
+macro_line|#include &lt;linux/ptrace.h&gt;&t;&t;  
+macro_line|#include &lt;linux/ioport.h&gt;&t;&t;  
+macro_line|#include &lt;linux/in.h&gt;&t;&t;  
+macro_line|#include &lt;linux/malloc.h&gt;&t;&t;  
+macro_line|#include &lt;linux/string.h&gt;&t;&t;  
 macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/bitops.h&gt;
-macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/system.h&gt;&t;&t;  
+macro_line|#include &lt;asm/bitops.h&gt;&t;&t;  
+macro_line|#include &lt;asm/io.h&gt;&t;&t;  
 macro_line|#include &lt;asm/dma.h&gt;
-macro_line|#include &lt;asm/delay.h&gt;
+macro_line|#ifndef LINUX_VERSION_CODE
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#endif
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x20123
+macro_line|#include &lt;linux/init.h&gt;
+macro_line|#else
+DECL|macro|__init
+mdefine_line|#define __init
+DECL|macro|__initdata
+mdefine_line|#define __initdata
+DECL|macro|__initfunc
+mdefine_line|#define __initfunc(x) x
+macro_line|#endif
+macro_line|#if LINUX_VERSION_CODE &lt; 0x20138
+DECL|macro|test_and_set_bit
+mdefine_line|#define test_and_set_bit(val,addr) set_bit(val,addr)
+macro_line|#endif
+macro_line|#if LINUX_VERSION_CODE &lt; 0x020100
+DECL|typedef|eth16i_stats_type
+r_typedef
+r_struct
+id|enet_statistics
+id|eth16i_stats_type
+suffix:semicolon
+macro_line|#else
+DECL|typedef|eth16i_stats_type
+r_typedef
+r_struct
+id|net_device_stats
+id|eth16i_stats_type
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Few macros */
 DECL|macro|BIT
-mdefine_line|#define BIT(a)&t;&t;        ( (1 &lt;&lt; (a)) )
+mdefine_line|#define BIT(a)&t;&t;       ( (1 &lt;&lt; (a)) )  
 DECL|macro|BITSET
-mdefine_line|#define BITSET(ioaddr, bnum)   ((outb(((inb(ioaddr)) | (bnum)), ioaddr)))
+mdefine_line|#define BITSET(ioaddr, bnum)   ((outb(((inb(ioaddr)) | (bnum)), ioaddr))) 
 DECL|macro|BITCLR
 mdefine_line|#define BITCLR(ioaddr, bnum)   ((outb(((inb(ioaddr)) &amp; (~(bnum))), ioaddr)))
 multiline_comment|/* This is the I/O address space for Etherteam 16i adapter. */
 DECL|macro|ETH16I_IO_EXTENT
-mdefine_line|#define ETH16I_IO_EXTENT 32
+mdefine_line|#define ETH16I_IO_EXTENT       32
 multiline_comment|/* Ticks before deciding that transmit has timed out */
-DECL|macro|TIMEOUT_TICKS
-mdefine_line|#define TIMEOUT_TICKS          30
+DECL|macro|TX_TIMEOUT
+mdefine_line|#define TX_TIMEOUT             (400*HZ/1000)
 multiline_comment|/* Maximum loop count when receiving packets */
 DECL|macro|MAX_RX_LOOP
-mdefine_line|#define MAX_RX_LOOP            40
+mdefine_line|#define MAX_RX_LOOP            20
 multiline_comment|/* Some interrupt masks */
 DECL|macro|ETH16I_INTR_ON
-mdefine_line|#define ETH16I_INTR_ON&t;       0x8f82
+mdefine_line|#define ETH16I_INTR_ON&t;       0xef8a       /* Higher is receive mask */
 DECL|macro|ETH16I_INTR_OFF
 mdefine_line|#define ETH16I_INTR_OFF&t;       0x0000
 multiline_comment|/* Buffers header status byte meanings */
@@ -73,6 +103,8 @@ DECL|macro|TX_PKT_RCD
 mdefine_line|#define TX_PKT_RCD             BIT(5)
 DECL|macro|CR_LOST
 mdefine_line|#define CR_LOST                BIT(4)
+DECL|macro|TX_JABBER_ERR
+mdefine_line|#define TX_JABBER_ERR&t;       BIT(3)
 DECL|macro|COLLISION
 mdefine_line|#define COLLISION              BIT(2)
 DECL|macro|COLLISIONS_16
@@ -154,25 +186,25 @@ mdefine_line|#define SYSTEM_BUS_WIDTH_8     BIT(5)       /* 1 = 8bit, 0 = 16bit 
 DECL|macro|BUFFER_WIDTH_8
 mdefine_line|#define BUFFER_WIDTH_8         BIT(4)       /* 1 = 8bit, 0 = 16bit */
 DECL|macro|TBS1
-mdefine_line|#define TBS1                   BIT(3)
+mdefine_line|#define TBS1                   BIT(3)       
 DECL|macro|TBS0
 mdefine_line|#define TBS0                   BIT(2)
-DECL|macro|MBS1
-mdefine_line|#define MBS1                   BIT(1)       /* 00=8kb,  01=16kb  */
-DECL|macro|MBS0
-mdefine_line|#define MBS0                   BIT(0)       /* 10=32kb, 11=64kb  */
-macro_line|#ifndef ETH16I_TX_BUF_SIZE                   /* 0 = 2kb, 1 = 4kb  */
+DECL|macro|SRAM_BS1
+mdefine_line|#define SRAM_BS1               BIT(1)       /* 00=8kb,  01=16kb  */
+DECL|macro|SRAM_BS0
+mdefine_line|#define SRAM_BS0               BIT(0)       /* 10=32kb, 11=64kb  */
+macro_line|#ifndef ETH16I_TX_BUF_SIZE                   /* 0 = 2kb, 1 = 4kb  */ 
 DECL|macro|ETH16I_TX_BUF_SIZE
-mdefine_line|#define ETH16I_TX_BUF_SIZE     2             /* 2 = 8kb, 3 = 16kb */
-macro_line|#endif
+mdefine_line|#define ETH16I_TX_BUF_SIZE     3             /* 2 = 8kb, 3 = 16kb */
+macro_line|#endif                                      
 DECL|macro|TX_BUF_1x2048
-mdefine_line|#define TX_BUF_1x2048            0
+mdefine_line|#define TX_BUF_1x2048          0
 DECL|macro|TX_BUF_2x2048
-mdefine_line|#define TX_BUF_2x2048            1
+mdefine_line|#define TX_BUF_2x2048          1
 DECL|macro|TX_BUF_2x4098
-mdefine_line|#define TX_BUF_2x4098            2
+mdefine_line|#define TX_BUF_2x4098          2
 DECL|macro|TX_BUF_2x8192
-mdefine_line|#define TX_BUF_2x8192            3
+mdefine_line|#define TX_BUF_2x8192          3
 multiline_comment|/* Configuration Register 1 (DLCR7) */
 DECL|macro|CONFIG_REG_1
 mdefine_line|#define CONFIG_REG_1           7
@@ -198,11 +230,11 @@ DECL|macro|HASH_TABLE_RB
 mdefine_line|#define HASH_TABLE_RB          1
 multiline_comment|/* Buffer memory ports */
 DECL|macro|BUFFER_MEM_PORT_LB
-mdefine_line|#define BUFFER_MEM_PORT_LB    8
+mdefine_line|#define BUFFER_MEM_PORT_LB     8
 DECL|macro|DATAPORT
-mdefine_line|#define DATAPORT              BUFFER_MEM_PORT_LB
+mdefine_line|#define DATAPORT               BUFFER_MEM_PORT_LB
 DECL|macro|BUFFER_MEM_PORT_HB
-mdefine_line|#define BUFFER_MEM_PORT_HB    9
+mdefine_line|#define BUFFER_MEM_PORT_HB     9
 multiline_comment|/* 16 Collision control register (BMPR11) */
 DECL|macro|COL_16_REG
 mdefine_line|#define COL_16_REG             11
@@ -210,11 +242,14 @@ DECL|macro|HALT_ON_16
 mdefine_line|#define HALT_ON_16             0x00
 DECL|macro|RETRANS_AND_HALT_ON_16
 mdefine_line|#define RETRANS_AND_HALT_ON_16 0x02
+multiline_comment|/* Maximum number of attempts to send after 16 concecutive collisions */
+DECL|macro|MAX_COL_16
+mdefine_line|#define MAX_COL_16&t;       10
 multiline_comment|/* DMA Burst and Transceiver Mode Register (BMPR13) */
 DECL|macro|TRANSCEIVER_MODE_REG
 mdefine_line|#define TRANSCEIVER_MODE_REG   13
 DECL|macro|TRANSCEIVER_MODE_RB
-mdefine_line|#define TRANSCEIVER_MODE_RB    2
+mdefine_line|#define TRANSCEIVER_MODE_RB    2         
 DECL|macro|IO_BASE_UNLOCK
 mdefine_line|#define IO_BASE_UNLOCK&t;       BIT(7)
 DECL|macro|LOWER_SQUELCH_TRESH
@@ -228,12 +263,10 @@ mdefine_line|#define DIS_AUTO_PORT_SEL      BIT(3)
 multiline_comment|/* Filter Self Receive Register (BMPR14)  */
 DECL|macro|FILTER_SELF_RX_REG
 mdefine_line|#define FILTER_SELF_RX_REG     14
-DECL|macro|SKIP_RECEIVE_PACKET
-mdefine_line|#define SKIP_RECEIVE_PACKET    BIT(2)
+DECL|macro|SKIP_RX_PACKET
+mdefine_line|#define SKIP_RX_PACKET         BIT(2)
 DECL|macro|FILTER_SELF_RECEIVE
 mdefine_line|#define FILTER_SELF_RECEIVE    BIT(0)
-DECL|macro|RX_BUF_SKIP_PACKET
-mdefine_line|#define RX_BUF_SKIP_PACKET     SKIP_RECEIVE_PACKET | FILTER_SELF_RECEIVE
 multiline_comment|/* EEPROM Control Register (BMPR 16) */
 DECL|macro|EEPROM_CTRL_REG
 mdefine_line|#define EEPROM_CTRL_REG        16
@@ -258,26 +291,28 @@ DECL|macro|EEPROM_READ
 mdefine_line|#define EEPROM_READ            0x80
 multiline_comment|/* NMC93CSx6 EEPROM Addresses */
 DECL|macro|E_NODEID_0
-mdefine_line|#define E_NODEID_0                     0x02
+mdefine_line|#define E_NODEID_0             0x02
 DECL|macro|E_NODEID_1
-mdefine_line|#define E_NODEID_1                     0x03
+mdefine_line|#define E_NODEID_1             0x03
 DECL|macro|E_NODEID_2
-mdefine_line|#define E_NODEID_2                     0x04
+mdefine_line|#define E_NODEID_2             0x04
 DECL|macro|E_PORT_SELECT
-mdefine_line|#define E_PORT_SELECT                  0x14
+mdefine_line|#define E_PORT_SELECT          0x14
 DECL|macro|E_PORT_BNC
-mdefine_line|#define E_PORT_BNC                   0
+mdefine_line|#define E_PORT_BNC           0x00
 DECL|macro|E_PORT_DIX
-mdefine_line|#define E_PORT_DIX                   1
+mdefine_line|#define E_PORT_DIX           0x01
 DECL|macro|E_PORT_TP
-mdefine_line|#define E_PORT_TP                    2
+mdefine_line|#define E_PORT_TP            0x02
 DECL|macro|E_PORT_AUTO
-mdefine_line|#define E_PORT_AUTO                  3
+mdefine_line|#define E_PORT_AUTO          0x03
+DECL|macro|E_PORT_FROM_EPROM
+mdefine_line|#define E_PORT_FROM_EPROM    0x04
 DECL|macro|E_PRODUCT_CFG
-mdefine_line|#define E_PRODUCT_CFG                  0x30
+mdefine_line|#define E_PRODUCT_CFG          0x30
 multiline_comment|/* Macro to slow down io between EEPROM clock transitions */
 DECL|macro|eeprom_slow_io
-mdefine_line|#define eeprom_slow_io() &t;udelay(100)&t;/* FIXME: smaller but right value here */
+mdefine_line|#define eeprom_slow_io() do { int _i = 40; while(--_i &gt; 0) { inb(0x80); }}while(0)
 multiline_comment|/* Jumperless Configuration Register (BMPR19) */
 DECL|macro|JUMPERLESS_CONFIG
 mdefine_line|#define JUMPERLESS_CONFIG      19
@@ -289,14 +324,13 @@ mdefine_line|#define ID_ROM_7               31
 DECL|macro|RESET
 mdefine_line|#define RESET                  ID_ROM_0
 multiline_comment|/* This is the I/O address list to be probed when seeking the card */
-DECL|variable|__initdata
+DECL|variable|eth16i_portlist
 r_static
 r_int
 r_int
 id|eth16i_portlist
 (braket
 )braket
-id|__initdata
 op_assign
 (brace
 l_int|0x260
@@ -318,14 +352,13 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-DECL|variable|__initdata
+DECL|variable|eth32i_portlist
 r_static
 r_int
 r_int
 id|eth32i_portlist
 (braket
 )braket
-id|__initdata
 op_assign
 (brace
 l_int|0x1000
@@ -362,14 +395,13 @@ l_int|0
 )brace
 suffix:semicolon
 multiline_comment|/* This is the Interrupt lookup table for Eth16i card */
-DECL|variable|__initdata
+DECL|variable|eth16i_irqmap
 r_static
 r_int
 r_int
 id|eth16i_irqmap
 (braket
 )braket
-id|__initdata
 op_assign
 (brace
 l_int|9
@@ -379,17 +411,20 @@ comma
 l_int|5
 comma
 l_int|15
+comma
+l_int|0
 )brace
 suffix:semicolon
+DECL|macro|NUM_OF_ISA_IRQS
+mdefine_line|#define NUM_OF_ISA_IRQS    4
 multiline_comment|/* This is the Interrupt lookup table for Eth32i card */
-DECL|variable|__initdata
+DECL|variable|eth32i_irqmap
 r_static
 r_int
 r_int
 id|eth32i_irqmap
 (braket
 )braket
-id|__initdata
 op_assign
 (brace
 l_int|3
@@ -407,10 +442,14 @@ comma
 l_int|12
 comma
 l_int|15
+comma
+l_int|0
 )brace
 suffix:semicolon
 DECL|macro|EISA_IRQ_REG
 mdefine_line|#define EISA_IRQ_REG&t;0xc89
+DECL|macro|NUM_OF_EISA_IRQS
+mdefine_line|#define NUM_OF_EISA_IRQS   8
 DECL|variable|eth16i_tx_buf_map
 r_static
 r_int
@@ -430,6 +469,7 @@ l_int|8192
 )brace
 suffix:semicolon
 DECL|variable|boot
+r_static
 r_int
 r_int
 id|boot
@@ -455,20 +495,22 @@ r_struct
 id|eth16i_local
 (brace
 DECL|member|stats
-r_struct
-id|net_device_stats
+id|eth16i_stats_type
 id|stats
 suffix:semicolon
 DECL|member|tx_started
 r_int
-r_int
+r_char
 id|tx_started
-suffix:colon
-l_int|1
+suffix:semicolon
+DECL|member|tx_buf_busy
+r_int
+r_char
+id|tx_buf_busy
 suffix:semicolon
 DECL|member|tx_queue
 r_int
-r_char
+r_int
 id|tx_queue
 suffix:semicolon
 multiline_comment|/* Number of packets in transmit buffer */
@@ -486,6 +528,16 @@ DECL|member|open_time
 r_int
 r_int
 id|open_time
+suffix:semicolon
+DECL|member|tx_buffered_packets
+r_int
+r_int
+id|tx_buffered_packets
+suffix:semicolon
+DECL|member|col_16
+r_int
+r_int
+id|col_16
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -683,6 +735,28 @@ id|regs
 suffix:semicolon
 r_static
 r_void
+id|eth16i_reset
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_static
+r_void
+id|eth16i_skip_packet
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_static
+r_void
 id|eth16i_multicast
 c_func
 (paren
@@ -716,9 +790,35 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+macro_line|#if 0
+r_static
+r_int
+id|eth16i_set_irq
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef MODULE
+r_static
+id|ushort
+id|eth16i_parse_mediatype
+c_func
+(paren
+r_const
+r_char
+op_star
+id|s
+)paren
+suffix:semicolon
+macro_line|#endif
 r_static
 r_struct
-id|net_device_stats
+id|enet_statistics
 op_star
 id|eth16i_get_stats
 c_func
@@ -737,7 +837,7 @@ id|cardname
 op_assign
 l_string|&quot;ICL EtherTeam 16i/32&quot;
 suffix:semicolon
-macro_line|#ifdef HAVE_DEVLIST
+macro_line|#ifdef HAVE_DEVLIST 
 multiline_comment|/* Support for alternate probe manager */
 DECL|variable|eth16i_drv
 op_div
@@ -798,6 +898,7 @@ l_int|4
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;Probing started for %s&bslash;n&quot;
 comma
 id|cardname
@@ -951,7 +1052,7 @@ r_return
 id|ENODEV
 suffix:semicolon
 )brace
-macro_line|#endif&t;/* Not HAVE_DEVLIST */
+macro_line|#endif  /* Not HAVE_DEVLIST */
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -977,18 +1078,12 @@ id|version_printed
 op_assign
 l_int|0
 suffix:semicolon
-r_int
-r_int
-id|irq
-op_assign
-l_int|0
-suffix:semicolon
 id|boot
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* To inform initialization that we are in boot probe */
-multiline_comment|/*&n;&t;&t; The MB86985 chip has on register which holds information in which&n;&t;&t; io address the chip lies. First read this register and compare&n;&t;&t; it to our current io address and if match then this could&n;&t;&t; be our chip.&n;&t;*/
+multiline_comment|/* To inform initilization that we are in boot probe */
+multiline_comment|/*&n;&t;  The MB86985 chip has on register which holds information in which &n;&t;  io address the chip lies. First read this register and compare&n;&t;  it to our current io address and if match then this could&n;&t;  be our chip.&n;&t;  */
 r_if
 c_cond
 (paren
@@ -1037,13 +1132,12 @@ op_ne
 l_int|0
 )paren
 (brace
-multiline_comment|/* Can we find the signature here */
 r_return
 op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t; Now it seems that we have found an ethernet chip in this particular&n;&t;&t; ioaddr. The MB86985 chip has this feature, that when you read a&n;&t;&t; certain register it will increase its io base address to next&n;&t;&t; configurable slot. Now when we have found the chip, first thing is&n;&t;&t; to make sure that the chip&squot;s ioaddr will hold still here.&n;&t;*/
+multiline_comment|/* &n;&t;   Now it seems that we have found a ethernet chip in this particular&n;&t;   ioaddr. The MB86985 chip has this feature, that when you read a &n;&t;   certain register it will increase it&squot;s io base address to next&n;&t;   configurable slot. Now when we have found the chip, first thing is&n;&t;   to make sure that the chip&squot;s ioaddr will hold still here.&n;&t;   */
 id|eth16i_select_regbank
 c_func
 (paren
@@ -1072,7 +1166,7 @@ op_plus
 id|RESET
 )paren
 suffix:semicolon
-multiline_comment|/* Will reset some parts of chip */
+multiline_comment|/* Reset some parts of chip */
 id|BITSET
 c_func
 (paren
@@ -1087,7 +1181,7 @@ l_int|7
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* This will disable the data link */
+multiline_comment|/* Disable the data link */
 r_if
 c_cond
 (paren
@@ -1103,11 +1197,7 @@ c_func
 (paren
 l_int|0
 comma
-r_sizeof
-(paren
-r_struct
-id|eth16i_local
-)paren
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -1127,6 +1217,9 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_INFO
+l_string|&quot;%s&quot;
+comma
 id|version
 )paren
 suffix:semicolon
@@ -1135,7 +1228,24 @@ id|dev-&gt;base_addr
 op_assign
 id|ioaddr
 suffix:semicolon
-id|irq
+macro_line|#if 0
+r_if
+c_cond
+(paren
+id|dev-&gt;irq
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|eth16i_set_irq
+c_func
+(paren
+id|dev
+)paren
+)paren
+(brace
+id|dev-&gt;irq
 op_assign
 id|eth16i_get_irq
 c_func
@@ -1143,9 +1253,18 @@ c_func
 id|ioaddr
 )paren
 suffix:semicolon
+)brace
+)brace
+r_else
+(brace
+macro_line|#endif
 id|dev-&gt;irq
 op_assign
-id|irq
+id|eth16i_get_irq
+c_func
+(paren
+id|ioaddr
+)paren
 suffix:semicolon
 multiline_comment|/* Try to obtain interrupt vector */
 r_if
@@ -1156,6 +1275,10 @@ c_func
 (paren
 id|dev-&gt;irq
 comma
+(paren
+r_void
+op_star
+)paren
 op_amp
 id|eth16i_interrupt
 comma
@@ -1170,24 +1293,8 @@ id|dev
 id|printk
 c_func
 (paren
-"&quot;"
-op_mod
-id|s
-suffix:colon
-op_mod
-id|s
-id|at
-op_mod
-macro_line|#3x, but is unusable due
-id|conflict
-id|on
-id|IRQ
-op_mod
-id|d
-dot
-"&bslash;"
-id|n
-"&quot;"
+id|KERN_WARNING
+l_string|&quot;%s: %s at %#3x, but is unusable due conflicting IRQ %d.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -1195,16 +1302,27 @@ id|cardname
 comma
 id|ioaddr
 comma
-id|irq
+id|dev-&gt;irq
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|EAGAIN
 suffix:semicolon
 )brace
+macro_line|#if 0
+id|irq2dev_map
+(braket
+id|dev-&gt;irq
+)braket
+op_assign
+id|dev
+suffix:semicolon
+macro_line|#endif
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;%s: %s at %#3x, IRQ %d, &quot;
 comma
 id|dev-&gt;name
@@ -1287,6 +1405,19 @@ comma
 id|GFP_KERNEL
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;priv
+op_eq
+l_int|NULL
+)paren
+(brace
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
+)brace
 )brace
 id|memset
 c_func
@@ -1538,7 +1669,7 @@ id|i
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t; Now let&squot;s disable the transmitter and receiver, set the buffer ram&n;&t;&t; cycle time, bus width and buffer data path width. Also we shall&n;&t;&t; set transmit buffer size and total buffer size.&n;&t;*/
+multiline_comment|/*&n;&t;  Now let&squot;s disable the transmitter and receiver, set the buffer ram &n;&t;  cycle time, bus width and buffer data path width. Also we shall&n;&t;  set transmit buffer size and total buffer size.&n;&t;  */
 id|eth16i_select_regbank
 c_func
 (paren
@@ -1580,7 +1711,7 @@ suffix:semicolon
 )brace
 id|node_byte
 op_or_assign
-id|MBS1
+id|SRAM_BS1
 suffix:semicolon
 r_if
 c_cond
@@ -1596,7 +1727,7 @@ l_int|64
 (brace
 id|node_byte
 op_or_assign
-id|MBS0
+id|SRAM_BS0
 suffix:semicolon
 )brace
 id|node_byte
@@ -1625,19 +1756,36 @@ multiline_comment|/* We shall halt the transmitting, if 16 collisions are detect
 id|outb
 c_func
 (paren
-id|RETRANS_AND_HALT_ON_16
+id|HALT_ON_16
 comma
 id|ioaddr
 op_plus
 id|COL_16_REG
 )paren
 suffix:semicolon
+macro_line|#ifdef MODULE
+multiline_comment|/* if_port already set by init_module() */
+macro_line|#else
+id|dev-&gt;if_port
+op_assign
+(paren
+id|dev-&gt;mem_start
+OL
+id|E_PORT_FROM_EPROM
+)paren
+ques
+c_cond
+id|dev-&gt;mem_start
+suffix:colon
+id|E_PORT_FROM_EPROM
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/* Set interface port type */
 r_if
 c_cond
 (paren
 id|boot
 )paren
-multiline_comment|/* Now set port type */
 (brace
 r_char
 op_star
@@ -1653,10 +1801,20 @@ comma
 l_string|&quot;TP&quot;
 comma
 l_string|&quot;AUTO&quot;
+comma
+l_string|&quot;FROM_EPROM&quot;
 )brace
 suffix:semicolon
-id|ushort
-id|ptype
+r_switch
+c_cond
+(paren
+id|dev-&gt;if_port
+)paren
+(brace
+r_case
+id|E_PORT_FROM_EPROM
+suffix:colon
+id|dev-&gt;if_port
 op_assign
 id|eth16i_read_eeprom
 c_func
@@ -1666,14 +1824,33 @@ comma
 id|E_PORT_SELECT
 )paren
 suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|E_PORT_AUTO
+suffix:colon
 id|dev-&gt;if_port
 op_assign
+id|eth16i_probe_port
+c_func
 (paren
-id|ptype
-op_amp
-l_int|0x00FF
+id|ioaddr
 )paren
 suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|E_PORT_BNC
+suffix:colon
+r_case
+id|E_PORT_TP
+suffix:colon
+r_case
+id|E_PORT_DIX
+suffix:colon
+r_break
+suffix:semicolon
+)brace
 id|printk
 c_func
 (paren
@@ -1685,29 +1862,12 @@ id|dev-&gt;if_port
 )braket
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|ptype
-op_eq
-id|E_PORT_AUTO
-)paren
-(brace
-id|ptype
-op_assign
-id|eth16i_probe_port
-c_func
-(paren
-id|ioaddr
-)paren
-suffix:semicolon
-)brace
 id|eth16i_set_port
 c_func
 (paren
 id|ioaddr
 comma
-id|ptype
+id|dev-&gt;if_port
 )paren
 suffix:semicolon
 )brace
@@ -1905,6 +2065,7 @@ l_int|1
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;Set port number %d&bslash;n&quot;
 comma
 id|i
@@ -1959,6 +2120,7 @@ l_int|1
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;Eth16i interface port found at %d&bslash;n&quot;
 comma
 id|i
@@ -1983,7 +2145,8 @@ l_int|1
 id|printk
 c_func
 (paren
-l_string|&quot;TRANSMIT_DONE timeout&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;TRANSMIT_DONE timeout when probing interface port&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -2000,6 +2163,7 @@ l_int|1
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;Using default port&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2110,6 +2274,7 @@ l_int|1
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;TRANSMIT_MODE_REG = %x&bslash;n&quot;
 comma
 id|inb
@@ -2124,6 +2289,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;TRANSCEIVER_MODE_REG = %x&bslash;n&quot;
 comma
 id|inb
@@ -2234,6 +2400,7 @@ l_int|0x80
 op_eq
 l_int|0
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -2243,11 +2410,14 @@ op_minus
 id|starttime
 )paren
 OG
-id|TIMEOUT_TICKS
+id|TX_TIMEOUT
 )paren
 (brace
-r_break
+r_return
+op_minus
+l_int|1
 suffix:semicolon
+)brace
 )brace
 r_return
 l_int|0
@@ -2297,7 +2467,7 @@ op_minus
 id|starttime
 )paren
 OG
-id|TIMEOUT_TICKS
+id|TX_TIMEOUT
 )paren
 (brace
 r_if
@@ -2311,7 +2481,8 @@ l_int|1
 id|printk
 c_func
 (paren
-l_string|&quot;Timeout occurred waiting transmit packet received&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;Timeout occured waiting transmit packet received&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -2346,7 +2517,7 @@ op_minus
 id|starttime
 )paren
 OG
-id|TIMEOUT_TICKS
+id|TX_TIMEOUT
 )paren
 (brace
 r_if
@@ -2360,7 +2531,8 @@ l_int|1
 id|printk
 c_func
 (paren
-l_string|&quot;Timeout occurred waiting receive packet&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;Timeout occured waiting receive packet&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -2381,6 +2553,7 @@ l_int|1
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;RECEIVE_PACKET&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2402,6 +2575,7 @@ l_int|1
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;TRANSMIT_PACKET_RECEIVED %x&bslash;n&quot;
 comma
 id|inb
@@ -2416,6 +2590,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;RX_STATUS_REG = %x&bslash;n&quot;
 comma
 id|inb
@@ -2433,6 +2608,129 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* Return success */
 )brace
+macro_line|#if 0
+r_static
+r_int
+id|eth16i_set_irq
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+(brace
+r_const
+r_int
+id|ioaddr
+op_assign
+id|dev-&gt;base_addr
+suffix:semicolon
+r_const
+r_int
+id|irq
+op_assign
+id|dev-&gt;irq
+suffix:semicolon
+r_int
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ioaddr
+OL
+l_int|0x1000
+)paren
+(brace
+r_while
+c_loop
+(paren
+id|eth16i_irqmap
+(braket
+id|i
+)braket
+op_logical_and
+id|eth16i_irqmap
+(braket
+id|i
+)braket
+op_ne
+id|irq
+)paren
+(brace
+id|i
+op_increment
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|i
+OL
+id|NUM_OF_ISA_IRQS
+)paren
+(brace
+id|u8
+id|cbyte
+op_assign
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+id|JUMPERLESS_CONFIG
+)paren
+suffix:semicolon
+id|cbyte
+op_assign
+(paren
+id|cbyte
+op_amp
+l_int|0x3F
+)paren
+op_or
+(paren
+id|i
+op_lshift
+l_int|6
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|cbyte
+comma
+id|ioaddr
+op_plus
+id|JUMPERLESS_CONFIG
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
+id|printk
+c_func
+(paren
+id|KERN_NOTICE
+l_string|&quot;%s: EISA Interrupt cannot be set. Use EISA Configuration utility.&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+)brace
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+macro_line|#endif
 DECL|function|eth16i_get_irq
 r_static
 r_int
@@ -2626,8 +2924,8 @@ op_and_assign
 l_int|0x7F
 suffix:semicolon
 multiline_comment|/* Mask DCLEN bit */
-macro_line|#if 0
-multiline_comment|/*&n;&t;This was removed because the card was sometimes left to state&n;  &t;from which it couldn&squot;t be find anymore. If there is need&n;&t;to have a more strict check still this have to be fixed.&n;*/
+macro_line|#ifdef 0
+multiline_comment|/* &n;&t;   This was removed because the card was sometimes left to state&n;&t;   from which it couldn&squot;t be find anymore. If there is need&n;&t;   to more strict check still this have to be fixed.&n;&t;   */
 r_if
 c_cond
 (paren
@@ -2701,7 +2999,7 @@ id|creg
 l_int|2
 )braket
 op_and_assign
-l_int|0x42
+l_int|0x40
 suffix:semicolon
 id|creg
 (braket
@@ -2721,7 +3019,7 @@ id|creg
 l_int|2
 )braket
 op_eq
-l_int|0x42
+l_int|0x40
 )paren
 op_logical_and
 (paren
@@ -3171,12 +3469,13 @@ c_cond
 (paren
 id|eth16i_debug
 OG
-l_int|3
+l_int|0
 )paren
 (brace
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;%s: transmit buffer size %d&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -3244,10 +3543,8 @@ id|dev-&gt;start
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -3281,7 +3578,24 @@ id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
-id|lp-&gt;open_time
+id|eth16i_reset
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+multiline_comment|/* Turn off interrupts*/
+id|outw
+c_func
+(paren
+id|ETH16I_INTR_OFF
+comma
+id|ioaddr
+op_plus
+id|TX_INTR_REG
+)paren
+suffix:semicolon
+id|dev-&gt;start
 op_assign
 l_int|0
 suffix:semicolon
@@ -3289,7 +3603,7 @@ id|dev-&gt;tbusy
 op_assign
 l_int|1
 suffix:semicolon
-id|dev-&gt;start
+id|lp-&gt;open_time
 op_assign
 l_int|0
 suffix:semicolon
@@ -3305,31 +3619,20 @@ id|DLC_EN
 )paren
 suffix:semicolon
 multiline_comment|/* Reset the chip */
+multiline_comment|/* outb(0xff, ioaddr + RESET); */
+multiline_comment|/* outw(0xffff, ioaddr + TX_STATUS_REG);    */
 id|outb
 c_func
 (paren
-l_int|0xff
+l_int|0x00
 comma
-id|ioaddr
-op_plus
-id|RESET
-)paren
-suffix:semicolon
-multiline_comment|/* Save some energy by switching off power */
-id|BITCLR
-c_func
-(paren
 id|ioaddr
 op_plus
 id|CONFIG_REG_1
-comma
-id|POWERUP
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -3368,13 +3671,18 @@ id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
+r_int
+id|status
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|dev-&gt;tbusy
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t; If we get here, some higher level has decided that we are broken.&n;&t;&t;&t; There should really be a &quot;kick me&quot; function call instead.&n;&t;&t;*/
+multiline_comment|/* &n;&t;&t;   If we get here, some higher level has decided that &n;&t;&t;   we are broken. There should really be a &quot;kick me&quot; &n;&t;&t;   function call instead. &n;&t;&t;   */
 r_int
 id|tickssofar
 op_assign
@@ -3387,18 +3695,27 @@ c_cond
 (paren
 id|tickssofar
 OL
-id|TIMEOUT_TICKS
+id|TX_TIMEOUT
 )paren
 (brace
-multiline_comment|/* Let&squot;s not rush with our timeout, */
 r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/* wait a couple of ticks first     */
+id|outw
+c_func
+(paren
+id|ETH16I_INTR_OFF
+comma
+id|ioaddr
+op_plus
+id|TX_INTR_REG
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: transmit timed out with status %04x, %s ?&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -3429,6 +3746,10 @@ suffix:colon
 l_string|&quot;network cable problem&quot;
 )paren
 suffix:semicolon
+id|dev-&gt;trans_start
+op_assign
+id|jiffies
+suffix:semicolon
 multiline_comment|/* Let&squot;s dump all registers */
 r_if
 c_cond
@@ -3441,7 +3762,8 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;%s: timeout regs: %02x %02x %02x %02x %02x %02x %02x %02x.&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;%s: timeout: %02x %02x %02x %02x %02x %02x %02x %02x.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -3513,6 +3835,32 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
+l_string|&quot;%s: transmit start reg: %02x. collision reg %02x&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+id|TRANSMIT_START_REG
+)paren
+comma
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+id|COL_16_REG
+)paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
 l_string|&quot;lp-&gt;tx_queue = %d&bslash;n&quot;
 comma
 id|lp-&gt;tx_queue
@@ -3521,6 +3869,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;lp-&gt;tx_queue_len = %d&bslash;n&quot;
 comma
 id|lp-&gt;tx_queue_len
@@ -3529,6 +3878,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;lp-&gt;tx_started = %d&bslash;n&quot;
 comma
 id|lp-&gt;tx_started
@@ -3538,64 +3888,15 @@ suffix:semicolon
 id|lp-&gt;stats.tx_errors
 op_increment
 suffix:semicolon
-multiline_comment|/* Now let&squot;s try to restart the adaptor */
-id|BITSET
-c_func
-(paren
-id|ioaddr
-op_plus
-id|CONFIG_REG_0
-comma
-id|DLC_EN
-)paren
-suffix:semicolon
-id|outw
-c_func
-(paren
-l_int|0xffff
-comma
-id|ioaddr
-op_plus
-id|RESET
-)paren
-suffix:semicolon
-id|eth16i_initialize
+id|eth16i_reset
 c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
-id|outw
-c_func
-(paren
-l_int|0xffff
-comma
-id|ioaddr
-op_plus
-id|TX_STATUS_REG
-)paren
-suffix:semicolon
-id|BITCLR
-c_func
-(paren
-id|ioaddr
-op_plus
-id|CONFIG_REG_0
-comma
-id|DLC_EN
-)paren
-suffix:semicolon
-id|lp-&gt;tx_started
+id|dev-&gt;trans_start
 op_assign
-l_int|0
-suffix:semicolon
-id|lp-&gt;tx_queue
-op_assign
-l_int|0
-suffix:semicolon
-id|lp-&gt;tx_queue_len
-op_assign
-l_int|0
+id|jiffies
 suffix:semicolon
 id|outw
 c_func
@@ -3607,16 +3908,60 @@ op_plus
 id|TX_INTR_REG
 )paren
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
+)brace
+multiline_comment|/* &n;&t;   If some higher layer thinks we&squot;ve missed an tx-done interrupt&n;&t;   we are passed NULL. Caution: dev_tint() handles the cli()/sti()&n;&t;   itself &n;&t;   */
+r_if
+c_cond
+(paren
+id|skb
+op_eq
+l_int|NULL
+)paren
+(brace
+macro_line|#if LINUX_VERSION_CODE &lt; 0x020100
+id|dev_tint
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
-id|dev-&gt;trans_start
-op_assign
-id|jiffies
+macro_line|#endif
+r_if
+c_cond
+(paren
+id|eth16i_debug
+OG
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;%s: Missed tx-done interrupt.&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
 suffix:semicolon
 )brace
-multiline_comment|/* Block a timer based transmitter from overlapping. This could better be&n;&t;&t; done with atomic_swap(1, dev-&gt;tbusy), but set_bit() works as well. */
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/* Block a timer based transmitter from overlapping. &n;&t;   This could better be done with atomic_swap(1, dev-&gt;tbusy), &n;&t;   but set_bit() works as well. */
+id|set_bit
+c_func
+(paren
+l_int|0
+comma
+(paren
+r_void
+op_star
+)paren
+op_amp
+id|lp-&gt;tx_buf_busy
+)paren
+suffix:semicolon
 multiline_comment|/* Turn off TX interrupts */
 id|outw
 c_func
@@ -3650,15 +3995,21 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: Transmitter access conflict.&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
+id|status
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
 )brace
 r_else
 (brace
-r_int
+id|ushort
 id|length
 op_assign
 id|ETH_ZLEN
@@ -3677,6 +4028,43 @@ id|buf
 op_assign
 id|skb-&gt;data
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|length
+op_plus
+l_int|2
+)paren
+OG
+(paren
+id|lp-&gt;tx_buf_size
+op_minus
+id|lp-&gt;tx_queue_len
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|eth16i_debug
+OG
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;%s: Transmit buffer full.&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
 id|outw
 c_func
 (paren
@@ -3799,6 +4187,9 @@ suffix:semicolon
 )brace
 )brace
 )brace
+id|lp-&gt;tx_buffered_packets
+op_increment
+suffix:semicolon
 id|lp-&gt;tx_queue
 op_increment
 suffix:semicolon
@@ -3807,6 +4198,11 @@ op_add_assign
 id|length
 op_plus
 l_int|2
+suffix:semicolon
+)brace
+id|lp-&gt;tx_buf_busy
+op_assign
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -3883,15 +4279,30 @@ id|TX_INTR_REG
 suffix:semicolon
 multiline_comment|/* Turn TX interrupts back on */
 multiline_comment|/* outb(TX_INTR_DONE | TX_INTR_16_COL, ioaddr + TX_INTR_REG); */
+id|status
+op_assign
+l_int|0
+suffix:semicolon
 )brace
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
 id|dev_kfree_skb
 c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
+macro_line|#else
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|FREE_WRITE
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
-l_int|0
+id|status
 suffix:semicolon
 )brace
 DECL|function|eth16i_rx
@@ -3959,6 +4370,18 @@ op_plus
 id|DATAPORT
 )paren
 suffix:semicolon
+multiline_comment|/* Get the size of the packet from receive buffer */
+id|ushort
+id|pkt_len
+op_assign
+id|inw
+c_func
+(paren
+id|ioaddr
+op_plus
+id|DATAPORT
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3970,6 +4393,7 @@ l_int|4
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;%s: Receiving packet mode %02x status %04x.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -3997,55 +4421,46 @@ id|PKT_GOOD
 )paren
 )paren
 (brace
-multiline_comment|/* Hmm..something went wrong. Let&squot;s check what error occurred */
 id|lp-&gt;stats.rx_errors
 op_increment
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|status
-op_amp
-id|PKT_SHORT
+(paren
+id|pkt_len
+OL
+id|ETH_ZLEN
+)paren
+op_logical_or
+(paren
+id|pkt_len
+OG
+id|ETH_FRAME_LEN
+)paren
 )paren
 (brace
 id|lp-&gt;stats.rx_length_errors
 op_increment
 suffix:semicolon
-)brace
-r_if
-c_cond
+id|eth16i_reset
+c_func
 (paren
-id|status
-op_amp
-id|PKT_ALIGN_ERR
+id|dev
 )paren
-(brace
-id|lp-&gt;stats.rx_frame_errors
-op_increment
+suffix:semicolon
+r_return
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|status
-op_amp
-id|PKT_CRC_ERR
-)paren
+r_else
 (brace
-id|lp-&gt;stats.rx_crc_errors
-op_increment
+id|eth16i_skip_packet
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|status
-op_amp
-id|PKT_RX_BUF_OVERFLOW
-)paren
-(brace
-id|lp-&gt;stats.rx_over_errors
+id|lp-&gt;stats.rx_dropped
 op_increment
 suffix:semicolon
 )brace
@@ -4058,54 +4473,6 @@ id|sk_buff
 op_star
 id|skb
 suffix:semicolon
-multiline_comment|/* Get the size of the packet from receive buffer */
-id|ushort
-id|pkt_len
-op_assign
-id|inw
-c_func
-(paren
-id|ioaddr
-op_plus
-id|DATAPORT
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|pkt_len
-OG
-id|ETH_FRAME_LEN
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;%s: %s claimed a very large packet, size of %d bytes.&bslash;n&quot;
-comma
-id|dev-&gt;name
-comma
-id|cardname
-comma
-id|pkt_len
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|RX_BUF_SKIP_PACKET
-comma
-id|ioaddr
-op_plus
-id|FILTER_SELF_RX_REG
-)paren
-suffix:semicolon
-id|lp-&gt;stats.rx_dropped
-op_increment
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
 id|skb
 op_assign
 id|dev_alloc_skb
@@ -4127,21 +4494,18 @@ l_int|NULL
 id|printk
 c_func
 (paren
-l_string|&quot;%s: Couldn&squot;t allocate memory for packet (len %d)&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;%s: Could&squot;n allocate memory for packet (len %d)&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
 id|pkt_len
 )paren
 suffix:semicolon
-id|outb
+id|eth16i_skip_packet
 c_func
 (paren
-id|RX_BUF_SKIP_PACKET
-comma
-id|ioaddr
-op_plus
-id|FILTER_SELF_RX_REG
+id|dev
 )paren
 suffix:semicolon
 id|lp-&gt;stats.rx_dropped
@@ -4162,7 +4526,7 @@ comma
 l_int|2
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;Now let&squot;s get the packet out of buffer.&n;&t;&t;&t;&t;size is (pkt_len + 1) &gt;&gt; 1, cause we are now reading words&n;&t;&t;&t;&t;and it has to be even aligned.&n;&t;&t;&t;*/
+multiline_comment|/* &n;&t;&t;&t;   Now let&squot;s get the packet out of buffer.&n;&t;&t;&t;   size is (pkt_len + 1) &gt;&gt; 1, cause we are now reading words&n;&t;&t;&t;   and it have to be even aligned.&n;&t;&t;&t;   */
 r_if
 c_cond
 (paren
@@ -4338,6 +4702,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;%s: Received packet of length %d.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -4363,6 +4728,7 @@ op_increment
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot; %02x&quot;
 comma
 id|skb-&gt;data
@@ -4375,6 +4741,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -4447,7 +4814,7 @@ suffix:semicolon
 id|outb
 c_func
 (paren
-id|RX_BUF_SKIP_PACKET
+id|SKIP_RX_PACKET
 comma
 id|ioaddr
 op_plus
@@ -4466,6 +4833,7 @@ l_int|1
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;%s: Flushed receive buffer.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -4526,6 +4894,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;eth16i_interrupt(): irq %d for unknown device. &bslash;n&quot;
 comma
 id|irq
@@ -4545,6 +4914,37 @@ op_plus
 id|TX_INTR_REG
 )paren
 suffix:semicolon
+id|set_bit
+c_func
+(paren
+l_int|0
+comma
+(paren
+r_void
+op_star
+)paren
+op_amp
+id|dev-&gt;tbusy
+)paren
+suffix:semicolon
+multiline_comment|/* Set the device busy so that */
+multiline_comment|/* eth16i_tx wont be called */
+r_if
+c_cond
+(paren
+id|dev-&gt;interrupt
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;%s: Re-entering the interrupt handler.&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+)brace
 id|dev-&gt;interrupt
 op_assign
 l_int|1
@@ -4595,6 +4995,7 @@ l_int|3
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;%s: Interrupt with status %04x.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -4602,6 +5003,216 @@ comma
 id|status
 )paren
 suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|status
+op_amp
+l_int|0x7f00
+)paren
+(brace
+id|lp-&gt;stats.rx_errors
+op_increment
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|status
+op_amp
+(paren
+id|BUS_RD_ERR
+op_lshift
+l_int|8
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;%s: Bus read error.&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|status
+op_amp
+(paren
+id|SHORT_PKT_ERR
+op_lshift
+l_int|8
+)paren
+)paren
+(brace
+id|lp-&gt;stats.rx_length_errors
+op_increment
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|status
+op_amp
+(paren
+id|ALIGN_ERR
+op_lshift
+l_int|8
+)paren
+)paren
+(brace
+id|lp-&gt;stats.rx_frame_errors
+op_increment
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|status
+op_amp
+(paren
+id|CRC_ERR
+op_lshift
+l_int|8
+)paren
+)paren
+(brace
+id|lp-&gt;stats.rx_crc_errors
+op_increment
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|status
+op_amp
+(paren
+id|RX_BUF_OVERFLOW
+op_lshift
+l_int|8
+)paren
+)paren
+(brace
+id|lp-&gt;stats.rx_over_errors
+op_increment
+suffix:semicolon
+)brace
+)brace
+r_if
+c_cond
+(paren
+id|status
+op_amp
+l_int|0x001a
+)paren
+(brace
+id|lp-&gt;stats.tx_errors
+op_increment
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|status
+op_amp
+id|CR_LOST
+)paren
+(brace
+id|lp-&gt;stats.tx_carrier_errors
+op_increment
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|status
+op_amp
+id|TX_JABBER_ERR
+)paren
+(brace
+id|lp-&gt;stats.tx_window_errors
+op_increment
+suffix:semicolon
+)brace
+macro_line|#if 0&t;       
+r_if
+c_cond
+(paren
+id|status
+op_amp
+id|COLLISION
+)paren
+(brace
+id|lp-&gt;stats.collisions
+op_add_assign
+(paren
+(paren
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+id|TRANSMIT_MODE_REG
+)paren
+op_amp
+l_int|0xF0
+)paren
+op_rshift
+l_int|4
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+r_if
+c_cond
+(paren
+id|status
+op_amp
+id|COLLISIONS_16
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|lp-&gt;col_16
+OL
+id|MAX_COL_16
+)paren
+(brace
+id|lp-&gt;col_16
+op_increment
+suffix:semicolon
+id|lp-&gt;stats.collisions
+op_increment
+suffix:semicolon
+multiline_comment|/* Resume transmitting, skip failed packet */
+id|outb
+c_func
+(paren
+l_int|0x02
+comma
+id|ioaddr
+op_plus
+id|COL_16_REG
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;%s: bailing out due to many consecutive 16-in-a-row collisions. Network cable problem?&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+)brace
+)brace
 )brace
 r_if
 c_cond
@@ -4622,7 +5233,12 @@ id|TX_DONE
 (brace
 multiline_comment|/* The transmit has been done */
 id|lp-&gt;stats.tx_packets
-op_increment
+op_assign
+id|lp-&gt;tx_buffered_packets
+suffix:semicolon
+id|lp-&gt;col_16
+op_assign
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -4630,8 +5246,8 @@ c_cond
 id|lp-&gt;tx_queue
 )paren
 (brace
-multiline_comment|/* Are there still packets ? */
-multiline_comment|/* There was packet(s) so start transmitting and write also&n;&t;&t;&t;&t;   how many packets there is to be sent */
+multiline_comment|/* Is there still packets ? */
+multiline_comment|/* There was packet(s) so start transmitting and write also&n;&t;&t;&t;&t;   how many packets there is to be sended */
 id|outb
 c_func
 (paren
@@ -4652,13 +5268,13 @@ id|lp-&gt;tx_queue_len
 op_assign
 l_int|0
 suffix:semicolon
+id|lp-&gt;tx_started
+op_assign
+l_int|1
+suffix:semicolon
 id|dev-&gt;trans_start
 op_assign
 id|jiffies
-suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
 suffix:semicolon
 id|mark_bh
 c_func
@@ -4670,10 +5286,6 @@ suffix:semicolon
 r_else
 (brace
 id|lp-&gt;tx_started
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;tbusy
 op_assign
 l_int|0
 suffix:semicolon
@@ -4692,7 +5304,7 @@ c_cond
 (paren
 id|status
 op_amp
-l_int|0xff00
+l_int|0x8000
 )paren
 op_logical_or
 (paren
@@ -4735,7 +5347,209 @@ op_plus
 id|TX_INTR_REG
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|lp-&gt;tx_queue_len
+OL
+id|lp-&gt;tx_buf_size
+op_minus
+(paren
+id|ETH_FRAME_LEN
+op_plus
+l_int|2
+)paren
+)paren
+(brace
+multiline_comment|/* There is still more room for one more packet in tx buffer */
+id|dev-&gt;tbusy
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 r_return
+suffix:semicolon
+)brace
+DECL|function|eth16i_skip_packet
+r_static
+r_void
+id|eth16i_skip_packet
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+(brace
+r_int
+id|ioaddr
+op_assign
+id|dev-&gt;base_addr
+suffix:semicolon
+id|inw
+c_func
+(paren
+id|ioaddr
+op_plus
+id|DATAPORT
+)paren
+suffix:semicolon
+id|inw
+c_func
+(paren
+id|ioaddr
+op_plus
+id|DATAPORT
+)paren
+suffix:semicolon
+id|inw
+c_func
+(paren
+id|ioaddr
+op_plus
+id|DATAPORT
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|SKIP_RX_PACKET
+comma
+id|ioaddr
+op_plus
+id|FILTER_SELF_RX_REG
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+id|FILTER_SELF_RX_REG
+)paren
+op_ne
+l_int|0
+)paren
+(brace
+suffix:semicolon
+)brace
+)brace
+DECL|function|eth16i_reset
+r_static
+r_void
+id|eth16i_reset
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+(brace
+r_struct
+id|eth16i_local
+op_star
+id|lp
+op_assign
+(paren
+r_struct
+id|eth16i_local
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
+r_int
+id|ioaddr
+op_assign
+id|dev-&gt;base_addr
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|eth16i_debug
+OG
+l_int|1
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;%s: Resetting device.&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+)brace
+id|BITSET
+c_func
+(paren
+id|ioaddr
+op_plus
+id|CONFIG_REG_0
+comma
+id|DLC_EN
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+l_int|0xffff
+comma
+id|ioaddr
+op_plus
+id|TX_STATUS_REG
+)paren
+suffix:semicolon
+id|eth16i_select_regbank
+c_func
+(paren
+l_int|2
+comma
+id|ioaddr
+)paren
+suffix:semicolon
+id|lp-&gt;tx_started
+op_assign
+l_int|0
+suffix:semicolon
+id|lp-&gt;tx_buf_busy
+op_assign
+l_int|0
+suffix:semicolon
+id|lp-&gt;tx_queue
+op_assign
+l_int|0
+suffix:semicolon
+id|lp-&gt;tx_queue_len
+op_assign
+l_int|0
+suffix:semicolon
+id|dev-&gt;interrupt
+op_assign
+l_int|0
+suffix:semicolon
+id|dev-&gt;start
+op_assign
+l_int|1
+suffix:semicolon
+id|dev-&gt;tbusy
+op_assign
+l_int|0
+suffix:semicolon
+id|BITCLR
+c_func
+(paren
+id|ioaddr
+op_plus
+id|CONFIG_REG_0
+comma
+id|DLC_EN
+)paren
 suffix:semicolon
 )brace
 DECL|function|eth16i_multicast
@@ -4802,7 +5616,7 @@ suffix:semicolon
 DECL|function|eth16i_get_stats
 r_static
 r_struct
-id|net_device_stats
+id|enet_statistics
 op_star
 id|eth16i_get_stats
 c_func
@@ -4886,12 +5700,117 @@ id|CONFIG_REG_1
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-DECL|variable|devicename
+DECL|function|eth16i_parse_mediatype
+r_static
+id|ushort
+id|eth16i_parse_mediatype
+c_func
+(paren
+r_const
+r_char
+op_star
+id|s
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|s
+)paren
+(brace
+r_return
+id|E_PORT_FROM_EPROM
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strncmp
+c_func
+(paren
+id|s
+comma
+l_string|&quot;bnc&quot;
+comma
+l_int|3
+)paren
+)paren
+r_return
+id|E_PORT_BNC
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strncmp
+c_func
+(paren
+id|s
+comma
+l_string|&quot;tp&quot;
+comma
+l_int|2
+)paren
+)paren
+r_return
+id|E_PORT_TP
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strncmp
+c_func
+(paren
+id|s
+comma
+l_string|&quot;dix&quot;
+comma
+l_int|3
+)paren
+)paren
+r_return
+id|E_PORT_DIX
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strncmp
+c_func
+(paren
+id|s
+comma
+l_string|&quot;auto&quot;
+comma
+l_int|4
+)paren
+)paren
+r_return
+id|E_PORT_AUTO
+suffix:semicolon
+r_else
+r_return
+id|E_PORT_FROM_EPROM
+suffix:semicolon
+)brace
+DECL|macro|MAX_ETH16I_CARDS
+mdefine_line|#define MAX_ETH16I_CARDS 4  /* Max number of Eth16i cards per module */
+DECL|macro|NAMELEN
+mdefine_line|#define NAMELEN          8  /* number of chars for storing dev-&gt;name */
+DECL|variable|namelist
 r_static
 r_char
-id|devicename
+id|namelist
 (braket
-l_int|9
+id|NAMELEN
+op_star
+id|MAX_ETH16I_CARDS
 )braket
 op_assign
 (brace
@@ -4904,9 +5823,13 @@ r_static
 r_struct
 id|device
 id|dev_eth16i
+(braket
+id|MAX_ETH16I_CARDS
+)braket
 op_assign
 (brace
-id|devicename
+(brace
+l_int|NULL
 comma
 l_int|0
 comma
@@ -4928,37 +5851,158 @@ l_int|0
 comma
 l_int|NULL
 comma
-id|eth16i_probe
+l_int|NULL
+)brace
+comma
 )brace
 suffix:semicolon
-DECL|variable|io
+DECL|variable|ioaddr
+r_static
 r_int
-id|io
+id|ioaddr
+(braket
+id|MAX_ETH16I_CARDS
+)braket
 op_assign
-l_int|0x2a0
-suffix:semicolon
-DECL|variable|irq
-r_int
-id|irq
-op_assign
+(brace
 l_int|0
+comma
+)brace
+suffix:semicolon
+macro_line|#if 0
+r_static
+r_int
+id|irq
+(braket
+id|MAX_ETH16I_CARDS
+)braket
+op_assign
+(brace
+l_int|0
+comma
+)brace
+suffix:semicolon
+macro_line|#endif
+DECL|variable|mediatype
+r_static
+r_char
+op_star
+id|mediatype
+(braket
+id|MAX_ETH16I_CARDS
+)braket
+op_assign
+(brace
+l_int|0
+comma
+)brace
+suffix:semicolon
+DECL|variable|debug
+r_static
+r_int
+id|debug
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+macro_line|#if (LINUX_VERSION_CODE &gt;= 0x20115) 
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Mika Kuoppala &lt;miku@iki.fi&gt;&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;ICL EtherTeam 16i/32 driver&quot;
+)paren
 suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
-id|io
+id|ioaddr
 comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|MAX_ETH16I_CARDS
+)paren
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|ioaddr
+comma
+l_string|&quot;eth16i io base address&quot;
+)paren
+suffix:semicolon
+macro_line|#if 0
 id|MODULE_PARM
 c_func
 (paren
 id|irq
 comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|MAX_ETH16I_CARDS
+)paren
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|irq
+comma
+l_string|&quot;eth16i interrupt request number&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+id|MODULE_PARM
+c_func
+(paren
+id|mediatype
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|MAX_ETH16I_CARDS
+)paren
+l_string|&quot;s&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|mediatype
+comma
+l_string|&quot;eth16i interfaceport mediatype&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|debug
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|debug
+comma
+l_string|&quot;eth16i debug level (0-4)&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|function|init_module
 r_int
 id|init_module
@@ -4967,37 +6011,159 @@ c_func
 r_void
 )paren
 (brace
+r_int
+id|this_dev
+comma
+id|found
+op_assign
+l_int|0
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|this_dev
+op_assign
+l_int|0
+suffix:semicolon
+id|this_dev
+OL
+id|MAX_ETH16I_CARDS
+suffix:semicolon
+id|this_dev
+op_increment
+)paren
+(brace
+r_struct
+id|device
+op_star
+id|dev
+op_assign
+op_amp
+id|dev_eth16i
+(braket
+id|this_dev
+)braket
+suffix:semicolon
+id|dev-&gt;name
+op_assign
+id|namelist
+op_plus
+(paren
+id|NAMELEN
+op_star
+id|this_dev
+)paren
+suffix:semicolon
+id|dev-&gt;irq
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* irq[this_dev]; */
+id|dev-&gt;base_addr
+op_assign
+id|ioaddr
+(braket
+id|this_dev
+)braket
+suffix:semicolon
+id|dev-&gt;init
+op_assign
+id|eth16i_probe
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|io
-op_eq
-l_int|0
+id|debug
+op_ne
+op_minus
+l_int|1
+)paren
+(brace
+id|eth16i_debug
+op_assign
+id|debug
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|eth16i_debug
+OG
+l_int|1
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;eth16i: You should not use auto-probing with insmod!&bslash;n&quot;
+id|KERN_NOTICE
+l_string|&quot;eth16i(%d): interface type %s&bslash;n&quot;
+comma
+id|this_dev
+comma
+id|mediatype
+(braket
+id|this_dev
+)braket
+ques
+c_cond
+id|mediatype
+(braket
+id|this_dev
+)braket
+suffix:colon
+l_string|&quot;none&quot;
 )paren
 suffix:semicolon
 )brace
-id|dev_eth16i.base_addr
+id|dev-&gt;if_port
 op_assign
-id|io
+id|eth16i_parse_mediatype
+c_func
+(paren
+id|mediatype
+(braket
+id|this_dev
+)braket
+)paren
 suffix:semicolon
-id|dev_eth16i.irq
-op_assign
-id|irq
+r_if
+c_cond
+(paren
+id|ioaddr
+(braket
+id|this_dev
+)braket
+op_eq
+l_int|0
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|this_dev
+op_ne
+l_int|0
+)paren
+(brace
+r_break
 suffix:semicolon
+)brace
+multiline_comment|/* Only autoprobe 1st one */
+id|printk
+c_func
+(paren
+id|KERN_NOTICE
+l_string|&quot;eth16i.c: Presently autoprobing (not recommended) for a single card.&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
 id|register_netdev
 c_func
 (paren
-op_amp
-id|dev_eth16i
+id|dev
 )paren
 op_ne
 l_int|0
@@ -5006,12 +6172,34 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;eth16i: register_netdev() returned non-zero.&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;eth16i.c No Eth16i card found (i/o = 0x%x).&bslash;n&quot;
+comma
+id|ioaddr
+(braket
+id|this_dev
+)braket
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|found
+op_ne
+l_int|0
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
 r_return
 op_minus
-id|EIO
+id|ENXIO
+suffix:semicolon
+)brace
+id|found
+op_increment
 suffix:semicolon
 )brace
 r_return
@@ -5026,30 +6214,79 @@ c_func
 r_void
 )paren
 (brace
+r_int
+id|this_dev
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|this_dev
+op_assign
+l_int|0
+suffix:semicolon
+id|this_dev
+OL
+id|MAX_ETH16I_CARDS
+suffix:semicolon
+id|this_dev
+op_increment
+)paren
+(brace
+r_struct
+id|device
+op_star
+id|dev
+op_assign
+op_amp
+id|dev_eth16i
+(braket
+id|this_dev
+)braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;priv
+op_ne
+l_int|NULL
+)paren
+(brace
 id|unregister_netdev
 c_func
 (paren
-op_amp
-id|dev_eth16i
+id|dev
 )paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|dev-&gt;priv
+)paren
+suffix:semicolon
+id|dev-&gt;priv
+op_assign
+l_int|NULL
 suffix:semicolon
 id|free_irq
 c_func
 (paren
-id|dev_eth16i.irq
+id|dev-&gt;irq
 comma
-op_amp
-id|dev_eth16i
+id|dev
 )paren
 suffix:semicolon
 id|release_region
 c_func
 (paren
-id|dev_eth16i.base_addr
+id|dev-&gt;base_addr
 comma
 id|ETH16I_IO_EXTENT
 )paren
 suffix:semicolon
 )brace
+)brace
+)brace
 macro_line|#endif /* MODULE */
+multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -DMODULE -D__KERNEL__ -Wall -Wstrict-prototypes -O6 -c eth16i.c&quot;&n; *  alt-compile-command: &quot;gcc -DMODVERSIONS -DMODULE -D__KERNEL__ -Wall -Wstrict -prototypes -O6 -c eth16i.c&quot;&n; *  tab-width: 8&n; *  c-basic-offset: 8&n; *  c-indent-level: 8&n; * End:&n; */
+multiline_comment|/* End of file eth16i.c */
 eof

@@ -1368,7 +1368,7 @@ r_void
 macro_line|#else
 r_int
 id|__init
-id|js_l4_an_init
+id|js_l4_init
 c_func
 (paren
 r_void

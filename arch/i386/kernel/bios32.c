@@ -1179,7 +1179,7 @@ comma
 id|pci_conf2_write_config_dword
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Before we decide to use direct hardware access mechanisms, we try to do some&n; * trivial checks to ensure it at least _seems_ to be working -- we just test&n; * whether bus 00 contains a host bridge (this is similar to checking&n; * techniques used in XFree86, but ours should be more reliable since we&n; * attempt to make use of direct access hints provided by the PCI BIOS).&n; *&n; * This should be close to trivial, but it isn&squot;t, because there are buggy&n; * chipsets (yes, you guessed it, by Intel) that have no class ID.&n; */
+multiline_comment|/*&n; * Before we decide to use direct hardware access mechanisms, we try to do some&n; * trivial checks to ensure it at least _seems_ to be working -- we just test&n; * whether bus 00 contains a host bridge (this is similar to checking&n; * techniques used in XFree86, but ours should be more reliable since we&n; * attempt to make use of direct access hints provided by the PCI BIOS).&n; *&n; * This should be close to trivial, but it isn&squot;t, because there are buggy&n; * chipsets (yes, you guessed it, by Intel and Compaq) that have no class ID.&n; */
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -1244,9 +1244,15 @@ op_amp
 id|x
 )paren
 op_logical_and
+(paren
 id|x
 op_eq
 id|PCI_CLASS_BRIDGE_HOST
+op_logical_or
+id|x
+op_eq
+id|PCI_CLASS_DISPLAY_VGA
+)paren
 )paren
 op_logical_or
 (paren
@@ -1266,9 +1272,15 @@ op_amp
 id|x
 )paren
 op_logical_and
+(paren
 id|x
 op_eq
 id|PCI_VENDOR_ID_INTEL
+op_logical_or
+id|x
+op_eq
+id|PCI_VENDOR_ID_COMPAQ
+)paren
 )paren
 )paren
 r_return

@@ -3203,6 +3203,10 @@ id|skb-&gt;priority
 op_assign
 l_int|1
 suffix:semicolon
+id|skb-&gt;dev
+op_assign
+id|dev
+suffix:semicolon
 id|dev_queue_xmit
 c_func
 (paren
@@ -3430,6 +3434,10 @@ suffix:semicolon
 id|skb-&gt;priority
 op_assign
 l_int|1
+suffix:semicolon
+id|skb-&gt;dev
+op_assign
+id|dev
 suffix:semicolon
 id|dev_queue_xmit
 c_func
@@ -3666,6 +3674,10 @@ id|sp-&gt;pp_flags
 op_or_assign
 id|PP_CISCO
 suffix:semicolon
+id|dev-&gt;type
+op_assign
+id|ARPHRD_HDLC
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -3675,6 +3687,10 @@ id|sp-&gt;pp_flags
 op_and_assign
 op_complement
 id|PP_CISCO
+suffix:semicolon
+id|dev-&gt;type
+op_assign
+id|ARPHRD_PPP
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -3823,7 +3839,7 @@ l_int|10
 suffix:semicolon
 id|dev-&gt;type
 op_assign
-id|ARPHRD_PPP
+id|ARPHRD_HDLC
 suffix:semicolon
 id|dev-&gt;addr_len
 op_assign
@@ -3876,6 +3892,10 @@ suffix:semicolon
 id|dev-&gt;flags
 op_assign
 id|IFF_MULTICAST
+op_or
+id|IFF_POINTOPOINT
+op_or
+id|IFF_NOARP
 suffix:semicolon
 id|dev_init_buffers
 c_func

@@ -37,9 +37,9 @@ mdefine_line|#define LP_ABORTOPEN 0x0100
 multiline_comment|/* timeout for each character.  This is relative to bus cycles -- it&n; * is the count in a busy loop.  THIS IS THE VALUE TO CHANGE if you&n; * have extremely slow printing, or if the machine seems to slow down&n; * a lot when you print.  If you have slow printing, increase this&n; * number and recompile, and if your system gets bogged down, decrease&n; * this number.  This can be changed with the tunelp(8) command as well.&n; */
 DECL|macro|LP_INIT_CHAR
 mdefine_line|#define LP_INIT_CHAR 1000
-multiline_comment|/* The parallel port specs apparently say that there needs to be&n; * a .5usec wait before and after the strobe.  Since there are wildly&n; * different computers running linux, I can&squot;t come up with a perfect&n; * value, but since it worked well on most printers before without,&n; * I&squot;ll initialize it to 0.&n; */
+multiline_comment|/* The parallel port specs apparently say that there needs to be&n; * a .5usec wait before and after the strobe.  Since there are wildly&n; * different computers running linux, I can&squot;t come up with a perfect&n; * value so if 20 is not good for you use `tunelp /dev/lp? -w ?`.&n; * You can also set it to 0 if your printer handle that.&n; */
 DECL|macro|LP_INIT_WAIT
-mdefine_line|#define LP_INIT_WAIT 0
+mdefine_line|#define LP_INIT_WAIT 20
 multiline_comment|/* This is the amount of time that the driver waits for the printer to&n; * catch up when the printer&squot;s buffer appears to be filled.  If you&n; * want to tune this and have a fast printer (i.e. HPIIIP), decrease&n; * this number, and if you have a slow printer, increase this number.&n; * This is in hundredths of a second, the default 2 being .05 second.&n; * Or use the tunelp(8) command, which is especially nice if you want&n; * change back and forth between character and graphics printing, which&n; * are wildly different...&n; */
 DECL|macro|LP_INIT_TIME
 mdefine_line|#define LP_INIT_TIME 2

@@ -763,17 +763,6 @@ id|handle
 )paren
 suffix:semicolon
 r_extern
-r_int
-id|parport_pc_examine_irq
-c_func
-(paren
-r_struct
-id|parport
-op_star
-id|p
-)paren
-suffix:semicolon
-r_extern
 r_void
 id|parport_pc_inc_use_count
 c_func

@@ -87,99 +87,22 @@ op_star
 id|type1
 )paren
 (brace
-r_int
-r_int
-id|addr
-suffix:semicolon
-id|DBG_CNF
-c_func
-(paren
-(paren
-l_string|&quot;mk_conf_addr(bus=%d ,device_fn=0x%x, where=0x%x,&quot;
-l_string|&quot; pci_addr=0x%p, type1=0x%p)&bslash;n&quot;
-comma
-id|bus
-comma
-id|device_fn
-comma
-id|where
-comma
-id|pci_addr
-comma
+op_star
 id|type1
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
+op_assign
 (paren
 id|bus
 op_eq
 l_int|0
 )paren
-(brace
-r_int
-id|device
-suffix:semicolon
-id|device
-op_assign
-id|device_fn
-op_rshift
-l_int|3
-suffix:semicolon
-multiline_comment|/* Type 0 configuration cycle. */
-macro_line|#if NOT_NOW
-r_if
+ques
 c_cond
-(paren
-id|device
-OG
-l_int|20
-)paren
-(brace
-id|DBG_CNF
-c_func
-(paren
-(paren
-l_string|&quot;mk_conf_addr: device (%d) &gt; 20, return -1&bslash;n&quot;
-comma
-id|device
-)paren
-)paren
-suffix:semicolon
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)brace
-macro_line|#endif
-op_star
-id|type1
-op_assign
 l_int|0
-suffix:semicolon
-id|addr
-op_assign
-(paren
-id|device_fn
-op_lshift
-l_int|8
-)paren
-op_or
-(paren
-id|where
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-multiline_comment|/* Type 1 configuration cycle.  */
-op_star
-id|type1
-op_assign
+suffix:colon
 l_int|1
 suffix:semicolon
-id|addr
+op_star
+id|pci_addr
 op_assign
 (paren
 id|bus
@@ -197,19 +120,20 @@ op_or
 id|where
 )paren
 suffix:semicolon
-)brace
-op_star
-id|pci_addr
-op_assign
-id|addr
-suffix:semicolon
 id|DBG_CNF
 c_func
 (paren
 (paren
-l_string|&quot;mk_conf_addr: returning pci_addr 0x%lx&bslash;n&quot;
+l_string|&quot;mk_conf_addr(bus=%d ,device_fn=0x%x, where=0x%x,&quot;
+l_string|&quot; returning address 0x%p&bslash;n&quot;
+id|bus
 comma
-id|addr
+id|device_fn
+comma
+id|where
+comma
+op_star
+id|pci_addr
 )paren
 )paren
 suffix:semicolon
@@ -289,16 +213,6 @@ id|vuip
 id|PYXIS_ERR
 suffix:semicolon
 multiline_comment|/* re-read to force write */
-id|DBG_CNF
-c_func
-(paren
-(paren
-l_string|&quot;conf_read: PYXIS ERR was 0x%x&bslash;n&quot;
-comma
-id|stat0
-)paren
-)paren
-suffix:semicolon
 multiline_comment|/* If Type1 access, must set PYXIS CFG.  */
 r_if
 c_cond
@@ -320,7 +234,12 @@ id|vuip
 )paren
 id|PYXIS_CFG
 op_assign
+(paren
 id|pyxis_cfg
+op_amp
+op_complement
+l_int|3L
+)paren
 op_or
 l_int|1
 suffix:semicolon
@@ -427,7 +346,7 @@ op_assign
 id|pyxis_cfg
 op_amp
 op_complement
-l_int|1
+l_int|3L
 suffix:semicolon
 id|mb
 c_func
@@ -444,6 +363,12 @@ id|PYXIS_CFG
 suffix:semicolon
 multiline_comment|/* re-read to force write */
 )brace
+id|__restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|DBG_CNF
 c_func
 (paren
@@ -456,12 +381,6 @@ id|type1
 comma
 id|value
 )paren
-)paren
-suffix:semicolon
-id|__restore_flags
-c_func
-(paren
-id|flags
 )paren
 suffix:semicolon
 r_return
@@ -502,20 +421,6 @@ r_int
 id|pyxis_cfg
 op_assign
 l_int|0
-suffix:semicolon
-id|DBG_CNF
-c_func
-(paren
-(paren
-l_string|&quot;conf_write(addr=%#lx, value=%#x, type1=%d)&bslash;n&quot;
-comma
-id|addr
-comma
-id|value
-comma
-id|type1
-)paren
-)paren
 suffix:semicolon
 id|__save_and_cli
 c_func
@@ -576,7 +481,12 @@ id|vuip
 )paren
 id|PYXIS_CFG
 op_assign
+(paren
 id|pyxis_cfg
+op_amp
+op_complement
+l_int|3L
+)paren
 op_or
 l_int|1
 suffix:semicolon
@@ -632,21 +542,15 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|mb
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* magic */
 id|temp
 op_assign
 op_star
 (paren
 id|vuip
 )paren
-id|PYXIS_ERR
+id|addr
 suffix:semicolon
-multiline_comment|/* do a PYXIS read to force the write */
+multiline_comment|/* read back to force the write */
 id|PYXIS_mcheck_expected
 op_assign
 l_int|0
@@ -672,7 +576,7 @@ op_assign
 id|pyxis_cfg
 op_amp
 op_complement
-l_int|1
+l_int|3L
 suffix:semicolon
 id|mb
 c_func
@@ -693,6 +597,20 @@ id|__restore_flags
 c_func
 (paren
 id|flags
+)paren
+suffix:semicolon
+id|DBG_CNF
+c_func
+(paren
+(paren
+l_string|&quot;conf_write(addr=%#lx, value=%#x, type1=%d)&bslash;n&quot;
+comma
+id|addr
+comma
+id|value
+comma
+id|type1
+)paren
 )paren
 suffix:semicolon
 )brace

@@ -10,8 +10,6 @@ macro_line|#include &lt;linux/i2c.h&gt;
 macro_line|#include &quot;msp3400.h&quot;
 macro_line|#include &quot;bt848.h&quot;
 macro_line|#include &lt;linux/videodev.h&gt;
-DECL|macro|MAX_CLIPRECS
-mdefine_line|#define MAX_CLIPRECS&t;100
 DECL|macro|MAX_GBUFFERS
 mdefine_line|#define MAX_GBUFFERS&t;2
 DECL|macro|RISCMEM_LEN
@@ -102,7 +100,7 @@ r_int
 r_int
 id|pll_ifreq
 suffix:semicolon
-multiline_comment|/* PLL input frequency &t;  */
+multiline_comment|/* PLL input frequency    */
 DECL|member|pll_ofreq
 r_int
 r_int

@@ -506,6 +506,16 @@ multiline_comment|/* Unfortunately, since MILO doesn&squot;t currently understan
 r_return
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|alpha_using_srm
+)paren
+id|srm_paging_stop
+c_func
+(paren
+)paren
+suffix:semicolon
 id|halt
 c_func
 (paren

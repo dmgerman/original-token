@@ -71,14 +71,6 @@ r_void
 suffix:semicolon
 r_extern
 r_int
-id|psaux_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
 id|qpmouse_init
 c_func
 (paren
@@ -631,14 +623,15 @@ op_amp
 l_int|7
 )paren
 suffix:semicolon
-id|misc-&gt;next
+multiline_comment|/*&n;&t; * Add it to the front, so that later devices can &quot;override&quot;&n;&t; * earlier defaults&n;&t; */
+id|misc-&gt;prev
 op_assign
 op_amp
 id|misc_list
 suffix:semicolon
-id|misc-&gt;prev
+id|misc-&gt;next
 op_assign
-id|misc_list.prev
+id|misc_list.next
 suffix:semicolon
 id|misc-&gt;prev-&gt;next
 op_assign
@@ -799,14 +792,6 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#if defined CONFIG_82C710_MOUSE
 id|qpmouse_init
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* This must be before psaux_init */
-macro_line|#endif
-macro_line|#if defined CONFIG_PSMOUSE
-id|psaux_init
 c_func
 (paren
 )paren

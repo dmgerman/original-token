@@ -102,7 +102,7 @@ l_int|NULL
 comma
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * hardsect_size contains the size of the hardware sector of a device.&n; *&n; * hardsect_size[MAJOR][MINOR]&n; *&n; * if (!hardsect_size[MAJOR])&n; *&t;&t;then 512 bytes is assumed.&n; * else&n; *&t;&t;sector_size is hardsect_size[MAJOR][MINOR]&n; * This is currently set by some scsi device and read by the msdos fs driver&n; * This might be a some uses later.&n; */
+multiline_comment|/*&n; * hardsect_size contains the size of the hardware sector of a device.&n; *&n; * hardsect_size[MAJOR][MINOR]&n; *&n; * if (!hardsect_size[MAJOR])&n; *&t;&t;then 512 bytes is assumed.&n; * else&n; *&t;&t;sector_size is hardsect_size[MAJOR][MINOR]&n; * This is currently set by some scsi devices and read by the msdos fs driver.&n; * Other uses may appear later.&n; */
 DECL|variable|hardsect_size
 r_int
 op_star
@@ -1022,7 +1022,7 @@ id|req-&gt;rq_dev
 )paren
 (brace
 r_case
-id|SCSI_DISK_MAJOR
+id|SCSI_DISK0_MAJOR
 suffix:colon
 id|disk_index
 op_assign
@@ -1033,7 +1033,7 @@ c_func
 id|req-&gt;rq_dev
 )paren
 op_amp
-l_int|0x0070
+l_int|0x00f0
 )paren
 op_rshift
 l_int|4
@@ -1786,7 +1786,28 @@ r_break
 suffix:semicolon
 multiline_comment|/* fall through */
 r_case
-id|SCSI_DISK_MAJOR
+id|SCSI_DISK0_MAJOR
+suffix:colon
+r_case
+id|SCSI_DISK1_MAJOR
+suffix:colon
+r_case
+id|SCSI_DISK2_MAJOR
+suffix:colon
+r_case
+id|SCSI_DISK3_MAJOR
+suffix:colon
+r_case
+id|SCSI_DISK4_MAJOR
+suffix:colon
+r_case
+id|SCSI_DISK5_MAJOR
+suffix:colon
+r_case
+id|SCSI_DISK6_MAJOR
+suffix:colon
+r_case
+id|SCSI_DISK7_MAJOR
 suffix:colon
 r_case
 id|SCSI_CDROM_MAJOR

@@ -4017,23 +4017,6 @@ id|bc-&gt;stats
 suffix:semicolon
 )brace
 multiline_comment|/* --------------------------------------------------------------------- */
-DECL|function|epp_preempt
-r_static
-r_int
-id|epp_preempt
-c_func
-(paren
-r_void
-op_star
-id|handle
-)paren
-(brace
-multiline_comment|/* we cannot relinquish the port in the middle of an operation */
-r_return
-l_int|1
-suffix:semicolon
-)brace
-multiline_comment|/* --------------------------------------------------------------------- */
 DECL|function|epp_wakeup
 r_static
 r_void
@@ -4294,13 +4277,13 @@ id|pp
 comma
 id|dev-&gt;name
 comma
-id|epp_preempt
+l_int|NULL
 comma
 id|epp_wakeup
 comma
 id|epp_interrupt
 comma
-id|PARPORT_DEV_LURK
+id|PARPORT_DEV_EXCL
 comma
 id|dev
 )paren

@@ -1,5 +1,8 @@
-multiline_comment|/*&n; *&t;Comtrol SV11 card driver&n; *&n; *&t;This is a slightly odd Z85230 synchronous driver. All you need to&n; *&t;know basically is&n; *&n; *&t;Its a genuine Z85230&n; *&n; *&t;It supports DMA using two DMA channels in SYNC mode. The driver doesn&squot;t&n; *&t;use these facilities (yet).&n; *&t;&n; *&t;The control port is at io+1, the data at io+3 and turning off the DMA&n; *&t;is done by writing 0 to io+4&n; *&n; *&t;The hardware does the bus handling to avoid the need for delays between&n; *&t;touching control registers.&n; *&n; *&t;Port B isnt wired (why - beats me)&n; */
+DECL|macro|LINUX_21
+mdefine_line|#define LINUX_21
+multiline_comment|/*&n; *&t;Comtrol SV11 card driver&n; *&n; *&t;This is a slightly odd Z85230 synchronous driver. All you need to&n; *&t;know basically is&n; *&n; *&t;Its a genuine Z85230&n; *&n; *&t;It supports DMA using two DMA channels in SYNC mode. The driver doesn&squot;t&n; *&t;use these facilities&n; *&t;&n; *&t;The control port is at io+1, the data at io+3 and turning off the DMA&n; *&t;is done by writing 0 to io+4&n; *&n; *&t;The hardware does the bus handling to avoid the need for delays between&n; *&t;touching control registers.&n; *&n; *&t;Port B isnt wired (why - beats me)&n; */
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
@@ -43,7 +46,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;Network driver support routines&n; */
-multiline_comment|/*&n; *&t;Frame receive. Simple for our card as we do sync ppp and there&n; *&t;is no funny garbage involved. This is very timing sensitive.&n; */
+multiline_comment|/*&n; *&t;Frame receive. Simple for our card as we do sync ppp and there&n; *&t;is no funny garbage involved&n; */
 DECL|function|hostess_input
 r_static
 r_void
@@ -80,15 +83,15 @@ c_func
 id|ETH_P_WAN_PPP
 )paren
 suffix:semicolon
+id|skb-&gt;mac.raw
+op_assign
+id|skb-&gt;data
+suffix:semicolon
 id|skb-&gt;dev
 op_assign
 id|c-&gt;netdevice
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Send it to the PPP layer. We dont have time to process&n;&t; *&t;it right now.&n;&t; */
-id|skb-&gt;mac.raw
-op_assign
-id|skb-&gt;data
-suffix:semicolon
 id|netif_rx
 c_func
 (paren
@@ -118,27 +121,20 @@ id|d-&gt;priv
 suffix:semicolon
 r_int
 id|err
+op_assign
+op_minus
+l_int|1
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Link layer up&n;&t; */
-r_if
+r_switch
 c_cond
 (paren
 id|dma
 )paren
 (brace
-id|err
-op_assign
-id|z8530_sync_dma_open
-c_func
-(paren
-id|d
-comma
-op_amp
-id|sv11-&gt;sync.chanA
-)paren
-suffix:semicolon
-)brace
-r_else
+r_case
+l_int|0
+suffix:colon
 id|err
 op_assign
 id|z8530_sync_open
@@ -150,6 +146,41 @@ op_amp
 id|sv11-&gt;sync.chanA
 )paren
 suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|1
+suffix:colon
+id|err
+op_assign
+id|z8530_sync_dma_open
+c_func
+(paren
+id|d
+comma
+op_amp
+id|sv11-&gt;sync.chanA
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|2
+suffix:colon
+id|err
+op_assign
+id|z8530_sync_txdma_open
+c_func
+(paren
+id|d
+comma
+op_amp
+id|sv11-&gt;sync.chanA
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -175,23 +206,15 @@ c_cond
 id|err
 )paren
 (brace
-r_if
+r_switch
 c_cond
 (paren
 id|dma
 )paren
 (brace
-id|z8530_sync_dma_close
-c_func
-(paren
-id|d
-comma
-op_amp
-id|sv11-&gt;sync.chanA
-)paren
-suffix:semicolon
-)brace
-r_else
+r_case
+l_int|0
+suffix:colon
 id|z8530_sync_close
 c_func
 (paren
@@ -201,6 +224,37 @@ op_amp
 id|sv11-&gt;sync.chanA
 )paren
 suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|1
+suffix:colon
+id|z8530_sync_dma_close
+c_func
+(paren
+id|d
+comma
+op_amp
+id|sv11-&gt;sync.chanA
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|2
+suffix:colon
+id|z8530_sync_txdma_close
+c_func
+(paren
+id|d
+comma
+op_amp
+id|sv11-&gt;sync.chanA
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 r_return
 id|err
 suffix:semicolon
@@ -256,23 +310,15 @@ id|d-&gt;tbusy
 op_assign
 l_int|1
 suffix:semicolon
-r_if
+r_switch
 c_cond
 (paren
 id|dma
 )paren
 (brace
-id|z8530_sync_dma_close
-c_func
-(paren
-id|d
-comma
-op_amp
-id|sv11-&gt;sync.chanA
-)paren
-suffix:semicolon
-)brace
-r_else
+r_case
+l_int|0
+suffix:colon
 id|z8530_sync_close
 c_func
 (paren
@@ -282,6 +328,37 @@ op_amp
 id|sv11-&gt;sync.chanA
 )paren
 suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|1
+suffix:colon
+id|z8530_sync_dma_close
+c_func
+(paren
+id|d
+comma
+op_amp
+id|sv11-&gt;sync.chanA
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|2
+suffix:colon
+id|z8530_sync_txdma_close
+c_func
+(paren
+id|d
+comma
+op_amp
+id|sv11-&gt;sync.chanA
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
@@ -331,7 +408,7 @@ suffix:semicolon
 DECL|function|hostess_get_stats
 r_static
 r_struct
-id|net_device_stats
+id|enet_statistics
 op_star
 id|hostess_get_stats
 c_func
@@ -405,6 +482,7 @@ id|skb
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef LINUX_21
 DECL|function|hostess_neigh_setup
 r_static
 r_int
@@ -481,6 +559,24 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#else
+DECL|function|return_0
+r_static
+r_int
+id|return_0
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|d
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif
 multiline_comment|/*&n; *&t;Description block for a Comtrol Hostess SV11 card&n; */
 DECL|function|sv11_init
 r_static
@@ -718,16 +814,18 @@ id|dma
 multiline_comment|/*&n;&t;&t; *&t;You can have DMA off or 1 and 3 thats the lot&n;&t;&t; *&t;on the Comtrol.&n;&t;&t; */
 id|dev-&gt;chanA.txdma
 op_assign
-l_int|1
+l_int|3
 suffix:semicolon
 id|dev-&gt;chanA.rxdma
 op_assign
-l_int|3
+l_int|1
 suffix:semicolon
 id|outb
 c_func
 (paren
-l_int|14
+l_int|0x03
+op_or
+l_int|0x08
 comma
 id|iobase
 op_plus
@@ -756,6 +854,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|dma
+op_eq
+l_int|1
+)paren
+(brace
+r_if
+c_cond
+(paren
 id|request_dma
 c_func
 (paren
@@ -770,6 +876,7 @@ l_int|0
 r_goto
 id|dmafail
 suffix:semicolon
+)brace
 )brace
 )brace
 id|save_flags
@@ -796,6 +903,13 @@ op_ne
 l_int|0
 )paren
 (brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;Z8530 series device not found.&bslash;n&quot;
+)paren
+suffix:semicolon
 r_goto
 id|dmafail2
 suffix:semicolon
@@ -841,13 +955,6 @@ id|restore_flags
 c_func
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;begin loading hdlc&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Now we can take the IRQ&n;&t; */
@@ -914,16 +1021,6 @@ comma
 id|i
 )paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;Filling in device &squot;%s&squot; at %p&bslash;n&quot;
-comma
-id|sv-&gt;name
-comma
-id|d
-)paren
-suffix:semicolon
 id|d-&gt;name
 op_assign
 id|sv-&gt;name
@@ -968,6 +1065,7 @@ id|d-&gt;do_ioctl
 op_assign
 id|hostess_ioctl
 suffix:semicolon
+macro_line|#ifdef LINUX_21&t;&t;&t;
 id|d-&gt;neigh_setup
 op_assign
 id|hostess_neigh_setup_dev
@@ -978,6 +1076,12 @@ c_func
 id|d
 )paren
 suffix:semicolon
+macro_line|#else
+id|d-&gt;init
+op_assign
+id|return_0
+suffix:semicolon
+macro_line|#endif
 id|d-&gt;set_mac_address
 op_assign
 l_int|NULL
@@ -1032,28 +1136,33 @@ suffix:colon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|dma
+op_eq
+l_int|1
 )paren
 (brace
-r_goto
-id|fail
-suffix:semicolon
-)brace
 id|free_dma
 c_func
 (paren
 id|dev-&gt;chanA.rxdma
 )paren
 suffix:semicolon
+)brace
 id|dmafail
 suffix:colon
+r_if
+c_cond
+(paren
+id|dma
+)paren
+(brace
 id|free_dma
 c_func
 (paren
 id|dev-&gt;chanA.txdma
 )paren
 suffix:semicolon
+)brace
 id|fail
 suffix:colon
 id|free_irq
@@ -1127,6 +1236,12 @@ comma
 id|dev
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dma
+)paren
+(brace
 id|free_dma
 c_func
 (paren
@@ -1139,6 +1254,7 @@ c_func
 id|dev-&gt;sync.chanA.txdma
 )paren
 suffix:semicolon
+)brace
 id|release_region
 c_func
 (paren
@@ -1165,6 +1281,7 @@ id|irq
 op_assign
 l_int|9
 suffix:semicolon
+macro_line|#ifdef LINUX_21
 id|MODULE_PARM
 c_func
 (paren
@@ -1225,6 +1342,7 @@ c_func
 l_string|&quot;Modular driver for the Comtrol Hostess SV11&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 DECL|variable|sv11_unit
 r_static
 r_struct
@@ -1244,7 +1362,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;SV-11 Z85230 Synchronous Driver v 0.02.&bslash;n&quot;
+l_string|&quot;SV-11 Z85230 Synchronous Driver v 0.01.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk

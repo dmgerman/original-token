@@ -192,7 +192,8 @@ suffix:semicolon
 r_int
 id|retval
 op_assign
-l_int|0
+op_minus
+id|EIO
 suffix:semicolon
 id|gdp
 op_assign
@@ -213,6 +214,10 @@ id|gdp
 )paren
 r_goto
 id|error_out
+suffix:semicolon
+id|retval
+op_assign
+l_int|0
 suffix:semicolon
 id|bh
 op_assign

@@ -42,9 +42,9 @@ l_int|2
 suffix:semicolon
 multiline_comment|/* A few options that we want selected */
 DECL|macro|NR_HOSTS_PRESENT
-mdefine_line|#define NR_HOSTS_PRESENT 1
+mdefine_line|#define NR_HOSTS_PRESENT 20
 DECL|macro|NR_FAKE_DISKS
-mdefine_line|#define NR_FAKE_DISKS   3
+mdefine_line|#define NR_FAKE_DISKS   6
 DECL|macro|N_HEAD
 mdefine_line|#define N_HEAD          32
 DECL|macro|N_SECTOR
@@ -59,6 +59,9 @@ multiline_comment|/* #define IMMEDIATE */
 multiline_comment|/* Skip some consistency checking.  Good for benchmarking */
 DECL|macro|SPEEDY
 mdefine_line|#define SPEEDY
+multiline_comment|/* Read return zeros. Undefine for benchmarking */
+DECL|macro|CLEAR
+mdefine_line|#define CLEAR
 multiline_comment|/* Number of real scsi disks that will be detected ahead of time */
 DECL|variable|NR_REAL
 r_static
@@ -1386,28 +1389,11 @@ id|delay
 op_assign
 id|SCSI_SETUP_LATENCY
 suffix:semicolon
-r_float
-id|usec
-suffix:semicolon
-id|usec
-op_assign
-l_float|0.0
-suffix:semicolon
-id|usec
-op_assign
-(paren
-id|SCpnt-&gt;request.nr_sectors
-op_lshift
-l_int|9
-)paren
-op_star
-l_float|1.0e6
-op_div
-id|SCSI_DATARATE
-suffix:semicolon
 id|delay
 op_add_assign
-id|usec
+id|SCpnt-&gt;request.nr_sectors
+op_star
+id|SCSI_DATARATE
 suffix:semicolon
 r_if
 c_cond
@@ -1495,7 +1481,7 @@ id|READ
 )paren
 suffix:semicolon
 multiline_comment|/* For the speedy test, we do not even want to fill the buffer with anything */
-macro_line|#ifndef SPEEDY
+macro_line|#ifdef CLEAR
 id|memset
 c_func
 (paren
@@ -1514,12 +1500,11 @@ c_cond
 id|block
 op_eq
 l_int|0
-op_logical_and
-id|target
-op_eq
-l_int|0
 )paren
 (brace
+r_int
+id|i
+suffix:semicolon
 id|memset
 c_func
 (paren
@@ -1559,7 +1544,7 @@ op_plus
 l_int|0x1be
 )paren
 suffix:semicolon
-id|npart
+id|i
 op_assign
 l_int|0
 suffix:semicolon
@@ -1568,7 +1553,7 @@ c_loop
 (paren
 id|starts
 (braket
-id|npart
+id|i
 op_plus
 l_int|1
 )braket
@@ -1578,21 +1563,21 @@ id|p-&gt;start_sect
 op_assign
 id|starts
 (braket
-id|npart
+id|i
 )braket
 suffix:semicolon
 id|p-&gt;nr_sects
 op_assign
 id|starts
 (braket
-id|npart
+id|i
 op_plus
 l_int|1
 )braket
 op_minus
 id|starts
 (braket
-id|npart
+id|i
 )braket
 suffix:semicolon
 id|p-&gt;sys_ind
@@ -1603,7 +1588,7 @@ multiline_comment|/* Linux partition */
 id|p-&gt;head
 op_assign
 (paren
-id|npart
+id|i
 op_eq
 l_int|0
 ques
@@ -1621,7 +1606,7 @@ id|p-&gt;cyl
 op_assign
 id|starts
 (braket
-id|npart
+id|i
 )braket
 op_div
 id|N_HEAD
@@ -1642,7 +1627,7 @@ id|p-&gt;end_cyl
 op_assign
 id|starts
 (braket
-id|npart
+id|i
 op_plus
 l_int|1
 )braket
@@ -1654,10 +1639,20 @@ suffix:semicolon
 id|p
 op_increment
 suffix:semicolon
-id|npart
+id|i
 op_increment
 suffix:semicolon
 )brace
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|npart
+)paren
+id|npart
+op_assign
+id|i
 suffix:semicolon
 id|scsi_debug_errsts
 op_assign
@@ -1797,7 +1792,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* End phony disk change code */
 macro_line|#endif
-macro_line|#ifndef SPEEDY
+macro_line|#ifdef CLEAR
 id|memcpy
 c_func
 (paren
@@ -1869,7 +1864,7 @@ c_cond
 id|SCpnt-&gt;use_sg
 )paren
 (brace
-macro_line|#ifndef SPEEDY
+macro_line|#ifdef CLEAR
 id|memcpy
 c_func
 (paren

@@ -1,4 +1,5 @@
-multiline_comment|/*&n; *  linux/arch/i386/kernel/time.c&n; *&n; *  Copyright (C) 1991, 1992, 1995  Linus Torvalds&n; *&n; * This file contains the PC-specific time handling details:&n; * reading the RTC at bootup, etc..&n; * 1994-07-02    Alan Modra&n; *&t;fixed set_rtc_mmss, fixed time.year for &gt;= 2000, new mktime&n; * 1995-03-26    Markus Kuhn&n; *      fixed 500 ms bug at call to set_rtc_mmss, fixed DS12887&n; *      precision CMOS clock update&n; * 1996-05-03    Ingo Molnar&n; *      fixed time warps in do_[slow|fast]_gettimeoffset()&n; */
+multiline_comment|/*&n; *  linux/arch/i386/kernel/time.c&n; *&n; *  Copyright (C) 1991, 1992, 1995  Linus Torvalds&n; *&n; * This file contains the PC-specific time handling details:&n; * reading the RTC at bootup, etc..&n; * 1994-07-02    Alan Modra&n; *&t;fixed set_rtc_mmss, fixed time.year for &gt;= 2000, new mktime&n; * 1995-03-26    Markus Kuhn&n; *      fixed 500 ms bug at call to set_rtc_mmss, fixed DS12887&n; *      precision CMOS clock update&n; * 1996-05-03    Ingo Molnar&n; *      fixed time warps in do_[slow|fast]_gettimeoffset()&n; * 1998-09-05    (Various)&n; *&t;More robust do_fast_gettimeoffset() algorithm implemented&n; *&t;(works with APM, Cyrix 6x86MX and Centaur C6),&n; *&t;monotonic gettimeofday() with fast_get_timeoffset(),&n; *&t;drift-proof precision TSC calibration on boot&n; *&t;(C. Scott Ananian &lt;cananian@alumni.princeton.edu&gt;, Andrew D.&n; *&t;Balsa &lt;andrebalsa@altern.org&gt;, Philip Gladstone &lt;philip@raptor.com&gt;;&n; *&t;ported from 2.0.35 Jumbo-9 by Michael Krause &lt;m.krause@tu-harburg.de&gt;).&n; */
+multiline_comment|/* What about the &quot;updated NTP code&quot; stuff in 2.0 time.c? It&squot;s not in&n; * 2.1, perhaps it should be ported, too.&n; *&n; * What about the BUGGY_NEPTUN_TIMER stuff in do_slow_gettimeoffset()?&n; * Whatever it fixes, is it also fixed in the new code from the Jumbo&n; * patch, so that that code can be used instead?&n; *&n; * The CPU Hz should probably be displayed in check_bugs() together&n; * with the CPU vendor and type. Perhaps even only in MHz, though that&n; * takes away some of the fun of the new code :)&n; *&n; * - Michael Krause */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -32,36 +33,33 @@ id|irqaction
 op_star
 )paren
 suffix:semicolon
-r_extern
-r_volatile
+DECL|variable|cpu_hz
 r_int
 r_int
-id|lost_ticks
+id|cpu_hz
 suffix:semicolon
-multiline_comment|/* change this if you have some constant time drift */
-DECL|macro|USECS_PER_JIFFY
-mdefine_line|#define USECS_PER_JIFFY (1000020/HZ)
-macro_line|#ifndef&t;CONFIG_APM&t;/* cycle counter may be unreliable */
-multiline_comment|/* Cycle counter value at the previous timer interrupt.. */
+multiline_comment|/* Detected as we calibrate the TSC */
+multiline_comment|/* Number of usecs that the last interrupt was delayed */
+DECL|variable|delay_at_last_interrupt
 r_static
-r_struct
-(brace
-DECL|member|low
 r_int
-r_int
-id|low
+id|delay_at_last_interrupt
 suffix:semicolon
-DECL|member|high
+DECL|variable|last_tsc_low
+r_static
 r_int
 r_int
-id|high
+id|last_tsc_low
 suffix:semicolon
-DECL|variable|init_timer_cc
-DECL|variable|last_timer_cc
-)brace
-id|init_timer_cc
-comma
-id|last_timer_cc
+multiline_comment|/* lsb 32 bits of Time Stamp Counter */
+multiline_comment|/* Cached *multiplier* to convert TSC counts to microseconds.&n; * (see the equation below).&n; * Equal to 2^32 * (1 / (clocks per usec) ).&n; * Initialized in time_init.&n; */
+DECL|variable|fast_gettimeoffset_quotient
+r_static
+r_int
+r_int
+id|fast_gettimeoffset_quotient
+op_assign
+l_int|0
 suffix:semicolon
 DECL|function|do_fast_gettimeoffset
 r_static
@@ -93,187 +91,7 @@ c_func
 l_string|&quot;dx&quot;
 )paren
 suffix:semicolon
-r_int
-r_int
-id|tmp
-comma
-id|quotient
-comma
-id|low_timer
-suffix:semicolon
-multiline_comment|/* Last jiffy when do_fast_gettimeoffset() was called. */
-r_static
-r_int
-r_int
-id|last_jiffies
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/*&n;&t; * Cached &quot;1/(clocks per usec)*2^32&quot; value. &n;&t; * It has to be recalculated once each jiffy.&n;&t; */
-r_static
-r_int
-r_int
-id|cached_quotient
-op_assign
-l_int|0
-suffix:semicolon
-id|tmp
-op_assign
-id|jiffies
-suffix:semicolon
-id|quotient
-op_assign
-id|cached_quotient
-suffix:semicolon
-id|low_timer
-op_assign
-id|last_timer_cc.low
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|last_jiffies
-op_ne
-id|tmp
-)paren
-(brace
-id|last_jiffies
-op_assign
-id|tmp
-suffix:semicolon
-multiline_comment|/* Get last timer tick in absolute kernel time */
-id|eax
-op_assign
-id|low_timer
-suffix:semicolon
-id|edx
-op_assign
-id|last_timer_cc.high
-suffix:semicolon
-id|__asm__
-c_func
-(paren
-l_string|&quot;subl &quot;
-id|SYMBOL_NAME_STR
-c_func
-(paren
-id|init_timer_cc
-)paren
-l_string|&quot;,%0&bslash;n&bslash;t&quot;
-l_string|&quot;sbbl &quot;
-id|SYMBOL_NAME_STR
-c_func
-(paren
-id|init_timer_cc
-)paren
-l_string|&quot;+4,%1&quot;
-suffix:colon
-l_string|&quot;=a&quot;
-(paren
-id|eax
-)paren
-comma
-l_string|&quot;=d&quot;
-(paren
-id|edx
-)paren
-suffix:colon
-l_string|&quot;0&quot;
-(paren
-id|eax
-)paren
-comma
-l_string|&quot;1&quot;
-(paren
-id|edx
-)paren
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Divide the 64-bit time with the 32-bit jiffy counter,&n;&t;&t; * getting the quotient in clocks.&n;&t;&t; *&n;&t;&t; * Giving quotient = &quot;1/(average internal clocks per usec)*2^32&quot;&n;&t;&t; * we do this &squot;1/...&squot; trick to get the &squot;mull&squot; into the critical &n;&t;&t; * path. &squot;mull&squot; is much faster than divl (10 vs. 41 clocks)&n;&t;&t; */
-id|__asm__
-c_func
-(paren
-l_string|&quot;divl %2&quot;
-suffix:colon
-l_string|&quot;=a&quot;
-(paren
-id|eax
-)paren
-comma
-l_string|&quot;=d&quot;
-(paren
-id|edx
-)paren
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-id|tmp
-)paren
-comma
-l_string|&quot;0&quot;
-(paren
-id|eax
-)paren
-comma
-l_string|&quot;1&quot;
-(paren
-id|edx
-)paren
-)paren
-suffix:semicolon
-id|edx
-op_assign
-id|USECS_PER_JIFFY
-suffix:semicolon
-id|tmp
-op_assign
-id|eax
-suffix:semicolon
-id|eax
-op_assign
-l_int|0
-suffix:semicolon
-id|__asm__
-c_func
-(paren
-l_string|&quot;divl %2&quot;
-suffix:colon
-l_string|&quot;=a&quot;
-(paren
-id|eax
-)paren
-comma
-l_string|&quot;=d&quot;
-(paren
-id|edx
-)paren
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-id|tmp
-)paren
-comma
-l_string|&quot;0&quot;
-(paren
-id|eax
-)paren
-comma
-l_string|&quot;1&quot;
-(paren
-id|edx
-)paren
-)paren
-suffix:semicolon
-id|cached_quotient
-op_assign
-id|eax
-suffix:semicolon
-id|quotient
-op_assign
-id|eax
-suffix:semicolon
-)brace
-multiline_comment|/* Read the time counter */
+multiline_comment|/* Read the Time Stamp Counter */
 id|__asm__
 c_func
 (paren
@@ -297,9 +115,10 @@ l_int|0
 suffix:semicolon
 id|eax
 op_sub_assign
-id|low_timer
+id|last_tsc_low
 suffix:semicolon
-multiline_comment|/*&n;&t; * Time offset = (USECS_PER_JIFFY * time_low) * quotient.&n;&t; */
+multiline_comment|/* tsc_low delta */
+multiline_comment|/*&n;         * Time offset = (tsc_low delta) * fast_gettimeoffset_quotient.&n;         *             = (tsc_low delta) / (clocks_per_usec)&n;         *             = (tsc_low delta) / (clocks_per_jiffy / usecs_per_jiffy)&n;&t; *&n;&t; * Using a mull instead of a divl saves up to 31 clock cycles&n;&t; * in the critical path.&n;         */
 id|__asm__
 c_func
 (paren
@@ -317,7 +136,7 @@ id|edx
 suffix:colon
 l_string|&quot;r&quot;
 (paren
-id|quotient
+id|fast_gettimeoffset_quotient
 )paren
 comma
 l_string|&quot;0&quot;
@@ -331,25 +150,13 @@ id|edx
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n; &t; * Due to possible jiffies inconsistencies, we need to check &n;&t; * the result so that we&squot;ll get a timer that is monotonic.&n;&t; */
-r_if
-c_cond
-(paren
-id|edx
-op_ge
-id|USECS_PER_JIFFY
-)paren
-id|edx
-op_assign
-id|USECS_PER_JIFFY
-op_minus
-l_int|1
-suffix:semicolon
+multiline_comment|/* our adjusted time offset in microseconds */
 r_return
 id|edx
+op_plus
+id|delay_at_last_interrupt
 suffix:semicolon
 )brace
-macro_line|#endif
 multiline_comment|/* This function must be called with interrupts disabled &n; * It was inspired by Steve McCanne&squot;s microtime-i386 for BSD.  -- jrs&n; * &n; * However, the pc-audio speaker driver changes the divisor so that&n; * it gets interrupted rather more often - it loads 64 into the&n; * counter rather than 11932! This has an adverse impact on&n; * do_gettimeoffset() -- it stops working! What is also not&n; * good is that the interval that our timer function gets called&n; * is no longer 10.0002 ms, but 9.9767 ms. To get around this&n; * would require using a different timing source. Maybe someone&n; * could use the RTC - I know that this can interrupt at frequencies&n; * ranging from 8192Hz to 2Hz. If I had the energy, I&squot;d somehow fix&n; * it so that at startup, the timer code in sched.c would select&n; * using either the RTC or the 8253 timer. The decision would be&n; * based on whether there was any other device around that needed&n; * to trample on the 8253. I&squot;d set up the RTC to interrupt at 1024 Hz,&n; * and then do some jiggery to have a version of do_timer that &n; * advanced the clock by 1/1024 s. Every time that reached over 1/100&n; * of a second, then do all the old code. If the time was kept correct&n; * then do_gettimeoffset could just return 0 - there is no low order&n; * divider that can be accessed.&n; *&n; * Ideally, you would be able to use the RTC for the speaker driver,&n; * but it appears that the speaker driver really needs interrupt more&n; * often than every 120 us or so.&n; *&n; * Anyway, this needs more thought....&t;&t;pjsg (1993-08-28)&n; * &n; * If you are really that interested, you should be reading&n; * comp.protocols.time.ntp!&n; */
 DECL|macro|TICK_SIZE
 mdefine_line|#define TICK_SIZE tick
@@ -525,28 +332,6 @@ r_return
 id|count
 suffix:semicolon
 )brace
-macro_line|#ifndef CONFIG_APM
-multiline_comment|/*&n; * this is only used if we have fast gettimeoffset:&n; */
-DECL|function|do_x86_get_fast_time
-r_static
-r_void
-id|do_x86_get_fast_time
-c_func
-(paren
-r_struct
-id|timeval
-op_star
-id|tv
-)paren
-(brace
-id|do_gettimeofday
-c_func
-(paren
-id|tv
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 DECL|variable|do_gettimeoffset
 r_static
 r_int
@@ -561,7 +346,7 @@ r_void
 op_assign
 id|do_slow_gettimeoffset
 suffix:semicolon
-multiline_comment|/*&n; * This version of gettimeofday has near microsecond resolution.&n; */
+multiline_comment|/*&n; * This version of gettimeofday has microsecond resolution&n; * and better than microsecond precision on fast x86 machines with TSC.&n; */
 DECL|function|do_gettimeofday
 r_void
 id|do_gettimeofday
@@ -600,22 +385,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * xtime is atomically updated in timer_bh. lost_ticks is&n;&t; * nonzero if the timer bottom half hasnt executed yet.&n;&t; */
-r_if
-c_cond
-(paren
-id|lost_ticks
-)paren
-id|tv-&gt;tv_usec
-op_add_assign
-id|USECS_PER_JIFFY
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -632,6 +401,12 @@ id|tv-&gt;tv_sec
 op_increment
 suffix:semicolon
 )brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 )brace
 DECL|function|do_settimeofday
 r_void
@@ -696,7 +471,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * In order to set the CMOS clock precisely, set_rtc_mmss has to be&n; * called 500 ms after the second nowtime has started, because when&n; * nowtime is written into the registers of the CMOS clock, it will&n; * jump to the next second precisely 500 ms later. Check the Motorola&n; * MC146818A or Dallas DS12887 data sheet for details.&n; */
+multiline_comment|/*&n; * In order to set the CMOS clock precisely, set_rtc_mmss has to be&n; * called 500 ms after the second nowtime has started, because when&n; * nowtime is written into the registers of the CMOS clock, it will&n; * jump to the next second precisely 500 ms later. Check the Motorola&n; * MC146818A or Dallas DS12887 data sheet for details.&n; *&n; * BUG: This routine does not handle hour overflow properly; it just&n; *      sets the minutes. Usually you&squot;ll only notice that after reboot!&n; */
 DECL|function|set_rtc_mmss
 r_static
 r_int
@@ -895,11 +670,24 @@ id|RTC_MINUTES
 suffix:semicolon
 )brace
 r_else
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;set_rtc_mmss: can&squot;t update from %d to %d&bslash;n&quot;
+comma
+id|cmos_minutes
+comma
+id|real_minutes
+)paren
+suffix:semicolon
 id|retval
 op_assign
 op_minus
 l_int|1
 suffix:semicolon
+)brace
 multiline_comment|/* The following flags have to be released exactly in this order,&n;&t; * otherwise the DS12887 (popular MC146818A clone with integrated&n;&t; * battery and quartz) will not reset the oscillator and will not&n;&t; * update precisely 500 ms later. You won&squot;t find this mentioned in&n;&t; * the Dallas Semiconductor data sheets, but who believes data&n;&t; * sheets anyway ...                           -- Markus Kuhn&n;&t; */
 id|CMOS_WRITE
 c_func
@@ -1093,8 +881,7 @@ multiline_comment|/* reset the IRQ */
 )brace
 macro_line|#endif
 )brace
-macro_line|#ifndef&t;CONFIG_APM&t;/* cycle counter may be unreliable */
-multiline_comment|/*&n; * This is the same as the above, except we _also_ save the current&n; * cycle counter value at the time of the timer interrupt, so that&n; * we later on can estimate the time of day more exactly.&n; */
+multiline_comment|/*&n; * This is the same as the above, except we _also_ save the current&n; * Time Stamp Counter value at the time of the timer interrupt, so that&n; * we later on can estimate the time of day more exactly.&n; */
 DECL|function|pentium_timer_interrupt
 r_static
 r_void
@@ -1114,6 +901,23 @@ op_star
 id|regs
 )paren
 (brace
+r_int
+id|count
+comma
+id|flags
+suffix:semicolon
+multiline_comment|/* It is important that these two operations happen almost at the&n;&t; * same time. We do the RDTSC stuff first, since it&squot;s faster. To&n;         * avoid any inconsistencies, we disable interrupts locally.&n;         */
+id|__save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|__cli
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/* read Pentium cycle counter */
 id|__asm__
 c_func
@@ -1122,13 +926,72 @@ l_string|&quot;rdtsc&quot;
 suffix:colon
 l_string|&quot;=a&quot;
 (paren
-id|last_timer_cc.low
+id|last_tsc_low
 )paren
+op_scope_resolution
+l_string|&quot;eax&quot;
 comma
-l_string|&quot;=d&quot;
-(paren
-id|last_timer_cc.high
+l_string|&quot;edx&quot;
 )paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+l_int|0x00
+comma
+l_int|0x43
+)paren
+suffix:semicolon
+multiline_comment|/* latch the count ASAP */
+id|count
+op_assign
+id|inb_p
+c_func
+(paren
+l_int|0x40
+)paren
+suffix:semicolon
+multiline_comment|/* read the latched count */
+id|count
+op_or_assign
+id|inb
+c_func
+(paren
+l_int|0x40
+)paren
+op_lshift
+l_int|8
+suffix:semicolon
+id|count
+op_assign
+(paren
+(paren
+id|LATCH
+op_minus
+l_int|1
+)paren
+op_minus
+id|count
+)paren
+op_star
+id|TICK_SIZE
+suffix:semicolon
+id|delay_at_last_interrupt
+op_assign
+(paren
+id|count
+op_plus
+id|LATCH
+op_div
+l_int|2
+)paren
+op_div
+id|LATCH
+suffix:semicolon
+id|__restore_flags
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 id|timer_interrupt
@@ -1142,7 +1005,6 @@ id|regs
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 multiline_comment|/* Converts Gregorian date to seconds since 1970-01-01 00:00:00.&n; * Assumes input in normal date format, i.e. 1980-12-31 23:59:59&n; * =&gt; year=1980, mon=12, day=31, hour=23, min=59, sec=59.&n; *&n; * [For the Julian calendar (which was used in Russia before 1917,&n; * Britain &amp; colonies before 1752, anywhere else before 1582,&n; * and is still in use by some communities) leave out the&n; * -year/100+year/400 terms, and add 10.]&n; *&n; * This algorithm was first published by Gauss (I think).&n; *&n; * WARNING: this function will overflow on 2106-02-07 06:28:16 on&n; * machines were long is 32-bit! (However, as time_t is signed, we&n; * will already get problems at other places on 2038-01-19 03:14:08)&n; */
 DECL|function|mktime
 r_static
@@ -1517,6 +1379,111 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
+multiline_comment|/* ------ Calibrate the TSC ------- &n; * Return 2^32 * (1 / (TSC clocks per usec)) for do_fast_gettimeoffset().&n; * Too much 64-bit arithmetic here to do this cleanly in C, and for&n; * accuracy&squot;s sake we want to keep the overhead on the CTC speaker (channel 2)&n; * output busy loop as low as possible. We avoid reading the CTC registers&n; * directly because of the awkward 8-bit access mechanism of the 82C54&n; * device.&n; */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_static
+r_int
+r_int
+id|calibrate_tsc
+c_func
+(paren
+r_void
+)paren
+)paren
+(brace
+r_int
+r_int
+id|retval
+suffix:semicolon
+id|__asm__
+c_func
+(paren
+multiline_comment|/* set the Gate high, program CTC channel 2 for mode 0&n;&t;&t; * (interrupt on terminal count mode), binary count, &n;&t;&t; * load 5 * LATCH count, (LSB and MSB)&n;&t;&t; * to begin countdown, read the TSC and busy wait.&n;&t;&t; * BTW LATCH is calculated in timex.h from the HZ value&n;&t;&t; */
+multiline_comment|/* Set the Gate high, disable speaker */
+l_string|&quot;inb  $0x61, %%al&bslash;n&bslash;t&quot;
+multiline_comment|/* Read port */
+l_string|&quot;andb $0xfd, %%al&bslash;n&bslash;t&quot;
+multiline_comment|/* Turn off speaker Data */
+l_string|&quot;orb  $0x01, %%al&bslash;n&bslash;t&quot;
+multiline_comment|/* Set Gate high */
+l_string|&quot;outb %%al, $0x61&bslash;n&bslash;t&quot;
+multiline_comment|/* Write port */
+multiline_comment|/* Now let&squot;s take care of CTC channel 2 */
+l_string|&quot;movb $0xb0, %%al&bslash;n&bslash;t&quot;
+multiline_comment|/* binary, mode 0, LSB/MSB, ch 2*/
+l_string|&quot;outb %%al, $0x43&bslash;n&bslash;t&quot;
+multiline_comment|/* Write to CTC command port */
+l_string|&quot;movb $0x0c, %%al&bslash;n&bslash;t&quot;
+l_string|&quot;outb %%al, $0x42&bslash;n&bslash;t&quot;
+multiline_comment|/* LSB of count */
+l_string|&quot;movb $0xe9, %%al&bslash;n&bslash;t&quot;
+l_string|&quot;outb %%al, $0x42&bslash;n&bslash;t&quot;
+multiline_comment|/* MSB of count */
+multiline_comment|/* Read the TSC; counting has just started */
+l_string|&quot;rdtsc&bslash;n&bslash;t&quot;
+multiline_comment|/* Move the value for safe-keeping. */
+l_string|&quot;movl %%eax, %%ebx&bslash;n&bslash;t&quot;
+l_string|&quot;movl %%edx, %%ecx&bslash;n&bslash;t&quot;
+multiline_comment|/* Busy wait. Only 50 ms wasted at boot time. */
+l_string|&quot;0: inb $0x61, %%al&bslash;n&bslash;t&quot;
+multiline_comment|/* Read Speaker Output Port */
+l_string|&quot;testb $0x20, %%al&bslash;n&bslash;t&quot;
+multiline_comment|/* Check CTC channel 2 output (bit 5) */
+l_string|&quot;jz 0b&bslash;n&bslash;t&quot;
+multiline_comment|/* And read the TSC.  5 jiffies (50.00077ms) have elapsed. */
+l_string|&quot;rdtsc&bslash;n&bslash;t&quot;
+multiline_comment|/* Great.  So far so good.  Store last TSC reading in&n;                * last_tsc_low (only 32 lsb bits needed) */
+l_string|&quot;movl %%eax, last_tsc_low&bslash;n&bslash;t&quot;
+multiline_comment|/* And now calculate the difference between the readings. */
+l_string|&quot;subl %%ebx, %%eax&bslash;n&bslash;t&quot;
+l_string|&quot;sbbl %%ecx, %%edx&bslash;n&bslash;t&quot;
+multiline_comment|/* 64-bit subtract */
+multiline_comment|/* but probably edx = 0 at this point (see below). */
+multiline_comment|/* Now we have 5 * (TSC counts per jiffy) in eax.  We want&n;                * to calculate TSC-&gt;microsecond conversion factor. */
+multiline_comment|/* Note that edx (high 32-bits of difference) will now be &n;                * zero iff CPU clock speed is less than 85 GHz.  Moore&squot;s&n;                * law says that this is likely to be true for the next&n;                * 12 years or so.  You will have to change this code to&n;                * do a real 64-by-64 divide before that time&squot;s up. */
+l_string|&quot;movl %%eax, %%ecx&bslash;n&bslash;t&quot;
+l_string|&quot;xorl %%eax, %%eax&bslash;n&bslash;t&quot;
+l_string|&quot;movl %1, %%edx&bslash;n&bslash;t&quot;
+l_string|&quot;divl %%ecx&bslash;n&bslash;t&quot;
+multiline_comment|/* eax= 2^32 / (1 * TSC counts per microsecond) */
+multiline_comment|/* Return eax for the use of fast_gettimeoffset */
+l_string|&quot;movl %%eax, %0&bslash;n&bslash;t&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|retval
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+l_int|5
+op_star
+l_int|1000020
+op_div
+id|HZ
+)paren
+suffix:colon
+multiline_comment|/* we clobber: */
+l_string|&quot;ax&quot;
+comma
+l_string|&quot;bx&quot;
+comma
+l_string|&quot;cx&quot;
+comma
+l_string|&quot;dx&quot;
+comma
+l_string|&quot;cc&quot;
+comma
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+r_return
+id|retval
+suffix:semicolon
+)brace
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -1540,9 +1507,7 @@ id|xtime.tv_usec
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n; * If we have APM enabled we can&squot;t currently depend&n; * on the cycle counter, because a suspend to disk&n; * will reset it. Somebody should come up with a&n; * better solution than to just disable the fast time&n; * code..&n; */
-macro_line|#ifndef CONFIG_APM
-multiline_comment|/* If we have the CPU hardware time counters, use them */
+multiline_comment|/*&n; * If we have APM enabled or the CPU clock speed is variable&n; * (CPU stops clock on HLT or slows clock to save power)&n; * then the TSC timestamps may diverge by up to 1 jiffy from&n; * &squot;real time&squot; but nothing will break.&n; * The most frequent case is that the CPU is &quot;woken&quot; from a halt&n; * state by the timer interrupt itself, so we get 0 error. In the&n; * rare cases where a driver would &quot;wake&quot; the CPU and request a&n; * timestamp, the maximum error is &lt; 1 jiffy. But timestamps are&n; * still perfectly ordered.&n; * Note that the TSC counter will be reset if APM suspends&n; * to disk; this won&squot;t break the kernel, though, &squot;cuz we&squot;re&n; * smart.  See devices/char/apm_bios.c.&n; */
 r_if
 c_cond
 (paren
@@ -1557,69 +1522,72 @@ id|do_fast_gettimeoffset
 suffix:semicolon
 id|do_get_fast_time
 op_assign
-id|do_x86_get_fast_time
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|boot_cpu_data.x86_vendor
-op_eq
-id|X86_VENDOR_AMD
-op_logical_and
-id|boot_cpu_data.x86
-op_eq
-l_int|5
-op_logical_and
-id|boot_cpu_data.x86_model
-op_eq
-l_int|0
-)paren
-(brace
-multiline_comment|/* turn on cycle counters during power down */
-id|__asm__
-id|__volatile__
-(paren
-l_string|&quot; movl $0x83, %%ecx &bslash;n &bslash;&n;&t;&t;&t;&t;rdmsr &bslash;n &bslash;&n;&t;&t;&t;&t;orl $1,%%eax &bslash;n &bslash;&n;&t;&t;&t;&t;wrmsr &bslash;n &quot;
-suffix:colon
-suffix:colon
-suffix:colon
-l_string|&quot;ax&quot;
-comma
-l_string|&quot;cx&quot;
-comma
-l_string|&quot;dx&quot;
-)paren
-suffix:semicolon
-id|udelay
-c_func
-(paren
-l_int|500
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* read Pentium cycle counter */
-id|__asm__
-c_func
-(paren
-l_string|&quot;rdtsc&quot;
-suffix:colon
-l_string|&quot;=a&quot;
-(paren
-id|init_timer_cc.low
-)paren
-comma
-l_string|&quot;=d&quot;
-(paren
-id|init_timer_cc.high
-)paren
-)paren
+id|do_gettimeofday
 suffix:semicolon
 id|irq0.handler
 op_assign
 id|pentium_timer_interrupt
 suffix:semicolon
+id|fast_gettimeoffset_quotient
+op_assign
+id|calibrate_tsc
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* report CPU clock rate in Hz.&n;&t;&t; * The formula is (10^6 * 2^32) / (2^32 * 1 / (clocks/us)) =&n;&t;&t; * clock/second. Our precision is about 100 ppm.&n;&t;&t; */
+(brace
+r_int
+r_int
+id|eax
+op_assign
+l_int|0
+comma
+id|edx
+op_assign
+l_int|1000000
+suffix:semicolon
+id|__asm__
+c_func
+(paren
+l_string|&quot;divl %2&quot;
+suffix:colon
+l_string|&quot;=a&quot;
+(paren
+id|cpu_hz
+)paren
+comma
+l_string|&quot;=d&quot;
+(paren
+id|edx
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|fast_gettimeoffset_quotient
+)paren
+comma
+l_string|&quot;0&quot;
+(paren
+id|eax
+)paren
+comma
+l_string|&quot;1&quot;
+(paren
+id|edx
+)paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Detected %ld Hz processor.&bslash;n&quot;
+comma
+id|cpu_hz
+)paren
+suffix:semicolon
 )brace
-macro_line|#endif
+)brace
 id|setup_x86_irq
 c_func
 (paren

@@ -1702,24 +1702,10 @@ id|ints
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_PMAC_CONSOLE
+macro_line|#ifdef CONFIG_ADBMOUSE
 r_extern
 r_void
-id|pmac_cons_setup
-c_func
-(paren
-r_char
-op_star
-id|str
-comma
-r_int
-op_star
-id|ints
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|pmac_vmode_setup
+id|adb_mouse_setup
 c_func
 (paren
 r_char

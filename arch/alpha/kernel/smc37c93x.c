@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/hwrpb.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
@@ -137,6 +138,9 @@ r_int
 r_int
 id|dataPort
 suffix:semicolon
+r_int
+id|i
+suffix:semicolon
 id|configPort
 op_assign
 id|indexPort
@@ -149,6 +153,23 @@ id|configPort
 op_plus
 l_int|1
 suffix:semicolon
+DECL|macro|NUM_RETRIES
+mdefine_line|#define NUM_RETRIES 5
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|NUM_RETRIES
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
 id|outb
 c_func
 (paren
@@ -205,16 +226,28 @@ c_func
 id|dataPort
 )paren
 suffix:semicolon
+r_break
+suffix:semicolon
 )brace
 r_else
-(brace
-id|baseAddr
-op_assign
-l_int|0
+id|udelay
+c_func
+(paren
+l_int|100
+)paren
 suffix:semicolon
 )brace
 r_return
+(paren
+id|i
+op_ne
+id|NUM_RETRIES
+)paren
+ques
+c_cond
 id|baseAddr
+suffix:colon
+l_int|0L
 suffix:semicolon
 )brace
 DECL|function|SMCRunState

@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/sunrpc/clnt.h&gt;
 macro_line|#include &lt;linux/sunrpc/svc.h&gt;
 macro_line|#include &lt;linux/lockd/lockd.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 DECL|macro|NLMDBG_FACILITY
 mdefine_line|#define NLMDBG_FACILITY&t;&t;NLMDBG_CIENT
 multiline_comment|/*&n; * Local function prototypes&n; */
@@ -455,6 +456,11 @@ op_star
 id|inode
 suffix:semicolon
 multiline_comment|/* This one ensures that our parent doesn&squot;t terminate while the&n;&t; * reclaim is in progress */
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|lockd_up
 c_func
 (paren
@@ -591,6 +597,11 @@ id|host
 )paren
 suffix:semicolon
 id|lockd_down
+c_func
+(paren
+)paren
+suffix:semicolon
+id|unlock_kernel
 c_func
 (paren
 )paren

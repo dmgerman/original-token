@@ -244,23 +244,6 @@ DECL|macro|SP_PAR
 mdefine_line|#define SP_PAR  2
 DECL|macro|SP_MIDI
 mdefine_line|#define SP_MIDI 4
-multiline_comment|/* ---------------------------------------------------------------------- */
-DECL|function|parptt_preempt
-r_static
-r_int
-id|parptt_preempt
-c_func
-(paren
-r_void
-op_star
-id|handle
-)paren
-(brace
-multiline_comment|/* we cannot relinquish the port in the middle of an operation */
-r_return
-l_int|1
-suffix:semicolon
-)brace
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|function|parptt_wakeup
 r_static
@@ -381,13 +364,13 @@ id|pp
 comma
 id|hfmodem_drvname
 comma
-id|parptt_preempt
+l_int|NULL
 comma
 id|parptt_wakeup
 comma
 l_int|NULL
 comma
-id|PARPORT_DEV_LURK
+id|PARPORT_DEV_EXCL
 comma
 id|dev
 )paren

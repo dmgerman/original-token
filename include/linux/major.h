@@ -34,8 +34,8 @@ DECL|macro|VCS_MAJOR
 mdefine_line|#define VCS_MAJOR&t;7
 DECL|macro|LOOP_MAJOR
 mdefine_line|#define LOOP_MAJOR&t;7
-DECL|macro|SCSI_DISK_MAJOR
-mdefine_line|#define SCSI_DISK_MAJOR&t;8
+DECL|macro|SCSI_DISK0_MAJOR
+mdefine_line|#define SCSI_DISK0_MAJOR 8
 DECL|macro|SCSI_TAPE_MAJOR
 mdefine_line|#define SCSI_TAPE_MAJOR&t;9
 DECL|macro|MD_MAJOR
@@ -136,6 +136,20 @@ DECL|macro|IDE4_MAJOR
 mdefine_line|#define IDE4_MAJOR&t;56
 DECL|macro|IDE5_MAJOR
 mdefine_line|#define IDE5_MAJOR&t;57
+DECL|macro|SCSI_DISK1_MAJOR
+mdefine_line|#define SCSI_DISK1_MAJOR&t;65
+DECL|macro|SCSI_DISK2_MAJOR
+mdefine_line|#define SCSI_DISK2_MAJOR&t;66
+DECL|macro|SCSI_DISK3_MAJOR
+mdefine_line|#define SCSI_DISK3_MAJOR&t;67
+DECL|macro|SCSI_DISK4_MAJOR
+mdefine_line|#define SCSI_DISK4_MAJOR&t;68
+DECL|macro|SCSI_DISK5_MAJOR
+mdefine_line|#define SCSI_DISK5_MAJOR&t;69
+DECL|macro|SCSI_DISK6_MAJOR
+mdefine_line|#define SCSI_DISK6_MAJOR&t;70
+DECL|macro|SCSI_DISK7_MAJOR
+mdefine_line|#define SCSI_DISK7_MAJOR&t;71
 DECL|macro|SPECIALIX_NORMAL_MAJOR
 mdefine_line|#define SPECIALIX_NORMAL_MAJOR 75
 DECL|macro|SPECIALIX_CALLOUT_MAJOR
@@ -147,8 +161,10 @@ mdefine_line|#define UNIX98_PTY_MAJOR_COUNT&t;8
 DECL|macro|UNIX98_PTY_SLAVE_MAJOR
 mdefine_line|#define UNIX98_PTY_SLAVE_MAJOR&t;(UNIX98_PTY_MASTER_MAJOR+UNIX98_PTY_MAJOR_COUNT)
 multiline_comment|/*&n; * Tests for SCSI devices.&n; */
+DECL|macro|SCSI_DISK_MAJOR
+mdefine_line|#define SCSI_DISK_MAJOR(M) ((M) == SCSI_DISK0_MAJOR || &bslash;&n;  ((M) &gt;= SCSI_DISK1_MAJOR &amp;&amp; (M) &lt;= SCSI_DISK7_MAJOR))
 DECL|macro|SCSI_BLK_MAJOR
-mdefine_line|#define SCSI_BLK_MAJOR(M) &bslash;&n;  ((M) == SCSI_DISK_MAJOR&t;&bslash;&n;   || (M) == SCSI_CDROM_MAJOR)
+mdefine_line|#define SCSI_BLK_MAJOR(M) &bslash;&n;  (SCSI_DISK_MAJOR(M)&t;&bslash;&n;   || (M) == SCSI_CDROM_MAJOR)
 DECL|function|scsi_blk_major
 r_static
 id|__inline__

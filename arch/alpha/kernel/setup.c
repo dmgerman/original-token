@@ -1822,12 +1822,20 @@ suffix:semicolon
 r_case
 id|ST_DEC_1000
 suffix:colon
+id|cpu
+op_and_assign
+l_int|0xffffffff
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|cpu
 op_eq
 id|EV5_CPU
+op_logical_or
+id|cpu
+op_eq
+id|EV56_CPU
 )paren
 id|vec
 op_assign
@@ -1845,12 +1853,20 @@ suffix:semicolon
 r_case
 id|ST_DEC_NORITAKE
 suffix:colon
+id|cpu
+op_and_assign
+l_int|0xffffffff
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|cpu
 op_eq
 id|EV5_CPU
+op_logical_or
+id|cpu
+op_eq
+id|EV56_CPU
 )paren
 id|vec
 op_assign
@@ -1868,12 +1884,20 @@ suffix:semicolon
 r_case
 id|ST_DEC_2100_A500
 suffix:colon
+id|cpu
+op_and_assign
+l_int|0xffffffff
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|cpu
 op_eq
 id|EV5_CPU
+op_logical_or
+id|cpu
+op_eq
+id|EV56_CPU
 )paren
 id|vec
 op_assign
@@ -2626,7 +2650,7 @@ l_string|&quot;system type&bslash;t&bslash;t: %s&bslash;n&quot;
 l_string|&quot;system variation&bslash;t: %s&bslash;n&quot;
 l_string|&quot;system revision&bslash;t&bslash;t: %ld&bslash;n&quot;
 l_string|&quot;system serial number&bslash;t: %s&bslash;n&quot;
-l_string|&quot;cycle frequency [Hz]&bslash;t: %lu&bslash;n&quot;
+l_string|&quot;cycle frequency [Hz]&bslash;t: %lu %s&bslash;n&quot;
 l_string|&quot;timer frequency [Hz]&bslash;t: %lu.%02lu&bslash;n&quot;
 l_string|&quot;page size [bytes]&bslash;t: %ld&bslash;n&quot;
 l_string|&quot;phys. address bits&bslash;t: %ld&bslash;n&quot;
@@ -2661,6 +2685,17 @@ op_star
 id|hwrpb-&gt;ssn
 comma
 id|hwrpb-&gt;cycle_freq
+ques
+c_cond
+suffix:colon
+id|est_cycle_freq
+comma
+id|hwrpb-&gt;cycle_freq
+ques
+c_cond
+l_string|&quot;&quot;
+suffix:colon
+l_string|&quot;est.&quot;
 comma
 id|hwrpb-&gt;intr_freq
 op_div
@@ -2743,9 +2778,8 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#ifdef __SMP__
-r_return
 id|len
-op_plus
+op_add_assign
 id|smp_info
 c_func
 (paren
@@ -2754,10 +2788,9 @@ op_plus
 id|len
 )paren
 suffix:semicolon
-macro_line|#else
+macro_line|#endif
 r_return
 id|len
 suffix:semicolon
-macro_line|#endif
 )brace
 eof

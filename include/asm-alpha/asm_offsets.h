@@ -14,7 +14,7 @@ mdefine_line|#define TASK_EXEC_DOMAIN 32
 DECL|macro|TASK_NEED_RESCHED
 mdefine_line|#define TASK_NEED_RESCHED 40
 DECL|macro|TASK_SIZE
-mdefine_line|#define TASK_SIZE 1120
+mdefine_line|#define TASK_SIZE 1096
 DECL|macro|STACK_SIZE
 mdefine_line|#define STACK_SIZE 16384
 DECL|macro|HAE_CACHE

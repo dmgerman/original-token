@@ -2018,7 +2018,7 @@ l_string|&quot;Pentium 60/66 A-step&quot;
 comma
 l_string|&quot;Pentium 60/66&quot;
 comma
-l_string|&quot;Pentium 75+&quot;
+l_string|&quot;Pentium 75 - 200&quot;
 comma
 l_string|&quot;OverDrive PODP5V83&quot;
 comma
@@ -2028,7 +2028,7 @@ l_int|NULL
 comma
 l_int|NULL
 comma
-l_string|&quot;Mobile Pentium 75+&quot;
+l_string|&quot;Mobile Pentium 75 - 200&quot;
 comma
 l_string|&quot;Mobile Pentium MMX&quot;
 comma

@@ -955,7 +955,7 @@ suffix:semicolon
 id|mdelay
 c_func
 (paren
-l_int|1
+l_int|2
 )paren
 suffix:semicolon
 )brace

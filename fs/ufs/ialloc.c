@@ -12,21 +12,12 @@ macro_line|#include &quot;swab.h&quot;
 macro_line|#include &quot;util.h&quot;
 DECL|macro|UFS_IALLOC_DEBUG
 macro_line|#undef UFS_IALLOC_DEBUG
-DECL|macro|UFS_IALLOC_DEBUG_MORE
-macro_line|#undef UFS_IALLOC_DEBUG_MORE
 macro_line|#ifdef UFS_IALLOC_DEBUG
 DECL|macro|UFSD
 mdefine_line|#define UFSD(x) printk(&quot;(%s, %d), %s: &quot;, __FILE__, __LINE__, __FUNCTION__); printk x;
 macro_line|#else
 DECL|macro|UFSD
 mdefine_line|#define UFSD(x)
-macro_line|#endif
-macro_line|#ifdef UFS_IALLOC_DEBUG_MORE
-DECL|macro|UFSDM
-mdefine_line|#define UFSDM &bslash;&n;ufs_print_cylinder_stuff (ucg, swab); &bslash;&n;printk(&quot;inode: total %u, fs %u, cg %u&bslash;n&quot;, SWAB32(usb1-&gt;fs_cstotal.cs_nifree), SWAB32(sb-&gt;fs_cs(ucpi-&gt;c_cgx).cs_nifree), SWAB32(ucg-&gt;cg_cs.cs_nifree)); &bslash;&n;printk(&quot;block: total %u, fs %u, cg %u&bslash;n&quot;, SWAB32(usb1-&gt;fs_cstotal.cs_nbfree), SWAB32(sb-&gt;fs_cs(ucpi-&gt;c_cgx).cs_nbfree), SWAB32(ucg-&gt;cg_cs.cs_nbfree)); &bslash;&n;printk(&quot;fragment: total %u, fs %u, cg %u&bslash;n&quot;, SWAB32(usb1-&gt;fs_cstotal.cs_nffree), SWAB32(sb-&gt;fs_cs(ucpi-&gt;c_cgx).cs_nffree), SWAB32(ucg-&gt;cg_cs.cs_nffree)); &bslash;&n;printk(&quot;ndir: total %u, fs %u, cg %u&bslash;n&quot;, SWAB32(usb1-&gt;fs_cstotal.cs_ndir), SWAB32(sb-&gt;fs_cs(ucpi-&gt;c_cgx).cs_ndir), SWAB32(ucg-&gt;cg_cs.cs_ndir));
-macro_line|#else
-DECL|macro|UFSDM
-mdefine_line|#define UFSDM
 macro_line|#endif
 multiline_comment|/*&n; * NOTE! When we get the inode, we&squot;re the only people&n; * that have access to it, and as such there are no&n; * race conditions we have to worry about. The inode&n; * is not on the hash-lists, and it cannot be reached&n; * through the filesystem because the directory entry&n; * has been deleted earlier.&n; *&n; * HOWEVER: we must make sure that we get no aliases,&n; * which means that we have to call &quot;clear_inode()&quot;&n; * _before_ we mark the inode not in use in the inode&n; * bitmaps. Otherwise a newly created file might use&n; * the same inode number (not actually the same pointer&n; * though), and then we&squot;d have two inodes sharing the&n; * same inode number and space on the harddisk.&n; */
 DECL|function|ufs_free_inode
@@ -275,7 +266,6 @@ comma
 l_string|&quot;internal error, bad cg magic number&quot;
 )paren
 suffix:semicolon
-id|UFSDM
 id|ucg-&gt;cg_time
 op_assign
 id|SWAB32
@@ -455,7 +445,6 @@ id|UCPI_UBH
 )paren
 suffix:semicolon
 )brace
-id|UFSDM
 id|sb-&gt;s_dirt
 op_assign
 l_int|1
@@ -839,7 +828,6 @@ comma
 l_string|&quot;internal error, bad cg magic number&quot;
 )paren
 suffix:semicolon
-id|UFSDM
 id|start
 op_assign
 id|ucpi-&gt;c_irotor
@@ -1189,7 +1177,6 @@ c_func
 id|inode
 )paren
 suffix:semicolon
-id|UFSDM
 id|unlock_super
 (paren
 id|sb

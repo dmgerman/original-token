@@ -4571,6 +4571,10 @@ id|cmd
 op_assign
 id|priv-&gt;cmd
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 multiline_comment|/* See Figure 2-15. Only overrun and EOF need to be checked. */
 r_if
 c_cond
@@ -4618,6 +4622,13 @@ c_cond
 id|dev-&gt;dma
 )paren
 (brace
+id|flags
+op_assign
+id|claim_dma_lock
+c_func
+(paren
+)paren
+suffix:semicolon
 id|disable_dma
 c_func
 (paren
@@ -4641,6 +4652,12 @@ id|dev-&gt;dma
 )paren
 op_minus
 l_int|2
+suffix:semicolon
+id|release_dma_lock
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 )brace
 r_else
@@ -4790,6 +4807,13 @@ c_cond
 id|dev-&gt;dma
 )paren
 (brace
+id|flags
+op_assign
+id|claim_dma_lock
+c_func
+(paren
+)paren
+suffix:semicolon
 id|set_dma_addr
 c_func
 (paren
@@ -4816,6 +4840,12 @@ id|enable_dma
 c_func
 (paren
 id|dev-&gt;dma
+)paren
+suffix:semicolon
+id|release_dma_lock
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -5252,6 +5282,10 @@ id|dst
 comma
 id|res
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 multiline_comment|/* Read status and reset interrupt bit */
 id|st
 op_assign
@@ -5312,6 +5346,13 @@ c_cond
 id|dev-&gt;dma
 )paren
 (brace
+id|flags
+op_assign
+id|claim_dma_lock
+c_func
+(paren
+)paren
+suffix:semicolon
 id|disable_dma
 c_func
 (paren
@@ -5330,6 +5371,12 @@ id|get_dma_residue
 c_func
 (paren
 id|dev-&gt;dma
+)paren
+suffix:semicolon
+id|release_dma_lock
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -5403,6 +5450,13 @@ c_cond
 id|dev-&gt;dma
 )paren
 (brace
+id|flags
+op_assign
+id|claim_dma_lock
+c_func
+(paren
+)paren
+suffix:semicolon
 id|set_dma_addr
 c_func
 (paren
@@ -5432,6 +5486,12 @@ id|enable_dma
 c_func
 (paren
 id|dev-&gt;dma
+)paren
+suffix:semicolon
+id|release_dma_lock
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -5563,6 +5623,13 @@ id|dev-&gt;dma
 )paren
 (brace
 multiline_comment|/* Program DMA controller */
+id|flags
+op_assign
+id|claim_dma_lock
+c_func
+(paren
+)paren
+suffix:semicolon
 id|disable_dma
 c_func
 (paren
@@ -5609,6 +5676,12 @@ id|enable_dma
 c_func
 (paren
 id|dev-&gt;dma
+)paren
+suffix:semicolon
+id|release_dma_lock
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 multiline_comment|/* Configure PackeTwin DMA */
@@ -5713,12 +5786,27 @@ c_cond
 (paren
 id|dev-&gt;dma
 )paren
+(brace
+id|flags
+op_assign
+id|claim_dma_lock
+c_func
+(paren
+)paren
+suffix:semicolon
 id|disable_dma
 c_func
 (paren
 id|dev-&gt;dma
 )paren
 suffix:semicolon
+id|release_dma_lock
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* Disable receiver */
 id|write_scc
 c_func
@@ -5897,6 +5985,13 @@ c_cond
 id|dev-&gt;dma
 )paren
 (brace
+id|flags
+op_assign
+id|claim_dma_lock
+c_func
+(paren
+)paren
+suffix:semicolon
 id|disable_dma
 c_func
 (paren
@@ -5935,6 +6030,12 @@ id|enable_dma
 c_func
 (paren
 id|dev-&gt;dma
+)paren
+suffix:semicolon
+id|release_dma_lock
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -5977,6 +6078,10 @@ r_int
 id|cmd
 op_assign
 id|priv-&gt;cmd
+suffix:semicolon
+r_int
+r_int
+id|flags
 suffix:semicolon
 r_switch
 c_cond
@@ -6080,6 +6185,13 @@ id|dev-&gt;dma
 )paren
 (brace
 multiline_comment|/* Program DMA controller */
+id|flags
+op_assign
+id|claim_dma_lock
+c_func
+(paren
+)paren
+suffix:semicolon
 id|disable_dma
 c_func
 (paren
@@ -6129,6 +6241,12 @@ id|enable_dma
 c_func
 (paren
 id|dev-&gt;dma
+)paren
+suffix:semicolon
+id|release_dma_lock
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 multiline_comment|/* Configure PackeTwin DMA */

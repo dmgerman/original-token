@@ -1162,6 +1162,11 @@ op_star
 id|regs
 )paren
 suffix:semicolon
+r_extern
+r_int
+r_int
+id|est_cycle_freq
+suffix:semicolon
 multiline_comment|/* smc37c93x.c */
 r_extern
 r_void
@@ -1301,6 +1306,7 @@ r_void
 )paren
 suffix:semicolon
 multiline_comment|/* process.c */
+r_extern
 r_void
 id|generic_kill_arch
 (paren
@@ -1312,6 +1318,7 @@ op_star
 id|reboot_cmd
 )paren
 suffix:semicolon
+r_extern
 r_void
 id|cpu_idle
 c_func
@@ -1325,6 +1332,35 @@ c_func
 (paren
 id|noreturn
 )paren
+)paren
+suffix:semicolon
+multiline_comment|/* ptrace.c */
+r_extern
+r_int
+id|ptrace_set_bpt
+(paren
+r_struct
+id|task_struct
+op_star
+id|child
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|ptrace_cancel_bpt
+(paren
+r_struct
+id|task_struct
+op_star
+id|child
+)paren
+suffix:semicolon
+multiline_comment|/* ../mm/init.c */
+r_void
+id|srm_paging_stop
+c_func
+(paren
+r_void
 )paren
 suffix:semicolon
 eof

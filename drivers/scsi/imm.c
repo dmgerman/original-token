@@ -559,7 +559,7 @@ id|imm_wakeup
 comma
 l_int|NULL
 comma
-id|PARPORT_DEV_TRAN
+l_int|0
 comma
 (paren
 r_void
@@ -572,6 +572,19 @@ id|i
 )braket
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|imm_hosts
+(braket
+id|i
+)braket
+dot
+id|dev
+)paren
+r_continue
+suffix:semicolon
 multiline_comment|/* Claim the bus so it remembers what we do to the control&n;         * registers. [ CTR and ECP ]&n;         */
 r_if
 c_cond
@@ -582,6 +595,13 @@ c_func
 id|i
 )paren
 )paren
+(brace
+r_int
+r_int
+id|now
+op_assign
+id|jiffies
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -592,12 +612,41 @@ id|i
 dot
 id|p_busy
 )paren
+(brace
 id|schedule
 c_func
 (paren
 )paren
 suffix:semicolon
 multiline_comment|/* We are safe to schedule here */
+r_if
+c_cond
+(paren
+id|jiffies
+OG
+id|now
+op_plus
+l_int|3
+op_star
+id|HZ
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;imm%d: failed to claim parport because a &quot;
+l_string|&quot;pardevice is owning the port for too longtime!&bslash;n&quot;
+comma
+id|i
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+)brace
+)brace
 id|ppb
 op_assign
 id|IMM_BASE

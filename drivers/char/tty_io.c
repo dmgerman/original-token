@@ -4570,6 +4570,11 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; * We&squot;ve decremented tty-&gt;count, so we should zero out&n;&t; * filp-&gt;private_data, to break the link between the tty and&n;&t; * the file descriptor.  Otherwise if close_fp() blocks before&n;&t; * the the file descriptor is removed from the inuse_filp&n;&t; * list, check_tty_count() could observe a discrepancy and&n;&t; * printk a warning message to the user.&n;&t; */
+id|filp-&gt;private_data
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/*&n;&t; * Perform some housekeeping before deciding whether to return.&n;&t; *&n;&t; * Set the TTY_CLOSING flag if this was the last open.  In the&n;&t; * case of a pty we may have to wait around for the other side&n;&t; * to close, and TTY_CLOSING makes sure we can&squot;t be reopened.&n;&t; */
 r_if
 c_cond
@@ -4692,10 +4697,6 @@ id|o_tty_closing
 )paren
 )paren
 r_return
-suffix:semicolon
-id|filp-&gt;private_data
-op_assign
-l_int|0
 suffix:semicolon
 macro_line|#ifdef TTY_DEBUG_HANGUP
 id|printk
@@ -5119,7 +5120,6 @@ r_return
 id|retval
 suffix:semicolon
 macro_line|#ifdef CONFIG_UNIX98_PTYS
-multiline_comment|/* N.B. this error exit may leave filp-&gt;f_flags with O_NONBLOCK set */
 id|init_dev_done
 suffix:colon
 macro_line|#endif
@@ -8630,6 +8630,7 @@ c_func
 l_string|&quot;Couldn&squot;t register /dev/console driver&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_UNIX98_PTYS
 id|dev_ptmx_driver
 op_assign
 id|dev_tty_driver
@@ -8684,6 +8685,7 @@ c_func
 l_string|&quot;Couldn&squot;t register /dev/ptmx driver&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_VT
 id|dev_console_driver
 op_assign

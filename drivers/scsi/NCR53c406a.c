@@ -838,13 +838,9 @@ id|panic
 l_string|&quot;NCR53c406a: attempted unaligned DMA transfer&bslash;n&quot;
 )paren
 suffix:semicolon
-id|save_flags
-c_func
-(paren
 id|flags
-)paren
-suffix:semicolon
-id|cli
+op_assign
+id|claim_dma_lock
 c_func
 (paren
 )paren
@@ -894,7 +890,7 @@ c_func
 id|dma_chan
 )paren
 suffix:semicolon
-id|restore_flags
+id|release_dma_lock
 c_func
 (paren
 id|flags
@@ -976,16 +972,10 @@ suffix:semicolon
 r_int
 r_int
 id|flags
-op_assign
-l_int|0
 suffix:semicolon
-id|save_flags
-c_func
-(paren
 id|flags
-)paren
-suffix:semicolon
-id|cli
+op_assign
+id|claim_dma_lock
 c_func
 (paren
 )paren
@@ -1004,7 +994,7 @@ c_func
 id|dma_chan
 )paren
 suffix:semicolon
-id|restore_flags
+id|release_dma_lock
 c_func
 (paren
 id|flags

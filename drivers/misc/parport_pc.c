@@ -1,25 +1,23 @@
-multiline_comment|/* Low-level parallel-port routines for PC-style hardware.&n; * &n; * Authors: Phil Blundell &lt;Philip.Blundell@pobox.com&gt;&n; *          Tim Waugh &lt;tim@cyberelk.demon.co.uk&gt;&n; *&t;    Jose Renau &lt;renau@acm.org&gt;&n; *          David Campbell &lt;campbell@torque.net&gt;&n; *          Andrea Arcangeli&n; *&n; * based on work by Grant Guenther &lt;grant@torque.net&gt; and Phil Blundell.&n; */
+multiline_comment|/* Low-level parallel-port routines for 8255-based PC-style hardware.&n; * &n; * Authors: Phil Blundell &lt;Philip.Blundell@pobox.com&gt;&n; *          Tim Waugh &lt;tim@cyberelk.demon.co.uk&gt;&n; *&t;    Jose Renau &lt;renau@acm.org&gt;&n; *          David Campbell &lt;campbell@torque.net&gt;&n; *          Andrea Arcangeli&n; *&n; * based on work by Grant Guenther &lt;grant@torque.net&gt; and Phil Blundell.&n; */
 multiline_comment|/* This driver should work with any hardware that is broadly compatible&n; * with that in the IBM PC.  This applies to the majority of integrated&n; * I/O chipsets that are commonly available.  The expected register&n; * layout is:&n; *&n; *&t;base+0&t;&t;data&n; *&t;base+1&t;&t;status&n; *&t;base+2&t;&t;control&n; *&n; * In addition, there are some optional registers:&n; *&n; *&t;base+3&t;&t;EPP address&n; *&t;base+4&t;&t;EPP data&n; *&t;base+0x400&t;ECP config A&n; *&t;base+0x401&t;ECP config B&n; *&t;base+0x402&t;ECP control&n; *&n; * All registers are 8 bits wide and read/write.  If your hardware differs&n; * only in register addresses (eg because your registers are on 32-bit&n; * word boundaries) then you can alter the constants in parport_pc.h to&n; * accomodate this.&n; */
-macro_line|#include &lt;linux/stddef.h&gt;
-macro_line|#include &lt;linux/tasks.h&gt;
-macro_line|#include &lt;asm/ptrace.h&gt;
-macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/parport.h&gt;
 macro_line|#include &lt;linux/parport_pc.h&gt;
 multiline_comment|/* Maximum number of ports to support.  It is useless to set this greater&n;   than PARPORT_MAX (in &lt;linux/parport.h&gt;).  */
 DECL|macro|PARPORT_PC_MAX_PORTS
 mdefine_line|#define PARPORT_PC_MAX_PORTS  8
-DECL|function|parport_pc_null_intr_func
+DECL|function|parport_pc_interrupt
 r_static
 r_void
-id|parport_pc_null_intr_func
+id|parport_pc_interrupt
 c_func
 (paren
 r_int
@@ -35,7 +33,21 @@ op_star
 id|regs
 )paren
 (brace
-multiline_comment|/* Null function - does nothing */
+id|parport_generic_irq
+c_func
+(paren
+id|irq
+comma
+(paren
+r_struct
+id|parport
+op_star
+)paren
+id|dev_id
+comma
+id|regs
+)paren
+suffix:semicolon
 )brace
 DECL|function|parport_pc_write_epp
 r_void
@@ -626,7 +638,7 @@ c_func
 (paren
 id|p-&gt;irq
 comma
-l_int|NULL
+id|p
 )paren
 suffix:semicolon
 id|release_region
@@ -687,13 +699,13 @@ c_func
 (paren
 id|p-&gt;irq
 comma
-id|parport_pc_null_intr_func
+id|parport_pc_interrupt
 comma
 l_int|0
 comma
 id|p-&gt;name
 comma
-l_int|NULL
+id|p
 )paren
 )paren
 op_ne
@@ -1065,22 +1077,6 @@ id|ENOSYS
 suffix:semicolon
 multiline_comment|/* FIXME */
 )brace
-DECL|function|parport_pc_examine_irq
-r_int
-id|parport_pc_examine_irq
-c_func
-(paren
-r_struct
-id|parport
-op_star
-id|p
-)paren
-(brace
-r_return
-l_int|0
-suffix:semicolon
-multiline_comment|/* FIXME */
-)brace
 DECL|function|parport_pc_inc_use_count
 r_void
 id|parport_pc_inc_use_count
@@ -1199,7 +1195,7 @@ id|parport_pc_enable_irq
 comma
 id|parport_pc_disable_irq
 comma
-id|parport_pc_examine_irq
+id|parport_pc_interrupt
 comma
 id|parport_pc_inc_use_count
 comma

@@ -771,10 +771,6 @@ id|conf-&gt;maddr
 (brace
 id|card-&gt;hw.dpmbase
 op_assign
-(paren
-r_int
-r_int
-)paren
 id|phys_to_virt
 c_func
 (paren
@@ -786,6 +782,10 @@ r_else
 multiline_comment|/* But 0 means NULL */
 id|card-&gt;hw.dpmbase
 op_assign
+(paren
+r_void
+op_star
+)paren
 id|conf-&gt;maddr
 suffix:semicolon
 id|card-&gt;hw.dpmsize
@@ -1493,19 +1493,15 @@ c_func
 r_void
 op_star
 )paren
-(paren
 id|dump.ptr
-)paren
 comma
 (paren
-r_void
+id|u8
 op_star
 )paren
-(paren
 id|card-&gt;hw.dpmbase
 op_plus
 id|pos
-)paren
 comma
 id|len
 )paren

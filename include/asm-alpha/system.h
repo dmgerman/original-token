@@ -279,8 +279,21 @@ r_int
 r_int
 )paren
 suffix:semicolon
-DECL|macro|halt
-mdefine_line|#define halt() &bslash;&n;__asm__ __volatile__ (&quot;call_pal %0 #halt&quot; : : &quot;i&quot; (PAL_halt) : &quot;memory&quot;)
+r_extern
+r_void
+id|halt
+c_func
+(paren
+r_void
+)paren
+id|__attribute__
+c_func
+(paren
+(paren
+id|noreturn
+)paren
+)paren
+suffix:semicolon
 DECL|macro|switch_to
 mdefine_line|#define switch_to(prev,next) do {&t;&t;&t;&t;&t;&bslash;&n;&t;current = next;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;alpha_switch_to((unsigned long) &amp;current-&gt;tss - IDENT_ADDR);&t;&bslash;&n;} while (0)
 r_extern

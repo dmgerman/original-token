@@ -22,6 +22,10 @@ DECL|macro|SNDCARD_VMIDI
 mdefine_line|#define SNDCARD_VMIDI&t;&t;&t;37
 DECL|macro|SNDCARD_WAVEFRONT
 mdefine_line|#define SNDCARD_WAVEFRONT               41
+DECL|macro|SNDCARD_OPL3SA2
+mdefine_line|#define SNDCARD_OPL3SA2                 42
+DECL|macro|SNDCARD_OPL3SA2_MPU
+mdefine_line|#define SNDCARD_OPL3SA2_MPU             43
 r_void
 id|attach_opl3sa_wss
 (paren
@@ -2106,6 +2110,40 @@ id|unload_cs4232_mpu
 )brace
 comma
 macro_line|#endif
+macro_line|#ifdef CONFIG_SOUND_OPL3SA2
+(brace
+l_string|&quot;OPL3SA2&quot;
+comma
+l_int|0
+comma
+id|SNDCARD_OPL3SA2
+comma
+l_string|&quot;OPL3SA2&quot;
+comma
+id|attach_opl3sa2
+comma
+id|probe_opl3sa2
+comma
+id|unload_opl3sa2
+)brace
+comma
+(brace
+l_string|&quot;OPL3SA2MPU&quot;
+comma
+l_int|0
+comma
+id|SNDCARD_OPL3SA2_MPU
+comma
+l_string|&quot;OPL3SA2 MIDI&quot;
+comma
+id|attach_opl3sa2_mpu
+comma
+id|probe_opl3sa2_mpu
+comma
+id|unload_opl3sa2_mpu
+)brace
+comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_SGALAXY
 (brace
 l_string|&quot;SGALAXY&quot;
@@ -2804,6 +2842,47 @@ comma
 id|CONFIG_CS4232_DMA
 comma
 id|CONFIG_CS4232_DMA2
+)brace
+comma
+id|SND_DEFAULT_ENABLE
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SOUND_OPL3SA2
+macro_line|#ifndef CONFIG_OPL3SA2_DMA2
+DECL|macro|CONFIG_OPL3SA2_DMA2
+mdefine_line|#define CONFIG_OPL3SA2_DMA2 CONFIG_OPL3SA2_DMA
+macro_line|#endif
+macro_line|#ifdef CONFIG_OPL3SA2_MPU_BASE
+(brace
+id|SNDCARD_OPL3SA2_MPU
+comma
+(brace
+id|CONFIG_OPL3SA2_MPU_BASE
+comma
+id|CONFIG_OPL3SA2_MPU_IRQ
+comma
+l_int|0
+comma
+op_minus
+l_int|1
+)brace
+comma
+id|SND_DEFAULT_ENABLE
+)brace
+comma
+macro_line|#endif
+(brace
+id|SNDCARD_OPL3SA2
+comma
+(brace
+id|CONFIG_OPL3SA2_BASE
+comma
+id|CONFIG_OPL3SA2_IRQ
+comma
+id|CONFIG_OPL3SA2_DMA
+comma
+id|CONFIG_OPL3SA2_DMA2
 )brace
 comma
 id|SND_DEFAULT_ENABLE

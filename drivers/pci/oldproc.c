@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;$Id: oldproc.c,v 1.20 1998/08/23 12:12:01 mj Exp $&n; *&n; *&t;Backward-compatible procfs interface for PCI.&n; *&n; *&t;Copyright 1993, 1994, 1995, 1997 Drew Eckhardt, Frederic Potter,&n; *&t;David Mosberger-Tang, Martin Mares&n; */
+multiline_comment|/*&n; *&t;$Id: oldproc.c,v 1.24 1998/10/11 15:13:04 mj Exp $&n; *&n; *&t;Backward-compatible procfs interface for PCI.&n; *&n; *&t;Copyright 1993, 1994, 1995, 1997 Drew Eckhardt, Frederic Potter,&n; *&t;David Mosberger-Tang, Martin Mares&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1693,6 +1693,16 @@ comma
 id|N9_I128_2
 comma
 l_string|&quot;Imagine 128v2&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|N9
+comma
+id|N9_I128_T2R
+comma
+l_string|&quot;Revolution 3D&quot;
 )paren
 comma
 id|DEVICE

@@ -3869,11 +3869,6 @@ comma
 id|devc
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|devc-&gt;my_mixerdev
-)paren
 id|sound_unload_mixerdev
 c_func
 (paren

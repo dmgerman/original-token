@@ -42,6 +42,7 @@ r_struct
 id|proc_dir_entry
 id|proc_sys_root
 suffix:semicolon
+macro_line|#ifdef CONFIG_SYSCTL
 DECL|variable|proc_sys_root
 id|EXPORT_SYMBOL
 c_func
@@ -49,6 +50,7 @@ c_func
 id|proc_sys_root
 )paren
 suffix:semicolon
+macro_line|#endif
 DECL|variable|proc_register
 id|EXPORT_SYMBOL
 c_func

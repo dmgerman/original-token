@@ -1,4 +1,4 @@
-multiline_comment|/* &n; *  linux/include/linux/ufs_fs_sb.h&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * $Id: ufs_fs_sb.h,v 1.8 1998/05/06 12:04:40 jj Exp $&n; *&n; * Write support by Daniel Pirkl (daniel.pirkl@email.cz)&n; * Charles University (Prague), Faculty of Mathematics and Physics&n; */
+multiline_comment|/* &n; *  linux/include/linux/ufs_fs_sb.h&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * $Id: ufs_fs_sb.h,v 1.8 1998/05/06 12:04:40 jj Exp $&n; *&n; * Write support by Daniel Pirkl &lt;daniel.pirkl@email.cz&gt;&n; */
 macro_line|#ifndef __LINUX_UFS_FS_SB_H
 DECL|macro|__LINUX_UFS_FS_SB_H
 mdefine_line|#define __LINUX_UFS_FS_SB_H
@@ -99,6 +99,21 @@ id|__u32
 id|c_nextfreeoff
 suffix:semicolon
 multiline_comment|/* (u_char) next available space */
+DECL|member|c_clustersumoff
+id|__u32
+id|c_clustersumoff
+suffix:semicolon
+multiline_comment|/* (u_int32) counts of avail clusters */
+DECL|member|c_clusteroff
+id|__u32
+id|c_clusteroff
+suffix:semicolon
+multiline_comment|/* (u_int8) free cluster map */
+DECL|member|c_nclusterblks
+id|__u32
+id|c_nclusterblks
+suffix:semicolon
+multiline_comment|/* number of clusters this cg */
 )brace
 suffix:semicolon
 DECL|struct|ufs_sb_private_info
@@ -296,6 +311,11 @@ id|__u32
 id|s_cpc
 suffix:semicolon
 multiline_comment|/* cyl per cycle in postbl */
+DECL|member|s_contigsumsize
+id|__s32
+id|s_contigsumsize
+suffix:semicolon
+multiline_comment|/* size of cluster summary array, 44bsd */
 DECL|member|s_qbmask
 id|__s64
 id|s_qbmask
@@ -386,12 +406,27 @@ id|__u32
 id|s_sbbase
 suffix:semicolon
 multiline_comment|/* offset of NeXTstep superblock */
+DECL|member|s_bpf
+id|__u32
+id|s_bpf
+suffix:semicolon
+multiline_comment|/* bits per fragment */
+DECL|member|s_bpfshift
+id|__u32
+id|s_bpfshift
+suffix:semicolon
+multiline_comment|/* bits per fragment shift*/
+DECL|member|s_bpfmask
+id|__u32
+id|s_bpfmask
+suffix:semicolon
+multiline_comment|/* bits per fragment mask */
 )brace
 suffix:semicolon
 DECL|macro|UFS_MAX_GROUP_LOADED
-mdefine_line|#define UFS_MAX_GROUP_LOADED 1
+mdefine_line|#define UFS_MAX_GROUP_LOADED 8
 DECL|macro|UFS_CGNO_EMPTY
-mdefine_line|#define UFS_CGNO_EMPTY uspi-&gt;s_ncg
+mdefine_line|#define UFS_CGNO_EMPTY ((unsigned)-1)
 DECL|struct|ufs_sb_info
 r_struct
 id|ufs_sb_info
@@ -456,6 +491,10 @@ DECL|member|s_cg_loaded
 r_int
 r_int
 id|s_cg_loaded
+suffix:semicolon
+DECL|member|s_mount_opt
+r_int
+id|s_mount_opt
 suffix:semicolon
 )brace
 suffix:semicolon

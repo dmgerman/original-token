@@ -8,6 +8,8 @@ DECL|macro|KBD_REPORT_TIMEOUTS
 mdefine_line|#define KBD_REPORT_TIMEOUTS&t;&t;/* Report keyboard timeouts */
 DECL|macro|KBD_IS_FOCUS_9000
 macro_line|#undef KBD_IS_FOCUS_9000&t;&t;/* We have the brain-damaged FOCUS-9000 keyboard */
+DECL|macro|INITIALIZE_MOUSE
+macro_line|#undef INITIALIZE_MOUSE&t;&t;&t;/* Define if your PS/2 mouse needs initialization. */
 DECL|macro|KBD_INIT_TIMEOUT
 mdefine_line|#define KBD_INIT_TIMEOUT 1000&t;&t;/* Timeout in ms for initializing the keyboard */
 DECL|macro|KBC_TIMEOUT
@@ -128,4 +130,42 @@ DECL|macro|AUX_DISABLE_DEV
 mdefine_line|#define AUX_DISABLE_DEV&t;&t;0xF5&t;/* Disable aux device */
 DECL|macro|AUX_RESET
 mdefine_line|#define AUX_RESET&t;&t;0xFF&t;/* Reset aux device */
+DECL|macro|AUX_BUF_SIZE
+mdefine_line|#define AUX_BUF_SIZE&t;&t;2048
+DECL|struct|aux_queue
+r_struct
+id|aux_queue
+(brace
+DECL|member|head
+r_int
+r_int
+id|head
+suffix:semicolon
+DECL|member|tail
+r_int
+r_int
+id|tail
+suffix:semicolon
+DECL|member|proc_list
+r_struct
+id|wait_queue
+op_star
+id|proc_list
+suffix:semicolon
+DECL|member|fasync
+r_struct
+id|fasync_struct
+op_star
+id|fasync
+suffix:semicolon
+DECL|member|buf
+r_int
+r_char
+id|buf
+(braket
+id|AUX_BUF_SIZE
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
 eof

@@ -34,8 +34,8 @@ id|irq
 suffix:semicolon
 multiline_comment|/* interrupt request level */
 DECL|member|dpmbase
-r_int
-r_int
+r_void
+op_star
 id|dpmbase
 suffix:semicolon
 multiline_comment|/* dual-port memory base */

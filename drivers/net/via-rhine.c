@@ -142,7 +142,6 @@ mdefine_line|#define TX_TIMEOUT  (2*HZ)
 DECL|macro|PKT_BUF_SZ
 mdefine_line|#define PKT_BUF_SZ&t;&t;1536&t;&t;&t;/* Size of each temporary Rx buffer.*/
 multiline_comment|/* Include files, designed to support most kernel versions 2.0.0 and later. */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#ifdef MODULE
 macro_line|#ifdef MODVERSIONS

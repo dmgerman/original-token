@@ -245,21 +245,6 @@ DECL|typedef|ide_pci_device_t
 )brace
 id|ide_pci_device_t
 suffix:semicolon
-macro_line|#ifdef CONFIG_BLK_DEV_OFFBOARD
-DECL|macro|ON_BOARD
-macro_line|#  define ON_BOARD&t;&t;0
-DECL|macro|OFF_BOARD
-macro_line|#  define OFF_BOARD&t;&t;1
-DECL|macro|NEVER_BOARD
-macro_line|#  define NEVER_BOARD&t;&t;0
-macro_line|#else /* CONFIG_BLK_DEV_OFFBOARD */
-DECL|macro|ON_BOARD
-macro_line|#  define ON_BOARD&t;&t;1
-DECL|macro|OFF_BOARD
-macro_line|#  define OFF_BOARD&t;&t;0
-DECL|macro|NEVER_BOARD
-macro_line|#  define NEVER_BOARD&t;&t;0
-macro_line|#endif /* CONFIG_BLK_DEV_OFFBOARD */
 DECL|variable|__initdata
 r_static
 id|ide_pci_device_t

@@ -11,6 +11,14 @@ id|local_irq_count
 id|NR_CPUS
 )braket
 suffix:semicolon
+r_extern
+r_int
+r_int
+id|hardirq_no
+(braket
+id|NR_CPUS
+)braket
+suffix:semicolon
 multiline_comment|/*&n; * Are we in an interrupt context? Either doing bottom half&n; * or hardware interrupt processing?&n; */
 DECL|macro|in_interrupt
 mdefine_line|#define in_interrupt()&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;int __cpu = smp_processor_id();&t;&t;&t;&t;&bslash;&n;&t;(local_irq_count[__cpu] + local_bh_count[__cpu]) != 0;&t;&bslash;&n;})
@@ -28,6 +36,7 @@ mdefine_line|#define synchronize_irq()&t;barrier()
 macro_line|#else
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#include &lt;asm/smp.h&gt;
 r_extern
 r_int
 id|global_irq_holder
@@ -100,6 +109,16 @@ op_amp
 id|global_irq_count
 )paren
 suffix:semicolon
+id|hardirq_no
+(braket
+id|cpu
+)braket
+op_or_assign
+l_int|1L
+op_lshift
+id|irq
+suffix:semicolon
+multiline_comment|/* debugging only */
 )brace
 DECL|function|hardirq_exit
 r_static
@@ -115,6 +134,19 @@ r_int
 id|irq
 )paren
 (brace
+id|hardirq_no
+(braket
+id|cpu
+)braket
+op_and_assign
+op_complement
+(paren
+l_int|1L
+op_lshift
+id|irq
+)paren
+suffix:semicolon
+multiline_comment|/* debugging only */
 id|atomic_dec
 c_func
 (paren

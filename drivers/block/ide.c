@@ -7594,6 +7594,22 @@ c_func
 id|hwgroup-&gt;drive
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA
+r_if
+c_cond
+(paren
+id|hwif-&gt;dma_base
+)paren
+(paren
+r_void
+)paren
+id|ide_release_dma
+c_func
+(paren
+id|hwif
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA */
 multiline_comment|/*&n;&t; * Remove us from the kernel&squot;s knowledge&n;&t; */
 id|unregister_blkdev
 c_func
@@ -14223,12 +14239,39 @@ suffix:semicolon
 op_increment
 id|index
 )paren
+(brace
 id|ide_unregister
 c_func
 (paren
 id|index
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA
+r_if
+c_cond
+(paren
+id|ide_hwifs
+(braket
+id|index
+)braket
+dot
+id|dma_base
+)paren
+(paren
+r_void
+)paren
+id|ide_release_dma
+c_func
+(paren
+op_amp
+id|ide_hwifs
+(braket
+id|index
+)braket
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA */
+)brace
 macro_line|#ifdef CONFIG_PROC_FS
 id|proc_ide_destroy
 c_func

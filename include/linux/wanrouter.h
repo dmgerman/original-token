@@ -837,8 +837,8 @@ id|ioport
 suffix:semicolon
 multiline_comment|/* adapter I/O port base #1 */
 DECL|member|maddr
-r_int
-r_int
+r_void
+op_star
 id|maddr
 suffix:semicolon
 multiline_comment|/* dual-port memory address */

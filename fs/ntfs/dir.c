@@ -2,7 +2,7 @@ multiline_comment|/*&n; *  dir.c&n; *&n; *  Copyright (C) 1995-1997 Martin von L
 macro_line|#include &quot;types.h&quot;
 macro_line|#include &quot;struct.h&quot;
 macro_line|#include &quot;dir.h&quot;
-macro_line|#include &lt;errno.h&gt;
+macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &quot;super.h&quot;
 macro_line|#include &quot;inode.h&quot;
 macro_line|#include &quot;attr.h&quot;

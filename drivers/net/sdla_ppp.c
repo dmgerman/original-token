@@ -1701,11 +1701,15 @@ id|wandev-&gt;ioport
 suffix:semicolon
 id|dev-&gt;mem_start
 op_assign
+(paren
+r_int
+r_int
+)paren
 id|wandev-&gt;maddr
 suffix:semicolon
 id|dev-&gt;mem_end
 op_assign
-id|wandev-&gt;maddr
+id|dev-&gt;mem_start
 op_plus
 id|wandev-&gt;msize
 op_minus

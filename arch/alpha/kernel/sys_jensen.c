@@ -347,14 +347,6 @@ id|rtc_port
 suffix:colon
 l_int|0x170
 comma
-id|rtc_addr
-suffix:colon
-l_int|0
-comma
-id|rtc_bcd
-suffix:colon
-l_int|1
-comma
 id|nr_irqs
 suffix:colon
 l_int|16

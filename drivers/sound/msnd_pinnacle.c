@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *&n; * Turtle Beach MultiSound Sound Card Driver for Linux&n; * Linux 2.0/2.2 Version&n; *&n; * msnd_pinnacle.c / msnd_classic.c&n; *&n; * -- If MSND_CLASSIC is defined:&n; *&n; *     -&gt; driver for Turtle Beach Classic/Monterey/Tahiti&n; *&n; * -- Else&n; *&n; *     -&gt; driver for Turtle Beach Pinnacle/Fiji&n; *&n; * Copyright (C) 1998 Andrew Veliath&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Id: msnd_pinnacle.c,v 1.63 1998/09/10 18:37:19 andrewtv Exp $&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *&n; * Turtle Beach MultiSound Sound Card Driver for Linux&n; * Linux 2.0/2.2 Version&n; *&n; * msnd_pinnacle.c / msnd_classic.c&n; *&n; * -- If MSND_CLASSIC is defined:&n; *&n; *     -&gt; driver for Turtle Beach Classic/Monterey/Tahiti&n; *&n; * -- Else&n; *&n; *     -&gt; driver for Turtle Beach Pinnacle/Fiji&n; *&n; * Copyright (C) 1998 Andrew Veliath&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Id: msnd_pinnacle.c,v 1.65 1998/09/18 19:13:03 andrewtv Exp $&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#if LINUX_VERSION_CODE &lt; 0x020101
@@ -5242,9 +5242,11 @@ multiline_comment|/* mmap */
 id|dev_open
 comma
 multiline_comment|/* open */
+macro_line|#ifndef LINUX20
 l_int|NULL
 comma
 multiline_comment|/* flush */
+macro_line|#endif
 id|dev_release
 comma
 multiline_comment|/* release */

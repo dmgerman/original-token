@@ -2,7 +2,7 @@ multiline_comment|/*&n; *  util.c&n; *  Miscellaneous support&n; *&n; *  Copyrig
 macro_line|#include &quot;types.h&quot;
 macro_line|#include &quot;struct.h&quot;
 macro_line|#include &quot;util.h&quot;
-macro_line|#include &lt;errno.h&gt;
+macro_line|#include &lt;linux/errno.h&gt;
 multiline_comment|/* FreeBSD doesn&squot;t seem to have EILSEQ in errno.h */
 macro_line|#ifndef EILSEQ
 DECL|macro|EILSEQ

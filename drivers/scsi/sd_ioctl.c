@@ -6,6 +6,8 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+DECL|macro|MAJOR_NR
+mdefine_line|#define MAJOR_NR&t;SCSI_DISK0_MAJOR
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &lt;scsi/scsi_ioctl.h&gt;
@@ -75,13 +77,11 @@ id|SDev
 op_assign
 id|rscsi_disks
 (braket
-id|MINOR
+id|DEVICE_NR
 c_func
 (paren
 id|dev
 )paren
-op_rshift
-l_int|4
 )braket
 dot
 id|device
@@ -151,13 +151,11 @@ id|host
 op_assign
 id|rscsi_disks
 (braket
-id|MINOR
+id|DEVICE_NR
 c_func
 (paren
 id|dev
 )paren
-op_rshift
-l_int|4
 )braket
 dot
 id|device-&gt;host
@@ -184,13 +182,11 @@ l_int|2
 op_assign
 id|rscsi_disks
 (braket
-id|MINOR
+id|DEVICE_NR
 c_func
 (paren
 id|dev
 )paren
-op_rshift
-l_int|4
 )braket
 dot
 id|capacity
@@ -214,13 +210,11 @@ c_func
 op_amp
 id|rscsi_disks
 (braket
-id|MINOR
+id|DEVICE_NR
 c_func
 (paren
 id|dev
 )paren
-op_rshift
-l_int|4
 )braket
 comma
 id|dev
@@ -240,13 +234,11 @@ c_func
 op_amp
 id|rscsi_disks
 (braket
-id|MINOR
+id|DEVICE_NR
 c_func
 (paren
 id|dev
 )paren
-op_rshift
-l_int|4
 )braket
 comma
 id|dev
@@ -299,7 +291,7 @@ c_func
 (paren
 id|sd
 (braket
-id|MINOR
+id|SD_PARTITION
 c_func
 (paren
 id|inode-&gt;i_rdev
@@ -361,7 +353,7 @@ c_func
 (paren
 id|sd
 (braket
-id|MINOR
+id|SD_PARTITION
 c_func
 (paren
 id|inode-&gt;i_rdev
@@ -591,13 +583,11 @@ c_func
 (paren
 id|rscsi_disks
 (braket
-id|MINOR
+id|DEVICE_NR
 c_func
 (paren
 id|dev
 )paren
-op_rshift
-l_int|4
 )braket
 dot
 id|device

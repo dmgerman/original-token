@@ -26,6 +26,8 @@ DECL|macro|O_NOCTTY
 mdefine_line|#define O_NOCTTY&t;0x0800&t;/* not fcntl */
 DECL|macro|FASYNC
 mdefine_line|#define FASYNC&t;&t;0x1000&t;/* fcntl, for BSD compatibility */
+DECL|macro|O_DIRECTORY
+mdefine_line|#define O_DIRECTORY&t;0x2000&t;/* must be a directory */
 DECL|macro|O_NDELAY
 mdefine_line|#define O_NDELAY&t;O_NONBLOCK
 DECL|macro|F_DUPFD

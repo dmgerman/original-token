@@ -1090,23 +1090,6 @@ c_func
 suffix:semicolon
 )brace
 multiline_comment|/* --------------------------------------------------------------------- */
-DECL|function|par96_preempt
-r_static
-r_int
-id|par96_preempt
-c_func
-(paren
-r_void
-op_star
-id|handle
-)paren
-(brace
-multiline_comment|/* we cannot relinquish the port in the middle of an operation */
-r_return
-l_int|1
-suffix:semicolon
-)brace
-multiline_comment|/* --------------------------------------------------------------------- */
 DECL|function|par96_wakeup
 r_static
 r_void
@@ -1307,13 +1290,13 @@ id|pp
 comma
 id|dev-&gt;name
 comma
-id|par96_preempt
+l_int|NULL
 comma
 id|par96_wakeup
 comma
 id|par96_interrupt
 comma
-id|PARPORT_DEV_LURK
+id|PARPORT_DEV_EXCL
 comma
 id|dev
 )paren

@@ -11,8 +11,6 @@ macro_line|#include &quot;swab.h&quot;
 macro_line|#include &quot;util.h&quot;
 DECL|macro|UFS_CYLINDER_DEBUG
 macro_line|#undef UFS_CYLINDER_DEBUG
-DECL|macro|UFS_CYLINDER_DEBUG_MORE
-macro_line|#undef UFS_CYLINDER_DEBUG_MORE
 macro_line|#ifdef UFS_CYLINDER_DEBUG
 DECL|macro|UFSD
 mdefine_line|#define UFSD(x) printk(&quot;(%s, %d), %s:&quot;, __FILE__, __LINE__, __FUNCTION__); printk x;
@@ -101,15 +99,6 @@ id|cgno
 op_member_access_from_pointer
 id|b_data
 suffix:semicolon
-macro_line|#ifdef UFS_CYLINDER_DEBUG_MORE
-id|ufs_print_cylinder_stuff
-(paren
-id|ucg
-comma
-id|swab
-)paren
-suffix:semicolon
-macro_line|#endif
 id|UCPI_UBH-&gt;fragment
 op_assign
 id|ufs_cgcmin
@@ -275,6 +264,30 @@ id|SWAB32
 c_func
 (paren
 id|ucg-&gt;cg_nextfreeoff
+)paren
+suffix:semicolon
+id|ucpi-&gt;c_clustersumoff
+op_assign
+id|SWAB32
+c_func
+(paren
+id|ucg-&gt;cg_u.cg_44.cg_clustersumoff
+)paren
+suffix:semicolon
+id|ucpi-&gt;c_clusteroff
+op_assign
+id|SWAB32
+c_func
+(paren
+id|ucg-&gt;cg_u.cg_44.cg_clusteroff
+)paren
+suffix:semicolon
+id|ucpi-&gt;c_nclusterblks
+op_assign
+id|SWAB32
+c_func
+(paren
+id|ucg-&gt;cg_u.cg_44.cg_nclusterblks
 )paren
 suffix:semicolon
 id|UFSD
@@ -829,6 +842,15 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
+id|ucpi
+op_assign
+id|sb-&gt;u.ufs_sb.s_ucpi
+(braket
+id|sb-&gt;u.ufs_sb.s_cg_loaded
+op_minus
+l_int|1
+)braket
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -871,6 +893,13 @@ l_int|1
 )braket
 suffix:semicolon
 )brace
+id|sb-&gt;u.ufs_sb.s_ucpi
+(braket
+l_int|0
+)braket
+op_assign
+id|ucpi
+suffix:semicolon
 id|ufs_read_cylinder
 (paren
 id|sb

@@ -849,18 +849,7 @@ l_string|&quot;Ruffian&quot;
 comma
 id|DO_EV5_MMU
 comma
-multiline_comment|/* RUFFIAN always uses BCD, like a PeeCee.  */
-id|rtc_port
-suffix:colon
-l_int|0x70
-comma
-id|rtc_addr
-suffix:colon
-l_int|0x80
-comma
-id|rtc_bcd
-suffix:colon
-l_int|1
+id|DO_DEFAULT_RTC
 comma
 multiline_comment|/* For the moment, do not use BWIO on RUFFIAN.  */
 id|IO

@@ -2672,6 +2672,10 @@ id|dev
 )paren
 (brace
 r_int
+r_int
+id|flags
+suffix:semicolon
+r_int
 id|ioaddr
 op_assign
 id|dev-&gt;base_addr
@@ -2693,6 +2697,13 @@ id|ioaddr
 )paren
 suffix:semicolon
 multiline_comment|/* CMD0_RESET */
+id|flags
+op_assign
+id|claim_dma_lock
+c_func
+(paren
+)paren
+suffix:semicolon
 id|disable_dma
 c_func
 (paren
@@ -2703,6 +2714,12 @@ id|disable_dma
 c_func
 (paren
 id|zn.tx_dma
+)paren
+suffix:semicolon
+id|release_dma_lock
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 id|free_irq
@@ -3029,6 +3046,10 @@ r_void
 )paren
 (brace
 r_int
+r_int
+id|flags
+suffix:semicolon
+r_int
 id|dma_port
 op_assign
 (paren
@@ -3062,6 +3083,13 @@ id|dma_port
 op_lshift
 l_int|8
 suffix:semicolon
+id|flags
+op_assign
+id|claim_dma_lock
+c_func
+(paren
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -3076,6 +3104,12 @@ c_func
 (paren
 id|zn.tx_dma
 )paren
+)paren
+suffix:semicolon
+id|release_dma_lock
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -3114,13 +3148,13 @@ comma
 id|ioaddr
 )paren
 suffix:semicolon
-id|cli
+id|flags
+op_assign
+id|claim_dma_lock
 c_func
 (paren
 )paren
 suffix:semicolon
-(brace
-multiline_comment|/* Protect against a DMA flip-flop */
 id|disable_dma
 c_func
 (paren
@@ -3217,10 +3251,10 @@ c_func
 id|zn.tx_dma
 )paren
 suffix:semicolon
-)brace
-id|sti
+id|release_dma_lock
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 r_if

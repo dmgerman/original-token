@@ -1556,15 +1556,6 @@ id|LOOKUP_SLASHOK
 r_goto
 id|return_base
 suffix:semicolon
-id|dentry
-op_assign
-id|ERR_PTR
-c_func
-(paren
-op_minus
-id|ENOTDIR
-)paren
-suffix:semicolon
 r_break
 suffix:semicolon
 )brace
@@ -1820,6 +1811,13 @@ r_return
 id|dir
 suffix:semicolon
 )brace
+multiline_comment|/* &n; * Special case: O_CREAT|O_EXCL on a dangling symlink should&n; * give EEXIST for security reasons.  While inconsistent, this&n; * is the same scheme used by, for example, Solaris 2.5.1.  --KAB&n; *&n; * O_DIRECTORY translates into forcing a directory lookup.&n; */
+DECL|macro|no_follow
+mdefine_line|#define no_follow(f)&t;(((f) &amp; (O_CREAT|O_EXCL)) == (O_CREAT|O_EXCL))
+DECL|macro|opendir
+mdefine_line|#define opendir(f)&t;((f) &amp; O_DIRECTORY)
+DECL|macro|lookup_flags
+mdefine_line|#define lookup_flags(f)&t;&bslash;&n;&t;(no_follow(f) ? 0 : opendir(f) ? (LOOKUP_FOLLOW | LOOKUP_DIRECTORY) : LOOKUP_FOLLOW)
 multiline_comment|/*&n; *&t;open_namei()&n; *&n; * namei for open - this is in fact almost the whole open-routine.&n; *&n; * Note that the low bits of &quot;flag&quot; aren&squot;t the same as in the open&n; * system call - they are 00 - no permissions needed&n; *&t;&t;&t;  01 - read permission needed&n; *&t;&t;&t;  10 - write permission needed&n; *&t;&t;&t;  11 - read/write permissions needed&n; * which is a lot more logical, and also allows the &quot;no perm&quot; needed&n; * for symlinks (where the permissions are checked later).&n; */
 DECL|function|open_namei
 r_struct
@@ -1866,7 +1864,6 @@ id|mode
 op_or_assign
 id|S_IFREG
 suffix:semicolon
-multiline_comment|/* &n;&t; * Special case: O_CREAT|O_EXCL on a dangling symlink should&n;&t; * give EEXIST for security reasons.  While inconsistent, this&n;&t; * is the same scheme used by, for example, Solaris 2.5.1.  --KAB&n;&t; */
 id|dentry
 op_assign
 id|lookup_dentry
@@ -1876,20 +1873,10 @@ id|pathname
 comma
 l_int|NULL
 comma
+id|lookup_flags
+c_func
 (paren
 id|flag
-op_amp
-(paren
-id|O_CREAT
-op_or
-id|O_EXCL
-)paren
-)paren
-op_ne
-(paren
-id|O_CREAT
-op_or
-id|O_EXCL
 )paren
 )paren
 suffix:semicolon

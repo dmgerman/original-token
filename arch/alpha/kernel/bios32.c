@@ -1878,36 +1878,10 @@ id|type
 r_case
 id|PCI_BASE_ADDRESS_MEM_TYPE_32
 suffix:colon
-r_break
-suffix:semicolon
 r_case
 id|PCI_BASE_ADDRESS_MEM_TYPE_64
 suffix:colon
-id|printk
-c_func
-(paren
-l_string|&quot;bios32 WARNING: &quot;
-l_string|&quot;ignoring 64-bit device in &quot;
-l_string|&quot;slot %d, function %d: &bslash;n&quot;
-comma
-id|PCI_SLOT
-c_func
-(paren
-id|dev-&gt;devfn
-)paren
-comma
-id|PCI_FUNC
-c_func
-(paren
-id|dev-&gt;devfn
-)paren
-)paren
-suffix:semicolon
-id|idx
-op_increment
-suffix:semicolon
-multiline_comment|/* skip extra 4 bytes */
-r_continue
+r_break
 suffix:semicolon
 r_case
 id|PCI_BASE_ADDRESS_MEM_TYPE_1M
@@ -2136,6 +2110,59 @@ id|idx
 op_assign
 id|handle
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; * Currently for 64-bit cards, we simply do the usual&n;&t;&t;&t; * for setup of the first register (low) of the pair,&n;&t;&t;&t; * and then clear out the second (high) register, as&n;&t;&t;&t; * we are not yet able to do 64-bit addresses, and&n;&t;&t;&t; * setting the high register to 0 allows 32-bit SAC&n;&t;&t;&t; * addresses to be used.&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|type
+op_eq
+id|PCI_BASE_ADDRESS_MEM_TYPE_64
+)paren
+(brace
+id|pcibios_write_config_dword
+c_func
+(paren
+id|bus-&gt;number
+comma
+id|dev-&gt;devfn
+comma
+id|off
+op_plus
+l_int|4
+comma
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/* Bypass hi reg in the loop.  */
+id|dev-&gt;base_address
+(braket
+op_increment
+id|idx
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;bios32 WARNING: &quot;
+l_string|&quot;handling 64-bit device in &quot;
+l_string|&quot;slot %d, function %d: &bslash;n&quot;
+comma
+id|PCI_SLOT
+c_func
+(paren
+id|dev-&gt;devfn
+)paren
+comma
+id|PCI_FUNC
+c_func
+(paren
+id|dev-&gt;devfn
+)paren
+)paren
+suffix:semicolon
+)brace
 id|DBG_DEVS
 c_func
 (paren
@@ -2555,7 +2582,7 @@ id|bridge-&gt;bus-&gt;number
 comma
 id|bridge-&gt;devfn
 comma
-l_int|0x1c
+id|PCI_IO_BASE
 comma
 op_amp
 id|l
@@ -2594,9 +2621,22 @@ id|bridge-&gt;bus-&gt;number
 comma
 id|bridge-&gt;devfn
 comma
-l_int|0x1c
+id|PCI_IO_BASE
 comma
 id|l
+)paren
+suffix:semicolon
+multiline_comment|/* Also clear out the upper 16 bits.  */
+id|pcibios_write_config_dword
+c_func
+(paren
+id|bridge-&gt;bus-&gt;number
+comma
+id|bridge-&gt;devfn
+comma
+id|PCI_IO_BASE_UPPER16
+comma
+l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Set up the top and bottom of the  PCI Memory segment&n;&t;&t; * for this bus.&n;&t;&t; */
@@ -2629,7 +2669,7 @@ id|bridge-&gt;bus-&gt;number
 comma
 id|bridge-&gt;devfn
 comma
-l_int|0x20
+id|PCI_MEMORY_BASE
 comma
 id|l
 )paren
@@ -2642,12 +2682,13 @@ id|bridge-&gt;bus-&gt;number
 comma
 id|bridge-&gt;devfn
 comma
-l_int|0x24
+id|PCI_PREF_MEMORY_BASE
 comma
 l_int|0x0000ffff
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Tell bridge that there is an ISA bus in the system,&n;&t;&t; * and (possibly) a VGA as well.&n;&t;&t; */
+multiline_comment|/* ??? This appears to be a single-byte write into MIN_GNT.&n;&t;&t;   What is up with this?  */
 id|l
 op_assign
 l_int|0x00040000
@@ -2683,7 +2724,7 @@ id|bridge-&gt;bus-&gt;number
 comma
 id|bridge-&gt;devfn
 comma
-l_int|0x4
+id|PCI_COMMAND
 comma
 l_int|0xffff0007
 )paren

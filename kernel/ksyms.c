@@ -42,6 +42,7 @@ macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/time.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
 r_extern
 r_int
 r_char
@@ -158,6 +159,10 @@ r_int
 r_int
 id|dmanr
 )paren
+suffix:semicolon
+r_extern
+id|spinlock_t
+id|dma_spin_lock
 suffix:semicolon
 macro_line|#ifdef MODVERSIONS
 DECL|variable|__export_Using_Versions
@@ -1423,6 +1428,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|free_dma
+)paren
+suffix:semicolon
+DECL|variable|dma_spin_lock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|dma_spin_lock
 )paren
 suffix:semicolon
 macro_line|#ifdef HAVE_DISABLE_HLT

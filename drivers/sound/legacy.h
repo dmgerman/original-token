@@ -32,6 +32,8 @@ DECL|macro|CONFIG_MSS
 mdefine_line|#define CONFIG_MSS
 DECL|macro|CONFIG_OPL3SA1
 mdefine_line|#define CONFIG_OPL3SA1
+DECL|macro|CONFIG_OPL3SA2
+mdefine_line|#define CONFIG_OPL3SA2
 DECL|macro|CONFIG_PAS
 mdefine_line|#define CONFIG_PAS
 DECL|macro|CONFIG_PSS

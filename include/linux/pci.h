@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;$Id: pci.h,v 1.84 1998/08/17 23:06:43 cort Exp $&n; *&n; *&t;PCI defines and function prototypes&n; *&t;Copyright 1994, Drew Eckhardt&n; *&t;Copyright 1997, 1998 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&n; *&t;For more information, please consult the following manuals (look at&n; *&t;http://www.pcisig.com/ for how to get them):&n; *&n; *&t;PCI BIOS Specification&n; *&t;PCI Local Bus Specification&n; *&t;PCI to PCI Bridge Specification&n; *&t;PCI System Design Guide&n; */
+multiline_comment|/*&n; *&t;$Id: pci.h,v 1.87 1998/10/11 15:13:12 mj Exp $&n; *&n; *&t;PCI defines and function prototypes&n; *&t;Copyright 1994, Drew Eckhardt&n; *&t;Copyright 1997, 1998 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&n; *&t;For more information, please consult the following manuals (look at&n; *&t;http://www.pcisig.com/ for how to get them):&n; *&n; *&t;PCI BIOS Specification&n; *&t;PCI Local Bus Specification&n; *&t;PCI to PCI Bridge Specification&n; *&t;PCI System Design Guide&n; */
 macro_line|#ifndef LINUX_PCI_H
 DECL|macro|LINUX_PCI_H
 mdefine_line|#define LINUX_PCI_H
@@ -1698,15 +1698,15 @@ mdefine_line|#define PCI_DEVICE_ID_ADAPTEC_7884&t;0x8478
 DECL|macro|PCI_DEVICE_ID_ADAPTEC_1030
 mdefine_line|#define PCI_DEVICE_ID_ADAPTEC_1030&t;0x8b78
 DECL|macro|PCI_VENDOR_ID_ADAPTEC2
-mdefine_line|#define PCI_VENDOR_ID_ADAPTEC2  0x9005
+mdefine_line|#define PCI_VENDOR_ID_ADAPTEC2&t;&t;0x9005
 DECL|macro|PCI_DEVICE_ID_ADAPTEC2_2940U2
-mdefine_line|#define PCI_DEVICE_ID_ADAPTEC2_2940U2  0x0010
+mdefine_line|#define PCI_DEVICE_ID_ADAPTEC2_2940U2&t;0x0010
 DECL|macro|PCI_DEVICE_ID_ADAPTEC2_7890
-mdefine_line|#define PCI_DEVICE_ID_ADAPTEC2_7890  0x001f
+mdefine_line|#define PCI_DEVICE_ID_ADAPTEC2_7890&t;0x001f
 DECL|macro|PCI_DEVICE_ID_ADAPTEC2_3940U2
-mdefine_line|#define PCI_DEVICE_ID_ADAPTEC2_3940U2  0x0050
+mdefine_line|#define PCI_DEVICE_ID_ADAPTEC2_3940U2&t;0x0050
 DECL|macro|PCI_DEVICE_ID_ADAPTEC2_7896
-mdefine_line|#define PCI_DEVICE_ID_ADAPTEC2_7896  0x005f
+mdefine_line|#define PCI_DEVICE_ID_ADAPTEC2_7896&t;0x005f
 DECL|macro|PCI_VENDOR_ID_ATRONICS
 mdefine_line|#define PCI_VENDOR_ID_ATRONICS&t;&t;0x907f
 DECL|macro|PCI_DEVICE_ID_ATRONICS_2015

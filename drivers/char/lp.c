@@ -3286,7 +3286,7 @@ l_int|NULL
 comma
 id|lp_interrupt
 comma
-id|PARPORT_DEV_TRAN
+l_int|0
 comma
 (paren
 r_void

@@ -1,6 +1,6 @@
 multiline_comment|/*&n; *&t;linux/arch/alpha/kernel/irq.h&n; *&n; *&t;Copyright (C) 1995 Linus Torvalds&n; *&t;Copyright (C) 1998 Richard Henderson&n; *&n; * This file contains declarations and inline functions for interfacing&n; * with the IRQ handling routines in irq.c.&n; */
 DECL|macro|STANDARD_INIT_IRQ_PROLOG
-mdefine_line|#define STANDARD_INIT_IRQ_PROLOG&t;&bslash;&n;&t;outb(0, DMA1_RESET_REG);&t;&bslash;&n;&t;outb(0, DMA2_RESET_REG);&t;&bslash;&n;&t;outb(0, DMA1_MASK_REG);&t;&t;&bslash;&n;&t;outb(0, DMA2_MASK_REG);&t;&t;&bslash;&n;&t;outb(0, DMA1_CLR_MASK_REG);&t;&bslash;&n;&t;outb(0, DMA2_CLR_MASK_REG);&t;&bslash;&n;&t;outb(DMA_MODE_CASCADE, DMA2_MODE_REG)
+mdefine_line|#define STANDARD_INIT_IRQ_PROLOG&t;&bslash;&n;&t;outb(0, DMA1_RESET_REG);&t;&bslash;&n;&t;outb(0, DMA2_RESET_REG);&t;&bslash;&n;&t;outb(0, DMA1_CLR_MASK_REG);&t;&bslash;&n;&t;outb(0, DMA2_CLR_MASK_REG)
 r_extern
 r_int
 r_int

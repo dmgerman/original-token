@@ -38,10 +38,10 @@ DECL|macro|CONFIGB
 mdefine_line|#define CONFIGB&t;&t;0x401
 DECL|macro|ECONTROL
 mdefine_line|#define ECONTROL&t;0x402
+DECL|function|parport_ax_interrupt
 r_static
 r_void
-DECL|function|parport_ax_null_intr_func
-id|parport_ax_null_intr_func
+id|parport_ax_interrupt
 c_func
 (paren
 r_int
@@ -57,7 +57,21 @@ op_star
 id|regs
 )paren
 (brace
-multiline_comment|/* NULL function - Does nothing */
+id|parport_generic_irq
+c_func
+(paren
+id|irq
+comma
+(paren
+r_struct
+id|parport
+op_star
+)paren
+id|dev_id
+comma
+id|regs
+)paren
+suffix:semicolon
 )brace
 r_void
 DECL|function|parport_ax_write_epp
@@ -743,7 +757,7 @@ c_func
 (paren
 id|p-&gt;irq
 comma
-l_int|NULL
+id|p
 )paren
 suffix:semicolon
 )brace
@@ -801,6 +815,9 @@ id|p
 )paren
 (brace
 multiline_comment|/* FIXME check that resources are free */
+r_int
+id|err
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -808,28 +825,39 @@ id|p-&gt;irq
 op_ne
 id|PARPORT_IRQ_NONE
 )paren
-(brace
+r_if
+c_cond
+(paren
+(paren
+id|err
+op_assign
 id|request_irq
 c_func
 (paren
 id|p-&gt;irq
 comma
-id|parport_ax_null_intr_func
+id|parport_ax_interrupt
 comma
 l_int|0
 comma
 id|p-&gt;name
 comma
-l_int|NULL
+id|p
 )paren
+)paren
+op_ne
+l_int|0
+)paren
+r_return
+id|err
 suffix:semicolon
+r_else
 id|parport_ax_enable_irq
 c_func
 (paren
 id|p
 )paren
 suffix:semicolon
-)brace
 id|request_region
 c_func
 (paren
@@ -1099,22 +1127,6 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* FIXME */
 )brace
-r_int
-DECL|function|parport_ax_examine_irq
-id|parport_ax_examine_irq
-c_func
-(paren
-r_struct
-id|parport
-op_star
-id|p
-)paren
-(brace
-r_return
-l_int|0
-suffix:semicolon
-multiline_comment|/* FIXME */
-)brace
 r_void
 DECL|function|parport_ax_inc_use_count
 id|parport_ax_inc_use_count
@@ -1234,7 +1246,7 @@ id|parport_ax_enable_irq
 comma
 id|parport_ax_disable_irq
 comma
-id|parport_ax_examine_irq
+id|parport_ax_interrupt
 comma
 id|parport_ax_inc_use_count
 comma

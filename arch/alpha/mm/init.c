@@ -43,11 +43,10 @@ c_func
 r_void
 )paren
 suffix:semicolon
-DECL|variable|original_pcb_ptr
+DECL|variable|original_pcb
 r_struct
 id|thread_struct
-op_star
-id|original_pcb_ptr
+id|original_pcb
 suffix:semicolon
 macro_line|#ifndef __SMP__
 DECL|variable|quicklists
@@ -843,6 +842,11 @@ id|memdesc_struct
 op_star
 id|memdesc
 suffix:semicolon
+r_struct
+id|thread_struct
+op_star
+id|original_pcb_ptr
+suffix:semicolon
 multiline_comment|/* initialize mem_map[] */
 id|start_mem
 op_assign
@@ -863,13 +867,13 @@ id|memdesc_struct
 op_star
 )paren
 (paren
-id|INIT_HWRPB-&gt;mddt_offset
+id|hwrpb-&gt;mddt_offset
 op_plus
 (paren
 r_int
 r_int
 )paren
-id|INIT_HWRPB
+id|hwrpb
 )paren
 suffix:semicolon
 id|cluster
@@ -900,12 +904,13 @@ id|pfn
 comma
 id|nr
 suffix:semicolon
+multiline_comment|/* Bit 0 is console/PALcode reserved.  Bit 1 is&n;&t;&t;   non-volatile memory -- we might want to mark&n;&t;&t;   this for later */
 r_if
 c_cond
 (paren
 id|cluster-&gt;usage
 op_amp
-l_int|1
+l_int|3
 )paren
 r_continue
 suffix:semicolon
@@ -916,16 +921,6 @@ suffix:semicolon
 id|nr
 op_assign
 id|cluster-&gt;numpages
-suffix:semicolon
-multiline_comment|/* non-volatile memory. We might want to mark this for later */
-r_if
-c_cond
-(paren
-id|cluster-&gt;usage
-op_amp
-l_int|2
-)paren
-r_continue
 suffix:semicolon
 r_while
 c_loop
@@ -949,8 +944,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* unmap the console stuff: we don&squot;t need it, and we don&squot;t want it */
-multiline_comment|/* Also set up the real kernel PCB while we&squot;re at it.. */
+multiline_comment|/* Initialize the kernel&squot;s page tables.  Linux puts the vptb in&n;&t;   the last slot of the L1 page table.  */
 id|memset
 c_func
 (paren
@@ -1010,6 +1004,33 @@ c_func
 id|PAGE_KERNEL
 )paren
 suffix:semicolon
+multiline_comment|/* Set the vptb.  This is often done by the bootloader, but &n;&t;   shouldn&squot;t be required.  */
+r_if
+c_cond
+(paren
+id|hwrpb-&gt;vptb
+op_ne
+l_int|0xfffffffe00000000
+)paren
+(brace
+id|wrvptptr
+c_func
+(paren
+l_int|0xfffffffe00000000
+)paren
+suffix:semicolon
+id|hwrpb-&gt;vptb
+op_assign
+l_int|0xfffffffe00000000
+suffix:semicolon
+id|hwrpb_update_checksum
+c_func
+(paren
+id|hwrpb
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* Also set up the real kernel PCB while we&squot;re at it.  */
 id|init_task.tss.ptbr
 op_assign
 id|newptbr
@@ -1025,6 +1046,38 @@ l_int|0
 suffix:semicolon
 id|original_pcb_ptr
 op_assign
+id|load_PCB
+c_func
+(paren
+op_amp
+id|init_task.tss
+)paren
+suffix:semicolon
+id|tbia
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Save off the contents of the original PCB so that we can&n;&t;   restore the original console&squot;s page tables for a clean reboot.&n;&n;&t;   Note that the PCB is supposed to be a physical address, but&n;&t;   since KSEG values also happen to work, folks get confused.&n;&t;   Check this here.  */
+r_if
+c_cond
+(paren
+(paren
+r_int
+r_int
+)paren
+id|original_pcb_ptr
+OL
+id|PAGE_OFFSET
+)paren
+(brace
+id|original_pcb_ptr
+op_assign
+(paren
+r_struct
+id|thread_struct
+op_star
+)paren
 id|phys_to_virt
 c_func
 (paren
@@ -1032,30 +1085,14 @@ c_func
 r_int
 r_int
 )paren
-id|load_PCB
-c_func
-(paren
-op_amp
-id|init_task.tss
-)paren
+id|original_pcb_ptr
 )paren
 suffix:semicolon
-macro_line|#if 0
-id|printk
-c_func
-(paren
-l_string|&quot;OKSP 0x%lx OPTBR 0x%lx&bslash;n&quot;
-comma
-id|original_pcb_ptr-&gt;ksp
-comma
-id|original_pcb_ptr-&gt;ptbr
-)paren
-suffix:semicolon
-macro_line|#endif
-id|tbia
-c_func
-(paren
-)paren
+)brace
+id|original_pcb
+op_assign
+op_star
+id|original_pcb_ptr
 suffix:semicolon
 r_return
 id|start_mem
@@ -1083,18 +1120,6 @@ id|current-&gt;tss.flags
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if 0
-id|printk
-c_func
-(paren
-l_string|&quot;paging_init_secondary: KSP 0x%lx PTBR 0x%lx&bslash;n&quot;
-comma
-id|current-&gt;tss.ksp
-comma
-id|current-&gt;tss.ptbr
-)paren
-suffix:semicolon
-macro_line|#endif
 id|load_PCB
 c_func
 (paren
@@ -1111,6 +1136,61 @@ r_return
 suffix:semicolon
 )brace
 macro_line|#endif /* __SMP__ */
+macro_line|#if defined(CONFIG_ALPHA_GENERIC) || defined(CONFIG_ALPHA_SRM)
+r_void
+DECL|function|srm_paging_stop
+id|srm_paging_stop
+(paren
+r_void
+)paren
+(brace
+multiline_comment|/* Move the vptb back to where the SRM console expects it.  */
+id|swapper_pg_dir
+(braket
+l_int|1
+)braket
+op_assign
+id|swapper_pg_dir
+(braket
+l_int|1023
+)braket
+suffix:semicolon
+id|tbia
+c_func
+(paren
+)paren
+suffix:semicolon
+id|wrvptptr
+c_func
+(paren
+l_int|0x200000000
+)paren
+suffix:semicolon
+id|hwrpb-&gt;vptb
+op_assign
+l_int|0x200000000
+suffix:semicolon
+id|hwrpb_update_checksum
+c_func
+(paren
+id|hwrpb
+)paren
+suffix:semicolon
+multiline_comment|/* Reload the page tables that the console had in use.  */
+id|load_PCB
+c_func
+(paren
+op_amp
+id|original_pcb
+)paren
+suffix:semicolon
+id|tbia
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 macro_line|#if DEBUG_POISON
 r_static
 r_void

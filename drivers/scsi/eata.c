@@ -3030,6 +3030,10 @@ id|FALSE
 suffix:semicolon
 r_else
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|sh
 (braket
 id|j
@@ -3047,6 +3051,13 @@ op_member_access_from_pointer
 id|unchecked_isa_dma
 op_assign
 id|TRUE
+suffix:semicolon
+id|flags
+op_assign
+id|claim_dma_lock
+c_func
+(paren
+)paren
 suffix:semicolon
 id|disable_dma
 c_func
@@ -3072,6 +3083,12 @@ id|enable_dma
 c_func
 (paren
 id|dma_channel
+)paren
+suffix:semicolon
+id|release_dma_lock
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 )brace

@@ -747,16 +747,6 @@ id|pt_regs
 id|regs
 )paren
 (brace
-r_extern
-r_int
-id|ptrace_cancel_bpt
-(paren
-r_struct
-id|task_struct
-op_star
-id|who
-)paren
-suffix:semicolon
 id|lock_kernel
 c_func
 (paren
@@ -2262,9 +2252,9 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Handle user-level unaligned fault.  Handling user-level unaligned&n; * faults is *extremely* slow and produces nasty messages.  A user&n; * program *should* fix unaligned faults ASAP.&n; *&n; * Notice that we have (almost) the regular kernel stack layout here,&n; * so finding the appropriate registers is a little more difficult&n; * than in the kernel case.&n; *&n; * Finally, we handle regular integer load/stores only.  In&n; * particular, load-linked/store-conditionally and floating point&n; * load/stores are not supported.  The former make no sense with&n; * unaligned faults (they are guaranteed to fail) and I don&squot;t think&n; * the latter will occur in any decent program.&n; *&n; * Sigh. We *do* have to handle some FP operations, because GCC will&n; * uses them as temporary storage for integer memory to memory copies.&n; * However, we need to deal with stt/ldt and sts/lds only.&n; */
 DECL|macro|OP_INT_MASK
-mdefine_line|#define OP_INT_MASK&t;( 1L &lt;&lt; 0x28 | 1L &lt;&lt; 0x2c   /* ldl stl */&t;&bslash;&n;&t;&t;&t;| 1L &lt;&lt; 0x29 | 1L &lt;&lt; 0x2d   /* ldq stq */&t;&bslash;&n;&t;&t;&t;| 1L &lt;&lt; 0x0c | 1L &lt;&lt; 0x0d ) /* ldwu stw */
+mdefine_line|#define OP_INT_MASK&t;( 1L &lt;&lt; 0x28 | 1L &lt;&lt; 0x2c   /* ldl stl */&t;&bslash;&n;&t;&t;&t;| 1L &lt;&lt; 0x29 | 1L &lt;&lt; 0x2d   /* ldq stq */&t;&bslash;&n;&t;&t;&t;| 1L &lt;&lt; 0x0c | 1L &lt;&lt; 0x0d   /* ldwu stw */&t;&bslash;&n;&t;&t;&t;| 1L &lt;&lt; 0x0a | 1L &lt;&lt; 0x0e ) /* ldbu stb */
 DECL|macro|OP_WRITE_MASK
-mdefine_line|#define OP_WRITE_MASK&t;( 1L &lt;&lt; 0x26 | 1L &lt;&lt; 0x27   /* sts stt */&t;&bslash;&n;&t;&t;&t;| 1L &lt;&lt; 0x2c | 1L &lt;&lt; 0x2d   /* stl stq */&t;&bslash;&n;&t;&t;&t;| 1L &lt;&lt; 0xd )&t;&t;    /* stw */
+mdefine_line|#define OP_WRITE_MASK&t;( 1L &lt;&lt; 0x26 | 1L &lt;&lt; 0x27   /* sts stt */&t;&bslash;&n;&t;&t;&t;| 1L &lt;&lt; 0x2c | 1L &lt;&lt; 0x2d   /* stl stq */&t;&bslash;&n;&t;&t;&t;| 1L &lt;&lt; 0x0d | 1L &lt;&lt; 0x0e ) /* stw stb */
 DECL|macro|R
 mdefine_line|#define R(x)&t;((size_t) &amp;((struct pt_regs *)0)-&gt;x)
 DECL|variable|unauser_reg_offsets

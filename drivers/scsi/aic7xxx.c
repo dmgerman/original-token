@@ -31,7 +31,6 @@ macro_line|#include &quot;sd.h&quot;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;aic7xxx.h&quot;
-macro_line|#include &quot;aic7xxx/bsd_q.h&quot;
 macro_line|#include &quot;aic7xxx/sequencer.h&quot;
 macro_line|#include &quot;aic7xxx/scsi_message.h&quot;
 macro_line|#include &quot;aic7xxx_reg.h&quot;
@@ -83,7 +82,7 @@ l_int|NULL
 )brace
 suffix:semicolon
 DECL|macro|AIC7XXX_C_VERSION
-mdefine_line|#define AIC7XXX_C_VERSION  &quot;5.1.0&quot;
+mdefine_line|#define AIC7XXX_C_VERSION  &quot;5.1.2&quot;
 DECL|macro|NUMBER
 mdefine_line|#define NUMBER(arr)     (sizeof(arr) / sizeof(arr[0]))
 DECL|macro|MIN
@@ -22153,6 +22152,7 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PCI
 r_if
 c_cond
 (paren
@@ -22166,6 +22166,7 @@ c_func
 id|p
 )paren
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren

@@ -2,7 +2,7 @@ multiline_comment|/*&n; *  attr.c&n; *&n; *  Copyright (C) 1996-1997 Martin von 
 macro_line|#include &quot;types.h&quot;
 macro_line|#include &quot;struct.h&quot;
 macro_line|#include &quot;attr.h&quot;
-macro_line|#include &lt;errno.h&gt;
+macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &quot;macros.h&quot;
 macro_line|#include &quot;support.h&quot;
 macro_line|#include &quot;util.h&quot;

@@ -416,7 +416,7 @@ DECL|macro|DEVICE_ON
 mdefine_line|#define DEVICE_ON(device)
 DECL|macro|DEVICE_OFF
 mdefine_line|#define DEVICE_OFF(device)
-macro_line|#elif (MAJOR_NR == SCSI_DISK_MAJOR)
+macro_line|#elif (SCSI_DISK_MAJOR(MAJOR_NR))
 DECL|macro|DEVICE_NAME
 mdefine_line|#define DEVICE_NAME &quot;scsidisk&quot;
 DECL|macro|DEVICE_INTR
@@ -426,7 +426,7 @@ mdefine_line|#define TIMEOUT_VALUE (2*HZ)
 DECL|macro|DEVICE_REQUEST
 mdefine_line|#define DEVICE_REQUEST do_sd_request
 DECL|macro|DEVICE_NR
-mdefine_line|#define DEVICE_NR(device) (MINOR(device) &gt;&gt; 4)
+mdefine_line|#define DEVICE_NR(device) (((MAJOR(device) &amp; SD_MAJOR_MASK) &lt;&lt; (8 - 4)) + (MINOR(device) &gt;&gt; 4))
 DECL|macro|DEVICE_ON
 mdefine_line|#define DEVICE_ON(device)
 DECL|macro|DEVICE_OFF

@@ -446,7 +446,7 @@ l_int|NULL
 comma
 l_int|NULL
 comma
-id|PARPORT_DEV_TRAN
+l_int|0
 comma
 op_amp
 id|dev

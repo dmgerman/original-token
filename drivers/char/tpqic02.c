@@ -4886,6 +4886,10 @@ c_func
 r_void
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4927,6 +4931,13 @@ c_func
 id|ctlbits
 comma
 id|QIC02_CTL_PORT
+)paren
+suffix:semicolon
+id|flags
+op_assign
+id|claim_dma_lock
+c_func
+(paren
 )paren
 suffix:semicolon
 id|clear_dma_ff
@@ -5069,6 +5080,12 @@ c_func
 id|QIC02_TAPE_DMA
 )paren
 suffix:semicolon
+id|release_dma_lock
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 multiline_comment|/* block transfer should start now, jumping to the &n;&t; * interrupt routine when done or an exception was detected.&n;&t; */
 )brace
 multiline_comment|/* dma_transfer */
@@ -5090,6 +5107,10 @@ multiline_comment|/* assume &squot;bytes_todo&squot;&gt;0 */
 (brace
 r_int
 id|stat
+suffix:semicolon
+r_int
+r_int
+id|flags
 suffix:semicolon
 id|tpqputs
 c_func
@@ -5411,6 +5432,12 @@ l_int|2
 )paren
 suffix:semicolon
 multiline_comment|/* initiate first data block read from/write to the tape controller */
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -5421,9 +5448,10 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 id|TPQPUTS
@@ -5455,12 +5483,23 @@ id|stat
 op_assign
 id|TE_OK
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|TIMEROFF
 suffix:semicolon
 id|TPQPUTS
 c_func
 (paren
 l_string|&quot;end_dma() enter&quot;
+)paren
+suffix:semicolon
+id|flags
+op_assign
+id|claim_dma_lock
+c_func
+(paren
 )paren
 suffix:semicolon
 id|disable_dma
@@ -5473,6 +5512,12 @@ id|clear_dma_ff
 c_func
 (paren
 id|QIC02_TAPE_DMA
+)paren
+suffix:semicolon
+id|release_dma_lock
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 r_if
@@ -5725,6 +5770,10 @@ id|r
 comma
 id|i
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|TIMEROFF
 suffix:semicolon
 r_if
@@ -5896,6 +5945,13 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+id|flags
+op_assign
+id|claim_dma_lock
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5927,6 +5983,12 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* big trouble, but can&squot;t do much about it... */
 )brace
+id|release_dma_lock
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

@@ -90,6 +90,20 @@ r_int
 r_int
 id|lock
 suffix:semicolon
+macro_line|#if DEBUG_SPINLOCK
+DECL|member|debug_state
+DECL|member|target_ipl
+DECL|member|saved_ipl
+DECL|member|on_cpu
+r_char
+id|debug_state
+comma
+id|target_ipl
+comma
+id|saved_ipl
+comma
+id|on_cpu
+suffix:semicolon
 DECL|member|previous
 r_void
 op_star
@@ -101,14 +115,22 @@ id|task_struct
 op_star
 id|task
 suffix:semicolon
+macro_line|#endif
 DECL|typedef|spinlock_t
 )brace
 id|spinlock_t
 suffix:semicolon
+macro_line|#if DEBUG_SPINLOCK
 DECL|macro|SPIN_LOCK_UNLOCKED
-mdefine_line|#define SPIN_LOCK_UNLOCKED { 0, 0, 0 }
+mdefine_line|#define SPIN_LOCK_UNLOCKED {0, 1, 0, 0, 0, 0}
 DECL|macro|spin_lock_init
-mdefine_line|#define spin_lock_init(x) &bslash;&n;&t;((x)-&gt;lock = 0, (x)-&gt;previous = 0, (x)-&gt;task = 0)
+mdefine_line|#define spin_lock_init(x)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;((x)-&gt;lock = 0, (x)-&gt;target_ipl = 0, (x)-&gt;debug_state = 1,&t;&bslash;&n;&t; (x)-&gt;previous = 0, (x)-&gt;task = 0)
+macro_line|#else
+DECL|macro|SPIN_LOCK_UNLOCKED
+mdefine_line|#define SPIN_LOCK_UNLOCKED&t;{ 0 }
+DECL|macro|spin_lock_init
+mdefine_line|#define spin_lock_init(x)&t;((x)-&gt;lock = 0)
+macro_line|#endif
 DECL|macro|spin_unlock_wait
 mdefine_line|#define spin_unlock_wait(x) &bslash;&n;&t;({ do { barrier(); } while(((volatile spinlock_t *)x)-&gt;lock); })
 DECL|member|a
@@ -131,6 +153,16 @@ mdefine_line|#define __dummy_lock(lock) (*(__dummy_lock_t *)(lock))
 macro_line|#if DEBUG_SPINLOCK
 r_extern
 r_void
+id|spin_unlock
+c_func
+(paren
+id|spinlock_t
+op_star
+id|lock
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|spin_lock
 c_func
 (paren
@@ -139,7 +171,41 @@ op_star
 id|lock
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|spin_trylock
+c_func
+(paren
+id|spinlock_t
+op_star
+id|lock
+)paren
+suffix:semicolon
+DECL|macro|spin_lock_own
+mdefine_line|#define spin_lock_own(LOCK, LOCATION)&t;&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (!((LOCK)-&gt;lock &amp;&amp; (LOCK)-&gt;on_cpu == smp_processor_id()))&t;&bslash;&n;&t;&t;printk(&quot;%s: called on %d from %p but lock %s on %d&bslash;n&quot;,&t;&bslash;&n;&t;&t;       LOCATION, smp_processor_id(),&t;&t;&t;&bslash;&n;&t;&t;       __builtin_return_address(0),&t;&t;&t;&bslash;&n;&t;&t;       (LOCK)-&gt;lock ? &quot;taken&quot; : &quot;freed&quot;, (LOCK)-&gt;on_cpu); &bslash;&n;} while (0)
 macro_line|#else
+DECL|function|spin_unlock
+r_static
+r_inline
+r_void
+id|spin_unlock
+c_func
+(paren
+id|spinlock_t
+op_star
+id|lock
+)paren
+(brace
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+id|lock-&gt;lock
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 DECL|function|spin_lock
 r_static
 r_inline
@@ -160,14 +226,14 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;1:&t;ldq_l&t;%0,%1&bslash;n&quot;
+l_string|&quot;1:&t;ldl_l&t;%0,%1&bslash;n&quot;
 l_string|&quot;&t;blbs&t;%0,2f&bslash;n&quot;
 l_string|&quot;&t;or&t;%0,1,%0&bslash;n&quot;
-l_string|&quot;&t;stq_c&t;%0,%1&bslash;n&quot;
+l_string|&quot;&t;stl_c&t;%0,%1&bslash;n&quot;
 l_string|&quot;&t;beq&t;%0,2f&bslash;n&quot;
 l_string|&quot;&t;mb&bslash;n&quot;
 l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
-l_string|&quot;2:&t;ldq&t;%0,%1&bslash;n&quot;
+l_string|&quot;2:&t;ldl&t;%0,%1&bslash;n&quot;
 l_string|&quot;&t;blbs&t;%0,2b&bslash;n&quot;
 l_string|&quot;&t;br&t;1b&bslash;n&quot;
 l_string|&quot;.previous&quot;
@@ -197,31 +263,11 @@ id|lock
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* DEBUG_SPINLOCK */
-DECL|function|spin_unlock
-r_static
-r_inline
-r_void
-id|spin_unlock
-c_func
-(paren
-id|spinlock_t
-op_star
-id|lock
-)paren
-(brace
-id|mb
-c_func
-(paren
-)paren
-suffix:semicolon
-id|lock-&gt;lock
-op_assign
-l_int|0
-suffix:semicolon
-)brace
 DECL|macro|spin_trylock
 mdefine_line|#define spin_trylock(lock) (!test_and_set_bit(0,(lock)))
+DECL|macro|spin_lock_own
+mdefine_line|#define spin_lock_own(LOCK, LOCATION)&t;((void)0)
+macro_line|#endif /* DEBUG_SPINLOCK */
 DECL|macro|spin_lock_irq
 mdefine_line|#define spin_lock_irq(lock) &bslash;&n;  (__cli(), spin_lock(lock))
 DECL|macro|spin_unlock_irq

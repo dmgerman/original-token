@@ -1275,9 +1275,11 @@ multiline_comment|/*&n;&t;&t;&t; *&t;Nonblocking mode handling. Return current #
 r_if
 c_cond
 (paren
+(paren
 id|file-&gt;f_flags
 op_amp
 id|O_NONBLOCK
+)paren
 op_logical_and
 id|buf_no
 op_eq

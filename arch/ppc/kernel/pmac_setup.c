@@ -556,6 +556,16 @@ macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &quot;../../../drivers/scsi/scsi.h&quot;
 macro_line|#include &quot;../../../drivers/scsi/sd.h&quot;
 macro_line|#include &quot;../../../drivers/scsi/hosts.h&quot;
+DECL|macro|SD_MAJOR
+mdefine_line|#define SD_MAJOR(i)&t;&t;(!(i) ? SCSI_DISK0_MAJOR : SCSI_DISK1_MAJOR-1+(i))
+DECL|macro|SD_MAJOR_NUMBER
+mdefine_line|#define SD_MAJOR_NUMBER(i)&t;SD_MAJOR((i) &gt;&gt; 8)
+DECL|macro|SD_MINOR_NUMBER
+mdefine_line|#define SD_MINOR_NUMBER(i)&t;((i) &amp; 255)
+DECL|macro|MKDEV_SD_PARTITION
+mdefine_line|#define MKDEV_SD_PARTITION(i)&t;MKDEV(SD_MAJOR_NUMBER(i), SD_MINOR_NUMBER(i))
+DECL|macro|MKDEV_SD
+mdefine_line|#define MKDEV_SD(index)&t;&t;MKDEV_SD_PARTITION((index) &lt;&lt; 4)
 DECL|function|sd_find_target
 id|kdev_t
 id|sd_find_target
@@ -613,14 +623,10 @@ op_eq
 id|tgt
 )paren
 r_return
-id|MKDEV
+id|MKDEV_SD
 c_func
 (paren
-id|SCSI_DISK_MAJOR
-comma
 id|i
-op_lshift
-l_int|4
 )paren
 suffix:semicolon
 r_return

@@ -29,6 +29,8 @@ DECL|macro|O_NDELAY
 mdefine_line|#define O_NDELAY&t;(0x0004 | O_NONBLOCK)
 DECL|macro|O_NOCTTY
 mdefine_line|#define O_NOCTTY&t;0x8000&t;/* not fcntl */
+DECL|macro|O_DIRECTORY
+mdefine_line|#define O_DIRECTORY&t;0x10000&t;/* must be a directory */
 DECL|macro|F_DUPFD
 mdefine_line|#define F_DUPFD&t;&t;0&t;/* dup */
 DECL|macro|F_GETFD

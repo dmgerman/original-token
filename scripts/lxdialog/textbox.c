@@ -2297,8 +2297,6 @@ id|width
 )paren
 (brace
 r_int
-id|i
-comma
 id|y
 comma
 id|x
@@ -2307,6 +2305,11 @@ r_char
 op_star
 id|line
 suffix:semicolon
+macro_line|#if OLD_NCURSES
+r_int
+id|i
+suffix:semicolon
+macro_line|#endif
 id|line
 op_assign
 id|get_line
