@@ -1612,6 +1612,9 @@ c_cond
 (paren
 id|tty-&gt;stopped
 op_logical_and
+op_logical_neg
+id|tty-&gt;flow_stopped
+op_logical_and
 id|I_IXON
 c_func
 (paren

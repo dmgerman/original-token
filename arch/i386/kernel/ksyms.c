@@ -1,7 +1,9 @@
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/elfcore.h&gt;
+macro_line|#include &lt;linux/mca.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -134,6 +136,57 @@ id|X
 c_func
 (paren
 id|smp_invalidate_needed
+)paren
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_MCA
+multiline_comment|/* Adapter probing and info methods. */
+id|X
+c_func
+(paren
+id|mca_write_pos
+)paren
+comma
+id|X
+c_func
+(paren
+id|mca_read_pos
+)paren
+comma
+id|X
+c_func
+(paren
+id|mca_read_stored_pos
+)paren
+comma
+id|X
+c_func
+(paren
+id|mca_set_adapter_name
+)paren
+comma
+id|X
+c_func
+(paren
+id|mca_get_adapter_name
+)paren
+comma
+id|X
+c_func
+(paren
+id|mca_set_adapter_procfn
+)paren
+comma
+id|X
+c_func
+(paren
+id|mca_isenabled
+)paren
+comma
+id|X
+c_func
+(paren
+id|mca_isadapter
 )paren
 comma
 macro_line|#endif

@@ -109,6 +109,8 @@ DECL|macro|IDE3_MAJOR
 mdefine_line|#define IDE3_MAJOR&t;34
 DECL|macro|NETLINK_MAJOR
 mdefine_line|#define NETLINK_MAJOR&t;36
+DECL|macro|PS2ESDI_MAJOR
+mdefine_line|#define PS2ESDI_MAJOR&t;36
 DECL|macro|IDETAPE_MAJOR
 mdefine_line|#define IDETAPE_MAJOR&t;37
 DECL|macro|Z2RAM_MAJOR

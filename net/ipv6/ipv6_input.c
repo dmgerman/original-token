@@ -359,7 +359,7 @@ op_minus
 id|__u8
 op_star
 )paren
-id|skb-&gt;ipv6_hdr
+id|skb-&gt;nh.raw
 suffix:semicolon
 multiline_comment|/* I think this is correct please check - IPM */
 r_switch
@@ -444,7 +444,7 @@ c_func
 (paren
 op_amp
 (paren
-id|skb-&gt;ipv6_hdr-&gt;daddr
+id|skb-&gt;nh.ipv6h-&gt;daddr
 )paren
 )paren
 op_amp
@@ -603,7 +603,7 @@ id|icmpv6hdr
 op_star
 )paren
 (paren
-id|skb-&gt;ipv6_hdr
+id|skb-&gt;nh.ipv6h
 op_plus
 l_int|1
 )paren
@@ -862,7 +862,7 @@ r_struct
 id|ipv6_options
 op_star
 )paren
-id|skb-&gt;proto_priv
+id|skb-&gt;cb
 suffix:semicolon
 r_struct
 id|ipv6hdr
@@ -904,14 +904,15 @@ id|pkt_len
 suffix:semicolon
 id|hdr
 op_assign
-id|skb-&gt;ipv6_hdr
+id|skb-&gt;nh.ipv6h
+suffix:semicolon
+id|skb-&gt;h.raw
 op_assign
 (paren
-r_struct
-id|ipv6hdr
+id|__u8
 op_star
 )paren
-id|skb-&gt;h.raw
+id|hdr
 suffix:semicolon
 r_if
 c_cond
@@ -1157,7 +1158,7 @@ id|skb-&gt;h.raw
 suffix:semicolon
 id|hdr
 op_assign
-id|skb-&gt;ipv6_hdr
+id|skb-&gt;nh.ipv6h
 suffix:semicolon
 r_continue
 suffix:semicolon
@@ -1354,10 +1355,6 @@ l_string|&quot;proto not found %d&bslash;n&quot;
 comma
 id|nexthdr
 )paren
-suffix:semicolon
-id|skb-&gt;sk
-op_assign
-l_int|NULL
 suffix:semicolon
 id|kfree_skb
 c_func

@@ -9,17 +9,13 @@ macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
-macro_line|#ifdef ALIAS_USER_LAND_DEBUG
-macro_line|#include &quot;net_alias.h&quot;
-macro_line|#include &quot;user_stubs.h&quot;
-macro_line|#endif
 macro_line|#include &lt;linux/net_alias.h&gt;
 macro_line|#ifdef CONFIG_KERNELD
 macro_line|#include &lt;linux/kerneld.h&gt;
 macro_line|#endif
 multiline_comment|/*&n; * Only allow the following flags to pass from main device to aliases&n; */
 DECL|macro|NET_ALIAS_IFF_MASK
-mdefine_line|#define  NET_ALIAS_IFF_MASK   (IFF_UP|IFF_BROADCAST|IFF_RUNNING|IFF_NOARP|IFF_LOOPBACK|IFF_POINTOPOINT)
+mdefine_line|#define  NET_ALIAS_IFF_MASK   (IFF_UP|IFF_RUNNING|IFF_NOARP|IFF_LOOPBACK|IFF_POINTOPOINT|IFF_BROADCAST|IFF_MULTICAST)
 r_static
 r_struct
 id|net_alias_type
@@ -917,6 +913,14 @@ suffix:semicolon
 id|dev-&gt;hard_header
 op_assign
 id|main_dev-&gt;hard_header
+suffix:semicolon
+id|dev-&gt;hard_header_cache
+op_assign
+id|main_dev-&gt;hard_header_cache
+suffix:semicolon
+id|dev-&gt;header_cache_update
+op_assign
+id|main_dev-&gt;header_cache_update
 suffix:semicolon
 id|dev-&gt;rebuild_header
 op_assign

@@ -259,11 +259,11 @@ id|__unused
 DECL|macro|COPY
 mdefine_line|#define COPY(x) regs-&gt;x = context-&gt;x
 DECL|macro|COPY_SEG
-mdefine_line|#define COPY_SEG(seg) &bslash;&n;{ unsigned int tmp = context-&gt;seg; &bslash;&n;if ((tmp &amp; 0xfffc) &amp;&amp; (tmp &amp; 3) != 3) goto badframe; &bslash;&n;regs-&gt;x##seg = tmp; }
+mdefine_line|#define COPY_SEG(seg) &bslash;&n;{ unsigned int tmp = context-&gt;seg; &bslash;&n;if (   (tmp &amp; 0xfffc)     /* not a NULL selectors */ &bslash;&n;    &amp;&amp; (tmp &amp; 0x4) != 0x4 /* not a LDT selector */ &bslash;&n;    &amp;&amp; (tmp &amp; 3) != 3     /* not a RPL3 GDT selector */ &bslash;&n;   ) goto badframe; &bslash;&n;regs-&gt;x##seg = tmp; }
 DECL|macro|COPY_SEG_STRICT
 mdefine_line|#define COPY_SEG_STRICT(seg) &bslash;&n;{ unsigned int tmp = context-&gt;seg; &bslash;&n;if ((tmp &amp; 0xfffc) &amp;&amp; (tmp &amp; 3) != 3) goto badframe; &bslash;&n;regs-&gt;x##seg = tmp; }
 DECL|macro|GET_SEG
-mdefine_line|#define GET_SEG(seg) &bslash;&n;{ unsigned int tmp = context-&gt;seg; &bslash;&n;if ((tmp &amp; 0xfffc) &amp;&amp; (tmp &amp; 3) != 3) goto badframe; &bslash;&n;__asm__(&quot;mov %w0,%%&quot; #seg: :&quot;r&quot; (tmp)); }
+mdefine_line|#define GET_SEG(seg) &bslash;&n;{ unsigned int tmp = context-&gt;seg; &bslash;&n;if (   (tmp &amp; 0xfffc)     /* not a NULL selectors */ &bslash;&n;    &amp;&amp; (tmp &amp; 0x4) != 0x4 /* not a LDT selector */ &bslash;&n;    &amp;&amp; (tmp &amp; 3) != 3     /* not a RPL3 GDT selector */ &bslash;&n;   ) goto badframe; &bslash;&n;__asm__(&quot;mov %w0,%%&quot; #seg: :&quot;r&quot; (tmp)); }
 r_struct
 id|sigcontext
 op_star

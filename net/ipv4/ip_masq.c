@@ -1596,7 +1596,7 @@ id|iphdr
 op_star
 id|iph
 op_assign
-id|skb-&gt;h.iph
+id|skb-&gt;nh.iph
 suffix:semicolon
 id|__u16
 op_star
@@ -1780,7 +1780,7 @@ op_star
 )paren
 id|portptr
 op_minus
-id|skb-&gt;h.raw
+id|skb-&gt;nh.raw
 )paren
 suffix:semicolon
 multiline_comment|/*&n;         *&t;Set iph addr and port from ip_masq obj.&n;         */
@@ -1820,7 +1820,7 @@ id|skb_ptr
 suffix:semicolon
 id|iph
 op_assign
-id|skb-&gt;h.iph
+id|skb-&gt;nh.iph
 suffix:semicolon
 id|portptr
 op_assign
@@ -1856,7 +1856,7 @@ op_star
 )paren
 id|portptr
 op_minus
-id|skb-&gt;h.raw
+id|skb-&gt;nh.raw
 )paren
 suffix:semicolon
 )brace
@@ -2079,7 +2079,7 @@ id|iphdr
 op_star
 id|iph
 op_assign
-id|skb-&gt;h.iph
+id|skb-&gt;nh.iph
 suffix:semicolon
 r_struct
 id|icmphdr
@@ -2489,7 +2489,7 @@ id|iphdr
 op_star
 id|iph
 op_assign
-id|skb-&gt;h.iph
+id|skb-&gt;nh.iph
 suffix:semicolon
 r_struct
 id|icmphdr
@@ -2898,7 +2898,7 @@ id|iphdr
 op_star
 id|iph
 op_assign
-id|skb-&gt;h.iph
+id|skb-&gt;nh.iph
 suffix:semicolon
 id|__u16
 op_star
@@ -3277,7 +3277,7 @@ id|skb_p
 suffix:semicolon
 id|iph
 op_assign
-id|skb-&gt;h.iph
+id|skb-&gt;nh.iph
 suffix:semicolon
 id|portptr
 op_assign

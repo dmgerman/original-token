@@ -40,6 +40,17 @@ id|dev
 suffix:semicolon
 r_extern
 r_int
+id|ultramca_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|wd_probe
 c_func
 (paren
@@ -247,6 +258,16 @@ op_star
 suffix:semicolon
 r_extern
 r_int
+id|elmc_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|elplus_probe
 c_func
 (paren
@@ -258,6 +279,16 @@ suffix:semicolon
 r_extern
 r_int
 id|ac3200_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|es_probe
 c_func
 (paren
 r_struct
@@ -513,6 +544,14 @@ c_func
 (paren
 id|dev
 )paren
+macro_line|#if defined(CONFIG_MCA)
+op_logical_and
+id|ultramca_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
 macro_line|#endif
 macro_line|#if defined(CONFIG_SMC9194)
 op_logical_and
@@ -557,6 +596,14 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_AC3200&t;&t;/* Ansel Communications EISA 3200. */
 op_logical_and
 id|ac3200_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#ifdef CONFIG_ES3210
+op_logical_and
+id|es_probe
 c_func
 (paren
 id|dev
@@ -694,6 +741,14 @@ macro_line|#endif&t;/* defined(CONFIG_WAVELAN) */
 macro_line|#ifdef CONFIG_EL16&t;&t;/* 3c507 */
 op_logical_and
 id|el16_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#ifdef CONFIG_ELMC&t;&t;/* 3c523 */
+op_logical_and
+id|elmc_probe
 c_func
 (paren
 id|dev
@@ -1986,7 +2041,6 @@ DECL|macro|NEXT_DEV
 macro_line|#   define&t;NEXT_DEV&t;(&amp;ibmtr_dev0)
 macro_line|#endif 
 macro_line|#ifdef CONFIG_NET_IPIP
-macro_line|#ifdef CONFIG_IP_FORWARD
 r_extern
 r_int
 id|tunnel_init
@@ -2086,7 +2140,6 @@ DECL|macro|NEXT_DEV
 macro_line|#   undef&t;NEXT_DEV
 DECL|macro|NEXT_DEV
 macro_line|#   define&t;NEXT_DEV&t;(&amp;tunnel_dev0)
-macro_line|#endif 
 macro_line|#endif
 macro_line|#ifdef CONFIG_AP1000
 r_extern

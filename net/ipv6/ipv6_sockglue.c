@@ -259,6 +259,11 @@ op_assign
 op_amp
 id|ipv4_specific
 suffix:semicolon
+id|sk-&gt;socket-&gt;ops
+op_assign
+op_amp
+id|inet_stream_ops
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -267,12 +272,12 @@ op_assign
 op_amp
 id|udp_prot
 suffix:semicolon
-)brace
 id|sk-&gt;socket-&gt;ops
 op_assign
 op_amp
-id|inet_proto_ops
+id|inet_dgram_ops
 suffix:semicolon
+)brace
 id|retv
 op_assign
 l_int|0

@@ -158,11 +158,7 @@ DECL|macro|SCSI_NCR_TIMER_INTERVAL
 mdefine_line|#define SCSI_NCR_TIMER_INTERVAL&t;((HZ+5-1)/5)
 multiline_comment|/*&n;**&t;Define Scsi_Host_Template parameters&n;**&n;**&t;Used by hosts.c and ncr53c8xx.c with module configuration.&n;*/
 macro_line|#if defined(HOSTS_C) || defined(MODULE)
-macro_line|#if&t;LINUX_VERSION_CODE &gt;= LinuxVersionCode(1,3,98)
 macro_line|#include &lt;scsi/scsicam.h&gt;
-macro_line|#else
-macro_line|#include &lt;linux/scsicam.h&gt;
-macro_line|#endif
 r_int
 id|ncr53c8xx_abort
 c_func

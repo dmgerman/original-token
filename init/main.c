@@ -127,7 +127,21 @@ r_void
 suffix:semicolon
 r_extern
 r_int
+r_int
 id|pci_init
+c_func
+(paren
+r_int
+r_int
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_MCA
+r_extern
+r_int
+id|mca_init
 c_func
 (paren
 r_int
@@ -135,12 +149,27 @@ comma
 r_int
 )paren
 suffix:semicolon
+macro_line|#endif
 r_extern
 r_void
 id|sysctl_init
 c_func
 (paren
 r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|smp_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
 )paren
 suffix:semicolon
 r_extern
@@ -507,6 +536,22 @@ op_star
 id|ints
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SCSI_IBMMCA
+r_extern
+r_void
+id|ibmmca_scsi_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+macro_line|#endif
 r_extern
 r_void
 id|in2000_setup
@@ -621,6 +666,36 @@ id|ints
 )paren
 suffix:semicolon
 macro_line|#endif CONFIG_CDU31A
+macro_line|#ifdef CONFIG_BLK_DEV_PS2
+r_extern
+r_void
+id|ed_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|tp720_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+macro_line|#endif CONFIG_BLK_DEV_PS2
 macro_line|#ifdef CONFIG_MCD
 r_extern
 r_void
@@ -1408,6 +1483,20 @@ comma
 id|profile_setup
 )brace
 comma
+macro_line|#ifdef __SMP__
+(brace
+l_string|&quot;nosmp&quot;
+comma
+id|smp_setup
+)brace
+comma
+(brace
+l_string|&quot;maxcpus=&quot;
+comma
+id|smp_setup
+)brace
+comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_RAM
 (brace
 l_string|&quot;ramdisk_start=&quot;
@@ -1696,6 +1785,14 @@ id|ppa_setup
 )brace
 comma
 macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_IBMMCA
+(brace
+l_string|&quot;ibmmcascsi=&quot;
+comma
+id|ibmmca_scsi_setup
+)brace
+comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_XD
 (brace
 l_string|&quot;xd=&quot;
@@ -1709,6 +1806,20 @@ macro_line|#ifdef CONFIG_BLK_DEV_FD
 l_string|&quot;floppy=&quot;
 comma
 id|floppy_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_PS2
+(brace
+l_string|&quot;ed=&quot;
+comma
+id|ed_setup
+)brace
+comma
+(brace
+l_string|&quot;tp720&quot;
+comma
+id|tp720_setup
 )brace
 comma
 macro_line|#endif
@@ -3613,6 +3724,18 @@ macro_line|#ifdef CONFIG_PCI
 id|memory_start
 op_assign
 id|pci_init
+c_func
+(paren
+id|memory_start
+comma
+id|memory_end
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_MCA
+id|memory_start
+op_assign
+id|mca_init
 c_func
 (paren
 id|memory_start

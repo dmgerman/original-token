@@ -594,6 +594,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;Exception at %lx (%lx)&bslash;n&quot;
 comma
 id|regs-&gt;eip

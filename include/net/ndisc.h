@@ -22,17 +22,17 @@ mdefine_line|#define NUD_IN_TIMER&t;0x01
 DECL|macro|NDISC_QUEUE_LEN
 mdefine_line|#define NDISC_QUEUE_LEN&t;3
 DECL|macro|NCF_NOARP
-mdefine_line|#define NCF_NOARP&t;&t;0x01&t;/* no ARP needed on this device */
+mdefine_line|#define NCF_NOARP&t;&t;0x0100&t;/* no ARP needed on this device */
 DECL|macro|NCF_SUBNET
-mdefine_line|#define NCF_SUBNET&t;&t;0x02    /* NC entry for subnet&t;&t;*/
+mdefine_line|#define NCF_SUBNET&t;&t;0x0200   /* NC entry for subnet&t;&t;*/
 DECL|macro|NCF_INVALID
-mdefine_line|#define NCF_INVALID&t;&t;0x04
+mdefine_line|#define NCF_INVALID&t;&t;0x0400
 DECL|macro|NCF_DELAY_EXPIRED
-mdefine_line|#define NCF_DELAY_EXPIRED&t;0x08&t;/* time to move to PROBE&t;*/
+mdefine_line|#define NCF_DELAY_EXPIRED&t;0x0800&t;/* time to move to PROBE&t;*/
 DECL|macro|NCF_ROUTER
-mdefine_line|#define NCF_ROUTER&t;&t;0x10&t;/* neighbour is a router&t;*/
+mdefine_line|#define NCF_ROUTER&t;&t;0x1000&t;/* neighbour is a router&t;*/
 DECL|macro|NCF_HHVALID
-mdefine_line|#define NCF_HHVALID&t;&t;0x20&t;/* Hardware header is valid&t;*/
+mdefine_line|#define NCF_HHVALID&t;&t;0x2000&t;/* Hardware header is valid&t;*/
 multiline_comment|/*&n; *&t;ICMP codes for neighbour discovery messages&n; */
 DECL|macro|NDISC_ROUTER_SOLICITATION
 mdefine_line|#define NDISC_ROUTER_SOLICITATION&t;133
@@ -71,95 +71,55 @@ macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/icmpv6.h&gt;
+macro_line|#include &lt;net/neighbour.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
-multiline_comment|/*&n; *&t;neighbour cache entry&n; *&t;used by neighbour discovery module&n; *&t;as similar functions of &quot;struct hh_cache&quot; used in ipv4&n; */
-DECL|struct|neighbour
+multiline_comment|/*&n; *&t;neighbour cache entry&n; *&t;used by neighbour discovery module&n; */
+DECL|struct|nd_neigh
+r_struct
+id|nd_neigh
+(brace
+DECL|member|neigh
 r_struct
 id|neighbour
-(brace
-DECL|member|addr
+id|neigh
+suffix:semicolon
+DECL|member|ndn_addr
 r_struct
 id|in6_addr
-id|addr
+id|ndn_addr
 suffix:semicolon
 multiline_comment|/* next hop addr */
-DECL|member|len
+DECL|member|ndn_plen
 id|__u8
-id|len
-suffix:semicolon
+id|ndn_plen
+comma
 multiline_comment|/* prefix len&t; */
-DECL|member|type
-id|__u8
-id|type
-suffix:semicolon
+DECL|member|ndn_type
+id|ndn_type
+comma
 multiline_comment|/* {unicast, multicast} */
-DECL|member|dev
-r_struct
-id|device
-op_star
-id|dev
+DECL|member|ndn_nud_state
+id|ndn_nud_state
+comma
+DECL|member|ndn_probes
+id|ndn_probes
 suffix:semicolon
-DECL|member|flags
-id|__u8
-id|flags
-suffix:semicolon
-DECL|member|hh_data
-id|__u8
-id|hh_data
-(braket
-id|MAX_ADDR_LEN
-)braket
-suffix:semicolon
-multiline_comment|/* cached hdr&t;*/
-DECL|member|h_dest
-id|__u8
-op_star
-id|h_dest
-suffix:semicolon
-multiline_comment|/* dest addr&t;*/
-DECL|member|arp_queue
-r_struct
-id|sk_buff_head
-id|arp_queue
-suffix:semicolon
-multiline_comment|/* packets waiting for ND to&n;&t;&t;&t;&t;&t;&t;   finish */
-DECL|member|refcnt
-id|atomic_t
-id|refcnt
-suffix:semicolon
-DECL|member|nud_state
-id|__u8
-id|nud_state
-suffix:semicolon
-DECL|member|probes
-id|__u8
-id|probes
-suffix:semicolon
-DECL|member|tstamp
-id|__u32
-id|tstamp
-suffix:semicolon
-multiline_comment|/* last reachable conf&t;*/
-DECL|member|expires
+DECL|member|ndn_expires
 r_int
 r_int
-id|expires
+id|ndn_expires
 suffix:semicolon
 multiline_comment|/* timer expires at&t;*/
-DECL|member|next
-r_struct
-id|neighbour
-op_star
-id|next
-suffix:semicolon
-multiline_comment|/* for hash chaining&t;*/
-DECL|member|prev
-r_struct
-id|neighbour
-op_star
-id|prev
-suffix:semicolon
-multiline_comment|/* for hash chaining&t;*/
+DECL|macro|ndn_refcnt
+mdefine_line|#define ndn_refcnt&t;&t;neigh.refcnt
+DECL|macro|ndn_tstamp
+mdefine_line|#define ndn_tstamp&t;&t;neigh.lastused
+DECL|macro|ndn_dev
+mdefine_line|#define ndn_dev&t;&t;&t;neigh.dev
+DECL|macro|ndn_flags
+mdefine_line|#define ndn_flags&t;&t;neigh.flags
+DECL|macro|ndn_ha
+mdefine_line|#define ndn_ha&t;&t;&t;neigh.ha
 )brace
 suffix:semicolon
 DECL|struct|nd_msg
@@ -268,7 +228,7 @@ r_extern
 r_struct
 id|neighbour
 op_star
-id|ndisc_get_neigh
+id|ndisc_find_neigh
 c_func
 (paren
 r_struct
@@ -299,9 +259,27 @@ id|ndisc_init
 c_func
 (paren
 r_struct
-id|proto_ops
+id|net_proto_family
 op_star
 id|ops
+)paren
+suffix:semicolon
+r_extern
+r_struct
+id|neighbour
+op_star
+id|ndisc_get_neigh
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+comma
+r_struct
+id|in6_addr
+op_star
+id|addr
 )paren
 suffix:semicolon
 r_extern
@@ -310,24 +288,6 @@ id|ndisc_cleanup
 c_func
 (paren
 r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|ndisc_eth_resolv
-c_func
-(paren
-r_int
-r_char
-op_star
-comma
-r_struct
-id|device
-op_star
-comma
-r_struct
-id|sk_buff
-op_star
 )paren
 suffix:semicolon
 r_extern
@@ -454,6 +414,24 @@ op_star
 )paren
 suffix:semicolon
 r_extern
+r_int
+id|ndisc_eth_resolv
+c_func
+(paren
+r_int
+r_char
+op_star
+comma
+r_struct
+id|device
+op_star
+comma
+r_struct
+id|sk_buff
+op_star
+)paren
+suffix:semicolon
+r_extern
 r_void
 id|ndisc_forwarding_on
 c_func
@@ -512,27 +490,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-DECL|function|ndisc_dec_neigh
-r_static
-id|__inline__
-r_void
-id|ndisc_dec_neigh
-c_func
-(paren
-r_struct
-id|neighbour
-op_star
-id|neigh
-)paren
-(brace
-id|atomic_dec
-c_func
-(paren
-op_amp
-id|neigh-&gt;refcnt
-)paren
-suffix:semicolon
-)brace
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif
 eof

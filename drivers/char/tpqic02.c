@@ -3,6 +3,13 @@ multiline_comment|/* After the legalese, now the important bits:&n; * &n; * This
 multiline_comment|/*&n;#define TDEBUG&n;*/
 DECL|macro|REALLY_SLOW_IO
 mdefine_line|#define REALLY_SLOW_IO&t;&t;/* it sure is ... */
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef MODULE
+macro_line|#ifdef CONFIG_QIC02_DYNCONF
+macro_line|#error dynamic configuration as module not implemented!
+macro_line|#endif
+macro_line|#endif
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -13,8 +20,8 @@ macro_line|#include &lt;linux/mtio.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/tpqic02.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -322,6 +329,16 @@ id|mode_access
 suffix:semicolon
 multiline_comment|/* access mode: READ or WRITE */
 multiline_comment|/* This is the actual kernel buffer where the interrupt routines read&n; * from/write to. It is needed because the DMA channels 1 and 3 cannot&n; * always access the user buffers. [The kernel buffer must reside in the&n; * lower 16MBytes of system memory because of the DMA controller.]&n; * The user must ensure that a large enough buffer is passed to the&n; * kernel, in order to reduce tape repositioning.&n; *&n; * The buffer is 512 bytes larger than expected, because I want to align it&n; * at 512 bytes, to prevent problems with 64k boundaries.&n; */
+macro_line|#ifdef MODULE
+DECL|variable|qic02_tape_buf
+r_static
+r_char
+op_star
+id|qic02_tape_buf
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#else
 DECL|variable|qic02_tape_buf
 r_static
 r_volatile
@@ -334,6 +351,7 @@ id|TAPE_BLKSIZE
 )braket
 suffix:semicolon
 multiline_comment|/* A really good compiler would be able to align this at 512 bytes... :-( */
+macro_line|#endif /* MODULE */
 DECL|variable|buffaddr
 r_static
 r_int
@@ -6327,9 +6345,6 @@ r_int
 id|count
 )paren
 (brace
-r_int
-id|error
-suffix:semicolon
 id|kdev_t
 id|dev
 op_assign
@@ -6442,27 +6457,6 @@ multiline_comment|/* Once written, no more reads, &squot;till after WFM. */
 r_return
 op_minus
 id|EACCES
-suffix:semicolon
-multiline_comment|/* Make sure buffer is safe to write into. */
-id|error
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-id|buf
-comma
-id|count
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
-)paren
-r_return
-id|error
 suffix:semicolon
 multiline_comment|/* This is rather ugly because it has to implement a finite state&n;&t; * machine in order to handle the EOF situations properly.&n;&t; */
 r_while
@@ -6744,6 +6738,9 @@ id|bytes_done
 OG
 l_int|0
 )paren
+r_if
+c_cond
+(paren
 id|copy_to_user
 c_func
 (paren
@@ -6765,6 +6762,10 @@ id|buffaddr
 comma
 id|bytes_done
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 macro_line|#if 1
 multiline_comment|/* Checks Ton&squot;s patch below */
@@ -6888,9 +6889,6 @@ r_int
 id|count
 )paren
 (brace
-r_int
-id|error
-suffix:semicolon
 id|kdev_t
 id|dev
 op_assign
@@ -7042,27 +7040,6 @@ id|EACCES
 suffix:semicolon
 multiline_comment|/* don&squot;t even try when write protected */
 )brace
-multiline_comment|/* Make sure buffer is safe to read from. */
-id|error
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_READ
-comma
-id|buf
-comma
-id|count
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
-)paren
-r_return
-id|error
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -7179,6 +7156,9 @@ OG
 l_int|0
 )paren
 (brace
+r_if
+c_cond
+(paren
 id|copy_from_user
 c_func
 (paren
@@ -7201,6 +7181,10 @@ id|buf
 comma
 id|bytes_todo
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 multiline_comment|/****************** similar problem with read() at FM could happen here at EOT.&n; ******************/
 multiline_comment|/***** if at EOT, 0 bytes can be written. start_dma() will&n; ***** fail and write() will return ENXIO error&n; *****/
@@ -7476,6 +7460,10 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -7487,7 +7475,12 @@ id|dev
 op_eq
 l_int|255
 )paren
+(brace
 multiline_comment|/* special case for resetting */
+macro_line|#ifdef MODULE
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -7519,6 +7512,7 @@ r_return
 op_minus
 id|EPERM
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -7540,6 +7534,10 @@ l_int|1
 )paren
 (brace
 multiline_comment|/* filp-&gt;f_count==1 for the first open() */
+macro_line|#ifdef MODULE
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+macro_line|#endif
 r_return
 op_minus
 id|EBUSY
@@ -7697,6 +7695,10 @@ comma
 l_string|&quot;open: sense() failed&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef MODULE
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+macro_line|#endif
 r_return
 op_minus
 id|EIO
@@ -7727,6 +7729,10 @@ comma
 l_string|&quot;No tape present.&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef MODULE
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+macro_line|#endif
 r_return
 op_minus
 id|EIO
@@ -7826,6 +7832,10 @@ comma
 l_string|&quot;open: rewind failed&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef MODULE
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+macro_line|#endif
 r_return
 op_minus
 id|EIO
@@ -7861,6 +7871,10 @@ op_ne
 id|TE_OK
 )paren
 (brace
+macro_line|#ifdef MODULE
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+macro_line|#endif
 r_return
 op_minus
 id|ENXIO
@@ -7902,6 +7916,10 @@ op_assign
 id|YES
 suffix:semicolon
 multiline_comment|/* try reset next time */
+macro_line|#ifdef MODULE
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+macro_line|#endif
 r_return
 op_minus
 id|EIO
@@ -8140,6 +8158,10 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* earlier 0xff80 */
+macro_line|#ifdef MODULE
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+macro_line|#endif
 r_return
 op_minus
 id|EIO
@@ -8201,6 +8223,10 @@ op_eq
 id|YES
 )paren
 multiline_comment|/* don&squot;t rewind in zombie mode */
+macro_line|#ifdef MODULE
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+macro_line|#endif
 r_return
 suffix:semicolon
 multiline_comment|/* Terminate any pending write cycle. Terminating the read-cycle&n;&t; * is delayed until it is required to do so for a new command.&n;&t; */
@@ -8265,6 +8291,10 @@ id|TIM_R
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+macro_line|#endif
 r_return
 suffix:semicolon
 )brace
@@ -8622,9 +8652,6 @@ r_int
 id|error
 suffix:semicolon
 r_int
-id|i
-suffix:semicolon
-r_int
 id|dev_maj
 op_assign
 id|MAJOR
@@ -8746,21 +8773,16 @@ id|EPERM
 suffix:semicolon
 id|error
 op_assign
-id|verify_area
+id|get_user
 c_func
 (paren
-id|VERIFY_READ
+id|c
 comma
 (paren
 r_int
 op_star
 )paren
 id|ioarg
-comma
-r_sizeof
-(paren
-r_int
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -8770,23 +8792,6 @@ id|error
 )paren
 r_return
 id|error
-suffix:semicolon
-id|c
-op_assign
-id|get_user
-c_func
-(paren
-r_sizeof
-(paren
-r_int
-)paren
-comma
-(paren
-r_int
-op_star
-)paren
-id|ioarg
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -8913,35 +8918,7 @@ op_minus
 id|EFAULT
 suffix:semicolon
 )brace
-multiline_comment|/* check for valid user address */
-id|error
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-(paren
-r_void
-op_star
-)paren
-id|ioarg
-comma
-r_sizeof
-(paren
-id|qic02_tape_dynconf
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
-)paren
-r_return
-id|error
-suffix:semicolon
-multiline_comment|/* copy current settings to user space */
+multiline_comment|/* check for valid user address and copy current settings to user space */
 id|stp
 op_assign
 (paren
@@ -8959,33 +8936,25 @@ op_star
 )paren
 id|ioarg
 suffix:semicolon
-r_for
-c_loop
+r_if
+c_cond
 (paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
+id|copy_to_user
+c_func
+(paren
+id|stp
+comma
+id|argp
+comma
 r_sizeof
 (paren
 id|qic02_tape_dynconf
 )paren
-suffix:semicolon
-id|i
-op_increment
 )paren
-id|put_user
-c_func
-(paren
-op_star
-id|stp
-op_increment
-comma
-id|argp
-op_increment
 )paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 r_return
 l_int|0
@@ -9084,33 +9053,6 @@ r_return
 op_minus
 id|EBUSY
 suffix:semicolon
-id|error
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_READ
-comma
-(paren
-r_char
-op_star
-)paren
-id|ioarg
-comma
-r_sizeof
-(paren
-id|qic02_tape_dynconf
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
-)paren
-r_return
-id|error
-suffix:semicolon
 multiline_comment|/* copy struct from user space to kernel space */
 id|stp
 op_assign
@@ -9129,6 +9071,9 @@ op_star
 )paren
 id|ioarg
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|copy_from_user
 c_func
 (paren
@@ -9141,6 +9086,10 @@ r_sizeof
 id|qic02_tape_dynconf
 )paren
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 r_if
 c_cond
@@ -9252,33 +9201,6 @@ op_minus
 id|EFAULT
 suffix:semicolon
 )brace
-id|error
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_READ
-comma
-(paren
-r_char
-op_star
-)paren
-id|ioarg
-comma
-r_sizeof
-(paren
-id|operation
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
-)paren
-r_return
-id|error
-suffix:semicolon
 multiline_comment|/* copy mtop struct from user space to kernel space */
 id|stp
 op_assign
@@ -9297,6 +9219,9 @@ op_star
 )paren
 id|ioarg
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|copy_from_user
 c_func
 (paren
@@ -9309,6 +9234,10 @@ r_sizeof
 id|operation
 )paren
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 multiline_comment|/* ---note: mt_count is signed, negative seeks must be&n;&t;&t; * ---&t;    translated to seeks in opposite direction!&n;&t;&t; * (only needed for Sun-programs, I think.)&n;&t;&t; */
 multiline_comment|/* ---note: MTFSF with count 0 should position the&n;&t;&t; * ---&t;    tape at the beginning of the current file.&n;&t;&t; */
@@ -9542,34 +9471,6 @@ op_minus
 id|EFAULT
 suffix:semicolon
 )brace
-multiline_comment|/* check for valid user address */
-id|error
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-(paren
-r_void
-op_star
-)paren
-id|ioarg
-comma
-r_sizeof
-(paren
-id|ioctl_status
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
-)paren
-r_return
-id|error
-suffix:semicolon
 multiline_comment|/* It appears (gmt(1)) that it is normal behaviour to&n;&t;&t; * first set the status with MTNOP, and then to read&n;&t;&t; * it out with MTIOCGET&n;&t;&t; */
 multiline_comment|/* copy results to user space */
 id|stp
@@ -9589,33 +9490,25 @@ op_star
 )paren
 id|ioarg
 suffix:semicolon
-r_for
-c_loop
+r_if
+c_cond
 (paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
+id|copy_to_user
+c_func
+(paren
+id|stp
+comma
+id|argp
+comma
 r_sizeof
 (paren
 id|ioctl_status
 )paren
-suffix:semicolon
-id|i
-op_increment
 )paren
-id|put_user
-c_func
-(paren
-op_star
-id|stp
-op_increment
-comma
-id|argp
-op_increment
 )paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 r_return
 l_int|0
@@ -9687,34 +9580,6 @@ op_minus
 id|EFAULT
 suffix:semicolon
 )brace
-multiline_comment|/* check for valid user address */
-id|error
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-(paren
-r_void
-op_star
-)paren
-id|ioarg
-comma
-r_sizeof
-(paren
-id|ioctl_tell
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
-)paren
-r_return
-id|error
-suffix:semicolon
 id|tpqputs
 c_func
 (paren
@@ -9817,33 +9682,25 @@ op_star
 )paren
 id|ioarg
 suffix:semicolon
-r_for
-c_loop
+r_if
+c_cond
 (paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-r_sizeof
-(paren
-id|ioctl_tell
-)paren
-suffix:semicolon
-id|i
-op_increment
-)paren
-id|put_user
+id|copy_to_user
 c_func
 (paren
-op_star
 id|stp
-op_increment
 comma
 id|argp
-op_increment
+comma
+r_sizeof
+(paren
+id|ioctl_status
 )paren
+)paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 r_return
 l_int|0
@@ -10344,7 +10201,80 @@ comma
 id|NR_BLK_BUF
 )paren
 suffix:semicolon
-multiline_comment|/* Setup the page-address for the dma transfer.&n;&t; * This assumes a one-to-one identity mapping between&n;&t; * kernel addresses and physical memory.&n;&t; */
+multiline_comment|/* &n;&t; * Setup the page-address for the dma transfer.&n;&t; */
+macro_line|#ifdef MODULE
+id|qic02_tape_buf
+op_assign
+id|kmalloc
+c_func
+(paren
+id|TPQBUF_SIZE
+op_plus
+id|TAPE_BLKSIZE
+comma
+id|GFP_DMA
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|qic02_tape_buf
+op_eq
+l_int|NULL
+)paren
+(brace
+macro_line|#ifndef CONFIG_QIC02_DYNCONF
+multiline_comment|/*&n;         * irq and dma were requested by qic_get_resources, so&n;         * relase them only when _not_ using DYNCONF&n;         */
+id|qic02_release_resources
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+)brace
+id|buffaddr
+op_assign
+id|align_buffer
+c_func
+(paren
+id|virt_to_bus
+c_func
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+id|qic02_tape_buf
+)paren
+comma
+id|TAPE_BLKSIZE
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;, at address 0x%lx (0x%lx)&bslash;n&quot;
+comma
+id|buffaddr
+comma
+id|virt_to_bus
+c_func
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+id|qic02_tape_buf
+)paren
+)paren
+suffix:semicolon
+macro_line|#else /* no MODULE */
 id|buffaddr
 op_assign
 id|align_buffer
@@ -10374,6 +10304,7 @@ op_amp
 id|qic02_tape_buf
 )paren
 suffix:semicolon
+macro_line|#endif /* MODULE */
 macro_line|#ifndef CONFIG_MAX_16M
 r_if
 c_cond
@@ -10392,6 +10323,19 @@ id|TPQIC02_NAME
 l_string|&quot;: DMA buffer *must* be in lower 16MB&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef MODULE
+id|qic02_release_resources
+c_func
+(paren
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|qic02_tape_buf
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 op_minus
 id|ENODEV
@@ -10424,18 +10368,9 @@ id|QIC02_TAPE_MAJOR
 )paren
 suffix:semicolon
 macro_line|#ifndef CONFIG_QIC02_DYNCONF
-id|free_irq
+id|qic02_release_resources
 c_func
 (paren
-id|QIC02_TAPE_IRQ
-comma
-l_int|NULL
-)paren
-suffix:semicolon
-id|free_dma
-c_func
-(paren
-id|QIC02_TAPE_DMA
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -10499,30 +10434,17 @@ comma
 l_string|&quot;No drive detected -- driver going on vacation...&quot;
 )paren
 suffix:semicolon
-id|status_dead
-op_assign
-id|YES
-suffix:semicolon
-id|free_irq
-c_func
-(paren
-id|QIC02_TAPE_IRQ
-comma
-l_int|NULL
-)paren
-suffix:semicolon
-id|free_dma
-c_func
-(paren
-id|QIC02_TAPE_DMA
-)paren
-suffix:semicolon
 id|unregister_chrdev
 c_func
 (paren
 id|QIC02_TAPE_MAJOR
 comma
 id|TPQIC02_NAME
+)paren
+suffix:semicolon
+id|qic02_release_resources
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return
@@ -10601,4 +10523,80 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* qic02_tape_init */
+macro_line|#ifdef MODULE
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+id|qic02_tape_init
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|unregister_chrdev
+c_func
+(paren
+id|QIC02_TAPE_MAJOR
+comma
+id|TPQIC02_NAME
+)paren
+suffix:semicolon
+id|qic02_release_resources
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|qic02_tape_buf
+)paren
+id|kfree
+c_func
+(paren
+id|qic02_tape_buf
+)paren
+suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif /* MODULE */
 eof

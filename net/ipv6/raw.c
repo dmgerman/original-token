@@ -96,10 +96,6 @@ l_int|0
 )paren
 (brace
 multiline_comment|/* ip_statistics.IpInDiscards++; */
-id|skb-&gt;sk
-op_assign
-l_int|NULL
-suffix:semicolon
 id|kfree_skb
 c_func
 (paren
@@ -162,6 +158,8 @@ id|sk
 op_assign
 id|skb-&gt;sk
 suffix:semicolon
+macro_line|#if 1
+multiline_comment|/*&n; *&t;It was wrong for IPv4. It breaks NRL too [ANK]&n; *&t;Actually i think this is the option that  does make more &n; *&t;sense with IPv6 nested headers. [Pedro]&n; */
 r_if
 c_cond
 (paren
@@ -170,14 +168,15 @@ id|sk-&gt;ip_hdrincl
 (brace
 id|skb-&gt;h.raw
 op_assign
-(paren
-r_int
-r_char
-op_star
-)paren
-id|skb-&gt;ipv6_hdr
+id|skb-&gt;nh.raw
 suffix:semicolon
 )brace
+macro_line|#else
+id|skb-&gt;h.raw
+op_assign
+id|skb-&gt;nh.raw
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -382,7 +381,7 @@ op_amp
 id|sin6-&gt;sin6_addr
 comma
 op_amp
-id|skb-&gt;ipv6_hdr-&gt;saddr
+id|skb-&gt;nh.ipv6h-&gt;saddr
 comma
 r_sizeof
 (paren
@@ -731,12 +730,6 @@ id|msg
 comma
 r_int
 id|len
-comma
-r_int
-id|noblock
-comma
-r_int
-id|flags
 )paren
 (brace
 r_struct
@@ -809,7 +802,7 @@ multiline_comment|/* Mirror BSD error message compatibility */
 r_if
 c_cond
 (paren
-id|flags
+id|msg-&gt;msg_flags
 op_amp
 id|MSG_OOB
 )paren
@@ -820,10 +813,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|flags
+id|msg-&gt;msg_flags
 op_amp
 op_complement
+(paren
 id|MSG_DONTROUTE
+op_or
+id|MSG_DONTWAIT
+)paren
 )paren
 r_return
 op_minus
@@ -1132,7 +1129,9 @@ id|opt
 comma
 id|proto
 comma
-id|noblock
+id|msg-&gt;msg_flags
+op_amp
+id|MSG_DONTWAIT
 )paren
 suffix:semicolon
 )brace
@@ -1161,7 +1160,9 @@ id|opt
 comma
 id|proto
 comma
-id|noblock
+id|msg-&gt;msg_flags
+op_amp
+id|MSG_DONTWAIT
 )paren
 suffix:semicolon
 )brace

@@ -39,6 +39,13 @@ DECL|macro|IS_INVBCAST
 mdefine_line|#define IS_INVBCAST&t;4&t;&t;/* Wrong netmask bcast not for us (unused)*/
 DECL|macro|IS_MULTICAST
 mdefine_line|#define IS_MULTICAST&t;5&t;&t;/* Multicast IP address */
+multiline_comment|/* NOTE: move to ipv4_device.h */
+DECL|macro|IFF_IP_ADDR_OK
+mdefine_line|#define IFF_IP_ADDR_OK&t;1
+DECL|macro|IFF_IP_MASK_OK
+mdefine_line|#define IFF_IP_MASK_OK&t;2
+DECL|macro|IFF_IP_BRD_OK
+mdefine_line|#define IFF_IP_BRD_OK&t;4
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/skbuff.h&gt;
 multiline_comment|/*&n; *&t;We tag multicasts with these structures.&n; */
@@ -81,12 +88,6 @@ id|hh_cache
 op_star
 id|hh_next
 suffix:semicolon
-DECL|member|hh_arp
-r_void
-op_star
-id|hh_arp
-suffix:semicolon
-multiline_comment|/* Opaque pointer, used by&n;&t;&t;&t;&t;&t; * any address resolution module,&n;&t;&t;&t;&t;&t; * not only ARP.&n;&t;&t;&t;&t;&t; */
 DECL|member|hh_refcnt
 r_int
 id|hh_refcnt
@@ -113,18 +114,18 @@ suffix:semicolon
 multiline_comment|/* cached hardware header */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * The DEVICE structure.&n; * Actually, this whole structure is a big mistake.  It mixes I/O&n; * data with strictly &quot;high-level&quot; data, and it has to know about&n; * almost every data structure used in the INET module.  &n; */
+multiline_comment|/*&n; *&t;The DEVICE structure.&n; *&t;Actually, this whole structure is a big mistake.  It mixes I/O&n; *&t;data with strictly &quot;high-level&quot; data, and it has to know about&n; *&t;almost every data structure used in the INET module.&n; *&n; *&t;FIXME: cleanup struct device such that network protocol info&n; *&t;moves out.&n; */
 DECL|struct|device
 r_struct
 id|device
 (brace
-multiline_comment|/*&n;   * This is the first field of the &quot;visible&quot; part of this structure&n;   * (i.e. as seen by users in the &quot;Space.c&quot; file).  It is the name&n;   * the interface.&n;   */
+multiline_comment|/*&n;&t; * This is the first field of the &quot;visible&quot; part of this structure&n;&t; * (i.e. as seen by users in the &quot;Space.c&quot; file).  It is the name&n;&t; * the interface.&n;&t; */
 DECL|member|name
 r_char
 op_star
 id|name
 suffix:semicolon
-multiline_comment|/* I/O specific fields - FIXME: Merge these and struct ifmap into one */
+multiline_comment|/*&n;&t; *&t;I/O specific fields&n;&t; *&t;FIXME: Merge these and struct ifmap into one&n;&t; */
 DECL|member|rmem_end
 r_int
 r_int
@@ -178,7 +179,7 @@ r_int
 r_int
 id|tbusy
 suffix:semicolon
-multiline_comment|/* transmitter busy must be long for bitops */
+multiline_comment|/* transmitter busy must be&n;&t;&t;&t;&t;&t;&t;   long for bitops&t;*/
 DECL|member|next
 r_struct
 id|device
@@ -199,7 +200,18 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-multiline_comment|/* Some hardware also needs these fields, but they are not part of the&n;     usual set specified in Space.c. */
+multiline_comment|/* Interface index. Unique device identifier&t;*/
+DECL|member|ifindex
+r_int
+id|ifindex
+suffix:semicolon
+DECL|member|next_up
+r_struct
+id|device
+op_star
+id|next_up
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Some hardware also needs these fields, but they are not&n;&t; *&t;part of the usual set specified in Space.c.&n;&t; */
 DECL|member|if_port
 r_int
 r_char
@@ -227,7 +239,24 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * This marks the end of the &quot;visible&quot; part of the structure. All&n;   * fields hereafter are internal to the system, and may change at&n;   * will (read: may be cleaned up at will).&n;   */
+macro_line|#ifdef CONFIG_NET_RADIO
+DECL|member|get_wireless_stats
+r_struct
+id|iw_statistics
+op_star
+(paren
+op_star
+id|get_wireless_stats
+)paren
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/*&n;&t; * This marks the end of the &quot;visible&quot; part of the structure. All&n;&t; * fields hereafter are internal to the system, and may change at&n;&t; * will (read: may be cleaned up at will).&n;&t; */
 multiline_comment|/* These may be needed for future network-power-down code. */
 DECL|member|trans_start
 r_int
@@ -240,7 +269,7 @@ r_int
 r_int
 id|last_rx
 suffix:semicolon
-multiline_comment|/* Time of last Rx&t;&t;*/
+multiline_comment|/* Time of last Rx&t;*/
 DECL|member|flags
 r_int
 r_int
@@ -314,25 +343,12 @@ r_char
 id|addr_len
 suffix:semicolon
 multiline_comment|/* hardware address length&t;*/
-macro_line|#if 0
-id|__u32
-id|pa_addr_arr
-(braket
-l_int|4
-)braket
-suffix:semicolon
-id|__u16
-id|pa_prefix_len
-suffix:semicolon
-mdefine_line|#define pa_addr&t;&t;  pa_addr_arr[3];
-macro_line|#else
 DECL|member|pa_addr
 r_int
 r_int
 id|pa_addr
 suffix:semicolon
 multiline_comment|/* protocol address&t;&t;*/
-macro_line|#endif
 DECL|member|pa_brdaddr
 r_int
 r_int
@@ -376,6 +392,14 @@ op_star
 id|ip_mc_list
 suffix:semicolon
 multiline_comment|/* IP multicast filter chain    */
+DECL|member|ip_flags
+r_int
+id|ip_flags
+suffix:semicolon
+DECL|member|hash
+id|__u8
+id|hash
+suffix:semicolon
 DECL|member|tx_queue_len
 id|__u32
 id|tx_queue_len
@@ -387,29 +411,29 @@ r_int
 r_int
 id|pkt_queue
 suffix:semicolon
-multiline_comment|/* Packets queued */
+multiline_comment|/* Packets queued&t;*/
 DECL|member|slave
 r_struct
 id|device
 op_star
 id|slave
 suffix:semicolon
-multiline_comment|/* Slave device */
+multiline_comment|/* Slave device&t;&t;*/
 DECL|member|alias_info
 r_struct
 id|net_alias_info
 op_star
 id|alias_info
 suffix:semicolon
-multiline_comment|/* main dev alias info */
+multiline_comment|/* main dev alias info&t;*/
 DECL|member|my_alias
 r_struct
 id|net_alias
 op_star
 id|my_alias
 suffix:semicolon
-multiline_comment|/* alias devs */
-multiline_comment|/* Pointer to the interface buffers. */
+multiline_comment|/* alias devs&t;&t;*/
+multiline_comment|/* Pointer to the interface buffers.&t;*/
 DECL|member|buffs
 r_struct
 id|sk_buff_head
@@ -418,7 +442,7 @@ id|buffs
 id|DEV_NUMBUFFS
 )braket
 suffix:semicolon
-multiline_comment|/* Pointers to interface service routines. */
+multiline_comment|/* Pointers to interface service routines.&t;*/
 DECL|member|open
 r_int
 (paren
@@ -503,19 +527,6 @@ op_star
 id|rebuild_header
 )paren
 (paren
-r_void
-op_star
-id|eth
-comma
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_int
-r_int
-id|raddr
-comma
 r_struct
 id|sk_buff
 op_star
@@ -601,30 +612,27 @@ id|map
 suffix:semicolon
 DECL|macro|HAVE_HEADER_CACHE
 mdefine_line|#define HAVE_HEADER_CACHE
-DECL|member|header_cache_bind
-r_void
+DECL|member|hard_header_cache
+r_int
 (paren
 op_star
-id|header_cache_bind
+id|hard_header_cache
 )paren
 (paren
 r_struct
-id|hh_cache
+id|dst_entry
 op_star
-op_star
-id|hhp
+id|dst
 comma
 r_struct
-id|device
+id|dst_entry
 op_star
-id|dev
+id|neigh
 comma
-r_int
-r_int
-id|htype
-comma
-id|__u32
-id|daddr
+r_struct
+id|hh_cache
+op_star
+id|hh
 )paren
 suffix:semicolon
 DECL|member|header_cache_update
@@ -725,12 +733,6 @@ multiline_comment|/* Used by dev_rint */
 DECL|macro|IN_SKBUFF
 mdefine_line|#define IN_SKBUFF&t;1
 r_extern
-r_volatile
-r_int
-r_int
-id|in_bh
-suffix:semicolon
-r_extern
 r_struct
 id|device
 id|loopback_dev
@@ -750,59 +752,10 @@ id|ptype_base
 l_int|16
 )braket
 suffix:semicolon
+multiline_comment|/* NOTE: move to INET specific header;&n;   __ip_chk_addr is deprecated, do not use if it&squot;s possible.&n; */
 r_extern
 r_int
-id|ip_addr_match
-c_func
-(paren
-r_int
-r_int
-id|addr1
-comma
-r_int
-r_int
-id|addr2
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|ip_chk_addr
-c_func
-(paren
-r_int
-r_int
-id|addr
-)paren
-suffix:semicolon
-r_extern
-r_struct
-id|device
-op_star
-id|ip_dev_bynet
-c_func
-(paren
-r_int
-r_int
-id|daddr
-comma
-r_int
-r_int
-id|mask
-)paren
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|ip_my_addr
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|ip_get_mask
+id|__ip_chk_addr
 c_func
 (paren
 r_int
@@ -820,18 +773,51 @@ c_func
 r_int
 r_int
 id|addr
+comma
+r_char
+op_star
+id|name
+)paren
+suffix:semicolon
+multiline_comment|/* This is the wrong place but it&squot;ll do for the moment */
+r_extern
+r_void
+id|ip_mc_allhost
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|devinet_ioctl
+c_func
+(paren
+r_int
+r_int
+id|cmd
+comma
+r_void
+op_star
 )paren
 suffix:semicolon
 r_extern
 r_struct
 id|device
 op_star
-id|dev_getbytype
+id|dev_getbyhwaddr
 c_func
 (paren
 r_int
 r_int
 id|type
+comma
+r_char
+op_star
+id|hwaddr
 )paren
 suffix:semicolon
 r_extern
@@ -892,7 +878,7 @@ id|dev
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_int
 id|dev_queue_xmit
 c_func
 (paren
@@ -900,14 +886,17 @@ r_struct
 id|sk_buff
 op_star
 id|skb
-comma
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|dev_loopback_xmit
+c_func
+(paren
 r_struct
-id|device
+id|sk_buff
 op_star
-id|dev
-comma
-r_int
-id|pri
+id|skb
 )paren
 suffix:semicolon
 DECL|macro|HAVE_NETIF_RX
@@ -989,10 +978,10 @@ r_void
 suffix:semicolon
 multiline_comment|/* Locking protection for page faults during outputs to devices unloaded during the fault */
 r_extern
-r_int
+id|atomic_t
 id|dev_lockct
 suffix:semicolon
-multiline_comment|/*&n; *&t;These two don&squot;t currently need to be interrupt-safe&n; *&t;but they may do soon. Do it properly anyway.&n; */
+multiline_comment|/*&n; *&t;These two don&squot;t currently need to be atomic&n; *&t;but they may do soon. Do it properly anyway.&n; */
 DECL|function|dev_lock_list
 r_extern
 id|__inline__
@@ -1003,28 +992,11 @@ c_func
 r_void
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|save_flags
+id|atomic_inc
 c_func
 (paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
+op_amp
 id|dev_lockct
-op_increment
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
 )paren
 suffix:semicolon
 )brace
@@ -1038,28 +1010,11 @@ c_func
 r_void
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|save_flags
+id|atomic_dec
 c_func
 (paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
+op_amp
 id|dev_lockct
-op_decrement
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
 )paren
 suffix:semicolon
 )brace
@@ -1086,6 +1041,133 @@ c_func
 )paren
 suffix:semicolon
 )brace
+)brace
+multiline_comment|/* NOTE: about to be replaced with if_index */
+DECL|function|dev_hash_name
+r_static
+id|__inline__
+id|__u8
+id|dev_hash_name
+c_func
+(paren
+r_char
+op_star
+id|name
+)paren
+(brace
+id|__u8
+id|hash
+op_assign
+l_int|0
+suffix:semicolon
+id|__u8
+op_star
+id|p
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|p
+op_assign
+id|name
+suffix:semicolon
+op_star
+id|p
+suffix:semicolon
+id|p
+op_increment
+)paren
+id|hash
+op_xor_assign
+op_star
+id|p
+suffix:semicolon
+r_return
+id|hash
+suffix:semicolon
+)brace
+DECL|function|dev_hash_mc_name
+r_static
+id|__inline__
+id|__u8
+id|dev_hash_mc_name
+c_func
+(paren
+r_char
+op_star
+id|name
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+id|__u8
+id|hash
+op_assign
+l_int|0
+suffix:semicolon
+r_int
+op_star
+id|p
+op_assign
+(paren
+r_int
+op_star
+)paren
+id|name
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|MAX_ADDR_LEN
+op_div
+r_sizeof
+(paren
+r_int
+)paren
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_int
+id|h
+op_assign
+id|p
+(braket
+id|i
+)braket
+suffix:semicolon
+id|h
+op_xor_assign
+(paren
+id|h
+op_rshift
+l_int|16
+)paren
+suffix:semicolon
+id|h
+op_xor_assign
+(paren
+id|h
+op_rshift
+l_int|8
+)paren
+suffix:semicolon
+id|hash
+op_xor_assign
+id|h
+suffix:semicolon
+)brace
+r_return
+id|hash
+suffix:semicolon
 )brace
 multiline_comment|/* These functions live elsewhere (drivers/net/net_init.c, but related) */
 r_extern
@@ -1239,18 +1321,6 @@ suffix:semicolon
 r_extern
 r_void
 id|dev_mc_discard
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-)paren
-suffix:semicolon
-multiline_comment|/* This is the wrong place but it&squot;ll do for the moment */
-r_extern
-r_void
-id|ip_mc_allhost
 c_func
 (paren
 r_struct

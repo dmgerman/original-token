@@ -49,7 +49,7 @@ r_struct
 id|ipv6_options
 op_star
 )paren
-id|skb-&gt;proto_priv
+id|skb-&gt;cb
 suffix:semicolon
 r_struct
 id|cmsghdr
@@ -171,7 +171,7 @@ op_amp
 id|src_info-&gt;ipi6_addr
 comma
 op_amp
-id|skb-&gt;ipv6_hdr-&gt;daddr
+id|skb-&gt;nh.ipv6h-&gt;daddr
 )paren
 suffix:semicolon
 id|len

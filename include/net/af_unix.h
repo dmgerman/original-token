@@ -53,12 +53,73 @@ c_func
 r_void
 )paren
 suffix:semicolon
+DECL|macro|UNIX_HASH_SIZE
+mdefine_line|#define UNIX_HASH_SIZE&t;16
 r_extern
 id|unix_socket
 op_star
-id|unix_socket_list
+id|unix_socket_table
+(braket
+id|UNIX_HASH_SIZE
+op_plus
+l_int|1
+)braket
 suffix:semicolon
-DECL|macro|UNIX_MAX_FD
-mdefine_line|#define UNIX_MAX_FD&t;8
+DECL|macro|forall_unix_sockets
+mdefine_line|#define forall_unix_sockets(i, s) for (i=0; i&lt;=UNIX_HASH_SIZE; i++) &bslash;&n;                                    for (s=unix_socket_table[i]; s; s=s-&gt;next)
+DECL|struct|unix_address
+r_struct
+id|unix_address
+(brace
+DECL|member|refcnt
+r_int
+id|refcnt
+suffix:semicolon
+DECL|member|len
+r_int
+id|len
+suffix:semicolon
+DECL|member|hash
+r_int
+id|hash
+suffix:semicolon
+DECL|member|name
+r_struct
+id|sockaddr_un
+id|name
+(braket
+l_int|0
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|unix_skb_parms
+r_struct
+id|unix_skb_parms
+(brace
+DECL|member|creds
+r_struct
+id|ucred
+id|creds
+suffix:semicolon
+multiline_comment|/* Skb credentials&t;*/
+DECL|member|fp
+r_struct
+id|scm_fp_list
+op_star
+id|fp
+suffix:semicolon
+multiline_comment|/* Passed files&t;&t;*/
+DECL|member|attr
+r_int
+id|attr
+suffix:semicolon
+multiline_comment|/* Special attributes&t;*/
+)brace
+suffix:semicolon
+DECL|macro|UNIXCB
+mdefine_line|#define UNIXCB(skb) &t;(*(struct unix_skb_parms*)&amp;((skb)-&gt;cb))
+DECL|macro|UNIXCREDS
+mdefine_line|#define UNIXCREDS(skb)&t;(&amp;UNIXCB((skb)).creds)
 macro_line|#endif
 eof

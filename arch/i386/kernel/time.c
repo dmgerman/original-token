@@ -1049,6 +1049,36 @@ suffix:semicolon
 multiline_comment|/* do it again in 60 s */
 multiline_comment|/* As we return to user mode fire off the other CPU schedulers.. this is &n;&t;   basically because we don&squot;t yet share IRQ&squot;s around. This message is&n;&t;   rigged to be safe on the 386 - basically it&squot;s a hack, so don&squot;t look&n;&t;   closely for now.. */
 multiline_comment|/*smp_message_pass(MSG_ALL_BUT_SELF, MSG_RESCHEDULE, 0L, 0); */
+macro_line|#ifdef CONFIG_MCA
+r_if
+c_cond
+(paren
+id|MCA_bus
+)paren
+(brace
+multiline_comment|/* The PS/2 uses level-triggered interrupts.  You can&squot;t&n;&t;&t;turn them off, nor would you want to (any attempt to&n;&t;&t;enable edge-triggered interrupts usually gets intercepted by a&n;&t;&t;special hardware circuit).  Hence we have to acknowledge&n;&t;&t;the timer interrupt.  Through some incredibly stupid&n;&t;&t;design idea, the reset for IRQ 0 is done by setting the&n;&t;&t;high bit of the PPI port B (0x61).  Note that some PS/2s,&n;&t;&t;notably the 55SX, work fine if this is removed.  */
+id|irq
+op_assign
+id|inb_p
+c_func
+(paren
+l_int|0x61
+)paren
+suffix:semicolon
+multiline_comment|/* read the current state */
+id|outb_p
+c_func
+(paren
+id|irq
+op_or
+l_int|0x80
+comma
+l_int|0x61
+)paren
+suffix:semicolon
+multiline_comment|/* reset the IRQ */
+)brace
+macro_line|#endif
 )brace
 macro_line|#ifndef&t;CONFIG_APM&t;/* cycle counter may be unreliable */
 multiline_comment|/*&n; * This is the same as the above, except we _also_ save the current&n; * cycle counter value at the time of the timer interrupt, so that&n; * we later on can estimate the time of day more exactly.&n; */

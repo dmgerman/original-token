@@ -62,6 +62,13 @@ id|seg_not_present
 suffix:colon
 l_int|1
 suffix:semicolon
+DECL|member|useable
+r_int
+r_int
+id|useable
+suffix:colon
+l_int|1
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|MODIFY_LDT_CONTENTS_DATA

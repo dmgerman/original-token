@@ -392,12 +392,6 @@ id|packed
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|typedef|atalk_socket
-r_typedef
-r_struct
-id|sock
-id|atalk_socket
-suffix:semicolon
 DECL|macro|AARP_EXPIRY_TIME
 mdefine_line|#define AARP_EXPIRY_TIME&t;(5*60*HZ)&t;/* Not specified - how long till we drop a resolved entry */
 DECL|macro|AARP_HASH_SIZE

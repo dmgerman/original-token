@@ -2,6 +2,7 @@ multiline_comment|/*&n; *  linux/fs/buffer.c&n; *&n; *  Copyright (C) 1991, 1992
 multiline_comment|/*&n; *  &squot;buffer.c&squot; implements the buffer-cache functions. Race-conditions have&n; * been avoided by NEVER letting an interrupt change a buffer (except for the&n; * data, of course), but instead letting the caller do it.&n; */
 multiline_comment|/*&n; * NOTE! There is one discordant note here: checking floppies for&n; * disk change. This is where it fits best, I think, as it should&n; * invalidate changed floppy-disk-caches.&n; */
 multiline_comment|/* Some bdflush() changes for the dynamic ramdisk - Paul Gortmaker, 12/94 */
+multiline_comment|/* Start bdflush() with kernel_thread not syscall - Paul Gortmaker, 12/95 */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/major.h&gt;

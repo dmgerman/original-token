@@ -69,7 +69,7 @@ r_struct
 id|iovec
 id|rq_svec
 (braket
-id|UIO_MAXIOV
+id|UIO_FASTIOV
 )braket
 suffix:semicolon
 DECL|member|rq_snr
@@ -87,7 +87,7 @@ r_struct
 id|iovec
 id|rq_rvec
 (braket
-id|UIO_MAXIOV
+id|UIO_FASTIOV
 )braket
 suffix:semicolon
 DECL|member|rq_rnr

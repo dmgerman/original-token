@@ -549,8 +549,14 @@ multiline_comment|/*&n;&t;&t; *&t;Attempt to recover if arp has changed (unlikel
 id|ip_rt_advice
 c_func
 (paren
+(paren
+r_struct
+id|rtable
+op_star
+op_star
+)paren
 op_amp
-id|sk-&gt;ip_route_cache
+id|sk-&gt;dst_cache
 comma
 l_int|0
 )paren
@@ -939,6 +945,10 @@ op_logical_or
 id|sk-&gt;state
 op_eq
 id|TCP_CLOSE_WAIT
+op_logical_or
+id|sk-&gt;state
+op_eq
+id|TCP_FIN_WAIT2
 )paren
 (brace
 r_struct

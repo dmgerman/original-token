@@ -332,6 +332,7 @@ c_cond
 (paren
 id|mode
 op_logical_and
+op_logical_neg
 id|suser
 c_func
 (paren

@@ -237,6 +237,16 @@ comma
 id|DEVICE
 c_func
 (paren
+id|TSENG
+comma
+id|TSENG_ET6000
+comma
+l_string|&quot;ET6000&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
 id|WEITEK
 comma
 id|WEITEK_P9000
@@ -794,6 +804,16 @@ comma
 id|OAK_OTI107
 comma
 l_string|&quot;OTI107&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|WINBOND2
+comma
+id|WINBOND2_89C940
+comma
+l_string|&quot;NE2000-PCI&quot;
 )paren
 comma
 id|DEVICE
@@ -1606,6 +1626,16 @@ comma
 id|SPECIALIX_RIO
 comma
 l_string|&quot;RIO host&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|COMPEX
+comma
+id|COMPEX_RL2000
+comma
+l_string|&quot;ReadyLink 2000&quot;
 )paren
 comma
 id|DEVICE
@@ -3141,6 +3171,12 @@ r_return
 l_string|&quot;OAK&quot;
 suffix:semicolon
 r_case
+id|PCI_VENDOR_ID_WINBOND2
+suffix:colon
+r_return
+l_string|&quot;Winbond&quot;
+suffix:semicolon
+r_case
 id|PCI_VENDOR_ID_PROMISE
 suffix:colon
 r_return
@@ -3361,6 +3397,12 @@ id|PCI_VENDOR_ID_SPECIALIX
 suffix:colon
 r_return
 l_string|&quot;Specialix&quot;
+suffix:semicolon
+r_case
+id|PCI_VENDOR_ID_COMPEX
+suffix:colon
+r_return
+l_string|&quot;Compex&quot;
 suffix:semicolon
 r_case
 id|PCI_VENDOR_ID_RP

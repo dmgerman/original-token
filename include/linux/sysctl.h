@@ -156,22 +156,75 @@ multiline_comment|/* /proc/sys/net/ethernet */
 multiline_comment|/* /proc/sys/net/802 */
 multiline_comment|/* /proc/sys/net/unix */
 multiline_comment|/* /proc/sys/net/ipv4 */
-DECL|macro|NET_IPV4_ARP_RES_TIME
-mdefine_line|#define NET_IPV4_ARP_RES_TIME           1
-DECL|macro|NET_IPV4_ARP_DEAD_RES_TIME
-mdefine_line|#define NET_IPV4_ARP_DEAD_RES_TIME      2
-DECL|macro|NET_IPV4_ARP_MAX_TRIES
-mdefine_line|#define NET_IPV4_ARP_MAX_TRIES          3
-DECL|macro|NET_IPV4_ARP_TIMEOUT
-mdefine_line|#define NET_IPV4_ARP_TIMEOUT            4
-DECL|macro|NET_IPV4_ARP_CHECK_INTERVAL
-mdefine_line|#define NET_IPV4_ARP_CHECK_INTERVAL     5
-DECL|macro|NET_IPV4_ARP_CONFIRM_INTERVAL
-mdefine_line|#define NET_IPV4_ARP_CONFIRM_INTERVAL   6
-DECL|macro|NET_IPV4_ARP_CONFIRM_TIMEOUT
-mdefine_line|#define NET_IPV4_ARP_CONFIRM_TIMEOUT&t;7
-DECL|macro|NET_IPV4_TCP_VEGAS_CONG_AVOID
-mdefine_line|#define NET_IPV4_TCP_VEGAS_CONG_AVOID   8
+r_enum
+(brace
+DECL|enumerator|NET_IPV4_ARP_RES_TIME
+id|NET_IPV4_ARP_RES_TIME
+op_assign
+l_int|1
+comma
+DECL|enumerator|NET_IPV4_ARP_DEAD_RES_TIME
+id|NET_IPV4_ARP_DEAD_RES_TIME
+comma
+DECL|enumerator|NET_IPV4_ARP_MAX_TRIES
+id|NET_IPV4_ARP_MAX_TRIES
+comma
+DECL|enumerator|NET_IPV4_ARP_TIMEOUT
+id|NET_IPV4_ARP_TIMEOUT
+comma
+DECL|enumerator|NET_IPV4_ARP_CHECK_INTERVAL
+id|NET_IPV4_ARP_CHECK_INTERVAL
+comma
+DECL|enumerator|NET_IPV4_ARP_CONFIRM_INTERVAL
+id|NET_IPV4_ARP_CONFIRM_INTERVAL
+comma
+DECL|enumerator|NET_IPV4_ARP_CONFIRM_TIMEOUT
+id|NET_IPV4_ARP_CONFIRM_TIMEOUT
+comma
+DECL|enumerator|NET_IPV4_TCP_VEGAS_CONG_AVOID
+id|NET_IPV4_TCP_VEGAS_CONG_AVOID
+comma
+DECL|enumerator|NET_IPV4_FORWARDING
+id|NET_IPV4_FORWARDING
+comma
+DECL|enumerator|NET_IPV4_DEFAULT_TTL
+id|NET_IPV4_DEFAULT_TTL
+comma
+DECL|enumerator|NET_IPV4_RFC1812_FILTER
+id|NET_IPV4_RFC1812_FILTER
+comma
+DECL|enumerator|NET_IPV4_LOG_MARTIANS
+id|NET_IPV4_LOG_MARTIANS
+comma
+DECL|enumerator|NET_IPV4_SOURCE_ROUTE
+id|NET_IPV4_SOURCE_ROUTE
+comma
+DECL|enumerator|NET_IPV4_ADDRMASK_AGENT
+id|NET_IPV4_ADDRMASK_AGENT
+comma
+DECL|enumerator|NET_IPV4_BOOTP_AGENT
+id|NET_IPV4_BOOTP_AGENT
+comma
+DECL|enumerator|NET_IPV4_BOOTP_RELAY
+id|NET_IPV4_BOOTP_RELAY
+comma
+DECL|enumerator|NET_IPV4_FIB_MODEL
+id|NET_IPV4_FIB_MODEL
+comma
+DECL|enumerator|NET_IPV4_NO_PMTU_DISC
+id|NET_IPV4_NO_PMTU_DISC
+comma
+DECL|enumerator|NET_IPV4_ACCEPT_REDIRECTS
+id|NET_IPV4_ACCEPT_REDIRECTS
+comma
+DECL|enumerator|NET_IPV4_SECURE_REDIRECTS
+id|NET_IPV4_SECURE_REDIRECTS
+comma
+DECL|enumerator|NET_IPV4_RFC1620_REDIRECTS
+id|NET_IPV4_RFC1620_REDIRECTS
+comma
+)brace
+suffix:semicolon
 multiline_comment|/* /proc/sys/net/ipv6 */
 DECL|macro|NET_IPV6_FORWARDING
 mdefine_line|#define NET_IPV6_FORWARDING&t;&t;1

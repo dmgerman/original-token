@@ -2,6 +2,7 @@ multiline_comment|/*&n; *&t;Linux NET3:&t;Multicast List maintenance. &n; *&n; *
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -21,6 +22,9 @@ macro_line|#include &lt;net/route.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
+macro_line|#ifdef CONFIG_NET_ALIAS
+macro_line|#include &lt;linux/net_alias.h&gt;
+macro_line|#endif
 multiline_comment|/*&n; *&t;Device multicast list maintenance. This knows about such little matters as promiscuous mode and&n; *&t;converting from the list to the array the drivers use. At least until I fix the drivers up.&n; *&n; *&t;This is used both by IP and by the user level maintenance functions. Unlike BSD we maintain a usage count&n; *&t;on a given multicast address so that a casual user application can add/delete multicasts used by protocols&n; *&t;without doing damage to the protocols when it deletes the entries. It also helps IP as it tracks overlapping&n; *&t;maps.&n; */
 multiline_comment|/*&n; *&t;Update the multicast list into the physical NIC controller.&n; */
 DECL|function|dev_mc_upload
@@ -49,6 +53,16 @@ id|IFF_UP
 r_return
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_NET_ALIAS
+id|dev
+op_assign
+id|net_alias_main_dev
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t; *&t;Devices with no set multicast don&squot;t get set &n;&t; */
 r_if
 c_cond
@@ -98,6 +112,16 @@ op_star
 op_star
 id|dmi
 suffix:semicolon
+macro_line|#ifdef CONFIG_NET_ALIAS
+id|dev
+op_assign
+id|net_alias_main_dev
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+macro_line|#endif
 r_for
 c_loop
 (paren
@@ -246,6 +270,16 @@ id|dev_mc_list
 op_star
 id|dmi
 suffix:semicolon
+macro_line|#ifdef CONFIG_NET_ALIAS
+id|dev
+op_assign
+id|net_alias_main_dev
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+macro_line|#endif
 r_for
 c_loop
 (paren
@@ -376,6 +410,19 @@ op_star
 id|dev
 )paren
 (brace
+macro_line|#ifdef CONFIG_NET_ALIAS
+r_if
+c_cond
+(paren
+id|net_alias_is
+c_func
+(paren
+id|dev
+)paren
+)paren
+r_return
+suffix:semicolon
+macro_line|#endif
 r_while
 c_loop
 (paren

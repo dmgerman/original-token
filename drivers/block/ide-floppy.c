@@ -1,5 +1,5 @@
-multiline_comment|/*&n; * linux/drivers/block/ide-floppy.c&t;Version 0.2 - ALPHA&t;Oct  31, 1996&n; *&n; * Copyright (C) 1996 Gadi Oxman &lt;gadio@netvision.net.il&gt;&n; */
-multiline_comment|/*&n; * IDE ATAPI floppy driver.&n; *&n; * The driver currently doesn&squot;t have any fancy features, just the bare&n; * minimum read/write support.&n; *&n; * Many thanks to Lode Leroy &lt;Lode.Leroy@www.ibase.be&gt;, who tested so many&n; * ALPHA patches to this driver on an EASYSTOR LS-120 ATAPI floppy drive.&n; *&n; * Ver 0.1   Oct 17 96   Initial test version, mostly based on ide-tape.c.&n; * Ver 0.2   Oct 31 96   Minor changes.&n; */
+multiline_comment|/*&n; * linux/drivers/block/ide-floppy.c&t;Version 0.3 - ALPHA&t;Dec   2, 1996&n; *&n; * Copyright (C) 1996 Gadi Oxman &lt;gadio@netvision.net.il&gt;&n; */
+multiline_comment|/*&n; * IDE ATAPI floppy driver.&n; *&n; * The driver currently doesn&squot;t have any fancy features, just the bare&n; * minimum read/write support.&n; *&n; * Many thanks to Lode Leroy &lt;Lode.Leroy@www.ibase.be&gt;, who tested so many&n; * ALPHA patches to this driver on an EASYSTOR LS-120 ATAPI floppy drive.&n; *&n; * Ver 0.1   Oct 17 96   Initial test version, mostly based on ide-tape.c.&n; * Ver 0.2   Oct 31 96   Minor changes.&n; * Ver 0.3   Dec  2 96   Fixed error recovery bug.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -1334,12 +1334,21 @@ id|drive
 op_assign
 id|hwgroup-&gt;drive
 suffix:semicolon
+id|idefloppy_floppy_t
+op_star
+id|floppy
+op_assign
+id|drive-&gt;driver_data
+suffix:semicolon
 r_struct
 id|request
 op_star
 id|rq
 op_assign
 id|hwgroup-&gt;rq
+suffix:semicolon
+r_int
+id|error
 suffix:semicolon
 macro_line|#if IDEFLOPPY_DEBUG_LOG
 id|printk
@@ -1349,6 +1358,46 @@ l_string|&quot;Reached idefloppy_end_request&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif /* IDEFLOPPY_DEBUG_LOG */
+r_switch
+c_cond
+(paren
+id|uptodate
+)paren
+(brace
+r_case
+l_int|0
+suffix:colon
+id|error
+op_assign
+id|IDEFLOPPY_ERROR_GENERAL
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|1
+suffix:colon
+id|error
+op_assign
+l_int|0
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|error
+op_assign
+id|uptodate
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|error
+)paren
+id|floppy-&gt;failed_pc
+op_assign
+l_int|NULL
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1369,37 +1418,10 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-r_switch
-c_cond
-(paren
-id|uptodate
-)paren
-(brace
-r_case
-l_int|0
-suffix:colon
 id|rq-&gt;errors
 op_assign
-id|IDEFLOPPY_ERROR_GENERAL
+id|error
 suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|1
-suffix:colon
-id|rq-&gt;errors
-op_assign
-l_int|0
-suffix:semicolon
-r_break
-suffix:semicolon
-r_default
-suffix:colon
-id|rq-&gt;errors
-op_assign
-id|uptodate
-suffix:semicolon
-)brace
 id|ide_end_drive_cmd
 (paren
 id|drive
@@ -3762,6 +3784,13 @@ op_ge
 id|ERROR_MAX
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|floppy-&gt;failed_pc
+op_ne
+l_int|NULL
+)paren
 id|printk
 (paren
 id|KERN_ERR
@@ -3779,6 +3808,15 @@ comma
 id|floppy-&gt;asc
 comma
 id|floppy-&gt;ascq
+)paren
+suffix:semicolon
+r_else
+id|printk
+(paren
+id|KERN_ERR
+l_string|&quot;ide-floppy: %s: I/O error&bslash;n&quot;
+comma
+id|drive-&gt;name
 )paren
 suffix:semicolon
 id|idefloppy_end_request
@@ -5988,6 +6026,9 @@ multiline_comment|/* busy */
 l_int|1
 comma
 multiline_comment|/* supports_dma */
+l_int|0
+comma
+multiline_comment|/* supports_dsc_overlap */
 id|idefloppy_cleanup
 comma
 multiline_comment|/* cleanup */

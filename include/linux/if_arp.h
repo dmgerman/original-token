@@ -147,6 +147,10 @@ DECL|macro|ATF_USETRAILERS
 mdefine_line|#define&t;ATF_USETRAILERS&t;0x10&t;&t;/* has requested trailers&t;*/
 DECL|macro|ATF_NETMASK
 mdefine_line|#define ATF_NETMASK     0x20            /* want to use a netmask (only&n;&t;&t;&t;&t;&t;   for proxy entries) */
+DECL|macro|ATF_DONTPUB
+mdefine_line|#define ATF_DONTPUB&t;0x40&t;&t;/* don&squot;t answer this addresses&t;*/
+DECL|macro|ATF_MAGIC
+mdefine_line|#define ATF_MAGIC&t;0x80&t;&t;/* automatically added entry&t;*/
 multiline_comment|/*&n; *&t;This structure defines an ethernet arp header.&n; */
 DECL|struct|arphdr
 r_struct

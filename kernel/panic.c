@@ -205,6 +205,7 @@ l_int|1000
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t;&t; *&t;Should we run the reboot notifier. For the moment Im&n;&t;&t; *&t;choosing not too. It might crash, be corrupt or do&n;&t;&t; *&t;more harm than good for other reasons.&n;&t;&t; */
 id|hard_reset_now
 c_func
 (paren

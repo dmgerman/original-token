@@ -41,9 +41,13 @@ macro_line|#ifdef CONFIG_WDT_501&t;&t;/* Full board */
 macro_line|#ifdef CONFIG_WDT501_FAN&t;/* Full board, Fan has no tachometer */
 DECL|macro|FEATUREMAP1
 mdefine_line|#define FEATUREMAP1&t;&t;0
+DECL|macro|WDT_OPTION_MASK
+mdefine_line|#define WDT_OPTION_MASK&t;&t;(WDIOF_OVERHEAT|WDIOF_POWERUNDER|WDIOF_POWEROVER|WDIOF_EXTERN1|WDIOF_EXTERN2|WDIOF_FANFAULT)
 macro_line|#else
 DECL|macro|FEATUREMAP1
 mdefine_line|#define FEATUREMAP1&t;&t;WDC_SR_FANGOOD
+DECL|macro|WDT_OPTION_MASK
+mdefine_line|#define WDT_OPTION_MASK&t;&t;(WDIOF_OVERHEAT|WDIOF_POWERUNDER|WDIOF_POWEROVER|WDIOF_EXTERN1|WDIOF_EXTERN2)
 macro_line|#endif
 DECL|macro|FEATUREMAP2
 mdefine_line|#define FEATUREMAP2&t;&t;0
@@ -57,6 +61,8 @@ DECL|macro|FEATUREMAP1
 mdefine_line|#define FEATUREMAP1&t;&t;(WDC_SR_TGOOD|WDC_SR_FANGOOD)
 DECL|macro|FEATUREMAP2
 mdefine_line|#define FEATUREMAP2&t;&t;(WDC_SR_PSUOVER|WDC_SR_PSUUNDR)
+DECL|macro|WDT_OPTION_MASK
+mdefine_line|#define WDT_OPTION_MASK&t;&t;(WDIOF_OVERHEAT)
 macro_line|#endif
 macro_line|#ifndef FEATUREMAP1
 macro_line|#error &quot;Config option not set&quot;

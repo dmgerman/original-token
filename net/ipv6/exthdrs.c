@@ -119,7 +119,7 @@ r_struct
 id|ipv6_options
 op_star
 )paren
-id|skb-&gt;proto_priv
+id|skb-&gt;cb
 suffix:semicolon
 id|opt-&gt;srcrt
 op_assign
@@ -168,7 +168,7 @@ op_minus
 id|__u8
 op_star
 )paren
-id|skb-&gt;ipv6_hdr
+id|skb-&gt;nh.ipv6h
 op_plus
 l_int|2
 suffix:semicolon
@@ -239,7 +239,7 @@ op_minus
 id|__u8
 op_star
 )paren
-id|skb-&gt;ipv6_hdr
+id|skb-&gt;nh.ipv6h
 op_plus
 l_int|2
 suffix:semicolon
@@ -342,14 +342,14 @@ c_func
 id|addr
 comma
 op_amp
-id|skb-&gt;ipv6_hdr-&gt;daddr
+id|skb-&gt;nh.ipv6h-&gt;daddr
 )paren
 suffix:semicolon
 id|ipv6_addr_copy
 c_func
 (paren
 op_amp
-id|skb-&gt;ipv6_hdr-&gt;daddr
+id|skb-&gt;nh.ipv6h-&gt;daddr
 comma
 op_amp
 id|daddr

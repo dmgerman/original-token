@@ -679,9 +679,9 @@ id|dev-&gt;set_mac_address
 op_assign
 id|eth_mac_addr
 suffix:semicolon
-id|dev-&gt;header_cache_bind
+id|dev-&gt;hard_header_cache
 op_assign
-id|eth_header_cache_bind
+id|eth_header_cache
 suffix:semicolon
 id|dev-&gt;header_cache_update
 op_assign

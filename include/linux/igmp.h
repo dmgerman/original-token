@@ -36,7 +36,7 @@ mdefine_line|#define IGMP_DVMRP&t;&t;&t;0x13&t;/* DVMRP routing */
 DECL|macro|IGMP_PIM
 mdefine_line|#define IGMP_PIM&t;&t;&t;0x14&t;/* PIM routing */
 DECL|macro|IGMP_TRACE
-mdefine_line|#define IGMP_TRACE&t;&t;&t;0x15&t;/* CISCO trace */
+mdefine_line|#define IGMP_TRACE&t;&t;&t;0x15
 DECL|macro|IGMP_HOST_NEW_MEMBERSHIP_REPORT
 mdefine_line|#define IGMP_HOST_NEW_MEMBERSHIP_REPORT 0x16&t;/* New version of 0x11 */
 DECL|macro|IGMP_HOST_LEAVE_MESSAGE
@@ -132,17 +132,17 @@ r_struct
 id|timer_list
 id|timer
 suffix:semicolon
-DECL|member|tm_running
-r_int
-id|tm_running
-suffix:semicolon
-DECL|member|reporter
-r_int
-id|reporter
-suffix:semicolon
 DECL|member|users
 r_int
 id|users
+suffix:semicolon
+DECL|member|tm_running
+r_char
+id|tm_running
+suffix:semicolon
+DECL|member|reporter
+r_char
+id|reporter
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -194,26 +194,8 @@ r_struct
 id|sk_buff
 op_star
 comma
-r_struct
-id|device
-op_star
-comma
-r_struct
-id|options
-op_star
-comma
-id|__u32
-comma
 r_int
 r_int
-comma
-id|__u32
-comma
-r_int
-comma
-r_struct
-id|inet_protocol
-op_star
 )paren
 suffix:semicolon
 r_extern

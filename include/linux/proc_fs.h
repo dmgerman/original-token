@@ -35,6 +35,9 @@ comma
 DECL|enumerator|PROC_PCI
 id|PROC_PCI
 comma
+DECL|enumerator|PROC_MCA
+id|PROC_MCA
+comma
 DECL|enumerator|PROC_SELF
 id|PROC_SELF
 comma
@@ -171,6 +174,15 @@ comma
 DECL|enumerator|PROC_NET_ROUTE
 id|PROC_NET_ROUTE
 comma
+DECL|enumerator|PROC_NET_RTCLASSES
+id|PROC_NET_RTCLASSES
+comma
+DECL|enumerator|PROC_NET_RTLOCAL
+id|PROC_NET_RTLOCAL
+comma
+DECL|enumerator|PROC_NET_RTRULES
+id|PROC_NET_RTRULES
+comma
 DECL|enumerator|PROC_NET_DEV
 id|PROC_NET_DEV
 comma
@@ -213,8 +225,8 @@ comma
 DECL|enumerator|PROC_NET_IPMSQHST
 id|PROC_NET_IPMSQHST
 comma
-DECL|enumerator|PROC_NET_WAVELAN
-id|PROC_NET_WAVELAN
+DECL|enumerator|PROC_NET_WIRELESS
+id|PROC_NET_WIRELESS
 comma
 DECL|enumerator|PROC_NET_IPX_INTERFACE
 id|PROC_NET_IPX_INTERFACE
@@ -276,6 +288,9 @@ comma
 DECL|enumerator|PROC_NET_RT6_STATS
 id|PROC_NET_RT6_STATS
 comma
+DECL|enumerator|PROC_NET_NDISC
+id|PROC_NET_NDISC
+comma
 DECL|enumerator|PROC_NET_STRIP_STATUS
 id|PROC_NET_STRIP_STATUS
 comma
@@ -296,6 +311,9 @@ id|PROC_NET_RS_ROUTES
 comma
 DECL|enumerator|PROC_NET_RS
 id|PROC_NET_RS
+comma
+DECL|enumerator|PROC_NET_CL2LLC
+id|PROC_NET_CL2LLC
 comma
 DECL|enumerator|PROC_NET_LAST
 id|PROC_NET_LAST
@@ -373,6 +391,9 @@ comma
 DECL|enumerator|PROC_SCSI_7000FASST
 id|PROC_SCSI_7000FASST
 comma
+DECL|enumerator|PROC_SCSI_IBMMCA
+id|PROC_SCSI_IBMMCA
+comma
 DECL|enumerator|PROC_SCSI_EATA2X
 id|PROC_SCSI_EATA2X
 comma
@@ -403,6 +424,9 @@ comma
 DECL|enumerator|PROC_SCSI_ATARI
 id|PROC_SCSI_ATARI
 comma
+DECL|enumerator|PROC_SCSI_IDESCSI
+id|PROC_SCSI_IDESCSI
+comma
 DECL|enumerator|PROC_SCSI_SCSI_DEBUG
 id|PROC_SCSI_SCSI_DEBUG
 comma
@@ -425,6 +449,42 @@ multiline_comment|/* won&squot;t ever see more than */
 )brace
 suffix:semicolon
 multiline_comment|/* 16 HBAs in one machine   */
+DECL|enum|mca_directory_inos
+r_enum
+id|mca_directory_inos
+(brace
+DECL|enumerator|PROC_MCA_MACHINE
+id|PROC_MCA_MACHINE
+op_assign
+(paren
+id|PROC_SCSI_LAST
+op_plus
+l_int|1
+)paren
+comma
+DECL|enumerator|PROC_MCA_REGISTERS
+id|PROC_MCA_REGISTERS
+comma
+DECL|enumerator|PROC_MCA_VIDEO
+id|PROC_MCA_VIDEO
+comma
+DECL|enumerator|PROC_MCA_SCSI
+id|PROC_MCA_SCSI
+comma
+DECL|enumerator|PROC_MCA_SLOT
+id|PROC_MCA_SLOT
+comma
+multiline_comment|/* the 8 adapter slots */
+DECL|enumerator|PROC_MCA_LAST
+id|PROC_MCA_LAST
+op_assign
+(paren
+id|PROC_MCA_SLOT
+op_plus
+l_int|8
+)paren
+)brace
+suffix:semicolon
 multiline_comment|/* Finally, the dynamically allocatable proc entries are reserved: */
 DECL|macro|PROC_DYNAMIC_FIRST
 mdefine_line|#define PROC_DYNAMIC_FIRST 4096
@@ -592,6 +652,11 @@ r_extern
 r_struct
 id|proc_dir_entry
 id|proc_pid_fd
+suffix:semicolon
+r_extern
+r_struct
+id|proc_dir_entry
+id|proc_mca
 suffix:semicolon
 r_extern
 r_struct

@@ -151,7 +151,7 @@ id|skb_p
 suffix:semicolon
 id|iph
 op_assign
-id|skb-&gt;h.iph
+id|skb-&gt;nh.iph
 suffix:semicolon
 id|th
 op_assign

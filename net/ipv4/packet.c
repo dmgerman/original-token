@@ -84,10 +84,6 @@ OL
 l_int|0
 )paren
 (brace
-id|skb-&gt;sk
-op_assign
-l_int|NULL
-suffix:semicolon
 id|kfree_skb
 c_func
 (paren
@@ -124,12 +120,6 @@ id|msg
 comma
 r_int
 id|len
-comma
-r_int
-id|noblock
-comma
-r_int
-id|flags
 )paren
 (brace
 r_struct
@@ -167,7 +157,10 @@ multiline_comment|/*&n;&t; *&t;Check the flags. &n;&t; */
 r_if
 c_cond
 (paren
-id|flags
+id|msg-&gt;msg_flags
+op_amp
+op_complement
+id|MSG_DONTWAIT
 )paren
 r_return
 op_minus
@@ -291,14 +284,6 @@ id|ENOBUFS
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;Fill it in &n;&t; */
-id|skb-&gt;sk
-op_assign
-id|sk
-suffix:semicolon
-id|skb-&gt;free
-op_assign
-l_int|1
-suffix:semicolon
 id|err
 op_assign
 id|memcpy_fromiovec
@@ -325,6 +310,14 @@ multiline_comment|/* No ARP needs doing on this (complete) frame */
 id|skb-&gt;protocol
 op_assign
 id|proto
+suffix:semicolon
+id|skb-&gt;dev
+op_assign
+id|dev
+suffix:semicolon
+id|skb-&gt;priority
+op_assign
+id|sk-&gt;priority
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Now send it&n;&t; */
 r_if
@@ -381,10 +374,6 @@ id|dev_queue_xmit
 c_func
 (paren
 id|skb
-comma
-id|dev
-comma
-id|sk-&gt;priority
 )paren
 suffix:semicolon
 r_return

@@ -678,7 +678,7 @@ id|sysctl_string
 )brace
 comma
 (brace
-id|KERN_NFSRNAME
+id|KERN_NFSRADDRS
 comma
 l_string|&quot;nfs-root-addrs&quot;
 comma

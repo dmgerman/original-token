@@ -579,7 +579,7 @@ id|result
 r_return
 id|result
 suffix:semicolon
-multiline_comment|/*&n;     * The structure that we are passed should look like:&n;     *&n;     * struct sdata{&n;     *&t;unsigned int inlen;&n;     *&t;unsigned int outlen;&n;     *&t;unsigned char  cmd[];  # However many bytes are used for cmd.&n;     *&t;unsigned char  data[];&n;     */
+multiline_comment|/*&n;     * The structure that we are passed should look like:&n;     *&n;     * struct sdata {&n;     *&t;unsigned int inlen;&n;     *&t;unsigned int outlen;&n;     *&t;unsigned char  cmd[];  # However many bytes are used for cmd.&n;     *&t;unsigned char  data[];&n;     * };&n;     */
 id|get_user
 c_func
 (paren

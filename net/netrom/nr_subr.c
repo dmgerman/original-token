@@ -60,10 +60,6 @@ id|skb-&gt;sk
 op_assign
 id|sk
 suffix:semicolon
-id|skb-&gt;free
-op_assign
-l_int|1
-suffix:semicolon
 id|kfree_skb
 c_func
 (paren
@@ -93,10 +89,6 @@ l_int|NULL
 id|skb-&gt;sk
 op_assign
 id|sk
-suffix:semicolon
-id|skb-&gt;free
-op_assign
-l_int|1
 suffix:semicolon
 id|kfree_skb
 c_func
@@ -219,10 +211,6 @@ suffix:semicolon
 id|skb-&gt;sk
 op_assign
 id|sk
-suffix:semicolon
-id|skb-&gt;free
-op_assign
-l_int|1
 suffix:semicolon
 id|kfree_skb
 c_func
@@ -868,10 +856,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|skb-&gt;free
-op_assign
-l_int|1
-suffix:semicolon
 id|nr_transmit_buffer
 c_func
 (paren
@@ -1085,10 +1069,6 @@ id|dptr
 op_increment
 op_assign
 l_int|0
-suffix:semicolon
-id|skbn-&gt;free
-op_assign
-l_int|1
 suffix:semicolon
 id|skbn-&gt;sk
 op_assign

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Linux NET3 Bridge Support&n; *&n; *&t;Originally by John Hayes (Network Plumbing).&n; *&t;Minor hacks to get it to run with 1.3.x by Alan Cox &lt;Alan.Cox@linux.org&gt;&n; *&t;More hacks to be able to switch protocols on and off by Christoph Lameter&n; *&t;&lt;clameter@debian.org&gt;&n; *&t;Software and more Documentation for the bridge is available from ftp.debian.org&n; *&t;in the bridge package or at ftp.fuller.edu/Linux/bridge&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Fixes:&n; *&n; *&t;Todo:&n; *&t;&t;Don&squot;t bring up devices automatically. Start ports disabled&n; *&t;and use a netlink notifier so a daemon can maintain the bridge&n; *&t;port group (could we also do multiple groups ????).&n; *&t;&t;A nice /proc file interface.&n; *&t;&t;Put the path costs in the port info and devices.&n; *&t;&t;Put the bridge port number in the device structure for speed.&n; *&t;&t;Bridge SNMP stats.&n; *&t;&n; */
+multiline_comment|/*&n; *&t;Linux NET3 Bridge Support&n; *&n; *&t;Originally by John Hayes (Network Plumbing).&n; *&t;Minor hacks to get it to run with 1.3.x by Alan Cox &lt;Alan.Cox@linux.org&gt;&n; *&t;More hacks to be able to switch protocols on and off by Christoph Lameter&n; *&t;&lt;clameter@debian.org&gt;&n; *&t;Software and more Documentation for the bridge is available from ftp.debian.org&n; *&t;in the bridge package or at ftp.fuller.edu/Linux/bridge&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Fixes:&n; *&t;&t;Yury Shevchuk&t;:&t;Bridge with non bridging ports&n; *&n; *&t;Todo:&n; *&t;&t;Don&squot;t bring up devices automatically. Start ports disabled&n; *&t;and use a netlink notifier so a daemon can maintain the bridge&n; *&t;port group (could we also do multiple groups ????).&n; *&t;&t;A nice /proc file interface.&n; *&t;&t;Put the path costs in the port info and devices.&n; *&t;&t;Put the bridge port number in the device structure for speed.&n; *&t;&t;Bridge SNMP stats.&n; *&t;&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -5300,7 +5300,7 @@ suffix:semicolon
 multiline_comment|/* pass frame up our stack (this will */
 multiline_comment|/* happen in net_bh() in dev.c) */
 )brace
-multiline_comment|/* ok, forward this frame... */
+multiline_comment|/* Now this frame came from one of bridged&n;&t;&t;&t;   ports, and it appears to be not for me;&n;&t;&t;&t;   this means we should attempt to forward it.&n;&t;&t;&t;   But actually this frame can still be for me&n;&t;&t;&t;   [as well] if it is destined to one of our&n;&t;&t;&t;   multicast groups.  br_forward() will not&n;&t;&t;&t;   consume the frame if this is the case */
 r_return
 id|br_forward
 c_func
@@ -5394,6 +5394,20 @@ c_cond
 id|skb-&gt;dev-&gt;flags
 op_amp
 id|IFF_LOOPBACK
+)paren
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/* if bridging is not enabled on the port we are going to send&n;           to, we have nothing to do with this frame, hands off */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|find_port
+c_func
+(paren
+id|skb-&gt;dev
+)paren
 )paren
 r_return
 l_int|0
@@ -5719,7 +5733,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * this routine returns 1 if it consumes the frame, 0&n; * if not...&n; */
+multiline_comment|/*&n; * Forward the frame SKB to proper port[s].  PORT is the port that the&n; * frame has come from; we will not send the frame back there.  PORT == 0&n; * means we have been called from br_tx_fr(), not from br_receive_frame().&n; *&n; * this routine returns 1 if it consumes the frame, 0&n; * if not...&n; */
 DECL|function|br_forward
 r_int
 id|br_forward

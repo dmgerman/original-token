@@ -154,6 +154,8 @@ DECL|macro|HDIO_GET_NOWERR
 mdefine_line|#define HDIO_GET_NOWERR&t;&t;0x030a&t;/* get ignore-write-error flag */
 DECL|macro|HDIO_GET_DMA
 mdefine_line|#define HDIO_GET_DMA&t;&t;0x030b&t;/* get use-dma flag */
+DECL|macro|HDIO_GET_NICE
+mdefine_line|#define HDIO_GET_NICE&t;&t;0x030c&t;/* get nice flags */
 DECL|macro|HDIO_DRIVE_CMD
 mdefine_line|#define HDIO_DRIVE_CMD&t;&t;0x031f&t;/* execute a special drive command */
 multiline_comment|/* hd/ide ctl&squot;s that pass (arg) non-ptr values are numbered 0x032n/0x033n */
@@ -173,6 +175,8 @@ DECL|macro|HDIO_SET_PIO_MODE
 mdefine_line|#define HDIO_SET_PIO_MODE&t;0x0327&t;/* reconfig interface to new speed */
 DECL|macro|HDIO_SCAN_HWIF
 mdefine_line|#define HDIO_SCAN_HWIF&t;&t;0x0328&t;/* register and (re)scan interface */
+DECL|macro|HDIO_SET_NICE
+mdefine_line|#define HDIO_SET_NICE&t;&t;0x0329&t;/* set nice flags */
 multiline_comment|/* structure returned by HDIO_GET_IDENTITY, as per ANSI ATA2 rev.2f spec */
 DECL|struct|hd_driveid
 r_struct
@@ -458,6 +462,17 @@ multiline_comment|/* unsigned short reservedyy[96];*/
 multiline_comment|/* reserved (words 160-255) */
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * IDE &quot;nice&quot; flags. These are used on a per drive basis to determine&n; * when to be nice and give more bandwidth to the other devices which&n; * share the same IDE bus.&n; */
+DECL|macro|IDE_NICE_DSC_OVERLAP
+mdefine_line|#define IDE_NICE_DSC_OVERLAP&t;(0)&t;/* per the DSC overlap protocol */
+DECL|macro|IDE_NICE_ATAPI_OVERLAP
+mdefine_line|#define IDE_NICE_ATAPI_OVERLAP&t;(1)&t;/* not supported yet */
+DECL|macro|IDE_NICE_0
+mdefine_line|#define IDE_NICE_0&t;&t;(2)&t;/* when sure that it won&squot;t affect us */
+DECL|macro|IDE_NICE_1
+mdefine_line|#define IDE_NICE_1&t;&t;(3)&t;/* when probably won&squot;t affect us much */
+DECL|macro|IDE_NICE_2
+mdefine_line|#define IDE_NICE_2&t;&t;(4)&t;/* when we know it&squot;s on our expense */
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * These routines are used for kernel command line parameters from main.c:&n; */
 macro_line|#include &lt;linux/config.h&gt;

@@ -246,6 +246,14 @@ comma
 r_int
 )paren
 suffix:semicolon
+DECL|member|mcfilter
+r_int
+r_char
+id|mcfilter
+(braket
+l_int|8
+)braket
+suffix:semicolon
 DECL|member|open
 r_int
 id|open

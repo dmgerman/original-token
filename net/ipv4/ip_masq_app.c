@@ -1055,7 +1055,7 @@ op_star
 id|skb_p
 )paren
 op_member_access_from_pointer
-id|h.iph
+id|nh.iph
 suffix:semicolon
 id|th
 op_assign
@@ -1255,7 +1255,7 @@ op_star
 id|skb_p
 )paren
 op_member_access_from_pointer
-id|h.iph
+id|nh.iph
 suffix:semicolon
 id|th
 op_assign
@@ -1828,10 +1828,6 @@ r_return
 id|skb
 suffix:semicolon
 )brace
-id|n_skb-&gt;free
-op_assign
-id|skb-&gt;free
-suffix:semicolon
 id|skb_reserve
 c_func
 (paren
@@ -1857,6 +1853,12 @@ id|n_skb-&gt;data
 op_minus
 id|skb-&gt;data
 suffix:semicolon
+id|n_skb-&gt;nh.raw
+op_assign
+id|skb-&gt;nh.raw
+op_plus
+id|offset
+suffix:semicolon
 id|n_skb-&gt;h.raw
 op_assign
 id|skb-&gt;h.raw
@@ -1877,25 +1879,6 @@ id|skb-&gt;mac.raw
 op_plus
 id|offset
 suffix:semicolon
-id|n_skb-&gt;ip_hdr
-op_assign
-(paren
-r_struct
-id|iphdr
-op_star
-)paren
-(paren
-(paren
-(paren
-r_char
-op_star
-)paren
-id|skb-&gt;ip_hdr
-)paren
-op_plus
-id|offset
-)paren
-suffix:semicolon
 id|n_skb-&gt;pkt_type
 op_assign
 id|skb-&gt;pkt_type
@@ -1907,6 +1890,14 @@ suffix:semicolon
 id|n_skb-&gt;ip_summed
 op_assign
 id|skb-&gt;ip_summed
+suffix:semicolon
+id|n_skb-&gt;dst
+op_assign
+id|dst_clone
+c_func
+(paren
+id|skb-&gt;dst
+)paren
 suffix:semicolon
 multiline_comment|/*&n;                 * Copy pkt in new buffer&n;                 */
 id|memcpy
@@ -2063,7 +2054,7 @@ macro_line|#endif
 multiline_comment|/*&n;                 * &t;update ip header&n;                 */
 id|iph
 op_assign
-id|n_skb-&gt;h.iph
+id|n_skb-&gt;nh.iph
 suffix:semicolon
 id|iph-&gt;check
 op_assign

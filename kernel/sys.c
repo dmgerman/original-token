@@ -19,6 +19,7 @@ macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#if defined(CONFIG_APM) &amp;&amp; defined(CONFIG_APM_POWER_OFF)
 macro_line|#include &lt;linux/apm_bios.h&gt;
 macro_line|#endif
+macro_line|#include &lt;linux/notifier.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 multiline_comment|/*&n; * this indicates whether you can reboot with ctrl-alt-del: the default is yes&n; */
@@ -27,6 +28,15 @@ r_int
 id|C_A_D
 op_assign
 l_int|1
+suffix:semicolon
+multiline_comment|/*&n; *&t;List of functions to call at shutdown. This is used to stop any&n; *&t;idling DMA operations and the like. &n; */
+DECL|variable|boot_notifier_list
+r_struct
+id|notifier_block
+op_star
+id|boot_notifier_list
+op_assign
+l_int|NULL
 suffix:semicolon
 r_extern
 r_void
@@ -599,11 +609,24 @@ id|flag
 op_eq
 l_int|0x01234567
 )paren
+(brace
+id|notifier_call_chain
+c_func
+(paren
+op_amp
+id|boot_notifier_list
+comma
+id|SYS_DOWN
+comma
+l_int|NULL
+)paren
+suffix:semicolon
 id|hard_reset_now
 c_func
 (paren
 )paren
 suffix:semicolon
+)brace
 r_else
 r_if
 c_cond
@@ -660,6 +683,17 @@ id|APM_STATE_OFF
 )paren
 suffix:semicolon
 macro_line|#endif
+id|notifier_call_chain
+c_func
+(paren
+op_amp
+id|boot_notifier_list
+comma
+id|SYS_HALT
+comma
+l_int|NULL
+)paren
+suffix:semicolon
 id|do_exit
 c_func
 (paren
@@ -692,11 +726,24 @@ c_cond
 (paren
 id|C_A_D
 )paren
+(brace
+id|notifier_call_chain
+c_func
+(paren
+op_amp
+id|boot_notifier_list
+comma
+id|SYS_DOWN
+comma
+l_int|NULL
+)paren
+suffix:semicolon
 id|hard_reset_now
 c_func
 (paren
 )paren
 suffix:semicolon
+)brace
 r_else
 id|kill_proc
 c_func

@@ -60,10 +60,6 @@ id|skb-&gt;sk
 op_assign
 id|sk
 suffix:semicolon
-id|skb-&gt;free
-op_assign
-l_int|1
-suffix:semicolon
 id|kfree_skb
 c_func
 (paren
@@ -93,10 +89,6 @@ l_int|NULL
 id|skb-&gt;sk
 op_assign
 id|sk
-suffix:semicolon
-id|skb-&gt;free
-op_assign
-l_int|1
 suffix:semicolon
 id|kfree_skb
 c_func
@@ -193,10 +185,6 @@ suffix:semicolon
 id|skb-&gt;sk
 op_assign
 id|sk
-suffix:semicolon
-id|skb-&gt;free
-op_assign
-l_int|1
 suffix:semicolon
 id|kfree_skb
 c_func

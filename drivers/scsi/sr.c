@@ -1340,6 +1340,7 @@ id|NOT_READY
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;CD-ROM not ready.  Make sure you have a disc in the drive.&bslash;n&quot;
 )paren
 suffix:semicolon

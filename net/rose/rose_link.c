@@ -513,10 +513,6 @@ op_increment
 op_assign
 l_int|0
 suffix:semicolon
-id|skb-&gt;free
-op_assign
-l_int|1
-suffix:semicolon
 id|skb-&gt;sk
 op_assign
 l_int|NULL
@@ -652,10 +648,6 @@ id|dptr
 op_increment
 op_assign
 id|ROSE_RESTART_CONFIRMATION
-suffix:semicolon
-id|skb-&gt;free
-op_assign
-l_int|1
 suffix:semicolon
 id|skb-&gt;sk
 op_assign
@@ -802,10 +794,6 @@ id|dptr
 op_increment
 op_assign
 id|diag
-suffix:semicolon
-id|skb-&gt;free
-op_assign
-l_int|1
 suffix:semicolon
 id|skb-&gt;sk
 op_assign
@@ -981,10 +969,6 @@ op_increment
 op_assign
 l_int|0x00
 suffix:semicolon
-id|skb-&gt;free
-op_assign
-l_int|1
-suffix:semicolon
 id|skb-&gt;sk
 op_assign
 l_int|NULL
@@ -1103,10 +1087,6 @@ op_assign
 id|AX25_P_ROSE
 suffix:semicolon
 id|skb-&gt;arp
-op_assign
-l_int|1
-suffix:semicolon
-id|skb-&gt;free
 op_assign
 l_int|1
 suffix:semicolon

@@ -2505,6 +2505,8 @@ c_cond
 (paren
 op_logical_neg
 id|tty-&gt;stopped
+op_logical_or
+id|tty-&gt;flow_stopped
 )paren
 r_return
 suffix:semicolon
@@ -8295,6 +8297,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_ESP  /* init ESP before rs, so rs doesn&squot;t see the port */
+id|esp_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_SERIAL
 id|rs_init
 c_func

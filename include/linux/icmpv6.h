@@ -289,7 +289,7 @@ id|icmpv6_init
 c_func
 (paren
 r_struct
-id|proto_ops
+id|net_proto_family
 op_star
 id|ops
 )paren

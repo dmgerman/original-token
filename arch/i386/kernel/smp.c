@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Intel MP v1.1/v1.4 specification support routines for multi-pentium &n; *&t;hosts.&n; *&n; *&t;(c) 1995 Alan Cox, CymruNET Ltd  &lt;alan@cymru.net&gt;&n; *&t;Supported by Caldera http://www.caldera.com.&n; *&t;Much of the core SMP work is based on previous work by Thomas Radke, to&n; *&t;whom a great many thanks are extended.&n; *&n; *&t;Thanks to Intel for making available several different Pentium and&n; *&t;Pentium Pro MP machines.&n; *&n; *&t;This code is released under the GNU public license version 2 or&n; *&t;later.&n; *&n; *&t;Fixes&n; *&t;&t;Felix Koop&t;:&t;NR_CPUS used properly&n; *&t;&t;Jose Renau&t;:&t;Handle single CPU case.&n; *&t;&t;Alan Cox&t;:&t;By repeated request 8) - Total BogoMIP report.&n; *&t;&t;Greg Wright&t;:&t;Fix for kernel stacks panic.&n; *&t;&t;Erich Boleyn&t;:&t;MP v1.4 and additional changes.&n; */
+multiline_comment|/*&n; *&t;Intel MP v1.1/v1.4 specification support routines for multi-pentium &n; *&t;hosts.&n; *&n; *&t;(c) 1995 Alan Cox, CymruNET Ltd  &lt;alan@cymru.net&gt;&n; *&t;Supported by Caldera http://www.caldera.com.&n; *&t;Much of the core SMP work is based on previous work by Thomas Radke, to&n; *&t;whom a great many thanks are extended.&n; *&n; *&t;Thanks to Intel for making available several different Pentium and&n; *&t;Pentium Pro MP machines.&n; *&n; *&t;This code is released under the GNU public license version 2 or&n; *&t;later.&n; *&n; *&t;Fixes&n; *&t;&t;Felix Koop&t;:&t;NR_CPUS used properly&n; *&t;&t;Jose Renau&t;:&t;Handle single CPU case.&n; *&t;&t;Alan Cox&t;:&t;By repeated request 8) - Total BogoMIP report.&n; *&t;&t;Greg Wright&t;:&t;Fix for kernel stacks panic.&n; *&t;&t;Erich Boleyn&t;:&t;MP v1.4 and additional changes.&n; *&t;Matthias Sattler&t;:&t;Changes for 2.1 kernel map.&n; *&t;Michel Lespinasse&t;:&t;Changes for 2.1 kernel map.&n; *&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
@@ -13,6 +13,8 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
+multiline_comment|/*&n; *&t;Some notes on processor bugs:&n; *&n; *&t;Pentium and Pentium Pro (and all CPU&squot;s) have bugs. The Linux issues&n; *&t;for SMP are handled as follows.&n; *&n; *&t;Pentium Pro&n; *&t;&t;Occasional delivery of &squot;spurious interrupt&squot; as trap #16. This&n; *&t;is very very rare. The kernel logs the event and recovers&n; *&n; *&t;Pentium&n; *&t;&t;There is a marginal case where REP MOVS on 100MHz SMP&n; *&t;machines with B stepping processors can fail. XXX should provide&n; *&t;an L1cache=Writethrough or L1cache=off option. &n; *&n; *&t;&t;B stepping CPU&squot;s may hang. There are hardware work arounds&n; *&t;for this. We warn about it in case your board doesnt have the work&n; *&t;arounds. Basically thats so I can tell anyone with a B stepping&n; *&t;CPU and SMP problems &quot;tough&quot;.&n; *&n; *&t;Specific items [From Pentium Processor Specification Update]&n; *&n; *&t;1AP.&t;Linux doesn&squot;t use remote read&n; *&t;2AP.&t;Linux doesn&squot;t trust APIC errors&n; *&t;3AP.&t;We work around this&n; *&t;4AP.&t;Linux never generated 3 interrupts of the same priority&n; *&t;&t;to cause a lost local interrupt.&n; *&t;5AP.&t;Remote read is never used&n; *&t;9AP.&t;XXX NEED TO CHECK WE HANDLE THIS XXX&n; *&t;10AP.&t;XXX NEED TO CHECK WE HANDLE THIS XXX&n; *&t;11AP.&t;Linux read the APIC between writes to avoid this, as per&n; *&t;&t;the documentation. Make sure you preserve this as it affects&n; *&t;&t;the C stepping chips too.&n; *&n; *&t;If this sounds worrying believe me these bugs are ___RARE___ and&n; *&t;there&squot;s about nothing of note with C stepping upwards.&n; */
 multiline_comment|/*&n; *&t;Why isn&squot;t this somewhere standard ??&n; */
 DECL|function|max
 r_extern
@@ -44,6 +46,23 @@ r_return
 id|b
 suffix:semicolon
 )brace
+DECL|variable|smp_b_stepping
+r_static
+r_int
+id|smp_b_stepping
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Set if we find a B stepping CPU&t;&t;&t;*/
+DECL|variable|max_cpus
+r_static
+r_int
+id|max_cpus
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+multiline_comment|/* Setup configured maximum number of CPUs to activate&t;*/
 DECL|variable|smp_found_config
 r_int
 id|smp_found_config
@@ -113,6 +132,13 @@ r_int
 id|smp_invalidate_needed
 suffix:semicolon
 multiline_comment|/* Used for the invalidate map that&squot;s also checked in the spinlock */
+DECL|variable|kstack_ptr
+r_volatile
+r_int
+r_int
+id|kstack_ptr
+suffix:semicolon
+multiline_comment|/* Stack vector for booting CPU&squot;s&t;&t;&t;*/
 DECL|variable|cpu_data
 r_struct
 id|cpuinfo_x86
@@ -420,6 +446,46 @@ macro_line|#else
 DECL|macro|SMP_PRINTK
 mdefine_line|#define SMP_PRINTK(x)
 macro_line|#endif
+multiline_comment|/*&n; *&t;Setup routine for controlling SMP activation&n; *&n; *&t;Command-line option of &quot;nosmp&quot; or &quot;maxcpus=0&quot; will disable SMP&n; *      activation entirely (the MPS table probe still happens, though).&n; *&n; *&t;Command-line option of &quot;maxcpus=&lt;NUM&gt;&quot;, where &lt;NUM&gt; is an integer&n; *&t;greater than 0, limits the maximum number of CPUs activated in&n; *&t;SMP mode to &lt;NUM&gt;.&n; */
+DECL|function|smp_setup
+r_void
+id|smp_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|ints
+op_logical_and
+id|ints
+(braket
+l_int|0
+)braket
+OG
+l_int|0
+)paren
+id|max_cpus
+op_assign
+id|ints
+(braket
+l_int|1
+)braket
+suffix:semicolon
+r_else
+id|max_cpus
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 multiline_comment|/* &n; *&t;Checksum an MP configuration block.&n; */
 DECL|function|mpf_checksum
 r_static
@@ -790,7 +856,19 @@ suffix:semicolon
 multiline_comment|/* set the local APIC address */
 id|apic_addr
 op_assign
+(paren
+r_int
+r_int
+)paren
+id|phys_to_virt
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
 id|mpc-&gt;mpc_lapic
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Now process the configuration blocks.&n;&t; */
 r_while
@@ -1128,7 +1206,15 @@ id|m-&gt;mpc_apicaddr
 suffix:semicolon
 id|io_apic_addr
 op_assign
+(paren
+r_int
+r_int
+)paren
+id|phys_to_virt
+c_func
+(paren
 id|m-&gt;mpc_apicaddr
+)paren
 suffix:semicolon
 )brace
 id|mpt
@@ -1261,12 +1347,11 @@ r_int
 op_star
 id|bp
 op_assign
+id|phys_to_virt
+c_func
 (paren
-r_int
-r_int
-op_star
-)paren
 id|base
+)paren
 suffix:semicolon
 r_struct
 id|intel_mp_floating
@@ -1726,9 +1811,19 @@ multiline_comment|/*&n;&t; *&t;Our stacks have to be below the 1Mb line, and mem
 r_if
 c_cond
 (paren
+id|virt_to_phys
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
+(paren
 id|mem_base
 op_plus
 id|size
+)paren
+)paren
 op_ge
 l_int|0x9F000
 )paren
@@ -1736,7 +1831,9 @@ l_int|0x9F000
 id|panic
 c_func
 (paren
-l_string|&quot;smp_alloc_memory: Insufficient low memory for kernel stacks.&bslash;n&quot;
+l_string|&quot;smp_alloc_memory: Insufficient low memory for kernel stacks 0x%lx.&bslash;n&quot;
+comma
+id|mem_base
 )paren
 suffix:semicolon
 )brace
@@ -1839,6 +1936,24 @@ id|c-&gt;x86_mask
 op_assign
 id|x86_mask
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|x86_mask
+op_ge
+l_int|1
+op_logical_and
+id|x86_mask
+op_le
+l_int|4
+)paren
+(brace
+id|smp_b_stepping
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+multiline_comment|/* Remember we have B step CPUs */
 id|c-&gt;x86_capability
 op_assign
 id|x86_capability
@@ -1883,9 +1998,27 @@ r_void
 )paren
 (brace
 multiline_comment|/*&n;&t; *&t;Lets the callin&squot;s below out of their loop.&n;&t; */
+id|SMP_PRINTK
+c_func
+(paren
+(paren
+l_string|&quot;Setting commenced=1, go go go&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 id|smp_commenced
 op_assign
 l_int|1
+suffix:semicolon
+)brace
+DECL|function|pointless_func
+r_void
+id|pointless_func
+c_func
+(paren
+r_void
+)paren
+(brace
 suffix:semicolon
 )brace
 DECL|function|smp_callin
@@ -1971,6 +2104,17 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|SMP_PRINTK
+c_func
+(paren
+(paren
+l_string|&quot;Stack at about %p&bslash;n&quot;
+comma
+op_amp
+id|cpuid
+)paren
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Save our processor parameters&n;&t; */
 id|smp_store_cpu_info
 c_func
@@ -2018,6 +2162,11 @@ id|smp_commenced
 (brace
 suffix:semicolon
 )brace
+id|local_flush_tlb
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2037,17 +2186,17 @@ l_int|1
 (brace
 suffix:semicolon
 )brace
-id|local_flush_tlb
-c_func
-(paren
-)paren
-suffix:semicolon
 id|SMP_PRINTK
 c_func
 (paren
 (paren
 l_string|&quot;Commenced..&bslash;n&quot;
 )paren
+)paren
+suffix:semicolon
+id|local_flush_tlb
+c_func
+(paren
 )paren
 suffix:semicolon
 id|load_TR
@@ -2059,9 +2208,8 @@ id|cpuid
 )braket
 )paren
 suffix:semicolon
-multiline_comment|/*&t;while(1);*/
 )brace
-multiline_comment|/*&n; *&t;Cycle through the processors sending pentium IPI&squot;s to boot each.&n; */
+multiline_comment|/*&n; *&t;Cycle through the processors sending APIC IPI&squot;s to boot each.&n; */
 DECL|function|smp_boot_cpus
 r_void
 id|smp_boot_cpus
@@ -2081,6 +2229,9 @@ suffix:semicolon
 r_int
 r_int
 id|cfg
+suffix:semicolon
+id|pgd_t
+id|maincfg
 suffix:semicolon
 r_void
 op_star
@@ -2158,6 +2309,27 @@ id|active_kernel_processor
 op_assign
 id|boot_cpu_id
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;If SMP should be disabled, then really disable it!&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|max_cpus
+op_logical_and
+id|smp_found_config
+)paren
+(brace
+id|smp_found_config
+op_assign
+l_int|0
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;SMP mode deactivated, forcing use of dummy APIC emulation.&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; *&t;If we don&squot;t conform to the Intel MPS standard, get out&n;&t; *&t;of here now!&n;&t; */
 r_if
 c_cond
@@ -2353,12 +2525,22 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|cpu_present_map
 op_amp
 (paren
 l_int|1
 op_lshift
 id|i
+)paren
+)paren
+op_logical_and
+(paren
+id|max_cpus
+template_param
+id|cpucount
+op_plus
+l_int|1
 )paren
 )paren
 (brace
@@ -2404,7 +2586,19 @@ id|kernel_stacks
 id|i
 )braket
 op_assign
+(paren
+r_void
+op_star
+)paren
+id|phys_to_virt
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
 id|stack
+)paren
 suffix:semicolon
 id|install_trampoline
 c_func
@@ -2460,6 +2654,14 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|SMP_PRINTK
+c_func
+(paren
+(paren
+l_string|&quot;1.&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 op_star
 (paren
 (paren
@@ -2468,7 +2670,11 @@ r_int
 r_int
 op_star
 )paren
+id|phys_to_virt
+c_func
+(paren
 l_int|0x469
+)paren
 )paren
 op_assign
 (paren
@@ -2481,6 +2687,14 @@ id|stack
 op_rshift
 l_int|4
 suffix:semicolon
+id|SMP_PRINTK
+c_func
+(paren
+(paren
+l_string|&quot;2.&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 op_star
 (paren
 (paren
@@ -2489,10 +2703,22 @@ r_int
 r_int
 op_star
 )paren
+id|phys_to_virt
+c_func
+(paren
 l_int|0x467
+)paren
 )paren
 op_assign
 l_int|0
+suffix:semicolon
+id|SMP_PRINTK
+c_func
+(paren
+(paren
+l_string|&quot;3.&bslash;n&quot;
+)paren
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; *&t;Protect it again&n;&t;&t;&t; */
 id|pg0
@@ -2507,6 +2733,29 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/*&t;walken modif&n;&t;&t;&t; *&t;enable mapping of the first 4M at virtual&n;&t;&t;&t; *&t;address zero&n;&t;&t;&t; */
+id|maincfg
+op_assign
+id|swapper_pg_dir
+(braket
+l_int|0
+)braket
+suffix:semicolon
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+id|swapper_pg_dir
+)paren
+(braket
+l_int|0
+)braket
+op_assign
+l_int|0x102007
+suffix:semicolon
+multiline_comment|/* no need to local_flush_tlb :&n;&t;&t;&t;   we are setting this up for the slave processor ! */
 multiline_comment|/*&n;&t;&t;&t; *&t;Be paranoid about clearing APIC errors.&n;&t;&t;&t; */
 r_if
 c_cond
@@ -2758,6 +3007,14 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|SMP_PRINTK
+c_func
+(paren
+(paren
+l_string|&quot;After apic_write.&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t; *&t;STARTUP IPI&n;&t;&t;&t;&t; */
 id|cfg
 op_assign
@@ -2812,7 +3069,11 @@ op_or
 (paren
 r_int
 )paren
+id|virt_to_phys
+c_func
+(paren
 id|stack
+)paren
 )paren
 op_rshift
 l_int|12
@@ -2820,6 +3081,14 @@ l_int|12
 )paren
 suffix:semicolon
 multiline_comment|/* Boot on the stack &t;*/
+id|SMP_PRINTK
+c_func
+(paren
+(paren
+l_string|&quot;Before start apic_write.&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 id|apic_write
 c_func
 (paren
@@ -2829,12 +3098,34 @@ id|cfg
 )paren
 suffix:semicolon
 multiline_comment|/* Kick the second &t;*/
+id|SMP_PRINTK
+c_func
+(paren
+(paren
+l_string|&quot;Startup point 1.&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 id|timeout
 op_assign
 l_int|0
 suffix:semicolon
 r_do
 (brace
+id|SMP_PRINTK
+c_func
+(paren
+(paren
+l_string|&quot;Sleeping.&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|1000000
+)paren
+suffix:semicolon
 id|udelay
 c_func
 (paren
@@ -2886,6 +3177,14 @@ l_int|0xEF
 )paren
 suffix:semicolon
 )brace
+id|SMP_PRINTK
+c_func
+(paren
+(paren
+l_string|&quot;After Startup.&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3012,7 +3311,11 @@ r_int
 r_char
 op_star
 )paren
+id|phys_to_virt
+c_func
+(paren
 l_int|8192
+)paren
 )paren
 op_eq
 l_int|0xA5
@@ -3034,6 +3337,27 @@ l_string|&quot;Not responding.&bslash;n&quot;
 suffix:semicolon
 )brace
 )brace
+id|SMP_PRINTK
+c_func
+(paren
+(paren
+l_string|&quot;CPU has booted.&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/*      walken modif&n;                         *      restore mapping of the first 4M&n;                         */
+id|swapper_pg_dir
+(braket
+l_int|0
+)braket
+op_assign
+id|maincfg
+suffix:semicolon
+id|local_flush_tlb
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/* mark &quot;stuck&quot; area as not stuck */
 op_star
 (paren
@@ -3043,7 +3367,11 @@ r_int
 r_int
 op_star
 )paren
+id|phys_to_virt
+c_func
+(paren
 l_int|8192
+)paren
 )paren
 op_assign
 l_int|0
@@ -3109,7 +3437,11 @@ r_volatile
 r_int
 op_star
 )paren
+id|phys_to_virt
+c_func
+(paren
 l_int|0x467
+)paren
 )paren
 op_assign
 l_int|0
@@ -3128,6 +3460,14 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Allow the user to impress friends.&n;&t; */
+id|SMP_PRINTK
+c_func
+(paren
+(paren
+l_string|&quot;Before bogomips.&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3230,6 +3570,14 @@ op_mod
 l_int|100
 )paren
 suffix:semicolon
+id|SMP_PRINTK
+c_func
+(paren
+(paren
+l_string|&quot;Before bogocount - setting activated=1.&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 id|smp_activated
 op_assign
 l_int|1
@@ -3241,6 +3589,27 @@ op_plus
 l_int|1
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|smp_b_stepping
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;WARNING: SMP operation may be unreliable with B stepping processors.&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+id|SMP_PRINTK
+c_func
+(paren
+(paren
+l_string|&quot;Boot done.&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;A non wait message cannot pass data or cpu source info. This current setup&n; *&t;is only safe because the kernel lock owner is the only person who can send a message.&n; *&n; *&t;Wrapping this whole block in a spinlock is not the safe answer either. A processor may&n; *&t;get stuck with irq&squot;s off waiting to send a message and thus not replying to the person&n; *&t;spinning for a reply....&n; *&n; *&t;In the end flush tlb ought to be the NMI and a very very short function (to avoid the old&n; *&t;IDE disk problems), and other messages sent with IRQ&squot;s enabled in a civilised fashion. That&n; *&t;will also boost performance.&n; */
 DECL|function|smp_message_pass
@@ -3770,6 +4139,7 @@ op_star
 id|regs
 )paren
 (brace
+multiline_comment|/*#define DEBUGGING_SMP_RESCHED*/
 macro_line|#ifdef DEBUGGING_SMP_RESCHED
 r_static
 r_int
@@ -3794,6 +4164,12 @@ id|smp_processor_id
 c_func
 (paren
 )paren
+)paren
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|1000000
 )paren
 suffix:semicolon
 id|ct

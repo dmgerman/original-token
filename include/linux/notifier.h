@@ -270,6 +270,19 @@ DECL|macro|NETDEV_DOWN
 mdefine_line|#define NETDEV_DOWN&t;0x0002
 DECL|macro|NETDEV_REBOOT
 mdefine_line|#define NETDEV_REBOOT&t;0x0003&t;/* Tell a protocol stack a network interface&n;&t;&t;&t;&t;   detected a hardware crash and restarted&n;&t;&t;&t;&t;   - we can use this eg to kick tcp sessions&n;&t;&t;&t;&t;   once done */
+DECL|macro|NETDEV_CHANGE
+mdefine_line|#define NETDEV_CHANGE&t;0x0004&t;/* Notify device state change */
+DECL|macro|SYS_DOWN
+mdefine_line|#define SYS_DOWN&t;0x0001&t;/* Notify of system down */
+DECL|macro|SYS_HALT
+mdefine_line|#define SYS_HALT&t;0x0002&t;/* Notify of system halt */
+multiline_comment|/*&n; *&t;Publically visible notifier objects&n; */
+r_extern
+r_struct
+id|notifier_block
+op_star
+id|boot_notifier_list
+suffix:semicolon
 macro_line|#endif
 macro_line|#endif
 eof

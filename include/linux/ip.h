@@ -3,24 +3,84 @@ macro_line|#ifndef _LINUX_IP_H
 DECL|macro|_LINUX_IP_H
 mdefine_line|#define _LINUX_IP_H
 macro_line|#include &lt;asm/byteorder.h&gt;
+multiline_comment|/* SOL_IP socket options */
+DECL|macro|IPTOS_TOS_MASK
+mdefine_line|#define IPTOS_TOS_MASK&t;&t;0x1E
+DECL|macro|IPTOS_TOS
+mdefine_line|#define IPTOS_TOS(tos)&t;&t;((tos)&amp;IPTOS_TOS_MASK)
+DECL|macro|IPTOS_LOWDELAY
+mdefine_line|#define&t;IPTOS_LOWDELAY&t;&t;0x10
+DECL|macro|IPTOS_THROUGHPUT
+mdefine_line|#define&t;IPTOS_THROUGHPUT&t;0x08
+DECL|macro|IPTOS_RELIABILITY
+mdefine_line|#define&t;IPTOS_RELIABILITY&t;0x04
+DECL|macro|IPTOS_MINCOST
+mdefine_line|#define&t;IPTOS_MINCOST&t;&t;0x02
+DECL|macro|IPTOS_PREC_MASK
+mdefine_line|#define IPTOS_PREC_MASK&t;&t;0xE0
+DECL|macro|IPTOS_PREC
+mdefine_line|#define IPTOS_PREC(tos)&t;&t;((tos)&amp;IPTOS_PREC_MASK)
+DECL|macro|IPTOS_PREC_NETCONTROL
+mdefine_line|#define IPTOS_PREC_NETCONTROL           0xe0
+DECL|macro|IPTOS_PREC_INTERNETCONTROL
+mdefine_line|#define IPTOS_PREC_INTERNETCONTROL      0xc0
+DECL|macro|IPTOS_PREC_CRITIC_ECP
+mdefine_line|#define IPTOS_PREC_CRITIC_ECP           0xa0
+DECL|macro|IPTOS_PREC_FLASHOVERRIDE
+mdefine_line|#define IPTOS_PREC_FLASHOVERRIDE        0x80
+DECL|macro|IPTOS_PREC_FLASH
+mdefine_line|#define IPTOS_PREC_FLASH                0x60
+DECL|macro|IPTOS_PREC_IMMEDIATE
+mdefine_line|#define IPTOS_PREC_IMMEDIATE            0x40
+DECL|macro|IPTOS_PREC_PRIORITY
+mdefine_line|#define IPTOS_PREC_PRIORITY             0x20
+DECL|macro|IPTOS_PREC_ROUTINE
+mdefine_line|#define IPTOS_PREC_ROUTINE              0x00
+multiline_comment|/* IP options */
+DECL|macro|IPOPT_COPY
+mdefine_line|#define IPOPT_COPY&t;&t;0x80
+DECL|macro|IPOPT_CLASS_MASK
+mdefine_line|#define IPOPT_CLASS_MASK&t;0x60
+DECL|macro|IPOPT_NUMBER_MASK
+mdefine_line|#define IPOPT_NUMBER_MASK&t;0x1f
+DECL|macro|IPOPT_COPIED
+mdefine_line|#define&t;IPOPT_COPIED(o)&t;&t;((o)&amp;IPOPT_COPY)
+DECL|macro|IPOPT_CLASS
+mdefine_line|#define&t;IPOPT_CLASS(o)&t;&t;((o)&amp;IPOPT_CLASS_MASK)
+DECL|macro|IPOPT_NUMBER
+mdefine_line|#define&t;IPOPT_NUMBER(o)&t;&t;((o)&amp;IPOPT_NUMBER_MASK)
+DECL|macro|IPOPT_CONTROL
+mdefine_line|#define&t;IPOPT_CONTROL&t;&t;0x00
+DECL|macro|IPOPT_RESERVED1
+mdefine_line|#define&t;IPOPT_RESERVED1&t;&t;0x20
+DECL|macro|IPOPT_MEASUREMENT
+mdefine_line|#define&t;IPOPT_MEASUREMENT&t;0x40
+DECL|macro|IPOPT_RESERVED2
+mdefine_line|#define&t;IPOPT_RESERVED2&t;&t;0x60
 DECL|macro|IPOPT_END
-mdefine_line|#define IPOPT_END&t;0
+mdefine_line|#define IPOPT_END&t;(0 |IPOPT_CONTROL)
 DECL|macro|IPOPT_NOOP
-mdefine_line|#define IPOPT_NOOP&t;1
+mdefine_line|#define IPOPT_NOOP&t;(1 |IPOPT_CONTROL)
 DECL|macro|IPOPT_SEC
-mdefine_line|#define IPOPT_SEC&t;130
+mdefine_line|#define IPOPT_SEC&t;(2 |IPOPT_CONTROL|IPOPT_COPY)
 DECL|macro|IPOPT_LSRR
-mdefine_line|#define IPOPT_LSRR&t;131
-DECL|macro|IPOPT_SSRR
-mdefine_line|#define IPOPT_SSRR&t;137
-DECL|macro|IPOPT_RR
-mdefine_line|#define IPOPT_RR&t;7
-DECL|macro|IPOPT_SID
-mdefine_line|#define IPOPT_SID&t;136
+mdefine_line|#define IPOPT_LSRR&t;(3 |IPOPT_CONTROL|IPOPT_COPY)
 DECL|macro|IPOPT_TIMESTAMP
-mdefine_line|#define IPOPT_TIMESTAMP&t;68
+mdefine_line|#define IPOPT_TIMESTAMP&t;(4 |IPOPT_MEASUREMENT)
+DECL|macro|IPOPT_RR
+mdefine_line|#define IPOPT_RR&t;(7 |IPOPT_CONTROL)
+DECL|macro|IPOPT_SID
+mdefine_line|#define IPOPT_SID&t;(8 |IPOPT_CONTROL|IPOPT_COPY)
+DECL|macro|IPOPT_SSRR
+mdefine_line|#define IPOPT_SSRR&t;(9 |IPOPT_CONTROL|IPOPT_COPY)
+DECL|macro|IPOPT_RA
+mdefine_line|#define IPOPT_RA&t;(20|IPOPT_CONTROL|IPOPT_COPY)
+DECL|macro|IPVERSION
+mdefine_line|#define IPVERSION&t;4
 DECL|macro|MAXTTL
 mdefine_line|#define MAXTTL&t;&t;255
+DECL|macro|IPDEFTTL
+mdefine_line|#define IPDEFTTL&t;64
 DECL|struct|timestamp
 r_struct
 id|timestamp
@@ -115,9 +175,9 @@ DECL|macro|IPOPT_TS_TSANDADDR
 mdefine_line|#define&t;IPOPT_TS_TSANDADDR&t;1&t;&t;/* timestamps and addresses */
 DECL|macro|IPOPT_TS_PRESPEC
 mdefine_line|#define&t;IPOPT_TS_PRESPEC&t;2&t;&t;/* specified modules only */
-DECL|struct|options
+DECL|struct|ip_options
 r_struct
-id|options
+id|ip_options
 (brace
 DECL|member|faddr
 id|__u32
@@ -194,6 +254,11 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Need to record addr of outgoing dev  */
+DECL|member|router_alert
+r_int
+r_char
+id|router_alert
+suffix:semicolon
 DECL|member|__pad1
 r_int
 r_char
@@ -203,11 +268,6 @@ DECL|member|__pad2
 r_int
 r_char
 id|__pad2
-suffix:semicolon
-DECL|member|__pad3
-r_int
-r_char
-id|__pad3
 suffix:semicolon
 DECL|member|__data
 r_int

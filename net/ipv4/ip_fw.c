@@ -4777,14 +4777,6 @@ id|proc_net_ipfwfwd
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif
-macro_line|#ifdef CONFIG_IP_MASQUERADE
-multiline_comment|/*&n;         *&t;Initialize masquerading. &n;         */
-id|ip_masq_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#if defined(CONFIG_IP_ACCT) || defined(CONFIG_IP_FIREWALL)
 multiline_comment|/* Register for device up/down reports */
 id|register_netdevice_notifier

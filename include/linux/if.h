@@ -23,7 +23,6 @@ DECL|macro|IFF_NOARP
 mdefine_line|#define&t;IFF_NOARP&t;0x80&t;&t;/* no ARP protocol&t;&t;*/
 DECL|macro|IFF_PROMISC
 mdefine_line|#define&t;IFF_PROMISC&t;0x100&t;&t;/* receive all packets&t;&t;*/
-multiline_comment|/* Not supported */
 DECL|macro|IFF_ALLMULTI
 mdefine_line|#define&t;IFF_ALLMULTI&t;0x200&t;&t;/* receive all multicast packets*/
 DECL|macro|IFF_MASTER

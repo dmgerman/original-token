@@ -4,6 +4,7 @@ mdefine_line|#define _LINUX_SOCKET_H
 macro_line|#include &lt;asm/socket.h&gt;&t;&t;&t;/* arch-dependent defines&t;*/
 macro_line|#include &lt;linux/sockios.h&gt;&t;&t;/* the SIOCxxx I/O controls&t;*/
 macro_line|#include &lt;linux/uio.h&gt;&t;&t;&t;/* iovec support&t;&t;*/
+macro_line|#include &lt;linux/types.h&gt;&t;&t;/* pid_t&t;&t;&t;*/
 DECL|typedef|sa_family_t
 r_typedef
 r_int
@@ -84,12 +85,11 @@ DECL|member|msg_controllen
 r_int
 id|msg_controllen
 suffix:semicolon
-multiline_comment|/* Length of rights list */
+multiline_comment|/* Length of cmsg list */
 DECL|member|msg_flags
 r_int
 id|msg_flags
 suffix:semicolon
-multiline_comment|/* 4.4 BSD item we dont use      */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;POSIX 1003.1g - ancillary data object information&n; *&t;Ancillary data consits of a sequence of pairs of&n; *&t;(cmsghdr, cmsg_data[])&n; */
@@ -124,11 +124,13 @@ suffix:semicolon
 suffix:semicolon
 multiline_comment|/*&n; *&t;Ancilliary data object information MACROS&n; *&t;Table 5-14 of POSIX 1003.1g&n; */
 DECL|macro|CMSG_DATA
-mdefine_line|#define CMSG_DATA(cmsg)&t;&t;cmsg-&gt;cmsg_data
+mdefine_line|#define CMSG_DATA(cmsg)&t;&t;(cmsg)-&gt;cmsg_data
 DECL|macro|CMSG_NXTHDR
 mdefine_line|#define CMSG_NXTHDR(mhdr, cmsg) cmsg_nxthdr(mhdr, cmsg)
+DECL|macro|CMSG_ALIGN
+mdefine_line|#define CMSG_ALIGN(len) ( ((len)+sizeof(long)-1) &amp; ~(sizeof(long)-1) )
 DECL|macro|CMSG_FIRST
-mdefine_line|#define CMSG_FIRST(mhdr)&t;((struct cmsghdr *) (mhdr)-&gt;msg_control)
+mdefine_line|#define&t;CMSG_FIRST(msg)&t;((msg)-&gt;msg_controllen &gt;= sizeof(struct cmsghdr) ? &bslash;&n;&t;&t;&t; (struct cmsghdr *)(msg)-&gt;msg_control : &bslash;&n;&t;&t;&t; (struct cmsghdr *)NULL)
 DECL|function|cmsg_nxthdr
 r_extern
 id|__inline__
@@ -181,7 +183,11 @@ op_star
 id|cmsg
 )paren
 op_plus
+id|CMSG_ALIGN
+c_func
+(paren
 id|cmsg-&gt;cmsg_len
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -209,9 +215,37 @@ op_star
 id|ptr
 suffix:semicolon
 )brace
-multiline_comment|/* Control Messages */
+macro_line|#ifdef __KERNEL__
+DECL|macro|KCMSG_NXTHDR
+mdefine_line|#define&t;KCMSG_NXTHDR(msg, cmsg)&t;({ &bslash;&n;&t;struct cmsghdr * __cmptr = (struct cmsghdr *)((unsigned char*)(cmsg) + CMSG_ALIGN(kcm.cmsg_len)); &bslash;&n;&t;( (void *)(__cmptr + 1) &lt;= (msg)-&gt;msg_control + (msg)-&gt;msg_controllen &amp;&amp; &bslash;&n;&t;  !copy_from_user(&amp;kcm, __cmptr, sizeof(struct cmsghdr)) ? __cmptr : NULL); })
+DECL|macro|KCMSG_FIRSTHDR
+mdefine_line|#define&t;KCMSG_FIRSTHDR(msg)&t;((msg)-&gt;msg_control &amp;&amp; (msg)-&gt;msg_controllen &gt;= sizeof(struct cmsghdr) &bslash;&n;&t;&t;&t;&t; &amp;&amp; !copy_from_user(&amp;kcm, (msg)-&gt;msg_control, sizeof(struct cmsghdr)) ? &bslash;&n;&t;&t;&t;&t; (struct cmsghdr *)(msg)-&gt;msg_control : &bslash;&n;&t;&t;&t;&t; (struct cmsghdr *)NULL)
+macro_line|#endif
+multiline_comment|/* &quot;Socket&quot;-level control message types: */
 DECL|macro|SCM_RIGHTS
-mdefine_line|#define SCM_RIGHTS&t;&t;1
+mdefine_line|#define&t;SCM_RIGHTS&t;0x01&t;&t;/* rw: access rights (array of int) */
+DECL|macro|SCM_CREDENTIALS
+mdefine_line|#define SCM_CREDENTIALS 0x02&t;&t;/* rw: struct ucred&t;&t;*/
+DECL|macro|SCM_CONNECT
+mdefine_line|#define SCM_CONNECT&t;0x03&t;&t;/* rw: struct scm_connect&t;*/
+DECL|struct|ucred
+r_struct
+id|ucred
+(brace
+DECL|member|pid
+id|pid_t
+id|pid
+suffix:semicolon
+DECL|member|uid
+id|uid_t
+id|uid
+suffix:semicolon
+DECL|member|gid
+id|gid_t
+id|gid
+suffix:semicolon
+)brace
+suffix:semicolon
 multiline_comment|/* Socket types. */
 DECL|macro|SOCK_STREAM
 mdefine_line|#define SOCK_STREAM&t;1&t;&t;/* stream (connection) socket&t;*/
@@ -306,15 +340,31 @@ mdefine_line|#define MSG_PEEK&t;2
 DECL|macro|MSG_DONTROUTE
 mdefine_line|#define MSG_DONTROUTE&t;4
 DECL|macro|MSG_CTRUNC
-mdefine_line|#define MSG_CTRUNC&t;8&t;/*  We need to support this for BSD oddments */
+mdefine_line|#define MSG_CTRUNC&t;8
 DECL|macro|MSG_PROXY
-mdefine_line|#define MSG_PROXY&t;16&t;/* Supply or ask second address. */
-DECL|macro|MSG_EOR
-mdefine_line|#define MSG_EOR&t;&t;32&t;/* End of record */
+mdefine_line|#define MSG_PROXY&t;0x10&t;/* Supply or ask second address. */
 DECL|macro|MSG_TRUNC
-mdefine_line|#define MSG_TRUNC&t;64&t;/* Data was discarded before delivery */
+mdefine_line|#define MSG_TRUNC&t;0x20
+DECL|macro|MSG_DONTWAIT
+mdefine_line|#define MSG_DONTWAIT&t;0x40&t;/* Nonblocking io&t;&t; */
+DECL|macro|MSG_EOR
+mdefine_line|#define MSG_EOR         0x80&t;/* End of record */
 DECL|macro|MSG_WAITALL
-mdefine_line|#define MSG_WAITALL&t;128&t;/* Wait for a full request */
+mdefine_line|#define MSG_WAITALL&t;0x100&t;/* Wait for a full request */
+DECL|macro|MSG_FIN
+mdefine_line|#define MSG_FIN         0x200
+DECL|macro|MSG_SYN
+mdefine_line|#define MSG_SYN&t;&t;0x400
+DECL|macro|MSG_URG
+mdefine_line|#define MSG_URG&t;&t;0x800
+DECL|macro|MSG_RST
+mdefine_line|#define MSG_RST&t;&t;0x1000
+DECL|macro|MSG_CTLIGNORE
+mdefine_line|#define MSG_CTLIGNORE   0x80000000
+DECL|macro|MSG_EOF
+mdefine_line|#define MSG_EOF         MSG_FIN
+DECL|macro|MSG_CTLFLAGS
+mdefine_line|#define MSG_CTLFLAGS&t;(MSG_OOB|MSG_URG|MSG_FIN|MSG_SYN|MSG_RST)
 multiline_comment|/* Setsockoptions(2) level. Thanks to BSD these must match IPPROTO_xxx */
 DECL|macro|SOL_IP
 mdefine_line|#define SOL_IP&t;&t;0
@@ -342,40 +392,6 @@ DECL|macro|SOL_TCP
 mdefine_line|#define SOL_TCP&t;&t;6
 DECL|macro|SOL_UDP
 mdefine_line|#define SOL_UDP&t;&t;17
-multiline_comment|/* IP options */
-DECL|macro|IP_TOS
-mdefine_line|#define IP_TOS&t;&t;1
-DECL|macro|IPTOS_LOWDELAY
-mdefine_line|#define&t;IPTOS_LOWDELAY&t;&t;0x10
-DECL|macro|IPTOS_THROUGHPUT
-mdefine_line|#define&t;IPTOS_THROUGHPUT&t;0x08
-DECL|macro|IPTOS_RELIABILITY
-mdefine_line|#define&t;IPTOS_RELIABILITY&t;0x04
-DECL|macro|IPTOS_MINCOST
-mdefine_line|#define&t;IPTOS_MINCOST&t;&t;0x02
-DECL|macro|IP_TTL
-mdefine_line|#define IP_TTL&t;&t;2
-DECL|macro|IP_HDRINCL
-mdefine_line|#define IP_HDRINCL&t;3
-DECL|macro|IP_OPTIONS
-mdefine_line|#define IP_OPTIONS&t;4
-DECL|macro|IP_MULTICAST_IF
-mdefine_line|#define IP_MULTICAST_IF&t;&t;&t;32
-DECL|macro|IP_MULTICAST_TTL
-mdefine_line|#define IP_MULTICAST_TTL &t;&t;33
-DECL|macro|IP_MULTICAST_LOOP
-mdefine_line|#define IP_MULTICAST_LOOP &t;&t;34
-DECL|macro|IP_ADD_MEMBERSHIP
-mdefine_line|#define IP_ADD_MEMBERSHIP&t;&t;35
-DECL|macro|IP_DROP_MEMBERSHIP
-mdefine_line|#define IP_DROP_MEMBERSHIP&t;&t;36
-multiline_comment|/* These need to appear somewhere around here */
-DECL|macro|IP_DEFAULT_MULTICAST_TTL
-mdefine_line|#define IP_DEFAULT_MULTICAST_TTL        1
-DECL|macro|IP_DEFAULT_MULTICAST_LOOP
-mdefine_line|#define IP_DEFAULT_MULTICAST_LOOP       1
-DECL|macro|IP_MAX_MEMBERSHIPS
-mdefine_line|#define IP_MAX_MEMBERSHIPS              20
 multiline_comment|/* IPX options */
 DECL|macro|IPX_TYPE
 mdefine_line|#define IPX_TYPE&t;1
@@ -537,6 +553,29 @@ comma
 r_void
 op_star
 id|kaddr
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|put_cmsg
+c_func
+(paren
+r_struct
+id|msghdr
+op_star
+comma
+r_int
+id|level
+comma
+r_int
+id|type
+comma
+r_int
+id|len
+comma
+r_void
+op_star
+id|data
 )paren
 suffix:semicolon
 macro_line|#endif

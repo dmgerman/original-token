@@ -1,10 +1,11 @@
-multiline_comment|/*&n; * PC Watchdog Driver&n; * by Ken Hollis (khollis@bitgate.com)&n; *&n; * Permission granted from Simon Machell (73244.1270@compuserve.com)&n; * Written for the Linux Kernel, and GPLed by Ken Hollis&n; *&n; * 960107&t;Added request_region routines, modulized the whole thing.&n; * 960108&t;Fixed end-of-file pointer (Thanks to Dan Hollis), added&n; *&t;&t;WD_TIMEOUT define.&n; * 960216&t;Added eof marker on the file, and changed verbose messages.&n; * 960716&t;Made functional and cosmetic changes to the source for&n; *&t;&t;inclusion in Linux 2.0.x kernels, thanks to Alan Cox.&n; * 960717&t;Removed read/seek routines, replaced with ioctl.  Also, added&n; *&t;&t;check_region command due to Alan&squot;s suggestion.&n; * 960821&t;Made changes to compile in newer 2.0.x kernels.  Added&n; *&t;&t;&quot;cold reboot sense&quot; entry.&n; */
+multiline_comment|/*&n; * PC Watchdog Driver&n; * by Ken Hollis (khollis@bitgate.com)&n; *&n; * Permission granted from Simon Machell (73244.1270@compuserve.com)&n; * Written for the Linux Kernel, and GPLed by Ken Hollis&n; *&n; * 960107&t;Added request_region routines, modulized the whole thing.&n; * 960108&t;Fixed end-of-file pointer (Thanks to Dan Hollis), added&n; *&t;&t;WD_TIMEOUT define.&n; * 960216&t;Added eof marker on the file, and changed verbose messages.&n; * 960716&t;Made functional and cosmetic changes to the source for&n; *&t;&t;inclusion in Linux 2.0.x kernels, thanks to Alan Cox.&n; * 960717&t;Removed read/seek routines, replaced with ioctl.  Also, added&n; *&t;&t;check_region command due to Alan&squot;s suggestion.&n; * 960821&t;Made changes to compile in newer 2.0.x kernels.  Added&n; *&t;&t;&quot;cold reboot sense&quot; entry.&n; * 960825&t;Made a few changes to code, deleted some defines and made&n; *&t;&t;typedefs to replace them.  Made heartbeat reset only available&n; *&t;&t;via ioctl, and removed the write routine.&n; * 960828&t;Added new items for PC Watchdog Rev.C card.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -14,24 +15,74 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;linux/pcwd.h&gt;
+macro_line|#include &lt;linux/watchdog.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-DECL|macro|WD_VER
-mdefine_line|#define WD_VER                  &quot;0.50 (08/21/96)&quot;
-DECL|macro|WD_MINOR
-mdefine_line|#define&t;WD_MINOR&t;&t;130&t;/* Minor device number */
-DECL|macro|WD_TIMEOUT
-mdefine_line|#define&t;WD_TIMEOUT&t;&t;3&t;/* 1 1/2 seconds for a timeout */
-DECL|macro|WD_TIMERRESET_PORT1
-mdefine_line|#define WD_TIMERRESET_PORT1     0x270&t;/* Reset port - first choice */
-DECL|macro|WD_TIMERRESET_PORT2
-mdefine_line|#define WD_TIMERRESET_PORT2     0x370&t;/* Reset port - second choice */
-DECL|macro|WD_CTLSTAT_PORT1
-mdefine_line|#define WD_CTLSTAT_PORT1        0x271&t;/* Control port - first choice */
-DECL|macro|WD_CTLSTAT_PORT2
-mdefine_line|#define WD_CTLSTAT_PORT2        0x371&t;/* Control port - second choice */
-DECL|macro|WD_PORT_EXTENT
-mdefine_line|#define&t;WD_PORT_EXTENT&t;&t;2&t;/* Takes up two addresses */
+macro_line|#include &lt;asm/uaccess.h&gt;
+DECL|struct|pcwd_ioports
+r_typedef
+r_struct
+id|pcwd_ioports
+(brace
+DECL|member|first_port
+r_int
+id|first_port
+suffix:semicolon
+DECL|member|range
+r_int
+id|range
+suffix:semicolon
+DECL|typedef|IOPS
+)brace
+id|IOPS
+suffix:semicolon
+multiline_comment|/*&n;** These are the auto-probe addresses available for the Rev.A version of the&n;** PC Watchdog card.&n;*/
+DECL|variable|pcwd_ioports
+r_static
+id|IOPS
+id|pcwd_ioports
+(braket
+)braket
+op_assign
+(brace
+(brace
+l_int|0x270
+comma
+l_int|3
+)brace
+comma
+(brace
+l_int|0x350
+comma
+l_int|3
+)brace
+comma
+(brace
+l_int|0x370
+comma
+l_int|3
+)brace
+comma
+(brace
+l_int|0x000
+comma
+l_int|0
+)brace
+)brace
+suffix:semicolon
+macro_line|#ifdef DEBUG
+DECL|macro|dprintk
+mdefine_line|#define dprintk(x)&t;printk(x)
+macro_line|#else
+DECL|macro|dprintk
+mdefine_line|#define dprintk(x)
+macro_line|#endif
+macro_line|#ifdef CONFIG_PCWD_REV_A
+DECL|macro|CARD_REV
+mdefine_line|#define CARD_REV&t;&quot;A&quot;
+DECL|macro|PORT_OFFSET
+mdefine_line|#define PORT_OFFSET&t;0
+DECL|macro|PORT_RANGE
+mdefine_line|#define PORT_RANGE&t;2
 DECL|macro|WD_WDRST
 mdefine_line|#define WD_WDRST                0x01&t;/* Previously reset state */
 DECL|macro|WD_T110
@@ -42,21 +93,43 @@ DECL|macro|WD_RLY2
 mdefine_line|#define WD_RLY2                 0x08&t;/* External relay triggered */
 DECL|macro|WD_SRLY2
 mdefine_line|#define WD_SRLY2                0x80&t;/* Software external relay triggered */
-DECL|variable|current_ctlport
+macro_line|#endif
+macro_line|#ifdef CONFIG_PCWD_REV_C
+DECL|macro|CARD_REV
+mdefine_line|#define CARD_REV&t;&quot;C&quot;
+DECL|macro|PORT_OFFSET
+mdefine_line|#define PORT_OFFSET&t;1
+DECL|macro|PORT_RANGE
+mdefine_line|#define PORT_RANGE&t;4
+DECL|macro|WD_WDRST
+mdefine_line|#define WD_WDRST                0x01&t;/* Previously reset state */
+DECL|macro|WD_T110
+mdefine_line|#define WD_T110                 0x04&t;/* Temperature overheat sense */
+macro_line|#endif
+DECL|macro|WD_VER
+mdefine_line|#define WD_VER                  &quot;0.52 (08/28/96)&quot;
+DECL|macro|WD_MINOR
+mdefine_line|#define&t;WD_MINOR&t;&t;130&t;/* Minor device number */
+DECL|macro|WD_TIMEOUT
+mdefine_line|#define&t;WD_TIMEOUT&t;&t;3&t;/* 1 1/2 seconds for a timeout */
 DECL|variable|current_readport
 r_static
 r_int
-id|current_ctlport
-comma
 id|current_readport
 suffix:semicolon
 DECL|variable|is_open
-DECL|variable|is_eof
+DECL|variable|initial_status
+DECL|variable|supports_temp
+DECL|variable|mode_debug
 r_static
 r_int
 id|is_open
 comma
-id|is_eof
+id|initial_status
+comma
+id|supports_temp
+comma
+id|mode_debug
 suffix:semicolon
 DECL|function|pcwd_checkcard
 r_int
@@ -90,9 +163,9 @@ c_cond
 id|check_region
 c_func
 (paren
-id|current_ctlport
+id|current_readport
 comma
-id|WD_PORT_EXTENT
+id|PORT_RANGE
 )paren
 )paren
 (brace
@@ -101,7 +174,7 @@ c_func
 (paren
 l_string|&quot;pcwd: Port 0x%x unavailable.&bslash;n&quot;
 comma
-id|current_ctlport
+id|current_readport
 )paren
 suffix:semicolon
 r_return
@@ -124,6 +197,28 @@ c_func
 id|current_readport
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|prev_card_dat
+op_eq
+l_int|0xFF
+)paren
+(brace
+id|dprintk
+c_func
+(paren
+(paren
+l_string|&quot;pcwd: No card detected at 0x%03x&bslash;n&quot;
+comma
+id|current_readport
+)paren
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 r_while
 c_loop
 (paren
@@ -132,9 +227,9 @@ OL
 id|WD_TIMEOUT
 )paren
 (brace
-macro_line|#ifdef&t;DEBUG
-id|printk
+id|dprintk
 c_func
+(paren
 (paren
 l_string|&quot;pcwd: Run #%d on port 0x%03x&bslash;n&quot;
 comma
@@ -142,8 +237,8 @@ id|count
 comma
 id|current_readport
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Read the raw card data from the port, and strip off the&n;&t;   first 4 bits */
 id|card_dat
 op_assign
@@ -184,14 +279,14 @@ id|done
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#ifdef&t;DEBUG
-id|printk
+id|dprintk
 c_func
+(paren
 (paren
 l_string|&quot;pcwd: I show nothing on this port.&bslash;n&quot;
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/* If there&squot;s a heart beat in both instances, then this means we&n;&t;   found our card.  This also means that either the card was&n;&t;   previously reset, or the computer was power-cycled. */
 r_if
@@ -223,14 +318,14 @@ id|done
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#ifdef&t;DEBUG
-id|printk
+id|dprintk
 c_func
+(paren
 (paren
 l_string|&quot;pcwd: I show alternate heart beats.  Card detected.&bslash;n&quot;
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 r_break
 suffix:semicolon
 )brace
@@ -253,14 +348,14 @@ id|done
 id|count
 op_increment
 suffix:semicolon
-macro_line|#ifdef&t;DEBUG
-id|printk
+id|dprintk
 c_func
+(paren
 (paren
 l_string|&quot;pcwd: The card data is exactly the same (possibility).&bslash;n&quot;
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 id|done
 op_assign
 l_int|1
@@ -290,14 +385,14 @@ id|found
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#ifdef&t;DEBUG
-id|printk
+id|dprintk
 c_func
+(paren
 (paren
 l_string|&quot;pcwd: I show alternate heart beats.  Card detected.&bslash;n&quot;
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 r_break
 suffix:semicolon
 )brace
@@ -336,12 +431,16 @@ id|card_status
 op_assign
 l_int|0x0000
 suffix:semicolon
+id|initial_status
+op_assign
 id|card_status
 op_assign
 id|inb
 c_func
 (paren
 id|current_readport
+op_plus
+id|PORT_OFFSET
 )paren
 suffix:semicolon
 r_if
@@ -360,16 +459,23 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|supports_temp
+)paren
+r_if
+c_cond
+(paren
 id|card_status
 op_amp
 id|WD_T110
 )paren
+(brace
 id|printk
 c_func
 (paren
 l_string|&quot;pcwd: CPU overheat sense.&bslash;n&quot;
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -398,46 +504,13 @@ l_string|&quot;pcwd: Cold boot sense.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-DECL|function|pcwd_return_data
+DECL|function|pcwd_send_heartbeat
 r_static
-r_int
-id|pcwd_return_data
+r_void
+id|pcwd_send_heartbeat
 c_func
 (paren
 r_void
-)paren
-(brace
-r_return
-id|inb
-c_func
-(paren
-id|current_readport
-)paren
-suffix:semicolon
-)brace
-DECL|function|pcwd_write
-r_static
-r_int
-id|pcwd_write
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|file
-comma
-r_const
-r_char
-op_star
-id|data
-comma
-r_int
-id|len
 )paren
 (brace
 r_int
@@ -450,17 +523,15 @@ op_logical_neg
 id|is_open
 )paren
 r_return
-op_minus
-id|EIO
 suffix:semicolon
-macro_line|#ifdef&t;DEBUG
-id|printk
+id|dprintk
 c_func
 (paren
-l_string|&quot;pcwd: write request&bslash;n&quot;
+(paren
+l_string|&quot;pcwd: heartbeat&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
-macro_line|#endif
 id|wdrst_stat
 op_assign
 id|inb_p
@@ -482,7 +553,9 @@ c_func
 (paren
 id|wdrst_stat
 comma
-id|current_ctlport
+id|current_readport
+op_plus
+id|PORT_OFFSET
 )paren
 suffix:semicolon
 r_return
@@ -521,6 +594,28 @@ id|cdat
 comma
 id|rv
 suffix:semicolon
+r_static
+r_struct
+id|watchdog_ident
+id|ident
+op_assign
+(brace
+id|WDIOF_OVERHEAT
+op_or
+id|WDIOF_CARDRESET
+comma
+macro_line|#ifdef CONFIG_PCWD_REV_A&t;
+l_int|1
+comma
+macro_line|#else
+l_int|3
+comma
+macro_line|#endif&t;&t;&t;&t;
+l_string|&quot;PCWD revision &quot;
+id|CARD_REV
+l_string|&quot;.&quot;
+)brace
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -534,7 +629,54 @@ op_minus
 id|ENOIOCTLCMD
 suffix:semicolon
 r_case
-id|PCWD_GETSTAT
+id|WDIOC_GETSUPPORT
+suffix:colon
+id|i
+op_assign
+id|verify_area
+c_func
+(paren
+id|VERIFY_WRITE
+comma
+(paren
+r_void
+op_star
+)paren
+id|arg
+comma
+r_sizeof
+(paren
+r_struct
+id|watchdog_info
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
+)paren
+r_return
+id|i
+suffix:semicolon
+r_else
+r_return
+id|copy_to_user
+c_func
+(paren
+id|arg
+comma
+op_amp
+id|ident
+comma
+r_sizeof
+(paren
+id|ident
+)paren
+)paren
+suffix:semicolon
+r_case
+id|WDIOC_GETSTATUS
 suffix:colon
 id|i
 op_assign
@@ -567,9 +709,10 @@ r_else
 (brace
 id|cdat
 op_assign
-id|pcwd_return_data
+id|inb
 c_func
 (paren
+id|current_readport
 )paren
 suffix:semicolon
 id|rv
@@ -585,7 +728,7 @@ id|WD_WDRST
 )paren
 id|rv
 op_or_assign
-l_int|0x01
+id|WDIOF_CARDRESET
 suffix:semicolon
 r_if
 c_cond
@@ -596,8 +739,9 @@ id|WD_T110
 )paren
 id|rv
 op_or_assign
-l_int|0x02
+id|WDIOF_OVERHEAT
 suffix:semicolon
+r_return
 id|put_user
 c_func
 (paren
@@ -610,34 +754,233 @@ op_star
 id|arg
 )paren
 suffix:semicolon
+)brace
+r_break
+suffix:semicolon
+r_case
+id|WDIOC_GETBOOTSTATUS
+suffix:colon
+id|i
+op_assign
+id|verify_area
+c_func
+(paren
+id|VERIFY_WRITE
+comma
+(paren
+r_void
+op_star
+)paren
+id|arg
+comma
+r_sizeof
+(paren
+r_int
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
+)paren
 r_return
+id|i
+suffix:semicolon
+r_else
+(brace
+r_int
+id|rv
+suffix:semicolon
+id|rv
+op_assign
 l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|initial_status
+op_amp
+id|WD_WDRST
+)paren
+id|rv
+op_or_assign
+id|WDIOF_CARDRESET
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|initial_status
+op_amp
+id|WD_T110
+)paren
+id|rv
+op_or_assign
+id|WDIOF_OVERHEAT
+suffix:semicolon
+r_return
+id|put_user
+c_func
+(paren
+id|rv
+comma
+(paren
+r_int
+op_star
+)paren
+id|arg
+)paren
 suffix:semicolon
 )brace
 r_break
 suffix:semicolon
 r_case
-id|PCWD_PING
+id|WDIOC_GETTEMP
 suffix:colon
-id|pcwd_write
+id|i
+op_assign
+id|verify_area
 c_func
 (paren
-l_int|NULL
+id|VERIFY_WRITE
 comma
-l_int|NULL
+(paren
+r_void
+op_star
+)paren
+id|arg
 comma
-l_int|NULL
-comma
-l_int|1
+r_sizeof
+(paren
+r_int
+)paren
 )paren
 suffix:semicolon
-multiline_comment|/* Is this legal? */
-r_break
+r_if
+c_cond
+(paren
+id|i
+)paren
+r_return
+id|i
+suffix:semicolon
+r_else
+(brace
+r_int
+id|rv
+suffix:semicolon
+id|rv
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|supports_temp
+)paren
+op_logical_and
+(paren
+id|mode_debug
+op_eq
+l_int|0
+)paren
+)paren
+(brace
+id|rv
+op_assign
+id|inb
+c_func
+(paren
+id|current_readport
+)paren
+suffix:semicolon
+r_return
+id|put_user
+c_func
+(paren
+id|rv
+comma
+(paren
+r_int
+op_star
+)paren
+id|arg
+)paren
+suffix:semicolon
+)brace
+r_else
+r_return
+id|put_user
+c_func
+(paren
+id|rv
+comma
+(paren
+r_int
+op_star
+)paren
+id|arg
+)paren
+suffix:semicolon
+)brace
+r_case
+id|WDIOC_KEEPALIVE
+suffix:colon
+id|pcwd_send_heartbeat
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 r_return
 l_int|0
 suffix:semicolon
+)brace
+DECL|function|pcwd_write
+r_static
+r_int
+id|pcwd_write
+c_func
+(paren
+r_struct
+id|file
+op_star
+id|file
+comma
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_const
+r_char
+op_star
+id|buf
+comma
+r_int
+r_int
+id|len
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|len
+)paren
+(brace
+id|pcwd_send_heartbeat
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
 )brace
 DECL|function|pcwd_open
 r_static
@@ -656,19 +999,15 @@ op_star
 id|filep
 )paren
 (brace
-macro_line|#ifdef&t;DEBUG
-id|printk
+id|dprintk
 c_func
+(paren
 (paren
 l_string|&quot;pcwd: open request&bslash;n&quot;
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 id|MOD_INC_USE_COUNT
-suffix:semicolon
-id|is_eof
-op_assign
-l_int|0
 suffix:semicolon
 r_return
 l_int|0
@@ -691,15 +1030,42 @@ op_star
 id|filep
 )paren
 (brace
-macro_line|#ifdef&t;DEBUG
-id|printk
+id|dprintk
 c_func
+(paren
 (paren
 l_string|&quot;pcwd: close request&bslash;n&quot;
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 id|MOD_DEC_USE_COUNT
+suffix:semicolon
+)brace
+DECL|function|get_support
+r_static
+r_void
+id|get_support
+c_func
+(paren
+r_void
+)paren
+(brace
+macro_line|#ifdef CONFIG_PCWD_REV_C
+r_if
+c_cond
+(paren
+id|inb
+c_func
+(paren
+id|current_readport
+)paren
+op_ne
+l_int|0xF0
+)paren
+macro_line|#endif&t;
+id|supports_temp
+op_assign
+l_int|1
 suffix:semicolon
 )brace
 DECL|variable|pcwd_fops
@@ -753,7 +1119,6 @@ id|pcwd_fops
 )brace
 suffix:semicolon
 macro_line|#ifdef&t;MODULE
-DECL|function|init_module
 r_int
 id|init_module
 c_func
@@ -761,6 +1126,7 @@ c_func
 r_void
 )paren
 macro_line|#else
+DECL|function|pcwatchdog_init
 r_int
 id|pcwatchdog_init
 c_func
@@ -769,45 +1135,93 @@ r_void
 )paren
 macro_line|#endif
 (brace
-macro_line|#ifdef&t;DEBUG
-id|printk
+r_int
+id|i
+comma
+id|found
+op_assign
+l_int|0
+suffix:semicolon
+id|dprintk
 c_func
+(paren
 (paren
 l_string|&quot;pcwd: Success.&bslash;n&quot;
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;pcwd: v%s Ken Hollis (khollis@bitgate.com)&bslash;n&quot;
 comma
 id|WD_VER
 )paren
 suffix:semicolon
-macro_line|#ifdef&t;DEBUG
-id|printk
+id|dprintk
 c_func
+(paren
 (paren
 l_string|&quot;pcwd: About to perform card autosense loop.&bslash;n&quot;
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
-id|is_eof
-op_assign
-l_int|0
-suffix:semicolon
+multiline_comment|/* Initial variables */
 id|is_open
 op_assign
 l_int|0
 suffix:semicolon
-id|current_ctlport
+id|supports_temp
 op_assign
-id|WD_TIMERRESET_PORT1
+l_int|0
 suffix:semicolon
+id|mode_debug
+op_assign
+l_int|0
+suffix:semicolon
+id|initial_status
+op_assign
+l_int|0x0000
+suffix:semicolon
+id|dprintk
+c_func
+(paren
+(paren
+l_string|&quot;pcwd: Revision &quot;
+id|CARD_REV
+l_string|&quot; support defined.&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|pcwd_ioports
+(braket
+id|i
+)braket
+dot
+id|first_port
+op_ne
+l_int|0
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
 id|current_readport
 op_assign
-id|WD_CTLSTAT_PORT1
+id|pcwd_ioports
+(braket
+id|i
+)braket
+dot
+id|first_port
 suffix:semicolon
 r_if
 c_cond
@@ -819,36 +1233,49 @@ c_func
 )paren
 )paren
 (brace
-macro_line|#ifdef&t;DEBUG
-id|printk
+id|dprintk
 c_func
 (paren
-l_string|&quot;pcwd: Trying port 0x370.&bslash;n&quot;
+(paren
+l_string|&quot;pcwd: Trying port 0x%03x.&bslash;n&quot;
+comma
+id|pcwd_ioports
+(braket
+id|i
+)braket
+dot
+id|first_port
 )paren
-suffix:semicolon
-macro_line|#endif
-id|current_ctlport
-op_assign
-id|WD_TIMERRESET_PORT2
-suffix:semicolon
-id|current_readport
-op_assign
-id|WD_CTLSTAT_PORT2
+)paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|pcwd_checkcard
 c_func
 (paren
 )paren
 )paren
 (brace
+id|found
+op_assign
+l_int|1
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|found
+)paren
+(brace
 id|printk
 c_func
 (paren
-l_string|&quot;pcwd: No card detected, or wrong port assigned.&bslash;n&quot;
+l_string|&quot;pcwd: No card detected.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -856,52 +1283,79 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
-r_else
+id|is_open
+op_assign
+l_int|1
+suffix:semicolon
+id|get_support
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#ifdef&t;CONFIG_PCWD_REV_A
 id|printk
 c_func
 (paren
-l_string|&quot;pcwd: Watchdog Rev.A detected at port 0x370&bslash;n&quot;
+l_string|&quot;pcwd: PC Watchdog (REV.A) detected at port 0x%03x&bslash;n&quot;
+comma
+id|current_readport
 )paren
 suffix:semicolon
-)brace
-r_else
+macro_line|#endif
+macro_line|#ifdef&t;CONFIG_PCWD_REV_C
 id|printk
 c_func
 (paren
-l_string|&quot;pcwd: Watchdog Rev.A detected at port 0x270&bslash;n&quot;
+l_string|&quot;pcwd: PC Watchdog (REV.C) detected at port 0x%03x -%stemp. support&bslash;n&quot;
+comma
+id|current_readport
+comma
+(paren
+id|supports_temp
+)paren
+ques
+c_cond
+l_string|&quot; Has &quot;
+suffix:colon
+l_string|&quot; No &quot;
 )paren
 suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef&t;CONFIG_PCWD_SHOW_PREVSTAT
 id|pcwd_showprevstate
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef&t;DEBUG
-id|printk
+macro_line|#endif
+id|dprintk
 c_func
+(paren
 (paren
 l_string|&quot;pcwd: Requesting region entry&bslash;n&quot;
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 id|request_region
 c_func
 (paren
-id|current_ctlport
+id|current_readport
 comma
-id|WD_PORT_EXTENT
+id|PORT_RANGE
 comma
-l_string|&quot;PCWD Rev.A (Berkshire)&quot;
+l_string|&quot;PCWD Rev.&quot;
+id|CARD_REV
+l_string|&quot;(Berkshire)&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef&t;DEBUG
-id|printk
+id|dprintk
 c_func
+(paren
 (paren
 l_string|&quot;pcwd: character device creation.&bslash;n&quot;
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 id|misc_register
 c_func
 (paren
@@ -914,7 +1368,6 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef&t;MODULE
-DECL|function|cleanup_module
 r_void
 id|cleanup_module
 c_func
@@ -932,20 +1385,20 @@ suffix:semicolon
 id|release_region
 c_func
 (paren
-id|current_ctlport
+id|current_readport
 comma
-l_int|2
+id|PORT_RANGE
 )paren
 suffix:semicolon
-macro_line|#ifdef&t;DEBUG
-id|printk
+id|dprintk
 c_func
+(paren
 (paren
 l_string|&quot;pcwd: Cleanup successful.&bslash;n&quot;
 )paren
+)paren
 suffix:semicolon
-macro_line|#endif
 )brace
 macro_line|#endif
-multiline_comment|/*&n;** TODO:&n;**&n;**&t;Both Revisions:&n;**&t;o) Support for revision B of the Watchdog Card&n;**&t;o) Implement the rest of the IOCTLs as discussed with Alan Cox&n;**&t;o) Implement only card heartbeat reset via IOCTL, not via write&n;**&t;o) Faster card detection routines&n;**&t;o) /proc device creation&n;**&n;**&t;Revision B functions:&n;**&t;o) /dev/temp device creation for temperature device (possibly use&n;**&t;   the one from the WDT drivers?)&n;**&t;o) Direct Motorola controller chip access via read/write routines&n;**&t;o) Autoprobe IO Ports for autodetection (possibly by chip detect?)&n;*/
+multiline_comment|/*&n;** TODO:&n;**&n;**&t;Both Revisions:&n;**&t;o) Implement the rest of the IOCTLs as discussed with Alan Cox&n;**&t;o) Faster card detection routines&n;**&t;o) /proc device creation&n;**&n;**&t;Revision B functions:&n;**&t;o) /dev/temp device creation for temperature device (possibly use&n;**&t;   the one from the WDT drivers?)&n;**&t;o) Direct Motorola controller chip access via read/write routines&n;**&t;o) Autoprobe IO Ports for autodetection (possibly by chip detect?)&n;*/
 eof

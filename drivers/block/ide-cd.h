@@ -61,6 +61,8 @@ DECL|macro|READ_CAPACITY
 mdefine_line|#define READ_CAPACITY&t;&t;0x25
 DECL|macro|READ_10
 mdefine_line|#define READ_10                 0x28
+DECL|macro|SEEK
+mdefine_line|#define SEEK&t;&t;&t;0x2b
 DECL|macro|MODE_SENSE_10
 mdefine_line|#define MODE_SENSE_10           0x5a
 DECL|macro|MODE_SELECT_10
@@ -172,11 +174,18 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Changer can report exact contents&n;&t;&t;&t;&t;      of slots. */
+DECL|member|seeking
+id|__u8
+id|seeking
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Seeking in progress */
 DECL|member|reserved
 id|__u8
 id|reserved
 suffix:colon
-l_int|7
+l_int|6
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -1017,6 +1026,16 @@ suffix:semicolon
 DECL|member|dma
 r_int
 id|dma
+suffix:semicolon
+DECL|member|last_block
+r_int
+r_int
+id|last_block
+suffix:semicolon
+DECL|member|start_seek
+r_int
+r_int
+id|start_seek
 suffix:semicolon
 multiline_comment|/* Buffer to hold mechanism status and changer slot table. */
 DECL|member|changer_info

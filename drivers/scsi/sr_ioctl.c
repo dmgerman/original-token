@@ -210,6 +210,7 @@ multiline_comment|/* This happens if there is no disc in drive */
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;CDROM not ready.  Make sure there is a disc in the drive.&bslash;n&quot;
 )paren
 suffix:semicolon

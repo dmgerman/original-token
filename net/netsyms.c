@@ -17,8 +17,14 @@ macro_line|#include &lt;net/udp.h&gt;
 macro_line|#include &lt;net/tcp.h&gt;
 macro_line|#include &lt;net/icmp.h&gt;
 macro_line|#include &lt;net/route.h&gt;
+macro_line|#include &lt;net/scm.h&gt;
 macro_line|#include &lt;net/inet_common.h&gt;
 macro_line|#include &lt;linux/net_alias.h&gt;
+r_extern
+r_struct
+id|net_proto_family
+id|inet_family_ops
+suffix:semicolon
 macro_line|#if defined(CONFIG_IPV6) || defined (CONFIG_IPV6_MODULE)
 macro_line|#include &lt;linux/in6.h&gt;
 macro_line|#include &lt;net/ndisc.h&gt;
@@ -31,7 +37,8 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_NET_ALIAS
 macro_line|#include &lt;linux/net_alias.h&gt;
 macro_line|#endif
-macro_line|#if     defined(CONFIG_ULTRA)   ||      defined(CONFIG_WD80x3)          || &bslash;&n;        defined(CONFIG_EL2)     ||      defined(CONFIG_NE2000)          || &bslash;&n;        defined(CONFIG_E2100)   ||      defined(CONFIG_HPLAN_PLUS)      || &bslash;&n;        defined(CONFIG_HPLAN)   ||      defined(CONFIG_AC3200)
+macro_line|#include &lt;net/scm.h&gt;
+macro_line|#if&t;defined(CONFIG_ULTRA)&t;||&t;defined(CONFIG_WD80x3)&t;&t;|| &bslash;&n;&t;defined(CONFIG_EL2)&t;||&t;defined(CONFIG_NE2000)&t;&t;|| &bslash;&n;&t;defined(CONFIG_E2100)&t;||&t;defined(CONFIG_HPLAN_PLUS)&t;|| &bslash;&n;&t;defined(CONFIG_HPLAN)&t;||&t;defined(CONFIG_AC3200)&t;&t;|| &bslash;&n;&t;defined(CONFIG_ES3210)
 macro_line|#include &quot;../drivers/net/8390.h&quot;
 macro_line|#endif
 r_extern
@@ -206,6 +213,19 @@ c_func
 id|datagram_select
 )paren
 comma
+multiline_comment|/* ?? needed by smbfs.o */
+id|X
+c_func
+(paren
+id|__scm_destroy
+)paren
+comma
+id|X
+c_func
+(paren
+id|__scm_send
+)paren
+comma
 macro_line|#ifdef CONFIG_IPX_MODULE
 id|X
 c_func
@@ -267,7 +287,7 @@ comma
 id|X
 c_func
 (paren
-id|ip_rt_route
+id|ip_route_output
 )paren
 comma
 id|X
@@ -306,6 +326,24 @@ c_func
 id|ip_send_check
 )paren
 comma
+id|X
+c_func
+(paren
+id|inet_family_ops
+)paren
+comma
+id|X
+c_func
+(paren
+id|__scm_send
+)paren
+comma
+id|X
+c_func
+(paren
+id|__scm_destroy
+)paren
+comma
 macro_line|#ifdef CONFIG_IP_FORWARD
 id|X
 c_func
@@ -319,7 +357,13 @@ multiline_comment|/* inet functions common to v4 and v6 */
 id|X
 c_func
 (paren
-id|inet_proto_ops
+id|inet_stream_ops
+)paren
+comma
+id|X
+c_func
+(paren
+id|inet_dgram_ops
 )paren
 comma
 id|X
@@ -337,7 +381,13 @@ comma
 id|X
 c_func
 (paren
-id|inet_connect
+id|inet_stream_connect
+)paren
+comma
+id|X
+c_func
+(paren
+id|inet_dgram_connect
 )paren
 comma
 id|X
@@ -422,12 +472,6 @@ id|X
 c_func
 (paren
 id|csum_partial
-)paren
-comma
-id|X
-c_func
-(paren
-id|ip_my_addr
 )paren
 comma
 id|X
@@ -578,12 +622,6 @@ comma
 id|X
 c_func
 (paren
-id|sock_wfree
-)paren
-comma
-id|X
-c_func
-(paren
 id|sock_wmalloc
 )paren
 comma
@@ -692,7 +730,7 @@ comma
 id|X
 c_func
 (paren
-id|ip_chk_addr
+id|__ip_chk_addr
 )paren
 comma
 id|X
@@ -726,7 +764,7 @@ id|ipv4_specific
 )paren
 comma
 macro_line|#endif
-macro_line|#if&t;defined(CONFIG_ULTRA)&t;||&t;defined(CONFIG_WD80x3)&t;&t;|| &bslash;&n;&t;defined(CONFIG_EL2)&t;||&t;defined(CONFIG_NE2000)&t;&t;|| &bslash;&n;&t;defined(CONFIG_E2100)&t;||&t;defined(CONFIG_HPLAN_PLUS)&t;|| &bslash;&n;&t;defined(CONFIG_HPLAN)&t;||&t;defined(CONFIG_AC3200)
+macro_line|#if&t;defined(CONFIG_ULTRA)&t;||&t;defined(CONFIG_WD80x3)&t;&t;|| &bslash;&n;&t;defined(CONFIG_EL2)&t;||&t;defined(CONFIG_NE2000)&t;&t;|| &bslash;&n;&t;defined(CONFIG_E2100)&t;||&t;defined(CONFIG_HPLAN_PLUS)&t;|| &bslash;&n;&t;defined(CONFIG_HPLAN)&t;||&t;defined(CONFIG_AC3200)&t;&t;|| &bslash;&n;&t;defined(CONFIG_ES3210)
 multiline_comment|/* If 8390 NIC support is built in, we will need these. */
 id|X
 c_func
@@ -857,7 +895,7 @@ comma
 id|X
 c_func
 (paren
-id|kfree_skb
+id|__kfree_skb
 )paren
 comma
 id|X
@@ -869,25 +907,13 @@ comma
 id|X
 c_func
 (paren
+id|skb_copy
+)paren
+comma
+id|X
+c_func
+(paren
 id|dev_alloc_skb
-)paren
-comma
-id|X
-c_func
-(paren
-id|dev_kfree_skb
-)paren
-comma
-id|X
-c_func
-(paren
-id|skb_device_unlock
-)paren
-comma
-id|X
-c_func
-(paren
-id|skb_device_locked
 )paren
 comma
 id|X

@@ -198,11 +198,13 @@ id|sa
 id|__u32
 id|addr
 suffix:semicolon
+macro_line|#if 0
 r_struct
 id|rtable
 op_star
 id|rt
 suffix:semicolon
+macro_line|#endif
 r_struct
 id|device
 op_star
@@ -249,6 +251,7 @@ r_return
 l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Find &squot;closest&squot; device to address given. any other suggestions? ...&n;&t; *&t;net_alias module will check if returned device is main_dev&squot;s alias&n;&t; */
+macro_line|#if 0
 id|rt
 op_assign
 id|ip_rt_route
@@ -276,6 +279,7 @@ id|rt
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 r_return
 id|dev
 suffix:semicolon

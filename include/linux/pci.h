@@ -326,6 +326,8 @@ DECL|macro|PCI_DEVICE_ID_TSENG_W32P_c
 mdefine_line|#define PCI_DEVICE_ID_TSENG_W32P_c&t;0x3206
 DECL|macro|PCI_DEVICE_ID_TSENG_W32P_d
 mdefine_line|#define PCI_DEVICE_ID_TSENG_W32P_d&t;0x3207
+DECL|macro|PCI_DEVICE_ID_TSENG_ET6000
+mdefine_line|#define PCI_DEVICE_ID_TSENG_ET6000&t;0x3208
 DECL|macro|PCI_VENDOR_ID_WEITEK
 mdefine_line|#define PCI_VENDOR_ID_WEITEK&t;&t;0x100e
 DECL|macro|PCI_DEVICE_ID_WEITEK_P9000
@@ -478,6 +480,11 @@ DECL|macro|PCI_VENDOR_ID_OAK
 mdefine_line|#define PCI_VENDOR_ID_OAK&t;&t;0x104e
 DECL|macro|PCI_DEVICE_ID_OAK_OTI107
 mdefine_line|#define PCI_DEVICE_ID_OAK_OTI107&t;0x0107
+multiline_comment|/* Winbond have two vendor IDs! See 0x10ad as well */
+DECL|macro|PCI_VENDOR_ID_WINBOND2
+mdefine_line|#define PCI_VENDOR_ID_WINBOND2&t;&t;0x1050
+DECL|macro|PCI_DEVICE_ID_WINBOND2_89C940
+mdefine_line|#define PCI_DEVICE_ID_WINBOND2_89C940&t;0x0940
 DECL|macro|PCI_VENDOR_ID_PROMISE
 mdefine_line|#define PCI_VENDOR_ID_PROMISE&t;&t;0x105a
 DECL|macro|PCI_DEVICE_ID_PROMISE_5300
@@ -714,6 +721,10 @@ DECL|macro|PCI_DEVICE_ID_SPECIALIX_XIO
 mdefine_line|#define PCI_DEVICE_ID_SPECIALIX_XIO&t;0x4000
 DECL|macro|PCI_DEVICE_ID_SPECIALIX_RIO
 mdefine_line|#define PCI_DEVICE_ID_SPECIALIX_RIO&t;0x8000
+DECL|macro|PCI_VENDOR_ID_COMPEX
+mdefine_line|#define PCI_VENDOR_ID_COMPEX&t;&t;0x11f6
+DECL|macro|PCI_DEVICE_ID_COMPEX_RL2000
+mdefine_line|#define PCI_DEVICE_ID_COMPEX_RL2000&t;0x1401
 DECL|macro|PCI_VENDOR_ID_RP
 mdefine_line|#define PCI_VENDOR_ID_RP               0x11fe
 DECL|macro|PCI_DEVICE_ID_RP8OCTA

@@ -462,11 +462,6 @@ r_int
 id|MCR
 suffix:semicolon
 multiline_comment|/* Modem control register */
-DECL|member|MCR_noint
-r_int
-id|MCR_noint
-suffix:semicolon
-multiline_comment|/* MCR with interrupts off */
 DECL|member|event
 r_int
 r_int

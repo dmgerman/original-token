@@ -166,6 +166,10 @@ c_func
 id|dev
 )paren
 suffix:semicolon
+id|dev-&gt;tx_queue_len
+op_assign
+l_int|0
+suffix:semicolon
 id|dev-&gt;flags
 op_or_assign
 id|IFF_NOARP

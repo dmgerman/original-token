@@ -750,7 +750,7 @@ op_assign
 id|ntohs
 c_func
 (paren
-id|skb-&gt;ipv6_hdr-&gt;payload_len
+id|skb-&gt;nh.ipv6h-&gt;payload_len
 )paren
 op_minus
 (paren
@@ -769,7 +769,7 @@ id|u8
 op_star
 )paren
 (paren
-id|skb-&gt;ipv6_hdr
+id|skb-&gt;nh.ipv6h
 op_plus
 l_int|1
 )paren
@@ -979,7 +979,7 @@ id|u8
 op_star
 )paren
 (paren
-id|tail-&gt;skb-&gt;ipv6_hdr
+id|tail-&gt;skb-&gt;nh.ipv6h
 op_plus
 l_int|1
 )paren
@@ -1064,7 +1064,7 @@ r_struct
 id|ipv6hdr
 )paren
 suffix:semicolon
-id|skb-&gt;ipv6_hdr
+id|skb-&gt;nh.ipv6h
 op_assign
 (paren
 r_struct
@@ -1072,10 +1072,6 @@ id|ipv6hdr
 op_star
 )paren
 id|skb-&gt;data
-suffix:semicolon
-id|skb-&gt;free
-op_assign
-l_int|1
 suffix:semicolon
 id|skb-&gt;dev
 op_assign
@@ -1103,7 +1099,7 @@ comma
 id|copy
 )paren
 comma
-id|tail-&gt;skb-&gt;ipv6_hdr
+id|tail-&gt;skb-&gt;nh.ipv6h
 comma
 id|copy
 )paren
@@ -1112,7 +1108,7 @@ id|skb-&gt;h.raw
 op_assign
 id|skb-&gt;tail
 suffix:semicolon
-id|skb-&gt;ipv6_hdr-&gt;payload_len
+id|skb-&gt;nh.ipv6h-&gt;payload_len
 op_assign
 id|ntohs
 c_func

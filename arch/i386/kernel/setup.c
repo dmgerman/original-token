@@ -111,6 +111,34 @@ id|EISA_bus
 op_assign
 l_int|0
 suffix:semicolon
+DECL|variable|MCA_bus
+r_int
+id|MCA_bus
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* for MCA, but anyone else can use it if they want */
+DECL|variable|machine_id
+r_int
+r_int
+id|machine_id
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|machine_submodel_id
+r_int
+r_int
+id|machine_submodel_id
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|BIOS_revision
+r_int
+r_int
+id|BIOS_revision
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/*&n; * Setup options&n; */
 DECL|struct|drive_info_struct
 DECL|member|dummy
@@ -139,6 +167,25 @@ id|apm_bios_info
 id|apm_bios_info
 suffix:semicolon
 macro_line|#endif
+DECL|struct|sys_desc_table_struct
+r_struct
+id|sys_desc_table_struct
+(brace
+DECL|member|length
+r_int
+r_int
+id|length
+suffix:semicolon
+DECL|member|table
+r_int
+r_char
+id|table
+(braket
+l_int|0
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|variable|aux_device_present
 r_int
 r_char
@@ -209,6 +256,8 @@ DECL|macro|INITRD_START
 mdefine_line|#define INITRD_START (*(unsigned long *) (PARAM+0x218))
 DECL|macro|INITRD_SIZE
 mdefine_line|#define INITRD_SIZE (*(unsigned long *) (PARAM+0x21c))
+DECL|macro|SYS_DESC_TABLE
+mdefine_line|#define SYS_DESC_TABLE (*(struct sys_desc_table_struct*)(PARAM+0x220))
 DECL|macro|COMMAND_LINE
 mdefine_line|#define COMMAND_LINE ((char *) (PARAM+2048))
 DECL|macro|COMMAND_LINE_SIZE
@@ -330,6 +379,45 @@ op_assign
 id|APM_BIOS_INFO
 suffix:semicolon
 macro_line|#endif
+r_if
+c_cond
+(paren
+id|SYS_DESC_TABLE.length
+op_ne
+l_int|0
+)paren
+(brace
+id|MCA_bus
+op_assign
+id|SYS_DESC_TABLE.table
+(braket
+l_int|3
+)braket
+op_amp
+l_int|0x2
+suffix:semicolon
+id|machine_id
+op_assign
+id|SYS_DESC_TABLE.table
+(braket
+l_int|0
+)braket
+suffix:semicolon
+id|machine_submodel_id
+op_assign
+id|SYS_DESC_TABLE.table
+(braket
+l_int|1
+)braket
+suffix:semicolon
+id|BIOS_revision
+op_assign
+id|SYS_DESC_TABLE.table
+(braket
+l_int|2
+)braket
+suffix:semicolon
+)brace
 id|aux_device_present
 op_assign
 id|AUX_DEVICE_INFO
@@ -752,7 +840,7 @@ c_func
 (paren
 l_int|0x80
 comma
-l_int|0x20
+l_int|0x10
 comma
 l_string|&quot;dma page reg&quot;
 )paren

@@ -784,6 +784,16 @@ c_func
 id|KEYBOARD_BH
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_MCA
+id|free_irq
+c_func
+(paren
+id|AUX_IRQ
+comma
+id|inode
+)paren
+suffix:semicolon
+macro_line|#else
 id|free_irq
 c_func
 (paren
@@ -792,6 +802,7 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
+macro_line|#endif
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
@@ -1014,6 +1025,31 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Flush input queue */
+macro_line|#ifdef CONFIG_MCA
+r_if
+c_cond
+(paren
+id|request_irq
+c_func
+(paren
+id|AUX_IRQ
+comma
+id|aux_interrupt
+comma
+id|MCA_bus
+ques
+c_cond
+id|SA_SHIRQ
+suffix:colon
+l_int|0
+comma
+l_string|&quot;PS/2 Mouse&quot;
+comma
+id|inode
+)paren
+)paren
+(brace
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -1032,6 +1068,7 @@ l_int|NULL
 )paren
 )paren
 (brace
+macro_line|#endif
 id|aux_count
 op_decrement
 suffix:semicolon

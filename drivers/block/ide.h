@@ -171,6 +171,12 @@ DECL|macro|MAX_DRIVES
 mdefine_line|#define MAX_DRIVES&t;2&t;/* per interface; 2 assumed by lots of code */
 DECL|macro|SECTOR_WORDS
 mdefine_line|#define SECTOR_WORDS&t;(512 / 4)&t;/* number of 32bit words per sector */
+DECL|macro|IDE_LARGE_SEEK
+mdefine_line|#define IDE_LARGE_SEEK(b1,b2,t)&t;(((b1) &gt; (b2) + (t)) || ((b2) &gt; (b1) + (t)))
+DECL|macro|IDE_MIN
+mdefine_line|#define IDE_MIN(a,b)&t;((a)&lt;(b) ? (a):(b))
+DECL|macro|IDE_MAX
+mdefine_line|#define IDE_MAX(a,b)&t;((a)&gt;(b) ? (a):(b))
 multiline_comment|/*&n; * Timeouts for various operations:&n; */
 DECL|macro|WAIT_DRQ
 mdefine_line|#define WAIT_DRQ&t;(5*HZ/100)&t;/* 50msec - spec allows up to 20ms */
@@ -187,6 +193,8 @@ DECL|macro|WAIT_WORSTCASE
 mdefine_line|#define WAIT_WORSTCASE&t;(30*HZ)&t;/* 30sec  - worst case when spinning up */
 DECL|macro|WAIT_CMD
 mdefine_line|#define WAIT_CMD&t;(10*HZ)&t;/* 10sec  - maximum wait for an IRQ to happen */
+DECL|macro|WAIT_MIN_SLEEP
+mdefine_line|#define WAIT_MIN_SLEEP&t;(2*HZ/100)&t;/* 20msec - minimum sleep time */
 macro_line|#if defined(CONFIG_BLK_DEV_HT6560B) || defined(CONFIG_BLK_DEV_PROMISE)
 DECL|macro|SELECT_DRIVE
 mdefine_line|#define SELECT_DRIVE(hwif,drive)&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (hwif-&gt;selectproc)&t;&t;&t;&t;&t;&bslash;&n;&t;&t;hwif-&gt;selectproc(drive);&t;&t;&t;&bslash;&n;&t;else&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;OUT_BYTE((drive)-&gt;select.all, hwif-&gt;io_ports[IDE_SELECT_OFFSET]); &bslash;&n;}
@@ -195,6 +203,8 @@ DECL|macro|SELECT_DRIVE
 mdefine_line|#define SELECT_DRIVE(hwif,drive)  OUT_BYTE((drive)-&gt;select.all, hwif-&gt;io_ports[IDE_SELECT_OFFSET]);
 macro_line|#endif&t;/* CONFIG_BLK_DEV_HT6560B || CONFIG_BLK_DEV_PROMISE */
 multiline_comment|/*&n; * Now for the data we need to maintain per-drive:  ide_drive_t&n; */
+DECL|macro|ide_scsi
+mdefine_line|#define ide_scsi&t;0x21
 DECL|macro|ide_disk
 mdefine_line|#define ide_disk&t;0x20
 DECL|macro|ide_cdrom
@@ -262,6 +272,38 @@ r_typedef
 r_struct
 id|ide_drive_s
 (brace
+DECL|member|queue
+r_struct
+id|request
+op_star
+id|queue
+suffix:semicolon
+multiline_comment|/* request queue */
+DECL|member|next
+r_struct
+id|ide_drive_s
+op_star
+id|next
+suffix:semicolon
+multiline_comment|/* circular list of hwgroup drives */
+DECL|member|sleep
+r_int
+r_int
+id|sleep
+suffix:semicolon
+multiline_comment|/* sleep until this time */
+DECL|member|service_start
+r_int
+r_int
+id|service_start
+suffix:semicolon
+multiline_comment|/* time we started last request */
+DECL|member|service_time
+r_int
+r_int
+id|service_time
+suffix:semicolon
+multiline_comment|/* service time of last request */
 DECL|member|special
 id|special_t
 id|special
@@ -372,6 +414,41 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* flag: byte swap data */
+DECL|member|dsc_overlap
+r_int
+id|dsc_overlap
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* flag: DSC overlap */
+DECL|member|atapi_overlap
+r_int
+id|atapi_overlap
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* flag: ATAPI overlap (not supported) */
+DECL|member|nice0
+r_int
+id|nice0
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* flag: give obvious excess bandwidth */
+DECL|member|nice1
+r_int
+id|nice1
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* flag: give potential excess bandwidth */
+DECL|member|nice2
+r_int
+id|nice2
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* flag: give a share in our own bandwidth */
 macro_line|#if FAKE_FDISK_FOR_EZDRIVE
 DECL|member|remap_0_to_1
 r_int
@@ -830,12 +907,6 @@ op_star
 id|hwif
 suffix:semicolon
 multiline_comment|/* ptr to current hwif in linked-list */
-DECL|member|next_hwif
-id|ide_hwif_t
-op_star
-id|next_hwif
-suffix:semicolon
-multiline_comment|/* next selected hwif (for tape) */
 DECL|member|rq
 r_struct
 id|request
@@ -861,13 +932,18 @@ r_int
 id|poll_timeout
 suffix:semicolon
 multiline_comment|/* timeout value during long polls */
+DECL|member|active
+r_int
+id|active
+suffix:semicolon
+multiline_comment|/* set when servicing requests */
 DECL|typedef|ide_hwgroup_t
 )brace
 id|ide_hwgroup_t
 suffix:semicolon
 multiline_comment|/*&n; * Subdrivers support.&n; */
 DECL|macro|IDE_SUBDRIVER_VERSION
-mdefine_line|#define IDE_SUBDRIVER_VERSION&t;0
+mdefine_line|#define IDE_SUBDRIVER_VERSION&t;1
 DECL|typedef|ide_cleanup_proc
 r_typedef
 r_int
@@ -1036,6 +1112,12 @@ suffix:semicolon
 DECL|member|supports_dma
 r_int
 id|supports_dma
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|supports_dsc_overlap
+r_int
+id|supports_dsc_overlap
 suffix:colon
 l_int|1
 suffix:semicolon
@@ -1377,7 +1459,7 @@ multiline_comment|/* insert rq at end of list, but don&squot;t wait for it */
 DECL|typedef|ide_action_t
 id|ide_action_t
 suffix:semicolon
-multiline_comment|/*&n; * This function issues a special IDE device request&n; * onto the request queue.&n; *&n; * If action is ide_wait, then then rq is queued at the end of&n; * the request queue, and the function sleeps until it has been&n; * processed.  This is for use when invoked from an ioctl handler.&n; *&n; * If action is ide_preempt, then the rq is queued at the head of&n; * the request queue, displacing the currently-being-processed&n; * request and this function returns immediately without waiting&n; * for the new rq to be completed.  This is VERY DANGEROUS, and is&n; * intended for careful use by the ATAPI tape/cdrom driver code.&n; *&n; * If action is ide_next, then the rq is queued immediately after&n; * the currently-being-processed-request (if any), and the function&n; * returns without waiting for the new rq to be completed.  As above,&n; * This is VERY DANGEROUS, and is intended for careful use by the &n; * ATAPI tape/cdrom driver code.&n; *&n; * If action is ide_end, then the rq is queued at the end of the&n; * request queue, and the function returns immediately without waiting&n; * for the new rq to be completed. This is again intended for careful&n; * use by the ATAPI tape/cdrom driver code. (Currently used by ide-tape.c,&n; * when operating in the pipelined operation mode).&n; */
+multiline_comment|/*&n; * This function issues a special IDE device request&n; * onto the request queue.&n; *&n; * If action is ide_wait, then then rq is queued at the end of&n; * the request queue, and the function sleeps until it has been&n; * processed.  This is for use when invoked from an ioctl handler.&n; *&n; * If action is ide_preempt, then the rq is queued at the head of&n; * the request queue, displacing the currently-being-processed&n; * request and this function returns immediately without waiting&n; * for the new rq to be completed.  This is VERY DANGEROUS, and is&n; * intended for careful use by the ATAPI tape/cdrom driver code.&n; *&n; * If action is ide_next, then the rq is queued immediately after&n; * the currently-being-processed-request (if any), and the function&n; * returns without waiting for the new rq to be completed.  As above,&n; * This is VERY DANGEROUS, and is intended for careful use by the &n; * ATAPI tape/cdrom driver code.&n; *&n; * If action is ide_end, then the rq is queued at the end of the&n; * request queue, and the function returns immediately without waiting&n; * for the new rq to be completed. This is again intended for careful&n; * use by the ATAPI tape/cdrom driver code.&n; */
 r_int
 id|ide_do_drive_cmd
 (paren
@@ -1429,10 +1511,28 @@ r_int
 id|mcount
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * ide_stall_queue() can be used by a drive to give excess bandwidth back&n; * to the hwgroup by sleeping for timeout jiffies.&n; */
 r_void
-id|ide_revalidate_drives
+id|ide_stall_queue
 (paren
-r_void
+id|ide_drive_t
+op_star
+id|drive
+comma
+r_int
+r_int
+id|timeout
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * ide_get_queue() returns the queue which corresponds to a given device.&n; */
+r_struct
+id|request
+op_star
+op_star
+id|ide_get_queue
+(paren
+id|kdev_t
+id|dev
 )paren
 suffix:semicolon
 r_void
@@ -1513,6 +1613,14 @@ id|ide_fops
 )braket
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_IDEDISK
+r_int
+id|idedisk_init
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_IDEDISK */
 macro_line|#ifdef CONFIG_BLK_DEV_IDECD
 r_int
 id|ide_cdrom_init
@@ -1537,14 +1645,14 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_BLK_DEV_IDEFLOPPY */
-macro_line|#ifdef CONFIG_BLK_DEV_IDEDISK
+macro_line|#ifdef CONFIG_BLK_DEV_IDESCSI
 r_int
-id|idedisk_init
+id|idescsi_init
 (paren
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_BLK_DEV_IDEDISK */
+macro_line|#endif /* CONFIG_BLK_DEV_IDESCSI */
 r_int
 id|ide_register_module
 (paren

@@ -262,6 +262,16 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_PS2
+r_extern
+r_int
+id|ps2esdi_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|macro|RO_IOCTLS
 mdefine_line|#define RO_IOCTLS(dev,where) &bslash;&n;  case BLKROSET: { int __val;  if (!suser()) return -EACCES; &bslash;&n;&t;&t;   if (get_user(__val, (int *)(where))) return -EFAULT; &bslash;&n;&t;&t;   set_device_ro((dev),__val); return 0; } &bslash;&n;  case BLKROGET: { int __val = (is_read_only(dev) != 0) ; &bslash;&n;&t;&t;    return put_user(__val,(int *) (where)); }
 macro_line|#if defined(MAJOR_NR) || defined(IDE_DRIVER)
@@ -384,6 +394,17 @@ DECL|macro|DEVICE_NAME
 mdefine_line|#define DEVICE_NAME &quot;xt disk&quot;
 DECL|macro|DEVICE_REQUEST
 mdefine_line|#define DEVICE_REQUEST do_xd_request
+DECL|macro|DEVICE_NR
+mdefine_line|#define DEVICE_NR(device) (MINOR(device) &gt;&gt; 6)
+DECL|macro|DEVICE_ON
+mdefine_line|#define DEVICE_ON(device)
+DECL|macro|DEVICE_OFF
+mdefine_line|#define DEVICE_OFF(device)
+macro_line|#elif (MAJOR_NR == PS2ESDI_MAJOR)
+DECL|macro|DEVICE_NAME
+mdefine_line|#define DEVICE_NAME &quot;PS/2 ESDI&quot;
+DECL|macro|DEVICE_REQUEST
+mdefine_line|#define DEVICE_REQUEST do_ps2esdi_request
 DECL|macro|DEVICE_NR
 mdefine_line|#define DEVICE_NR(device) (MINOR(device) &gt;&gt; 6)
 DECL|macro|DEVICE_ON
@@ -791,6 +812,10 @@ id|req-&gt;rq_dev
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef IDE_DRIVER
+id|hwgroup-&gt;drive-&gt;queue
+op_assign
+id|req-&gt;next
+suffix:semicolon
 id|blk_dev
 (braket
 id|MAJOR
@@ -802,7 +827,7 @@ id|req-&gt;rq_dev
 dot
 id|current_request
 op_assign
-id|req-&gt;next
+l_int|NULL
 suffix:semicolon
 id|hwgroup-&gt;rq
 op_assign

@@ -398,6 +398,7 @@ id|winsize
 suffix:semicolon
 DECL|member|stopped
 DECL|member|hw_stopped
+DECL|member|flow_stopped
 DECL|member|packet
 r_int
 r_char
@@ -406,6 +407,10 @@ suffix:colon
 l_int|1
 comma
 id|hw_stopped
+suffix:colon
+l_int|1
+comma
+id|flow_stopped
 suffix:colon
 l_int|1
 comma
@@ -742,6 +747,14 @@ suffix:semicolon
 r_extern
 r_int
 id|riscom8_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|esp_init
 c_func
 (paren
 r_void

@@ -1,5 +1,5 @@
-multiline_comment|/*&n; *  linux/drivers/block/ide-disk.c&t;Version 1.0  Oct   6, 1996&n; *&n; *  Copyright (C) 1994-1996  Linus Torvalds &amp; authors (see below)&n; */
-multiline_comment|/*&n; *  Maintained by Mark Lord  &lt;mlord@pobox.com&gt;&n; *            and Gadi Oxman &lt;gadio@netvision.net.il&gt;&n; *&n; * This is the IDE/ATA disk driver, as evolved from hd.c and ide.c.&n; *&n; *  From hd.c:&n; *  |&n; *  | It traverses the request-list, using interrupts to jump between functions.&n; *  | As nearly all functions can be called within interrupts, we may not sleep.&n; *  | Special care is recommended.  Have Fun!&n; *  |&n; *  | modified by Drew Eckhardt to check nr of hd&squot;s from the CMOS.&n; *  |&n; *  | Thanks to Branko Lankester, lankeste@fwi.uva.nl, who found a bug&n; *  | in the early extended-partition checks and added DM partitions.&n; *  |&n; *  | Early work on error handling by Mika Liljeberg (liljeber@cs.Helsinki.FI).&n; *  |&n; *  | IRQ-unmask, drive-id, multiple-mode, support for &quot;&gt;16 heads&quot;,&n; *  | and general streamlining by Mark Lord (mlord@pobox.com).&n; *&n; *  October, 1994 -- Complete line-by-line overhaul for linux 1.1.x, by:&n; *&n; *&t;Mark Lord&t;(mlord@pobox.com)&t;&t;(IDE Perf.Pkg)&n; *&t;Delman Lee&t;(delman@mipg.upenn.edu)&t;&t;(&quot;Mr. atdisk2&quot;)&n; *&t;Scott Snyder&t;(snyder@fnald0.fnal.gov)&t;(ATAPI IDE cd-rom)&n; *&n; *  This was a rewrite of just about everything from hd.c, though some original&n; *  code is still sprinkled about.  Think of it as a major evolution, with&n; *  inspiration from lots of linux users, esp.  hamish@zot.apana.org.au&n; *&n; * Version 1.0&t;&t;move disk only code from ide.c to ide-disk.c&n; *&t;&t;&t;support optional byte-swapping of all data&n; */
+multiline_comment|/*&n; *  linux/drivers/block/ide-disk.c&t;Version 1.01  Nov  25, 1996&n; *&n; *  Copyright (C) 1994-1996  Linus Torvalds &amp; authors (see below)&n; */
+multiline_comment|/*&n; *  Maintained by Mark Lord  &lt;mlord@pobox.com&gt;&n; *            and Gadi Oxman &lt;gadio@netvision.net.il&gt;&n; *&n; * This is the IDE/ATA disk driver, as evolved from hd.c and ide.c.&n; *&n; *  From hd.c:&n; *  |&n; *  | It traverses the request-list, using interrupts to jump between functions.&n; *  | As nearly all functions can be called within interrupts, we may not sleep.&n; *  | Special care is recommended.  Have Fun!&n; *  |&n; *  | modified by Drew Eckhardt to check nr of hd&squot;s from the CMOS.&n; *  |&n; *  | Thanks to Branko Lankester, lankeste@fwi.uva.nl, who found a bug&n; *  | in the early extended-partition checks and added DM partitions.&n; *  |&n; *  | Early work on error handling by Mika Liljeberg (liljeber@cs.Helsinki.FI).&n; *  |&n; *  | IRQ-unmask, drive-id, multiple-mode, support for &quot;&gt;16 heads&quot;,&n; *  | and general streamlining by Mark Lord (mlord@pobox.com).&n; *&n; *  October, 1994 -- Complete line-by-line overhaul for linux 1.1.x, by:&n; *&n; *&t;Mark Lord&t;(mlord@pobox.com)&t;&t;(IDE Perf.Pkg)&n; *&t;Delman Lee&t;(delman@mipg.upenn.edu)&t;&t;(&quot;Mr. atdisk2&quot;)&n; *&t;Scott Snyder&t;(snyder@fnald0.fnal.gov)&t;(ATAPI IDE cd-rom)&n; *&n; *  This was a rewrite of just about everything from hd.c, though some original&n; *  code is still sprinkled about.  Think of it as a major evolution, with&n; *  inspiration from lots of linux users, esp.  hamish@zot.apana.org.au&n; *&n; * Version 1.00&t;&t;move disk only code from ide.c to ide-disk.c&n; *&t;&t;&t;support optional byte-swapping of all data&n; * Version 1.01&t;&t;fix previous byte-swapping code&n; */
 DECL|macro|REALLY_SLOW_IO
 macro_line|#undef REALLY_SLOW_IO&t;&t;/* most systems can safely undef this */
 macro_line|#include &lt;linux/config.h&gt;
@@ -141,6 +141,20 @@ r_int
 id|wcount
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|drive-&gt;bswap
+)paren
+(brace
+id|idedisk_bswap_data
+c_func
+(paren
+id|buffer
+comma
+id|wcount
+)paren
+suffix:semicolon
 id|ide_output_data
 c_func
 (paren
@@ -151,14 +165,21 @@ comma
 id|wcount
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|drive-&gt;bswap
-)paren
 id|idedisk_bswap_data
 c_func
 (paren
+id|buffer
+comma
+id|wcount
+)paren
+suffix:semicolon
+)brace
+r_else
+id|ide_output_data
+c_func
+(paren
+id|drive
+comma
 id|buffer
 comma
 id|wcount
@@ -2209,6 +2230,9 @@ multiline_comment|/* busy */
 l_int|1
 comma
 multiline_comment|/* supports_dma */
+l_int|0
+comma
+multiline_comment|/* supports_dsc_overlap */
 l_int|NULL
 comma
 multiline_comment|/* cleanup */

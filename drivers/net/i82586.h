@@ -571,17 +571,23 @@ r_int
 id|mcs_cnt
 suffix:semicolon
 multiline_comment|/* No. of bytes of MC addresses&t;*/
-DECL|member|mcs_data
+macro_line|#if 0
 r_int
-r_int
+r_char
 id|mcs_data
 (braket
-l_int|3
+id|ADDR_LEN
 )braket
 suffix:semicolon
 multiline_comment|/* The first MC address ..&t;*/
+dot
+dot
+dot
+macro_line|#endif
 )brace
 suffix:semicolon
+DECL|macro|I82586_MAX_MULTICAST_ADDRESSES
+mdefine_line|#define I82586_MAX_MULTICAST_ADDRESSES&t;128&t;/* Hardware hashed filter */
 multiline_comment|/*&n; * The Transmit Action Command.&n; */
 DECL|typedef|ac_tx_t
 r_typedef

@@ -15,6 +15,7 @@ l_string|&quot;NET3 PLIP version 2.2 gniibe@mri.co.jp&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/*&n;  Sources:&n;&t;Ideas and protocols came from Russ Nelson&squot;s &lt;nelson@crynwr.com&gt;&n;&t;&quot;parallel.asm&quot; parallel port packet driver.&n;&n;  The &quot;Crynwr&quot; parallel port standard specifies the following protocol:&n;    Trigger by sending &squot;0x08&squot; (this cause interrupt on other end)&n;    count-low octet&n;    count-high octet&n;    ... data octets&n;    checksum octet&n;  Each octet is sent as &lt;wait for rx. &squot;0x1?&squot;&gt; &lt;send 0x10+(octet&amp;0x0F)&gt;&n;&t;&t;&t;&lt;wait for rx. &squot;0x0?&squot;&gt; &lt;send 0x00+((octet&gt;&gt;4)&amp;0x0F)&gt;&n;&n;  The packet is encapsulated as if it were ethernet.&n;&n;  The cable used is a de facto standard parallel null cable -- sold as&n;  a &quot;LapLink&quot; cable by various places.  You&squot;ll need a 12-conductor cable to&n;  make one yourself.  The wiring is:&n;    SLCTIN&t;17 - 17&n;    GROUND&t;25 - 25&n;    D0-&gt;ERROR&t;2 - 15&t;&t;15 - 2&n;    D1-&gt;SLCT&t;3 - 13&t;&t;13 - 3&n;    D2-&gt;PAPOUT&t;4 - 12&t;&t;12 - 4&n;    D3-&gt;ACK&t;5 - 10&t;&t;10 - 5&n;    D4-&gt;BUSY&t;6 - 11&t;&t;11 - 6&n;  Do not connect the other pins.  They are&n;    D5,D6,D7 are 7,8,9&n;    STROBE is 1, FEED is 14, INIT is 16&n;    extra grounds are 18,19,20,21,22,23,24&n;*/
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -118,19 +119,6 @@ r_int
 id|plip_rebuild_header
 c_func
 (paren
-r_void
-op_star
-id|buff
-comma
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_int
-r_int
-id|raddr
-comma
 r_struct
 id|sk_buff
 op_star
@@ -423,19 +411,6 @@ op_star
 id|orig_rebuild_header
 )paren
 (paren
-r_void
-op_star
-id|eth
-comma
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_int
-r_int
-id|raddr
-comma
 r_struct
 id|sk_buff
 op_star
@@ -1464,10 +1439,6 @@ c_cond
 id|rcv-&gt;skb
 )paren
 (brace
-id|rcv-&gt;skb-&gt;free
-op_assign
-l_int|1
-suffix:semicolon
 id|kfree_skb
 c_func
 (paren
@@ -3609,25 +3580,19 @@ DECL|function|plip_rebuild_header
 id|plip_rebuild_header
 c_func
 (paren
-r_void
-op_star
-id|buff
-comma
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_int
-r_int
-id|dst
-comma
 r_struct
 id|sk_buff
 op_star
 id|skb
 )paren
 (brace
+r_struct
+id|device
+op_star
+id|dev
+op_assign
+id|skb-&gt;dev
+suffix:semicolon
 r_struct
 id|net_local
 op_star
@@ -3650,7 +3615,7 @@ r_struct
 id|ethhdr
 op_star
 )paren
-id|buff
+id|skb-&gt;data
 suffix:semicolon
 r_int
 id|i
@@ -3672,12 +3637,6 @@ op_member_access_from_pointer
 id|orig_rebuild_header
 c_func
 (paren
-id|buff
-comma
-id|dev
-comma
-id|dst
-comma
 id|skb
 )paren
 suffix:semicolon
@@ -3686,11 +3645,21 @@ c_cond
 (paren
 id|eth-&gt;h_proto
 op_ne
-id|htons
+id|__constant_htons
 c_func
 (paren
 id|ETH_P_IP
 )paren
+macro_line|#if defined(CONFIG_IPV6) || defined(CONFIG_IPV6_MODULE)
+op_logical_and
+id|eth-&gt;h_proto
+op_ne
+id|__constant_htons
+c_func
+(paren
+id|ETH_P_IPV6
+)paren
+macro_line|#endif
 )paren
 (brace
 id|printk
@@ -3744,6 +3713,7 @@ id|i
 op_assign
 l_int|0xfc
 suffix:semicolon
+macro_line|#if 0
 op_star
 (paren
 id|u32
@@ -3757,6 +3727,22 @@ id|i
 op_assign
 id|dst
 suffix:semicolon
+macro_line|#else
+multiline_comment|/* Do not want to include net/route.h here.&n;&t; * In any case, it is TOP of silliness to emulate&n;&t; * hardware addresses on PtP link. --ANK&n;&t; */
+op_star
+(paren
+id|u32
+op_star
+)paren
+(paren
+id|eth-&gt;h_dest
+op_plus
+id|i
+)paren
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -4302,10 +4288,6 @@ c_cond
 id|rcv-&gt;skb
 )paren
 (brace
-id|rcv-&gt;skb-&gt;free
-op_assign
-l_int|1
-suffix:semicolon
 id|kfree_skb
 c_func
 (paren

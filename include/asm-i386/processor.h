@@ -59,13 +59,31 @@ r_int
 id|have_cpuid
 suffix:semicolon
 multiline_comment|/* We have a CPUID */
-multiline_comment|/*&n; * Bus types (default is ISA, but people can check others with these..)&n; * MCA_bus hardcoded to 0 for now.&n; */
+multiline_comment|/*&n; * Bus types (default is ISA, but people can check others with these..)&n; */
 r_extern
 r_int
 id|EISA_bus
 suffix:semicolon
-DECL|macro|MCA_bus
-mdefine_line|#define MCA_bus 0
+r_extern
+r_int
+id|MCA_bus
+suffix:semicolon
+multiline_comment|/* from system description table in BIOS.  Mostly for MCA use, but&n;others may find it useful. */
+r_extern
+r_int
+r_int
+id|machine_id
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|machine_submodel_id
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|BIOS_revision
+suffix:semicolon
 multiline_comment|/*&n; * User space process size: 3GB. This is hardcoded into a few places,&n; * so don&squot;t change it unless you know what you are doing.&n; */
 DECL|macro|TASK_SIZE
 mdefine_line|#define TASK_SIZE&t;(0xC0000000UL)

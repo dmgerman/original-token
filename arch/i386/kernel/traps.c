@@ -61,6 +61,8 @@ suffix:semicolon
 )brace
 DECL|macro|DO_ERROR
 mdefine_line|#define DO_ERROR(trapnr, signr, str, name, tsk) &bslash;&n;asmlinkage void do_##name(struct pt_regs * regs, long error_code) &bslash;&n;{ &bslash;&n;&t;tsk-&gt;tss.error_code = error_code; &bslash;&n;&t;tsk-&gt;tss.trap_no = trapnr; &bslash;&n;&t;force_sig(signr, tsk); &bslash;&n;&t;die_if_kernel(str,regs,error_code); &bslash;&n;}
+DECL|macro|DO_VM86_ERROR
+mdefine_line|#define DO_VM86_ERROR(trapnr, signr, str, name, tsk) &bslash;&n;asmlinkage void do_##name(struct pt_regs * regs, long error_code) &bslash;&n;{ &bslash;&n;&t;if (regs-&gt;eflags &amp; VM_MASK) { &bslash;&n;&t;&t;if (!handle_vm86_trap((struct kernel_vm86_regs *) regs, error_code, trapnr)) &bslash;&n;&t;&t;&t;return; &bslash;&n;&t;&t;/* else fall through */ &bslash;&n;&t;} &bslash;&n;&t;tsk-&gt;tss.error_code = error_code; &bslash;&n;&t;tsk-&gt;tss.trap_no = trapnr; &bslash;&n;&t;force_sig(signr, tsk); &bslash;&n;&t;die_if_kernel(str,regs,error_code); &bslash;&n;}
 DECL|macro|get_seg_byte
 mdefine_line|#define get_seg_byte(seg,addr) ({ &bslash;&n;register unsigned char __res; &bslash;&n;__asm__(&quot;push %%fs;mov %%ax,%%fs;movb %%fs:%2,%%al;pop %%fs&quot; &bslash;&n;&t;:&quot;=a&quot; (__res):&quot;0&quot; (seg),&quot;m&quot; (*(addr))); &bslash;&n;__res;})
 DECL|macro|get_seg_long
@@ -756,7 +758,7 @@ id|SIGSEGV
 )paren
 suffix:semicolon
 )brace
-id|DO_ERROR
+id|DO_VM86_ERROR
 c_func
 (paren
 l_int|0
@@ -769,7 +771,7 @@ id|divide_error
 comma
 id|current
 )paren
-id|DO_ERROR
+id|DO_VM86_ERROR
 c_func
 (paren
 l_int|3
@@ -782,7 +784,7 @@ id|int3
 comma
 id|current
 )paren
-id|DO_ERROR
+id|DO_VM86_ERROR
 c_func
 (paren
 l_int|4
@@ -795,7 +797,7 @@ id|overflow
 comma
 id|current
 )paren
-id|DO_ERROR
+id|DO_VM86_ERROR
 c_func
 (paren
 l_int|5
@@ -821,7 +823,7 @@ id|invalid_op
 comma
 id|current
 )paren
-id|DO_ERROR
+id|DO_VM86_ERROR
 c_func
 (paren
 l_int|7
@@ -953,7 +955,7 @@ c_func
 (paren
 (paren
 r_struct
-id|vm86_regs
+id|kernel_vm86_regs
 op_star
 )paren
 id|regs
@@ -1058,17 +1060,19 @@ op_amp
 id|VM_MASK
 )paren
 (brace
-id|handle_vm86_debug
+id|handle_vm86_trap
 c_func
 (paren
 (paren
 r_struct
-id|vm86_regs
+id|kernel_vm86_regs
 op_star
 )paren
 id|regs
 comma
 id|error_code
+comma
+l_int|1
 )paren
 suffix:semicolon
 r_return

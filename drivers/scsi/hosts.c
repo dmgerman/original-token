@@ -98,6 +98,9 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_7000FASST
 macro_line|#include &quot;wd7000.h&quot;
 macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_IBMMCA
+macro_line|#include &quot;ibmmca.h&quot;
+macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_EATA
 macro_line|#include &quot;eata.h&quot;
 macro_line|#endif
@@ -112,6 +115,9 @@ macro_line|#include &quot;ppa.h&quot;
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_SUNESP
 macro_line|#include &quot;esp.h&quot;
+macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_IDESCSI
+macro_line|#include &quot;ide-scsi.h&quot;
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_DEBUG
 macro_line|#include &quot;scsi_debug.h&quot;
@@ -250,6 +256,10 @@ macro_line|#ifdef CONFIG_SCSI_7000FASST
 id|WD7000
 comma
 macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_IBMMCA
+id|IBMMCA
+comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_EATA
 id|EATA
 comma
@@ -264,6 +274,10 @@ comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_SUNESP
 id|SCSI_SPARC_ESP
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_IDESCSI
+id|IDESCSI
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_DEBUG

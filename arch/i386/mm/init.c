@@ -473,7 +473,6 @@ id|end_mem
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; * The following code enabled 4MB page tables for the&n;&t;&t; * Intel Pentium cpu, unfortunately the SMP kernel can&squot;t&n;&t;&t; * handle the 4MB page table optimizations yet&n;&t;&t; */
-macro_line|#ifndef __SMP__
 multiline_comment|/*&n;&t;&t; * This will create page tables that&n;&t;&t; * span up to the next 4MB virtual&n;&t;&t; * memory boundary, but that&squot;s ok,&n;&t;&t; * we won&squot;t use that memory anyway.&n;&t;&t; */
 r_if
 c_cond
@@ -547,7 +546,6 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-macro_line|#endif
 multiline_comment|/* map the memory at virtual addr 0xC0000000 */
 multiline_comment|/* pg_table is physical at this point */
 id|pg_table
@@ -785,7 +783,7 @@ op_plus
 id|PAGE_OFFSET
 suffix:semicolon
 macro_line|#ifdef __SMP__
-multiline_comment|/*&n;&t; * But first pinch a few for the stack/trampoline stuff&n;&t; */
+multiline_comment|/*&n;&t; * But first pinch a few for the stack/trampoline stuff&n;&t; *&t;FIXME: Don&squot;t need the extra page at 4K, but need to fix&n;&t; *&t;trampoline before removing it. (see the GDT stuff)&n;&t; *&n;&t; */
 id|start_low_mem
 op_add_assign
 id|PAGE_SIZE

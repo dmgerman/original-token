@@ -23,6 +23,7 @@ macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/tcp.h&gt;
 macro_line|#include &lt;net/af_unix.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#include &lt;net/scm.h&gt;
 multiline_comment|/* Internal data structures and random procedures: */
 DECL|macro|MAX_STACK
 mdefine_line|#define MAX_STACK 1000&t;&t;/* Maximum depth of tree (about 1 page) */
@@ -81,23 +82,33 @@ id|inode-&gt;i_sock
 r_struct
 id|socket
 op_star
-id|s
+id|sock
 op_assign
 op_amp
 id|inode-&gt;u.socket_i
+suffix:semicolon
+r_struct
+id|sock
+op_star
+id|s
+op_assign
+id|sock-&gt;sk
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; *&t;AF_UNIX ?&n;&t;&t; */
 r_if
 c_cond
 (paren
-id|s-&gt;ops
+id|s
+op_logical_and
+id|sock-&gt;ops
+op_logical_and
+id|sock-&gt;ops-&gt;family
 op_eq
-op_amp
-id|unix_proto_ops
+id|AF_UNIX
 )paren
 id|u_sock
 op_assign
-id|s-&gt;data
+id|s
 suffix:semicolon
 )brace
 r_return
@@ -299,6 +310,9 @@ id|in_unix_gc
 op_assign
 l_int|0
 suffix:semicolon
+r_int
+id|i
+suffix:semicolon
 id|unix_socket
 op_star
 id|s
@@ -337,20 +351,12 @@ suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Assume everything is now unmarked &n;&t; */
 multiline_comment|/* Invariant to be maintained:&n;&t;&t;- everything marked is either:&n;&t;&t;-- (a) on the stack, or&n;&t;&t;-- (b) has all of its children marked&n;&t;&t;- everything on the stack is always marked&n;&t;&t;- nothing is ever pushed onto the stack twice, because:&n;&t;&t;-- nothing previously marked is ever pushed on the stack&n;&t; */
 multiline_comment|/*&n;&t; *&t;Push root set&n;&t; */
-r_for
-c_loop
+id|forall_unix_sockets
+c_func
 (paren
+id|i
+comma
 id|s
-op_assign
-id|unix_socket_list
-suffix:semicolon
-id|s
-op_ne
-l_int|NULL
-suffix:semicolon
-id|s
-op_assign
-id|s-&gt;next
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; *&t;If all instances of the descriptor are not&n;&t;&t; *&t;in flight we are in use.&n;&t;&t; */
@@ -440,19 +446,26 @@ multiline_comment|/*&n;&t;&t;&t; *&t;Do we have file descriptors ?&n;&t;&t;&t; *
 r_if
 c_cond
 (paren
-id|skb-&gt;h.filp
+id|UNIXCB
+c_func
+(paren
+id|skb
+)paren
+dot
+id|fp
 )paren
 (brace
 multiline_comment|/*&n;&t;&t;&t;&t; *&t;Process the descriptors of this socket&n;&t;&t;&t;&t; */
 r_int
 id|nfd
 op_assign
-op_star
+id|UNIXCB
+c_func
 (paren
-r_int
-op_star
+id|skb
 )paren
-id|skb-&gt;h.filp
+dot
+id|fp-&gt;count
 suffix:semicolon
 r_struct
 id|file
@@ -460,20 +473,13 @@ op_star
 op_star
 id|fp
 op_assign
+id|UNIXCB
+c_func
 (paren
-r_struct
-id|file
-op_star
-op_star
+id|skb
 )paren
-(paren
-id|skb-&gt;h.filp
-op_plus
-r_sizeof
-(paren
-r_int
-)paren
-)paren
+dot
+id|fp-&gt;fp
 suffix:semicolon
 r_while
 c_loop
@@ -567,20 +573,12 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n;&t; *&t;Sweep phase.  NOTE: this part dominates the time complexity &n;&t; */
-r_for
-c_loop
+id|forall_unix_sockets
+c_func
 (paren
+id|i
+comma
 id|s
-op_assign
-id|unix_socket_list
-suffix:semicolon
-id|s
-op_ne
-l_int|NULL
-suffix:semicolon
-id|s
-op_assign
-id|next
 )paren
 (brace
 id|next

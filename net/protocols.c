@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/fs.h&gt;
 DECL|macro|CONFIG_UNIX
 mdefine_line|#define CONFIG_UNIX&t;&t;/* always present...&t;*/
 macro_line|#ifdef&t;CONFIG_UNIX
+macro_line|#include &lt;linux/un.h&gt;
 macro_line|#include &lt;net/af_unix.h&gt;
 macro_line|#endif
 macro_line|#ifdef&t;CONFIG_INET
@@ -26,9 +27,9 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#endif&t;/* INET */
 macro_line|#if defined(CONFIG_IPX) || defined(CONFIG_IPX_MODULE)
+DECL|macro|NEED_802
+mdefine_line|#define NEED_802
 macro_line|#include &lt;net/ipxcall.h&gt;
-macro_line|#include &lt;net/p8022call.h&gt;
-macro_line|#include &lt;net/p8022trcall.h&gt;
 macro_line|#endif
 macro_line|#ifdef CONFIG_X25
 macro_line|#include &lt;net/x25call.h&gt;
@@ -43,11 +44,14 @@ macro_line|#include &lt;net/rosecall.h&gt;
 macro_line|#endif
 macro_line|#endif
 macro_line|#if defined(CONFIG_ATALK) || defined(CONFIG_ATALK_MODULE)
-macro_line|#if ! ( defined(CONFIG_IPX) || defined(CONFIG_IPX_MODULE) )
-macro_line|#include &lt;net/p8022call.h&gt;
-macro_line|#include &lt;net/p8022trcall.h&gt;
-macro_line|#endif
+DECL|macro|NEED_802
+mdefine_line|#define NEED_802
 macro_line|#include &lt;net/atalkcall.h&gt;
+macro_line|#endif
+macro_line|#if defined(CONFIG_NETBEUI)
+DECL|macro|NEED_LLC
+mdefine_line|#define NEED_LLC
+macro_line|#include &lt;net/netbeuicall.h&gt;
 macro_line|#endif
 macro_line|#include &lt;net/psnapcall.h&gt;
 macro_line|#ifdef CONFIG_TR
@@ -63,6 +67,15 @@ id|net_proto
 op_star
 )paren
 suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef NEED_LLC
+DECL|macro|NEED_802
+mdefine_line|#define NEED_802
+macro_line|#include &lt;net/llccall.h&gt;
+macro_line|#endif
+macro_line|#ifdef NEED_802
+macro_line|#include &lt;net/p8022call.h&gt;
+macro_line|#include &lt;net/p8022trcall.h&gt;
 macro_line|#endif
 multiline_comment|/*&n; *&t;Protocol Table&n; */
 DECL|variable|protocols
@@ -82,7 +95,7 @@ id|unix_proto_init
 comma
 multiline_comment|/* Unix domain socket family &t;*/
 macro_line|#endif
-macro_line|#if defined(CONFIG_IPX)   || defined(CONFIG_IPX_MODULE) || &bslash;&n;    defined(CONFIG_ATALK) || defined(CONFIG_ATALK_MODULE)
+macro_line|#ifdef NEED_802
 (brace
 l_string|&quot;802.2&quot;
 comma
@@ -113,6 +126,15 @@ id|rif_init
 )brace
 comma
 multiline_comment|/* RIF for Token ring&t;&t;*/
+macro_line|#endif  
+macro_line|#ifdef NEED_LLC
+(brace
+l_string|&quot;802.2LLC&quot;
+comma
+id|llc_init
+)brace
+comma
+multiline_comment|/* 802.2 LLC */
 macro_line|#endif  
 macro_line|#ifdef CONFIG_AX25  
 (brace

@@ -21,7 +21,13 @@ multiline_comment|/* Must be size_t (1003.1g) */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;UIO_MAXIOV shall be at least 16 1003.1g (5.4.1.1)&n; */
+DECL|macro|UIO_FASTIOV
+mdefine_line|#define UIO_FASTIOV&t;8
 DECL|macro|UIO_MAXIOV
+mdefine_line|#define UIO_MAXIOV&t;1024
+macro_line|#if 0
 mdefine_line|#define UIO_MAXIOV&t;16&t;/* Maximum iovec&squot;s in one operation &n;&t;&t;&t;&t;   16 matches BSD */
+multiline_comment|/* Beg pardon: BSD has 1024 --ANK */
+macro_line|#endif
 macro_line|#endif
 eof

@@ -110,12 +110,6 @@ DECL|typedef|ipx_packet
 )brace
 id|ipx_packet
 suffix:semicolon
-DECL|typedef|ipx_socket
-r_typedef
-r_struct
-id|sock
-id|ipx_socket
-suffix:semicolon
 macro_line|#include &lt;net/ipxcall.h&gt;
 r_extern
 r_int
@@ -193,7 +187,8 @@ r_int
 id|if_sknum
 suffix:semicolon
 DECL|member|if_sklist
-id|ipx_socket
+r_struct
+id|sock
 op_star
 id|if_sklist
 suffix:semicolon

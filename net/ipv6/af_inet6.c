@@ -187,6 +187,16 @@ id|rawv6_sock_array
 id|SOCK_ARRAY_SIZE
 )braket
 suffix:semicolon
+r_extern
+r_struct
+id|proto_ops
+id|inet6_stream_ops
+suffix:semicolon
+r_extern
+r_struct
+id|proto_ops
+id|inet6_dgram_ops
+suffix:semicolon
 DECL|function|inet6_create
 r_static
 r_int
@@ -306,6 +316,11 @@ op_assign
 op_amp
 id|tcpv6_prot
 suffix:semicolon
+id|sock-&gt;ops
+op_assign
+op_amp
+id|inet6_stream_ops
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -354,6 +369,11 @@ id|prot
 op_assign
 op_amp
 id|udpv6_prot
+suffix:semicolon
+id|sock-&gt;ops
+op_assign
+op_amp
+id|inet6_dgram_ops
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -423,6 +443,11 @@ id|prot
 op_assign
 op_amp
 id|rawv6_prot
+suffix:semicolon
+id|sock-&gt;ops
+op_assign
+op_amp
+id|inet6_dgram_ops
 suffix:semicolon
 id|sk-&gt;reuse
 op_assign
@@ -499,14 +524,11 @@ id|prot-&gt;backlog_rcv
 suffix:semicolon
 id|sk-&gt;sleep
 op_assign
+op_amp
 id|sock-&gt;wait
 suffix:semicolon
-id|sock-&gt;data
+id|sock-&gt;sk
 op_assign
-(paren
-r_void
-op_star
-)paren
 id|sk
 suffix:semicolon
 id|sk-&gt;state
@@ -525,6 +547,13 @@ c_func
 (paren
 op_amp
 id|sk-&gt;receive_queue
+)paren
+suffix:semicolon
+id|skb_queue_head_init
+c_func
+(paren
+op_amp
+id|sk-&gt;error_queue
 )paren
 suffix:semicolon
 id|skb_queue_head_init
@@ -709,18 +738,7 @@ c_func
 (paren
 id|newsock
 comma
-(paren
-(paren
-r_struct
-id|sock
-op_star
-)paren
-(paren
-id|oldsock-&gt;data
-)paren
-)paren
-op_member_access_from_pointer
-id|protocol
+id|oldsock-&gt;sk-&gt;protocol
 )paren
 suffix:semicolon
 )brace
@@ -762,12 +780,7 @@ id|sock
 op_star
 id|sk
 op_assign
-(paren
-r_struct
-id|sock
-op_star
-)paren
-id|sock-&gt;data
+id|sock-&gt;sk
 comma
 op_star
 id|sk2
@@ -947,7 +960,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|ip_chk_addr
+id|__ip_chk_addr
 c_func
 (paren
 id|v4addr
@@ -1341,12 +1354,7 @@ id|AF_INET6
 suffix:semicolon
 id|sk
 op_assign
-(paren
-r_struct
-id|sock
-op_star
-)paren
-id|sock-&gt;data
+id|sock-&gt;sk
 suffix:semicolon
 r_if
 c_cond
@@ -1479,12 +1487,7 @@ id|sock
 op_star
 id|sk
 op_assign
-(paren
-r_struct
-id|sock
-op_star
-)paren
-id|sock-&gt;data
+id|sock-&gt;sk
 suffix:semicolon
 r_int
 id|err
@@ -2528,16 +2531,13 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-DECL|variable|inet6_proto_ops
-r_static
+DECL|variable|inet6_stream_ops
 r_struct
 id|proto_ops
-id|inet6_proto_ops
+id|inet6_stream_ops
 op_assign
 (brace
 id|AF_INET6
-comma
-id|inet6_create
 comma
 id|inet6_dup
 comma
@@ -2545,7 +2545,7 @@ id|inet6_release
 comma
 id|inet6_bind
 comma
-id|inet_connect
+id|inet_stream_connect
 comma
 multiline_comment|/* ok&t;&t;*/
 id|inet6_socketpair
@@ -2584,6 +2584,70 @@ id|inet_recvmsg
 multiline_comment|/* ok&t;&t;*/
 )brace
 suffix:semicolon
+DECL|variable|inet6_dgram_ops
+r_struct
+id|proto_ops
+id|inet6_dgram_ops
+op_assign
+(brace
+id|AF_INET6
+comma
+id|inet6_dup
+comma
+id|inet6_release
+comma
+id|inet6_bind
+comma
+id|inet_dgram_connect
+comma
+multiline_comment|/* ok&t;&t;*/
+id|inet6_socketpair
+comma
+multiline_comment|/* a do nothing&t;*/
+id|inet_accept
+comma
+multiline_comment|/* ok&t;&t;*/
+id|inet6_getname
+comma
+id|datagram_select
+comma
+multiline_comment|/* ok&t;&t;*/
+id|inet6_ioctl
+comma
+multiline_comment|/* must change  */
+id|inet_listen
+comma
+multiline_comment|/* ok&t;&t;*/
+id|inet_shutdown
+comma
+multiline_comment|/* ok&t;&t;*/
+id|inet_setsockopt
+comma
+multiline_comment|/* ok&t;&t;*/
+id|inet_getsockopt
+comma
+multiline_comment|/* ok&t;&t;*/
+id|inet_fcntl
+comma
+multiline_comment|/* ok&t;&t;*/
+id|inet_sendmsg
+comma
+multiline_comment|/* ok&t;&t;*/
+id|inet_recvmsg
+multiline_comment|/* ok&t;&t;*/
+)brace
+suffix:semicolon
+DECL|variable|inet6_family_ops
+r_struct
+id|net_proto_family
+id|inet6_family_ops
+op_assign
+(brace
+id|AF_INET6
+comma
+id|inet6_create
+)brace
+suffix:semicolon
 macro_line|#ifdef MODULE
 DECL|function|init_module
 r_int
@@ -2614,13 +2678,14 @@ id|KERN_INFO
 l_string|&quot;IPv6 v0.1 for NET3.037&bslash;n&quot;
 )paren
 suffix:semicolon
+(paren
+r_void
+)paren
 id|sock_register
 c_func
 (paren
-id|inet6_proto_ops.family
-comma
 op_amp
-id|inet6_proto_ops
+id|inet6_family_ops
 )paren
 suffix:semicolon
 r_for
@@ -2692,14 +2757,14 @@ id|icmpv6_init
 c_func
 (paren
 op_amp
-id|inet6_proto_ops
+id|inet6_family_ops
 )paren
 suffix:semicolon
 id|ndisc_init
 c_func
 (paren
 op_amp
-id|inet6_proto_ops
+id|inet6_family_ops
 )paren
 suffix:semicolon
 id|addrconf_init

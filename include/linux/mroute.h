@@ -335,9 +335,21 @@ r_int
 id|is_frag
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|ip_mr_find_tunnel
+c_func
+(paren
+id|__u32
+comma
+id|__u32
+)paren
+suffix:semicolon
 DECL|struct|vif_device
 r_struct
 id|vif_device
+(brace
+r_union
 (brace
 DECL|member|dev
 r_struct
@@ -346,13 +358,17 @@ op_star
 id|dev
 suffix:semicolon
 multiline_comment|/* Device we are using */
-DECL|member|rt_cache
+DECL|member|rt
 r_struct
-id|route
+id|rtable
 op_star
-id|rt_cache
+id|rt
 suffix:semicolon
-multiline_comment|/* Tunnel route cache */
+multiline_comment|/* Route for tunnel    */
+DECL|member|u
+)brace
+id|u
+suffix:semicolon
 DECL|member|bytes_in
 DECL|member|bytes_out
 r_int
@@ -447,6 +463,33 @@ r_int
 id|mfc_queuelen
 suffix:semicolon
 multiline_comment|/* Unresolved buffer counter&t;*/
+DECL|member|mfc_last_assert
+r_int
+id|mfc_last_assert
+suffix:semicolon
+DECL|member|mfc_minvif
+r_int
+id|mfc_minvif
+suffix:semicolon
+DECL|member|mfc_maxvif
+r_int
+id|mfc_maxvif
+suffix:semicolon
+DECL|member|mfc_bytes
+r_int
+r_int
+id|mfc_bytes
+suffix:semicolon
+DECL|member|mfc_pkt
+r_int
+r_int
+id|mfc_pkt
+suffix:semicolon
+DECL|member|mfc_wrong_if
+r_int
+r_int
+id|mfc_wrong_if
+suffix:semicolon
 DECL|member|mfc_ttls
 r_int
 r_char
@@ -472,6 +515,8 @@ DECL|macro|MFC_HASH
 mdefine_line|#define MFC_HASH(a,b)&t;(((a)^((b)&gt;&gt;2))&amp;(MFC_LINES-1))
 macro_line|#endif&t;&t;
 macro_line|#endif
+DECL|macro|MFC_ASSERT_THRESH
+mdefine_line|#define MFC_ASSERT_THRESH (3*HZ)&t;&t;/* Maximal freq. of asserts */
 multiline_comment|/*&n; *&t;Pseudo messages used by mrouted&n; */
 DECL|macro|IGMPMSG_NOCACHE
 mdefine_line|#define IGMPMSG_NOCACHE&t;&t;1&t;&t;/* Kernel cache fill request to mrouted */

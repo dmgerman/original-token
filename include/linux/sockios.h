@@ -8,6 +8,8 @@ DECL|macro|SIOCADDRT
 mdefine_line|#define SIOCADDRT&t;0x890B&t;&t;/* add routing table entry&t;*/
 DECL|macro|SIOCDELRT
 mdefine_line|#define SIOCDELRT&t;0x890C&t;&t;/* delete routing table entry&t;*/
+DECL|macro|SIOCRTMSG
+mdefine_line|#define SIOCRTMSG&t;0x890D&t;&t;/* call to routing system&t;*/
 multiline_comment|/* Socket configuration controls. */
 DECL|macro|SIOCGIFNAME
 mdefine_line|#define SIOCGIFNAME&t;0x8910&t;&t;/* get iface name&t;&t;*/

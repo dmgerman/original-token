@@ -530,7 +530,7 @@ c_cond
 id|rt-&gt;rt_nexthop
 )paren
 (brace
-id|ndisc_dec_neigh
+id|neighbour_unlock
 c_func
 (paren
 id|rt-&gt;rt_nexthop

@@ -20,7 +20,6 @@ macro_line|#include &lt;net/icmp.h&gt;
 macro_line|#include &lt;net/udp.h&gt;
 macro_line|#include &lt;net/ipip.h&gt;
 macro_line|#include &lt;linux/igmp.h&gt;
-macro_line|#ifdef CONFIG_IP_FORWARD
 macro_line|#ifdef CONFIG_NET_IPIP
 DECL|variable|ipip_protocol
 r_static
@@ -32,7 +31,7 @@ op_assign
 id|ipip_rcv
 comma
 multiline_comment|/* IPIP handler          */
-l_int|NULL
+id|ipip_err
 comma
 multiline_comment|/* TUNNEL error control    */
 l_int|0
@@ -52,7 +51,6 @@ multiline_comment|/* name                 */
 )brace
 suffix:semicolon
 macro_line|#endif
-macro_line|#endif
 DECL|variable|tcp_protocol
 r_static
 r_struct
@@ -66,7 +64,7 @@ multiline_comment|/* TCP handler&t;&t;*/
 id|tcp_v4_err
 comma
 multiline_comment|/* TCP error control&t;*/
-macro_line|#if defined(CONFIG_NET_IPIP) &amp;&amp; defined(CONFIG_IP_FORWARD)
+macro_line|#ifdef CONFIG_NET_IPIP
 op_amp
 id|ipip_protocol
 comma
@@ -148,17 +146,6 @@ l_string|&quot;ICMP&quot;
 multiline_comment|/* name&t;&t;&t;*/
 )brace
 suffix:semicolon
-macro_line|#ifndef CONFIG_IP_MULTICAST
-DECL|variable|inet_protocol_base
-r_struct
-id|inet_protocol
-op_star
-id|inet_protocol_base
-op_assign
-op_amp
-id|icmp_protocol
-suffix:semicolon
-macro_line|#else
 DECL|variable|igmp_protocol
 r_static
 r_struct
@@ -198,7 +185,6 @@ op_assign
 op_amp
 id|igmp_protocol
 suffix:semicolon
-macro_line|#endif
 DECL|variable|inet_protos
 r_struct
 id|inet_protocol

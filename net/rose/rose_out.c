@@ -135,10 +135,6 @@ id|skbn-&gt;sk
 op_assign
 id|sk
 suffix:semicolon
-id|skbn-&gt;free
-op_assign
-l_int|1
-suffix:semicolon
 id|skbn-&gt;arp
 op_assign
 l_int|1
@@ -233,10 +229,6 @@ id|skbn
 suffix:semicolon
 multiline_comment|/* Throw it on the queue */
 )brace
-id|skb-&gt;free
-op_assign
-l_int|1
-suffix:semicolon
 id|kfree_skb
 c_func
 (paren

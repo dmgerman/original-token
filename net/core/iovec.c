@@ -3,6 +3,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/in6.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -73,9 +74,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|m-&gt;msg_name
-op_ne
-l_int|NULL
+id|m-&gt;msg_namelen
 )paren
 (brace
 r_if
@@ -131,12 +130,15 @@ op_assign
 id|address
 suffix:semicolon
 )brace
+r_else
+id|m-&gt;msg_name
+op_assign
+l_int|NULL
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|m-&gt;msg_control
-op_ne
-l_int|NULL
+id|m-&gt;msg_controllen
 )paren
 (brace
 id|err
@@ -161,6 +163,46 @@ r_return
 id|err
 suffix:semicolon
 )brace
+)brace
+r_else
+id|m-&gt;msg_control
+op_assign
+l_int|NULL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|m-&gt;msg_iovlen
+OG
+id|UIO_FASTIOV
+)paren
+(brace
+id|iov
+op_assign
+id|kmalloc
+c_func
+(paren
+id|m-&gt;msg_iovlen
+op_star
+r_sizeof
+(paren
+r_struct
+id|iovec
+)paren
+comma
+id|GFP_KERNEL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|iov
+)paren
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
 )brace
 r_for
 c_loop
@@ -206,9 +248,24 @@ c_cond
 (paren
 id|err
 )paren
+(brace
+r_if
+c_cond
+(paren
+id|m-&gt;msg_iovlen
+OG
+id|UIO_FASTIOV
+)paren
+id|kfree
+c_func
+(paren
+id|iov
+)paren
+suffix:semicolon
 r_return
 id|err
 suffix:semicolon
+)brace
 id|err
 op_assign
 id|verify_area
@@ -237,6 +294,19 @@ c_cond
 id|err
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|m-&gt;msg_iovlen
+OG
+id|UIO_FASTIOV
+)paren
+id|kfree
+c_func
+(paren
+id|iov
+)paren
+suffix:semicolon
 r_return
 id|err
 suffix:semicolon

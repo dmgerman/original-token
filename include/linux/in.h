@@ -93,6 +93,61 @@ id|s_addr
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|IP_TOS
+mdefine_line|#define IP_TOS&t;&t;1
+DECL|macro|IP_TTL
+mdefine_line|#define IP_TTL&t;&t;2
+DECL|macro|IP_HDRINCL
+mdefine_line|#define IP_HDRINCL&t;3
+DECL|macro|IP_OPTIONS
+mdefine_line|#define IP_OPTIONS&t;4
+DECL|macro|IP_LOCALADDR
+mdefine_line|#define IP_LOCALADDR&t;5
+DECL|macro|IP_RECVOPTS
+mdefine_line|#define IP_RECVOPTS&t;6
+DECL|macro|IP_RETOPTS
+mdefine_line|#define IP_RETOPTS&t;7
+DECL|macro|IP_LOCALDEV
+mdefine_line|#define IP_LOCALDEV&t;8
+DECL|macro|IP_RECVDSTADDR
+mdefine_line|#define IP_RECVDSTADDR  9
+DECL|macro|IP_PMTUDISC
+mdefine_line|#define IP_PMTUDISC&t;10
+DECL|macro|IP_RECVERR
+mdefine_line|#define IP_RECVERR&t;11
+multiline_comment|/* BSD compatibility */
+DECL|macro|IP_RECVRETOPTS
+mdefine_line|#define IP_RECVRETOPTS&t;IP_RETOPTS
+multiline_comment|/* IP_PMTUDISC values */
+DECL|macro|IP_PMTUDISC_WANT
+mdefine_line|#define IP_PMTUDISC_WANT&t;&t;0&t;/* Use per route hints&t;*/
+DECL|macro|IP_PMTUDISC_DONT
+mdefine_line|#define IP_PMTUDISC_DONT&t;&t;1&t;/* Never send DF frames */
+DECL|macro|IP_PMTUDISC_DO
+mdefine_line|#define IP_PMTUDISC_DO&t;&t;&t;2&t;/* Always DF&t;&t;*/
+DECL|macro|IP_MULTICAST_IF
+mdefine_line|#define IP_MULTICAST_IF&t;&t;&t;32
+DECL|macro|IP_MULTICAST_TTL
+mdefine_line|#define IP_MULTICAST_TTL &t;&t;33
+DECL|macro|IP_MULTICAST_LOOP
+mdefine_line|#define IP_MULTICAST_LOOP &t;&t;34
+DECL|macro|IP_ADD_MEMBERSHIP
+mdefine_line|#define IP_ADD_MEMBERSHIP&t;&t;35
+DECL|macro|IP_DROP_MEMBERSHIP
+mdefine_line|#define IP_DROP_MEMBERSHIP&t;&t;36
+DECL|macro|IP_MULTICAST_IFN
+mdefine_line|#define IP_MULTICAST_IFN&t;&t;37
+DECL|macro|IP_ADD_MEMBERSHIPN
+mdefine_line|#define IP_ADD_MEMBERSHIPN&t;&t;38
+DECL|macro|IP_DROP_MEMBERSHIPN
+mdefine_line|#define IP_DROP_MEMBERSHIPN&t;&t;39
+multiline_comment|/* These need to appear somewhere around here */
+DECL|macro|IP_DEFAULT_MULTICAST_TTL
+mdefine_line|#define IP_DEFAULT_MULTICAST_TTL        1
+DECL|macro|IP_DEFAULT_MULTICAST_LOOP
+mdefine_line|#define IP_DEFAULT_MULTICAST_LOOP       1
+DECL|macro|IP_MAX_MEMBERSHIPS
+mdefine_line|#define IP_MAX_MEMBERSHIPS              20
 multiline_comment|/* Request struct for multicast socket ops */
 DECL|struct|ip_mreq
 r_struct
@@ -110,6 +165,39 @@ id|in_addr
 id|imr_interface
 suffix:semicolon
 multiline_comment|/* local IP address of interface */
+)brace
+suffix:semicolon
+DECL|struct|ip_mreqn
+r_struct
+id|ip_mreqn
+(brace
+DECL|member|imr_multiaddr
+r_struct
+id|in_addr
+id|imr_multiaddr
+suffix:semicolon
+multiline_comment|/* IP multicast address of group */
+DECL|member|imr_address
+r_struct
+id|in_addr
+id|imr_address
+suffix:semicolon
+multiline_comment|/* local IP address of interface */
+macro_line|#if 1
+DECL|member|imr_interface
+r_char
+id|imr_interface
+(braket
+l_int|16
+)braket
+suffix:semicolon
+macro_line|#else
+DECL|member|imr_ifindex
+r_int
+id|imr_ifindex
+suffix:semicolon
+multiline_comment|/* Interface index */
+macro_line|#endif
 )brace
 suffix:semicolon
 multiline_comment|/* Structure describing an Internet (IP) socket address. */
@@ -205,9 +293,9 @@ mdefine_line|#define&t;IN_MULTICAST(a)&t;&t;IN_CLASSD(a)
 DECL|macro|IN_MULTICAST_NET
 mdefine_line|#define IN_MULTICAST_NET&t;0xF0000000
 DECL|macro|IN_EXPERIMENTAL
-mdefine_line|#define&t;IN_EXPERIMENTAL(a)&t;((((long int) (a)) &amp; 0xe0000000) == 0xe0000000)
+mdefine_line|#define&t;IN_EXPERIMENTAL(a)&t;((((long int) (a)) &amp; 0xf0000000) == 0xf0000000)
 DECL|macro|IN_BADCLASS
-mdefine_line|#define&t;IN_BADCLASS(a)&t;&t;((((long int) (a)) &amp; 0xf0000000) == 0xf0000000)
+mdefine_line|#define&t;IN_BADCLASS(a)&t;&t;IN_EXPERIMENTAL((a))
 multiline_comment|/* Address to accept any incoming messages. */
 DECL|macro|INADDR_ANY
 mdefine_line|#define&t;INADDR_ANY&t;&t;((unsigned long int) 0x00000000)
@@ -227,11 +315,13 @@ DECL|macro|IN_LOOPBACK
 mdefine_line|#define&t;IN_LOOPBACK(a)&t;&t;((((long int) (a)) &amp; 0xff000000) == 0x7f000000)
 multiline_comment|/* Defines for Multicast INADDR */
 DECL|macro|INADDR_UNSPEC_GROUP
-mdefine_line|#define INADDR_UNSPEC_GROUP   &t;0xe0000000      /* 224.0.0.0   */
+mdefine_line|#define INADDR_UNSPEC_GROUP   &t;0xe0000000U&t;/* 224.0.0.0   */
 DECL|macro|INADDR_ALLHOSTS_GROUP
-mdefine_line|#define INADDR_ALLHOSTS_GROUP &t;0xe0000001      /* 224.0.0.1   */
+mdefine_line|#define INADDR_ALLHOSTS_GROUP &t;0xe0000001U&t;/* 224.0.0.1   */
+DECL|macro|INADDR_ALLRTRS_GROUP
+mdefine_line|#define INADDR_ALLRTRS_GROUP    0xe0000002U&t;/* 224.0.0.2 */
 DECL|macro|INADDR_MAX_LOCAL_GROUP
-mdefine_line|#define INADDR_MAX_LOCAL_GROUP  0xe00000ff      /* 224.0.0.255 */
+mdefine_line|#define INADDR_MAX_LOCAL_GROUP  0xe00000ffU&t;/* 224.0.0.255 */
 multiline_comment|/* &lt;asm/byteorder.h&gt; contains the htonl type stuff.. */
 macro_line|#include &lt;asm/byteorder.h&gt; 
 macro_line|#ifdef __KERNEL__
@@ -240,6 +330,12 @@ DECL|macro|LOOPBACK
 mdefine_line|#define LOOPBACK(x)&t;(((x) &amp; htonl(0xff000000)) == htonl(0x7f000000))
 DECL|macro|MULTICAST
 mdefine_line|#define MULTICAST(x)&t;(((x) &amp; htonl(0xf0000000)) == htonl(0xe0000000))
+DECL|macro|BADCLASS
+mdefine_line|#define BADCLASS(x)&t;(((x) &amp; htonl(0xf0000000)) == htonl(0xf0000000))
+DECL|macro|ZERONET
+mdefine_line|#define ZERONET(x)&t;(((x) &amp; htonl(0xff000000)) == htonl(0x00000000))
+DECL|macro|LOCAL_MCAST
+mdefine_line|#define LOCAL_MCAST(x)&t;(((x) &amp; htonl(0xFFFFFF00)) == htonl(0xE0000000))
 macro_line|#endif
 macro_line|#endif&t;/* _LINUX_IN_H */
 eof

@@ -641,7 +641,8 @@ id|found
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef CONFIG_MCA
+multiline_comment|/*&n; * This has to be coded according to Documentation/mca.txt before&n; * this driver can be used with the 3c529 MCA cards.&n; */
+macro_line|#if 0 /* #ifdef CONFIG_MCA */
 r_if
 c_cond
 (paren
