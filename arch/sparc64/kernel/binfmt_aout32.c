@@ -327,6 +327,8 @@ op_or
 l_int|2
 op_or
 id|O_TRUNC
+op_or
+id|O_NOFOLLOW
 comma
 l_int|0600
 )paren

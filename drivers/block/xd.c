@@ -163,19 +163,6 @@ multiline_comment|/* Pat Mackinlay, pat@it.com.au */
 (brace
 l_int|0x0008
 comma
-l_string|&quot;07/15/86 (C) Copyright 1986 Western Digital Corp&quot;
-comma
-id|xd_wd_init_controller
-comma
-id|xd_wd_init_drive
-comma
-l_string|&quot; Western Dig. 1002AWX1&quot;
-)brace
-comma
-multiline_comment|/* Ian Justman, citrus!ianj@csusac.ecs.csus.edu */
-(brace
-l_int|0x0008
-comma
 l_string|&quot;07/15/86(C) Copyright 1986 Western Digital Corp.&quot;
 comma
 id|xd_wd_init_controller
@@ -186,19 +173,6 @@ l_string|&quot; Western Dig. 1002-27X&quot;
 )brace
 comma
 multiline_comment|/* Andrzej Krzysztofowicz, ankry@mif.pg.gda.pl */
-(brace
-l_int|0x0008
-comma
-l_string|&quot;06/24/88 (C) Copyright 1988 Western Digital Corp&quot;
-comma
-id|xd_wd_init_controller
-comma
-id|xd_wd_init_drive
-comma
-l_string|&quot; Western Dig. 1004A27X&quot;
-)brace
-comma
-multiline_comment|/* Dave Thaler, thalerd@engin.umich.edu */
 (brace
 l_int|0x0008
 comma
@@ -3221,9 +3195,11 @@ id|flags
 )paren
 )paren
 op_logical_and
+id|time_before
+c_func
 (paren
 id|jiffies
-OL
+comma
 id|expiry
 )paren
 )paren
@@ -7538,8 +7514,6 @@ id|count
 )paren
 )paren
 (brace
-suffix:semicolon
-)brace
 id|xd_setup
 c_func
 (paren
@@ -7548,6 +7522,7 @@ comma
 id|xd
 )paren
 suffix:semicolon
+)brace
 id|xd_geninit
 c_func
 (paren

@@ -12,6 +12,10 @@ macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#ifdef CONFIG_MCA
+macro_line|#include &lt;linux/mca.h&gt;
+macro_line|#include &lt;asm/processor.h&gt;
+macro_line|#endif
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -1409,6 +1413,23 @@ op_star
 id|regs
 )paren
 (brace
+macro_line|#ifdef CONFIG_MCA
+multiline_comment|/* Might actually be able to figure out what the guilty party&n;&t;* is. */
+r_if
+c_cond
+(paren
+id|MCA_bus
+)paren
+(brace
+id|mca_handle_nmi
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+macro_line|#endif
 id|printk
 c_func
 (paren

@@ -6598,7 +6598,7 @@ mdefine_line|#define ONE_SECOND&t;HZ&t;/* in jiffies (100ths of a second) */
 DECL|macro|NO_TIME_LIMIT
 mdefine_line|#define NO_TIME_LIMIT&t;0xffffffff
 DECL|macro|SLEEP
-mdefine_line|#define SLEEP(queue, time_limit) &bslash;&n;&t;interruptible_sleep_on(&amp;queue, (time_limit));
+mdefine_line|#define SLEEP(queue, time_limit) &bslash;&n;&t;interruptible_sleep_on_timeout(&amp;queue, (time_limit));
 DECL|macro|WAKE_UP
 mdefine_line|#define WAKE_UP(queue)&t;(wake_up_interruptible(&amp;queue))
 multiline_comment|/*&n; * /dev/sndstat&n; */

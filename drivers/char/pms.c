@@ -175,10 +175,10 @@ id|data_port
 )paren
 suffix:semicolon
 )brace
-DECL|function|i2c_stat
-r_extern
+DECL|function|pms_i2c_stat
+r_static
 r_int
-id|i2c_stat
+id|pms_i2c_stat
 c_func
 (paren
 id|u8
@@ -396,9 +396,10 @@ id|data_port
 )paren
 suffix:semicolon
 )brace
-DECL|function|i2c_write
+DECL|function|pms_i2c_write
+r_static
 r_int
-id|i2c_write
+id|pms_i2c_write
 c_func
 (paren
 id|u16
@@ -664,9 +665,10 @@ r_return
 id|count
 suffix:semicolon
 )brace
-DECL|function|i2c_read
+DECL|function|pms_i2c_read
+r_static
 r_int
-id|i2c_read
+id|pms_i2c_read
 c_func
 (paren
 r_int
@@ -732,9 +734,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|i2c_andor
+DECL|function|pms_i2c_andor
+r_static
 r_void
-id|i2c_andor
+id|pms_i2c_andor
 c_func
 (paren
 r_int
@@ -755,7 +758,7 @@ id|tmp
 suffix:semicolon
 id|tmp
 op_assign
-id|i2c_read
+id|pms_i2c_read
 c_func
 (paren
 id|slave
@@ -773,7 +776,7 @@ op_logical_and
 op_or
 op_logical_or
 suffix:semicolon
-id|i2c_write
+id|pms_i2c_write
 c_func
 (paren
 id|slave
@@ -828,7 +831,7 @@ id|decoder
 r_case
 id|MOTOROLA
 suffix:colon
-id|i2c_write
+id|pms_i2c_write
 c_func
 (paren
 l_int|0x8A
@@ -843,7 +846,7 @@ suffix:semicolon
 r_case
 id|PHILIPS2
 suffix:colon
-id|i2c_write
+id|pms_i2c_write
 c_func
 (paren
 l_int|0x8A
@@ -858,7 +861,7 @@ suffix:semicolon
 r_case
 id|PHILIPS1
 suffix:colon
-id|i2c_write
+id|pms_i2c_write
 c_func
 (paren
 l_int|0x42
@@ -891,7 +894,7 @@ id|decoder
 r_case
 id|MOTOROLA
 suffix:colon
-id|i2c_write
+id|pms_i2c_write
 c_func
 (paren
 l_int|0x8A
@@ -906,7 +909,7 @@ suffix:semicolon
 r_case
 id|PHILIPS1
 suffix:colon
-id|i2c_write
+id|pms_i2c_write
 c_func
 (paren
 l_int|0x42
@@ -939,7 +942,7 @@ id|decoder
 r_case
 id|MOTOROLA
 suffix:colon
-id|i2c_write
+id|pms_i2c_write
 c_func
 (paren
 l_int|0x8A
@@ -954,7 +957,7 @@ suffix:semicolon
 r_case
 id|PHILIPS1
 suffix:colon
-id|i2c_write
+id|pms_i2c_write
 c_func
 (paren
 l_int|0x42
@@ -987,7 +990,7 @@ id|decoder
 r_case
 id|MOTOROLA
 suffix:colon
-id|i2c_write
+id|pms_i2c_write
 c_func
 (paren
 l_int|0x8A
@@ -997,7 +1000,7 @@ comma
 id|brightness
 )paren
 suffix:semicolon
-id|i2c_write
+id|pms_i2c_write
 c_func
 (paren
 l_int|0x8A
@@ -1007,7 +1010,7 @@ comma
 id|brightness
 )paren
 suffix:semicolon
-id|i2c_write
+id|pms_i2c_write
 c_func
 (paren
 l_int|0x8A
@@ -1022,7 +1025,7 @@ suffix:semicolon
 r_case
 id|PHILIPS1
 suffix:colon
-id|i2c_write
+id|pms_i2c_write
 c_func
 (paren
 l_int|0x42
@@ -1093,7 +1096,7 @@ r_case
 l_int|0
 suffix:colon
 multiline_comment|/* Auto */
-id|i2c_andor
+id|pms_i2c_andor
 c_func
 (paren
 id|target
@@ -1105,7 +1108,7 @@ comma
 l_int|0x00
 )paren
 suffix:semicolon
-id|i2c_andor
+id|pms_i2c_andor
 c_func
 (paren
 id|target
@@ -1123,7 +1126,7 @@ r_case
 l_int|1
 suffix:colon
 multiline_comment|/* NTSC */
-id|i2c_andor
+id|pms_i2c_andor
 c_func
 (paren
 id|target
@@ -1135,7 +1138,7 @@ comma
 l_int|0x00
 )paren
 suffix:semicolon
-id|i2c_andor
+id|pms_i2c_andor
 c_func
 (paren
 id|target
@@ -1153,7 +1156,7 @@ r_case
 l_int|2
 suffix:colon
 multiline_comment|/* PAL */
-id|i2c_andor
+id|pms_i2c_andor
 c_func
 (paren
 id|target
@@ -1165,7 +1168,7 @@ comma
 l_int|0x00
 )paren
 suffix:semicolon
-id|i2c_andor
+id|pms_i2c_andor
 c_func
 (paren
 id|target
@@ -1183,7 +1186,7 @@ r_case
 l_int|3
 suffix:colon
 multiline_comment|/* SECAM */
-id|i2c_andor
+id|pms_i2c_andor
 c_func
 (paren
 id|target
@@ -1195,7 +1198,7 @@ comma
 l_int|0x01
 )paren
 suffix:semicolon
-id|i2c_andor
+id|pms_i2c_andor
 c_func
 (paren
 id|target
@@ -1232,7 +1235,7 @@ id|decoder
 r_case
 id|PHILIPS1
 suffix:colon
-id|i2c_write
+id|pms_i2c_write
 c_func
 (paren
 l_int|0x8A
@@ -1242,7 +1245,7 @@ comma
 id|start
 )paren
 suffix:semicolon
-id|i2c_write
+id|pms_i2c_write
 c_func
 (paren
 l_int|0x8A
@@ -1257,7 +1260,7 @@ suffix:semicolon
 r_case
 id|PHILIPS2
 suffix:colon
-id|i2c_write
+id|pms_i2c_write
 c_func
 (paren
 l_int|0x42
@@ -1267,7 +1270,7 @@ comma
 id|start
 )paren
 suffix:semicolon
-id|i2c_write
+id|pms_i2c_write
 c_func
 (paren
 l_int|0x42
@@ -1300,7 +1303,7 @@ op_eq
 id|PHILIPS2
 )paren
 (brace
-id|i2c_andor
+id|pms_i2c_andor
 c_func
 (paren
 l_int|0x8A
@@ -1328,7 +1331,7 @@ op_eq
 id|PHILIPS1
 )paren
 (brace
-id|i2c_andor
+id|pms_i2c_andor
 c_func
 (paren
 l_int|0x42
@@ -1366,7 +1369,7 @@ op_eq
 id|PHILIPS2
 )paren
 (brace
-id|i2c_andor
+id|pms_i2c_andor
 c_func
 (paren
 l_int|0x8A
@@ -1394,7 +1397,7 @@ op_eq
 id|PHILIPS1
 )paren
 (brace
-id|i2c_andor
+id|pms_i2c_andor
 c_func
 (paren
 l_int|0x42
@@ -1432,7 +1435,7 @@ op_eq
 id|PHILIPS2
 )paren
 (brace
-id|i2c_andor
+id|pms_i2c_andor
 c_func
 (paren
 l_int|0x8A
@@ -1456,7 +1459,7 @@ op_eq
 id|PHILIPS1
 )paren
 (brace
-id|i2c_andor
+id|pms_i2c_andor
 c_func
 (paren
 l_int|0x42
@@ -1490,7 +1493,7 @@ op_eq
 id|PHILIPS2
 )paren
 (brace
-id|i2c_andor
+id|pms_i2c_andor
 c_func
 (paren
 l_int|0x8A
@@ -1518,7 +1521,7 @@ op_eq
 id|PHILIPS1
 )paren
 (brace
-id|i2c_andor
+id|pms_i2c_andor
 c_func
 (paren
 l_int|0x42
@@ -1556,7 +1559,7 @@ op_eq
 id|PHILIPS2
 )paren
 (brace
-id|i2c_andor
+id|pms_i2c_andor
 c_func
 (paren
 l_int|0x8A
@@ -1580,7 +1583,7 @@ op_eq
 id|PHILIPS1
 )paren
 (brace
-id|i2c_andor
+id|pms_i2c_andor
 c_func
 (paren
 l_int|0x42
@@ -1614,7 +1617,7 @@ op_eq
 id|PHILIPS2
 )paren
 (brace
-id|i2c_andor
+id|pms_i2c_andor
 c_func
 (paren
 l_int|0x8A
@@ -1642,7 +1645,7 @@ op_eq
 id|PHILIPS1
 )paren
 (brace
-id|i2c_andor
+id|pms_i2c_andor
 c_func
 (paren
 l_int|0x42
@@ -1680,7 +1683,7 @@ op_eq
 id|PHILIPS2
 )paren
 (brace
-id|i2c_andor
+id|pms_i2c_andor
 c_func
 (paren
 l_int|0xB8
@@ -1708,7 +1711,7 @@ op_eq
 id|PHILIPS1
 )paren
 (brace
-id|i2c_andor
+id|pms_i2c_andor
 c_func
 (paren
 l_int|0x42
@@ -1746,7 +1749,7 @@ op_eq
 id|PHILIPS2
 )paren
 (brace
-id|i2c_andor
+id|pms_i2c_andor
 c_func
 (paren
 l_int|0x8A
@@ -1774,7 +1777,7 @@ op_eq
 id|PHILIPS1
 )paren
 (brace
-id|i2c_andor
+id|pms_i2c_andor
 c_func
 (paren
 l_int|0x42
@@ -1812,7 +1815,7 @@ op_eq
 id|PHILIPS2
 )paren
 (brace
-id|i2c_andor
+id|pms_i2c_andor
 c_func
 (paren
 l_int|0xB8
@@ -1840,7 +1843,7 @@ op_eq
 id|PHILIPS1
 )paren
 (brace
-id|i2c_andor
+id|pms_i2c_andor
 c_func
 (paren
 l_int|0x42
@@ -1878,7 +1881,7 @@ op_eq
 id|PHILIPS2
 )paren
 (brace
-id|i2c_andor
+id|pms_i2c_andor
 c_func
 (paren
 l_int|0xB8
@@ -1906,7 +1909,7 @@ op_eq
 id|PHILIPS1
 )paren
 (brace
-id|i2c_andor
+id|pms_i2c_andor
 c_func
 (paren
 l_int|0x42
@@ -1944,7 +1947,7 @@ op_eq
 id|PHILIPS2
 )paren
 (brace
-id|i2c_andor
+id|pms_i2c_andor
 c_func
 (paren
 l_int|0x8A
@@ -1962,7 +1965,7 @@ op_lshift
 l_int|3
 )paren
 suffix:semicolon
-id|i2c_andor
+id|pms_i2c_andor
 c_func
 (paren
 l_int|0x8A
@@ -1990,7 +1993,7 @@ op_eq
 id|PHILIPS1
 )paren
 (brace
-id|i2c_andor
+id|pms_i2c_andor
 c_func
 (paren
 l_int|0x42
@@ -2008,7 +2011,7 @@ op_lshift
 l_int|3
 )paren
 suffix:semicolon
-id|i2c_andor
+id|pms_i2c_andor
 c_func
 (paren
 l_int|0x42
@@ -2046,7 +2049,7 @@ op_eq
 id|PHILIPS2
 )paren
 (brace
-id|i2c_write
+id|pms_i2c_write
 c_func
 (paren
 l_int|0x8A
@@ -2066,7 +2069,7 @@ op_eq
 id|PHILIPS1
 )paren
 (brace
-id|i2c_write
+id|pms_i2c_write
 c_func
 (paren
 l_int|0x42
@@ -2168,7 +2171,7 @@ op_eq
 id|PHILIPS2
 )paren
 (brace
-id|i2c_andor
+id|pms_i2c_andor
 c_func
 (paren
 l_int|0x8A
@@ -2196,7 +2199,7 @@ op_eq
 id|PHILIPS1
 )paren
 (brace
-id|i2c_andor
+id|pms_i2c_andor
 c_func
 (paren
 l_int|0x42
@@ -2234,7 +2237,7 @@ op_eq
 id|PHILIPS2
 )paren
 (brace
-id|i2c_write
+id|pms_i2c_write
 c_func
 (paren
 l_int|0x8A
@@ -2244,7 +2247,7 @@ comma
 id|sense
 )paren
 suffix:semicolon
-id|i2c_write
+id|pms_i2c_write
 c_func
 (paren
 l_int|0x8A
@@ -2264,7 +2267,7 @@ op_eq
 id|PHILIPS1
 )paren
 (brace
-id|i2c_write
+id|pms_i2c_write
 c_func
 (paren
 l_int|0x42
@@ -2274,7 +2277,7 @@ comma
 id|sense
 )paren
 suffix:semicolon
-id|i2c_write
+id|pms_i2c_write
 c_func
 (paren
 l_int|0x42
@@ -2960,7 +2963,7 @@ op_eq
 id|PHILIPS2
 )paren
 (brace
-id|i2c_andor
+id|pms_i2c_andor
 c_func
 (paren
 l_int|0x8A
@@ -2988,7 +2991,7 @@ op_eq
 id|PHILIPS1
 )paren
 (brace
-id|i2c_andor
+id|pms_i2c_andor
 c_func
 (paren
 l_int|0x42
@@ -4469,7 +4472,7 @@ l_int|3
 suffix:semicolon
 id|decst
 op_assign
-id|i2c_stat
+id|pms_i2c_stat
 c_func
 (paren
 l_int|0x43
@@ -4493,7 +4496,7 @@ r_else
 r_if
 c_cond
 (paren
-id|i2c_stat
+id|pms_i2c_stat
 c_func
 (paren
 l_int|0xb9
@@ -4512,7 +4515,7 @@ r_else
 r_if
 c_cond
 (paren
-id|i2c_stat
+id|pms_i2c_stat
 c_func
 (paren
 l_int|0x8b
@@ -4613,7 +4616,7 @@ op_eq
 l_int|0xFF
 )paren
 (brace
-id|i2c_andor
+id|pms_i2c_andor
 c_func
 (paren
 l_int|0x8A
@@ -4627,7 +4630,7 @@ l_int|0x00
 suffix:semicolon
 )brace
 r_else
-id|i2c_write
+id|pms_i2c_write
 c_func
 (paren
 l_int|0x8A
@@ -4641,7 +4644,7 @@ id|i
 )paren
 suffix:semicolon
 )brace
-id|i2c_write
+id|pms_i2c_write
 c_func
 (paren
 l_int|0xB8
@@ -4651,7 +4654,7 @@ comma
 l_int|0x12
 )paren
 suffix:semicolon
-id|i2c_write
+id|pms_i2c_write
 c_func
 (paren
 l_int|0xB8
@@ -4661,7 +4664,7 @@ comma
 l_int|0x00
 )paren
 suffix:semicolon
-id|i2c_write
+id|pms_i2c_write
 c_func
 (paren
 l_int|0xB8
@@ -4671,7 +4674,7 @@ comma
 l_int|0x00
 )paren
 suffix:semicolon
-id|i2c_write
+id|pms_i2c_write
 c_func
 (paren
 l_int|0xB8
@@ -4681,7 +4684,7 @@ comma
 l_int|0x00
 )paren
 suffix:semicolon
-id|i2c_write
+id|pms_i2c_write
 c_func
 (paren
 l_int|0xB8
@@ -4691,7 +4694,7 @@ comma
 l_int|0xFF
 )paren
 suffix:semicolon
-id|i2c_write
+id|pms_i2c_write
 c_func
 (paren
 l_int|0xB8
@@ -4701,7 +4704,7 @@ comma
 l_int|0x00
 )paren
 suffix:semicolon
-id|i2c_write
+id|pms_i2c_write
 c_func
 (paren
 l_int|0xB8
@@ -4711,7 +4714,7 @@ comma
 l_int|0x10
 )paren
 suffix:semicolon
-id|i2c_write
+id|pms_i2c_write
 c_func
 (paren
 l_int|0xB8
@@ -4939,11 +4942,14 @@ c_func
 r_void
 )paren
 macro_line|#else
-r_void
+r_int
 id|init_pms_cards
 c_func
 (paren
-r_void
+r_struct
+id|video_init
+op_star
+id|v
 )paren
 macro_line|#endif
 (brace

@@ -1295,7 +1295,7 @@ id|SOUND_MIXER_MIC
 comma
 l_int|0x6a
 comma
-l_int|6
+l_int|2
 comma
 l_int|3
 comma

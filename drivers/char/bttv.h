@@ -534,6 +534,8 @@ DECL|macro|BTTV_HAUPPAUGE878
 mdefine_line|#define BTTV_HAUPPAUGE878  0x0a
 DECL|macro|BTTV_MIROPRO
 mdefine_line|#define BTTV_MIROPRO       0x0b
+DECL|macro|BTTV_ADSTECH_TV
+mdefine_line|#define BTTV_ADSTECH_TV    0x0c
 DECL|macro|AUDIO_TUNER
 mdefine_line|#define AUDIO_TUNER        0x00
 DECL|macro|AUDIO_RADIO

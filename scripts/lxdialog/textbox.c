@@ -2305,11 +2305,6 @@ r_char
 op_star
 id|line
 suffix:semicolon
-macro_line|#if OLD_NCURSES
-r_int
-id|i
-suffix:semicolon
-macro_line|#endif
 id|line
 op_assign
 id|get_line
@@ -2376,6 +2371,10 @@ id|x
 suffix:semicolon
 multiline_comment|/* Clear &squot;residue&squot; of previous line */
 macro_line|#if OLD_NCURSES
+(brace
+r_int
+id|i
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -2399,6 +2398,7 @@ comma
 l_char|&squot; &squot;
 )paren
 suffix:semicolon
+)brace
 macro_line|#else
 id|wclrtoeol
 c_func

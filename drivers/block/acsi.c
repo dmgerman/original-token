@@ -5344,7 +5344,6 @@ c_func
 op_eq
 l_int|0
 )paren
-suffix:semicolon
 r_break
 suffix:semicolon
 )brace

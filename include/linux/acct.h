@@ -130,6 +130,15 @@ macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_BSD_PROCESS_ACCT
 r_extern
+r_void
+id|acct_auto_close
+c_func
+(paren
+id|kdev_t
+id|dev
+)paren
+suffix:semicolon
+r_extern
 r_int
 id|acct_process
 c_func
@@ -139,6 +148,8 @@ id|exitcode
 )paren
 suffix:semicolon
 macro_line|#else
+DECL|macro|acct_auto_close
+mdefine_line|#define acct_auto_close(x)&t;do { } while (0)
 DECL|macro|acct_process
 mdefine_line|#define acct_process(x)&t;&t;do { } while (0)
 macro_line|#endif

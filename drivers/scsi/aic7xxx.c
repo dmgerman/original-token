@@ -9,12 +9,17 @@ DECL|macro|AIC7XXX_STRICT_PCI_SETUP
 mdefine_line|#define AIC7XXX_STRICT_PCI_SETUP
 multiline_comment|/*&n; * AIC7XXX_VERBOSE_DEBUGGING&n; *   This option enables a lot of extra printk();s in the code, surrounded&n; *   by if (aic7xxx_verbose ...) statements.  Executing all of those if&n; *   statements and the extra checks can get to where it actually does have&n; *   an impact on CPU usage and such, as well as code size.  Disabling this&n; *   define will keep some of those from becoming part of the code.&n; *&n; *   NOTE:  Currently, this option has no real effect, I will be adding the&n; *   various #ifdef&squot;s in the code later when I&squot;ve decided a section is&n; *   complete and no longer needs debugging.  OK...a lot of things are now&n; *   surrounded by this define, so turning this off does have an impact.&n; */
 multiline_comment|/*&n; * #define AIC7XXX_VERBOSE_DEBUGGING&n; */
-macro_line|#ifdef MODULE
+macro_line|#if defined(MODULE) || defined(PCMCIA)
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#endif
+macro_line|#if defined(PCMCIA)
+DECL|macro|MODULE
+macro_line|#  undef MODULE
 macro_line|#endif
 macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -82,7 +87,7 @@ l_int|NULL
 )brace
 suffix:semicolon
 DECL|macro|AIC7XXX_C_VERSION
-mdefine_line|#define AIC7XXX_C_VERSION  &quot;5.1.3&quot;
+mdefine_line|#define AIC7XXX_C_VERSION  &quot;5.1.4&quot;
 DECL|macro|NUMBER
 mdefine_line|#define NUMBER(arr)     (sizeof(arr) / sizeof(arr[0]))
 DECL|macro|MIN
@@ -422,7 +427,8 @@ DECL|macro|CFWIDEB
 mdefine_line|#define CFWIDEB               0x0020      /* wide bus device (wide card) */
 DECL|macro|CFSYNCHISULTRA
 mdefine_line|#define CFSYNCHISULTRA        0x0040      /* CFSYNC is an ultra offset */
-multiline_comment|/* UNUSED                0x0080 */
+DECL|macro|CFNEWULTRAFORMAT
+mdefine_line|#define CFNEWULTRAFORMAT      0x0080      /* Use the Ultra2 SEEPROM format */
 DECL|macro|CFSTART
 mdefine_line|#define CFSTART               0x0100      /* send start unit SCSI command */
 DECL|macro|CFINCBIOS
@@ -431,7 +437,11 @@ DECL|macro|CFRNFOUND
 mdefine_line|#define CFRNFOUND             0x0400      /* report even if not found */
 DECL|macro|CFMULTILUN
 mdefine_line|#define CFMULTILUN            0x0800      /* probe mult luns in BIOS scan */
-multiline_comment|/* UNUSED                0xF000 */
+DECL|macro|CFWBCACHEYES
+mdefine_line|#define CFWBCACHEYES          0x4000      /* Enable W-Behind Cache on drive */
+DECL|macro|CFWBCACHENC
+mdefine_line|#define CFWBCACHENC           0xc000      /* Don&squot;t change W-Behind Cache */
+multiline_comment|/* UNUSED                0x3000 */
 DECL|member|device_flags
 r_int
 r_int
@@ -2534,7 +2544,6 @@ op_star
 id|p
 )paren
 suffix:semicolon
-macro_line|#ifdef AIC7XXX_VERBOSE_DEBUGGING
 r_static
 r_void
 id|aic7xxx_print_sequencer
@@ -2549,6 +2558,7 @@ r_int
 id|downloaded
 )paren
 suffix:semicolon
+macro_line|#ifdef AIC7XXX_VERBOSE_DEBUGGING
 r_static
 r_void
 id|aic7xxx_check_scbs
@@ -2736,99 +2746,6 @@ comma
 id|p-&gt;base
 op_plus
 id|port
-)paren
-suffix:semicolon
-macro_line|#endif
-)brace
-r_static
-r_void
-DECL|function|aic_outsb
-id|aic_outsb
-c_func
-(paren
-r_struct
-id|aic7xxx_host
-op_star
-id|p
-comma
-r_int
-id|port
-comma
-r_int
-r_char
-op_star
-id|valp
-comma
-r_int
-id|size
-)paren
-(brace
-macro_line|#ifdef MMAPIO
-r_if
-c_cond
-(paren
-id|p-&gt;maddr
-)paren
-(brace
-r_int
-id|i
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|size
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|p-&gt;maddr
-(braket
-id|port
-)braket
-op_assign
-id|valp
-(braket
-id|i
-)braket
-suffix:semicolon
-)brace
-id|mb
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-r_else
-id|outsb
-c_func
-(paren
-id|p-&gt;base
-op_plus
-id|port
-comma
-id|valp
-comma
-id|size
-)paren
-suffix:semicolon
-macro_line|#else
-id|outsb
-c_func
-(paren
-id|p-&gt;base
-op_plus
-id|port
-comma
-id|valp
-comma
-id|size
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -3723,9 +3640,27 @@ c_func
 (paren
 id|p
 comma
+l_int|0
+comma
+id|SEQADDR0
+)paren
+suffix:semicolon
+id|aic_outb
+c_func
+(paren
+id|p
+comma
+l_int|0
+comma
+id|SEQADDR1
+)paren
+suffix:semicolon
+id|aic_outb
+c_func
+(paren
+id|p
+comma
 id|FASTMODE
-op_or
-id|SEQRESET
 comma
 id|SEQCTL
 )paren
@@ -3926,6 +3861,14 @@ id|instrptr
 op_star
 l_int|4
 )braket
+suffix:semicolon
+id|instr.integer
+op_assign
+id|le32_to_cpu
+c_func
+(paren
+id|instr.integer
+)paren
 suffix:semicolon
 id|fmt1_ins
 op_assign
@@ -4271,16 +4214,72 @@ l_int|25
 suffix:semicolon
 )brace
 )brace
-id|aic_outsb
+id|aic_outb
 c_func
 (paren
 id|p
 comma
+(paren
+id|instr.integer
+op_amp
+l_int|0xff
+)paren
+comma
 id|SEQRAM
+)paren
+suffix:semicolon
+id|aic_outb
+c_func
+(paren
+id|p
 comma
-id|instr.bytes
+(paren
+(paren
+id|instr.integer
+op_rshift
+l_int|8
+)paren
+op_amp
+l_int|0xff
+)paren
 comma
-l_int|4
+id|SEQRAM
+)paren
+suffix:semicolon
+id|aic_outb
+c_func
+(paren
+id|p
+comma
+(paren
+(paren
+id|instr.integer
+op_rshift
+l_int|16
+)paren
+op_amp
+l_int|0xff
+)paren
+comma
+id|SEQRAM
+)paren
+suffix:semicolon
+id|aic_outb
+c_func
+(paren
+id|p
+comma
+(paren
+(paren
+id|instr.integer
+op_rshift
+l_int|24
+)paren
+op_amp
+l_int|0xff
+)paren
+comma
+id|SEQRAM
 )paren
 suffix:semicolon
 r_break
@@ -4485,9 +4484,59 @@ c_func
 (paren
 id|p
 comma
+l_int|0
+comma
+id|SEQADDR0
+)paren
+suffix:semicolon
+id|aic_outb
+c_func
+(paren
+id|p
+comma
+l_int|0
+comma
+id|SEQADDR1
+)paren
+suffix:semicolon
+id|aic_outb
+c_func
+(paren
+id|p
+comma
 id|FASTMODE
 op_or
-id|SEQRESET
+id|FAILDIS
+comma
+id|SEQCTL
+)paren
+suffix:semicolon
+id|unpause_sequencer
+c_func
+(paren
+id|p
+comma
+id|TRUE
+)paren
+suffix:semicolon
+id|mdelay
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
+id|pause_sequencer
+c_func
+(paren
+id|p
+)paren
+suffix:semicolon
+id|aic_outb
+c_func
+(paren
+id|p
+comma
+id|FASTMODE
 comma
 id|SEQCTL
 )paren
@@ -4509,7 +4558,6 @@ id|downloaded
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef AIC7XXX_VERBOSE_DEBUGGING
 r_if
 c_cond
 (paren
@@ -4523,9 +4571,7 @@ comma
 id|downloaded
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
-macro_line|#ifdef AIC7XXX_VERBOSE_DEBUGGING
 multiline_comment|/*+F*************************************************************************&n; * Function:&n; *   aic7xxx_print_sequencer&n; *&n; * Description:&n; *   Print the contents of the sequencer memory to the screen.&n; *-F*************************************************************************/
 r_static
 r_void
@@ -4712,9 +4758,59 @@ c_func
 (paren
 id|p
 comma
+l_int|0
+comma
+id|SEQADDR0
+)paren
+suffix:semicolon
+id|aic_outb
+c_func
+(paren
+id|p
+comma
+l_int|0
+comma
+id|SEQADDR1
+)paren
+suffix:semicolon
+id|aic_outb
+c_func
+(paren
+id|p
+comma
 id|FASTMODE
 op_or
-id|SEQRESET
+id|FAILDIS
+comma
+id|SEQCTL
+)paren
+suffix:semicolon
+id|unpause_sequencer
+c_func
+(paren
+id|p
+comma
+id|TRUE
+)paren
+suffix:semicolon
+id|mdelay
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
+id|pause_sequencer
+c_func
+(paren
+id|p
+)paren
+suffix:semicolon
+id|aic_outb
+c_func
+(paren
+id|p
+comma
+id|FASTMODE
 comma
 id|SEQCTL
 )paren
@@ -4726,7 +4822,6 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 multiline_comment|/*+F*************************************************************************&n; * Function:&n; *   aic7xxx_delay&n; *&n; * Description:&n; *   Delay for specified amount of time.  We use mdelay because the timer&n; *   interrupt is not guaranteed to be enabled.  This will cause an&n; *   infinite loop since jiffies (clock ticks) is not updated.&n; *-F*************************************************************************/
 r_static
 r_void
@@ -13231,6 +13326,30 @@ op_increment
 r_if
 c_cond
 (paren
+id|timer_pending
+c_func
+(paren
+op_amp
+id|p-&gt;dev_timer
+(braket
+id|i
+)braket
+)paren
+op_logical_and
+id|time_before_eq
+c_func
+(paren
+id|p-&gt;dev_timer
+(braket
+id|i
+)braket
+dot
+id|expires
+comma
+id|jiffies
+)paren
+)paren
+(brace
 id|del_timer
 c_func
 (paren
@@ -13240,8 +13359,7 @@ id|p-&gt;dev_timer
 id|i
 )braket
 )paren
-)paren
-(brace
+suffix:semicolon
 id|p-&gt;dev_temp_queue_depth
 (braket
 id|i
@@ -18678,6 +18796,8 @@ id|phasemis
 suffix:semicolon
 r_int
 id|done
+op_assign
+id|FALSE
 suffix:semicolon
 r_switch
 c_cond
@@ -26777,6 +26897,7 @@ id|p-&gt;maddr
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_PCI
 multiline_comment|/*&n;   * Now that we know our instance number, we can set the flags we need to&n;   * force termination if need be.&n;   */
 r_if
 c_cond
@@ -26914,6 +27035,7 @@ suffix:semicolon
 macro_line|#endif
 )brace
 )brace
+macro_line|#endif
 multiline_comment|/*&n;   * That took care of devconfig and stpwlev, now for the actual termination&n;   * settings.&n;   */
 r_if
 c_cond
@@ -27089,56 +27211,6 @@ id|p
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;   * Load the sequencer program, then re-enable the board -&n;   * resetting the AIC-7770 disables it, leaving the lights&n;   * on with nobody home.&n;   */
-id|aic7xxx_loadseq
-c_func
-(paren
-id|p
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|p-&gt;chip
-op_amp
-id|AHC_CHIPID_MASK
-)paren
-op_eq
-id|AHC_AIC7770
-)paren
-(brace
-id|aic_outb
-c_func
-(paren
-id|p
-comma
-id|ENABLE
-comma
-id|BCTL
-)paren
-suffix:semicolon
-multiline_comment|/* Enable the boards BUS drivers. */
-)brace
-id|aic_outb
-c_func
-(paren
-id|p
-comma
-id|aic_inb
-c_func
-(paren
-id|p
-comma
-id|SBLKCTL
-)paren
-op_amp
-op_complement
-id|AUTOFLUSHDIS
-comma
-id|SBLKCTL
-)paren
-suffix:semicolon
 multiline_comment|/*&n;   * Clear out any possible pending interrupts.&n;   */
 id|aic7xxx_clear_intstat
 c_func
@@ -28050,6 +28122,37 @@ c_func
 id|p
 )paren
 suffix:semicolon
+multiline_comment|/*&n;   * Load the sequencer program, then re-enable the board -&n;   * resetting the AIC-7770 disables it, leaving the lights&n;   * on with nobody home.&n;   */
+id|aic7xxx_loadseq
+c_func
+(paren
+id|p
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|p-&gt;chip
+op_amp
+id|AHC_CHIPID_MASK
+)paren
+op_eq
+id|AHC_AIC7770
+)paren
+(brace
+id|aic_outb
+c_func
+(paren
+id|p
+comma
+id|ENABLE
+comma
+id|BCTL
+)paren
+suffix:semicolon
+multiline_comment|/* Enable the boards BUS drivers. */
+)brace
 r_if
 c_cond
 (paren
@@ -29523,6 +29626,7 @@ r_if
 c_cond
 (paren
 (paren
+(paren
 id|p-&gt;features
 op_amp
 id|AHC_ULTRA
@@ -29542,6 +29646,16 @@ id|i
 )braket
 op_amp
 id|CFSYNCHISULTRA
+)paren
+)paren
+op_logical_or
+(paren
+id|sc-&gt;device_flags
+(braket
+id|i
+)braket
+op_amp
+id|CFNEWULTRAFORMAT
 )paren
 )paren
 (brace
@@ -29952,6 +30066,58 @@ id|p-&gt;ultraenb
 op_or_assign
 id|mask
 suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|sc-&gt;device_flags
+(braket
+id|i
+)braket
+op_amp
+id|CFNEWULTRAFORMAT
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|sc-&gt;device_flags
+(braket
+id|i
+)braket
+op_amp
+(paren
+id|CFSYNCHISULTRA
+op_or
+id|CFXFER
+)paren
+)paren
+op_eq
+l_int|0x03
+)paren
+(brace
+id|sc-&gt;device_flags
+(braket
+id|i
+)braket
+op_and_assign
+op_complement
+id|CFXFER
+suffix:semicolon
+id|sc-&gt;device_flags
+(braket
+id|i
+)braket
+op_or_assign
+id|CFSYNCHISULTRA
+suffix:semicolon
+id|p-&gt;ultraenb
+op_or_assign
+id|mask
+suffix:semicolon
+)brace
 )brace
 )brace
 r_else
@@ -30614,6 +30780,7 @@ id|found
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#if defined(__i386__) || defined(__alpha__)
 id|ahc_flag_type
 id|flags
 op_assign
@@ -30622,6 +30789,7 @@ suffix:semicolon
 r_int
 id|type
 suffix:semicolon
+macro_line|#endif
 r_int
 r_char
 id|sxfrctl1

@@ -2061,7 +2061,7 @@ id|i
 op_increment
 )braket
 op_assign
-id|simple_strtoul
+id|simple_strtol
 c_func
 (paren
 id|cur

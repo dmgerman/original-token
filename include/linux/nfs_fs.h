@@ -864,10 +864,6 @@ r_struct
 id|page
 op_star
 comma
-r_const
-r_char
-op_star
-comma
 r_int
 r_int
 comma

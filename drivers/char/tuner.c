@@ -367,6 +367,34 @@ comma
 l_int|623
 )brace
 comma
+(brace
+l_string|&quot;Temic 4036 FY5 NTSC&quot;
+comma
+id|TEMIC
+comma
+id|NTSC
+comma
+l_int|16
+op_star
+l_float|157.25
+comma
+l_int|16
+op_star
+l_float|463.25
+comma
+l_int|0xa0
+comma
+l_int|0x90
+comma
+l_int|0x30
+comma
+l_int|0x8e
+comma
+l_int|0xc2
+comma
+l_int|732
+)brace
+comma
 )brace
 suffix:semicolon
 multiline_comment|/* ---------------------------------------------------------------------- */

@@ -45,11 +45,6 @@ op_plus
 l_int|1
 )braket
 suffix:semicolon
-macro_line|#if OLD_NCURSES
-r_int
-id|i
-suffix:semicolon
-macro_line|#endif
 id|strncpy
 c_func
 (paren
@@ -95,6 +90,10 @@ l_int|0
 )paren
 suffix:semicolon
 macro_line|#if OLD_NCURSES
+(brace
+r_int
+id|i
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -116,6 +115,7 @@ comma
 l_char|&squot; &squot;
 )paren
 suffix:semicolon
+)brace
 macro_line|#else
 id|wclrtoeol
 c_func

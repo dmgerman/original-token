@@ -97,8 +97,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-DECL|macro|RUNTIME_DMA_ALLOC
-mdefine_line|#define RUNTIME_DMA_ALLOC
 DECL|macro|USE_AUTOINIT_DMA
 mdefine_line|#define USE_AUTOINIT_DMA
 r_extern

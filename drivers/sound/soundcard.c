@@ -1,6 +1,6 @@
 multiline_comment|/*&n; * linux/drivers/sound/soundcard.c&n; *&n; * Sound card driver for Linux&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
-multiline_comment|/*&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; *                   integrated sound_switch.c&n; * Stefan Reinauer : integrated /proc/sound (equals to /dev/sndstat,&n; *                   which should disappear in the near future)&n; */
+multiline_comment|/*&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; *                   integrated sound_switch.c&n; * Stefan Reinauer : integrated /proc/sound (equals to /dev/sndstat,&n; *                   which should disappear in the near future)&n; *&n; * Rob Riggs&t;&t;Added persistent DMA buffers support (1998/10/17)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &lt;linux/types.h&gt;
@@ -81,6 +81,14 @@ id|sound_nblocks
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* Persistent DMA buffers */
+DECL|variable|sound_dmap_flag
+r_int
+id|sound_dmap_flag
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Off by default */
 DECL|variable|soundcard_configured
 r_static
 r_int
@@ -4025,10 +4033,25 @@ id|traceinit
 op_assign
 l_int|0
 suffix:semicolon
+DECL|variable|dmabuf
+r_static
+r_int
+id|dmabuf
+op_assign
+l_int|0
+suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
 id|traceinit
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|dmabuf
 comma
 l_string|&quot;i&quot;
 )paren
@@ -4131,6 +4154,20 @@ r_return
 id|err
 suffix:semicolon
 )brace
+multiline_comment|/* Protecting the innocent */
+id|sound_dmap_flag
+op_assign
+(paren
+id|dmabuf
+OG
+l_int|0
+ques
+c_cond
+l_int|1
+suffix:colon
+l_int|0
+)paren
+suffix:semicolon
 id|chrdev_registered
 op_assign
 l_int|1

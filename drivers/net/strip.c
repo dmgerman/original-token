@@ -4280,6 +4280,7 @@ id|proc_strip_status_name
 op_assign
 l_string|&quot;strip&quot;
 suffix:semicolon
+macro_line|#ifdef CONFIG_PROC_FS
 DECL|variable|proc_strip_get_status_info
 r_static
 r_struct
@@ -4338,6 +4339,7 @@ l_int|NULL
 multiline_comment|/* void *data; */
 )brace
 suffix:semicolon
+macro_line|#endif /* CONFIG_PROC_FS */
 multiline_comment|/************************************************************************/
 multiline_comment|/* Sending routines&t;&t;&t;&t;&t;&t;&t;*/
 DECL|function|ResetRadio
@@ -10887,6 +10889,7 @@ id|status
 suffix:semicolon
 )brace
 multiline_comment|/*&n;     * Register the status file with /proc&n;     */
+macro_line|#ifdef CONFIG_PROC_FS 
 r_if
 c_cond
 (paren
@@ -10908,6 +10911,7 @@ l_string|&quot;strip: status proc_net_register() failed.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 macro_line|#ifdef MODULE
 r_return
 id|status
@@ -10961,12 +10965,14 @@ id|struct_strip_list
 )paren
 suffix:semicolon
 multiline_comment|/* Unregister with the /proc/net file here. */
+macro_line|#ifdef CONFIG_PROC_FS
 id|proc_net_unregister
 c_func
 (paren
 id|PROC_NET_STRIP_STATUS
 )paren
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren

@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * sound/dmabuf.c&n; *&n; * The DMA buffer manager for digitized voice applications&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; * Thomas Sailer   : moved several static variables into struct audio_operations&n; *                   (which is grossly misnamed btw.) because they have the same&n; *                   lifetime as the rest in there and dynamic allocation saves&n; *                   12k or so&n; * Thomas Sailer   : remove {in,out}_sleep_flag. It was used for the sleeper to&n; *                   determine if it was woken up by the expiring timeout or by&n; *                   an explicit wake_up. The return value from schedule_timeout&n; *&t;&t;     can be used instead; if 0, the wakeup was due to the timeout.&n; */
+multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; * Thomas Sailer   : moved several static variables into struct audio_operations&n; *                   (which is grossly misnamed btw.) because they have the same&n; *                   lifetime as the rest in there and dynamic allocation saves&n; *                   12k or so&n; * Thomas Sailer   : remove {in,out}_sleep_flag. It was used for the sleeper to&n; *                   determine if it was woken up by the expiring timeout or by&n; *                   an explicit wake_up. The return value from schedule_timeout&n; *&t;&t;     can be used instead; if 0, the wakeup was due to the timeout.&n; *&n; * Rob Riggs&t;&t;Added persistent DMA buffers (1998/10/17)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|BE_CONSERVATIVE
 mdefine_line|#define BE_CONSERVATIVE
@@ -7,6 +7,14 @@ DECL|macro|SAMPLE_ROUNDUP
 mdefine_line|#define SAMPLE_ROUNDUP 0
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#if defined(CONFIG_AUDIO) || defined(CONFIG_GUS)
+DECL|macro|DMAP_FREE_ON_CLOSE
+mdefine_line|#define DMAP_FREE_ON_CLOSE      0
+DECL|macro|DMAP_KEEP_ON_CLOSE
+mdefine_line|#define DMAP_KEEP_ON_CLOSE      1
+r_extern
+r_int
+id|sound_dmap_flag
+suffix:semicolon
 r_static
 r_void
 id|dma_reset_output
@@ -990,6 +998,13 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|sound_dmap_flag
+op_eq
+id|DMAP_FREE_ON_CLOSE
+)paren
 id|sound_free_dmap
 c_func
 (paren
@@ -3657,7 +3672,7 @@ id|current
 )paren
 r_return
 op_minus
-id|EIO
+id|EINTR
 suffix:semicolon
 id|timeout
 op_assign
@@ -5138,16 +5153,16 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|clear_dma_ff
-c_func
-(paren
-id|chan
-)paren
-suffix:semicolon
 id|disable_dma
 c_func
 (paren
 id|dmap-&gt;dma
+)paren
+suffix:semicolon
+id|clear_dma_ff
+c_func
+(paren
+id|chan
 )paren
 suffix:semicolon
 id|pos
@@ -5702,16 +5717,16 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|clear_dma_ff
-c_func
-(paren
-id|chan
-)paren
-suffix:semicolon
 id|disable_dma
 c_func
 (paren
 id|dmap-&gt;dma
+)paren
+suffix:semicolon
+id|clear_dma_ff
+c_func
+(paren
+id|chan
 )paren
 suffix:semicolon
 id|pos
@@ -6055,6 +6070,42 @@ op_assign
 id|dma2
 suffix:semicolon
 )brace
+)brace
+multiline_comment|/* Persistent DMA buffers allocated here */
+r_if
+c_cond
+(paren
+id|sound_dmap_flag
+op_eq
+id|DMAP_KEEP_ON_CLOSE
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|adev-&gt;dmap_in-&gt;raw_buf
+op_eq
+l_int|NULL
+)paren
+id|sound_alloc_dmap
+c_func
+(paren
+id|adev-&gt;dmap_in
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|adev-&gt;dmap_out-&gt;raw_buf
+op_eq
+l_int|NULL
+)paren
+id|sound_alloc_dmap
+c_func
+(paren
+id|adev-&gt;dmap_out
+)paren
+suffix:semicolon
 )brace
 )brace
 )brace
@@ -6441,7 +6492,15 @@ id|adev
 )paren
 r_return
 suffix:semicolon
-macro_line|#ifdef RUNTIME_DMA_ALLOC
+multiline_comment|/* Persistent DMA buffers deallocated here */
+r_if
+c_cond
+(paren
+id|sound_dmap_flag
+op_eq
+id|DMAP_KEEP_ON_CLOSE
+)paren
+(brace
 id|sound_free_dmap
 c_func
 (paren
@@ -6461,7 +6520,7 @@ c_func
 id|adev-&gt;dmap_in
 )paren
 suffix:semicolon
-macro_line|#endif
+)brace
 )brace
 macro_line|#endif
 eof

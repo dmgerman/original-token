@@ -1757,12 +1757,14 @@ op_star
 id|t
 )paren
 (brace
+macro_line|#if 0
 id|flush_signals
 c_func
 (paren
 id|t
 )paren
 suffix:semicolon
+macro_line|#endif
 id|flush_signal_handlers
 c_func
 (paren

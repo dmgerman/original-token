@@ -114,6 +114,7 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
+macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;&t;&t;&t;/* For NR_IRQS only. */
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -905,6 +906,7 @@ DECL|struct|w3_config_fields
 r_struct
 id|w3_config_fields
 (brace
+macro_line|#if defined(__LITTLE_ENDIAN_BITFIELD)
 DECL|member|ram_size
 DECL|member|ram_width
 DECL|member|ram_speed
@@ -961,6 +963,58 @@ id|pad24
 suffix:colon
 l_int|7
 suffix:semicolon
+macro_line|#elif defined(__BIG_ENDIAN_BITFIELD)
+r_int
+r_int
+id|rom_size
+suffix:colon
+l_int|2
+comma
+id|ram_speed
+suffix:colon
+l_int|2
+comma
+id|ram_width
+suffix:colon
+l_int|1
+comma
+id|ram_size
+suffix:colon
+l_int|3
+suffix:semicolon
+r_int
+id|pad8
+suffix:colon
+l_int|8
+suffix:semicolon
+r_int
+r_int
+id|xcvr
+suffix:colon
+l_int|4
+comma
+id|pad18
+suffix:colon
+l_int|2
+comma
+id|ram_split
+suffix:colon
+l_int|2
+suffix:semicolon
+r_int
+id|pad24
+suffix:colon
+l_int|7
+suffix:semicolon
+r_int
+r_int
+id|autoselect
+suffix:colon
+l_int|1
+suffix:semicolon
+macro_line|#else
+macro_line|#error &quot;Bitfield endianness not defined! Check your byteorder.h&quot;
+macro_line|#endif
 DECL|member|u
 )brace
 id|u

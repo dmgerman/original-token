@@ -150,7 +150,7 @@ multiline_comment|/* writepage */
 l_int|NULL
 comma
 multiline_comment|/* bmap */
-id|ext2_truncate
+l_int|NULL
 comma
 multiline_comment|/* truncate */
 id|ext2_permission

@@ -883,7 +883,7 @@ multiline_comment|/* writepage */
 id|ufs_bmap
 comma
 multiline_comment|/* bmap */
-id|ufs_truncate
+l_int|NULL
 comma
 multiline_comment|/* truncate */
 id|ufs_permission

@@ -117,6 +117,14 @@ id|lenp
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_BSD_PROCESS_ACCT
+r_extern
+r_int
+id|acct_parm
+(braket
+)braket
+suffix:semicolon
+macro_line|#endif
 r_extern
 r_int
 id|pgt_cache_water
@@ -934,6 +942,31 @@ r_int
 )paren
 comma
 l_int|0444
+comma
+l_int|NULL
+comma
+op_amp
+id|proc_dointvec
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_BSD_PROCESS_ACCT
+(brace
+id|KERN_ACCT
+comma
+l_string|&quot;acct&quot;
+comma
+op_amp
+id|acct_parm
+comma
+l_int|3
+op_star
+r_sizeof
+(paren
+r_int
+)paren
+comma
+l_int|0644
 comma
 l_int|NULL
 comma

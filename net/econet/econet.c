@@ -987,11 +987,6 @@ id|ARPHRD_ECONET
 (brace
 multiline_comment|/* Real hardware Econet.  We&squot;re not worthy etc. */
 macro_line|#ifdef CONFIG_ECONET_NATIVE
-r_int
-r_char
-op_star
-id|p
-suffix:semicolon
 id|dev_lock_list
 c_func
 (paren

@@ -1357,14 +1357,14 @@ id|resetting
 op_assign
 l_int|0
 suffix:semicolon
+r_int
+id|timeout
+suffix:semicolon
 id|TRACE_FUN
 c_func
 (paren
 id|ft_t_fdc_dma
 )paren
-suffix:semicolon
-r_int
-id|timeout
 suffix:semicolon
 macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VER(2,0,16)
 r_if

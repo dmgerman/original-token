@@ -2163,10 +2163,14 @@ op_ne
 id|NLM_NEVER
 )paren
 r_return
+(paren
 id|block-&gt;b_when
+op_minus
+id|jiffies
+)paren
 suffix:semicolon
 r_return
-l_int|0
+id|MAX_SCHEDULE_TIMEOUT
 suffix:semicolon
 )brace
 eof

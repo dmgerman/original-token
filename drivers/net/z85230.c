@@ -1253,8 +1253,8 @@ id|chan-&gt;rxdma_on
 (brace
 multiline_comment|/* Special condition check only */
 id|u8
-id|r7
-op_assign
+id|status
+suffix:semicolon
 id|read_zsreg
 c_func
 (paren
@@ -1263,9 +1263,6 @@ comma
 id|R7
 )paren
 suffix:semicolon
-id|u8
-id|r6
-op_assign
 id|read_zsreg
 c_func
 (paren
@@ -1274,7 +1271,6 @@ comma
 id|R6
 )paren
 suffix:semicolon
-id|u8
 id|status
 op_assign
 id|read_zsreg

@@ -3299,14 +3299,6 @@ id|jifs
 )paren
 multiline_comment|/* This routine is used for sleeping.&n; * A jifs value &lt;0 means NO sleeping,&n; *              =0 means minimal sleeping (let the kernel&n; *                 run for other processes)&n; *              &gt;0 means at least sleep for that amount.&n; *&t;May be we could use a simple count loop w/ jumps to itself, but&n; *&t;I wanna make this independent of cpu speed. [1 jiffy is 1/HZ] sec */
 (brace
-r_int
-r_int
-id|tout
-op_assign
-id|jiffies
-op_plus
-id|jifs
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3316,37 +3308,6 @@ l_int|0
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/* If loaded during kernel boot no *_sleep_on is&n;&t; * allowed! */
-r_if
-c_cond
-(paren
-id|current-&gt;pid
-op_eq
-l_int|0
-)paren
-(brace
-r_while
-c_loop
-(paren
-id|jiffies
-OL
-id|tout
-)paren
-(brace
-id|schedule_timeout
-c_func
-(paren
-l_int|0
-)paren
-suffix:semicolon
-)brace
-)brace
-r_else
-(brace
-id|current-&gt;timeout
-op_assign
-id|tout
-suffix:semicolon
 id|xtrace
 c_func
 (paren
@@ -3355,11 +3316,13 @@ comma
 l_string|&quot;*** delay: sleepq&bslash;n&quot;
 )paren
 suffix:semicolon
-id|interruptible_sleep_on
+id|interruptible_sleep_on_timeout
 c_func
 (paren
 op_amp
 id|stuff-&gt;sleepq
+comma
+id|jifs
 )paren
 suffix:semicolon
 id|xtrace
@@ -3388,7 +3351,6 @@ comma
 l_string|&quot;got signal&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
 )brace
 )brace
 r_static

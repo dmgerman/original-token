@@ -736,6 +736,17 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|tc515_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
 multiline_comment|/* Gigabit Ethernet adapters */
 r_extern
 r_int
@@ -1238,6 +1249,14 @@ l_int|0
 )brace
 comma
 macro_line|#endif&t;
+macro_line|#ifdef CONFIG_3C515
+(brace
+id|tc515_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_ULTRA 
 (brace
 id|ultra_probe

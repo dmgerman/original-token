@@ -1445,9 +1445,13 @@ DECL|struct|tvcard
 r_struct
 id|tvcard
 (brace
-DECL|member|inputs
+DECL|member|video_inputs
 r_int
-id|inputs
+id|video_inputs
+suffix:semicolon
+DECL|member|audio_inputs
+r_int
+id|audio_inputs
 suffix:semicolon
 DECL|member|tuner
 r_int
@@ -1496,6 +1500,8 @@ multiline_comment|/* default */
 (brace
 l_int|3
 comma
+l_int|1
+comma
 l_int|0
 comma
 l_int|2
@@ -1528,6 +1534,8 @@ comma
 multiline_comment|/* MIRO */
 (brace
 l_int|4
+comma
+l_int|1
 comma
 l_int|0
 comma
@@ -1562,6 +1570,8 @@ multiline_comment|/* Hauppauge */
 (brace
 l_int|3
 comma
+l_int|1
+comma
 l_int|0
 comma
 l_int|2
@@ -1594,6 +1604,8 @@ comma
 multiline_comment|/* STB */
 (brace
 l_int|3
+comma
+l_int|1
 comma
 l_int|0
 comma
@@ -1628,6 +1640,8 @@ multiline_comment|/* Intel??? */
 (brace
 l_int|3
 comma
+l_int|1
+comma
 l_int|0
 comma
 l_int|2
@@ -1660,6 +1674,8 @@ comma
 multiline_comment|/* Diamond DTV2000 */
 (brace
 l_int|3
+comma
+l_int|1
 comma
 l_int|0
 comma
@@ -1694,6 +1710,8 @@ multiline_comment|/* AVerMedia TVPhone */
 (brace
 l_int|3
 comma
+l_int|1
+comma
 l_int|0
 comma
 l_int|3
@@ -1727,6 +1745,8 @@ multiline_comment|/* Matrix Vision MV-Delta */
 (brace
 l_int|5
 comma
+l_int|1
+comma
 op_minus
 l_int|1
 comma
@@ -1750,6 +1770,8 @@ comma
 multiline_comment|/* Fly Video II */
 (brace
 l_int|3
+comma
+l_int|1
 comma
 l_int|0
 comma
@@ -1786,6 +1808,8 @@ multiline_comment|/* TurboTV */
 (brace
 l_int|3
 comma
+l_int|1
+comma
 l_int|0
 comma
 l_int|2
@@ -1818,6 +1842,8 @@ comma
 multiline_comment|/* Newer Hauppauge (bt878) */
 (brace
 l_int|3
+comma
+l_int|1
 comma
 l_int|0
 comma
@@ -1852,6 +1878,8 @@ multiline_comment|/* MIRO PCTV pro */
 (brace
 l_int|3
 comma
+l_int|1
+comma
 l_int|0
 comma
 l_int|2
@@ -1879,6 +1907,45 @@ l_int|0
 comma
 l_int|10
 )brace
+)brace
+comma
+multiline_comment|/* ADS Technologies Channel Surfer TV (and maybe TV+FM) */
+(brace
+l_int|3
+comma
+l_int|4
+comma
+l_int|0
+comma
+l_int|2
+comma
+l_int|0x0F
+comma
+(brace
+l_int|0x02
+comma
+l_int|0x03
+comma
+l_int|0x01
+comma
+l_int|0x01
+)brace
+comma
+(brace
+l_int|0x0D
+comma
+l_int|0x0E
+comma
+l_int|0x0B
+comma
+l_int|0x07
+comma
+l_int|0x00
+comma
+l_int|0x00
+)brace
+comma
+l_int|0x00
 )brace
 comma
 )brace
@@ -2550,7 +2617,7 @@ id|tvcards
 id|btv-&gt;type
 )braket
 dot
-id|inputs
+id|video_inputs
 suffix:semicolon
 r_if
 c_cond
@@ -6537,7 +6604,7 @@ c_func
 (paren
 id|btv
 comma
-id|AUDIO_MUTE
+id|AUDIO_INTERN
 )paren
 suffix:semicolon
 id|btv-&gt;cap
@@ -6913,7 +6980,7 @@ id|tvcards
 id|btv-&gt;type
 )braket
 dot
-id|inputs
+id|video_inputs
 suffix:semicolon
 id|b.audios
 op_assign
@@ -6922,7 +6989,7 @@ id|tvcards
 id|btv-&gt;type
 )braket
 dot
-id|inputs
+id|audio_inputs
 suffix:semicolon
 id|b.maxwidth
 op_assign
@@ -7024,7 +7091,7 @@ id|tvcards
 id|btv-&gt;type
 )braket
 dot
-id|inputs
+id|video_inputs
 )paren
 r_return
 op_minus
@@ -7161,13 +7228,13 @@ r_if
 c_cond
 (paren
 id|v.channel
-OG
+op_ge
 id|tvcards
 (braket
 id|btv-&gt;type
 )braket
 dot
-id|inputs
+id|video_inputs
 )paren
 r_return
 op_minus
@@ -8679,12 +8746,24 @@ id|AUDIO_MUTE
 suffix:semicolon
 )brace
 multiline_comment|/* One audio source per tuner */
+multiline_comment|/* if(v.audio!=0) */
+multiline_comment|/* Nope... I have three on my ADSTech TV card. The*/
+multiline_comment|/* ADSTech TV+FM prolly has 4 &lt;rriggs@tesser.com&gt; */
 r_if
 c_cond
 (paren
 id|v.audio
-op_ne
+OL
 l_int|0
+op_logical_or
+id|v.audio
+op_ge
+id|tvcards
+(braket
+id|btv-&gt;type
+)braket
+dot
+id|audio_inputs
 )paren
 (brace
 r_return
@@ -12187,13 +12266,36 @@ l_string|&quot;(MATRIX-Vision)&quot;
 suffix:semicolon
 r_break
 suffix:semicolon
+r_case
+id|BTTV_ADSTECH_TV
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;ADSTech Channel Surfer TV&bslash;n&quot;
+)paren
+suffix:semicolon
+id|strcat
+c_func
+(paren
+id|btv-&gt;video_dev.name
+comma
+l_string|&quot;(ADSTech Channel Surfer TV)&quot;
+)paren
+suffix:semicolon
+id|btv-&gt;tuner_type
+op_assign
+l_int|8
+suffix:semicolon
+r_break
+suffix:semicolon
 )brace
 id|audio
 c_func
 (paren
 id|btv
 comma
-id|AUDIO_MUTE
+id|AUDIO_INTERN
 )paren
 suffix:semicolon
 )brace

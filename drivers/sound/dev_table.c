@@ -2559,6 +2559,12 @@ op_minus
 l_int|1
 )paren
 (brace
+id|DMAbuf_deinit
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 id|audio_devs
 (braket
 id|dev

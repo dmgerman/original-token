@@ -56,6 +56,7 @@ DECL|typedef|wan_stat_entry_t
 id|wan_stat_entry_t
 suffix:semicolon
 multiline_comment|/****** Function Prototypes *************************************************/
+macro_line|#ifdef CONFIG_PROC_FS
 multiline_comment|/* Proc filesystem interface */
 r_static
 r_int
@@ -1724,4 +1725,62 @@ id|cnt
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;End&n; */
+macro_line|#else
+multiline_comment|/*&n; *&t;No /proc - output stubs&n; */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_int
+id|wanrouter_proc_init
+c_func
+(paren
+r_void
+)paren
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|wanrouter_proc_cleanup
+r_void
+id|wanrouter_proc_cleanup
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+suffix:semicolon
+)brace
+DECL|function|wanrouter_proc_add
+r_int
+id|wanrouter_proc_add
+c_func
+(paren
+id|wan_device_t
+op_star
+id|wandev
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|wanrouter_proc_delete
+r_int
+id|wanrouter_proc_delete
+c_func
+(paren
+id|wan_device_t
+op_star
+id|wandev
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif
 eof

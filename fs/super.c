@@ -15,6 +15,7 @@ macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/fd.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/quotaops.h&gt;
+macro_line|#include &lt;linux/acct.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -2996,17 +2997,12 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_BSD_PROCESS_ACCT
-(paren
-r_void
-)paren
 id|acct_auto_close
 c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n;&t; * If we may have to abort operations to get out of this&n;&t; * mount, and they will themselves hold resources we must&n;&t; * allow the fs to do things. In the Unix tradition of&n;&t; * &squot;Gee thats tricky lets do it in userspace&squot; the umount_begin&n;&t; * might fail to complete on the first run through as other tasks&n;&t; * must return, and the like. Thats for the mount program to worry&n;&t; * about for the moment.&n;&t; */
 r_if
 c_cond
@@ -4072,6 +4068,19 @@ id|sb
 )paren
 suffix:semicolon
 id|fsync_dev
+c_func
+(paren
+id|sb-&gt;s_dev
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|flags
+op_amp
+id|MS_RDONLY
+)paren
+id|acct_auto_close
 c_func
 (paren
 id|sb-&gt;s_dev

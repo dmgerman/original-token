@@ -36,6 +36,22 @@ macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/scm.h&gt;
 r_static
 r_int
+id|sock_no_open
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|irrelevant
+comma
+r_struct
+id|file
+op_star
+id|dontcare
+)paren
+suffix:semicolon
+r_static
+r_int
 r_int
 id|sock_lseek
 c_func
@@ -196,9 +212,9 @@ comma
 l_int|NULL
 comma
 multiline_comment|/* mmap */
-l_int|NULL
+id|sock_no_open
 comma
-multiline_comment|/* no special open code... */
+multiline_comment|/* special open code to disallow open via /proc */
 l_int|NULL
 comma
 multiline_comment|/* flush */
@@ -795,6 +811,29 @@ op_increment
 suffix:semicolon
 r_return
 id|sock
+suffix:semicolon
+)brace
+multiline_comment|/*&n; *&t;In theory you can&squot;t get an open on this inode, but /proc provides&n; *&t;a back door. Remember to keep it shut otherwise you&squot;ll let the&n; *&t;creepy crawlies in.&n; */
+DECL|function|sock_no_open
+r_static
+r_int
+id|sock_no_open
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|irrelevant
+comma
+r_struct
+id|file
+op_star
+id|dontcare
+)paren
+(brace
+r_return
+op_minus
+id|ENXIO
 suffix:semicolon
 )brace
 DECL|function|sock_release

@@ -230,17 +230,30 @@ op_star
 )paren
 id|skb-&gt;data
 suffix:semicolon
+macro_line|#ifdef CONFIG_INET
 r_if
 c_cond
 (paren
 id|fddi-&gt;hdr.llc_snap.ethertype
-op_ne
+op_eq
 id|__constant_htons
 c_func
 (paren
 id|ETH_P_IP
 )paren
 )paren
+multiline_comment|/* Try to get ARP to resolve the header and fill destination address */
+r_return
+id|arp_find
+c_func
+(paren
+id|fddi-&gt;daddr
+comma
+id|skb
+)paren
+suffix:semicolon
+r_else
+macro_line|#endif&t;
 (brace
 id|printk
 c_func
@@ -260,16 +273,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Try to get ARP to resolve the header and fill destination address */
-r_return
-id|arp_find
-c_func
-(paren
-id|fddi-&gt;daddr
-comma
-id|skb
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/*&n; * Determine the packet&squot;s protocol ID and fill in skb fields.&n; * This routine is called before an incoming packet is passed&n; * up.  It&squot;s used to fill in specific skb fields and to set&n; * the proper pointer to the start of packet data (skb-&gt;data).&n; */
 DECL|function|fddi_type_trans

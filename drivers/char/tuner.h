@@ -18,6 +18,8 @@ DECL|macro|TUNER_TEMIC_NTSC
 mdefine_line|#define TUNER_TEMIC_NTSC    6
 DECL|macro|TUNER_TEMIC_PAL_I
 mdefine_line|#define TUNER_TEMIC_PAL_I   7
+DECL|macro|TUNER_TEMIC_4036FY5_NTSC
+mdefine_line|#define TUNER_TEMIC_4036FY5_NTSC&t;8
 DECL|macro|NOTUNER
 mdefine_line|#define NOTUNER 0
 DECL|macro|PAL

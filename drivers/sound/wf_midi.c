@@ -981,8 +981,8 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-r_void
 DECL|function|wf_mpuintr
+r_void
 id|wf_mpuintr
 (paren
 r_int
@@ -1021,12 +1021,6 @@ r_struct
 id|midi_input_info
 op_star
 id|mi
-suffix:semicolon
-r_static
-r_int
-id|cnt
-op_assign
-l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -1245,9 +1239,9 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|wf_mpu_open
 r_static
 r_int
-DECL|function|wf_mpu_open
 id|wf_mpu_open
 (paren
 r_int

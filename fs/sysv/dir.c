@@ -142,7 +142,7 @@ multiline_comment|/* writepage */
 l_int|NULL
 comma
 multiline_comment|/* bmap */
-id|sysv_truncate
+l_int|NULL
 comma
 multiline_comment|/* truncate */
 l_int|NULL

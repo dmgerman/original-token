@@ -229,13 +229,13 @@ comma
 id|irq_mode
 suffix:semicolon
 multiline_comment|/* duplicate audio fields for full duplex support */
-DECL|member|intr_active_2
-DECL|member|irq_mode_2
+DECL|member|intr_active_16
+DECL|member|irq_mode_16
 r_volatile
 r_int
-id|intr_active_2
+id|intr_active_16
 comma
-id|irq_mode_2
+id|irq_mode_16
 suffix:semicolon
 multiline_comment|/* Mixer fields */
 DECL|member|levels
@@ -299,26 +299,26 @@ r_int
 id|trg_restart
 suffix:semicolon
 multiline_comment|/* duplicate audio fields for full duplex support */
-DECL|member|trg_buf_2
+DECL|member|trg_buf_16
 r_int
 r_int
-id|trg_buf_2
+id|trg_buf_16
 suffix:semicolon
-DECL|member|trigger_bits_2
+DECL|member|trigger_bits_16
 r_int
-id|trigger_bits_2
+id|trigger_bits_16
 suffix:semicolon
-DECL|member|trg_bytes_2
+DECL|member|trg_bytes_16
 r_int
-id|trg_bytes_2
+id|trg_bytes_16
 suffix:semicolon
-DECL|member|trg_intrflag_2
+DECL|member|trg_intrflag_16
 r_int
-id|trg_intrflag_2
+id|trg_intrflag_16
 suffix:semicolon
-DECL|member|trg_restart_2
+DECL|member|trg_restart_16
 r_int
-id|trg_restart_2
+id|trg_restart_16
 suffix:semicolon
 DECL|member|tconst
 r_int

@@ -88,6 +88,9 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_U14_34F
 macro_line|#include &quot;u14-34f.h&quot;
 macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_FD_MCS
+macro_line|#include &quot;fd_mcs.h&quot;
+macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_FUTURE_DOMAIN
 macro_line|#include &quot;fdomain.h&quot;
 macro_line|#endif

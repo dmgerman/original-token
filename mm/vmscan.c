@@ -1782,6 +1782,17 @@ l_int|0
 )paren
 r_break
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|nr_free_pages
+OG
+l_int|2
+op_star
+id|freepages.high
+)paren
+r_break
+suffix:semicolon
 )brace
 r_while
 c_loop

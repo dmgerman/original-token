@@ -48,16 +48,6 @@ id|ipddp_route_list
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n; *      The name of the card. Is used for messages and in the requests for&n; *      io regions, irqs and dma channels&n; */
-DECL|variable|cardname
-r_static
-r_const
-r_char
-op_star
-id|cardname
-op_assign
-l_string|&quot;ipddp&quot;
-suffix:semicolon
 macro_line|#ifdef CONFIG_IPDDP_ENCAP
 DECL|variable|ipddp_mode
 r_static

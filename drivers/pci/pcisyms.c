@@ -134,6 +134,7 @@ c_func
 id|pci_set_master
 )paren
 suffix:semicolon
+macro_line|#ifdef&t;CONFIG_PROC_FS
 DECL|variable|pci_proc_attach_device
 id|EXPORT_SYMBOL
 c_func
@@ -148,6 +149,7 @@ c_func
 id|pci_proc_detach_device
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Backward compatibility */
 DECL|variable|pcibios_find_class
 id|EXPORT_SYMBOL

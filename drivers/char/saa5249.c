@@ -3621,6 +3621,41 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+DECL|function|init_saa_5249
+r_int
+id|init_saa_5249
+c_func
+(paren
+r_struct
+id|video_init
+op_star
+id|v
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;SAA5249 driver (&quot;
+id|IF_NAME
+l_string|&quot; interface) for VideoText version %d.%d&bslash;n&quot;
+comma
+id|VTX_VER_MAJ
+comma
+id|VTX_VER_MIN
+)paren
+suffix:semicolon
+id|i2c_register_driver
+c_func
+(paren
+op_amp
+id|i2c_driver_videotext
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 DECL|variable|saa_template
 r_static
 r_struct
@@ -3659,6 +3694,7 @@ comma
 l_int|0
 )brace
 suffix:semicolon
+macro_line|#ifdef MODULE
 multiline_comment|/*&n; *&t;Routines for loadable modules&n; */
 DECL|function|init_module
 r_int
@@ -3668,24 +3704,10 @@ c_func
 r_void
 )paren
 (brace
-id|printk
+id|init_saa_5249
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;SAA5249 driver (&quot;
-id|IF_NAME
-l_string|&quot; interface) for VideoText version %d.%d&bslash;n&quot;
-comma
-id|VTX_VER_MAJ
-comma
-id|VTX_VER_MIN
-)paren
-suffix:semicolon
-id|i2c_register_driver
-c_func
-(paren
-op_amp
-id|i2c_driver_videotext
+l_int|NULL
 )paren
 suffix:semicolon
 r_return
@@ -3708,4 +3730,5 @@ id|i2c_driver_videotext
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 eof

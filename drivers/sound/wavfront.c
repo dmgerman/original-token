@@ -7629,9 +7629,9 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+DECL|function|wavefront_close
 r_static
 r_void
-DECL|function|wavefront_close
 id|wavefront_close
 (paren
 r_int
@@ -7646,10 +7646,10 @@ op_assign
 op_amp
 id|wavefront_configuration
 suffix:semicolon
+macro_line|#ifdef WF_STATS
 r_int
 id|i
 suffix:semicolon
-macro_line|#ifdef WF_STATS
 id|printk
 (paren
 l_string|&quot;Status during loop: %ld&bslash;n&quot;
@@ -7697,9 +7697,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|wavefront_aftertouch
 r_static
 r_void
-DECL|function|wavefront_aftertouch
 id|wavefront_aftertouch
 (paren
 r_int
@@ -7723,9 +7723,9 @@ id|pressure
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|function|wavefront_bender
 r_static
 r_void
-DECL|function|wavefront_bender
 id|wavefront_bender
 (paren
 r_int
@@ -7749,9 +7749,9 @@ id|value
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|function|wavefront_controller
 r_static
 r_void
-DECL|function|wavefront_controller
 id|wavefront_controller
 (paren
 r_int
@@ -7799,9 +7799,9 @@ id|value
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|function|wavefront_panning
 r_static
 r_void
-DECL|function|wavefront_panning
 id|wavefront_panning
 c_func
 (paren
@@ -7828,9 +7828,9 @@ id|pressure
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|function|wavefront_set_instr
 r_static
 r_int
-DECL|function|wavefront_set_instr
 id|wavefront_set_instr
 (paren
 r_int
@@ -7855,9 +7855,9 @@ id|instr_no
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|function|wavefront_kill_note
 r_static
 r_int
-DECL|function|wavefront_kill_note
 id|wavefront_kill_note
 (paren
 r_int
@@ -7908,9 +7908,9 @@ id|volume
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|function|wavefront_start_note
 r_static
 r_int
-DECL|function|wavefront_start_note
 id|wavefront_start_note
 (paren
 r_int
@@ -7987,9 +7987,9 @@ l_int|0
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|function|wavefront_setup_voice
 r_static
 r_void
-DECL|function|wavefront_setup_voice
 id|wavefront_setup_voice
 (paren
 r_int

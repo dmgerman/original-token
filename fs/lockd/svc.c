@@ -358,8 +358,6 @@ id|nlmsvc_retry_blocked
 c_func
 (paren
 )paren
-op_minus
-id|jiffies
 suffix:semicolon
 )brace
 r_else

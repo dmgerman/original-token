@@ -223,7 +223,7 @@ id|cmd_buffer
 l_int|16
 )braket
 suffix:semicolon
-multiline_comment|/* This is where all commands are put&n;&t;&t;&t;&t; * before they are trasfered to the ESP chip&n;&t;&t;&t;&t; * via PIO.&n;&t;&t;&t;&t; */
+multiline_comment|/* This is where all commands are put&n;&t;&t;&t;&t; * before they are transfered to the ESP chip&n;&t;&t;&t;&t; * via PIO.&n;&t;&t;&t;&t; */
 multiline_comment|/***************************************************************** Detection */
 DECL|function|fastlane_esp_detect
 r_int
