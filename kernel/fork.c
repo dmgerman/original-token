@@ -1186,6 +1186,10 @@ op_amp
 id|mm-&gt;mmap_sem
 )paren
 suffix:semicolon
+id|mm-&gt;page_table_lock
+op_assign
+id|RW_LOCK_UNLOCKED
+suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Leave mm-&gt;pgd set to the parent&squot;s pgd&n;&t;&t; * so that pgd_offset() is always valid.&n;&t;&t; */
 id|mm-&gt;mmap
 op_assign
@@ -1197,6 +1201,10 @@ l_int|NULL
 suffix:semicolon
 multiline_comment|/* It has not run yet, so cannot be present in anyone&squot;s&n;&t;&t; * cache or tlb.&n;&t;&t; */
 id|mm-&gt;cpu_vm_mask
+op_assign
+l_int|0
+suffix:semicolon
+id|mm-&gt;swappable
 op_assign
 l_int|0
 suffix:semicolon
@@ -1388,24 +1396,6 @@ suffix:semicolon
 id|tsk-&gt;mm
 op_assign
 id|mm
-suffix:semicolon
-id|tsk-&gt;min_flt
-op_assign
-id|tsk-&gt;maj_flt
-op_assign
-l_int|0
-suffix:semicolon
-id|tsk-&gt;cmin_flt
-op_assign
-id|tsk-&gt;cmaj_flt
-op_assign
-l_int|0
-suffix:semicolon
-id|tsk-&gt;nswap
-op_assign
-id|tsk-&gt;cnswap
-op_assign
-l_int|0
 suffix:semicolon
 id|copy_segments
 c_func
@@ -2356,10 +2346,6 @@ id|p-&gt;did_exec
 op_assign
 l_int|0
 suffix:semicolon
-id|p-&gt;swappable
-op_assign
-l_int|0
-suffix:semicolon
 id|p-&gt;state
 op_assign
 id|TASK_UNINTERRUPTIBLE
@@ -2640,7 +2626,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* ok, now we should be set up.. */
-id|p-&gt;swappable
+id|p-&gt;mm-&gt;swappable
 op_assign
 l_int|1
 suffix:semicolon

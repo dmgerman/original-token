@@ -2257,9 +2257,17 @@ suffix:semicolon
 )brace
 id|current-&gt;mm-&gt;start_stack
 op_assign
+(paren
+r_int
+r_int
+)paren
 id|create_aout_tables
 c_func
 (paren
+(paren
+r_char
+op_star
+)paren
 id|bprm-&gt;p
 comma
 id|bprm

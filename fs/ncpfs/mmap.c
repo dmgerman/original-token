@@ -342,11 +342,7 @@ l_int|NULL
 comma
 multiline_comment|/* wppage */
 l_int|NULL
-comma
 multiline_comment|/* swapout */
-l_int|NULL
-comma
-multiline_comment|/* swapin */
 )brace
 suffix:semicolon
 multiline_comment|/* This is used for a general mmap of a ncp file */

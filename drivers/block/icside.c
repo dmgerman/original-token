@@ -937,6 +937,21 @@ op_assign
 l_int|250
 suffix:semicolon
 )brace
+macro_line|#if 1
+id|err
+op_assign
+id|ide_config_drive_speed
+c_func
+(paren
+id|drive
+comma
+(paren
+id|byte
+)paren
+id|speed
+)paren
+suffix:semicolon
+macro_line|#else
 multiline_comment|/*&n;&t; * Don&squot;t use ide_wait_cmd here - it will&n;&t; * attempt to set_geometry and recalibrate,&n;&t; * but for some reason these don&squot;t work at&n;&t; * this point (lost interrupt).&n;&t; */
 id|SELECT_DRIVE
 c_func
@@ -998,6 +1013,7 @@ comma
 id|WAIT_CMD
 )paren
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren

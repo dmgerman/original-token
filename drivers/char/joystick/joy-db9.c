@@ -1905,11 +1905,7 @@ op_logical_neg
 (paren
 id|pp-&gt;modes
 op_amp
-(paren
-id|PARPORT_MODE_PCPS2
-op_or
-id|PARPORT_MODE_PCECPPS2
-)paren
+id|PARPORT_MODE_TRISTATE
 )paren
 )paren
 (brace

@@ -12,9 +12,7 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/ide.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
-DECL|macro|IDE_DMA_NEW_LISTINGS
-mdefine_line|#define IDE_DMA_NEW_LISTINGS&t;&t;0
-macro_line|#if IDE_DMA_NEW_LISTINGS
+macro_line|#ifdef IDEDMA_NEW_DRIVE_LISTINGS
 DECL|struct|drive_list_entry
 r_struct
 id|drive_list_entry
@@ -197,7 +195,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#else /* !IDE_DMA_NEW_LISTINGS */
+macro_line|#else /* !IDEDMA_NEW_DRIVE_LISTINGS */
 multiline_comment|/*&n; * good_dma_drives() lists the model names (from &quot;hdparm -i&quot;)&n; * of drives which do not support mode2 DMA but which are&n; * known to work fine with this interface under Linux.&n; */
 DECL|variable|good_dma_drives
 r_const
@@ -245,7 +243,7 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
-macro_line|#endif /* IDE_DMA_NEW_LISTINGS */
+macro_line|#endif /* IDEDMA_NEW_DRIVE_LISTINGS */
 multiline_comment|/*&n; * Our Physical Region Descriptor (PRD) table should be large enough&n; * to handle the biggest I/O request we are likely to see.  Since requests&n; * can have no more than 256 sectors, and since the typical blocksize is&n; * two or more sectors, we could get by with a limit of 128 entries here for&n; * the usual worst case.  Most requests seem to include some contiguous blocks,&n; * further reducing the number of table entries required.&n; *&n; * The driver reverts to PIO mode for individual requests that exceed&n; * this limit (possible with 512 byte blocksizes, eg. MSDOS f/s), so handling&n; * 100% of all crazy scenarios here is not necessary.&n; *&n; * As it turns out though, we must allocate a full 4KB page for this,&n; * so the two PRD tables (ide0 &amp; ide1) will each get half of that,&n; * allowing each to have about 256 entries (8 bytes each) from this.&n; */
 DECL|macro|PRD_BYTES
 mdefine_line|#define PRD_BYTES&t;8
@@ -844,7 +842,7 @@ id|id
 op_assign
 id|drive-&gt;id
 suffix:semicolon
-macro_line|#if IDE_DMA_NEW_LISTINGS
+macro_line|#ifdef IDEDMA_NEW_DRIVE_LISTINGS
 r_if
 c_cond
 (paren
@@ -893,7 +891,7 @@ r_return
 id|blacklist
 suffix:semicolon
 )brace
-macro_line|#else /* !IDE_DMA_NEW_LISTINGS */
+macro_line|#else /* !IDEDMA_NEW_DRIVE_LISTINGS */
 r_const
 r_char
 op_star
@@ -982,7 +980,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-macro_line|#endif /* IDE_DMA_NEW_LISTINGS */
+macro_line|#endif /* IDEDMA_NEW_DRIVE_LISTINGS */
 r_return
 l_int|0
 suffix:semicolon
@@ -1051,7 +1049,7 @@ comma
 id|drive
 )paren
 suffix:semicolon
-macro_line|#if 0
+macro_line|#ifdef CONFIG_IDEDMA_ULTRA_66
 multiline_comment|/* Enable DMA on any drive that has UltraDMA (mode 3/4) enabled */
 r_if
 c_cond
@@ -1094,7 +1092,7 @@ comma
 id|drive
 )paren
 suffix:semicolon
-macro_line|#endif
+macro_line|#endif /* CONFIG_IDEDMA_ULTRA_66 */
 multiline_comment|/* Enable DMA on any drive that has UltraDMA (mode 0/1/2) enabled */
 r_if
 c_cond
@@ -1954,7 +1952,7 @@ c_cond
 (paren
 id|extra
 )paren
-multiline_comment|/* PDC20246 &amp; HPT343 */
+multiline_comment|/* PDC20246, PDC20262, &amp; HPT343 */
 id|request_region
 c_func
 (paren
@@ -1990,12 +1988,15 @@ r_case
 id|PCI_DEVICE_ID_CMD_643
 suffix:colon
 multiline_comment|/*&n;&t;&t;&t;&t; * Lets attempt to use the same Ali tricks&n;&t;&t;&t;&t; * to fix CMD643.....&n;&t;&t;&t;&t; */
+macro_line|#ifdef CONFIG_BLK_DEV_ALI15X3
 r_case
 id|PCI_DEVICE_ID_AL_M5219
 suffix:colon
 r_case
 id|PCI_DEVICE_ID_AL_M5229
 suffix:colon
+multiline_comment|/*&n;&t;&t;&t;&t; * Ali 15x3 chipsets know as ALI IV and V report&n;&t;&t;&t;&t; * this as simplex, skip this test for them.&n;&t;&t;&t;&t; */
+macro_line|#endif /* CONFIG_BLK_DEV_ALI15X3 */
 id|outb
 c_func
 (paren
@@ -2014,7 +2015,6 @@ op_plus
 l_int|2
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Ali 15x3 chipsets know as ALI IV and V report&n;&t;&t;&t;&t; * this as simplex, skip this test for them.&n;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren

@@ -217,72 +217,50 @@ id|arc_read_control
 comma
 id|arc_frob_control
 comma
-l_int|NULL
-comma
-multiline_comment|/* write_econtrol */
-l_int|NULL
-comma
-multiline_comment|/* read_econtrol */
-l_int|NULL
-comma
-multiline_comment|/* frob_econtrol */
-id|arc_write_status
-comma
 id|arc_read_status
 comma
-l_int|NULL
+id|arc_enable_irq
 comma
-multiline_comment|/* write_fifo */
-l_int|NULL
+id|arc_disable_irq
 comma
-multiline_comment|/* read_fifo */
-l_int|NULL
+id|arc_data_forward
 comma
-multiline_comment|/* change_mode */
-l_int|NULL
+id|arc_data_reverse
 comma
-multiline_comment|/* epp_write_data */
-l_int|NULL
+id|arc_interrupt
 comma
-multiline_comment|/* epp_read_data */
-l_int|NULL
-comma
-multiline_comment|/* epp_write_addr */
-l_int|NULL
-comma
-multiline_comment|/* epp_read_addr */
-l_int|NULL
-comma
-multiline_comment|/* epp_check_timeout */
-l_int|NULL
-comma
-multiline_comment|/* epp_write_block */
-l_int|NULL
-comma
-multiline_comment|/* epp_read_block */
-l_int|NULL
-comma
-multiline_comment|/* ecp_write_block */
-l_int|NULL
-comma
-multiline_comment|/* epp_write_block */
 id|arc_init_state
 comma
 id|arc_save_state
 comma
 id|arc_restore_state
 comma
-id|arc_enable_irq
-comma
-id|arc_disable_irq
-comma
-id|arc_interrupt
-comma
 id|arc_inc_use_count
 comma
 id|arc_dec_use_count
 comma
 id|arc_fill_inode
+comma
+id|parport_ieee1284_epp_write_data
+comma
+id|parport_ieee1284_epp_read_data
+comma
+id|parport_ieee1284_epp_write_addr
+comma
+id|parport_ieee1284_epp_read_addr
+comma
+id|parport_ieee1284_ecp_write_data
+comma
+id|parport_ieee1284_ecp_read_data
+comma
+id|parport_ieee1284_ecp_write_addr
+comma
+id|parport_ieee1284_write_compat
+comma
+id|parport_ieee1284_read_nibble
+comma
+id|parport_ieee1284_read_byte
+comma
 )brace
 suffix:semicolon
 multiline_comment|/* --- Initialisation code -------------------------------- */
@@ -308,7 +286,7 @@ c_func
 (paren
 id|PORT_BASE
 comma
-l_int|4
+l_int|1
 )paren
 )paren
 r_return
@@ -317,9 +295,8 @@ suffix:semicolon
 id|p
 op_assign
 id|parport_register_port
-c_func
 (paren
-id|base
+id|PORT_BASE
 comma
 id|IRQ_PRINTERACK
 comma
@@ -357,19 +334,6 @@ id|p-&gt;irq
 suffix:semicolon
 id|parport_proc_register
 c_func
-(paren
-id|p
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|parport_probe_hook
-)paren
-(paren
-op_star
-id|parport_probe_hook
-)paren
 (paren
 id|p
 )paren

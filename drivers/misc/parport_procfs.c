@@ -186,7 +186,8 @@ suffix:colon
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#if 0 &amp;&amp; defined (CONFIG_PARPORT_1284)
+macro_line|#ifdef CONFIG_PARPORT_1284
+DECL|function|do_autoprobe
 r_static
 r_int
 id|do_autoprobe
@@ -660,19 +661,31 @@ suffix:semicolon
 id|printmode
 c_func
 (paren
-id|PCPS2
+id|TRISTATE
 )paren
 suffix:semicolon
 id|printmode
 c_func
 (paren
-id|PCEPP
+id|COMPAT
 )paren
 suffix:semicolon
 id|printmode
 c_func
 (paren
-id|PCECP
+id|EPP
+)paren
+suffix:semicolon
+id|printmode
+c_func
+(paren
+id|ECP
+)paren
+suffix:semicolon
+id|printmode
+c_func
+(paren
+id|DMA
 )paren
 suffix:semicolon
 DECL|macro|printmode
@@ -832,7 +845,7 @@ id|do_hardware
 comma
 id|PARPORT_DEVICES_ROOT_DIR
 comma
-macro_line|#if 0 &amp;&amp; defined(CONFIG_PARPORT_1284)
+macro_line|#ifdef CONFIG_PARPORT_1284
 (brace
 id|DEV_PARPORT_AUTOPROBE
 comma
@@ -1386,7 +1399,6 @@ id|extra1
 op_assign
 id|port
 suffix:semicolon
-macro_line|#if 0 /* Wait for IEEE 1284 support */
 id|t-&gt;vars
 (braket
 l_int|0
@@ -1397,7 +1409,6 @@ op_assign
 op_amp
 id|port-&gt;spintime
 suffix:semicolon
-macro_line|#endif
 id|t-&gt;vars
 (braket
 l_int|2
@@ -1421,7 +1432,6 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-macro_line|#if 0
 id|t-&gt;vars
 (braket
 l_int|3
@@ -1437,20 +1447,6 @@ id|port-&gt;probe_info
 id|i
 )braket
 suffix:semicolon
-macro_line|#else
-id|t-&gt;vars
-(braket
-l_int|3
-op_plus
-id|i
-)braket
-dot
-id|extra2
-op_assign
-op_amp
-id|port-&gt;probe_info
-suffix:semicolon
-macro_line|#endif
 id|t-&gt;port_dir
 (braket
 l_int|0
@@ -1701,7 +1697,7 @@ id|child
 op_assign
 id|t-&gt;device_dir
 suffix:semicolon
-macro_line|#if 0 &amp;&amp; defined(CONFIG_PARPORT_1284)
+macro_line|#ifdef CONFIG_PARPORT_1284
 id|t-&gt;device_dir
 (braket
 l_int|0

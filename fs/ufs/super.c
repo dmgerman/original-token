@@ -2508,7 +2508,8 @@ id|printk
 c_func
 (paren
 l_string|&quot;You didn&squot;t specify the type of your ufs filesystem&bslash;n&bslash;n&quot;
-l_string|&quot;       mount -t ufs -o ufstype=sun|sunx86|44bsd|old|nextstep|netxstep-cd|openstep ...&bslash;n&bslash;n&quot;
+l_string|&quot;mount -t ufs -o ufstype=&quot;
+l_string|&quot;sun|sunx86|44bsd|old|nextstep|netxstep-cd|openstep ...&bslash;n&bslash;n&quot;
 l_string|&quot;&gt;&gt;&gt;WARNING&lt;&lt;&lt; Wrong ufstype may corrupt your filesystem, &quot;
 l_string|&quot;default is ufstype=old&bslash;n&quot;
 )paren

@@ -531,8 +531,6 @@ r_if
 c_cond
 (paren
 id|prof_buffer
-op_logical_and
-id|current-&gt;pid
 )paren
 (brace
 id|eip

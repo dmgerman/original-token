@@ -287,28 +287,6 @@ id|entry
 )paren
 suffix:semicolon
 multiline_comment|/* linux/mm/page_alloc.c */
-r_extern
-r_void
-id|swap_in
-c_func
-(paren
-r_struct
-id|task_struct
-op_star
-comma
-r_struct
-id|vm_area_struct
-op_star
-comma
-id|pte_t
-op_star
-comma
-r_int
-r_int
-comma
-r_int
-)paren
-suffix:semicolon
 multiline_comment|/* linux/mm/swap_state.c */
 r_extern
 r_void

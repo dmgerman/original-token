@@ -38,7 +38,6 @@ id|parport_i2c_bus
 op_star
 id|bus_list
 suffix:semicolon
-macro_line|#ifdef __SMP__
 DECL|variable|bus_list_lock
 r_static
 id|spinlock_t
@@ -46,7 +45,6 @@ id|bus_list_lock
 op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* software I2C functions */
 DECL|function|i2c_setlines
 r_static

@@ -3542,6 +3542,19 @@ id|EINVAL
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|atif
+op_eq
+l_int|NULL
+)paren
+r_return
+(paren
+op_minus
+id|EADDRNOTAVAIL
+)paren
+suffix:semicolon
 multiline_comment|/*&n;                         * give to aarp module to remove proxy entry&n;                         */
 id|aarp_proxy_remove
 c_func

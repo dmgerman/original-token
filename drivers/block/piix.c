@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/block/piix.c&t;Version 0.23&t;May 29, 1999&n; *&n; *  Copyright (C) 1998-1999 Andrzej Krzysztofowicz, Author and Maintainer&n; *  Copyright (C) 1998-1999 Andre Hedrick, Author and Maintainer&n; *&n; *  PIO mode setting function for Intel chipsets.  &n; *  For use instead of BIOS settings.&n; *&n; * 40-41&n; * 42-43&n; * &n; *                 41&n; *                 43&n; *&n; * | PIO 0       | c0 | 80 | 0 | &t;piix_tune_drive(drive, 0);&n; * | PIO 2 | SW2 | d0 | 90 | 4 | &t;piix_tune_drive(drive, 2);&n; * | PIO 3 | MW1 | e1 | a1 | 9 | &t;piix_tune_drive(drive, 3);&n; * | PIO 4 | MW2 | e3 | a3 | b | &t;piix_tune_drive(drive, 4);&n; * &n; * sitre = word40 &amp; 0x4000; primary&n; * sitre = word42 &amp; 0x4000; secondary&n; *&n; * 44 8421|8421    hdd|hdb&n; * &n; * 48 8421         hdd|hdc|hdb|hda udma enabled&n; *&n; *    0001         hda&n; *    0010         hdb&n; *    0100         hdc&n; *    1000         hdd&n; *&n; * 4a 84|21        hdb|hda&n; * 4b 84|21        hdd|hdc&n; * &n; *    00|00 udma 0&n; *    01|01 udma 1&n; *    10|10 udma 2&n; *    11|11 reserved&n; *&n; * pci_read_config_word(HWIF(drive)-&gt;pci_dev, 0x40, &amp;reg40);&n; * pci_read_config_word(HWIF(drive)-&gt;pci_dev, 0x42, &amp;reg42);&n; * pci_read_config_word(HWIF(drive)-&gt;pci_dev, 0x44, &amp;reg44);&n; * pci_read_config_word(HWIF(drive)-&gt;pci_dev, 0x48, &amp;reg48);&n; * pci_read_config_word(HWIF(drive)-&gt;pci_dev, 0x4a, &amp;reg4a);&n; *&n; */
+multiline_comment|/*&n; * linux/drivers/block/piix.c&t;Version 0.24&t;June 28, 1999&n; *&n; *  Copyright (C) 1998-1999 Andrzej Krzysztofowicz, Author and Maintainer&n; *  Copyright (C) 1998-1999 Andre Hedrick, Author and Maintainer&n; *&n; *  PIO mode setting function for Intel chipsets.  &n; *  For use instead of BIOS settings.&n; *&n; * 40-41&n; * 42-43&n; * &n; *                 41&n; *                 43&n; *&n; * | PIO 0       | c0 | 80 | 0 | &t;piix_tune_drive(drive, 0);&n; * | PIO 2 | SW2 | d0 | 90 | 4 | &t;piix_tune_drive(drive, 2);&n; * | PIO 3 | MW1 | e1 | a1 | 9 | &t;piix_tune_drive(drive, 3);&n; * | PIO 4 | MW2 | e3 | a3 | b | &t;piix_tune_drive(drive, 4);&n; * &n; * sitre = word40 &amp; 0x4000; primary&n; * sitre = word42 &amp; 0x4000; secondary&n; *&n; * 44 8421|8421    hdd|hdb&n; * &n; * 48 8421         hdd|hdc|hdb|hda udma enabled&n; *&n; *    0001         hda&n; *    0010         hdb&n; *    0100         hdc&n; *    1000         hdd&n; *&n; * 4a 84|21        hdb|hda&n; * 4b 84|21        hdd|hdc&n; * &n; *    00|00 udma 0&n; *    01|01 udma 1&n; *    10|10 udma 2&n; *    11|11 reserved&n; *&n; * pci_read_config_word(HWIF(drive)-&gt;pci_dev, 0x40, &amp;reg40);&n; * pci_read_config_word(HWIF(drive)-&gt;pci_dev, 0x42, &amp;reg42);&n; * pci_read_config_word(HWIF(drive)-&gt;pci_dev, 0x44, &amp;reg44);&n; * pci_read_config_word(HWIF(drive)-&gt;pci_dev, 0x48, &amp;reg48);&n; * pci_read_config_word(HWIF(drive)-&gt;pci_dev, 0x4a, &amp;reg4a);&n; *&n; * #if 0&n; * int err;&n; * err = ide_config_drive_speed(drive, speed);&n; * (void) ide_config_drive_speed(drive, speed);&n; * #else&n; * #endif&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
@@ -19,6 +19,7 @@ id|byte
 id|xfer_rate
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_PIIX_TUNING
 multiline_comment|/*&n; *&n; */
 DECL|function|piix_dma_2_pio
 r_static
@@ -102,6 +103,7 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif /* CONFIG_BLK_DEV_PIIX_TUNING */
 multiline_comment|/*&n; *  Based on settings done by AMI BIOS&n; *  (might be usefull if drive is not registered in CMOS for any reason).&n; */
 DECL|function|piix_tune_drive
 r_static
@@ -208,7 +210,6 @@ l_int|3
 comma
 )brace
 suffix:semicolon
-macro_line|#if 1
 id|pio
 op_assign
 id|ide_get_best_pio_mode
@@ -223,22 +224,6 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-macro_line|#else
-id|pio
-op_assign
-id|ide_get_best_pio_mode
-c_func
-(paren
-id|drive
-comma
-id|pio
-comma
-l_int|4
-comma
-l_int|NULL
-)paren
-suffix:semicolon
-macro_line|#endif
 id|pci_read_config_word
 c_func
 (paren
@@ -468,6 +453,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_BLK_DEV_PIIX_TUNING
 DECL|function|piix_config_drive_for_dma
 r_static
 r_int
@@ -1205,12 +1191,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-macro_line|#if 0
-id|speed
-op_assign
-id|XFER_PIO_0
-suffix:semicolon
-macro_line|#else
 id|speed
 op_assign
 id|XFER_PIO_0
@@ -1227,7 +1207,6 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 id|restore_flags
 c_func
@@ -1250,20 +1229,12 @@ suffix:semicolon
 (paren
 r_void
 )paren
-id|ide_wait_cmd
+id|ide_config_drive_speed
 c_func
 (paren
 id|drive
 comma
-id|WIN_SETFEATURES
-comma
 id|speed
-comma
-id|SETFEATURES_XFER
-comma
-l_int|0
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 macro_line|#if PIIX_DEBUG_DRIVE_INFO
@@ -1415,6 +1386,7 @@ id|drive
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif /* CONFIG_BLK_DEV_PIIX_TUNING */
 DECL|function|ide_init_piix
 r_void
 id|ide_init_piix
@@ -1429,6 +1401,7 @@ op_assign
 op_amp
 id|piix_tune_drive
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_PIIX_TUNING
 r_if
 c_cond
 (paren
@@ -1439,6 +1412,28 @@ id|hwif-&gt;dmaproc
 op_assign
 op_amp
 id|piix_dmaproc
+suffix:semicolon
+)brace
+r_else
+macro_line|#endif /* CONFIG_BLK_DEV_PIIX_TUNING */
+(brace
+id|hwif-&gt;drives
+(braket
+l_int|0
+)braket
+dot
+id|autotune
+op_assign
+l_int|1
+suffix:semicolon
+id|hwif-&gt;drives
+(braket
+l_int|1
+)braket
+dot
+id|autotune
+op_assign
+l_int|1
 suffix:semicolon
 )brace
 )brace

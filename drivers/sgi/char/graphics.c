@@ -958,10 +958,7 @@ l_int|NULL
 comma
 multiline_comment|/* no special mmap-wppage */
 l_int|NULL
-comma
 multiline_comment|/* no special mmap-swapout */
-l_int|NULL
-multiline_comment|/* no special mmap-swapin */
 )brace
 suffix:semicolon
 r_int

@@ -4186,11 +4186,6 @@ comma
 op_star
 id|out_inode
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; * Get input file, and verify that it is ok..&n;&t; */
 id|retval
 op_assign
@@ -4371,11 +4366,6 @@ id|retval
 r_goto
 id|fput_out
 suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|retval
 op_assign
 l_int|0
@@ -4425,7 +4415,7 @@ id|offset
 )paren
 )paren
 r_goto
-id|fput_out_lock
+id|fput_out
 suffix:semicolon
 id|ppos
 op_assign
@@ -4494,13 +4484,6 @@ id|offset
 )paren
 suffix:semicolon
 )brace
-id|fput_out_lock
-suffix:colon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|fput_out
 suffix:colon
 id|fput
@@ -4519,11 +4502,6 @@ id|in_file
 suffix:semicolon
 id|out
 suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|retval
 suffix:semicolon
@@ -4630,12 +4608,7 @@ op_eq
 id|current-&gt;mm
 )paren
 r_goto
-id|no_page_nolock
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
+id|no_page
 suffix:semicolon
 multiline_comment|/*&n;&t; * Do we have something in the page cache already?&n;&t; */
 id|hash
@@ -4773,11 +4746,6 @@ c_func
 id|old_page
 )paren
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|old_page
 suffix:semicolon
@@ -4801,11 +4769,6 @@ id|page_cache_release
 c_func
 (paren
 id|page
-)paren
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 r_return
@@ -5064,13 +5027,6 @@ id|new_page
 )paren
 suffix:semicolon
 id|no_page
-suffix:colon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-id|no_page_nolock
 suffix:colon
 r_return
 l_int|0
@@ -6163,11 +6119,7 @@ l_int|NULL
 comma
 multiline_comment|/* wppage */
 id|filemap_swapout
-comma
 multiline_comment|/* swapout */
-l_int|NULL
-comma
-multiline_comment|/* swapin */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Private mappings just need to be able to load in the map.&n; *&n; * (This is actually used for shared mappings as well, if we&n; * know they can&squot;t ever get write permissions..)&n; */
@@ -6203,11 +6155,7 @@ l_int|NULL
 comma
 multiline_comment|/* wppage */
 l_int|NULL
-comma
 multiline_comment|/* swapout */
-l_int|NULL
-comma
-multiline_comment|/* swapin */
 )brace
 suffix:semicolon
 multiline_comment|/* This is used for a general mmap of a disk file */

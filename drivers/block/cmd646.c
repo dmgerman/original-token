@@ -354,6 +354,19 @@ id|byte
 id|command
 )paren
 (brace
+macro_line|#if 0
+(paren
+r_void
+)paren
+id|ide_config_drive_speed
+c_func
+(paren
+id|drive
+comma
+id|command
+)paren
+suffix:semicolon
+macro_line|#else
 r_int
 r_int
 id|flags
@@ -487,6 +500,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|cmd646_dma2_enable
 r_static

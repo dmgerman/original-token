@@ -2842,7 +2842,7 @@ c_cond
 (paren
 op_decrement
 id|current-&gt;counter
-OL
+op_le
 l_int|0
 )paren
 (brace

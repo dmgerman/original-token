@@ -23,8 +23,16 @@ DECL|macro|LP_CAREFUL
 mdefine_line|#define LP_CAREFUL 0x0080 /* obsoleted -arca */
 DECL|macro|LP_ABORTOPEN
 mdefine_line|#define LP_ABORTOPEN 0x0100
-DECL|macro|LP_TRUST_IRQ
-mdefine_line|#define&t;LP_TRUST_IRQ 0x0200
+DECL|macro|LP_TRUST_IRQ_
+mdefine_line|#define LP_TRUST_IRQ_  0x0200 /* obsolete */
+DECL|macro|LP_NO_REVERSE
+mdefine_line|#define LP_NO_REVERSE  0x0400 /* No reverse mode available. */
+DECL|macro|LP_DATA_AVAIL
+mdefine_line|#define LP_DATA_AVAIL  0x0800 /* Data is available. */
+DECL|macro|LP_HAVE_PORT_BIT
+mdefine_line|#define LP_HAVE_PORT_BIT   12 /* (0x1000) Port is claimed. */
+DECL|macro|LP_PORT_BUSY
+mdefine_line|#define LP_PORT_BUSY   (1&lt;&lt;13) /* Reading or writing. */
 multiline_comment|/* timeout for each character.  This is relative to bus cycles -- it&n; * is the count in a busy loop.  THIS IS THE VALUE TO CHANGE if you&n; * have extremely slow printing, or if the machine seems to slow down&n; * a lot when you print.  If you have slow printing, increase this&n; * number and recompile, and if your system gets bogged down, decrease&n; * this number.  This can be changed with the tunelp(8) command as well.&n; */
 DECL|macro|LP_INIT_CHAR
 mdefine_line|#define LP_INIT_CHAR 1000
@@ -62,8 +70,6 @@ mdefine_line|#define LPGETSTATS  0x060d  /* get statistics (struct lp_stats) */
 macro_line|#endif
 DECL|macro|LPGETFLAGS
 mdefine_line|#define LPGETFLAGS  0x060e  /* get status flags */
-DECL|macro|LPTRUSTIRQ
-mdefine_line|#define LPTRUSTIRQ  0x060f  /* set/unset the LP_TRUST_IRQ flag */
 multiline_comment|/* timeout for printk&squot;ing a timeout, in jiffies (100ths of a second).&n;   This is also used for re-checking error conditions if LP_ABORT is&n;   not set.  This is the default behavior. */
 DECL|macro|LP_TIMEOUT_INTERRUPT
 mdefine_line|#define LP_TIMEOUT_INTERRUPT&t;(60 * HZ)
@@ -95,7 +101,7 @@ DECL|macro|LP_STAT
 mdefine_line|#define LP_STAT(minor)&t;lp_table[(minor)].stats&t;&t;/* statistics area */
 macro_line|#endif
 DECL|macro|LP_BUFFER_SIZE
-mdefine_line|#define LP_BUFFER_SIZE 256
+mdefine_line|#define LP_BUFFER_SIZE PAGE_SIZE
 DECL|macro|LP_BASE
 mdefine_line|#define LP_BASE(x)&t;lp_table[(x)].dev-&gt;port-&gt;base
 macro_line|#ifdef LP_STATS
@@ -188,30 +194,23 @@ id|lp_stats
 id|stats
 suffix:semicolon
 macro_line|#endif
-DECL|member|wait_q
+DECL|member|waitq
 id|wait_queue_head_t
-id|wait_q
+id|waitq
 suffix:semicolon
 DECL|member|last_error
 r_int
 r_int
 id|last_error
 suffix:semicolon
-DECL|member|irq_detected
-r_volatile
-r_int
-r_int
-id|irq_detected
-suffix:colon
-l_int|1
+DECL|member|port_mutex
+r_struct
+id|semaphore
+id|port_mutex
 suffix:semicolon
-DECL|member|irq_missed
-r_volatile
-r_int
-r_int
-id|irq_missed
-suffix:colon
-l_int|1
+DECL|member|dataq
+id|wait_queue_head_t
+id|dataq
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -244,10 +243,6 @@ mdefine_line|#define LP_DUMMY&t;0x00
 multiline_comment|/*&n; * This is the port delay time, in microseconds.&n; * It is used only in the lp_init() and lp_reset() routine.&n; */
 DECL|macro|LP_DELAY
 mdefine_line|#define LP_DELAY &t;50
-DECL|macro|LP_POLLED
-mdefine_line|#define LP_POLLED(minor) (lp_table[(minor)].dev-&gt;port-&gt;irq == PARPORT_IRQ_NONE)
-DECL|macro|LP_PREEMPTED
-mdefine_line|#define LP_PREEMPTED(minor) (lp_table[(minor)].dev-&gt;port-&gt;waithead != NULL)
 multiline_comment|/*&n; * function prototypes&n; */
 r_extern
 r_int

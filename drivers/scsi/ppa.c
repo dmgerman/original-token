@@ -544,7 +544,7 @@ c_cond
 (paren
 id|modes
 op_amp
-id|PARPORT_MODE_PCPS2
+id|PARPORT_MODE_TRISTATE
 )paren
 id|ppa_hosts
 (braket
@@ -560,7 +560,7 @@ c_cond
 (paren
 id|modes
 op_amp
-id|PARPORT_MODE_PCECPPS2
+id|PARPORT_MODE_ECP
 )paren
 (brace
 id|w_ecr
@@ -584,9 +584,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|modes
 op_amp
-id|PARPORT_MODE_PCECPEPP
+id|PARPORT_MODE_EPP
+)paren
+op_logical_and
+(paren
+id|modes
+op_amp
+id|PARPORT_MODE_ECP
+)paren
 )paren
 id|w_ecr
 c_func

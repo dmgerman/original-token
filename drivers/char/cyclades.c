@@ -9670,11 +9670,6 @@ id|current-&gt;state
 op_assign
 id|TASK_INTERRUPTIBLE
 suffix:semicolon
-id|current-&gt;counter
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* make us low-priority */
 id|schedule_timeout
 c_func
 (paren
@@ -9724,11 +9719,6 @@ id|current-&gt;state
 op_assign
 id|TASK_INTERRUPTIBLE
 suffix:semicolon
-id|current-&gt;counter
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* make us low-priority */
 id|schedule_timeout
 c_func
 (paren

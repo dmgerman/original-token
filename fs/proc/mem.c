@@ -1449,7 +1449,7 @@ id|src_table
 id|handle_mm_fault
 c_func
 (paren
-id|tsk
+id|tsk-&gt;mm
 comma
 id|src_vma
 comma
@@ -1478,7 +1478,7 @@ id|src_table
 id|handle_mm_fault
 c_func
 (paren
-id|tsk
+id|tsk-&gt;mm
 comma
 id|src_vma
 comma

@@ -63,8 +63,8 @@ DECL|macro|DEVID_UM8886A
 mdefine_line|#define DEVID_UM8886A&t;((ide_pci_devid_t){PCI_VENDOR_ID_UMC,     PCI_DEVICE_ID_UMC_UM8886A})
 DECL|macro|DEVID_UM8886BF
 mdefine_line|#define DEVID_UM8886BF&t;((ide_pci_devid_t){PCI_VENDOR_ID_UMC,     PCI_DEVICE_ID_UMC_UM8886BF})
-DECL|macro|DEVID_HPT343
-mdefine_line|#define DEVID_HPT343&t;((ide_pci_devid_t){PCI_VENDOR_ID_TTI,     PCI_DEVICE_ID_TTI_HPT343})
+DECL|macro|DEVID_HPT34X
+mdefine_line|#define DEVID_HPT34X&t;((ide_pci_devid_t){PCI_VENDOR_ID_TTI,     PCI_DEVICE_ID_TTI_HPT343})
 DECL|macro|DEVID_ALI15X3
 mdefine_line|#define DEVID_ALI15X3&t;((ide_pci_devid_t){PCI_VENDOR_ID_AL,      PCI_DEVICE_ID_AL_M5229})
 DECL|macro|DEVID_CY82C693
@@ -333,11 +333,11 @@ macro_line|#else
 DECL|macro|PCI_AEC6210
 mdefine_line|#define PCI_AEC6210&t;NULL
 macro_line|#endif
-macro_line|#ifdef CONFIG_BLK_DEV_HPT343
+macro_line|#ifdef CONFIG_BLK_DEV_HPT34X
 r_extern
 r_int
 r_int
-id|pci_init_hpt343
+id|pci_init_hpt34x
 c_func
 (paren
 r_struct
@@ -351,22 +351,22 @@ op_star
 suffix:semicolon
 r_extern
 r_void
-id|ide_init_hpt343
+id|ide_init_hpt34x
 c_func
 (paren
 id|ide_hwif_t
 op_star
 )paren
 suffix:semicolon
-DECL|macro|PCI_HPT343
-mdefine_line|#define PCI_HPT343&t;&amp;pci_init_hpt343
-DECL|macro|INIT_HPT343
-mdefine_line|#define&t;INIT_HPT343&t;&amp;ide_init_hpt343
+DECL|macro|PCI_HPT34X
+mdefine_line|#define PCI_HPT34X&t;&amp;pci_init_hpt34x
+DECL|macro|INIT_HPT34X
+mdefine_line|#define&t;INIT_HPT34X&t;&amp;ide_init_hpt34x
 macro_line|#else
-DECL|macro|PCI_HPT343
-mdefine_line|#define PCI_HPT343&t;NULL
-DECL|macro|INIT_HPT343
-mdefine_line|#define&t;INIT_HPT343&t;NULL
+DECL|macro|PCI_HPT34X
+mdefine_line|#define PCI_HPT34X&t;NULL
+DECL|macro|INIT_HPT34X
+mdefine_line|#define&t;INIT_HPT34X&t;NULL
 macro_line|#endif
 DECL|macro|INIT_SAMURAI
 mdefine_line|#define INIT_SAMURAI&t;NULL
@@ -1338,13 +1338,13 @@ l_int|0
 )brace
 comma
 (brace
-id|DEVID_HPT343
+id|DEVID_HPT34X
 comma
-l_string|&quot;HPT343&quot;
+l_string|&quot;HPT34X&quot;
 comma
-id|PCI_HPT343
+id|PCI_HPT34X
 comma
-id|INIT_HPT343
+id|INIT_HPT34X
 comma
 l_int|NULL
 comma
@@ -1585,7 +1585,7 @@ l_int|0
 suffix:semicolon
 r_int
 r_int
-id|hpt343IoBase
+id|hpt34xIoBase
 op_assign
 id|dev-&gt;base_address
 (braket
@@ -1610,7 +1610,7 @@ l_int|0
 )braket
 op_assign
 (paren
-id|hpt343IoBase
+id|hpt34xIoBase
 op_plus
 l_int|0x20
 )paren
@@ -1621,7 +1621,7 @@ l_int|1
 )braket
 op_assign
 (paren
-id|hpt343IoBase
+id|hpt34xIoBase
 op_plus
 l_int|0x34
 )paren
@@ -1632,7 +1632,7 @@ l_int|2
 )braket
 op_assign
 (paren
-id|hpt343IoBase
+id|hpt34xIoBase
 op_plus
 l_int|0x28
 )paren
@@ -1643,7 +1643,7 @@ l_int|3
 )braket
 op_assign
 (paren
-id|hpt343IoBase
+id|hpt34xIoBase
 op_plus
 l_int|0x3c
 )paren
@@ -2487,7 +2487,7 @@ c_func
 (paren
 id|d-&gt;devid
 comma
-id|DEVID_HPT343
+id|DEVID_HPT34X
 )paren
 )paren
 (brace
@@ -2922,16 +2922,16 @@ comma
 id|DEVID_AEC6210
 )paren
 op_logical_or
-macro_line|#ifdef CONFIG_BLK_DEV_HPT343
+macro_line|#ifdef CONFIG_BLK_DEV_HPT34X
 id|IDE_PCI_DEVID_EQ
 c_func
 (paren
 id|d-&gt;devid
 comma
-id|DEVID_HPT343
+id|DEVID_HPT34X
 )paren
 op_logical_or
-macro_line|#endif
+macro_line|#endif /* CONFIG_BLK_DEV_HPT34X */
 id|IDE_PCI_DEVID_EQ
 c_func
 (paren

@@ -15,7 +15,6 @@ mdefine_line|#define PAGE_SIZE    (1 &lt;&lt; PAGE_SHIFT)
 DECL|macro|PAGE_MASK
 mdefine_line|#define PAGE_MASK    (~(PAGE_SIZE-1))
 macro_line|#ifdef __KERNEL__
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/head.h&gt;       /* for KERNBASE */
 macro_line|#include &lt;asm/btfixup.h&gt;
 multiline_comment|/* This is always 2048*sizeof(long), doesn&squot;t change with PAGE_SIZE */

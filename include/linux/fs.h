@@ -986,6 +986,10 @@ id|private_data
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|get_file
+mdefine_line|#define get_file(x)&t;atomic_inc(&amp;(x)-&gt;f_count)
+DECL|macro|file_count
+mdefine_line|#define file_count(x)&t;atomic_read(&amp;(x)-&gt;f_count)
 r_extern
 r_int
 id|init_private_file
@@ -2553,8 +2557,11 @@ comma
 r_int
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * Candidates for mandatory locking have the setgid bit set&n; * but no group execute bit -  an otherwise meaningless combination.&n; */
+DECL|macro|MANDATORY_LOCK
+mdefine_line|#define MANDATORY_LOCK(inode) &bslash;&n;&t;(IS_MANDLOCK(inode) &amp;&amp; ((inode)-&gt;i_mode &amp; (S_ISGID | S_IXGRP)) == S_ISGID)
 DECL|function|locks_verify_locked
-r_extern
+r_static
 r_inline
 r_int
 id|locks_verify_locked
@@ -2566,41 +2573,24 @@ op_star
 id|inode
 )paren
 (brace
-multiline_comment|/* Candidates for mandatory locking have the setgid bit set&n;&t; * but no group execute bit -  an otherwise meaningless combination.&n;&t; */
 r_if
 c_cond
 (paren
-id|IS_MANDLOCK
+id|MANDATORY_LOCK
 c_func
 (paren
 id|inode
 )paren
-op_logical_and
-(paren
-id|inode-&gt;i_mode
-op_amp
-(paren
-id|S_ISGID
-op_or
-id|S_IXGRP
-)paren
-)paren
-op_eq
-id|S_ISGID
 )paren
 r_return
-(paren
 id|locks_mandatory_locked
 c_func
 (paren
 id|inode
 )paren
-)paren
 suffix:semicolon
 r_return
-(paren
 l_int|0
-)paren
 suffix:semicolon
 )brace
 DECL|function|locks_verify_area
@@ -2630,30 +2620,18 @@ r_int
 id|count
 )paren
 (brace
-multiline_comment|/* Candidates for mandatory locking have the setgid bit set&n;&t; * but no group execute bit -  an otherwise meaningless combination.&n;&t; */
 r_if
 c_cond
 (paren
-id|IS_MANDLOCK
+id|inode-&gt;i_flock
+op_logical_and
+id|MANDATORY_LOCK
 c_func
 (paren
 id|inode
 )paren
-op_logical_and
-(paren
-id|inode-&gt;i_mode
-op_amp
-(paren
-id|S_ISGID
-op_or
-id|S_IXGRP
-)paren
-)paren
-op_eq
-id|S_ISGID
 )paren
 r_return
-(paren
 id|locks_mandatory_area
 c_func
 (paren
@@ -2667,12 +2645,9 @@ id|offset
 comma
 id|count
 )paren
-)paren
 suffix:semicolon
 r_return
-(paren
 l_int|0
-)paren
 suffix:semicolon
 )brace
 multiline_comment|/* fs/open.c */

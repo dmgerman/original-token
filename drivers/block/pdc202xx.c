@@ -17,10 +17,6 @@ DECL|macro|PDC202XX_DEBUG_DRIVE_INFO
 mdefine_line|#define PDC202XX_DEBUG_DRIVE_INFO&t;&t;0
 DECL|macro|PDC202XX_DECODE_REGISTER_INFO
 mdefine_line|#define PDC202XX_DECODE_REGISTER_INFO&t;&t;0
-DECL|macro|PDC202XX_FORCE_BURST_BIT
-mdefine_line|#define PDC202XX_FORCE_BURST_BIT&t;&t;0
-DECL|macro|PDC202XX_FORCE_MASTER_MODE
-mdefine_line|#define PDC202XX_FORCE_MASTER_MODE&t;&t;0
 r_extern
 r_char
 op_star
@@ -881,24 +877,6 @@ op_amp
 id|drive_conf
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|drive_conf
-op_ne
-l_int|0x004ff304
-)paren
-op_logical_and
-(paren
-id|drive_conf
-op_ne
-l_int|0x004ff3c4
-)paren
-)paren
-r_goto
-id|chipset_is_set
-suffix:semicolon
 id|pci_read_config_byte
 c_func
 (paren
@@ -955,24 +933,6 @@ comma
 op_amp
 id|drive_conf
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|drive_conf
-op_ne
-l_int|0x004ff304
-)paren
-op_logical_and
-(paren
-id|drive_conf
-op_ne
-l_int|0x004ff3c4
-)paren
-)paren
-r_goto
-id|chipset_is_set
 suffix:semicolon
 id|pci_read_config_byte
 c_func
@@ -1048,24 +1008,6 @@ op_amp
 id|drive_conf
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|drive_conf
-op_ne
-l_int|0x004ff304
-)paren
-op_logical_and
-(paren
-id|drive_conf
-op_ne
-l_int|0x004ff3c4
-)paren
-)paren
-r_goto
-id|chipset_is_set
-suffix:semicolon
 id|pci_read_config_byte
 c_func
 (paren
@@ -1122,24 +1064,6 @@ comma
 op_amp
 id|drive_conf
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|drive_conf
-op_ne
-l_int|0x004ff304
-)paren
-op_logical_and
-(paren
-id|drive_conf
-op_ne
-l_int|0x004ff3c4
-)paren
-)paren
-r_goto
-id|chipset_is_set
 suffix:semicolon
 id|pci_read_config_byte
 c_func
@@ -2400,20 +2324,12 @@ suffix:semicolon
 )brace
 id|err
 op_assign
-id|ide_wait_cmd
+id|ide_config_drive_speed
 c_func
 (paren
 id|drive
 comma
-id|WIN_SETFEATURES
-comma
 id|speed
-comma
-id|SETFEATURES_XFER
-comma
-l_int|0
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 macro_line|#if PDC202XX_DECODE_REGISTER_INFO
@@ -2532,8 +2448,6 @@ id|drive_conf
 )paren
 suffix:semicolon
 macro_line|#endif /* PDC202XX_DEBUG_DRIVE_INFO */
-id|chipset_is_set
-suffix:colon
 r_return
 (paren
 (paren
@@ -3074,7 +2988,7 @@ suffix:colon
 l_string|&quot;PCI&quot;
 )paren
 suffix:semicolon
-macro_line|#if PDC202XX_FORCE_BURST_BIT
+macro_line|#ifdef PDC202XX_FORCE_BURST_BIT
 r_if
 c_cond
 (paren
@@ -3139,7 +3053,7 @@ l_string|&quot;INA&quot;
 suffix:semicolon
 )brace
 macro_line|#endif /* PDC202XX_FORCE_BURST_BIT */
-macro_line|#if PDC202XX_FORCE_MASTER_MODE
+macro_line|#ifdef PDC202XX_FORCE_MASTER_MODE
 r_if
 c_cond
 (paren

@@ -102,6 +102,32 @@ c_func
 id|page_addr
 )paren
 suffix:semicolon
+id|write_lock
+c_func
+(paren
+op_amp
+id|tsk-&gt;mm-&gt;page_table_lock
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pte_val
+c_func
+(paren
+id|pte
+)paren
+op_ne
+id|pte_val
+c_func
+(paren
+op_star
+id|page_table
+)paren
+)paren
+r_goto
+id|out_failed_unlock
+suffix:semicolon
 multiline_comment|/*&n;&t; * Dont be too eager to get aging right if&n;&t; * memory is dangerously low.&n;&t; */
 r_if
 c_cond
@@ -139,7 +165,7 @@ id|page-&gt;flags
 )paren
 suffix:semicolon
 r_goto
-id|out_failed
+id|out_failed_unlock
 suffix:semicolon
 )brace
 r_if
@@ -173,7 +199,7 @@ id|page
 )paren
 )paren
 r_goto
-id|out_failed
+id|out_failed_unlock
 suffix:semicolon
 multiline_comment|/*&n;&t; * Is the page already in the swap cache? If so, then&n;&t; * we can just drop our reference to it without doing&n;&t; * any IO - it&squot;s already up-to-date on disk.&n;&t; *&n;&t; * Return 0, as we didn&squot;t actually free any real&n;&t; * memory, and we should just continue our scan.&n;&t; */
 r_if
@@ -228,7 +254,7 @@ id|page
 )paren
 suffix:semicolon
 r_goto
-id|out_failed
+id|out_failed_unlock
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Is it a clean page? Then it must be recoverable&n;&t; * by just paging it in again, and we can just drop&n;&t; * it..&n;&t; *&n;&t; * However, this won&squot;t actually free any real&n;&t; * memory, as the page will just be in the page cache&n;&t; * somewhere, and as such we should just continue&n;&t; * our scan.&n;&t; *&n;&t; * Basically, this just makes it possible for us to do&n;&t; * some real work in the future in &quot;shrink_mmap()&quot;.&n;&t; */
@@ -265,7 +291,7 @@ id|__GFP_IO
 )paren
 )paren
 r_goto
-id|out_failed
+id|out_failed_unlock
 suffix:semicolon
 multiline_comment|/*&n;&t; * Ok, it&squot;s really dirty. That means that&n;&t; * we should either create a new swap cache&n;&t; * entry for it, or we should write it back&n;&t; * to its own backing store.&n;&t; *&n;&t; * Note that in neither case do we actually&n;&t; * know that we make a page available, but&n;&t; * as we potentially sleep we can no longer&n;&t; * continue scanning, so we migth as well&n;&t; * assume we free&squot;d something.&n;&t; *&n;&t; * NOTE NOTE NOTE! This should just set a&n;&t; * dirty bit in &squot;page&squot;, and just drop the&n;&t; * pte. All the hard work would be done by&n;&t; * shrink_mmap().&n;&t; *&n;&t; * That would get rid of a lot of problems.&n;&t; */
 id|flush_cache_page
@@ -293,6 +319,13 @@ id|pte_clear
 c_func
 (paren
 id|page_table
+)paren
+suffix:semicolon
+id|write_unlock
+c_func
+(paren
+op_amp
+id|tsk-&gt;mm-&gt;page_table_lock
 )paren
 suffix:semicolon
 id|flush_tlb_page
@@ -354,7 +387,7 @@ multiline_comment|/* No swap space left */
 id|vma-&gt;vm_mm-&gt;rss
 op_decrement
 suffix:semicolon
-id|tsk-&gt;nswap
+id|tsk-&gt;mm-&gt;nswap
 op_increment
 suffix:semicolon
 id|set_pte
@@ -367,6 +400,13 @@ c_func
 (paren
 id|entry
 )paren
+)paren
+suffix:semicolon
+id|write_unlock
+c_func
+(paren
+op_amp
+id|tsk-&gt;mm-&gt;page_table_lock
 )paren
 suffix:semicolon
 id|flush_tlb_page
@@ -414,6 +454,15 @@ id|page
 suffix:semicolon
 r_return
 l_int|1
+suffix:semicolon
+id|out_failed_unlock
+suffix:colon
+id|write_unlock
+c_func
+(paren
+op_amp
+id|tsk-&gt;mm-&gt;page_table_lock
+)paren
 suffix:semicolon
 id|out_failed
 suffix:colon
@@ -1116,7 +1165,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|p-&gt;swappable
+id|p-&gt;mm-&gt;swappable
 )paren
 r_continue
 suffix:semicolon

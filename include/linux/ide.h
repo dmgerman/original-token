@@ -2126,6 +2126,17 @@ id|ide_delay_50ms
 r_void
 )paren
 suffix:semicolon
+r_int
+id|ide_config_drive_speed
+(paren
+id|ide_drive_t
+op_star
+id|drive
+comma
+id|byte
+id|speed
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * ide_system_bus_speed() returns what we think is the system VESA/PCI&n; * bus speed (in MHz).  This is used for calculating interface PIO timings.&n; * The default is 40 for known PCI systems, 50 otherwise.&n; * The &quot;idebus=xx&quot; parameter can be used to override this value.&n; */
 r_int
 id|ide_system_bus_speed

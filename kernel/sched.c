@@ -4551,7 +4551,7 @@ r_if
 c_cond
 (paren
 id|p-&gt;counter
-OL
+op_le
 l_int|0
 )paren
 (brace
@@ -5077,7 +5077,7 @@ id|newprio
 op_assign
 l_int|40
 suffix:semicolon
-multiline_comment|/*&n;&t; * do a &quot;normalization&quot; of the priority (traditionally&n;&t; * Unix nice values are -20 to 20; Linux doesn&squot;t really&n;&t; * use that kind of thing, but uses the length of the&n;&t; * timeslice instead (default 210 ms). The rounding is&n;&t; * why we want to avoid negative values.&n;&t; */
+multiline_comment|/*&n;&t; * do a &quot;normalization&quot; of the priority (traditionally&n;&t; * Unix nice values are -20 to 20; Linux doesn&squot;t really&n;&t; * use that kind of thing, but uses the length of the&n;&t; * timeslice instead (default 200 ms). The rounding is&n;&t; * why we want to avoid negative values.&n;&t; */
 id|newprio
 op_assign
 (paren

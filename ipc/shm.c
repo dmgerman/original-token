@@ -1900,10 +1900,7 @@ l_int|NULL
 comma
 multiline_comment|/* wppage */
 id|shm_swapout
-comma
 multiline_comment|/* swapout */
-l_int|NULL
-multiline_comment|/* swapin */
 )brace
 suffix:semicolon
 multiline_comment|/* Insert shmd into the list shp-&gt;attaches */
@@ -2708,6 +2705,11 @@ id|shmid_kernel
 op_star
 id|shp
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|id
 op_assign
 id|SWP_OFFSET
@@ -2764,6 +2766,11 @@ id|shp-&gt;u.shm_lpid
 op_assign
 id|current-&gt;pid
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * remove the attach descriptor shmd.&n; * free memory for segment if it is marked destroyed.&n; * The descriptor has already been removed from the current-&gt;mm-&gt;mmap list&n; * and will later be kfree()d.&n; */
 DECL|function|shm_close
@@ -2784,6 +2791,11 @@ id|shp
 suffix:semicolon
 r_int
 id|id
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 multiline_comment|/* remove from the list of attaches of the shm segment */
 id|id
@@ -2835,6 +2847,11 @@ id|SHM_DEST
 id|killseg
 (paren
 id|id
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace
@@ -3267,13 +3284,13 @@ suffix:semicolon
 )brace
 r_else
 op_decrement
-id|current-&gt;maj_flt
+id|current-&gt;mm-&gt;maj_flt
 suffix:semicolon
 multiline_comment|/* was incremented in do_no_page */
 id|done
 suffix:colon
 multiline_comment|/* pte_val(pte) == shp-&gt;shm_pages[idx] */
-id|current-&gt;min_flt
+id|current-&gt;mm-&gt;min_flt
 op_increment
 suffix:semicolon
 id|get_page
