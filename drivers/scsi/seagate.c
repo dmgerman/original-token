@@ -560,12 +560,12 @@ op_decrement
 id|count
 )paren
 suffix:semicolon
+macro_line|#if (DEBUG &amp; DEBUG_BORKEN) 
 r_if
 c_cond
 (paren
 id|count
 )paren
-macro_line|#if (DEBUG &amp; DEBUG_BORKEN) 
 id|printk
 c_func
 (paren
@@ -573,8 +573,6 @@ l_string|&quot;scsi%d : borken timeout&bslash;n&quot;
 comma
 id|hostno
 )paren
-suffix:semicolon
-macro_line|#else
 suffix:semicolon
 macro_line|#endif 
 )brace

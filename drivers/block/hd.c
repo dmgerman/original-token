@@ -1040,11 +1040,6 @@ id|head
 )paren
 )paren
 (brace
-id|special_op
-(braket
-id|drive
-)braket
-op_add_assign
 id|reset
 op_assign
 l_int|1
@@ -1710,11 +1705,6 @@ comma
 l_int|7
 )paren
 )paren
-id|special_op
-(braket
-id|dev
-)braket
-op_add_assign
 id|reset
 op_assign
 l_int|1
@@ -2416,11 +2406,6 @@ id|RESET_FREQ
 op_eq
 l_int|0
 )paren
-id|special_op
-(braket
-id|dev
-)braket
-op_add_assign
 id|reset
 op_assign
 l_int|1
@@ -3450,15 +3435,6 @@ id|CURRENT
 )paren
 r_return
 suffix:semicolon
-id|special_op
-(braket
-id|DEVICE_NR
-c_func
-(paren
-id|CURRENT-&gt;dev
-)paren
-)braket
-op_add_assign
 id|reset
 op_assign
 l_int|1
@@ -3731,16 +3707,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|special_op
-(braket
-id|dev
-)braket
-)paren
-(brace
-multiline_comment|/* we use &quot;special_op&quot; to reduce overhead on r/w */
-r_if
-c_cond
-(paren
 id|reset
 )paren
 (brace
@@ -3787,6 +3753,16 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|special_op
+(braket
+id|dev
+)braket
+)paren
+(brace
+multiline_comment|/* we use &quot;special_op&quot; to reduce overhead on r/w */
 r_if
 c_cond
 (paren

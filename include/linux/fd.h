@@ -45,6 +45,10 @@ DECL|macro|FDPOLLDRVSTAT
 mdefine_line|#define FDPOLLDRVSTAT 23 /* get drive state */
 DECL|macro|FDGETFDCSTAT
 mdefine_line|#define FDGETFDCSTAT 25 /* get fdc state */
+DECL|macro|FDWERRORCLR
+mdefine_line|#define FDWERRORCLR  27 /* clear write error and badness information */
+DECL|macro|FDWERRORGET
+mdefine_line|#define FDWERRORGET  28 /* get write error and badness information */
 DECL|macro|FDRESET
 mdefine_line|#define FDRESET 24 /* reset FDC */
 DECL|macro|FD_RESET_IF_NEEDED
@@ -75,7 +79,7 @@ mdefine_line|#define FD_2M 0x4
 DECL|macro|FD_SIZECODEMASK
 mdefine_line|#define FD_SIZECODEMASK 0x38
 DECL|macro|FD_SIZECODE
-mdefine_line|#define FD_SIZECODE(floppy) (((( (floppy)-&gt;rate ) &amp; FD_SIZECODEMASK) &gt;&gt; 3)+ 2)
+mdefine_line|#define FD_SIZECODE(floppy) (((((floppy)-&gt;rate&amp;FD_SIZECODEMASK)&gt;&gt; 3)+ 2) %8)
 DECL|macro|FD_SECTSIZE
 mdefine_line|#define FD_SECTSIZE(floppy) ( (floppy)-&gt;rate &amp; FD_2M ? &bslash;&n;&t;&t;&t;     512 : 128 &lt;&lt; FD_SIZECODE(floppy) )
 DECL|macro|FD_PERP
@@ -380,6 +384,44 @@ r_int
 id|last_checked
 suffix:semicolon
 multiline_comment|/* when was the drive last checked for a disk change? */
+)brace
+suffix:semicolon
+DECL|struct|floppy_write_errors
+r_struct
+id|floppy_write_errors
+(brace
+multiline_comment|/* Write error logging.&n;   *&n;   * These fields can be cleared with the FDWERRORCLR ioctl.&n;   * Only writes that were attempted but failed due to a physical media&n;   * error are logged.  write(2) calls that fail and return an error code&n;   * to the user process are not counted.&n;   */
+DECL|member|write_errors
+r_int
+r_int
+id|write_errors
+suffix:semicolon
+multiline_comment|/* number of physical write errors encountered */
+multiline_comment|/* position of first and last write errors */
+DECL|member|first_error_sector
+r_int
+r_int
+id|first_error_sector
+suffix:semicolon
+DECL|member|first_error_generation
+r_int
+id|first_error_generation
+suffix:semicolon
+DECL|member|last_error_sector
+r_int
+r_int
+id|last_error_sector
+suffix:semicolon
+DECL|member|last_error_generation
+r_int
+id|last_error_generation
+suffix:semicolon
+DECL|member|badness
+r_int
+r_int
+id|badness
+suffix:semicolon
+multiline_comment|/* highest retry count for a read or write operation */
 )brace
 suffix:semicolon
 DECL|struct|floppy_fdc_state
