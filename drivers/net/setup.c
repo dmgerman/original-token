@@ -358,6 +358,14 @@ r_void
 suffix:semicolon
 r_extern
 r_int
+id|tlan_probe
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|tulip_probe
 c_func
 (paren
@@ -659,6 +667,14 @@ macro_line|#endif&t;
 macro_line|#ifdef CONFIG_EEXPRESS_PRO100&t;/* Intel EtherExpress Pro/100 */
 (brace
 id|eepro100_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_TLAN
+(brace
+id|tlan_probe
 comma
 l_int|0
 )brace

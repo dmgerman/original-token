@@ -412,7 +412,6 @@ r_int
 id|phys_addr
 comma
 r_int
-r_int
 id|size
 comma
 r_int

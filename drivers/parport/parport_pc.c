@@ -6681,6 +6681,7 @@ op_assign
 id|PARPORT_DMA_NONE
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_PARPORT_PC_FIFO
 r_if
 c_cond
 (paren
@@ -6761,6 +6762,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
+macro_line|#endif /* CONFIG_PARPORT_PC_FIFO */
 )brace
 multiline_comment|/* Done probing.  Now put the port into a sensible start-up state.&n;&t; * SELECT | INIT also puts IEEE1284-compliant devices into&n;&t; * compatibility mode. */
 r_if

@@ -12,8 +12,6 @@ DECL|macro|su_lf_sblk
 mdefine_line|#define su_lf_sblk&t;u.bfs_sb.si_lf_sblk
 DECL|macro|su_lf_eblk
 mdefine_line|#define su_lf_eblk&t;u.bfs_sb.si_lf_eblk
-DECL|macro|su_bmap
-mdefine_line|#define su_bmap&t;&t;u.bfs_sb.si_bmap
 DECL|macro|su_imap
 mdefine_line|#define su_imap&t;&t;u.bfs_sb.si_imap
 DECL|macro|su_sbh
@@ -26,4 +24,6 @@ DECL|macro|iu_sblock
 mdefine_line|#define iu_sblock&t;u.bfs_i.i_sblock
 DECL|macro|iu_eblock
 mdefine_line|#define iu_eblock&t;u.bfs_i.i_eblock
+DECL|macro|printf
+mdefine_line|#define printf(format, args...) &bslash;&n;&t;printk(KERN_ERR &quot;BFS-fs: &quot; __FUNCTION__ &quot;(): &quot; format, ## args)
 eof

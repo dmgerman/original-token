@@ -2,12 +2,8 @@ multiline_comment|/*&n; *  linux/arch/arm/kernel/time.c&n; *&n; *  Copyright (C)
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/param.h&gt;
-macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/time.h&gt;
-macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -28,6 +24,14 @@ op_star
 )paren
 suffix:semicolon
 r_extern
+r_void
+id|setup_timer
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
 r_volatile
 r_int
 r_int
@@ -44,10 +48,64 @@ macro_line|#ifndef BIN_TO_BCD
 DECL|macro|BIN_TO_BCD
 mdefine_line|#define BIN_TO_BCD(val) ((val)=(((val)/10)&lt;&lt;4) + (val)%10)
 macro_line|#endif
+DECL|function|dummy_set_rtc
+r_static
+r_int
+id|dummy_set_rtc
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * hook for setting the RTC&squot;s idea of the current time.&n; */
+DECL|variable|set_rtc
+r_int
+(paren
+op_star
+id|set_rtc
+)paren
+(paren
+r_void
+)paren
+op_assign
+id|dummy_set_rtc
+suffix:semicolon
+DECL|function|dummy_gettimeoffset
+r_static
+r_int
+r_int
+id|dummy_gettimeoffset
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * hook for getting the time offset&n; */
+DECL|variable|gettimeoffset
+r_int
+r_int
+(paren
+op_star
+id|gettimeoffset
+)paren
+(paren
+r_void
+)paren
+op_assign
+id|dummy_gettimeoffset
+suffix:semicolon
 multiline_comment|/* Converts Gregorian date to seconds since 1970-01-01 00:00:00.&n; * Assumes input in normal date format, i.e. 1980-12-31 23:59:59&n; * =&gt; year=1980, mon=12, day=31, hour=23, min=59, sec=59.&n; *&n; * [For the Julian calendar (which was used in Russia before 1917,&n; * Britain &amp; colonies before 1752, anywhere else before 1582,&n; * and is still in use by some communities) leave out the&n; * -year/100+year/400 terms, and add 10.]&n; *&n; * This algorithm was first published by Gauss (I think).&n; *&n; * WARNING: this function will overflow on 2106-02-07 06:28:16 on&n; * machines were long is 32-bit! (However, as time_t is signed, we&n; * will already get problems at other places on 2038-01-19 03:14:08)&n; */
+r_int
+r_int
 DECL|function|mktime
-r_int
-r_int
 id|mktime
 c_func
 (paren
@@ -157,26 +215,45 @@ id|sec
 suffix:semicolon
 multiline_comment|/* finally seconds */
 )brace
-multiline_comment|/*&n; * Handle profile stuff...&n; */
+multiline_comment|/*&n; * Handle kernel profile stuff...&n; */
 DECL|function|do_profile
 r_static
+r_inline
 r_void
 id|do_profile
 c_func
 (paren
-r_int
-r_int
-id|pc
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 (brace
 r_if
 c_cond
 (paren
+op_logical_neg
+id|user_mode
+c_func
+(paren
+id|regs
+)paren
+op_logical_and
 id|prof_buffer
 op_logical_and
 id|current-&gt;pid
 )paren
 (brace
+r_int
+r_int
+id|pc
+op_assign
+id|instruction_pointer
+c_func
+(paren
+id|regs
+)paren
+suffix:semicolon
 r_extern
 r_int
 id|_stext
@@ -216,23 +293,176 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
-macro_line|#include &lt;asm/arch/time.h&gt;
-DECL|function|do_gettimeoffset
+DECL|variable|next_rtc_update
 r_static
 r_int
-r_int
-id|do_gettimeoffset
+id|next_rtc_update
+suffix:semicolon
+multiline_comment|/*&n; * If we have an externally synchronized linux clock, then update&n; * CMOS clock accordingly every ~11 minutes.  set_rtc() has to be&n; * called as close as possible to 500 ms before the new second&n; * starts.&n; */
+DECL|function|do_set_rtc
+r_static
+r_inline
+r_void
+id|do_set_rtc
 c_func
 (paren
 r_void
 )paren
 (brace
-r_return
-id|gettimeoffset
+r_if
+c_cond
 (paren
+id|time_status
+op_amp
+id|STA_UNSYNC
+op_logical_or
+id|set_rtc
+op_eq
+l_int|NULL
+)paren
+r_return
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|next_rtc_update
+op_logical_and
+id|time_before
+c_func
+(paren
+id|xtime.tv_sec
+comma
+id|next_rtc_update
+)paren
+)paren
+r_return
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|xtime.tv_usec
+OL
+l_int|50000
+op_minus
+(paren
+id|tick
+op_rshift
+l_int|1
+)paren
+op_logical_and
+id|xtime.tv_usec
+op_ge
+l_int|50000
+op_plus
+(paren
+id|tick
+op_rshift
+l_int|1
+)paren
+)paren
+r_return
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|set_rtc
+c_func
+(paren
+)paren
+)paren
+multiline_comment|/*&n;&t;&t; * rtc update failed.  Try again in 60s&n;&t;&t; */
+id|next_rtc_update
+op_assign
+id|xtime.tv_sec
+op_plus
+l_int|60
+suffix:semicolon
+r_else
+id|next_rtc_update
+op_assign
+id|xtime.tv_sec
+op_plus
+l_int|660
+suffix:semicolon
+)brace
+macro_line|#ifdef CONFIG_LEDS
+macro_line|#include &lt;asm/leds.h&gt;
+DECL|function|do_leds
+r_static
+r_void
+id|do_leds
+c_func
+(paren
+r_void
+)paren
+(brace
+r_static
+r_int
+r_int
+id|count
+op_assign
+l_int|50
+suffix:semicolon
+r_static
+r_int
+id|last_pid
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|current-&gt;pid
+op_ne
+id|last_pid
+)paren
+(brace
+id|last_pid
+op_assign
+id|current-&gt;pid
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|last_pid
+)paren
+id|leds_event
+c_func
+(paren
+id|led_idle_end
+)paren
+suffix:semicolon
+r_else
+id|leds_event
+c_func
+(paren
+id|led_idle_start
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+op_decrement
+id|count
+op_eq
+l_int|0
+)paren
+(brace
+id|count
+op_assign
+l_int|50
+suffix:semicolon
+id|leds_event
+c_func
+(paren
+id|led_timer
+)paren
+suffix:semicolon
+)brace
+)brace
+macro_line|#else
+DECL|macro|do_leds
+mdefine_line|#define do_leds()
+macro_line|#endif
 DECL|function|do_gettimeofday
 r_void
 id|do_gettimeofday
@@ -260,7 +490,7 @@ id|xtime
 suffix:semicolon
 id|tv-&gt;tv_usec
 op_add_assign
-id|do_gettimeoffset
+id|gettimeoffset
 c_func
 (paren
 )paren
@@ -316,7 +546,7 @@ suffix:semicolon
 multiline_comment|/* This is revolting. We need to set the xtime.tv_usec&n;&t; * correctly. However, the value in this location is&n;&t; * is value at the last tick.&n;&t; * Discover what correction gettimeofday&n;&t; * would have done, and then undo it!&n;&t; */
 id|tv-&gt;tv_usec
 op_sub_assign
-id|do_gettimeoffset
+id|gettimeoffset
 c_func
 (paren
 )paren
@@ -365,6 +595,29 @@ c_func
 )paren
 suffix:semicolon
 )brace
+DECL|variable|timer_irq
+r_static
+r_struct
+id|irqaction
+id|timer_irq
+op_assign
+(brace
+l_int|NULL
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_string|&quot;timer&quot;
+comma
+l_int|NULL
+comma
+l_int|NULL
+)brace
+suffix:semicolon
+multiline_comment|/*&n; * Include architecture specific code&n; */
+macro_line|#include &lt;asm/arch/time.h&gt;
+multiline_comment|/*&n; * This must cause the timer to start ticking.&n; * It doesn&squot;t have to set the current time though&n; * from an RTC - it can be done later once we have&n; * some buses initialised.&n; */
 DECL|function|time_init
 r_void
 id|__init
@@ -375,6 +628,10 @@ r_void
 )paren
 (brace
 id|xtime.tv_usec
+op_assign
+l_int|0
+suffix:semicolon
+id|xtime.tv_sec
 op_assign
 l_int|0
 suffix:semicolon

@@ -218,7 +218,9 @@ mdefine_line|#define  PCI_BRIDGE_CTL_BUS_RESET 0x40&t;/* Secondary bus reset */
 DECL|macro|PCI_BRIDGE_CTL_FAST_BACK
 mdefine_line|#define  PCI_BRIDGE_CTL_FAST_BACK 0x80&t;/* Fast Back2Back enabled on secondary interface */
 multiline_comment|/* Header type 2 (CardBus bridges) */
-multiline_comment|/* 0x14-0x15 reserved */
+DECL|macro|PCI_CB_CAPABILITY_LIST
+mdefine_line|#define PCI_CB_CAPABILITY_LIST&t;0x14
+multiline_comment|/* 0x15 reserved */
 DECL|macro|PCI_CB_SEC_STATUS
 mdefine_line|#define PCI_CB_SEC_STATUS&t;0x16&t;/* Secondary status */
 DECL|macro|PCI_CB_PRIMARY_BUS

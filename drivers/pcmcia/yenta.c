@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;pcmcia/ss.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;yenta.h&quot;
@@ -4007,6 +4008,13 @@ id|yenta_set_mem_map
 comma
 id|yenta_proc_setup
 )brace
+suffix:semicolon
+DECL|variable|yenta_operations
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|yenta_operations
+)paren
 suffix:semicolon
 multiline_comment|/*&n; * Ricoh cardbus bridge: standard cardbus, except it needs&n; * some extra init code to set timings etc.&n; */
 DECL|variable|ricoh_operations

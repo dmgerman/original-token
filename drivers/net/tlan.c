@@ -1,6 +1,7 @@
-multiline_comment|/*******************************************************************************&n; *&n; *  Linux ThunderLAN Driver&n; *&n; *  tlan.c&n; *  by James Banks&n; *&n; *  (C) 1997-1998 Caldera, Inc.&n; *  (C) 1998 James Banks&n; *  (C) 1999, 2000 Torben Mathiasen&n; *&n; *  This software may be used and distributed according to the terms&n; *  of the GNU Public License, incorporated herein by reference.&n; *&n; ** This file is best viewed/edited with columns&gt;=132.&n; *&n; ** Useful (if not required) reading:&n; *&n; *&t;&t;Texas Instruments, ThunderLAN Programmer&squot;s Guide,&n; *&t;&t;&t;TI Literature Number SPWU013A&n; *&t;&t;&t;available in PDF format from www.ti.com&n; *&t;&t;Level One, LXT901 and LXT970 Data Sheets&n; *&t;&t;&t;available in PDF format from www.level1.com&n; *&t;&t;National Semiconductor, DP83840A Data Sheet&n; *&t;&t;&t;available in PDF format from www.national.com&n; *&t;&t;Microchip Technology, 24C01A/02A/04A Data Sheet&n; *&t;&t;&t;available in PDF format from www.microchip.com&n; *&n; * Change History&n; *&n; *&t;Tigran Aivazian &lt;tigran@sco.com&gt;:&t;TLan_PciProbe() now uses&n; *&t;&t;&t;&t;&t;&t;new PCI BIOS interface.&n; *&t;Alan Cox&t;&lt;alan@redhat.com&gt;:&t;Fixed the out of memory&n; *&t;&t;&t;&t;&t;&t;handling.&n; *      &n; *&t;Torben Mathiasen &lt;torben.mathiasen@compaq.com&gt; New Maintainer!&n; *&n; *&t;v1.1 Dec 20, 1999    - Removed linux version checking&n; *&t;&t;&t;       Patch from Tigran Aivazian. &n; *&t;&t;&t;     - v1.1 includes Alan&squot;s SMP updates.&n; *&t;&t;&t;     - We still have problems on SMP though,&n; *&t;&t;&t;       but I&squot;m looking into that. &n; *&t;&t;&t;&n; *&t;v1.2 Jan 02, 2000    - Hopefully fixed the SMP deadlock.&n; *&t;&t;&t;     - Removed dependency of HZ being 100.&n; *&t;&t;&t;     - We now allow higher priority timers to &n; *&t;&t;&t;       overwrite timers like TLAN_TIMER_ACTIVITY&n; *&t;&t;&t;       Patch from John Cagle &lt;john.cagle@compaq.com&gt;.&n; *&t;&t;&t;     - Fixed a few compiler warnings.&n; *&t;&t;&t;     &n; *&n; *******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; *  Linux ThunderLAN Driver&n; *&n; *  tlan.c&n; *  by James Banks&n; *&n; *  (C) 1997-1998 Caldera, Inc.&n; *  (C) 1998 James Banks&n; *  (C) 1999, 2000 Torben Mathiasen&n; *&n; *  This software may be used and distributed according to the terms&n; *  of the GNU Public License, incorporated herein by reference.&n; *&n; ** This file is best viewed/edited with columns&gt;=132.&n; *&n; ** Useful (if not required) reading:&n; *&n; *&t;&t;Texas Instruments, ThunderLAN Programmer&squot;s Guide,&n; *&t;&t;&t;TI Literature Number SPWU013A&n; *&t;&t;&t;available in PDF format from www.ti.com&n; *&t;&t;Level One, LXT901 and LXT970 Data Sheets&n; *&t;&t;&t;available in PDF format from www.level1.com&n; *&t;&t;National Semiconductor, DP83840A Data Sheet&n; *&t;&t;&t;available in PDF format from www.national.com&n; *&t;&t;Microchip Technology, 24C01A/02A/04A Data Sheet&n; *&t;&t;&t;available in PDF format from www.microchip.com&n; *&n; * Change History&n; *&n; *&t;Tigran Aivazian &lt;tigran@sco.com&gt;:&t;TLan_PciProbe() now uses&n; *&t;&t;&t;&t;&t;&t;new PCI BIOS interface.&n; *&t;Alan Cox&t;&lt;alan@redhat.com&gt;:&t;Fixed the out of memory&n; *&t;&t;&t;&t;&t;&t;handling.&n; *      &n; *&t;Torben Mathiasen &lt;torben.mathiasen@compaq.com&gt; New Maintainer!&n; *&n; *&t;v1.1 Dec 20, 1999    - Removed linux version checking&n; *&t;&t;&t;       Patch from Tigran Aivazian. &n; *&t;&t;&t;     - v1.1 includes Alan&squot;s SMP updates.&n; *&t;&t;&t;     - We still have problems on SMP though,&n; *&t;&t;&t;       but I&squot;m looking into that. &n; *&t;&t;&t;&n; *&t;v1.2 Jan 02, 2000    - Hopefully fixed the SMP deadlock.&n; *&t;&t;&t;     - Removed dependency of HZ being 100.&n; *&t;&t;&t;     - We now allow higher priority timers to &n; *&t;&t;&t;       overwrite timers like TLAN_TIMER_ACTIVITY&n; *&t;&t;&t;       Patch from John Cagle &lt;john.cagle@compaq.com&gt;.&n; *&t;&t;&t;     - Fixed a few compiler warnings.&n; *&n; *&t;v1.3 Feb 04, 2000    - Fixed the remaining HZ issues.&n; *&t;&t;&t;     - Removed call to pci_present(). &n; *&t;&t;&t;     - Removed SA_INTERRUPT flag from irq handler.&n; *&t;&t;&t;     - Added __init and __initdata to reduce resisdent &n; *&t;&t;&t;       code size.&n; *&t;&t;&t;     - Driver now uses module_init/module_exit.&n; *&t;&t;&t;     - Rewrote init_module and tlan_probe to&n; *&t;&t;&t;       share a lot more code. We now use tlan_probe&n; *&t;&t;&t;       with builtin and module driver.&n; *&t;&t;&t;     - Driver ported to new net API. &n; *&t;&t;&t;     - tlan.txt has been reworked to reflect current &n; *&t;&t;&t;       driver (almost)&n; *&t;&t;&t;     - Other minor stuff&n; *&n; *******************************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;tlan.h&quot;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
@@ -20,7 +21,6 @@ comma
 id|u16
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
 DECL|variable|TLanDevices
 r_static
 r_struct
@@ -37,17 +37,11 @@ id|TLanDevicesInstalled
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* Force speed, duplex and aui settings */
 DECL|variable|aui
 r_static
 r_int
 id|aui
-op_assign
-l_int|0
-suffix:semicolon
-DECL|variable|sa_int
-r_static
-r_int
-id|sa_int
 op_assign
 l_int|0
 suffix:semicolon
@@ -65,18 +59,11 @@ id|speed
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef MODULE
 id|MODULE_PARM
 c_func
 (paren
 id|aui
-comma
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
-id|sa_int
 comma
 l_string|&quot;i&quot;
 )paren
@@ -108,6 +95,7 @@ suffix:semicolon
 id|EXPORT_NO_SYMBOLS
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* Turn on debugging. See linux/Documentation/networking/tlan.txt for details */
 DECL|variable|debug
 r_static
 r_int
@@ -149,14 +137,15 @@ r_static
 r_int
 id|TLanVersionMinor
 op_assign
-l_int|2
+l_int|3
 suffix:semicolon
-DECL|variable|TLanAdapterList
+DECL|variable|__initdata
 r_static
 id|TLanAdapterEntry
 id|TLanAdapterList
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 (brace
@@ -941,405 +930,11 @@ suffix:semicolon
 )brace
 multiline_comment|/* TLan_SetTimer */
 multiline_comment|/*****************************************************************************&n;******************************************************************************&n;&n;&t;ThunderLAN Driver Primary Functions&n;&n;&t;These functions are more or less common to all Linux network drivers.&n;&n;******************************************************************************&n;*****************************************************************************/
-macro_line|#ifdef MODULE
-multiline_comment|/***************************************************************&n;&t; *&t;init_module&n;&t; *&n;&t; *&t;Returns:&n;&t; *&t;&t;0 if module installed ok, non-zero if not.&n;&t; *&t;Parms:&n;&t; *&t;&t;None&n;&t; *&n;&t; *&t;This function begins the setup of the driver creating a&n;&t; *&t;pad buffer, finding all TLAN devices (matching&n;&t; *&t;TLanAdapterList entries), and creating and initializing a&n;&t; *&t;device structure for each adapter.&n;&t; *&n;&t; **************************************************************/
-DECL|function|init_module
-r_extern
-r_int
-id|init_module
-c_func
-(paren
+multiline_comment|/***************************************************************&n;&t; *&t;tlan_exit&n;&t; *&n;&t; *&t;Returns:&n;&t; *&t;&t;Nothing&n;&t; *&t;Parms:&n;&t; *&t;&t;None&n;&t; *&n;&t; *&t;Goes through the TLanDevices list and frees the device&n;&t; *&t;structs and memory associated with each device (lists&n;&t; *&t;and buffers).  It also ureserves the IO port regions&n;&t; *&t;associated with this device.&n;&t; *&n;&t; **************************************************************/
+DECL|function|tlan_exit
 r_void
-)paren
-(brace
-id|TLanPrivateInfo
-op_star
-id|priv
-suffix:semicolon
-r_struct
-id|net_device
-op_star
-id|dev
-suffix:semicolon
-r_int
-id|dev_size
-suffix:semicolon
-id|u8
-id|dfn
-suffix:semicolon
-id|u32
-id|index
-suffix:semicolon
-r_int
-id|failed
-suffix:semicolon
-r_int
-id|found
-suffix:semicolon
-id|u32
-id|io_base
-suffix:semicolon
-id|u8
-id|irq
-suffix:semicolon
-id|u8
-id|rev
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;TLAN driver, v%d.%d, (C) 1997-8 Caldera, Inc.&bslash;n&quot;
-comma
-id|TLanVersionMajor
-comma
-id|TLanVersionMinor
-)paren
-suffix:semicolon
-id|TLanPadBuffer
-op_assign
-(paren
-id|u8
-op_star
-)paren
-id|kmalloc
-c_func
-(paren
-id|TLAN_MIN_FRAME_SIZE
-comma
-(paren
-id|GFP_KERNEL
-op_or
-id|GFP_DMA
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|TLanPadBuffer
-op_eq
-l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;TLAN:  Could not allocate memory for pad buffer.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|ENOMEM
-suffix:semicolon
-)brace
-id|memset
-c_func
-(paren
-id|TLanPadBuffer
-comma
-l_int|0
-comma
-id|TLAN_MIN_FRAME_SIZE
-)paren
-suffix:semicolon
-id|dev_size
-op_assign
-r_sizeof
-(paren
-r_struct
-id|net_device
-)paren
-op_plus
-r_sizeof
-(paren
-id|TLanPrivateInfo
-)paren
-suffix:semicolon
-r_while
-c_loop
-(paren
-(paren
-id|found
-op_assign
-id|TLan_PciProbe
-c_func
-(paren
-op_amp
-id|dfn
-comma
-op_amp
-id|irq
-comma
-op_amp
-id|rev
-comma
-op_amp
-id|io_base
-comma
-op_amp
-id|index
-)paren
-)paren
-)paren
-(brace
-id|dev
-op_assign
-(paren
-r_struct
-id|net_device
-op_star
-)paren
-id|kmalloc
-c_func
-(paren
-id|dev_size
-comma
-id|GFP_KERNEL
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev
-op_eq
-l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;TLAN:  Could not allocate memory for device.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_continue
-suffix:semicolon
-)brace
-id|memset
-c_func
-(paren
-id|dev
-comma
-l_int|0
-comma
-id|dev_size
-)paren
-suffix:semicolon
-id|dev-&gt;priv
-op_assign
-id|priv
-op_assign
-(paren
-(paren
-r_void
-op_star
-)paren
-id|dev
-)paren
-op_plus
-r_sizeof
-(paren
-r_struct
-id|net_device
-)paren
-suffix:semicolon
-id|dev-&gt;name
-op_assign
-id|priv-&gt;devName
-suffix:semicolon
-id|strcpy
-c_func
-(paren
-id|priv-&gt;devName
-comma
-l_string|&quot;    &quot;
-)paren
-suffix:semicolon
-id|dev-&gt;base_addr
-op_assign
-id|io_base
-suffix:semicolon
-id|dev-&gt;irq
-op_assign
-id|irq
-suffix:semicolon
-id|dev-&gt;init
-op_assign
-id|TLan_Init
-suffix:semicolon
-id|priv-&gt;adapter
-op_assign
-op_amp
-id|TLanAdapterList
-(braket
-id|index
-)braket
-suffix:semicolon
-id|priv-&gt;adapterRev
-op_assign
-id|rev
-suffix:semicolon
-id|priv-&gt;aui
-op_assign
-id|aui
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|duplex
-op_ne
-l_int|1
-)paren
-op_logical_and
-(paren
-id|duplex
-op_ne
-l_int|2
-)paren
-)paren
-(brace
-id|duplex
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-id|priv-&gt;duplex
-op_assign
-id|duplex
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|speed
-op_ne
-l_int|10
-)paren
-op_logical_and
-(paren
-id|speed
-op_ne
-l_int|100
-)paren
-)paren
-(brace
-id|speed
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-id|priv-&gt;speed
-op_assign
-id|speed
-suffix:semicolon
-id|priv-&gt;sa_int
-op_assign
-id|sa_int
-suffix:semicolon
-id|priv-&gt;debug
-op_assign
-id|debug
-suffix:semicolon
-id|spin_lock_init
-c_func
-(paren
-op_amp
-id|priv-&gt;lock
-)paren
-suffix:semicolon
-id|ether_setup
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-id|failed
-op_assign
-id|register_netdev
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|failed
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;TLAN:  Could not register device.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|kfree
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|priv-&gt;nextDevice
-op_assign
-id|TLanDevices
-suffix:semicolon
-id|TLanDevices
-op_assign
-id|dev
-suffix:semicolon
-id|TLanDevicesInstalled
-op_increment
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;TLAN:  %s irq=%2d io=%04x, %s, Rev. %d&bslash;n&quot;
-comma
-id|dev-&gt;name
-comma
-(paren
-r_int
-)paren
-id|dev-&gt;irq
-comma
-(paren
-r_int
-)paren
-id|dev-&gt;base_addr
-comma
-id|priv-&gt;adapter-&gt;deviceLabel
-comma
-id|priv-&gt;adapterRev
-)paren
-suffix:semicolon
-)brace
-)brace
-multiline_comment|/* printk( &quot;TLAN:  Found %d device(s).&bslash;n&quot;, TLanDevicesInstalled ); */
-r_return
-(paren
-(paren
-id|TLanDevicesInstalled
-OG
-l_int|0
-)paren
-ques
-c_cond
-l_int|0
-suffix:colon
-op_minus
-id|ENODEV
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* init_module */
-multiline_comment|/***************************************************************&n;&t; *&t;cleanup_module&n;&t; *&n;&t; *&t;Returns:&n;&t; *&t;&t;Nothing&n;&t; *&t;Parms:&n;&t; *&t;&t;None&n;&t; *&n;&t; *&t;Goes through the TLanDevices list and frees the device&n;&t; *&t;structs and memory associated with each device (lists&n;&t; *&t;and buffers).  It also ureserves the IO port regions&n;&t; *&t;associated with this device.&n;&t; *&n;&t; **************************************************************/
-DECL|function|cleanup_module
-r_extern
-r_void
-id|cleanup_module
+id|__exit
+id|tlan_exit
 c_func
 (paren
 r_void
@@ -1420,21 +1015,21 @@ id|TLanPadBuffer
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* cleanup_module */
-macro_line|#else /* MODULE */
-multiline_comment|/***************************************************************&n;&t; *&t;tlan_probe&n;&t; *&n;&t; *&t;Returns:&n;&t; *&t;&t;0 on success, error code on error&n;&t; *&t;Parms:&n;&t; *&t;&t;dev&t;device struct to use if adapter is&n;&t; *&t;&t;&t;found.&n;&t; *&n;&t; *&t;The name is lower case to fit in with all the rest of&n;&t; *&t;the netcard_probe names.  This function looks for a/&n;&t; *&t;another TLan based adapter, setting it up with the&n;&t; *&t;provided device struct if one is found.&n;&t; *&n;&t; **************************************************************/
+multiline_comment|/*&n;&t;***************************************************************&n;&t; *&t;tlan_probe&n;&t; *&n;&t; *&t;Returns:&n;&t; *&t;&t;0 on success, error code on error&n;&t; *&t;Parms: &n;&t; *&t;&t;none&n;&t; *&n;&t; *&t;The name is lower case to fit in with all the rest of&n;&t; *&t;the netcard_probe names.  This function looks for &n;&t; *&t;another TLan based adapter, setting it up with the&n;&t; *&t;allocated device struct if one is found.&n;&t; *&t;tlan_probe has been ported to the new net API and&n;&t; *&t;now allocates its own device structure. This function&n;&t; *&t;is also used by modules.&n;&t; *&n;&t; **************************************************************/
 DECL|function|tlan_probe
-r_extern
 r_int
+id|__init
 id|tlan_probe
 c_func
 (paren
+r_void
+)paren
+(brace
 r_struct
 id|net_device
 op_star
 id|dev
-)paren
-(brace
+suffix:semicolon
 id|TLanPrivateInfo
 op_star
 id|priv
@@ -1444,9 +1039,6 @@ r_int
 id|pad_allocated
 op_assign
 l_int|0
-suffix:semicolon
-r_int
-id|found
 suffix:semicolon
 id|u8
 id|dfn
@@ -1460,6 +1052,72 @@ id|io_base
 comma
 id|index
 suffix:semicolon
+r_int
+id|found
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;ThunderLAN driver v%d.%d:&bslash;n&quot;
+comma
+id|TLanVersionMajor
+comma
+id|TLanVersionMinor
+)paren
+suffix:semicolon
+id|TLanPadBuffer
+op_assign
+(paren
+id|u8
+op_star
+)paren
+id|kmalloc
+c_func
+(paren
+id|TLAN_MIN_FRAME_SIZE
+comma
+(paren
+id|GFP_KERNEL
+op_or
+id|GFP_DMA
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|TLanPadBuffer
+op_eq
+l_int|NULL
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;TLAN: Could not allocate memory for pad buffer.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
+)brace
+id|memset
+c_func
+(paren
+id|TLanPadBuffer
+comma
+l_int|0
+comma
+id|TLAN_MIN_FRAME_SIZE
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+(paren
 id|found
 op_assign
 id|TLan_PciProbe
@@ -1480,151 +1138,88 @@ comma
 op_amp
 id|index
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|found
+)paren
 )paren
 (brace
-r_return
-op_minus
-id|ENODEV
-suffix:semicolon
-)brace
-id|dev-&gt;priv
-op_assign
-id|kmalloc
-c_func
-(paren
-r_sizeof
-(paren
-id|TLanPrivateInfo
-)paren
-comma
-id|GFP_KERNEL
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev-&gt;priv
-op_eq
-l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;TLAN:  Could not allocate memory for device.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|ENOMEM
-suffix:semicolon
-)brace
-id|memset
-c_func
-(paren
-id|dev-&gt;priv
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-id|TLanPrivateInfo
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|pad_allocated
-)paren
-(brace
-id|TLanPadBuffer
-op_assign
-(paren
-id|u8
-op_star
-)paren
-id|kmalloc
-c_func
-(paren
-id|TLAN_MIN_FRAME_SIZE
-comma
-singleline_comment|//&t;&t;&t;&t;&t;&t;( GFP_KERNEL | GFP_DMA )
-(paren
-id|GFP_KERNEL
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|TLanPadBuffer
-op_eq
-l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;TLAN:  Could not allocate memory for padding.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|kfree
-c_func
-(paren
-id|dev-&gt;priv
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|ENOMEM
-suffix:semicolon
-)brace
-r_else
-(brace
-id|pad_allocated
-op_assign
-l_int|1
-suffix:semicolon
-id|memset
-c_func
-(paren
-id|TLanPadBuffer
-comma
-l_int|0
-comma
-id|TLAN_MIN_FRAME_SIZE
-)paren
-suffix:semicolon
-)brace
-)brace
-id|priv
-op_assign
-(paren
-id|TLanPrivateInfo
-op_star
-)paren
-id|dev-&gt;priv
-suffix:semicolon
 id|dev
 op_assign
 id|init_etherdev
 c_func
 (paren
-id|dev
+l_int|NULL
 comma
 r_sizeof
 (paren
 id|TLanPrivateInfo
 )paren
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev
+op_eq
+l_int|NULL
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;TLAN: Could not allocate memory for device.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
+)brace
+id|priv
+op_assign
+id|dev-&gt;priv
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;priv
+op_eq
+l_int|NULL
+)paren
+(brace
+id|dev-&gt;priv
+op_assign
+id|kmalloc
+c_func
+(paren
+r_sizeof
+(paren
+id|TLanPrivateInfo
+)paren
+comma
+id|GFP_KERNEL
+)paren
+suffix:semicolon
+id|priv
+op_assign
+id|dev-&gt;priv
+suffix:semicolon
+)brace
+id|memset
+c_func
+(paren
+id|priv
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|TLanPrivateInfo
+)paren
+)paren
+suffix:semicolon
+id|pad_allocated
+op_assign
+l_int|1
 suffix:semicolon
 id|dev-&gt;base_addr
 op_assign
@@ -1648,92 +1243,57 @@ id|rev
 suffix:semicolon
 id|priv-&gt;aui
 op_assign
-id|dev-&gt;mem_start
-op_amp
-l_int|0x01
+id|aui
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|duplex
+op_ne
+l_int|1
+)paren
+op_logical_and
+(paren
+id|duplex
+op_ne
+l_int|2
+)paren
+)paren
+id|duplex
+op_assign
+l_int|0
 suffix:semicolon
 id|priv-&gt;duplex
 op_assign
-(paren
-(paren
-id|dev-&gt;mem_start
-op_amp
-l_int|0x0C
-)paren
-op_eq
-l_int|0x0C
-)paren
-ques
-c_cond
-l_int|0
-suffix:colon
-(paren
-id|dev-&gt;mem_start
-op_amp
-l_int|0x0C
-)paren
-op_rshift
-l_int|2
-suffix:semicolon
-id|priv-&gt;speed
-op_assign
-(paren
-(paren
-id|dev-&gt;mem_start
-op_amp
-l_int|0x30
-)paren
-op_eq
-l_int|0x30
-)paren
-ques
-c_cond
-l_int|0
-suffix:colon
-(paren
-id|dev-&gt;mem_start
-op_amp
-l_int|0x30
-)paren
-op_rshift
-l_int|4
+id|duplex
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|priv-&gt;speed
-op_eq
-l_int|0x1
-)paren
-(brace
-id|priv-&gt;speed
-op_assign
-id|TLAN_SPEED_10
-suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
 (paren
-id|priv-&gt;speed
-op_eq
-l_int|0x2
+id|speed
+op_ne
+l_int|10
 )paren
-(brace
+op_logical_and
+(paren
+id|speed
+op_ne
+l_int|100
+)paren
+)paren
+id|speed
+op_assign
+l_int|0
+suffix:semicolon
 id|priv-&gt;speed
 op_assign
-id|TLAN_SPEED_100
-suffix:semicolon
-)brace
-id|priv-&gt;sa_int
-op_assign
-id|dev-&gt;mem_start
-op_amp
-l_int|0x02
+id|speed
 suffix:semicolon
 id|priv-&gt;debug
 op_assign
-id|dev-&gt;mem_end
+id|debug
 suffix:semicolon
 id|spin_lock_init
 c_func
@@ -1742,41 +1302,114 @@ op_amp
 id|priv-&gt;lock
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|TLan_Init
+c_func
+(paren
+id|dev
+)paren
+)paren
+(brace
 id|printk
 c_func
 (paren
-l_string|&quot;TLAN %d.%d:  %s irq=%2d io=%04x, %s, Rev. %d&bslash;n&quot;
-comma
-id|TLanVersionMajor
-comma
-id|TLanVersionMinor
+id|KERN_ERR
+l_string|&quot;TLAN: Could not register device.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|unregister_netdev
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|TLanDevicesInstalled
+op_increment
+suffix:semicolon
+id|priv-&gt;nextDevice
+op_assign
+id|TLanDevices
+suffix:semicolon
+id|TLanDevices
+op_assign
+id|dev
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;TLAN: %s irq=%2d, io=%04x, %s, Rev. %d&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
 (paren
 r_int
 )paren
-id|irq
+id|dev-&gt;irq
 comma
-id|io_base
+(paren
+r_int
+)paren
+id|dev-&gt;base_addr
 comma
 id|priv-&gt;adapter-&gt;deviceLabel
 comma
 id|priv-&gt;adapterRev
 )paren
 suffix:semicolon
-id|TLan_Init
+)brace
+)brace
+id|printk
 c_func
 (paren
-id|dev
+id|KERN_INFO
+l_string|&quot;TLAN: %d device(s) installed&bslash;n&quot;
+comma
+id|TLanDevicesInstalled
 )paren
 suffix:semicolon
 r_return
+(paren
+(paren
+id|TLanDevicesInstalled
+OG
 l_int|0
+)paren
+ques
+c_cond
+l_int|0
+suffix:colon
+op_minus
+id|ENODEV
+)paren
 suffix:semicolon
 )brace
-multiline_comment|/* tlan_probe */
-macro_line|#endif /* MODULE */
+multiline_comment|/* Module loading/unloading */
+DECL|variable|tlan_probe
+id|module_init
+c_func
+(paren
+id|tlan_probe
+)paren
+suffix:semicolon
+DECL|variable|tlan_exit
+id|module_exit
+c_func
+(paren
+id|tlan_exit
+)paren
+suffix:semicolon
 multiline_comment|/***************************************************************&n;&t; *&t;TLan_PciProbe&n;&t; *&n;&t; *&t;Returns:&n;&t; *&t;&t;1 if another TLAN card was found, 0 if not.&n;&t; *&t;Parms:&n;&t; *&t;&t;pci_dfn&t;&t;The PCI whatever the card was&n;&t; *&t;&t;&t;&t;found at.&n;&t; *&t;&t;pci_irq&t;&t;The IRQ of the found adapter.&n;&t; *&t;&t;pci_rev&t;&t;The revision of the adapter.&n;&t; *&t;&t;pci_io_base&t;The first IO port used by the&n;&t; *&t;&t;&t;&t;adapter.&n;&t; *&t;&t;dl_ix&t;&t;The index in the device list&n;&t; *&t;&t;&t;&t;of the adapter.&n;&t; *&n;&t; *&t;This function searches for an adapter with PCI vendor&n;&t; *&t;and device IDs matching those in the TLanAdapterList.&n;&t; *&t;The function &squot;remembers&squot; the last device it found,&n;&t; *&t;and so finds a new device (if anymore are to be found)&n;&t; *&t;each time the function is called.  It then looks up&n;&t; *&t;pertinent PCI info and returns it to the caller.&n;&t; *&n;&t; **************************************************************/
 DECL|function|TLan_PciProbe
 r_int
@@ -1824,26 +1457,6 @@ suffix:semicolon
 r_int
 id|reg
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|pci_present
-c_func
-(paren
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;TLAN:   PCI Bios not present.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 r_for
 c_loop
 (paren
@@ -1894,7 +1507,7 @@ c_func
 (paren
 id|TLAN_DEBUG_GNRL
 comma
-l_string|&quot;TLAN:  found: Vendor Id = 0x%hx, Device Id = 0x%hx&bslash;n&quot;
+l_string|&quot;found: Vendor Id = 0x%hx, Device Id = 0x%hx&bslash;n&quot;
 comma
 id|TLanAdapterList
 (braket
@@ -2003,7 +1616,7 @@ c_func
 (paren
 id|TLAN_DEBUG_GNRL
 comma
-l_string|&quot;TLAN:    IO mapping is available at %x.&bslash;n&quot;
+l_string|&quot;IO mapping is available at %x.&bslash;n&quot;
 comma
 op_star
 id|pci_io_base
@@ -2032,6 +1645,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;TLAN:    IO mapping not available, ignoring device.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2073,6 +1687,7 @@ suffix:semicolon
 multiline_comment|/* TLan_PciProbe */
 multiline_comment|/***************************************************************&n;&t; *&t;TLan_Init&n;&t; *&n;&t; *&t;Returns:&n;&t; *&t;&t;0 on success, error code otherwise.&n;&t; *&t;Parms:&n;&t; *&t;&t;dev&t;The structure of the device to be&n;&t; *&t;&t;&t;init&squot;ed.&n;&t; *&n;&t; *&t;This function completes the initialization of the&n;&t; *&t;device structure and driver.  It reserves the IO&n;&t; *&t;addresses, allocates memory for the lists and bounce&n;&t; *&t;buffers, retrieves the MAC address from the eeprom&n;&t; *&t;and assignes the device&squot;s methods.&n;&t; *&t;&n;&t; **************************************************************/
 DECL|function|TLan_Init
+r_static
 r_int
 id|TLan_Init
 c_func
@@ -2123,7 +1738,8 @@ id|err
 id|printk
 c_func
 (paren
-l_string|&quot;TLAN:  %s: Io port region 0x%lx size 0x%x in use.&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;TLAN: %s: Io port region 0x%lx size 0x%x in use.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -2212,6 +1828,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;TLAN:  Could not allocate lists and buffers for %s.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -2340,6 +1957,7 @@ id|err
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;TLAN:  %s: Error reading MAC from eeprom: %d&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -2352,6 +1970,7 @@ id|dev-&gt;addr_len
 op_assign
 l_int|6
 suffix:semicolon
+multiline_comment|/* Device methods */
 id|dev-&gt;open
 op_assign
 op_amp
@@ -2407,6 +2026,8 @@ suffix:semicolon
 r_int
 id|err
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 id|priv-&gt;tlanRev
 op_assign
 id|TLan_DioRead8
@@ -2417,41 +2038,6 @@ comma
 id|TLAN_DEF_REVISION
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|priv-&gt;sa_int
-)paren
-(brace
-id|TLAN_DBG
-c_func
-(paren
-id|TLAN_DEBUG_GNRL
-comma
-l_string|&quot;TLAN:   Using SA_INTERRUPT&bslash;n&quot;
-)paren
-suffix:semicolon
-id|err
-op_assign
-id|request_irq
-c_func
-(paren
-id|dev-&gt;irq
-comma
-id|TLan_HandleInterrupt
-comma
-id|SA_SHIRQ
-op_or
-id|SA_INTERRUPT
-comma
-id|TLanSignature
-comma
-id|dev
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
 id|err
 op_assign
 id|request_irq
@@ -2468,7 +2054,6 @@ comma
 id|dev
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -2478,6 +2063,7 @@ id|err
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;TLAN:  Cannot open %s because IRQ %d is already in use.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -2490,8 +2076,6 @@ op_minus
 id|EAGAIN
 suffix:semicolon
 )brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|dev-&gt;tbusy
 op_assign
 l_int|0
@@ -2530,7 +2114,7 @@ c_func
 (paren
 id|TLAN_DEBUG_GNRL
 comma
-l_string|&quot;TLAN:  %s: Opened.  TLAN Chip Rev: %x&bslash;n&quot;
+l_string|&quot;%s: Opened.  TLAN Chip Rev: %x&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -2596,7 +2180,7 @@ c_func
 (paren
 id|TLAN_DEBUG_TX
 comma
-l_string|&quot;TLAN TRANSMIT:  %s PHY is not ready&bslash;n&quot;
+l_string|&quot;TRANSMIT:  %s PHY is not ready&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
@@ -2630,7 +2214,7 @@ c_func
 (paren
 id|TLAN_DEBUG_TX
 comma
-l_string|&quot;TLAN TRANSMIT:  %s is busy (Head=%d Tail=%d)&bslash;n&quot;
+l_string|&quot;TRANSMIT:  %s is busy (Head=%d Tail=%d)&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -2853,7 +2437,7 @@ c_func
 (paren
 id|TLAN_DEBUG_TX
 comma
-l_string|&quot;TLAN TRANSMIT:  Starting TX on buffer %d&bslash;n&quot;
+l_string|&quot;TRANSMIT:  Starting TX on buffer %d&bslash;n&quot;
 comma
 id|priv-&gt;txTail
 )paren
@@ -2892,7 +2476,7 @@ c_func
 (paren
 id|TLAN_DEBUG_TX
 comma
-l_string|&quot;TLAN TRANSMIT:  Adding buffer %d to TX channel&bslash;n&quot;
+l_string|&quot;TRANSMIT:  Adding buffer %d to TX channel&bslash;n&quot;
 comma
 id|priv-&gt;txTail
 )paren
@@ -3233,7 +2817,7 @@ c_func
 (paren
 id|TLAN_DEBUG_GNRL
 comma
-l_string|&quot;TLAN:  Device %s closed.&bslash;n&quot;
+l_string|&quot;Device %s closed.&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
@@ -3286,7 +2870,7 @@ c_func
 (paren
 id|TLAN_DEBUG_RX
 comma
-l_string|&quot;TLAN RECEIVE:  %s EOC count = %d&bslash;n&quot;
+l_string|&quot;RECEIVE:  %s EOC count = %d&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -3298,7 +2882,7 @@ c_func
 (paren
 id|TLAN_DEBUG_TX
 comma
-l_string|&quot;TLAN TRANSMIT:  %s Busy count = %d&bslash;n&quot;
+l_string|&quot;TRANSMIT:  %s Busy count = %d&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -3761,7 +3345,7 @@ c_func
 (paren
 id|TLAN_DEBUG_TX
 comma
-l_string|&quot;TLAN TRANSMIT:  Handling TX EOF (Head=%d Tail=%d)&bslash;n&quot;
+l_string|&quot;TRANSMIT:  Handling TX EOF (Head=%d Tail=%d)&bslash;n&quot;
 comma
 id|priv-&gt;txHead
 comma
@@ -3869,7 +3453,7 @@ c_func
 (paren
 id|TLAN_DEBUG_TX
 comma
-l_string|&quot;TLAN TRANSMIT:  Handling TX EOC (Head=%d Tail=%d)&bslash;n&quot;
+l_string|&quot;TRANSMIT:  Handling TX EOC (Head=%d Tail=%d)&bslash;n&quot;
 comma
 id|priv-&gt;txHead
 comma
@@ -4097,7 +3681,7 @@ c_func
 (paren
 id|TLAN_DEBUG_RX
 comma
-l_string|&quot;TLAN RECEIVE:  Handling RX EOF (Head=%d Tail=%d)&bslash;n&quot;
+l_string|&quot;RECEIVE:  Handling RX EOF (Head=%d Tail=%d)&bslash;n&quot;
 comma
 id|priv-&gt;rxHead
 comma
@@ -4445,7 +4029,7 @@ c_func
 (paren
 id|TLAN_DEBUG_RX
 comma
-l_string|&quot;TLAN RECEIVE:  Handling RX EOC (Head=%d Tail=%d)&bslash;n&quot;
+l_string|&quot;RECEIVE:  Handling RX EOC (Head=%d Tail=%d)&bslash;n&quot;
 comma
 id|priv-&gt;rxHead
 comma
@@ -4652,7 +4236,7 @@ c_func
 (paren
 id|TLAN_DEBUG_TX
 comma
-l_string|&quot;TLAN TRANSMIT:  Handling TX EOC (Head=%d Tail=%d) -- IRQ&bslash;n&quot;
+l_string|&quot;TRANSMIT:  Handling TX EOC (Head=%d Tail=%d) -- IRQ&bslash;n&quot;
 comma
 id|priv-&gt;txHead
 comma
@@ -4836,7 +4420,7 @@ c_func
 (paren
 id|TLAN_DEBUG_GNRL
 comma
-l_string|&quot;TLAN:  %s: Status Check&bslash;n&quot;
+l_string|&quot;%s: Status Check&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
@@ -4879,7 +4463,7 @@ c_func
 (paren
 id|TLAN_DEBUG_GNRL
 comma
-l_string|&quot;TLAN:  %s:    Net_Sts = %x&bslash;n&quot;
+l_string|&quot;%s:    Net_Sts = %x&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -5073,7 +4657,7 @@ c_func
 (paren
 id|TLAN_DEBUG_RX
 comma
-l_string|&quot;TLAN RECEIVE:  Handling RX EOC (Head=%d Tail=%d) -- IRQ&bslash;n&quot;
+l_string|&quot;RECEIVE:  Handling RX EOC (Head=%d Tail=%d) -- IRQ&bslash;n&quot;
 comma
 id|priv-&gt;rxHead
 comma
@@ -6950,7 +6534,7 @@ id|MII_GS_LINK
 id|printk
 c_func
 (paren
-l_string|&quot;TLAN:  %s: Link active.&bslash;n&quot;
+l_string|&quot;TLAN: %s: Link active.&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
@@ -7134,7 +6718,11 @@ c_func
 (paren
 id|dev
 comma
-l_int|1000
+(paren
+l_int|10
+op_star
+id|HZ
+)paren
 comma
 id|TLAN_TIMER_FINISH_RESET
 )paren
@@ -7633,7 +7221,7 @@ c_func
 (paren
 id|TLAN_DEBUG_GNRL
 comma
-l_string|&quot;TLAN: PHY found at %02x %04x %04x %04x&bslash;n&quot;
+l_string|&quot;PHY found at %02x %04x %04x %04x&bslash;n&quot;
 comma
 id|phy
 comma
@@ -7746,7 +7334,7 @@ c_func
 (paren
 id|TLAN_DEBUG_GNRL
 comma
-l_string|&quot;TLAN:  %s: Powering down PHY(s).&bslash;n&quot;
+l_string|&quot;%s: Powering down PHY(s).&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
@@ -7837,13 +7425,9 @@ c_func
 id|dev
 comma
 (paren
-l_int|50
-op_div
-(paren
-l_int|1000
-op_div
 id|HZ
-)paren
+op_div
+l_int|20
 )paren
 comma
 id|TLAN_TIMER_PHY_PUP
@@ -7880,7 +7464,7 @@ c_func
 (paren
 id|TLAN_DEBUG_GNRL
 comma
-l_string|&quot;TLAN:  %s: Powering up PHY.&bslash;n&quot;
+l_string|&quot;%s: Powering up PHY.&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
@@ -7966,7 +7550,7 @@ c_func
 (paren
 id|TLAN_DEBUG_GNRL
 comma
-l_string|&quot;TLAN:  %s: Reseting PHY.&bslash;n&quot;
+l_string|&quot;%s: Reseting PHY.&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
@@ -8110,7 +7694,7 @@ c_func
 (paren
 id|TLAN_DEBUG_GNRL
 comma
-l_string|&quot;TLAN:  %s: Trying to activate link.&bslash;n&quot;
+l_string|&quot;%s: Trying to activate link.&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
@@ -8261,7 +7845,7 @@ multiline_comment|/* Wait for 4 sec for autonegotiation&n;&t;&t; * to complete. 
 id|printk
 c_func
 (paren
-l_string|&quot;TLAN:  %s: Starting autonegotiation.&bslash;n&quot;
+l_string|&quot;TLAN: %s: Starting autonegotiation.&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
@@ -8324,7 +7908,15 @@ c_func
 (paren
 id|dev
 comma
+(paren
 l_int|4
+op_star
+(paren
+id|HZ
+op_div
+l_int|1000
+)paren
+)paren
 comma
 id|TLAN_TIMER_PHY_PDOWN
 )paren
@@ -8519,7 +8111,7 @@ multiline_comment|/* Wait for 8 sec to give the process&n;&t;&t; * more time.  P
 id|printk
 c_func
 (paren
-l_string|&quot;TLAN:  Giving autonegotiation more time.&bslash;n&quot;
+l_string|&quot;TLAN: Giving autonegotiation more time.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|TLan_SetTimer
@@ -8542,7 +8134,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;TLAN:  %s: Autonegotiation complete.&bslash;n&quot;
+l_string|&quot;TLAN: %s: Autonegotiation complete.&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
@@ -8669,7 +8261,15 @@ c_func
 (paren
 id|dev
 comma
-l_int|40
+(paren
+l_int|400
+op_star
+(paren
+id|HZ
+op_div
+l_int|1000
+)paren
+)paren
 comma
 id|TLAN_TIMER_PHY_PDOWN
 )paren

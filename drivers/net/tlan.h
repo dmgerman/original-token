@@ -23,7 +23,7 @@ mdefine_line|#define TLAN_IGNORE&t;&t;0
 DECL|macro|TLAN_RECORD
 mdefine_line|#define TLAN_RECORD&t;&t;1
 DECL|macro|TLAN_DBG
-mdefine_line|#define TLAN_DBG(lvl, format, args...)&t;if (debug&amp;lvl) printk( format, ##args );
+mdefine_line|#define TLAN_DBG(lvl, format, args...)&t;if (debug&amp;lvl) printk(KERN_DEBUG &quot;TLAN: &quot; format, ##args );
 DECL|macro|TLAN_DEBUG_GNRL
 mdefine_line|#define TLAN_DEBUG_GNRL&t;&t;0x0001
 DECL|macro|TLAN_DEBUG_TX
@@ -317,10 +317,6 @@ suffix:semicolon
 DECL|member|phyNum
 id|u32
 id|phyNum
-suffix:semicolon
-DECL|member|sa_int
-id|u32
-id|sa_int
 suffix:semicolon
 DECL|member|speed
 id|u32

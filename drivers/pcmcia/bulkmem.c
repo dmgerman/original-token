@@ -37,6 +37,8 @@ id|buf
 (brace
 r_int
 id|ret
+op_assign
+l_int|0
 comma
 id|tries
 suffix:semicolon

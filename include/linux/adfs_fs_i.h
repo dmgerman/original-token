@@ -7,12 +7,41 @@ DECL|struct|adfs_inode_info
 r_struct
 id|adfs_inode_info
 (brace
-DECL|member|file_id
+DECL|member|parent_id
 r_int
 r_int
-id|file_id
+id|parent_id
 suffix:semicolon
-multiline_comment|/* id of fragments containing actual data */
+multiline_comment|/* object id of parent&t;&t;*/
+DECL|member|loadaddr
+id|__u32
+id|loadaddr
+suffix:semicolon
+multiline_comment|/* RISC OS load address&t;&t;*/
+DECL|member|execaddr
+id|__u32
+id|execaddr
+suffix:semicolon
+multiline_comment|/* RISC OS exec address&t;&t;*/
+DECL|member|filetype
+r_int
+r_int
+id|filetype
+suffix:semicolon
+multiline_comment|/* RISC OS file type&t;&t;*/
+DECL|member|attr
+r_int
+r_int
+id|attr
+suffix:semicolon
+multiline_comment|/* RISC OS permissions&t;&t;*/
+DECL|member|stamped
+r_int
+id|stamped
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* RISC OS file has date/time&t;*/
 )brace
 suffix:semicolon
 macro_line|#endif

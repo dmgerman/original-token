@@ -2,21 +2,6 @@ multiline_comment|/*&n; *&t;include/linux/bfs_fs_sb.h&n; *&t;Copyright (C) 1999 
 macro_line|#ifndef _LINUX_BFS_FS_SB
 DECL|macro|_LINUX_BFS_FS_SB
 mdefine_line|#define _LINUX_BFS_FS_SB
-multiline_comment|/*&n; * BFS block map entry, an array of these is kept in bfs_sb_info.&n; */
-DECL|struct|bfs_bmap
-r_struct
-id|bfs_bmap
-(brace
-DECL|member|start
-DECL|member|end
-r_int
-r_int
-id|start
-comma
-id|end
-suffix:semicolon
-)brace
-suffix:semicolon
 multiline_comment|/*&n; * BFS file system in-core superblock info&n; */
 DECL|struct|bfs_sb_info
 r_struct
@@ -56,12 +41,6 @@ DECL|member|si_lasti
 r_int
 r_int
 id|si_lasti
-suffix:semicolon
-DECL|member|si_bmap
-r_struct
-id|bfs_bmap
-op_star
-id|si_bmap
 suffix:semicolon
 DECL|member|si_imap
 r_char

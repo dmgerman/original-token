@@ -7,11 +7,11 @@ macro_line|#include &quot;bfs_defs.h&quot;
 DECL|macro|DEBUG
 macro_line|#undef DEBUG
 macro_line|#ifdef DEBUG
-DECL|macro|DBG
-mdefine_line|#define DBG(x...)&t;printk(x)
+DECL|macro|dprintf
+mdefine_line|#define dprintf(x...)&t;printf(x)
 macro_line|#else
-DECL|macro|DBG
-mdefine_line|#define DBG(x...)
+DECL|macro|dprintf
+mdefine_line|#define dprintf(x...)
 macro_line|#endif
 r_static
 r_int
@@ -155,13 +155,10 @@ id|dir-&gt;i_mode
 )paren
 )paren
 (brace
-id|printk
+id|printf
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;BFS-fs: %s(): Bad inode or not a directory %s:%08lx&bslash;n&quot;
-comma
-id|__FUNCTION__
+l_string|&quot;Bad inode or not a directory %s:%08lx&bslash;n&quot;
 comma
 id|bdevname
 c_func
@@ -189,13 +186,10 @@ l_int|1
 )paren
 )paren
 (brace
-id|printk
+id|printf
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;BFS-fs: %s(): Bad f_pos=%08lx for %s:%08lx&bslash;n&quot;
-comma
-id|__FUNCTION__
+l_string|&quot;Bad f_pos=%08lx for %s:%08lx&bslash;n&quot;
 comma
 (paren
 r_int
@@ -973,13 +967,10 @@ op_logical_neg
 id|inode-&gt;i_nlink
 )paren
 (brace
-id|printk
+id|printf
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;BFS-fs: %s(): unlinking non-existent file %s:%lu (nlink=%d)&bslash;n&quot;
-comma
-id|__FUNCTION__
+l_string|&quot;unlinking non-existent file %s:%lu (nlink=%d)&bslash;n&quot;
 comma
 id|bdevname
 c_func
@@ -1442,13 +1433,10 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-id|DBG
+id|dprintf
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;BFS-fs: %s(%s,%d)&bslash;n&quot;
-comma
-id|__FUNCTION__
+l_string|&quot;name=%s, namelen=%d&bslash;n&quot;
 comma
 id|name
 comma

@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *&t;fs/bfs/inode.c&n; *&t;BFS superblock and inode operations.&n; *&t;Copyright (C) 1999 Tigran Aivazian &lt;tigran@ocston.org&gt;&n; *&t;From fs/minix, Copyright (C) 1991, 1992 Linus Torvalds.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
@@ -17,7 +16,7 @@ suffix:semicolon
 id|MODULE_DESCRIPTION
 c_func
 (paren
-l_string|&quot;UnixWare BFS filesystem for Linux&quot;
+l_string|&quot;SCO UnixWare BFS filesystem for Linux&quot;
 )paren
 suffix:semicolon
 id|EXPORT_NO_SYMBOLS
@@ -25,11 +24,11 @@ suffix:semicolon
 DECL|macro|DEBUG
 macro_line|#undef DEBUG
 macro_line|#ifdef DEBUG
-DECL|macro|DBG
-mdefine_line|#define DBG(x...)&t;printk(x)
+DECL|macro|dprintf
+mdefine_line|#define dprintf(x...)&t;printf(x)
 macro_line|#else
-DECL|macro|DBG
-mdefine_line|#define DBG(x...)
+DECL|macro|dprintf
+mdefine_line|#define dprintf(x...)
 macro_line|#endif
 r_void
 id|dump_imap
@@ -92,13 +91,10 @@ template_param
 id|inode-&gt;i_sb-&gt;su_lasti
 )paren
 (brace
-id|printk
+id|printf
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;BFS-fs: %s(): Bad inode number %s:%08lx&bslash;n&quot;
-comma
-id|__FUNCTION__
+l_string|&quot;Bad inode number %s:%08lx&bslash;n&quot;
 comma
 id|bdevname
 c_func
@@ -149,13 +145,10 @@ op_logical_neg
 id|bh
 )paren
 (brace
-id|printk
+id|printf
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;BFS-fs: %s(): Unable to read inode %s:%08lx&bslash;n&quot;
-comma
-id|__FUNCTION__
+l_string|&quot;Unable to read inode %s:%08lx&bslash;n&quot;
 comma
 id|bdevname
 c_func
@@ -359,13 +352,10 @@ template_param
 id|inode-&gt;i_sb-&gt;su_lasti
 )paren
 (brace
-id|printk
+id|printf
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;BFS-fs: %s(): Bad inode number %s:%08lx&bslash;n&quot;
-comma
-id|__FUNCTION__
+l_string|&quot;Bad inode number %s:%08lx&bslash;n&quot;
 comma
 id|bdevname
 c_func
@@ -410,13 +400,10 @@ op_logical_neg
 id|bh
 )paren
 (brace
-id|printk
+id|printf
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;BFS-fs: %s(): Unable to read inode %s:%08lx&bslash;n&quot;
-comma
-id|__FUNCTION__
+l_string|&quot;Unable to read inode %s:%08lx&bslash;n&quot;
 comma
 id|bdevname
 c_func
@@ -577,13 +564,10 @@ id|s
 op_assign
 id|inode-&gt;i_sb
 suffix:semicolon
-id|DBG
+id|dprintf
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;%s(ino=%08lx)&bslash;n&quot;
-comma
-id|__FUNCTION__
+l_string|&quot;ino=%08lx&bslash;n&quot;
 comma
 id|inode-&gt;i_ino
 )paren
@@ -593,89 +577,21 @@ c_cond
 (paren
 op_logical_neg
 id|inode
-)paren
-r_return
-suffix:semicolon
-r_if
-c_cond
-(paren
+op_logical_or
 op_logical_neg
 id|inode-&gt;i_dev
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;BFS-fs: free_inode(%08lx) !dev&bslash;n&quot;
-comma
-id|inode-&gt;i_ino
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
+op_logical_or
 id|inode-&gt;i_count
 OG
 l_int|1
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;BFS-fs: free_inode(%08lx) count=%d&bslash;n&quot;
-comma
-id|inode-&gt;i_ino
-comma
-id|inode-&gt;i_count
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
+op_logical_or
 id|inode-&gt;i_nlink
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;BFS-fs: free_inode(%08lx) nlink=%d&bslash;n&quot;
-comma
-id|inode-&gt;i_ino
-comma
-id|inode-&gt;i_nlink
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
+op_logical_or
 op_logical_neg
-id|inode-&gt;i_sb
+id|s
 )paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;BFS-fs: free_inode(%08lx) !sb&bslash;n&quot;
-comma
-id|inode-&gt;i_ino
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -684,11 +600,10 @@ template_param
 id|inode-&gt;i_sb-&gt;su_lasti
 )paren
 (brace
-id|printk
+id|printf
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;BFS-fs: free_inode(%08lx) invalid ino&bslash;n&quot;
+l_string|&quot;invalid ino=%08lx&bslash;n&quot;
 comma
 id|inode-&gt;i_ino
 )paren
@@ -745,13 +660,10 @@ op_logical_neg
 id|bh
 )paren
 (brace
-id|printk
+id|printf
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;BFS-fs: %s(): Unable to read inode %s:%08lx&bslash;n&quot;
-comma
-id|__FUNCTION__
+l_string|&quot;Unable to read inode %s:%08lx&bslash;n&quot;
 comma
 id|bdevname
 c_func
@@ -842,6 +754,30 @@ c_func
 id|bh
 )paren
 suffix:semicolon
+multiline_comment|/* if this was the last file, make the previous &n;&t;   block &quot;last files last block&quot; even if there is no real file there,&n;&t;   saves us 1 gap */
+r_if
+c_cond
+(paren
+id|s-&gt;su_lf_eblk
+op_eq
+id|inode-&gt;iu_eblock
+)paren
+(brace
+id|s-&gt;su_lf_eblk
+op_assign
+id|inode-&gt;iu_sblock
+op_minus
+l_int|1
+suffix:semicolon
+id|mark_buffer_dirty
+c_func
+(paren
+id|s-&gt;su_sbh
+comma
+l_int|1
+)paren
+suffix:semicolon
+)brace
 id|clear_inode
 c_func
 (paren
@@ -871,12 +807,6 @@ id|kfree
 c_func
 (paren
 id|s-&gt;su_imap
-)paren
-suffix:semicolon
-id|kfree
-c_func
-(paren
-id|s-&gt;su_bmap
 )paren
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
@@ -1154,7 +1084,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;BFS-fs: %s: lasti=%d &lt;%s&gt;&bslash;n&quot;
+l_string|&quot;BFS-fs: %s: lasti=%08lx &lt;%s&gt;&bslash;n&quot;
 comma
 id|prefix
 comma
@@ -1218,8 +1148,6 @@ r_int
 id|i
 comma
 id|imap_len
-comma
-id|bmap_len
 suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
@@ -1249,10 +1177,9 @@ id|s-&gt;s_blocksize_bits
 op_assign
 id|BFS_BSIZE_BITS
 suffix:semicolon
-multiline_comment|/* read ahead 8K to get inodes as we&squot;ll need them in a tick */
 id|bh
 op_assign
-id|breada
+id|bread
 c_func
 (paren
 id|dev
@@ -1260,10 +1187,6 @@ comma
 l_int|0
 comma
 id|BFS_BSIZE
-comma
-l_int|0
-comma
-l_int|8192
 )paren
 suffix:semicolon
 r_if
@@ -1300,11 +1223,10 @@ c_cond
 op_logical_neg
 id|silent
 )paren
-id|printk
+id|printf
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;BFS-fs: No BFS filesystem on %s (magic=%08x)&bslash;n&quot;
+l_string|&quot;No BFS filesystem on %s (magic=%08x)&bslash;n&quot;
 comma
 id|bdevname
 c_func
@@ -1333,11 +1255,10 @@ op_logical_and
 op_logical_neg
 id|silent
 )paren
-id|printk
+id|printf
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;BFS-fs: %s is unclean&bslash;n&quot;
+l_string|&quot;%s is unclean, continuing&bslash;n&quot;
 comma
 id|bdevname
 c_func
@@ -1346,12 +1267,6 @@ id|dev
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifndef CONFIG_BFS_FS_WRITE
-id|s-&gt;s_flags
-op_or_assign
-id|MS_RDONLY
-suffix:semicolon
-macro_line|#endif
 id|s-&gt;s_magic
 op_assign
 id|BFS_MAGIC
@@ -1382,45 +1297,6 @@ id|BFS_ROOT_INO
 op_minus
 l_int|1
 suffix:semicolon
-id|bmap_len
-op_assign
-r_sizeof
-(paren
-r_struct
-id|bfs_bmap
-)paren
-op_star
-id|s-&gt;su_lasti
-suffix:semicolon
-id|s-&gt;su_bmap
-op_assign
-id|kmalloc
-c_func
-(paren
-id|bmap_len
-comma
-id|GFP_KERNEL
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|s-&gt;su_bmap
-)paren
-r_goto
-id|out
-suffix:semicolon
-id|memset
-c_func
-(paren
-id|s-&gt;su_bmap
-comma
-l_int|0
-comma
-id|bmap_len
-)paren
-suffix:semicolon
 id|imap_len
 op_assign
 id|s-&gt;su_lasti
@@ -1445,17 +1321,9 @@ c_cond
 op_logical_neg
 id|s-&gt;su_imap
 )paren
-(brace
-id|kfree
-c_func
-(paren
-id|s-&gt;su_bmap
-)paren
-suffix:semicolon
 r_goto
 id|out
 suffix:semicolon
-)brace
 id|memset
 c_func
 (paren
@@ -1480,23 +1348,6 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-(brace
-id|s-&gt;su_bmap
-(braket
-id|i
-)braket
-dot
-id|start
-op_assign
-id|s-&gt;su_bmap
-(braket
-id|i
-)braket
-dot
-id|end
-op_assign
-l_int|0
-suffix:semicolon
 id|set_bit
 c_func
 (paren
@@ -1505,7 +1356,6 @@ comma
 id|s-&gt;su_imap
 )paren
 suffix:semicolon
-)brace
 id|s-&gt;s_op
 op_assign
 op_amp
@@ -1532,12 +1382,6 @@ id|kfree
 c_func
 (paren
 id|s-&gt;su_imap
-)paren
-suffix:semicolon
-id|kfree
-c_func
-(paren
-id|s-&gt;su_bmap
 )paren
 suffix:semicolon
 r_goto
@@ -1569,12 +1413,6 @@ id|kfree
 c_func
 (paren
 id|s-&gt;su_imap
-)paren
-suffix:semicolon
-id|kfree
-c_func
-(paren
-id|s-&gt;su_bmap
 )paren
 suffix:semicolon
 r_goto
@@ -1652,27 +1490,9 @@ id|inode-&gt;iu_dsk_ino
 op_eq
 l_int|0
 )paren
-(brace
 id|s-&gt;su_freei
 op_increment
 suffix:semicolon
-id|s-&gt;su_bmap
-(braket
-id|i
-)braket
-dot
-id|start
-op_assign
-id|s-&gt;su_bmap
-(braket
-id|i
-)braket
-dot
-id|end
-op_assign
-l_int|0
-suffix:semicolon
-)brace
 r_else
 (brace
 id|set_bit
@@ -1712,24 +1532,6 @@ id|i
 )paren
 suffix:semicolon
 )brace
-id|s-&gt;su_bmap
-(braket
-id|i
-)braket
-dot
-id|start
-op_assign
-id|inode-&gt;iu_sblock
-suffix:semicolon
-id|s-&gt;su_bmap
-(braket
-id|i
-)braket
-dot
-id|end
-op_assign
-id|inode-&gt;iu_eblock
-suffix:semicolon
 )brace
 id|iput
 c_func

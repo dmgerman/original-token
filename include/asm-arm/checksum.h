@@ -102,14 +102,6 @@ id|__volatile__
 c_func
 (paren
 "&quot;"
-id|sub
-op_mod
-l_int|2
-comma
-op_mod
-l_int|2
-comma
-macro_line|#5&t;&t;@ ip_fast_csum
 id|ldr
 op_mod
 l_int|0
@@ -119,7 +111,7 @@ op_mod
 l_int|1
 )braket
 comma
-macro_line|#4
+macro_line|#4&t;&t;@ ip_fast_csum
 id|ldr
 op_mod
 l_int|3
@@ -130,6 +122,14 @@ l_int|1
 )braket
 comma
 macro_line|#4
+id|sub
+op_mod
+l_int|2
+comma
+op_mod
+l_int|2
+comma
+macro_line|#5
 id|adds
 op_mod
 l_int|0

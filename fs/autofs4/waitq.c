@@ -310,8 +310,7 @@ id|autofs_wait_queue
 op_star
 id|wq
 comma
-r_enum
-id|autofs_packet_type
+r_int
 id|type
 )paren
 (brace

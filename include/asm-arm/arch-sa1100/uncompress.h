@@ -1,5 +1,4 @@
 multiline_comment|/*&n; * linux/include/asm-arm/arch-brutus/uncompress.h&n; *&n; * (C) 1999 Nicolas Pitre &lt;nico@cam.org&gt;&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_SA1100_EMPEG) || &bslash;&n;    defined(CONFIG_SA1100_VICTOR) || &bslash;&n;    defined(CONFIG_SA1100_LART)
 macro_line|#include &quot;hardware.h&quot;
 macro_line|#include &quot;serial_reg.h&quot;

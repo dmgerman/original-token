@@ -1,5 +1,4 @@
 multiline_comment|/*&n; * linux/include/asm-arm/arch-sa1100/ide.h&n; *&n; * Copyright (c) 1998 Hugo Fiennes &amp; Nicolas Pitre&n; *&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_BLK_DEV_IDE
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/arch/hardware.h&gt;

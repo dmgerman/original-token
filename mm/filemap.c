@@ -909,6 +909,19 @@ l_int|2
 r_goto
 id|cache_unlock_continue
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * We did the page aging part.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|nr_lru_pages
+OL
+id|freepages.min
+op_star
+id|priority
+)paren
+r_goto
+id|cache_unlock_continue
+suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Is it a page swap page? If so, we want to&n;&t;&t; * drop it if it is no longer used, even if it&n;&t;&t; * were to be marked referenced..&n;&t;&t; */
 r_if
 c_cond

@@ -1,6 +1,6 @@
-multiline_comment|/*&n; *&t;Real Time Clock interface for Linux&t;&n; *&n; *&t;Copyright (C) 1996 Paul Gortmaker&n; *&n; *&t;This driver allows use of the real time clock (built into&n; *&t;nearly all computers) from user space. It exports the /dev/rtc&n; *&t;interface supporting various ioctl() and also the&n; *&t;/proc/driver/rtc pseudo-file for status information.&n; *&n; *&t;The ioctls can be used to set the interrupt behaviour and&n; *&t;generation rate from the RTC via IRQ 8. Then the /dev/rtc&n; *&t;interface can be used to make use of these timer interrupts,&n; *&t;be they interval or alarm based.&n; *&n; *&t;The /dev/rtc interface will block on reads until an interrupt&n; *&t;has been received. If a RTC interrupt has already happened,&n; *&t;it will output an unsigned long and then block. The output value&n; *&t;contains the interrupt status in the low byte and the number of&n; *&t;interrupts since the last read in the remaining high bytes. The &n; *&t;/dev/rtc interface can also be used with the select(2) call.&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Based on other minimal char device drivers, like Alan&squot;s&n; *&t;watchdog, Ted&squot;s random, etc. etc.&n; *&n; *&t;1.07&t;Paul Gortmaker.&n; *&t;1.08&t;Miquel van Smoorenburg: disallow certain things on the&n; *&t;&t;DEC Alpha as the CMOS clock is also used for other things.&n; *&t;1.09&t;Nikita Schmidt: epoch support and some Alpha cleanup.&n; *&t;1.09a&t;Pete Zaitcev: Sun SPARC&n; *&t;1.09b&t;Jeff Garzik: Modularize, init cleanup&n; *&n; */
+multiline_comment|/*&n; *&t;Real Time Clock interface for Linux&t;&n; *&n; *&t;Copyright (C) 1996 Paul Gortmaker&n; *&n; *&t;This driver allows use of the real time clock (built into&n; *&t;nearly all computers) from user space. It exports the /dev/rtc&n; *&t;interface supporting various ioctl() and also the&n; *&t;/proc/driver/rtc pseudo-file for status information.&n; *&n; *&t;The ioctls can be used to set the interrupt behaviour and&n; *&t;generation rate from the RTC via IRQ 8. Then the /dev/rtc&n; *&t;interface can be used to make use of these timer interrupts,&n; *&t;be they interval or alarm based.&n; *&n; *&t;The /dev/rtc interface will block on reads until an interrupt&n; *&t;has been received. If a RTC interrupt has already happened,&n; *&t;it will output an unsigned long and then block. The output value&n; *&t;contains the interrupt status in the low byte and the number of&n; *&t;interrupts since the last read in the remaining high bytes. The &n; *&t;/dev/rtc interface can also be used with the select(2) call.&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Based on other minimal char device drivers, like Alan&squot;s&n; *&t;watchdog, Ted&squot;s random, etc. etc.&n; *&n; *&t;1.07&t;Paul Gortmaker.&n; *&t;1.08&t;Miquel van Smoorenburg: disallow certain things on the&n; *&t;&t;DEC Alpha as the CMOS clock is also used for other things.&n; *&t;1.09&t;Nikita Schmidt: epoch support and some Alpha cleanup.&n; *&t;1.09a&t;Pete Zaitcev: Sun SPARC&n; *&t;1.09b&t;Jeff Garzik: Modularize, init cleanup&n; *&t;1.09c&t;Jeff Garzik: SMP cleanup&n; *&t;1.10    Paul Barton-Davis: add support for async I/O&n; */
 DECL|macro|RTC_VERSION
-mdefine_line|#define RTC_VERSION&t;&t;&quot;1.09b&quot;
+mdefine_line|#define RTC_VERSION&t;&t;&quot;1.10&quot;
 DECL|macro|RTC_IRQ
 mdefine_line|#define RTC_IRQ &t;8&t;/* Can&squot;t see this changing soon.&t;*/
 DECL|macro|RTC_IO_EXTENT
@@ -35,6 +35,13 @@ id|rtc_irq
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n; *&t;We sponge a minor off of the misc major. No need slurping&n; *&t;up another valuable major dev number for this. If you add&n; *&t;an ioctl, make sure you don&squot;t conflict with SPARC&squot;s RTC&n; *&t;ioctls.&n; */
+DECL|variable|rtc_async_queue
+r_static
+r_struct
+id|fasync_struct
+op_star
+id|rtc_async_queue
+suffix:semicolon
 r_static
 id|DECLARE_WAIT_QUEUE_HEAD
 c_func
@@ -365,6 +372,20 @@ c_func
 (paren
 op_amp
 id|rtc_wait
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|rtc_async_queue
+)paren
+id|kill_fasync
+(paren
+id|rtc_async_queue
+comma
+id|SIGIO
+comma
+id|POLL_IN
 )paren
 suffix:semicolon
 r_if
@@ -1820,6 +1841,37 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|rtc_fasync
+r_static
+r_int
+id|rtc_fasync
+(paren
+r_int
+id|fd
+comma
+r_struct
+id|file
+op_star
+id|filp
+comma
+r_int
+id|on
+)paren
+(brace
+r_return
+id|fasync_helper
+(paren
+id|fd
+comma
+id|filp
+comma
+id|on
+comma
+op_amp
+id|rtc_async_queue
+)paren
+suffix:semicolon
+)brace
 DECL|function|rtc_release
 r_static
 r_int
@@ -1936,6 +1988,25 @@ c_func
 (paren
 op_amp
 id|rtc_irq_timer
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|file-&gt;f_flags
+op_amp
+id|FASYNC
+)paren
+(brace
+id|rtc_fasync
+(paren
+op_minus
+l_int|1
+comma
+id|file
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -2060,29 +2131,34 @@ id|file_operations
 id|rtc_fops
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|rtc_llseek
 comma
+id|read
+suffix:colon
 id|rtc_read
 comma
-l_int|NULL
-comma
-multiline_comment|/* No write */
-l_int|NULL
-comma
-multiline_comment|/* No readdir */
+id|poll
+suffix:colon
 id|rtc_poll
 comma
+id|ioctl
+suffix:colon
 id|rtc_ioctl
 comma
-l_int|NULL
-comma
-multiline_comment|/* No mmap */
+id|open
+suffix:colon
 id|rtc_open
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|rtc_release
+comma
+id|fasync
+suffix:colon
+id|rtc_fasync
+comma
 )brace
 suffix:semicolon
 DECL|variable|rtc_dev

@@ -1,8 +1,6 @@
 multiline_comment|/*&n; * linux/include/asm-arm/arch-ebsa110/time.h&n; *&n; * Copyright (c) 1996,1997,1998 Russell King.&n; *&n; * No real time clock on the evalulation board!&n; *&n; * Changelog:&n; *  10-Oct-1996&t;RMK&t;Created&n; *  04-Dec-1997&t;RMK&t;Updated for new arch/arm/kernel/time.c&n; *  07-Aug-1998&t;RMK&t;Updated for arch/arm/kernel/leds.c&n; *  28-Dec-1998&t;APH&t;Made leds code optional&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/leds.h&gt;
-DECL|macro|IRQ_TIMER
-mdefine_line|#define IRQ_TIMER IRQ_EBSA110_TIMER0
 DECL|macro|MCLK_47_8
 mdefine_line|#define MCLK_47_8
 macro_line|#if defined(MCLK_42_3)
@@ -15,20 +13,6 @@ mdefine_line|#define PIT1_COUNT 0x85A1
 DECL|macro|DIVISOR
 mdefine_line|#define DIVISOR 2
 macro_line|#endif
-DECL|function|gettimeoffset
-r_extern
-id|__inline__
-r_int
-r_int
-id|gettimeoffset
-(paren
-r_void
-)paren
-(brace
-r_return
-l_int|0
-suffix:semicolon
-)brace
 DECL|function|timer_interrupt
 r_static
 r_void
@@ -66,38 +50,8 @@ id|PIT1_COUNT
 op_rshift
 l_int|8
 suffix:semicolon
-macro_line|#ifdef CONFIG_LEDS
-(brace
-r_static
-r_int
-id|count
-op_assign
-l_int|50
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_decrement
-id|count
-op_eq
-l_int|0
-)paren
-(brace
-id|count
-op_assign
-l_int|50
-suffix:semicolon
-id|leds_event
-c_func
-(paren
-id|led_timer
-)paren
-suffix:semicolon
-)brace
-)brace
-macro_line|#endif
-(brace
 macro_line|#ifdef DIVISOR
+(brace
 r_static
 r_int
 r_int
@@ -108,19 +62,22 @@ c_cond
 (paren
 id|divisor
 op_decrement
-op_eq
-l_int|0
 )paren
-(brace
+r_return
+suffix:semicolon
 id|divisor
 op_assign
 id|DIVISOR
 op_minus
 l_int|1
 suffix:semicolon
-macro_line|#else
-(brace
+)brace
 macro_line|#endif
+id|do_leds
+c_func
+(paren
+)paren
+suffix:semicolon
 id|do_timer
 c_func
 (paren
@@ -128,29 +85,7 @@ id|regs
 )paren
 suffix:semicolon
 )brace
-)brace
-)brace
-DECL|variable|timerirq
-r_static
-r_struct
-id|irqaction
-id|timerirq
-op_assign
-(brace
-id|timer_interrupt
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_string|&quot;timer&quot;
-comma
-l_int|NULL
-comma
-l_int|NULL
-)brace
-suffix:semicolon
-multiline_comment|/*&n; * Set up timer interrupt, and return the current time in seconds.&n; */
+multiline_comment|/*&n; * Set up timer interrupt.&n; */
 DECL|function|setup_timer
 r_extern
 id|__inline__
@@ -186,32 +121,17 @@ id|PIT1_COUNT
 op_rshift
 l_int|8
 suffix:semicolon
-multiline_comment|/*&n;&t; * Default the date to 1 Jan 1970 0:0:0&n;&t; * You will have to run a time daemon to set the&n;&t; * clock correctly at bootup&n;&t; */
-id|xtime.tv_sec
+id|timer_irq.handler
 op_assign
-id|mktime
-c_func
-(paren
-l_int|1970
-comma
-l_int|1
-comma
-l_int|1
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-)paren
+id|timer_interrupt
 suffix:semicolon
 id|setup_arm_irq
 c_func
 (paren
-id|IRQ_TIMER
+id|IRQ_EBSA110_TIMER0
 comma
 op_amp
-id|timerirq
+id|timer_irq
 )paren
 suffix:semicolon
 )brace

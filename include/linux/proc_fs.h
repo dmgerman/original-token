@@ -468,11 +468,6 @@ suffix:semicolon
 r_extern
 r_struct
 id|inode_operations
-id|proc_omirr_inode_operations
-suffix:semicolon
-r_extern
-r_struct
-id|inode_operations
 id|proc_ppc_htab_inode_operations
 suffix:semicolon
 multiline_comment|/*&n; * proc_tty.c&n; */

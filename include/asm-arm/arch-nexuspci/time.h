@@ -3,22 +3,6 @@ DECL|macro|UART_BASE
 mdefine_line|#define UART_BASE&t;&t;0xfff00000
 DECL|macro|INTCONT
 mdefine_line|#define INTCONT&t;&t;&t;0xffe00000
-DECL|macro|update_rtc
-mdefine_line|#define update_rtc()
-DECL|function|gettimeoffset
-r_extern
-id|__inline__
-r_int
-r_int
-id|gettimeoffset
-(paren
-r_void
-)paren
-(brace
-r_return
-l_int|0
-suffix:semicolon
-)brace
 DECL|function|timer_interrupt
 r_static
 r_void
@@ -143,26 +127,6 @@ id|regs
 )paren
 suffix:semicolon
 )brace
-DECL|variable|timerirq
-r_static
-r_struct
-id|irqaction
-id|timerirq
-op_assign
-(brace
-id|timer_interrupt
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_string|&quot;timer&quot;
-comma
-l_int|NULL
-comma
-l_int|NULL
-)brace
-suffix:semicolon
 DECL|function|setup_timer
 r_extern
 id|__inline__
@@ -228,24 +192,9 @@ op_plus
 l_int|0x14
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Default the date to 1 Jan 1970 0:0:0&n;&t; * You will have to run a time daemon to set the&n;&t; * clock correctly at bootup&n;&t; */
-id|xtime.tv_sec
+id|timer_irq.handler
 op_assign
-id|mktime
-c_func
-(paren
-l_int|1970
-comma
-l_int|1
-comma
-l_int|1
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-)paren
+id|timer_interrupt
 suffix:semicolon
 id|setup_arm_irq
 c_func
@@ -253,7 +202,7 @@ c_func
 id|IRQ_TIMER
 comma
 op_amp
-id|timerirq
+id|timer_irq
 )paren
 suffix:semicolon
 )brace

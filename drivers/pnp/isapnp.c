@@ -1052,6 +1052,8 @@ suffix:semicolon
 r_int
 r_char
 id|d
+op_assign
+l_int|0
 suffix:semicolon
 r_for
 c_loop

@@ -529,16 +529,6 @@ op_star
 suffix:semicolon
 r_extern
 r_int
-id|tlan_probe
-c_func
-(paren
-r_struct
-id|net_device
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
 id|cs89x0_probe
 c_func
 (paren
@@ -934,14 +924,6 @@ op_assign
 macro_line|#ifdef CONFIG_DE4X5             /* DEC DE425, DE434, DE435 adapters */
 (brace
 id|de4x5_probe
-comma
-l_int|0
-)brace
-comma
-macro_line|#endif
-macro_line|#ifdef CONFIG_TLAN
-(brace
-id|tlan_probe
 comma
 l_int|0
 )brace

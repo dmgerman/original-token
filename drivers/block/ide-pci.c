@@ -81,8 +81,8 @@ DECL|macro|DEVID_CY82C693
 mdefine_line|#define DEVID_CY82C693&t;((ide_pci_devid_t){PCI_VENDOR_ID_CONTAQ,  PCI_DEVICE_ID_CONTAQ_82C693})
 DECL|macro|DEVID_HINT
 mdefine_line|#define DEVID_HINT&t;((ide_pci_devid_t){0x3388,                0x8013})
-DECL|macro|DEVID_CX5530
-mdefine_line|#define DEVID_CX5530&t;((ide_pci_devid_t){PCI_VENDOR_ID_CYRIX,   PCI_DEVICE_ID_CYRIX_5530_IDE})
+DECL|macro|DEVID_CS5530
+mdefine_line|#define DEVID_CS5530&t;((ide_pci_devid_t){PCI_VENDOR_ID_CYRIX,   PCI_DEVICE_ID_CYRIX_5530_IDE})
 DECL|macro|DEVID_AMD7409
 mdefine_line|#define DEVID_AMD7409&t;((ide_pci_devid_t){PCI_VENDOR_ID_AMD,     PCI_DEVICE_ID_AMD_VIPER_7409})
 DECL|macro|IDE_IGNORE
@@ -334,8 +334,41 @@ mdefine_line|#define PCI_CY82C693&t;NULL
 DECL|macro|INIT_CY82C693
 mdefine_line|#define INIT_CY82C693&t;NULL
 macro_line|#endif
-DECL|macro|INIT_CX5530
-mdefine_line|#define INIT_CX5530&t;NULL
+macro_line|#ifdef CONFIG_BLK_DEV_CS5530
+r_extern
+r_int
+r_int
+id|pci_init_cs5530
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+comma
+r_const
+r_char
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|ide_init_cs5530
+c_func
+(paren
+id|ide_hwif_t
+op_star
+)paren
+suffix:semicolon
+DECL|macro|INIT_CS5530
+mdefine_line|#define INIT_CS5530&t;&amp;ide_init_cs5530
+DECL|macro|PCI_CS5530
+mdefine_line|#define PCI_CS5530&t;&amp;pci_init_cs5530
+macro_line|#else
+DECL|macro|INIT_CS5530
+mdefine_line|#define INIT_CS5530&t;NULL
+DECL|macro|PCI_CS5530
+mdefine_line|#define PCI_CS5530&t;NULL
+macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_HPT34X
 r_extern
 r_int
@@ -2105,15 +2138,15 @@ l_int|0
 )brace
 comma
 (brace
-id|DEVID_CX5530
+id|DEVID_CS5530
 comma
-l_string|&quot;CX5530&quot;
+l_string|&quot;CS5530&quot;
+comma
+id|PCI_CS5530
 comma
 l_int|NULL
 comma
-l_int|NULL
-comma
-id|INIT_CX5530
+id|INIT_CS5530
 comma
 l_int|NULL
 comma
@@ -3762,6 +3795,14 @@ c_func
 id|d-&gt;devid
 comma
 id|DEVID_HPT366
+)paren
+op_logical_or
+id|IDE_PCI_DEVID_EQ
+c_func
+(paren
+id|d-&gt;devid
+comma
+id|DEVID_CS5530
 )paren
 op_logical_or
 id|IDE_PCI_DEVID_EQ

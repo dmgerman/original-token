@@ -20,13 +20,6 @@ macro_line|#include &lt;video/fbcon.h&gt;
 macro_line|#include &lt;video/fbcon-cfb8.h&gt;
 macro_line|#include &lt;video/fbcon-cfb16.h&gt;
 macro_line|#include &lt;video/fbcon-cfb24.h&gt;
-multiline_comment|/*&n; *    Some defaults&n; */
-DECL|macro|DEFAULT_XRES
-mdefine_line|#define DEFAULT_XRES&t;640
-DECL|macro|DEFAULT_YRES
-mdefine_line|#define DEFAULT_YRES&t;480
-DECL|macro|DEFAULT_BPP
-mdefine_line|#define DEFAULT_BPP&t;8
 DECL|macro|MMIO_SIZE
 mdefine_line|#define MMIO_SIZE&t;0x000c0000
 DECL|variable|CyberRegs

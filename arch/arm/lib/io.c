@@ -1,4 +1,5 @@
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 multiline_comment|/*&n; * Copy data from IO memory space to &quot;real&quot; memory space.&n; * This needs to be optimized.&n; */
 DECL|function|_memcpy_fromio
@@ -14,7 +15,6 @@ r_int
 r_int
 id|from
 comma
-r_int
 r_int
 id|count
 )paren
@@ -71,7 +71,6 @@ op_star
 id|from
 comma
 r_int
-r_int
 id|count
 )paren
 (brace
@@ -124,7 +123,6 @@ comma
 r_int
 id|c
 comma
-r_int
 r_int
 id|count
 )paren
