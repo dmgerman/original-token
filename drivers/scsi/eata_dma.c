@@ -7578,10 +7578,12 @@ id|dev
 suffix:semicolon
 id|base
 op_assign
-id|dev-&gt;base_address
+id|dev-&gt;resource
 (braket
 l_int|0
 )braket
+dot
+id|flags
 suffix:semicolon
 r_if
 c_cond
@@ -7606,8 +7608,13 @@ r_continue
 suffix:semicolon
 )brace
 id|base
-op_and_assign
-id|PCI_BASE_ADDRESS_IO_MASK
+op_assign
+id|dev-&gt;resource
+(braket
+l_int|0
+)braket
+dot
+id|start
 suffix:semicolon
 multiline_comment|/* EISA tag there ? */
 id|pal1

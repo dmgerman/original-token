@@ -1870,6 +1870,12 @@ r_case
 id|IDE7_MAJOR
 suffix:colon
 r_case
+id|IDE8_MAJOR
+suffix:colon
+r_case
+id|IDE9_MAJOR
+suffix:colon
+r_case
 id|ACSI_MAJOR
 suffix:colon
 r_case

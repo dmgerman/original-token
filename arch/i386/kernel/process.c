@@ -158,6 +158,94 @@ r_void
 op_assign
 id|default_idle
 suffix:semicolon
+macro_line|#if 1
+macro_line|#include &lt;linux/pci.h&gt;
+DECL|function|piix4_idle_init
+r_static
+r_int
+id|__init
+id|piix4_idle_init
+c_func
+(paren
+r_void
+)paren
+(brace
+multiline_comment|/* This is the PIIX4 ACPI device */
+r_struct
+id|pci_dev
+op_star
+id|dev
+op_assign
+id|pci_find_device
+c_func
+(paren
+id|PCI_VENDOR_ID_INTEL
+comma
+id|PCI_DEVICE_ID_INTEL_82371AB_3
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev
+)paren
+(brace
+id|u32
+id|base
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Found PIIX4 ACPI device&bslash;n&quot;
+)paren
+suffix:semicolon
+id|pci_read_config_dword
+c_func
+(paren
+id|dev
+comma
+l_int|0x40
+comma
+op_amp
+id|base
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;  Base address %04x&bslash;n&quot;
+comma
+id|base
+)paren
+suffix:semicolon
+macro_line|#ifdef __SMP__
+multiline_comment|/*&n;&t;&t; * We can&squot;t really do idle things with multiple CPU&squot;s, I&squot;m&n;&t;&t; * afraid.  We&squot;d need a per-CPU ACPI device.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|smp_num_cpus
+OG
+l_int|1
+)paren
+r_return
+l_int|0
+suffix:semicolon
+macro_line|#endif
+)brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|variable|piix4_idle_init
+id|__initcall
+c_func
+(paren
+id|piix4_idle_init
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; * The idle thread. There&squot;s no useful work to be&n; * done, so just try to conserve power and have a&n; * low exit latency (ie sit in a loop waiting for&n; * somebody to say that they&squot;d like to reschedule)&n; */
 DECL|function|cpu_idle
 r_void

@@ -1,7 +1,7 @@
-multiline_comment|/*&n; * linux/drivers/block/ide-floppy.c&t;Version 0.8&t;&t;Dec   7, 1997&n; *&n; * Copyright (C) 1996, 1997 Gadi Oxman &lt;gadio@netvision.net.il&gt;&n; */
-multiline_comment|/*&n; * IDE ATAPI floppy driver.&n; *&n; * The driver currently doesn&squot;t have any fancy features, just the bare&n; * minimum read/write support.&n; *&n; * Many thanks to Lode Leroy &lt;Lode.Leroy@www.ibase.be&gt;, who tested so many&n; * ALPHA patches to this driver on an EASYSTOR LS-120 ATAPI floppy drive.&n; *&n; * Ver 0.1   Oct 17 96   Initial test version, mostly based on ide-tape.c.&n; * Ver 0.2   Oct 31 96   Minor changes.&n; * Ver 0.3   Dec  2 96   Fixed error recovery bug.&n; * Ver 0.4   Jan 26 97   Add support for the HDIO_GETGEO ioctl.&n; * Ver 0.5   Feb 21 97   Add partitions support.&n; *                       Use the minimum of the LBA and CHS capacities.&n; *                       Avoid hwgroup-&gt;rq == NULL on the last irq.&n; *                       Fix potential null dereferencing with DEBUG_LOG.&n; * Ver 0.8   Dec  7 97   Increase irq timeout from 10 to 50 seconds.&n; *                       Add media write-protect detection.&n; *                       Issue START command only if TEST UNIT READY fails.&n; *                       Add work-around for IOMEGA ZIP revision 21.D.&n; *                       Remove idefloppy_get_capabilities().&n; */
+multiline_comment|/*&n; * linux/drivers/block/ide-floppy.c&t;Version 0.9&t;&t;Jul   4, 1999&n; *&n; * Copyright (C) 1996 - 1999 Gadi Oxman &lt;gadio@netvision.net.il&gt;&n; */
+multiline_comment|/*&n; * IDE ATAPI floppy driver.&n; *&n; * The driver currently doesn&squot;t have any fancy features, just the bare&n; * minimum read/write support.&n; *&n; * Many thanks to Lode Leroy &lt;Lode.Leroy@www.ibase.be&gt;, who tested so many&n; * ALPHA patches to this driver on an EASYSTOR LS-120 ATAPI floppy drive.&n; *&n; * Ver 0.1   Oct 17 96   Initial test version, mostly based on ide-tape.c.&n; * Ver 0.2   Oct 31 96   Minor changes.&n; * Ver 0.3   Dec  2 96   Fixed error recovery bug.&n; * Ver 0.4   Jan 26 97   Add support for the HDIO_GETGEO ioctl.&n; * Ver 0.5   Feb 21 97   Add partitions support.&n; *                       Use the minimum of the LBA and CHS capacities.&n; *                       Avoid hwgroup-&gt;rq == NULL on the last irq.&n; *                       Fix potential null dereferencing with DEBUG_LOG.&n; * Ver 0.8   Dec  7 97   Increase irq timeout from 10 to 50 seconds.&n; *                       Add media write-protect detection.&n; *                       Issue START command only if TEST UNIT READY fails.&n; *                       Add work-around for IOMEGA ZIP revision 21.D.&n; *                       Remove idefloppy_get_capabilities().&n; * Ver 0.9   Jul  4 99   Fix a bug which might have caused the number of&n; *                        bytes requested on each interrupt to be zero.&n; *                        Thanks to &lt;shanos@es.co.nz&gt; for pointing this out.&n; */
 DECL|macro|IDEFLOPPY_VERSION
-mdefine_line|#define IDEFLOPPY_VERSION &quot;0.8&quot;
+mdefine_line|#define IDEFLOPPY_VERSION &quot;0.9&quot;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -3600,9 +3600,16 @@ id|pc-&gt;buffer
 suffix:semicolon
 id|bcount.all
 op_assign
+id|IDE_MIN
+c_func
+(paren
 id|pc-&gt;request_transfer
+comma
+l_int|63
+op_star
+l_int|1024
+)paren
 suffix:semicolon
-multiline_comment|/* Request to transfer the entire buffer at once */
 macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA
 r_if
 c_cond
@@ -6710,6 +6717,7 @@ op_amp
 id|floppy-&gt;flags
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;We used to check revisions here. At this point however&n;&t; *&t;I&squot;m giving up. Just assume they are all broken, its easier.&n;&t; *&n;&t; *&t;The actual reason for the workarounds was likely&n;&t; *&t;a driver bug after all rather than a firmware bug,&n;&t; *&t;and the workaround below used to hide it. It should&n;&t; *&t;be fixed as of version 1.9, but to be on the safe side&n;&t; *&t;we&squot;ll leave the limitation below for the 2.2.x tree.&n;&t; */
 r_if
 c_cond
 (paren
@@ -6722,32 +6730,6 @@ l_string|&quot;IOMEGA ZIP 100 ATAPI&quot;
 )paren
 op_eq
 l_int|0
-op_logical_and
-(paren
-(paren
-id|strcmp
-c_func
-(paren
-id|drive-&gt;id-&gt;fw_rev
-comma
-l_string|&quot;21.D&quot;
-)paren
-op_eq
-l_int|0
-)paren
-op_logical_or
-(paren
-id|strcmp
-c_func
-(paren
-id|drive-&gt;id-&gt;fw_rev
-comma
-l_string|&quot;23.D&quot;
-)paren
-op_eq
-l_int|0
-)paren
-)paren
 )paren
 (brace
 r_for

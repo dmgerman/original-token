@@ -135,11 +135,9 @@ DECL|macro|ULTRA_IO_EXTENT
 mdefine_line|#define ULTRA_IO_EXTENT 32
 DECL|macro|EN0_ERWCNT
 mdefine_line|#define EN0_ERWCNT      0x08  /* Early receive warning count. */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ultramca_probe
 r_int
+id|__init
 id|ultramca_probe
 c_func
 (paren
@@ -147,7 +145,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int

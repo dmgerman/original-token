@@ -880,12 +880,10 @@ suffix:semicolon
 suffix:semicolon
 )brace
 multiline_comment|/* Reset and setup CD180 chip */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|rc_init_CD180
 r_static
 r_void
+id|__init
 id|rc_init_CD180
 c_func
 (paren
@@ -894,7 +892,6 @@ id|riscom_board
 r_const
 op_star
 id|bp
-)paren
 )paren
 (brace
 r_int
@@ -1064,12 +1061,10 @@ id|flags
 suffix:semicolon
 )brace
 multiline_comment|/* Main probing routine, also sets irq. */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|rc_probe
 r_static
 r_int
+id|__init
 id|rc_probe
 c_func
 (paren
@@ -1077,7 +1072,6 @@ r_struct
 id|riscom_board
 op_star
 id|bp
-)paren
 )paren
 (brace
 r_int
@@ -9213,11 +9207,9 @@ suffix:semicolon
 )brace
 macro_line|#ifndef MODULE
 multiline_comment|/*&n; * Called at boot time.&n; * &n; * You can specify IO base for up to RC_NBOARD cards,&n; * using line &quot;riscom8=0xiobase1,0xiobase2,..&quot; at LILO prompt.&n; * Note that there will be no probing at default&n; * addresses in this case.&n; *&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|riscom8_setup
 r_void
+id|__init
 id|riscom8_setup
 c_func
 (paren
@@ -9228,7 +9220,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_int
@@ -9287,16 +9278,13 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/* &n; * This routine must be called by kernel at boot time &n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|riscom8_init
 r_int
+id|__init
 id|riscom8_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int

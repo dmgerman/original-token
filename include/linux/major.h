@@ -184,6 +184,10 @@ DECL|macro|IDE6_MAJOR
 mdefine_line|#define IDE6_MAJOR&t;88
 DECL|macro|IDE7_MAJOR
 mdefine_line|#define IDE7_MAJOR&t;89
+DECL|macro|IDE8_MAJOR
+mdefine_line|#define IDE8_MAJOR&t;90
+DECL|macro|IDE9_MAJOR
+mdefine_line|#define IDE9_MAJOR&t;91
 DECL|macro|AURORA_MAJOR
 mdefine_line|#define AURORA_MAJOR 79
 DECL|macro|RAW_MAJOR

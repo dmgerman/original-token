@@ -664,14 +664,12 @@ id|pdev-&gt;irq
 suffix:semicolon
 id|pci_ioaddr
 op_assign
-id|pdev-&gt;base_address
+id|pdev-&gt;resource
 (braket
 l_int|0
 )braket
-suffix:semicolon
-id|pci_ioaddr
-op_and_assign
-id|PCI_BASE_ADDRESS_MEM_MASK
+dot
+id|start
 suffix:semicolon
 macro_line|#ifdef RCDEBUG
 id|printk

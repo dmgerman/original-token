@@ -2327,16 +2327,13 @@ l_int|NULL
 multiline_comment|/* fsync */
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|chr_dev_init
 r_int
+id|__init
 id|chr_dev_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_if

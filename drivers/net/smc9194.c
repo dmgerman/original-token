@@ -1710,11 +1710,9 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*-------------------------------------------------------------------------&n; |&n; | smc_init( struct device * dev )&n; |   Input parameters:&n; |&t;dev-&gt;base_addr == 0, try to find all possible locations&n; |&t;dev-&gt;base_addr == 1, return failure code&n; |&t;dev-&gt;base_addr == 2, always allocate space,  and return success&n; |&t;dev-&gt;base_addr == &lt;anything else&gt;   this is the address to check&n; |&n; |   Output:&n; |&t;0 --&gt; there is a device&n; |&t;anything else, error&n; |&n; ---------------------------------------------------------------------------&n;*/
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|smc_init
 r_int
+id|__init
 id|smc_init
 c_func
 (paren
@@ -1722,7 +1720,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int
@@ -1867,17 +1864,14 @@ suffix:semicolon
 )brace
 macro_line|#ifndef NO_AUTOPROBE
 multiline_comment|/*----------------------------------------------------------------------&n; . smc_findirq&n; .&n; . This routine has a simple purpose -- make the SMC chip generate an&n; . interrupt, so an auto-detect routine can detect it, and find the IRQ,&n; ------------------------------------------------------------------------&n;*/
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|smc_findirq
 r_int
+id|__init
 id|smc_findirq
 c_func
 (paren
 r_int
 id|ioaddr
-)paren
 )paren
 (brace
 r_int
@@ -2002,18 +1996,15 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/*----------------------------------------------------------------------&n; . Function: smc_probe( int ioaddr )&n; .&n; . Purpose:&n; .&t;Tests to see if a given ioaddr points to an SMC9xxx chip.&n; .&t;Returns a 0 on success&n; .&n; . Algorithm:&n; .&t;(1) see if the high byte of BANK_SELECT is 0x33&n; . &t;(2) compare the ioaddr with the base register&squot;s address&n; .&t;(3) see if I recognize the chip ID in the appropriate register&n; .&n; .---------------------------------------------------------------------&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|smc_probe
 r_static
 r_int
+id|__init
 id|smc_probe
 c_func
 (paren
 r_int
 id|ioaddr
-)paren
 )paren
 (brace
 r_int
@@ -2202,12 +2193,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*---------------------------------------------------------------&n; . Here I do typical initialization tasks.&n; .&n; . o  Initialize the structure if needed&n; . o  print out my vanity message if not done so already&n; . o  print out what type of hardware is detected&n; . o  print out the ethernet address&n; . o  find the IRQ&n; . o  set up my private data&n; . o  configure the dev structure with my subroutines&n; . o  actually GRAB the irq.&n; . o  GRAB the region&n; .-----------------------------------------------------------------&n;*/
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|smc_initcard
 r_static
 r_int
+id|__init
 id|smc_initcard
 c_func
 (paren
@@ -2218,7 +2207,6 @@ id|dev
 comma
 r_int
 id|ioaddr
-)paren
 )paren
 (brace
 r_int

@@ -469,11 +469,9 @@ suffix:semicolon
 suffix:semicolon
 "&f;"
 multiline_comment|/* Entry point of PLIP driver.&n;   Probe the hardware, and register/initialize the driver.&n;&n;   PLIP is rather weird, because of the way it interacts with the parport&n;   system.  It is _not_ initialised from Space.c.  Instead, plip_init()&n;   is called, and that function makes up a &quot;struct device&quot; for each port, and&n;   then calls us here.&n;&n;   */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|plip_init_dev
 id|plip_init_dev
 c_func
 (paren
@@ -486,7 +484,6 @@ r_struct
 id|parport
 op_star
 id|pb
-)paren
 )paren
 (brace
 r_struct
@@ -5066,16 +5063,13 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|plip_init
 id|plip_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct

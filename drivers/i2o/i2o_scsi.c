@@ -1111,6 +1111,8 @@ comma
 l_string|&quot;I2O SCSI OSM&quot;
 comma
 l_int|0
+comma
+id|I2O_CLASS_SCSI_PERIPHERAL
 )brace
 suffix:semicolon
 DECL|function|i2o_find_lun

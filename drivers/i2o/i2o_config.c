@@ -194,6 +194,9 @@ comma
 l_string|&quot;Configuration&quot;
 comma
 l_int|0
+comma
+l_int|0xffffffff
+singleline_comment|// All classes
 )brace
 suffix:semicolon
 DECL|function|cfg_llseek

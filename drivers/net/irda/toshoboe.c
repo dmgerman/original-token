@@ -2311,12 +2311,12 @@ id|pci_dev
 suffix:semicolon
 id|self-&gt;base
 op_assign
-id|pci_dev-&gt;base_address
+id|pci_dev-&gt;resource
 (braket
 l_int|0
 )braket
-op_amp
-id|PCI_BASE_ADDRESS_IO_MASK
+dot
+id|start
 suffix:semicolon
 id|idev
 op_assign
@@ -2845,12 +2845,10 @@ id|printk
 id|KERN_WARNING
 l_string|&quot;ToshOboe: Found 701 chip at 0x%0lx irq %d&bslash;n&quot;
 comma
-id|pci_dev-&gt;base_address
+id|pci_dev-&gt;resource
 (braket
 l_int|0
 )braket
-op_amp
-id|PCI_BASE_ADDRESS_IO_MASK
 comma
 id|pci_dev-&gt;irq
 )paren

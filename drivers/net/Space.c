@@ -2956,6 +2956,55 @@ macro_line|#undef NEXT_DEV
 DECL|macro|NEXT_DEV
 mdefine_line|#define NEXT_DEV (&amp;mkiss_bootstrap)
 macro_line|#endif&t;/* MKISS */
+macro_line|#if defined(CONFIG_YAM)
+r_extern
+r_int
+id|yam_init
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+DECL|variable|yam_bootstrap
+r_static
+r_struct
+id|device
+id|yam_bootstrap
+op_assign
+(brace
+l_string|&quot;yam&quot;
+comma
+l_int|0x0
+comma
+l_int|0x0
+comma
+l_int|0x0
+comma
+l_int|0x0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|NEXT_DEV
+comma
+id|yam_init
+comma
+)brace
+suffix:semicolon
+DECL|macro|NEXT_DEV
+macro_line|#undef NEXT_DEV
+DECL|macro|NEXT_DEV
+mdefine_line|#define NEXT_DEV (&amp;yam_bootstrap)
+macro_line|#endif&t;/* CONFIG_YAM */
 macro_line|#if defined(CONFIG_STRIP)
 r_extern
 r_int

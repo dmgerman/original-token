@@ -277,11 +277,9 @@ id|netcard_portlist
 )brace
 suffix:semicolon
 macro_line|#else
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
+DECL|function|netcard_probe
 id|netcard_probe
 c_func
 (paren
@@ -289,7 +287,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int
@@ -396,12 +393,10 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/*&n; * This is the real probe routine. Linux has a history of friendly device&n; * probes on the ISA bus. A good device probes avoids doing writes, and&n; * verifies that the correct device exists and functions.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|netcard_probe1
 r_static
 r_int
+id|__init
 id|netcard_probe1
 c_func
 (paren
@@ -412,7 +407,6 @@ id|dev
 comma
 r_int
 id|ioaddr
-)paren
 )paren
 (brace
 r_static

@@ -14449,7 +14449,7 @@ c_func
 (paren
 id|zr-&gt;i2c.name
 comma
-l_string|&quot;zoran%u%u&quot;
+l_string|&quot;zoran%u&quot;
 comma
 id|zr-&gt;id
 )paren
@@ -14946,12 +14946,12 @@ id|zr-&gt;lock
 suffix:semicolon
 id|zr-&gt;zr36057_adr
 op_assign
-id|zr-&gt;pci_dev-&gt;base_address
+id|zr-&gt;pci_dev-&gt;resource
 (braket
 l_int|0
 )braket
-op_amp
-id|PCI_BASE_ADDRESS_MEM_MASK
+dot
+id|start
 suffix:semicolon
 id|pci_read_config_byte
 c_func

@@ -9754,12 +9754,12 @@ id|pci_devp-&gt;bus-&gt;number
 suffix:semicolon
 id|iop
 op_assign
-id|pci_devp-&gt;base_address
+id|pci_devp-&gt;resource
 (braket
 l_int|0
 )braket
-op_amp
-id|PCI_IOADDRESS_MASK
+dot
+id|start
 suffix:semicolon
 id|ASC_DBG2
 c_func
@@ -10115,10 +10115,12 @@ macro_line|#else /* version &gt;= v2.1.93 */
 macro_line|#ifdef CONFIG_PCI
 id|pci_memory_address
 op_assign
-id|pci_devp-&gt;base_address
+id|pci_devp-&gt;resource
 (braket
 l_int|1
 )braket
+dot
+id|start
 suffix:semicolon
 r_if
 c_cond

@@ -3569,12 +3569,10 @@ id|NET_BH
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_int
+id|__init
+DECL|function|sparc_lance_init
 id|sparc_lance_init
 (paren
 r_struct
@@ -3596,7 +3594,6 @@ r_struct
 id|linux_sbus_device
 op_star
 id|lebuffer
-)paren
 )paren
 (brace
 r_static
@@ -4407,18 +4404,15 @@ suffix:semicolon
 macro_line|#ifdef CONFIG_SUN4
 macro_line|#include &lt;asm/sun4paddr.h&gt;
 multiline_comment|/* Find all the lance cards on the system and initialize them */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sparc_lance_probe
 r_int
+id|__init
 id|sparc_lance_probe
 (paren
 r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_static
@@ -4519,18 +4513,15 @@ suffix:semicolon
 )brace
 macro_line|#else /* !CONFIG_SUN4 */
 multiline_comment|/* Find all the lance cards on the system and initialize them */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sparc_lance_probe
 r_int
+id|__init
 id|sparc_lance_probe
 (paren
 r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_struct

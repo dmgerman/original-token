@@ -194,12 +194,10 @@ l_int|0x0
 comma
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|quirk_bridge
 r_static
 r_void
+id|__init
 id|quirk_bridge
 c_func
 (paren
@@ -210,7 +208,6 @@ id|dev
 comma
 r_int
 id|pos
-)paren
 )paren
 (brace
 r_struct
@@ -372,12 +369,10 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/* Deal with broken BIOS&squot;es that neglect to enable passive release,&n;   which can cause problems in combination with the 82441FX/PPro MTRRs */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|quirk_passive_release
 r_static
 r_void
+id|__init
 id|quirk_passive_release
 c_func
 (paren
@@ -388,7 +383,6 @@ id|dev
 comma
 r_int
 id|arg
-)paren
 )paren
 (brace
 r_struct
@@ -478,12 +472,10 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Exported */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|quirk_isa_dma_hangs
 r_static
 r_void
+id|__init
 id|quirk_isa_dma_hangs
 c_func
 (paren
@@ -494,7 +486,6 @@ id|dev
 comma
 r_int
 id|arg
-)paren
 )paren
 (brace
 r_if
@@ -753,16 +744,13 @@ l_int|0x00
 comma
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|pci_quirks_init
 r_void
+id|__init
 id|pci_quirks_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct

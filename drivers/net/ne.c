@@ -780,12 +780,12 @@ id|pdev
 (brace
 id|pci_ioaddr
 op_assign
-id|pdev-&gt;base_address
+id|pdev-&gt;resource
 (braket
 l_int|0
 )braket
-op_amp
-id|PCI_BASE_ADDRESS_IO_MASK
+dot
+id|start
 suffix:semicolon
 multiline_comment|/* Avoid already found cards from previous calls */
 r_if

@@ -176,11 +176,9 @@ mdefine_line|#define ULTRA32_CFG6&t;(-0x15)&t;/* 0xc8b */
 DECL|macro|ULTRA32_CFG7
 mdefine_line|#define ULTRA32_CFG7&t;0x0d&t;/* 0xcad */
 multiline_comment|/*&t;Probe for the Ultra32.  This looks like a 8013 with the station&n;&t;address PROM at I/O ports &lt;base&gt;+8 to &lt;base&gt;+13, with a checksum&n;&t;following.&n;*/
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ultra32_probe
 r_int
+id|__init
 id|ultra32_probe
 c_func
 (paren
@@ -188,7 +186,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_const
@@ -345,11 +342,9 @@ r_return
 id|ENODEV
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ultra32_probe1
 r_int
+id|__init
 id|ultra32_probe1
 c_func
 (paren
@@ -360,7 +355,6 @@ id|dev
 comma
 r_int
 id|ioaddr
-)paren
 )paren
 (brace
 r_int

@@ -6,8 +6,10 @@ macro_line|#include &lt;linux/swapctl.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;linux/utsname.h&gt;
+macro_line|#include &lt;linux/capability.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/sysrq.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#ifdef CONFIG_ROOT_NFS
 macro_line|#include &lt;linux/nfs_fs.h&gt;
@@ -704,6 +706,27 @@ op_amp
 id|proc_dointvec
 )brace
 comma
+(brace
+id|KERN_CAP_BSET
+comma
+l_string|&quot;cap-bound&quot;
+comma
+op_amp
+id|cap_bset
+comma
+r_sizeof
+(paren
+id|kernel_cap_t
+)paren
+comma
+l_int|0600
+comma
+l_int|NULL
+comma
+op_amp
+id|proc_dointvec_bset
+)brace
+comma
 macro_line|#ifdef CONFIG_BLK_DEV_INITRD
 (brace
 id|KERN_REALROOTDEV
@@ -1011,6 +1034,29 @@ id|proc_dointvec
 )brace
 comma
 macro_line|#endif
+macro_line|#ifdef CONFIG_MAGIC_SYSRQ
+(brace
+id|KERN_SYSRQ
+comma
+l_string|&quot;sysrq&quot;
+comma
+op_amp
+id|sysrq_enabled
+comma
+r_sizeof
+(paren
+r_int
+)paren
+comma
+l_int|0644
+comma
+l_int|NULL
+comma
+op_amp
+id|proc_dointvec
+)brace
+comma
+macro_line|#endif&t; 
 (brace
 id|KERN_MAX_THREADS
 comma
@@ -3452,6 +3498,16 @@ r_return
 id|r
 suffix:semicolon
 )brace
+DECL|macro|OP_SET
+mdefine_line|#define OP_SET&t;0
+DECL|macro|OP_AND
+mdefine_line|#define OP_AND&t;1
+DECL|macro|OP_OR
+mdefine_line|#define OP_OR&t;2
+DECL|macro|OP_MAX
+mdefine_line|#define OP_MAX&t;3
+DECL|macro|OP_MIN
+mdefine_line|#define OP_MIN&t;4
 DECL|function|do_proc_dointvec
 r_static
 r_int
@@ -3480,6 +3536,9 @@ id|lenp
 comma
 r_int
 id|conv
+comma
+r_int
+id|op
 )paren
 (brace
 r_int
@@ -3797,11 +3856,83 @@ id|left
 op_sub_assign
 id|len
 suffix:semicolon
+r_switch
+c_cond
+(paren
+id|op
+)paren
+(brace
+r_case
+id|OP_SET
+suffix:colon
 op_star
 id|i
 op_assign
 id|val
 suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|OP_AND
+suffix:colon
+op_star
+id|i
+op_and_assign
+id|val
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|OP_OR
+suffix:colon
+op_star
+id|i
+op_or_assign
+id|val
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|OP_MAX
+suffix:colon
+r_if
+c_cond
+(paren
+op_star
+id|i
+OL
+id|val
+)paren
+(brace
+op_star
+id|i
+op_assign
+id|val
+suffix:semicolon
+)brace
+r_break
+suffix:semicolon
+r_case
+id|OP_MIN
+suffix:colon
+r_if
+c_cond
+(paren
+op_star
+id|i
+OG
+id|val
+)paren
+(brace
+op_star
+id|i
+op_assign
+id|val
+suffix:semicolon
+)brace
+r_break
+suffix:semicolon
+)brace
 )brace
 r_else
 (brace
@@ -4048,6 +4179,64 @@ comma
 id|lenp
 comma
 l_int|1
+comma
+id|OP_SET
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; *&t;init may raise the set.&n; */
+DECL|function|proc_dointvec_bset
+r_int
+id|proc_dointvec_bset
+c_func
+(paren
+id|ctl_table
+op_star
+id|table
+comma
+r_int
+id|write
+comma
+r_struct
+id|file
+op_star
+id|filp
+comma
+r_void
+op_star
+id|buffer
+comma
+r_int
+op_star
+id|lenp
+)paren
+(brace
+r_return
+id|do_proc_dointvec
+c_func
+(paren
+id|table
+comma
+id|write
+comma
+id|filp
+comma
+id|buffer
+comma
+id|lenp
+comma
+l_int|1
+comma
+(paren
+id|current-&gt;pid
+op_eq
+l_int|1
+)paren
+ques
+c_cond
+id|OP_SET
+suffix:colon
+id|OP_AND
 )paren
 suffix:semicolon
 )brace
@@ -4686,6 +4875,8 @@ comma
 id|lenp
 comma
 id|HZ
+comma
+id|OP_SET
 )paren
 suffix:semicolon
 )brace

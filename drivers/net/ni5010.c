@@ -296,11 +296,9 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ni5010_probe
 r_int
+id|__init
 id|ni5010_probe
 c_func
 (paren
@@ -308,7 +306,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int
@@ -496,17 +493,14 @@ id|IE_SAPROM
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|trigger_irq
 r_void
+id|__init
 id|trigger_irq
 c_func
 (paren
 r_int
 id|ioaddr
-)paren
 )paren
 (brace
 id|outb
@@ -614,12 +608,10 @@ suffix:semicolon
 multiline_comment|/* Start transmission */
 )brace
 multiline_comment|/*&n; *      This is the real probe routine.  Linux has a history of friendly device&n; *      probes on the ISA bus.  A good device probes avoids doing writes, and&n; *      verifies that the correct device exists and functions.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ni5010_probe1
 r_static
 r_int
+id|__init
 id|ni5010_probe1
 c_func
 (paren
@@ -630,7 +622,6 @@ id|dev
 comma
 r_int
 id|ioaddr
-)paren
 )paren
 (brace
 r_static

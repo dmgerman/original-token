@@ -12694,10 +12694,8 @@ r_void
 )paren
 (brace
 macro_line|#else
-id|__initfunc
-c_func
-(paren
 r_int
+id|__init
 id|init_planbs
 c_func
 (paren
@@ -12705,7 +12703,6 @@ r_struct
 id|video_init
 op_star
 id|unused
-)paren
 )paren
 (brace
 macro_line|#endif

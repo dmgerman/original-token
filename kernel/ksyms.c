@@ -29,6 +29,7 @@ macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/capability.h&gt;
 macro_line|#if defined(CONFIG_PROC_FS)
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#endif
@@ -800,6 +801,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|generic_file_mmap
+)paren
+suffix:semicolon
+DECL|variable|generic_buffer_fdatasync
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|generic_buffer_fdatasync
 )paren
 suffix:semicolon
 DECL|variable|page_hash_bits
@@ -1859,6 +1867,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|securebits
+)paren
+suffix:semicolon
+DECL|variable|cap_bset
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|cap_bset
 )paren
 suffix:semicolon
 multiline_comment|/* Program loader interfaces */

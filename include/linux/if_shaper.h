@@ -46,6 +46,11 @@ r_int
 r_int
 id|locked
 suffix:semicolon
+DECL|member|stats
+r_struct
+id|net_device_stats
+id|stats
+suffix:semicolon
 DECL|member|dev
 r_struct
 id|device

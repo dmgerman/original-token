@@ -218,6 +218,15 @@ r_int
 id|on
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SX
+r_extern
+r_int
+id|sx_init
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_8xx
 r_extern
 r_int
@@ -8649,16 +8658,13 @@ id|dev_console_driver
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n; * Ok, now we can initialize the rest of the tty devices and can count&n; * on memory allocations, interrupts etc..&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|tty_init
 r_int
+id|__init
 id|tty_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_if
@@ -8978,6 +8984,13 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_SPECIALIX
 id|specialix_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_SX
+id|sx_init
 c_func
 (paren
 )paren

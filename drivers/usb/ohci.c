@@ -9559,10 +9559,12 @@ r_int
 r_int
 id|mem_base
 op_assign
-id|dev-&gt;base_address
+id|dev-&gt;resource
 (braket
 l_int|0
 )braket
+dot
+id|flags
 suffix:semicolon
 multiline_comment|/* If its OHCI, its memory */
 r_if
@@ -9578,8 +9580,13 @@ id|ENODEV
 suffix:semicolon
 multiline_comment|/* Get the memory address and map it for IO */
 id|mem_base
-op_and_assign
-id|PCI_BASE_ADDRESS_MEM_MASK
+op_assign
+id|dev-&gt;resource
+(braket
+l_int|0
+)braket
+dot
+id|start
 suffix:semicolon
 multiline_comment|/* no interrupt won&squot;t work... */
 r_if

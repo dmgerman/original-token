@@ -1299,13 +1299,12 @@ id|ioaddr
 op_assign
 id|pci_dev
 op_member_access_from_pointer
-id|base_address
+id|resource
 (braket
 l_int|0
 )braket
-op_amp
-op_complement
-l_int|3
+dot
+id|start
 suffix:semicolon
 r_if
 c_cond

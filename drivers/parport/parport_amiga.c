@@ -708,8 +708,6 @@ multiline_comment|/* data_forward */
 l_int|NULL
 comma
 multiline_comment|/* data_reverse */
-id|amiga_interrupt
-comma
 id|amiga_init_state
 comma
 id|amiga_save_state

@@ -545,6 +545,12 @@ r_static
 r_int
 id|sysrq_pressed
 suffix:semicolon
+DECL|variable|sysrq_enabled
+r_int
+id|sysrq_enabled
+op_assign
+l_int|1
+suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n; * Many other routines do put_queue, but I think either&n; * they produce ASCII, or they produce some user-assigned&n; * string, and in both cases we might assume that it is&n; * in utf-8 already.&n; */
 DECL|function|to_utf8
@@ -893,6 +899,8 @@ c_cond
 (paren
 op_logical_neg
 id|up_flag
+op_logical_and
+id|sysrq_enabled
 )paren
 (brace
 id|handle_sysrq

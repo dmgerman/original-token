@@ -10134,12 +10134,10 @@ suffix:semicolon
 )brace
 multiline_comment|/*****************************************************************************/
 multiline_comment|/*&n; *&t;Map in interrupt vector to this driver. Check that we don&squot;t&n; *&t;already have this vector mapped, we might be sharing this&n; *&t;interrupt across multiple boards.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|stl_mapirq
 r_static
 r_int
+id|__init
 id|stl_mapirq
 c_func
 (paren
@@ -10149,7 +10147,6 @@ comma
 r_char
 op_star
 id|name
-)paren
 )paren
 (brace
 r_int
@@ -10266,12 +10263,10 @@ suffix:semicolon
 )brace
 multiline_comment|/*****************************************************************************/
 multiline_comment|/*&n; *&t;Initialize all the ports on a panel.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|stl_initports
 r_static
 r_int
+id|__init
 id|stl_initports
 c_func
 (paren
@@ -10282,7 +10277,6 @@ comma
 id|stlpanel_t
 op_star
 id|panelp
-)paren
 )paren
 (brace
 id|stlport_t
@@ -11976,19 +11970,16 @@ suffix:semicolon
 )brace
 multiline_comment|/*****************************************************************************/
 multiline_comment|/*&n; *&t;Initialize and configure the specified board.&n; *&t;Scan through all the boards in the configuration and see what we&n; *&t;can find. Handle EIO and the ECH boards a little differently here&n; *&t;since the initial search and setup is very different.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|stl_brdinit
 r_static
 r_int
+id|__init
 id|stl_brdinit
 c_func
 (paren
 id|stlbrd_t
 op_star
 id|brdp
-)paren
 )paren
 (brace
 r_int
@@ -14042,16 +14033,13 @@ id|rc
 suffix:semicolon
 )brace
 multiline_comment|/*****************************************************************************/
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|stl_init
 r_int
+id|__init
 id|stl_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|printk

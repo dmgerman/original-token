@@ -1,5 +1,4 @@
-multiline_comment|/*&n; *&t;&t;&t;Simple traffic shaper for Linux NET3.&n; *&n; *&t;(c) Copyright 1996 Alan Cox &lt;alan@redhat.com&gt;, All Rights Reserved.&n; *&t;&t;&t;&t;http://www.redhat.com&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&t;&n; *&t;Neither Alan Cox nor CymruNet Ltd. admit liability nor provide &n; *&t;warranty for any of this software. This material is provided &n; *&t;&quot;AS-IS&quot; and at no charge.&t;&n; *&n; *&t;&n; *&t;Algorithm:&n; *&n; *&t;Queue Frame:&n; *&t;&t;Compute time length of frame at regulated speed&n; *&t;&t;Add frame to queue at appropriate point&n; *&t;&t;Adjust time length computation for followup frames&n; *&t;&t;Any frame that falls outside of its boundaries is freed&n; *&n; *&t;We work to the following constants&n; *&n; *&t;&t;SHAPER_QLEN&t;Maximum queued frames&n; *&t;&t;SHAPER_LATENCY&t;Bounding latency on a frame. Leaving this latency&n; *&t;&t;&t;&t;window drops the frame. This stops us queueing &n; *&t;&t;&t;&t;frames for a long time and confusing a remote&n; *&t;&t;&t;&t;host.&n; *&t;&t;SHAPER_MAXSLIP&t;Maximum time a priority frame may jump forward.&n; *&t;&t;&t;&t;That bounds the penalty we will inflict on low&n; *&t;&t;&t;&t;priority traffic.&n; *&t;&t;SHAPER_BURST&t;Time range we call &quot;now&quot; in order to reduce&n; *&t;&t;&t;&t;system load. The more we make this the burstier&n; *&t;&t;&t;&t;the behaviour, the better local performance you&n; *&t;&t;&t;&t;get through packet clustering on routers and the&n; *&t;&t;&t;&t;worse the remote end gets to judge rtts.&n; *&n; *&t;This is designed to handle lower speed links ( &lt; 200K/second or so). We&n; *&t;run off a 100-150Hz base clock typically. This gives us a resolution at&n; *&t;200Kbit/second of about 2Kbit or 256 bytes. Above that our timer&n; *&t;resolution may start to cause much more burstiness in the traffic. We&n; *&t;could avoid a lot of that by calling kick_shaper() at the end of the &n; *&t;tied device transmissions. If you run above about 100K second you &n; *&t;may need to tune the supposed speed rate for the right values.&n; *&n; *&t;BUGS:&n; *&t;&t;Downing the interface under the shaper before the shaper&n; *&t;&t;will render your machine defunct. Don&squot;t for now shape over&n; *&t;&t;PPP or SLIP therefore!&n; *&t;&t;This will be fixed in BETA4&n; */
-multiline_comment|/*&n; * bh_atomic() SMP races fixes and rewritten the locking code to be SMP safe&n; * and irq-mask friendly. NOTE: we can&squot;t use start_bh_atomic() in kick_shaper()&n; * because it&squot;s going to be recalled from an irq handler, and synchronize_bh()&n; * is a nono if called from irq context.&n; *&t;&t;&t;&t;&t;&t;1999  Andrea Arcangeli&n; */
+multiline_comment|/*&n; *&t;&t;&t;Simple traffic shaper for Linux NET3.&n; *&n; *&t;(c) Copyright 1996 Alan Cox &lt;alan@redhat.com&gt;, All Rights Reserved.&n; *&t;&t;&t;&t;http://www.redhat.com&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&t;&n; *&t;Neither Alan Cox nor CymruNet Ltd. admit liability nor provide &n; *&t;warranty for any of this software. This material is provided &n; *&t;&quot;AS-IS&quot; and at no charge.&t;&n; *&n; *&t;&n; *&t;Algorithm:&n; *&n; *&t;Queue Frame:&n; *&t;&t;Compute time length of frame at regulated speed&n; *&t;&t;Add frame to queue at appropriate point&n; *&t;&t;Adjust time length computation for followup frames&n; *&t;&t;Any frame that falls outside of its boundaries is freed&n; *&n; *&t;We work to the following constants&n; *&n; *&t;&t;SHAPER_QLEN&t;Maximum queued frames&n; *&t;&t;SHAPER_LATENCY&t;Bounding latency on a frame. Leaving this latency&n; *&t;&t;&t;&t;window drops the frame. This stops us queueing &n; *&t;&t;&t;&t;frames for a long time and confusing a remote&n; *&t;&t;&t;&t;host.&n; *&t;&t;SHAPER_MAXSLIP&t;Maximum time a priority frame may jump forward.&n; *&t;&t;&t;&t;That bounds the penalty we will inflict on low&n; *&t;&t;&t;&t;priority traffic.&n; *&t;&t;SHAPER_BURST&t;Time range we call &quot;now&quot; in order to reduce&n; *&t;&t;&t;&t;system load. The more we make this the burstier&n; *&t;&t;&t;&t;the behaviour, the better local performance you&n; *&t;&t;&t;&t;get through packet clustering on routers and the&n; *&t;&t;&t;&t;worse the remote end gets to judge rtts.&n; *&n; *&t;This is designed to handle lower speed links ( &lt; 200K/second or so). We&n; *&t;run off a 100-150Hz base clock typically. This gives us a resolution at&n; *&t;200Kbit/second of about 2Kbit or 256 bytes. Above that our timer&n; *&t;resolution may start to cause much more burstiness in the traffic. We&n; *&t;could avoid a lot of that by calling kick_shaper() at the end of the &n; *&t;tied device transmissions. If you run above about 100K second you &n; *&t;may need to tune the supposed speed rate for the right values.&n; *&n; *&t;BUGS:&n; *&t;&t;Downing the interface under the shaper before the shaper&n; *&t;&t;will render your machine defunct. Don&squot;t for now shape over&n; *&t;&t;PPP or SLIP therefore!&n; *&t;&t;This will be fixed in BETA4&n; *&n; * Update History :&n; *&n; *              bh_atomic() SMP races fixes and rewritten the locking code to&n; *              be SMP safe and irq-mask friendly.&n; *              NOTE: we can&squot;t use start_bh_atomic() in kick_shaper()&n; *              because it&squot;s going to be recalled from an irq handler,&n; *              and synchronize_bh() is a nono if called from irq context.&n; *&t;&t;&t;&t;&t;&t;1999  Andrea Arcangeli&n; *&n; *              Device statistics (tx_pakets, tx_bytes,&n; *              tx_drops: queue_over_time and collisions: max_queue_exceded)&n; *                               1999/06/18 Jordi Murgo &lt;savage@apostols.org&gt;&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -497,6 +496,9 @@ c_func
 id|skb
 )paren
 suffix:semicolon
+id|shaper-&gt;stats.tx_dropped
+op_increment
+suffix:semicolon
 )brace
 r_else
 id|skb_queue_tail
@@ -550,6 +552,9 @@ c_func
 (paren
 id|ptr
 )paren
+suffix:semicolon
+id|shaper-&gt;stats.collisions
+op_increment
 suffix:semicolon
 )brace
 id|shaper_unlock
@@ -644,6 +649,13 @@ c_func
 (paren
 id|newskb
 )paren
+suffix:semicolon
+id|shaper-&gt;stats.tx_bytes
+op_add_assign
+id|newskb-&gt;len
+suffix:semicolon
+id|shaper-&gt;stats.tx_packets
+op_increment
 suffix:semicolon
 r_if
 c_cond
@@ -1095,8 +1107,16 @@ op_star
 id|dev
 )paren
 (brace
+r_struct
+id|shaper
+op_star
+id|sh
+op_assign
+id|dev-&gt;priv
+suffix:semicolon
 r_return
-l_int|NULL
+op_amp
+id|sh-&gt;stats
 suffix:semicolon
 )brace
 DECL|function|shaper_header
@@ -1860,11 +1880,9 @@ id|sh
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Add a shaper device to the system&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|shaper_probe
 r_int
+id|__init
 id|shaper_probe
 c_func
 (paren
@@ -1872,7 +1890,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 multiline_comment|/*&n;&t; *&t;Set up the shaper.&n;&t; */
@@ -2098,6 +2115,13 @@ c_func
 r_void
 )paren
 (brace
+r_struct
+id|shaper
+op_star
+id|sh
+op_assign
+id|dev_shape.priv
+suffix:semicolon
 multiline_comment|/*&n;&t; *&t;No need to check MOD_IN_USE, as sys_delete_module() checks.&n;&t; *&t;To be unloadable we must be closed and detached so we don&squot;t&n;&t; *&t;need to flush things.&n;&t; */
 id|unregister_netdev
 c_func
@@ -2106,11 +2130,11 @@ op_amp
 id|dev_shape
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Free up the private structure, or leak memory :-) &n;&t; */
+multiline_comment|/*&n;&t; *&t;Free up the private structure, or leak memory :-)&n;&t; */
 id|kfree
 c_func
 (paren
-id|dev_shape.priv
+id|sh
 )paren
 suffix:semicolon
 id|dev_shape.priv

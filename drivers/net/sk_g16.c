@@ -597,11 +597,9 @@ suffix:semicolon
 "&f;"
 multiline_comment|/*-&n; * Function       : SK_init&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/26&n; *&n; * Description    : Check for a SK_G16 network adaptor and initialize it.&n; *                  This function gets called by dev_init which initializes&n; *                  all Network devices.&n; *&n; * Parameters     : I : struct device *dev - structure preconfigured &n; *                                           from Space.c&n; * Return Value   : 0 = Driver Found and initialized &n; * Errors         : ENODEV - no device found&n; *                  ENXIO  - not probed&n; * Globals        : None&n; * Update History :&n; *     YY/MM/DD  uid  Description&n;-*/
 multiline_comment|/* &n; * Check for a network adaptor of this type, and return &squot;0&squot; if one exists.&n; * If dev-&gt;base_addr == 0, probe all likely locations.&n; * If dev-&gt;base_addr == 1, always return failure.&n; * If dev-&gt;base_addr == 2, allocate space for the device and return success&n; *                         (detachable devices only).&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|SK_init
 r_int
+id|__init
 id|SK_init
 c_func
 (paren
@@ -609,7 +607,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int
@@ -826,11 +823,9 @@ multiline_comment|/* Failed to find or init driver */
 multiline_comment|/* End of SK_init */
 "&f;"
 multiline_comment|/*-&n; * Function       : SK_probe&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/26&n; *&n; * Description    : This function is called by SK_init and &n; *                  does the main part of initialization.&n; *                  &n; * Parameters     : I : struct device *dev - SK_G16 device structure&n; *                  I : short ioaddr       - I/O Port address where POS is.&n; * Return Value   : 0 = Initialization done             &n; * Errors         : ENODEV - No SK_G16 found&n; *                  -1     - Configuration problem&n; * Globals        : board       - pointer to SK_RAM&n; * Update History :&n; *     YY/MM/DD  uid  Description&n; *     94/06/30  pwe  SK_ADDR now checked and at the correct place&n;-*/
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|SK_probe
 r_int
+id|__init
 id|SK_probe
 c_func
 (paren
@@ -841,7 +836,6 @@ id|dev
 comma
 r_int
 id|ioaddr
-)paren
 )paren
 (brace
 r_int
@@ -3938,17 +3932,14 @@ multiline_comment|/* Not implemented yet. */
 multiline_comment|/* End of set_multicast_list() */
 "&f;"
 multiline_comment|/*-&n; * Function       : SK_rom_addr&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/06/01&n; *&n; * Description    : Try to find a Boot_ROM at all possible locations&n; *&n; * Parameters     : None&n; * Return Value   : Address where Boot_ROM is&n; * Errors         : 0 - Did not find Boot_ROM&n; * Globals        : None&n; * Update History :&n; *     YY/MM/DD  uid  Description&n;-*/
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|SK_rom_addr
 r_int
 r_int
+id|__init
 id|SK_rom_addr
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int

@@ -137,25 +137,6 @@ id|p
 )paren
 (brace
 )brace
-DECL|function|dead_irq
-r_static
-r_void
-id|dead_irq
-(paren
-r_int
-id|i
-comma
-r_void
-op_star
-id|p
-comma
-r_struct
-id|pt_regs
-op_star
-id|r
-)paren
-(brace
-)brace
 DECL|function|dead_initstate
 r_static
 r_void
@@ -284,8 +265,6 @@ multiline_comment|/* data_forward */
 id|dead_onearg
 comma
 multiline_comment|/* data_reverse */
-id|dead_irq
-comma
 id|dead_initstate
 comma
 multiline_comment|/* init_state */

@@ -12831,12 +12831,12 @@ id|CM_MAGIC
 suffix:semicolon
 id|s-&gt;iobase
 op_assign
-id|pcidev-&gt;base_address
+id|pcidev-&gt;resource
 (braket
 l_int|0
 )braket
-op_amp
-id|PCI_BASE_ADDRESS_IO_MASK
+dot
+id|start
 suffix:semicolon
 macro_line|#ifdef CONFIG_SOUND_CMPCI_FM
 id|s-&gt;iosynth

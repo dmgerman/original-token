@@ -447,18 +447,15 @@ id|blist
 op_assign
 l_int|NULL
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|dio_find_slow
 r_static
 r_int
+id|__init
 id|dio_find_slow
 c_func
 (paren
 r_int
 id|deviceid
-)paren
 )paren
 (brace
 multiline_comment|/* Called to find a DIO device before the full bus scan has run.  Basically&n;&t;   only used by the console driver.  */
@@ -601,16 +598,13 @@ id|deviceid
 suffix:semicolon
 )brace
 multiline_comment|/* This is the function that scans the DIO space and works out what&n; * hardware is actually present.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|dio_init
 r_void
+id|__init
 id|dio_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_int

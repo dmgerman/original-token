@@ -745,8 +745,12 @@ DECL|macro|PCI_DEVICE_ID_SI_501
 mdefine_line|#define PCI_DEVICE_ID_SI_501&t;&t;0x0406
 DECL|macro|PCI_DEVICE_ID_SI_496
 mdefine_line|#define PCI_DEVICE_ID_SI_496&t;&t;0x0496
+DECL|macro|PCI_DEVICE_ID_SI_530
+mdefine_line|#define PCI_DEVICE_ID_SI_530&t;&t;0x0530
 DECL|macro|PCI_DEVICE_ID_SI_601
 mdefine_line|#define PCI_DEVICE_ID_SI_601&t;&t;0x0601
+DECL|macro|PCI_DEVICE_ID_SI_620
+mdefine_line|#define PCI_DEVICE_ID_SI_620&t;&t;0x0620
 DECL|macro|PCI_DEVICE_ID_SI_5107
 mdefine_line|#define PCI_DEVICE_ID_SI_5107&t;&t;0x5107
 DECL|macro|PCI_DEVICE_ID_SI_5511
@@ -759,6 +763,10 @@ DECL|macro|PCI_DEVICE_ID_SI_5591
 mdefine_line|#define PCI_DEVICE_ID_SI_5591&t;&t;0x5591
 DECL|macro|PCI_DEVICE_ID_SI_5597
 mdefine_line|#define PCI_DEVICE_ID_SI_5597&t;&t;0x5597
+DECL|macro|PCI_DEVICE_ID_SI_5600
+mdefine_line|#define PCI_DEVICE_ID_SI_5600&t;&t;0x5600
+DECL|macro|PCI_DEVICE_ID_SI_6306
+mdefine_line|#define PCI_DEVICE_ID_SI_6306&t;&t;0x6306
 DECL|macro|PCI_DEVICE_ID_SI_7001
 mdefine_line|#define PCI_DEVICE_ID_SI_7001&t;&t;0x7001
 DECL|macro|PCI_VENDOR_ID_HP
@@ -1218,6 +1226,8 @@ DECL|macro|PCI_VENDOR_ID_TTI
 mdefine_line|#define PCI_VENDOR_ID_TTI&t;&t;0x1103
 DECL|macro|PCI_DEVICE_ID_TTI_HPT343
 mdefine_line|#define PCI_DEVICE_ID_TTI_HPT343&t;0x0003
+DECL|macro|PCI_DEVICE_ID_TTI_HPT366
+mdefine_line|#define PCI_DEVICE_ID_TTI_HPT366&t;0x0004
 DECL|macro|PCI_VENDOR_ID_VIA
 mdefine_line|#define PCI_VENDOR_ID_VIA&t;&t;0x1106
 DECL|macro|PCI_DEVICE_ID_VIA_82C505
@@ -1234,10 +1244,20 @@ DECL|macro|PCI_DEVICE_ID_VIA_82C586_0
 mdefine_line|#define PCI_DEVICE_ID_VIA_82C586_0&t;0x0586
 DECL|macro|PCI_DEVICE_ID_VIA_82C595
 mdefine_line|#define PCI_DEVICE_ID_VIA_82C595&t;0x0595
+DECL|macro|PCI_DEVICE_ID_VIA_82C596
+mdefine_line|#define PCI_DEVICE_ID_VIA_82C596&t;0x0596
 DECL|macro|PCI_DEVICE_ID_VIA_82C597_0
 mdefine_line|#define PCI_DEVICE_ID_VIA_82C597_0&t;0x0597
 DECL|macro|PCI_DEVICE_ID_VIA_82C598_0
-mdefine_line|#define PCI_DEVICE_ID_VIA_82C598_0      0x0598
+mdefine_line|#define PCI_DEVICE_ID_VIA_82C598_0&t;0x0598
+DECL|macro|PCI_DEVICE_ID_VIA_82C680
+mdefine_line|#define PCI_DEVICE_ID_VIA_82C680&t;0x0680
+DECL|macro|PCI_DEVICE_ID_VIA_82C686
+mdefine_line|#define PCI_DEVICE_ID_VIA_82C686&t;0x0686
+DECL|macro|PCI_DEVICE_ID_VIA_82C691
+mdefine_line|#define PCI_DEVICE_ID_VIA_82C691&t;0x0691
+DECL|macro|PCI_DEVICE_ID_VIA_82C693
+mdefine_line|#define PCI_DEVICE_ID_VIA_82C693&t;0x0693
 DECL|macro|PCI_DEVICE_ID_VIA_82C926
 mdefine_line|#define PCI_DEVICE_ID_VIA_82C926&t;0x0926
 DECL|macro|PCI_DEVICE_ID_VIA_82C416
@@ -1248,12 +1268,18 @@ DECL|macro|PCI_DEVICE_ID_VIA_82C586_2
 mdefine_line|#define PCI_DEVICE_ID_VIA_82C586_2&t;0x3038
 DECL|macro|PCI_DEVICE_ID_VIA_82C586_3
 mdefine_line|#define PCI_DEVICE_ID_VIA_82C586_3&t;0x3040
+DECL|macro|PCI_DEVICE_ID_VIA_82C686_4
+mdefine_line|#define PCI_DEVICE_ID_VIA_82C686_4&t;0x3057
+DECL|macro|PCI_DEVICE_ID_VIA_82C686_5
+mdefine_line|#define PCI_DEVICE_ID_VIA_82C686_5&t;0x3058
+DECL|macro|PCI_DEVICE_ID_VIA_82C686_6
+mdefine_line|#define PCI_DEVICE_ID_VIA_82C686_6&t;0x3068
 DECL|macro|PCI_DEVICE_ID_VIA_86C100A
 mdefine_line|#define PCI_DEVICE_ID_VIA_86C100A&t;0x6100
 DECL|macro|PCI_DEVICE_ID_VIA_82C597_1
 mdefine_line|#define PCI_DEVICE_ID_VIA_82C597_1&t;0x8597
 DECL|macro|PCI_DEVICE_ID_VIA_82C598_1
-mdefine_line|#define PCI_DEVICE_ID_VIA_82C598_1      0x8598
+mdefine_line|#define PCI_DEVICE_ID_VIA_82C598_1&t;0x8598
 DECL|macro|PCI_VENDOR_ID_SMC2
 mdefine_line|#define PCI_VENDOR_ID_SMC2             0x1113
 DECL|macro|PCI_DEVICE_ID_SMC2_1211TX
@@ -1582,6 +1608,10 @@ DECL|macro|PCI_DEVICE_ID_OPTIBASE_VPLEXCC
 mdefine_line|#define PCI_DEVICE_ID_OPTIBASE_VPLEXCC&t;0x2120
 DECL|macro|PCI_DEVICE_ID_OPTIBASE_VQUEST
 mdefine_line|#define PCI_DEVICE_ID_OPTIBASE_VQUEST&t;0x2130
+DECL|macro|PCI_VENDOR_ID_ESS
+mdefine_line|#define PCI_VENDOR_ID_ESS&t;&t;0x125d
+DECL|macro|PCI_DEVICE_ID_ESS_AUDIOPCI
+mdefine_line|#define PCI_DEVICE_ID_ESS_AUDIOPCI&t;0x1969
 DECL|macro|PCI_VENDOR_ID_SATSAGEM
 mdefine_line|#define PCI_VENDOR_ID_SATSAGEM&t;&t;0x1267
 DECL|macro|PCI_DEVICE_ID_SATSAGEM_PCR2101
@@ -2376,19 +2406,6 @@ r_void
 )paren
 suffix:semicolon
 r_void
-id|pci_setup
-c_func
-(paren
-r_char
-op_star
-id|str
-comma
-r_int
-op_star
-id|ints
-)paren
-suffix:semicolon
-r_void
 id|pci_quirks_init
 c_func
 (paren
@@ -2414,20 +2431,6 @@ c_func
 (paren
 r_int
 id|bus
-)paren
-suffix:semicolon
-r_void
-id|pci_proc_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_void
-id|proc_old_pci_init
-c_func
-(paren
-r_void
 )paren
 suffix:semicolon
 r_int

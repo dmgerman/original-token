@@ -7,6 +7,12 @@ id|spinlock_t
 id|task_capability_lock
 suffix:semicolon
 multiline_comment|/*&n; * For sys_getproccap() and sys_setproccap(), any of the three&n; * capability set pointers may be NULL -- indicating that that set is&n; * uninteresting and/or not to be changed.&n; */
+DECL|variable|cap_bset
+id|kernel_cap_t
+id|cap_bset
+op_assign
+id|CAP_FULL_SET
+suffix:semicolon
 DECL|function|sys_capget
 id|asmlinkage
 r_int

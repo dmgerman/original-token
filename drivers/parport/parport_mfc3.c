@@ -1166,8 +1166,6 @@ multiline_comment|/* data_forward - FIXME */
 l_int|NULL
 comma
 multiline_comment|/* data_reverse - FIXME */
-id|mfc3_interrupt
-comma
 id|mfc3_init_state
 comma
 id|mfc3_save_state

@@ -5774,11 +5774,9 @@ r_return
 id|res
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|qec_probe
 r_int
+id|__init
 id|qec_probe
 c_func
 (paren
@@ -5786,7 +5784,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_struct

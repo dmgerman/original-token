@@ -7947,10 +7947,12 @@ suffix:semicolon
 )brace
 id|io_base
 op_assign
-id|pdev-&gt;base_address
+id|pdev-&gt;resource
 (braket
 l_int|0
 )braket
+dot
+id|start
 suffix:semicolon
 id|irq
 op_assign

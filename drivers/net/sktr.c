@@ -771,11 +771,9 @@ id|Status
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Check for a network adapter of this type, and return &squot;0&squot; if one exists.&n; * If dev-&gt;base_addr == 0, probe all likely locations.&n; * If dev-&gt;base_addr == 1, always return failure.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sktr_probe
 r_int
+id|__init
 id|sktr_probe
 c_func
 (paren
@@ -783,7 +781,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int
@@ -912,12 +909,10 @@ id|ENODEV
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Detect and setup the PCI SysKonnect TR cards in slot order.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sktr_pci_chk_card
 r_static
 r_int
+id|__init
 id|sktr_pci_chk_card
 c_func
 (paren
@@ -925,7 +920,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_static
@@ -1244,12 +1238,10 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Detect and setup the ISA SysKonnect TR cards.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sktr_isa_chk_card
 r_static
 r_int
+id|__init
 id|sktr_isa_chk_card
 c_func
 (paren
@@ -1260,7 +1252,6 @@ id|dev
 comma
 r_int
 id|ioaddr
-)paren
 )paren
 (brace
 r_int
@@ -1677,12 +1668,10 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sktr_probe1
 r_static
 r_int
+id|__init
 id|sktr_probe1
 c_func
 (paren
@@ -1693,7 +1682,6 @@ id|dev
 comma
 r_int
 id|ioaddr
-)paren
 )paren
 (brace
 r_static
@@ -1893,12 +1881,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Dummy function */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sktr_init_card
 r_static
 r_int
+id|__init
 id|sktr_init_card
 c_func
 (paren
@@ -1906,7 +1892,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_if
@@ -1933,18 +1918,15 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This function tests if an adapter is really installed at the&n; * given I/O address. Return negative if no adapter at IO addr.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|sktr_isa_chk_ioaddr
 r_static
 r_int
+id|__init
 id|sktr_isa_chk_ioaddr
 c_func
 (paren
 r_int
 id|ioaddr
-)paren
 )paren
 (brace
 r_int

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * &t;linux/drivers/i2o/i2o_lan.c&n; *&n; *    &t;I2O LAN CLASS OSM &t;Prototyping, June 4th 1999&n; *&n; *&t;(C) Copyright 1999 &t;University of Helsinki,&n; *&t;&t;&t;&t;Department of Computer Science&n; *&n; *   &t;This code is still under development / test.&n; *&n; *      This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.    &n; *&n; * &t;Authors: &t;Auvo H&#xfffd;kkinen &lt;Auvo.Hakkinen@cs.Helsinki.FI&gt;&n; *&t;&t;&t;Juha Siev&#xfffd;nen &lt;Juha.Sievanen@cs.Helsinki.FI&gt;&n; *&n; *&t;Tested:&t;&t;in FDDI environment (using SysKonnect&squot;s DDM)&n; *&t;&t;&t;in Ethernet environment (using Intel 82558 DDM proto)&n; *&n; *&t;TODO:&t;&t;batch mode networking&n; *&t;&t;&t;- this one assumes that we always get one packet &n; *&t;&t;&t;  in a bucket&n; *&t;&t;&t;- we&squot;ve not been able to test batch replies and &n; *&t;&t;&t;  batch receives&n; *&t;&t;&t;- error checking / timeouts&n; *&t;&t;&t;- code / test for other LAN classes&n; */
+multiline_comment|/*&n; * &t;linux/drivers/i2o/i2o_lan.c&n; *&n; *    &t;I2O LAN CLASS OSM &t;Prototyping, July 16th 1999&n; *&n; *&t;(C) Copyright 1999 &t;University of Helsinki,&n; *&t;&t;&t;&t;Department of Computer Science&n; *&n; *   &t;This code is still under development / test.&n; *&n; *      This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.    &n; *&n; * &t;Authors: &t;Auvo H&#xfffd;kkinen &lt;Auvo.Hakkinen@cs.Helsinki.FI&gt;&n; *&t;&t;&t;Juha Siev&#xfffd;nen &lt;Juha.Sievanen@cs.Helsinki.FI&gt;&n; *&t;&t;&t;Deepak Saxena &lt;deepak@plexity.net&gt;&n; *&n; *&t;Tested:&t;&t;in FDDI environment (using SysKonnect&squot;s DDM)&n; *&t;&t;&t;in Ethernet environment (using Intel 82558 DDM proto)&n; *&n; *&t;TODO:&t;&t;batch mode networking&n; *&t;&t;&t;- we&squot;ve not been able to test batch replies and &n; *&t;&t;&t;  batch receives&n; *&t;&t;&t;error checking / timeouts&n; *&t;&t;&t;code / test for other LAN classes&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/trdevice.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/i2o.h&gt;
@@ -16,7 +17,7 @@ macro_line|#include &quot;i2o_lan.h&quot;
 singleline_comment|//#define DRIVERDEBUG
 macro_line|#ifdef DRIVERDEBUG
 DECL|macro|dprintk
-mdefine_line|#define dprintk(s, args...) printk(s, ## args) 
+mdefine_line|#define dprintk(s, args...) printk(s, ## args)
 macro_line|#else
 DECL|macro|dprintk
 mdefine_line|#define dprintk(s, args...)
@@ -91,6 +92,11 @@ id|device
 op_star
 )paren
 suffix:semicolon
+multiline_comment|/* &n;&t; * Due to way that interrupts can pile up, we need to keep track&n; &t; * of buckets ourselves.  Otherwise we&squot;ll end up flooding&n;&t; * the DDM with buckets.&n;&t; */
+DECL|member|bucket_count
+id|u32
+id|bucket_count
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* function prototypes */
@@ -121,20 +127,42 @@ op_star
 id|m
 )paren
 suffix:semicolon
+r_static
+r_void
+id|i2o_lan_release_buckets
+c_func
+(paren
+id|u32
+op_star
+id|msg
+comma
+r_struct
+id|i2o_lan_local
+op_star
+id|priv
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Module params&n; */
 DECL|variable|bucketpost
 r_static
 id|u32
 id|bucketpost
 op_assign
-l_int|64
+id|I2O_BUCKET_COUNT
 suffix:semicolon
 DECL|variable|bucketthresh
 r_static
 id|u32
 id|bucketthresh
 op_assign
-l_int|8
+id|I2O_BUCKET_THRESH
+suffix:semicolon
+DECL|variable|rx_copybreak
+r_static
+id|u32
+id|rx_copybreak
+op_assign
+l_int|200
 suffix:semicolon
 DECL|function|i2o_lan_reply
 r_static
@@ -193,6 +221,47 @@ id|i2o_landevs
 (braket
 id|unit
 )braket
+suffix:semicolon
+r_struct
+id|i2o_lan_local
+op_star
+id|priv
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev
+)paren
+(brace
+id|priv
+op_assign
+(paren
+r_struct
+id|i2o_lan_local
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
+)brace
+r_else
+id|priv
+op_assign
+l_int|NULL
+suffix:semicolon
+id|dprintk
+c_func
+(paren
+l_string|&quot;Unit: %d Function: %#x&bslash;n&quot;
+comma
+id|unit
+comma
+id|msg
+(braket
+l_int|1
+)braket
+op_rshift
+l_int|24
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -321,19 +390,29 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#ifdef DRIVERDEBUG
-singleline_comment|//&t;if (msg[4] &gt;&gt; 24) &t;/* ReqStatus != SUCCESS */
+macro_line|#ifndef DRIVERDEBUG
+r_if
+c_cond
+(paren
+id|msg
+(braket
+l_int|4
+)braket
+op_rshift
+l_int|24
+)paren
+multiline_comment|/* ReqStatus != SUCCESS */
+macro_line|#endif
 id|i2o_report_status
 c_func
 (paren
 id|KERN_INFO
 comma
-l_string|&quot;i2o_lan&quot;
+id|dev-&gt;name
 comma
 id|msg
 )paren
 suffix:semicolon
-macro_line|#endif
 r_switch
 c_cond
 (paren
@@ -348,11 +427,27 @@ l_int|24
 r_case
 id|LAN_RECEIVE_POST
 suffix:colon
+(brace
 r_if
 c_cond
 (paren
 id|dev-&gt;start
 )paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|msg
+(braket
+l_int|4
+)braket
+op_rshift
+l_int|24
+)paren
+)paren
+(brace
 id|i2o_lan_receive_post_reply
 c_func
 (paren
@@ -361,70 +456,45 @@ comma
 id|m
 )paren
 suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 r_else
 (brace
-singleline_comment|// we are getting unused buckets back
-id|u8
-id|trl_count
-op_assign
-id|msg
-(braket
-l_int|3
-)braket
-op_amp
-l_int|0x000000FF
-suffix:semicolon
-r_struct
-id|i2o_bucket_descriptor
-op_star
-id|bucket
-op_assign
-(paren
-r_struct
-id|i2o_bucket_descriptor
-op_star
-)paren
-op_amp
-id|msg
-(braket
-l_int|6
-)braket
-suffix:semicolon
-r_do
-(brace
-id|dprintk
+singleline_comment|// Something VERY wrong if this is happening
+id|printk
 c_func
 (paren
-l_string|&quot;%s: Releasing unused bucket&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;i2olan: Device %s rejected bucket post&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-id|dev_kfree_skb
+id|i2o_lan_release_buckets
 c_func
 (paren
-(paren
-r_struct
-id|sk_buff
-op_star
+id|msg
+comma
+id|priv
 )paren
-id|bucket-&gt;context
-)paren
-suffix:semicolon
-id|bucket
-op_increment
 suffix:semicolon
 )brace
-r_while
-c_loop
+)brace
+r_else
+(brace
+id|i2o_lan_release_buckets
+c_func
 (paren
-op_decrement
-id|trl_count
+id|msg
+comma
+id|priv
 )paren
 suffix:semicolon
 )brace
 r_break
 suffix:semicolon
+)brace
 r_case
 id|LAN_PACKET_SEND
 suffix:colon
@@ -441,27 +511,6 @@ l_int|3
 )braket
 op_amp
 l_int|0x000000FF
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|msg
-(braket
-l_int|4
-)braket
-op_rshift
-l_int|24
-)paren
-singleline_comment|// ReqStatus != SUCCESS
-id|i2o_report_status
-c_func
-(paren
-id|KERN_WARNING
-comma
-id|dev-&gt;name
-comma
-id|msg
-)paren
 suffix:semicolon
 r_do
 (brace
@@ -512,9 +561,9 @@ id|NET_BH
 )paren
 suffix:semicolon
 multiline_comment|/* inform upper layers */
-)brace
 r_break
 suffix:semicolon
+)brace
 r_default
 suffix:colon
 (brace
@@ -557,16 +606,6 @@ l_int|24
 )paren
 singleline_comment|// ReqStatus != SUCCESS
 (brace
-id|i2o_report_status
-c_func
-(paren
-id|KERN_WARNING
-comma
-id|dev-&gt;name
-comma
-id|msg
-)paren
-suffix:semicolon
 op_star
 id|flag
 op_assign
@@ -591,6 +630,102 @@ suffix:semicolon
 )brace
 )brace
 )brace
+DECL|function|i2o_lan_release_buckets
+r_void
+id|i2o_lan_release_buckets
+c_func
+(paren
+id|u32
+op_star
+id|msg
+comma
+r_struct
+id|i2o_lan_local
+op_star
+id|priv
+)paren
+(brace
+id|u8
+id|trl_count
+op_assign
+(paren
+id|u8
+)paren
+(paren
+id|msg
+(braket
+l_int|3
+)braket
+op_amp
+l_int|0x000000FF
+)paren
+suffix:semicolon
+id|u32
+op_star
+id|pskb
+op_assign
+op_amp
+id|msg
+(braket
+l_int|6
+)braket
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|trl_count
+)paren
+(brace
+id|dprintk
+c_func
+(paren
+l_string|&quot;%s: Releasing unused sk_buff %p&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+(paren
+r_struct
+id|sk_buff
+op_star
+)paren
+(paren
+op_star
+id|pskb
+)paren
+)paren
+suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
+(paren
+r_struct
+id|sk_buff
+op_star
+)paren
+(paren
+op_star
+id|pskb
+)paren
+)paren
+suffix:semicolon
+id|pskb
+op_increment
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|priv
+)paren
+(brace
+id|priv-&gt;bucket_count
+op_decrement
+suffix:semicolon
+)brace
+id|trl_count
+op_decrement
+suffix:semicolon
+)brace
+)brace
 DECL|variable|i2o_lan_handler
 r_static
 r_struct
@@ -603,7 +738,9 @@ comma
 l_string|&quot;I2O Lan OSM&quot;
 comma
 l_int|0
+comma
 singleline_comment|// context
+id|I2O_CLASS_LAN
 )brace
 suffix:semicolon
 DECL|variable|lan_context
@@ -731,12 +868,14 @@ id|dprintk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Buckets_remaining = %d&bslash;n&quot;
+l_string|&quot;Buckets_remaining = %d, bucket_count = %d&bslash;n&quot;
 comma
 id|msg
 (braket
 l_int|5
 )braket
+comma
+id|priv-&gt;bucket_count
 )paren
 suffix:semicolon
 r_do
@@ -761,11 +900,16 @@ op_star
 )paren
 id|bucket-&gt;packet_info
 suffix:semicolon
+id|priv-&gt;bucket_count
+op_decrement
+suffix:semicolon
 macro_line|#if 0
 id|dprintk
 c_func
 (paren
-id|KERN_INFO
+id|KERN
+)paren
+id|INFO
 l_string|&quot;flags = 0x%02X, offset = 0x%06X, status = 0x%02X, length = %d&bslash;n&quot;
 comma
 id|packet-&gt;flags
@@ -783,7 +927,7 @@ c_cond
 (paren
 id|packet-&gt;len
 OL
-id|priv-&gt;packet_tresh
+id|rx_copybreak
 )paren
 (brace
 id|newskb
@@ -866,7 +1010,9 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;Can&squot;t allocate skb.&bslash;n&quot;
+l_string|&quot;I2OLAN-%s: Can&squot;t allocate skb.&bslash;n&quot;
+comma
+id|dev-&gt;name
 )paren
 suffix:semicolon
 r_return
@@ -935,20 +1081,52 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|msg
-(braket
-l_int|5
-)braket
+id|priv-&gt;bucket_count
 op_le
 id|bucketthresh
 )paren
 singleline_comment|// BucketsRemaining
+(brace
+id|dprintk
+c_func
+(paren
+l_string|&quot;Bucket_count = %d, &quot;
+comma
+id|priv-&gt;bucket_count
+)paren
+suffix:semicolon
 id|i2o_lan_receive_post
 c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+(paren
+id|msg
+(braket
+l_int|4
+)braket
+op_amp
+l_int|0x0000ffff
+)paren
+op_eq
+l_int|0x05
+)paren
+singleline_comment|// I2O_LAN_RECEIVE_OVERRUN
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Bucket overrun! priv-&gt;bucketcount = %d&bslash;n&quot;
+comma
+id|priv-&gt;bucket_count
+)paren
+suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -1186,6 +1364,9 @@ id|skb
 comma
 l_int|2
 )paren
+suffix:semicolon
+id|priv-&gt;bucket_count
+op_increment
 suffix:semicolon
 id|msg
 (braket
@@ -1446,6 +1627,14 @@ id|msg
 l_int|5
 )braket
 suffix:semicolon
+id|dprintk
+c_func
+(paren
+l_string|&quot;%s: LAN SUSPEND MESSAGE&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
 id|msg
 (braket
 l_int|0
@@ -1588,6 +1777,10 @@ id|iop
 comma
 id|i2o_dev-&gt;id
 comma
+id|priv-&gt;unit
+op_lshift
+l_int|16
+op_or
 id|lan_context
 comma
 l_int|0x0003
@@ -1642,6 +1835,10 @@ id|iop
 comma
 id|i2o_dev-&gt;id
 comma
+id|priv-&gt;unit
+op_lshift
+l_int|16
+op_or
 id|lan_context
 comma
 l_int|0x0004
@@ -1720,25 +1917,20 @@ id|iop
 op_assign
 id|i2o_dev-&gt;controller
 suffix:semicolon
+multiline_comment|/*&t;if (i2o_issue_claim(iop, i2o_dev-&gt;id, priv-&gt;unit &lt;&lt; 16 | lan_context, 1, &n;&t;&t;&t;    &amp;priv-&gt;reply_flag) &lt; 0)&n;*/
 r_if
 c_cond
 (paren
-id|i2o_issue_claim
+id|i2o_claim_device
 c_func
 (paren
-id|iop
-comma
-id|i2o_dev-&gt;id
-comma
-id|lan_context
-comma
-l_int|1
+id|i2o_dev
 comma
 op_amp
-id|priv-&gt;reply_flag
+id|i2o_lan_handler
+comma
+id|I2O_CLAIM_PRIMARY
 )paren
-OL
-l_int|0
 )paren
 (brace
 id|printk
@@ -1863,26 +2055,22 @@ c_func
 id|dev
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;if (i2o_issue_claim(iop, i2o_dev-&gt;id, priv-&gt;unit &lt;&lt; 16 | lan_context, 0, &n;&t;&t;&t;    &amp;priv-&gt;reply_flag) &lt; 0)&n;*/
 r_if
 c_cond
 (paren
-id|i2o_issue_claim
+id|i2o_release_device
 c_func
 (paren
-id|iop
-comma
-id|i2o_dev-&gt;id
-comma
-id|lan_context
-comma
-l_int|0
+id|i2o_dev
 comma
 op_amp
-id|priv-&gt;reply_flag
+id|i2o_lan_handler
+comma
+id|I2O_CLAIM_PRIMARY
 )paren
-OL
-l_int|0
 )paren
+(brace
 id|printk
 c_func
 (paren
@@ -1895,6 +2083,7 @@ comma
 id|i2o_dev-&gt;id
 )paren
 suffix:semicolon
+)brace
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
@@ -2400,6 +2589,10 @@ id|iop
 comma
 id|i2o_dev-&gt;id
 comma
+id|priv-&gt;unit
+op_lshift
+l_int|16
+op_or
 id|lan_context
 comma
 l_int|0x0100
@@ -2495,6 +2688,10 @@ id|iop
 comma
 id|i2o_dev-&gt;id
 comma
+id|priv-&gt;unit
+op_lshift
+l_int|16
+op_or
 id|lan_context
 comma
 l_int|0x0180
@@ -2533,6 +2730,10 @@ id|iop
 comma
 id|i2o_dev-&gt;id
 comma
+id|priv-&gt;unit
+op_lshift
+l_int|16
+op_or
 id|lan_context
 comma
 l_int|0x0183
@@ -2617,6 +2818,10 @@ id|iop
 comma
 id|i2o_dev-&gt;id
 comma
+id|priv-&gt;unit
+op_lshift
+l_int|16
+op_or
 id|lan_context
 comma
 l_int|0x0200
@@ -2647,14 +2852,7 @@ id|dev-&gt;name
 suffix:semicolon
 r_else
 (brace
-id|dprintk
-c_func
-(paren
-l_string|&quot;%s: LAN_802_3_HISTORICAL_STATS queried.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
+singleline_comment|//        &t;&t;dprintk(&quot;%s: LAN_802_3_HISTORICAL_STATS queried.&bslash;n&quot;,dev-&gt;name);
 id|priv-&gt;stats.transmit_collision
 op_assign
 id|val64
@@ -2682,6 +2880,9 @@ l_int|6
 )braket
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
 id|i2o_query_scalar
 c_func
 (paren
@@ -2689,6 +2890,10 @@ id|iop
 comma
 id|i2o_dev-&gt;id
 comma
+id|priv-&gt;unit
+op_lshift
+l_int|16
+op_or
 id|lan_context
 comma
 l_int|0x0280
@@ -2703,6 +2908,16 @@ l_int|8
 comma
 op_amp
 id|priv-&gt;reply_flag
+)paren
+OL
+l_int|0
+)paren
+id|dprintk
+c_func
+(paren
+l_string|&quot;%s: Unable to query LAN_SUPPORTED_802_3_HISTORICAL_STATS&bslash;n&quot;
+comma
+id|dev-&gt;name
 )paren
 suffix:semicolon
 r_if
@@ -2723,6 +2938,10 @@ id|iop
 comma
 id|i2o_dev-&gt;id
 comma
+id|priv-&gt;unit
+op_lshift
+l_int|16
+op_or
 id|lan_context
 comma
 l_int|0x0281
@@ -2746,7 +2965,7 @@ l_int|0
 id|dprintk
 c_func
 (paren
-l_string|&quot;%s: Unable to query LAN_OPTIONLA_802_3_HISTORICAL_STATS.&bslash;n&quot;
+l_string|&quot;%s: Unable to query LAN_OPTIONAL_802_3_HISTORICAL_STATS.&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
@@ -2811,6 +3030,10 @@ id|iop
 comma
 id|i2o_dev-&gt;id
 comma
+id|priv-&gt;unit
+op_lshift
+l_int|16
+op_or
 id|lan_context
 comma
 l_int|0x0300
@@ -2854,14 +3077,7 @@ op_star
 op_amp
 id|priv-&gt;stats
 suffix:semicolon
-id|dprintk
-c_func
-(paren
-l_string|&quot;%s: LAN_802_5_HISTORICAL_STATS queried.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
+singleline_comment|//        &t;&t;dprintk(&quot;%s: LAN_802_5_HISTORICAL_STATS queried.&bslash;n&quot;,dev-&gt;name);
 id|stats-&gt;line_errors
 op_assign
 id|val64
@@ -2949,6 +3165,10 @@ id|iop
 comma
 id|i2o_dev-&gt;id
 comma
+id|priv-&gt;unit
+op_lshift
+l_int|16
+op_or
 id|lan_context
 comma
 l_int|0x0400
@@ -2979,14 +3199,7 @@ id|dev-&gt;name
 suffix:semicolon
 r_else
 (brace
-id|dprintk
-c_func
-(paren
-l_string|&quot;%s: LAN_FDDI_HISTORICAL_STATS queried.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
+singleline_comment|//        &t;&t;dprintk(&quot;%s: LAN_FDDI_HISTORICAL_STATS queried.&bslash;n&quot;,dev-&gt;name);
 id|priv-&gt;stats.smt_cf_state
 op_assign
 id|val64
@@ -3170,9 +3383,85 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev
+op_eq
+l_int|NULL
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;dev is NULL&bslash;n&quot;
+)paren
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|dev-&gt;priv
+op_eq
+l_int|NULL
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;dev-&gt;priv is NULL&bslash;n&quot;
+)paren
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|priv-&gt;i2o_dev
+op_eq
+l_int|NULL
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;i2o_dev is NULL&bslash;n&quot;
+)paren
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|i2o_dev-&gt;controller
+op_eq
+l_int|NULL
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;iop is NULL&bslash;n&quot;
+)paren
+suffix:semicolon
+r_else
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Everything seems to be OK in i2o_lan_set_multicast_list().&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;id = %d, unit = %d, lan_context = %d&bslash;n&quot;
+comma
+id|i2o_dev-&gt;id
+comma
+id|priv-&gt;unit
+comma
+id|lan_context
+)paren
+suffix:semicolon
+)brace
 r_return
 suffix:semicolon
-multiline_comment|/* FIXME: Why does the next call kill the interrupt handler?&n; * The same works fine in function lan_open(), and in i2o_proc.c&n; *&n; *  *because its trying to sleep in an irq - this must be async - Alan&n; */
+multiline_comment|/* FIXME: Why does the next call kill the interrupt handler?&n; * The same piece of code works fine in function lan_open(), and in i2o_proc.c&n; *&n; * *because its trying to sleep in an irq - this must be async - Alan&n; */
 r_if
 c_cond
 (paren
@@ -3183,6 +3472,10 @@ id|iop
 comma
 id|i2o_dev-&gt;id
 comma
+id|priv-&gt;unit
+op_lshift
+l_int|16
+op_or
 id|lan_context
 comma
 l_int|0x0001
@@ -3375,6 +3668,10 @@ id|iop
 comma
 id|i2o_dev-&gt;id
 comma
+id|priv-&gt;unit
+op_lshift
+l_int|16
+op_or
 id|lan_context
 comma
 l_int|0x0002
@@ -3403,6 +3700,10 @@ id|iop
 comma
 id|i2o_dev-&gt;id
 comma
+id|priv-&gt;unit
+op_lshift
+l_int|16
+op_or
 id|lan_context
 comma
 l_int|0x0002
@@ -3456,6 +3757,10 @@ id|iop
 comma
 id|i2o_dev-&gt;id
 comma
+id|priv-&gt;unit
+op_lshift
+l_int|16
+op_or
 id|lan_context
 comma
 l_int|0x0001
@@ -3832,6 +4137,24 @@ id|priv-&gt;type_trans
 op_assign
 id|type_trans
 suffix:semicolon
+id|priv-&gt;bucket_count
+op_assign
+l_int|0
+suffix:semicolon
+id|unit
+op_increment
+suffix:semicolon
+id|i2o_landevs
+(braket
+id|unit
+)braket
+op_assign
+id|dev
+suffix:semicolon
+id|priv-&gt;unit
+op_assign
+id|unit
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3842,6 +4165,10 @@ id|i2o_dev-&gt;controller
 comma
 id|i2o_dev-&gt;id
 comma
+id|priv-&gt;unit
+op_lshift
+l_int|16
+op_or
 id|lan_context
 comma
 l_int|0x0001
@@ -3868,6 +4195,9 @@ l_string|&quot;%s: Unable to query hardware address.&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
+suffix:semicolon
+id|unit
+op_decrement
 suffix:semicolon
 id|unregister_dev
 c_func
@@ -3979,13 +4309,14 @@ id|device
 op_star
 id|dev
 suffix:semicolon
-r_struct
-id|i2o_lan_local
-op_star
-id|priv
-suffix:semicolon
 r_int
 id|i
+suffix:semicolon
+id|bucketpost
+op_assign
+id|bucketpost
+op_minus
+id|bucketthresh
 suffix:semicolon
 r_if
 c_cond
@@ -4010,6 +4341,29 @@ suffix:semicolon
 r_return
 op_minus
 id|EINVAL
+suffix:semicolon
+)brace
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+op_le
+id|MAX_LAN_CARDS
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|i2o_landevs
+(braket
+id|i
+)braket
+op_assign
+l_int|NULL
 suffix:semicolon
 )brace
 id|lan_context
@@ -4136,29 +4490,6 @@ r_continue
 suffix:semicolon
 singleline_comment|// try next one
 )brace
-id|priv
-op_assign
-(paren
-r_struct
-id|i2o_lan_local
-op_star
-)paren
-id|dev-&gt;priv
-suffix:semicolon
-id|unit
-op_increment
-suffix:semicolon
-id|i2o_landevs
-(braket
-id|unit
-)braket
-op_assign
-id|dev
-suffix:semicolon
-id|priv-&gt;unit
-op_assign
-id|unit
-suffix:semicolon
 id|printk
 c_func
 (paren
@@ -4172,7 +4503,16 @@ id|i2o_dev-&gt;id
 comma
 id|i2o_dev-&gt;subclass
 comma
-id|priv-&gt;unit
+(paren
+(paren
+r_struct
+id|i2o_lan_local
+op_star
+)paren
+id|dev-&gt;priv
+)paren
+op_member_access_from_pointer
+id|unit
 )paren
 suffix:semicolon
 )brace
@@ -4377,5 +4717,13 @@ l_string|&quot;i&quot;
 )paren
 suffix:semicolon
 singleline_comment|// Bucket post threshold
+id|MODULE_PARM
+c_func
+(paren
+id|rx_copybreak
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 macro_line|#endif    
 eof

@@ -1237,6 +1237,8 @@ comma
 l_string|&quot;I2O Block OSM&quot;
 comma
 l_int|0
+comma
+id|I2O_CLASS_RANDOM_BLOCK_STORAGE
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;Flush all pending requests as errors. Must call with the queue&n; *&t;locked.&n; */
@@ -2262,39 +2264,6 @@ id|arg
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; *&t;Issue UTIL_CLAIM messages&n; */
-DECL|function|i2ob_claim_device
-r_static
-r_int
-id|i2ob_claim_device
-c_func
-(paren
-r_struct
-id|i2ob_device
-op_star
-id|dev
-comma
-r_int
-id|onoff
-)paren
-(brace
-r_return
-id|i2o_issue_claim
-c_func
-(paren
-id|dev-&gt;controller
-comma
-id|dev-&gt;tid
-comma
-id|i2ob_context
-comma
-id|onoff
-comma
-op_amp
-id|dev-&gt;done_flag
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n; *&t;Close the block device down&n; */
 DECL|function|i2ob_release
 r_static
@@ -2539,16 +2508,19 @@ comma
 l_int|2
 )paren
 suffix:semicolon
-multiline_comment|/*&n;                 * Now unclaim the device.&n;                 */
+multiline_comment|/*&n; &t;&t; * Now unclaim the device.&n;&t;&t; */
 r_if
 c_cond
 (paren
-id|i2ob_claim_device
+id|i2o_release_device
 c_func
 (paren
-id|dev
+id|dev-&gt;i2odev
 comma
-l_int|0
+op_amp
+id|i2o_block_handler
+comma
+id|I2O_CLAIM_PRIMARY
 )paren
 OL
 l_int|0
@@ -2658,12 +2630,15 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|i2ob_claim_device
+id|i2o_claim_device
 c_func
 (paren
-id|dev
+id|dev-&gt;i2odev
 comma
-l_int|1
+op_amp
+id|i2o_block_handler
+comma
+id|I2O_CLAIM_PRIMARY
 )paren
 OL
 l_int|0
@@ -3523,7 +3498,7 @@ op_lshift
 l_int|4
 )paren
 (brace
-multiline_comment|/*&n;                                 * Get the device and fill in the&n;                                 * Tid and controller.&n;                                 */
+multiline_comment|/*&n;&t;&t;&t;&t; * Get the device and fill in the&n;&t;&t;&t;&t; * Tid and controller.&n;&t;&t;&t;&t; */
 r_struct
 id|i2ob_device
 op_star
@@ -3547,16 +3522,19 @@ id|dev-&gt;tid
 op_assign
 id|d-&gt;id
 suffix:semicolon
-multiline_comment|/*&n;                                 * Insure the device can be claimed&n;                                 * before installing it.&n;                                 */
+multiline_comment|/*&n;&t;&t;&t;&t; * Insure the device can be claimed&n;&t;&t;&t;&t; * before installing it.&n;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
-id|i2ob_claim_device
+id|i2o_claim_device
 c_func
 (paren
-id|dev
+id|dev-&gt;i2odev
 comma
-l_int|1
+op_amp
+id|i2o_block_handler
+comma
+id|I2O_CLAIM_PRIMARY
 )paren
 op_eq
 l_int|0
@@ -3589,20 +3567,22 @@ id|unit
 op_add_assign
 l_int|16
 suffix:semicolon
-multiline_comment|/*&n;                                         * Now that the device has been&n;                                         * installed, unclaim it so that&n;                                         * it can be claimed by either&n;                                         * the block or scsi driver.&n;                                         */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * Now that the device has been&n;&t;&t;&t;&t;&t; * installed, unclaim it so that&n;&t;&t;&t;&t;&t; * it can be claimed by either&n;&t;&t;&t;&t;&t; * the block or scsi driver.&n;&t;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
-id|i2ob_claim_device
+id|i2o_release_device
 c_func
 (paren
-id|dev
+id|dev-&gt;i2odev
 comma
-l_int|0
+op_amp
+id|i2o_block_handler
+comma
+id|I2O_CLAIM_PRIMARY
 )paren
-OL
-l_int|0
 )paren
+(brace
 id|printk
 c_func
 (paren
@@ -3614,6 +3594,7 @@ comma
 id|dev-&gt;tid
 )paren
 suffix:semicolon
+)brace
 )brace
 r_else
 id|printk

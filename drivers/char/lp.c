@@ -2929,6 +2929,50 @@ suffix:colon
 l_string|&quot;interrupt-driven&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_LP_CONSOLE
+r_if
+c_cond
+(paren
+op_logical_neg
+id|nr
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|port-&gt;modes
+op_amp
+id|PARPORT_MODE_SAFEININT
+)paren
+(brace
+id|register_console
+(paren
+op_amp
+id|lpcons
+)paren
+suffix:semicolon
+id|printk
+(paren
+id|KERN_INFO
+l_string|&quot;lp%d: console ready&bslash;n&quot;
+comma
+id|CONSOLE_LP
+)paren
+suffix:semicolon
+)brace
+r_else
+id|printk
+(paren
+id|KERN_ERR
+l_string|&quot;lp%d: cannot run console on %s&bslash;n&quot;
+comma
+id|CONSOLE_LP
+comma
+id|port-&gt;name
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -3343,25 +3387,6 @@ l_string|&quot;lp: (is IEEE 1284.3 support enabled?)&bslash;n&quot;
 suffix:semicolon
 macro_line|#endif
 )brace
-macro_line|#ifdef CONFIG_LP_CONSOLE
-r_else
-(brace
-id|register_console
-(paren
-op_amp
-id|lpcons
-)paren
-suffix:semicolon
-id|printk
-(paren
-id|KERN_INFO
-l_string|&quot;lp%d: console ready&bslash;n&quot;
-comma
-id|CONSOLE_LP
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon

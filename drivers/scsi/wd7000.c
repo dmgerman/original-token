@@ -5453,8 +5453,6 @@ op_eq
 id|pass
 )paren
 (brace
-macro_line|#if (LINUX_VERSION_CODE &lt; 0x020100)
-macro_line|#else
 r_void
 op_star
 id|biosaddr
@@ -5481,8 +5479,17 @@ dot
 id|len
 )paren
 suffix:semicolon
-macro_line|#endif
 r_int
+id|bios_match
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|biosaddr
+)paren
+(brace
 id|bios_match
 op_assign
 id|memcmp
@@ -5508,14 +5515,12 @@ dot
 id|len
 )paren
 suffix:semicolon
-macro_line|#if (LINUX_VERSION_CODE &lt; 0x020100)
-macro_line|#else
+)brace
 id|iounmap
 (paren
 id|biosaddr
 )paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren

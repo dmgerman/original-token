@@ -674,12 +674,12 @@ r_continue
 suffix:semicolon
 id|pci_ioaddr
 op_assign
-id|pdev-&gt;base_address
+id|pdev-&gt;resource
 (braket
 l_int|0
 )braket
-op_amp
-id|PCI_BASE_ADDRESS_IO_MASK
+dot
+id|start
 suffix:semicolon
 id|pci_irq_line
 op_assign

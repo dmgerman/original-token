@@ -102,6 +102,11 @@ mdefine_line|#define&t;&t;ISILOAD_NAME&t;&t;&quot;ISILoad&quot;
 multiline_comment|/*&t;&n; *  ISICOM Driver definitions ...&n; *&n; */
 DECL|macro|ISICOM_NAME
 mdefine_line|#define&t;&t;ISICOM_NAME&t;&quot;ISICom&quot;
+multiline_comment|/*&n; *      PCI definitions&n; */
+DECL|macro|DEVID_COUNT
+mdefine_line|#define        DEVID_COUNT     9
+DECL|macro|VENDOR_ID
+mdefine_line|#define        VENDOR_ID       0x10b5
 multiline_comment|/*&n; *&t;These are now officially allocated numbers&n; */
 DECL|macro|ISICOM_NMAJOR
 mdefine_line|#define&t;&t;ISICOM_NMAJOR&t;112&t;/* normal  */
@@ -227,6 +232,11 @@ DECL|member|count
 r_int
 r_char
 id|count
+suffix:semicolon
+DECL|member|isa
+r_int
+r_char
+id|isa
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -375,7 +385,7 @@ suffix:semicolon
 r_int
 id|wait
 op_assign
-l_int|300
+l_int|400
 suffix:semicolon
 r_while
 c_loop
@@ -503,7 +513,7 @@ suffix:semicolon
 r_int
 id|wait
 op_assign
-l_int|300
+l_int|400
 suffix:semicolon
 r_while
 c_loop
@@ -632,7 +642,7 @@ suffix:semicolon
 r_int
 id|wait
 op_assign
-l_int|300
+l_int|400
 suffix:semicolon
 r_while
 c_loop
@@ -760,7 +770,7 @@ suffix:semicolon
 r_int
 id|wait
 op_assign
-l_int|300
+l_int|400
 suffix:semicolon
 r_while
 c_loop
@@ -889,7 +899,7 @@ suffix:semicolon
 r_int
 id|wait
 op_assign
-l_int|300
+l_int|400
 suffix:semicolon
 r_while
 c_loop
@@ -1021,7 +1031,7 @@ suffix:semicolon
 r_int
 id|wait
 op_assign
-l_int|300
+l_int|400
 suffix:semicolon
 r_while
 c_loop
@@ -1157,7 +1167,7 @@ suffix:semicolon
 r_int
 id|wait
 op_assign
-l_int|300
+l_int|400
 suffix:semicolon
 r_while
 c_loop

@@ -5813,12 +5813,10 @@ op_or_assign
 id|BIGMAC_RXCFG_ENABLE
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|bigmac_ether_init
 r_static
 r_int
+id|__init
 id|bigmac_ether_init
 c_func
 (paren
@@ -5831,7 +5829,6 @@ r_struct
 id|linux_sbus_device
 op_star
 id|qec_sdev
-)paren
 )paren
 (brace
 r_static
@@ -6818,11 +6815,9 @@ id|res
 suffix:semicolon
 multiline_comment|/* Return error code. */
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|bigmac_probe
 r_int
+id|__init
 id|bigmac_probe
 c_func
 (paren
@@ -6830,7 +6825,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_struct

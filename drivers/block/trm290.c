@@ -454,10 +454,12 @@ id|ide_trm290
 suffix:semicolon
 id|cfgbase
 op_assign
-id|dev-&gt;base_address
+id|dev-&gt;resource
 (braket
 l_int|4
 )braket
+dot
+id|start
 suffix:semicolon
 r_if
 c_cond

@@ -3596,10 +3596,12 @@ id|addr
 id|i
 )braket
 op_assign
-id|pdev-&gt;base_address
+id|pdev-&gt;resource
 (braket
 id|i
 )braket
+dot
+id|flags
 suffix:semicolon
 )brace
 (paren
@@ -3822,10 +3824,12 @@ l_int|0x1
 (brace
 id|c-&gt;paddr
 op_assign
-id|addr
+id|pdev-&gt;resource
 (braket
 id|i
 )braket
+dot
+id|start
 suffix:semicolon
 r_break
 suffix:semicolon

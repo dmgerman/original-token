@@ -1188,13 +1188,12 @@ l_int|NULL
 r_int
 id|pci_ioaddr
 op_assign
-id|pcidev-&gt;base_address
+id|pcidev-&gt;resource
 (braket
 l_int|0
 )braket
-op_amp
-op_complement
-l_int|3
+dot
+id|start
 suffix:semicolon
 r_int
 id|vendor

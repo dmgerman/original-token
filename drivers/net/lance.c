@@ -1090,12 +1090,12 @@ id|pdev-&gt;irq
 suffix:semicolon
 id|pci_ioaddr
 op_assign
-id|pdev-&gt;base_address
+id|pdev-&gt;resource
 (braket
 l_int|0
 )braket
-op_amp
-id|PCI_BASE_ADDRESS_IO_MASK
+dot
+id|start
 suffix:semicolon
 multiline_comment|/* PCI Spec 2.1 states that it is either the driver or PCI card&squot;s&n;&t; &t;&t; * responsibility to set the PCI Master Enable Bit if needed.&n;&t;&t;&t; *&t;(From Mark Stockton &lt;marks@schooner.sys.hou.compaq.com&gt;)&n;&t;&t;&t; */
 id|pci_read_config_word

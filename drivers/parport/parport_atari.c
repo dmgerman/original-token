@@ -469,8 +469,6 @@ multiline_comment|/* data_forward - FIXME */
 l_int|NULL
 comma
 multiline_comment|/* data_reverse - FIXME */
-id|parport_atari_interrupt
-comma
 id|parport_atari_init_state
 comma
 id|parport_atari_save_state

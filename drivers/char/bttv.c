@@ -18234,10 +18234,12 @@ id|dev-&gt;irq
 suffix:semicolon
 id|btv-&gt;bt848_adr
 op_assign
-id|dev-&gt;base_address
+id|dev-&gt;resource
 (braket
 l_int|0
 )braket
+dot
+id|start
 suffix:semicolon
 r_if
 c_cond
@@ -18261,6 +18263,7 @@ op_or
 id|BT848_I2C_SDA
 )paren
 suffix:semicolon
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -18358,10 +18361,7 @@ op_assign
 id|btv-&gt;bt848_adr
 suffix:semicolon
 )brace
-id|btv-&gt;bt848_adr
-op_and_assign
-id|PCI_BASE_ADDRESS_MEM_MASK
-suffix:semicolon
+macro_line|#endif        
 id|pci_read_config_byte
 c_func
 (paren

@@ -5018,16 +5018,13 @@ l_string|&quot;Enabled SOCAL&bslash;n&quot;
 )paren
 )brace
 macro_line|#ifndef MODULE
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|socal_probe
 r_int
+id|__init
 id|socal_probe
 c_func
 (paren
 r_void
-)paren
 )paren
 macro_line|#else
 r_int

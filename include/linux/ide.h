@@ -1,7 +1,7 @@
 macro_line|#ifndef _IDE_H
 DECL|macro|_IDE_H
 mdefine_line|#define _IDE_H
-multiline_comment|/*&n; *  linux/drivers/block/ide.h&n; *&n; *  Copyright (C) 1994-1998  Linus Torvalds &amp; authors&n; */
+multiline_comment|/*&n; *  linux/include/linux/ide.h&n; *&n; *  Copyright (C) 1994-1998  Linus Torvalds &amp; authors&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
@@ -791,6 +791,12 @@ DECL|enumerator|ide_dma_good_drive
 id|ide_dma_bad_drive
 comma
 id|ide_dma_good_drive
+comma
+DECL|enumerator|ide_dma_lostirq
+DECL|enumerator|ide_dma_timeout
+id|ide_dma_lostirq
+comma
+id|ide_dma_timeout
 DECL|typedef|ide_dma_action_t
 )brace
 id|ide_dma_action_t
@@ -2308,6 +2314,22 @@ macro_line|#endif
 macro_line|#if MAX_HWIFS &gt; 7
 r_void
 id|do_ide7_request
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#if MAX_HWIFS &gt; 8
+r_void
+id|do_ide8_request
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#if MAX_HWIFS &gt; 9
+r_void
+id|do_ide9_request
 (paren
 r_void
 )paren

@@ -199,8 +199,6 @@ id|arc_data_forward
 comma
 id|arc_data_reverse
 comma
-id|arc_interrupt
-comma
 id|arc_init_state
 comma
 id|arc_save_state

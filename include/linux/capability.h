@@ -222,6 +222,11 @@ multiline_comment|/* Allow vhangup() of tty */
 DECL|macro|CAP_SYS_TTY_CONFIG
 mdefine_line|#define CAP_SYS_TTY_CONFIG   26
 macro_line|#ifdef __KERNEL__
+multiline_comment|/* &n; * Bounding set&n; */
+r_extern
+id|kernel_cap_t
+id|cap_bset
+suffix:semicolon
 multiline_comment|/*&n; * Internal kernel functions only&n; */
 macro_line|#ifdef STRICT_CAP_T_TYPECHECKS
 DECL|macro|to_cap_t
@@ -249,7 +254,7 @@ mdefine_line|#define cap_raise(c, flag)   (cap_t(c) |=  CAP_TO_MASK(flag))
 DECL|macro|cap_lower
 mdefine_line|#define cap_lower(c, flag)   (cap_t(c) &amp;= ~CAP_TO_MASK(flag))
 DECL|macro|cap_raised
-mdefine_line|#define cap_raised(c, flag)  (cap_t(c) &amp;   CAP_TO_MASK(flag))
+mdefine_line|#define cap_raised(c, flag)  (cap_t(c) &amp; CAP_TO_MASK(flag) &amp; cap_bset)
 DECL|function|cap_combine
 r_static
 r_inline

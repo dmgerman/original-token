@@ -146,6 +146,21 @@ r_char
 id|val
 )paren
 (brace
+r_const
+r_int
+r_char
+id|wm
+op_assign
+(paren
+id|PARPORT_CONTROL_STROBE
+op_or
+id|PARPORT_CONTROL_AUTOFD
+op_or
+id|PARPORT_CONTROL_INIT
+op_or
+id|PARPORT_CONTROL_SELECT
+)paren
+suffix:semicolon
 r_struct
 id|parport_pc_private
 op_star
@@ -189,6 +204,8 @@ r_return
 id|priv-&gt;ctr
 op_assign
 id|ctr
+op_amp
+id|wm
 suffix:semicolon
 multiline_comment|/* update soft copy */
 )brace

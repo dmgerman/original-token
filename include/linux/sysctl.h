@@ -166,12 +166,12 @@ id|KERN_DOMAINNAME
 op_assign
 l_int|8
 comma
-DECL|enumerator|KERN_SECURELVL
-id|KERN_SECURELVL
+DECL|enumerator|KERN_CAP_BSET
+id|KERN_CAP_BSET
 op_assign
 l_int|14
 comma
-multiline_comment|/* int: system security level */
+multiline_comment|/* int: capability bounding set */
 DECL|enumerator|KERN_PANIC
 id|KERN_PANIC
 op_assign
@@ -284,10 +284,16 @@ op_assign
 l_int|37
 comma
 multiline_comment|/* int: Maximum system message pool size */
+DECL|enumerator|KERN_SYSRQ
+id|KERN_SYSRQ
+op_assign
+l_int|38
+comma
+multiline_comment|/* int: Sysreq enable */
 DECL|enumerator|KERN_MAX_THREADS
 id|KERN_MAX_THREADS
 op_assign
-l_int|38
+l_int|39
 multiline_comment|/* int: Maximum nr of threads in the system */
 )brace
 suffix:semicolon
@@ -1560,6 +1566,31 @@ DECL|enumerator|DEV_CDROM_INFO
 id|DEV_CDROM_INFO
 op_assign
 l_int|1
+comma
+DECL|enumerator|DEV_CDROM_AUTOCLOSE
+id|DEV_CDROM_AUTOCLOSE
+op_assign
+l_int|2
+comma
+DECL|enumerator|DEV_CDROM_AUTOEJECT
+id|DEV_CDROM_AUTOEJECT
+op_assign
+l_int|3
+comma
+DECL|enumerator|DEV_CDROM_DEBUG
+id|DEV_CDROM_DEBUG
+op_assign
+l_int|4
+comma
+DECL|enumerator|DEV_CDROM_LOCK
+id|DEV_CDROM_LOCK
+op_assign
+l_int|5
+comma
+DECL|enumerator|DEV_CDROM_CHECK_MEDIA
+id|DEV_CDROM_CHECK_MEDIA
+op_assign
+l_int|6
 )brace
 suffix:semicolon
 multiline_comment|/* /proc/sys/dev/parport */
@@ -1744,6 +1775,27 @@ suffix:semicolon
 r_extern
 r_int
 id|proc_dointvec
+c_func
+(paren
+id|ctl_table
+op_star
+comma
+r_int
+comma
+r_struct
+id|file
+op_star
+comma
+r_void
+op_star
+comma
+r_int
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|proc_dointvec_bset
 c_func
 (paren
 id|ctl_table

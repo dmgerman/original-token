@@ -1057,11 +1057,9 @@ id|scb_struct
 suffix:semicolon
 )brace
 multiline_comment|/**********************************************&n; * probe the ni5210-card&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ni52_probe
 r_int
+id|__init
 id|ni52_probe
 c_func
 (paren
@@ -1069,7 +1067,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 macro_line|#ifndef MODULE
@@ -1355,12 +1352,10 @@ r_return
 id|ENODEV
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ni52_probe1
 r_static
 r_int
+id|__init
 id|ni52_probe1
 c_func
 (paren
@@ -1371,7 +1366,6 @@ id|dev
 comma
 r_int
 id|ioaddr
-)paren
 )paren
 (brace
 r_int

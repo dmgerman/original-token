@@ -1523,13 +1523,12 @@ id|pci_device_fn
 suffix:semicolon
 id|ioaddr
 op_assign
-id|pdev-&gt;base_address
+id|pdev-&gt;resource
 (braket
 l_int|0
 )braket
-op_amp
-op_complement
-l_int|3
+dot
+id|start
 suffix:semicolon
 id|irq
 op_assign

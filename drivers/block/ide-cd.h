@@ -85,9 +85,25 @@ DECL|macro|MECHANISM_STATUS
 mdefine_line|#define MECHANISM_STATUS        0xbd
 DECL|macro|READ_CD
 mdefine_line|#define READ_CD                 0xbe
-multiline_comment|/* DVD Opcodes */
-DECL|macro|DVD_GET_PERFORMANCE
-mdefine_line|#define DVD_GET_PERFORMANCE&t;0xac
+multiline_comment|/* MMC2/MTFuji Opcodes */
+DECL|macro|BLANK
+mdefine_line|#define BLANK&t;&t;&t;0xa1
+DECL|macro|CLOSE_TRACK
+mdefine_line|#define CLOSE_TRACK&t;&t;0x5b
+DECL|macro|ERASE
+mdefine_line|#define ERASE&t;&t;&t;0x2c
+DECL|macro|FORMAT_UNIT
+mdefine_line|#define FORMAT_UNIT&t;&t;0x04
+DECL|macro|GET_CONFIGURATION
+mdefine_line|#define GET_CONFIGURATION&t;0x46
+DECL|macro|GET_EVENT
+mdefine_line|#define GET_EVENT&t;&t;0xa4
+DECL|macro|GET_PERFORMANCE
+mdefine_line|#define GET_PERFORMANCE&t;&t;0xac
+DECL|macro|READ_BUFFER
+mdefine_line|#define READ_BUFFER&t;&t;0x3c
+DECL|macro|READ_DISC_INFO
+mdefine_line|#define READ_DISC_INFO&t;&t;0x51
 multiline_comment|/* Page codes for mode sense/set */
 DECL|macro|PAGE_READERR
 mdefine_line|#define PAGE_READERR            0x01
@@ -120,7 +136,6 @@ DECL|macro|ABORTED_COMMAND
 mdefine_line|#define ABORTED_COMMAND         0x0b
 DECL|macro|MISCOMPARE
 mdefine_line|#define MISCOMPARE              0x0e
-multiline_comment|/* We want some additional flags for CDROM drives.&n;   To save space in the ide_drive_t struct, use some fields which&n;   doesn&squot;t make sense for CDROMs -- `bios_cyl&squot; and `bios_head&squot;. */
 multiline_comment|/* Configuration flags.  These describe the capabilities of the drive.&n;   They generally do not change after initialization, unless we learn&n;   more about the drive from stuff failing. */
 DECL|struct|ide_cd_config_flags
 r_struct
@@ -132,7 +147,7 @@ id|drq_interrupt
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* Device sends an interrupt when ready&n;&t;&t;&t;&t;      for a packet command. */
+multiline_comment|/* Device sends an interrupt when ready&n;&t;&t;&t;&t;&t;for a packet command. */
 DECL|member|no_doorlock
 id|__u8
 id|no_doorlock
@@ -216,14 +231,14 @@ id|dvd_r
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* Drive can write DVD-RAM */
-DECL|member|dvd_rw
+multiline_comment|/* Drive can write DVD-R */
+DECL|member|dvd_ram
 id|__u8
-id|dvd_rw
+id|dvd_ram
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* Drive can write DVD-R/W */
+multiline_comment|/* Drive can write DVD-RAM */
 DECL|member|test_write
 id|__u8
 id|test_write
@@ -237,14 +252,14 @@ id|supp_disc_present
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* Changer can report exact contents&n;&t;&t;&t;&t;      of slots. */
+multiline_comment|/* Changer can report exact contents&n;&t;&t;&t;&t;&t;of slots. */
 DECL|member|limit_nframes
 id|__u8
 id|limit_nframes
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* Drive does not provide data in&n;&t;&t;&t;&t;      multiples of SECTOR_SIZE when more&n;&t;&t;&t;&t;      than one interrupt is needed. */
+multiline_comment|/* Drive does not provide data in&n;&t;&t;&t;&t;&t;multiples of SECTOR_SIZE when more&n;&t;&t;&t;&t;&t;than one interrupt is needed. */
 DECL|member|seeking
 id|__u8
 id|seeking
@@ -252,11 +267,25 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Seeking in progress */
+DECL|member|audio_play
+id|__u8
+id|audio_play
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* can do audio related commands */
+DECL|member|close_tray
+id|__u8
+id|close_tray
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* can close the tray */
 DECL|member|reserved
 id|__u8
 id|reserved
 suffix:colon
-l_int|6
+l_int|4
 suffix:semicolon
 DECL|member|max_speed
 id|byte
@@ -1475,18 +1504,30 @@ id|mech_state
 suffix:colon
 l_int|3
 suffix:semicolon
+DECL|member|door_open
+id|__u8
+id|door_open
+suffix:colon
+l_int|1
+suffix:semicolon
 DECL|member|reserved1
 id|__u8
 id|reserved1
 suffix:colon
-l_int|5
+l_int|4
 suffix:semicolon
 macro_line|#elif defined(__LITTLE_ENDIAN_BITFIELD)
 DECL|member|reserved1
 id|__u8
 id|reserved1
 suffix:colon
-l_int|5
+l_int|4
+suffix:semicolon
+DECL|member|door_open
+id|__u8
+id|door_open
+suffix:colon
+l_int|1
 suffix:semicolon
 DECL|member|mech_state
 id|__u8
@@ -1858,6 +1899,12 @@ l_string|&quot;Read(12)&quot;
 )brace
 comma
 (brace
+id|GET_PERFORMANCE
+comma
+l_string|&quot;Get Performance&quot;
+)brace
+comma
+(brace
 id|READ_CD_MSF
 comma
 l_string|&quot;Read CD MSF&quot;
@@ -1891,12 +1938,6 @@ comma
 id|READ_CD
 comma
 l_string|&quot;Read CD&quot;
-)brace
-comma
-(brace
-id|DVD_GET_PERFORMANCE
-comma
-l_string|&quot;Get Performance&quot;
 )brace
 comma
 )brace

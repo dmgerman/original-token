@@ -9,6 +9,8 @@ multiline_comment|/* How many controllers are we allowing */
 DECL|macro|MAX_I2O_CONTROLLERS
 mdefine_line|#define MAX_I2O_CONTROLLERS&t;32
 macro_line|#ifdef __KERNEL__   /* ioctl stuff only thing exported to users */
+DECL|macro|I2O_MAX_MANAGERS
+mdefine_line|#define I2O_MAX_MANAGERS&t;4
 multiline_comment|/*&n; *&t;I2O Interface Objects&n; */
 macro_line|#include &lt;linux/notifier.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
@@ -496,13 +498,27 @@ op_star
 id|proc_entry
 suffix:semicolon
 multiline_comment|/* /proc dir */
+multiline_comment|/* Primary user */
 DECL|member|owner
 r_struct
-id|i2o_driver
+id|i2o_handler
 op_star
 id|owner
 suffix:semicolon
-multiline_comment|/* Owning device */
+multiline_comment|/* Management users */
+DECL|member|managers
+r_struct
+id|i2o_handler
+op_star
+id|managers
+(braket
+id|I2O_MAX_MANAGERS
+)braket
+suffix:semicolon
+DECL|member|num_managers
+r_int
+id|num_managers
+suffix:semicolon
 DECL|member|controller
 r_struct
 id|i2o_controller
@@ -527,6 +543,7 @@ suffix:semicolon
 multiline_comment|/* linux /dev name if available */
 )brace
 suffix:semicolon
+macro_line|#ifdef CONFIG_I2O_PCI_MODULE
 multiline_comment|/*&n; *&t;Resource data for each PCI I2O controller&n; */
 DECL|struct|i2o_pci
 r_struct
@@ -538,6 +555,7 @@ id|irq
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; *&t;Each I2O controller has one of these objects&n; */
 DECL|struct|i2o_controller
 r_struct
@@ -669,6 +687,7 @@ DECL|member|bus
 )brace
 id|bus
 suffix:semicolon
+multiline_comment|/* Bus specific destructor */
 DECL|member|destructor
 r_void
 (paren
@@ -681,7 +700,7 @@ id|i2o_controller
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/* Bus specific destructor */
+multiline_comment|/* Bus specific attach/detach */
 DECL|member|bind
 r_int
 (paren
@@ -698,7 +717,7 @@ id|i2o_device
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/* Bus specific attach/detach */
+multiline_comment|/* Bus specific initiator */
 DECL|member|unbind
 r_int
 (paren
@@ -762,9 +781,96 @@ r_int
 id|context
 suffix:semicolon
 multiline_comment|/* Low 8 bits of the transaction info */
+DECL|member|class
+id|u32
+r_class
+suffix:semicolon
+multiline_comment|/* I2O classes that this driver handles */
 multiline_comment|/* User data follows */
 )brace
 suffix:semicolon
+macro_line|#ifdef MODULE
+multiline_comment|/*&n; * Used by bus specific modules to communicate with the core&n; *&n; * This is needed because the bus modules cannot make direct&n; * calls to the core as this results in the i2o_bus_specific_module&n; * being dependent on the core, not the otherway around.&n; * In that case, a &squot;modprobe i2o_lan&squot; loads i2o_core &amp; i2o_lan,&n; * but _not_ i2o_pci...which makes the whole thing pretty useless :)&n; *&n; */
+DECL|struct|i2o_core_func_table
+r_struct
+id|i2o_core_func_table
+(brace
+DECL|member|install
+r_int
+(paren
+op_star
+id|install
+)paren
+(paren
+r_struct
+id|i2o_controller
+op_star
+)paren
+suffix:semicolon
+DECL|member|activate
+r_int
+(paren
+op_star
+id|activate
+)paren
+(paren
+r_struct
+id|i2o_controller
+op_star
+)paren
+suffix:semicolon
+r_struct
+id|i2o_controller
+op_star
+DECL|member|find
+(paren
+op_star
+id|find
+)paren
+(paren
+r_int
+)paren
+suffix:semicolon
+DECL|member|unlock
+r_void
+(paren
+op_star
+id|unlock
+)paren
+(paren
+r_struct
+id|i2o_controller
+op_star
+)paren
+suffix:semicolon
+DECL|member|run_queue
+r_void
+(paren
+op_star
+id|run_queue
+)paren
+(paren
+r_struct
+id|i2o_controller
+op_star
+id|c
+)paren
+suffix:semicolon
+DECL|member|delete
+r_int
+(paren
+op_star
+r_delete
+)paren
+(paren
+r_struct
+id|i2o_controller
+op_star
+)paren
+suffix:semicolon
+)brace
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; *&t;Messenger inlines&n; */
 DECL|function|I2O_POST_READ32
 r_extern
@@ -1080,8 +1186,10 @@ id|i2o_device
 op_star
 comma
 r_struct
-id|i2o_driver
+id|i2o_handler
 op_star
+comma
+id|u32
 )paren
 suffix:semicolon
 r_extern
@@ -1092,6 +1200,12 @@ c_func
 r_struct
 id|i2o_device
 op_star
+comma
+r_struct
+id|i2o_handler
+op_star
+comma
+id|u32
 )paren
 suffix:semicolon
 r_extern
@@ -1150,6 +1264,8 @@ r_int
 comma
 r_int
 op_star
+comma
+id|u32
 )paren
 suffix:semicolon
 r_extern
@@ -1727,6 +1843,15 @@ DECL|macro|I2O_DSC_DEVICE_BUSY
 mdefine_line|#define I2O_DSC_DEVICE_BUSY                    0x001B
 DECL|macro|I2O_DSC_DEVICE_NOT_AVAILABLE
 mdefine_line|#define I2O_DSC_DEVICE_NOT_AVAILABLE           0x001C
+multiline_comment|/* Device Claim Types */
+DECL|macro|I2O_CLAIM_PRIMARY
+mdefine_line|#define&t;I2O_CLAIM_PRIMARY&t;&t;&t;&t;&t;&t;0x01000000
+DECL|macro|I2O_CLAIM_MANAGEMENT
+mdefine_line|#define&t;I2O_CLAIM_MANAGEMENT&t;&t;&t;&t;&t;0x02000000
+DECL|macro|I2O_CLAIM_AUTHORIZED
+mdefine_line|#define&t;I2O_CLAIM_AUTHORIZED&t;&t;&t;&t;&t;0x03000000
+DECL|macro|I2O_CLAIM_SECONDARY
+mdefine_line|#define&t;I2O_CLAIM_SECONDARY&t;&t;&t;&t;&t;0x04000000
 multiline_comment|/* Message header defines for VersionOffset */
 DECL|macro|I2OVER15
 mdefine_line|#define I2OVER15&t;0x0001

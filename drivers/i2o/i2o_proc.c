@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *   procfs handler for Linux I2O subsystem&n; *&n; *   Copyright (c) 1999 Intel Corporation&n; *   &n; *   Originally written by Deepak Saxena(deepak.saxena@intel.com)&n; *&n; *   This program is free software. You can redistribute it and/or&n; *   modify it under the terms of the GNU General Public License&n; *   as published by the Free Software Foundation; either version&n; *   2 of the License, or (at your option) any later version.&n; *&n; *   This is an initial test release. The code is based on the design&n; *   of the ide procfs system (drivers/block/ide-proc.c). Some code&n; *   taken from i2o-core module by Alan Cox.&n; *&n; *   DISCLAIMER: This code is still under development/test and may cause&n; *   your system to behave unpredictably.  Use at your own discretion.&n; *&n; *   LAN entries by Juha Siev&#xfffd;nen (Juha.Sievanen@cs.Helsinki.FI),&n; *&t;&t;    Auvo H&#xfffd;kkinen (Auvo.Hakkinen@cs.Helsinki.FI)&n; *   University of Helsinki, Department of Computer Science&n; */
+multiline_comment|/*&n; *   procfs handler for Linux I2O subsystem&n; *&n; *   Copyright (c) 1999 Intel Corporation&n; *   &n; *   Originally written by Deepak Saxena(deepak@plexity.net)&n; *&n; *   This program is free software. You can redistribute it and/or&n; *   modify it under the terms of the GNU General Public License&n; *   as published by the Free Software Foundation; either version&n; *   2 of the License, or (at your option) any later version.&n; *&n; *   This is an initial test release. The code is based on the design&n; *   of the ide procfs system (drivers/block/ide-proc.c). Some code&n; *   taken from i2o-core module by Alan Cox.&n; *&n; *   DISCLAIMER: This code is still under development/test and may cause&n; *   your system to behave unpredictably.  Use at your own discretion.&n; *&n; *   LAN entries by Juha Siev&#xfffd;nen (Juha.Sievanen@cs.Helsinki.FI),&n; *&t;&t;    Auvo H&#xfffd;kkinen (Auvo.Hakkinen@cs.Helsinki.FI)&n; *   University of Helsinki, Department of Computer Science&n; */
 multiline_comment|/*&n; * set tabstop=3&n; */
 multiline_comment|/*&n; * TODO List&n; *&n; * - Add support for any version 2.0 spec changes once 2.0 IRTOS is&n; *   is available to test with&n; * - Clean up code to use official structure definitions &n; */
 singleline_comment|// FIXME!
@@ -6,6 +6,7 @@ DECL|macro|FMT_U64_HEX
 mdefine_line|#define FMT_U64_HEX &quot;0x%08x%08x&quot;
 DECL|macro|U64_VAL
 mdefine_line|#define U64_VAL(pu64) *((u32*)(pu64)+1), *((u32*)(pu64))
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/i2o.h&gt;
@@ -926,6 +927,9 @@ comma
 l_string|&quot;I2O procfs Layer&quot;
 comma
 l_int|0
+comma
+l_int|0xffffffff
+singleline_comment|// All classes
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * IOP specific entries...write field just in case someone &n; * ever wants one.&n; */
@@ -17968,7 +17972,7 @@ macro_line|#ifdef MODULE
 id|MODULE_AUTHOR
 c_func
 (paren
-l_string|&quot;Intel Corporation&quot;
+l_string|&quot;Deepak Saxena&quot;
 )paren
 suffix:semicolon
 id|MODULE_DESCRIPTION

@@ -731,6 +731,21 @@ r_char
 id|val
 )paren
 (brace
+r_const
+r_int
+r_char
+id|wm
+op_assign
+(paren
+id|PARPORT_CONTROL_STROBE
+op_or
+id|PARPORT_CONTROL_AUTOFD
+op_or
+id|PARPORT_CONTROL_INIT
+op_or
+id|PARPORT_CONTROL_SELECT
+)paren
+suffix:semicolon
 r_struct
 id|parport_pc_private
 op_star
@@ -774,6 +789,8 @@ r_return
 id|priv-&gt;ctr
 op_assign
 id|ctr
+op_amp
+id|wm
 suffix:semicolon
 multiline_comment|/* update soft copy */
 )brace
@@ -3622,8 +3639,6 @@ id|parport_pc_data_forward
 comma
 id|parport_pc_data_reverse
 comma
-id|parport_pc_interrupt
-comma
 id|parport_pc_init_state
 comma
 id|parport_pc_save_state
@@ -6012,6 +6027,8 @@ suffix:semicolon
 id|p-&gt;modes
 op_assign
 id|PARPORT_MODE_PCSPP
+op_or
+id|PARPORT_MODE_SAFEININT
 suffix:semicolon
 id|p-&gt;ops
 op_assign

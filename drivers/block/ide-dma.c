@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/drivers/block/ide-dma.c&t;Version 4.09  April 23, 1999&n; *&n; *  Copyright (c) 1999  Andre Hedrick&n; *  May be copied or modified under the terms of the GNU General Public License&n; */
+multiline_comment|/*&n; *  linux/drivers/block/ide-dma.c&t;Version 4.09&t;April 23, 1999&n; *&n; *  Copyright (c) 1999  Andre Hedrick&n; *  May be copied or modified under the terms of the GNU General Public License&n; */
 multiline_comment|/*&n; *  Special Thanks to Mark for his Six years of work.&n; *&n; *  Copyright (c) 1995-1998  Mark Lord&n; *  May be copied or modified under the terms of the GNU General Public License&n; */
 multiline_comment|/*&n; * This module provides support for the bus-master IDE DMA functions&n; * of various PCI chipsets, including the Intel PIIX (i82371FB for&n; * the 430 FX chipset), the PIIX3 (i82371SB for the 430 HX/VX and &n; * 440 chipsets), and the PIIX4 (i82371AB for the 430 TX chipset)&n; * (&quot;PIIX&quot; stands for &quot;PCI ISA IDE Xcellerator&quot;).&n; *&n; * Pretty much the same code works for other IDE PCI bus-mastering chipsets.&n; *&n; * DMA is supported for all IDE devices (disk drives, cdroms, tapes, floppies).&n; *&n; * By default, DMA support is prepared for use, but is currently enabled only&n; * for drives which already have DMA enabled (UltraDMA or mode 2 multi/single),&n; * or which are recognized as &quot;good&quot; (see table below).  Drives with only mode0&n; * or mode1 (multi/single) DMA should also work with this chipset/driver&n; * (eg. MC2112A) but are not enabled by default.&n; *&n; * Use &quot;hdparm -i&quot; to view modes supported by a given drive.&n; *&n; * The hdparm-3.5 (or later) utility can be used for manually enabling/disabling&n; * DMA support, but must be (re-)compiled against this kernel version or later.&n; *&n; * To enable DMA, use &quot;hdparm -d1 /dev/hd?&quot; on a per-drive basis after booting.&n; * If problems arise, ide.c will disable DMA operation after a few retries.&n; * This error recovery mechanism works and has been extremely well exercised.&n; *&n; * IDE drives, depending on their vintage, may support several different modes&n; * of DMA operation.  The boot-time modes are indicated with a &quot;*&quot; in&n; * the &quot;hdparm -i&quot; listing, and can be changed with *knowledgeable* use of&n; * the &quot;hdparm -X&quot; feature.  There is seldom a need to do this, as drives&n; * normally power-up with their &quot;best&quot; PIO/DMA modes enabled.&n; *&n; * Testing has been done with a rather extensive number of drives,&n; * with Quantum &amp; Western Digital models generally outperforming the pack,&n; * and Fujitsu &amp; Conner (and some Seagate which are really Conner) drives&n; * showing more lackluster throughput.&n; *&n; * Keep an eye on /var/adm/messages for &quot;DMA disabled&quot; messages.&n; *&n; * Some people have reported trouble with Intel Zappa motherboards.&n; * This can be fixed by upgrading the AMI BIOS to version 1.00.04.BS0,&n; * available from ftp://ftp.intel.com/pub/bios/10004bs0.exe&n; * (thanks to Glen Morrell &lt;glen@spin.Stanford.edu&gt; for researching this).&n; *&n; * Thanks to &quot;Christopher J. Reimer&quot; &lt;reimer@doe.carleton.ca&gt; for&n; * fixing the problem with the BIOS on some Acer motherboards.&n; *&n; * Thanks to &quot;Benoit Poulot-Cazajous&quot; &lt;poulot@chorus.fr&gt; for testing&n; * &quot;TX&quot; chipset compatibility and for providing patches for the &quot;TX&quot; chipset.&n; *&n; * Thanks to Christian Brunner &lt;chb@muc.de&gt; for taking a good first crack&n; * at generic DMA -- his patches were referred to when preparing this code.&n; *&n; * Most importantly, thanks to Robert Bringman &lt;rob@mars.trion.com&gt;&n; * for supplying a Promise UDMA board &amp; WD UDMA drive for this work!&n; *&n; * And, yes, Intel Zappa boards really *do* use both PIIX IDE ports.&n; *&n; * ACARD ATP850UF Chipset &quot;Modified SCSI Class&quot; with other names&n; *       AEC6210 U/UF&n; *       SIIG&squot;s UltraIDE Pro CN-2449&n; * TTI   HPT343 Chipset &quot;Modified SCSI Class&quot; but reports as an&n; *       unknown storage device.&n; * NEW&t; check_drive_lists(ide_drive_t *drive, int good_bad)&n; */
 macro_line|#include &lt;linux/config.h&gt;
@@ -1049,7 +1049,6 @@ comma
 id|drive
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_IDEDMA_ULTRA_66
 multiline_comment|/* Enable DMA on any drive that has UltraDMA (mode 3/4) enabled */
 r_if
 c_cond
@@ -1058,6 +1057,10 @@ c_cond
 id|id-&gt;field_valid
 op_amp
 l_int|4
+)paren
+op_logical_and
+(paren
+id|hwif-&gt;udma_four
 )paren
 op_logical_and
 (paren
@@ -1092,7 +1095,6 @@ comma
 id|drive
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_IDEDMA_ULTRA_66 */
 multiline_comment|/* Enable DMA on any drive that has UltraDMA (mode 0/1/2) enabled */
 r_if
 c_cond
@@ -1523,6 +1525,16 @@ id|ide_dma_good_drive
 )paren
 )paren
 suffix:semicolon
+r_case
+id|ide_dma_lostirq
+suffix:colon
+r_case
+id|ide_dma_timeout
+suffix:colon
+multiline_comment|/*&n;&t;&t;&t; * printk(&quot;ide_dmaproc: chipset supported func only: %d&bslash;n&quot;, func);&n;&t;&t;&t; */
+r_return
+l_int|1
+suffix:semicolon
 r_default
 suffix:colon
 id|printk
@@ -1846,12 +1858,10 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * Fetch the DMA Bus-Master-I/O-Base-Address (BMIBA) from PCI space:&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|ide_get_or_set_dma_base
 r_int
 r_int
+id|__init
 id|ide_get_or_set_dma_base
 (paren
 id|ide_hwif_t
@@ -1865,7 +1875,6 @@ r_const
 r_char
 op_star
 id|name
-)paren
 )paren
 (brace
 r_int
@@ -1907,12 +1916,12 @@ r_else
 (brace
 id|dma_base
 op_assign
-id|dev-&gt;base_address
+id|dev-&gt;resource
 (braket
 l_int|4
 )braket
-op_amp
-id|PCI_BASE_ADDRESS_IO_MASK
+dot
+id|start
 suffix:semicolon
 r_if
 c_cond
@@ -1987,7 +1996,6 @@ id|dev-&gt;device
 r_case
 id|PCI_DEVICE_ID_CMD_643
 suffix:colon
-multiline_comment|/*&n;&t;&t;&t;&t; * Lets attempt to use the same Ali tricks&n;&t;&t;&t;&t; * to fix CMD643.....&n;&t;&t;&t;&t; */
 macro_line|#ifdef CONFIG_BLK_DEV_ALI15X3
 r_case
 id|PCI_DEVICE_ID_AL_M5219
@@ -2044,8 +2052,10 @@ r_default
 suffix:colon
 (brace
 )brace
+multiline_comment|/*&n;&t;&t;&t;&t; * If the device claims &quot;simplex&quot; DMA,&n;&t;&t;&t;&t; * this means only one of the two interfaces&n;&t;&t;&t;&t; * can be trusted with DMA at any point in time.&n;&t;&t;&t;&t; * So we should enable DMA only on one of the&n;&t;&t;&t;&t; * two interfaces.&n;&t;&t;&t;&t; */
 r_if
 c_cond
+(paren
 (paren
 id|inb
 c_func
@@ -2056,6 +2066,36 @@ l_int|2
 )paren
 op_amp
 l_int|0x80
+)paren
+)paren
+(brace
+multiline_comment|/* simplex device? */
+r_if
+c_cond
+(paren
+(paren
+op_logical_neg
+id|hwif-&gt;drives
+(braket
+l_int|0
+)braket
+dot
+id|present
+op_logical_and
+op_logical_neg
+id|hwif-&gt;drives
+(braket
+l_int|1
+)braket
+dot
+id|present
+)paren
+op_logical_or
+(paren
+id|hwif-&gt;mate
+op_logical_and
+id|hwif-&gt;mate-&gt;dma_base
+)paren
 )paren
 (brace
 id|printk
@@ -2070,6 +2110,7 @@ id|dma_base
 op_assign
 l_int|0
 suffix:semicolon
+)brace
 )brace
 )brace
 )brace

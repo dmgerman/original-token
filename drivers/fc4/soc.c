@@ -4087,16 +4087,13 @@ l_string|&quot;Enabled SOC&bslash;n&quot;
 )paren
 )brace
 macro_line|#ifndef MODULE
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|soc_probe
 r_int
+id|__init
 id|soc_probe
 c_func
 (paren
 r_void
-)paren
 )paren
 macro_line|#else
 r_int

@@ -4047,11 +4047,9 @@ suffix:semicolon
 )brace
 macro_line|#ifndef MODULE
 multiline_comment|/*&n; * Driver setup function when linked into the kernel to optionally parse multible&n; * &quot;digi=&quot;-lines and initialize the driver at boot time. No probing.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|pcxx_setup
 r_void
+id|__init
 id|pcxx_setup
 c_func
 (paren
@@ -4062,7 +4060,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_struct
@@ -4797,16 +4794,13 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/*&n; * function to initialize the driver with the given parameters, which are either&n; * the default values from this file or the parameters given at boot.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|pcxe_init
 r_int
+id|__init
 id|pcxe_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 id|ulong

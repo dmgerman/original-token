@@ -88,6 +88,17 @@ mdefine_line|#define CDROM_GET_CAPABILITY&t;0x5331&t;/* get capabilities */
 multiline_comment|/* This ioctl is only used by sbpcd at the moment */
 DECL|macro|CDROMAUDIOBUFSIZ
 mdefine_line|#define CDROMAUDIOBUFSIZ        0x5382&t;/* set the audio buffer size */
+multiline_comment|/* DVD-ROM Specific ioctls */
+DECL|macro|DVD_READ_STRUCT
+mdefine_line|#define DVD_READ_STRUCT&t;&t;0x5390  /* Read structure */
+DECL|macro|DVD_WRITE_STRUCT
+mdefine_line|#define DVD_WRITE_STRUCT&t;0x5391  /* Write structure */
+DECL|macro|DVD_AUTH
+mdefine_line|#define DVD_AUTH&t;&t;0x5392  /* Authentication */
+DECL|macro|CDROM_SEND_PACKET
+mdefine_line|#define CDROM_SEND_PACKET&t;0x5393&t;/* send a packet to the drive */
+DECL|macro|CDROM_BLANK
+mdefine_line|#define CDROM_BLANK&t;&t;0x5394&t;/* blank */
 multiline_comment|/*******************************************************&n; * CDROM IOCTL structures&n; *******************************************************/
 multiline_comment|/* Address in MSF format */
 DECL|struct|cdrom_msf0
@@ -411,6 +422,38 @@ id|len
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|CDROM_PACKET_SIZE
+mdefine_line|#define CDROM_PACKET_SIZE&t;12
+multiline_comment|/* for CDROM_PACKET_COMMAND ioctl */
+DECL|struct|cdrom_generic_command
+r_struct
+id|cdrom_generic_command
+(brace
+DECL|member|cmd
+r_int
+r_char
+id|cmd
+(braket
+id|CDROM_PACKET_SIZE
+)braket
+suffix:semicolon
+DECL|member|buffer
+r_int
+r_char
+op_star
+id|buffer
+suffix:semicolon
+DECL|member|buflen
+r_int
+r_int
+id|buflen
+suffix:semicolon
+DECL|member|stat
+r_int
+id|stat
+suffix:semicolon
+)brace
+suffix:semicolon
 multiline_comment|/*&n; * A CD-ROM physical sector size is 2048, 2052, 2056, 2324, 2332, 2336, &n; * 2340, or 2352 bytes long.  &n;&n;*         Sector types of the standard CD-ROM data formats:&n; *&n; * format   sector type               user data size (bytes)&n; * -----------------------------------------------------------------------------&n; *   1     (Red Book)    CD-DA          2352    (CD_FRAMESIZE_RAW)&n; *   2     (Yellow Book) Mode1 Form1    2048    (CD_FRAMESIZE)&n; *   3     (Yellow Book) Mode1 Form2    2336    (CD_FRAMESIZE_RAW0)&n; *   4     (Green Book)  Mode2 Form1    2048    (CD_FRAMESIZE)&n; *   5     (Green Book)  Mode2 Form2    2328    (2324+4 spare bytes)&n; *&n; *&n; *       The layout of the standard CD-ROM data formats:&n; * -----------------------------------------------------------------------------&n; * - audio (red):                  | audio_sample_bytes |&n; *                                 |        2352        |&n; *&n; * - data (yellow, mode1):         | sync - head - data - EDC - zero - ECC |&n; *                                 |  12  -   4  - 2048 -  4  -   8  - 276 |&n; *&n; * - data (yellow, mode2):         | sync - head - data |&n; *                                 |  12  -   4  - 2336 |&n; *&n; * - XA data (green, mode2 form1): | sync - head - sub - data - EDC - ECC |&n; *                                 |  12  -   4  -  8  - 2048 -  4  - 276 |&n; *&n; * - XA data (green, mode2 form2): | sync - head - sub - data - Spare |&n; *                                 |  12  -   4  -  8  - 2324 -  4    |&n; *&n; */
 multiline_comment|/* Some generally useful CD-ROM information -- mostly based on the above */
 DECL|macro|CD_MINS
@@ -518,6 +561,18 @@ DECL|macro|CDC_IOCTLS
 mdefine_line|#define CDC_IOCTLS              0x400   /* driver has non-standard ioctls */
 DECL|macro|CDC_DRIVE_STATUS
 mdefine_line|#define CDC_DRIVE_STATUS        0x800   /* driver implements drive status */
+DECL|macro|CDC_GENERIC_PACKET
+mdefine_line|#define CDC_GENERIC_PACKET&t;0x1000&t;/* driver implements generic packets */
+DECL|macro|CDC_CD_R
+mdefine_line|#define CDC_CD_R&t;&t;0x2000&t;/* drive is a CD-R */
+DECL|macro|CDC_CD_RW
+mdefine_line|#define CDC_CD_RW&t;&t;0x4000&t;/* drive is a CD-RW */
+DECL|macro|CDC_DVD
+mdefine_line|#define CDC_DVD&t;&t;&t;0x8000&t;/* drive is a DVD */
+DECL|macro|CDC_DVD_R
+mdefine_line|#define CDC_DVD_R&t;&t;0x10000&t;/* drive can write DVD-R */
+DECL|macro|CDC_DVD_RAM
+mdefine_line|#define CDC_DVD_RAM&t;&t;0x20000&t;/* drive can write DVD-RAM */
 multiline_comment|/* drive status possibilities returned by CDROM_DRIVE_STATUS ioctl */
 DECL|macro|CDS_NO_INFO
 mdefine_line|#define CDS_NO_INFO&t;&t;0&t;/* if not implemented */
@@ -559,6 +614,493 @@ DECL|macro|CDSL_NONE
 mdefine_line|#define CDSL_NONE       &t;((int) (~0U&gt;&gt;1)-1)
 DECL|macro|CDSL_CURRENT
 mdefine_line|#define CDSL_CURRENT    &t;((int) (~0U&gt;&gt;1))
+multiline_comment|/*********************************************************************&n; * MMC commands and such&n; *********************************************************************/
+DECL|macro|DVD_SEND_KEY
+mdefine_line|#define DVD_SEND_KEY&t;&t;0xa3
+DECL|macro|DVD_REPORT_KEY
+mdefine_line|#define DVD_REPORT_KEY&t;&t;0xa4
+DECL|macro|DVD_READ_STRUCTURE
+mdefine_line|#define DVD_READ_STRUCTURE&t;0xad
+DECL|macro|DVD_STRUCT_PHYSICAL
+mdefine_line|#define DVD_STRUCT_PHYSICAL&t;0x00
+DECL|macro|DVD_STRUCT_COPYRIGHT
+mdefine_line|#define DVD_STRUCT_COPYRIGHT&t;0x01
+DECL|macro|DVD_STRUCT_DISCKEY
+mdefine_line|#define DVD_STRUCT_DISCKEY&t;0x02
+DECL|macro|DVD_STRUCT_BCA
+mdefine_line|#define DVD_STRUCT_BCA&t;&t;0x03
+DECL|macro|DVD_STRUCT_MANUFACT
+mdefine_line|#define DVD_STRUCT_MANUFACT&t;0x04
+DECL|struct|dvd_layer
+r_struct
+id|dvd_layer
+(brace
+DECL|member|book_version
+id|u_char
+id|book_version
+suffix:colon
+l_int|4
+suffix:semicolon
+DECL|member|book_type
+id|u_char
+id|book_type
+suffix:colon
+l_int|4
+suffix:semicolon
+DECL|member|min_rate
+id|u_char
+id|min_rate
+suffix:colon
+l_int|4
+suffix:semicolon
+DECL|member|disc_size
+id|u_char
+id|disc_size
+suffix:colon
+l_int|4
+suffix:semicolon
+DECL|member|layer_type
+id|u_char
+id|layer_type
+suffix:colon
+l_int|4
+suffix:semicolon
+DECL|member|track_path
+id|u_char
+id|track_path
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|nlayers
+id|u_char
+id|nlayers
+suffix:colon
+l_int|2
+suffix:semicolon
+DECL|member|track_density
+id|u_char
+id|track_density
+suffix:colon
+l_int|4
+suffix:semicolon
+DECL|member|linear_density
+id|u_char
+id|linear_density
+suffix:colon
+l_int|4
+suffix:semicolon
+DECL|member|bca
+id|u_char
+id|bca
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|start_sector
+id|u_char
+id|start_sector
+suffix:semicolon
+DECL|member|end_sector
+id|u_char
+id|end_sector
+suffix:semicolon
+DECL|member|end_sector_l0
+id|u_char
+id|end_sector_l0
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|dvd_physical
+r_struct
+id|dvd_physical
+(brace
+DECL|member|type
+id|u_char
+id|type
+suffix:semicolon
+DECL|member|layer_num
+id|u_char
+id|layer_num
+suffix:semicolon
+DECL|member|layer
+r_struct
+id|dvd_layer
+id|layer
+(braket
+l_int|4
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|dvd_copyright
+r_struct
+id|dvd_copyright
+(brace
+DECL|member|type
+id|u_char
+id|type
+suffix:semicolon
+DECL|member|layer_num
+id|u_char
+id|layer_num
+suffix:semicolon
+DECL|member|cpst
+id|u_char
+id|cpst
+suffix:semicolon
+DECL|member|rmi
+id|u_char
+id|rmi
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|dvd_disckey
+r_struct
+id|dvd_disckey
+(brace
+DECL|member|type
+id|u_char
+id|type
+suffix:semicolon
+DECL|member|agid
+r_int
+id|agid
+suffix:colon
+l_int|2
+suffix:semicolon
+DECL|member|value
+id|u_char
+id|value
+(braket
+l_int|2048
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|dvd_bca
+r_struct
+id|dvd_bca
+(brace
+DECL|member|type
+id|u_char
+id|type
+suffix:semicolon
+DECL|member|len
+r_int
+id|len
+suffix:semicolon
+DECL|member|value
+id|u_char
+id|value
+(braket
+l_int|188
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|dvd_manufact
+r_struct
+id|dvd_manufact
+(brace
+DECL|member|type
+id|u_char
+id|type
+suffix:semicolon
+DECL|member|layer_num
+id|u_char
+id|layer_num
+suffix:semicolon
+DECL|member|len
+r_int
+id|len
+suffix:semicolon
+DECL|member|value
+id|u_char
+id|value
+(braket
+l_int|2048
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
+r_typedef
+r_union
+(brace
+DECL|member|type
+id|u_char
+id|type
+suffix:semicolon
+DECL|member|physical
+r_struct
+id|dvd_physical
+id|physical
+suffix:semicolon
+DECL|member|copyright
+r_struct
+id|dvd_copyright
+id|copyright
+suffix:semicolon
+DECL|member|disckey
+r_struct
+id|dvd_disckey
+id|disckey
+suffix:semicolon
+DECL|member|bca
+r_struct
+id|dvd_bca
+id|bca
+suffix:semicolon
+DECL|member|manufact
+r_struct
+id|dvd_manufact
+id|manufact
+suffix:semicolon
+DECL|typedef|dvd_struct
+)brace
+id|dvd_struct
+suffix:semicolon
+multiline_comment|/*&n; * DVD authentication ioctl&n; */
+multiline_comment|/* Authentication states */
+DECL|macro|DVD_LU_SEND_AGID
+mdefine_line|#define DVD_LU_SEND_AGID&t;0
+DECL|macro|DVD_HOST_SEND_CHALLENGE
+mdefine_line|#define DVD_HOST_SEND_CHALLENGE&t;1
+DECL|macro|DVD_LU_SEND_KEY1
+mdefine_line|#define DVD_LU_SEND_KEY1&t;2
+DECL|macro|DVD_LU_SEND_CHALLENGE
+mdefine_line|#define DVD_LU_SEND_CHALLENGE&t;3
+DECL|macro|DVD_HOST_SEND_KEY2
+mdefine_line|#define DVD_HOST_SEND_KEY2&t;4
+multiline_comment|/* Termination states */
+DECL|macro|DVD_AUTH_ESTABLISHED
+mdefine_line|#define DVD_AUTH_ESTABLISHED&t;5
+DECL|macro|DVD_AUTH_FAILURE
+mdefine_line|#define DVD_AUTH_FAILURE&t;6
+multiline_comment|/* Other functions */
+DECL|macro|DVD_LU_SEND_TITLE_KEY
+mdefine_line|#define DVD_LU_SEND_TITLE_KEY&t;7
+DECL|macro|DVD_LU_SEND_ASF
+mdefine_line|#define DVD_LU_SEND_ASF&t;&t;8
+DECL|macro|DVD_INVALIDATE_AGID
+mdefine_line|#define DVD_INVALIDATE_AGID&t;9
+multiline_comment|/* State data */
+DECL|typedef|dvd_key
+r_typedef
+id|u_char
+id|dvd_key
+(braket
+l_int|5
+)braket
+suffix:semicolon
+multiline_comment|/* 40-bit value, MSB is first elem. */
+DECL|typedef|dvd_challenge
+r_typedef
+id|u_char
+id|dvd_challenge
+(braket
+l_int|10
+)braket
+suffix:semicolon
+multiline_comment|/* 80-bit value, MSB is first elem. */
+DECL|struct|dvd_lu_send_agid
+r_struct
+id|dvd_lu_send_agid
+(brace
+DECL|member|type
+id|u_char
+id|type
+suffix:semicolon
+DECL|member|agid
+r_int
+id|agid
+suffix:colon
+l_int|2
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|dvd_host_send_challenge
+r_struct
+id|dvd_host_send_challenge
+(brace
+DECL|member|type
+id|u_char
+id|type
+suffix:semicolon
+DECL|member|agid
+r_int
+id|agid
+suffix:colon
+l_int|2
+suffix:semicolon
+DECL|member|chal
+id|dvd_challenge
+id|chal
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|dvd_send_key
+r_struct
+id|dvd_send_key
+(brace
+DECL|member|type
+id|u_char
+id|type
+suffix:semicolon
+DECL|member|agid
+r_int
+id|agid
+suffix:colon
+l_int|2
+suffix:semicolon
+DECL|member|key
+id|dvd_key
+id|key
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|dvd_lu_send_challenge
+r_struct
+id|dvd_lu_send_challenge
+(brace
+DECL|member|type
+id|u_char
+id|type
+suffix:semicolon
+DECL|member|agid
+r_int
+id|agid
+suffix:colon
+l_int|2
+suffix:semicolon
+DECL|member|chal
+id|dvd_challenge
+id|chal
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|macro|DVD_CPM_NO_COPYRIGHT
+mdefine_line|#define DVD_CPM_NO_COPYRIGHT&t;0
+DECL|macro|DVD_CPM_COPYRIGHTED
+mdefine_line|#define DVD_CPM_COPYRIGHTED&t;1
+DECL|macro|DVD_CP_SEC_NONE
+mdefine_line|#define DVD_CP_SEC_NONE&t;&t;0
+DECL|macro|DVD_CP_SEC_EXIST
+mdefine_line|#define DVD_CP_SEC_EXIST&t;1
+DECL|macro|DVD_CGMS_UNRESTRICTED
+mdefine_line|#define DVD_CGMS_UNRESTRICTED&t;0
+DECL|macro|DVD_CGMS_SINGLE
+mdefine_line|#define DVD_CGMS_SINGLE&t;&t;2
+DECL|macro|DVD_CGMS_RESTRICTED
+mdefine_line|#define DVD_CGMS_RESTRICTED&t;3
+DECL|struct|dvd_lu_send_title_key
+r_struct
+id|dvd_lu_send_title_key
+(brace
+DECL|member|type
+id|u_char
+id|type
+suffix:semicolon
+DECL|member|agid
+r_int
+id|agid
+suffix:colon
+l_int|2
+suffix:semicolon
+DECL|member|title_key
+id|dvd_key
+id|title_key
+suffix:semicolon
+DECL|member|lba
+r_int
+id|lba
+suffix:semicolon
+DECL|member|cpm
+r_int
+id|cpm
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|cp_sec
+r_int
+id|cp_sec
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|cgms
+r_int
+id|cgms
+suffix:colon
+l_int|2
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|dvd_lu_send_asf
+r_struct
+id|dvd_lu_send_asf
+(brace
+DECL|member|type
+id|u_char
+id|type
+suffix:semicolon
+DECL|member|agid
+r_int
+id|agid
+suffix:colon
+l_int|2
+suffix:semicolon
+DECL|member|asf
+r_int
+id|asf
+suffix:colon
+l_int|1
+suffix:semicolon
+)brace
+suffix:semicolon
+r_typedef
+r_union
+(brace
+DECL|member|type
+id|u_char
+id|type
+suffix:semicolon
+DECL|member|lsa
+r_struct
+id|dvd_lu_send_agid
+id|lsa
+suffix:semicolon
+DECL|member|hsc
+r_struct
+id|dvd_host_send_challenge
+id|hsc
+suffix:semicolon
+DECL|member|lsk
+r_struct
+id|dvd_send_key
+id|lsk
+suffix:semicolon
+DECL|member|lsc
+r_struct
+id|dvd_lu_send_challenge
+id|lsc
+suffix:semicolon
+DECL|member|hsk
+r_struct
+id|dvd_send_key
+id|hsk
+suffix:semicolon
+DECL|member|lstk
+r_struct
+id|dvd_lu_send_title_key
+id|lstk
+suffix:semicolon
+DECL|member|lsasf
+r_struct
+id|dvd_lu_send_asf
+id|lsasf
+suffix:semicolon
+DECL|typedef|dvd_authinfo
+)brace
+id|dvd_authinfo
+suffix:semicolon
 macro_line|#ifdef __KERNEL__
 multiline_comment|/* Uniform cdrom data structures for cdrom.c */
 DECL|struct|cdrom_device_info
@@ -846,6 +1388,23 @@ r_int
 id|n_minors
 suffix:semicolon
 multiline_comment|/* number of active minor devices */
+multiline_comment|/* handle uniform packets for scsi type devices (scsi,atapi) */
+DECL|member|generic_packet
+r_int
+(paren
+op_star
+id|generic_packet
+)paren
+(paren
+r_struct
+id|cdrom_device_info
+op_star
+comma
+r_struct
+id|cdrom_generic_command
+op_star
+)paren
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* the general file operations structure: */

@@ -2937,16 +2937,13 @@ r_return
 suffix:semicolon
 )brace
 macro_line|#else /* MODULE */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|slhc_install
 r_void
+id|__init
 id|slhc_install
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 )brace

@@ -107,6 +107,8 @@ DECL|macro|PARPORT_MODE_COMPAT
 mdefine_line|#define PARPORT_MODE_COMPAT&t;(1&lt;&lt;4) /* Hardware &squot;printer protocol&squot;. */
 DECL|macro|PARPORT_MODE_DMA
 mdefine_line|#define PARPORT_MODE_DMA&t;(1&lt;&lt;5) /* Hardware can DMA. */
+DECL|macro|PARPORT_MODE_SAFEININT
+mdefine_line|#define PARPORT_MODE_SAFEININT&t;(1&lt;&lt;6) /* SPP registers accessible in IRQ. */
 multiline_comment|/* IEEE1284 modes: &n;   Nibble mode, byte mode, ECP, ECPRLE and EPP are their own&n;   &squot;extensibility request&squot; values.  Others are special.&n;   &squot;Real&squot; ECP modes must have the IEEE1284_MODE_ECP bit set.  */
 DECL|macro|IEEE1284_MODE_NIBBLE
 mdefine_line|#define IEEE1284_MODE_NIBBLE             0
@@ -135,6 +137,9 @@ DECL|macro|IEEE1284_ADDR
 mdefine_line|#define IEEE1284_ADDR&t;&t;&t;(1&lt;&lt;13)&t;/* This is a flag */
 DECL|macro|IEEE1284_DATA
 mdefine_line|#define IEEE1284_DATA&t;&t;&t; 0&t;/* So is this */
+multiline_comment|/* Flags for block transfer operations. */
+DECL|macro|PARPORT_EPP_FAST
+mdefine_line|#define PARPORT_EPP_FAST&t;&t;(1&lt;&lt;0) /* Unreliable counts. */
 multiline_comment|/* The rest is for the kernel only */
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/wait.h&gt;
@@ -401,23 +406,6 @@ op_star
 )paren
 suffix:semicolon
 multiline_comment|/* For core parport code. */
-DECL|member|interrupt
-r_void
-(paren
-op_star
-id|interrupt
-)paren
-(paren
-r_int
-comma
-r_void
-op_star
-comma
-r_struct
-id|pt_regs
-op_star
-)paren
-suffix:semicolon
 DECL|member|init_state
 r_void
 (paren

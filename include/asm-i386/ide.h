@@ -6,7 +6,7 @@ mdefine_line|#define __ASMi386_IDE_H
 macro_line|#ifdef __KERNEL__
 macro_line|#ifndef MAX_HWIFS
 DECL|macro|MAX_HWIFS
-mdefine_line|#define MAX_HWIFS&t;8
+mdefine_line|#define MAX_HWIFS&t;10
 macro_line|#endif
 DECL|macro|ide__sti
 mdefine_line|#define ide__sti()&t;__sti()
@@ -239,7 +239,7 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifdef __DO_I_NEED_THIS
+macro_line|#ifndef CONFIG_BLK_DEV_IDEPCI
 id|hw_regs_t
 id|hw
 suffix:semicolon
@@ -300,7 +300,7 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* __DO_I_NEED_THIS */
+macro_line|#endif /* CONFIG_BLK_DEV_IDEPCI */
 )brace
 r_typedef
 r_union

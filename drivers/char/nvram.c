@@ -1253,16 +1253,13 @@ op_amp
 id|nvram_fops
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|nvram_init
 r_int
+id|__init
 id|nvram_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 multiline_comment|/* First test whether the driver should init at all */
