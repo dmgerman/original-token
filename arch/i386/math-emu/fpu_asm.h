@@ -2,9 +2,10 @@ multiline_comment|/*------------------------------------------------------------
 macro_line|#ifndef _FPU_ASM_H_
 DECL|macro|_FPU_ASM_H_
 mdefine_line|#define _FPU_ASM_H_
+macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &quot;fpu_emu.h&quot;
 DECL|macro|EXCEPTION
-mdefine_line|#define&t;EXCEPTION&t;_exception
+mdefine_line|#define&t;EXCEPTION&t;SYMBOL_NAME(exception)
 DECL|macro|PARAM1
 mdefine_line|#define PARAM1&t;8(%ebp)
 DECL|macro|PARAM2

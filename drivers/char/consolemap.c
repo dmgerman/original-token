@@ -2342,6 +2342,7 @@ r_int
 id|con_set_trans_old
 c_func
 (paren
+r_int
 r_char
 op_star
 id|arg
@@ -2428,6 +2429,7 @@ r_int
 id|con_get_trans_old
 c_func
 (paren
+r_int
 r_char
 op_star
 id|arg

@@ -64,6 +64,27 @@ r_int
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|generic_proc_info
+c_func
+(paren
+r_char
+op_star
+comma
+r_char
+op_star
+op_star
+comma
+id|off_t
+comma
+r_int
+comma
+r_int
+comma
+r_int
+)paren
+suffix:semicolon
 macro_line|#ifndef NULL
 DECL|macro|NULL
 mdefine_line|#define NULL 0L
@@ -74,6 +95,6 @@ mdefine_line|#define WD7000_Q    16
 DECL|macro|WD7000_SG
 mdefine_line|#define WD7000_SG   16
 DECL|macro|WD7000
-mdefine_line|#define WD7000 { NULL, NULL, &bslash;&n;&t;&quot;Western Digital WD-7000&quot;,      &bslash;&n;&t;wd7000_detect,                  &bslash;&n;&t;NULL,&t;&t;&t;&t;&bslash;&n;&t;NULL,&t;&t;                &bslash;&n;&t;wd7000_command,&t;                &bslash;&n;&t;wd7000_queuecommand,&t;        &bslash;&n;&t;wd7000_abort,&t;&t;&t;&bslash;&n;&t;wd7000_reset,&t;&t;&t;&bslash;&n;&t;NULL,                           &bslash;&n;&t;wd7000_biosparam,               &bslash;&n;&t;WD7000_Q, 7, WD7000_SG, 1, 0, 1, ENABLE_CLUSTERING}
+mdefine_line|#define WD7000 { NULL, NULL,            &bslash;&n;&t;generic_proc_info,              &bslash;&n;&t;&quot;wd7000&quot;,                       &bslash;&n;&t;PROC_SCSI_7000FASST,            &bslash;&n;&t;&quot;Western Digital WD-7000&quot;,      &bslash;&n;&t;wd7000_detect,                  &bslash;&n;&t;NULL,&t;&t;&t;&t;&bslash;&n;&t;NULL,&t;&t;&t;&t;&bslash;&n;&t;wd7000_command,&t;&t;&t;&bslash;&n;&t;wd7000_queuecommand,&t;&t;&bslash;&n;&t;wd7000_abort,&t;&t;&t;&bslash;&n;&t;wd7000_reset,&t;&t;&t;&bslash;&n;&t;NULL,                           &bslash;&n;&t;wd7000_biosparam,               &bslash;&n;&t;WD7000_Q, 7, WD7000_SG, 1, 0, 1, ENABLE_CLUSTERING}
 macro_line|#endif
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Linux ethernet device driver for the 3Com Etherlink Plus (3C505)&n; * &t;By Craig Southeren and Juha Laiho&n; *&n; * 3c505.c&t;This module implements an interface to the 3Com&n; *&t;&t;Etherlink Plus (3c505) ethernet card. Linux device &n; *&t;&t;driver interface reverse engineered from the Linux 3C509&n; *&t;&t;device drivers. Some 3C505 information gleaned from&n; *&t;&t;the Crynwr packet driver. Still this driver would not&n; *&t;&t;be here without 3C505 technical reference provided by&n; *&t;&t;3Com.&n; *&n; * Version:&t;@(#)3c505.c&t;0.8&t;4-Jun-95&n; *&n; * Authors:&t;Linux 3c505 device driver by&n; *&t;&t;&t;Craig Southeren, &lt;craigs@ineluki.apana.org.au&gt;&n; *              Final debugging by&n; *&t;&t;&t;Andrew Tridgell, &lt;tridge@nimbus.anu.edu.au&gt;&n; *&t;&t;Auto irq/address, tuning, cleanup and v1.1.4+ kernel mods by&n; *&t;&t;&t;Juha Laiho, &lt;jlaiho@ichaos.nullnet.fi&gt;&n; *              Linux 3C509 driver by&n; *             &t;&t;Donald Becker, &lt;becker@super.org&gt;&n; *&t;&t;Crynwr packet driver by&n; *&t;&t;&t;Krishnan Gopalan and Gregg Stefancik,&n; * &t;&t;&t;   Clemson University Engineering Computer Operations.&n; *&t;&t;&t;Portions of the code have been adapted from the 3c505&n; *&t;&t;&t;   driver for NCSA Telnet by Bruce Orchard and later&n; *&t;&t;&t;   modified by Warren Van Houten and krus@diku.dk.&n; *              3C505 technical information provided by&n; *                      Terry Murphy, of 3Com Network Adapter Division&n; *&t;&t;Linux 1.3.0 changes by&n; *&t;&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&n; *                     &n; */
+multiline_comment|/*&n; * Linux ethernet device driver for the 3Com Etherlink Plus (3C505)&n; * &t;By Craig Southeren and Juha Laiho&n; *&n; * 3c505.c&t;This module implements an interface to the 3Com&n; *&t;&t;Etherlink Plus (3c505) ethernet card. Linux device &n; *&t;&t;driver interface reverse engineered from the Linux 3C509&n; *&t;&t;device drivers. Some 3C505 information gleaned from&n; *&t;&t;the Crynwr packet driver. Still this driver would not&n; *&t;&t;be here without 3C505 technical reference provided by&n; *&t;&t;3Com.&n; *&n; * Version:&t;@(#)3c505.c&t;0.8.1&t;26-Jun-95&n; *&n; * Authors:&t;Linux 3c505 device driver by&n; *&t;&t;&t;Craig Southeren, &lt;craigs@ineluki.apana.org.au&gt;&n; *              Final debugging by&n; *&t;&t;&t;Andrew Tridgell, &lt;tridge@nimbus.anu.edu.au&gt;&n; *&t;&t;Auto irq/address, tuning, cleanup and v1.1.4+ kernel mods by&n; *&t;&t;&t;Juha Laiho, &lt;jlaiho@ichaos.nullnet.fi&gt;&n; *              Linux 3C509 driver by&n; *             &t;&t;Donald Becker, &lt;becker@super.org&gt;&n; *&t;&t;Crynwr packet driver by&n; *&t;&t;&t;Krishnan Gopalan and Gregg Stefancik,&n; * &t;&t;&t;   Clemson University Engineering Computer Operations.&n; *&t;&t;&t;Portions of the code have been adapted from the 3c505&n; *&t;&t;&t;   driver for NCSA Telnet by Bruce Orchard and later&n; *&t;&t;&t;   modified by Warren Van Houten and krus@diku.dk.&n; *              3C505 technical information provided by&n; *                      Terry Murphy, of 3Com Network Adapter Division&n; *&t;&t;Linux 1.3.0 changes by&n; *&t;&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&n; *                     &n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -113,7 +113,7 @@ suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n; *  0 = no messages (well, some)&n; *  1 = messages when high level commands performed&n; *  2 = messages when low level commands performed&n; *  3 = messages when interrupts received&n; */
 DECL|macro|ELP_VERSION
-mdefine_line|#define&t;ELP_VERSION&t;&quot;0.7.0&quot;
+mdefine_line|#define&t;ELP_VERSION&t;&quot;0.8.1&quot;
 multiline_comment|/*****************************************************************&n; *&n; * useful macros&n; *&n; *****************************************************************/
 macro_line|#ifndef&t;TRUE
 DECL|macro|TRUE
@@ -304,6 +304,7 @@ r_typedef
 r_struct
 (brace
 DECL|member|got
+r_volatile
 r_int
 id|got
 (braket

@@ -1,9 +1,13 @@
 multiline_comment|/*  $Id$&n; *  1993/03/31&n; *  linux/kernel/aha1740.c&n; *&n; *  Based loosely on aha1542.c which is&n; *  Copyright (C) 1992  Tommy Thorn and&n; *  Modified by Eric Youngdale&n; *&n; *  This file is aha1740.c, written and&n; *  Copyright (C) 1992,1993  Brad McLean&n; *  &n; *  Modifications to makecode and queuecommand&n; *  for proper handling of multiple devices courteously&n; *  provided by Michael Weller, March, 1993&n; *&n; * aha1740_makecode may still need even more work&n; * if it doesn&squot;t work for your devices, take a look.&n; */
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -348,7 +352,7 @@ id|DID_ERROR
 suffix:semicolon
 multiline_comment|/* Didn&squot;t find a better error */
 )brace
-multiline_comment|/* In any other case return DID_OK so for example&n;               CONDITION_CHECKS make it through to the appropriate&n;&t;       device driver */
+multiline_comment|/* In any other case return DID_OK so for example&n;&t;       CONDITION_CHECKS make it through to the appropriate&n;&t;       device driver */
 )brace
 )brace
 multiline_comment|/* Under all circumstances supply the target status -Michael */
@@ -1735,7 +1739,7 @@ c_cond
 id|done
 )paren
 (brace
-multiline_comment|/*  You may question the code below, which contains potentially&n;&t;  non-terminating while loops with interrupts disabled.  So did&n;&t;  I when I wrote it, but the Adaptec Spec says the card is so fast,&n;&t;  that this problem virtually never occurs so I&squot;ve kept it.  We&n;          do printk a warning first, so that you&squot;ll know if it happens.&n;&t;  In practice the only time we&squot;ve seen this message is when some-&n;&t;  thing else is in the driver was broken, like _makecode(), or&n;&t;  when a scsi device hung the scsi bus.  Even under these conditions,&n;&t;  The loop actually only cycled &lt; 3 times (we instrumented it). */
+multiline_comment|/*  You may question the code below, which contains potentially&n;&t;  non-terminating while loops with interrupts disabled.  So did&n;&t;  I when I wrote it, but the Adaptec Spec says the card is so fast,&n;&t;  that this problem virtually never occurs so I&squot;ve kept it.  We&n;&t;  do printk a warning first, so that you&squot;ll know if it happens.&n;&t;  In practice the only time we&squot;ve seen this message is when some-&n;&t;  thing else is in the driver was broken, like _makecode(), or&n;&t;  when a scsi device hung the scsi bus.  Even under these conditions,&n;&t;  The loop actually only cycled &lt; 3 times (we instrumented it). */
 id|DEB
 c_func
 (paren
@@ -2349,5 +2353,15 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+multiline_comment|/* Eventually this will go into an include file, but this will be later */
+DECL|variable|driver_template
+id|Scsi_Host_Template
+id|driver_template
+op_assign
+id|AHA1740
+suffix:semicolon
+macro_line|#include &quot;scsi_module.c&quot;
+macro_line|#endif
 multiline_comment|/* Okay, you made it all the way through.  As of this writing, 3/31/93, I&squot;m&n;brad@saturn.gaylord.com or brad@bradpc.gaylord.com.  I&squot;ll try to help as time&n;permits if you have any trouble with this driver.  Happy Linuxing! */
 eof

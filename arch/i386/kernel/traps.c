@@ -267,7 +267,7 @@ r_extern
 r_char
 id|start_kernel
 comma
-id|etext
+id|_etext
 suffix:semicolon
 id|esp
 op_assign
@@ -603,7 +603,7 @@ r_int
 r_int
 )paren
 op_amp
-id|etext
+id|_etext
 )paren
 )paren
 op_logical_or

@@ -97,6 +97,94 @@ r_int
 id|tick
 suffix:semicolon
 multiline_comment|/* (modified) usecs between clock ticks */
+DECL|member|ppsfreq
+r_int
+id|ppsfreq
+suffix:semicolon
+multiline_comment|/* pps frequency (scaled ppm) (ro) */
+DECL|member|jitter
+r_int
+id|jitter
+suffix:semicolon
+multiline_comment|/* pps jitter (us) (ro) */
+DECL|member|shift
+r_int
+id|shift
+suffix:semicolon
+multiline_comment|/* interval duration (s) (shift) (ro) */
+DECL|member|stabil
+r_int
+id|stabil
+suffix:semicolon
+multiline_comment|/* pps stability (scaled ppm) (ro) */
+DECL|member|jitcnt
+r_int
+id|jitcnt
+suffix:semicolon
+multiline_comment|/* jitter limit exceeded (ro) */
+DECL|member|calcnt
+r_int
+id|calcnt
+suffix:semicolon
+multiline_comment|/* calibration intervals (ro) */
+DECL|member|errcnt
+r_int
+id|errcnt
+suffix:semicolon
+multiline_comment|/* calibration errors (ro) */
+DECL|member|stbcnt
+r_int
+id|stbcnt
+suffix:semicolon
+multiline_comment|/* stability limit exceeded (ro) */
+r_int
+suffix:colon
+l_int|32
+suffix:semicolon
+r_int
+suffix:colon
+l_int|32
+suffix:semicolon
+r_int
+suffix:colon
+l_int|32
+suffix:semicolon
+r_int
+suffix:colon
+l_int|32
+suffix:semicolon
+r_int
+suffix:colon
+l_int|32
+suffix:semicolon
+r_int
+suffix:colon
+l_int|32
+suffix:semicolon
+r_int
+suffix:colon
+l_int|32
+suffix:semicolon
+r_int
+suffix:colon
+l_int|32
+suffix:semicolon
+r_int
+suffix:colon
+l_int|32
+suffix:semicolon
+r_int
+suffix:colon
+l_int|32
+suffix:semicolon
+r_int
+suffix:colon
+l_int|32
+suffix:semicolon
+r_int
+suffix:colon
+l_int|32
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Mode codes (timex.mode) &n; */

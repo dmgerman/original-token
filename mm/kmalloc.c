@@ -4,8 +4,6 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
-DECL|macro|GFP_LEVEL_MASK
-mdefine_line|#define GFP_LEVEL_MASK 0xf
 multiline_comment|/* I want this low enough for a while to catch errors.&n;   I want this number to be increased in the near future:&n;        loadable device drivers should use this function to get memory */
 DECL|macro|MAX_KMALLOC_K
 mdefine_line|#define MAX_KMALLOC_K ((PAGE_SIZE&lt;&lt;(NUM_AREA_ORDERS-1))&gt;&gt;10)

@@ -62,7 +62,7 @@ mdefine_line|#define SG_DEFAULT_TIMEOUT (60*HZ) /* 1 minute timeout */
 DECL|macro|SG_DEFAULT_RETRIES
 mdefine_line|#define SG_DEFAULT_RETRIES 1
 DECL|macro|SG_MAX_QUEUE
-mdefine_line|#define SG_MAX_QUEUE 4 /* maximum outstanding request, arbitrary, may be&n;                          changed if sufficient DMA buffer room available */
+mdefine_line|#define SG_MAX_QUEUE 4 /* maximum outstanding request, arbitrary, may be&n;&t;&t;&t;  changed if sufficient DMA buffer room available */
 DECL|macro|SG_BIG_BUFF
 mdefine_line|#define SG_BIG_BUFF 32768
 eof

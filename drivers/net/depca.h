@@ -79,6 +79,10 @@ DECL|macro|STRT
 mdefine_line|#define STRT    &t;0x0002 &t;/* Start */
 DECL|macro|INIT
 mdefine_line|#define INIT    &t;0x0001 &t;/* Initialize */
+DECL|macro|INTM
+mdefine_line|#define INTM            0xff00  /* Interrupt Mask */
+DECL|macro|INTE
+mdefine_line|#define INTE            0xfff0  /* Interrupt Enable */
 multiline_comment|/*&n;** CONTROL AND STATUS REGISTER 3 (CSR3)&n;*/
 DECL|macro|BSWP
 mdefine_line|#define BSWP    &t;0x0004&t;/* Byte SWaP */
@@ -139,6 +143,8 @@ DECL|macro|T_STP
 mdefine_line|#define T_STP       0x02000000 &t;/* Start of Packet */
 DECL|macro|T_ENP
 mdefine_line|#define T_ENP       0x01000000&t;/* End of Packet */
+DECL|macro|T_FLAGS
+mdefine_line|#define T_FLAGS     0xff000000  /* TX Flags Field */
 multiline_comment|/*&n;** Transmit Message Descriptor 3 (TMD3) bit definitions.&n;*/
 DECL|macro|TMD3_BUFF
 mdefine_line|#define TMD3_BUFF    0x8000&t;/* BUFFer error */
@@ -172,14 +178,76 @@ mdefine_line|#define PADR16   &t;0x0002&t;/* RAM on 64kB boundary */
 DECL|macro|PADR17
 mdefine_line|#define PADR17    &t;0x0001&t;/* RAM on 128kB boundary */
 multiline_comment|/*&n;** Miscellaneous&n;*/
+DECL|macro|HASH_TABLE_LEN
+mdefine_line|#define HASH_TABLE_LEN   64           /* Bits */
+DECL|macro|HASH_BITS
+mdefine_line|#define HASH_BITS        0x003f       /* 6 LS bits */
 DECL|macro|MASK_INTERRUPTS
 mdefine_line|#define MASK_INTERRUPTS   1
 DECL|macro|UNMASK_INTERRUPTS
 mdefine_line|#define UNMASK_INTERRUPTS 0
 DECL|macro|EISA_EN
-mdefine_line|#define EISA_EN         0x0001   /* Enable EISA bus buffers */
-DECL|macro|DEPCA_EISA_ID
-mdefine_line|#define DEPCA_EISA_ID   ioaddr+0x80   /* ID long word for EISA card */
-DECL|macro|DEPCA_EISA_CTRL
-mdefine_line|#define DEPCA_EISA_CTRL ioaddr+0x84   /* Control word for EISA card */
+mdefine_line|#define EISA_EN         0x0001        /* Enable EISA bus buffers */
+DECL|macro|EISA_ID
+mdefine_line|#define EISA_ID         iobase+0x0080 /* ID long word for EISA card */
+DECL|macro|EISA_CTRL
+mdefine_line|#define EISA_CTRL       iobase+0x0084 /* Control word for EISA card */
+multiline_comment|/*&n;** Include the IOCTL stuff&n;*/
+macro_line|#include &lt;linux/sockios.h&gt;
+DECL|macro|DEPCAIOCTL
+mdefine_line|#define&t;DEPCAIOCTL&t;SIOCDEVPRIVATE
+DECL|struct|depca_ioctl
+r_struct
+id|depca_ioctl
+(brace
+DECL|member|cmd
+r_int
+r_int
+id|cmd
+suffix:semicolon
+multiline_comment|/* Command to run */
+DECL|member|len
+r_int
+r_int
+id|len
+suffix:semicolon
+multiline_comment|/* Length of the data buffer */
+DECL|member|data
+r_int
+r_char
+op_star
+id|data
+suffix:semicolon
+multiline_comment|/* Pointer to the data buffer */
+)brace
+suffix:semicolon
+multiline_comment|/* &n;** Recognised commands for the driver &n;*/
+DECL|macro|DEPCA_GET_HWADDR
+mdefine_line|#define DEPCA_GET_HWADDR&t;0x01 /* Get the hardware address */
+DECL|macro|DEPCA_SET_HWADDR
+mdefine_line|#define DEPCA_SET_HWADDR&t;0x02 /* Get the hardware address */
+DECL|macro|DEPCA_SET_PROM
+mdefine_line|#define DEPCA_SET_PROM  &t;0x03 /* Set Promiscuous Mode */
+DECL|macro|DEPCA_CLR_PROM
+mdefine_line|#define DEPCA_CLR_PROM  &t;0x04 /* Clear Promiscuous Mode */
+DECL|macro|DEPCA_SAY_BOO
+mdefine_line|#define DEPCA_SAY_BOO&t;        0x05 /* Say &quot;Boo!&quot; to the kernel log file */
+DECL|macro|DEPCA_GET_MCA
+mdefine_line|#define DEPCA_GET_MCA   &t;0x06 /* Get a multicast address */
+DECL|macro|DEPCA_SET_MCA
+mdefine_line|#define DEPCA_SET_MCA   &t;0x07 /* Set a multicast address */
+DECL|macro|DEPCA_CLR_MCA
+mdefine_line|#define DEPCA_CLR_MCA    &t;0x08 /* Clear a multicast address */
+DECL|macro|DEPCA_MCA_EN
+mdefine_line|#define DEPCA_MCA_EN    &t;0x09 /* Enable a multicast address group */
+DECL|macro|DEPCA_GET_STATS
+mdefine_line|#define DEPCA_GET_STATS  &t;0x0a /* Get the driver statistics */
+DECL|macro|DEPCA_CLR_STATS
+mdefine_line|#define DEPCA_CLR_STATS &t;0x0b /* Zero out the driver statistics */
+DECL|macro|DEPCA_GET_REG
+mdefine_line|#define DEPCA_GET_REG   &t;0x0c /* Get the Register contents */
+DECL|macro|DEPCA_SET_REG
+mdefine_line|#define DEPCA_SET_REG   &t;0x0d /* Set the Register contents */
+DECL|macro|DEPCA_DUMP
+mdefine_line|#define DEPCA_DUMP              0x0f /* Dump the DEPCA Status */
 eof

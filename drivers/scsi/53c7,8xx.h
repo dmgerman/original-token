@@ -94,8 +94,29 @@ macro_line|#else
 DECL|macro|NCR53c7xx_release
 mdefine_line|#define NCR53c7xx_release NULL
 macro_line|#endif
+r_extern
+r_int
+id|generic_proc_info
+c_func
+(paren
+r_char
+op_star
+comma
+r_char
+op_star
+op_star
+comma
+id|off_t
+comma
+r_int
+comma
+r_int
+comma
+r_int
+)paren
+suffix:semicolon
 DECL|macro|NCR53c7xx
-mdefine_line|#define NCR53c7xx {NULL, NULL, &quot;NCR53c{7,8}xx (rel 4)&quot;, NCR53c7xx_detect, &t;&bslash;&n;    &t;NULL, /* info */ NULL, /* command, deprecated */ NULL, &t;&t;&bslash;&n;&t;NCR53c7xx_queue_command, NCR53c7xx_abort, NCR53c7xx_reset,&t;&bslash;&n;        NULL /* slave attach */, scsicam_bios_param, /* can queue */ 1, &bslash;&n;&t;/* id */ 7, 127 /* old SG_ALL */, /* cmd per lun */ 1 , &t;&bslash;&n;        /* present */ 0, /* unchecked isa dma */ 0, DISABLE_CLUSTERING} 
+mdefine_line|#define NCR53c7xx {NULL, NULL, generic_proc_info, &quot;NCR53c7xx&quot;,          &bslash;&n; &t;PROC_SCSI_NCR53C7xx, &quot;NCR53c{7,8}xx (rel 4)&quot;, NCR53c7xx_detect, &bslash;&n;    &t;NULL, /* info */ NULL, /* command, deprecated */ NULL, &t;&t;&bslash;&n;&t;NCR53c7xx_queue_command, NCR53c7xx_abort, NCR53c7xx_reset,&t;&bslash;&n;&t;NULL /* slave attach */, scsicam_bios_param, /* can queue */ 1, &bslash;&n;&t;/* id */ 7, 127 /* old SG_ALL */, /* cmd per lun */ 1 , &t;&bslash;&n;&t;/* present */ 0, /* unchecked isa dma */ 0, DISABLE_CLUSTERING} 
 macro_line|#endif /* defined(HOSTS_C) || defined(MODULE) */ 
 macro_line|#ifndef HOSTS_C
 multiline_comment|/* Register addresses, ordered numerically */
@@ -445,7 +466,7 @@ multiline_comment|/* 0x80 - 0x04 are reserved */
 DECL|macro|CTEST0_700_RTRG
 mdefine_line|#define CTEST0_700_RTRG&t;&t;0x02&t;/* Real target mode */
 DECL|macro|CTEST0_700_DDIR
-mdefine_line|#define CTEST0_700_DDIR&t;&t;0x01&t;/* Data direction, 1 = &n;&t;                                 * SCSI bus to host, 0  =&n;&t;                                 * host to SCSI.&n;&t;                                 */
+mdefine_line|#define CTEST0_700_DDIR&t;&t;0x01&t;/* Data direction, 1 = &n;&t;&t;&t;&t;&t; * SCSI bus to host, 0  =&n;&t;&t;&t;&t;&t; * host to SCSI.&n;&t;&t;&t;&t;&t; */
 DECL|macro|CTEST1_REG_700
 mdefine_line|#define CTEST1_REG_700&t;&t;0x15&t;/* Chip test 1 ro */
 DECL|macro|CTEST1_REG_800
@@ -605,7 +626,7 @@ mdefine_line|#define CTEST7_EVP&t;&t;0x04&t;/* 1 = host bus even parity, 0 = odd
 DECL|macro|CTEST7_10_TT1
 mdefine_line|#define CTEST7_10_TT1&t;&t;0x02&t;/* Transfer type */
 DECL|macro|CTEST7_00_DC
-mdefine_line|#define CTEST7_00_DC&t;&t;0x02&t;/* Set to drive DC low during instruction &n;                                           fetch */
+mdefine_line|#define CTEST7_00_DC&t;&t;0x02&t;/* Set to drive DC low during instruction &n;&t;&t;&t;&t;&t;   fetch */
 DECL|macro|CTEST7_DIFF
 mdefine_line|#define CTEST7_DIFF&t;&t;0x01&t;/* Differential mode */
 DECL|macro|CTEST7_SAVE
@@ -678,7 +699,7 @@ mdefine_line|#define CTEST8_0066_HSC&t;&t;0x08&t;/* Halt SCSI clock */
 DECL|macro|CTEST8_0066_SRA
 mdefine_line|#define CTEST8_0066_SRA&t;&t;0x04&t;/* Shorten REQ/ACK filtering,&n;&t;&t;&t;&t;&t; * must be set for fast SCSI-II&n;&t;&t;&t;&t;&t; * speeds.&n;&t;&t;&t;&t;&t; */
 DECL|macro|CTEST8_0066_DAS
-mdefine_line|#define CTEST8_0066_DAS&t;&t;0x02&t;/* Disable automatic target/initiator&n;&t;&t;&t;                 * switching.&n;&t;&t;&t;                 */
+mdefine_line|#define CTEST8_0066_DAS&t;&t;0x02&t;/* Disable automatic target/initiator&n;&t;&t;&t;&t;&t; * switching.&n;&t;&t;&t;&t;&t; */
 DECL|macro|CTEST8_0066_LDE
 mdefine_line|#define CTEST8_0066_LDE&t;&t;0x01&t;/* Last disconnect enable.&n;&t;&t;&t;&t;&t; * The status of pending &n;&t;&t;&t;&t;&t; * disconnect is maintained by&n;&t;&t;&t;&t;&t; * the core, eliminating&n;&t;&t;&t;&t;&t; * the possibility of missing a &n;&t;&t;&t;&t;&t; * selection or reselection&n;&t;&t;&t;&t;&t; * while waiting to fetch a &n;&t;&t;&t;&t;&t; * WAIT DISCONNECT opcode.&n;&t;&t;&t;&t;&t; */
 DECL|macro|CTEST8_10_V3
@@ -1177,6 +1198,11 @@ op_star
 id|prev
 suffix:semicolon
 multiline_comment|/* Linux maintained lists.  Note that&n;&t;&t;&t;&t;&t;   hostdata-&gt;free is a singly linked&n;&t;&t;&t;&t;&t;   list; the rest are doubly linked */
+DECL|member|dsa_size
+r_int
+id|dsa_size
+suffix:semicolon
+multiline_comment|/* Size of DSA structure */
 DECL|member|data_transfer_start
 id|u32
 op_star
@@ -1290,7 +1316,7 @@ r_int
 id|chip
 suffix:semicolon
 multiline_comment|/* set to chip type */
-multiline_comment|/*&n;  &t; * NCR53c700 = 700&n;&t; * NCR53c700-66 = 70066&n;&t; * NCR53c710 = 710&n;&t; * NCR53c720 = 720 &n;         * NCR53c810 = 810&n;&t; */
+multiline_comment|/*&n;  &t; * NCR53c700 = 700&n;&t; * NCR53c700-66 = 70066&n;&t; * NCR53c710 = 710&n;&t; * NCR53c720 = 720 &n;&t; * NCR53c810 = 810&n;&t; */
 multiline_comment|/*&n;     * PCI bus, device, function, only for NCR53c8x0 chips.&n;     * pci_valid indicates that the PCI configuration information&n;     * is valid, and we can twiddle MAX_LAT, etc. as recommended&n;     * for maximum performance in the NCR documentation.&n;     */
 DECL|member|pci_bus
 DECL|member|pci_device_fn
@@ -1735,7 +1761,7 @@ DECL|member|debug_count_limit
 r_int
 id|debug_count_limit
 suffix:semicolon
-multiline_comment|/* Number of commands to execute&n;&t;&t;&t;&t;           before puking to limit debugging &n;&t;&t;&t;&t;&t;   output */
+multiline_comment|/* Number of commands to execute&n;&t;&t;&t;&t;&t;   before puking to limit debugging &n;&t;&t;&t;&t;&t;   output */
 DECL|member|idle
 r_volatile
 r_int
@@ -1946,7 +1972,7 @@ mdefine_line|#define NCR53c7x0_write32(address,value) &t;&t;&t;&t;&bslash;&n;   
 DECL|macro|patch_abs_32
 mdefine_line|#define patch_abs_32(script, offset, symbol, value)&t;&t;&t;&bslash;&n;    &t;for (i = 0; i &lt; (sizeof (A_##symbol##_used) / sizeof &t;&t;&bslash;&n;    &t;    (u32)); ++i) {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;    (script)[A_##symbol##_used[i] - (offset)] += (value);&t;&bslash;&n;&t;    if (hostdata-&gt;options &amp; OPTION_DEBUG_FIXUP) &t;&t;&bslash;&n;&t;      printk(&quot;scsi%d : %s reference %d at 0x%x in %s is now 0x%x&bslash;n&quot;,&bslash;&n;&t;&t;host-&gt;host_no, #symbol, i, A_##symbol##_used[i] - &t;&bslash;&n;&t;&t;(int)(offset), #script, (script)[A_##symbol##_used[i] -&t;&bslash;&n;&t;&t;(offset)]);&t;&t;&t;&t;&t;&t;&bslash;&n;    &t;}
 DECL|macro|patch_abs_rwri_data
-mdefine_line|#define patch_abs_rwri_data(script, offset, symbol, value)&t;        &bslash;&n;    &t;for (i = 0; i &lt; (sizeof (A_##symbol##_used) / sizeof &t;&t;&bslash;&n;    &t;    (u32)); ++i)&t;&t;&t;&t;&t;&t;&bslash;&n;    &t;    (script)[A_##symbol##_used[i] - (offset)] =&t;&t;&t;&bslash;&n;&t;    &t;((script)[A_##symbol##_used[i] - (offset)] &amp; &t;&t;&bslash;&n;&t;    &t;~DBC_RWRI_IMMEDIATE_MASK) | &t;&t;&t;&t;&bslash;&n;    &t;    &t;(((value) &lt;&lt; DBC_RWRI_IMMEDIATE_SHIFT) &amp;&t;&t;&bslash;&n;&t;&t; DBC_RWRI_IMMEDIATE_MASK)
+mdefine_line|#define patch_abs_rwri_data(script, offset, symbol, value)&t;&t;&bslash;&n;    &t;for (i = 0; i &lt; (sizeof (A_##symbol##_used) / sizeof &t;&t;&bslash;&n;    &t;    (u32)); ++i)&t;&t;&t;&t;&t;&t;&bslash;&n;    &t;    (script)[A_##symbol##_used[i] - (offset)] =&t;&t;&t;&bslash;&n;&t;    &t;((script)[A_##symbol##_used[i] - (offset)] &amp; &t;&t;&bslash;&n;&t;    &t;~DBC_RWRI_IMMEDIATE_MASK) | &t;&t;&t;&t;&bslash;&n;    &t;    &t;(((value) &lt;&lt; DBC_RWRI_IMMEDIATE_SHIFT) &amp;&t;&t;&bslash;&n;&t;&t; DBC_RWRI_IMMEDIATE_MASK)
 DECL|macro|patch_dsa_32
 mdefine_line|#define patch_dsa_32(dsa, symbol, word, value)&t;&t;&t;&t;&bslash;&n;&t;{&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;(dsa)[(hostdata-&gt;##symbol - hostdata-&gt;dsa_start) / sizeof(u32)&t;&bslash;&n;&t;&t;+ (word)] = (value);&t;&t;&t;&t;&t;&bslash;&n;&t;if (hostdata-&gt;options &amp; OPTION_DEBUG_DSA)&t;&t;&t;&bslash;&n;&t;    printk(&quot;scsi : dsa %s symbol %s(%d) word %d now 0x%x&bslash;n&quot;,&t;&bslash;&n;&t;&t;#dsa, #symbol, hostdata-&gt;##symbol,&t; &t;&t;&bslash;&n;&t;&t;(word), (u32)(value));&t;&t;&t;&t;&bslash;&n;&t;}
 macro_line|#endif /* NCR53c7x0_C */

@@ -1,4 +1,7 @@
 multiline_comment|/* fdomain.c -- Future Domain TMC-16x0 SCSI driver&n; * Created: Sun May  3 18:53:19 1992 by faith@cs.unc.edu&n; * Revised: Fri Jun 23 17:07:09 1995 by r.faith@ieee.org&n; * Author: Rickard E. Faith, faith@cs.unc.edu&n; * Copyright 1992, 1993, 1994, 1995 Rickard E. Faith&n; *&n; * $Id: fdomain.c,v 5.31 1995/06/23 21:07:16 faith Exp $&n;&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n;&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n;&n; * You should have received a copy of the GNU General Public License along&n; * with this program; if not, write to the Free Software Foundation, Inc.,&n; * 675 Mass Ave, Cambridge, MA 02139, USA.&n;&n; **************************************************************************&n; &n; DESCRIPTION:&n;&n; This is the Linux low-level SCSI driver for Future Domain TMC-1660/1680&n; TMC-1650/1670, and TMC-3260 SCSI host adapters.  The 1650 and 1670 have a&n; 25-pin external connector, whereas the 1660 and 1680 have a SCSI-2 50-pin&n; high-density external connector.  The 1670 and 1680 have floppy disk&n; controllers built in.  The TMC-3260 is a PCI bus card.&n;&n; Future Domain&squot;s older boards are based on the TMC-1800 chip, and this&n; driver was originally written for a TMC-1680 board with the TMC-1800 chip.&n; More recently, boards are being produced with the TMC-18C50 and TMC-18C30&n; chips.  The latest and greatest board may not work with this driver.  If&n; you have to patch this driver so that it will recognize your board&squot;s BIOS&n; signature, then the driver may fail to function after the board is&n; detected.&n;&n; The following BIOS versions are supported: 2.0, 3.0, 3.2, 3.4, and 3.5.&n; The following chips are supported: TMC-1800, TMC-18C50, TMC-18C30.&n; Reports suggest that the driver will also work with the 36C70 chip and&n; with the Quantum ISA-200S and ISA-250MG SCSI adapters.&n;&n; Please note that the drive ordering that Future Domain implemented in BIOS&n; versions 3.4 and 3.5 is the opposite of the order (currently) used by the&n; rest of the SCSI industry.  If you have BIOS version 3.4 or 3.5, and have&n; more then one drive, then the drive ordering will be the reverse of that&n; which you see under DOS.  For example, under DOS SCSI ID 0 will be D: and&n; SCSI ID 1 will be C: (the boot device).  Under Linux, SCSI ID 0 will be&n; /dev/sda and SCSI ID 1 will be /dev/sdb.  The Linux ordering is consistent&n; with that provided by all the other SCSI drivers for Linux.  If you want&n; this changed, send me patches that are protected by #ifdefs.&n;&n; If you have a TMC-8xx or TMC-9xx board, then this is not the driver for&n; your board.  Please refer to the Seagate driver for more information and&n; possible support.&n;&n; &n;&n; REFERENCES USED:&n;&n; &quot;TMC-1800 SCSI Chip Specification (FDC-1800T)&quot;, Future Domain Corporation,&n; 1990.&n;&n; &quot;Technical Reference Manual: 18C50 SCSI Host Adapter Chip&quot;, Future Domain&n; Corporation, January 1992.&n;&n; &quot;LXT SCSI Products: Specifications and OEM Technical Manual (Revision&n; B/September 1991)&quot;, Maxtor Corporation, 1991.&n;&n; &quot;7213S product Manual (Revision P3)&quot;, Maxtor Corporation, 1992.&n;&n; &quot;Draft Proposed American National Standard: Small Computer System&n; Interface - 2 (SCSI-2)&quot;, Global Engineering Documents. (X3T9.2/86-109,&n; revision 10h, October 17, 1991)&n;&n; Private communications, Drew Eckhardt (drew@cs.colorado.edu) and Eric&n; Youngdale (ericy@cais.com), 1992.&n;&n; Private communication, Tuong Le (Future Domain Engineering department),&n; 1994. (Disk geometry computations for Future Domain BIOS version 3.4, and&n; TMC-18C30 detection.)&n;&n; Hogan, Thom. The Programmer&squot;s PC Sourcebook. Microsoft Press, 1988. Page&n; 60 (2.39: Disk Partition Table Layout).&n;&n; &quot;18C30 Technical Reference Manual&quot;, Future Domain Corporation, 1993, page&n; 6-1.&n;&n;&n; &n; NOTES ON REFERENCES:&n;&n; The Maxtor manuals were free.  Maxtor telephone technical support is&n; great!&n;&n; The Future Domain manuals were $25 and $35.  They document the chip, not&n; the TMC-16x0 boards, so some information I had to guess at.  In 1992,&n; Future Domain sold DOS BIOS source for $250 and the UN*X driver source was&n; $750, but these required a non-disclosure agreement, so even if I could&n; have afforded them, they would *not* have been useful for writing this&n; publically distributable driver.  Future Domain technical support has&n; provided some information on the phone and have sent a few useful FAXs.&n; They have been much more helpful since they started to recognize that the&n; word &quot;Linux&quot; refers to an operating system :-).&n;&n; &n;&n; ALPHA TESTERS:&n;&n; There are many other alpha testers that come and go as the driver&n; develops.  The people listed here were most helpful in times of greatest&n; need (mostly early on -- I&squot;ve probably left out a few worthy people in&n; more recent times):&n;&n; Todd Carrico (todd@wutc.wustl.edu), Dan Poirier (poirier@cs.unc.edu ), Ken&n; Corey (kenc@sol.acs.unt.edu), C. de Bruin (bruin@bruin@sterbbs.nl), Sakari&n; Aaltonen (sakaria@vipunen.hit.fi), John Rice (rice@xanth.cs.odu.edu), Brad&n; Yearwood (brad@optilink.com), and Ray Toy (toy@soho.crd.ge.com).&n;&n; Special thanks to Tien-Wan Yang (twyang@cs.uh.edu), who graciously lent me&n; his 18C50-based card for debugging.  He is the sole reason that this&n; driver works with the 18C50 chip.&n;&n; Thanks to Dave Newman (dnewman@crl.com) for providing initial patches for&n; the version 3.4 BIOS.&n;&n; Thanks to James T. McKinley (mckinley@msupa.pa.msu.edu) for providing&n; patches that support the TMC-3260, a PCI bus card with the 36C70 chip.&n; The 36C70 chip appears to be &quot;completely compatible&quot; with the 18C30 chip.&n;&n; Thanks to Eric Kasten (tigger@petroglyph.cl.msu.edu) for providing the&n; patch for the version 3.5 BIOS.&n;&n; Thanks for Stephen Henson (shenson@nyx10.cs.du.edu) for providing the&n; patch for the Quantum ISA-200S SCSI adapter.&n; &n; Thanks to Adam Bowen for the signature to the 1610M/MER/MEX scsi cards,&n; and to Martin Andrews (andrewm@ccfadm.eeg.ccf.org) for the signature to&n; some random TMC-1680 repackaged by IBM.&n;&n; Thanks for Mark Singer (elf@netcom.com) and Richard Simpson&n; (rsimpson@ewrcsdra.demon.co.uk) for more Quantum signatures and detective&n; work on the Quantum RAM layout.&n;&n; Special thanks to James T. McKinley (mckinley@msupa.pa.msu.edu) for&n; providing patches for proper PCI BIOS32-mediated detection of the TMC-3260&n; card (a PCI bus card with the 36C70 chip).  Please send James PCI-related&n; bug reports.&n; &n; All of the alpha testers deserve much thanks.&n;&n;&n;&n; NOTES ON USER DEFINABLE OPTIONS:&n;&n; DEBUG: This turns on the printing of various debug information.&n;&n; ENABLE_PARITY: This turns on SCSI parity checking.  With the current&n; driver, all attached devices must support SCSI parity.  If none of your&n; devices support parity, then you can probably get the driver to work by&n; turning this option off.  I have no way of testing this, however.&n;&n; FIFO_COUNT: The host adapter has an 8K cache (host adapters based on the&n; 18C30 chip have a 2k cache).  When this many 512 byte blocks are filled by&n; the SCSI device, an interrupt will be raised.  Therefore, this could be as&n; low as 0, or as high as 16.  Note, however, that values which are too high&n; or too low seem to prevent any interrupts from occurring, and thereby lock&n; up the machine.  I have found that 2 is a good number, but throughput may&n; be increased by changing this value to values which are close to 2.&n; Please let me know if you try any different values.&n;&n; DO_DETECT: This activates some old scan code which was needed before the&n; high level drivers got fixed.  If you are having trouble with the driver,&n; turning this on should not hurt, and might help.  Please let me know if&n; this is the case, since this code will be removed from future drivers.&n;&n; RESELECTION: This is no longer an option, since I gave up trying to&n; implement it in version 4.x of this driver.  It did not improve&n; performance at all and made the driver unstable (because I never found one&n; of the two race conditions which were introduced by the multiple&n; outstanding command code).  The instability seems a very high price to pay&n; just so that you don&squot;t have to wait for the tape to rewind.  If you want&n; this feature implemented, send me patches.  I&squot;ll be happy to send a copy&n; of my (broken) driver to anyone who would like to see a copy.&n;&n; **************************************************************************/
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;../block/blk.h&quot;
@@ -9,6 +12,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 DECL|macro|VERSION
@@ -864,7 +868,7 @@ comma
 id|shpnt-&gt;this_id
 )paren
 suffix:semicolon
-multiline_comment|/* If this driver works for later FD PCI&n;                                   boards, we will have to modify banner&n;                                   for additional PCI cards, but for now if&n;                                   it&squot;s PCI it&squot;s a TMC-3260 - JTM */
+multiline_comment|/* If this driver works for later FD PCI&n;&t;&t;&t;&t;   boards, we will have to modify banner&n;&t;&t;&t;&t;   for additional PCI cards, but for now if&n;&t;&t;&t;&t;   it&squot;s PCI it&squot;s a TMC-3260 - JTM */
 id|printk
 c_func
 (paren
@@ -1205,7 +1209,7 @@ multiline_comment|/* 2k FIFO */
 )brace
 )brace
 macro_line|#else
-multiline_comment|/* That should have worked, but appears to&n;                                   have problems.  Lets assume it is an&n;                                   18c30 if the RAM is disabled. */
+multiline_comment|/* That should have worked, but appears to&n;&t;&t;&t;&t;   have problems.  Lets assume it is an&n;&t;&t;&t;&t;   18c30 if the RAM is disabled. */
 r_if
 c_cond
 (paren
@@ -3685,7 +3689,7 @@ suffix:semicolon
 r_int
 id|data_count
 suffix:semicolon
-multiline_comment|/* The fdomain_16x0_intr is only called via&n;                                   the interrupt handler.  The goal of the&n;                                   sti() here is to allow other&n;                                   interruptions while this routine is&n;                                   running. */
+multiline_comment|/* The fdomain_16x0_intr is only called via&n;&t;&t;&t;&t;   the interrupt handler.  The goal of the&n;&t;&t;&t;&t;   sti() here is to allow other&n;&t;&t;&t;&t;   interruptions while this routine is&n;&t;&t;&t;&t;   running. */
 id|sti
 c_func
 (paren
@@ -6266,7 +6270,7 @@ l_int|0x1c2
 )paren
 (brace
 multiline_comment|/* Partition type */
-multiline_comment|/* The partition table layout is as follows:&n;&n;&t;    Start: 0x1b3h&n;&t;    Offset: 0 = partition status&n;&t;            1 = starting head&n;&t;&t;    2 = starting sector and cylinder (word, encoded)&n;&t;&t;    4 = partition type&n;&t;&t;    5 = ending head&n;&t;&t;    6 = ending sector and cylinder (word, encoded)&n;&t;&t;    8 = starting absolute sector (double word)&n;&t;&t;    c = number of sectors (double word)&n;&t;    Signature: 0x1fe = 0x55aa&n;&n;&t;    So, this algorithm assumes:&n;&t;    1) the first partition table is in use,&n;&t;    2) the data in the first entry is correct, and&n;&t;    3) partitions never divide cylinders&n;&n;&t;    Note that (1) may be FALSE for NetBSD (and other BSD flavors),&n;            as well as for Linux.  Note also, that Linux doesn&squot;t pay any&n;            attention to the fields that are used by this algorithm -- it&n;            only uses the absolute sector data.  Recent versions of Linux&squot;s&n;            fdisk(1) will fill this data in correctly, and forthcoming&n;            versions will check for consistency.&n;&n;&t;    Checking for a non-zero partition type is not part of the&n;            Future Domain algorithm, but it seemed to be a reasonable thing&n;            to do, especially in the Linux and BSD worlds. */
+multiline_comment|/* The partition table layout is as follows:&n;&n;&t;    Start: 0x1b3h&n;&t;    Offset: 0 = partition status&n;&t;&t;    1 = starting head&n;&t;&t;    2 = starting sector and cylinder (word, encoded)&n;&t;&t;    4 = partition type&n;&t;&t;    5 = ending head&n;&t;&t;    6 = ending sector and cylinder (word, encoded)&n;&t;&t;    8 = starting absolute sector (double word)&n;&t;&t;    c = number of sectors (double word)&n;&t;    Signature: 0x1fe = 0x55aa&n;&n;&t;    So, this algorithm assumes:&n;&t;    1) the first partition table is in use,&n;&t;    2) the data in the first entry is correct, and&n;&t;    3) partitions never divide cylinders&n;&n;&t;    Note that (1) may be FALSE for NetBSD (and other BSD flavors),&n;&t;    as well as for Linux.  Note also, that Linux doesn&squot;t pay any&n;&t;    attention to the fields that are used by this algorithm -- it&n;&t;    only uses the absolute sector data.  Recent versions of Linux&squot;s&n;&t;    fdisk(1) will fill this data in correctly, and forthcoming&n;&t;    versions will check for consistency.&n;&n;&t;    Checking for a non-zero partition type is not part of the&n;&t;    Future Domain algorithm, but it seemed to be a reasonable thing&n;&t;    to do, especially in the Linux and BSD worlds. */
 id|info_array
 (braket
 l_int|0
@@ -6296,7 +6300,7 @@ multiline_comment|/* sectors */
 )brace
 r_else
 (brace
-multiline_comment|/* Note that this new method guarantees that there will always be&n;            less than 1024 cylinders on a platter.  This is good for drives&n;            up to approximately 7.85GB (where 1GB = 1024 * 1024 kB). */
+multiline_comment|/* Note that this new method guarantees that there will always be&n;&t;    less than 1024 cylinders on a platter.  This is good for drives&n;&t;    up to approximately 7.85GB (where 1GB = 1024 * 1024 kB). */
 r_if
 c_cond
 (paren
@@ -6405,4 +6409,14 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+multiline_comment|/* Eventually this will go into an include file, but this will be later */
+DECL|variable|driver_template
+id|Scsi_Host_Template
+id|driver_template
+op_assign
+id|FDOMAIN_16X0
+suffix:semicolon
+macro_line|#include &quot;scsi_module.c&quot;
+macro_line|#endif
 eof

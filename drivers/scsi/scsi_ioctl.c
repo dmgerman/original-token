@@ -11,7 +11,7 @@ macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;scsi_ioctl.h&quot;
 DECL|macro|MAX_RETRIES
-mdefine_line|#define MAX_RETRIES 5&t;
+mdefine_line|#define MAX_RETRIES 5   
 DECL|macro|MAX_TIMEOUT
 mdefine_line|#define MAX_TIMEOUT 900
 DECL|macro|MAX_BUF
@@ -1040,7 +1040,7 @@ l_int|0
 suffix:semicolon
 macro_line|#endif
 )brace
-multiline_comment|/*&n;&t;the scsi_ioctl() function differs from most ioctls in that it does&n;&t;not take a major/minor number as the dev filed.  Rather, it takes&n;&t;a pointer to a scsi_devices[] element, a structure. &n;*/
+multiline_comment|/*&n; * the scsi_ioctl() function differs from most ioctls in that it does&n; * not take a major/minor number as the dev filed.  Rather, it takes&n; * a pointer to a scsi_devices[] element, a structure. &n; */
 DECL|function|scsi_ioctl
 r_int
 id|scsi_ioctl
@@ -1115,6 +1115,13 @@ op_plus
 id|dev-&gt;host-&gt;host_no
 op_lshift
 l_int|16
+)paren
+op_plus
+multiline_comment|/* This has been added to support &n;&t;&t;     * multichannel HBAs, it might cause &n;&t;&t;     * problems with some software */
+(paren
+id|dev-&gt;channel
+op_lshift
+l_int|24
 )paren
 comma
 (paren
@@ -1520,5 +1527,5 @@ r_return
 id|tmp
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Overrides for Emacs so that we follow Linus&squot;s tabbing style.&n; * Emacs will notice this stuff at the end of the file and automatically&n; * adjust the settings for this buffer only.  This must remain at the end&n; * of the file.&n; * ---------------------------------------------------------------------------&n; * Local variables:&n; * c-indent-level: 8&n; * c-brace-imaginary-offset: 0&n; * c-brace-offset: -8&n; * c-argdecl-indent: 8&n; * c-label-offset: -8&n; * c-continued-statement-offset: 8&n; * c-continued-brace-offset: 0&n; * End:&n; */
+multiline_comment|/*&n; * Overrides for Emacs so that we almost follow Linus&squot;s tabbing style.&n; * Emacs will notice this stuff at the end of the file and automatically&n; * adjust the settings for this buffer only.  This must remain at the end&n; * of the file.&n; * ---------------------------------------------------------------------------&n; * Local variables:&n; * c-indent-level: 4&n; * c-brace-imaginary-offset: 0&n; * c-brace-offset: -4&n; * c-argdecl-indent: 4&n; * c-label-offset: -4&n; * c-continued-statement-offset: 4&n; * c-continued-brace-offset: 0&n; * indent-tabs-mode: nil&n; * tab-width: 8&n; * End:&n; */
 eof

@@ -195,7 +195,7 @@ DECL|macro|CFLT_BC
 mdefine_line|#define CFLT_BC     0x0000ff00       /* Latency Timer bits */
 multiline_comment|/*&n;** PCI Configuration Base I/O Address Register (PCI_CBIO)&n;*/
 DECL|macro|CBIO_MASK
-mdefine_line|#define CBIO_MASK   0x0000ff80       /* Base I/O Address Mask */
+mdefine_line|#define CBIO_MASK   0xffffff80       /* Base I/O Address Mask */
 DECL|macro|CBIO_IOSI
 mdefine_line|#define CBIO_IOSI   0x00000001       /* I/O Space Indicator (RO, value is 1) */
 multiline_comment|/*&n;** PCI Configuration Expansion ROM Base Address Register (PCI_CBER)&n;*/

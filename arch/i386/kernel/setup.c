@@ -132,11 +132,11 @@ id|root_mountflags
 suffix:semicolon
 r_extern
 r_int
-id|etext
+id|_etext
 comma
-id|edata
+id|_edata
 comma
-id|end
+id|_end
 suffix:semicolon
 r_extern
 r_char
@@ -301,7 +301,7 @@ r_int
 r_int
 )paren
 op_amp
-id|end
+id|_end
 suffix:semicolon
 id|init_task.mm-&gt;start_code
 op_assign
@@ -316,7 +316,7 @@ r_int
 r_int
 )paren
 op_amp
-id|etext
+id|_etext
 suffix:semicolon
 id|init_task.mm-&gt;end_data
 op_assign
@@ -327,7 +327,7 @@ r_int
 r_int
 )paren
 op_amp
-id|edata
+id|_edata
 suffix:semicolon
 id|init_task.mm-&gt;brk
 op_assign
@@ -338,7 +338,7 @@ r_int
 r_int
 )paren
 op_amp
-id|end
+id|_end
 suffix:semicolon
 r_for
 c_loop

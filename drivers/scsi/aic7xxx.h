@@ -1,13 +1,12 @@
-multiline_comment|/* @(#)aic7xxx.h 1.14 94/11/30 jda */
-multiline_comment|/*&n; * Adaptec 274x/284x/294x device driver for Linux.&n; * Copyright (c) 1994 The University of Calgary Department of Computer Science.&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
-macro_line|#ifndef aic7xxx_h
-DECL|macro|aic7xxx_h
-mdefine_line|#define aic7xxx_h
+multiline_comment|/*+M*************************************************************************&n; * Adaptec 274x/284x/294x device driver for Linux.&n; *&n; * Copyright (c) 1994 John Aycock&n; *   The University of Calgary Department of Computer Science.&n; *   All rights reserved.&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions&n; * are met:&n; * 1. Redistributions of source code must retain the above copyright&n; *    notice, this list of conditions, and the following disclaimer.&n; * 2. Redistributions in binary form must reproduce the above copyright&n; *    notice, this list of conditions and the following disclaimer in the&n; *    documentation and/or other materials provided with the distribution.&n; * 3. All advertising materials mentioning features or use of this software&n; *    must display the following acknowledgement:&n; *      This product includes software developed by the University of Calgary&n; *      Department of Computer Science and its contributors.&n; * 4. Neither the name of the University nor the names of its contributors&n; *    may be used to endorse or promote products derived from this software&n; *    without specific prior written permission.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND&n; * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE&n; * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE&n; * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE&n; * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS&n; * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)&n; * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; * &n; * $Id: aic7xxx.h,v 1.18 1995/06/22 04:17:56 deang Exp $&n; *-M*************************************************************************/
+macro_line|#ifndef _aic7xxx_h
+DECL|macro|_aic7xxx_h
+mdefine_line|#define _aic7xxx_h
 DECL|macro|AIC7XXX_H_VERSION
-mdefine_line|#define AIC7XXX_H_VERSION&t;&quot;1.14&quot;
-multiline_comment|/*&n; *  Scsi_Host_Template (see hosts.h) for 274x - some fields&n; *  to do with card config are filled in after the card is&n; *  detected.&n; */
+mdefine_line|#define AIC7XXX_H_VERSION  &quot;$Revision: 1.18 $&quot;
+multiline_comment|/*&n; * Scsi_Host_Template (see hosts.h) for AIC-7770/AIC-7870 - some fields&n; * to do with card config are filled in after the card is detected.&n; */
 DECL|macro|AIC7XXX
-mdefine_line|#define AIC7XXX&t;{&t;&t;&t;&t;&t;&t;&bslash;&n;&t;NULL,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;NULL,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;NULL,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;aic7xxx_detect,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;NULL,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;aic7xxx_info,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;NULL,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;aic7xxx_queue,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;aic7xxx_abort,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;aic7xxx_reset,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;NULL,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;aic7xxx_biosparam,&t;&t;&t;&t;&t;&bslash;&n;&t;-1,&t;&t;&t;/* max simultaneous cmds      */&bslash;&n;&t;-1,&t;&t;&t;/* scsi id of host adapter    */&bslash;&n;&t;SG_ALL,&t;&t;&t;/* max scatter-gather cmds    */&bslash;&n;&t;1,&t;&t;&t;/* cmds per lun (linked cmds) */&bslash;&n;&t;0,&t;&t;&t;/* number of 274x&squot;s present   */&bslash;&n;&t;0,&t;&t;&t;/* no memory DMA restrictions */&bslash;&n;&t;DISABLE_CLUSTERING&t;&t;&t;&t;&t;&bslash;&n;}
+mdefine_line|#define AIC7XXX&t;{&t;&t;&t;&t;&t;&t;&bslash;&n;&t;NULL,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;NULL,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;generic_proc_info,&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;aic7xxx&quot;,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;PROC_SCSI_AIC7XXX,&t;&t;&t;&t;&t;&bslash;&n;&t;NULL,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;aic7xxx_detect,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;NULL,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;aic7xxx_info,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;NULL,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;aic7xxx_queue,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;aic7xxx_abort,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;aic7xxx_reset,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;NULL,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;aic7xxx_biosparam,&t;&t;&t;&t;&t;&bslash;&n;&t;-1,&t;&t;&t;/* max simultaneous cmds      */&bslash;&n;&t;-1,&t;&t;&t;/* scsi id of host adapter    */&bslash;&n;&t;SG_ALL,&t;&t;&t;/* max scatter-gather cmds    */&bslash;&n;&t;2,&t;&t;&t;/* cmds per lun (linked cmds) */&bslash;&n;&t;0,&t;&t;&t;/* number of 7xxx&squot;s present   */&bslash;&n;&t;0,&t;&t;&t;/* no memory DMA restrictions */&bslash;&n;&t;ENABLE_CLUSTERING&t;&t;&t;&t;&t;&bslash;&n;}
 r_extern
 r_int
 id|aic7xxx_queue
@@ -89,5 +88,26 @@ id|Scsi_Host
 op_star
 )paren
 suffix:semicolon
-macro_line|#endif
+r_extern
+r_int
+id|generic_proc_info
+c_func
+(paren
+r_char
+op_star
+comma
+r_char
+op_star
+op_star
+comma
+id|off_t
+comma
+r_int
+comma
+r_int
+comma
+r_int
+)paren
+suffix:semicolon
+macro_line|#endif /* _aic7xxx_h */
 eof

@@ -601,7 +601,7 @@ id|tmp
 suffix:semicolon
 r_extern
 r_int
-id|etext
+id|_etext
 suffix:semicolon
 id|end_mem
 op_and_assign
@@ -757,7 +757,7 @@ r_int
 r_int
 )paren
 op_amp
-id|etext
+id|_etext
 )paren
 id|codepages
 op_increment

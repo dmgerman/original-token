@@ -6591,7 +6591,7 @@ l_int|0
 (brace
 id|ppp_debug
 op_assign
-id|get_int
+id|get_user
 (paren
 (paren
 r_int

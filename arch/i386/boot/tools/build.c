@@ -11,10 +11,12 @@ macro_line|#include &lt;unistd.h&gt;&t;/* contains read/write */
 macro_line|#include &lt;fcntl.h&gt;
 macro_line|#include &lt;linux/a.out.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;errno.h&gt;
 DECL|macro|MINIX_HEADER
 mdefine_line|#define MINIX_HEADER 32
 DECL|macro|N_MAGIC_OFFSET
 mdefine_line|#define N_MAGIC_OFFSET 1024
+macro_line|#ifndef __BFD__
 DECL|variable|GCC_HEADER
 r_static
 r_int
@@ -26,6 +28,7 @@ r_struct
 id|exec
 )paren
 suffix:semicolon
+macro_line|#endif
 DECL|macro|SYS_SIZE
 mdefine_line|#define SYS_SIZE DEF_SYSSIZE
 DECL|macro|DEFAULT_MAJOR_ROOT
@@ -249,6 +252,7 @@ id|buf
 l_int|1024
 )braket
 suffix:semicolon
+macro_line|#ifndef __BFD__
 r_struct
 id|exec
 op_star
@@ -261,6 +265,7 @@ op_star
 )paren
 id|buf
 suffix:semicolon
+macro_line|#endif
 r_char
 id|major_root
 comma
@@ -1198,6 +1203,7 @@ c_func
 l_string|&quot;Unable to open &squot;system&squot;&quot;
 )paren
 suffix:semicolon
+macro_line|#ifndef __BFD__
 r_if
 c_cond
 (paren
@@ -1309,6 +1315,46 @@ id|GCC_HEADER
 op_plus
 l_int|4
 suffix:semicolon
+macro_line|#else
+r_if
+c_cond
+(paren
+id|fstat
+(paren
+id|id
+comma
+op_amp
+id|sb
+)paren
+)paren
+(brace
+id|perror
+(paren
+l_string|&quot;fstat&quot;
+)paren
+suffix:semicolon
+id|die
+(paren
+l_string|&quot;Unable to stat &squot;system&squot;&quot;
+)paren
+suffix:semicolon
+)brace
+id|sz
+op_assign
+id|sb.st_size
+suffix:semicolon
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;System is %d kB&bslash;n&quot;
+comma
+id|sz
+op_div
+l_int|1024
+)paren
+suffix:semicolon
+macro_line|#endif
 id|sys_size
 op_assign
 (paren

@@ -27,7 +27,7 @@ op_star
 )paren
 suffix:semicolon
 DECL|macro|DEFAULT_MESSAGE_LOGLEVEL
-mdefine_line|#define DEFAULT_MESSAGE_LOGLEVEL 7 /* KERN_DEBUG */
+mdefine_line|#define DEFAULT_MESSAGE_LOGLEVEL 6 /* KERN_INFO */
 DECL|macro|DEFAULT_CONSOLE_LOGLEVEL
 mdefine_line|#define DEFAULT_CONSOLE_LOGLEVEL 7 /* anything more serious than KERN_DEBUG */
 DECL|variable|log_size
@@ -695,8 +695,6 @@ l_int|1
 )braket
 op_assign
 id|DEFAULT_MESSAGE_LOGLEVEL
-op_minus
-l_int|1
 op_plus
 l_char|&squot;0&squot;
 suffix:semicolon

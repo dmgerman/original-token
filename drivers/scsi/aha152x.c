@@ -15,6 +15,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &quot;aha152x.h&quot;
 multiline_comment|/* DEFINES */
 multiline_comment|/* For PCMCIA cards, always use AUTOCONF */
@@ -2786,7 +2787,7 @@ op_star
 )paren
 id|ptr-&gt;host_scribble
 suffix:semicolon
-multiline_comment|/* set command current and initiate selection,&n;           let the interrupt routine take care of the abortion */
+multiline_comment|/* set command current and initiate selection,&n;&t;   let the interrupt routine take care of the abortion */
 id|current_SC
 op_assign
 id|ptr
@@ -3861,7 +3862,7 @@ id|target
 comma
 id|i
 suffix:semicolon
-multiline_comment|/* Avoid conflicts when a target reconnects&n;         while we are trying to connect to another. */
+multiline_comment|/* Avoid conflicts when a target reconnects&n;&t; while we are trying to connect to another. */
 r_if
 c_cond
 (paren
@@ -5095,7 +5096,7 @@ id|ABORT
 suffix:semicolon
 )brace
 r_else
-multiline_comment|/* If we didn&squot;t identify yet, do it. Otherwise there&squot;s nothing to do,&n;             but reject (probably we got an message before, that we have to&n;             reject (SDTR, WDTR, etc.) */
+multiline_comment|/* If we didn&squot;t identify yet, do it. Otherwise there&squot;s nothing to do,&n;&t;     but reject (probably we got an message before, that we have to&n;&t;     reject (SDTR, WDTR, etc.) */
 r_if
 c_cond
 (paren
@@ -5627,7 +5628,7 @@ l_string|&quot;waiting for SEMPTY, &quot;
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/* wait for SCSI FIFO to get empty.&n;             very important to send complete commands. */
+multiline_comment|/* wait for SCSI FIFO to get empty.&n;&t;     very important to send complete commands. */
 r_while
 c_loop
 (paren
@@ -6297,7 +6298,7 @@ l_string|&quot; ), &quot;
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/* We reject all extended messages. To do this&n;                   we just enter MSGO by asserting ATN. Since&n;                   we have already identified a REJECT message&n;                   will be sent. */
+multiline_comment|/* We reject all extended messages. To do this&n;&t;&t;   we just enter MSGO by asserting ATN. Since&n;&t;&t;   we have already identified a REJECT message&n;&t;&t;   will be sent. */
 id|SETPORT
 c_func
 (paren
@@ -7072,7 +7073,7 @@ id|current_SC-&gt;SCp.buffer-&gt;length
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;             * Fifo should be empty&n;             */
+multiline_comment|/*&n;&t;     * Fifo should be empty&n;&t;     */
 r_if
 c_cond
 (paren
@@ -7426,7 +7427,7 @@ op_or
 id|ENBUSFREE
 )paren
 suffix:semicolon
-multiline_comment|/* while current buffer is not empty or&n;           there are more buffers to transfer */
+multiline_comment|/* while current buffer is not empty or&n;&t;   there are more buffers to transfer */
 r_while
 c_loop
 (paren
@@ -7659,7 +7660,7 @@ op_logical_or
 id|current_SC-&gt;SCp.buffers_residual
 )paren
 (brace
-multiline_comment|/* target leaves DATA OUT for an other phase&n;               (perhaps disconnect) */
+multiline_comment|/* target leaves DATA OUT for an other phase&n;&t;       (perhaps disconnect) */
 multiline_comment|/* data in fifos has to be resend */
 id|data_count
 op_assign
@@ -10485,4 +10486,14 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+multiline_comment|/* Eventually this will go into an include file, but this will be later */
+DECL|variable|driver_template
+id|Scsi_Host_Template
+id|driver_template
+op_assign
+id|AHA152X
+suffix:semicolon
+macro_line|#include &quot;scsi_module.c&quot;
+macro_line|#endif
 eof

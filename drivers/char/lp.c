@@ -2940,10 +2940,9 @@ c_func
 (paren
 id|offset
 )paren
-op_logical_and
+op_amp
 id|LP_EXIST
 )paren
-(brace
 id|release_region
 c_func
 (paren
@@ -2956,7 +2955,6 @@ comma
 l_int|3
 )paren
 suffix:semicolon
-)brace
 )brace
 )brace
 macro_line|#endif

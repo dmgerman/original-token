@@ -95,6 +95,16 @@ comma
 id|DEVICE
 c_func
 (paren
+id|ADAPTEC
+comma
+id|ADAPTEC_7850
+comma
+l_string|&quot;AIC-7850&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
 id|DPT
 comma
 id|DPT
@@ -261,6 +271,16 @@ c_func
 (paren
 id|UMC
 comma
+id|UMC_UM8886A
+comma
+l_string|&quot;UM8886A&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|UMC
+comma
 id|UMC_UM8673F
 comma
 l_string|&quot;UM8673F&quot;
@@ -283,7 +303,17 @@ id|DEC
 comma
 id|DEC_TULIP_FAST
 comma
-l_string|&quot;DC21040&quot;
+l_string|&quot;DC21140&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|DEC
+comma
+id|DEC_TULIP_PLUS
+comma
+l_string|&quot;DC21041&quot;
 )paren
 comma
 id|DEVICE
@@ -488,6 +518,16 @@ comma
 id|CIRRUS_6729
 comma
 l_string|&quot;CL 6729&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|CIRRUS
+comma
+id|CIRRUS_7542
+comma
+l_string|&quot;CL 7542&quot;
 )paren
 comma
 id|DEVICE
@@ -986,6 +1026,16 @@ comma
 id|X_AGX016
 comma
 l_string|&quot;ITT AGX016&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|VORTEX
+comma
+id|VORTEX_GDT
+comma
+l_string|&quot;GDT 6000b&quot;
 )paren
 )brace
 suffix:semicolon
@@ -1808,6 +1858,24 @@ id|PCI_VENDOR_ID_QLOGIC
 suffix:colon
 r_return
 l_string|&quot;Q Logic&quot;
+suffix:semicolon
+r_case
+id|PCI_VENDOR_ID_X
+suffix:colon
+r_return
+l_string|&quot;X TECHNOLOGY&quot;
+suffix:semicolon
+r_case
+id|PCI_VENDOR_ID_ACC
+suffix:colon
+r_return
+l_string|&quot;ACC MICROELECTRONICS&quot;
+suffix:semicolon
+r_case
+id|PCI_VENDOR_ID_VORTEX
+suffix:colon
+r_return
+l_string|&quot;VORTEX&quot;
 suffix:semicolon
 r_default
 suffix:colon

@@ -1,11 +1,15 @@
 multiline_comment|/*&n; *&t;seagate.c Copyright (C) 1992, 1993 Drew Eckhardt &n; *&t;low level scsi driver for ST01/ST02, Future Domain TMC-885, &n; *&t;TMC-950  by&n; *&n; *&t;&t;Drew Eckhardt &n; *&n; *&t;&lt;drew@colorado.edu&gt;&n; *&n; * &t;Note : TMC-880 boards don&squot;t work because they have two bits in &n; *&t;&t;the status register flipped, I&squot;ll fix this &quot;RSN&quot;&n; *&n; *      This card does all the I/O via memory mapped I/O, so there is no need&n; *      to check or snarf a region of the I/O address space.&n; */
 multiline_comment|/*&n; * Configuration : &n; * To use without BIOS -DOVERRIDE=base_address -DCONTROLLER=FD or SEAGATE&n; * -DIRQ will override the default of 5.&n; * Note: You can now set these options from the kernel&squot;s &quot;command line&quot;.&n; * The syntax is:&n; *&n; *     st0x=ADDRESS,IRQ                (for a Seagate controller)&n; * or:&n; *     tmc8xx=ADDRESS,IRQ              (for a TMC-8xx or TMC-950 controller)&n; * eg:&n; *     tmc8xx=0xC8000,15&n; *&n; * will configure the driver for a TMC-8xx style controller using IRQ 15&n; * with a base address of 0xC8000.&n; * &n; * -DFAST or -DFAST32 will use blind transfers where possible&n; *&n; * -DARBITRATE will cause the host adapter to arbitrate for the &n; *&t;bus for better SCSI-II compatibility, rather than just &n; *&t;waiting for BUS FREE and then doing its thing.  Should&n; *&t;let us do one command per Lun when I integrate my &n; *&t;reorganization changes into the distribution sources.&n; *&n; * -DSLOW_HANDSHAKE will allow compatibility with broken devices that don&squot;t &n; *&t;handshake fast enough (ie, some CD ROM&squot;s) for the Seagate&n; * &t;code.&n; *&n; * -DSLOW_RATE=x, x some number will let you specify a default &n; *&t;transfer rate if handshaking isn&squot;t working correctly.&n; */
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#endif
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &quot;../block/blk.h&quot;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
@@ -642,7 +646,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* If the user specified the controller type from the command line,&n;         controller_type will be non-zero, so don&squot;t try and detect one */
+multiline_comment|/* If the user specified the controller type from the command line,&n;&t; controller_type will be non-zero, so don&squot;t try and detect one */
 r_if
 c_cond
 (paren
@@ -3142,13 +3146,13 @@ id|jz
 l_float|2f
 id|cld
 id|movl
-id|_st0x_cr_sr
+l_string|&quot; SYMBOL_NAME_STR(st0x_cr_sr) &quot;
 comma
 op_mod
 op_mod
 id|ebx
 id|movl
-id|_st0x_dr
+l_string|&quot; SYMBOL_NAME_STR(st0x_dr) &quot;
 comma
 op_mod
 op_mod
@@ -3570,13 +3574,13 @@ id|jz
 l_float|2f
 id|cld
 id|movl
-id|_st0x_cr_sr
+l_string|&quot; SYMBOL_NAME_STR(st0x_cr_sr) &quot;
 comma
 op_mod
 op_mod
 id|esi
 id|movl
-id|_st0x_dr
+l_string|&quot; SYMBOL_NAME_STR(st0x_dr) &quot;
 comma
 op_mod
 op_mod
@@ -4963,4 +4967,14 @@ r_return
 id|result
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+multiline_comment|/* Eventually this will go into an include file, but this will be later */
+DECL|variable|driver_template
+id|Scsi_Host_Template
+id|driver_template
+op_assign
+id|SEAGATE_ST0X
+suffix:semicolon
+macro_line|#include &quot;scsi_module.c&quot;
+macro_line|#endif
 eof

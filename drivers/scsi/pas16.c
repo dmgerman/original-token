@@ -8,8 +8,12 @@ DECL|macro|UNSAFE
 mdefine_line|#define UNSAFE  /* Not unsafe for PAS16 -- use it */
 multiline_comment|/*&n; * This driver adapted from Drew Eckhardt&squot;s Trantor T128 driver&n; *&n; * Copyright 1993, Drew Eckhardt&n; *&t;Visionary Computing&n; *&t;(Unix and Linux consulting and custom programming)&n; *&t;drew@colorado.edu&n; *      +1 (303) 666-5836&n; *&n; *  ( Based on T128 - DISTRIBUTION RELEASE 3. ) &n; *&n; * Modified to work with the Pro Audio Spectrum/Studio 16&n; * by John Weidman.&n; *&n; *&n; * For more information, please consult &n; *&n; * Media Vision&n; * (510) 770-8600&n; * (800) 348-7116&n; * &n; * and &n; *&n; * NCR 5380 Family&n; * SCSI Protocol Controller&n; * Databook&n; *&n; * NCR Microelectronics&n; * 1635 Aeroplaza Drive&n; * Colorado Springs, CO 80916&n; * 1+ (719) 578-3400&n; * 1+ (800) 334-5454&n; */
 multiline_comment|/*&n; * Options : &n; * AUTOSENSE - if defined, REQUEST SENSE will be performed automatically&n; *      for commands that return with a CHECK CONDITION status. &n; *&n; * LIMIT_TRANSFERSIZE - if defined, limit the pseudo-dma transfers to 512&n; *      bytes at a time.  Since interrupts are disabled by default during&n; *      these transfers, we might need this to give reasonable interrupt&n; *      service time if the transfer size gets too large.&n; *&n; * PSEUDO_DMA - enables PSEUDO-DMA hardware, should give a 3-4X performance&n; * increase compared to polled I/O.&n; *&n; * PARITY - enable parity checking.  Not supported.&n; * &n; * SCSI2 - enable support for SCSI-II tagged queueing.  Untested.&n; *&n; * UNSAFE - leave interrupts enabled during pseudo-DMA transfers.  This&n; *&t;    parameter comes from the NCR5380 code.  It is NOT unsafe with&n; *&t;    the PAS16 and you should use it.  If you don&squot;t you will have&n; *&t;    a problem with dropped characters during high speed&n; *&t;    communications during SCSI transfers.  If you really don&squot;t&n; *&t;    want to use UNSAFE you can try defining LIMIT_TRANSFERSIZE or&n; *&t;    twiddle with the transfer size in the high level code.&n; *&n; * USLEEP - enable support for devices that don&squot;t disconnect.  Untested.&n; *&n; * The card is detected and initialized in one of several ways : &n; * 1.  Autoprobe (default) - There are many different models of&n; *     the Pro Audio Spectrum/Studio 16, and I only have one of&n; *     them, so this may require a little tweaking.  An interrupt&n; *     is triggered to autoprobe for the interrupt line.  Note:&n; *     with the newer model boards, the interrupt is set via&n; *     software after reset using the default_irq for the&n; *     current board number.&n; *&n; *&n; * 2.  With command line overrides - pas16=port,irq may be &n; *     used on the LILO command line to override the defaults.&n; *&n; * 3.  With the PAS16_OVERRIDE compile time define.  This is &n; *     specified as an array of address, irq tuples.  Ie, for&n; *     one board at the default 0x388 address, IRQ10, I could say &n; *     -DPAS16_OVERRIDE={{0x388, 10}}&n; *     NOTE:  Untested.&n; *&t;&n; *     Note that if the override methods are used, place holders must&n; *     be specified for other boards in the system.&n; *&n; *&n; * Configuration notes :&n; *   The current driver does not support interrupt sharing with the&n; *   sound portion of the card.  If you use the same irq for the&n; *   scsi port and sound you will have problems.  Either use&n; *   a different irq for the scsi port or don&squot;t use interrupts&n; *   for the scsi port.&n; *&n; *   If you have problems with your card not being recognized, use&n; *   the LILO command line override.  Try to get it recognized without&n; *   interrupts.  Ie, for a board at the default 0x388 base port,&n; *   boot: linux pas16=0x388,255&n; *&n; *     (255 is the IRQ_NONE constant in NCR5380.h)&n; */
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#endif
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;../block/blk.h&quot;
@@ -212,10 +216,10 @@ comma
 multiline_comment|/* BUS_AND_STATUS_REG ro, START_DMA_SEND_REG wo */
 l_int|0x3c02
 comma
-multiline_comment|/* INPUT_DATA_REGISTER ro, (N/A on PAS16 ?)&n;                    * START_DMA_TARGET_RECEIVE_REG wo&n;                    */
+multiline_comment|/* INPUT_DATA_REGISTER ro, (N/A on PAS16 ?)&n;&t;&t;    * START_DMA_TARGET_RECEIVE_REG wo&n;&t;&t;    */
 l_int|0x3c03
 comma
-multiline_comment|/* RESET_PARITY_INTERRUPT_REG ro,&n;                    * START_DMA_INITIATOR_RECEIVE_REG wo&n;                    */
+multiline_comment|/* RESET_PARITY_INTERRUPT_REG ro,&n;&t;&t;    * START_DMA_INITIATOR_RECEIVE_REG wo&n;&t;&t;    */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Function : enable_board( int  board_num, unsigned short port )&n; *&n; * Purpose :  set address in new model board&n; *&n; * Inputs : board_num - logical board number 0-3, port - base address&n; *&n; */

@@ -1,4 +1,7 @@
 multiline_comment|/* $Id: $&n; *  linux/drivers/scsi/wd7000.c&n; *&n; *  Copyright (C) 1992  Thomas Wuensche&n; *&t;closely related to the aha1542 driver from Tommy Thorn&n; *&t;( as close as different hardware allows on a lowlevel-driver :-) )&n; *&n; *  Revised (and renamed) by John Boyd &lt;boyd@cis.ohio-state.edu&gt; to&n; *  accommodate Eric Youngdale&squot;s modifications to scsi.c.  Nov 1992.&n; *&n; *  Additional changes to support scatter/gather.  Dec. 1992.  tw/jb&n; *&n; *  No longer tries to reset SCSI bus at boot (it wasn&squot;t working anyway).&n; *  Rewritten to support multiple host adapters.&n; *  Miscellaneous cleanup.&n; *  So far, still doesn&squot;t do reset or abort correctly, since I have no idea&n; *  how to do them with this board (8^(.                      Jan 1994 jb&n; *&n; * This driver now supports both of the two standard configurations (per&n; * the 3.36 Owner&squot;s Manual, my latest reference) by the same method as&n; * before; namely, by looking for a BIOS signature.  Thus, the location of&n; * the BIOS signature determines the board configuration.  Until I have&n; * time to do something more flexible, users should stick to one of the&n; * following:&n; *&n; * Standard configuration for single-adapter systems:&n; *    - BIOS at CE00h&n; *    - I/O base address 350h&n; *    - IRQ level 15&n; *    - DMA channel 6&n; * Standard configuration for a second adapter in a system:&n; *    - BIOS at C800h&n; *    - I/O base address 330h&n; *    - IRQ level 11&n; *    - DMA channel 5&n; *&n; * Anyone who can recompile the kernel is welcome to add others as need&n; * arises, but unpredictable results may occur if there are conflicts.&n; * In any event, if there are multiple adapters in a system, they MUST&n; * use different I/O bases, IRQ levels, and DMA channels, since they will be&n; * indistinguishable (and in direct conflict) otherwise.&n; *&n; *   As a point of information, the NO_OP command toggles the CMD_RDY bit&n; * of the status port, and this fact could be used as a test for the I/O&n; * base address (or more generally, board detection).  There is an interrupt&n; * status port, so IRQ probing could also be done.  I suppose the full&n; * DMA diagnostic could be used to detect the DMA channel being used.  I&n; * haven&squot;t done any of this, though, because I think there&squot;s too much of&n; * a chance that such explorations could be destructive, if some other&n; * board&squot;s resources are used inadvertently.  So, call me a wimp, but I&n; * don&squot;t want to try it.  The only kind of exploration I trust is memory&n; * exploration, since it&squot;s more certain that reading memory won&squot;t be&n; * destructive.&n; *&n; * More to my liking would be a LILO boot command line specification, such&n; * as is used by the aha152x driver (and possibly others).  I&squot;ll look into&n; * it, as I have time...&n; *&n; *   I get mail occasionally from people who either are using or are&n; * considering using a WD7000 with Linux.  There is a variety of&n; * nomenclature describing WD7000&squot;s.  To the best of my knowledge, the&n; * following is a brief summary (from an old WD doc - I don&squot;t work for&n; * them or anything like that):&n; *&n; * WD7000-FASST2: This is a WD7000 board with the real-mode SST ROM BIOS&n; *        installed.  Last I heard, the BIOS was actually done by Columbia&n; *        Data Products.  The BIOS is only used by this driver (and thus&n; *        by Linux) to identify the board; none of it can be executed under&n; *        Linux.&n; *&n; * WD7000-ASC: This is the original adapter board, with or without BIOS.&n; *        The board uses a WD33C93 or WD33C93A SBIC, which in turn is&n; *        controlled by an onboard Z80 processor.  The board interface&n; *        visible to the host CPU is defined effectively by the Z80&squot;s&n; *        firmware, and it is this firmware&squot;s revision level that is&n; *        determined and reported by this driver.  (The version of the&n; *        on-board BIOS is of no interest whatsoever.)  The host CPU has&n; *        no access to the SBIC; hence the fact that it is a WD33C93 is&n; *        also of no interest to this driver.&n; *&n; * WD7000-AX:&n; * WD7000-MX:&n; * WD7000-EX: These are newer versions of the WD7000-ASC.  The -ASC is&n; *        largely built from discrete components; these boards use more&n; *        integration.  The -AX is an ISA bus board (like the -ASC),&n; *        the -MX is an MCA (i.e., PS/2) bus board), and the -EX is an&n; *        EISA bus board.&n; *&n; *  At the time of my documentation, the -?X boards were &quot;future&quot; products,&n; *  and were not yet available.  However, I vaguely recall that Thomas&n; *  Wuensche had an -AX, so I believe at least it is supported by this&n; *  driver.  I have no personal knowledge of either -MX or -EX boards.&n; *&n; *  P.S. Just recently, I&squot;ve discovered (directly from WD and Future&n; *  Domain) that all but the WD7000-EX have been out of production for&n; *  two years now.  FD has production rights to the 7000-EX, and are&n; *  producing it under a new name, and with a new BIOS.  If anyone has&n; *  one of the FD boards, it would be nice to come up with a signature&n; *  for it.&n; *                                                           J.B. Jan 1994.&n; */
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#endif
 macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/head.h&gt;
@@ -10,6 +13,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &quot;../block/blk.h&quot;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
@@ -285,11 +289,11 @@ DECL|macro|ASC_CONTROL
 mdefine_line|#define ASC_CONTROL     2       /* Control, Write */
 multiline_comment|/* ASC Status Port&n; */
 DECL|macro|INT_IM
-mdefine_line|#define INT_IM&t;        0x80&t;&t;/* Interrupt Image Flag */
+mdefine_line|#define INT_IM&t;&t;0x80&t;&t;/* Interrupt Image Flag */
 DECL|macro|CMD_RDY
-mdefine_line|#define CMD_RDY&t;        0x40&t;&t;/* Command Port Ready */
+mdefine_line|#define CMD_RDY&t;&t;0x40&t;&t;/* Command Port Ready */
 DECL|macro|CMD_REJ
-mdefine_line|#define CMD_REJ&t;        0x20&t;&t;/* Command Port Byte Rejected */
+mdefine_line|#define CMD_REJ&t;&t;0x20&t;&t;/* Command Port Byte Rejected */
 DECL|macro|ASC_INIT
 mdefine_line|#define ASC_INIT        0x10&t;&t;/* ASC Initialized Flag */
 DECL|macro|ASC_STATMASK
@@ -380,13 +384,13 @@ DECL|macro|MB_MASK
 mdefine_line|#define MB_MASK  0x3f           /* mask for mailbox number */
 multiline_comment|/* CONTROL port bits&n; */
 DECL|macro|INT_EN
-mdefine_line|#define INT_EN&t;        0x08&t;/* Interrupt Enable&t;*/
+mdefine_line|#define INT_EN&t;&t;0x08&t;/* Interrupt Enable&t;*/
 DECL|macro|DMA_EN
-mdefine_line|#define DMA_EN&t;        0x04&t;/* DMA Enable&t;&t;*/
+mdefine_line|#define DMA_EN&t;&t;0x04&t;/* DMA Enable&t;&t;*/
 DECL|macro|SCSI_RES
 mdefine_line|#define SCSI_RES&t;0x02&t;/* SCSI Reset&t;&t;*/
 DECL|macro|ASC_RES
-mdefine_line|#define ASC_RES&t;        0x01&t;/* ASC Reset&t;&t;*/
+mdefine_line|#define ASC_RES&t;&t;0x01&t;/* ASC Reset&t;&t;*/
 multiline_comment|/*&n;   Driver data structures:&n;   - mb and scbs are required for interfacing with the host adapter.&n;     An SCB has extra fields not visible to the adapter; mb&squot;s&n;     _cannot_ do this, since the adapter assumes they are contiguous in&n;     memory, 4 bytes each, with ICMBs following OGMBs, and uses this fact&n;     to access them.&n;   - An icb is for host-only (non-SCSI) commands.  ICBs are 16 bytes each;&n;     the additional bytes are used only by the driver.&n;   - For now, a pool of SCBs are kept in global storage by this driver,&n;     and are allocated and freed as needed.&n;&n;  The 7000-FASST2 marks OGMBs empty as soon as it has _started_ a command,&n;  not when it has finished.  Since the SCB must be around for completion,&n;  problems arise when SCBs correspond to OGMBs, which may be reallocated&n;  earlier (or delayed unnecessarily until a command completes).&n;  Mailboxes are used as transient data structures, simply for&n;  carrying SCB addresses to/from the 7000-FASST2.&n;&n;  Note also since SCBs are not &quot;permanently&quot; associated with mailboxes,&n;  there is no need to keep a global list of Scsi_Cmnd pointers indexed&n;  by OGMB.   Again, SCBs reference their Scsi_Cmnds directly, so mailbox&n;  indices need not be involved.&n;*/
 multiline_comment|/*&n; *  WD7000-specific scatter/gather element structure&n; */
 DECL|struct|sgb
@@ -1165,7 +1169,7 @@ multiline_comment|/*&n;   These are the old ones - I&squot;ve just moved them he
 DECL|macro|any2scsi
 macro_line|#undef any2scsi
 DECL|macro|any2scsi
-mdefine_line|#define any2scsi(up, p)&t;&t;&t;&bslash;&n;(up)[0] = (((unsigned long)(p)) &gt;&gt; 16);&t;        &bslash;&n;(up)[1] = ((unsigned long)(p)) &gt;&gt; 8;&t;&t;&bslash;&n;(up)[2] = ((unsigned long)(p));
+mdefine_line|#define any2scsi(up, p)&t;&t;&t;&bslash;&n;(up)[0] = (((unsigned long)(p)) &gt;&gt; 16);&t;&t;&bslash;&n;(up)[1] = ((unsigned long)(p)) &gt;&gt; 8;&t;&t;&bslash;&n;(up)[2] = ((unsigned long)(p));
 DECL|macro|scsi2int
 macro_line|#undef scsi2int
 DECL|macro|scsi2int
@@ -3981,4 +3985,14 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+multiline_comment|/* Eventually this will go into an include file, but this will be later */
+DECL|variable|driver_template
+id|Scsi_Host_Template
+id|driver_template
+op_assign
+id|WD7000
+suffix:semicolon
+macro_line|#include &quot;scsi_module.c&quot;
+macro_line|#endif
 eof

@@ -237,6 +237,14 @@ comma
 l_string|&quot;net&quot;
 )brace
 comma
+(brace
+id|PROC_SCSI
+comma
+l_int|4
+comma
+l_string|&quot;scsi&quot;
+)brace
+comma
 macro_line|#ifdef CONFIG_DEBUG_MALLOC
 (brace
 id|PROC_MALLOC

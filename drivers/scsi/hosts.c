@@ -1,10 +1,11 @@
-multiline_comment|/*&n; *&t;hosts.c Copyright (C) 1992 Drew Eckhardt&n; *&t;        Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *&t;mid to lowlevel SCSI driver interface&n; *&t;&t;Initial versions: Drew Eckhardt&n; *&t;&t;Subsequent revisions: Eric Youngdale&n; *&n; *&t;&lt;drew@colorado.edu&gt;&n; */
-multiline_comment|/*&n; *&t;This file contains the medium level SCSI&n; *&t;host interface initialization, as well as the scsi_hosts array of SCSI&n; *&t;hosts currently present in the system.&n; */
+multiline_comment|/*&n; *  hosts.c Copyright (C) 1992 Drew Eckhardt&n; *          Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  mid to lowlevel SCSI driver interface&n; *      Initial versions: Drew Eckhardt&n; *      Subsequent revisions: Eric Youngdale&n; *&n; *  &lt;drew@colorado.edu&gt;&n; */
+multiline_comment|/*&n; *  This file contains the medium level SCSI&n; *  host interface initialization, as well as the scsi_hosts array of SCSI&n; *  hosts currently present in the system.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;../block/blk.h&quot;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#ifndef NULL
 DECL|macro|NULL
@@ -30,6 +31,9 @@ macro_line|#include &quot;buslogic.h&quot;
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_EATA_DMA
 macro_line|#include &quot;eata_dma.h&quot;
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_EATA_PIO
+macro_line|#include &quot;eata_pio.h&quot;
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_U14_34F
 macro_line|#include &quot;u14-34f.h&quot;
@@ -71,11 +75,11 @@ macro_line|#ifdef CONFIG_SCSI_DEBUG
 macro_line|#include &quot;scsi_debug.h&quot;
 macro_line|#endif
 multiline_comment|/*&n;static const char RCSid[] = &quot;$Header: /usr/src/linux/kernel/blk_drv/scsi/RCS/hosts.c,v 1.3 1993/09/24 12:21:00 drew Exp drew $&quot;;&n;*/
-multiline_comment|/*&n; *&t;The scsi host entries should be in the order you wish the&n; *&t;cards to be detected.  A driver may appear more than once IFF&n; *&t;it can deal with being detected (and therefore initialized)&n; *&t;with more than one simultaneous host number, can handle being&n; *&t;reentrant, etc.&n; *&n; *&t;They may appear in any order, as each SCSI host  is told which host number it is&n; *&t;during detection.&n; */
-multiline_comment|/* This is a placeholder for controllers that are not configured into&n;   the system - we do this to ensure that the controller numbering is&n;   always consistent, no matter how the kernel is configured. */
+multiline_comment|/*&n; *  The scsi host entries should be in the order you wish the&n; *  cards to be detected.  A driver may appear more than once IFF&n; *  it can deal with being detected (and therefore initialized)&n; *  with more than one simultaneous host number, can handle being&n; *  reentrant, etc.&n; *&n; *  They may appear in any order, as each SCSI host is told which host &n; *  number it is during detection.&n; */
+multiline_comment|/* This is a placeholder for controllers that are not configured into&n; * the system - we do this to ensure that the controller numbering is&n; * always consistent, no matter how the kernel is configured. */
 DECL|macro|NO_CONTROLLER
-mdefine_line|#define NO_CONTROLLER {NULL, NULL, NULL, NULL, NULL, NULL, NULL, &bslash;&n;&t;        NULL, NULL, 0, 0, 0, 0, 0, 0}
-multiline_comment|/*&n; *&t;When figure is run, we don&squot;t want to link to any object code.  Since&n; *&t;the macro for each host will contain function pointers, we cannot&n; *&t;use it and instead must use a &quot;blank&quot; that does no such&n; *&t;idiocy.&n; */
+mdefine_line|#define NO_CONTROLLER {NULL, NULL, NULL, NULL, NULL, NULL, NULL, &bslash;&n;&t;&t;&t;   NULL, NULL, 0, 0, 0, 0, 0, 0}
+multiline_comment|/*&n; *  When figure is run, we don&squot;t want to link to any object code.  Since&n; *  the macro for each host will contain function pointers, we cannot&n; *  use it and instead must use a &quot;blank&quot; that does no such&n; *  idiocy.&n; */
 DECL|variable|scsi_hosts
 id|Scsi_Host_Template
 op_star
@@ -156,6 +160,10 @@ macro_line|#ifdef CONFIG_SCSI_EATA_DMA
 id|EATA_DMA
 comma
 macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_EATA_PIO
+id|EATA_PIO
+comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_7000FASST
 id|WD7000
 comma
@@ -172,7 +180,7 @@ macro_line|#endif
 suffix:semicolon
 DECL|macro|MAX_SCSI_HOSTS
 mdefine_line|#define MAX_SCSI_HOSTS (sizeof(builtin_scsi_hosts) / sizeof(Scsi_Host_Template))
-multiline_comment|/*&n; *&t;Our semaphores and timeout counters, where size depends on MAX_SCSI_HOSTS here.&n; */
+multiline_comment|/*&n; *  Our semaphores and timeout counters, where size depends on &n; *      MAX_SCSI_HOSTS here.&n; */
 DECL|variable|scsi_hostlist
 r_struct
 id|Scsi_Host
@@ -186,6 +194,8 @@ r_struct
 id|Scsi_Device_Template
 op_star
 id|scsi_devicelist
+op_assign
+l_int|NULL
 suffix:semicolon
 DECL|variable|max_scsi_hosts
 r_int
@@ -253,8 +263,7 @@ op_assign
 id|shpnt-&gt;next-&gt;next
 suffix:semicolon
 )brace
-suffix:semicolon
-multiline_comment|/* If we are removing the last host registered, it is safe to reuse&n;           its host number (this avoids &quot;holes&quot; at boot time) (DB) */
+multiline_comment|/* If we are removing the last host registered, it is safe to reuse&n;     * its host number (this avoids &quot;holes&quot; at boot time) (DB) &n;     */
 r_if
 c_cond
 (paren
@@ -291,7 +300,7 @@ id|sh-&gt;extra_bytes
 suffix:semicolon
 )brace
 )def_block
-multiline_comment|/* We call this when we come across a new host adapter. We only do this&n;   once we are 100% sure that we want to use this host adapter -  it is a&n;   pain to reverse this, so we try and avoid it */
+multiline_comment|/* We call this when we come across a new host adapter. We only do this&n; * once we are 100% sure that we want to use this host adapter -  it is a&n; * pain to reverse this, so we try and avoid it &n; */
 DECL|function|scsi_register
 r_struct
 id|Scsi_Host
@@ -412,6 +421,19 @@ id|retval-&gt;dma_channel
 op_assign
 l_int|0xff
 suffix:semicolon
+multiline_comment|/* These three are default values which can be overridden */
+id|retval-&gt;max_channel
+op_assign
+l_int|0
+suffix:semicolon
+id|retval-&gt;max_id
+op_assign
+l_int|8
+suffix:semicolon
+id|retval-&gt;max_lun
+op_assign
+l_int|8
+suffix:semicolon
 id|retval-&gt;io_port
 op_assign
 l_int|0
@@ -452,7 +474,7 @@ id|j
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* The next four are the default values which can be overridden&n;&t;   if need be */
+multiline_comment|/* The next six are the default values which can be overridden&n;     * if need be */
 id|retval-&gt;this_id
 op_assign
 id|tpnt-&gt;this_id
@@ -472,6 +494,10 @@ suffix:semicolon
 id|retval-&gt;unchecked_isa_dma
 op_assign
 id|tpnt-&gt;unchecked_isa_dma
+suffix:semicolon
+id|retval-&gt;use_clustering
+op_assign
+id|tpnt-&gt;use_clustering
 suffix:semicolon
 r_if
 c_cond
@@ -621,7 +647,7 @@ id|tpnt
 op_increment
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * Initialize our semaphores.  -1 is interpreted to mean&n;&t;&t; * &quot;inactive&quot; - where as 0 will indicate a time out condition.&n;&t;&t; */
+multiline_comment|/*&n;&t; * Initialize our semaphores.  -1 is interpreted to mean&n;&t; * &quot;inactive&quot; - where as 0 will indicate a time out condition.&n;&t; */
 id|pcount
 op_assign
 id|next_scsi_host
@@ -646,7 +672,7 @@ id|tpnt
 )paren
 )paren
 (brace
-multiline_comment|/* The only time this should come up is when people use&n;&t;&t;&t;   some kind of patched driver of some kind or another. */
+multiline_comment|/* The only time this should come up is when people use&n;&t;     * some kind of patched driver of some kind or another. */
 r_if
 c_cond
 (paren
@@ -670,7 +696,7 @@ l_string|&quot;Failure to register low-level scsi driver&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* The low-level driver failed to register a driver.  We&n; &t;&t;&t;&t;   can do this now. */
+multiline_comment|/* The low-level driver failed to register a driver.  We&n;&t;&t; * can do this now. */
 id|scsi_register
 c_func
 (paren
@@ -680,7 +706,6 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-suffix:semicolon
 id|tpnt-&gt;next
 op_assign
 id|scsi_hosts
@@ -691,6 +716,14 @@ id|tpnt
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/* Add the drivers to /proc/scsi */
+macro_line|#if CONFIG_PROC_FS 
+id|build_proc_dir_entries
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 r_for
 c_loop
 (paren
@@ -932,5 +965,5 @@ r_continue
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Overrides for Emacs so that we follow Linus&squot;s tabbing style.&n; * Emacs will notice this stuff at the end of the file and automatically&n; * adjust the settings for this buffer only.  This must remain at the end&n; * of the file.&n; * ---------------------------------------------------------------------------&n; * Local variables:&n; * c-indent-level: 8&n; * c-brace-imaginary-offset: 0&n; * c-brace-offset: -8&n; * c-argdecl-indent: 8&n; * c-label-offset: -8&n; * c-continued-statement-offset: 8&n; * c-continued-brace-offset: 0&n; * End:&n; */
+multiline_comment|/*&n; * Overrides for Emacs so that we follow Linus&squot;s tabbing style.&n; * Emacs will notice this stuff at the end of the file and automatically&n; * adjust the settings for this buffer only.  This must remain at the end&n; * of the file.&n; * ---------------------------------------------------------------------------&n; * Local variables:&n; * c-indent-level: 4&n; * c-brace-imaginary-offset: 0&n; * c-brace-offset: -4&n; * c-argdecl-indent: 4&n; * c-label-offset: -4&n; * c-continued-statement-offset: 4&n; * c-continued-brace-offset: 0&n; * indent-tabs-mode: nil&n; * tab-width: 8&n; * End:&n; */
 eof

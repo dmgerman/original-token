@@ -2,6 +2,7 @@ macro_line|#ifndef _LINUX_PROC_FS_H
 DECL|macro|_LINUX_PROC_FS_H
 mdefine_line|#define _LINUX_PROC_FS_H
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/fs.h&gt;
 multiline_comment|/*&n; * The proc filesystem constants/structures&n; */
 DECL|enum|root_directory_inos
 r_enum
@@ -39,6 +40,9 @@ comma
 multiline_comment|/* will change inode # */
 DECL|enumerator|PROC_NET
 id|PROC_NET
+comma
+DECL|enumerator|PROC_SCSI
+id|PROC_SCSI
 comma
 macro_line|#ifdef CONFIG_DEBUG_MALLOC
 DECL|enumerator|PROC_MALLOC
@@ -240,6 +244,91 @@ DECL|enumerator|PROC_NET_LAST
 id|PROC_NET_LAST
 )brace
 suffix:semicolon
+DECL|enum|scsi_directory_inos
+r_enum
+id|scsi_directory_inos
+(brace
+DECL|enumerator|PROC_SCSI_SCSI
+id|PROC_SCSI_SCSI
+op_assign
+l_int|256
+comma
+DECL|enumerator|PROC_SCSI_EATA
+id|PROC_SCSI_EATA
+comma
+DECL|enumerator|PROC_SCSI_EATA_PIO
+id|PROC_SCSI_EATA_PIO
+comma
+DECL|enumerator|PROC_SCSI_AHA152X
+id|PROC_SCSI_AHA152X
+comma
+DECL|enumerator|PROC_SCSI_AHA1542
+id|PROC_SCSI_AHA1542
+comma
+DECL|enumerator|PROC_SCSI_AHA1740
+id|PROC_SCSI_AHA1740
+comma
+DECL|enumerator|PROC_SCSI_AIC7XXX
+id|PROC_SCSI_AIC7XXX
+comma
+DECL|enumerator|PROC_SCSI_BUSLOGIC
+id|PROC_SCSI_BUSLOGIC
+comma
+DECL|enumerator|PROC_SCSI_U14_34F
+id|PROC_SCSI_U14_34F
+comma
+DECL|enumerator|PROC_SCSI_FUTURE_DOMAIN
+id|PROC_SCSI_FUTURE_DOMAIN
+comma
+DECL|enumerator|PROC_SCSI_GENERIC_NCR5380
+id|PROC_SCSI_GENERIC_NCR5380
+comma
+DECL|enumerator|PROC_SCSI_IN2000
+id|PROC_SCSI_IN2000
+comma
+DECL|enumerator|PROC_SCSI_PAS16
+id|PROC_SCSI_PAS16
+comma
+DECL|enumerator|PROC_SCSI_QLOGIC
+id|PROC_SCSI_QLOGIC
+comma
+DECL|enumerator|PROC_SCSI_SEAGATE
+id|PROC_SCSI_SEAGATE
+comma
+DECL|enumerator|PROC_SCSI_T128
+id|PROC_SCSI_T128
+comma
+DECL|enumerator|PROC_SCSI_NCR53C7xx
+id|PROC_SCSI_NCR53C7xx
+comma
+DECL|enumerator|PROC_SCSI_ULTRASTOR
+id|PROC_SCSI_ULTRASTOR
+comma
+DECL|enumerator|PROC_SCSI_7000FASST
+id|PROC_SCSI_7000FASST
+comma
+DECL|enumerator|PROC_SCSI_SCSI_DEBUG
+id|PROC_SCSI_SCSI_DEBUG
+comma
+DECL|enumerator|PROC_SCSI_NOT_PRESENT
+id|PROC_SCSI_NOT_PRESENT
+comma
+DECL|enumerator|PROC_SCSI_FILE
+id|PROC_SCSI_FILE
+comma
+multiline_comment|/* I&squot;m asuming here that we */
+DECL|enumerator|PROC_SCSI_LAST
+id|PROC_SCSI_LAST
+op_assign
+(paren
+id|PROC_SCSI_FILE
+op_plus
+l_int|16
+)paren
+multiline_comment|/* won&squot;t ever see more than */
+)brace
+suffix:semicolon
+multiline_comment|/* 16 HBAs in one machine   */
 DECL|macro|PROC_SUPER_MAGIC
 mdefine_line|#define PROC_SUPER_MAGIC 0x9fa0
 DECL|struct|proc_dir_entry
@@ -366,6 +455,11 @@ r_extern
 r_struct
 id|inode_operations
 id|proc_net_inode_operations
+suffix:semicolon
+r_extern
+r_struct
+id|inode_operations
+id|proc_scsi_inode_operations
 suffix:semicolon
 r_extern
 r_struct

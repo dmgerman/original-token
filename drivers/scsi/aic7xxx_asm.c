@@ -1,15 +1,20 @@
-multiline_comment|/*&n; * Adaptec 274x/284x/294x device driver for Linux.&n; * Copyright (c) 1994 The University of Calgary Department of Computer Science.&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  Comments are started by `#&squot; and continue to the end of the line; lines&n; *  may be of the form:&n; *&n; *&t;&lt;label&gt;*&n; *&t;&lt;label&gt;*  &lt;undef-sym&gt; = &lt;value&gt;&n; *&t;&lt;label&gt;*  &lt;opcode&gt; &lt;operand&gt;*&n; *&n; *  A &lt;label&gt; is an &lt;undef-sym&gt; ending in a colon.  Spaces, tabs, and commas&n; *  are token separators.&n; */
-DECL|macro|_POSIX_SOURCE
-mdefine_line|#define _POSIX_SOURCE&t;1
-DECL|macro|_POSIX_C_SOURCE
-mdefine_line|#define _POSIX_C_SOURCE&t;2
+multiline_comment|/*+M*************************************************************************&n; * Adaptec AIC7770/AIC7870 sequencer code assembler.&n; *&n; * Copyright (c) 1994 John Aycock&n; *   The University of Calgary Department of Computer Science.&n; *   All rights reserved.&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions&n; * are met:&n; * 1. Redistributions of source code must retain the above copyright&n; *    notice, this list of conditions, and the following disclaimer.&n; * 2. Redistributions in binary form must reproduce the above copyright&n; *    notice, this list of conditions and the following disclaimer in the&n; *    documentation and/or other materials provided with the distribution.&n; * 3. All advertising materials mentioning features or use of this software&n; *    must display the following acknowledgement:&n; *      This product includes software developed by the University of Calgary&n; *      Department of Computer Science and its contributors.&n; * 4. Neither the name of the University nor the names of its contributors&n; *    may be used to endorse or promote products derived from this software&n; *    without specific prior written permission.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND&n; * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE&n; * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE&n; * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE&n; * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS&n; * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)&n; * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; * Comments are started by `#&squot; and continue to the end of the line; lines&n; * may be of the form:&n; *      &lt;label&gt;*&n; *      &lt;label&gt;*  &lt;undef-sym&gt; = &lt;value&gt;&n; *      &lt;label&gt;*  &lt;opcode&gt; &lt;operand&gt;*&n; *&n; * A &lt;label&gt; is an &lt;undef-sym&gt; ending in a colon.  Spaces, tabs, and commas&n; * are token separators.&n; *&n; *-M*************************************************************************/
+DECL|variable|id
+r_static
+r_char
+id|id
+(braket
+)braket
+op_assign
+l_string|&quot;$Id: aic7xxx_asm.c,v 1.8 1995/05/25 06:25:36 root Exp $&quot;
+suffix:semicolon
 macro_line|#include &lt;ctype.h&gt;
 macro_line|#include &lt;stdio.h&gt;
 macro_line|#include &lt;string.h&gt;
 macro_line|#include &lt;stdlib.h&gt;
 macro_line|#include &lt;unistd.h&gt;
 DECL|macro|MEMORY
-mdefine_line|#define MEMORY&t;&t;512&t;&t;/* 2^9 29-bit words */
+mdefine_line|#define MEMORY&t;&t;448
 DECL|macro|MAXLINE
 mdefine_line|#define MAXLINE&t;&t;1024
 DECL|macro|MAXTOKEN
@@ -18,7 +23,7 @@ DECL|macro|ADOTOUT
 mdefine_line|#define ADOTOUT&t;&t;&quot;a.out&quot;
 DECL|macro|NOVALUE
 mdefine_line|#define NOVALUE&t;&t;-1
-multiline_comment|/*&n; *  AIC-7770 register definitions&n; */
+multiline_comment|/*&n; * AIC-7770/AIC-7870 register definitions&n; */
 DECL|macro|R_SINDEX
 mdefine_line|#define R_SINDEX&t;0x65
 DECL|macro|R_ALLONES
@@ -27,15 +32,6 @@ DECL|macro|R_ALLZEROS
 mdefine_line|#define R_ALLZEROS&t;0x6a
 DECL|macro|R_NONE
 mdefine_line|#define R_NONE&t;&t;0x6a
-r_static
-DECL|variable|sccsid
-r_char
-id|sccsid
-(braket
-)braket
-op_assign
-l_string|&quot;@(#)aic7770.c 1.10 94/07/22 jda&quot;
-suffix:semicolon
 DECL|variable|debug
 r_int
 id|debug
@@ -72,8 +68,8 @@ id|MEMORY
 l_int|4
 )braket
 suffix:semicolon
-DECL|function|error
 r_void
+DECL|function|error
 id|error
 c_func
 (paren
@@ -102,9 +98,9 @@ id|EXIT_FAILURE
 )paren
 suffix:semicolon
 )brace
-DECL|function|Malloc
 r_void
 op_star
+DECL|function|Malloc
 id|Malloc
 c_func
 (paren
@@ -138,9 +134,9 @@ r_return
 id|p
 suffix:semicolon
 )brace
-DECL|function|Realloc
 r_void
 op_star
+DECL|function|Realloc
 id|Realloc
 c_func
 (paren
@@ -180,9 +176,9 @@ r_return
 id|p
 suffix:semicolon
 )brace
-DECL|function|Strdup
 r_char
 op_star
+DECL|function|Strdup
 id|Strdup
 c_func
 (paren
@@ -245,10 +241,11 @@ r_int
 id|value
 suffix:semicolon
 DECL|member|npatch
-DECL|member|patch
 r_int
 id|npatch
-comma
+suffix:semicolon
+DECL|member|patch
+r_int
 op_star
 id|patch
 suffix:semicolon
@@ -261,8 +258,8 @@ id|sym_t
 op_star
 id|head
 suffix:semicolon
-DECL|function|define
 r_void
+DECL|function|define
 id|define
 c_func
 (paren
@@ -412,9 +409,9 @@ l_string|&quot;undefined&bslash;n&quot;
 suffix:semicolon
 )brace
 )brace
-DECL|function|lookup
 id|sym_t
 op_star
+DECL|function|lookup
 id|lookup
 c_func
 (paren
@@ -459,8 +456,8 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-DECL|function|patch
 r_void
+DECL|function|patch
 id|patch
 c_func
 (paren
@@ -685,8 +682,8 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; *  Output words in byte-reversed order (least significant first)&n; *  since the sequencer RAM is loaded that way.&n; */
-DECL|function|output
 r_void
+DECL|function|output
 id|output
 c_func
 (paren
@@ -752,11 +749,21 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;%d out of %d instructions used.&bslash;n&quot;
+comma
+id|LC
+comma
+id|MEMORY
+)paren
+suffix:semicolon
 )brace
-DECL|function|getl
 r_char
 op_star
 op_star
+DECL|function|getl
 id|getl
 c_func
 (paren
@@ -771,6 +778,9 @@ suffix:semicolon
 r_char
 op_star
 id|p
+comma
+op_star
+id|quote
 suffix:semicolon
 r_static
 r_char
@@ -854,6 +864,32 @@ id|p
 op_assign
 l_char|&squot;&bslash;0&squot;
 suffix:semicolon
+id|p
+op_assign
+id|buf
+suffix:semicolon
+id|rescan
+suffix:colon
+id|quote
+op_assign
+id|strchr
+c_func
+(paren
+id|p
+comma
+l_char|&squot;&bslash;&quot;&squot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|quote
+)paren
+op_star
+id|quote
+op_assign
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -862,7 +898,7 @@ op_assign
 id|strtok
 c_func
 (paren
-id|buf
+id|p
 comma
 l_string|&quot;, &bslash;t&bslash;n&quot;
 )paren
@@ -903,6 +939,76 @@ c_func
 l_string|&quot;too many tokens&quot;
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|quote
+)paren
+(brace
+id|quote
+op_increment
+suffix:semicolon
+id|p
+op_assign
+id|strchr
+c_func
+(paren
+id|quote
+comma
+l_char|&squot;&bslash;&quot;&squot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|p
+)paren
+id|error
+c_func
+(paren
+l_string|&quot;unterminated string constant&quot;
+)paren
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|i
+OL
+id|MAXTOKEN
+op_minus
+l_int|1
+)paren
+(brace
+id|a
+(braket
+id|i
+op_increment
+)braket
+op_assign
+id|quote
+suffix:semicolon
+op_star
+id|p
+op_assign
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
+id|p
+op_increment
+suffix:semicolon
+)brace
+r_else
+id|error
+c_func
+(paren
+l_string|&quot;too many tokens&quot;
+)paren
+suffix:semicolon
+r_goto
+id|rescan
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -997,7 +1103,8 @@ id|instr
 )braket
 op_assign
 (brace
-multiline_comment|/*&n; *&t;&t;N  OP&t; DEST&t;&t;SRC&t;&t;IMM&t;ADDR FMT&n; */
+multiline_comment|/*&n; *&t;&t;  N  OP    DEST&t;&t;SRC&t;&t;IMM&t;ADDR&t;FMT&n; */
+(brace
 l_string|&quot;mov&quot;
 comma
 l_int|3
@@ -1015,7 +1122,9 @@ comma
 id|NA
 comma
 l_int|1
+)brace
 comma
+(brace
 l_string|&quot;mov&quot;
 comma
 l_int|4
@@ -1035,7 +1144,9 @@ comma
 l_int|3
 comma
 l_int|3
+)brace
 comma
+(brace
 l_string|&quot;mvi&quot;
 comma
 l_int|3
@@ -1055,7 +1166,9 @@ comma
 id|NA
 comma
 l_int|1
+)brace
 comma
+(brace
 l_string|&quot;mvi&quot;
 comma
 l_int|4
@@ -1075,7 +1188,9 @@ comma
 l_int|3
 comma
 l_int|3
+)brace
 comma
+(brace
 l_string|&quot;not&quot;
 comma
 l_int|2
@@ -1093,25 +1208,9 @@ comma
 id|NA
 comma
 l_int|1
+)brace
 comma
-l_string|&quot;not&quot;
-comma
-l_int|3
-comma
-l_int|2
-comma
-l_int|1
-comma
-l_int|2
-comma
-id|I
-op_or
-l_int|0xff
-comma
-id|NA
-comma
-l_int|1
-comma
+(brace
 l_string|&quot;and&quot;
 comma
 l_int|3
@@ -1129,7 +1228,9 @@ comma
 id|NA
 comma
 l_int|1
+)brace
 comma
+(brace
 l_string|&quot;and&quot;
 comma
 l_int|4
@@ -1147,7 +1248,9 @@ comma
 id|NA
 comma
 l_int|1
+)brace
 comma
+(brace
 l_string|&quot;or&quot;
 comma
 l_int|3
@@ -1165,7 +1268,9 @@ comma
 id|NA
 comma
 l_int|1
+)brace
 comma
+(brace
 l_string|&quot;or&quot;
 comma
 l_int|4
@@ -1183,7 +1288,9 @@ comma
 id|NA
 comma
 l_int|1
+)brace
 comma
+(brace
 l_string|&quot;or&quot;
 comma
 l_int|5
@@ -1201,7 +1308,9 @@ comma
 l_int|4
 comma
 l_int|3
+)brace
 comma
+(brace
 l_string|&quot;xor&quot;
 comma
 l_int|3
@@ -1219,7 +1328,9 @@ comma
 id|NA
 comma
 l_int|1
+)brace
 comma
+(brace
 l_string|&quot;xor&quot;
 comma
 l_int|4
@@ -1237,7 +1348,9 @@ comma
 id|NA
 comma
 l_int|1
+)brace
 comma
+(brace
 l_string|&quot;nop&quot;
 comma
 l_int|1
@@ -1259,7 +1372,9 @@ comma
 id|NA
 comma
 l_int|1
+)brace
 comma
+(brace
 l_string|&quot;inc&quot;
 comma
 l_int|2
@@ -1277,7 +1392,9 @@ comma
 id|NA
 comma
 l_int|1
+)brace
 comma
+(brace
 l_string|&quot;inc&quot;
 comma
 l_int|3
@@ -1295,7 +1412,9 @@ comma
 id|NA
 comma
 l_int|1
+)brace
 comma
+(brace
 l_string|&quot;dec&quot;
 comma
 l_int|2
@@ -1313,7 +1432,9 @@ comma
 id|NA
 comma
 l_int|1
+)brace
 comma
+(brace
 l_string|&quot;dec&quot;
 comma
 l_int|3
@@ -1331,7 +1452,9 @@ comma
 id|NA
 comma
 l_int|1
+)brace
 comma
+(brace
 l_string|&quot;jmp&quot;
 comma
 l_int|2
@@ -1353,7 +1476,9 @@ comma
 l_int|1
 comma
 l_int|3
+)brace
 comma
+(brace
 l_string|&quot;jc&quot;
 comma
 l_int|2
@@ -1375,7 +1500,9 @@ comma
 l_int|1
 comma
 l_int|3
+)brace
 comma
+(brace
 l_string|&quot;jnc&quot;
 comma
 l_int|2
@@ -1397,7 +1524,9 @@ comma
 l_int|1
 comma
 l_int|3
+)brace
 comma
+(brace
 l_string|&quot;call&quot;
 comma
 l_int|2
@@ -1419,7 +1548,9 @@ comma
 l_int|1
 comma
 l_int|3
+)brace
 comma
+(brace
 l_string|&quot;test&quot;
 comma
 l_int|5
@@ -1439,7 +1570,9 @@ comma
 l_int|4
 comma
 l_int|3
+)brace
 comma
+(brace
 l_string|&quot;cmp&quot;
 comma
 l_int|5
@@ -1459,7 +1592,9 @@ comma
 l_int|4
 comma
 l_int|3
+)brace
 comma
+(brace
 l_string|&quot;ret&quot;
 comma
 l_int|1
@@ -1481,7 +1616,33 @@ comma
 id|NA
 comma
 l_int|1
+)brace
 comma
+(brace
+l_string|&quot;ret&quot;
+comma
+l_int|1
+comma
+l_int|1
+comma
+id|I
+op_or
+id|R_NONE
+comma
+id|I
+op_or
+id|R_ALLZEROS
+comma
+id|I
+op_or
+l_int|0xff
+comma
+id|NA
+comma
+l_int|1
+)brace
+comma
+(brace
 l_string|&quot;clc&quot;
 comma
 l_int|1
@@ -1503,7 +1664,9 @@ comma
 id|NA
 comma
 l_int|1
+)brace
 comma
+(brace
 l_string|&quot;clc&quot;
 comma
 l_int|4
@@ -1523,29 +1686,9 @@ comma
 id|NA
 comma
 l_int|1
+)brace
 comma
-l_string|&quot;stc&quot;
-comma
-l_int|1
-comma
-l_int|3
-comma
-id|I
-op_or
-id|R_NONE
-comma
-id|I
-op_or
-id|R_ALLONES
-comma
-id|I
-op_or
-l_int|1
-comma
-id|NA
-comma
-l_int|1
-comma
+(brace
 l_string|&quot;stc&quot;
 comma
 l_int|2
@@ -1565,7 +1708,9 @@ comma
 id|NA
 comma
 l_int|1
+)brace
 comma
+(brace
 l_string|&quot;add&quot;
 comma
 l_int|3
@@ -1583,7 +1728,9 @@ comma
 id|NA
 comma
 l_int|1
+)brace
 comma
+(brace
 l_string|&quot;add&quot;
 comma
 l_int|4
@@ -1601,7 +1748,9 @@ comma
 id|NA
 comma
 l_int|1
+)brace
 comma
+(brace
 l_string|&quot;adc&quot;
 comma
 l_int|3
@@ -1619,7 +1768,9 @@ comma
 id|NA
 comma
 l_int|1
+)brace
 comma
+(brace
 l_string|&quot;adc&quot;
 comma
 l_int|4
@@ -1637,7 +1788,9 @@ comma
 id|NA
 comma
 l_int|1
+)brace
 comma
+(brace
 l_string|&quot;shl&quot;
 comma
 l_int|3
@@ -1655,7 +1808,9 @@ comma
 id|NA
 comma
 l_int|2
+)brace
 comma
+(brace
 l_string|&quot;shl&quot;
 comma
 l_int|4
@@ -1673,7 +1828,9 @@ comma
 id|NA
 comma
 l_int|2
+)brace
 comma
+(brace
 l_string|&quot;shr&quot;
 comma
 l_int|3
@@ -1691,7 +1848,9 @@ comma
 id|NA
 comma
 l_int|2
+)brace
 comma
+(brace
 l_string|&quot;shr&quot;
 comma
 l_int|4
@@ -1709,7 +1868,9 @@ comma
 id|NA
 comma
 l_int|2
+)brace
 comma
+(brace
 l_string|&quot;rol&quot;
 comma
 l_int|3
@@ -1727,7 +1888,9 @@ comma
 id|NA
 comma
 l_int|2
+)brace
 comma
+(brace
 l_string|&quot;rol&quot;
 comma
 l_int|4
@@ -1745,7 +1908,9 @@ comma
 id|NA
 comma
 l_int|2
+)brace
 comma
+(brace
 l_string|&quot;ror&quot;
 comma
 l_int|3
@@ -1763,7 +1928,9 @@ comma
 id|NA
 comma
 l_int|2
+)brace
 comma
+(brace
 l_string|&quot;ror&quot;
 comma
 l_int|4
@@ -1781,8 +1948,10 @@ comma
 id|NA
 comma
 l_int|2
+)brace
 comma
 multiline_comment|/*&n;&t; *  Extensions (note also that mvi allows A)&n;&t; */
+(brace
 l_string|&quot;clr&quot;
 comma
 l_int|2
@@ -1802,12 +1971,29 @@ comma
 id|NA
 comma
 l_int|1
+)brace
+comma
+(brace
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
 comma
 l_int|0
 )brace
+)brace
 suffix:semicolon
-DECL|function|eval_operand
 r_int
+DECL|function|eval_operand
 id|eval_operand
 c_func
 (paren
@@ -1857,53 +2043,69 @@ id|jmptab
 )braket
 op_assign
 (brace
+(brace
 id|LO
 comma
 l_string|&quot;jmp&quot;
 comma
 l_int|8
+)brace
 comma
+(brace
 id|LO
 comma
 l_string|&quot;jc&quot;
 comma
 l_int|9
+)brace
 comma
+(brace
 id|LO
 comma
 l_string|&quot;jnc&quot;
 comma
 l_int|10
+)brace
 comma
+(brace
 id|LO
 comma
 l_string|&quot;call&quot;
 comma
 l_int|11
+)brace
 comma
+(brace
 id|LA
 comma
 l_string|&quot;jz&quot;
 comma
 l_int|15
+)brace
 comma
+(brace
 id|LA
 comma
 l_string|&quot;jnz&quot;
 comma
 l_int|13
+)brace
 comma
+(brace
 id|LX
 comma
 l_string|&quot;je&quot;
 comma
 l_int|14
+)brace
 comma
+(brace
 id|LX
 comma
 l_string|&quot;jne&quot;
 comma
 l_int|12
+)brace
 comma
 )brace
 suffix:semicolon
@@ -1998,8 +2200,8 @@ id|spec
 suffix:semicolon
 multiline_comment|/* &quot;case 0&quot; - no flags set */
 )brace
-DECL|function|eval_sdi
 r_int
+DECL|function|eval_sdi
 id|eval_sdi
 c_func
 (paren
@@ -2402,8 +2604,8 @@ id|NA
 suffix:semicolon
 multiline_comment|/* shut the compiler up */
 )brace
-DECL|function|eval_addr
 r_int
+DECL|function|eval_addr
 id|eval_addr
 c_func
 (paren
@@ -2531,8 +2733,8 @@ id|NA
 suffix:semicolon
 multiline_comment|/* will be patched in later */
 )brace
-DECL|function|crack
 r_int
+DECL|function|crack
 id|crack
 c_func
 (paren
@@ -2740,6 +2942,21 @@ dot
 id|addr
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|LC
+op_ge
+id|MEMORY
+)paren
+(brace
+id|error
+c_func
+(paren
+l_string|&quot;Memory exhausted!&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
 r_switch
 c_cond
 (paren
@@ -2879,7 +3096,9 @@ r_break
 suffix:semicolon
 )brace
 r_return
+(paren
 l_int|1
+)paren
 suffix:semicolon
 multiline_comment|/* no two-byte instructions yet */
 )brace
@@ -2901,8 +3120,8 @@ DECL|macro|I
 macro_line|#undef I
 DECL|macro|A
 macro_line|#undef A
-DECL|function|assemble
 r_void
+DECL|function|assemble
 id|assemble
 c_func
 (paren
@@ -3132,8 +3351,8 @@ id|stderr
 )paren
 suffix:semicolon
 )brace
-DECL|function|main
 r_int
+DECL|function|main
 id|main
 c_func
 (paren
@@ -3162,7 +3381,7 @@ id|argc
 comma
 id|argv
 comma
-l_string|&quot;dho:&quot;
+l_string|&quot;dho:vD&quot;
 )paren
 )paren
 op_ne
@@ -3185,6 +3404,68 @@ l_int|0
 suffix:semicolon
 r_break
 suffix:semicolon
+r_case
+l_char|&squot;D&squot;
+suffix:colon
+(brace
+r_char
+op_star
+id|p
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|p
+op_assign
+id|strchr
+c_func
+(paren
+id|optarg
+comma
+l_char|&squot;=&squot;
+)paren
+)paren
+op_ne
+l_int|NULL
+)paren
+(brace
+op_star
+id|p
+op_assign
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
+id|define
+c_func
+(paren
+id|optarg
+comma
+id|strtol
+c_func
+(paren
+id|p
+op_plus
+l_int|1
+comma
+l_int|NULL
+comma
+l_int|0
+)paren
+)paren
+suffix:semicolon
+)brace
+r_else
+id|define
+c_func
+(paren
+id|optarg
+comma
+l_int|1
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 r_case
 l_char|&squot;o&squot;
 suffix:colon
@@ -3225,7 +3506,7 @@ suffix:colon
 id|printf
 c_func
 (paren
-l_string|&quot;usage: %s [-d] [-ooutput] input&bslash;n&quot;
+l_string|&quot;usage: %s [-d] [-Dname] [-ooutput] input&bslash;n&quot;
 comma
 op_star
 id|argv
@@ -3236,17 +3517,25 @@ m_exit
 id|EXIT_SUCCESS
 )paren
 suffix:semicolon
+r_break
+suffix:semicolon
 r_case
-l_int|NULL
+l_char|&squot;v&squot;
 suffix:colon
-multiline_comment|/*&n;&t;&t;&t; *  An impossible option to shut the compiler&n;&t;&t;&t; *  up about sccsid[].&n;&t;&t;&t; */
+id|printf
+c_func
+(paren
+l_string|&quot;%s&bslash;n&quot;
+comma
+id|id
+)paren
+suffix:semicolon
 m_exit
 (paren
-(paren
-r_int
+id|EXIT_SUCCESS
 )paren
-id|sccsid
-)paren
+suffix:semicolon
+r_break
 suffix:semicolon
 r_default
 suffix:colon
@@ -3254,6 +3543,8 @@ m_exit
 (paren
 id|EXIT_FAILURE
 )paren
+suffix:semicolon
+r_break
 suffix:semicolon
 )brace
 )brace

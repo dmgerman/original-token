@@ -1,4 +1,8 @@
-multiline_comment|/*&n;   History:&n;    Started: Aug 9 by Lawrence Foard (entropy@world.std.com), to allow user &n;     process control of SCSI devices.&n;    Development Sponsored by Killy Corp. NY NY&n;    &n;    Borrows code from st driver.&n;*/
+multiline_comment|/*&n; *  History:&n; *  Started: Aug 9 by Lawrence Foard (entropy@world.std.com), &n; *           to allow user process control of SCSI devices.&n; *  Development Sponsored by Killy Corp. NY NY&n; *   &n; *  Borrows code from st driver.&n; */
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#endif /* MODULE */
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -63,6 +67,8 @@ l_int|NULL
 comma
 l_string|&quot;sg&quot;
 comma
+l_int|NULL
+comma
 l_int|0xff
 comma
 id|SCSI_GENERIC_MAJOR
@@ -92,6 +98,8 @@ r_static
 r_char
 op_star
 id|big_buff
+op_assign
+l_int|NULL
 suffix:semicolon
 DECL|variable|big_wait
 r_static
@@ -616,6 +624,19 @@ id|device-&gt;host-&gt;hostt-&gt;usage_count
 )paren
 op_increment
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|sg_template.usage_count
+)paren
+(brace
+(paren
+op_star
+id|sg_template.usage_count
+)paren
+op_increment
+suffix:semicolon
+)brace
 id|scsi_generics
 (braket
 id|dev
@@ -683,6 +704,19 @@ id|device-&gt;host-&gt;hostt-&gt;usage_count
 )paren
 op_decrement
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|sg_template.usage_count
+)paren
+(brace
+(paren
+op_star
+id|sg_template.usage_count
+)paren
+op_decrement
+suffix:semicolon
+)brace
 id|scsi_generics
 (braket
 id|dev
@@ -1244,7 +1278,7 @@ id|count
 r_return
 id|i
 suffix:semicolon
-multiline_comment|/*&n;   * The minimum scsi command length is 6 bytes.  If we get anything less than this,&n;   * it is clearly bogus.&n;   */
+multiline_comment|/*&n;     * The minimum scsi command length is 6 bytes.  If we get anything less than this,&n;     * it is clearly bogus.&n;     */
 r_if
 c_cond
 (paren
@@ -1543,7 +1577,18 @@ id|SCpnt-&gt;cmd_len
 op_assign
 id|size
 suffix:semicolon
-multiline_comment|/*&n;   * Verify that the user has actually passed enough bytes for this command.&n;   */
+id|amt
+op_sub_assign
+id|device-&gt;header.pack_len
+OG
+id|device-&gt;header.reply_len
+ques
+c_cond
+id|size
+suffix:colon
+l_int|0
+suffix:semicolon
+multiline_comment|/*&n;     * Verify that the user has actually passed enough bytes for this command.&n;     */
 r_if
 c_cond
 (paren
@@ -2124,5 +2169,136 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Overrides for Emacs so that we follow Linus&squot;s tabbing style.&n; * Emacs will notice this stuff at the end of the file and automatically&n; * adjust the settings for this buffer only.  This must remain at the end&n; * of the file.&n; * ---------------------------------------------------------------------------&n; * Local variables:&n; * c-indent-level: 8&n; * c-brace-imaginary-offset: 0&n; * c-brace-offset: -8&n; * c-argdecl-indent: 8&n; * c-label-offset: -8&n; * c-continued-statement-offset: 8&n; * c-continued-brace-offset: 0&n; * End:&n; */
+macro_line|#ifdef MODULE
+DECL|variable|kernel_version
+r_char
+id|kernel_version
+(braket
+)braket
+op_assign
+id|UTS_RELEASE
+suffix:semicolon
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+id|sg_template.usage_count
+op_assign
+op_amp
+id|mod_use_count_
+suffix:semicolon
+r_return
+id|scsi_register_module
+c_func
+(paren
+id|MODULE_SCSI_DEV
+comma
+op_amp
+id|sg_template
+)paren
+suffix:semicolon
+)brace
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|MOD_IN_USE
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+id|__FILE__
+l_string|&quot;: module is in use, remove rejected&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|scsi_unregister_module
+c_func
+(paren
+id|MODULE_SCSI_DEV
+comma
+op_amp
+id|sg_template
+)paren
+suffix:semicolon
+id|unregister_chrdev
+c_func
+(paren
+id|SCSI_GENERIC_MAJOR
+comma
+l_string|&quot;sg&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|scsi_generics
+op_ne
+l_int|NULL
+)paren
+(brace
+id|scsi_init_free
+c_func
+(paren
+(paren
+r_char
+op_star
+)paren
+id|scsi_generics
+comma
+(paren
+id|sg_template.dev_noticed
+op_plus
+id|SG_EXTRA_DEVS
+)paren
+op_star
+r_sizeof
+(paren
+r_struct
+id|scsi_generic
+)paren
+)paren
+suffix:semicolon
+)brace
+id|sg_template.dev_max
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#ifdef SG_BIG_BUFF
+r_if
+c_cond
+(paren
+id|big_buff
+op_ne
+l_int|NULL
+)paren
+(brace
+id|scsi_init_free
+c_func
+(paren
+id|big_buff
+comma
+id|SG_BIG_BUFF
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+)brace
+macro_line|#endif /* MODULE */
+multiline_comment|/*&n; * Overrides for Emacs so that we almost follow Linus&squot;s tabbing style.&n; * Emacs will notice this stuff at the end of the file and automatically&n; * adjust the settings for this buffer only.  This must remain at the end&n; * of the file.&n; * ---------------------------------------------------------------------------&n; * Local variables:&n; * c-indent-level: 4&n; * c-brace-imaginary-offset: 0&n; * c-brace-offset: -4&n; * c-argdecl-indent: 4&n; * c-label-offset: -4&n; * c-continued-statement-offset: 4&n; * c-continued-brace-offset: 0&n; * indent-tabs-mode: nil&n; * tab-width: 8&n; * End:&n; */
 eof

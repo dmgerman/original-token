@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *  linux/drivers/char/console.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
-multiline_comment|/*&n; *&t;console.c&n; *&n; * This module exports the console io functions:&n; * &n; *     &squot;void do_keyboard_interrupt(void)&squot;&n; *&n; *     &squot;int vc_allocate(unsigned int console)&squot; &n; *     &squot;int vc_cons_allocated(unsigned int console)&squot;&n; *     &squot;int vc_resize(unsigned long lines, unsigned long cols)&squot;&n; *     &squot;void vc_disallocate(unsigned int currcons)&squot;&n; *&n; *     &squot;long con_init(long)&squot;&n; *     &squot;int con_open(struct tty_struct *tty, struct file * filp)&squot;&n; *     &squot;void con_write(struct tty_struct * tty)&squot;&n; *     &squot;void console_print(const char * b)&squot;&n; *     &squot;void update_screen(int new_console)&squot;&n; *&n; *     &squot;void do_blank_screen(int)&squot;&n; *     &squot;void do_unblank_screen(void)&squot;&n; *     &squot;void poke_blanked_console(void)&squot;&n; *&n; *     &squot;unsigned short *screen_pos(int currcons, int w_offset, int viewed)&squot;&n; *     &squot;void complement_pos(int currcons, int offset)&squot;&n; *     &squot;void invert_screen(int currcons, int offset, int count, int shift)&squot;&n; *&n; *     &squot;void scrollback(int lines)&squot;&n; *     &squot;void scrollfront(int lines)&squot;&n; *&n; *     &squot;int con_get_font(char *data)&squot; &n; *     &squot;int con_set_font(char *data, int ch512)&squot;&n; *     &squot;int con_adjust_height(int fontheight)&squot;&n; *&n; *     &squot;int con_get_cmap(char *)&squot;&n; *     &squot;int con_set_cmap(char *)&squot;&n; *&n; *     &squot;int reset_palette(int currcons)&squot;&n; *     &squot;void set_palette(void)&squot;&n; *&n; *     &squot;void mouse_report(struct tty_struct * tty, int butt, int mrx, int mry)&squot;&n; *     &squot;int mouse_reporting(void)&squot;&n; *&n; * Hopefully this will be a rather complete VT102 implementation.&n; *&n; * Beeping thanks to John T Kohl.&n; * &n; * Virtual Consoles, Screen Blanking, Screen Dumping, Color, Graphics&n; *   Chars, and VT100 enhancements by Peter MacDonald.&n; *&n; * Copy and paste function by Andrew Haylett,&n; *   some enhancements by Alessandro Rubini.&n; *&n; * User definable mapping table and font loading by Eugene G. Crosser,&n; * &lt;crosser@pccross.msk.su&gt;&n; *&n; * Code to check for different video-cards mostly by Galen Hunt,&n; * &lt;g-hunt@ee.utah.edu&gt;&n; *&n; * Rudimentary ISO 10646/Unicode/UTF-8 character set support by&n; * Markus Kuhn, &lt;mskuhn@immd4.informatik.uni-erlangen.de&gt;.&n; *&n; * Dynamic allocation of consoles, aeb@cwi.nl, May 1994&n; * Resizing of consoles, aeb, 940926&n; *&n; * Code for xterm like mouse click reporting by Peter Orbaek 20-Jul-94&n; * &lt;poe@daimi.aau.dk&gt;&n; *&n; * Improved loadable font/UTF-8 support by H. Peter Anvin, Feb 1995&n; *&n; * improved scrollback, plus colour palette handling, by Simon Tatham&n; * 17-Jun-95 &lt;sgt20@cam.ac.uk&gt;&n; *&n; */
+multiline_comment|/*&n; *&t;console.c&n; *&n; * This module exports the console io functions:&n; *&n; *     &squot;void do_keyboard_interrupt(void)&squot;&n; *&n; *     &squot;int vc_allocate(unsigned int console)&squot;&n; *     &squot;int vc_cons_allocated(unsigned int console)&squot;&n; *     &squot;int vc_resize(unsigned long lines, unsigned long cols)&squot;&n; *     &squot;void vc_disallocate(unsigned int currcons)&squot;&n; *&n; *     &squot;long con_init(long)&squot;&n; *     &squot;int con_open(struct tty_struct *tty, struct file * filp)&squot;&n; *     &squot;void con_write(struct tty_struct * tty)&squot;&n; *     &squot;void console_print(const char * b)&squot;&n; *     &squot;void update_screen(int new_console)&squot;&n; *&n; *     &squot;void do_blank_screen(int)&squot;&n; *     &squot;void do_unblank_screen(void)&squot;&n; *     &squot;void poke_blanked_console(void)&squot;&n; *&n; *     &squot;unsigned short *screen_pos(int currcons, int w_offset, int viewed)&squot;&n; *     &squot;void complement_pos(int currcons, int offset)&squot;&n; *     &squot;void invert_screen(int currcons, int offset, int count, int shift)&squot;&n; *&n; *     &squot;void scrollback(int lines)&squot;&n; *     &squot;void scrollfront(int lines)&squot;&n; *&n; *     &squot;int con_get_font(char *data)&squot;&n; *     &squot;int con_set_font(char *data, int ch512)&squot;&n; *     &squot;int con_adjust_height(int fontheight)&squot;&n; *&n; *     &squot;int con_get_cmap(char *)&squot;&n; *     &squot;int con_set_cmap(char *)&squot;&n; *&n; *     &squot;int reset_palette(int currcons)&squot;&n; *     &squot;void set_palette(void)&squot;&n; *&n; *     &squot;void mouse_report(struct tty_struct * tty, int butt, int mrx, int mry)&squot;&n; *     &squot;int mouse_reporting(void)&squot;&n; *&n; * Hopefully this will be a rather complete VT102 implementation.&n; *&n; * Beeping thanks to John T Kohl.&n; *&n; * Virtual Consoles, Screen Blanking, Screen Dumping, Color, Graphics&n; *   Chars, and VT100 enhancements by Peter MacDonald.&n; *&n; * Copy and paste function by Andrew Haylett,&n; *   some enhancements by Alessandro Rubini.&n; *&n; * User definable mapping table and font loading by Eugene G. Crosser,&n; * &lt;crosser@pccross.msk.su&gt;&n; *&n; * Code to check for different video-cards mostly by Galen Hunt,&n; * &lt;g-hunt@ee.utah.edu&gt;&n; *&n; * Rudimentary ISO 10646/Unicode/UTF-8 character set support by&n; * Markus Kuhn, &lt;mskuhn@immd4.informatik.uni-erlangen.de&gt;.&n; *&n; * Dynamic allocation of consoles, aeb@cwi.nl, May 1994&n; * Resizing of consoles, aeb, 940926&n; *&n; * Code for xterm like mouse click reporting by Peter Orbaek 20-Jul-94&n; * &lt;poe@daimi.aau.dk&gt;&n; *&n; * Improved loadable font/UTF-8 support by H. Peter Anvin, Feb 1995&n; *&n; * improved scrollback, plus colour palette handling, by Simon Tatham&n; * 17-Jun-95 &lt;sgt20@cam.ac.uk&gt;&n; *&n; */
 DECL|macro|BLANK
 mdefine_line|#define BLANK 0x0020
 DECL|macro|CAN_LOAD_EGA_FONTS
@@ -881,7 +881,7 @@ mdefine_line|#define video_mem_start&t;(vc_cons[currcons].d-&gt;vc_video_mem_sta
 DECL|macro|video_mem_end
 mdefine_line|#define video_mem_end&t;(vc_cons[currcons].d-&gt;vc_video_mem_end)
 DECL|macro|video_erase_char
-mdefine_line|#define video_erase_char (vc_cons[currcons].d-&gt;vc_video_erase_char)&t;
+mdefine_line|#define video_erase_char (vc_cons[currcons].d-&gt;vc_video_erase_char)
 DECL|macro|disp_ctrl
 mdefine_line|#define disp_ctrl&t;(vc_cons[currcons].d-&gt;vc_disp_ctrl)
 DECL|macro|toggle_meta
@@ -9764,7 +9764,8 @@ comma
 l_string|&quot;vga+&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* get 64K rather than 32K of video RAM */
+macro_line|#ifdef VGA_CAN_DO_64KB
+multiline_comment|/*&n;&t;&t;&t;&t; * get 64K rather than 32K of video RAM.&n;&t;&t;&t;&t; * This doesn&squot;t actually work on all &quot;VGA&quot;&n;&t;&t;&t;&t; * controllers (it seems like setting MM=01&n;&t;&t;&t;&t; * and COE=1 isn&squot;t necessarily a good idea)&n;&t;&t;&t;&t; */
 id|video_mem_base
 op_assign
 l_int|0xa0000
@@ -9787,6 +9788,7 @@ comma
 l_int|0x3cf
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* normalise the palette registers, to point the                                 * 16 screen colours to the first 16 DAC entries */
 r_for
 c_loop
@@ -9830,7 +9832,7 @@ comma
 l_int|0x3c0
 )paren
 suffix:semicolon
-multiline_comment|/* now set the DAC registers back to their default&n;                                 * values */
+multiline_comment|/* now set the DAC registers back to their default&n;&t;&t;&t;&t; * values */
 r_for
 c_loop
 (paren
@@ -10133,6 +10135,10 @@ l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* Figure out the size of the screen and screen font so we&n;&t;   can figure out the appropriate screen size should we load&n;&t;   a different font */
+id|printable
+op_assign
+l_int|1
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -10171,10 +10177,6 @@ id|video_scan_lines
 )paren
 suffix:semicolon
 )brace
-id|printable
-op_assign
-l_int|1
-suffix:semicolon
 id|printk
 c_func
 (paren
@@ -12344,7 +12346,7 @@ op_minus
 l_int|1
 suffix:semicolon
 multiline_comment|/* Scan lines to actually display-1 */
-multiline_comment|/* Reprogram the CRTC for the new font size&n;           Note: the attempt to read the overflow register will fail&n;&t;   on an EGA, but using 0xff for the previous value appears to&n;&t;   be OK for EGA text modes in the range 257-512 scan lines, so I&n;&t;   guess we don&squot;t need to worry about it.&n;&n;&t;   The same applies for the spill bits in the font size and cursor&n;&t;   registers; they are write-only on EGA, but it appears that they&n;&t;   are all don&squot;t care bits on EGA, so I guess it doesn&squot;t matter. */
+multiline_comment|/* Reprogram the CRTC for the new font size&n;&t;   Note: the attempt to read the overflow register will fail&n;&t;   on an EGA, but using 0xff for the previous value appears to&n;&t;   be OK for EGA text modes in the range 257-512 scan lines, so I&n;&t;   guess we don&squot;t need to worry about it.&n;&n;&t;   The same applies for the spill bits in the font size and cursor&n;&t;   registers; they are write-only on EGA, but it appears that they&n;&t;   are all don&squot;t care bits on EGA, so I guess it doesn&squot;t matter. */
 id|cli
 c_func
 (paren

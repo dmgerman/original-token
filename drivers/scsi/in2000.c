@@ -4,11 +4,15 @@ multiline_comment|/* More changes by Bill Earnest, wde@aluxpo.att.com&n; * throu
 multiline_comment|/* Merged code from Matt Postiff improving the auto-sense validation&n; * for all I/O addresses. Some reports of problems still come in, but&n; * have been unable to reproduce or localize the cause. Some are from&n; * LUN &gt; 0 problems, but that is not host specific. Now 6/6/94.&n; */
 multiline_comment|/* Changes for 1.1.28 kernel made 7/19/94, code not affected. (WDE)&n; */
 multiline_comment|/* Changes for 1.1.43+ kernels made 8/25/94, code added to check for&n; * new BIOS version, derived by jshiffle@netcom.com. (WDE)&n; *&n; * 1/7/95 Fix from Peter Lu (swift@world.std.com) for datalen vs. dataptr&n; * logic, much more stable under load.&n; *&n; * 1/19/95 (zerucha@shell.portal.com) Added module and biosparam support for&n; * larger SCSI hard drives (untested).&n; */
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;

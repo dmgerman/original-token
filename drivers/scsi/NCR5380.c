@@ -795,7 +795,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* &n;         * main_running is cleared in NCR5380_main once it can&squot;t do &n;&t; * more work, and NCR5380_main exits with interrupts disabled.&n;&t; */
+multiline_comment|/* &n;&t; * main_running is cleared in NCR5380_main once it can&squot;t do &n;&t; * more work, and NCR5380_main exits with interrupts disabled.&n;&t; */
 id|sti
 c_func
 (paren

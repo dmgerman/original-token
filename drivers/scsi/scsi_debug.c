@@ -1,4 +1,7 @@
 multiline_comment|/* $Id: scsi_debug.c,v 1.1 1992/07/24 06:27:38 root Exp root $&n; *  linux/kernel/scsi_debug.c&n; *&n; *  Copyright (C) 1992  Eric Youngdale&n; *  Simulate a host adapter with 2 disks attached.  Do a lot of checking&n; *  to make sure that we are not getting blocks mixed up, and panic if&n; *  anything out of the ordinary is seen.&n; */
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
@@ -7,8 +10,12 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#endif
 macro_line|#include &quot;../block/blk.h&quot;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
@@ -31,7 +38,7 @@ op_minus
 l_int|1
 suffix:semicolon
 DECL|macro|NR_BLK_DEV
-mdefine_line|#define NR_BLK_DEV&t;12
+mdefine_line|#define NR_BLK_DEV  12
 macro_line|#ifndef MAJOR_NR
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR 8
@@ -86,9 +93,9 @@ DECL|macro|VERIFY_DEBUG
 mdefine_line|#define VERIFY_DEBUG(RW) 1
 macro_line|#else
 DECL|macro|VERIFY1_DEBUG
-mdefine_line|#define VERIFY1_DEBUG(RW)&t;&t;&t;       &t;&t;&t;&bslash;&n;      if (bufflen != 1024) {printk(&quot;%d&quot;, bufflen); panic(&quot;(1)Bad bufflen&quot;);};&t;&t;&t;&bslash;&n;      start = 0;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;      if ((SCpnt-&gt;request.dev &amp; 0xf) != 0) start = starts[(SCpnt-&gt;request.dev &amp; 0xf) - 1];&t;&t;&bslash;&n;      if (bh){&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (bh-&gt;b_size != 1024) panic (&quot;Wrong bh size&quot;);&t;&bslash;&n;&t;if ((bh-&gt;b_blocknr &lt;&lt; 1) + start != block)&t;       &t;&bslash;&n;&t;  {  printk(&quot;Wrong bh block# %d %d &quot;,bh-&gt;b_blocknr, block);  &bslash;&n;&t;  panic (&quot;Wrong bh block#&quot;);};  &bslash;&n;&t;if (bh-&gt;b_dev != SCpnt-&gt;request.dev) panic (&quot;Bad bh target&quot;);&bslash;&n;      };
+mdefine_line|#define VERIFY1_DEBUG(RW)                           &bslash;&n;    if (bufflen != 1024) {printk(&quot;%d&quot;, bufflen); panic(&quot;(1)Bad bufflen&quot;);};         &bslash;&n;    start = 0;                          &bslash;&n;    if ((SCpnt-&gt;request.dev &amp; 0xf) != 0) start = starts[(SCpnt-&gt;request.dev &amp; 0xf) - 1];        &bslash;&n;    if (bh){                            &bslash;&n;&t;if (bh-&gt;b_size != 1024) panic (&quot;Wrong bh size&quot;);    &bslash;&n;&t;if ((bh-&gt;b_blocknr &lt;&lt; 1) + start != block)          &bslash;&n;&t;{   printk(&quot;Wrong bh block# %d %d &quot;,bh-&gt;b_blocknr, block);  &bslash;&n;&t;    panic (&quot;Wrong bh block#&quot;); &bslash;&n;&t;};  &bslash;&n;&t;if (bh-&gt;b_dev != SCpnt-&gt;request.dev) panic (&quot;Bad bh target&quot;);&bslash;&n;    };
 macro_line|#if 0
-multiline_comment|/* This had been in the VERIFY_DEBUG macro, but it fails if there is already&n;   a disk on the system */
+multiline_comment|/* This had been in the VERIFY_DEBUG macro, but it fails if there is already&n; * a disk on the system */
 r_if
 c_cond
 (paren
@@ -132,12 +139,13 @@ id|panic
 l_string|&quot;Bad target&quot;
 )paren
 suffix:semicolon
+"&bslash;"
 )brace
 suffix:semicolon
 "&bslash;"
 macro_line|#endif
 DECL|macro|VERIFY_DEBUG
-mdefine_line|#define VERIFY_DEBUG(RW)&t;&t;&t;       &t;&t;&t;&bslash;&n;      if (bufflen != 1024 &amp;&amp; (!SCpnt-&gt;use_sg)) {printk(&quot;%x %d&bslash;n &quot;,bufflen, SCpnt-&gt;use_sg); panic(&quot;Bad bufflen&quot;);};   &t;&bslash;&n;      start = 0;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;      if ((SCpnt-&gt;request.dev &amp; 0xf) &gt; npart) panic (&quot;Bad partition&quot;);&t;&bslash;&n;      if ((SCpnt-&gt;request.dev &amp; 0xf) != 0) start = starts[(SCpnt-&gt;request.dev &amp; 0xf) - 1];&t;&t;&bslash;&n;      if (SCpnt-&gt;request.cmd != RW) panic (&quot;Wrong  operation&quot;);&t;&t;&bslash;&n;      if (SCpnt-&gt;request.sector + start != block) panic(&quot;Wrong block.&quot;);&t;&bslash;&n;      if (SCpnt-&gt;request.current_nr_sectors != 2 &amp;&amp; (!SCpnt-&gt;use_sg)) panic (&quot;Wrong # blocks&quot;);&t;&bslash;&n;      if (SCpnt-&gt;request.bh){&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (SCpnt-&gt;request.bh-&gt;b_size != 1024) panic (&quot;Wrong bh size&quot;);&t;&bslash;&n;&t;if ((SCpnt-&gt;request.bh-&gt;b_blocknr &lt;&lt; 1) + start != block)&t;       &t;&bslash;&n;&t;  {  printk(&quot;Wrong bh block# %d %d &quot;,SCpnt-&gt;request.bh-&gt;b_blocknr, block);  &bslash;&n;&t;  panic (&quot;Wrong bh block#&quot;);};  &bslash;&n;&t;if (SCpnt-&gt;request.bh-&gt;b_dev != SCpnt-&gt;request.dev) panic (&quot;Bad bh target&quot;);&bslash;&n;      };
+mdefine_line|#define VERIFY_DEBUG(RW)                            &bslash;&n;    if (bufflen != 1024 &amp;&amp; (!SCpnt-&gt;use_sg)) {printk(&quot;%x %d&bslash;n &quot;,bufflen, SCpnt-&gt;use_sg); panic(&quot;Bad bufflen&quot;);};    &bslash;&n;    start = 0;                          &bslash;&n;    if ((SCpnt-&gt;request.dev &amp; 0xf) &gt; npart) panic (&quot;Bad partition&quot;);    &bslash;&n;    if ((SCpnt-&gt;request.dev &amp; 0xf) != 0) start = starts[(SCpnt-&gt;request.dev &amp; 0xf) - 1];        &bslash;&n;    if (SCpnt-&gt;request.cmd != RW) panic (&quot;Wrong  operation&quot;);       &bslash;&n;    if (SCpnt-&gt;request.sector + start != block) panic(&quot;Wrong block.&quot;);  &bslash;&n;    if (SCpnt-&gt;request.current_nr_sectors != 2 &amp;&amp; (!SCpnt-&gt;use_sg)) panic (&quot;Wrong # blocks&quot;);   &bslash;&n;    if (SCpnt-&gt;request.bh){                         &bslash;&n;&t;if (SCpnt-&gt;request.bh-&gt;b_size != 1024) panic (&quot;Wrong bh size&quot;); &bslash;&n;&t;if ((SCpnt-&gt;request.bh-&gt;b_blocknr &lt;&lt; 1) + start != block)           &bslash;&n;&t;{   printk(&quot;Wrong bh block# %d %d &quot;,SCpnt-&gt;request.bh-&gt;b_blocknr, block);  &bslash;&n;&t;    panic (&quot;Wrong bh block#&quot;); &bslash;&n;&t;};  &bslash;&n;&t;if (SCpnt-&gt;request.bh-&gt;b_dev != SCpnt-&gt;request.dev) panic (&quot;Bad bh target&quot;);&bslash;&n;    };
 macro_line|#endif
 DECL|variable|do_done
 r_static
@@ -1366,7 +1374,7 @@ id|bufflen
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* If this is block 0, then we want to read the partition table for this&n;   device.  Let&squot;s make one up */
+multiline_comment|/* If this is block 0, then we want to read the partition table for this&n;&t;     * device.  Let&squot;s make one up */
 r_if
 c_cond
 (paren
@@ -2301,7 +2309,7 @@ r_return
 id|internal_done_errcode
 suffix:semicolon
 )brace
-multiline_comment|/* A &quot;high&quot; level interrupt handler.  This should be called once per jiffy&n; to simulate a regular scsi disk.  We use a timer to do this. */
+multiline_comment|/* A &quot;high&quot; level interrupt handler.  This should be called once per jiffy&n; * to simulate a regular scsi disk.  We use a timer to do this. */
 DECL|function|scsi_debug_intr_handle
 r_static
 r_void
@@ -3114,4 +3122,15 @@ r_return
 id|buffer
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+multiline_comment|/* Eventually this will go into an include file, but this will be later */
+DECL|variable|driver_template
+id|Scsi_Host_Template
+id|driver_template
+op_assign
+id|SCSI_DEBUG
+suffix:semicolon
+macro_line|#include &quot;scsi_module.c&quot;
+macro_line|#endif
+multiline_comment|/*&n; * Overrides for Emacs so that we almost follow Linus&squot;s tabbing style.&n; * Emacs will notice this stuff at the end of the file and automatically&n; * adjust the settings for this buffer only.  This must remain at the end&n; * of the file.&n; * ---------------------------------------------------------------------------&n; * Local variables:&n; * c-indent-level: 4&n; * c-brace-imaginary-offset: 0&n; * c-brace-offset: -4&n; * c-argdecl-indent: 4&n; * c-label-offset: -4&n; * c-continued-statement-offset: 4&n; * c-continued-brace-offset: 0&n; * indent-tabs-mode: nil&n; * tab-width: 8&n; * End:&n; */
 eof

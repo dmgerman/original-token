@@ -1755,6 +1755,7 @@ id|MAX_RETRIES
 r_if
 c_cond
 (paren
+(paren
 id|inb_p
 c_func
 (paren
@@ -1762,6 +1763,7 @@ id|AUX_STATUS
 )paren
 op_amp
 id|AUX_OBUF_FULL
+)paren
 op_eq
 id|AUX_OBUF_FULL
 )paren

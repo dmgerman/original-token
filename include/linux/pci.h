@@ -13,7 +13,7 @@ mdefine_line|#define PCI_COMMAND&t;&t;0x04&t;/* 16 bits */
 DECL|macro|PCI_COMMAND_IO
 mdefine_line|#define  PCI_COMMAND_IO&t;&t;0x1&t;/* Enable response in I/O space */
 DECL|macro|PCI_COMMAND_MEMORY
-mdefine_line|#define  PCI_COMMAND_MEMORY&t;0x2&t;/* Enable response in I/O space */
+mdefine_line|#define  PCI_COMMAND_MEMORY&t;0x2&t;/* Enable response in Memory space */
 DECL|macro|PCI_COMMAND_MASTER
 mdefine_line|#define  PCI_COMMAND_MASTER&t;0x4&t;/* Enable bus mastering */
 DECL|macro|PCI_COMMAND_SPECIAL
@@ -208,6 +208,8 @@ DECL|macro|PCI_DEVICE_ID_ADAPTEC_2940
 mdefine_line|#define PCI_DEVICE_ID_ADAPTEC_2940&t;0x7178
 DECL|macro|PCI_DEVICE_ID_ADAPTEC_294x
 mdefine_line|#define PCI_DEVICE_ID_ADAPTEC_294x&t;0x7078
+DECL|macro|PCI_DEVICE_ID_ADAPTEC_7850
+mdefine_line|#define PCI_DEVICE_ID_ADAPTEC_7850&t;0x5078
 DECL|macro|PCI_VENDOR_ID_DPT
 mdefine_line|#define PCI_VENDOR_ID_DPT               0x1044   
 DECL|macro|PCI_DEVICE_ID_DPT
@@ -248,6 +250,8 @@ DECL|macro|PCI_DEVICE_ID_UMC_UM8891A
 mdefine_line|#define PCI_DEVICE_ID_UMC_UM8891A&t;0x0891
 DECL|macro|PCI_DEVICE_ID_UMC_UM8886F
 mdefine_line|#define PCI_DEVICE_ID_UMC_UM8886F&t;0x8886
+DECL|macro|PCI_DEVICE_ID_UMC_UM8886A
+mdefine_line|#define PCI_DEVICE_ID_UMC_UM8886A&t;0x886a
 DECL|macro|PCI_DEVICE_ID_UMC_UM8673F
 mdefine_line|#define PCI_DEVICE_ID_UMC_UM8673F&t;0x0101
 DECL|macro|PCI_VENDOR_ID_DEC
@@ -256,6 +260,8 @@ DECL|macro|PCI_DEVICE_ID_DEC_TULIP
 mdefine_line|#define PCI_DEVICE_ID_DEC_TULIP&t;&t;0x0002
 DECL|macro|PCI_DEVICE_ID_DEC_TULIP_FAST
 mdefine_line|#define PCI_DEVICE_ID_DEC_TULIP_FAST&t;0x0009
+DECL|macro|PCI_DEVICE_ID_DEC_TULIP_PLUS
+mdefine_line|#define PCI_DEVICE_ID_DEC_TULIP_PLUS&t;0x0014
 DECL|macro|PCI_DEVICE_ID_DEC_FDDI
 mdefine_line|#define PCI_DEVICE_ID_DEC_FDDI&t;&t;0x000F
 DECL|macro|PCI_DEVICE_ID_DEC_BRD
@@ -308,6 +314,8 @@ DECL|macro|PCI_DEVICE_ID_CIRRUS_5434_8
 mdefine_line|#define PCI_DEVICE_ID_CIRRUS_5434_8&t;0x00A8
 DECL|macro|PCI_DEVICE_ID_CIRRUS_6729
 mdefine_line|#define PCI_DEVICE_ID_CIRRUS_6729&t;0x1100
+DECL|macro|PCI_DEVICE_ID_CIRRUS_7542
+mdefine_line|#define PCI_DEVICE_ID_CIRRUS_7542&t;0x1200
 DECL|macro|PCI_VENDOR_ID_BUSLOGIC
 mdefine_line|#define PCI_VENDOR_ID_BUSLOGIC&t;&t;0x104B
 DECL|macro|PCI_DEVICE_ID_BUSLOGIC_946C
@@ -464,6 +472,12 @@ DECL|macro|PCI_VENDOR_ID_X
 mdefine_line|#define PCI_VENDOR_ID_X&t;&t;&t;0x1061
 DECL|macro|PCI_DEVICE_ID_X_AGX016
 mdefine_line|#define PCI_DEVICE_ID_X_AGX016&t;&t;0x0001
+DECL|macro|PCI_VENDOR_ID_ACC
+mdefine_line|#define PCI_VENDOR_ID_ACC&t;&t;0x10aa
+DECL|macro|PCI_VENDOR_ID_VORTEX
+mdefine_line|#define PCI_VENDOR_ID_VORTEX&t;&t;0x1119
+DECL|macro|PCI_DEVICE_ID_VORTEX_GDT
+mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDT&t;0x0001
 multiline_comment|/*&n; * The PCI interface treats multi-function devices as independent&n; * devices.  The slot/function address of each device is encoded&n; * in a single byte as follows:&n; *&n; *&t;7:4 = slot&n; *&t;3:0 = function&n; */
 DECL|macro|PCI_DEVFN
 mdefine_line|#define PCI_DEVFN(slot,func)&t;((((slot) &amp; 0x1f) &lt;&lt; 3) | ((func) &amp; 0x07))

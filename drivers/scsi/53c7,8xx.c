@@ -18,6 +18,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &quot;../block/blk.h&quot;
@@ -218,7 +219,7 @@ id|the_template
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n; * TODO : &n; *&n; * 1.  Implement single step / trace code?&n; * &n; * 2.  The initial code has been tested on the NCR53c810.  I don&squot;t &n; *     have access to NCR53c700, 700-66 (Forex boards), NCR53c710&n; *     (NCR Pentium systems), NCR53c720, or NCR53c820 boards to finish&n; *     development on those platforms.&n; *&n; *     NCR53c820/720 - need to add wide transfer support, including WDTR &n; *     &t;&t;negotiation, programming of wide transfer capabilities&n; *&t;&t;on reselection and table indirect selection.&n; *&n; *     NCR53c720/710 - need to add fatal interrupt or GEN code for &n; *&t;&t;command completion signaling.   Need to take care of &n; *&t;        ADD WITH CARRY instructions since carry is unimplemented.&n; *&t;&t;Also need to modify all SDID, SCID, etc. registers,&n; *&t;&t;and table indirect select code since these use bit&n; *&t;&t;fielded (ie 1&lt;&lt;target) instead of binary encoded&n; *&t;&t;target ids.  Also, SCNTL3 is _not_ automatically&n; *&t;&t;programmed on selection, so we need to add more code.&n; * &n; *     NCR53c700/700-66 - need to add code to refix addresses on &n; *&t;&t;every nexus change, eliminate all table indirect code.&n; *&n; * 3.  The NCR53c7x0 series is very popular on other platforms that &n; *     could be running Linux - ie, some high performance AMIGA SCSI &n; *     boards use it.  &n; *&t;&n; *     So, I should include #ifdef&squot;d code so that it is &n; *     compatible with these systems.&n; *&t;&n; *     Specifically, the little Endian assumptions I made in my &n; *     bit fields need to change, and if the NCR doesn&squot;t see memory&n; *     the right way, we need to provide options to reverse words&n; *     when the scripts are relocated.&n; *&n; * 4.  Implement code to include page table entries for the &n; *     area occupied by memory mapped boards so we don&squot;t have &n; *     to use the potentially slower I/O accesses.&n; */
+multiline_comment|/*&n; * TODO : &n; *&n; * 1.  Implement single step / trace code?&n; * &n; * 2.  The initial code has been tested on the NCR53c810.  I don&squot;t &n; *     have access to NCR53c700, 700-66 (Forex boards), NCR53c710&n; *     (NCR Pentium systems), NCR53c720, or NCR53c820 boards to finish&n; *     development on those platforms.&n; *&n; *     NCR53c820/720 - need to add wide transfer support, including WDTR &n; *     &t;&t;negotiation, programming of wide transfer capabilities&n; *&t;&t;on reselection and table indirect selection.&n; *&n; *     NCR53c720/710 - need to add fatal interrupt or GEN code for &n; *&t;&t;command completion signaling.   Need to take care of &n; *&t;&t;ADD WITH CARRY instructions since carry is unimplemented.&n; *&t;&t;Also need to modify all SDID, SCID, etc. registers,&n; *&t;&t;and table indirect select code since these use bit&n; *&t;&t;fielded (ie 1&lt;&lt;target) instead of binary encoded&n; *&t;&t;target ids.  Also, SCNTL3 is _not_ automatically&n; *&t;&t;programmed on selection, so we need to add more code.&n; * &n; *     NCR53c700/700-66 - need to add code to refix addresses on &n; *&t;&t;every nexus change, eliminate all table indirect code.&n; *&n; * 3.  The NCR53c7x0 series is very popular on other platforms that &n; *     could be running Linux - ie, some high performance AMIGA SCSI &n; *     boards use it.  &n; *&t;&n; *     So, I should include #ifdef&squot;d code so that it is &n; *     compatible with these systems.&n; *&t;&n; *     Specifically, the little Endian assumptions I made in my &n; *     bit fields need to change, and if the NCR doesn&squot;t see memory&n; *     the right way, we need to provide options to reverse words&n; *     when the scripts are relocated.&n; *&n; * 4.  Implement code to include page table entries for the &n; *     area occupied by memory mapped boards so we don&squot;t have &n; *     to use the potentially slower I/O accesses.&n; */
 multiline_comment|/* &n; * XXX - note that my assembler was modified so that internally,&n; * the names used can take a prefix, so that there is no conflict&n; * between multiple copies of the same script assembled with &n; * different defines.&n; *&n; *&n; * Allow for simultaneous existence of multiple SCSI scripts so we &n; * can have a single driver binary for all of the family.&n; *&n; * - one for NCR53c700 and NCR53c700-66 chips&t;(not yet supported)&n; * - one for NCR53c710 and NCR53c720 chips&t;(not yet supported)&n; * - one for NCR53c810 and NCR53c820 chips &t;(only the NCR53c810 is&n; *&t;currently supported)&n; *&n; * For the very similar chips, we should probably hack the fixup code&n; * and interrupt code so that it works everywhere, but I suspect the &n; * NCR53c700 is going to need it&squot;s own fixup routine.&n; */
 multiline_comment|/*&n; * Use to translate between device IDs of various types.&n; */
 DECL|struct|pci_chip
@@ -1852,7 +1853,7 @@ l_int|8
 multiline_comment|/* Each instruction is eight bytes */
 suffix:semicolon
 multiline_comment|/* Note that alignment will be guaranteed, since we put the command&n;       allocated at probe time after the fixed-up SCSI script, which &n;       consists of 32 bit words, aligned on a 32 bit boundary. */
-multiline_comment|/* Allocate fixed part of hostdata, dynamic part to hold appropriate&n;       SCSI SCRIPT(tm) plus a single, maximum-sized NCR53c7x0_cmd structure.&n;&n;       We need a NCR53c7x0_cmd structure for scan_scsis() when we are &n;       not loaded as a module, and when we&squot;re loaded as a module, we &n;       can&squot;t use a non-dynamically allocated structure because modules&n;       are vmalloc()&squot;d, which can allow structures to cross page &n;       boundaries and breaks our physical/virtual address assumptions&n;       for DMA.&n;&n;       So, we stick it past the end of our hostdata structure.&n;&n;       ASSUMPTION : &n;       &t; Regardless of how many simultaneous SCSI commands we allow,&n;         the probe code only executes a _single_ instruction at a time,&n;&t; so we only need one here, and don&squot;t need to allocate NCR53c7x0_cmd&n;&t; structures for each target until we are no longer in scan_scsis&n;&t; and kmalloc() has become functional (memory_init() happens &n;&t; after all device driver initialization).&n;    */
+multiline_comment|/* Allocate fixed part of hostdata, dynamic part to hold appropriate&n;       SCSI SCRIPT(tm) plus a single, maximum-sized NCR53c7x0_cmd structure.&n;&n;       We need a NCR53c7x0_cmd structure for scan_scsis() when we are &n;       not loaded as a module, and when we&squot;re loaded as a module, we &n;       can&squot;t use a non-dynamically allocated structure because modules&n;       are vmalloc()&squot;d, which can allow structures to cross page &n;       boundaries and breaks our physical/virtual address assumptions&n;       for DMA.&n;&n;       So, we stick it past the end of our hostdata structure.&n;&n;       ASSUMPTION : &n;       &t; Regardless of how many simultaneous SCSI commands we allow,&n;&t; the probe code only executes a _single_ instruction at a time,&n;&t; so we only need one here, and don&squot;t need to allocate NCR53c7x0_cmd&n;&t; structures for each target until we are no longer in scan_scsis&n;&t; and kmalloc() has become functional (memory_init() happens &n;&t; after all device driver initialization).&n;    */
 id|size
 op_assign
 r_sizeof
@@ -2289,6 +2290,10 @@ id|device_fn
 comma
 id|PCI_BASE_ADDRESS_0
 comma
+(paren
+r_int
+op_star
+)paren
 op_amp
 id|io_port
 )paren
@@ -2305,6 +2310,10 @@ id|device_fn
 comma
 id|PCI_BASE_ADDRESS_1
 comma
+(paren
+r_int
+op_star
+)paren
 op_amp
 id|base
 )paren
@@ -8526,6 +8535,8 @@ id|hostdata-&gt;this_id_mask
 )paren
 suffix:semicolon
 multiline_comment|/*&n;     * Use a maximum (1.6) second handshake to handshake timeout,&n;     * and SCSI recommended .5s selection timeout.&n;     */
+multiline_comment|/*&n;     * The new gcc won&squot;t recognize preprocessing directives&n;     * within macro args.&n;     */
+macro_line|#if 0
 id|NCR53c7x0_write8
 c_func
 (paren
@@ -8541,7 +8552,6 @@ op_amp
 id|STIME0_800_SEL_MASK
 )paren
 multiline_comment|/* Disable HTH interrupt */
-macro_line|#if 0
 op_or
 (paren
 (paren
@@ -8552,9 +8562,26 @@ id|STIME0_800_HTH_SHIFT
 op_amp
 id|STIME0_800_HTH_MASK
 )paren
-macro_line|#endif
 )paren
 suffix:semicolon
+macro_line|#else
+id|NCR53c7x0_write8
+c_func
+(paren
+id|STIME0_REG_800
+comma
+(paren
+(paren
+l_int|14
+op_lshift
+id|STIME0_800_SEL_SHIFT
+)paren
+op_amp
+id|STIME0_800_SEL_MASK
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;     * Enable all interrupts, except parity which we only want when&n;     * the user requests it.&n;     */
 id|NCR53c7x0_write8
 c_func

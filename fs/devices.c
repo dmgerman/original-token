@@ -790,6 +790,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;VFS: Disk change detected on device %d/%d&bslash;n&quot;
 comma
 id|MAJOR

@@ -7,6 +7,17 @@ mdefine_line|#define&t;NEXT_DEV&t;NULL
 multiline_comment|/* A unified ethernet device probe.  This is the easiest way to have every&n;   ethernet adaptor have the name &quot;eth[0123...]&quot;.&n;   */
 r_extern
 r_int
+id|hp100_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|ultra_probe
 c_func
 (paren
@@ -306,7 +317,7 @@ op_star
 id|dev
 )paren
 (brace
-r_int
+id|u_long
 id|base_addr
 op_assign
 id|dev-&gt;base_addr
@@ -314,13 +325,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|base_addr
-OL
-l_int|0
+op_eq
+l_int|0xffe0
+)paren
 op_logical_or
+(paren
 id|base_addr
 op_eq
 l_int|1
+)paren
 )paren
 r_return
 l_int|1
@@ -330,6 +345,14 @@ r_if
 c_cond
 (paren
 l_int|1
+macro_line|#if defined(CONFIG_HP100)
+op_logical_and
+id|hp100_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif&t;
 macro_line|#if defined(CONFIG_ULTRA)
 op_logical_and
 id|ultra_probe

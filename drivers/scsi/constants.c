@@ -5,17 +5,17 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 DECL|macro|CONST_COMMAND
-mdefine_line|#define CONST_COMMAND &t;0x01
+mdefine_line|#define CONST_COMMAND   0x01
 DECL|macro|CONST_STATUS
-mdefine_line|#define CONST_STATUS &t;0x02
+mdefine_line|#define CONST_STATUS    0x02
 DECL|macro|CONST_SENSE
-mdefine_line|#define CONST_SENSE &t;0x04
+mdefine_line|#define CONST_SENSE     0x04
 DECL|macro|CONST_XSENSE
-mdefine_line|#define CONST_XSENSE &t;0x08
+mdefine_line|#define CONST_XSENSE    0x08
 DECL|macro|CONST_CMND
-mdefine_line|#define CONST_CMND&t;0x10
+mdefine_line|#define CONST_CMND      0x10
 DECL|macro|CONST_MSG
-mdefine_line|#define CONST_MSG&t;0x20
+mdefine_line|#define CONST_MSG       0x20
 DECL|variable|unknown
 r_static
 r_const
@@ -184,7 +184,7 @@ comma
 l_string|&quot;Read Defect Data&quot;
 comma
 multiline_comment|/* 38-3c */
-id|unknown
+l_string|&quot;Medium Scan&quot;
 comma
 l_string|&quot;Compare&quot;
 comma
@@ -194,12 +194,12 @@ l_string|&quot;Write Buffer&quot;
 comma
 l_string|&quot;Read Buffer&quot;
 comma
-multiline_comment|/* 3d-39 */
-id|unknown
+multiline_comment|/* 3d-3f */
+l_string|&quot;Update Block&quot;
 comma
 l_string|&quot;Read Long&quot;
 comma
-id|unknown
+l_string|&quot;Write Long&quot;
 comma
 )brace
 suffix:semicolon
@@ -216,7 +216,7 @@ op_assign
 multiline_comment|/* 40-41 */
 l_string|&quot;Change Definition&quot;
 comma
-id|unknown
+l_string|&quot;Write Same&quot;
 comma
 multiline_comment|/* 42-48 */
 id|unknown
@@ -243,6 +243,8 @@ comma
 l_string|&quot;Log Select&quot;
 comma
 l_string|&quot;Log Sense&quot;
+comma
+id|unknown
 comma
 id|unknown
 comma
@@ -286,9 +288,9 @@ mdefine_line|#define group(opcode) (((opcode) &gt;&gt; 5) &amp; 7)
 DECL|macro|RESERVED_GROUP
 mdefine_line|#define RESERVED_GROUP  0
 DECL|macro|VENDOR_GROUP
-mdefine_line|#define VENDOR_GROUP &t;1
+mdefine_line|#define VENDOR_GROUP    1
 DECL|macro|NOTEXT_GROUP
-mdefine_line|#define NOTEXT_GROUP&t;2
+mdefine_line|#define NOTEXT_GROUP    2
 DECL|variable|commands
 r_static
 r_const
@@ -5238,4 +5240,5 @@ id|cmd-&gt;cmnd
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Overrides for Emacs so that we almost follow Linus&squot;s tabbing style.&n; * Emacs will notice this stuff at the end of the file and automatically&n; * adjust the settings for this buffer only.  This must remain at the end&n; * of the file.&n; * ---------------------------------------------------------------------------&n; * Local variables:&n; * c-indent-level: 4&n; * c-brace-imaginary-offset: 0&n; * c-brace-offset: -4&n; * c-argdecl-indent: 4&n; * c-label-offset: -4&n; * c-continued-statement-offset: 4&n; * c-continued-brace-offset: 0&n; * indent-tabs-mode: nil&n; * tab-width: 8&n; * End:&n; */
 eof
