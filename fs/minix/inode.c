@@ -1432,7 +1432,7 @@ id|s
 suffix:semicolon
 )brace
 DECL|function|minix_statfs
-r_void
+r_int
 id|minix_statfs
 c_func
 (paren
@@ -1500,6 +1500,7 @@ id|tmp.f_namelen
 op_assign
 id|sb-&gt;u.minix_sb.s_namelen
 suffix:semicolon
+r_return
 id|copy_to_user
 c_func
 (paren
@@ -1510,6 +1511,12 @@ id|tmp
 comma
 id|bufsiz
 )paren
+ques
+c_cond
+op_minus
+id|EFAULT
+suffix:colon
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * The minix V1 fs bmap functions.&n; */
@@ -2331,9 +2338,11 @@ id|inode-&gt;i_ctime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
-id|inode-&gt;i_dirt
-op_assign
-l_int|1
+id|mark_inode_dirty
+c_func
+(paren
+id|inode
+)paren
 suffix:semicolon
 r_return
 id|result
@@ -2937,9 +2946,11 @@ id|inode-&gt;i_ctime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
-id|inode-&gt;i_dirt
-op_assign
-l_int|1
+id|mark_inode_dirty
+c_func
+(paren
+id|inode
+)paren
 suffix:semicolon
 r_return
 id|result
@@ -4352,10 +4363,6 @@ comma
 id|ino
 )paren
 suffix:semicolon
-id|inode-&gt;i_dirt
-op_assign
-l_int|0
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -4400,10 +4407,6 @@ c_func
 (paren
 l_string|&quot;unable to read i-node block&bslash;n&quot;
 )paren
-suffix:semicolon
-id|inode-&gt;i_dirt
-op_assign
-l_int|0
 suffix:semicolon
 r_return
 l_int|0
@@ -4503,10 +4506,6 @@ id|inode-&gt;u.minix_i.u.i1_data
 id|block
 )braket
 suffix:semicolon
-id|inode-&gt;i_dirt
-op_assign
-l_int|0
-suffix:semicolon
 id|mark_buffer_dirty
 c_func
 (paren
@@ -4579,10 +4578,6 @@ comma
 id|ino
 )paren
 suffix:semicolon
-id|inode-&gt;i_dirt
-op_assign
-l_int|0
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -4627,10 +4622,6 @@ c_func
 (paren
 l_string|&quot;unable to read i-node block&bslash;n&quot;
 )paren
-suffix:semicolon
-id|inode-&gt;i_dirt
-op_assign
-l_int|0
 suffix:semicolon
 r_return
 l_int|0
@@ -4737,10 +4728,6 @@ id|inode-&gt;u.minix_i.u.i2_data
 (braket
 id|block
 )braket
-suffix:semicolon
-id|inode-&gt;i_dirt
-op_assign
-l_int|0
 suffix:semicolon
 id|mark_buffer_dirty
 c_func

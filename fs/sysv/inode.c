@@ -1783,6 +1783,11 @@ id|dev
 op_assign
 id|sb-&gt;s_dev
 suffix:semicolon
+r_struct
+id|inode
+op_star
+id|root_inode
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2650,7 +2655,7 @@ op_assign
 op_amp
 id|sysv_sops
 suffix:semicolon
-id|sb-&gt;s_mounted
+id|root_inode
 op_assign
 id|iget
 c_func
@@ -2658,6 +2663,16 @@ c_func
 id|sb
 comma
 id|SYSV_ROOT_INO
+)paren
+suffix:semicolon
+id|sb-&gt;s_root
+op_assign
+id|d_alloc_root
+c_func
+(paren
+id|root_inode
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 id|unlock_super
@@ -2670,7 +2685,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|sb-&gt;s_mounted
+id|sb-&gt;s_root
 )paren
 (brace
 id|printk
@@ -2887,7 +2902,7 @@ id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
 DECL|function|sysv_statfs
-r_void
+r_int
 id|sysv_statfs
 c_func
 (paren
@@ -2958,6 +2973,7 @@ id|SYSV_NAMELEN
 suffix:semicolon
 multiline_comment|/* Don&squot;t know what value to put in tmp.f_fsid */
 multiline_comment|/* file system id */
+r_return
 id|copy_to_user
 c_func
 (paren
@@ -2968,6 +2984,12 @@ id|tmp
 comma
 id|bufsiz
 )paren
+ques
+c_cond
+op_minus
+id|EFAULT
+suffix:colon
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* bmap support for running executables and shared libraries. */
@@ -3653,9 +3675,11 @@ id|inode-&gt;i_ctime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
-id|inode-&gt;i_dirt
-op_assign
-l_int|1
+id|mark_inode_dirty
+c_func
+(paren
+id|inode
+)paren
 suffix:semicolon
 r_return
 id|result
@@ -5081,10 +5105,6 @@ comma
 id|ino
 )paren
 suffix:semicolon
-id|inode-&gt;i_dirt
-op_assign
-l_int|0
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -5127,10 +5147,6 @@ c_func
 (paren
 l_string|&quot;unable to read i-node block&bslash;n&quot;
 )paren
-suffix:semicolon
-id|inode-&gt;i_dirt
-op_assign
-l_int|0
 suffix:semicolon
 r_return
 l_int|0
@@ -5350,10 +5366,6 @@ id|inode-&gt;u.sysv_i.i_data
 id|block
 )braket
 )paren
-suffix:semicolon
-id|inode-&gt;i_dirt
-op_assign
-l_int|0
 suffix:semicolon
 id|mark_buffer_dirty
 c_func

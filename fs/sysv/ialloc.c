@@ -770,9 +770,11 @@ id|dir-&gt;i_gid
 suffix:colon
 id|current-&gt;fsgid
 suffix:semicolon
-id|inode-&gt;i_dirt
-op_assign
-l_int|1
+id|mark_inode_dirty
+c_func
+(paren
+id|inode
+)paren
 suffix:semicolon
 id|inode-&gt;i_ino
 op_assign
@@ -821,9 +823,11 @@ id|inode
 suffix:semicolon
 multiline_comment|/* ensure inode not allocated again */
 multiline_comment|/* FIXME: caller may call this too. */
-id|inode-&gt;i_dirt
-op_assign
-l_int|1
+id|mark_inode_dirty
+c_func
+(paren
+id|inode
+)paren
 suffix:semicolon
 multiline_comment|/* cleared by sysv_write_inode() */
 multiline_comment|/* That&squot;s it. */

@@ -8,6 +8,7 @@ macro_line|#include &quot;autofs_i.h&quot;
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
+multiline_comment|/*&n; * Dummy functions - do we ever actually want to do&n; * something here?&n; */
 DECL|function|autofs_put_inode
 r_static
 r_void
@@ -20,13 +21,19 @@ op_star
 id|inode
 )paren
 (brace
-r_if
-c_cond
+)brace
+DECL|function|autofs_delete_inode
+r_static
+r_void
+id|autofs_delete_inode
+c_func
 (paren
-id|inode-&gt;i_nlink
+r_struct
+id|inode
+op_star
+id|inode
 )paren
-r_return
-suffix:semicolon
+(brace
 id|inode-&gt;i_size
 op_assign
 l_int|0
@@ -203,16 +210,20 @@ op_assign
 (brace
 id|autofs_read_inode
 comma
-l_int|NULL
-comma
 id|autofs_write_inode
 comma
 id|autofs_put_inode
 comma
+id|autofs_delete_inode
+comma
+l_int|NULL
+comma
+multiline_comment|/* notify_change */
 id|autofs_put_super
 comma
 l_int|NULL
 comma
+multiline_comment|/* write_super */
 id|autofs_statfs
 comma
 l_int|NULL

@@ -1191,15 +1191,8 @@ op_star
 id|dir
 comma
 r_struct
-id|qstr
-op_star
 id|dentry
-comma
-r_struct
-id|inode
 op_star
-op_star
-id|result
 )paren
 suffix:semicolon
 r_extern

@@ -43,6 +43,16 @@ op_star
 suffix:semicolon
 r_static
 r_void
+id|nfs_delete_inode
+c_func
+(paren
+r_struct
+id|inode
+op_star
+)paren
+suffix:semicolon
+r_static
+r_void
 id|nfs_put_super
 c_func
 (paren
@@ -88,15 +98,18 @@ op_assign
 id|nfs_read_inode
 comma
 multiline_comment|/* read inode */
-id|nfs_notify_change
-comma
-multiline_comment|/* notify change */
 l_int|NULL
 comma
 multiline_comment|/* write inode */
 id|nfs_put_inode
 comma
 multiline_comment|/* put inode */
+id|nfs_delete_inode
+comma
+multiline_comment|/* delete inode */
+id|nfs_notify_change
+comma
+multiline_comment|/* notify change */
 id|nfs_put_super
 comma
 multiline_comment|/* put superblock */
@@ -173,15 +186,28 @@ comma
 id|inode-&gt;i_ino
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|inode-&gt;i_pipe
-)paren
-id|clear_inode
+)brace
+multiline_comment|/*&n; * This should do any silly-rename cleanups once we&n; * get silly-renaming working again..&n; */
+r_static
+r_void
+DECL|function|nfs_delete_inode
+id|nfs_delete_inode
 c_func
 (paren
+r_struct
 id|inode
+op_star
+id|inode
+)paren
+(brace
+id|dprintk
+c_func
+(paren
+l_string|&quot;NFS: delete_inode(%x/%ld)&bslash;n&quot;
+comma
+id|inode-&gt;i_dev
+comma
+id|inode-&gt;i_ino
 )paren
 suffix:semicolon
 )brace
@@ -1242,12 +1268,7 @@ id|inode-&gt;i_dev
 comma
 id|inode-&gt;i_ino
 comma
-id|atomic_read
-c_func
-(paren
-op_amp
 id|inode-&gt;i_count
-)paren
 )paren
 suffix:semicolon
 r_return

@@ -84,13 +84,13 @@ op_star
 id|fh_export
 suffix:semicolon
 multiline_comment|/* export pointer */
-DECL|member|fh_inode
+DECL|member|fh_dentry
 r_struct
-id|inode
+id|dentry
 op_star
-id|fh_inode
+id|fh_dentry
 suffix:semicolon
-multiline_comment|/* inode */
+multiline_comment|/* file */
 DECL|member|fh_pre_size
 r_int
 id|fh_pre_size
@@ -244,7 +244,7 @@ id|inode
 op_star
 id|inode
 op_assign
-id|fhp-&gt;fh_inode
+id|fhp-&gt;fh_dentry-&gt;d_inode
 suffix:semicolon
 multiline_comment|/*&n;&t;dfprintk(FILEOP, &quot;nfsd: fh_lock(%x/%ld) locked = %d&bslash;n&quot;,&n;&t;&t;&t;SVCFH_DEV(fhp), SVCFH_INO(fhp), fhp-&gt;fh_locked);&n;&t; */
 r_if
@@ -296,7 +296,7 @@ id|inode
 op_star
 id|inode
 op_assign
-id|fhp-&gt;fh_inode
+id|fhp-&gt;fh_dentry-&gt;d_inode
 suffix:semicolon
 r_if
 c_cond
@@ -345,7 +345,7 @@ id|fhp
 r_if
 c_cond
 (paren
-id|fhp-&gt;fh_inode
+id|fhp-&gt;fh_dentry
 )paren
 (brace
 id|fh_unlock
@@ -354,10 +354,10 @@ c_func
 id|fhp
 )paren
 suffix:semicolon
-id|iput
+id|dput
 c_func
 (paren
-id|fhp-&gt;fh_inode
+id|fhp-&gt;fh_dentry
 )paren
 suffix:semicolon
 )brace
@@ -386,18 +386,18 @@ id|line
 )paren
 (brace
 r_struct
-id|inode
+id|dentry
 op_star
-id|inode
+id|dentry
 suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
 (paren
-id|inode
+id|dentry
 op_assign
-id|fhp-&gt;fh_inode
+id|fhp-&gt;fh_dentry
 )paren
 )paren
 r_return
@@ -406,29 +406,22 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|atomic_read
-c_func
-(paren
-op_amp
-id|inode-&gt;i_count
-)paren
+id|dentry-&gt;d_count
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;nfsd: trying to free free inode in %s:%d&bslash;n&quot;
-l_string|&quot;      dev %04x ino %ld, mode %07o&bslash;n&quot;
+l_string|&quot;nfsd: trying to free free dentry in %s:%d&bslash;n&quot;
+l_string|&quot;      file %s/%s&bslash;n&quot;
 comma
 id|file
 comma
 id|line
 comma
-id|inode-&gt;i_dev
+id|dentry-&gt;d_parent-&gt;d_name.name
 comma
-id|inode-&gt;i_ino
-comma
-id|inode-&gt;i_mode
+id|dentry-&gt;d_name.name
 )paren
 suffix:semicolon
 )brace
@@ -440,10 +433,10 @@ c_func
 id|fhp
 )paren
 suffix:semicolon
-id|iput
+id|dput
 c_func
 (paren
-id|inode
+id|dentry
 )paren
 suffix:semicolon
 )brace

@@ -82,7 +82,7 @@ mdefine_line|#define ENTRY_ENABLED 1&t;&t;/* the old binfmt_entry.enabled */
 DECL|macro|ENTRY_MAGIC
 mdefine_line|#define&t;ENTRY_MAGIC 8&t;&t;/* not filename detection */
 DECL|macro|ENTRY_STRIP_EXT
-mdefine_line|#define ENTRY_STRIP_EXT 32&t;/* strip of last filename extension */
+mdefine_line|#define ENTRY_STRIP_EXT 32&t;/* strip off last filename extension */
 r_static
 r_int
 id|load_misc_binary
@@ -586,6 +586,8 @@ id|fmt_flags
 op_assign
 l_int|0
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -836,6 +838,8 @@ id|regs
 suffix:semicolon
 id|_ret
 suffix:colon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 id|retval
 suffix:semicolon
@@ -1174,6 +1178,8 @@ id|err
 op_assign
 l_int|0
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 multiline_comment|/* some sanity checks */
 r_if
 c_cond
@@ -1190,10 +1196,16 @@ OG
 l_int|256
 )paren
 )paren
-r_return
+(brace
+id|err
+op_assign
 op_minus
 id|EINVAL
 suffix:semicolon
+r_goto
+id|_err
+suffix:semicolon
+)brace
 id|memsize
 op_assign
 r_sizeof
@@ -1225,10 +1237,16 @@ id|GFP_USER
 )paren
 )paren
 )paren
-r_return
+(brace
+id|err
+op_assign
 op_minus
 id|ENOMEM
 suffix:semicolon
+r_goto
+id|_err
+suffix:semicolon
+)brace
 id|sp
 op_assign
 id|buffer
@@ -1537,9 +1555,13 @@ c_func
 id|e
 )paren
 suffix:semicolon
-r_return
+id|err
+op_assign
 op_minus
 id|EINVAL
+suffix:semicolon
+r_goto
+id|_err
 suffix:semicolon
 )brace
 id|write_lock
@@ -1564,8 +1586,16 @@ op_amp
 id|entries_lock
 )paren
 suffix:semicolon
-r_return
+id|err
+op_assign
 id|count
+suffix:semicolon
+id|_err
+suffix:colon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+r_return
+id|err
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Get status of entry/binfmt_misc&n; * FIXME? should an entry be marked disabled if binfmt_misc is disabled though&n; *        entry is enabled?&n; */
@@ -1612,6 +1642,8 @@ r_int
 id|elen
 comma
 id|i
+suffix:semicolon
+id|MOD_INC_USE_COUNT
 suffix:semicolon
 macro_line|#ifndef VERBOSE_STATUS
 r_if
@@ -2011,6 +2043,8 @@ id|page
 op_plus
 id|off
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 id|elen
 suffix:semicolon
@@ -2050,6 +2084,8 @@ r_int
 id|res
 op_assign
 id|count
+suffix:semicolon
+id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_if
 c_cond
@@ -2248,6 +2284,8 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 id|res
 suffix:semicolon

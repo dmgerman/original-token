@@ -598,11 +598,13 @@ op_assign
 (brace
 id|ext2_read_inode
 comma
-l_int|NULL
-comma
 id|ext2_write_inode
 comma
 id|ext2_put_inode
+comma
+id|ext2_delete_inode
+comma
+l_int|NULL
 comma
 id|ext2_put_super
 comma

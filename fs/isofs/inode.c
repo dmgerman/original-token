@@ -89,13 +89,16 @@ id|isofs_read_inode
 comma
 l_int|NULL
 comma
-multiline_comment|/* notify_change */
-l_int|NULL
-comma
 multiline_comment|/* write_inode */
 l_int|NULL
 comma
 multiline_comment|/* put_inode */
+l_int|NULL
+comma
+multiline_comment|/* delete_inode */
+l_int|NULL
+comma
+multiline_comment|/* notify_change */
 id|isofs_put_super
 comma
 l_int|NULL
@@ -2709,11 +2712,6 @@ id|i_sb
 op_member_access_from_pointer
 id|u.isofs_sb.s_log_zone_size
 suffix:semicolon
-id|inode-&gt;u.isofs_i.i_backlink
-op_assign
-l_int|0xffffffff
-suffix:semicolon
-multiline_comment|/* Will be used for previous directory */
 r_switch
 c_cond
 (paren
@@ -2988,10 +2986,6 @@ suffix:semicolon
 id|inode-&gt;u.isofs_i.i_first_extent
 op_assign
 l_int|0
-suffix:semicolon
-id|inode-&gt;u.isofs_i.i_backlink
-op_assign
-l_int|0xffffffff
 suffix:semicolon
 id|inode-&gt;i_size
 op_assign

@@ -624,12 +624,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|atomic_read
-c_func
-(paren
-op_amp
 id|inode-&gt;i_count
-)paren
 OG
 l_int|1
 )paren
@@ -638,12 +633,7 @@ id|printk
 (paren
 l_string|&quot;ext2_free_inode: inode has count=%d&bslash;n&quot;
 comma
-id|atomic_read
-c_func
-(paren
-op_amp
 id|inode-&gt;i_count
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -1667,15 +1657,6 @@ suffix:semicolon
 id|inode-&gt;i_sb
 op_assign
 id|sb
-suffix:semicolon
-id|atomic_set
-c_func
-(paren
-op_amp
-id|inode-&gt;i_count
-comma
-l_int|1
-)paren
 suffix:semicolon
 id|inode-&gt;i_nlink
 op_assign

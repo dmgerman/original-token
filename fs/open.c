@@ -1838,6 +1838,10 @@ id|dentry
 op_assign
 id|tmp
 suffix:semicolon
+id|error
+op_assign
+l_int|0
+suffix:semicolon
 id|dput_and_out
 suffix:colon
 id|dput

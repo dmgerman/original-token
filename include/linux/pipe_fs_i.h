@@ -21,11 +21,6 @@ r_int
 r_int
 id|start
 suffix:semicolon
-DECL|member|len
-r_int
-r_int
-id|len
-suffix:semicolon
 DECL|member|lock
 r_int
 r_int
@@ -60,7 +55,7 @@ mdefine_line|#define PIPE_BASE(inode)&t;((inode).u.pipe_i.base)
 DECL|macro|PIPE_START
 mdefine_line|#define PIPE_START(inode)&t;((inode).u.pipe_i.start)
 DECL|macro|PIPE_LEN
-mdefine_line|#define PIPE_LEN(inode)&t;&t;((inode).u.pipe_i.len)
+mdefine_line|#define PIPE_LEN(inode)&t;&t;((inode).i_size)
 DECL|macro|PIPE_RD_OPENERS
 mdefine_line|#define PIPE_RD_OPENERS(inode)&t;((inode).u.pipe_i.rd_openers)
 DECL|macro|PIPE_WR_OPENERS

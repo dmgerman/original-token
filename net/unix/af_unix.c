@@ -2051,13 +2051,10 @@ id|inode
 op_assign
 id|dentry-&gt;d_inode
 suffix:semicolon
-id|atomic_inc
-c_func
-(paren
-op_amp
 id|inode-&gt;i_count
-)paren
+op_increment
 suffix:semicolon
+multiline_comment|/* HATEFUL - we should use the dentry */
 id|dput
 c_func
 (paren
@@ -3104,13 +3101,10 @@ c_cond
 id|sk-&gt;protinfo.af_unix.inode
 )paren
 (brace
-id|atomic_inc
-c_func
-(paren
-op_amp
 id|sk-&gt;protinfo.af_unix.inode-&gt;i_count
-)paren
+op_increment
 suffix:semicolon
+multiline_comment|/* Should use dentry */
 id|newsk-&gt;protinfo.af_unix.inode
 op_assign
 id|sk-&gt;protinfo.af_unix.inode

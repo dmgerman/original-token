@@ -97,6 +97,9 @@ multiline_comment|/* rename */
 l_int|NULL
 comma
 multiline_comment|/* readlink */
+l_int|NULL
+comma
+multiline_comment|/* follow_link */
 id|generic_readpage
 comma
 multiline_comment|/* readpage */
@@ -196,6 +199,9 @@ multiline_comment|/* rename */
 l_int|NULL
 comma
 multiline_comment|/* readlink */
+l_int|NULL
+comma
+multiline_comment|/* follow_link */
 l_int|NULL
 comma
 multiline_comment|/* readpage */
@@ -1636,9 +1642,11 @@ id|inode-&gt;i_size
 op_assign
 id|filp-&gt;f_pos
 suffix:semicolon
-id|inode-&gt;i_dirt
-op_assign
-l_int|1
+id|mark_inode_dirty
+c_func
+(paren
+id|inode
+)paren
 suffix:semicolon
 )brace
 id|fat_set_uptodate
@@ -1696,9 +1704,11 @@ id|i_attrs
 op_or_assign
 id|ATTR_ARCH
 suffix:semicolon
-id|inode-&gt;i_dirt
-op_assign
-l_int|1
+id|mark_inode_dirty
+c_func
+(paren
+id|inode
+)paren
 suffix:semicolon
 r_return
 id|buf
@@ -1776,9 +1786,11 @@ id|i_attrs
 op_or_assign
 id|ATTR_ARCH
 suffix:semicolon
-id|inode-&gt;i_dirt
-op_assign
-l_int|1
+id|mark_inode_dirty
+c_func
+(paren
+id|inode
+)paren
 suffix:semicolon
 )brace
 eof

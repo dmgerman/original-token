@@ -528,12 +528,7 @@ id|inode-&gt;i_dev
 comma
 id|inode-&gt;i_ino
 comma
-id|atomic_read
-c_func
-(paren
-op_amp
 id|inode-&gt;i_count
-)paren
 comma
 id|count
 comma

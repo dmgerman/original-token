@@ -733,10 +733,6 @@ op_assign
 op_amp
 id|fifo_inode_operations
 suffix:semicolon
-id|inode-&gt;i_pipe
-op_assign
-l_int|1
-suffix:semicolon
 id|PIPE_LOCK
 c_func
 (paren

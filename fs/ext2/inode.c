@@ -23,6 +23,7 @@ r_int
 id|do_sync
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * Called at each iput()&n; */
 DECL|function|ext2_put_inode
 r_void
 id|ext2_put_inode
@@ -38,11 +39,21 @@ id|ext2_discard_prealloc
 id|inode
 )paren
 suffix:semicolon
+)brace
+multiline_comment|/*&n; * Called at the last iput() if i_nlink is zero.&n; */
+DECL|function|ext2_delete_inode
+r_void
+id|ext2_delete_inode
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+)paren
+(brace
 r_if
 c_cond
 (paren
-id|inode-&gt;i_nlink
-op_logical_or
 id|inode-&gt;i_ino
 op_eq
 id|EXT2_ACL_IDX_INO

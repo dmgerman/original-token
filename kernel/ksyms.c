@@ -742,6 +742,13 @@ c_func
 id|posix_unblock_lock
 )paren
 suffix:semicolon
+DECL|variable|dput
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|dput
+)paren
+suffix:semicolon
 macro_line|#if !defined(CONFIG_NFSD) &amp;&amp; defined(CONFIG_NFSD_MODULE)
 DECL|variable|do_nfsservctl
 id|EXPORT_SYMBOL

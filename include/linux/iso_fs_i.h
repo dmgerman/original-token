@@ -11,11 +11,6 @@ r_int
 r_int
 id|i_first_extent
 suffix:semicolon
-DECL|member|i_backlink
-r_int
-r_int
-id|i_backlink
-suffix:semicolon
 DECL|member|i_file_format
 r_int
 r_char

@@ -91,30 +91,13 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Filesystem panic (dev %s, &quot;
+l_string|&quot;Filesystem panic (dev %s).&quot;
 comma
 id|kdevname
 c_func
 (paren
 id|s-&gt;s_dev
 )paren
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;mounted on %s:%ld)&bslash;n  %s&bslash;n&quot;
-comma
-multiline_comment|/* note: kdevname returns &amp; static char[] */
-id|kdevname
-c_func
-(paren
-id|s-&gt;s_covered-&gt;i_dev
-)paren
-comma
-id|s-&gt;s_covered-&gt;i_ino
-comma
-id|msg
 )paren
 suffix:semicolon
 r_if
@@ -805,9 +788,11 @@ id|i_start
 op_assign
 id|nr
 suffix:semicolon
-id|inode-&gt;i_dirt
-op_assign
-l_int|1
+id|mark_inode_dirty
+c_func
+(paren
+id|inode
+)paren
 suffix:semicolon
 )brace
 macro_line|#ifdef DEBUG
@@ -1047,9 +1032,11 @@ id|inode
 )paren
 suffix:semicolon
 macro_line|#endif
-id|inode-&gt;i_dirt
-op_assign
-l_int|1
+id|mark_inode_dirty
+c_func
+(paren
+id|inode
+)paren
 suffix:semicolon
 )brace
 r_return
