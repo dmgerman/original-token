@@ -808,7 +808,6 @@ op_amp
 id|tcp_lock
 )paren
 suffix:semicolon
-multiline_comment|/* Refresh: need write lock to write to conntrack. */
 id|ip_ct_refresh
 c_func
 (paren
@@ -827,6 +826,7 @@ suffix:semicolon
 multiline_comment|/* Called when a new connection for this protocol found. */
 DECL|function|tcp_new
 r_static
+r_int
 r_int
 id|tcp_new
 c_func
@@ -906,26 +906,15 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_else
-(brace
 id|conntrack-&gt;proto.tcp_state
 op_assign
 id|newconntrack
 suffix:semicolon
-id|ip_ct_refresh
-c_func
-(paren
-id|conntrack
-comma
+r_return
 id|tcp_timeouts
 (braket
 id|conntrack-&gt;proto.tcp_state
 )braket
-)paren
-suffix:semicolon
-)brace
-r_return
-l_int|1
 suffix:semicolon
 )brace
 DECL|variable|ip_conntrack_protocol_tcp

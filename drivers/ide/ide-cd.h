@@ -30,6 +30,8 @@ DECL|macro|SECTOR_BUFFER_SIZE
 mdefine_line|#define SECTOR_BUFFER_SIZE&t;(CD_FRAMESIZE * 32)
 DECL|macro|SECTORS_BUFFER
 mdefine_line|#define SECTORS_BUFFER&t;&t;(SECTOR_BUFFER_SIZE / SECTOR_SIZE)
+DECL|macro|BLOCKS_PER_FRAME
+mdefine_line|#define BLOCKS_PER_FRAME&t;(CD_FRAMESIZE / BLOCK_SIZE)
 DECL|macro|MIN
 mdefine_line|#define MIN(a,b) ((a) &lt; (b) ? (a) : (b))
 multiline_comment|/* special command codes for strategy routine. */
@@ -271,11 +273,11 @@ DECL|member|stat
 r_int
 id|stat
 suffix:semicolon
-DECL|member|sense_data
+DECL|member|sense
 r_struct
 id|request_sense
 op_star
-id|sense_data
+id|sense
 suffix:semicolon
 DECL|member|c
 r_int

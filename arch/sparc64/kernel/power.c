@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: power.c,v 1.5 1999/12/19 23:28:00 davem Exp $&n; * power.c: Power management driver.&n; *&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: power.c,v 1.6 2000/04/13 00:59:59 davem Exp $&n; * power.c: Power management driver.&n; *&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -166,13 +166,10 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
-id|current-&gt;session
-op_assign
-l_int|1
-suffix:semicolon
-id|current-&gt;pgrp
-op_assign
-l_int|1
+id|daemonize
+c_func
+(paren
+)paren
 suffix:semicolon
 id|sprintf
 c_func

@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
+macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &quot;midway.h&quot;
 DECL|macro|KERNEL_OFFSET
 mdefine_line|#define KERNEL_OFFSET&t;0xC0000000&t;/* kernel 0x0 is at phys 0xC0000000 */
@@ -97,7 +98,7 @@ id|backlog
 suffix:semicolon
 multiline_comment|/* queue of waiting TX buffers */
 DECL|member|backlog_len
-r_int
+id|atomic_t
 id|backlog_len
 suffix:semicolon
 multiline_comment|/* length of backlog in bytes */
@@ -199,6 +200,17 @@ id|spinlock_t
 id|lock
 suffix:semicolon
 multiline_comment|/* sync with interrupt */
+DECL|member|task
+r_struct
+id|tasklet_struct
+id|task
+suffix:semicolon
+multiline_comment|/* tasklet for interrupt work */
+DECL|member|events
+id|u32
+id|events
+suffix:semicolon
+multiline_comment|/* pending events */
 multiline_comment|/*-------------------------------- base pointers into Midway address&n;&t;&t;&t;&t;&t;   space */
 DECL|member|phy
 r_int

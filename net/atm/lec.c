@@ -26,6 +26,7 @@ macro_line|#if defined(CONFIG_BRIDGE) || defined(CONFIG_BRIDGE_MODULE)
 macro_line|#include &lt;linux/if_bridge.h&gt;
 macro_line|#include &quot;../bridge/br_private.h&quot;
 DECL|variable|bridge_ula
+r_static
 r_int
 r_char
 id|bridge_ula
@@ -2225,13 +2226,6 @@ l_int|5
 )braket
 )paren
 suffix:semicolon
-id|read_lock
-c_func
-(paren
-op_amp
-id|lane_bridge_hook_lock
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2243,17 +2237,8 @@ id|dev-&gt;br_port
 op_eq
 l_int|NULL
 )paren
-(brace
-id|read_unlock
-c_func
-(paren
-op_amp
-id|lane_bridge_hook_lock
-)paren
-suffix:semicolon
 r_break
 suffix:semicolon
-)brace
 id|f
 op_assign
 id|br_fdb_get_hook
@@ -2322,13 +2307,6 @@ c_func
 id|f
 )paren
 suffix:semicolon
-id|read_unlock
-c_func
-(paren
-op_amp
-id|lane_bridge_hook_lock
-)paren
-suffix:semicolon
 r_break
 suffix:semicolon
 )brace
@@ -2390,13 +2368,6 @@ id|br_fdb_put_hook
 c_func
 (paren
 id|f
-)paren
-suffix:semicolon
-id|read_unlock
-c_func
-(paren
-op_amp
-id|lane_bridge_hook_lock
 )paren
 suffix:semicolon
 macro_line|#endif /* defined(CONFIG_BRIDGE) || defined(CONFIG_BRIDGE_MODULE) */
@@ -3351,10 +3322,6 @@ suffix:semicolon
 id|skb-&gt;dev
 op_assign
 id|dev
-suffix:semicolon
-id|skb-&gt;rx_dev
-op_assign
-l_int|NULL
 suffix:semicolon
 id|skb-&gt;data
 op_add_assign
@@ -4960,7 +4927,7 @@ c_func
 id|ATM_VF_RELEASED
 comma
 op_amp
-id|entry-&gt;vcc-&gt;flags
+id|entry-&gt;recv_vcc-&gt;flags
 )paren
 suffix:semicolon
 id|clear_bit
@@ -4969,7 +4936,7 @@ c_func
 id|ATM_VF_READY
 comma
 op_amp
-id|entry-&gt;vcc-&gt;flags
+id|entry-&gt;recv_vcc-&gt;flags
 )paren
 suffix:semicolon
 id|entry-&gt;recv_vcc

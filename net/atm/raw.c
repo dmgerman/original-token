@@ -105,7 +105,7 @@ id|wake_up
 c_func
 (paren
 op_amp
-id|vcc-&gt;wsleep
+id|vcc-&gt;sleep
 )paren
 suffix:semicolon
 )brace

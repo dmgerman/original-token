@@ -311,9 +311,9 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;RPC:      rpc_getport_external(%s, %d, %d, %d)&bslash;n&quot;
+l_string|&quot;RPC:      rpc_getport_external(%u.%u.%u.%u, %d, %d, %d)&bslash;n&quot;
 comma
-id|in_ntoa
+id|NIPQUAD
 c_func
 (paren
 id|sin-&gt;sin_addr.s_addr

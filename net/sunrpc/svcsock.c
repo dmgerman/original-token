@@ -1992,11 +1992,11 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;%s: connect from unprivileged port: %s:%d&quot;
+l_string|&quot;%s: connect from unprivileged port: %u.%u.%u.%u:%d&quot;
 comma
 id|serv-&gt;sv_name
 comma
-id|in_ntoa
+id|NIPQUAD
 c_func
 (paren
 id|sin.sin_addr.s_addr
@@ -2016,11 +2016,11 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;%s: connect from %s:%04x&bslash;n&quot;
+l_string|&quot;%s: connect from %u.%u.%u.%u:%04x&bslash;n&quot;
 comma
 id|serv-&gt;sv_name
 comma
-id|in_ntoa
+id|NIPQUAD
 c_func
 (paren
 id|sin.sin_addr.s_addr
@@ -3455,13 +3455,13 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;svc: svc_create_socket(%s, %d, %08x:%d)&bslash;n&quot;
+l_string|&quot;svc: svc_create_socket(%s, %d, %u.%u.%u.%u:%d)&bslash;n&quot;
 comma
 id|serv-&gt;sv_program-&gt;pg_name
 comma
 id|protocol
 comma
-id|ntohl
+id|NIPQUAD
 c_func
 (paren
 id|sin-&gt;sin_addr.s_addr

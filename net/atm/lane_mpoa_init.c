@@ -40,12 +40,6 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#if defined(CONFIG_ATM_LANE) || defined(CONFIG_ATM_LANE_MODULE)
 macro_line|#if defined(CONFIG_BRIDGE) || defined(CONFIG_BRIDGE_MODULE)
-DECL|variable|lane_bridge_hook_lock
-id|rwlock_t
-id|lane_bridge_hook_lock
-op_assign
-id|RW_LOCK_UNLOCKED
-suffix:semicolon
 DECL|variable|br_fdb_get_hook
 r_struct
 id|net_bridge_fdb_entry
@@ -84,13 +78,6 @@ op_assign
 l_int|NULL
 suffix:semicolon
 macro_line|#if defined(CONFIG_ATM_LANE_MODULE) || defined(CONFIG_BRIDGE_MODULE)
-DECL|variable|lane_bridge_hook_lock
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|lane_bridge_hook_lock
-)paren
-suffix:semicolon
 DECL|variable|br_fdb_get_hook
 id|EXPORT_SYMBOL
 c_func

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: io.h,v 1.26 2000/03/30 01:43:26 davem Exp $&n; */
+multiline_comment|/*&n; * $Id: io.h,v 1.27 2000/04/13 04:45:59 davem Exp $&n; */
 macro_line|#ifndef __SPARC_IO_H
 DECL|macro|__SPARC_IO_H
 mdefine_line|#define __SPARC_IO_H
@@ -811,6 +811,8 @@ r_int
 id|size
 )paren
 suffix:semicolon
+DECL|macro|ioremap_nocache
+mdefine_line|#define ioremap_nocache(X,Y)&t;ioremap((X),(Y))
 r_extern
 r_void
 id|iounmap

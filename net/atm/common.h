@@ -1,5 +1,5 @@
 multiline_comment|/* net/atm/common.h - ATM sockets (common part for PVC and SVC) */
-multiline_comment|/* Written 1995-1998 by Werner Almesberger, EPFL LRC/ICA */
+multiline_comment|/* Written 1995-2000 by Werner Almesberger, EPFL LRC/ICA */
 macro_line|#ifndef NET_ATM_COMMON_H
 DECL|macro|NET_ATM_COMMON_H
 mdefine_line|#define NET_ATM_COMMON_H
@@ -231,7 +231,6 @@ op_star
 id|qos
 )paren
 suffix:semicolon
-multiline_comment|/* -- now in atmdev.h:&n;void atm_async_release_vcc(struct atm_vcc *vcc,int reply);&n;*/
 r_void
 id|atm_shutdown_dev
 c_func

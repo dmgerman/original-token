@@ -1354,7 +1354,8 @@ id|u32
 op_star
 id|membase
 suffix:semicolon
-macro_line|#if 0  
+macro_line|#ifdef FILL_RX_POOLS_IN_BH
+DECL|member|bh
 r_struct
 id|tq_struct
 id|bh

@@ -5557,6 +5557,42 @@ id|floppy-&gt;flags
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;Revalidate the new media. Should set blk_size[]&n; */
+DECL|function|idefloppy_revalidate
+r_static
+r_void
+id|idefloppy_revalidate
+(paren
+id|ide_drive_t
+op_star
+id|drive
+)paren
+(brace
+id|grok_partitions
+c_func
+(paren
+id|HWIF
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|gd
+comma
+id|drive-&gt;select.b.unit
+comma
+l_int|1
+op_lshift
+id|PARTN_BITS
+comma
+id|current_capacity
+c_func
+(paren
+id|drive
+)paren
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; *&t;Return the current floppy capacity to ide.c.&n; */
 DECL|function|idefloppy_capacity
 r_static
@@ -7018,6 +7054,9 @@ id|idefloppy_release
 comma
 multiline_comment|/* release */
 id|idefloppy_media_change
+comma
+multiline_comment|/* media_change */
+id|idefloppy_revalidate
 comma
 multiline_comment|/* media_change */
 l_int|NULL

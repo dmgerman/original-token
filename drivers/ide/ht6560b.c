@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;linux/ide.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;ide_modes.h&quot;
 multiline_comment|/* #define DEBUG */
@@ -398,8 +399,6 @@ id|pio
 )paren
 (brace
 r_int
-id|bus_speed
-comma
 id|active_time
 comma
 id|recovery_time
@@ -411,6 +410,14 @@ id|recovery_cycles
 suffix:semicolon
 id|ide_pio_data_t
 id|d
+suffix:semicolon
+r_int
+id|bus_speed
+op_assign
+id|system_bus_clock
+c_func
+(paren
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -434,13 +441,6 @@ id|d
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; *  Just like opti621.c we try to calculate the&n;&t;&t; *  actual cycle time for recovery and activity&n;&t;&t; *  according system bus speed.&n;&t;&t; */
-id|bus_speed
-op_assign
-id|ide_system_bus_speed
-c_func
-(paren
-)paren
-suffix:semicolon
 id|active_time
 op_assign
 id|ide_pio_timings

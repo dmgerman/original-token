@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Declarations of X.25 Packet Layer type objects.&n; *&n; *&t;Jonathan Naylor&t;&t;17/11/96&n; */
+multiline_comment|/*&n; *&t;Declarations of X.25 Packet Layer type objects.&n; *&n; * &t;History&n; *&t;nov/17/96&t;Jonathan Naylor&t;  Initial version.&t;&t;&n; *&t;mar/20/00&t;Daniela Squassoni Disabling/enabling of facilities &n; *&t;&t;&t;&t;&t;  negotiation.&n; */
 macro_line|#ifndef _X25_H
 DECL|macro|_X25_H
 mdefine_line|#define _X25_H 
@@ -223,6 +223,11 @@ r_struct
 id|timer_list
 id|t20timer
 suffix:semicolon
+DECL|member|global_facil_mask
+r_int
+r_int
+id|global_facil_mask
+suffix:semicolon
 )brace
 suffix:semicolon
 r_typedef
@@ -340,6 +345,12 @@ r_struct
 id|x25_calluserdata
 id|calluserdata
 suffix:semicolon
+DECL|member|vc_facil_mask
+r_int
+r_int
+id|vc_facil_mask
+suffix:semicolon
+multiline_comment|/* inc_call facilities mask */
 DECL|typedef|x25_cb
 )brace
 id|x25_cb
@@ -545,6 +556,10 @@ comma
 r_struct
 id|x25_facilities
 op_star
+comma
+r_int
+r_int
+op_star
 )paren
 suffix:semicolon
 r_extern
@@ -559,6 +574,9 @@ comma
 r_struct
 id|x25_facilities
 op_star
+comma
+r_int
+r_int
 )paren
 suffix:semicolon
 r_extern

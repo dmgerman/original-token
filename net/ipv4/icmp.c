@@ -1626,7 +1626,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;ICMP: %d.%d.%d.%d: fragmentation needed and DF set.&bslash;n&quot;
+l_string|&quot;ICMP: %u.%u.%u.%u: fragmentation needed and DF set.&bslash;n&quot;
 comma
 id|NIPQUAD
 c_func
@@ -1690,7 +1690,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;ICMP: %d.%d.%d.%d: Source Route Failed.&bslash;n&quot;
+l_string|&quot;ICMP: %u.%u.%u.%u: Source Route Failed.&bslash;n&quot;
 comma
 id|NIPQUAD
 c_func
@@ -1749,7 +1749,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;%d.%d.%d.%d sent an invalid ICMP error to a broadcast.&bslash;n&quot;
+l_string|&quot;%u.%u.%u.%u sent an invalid ICMP error to a broadcast.&bslash;n&quot;
 comma
 id|NIPQUAD
 c_func
@@ -2436,40 +2436,25 @@ c_func
 )paren
 )paren
 (brace
-r_char
-id|b1
-(braket
-l_int|16
-)braket
-comma
-id|b2
-(braket
-l_int|16
-)braket
-suffix:semicolon
 id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Wrong address mask %s from %s/%s&bslash;n&quot;
+l_string|&quot;Wrong address mask %u.%u.%u.%u from %s/%u.%u.%u.%u&bslash;n&quot;
 comma
-id|in_ntoa2
+id|NIPQUAD
 c_func
 (paren
 id|mask
-comma
-id|b1
-)paren
-comma
-id|in_ntoa2
-c_func
-(paren
-id|rt-&gt;rt_src
-comma
-id|b2
 )paren
 comma
 id|dev-&gt;name
+comma
+id|NIPQUAD
+c_func
+(paren
+id|rt-&gt;rt_src
+)paren
 )paren
 suffix:semicolon
 )brace

@@ -1,8 +1,8 @@
-multiline_comment|/* sx.c -- driver for the Specialix SX series cards. &n; *&n; *  This driver will also support the older SI, and XIO cards.&n; *&n; *&n; *   (C) 1998 - 2000  R.E.Wolff@BitWizard.nl&n; *&n; *  Simon Allen (simonallen@cix.compulink.co.uk) wrote a previous&n; *  version of this driver. Some fragments may have been copied. (none&n; *  yet :-)&n; *&n; * Specialix pays for the development and support of this driver.&n; * Please DO contact support@specialix.co.uk if you require&n; * support. But please read the documentation (sx.txt) first.&n; *&n; *&n; *&n; *      This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License as&n; *      published by the Free Software Foundation; either version 2 of&n; *      the License, or (at your option) any later version.&n; *&n; *      This program is distributed in the hope that it will be&n; *      useful, but WITHOUT ANY WARRANTY; without even the implied&n; *      warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR&n; *      PURPOSE.  See the GNU General Public License for more details.&n; *&n; *      You should have received a copy of the GNU General Public&n; *      License along with this program; if not, write to the Free&n; *      Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,&n; *      USA.&n; *&n; * Revision history:&n; * $Log: sx.c,v $&n; * Revision 1.32  2000/03/07 90:00:00  wolff,pvdl&n; * - Fixed some sx_dprintk typos&n; * - added detection for an invalid board/module configuration&n; *&n; * Revision 1.31  2000/03/06 12:00:00  wolff,pvdl&n; * - Added support for EISA&n; *&n; * Revision 1.30  2000/01/21 17:43:06  wolff&n; * - Added support for SX+&n; *&n; * Revision 1.26  1999/08/05 15:22:14  wolff&n; * - Port to 2.3.x&n; * - Reformatted to Linus&squot; liking.&n; *&n; * Revision 1.25  1999/07/30 14:24:08  wolff&n; * Had accidentally left &quot;gs_debug&quot; set to &quot;-1&quot; instead of &quot;off&quot; (=0).&n; *&n; * Revision 1.24  1999/07/28 09:41:52  wolff&n; * - I noticed the remark about use-count straying in sx.txt. I checked&n; *   sx_open, and found a few places where that could happen. I hope it&squot;s&n; *   fixed now.&n; *&n; * Revision 1.23  1999/07/28 08:56:06  wolff&n; * - Fixed crash when sx_firmware run twice.&n; * - Added sx_slowpoll as a module parameter (I guess nobody really wanted&n; *   to change it from the default... )&n; * - Fixed a stupid editing problem I introduced in 1.22.&n; * - Fixed dropping characters on a termios change.&n; *&n; * Revision 1.22  1999/07/26 21:01:43  wolff&n; * Russell Brown noticed that I had overlooked 4 out of six modem control&n; * signals in sx_getsignals. Ooops.&n; *&n; * Revision 1.21  1999/07/23 09:11:33  wolff&n; * I forgot to free dynamically allocated memory when the driver is unloaded.&n; *&n; * Revision 1.20  1999/07/20 06:25:26  wolff&n; * The &quot;closing wait&quot; wasn&squot;t honoured. Thanks to James Griffiths for&n; * reporting this.&n; *&n; * Revision 1.19  1999/07/11 08:59:59  wolff&n; * Fixed an oops in close, when an open was pending. Changed the memtest&n; * a bit. Should also test the board in word-mode, however my card fails the&n; * memtest then. I still have to figure out what is wrong...&n; *&n; * Revision 1.18  1999/06/10 09:38:42  wolff&n; * Changed the format of the firmware revision from %04x to %x.%02x .&n; *&n; * Revision 1.17  1999/06/04 09:44:35  wolff&n; * fixed problem: reference to pci stuff when config_pci was off...&n; * Thanks to Jorge Novo for noticing this.&n; *&n; * Revision 1.16  1999/06/02 08:30:15  wolff&n; * added/removed the workaround for the DCD bug in the Firmware.&n; * A bit more debugging code to locate that...&n; *&n; * Revision 1.15  1999/06/01 11:35:30  wolff&n; * when DCD is left low (floating?), on TA&squot;s the firmware first tells us&n; * that DCD is high, but after a short while suddenly comes to the&n; * conclusion that it is low. All this would be fine, if it weren&squot;t that&n; * Unix requires us to send a &quot;hangup&quot; signal in that case. This usually&n; * all happens BEFORE the program has had a chance to ioctl the device&n; * into clocal mode..&n; *&n; * Revision 1.14  1999/05/25 11:18:59  wolff&n; * Added PCI-fix.&n; * Added checks for return code of sx_sendcommand.&n; * Don&squot;t issue &quot;reconfig&quot; if port isn&squot;t open yet. (bit us on TA modules...)&n; *&n; * Revision 1.13  1999/04/29 15:18:01  wolff&n; * Fixed an &quot;oops&quot; that showed on SuSE 6.0 systems.&n; * Activate DTR again after stty 0.&n; *&n; * Revision 1.12  1999/04/29 07:49:52  wolff&n; * Improved &quot;stty 0&quot; handling a bit. (used to change baud to 9600 assuming&n; *     the connection would be dropped anyway. That is not always the case,&n; *     and confuses people).&n; * Told the card to always monitor the modem signals.&n; * Added support for dynamic  gs_debug adjustments.&n; * Now tells the rest of the system the number of ports.&n; *&n; * Revision 1.11  1999/04/24 11:11:30  wolff&n; * Fixed two stupid typos in the memory test.&n; *&n; * Revision 1.10  1999/04/24 10:53:39  wolff&n; * Added some of Christian&squot;s suggestions.&n; * Fixed an HW_COOK_IN bug (ISIG was not in I_OTHER. We used to trust the&n; * card to send the signal to the process.....)&n; *&n; * Revision 1.9  1999/04/23 07:26:38  wolff&n; * Included Christian Lademann&squot;s 2.0 compile-warning fixes and interrupt&n; *    assignment redesign.&n; * Cleanup of some other stuff.&n; *&n; * Revision 1.8  1999/04/16 13:05:30  wolff&n; * fixed a DCD change unnoticed bug.&n; *&n; * Revision 1.7  1999/04/14 22:19:51  wolff&n; * Fixed typo that showed up in 2.0.x builds (get_user instead of Get_user!)&n; *&n; * Revision 1.6  1999/04/13 18:40:20  wolff&n; * changed misc-minor to 161, as assigned by HPA.&n; *&n; * Revision 1.5  1999/04/13 15:12:25  wolff&n; * Fixed use-count leak when &quot;hangup&quot; occurred.&n; * Added workaround for a stupid-PCIBIOS bug.&n; *&n; *&n; * Revision 1.4  1999/04/01 22:47:40  wolff&n; * Fixed &lt; 1M linux-2.0 problem.&n; * (vremap isn&squot;t compatible with ioremap in that case)&n; *&n; * Revision 1.3  1999/03/31 13:45:45  wolff&n; * Firmware loading is now done through a separate IOCTL.&n; *&n; * Revision 1.2  1999/03/28 12:22:29  wolff&n; * rcs cleanup&n; *&n; * Revision 1.1  1999/03/28 12:10:34  wolff&n; * Readying for release on 2.0.x (sorry David, 1.01 becomes 1.1 for RCS). &n; *&n; * Revision 0.12  1999/03/28 09:20:10  wolff&n; * Fixed problem in 0.11, continueing cleanup.&n; *&n; * Revision 0.11  1999/03/28 08:46:44  wolff&n; * cleanup. Not good.&n; *&n; * Revision 0.10  1999/03/28 08:09:43  wolff&n; * Fixed loosing characters on close.&n; *&n; * Revision 0.9  1999/03/21 22:52:01  wolff&n; * Ported back to 2.2.... (minor things)&n; *&n; * Revision 0.8  1999/03/21 22:40:33  wolff&n; * Port to 2.0&n; *&n; * Revision 0.7  1999/03/21 19:06:34  wolff&n; * Fixed hangup processing.&n; *&n; * Revision 0.6  1999/02/05 08:45:14  wolff&n; * fixed real_raw problems. Inclusion into kernel imminent.&n; *&n; * Revision 0.5  1998/12/21 23:51:06  wolff&n; * Snatched a nasty bug: sx_transmit_chars was getting re-entered, and it&n; * shouldn&squot;t have. THATs why I want to have transmit interrupts even when&n; * the buffer is empty.&n; *&n; * Revision 0.4  1998/12/17 09:34:46  wolff&n; * PPP works. ioctl works. Basically works!&n; *&n; * Revision 0.3  1998/12/15 13:05:18  wolff&n; * It works! Wow! Gotta start implementing IOCTL and stuff....&n; *&n; * Revision 0.2  1998/12/01 08:33:53  wolff&n; * moved over to 2.1.130&n; *&n; * Revision 0.1  1998/11/03 21:23:51  wolff&n; * Initial revision. Detects SX card.&n; *&n; * */
+multiline_comment|/* sx.c -- driver for the Specialix SX series cards. &n; *&n; *  This driver will also support the older SI, and XIO cards.&n; *&n; *&n; *   (C) 1998 - 2000  R.E.Wolff@BitWizard.nl&n; *&n; *  Simon Allen (simonallen@cix.compulink.co.uk) wrote a previous&n; *  version of this driver. Some fragments may have been copied. (none&n; *  yet :-)&n; *&n; * Specialix pays for the development and support of this driver.&n; * Please DO contact support@specialix.co.uk if you require&n; * support. But please read the documentation (sx.txt) first.&n; *&n; *&n; *&n; *      This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License as&n; *      published by the Free Software Foundation; either version 2 of&n; *      the License, or (at your option) any later version.&n; *&n; *      This program is distributed in the hope that it will be&n; *      useful, but WITHOUT ANY WARRANTY; without even the implied&n; *      warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR&n; *      PURPOSE.  See the GNU General Public License for more details.&n; *&n; *      You should have received a copy of the GNU General Public&n; *      License along with this program; if not, write to the Free&n; *      Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,&n; *      USA.&n; *&n; * Revision history:&n; * $Log: sx.c,v $&n; * Revision 1.33  2000/03/09 10:00:00  pvdl,wolff&n; * - Fixed module and port counting&n; * - Fixed signal handling&n; * - Fixed an Ooops&n; * &n; * Revision 1.32  2000/03/07 09:00:00  wolff,pvdl&n; * - Fixed some sx_dprintk typos&n; * - added detection for an invalid board/module configuration&n; *&n; * Revision 1.31  2000/03/06 12:00:00  wolff,pvdl&n; * - Added support for EISA&n; *&n; * Revision 1.30  2000/01/21 17:43:06  wolff&n; * - Added support for SX+&n; *&n; * Revision 1.26  1999/08/05 15:22:14  wolff&n; * - Port to 2.3.x&n; * - Reformatted to Linus&squot; liking.&n; *&n; * Revision 1.25  1999/07/30 14:24:08  wolff&n; * Had accidentally left &quot;gs_debug&quot; set to &quot;-1&quot; instead of &quot;off&quot; (=0).&n; *&n; * Revision 1.24  1999/07/28 09:41:52  wolff&n; * - I noticed the remark about use-count straying in sx.txt. I checked&n; *   sx_open, and found a few places where that could happen. I hope it&squot;s&n; *   fixed now.&n; *&n; * Revision 1.23  1999/07/28 08:56:06  wolff&n; * - Fixed crash when sx_firmware run twice.&n; * - Added sx_slowpoll as a module parameter (I guess nobody really wanted&n; *   to change it from the default... )&n; * - Fixed a stupid editing problem I introduced in 1.22.&n; * - Fixed dropping characters on a termios change.&n; *&n; * Revision 1.22  1999/07/26 21:01:43  wolff&n; * Russell Brown noticed that I had overlooked 4 out of six modem control&n; * signals in sx_getsignals. Ooops.&n; *&n; * Revision 1.21  1999/07/23 09:11:33  wolff&n; * I forgot to free dynamically allocated memory when the driver is unloaded.&n; *&n; * Revision 1.20  1999/07/20 06:25:26  wolff&n; * The &quot;closing wait&quot; wasn&squot;t honoured. Thanks to James Griffiths for&n; * reporting this.&n; *&n; * Revision 1.19  1999/07/11 08:59:59  wolff&n; * Fixed an oops in close, when an open was pending. Changed the memtest&n; * a bit. Should also test the board in word-mode, however my card fails the&n; * memtest then. I still have to figure out what is wrong...&n; *&n; * Revision 1.18  1999/06/10 09:38:42  wolff&n; * Changed the format of the firmware revision from %04x to %x.%02x .&n; *&n; * Revision 1.17  1999/06/04 09:44:35  wolff&n; * fixed problem: reference to pci stuff when config_pci was off...&n; * Thanks to Jorge Novo for noticing this.&n; *&n; * Revision 1.16  1999/06/02 08:30:15  wolff&n; * added/removed the workaround for the DCD bug in the Firmware.&n; * A bit more debugging code to locate that...&n; *&n; * Revision 1.15  1999/06/01 11:35:30  wolff&n; * when DCD is left low (floating?), on TA&squot;s the firmware first tells us&n; * that DCD is high, but after a short while suddenly comes to the&n; * conclusion that it is low. All this would be fine, if it weren&squot;t that&n; * Unix requires us to send a &quot;hangup&quot; signal in that case. This usually&n; * all happens BEFORE the program has had a chance to ioctl the device&n; * into clocal mode..&n; *&n; * Revision 1.14  1999/05/25 11:18:59  wolff&n; * Added PCI-fix.&n; * Added checks for return code of sx_sendcommand.&n; * Don&squot;t issue &quot;reconfig&quot; if port isn&squot;t open yet. (bit us on TA modules...)&n; *&n; * Revision 1.13  1999/04/29 15:18:01  wolff&n; * Fixed an &quot;oops&quot; that showed on SuSE 6.0 systems.&n; * Activate DTR again after stty 0.&n; *&n; * Revision 1.12  1999/04/29 07:49:52  wolff&n; * Improved &quot;stty 0&quot; handling a bit. (used to change baud to 9600 assuming&n; *     the connection would be dropped anyway. That is not always the case,&n; *     and confuses people).&n; * Told the card to always monitor the modem signals.&n; * Added support for dynamic  gs_debug adjustments.&n; * Now tells the rest of the system the number of ports.&n; *&n; * Revision 1.11  1999/04/24 11:11:30  wolff&n; * Fixed two stupid typos in the memory test.&n; *&n; * Revision 1.10  1999/04/24 10:53:39  wolff&n; * Added some of Christian&squot;s suggestions.&n; * Fixed an HW_COOK_IN bug (ISIG was not in I_OTHER. We used to trust the&n; * card to send the signal to the process.....)&n; *&n; * Revision 1.9  1999/04/23 07:26:38  wolff&n; * Included Christian Lademann&squot;s 2.0 compile-warning fixes and interrupt&n; *    assignment redesign.&n; * Cleanup of some other stuff.&n; *&n; * Revision 1.8  1999/04/16 13:05:30  wolff&n; * fixed a DCD change unnoticed bug.&n; *&n; * Revision 1.7  1999/04/14 22:19:51  wolff&n; * Fixed typo that showed up in 2.0.x builds (get_user instead of Get_user!)&n; *&n; * Revision 1.6  1999/04/13 18:40:20  wolff&n; * changed misc-minor to 161, as assigned by HPA.&n; *&n; * Revision 1.5  1999/04/13 15:12:25  wolff&n; * Fixed use-count leak when &quot;hangup&quot; occurred.&n; * Added workaround for a stupid-PCIBIOS bug.&n; *&n; *&n; * Revision 1.4  1999/04/01 22:47:40  wolff&n; * Fixed &lt; 1M linux-2.0 problem.&n; * (vremap isn&squot;t compatible with ioremap in that case)&n; *&n; * Revision 1.3  1999/03/31 13:45:45  wolff&n; * Firmware loading is now done through a separate IOCTL.&n; *&n; * Revision 1.2  1999/03/28 12:22:29  wolff&n; * rcs cleanup&n; *&n; * Revision 1.1  1999/03/28 12:10:34  wolff&n; * Readying for release on 2.0.x (sorry David, 1.01 becomes 1.1 for RCS). &n; *&n; * Revision 0.12  1999/03/28 09:20:10  wolff&n; * Fixed problem in 0.11, continueing cleanup.&n; *&n; * Revision 0.11  1999/03/28 08:46:44  wolff&n; * cleanup. Not good.&n; *&n; * Revision 0.10  1999/03/28 08:09:43  wolff&n; * Fixed loosing characters on close.&n; *&n; * Revision 0.9  1999/03/21 22:52:01  wolff&n; * Ported back to 2.2.... (minor things)&n; *&n; * Revision 0.8  1999/03/21 22:40:33  wolff&n; * Port to 2.0&n; *&n; * Revision 0.7  1999/03/21 19:06:34  wolff&n; * Fixed hangup processing.&n; *&n; * Revision 0.6  1999/02/05 08:45:14  wolff&n; * fixed real_raw problems. Inclusion into kernel imminent.&n; *&n; * Revision 0.5  1998/12/21 23:51:06  wolff&n; * Snatched a nasty bug: sx_transmit_chars was getting re-entered, and it&n; * shouldn&squot;t have. THATs why I want to have transmit interrupts even when&n; * the buffer is empty.&n; *&n; * Revision 0.4  1998/12/17 09:34:46  wolff&n; * PPP works. ioctl works. Basically works!&n; *&n; * Revision 0.3  1998/12/15 13:05:18  wolff&n; * It works! Wow! Gotta start implementing IOCTL and stuff....&n; *&n; * Revision 0.2  1998/12/01 08:33:53  wolff&n; * moved over to 2.1.130&n; *&n; * Revision 0.1  1998/11/03 21:23:51  wolff&n; * Initial revision. Detects SX card.&n; *&n; * */
 DECL|macro|RCS_ID
-mdefine_line|#define RCS_ID &quot;$Id: sx.c,v 1.32 2000/03/07 17:01:02 wolff, pvdl Exp $&quot;
+mdefine_line|#define RCS_ID &quot;$Id: sx.c,v 1.33 2000/03/08 10:01:02 wolff, pvdl Exp $&quot;
 DECL|macro|RCS_REV
-mdefine_line|#define RCS_REV &quot;$Revision: 1.32 $&quot;
+mdefine_line|#define RCS_REV &quot;$Revision: 1.33 $&quot;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt; 
 macro_line|#include &lt;linux/kdev_t.h&gt;
@@ -36,8 +36,8 @@ DECL|macro|_u16
 mdefine_line|#define _u16 u16
 macro_line|#include &quot;sxboards.h&quot;
 macro_line|#include &quot;sxwindow.h&quot;
-macro_line|#include &lt;linux/generic_serial.h&gt;
 macro_line|#include &lt;linux/compatmac.h&gt;
+macro_line|#include &lt;linux/generic_serial.h&gt;
 macro_line|#include &quot;sx.h&quot;
 multiline_comment|/* I don&squot;t think that this driver can handle more than 256 ports on&n;   one machine. You&squot;ll have to increase the number of boards in sx.h&n;   if you want more than 4 boards.  */
 multiline_comment|/* Why the hell am I defining these here? */
@@ -2659,6 +2659,15 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|port-&gt;gs.tty
+)paren
+r_return
+l_int|0
+suffix:semicolon
 multiline_comment|/* What is this doing here? -- REW&n;&t;   Ha! figured it out. It is to allow you to get DTR active again&n;&t;   if you&squot;ve dropped it with stty 0. Moved to set_baud, where it&n;&t;   belongs (next to the drop dtr if baud == 0) -- REW */
 multiline_comment|/* sx_setsignals (port, 1, -1); */
 id|sx_set_baud
@@ -3405,9 +3414,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|port-&gt;gs.xmit_cnt
 op_le
 id|port-&gt;gs.wakeup_chars
+)paren
+op_logical_and
+id|port-&gt;gs.tty
 )paren
 (brace
 r_if
@@ -4400,6 +4413,13 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
+id|init_timer
+c_func
+(paren
+op_amp
+id|board-&gt;timer
+)paren
+suffix:semicolon
 id|board-&gt;timer.expires
 op_assign
 id|jiffies
@@ -4695,9 +4715,11 @@ c_cond
 (paren
 id|port-&gt;gs.tty
 op_logical_and
+(paren
 id|port-&gt;gs.tty-&gt;termios-&gt;c_cflag
 op_amp
 id|HUPCL
+)paren
 )paren
 (brace
 id|sx_setsignals
@@ -4910,6 +4932,14 @@ id|port-&gt;gs.tty
 op_assign
 id|tty
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|port-&gt;gs.count
+)paren
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 id|port-&gt;gs.count
 op_increment
 suffix:semicolon
@@ -4946,6 +4976,13 @@ id|retval
 id|port-&gt;gs.count
 op_decrement
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|port-&gt;gs.count
+)paren
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 id|retval
 suffix:semicolon
@@ -4961,33 +4998,6 @@ comma
 l_int|1
 comma
 l_int|1
-)paren
-suffix:semicolon
-id|sx_dprintk
-(paren
-id|SX_DEBUG_OPEN
-comma
-l_string|&quot;before inc_use_count (count=%d.&bslash;n&quot;
-comma
-id|port-&gt;gs.count
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|port-&gt;gs.count
-op_eq
-l_int|1
-)paren
-(brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-)brace
-id|sx_dprintk
-(paren
-id|SX_DEBUG_OPEN
-comma
-l_string|&quot;after inc_use_count&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#if 0
@@ -5065,10 +5075,16 @@ id|KERN_ERR
 l_string|&quot;sx: Card didn&squot;t respond to LOPEN command.&bslash;n&quot;
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 id|port-&gt;gs.count
 op_decrement
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|port-&gt;gs.count
+)paren
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 op_minus
@@ -5102,11 +5118,7 @@ c_cond
 id|retval
 )paren
 (brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
-id|port-&gt;gs.count
-op_decrement
-suffix:semicolon
+multiline_comment|/* &n;&t;&t; * Don&squot;t lower gs.count here because sx_close() will be called later&n;&t;&t; */
 r_return
 id|retval
 suffix:semicolon
@@ -5196,10 +5208,90 @@ op_star
 id|ptr
 )paren
 (brace
+r_struct
+id|sx_port
+op_star
+id|port
+op_assign
+id|ptr
+suffix:semicolon
 id|func_enter
 (paren
 )paren
 suffix:semicolon
+id|sx_setsignals
+(paren
+id|port
+comma
+l_int|0
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|sx_reconfigure_port
+c_func
+(paren
+id|port
+)paren
+suffix:semicolon
+id|sx_send_command
+(paren
+id|port
+comma
+id|HS_CLOSE
+comma
+l_int|0
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sx_read_channel_byte
+(paren
+id|port
+comma
+id|hi_hstat
+)paren
+op_ne
+id|HS_IDLE_CLOSED
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|sx_send_command
+(paren
+id|port
+comma
+id|HS_FORCE_CLOSED
+comma
+op_minus
+l_int|1
+comma
+id|HS_IDLE_CLOSED
+)paren
+op_ne
+l_int|1
+)paren
+(brace
+id|printk
+(paren
+id|KERN_ERR
+l_string|&quot;sx: sent the force_close command, but card didn&squot;t react&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+id|sx_dprintk
+(paren
+id|SX_DEBUG_CLOSE
+comma
+l_string|&quot;sent the force_close command.&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 id|func_exit
@@ -5234,6 +5326,21 @@ id|HZ
 suffix:semicolon
 id|func_enter
 (paren
+)paren
+suffix:semicolon
+id|sx_setsignals
+(paren
+id|port
+comma
+l_int|0
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|sx_reconfigure_port
+c_func
+(paren
+id|port
 )paren
 suffix:semicolon
 id|sx_send_command
@@ -5353,6 +5460,27 @@ comma
 id|port-&gt;gs.count
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|port-&gt;gs.count
+)paren
+(brace
+id|sx_dprintk
+c_func
+(paren
+id|SX_DEBUG_CLOSE
+comma
+l_string|&quot;WARNING port count:%d&bslash;n&quot;
+comma
+id|port-&gt;gs.count
+)paren
+suffix:semicolon
+id|port-&gt;gs.count
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 id|func_exit

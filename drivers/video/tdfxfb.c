@@ -2124,6 +2124,7 @@ id|inverse
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef CONFIG_MTRR
 DECL|variable|nomtrr
 r_static
 r_int
@@ -2131,6 +2132,7 @@ id|nomtrr
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#endif
 DECL|variable|nohwcursor
 r_static
 r_int
@@ -10192,7 +10194,8 @@ suffix:semicolon
 id|fb_info.regbase_virt
 op_assign
 (paren
-id|u32
+r_int
+r_int
 )paren
 id|ioremap_nocache
 c_func
@@ -10269,7 +10272,8 @@ suffix:semicolon
 id|fb_info.bufbase_virt
 op_assign
 (paren
-id|u32
+r_int
+r_int
 )paren
 id|ioremap_nocache
 c_func
@@ -10335,7 +10339,8 @@ suffix:semicolon
 id|fb_info.regbase_virt
 op_assign
 (paren
-id|u32
+r_int
+r_int
 )paren
 id|ioremap_nocache
 c_func
@@ -10416,7 +10421,8 @@ suffix:semicolon
 id|fb_info.bufbase_virt
 op_assign
 (paren
-id|u32
+r_int
+r_int
 )paren
 id|ioremap_nocache
 c_func

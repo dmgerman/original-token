@@ -1,4 +1,4 @@
-multiline_comment|/*&n;  $Id: fore200e.c,v 1.2 2000/03/21 21:19:24 davem Exp $&n;&n;  A FORE Systems 200E-series driver for ATM on Linux.&n;  Christophe Lizzi (lizzi@cnam.fr), October 1999-February 2000.&n;&n;  Based on the PCA-200E driver from Uwe Dannowski (Uwe.Dannowski@inf.tu-dresden.de).&n;&n;  This driver simultaneously supports PCA-200E and SBA-200E adapters&n;  on i386, alpha (untested), powerpc, sparc and sparc64 architectures.&n;&n;  This program is free software; you can redistribute it and/or modify&n;  it under the terms of the GNU General Public License as published by&n;  the Free Software Foundation; either version 2 of the License, or&n;  (at your option) any later version.&n;&n;  This program is distributed in the hope that it will be useful,&n;  but WITHOUT ANY WARRANTY; without even the implied warranty of&n;  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;  GNU General Public License for more details.&n;&n;  You should have received a copy of the GNU General Public License&n;  along with this program; if not, write to the Free Software&n;  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n;*/
+multiline_comment|/*&n;  $Id: fore200e.c,v 1.5 2000/04/14 10:10:34 davem Exp $&n;&n;  A FORE Systems 200E-series driver for ATM on Linux.&n;  Christophe Lizzi (lizzi@cnam.fr), October 1999-March 2000.&n;&n;  Based on the PCA-200E driver from Uwe Dannowski (Uwe.Dannowski@inf.tu-dresden.de).&n;&n;  This driver simultaneously supports PCA-200E and SBA-200E adapters&n;  on i386, alpha (untested), powerpc, sparc and sparc64 architectures.&n;&n;  This program is free software; you can redistribute it and/or modify&n;  it under the terms of the GNU General Public License as published by&n;  the Free Software Foundation; either version 2 of the License, or&n;  (at your option) any later version.&n;&n;  This program is distributed in the hope that it will be useful,&n;  but WITHOUT ANY WARRANTY; without even the implied warranty of&n;  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;  GNU General Public License for more details.&n;&n;  You should have received a copy of the GNU General Public License&n;  along with this program; if not, write to the Free Software&n;  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA&n;*/
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -6,10 +6,11 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/capability.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/bitops.h&gt;
 macro_line|#include &lt;linux/atmdev.h&gt;
 macro_line|#include &lt;linux/sonet.h&gt;
 macro_line|#include &lt;linux/atm_suni.h&gt;
-macro_line|#include &lt;linux/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/string.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
@@ -37,7 +38,7 @@ DECL|macro|FORE200E_52BYTE_AAL0_SDU
 mdefine_line|#define FORE200E_52BYTE_AAL0_SDU
 macro_line|#endif
 DECL|macro|FORE200E_VERSION
-mdefine_line|#define FORE200E_VERSION &quot;0.2b&quot;
+mdefine_line|#define FORE200E_VERSION &quot;0.2d&quot;
 DECL|macro|FORE200E
 mdefine_line|#define FORE200E         &quot;fore200e: &quot;
 macro_line|#if defined(CONFIG_ATM_FORE200E_DEBUG) &amp;&amp; (CONFIG_ATM_FORE200E_DEBUG &gt; 0)
@@ -2291,6 +2292,12 @@ comma
 id|index
 op_minus
 l_int|1
+)paren
+suffix:semicolon
+id|pci_enable_device
+c_func
+(paren
+id|pci_dev
 )paren
 suffix:semicolon
 id|pci_set_master
@@ -4826,6 +4833,45 @@ l_int|9
 )braket
 )paren
 suffix:semicolon
+id|tasklet_schedule
+c_func
+(paren
+op_amp
+id|fore200e-&gt;tasklet
+)paren
+suffix:semicolon
+id|fore200e-&gt;bus
+op_member_access_from_pointer
+id|irq_ack
+c_func
+(paren
+id|fore200e
+)paren
+suffix:semicolon
+)brace
+r_static
+r_void
+DECL|function|fore200e_tasklet
+id|fore200e_tasklet
+c_func
+(paren
+r_int
+r_int
+id|data
+)paren
+(brace
+r_struct
+id|fore200e
+op_star
+id|fore200e
+op_assign
+(paren
+r_struct
+id|fore200e
+op_star
+)paren
+id|data
+suffix:semicolon
 id|fore200e_irq_rx
 c_func
 (paren
@@ -4838,14 +4884,6 @@ c_cond
 id|fore200e-&gt;host_txq.txing
 )paren
 id|fore200e_irq_tx
-c_func
-(paren
-id|fore200e
-)paren
-suffix:semicolon
-id|fore200e-&gt;bus
-op_member_access_from_pointer
-id|irq_ack
 c_func
 (paren
 id|fore200e
@@ -5840,7 +5878,7 @@ id|fore200e_vcc-&gt;rx_max_pdu
 op_assign
 l_int|0
 suffix:semicolon
-id|clear_bit
+id|set_bit
 c_func
 (paren
 id|ATM_VF_READY
@@ -5957,6 +5995,15 @@ id|fore200e-&gt;rate_sf
 )paren
 suffix:semicolon
 )brace
+id|clear_bit
+c_func
+(paren
+id|ATM_VF_READY
+comma
+op_amp
+id|vcc-&gt;flags
+)paren
+suffix:semicolon
 )brace
 macro_line|#if 0
 mdefine_line|#define FORE200E_SYNC_SEND    /* wait tx completion before returning */
@@ -6022,10 +6069,7 @@ r_struct
 id|tpd_haddr
 id|tpd_haddr
 suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
+singleline_comment|//unsigned long          flags;
 r_int
 id|retry
 op_assign
@@ -6121,13 +6165,11 @@ suffix:semicolon
 )brace
 id|retry_here
 suffix:colon
-id|spin_lock_irqsave
+id|tasklet_disable
 c_func
 (paren
 op_amp
-id|fore200e-&gt;tx_lock
-comma
-id|flags
+id|fore200e-&gt;tasklet
 )paren
 suffix:semicolon
 id|entry
@@ -6163,13 +6205,11 @@ op_ne
 id|STATUS_FREE
 )paren
 (brace
-id|spin_unlock_irqrestore
+id|tasklet_enable
 c_func
 (paren
 op_amp
-id|fore200e-&gt;tx_lock
-comma
-id|flags
+id|fore200e-&gt;tasklet
 )paren
 suffix:semicolon
 multiline_comment|/* retry once again? */
@@ -6341,13 +6381,11 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|spin_unlock_irqrestore
+id|tasklet_enable
 c_func
 (paren
 op_amp
-id|fore200e-&gt;tx_lock
-comma
-id|flags
+id|fore200e-&gt;tasklet
 )paren
 suffix:semicolon
 r_if
@@ -6478,13 +6516,11 @@ suffix:semicolon
 id|txq-&gt;txing
 op_increment
 suffix:semicolon
-id|spin_unlock_irqrestore
+id|tasklet_enable
 c_func
 (paren
 op_amp
-id|fore200e-&gt;tx_lock
-comma
-id|flags
+id|fore200e-&gt;tasklet
 )paren
 suffix:semicolon
 multiline_comment|/* ensure DMA synchronisation */
@@ -8273,6 +8309,21 @@ comma
 id|fore200e-&gt;name
 )paren
 suffix:semicolon
+id|tasklet_init
+c_func
+(paren
+op_amp
+id|fore200e-&gt;tasklet
+comma
+id|fore200e_tasklet
+comma
+(paren
+r_int
+r_int
+)paren
+id|fore200e
+)paren
+suffix:semicolon
 id|fore200e-&gt;state
 op_assign
 id|FORE200E_STATE_IRQ
@@ -9885,13 +9936,6 @@ comma
 l_string|&quot;device %s being initialized&bslash;n&quot;
 comma
 id|fore200e-&gt;name
-)paren
-suffix:semicolon
-id|spin_lock_init
-c_func
-(paren
-op_amp
-id|fore200e-&gt;tx_lock
 )paren
 suffix:semicolon
 id|init_MUTEX
@@ -12259,10 +12303,12 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
+r_static
 r_int
 r_int
-DECL|function|init_module
-id|init_module
+id|__init
+DECL|function|fore200e_module_init
+id|fore200e_module_init
 c_func
 (paren
 r_void
@@ -12285,9 +12331,11 @@ op_eq
 l_int|0
 suffix:semicolon
 )brace
+r_static
 r_void
-DECL|function|cleanup_module
-id|cleanup_module
+id|__exit
+DECL|function|fore200e_module_cleanup
+id|fore200e_module_cleanup
 c_func
 (paren
 r_void
@@ -12316,6 +12364,20 @@ l_string|&quot;module being removed&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+DECL|variable|fore200e_module_init
+id|module_init
+c_func
+(paren
+id|fore200e_module_init
+)paren
+suffix:semicolon
+DECL|variable|fore200e_module_cleanup
+id|module_exit
+c_func
+(paren
+id|fore200e_module_cleanup
+)paren
+suffix:semicolon
 macro_line|#endif
 DECL|variable|fore200e_ops
 r_static

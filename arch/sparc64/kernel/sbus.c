@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sbus.c,v 1.10 2000/03/10 07:52:08 davem Exp $&n; * sbus.c: UltraSparc SBUS controller support.&n; *&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: sbus.c,v 1.11 2000/04/14 09:13:04 davem Exp $&n; * sbus.c: UltraSparc SBUS controller support.&n; *&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -1379,7 +1379,7 @@ r_int
 r_int
 id|npages
 comma
-id|phys_base
+id|pbase
 comma
 id|flags
 suffix:semicolon
@@ -1408,7 +1408,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|phys_base
+id|pbase
 op_assign
 (paren
 r_int
@@ -1422,7 +1422,7 @@ op_assign
 id|u32
 )paren
 (paren
-id|phys_base
+id|pbase
 op_amp
 op_complement
 id|PAGE_MASK
@@ -1434,19 +1434,19 @@ op_assign
 id|PAGE_ALIGN
 c_func
 (paren
-id|phys_base
+id|pbase
 op_plus
 id|size
 )paren
 op_minus
 (paren
-id|phys_base
+id|pbase
 op_amp
 id|PAGE_MASK
 )paren
 )paren
 suffix:semicolon
-id|phys_base
+id|pbase
 op_assign
 (paren
 r_int
@@ -1455,7 +1455,7 @@ r_int
 id|__pa
 c_func
 (paren
-id|phys_base
+id|pbase
 op_amp
 id|PAGE_MASK
 )paren
@@ -1541,13 +1541,13 @@ c_func
 id|iopte_bits
 op_or
 (paren
-id|phys_base
+id|pbase
 op_amp
 id|IOPTE_PAGE
 )paren
 )paren
 suffix:semicolon
-id|phys_base
+id|pbase
 op_add_assign
 id|PAGE_SIZE
 suffix:semicolon

@@ -1564,11 +1564,19 @@ suffix:semicolon
 id|FRprintk
 c_func
 (paren
-l_string|&quot;Lookup: %08x &lt;- %08x &quot;
+l_string|&quot;Lookup: %u.%u.%u.%u &lt;- %u.%u.%u.%u &quot;
 comma
+id|NIPQUAD
+c_func
+(paren
 id|key-&gt;dst
+)paren
 comma
+id|NIPQUAD
+c_func
+(paren
 id|key-&gt;src
+)paren
 )paren
 suffix:semicolon
 id|read_lock

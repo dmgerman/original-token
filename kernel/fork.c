@@ -935,6 +935,17 @@ op_assign
 op_minus
 id|ENOMEM
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|mpnt-&gt;vm_flags
+op_amp
+id|VM_DONTCOPY
+)paren
+(brace
+r_continue
+suffix:semicolon
+)brace
 id|tmp
 op_assign
 id|kmem_cache_alloc

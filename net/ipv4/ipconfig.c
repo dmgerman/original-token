@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  $Id: ipconfig.c,v 1.27 2000/02/21 15:51:41 davem Exp $&n; *&n; *  Automatic Configuration of IP -- use BOOTP or RARP or user-supplied&n; *  information to configure own IP address and routes.&n; *&n; *  Copyright (C) 1996--1998 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&n; *  Derived from network configuration code in fs/nfs/nfsroot.c,&n; *  originally Copyright (C) 1995, 1996 Gero Kuhlmann and me.&n; *&n; *  BOOTP rewritten to construct and analyse packets itself instead&n; *  of misusing the IP layer. num_bugs_causing_wrong_arp_replies--;&n; *&t;&t;&t;&t;&t;     -- MJ, December 1998&n; *  &n; *  Fixed ip_auto_config_setup calling at startup in the new &quot;Linker Magic&quot;&n; *  initialization scheme.&n; *&t;- Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt;, 08/11/1999&n; */
+multiline_comment|/*&n; *  $Id: ipconfig.c,v 1.29 2000/04/13 01:16:17 davem Exp $&n; *&n; *  Automatic Configuration of IP -- use BOOTP or RARP or user-supplied&n; *  information to configure own IP address and routes.&n; *&n; *  Copyright (C) 1996--1998 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&n; *  Derived from network configuration code in fs/nfs/nfsroot.c,&n; *  originally Copyright (C) 1995, 1996 Gero Kuhlmann and me.&n; *&n; *  BOOTP rewritten to construct and analyse packets itself instead&n; *  of misusing the IP layer. num_bugs_causing_wrong_arp_replies--;&n; *&t;&t;&t;&t;&t;     -- MJ, December 1998&n; *  &n; *  Fixed ip_auto_config_setup calling at startup in the new &quot;Linker Magic&quot;&n; *  initialization scheme.&n; *&t;- Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt;, 08/11/1999&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -142,7 +142,6 @@ macro_line|#if defined(CONFIG_IP_PNP_BOOTP) || defined(CONFIG_IP_PNP_RARP)
 DECL|macro|CONFIG_IP_PNP_DYNAMIC
 mdefine_line|#define CONFIG_IP_PNP_DYNAMIC
 DECL|variable|__initdata
-r_static
 r_int
 id|ic_proto_enabled
 id|__initdata
@@ -856,9 +855,13 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;IP-Config: Unable to set interface address (%d).&bslash;n&quot;
+l_string|&quot;IP-Config: Unable to set interface address (%u.%u.%u.%u).&bslash;n&quot;
 comma
+id|NIPQUAD
+c_func
+(paren
 id|err
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -899,9 +902,13 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;IP-Config: Unable to set interface netmask (%d).&bslash;n&quot;
+l_string|&quot;IP-Config: Unable to set interface netmask (%u.%u.%u.%u).&bslash;n&quot;
 comma
+id|NIPQUAD
+c_func
+(paren
 id|err
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -945,9 +952,13 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;IP-Config: Unable to set interface broadcast address (%d).&bslash;n&quot;
+l_string|&quot;IP-Config: Unable to set interface broadcast address (%u.%u.%u.%u).&bslash;n&quot;
 comma
+id|NIPQUAD
+c_func
+(paren
 id|err
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -1100,9 +1111,13 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;IP-Config: Cannot add default route (%d).&bslash;n&quot;
+l_string|&quot;IP-Config: Cannot add default route (%u.%u.%u.%u).&bslash;n&quot;
 comma
+id|NIPQUAD
+c_func
+(paren
 id|err
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -1235,9 +1250,13 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;IP-Config: Unable to guess netmask for address %08x&bslash;n&quot;
+l_string|&quot;IP-Config: Unable to guess netmask for address %u.%u.%u.%u&bslash;n&quot;
 comma
+id|NIPQUAD
+c_func
+(paren
 id|ic_myaddr
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -1248,9 +1267,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;IP-Config: Guessing netmask %s&bslash;n&quot;
+l_string|&quot;IP-Config: Guessing netmask %u.%u.%u.%u&bslash;n&quot;
 comma
-id|in_ntoa
+id|NIPQUAD
 c_func
 (paren
 id|ic_netmask
@@ -3411,7 +3430,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;IP-Config: Got %s answer from %s, &quot;
+l_string|&quot;IP-Config: Got %s answer from %u.%u.%u.%u, &quot;
 comma
 (paren
 id|ic_got_reply
@@ -3424,7 +3443,7 @@ l_string|&quot;BOOTP&quot;
 suffix:colon
 l_string|&quot;RARP&quot;
 comma
-id|in_ntoa
+id|NIPQUAD
 c_func
 (paren
 id|ic_servaddr
@@ -3434,9 +3453,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;my address is %s&bslash;n&quot;
+l_string|&quot;my address is %u.%u.%u.%u&bslash;n&quot;
 comma
-id|in_ntoa
+id|NIPQUAD
 c_func
 (paren
 id|ic_myaddr

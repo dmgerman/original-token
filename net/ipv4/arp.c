@@ -3939,12 +3939,6 @@ id|hexbuf
 op_assign
 l_string|&quot;0123456789ABCDEF&quot;
 suffix:semicolon
-r_char
-id|abuf
-(braket
-l_int|16
-)braket
-suffix:semicolon
 id|size
 op_assign
 id|sprintf
@@ -4158,9 +4152,9 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;%-17s0x%-10x0x%-10x%s&quot;
+l_string|&quot;%u.%u.%u.%u0x%-10x0x%-10x%s&quot;
 comma
-id|in_ntoa2
+id|NIPQUAD
 c_func
 (paren
 op_star
@@ -4169,8 +4163,6 @@ id|u32
 op_star
 )paren
 id|n-&gt;primary_key
-comma
-id|abuf
 )paren
 comma
 id|hatype
@@ -4321,9 +4313,9 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;%-17s0x%-10x0x%-10x%s&quot;
+l_string|&quot;%u.%u.%u.%u0x%-10x0x%-10x%s&quot;
 comma
-id|in_ntoa2
+id|NIPQUAD
 c_func
 (paren
 op_star
@@ -4332,8 +4324,6 @@ id|u32
 op_star
 )paren
 id|n-&gt;key
-comma
-id|abuf
 )paren
 comma
 id|hatype

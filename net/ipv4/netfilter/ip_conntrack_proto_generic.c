@@ -151,9 +151,10 @@ id|NF_ACCEPT
 suffix:semicolon
 )brace
 multiline_comment|/* Called when a new connection for this protocol found. */
-DECL|function|new
 r_static
 r_int
+r_int
+DECL|function|new
 r_new
 (paren
 r_struct
@@ -171,7 +172,7 @@ id|len
 )paren
 (brace
 r_return
-l_int|1
+id|GENERIC_TIMEOUT
 suffix:semicolon
 )brace
 DECL|variable|ip_conntrack_generic_protocol

@@ -752,29 +752,6 @@ l_int|10
 )braket
 suffix:semicolon
 multiline_comment|/* requests specific driver */
-macro_line|#if 1
-DECL|member|smart_thresholds
-r_struct
-id|thresholds_s
-op_star
-id|smart_thresholds
-suffix:semicolon
-DECL|member|smart_values
-r_struct
-id|values_s
-op_star
-id|smart_values
-suffix:semicolon
-macro_line|#else
-DECL|member|smart_thresholds
-id|thresholds_t
-id|smart_thresholds
-suffix:semicolon
-DECL|member|smart_values
-id|values_t
-id|smart_values
-suffix:semicolon
-macro_line|#endif
 DECL|member|last_lun
 r_int
 id|last_lun
@@ -1049,7 +1026,7 @@ id|dmatable_cpu
 suffix:semicolon
 multiline_comment|/* dma physical region descriptor table (cpu view) */
 DECL|member|dmatable_dma
-id|u32
+id|dma_addr_t
 id|dmatable_dma
 suffix:semicolon
 multiline_comment|/* dma physical region descriptor table (dma view) */
@@ -1757,6 +1734,17 @@ id|ide_drive_t
 op_star
 )paren
 suffix:semicolon
+DECL|typedef|ide_revalidate_proc
+r_typedef
+r_void
+(paren
+id|ide_revalidate_proc
+)paren
+(paren
+id|ide_drive_t
+op_star
+)paren
+suffix:semicolon
 DECL|typedef|ide_pre_reset_proc
 r_typedef
 r_void
@@ -1875,6 +1863,11 @@ DECL|member|media_change
 id|ide_check_media_change_proc
 op_star
 id|media_change
+suffix:semicolon
+DECL|member|revalidate
+id|ide_revalidate_proc
+op_star
+id|revalidate
 suffix:semicolon
 DECL|member|pre_reset
 id|ide_pre_reset_proc
@@ -2319,6 +2312,13 @@ id|buf
 suffix:semicolon
 r_void
 id|ide_delay_50ms
+(paren
+r_void
+)paren
+suffix:semicolon
+r_int
+id|system_bus_clock
+c_func
 (paren
 r_void
 )paren

@@ -25128,6 +25128,9 @@ multiline_comment|/* release */
 l_int|NULL
 comma
 multiline_comment|/* media_change */
+l_int|NULL
+comma
+multiline_comment|/* revalidate */
 id|idetape_pre_reset
 comma
 multiline_comment|/* pre_reset */

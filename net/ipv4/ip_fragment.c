@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP fragmentation functionality.&n; *&t;&t;&n; * Version:&t;$Id: ip_fragment.c,v 1.47 2000/02/09 21:11:33 davem Exp $&n; *&n; * Authors:&t;Fred N. van Kempen &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Split from ip.c , see ip_input.c for history.&n; *&t;&t;David S. Miller :&t;Begin massive cleanup...&n; *&t;&t;Andi Kleen&t;:&t;Add sysctls.&n; *&t;&t;xxxx&t;&t;:&t;Overlapfrag bug.&n; *&t;&t;Ultima          :       ip_expire() kernel panic.&n; *&t;&t;Bill Hawes&t;:&t;Frag accounting and evictor fixes.&n; *&t;&t;John McDonald&t;:&t;0 length frag bug.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP fragmentation functionality.&n; *&t;&t;&n; * Version:&t;$Id: ip_fragment.c,v 1.48 2000/04/13 01:05:33 davem Exp $&n; *&n; * Authors:&t;Fred N. van Kempen &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Split from ip.c , see ip_input.c for history.&n; *&t;&t;David S. Miller :&t;Begin massive cleanup...&n; *&t;&t;Andi Kleen&t;:&t;Add sysctls.&n; *&t;&t;xxxx&t;&t;:&t;Overlapfrag bug.&n; *&t;&t;Ultima          :       ip_expire() kernel panic.&n; *&t;&t;Bill Hawes&t;:&t;Frag accounting and evictor fixes.&n; *&t;&t;John McDonald&t;:&t;0 length frag bug.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -1347,11 +1347,24 @@ id|skb-&gt;security
 op_assign
 id|qp-&gt;fragments-&gt;skb-&gt;security
 suffix:semicolon
+macro_line|#ifdef CONFIG_NETFILTER
+multiline_comment|/* Connection association is same as fragment (if any). */
+id|skb-&gt;nfct
+op_assign
+id|qp-&gt;fragments-&gt;skb-&gt;nfct
+suffix:semicolon
+id|nf_conntrack_get
+c_func
+(paren
+id|skb-&gt;nfct
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_NETFILTER_DEBUG
 id|skb-&gt;nf_debug
 op_assign
 id|qp-&gt;fragments-&gt;skb-&gt;nf_debug
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 multiline_comment|/* Done with all fragments. Fixup the new IP header. */
 id|iph
@@ -2070,7 +2083,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Oversized packet received from %d.%d.%d.%d&bslash;n&quot;
+l_string|&quot;Oversized packet received from %u.%u.%u.%u&bslash;n&quot;
 comma
 id|NIPQUAD
 c_func

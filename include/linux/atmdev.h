@@ -548,11 +548,6 @@ id|wait_queue_head_t
 id|sleep
 suffix:semicolon
 multiline_comment|/* if socket is busy */
-DECL|member|wsleep
-id|wait_queue_head_t
-id|wsleep
-suffix:semicolon
-multiline_comment|/* if waiting for write buffer space */
 DECL|member|sk
 r_struct
 id|sock

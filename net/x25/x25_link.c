@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;X.25 Packet Layer release 002&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 2.1.15 or higher&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;X.25 001&t;Jonathan Naylor&t;Started coding.&n; *&t;X.25 002&t;Jonathan Naylor&t;New timer architecture.&n; */
+multiline_comment|/*&n; *&t;X.25 Packet Layer release 002&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 2.1.15 or higher&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;X.25 001&t;Jonathan Naylor&t;  Started coding.&n; *&t;X.25 002&t;Jonathan Naylor&t;  New timer architecture.&n; *&t;mar/20/00&t;Daniela Squassoni Disabling/enabling of facilities &n; *&t;&t;&t;&t;&t;  negotiation.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_X25) || defined(CONFIG_X25_MODULE)
 macro_line|#include &lt;linux/errno.h&gt;
@@ -1047,6 +1047,19 @@ id|x25_neigh-&gt;extended
 op_assign
 l_int|0
 suffix:semicolon
+id|x25_neigh-&gt;global_facil_mask
+op_assign
+(paren
+id|X25_MASK_REVERSE
+op_or
+id|X25_MASK_THROUGHPUT
+op_or
+id|X25_MASK_PACKET_SIZE
+op_or
+id|X25_MASK_WINDOW_SIZE
+)paren
+suffix:semicolon
+multiline_comment|/* enables negotiation */
 id|x25_neigh-&gt;t20
 op_assign
 id|sysctl_x25_restart_request_timeout
@@ -1366,6 +1379,28 @@ suffix:colon
 r_if
 c_cond
 (paren
+id|copy_from_user
+c_func
+(paren
+op_amp
+id|x25_subscr
+comma
+id|arg
+comma
+r_sizeof
+(paren
+r_struct
+id|x25_subscrip_struct
+)paren
+)paren
+)paren
+r_return
+op_minus
+id|EFAULT
+suffix:semicolon
+r_if
+c_cond
+(paren
 (paren
 id|dev
 op_assign
@@ -1418,6 +1453,10 @@ suffix:semicolon
 id|x25_subscr.extended
 op_assign
 id|x25_neigh-&gt;extended
+suffix:semicolon
+id|x25_subscr.global_facil_mask
+op_assign
+id|x25_neigh-&gt;global_facil_mask
 suffix:semicolon
 r_if
 c_cond
@@ -1538,6 +1577,10 @@ suffix:semicolon
 id|x25_neigh-&gt;extended
 op_assign
 id|x25_subscr.extended
+suffix:semicolon
+id|x25_neigh-&gt;global_facil_mask
+op_assign
+id|x25_subscr.global_facil_mask
 suffix:semicolon
 r_break
 suffix:semicolon

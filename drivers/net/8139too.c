@@ -1399,7 +1399,8 @@ id|pio_flags
 comma
 id|pio_len
 suffix:semicolon
-id|u32
+r_int
+r_int
 id|mmio_start
 comma
 id|mmio_end

@@ -259,6 +259,8 @@ mdefine_line|#define pr_info(fmt,arg...) &bslash;&n;&t;printk(KERN_INFO fmt,##ar
 multiline_comment|/*&n; *      Display an IP address in readable format.&n; */
 DECL|macro|NIPQUAD
 mdefine_line|#define NIPQUAD(addr) &bslash;&n;&t;((unsigned char *)&amp;addr)[0], &bslash;&n;&t;((unsigned char *)&amp;addr)[1], &bslash;&n;&t;((unsigned char *)&amp;addr)[2], &bslash;&n;&t;((unsigned char *)&amp;addr)[3]
+DECL|macro|HIPQUAD
+mdefine_line|#define HIPQUAD(addr) &bslash;&n;&t;((unsigned char *)&amp;addr)[3], &bslash;&n;&t;((unsigned char *)&amp;addr)[2], &bslash;&n;&t;((unsigned char *)&amp;addr)[1], &bslash;&n;&t;((unsigned char *)&amp;addr)[0]
 macro_line|#endif /* __KERNEL__ */
 DECL|macro|SI_LOAD_SHIFT
 mdefine_line|#define SI_LOAD_SHIFT&t;16

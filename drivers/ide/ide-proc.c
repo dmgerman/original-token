@@ -15,16 +15,16 @@ macro_line|#ifndef MIN
 DECL|macro|MIN
 mdefine_line|#define MIN(a,b) (((a) &lt; (b)) ? (a) : (b))
 macro_line|#endif
-macro_line|#ifdef CONFIG_BLK_DEV_AEC6210
+macro_line|#ifdef CONFIG_BLK_DEV_AEC62XX
 r_extern
 id|byte
-id|aec6210_proc
+id|aec62xx_proc
 suffix:semicolon
-DECL|variable|aec6210_display_info
+DECL|variable|aec62xx_display_info
 r_int
 (paren
 op_star
-id|aec6210_display_info
+id|aec62xx_display_info
 )paren
 (paren
 r_char
@@ -41,7 +41,7 @@ r_int
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#endif /* CONFIG_BLK_DEV_AEC6210 */
+macro_line|#endif /* CONFIG_BLK_DEV_AEC62XX */
 macro_line|#ifdef CONFIG_BLK_DEV_ALI15X3
 r_extern
 id|byte
@@ -4368,31 +4368,31 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_BLK_DEV_AEC6210
+macro_line|#ifdef CONFIG_BLK_DEV_AEC62XX
 r_if
 c_cond
 (paren
 (paren
-id|aec6210_display_info
+id|aec62xx_display_info
 )paren
 op_logical_and
 (paren
-id|aec6210_proc
+id|aec62xx_proc
 )paren
 )paren
 id|create_proc_info_entry
 c_func
 (paren
-l_string|&quot;aec6210&quot;
+l_string|&quot;aec62xx&quot;
 comma
 l_int|0
 comma
 id|proc_ide_root
 comma
-id|aec6210_display_info
+id|aec62xx_display_info
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_BLK_DEV_AEC6210 */
+macro_line|#endif /* CONFIG_BLK_DEV_AEC62XX */
 macro_line|#ifdef CONFIG_BLK_DEV_ALI15X3
 r_if
 c_cond
@@ -4653,27 +4653,27 @@ r_void
 )paren
 (brace
 multiline_comment|/*&n;&t; * Mmmm.. does this free up all resources,&n;&t; * or do we need to do a more proper cleanup here ??&n;&t; */
-macro_line|#ifdef CONFIG_BLK_DEV_AEC6210
+macro_line|#ifdef CONFIG_BLK_DEV_AEC62XX
 r_if
 c_cond
 (paren
 (paren
-id|aec6210_display_info
+id|aec62xx_display_info
 )paren
 op_logical_and
 (paren
-id|aec6210_proc
+id|aec62xx_proc
 )paren
 )paren
 id|remove_proc_entry
 c_func
 (paren
-l_string|&quot;ide/aec6210&quot;
+l_string|&quot;ide/aec62xx&quot;
 comma
 l_int|0
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_BLK_DEV_AEC6210 */
+macro_line|#endif /* CONFIG_BLK_DEV_AEC62XX */
 macro_line|#ifdef CONFIG_BLK_DEV_ALI15X3
 r_if
 c_cond

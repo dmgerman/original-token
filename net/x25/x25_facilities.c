@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;X.25 Packet Layer release 002&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 2.1.15 or higher&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;X.25 001&t;Split from x25_subr.c&n; */
+multiline_comment|/*&n; *&t;X.25 Packet Layer release 002&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 2.1.15 or higher&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;X.25 001&t;Split from x25_subr.c&n; *&t;mar/20/00&t;Daniela Squassoni Disabling/enabling of facilities &n; *&t;&t;&t;&t;&t;  negotiation.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_X25) || defined(CONFIG_X25_MODULE)
 macro_line|#include &lt;linux/errno.h&gt;
@@ -36,6 +36,11 @@ r_struct
 id|x25_facilities
 op_star
 id|facilities
+comma
+r_int
+r_int
+op_star
+id|vc_fac_mask
 )paren
 (brace
 r_int
@@ -54,6 +59,11 @@ op_assign
 op_star
 id|p
 op_increment
+suffix:semicolon
+op_star
+id|vc_fac_mask
+op_assign
+l_int|0
 suffix:semicolon
 r_while
 c_loop
@@ -96,6 +106,11 @@ op_amp
 l_int|0x01
 )paren
 suffix:semicolon
+op_star
+id|vc_fac_mask
+op_or_assign
+id|X25_MASK_REVERSE
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -107,6 +122,11 @@ id|p
 (braket
 l_int|1
 )braket
+suffix:semicolon
+op_star
+id|vc_fac_mask
+op_or_assign
+id|X25_MASK_THROUGHPUT
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -169,6 +189,11 @@ id|p
 l_int|2
 )braket
 suffix:semicolon
+op_star
+id|vc_fac_mask
+op_or_assign
+id|X25_MASK_PACKET_SIZE
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -187,6 +212,11 @@ id|p
 (braket
 l_int|2
 )braket
+suffix:semicolon
+op_star
+id|vc_fac_mask
+op_or_assign
+id|X25_MASK_WINDOW_SIZE
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -350,6 +380,10 @@ r_struct
 id|x25_facilities
 op_star
 id|facilities
+comma
+r_int
+r_int
+id|facil_mask
 )paren
 (brace
 r_int
@@ -367,9 +401,42 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|facil_mask
+op_eq
+l_int|0
+)paren
+(brace
+id|buffer
+(braket
+l_int|0
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* length of the facilities field in call_req or call_accept packets */
+id|len
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* 1 byte for the length field */
+r_return
+id|len
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+(paren
 id|facilities-&gt;reverse
 op_ne
 l_int|0
+)paren
+op_logical_and
+(paren
+id|facil_mask
+op_amp
+id|X25_MASK_REVERSE
+)paren
 )paren
 (brace
 op_star
@@ -395,9 +462,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|facilities-&gt;throughput
 op_ne
 l_int|0
+)paren
+op_logical_and
+(paren
+id|facil_mask
+op_amp
+id|X25_MASK_THROUGHPUT
+)paren
 )paren
 (brace
 op_star
@@ -416,6 +491,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|facilities-&gt;pacsize_in
 op_ne
 l_int|0
@@ -423,6 +499,13 @@ op_logical_or
 id|facilities-&gt;pacsize_out
 op_ne
 l_int|0
+)paren
+op_logical_and
+(paren
+id|facil_mask
+op_amp
+id|X25_MASK_PACKET_SIZE
+)paren
 )paren
 (brace
 op_star
@@ -465,6 +548,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|facilities-&gt;winsize_in
 op_ne
 l_int|0
@@ -472,6 +556,13 @@ op_logical_or
 id|facilities-&gt;winsize_out
 op_ne
 l_int|0
+)paren
+op_logical_and
+(paren
+id|facil_mask
+op_amp
+id|X25_MASK_WINDOW_SIZE
+)paren
 )paren
 (brace
 op_star
@@ -599,6 +690,9 @@ id|skb
 comma
 op_amp
 id|theirs
+comma
+op_amp
+id|sk-&gt;protinfo.x25-&gt;vc_facil_mask
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;They want reverse charging, we won&squot;t accept it.&n;&t; */

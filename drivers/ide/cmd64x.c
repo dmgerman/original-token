@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;linux/ide.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;ide_modes.h&quot;
 macro_line|#ifndef SPLIT_BYTE
@@ -1921,7 +1922,7 @@ suffix:semicolon
 r_int
 id|bus_speed
 op_assign
-id|ide_system_bus_speed
+id|system_bus_clock
 c_func
 (paren
 )paren
@@ -4019,6 +4020,21 @@ comma
 l_int|0x3f
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PPC
+(paren
+r_void
+)paren
+id|pci_write_config_byte
+c_func
+(paren
+id|dev
+comma
+id|UDIDETCR0
+comma
+l_int|0xf0
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_PPC */
 macro_line|#if defined(DISPLAY_CMD64X_TIMINGS) &amp;&amp; defined(CONFIG_PROC_FS)
 r_if
 c_cond

@@ -2786,6 +2786,9 @@ comma
 multiline_comment|/* media_change */
 l_int|NULL
 comma
+multiline_comment|/* revalidate */
+l_int|NULL
+comma
 multiline_comment|/* pre_reset */
 l_int|NULL
 comma

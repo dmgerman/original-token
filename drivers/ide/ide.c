@@ -735,7 +735,7 @@ c_func
 )paren
 id|system_bus_speed
 op_assign
-l_int|40
+l_int|33
 suffix:semicolon
 multiline_comment|/* safe default value for PCI */
 macro_line|#endif /* CONFIG_PCI */
@@ -4404,7 +4404,6 @@ id|block
 op_plus
 id|rq-&gt;nr_sectors
 suffix:semicolon
-macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -4428,7 +4427,6 @@ op_eq
 id|ide_floppy
 )paren
 )paren
-macro_line|#endif
 (brace
 r_if
 c_cond
@@ -7175,41 +7173,16 @@ l_int|0
 suffix:semicolon
 )brace
 suffix:semicolon
-id|grok_partitions
-c_func
-(paren
-id|HWIF
+id|DRIVER
 c_func
 (paren
 id|drive
 )paren
 op_member_access_from_pointer
-id|gd
-comma
-id|drive-&gt;select.b.unit
-comma
-(paren
-id|drive-&gt;media
-op_ne
-id|ide_disk
-op_logical_and
-id|drive-&gt;media
-op_ne
-id|ide_floppy
-)paren
-ques
-c_cond
-l_int|1
-suffix:colon
-l_int|1
-op_lshift
-id|PARTN_BITS
-comma
-id|current_capacity
+id|revalidate
 c_func
 (paren
 id|drive
-)paren
 )paren
 suffix:semicolon
 id|drive-&gt;busy
@@ -8833,10 +8806,12 @@ id|hwif-&gt;proc
 op_assign
 id|old_hwif.proc
 suffix:semicolon
+macro_line|#ifndef CONFIG_BLK_DEV_IDECS
 id|hwif-&gt;irq
 op_assign
 id|old_hwif.irq
 suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_IDECS */
 id|hwif-&gt;major
 op_assign
 id|old_hwif.major
@@ -10866,6 +10841,7 @@ id|ide_delay_50ms
 r_void
 )paren
 (brace
+macro_line|#if 0
 r_int
 r_int
 id|timeout
@@ -10898,6 +10874,49 @@ id|timeout
 op_minus
 id|jiffies
 )paren
+)paren
+suffix:semicolon
+macro_line|#else
+id|__set_current_state
+c_func
+(paren
+id|TASK_UNINTERRUPTIBLE
+)paren
+suffix:semicolon
+id|schedule_timeout
+c_func
+(paren
+id|HZ
+op_div
+l_int|20
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+DECL|function|system_bus_clock
+r_int
+id|system_bus_clock
+(paren
+r_void
+)paren
+(brace
+r_return
+(paren
+r_int
+)paren
+(paren
+(paren
+op_logical_neg
+id|system_bus_speed
+)paren
+ques
+c_cond
+id|ide_system_bus_speed
+c_func
+(paren
+)paren
+suffix:colon
+id|system_bus_speed
 )paren
 suffix:semicolon
 )brace
@@ -15131,7 +15150,6 @@ id|drive
 r_return
 l_int|0x7fffffff
 suffix:semicolon
-multiline_comment|/* cdrom or tape */
 )brace
 DECL|function|default_special
 r_static
@@ -16311,6 +16329,13 @@ c_func
 id|current_capacity
 )paren
 suffix:semicolon
+DECL|variable|system_bus_clock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|system_bus_clock
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * This is gets invoked once during initialization, to set *everything* up&n; */
 DECL|function|ide_init
 r_int
@@ -16358,9 +16383,8 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-(paren
-r_void
-)paren
+id|system_bus_speed
+op_assign
 id|ide_system_bus_speed
 c_func
 (paren

@@ -1049,7 +1049,7 @@ macro_line|#if TR_SR_DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;source routing for %02X %02X %02X %02X %02X %02X&bslash;n&quot;
+l_string|&quot;source routing for %02X:%02X:%02X:%02X:%02X:%02X&bslash;n&quot;
 comma
 id|trh-&gt;daddr
 (braket

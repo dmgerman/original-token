@@ -1101,22 +1101,12 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
-multiline_comment|/* just CD-RW for now. DVD-RW will come soon, CD-R and DVD-R&n;&t; * need to be handled differently. */
 r_if
 c_cond
-(paren
 (paren
 id|fp-&gt;f_mode
 op_amp
 id|FMODE_WRITE
-)paren
-op_logical_and
-op_logical_neg
-id|CDROM_CAN
-c_func
-(paren
-id|CDC_CD_RW
-)paren
 )paren
 r_return
 op_minus
@@ -7036,7 +7026,7 @@ c_func
 (paren
 id|CD_WARNING
 comma
-l_string|&quot;This disc doesn&squot;t have any tracks I recognise!&bslash;n&quot;
+l_string|&quot;This disc doesn&squot;t have any tracks I recognize!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -12151,8 +12141,6 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#endif /* endif CONFIG_SYSCTL */
-macro_line|#ifdef MODULE
 DECL|function|cdrom_sysctl_unregister
 r_static
 r_void
@@ -12162,18 +12150,18 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifdef CONFIG_SYSCTL
 id|unregister_sysctl_table
 c_func
 (paren
 id|cdrom_sysctl_header
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
-DECL|function|init_module
+macro_line|#endif /* CONFIG_SYSCTL */
+DECL|function|cdrom_init
+r_static
 r_int
-id|init_module
+id|cdrom_init
 c_func
 (paren
 r_void
@@ -12189,6 +12177,7 @@ macro_line|#endif
 id|devfs_handle
 op_assign
 id|devfs_mk_dir
+c_func
 (paren
 l_int|NULL
 comma
@@ -12203,9 +12192,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|cleanup_module
+DECL|function|cdrom_exit
+r_static
 r_void
-id|cleanup_module
+id|cdrom_exit
 c_func
 (paren
 r_void
@@ -12224,12 +12214,26 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_SYSCTL */
+macro_line|#endif
 id|devfs_unregister
+c_func
 (paren
 id|devfs_handle
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* endif MODULE */
+DECL|variable|cdrom_init
+id|module_init
+c_func
+(paren
+id|cdrom_init
+)paren
+suffix:semicolon
+DECL|variable|cdrom_exit
+id|module_exit
+c_func
+(paren
+id|cdrom_exit
+)paren
+suffix:semicolon
 eof

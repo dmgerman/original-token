@@ -2123,6 +2123,7 @@ id|r
 OL
 l_int|0
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -2134,18 +2135,21 @@ c_func
 l_string|&quot; unable to read boot sectors / partition sectors&bslash;n&quot;
 )paren
 suffix:semicolon
+)brace
 r_else
 r_if
 c_cond
 (paren
 id|r
 )paren
+(brace
 id|printk
 c_func
 (paren
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
+)brace
 r_return
 id|r
 suffix:semicolon

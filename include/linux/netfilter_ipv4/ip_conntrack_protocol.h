@@ -131,8 +131,9 @@ id|ip_conntrack_info
 id|ctinfo
 )paren
 suffix:semicolon
-multiline_comment|/* Called when a new connection for this protocol found; returns&n;&t; * TRUE if it&squot;s OK.  If so, packet() called next. */
+multiline_comment|/* Called when a new connection for this protocol found;&n;&t; * returns timeout.  If so, packet() called next. */
 DECL|member|new
+r_int
 r_int
 (paren
 op_star

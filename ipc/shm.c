@@ -1634,7 +1634,7 @@ id|buf
 (brace
 id|buf-&gt;f_type
 op_assign
-l_int|0
+id|SHM_FS_MAGIC
 suffix:semicolon
 id|buf-&gt;f_bsize
 op_assign

@@ -1227,6 +1227,18 @@ l_int|7
 )paren
 )paren
 (brace
+r_if
+c_cond
+(paren
+(paren
+id|id-&gt;dma_ultra
+op_rshift
+l_int|10
+)paren
+op_amp
+l_int|1
+)paren
+(brace
 id|printk
 c_func
 (paren
@@ -1234,6 +1246,38 @@ l_string|&quot;, UDMA(33)&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* UDMA BIOS-enabled! */
+)brace
+r_else
+r_if
+c_cond
+(paren
+(paren
+id|id-&gt;dma_ultra
+op_rshift
+l_int|9
+)paren
+op_amp
+l_int|1
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;, UDMA(25)&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* UDMA BIOS-enabled! */
+)brace
+r_else
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;, UDMA(16)&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* UDMA BIOS-enabled! */
+)brace
 )brace
 r_else
 r_if

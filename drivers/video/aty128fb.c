@@ -582,7 +582,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifndef CONFIG_PPC
+macro_line|#if !defined(CONFIG_PPC) &amp;&amp; !defined(__sparc__)
 DECL|variable|bios_seg
 r_static
 r_void
@@ -1396,7 +1396,7 @@ op_star
 id|info
 )paren
 suffix:semicolon
-macro_line|#ifndef CONFIG_PPC
+macro_line|#if !defined(CONFIG_PPC) &amp;&amp; !defined(__sparc__)
 r_static
 r_void
 id|aty128_get_pllinfo
@@ -8721,7 +8721,7 @@ id|info
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifndef CONFIG_PPC
+macro_line|#if !defined(CONFIG_PPC) &amp;&amp; !defined(__sparc__)
 r_else
 id|aty128_get_pllinfo
 c_func
@@ -8865,7 +8865,7 @@ l_int|1
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_PCI */
-multiline_comment|/* PPC cannot read video ROM, so we fail by default */
+multiline_comment|/* PPC and Sparc cannot read video ROM, so we fail by default */
 r_static
 r_int
 id|__init
@@ -8884,7 +8884,7 @@ id|flag
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifndef CONFIG_PPC
+macro_line|#if !defined(CONFIG_PPC) &amp;&amp; !defined(__sparc__)
 id|u32
 id|segstart
 suffix:semicolon
@@ -9210,7 +9210,7 @@ id|flag
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifndef CONFIG_PPC
+macro_line|#if !defined(CONFIG_PPC) &amp;&amp; !defined(__sparc__)
 r_static
 r_void
 id|__init

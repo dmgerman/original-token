@@ -359,12 +359,11 @@ r_int
 id|adr_setup
 comma
 id|data_pls
-comma
-id|bus_speed
 suffix:semicolon
+r_int
 id|bus_speed
 op_assign
-id|ide_system_bus_speed
+id|system_bus_clock
 c_func
 (paren
 )paren

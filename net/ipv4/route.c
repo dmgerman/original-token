@@ -2376,11 +2376,15 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;rt_cache @%02x: %08x&quot;
+l_string|&quot;rt_cache @%02x: %u.%u.%u.%u&quot;
 comma
 id|hash
 comma
+id|NIPQUAD
+c_func
+(paren
 id|rt-&gt;rt_dst
+)paren
 )paren
 suffix:semicolon
 r_for
@@ -2399,9 +2403,13 @@ id|trt-&gt;u.rt_next
 id|printk
 c_func
 (paren
-l_string|&quot; . %08x&quot;
+l_string|&quot; . %u.%u.%u.%u&quot;
 comma
+id|NIPQUAD
+c_func
+(paren
 id|trt-&gt;rt_dst
+)paren
 )paren
 suffix:semicolon
 id|printk
@@ -3373,10 +3381,10 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Redirect from %X/%s to %X ignored.&quot;
-l_string|&quot;Path = %X -&gt; %X, tos %02x&bslash;n&quot;
+l_string|&quot;Redirect from %u.%u.%u.%u on %s about %u.%u.%u.%u ignored.&bslash;n&quot;
+l_string|&quot;  Advised path = %u.%u.%u.%u -&gt; %u.%u.%u.%u, tos %02x&bslash;n&quot;
 comma
-id|ntohl
+id|NIPQUAD
 c_func
 (paren
 id|old_gw
@@ -3384,19 +3392,19 @@ id|old_gw
 comma
 id|dev-&gt;name
 comma
-id|ntohl
+id|NIPQUAD
 c_func
 (paren
 id|new_gw
 )paren
 comma
-id|ntohl
+id|NIPQUAD
 c_func
 (paren
 id|saddr
 )paren
 comma
-id|ntohl
+id|NIPQUAD
 c_func
 (paren
 id|daddr
@@ -3499,7 +3507,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;ip_rt_advice: redirect to %d.%d.%d.%d/%02x dropped&bslash;n&quot;
+l_string|&quot;ip_rt_advice: redirect to %u.%u.%u.%u/%02x dropped&bslash;n&quot;
 comma
 id|NIPQUAD
 c_func
@@ -3672,15 +3680,28 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;host %08x/if%d ignores redirects for %08x to %08x.&bslash;n&quot;
+l_string|&quot;host %u.%u.%u.%u/if%d ignores redirects for &quot;
+l_string|&quot;%u.%u.%u.%u to %u.%u.%u.%u.&bslash;n&quot;
 comma
+id|NIPQUAD
+c_func
+(paren
 id|rt-&gt;rt_src
+)paren
 comma
 id|rt-&gt;rt_iif
 comma
+id|NIPQUAD
+c_func
+(paren
 id|rt-&gt;rt_dst
+)paren
 comma
+id|NIPQUAD
+c_func
+(paren
 id|rt-&gt;rt_gateway
+)paren
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -4485,11 +4506,19 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;ip_rt_bug: %08x -&gt; %08x, %s&bslash;n&quot;
+l_string|&quot;ip_rt_bug: %u.%u.%u.%u -&gt; %u.%u.%u.%u, %s&bslash;n&quot;
 comma
+id|NIPQUAD
+c_func
+(paren
 id|skb-&gt;nh.iph-&gt;saddr
+)paren
 comma
+id|NIPQUAD
+c_func
+(paren
 id|skb-&gt;nh.iph-&gt;daddr
+)paren
 comma
 id|skb-&gt;dev
 ques
@@ -6435,11 +6464,19 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;martian destination %08x from %08x, dev %s&bslash;n&quot;
+l_string|&quot;martian destination %u.%u.%u.%u from %u.%u.%u.%u, dev %s&bslash;n&quot;
 comma
+id|NIPQUAD
+c_func
+(paren
 id|daddr
+)paren
 comma
+id|NIPQUAD
+c_func
+(paren
 id|saddr
+)paren
 comma
 id|dev-&gt;name
 )paren
@@ -6483,16 +6520,24 @@ c_func
 )paren
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; *&t;RFC1812 recommenadtion, if source is martian,&n;&t;&t; *&t;the only hint is MAC header.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;RFC1812 recommendation, if source is martian,&n;&t;&t; *&t;the only hint is MAC header.&n;&t;&t; */
 id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;martian source %08x for %08x, dev %s&bslash;n&quot;
+l_string|&quot;martian source %u.%u.%u.%u from %u.%u.%u.%u, on dev %s&bslash;n&quot;
 comma
-id|saddr
-comma
+id|NIPQUAD
+c_func
+(paren
 id|daddr
+)paren
+comma
+id|NIPQUAD
+c_func
+(paren
+id|saddr
+)paren
 comma
 id|dev-&gt;name
 )paren
@@ -6517,7 +6562,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;ll header:&quot;
+l_string|&quot;ll header: &quot;
 )paren
 suffix:semicolon
 r_for
@@ -6537,15 +6582,36 @@ comma
 id|p
 op_increment
 )paren
+(brace
 id|printk
 c_func
 (paren
-l_string|&quot; %02x&quot;
+l_string|&quot;%02x&quot;
 comma
 op_star
 id|p
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
+OL
+(paren
+id|dev-&gt;hard_header_len
+op_minus
+l_int|1
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;:&quot;
+)paren
+suffix:semicolon
+)brace
+)brace
 id|printk
 c_func
 (paren

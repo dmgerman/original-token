@@ -5649,13 +5649,18 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;TW_REC: reject openreq %u/%u %08x/%u&bslash;n&quot;
+l_string|&quot;TW_REC: reject openreq %u/%u %u.%u.%u.%u/%u&bslash;n&quot;
 comma
+"&bslash;"
 id|peer-&gt;tcp_ts
 comma
 id|req-&gt;ts_recent
 comma
+id|NIPQUAD
+c_func
+(paren
 id|saddr
+)paren
 comma
 id|ntohs
 c_func
@@ -5734,13 +5739,19 @@ c_func
 (paren
 )paren
 )paren
+"&bslash;"
 id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;TCP: drop open request from %08x/%u&bslash;n&quot;
+l_string|&quot;TCP: drop open request from %u.%u.%u.%u/%u&bslash;n&quot;
 comma
+"&bslash;"
+id|NIPQUAD
+c_func
+(paren
 id|saddr
+)paren
 comma
 id|ntohs
 c_func

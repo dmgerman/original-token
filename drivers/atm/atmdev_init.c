@@ -1,31 +1,11 @@
 multiline_comment|/* drivers/atm/atmdev_init.c - ATM device driver initialization */
-multiline_comment|/* Written 1995-1997 by Werner Almesberger, EPFL LRC */
+multiline_comment|/* Written 1995-2000 by Werner Almesberger, EPFL LRC/ICA */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#ifdef CONFIG_ATM_ENI
-r_extern
-r_int
-id|eni_detect
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_ATM_ZATM
 r_extern
 r_int
 id|zatm_detect
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_ATM_TNETA1570
-r_extern
-r_int
-id|tneta1570_detect
 c_func
 (paren
 r_void
@@ -82,6 +62,7 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/*&n; * For historical reasons, atmdev_init returns the number of devices found.&n; * Note that some detections may not go via atmdev_init (e.g. eni.c), so this&n; * number is meaningless.&n; */
 DECL|function|atmdev_init
 r_int
 id|__init
@@ -98,22 +79,10 @@ id|devs
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef CONFIG_ATM_ENI
-singleline_comment|//&t;devs += eni_detect();
-macro_line|#endif
 macro_line|#ifdef CONFIG_ATM_ZATM
 id|devs
 op_add_assign
 id|zatm_detect
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_ATM_TNETA1570
-id|devs
-op_add_assign
-id|tneta1570_detect
 c_func
 (paren
 )paren

@@ -2573,6 +2573,8 @@ op_star
 comma
 r_int
 comma
+r_int
+comma
 r_struct
 id|scm_cookie
 op_star

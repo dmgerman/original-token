@@ -1,10 +1,8 @@
 macro_line|#ifndef _IPT_STATE_H
 DECL|macro|_IPT_STATE_H
 mdefine_line|#define _IPT_STATE_H
-DECL|macro|_IPT_STATE_BIT
-mdefine_line|#define _IPT_STATE_BIT(ctinfo) (1 &lt;&lt; ((ctinfo)+1))
 DECL|macro|IPT_STATE_BIT
-mdefine_line|#define IPT_STATE_BIT(ctinfo) ((ctinfo) &gt;= IP_CT_IS_REPLY ? _IPT_STATE_BIT((ctinfo)-IP_CT_IS_REPLY) : _IPT_STATE_BIT(ctinfo))
+mdefine_line|#define IPT_STATE_BIT(ctinfo) (1 &lt;&lt; ((ctinfo)%IP_CT_IS_REPLY+1))
 DECL|macro|IPT_STATE_INVALID
 mdefine_line|#define IPT_STATE_INVALID (1 &lt;&lt; 0)
 DECL|struct|ipt_state_info

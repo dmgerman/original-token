@@ -5,7 +5,9 @@ macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/fb.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
+macro_line|#ifdef __mc68000__
 macro_line|#include &lt;asm/setup.h&gt;
+macro_line|#endif
 macro_line|#include &lt;video/fbcon.h&gt;
 macro_line|#include &lt;video/fbcon-iplan2p4.h&gt;
 multiline_comment|/*&n;     *  Interleaved bitplanes &#xfffd; la Atari (4 planes, 2 bytes interleave)&n;     */

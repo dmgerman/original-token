@@ -647,6 +647,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|kc-&gt;kc_last
+op_eq
+op_minus
+l_int|1
+)paren
+r_continue
+suffix:semicolon
+multiline_comment|/* don&squot;t look in cache if invalid. */
+r_if
+c_cond
+(paren
 op_star
 id|ext
 op_eq
@@ -4077,7 +4088,7 @@ l_int|0
 suffix:semicolon
 id|key
 OL
-l_int|3
+l_int|4
 suffix:semicolon
 id|key
 op_increment

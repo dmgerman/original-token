@@ -2342,7 +2342,7 @@ l_int|NULL
 id|DPRINTK
 c_func
 (paren
-l_string|&quot;gred_dump:failed to malloc for %d&bslash;n&quot;
+l_string|&quot;gred_dump:failed to malloc for %Zd&bslash;n&quot;
 comma
 r_sizeof
 (paren

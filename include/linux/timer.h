@@ -224,13 +224,13 @@ id|timer
 suffix:semicolon
 macro_line|#else
 DECL|macro|timer_exit
-mdefine_line|#define timer_exit(t) do { } while (0)
+mdefine_line|#define timer_exit(t) (void)(t)
 DECL|macro|timer_set_running
-mdefine_line|#define timer_set_running(t) do { } while (0)
+mdefine_line|#define timer_set_running(t) (void)(t)
 DECL|macro|timer_is_running
 mdefine_line|#define timer_is_running(t) (0)
 DECL|macro|timer_synchronize
-mdefine_line|#define timer_synchronize(t) barrier()
+mdefine_line|#define timer_synchronize(t) do { (void)(t); barrier(); } while(0)
 DECL|macro|del_timer_sync
 mdefine_line|#define del_timer_sync(t) del_timer(t)
 macro_line|#endif

@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;linux/ide.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;ide_modes.h&quot;
 multiline_comment|/*&n; * This flag is set in ide.c by the parameter:  ide0=cmd640_vlb&n; */
@@ -2003,7 +2004,7 @@ suffix:semicolon
 r_int
 id|bus_speed
 op_assign
-id|ide_system_bus_speed
+id|system_bus_clock
 c_func
 (paren
 )paren

@@ -2276,7 +2276,7 @@ comma
 l_string|&quot;Peer pid            : %d&bslash;n&quot;
 l_string|&quot;Peer died           : %d&bslash;n&quot;
 l_string|&quot;Peer copy mode      : %d&bslash;n&quot;
-l_string|&quot;Peer copy range     : %d&bslash;n&quot;
+l_string|&quot;Peer copy range     : %Zu&bslash;n&quot;
 l_string|&quot;Queue length        : %d&bslash;n&quot;
 l_string|&quot;Queue max. length   : %d&bslash;n&quot;
 l_string|&quot;Queue flushing      : %d&bslash;n&quot;

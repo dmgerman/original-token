@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sparc.c,v 1.37 2000/03/17 05:48:46 anton Exp $&n; * linux/arch/sparc64/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
+multiline_comment|/* $Id: sys_sparc.c,v 1.38 2000/04/13 07:30:34 jj Exp $&n; * linux/arch/sparc64/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/ipc.h&gt;
+macro_line|#include &lt;linux/personality.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/ipc.h&gt;
 macro_line|#include &lt;asm/utrap.h&gt;
@@ -750,6 +751,139 @@ c_func
 suffix:semicolon
 r_return
 id|err
+suffix:semicolon
+)brace
+r_extern
+id|asmlinkage
+r_int
+id|sys_newuname
+c_func
+(paren
+r_struct
+id|new_utsname
+op_star
+id|name
+)paren
+suffix:semicolon
+DECL|function|sparc64_newuname
+id|asmlinkage
+r_int
+id|sparc64_newuname
+c_func
+(paren
+r_struct
+id|new_utsname
+op_star
+id|name
+)paren
+(brace
+r_int
+id|ret
+op_assign
+id|sys_newuname
+c_func
+(paren
+id|name
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|current-&gt;personality
+op_eq
+id|PER_LINUX32
+op_logical_and
+op_logical_neg
+id|ret
+)paren
+(brace
+id|ret
+op_assign
+id|copy_to_user
+c_func
+(paren
+id|name-&gt;machine
+comma
+l_string|&quot;sparc&bslash;0&bslash;0&quot;
+comma
+l_int|8
+)paren
+suffix:semicolon
+)brace
+r_return
+id|ret
+suffix:semicolon
+)brace
+r_extern
+id|asmlinkage
+r_int
+id|sys_personality
+c_func
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
+DECL|function|sparc64_personality
+id|asmlinkage
+r_int
+id|sparc64_personality
+c_func
+(paren
+r_int
+r_int
+id|personality
+)paren
+(brace
+r_int
+id|ret
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|current-&gt;personality
+op_eq
+id|PER_LINUX32
+op_logical_and
+id|personality
+op_eq
+id|PER_LINUX
+)paren
+id|personality
+op_assign
+id|PER_LINUX32
+suffix:semicolon
+id|ret
+op_assign
+id|sys_personality
+c_func
+(paren
+id|personality
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
+op_eq
+id|PER_LINUX32
+)paren
+id|ret
+op_assign
+id|PER_LINUX
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 multiline_comment|/* Linux version of mmap */

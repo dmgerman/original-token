@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sparc64_ksyms.c,v 1.80 2000/03/27 10:38:47 davem Exp $&n; * arch/sparc64/kernel/sparc64_ksyms.c: Sparc64 specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: sparc64_ksyms.c,v 1.81 2000/04/13 04:45:58 davem Exp $&n; * arch/sparc64/kernel/sparc64_ksyms.c: Sparc64 specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
 multiline_comment|/* Tell string.h we don&squot;t want memcpy etc. as cpp defines */
 DECL|macro|EXPORT_SYMTAB_STROPS
 mdefine_line|#define EXPORT_SYMTAB_STROPS
@@ -1496,18 +1496,18 @@ c_func
 id|__memset
 )paren
 suffix:semicolon
-DECL|variable|clear_page
+DECL|variable|_clear_page
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|clear_page
+id|_clear_page
 )paren
 suffix:semicolon
-DECL|variable|copy_page
+DECL|variable|_copy_page
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|copy_page
+id|_copy_page
 )paren
 suffix:semicolon
 DECL|variable|clear_user_page

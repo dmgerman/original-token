@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sab82532.h,v 1.5 1999/05/12 11:21:22 davem Exp $&n; * sab82532.h: Register Definitions for the Siemens SAB82532 DUSCC&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: sab82532.h,v 1.6 2000/04/13 07:22:35 ecd Exp $&n; * sab82532.h: Register Definitions for the Siemens SAB82532 DUSCC&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
 macro_line|#ifndef _SPARC64_SAB82532_H
 DECL|macro|_SPARC64_SAB82532_H
 mdefine_line|#define _SPARC64_SAB82532_H
@@ -572,6 +572,16 @@ suffix:semicolon
 DECL|member|baud
 r_int
 id|baud
+suffix:semicolon
+DECL|member|cec_timeout
+r_int
+r_int
+id|cec_timeout
+suffix:semicolon
+DECL|member|tec_timeout
+r_int
+r_int
+id|tec_timeout
 suffix:semicolon
 DECL|member|x_char
 r_int

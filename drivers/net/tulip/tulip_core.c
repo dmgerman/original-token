@@ -8,7 +8,7 @@ id|version
 (braket
 )braket
 op_assign
-l_string|&quot;Linux Tulip driver version 0.9.4.2 (Mar 21, 2000)&bslash;n&quot;
+l_string|&quot;Linux Tulip driver version 0.9.4.3 (Apr 14, 2000)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;tulip.h&quot;

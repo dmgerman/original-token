@@ -8720,6 +8720,10 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+singleline_comment|// prevent module unload while sleeping (kmalloc)
+singleline_comment|// doing this any earlier would complicate more error return paths
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 singleline_comment|// get space for our vcc stuff and copy parameters into it
 id|vccp
 op_assign
@@ -8746,6 +8750,8 @@ id|KERN_ERR
 comma
 l_string|&quot;out of memory!&quot;
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 op_minus
@@ -8867,6 +8873,8 @@ id|kfree
 id|vccp
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 id|error
 suffix:semicolon
@@ -8909,11 +8917,18 @@ comma
 l_string|&quot;VC already open for RX&quot;
 )paren
 suffix:semicolon
-r_return
+id|error
+op_assign
 op_minus
 id|EBUSY
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|error
+)paren
 id|error
 op_assign
 id|hrz_open_rx
@@ -8933,6 +8948,8 @@ id|kfree
 (paren
 id|vccp
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 id|error
@@ -8973,8 +8990,6 @@ comma
 op_amp
 id|atm_vcc-&gt;flags
 )paren
-suffix:semicolon
-id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0

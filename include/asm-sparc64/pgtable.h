@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtable.h,v 1.124 2000/03/27 10:38:56 davem Exp $&n; * pgtable.h: SpitFire page table operations.&n; *&n; * Copyright 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: pgtable.h,v 1.125 2000/04/12 08:10:26 davem Exp $&n; * pgtable.h: SpitFire page table operations.&n; *&n; * Copyright 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#ifndef _SPARC64_PGTABLE_H
 DECL|macro|_SPARC64_PGTABLE_H
 mdefine_line|#define _SPARC64_PGTABLE_H
@@ -184,17 +184,16 @@ r_void
 suffix:semicolon
 DECL|macro|BAD_PAGE
 mdefine_line|#define BAD_PAGE&t;__bad_page()
-multiline_comment|/* First physical page can be anywhere, the following is needed so that&n; * va--&gt;pa and vice versa conversions work properly without performance&n; * hit for all __pa()/__va() operations.&n; */
 r_extern
 r_int
 r_int
 id|phys_base
 suffix:semicolon
 DECL|macro|ZERO_PAGE
-mdefine_line|#define ZERO_PAGE(vaddr)&t;(mem_map + (phys_base&gt;&gt;PAGE_SHIFT))
+mdefine_line|#define ZERO_PAGE(vaddr)&t;(mem_map)
 multiline_comment|/* Warning: These take pointers to page structs now... */
 DECL|macro|mk_pte
-mdefine_line|#define mk_pte(page, pgprot)&t;&t;&bslash;&n;&t;__pte(((page - mem_map) &lt;&lt; PAGE_SHIFT) | pgprot_val(pgprot))
+mdefine_line|#define mk_pte(page, pgprot)&t;&t;&bslash;&n;&t;__pte((((page - mem_map) &lt;&lt; PAGE_SHIFT)+phys_base) | pgprot_val(pgprot))
 DECL|macro|page_pte_prot
 mdefine_line|#define page_pte_prot(page, prot)&t;mk_pte(page, prot)
 DECL|macro|page_pte
@@ -249,7 +248,7 @@ mdefine_line|#define pmd_set(pmdp, ptep)&t;&bslash;&n;&t;(pmd_val(*(pmdp)) = (__
 DECL|macro|pgd_set
 mdefine_line|#define pgd_set(pgdp, pmdp)&t;&bslash;&n;&t;(pgd_val(*(pgdp)) = (__pa((unsigned long) (pmdp)) &gt;&gt; 11UL))
 DECL|macro|pte_pagenr
-mdefine_line|#define pte_pagenr(pte)   ((unsigned long) ((pte_val(pte)&amp;~PAGE_OFFSET)&gt;&gt;PAGE_SHIFT))
+mdefine_line|#define pte_pagenr(pte)   (((unsigned long) ((pte_val(pte)&amp;~PAGE_OFFSET)-phys_base)&gt;&gt;PAGE_SHIFT))
 DECL|macro|pmd_page
 mdefine_line|#define pmd_page(pmd)&t;&t;&t;((unsigned long) __va((pmd_val(pmd)&lt;&lt;11UL)))
 DECL|macro|pgd_page

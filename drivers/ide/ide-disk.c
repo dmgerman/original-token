@@ -2202,6 +2202,41 @@ id|drive-&gt;removable
 suffix:semicolon
 multiline_comment|/* if removable, always assume it was changed */
 )brace
+DECL|function|idedisk_revalidate
+r_static
+r_void
+id|idedisk_revalidate
+(paren
+id|ide_drive_t
+op_star
+id|drive
+)paren
+(brace
+id|grok_partitions
+c_func
+(paren
+id|HWIF
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|gd
+comma
+id|drive-&gt;select.b.unit
+comma
+l_int|1
+op_lshift
+id|PARTN_BITS
+comma
+id|current_capacity
+c_func
+(paren
+id|drive
+)paren
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * Compute drive-&gt;capacity, the full capacity of the drive&n; * Called with drive-&gt;id != NULL.&n; */
 DECL|function|init_idedisk_capacity
 r_static
@@ -3683,6 +3718,9 @@ multiline_comment|/* release */
 id|idedisk_media_change
 comma
 multiline_comment|/* media_change */
+id|idedisk_revalidate
+comma
+multiline_comment|/* revalidate */
 id|idedisk_pre_reset
 comma
 multiline_comment|/* pre_reset */

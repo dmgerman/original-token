@@ -2,6 +2,7 @@ multiline_comment|/*&n; *&t;Access to VGA videoram&n; *&n; *&t;(c) 1998 Martin M
 macro_line|#ifndef _LINUX_ASM_VGA_H_
 DECL|macro|_LINUX_ASM_VGA_H_
 mdefine_line|#define _LINUX_ASM_VGA_H_
+macro_line|#include &lt;asm/types.h&gt;
 DECL|macro|VT_BUF_HAVE_RW
 mdefine_line|#define VT_BUF_HAVE_RW
 DECL|function|scr_writew

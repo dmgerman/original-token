@@ -64,7 +64,7 @@ DECL|macro|dprintf4
 mdefine_line|#define dprintf4(a1,a2,a3,a4)
 macro_line|#endif
 DECL|macro|print_ip
-mdefine_line|#define print_ip(a)&t; printk(&quot;%d.%d.%d.%d&quot;,(ntohl(a)&gt;&gt;24)&amp;0xFF,&bslash;&n;&t;&t;&t;&t;&t;      (ntohl(a)&gt;&gt;16)&amp;0xFF,&bslash;&n;&t;&t;&t;&t;&t;      (ntohl(a)&gt;&gt;8)&amp;0xFF,&bslash;&n;&t;&t;&t;&t;&t;      (ntohl(a))&amp;0xFF);
+mdefine_line|#define print_ip(a)&t; printk(&quot;%u.%u.%u.%u&quot;, NIPQUAD(a));
 macro_line|#ifdef DEBUG_IP_FIREWALL
 DECL|macro|dprint_ip
 mdefine_line|#define dprint_ip(a)&t;print_ip(a)

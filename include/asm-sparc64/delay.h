@@ -1,8 +1,9 @@
-multiline_comment|/* $Id: delay.h,v 1.7 1997/11/07 18:24:31 mj Exp $&n; * delay.h: Linux delay routines on the V9.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu).&n; */
+multiline_comment|/* $Id: delay.h,v 1.8 2000/04/13 04:45:59 davem Exp $&n; * delay.h: Linux delay routines on the V9.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu).&n; */
 macro_line|#ifndef __SPARC64_DELAY_H
 DECL|macro|__SPARC64_DELAY_H
 mdefine_line|#define __SPARC64_DELAY_H
 macro_line|#ifdef __SMP__
+macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#endif 
 DECL|function|__delay

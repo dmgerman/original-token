@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;linux/ide.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;ide_modes.h&quot;
 DECL|macro|DISPLAY_ALI_TIMINGS
@@ -1524,7 +1525,7 @@ suffix:semicolon
 r_int
 id|bus_speed
 op_assign
-id|ide_system_bus_speed
+id|system_bus_clock
 c_func
 (paren
 )paren
@@ -2494,7 +2495,7 @@ op_star
 id|drive
 )paren
 (brace
-macro_line|#ifdef CONFIG_WDC_ALI15X3
+macro_line|#ifndef CONFIG_WDC_ALI15X3
 r_struct
 id|hd_driveid
 op_star
@@ -2525,7 +2526,7 @@ OL
 l_int|0xC2
 )paren
 op_logical_and
-macro_line|#ifdef CONFIG_WDC_ALI15X3
+macro_line|#ifndef CONFIG_WDC_ALI15X3
 (paren
 (paren
 id|chip_is_1543c_e

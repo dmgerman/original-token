@@ -8037,7 +8037,7 @@ multiline_comment|/*  End Function get_vfs_inode  */
 multiline_comment|/*  File operations for device entries follow  */
 DECL|function|devfs_read
 r_static
-r_int
+id|ssize_t
 id|devfs_read
 (paren
 r_struct

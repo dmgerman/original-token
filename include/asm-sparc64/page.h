@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: page.h,v 1.33 2000/03/22 02:48:04 davem Exp $ */
+multiline_comment|/* $Id: page.h,v 1.35 2000/04/13 04:45:59 davem Exp $ */
 macro_line|#ifndef _SPARC64_PAGE_H
 DECL|macro|_SPARC64_PAGE_H
 mdefine_line|#define _SPARC64_PAGE_H
@@ -22,7 +22,7 @@ DECL|macro|PAGE_BUG
 mdefine_line|#define PAGE_BUG(page)&t;BUG()
 r_extern
 r_void
-id|clear_page
+id|_clear_page
 c_func
 (paren
 r_void
@@ -32,7 +32,7 @@ id|page
 suffix:semicolon
 r_extern
 r_void
-id|copy_page
+id|_copy_page
 c_func
 (paren
 r_void
@@ -44,6 +44,10 @@ op_star
 id|from
 )paren
 suffix:semicolon
+DECL|macro|clear_page
+mdefine_line|#define clear_page(X)&t;_clear_page((void *)(X))
+DECL|macro|copy_page
+mdefine_line|#define copy_page(X,Y)&t;_copy_page((void *)(X), (void *)(Y))
 r_extern
 r_void
 id|clear_user_page
@@ -292,7 +296,7 @@ mdefine_line|#define __pa(x)&t;&t;&t;((unsigned long)(x) - PAGE_OFFSET)
 DECL|macro|__va
 mdefine_line|#define __va(x)&t;&t;&t;((void *)((unsigned long) (x) + PAGE_OFFSET))
 DECL|macro|MAP_NR
-mdefine_line|#define MAP_NR(addr)&t;&t;(__pa(addr) &gt;&gt; PAGE_SHIFT)
+mdefine_line|#define MAP_NR(addr)&t;&t;((__pa(addr)-phys_base) &gt;&gt; PAGE_SHIFT)
 DECL|macro|virt_to_phys
 mdefine_line|#define virt_to_phys __pa
 DECL|macro|phys_to_virt

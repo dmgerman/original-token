@@ -4373,10 +4373,7 @@ id|__init
 id|econet_proto_init
 c_func
 (paren
-r_struct
-id|net_proto
-op_star
-id|pro
+r_void
 )paren
 (brace
 r_extern

@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/ide.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;ide_modes.h&quot;
 multiline_comment|/* the current version */
@@ -165,10 +166,8 @@ id|clk2
 suffix:semicolon
 r_int
 id|bus_speed
-suffix:semicolon
-id|bus_speed
 op_assign
-id|ide_system_bus_speed
+id|system_bus_clock
 c_func
 (paren
 )paren

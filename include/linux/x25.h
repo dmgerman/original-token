@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * These are the public elements of the Linux kernel X.25 implementation.&n; */
+multiline_comment|/*&n; * These are the public elements of the Linux kernel X.25 implementation.&n; *&n; * &t;History&n; *&t;mar/20/00&t;Daniela Squassoni Disabling/enabling of facilities &n; *&t;&t;&t;&t;&t;  negotiation.&n; */
 macro_line|#ifndef&t;X25_KERNEL_H
 DECL|macro|X25_KERNEL_H
 mdefine_line|#define&t;X25_KERNEL_H
@@ -70,7 +70,7 @@ suffix:semicolon
 multiline_comment|/* X.121 Address */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; *&t;DTE/DCE subscription options.&n; */
+multiline_comment|/*&n; *&t;DTE/DCE subscription options.&n; *&n; *      As this is missing lots of options, user should expect major&n; *&t;changes of this structure in 2.5.x which might break compatibilty.&n; *      The somewhat ugly dimension 200-sizeof() is needed to maintain&n; *&t;backward compatibility.&n; */
 DECL|struct|x25_subscrip_struct
 r_struct
 id|x25_subscrip_struct
@@ -80,8 +80,20 @@ r_char
 id|device
 (braket
 l_int|200
+op_minus
+r_sizeof
+(paren
+r_int
+r_int
+)paren
 )braket
 suffix:semicolon
+DECL|member|global_facil_mask
+r_int
+r_int
+id|global_facil_mask
+suffix:semicolon
+multiline_comment|/* 0 to disable negotiation */
 DECL|member|extended
 r_int
 r_int
@@ -89,6 +101,15 @@ id|extended
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* values for above global_facil_mask */
+DECL|macro|X25_MASK_REVERSE
+mdefine_line|#define&t;X25_MASK_REVERSE&t;0x01&t;
+DECL|macro|X25_MASK_THROUGHPUT
+mdefine_line|#define&t;X25_MASK_THROUGHPUT&t;0x02
+DECL|macro|X25_MASK_PACKET_SIZE
+mdefine_line|#define&t;X25_MASK_PACKET_SIZE&t;0x04
+DECL|macro|X25_MASK_WINDOW_SIZE
+mdefine_line|#define&t;X25_MASK_WINDOW_SIZE&t;0x08
 multiline_comment|/*&n; *&t;Routing table control structure.&n; */
 DECL|struct|x25_route_struct
 r_struct

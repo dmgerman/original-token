@@ -1278,7 +1278,7 @@ r_sizeof
 r_int
 )paren
 comma
-l_int|0600
+l_int|0644
 comma
 l_int|NULL
 comma
@@ -1396,7 +1396,7 @@ r_sizeof
 r_int
 )paren
 comma
-l_int|0600
+l_int|0644
 comma
 l_int|NULL
 comma
@@ -1417,7 +1417,7 @@ r_sizeof
 r_int
 )paren
 comma
-l_int|0600
+l_int|0644
 comma
 l_int|NULL
 comma

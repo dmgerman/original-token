@@ -65,6 +65,10 @@ DECL|macro|DEVID_HT6565
 mdefine_line|#define DEVID_HT6565&t;((ide_pci_devid_t){PCI_VENDOR_ID_HOLTEK,  PCI_DEVICE_ID_HOLTEK_6565})
 DECL|macro|DEVID_AEC6210
 mdefine_line|#define DEVID_AEC6210&t;((ide_pci_devid_t){PCI_VENDOR_ID_ARTOP,   PCI_DEVICE_ID_ARTOP_ATP850UF})
+DECL|macro|DEVID_AEC6260
+mdefine_line|#define DEVID_AEC6260&t;((ide_pci_devid_t){PCI_VENDOR_ID_ARTOP,   PCI_DEVICE_ID_ARTOP_ATP860})
+DECL|macro|DEVID_AEC6260R
+mdefine_line|#define DEVID_AEC6260R&t;((ide_pci_devid_t){PCI_VENDOR_ID_ARTOP,   PCI_DEVICE_ID_ARTOP_ATP860R})
 DECL|macro|DEVID_W82C105
 mdefine_line|#define DEVID_W82C105&t;((ide_pci_devid_t){PCI_VENDOR_ID_WINBOND, PCI_DEVICE_ID_WINBOND_82C105})
 DECL|macro|DEVID_UM8673F
@@ -89,11 +93,11 @@ DECL|macro|DEVID_AMD7409
 mdefine_line|#define DEVID_AMD7409&t;((ide_pci_devid_t){PCI_VENDOR_ID_AMD,     PCI_DEVICE_ID_AMD_VIPER_7409})
 DECL|macro|IDE_IGNORE
 mdefine_line|#define&t;IDE_IGNORE&t;((void *)-1)
-macro_line|#ifdef CONFIG_BLK_DEV_AEC6210
+macro_line|#ifdef CONFIG_BLK_DEV_AEC62XX
 r_extern
 r_int
 r_int
-id|pci_init_aec6210
+id|pci_init_aec62xx
 c_func
 (paren
 r_struct
@@ -106,8 +110,9 @@ op_star
 )paren
 suffix:semicolon
 r_extern
-r_void
-id|ide_init_aec6210
+r_int
+r_int
+id|ata66_aec62xx
 c_func
 (paren
 id|ide_hwif_t
@@ -116,7 +121,16 @@ op_star
 suffix:semicolon
 r_extern
 r_void
-id|ide_dmacapable_aec6210
+id|ide_init_aec62xx
+c_func
+(paren
+id|ide_hwif_t
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|ide_dmacapable_aec62xx
 c_func
 (paren
 id|ide_hwif_t
@@ -126,19 +140,23 @@ r_int
 r_int
 )paren
 suffix:semicolon
-DECL|macro|PCI_AEC6210
-mdefine_line|#define PCI_AEC6210&t;&amp;pci_init_aec6210
-DECL|macro|INIT_AEC6210
-mdefine_line|#define INIT_AEC6210&t;&amp;ide_init_aec6210
-DECL|macro|DMA_AEC6210
-mdefine_line|#define DMA_AEC6210&t;&amp;ide_dmacapable_aec6210
+DECL|macro|PCI_AEC62XX
+mdefine_line|#define PCI_AEC62XX&t;&amp;pci_init_aec62xx
+DECL|macro|ATA66_AEC62XX
+mdefine_line|#define ATA66_AEC62XX&t;&amp;ata66_aec62xx
+DECL|macro|INIT_AEC62XX
+mdefine_line|#define INIT_AEC62XX&t;&amp;ide_init_aec62xx
+DECL|macro|DMA_AEC62XX
+mdefine_line|#define DMA_AEC62XX&t;&amp;ide_dmacapable_aec62xx
 macro_line|#else
-DECL|macro|PCI_AEC6210
-mdefine_line|#define PCI_AEC6210&t;NULL
-DECL|macro|INIT_AEC6210
-mdefine_line|#define INIT_AEC6210&t;NULL
-DECL|macro|DMA_AEC6210
-mdefine_line|#define DMA_AEC6210&t;NULL
+DECL|macro|PCI_AEC62XX
+mdefine_line|#define PCI_AEC62XX&t;NULL
+DECL|macro|ATA66_AEC62XX
+mdefine_line|#define ATA66_AEC62XX&t;NULL
+DECL|macro|INIT_AEC62XX
+mdefine_line|#define INIT_AEC62XX&t;NULL
+DECL|macro|DMA_AEC62XX
+mdefine_line|#define DMA_AEC62XX&t;NULL
 macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_ALI15X3
 r_extern
@@ -1871,13 +1889,49 @@ id|DEVID_AEC6210
 comma
 l_string|&quot;AEC6210&quot;
 comma
-id|PCI_AEC6210
+id|PCI_AEC62XX
 comma
 l_int|NULL
 comma
-id|INIT_AEC6210
+id|INIT_AEC62XX
 comma
-id|DMA_AEC6210
+id|DMA_AEC62XX
+comma
+(brace
+(brace
+l_int|0x4a
+comma
+l_int|0x02
+comma
+l_int|0x02
+)brace
+comma
+(brace
+l_int|0x4a
+comma
+l_int|0x04
+comma
+l_int|0x04
+)brace
+)brace
+comma
+id|OFF_BOARD
+comma
+l_int|0
+)brace
+comma
+(brace
+id|DEVID_AEC6260
+comma
+l_string|&quot;AEC6260&quot;
+comma
+id|PCI_AEC62XX
+comma
+id|ATA66_AEC62XX
+comma
+id|INIT_AEC62XX
+comma
+l_int|NULL
 comma
 (brace
 (brace
@@ -1894,6 +1948,42 @@ comma
 l_int|0x00
 comma
 l_int|0x00
+)brace
+)brace
+comma
+id|NEVER_BOARD
+comma
+l_int|0
+)brace
+comma
+(brace
+id|DEVID_AEC6260R
+comma
+l_string|&quot;AEC6260R&quot;
+comma
+id|PCI_AEC62XX
+comma
+id|ATA66_AEC62XX
+comma
+id|INIT_AEC62XX
+comma
+l_int|NULL
+comma
+(brace
+(brace
+l_int|0x4a
+comma
+l_int|0x02
+comma
+l_int|0x02
+)brace
+comma
+(brace
+l_int|0x4a
+comma
+l_int|0x04
+comma
+l_int|0x04
 )brace
 )brace
 comma
@@ -2371,6 +2461,12 @@ id|PCI_DEVICE_ID_PROMISE_20262
 suffix:colon
 r_case
 id|PCI_DEVICE_ID_ARTOP_ATP850UF
+suffix:colon
+r_case
+id|PCI_DEVICE_ID_ARTOP_ATP860
+suffix:colon
+r_case
+id|PCI_DEVICE_ID_ARTOP_ATP860R
 suffix:colon
 r_return
 id|dev-&gt;irq
@@ -3659,6 +3755,14 @@ c_func
 (paren
 id|d-&gt;devid
 comma
+id|DEVID_AEC6260
+)paren
+op_logical_or
+id|IDE_PCI_DEVID_EQ
+c_func
+(paren
+id|d-&gt;devid
+comma
 id|DEVID_HPT34X
 )paren
 )paren
@@ -3700,6 +3804,22 @@ c_func
 id|d-&gt;devid
 comma
 id|DEVID_AEC6210
+)paren
+op_logical_or
+id|IDE_PCI_DEVID_EQ
+c_func
+(paren
+id|d-&gt;devid
+comma
+id|DEVID_AEC6260
+)paren
+op_logical_or
+id|IDE_PCI_DEVID_EQ
+c_func
+(paren
+id|d-&gt;devid
+comma
+id|DEVID_AEC6260R
 )paren
 op_logical_or
 id|IDE_PCI_DEVID_EQ

@@ -329,6 +329,7 @@ multiline_comment|/* Called when a new connection for this protocol found. */
 DECL|function|icmp_new
 r_static
 r_int
+r_int
 id|icmp_new
 c_func
 (paren
@@ -436,7 +437,7 @@ l_int|0
 suffix:semicolon
 )brace
 r_return
-l_int|1
+id|ICMP_TIMEOUT
 suffix:semicolon
 )brace
 DECL|variable|ip_conntrack_protocol_icmp

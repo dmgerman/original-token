@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: io.h,v 1.34 2000/03/30 01:40:54 davem Exp $ */
+multiline_comment|/* $Id: io.h,v 1.35 2000/04/13 04:45:59 davem Exp $ */
 macro_line|#ifndef __SPARC64_IO_H
 DECL|macro|__SPARC64_IO_H
 mdefine_line|#define __SPARC64_IO_H
@@ -1513,6 +1513,8 @@ suffix:semicolon
 multiline_comment|/* On sparc64 we have the whole physical IO address space accessible&n; * using physically addressed loads and stores, so this does nothing.&n; */
 DECL|macro|ioremap
 mdefine_line|#define ioremap(__offset, __size)&t;((void *)(__offset))
+DECL|macro|ioremap_nocache
+mdefine_line|#define ioremap_nocache(X,Y)&t;&t;ioremap((X),(Y))
 DECL|macro|iounmap
 mdefine_line|#define iounmap(__addr)&t;&t;&t;do { } while(0)
 multiline_comment|/* Similarly for SBUS. */

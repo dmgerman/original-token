@@ -143,6 +143,10 @@ DECL|macro|SMART_SAVE
 mdefine_line|#define SMART_SAVE&t;&t;0xd3
 DECL|macro|SMART_IMMEDIATE_OFFLINE
 mdefine_line|#define SMART_IMMEDIATE_OFFLINE&t;0xd4
+DECL|macro|SMART_READ_LOG_SECTOR
+mdefine_line|#define SMART_READ_LOG_SECTOR&t;0xd5
+DECL|macro|SMART_WRITE_LOG_SECTOR
+mdefine_line|#define SMART_WRITE_LOG_SECTOR&t;0xd6
 DECL|macro|SMART_ENABLE
 mdefine_line|#define SMART_ENABLE&t;&t;0xd8
 DECL|macro|SMART_DISABLE

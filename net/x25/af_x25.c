@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;X.25 Packet Layer release 002&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 2.1.15 or higher&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;X.25 001&t;Jonathan Naylor&t;Started coding.&n; *&t;X.25 002&t;Jonathan Naylor&t;Centralised disconnect handling.&n; *&t;&t;&t;&t;&t;New timer architecture.&n; *&t;2000-11-03&t;Henner Eisen&t;MSG_EOR handling more POSIX compliant.&n; */
+multiline_comment|/*&n; *&t;X.25 Packet Layer release 002&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 2.1.15 or higher&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;X.25 001&t;Jonathan Naylor&t;Started coding.&n; *&t;X.25 002&t;Jonathan Naylor&t;Centralised disconnect handling.&n; *&t;&t;&t;&t;&t;New timer architecture.&n; *&t;2000-11-03&t;Henner Eisen&t;MSG_EOR handling more POSIX compliant.&n; *&t;2000-22-03&t;Daniela Squassoni Allowed disabling/enabling of &n; *&t;&t;&t;&t;&t;  facilities negotiation and increased &n; *&t;&t;&t;&t;&t;  the throughput upper limit.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_X25) || defined(CONFIG_X25_MODULE)
 macro_line|#include &lt;linux/module.h&gt;
@@ -3102,6 +3102,10 @@ id|make-&gt;protinfo.x25-&gt;facilities
 op_assign
 id|facilities
 suffix:semicolon
+id|make-&gt;protinfo.x25-&gt;vc_facil_mask
+op_assign
+id|sk-&gt;protinfo.x25-&gt;vc_facil_mask
+suffix:semicolon
 id|x25_write_internal
 c_func
 (paren
@@ -4606,7 +4610,7 @@ c_cond
 (paren
 id|facilities.throughput
 template_param
-l_int|0x2C
+l_int|0xDD
 )paren
 r_return
 op_minus

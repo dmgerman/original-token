@@ -33,7 +33,7 @@ mdefine_line|#define duprintf(format, args...)
 macro_line|#endif
 macro_line|#ifdef CONFIG_NETFILTER_DEBUG
 DECL|macro|IP_NF_ASSERT
-mdefine_line|#define IP_NF_ASSERT(x)&t;&t;&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (!(x))&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;printk(&quot;IPT_ASSERT: %s:%s:%u&bslash;n&quot;,&t;&t;&bslash;&n;&t;&t;       __FUNCTION__, __FILE__, __LINE__);&t;&bslash;&n;} while(0)
+mdefine_line|#define IP_NF_ASSERT(x)&t;&t;&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (!(x))&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;printk(&quot;IP_NF_ASSERT: %s:%s:%u&bslash;n&quot;,&t;&t;&bslash;&n;&t;&t;       __FUNCTION__, __FILE__, __LINE__);&t;&bslash;&n;} while(0)
 macro_line|#else
 DECL|macro|IP_NF_ASSERT
 mdefine_line|#define IP_NF_ASSERT(x)
@@ -2914,13 +2914,6 @@ comma
 id|t-&gt;u.name
 )paren
 suffix:semicolon
-id|up
-c_func
-(paren
-op_amp
-id|ipt_mutex
-)paren
-suffix:semicolon
 r_return
 id|ret
 suffix:semicolon
@@ -5728,6 +5721,8 @@ id|target
 r_int
 id|ret
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 id|ret
 op_assign
 id|down_interruptible
@@ -5750,6 +5745,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|list_named_insert
 c_func
 (paren
@@ -5759,15 +5755,6 @@ comma
 id|target
 )paren
 )paren
-(brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-id|ret
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-r_else
 (brace
 id|duprintf
 c_func
@@ -5781,6 +5768,8 @@ id|ret
 op_assign
 op_minus
 id|EINVAL
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
 id|up
@@ -5845,6 +5834,8 @@ id|match
 r_int
 id|ret
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 id|ret
 op_assign
 id|down_interruptible
@@ -5861,9 +5852,13 @@ id|ret
 op_ne
 l_int|0
 )paren
+(brace
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 id|ret
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -5877,8 +5872,6 @@ id|match
 )paren
 )paren
 (brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|ret
 op_assign
 l_int|0
@@ -5893,6 +5886,8 @@ l_string|&quot;ipt_register_match: `%s&squot; already in list!&bslash;n&quot;
 comma
 id|match-&gt;name
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 id|ret
 op_assign
@@ -5992,6 +5987,8 @@ comma
 )brace
 )brace
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 id|newinfo
 op_assign
 id|vmalloc
@@ -6023,6 +6020,8 @@ id|ret
 op_assign
 op_minus
 id|ENOMEM
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 id|ret
@@ -6072,6 +6071,8 @@ c_func
 id|newinfo
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 id|ret
 suffix:semicolon
@@ -6098,6 +6099,8 @@ c_func
 (paren
 id|newinfo
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 id|ret
@@ -6179,8 +6182,6 @@ comma
 id|table
 )paren
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|unlock
 suffix:colon
 id|up
@@ -6200,6 +6201,8 @@ c_func
 (paren
 id|newinfo
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_goto
 id|unlock

@@ -770,6 +770,25 @@ op_assign
 id|IDE_STATUS_REG
 suffix:semicolon
 )brace
+multiline_comment|/* set features register for atapi identify command to be sure of reply */
+r_if
+c_cond
+(paren
+(paren
+id|cmd
+op_eq
+id|WIN_PIDENTIFY
+)paren
+)paren
+id|OUT_BYTE
+c_func
+(paren
+l_int|0
+comma
+id|IDE_FEATURE_REG
+)paren
+suffix:semicolon
+multiline_comment|/* disable dma &amp; overlap */
 macro_line|#if CONFIG_BLK_DEV_PDC4030
 r_if
 c_cond
