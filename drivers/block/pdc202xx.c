@@ -1,6 +1,5 @@
-multiline_comment|/*&n; *  linux/drivers/block/pdc202xx.c&t;Version 0.27&t;Sept. 3, 1999&n; *&n; *  Copyright (C) 1998-99&t;Andre Hedrick (andre@suse.com)&n; *  May be copied or modified under the terms of the GNU General Public License&n; *&n; *  Promise Ultra33 cards with BIOS v1.20 through 1.28 will need this&n; *  compiled into the kernel if you have more than one card installed.&n; *  Note that BIOS v1.29 is reported to fix the problem.  Since this is&n; *  safe chipset tuning, including this support is harmless&n; *&n; *  The latest chipset code will support the following ::&n; *  Three Ultra33 controllers and 12 drives.&n; *  8 are UDMA supported and 4 are limited to DMA mode 2 multi-word.&n; *  The 8/4 ratio is a BIOS code limit by promise.&n; *&n; *  UNLESS you enable &quot;CONFIG_PDC202XX_FORCE_BURST_BIT&quot;&n; *&n; *  There is only one BIOS in the three contollers.&n; *&n; *  May  8 20:56:17 Orion kernel:&n; *  Uniform Multi-Platform E-IDE driver Revision: 6.19&n; *  PDC20246: IDE controller on PCI bus 00 dev a0&n; *  PDC20246: not 100% native mode: will probe irqs later&n; *  PDC20246: ROM enabled at 0xfebd0000&n; *  PDC20246: (U)DMA Burst Bit ENABLED Primary PCI Mode Secondary PCI Mode.&n; *      ide0: BM-DMA at 0xef80-0xef87, BIOS settings: hda:DMA, hdb:DMA&n; *      ide1: BM-DMA at 0xef88-0xef8f, BIOS settings: hdc:pio, hdd:pio&n; *  PDC20246: IDE controller on PCI bus 00 dev 98&n; *  PDC20246: not 100% native mode: will probe irqs later&n; *  PDC20246: ROM enabled at 0xfebc0000&n; *  PDC20246: (U)DMA Burst Bit ENABLED Primary PCI Mode Secondary PCI Mode.&n; *      ide2: BM-DMA at 0xef40-0xef47, BIOS settings: hde:DMA, hdf:DMA&n; *      ide3: BM-DMA at 0xef48-0xef4f, BIOS settings: hdg:DMA, hdh:DMA&n; *  PDC20246: IDE controller on PCI bus 00 dev 90&n; *  PDC20246: not 100% native mode: will probe irqs later&n; *  PDC20246: ROM enabled at 0xfebb0000&n; *  PDC20246: (U)DMA Burst Bit DISABLED Primary PCI Mode Secondary PCI Mode.&n; *  PDC20246: FORCING BURST BIT 0x00 -&gt; 0x01 ACTIVE&n; *      ide4: BM-DMA at 0xef00-0xef07, BIOS settings: hdi:DMA, hdj:pio&n; *      ide5: BM-DMA at 0xef08-0xef0f, BIOS settings: hdk:pio, hdl:pio&n; *  PIIX3: IDE controller on PCI bus 00 dev 39&n; *  PIIX3: device not capable of full native PCI mode&n; *&n; *  ide0 at 0xeff0-0xeff7,0xefe6 on irq 19&n; *  ide1 at 0xefa8-0xefaf,0xebe6 on irq 19&n; *  ide2 at 0xefa0-0xefa7,0xef7e on irq 18&n; *  ide3 at 0xef68-0xef6f,0xef66 on irq 18&n; *  ide4 at 0xef38-0xef3f,0xef62 on irq 17&n; *  hda: QUANTUM FIREBALL ST6.4A, 6149MB w/81kB Cache, CHS=13328/15/63, UDMA(33)&n; *  hdb: QUANTUM FIREBALL ST3.2A, 3079MB w/81kB Cache, CHS=6256/16/63, UDMA(33)&n; *  hde: Maxtor 72004 AP, 1916MB w/128kB Cache, CHS=3893/16/63, DMA&n; *  hdf: Maxtor 71626 A, 1554MB w/64kB Cache, CHS=3158/16/63, DMA&n; *  hdi: Maxtor 90680D4, 6485MB w/256kB Cache, CHS=13176/16/63, UDMA(33)&n; *  hdj: Maxtor 90680D4, 6485MB w/256kB Cache, CHS=13176/16/63, UDMA(33)&n; *&n; *  Promise Ultra66 cards with BIOS v1.11 this&n; *  compiled into the kernel if you have more than one card installed.&n; *&n; *  PDC20262: IDE controller on PCI bus 00 dev a0&n; *  PDC20262: not 100% native mode: will probe irqs later&n; *  PDC20262: ROM enabled at 0xfebb0000&n; *  PDC20262: (U)DMA Burst Bit ENABLED Primary PCI Mode Secondary PCI Mode.&n; *      ide0: BM-DMA at 0xef00-0xef07, BIOS settings: hda:pio, hdb:pio&n; *      ide1: BM-DMA at 0xef08-0xef0f, BIOS settings: hdc:pio, hdd:pio&n; *&n; *  UDMA 4/2 and UDMA 3/1 only differ by the testing bit 13 in word93.&n; *  Chipset timing speeds must be identical&n; *&n; *  drive_number&n; *      = ((HWIF(drive)-&gt;channel ? 2 : 0) + (drive-&gt;select.b.unit &amp; 0x01));&n; *      = ((hwif-&gt;channel ? 2 : 0) + (drive-&gt;select.b.unit &amp; 0x01));&n; */
+multiline_comment|/*&n; *  linux/drivers/block/pdc202xx.c&t;Version 0.28&t;Dec. 13, 1999&n; *&n; *  Copyright (C) 1998-99&t;Andre Hedrick (andre@suse.com)&n; *  May be copied or modified under the terms of the GNU General Public License&n; *&n; *  Promise Ultra33 cards with BIOS v1.20 through 1.28 will need this&n; *  compiled into the kernel if you have more than one card installed.&n; *  Note that BIOS v1.29 is reported to fix the problem.  Since this is&n; *  safe chipset tuning, including this support is harmless&n; *&n; *  The latest chipset code will support the following ::&n; *  Three Ultra33 controllers and 12 drives.&n; *  8 are UDMA supported and 4 are limited to DMA mode 2 multi-word.&n; *  The 8/4 ratio is a BIOS code limit by promise.&n; *&n; *  UNLESS you enable &quot;CONFIG_PDC202XX_FORCE_BURST_BIT&quot;&n; *&n; *  There is only one BIOS in the three contollers.&n; *&n; *  May  8 20:56:17 Orion kernel:&n; *  Uniform Multi-Platform E-IDE driver Revision: 6.19&n; *  PDC20246: IDE controller on PCI bus 00 dev a0&n; *  PDC20246: not 100% native mode: will probe irqs later&n; *  PDC20246: ROM enabled at 0xfebd0000&n; *  PDC20246: (U)DMA Burst Bit ENABLED Primary PCI Mode Secondary PCI Mode.&n; *      ide0: BM-DMA at 0xef80-0xef87, BIOS settings: hda:DMA, hdb:DMA&n; *      ide1: BM-DMA at 0xef88-0xef8f, BIOS settings: hdc:pio, hdd:pio&n; *  PDC20246: IDE controller on PCI bus 00 dev 98&n; *  PDC20246: not 100% native mode: will probe irqs later&n; *  PDC20246: ROM enabled at 0xfebc0000&n; *  PDC20246: (U)DMA Burst Bit ENABLED Primary PCI Mode Secondary PCI Mode.&n; *      ide2: BM-DMA at 0xef40-0xef47, BIOS settings: hde:DMA, hdf:DMA&n; *      ide3: BM-DMA at 0xef48-0xef4f, BIOS settings: hdg:DMA, hdh:DMA&n; *  PDC20246: IDE controller on PCI bus 00 dev 90&n; *  PDC20246: not 100% native mode: will probe irqs later&n; *  PDC20246: ROM enabled at 0xfebb0000&n; *  PDC20246: (U)DMA Burst Bit DISABLED Primary PCI Mode Secondary PCI Mode.&n; *  PDC20246: FORCING BURST BIT 0x00 -&gt; 0x01 ACTIVE&n; *      ide4: BM-DMA at 0xef00-0xef07, BIOS settings: hdi:DMA, hdj:pio&n; *      ide5: BM-DMA at 0xef08-0xef0f, BIOS settings: hdk:pio, hdl:pio&n; *  PIIX3: IDE controller on PCI bus 00 dev 39&n; *  PIIX3: device not capable of full native PCI mode&n; *&n; *  ide0 at 0xeff0-0xeff7,0xefe6 on irq 19&n; *  ide1 at 0xefa8-0xefaf,0xebe6 on irq 19&n; *  ide2 at 0xefa0-0xefa7,0xef7e on irq 18&n; *  ide3 at 0xef68-0xef6f,0xef66 on irq 18&n; *  ide4 at 0xef38-0xef3f,0xef62 on irq 17&n; *  hda: QUANTUM FIREBALL ST6.4A, 6149MB w/81kB Cache, CHS=13328/15/63, UDMA(33)&n; *  hdb: QUANTUM FIREBALL ST3.2A, 3079MB w/81kB Cache, CHS=6256/16/63, UDMA(33)&n; *  hde: Maxtor 72004 AP, 1916MB w/128kB Cache, CHS=3893/16/63, DMA&n; *  hdf: Maxtor 71626 A, 1554MB w/64kB Cache, CHS=3158/16/63, DMA&n; *  hdi: Maxtor 90680D4, 6485MB w/256kB Cache, CHS=13176/16/63, UDMA(33)&n; *  hdj: Maxtor 90680D4, 6485MB w/256kB Cache, CHS=13176/16/63, UDMA(33)&n; *&n; *  Promise Ultra66 cards with BIOS v1.11 this&n; *  compiled into the kernel if you have more than one card installed.&n; *&n; *  PDC20262: IDE controller on PCI bus 00 dev a0&n; *  PDC20262: not 100% native mode: will probe irqs later&n; *  PDC20262: ROM enabled at 0xfebb0000&n; *  PDC20262: (U)DMA Burst Bit ENABLED Primary PCI Mode Secondary PCI Mode.&n; *      ide0: BM-DMA at 0xef00-0xef07, BIOS settings: hda:pio, hdb:pio&n; *      ide1: BM-DMA at 0xef08-0xef0f, BIOS settings: hdc:pio, hdd:pio&n; *&n; *  UDMA 4/2 and UDMA 3/1 only differ by the testing bit 13 in word93.&n; *  Chipset timing speeds must be identical&n; *&n; *  drive_number&n; *      = ((HWIF(drive)-&gt;channel ? 2 : 0) + (drive-&gt;select.b.unit &amp; 0x01));&n; *      = ((hwif-&gt;channel ? 2 : 0) + (drive-&gt;select.b.unit &amp; 0x01));&n; */
 multiline_comment|/*&n; *  Portions Copyright (C) 1999 Promise Technology, Inc.&n; *  Author: Frank Tiernan (frankt@promise.com)&n; *  Released under terms of General Public License&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
@@ -770,10 +769,6 @@ id|drive_conf
 suffix:semicolon
 id|byte
 id|drive_pci
-comma
-id|speed_ok
-op_assign
-l_int|0
 suffix:semicolon
 id|byte
 id|test1
@@ -1143,15 +1138,9 @@ op_ne
 l_int|0x004ff3c4
 )paren
 )paren
-(brace
-id|speed_ok
-op_assign
-l_int|1
-suffix:semicolon
 r_goto
 id|chipset_is_set
 suffix:semicolon
-)brace
 id|pci_read_config_byte
 c_func
 (paren
@@ -1224,15 +1213,9 @@ op_ne
 l_int|0x004ff3c4
 )paren
 )paren
-(brace
-id|speed_ok
-op_assign
-l_int|1
-suffix:semicolon
 r_goto
 id|chipset_is_set
 suffix:semicolon
-)brace
 id|pci_read_config_byte
 c_func
 (paren
@@ -1322,15 +1305,9 @@ op_ne
 l_int|0x004ff3c4
 )paren
 )paren
-(brace
-id|speed_ok
-op_assign
-l_int|1
-suffix:semicolon
 r_goto
 id|chipset_is_set
 suffix:semicolon
-)brace
 id|pci_read_config_byte
 c_func
 (paren
@@ -1403,15 +1380,9 @@ op_ne
 l_int|0x004ff3c4
 )paren
 )paren
-(brace
-id|speed_ok
-op_assign
-l_int|1
-suffix:semicolon
 r_goto
 id|chipset_is_set
 suffix:semicolon
-)brace
 id|pci_read_config_byte
 c_func
 (paren
@@ -2161,12 +2132,6 @@ id|DP
 )paren
 suffix:semicolon
 macro_line|#endif /* PDC202XX_DECODE_REGISTER_INFO */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|speed_ok
-)paren
 id|err
 op_assign
 id|ide_config_drive_speed
@@ -3753,6 +3718,24 @@ id|hwif-&gt;dmaproc
 op_assign
 op_amp
 id|pdc202xx_dmaproc
+suffix:semicolon
+id|hwif-&gt;drives
+(braket
+l_int|0
+)braket
+dot
+id|autotune
+op_assign
+l_int|0
+suffix:semicolon
+id|hwif-&gt;drives
+(braket
+l_int|1
+)braket
+dot
+id|autotune
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 r_else

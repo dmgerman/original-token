@@ -492,7 +492,7 @@ id|skb
 comma
 l_int|NULL
 comma
-l_int|NULL
+id|rt-&gt;u.dst.dev
 comma
 id|output_maybe_reroute
 )paren
@@ -3014,6 +3014,10 @@ c_func
 (paren
 id|skb-&gt;dst
 )paren
+suffix:semicolon
+id|skb2-&gt;dev
+op_assign
+id|skb-&gt;dev
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; *&t;Copy the packet header into the new buffer.&n;&t;&t; */
 id|memcpy

@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * driver/usb/usb-core.c&n; *&n; * (C) Copyright David Waite 1999&n; * based on code from usb.c, by Linus Torvalds&n; *&n; * The purpose of this file is to pull any and all generic modular code from&n; * usb.c and put it in a separate file. This way usb.c is kept as a generic&n; * library, while this file handles starting drivers, etc.&n; *&n; */
+macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;inits.h&quot;
@@ -7,15 +8,6 @@ macro_line|#ifndef CONFIG_USB_MODULE
 macro_line|#&t;ifdef CONFIG_USB_UHCI
 r_int
 id|uhci_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#&t;endif
-macro_line|#&t;ifdef CONFIG_USB_OHCI
-r_int
-id|ohci_init
 c_func
 (paren
 r_void
@@ -60,13 +52,6 @@ suffix:semicolon
 macro_line|#ifndef CONFIG_USB_MODULE
 macro_line|#&t;ifdef CONFIG_USB_UHCI
 id|uhci_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#&t;endif
-macro_line|#&t;ifdef CONFIG_USB_OHCI
-id|ohci_init
 c_func
 (paren
 )paren
@@ -149,6 +134,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#&t;endif
+macro_line|#&t;ifdef CONFIG_USB_DABUSB
+id|dabusb_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#&t;endif
 macro_line|#endif
 r_return
 l_int|0
@@ -194,6 +186,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#       endif
+macro_line|#&t;ifdef CONFIG_USB_DABUSB
+id|dabusb_cleanup
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#&t;endif
 macro_line|#endif
 )brace
 macro_line|#ifdef MODULE

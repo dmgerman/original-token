@@ -2850,6 +2850,11 @@ id|pm2_cnt
 )paren
 (brace
 multiline_comment|/* Disable PCI arbitration while sleeping,&n;&t;&t;&t;   to avoid DMA corruption? */
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 id|outb
 c_func
 (paren
@@ -2885,6 +2890,11 @@ op_complement
 id|ACPI_ARB_DIS
 comma
 id|pm2_cnt
+)paren
+suffix:semicolon
+id|sti
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace

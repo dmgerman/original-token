@@ -244,6 +244,7 @@ suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
+multiline_comment|/* return startstop; ?? */
 )brace
 r_if
 c_cond
@@ -262,6 +263,7 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+multiline_comment|/* return startstop; ?? */
 )brace
 multiline_comment|/*&n; * We only deal with PIO mode here - DMA mode &squot;using_dma&squot; is not&n; * initialised at the point that this function is called.&n; */
 DECL|function|tune_sl82c105

@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;paride.h&quot;
 multiline_comment|/* mode codes:  0  nybble reads, 8-bit writes&n;                1  8-bit reads and writes&n;                2  8-bit EPP mode&n;*/

@@ -2070,7 +2070,9 @@ op_increment
 (brace
 r_int
 r_int
-id|curr_pfn
+id|start
+comma
+id|end
 suffix:semicolon
 multiline_comment|/* RAM? */
 r_if
@@ -2087,7 +2089,20 @@ id|E820_RAM
 )paren
 r_continue
 suffix:semicolon
-id|curr_pfn
+id|start
+op_assign
+id|PFN_UP
+c_func
+(paren
+id|e820.map
+(braket
+id|i
+)braket
+dot
+id|addr
+)paren
+suffix:semicolon
+id|end
 op_assign
 id|PFN_DOWN
 c_func
@@ -2110,13 +2125,22 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|curr_pfn
+id|start
+op_ge
+id|end
+)paren
+r_continue
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|end
 OG
 id|max_pfn
 )paren
 id|max_pfn
 op_assign
-id|curr_pfn
+id|end
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Determine low and high memory ranges:&n;&t; */

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/block/sis5513.c&t;Version 0.07&t;Sept. 3, 1999&n; *&n; * Copyright (C) 1999&t;Andre Hedrick (andre@suse.com)&n; * May be copied or modified under the terms of the GNU General Public License&n; *&n; * Thanks to SIS Taiwan for direct support and hardware.&n; * Tested and designed on the SiS620/5513 chipset.&n; */
+multiline_comment|/*&n; * linux/drivers/block/sis5513.c&t;Version 0.08&t;Dec. 13, 1999&n; *&n; * Copyright (C) 1999&t;Andre Hedrick (andre@suse.com)&n; * May be copied or modified under the terms of the GNU General Public License&n; *&n; * Thanks to SIS Taiwan for direct support and hardware.&n; * Tested and designed on the SiS620/5513 chipset.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

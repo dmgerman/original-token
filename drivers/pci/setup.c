@@ -286,6 +286,10 @@ suffix:colon
 id|min_mem
 )paren
 suffix:semicolon
+id|min
+op_add_assign
+id|root-&gt;start
+suffix:semicolon
 id|size
 op_assign
 id|res-&gt;end

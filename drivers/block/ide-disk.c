@@ -903,6 +903,18 @@ op_le
 l_int|0
 )paren
 (brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s: multwrite: count=%d, current=%ld&bslash;n&quot;
+comma
+id|drive-&gt;name
+comma
+id|nsect
+comma
+id|rq-&gt;nr_sectors
+)paren
+suffix:semicolon
 id|spin_unlock_irqrestore
 c_func
 (paren

@@ -146,6 +146,10 @@ DECL|macro|SETFEATURES_EN_WCACHE
 mdefine_line|#define SETFEATURES_EN_WCACHE&t;0x02&t;/* Enable write cache */
 DECL|macro|SETFEATURES_XFER
 mdefine_line|#define SETFEATURES_XFER&t;0x03&t;/* Set transfer mode */
+DECL|macro|XFER_UDMA_6
+macro_line|#&t;define XFER_UDMA_6&t;0x46&t;/* 0100|0110 */
+DECL|macro|XFER_UDMA_5
+macro_line|#&t;define XFER_UDMA_5&t;0x45&t;/* 0100|0101 */
 DECL|macro|XFER_UDMA_4
 macro_line|#&t;define XFER_UDMA_4&t;0x44&t;/* 0100|0100 */
 DECL|macro|XFER_UDMA_3

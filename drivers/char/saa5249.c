@@ -9,7 +9,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;stdarg.h&gt;
-macro_line|#include &lt;linux/i2c.h&gt;
+macro_line|#include &lt;linux/i2c-old.h&gt;
 macro_line|#include &lt;linux/videotext.h&gt;
 macro_line|#include &lt;linux/videodev.h&gt;
 macro_line|#include &lt;asm/io.h&gt;

@@ -5,7 +5,7 @@ mdefine_line|#define _ZR36120_H
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
-macro_line|#include &lt;linux/i2c.h&gt;
+macro_line|#include &lt;linux/i2c-old.h&gt;
 macro_line|#include &lt;linux/videodev.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 multiline_comment|/*&n; * Debug macro&squot;s, place an x behind the ) for actual debug-compilation&n; * E.g. #define DEBUG(x...)&t;x&n; */

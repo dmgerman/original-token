@@ -5,7 +5,7 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &lt;linux/i2c.h&gt;
+macro_line|#include &lt;linux/i2c-old.h&gt;
 macro_line|#include &lt;linux/videodev.h&gt;
 macro_line|#include &quot;linux/video_decoder.h&quot;
 DECL|macro|DEBUG

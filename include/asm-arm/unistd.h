@@ -156,8 +156,8 @@ DECL|macro|__NR_sethostname
 mdefine_line|#define __NR_sethostname&t;&t;(__NR_SYSCALL_BASE+ 74)
 DECL|macro|__NR_setrlimit
 mdefine_line|#define __NR_setrlimit&t;&t;&t;(__NR_SYSCALL_BASE+ 75)
-DECL|macro|__NR_getrlimit
-mdefine_line|#define __NR_getrlimit&t;&t;&t;(__NR_SYSCALL_BASE+ 76)
+DECL|macro|__NR_old_getrlimit
+mdefine_line|#define __NR_old_getrlimit&t;&t;(__NR_SYSCALL_BASE+ 76)
 DECL|macro|__NR_getrusage
 mdefine_line|#define __NR_getrusage&t;&t;&t;(__NR_SYSCALL_BASE+ 77)
 DECL|macro|__NR_gettimeofday
@@ -384,6 +384,20 @@ multiline_comment|/* 188 reserved */
 multiline_comment|/* 189 reserved */
 DECL|macro|__NR_vfork
 mdefine_line|#define __NR_vfork&t;&t;&t;(__NR_SYSCALL_BASE+190)
+DECL|macro|__NR_getrlimit
+mdefine_line|#define __NR_getrlimit&t;&t;&t;(__NR_SYSCALL_BASE+191)
+DECL|macro|__NR_mmap2
+mdefine_line|#define __NR_mmap2&t;&t;&t;(__NR_SYSCALL_BASE+192)
+DECL|macro|__NR_truncate64
+mdefine_line|#define __NR_truncate64&t;&t;&t;(__NR_SYSCALL_BASE+193)
+DECL|macro|__NR_ftruncate64
+mdefine_line|#define __NR_ftruncate64&t;&t;(__NR_SYSCALL_BASE+194)
+DECL|macro|__NR_stat64
+mdefine_line|#define __NR_stat64&t;&t;&t;(__NR_SYSCALL_BASE+195)
+DECL|macro|__NR_lstat64
+mdefine_line|#define __NR_lstat64&t;&t;&t;(__NR_SYSCALL_BASE+196)
+DECL|macro|__NR_fstat64
+mdefine_line|#define __NR_fstat64&t;&t;&t;(__NR_SYSCALL_BASE+197)
 DECL|macro|__sys2
 mdefine_line|#define __sys2(x) #x
 DECL|macro|__sys1

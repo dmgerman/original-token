@@ -147,6 +147,7 @@ macro_line|#endif
 macro_line|#ifdef ENABLE_SERIAL_PCI
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#endif
+macro_line|#include &lt;linux/sysrq.h&gt;
 multiline_comment|/*&n; * All of the compatibilty code so we can compile serial.c against&n; * older kernels is hidden in serial_compat.h&n; */
 macro_line|#if (LINUX_VERSION_CODE &lt; 0x020317) /* 2.3.23 */
 macro_line|#include &quot;serial_compat.h&quot;&t;

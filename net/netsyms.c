@@ -2501,6 +2501,13 @@ c_func
 id|noop_qdisc
 )paren
 suffix:semicolon
+DECL|variable|qdisc_tree_lock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|qdisc_tree_lock
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_NET_SCHED
 id|PSCHED_EXPORTLIST
 suffix:semicolon

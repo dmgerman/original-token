@@ -38,6 +38,18 @@ id|xfer_rate
 )paren
 (brace
 r_case
+id|XFER_UDMA_6
+suffix:colon
+r_return
+l_string|&quot;UDMA 6&quot;
+suffix:semicolon
+r_case
+id|XFER_UDMA_5
+suffix:colon
+r_return
+l_string|&quot;UDMA 5&quot;
+suffix:semicolon
+r_case
 id|XFER_UDMA_4
 suffix:colon
 r_return
@@ -992,6 +1004,26 @@ c_cond
 id|speed
 )paren
 (brace
+macro_line|#if 0
+r_case
+id|XFER_UDMA_6
+suffix:colon
+id|drive-&gt;id-&gt;dma_ultra
+op_or_assign
+l_int|0x1010
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|XFER_UDMA_5
+suffix:colon
+id|drive-&gt;id-&gt;dma_ultra
+op_or_assign
+l_int|0x1010
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
 r_case
 id|XFER_UDMA_4
 suffix:colon

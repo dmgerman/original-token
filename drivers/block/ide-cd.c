@@ -10298,6 +10298,23 @@ r_continue
 suffix:semicolon
 )brace
 )brace
+r_if
+c_cond
+(paren
+id|drive-&gt;scsi
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;ide-cd: passing drive %s to ide-scsi emulation.&bslash;n&quot;
+comma
+id|drive-&gt;name
+)paren
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
 id|info
 op_assign
 (paren

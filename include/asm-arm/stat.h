@@ -168,5 +168,6 @@ id|__unused5
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* Someone please add a glibc/arm compatible stat64 struct here. */
 macro_line|#endif
 eof

@@ -1,4 +1,5 @@
-multiline_comment|/*&n; * USB HID boot protocol mouse support based on MS BusMouse driver, psaux &n; * driver, and Linus&squot;s skeleton USB mouse driver. Fixed up a lot by Linus.&n; *&n; * Brad Keryan 4/3/1999&n; *&n; * version 0.30? Paul Ashton 1999/08/19 - Fixed behaviour on mouse&n; * disconnect and suspend/resume. Added module parameter &quot;force=1&quot;&n; * to allow opening of the mouse driver before mouse has been plugged&n; * in (enables consistent XF86Config settings). Fixed module use count.&n; * Documented missing blocking/non-blocking read handling (not fixed).&n; * &n; * version 0.20: Linus rewrote read_mouse() to do PS/2 and do it&n; * correctly. Events are added together, not queued, to keep the rodent sober.&n; *&n; * version 0.02: Hmm, the mouse seems drunk because I&squot;m queueing the events.&n; * This is wrong: when an application (like X or gpm) reads the mouse device,&n; * it wants to find out the mouse&squot;s current position, not its recent history.&n; * The button thing turned out to be UHCI not flipping data toggle, so half the&n; * packets were thrown out.&n; *&n; * version 0.01: Switched over to busmouse protocol, and changed the minor&n; * number to 32 (same as uusbd&squot;s hidbp driver). Buttons work more sanely now, &n; * but it still doesn&squot;t generate button events unless you move the mouse.&n; *&n; * version 0.0: Driver emulates a PS/2 mouse, stealing /dev/psaux (sorry, I &n; * know that&squot;s not very nice). Moving in the X and Y axes works. Buttons don&squot;t&n; * work right yet: X sees a lot of MotionNotify/ButtonPress/ButtonRelease &n; * combos when you hold down a button and drag the mouse around. Probably has &n; * some additional bugs on an SMP machine.&n; */
+multiline_comment|/*&n; * USB HID boot protocol mouse support based on MS BusMouse driver, psaux &n; * driver, and Linus&squot;s skeleton USB mouse driver. Fixed up a lot by Linus.&n; *&n; * Brad Keryan 4/3/1999&n; *&n; * version 0.? Georg Acher 1999/10/30 &n; * URBification for UHCI-Acher/Fliegl/Sailer&n; *&n; * version 0.30? Paul Ashton 1999/08/19 - Fixed behaviour on mouse&n; * disconnect and suspend/resume. Added module parameter &quot;force=1&quot;&n; * to allow opening of the mouse driver before mouse has been plugged&n; * in (enables consistent XF86Config settings). Fixed module use count.&n; * Documented missing blocking/non-blocking read handling (not fixed).&n; * &n; * version 0.20: Linus rewrote read_mouse() to do PS/2 and do it&n; * correctly. Events are added together, not queued, to keep the rodent sober.&n; *&n; * version 0.02: Hmm, the mouse seems drunk because I&squot;m queueing the events.&n; * This is wrong: when an application (like X or gpm) reads the mouse device,&n; * it wants to find out the mouse&squot;s current position, not its recent history.&n; * The button thing turned out to be UHCI not flipping data toggle, so half the&n; * packets were thrown out.&n; *&n; * version 0.01: Switched over to busmouse protocol, and changed the minor&n; * number to 32 (same as uusbd&squot;s hidbp driver). Buttons work more sanely now, &n; * but it still doesn&squot;t generate button events unless you move the mouse.&n; *&n; * version 0.0: Driver emulates a PS/2 mouse, stealing /dev/psaux (sorry, I &n; * know that&squot;s not very nice). Moving in the X and Y axes works. Buttons don&squot;t&n; * work right yet: X sees a lot of MotionNotify/ButtonPress/ButtonRelease &n; * combos when you hold down a button and drag the mouse around. Probably has &n; * some additional bugs on an SMP machine.&n; */
+macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -8,8 +9,10 @@ macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/spinlock.h&gt;
+singleline_comment|//#include &lt;linux/spinlock.h&gt;
 macro_line|#include &quot;usb.h&quot;
+DECL|macro|MODSTR
+mdefine_line|#define MODSTR &quot;mouse.c: &quot;
 DECL|struct|mouse_state
 r_struct
 id|mouse_state
@@ -80,6 +83,16 @@ op_star
 id|irq_handle
 suffix:semicolon
 multiline_comment|/* host controller&squot;s IRQ transfer handle */
+DECL|member|buffer
+r_char
+op_star
+id|buffer
+suffix:semicolon
+DECL|member|urb
+id|urb_t
+op_star
+id|urb
+suffix:semicolon
 DECL|member|bEndpointAddress
 id|__u8
 id|bEndpointAddress
@@ -120,25 +133,22 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+DECL|variable|xxx
+r_int
+id|xxx
+op_assign
+l_int|0
+suffix:semicolon
+singleline_comment|//static int mouse_irq(int state, void *__buffer, int len, void *dev_id)
 DECL|function|mouse_irq
 r_static
-r_int
+r_void
 id|mouse_irq
 c_func
 (paren
-r_int
-id|state
-comma
-r_void
+id|urb_t
 op_star
-id|__buffer
-comma
-r_int
-id|len
-comma
-r_void
-op_star
-id|dev_id
+id|urb
 )paren
 (brace
 r_int
@@ -146,7 +156,17 @@ r_char
 op_star
 id|data
 op_assign
-id|__buffer
+id|urb-&gt;transfer_buffer
+suffix:semicolon
+r_int
+id|state
+op_assign
+id|urb-&gt;status
+suffix:semicolon
+r_int
+id|len
+op_assign
+id|urb-&gt;actual_length
 suffix:semicolon
 multiline_comment|/* finding the mouse is easy when there&squot;s only one */
 r_struct
@@ -154,8 +174,7 @@ id|mouse_state
 op_star
 id|mouse
 op_assign
-op_amp
-id|static_mouse_state
+id|urb-&gt;context
 suffix:semicolon
 r_if
 c_cond
@@ -166,7 +185,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;%s(%d):state %d, bp %p, len %d, dp %p&bslash;n&quot;
+l_string|&quot;%s(%d):state %d, bp %p, len %d&bslash;n&quot;
 comma
 id|__FILE__
 comma
@@ -174,13 +193,12 @@ id|__LINE__
 comma
 id|state
 comma
-id|__buffer
+id|data
 comma
 id|len
-comma
-id|dev_id
 )paren
 suffix:semicolon
+singleline_comment|//printk(&quot;mouseirq: %i&bslash;n&quot;,xxx++);
 multiline_comment|/*&n;&t; * USB_ST_NOERROR is the normal case.&n;&t; * USB_ST_REMOVED occurs if mouse disconnected or suspend/resume&n;&t; * USB_ST_INTERNALERROR occurs if system suspended then mouse removed&n;&t; *    followed by resume. On UHCI could then occur every second&n;&t; * In both cases, suspend the mouse&n;&t; * On other states, ignore&n;&t; */
 r_switch
 c_cond
@@ -209,10 +227,9 @@ id|mouse-&gt;suspended
 op_assign
 l_int|1
 suffix:semicolon
+singleline_comment|// FIXME stop interrupt!
 r_return
-l_int|0
 suffix:semicolon
-multiline_comment|/* disable */
 r_case
 id|USB_ST_NOERROR
 suffix:colon
@@ -221,7 +238,6 @@ suffix:semicolon
 r_default
 suffix:colon
 r_return
-l_int|1
 suffix:semicolon
 multiline_comment|/* ignore */
 )brace
@@ -234,7 +250,6 @@ id|mouse-&gt;active
 )paren
 (brace
 r_return
-l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* if the USB mouse sends an interrupt, then something noteworthy&n;&t;   must have happened */
@@ -310,6 +325,7 @@ c_cond
 (paren
 id|mouse-&gt;fasync
 )paren
+macro_line|#if LINUX_VERSION_CODE &gt; KERNEL_VERSION(2,3,20)
 id|kill_fasync
 c_func
 (paren
@@ -320,8 +336,17 @@ comma
 id|POLL_IN
 )paren
 suffix:semicolon
+macro_line|#else
+id|kill_fasync
+c_func
+(paren
+id|mouse-&gt;fasync
+comma
+id|SIGIO
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
-l_int|1
 suffix:semicolon
 )brace
 DECL|function|fasync_mouse
@@ -445,20 +470,10 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* stop polling the mouse while its not in use */
-id|usb_release_irq
+id|usb_unlink_urb
 c_func
 (paren
-id|mouse-&gt;dev
-comma
-id|mouse-&gt;irq_handle
-comma
-id|usb_rcvctrlpipe
-c_func
-(paren
-id|mouse-&gt;dev
-comma
-id|mouse-&gt;bEndpointAddress
-)paren
+id|mouse-&gt;urb
 )paren
 suffix:semicolon
 multiline_comment|/* never keep a reference to a released IRQ! */
@@ -498,6 +513,10 @@ id|static_mouse_state
 suffix:semicolon
 r_int
 id|ret
+suffix:semicolon
+r_int
+r_int
+id|pipe
 suffix:semicolon
 id|printk
 c_func
@@ -593,31 +612,59 @@ r_return
 l_int|0
 suffix:semicolon
 multiline_comment|/* start the usb controller&squot;s polling of the mouse */
-id|ret
+id|pipe
 op_assign
-id|usb_request_irq
-c_func
-(paren
-id|mouse-&gt;dev
-comma
-id|usb_rcvctrlpipe
+id|usb_rcvintpipe
 c_func
 (paren
 id|mouse-&gt;dev
 comma
 id|mouse-&gt;bEndpointAddress
 )paren
+suffix:semicolon
+id|FILL_INT_URB
+c_func
+(paren
+id|mouse-&gt;urb
+comma
+id|mouse-&gt;dev
+comma
+id|pipe
+comma
+id|mouse-&gt;buffer
+comma
+id|usb_maxpacket
+c_func
+(paren
+id|mouse-&gt;urb-&gt;dev
+comma
+id|pipe
+comma
+id|usb_pipeout
+c_func
+(paren
+id|pipe
+)paren
+)paren
 comma
 id|mouse_irq
 comma
+id|mouse
+comma
 id|mouse-&gt;bInterval
-comma
-l_int|NULL
-comma
-op_amp
-id|mouse-&gt;irq_handle
 )paren
 suffix:semicolon
+id|ret
+op_assign
+id|usb_submit_urb
+c_func
+(paren
+id|mouse-&gt;urb
+)paren
+suffix:semicolon
+singleline_comment|//&t;ret = usb_request_irq(mouse-&gt;dev, usb_rcvctrlpipe(mouse-&gt;dev, mouse-&gt;bEndpointAddress),
+singleline_comment|//&t;&t;mouse_irq, mouse-&gt;bInterval,
+singleline_comment|//&t;&t;NULL, &amp;mouse-&gt;irq_handle);
 r_if
 c_cond
 (paren
@@ -627,10 +674,12 @@ id|ret
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;usb-mouse: usb_request_irq failed (0x%x)&bslash;n&quot;
+l_string|&quot;usb-mouse: usb_submit_urb(INT) failed (0x%x)&bslash;n&quot;
 comma
 id|ret
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 id|ret
@@ -669,7 +718,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Look like a PS/2 mouse, please..&n; * In XFree86 (3.3.5 tested) you must select Protocol &quot;NetMousePS/2&quot;,&n; *  then use your wheel as Button 4 and 5 via ZAxisMapping 4 5.&n; *&n; * The PS/2 protocol is fairly strange, but&n; * oh, well, it&squot;s at least common..&n; */
+multiline_comment|/*&n; * Look like a PS/2 mouse, please..&n; *&n; * The PS/2 protocol is fairly strange, but&n; * oh, well, it&squot;s at least common..&n; */
 DECL|function|read_mouse
 r_static
 id|ssize_t
@@ -1005,7 +1054,6 @@ comma
 )brace
 suffix:semicolon
 DECL|function|mouse_probe
-r_static
 r_void
 op_star
 id|mouse_probe
@@ -1018,7 +1066,7 @@ id|dev
 comma
 r_int
 r_int
-id|i
+id|ifnum
 )paren
 (brace
 r_struct
@@ -1042,13 +1090,25 @@ suffix:semicolon
 r_int
 id|ret
 suffix:semicolon
+r_int
+r_int
+id|pipe
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;mouse probe for if %i&bslash;n&quot;
+comma
+id|ifnum
+)paren
+suffix:semicolon
 multiline_comment|/* Is it a mouse interface? */
 id|interface
 op_assign
 op_amp
 id|dev-&gt;actconfig-&gt;interface
 (braket
-id|i
+id|ifnum
 )braket
 dot
 id|altsetting
@@ -1177,29 +1237,54 @@ id|__LINE__
 )paren
 suffix:semicolon
 multiline_comment|/* restart the usb controller&squot;s polling of the mouse */
-id|ret
+id|pipe
 op_assign
-id|usb_request_irq
-c_func
-(paren
-id|mouse-&gt;dev
-comma
-id|usb_rcvctrlpipe
+id|usb_rcvintpipe
 c_func
 (paren
 id|mouse-&gt;dev
 comma
 id|mouse-&gt;bEndpointAddress
 )paren
+suffix:semicolon
+id|FILL_INT_URB
+c_func
+(paren
+id|mouse-&gt;urb
+comma
+id|mouse-&gt;dev
+comma
+id|pipe
+comma
+id|mouse-&gt;buffer
+comma
+id|usb_maxpacket
+c_func
+(paren
+id|mouse-&gt;urb-&gt;dev
+comma
+id|pipe
+comma
+id|usb_pipeout
+c_func
+(paren
+id|pipe
+)paren
+)paren
 comma
 id|mouse_irq
 comma
+id|mouse
+comma
 id|mouse-&gt;bInterval
-comma
-l_int|NULL
-comma
-op_amp
-id|mouse-&gt;irq_handle
+)paren
+suffix:semicolon
+id|ret
+op_assign
+id|usb_submit_urb
+c_func
+(paren
+id|mouse-&gt;urb
 )paren
 suffix:semicolon
 r_if
@@ -1211,7 +1296,7 @@ id|ret
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;usb-mouse: usb_request_irq failed (0x%x)&bslash;n&quot;
+l_string|&quot;usb-mouse: usb_submit_urb(INT) failed (0x%x)&bslash;n&quot;
 comma
 id|ret
 )paren
@@ -1225,6 +1310,12 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+id|printk
+c_func
+(paren
+l_string|&quot;mouse probe2&bslash;n&quot;
+)paren
+suffix:semicolon
 r_return
 id|mouse
 suffix:semicolon
@@ -1242,7 +1333,7 @@ id|dev
 comma
 r_void
 op_star
-id|ptr
+id|priv
 )paren
 (brace
 r_struct
@@ -1250,7 +1341,7 @@ id|mouse_state
 op_star
 id|mouse
 op_assign
-id|ptr
+id|priv
 suffix:semicolon
 multiline_comment|/* stop the usb interrupt transfer */
 r_if
@@ -1259,23 +1350,12 @@ c_cond
 id|mouse-&gt;present
 )paren
 (brace
-id|usb_release_irq
+id|usb_unlink_urb
 c_func
 (paren
-id|mouse-&gt;dev
-comma
-id|mouse-&gt;irq_handle
-comma
-id|usb_rcvctrlpipe
-c_func
-(paren
-id|mouse-&gt;dev
-comma
-id|mouse-&gt;bEndpointAddress
-)paren
+id|mouse-&gt;urb
 )paren
 suffix:semicolon
-multiline_comment|/* never keep a reference to a released IRQ! */
 )brace
 id|mouse-&gt;irq_handle
 op_assign
@@ -1289,7 +1369,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;USB Mouse disconnected&bslash;n&quot;
+l_string|&quot;Mouse disconnected&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -1345,6 +1425,48 @@ suffix:semicolon
 id|mouse-&gt;irq_handle
 op_assign
 l_int|NULL
+suffix:semicolon
+id|mouse-&gt;buffer
+op_assign
+id|kmalloc
+c_func
+(paren
+l_int|64
+comma
+id|GFP_KERNEL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|mouse-&gt;buffer
+)paren
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
+id|mouse-&gt;urb
+op_assign
+id|usb_alloc_urb
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|mouse-&gt;urb
+)paren
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+id|MODSTR
+l_string|&quot;URB allocation failed&bslash;n&quot;
+)paren
 suffix:semicolon
 id|init_waitqueue_head
 c_func
@@ -1407,20 +1529,10 @@ c_cond
 id|mouse-&gt;present
 )paren
 (brace
-id|usb_release_irq
+id|usb_unlink_urb
 c_func
 (paren
-id|mouse-&gt;dev
-comma
-id|mouse-&gt;irq_handle
-comma
-id|usb_rcvctrlpipe
-c_func
-(paren
-id|mouse-&gt;dev
-comma
-id|mouse-&gt;bEndpointAddress
-)paren
+id|mouse-&gt;urb
 )paren
 suffix:semicolon
 multiline_comment|/* never keep a reference to a released IRQ! */
@@ -1429,6 +1541,18 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
+id|kfree
+c_func
+(paren
+id|mouse-&gt;urb
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|mouse-&gt;buffer
+)paren
+suffix:semicolon
 multiline_comment|/* this, too, probably needs work */
 id|usb_deregister
 c_func

@@ -168,5 +168,6 @@ id|__unused5
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* stat64 struct goes here -- someone please make&n; * it mesh with whatever glibc does in userland on&n; * m68k&squot;s.&n; */
 macro_line|#endif /* _M68K_STAT_H */
 eof

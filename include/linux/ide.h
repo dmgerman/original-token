@@ -562,6 +562,11 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* 1=present, 0=default */
+DECL|member|scsi
+id|byte
+id|scsi
+suffix:semicolon
+multiline_comment|/* 0=default, 1=skip current ide-subdriver for ide-scsi emulation */
 DECL|member|media
 id|byte
 id|media

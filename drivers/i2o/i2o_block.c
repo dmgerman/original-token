@@ -517,7 +517,7 @@ id|mptr
 op_assign
 id|msg
 op_plus
-l_int|8
+l_int|32
 suffix:semicolon
 r_if
 c_cond
@@ -744,6 +744,8 @@ id|mptr
 op_minus
 id|msg
 )paren
+op_rshift
+l_int|2
 op_or
 id|SGL_OFFSET_8
 comma

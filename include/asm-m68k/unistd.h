@@ -152,8 +152,8 @@ DECL|macro|__NR_sethostname
 mdefine_line|#define __NR_sethostname&t; 74
 DECL|macro|__NR_setrlimit
 mdefine_line|#define __NR_setrlimit&t;&t; 75
-DECL|macro|__NR_getrlimit
-mdefine_line|#define __NR_getrlimit&t;&t; 76
+DECL|macro|__NR_old_getrlimit
+mdefine_line|#define __NR_old_getrlimit&t; 76
 DECL|macro|__NR_getrusage
 mdefine_line|#define __NR_getrusage&t;&t; 77
 DECL|macro|__NR_gettimeofday
@@ -380,6 +380,20 @@ DECL|macro|__NR_putpmsg
 mdefine_line|#define __NR_putpmsg&t;&t;189&t;/* some people actually want streams */
 DECL|macro|__NR_vfork
 mdefine_line|#define __NR_vfork&t;&t;190
+DECL|macro|__NR_getrlimit
+mdefine_line|#define __NR_getrlimit&t;&t;191
+DECL|macro|__NR_mmap2
+mdefine_line|#define __NR_mmap2&t;&t;192
+DECL|macro|__NR_truncate64
+mdefine_line|#define __NR_truncate64&t;&t;193
+DECL|macro|__NR_ftruncate64
+mdefine_line|#define __NR_ftruncate64&t;194
+DECL|macro|__NR_stat64
+mdefine_line|#define __NR_stat64&t;&t;195
+DECL|macro|__NR_lstat64
+mdefine_line|#define __NR_lstat64&t;&t;196
+DECL|macro|__NR_fstat64
+mdefine_line|#define __NR_fstat64&t;&t;197
 multiline_comment|/* user-visible error numbers are in the range -1 - -122: see&n;   &lt;asm-m68k/errno.h&gt; */
 DECL|macro|__syscall_return
 mdefine_line|#define __syscall_return(type, res) &bslash;&n;do { &bslash;&n;&t;if ((unsigned long)(res) &gt;= (unsigned long)(-125)) { &bslash;&n;&t;/* avoid using res which is declared to be in register d0; &bslash;&n;&t;   errno might expand to a function call and clobber it.  */ &bslash;&n;&t;&t;int __err = -(res); &bslash;&n;&t;&t;errno = __err; &bslash;&n;&t;&t;res = -1; &bslash;&n;&t;} &bslash;&n;&t;return (type) (res); &bslash;&n;} while (0)

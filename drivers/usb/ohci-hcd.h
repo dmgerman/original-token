@@ -1,72 +1,140 @@
-multiline_comment|/*&n; * OHCI HCD (Host Controller Driver) for USB.&n; *&n; * (C) Copyright 1999 Roman Weissgaerber &lt;weissg@vienna.at&gt;&n; *&n; * The OHCI HCD layer is a simple but nearly complete implementation of what the&n; * USB people would call a HCD  for the OHCI. &n; * (ISO comming soon, Bulk, INT u. CTRL transfers enabled)&n; * The layer on top of it, is for interfacing to the alternate-usb device-drivers.&n; * &n; * [ This is based on Linus&squot; UHCI code and gregs OHCI fragments (0.03c source tree). ]&n; * [ Open Host Controller Interface driver for USB. ]&n; * [ (C) Copyright 1999 Linus Torvalds (uhci.c) ]&n; * [ (C) Copyright 1999 Gregory P. Smith &lt;greg@electricrain.com&gt; ]&n; * [ _Log: ohci-hcd.h,v _&n; * [ Revision 1.1  1999/04/05 08:32:30  greg ]&n; * &n; * v4.0 1999/08/18&n; * v2.1 1999/05/09 ep_addr correction, code clean up&n; * v2.0 1999/05/04 &n; * v1.0 1999/04/27&n; * ohci-hcd.h&n; */
-DECL|macro|OHCI_DBG
-mdefine_line|#define OHCI_DBG    /* printk some debug information */
-macro_line|#include &lt;linux/config.h&gt;
-singleline_comment|// #ifdef CONFIG_USB_OHCI_VROOTHUB
-DECL|macro|VROOTHUB
-mdefine_line|#define VROOTHUB  
-singleline_comment|// #endif
-multiline_comment|/* enables virtual root hub &n; * (root hub will be managed by the hub controller &n; *  hub.c of the alternate usb driver)&n; *  must be on now&n; */
-macro_line|#ifdef OHCI_DBG
-DECL|macro|OHCI_DEBUG
-mdefine_line|#define OHCI_DEBUG(X) X
-macro_line|#else 
-DECL|macro|OHCI_DEBUG
-mdefine_line|#define OHCI_DEBUG(X)
-macro_line|#endif 
-multiline_comment|/* for readl writel functions */
-macro_line|#include &lt;linux/list.h&gt;
-macro_line|#include &lt;asm/io.h&gt;
+multiline_comment|/*&n; * URB OHCI HCD (Host Controller Driver) for USB.&n; * &n; *(C) Copyright 1999 Roman Weissgaerber &lt;weissg@vienna.at&gt;&n; * &n; * ohci-hcd.h&n; * &n; */
+DECL|macro|MODSTR
+mdefine_line|#define MODSTR &quot;ohci: &quot;
+DECL|variable|cc_to_error
+r_static
+r_int
+id|cc_to_error
+(braket
+l_int|16
+)braket
+op_assign
+(brace
+multiline_comment|/* mapping of the OHCI CC status to error codes */
+macro_line|#ifdef USB_ST_CRC /* status codes */
+multiline_comment|/* No  Error  */
+id|USB_ST_NOERROR
+comma
+multiline_comment|/* CRC Error  */
+id|USB_ST_CRC
+comma
+multiline_comment|/* Bit Stuff  */
+id|USB_ST_BITSTUFF
+comma
+multiline_comment|/* Data Togg  */
+id|USB_ST_CRC
+comma
+multiline_comment|/* Stall      */
+id|USB_ST_STALL
+comma
+multiline_comment|/* DevNotResp */
+id|USB_ST_NORESPONSE
+comma
+multiline_comment|/* PIDCheck   */
+id|USB_ST_BITSTUFF
+comma
+multiline_comment|/* UnExpPID   */
+id|USB_ST_BITSTUFF
+comma
+multiline_comment|/* DataOver   */
+id|USB_ST_DATAOVERRUN
+comma
+multiline_comment|/* DataUnder  */
+id|USB_ST_DATAUNDERRUN
+comma
+multiline_comment|/* reservd    */
+id|USB_ST_NORESPONSE
+comma
+multiline_comment|/* reservd    */
+id|USB_ST_NORESPONSE
+comma
+multiline_comment|/* BufferOver */
+id|USB_ST_BUFFEROVERRUN
+comma
+multiline_comment|/* BuffUnder  */
+id|USB_ST_BUFFERUNDERRUN
+comma
+multiline_comment|/* Not Access */
+id|USB_ST_NORESPONSE
+comma
+multiline_comment|/* Not Access */
+id|USB_ST_NORESPONSE
+)brace
+suffix:semicolon
+macro_line|#else  /* error codes */
+multiline_comment|/* No  Error  */
+l_int|0
+comma
+multiline_comment|/* CRC Error  */
+op_minus
+id|EILSEQ
+comma
+multiline_comment|/* Bit Stuff  */
+op_minus
+id|EPROTO
+comma
+multiline_comment|/* Data Togg  */
+op_minus
+id|EILSEQ
+comma
+multiline_comment|/* Stall      */
+op_minus
+id|EPIPE
+comma
+multiline_comment|/* DevNotResp */
+op_minus
+id|ETIMEDOUT
+comma
+multiline_comment|/* PIDCheck   */
+op_minus
+id|EPROTO
+comma
+multiline_comment|/* UnExpPID   */
+op_minus
+id|EPROTO
+comma
+multiline_comment|/* DataOver   */
+op_minus
+id|EOVERFLOW
+comma
+multiline_comment|/* DataUnder  */
+op_minus
+id|EREMOTEIO
+comma
+multiline_comment|/* reservd    */
+op_minus
+id|ETIMEDOUT
+comma
+multiline_comment|/* reservd    */
+op_minus
+id|ETIMEDOUT
+comma
+multiline_comment|/* BufferOver */
+op_minus
+id|ECOMM
+comma
+multiline_comment|/* BuffUnder  */
+op_minus
+id|ECOMM
+comma
+multiline_comment|/* Not Access */
+op_minus
+id|ETIMEDOUT
+comma
+multiline_comment|/* Not Access */
+op_minus
+id|ETIMEDOUT
+)brace
+suffix:semicolon
+mdefine_line|#define USB_ST_URB_PENDING&t;&t;-EINPROGRESS
+macro_line|#endif
 r_struct
-id|usb_ohci_ed
+id|ed
 suffix:semicolon
 r_struct
-id|usb_ohci_td
+id|td
 suffix:semicolon
 multiline_comment|/* for ED and TD structures */
-DECL|typedef|__OHCI_BAG
-r_typedef
-r_void
-op_star
-id|__OHCI_BAG
-suffix:semicolon
-DECL|typedef|f_handler
-r_typedef
-r_int
-(paren
-op_star
-id|f_handler
-)paren
-(paren
-r_void
-op_star
-id|ohci
-comma
-r_struct
-id|usb_ohci_td
-op_star
-id|td
-comma
-r_void
-op_star
-id|data
-comma
-r_int
-id|data_len
-comma
-r_int
-id|dlen
-comma
-r_int
-id|status
-comma
-id|__OHCI_BAG
-id|lw0
-comma
-id|__OHCI_BAG
-id|lw1
-)paren
-suffix:semicolon
 multiline_comment|/* ED States */
 DECL|macro|ED_NEW
 mdefine_line|#define ED_NEW &t;&t;0x00
@@ -74,23 +142,15 @@ DECL|macro|ED_UNLINK
 mdefine_line|#define ED_UNLINK &t;0x01
 DECL|macro|ED_OPER
 mdefine_line|#define ED_OPER&t;&t;0x02
-DECL|macro|ED_STOP
-mdefine_line|#define ED_STOP     0x03
 DECL|macro|ED_DEL
 mdefine_line|#define ED_DEL&t;&t;0x04
-DECL|macro|ED_TD_DEL
-mdefine_line|#define ED_TD_DEL&t;0x05
-DECL|macro|ED_RH
-mdefine_line|#define ED_RH&t;&t;0x07 /* marker for RH ED */
-DECL|macro|ED_STATE
-mdefine_line|#define ED_STATE(ed) &t;&t;&t;(((ed)-&gt;hwINFO &gt;&gt; 29) &amp; 0x7)
-DECL|macro|ED_setSTATE
-mdefine_line|#define ED_setSTATE(ed,state) &t;(ed)-&gt;hwINFO = ((ed)-&gt;hwINFO &amp; ~(0x7 &lt;&lt; 29)) | (((state)&amp; 0x7) &lt;&lt; 29)
-DECL|macro|ED_TYPE
-mdefine_line|#define ED_TYPE(ed) &t;&t;&t;(((ed)-&gt;hwINFO &gt;&gt; 27) &amp; 0x3)
-DECL|struct|usb_ohci_ed
+DECL|macro|ED_URB_DEL
+mdefine_line|#define ED_URB_DEL  0x08
+multiline_comment|/* usb_ohci_ed */
+DECL|struct|ed
+r_typedef
 r_struct
-id|usb_ohci_ed
+id|ed
 (brace
 DECL|member|hwINFO
 id|__u32
@@ -108,19 +168,9 @@ DECL|member|hwNextED
 id|__u32
 id|hwNextED
 suffix:semicolon
-DECL|member|buffer_start
-r_void
-op_star
-id|buffer_start
-suffix:semicolon
-DECL|member|len
-r_int
-r_int
-id|len
-suffix:semicolon
 DECL|member|ed_prev
 r_struct
-id|usb_ohci_ed
+id|ed
 op_star
 id|ed_prev
 suffix:semicolon
@@ -140,62 +190,31 @@ DECL|member|int_interval
 id|__u8
 id|int_interval
 suffix:semicolon
-)brace
-id|__attribute
-c_func
-(paren
-(paren
-id|aligned
-c_func
-(paren
-l_int|32
-)paren
-)paren
-)paren
-suffix:semicolon
-DECL|struct|usb_hcd_ed
-r_struct
-id|usb_hcd_ed
-(brace
-DECL|member|endpoint
-r_int
-id|endpoint
-suffix:semicolon
-DECL|member|function
-r_int
-id|function
-suffix:semicolon
-DECL|member|out
-r_int
-id|out
+DECL|member|state
+id|__u8
+id|state
 suffix:semicolon
 DECL|member|type
-r_int
+id|__u8
 id|type
 suffix:semicolon
-DECL|member|slow
-r_int
-id|slow
+DECL|member|last_iso
+id|__u16
+id|last_iso
 suffix:semicolon
-DECL|member|maxpack
-r_int
-id|maxpack
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|struct|ohci_state
+DECL|member|ed_rm_list
 r_struct
-id|ohci_state
-(brace
-DECL|member|len
-r_int
-id|len
+id|ed
+op_star
+id|ed_rm_list
 suffix:semicolon
-DECL|member|status
-r_int
-id|status
-suffix:semicolon
+DECL|typedef|ed_t
+DECL|typedef|ped_t
 )brace
+id|ed_t
+comma
+op_star
+id|ped_t
 suffix:semicolon
 multiline_comment|/* TD info field */
 DECL|macro|TD_CC
@@ -260,10 +279,11 @@ mdefine_line|#define TD_BUFFERUNDERRUN  0x0D
 DECL|macro|TD_NOTACCESSED
 mdefine_line|#define TD_NOTACCESSED     0x0F
 DECL|macro|MAXPSW
-mdefine_line|#define MAXPSW 2
-DECL|struct|usb_ohci_td
+mdefine_line|#define MAXPSW 8
+DECL|struct|td
+r_typedef
 r_struct
-id|usb_ohci_td
+id|td
 (brace
 DECL|member|hwINFO
 id|__u32
@@ -292,50 +312,36 @@ id|MAXPSW
 )braket
 suffix:semicolon
 DECL|member|type
-id|__u32
+id|__u8
 id|type
 suffix:semicolon
-DECL|member|buffer_start
-r_void
-op_star
-id|buffer_start
-suffix:semicolon
-DECL|member|handler
-id|f_handler
-id|handler
+DECL|member|index
+id|__u8
+id|index
 suffix:semicolon
 DECL|member|ed
 r_struct
-id|usb_ohci_ed
+id|ed
 op_star
 id|ed
 suffix:semicolon
 DECL|member|next_dl_td
 r_struct
-id|usb_ohci_td
+id|td
 op_star
 id|next_dl_td
 suffix:semicolon
-DECL|member|lw0
-id|__OHCI_BAG
-id|lw0
+DECL|member|urb
+id|purb_t
+id|urb
 suffix:semicolon
-DECL|member|lw1
-id|__OHCI_BAG
-id|lw1
-suffix:semicolon
+DECL|typedef|td_t
+DECL|typedef|ptd_t
 )brace
-id|__attribute
-c_func
-(paren
-(paren
-id|aligned
-c_func
-(paren
-l_int|32
-)paren
-)paren
-)paren
+id|td_t
+comma
+op_star
+id|ptd_t
 suffix:semicolon
 multiline_comment|/* TD types */
 DECL|macro|BULK
@@ -346,45 +352,14 @@ DECL|macro|CTRL
 mdefine_line|#define CTRL&t;&t;0x02
 DECL|macro|ISO
 mdefine_line|#define ISO&t;&t;&t;0x00
-multiline_comment|/* TD types with direction */
-DECL|macro|BULK_IN
-mdefine_line|#define BULK_IN&t;&t;0x07
-DECL|macro|BULK_OUT
-mdefine_line|#define BULK_OUT&t;0x03
-DECL|macro|INT_IN
-mdefine_line|#define INT_IN&t;&t;0x05
-DECL|macro|INT_OUT
-mdefine_line|#define INT_OUT&t;&t;0x01
-DECL|macro|CTRL_IN
-mdefine_line|#define CTRL_IN&t;&t;0x06
-DECL|macro|CTRL_OUT
-mdefine_line|#define CTRL_OUT&t;0x02
-DECL|macro|ISO_IN
-mdefine_line|#define ISO_IN&t;&t;0x04
-DECL|macro|ISO_OUT
-mdefine_line|#define ISO_OUT&t;&t;0x00
-DECL|macro|CTRL_SETUP
-mdefine_line|#define CTRL_SETUP  &t;0x102
-DECL|macro|CTRL_DATA_IN
-mdefine_line|#define CTRL_DATA_IN&t;0x206
-DECL|macro|CTRL_DATA_OUT
-mdefine_line|#define CTRL_DATA_OUT&t;0x202
-DECL|macro|CTRL_STATUS_IN
-mdefine_line|#define CTRL_STATUS_IN&t;0x306
-DECL|macro|CTRL_STATUS_OUT
-mdefine_line|#define CTRL_STATUS_OUT&t;0x302
 DECL|macro|SEND
-mdefine_line|#define SEND            0x00001000
+mdefine_line|#define SEND            0x01
 DECL|macro|ST_ADDR
-mdefine_line|#define ST_ADDR         0x00002000
+mdefine_line|#define ST_ADDR         0x02
 DECL|macro|ADD_LEN
-mdefine_line|#define ADD_LEN         0x00004000
+mdefine_line|#define ADD_LEN         0x04
 DECL|macro|DEL
-mdefine_line|#define DEL             0x00008000
-DECL|macro|DEL_ED
-mdefine_line|#define DEL_ED          0x00040000
-DECL|macro|TD_RM
-mdefine_line|#define TD_RM&t;&t;&t;0x00080000
+mdefine_line|#define DEL             0x08
 DECL|macro|OHCI_ED_SKIP
 mdefine_line|#define OHCI_ED_SKIP&t;(1 &lt;&lt; 14)
 multiline_comment|/*&n; * The HCCA (Host Controller Communications Area) is a 256 byte&n; * structure defined in the OHCI spec. that the host controller is&n; * told the base address of.  It must be 256-byte aligned.&n; */
@@ -437,7 +412,7 @@ l_int|256
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * This is the maximum number of root hub ports.  I don&squot;t think we&squot;ll&n; * ever see more than two as that&squot;s the space available on an ATX&n; * motherboard&squot;s case, but it could happen.  The OHCI spec allows for&n; * up to 15... (which is insane!)&n; * &n; * Although I suppose several &quot;ports&quot; could be connected directly to&n; * internal laptop devices such as a keyboard, mouse, camera and&n; * serial/parallel ports.  hmm...  That&squot;d be neat.&n; */
+multiline_comment|/*&n; * Maximum number of root hub ports.  &n; */
 DECL|macro|MAX_ROOT_PORTS
 mdefine_line|#define MAX_ROOT_PORTS&t;15&t;/* maximum OHCI root hub ports */
 multiline_comment|/*&n; * This is the structure of the OHCI controller&squot;s memory mapped I/O&n; * region.  This is Memory Mapped I/O.  You must use the readl() and&n; * writel() macros defined in asm/io.h to access these!!&n; */
@@ -561,12 +536,6 @@ l_int|32
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* &n; * Read a MMIO register and re-write it after ANDing with (m)&n; */
-DECL|macro|writel_mask
-mdefine_line|#define writel_mask(m, a) writel( (readl((__u32)(a))) &amp; (__u32)(m), (__u32)(a) )
-multiline_comment|/*&n; * Read a MMIO register and re-write it after ORing with (b)&n; */
-DECL|macro|writel_set
-mdefine_line|#define writel_set(b, a) writel( (readl((__u32)(a))) | (__u32)(b), (__u32)(a) )
 multiline_comment|/*&n; * cmdstatus register */
 DECL|macro|OHCI_CLF
 mdefine_line|#define OHCI_CLF  0x02
@@ -594,10 +563,13 @@ mdefine_line|#define OHCI_INTR_MIE&t;(1 &lt;&lt; 31)
 multiline_comment|/*&n; * Control register masks&n; */
 DECL|macro|OHCI_USB_RESET
 mdefine_line|#define OHCI_USB_RESET&t;&t;0
+DECL|macro|OHCI_USB_RESUME
+mdefine_line|#define OHCI_USB_RESUME     (1 &lt;&lt; 6)
 DECL|macro|OHCI_USB_OPER
 mdefine_line|#define OHCI_USB_OPER&t;&t;(2 &lt;&lt; 6)
 DECL|macro|OHCI_USB_SUSPEND
 mdefine_line|#define OHCI_USB_SUSPEND&t;(3 &lt;&lt; 6)
+multiline_comment|/* Virtual Root HUB */
 DECL|struct|virt_root_hub
 r_struct
 id|virt_root_hub
@@ -607,14 +579,10 @@ r_int
 id|devnum
 suffix:semicolon
 multiline_comment|/* Address of Root Hub endpoint */
-DECL|member|handler
-id|usb_device_irq
-id|handler
-suffix:semicolon
-DECL|member|dev_id
+DECL|member|urb
 r_void
 op_star
-id|dev_id
+id|urb
 suffix:semicolon
 DECL|member|int_addr
 r_void
@@ -636,366 +604,85 @@ id|rh_int_timer
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * This is the full ohci controller description&n; *&n; * Note how the &quot;proper&quot; USB information is just&n; * a subset of what the full implementation needs. (Linus)&n; */
-DECL|struct|ohci
-r_struct
-id|ohci
-(brace
-DECL|member|irq
-r_int
-id|irq
-suffix:semicolon
-DECL|member|regs
-r_struct
-id|ohci_regs
-op_star
-id|regs
-suffix:semicolon
-multiline_comment|/* OHCI controller&squot;s memory */
-DECL|member|hc_area
-r_struct
-id|ohci_hc_area
-op_star
-id|hc_area
-suffix:semicolon
-multiline_comment|/* hcca, int ed-tree, ohci itself .. */
-DECL|member|ohci_hcd_list
-r_struct
-id|list_head
-id|ohci_hcd_list
-suffix:semicolon
-multiline_comment|/* list of all ohci_hcd */
-DECL|member|ohci_int_load
-r_int
-id|ohci_int_load
-(braket
-l_int|32
-)braket
-suffix:semicolon
-multiline_comment|/* load of the 32 Interrupt Chains (for load ballancing)*/
-DECL|member|ed_rm_list
-r_struct
-id|usb_ohci_ed
-op_star
-id|ed_rm_list
-suffix:semicolon
-multiline_comment|/* list of all endpoints to be removed */
-DECL|member|ed_bulktail
-r_struct
-id|usb_ohci_ed
-op_star
-id|ed_bulktail
-suffix:semicolon
-multiline_comment|/* last endpoint of bulk list */
-DECL|member|ed_controltail
-r_struct
-id|usb_ohci_ed
-op_star
-id|ed_controltail
-suffix:semicolon
-multiline_comment|/* last endpoint of control list */
-DECL|member|ed_isotail
-r_struct
-id|usb_ohci_ed
-op_star
-id|ed_isotail
-suffix:semicolon
-multiline_comment|/* last endpoint of iso list */
-DECL|member|intrstatus
-r_int
-id|intrstatus
-suffix:semicolon
-DECL|member|repl_queue
-r_struct
-id|ohci_rep_td
-op_star
-id|repl_queue
-suffix:semicolon
-multiline_comment|/* for internal requests */
-DECL|member|rh_int_interval
-r_int
-id|rh_int_interval
-suffix:semicolon
-DECL|member|rh_int_timer
-r_int
-id|rh_int_timer
-suffix:semicolon
-DECL|member|bus
-r_struct
-id|usb_bus
-op_star
-id|bus
-suffix:semicolon
-DECL|member|rh
-r_struct
-id|virt_root_hub
-id|rh
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|macro|NUM_TDS
-mdefine_line|#define NUM_TDS&t;0&t;&t;/* num of preallocated transfer descriptors */
-DECL|macro|NUM_EDS
-mdefine_line|#define NUM_EDS 32&t;&t;/* num of preallocated endpoint descriptors */
-DECL|struct|ohci_hc_area
-r_struct
-id|ohci_hc_area
-(brace
-DECL|member|hcca
-r_struct
-id|ohci_hcca
-id|hcca
-suffix:semicolon
-multiline_comment|/* OHCI mem. mapped IO area 256 Bytes*/
-DECL|member|ohci
-r_struct
-id|ohci
-id|ohci
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|struct|ohci_device
-r_struct
-id|ohci_device
-(brace
-DECL|member|usb
-r_struct
-id|usb_device
-op_star
-id|usb
-suffix:semicolon
-DECL|member|refcnt
-id|atomic_t
-id|refcnt
-suffix:semicolon
-DECL|member|ohci
-r_struct
-id|ohci
-op_star
-id|ohci
-suffix:semicolon
-DECL|member|ed
-r_struct
-id|usb_ohci_ed
-id|ed
-(braket
-id|NUM_EDS
-)braket
-suffix:semicolon
-DECL|member|data
-r_int
-r_int
-id|data
-(braket
-l_int|16
-)braket
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|macro|ohci_to_usb
-mdefine_line|#define ohci_to_usb(ohci)&t;((ohci)-&gt;usb)
-DECL|macro|usb_to_ohci
-mdefine_line|#define usb_to_ohci(usb)&t;((struct ohci_device *)(usb)-&gt;hcpriv)
-multiline_comment|/* hcd */
-r_struct
-id|usb_ohci_td
-op_star
-id|ohci_trans_req
-c_func
-(paren
-r_struct
-id|ohci
-op_star
-id|ohci
-comma
-r_struct
-id|usb_ohci_ed
-op_star
-id|ed
-comma
-r_int
-id|cmd_len
-comma
-r_void
-op_star
-id|cmd
-comma
-r_void
-op_star
-id|data
-comma
-r_int
-id|data_len
-comma
-id|__OHCI_BAG
-id|lw0
-comma
-id|__OHCI_BAG
-id|lw1
-comma
-r_int
-r_int
-id|type
-comma
-id|f_handler
-id|handler
-)paren
-suffix:semicolon
-r_struct
-id|usb_ohci_ed
-op_star
-id|usb_ohci_add_ep
-c_func
-(paren
-r_struct
-id|usb_device
-op_star
-id|usb_dev
-comma
-r_struct
-id|usb_hcd_ed
-op_star
-id|hcd_ed
-comma
-r_int
-id|interval
-comma
-r_int
-id|load
-)paren
-suffix:semicolon
-r_int
-id|usb_ohci_rm_function
-c_func
-(paren
-r_struct
-id|usb_device
-op_star
-id|usb_dev
-comma
-id|f_handler
-id|handler
-comma
-id|__OHCI_BAG
-id|lw0
-comma
-id|__OHCI_BAG
-id|lw1
-)paren
-suffix:semicolon
-r_int
-id|usb_ohci_rm_ep
-c_func
-(paren
-r_struct
-id|usb_device
-op_star
-id|usb_dev
-comma
-r_struct
-id|usb_ohci_ed
-op_star
-id|ed
-comma
-id|f_handler
-id|handler
-comma
-id|__OHCI_BAG
-id|lw0
-comma
-id|__OHCI_BAG
-id|lw1
-comma
-r_int
-id|send
-)paren
-suffix:semicolon
-r_struct
-id|usb_ohci_ed
-op_star
-id|ohci_find_ep
-c_func
-(paren
-r_struct
-id|usb_device
-op_star
-id|usb_dev
-comma
-r_struct
-id|usb_hcd_ed
-op_star
-id|hcd_ed
-)paren
-suffix:semicolon
-multiline_comment|/* roothub */
-r_int
-id|root_hub_control_msg
-c_func
-(paren
-r_struct
-id|usb_device
-op_star
-id|usb_dev
-comma
-r_int
-r_int
-id|pipe
-comma
-id|devrequest
-op_star
-id|cmd
-comma
-r_void
-op_star
-id|data
-comma
-r_int
-id|len
-)paren
-suffix:semicolon
-r_int
-id|root_hub_release_irq
-c_func
-(paren
-r_struct
-id|usb_device
-op_star
-id|usb_dev
-comma
-r_void
-op_star
-id|ed
-)paren
-suffix:semicolon
-r_int
-id|root_hub_request_irq
-c_func
-(paren
-r_struct
-id|usb_device
-op_star
-id|usb_dev
-comma
-r_int
-r_int
-id|pipe
-comma
-id|usb_device_irq
-id|handler
-comma
-r_int
-id|period
-comma
-r_void
-op_star
-id|dev_id
-comma
-r_void
-op_star
-op_star
-id|handle
-)paren
-suffix:semicolon
+multiline_comment|/* destination of request */
+DECL|macro|RH_INTERFACE
+mdefine_line|#define RH_INTERFACE               0x01
+DECL|macro|RH_ENDPOINT
+mdefine_line|#define RH_ENDPOINT                0x02
+DECL|macro|RH_OTHER
+mdefine_line|#define RH_OTHER                   0x03
+DECL|macro|RH_CLASS
+mdefine_line|#define RH_CLASS                   0x20
+DECL|macro|RH_VENDOR
+mdefine_line|#define RH_VENDOR                  0x40
+multiline_comment|/* Requests: bRequest &lt;&lt; 8 | bmRequestType */
+DECL|macro|RH_GET_STATUS
+mdefine_line|#define RH_GET_STATUS           0x0080
+DECL|macro|RH_CLEAR_FEATURE
+mdefine_line|#define RH_CLEAR_FEATURE        0x0100
+DECL|macro|RH_SET_FEATURE
+mdefine_line|#define RH_SET_FEATURE          0x0300
+DECL|macro|RH_SET_ADDRESS
+mdefine_line|#define RH_SET_ADDRESS&t;&t;&t;0x0500
+DECL|macro|RH_GET_DESCRIPTOR
+mdefine_line|#define RH_GET_DESCRIPTOR&t;&t;0x0680
+DECL|macro|RH_SET_DESCRIPTOR
+mdefine_line|#define RH_SET_DESCRIPTOR       0x0700
+DECL|macro|RH_GET_CONFIGURATION
+mdefine_line|#define RH_GET_CONFIGURATION&t;0x0880
+DECL|macro|RH_SET_CONFIGURATION
+mdefine_line|#define RH_SET_CONFIGURATION&t;0x0900
+DECL|macro|RH_GET_STATE
+mdefine_line|#define RH_GET_STATE            0x0280
+DECL|macro|RH_GET_INTERFACE
+mdefine_line|#define RH_GET_INTERFACE        0x0A80
+DECL|macro|RH_SET_INTERFACE
+mdefine_line|#define RH_SET_INTERFACE        0x0B00
+DECL|macro|RH_SYNC_FRAME
+mdefine_line|#define RH_SYNC_FRAME           0x0C80
+multiline_comment|/* Our Vendor Specific Request */
+DECL|macro|RH_SET_EP
+mdefine_line|#define RH_SET_EP               0x2000
+multiline_comment|/* Hub port features */
+DECL|macro|RH_PORT_CONNECTION
+mdefine_line|#define RH_PORT_CONNECTION         0x00
+DECL|macro|RH_PORT_ENABLE
+mdefine_line|#define RH_PORT_ENABLE             0x01
+DECL|macro|RH_PORT_SUSPEND
+mdefine_line|#define RH_PORT_SUSPEND            0x02
+DECL|macro|RH_PORT_OVER_CURRENT
+mdefine_line|#define RH_PORT_OVER_CURRENT       0x03
+DECL|macro|RH_PORT_RESET
+mdefine_line|#define RH_PORT_RESET              0x04
+DECL|macro|RH_PORT_POWER
+mdefine_line|#define RH_PORT_POWER              0x08
+DECL|macro|RH_PORT_LOW_SPEED
+mdefine_line|#define RH_PORT_LOW_SPEED          0x09
+DECL|macro|RH_C_PORT_CONNECTION
+mdefine_line|#define RH_C_PORT_CONNECTION       0x10
+DECL|macro|RH_C_PORT_ENABLE
+mdefine_line|#define RH_C_PORT_ENABLE           0x11
+DECL|macro|RH_C_PORT_SUSPEND
+mdefine_line|#define RH_C_PORT_SUSPEND          0x12
+DECL|macro|RH_C_PORT_OVER_CURRENT
+mdefine_line|#define RH_C_PORT_OVER_CURRENT     0x13
+DECL|macro|RH_C_PORT_RESET
+mdefine_line|#define RH_C_PORT_RESET            0x14  
+multiline_comment|/* Hub features */
+DECL|macro|RH_C_HUB_LOCAL_POWER
+mdefine_line|#define RH_C_HUB_LOCAL_POWER       0x00
+DECL|macro|RH_C_HUB_OVER_CURRENT
+mdefine_line|#define RH_C_HUB_OVER_CURRENT      0x01
+DECL|macro|RH_DEVICE_REMOTE_WAKEUP
+mdefine_line|#define RH_DEVICE_REMOTE_WAKEUP    0x00
+DECL|macro|RH_ENDPOINT_STALL
+mdefine_line|#define RH_ENDPOINT_STALL          0x01
+DECL|macro|RH_ACK
+mdefine_line|#define RH_ACK                     0x01
+DECL|macro|RH_REQ_ERR
+mdefine_line|#define RH_REQ_ERR                 -1
+DECL|macro|RH_NACK
+mdefine_line|#define RH_NACK                    0x00
 multiline_comment|/* Root-Hub Register info */
 DECL|macro|RH_PS_CCS
 mdefine_line|#define RH_PS_CCS            0x00000001   
@@ -1021,15 +708,327 @@ DECL|macro|RH_PS_OCIC
 mdefine_line|#define RH_PS_OCIC           0x00080000    
 DECL|macro|RH_PS_PRSC
 mdefine_line|#define RH_PS_PRSC           0x00100000   
-macro_line|#ifdef OHCI_DBG
+DECL|macro|min
+mdefine_line|#define min(a,b) (((a)&lt;(b))?(a):(b))  
+multiline_comment|/* urb */
+r_typedef
+r_struct
+(brace
+DECL|member|ed
+id|ped_t
+id|ed
+suffix:semicolon
+DECL|member|length
+id|__u16
+id|length
+suffix:semicolon
+singleline_comment|// number of tds associated with this request
+DECL|member|td_cnt
+id|__u16
+id|td_cnt
+suffix:semicolon
+singleline_comment|// number of tds already serviced
+DECL|member|state
+r_int
+id|state
+suffix:semicolon
+DECL|member|wait
+r_void
+op_star
+id|wait
+suffix:semicolon
+DECL|member|td
+id|ptd_t
+id|td
+(braket
+l_int|0
+)braket
+suffix:semicolon
+singleline_comment|// list pointer to all corresponding TDs associated with this request
+DECL|typedef|urb_priv_t
+DECL|typedef|purb_priv_t
+)brace
+id|urb_priv_t
+comma
+op_star
+id|purb_priv_t
+suffix:semicolon
+DECL|macro|URB_DEL
+mdefine_line|#define URB_DEL 1
+multiline_comment|/*&n; * This is the full ohci controller description&n; *&n; * Note how the &quot;proper&quot; USB information is just&n; * a subset of what the full implementation needs. (Linus)&n; */
+DECL|struct|ohci
+r_typedef
+r_struct
+id|ohci
+(brace
+DECL|member|hcca
+r_struct
+id|ohci_hcca
+id|hcca
+suffix:semicolon
+multiline_comment|/* hcca */
+DECL|member|irq
+r_int
+id|irq
+suffix:semicolon
+DECL|member|regs
+r_struct
+id|ohci_regs
+op_star
+id|regs
+suffix:semicolon
+multiline_comment|/* OHCI controller&squot;s memory */
+DECL|member|ohci_hcd_list
+r_struct
+id|list_head
+id|ohci_hcd_list
+suffix:semicolon
+multiline_comment|/* list of all ohci_hcd */
+DECL|member|next
+r_struct
+id|ohci
+op_star
+id|next
+suffix:semicolon
+singleline_comment|// chain of uhci device contexts
+DECL|member|urb_list
+r_struct
+id|list_head
+id|urb_list
+suffix:semicolon
+singleline_comment|// list of all pending urbs
+DECL|member|urb_list_lock
+id|spinlock_t
+id|urb_list_lock
+suffix:semicolon
+singleline_comment|// lock to keep consistency 
+DECL|member|ohci_int_load
+r_int
+id|ohci_int_load
+(braket
+l_int|32
+)braket
+suffix:semicolon
+multiline_comment|/* load of the 32 Interrupt Chains (for load ballancing)*/
+DECL|member|ed_rm_list
+id|ped_t
+id|ed_rm_list
+(braket
+l_int|2
+)braket
+suffix:semicolon
+multiline_comment|/* lists of all endpoints to be removed */
+DECL|member|ed_bulktail
+id|ped_t
+id|ed_bulktail
+suffix:semicolon
+multiline_comment|/* last endpoint of bulk list */
+DECL|member|ed_controltail
+id|ped_t
+id|ed_controltail
+suffix:semicolon
+multiline_comment|/* last endpoint of control list */
+DECL|member|ed_isotail
+id|ped_t
+id|ed_isotail
+suffix:semicolon
+multiline_comment|/* last endpoint of iso list */
+DECL|member|intrstatus
+r_int
+id|intrstatus
+suffix:semicolon
+DECL|member|hc_control
+id|__u32
+id|hc_control
+suffix:semicolon
+multiline_comment|/* copy of the hc control reg */
+DECL|member|bus
+r_struct
+id|usb_bus
+op_star
+id|bus
+suffix:semicolon
+DECL|member|dev
+r_struct
+id|usb_device
+op_star
+id|dev
+(braket
+l_int|128
+)braket
+suffix:semicolon
+DECL|member|rh
+r_struct
+id|virt_root_hub
+id|rh
+suffix:semicolon
+DECL|typedef|ohci_t
+DECL|typedef|pohci_t
+)brace
+id|ohci_t
+comma
+op_star
+id|pohci_t
+suffix:semicolon
+DECL|macro|NUM_TDS
+mdefine_line|#define NUM_TDS&t;0&t;&t;/* num of preallocated transfer descriptors */
+DECL|macro|NUM_EDS
+mdefine_line|#define NUM_EDS 32&t;&t;/* num of preallocated endpoint descriptors */
+DECL|struct|ohci_device
+r_struct
+id|ohci_device
+(brace
+DECL|member|ed
+id|ed_t
+id|ed
+(braket
+id|NUM_EDS
+)braket
+suffix:semicolon
+DECL|member|ed_cnt
+r_int
+id|ed_cnt
+suffix:semicolon
+DECL|member|wait
+r_void
+op_star
+id|wait
+suffix:semicolon
+)brace
+suffix:semicolon
+singleline_comment|// #define ohci_to_usb(ohci)&t;((ohci)-&gt;usb)
+DECL|macro|usb_to_ohci
+mdefine_line|#define usb_to_ohci(usb)&t;((struct ohci_device *)(usb)-&gt;hcpriv)
+multiline_comment|/* hcd */
+multiline_comment|/* endpoint */
+r_static
+r_int
+id|ep_link
+c_func
+(paren
+id|pohci_t
+id|ohci
+comma
+id|ped_t
+id|ed
+)paren
+suffix:semicolon
+r_static
+r_int
+id|ep_unlink
+c_func
+(paren
+id|pohci_t
+id|ohci
+comma
+id|ped_t
+id|ed
+)paren
+suffix:semicolon
+r_static
+id|ped_t
+id|ep_add_ed
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+id|usb_dev
+comma
+r_int
+r_int
+id|pipe
+comma
+r_int
+id|interval
+comma
+r_int
+id|load
+)paren
+suffix:semicolon
+r_static
+r_void
+id|ep_rm_ed
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+id|usb_dev
+comma
+id|ped_t
+id|ed
+)paren
+suffix:semicolon
+multiline_comment|/* td */
+r_static
+r_void
+id|td_fill
+c_func
+(paren
+r_int
+r_int
+id|info
+comma
+r_void
+op_star
+id|data
+comma
+r_int
+id|len
+comma
+id|purb_t
+id|purb
+comma
+r_int
+id|type
+comma
+r_int
+id|index
+)paren
+suffix:semicolon
+r_static
+r_void
+id|td_submit_urb
+c_func
+(paren
+id|purb_t
+id|purb
+)paren
+suffix:semicolon
+multiline_comment|/* root hub */
+r_static
+r_int
+id|rh_submit_urb
+c_func
+(paren
+id|purb_t
+id|purb
+)paren
+suffix:semicolon
+r_static
+r_int
+id|rh_unlink_urb
+c_func
+(paren
+id|purb_t
+id|purb
+)paren
+suffix:semicolon
+r_static
+r_int
+id|rh_init_int_timer
+c_func
+(paren
+id|purb_t
+id|purb
+)paren
+suffix:semicolon
+macro_line|#ifdef DEBUG
 DECL|macro|OHCI_FREE
 mdefine_line|#define OHCI_FREE(x) kfree(x); printk(&quot;OHCI FREE: %d: %4x&bslash;n&quot;, -- __ohci_free_cnt, (unsigned int) x)
 DECL|macro|OHCI_ALLOC
-mdefine_line|#define OHCI_ALLOC(x,size) (x) = kmalloc(size, GFP_KERNEL); printk(&quot;OHCI ALLO: %d: %4x&bslash;n&quot;, ++ __ohci_free_cnt,(unsigned int) x)
-DECL|macro|USB_FREE
-mdefine_line|#define USB_FREE(x) kfree(x); printk(&quot;USB FREE: %d: %4x&bslash;n&quot;, -- __ohci_free1_cnt, (unsigned int) x)
-DECL|macro|USB_ALLOC
-mdefine_line|#define USB_ALLOC(x,size) (x) = kmalloc(size, GFP_KERNEL); printk(&quot;USB ALLO: %d: %4x&bslash;n&quot;, ++ __ohci_free1_cnt, (unsigned int) x)
+mdefine_line|#define OHCI_ALLOC(x,size) (x) = kmalloc(size, in_interrupt() ? GFP_ATOMIC : GFP_KERNEL); printk(&quot;OHCI ALLO: %d: %4x&bslash;n&quot;, ++ __ohci_free_cnt,(unsigned int) x)
 DECL|variable|__ohci_free_cnt
 r_static
 r_int
@@ -1037,21 +1036,10 @@ id|__ohci_free_cnt
 op_assign
 l_int|0
 suffix:semicolon
-DECL|variable|__ohci_free1_cnt
-r_static
-r_int
-id|__ohci_free1_cnt
-op_assign
-l_int|0
-suffix:semicolon
 macro_line|#else
 DECL|macro|OHCI_FREE
 mdefine_line|#define OHCI_FREE(x) kfree(x) 
 DECL|macro|OHCI_ALLOC
-mdefine_line|#define OHCI_ALLOC(x,size) (x) = kmalloc(size, GFP_KERNEL) 
-DECL|macro|USB_FREE
-mdefine_line|#define USB_FREE(x) kfree(x) 
-DECL|macro|USB_ALLOC
-mdefine_line|#define USB_ALLOC(x,size) (x) = kmalloc(size, GFP_KERNEL) 
+mdefine_line|#define OHCI_ALLOC(x,size) (x) = kmalloc(size, in_interrupt() ? GFP_ATOMIC : GFP_KERNEL) 
 macro_line|#endif
 eof

@@ -135,7 +135,7 @@ macro_line|#endif /* !__ASSEMBLY__ */
 multiline_comment|/* to align the pointer to the (next) page boundary */
 DECL|macro|PAGE_ALIGN
 mdefine_line|#define PAGE_ALIGN(addr)&t;(((addr)+PAGE_SIZE-1)&amp;PAGE_MASK)
-multiline_comment|/*&n; * This handles the memory map.. We could make this a config&n; * option, but too many people screw it up, and too few need&n; * it.&n; *&n; * A __PAGE_OFFSET of 0xC0000000 means that the kernel has&n; * a virtual address space of one gigabyte, which limits the&n; * amount of physical memory you can use to about 950MB. &n; *&n; * If you want more physical memory than this then see the CONFIG_BIGMEM&n; * option in the kernel configuration.&n; */
+multiline_comment|/*&n; * This handles the memory map.. We could make this a config&n; * option, but too many people screw it up, and too few need&n; * it.&n; *&n; * A __PAGE_OFFSET of 0xC0000000 means that the kernel has&n; * a virtual address space of one gigabyte, which limits the&n; * amount of physical memory you can use to about 950MB. &n; *&n; * If you want more physical memory than this then see the CONFIG_HIGHMEM4G&n; * amd CONFIG_HIGHMEM64G options in the kernel configuration.&n; */
 DECL|macro|__PAGE_OFFSET
 mdefine_line|#define __PAGE_OFFSET&t;&t;(0xC0000000)
 macro_line|#ifndef __ASSEMBLY__

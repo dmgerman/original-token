@@ -434,6 +434,26 @@ multiline_comment|/* DMA failed: select PIO xfer */
 r_return
 l_int|1
 suffix:semicolon
+r_case
+id|ide_dma_check
+suffix:colon
+r_if
+c_cond
+(paren
+id|drive-&gt;media
+op_ne
+id|ide_disk
+)paren
+r_return
+id|ide_dmaproc
+c_func
+(paren
+id|ide_dma_off_quietly
+comma
+id|drive
+)paren
+suffix:semicolon
+multiline_comment|/* Fallthrough... */
 r_default
 suffix:colon
 r_return

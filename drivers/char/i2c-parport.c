@@ -2,7 +2,7 @@ multiline_comment|/*&n; * I2C driver for parallel port&n; *&n; * Author: Phil Bl
 macro_line|#include &lt;linux/parport.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
-macro_line|#include &lt;linux/i2c.h&gt;
+macro_line|#include &lt;linux/i2c-old.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
 DECL|macro|I2C_DELAY

@@ -139,6 +139,33 @@ id|data
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|struct|ezusb_interrupt
+r_struct
+id|ezusb_interrupt
+(brace
+DECL|member|ep
+r_int
+r_int
+id|ep
+suffix:semicolon
+DECL|member|len
+r_int
+r_int
+id|len
+suffix:semicolon
+DECL|member|interval
+r_int
+r_int
+id|interval
+suffix:semicolon
+multiline_comment|/* in milliseconds */
+DECL|member|data
+r_void
+op_star
+id|data
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|struct|ezusb_setinterface
 r_struct
 id|ezusb_setinterface
@@ -288,7 +315,9 @@ mdefine_line|#define EZUSB_REQUESTISO        _IOR(&squot;E&squot;, 17, struct ez
 DECL|macro|EZUSB_TERMINATEASYNC
 mdefine_line|#define EZUSB_TERMINATEASYNC    _IOR(&squot;E&squot;, 18, void *)
 DECL|macro|EZUSB_GETFRAMENUMBER
-mdefine_line|#define EZUSB_GETFRAMENUMBER    _IOW(&squot;E&squot;, 18, unsigned int)
+mdefine_line|#define EZUSB_GETFRAMENUMBER    _IOW(&squot;E&squot;, 19, unsigned int)
+DECL|macro|EZUSB_INTERRUPT
+mdefine_line|#define EZUSB_INTERRUPT&t;&t;_IOWR(&squot;E&squot;, 20, struct ezusb_interrupt)
 multiline_comment|/* --------------------------------------------------------------------- */
 macro_line|#endif /* _LINUX_EZUSB_H */
 eof

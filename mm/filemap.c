@@ -6033,6 +6033,11 @@ r_int
 id|len
 )paren
 (brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|filemap_sync
 c_func
 (paren
@@ -6043,6 +6048,11 @@ comma
 id|len
 comma
 id|MS_ASYNC
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace

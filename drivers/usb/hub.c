@@ -4,11 +4,76 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/list.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
-macro_line|#include &lt;linux/spinlock.h&gt;
+singleline_comment|//#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &quot;usb.h&quot;
 macro_line|#include &quot;hub.h&quot;
+macro_line|#ifdef __alpha
+macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,3,0)
+r_extern
+r_int
+id|__kernel_thread
+c_func
+(paren
+r_int
+r_int
+comma
+r_int
+(paren
+op_star
+)paren
+(paren
+r_void
+op_star
+)paren
+comma
+r_void
+op_star
+)paren
+suffix:semicolon
+DECL|function|kernel_thread
+r_static
+r_inline
+r_int
+id|kernel_thread
+c_func
+(paren
+r_int
+(paren
+op_star
+id|fn
+)paren
+(paren
+r_void
+op_star
+)paren
+comma
+r_void
+op_star
+id|arg
+comma
+r_int
+r_int
+id|flags
+)paren
+(brace
+r_return
+id|__kernel_thread
+c_func
+(paren
+id|flags
+op_or
+id|CLONE_VM
+comma
+id|fn
+comma
+id|arg
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+macro_line|#endif
 multiline_comment|/* Wakes up khubd */
 DECL|variable|hub_event_lock
 r_static
@@ -351,13 +416,14 @@ id|status
 )paren
 (brace
 r_case
-id|USB_ST_REMOVED
+op_minus
+id|ENODEV
 suffix:colon
 multiline_comment|/* Just ignore it */
 r_break
 suffix:semicolon
 r_case
-id|USB_ST_NOERROR
+l_int|0
 suffix:colon
 multiline_comment|/* Something happened, let khubd figure it out */
 r_if
@@ -1134,7 +1200,7 @@ l_int|0
 (brace
 id|hub-&gt;irqpipe
 op_assign
-id|usb_rcvctrlpipe
+id|usb_rcvintpipe
 c_func
 (paren
 id|dev
@@ -1170,7 +1236,7 @@ id|ret
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;usb-hub: usb_request_irq failed (0x%x)&bslash;n&quot;
+l_string|&quot;hub: usb_request_irq failed (%d)&bslash;n&quot;
 comma
 id|ret
 )paren
@@ -1375,37 +1441,6 @@ id|portstatus
 comma
 id|portchange
 suffix:semicolon
-multiline_comment|/* Disconnect anything that may have been there */
-id|usb_disconnect
-c_func
-(paren
-op_amp
-id|hub-&gt;children
-(braket
-id|port
-)braket
-)paren
-suffix:semicolon
-multiline_comment|/* Reset the port */
-id|usb_set_port_feature
-c_func
-(paren
-id|hub
-comma
-id|port
-op_plus
-l_int|1
-comma
-id|USB_PORT_FEAT_RESET
-)paren
-suffix:semicolon
-id|wait_ms
-c_func
-(paren
-l_int|50
-)paren
-suffix:semicolon
-multiline_comment|/* FIXME: This is from the *BSD stack, thanks! :) */
 multiline_comment|/* Check status */
 r_if
 c_cond
@@ -1452,6 +1487,16 @@ c_func
 id|portsts.wPortChange
 )paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;hub.c: portstatus %x, change %x&bslash;n&quot;
+comma
+id|portstatus
+comma
+id|portchange
+)paren
+suffix:semicolon
 multiline_comment|/* If it&squot;s not in CONNECT and ENABLE state, we&squot;re done */
 r_if
 c_cond
@@ -1474,8 +1519,46 @@ id|USB_PORT_STAT_ENABLE
 )paren
 )paren
 )paren
+(brace
+multiline_comment|/* Disconnect anything that may have been there */
+id|usb_disconnect
+c_func
+(paren
+op_amp
+id|hub-&gt;children
+(braket
+id|port
+)braket
+)paren
+suffix:semicolon
 multiline_comment|/* We&squot;re done now, we already disconnected the device */
 r_return
+suffix:semicolon
+)brace
+id|wait_ms
+c_func
+(paren
+l_int|500
+)paren
+suffix:semicolon
+multiline_comment|/* Reset the port */
+id|usb_set_port_feature
+c_func
+(paren
+id|hub
+comma
+id|port
+op_plus
+l_int|1
+comma
+id|USB_PORT_FEAT_RESET
+)paren
+suffix:semicolon
+id|wait_ms
+c_func
+(paren
+l_int|500
+)paren
 suffix:semicolon
 multiline_comment|/* Allocate a new device struct for it */
 id|usb

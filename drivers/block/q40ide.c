@@ -4,7 +4,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
-macro_line|#include &quot;ide.h&quot;
+macro_line|#include &lt;linux/ide.h&gt;
 multiline_comment|/*&n;     *  Bases of the IDE interfaces&n;     */
 DECL|macro|PCIDE_NUM_HWIFS
 mdefine_line|#define PCIDE_NUM_HWIFS&t;2

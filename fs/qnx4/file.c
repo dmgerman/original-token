@@ -1069,7 +1069,7 @@ id|page-&gt;flags
 )paren
 suffix:semicolon
 )brace
-id|Unlock_Page
+id|UnlockPage
 c_func
 (paren
 id|page

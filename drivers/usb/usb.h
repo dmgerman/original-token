@@ -3,6 +3,7 @@ DECL|macro|__LINUX_USB_H
 mdefine_line|#define __LINUX_USB_H
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/ioctl.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
 multiline_comment|/* USB constants */
 multiline_comment|/*&n; * Device and/or Interface Class codes&n; */
 DECL|macro|USB_CLASS_PER_INTERFACE
@@ -288,19 +289,19 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|USB_PROC_CONTROL
-mdefine_line|#define USB_PROC_CONTROL&t;_IOWR(&squot;U&squot;, 0, struct usb_proc_ctrltransfer)
+mdefine_line|#define USB_PROC_CONTROL           _IOWR(&squot;U&squot;, 0, struct usb_proc_ctrltransfer)
 DECL|macro|USB_PROC_BULK
-mdefine_line|#define USB_PROC_BULK&t;&t;_IOWR(&squot;U&squot;, 2, struct usb_proc_bulktransfer)
+mdefine_line|#define USB_PROC_BULK              _IOWR(&squot;U&squot;, 2, struct usb_proc_bulktransfer)
 DECL|macro|USB_PROC_OLD_CONTROL
-mdefine_line|#define USB_PROC_OLD_CONTROL&t;_IOWR(&squot;U&squot;, 0, struct usb_proc_old_ctrltransfer)
+mdefine_line|#define USB_PROC_OLD_CONTROL       _IOWR(&squot;U&squot;, 0, struct usb_proc_old_ctrltransfer)
 DECL|macro|USB_PROC_OLD_BULK
-mdefine_line|#define USB_PROC_OLD_BULK&t;_IOWR(&squot;U&squot;, 2, struct usb_proc_old_bulktransfer)
+mdefine_line|#define USB_PROC_OLD_BULK          _IOWR(&squot;U&squot;, 2, struct usb_proc_old_bulktransfer)
 DECL|macro|USB_PROC_RESETEP
-mdefine_line|#define USB_PROC_RESETEP&t;_IOR(&squot;U&squot;, 3, unsigned int)
+mdefine_line|#define USB_PROC_RESETEP           _IOR(&squot;U&squot;, 3, unsigned int)
 DECL|macro|USB_PROC_SETINTERFACE
-mdefine_line|#define USB_PROC_SETINTERFACE&t;_IOR(&squot;U&squot;, 4, struct usb_proc_setinterface)
+mdefine_line|#define USB_PROC_SETINTERFACE      _IOR(&squot;U&squot;, 4, struct usb_proc_setinterface)
 DECL|macro|USB_PROC_SETCONFIGURATION
-mdefine_line|#define USB_PROC_SETCONFIGURATION&t;_IOR(&squot;U&squot;, 5, unsigned int)
+mdefine_line|#define USB_PROC_SETCONFIGURATION  _IOR(&squot;U&squot;, 5, unsigned int)
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/list.h&gt;
@@ -371,6 +372,75 @@ c_func
 r_void
 )paren
 suffix:semicolon
+multiline_comment|/* for 2.2-kernels */
+macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,3,0)
+DECL|function|list_add_tail
+r_static
+id|__inline__
+r_void
+id|list_add_tail
+c_func
+(paren
+r_struct
+id|list_head
+op_star
+r_new
+comma
+r_struct
+id|list_head
+op_star
+id|head
+)paren
+(brace
+id|__list_add
+c_func
+(paren
+r_new
+comma
+id|head-&gt;prev
+comma
+id|head
+)paren
+suffix:semicolon
+)brace
+DECL|macro|LIST_HEAD_INIT
+mdefine_line|#define LIST_HEAD_INIT(name) { &amp;(name), &amp;(name) }
+DECL|typedef|wait_queue_t
+r_typedef
+r_struct
+id|wait_queue
+id|wait_queue_t
+suffix:semicolon
+DECL|typedef|wait_queue_head_t
+r_typedef
+r_struct
+id|wait_queue
+op_star
+id|wait_queue_head_t
+suffix:semicolon
+DECL|macro|DECLARE_WAITQUEUE
+mdefine_line|#define DECLARE_WAITQUEUE(wait, current) &bslash;&n;&t;struct wait_queue wait = { current, NULL }
+DECL|macro|DECLARE_WAIT_QUEUE_HEAD
+mdefine_line|#define DECLARE_WAIT_QUEUE_HEAD(wait)&bslash;&n;&t;wait_queue_head_t wait
+DECL|macro|init_waitqueue_head
+mdefine_line|#define init_waitqueue_head(x) *x=NULL
+DECL|macro|init_MUTEX
+mdefine_line|#define init_MUTEX(x) *(x)=MUTEX
+DECL|macro|DECLARE_MUTEX
+mdefine_line|#define DECLARE_MUTEX(name) struct semaphore name=MUTEX
+DECL|macro|DECLARE_MUTEX_LOCKED
+mdefine_line|#define DECLARE_MUTEX_LOCKED(name) struct semaphore name=MUTEX_LOCKED
+DECL|macro|__set_current_state
+mdefine_line|#define __set_current_state(state_value)                        &bslash;&n;&t;do { current-&gt;state = state_value; } while (0)
+macro_line|#ifdef __SMP__
+DECL|macro|set_current_state
+mdefine_line|#define set_current_state(state_value)          &bslash;&n;&t;set_mb(current-&gt;state, state_value)
+macro_line|#else
+DECL|macro|set_current_state
+mdefine_line|#define set_current_state(state_value)          &bslash;&n;&t;__set_current_state(state_value)
+macro_line|#endif
+macro_line|#endif 
+singleline_comment|// 2.2.x
 DECL|function|wait_ms
 r_static
 id|__inline__
@@ -433,52 +503,47 @@ id|packed
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* &n; * Status codes (these [used to] follow OHCI controllers condition codes)&n; */
+multiline_comment|/* USB-status codes:&n; * USB_ST* maps to -E* and should go away in the future&n;*/
 DECL|macro|USB_ST_NOERROR
 mdefine_line|#define USB_ST_NOERROR&t;&t;0
 DECL|macro|USB_ST_CRC
-mdefine_line|#define USB_ST_CRC&t;&t;-1
+mdefine_line|#define USB_ST_CRC&t;&t;(-EILSEQ)
 DECL|macro|USB_ST_BITSTUFF
-mdefine_line|#define USB_ST_BITSTUFF&t;&t;-2
-DECL|macro|USB_ST_DTMISMATCH
-mdefine_line|#define USB_ST_DTMISMATCH&t;-3&t;/* data toggle mismatch */
-DECL|macro|USB_ST_STALL
-mdefine_line|#define USB_ST_STALL&t;&t;-4
+mdefine_line|#define USB_ST_BITSTUFF&t;&t;(-EPROTO)
 DECL|macro|USB_ST_NORESPONSE
-mdefine_line|#define USB_ST_NORESPONSE&t;-5&t;/* device not responding/handshaking */
-DECL|macro|USB_ST_PIDCHECK
-mdefine_line|#define USB_ST_PIDCHECK&t;&t;-6&t;/* Check bits on PID failed */
-DECL|macro|USB_ST_PIDUNDEF
-mdefine_line|#define USB_ST_PIDUNDEF&t;&t;-7&t;/* PID unexpected/undefined */
+mdefine_line|#define USB_ST_NORESPONSE&t;(-ETIMEDOUT)&t;&t;&t;/* device not responding/handshaking */
 DECL|macro|USB_ST_DATAOVERRUN
-mdefine_line|#define USB_ST_DATAOVERRUN&t;-8
+mdefine_line|#define USB_ST_DATAOVERRUN&t;(-EOVERFLOW)
 DECL|macro|USB_ST_DATAUNDERRUN
-mdefine_line|#define USB_ST_DATAUNDERRUN&t;-9
-DECL|macro|USB_ST_RESERVED1
-mdefine_line|#define USB_ST_RESERVED1&t;-10
-DECL|macro|USB_ST_RESERVED2
-mdefine_line|#define USB_ST_RESERVED2&t;-11
+mdefine_line|#define USB_ST_DATAUNDERRUN&t;(-EREMOTEIO)
 DECL|macro|USB_ST_BUFFEROVERRUN
-mdefine_line|#define USB_ST_BUFFEROVERRUN&t;-12
+mdefine_line|#define USB_ST_BUFFEROVERRUN&t;(-ECOMM)
 DECL|macro|USB_ST_BUFFERUNDERRUN
-mdefine_line|#define USB_ST_BUFFERUNDERRUN&t;-13
-DECL|macro|USB_ST_RESERVED3
-mdefine_line|#define USB_ST_RESERVED3&t;-14
-DECL|macro|USB_ST_RESERVED4
-mdefine_line|#define USB_ST_RESERVED4&t;-15
-multiline_comment|/* internal errors */
-DECL|macro|USB_ST_REMOVED
-mdefine_line|#define USB_ST_REMOVED&t;&t;-100
-DECL|macro|USB_ST_TIMEOUT
-mdefine_line|#define USB_ST_TIMEOUT&t;&t;-101
+mdefine_line|#define USB_ST_BUFFERUNDERRUN&t;(-ENOSR)
 DECL|macro|USB_ST_INTERNALERROR
-mdefine_line|#define USB_ST_INTERNALERROR&t;-200
+mdefine_line|#define USB_ST_INTERNALERROR&t;(-EPROTO) &t;&t;&t;/* unknown error */
+DECL|macro|USB_ST_SHORT_PACKET
+mdefine_line|#define USB_ST_SHORT_PACKET    &t;(-EREMOTEIO)
+DECL|macro|USB_ST_PARTIAL_ERROR
+mdefine_line|#define USB_ST_PARTIAL_ERROR  &t;(-EXDEV)&t;&t;&t;/* ISO transfer only partially completed */
+DECL|macro|USB_ST_URB_KILLED
+mdefine_line|#define USB_ST_URB_KILLED     &t;(-ENOENT)&t;&t;&t;/* URB canceled by user */
+DECL|macro|USB_ST_URB_PENDING
+mdefine_line|#define USB_ST_URB_PENDING       (-EINPROGRESS)
+DECL|macro|USB_ST_REMOVED
+mdefine_line|#define USB_ST_REMOVED&t;&t;(-ENODEV) &t;&t;&t;/* device not existing or removed */
+DECL|macro|USB_ST_TIMEOUT
+mdefine_line|#define USB_ST_TIMEOUT&t;&t;(-ETIMEDOUT)&t;&t;&t;/* communication timed out, also in urb-&gt;status**/
 DECL|macro|USB_ST_NOTSUPPORTED
-mdefine_line|#define USB_ST_NOTSUPPORTED&t;-201
+mdefine_line|#define USB_ST_NOTSUPPORTED&t;(-ENOSYS)&t;&t;&t;
 DECL|macro|USB_ST_BANDWIDTH_ERROR
-mdefine_line|#define USB_ST_BANDWIDTH_ERROR&t;-202
-DECL|macro|USB_ST_NOCHANGE
-mdefine_line|#define USB_ST_NOCHANGE&t;&t;-203
+mdefine_line|#define USB_ST_BANDWIDTH_ERROR&t;(-ENOSPC)&t;&t;&t;/* too much bandwidth used */
+DECL|macro|USB_ST_URB_INVALID_ERROR
+mdefine_line|#define USB_ST_URB_INVALID_ERROR  (-EINVAL)&t;&t;&t;/* invalid value/transfer type */
+DECL|macro|USB_ST_URB_REQUEST_ERROR
+mdefine_line|#define USB_ST_URB_REQUEST_ERROR  (-ENXIO)&t;&t;&t;/* invalid endpoint */
+DECL|macro|USB_ST_STALL
+mdefine_line|#define USB_ST_STALL&t;&t;(-EPIPE) &t;&t;&t;/* pipe stalled, also in urb-&gt;status*/
 multiline_comment|/*&n; * USB device number allocation bitmap. There&squot;s one bitmap&n; * per USB tree.&n; */
 DECL|struct|usb_devmap
 r_struct
@@ -535,9 +600,9 @@ multiline_comment|/* Everything but the endpoint maximums are aribtrary */
 DECL|macro|USB_MAXCONFIG
 mdefine_line|#define USB_MAXCONFIG&t;&t;8
 DECL|macro|USB_ALTSETTINGALLOC
-mdefine_line|#define USB_ALTSETTINGALLOC&t;4
+mdefine_line|#define USB_ALTSETTINGALLOC     4
 DECL|macro|USB_MAXALTSETTING
-mdefine_line|#define USB_MAXALTSETTING&t;128&t;/* Hard limit */
+mdefine_line|#define USB_MAXALTSETTING&t;128  /* Hard limit */
 DECL|macro|USB_MAXINTERFACES
 mdefine_line|#define USB_MAXINTERFACES&t;32
 DECL|macro|USB_MAXENDPOINTS
@@ -1013,190 +1078,314 @@ r_void
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Isoc. support additions&n; */
-DECL|macro|START_FRAME_FUDGE
-mdefine_line|#define START_FRAME_FUDGE      3
-DECL|macro|USB_WRAP_FRAMENR
-mdefine_line|#define USB_WRAP_FRAMENR(x) ((x) &amp; 2047)
-multiline_comment|/* for start_type: */
-r_enum
-(brace
-DECL|enumerator|START_ASAP
-id|START_ASAP
-op_assign
-l_int|0
-comma
-DECL|enumerator|START_ABSOLUTE
-id|START_ABSOLUTE
-comma
-DECL|enumerator|START_RELATIVE
-id|START_RELATIVE
-)brace
-suffix:semicolon
-DECL|macro|START_TYPE_MAX
-mdefine_line|#define START_TYPE_MAX     START_RELATIVE
-multiline_comment|/*&n; * Completion/Callback routine returns an enum,&n; * which tells the interrupt handler what to do&n; * with the completed frames (TDs).&n; */
-r_enum
-(brace
-DECL|enumerator|CB_CONTINUE
-id|CB_CONTINUE
-op_assign
-l_int|0
-comma
-multiline_comment|/* OK, remove all TDs;&n;&t;&t;&t;&t;   needs to be 0 to be consistent with&n;&t;&t;&t;&t;   current callback function ret. values */
-DECL|enumerator|CB_REUSE
-id|CB_REUSE
-comma
-multiline_comment|/* leave descriptors as NULL, not active */
-DECL|enumerator|CB_RESTART
-id|CB_RESTART
-comma
-multiline_comment|/* leave descriptors as they are, alive */
-DECL|enumerator|CB_ABORT
-id|CB_ABORT
-comma
-multiline_comment|/* kill this USB transfer request */
-DECL|enumerator|CB_CONT_RUN
-id|CB_CONT_RUN
-multiline_comment|/* append the isoc_desc at the end of all active isoc_desc */
-)brace
-suffix:semicolon
-DECL|struct|isoc_frame_desc
+multiline_comment|/* -------------------------------------------------------------------------------------* &n; * New USB Structures                                                                   *&n; * -------------------------------------------------------------------------------------*/
+DECL|macro|USB_DISABLE_SPD
+mdefine_line|#define USB_DISABLE_SPD           1
+DECL|macro|USB_ISO_ASAP
+mdefine_line|#define USB_ISO_ASAP              2
+DECL|macro|USB_URB_EARLY_COMPLETE
+mdefine_line|#define USB_URB_EARLY_COMPLETE    4
+r_typedef
 r_struct
-id|isoc_frame_desc
 (brace
-DECL|member|frame_length
+DECL|member|offset
 r_int
-id|frame_length
+r_int
+id|offset
 suffix:semicolon
-multiline_comment|/* may be 0 (i.e., allowed) */
-multiline_comment|/* set by driver for OUTs to devices;&n;&t;&t;&t; * set by USBD for INs from devices,&n;&t;&t;&t; * after I/O complete */
-DECL|member|frame_status
+DECL|member|length
 r_int
 r_int
-id|frame_status
+id|length
 suffix:semicolon
-multiline_comment|/* set by USBD after I/O complete */
+singleline_comment|// expected length
+DECL|member|actual_length
+r_int
+r_int
+id|actual_length
+suffix:semicolon
+DECL|member|status
+r_int
+r_int
+id|status
+suffix:semicolon
+DECL|typedef|iso_packet_descriptor_t
+DECL|typedef|piso_packet_descriptor_t
 )brace
+id|iso_packet_descriptor_t
+comma
+op_star
+id|piso_packet_descriptor_t
 suffix:semicolon
-DECL|struct|usb_isoc_desc
 r_struct
-id|usb_isoc_desc
+id|urb
+suffix:semicolon
+DECL|typedef|usb_complete_t
+r_typedef
+r_void
+(paren
+op_star
+id|usb_complete_t
+)paren
+(paren
+r_struct
+id|urb
+op_star
+)paren
+suffix:semicolon
+DECL|struct|urb
+r_typedef
+r_struct
+id|urb
 (brace
-multiline_comment|/*&n;&t; * The following fields are set by the usb_init_isoc() call.&n;&t; */
-DECL|member|usb_dev
+DECL|member|hcpriv
+r_void
+op_star
+id|hcpriv
+suffix:semicolon
+singleline_comment|// private data for host controller
+DECL|member|urb_list
+r_struct
+id|list_head
+id|urb_list
+suffix:semicolon
+singleline_comment|// list pointer to all active urbs 
+DECL|member|next
+r_struct
+id|urb
+op_star
+id|next
+suffix:semicolon
+singleline_comment|// pointer to next URB&t;
+DECL|member|dev
 r_struct
 id|usb_device
 op_star
-id|usb_dev
+id|dev
 suffix:semicolon
+singleline_comment|// pointer to associated USB device
 DECL|member|pipe
 r_int
 r_int
 id|pipe
 suffix:semicolon
-DECL|member|frame_count
+singleline_comment|// pipe information
+DECL|member|status
 r_int
-id|frame_count
+id|status
 suffix:semicolon
+singleline_comment|// returned status
+DECL|member|transfer_flags
+r_int
+r_int
+id|transfer_flags
+suffix:semicolon
+singleline_comment|// USB_DISABLE_SPD | USB_ISO_ASAP | USB_URB_EARLY_COMPLETE
+DECL|member|transfer_buffer
+r_void
+op_star
+id|transfer_buffer
+suffix:semicolon
+singleline_comment|// associated data buffer
+DECL|member|transfer_buffer_length
+r_int
+id|transfer_buffer_length
+suffix:semicolon
+singleline_comment|// data buffer length
+DECL|member|actual_length
+r_int
+id|actual_length
+suffix:semicolon
+singleline_comment|// actual data buffer length&t;
+DECL|member|setup_packet
+r_int
+r_char
+op_star
+id|setup_packet
+suffix:semicolon
+singleline_comment|// setup packet (control only)
+singleline_comment|//
+DECL|member|start_frame
+r_int
+id|start_frame
+suffix:semicolon
+singleline_comment|// start frame (iso/irq only)
+DECL|member|number_of_packets
+r_int
+id|number_of_packets
+suffix:semicolon
+singleline_comment|// number of packets in this request (iso/irq only)
+DECL|member|interval
+r_int
+id|interval
+suffix:semicolon
+singleline_comment|// polling interval (irq only)
+DECL|member|error_count
+r_int
+id|error_count
+suffix:semicolon
+singleline_comment|// number of errors in this transfer (iso only)
+singleline_comment|//
 DECL|member|context
 r_void
 op_star
 id|context
 suffix:semicolon
-multiline_comment|/* driver context (private) ptr */
-DECL|member|frame_size
-r_int
-id|frame_size
+singleline_comment|// context for completion routine
+DECL|member|complete
+id|usb_complete_t
+id|complete
 suffix:semicolon
-multiline_comment|/*&n;&t; * The following fields are set by the driver between the&n;&t; * usb_init_isoc() and usb_run_isoc() calls&n;&t; * (along with the &quot;frames&quot; array for OUTput).&n;&t; */
-DECL|member|start_type
-r_int
-id|start_type
-suffix:semicolon
-DECL|member|start_frame
-r_int
-id|start_frame
-suffix:semicolon
-multiline_comment|/* optional, depending on start_type */
-DECL|member|frame_spacing
-r_int
-id|frame_spacing
-suffix:semicolon
-multiline_comment|/* not using (yet?) */
-DECL|member|callback_frames
-r_int
-id|callback_frames
-suffix:semicolon
-multiline_comment|/* every # frames + last one */
-multiline_comment|/* 0 means no callbacks until IOC on last frame */
-DECL|member|callback_fn
-id|usb_device_irq
-id|callback_fn
-suffix:semicolon
-DECL|member|data
-r_void
-op_star
-id|data
-suffix:semicolon
-DECL|member|buf_size
-r_int
-id|buf_size
-suffix:semicolon
-DECL|member|prev_isocdesc
-r_struct
-id|usb_isoc_desc
-op_star
-id|prev_isocdesc
-suffix:semicolon
-multiline_comment|/* previous isoc_desc, for CB_CONT_RUN */
-multiline_comment|/*&n;&t; * The following fields are set by the usb_run_isoc() call.&n;&t; */
-DECL|member|end_frame
-r_int
-id|end_frame
-suffix:semicolon
-DECL|member|td
-r_void
-op_star
-id|td
-suffix:semicolon
-multiline_comment|/* UHCI or OHCI TD ptr */
-multiline_comment|/*&n;&t; * The following fields are set by the USB HCD interrupt handler&n;&t; * before calling the driver&squot;s callback function.&n;&t; */
-DECL|member|total_completed_frames
-r_int
-id|total_completed_frames
-suffix:semicolon
-DECL|member|prev_completed_frame
-r_int
-id|prev_completed_frame
-suffix:semicolon
-multiline_comment|/* from the previous callback */
-DECL|member|cur_completed_frame
-r_int
-id|cur_completed_frame
-suffix:semicolon
-multiline_comment|/* from this callback */
-DECL|member|total_length
-r_int
-id|total_length
-suffix:semicolon
-multiline_comment|/* accumulated */
-DECL|member|error_count
-r_int
-id|error_count
-suffix:semicolon
-multiline_comment|/* accumulated */
-DECL|member|frames
-r_struct
-id|isoc_frame_desc
-id|frames
+singleline_comment|// pointer to completion routine
+singleline_comment|//
+DECL|member|iso_frame_desc
+id|iso_packet_descriptor_t
+id|iso_frame_desc
 (braket
 l_int|0
 )braket
 suffix:semicolon
-multiline_comment|/* variable size: [frame_count] */
+DECL|typedef|urb_t
+DECL|typedef|purb_t
+)brace
+id|urb_t
+comma
+op_star
+id|purb_t
+suffix:semicolon
+DECL|macro|FILL_CONTROL_URB
+mdefine_line|#define FILL_CONTROL_URB(a,aa,b,c,d,e,f,g) &bslash;&n;    do {&bslash;&n;&t;a-&gt;dev=aa;&bslash;&n;&t;a-&gt;pipe=b;&bslash;&n;&t;a-&gt;setup_packet=c;&bslash;&n;&t;a-&gt;transfer_buffer=d;&bslash;&n;&t;a-&gt;transfer_buffer_length=e;&bslash;&n;&t;a-&gt;complete=f;&bslash;&n;&t;a-&gt;context=g;&bslash;&n;    } while (0)
+DECL|macro|FILL_BULK_URB
+mdefine_line|#define FILL_BULK_URB(a,aa,b,c,d,e,f) &bslash;&n;    do {&bslash;&n;&t;a-&gt;dev=aa;&bslash;&n;&t;a-&gt;pipe=b;&bslash;&n;&t;a-&gt;transfer_buffer=c;&bslash;&n;&t;a-&gt;transfer_buffer_length=d;&bslash;&n;&t;a-&gt;complete=e;&bslash;&n;&t;a-&gt;context=f;&bslash;&n;    } while (0)
+DECL|macro|FILL_INT_URB
+mdefine_line|#define FILL_INT_URB(a,aa,b,c,d,e,f,g) &bslash;&n;    do {&bslash;&n;&t;a-&gt;dev=aa;&bslash;&n;&t;a-&gt;pipe=b;&bslash;&n;&t;a-&gt;transfer_buffer=c;&bslash;&n;&t;a-&gt;transfer_buffer_length=d;&bslash;&n;&t;a-&gt;complete=e;&bslash;&n;&t;a-&gt;context=f;&bslash;&n;&t;a-&gt;interval=g;&bslash;&n;&t;a-&gt;start_frame=-1;&bslash;&n;    } while (0)
+id|purb_t
+id|usb_alloc_urb
+c_func
+(paren
+r_int
+id|iso_packets
+)paren
+suffix:semicolon
+r_void
+id|usb_free_urb
+(paren
+id|purb_t
+id|purb
+)paren
+suffix:semicolon
+r_int
+id|usb_submit_urb
+c_func
+(paren
+id|purb_t
+id|purb
+)paren
+suffix:semicolon
+r_int
+id|usb_unlink_urb
+c_func
+(paren
+id|purb_t
+id|purb
+)paren
+suffix:semicolon
+r_int
+id|usb_internal_control_msg
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+id|usb_dev
+comma
+r_int
+r_int
+id|pipe
+comma
+id|devrequest
+op_star
+id|cmd
+comma
+r_void
+op_star
+id|data
+comma
+r_int
+id|len
+comma
+r_int
+id|timeout
+)paren
+suffix:semicolon
+r_int
+id|usb_bulk_msg
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+id|usb_dev
+comma
+r_int
+r_int
+id|pipe
+comma
+r_void
+op_star
+id|data
+comma
+r_int
+id|len
+comma
+r_int
+r_int
+op_star
+id|rval
+comma
+r_int
+id|timeout
+)paren
+suffix:semicolon
+multiline_comment|/*-------------------------------------------------------------------*&n; *                         COMPATIBILITY STUFF                       *&n; *-------------------------------------------------------------------*/
+r_typedef
+r_struct
+(brace
+DECL|member|wakeup
+id|wait_queue_head_t
+op_star
+id|wakeup
+suffix:semicolon
+DECL|member|handler
+id|usb_device_irq
+id|handler
+suffix:semicolon
+DECL|member|stuff
+r_void
+op_star
+id|stuff
+suffix:semicolon
+multiline_comment|/* more to follow */
+DECL|typedef|api_wrapper_data
+)brace
+id|api_wrapper_data
+suffix:semicolon
+DECL|struct|irq_wrapper_data
+r_struct
+id|irq_wrapper_data
+(brace
+DECL|member|context
+r_void
+op_star
+id|context
+suffix:semicolon
+DECL|member|handler
+id|usb_device_irq
+id|handler
+suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* ------------------------------------------------------------------------------------- */
 DECL|struct|usb_operations
 r_struct
 id|usb_operations
@@ -1225,141 +1414,6 @@ id|usb_device
 op_star
 )paren
 suffix:semicolon
-DECL|member|control_msg
-r_int
-(paren
-op_star
-id|control_msg
-)paren
-(paren
-r_struct
-id|usb_device
-op_star
-comma
-r_int
-r_int
-comma
-id|devrequest
-op_star
-comma
-r_void
-op_star
-comma
-r_int
-comma
-r_int
-)paren
-suffix:semicolon
-DECL|member|bulk_msg
-r_int
-(paren
-op_star
-id|bulk_msg
-)paren
-(paren
-r_struct
-id|usb_device
-op_star
-comma
-r_int
-r_int
-comma
-r_void
-op_star
-comma
-r_int
-comma
-r_int
-r_int
-op_star
-comma
-r_int
-)paren
-suffix:semicolon
-DECL|member|request_irq
-r_int
-(paren
-op_star
-id|request_irq
-)paren
-(paren
-r_struct
-id|usb_device
-op_star
-comma
-r_int
-r_int
-comma
-id|usb_device_irq
-comma
-r_int
-comma
-r_void
-op_star
-comma
-r_void
-op_star
-op_star
-comma
-r_int
-)paren
-suffix:semicolon
-DECL|member|release_irq
-r_int
-(paren
-op_star
-id|release_irq
-)paren
-(paren
-r_struct
-id|usb_device
-op_star
-comma
-r_void
-op_star
-)paren
-suffix:semicolon
-DECL|member|request_bulk
-r_void
-op_star
-(paren
-op_star
-id|request_bulk
-)paren
-(paren
-r_struct
-id|usb_device
-op_star
-comma
-r_int
-r_int
-comma
-id|usb_device_irq
-comma
-r_void
-op_star
-comma
-r_int
-comma
-r_void
-op_star
-)paren
-suffix:semicolon
-DECL|member|terminate_bulk
-r_int
-(paren
-op_star
-id|terminate_bulk
-)paren
-(paren
-r_struct
-id|usb_device
-op_star
-comma
-r_void
-op_star
-)paren
-suffix:semicolon
 DECL|member|get_frame_number
 r_int
 (paren
@@ -1373,78 +1427,30 @@ op_star
 id|usb_dev
 )paren
 suffix:semicolon
-DECL|member|init_isoc
+DECL|member|submit_urb
 r_int
 (paren
 op_star
-id|init_isoc
+id|submit_urb
 )paren
 (paren
 r_struct
-id|usb_device
+id|urb
 op_star
-id|usb_dev
-comma
-r_int
-r_int
-id|pipe
-comma
-r_int
-id|frame_count
-comma
-r_void
-op_star
-id|context
-comma
-r_struct
-id|usb_isoc_desc
-op_star
-op_star
-id|isocdesc
+id|purb
 )paren
 suffix:semicolon
-DECL|member|free_isoc
-r_void
-(paren
-op_star
-id|free_isoc
-)paren
-(paren
-r_struct
-id|usb_isoc_desc
-op_star
-id|isocdesc
-)paren
-suffix:semicolon
-DECL|member|run_isoc
+DECL|member|unlink_urb
 r_int
 (paren
 op_star
-id|run_isoc
+id|unlink_urb
 )paren
 (paren
 r_struct
-id|usb_isoc_desc
+id|urb
 op_star
-id|isocdesc
-comma
-r_struct
-id|usb_isoc_desc
-op_star
-id|pr_isocdesc
-)paren
-suffix:semicolon
-DECL|member|kill_isoc
-r_int
-(paren
-op_star
-id|kill_isoc
-)paren
-(paren
-r_struct
-id|usb_isoc_desc
-op_star
-id|isocdesc
+id|purb
 )paren
 suffix:semicolon
 )brace
@@ -1511,6 +1517,10 @@ id|bandwidth_isoc_reqs
 suffix:semicolon
 multiline_comment|/* number of Isoc. requesters */
 multiline_comment|/* procfs entry */
+DECL|member|proc_busnum
+r_int
+id|proc_busnum
+suffix:semicolon
 DECL|member|proc_entry
 r_struct
 id|proc_dir_entry
@@ -1896,30 +1906,6 @@ id|pipe
 )paren
 suffix:semicolon
 r_extern
-r_int
-id|usb_bulk_msg
-c_func
-(paren
-r_struct
-id|usb_device
-op_star
-comma
-r_int
-r_int
-comma
-r_void
-op_star
-comma
-r_int
-comma
-r_int
-r_int
-op_star
-comma
-r_int
-)paren
-suffix:semicolon
-r_extern
 r_void
 op_star
 id|usb_request_bulk
@@ -2007,64 +1993,6 @@ r_struct
 id|usb_device
 op_star
 id|usb_dev
-)paren
-suffix:semicolon
-r_int
-id|usb_init_isoc
-(paren
-r_struct
-id|usb_device
-op_star
-id|usb_dev
-comma
-r_int
-r_int
-id|pipe
-comma
-r_int
-id|frame_count
-comma
-r_void
-op_star
-id|context
-comma
-r_struct
-id|usb_isoc_desc
-op_star
-op_star
-id|isocdesc
-)paren
-suffix:semicolon
-r_void
-id|usb_free_isoc
-(paren
-r_struct
-id|usb_isoc_desc
-op_star
-id|isocdesc
-)paren
-suffix:semicolon
-r_int
-id|usb_run_isoc
-(paren
-r_struct
-id|usb_isoc_desc
-op_star
-id|isocdesc
-comma
-r_struct
-id|usb_isoc_desc
-op_star
-id|pr_isocdesc
-)paren
-suffix:semicolon
-r_int
-id|usb_kill_isoc
-(paren
-r_struct
-id|usb_isoc_desc
-op_star
-id|isocdesc
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Calling this entity a &quot;pipe&quot; is glorifying it. A USB pipe&n; * is something embarrassingly simple: it basically consists&n; * of the following information:&n; *  - device number (7 bits)&n; *  - endpoint number (4 bits)&n; *  - current Data0/1 state (1 bit)&n; *  - direction (1 bit)&n; *  - speed (1 bit)&n; *  - max packet size (2 bits: 8, 16, 32 or 64)&n; *  - pipe type (2 bits: control, interrupt, bulk, isochronous)&n; *&n; * That&squot;s 18 bits. Really. Nothing more. And the USB people have&n; * documented these eighteen bits as some kind of glorious&n; * virtual data structure.&n; *&n; * Let&squot;s not fall in that trap. We&squot;ll just encode it as a simple&n; * unsigned int. The encoding is:&n; *&n; *  - max size:&t;&t;bits 0-1&t;(00 = 8, 01 = 16, 10 = 32, 11 = 64)&n; *  - direction:&t;bit 7&t;&t;(0 = Host-to-Device [Out], 1 = Device-to-Host [In])&n; *  - device:&t;&t;bits 8-14&n; *  - endpoint:&t;&t;bits 15-18&n; *  - Data0/1:&t;&t;bit 19&n; *  - speed:&t;&t;bit 26&t;&t;(0 = Full, 1 = Low Speed)&n; *  - pipe type:&t;bits 30-31&t;(00 = isochronous, 01 = interrupt, 10 = control, 11 = bulk)&n; *&n; * Why? Because it&squot;s arbitrary, and whatever encoding we select is really&n; * up to us. This one happens to share a lot of bit positions with the UHCI&n; * specification, so that much of the uhci driver can just mask the bits&n; * appropriately.&n; */

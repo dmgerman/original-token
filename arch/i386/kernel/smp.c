@@ -1,6 +1,7 @@
 multiline_comment|/*&n; *&t;Intel SMP support routines.&n; *&n; *&t;(c) 1995 Alan Cox, Building #3 &lt;alan@redhat.com&gt;&n; *&t;(c) 1998-99 Ingo Molnar &lt;mingo@redhat.com&gt;&n; *&n; *&t;This code is released under the GNU public license version 2 or&n; *&t;later.&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/irq.h&gt;
@@ -1721,9 +1722,26 @@ c_func
 r_void
 )paren
 (brace
+r_extern
+id|rwlock_t
+id|xtime_lock
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_int
 r_int
 id|count
+suffix:semicolon
+id|write_lock_irqsave
+c_func
+(paren
+op_amp
+id|xtime_lock
+comma
+id|flags
+)paren
 suffix:semicolon
 id|outb_p
 c_func
@@ -1750,6 +1768,15 @@ l_int|0x40
 )paren
 op_lshift
 l_int|8
+suffix:semicolon
+id|write_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|xtime_lock
+comma
+id|flags
+)paren
 suffix:semicolon
 r_return
 id|count

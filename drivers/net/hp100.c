@@ -207,14 +207,14 @@ id|mem_mapped
 suffix:semicolon
 multiline_comment|/* memory mapped access */
 DECL|member|mem_ptr_virt
-id|u_int
+id|u32
 op_star
 id|mem_ptr_virt
 suffix:semicolon
 multiline_comment|/* virtual memory mapped area, maybe NULL */
 DECL|member|mem_ptr_phys
-id|u_int
-op_star
+r_int
+r_int
 id|mem_ptr_phys
 suffix:semicolon
 multiline_comment|/* physical memory mapped area */
@@ -1924,10 +1924,12 @@ suffix:semicolon
 r_int
 id|mem_mapped
 suffix:semicolon
-id|u_int
-op_star
+r_int
+r_int
 id|mem_ptr_phys
-comma
+suffix:semicolon
+id|u32
+op_star
 op_star
 id|mem_ptr_virt
 suffix:semicolon
@@ -2767,6 +2769,8 @@ l_int|0
 suffix:semicolon
 id|mem_ptr_phys
 op_assign
+l_int|0UL
+suffix:semicolon
 id|mem_ptr_virt
 op_assign
 l_int|NULL
@@ -2811,10 +2815,6 @@ l_int|1
 id|mem_ptr_phys
 op_assign
 (paren
-id|u_int
-op_star
-)paren
-(paren
 id|hp100_inw
 c_func
 (paren
@@ -2832,9 +2832,6 @@ l_int|16
 )paren
 )paren
 suffix:semicolon
-(paren
-id|u_int
-)paren
 id|mem_ptr_phys
 op_and_assign
 op_complement
@@ -2849,9 +2846,6 @@ op_eq
 id|HP100_BUS_ISA
 op_logical_and
 (paren
-(paren
-id|u_long
-)paren
 id|mem_ptr_phys
 op_amp
 op_complement
@@ -2871,7 +2865,7 @@ id|dev-&gt;name
 suffix:semicolon
 id|mem_ptr_phys
 op_assign
-l_int|NULL
+l_int|0
 suffix:semicolon
 id|mem_mapped
 op_assign
@@ -2903,10 +2897,6 @@ id|HP100_BUS_PCI
 op_logical_and
 id|mem_ptr_phys
 op_ge
-(paren
-id|u_int
-op_star
-)paren
 l_int|0x100000
 )paren
 (brace
@@ -2958,9 +2948,6 @@ id|dev-&gt;name
 comma
 id|virt_memory_size
 comma
-(paren
-id|u_long
-)paren
 id|mem_ptr_phys
 )paren
 suffix:semicolon
@@ -2978,9 +2965,6 @@ id|dev-&gt;name
 comma
 id|virt_memory_size
 comma
-(paren
-id|u_long
-)paren
 id|mem_ptr_phys
 comma
 (paren
@@ -3038,6 +3022,8 @@ l_int|0
 suffix:semicolon
 id|mem_ptr_phys
 op_assign
+l_int|0
+suffix:semicolon
 id|mem_ptr_virt
 op_assign
 l_int|NULL
@@ -3576,24 +3562,14 @@ l_string|&quot;hp100: %s: Memory area at 0x%lx-0x%lx&quot;
 comma
 id|dev-&gt;name
 comma
-(paren
-id|u_long
-)paren
 id|mem_ptr_phys
 comma
 (paren
-(paren
-id|u_long
-)paren
 id|mem_ptr_phys
 op_plus
 (paren
 id|mem_ptr_phys
 OG
-(paren
-id|u_int
-op_star
-)paren
 l_int|0x100000
 ques
 c_cond
@@ -3636,21 +3612,12 @@ suffix:semicolon
 multiline_comment|/* Set for info when doing ifconfig */
 id|dev-&gt;mem_start
 op_assign
-(paren
-id|u_long
-)paren
 id|mem_ptr_phys
 suffix:semicolon
 id|dev-&gt;mem_end
 op_assign
-(paren
-id|u_long
-)paren
 id|mem_ptr_phys
 op_plus
-(paren
-id|u_long
-)paren
 id|lp-&gt;memory_size
 suffix:semicolon
 )brace
@@ -7668,7 +7635,7 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* Note: The J2585B needs alignment to 32bits here!  */
-id|memcpy_toio
+id|isa_memcpy_toio
 c_func
 (paren
 id|lp-&gt;mem_ptr_phys
@@ -7691,7 +7658,7 @@ c_cond
 op_logical_neg
 id|ok_flag
 )paren
-id|memset_io
+id|isa_memset_io
 c_func
 (paren
 id|lp-&gt;mem_ptr_phys
@@ -7983,17 +7950,16 @@ id|lp-&gt;mem_ptr_virt
 multiline_comment|/* if memory was remapped */
 id|header
 op_assign
-op_star
+id|readl
+c_func
 (paren
-id|__u32
-op_star
-)paren
 id|lp-&gt;mem_ptr_virt
+)paren
 suffix:semicolon
 r_else
 id|header
 op_assign
-id|readl
+id|isa_readl
 c_func
 (paren
 id|lp-&gt;mem_ptr_phys
@@ -8141,7 +8107,7 @@ id|pkt_len
 suffix:semicolon
 multiline_comment|/* Note alignment to 32bit transfers */
 r_else
-id|memcpy_fromio
+id|isa_memcpy_fromio
 c_func
 (paren
 id|ptr

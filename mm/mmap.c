@@ -2652,11 +2652,6 @@ id|end
 op_minus
 id|st
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2674,11 +2669,6 @@ comma
 id|st
 comma
 id|size
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 id|remove_shared_vm_struct

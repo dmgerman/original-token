@@ -32,7 +32,7 @@ comma
 l_int|NULL
 comma
 op_amp
-id|proc_dointvec_jiffies
+id|proc_dointvec
 )brace
 comma
 (brace

@@ -24,7 +24,7 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;linux/videodev.h&gt;
-macro_line|#include &lt;linux/i2c.h&gt;
+macro_line|#include &lt;linux/i2c-old.h&gt;
 macro_line|#include &quot;saa7146.h&quot;
 macro_line|#include &quot;saa7146reg.h&quot;
 macro_line|#include &quot;ibmmpeg2.h&quot;

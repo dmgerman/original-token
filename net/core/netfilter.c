@@ -1707,6 +1707,17 @@ id|list_head
 op_star
 op_star
 id|i
+comma
+r_int
+(paren
+op_star
+id|okfn
+)paren
+(paren
+r_struct
+id|sk_buff
+op_star
+)paren
 )paren
 (brace
 r_for
@@ -1766,6 +1777,8 @@ comma
 id|indev
 comma
 id|outdev
+comma
+id|okfn
 )paren
 )paren
 (brace
@@ -2340,6 +2353,8 @@ id|outdev
 comma
 op_amp
 id|elem
+comma
+id|okfn
 )paren
 suffix:semicolon
 r_if
@@ -2738,6 +2753,8 @@ id|info-&gt;outdev
 comma
 op_amp
 id|elem
+comma
+id|info-&gt;okfn
 )paren
 suffix:semicolon
 )brace

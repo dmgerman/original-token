@@ -22,7 +22,7 @@ macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;linux/videodev.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &lt;linux/i2c.h&gt;
+macro_line|#include &lt;linux/i2c-old.h&gt;
 macro_line|#include &quot;buz.h&quot;
 macro_line|#include &lt;linux/video_decoder.h&gt;
 macro_line|#include &lt;linux/video_encoder.h&gt;

@@ -19,6 +19,10 @@ DECL|macro|DEVID_PIIX3
 mdefine_line|#define DEVID_PIIX3&t;((ide_pci_devid_t){PCI_VENDOR_ID_INTEL,   PCI_DEVICE_ID_INTEL_82371SB_1})
 DECL|macro|DEVID_PIIX4
 mdefine_line|#define DEVID_PIIX4&t;((ide_pci_devid_t){PCI_VENDOR_ID_INTEL,   PCI_DEVICE_ID_INTEL_82371AB})
+DECL|macro|DEVID_PIIX4E
+mdefine_line|#define DEVID_PIIX4E&t;((ide_pci_devid_t){PCI_VENDOR_ID_INTEL,   PCI_DEVICE_ID_INTEL_82801AA_1})
+DECL|macro|DEVID_PIIX4U
+mdefine_line|#define DEVID_PIIX4U&t;((ide_pci_devid_t){PCI_VENDOR_ID_INTEL,   PCI_DEVICE_ID_INTEL_82801AB_1})
 DECL|macro|DEVID_VIA_IDE
 mdefine_line|#define DEVID_VIA_IDE&t;((ide_pci_devid_t){PCI_VENDOR_ID_VIA,     PCI_DEVICE_ID_VIA_82C561})
 DECL|macro|DEVID_VP_IDE
@@ -464,6 +468,16 @@ op_star
 )paren
 suffix:semicolon
 r_extern
+r_int
+r_int
+id|ata66_piix
+c_func
+(paren
+id|ide_hwif_t
+op_star
+)paren
+suffix:semicolon
+r_extern
 r_void
 id|ide_init_piix
 c_func
@@ -474,11 +488,15 @@ op_star
 suffix:semicolon
 DECL|macro|PCI_PIIX
 mdefine_line|#define PCI_PIIX&t;&amp;pci_init_piix
+DECL|macro|ATA66_PIIX
+mdefine_line|#define ATA66_PIIX&t;&amp;ata66_piix
 DECL|macro|INIT_PIIX
 mdefine_line|#define INIT_PIIX&t;&amp;ide_init_piix
 macro_line|#else
 DECL|macro|PCI_PIIX
 mdefine_line|#define PCI_PIIX&t;NULL
+DECL|macro|ATA66_PIIX
+mdefine_line|#define ATA66_PIIX&t;NULL
 DECL|macro|INIT_PIIX
 mdefine_line|#define INIT_PIIX&t;NULL
 macro_line|#endif
@@ -890,6 +908,78 @@ comma
 id|PCI_PIIX
 comma
 l_int|NULL
+comma
+id|INIT_PIIX
+comma
+l_int|NULL
+comma
+(brace
+(brace
+l_int|0x41
+comma
+l_int|0x80
+comma
+l_int|0x80
+)brace
+comma
+(brace
+l_int|0x43
+comma
+l_int|0x80
+comma
+l_int|0x80
+)brace
+)brace
+comma
+id|ON_BOARD
+comma
+l_int|0
+)brace
+comma
+(brace
+id|DEVID_PIIX4E
+comma
+l_string|&quot;PIIX4&quot;
+comma
+id|PCI_PIIX
+comma
+l_int|NULL
+comma
+id|INIT_PIIX
+comma
+l_int|NULL
+comma
+(brace
+(brace
+l_int|0x41
+comma
+l_int|0x80
+comma
+l_int|0x80
+)brace
+comma
+(brace
+l_int|0x43
+comma
+l_int|0x80
+comma
+l_int|0x80
+)brace
+)brace
+comma
+id|ON_BOARD
+comma
+l_int|0
+)brace
+comma
+(brace
+id|DEVID_PIIX4U
+comma
+l_string|&quot;PIIX4&quot;
+comma
+id|PCI_PIIX
+comma
+id|ATA66_PIIX
 comma
 id|INIT_PIIX
 comma
@@ -3419,6 +3509,23 @@ r_goto
 id|bypass_umc_dma
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|hwif-&gt;udma_four
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s: ATA-66 forced bit set (WARNING)!!&bslash;n&quot;
+comma
+id|d-&gt;name
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
 id|hwif-&gt;udma_four
 op_assign
 (paren
@@ -3436,6 +3543,7 @@ id|hwif
 suffix:colon
 l_int|0
 suffix:semicolon
+)brace
 macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA
 r_if
 c_cond

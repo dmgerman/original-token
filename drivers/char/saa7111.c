@@ -19,7 +19,7 @@ macro_line|#include &lt;linux/wrapper.h&gt;
 macro_line|#include &lt;linux/videodev.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &lt;linux/i2c.h&gt;
+macro_line|#include &lt;linux/i2c-old.h&gt;
 macro_line|#include &lt;linux/video_decoder.h&gt;
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG(x)&t;&t;/* Debug driver */

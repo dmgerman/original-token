@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;sd.h&quot;
@@ -1203,6 +1204,24 @@ DECL|typedef|Icb
 )brace
 id|Icb
 suffix:semicolon
+macro_line|#ifdef MODULE
+DECL|variable|wd7000
+r_static
+r_char
+op_star
+id|wd7000
+op_assign
+l_int|NULL
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|wd7000
+comma
+l_string|&quot;s&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; *  Driver SCB structure pool.&n; *&n; *  The SCBs declared here are shared by all host adapters; hence, this&n; *  structure is not part of the Adapter structure.&n; */
 DECL|variable|scbs
 r_static
@@ -1350,16 +1369,15 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Note: You can now set these options from the kernel&squot;s &quot;command line&quot;.&n; * The syntax is:&n; *&n; *     wd7000=&lt;IRQ&gt;,&lt;DMA&gt;,&lt;IO&gt;[,&lt;BUS_ON&gt;[,&lt;BUS_OFF&gt;]]&n; *&n; * , where BUS_ON and BUS_OFF are in nanoseconds. BIOS default values&n; * are 8000ns for BUS_ON and 1875ns for BUS_OFF.&n; * eg:&n; *     wd7000=7,6,0x350&n; *&n; * will configure the driver for a WD-7000 controller&n; * using IRQ 15 with a DMA channel 6, at IO base address 0x350.&n; */
 DECL|function|wd7000_setup
-r_void
+r_static
+r_int
+id|__init
 id|wd7000_setup
+c_func
 (paren
 r_char
 op_star
 id|str
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
 r_static
@@ -1373,6 +1391,29 @@ id|i
 comma
 id|j
 suffix:semicolon
+r_int
+id|ints
+(braket
+l_int|6
+)braket
+suffix:semicolon
+(paren
+r_void
+)paren
+id|get_options
+c_func
+(paren
+id|str
+comma
+id|ARRAY_SIZE
+c_func
+(paren
+id|ints
+)paren
+comma
+id|ints
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1382,12 +1423,14 @@ id|NUM_CONFIGS
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;wd7000_setup: Too many &bslash;&quot;wd7000=&bslash;&quot; configurations in &quot;
 l_string|&quot;command line!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 r_if
@@ -1411,12 +1454,15 @@ OG
 l_int|5
 )paren
 )paren
+(brace
 id|printk
+c_func
 (paren
 l_string|&quot;wd7000_setup: Error in command line!  &quot;
 l_string|&quot;Usage: wd7000=&lt;IRQ&gt;,&lt;DMA&gt;,IO&gt;[,&lt;BUS_ON&gt;[,&lt;BUS_OFF&gt;]]&bslash;n&quot;
 )paren
 suffix:semicolon
+)brace
 r_else
 (brace
 r_for
@@ -1457,6 +1503,7 @@ id|NUM_IRQS
 )paren
 (brace
 id|setup_error
+c_func
 (paren
 l_string|&quot;invalid IRQ.&quot;
 comma
@@ -1464,6 +1511,7 @@ id|ints
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 r_else
@@ -1517,6 +1565,7 @@ id|NUM_DMAS
 )paren
 (brace
 id|setup_error
+c_func
 (paren
 l_string|&quot;invalid DMA channel.&quot;
 comma
@@ -1524,6 +1573,7 @@ id|ints
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 r_else
@@ -1577,6 +1627,7 @@ id|NUM_IOPORTS
 )paren
 (brace
 id|setup_error
+c_func
 (paren
 l_string|&quot;invalid I/O base address.&quot;
 comma
@@ -1584,6 +1635,7 @@ id|ints
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 r_else
@@ -1633,6 +1685,7 @@ l_int|31875
 )paren
 (brace
 id|setup_error
+c_func
 (paren
 l_string|&quot;BUS_ON value is out of range (500 to 31875 nanoseconds)!&quot;
 comma
@@ -1709,6 +1762,7 @@ l_int|31875
 )paren
 (brace
 id|setup_error
+c_func
 (paren
 l_string|&quot;BUS_OFF value is out of range (500 to 31875 nanoseconds)!&quot;
 comma
@@ -1810,6 +1864,7 @@ id|irq
 )paren
 (brace
 id|setup_error
+c_func
 (paren
 l_string|&quot;duplicated IRQ!&quot;
 comma
@@ -1817,6 +1872,7 @@ id|ints
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 r_else
@@ -1839,6 +1895,7 @@ id|dma
 )paren
 (brace
 id|setup_error
+c_func
 (paren
 l_string|&quot;duplicated DMA channel!&quot;
 comma
@@ -1846,6 +1903,7 @@ id|ints
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 r_else
@@ -1875,6 +1933,7 @@ id|ints
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 )brace
@@ -1928,7 +1987,18 @@ id|wd7000_card_num
 op_increment
 suffix:semicolon
 )brace
+r_return
+l_int|1
+suffix:semicolon
 )brace
+id|__setup
+c_func
+(paren
+l_string|&quot;wd7000=&quot;
+comma
+id|wd7000_setup
+)paren
+suffix:semicolon
 macro_line|#ifdef ANY2SCSI_INLINE
 multiline_comment|/*&n; * Since they&squot;re used a lot, I&squot;ve redone the following from the macros&n; * formerly in wd7000.h, hopefully to speed them up by getting rid of&n; * all the shifting (it may not matter; GCC might have done as well anyway).&n; *&n; * xany2scsi and xscsi2int were not being used, and are no longer defined.&n; * (They were simply 4-byte versions of these routines).&n; */
 r_typedef
@@ -5294,6 +5364,19 @@ macro_line|#ifdef WD7000_DEBUG
 id|printk
 (paren
 l_string|&quot;wd7000_detect: started&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef MODULE
+r_if
+c_cond
+(paren
+id|wd7000
+)paren
+id|wd7000_setup
+c_func
+(paren
+id|wd7000
 )paren
 suffix:semicolon
 macro_line|#endif

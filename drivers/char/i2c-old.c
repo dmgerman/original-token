@@ -9,7 +9,7 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#include &lt;linux/i2c.h&gt;
+macro_line|#include &lt;linux/i2c-old.h&gt;
 DECL|macro|REGPRINT
 mdefine_line|#define REGPRINT(x)   if (verbose)   (x)
 DECL|macro|I2C_DEBUG

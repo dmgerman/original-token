@@ -73,6 +73,17 @@ r_struct
 id|net_device
 op_star
 id|out
+comma
+r_int
+(paren
+op_star
+id|okfn
+)paren
+(paren
+r_struct
+id|sk_buff
+op_star
+)paren
 )paren
 suffix:semicolon
 DECL|typedef|nf_cacheflushfn

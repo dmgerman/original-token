@@ -7608,7 +7608,6 @@ suffix:semicolon
 id|release_region
 c_func
 (paren
-op_amp
 id|dev_sb1000.base_addr
 comma
 l_int|16
@@ -7617,7 +7616,6 @@ suffix:semicolon
 id|release_region
 c_func
 (paren
-op_amp
 id|dev_sb1000.rmem_end
 comma
 l_int|16

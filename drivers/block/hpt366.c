@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/block/hpt366.c&t;&t;Version 0.13&t;Sept. 3, 1999&n; *&n; * Copyright (C) 1999&t;&t;&t;Andre Hedrick &lt;andre@suse.com&gt;&n; * May be copied or modified under the terms of the GNU General Public License&n; *&n; * Thanks to HighPoint Technologies for their assistance, and hardware.&n; * Special Thanks to Jon Burchmore in SanDiego for the deep pockets, his&n; * donation of an ABit BP6 mainboard, processor, and memory acellerated&n; * development and support.&n; */
+multiline_comment|/*&n; * linux/drivers/block/hpt366.c&t;&t;Version 0.14&t;Dec. 13, 1999&n; *&n; * Copyright (C) 1999&t;&t;&t;Andre Hedrick &lt;andre@suse.com&gt;&n; * May be copied or modified under the terms of the GNU General Public License&n; *&n; * Thanks to HighPoint Technologies for their assistance, and hardware.&n; * Special Thanks to Jon Burchmore in SanDiego for the deep pockets, his&n; * donation of an ABit BP6 mainboard, processor, and memory acellerated&n; * development and support.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
@@ -2535,6 +2535,26 @@ op_assign
 op_amp
 id|hpt366_dmaproc
 suffix:semicolon
+macro_line|#if 0
+id|hwif-&gt;drives
+(braket
+l_int|0
+)braket
+dot
+id|autotune
+op_assign
+l_int|0
+suffix:semicolon
+id|hwif-&gt;drives
+(braket
+l_int|1
+)braket
+dot
+id|autotune
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 )brace
 r_else
 (brace
