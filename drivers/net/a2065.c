@@ -2236,47 +2236,6 @@ r_return
 id|status
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|skb
-op_eq
-l_int|NULL
-)paren
-(brace
-id|dev_tint
-(paren
-id|dev
-)paren
-suffix:semicolon
-id|printk
-(paren
-l_string|&quot;skb is NULL&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|skb-&gt;len
-op_le
-l_int|0
-)paren
-(brace
-id|printk
-(paren
-l_string|&quot;skb len is %id&bslash;n&quot;
-comma
-id|skb-&gt;len
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 multiline_comment|/* Block a timer-based transmit from overlapping. */
 macro_line|#ifdef OLD_METHOD
 id|dev-&gt;tbusy

@@ -48,6 +48,7 @@ l_int|0
 suffix:semicolon
 macro_line|#ifdef PCNET32_DEBUG
 DECL|variable|pcnet32_debug
+r_static
 r_int
 id|pcnet32_debug
 op_assign
@@ -55,6 +56,7 @@ id|PCNET32_DEBUG
 suffix:semicolon
 macro_line|#else
 DECL|variable|pcnet32_debug
+r_static
 r_int
 id|pcnet32_debug
 op_assign

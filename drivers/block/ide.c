@@ -6276,7 +6276,7 @@ suffix:semicolon
 multiline_comment|/*&n; * Releasing a block device means we sync() it, so that it can safely&n; * be forgotten about...&n; */
 DECL|function|ide_release
 r_static
-r_void
+r_int
 id|ide_release
 c_func
 (paren
@@ -6346,6 +6346,9 @@ suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 DECL|function|ide_unregister
 r_void

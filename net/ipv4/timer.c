@@ -242,6 +242,7 @@ id|TCP_CLOSE
 (brace
 id|printk
 (paren
+id|KERN_DEBUG
 l_string|&quot;non CLOSE socket in time_done&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -313,6 +314,7 @@ r_default
 suffix:colon
 id|printk
 (paren
+id|KERN_DEBUG
 l_string|&quot;net_timer: timer expired - reason %d is unknown&bslash;n&quot;
 comma
 id|why

@@ -1580,7 +1580,7 @@ l_int|0
 suffix:semicolon
 )brace
 r_static
-r_void
+r_int
 DECL|function|fb_release
 id|fb_release
 c_func
@@ -1621,6 +1621,7 @@ op_logical_neg
 id|vidx
 )paren
 r_return
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -1639,6 +1640,9 @@ id|fb_curr_open
 id|fbidx
 )braket
 op_assign
+l_int|0
+suffix:semicolon
+r_return
 l_int|0
 suffix:semicolon
 )brace

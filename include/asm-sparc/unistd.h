@@ -484,8 +484,8 @@ DECL|macro|__NR_getsid
 mdefine_line|#define __NR_getsid             252
 DECL|macro|__NR_fdatasync
 mdefine_line|#define __NR_fdatasync          253
-DECL|macro|__NR_nfsctl
-mdefine_line|#define __NR_nfsctl             254
+DECL|macro|__NR_nfsservctl
+mdefine_line|#define __NR_nfsservctl         254
 DECL|macro|__NR_aplib
 mdefine_line|#define __NR_aplib              255
 DECL|macro|_syscall0

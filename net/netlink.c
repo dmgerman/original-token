@@ -596,7 +596,7 @@ suffix:semicolon
 )brace
 DECL|function|netlink_release
 r_static
-r_void
+r_int
 id|netlink_release
 c_func
 (paren
@@ -638,6 +638,9 @@ id|minor
 )paren
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|netlink_ioctl
@@ -1668,7 +1671,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Network Kernel/User communications module 0.04&bslash;n&quot;
+l_string|&quot;Network Kernel/User communications module 0.05&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return

@@ -232,6 +232,7 @@ DECL|macro|RX_BUF_END
 mdefine_line|#define RX_BUF_END&t;&t;(dev-&gt;mem_end - dev-&gt;mem_start)
 multiline_comment|/*&n;  That&squot;s it: only 86 bytes to set up the beast, including every extra&n;  command available.  The 170 byte buffer at DUMP_DATA is shared between the&n;  Dump command (called only by the diagnostic program) and the SetMulticastList&n;  command.&n;&n;  To complete the memory setup you only have to write the station address at&n;  SA_OFFSET and create the Tx &amp; Rx buffer lists.&n;&n;  The Tx command chain and buffer list is setup as follows:&n;  A Tx command table, with the data buffer pointing to...&n;  A Tx data buffer descriptor.  The packet is in a single buffer, rather than&n;&t;chaining together several smaller buffers.&n;  A NoOp command, which initially points to itself,&n;  And the packet data.&n;&n;  A transmit is done by filling in the Tx command table and data buffer,&n;  re-writing the NoOp command, and finally changing the offset of the last&n;  command to point to the current Tx command.  When the Tx command is finished,&n;  it jumps to the NoOp, when it loops until the next Tx command changes the&n;  &quot;link offset&quot; in the NoOp.  This way the 82586 never has to go through the&n;  slow restart sequence.&n;&n;  The Rx buffer list is set up in the obvious ring structure.  We have enough&n;  memory (and low enough interrupt latency) that we can avoid the complicated&n;  Rx buffer linked lists by alway associating a full-size Rx data buffer with&n;  each Rx data frame.&n;&n;  I current use four transmit buffers starting at TX_BUF_START (0x0100), and&n;  use the rest of memory, from RX_BUF_START to RX_BUF_END, for Rx buffers.&n;&n;  */
 DECL|variable|init_words
+r_static
 r_int
 r_int
 id|init_words
@@ -493,6 +494,7 @@ r_int
 id|length
 )paren
 suffix:semicolon
+r_static
 r_void
 id|init_82586_mem
 c_func
@@ -2375,6 +2377,7 @@ suffix:semicolon
 multiline_comment|/* Link */
 )brace
 DECL|function|init_82586_mem
+r_static
 r_void
 id|init_82586_mem
 c_func

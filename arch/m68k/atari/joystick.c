@@ -207,7 +207,7 @@ multiline_comment|/*    ikbd_joystick_event_on(); */
 )brace
 DECL|function|release_joystick
 r_static
-r_void
+r_int
 id|release_joystick
 c_func
 (paren
@@ -278,6 +278,9 @@ id|ikbd_joystick_disable
 c_func
 (paren
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|open_joystick

@@ -2,6 +2,7 @@ macro_line|#ifndef _IPX_H_
 DECL|macro|_IPX_H_
 mdefine_line|#define _IPX_H_
 macro_line|#include &lt;linux/sockios.h&gt;
+macro_line|#include &lt;linux/socket.h&gt;
 DECL|macro|IPX_NODE_LEN
 mdefine_line|#define IPX_NODE_LEN&t;6
 DECL|macro|IPX_MTU

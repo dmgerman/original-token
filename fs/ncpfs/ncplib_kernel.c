@@ -1,20 +1,5 @@
 multiline_comment|/*&n; *  ncplib_kernel.c&n; *&n; *  Copyright (C) 1995, 1996 by Volker Lendecke&n; *  Modified for big endian by J.F. Chadima and David S. Miller&n; *&n; */
 macro_line|#include &quot;ncplib_kernel.h&quot;
-DECL|typedef|byte
-r_typedef
-id|__u8
-id|byte
-suffix:semicolon
-DECL|typedef|word
-r_typedef
-id|__u16
-id|word
-suffix:semicolon
-DECL|typedef|dword
-r_typedef
-id|__u32
-id|dword
-suffix:semicolon
 DECL|function|min
 r_static
 r_inline
@@ -40,9 +25,9 @@ suffix:colon
 id|b
 suffix:semicolon
 )brace
+DECL|function|assert_server_locked
 r_static
 r_void
-DECL|function|assert_server_locked
 id|assert_server_locked
 c_func
 (paren
@@ -68,9 +53,9 @@ l_string|&quot;ncpfs: server not locked!&bslash;n&quot;
 suffix:semicolon
 )brace
 )brace
+DECL|function|ncp_add_byte
 r_static
 r_void
-DECL|function|ncp_add_byte
 id|ncp_add_byte
 c_func
 (paren
@@ -79,7 +64,7 @@ id|ncp_server
 op_star
 id|server
 comma
-id|byte
+id|__u8
 id|x
 )paren
 (brace
@@ -91,7 +76,7 @@ id|server
 suffix:semicolon
 op_star
 (paren
-id|byte
+id|__u8
 op_star
 )paren
 (paren
@@ -113,9 +98,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|ncp_add_word
 r_static
 r_void
-DECL|function|ncp_add_word
 id|ncp_add_word
 c_func
 (paren
@@ -124,7 +109,7 @@ id|ncp_server
 op_star
 id|server
 comma
-id|word
+id|__u16
 id|x
 )paren
 (brace
@@ -140,7 +125,7 @@ c_func
 id|x
 comma
 (paren
-id|word
+id|__u16
 op_star
 )paren
 (paren
@@ -161,9 +146,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|ncp_add_dword
 r_static
 r_void
-DECL|function|ncp_add_dword
 id|ncp_add_dword
 c_func
 (paren
@@ -172,7 +157,7 @@ id|ncp_server
 op_star
 id|server
 comma
-id|dword
+id|__u32
 id|x
 )paren
 (brace
@@ -188,7 +173,7 @@ c_func
 id|x
 comma
 (paren
-id|dword
+id|__u32
 op_star
 )paren
 (paren
@@ -209,9 +194,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|ncp_add_mem
 r_static
 r_void
-DECL|function|ncp_add_mem
 id|ncp_add_mem
 c_func
 (paren
@@ -258,9 +243,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|ncp_add_mem_fromfs
 r_static
 r_void
-DECL|function|ncp_add_mem_fromfs
 id|ncp_add_mem_fromfs
 c_func
 (paren
@@ -307,9 +292,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|ncp_add_pstring
 r_static
 r_void
-DECL|function|ncp_add_pstring
 id|ncp_add_pstring
 c_func
 (paren
@@ -381,9 +366,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|ncp_init_request
 r_static
 r_void
-DECL|function|ncp_init_request
 id|ncp_init_request
 c_func
 (paren
@@ -412,9 +397,9 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|ncp_init_request_s
 r_static
 r_void
-DECL|function|ncp_init_request_s
 id|ncp_init_request_s
 c_func
 (paren
@@ -488,7 +473,7 @@ id|offset
 suffix:semicolon
 )brace
 r_static
-id|byte
+id|__u8
 DECL|function|ncp_reply_byte
 id|ncp_reply_byte
 c_func
@@ -503,12 +488,13 @@ id|offset
 )paren
 (brace
 r_return
-op_star
+id|get_unaligned
+c_func
 (paren
-id|byte
+(paren
+id|__u8
 op_star
 )paren
-(paren
 id|ncp_reply_data
 c_func
 (paren
@@ -520,7 +506,7 @@ id|offset
 suffix:semicolon
 )brace
 r_static
-id|word
+id|__u16
 DECL|function|ncp_reply_word
 id|ncp_reply_word
 c_func
@@ -535,12 +521,13 @@ id|offset
 )paren
 (brace
 r_return
-op_star
+id|get_unaligned
+c_func
 (paren
-id|word
+(paren
+id|__u16
 op_star
 )paren
-(paren
 id|ncp_reply_data
 c_func
 (paren
@@ -552,7 +539,7 @@ id|offset
 suffix:semicolon
 )brace
 r_static
-id|dword
+id|__u32
 DECL|function|ncp_reply_dword
 id|ncp_reply_dword
 c_func
@@ -567,12 +554,13 @@ id|offset
 )paren
 (brace
 r_return
-op_star
+id|get_unaligned
+c_func
 (paren
-id|dword
+(paren
+id|__u32
 op_star
 )paren
-(paren
 id|ncp_reply_data
 c_func
 (paren
@@ -583,8 +571,8 @@ id|offset
 )paren
 suffix:semicolon
 )brace
-r_int
 DECL|function|ncp_negotiate_buffersize
+r_int
 id|ncp_negotiate_buffersize
 c_func
 (paren
@@ -681,8 +669,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_int
 DECL|function|ncp_get_volume_info_with_number
+r_int
 id|ncp_get_volume_info_with_number
 c_func
 (paren
@@ -902,8 +890,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_int
 DECL|function|ncp_close_file
+r_int
 id|ncp_close_file
 c_func
 (paren
@@ -965,9 +953,9 @@ r_return
 id|result
 suffix:semicolon
 )brace
+DECL|function|ncp_add_handle_path
 r_static
 r_void
-DECL|function|ncp_add_handle_path
 id|ncp_add_handle_path
 c_func
 (paren
@@ -1074,9 +1062,9 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
+DECL|function|ncp_extract_file_info
 r_static
 r_void
-DECL|function|ncp_extract_file_info
 id|ncp_extract_file_info
 c_func
 (paren
@@ -1151,8 +1139,8 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-r_int
 DECL|function|ncp_obtain_info
+r_int
 id|ncp_obtain_info
 c_func
 (paren
@@ -1318,10 +1306,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|ncp_has_os2_namespace
 r_static
 r_inline
 r_int
-DECL|function|ncp_has_os2_namespace
 id|ncp_has_os2_namespace
 c_func
 (paren
@@ -1486,8 +1474,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_int
 DECL|function|ncp_lookup_volume
+r_int
 id|ncp_lookup_volume
 c_func
 (paren
@@ -1742,8 +1730,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_int
 DECL|function|ncp_modify_file_or_subdir_dos_info
+r_int
 id|ncp_modify_file_or_subdir_dos_info
 c_func
 (paren
@@ -1873,8 +1861,8 @@ r_return
 id|result
 suffix:semicolon
 )brace
-r_int
 DECL|function|ncp_del_file_or_subdir
+r_int
 id|ncp_del_file_or_subdir
 c_func
 (paren
@@ -1978,11 +1966,12 @@ r_return
 id|result
 suffix:semicolon
 )brace
+DECL|function|ConvertToNWfromDWORD
 r_static
 r_inline
 r_void
-DECL|function|ConvertToNWfromDWORD
 id|ConvertToNWfromDWORD
+c_func
 (paren
 id|__u32
 id|sfd
@@ -2005,6 +1994,7 @@ op_star
 id|ret
 suffix:semicolon
 id|memcpy
+c_func
 (paren
 id|ret
 op_plus
@@ -2046,8 +2036,8 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/* If both dir and name are NULL, then in target there&squot;s already a&n;   looked-up entry that wants to be opened. */
-r_int
 DECL|function|ncp_open_create_file_or_subdir
+r_int
 id|ncp_open_create_file_or_subdir
 c_func
 (paren
@@ -2331,8 +2321,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_int
 DECL|function|ncp_initialize_search
+r_int
 id|ncp_initialize_search
 c_func
 (paren
@@ -2463,8 +2453,8 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Search for everything */
-r_int
 DECL|function|ncp_search_for_file_or_subdir
+r_int
 id|ncp_search_for_file_or_subdir
 c_func
 (paren
@@ -2648,8 +2638,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_int
 DECL|function|ncp_ren_or_mov_file_or_subdir
+r_int
 id|ncp_ren_or_mov_file_or_subdir
 c_func
 (paren
@@ -2752,6 +2742,7 @@ c_func
 id|server
 comma
 id|ntohs
+c_func
 (paren
 l_int|0x0680
 )paren
@@ -2865,8 +2856,8 @@ id|result
 suffix:semicolon
 )brace
 multiline_comment|/* We have to transfer to/from user space */
-r_int
 DECL|function|ncp_read
+r_int
 id|ncp_read
 c_func
 (paren
@@ -3022,8 +3013,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_int
 DECL|function|ncp_write
+r_int
 id|ncp_write
 c_func
 (paren

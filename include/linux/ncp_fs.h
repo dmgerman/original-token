@@ -84,8 +84,6 @@ DECL|macro|NCP_MAXPATHLEN
 mdefine_line|#define NCP_MAXPATHLEN 255
 DECL|macro|NCP_MAXNAMELEN
 mdefine_line|#define NCP_MAXNAMELEN 14
-DECL|macro|NCP_MSG_COMMAND
-mdefine_line|#define NCP_MSG_COMMAND &quot;/sbin/nwmsg&quot;
 macro_line|#ifdef __KERNEL__
 multiline_comment|/* The readdir cache size controls how many directory entries are&n; * cached.&n; */
 DECL|macro|NCP_READDIR_CACHE_SIZE
@@ -149,10 +147,10 @@ id|priority
 )paren
 suffix:semicolon
 )brace
+DECL|function|ncp_kfree_s
 r_static
 r_inline
 r_void
-DECL|function|ncp_kfree_s
 id|ncp_kfree_s
 c_func
 (paren
@@ -177,12 +175,12 @@ id|size
 )paren
 suffix:semicolon
 )brace
-macro_line|#else /* DEBUG_NCP_MALLOC */
+macro_line|#else&t;&t;&t;&t;/* DEBUG_NCP_MALLOC */
 DECL|macro|ncp_kmalloc
 mdefine_line|#define ncp_kmalloc(s,p) kmalloc(s,p)
 DECL|macro|ncp_kfree_s
 mdefine_line|#define ncp_kfree_s(o,s) kfree_s(o,s)
-macro_line|#endif /* DEBUG_NCP_MALLOC */
+macro_line|#endif&t;&t;&t;&t;/* DEBUG_NCP_MALLOC */
 macro_line|#if DEBUG_NCP &gt; 0
 DECL|macro|DPRINTK
 mdefine_line|#define DPRINTK(format, args...) printk(format , ## args)
@@ -343,6 +341,7 @@ suffix:semicolon
 multiline_comment|/* linux/fs/ncpfs/ioctl.c */
 r_int
 id|ncp_ioctl
+c_func
 (paren
 r_struct
 id|inode
@@ -391,16 +390,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_void
-id|ncp_trigger_message
-c_func
-(paren
-r_struct
-id|ncp_server
-op_star
-id|server
-)paren
-suffix:semicolon
 multiline_comment|/* linux/fs/ncpfs/sock.c */
 r_int
 id|ncp_request
@@ -427,36 +416,6 @@ id|server
 suffix:semicolon
 r_int
 id|ncp_disconnect
-c_func
-(paren
-r_struct
-id|ncp_server
-op_star
-id|server
-)paren
-suffix:semicolon
-r_int
-id|ncp_catch_watchdog
-c_func
-(paren
-r_struct
-id|ncp_server
-op_star
-id|server
-)paren
-suffix:semicolon
-r_int
-id|ncp_dont_catch_watchdog
-c_func
-(paren
-r_struct
-id|ncp_server
-op_star
-id|server
-)paren
-suffix:semicolon
-r_int
-id|ncp_catch_message
 c_func
 (paren
 r_struct
@@ -506,6 +465,6 @@ op_star
 id|vma
 )paren
 suffix:semicolon
-macro_line|#endif /* __KERNEL__ */
-macro_line|#endif /* _LINUX_NCP_FS_H */
+macro_line|#endif&t;&t;&t;&t;/* __KERNEL__ */
+macro_line|#endif&t;&t;&t;&t;/* _LINUX_NCP_FS_H */
 eof

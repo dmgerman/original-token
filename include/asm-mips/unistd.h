@@ -2218,6 +2218,8 @@ DECL|macro|__NR_mlockall
 mdefine_line|#define __NR_mlockall&t;&t;&t;(__NR_Linux + 156)
 DECL|macro|__NR_munlockall
 mdefine_line|#define __NR_munlockall&t;&t;&t;(__NR_Linux + 157)
+DECL|macro|__NR_nfsservctl
+mdefine_line|#define __NR_nfsservctl&t;&t;&t;(__NR_Linux + 158)
 multiline_comment|/*&n; * Offset of the last Linux flavoured syscall&n; */
 DECL|macro|__NR_Linux_syscalls
 mdefine_line|#define __NR_Linux_syscalls&t;&t;157

@@ -156,17 +156,25 @@ mdefine_line|#define mb() &bslash;&n;__asm__ __volatile__(&quot;mb&quot;: : :&qu
 DECL|macro|draina
 mdefine_line|#define draina() &bslash;&n;__asm__ __volatile__ (&quot;call_pal %0&quot; : : &quot;i&quot; (PAL_draina) : &quot;memory&quot;)
 DECL|macro|getipl
-mdefine_line|#define getipl() &bslash;&n;({ unsigned long __old_ipl; &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;call_pal 54&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;bis $0,$0,%0&quot; &bslash;&n;&t;: &quot;=r&quot; (__old_ipl) &bslash;&n;&t;: : &quot;$0&quot;, &quot;$1&quot;, &quot;$16&quot;, &quot;$22&quot;, &quot;$23&quot;, &quot;$24&quot;, &quot;$25&quot;); &bslash;&n;__old_ipl; })
+mdefine_line|#define getipl(__old_ipl) &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;call_pal 54&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;bis $0,$0,%0&quot; &bslash;&n;&t;: &quot;=r&quot; (__old_ipl) &bslash;&n;&t;: : &quot;$0&quot;, &quot;$1&quot;, &quot;$16&quot;, &quot;$22&quot;, &quot;$23&quot;, &quot;$24&quot;, &quot;$25&quot;)
 DECL|macro|setipl
 mdefine_line|#define setipl(__new_ipl) &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;bis %0,%0,$16&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;call_pal 53&quot; &bslash;&n;&t;: : &quot;r&quot; (__new_ipl) &bslash;&n;&t;: &quot;$0&quot;, &quot;$1&quot;, &quot;$16&quot;, &quot;$22&quot;, &quot;$23&quot;, &quot;$24&quot;, &quot;$25&quot;, &quot;memory&quot;)
 DECL|macro|swpipl
-mdefine_line|#define swpipl(__new_ipl) &bslash;&n;({ unsigned long __old_ipl; &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;bis %1,%1,$16&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;call_pal 53&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;bis $0,$0,%0&quot; &bslash;&n;&t;: &quot;=r&quot; (__old_ipl) &bslash;&n;&t;: &quot;r&quot; (__new_ipl) &bslash;&n;&t;: &quot;$0&quot;, &quot;$1&quot;, &quot;$16&quot;, &quot;$22&quot;, &quot;$23&quot;, &quot;$24&quot;, &quot;$25&quot;, &quot;memory&quot;); &bslash;&n;__old_ipl; })
+mdefine_line|#define swpipl(__old_ipl,__new_ipl) &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;bis %1,%1,$16&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;call_pal 53&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;bis $0,$0,%0&quot; &bslash;&n;&t;: &quot;=r&quot; (__old_ipl) &bslash;&n;&t;: &quot;r&quot; (__new_ipl) &bslash;&n;&t;: &quot;$0&quot;, &quot;$1&quot;, &quot;$16&quot;, &quot;$22&quot;, &quot;$23&quot;, &quot;$24&quot;, &quot;$25&quot;, &quot;memory&quot;)
+DECL|macro|__cli
+mdefine_line|#define __cli()&t;&t;&t;setipl(7)
+DECL|macro|__sti
+mdefine_line|#define __sti()&t;&t;&t;setipl(0)
+DECL|macro|__save_flags
+mdefine_line|#define __save_flags(flags)&t;getipl(flags)
+DECL|macro|__restore_flags
+mdefine_line|#define __restore_flags(flags)&t;setipl(flags)
 DECL|macro|cli
 mdefine_line|#define cli()&t;&t;&t;setipl(7)
 DECL|macro|sti
 mdefine_line|#define sti()&t;&t;&t;setipl(0)
 DECL|macro|save_flags
-mdefine_line|#define save_flags(flags)&t;do { flags = getipl(); } while (0)
+mdefine_line|#define save_flags(flags)&t;getipl(flags)
 DECL|macro|restore_flags
 mdefine_line|#define restore_flags(flags)&t;setipl(flags)
 multiline_comment|/*&n; * TB routines..&n; */
@@ -252,11 +260,13 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;&bslash;n1:&bslash;t&quot;
-l_string|&quot;ldl_l %0,%2&bslash;n&bslash;t&quot;
-l_string|&quot;bis %3,%3,%1&bslash;n&bslash;t&quot;
-l_string|&quot;stl_c %1,%2&bslash;n&bslash;t&quot;
-l_string|&quot;beq %1,1b&bslash;n&quot;
+l_string|&quot;1:&t;ldl_l %0,%2&bslash;n&quot;
+l_string|&quot;&t;bis %3,%3,%1&bslash;n&quot;
+l_string|&quot;&t;stl_c %1,%2&bslash;n&quot;
+l_string|&quot;&t;beq %1,2f&bslash;n&quot;
+l_string|&quot;.text 2&bslash;n&quot;
+l_string|&quot;2:&t;br 1b&bslash;n&quot;
+l_string|&quot;.text&quot;
 suffix:colon
 l_string|&quot;=&amp;r&quot;
 (paren
@@ -316,11 +326,13 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;&bslash;n1:&bslash;t&quot;
-l_string|&quot;ldq_l %0,%2&bslash;n&bslash;t&quot;
-l_string|&quot;bis %3,%3,%1&bslash;n&bslash;t&quot;
-l_string|&quot;stq_c %1,%2&bslash;n&bslash;t&quot;
-l_string|&quot;beq %1,1b&bslash;n&quot;
+l_string|&quot;1:&t;ldq_l %0,%2&bslash;n&quot;
+l_string|&quot;&t;bis %3,%3,%1&bslash;n&quot;
+l_string|&quot;&t;stq_c %1,%2&bslash;n&quot;
+l_string|&quot;&t;beq %1,2f&bslash;n&quot;
+l_string|&quot;.text 2&bslash;n&quot;
+l_string|&quot;2:&t;br 1b&bslash;n&quot;
+l_string|&quot;.text&quot;
 suffix:colon
 l_string|&quot;=&amp;r&quot;
 (paren

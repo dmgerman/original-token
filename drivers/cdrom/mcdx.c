@@ -560,7 +560,7 @@ op_star
 )paren
 suffix:semicolon
 r_static
-r_void
+r_int
 id|mcdx_close
 c_func
 (paren
@@ -3637,7 +3637,7 @@ l_int|0
 suffix:semicolon
 )brace
 r_static
-r_void
+r_int
 DECL|function|mcdx_close
 id|mcdx_close
 c_func
@@ -3753,6 +3753,7 @@ suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|check_mcdx_media_change

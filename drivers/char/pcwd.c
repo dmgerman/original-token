@@ -1265,7 +1265,7 @@ suffix:semicolon
 )brace
 DECL|function|pcwd_close
 r_static
-r_void
+r_int
 id|pcwd_close
 c_func
 (paren
@@ -1281,6 +1281,9 @@ id|filep
 )paren
 (brace
 id|MOD_DEC_USE_COUNT
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|get_support

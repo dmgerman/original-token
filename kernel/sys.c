@@ -3309,8 +3309,7 @@ id|groups
 op_eq
 id|grp
 )paren
-r_goto
-id|out
+r_break
 suffix:semicolon
 id|groups
 op_increment
@@ -3330,8 +3329,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|out
-suffix:colon
 r_return
 l_int|1
 suffix:semicolon

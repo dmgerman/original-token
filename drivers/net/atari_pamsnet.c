@@ -2454,25 +2454,6 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-multiline_comment|/* If some higher layer thinks we&squot;ve missed an tx-done interrupt we&n;&t; * are passed NULL. Caution: dev_tint() handles the cli()/sti() itself.&n;&t; */
-r_if
-c_cond
-(paren
-id|skb
-op_eq
-l_int|NULL
-)paren
-(brace
-id|dev_tint
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 multiline_comment|/* Block a timer-based transmit from overlapping.  This could better be&n;&t; * done with atomic_swap(1, dev-&gt;tbusy), but set_bit() works as well.&n;&t; */
 id|save_flags
 c_func
@@ -2629,6 +2610,13 @@ id|dev-&gt;tbusy
 op_assign
 l_int|0
 suffix:semicolon
+id|lp-&gt;stats.tx_packets
+op_increment
+suffix:semicolon
+id|lp-&gt;stats.tx_bytes
+op_add_assign
+id|length
+suffix:semicolon
 )brace
 id|dev_kfree_skb
 c_func
@@ -2637,10 +2625,6 @@ id|skb
 comma
 id|FREE_WRITE
 )paren
-suffix:semicolon
-multiline_comment|/* You might need to clean up and record Tx statistics here.&n;&t; */
-id|lp-&gt;stats.tx_packets
-op_increment
 suffix:semicolon
 r_return
 l_int|0
@@ -2886,6 +2870,10 @@ id|skb
 suffix:semicolon
 id|lp-&gt;stats.rx_packets
 op_increment
+suffix:semicolon
+id|lp-&gt;stats.rx_bytes
+op_add_assign
+id|pkt_len
 suffix:semicolon
 )brace
 )brace

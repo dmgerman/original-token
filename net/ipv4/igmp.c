@@ -438,7 +438,7 @@ r_else
 id|printk
 c_func
 (paren
-id|KERN_ERR
+id|KERN_DEBUG
 l_string|&quot;igmp_stop_timer() called with timer not running by %p&bslash;n&quot;
 comma
 id|__builtin_return_address

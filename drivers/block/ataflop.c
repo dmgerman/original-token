@@ -7577,7 +7577,7 @@ suffix:semicolon
 )brace
 DECL|function|floppy_release
 r_static
-r_void
+r_int
 id|floppy_release
 c_func
 (paren
@@ -7670,6 +7670,9 @@ l_int|0
 suffix:semicolon
 )brace
 id|MOD_DEC_USE_COUNT
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|variable|floppy_fops

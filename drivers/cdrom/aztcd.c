@@ -650,7 +650,7 @@ id|fp
 )paren
 suffix:semicolon
 r_static
-r_void
+r_int
 id|aztcd_release
 c_func
 (paren
@@ -6764,7 +6764,7 @@ suffix:semicolon
 multiline_comment|/*&n; * On close, we flush all azt blocks from the buffer cache.&n; */
 DECL|function|aztcd_release
 r_static
-r_void
+r_int
 id|aztcd_release
 c_func
 (paren
@@ -6849,6 +6849,7 @@ id|CLEAR_TIMER
 suffix:semicolon
 )brace
 r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Test for presence of drive and initialize it.  Called at boot time.&n; */

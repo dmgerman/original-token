@@ -675,24 +675,6 @@ c_func
 id|misc_deregister
 )paren
 suffix:semicolon
-macro_line|#ifndef MODULE
-DECL|variable|set_selection
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|set_selection
-)paren
-suffix:semicolon
-multiline_comment|/* used by the kmouse module, can only */
-DECL|variable|paste_selection
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|paste_selection
-)paren
-suffix:semicolon
-multiline_comment|/* be exported if misc.c is in linked in */
-macro_line|#endif
 macro_line|#if defined(CONFIG_PROC_FS) &amp;&amp; !defined(MODULE)
 DECL|variable|proc_misc
 r_static

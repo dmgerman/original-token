@@ -1040,7 +1040,7 @@ suffix:semicolon
 )brace
 DECL|function|wdt_release
 r_static
-r_void
+r_int
 id|wdt_release
 c_func
 (paren
@@ -1091,6 +1091,9 @@ l_int|0
 suffix:semicolon
 )brace
 id|MOD_DEC_USE_COUNT
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Notifier for system down&n; */

@@ -51,7 +51,7 @@ id|file
 suffix:semicolon
 )brace
 r_extern
-r_void
+r_int
 id|__fput
 c_func
 (paren
@@ -67,7 +67,7 @@ suffix:semicolon
 DECL|function|fput
 r_extern
 r_inline
-r_void
+r_int
 id|fput
 c_func
 (paren
@@ -89,12 +89,19 @@ id|file-&gt;f_count
 op_minus
 l_int|1
 suffix:semicolon
+r_int
+id|error
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
 id|count
 )paren
+id|error
+op_assign
 id|__fput
 c_func
 (paren
@@ -106,6 +113,9 @@ suffix:semicolon
 id|file-&gt;f_count
 op_assign
 id|count
+suffix:semicolon
+r_return
+id|error
 suffix:semicolon
 )brace
 macro_line|#endif

@@ -1805,7 +1805,10 @@ c_cond
 id|SDev-&gt;removable
 op_logical_and
 op_logical_neg
-id|intr_count
+id|in_interrupt
+c_func
+(paren
+)paren
 )paren
 (brace
 id|scsi_ioctl

@@ -36,9 +36,9 @@ suffix:colon
 id|b
 suffix:semicolon
 )brace
+DECL|function|ncp_fsync
 r_static
 r_int
-DECL|function|ncp_fsync
 id|ncp_fsync
 c_func
 (paren
@@ -57,8 +57,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_int
 DECL|function|ncp_make_open
+r_int
 id|ncp_make_open
 c_func
 (paren
@@ -276,9 +276,9 @@ op_minus
 id|EACCES
 suffix:semicolon
 )brace
+DECL|function|ncp_file_read
 r_static
 r_int
-DECL|function|ncp_file_read
 id|ncp_file_read
 c_func
 (paren
@@ -594,9 +594,9 @@ r_return
 id|already_read
 suffix:semicolon
 )brace
+DECL|function|ncp_file_write
 r_static
 r_int
-DECL|function|ncp_file_write
 id|ncp_file_write
 c_func
 (paren

@@ -112,7 +112,7 @@ id|filp
 )paren
 suffix:semicolon
 r_static
-r_void
+r_int
 id|affs_release_file
 c_func
 (paren
@@ -4806,7 +4806,7 @@ id|error
 suffix:semicolon
 )brace
 r_static
-r_void
+r_int
 DECL|function|affs_release_file
 id|affs_release_file
 c_func
@@ -4953,6 +4953,9 @@ c_func
 (paren
 id|inode-&gt;i_sb
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 eof

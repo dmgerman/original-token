@@ -5037,6 +5037,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;TCPv4 bad checksum from %08x:%04x to %08x:%04x, len=%d/%d/%d&bslash;n&quot;
 comma
 id|saddr

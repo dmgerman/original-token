@@ -702,6 +702,7 @@ c_func
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;&bslash;nIP: No memory available for IP forward&bslash;n&quot;
 )paren
 )paren

@@ -150,6 +150,27 @@ c_func
 id|memcpy_fromiovec
 )paren
 suffix:semicolon
+DECL|variable|sock_create
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sock_create
+)paren
+suffix:semicolon
+DECL|variable|sock_alloc
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sock_alloc
+)paren
+suffix:semicolon
+DECL|variable|sock_release
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sock_release
+)paren
+suffix:semicolon
 DECL|variable|sock_setsockopt
 id|EXPORT_SYMBOL
 c_func
@@ -441,6 +462,15 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|sklist_insert_socket
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_SMB_FS_MODULE
+DECL|variable|scm_detach_fds
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|scm_detach_fds
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1094,6 +1124,13 @@ c_func
 id|init_trdev
 )paren
 suffix:semicolon
+DECL|variable|csum_partial_copy
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|csum_partial_copy
+)paren
+suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_NET_ALIAS
 macro_line|#include &lt;linux/net_alias.h&gt;
@@ -1148,7 +1185,7 @@ id|unregister_net_alias_type
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* support for loadable net drivers */
-macro_line|#ifdef CONFIG_INET
+macro_line|#ifdef CONFIG_NET
 DECL|variable|register_netdev
 id|EXPORT_SYMBOL
 c_func
@@ -1275,6 +1312,20 @@ c_func
 id|dev_get
 )paren
 suffix:semicolon
+DECL|variable|dev_alloc
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|dev_alloc
+)paren
+suffix:semicolon
+DECL|variable|dev_alloc_name
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|dev_alloc_name
+)paren
+suffix:semicolon
 DECL|variable|dev_ioctl
 id|EXPORT_SYMBOL
 c_func
@@ -1368,7 +1419,7 @@ c_func
 id|arp_rcv
 )paren
 suffix:semicolon
-macro_line|#endif  /* CONFIG_INET */
+macro_line|#endif  /* CONFIG_NET */
 macro_line|#ifdef CONFIG_NETLINK
 DECL|variable|netlink_attach
 id|EXPORT_SYMBOL

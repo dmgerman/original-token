@@ -892,9 +892,6 @@ op_assign
 l_int|0
 suffix:semicolon
 r_int
-id|i
-suffix:semicolon
-r_int
 id|bl
 suffix:semicolon
 id|NCR5380_local_declare

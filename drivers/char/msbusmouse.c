@@ -322,7 +322,7 @@ suffix:semicolon
 )brace
 DECL|function|release_mouse
 r_static
-r_void
+r_int
 id|release_mouse
 c_func
 (paren
@@ -354,6 +354,7 @@ op_decrement
 id|mouse.active
 )paren
 r_return
+l_int|0
 suffix:semicolon
 id|MS_MSE_INT_OFF
 c_func
@@ -373,6 +374,9 @@ l_int|NULL
 )paren
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|open_mouse

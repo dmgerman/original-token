@@ -25,31 +25,9 @@ macro_line|#include &quot;consolemap.h&quot;
 macro_line|#include &quot;selection.h&quot;
 macro_line|#include &quot;console_struct.h&quot;
 r_extern
-r_void
-id|register_console
-c_func
-(paren
-r_void
-(paren
-op_star
-id|proc
-)paren
-(paren
-r_const
-r_char
-op_star
-)paren
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|console_print
-c_func
-(paren
-r_const
-r_char
-op_star
-)paren
+r_struct
+id|console
+id|vt_console_driver
 suffix:semicolon
 multiline_comment|/* TGA hardware description (minimal) */
 multiline_comment|/*&n; * Offsets within Memory Space&n; */
@@ -1549,12 +1527,15 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * FINALLY, we can register TGA as console (whew!)&n;&t; */
+macro_line|#ifdef CONFIG_VT_CONSOLE
 id|register_console
 c_func
 (paren
-id|console_print
+op_amp
+id|vt_console_driver
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 DECL|variable|PLLbits
 r_int

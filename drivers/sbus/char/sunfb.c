@@ -1757,21 +1757,6 @@ comma
 id|fb_open
 comma
 multiline_comment|/* open */
-(paren
-r_void
-(paren
-op_star
-)paren
-(paren
-r_struct
-id|inode
-op_star
-comma
-r_struct
-id|file
-op_star
-)paren
-)paren
 id|fb_close
 comma
 multiline_comment|/* close */

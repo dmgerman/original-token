@@ -9242,7 +9242,7 @@ id|ENODEV
 suffix:semicolon
 )brace
 r_static
-r_void
+r_int
 DECL|function|isdn_close
 id|isdn_close
 c_func
@@ -9339,6 +9339,7 @@ id|p-&gt;next
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 id|q
@@ -9364,6 +9365,7 @@ l_string|&quot;isdn: No private data while closing isdnctrl&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 r_if
@@ -9417,6 +9419,7 @@ id|c
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 r_if
@@ -9445,6 +9448,7 @@ OL
 l_int|0
 )paren
 r_return
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -9483,6 +9487,7 @@ id|c
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_ISDN_PPP
@@ -9504,6 +9509,9 @@ id|filep
 )paren
 suffix:semicolon
 macro_line|#endif
+r_return
+l_int|0
+suffix:semicolon
 )brace
 DECL|variable|isdn_fops
 r_static

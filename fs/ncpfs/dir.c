@@ -309,10 +309,10 @@ r_int
 id|must_be_dir
 )paren
 suffix:semicolon
+DECL|function|str_upper
 r_static
 r_inline
 r_void
-DECL|function|str_upper
 id|str_upper
 c_func
 (paren
@@ -357,10 +357,10 @@ op_increment
 suffix:semicolon
 )brace
 )brace
+DECL|function|str_lower
 r_static
 r_inline
 r_void
-DECL|function|str_lower
 id|str_lower
 c_func
 (paren
@@ -405,10 +405,10 @@ op_increment
 suffix:semicolon
 )brace
 )brace
+DECL|function|ncp_namespace
 r_static
 r_inline
 r_int
-DECL|function|ncp_namespace
 id|ncp_namespace
 c_func
 (paren
@@ -447,10 +447,10 @@ id|info-&gt;volNumber
 )braket
 suffix:semicolon
 )brace
+DECL|function|ncp_preserve_case
 r_static
 r_inline
 r_int
-DECL|function|ncp_preserve_case
 id|ncp_preserve_case
 c_func
 (paren
@@ -567,10 +567,10 @@ multiline_comment|/* smap */
 )brace
 suffix:semicolon
 multiline_comment|/* Here we encapsulate the inode number handling that depends upon the&n; * mount mode: When we mount a complete server, the memory address of&n; * the ncp_inode_info is used as the inode number. When only a single&n; * volume is mounted, then the dirEntNum is used as the inode&n; * number. As this is unique for the complete volume, this should&n; * enable the NFS exportability of a ncpfs-mounted volume.&n; */
+DECL|function|ncp_single_volume
 r_static
 r_inline
 r_int
-DECL|function|ncp_single_volume
 id|ncp_single_volume
 c_func
 (paren
@@ -624,10 +624,10 @@ id|ino_t
 id|info
 suffix:semicolon
 )brace
+DECL|function|ncp_is_server_root
 r_static
 r_inline
 r_int
-DECL|function|ncp_is_server_root
 id|ncp_is_server_root
 c_func
 (paren
@@ -759,9 +759,9 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+DECL|function|ncp_dir_read
 r_static
 r_int
-DECL|function|ncp_dir_read
 id|ncp_dir_read
 c_func
 (paren
@@ -844,10 +844,10 @@ id|c_wait
 op_assign
 l_int|NULL
 suffix:semicolon
+DECL|function|ncp_lock_dircache
 r_static
 r_inline
 r_void
-DECL|function|ncp_lock_dircache
 id|ncp_lock_dircache
 c_func
 (paren
@@ -871,10 +871,10 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+DECL|function|ncp_unlock_dircache
 r_static
 r_inline
 r_void
-DECL|function|ncp_unlock_dircache
 id|ncp_unlock_dircache
 c_func
 (paren
@@ -893,9 +893,9 @@ id|c_wait
 )paren
 suffix:semicolon
 )brace
+DECL|function|ncp_readdir
 r_static
 r_int
-DECL|function|ncp_readdir
 id|ncp_readdir
 c_func
 (paren
@@ -1616,9 +1616,9 @@ r_return
 id|result
 suffix:semicolon
 )brace
+DECL|function|ncp_read_volume_list
 r_static
 r_int
-DECL|function|ncp_read_volume_list
 id|ncp_read_volume_list
 c_func
 (paren
@@ -1826,9 +1826,9 @@ id|fpos
 )paren
 suffix:semicolon
 )brace
+DECL|function|ncp_do_readdir
 r_static
 r_int
-DECL|function|ncp_do_readdir
 id|ncp_do_readdir
 c_func
 (paren
@@ -2080,8 +2080,8 @@ id|fpos
 )paren
 suffix:semicolon
 )brace
-r_void
 DECL|function|ncp_init_dir_cache
+r_void
 id|ncp_init_dir_cache
 c_func
 (paren
@@ -2101,8 +2101,8 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
-r_void
 DECL|function|ncp_invalid_dir_cache
+r_void
 id|ncp_invalid_dir_cache
 c_func
 (paren
@@ -2142,8 +2142,8 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-r_void
 DECL|function|ncp_free_dir_cache
+r_void
 id|ncp_free_dir_cache
 c_func
 (paren
@@ -2319,7 +2319,7 @@ id|nused
 op_add_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* We have to link the new inode_info into the doubly linked&n;           list of inode_infos to make a complete linear search&n;           possible. */
+multiline_comment|/* We have to link the new inode_info into the doubly linked&n;&t;   list of inode_infos to make a complete linear search&n;&t;   possible. */
 id|root
 op_assign
 op_amp
@@ -2390,8 +2390,8 @@ r_return
 id|inode
 suffix:semicolon
 )brace
-r_void
 DECL|function|ncp_free_inode_info
+r_void
 id|ncp_free_inode_info
 c_func
 (paren
@@ -2493,8 +2493,8 @@ id|dir
 suffix:semicolon
 )brace
 )brace
-r_void
 DECL|function|ncp_init_root
+r_void
 id|ncp_init_root
 c_func
 (paren
@@ -2527,14 +2527,6 @@ suffix:semicolon
 r_int
 r_int
 id|dummy
-suffix:semicolon
-id|DPRINTK
-c_func
-(paren
-l_string|&quot;ncp_init_root: server %s&bslash;n&quot;
-comma
-id|server-&gt;m.server_name
-)paren
 suffix:semicolon
 id|DPRINTK
 c_func
@@ -2690,8 +2682,8 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-r_int
 DECL|function|ncp_conn_logged_in
+r_int
 id|ncp_conn_logged_in
 c_func
 (paren
@@ -2756,8 +2748,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_void
 DECL|function|ncp_free_all_inodes
+r_void
 id|ncp_free_all_inodes
 c_func
 (paren
@@ -2767,7 +2759,7 @@ op_star
 id|server
 )paren
 (brace
-multiline_comment|/* Here nothing should be to do. I do not know whether it&squot;s&n;           better to leave some memory allocated or be stuck in an&n;           endless loop */
+multiline_comment|/* Here nothing should be to do. I do not know whether it&squot;s&n;&t;   better to leave some memory allocated or be stuck in an&n;&t;   endless loop */
 macro_line|#if 1
 r_struct
 id|ncp_inode_info
@@ -2821,7 +2813,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif        
+macro_line|#endif
 r_return
 suffix:semicolon
 )brace
@@ -2917,7 +2909,7 @@ id|name
 op_eq
 l_int|0
 )paren
-multiline_comment|/* The root dir is never looked up using this&n;&t;&t;     * routine.  Without the following test a root&n;&t;&t;     * directory &squot;sys&squot; in a volume named &squot;sys&squot; could&n;&t;&t;     * never be looked up, because&n;&t;&t;     * server-&gt;root-&gt;dir==server-&gt;root. */
+multiline_comment|/* The root dir is never looked up using this&n;&t;&t; * routine.  Without the following test a root&n;&t;&t; * directory &squot;sys&squot; in a volume named &squot;sys&squot; could&n;&t;&t; * never be looked up, because&n;&t;&t; * server-&gt;root-&gt;dir==server-&gt;root. */
 op_logical_and
 (paren
 id|result
@@ -2953,9 +2945,9 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+DECL|function|ncp_lookup
 r_static
 r_int
-DECL|function|ncp_lookup
 id|ncp_lookup
 c_func
 (paren
@@ -3263,7 +3255,7 @@ op_assign
 id|NCP_INODE_LOOKED_UP
 suffix:semicolon
 )brace
-multiline_comment|/* Here we convert the inode_info address into an&n;                   inode number */
+multiline_comment|/* Here we convert the inode_info address into an&n;&t;&t;   inode number */
 op_star
 id|result
 op_assign
@@ -3311,7 +3303,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* If the file is in the dir cache, we do not have to ask the&n;           server. */
+multiline_comment|/* If the file is in the dir cache, we do not have to ask the&n;&t;   server. */
 id|found_in_cache
 op_assign
 l_int|0
@@ -3648,9 +3640,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|ncp_create
 r_static
 r_int
-DECL|function|ncp_create
 id|ncp_create
 c_func
 (paren
@@ -3942,9 +3934,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|ncp_mkdir
 r_static
 r_int
-DECL|function|ncp_mkdir
 id|ncp_mkdir
 c_func
 (paren
@@ -4183,9 +4175,9 @@ r_return
 id|error
 suffix:semicolon
 )brace
+DECL|function|ncp_rmdir
 r_static
 r_int
-DECL|function|ncp_rmdir
 id|ncp_rmdir
 c_func
 (paren
@@ -4388,9 +4380,9 @@ r_return
 id|error
 suffix:semicolon
 )brace
+DECL|function|ncp_unlink
 r_static
 r_int
-DECL|function|ncp_unlink
 id|ncp_unlink
 c_func
 (paren
@@ -4593,9 +4585,9 @@ r_return
 id|error
 suffix:semicolon
 )brace
+DECL|function|ncp_rename
 r_static
 r_int
-DECL|function|ncp_rename
 id|ncp_rename
 c_func
 (paren
@@ -4961,9 +4953,9 @@ r_struct
 id|timezone
 id|sys_tz
 suffix:semicolon
+DECL|function|utc2local
 r_static
 r_int
-DECL|function|utc2local
 id|utc2local
 c_func
 (paren
@@ -4988,9 +4980,9 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+DECL|function|local2utc
 r_static
 r_int
-DECL|function|local2utc
 id|local2utc
 c_func
 (paren
@@ -5016,8 +5008,8 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Convert a MS-DOS time/date pair to a UNIX date (seconds since 1 1 70). */
-r_int
 DECL|function|ncp_date_dos2unix
+r_int
 id|ncp_date_dos2unix
 c_func
 (paren
@@ -5145,8 +5137,8 @@ id|secs
 suffix:semicolon
 )brace
 multiline_comment|/* Convert linear UNIX date to a MS-DOS time/date pair. */
-r_void
 DECL|function|ncp_date_unix2dos
+r_void
 id|ncp_date_unix2dos
 c_func
 (paren

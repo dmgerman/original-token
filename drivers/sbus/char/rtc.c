@@ -434,7 +434,7 @@ suffix:semicolon
 )brace
 DECL|function|rtc_release
 r_static
-r_void
+r_int
 id|rtc_release
 c_func
 (paren
@@ -453,6 +453,9 @@ id|MOD_DEC_USE_COUNT
 suffix:semicolon
 id|rtc_busy
 op_assign
+l_int|0
+suffix:semicolon
+r_return
 l_int|0
 suffix:semicolon
 )brace

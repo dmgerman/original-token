@@ -214,7 +214,7 @@ suffix:semicolon
 multiline_comment|/* Example routines you must write ;-&gt;. */
 DECL|macro|tx_done
 mdefine_line|#define tx_done(dev)&t;(inw(SEEQ_STATUS) &amp; SEEQSTAT_TX_ON)
-r_extern
+r_static
 r_void
 id|hardware_send_packet
 c_func
@@ -246,6 +246,7 @@ r_int
 id|startp
 )paren
 suffix:semicolon
+r_static
 r_inline
 r_void
 id|wait_for_buffer
@@ -1683,25 +1684,6 @@ op_assign
 id|jiffies
 suffix:semicolon
 )brace
-multiline_comment|/* If some higher layer thinks we&squot;ve missed an tx-done interrupt&n;&t;   we are passed NULL. Caution: dev_tint() handles the cli()/sti()&n;&t;   itself. */
-r_if
-c_cond
-(paren
-id|skb
-op_eq
-l_int|NULL
-)paren
-(brace
-id|dev_tint
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 multiline_comment|/* Block a timer-based transmit from overlapping.  This could better be&n;&t;   done with atomic_swap(1, dev-&gt;tbusy), but set_bit() works as well. */
 r_if
 c_cond
@@ -3120,6 +3102,7 @@ suffix:semicolon
 )brace
 )brace
 DECL|function|hardware_send_packet
+r_static
 r_void
 id|hardware_send_packet
 c_func

@@ -665,6 +665,8 @@ op_amp
 id|tmp-&gt;next
 suffix:semicolon
 )brace
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 )brace
 DECL|function|atif_add_device
 r_static
@@ -764,6 +766,8 @@ c_func
 (paren
 id|flags
 )paren
+suffix:semicolon
+id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_return
 id|iface
@@ -2425,6 +2429,17 @@ comma
 op_amp
 id|sa-&gt;sat_addr
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|atif
+op_eq
+l_int|NULL
+)paren
+r_return
+op_minus
+id|ENOMEM
 suffix:semicolon
 )brace
 id|atif-&gt;nets

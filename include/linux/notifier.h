@@ -17,7 +17,7 @@ id|notifier_call
 r_struct
 id|notifier_block
 op_star
-id|this
+id|self
 comma
 r_int
 r_int

@@ -428,7 +428,7 @@ suffix:semicolon
 )brace
 DECL|function|sd_release
 r_static
-r_void
+r_int
 id|sd_release
 c_func
 (paren
@@ -541,6 +541,9 @@ id|sd_template.module
 )paren
 suffix:semicolon
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 r_static
 r_void
@@ -1851,7 +1854,10 @@ c_cond
 id|SDev-&gt;removable
 op_logical_and
 op_logical_neg
-id|intr_count
+id|in_interrupt
+c_func
+(paren
+)paren
 )paren
 (brace
 id|scsi_ioctl

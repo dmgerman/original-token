@@ -40,7 +40,7 @@ DECL|member|nused
 r_int
 id|nused
 suffix:semicolon
-multiline_comment|/* for directories:&n;                                   number of references in memory */
+multiline_comment|/* for directories:&n;&t;&t;&t;&t;   number of references in memory */
 DECL|member|dir
 r_struct
 id|ncp_inode_info

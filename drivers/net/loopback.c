@@ -160,6 +160,14 @@ c_func
 id|skb
 )paren
 suffix:semicolon
+id|stats-&gt;rx_bytes
+op_add_assign
+id|skb-&gt;len
+suffix:semicolon
+id|stats-&gt;tx_bytes
+op_add_assign
+id|skb-&gt;len
+suffix:semicolon
 id|stats-&gt;rx_packets
 op_increment
 suffix:semicolon

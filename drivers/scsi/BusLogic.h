@@ -193,7 +193,7 @@ multiline_comment|/*&n;  Define the Host Adapter Line and Message Buffer Sizes.&
 DECL|macro|BusLogic_LineBufferSize
 mdefine_line|#define BusLogic_LineBufferSize&t;&t;&t;100
 DECL|macro|BusLogic_MessageBufferSize
-mdefine_line|#define BusLogic_MessageBufferSize&t;&t;8900
+mdefine_line|#define BusLogic_MessageBufferSize&t;&t;9900
 multiline_comment|/*&n;  Define the Driver Message Levels.&n;*/
 DECL|enum|BusLogic_MessageLevel
 r_typedef
@@ -3835,6 +3835,11 @@ DECL|member|IncrementalCCBs
 r_int
 r_int
 id|IncrementalCCBs
+suffix:semicolon
+DECL|member|AllocatedCCBs
+r_int
+r_int
+id|AllocatedCCBs
 suffix:semicolon
 DECL|member|DriverQueueDepth
 r_int

@@ -199,12 +199,14 @@ comma
 )brace
 suffix:semicolon
 DECL|variable|hp100_rx_ratio
+r_static
 r_int
 id|hp100_rx_ratio
 op_assign
 id|HP100_DEFAULT_RX_RATIO
 suffix:semicolon
 DECL|variable|hp100_priority_tx
+r_static
 r_int
 id|hp100_priority_tx
 op_assign

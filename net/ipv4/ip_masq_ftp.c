@@ -821,6 +821,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;ip_masq_ftp: can&squot;t remove module&quot;
 )paren
 suffix:semicolon

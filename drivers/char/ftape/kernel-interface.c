@@ -62,7 +62,7 @@ id|filep
 )paren
 suffix:semicolon
 r_static
-r_void
+r_int
 id|ftape_close
 c_func
 (paren
@@ -949,7 +949,7 @@ suffix:semicolon
 multiline_comment|/*      Close ftape device&n; */
 DECL|function|ftape_close
 r_static
-r_void
+r_int
 id|ftape_close
 c_func
 (paren
@@ -1001,6 +1001,7 @@ suffix:semicolon
 id|TRACE_EXIT
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 multiline_comment|/* keep busy_flag !(?) */
 )brace
@@ -1057,6 +1058,9 @@ suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 multiline_comment|/* unlock module in memory */
+r_return
+l_int|0
+suffix:semicolon
 )brace
 multiline_comment|/*      Ioctl for ftape device&n; */
 DECL|function|ftape_ioctl

@@ -28,6 +28,7 @@ mdefine_line|#define MAX_NR_KEYMAPS&t;256
 multiline_comment|/* This means 64Kb if all keymaps are allocated. Only the superuser&n;&t;may increase the number of keymaps beyond MAX_NR_OF_USER_KEYMAPS. */
 DECL|macro|MAX_NR_OF_USER_KEYMAPS
 mdefine_line|#define MAX_NR_OF_USER_KEYMAPS 256 &t;/* should be at least 7 */
+macro_line|#ifdef __KERNEL__
 r_extern
 r_const
 r_int
@@ -57,6 +58,13 @@ id|plain_map
 id|NR_KEYS
 )braket
 suffix:semicolon
+r_extern
+r_struct
+id|wait_queue
+op_star
+id|keypress_wait
+suffix:semicolon
+macro_line|#endif
 DECL|macro|MAX_NR_FUNC
 mdefine_line|#define MAX_NR_FUNC&t;256&t;/* max nr of strings assigned to keys */
 DECL|macro|KT_LATIN

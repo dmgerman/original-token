@@ -521,7 +521,7 @@ suffix:semicolon
 multiline_comment|/*&n; * close access to the mouse&n; */
 DECL|function|close_mouse
 r_static
-r_void
+r_int
 id|close_mouse
 c_func
 (paren
@@ -568,6 +568,9 @@ c_func
 )paren
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * open access to the mouse, currently only one open is&n; * allowed.&n; */

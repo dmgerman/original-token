@@ -2558,7 +2558,7 @@ suffix:semicolon
 )brace
 DECL|function|openprom_release
 r_static
-r_void
+r_int
 id|openprom_release
 c_func
 (paren
@@ -2585,6 +2585,9 @@ id|DATA
 )paren
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|variable|openprom_fops

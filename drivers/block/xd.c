@@ -1464,7 +1464,7 @@ suffix:semicolon
 multiline_comment|/* xd_release: release the device */
 DECL|function|xd_release
 r_static
-r_void
+r_int
 id|xd_release
 (paren
 r_struct
@@ -1510,6 +1510,9 @@ id|target
 op_decrement
 suffix:semicolon
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 multiline_comment|/* xd_reread_partitions: rereads the partition table from a drive */
 DECL|function|xd_reread_partitions

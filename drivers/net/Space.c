@@ -1592,6 +1592,56 @@ macro_line|#undef NEXT_DEV
 DECL|macro|NEXT_DEV
 mdefine_line|#define NEXT_DEV (&amp;slip_bootstrap)
 macro_line|#endif&t;/* SLIP */
+macro_line|#if defined(X25_ASY) || defined(CONFIG_X25_ASY)
+multiline_comment|/* To be exact, this node just hooks the initialization&n;&t;   routines to the device structures.&t;&t;&t;*/
+r_extern
+r_int
+id|x25_asy_init_ctrl_dev
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+DECL|variable|x25_asy_bootstrap
+r_static
+r_struct
+id|device
+id|x25_asy_bootstrap
+op_assign
+(brace
+l_string|&quot;x25_proto&quot;
+comma
+l_int|0x0
+comma
+l_int|0x0
+comma
+l_int|0x0
+comma
+l_int|0x0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|NEXT_DEV
+comma
+id|x25_asy_init_ctrl_dev
+comma
+)brace
+suffix:semicolon
+DECL|macro|NEXT_DEV
+macro_line|#undef NEXT_DEV
+DECL|macro|NEXT_DEV
+mdefine_line|#define NEXT_DEV (&amp;x25_asy_bootstrap)
+macro_line|#endif&t;/* X25_ASY */
 macro_line|#if defined(CONFIG_MKISS)
 multiline_comment|/* To be exact, this node just hooks the initialization&n;&t;   routines to the device structures.&t;&t;&t;*/
 r_extern

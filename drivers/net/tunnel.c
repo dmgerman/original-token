@@ -788,28 +788,14 @@ multiline_comment|/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 multiline_comment|/*  Module specific interface                                      */
 multiline_comment|/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 macro_line|#ifdef MODULE
-DECL|function|tunnel_probe
+DECL|variable|tunnel_name
 r_static
-r_int
-id|tunnel_probe
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-)paren
-(brace
-id|tunnel_init
-c_func
-(paren
-id|dev
-)paren
+r_char
+id|tunnel_name
+(braket
+l_int|16
+)braket
 suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 DECL|variable|dev_tunnel
 r_static
 r_struct
@@ -817,7 +803,7 @@ id|device
 id|dev_tunnel
 op_assign
 (brace
-l_string|&quot;tunl0&bslash;0   &quot;
+id|tunnel_name
 comma
 l_int|0
 comma
@@ -839,7 +825,7 @@ l_int|0
 comma
 l_int|NULL
 comma
-id|tunnel_probe
+id|tunnel_init
 )brace
 suffix:semicolon
 DECL|function|init_module
@@ -852,38 +838,27 @@ r_void
 (brace
 multiline_comment|/* Find a name for this unit */
 r_int
-id|ct
+id|err
 op_assign
-l_int|1
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|dev_get
+id|dev_alloc_name
 c_func
 (paren
-id|dev_tunnel.name
-)paren
-op_ne
-l_int|NULL
-op_logical_and
-id|ct
-OL
-l_int|100
-)paren
-(brace
-id|sprintf
-c_func
-(paren
-id|dev_tunnel.name
+op_amp
+id|dev_tunnel
 comma
 l_string|&quot;tunl%d&quot;
-comma
-id|ct
 )paren
 suffix:semicolon
-id|ct
-op_increment
+r_if
+c_cond
+(paren
+id|err
+OL
+l_int|0
+)paren
+(brace
+r_return
+id|err
 suffix:semicolon
 )brace
 macro_line|#ifdef TUNNEL_DEBUG

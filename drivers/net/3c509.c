@@ -3329,8 +3329,16 @@ id|EL3_CMD
 )paren
 suffix:semicolon
 multiline_comment|/* Pop top Rx packet. */
+id|lp-&gt;stats.rx_bytes
+op_add_assign
+id|skb-&gt;len
+suffix:semicolon
 id|lp-&gt;stats.rx_packets
 op_increment
+suffix:semicolon
+id|lp-&gt;stats.rx_bytes
+op_add_assign
+id|pkt_len
 suffix:semicolon
 r_continue
 suffix:semicolon

@@ -97,6 +97,30 @@ op_assign
 l_int|0x01
 suffix:semicolon
 multiline_comment|/* modified by psaux.c */
+DECL|variable|keypress_wait
+r_struct
+id|wait_queue
+op_star
+id|keypress_wait
+op_assign
+l_int|NULL
+suffix:semicolon
+DECL|function|keyboard_wait_for_keypress
+r_void
+id|keyboard_wait_for_keypress
+c_func
+(paren
+r_void
+)paren
+(brace
+id|sleep_on
+c_func
+(paren
+op_amp
+id|keypress_wait
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * global state includes the following, and various static variables&n; * in this module: prev_scancode, shift_state, diacr, npadch, dead_key_next.&n; * (last_console is now a global variable)&n; */
 multiline_comment|/* shift state counters.. */
 DECL|variable|k_down

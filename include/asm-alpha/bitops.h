@@ -2,7 +2,7 @@ macro_line|#ifndef _ALPHA_BITOPS_H
 DECL|macro|_ALPHA_BITOPS_H
 mdefine_line|#define _ALPHA_BITOPS_H
 multiline_comment|/*&n; * Copyright 1994, Linus Torvalds.&n; */
-multiline_comment|/*&n; * These have to be done with inline assembly: that way the bit-setting&n; * is guaranteed to be atomic. All bit operations return 0 if the bit&n; * was cleared before the operation and != 0 if it was not.&n; *&n; * bit 0 is the LSB of addr; bit 64 is the LSB of (addr+1).&n; */
+multiline_comment|/*&n; * These have to be done with inline assembly: that way the bit-setting&n; * is guaranteed to be atomic. All bit operations return 0 if the bit&n; * was cleared before the operation and != 0 if it was not.&n; *&n; * To get proper branch prediction for the main line, we must branch&n; * forward to code at the end of this object&squot;s .text section, then&n; * branch back to restart the operation.&n; *&n; * bit 0 is the LSB of addr; bit 64 is the LSB of (addr+1).&n; */
 DECL|function|set_bit
 r_extern
 id|__inline__
@@ -52,14 +52,16 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;&bslash;n1:&bslash;t&quot;
-l_string|&quot;ldl_l %0,%1&bslash;n&bslash;t&quot;
-l_string|&quot;and %0,%3,%2&bslash;n&bslash;t&quot;
-l_string|&quot;bne %2,2f&bslash;n&bslash;t&quot;
-l_string|&quot;xor %0,%3,%0&bslash;n&bslash;t&quot;
-l_string|&quot;stl_c %0,%1&bslash;n&bslash;t&quot;
-l_string|&quot;beq %0,1b&bslash;n&quot;
-l_string|&quot;2:&quot;
+l_string|&quot;1:&t;ldl_l %0,%1&bslash;n&quot;
+l_string|&quot;&t;and %0,%3,%2&bslash;n&quot;
+l_string|&quot;&t;bne %2,2f&bslash;n&quot;
+l_string|&quot;&t;xor %0,%3,%0&bslash;n&quot;
+l_string|&quot;&t;stl_c %0,%1&bslash;n&quot;
+l_string|&quot;&t;beq %0,3f&bslash;n&quot;
+l_string|&quot;2:&bslash;n&quot;
+l_string|&quot;.text 2&bslash;n&quot;
+l_string|&quot;3:&t;br 1b&bslash;n&quot;
+l_string|&quot;.text&quot;
 suffix:colon
 l_string|&quot;=&amp;r&quot;
 (paren
@@ -150,14 +152,16 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;&bslash;n1:&bslash;t&quot;
-l_string|&quot;ldl_l %0,%1&bslash;n&bslash;t&quot;
-l_string|&quot;and %0,%3,%2&bslash;n&bslash;t&quot;
-l_string|&quot;beq %2,2f&bslash;n&bslash;t&quot;
-l_string|&quot;xor %0,%3,%0&bslash;n&bslash;t&quot;
-l_string|&quot;stl_c %0,%1&bslash;n&bslash;t&quot;
-l_string|&quot;beq %0,1b&bslash;n&quot;
-l_string|&quot;2:&quot;
+l_string|&quot;1:&t;ldl_l %0,%1&bslash;n&quot;
+l_string|&quot;&t;and %0,%3,%2&bslash;n&bslash;t&quot;
+l_string|&quot;&t;beq %2,2f&bslash;n&bslash;t&quot;
+l_string|&quot;&t;xor %0,%3,%0&bslash;n&bslash;t&quot;
+l_string|&quot;&t;stl_c %0,%1&bslash;n&bslash;t&quot;
+l_string|&quot;&t;beq %0,3f&bslash;n&quot;
+l_string|&quot;2:&bslash;n&quot;
+l_string|&quot;.text 2&bslash;n&quot;
+l_string|&quot;3:&t;br 1b&bslash;n&quot;
+l_string|&quot;.text&quot;
 suffix:colon
 l_string|&quot;=&amp;r&quot;
 (paren
@@ -248,12 +252,14 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;&bslash;n1:&bslash;t&quot;
-l_string|&quot;ldl_l %0,%1&bslash;n&bslash;t&quot;
-l_string|&quot;and %0,%3,%2&bslash;n&bslash;t&quot;
-l_string|&quot;xor %0,%3,%0&bslash;n&bslash;t&quot;
-l_string|&quot;stl_c %0,%1&bslash;n&bslash;t&quot;
-l_string|&quot;beq %0,1b&bslash;n&quot;
+l_string|&quot;1:&t;ldl_l %0,%1&bslash;n&quot;
+l_string|&quot;&t;and %0,%3,%2&bslash;n&bslash;t&quot;
+l_string|&quot;&t;xor %0,%3,%0&bslash;n&bslash;t&quot;
+l_string|&quot;&t;stl_c %0,%1&bslash;n&bslash;t&quot;
+l_string|&quot;&t;beq %0,3f&bslash;n&quot;
+l_string|&quot;.text 2&bslash;n&quot;
+l_string|&quot;3:&t;br 1b&bslash;n&quot;
+l_string|&quot;.text&quot;
 suffix:colon
 l_string|&quot;=&amp;r&quot;
 (paren

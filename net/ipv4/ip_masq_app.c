@@ -128,6 +128,7 @@ id|mapp
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;register_ip_masq_app(): NULL arg&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -230,6 +231,7 @@ id|mapp
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;unregister_ip_masq_app(): NULL arg&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -248,6 +250,7 @@ id|mapp-&gt;n_attach
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;unregister_ip_masq_app(): has %d attachments. failed&bslash;n&quot;
 comma
 id|mapp-&gt;n_attach
@@ -346,6 +349,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;unregister_ip_masq_app(proto=%s,port=%u): not hashed!&bslash;n&quot;
 comma
 id|masq_proto_name
@@ -526,6 +530,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;ip_masq_app: tried to set n_attach &lt; 0 for (proto=%s,port==%d) ip_masq_app object.&bslash;n&quot;
 comma
 id|masq_proto_name
@@ -613,6 +618,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;ip_masq_bind_app() called for already bound object.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1801,6 +1807,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;skb_replace(): no room left (from %p)&bslash;n&quot;
 comma
 id|__builtin_return_address

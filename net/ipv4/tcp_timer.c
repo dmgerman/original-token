@@ -192,6 +192,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;xmit_timer &lt;= 0 - timer:%d when:%lx&bslash;n&quot;
 comma
 id|what
@@ -301,6 +302,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;bug: tcp_reset_xmit_timer TIME_WRITE&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -311,6 +313,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;bug: unknown timer value&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -385,6 +388,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;bug: unknown timer value&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -453,6 +457,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;bug: unknown timer value&bslash;n&quot;
 )paren
 suffix:semicolon

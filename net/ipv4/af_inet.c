@@ -402,6 +402,7 @@ multiline_comment|/* &n;&t; * It&squot;s more normal than that...&n;&t; * It can
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;Socket destroy delayed (r=%d w=%d)&bslash;n&quot;
 comma
 id|sk-&gt;rmem_alloc
@@ -3869,6 +3870,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Swansea University Computer Society TCP/IP for NET3.037&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3918,6 +3920,7 @@ multiline_comment|/*&n;&t; *&t;Add all the protocols. &n;&t; */
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;IP Protocols: &quot;
 )paren
 suffix:semicolon

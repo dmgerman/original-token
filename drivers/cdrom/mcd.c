@@ -4213,7 +4213,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * On close, we flush all mcd blocks from the buffer cache.&n; */
 r_static
-r_void
+r_int
 DECL|function|mcd_release
 id|mcd_release
 c_func
@@ -4259,6 +4259,9 @@ id|i_rdev
 )paren
 suffix:semicolon
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 DECL|variable|mcd_fops
 r_static

@@ -354,7 +354,7 @@ id|current_skb
 suffix:semicolon
 DECL|member|tr_stats
 r_struct
-id|tr_statistics
+id|net_device_stats
 id|tr_stats
 suffix:semicolon
 DECL|member|auto_ringspeedsave
@@ -377,6 +377,15 @@ r_int
 id|adapter_int_enable
 suffix:semicolon
 multiline_comment|/* Adapter-specific int enable */
+DECL|member|tr_timer
+r_struct
+id|timer_list
+id|tr_timer
+suffix:semicolon
+DECL|member|func_addr
+id|__u32
+id|func_addr
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* token ring adapter commands */
@@ -391,7 +400,7 @@ mdefine_line|#define DIR_CLOSE_ADAPTER   &t;0x04
 DECL|macro|DIR_SET_GRP_ADDR
 mdefine_line|#define DIR_SET_GRP_ADDR    &t;0x06
 DECL|macro|DIR_SET_FUNC_ADDR
-mdefine_line|#define DIR_SET_FUNC_ADDR   &t;0x07
+mdefine_line|#define DIR_SET_FUNC_ADDR   &t;0x07 /* struct srb_set_funct_addr */
 DECL|macro|DIR_READ_LOG
 mdefine_line|#define DIR_READ_LOG &t;&t;0x08 /* struct srb_read_log */
 DECL|macro|DLC_OPEN_SAP
@@ -412,9 +421,9 @@ multiline_comment|/* DIR_OPEN_ADAPTER options */
 DECL|macro|OPEN_PASS_BCON_MAC
 mdefine_line|#define OPEN_PASS_BCON_MAC 0x0100
 DECL|macro|NUM_RCV_BUF
-mdefine_line|#define NUM_RCV_BUF 16
+mdefine_line|#define NUM_RCV_BUF 3
 DECL|macro|RCV_BUF_LEN
-mdefine_line|#define RCV_BUF_LEN 136
+mdefine_line|#define RCV_BUF_LEN 1024
 DECL|macro|DHB_LENGTH
 mdefine_line|#define DHB_LENGTH 2048
 DECL|macro|NUM_DHB
@@ -1078,14 +1087,7 @@ DECL|struct|rec_buf
 r_struct
 id|rec_buf
 (brace
-DECL|member|reserved1
-r_int
-r_char
-id|reserved1
-(braket
-l_int|2
-)braket
-suffix:semicolon
+multiline_comment|/*&t;unsigned char reserved1[2]; */
 DECL|member|buf_ptr
 id|__u16
 id|buf_ptr
@@ -1203,6 +1205,39 @@ DECL|member|ret_code
 r_int
 r_char
 id|ret_code
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|srb_set_funct_addr
+r_struct
+id|srb_set_funct_addr
+(brace
+DECL|member|command
+r_int
+r_char
+id|command
+suffix:semicolon
+DECL|member|reserved1
+r_int
+r_char
+id|reserved1
+suffix:semicolon
+DECL|member|ret_code
+r_int
+r_char
+id|ret_code
+suffix:semicolon
+DECL|member|reserved2
+r_int
+r_char
+id|reserved2
+(braket
+l_int|3
+)braket
+suffix:semicolon
+DECL|member|funct_address
+id|__u32
+id|funct_address
 suffix:semicolon
 )brace
 suffix:semicolon

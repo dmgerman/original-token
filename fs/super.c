@@ -44,15 +44,6 @@ id|major
 )paren
 suffix:semicolon
 r_extern
-r_void
-id|blkdev_release
-(paren
-r_struct
-id|inode
-op_star
-)paren
-suffix:semicolon
-r_extern
 r_int
 id|root_mountflags
 suffix:semicolon

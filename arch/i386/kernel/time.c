@@ -522,6 +522,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * this is only used if we have fast gettimeoffset:&n; */
 DECL|function|do_x86_get_fast_time
+r_static
 r_void
 id|do_x86_get_fast_time
 c_func
@@ -1215,6 +1216,7 @@ suffix:semicolon
 multiline_comment|/* finally seconds */
 )brace
 DECL|function|get_cmos_time
+r_static
 r_int
 r_int
 id|get_cmos_time

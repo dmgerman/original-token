@@ -1723,7 +1723,7 @@ multiline_comment|/* Always succeed */
 )brace
 DECL|function|md_release
 r_static
-r_void
+r_int
 id|md_release
 (paren
 r_struct
@@ -1758,6 +1758,9 @@ id|minor
 dot
 id|busy
 op_decrement
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|md_read

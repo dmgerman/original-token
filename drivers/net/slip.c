@@ -1004,7 +1004,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 )brace
-multiline_comment|/* Set the &quot;sending&quot; flag.  This must be atomic, hence the ASM. */
+multiline_comment|/* Set the &quot;sending&quot; flag.  This must be atomic hence the set_bit. */
 r_static
 r_inline
 r_void

@@ -232,7 +232,7 @@ id|file
 )paren
 suffix:semicolon
 r_static
-r_void
+r_int
 id|ps2esdi_release
 c_func
 (paren
@@ -5009,7 +5009,7 @@ suffix:semicolon
 )brace
 DECL|function|ps2esdi_release
 r_static
-r_void
+r_int
 id|ps2esdi_release
 c_func
 (paren
@@ -5058,6 +5058,9 @@ id|dev
 op_decrement
 suffix:semicolon
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 DECL|function|ps2esdi_ioctl
 r_static

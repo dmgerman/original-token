@@ -33,7 +33,7 @@ id|fp
 )paren
 suffix:semicolon
 r_static
-r_void
+r_int
 id|cdrom_release
 c_func
 (paren
@@ -820,7 +820,7 @@ suffix:semicolon
 multiline_comment|/* Admittedly, the logic below could be performed in a nicer way. */
 r_static
 DECL|function|cdrom_release
-r_void
+r_int
 id|cdrom_release
 c_func
 (paren
@@ -863,6 +863,7 @@ op_eq
 l_int|NULL
 )paren
 r_return
+l_int|0
 suffix:semicolon
 id|cdo
 op_assign
@@ -961,6 +962,9 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 multiline_comment|/* We want to make media_changed accessible to the user through an&n; * ioctl. The main problem now is that we must double-buffer the&n; * low-level implementation, to assure that the VFS and the user both&n; * see a medium change once.&n; */
 r_static

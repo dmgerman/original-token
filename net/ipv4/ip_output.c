@@ -2866,6 +2866,7 @@ c_func
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;IP: frag: no memory for new fragment!&bslash;n&quot;
 )paren
 )paren

@@ -5577,7 +5577,7 @@ suffix:semicolon
 multiline_comment|/*&n; * On close, we flush all sjcd blocks from the buffer cache.&n; */
 DECL|function|sjcd_release
 r_static
-r_void
+r_int
 (def_block
 id|sjcd_release
 c_func
@@ -5700,6 +5700,9 @@ macro_line|#endif
 )brace
 )brace
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 )def_block
 multiline_comment|/*&n; * A list of file operations allowed for this cdrom.&n; */

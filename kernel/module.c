@@ -174,22 +174,17 @@ op_minus
 id|__start___ksymtab
 suffix:semicolon
 macro_line|#ifdef __alpha__
-(brace
-r_register
-r_int
-r_int
-id|gp
 id|__asm__
 c_func
 (paren
-l_string|&quot;$29&quot;
+l_string|&quot;stq $29,%0&quot;
+suffix:colon
+l_string|&quot;=m&quot;
+(paren
+id|kernel_module.gp
+)paren
 )paren
 suffix:semicolon
-id|kernel_module.gp
-op_assign
-id|gp
-suffix:semicolon
-)brace
 macro_line|#endif
 )brace
 multiline_comment|/*&n; * Copy the name of a module from user space.&n; */

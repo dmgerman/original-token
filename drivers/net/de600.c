@@ -53,6 +53,7 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 DECL|variable|de600_debug
+r_static
 r_int
 r_int
 id|de600_debug
@@ -787,25 +788,6 @@ id|buffer
 op_assign
 id|skb-&gt;data
 suffix:semicolon
-multiline_comment|/*&n;&t; * If some higher layer thinks we&squot;ve missed a&n;&t; * tx-done interrupt we are passed NULL.&n;&t; * Caution: dev_tint() handles the cli()/sti() itself.&n;&t; */
-r_if
-c_cond
-(paren
-id|skb
-op_eq
-l_int|NULL
-)paren
-(brace
-id|dev_tint
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren

@@ -166,7 +166,7 @@ op_star
 )paren
 suffix:semicolon
 r_static
-r_void
+r_int
 id|do_release
 c_func
 (paren
@@ -2764,7 +2764,7 @@ suffix:semicolon
 )brace
 DECL|function|do_release
 r_static
-r_void
+r_int
 id|do_release
 c_func
 (paren
@@ -2804,6 +2804,7 @@ l_string|&quot;release&quot;
 )paren
 )paren
 r_return
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -2927,6 +2928,9 @@ op_star
 id|as
 )paren
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|do_open

@@ -39,10 +39,10 @@ id|b
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Fill in the supplied page for mmap&n; */
+DECL|function|ncp_file_mmap_nopage
 r_static
 r_int
 r_int
-DECL|function|ncp_file_mmap_nopage
 id|ncp_file_mmap_nopage
 c_func
 (paren
@@ -396,8 +396,8 @@ multiline_comment|/* swapin */
 )brace
 suffix:semicolon
 multiline_comment|/* This is used for a general mmap of a ncp file */
-r_int
 DECL|function|ncp_mmap
+r_int
 id|ncp_mmap
 c_func
 (paren

@@ -3176,7 +3176,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 DECL|function|__fput
-r_void
+r_int
 id|__fput
 c_func
 (paren
@@ -3191,6 +3191,11 @@ op_star
 id|inode
 )paren
 (brace
+r_int
+id|error
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3198,6 +3203,8 @@ id|filp-&gt;f_op
 op_logical_and
 id|filp-&gt;f_op-&gt;release
 )paren
+id|error
+op_assign
 id|filp-&gt;f_op
 op_member_access_from_pointer
 id|release
@@ -3230,6 +3237,9 @@ c_func
 (paren
 id|inode
 )paren
+suffix:semicolon
+r_return
+id|error
 suffix:semicolon
 )brace
 DECL|function|close_fp
@@ -3283,6 +3293,7 @@ comma
 id|filp
 )paren
 suffix:semicolon
+r_return
 id|fput
 c_func
 (paren
@@ -3290,9 +3301,6 @@ id|filp
 comma
 id|inode
 )paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 DECL|function|sys_close

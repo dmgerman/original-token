@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IP multicast routing support for mrouted 3.6/3.8&n; *&n; *&t;&t;(c) 1995 Alan Cox, &lt;alan@cymru.net&gt;&n; *&t;  Linux Consultancy and Custom Driver Development&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&n; *&t;Fixes:&n; *&t;Michael Chastain&t;:&t;Incorrect size of copying.&n; *&t;Alan Cox&t;&t;:&t;Added the cache manager code&n; *&t;Alan Cox&t;&t;:&t;Fixed the clone/copy bug and device race.&n; *&t;Malcolm Beattie&t;&t;:&t;Buffer handling fixes.&n; *&t;Alexey Kuznetsov&t;:&t;Double buffer free and other fixes.&n; *&t;SVR Anand&t;&t;:&t;Fixed several multicast bugs and problems.&n; *&n; *&t;Status:&n; *&t;&t;Cache manager under test. Forwarding in vague test mode&n; *&t;Todo:&n; *&t;&t;Flow control&n; *&t;&t;Finish Tunnels&n; *&t;&t;Debug cache ttl handling properly&n; *&t;&t;Resolve IFF_ALLMULTI for rest of cards&n; */
+multiline_comment|/*&n; *&t;IP multicast routing support for mrouted 3.6/3.8&n; *&n; *&t;&t;(c) 1995 Alan Cox, &lt;alan@cymru.net&gt;&n; *&t;  Linux Consultancy and Custom Driver Development&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&n; *&t;Fixes:&n; *&t;Michael Chastain&t;:&t;Incorrect size of copying.&n; *&t;Alan Cox&t;&t;:&t;Added the cache manager code&n; *&t;Alan Cox&t;&t;:&t;Fixed the clone/copy bug and device race.&n; *&t;Malcolm Beattie&t;&t;:&t;Buffer handling fixes.&n; *&t;Alexey Kuznetsov&t;:&t;Double buffer free and other fixes.&n; *&t;SVR Anand&t;&t;:&t;Fixed several multicast bugs and problems.&n; *&t;Alexey Kuznetsov&t;:&t;Status, optimisations and more.&n; *&t;Brad Parker&t;&t;:&t;Better behaviour on mrouted upcall&n; *&t;&t;&t;&t;&t;overflow.&n; *&n; *&t;Status:&n; *&t;&t;Cache manager under test. Forwarding in vague test mode&n; *&t;Todo:&n; *&t;&t;Flow control&n; *&t;&t;Finish Tunnels&n; *&t;&t;Debug cache ttl handling properly&n; *&t;&t;Resolve IFF_ALLMULTI for rest of cards&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -808,7 +808,7 @@ suffix:semicolon
 multiline_comment|/*&n; *&t;Bounce a cache query up to mrouted. We could use netlink for this but mrouted&n; *&t;expects the following bizarre scheme..&n; */
 DECL|function|ipmr_cache_report
 r_static
-r_void
+r_int
 id|ipmr_cache_report
 c_func
 (paren
@@ -854,6 +854,9 @@ id|igmpmsg
 op_star
 id|msg
 suffix:semicolon
+r_int
+id|ret
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -862,6 +865,8 @@ id|skb
 )paren
 (brace
 r_return
+op_minus
+id|ENOMEM
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;Copy the IP header&n;&t; */
@@ -965,6 +970,9 @@ multiline_comment|/*&n;&t; *&t;Deliver to mrouted&n;&t; */
 r_if
 c_cond
 (paren
+(paren
+id|ret
+op_assign
 id|sock_queue_rcv_skb
 c_func
 (paren
@@ -972,10 +980,39 @@ id|mroute_socket
 comma
 id|skb
 )paren
+)paren
 OL
 l_int|0
 )paren
 (brace
+r_static
+r_int
+r_int
+id|last_warn
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|jiffies
+op_minus
+id|last_warn
+OG
+l_int|10
+op_star
+id|HZ
+)paren
+(brace
+id|last_warn
+op_assign
+id|jiffies
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;mroute: pending queue full, dropping entries.&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
 id|kfree_skb
 c_func
 (paren
@@ -983,6 +1020,9 @@ id|skb
 comma
 id|FREE_READ
 )paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 )brace
@@ -1097,6 +1137,10 @@ c_cond
 id|mroute_socket
 )paren
 (brace
+multiline_comment|/* If the report failed throw the cache entry &n;&t;&t;&t;   out - Brad Parker */
+r_if
+c_cond
+(paren
 id|ipmr_cache_report
 c_func
 (paren
@@ -1106,7 +1150,17 @@ id|vifi
 comma
 l_int|0
 )paren
+OL
+l_int|0
+)paren
+(brace
+id|impr_cache_delete
+c_func
+(paren
+id|cache
+)paren
 suffix:semicolon
+)brace
 )brace
 )brace
 multiline_comment|/*&n;&t; *&t;See if we can append the packet&n;&t; */

@@ -142,7 +142,7 @@ suffix:semicolon
 )brace
 DECL|function|softdog_release
 r_static
-r_void
+r_int
 id|softdog_release
 c_func
 (paren
@@ -171,6 +171,9 @@ suffix:semicolon
 macro_line|#endif&t;
 id|timer_alive
 op_assign
+l_int|0
+suffix:semicolon
+r_return
 l_int|0
 suffix:semicolon
 )brace

@@ -2879,7 +2879,7 @@ suffix:semicolon
 )brace
 DECL|function|lp_release
 r_static
-r_void
+r_int
 id|lp_release
 c_func
 (paren
@@ -2963,6 +2963,9 @@ op_complement
 id|LP_BUSY
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|lp_ioctl

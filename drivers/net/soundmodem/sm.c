@@ -446,6 +446,7 @@ mdefine_line|#define SP_MIDI 4
 multiline_comment|/* --------------------------------------------------------------------- */
 multiline_comment|/*&n; * ===================== port checking routines ========================&n; */
 multiline_comment|/*&n; * returns 0 if ok and != 0 on error;&n; * the same behaviour as par96_check_lpt in baycom.c&n; */
+multiline_comment|/*&n; * returns 0 if ok and != 0 on error;&n; * the same behaviour as par96_check_lpt in baycom.c&n; */
 DECL|function|check_lpt
 r_static
 r_int

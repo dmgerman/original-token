@@ -16,7 +16,7 @@ r_struct
 id|ncp_mount_data
 id|m
 suffix:semicolon
-multiline_comment|/* Nearly all of the mount data is of&n;&t;&t;&t;&t;    interest for us later, so we store&n;&t;&t;&t;&t;    it completely. */
+multiline_comment|/* Nearly all of the mount data is of&n;&t;&t;&t;&t;&t;   interest for us later, so we store&n;&t;&t;&t;&t;&t;   it completely. */
 DECL|member|name_space
 id|__u8
 id|name_space
@@ -31,26 +31,6 @@ op_star
 id|ncp_filp
 suffix:semicolon
 multiline_comment|/* File pointer to ncp socket */
-DECL|member|wdog_filp
-r_struct
-id|file
-op_star
-id|wdog_filp
-suffix:semicolon
-multiline_comment|/* File pointer to wdog socket */
-DECL|member|msg_filp
-r_struct
-id|file
-op_star
-id|msg_filp
-suffix:semicolon
-multiline_comment|/* File pointer to message socket */
-DECL|member|data_ready
-r_void
-op_star
-id|data_ready
-suffix:semicolon
-multiline_comment|/* The wdog socket gets a new&n;&t;&t;&t;&t;   data_ready callback. We store the&n;&t;&t;&t;&t;   old one for checking purposes and&n;&t;&t;&t;&t;   to reset it on unmounting. */
 DECL|member|sequence
 id|u8
 id|sequence
@@ -131,10 +111,10 @@ suffix:semicolon
 multiline_comment|/* &squot;&bslash;0&squot; */
 )brace
 suffix:semicolon
+DECL|function|ncp_conn_valid
 r_static
 r_inline
 r_int
-DECL|function|ncp_conn_valid
 id|ncp_conn_valid
 c_func
 (paren
@@ -156,10 +136,10 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+DECL|function|ncp_invalidate_conn
 r_static
 r_inline
 r_void
-DECL|function|ncp_invalidate_conn
 id|ncp_invalidate_conn
 c_func
 (paren
@@ -174,6 +154,6 @@ op_or_assign
 l_int|0x01
 suffix:semicolon
 )brace
-macro_line|#endif /* __KERNEL__ */
+macro_line|#endif&t;&t;&t;&t;/* __KERNEL__ */
 macro_line|#endif
 eof

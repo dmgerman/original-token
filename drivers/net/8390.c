@@ -1,5 +1,5 @@
 multiline_comment|/* 8390.c: A general NS8390 ethernet driver core for linux. */
-multiline_comment|/*&n;&t;Written 1992-94 by Donald Becker.&n;  &n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;  &n;  This is the chip-specific code for many 8390-based ethernet adaptors.&n;  This is not a complete driver, it must be combined with board-specific&n;  code such as ne.c, wd.c, 3c503.c, etc.&n;&n;  Seeing how at least eight drivers use this code, (not counting the&n;  PCMCIA ones either) it is easy to break some card by what seems like&n;  a simple innocent change. Please contact me or Donald if you think&n;  you have found something that needs changing. -- PG&n;&n;&n;  Changelog:&n;&n;  Paul Gortmaker&t;: remove set_bit lock, other cleanups.&n;  Paul Gortmaker&t;: add ei_get_8390_hdr() so we can pass skb&squot;s to &n;&t;&t;&t;  ei_block_input() for eth_io_copy_and_sum().&n;  Paul Gortmaker&t;: exchange static int ei_pingpong for a #define,&n;&t;&t;&t;  also add better Tx error handling.&n;  Paul Gortmaker&t;: rewrite Rx overrun handling as per NS specs.&n;  Alexey Kuznetsov&t;: use the 8390&squot;s six bit hash multicast filter.&n;  Paul Gortmaker&t;: tweak ANK&squot;s above multicast changes a bit.&n;&n;&n;  Sources:&n;  The National Semiconductor LAN Databook, and the 3Com 3c503 databook.&n;&n;  */
+multiline_comment|/*&n;&t;Written 1992-94 by Donald Becker.&n;  &n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;  &n;  This is the chip-specific code for many 8390-based ethernet adaptors.&n;  This is not a complete driver, it must be combined with board-specific&n;  code such as ne.c, wd.c, 3c503.c, etc.&n;&n;  Seeing how at least eight drivers use this code, (not counting the&n;  PCMCIA ones either) it is easy to break some card by what seems like&n;  a simple innocent change. Please contact me or Donald if you think&n;  you have found something that needs changing. -- PG&n;&n;&n;  Changelog:&n;&n;  Paul Gortmaker&t;: remove set_bit lock, other cleanups.&n;  Paul Gortmaker&t;: add ei_get_8390_hdr() so we can pass skb&squot;s to &n;&t;&t;&t;  ei_block_input() for eth_io_copy_and_sum().&n;  Paul Gortmaker&t;: exchange static int ei_pingpong for a #define,&n;&t;&t;&t;  also add better Tx error handling.&n;  Paul Gortmaker&t;: rewrite Rx overrun handling as per NS specs.&n;  Alexey Kuznetsov&t;: use the 8390&squot;s six bit hash multicast filter.&n;  Paul Gortmaker&t;: tweak ANK&squot;s above multicast changes a bit.&n;  Paul Gortmaker&t;: update packet statistics for v2.1.x&n;&n;&n;  Sources:&n;  The National Semiconductor LAN Databook, and the 3Com 3c503 databook.&n;&n;  */
 DECL|variable|version
 r_static
 r_const
@@ -328,6 +328,9 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+id|ei_local-&gt;stat.tx_errors
+op_increment
+suffix:semicolon
 id|isr
 op_assign
 id|inb
@@ -358,7 +361,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t; * Note that if the Tx posted a TX_ERR interrupt, then the&n;&t;&t; * error will have been handled from the interrupt handler.&n;&t;&t; * and not here.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Note that if the Tx posted a TX_ERR interrupt, then the&n;&t;&t; * error will have been handled from the interrupt handler&n;&t;&t; * and not here. Error statistics are handled there as well.&n;&t;&t; */
 id|printk
 c_func
 (paren
@@ -468,6 +471,9 @@ op_plus
 id|EN0_IMR
 )paren
 suffix:semicolon
+id|ei_local-&gt;stat.tx_errors
+op_increment
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
@@ -486,10 +492,6 @@ c_cond
 id|length
 suffix:colon
 id|ETH_ZLEN
-suffix:semicolon
-id|ei_local-&gt;stat.tx_bytes
-op_add_assign
-id|send_length
 suffix:semicolon
 macro_line|#ifdef EI_PINGPONG
 multiline_comment|/*&n;     * We have two Tx slots available for use. Find the first free&n;     * slot, and then perform some sanity checks. With two Tx bufs,&n;     * you get very close to transmitting back-to-back packets. With&n;     * only one Tx buf, the transmitter sits idle while you reload the&n;     * card, leaving a substantial gap between each transmitted packet.&n;     */
@@ -617,6 +619,9 @@ id|e8390_base
 op_plus
 id|EN0_IMR
 )paren
+suffix:semicolon
+id|ei_local-&gt;stat.tx_errors
+op_increment
 suffix:semicolon
 r_return
 l_int|1
@@ -763,6 +768,10 @@ id|skb
 comma
 id|FREE_WRITE
 )paren
+suffix:semicolon
+id|ei_local-&gt;stat.tx_bytes
+op_add_assign
+id|send_length
 suffix:semicolon
 r_return
 l_int|0
@@ -1376,18 +1385,42 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * Note: NCR reads zero on 16 collisions so we add them&n;     * in by hand. Somebody might care...&n;     */
+r_else
+(brace
+id|ei_local-&gt;stat.tx_errors
+op_increment
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|txsr
 op_amp
-id|ENTSR_ABT
+id|ENTSR_CRS
 )paren
-id|ei_local-&gt;stat.collisions
-op_add_assign
-l_int|16
+id|ei_local-&gt;stat.tx_carrier_errors
+op_increment
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|txsr
+op_amp
+id|ENTSR_CDH
+)paren
+id|ei_local-&gt;stat.tx_heartbeat_errors
+op_increment
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|txsr
+op_amp
+id|ENTSR_OWC
+)paren
+id|ei_local-&gt;stat.tx_window_errors
+op_increment
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/* We have finished a transmit: check for errors and then trigger the next&n;   packet to be sent. */
 DECL|function|ei_tx_intr
@@ -1676,9 +1709,15 @@ id|status
 op_amp
 id|ENTSR_ABT
 )paren
+(brace
 id|ei_local-&gt;stat.tx_aborted_errors
 op_increment
 suffix:semicolon
+id|ei_local-&gt;stat.collisions
+op_add_assign
+l_int|16
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1795,6 +1834,8 @@ l_int|10
 (brace
 r_int
 id|pkt_len
+comma
+id|pkt_stat
 suffix:semicolon
 multiline_comment|/* Get the rx page (incoming packet pointer). */
 id|outb_p
@@ -1917,6 +1958,10 @@ r_struct
 id|e8390_pkt_hdr
 )paren
 suffix:semicolon
+id|pkt_stat
+op_assign
+id|rx_frame.status
+suffix:semicolon
 id|next_frame
 op_assign
 id|this_frame
@@ -2014,13 +2059,16 @@ suffix:semicolon
 id|ei_local-&gt;stat.rx_errors
 op_increment
 suffix:semicolon
+id|ei_local-&gt;stat.rx_length_errors
+op_increment
+suffix:semicolon
 )brace
 r_else
 r_if
 c_cond
 (paren
 (paren
-id|rx_frame.status
+id|pkt_stat
 op_amp
 l_int|0x0F
 )paren
@@ -2115,10 +2163,6 @@ id|rx_frame
 )paren
 )paren
 suffix:semicolon
-id|ei_local-&gt;stat.rx_bytes
-op_add_assign
-id|skb-&gt;len
-suffix:semicolon
 id|skb-&gt;protocol
 op_assign
 id|eth_type_trans
@@ -2138,15 +2182,24 @@ suffix:semicolon
 id|ei_local-&gt;stat.rx_packets
 op_increment
 suffix:semicolon
+id|ei_local-&gt;stat.rx_bytes
+op_add_assign
+id|pkt_len
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pkt_stat
+op_amp
+id|ENRSR_PHY
+)paren
+id|ei_local-&gt;stat.multicast
+op_increment
+suffix:semicolon
 )brace
 )brace
 r_else
 (brace
-r_int
-id|errs
-op_assign
-id|rx_frame.status
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2166,10 +2219,14 @@ comma
 id|rx_frame.count
 )paren
 suffix:semicolon
+id|ei_local-&gt;stat.rx_errors
+op_increment
+suffix:semicolon
+multiline_comment|/* NB: The NIC counts CRC, frame and missed errors. */
 r_if
 c_cond
 (paren
-id|errs
+id|pkt_stat
 op_amp
 id|ENRSR_FO
 )paren

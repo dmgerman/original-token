@@ -5403,7 +5403,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Close the drive.  Spin it down if no task is using it.  The spin&n; * down will fail if playing audio, so audio play is OK.&n; */
 r_static
-r_void
+r_int
 DECL|function|cdu_release
 id|cdu_release
 c_func
@@ -5519,6 +5519,9 @@ l_int|0
 suffix:semicolon
 macro_line|#endif
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 DECL|variable|cdu_fops
 r_static

@@ -30347,7 +30347,7 @@ multiline_comment|/*============================================================
 multiline_comment|/*&n; *  On close, we flush all sbp blocks from the buffer cache.&n; */
 DECL|function|sbpcd_release
 r_static
-r_void
+r_int
 id|sbpcd_release
 c_func
 (paren
@@ -30412,6 +30412,7 @@ id|ip-&gt;i_rdev
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 id|down
@@ -30585,6 +30586,9 @@ c_func
 op_amp
 id|ioctl_read_sem
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*==========================================================================*/

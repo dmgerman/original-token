@@ -780,7 +780,7 @@ l_int|1
 op_lshift
 id|event
 suffix:semicolon
-id|queue_task_irq_off
+id|queue_task
 c_func
 (paren
 op_amp
@@ -1088,7 +1088,7 @@ comma
 id|info-&gt;tty_buf-&gt;count
 )paren
 suffix:semicolon
-id|queue_task_irq_off
+id|queue_task
 c_func
 (paren
 op_amp
@@ -1099,7 +1099,7 @@ id|tq_timer
 )paren
 suffix:semicolon
 )brace
-id|queue_task_irq_off
+id|queue_task
 c_func
 (paren
 op_amp
@@ -1112,7 +1112,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|queue_task_irq_off
+id|queue_task
 c_func
 (paren
 op_amp
@@ -1427,7 +1427,7 @@ id|buffer
 op_eq
 id|info-&gt;tty_buf
 )paren
-id|queue_task_irq_off
+id|queue_task
 c_func
 (paren
 op_amp
@@ -1437,7 +1437,7 @@ op_amp
 id|tq_timer
 )paren
 suffix:semicolon
-id|queue_task_irq_off
+id|queue_task
 c_func
 (paren
 op_amp
@@ -2116,7 +2116,7 @@ l_string|&quot;scheduling hangup...&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-id|queue_task_irq_off
+id|queue_task
 c_func
 (paren
 op_amp

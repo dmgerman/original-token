@@ -152,7 +152,7 @@ op_star
 )paren
 suffix:semicolon
 r_static
-r_void
+r_int
 id|gscd_release
 (paren
 r_struct
@@ -1226,7 +1226,7 @@ suffix:semicolon
 multiline_comment|/*&n; * On close, we flush all gscd blocks from the buffer cache.&n; */
 DECL|function|gscd_release
 r_static
-r_void
+r_int
 id|gscd_release
 (paren
 r_struct
@@ -1267,6 +1267,9 @@ id|i_rdev
 )paren
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|get_status

@@ -85,11 +85,11 @@ c_func
 id|dump_fpu
 )paren
 suffix:semicolon
-DECL|variable|ioremap
+DECL|variable|__ioremap
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|ioremap
+id|__ioremap
 )paren
 suffix:semicolon
 DECL|variable|iounmap
@@ -175,6 +175,13 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_MCA
 multiline_comment|/* Adapter probing and info methods. */
+DECL|variable|mca_find_adapter
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|mca_find_adapter
+)paren
+suffix:semicolon
 DECL|variable|mca_write_pos
 id|EXPORT_SYMBOL
 c_func

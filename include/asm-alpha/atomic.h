@@ -1,15 +1,16 @@
-macro_line|#ifndef __ARCH_ALPHA_ATOMIC__
-DECL|macro|__ARCH_ALPHA_ATOMIC__
-mdefine_line|#define __ARCH_ALPHA_ATOMIC__
-multiline_comment|/*&n; * Atomic operations that C can&squot;t guarantee us.  Useful for&n; * resource counting etc...&n; *&n; * But use these as seldom as possible since they are much more slower&n; * than regular operations.&n; */
-multiline_comment|/*&n; * Make sure gcc doesn&squot;t try to be clever and move things around&n; * on us. We need to use _exactly_ the address the user gave us,&n; * not some alias that contains the same information.&n; */
-DECL|macro|__atomic_fool_gcc
-mdefine_line|#define __atomic_fool_gcc(x) (*(struct { int a[100]; } *)x)
+macro_line|#ifndef _ALPHA_ATOMIC_H
+DECL|macro|_ALPHA_ATOMIC_H
+mdefine_line|#define _ALPHA_ATOMIC_H
+multiline_comment|/*&n; * Atomic operations that C can&squot;t guarantee us.  Useful for&n; * resource counting etc...&n; *&n; * But use these as seldom as possible since they are much slower&n; * than regular operations.&n; */
 DECL|typedef|atomic_t
 r_typedef
 r_int
 id|atomic_t
 suffix:semicolon
+multiline_comment|/*&n; * Make sure gcc doesn&squot;t try to be clever and move things around&n; * on us. We need to use _exactly_ the address the user gave us,&n; * not some alias that contains the same information.&n; */
+DECL|macro|__atomic_fool_gcc
+mdefine_line|#define __atomic_fool_gcc(x) (*(struct { int a[100]; } *)x)
+multiline_comment|/*&n; * To get proper branch prediction for the main line, we must branch&n; * forward to code at the end of this object&squot;s .text section, then&n; * branch back to restart the operation.&n; */
 DECL|function|atomic_add
 r_extern
 id|__inline__
@@ -33,12 +34,13 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;&bslash;n1:&bslash;t&quot;
-l_string|&quot;ldl_l %0,%1&bslash;n&bslash;t&quot;
-l_string|&quot;addl %0,%2,%0&bslash;n&bslash;t&quot;
-l_string|&quot;stl_c %0,%1&bslash;n&bslash;t&quot;
-l_string|&quot;beq %0,1b&bslash;n&quot;
-l_string|&quot;2:&quot;
+l_string|&quot;1:&t;ldl_l %0,%1&bslash;n&quot;
+l_string|&quot;&t;addl %0,%2,%0&bslash;n&quot;
+l_string|&quot;&t;stl_c %0,%1&bslash;n&quot;
+l_string|&quot;&t;beq %0,2f&bslash;n&quot;
+l_string|&quot;.text 2&bslash;n&quot;
+l_string|&quot;2:&t;br 1b&bslash;n&quot;
+l_string|&quot;.text&quot;
 suffix:colon
 l_string|&quot;=&amp;r&quot;
 (paren
@@ -93,12 +95,13 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;&bslash;n1:&bslash;t&quot;
-l_string|&quot;ldl_l %0,%1&bslash;n&bslash;t&quot;
-l_string|&quot;subl %0,%2,%0&bslash;n&bslash;t&quot;
-l_string|&quot;stl_c %0,%1&bslash;n&bslash;t&quot;
-l_string|&quot;beq %0,1b&bslash;n&quot;
-l_string|&quot;2:&quot;
+l_string|&quot;1:&t;ldl_l %0,%1&bslash;n&quot;
+l_string|&quot;&t;subl %0,%2,%0&bslash;n&quot;
+l_string|&quot;&t;stl_c %0,%1&bslash;n&quot;
+l_string|&quot;&t;beq %0,2f&bslash;n&quot;
+l_string|&quot;.text 2&bslash;n&quot;
+l_string|&quot;2:&t;br 1b&bslash;n&quot;
+l_string|&quot;.text&quot;
 suffix:colon
 l_string|&quot;=&amp;r&quot;
 (paren
@@ -155,13 +158,14 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;&bslash;n1:&bslash;t&quot;
-l_string|&quot;ldl_l %0,%1&bslash;n&bslash;t&quot;
-l_string|&quot;addl %0,%3,%0&bslash;n&bslash;t&quot;
-l_string|&quot;bis %0,%0,%2&bslash;n&bslash;t&quot;
-l_string|&quot;stl_c %0,%1&bslash;n&bslash;t&quot;
-l_string|&quot;beq %0,1b&bslash;n&quot;
-l_string|&quot;2:&quot;
+l_string|&quot;1:&t;ldl_l %0,%1&bslash;n&quot;
+l_string|&quot;&t;addl %0,%3,%0&bslash;n&quot;
+l_string|&quot;&t;mov %0,%2&bslash;n&quot;
+l_string|&quot;&t;stl_c %0,%1&bslash;n&quot;
+l_string|&quot;&t;beq %0,2f&bslash;n&quot;
+l_string|&quot;.text 2&bslash;n&quot;
+l_string|&quot;2:&t;br 1b&bslash;n&quot;
+l_string|&quot;.text&quot;
 suffix:colon
 l_string|&quot;=&amp;r&quot;
 (paren
@@ -225,13 +229,14 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;&bslash;n1:&bslash;t&quot;
-l_string|&quot;ldl_l %0,%1&bslash;n&bslash;t&quot;
-l_string|&quot;subl %0,%3,%0&bslash;n&bslash;t&quot;
-l_string|&quot;bis %0,%0,%2&bslash;n&bslash;t&quot;
-l_string|&quot;stl_c %0,%1&bslash;n&bslash;t&quot;
-l_string|&quot;beq %0,1b&bslash;n&quot;
-l_string|&quot;2:&quot;
+l_string|&quot;1:&t;ldl_l %0,%1&bslash;n&quot;
+l_string|&quot;&t;subl %0,%3,%0&bslash;n&quot;
+l_string|&quot;&t;mov %0,%2&bslash;n&quot;
+l_string|&quot;&t;stl_c %0,%1&bslash;n&quot;
+l_string|&quot;&t;beq %0,2f&bslash;n&quot;
+l_string|&quot;.text 2&bslash;n&quot;
+l_string|&quot;2:&t;br 1b&bslash;n&quot;
+l_string|&quot;.text&quot;
 suffix:colon
 l_string|&quot;=&amp;r&quot;
 (paren
@@ -283,5 +288,5 @@ DECL|macro|atomic_inc
 mdefine_line|#define atomic_inc(v) atomic_add(1,(v))
 DECL|macro|atomic_dec
 mdefine_line|#define atomic_dec(v) atomic_sub(1,(v))
-macro_line|#endif
+macro_line|#endif /* _ALPHA_ATOMIC_H */
 eof

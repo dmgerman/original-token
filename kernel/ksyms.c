@@ -39,6 +39,7 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
+macro_line|#include &lt;linux/file.h&gt;
 macro_line|#if defined(CONFIG_BLK_DEV_IDE) || defined(CONFIG_BLK_DEV_HD) || defined(CONFIG_BLK_DEV_IDE_MODULE) || defined(CONFIG_BLK_DEV_HD_MODULE)
 r_extern
 r_struct
@@ -106,7 +107,7 @@ r_int
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_int
 id|blkdev_release
 c_func
 (paren
@@ -300,6 +301,13 @@ c_func
 id|exit_mm
 )paren
 suffix:semicolon
+DECL|variable|exit_files
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|exit_files
+)paren
+suffix:semicolon
 multiline_comment|/* internal kernel memory management */
 DECL|variable|__get_free_pages
 id|EXPORT_SYMBOL
@@ -398,6 +406,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|putname
+)paren
+suffix:semicolon
+DECL|variable|__fput
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__fput
 )paren
 suffix:semicolon
 DECL|variable|__iget
@@ -603,6 +618,13 @@ c_func
 id|generic_file_read
 )paren
 suffix:semicolon
+DECL|variable|generic_file_write
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|generic_file_write
+)paren
+suffix:semicolon
 DECL|variable|generic_file_mmap
 id|EXPORT_SYMBOL
 c_func
@@ -615,6 +637,41 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|generic_readpage
+)paren
+suffix:semicolon
+DECL|variable|file_lock_table
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|file_lock_table
+)paren
+suffix:semicolon
+DECL|variable|posix_lock_file
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|posix_lock_file
+)paren
+suffix:semicolon
+DECL|variable|posix_test_lock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|posix_test_lock
+)paren
+suffix:semicolon
+DECL|variable|posix_block_lock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|posix_block_lock
+)paren
+suffix:semicolon
+DECL|variable|posix_unblock_lock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|posix_unblock_lock
 )paren
 suffix:semicolon
 multiline_comment|/* device registration */
@@ -1399,6 +1456,13 @@ c_func
 id|secure_tcp_sequence_number
 )paren
 suffix:semicolon
+DECL|variable|get_random_bytes
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|get_random_bytes
+)paren
+suffix:semicolon
 multiline_comment|/* Signal interfaces */
 DECL|variable|send_sig
 id|EXPORT_SYMBOL
@@ -1629,6 +1693,7 @@ c_func
 id|aux_device_present
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_VT
 DECL|variable|kbd_read_mask
 id|EXPORT_SYMBOL
 c_func
@@ -1636,6 +1701,7 @@ c_func
 id|kbd_read_mask
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_MD
 DECL|variable|disk_name
 id|EXPORT_SYMBOL

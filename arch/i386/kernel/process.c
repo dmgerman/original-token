@@ -375,6 +375,18 @@ l_string|&quot;hlt&quot;
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t;&t; * tq_scheduler currently assumes we&squot;re running in a process&n;&t;&t; * context (ie that we hold the kernel lock..)&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|tq_scheduler
+)paren
+(brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|run_task_queue
 c_func
 (paren
@@ -382,6 +394,12 @@ op_amp
 id|tq_scheduler
 )paren
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 id|schedule
 c_func
 (paren
@@ -534,6 +552,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* The following code and data reboots the machine by switching to real&n;   mode and jumping to the BIOS reset entry point, as if the CPU has&n;   really been reset.  The previous version asked the keyboard&n;   controller to pulse the CPU reset line, which is more thorough, but&n;   doesn&squot;t work with at least one type of 486 motherboard.  It is easy&n;   to stop this code working; hence the copious comments. */
+r_static
 r_int
 r_int
 r_int
@@ -554,6 +573,7 @@ l_int|0x000092000100ffffULL
 multiline_comment|/* 16-bit real-mode 64k data at 0x00000100 */
 )brace
 suffix:semicolon
+r_static
 r_struct
 (brace
 DECL|member|size
@@ -606,6 +626,7 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* This is 16-bit protected mode code to disable paging and the cache,&n;   switch to real mode and jump to the BIOS reset code.&n;&n;   The instruction that switches to real mode by writing to CR0 must be&n;   followed immediately by a far jump instruction, which set CS to a&n;   valid value for real mode, and flushes the prefetch queue to avoid&n;   running instructions that have already been decoded in protected&n;   mode.&n;&n;   Clears all the flags except ET, especially PG (paging), PE&n;   (protected-mode enable) and TS (task switch for coprocessor state&n;   save).  Flushes the TLB after paging has been disabled.  Sets CD and&n;   NW, to disable the cache on a 486, and invalidates the cache.  This&n;   is more like the state of a 486 after reset.  I don&squot;t know if&n;   something else should be done for other chips.&n;&n;   More could be done here to set up the registers as if a CPU reset had&n;   occurred; hopefully real BIOSes don&squot;t assume much. */
 DECL|variable|real_mode_switch
+r_static
 r_int
 r_char
 id|real_mode_switch

@@ -344,6 +344,8 @@ comma
 )brace
 )brace
 suffix:semicolon
+DECL|macro|DE4X5_VERBOSE
+macro_line|#undef DE4X5_VERBOSE     /* define to get more verbose startup messages */
 macro_line|#ifdef DE4X5_DEBUG
 DECL|variable|de4x5_debug
 r_static
@@ -1085,6 +1087,7 @@ DECL|variable|bus
 id|bus
 suffix:semicolon
 multiline_comment|/*&n;** To get around certain poxy cards that don&squot;t provide an SROM&n;** for the second and more DECchip, I have to key off the first&n;** chip&squot;s address. I&squot;ll assume there&squot;s not a bad SROM iff:&n;**&n;**      o the chipset is the same&n;**      o the bus number is the same and &gt; 0&n;**      o the sum of all the returned hw address bytes is 0 or 0x5fa&n;**&n;** Also have to save the irq for those cards whose hardware designers&n;** can&squot;t follow the PCI to PCI Bridge Architecture spec.&n;*/
+r_static
 r_struct
 (brace
 DECL|member|chipset
@@ -2423,6 +2426,7 @@ op_star
 id|tmp
 )paren
 suffix:semicolon
+macro_line|#ifdef MODULE
 r_static
 r_struct
 id|device
@@ -2436,6 +2440,7 @@ op_star
 id|p
 )paren
 suffix:semicolon
+macro_line|#endif
 r_static
 r_void
 id|de4x5_dbg_open
@@ -2792,6 +2797,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|variable|infoleaf_array
+r_static
 r_struct
 id|InfoLeaf
 id|infoleaf_array
@@ -3938,16 +3944,20 @@ l_string|&quot;EISA CNFG&quot;
 )paren
 )paren
 suffix:semicolon
+macro_line|#ifdef DE4X5_VERBOSE
 id|printk
 c_func
 (paren
-l_string|&quot;INFOLEAF_SIZE: %d&bslash;nCOMPACT: %d&bslash;n&quot;
+l_string|&quot;%s: INFOLEAF_SIZE: %ld, COMPACT: %ld&bslash;n&quot;
+comma
+id|dev-&gt;name
 comma
 id|INFOLEAF_SIZE
 comma
 id|COMPACT
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 r_if
 c_cond
@@ -4969,6 +4979,11 @@ OG
 l_int|0
 )paren
 (brace
+multiline_comment|/* Update the byte counter */
+id|lp-&gt;stats.tx_bytes
+op_add_assign
+id|skb-&gt;len
+suffix:semicolon
 multiline_comment|/* If we already have stuff queued locally, use that first */
 r_if
 c_cond
@@ -5771,6 +5786,10 @@ suffix:semicolon
 multiline_comment|/* Update stats */
 id|lp-&gt;stats.rx_packets
 op_increment
+suffix:semicolon
+id|lp-&gt;stats.rx_bytes
+op_add_assign
+id|pkt_len
 suffix:semicolon
 id|de4x5_local_stats
 c_func
@@ -9128,6 +9147,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
 r_static
 r_struct
 id|device
@@ -9229,6 +9249,7 @@ r_return
 id|next
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*&n;** Auto configure the media here rather than setting the port at compile&n;** time. This routine is called by de4x5_init() and when a loss of media is&n;** detected (excessive collisions, loss of carrier, no carrier or link fail&n;** [TP] or no recent receive activity) to check whether the user has been &n;** sneaky and changed the port on us.&n;*/
 r_static
 r_int
@@ -22791,45 +22812,59 @@ suffix:semicolon
 id|s32
 id|omr
 suffix:semicolon
-r_union
+r_struct
 (brace
 id|u8
-id|addr
-(braket
-(paren
-id|HASH_TABLE_LEN
 op_star
-id|ETH_ALEN
-)paren
-)braket
+id|addr
 suffix:semicolon
 id|u16
-id|sval
-(braket
-(paren
-id|HASH_TABLE_LEN
 op_star
-id|ETH_ALEN
-)paren
-op_rshift
-l_int|1
-)braket
+id|sval
 suffix:semicolon
 id|u32
-id|lval
-(braket
-(paren
-id|HASH_TABLE_LEN
 op_star
-id|ETH_ALEN
-)paren
-op_rshift
-l_int|2
-)braket
+id|lval
 suffix:semicolon
 )brace
 id|tmp
 suffix:semicolon
+id|tmp.addr
+op_assign
+id|tmp.sval
+op_assign
+id|tmp.lval
+op_assign
+id|kmalloc
+c_func
+(paren
+id|HASH_TABLE_LEN
+op_star
+id|ETH_ALEN
+comma
+id|GFP_KERNEL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|tmp.addr
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s ioctl: memory squeeze.&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
+)brace
 r_switch
 c_cond
 (paren
@@ -24870,6 +24905,12 @@ op_minus
 id|EOPNOTSUPP
 suffix:semicolon
 )brace
+id|kfree
+c_func
+(paren
+id|tmp.addr
+)paren
+suffix:semicolon
 r_return
 id|status
 suffix:semicolon

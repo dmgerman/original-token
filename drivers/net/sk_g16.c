@@ -8,7 +8,7 @@ id|rcsid
 op_assign
 l_string|&quot;$Id: sk_g16.c,v 1.1 1994/06/30 16:25:15 root Exp $&quot;
 suffix:semicolon
-multiline_comment|/*&n; * The Schneider &amp; Koch (SK) G16 Network device driver is based&n; * on the &squot;ni6510&squot; driver from Michael Hipp which can be found at&n; * ftp://sunsite.unc.edu/pub/Linux/system/Network/drivers/nidrivers.tar.gz&n; * &n; * Sources: 1) ni6510.c by M. Hipp&n; *          2) depca.c  by D.C. Davies&n; *          3) skeleton.c by D. Becker&n; *          4) Am7990 Local Area Network Controller for Ethernet (LANCE),&n; *             AMD, Pub. #05698, June 1989&n; *&n; * Many Thanks for helping me to get things working to: &n; *                 &n; *                 A. Cox (A.Cox@swansea.ac.uk)&n; *                 M. Hipp (mhipp@student.uni-tuebingen.de)&n; *                 R. Bolz (Schneider &amp; Koch, Germany)&n; *&n; * See README.sk_g16 for details about limitations and bugs for the&n; * current version.&n; *&n; * To Do: &n; *        - Support of SK_G8 and other SK Network Cards.&n; *        - Autoset memory mapped RAM. Check for free memory and then&n; *          configure RAM correctly. &n; *        - SK_close should really set card in to initial state.&n; *        - Test if IRQ 3 is not switched off. Use autoirq() functionality.&n; *          (as in /drivers/net/skeleton.c)&n; *        - Implement Multicast addressing. At minimum something like&n; *          in depca.c. &n; *        - Redo the statistics part.&n; *        - Try to find out if the board is in 8 Bit or 16 Bit slot.&n; *          If in 8 Bit mode don&squot;t use IRQ 11.&n; *        - (Try to make it slightly faster.) &n; */
+multiline_comment|/*&n; * The Schneider &amp; Koch (SK) G16 Network device driver is based&n; * on the &squot;ni6510&squot; driver from Michael Hipp which can be found at&n; * ftp://sunsite.unc.edu/pub/Linux/system/Network/drivers/nidrivers.tar.gz&n; * &n; * Sources: 1) ni6510.c by M. Hipp&n; *          2) depca.c  by D.C. Davies&n; *          3) skeleton.c by D. Becker&n; *          4) Am7990 Local Area Network Controller for Ethernet (LANCE),&n; *             AMD, Pub. #05698, June 1989&n; *&n; * Many Thanks for helping me to get things working to: &n; *                 &n; *                 A. Cox (A.Cox@swansea.ac.uk)&n; *                 M. Hipp (mhipp@student.uni-tuebingen.de)&n; *                 R. Bolz (Schneider &amp; Koch, Germany)&n; *&n; * To Do: &n; *        - Support of SK_G8 and other SK Network Cards.&n; *        - Autoset memory mapped RAM. Check for free memory and then&n; *          configure RAM correctly. &n; *        - SK_close should really set card in to initial state.&n; *        - Test if IRQ 3 is not switched off. Use autoirq() functionality.&n; *          (as in /drivers/net/skeleton.c)&n; *        - Implement Multicast addressing. At minimum something like&n; *          in depca.c. &n; *        - Redo the statistics part.&n; *        - Try to find out if the board is in 8 Bit or 16 Bit slot.&n; *          If in 8 Bit mode don&squot;t use IRQ 11.&n; *        - (Try to make it slightly faster.) &n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
@@ -159,13 +159,6 @@ mdefine_line|#define PKT_BUF_SZ              1518
 multiline_comment|/* &n; * The number of low I/O ports used by the ethercard. &n; */
 DECL|macro|ETHERCARD_TOTAL_SIZE
 mdefine_line|#define ETHERCARD_TOTAL_SIZE    SK_POS_SIZE
-multiline_comment|/* &n; * Portreserve is there to mark the Card I/O Port region as used. &n; * Check_region is to check if the region at ioaddr with the size &quot;size&quot; &n; * is free or not.&n; * Snarf_region allocates the I/O Port region.&n; */
-macro_line|#ifndef HAVE_PORTRESERVE
-DECL|macro|check_region
-mdefine_line|#define check_region(ioaddr, size)              0
-DECL|macro|request_region
-mdefine_line|#define request_region(ioaddr, size,name)       do ; while (0)
-macro_line|#endif
 multiline_comment|/* &n; * SK_DEBUG&n; *&n; * Here you can choose what level of debugging wanted.&n; *&n; * If SK_DEBUG and SK_DEBUG2 are undefined, then only the&n; *  necessary messages will be printed.&n; *&n; * If SK_DEBUG is defined, there will be many debugging prints&n; *  which can help to find some mistakes in configuration or even&n; *  in the driver code.&n; *&n; * If SK_DEBUG2 is defined, many many messages will be printed &n; *  which normally you don&squot;t need. I used this to check the interrupt&n; *  routine. &n; *&n; * (If you define only SK_DEBUG2 then only the messages for &n; *  checking interrupts will be printed!)&n; *&n; * Normal way of live is: &n; *&n; * For the whole thing get going let both symbolic constants&n; * undefined. If you face any problems and you know what&squot;s going&n; * on (you know something about the card and you can interpret some&n; * hex LANCE register output) then define SK_DEBUG&n; * &n; */
 DECL|macro|SK_DEBUG
 macro_line|#undef  SK_DEBUG&t;/* debugging */
@@ -2170,6 +2163,10 @@ id|mode
 r_int
 id|i
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_struct
 id|priv
 op_star
@@ -2247,8 +2244,9 @@ id|p-&gt;tmdhead
 op_plus
 id|i
 suffix:semicolon
-id|tmdp-&gt;u.buffer
-op_assign
+id|writel
+c_func
+(paren
 (paren
 r_int
 r_int
@@ -2257,14 +2255,21 @@ id|p-&gt;tmdbufs
 (braket
 id|i
 )braket
+comma
+id|tmdp-&gt;u.buffer
+)paren
 suffix:semicolon
 multiline_comment|/* assign buffer */
 multiline_comment|/* Mark TMD as start and end of packet */
-id|tmdp-&gt;u.s.status
-op_assign
+id|writeb
+c_func
+(paren
 id|TX_STP
 op_or
 id|TX_ENP
+comma
+id|tmdp-&gt;u.s.status
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Initialize RMD&squot;s with start values */
@@ -2295,8 +2300,9 @@ id|p-&gt;rmdhead
 op_plus
 id|i
 suffix:semicolon
-id|rmdp-&gt;u.buffer
-op_assign
+id|writel
+c_func
+(paren
 (paren
 r_int
 r_int
@@ -2305,33 +2311,52 @@ id|p-&gt;rmdbufs
 (braket
 id|i
 )braket
+comma
+id|rmdp-&gt;u.buffer
+)paren
 suffix:semicolon
 multiline_comment|/* assign buffer */
 multiline_comment|/* &n;         * LANCE must be owner at beginning so that he can fill in &n;&t; * receiving packets, set status and release RMD &n;&t; */
-id|rmdp-&gt;u.s.status
-op_assign
+id|writeb
+c_func
+(paren
 id|RX_OWN
+comma
+id|rmdp-&gt;u.s.status
+)paren
 suffix:semicolon
-id|rmdp-&gt;blen
-op_assign
+id|writew
+c_func
+(paren
 op_minus
 id|PKT_BUF_SZ
+comma
+id|rmdp-&gt;blen
+)paren
 suffix:semicolon
-multiline_comment|/* Buffer Size in a two&squot;s complement */
-id|rmdp-&gt;mlen
-op_assign
+multiline_comment|/* Buffer Size (two&squot;s complement) */
+id|writeb
+c_func
+(paren
 l_int|0
+comma
+id|rmdp-&gt;mlen
+)paren
 suffix:semicolon
 multiline_comment|/* init message length */
 )brace
 multiline_comment|/* Fill LANCE Initialize Block */
+id|writew
+c_func
+(paren
+id|mode
+comma
 (paren
 id|p-&gt;ram
 )paren
 op_member_access_from_pointer
 id|ib.mode
-op_assign
-id|mode
+)paren
 suffix:semicolon
 multiline_comment|/* Set operation mode */
 r_for
@@ -2350,6 +2375,14 @@ op_increment
 )paren
 multiline_comment|/* Set physical address */
 (brace
+id|writeb
+c_func
+(paren
+id|dev-&gt;dev_addr
+(braket
+id|i
+)braket
+comma
 (paren
 id|p-&gt;ram
 )paren
@@ -2358,11 +2391,7 @@ id|ib.paddr
 (braket
 id|i
 )braket
-op_assign
-id|dev-&gt;dev_addr
-(braket
-id|i
-)braket
+)paren
 suffix:semicolon
 )brace
 r_for
@@ -2381,6 +2410,11 @@ op_increment
 )paren
 multiline_comment|/* Set multicast, logical address */
 (brace
+id|writeb
+c_func
+(paren
+l_int|0
+comma
 (paren
 id|p-&gt;ram
 )paren
@@ -2389,39 +2423,52 @@ id|ib.laddr
 (braket
 id|i
 )braket
-op_assign
-l_int|0
+)paren
 suffix:semicolon
 multiline_comment|/* We do not use logical addressing */
 )brace
 multiline_comment|/* Set ring descriptor pointers and set number of descriptors */
+id|writel
+c_func
 (paren
-id|p-&gt;ram
-)paren
-op_member_access_from_pointer
-id|ib.rdrp
-op_assign
 (paren
 r_int
 )paren
 id|p-&gt;rmdhead
 op_or
 id|RMDNUMMASK
-suffix:semicolon
+comma
 (paren
 id|p-&gt;ram
 )paren
 op_member_access_from_pointer
-id|ib.tdrp
-op_assign
+id|ib.rdrp
+)paren
+suffix:semicolon
+id|writel
+c_func
+(paren
 (paren
 r_int
 )paren
 id|p-&gt;tmdhead
 op_or
 id|TMDNUMMASK
+comma
+(paren
+id|p-&gt;ram
+)paren
+op_member_access_from_pointer
+id|ib.tdrp
+)paren
 suffix:semicolon
 multiline_comment|/* Prepare LANCE Control and Status Registers */
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -2482,9 +2529,10 @@ comma
 id|CSR0_INIT
 )paren
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 multiline_comment|/* Wait until LANCE finished initialization */
@@ -2723,26 +2771,6 @@ id|jiffies
 suffix:semicolon
 multiline_comment|/* Mark Start of transmission */
 )brace
-multiline_comment|/* &n;     * If some upper Layer thinks we missed a transmit done interrupt&n;     * we are passed NULL.&n;     * (dev_queue_xmit net/inet/dev.c &n;     */
-r_if
-c_cond
-(paren
-id|skb
-op_eq
-l_int|NULL
-)paren
-(brace
-multiline_comment|/* &n;         * Dequeue packets from transmit queue and send them.&n;         */
-id|dev_tint
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 id|PRINTK2
 c_func
 (paren
@@ -2827,20 +2855,28 @@ comma
 id|skb-&gt;len
 )paren
 suffix:semicolon
-id|tmdp-&gt;blen
-op_assign
+id|writew
+c_func
+(paren
 op_minus
 id|len
+comma
+id|tmdp-&gt;blen
+)paren
 suffix:semicolon
 multiline_comment|/* set length to transmit */
 multiline_comment|/* &n;&t; * Packet start and end is always set because we use the maximum&n;&t; * packet length as buffer length.&n;&t; * Relinquish ownership to LANCE&n;&t; */
-id|tmdp-&gt;u.s.status
-op_assign
+id|writeb
+c_func
+(paren
 id|TX_OWN
 op_or
 id|TX_STP
 op_or
 id|TX_ENP
+comma
+id|tmdp-&gt;u.s.status
+)paren
 suffix:semicolon
 multiline_comment|/* Start Demand Transmission */
 id|SK_write_reg
@@ -2874,6 +2910,9 @@ c_cond
 (paren
 op_logical_neg
 (paren
+id|readb
+c_func
+(paren
 (paren
 id|p-&gt;tmdhead
 op_plus
@@ -2881,6 +2920,7 @@ id|p-&gt;tmdnum
 )paren
 op_member_access_from_pointer
 id|u.s.status
+)paren
 op_amp
 id|TX_OWN
 )paren
@@ -3180,11 +3220,12 @@ l_int|1
 suffix:semicolon
 id|tmdstat
 op_assign
+id|readb
+c_func
+(paren
 id|tmdp-&gt;u.s.status
-op_amp
-l_int|0xff00
+)paren
 suffix:semicolon
-multiline_comment|/* filter out status bits 15:08 */
 multiline_comment|/* &n;     * We check status of transmitted packet.&n;     * see LANCE data-sheet for error explanation&n;     */
 r_if
 c_cond
@@ -3195,6 +3236,15 @@ id|TX_ERR
 )paren
 multiline_comment|/* Error occurred */
 (brace
+r_int
+id|stat2
+op_assign
+id|readw
+c_func
+(paren
+id|tmdp-&gt;status2
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -3202,21 +3252,15 @@ l_string|&quot;%s: TX error: %04x %04x&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
-(paren
-r_int
-)paren
 id|tmdstat
 comma
-(paren
-r_int
-)paren
-id|tmdp-&gt;status2
+id|stat2
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|tmdp-&gt;status2
+id|stat2
 op_amp
 id|TX_TDR
 )paren
@@ -3234,7 +3278,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|tmdp-&gt;status2
+id|stat2
 op_amp
 id|TX_RTRY
 )paren
@@ -3245,7 +3289,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|tmdp-&gt;status2
+id|stat2
 op_amp
 id|TX_LCOL
 )paren
@@ -3256,7 +3300,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|tmdp-&gt;status2
+id|stat2
 op_amp
 id|TX_LCAR
 )paren
@@ -3267,7 +3311,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|tmdp-&gt;status2
+id|stat2
 op_amp
 id|TX_UFLO
 )paren
@@ -3289,9 +3333,13 @@ suffix:semicolon
 id|p-&gt;stats.tx_errors
 op_increment
 suffix:semicolon
-id|tmdp-&gt;status2
-op_assign
+id|writew
+c_func
+(paren
 l_int|0
+comma
+id|tmdp-&gt;status2
+)paren
 suffix:semicolon
 multiline_comment|/* Clear error flags */
 )brace
@@ -3305,7 +3353,7 @@ id|TX_MORE
 )paren
 multiline_comment|/* Collisions occurred ? */
 (brace
-multiline_comment|/* &n;         * Here I have a problem.&n;         * I only know that there must be one or up to 15 collisions.&n;         * That&squot;s why TX_MORE is set, because after 16 attempts TX_RTRY&n;         * will be set which means couldn&squot;t send packet aborted transfer.&n;         *&n;         * First I did not have this in but then I thought at minimum&n;         * we see that something was not ok.&n;         * If anyone knows something better than this to handle this&n;         * please report it. (see Email addresses in the README file)&n;         */
+multiline_comment|/* &n;         * Here I have a problem.&n;         * I only know that there must be one or up to 15 collisions.&n;         * That&squot;s why TX_MORE is set, because after 16 attempts TX_RTRY&n;         * will be set which means couldn&squot;t send packet aborted transfer.&n;         *&n;         * First I did not have this in but then I thought at minimum&n;         * we see that something was not ok.&n;         * If anyone knows something better than this to handle this&n;         * please report it.&n;         */
 id|p-&gt;stats.collisions
 op_increment
 suffix:semicolon
@@ -3396,7 +3444,11 @@ op_logical_neg
 (paren
 id|rmdstat
 op_assign
+id|readb
+c_func
+(paren
 id|rmdp-&gt;u.s.status
+)paren
 )paren
 op_amp
 id|RX_OWN
@@ -3451,9 +3503,13 @@ id|dev-&gt;name
 suffix:semicolon
 )brace
 multiline_comment|/* &n;             * All other packets will be ignored until a new frame with&n;&t;     * start (RX_STP) set follows.&n;&t;     * &n;&t;     * What we do is just give descriptor free for new incoming&n;&t;     * packets. &n;&t;     */
-id|rmdp-&gt;u.s.status
-op_assign
+id|writeb
+c_func
+(paren
 id|RX_OWN
+comma
+id|rmdp-&gt;u.s.status
+)paren
 suffix:semicolon
 multiline_comment|/* Relinquish ownership to LANCE */
 )brace
@@ -3503,9 +3559,13 @@ id|RX_CRC
 id|p-&gt;stats.rx_crc_errors
 op_increment
 suffix:semicolon
-id|rmdp-&gt;u.s.status
-op_assign
+id|writeb
+c_func
+(paren
 id|RX_OWN
+comma
+id|rmdp-&gt;u.s.status
+)paren
 suffix:semicolon
 multiline_comment|/* Relinquish ownership to LANCE */
 )brace
@@ -3515,11 +3575,13 @@ multiline_comment|/* We have a packet which can be queued for the upper layers *
 r_int
 id|len
 op_assign
+id|readw
+c_func
 (paren
 id|rmdp-&gt;mlen
+)paren
 op_amp
 l_int|0x0fff
-)paren
 suffix:semicolon
 multiline_comment|/* extract message length from receive buffer */
 r_struct
@@ -3548,9 +3610,13 @@ l_int|NULL
 multiline_comment|/* Could not get mem ? */
 (brace
 multiline_comment|/* &n;                 * Couldn&squot;t allocate sk_buffer so we give descriptor back&n;&t;&t; * to Lance, update statistics and go ahead.&n;&t;&t; */
-id|rmdp-&gt;u.s.status
-op_assign
+id|writeb
+c_func
+(paren
 id|RX_OWN
+comma
+id|rmdp-&gt;u.s.status
+)paren
 suffix:semicolon
 multiline_comment|/* Relinquish ownership to LANCE */
 id|printk
@@ -3622,9 +3688,13 @@ id|skb
 suffix:semicolon
 multiline_comment|/* queue packet and mark it for processing */
 multiline_comment|/* &n;             * Packet is queued and marked for processing so we&n;&t;     * free our descriptor and update statistics &n;&t;     */
-id|rmdp-&gt;u.s.status
-op_assign
+id|writeb
+c_func
+(paren
 id|RX_OWN
+comma
+id|rmdp-&gt;u.s.status
+)paren
 suffix:semicolon
 id|p-&gt;stats.rx_packets
 op_increment

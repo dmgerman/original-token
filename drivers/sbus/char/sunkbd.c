@@ -103,6 +103,30 @@ op_assign
 l_int|0x00
 suffix:semicolon
 multiline_comment|/* To make kernel/ksyms.c happy */
+DECL|variable|keypress_wait
+r_struct
+id|wait_queue
+op_star
+id|keypress_wait
+op_assign
+l_int|NULL
+suffix:semicolon
+DECL|function|keyboard_wait_for_keypress
+r_void
+id|keyboard_wait_for_keypress
+c_func
+(paren
+r_void
+)paren
+(brace
+id|sleep_on
+c_func
+(paren
+op_amp
+id|keypress_wait
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * global state includes the following, and various static variables&n; * in this module: prev_scancode, shift_state, diacr, npadch, dead_key_next.&n; * (last_console is now a global variable)&n; */
 multiline_comment|/* shift state counters.. */
 DECL|variable|k_down
@@ -6172,7 +6196,7 @@ l_int|0
 suffix:semicolon
 )brace
 r_static
-r_void
+r_int
 DECL|function|kbd_close
 id|kbd_close
 (paren
@@ -6227,6 +6251,9 @@ id|f
 comma
 l_int|0
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 r_static

@@ -1,7 +1,5 @@
 multiline_comment|/* dummy.c: a dummy net driver&n;&n;&t;The purpose of this driver is to provide a device to point a&n;&t;route through, but not to actually transmit packets.&n;&n;&t;Why?  If you have a machine whose only connection is an occasional&n;&t;PPP/SLIP/PLIP link, you can only connect to your own hostname&n;&t;when the link is up.  Otherwise you have to use localhost.&n;&t;This isn&squot;t very consistent.&n;&n;&t;One solution is to set up a dummy link using PPP/SLIP/PLIP,&n;&t;but this seems (to me) too much overhead for too little gain.&n;&t;This driver provides a small alternative. Thus you can do&n;&t;&n;&t;[when not running slip]&n;&t;&t;ifconfig dummy slip.addr.ess.here up&n;&t;[to go to slip]&n;&t;&t;ifconfig dummy down&n;&t;&t;dip whatever&n;&n;&t;This was written by looking at Donald Becker&squot;s skeleton driver&n;&t;and the loopback driver.  I then threw away anything that didn&squot;t&n;&t;apply!&t;Thanks to Alan Cox for the key clue on what to do with&n;&t;misguided packets.&n;&n;&t;&t;&t;Nick Holloway, 27th May 1994&n;&t;[I tweaked this explanation a little but that&squot;s all]&n;&t;&t;&t;Alan Cox, 30th May 1994&n;*/
 multiline_comment|/* To have statistics (just packets sent) define this */
-DECL|macro|DUMMY_STATS
-macro_line|#undef DUMMY_STATS
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -37,7 +35,6 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-macro_line|#ifdef DUMMY_STATS
 r_static
 r_struct
 id|net_device_stats
@@ -51,7 +48,6 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-macro_line|#endif
 DECL|function|dummy_open
 r_static
 r_int
@@ -88,6 +84,20 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* fake multicast ability */
+DECL|function|set_multicast_list
+r_static
+r_void
+id|set_multicast_list
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+(brace
+)brace
 DECL|function|dummy_init
 r_int
 id|dummy_init
@@ -99,14 +109,11 @@ op_star
 id|dev
 )paren
 (brace
-multiline_comment|/* I commented this out as bootup is noisy enough anyway and this driver&n;   seems pretty reliable 8) 8) 8) */
-multiline_comment|/*&t;printk ( KERN_INFO &quot;Dummy net driver (94/05/27 v1.0)&bslash;n&quot; ); */
 multiline_comment|/* Initialize the device structure. */
 id|dev-&gt;hard_start_xmit
 op_assign
 id|dummy_xmit
 suffix:semicolon
-macro_line|#if DUMMY_STATS
 id|dev-&gt;priv
 op_assign
 id|kmalloc
@@ -150,7 +157,6 @@ id|dev-&gt;get_stats
 op_assign
 id|dummy_get_stats
 suffix:semicolon
-macro_line|#endif
 id|dev-&gt;open
 op_assign
 id|dummy_open
@@ -158,6 +164,10 @@ suffix:semicolon
 id|dev-&gt;stop
 op_assign
 id|dummy_close
+suffix:semicolon
+id|dev-&gt;set_multicast_list
+op_assign
+id|set_multicast_list
 suffix:semicolon
 multiline_comment|/* Fill in the fields of the device structure with ethernet-generic values. */
 id|ether_setup
@@ -178,9 +188,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|dummy_xmit
 r_static
 r_int
-DECL|function|dummy_xmit
 id|dummy_xmit
 c_func
 (paren
@@ -195,13 +205,11 @@ op_star
 id|dev
 )paren
 (brace
-macro_line|#if DUMMY_STATS
 r_struct
 id|net_device_stats
 op_star
 id|stats
 suffix:semicolon
-macro_line|#endif
 id|dev_kfree_skb
 c_func
 (paren
@@ -210,7 +218,6 @@ comma
 id|FREE_WRITE
 )paren
 suffix:semicolon
-macro_line|#if DUMMY_STATS
 id|stats
 op_assign
 (paren
@@ -223,12 +230,14 @@ suffix:semicolon
 id|stats-&gt;tx_packets
 op_increment
 suffix:semicolon
-macro_line|#endif
+id|stats-&gt;tx_bytes
+op_add_assign
+id|skb-&gt;len
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#if DUMMY_STATS
 DECL|function|dummy_get_stats
 r_static
 r_struct
@@ -259,7 +268,6 @@ r_return
 id|stats
 suffix:semicolon
 )brace
-macro_line|#endif
 macro_line|#ifdef MODULE
 DECL|function|dummy_probe
 r_static
@@ -283,6 +291,14 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|variable|dummy_name
+r_static
+r_char
+id|dummy_name
+(braket
+l_int|16
+)braket
+suffix:semicolon
 DECL|variable|dev_dummy
 r_static
 r_struct
@@ -290,8 +306,9 @@ id|device
 id|dev_dummy
 op_assign
 (brace
-l_string|&quot;dummy0&bslash;0   &quot;
+id|dummy_name
 comma
+multiline_comment|/* Needs to be writeable */
 l_int|0
 comma
 l_int|0
@@ -325,51 +342,25 @@ r_void
 (brace
 multiline_comment|/* Find a name for this unit */
 r_int
-id|ct
+id|err
 op_assign
-l_int|1
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|dev_get
+id|dev_alloc_name
 c_func
 (paren
-id|dev_dummy.name
-)paren
-op_ne
-l_int|NULL
-op_logical_and
-id|ct
-OL
-l_int|100
-)paren
-(brace
-id|sprintf
-c_func
-(paren
-id|dev_dummy.name
+op_amp
+id|dev_dummy
 comma
 l_string|&quot;dummy%d&quot;
-comma
-id|ct
 )paren
 suffix:semicolon
-id|ct
-op_increment
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
-id|ct
-op_eq
-l_int|100
+id|err
 )paren
 (brace
 r_return
-op_minus
-id|ENFILE
+id|err
 suffix:semicolon
 )brace
 r_if

@@ -30,7 +30,6 @@ mdefine_line|#define PER_XENIX&t;&t;(0x0007 | STICKY_TIMEOUTS)
 multiline_comment|/* Prototype for an lcall7 syscall handler. */
 DECL|typedef|lcall7_func
 r_typedef
-id|asmlinkage
 r_void
 (paren
 op_star

@@ -7391,7 +7391,7 @@ id|AF_INET
 id|printk
 c_func
 (paren
-id|KERN_WARNING
+id|KERN_DEBUG
 l_string|&quot;%s forgot to specify route netmask.&bslash;n&quot;
 comma
 id|current-&gt;comm

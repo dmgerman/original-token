@@ -494,7 +494,7 @@ suffix:semicolon
 )brace
 DECL|function|initrd_release
 r_static
-r_void
+r_int
 id|initrd_release
 c_func
 (paren
@@ -544,6 +544,9 @@ id|i
 suffix:semicolon
 id|initrd_start
 op_assign
+l_int|0
+suffix:semicolon
+r_return
 l_int|0
 suffix:semicolon
 )brace
@@ -663,7 +666,7 @@ suffix:semicolon
 macro_line|#ifdef MODULE
 DECL|function|rd_release
 r_static
-r_void
+r_int
 id|rd_release
 c_func
 (paren
@@ -679,6 +682,9 @@ id|filp
 )paren
 (brace
 id|MOD_DEC_USE_COUNT
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif

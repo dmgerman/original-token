@@ -4085,6 +4085,10 @@ suffix:semicolon
 id|p-&gt;stats.rx_packets
 op_increment
 suffix:semicolon
+id|p-&gt;stats.rx_bytes
+op_add_assign
+id|totlen
+suffix:semicolon
 )brace
 r_else
 (brace

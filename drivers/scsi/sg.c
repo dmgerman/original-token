@@ -681,7 +681,7 @@ suffix:semicolon
 )brace
 DECL|function|sg_close
 r_static
-r_void
+r_int
 id|sg_close
 c_func
 (paren
@@ -767,6 +767,9 @@ id|dev
 dot
 id|generic_wait
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|sg_malloc

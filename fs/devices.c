@@ -1077,7 +1077,7 @@ id|ret
 suffix:semicolon
 )brace
 DECL|function|blkdev_release
-r_void
+r_int
 id|blkdev_release
 c_func
 (paren
@@ -1109,6 +1109,7 @@ id|fops
 op_logical_and
 id|fops-&gt;release
 )paren
+r_return
 id|fops
 op_member_access_from_pointer
 id|release
@@ -1118,6 +1119,9 @@ id|inode
 comma
 l_int|NULL
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Dummy default file-operations: the only thing this does&n; * is contain the open that then fills in the correct operations&n; * depending on the special file...&n; */

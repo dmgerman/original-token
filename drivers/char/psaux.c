@@ -712,7 +712,7 @@ suffix:semicolon
 macro_line|#endif
 DECL|function|release_aux
 r_static
-r_void
+r_int
 id|release_aux
 c_func
 (paren
@@ -744,6 +744,7 @@ op_decrement
 id|aux_count
 )paren
 r_return
+l_int|0
 suffix:semicolon
 multiline_comment|/* disable kbd bh to avoid mixing of cmd bytes */
 id|disable_bh
@@ -806,11 +807,14 @@ suffix:semicolon
 macro_line|#endif
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_82C710_MOUSE
 DECL|function|release_qp
 r_static
-r_void
+r_int
 id|release_qp
 c_func
 (paren
@@ -842,11 +846,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 op_decrement
 id|qp_count
 )paren
-r_return
-suffix:semicolon
+(brace
 r_if
 c_cond
 (paren
@@ -909,6 +913,10 @@ l_int|NULL
 )paren
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
+suffix:semicolon
+)brace
+r_return
+l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
@@ -1916,10 +1924,12 @@ id|aux_present
 op_assign
 l_int|1
 suffix:semicolon
+macro_line|#ifdef CONFIG_VT
 id|kbd_read_mask
 op_assign
 id|AUX_OBUF_FULL
 suffix:semicolon
+macro_line|#endif
 )brace
 r_else
 (brace

@@ -1506,10 +1506,6 @@ id|NR_CPUS
 suffix:semicolon
 DECL|macro|irq_active
 mdefine_line|#define irq_active(cpu) &bslash;&n;&t;(global_irq_count != local_irq_count[cpu])
-DECL|macro|INIT_STUCK
-mdefine_line|#define INIT_STUCK 10000000
-DECL|macro|STUCK
-mdefine_line|#define STUCK(x) &bslash;&n;if (!--stuck) {printk(#x &quot; stuck at %08lx, waiting for %08lx&bslash;n&quot;, where, previous); stuck = INIT_STUCK;}
 multiline_comment|/*&n; * &quot;global_cli()&quot; is a special case, in that it can hold the&n; * interrupts disabled for a longish time, and also because&n; * we may be doing TLB invalidates when holding the global&n; * IRQ lock for historical reasons. Thus we may need to check&n; * SMP invalidate events specially by hand here (but not in&n; * any normal spinlocks)&n; */
 DECL|function|check_smp_invalidate
 r_static
@@ -1551,11 +1547,25 @@ c_func
 suffix:semicolon
 )brace
 )brace
-DECL|function|get_irqlock
+DECL|variable|previous_irqholder
+r_static
+r_int
+r_int
+id|previous_irqholder
+suffix:semicolon
+DECL|macro|INIT_STUCK
+macro_line|#undef INIT_STUCK
+DECL|macro|INIT_STUCK
+mdefine_line|#define INIT_STUCK 10000000
+DECL|macro|STUCK
+macro_line|#undef STUCK
+DECL|macro|STUCK
+mdefine_line|#define STUCK &bslash;&n;if (!--stuck) {printk(&quot;wait_on_irq stuck at %08lx, waiting for %08lx (local=%d, global=%d)&bslash;n&quot;, where, previous_irqholder, local_count, global_irq_count); stuck = INIT_STUCK;}
+DECL|function|wait_on_irq
 r_static
 r_inline
 r_void
-id|get_irqlock
+id|wait_on_irq
 c_func
 (paren
 r_int
@@ -1566,93 +1576,12 @@ r_int
 id|where
 )paren
 (brace
-r_static
-r_int
-r_int
-id|previous
-suffix:semicolon
-r_int
-id|local_count
-suffix:semicolon
 r_int
 id|stuck
 op_assign
 id|INIT_STUCK
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|set_bit
-c_func
-(paren
-l_int|0
-comma
-op_amp
-id|global_irq_lock
-)paren
-)paren
-(brace
-multiline_comment|/* do we already hold the lock? */
-r_if
-c_cond
-(paren
-(paren
 r_int
-r_char
-)paren
-id|cpu
-op_eq
-id|global_irq_holder
-)paren
-r_return
-suffix:semicolon
-multiline_comment|/* Uhhuh.. Somebody else got it. Wait.. */
-r_do
-(brace
-r_do
-(brace
-id|STUCK
-c_func
-(paren
-id|irqlock1
-)paren
-suffix:semicolon
-id|check_smp_invalidate
-c_func
-(paren
-id|cpu
-)paren
-suffix:semicolon
-)brace
-r_while
-c_loop
-(paren
-id|test_bit
-c_func
-(paren
-l_int|0
-comma
-op_amp
-id|global_irq_lock
-)paren
-)paren
-suffix:semicolon
-)brace
-r_while
-c_loop
-(paren
-id|set_bit
-c_func
-(paren
-l_int|0
-comma
-op_amp
-id|global_irq_lock
-)paren
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n;&t; * Ok, we got the lock bit.&n;&t; * But that&squot;s actually just the easy part.. Now&n;&t; * we need to make sure that nobody else is running&n;&t; * in an interrupt context. &n;&t; */
 id|local_count
 op_assign
 id|local_irq_count
@@ -1692,10 +1621,6 @@ suffix:semicolon
 )paren
 (brace
 id|STUCK
-c_func
-(paren
-id|irqlock2
-)paren
 suffix:semicolon
 id|check_smp_invalidate
 c_func
@@ -1743,12 +1668,119 @@ id|global_irq_count
 )paren
 suffix:semicolon
 )brace
+)brace
+DECL|macro|INIT_STUCK
+macro_line|#undef INIT_STUCK
+DECL|macro|INIT_STUCK
+mdefine_line|#define INIT_STUCK 10000000
+DECL|macro|STUCK
+macro_line|#undef STUCK
+DECL|macro|STUCK
+mdefine_line|#define STUCK &bslash;&n;if (!--stuck) {printk(&quot;get_irqlock stuck at %08lx, waiting for %08lx&bslash;n&quot;, where, previous_irqholder); stuck = INIT_STUCK;}
+DECL|function|get_irqlock
+r_static
+r_inline
+r_void
+id|get_irqlock
+c_func
+(paren
+r_int
+id|cpu
+comma
+r_int
+r_int
+id|where
+)paren
+(brace
+r_int
+id|stuck
+op_assign
+id|INIT_STUCK
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|set_bit
+c_func
+(paren
+l_int|0
+comma
+op_amp
+id|global_irq_lock
+)paren
+)paren
+(brace
+multiline_comment|/* do we already hold the lock? */
+r_if
+c_cond
+(paren
+(paren
+r_int
+r_char
+)paren
+id|cpu
+op_eq
+id|global_irq_holder
+)paren
+r_return
+suffix:semicolon
+multiline_comment|/* Uhhuh.. Somebody else got it. Wait.. */
+r_do
+(brace
+r_do
+(brace
+id|STUCK
+suffix:semicolon
+id|check_smp_invalidate
+c_func
+(paren
+id|cpu
+)paren
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+id|test_bit
+c_func
+(paren
+l_int|0
+comma
+op_amp
+id|global_irq_lock
+)paren
+)paren
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+id|set_bit
+c_func
+(paren
+l_int|0
+comma
+op_amp
+id|global_irq_lock
+)paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; * Ok, we got the lock bit.&n;&t; * But that&squot;s actually just the easy part.. Now&n;&t; * we need to make sure that nobody else is running&n;&t; * in an interrupt context. &n;&t; */
+id|wait_on_irq
+c_func
+(paren
+id|cpu
+comma
+id|where
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * Finally.&n;&t; */
 id|global_irq_holder
 op_assign
 id|cpu
 suffix:semicolon
-id|previous
+id|previous_irqholder
 op_assign
 id|where
 suffix:semicolon
@@ -2021,9 +2053,9 @@ suffix:semicolon
 )brace
 macro_line|#else
 DECL|macro|irq_enter
-mdefine_line|#define irq_enter(cpu, irq)&t;do { } while (0)
+mdefine_line|#define irq_enter(cpu, irq)&t;(++intr_count)
 DECL|macro|irq_exit
-mdefine_line|#define irq_exit(cpu, irq)&t;do { } while (0)
+mdefine_line|#define irq_exit(cpu, irq)&t;(--intr_count)
 macro_line|#endif
 multiline_comment|/*&n; * do_IRQ handles IRQ&squot;s that have been installed without the&n; * SA_INTERRUPT flag: it uses the full signal-handling return&n; * and runs with other interrupts enabled. All relatively slow&n; * IRQ&squot;s should use this format: notably the keyboard/timer&n; * routines.&n; */
 DECL|function|do_IRQ

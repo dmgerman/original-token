@@ -342,7 +342,7 @@ op_assign
 id|htons
 c_func
 (paren
-id|ETH_P_8022
+id|ETH_P_802_2
 )paren
 suffix:semicolon
 )brace

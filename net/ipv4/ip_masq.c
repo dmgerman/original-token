@@ -233,6 +233,7 @@ id|IP_MASQ_F_HASHED
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;ip_masq_hash(): request for already hashed&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -339,6 +340,7 @@ id|IP_MASQ_F_HASHED
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;ip_masq_unhash(): request for unhash flagged&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1129,6 +1131,7 @@ l_int|5
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;ip_masq_new(proto=%s): no free ports.&bslash;n&quot;
 comma
 id|masq_proto_name
@@ -1180,6 +1183,7 @@ l_int|5
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;ip_masq_new(proto=%s): no memory available.&bslash;n&quot;
 comma
 id|masq_proto_name
@@ -1418,6 +1422,7 @@ l_int|5
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;ip_masq_new(proto=%s): could not get free masq entry (free=%d).&bslash;n&quot;
 comma
 id|masq_proto_name

@@ -657,12 +657,6 @@ r_int
 id|kmsg_redirect
 suffix:semicolon
 r_extern
-r_struct
-id|wait_queue
-op_star
-id|keypress_wait
-suffix:semicolon
-r_extern
 r_int
 r_int
 id|con_init
@@ -1051,6 +1045,19 @@ r_int
 id|arg
 )paren
 suffix:semicolon
+multiline_comment|/* serial.c */
+r_extern
+r_int
+id|serial_console_init
+c_func
+(paren
+r_int
+id|kmem_start
+comma
+r_int
+id|kmem_end
+)paren
+suffix:semicolon
 multiline_comment|/* pcxx.c */
 r_extern
 r_int
@@ -1070,22 +1077,6 @@ id|filp
 suffix:semicolon
 multiline_comment|/* console.c */
 r_extern
-r_int
-id|con_open
-c_func
-(paren
-r_struct
-id|tty_struct
-op_star
-id|tty
-comma
-r_struct
-id|file
-op_star
-id|filp
-)paren
-suffix:semicolon
-r_extern
 r_void
 id|update_screen
 c_func
@@ -1094,6 +1085,7 @@ r_int
 id|new_console
 )paren
 suffix:semicolon
+multiline_comment|/* printk.c */
 r_extern
 r_void
 id|console_print

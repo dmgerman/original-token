@@ -235,6 +235,7 @@ c_func
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;IP: frag_create: no memory left !&bslash;n&quot;
 )paren
 )paren
@@ -728,6 +729,7 @@ c_func
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;IP: create: no memory left !&bslash;n&quot;
 )paren
 )paren
@@ -788,6 +790,7 @@ c_func
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;IP: create: no memory left !&bslash;n&quot;
 )paren
 )paren
@@ -1035,6 +1038,7 @@ l_int|65535
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Oversized IP packet from %s.&bslash;n&quot;
 comma
 id|in_ntoa
@@ -1082,6 +1086,7 @@ c_func
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;IP: queue_glue: no memory for gluing queue %p&bslash;n&quot;
 comma
 id|qp
@@ -1170,6 +1175,7 @@ c_func
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Invalid fragment list: Fragment over size.&bslash;n&quot;
 )paren
 )paren
@@ -1564,6 +1570,7 @@ l_int|65535
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Oversized packet received from %s&bslash;n&quot;
 comma
 id|in_ntoa

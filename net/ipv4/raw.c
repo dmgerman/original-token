@@ -996,6 +996,7 @@ op_increment
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;%s forgot to set AF_INET in raw sendmsg. Fix it!&bslash;n&quot;
 comma
 id|current-&gt;comm

@@ -1,6 +1,8 @@
 macro_line|#ifndef __I386_SMPLOCK_H
 DECL|macro|__I386_SMPLOCK_H
 mdefine_line|#define __I386_SMPLOCK_H
+DECL|macro|__STR
+mdefine_line|#define __STR(x) #x
 macro_line|#ifndef __SMP__
 DECL|macro|lock_kernel
 mdefine_line|#define lock_kernel()&t;&t;&t;&t;do { } while(0)
@@ -169,13 +171,13 @@ id|movb
 op_mod
 l_int|1
 comma
-id|active_kernel_processor
+l_string|&quot; __STR(active_kernel_processor) &quot;
 id|lock
 id|btrl
 "$"
 l_int|0
 comma
-id|kernel_flag
+l_string|&quot; __STR(kernel_flag) &quot;
 l_int|1
 suffix:colon
 id|popfl

@@ -9460,6 +9460,10 @@ suffix:semicolon
 id|lp-&gt;stats.rx_packets
 op_increment
 suffix:semicolon
+id|lp-&gt;stats.rx_bytes
+op_add_assign
+id|sksize
+suffix:semicolon
 macro_line|#ifdef DEBUG_RX_TRACE
 id|printk
 c_func

@@ -2441,7 +2441,7 @@ id|k
 suffix:semicolon
 )brace
 DECL|function|property_release
-r_void
+r_int
 id|property_release
 (paren
 r_struct
@@ -2482,6 +2482,7 @@ op_logical_neg
 id|op
 )paren
 r_return
+l_int|0
 suffix:semicolon
 id|node
 op_assign
@@ -2766,6 +2767,9 @@ id|kfree
 (paren
 id|filp-&gt;private_data
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|variable|openpromfs_prop_ops

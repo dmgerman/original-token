@@ -64,7 +64,7 @@ suffix:semicolon
 )brace
 DECL|function|kmsg_release
 r_static
-r_void
+r_int
 id|kmsg_release
 c_func
 (paren
@@ -91,6 +91,9 @@ l_int|NULL
 comma
 l_int|0
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|kmsg_read

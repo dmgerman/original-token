@@ -334,6 +334,8 @@ DECL|macro|__NR_setresuid
 mdefine_line|#define __NR_setresuid&t;&t;164
 DECL|macro|__NR_getresuid
 mdefine_line|#define __NR_getresuid&t;&t;165
+DECL|macro|__NR_nfsservctl
+mdefine_line|#define __NR_nfsservctl&t;&t;166
 multiline_comment|/* user-visible error numbers are in the range -1 - -122: see&n;   &lt;asm-m68k/errno.h&gt; */
 DECL|macro|__syscall_return
 mdefine_line|#define __syscall_return(type, res) &bslash;&n;do { &bslash;&n;&t;if ((unsigned long)(res) &gt;= (unsigned long)(-125)) { &bslash;&n;&t;&t;errno = -(res); &bslash;&n;&t;&t;res = -1; &bslash;&n;&t;} &bslash;&n;&t;return (type) (res); &bslash;&n;} while (0)

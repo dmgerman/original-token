@@ -1121,6 +1121,12 @@ id|socket
 op_star
 id|socket
 suffix:semicolon
+multiline_comment|/*&n;   *&t;RPC layer private data&n;   */
+DECL|member|user_data
+r_void
+op_star
+id|user_data
+suffix:semicolon
 multiline_comment|/*&n;   *&t;Callbacks &n;   */
 DECL|member|state_change
 r_void

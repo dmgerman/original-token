@@ -1,5 +1,5 @@
 multiline_comment|/* cs89x0.c: A Crystal Semiconductor CS89[02]0 driver for linux. */
-multiline_comment|/*&n;&t;Written 1996 by Russell Nelson, with reference to skeleton.c&n;&t;written 1993-1994 by Donald Becker.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;The author may be reached at nelson@crynwr.com, Crynwr&n;&t;Software, 11 Grant St., Potsdam, NY 13676&n;&n;  Changelog:&n;&n;  Mike Cruse        : mcruse@cti-ltd.com&n;                    : Changes for Linux 2.0 compatibility. &n;                    : Added dev_id parameter in net_interrupt(),&n;                    : request_irq() and free_irq(). Just NULL for now.&n;&n;  Mike Cruse        : Added MOD_INC_USE_COUNT and MOD_DEC_USE_COUNT macros&n;                    : in net_open() and net_close() so kerneld would know&n;                    : that the module is in use and wouldn&squot;t eject the &n;                    : driver prematurely.&n;&n;  Mike Cruse        : Rewrote init_module() and cleanup_module using 8390.c&n;                    : as an example. Disabled autoprobing in init_module(),&n;                    : not a good thing to do to other devices while Linux&n;                    : is running from all accounts.&n;*/
+multiline_comment|/*&n;&t;Written 1996 by Russell Nelson, with reference to skeleton.c&n;&t;written 1993-1994 by Donald Becker.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;The author may be reached at nelson@crynwr.com, Crynwr&n;&t;Software, 11 Grant St., Potsdam, NY 13676&n;&n;  Changelog:&n;&n;  Mike Cruse        : mcruse@cti-ltd.com&n;                    : Changes for Linux 2.0 compatibility. &n;                    : Added dev_id parameter in net_interrupt(),&n;                    : request_irq() and free_irq(). Just NULL for now.&n;&n;  Mike Cruse        : Added MOD_INC_USE_COUNT and MOD_DEC_USE_COUNT macros&n;                    : in net_open() and net_close() so kerneld would know&n;                    : that the module is in use and wouldn&squot;t eject the &n;                    : driver prematurely.&n;&n;  Mike Cruse        : Rewrote init_module() and cleanup_module using 8390.c&n;                    : as an example. Disabled autoprobing in init_module(),&n;                    : not a good thing to do to other devices while Linux&n;                    : is running from all accounts.&n;                    &n;  Alan Cox          : Removed 1.2 support, added 2.1 extra counters.&n;*/
 DECL|variable|version
 r_static
 r_char
@@ -9,9 +9,6 @@ op_assign
 l_string|&quot;cs89x0.c:v1.02 11/26/96 Russell Nelson &lt;nelson@crynwr.com&gt;&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/* ======================= configure the driver here ======================= */
-multiline_comment|/* we also support 1.2.13 */
-DECL|macro|SUPPORTS_1_2_13
-mdefine_line|#define SUPPORTS_1_2_13 0
 multiline_comment|/* use 0 for production, 1 for verification, &gt;2 for debug */
 macro_line|#ifndef NET_DEBUG
 DECL|macro|NET_DEBUG
@@ -216,40 +213,6 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-macro_line|#if SUPPORTS_1_2_13
-r_static
-r_void
-id|net_interrupt
-c_func
-(paren
-r_int
-id|irq
-comma
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-suffix:semicolon
-r_static
-r_void
-id|set_multicast_list
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_int
-id|num_addrs
-comma
-r_void
-op_star
-id|addrs
-)paren
-suffix:semicolon
-macro_line|#else
 r_static
 r_void
 id|net_interrupt
@@ -279,7 +242,6 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-macro_line|#endif
 r_static
 r_void
 id|net_rx
@@ -519,6 +481,7 @@ id|ENODEV
 suffix:semicolon
 )brace
 macro_line|#endif
+r_static
 r_int
 r_inline
 DECL|function|readreg
@@ -554,6 +517,7 @@ id|DATA_PORT
 )paren
 suffix:semicolon
 )brace
+r_static
 r_void
 r_inline
 DECL|function|writereg
@@ -593,6 +557,7 @@ id|DATA_PORT
 )paren
 suffix:semicolon
 )brace
+r_static
 r_int
 r_inline
 DECL|function|readword
@@ -618,6 +583,7 @@ id|portno
 )paren
 suffix:semicolon
 )brace
+r_static
 r_void
 r_inline
 DECL|function|writeword
@@ -647,6 +613,7 @@ id|portno
 )paren
 suffix:semicolon
 )brace
+r_static
 r_int
 DECL|function|wait_eeprom_ready
 id|wait_eeprom_ready
@@ -1875,6 +1842,7 @@ suffix:semicolon
 )brace
 )brace
 "&f;"
+r_static
 r_void
 DECL|function|control_dc_dc
 id|control_dc_dc
@@ -2176,6 +2144,7 @@ id|A_CNF_MEDIA_10B_T
 suffix:semicolon
 )brace
 multiline_comment|/* send a test packet - return true if carrier bits are ok */
+r_static
 r_int
 DECL|function|send_test_pkt
 id|send_test_pkt
@@ -2467,6 +2436,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+r_static
 r_int
 DECL|function|detect_aui
 id|detect_aui
@@ -2547,6 +2517,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+r_static
 r_int
 DECL|function|detect_bnc
 id|detect_bnc
@@ -2628,6 +2599,7 @@ l_int|0
 suffix:semicolon
 )brace
 "&f;"
+r_static
 r_void
 DECL|function|write_irq
 id|write_irq
@@ -2812,7 +2784,6 @@ op_amp
 id|lp-&gt;irq_map
 )paren
 (brace
-macro_line|#if SUPPORTS_1_2_13
 r_if
 c_cond
 (paren
@@ -2824,26 +2795,7 @@ l_int|NULL
 comma
 l_int|0
 comma
-l_string|&quot;bogus&quot;
-)paren
-op_ne
-op_minus
-id|EBUSY
-)paren
-(brace
-macro_line|#else
-r_if
-c_cond
-(paren
-id|request_irq
-(paren
-id|i
-comma
-l_int|NULL
-comma
-l_int|0
-comma
-l_string|&quot;bogus&quot;
+l_string|&quot;cs8920&quot;
 comma
 l_int|NULL
 )paren
@@ -2852,15 +2804,6 @@ op_minus
 id|EBUSY
 )paren
 (brace
-macro_line|#endif
-macro_line|#if 0
-multiline_comment|/* Twinkle the interrupt, and check if it&squot;s seen. */
-id|autoirq_setup
-c_func
-(paren
-l_int|0
-)paren
-suffix:semicolon
 id|write_irq
 c_func
 (paren
@@ -2884,78 +2827,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|i
-op_eq
-id|autoirq_report
-c_func
-(paren
-l_int|0
-)paren
-multiline_comment|/* It&squot;s a good IRQ line! */
-op_logical_and
-id|request_irq
-(paren
-id|dev-&gt;irq
-op_assign
-id|i
-comma
-op_amp
-id|net_interrupt
-comma
-l_int|0
-comma
-l_string|&quot;cs89x0&quot;
-)paren
-op_eq
-l_int|0
-)paren
-r_break
-suffix:semicolon
-macro_line|#else
-id|write_irq
-c_func
-(paren
-id|dev
-comma
-id|lp-&gt;chip_type
-comma
-id|i
-)paren
-suffix:semicolon
-id|writereg
-c_func
-(paren
-id|dev
-comma
-id|PP_BufCFG
-comma
-id|GENERATE_SW_INTERRUPT
-)paren
-suffix:semicolon
-macro_line|#if SUPPORTS_1_2_13
-r_if
-c_cond
-(paren
-id|request_irq
-(paren
-id|dev-&gt;irq
-op_assign
-id|i
-comma
-op_amp
-id|net_interrupt
-comma
-l_int|0
-comma
-l_string|&quot;cs89x0&quot;
-)paren
-op_eq
-l_int|0
-)paren
-macro_line|#else
-r_if
-c_cond
-(paren
 id|request_irq
 (paren
 id|dev-&gt;irq
@@ -2974,10 +2845,8 @@ l_int|NULL
 op_eq
 l_int|0
 )paren
-macro_line|#endif
 r_break
 suffix:semicolon
-macro_line|#endif
 )brace
 )brace
 r_if
@@ -3062,25 +2931,6 @@ comma
 id|dev-&gt;irq
 )paren
 suffix:semicolon
-macro_line|#if SUPPORTS_1_2_13
-r_if
-c_cond
-(paren
-id|request_irq
-c_func
-(paren
-id|dev-&gt;irq
-comma
-op_amp
-id|net_interrupt
-comma
-l_int|0
-comma
-l_string|&quot;cs89x0&quot;
-)paren
-)paren
-(brace
-macro_line|#else
 r_if
 c_cond
 (paren
@@ -3100,7 +2950,6 @@ l_int|NULL
 )paren
 )paren
 (brace
-macro_line|#endif
 r_return
 op_minus
 id|EAGAIN
@@ -3296,14 +3145,6 @@ id|SERIAL_RX_ON
 )paren
 )paren
 suffix:semicolon
-macro_line|#if SUPPORTS_1_2_13
-id|free_irq
-c_func
-(paren
-id|dev-&gt;irq
-)paren
-suffix:semicolon
-macro_line|#else
 id|free_irq
 c_func
 (paren
@@ -3312,7 +3153,6 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-macro_line|#endif
 id|irq2dev_map
 (braket
 id|dev-&gt;irq
@@ -3835,25 +3675,6 @@ op_assign
 id|jiffies
 suffix:semicolon
 )brace
-multiline_comment|/* If some higher layer thinks we&squot;ve missed an tx-done interrupt&n;&t;   we are passed NULL. Caution: dev_tint() handles the cli()/sti()&n;&t;   itself. */
-r_if
-c_cond
-(paren
-id|skb
-op_eq
-l_int|NULL
-)paren
-(brace
-id|dev_tint
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 multiline_comment|/* Block a timer-based transmit from overlapping.  This could better be&n;&t;   done with atomic_swap(1, dev-&gt;tbusy), but set_bit() works as well. */
 r_if
 c_cond
@@ -4047,22 +3868,9 @@ suffix:semicolon
 )brace
 "&f;"
 multiline_comment|/* The typical workload of the driver:&n;   Handle the network interface interrupts. */
+DECL|function|net_interrupt
 r_static
 r_void
-macro_line|#if SUPPORTS_1_2_13
-DECL|function|net_interrupt
-id|net_interrupt
-c_func
-(paren
-r_int
-id|irq
-comma
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-macro_line|#else
 id|net_interrupt
 c_func
 (paren
@@ -4078,7 +3886,6 @@ id|pt_regs
 op_star
 id|regs
 )paren
-macro_line|#endif
 (brace
 r_struct
 id|device
@@ -4640,7 +4447,6 @@ l_int|1
 )braket
 )paren
 suffix:semicolon
-macro_line|#if !SUPPORTS_1_2_13
 id|skb-&gt;protocol
 op_assign
 id|eth_type_trans
@@ -4651,7 +4457,6 @@ comma
 id|dev
 )paren
 suffix:semicolon
-macro_line|#endif
 id|netif_rx
 c_func
 (paren
@@ -4660,6 +4465,10 @@ id|skb
 suffix:semicolon
 id|lp-&gt;stats.rx_packets
 op_increment
+suffix:semicolon
+id|lp-&gt;stats.rx_bytes
+op_add_assign
+id|skb-&gt;len
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -4721,14 +4530,6 @@ id|dev-&gt;start
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if SUPPORTS_1_2_13
-id|free_irq
-c_func
-(paren
-id|dev-&gt;irq
-)paren
-suffix:semicolon
-macro_line|#else
 id|free_irq
 c_func
 (paren
@@ -4737,7 +4538,6 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-macro_line|#endif
 id|irq2dev_map
 (braket
 id|dev-&gt;irq
@@ -4823,117 +4623,6 @@ op_amp
 id|lp-&gt;stats
 suffix:semicolon
 )brace
-macro_line|#if SUPPORTS_1_2_13
-multiline_comment|/* Set or clear the multicast filter for this adaptor.&n;   num_addrs == -1&t;Promiscuous mode, receive all packets&n;   num_addrs == 0&t;Normal mode, clear multicast list&n;   num_addrs &gt; 0&t;Multicast mode, receive normal and MC packets, and do&n;&t;&t;&t;best-effort filtering.&n; */
-r_static
-r_void
-DECL|function|set_multicast_list
-id|set_multicast_list
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_int
-id|num_addrs
-comma
-r_void
-op_star
-id|addrs
-)paren
-(brace
-r_struct
-id|net_local
-op_star
-id|lp
-op_assign
-(paren
-r_struct
-id|net_local
-op_star
-)paren
-id|dev-&gt;priv
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|num_addrs
-op_eq
-l_int|0
-)paren
-id|lp-&gt;rx_mode
-op_assign
-l_int|0
-suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
-id|num_addrs
-OG
-l_int|0
-)paren
-id|lp-&gt;rx_mode
-op_assign
-id|RX_MULTCAST_ACCEPT
-suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
-id|num_addrs
-op_eq
-op_minus
-l_int|1
-)paren
-id|lp-&gt;rx_mode
-op_assign
-id|RX_ALL_ACCEPT
-suffix:semicolon
-id|writereg
-c_func
-(paren
-id|dev
-comma
-id|PP_RxCTL
-comma
-id|DEF_RX_ACCEPT
-op_or
-id|lp-&gt;rx_mode
-)paren
-suffix:semicolon
-multiline_comment|/* in promiscuous mode, we accept errored packets, so we have to enable interrupts on them also */
-id|writereg
-c_func
-(paren
-id|dev
-comma
-id|PP_RxCFG
-comma
-id|lp-&gt;curr_rx_cfg
-op_or
-(paren
-id|lp-&gt;rx_mode
-op_eq
-id|RX_ALL_ACCEPT
-ques
-c_cond
-(paren
-id|RX_CRC_ERROR_ENBL
-op_or
-id|RX_RUNT_ENBL
-op_or
-id|RX_EXTRA_DATA_ENBL
-)paren
-suffix:colon
-l_int|0
-)paren
-)paren
-suffix:semicolon
-)brace
-macro_line|#else
 DECL|function|set_multicast_list
 r_static
 r_void
@@ -5036,10 +4725,9 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+DECL|function|set_mac_address
 r_static
 r_int
-DECL|function|set_mac_address
 id|set_mac_address
 c_func
 (paren
@@ -5170,16 +4858,6 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-macro_line|#if SUPPORTS_1_2_13
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
-macro_line|#endif
 DECL|variable|namespace
 r_static
 r_char

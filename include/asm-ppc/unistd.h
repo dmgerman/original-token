@@ -339,6 +339,8 @@ DECL|macro|__NR_setresuid
 mdefine_line|#define __NR_setresuid&t;&t;164
 DECL|macro|__NR_getresuid
 mdefine_line|#define __NR_getresuid&t;&t;165
+DECL|macro|__NR_nfsservctl
+mdefine_line|#define __NR_nfsservctl&t;&t;166
 multiline_comment|/* XXX - _foo needs to be __foo, while __NR_bar could be _NR_bar. */
 DECL|macro|_syscall0
 mdefine_line|#define _syscall0(type,name) &bslash;&n;type name(void) &bslash;&n;{ &bslash;&n; __asm__ (_lisc(__NR_##name)); &bslash;&n; __asm__ (&quot;sc&quot;); &bslash;&n; __asm__ (&quot;mr 31,3&quot;); &bslash;&n; __asm__ (&quot;bns 10f&quot;); &bslash;&n; __asm__ (&quot;mr 0,3&quot;); &bslash;&n; __asm__ (&quot;lis 3,errno@ha&quot;); &bslash;&n; __asm__ (&quot;stw 0,errno@l(3)&quot;); &bslash;&n; __asm__ (&quot;li 3,-1&quot;); &bslash;&n; __asm__ (&quot;10:&quot;); &bslash;&n;}

@@ -3468,7 +3468,7 @@ suffix:semicolon
 multiline_comment|/*&n; * Releasing a block device means we sync() it, so that it can safely&n; * be forgotten about...&n; */
 DECL|function|hd_release
 r_static
-r_void
+r_int
 id|hd_release
 c_func
 (paren
@@ -3505,6 +3505,9 @@ id|access_count
 id|target
 )braket
 op_decrement
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 r_static

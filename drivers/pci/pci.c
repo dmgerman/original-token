@@ -581,6 +581,16 @@ c_func
 (paren
 id|MATROX
 comma
+id|MATROX_MYS
+comma
+l_string|&quot;Mystique&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|MATROX
+comma
 id|MATROX_MGA_IMP
 comma
 l_string|&quot;MGA Impression&quot;

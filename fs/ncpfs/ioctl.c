@@ -7,9 +7,10 @@ macro_line|#include &lt;linux/ioctl.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/ncp.h&gt;
-r_int
 DECL|function|ncp_ioctl
+r_int
 id|ncp_ioctl
+c_func
 (paren
 r_struct
 id|inode
@@ -52,84 +53,6 @@ c_func
 id|inode
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Binary compatible with 1.3.XX releases.&n;&t; * Take this out in 2.1.0 development series.&n;&t; * &lt;mec@duracef.shout.net&gt; 12 Mar 1996&n;&t; */
-r_switch
-c_cond
-(paren
-id|cmd
-)paren
-(brace
-r_case
-id|_IOR
-c_func
-(paren
-l_char|&squot;n&squot;
-comma
-l_int|1
-comma
-r_int
-r_char
-op_star
-)paren
-suffix:colon
-id|cmd
-op_assign
-id|NCP_IOC_NCPREQUEST
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|_IOR
-c_func
-(paren
-l_char|&squot;u&squot;
-comma
-l_int|1
-comma
-id|uid_t
-)paren
-suffix:colon
-id|cmd
-op_assign
-id|NCP_IOC_GETMOUNTUID
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|_IO
-c_func
-(paren
-l_char|&squot;l&squot;
-comma
-l_int|1
-)paren
-suffix:colon
-id|cmd
-op_assign
-id|NCP_IOC_CONN_LOGGED_IN
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|_IOWR
-c_func
-(paren
-l_char|&squot;i&squot;
-comma
-l_int|1
-comma
-r_int
-r_char
-op_star
-)paren
-suffix:colon
-id|cmd
-op_assign
-id|NCP_IOC_GET_FS_INFO
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
 r_switch
 c_cond
 (paren
@@ -277,7 +200,7 @@ c_func
 id|server
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME: We hack around in the server&squot;s structures&n;                   here to be able to use ncp_request */
+multiline_comment|/* FIXME: We hack around in the server&squot;s structures&n;&t;&t;   here to be able to use ncp_request */
 id|server-&gt;has_subfunction
 op_assign
 l_int|0
@@ -469,10 +392,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-id|info.addr
-op_assign
-id|server-&gt;m.serv_addr
-suffix:semicolon
+multiline_comment|/* TODO: info.addr = server-&gt;m.serv_addr; */
 id|info.mounted_uid
 op_assign
 id|server-&gt;m.mounted_uid

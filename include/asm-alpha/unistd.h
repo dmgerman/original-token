@@ -522,8 +522,8 @@ DECL|macro|__NR_nanosleep
 mdefine_line|#define __NR_nanosleep&t;&t;&t;340
 DECL|macro|__NR_mremap
 mdefine_line|#define __NR_mremap&t;&t;&t;341
-DECL|macro|__NR_nfsctl
-mdefine_line|#define __NR_nfsctl&t;&t;&t;342
+DECL|macro|__NR_nfsservctl
+mdefine_line|#define __NR_nfsservctl&t;&t;&t;342
 DECL|macro|__NR_setresuid
 mdefine_line|#define __NR_setresuid&t;&t;&t;343
 DECL|macro|__NR_getresuid

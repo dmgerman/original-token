@@ -1067,7 +1067,7 @@ l_int|0
 suffix:semicolon
 )brace
 r_static
-r_void
+r_int
 DECL|function|sun_mouse_close
 id|sun_mouse_close
 c_func
@@ -1099,9 +1099,13 @@ op_decrement
 id|sunmouse.active
 )paren
 r_return
+l_int|0
 suffix:semicolon
 id|sunmouse.ready
 op_assign
+l_int|0
+suffix:semicolon
+r_return
 l_int|0
 suffix:semicolon
 )brace

@@ -10638,7 +10638,7 @@ suffix:semicolon
 multiline_comment|/*&n; *&t;Our character device release function.&n; */
 DECL|function|idetape_chrdev_release
 r_static
-r_void
+r_int
 id|idetape_chrdev_release
 (paren
 r_struct
@@ -10841,6 +10841,9 @@ op_eq
 id|idetape_direction_none
 )paren
 id|MOD_DEC_USE_COUNT
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;idetape_identify_device is called to check the contents of the&n; *&t;ATAPI IDENTIFY command results. We return:&n; *&n; *&t;1&t;If the tape can be supported by us, based on the information&n; *&t;&t;we have so far.&n; *&n; *&t;0 &t;If this tape driver is not currently supported by us.&n; */

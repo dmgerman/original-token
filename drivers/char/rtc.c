@@ -1823,7 +1823,7 @@ suffix:semicolon
 )brace
 DECL|function|rtc_release
 r_static
-r_void
+r_int
 id|rtc_release
 c_func
 (paren
@@ -1930,6 +1930,9 @@ id|rtc_status
 op_and_assign
 op_complement
 id|RTC_IS_OPEN
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|rtc_poll

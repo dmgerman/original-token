@@ -422,7 +422,7 @@ id|retval
 suffix:semicolon
 )brace
 r_static
-r_void
+r_int
 DECL|function|sound_release
 id|sound_release
 (paren
@@ -471,6 +471,9 @@ macro_line|#ifdef MODULE
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 macro_line|#endif
+r_return
+l_int|0
+suffix:semicolon
 )brace
 r_static
 r_int

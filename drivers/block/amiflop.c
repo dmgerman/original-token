@@ -9401,7 +9401,7 @@ suffix:semicolon
 )brace
 DECL|function|floppy_release
 r_static
-r_void
+r_int
 id|floppy_release
 c_func
 (paren
@@ -9525,6 +9525,9 @@ l_int|3
 )paren
 suffix:semicolon
 macro_line|#endif
+r_return
+l_int|0
+suffix:semicolon
 )brace
 DECL|function|amiga_floppy_setup
 r_void

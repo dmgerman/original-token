@@ -1,6 +1,7 @@
-multiline_comment|/*&n; *  linux/fs/ext2/fsync.c&n; *&n; *  Copyright (C) 1993  Stephen Tweedie (sct@dcs.ed.ac.uk)&n; *  from&n; *  Copyright (C) 1992  Remy Card (card@masi.ibp.fr)&n; *                      Laboratoire MASI - Institut Blaise Pascal&n; *                      Universite Pierre et Marie Curie (Paris VI)&n; *  from&n; *  linux/fs/minix/truncate.c   Copyright (C) 1991, 1992  Linus Torvalds&n; * &n; *  ext2fs fsync primitive&n; *&n; *  Big-endian to little-endian byte-swapping/bitmaps by&n; *        David S. Miller (davem@caip.rutgers.edu), 1995&n; */
+multiline_comment|/*&n; *  linux/fs/ext2/fsync.c&n; *&n; *  Copyright (C) 1993  Stephen Tweedie (sct@dcs.ed.ac.uk)&n; *  from&n; *  Copyright (C) 1992  Remy Card (card@masi.ibp.fr)&n; *                      Laboratoire MASI - Institut Blaise Pascal&n; *                      Universite Pierre et Marie Curie (Paris VI)&n; *  from&n; *  linux/fs/minix/truncate.c   Copyright (C) 1991, 1992  Linus Torvalds&n; * &n; *  ext2fs fsync primitive&n; *&n; *  Big-endian to little-endian byte-swapping/bitmaps by&n; *        David S. Miller (davem@caip.rutgers.edu), 1995&n; * &n; *  Removed unnecessary code duplication for little endian machines&n; *  and excessive __inline__s. &n; *        Andi Kleen, 1997&n; */
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/ext2_fs.h&gt;
@@ -14,7 +15,6 @@ DECL|macro|addr_per_block
 mdefine_line|#define addr_per_block (EXT2_ADDR_PER_BLOCK(inode-&gt;i_sb))
 DECL|function|sync_block
 r_static
-id|__inline__
 r_int
 id|sync_block
 (paren
@@ -168,9 +168,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifndef __LITTLE_ENDIAN
 DECL|function|sync_block_swab32
 r_static
-id|__inline__
 r_int
 id|sync_block_swab32
 (paren
@@ -340,9 +340,12 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#else
+DECL|macro|sync_block_swab32
+mdefine_line|#define sync_block_swab32 sync_block
+macro_line|#endif
 DECL|function|sync_iblock
 r_static
-id|__inline__
 r_int
 id|sync_iblock
 (paren
@@ -459,9 +462,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifndef __LITTLE_ENDIAN
 DECL|function|sync_iblock_swab32
 r_static
-id|__inline__
 r_int
 id|sync_iblock_swab32
 (paren
@@ -586,9 +589,12 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#else
+DECL|macro|sync_iblock_swab32
+mdefine_line|#define sync_iblock_swab32 sync_iblock
+macro_line|#endif
 DECL|function|sync_direct
 r_static
-id|__inline__
 r_int
 id|sync_direct
 (paren
@@ -664,7 +670,6 @@ suffix:semicolon
 )brace
 DECL|function|sync_indirect
 r_static
-id|__inline__
 r_int
 id|sync_indirect
 (paren
@@ -783,6 +788,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
+macro_line|#ifndef __LITTLE_ENDIAN
 DECL|function|sync_indirect_swab32
 r_static
 id|__inline__
@@ -904,9 +910,12 @@ r_return
 id|err
 suffix:semicolon
 )brace
+macro_line|#else
+DECL|macro|sync_indirect_swab32
+mdefine_line|#define sync_indirect_swab32 sync_indirect
+macro_line|#endif
 DECL|function|sync_dindirect
 r_static
-id|__inline__
 r_int
 id|sync_dindirect
 (paren
@@ -1025,6 +1034,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
+macro_line|#ifndef __LITTLE_ENDIAN
 DECL|function|sync_dindirect_swab32
 r_static
 id|__inline__
@@ -1146,9 +1156,12 @@ r_return
 id|err
 suffix:semicolon
 )brace
+macro_line|#else
+DECL|macro|sync_dindirect_swab32
+mdefine_line|#define sync_dindirect_swab32 sync_dindirect
+macro_line|#endif
 DECL|function|sync_tindirect
 r_static
-id|__inline__
 r_int
 id|sync_tindirect
 (paren

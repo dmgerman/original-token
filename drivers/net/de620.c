@@ -1375,25 +1375,6 @@ suffix:semicolon
 id|byte
 id|using_txbuf
 suffix:semicolon
-multiline_comment|/*&n;&t; * If some higher layer thinks we&squot;ve missed a&n;&t; * tx-done interrupt we are passed NULL.&n;&t; * Caution: dev_tint() handles the cli()/sti() itself.&n;&t; */
-r_if
-c_cond
-(paren
-id|skb
-op_eq
-l_int|NULL
-)paren
-(brace
-id|dev_tint
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 id|using_txbuf
 op_assign
 id|de620_tx_buffs

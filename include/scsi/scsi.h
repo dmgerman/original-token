@@ -197,6 +197,8 @@ DECL|macro|TYPE_SCANNER
 mdefine_line|#define TYPE_SCANNER        0x06
 DECL|macro|TYPE_MOD
 mdefine_line|#define TYPE_MOD            0x07    /* Magneto-optical disk - &n;&t;&t;&t;&t;     * - treated as TYPE_DISK */
+DECL|macro|TYPE_MEDIUM_CHANGER
+mdefine_line|#define TYPE_MEDIUM_CHANGER 0x08
 DECL|macro|TYPE_NO_LUN
 mdefine_line|#define TYPE_NO_LUN         0x7f
 multiline_comment|/*&n; *  MESSAGE CODES&n; */

@@ -3398,11 +3398,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_VT
 id|console_map_init
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 r_for
 c_loop
 (paren

@@ -15472,7 +15472,7 @@ suffix:semicolon
 )brace
 DECL|function|floppy_release
 r_static
-r_void
+r_int
 id|floppy_release
 c_func
 (paren
@@ -15558,6 +15558,9 @@ id|floppy_release_irq_and_dma
 c_func
 (paren
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * floppy_open check for aliasing (/dev/fd0 can be the same as&n; * /dev/PS0 etc), and disallows simultaneous access to the same&n; * drive with different device numbers.&n; */

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/drivers/block/loop.c&n; *&n; *  Written by Theodore Ts&squot;o, 3/29/93&n; * &n; * Copyright 1993 by Theodore Ts&squot;o.  Redistribution of this file is&n; * permitted under the GNU Public License.&n; *&n; * more DES encryption plus IDEA encryption by Nicholas J. Leon, June 20, 1996&n; * DES encryption plus some minor changes by Werner Almesberger, 30-MAY-1993&n; *&n; * Modularized and updated for 1.1.16 kernel - Mitch Dsouza 28th May 1994&n; *&n; * Adapted for 1.3.59 kernel - Andries Brouwer, 1 Feb 1996&n; */
+multiline_comment|/*&n; *  linux/drivers/block/loop.c&n; *&n; *  Written by Theodore Ts&squot;o, 3/29/93&n; * &n; * Copyright 1993 by Theodore Ts&squot;o.  Redistribution of this file is&n; * permitted under the GNU Public License.&n; *&n; * more DES encryption plus IDEA encryption by Nicholas J. Leon, June 20, 1996&n; * DES encryption plus some minor changes by Werner Almesberger, 30-MAY-1993&n; *&n; * Modularized and updated for 1.1.16 kernel - Mitch Dsouza 28th May 1994&n; *&n; * Adapted for 1.3.59 kernel - Andries Brouwer, 1 Feb 1996&n; *&n; * Fixed do_loop_request() re-entrancy - &lt;Vincent.Renardias@waw.com&gt; Mar 20, 1997&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -783,9 +783,22 @@ id|buffer_head
 op_star
 id|bh
 suffix:semicolon
+r_struct
+id|request
+op_star
+id|current_request
+suffix:semicolon
 id|repeat
 suffix:colon
 id|INIT_REQUEST
+suffix:semicolon
+id|current_request
+op_assign
+id|CURRENT
+suffix:semicolon
+id|CURRENT
+op_assign
+id|current_request-&gt;next
 suffix:semicolon
 r_if
 c_cond
@@ -793,7 +806,7 @@ c_cond
 id|MINOR
 c_func
 (paren
-id|CURRENT-&gt;rq_dev
+id|current_request-&gt;rq_dev
 )paren
 op_ge
 id|MAX_LOOP
@@ -809,7 +822,7 @@ id|loop_dev
 id|MINOR
 c_func
 (paren
-id|CURRENT-&gt;rq_dev
+id|current_request-&gt;rq_dev
 )paren
 )braket
 suffix:semicolon
@@ -873,7 +886,7 @@ suffix:semicolon
 )brace
 id|dest_addr
 op_assign
-id|CURRENT-&gt;buffer
+id|current_request-&gt;buffer
 suffix:semicolon
 r_if
 c_cond
@@ -885,7 +898,7 @@ l_int|512
 (brace
 id|block
 op_assign
-id|CURRENT-&gt;sector
+id|current_request-&gt;sector
 op_star
 (paren
 l_int|512
@@ -902,7 +915,7 @@ r_else
 (brace
 id|block
 op_assign
-id|CURRENT-&gt;sector
+id|current_request-&gt;sector
 op_div
 (paren
 id|blksize
@@ -913,7 +926,7 @@ suffix:semicolon
 id|offset
 op_assign
 (paren
-id|CURRENT-&gt;sector
+id|current_request-&gt;sector
 op_mod
 (paren
 id|blksize
@@ -955,14 +968,14 @@ suffix:semicolon
 )brace
 id|len
 op_assign
-id|CURRENT-&gt;current_nr_sectors
+id|current_request-&gt;current_nr_sectors
 op_lshift
 l_int|9
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|CURRENT-&gt;cmd
+id|current_request-&gt;cmd
 op_eq
 id|WRITE
 )paren
@@ -982,7 +995,7 @@ r_else
 r_if
 c_cond
 (paren
-id|CURRENT-&gt;cmd
+id|current_request-&gt;cmd
 op_ne
 id|READ
 )paren
@@ -992,7 +1005,7 @@ c_func
 (paren
 l_string|&quot;unknown loop device command (%d)?!?&quot;
 comma
-id|CURRENT-&gt;cmd
+id|current_request-&gt;cmd
 )paren
 suffix:semicolon
 r_goto
@@ -1100,7 +1113,7 @@ id|bh
 op_logical_and
 (paren
 (paren
-id|CURRENT-&gt;cmd
+id|current_request-&gt;cmd
 op_eq
 id|READ
 )paren
@@ -1182,7 +1195,7 @@ id|lo-&gt;transfer
 (paren
 id|lo
 comma
-id|CURRENT-&gt;cmd
+id|current_request-&gt;cmd
 comma
 id|bh-&gt;b_data
 op_plus
@@ -1215,7 +1228,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|CURRENT-&gt;cmd
+id|current_request-&gt;cmd
 op_eq
 id|WRITE
 )paren
@@ -1259,6 +1272,14 @@ id|block
 op_increment
 suffix:semicolon
 )brace
+id|current_request-&gt;next
+op_assign
+id|CURRENT
+suffix:semicolon
+id|CURRENT
+op_assign
+id|current_request
+suffix:semicolon
 id|end_request
 c_func
 (paren
@@ -1270,6 +1291,14 @@ id|repeat
 suffix:semicolon
 id|error_out
 suffix:colon
+id|current_request-&gt;next
+op_assign
+id|CURRENT
+suffix:semicolon
+id|CURRENT
+op_assign
+id|current_request
+suffix:semicolon
 id|end_request
 c_func
 (paren
@@ -2370,7 +2399,7 @@ suffix:semicolon
 )brace
 DECL|function|lo_release
 r_static
-r_void
+r_int
 id|lo_release
 c_func
 (paren
@@ -2400,6 +2429,7 @@ op_logical_neg
 id|inode
 )paren
 r_return
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -2422,6 +2452,7 @@ id|MAJOR_NR
 )paren
 suffix:semicolon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 id|dev
@@ -2440,6 +2471,7 @@ op_ge
 id|MAX_LOOP
 )paren
 r_return
+l_int|0
 suffix:semicolon
 id|fsync_dev
 c_func
@@ -2478,6 +2510,9 @@ suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 DECL|variable|lo_fops
 r_static

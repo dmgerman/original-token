@@ -2305,38 +2305,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|skb
-op_eq
-l_int|NULL
-)paren
-(brace
-multiline_comment|/* If we get here, some higher layer thinks we&squot;ve missed a&n;&t;&t; * tx-done interrupt.&n;&t;&t; */
-macro_line|#ifdef _DEBUG_
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;%s: interface %s got kicked!&bslash;n&quot;
-comma
-id|card-&gt;devname
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-macro_line|#endif
-id|dev_tint
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
 id|set_bit
 c_func
 (paren

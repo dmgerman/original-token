@@ -59,7 +59,7 @@ r_int
 )paren
 suffix:semicolon
 r_static
-r_void
+r_int
 id|ext2_release_file
 (paren
 r_struct
@@ -1015,7 +1015,7 @@ suffix:semicolon
 multiline_comment|/*&n; * Called when an inode is released. Note that this is different&n; * from ext2_open: open gets called at every open, but release&n; * gets called only when /all/ the files are closed.&n; */
 DECL|function|ext2_release_file
 r_static
-r_void
+r_int
 id|ext2_release_file
 (paren
 r_struct
@@ -1040,6 +1040,9 @@ id|ext2_discard_prealloc
 (paren
 id|inode
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 eof

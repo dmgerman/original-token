@@ -17,7 +17,7 @@ suffix:semicolon
 multiline_comment|/* it&squot;s really int */
 r_extern
 r_void
-id|do_unblank_screen
+id|unblank_console
 c_func
 (paren
 r_void
@@ -150,7 +150,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|do_unblank_screen
+id|unblank_console
 c_func
 (paren
 )paren

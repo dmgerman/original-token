@@ -5,6 +5,7 @@ mdefine_line|#define _LINUX_INTERRUPT_H
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
+macro_line|#include &lt;asm/hardirq.h&gt;
 DECL|struct|irqaction
 r_struct
 id|irqaction
@@ -274,6 +275,7 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#ifdef __SMP__
 id|cli
 c_func
 (paren
@@ -291,6 +293,16 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#else
+id|intr_count
+op_increment
+suffix:semicolon
+id|barrier
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|end_bh_atomic
 r_extern
@@ -302,11 +314,7 @@ c_func
 r_void
 )paren
 (brace
-id|barrier
-c_func
-(paren
-)paren
-suffix:semicolon
+macro_line|#ifdef __SMP__
 id|atomic_dec
 c_func
 (paren
@@ -314,6 +322,16 @@ op_amp
 id|intr_count
 )paren
 suffix:semicolon
+macro_line|#else
+id|barrier
+c_func
+(paren
+)paren
+suffix:semicolon
+id|intr_count
+op_decrement
+suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/*&n; * Autoprobing for irqs:&n; *&n; * probe_irq_on() and probe_irq_off() provide robust primitives&n; * for accurate IRQ probing during kernel initialization.  They are&n; * reasonably simple to use, are not &quot;fooled&quot; by spurious interrupts,&n; * and, unlike other attempts at IRQ probing, they do not get hung on&n; * stuck interrupts (such as unused PS2 mouse interfaces on ASUS boards).&n; *&n; * For reasonably foolproof probing, use them as follows:&n; *&n; * 1. clear and/or mask the device&squot;s internal interrupt.&n; * 2. sti();&n; * 3. irqs = probe_irq_on();      // &quot;take over&quot; all unassigned idle IRQs&n; * 4. enable the device and cause it to trigger an interrupt.&n; * 5. wait for the device to interrupt, using non-intrusive polling or a delay.&n; * 6. irq = probe_irq_off(irqs);  // get IRQ number, 0=none, negative=multiple&n; * 7. service the device to clear its pending interrupt.&n; * 8. loop again if paranoia is required.&n; *&n; * probe_irq_on() returns a mask of allocated irq&squot;s.&n; *&n; * probe_irq_off() takes the mask as a parameter,&n; * and returns the irq number which occurred,&n; * or zero if none occurred, or a negative irq number&n; * if more than one irq occurred.&n; */
 r_extern

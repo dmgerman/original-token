@@ -23,6 +23,10 @@ comma
 r_int
 r_int
 id|phys_addr
+comma
+r_int
+r_int
+id|flags
 )paren
 (brace
 r_int
@@ -80,7 +84,19 @@ c_func
 (paren
 id|phys_addr
 comma
-id|PAGE_KERNEL
+id|__pgprot
+c_func
+(paren
+id|_PAGE_PRESENT
+op_or
+id|_PAGE_RW
+op_or
+id|_PAGE_DIRTY
+op_or
+id|_PAGE_ACCESSED
+op_or
+id|flags
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -127,6 +143,10 @@ comma
 r_int
 r_int
 id|phys_addr
+comma
+r_int
+r_int
+id|flags
 )paren
 (brace
 r_int
@@ -197,6 +217,8 @@ comma
 id|address
 op_plus
 id|phys_addr
+comma
+id|flags
 )paren
 suffix:semicolon
 id|address
@@ -242,6 +264,10 @@ comma
 r_int
 r_int
 id|size
+comma
+r_int
+r_int
+id|flags
 )paren
 (brace
 id|pgd_t
@@ -323,6 +349,8 @@ comma
 id|phys_addr
 op_plus
 id|address
+comma
+id|flags
 )paren
 )paren
 r_return
@@ -361,11 +389,12 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Generic mapping function (not visible outside):&n; */
 multiline_comment|/*&n; * Remap an arbitrary physical address space into the kernel virtual&n; * address space. Needed when the kernel wants to access high addresses&n; * directly.&n; */
-DECL|function|ioremap
+DECL|function|__ioremap
 r_void
 op_star
-id|ioremap
+id|__ioremap
 c_func
 (paren
 r_int
@@ -375,6 +404,10 @@ comma
 r_int
 r_int
 id|size
+comma
+r_int
+r_int
+id|flags
 )paren
 (brace
 r_void
@@ -474,6 +507,8 @@ comma
 id|phys_addr
 comma
 id|size
+comma
+id|flags
 )paren
 )paren
 (brace

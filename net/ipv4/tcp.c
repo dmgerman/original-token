@@ -2794,6 +2794,7 @@ id|skb-&gt;seq
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;recvmsg bug: copied %X seq %X&bslash;n&quot;
 comma
 op_star

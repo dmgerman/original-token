@@ -7647,7 +7647,7 @@ suffix:semicolon
 multiline_comment|/* Release device special file; flush all blocks from the buffer cache */
 DECL|function|opt_release
 r_static
-r_void
+r_int
 id|opt_release
 c_func
 (paren
@@ -7791,6 +7791,9 @@ id|CLEAR_REQ_TIMER
 suffix:semicolon
 )brace
 id|MOD_DEC_USE_COUNT
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Check if disk has been changed */

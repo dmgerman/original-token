@@ -3936,7 +3936,7 @@ suffix:semicolon
 "&f;"
 multiline_comment|/* Close the device*/
 r_static
-r_void
+r_int
 DECL|function|scsi_tape_close
 id|scsi_tape_close
 c_func
@@ -4563,6 +4563,7 @@ id|st_template.module
 suffix:semicolon
 )brace
 r_return
+l_int|0
 suffix:semicolon
 )brace
 "&f;"
@@ -10461,6 +10462,8 @@ l_int|3
 )braket
 op_assign
 id|arg
+op_minus
+id|MT_ST_HPLOADER_OFFSET
 suffix:semicolon
 multiline_comment|/* MediaID field of C1553A */
 )brace
@@ -15730,6 +15733,7 @@ id|STbuffer-&gt;buffer_size
 suffix:semicolon
 macro_line|#endif
 )brace
+macro_line|#ifndef MODULE
 multiline_comment|/* Set the boot options. Syntax: st=xxx,yyy&n;   where xxx is buffer size in 1024 byte blocks and yyy is write threshold&n;   in 1024 byte blocks. */
 r_void
 DECL|function|st_setup
@@ -15835,6 +15839,7 @@ l_int|3
 )braket
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|variable|st_fops
 r_static
 r_struct
