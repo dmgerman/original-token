@@ -47,6 +47,10 @@ multiline_comment|/* attribute bits that are copied &quot;as is&quot; */
 DECL|macro|ATTR_EXT
 mdefine_line|#define ATTR_EXT     (ATTR_RO | ATTR_HIDDEN | ATTR_SYS | ATTR_VOLUME)
 multiline_comment|/* bits that are used by the Windows 95/Windows NT extended FAT */
+DECL|macro|ATTR_DIR_READ_BOTH
+mdefine_line|#define ATTR_DIR_READ_BOTH 512 /* read both short and long names from the&n;&t;&t;&t;&t;* vfat filesystem.  This is used by Samba&n;&t;&t;&t;&t;* to export the vfat filesystem with correct&n;&t;&t;&t;&t;* shortnames. */
+DECL|macro|ATTR_DIR_READ_SHORT
+mdefine_line|#define ATTR_DIR_READ_SHORT 1024
 DECL|macro|CASE_LOWER_BASE
 mdefine_line|#define CASE_LOWER_BASE 8&t;/* base is lower case */
 DECL|macro|CASE_LOWER_EXT
@@ -82,6 +86,14 @@ DECL|macro|MSDOS_DOTDOT
 mdefine_line|#define MSDOS_DOTDOT &quot;..         &quot; /* &quot;..&quot;, padded to MSDOS_NAME chars */
 DECL|macro|MSDOS_FAT12
 mdefine_line|#define MSDOS_FAT12 4078 /* maximum number of clusters in a 12 bit FAT */
+multiline_comment|/*&n; * Inode flags&n; */
+DECL|macro|FAT_BINARY_FL
+mdefine_line|#define FAT_BINARY_FL&t;&t;0x00000001 /* File contains binary data */
+multiline_comment|/*&n; * ioctl commands&n; */
+DECL|macro|VFAT_IOCTL_READDIR_BOTH
+mdefine_line|#define&t;VFAT_IOCTL_READDIR_BOTH&t;&t;_IOR(&squot;r&squot;, 1, long)
+DECL|macro|VFAT_IOCTL_READDIR_SHORT
+mdefine_line|#define&t;VFAT_IOCTL_READDIR_SHORT&t;_IOW(&squot;r&squot;, 2, long)
 multiline_comment|/*&n; * Conversion from and to little-endian byte order. (no-op on i386/i486)&n; *&n; * Naming: Ca_b_c, where a: F = from, T = to, b: LE = little-endian,&n; * BE = big-endian, c: W = word (16 bits), L = longword (32 bits)&n; */
 DECL|macro|CF_LE_W
 mdefine_line|#define CF_LE_W(v) (v)
@@ -350,6 +362,16 @@ suffix:semicolon
 multiline_comment|/* ino for the file */
 )brace
 suffix:semicolon
+multiline_comment|/* Determine whether this FS has kB-aligned data. */
+DECL|macro|MSDOS_CAN_BMAP
+mdefine_line|#define MSDOS_CAN_BMAP(mib) (!(((mib)-&gt;cluster_size &amp; 1) || &bslash;&n;    ((mib)-&gt;data_start &amp; 1)))
+multiline_comment|/* Convert attribute bits and a mask to the UNIX mode. */
+DECL|macro|MSDOS_MKMODE
+mdefine_line|#define MSDOS_MKMODE(a,m) (m &amp; (a &amp; ATTR_RO ? S_IRUGO|S_IXUGO : S_IRWXUGO))
+multiline_comment|/* Convert the UNIX mode to MS-DOS attribute bits. */
+DECL|macro|MSDOS_MKATTR
+mdefine_line|#define MSDOS_MKATTR(m) ((m &amp; S_IWUGO) ? ATTR_NONE : ATTR_RO)
+macro_line|#ifdef __KERNEL__
 DECL|struct|fat_cache
 r_struct
 id|fat_cache
@@ -383,16 +405,6 @@ suffix:semicolon
 multiline_comment|/* next cache entry */
 )brace
 suffix:semicolon
-multiline_comment|/* Determine whether this FS has kB-aligned data. */
-DECL|macro|MSDOS_CAN_BMAP
-mdefine_line|#define MSDOS_CAN_BMAP(mib) (!(((mib)-&gt;cluster_size &amp; 1) || &bslash;&n;    ((mib)-&gt;data_start &amp; 1)))
-multiline_comment|/* Convert attribute bits and a mask to the UNIX mode. */
-DECL|macro|MSDOS_MKMODE
-mdefine_line|#define MSDOS_MKMODE(a,m) (m &amp; (a &amp; ATTR_RO ? S_IRUGO|S_IXUGO : S_IRWXUGO))
-multiline_comment|/* Convert the UNIX mode to MS-DOS attribute bits. */
-DECL|macro|MSDOS_MKATTR
-mdefine_line|#define MSDOS_MKATTR(m) ((m &amp; S_IWUGO) ? ATTR_NONE : ATTR_RO)
-macro_line|#ifdef __KERNEL__
 multiline_comment|/* misc.c */
 r_extern
 r_int

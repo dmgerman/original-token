@@ -812,21 +812,6 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* just to be safe. */
-multiline_comment|/* &n;  &t; *&t;In case it&squot;s sleeping somewhere. &n;  &t; */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|sk-&gt;dead
-)paren
-id|sk
-op_member_access_from_pointer
-id|write_space
-c_func
-(paren
-id|sk
-)paren
-suffix:semicolon
 id|remove_sock
 c_func
 (paren
@@ -912,6 +897,21 @@ id|FREE_WRITE
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* &n;  &t; *&t;In case it&squot;s sleeping somewhere. &n;  &t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|sk-&gt;dead
+)paren
+id|sk
+op_member_access_from_pointer
+id|write_space
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
 multiline_comment|/*&n;  &t; *&t;Don&squot;t discard received data until the user side kills its&n;  &t; *&t;half of the socket.&n;  &t; */
 r_if
 c_cond
@@ -1081,6 +1081,10 @@ l_int|NULL
 )paren
 (brace
 multiline_comment|/* this should [almost] never happen. */
+id|skb-&gt;sk
+op_assign
+l_int|NULL
+suffix:semicolon
 id|kfree_skb
 c_func
 (paren
@@ -1730,6 +1734,12 @@ c_cond
 (paren
 op_logical_neg
 id|sk-&gt;dead
+op_logical_and
+id|sk-&gt;wmem_alloc
+op_star
+l_int|2
+op_le
+id|sk-&gt;sndbuf
 )paren
 (brace
 id|wake_up_interruptible

@@ -2,6 +2,8 @@ multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol sui
 macro_line|#ifndef _LINUX_TCP_H
 DECL|macro|_LINUX_TCP_H
 mdefine_line|#define _LINUX_TCP_H
+macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;asm/byteorder.h&gt;
 DECL|struct|tcphdr
 r_struct
 id|tcphdr

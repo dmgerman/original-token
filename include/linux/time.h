@@ -5,14 +5,14 @@ DECL|struct|timespec
 r_struct
 id|timespec
 (brace
-DECL|member|tv_sec
+DECL|member|ts_sec
 r_int
-id|tv_sec
+id|ts_sec
 suffix:semicolon
 multiline_comment|/* seconds */
-DECL|member|tv_nsec
+DECL|member|ts_nsec
 r_int
-id|tv_nsec
+id|ts_nsec
 suffix:semicolon
 multiline_comment|/* nanoseconds */
 )brace

@@ -2287,6 +2287,8 @@ r_sizeof
 (paren
 id|nfs_root_addrs
 )paren
+op_minus
+l_int|1
 )braket
 op_assign
 l_char|&squot;&bslash;0&squot;

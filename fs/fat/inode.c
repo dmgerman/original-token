@@ -2906,10 +2906,10 @@ id|ATTR_SYS
 r_if
 c_cond
 (paren
-id|MSDOS_I
+id|MSDOS_SB
 c_func
 (paren
-id|inode
+id|inode-&gt;i_sb
 )paren
 op_member_access_from_pointer
 id|sys_immutable

@@ -342,22 +342,6 @@ id|proc_kcore_operations
 comma
 )brace
 suffix:semicolon
-r_extern
-r_int
-r_int
-id|prof_len
-suffix:semicolon
-r_extern
-r_int
-r_int
-op_star
-id|prof_buffer
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|prof_shift
-suffix:semicolon
 multiline_comment|/*&n; * This function accesses profiling information. The returned data is&n; * binary: the sampling step and the actual contents of the profile&n; * buffer. Use of the program readprofile is recommended in order to&n; * get meaningful info out of these data.&n; */
 DECL|function|read_profile
 r_static

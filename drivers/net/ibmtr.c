@@ -6213,7 +6213,7 @@ c_cond
 (paren
 id|ticks_waited
 OL
-l_int|5
+id|TX_TIMEOUT
 )paren
 (brace
 r_return

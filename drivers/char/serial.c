@@ -9906,6 +9906,13 @@ id|ASYNC_CLOSING
 )paren
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|info-&gt;flags
+op_amp
+id|ASYNC_CLOSING
+)paren
 id|interruptible_sleep_on
 c_func
 (paren

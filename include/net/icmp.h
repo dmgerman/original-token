@@ -3,6 +3,9 @@ macro_line|#ifndef _ICMP_H
 DECL|macro|_ICMP_H
 mdefine_line|#define&t;_ICMP_H
 macro_line|#include &lt;linux/icmp.h&gt;
+macro_line|#include &lt;linux/skbuff.h&gt;
+macro_line|#include &lt;net/sock.h&gt;
+macro_line|#include &lt;net/protocol.h&gt;
 r_extern
 r_struct
 id|icmp_err

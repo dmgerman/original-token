@@ -36,6 +36,7 @@ suffix:semicolon
 suffix:semicolon
 multiline_comment|/* Exported functions */
 macro_line|#ifdef __KERNEL__
+r_extern
 r_void
 id|rand_initialize
 c_func
@@ -43,6 +44,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
 r_void
 id|rand_initialize_irq
 c_func
@@ -51,6 +53,7 @@ r_int
 id|irq
 )paren
 suffix:semicolon
+r_extern
 r_void
 id|rand_initialize_blkdev
 c_func
@@ -62,6 +65,7 @@ r_int
 id|mode
 )paren
 suffix:semicolon
+r_extern
 r_void
 id|add_keyboard_randomness
 c_func
@@ -71,6 +75,7 @@ r_char
 id|scancode
 )paren
 suffix:semicolon
+r_extern
 r_void
 id|add_mouse_randomness
 c_func
@@ -79,6 +84,7 @@ id|__u32
 id|mouse_data
 )paren
 suffix:semicolon
+r_extern
 r_void
 id|add_interrupt_randomness
 c_func
@@ -87,6 +93,7 @@ r_int
 id|irq
 )paren
 suffix:semicolon
+r_extern
 r_void
 id|add_blkdev_randomness
 c_func
@@ -95,6 +102,7 @@ r_int
 id|major
 )paren
 suffix:semicolon
+r_extern
 r_void
 id|get_random_bytes
 c_func
@@ -107,14 +115,15 @@ r_int
 id|nbytes
 )paren
 suffix:semicolon
-DECL|variable|random_fops
-DECL|variable|urandom_fops
+macro_line|#ifndef MODULE
+r_extern
 r_struct
 id|file_operations
 id|random_fops
 comma
 id|urandom_fops
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif /* __KERNEL___ */
 macro_line|#endif /* _LINUX_RANDOM_H */
 eof

@@ -12,6 +12,14 @@ DECL|macro|NOTOK
 mdefine_line|#define NOTOK 0
 DECL|macro|TOKDEBUG
 mdefine_line|#define TOKDEBUG 1
+multiline_comment|/* Mike Eckhoff -- 96/02/08 */
+multiline_comment|/* This defines the minimum timeout. If a transmission takes */
+multiline_comment|/* longer then TX_TIMEOUT to send, we will wait and retry. */
+multiline_comment|/* On large networks, this value may need to be increased. */
+multiline_comment|/* We will start at .2s because that is what most drivers seem to be doing */
+multiline_comment|/* now and the original value of .05s was not nearly enough for large nets. */
+DECL|macro|TX_TIMEOUT
+mdefine_line|#define TX_TIMEOUT (HZ/5)
 macro_line|#ifndef IBMTR_SHARED_RAM_BASE
 DECL|macro|IBMTR_SHARED_RAM_BASE
 mdefine_line|#define IBMTR_SHARED_RAM_BASE 0xD0

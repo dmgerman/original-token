@@ -1,4 +1,4 @@
-multiline_comment|/*&n;  SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;  file README.st for more information.&n;&n;  History:&n;  Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;  Contribution and ideas from several people including (in alphabetical&n;  order) Klaus Ehrenfried, Steve Hirsch, Wolfgang Denk, Andreas Koppenh&quot;ofer,&n;  J&quot;org Weule, and Eric Youngdale.&n;&n;  Copyright 1992, 1993, 1994, 1995 Kai Makisara&n;&t;&t; email Kai.Makisara@metla.fi&n;&n;  Last modified: Thu Dec 14 21:51:16 1995 by root@kai.makisara.fi&n;  Some small formal changes - aeb, 950809&n;*/
+multiline_comment|/*&n;  SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;  file README.st for more information.&n;&n;  History:&n;  Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;  Contribution and ideas from several people including (in alphabetical&n;  order) Klaus Ehrenfried, Steve Hirsch, Wolfgang Denk, Andreas Koppenh&quot;ofer,&n;  J&quot;org Weule, and Eric Youngdale.&n;&n;  Copyright 1992, 1993, 1994, 1995 Kai Makisara&n;&t;&t; email Kai.Makisara@metla.fi&n;&n;  Last modified: Mon Jan 29 21:18:12 1996 by root@kai.makisara.fi&n;  Some small formal changes - aeb, 950809&n;*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1897,6 +1897,32 @@ id|MTBSR
 comma
 id|backspace
 )paren
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+(paren
+id|STp-&gt;eof
+op_eq
+id|ST_FM
+)paren
+op_logical_and
+op_logical_neg
+id|STp-&gt;eof_hit
+)paren
+(brace
+(paren
+id|STp-&gt;mt_status
+)paren
+op_member_access_from_pointer
+id|mt_fileno
+op_increment
+suffix:semicolon
+id|STp-&gt;drv_block
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 r_return
@@ -9751,6 +9777,28 @@ r_if
 c_cond
 (paren
 id|i
+)paren
+r_return
+id|i
+suffix:semicolon
+id|i
+op_assign
+id|flush_buffer
+c_func
+(paren
+id|inode
+comma
+id|file
+comma
+id|FALSE
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
+OL
+l_int|0
 )paren
 r_return
 id|i

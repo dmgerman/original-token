@@ -7,6 +7,11 @@ DECL|macro|CTRL_ACTION
 mdefine_line|#define CTRL_ACTION 0x0d00ff81
 DECL|macro|CTRL_ALWAYS
 mdefine_line|#define CTRL_ALWAYS 0x0800f501&t;/* Cannot be overridden by disp_ctrl */
+multiline_comment|/*&n; * Here is the default bell parameters: 750HZ, 1/8th of a second&n; */
+DECL|macro|DEFAULT_BELL_PITCH
+mdefine_line|#define DEFAULT_BELL_PITCH&t;750
+DECL|macro|DEFAULT_BELL_DURATION
+mdefine_line|#define DEFAULT_BELL_DURATION&t;(HZ/8)
 multiline_comment|/*&n; *  NOTE!!! We sometimes disable and enable interrupts for a short while&n; * (to put a word in video IO), but this will work even for keyboard&n; * interrupts. We know interrupts aren&squot;t enabled when getting a keyboard&n; * interrupt, as we use trap-gates. Hopefully all is well.&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
@@ -5013,20 +5018,6 @@ l_int|1
 )paren
 id|bell_pitch
 op_assign
-(paren
-id|par
-(braket
-l_int|1
-)braket
-template_param
-l_int|32767
-)paren
-ques
-c_cond
-l_int|0
-suffix:colon
-l_int|1193180
-op_div
 id|par
 (braket
 l_int|1
@@ -5035,7 +5026,7 @@ suffix:semicolon
 r_else
 id|bell_pitch
 op_assign
-l_int|0x637
+id|DEFAULT_BELL_PITCH
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -5076,9 +5067,7 @@ suffix:semicolon
 r_else
 id|bell_duration
 op_assign
-id|HZ
-op_div
-l_int|8
+id|DEFAULT_BELL_DURATION
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -5927,13 +5916,11 @@ l_int|0x01010101
 suffix:semicolon
 id|bell_pitch
 op_assign
-l_int|0x637
+id|DEFAULT_BELL_PITCH
 suffix:semicolon
 id|bell_duration
 op_assign
-id|HZ
-op_div
-l_int|8
+id|DEFAULT_BELL_DURATION
 suffix:semicolon
 id|gotoxy
 c_func
@@ -6698,8 +6685,6 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|bell_pitch
-op_logical_and
 id|bell_duration
 )paren
 id|kd_mksound
