@@ -3509,7 +3509,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 DECL|function|lp_wakeup
-r_int
+r_void
 id|lp_wakeup
 c_func
 (paren
@@ -3537,7 +3537,6 @@ op_logical_neg
 id|lp_dev-&gt;lp_wait_q
 )paren
 r_return
-l_int|1
 suffix:semicolon
 multiline_comment|/* Wake up whom? */
 multiline_comment|/* Claim the Parport */
@@ -3551,7 +3550,6 @@ id|lp_dev-&gt;dev
 )paren
 )paren
 r_return
-l_int|1
 suffix:semicolon
 multiline_comment|/* Shouldn&squot;t happen */
 id|wake_up
@@ -3560,9 +3558,6 @@ c_func
 op_amp
 id|lp_dev-&gt;lp_wait_q
 )paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 DECL|function|lp_searchfor

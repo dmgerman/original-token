@@ -1,4 +1,5 @@
 multiline_comment|/* $Id: parport_pc.c,v 1.1.2.3 1997/04/18 15:00:52 phil Exp $ &n; * Parallel-port routines for PC architecture&n; * &n; * Authors: Phil Blundell &lt;pjb27@cam.ac.uk&gt;&n; *          Tim Waugh &lt;tmw20@cam.ac.uk&gt;&n; *&t;    Jose Renau &lt;renau@acm.org&gt;&n; *          David Campbell &lt;campbell@tirian.che.curtin.edu.au&gt;&n; *&n; * based on work by Grant Guenther &lt;grant@torque.net&gt;&n; *              and Philip Blundell &lt;Philip.Blundell@pobox.com&gt;&n; */
+macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/tasks.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -573,7 +574,7 @@ c_func
 (paren
 id|p-&gt;irq
 comma
-l_int|NULL
+id|p
 )paren
 suffix:semicolon
 id|release_region
@@ -1720,6 +1721,7 @@ op_star
 id|pb
 )paren
 (brace
+r_int
 r_int
 id|r
 comma
@@ -3423,7 +3425,31 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|p-&gt;irq
+id|p-&gt;dma
+op_eq
+id|PARPORT_DMA_AUTO
+)paren
+id|p-&gt;dma
+op_assign
+(paren
+id|p-&gt;modes
+op_amp
+id|PARPORT_MODE_PCECP
+)paren
+ques
+c_cond
+id|parport_dma_probe
+c_func
+(paren
+id|p
+)paren
+suffix:colon
+id|PARPORT_DMA_NONE
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|p-&gt;dma
 op_ne
 id|PARPORT_DMA_NONE
 )paren
@@ -3492,6 +3518,12 @@ id|printk
 c_func
 (paren
 l_string|&quot;]&bslash;n&quot;
+)paren
+suffix:semicolon
+id|parport_proc_register
+c_func
+(paren
+id|p
 )paren
 suffix:semicolon
 r_return
@@ -3721,11 +3753,11 @@ r_return
 id|parport_pc_init
 c_func
 (paren
-l_int|NULL
+id|io
 comma
-l_int|NULL
+id|irq
 comma
-l_int|NULL
+id|dma
 )paren
 ques
 c_cond
@@ -3779,6 +3811,18 @@ id|PARPORT_FLAG_COMA
 )paren
 )paren
 id|parport_quiesce
+c_func
+(paren
+id|p
+)paren
+suffix:semicolon
+id|parport_proc_unregister
+c_func
+(paren
+id|p
+)paren
+suffix:semicolon
+id|parport_unregister_port
 c_func
 (paren
 id|p

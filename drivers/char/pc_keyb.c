@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * linux/drivers/char/pc_keyb.c&n; *&n; * Separation of the PC low-level part by Geert Uytterhoeven, May 1997&n; * See keyboard.c for the whole history.&n; *&n; * Major cleanup by Martin Mares, May 1997&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;

@@ -609,7 +609,7 @@ id|description
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* Each device can have two callback functions:&n; *  1) a preemption function, called by the resource manager to request&n; *     that the driver relinquish control of the port.  The driver should&n; *     return zero if it agrees to release the port, and nonzero if it &n; *     refuses.  Do not call parport_release() - the kernel will do this&n; *     implicitly.&n; *&n; *  2) a wake-up function, called by the resource manager to tell drivers&n; *     that the port is available to be claimed.  If a driver wants to use&n; *     the port, it should call parport_claim() here.  The return value from&n; *     this function is ignored.&n; */
+multiline_comment|/* Each device can have two callback functions:&n; *  1) a preemption function, called by the resource manager to request&n; *     that the driver relinquish control of the port.  The driver should&n; *     return zero if it agrees to release the port, and nonzero if it &n; *     refuses.  Do not call parport_release() - the kernel will do this&n; *     implicitly.&n; *&n; *  2) a wake-up function, called by the resource manager to tell drivers&n; *     that the port is available to be claimed.  If a driver wants to use&n; *     the port, it should call parport_claim() here.&n; */
 multiline_comment|/* A parallel port device */
 DECL|struct|pardevice
 r_struct
@@ -850,6 +850,17 @@ op_star
 id|ops
 )paren
 suffix:semicolon
+multiline_comment|/* Unregister a port. */
+r_void
+id|parport_unregister_port
+c_func
+(paren
+r_struct
+id|parport
+op_star
+id|port
+)paren
+suffix:semicolon
 multiline_comment|/* parport_in_use returns nonzero if there are devices attached to a port. */
 DECL|macro|parport_in_use
 mdefine_line|#define parport_in_use(x)  ((x)-&gt;devices != NULL)
@@ -900,7 +911,7 @@ r_void
 op_star
 )paren
 comma
-r_int
+r_void
 (paren
 op_star
 id|kf

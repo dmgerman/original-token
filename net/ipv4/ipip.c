@@ -72,6 +72,10 @@ l_string|&quot;ipip_rcv: got a packet!&bslash;n&quot;
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n;&t; *&t;Discard the original IP header&n;&t; */
+id|skb-&gt;mac.raw
+op_assign
+id|skb-&gt;data
+suffix:semicolon
 id|skb_pull
 c_func
 (paren

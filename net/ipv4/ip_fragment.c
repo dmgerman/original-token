@@ -1374,6 +1374,14 @@ op_assign
 id|fp-&gt;next
 suffix:semicolon
 )brace
+id|skb-&gt;pkt_type
+op_assign
+id|qp-&gt;fragments-&gt;skb-&gt;pkt_type
+suffix:semicolon
+id|skb-&gt;protocol
+op_assign
+id|qp-&gt;fragments-&gt;skb-&gt;protocol
+suffix:semicolon
 multiline_comment|/* We glued together all fragments, so remove the queue entry. */
 id|ip_free
 c_func

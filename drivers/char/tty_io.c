@@ -2838,13 +2838,6 @@ id|device
 op_minus
 id|driver-&gt;minor_start
 suffix:semicolon
-id|tty
-op_assign
-id|driver-&gt;table
-(braket
-id|idx
-)braket
-suffix:semicolon
 multiline_comment|/* &n;&t; * Check whether we need to acquire the tty semaphore to avoid&n;&t; * race conditions.  For now, play it safe.&n;&t; */
 id|down_tty_sem
 c_func
@@ -2853,16 +2846,21 @@ id|idx
 )paren
 suffix:semicolon
 multiline_comment|/* check whether we&squot;re reopening an existing tty */
+id|tty
+op_assign
+id|driver-&gt;table
+(braket
+id|idx
+)braket
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|tty
 )paren
-(brace
 r_goto
 id|fast_track
 suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; * First time open is complex, especially for PTY devices.&n;&t; * This code guarantees that either everything succeeds and the&n;&t; * TTY is ready for operation, or else the table slots are vacated&n;&t; * and the allocated memory released.  (Except that the termios &n;&t; * and locked termios may be retained.)&n;&t; */
 id|o_tty
 op_assign

@@ -3914,6 +3914,9 @@ id|len
 op_assign
 id|dentry-&gt;d_name.len
 suffix:semicolon
+r_int
+id|retval
+suffix:semicolon
 multiline_comment|/* In case of madness */
 r_if
 c_cond
@@ -3936,8 +3939,9 @@ c_func
 id|dir-&gt;i_mode
 )paren
 )paren
-r_goto
-id|bail
+r_return
+op_minus
+id|ENOENT
 suffix:semicolon
 multiline_comment|/*&n;&t; * Read in the directory entry. &quot;.&quot; is there under the name ^A^A .&n;&t; * Always read the dir even for . and .. in case we need the dates.&n;&t; */
 r_if
@@ -4035,6 +4039,10 @@ id|qbh
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * This is not really a bailout, just means file not found.&n;&t; */
+id|inode
+op_assign
+l_int|NULL
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4042,7 +4050,7 @@ op_logical_neg
 id|de
 )paren
 r_goto
-id|bail
+id|add_dentry
 suffix:semicolon
 multiline_comment|/*&n;&t; * Get inode number, what we&squot;re after.&n;&t; */
 r_if
@@ -4068,6 +4076,11 @@ id|de-&gt;fnode
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Go find or make an inode.&n;&t; */
+id|retval
+op_assign
+op_minus
+id|EACCES
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4085,7 +4098,7 @@ id|ino
 )paren
 )paren
 r_goto
-id|bail1
+id|free4
 suffix:semicolon
 multiline_comment|/*&n;&t; * Fill in the info from the directory if this is a newly created&n;&t; * inode.&n;&t; */
 r_if
@@ -4157,15 +4170,10 @@ l_int|9
 suffix:semicolon
 )brace
 )brace
-id|brelse4
-c_func
-(paren
-op_amp
-id|qbh
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * Made it.&n;&t; */
-id|d_instantiate
+multiline_comment|/*&n;&t; * Add the dentry, negative or otherwise.&n;&t; */
+id|add_dentry
+suffix:colon
+id|d_add
 c_func
 (paren
 id|dentry
@@ -4173,17 +4181,11 @@ comma
 id|inode
 )paren
 suffix:semicolon
-id|iput
-c_func
-(paren
-id|dir
-)paren
-suffix:semicolon
-r_return
+id|retval
+op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t; * Didn&squot;t.&n;&t; */
-id|bail1
+id|free4
 suffix:colon
 id|brelse4
 c_func
@@ -4192,17 +4194,8 @@ op_amp
 id|qbh
 )paren
 suffix:semicolon
-id|bail
-suffix:colon
-id|iput
-c_func
-(paren
-id|dir
-)paren
-suffix:semicolon
 r_return
-op_minus
-id|ENOENT
+id|retval
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Compare two counted strings ignoring case.&n; * HPFS directory order sorts letters as if they&squot;re upper case.&n; */

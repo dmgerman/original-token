@@ -1,4 +1,5 @@
 multiline_comment|/* $Id: parport_procfs.c,v 1.1.2.2 1997/04/18 15:00:52 phil Exp $&n; * Parallel port /proc interface code.&n; * &n; * Authors: David Campbell &lt;campbell@tirian.che.curtin.edu.au&gt;&n; *          Tim Waugh &lt;tmw20@cam.ac.uk&gt;&n; *&n; * based on work by Grant Guenther &lt;grant@torque.net&gt;&n; *              and Philip Blundell &lt;Philip.Blundell@pobox.com&gt;&n; */
+macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/tasks.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -649,6 +650,26 @@ comma
 id|pp-&gt;irq
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|pp-&gt;dma
+op_eq
+id|PARPORT_DMA_NONE
+)paren
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|page
+op_plus
+id|len
+comma
+l_string|&quot;dma:&bslash;tnone&bslash;n&quot;
+)paren
+suffix:semicolon
+r_else
 id|len
 op_add_assign
 id|sprintf

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Implementation of the diskquota system for the LINUX operating&n; * system. QUOTA is implemented using the BSD systemcall interface as&n; * the means of communication with the user level. Currently only the&n; * ext2-filesystem has support for diskquotas. Other filesystems may&n; * be added in future time. This file contains the generic routines&n; * called by the different filesystems on allocation of an inode or&n; * block. These routines take care of the administration needed to&n; * have a consistent diskquota tracking system. The ideas of both&n; * user and group quotas are based on the Melbourne quota system as&n; * used on BSD derived systems. The internal implementation is &n; * based on the LINUX inode-subsystem with added complexity of the&n; * diskquota system. This implementation is not based on any BSD&n; * kernel sourcecode.&n; * &n; * Version: $Id: dquot.c,v 1.11 1997/01/06 06:53:02 davem Exp $&n; * &n; * Author:  Marco van Wieringen &lt;mvw@mcs.ow.nl&gt; &lt;mvw@tnix.net&gt;&n; * &n; * Fixes:   Dmitry Gorodchanin &lt;begemot@bgm.rosprint.net&gt;, 11 Feb 96&n; *&t;    removed race conditions in dqput(), dqget() and iput(). &n; *          Andi Kleen removed all verify_area() calls, 31 Dec 96  &n; *&n; * (C) Copyright 1994, 1995 Marco van Wieringen &n; *&n; */
+multiline_comment|/*&n; * Implementation of the diskquota system for the LINUX operating&n; * system. QUOTA is implemented using the BSD systemcall interface as&n; * the means of communication with the user level. Currently only the&n; * ext2-filesystem has support for diskquotas. Other filesystems may&n; * be added in future time. This file contains the generic routines&n; * called by the different filesystems on allocation of an inode or&n; * block. These routines take care of the administration needed to&n; * have a consistent diskquota tracking system. The ideas of both&n; * user and group quotas are based on the Melbourne quota system as&n; * used on BSD derived systems. The internal implementation is &n; * based on the LINUX inode-subsystem with added complexity of the&n; * diskquota system. This implementation is not based on any BSD&n; * kernel sourcecode.&n; * &n; * Version: $Id: dquot.c,v 1.11 1997/01/06 06:53:02 davem Exp $&n; * &n; * Author:  Marco van Wieringen &lt;mvw@mcs.ow.nl&gt; &lt;mvw@tnix.net&gt;&n; * &n; * Fixes:   Dmitry Gorodchanin &lt;begemot@bgm.rosprint.net&gt;, 11 Feb 96&n; *&t;    removed race conditions in dqput(), dqget() and iput(). &n; *          Andi Kleen removed all verify_area() calls, 31 Dec 96  &n; *          Nick Kralevich &lt;nickkral@cal.alumni.berkeley.edu&gt;, 21 Jul 97&n; *          Fixed a condition where user and group quotas could get mixed up.&n; *&n; * (C) Copyright 1994, 1995 Marco van Wieringen &n; *&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -2699,6 +2699,10 @@ op_logical_or
 id|dquot-&gt;dq_id
 op_ne
 id|id
+op_logical_or
+id|dquot-&gt;dq_type
+op_ne
+id|type
 )paren
 (brace
 id|dquot
@@ -2724,6 +2728,10 @@ op_logical_or
 id|dquot-&gt;dq_id
 op_ne
 id|id
+op_logical_or
+id|dquot-&gt;dq_type
+op_ne
+id|type
 )paren
 r_goto
 id|repeat

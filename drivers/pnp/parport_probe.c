@@ -419,7 +419,7 @@ l_int|NULL
 suffix:semicolon
 DECL|function|wakeup
 r_static
-r_int
+r_void
 id|wakeup
 c_func
 (paren
@@ -456,7 +456,6 @@ id|dev
 )paren
 )paren
 r_return
-l_int|1
 suffix:semicolon
 id|wake_up
 c_func
@@ -466,7 +465,6 @@ id|wait_q
 )paren
 suffix:semicolon
 r_return
-l_int|0
 suffix:semicolon
 )brace
 DECL|function|parport_probe

@@ -4288,7 +4288,7 @@ l_int|0
 suffix:semicolon
 )brace
 r_static
-r_int
+r_void
 DECL|function|plip_wakeup
 id|plip_wakeup
 c_func
@@ -4360,7 +4360,6 @@ id|dev-&gt;name
 suffix:semicolon
 r_else
 r_return
-l_int|1
 suffix:semicolon
 )brace
 r_if
@@ -4375,7 +4374,6 @@ id|IFF_UP
 )paren
 multiline_comment|/* Don&squot;t need the port when the interface is down */
 r_return
-l_int|1
 suffix:semicolon
 r_if
 c_cond
@@ -4413,7 +4411,6 @@ id|dev
 suffix:semicolon
 )brace
 r_return
-l_int|0
 suffix:semicolon
 )brace
 r_static

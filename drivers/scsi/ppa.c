@@ -386,7 +386,8 @@ mdefine_line|#define w_fifo(x,y)     outb(y, PPA_BASE(x)+0x400)
 DECL|macro|w_ecr
 mdefine_line|#define w_ecr(x,y)      outb(y, PPA_BASE(x)+0x402)
 DECL|function|ppa_wakeup
-r_int
+r_static
+r_void
 id|ppa_wakeup
 c_func
 (paren
@@ -412,7 +413,6 @@ op_logical_neg
 id|ppa_dev-&gt;ppa_wait_q
 )paren
 r_return
-l_int|1
 suffix:semicolon
 multiline_comment|/* Wake up whom ? */
 multiline_comment|/* Claim the Parport */
@@ -426,7 +426,6 @@ id|ppa_dev-&gt;dev
 )paren
 )paren
 r_return
-l_int|1
 suffix:semicolon
 multiline_comment|/* Shouldn&squot;t happen */
 id|wake_up
@@ -437,10 +436,10 @@ id|ppa_dev-&gt;ppa_wait_q
 )paren
 suffix:semicolon
 r_return
-l_int|0
 suffix:semicolon
 )brace
 DECL|function|ppa_release
+r_static
 r_int
 id|ppa_release
 c_func
