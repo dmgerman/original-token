@@ -1386,18 +1386,6 @@ l_int|5
 )braket
 )paren
 suffix:semicolon
-multiline_comment|/* Grab the I/O Port region */
-id|request_region
-c_func
-(paren
-id|ioaddr
-comma
-id|ETHERCARD_TOTAL_SIZE
-comma
-l_string|&quot;sk_g16&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* Initialize device structure */
 multiline_comment|/* Allocate memory for private structure */
 id|p
 op_assign
@@ -1426,10 +1414,20 @@ id|p
 op_eq
 l_int|NULL
 )paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s: ERROR - no memory for driver data!&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
+)brace
 id|memset
 c_func
 (paren
@@ -1449,6 +1447,17 @@ id|priv
 )paren
 suffix:semicolon
 multiline_comment|/* clear memory */
+multiline_comment|/* Grab the I/O Port region */
+id|request_region
+c_func
+(paren
+id|ioaddr
+comma
+id|ETHERCARD_TOTAL_SIZE
+comma
+l_string|&quot;sk_g16&quot;
+)paren
+suffix:semicolon
 multiline_comment|/* Assign our Device Driver functions */
 id|dev-&gt;open
 op_assign

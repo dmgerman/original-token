@@ -203,6 +203,36 @@ r_void
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|struct|sigaction
+r_struct
+id|sigaction
+(brace
+DECL|member|sa_handler
+id|__sighandler_t
+id|sa_handler
+suffix:semicolon
+DECL|member|sa_flags
+r_int
+r_int
+id|sa_flags
+suffix:semicolon
+DECL|member|sa_restorer
+r_void
+(paren
+op_star
+id|sa_restorer
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
+DECL|member|sa_mask
+id|sigset_t
+id|sa_mask
+suffix:semicolon
+multiline_comment|/* mask last for extensibility */
+)brace
+suffix:semicolon
 DECL|struct|k_sigaction
 r_struct
 id|k_sigaction
@@ -411,15 +441,15 @@ r_int
 id|_sig
 )paren
 (brace
-r_char
+r_int
 id|ret
 suffix:semicolon
 id|__asm__
 c_func
 (paren
-l_string|&quot;bftst %1{%2,#1}&bslash;n&bslash;t sne %0&quot;
+l_string|&quot;bfextu %1{%2,#1},%0&quot;
 suffix:colon
-l_string|&quot;=rm&quot;
+l_string|&quot;=d&quot;
 (paren
 id|ret
 )paren
@@ -440,8 +470,6 @@ l_int|1
 op_xor
 l_int|31
 )paren
-suffix:colon
-l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 r_return

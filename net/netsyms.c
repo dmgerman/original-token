@@ -1222,13 +1222,6 @@ c_func
 id|tcp_do_sendmsg
 )paren
 suffix:semicolon
-DECL|variable|tcp_v4_build_header
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|tcp_v4_build_header
-)paren
-suffix:semicolon
 DECL|variable|tcp_v4_rebuild_header
 id|EXPORT_SYMBOL
 c_func
@@ -1346,6 +1339,27 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|tcp_simple_retransmit
+)paren
+suffix:semicolon
+DECL|variable|tcp_transmit_skb
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|tcp_transmit_skb
+)paren
+suffix:semicolon
+DECL|variable|tcp_connect
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|tcp_connect
+)paren
+suffix:semicolon
+DECL|variable|tcp_make_synack
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|tcp_make_synack
 )paren
 suffix:semicolon
 DECL|variable|xrlim_allow
@@ -1684,6 +1698,13 @@ id|unregister_netdevice_notifier
 suffix:semicolon
 multiline_comment|/* support for loadable net drivers */
 macro_line|#ifdef CONFIG_NET
+DECL|variable|loopback_dev
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|loopback_dev
+)paren
+suffix:semicolon
 DECL|variable|register_netdevice
 id|EXPORT_SYMBOL
 c_func

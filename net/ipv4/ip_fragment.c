@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP fragmentation functionality.&n; *&t;&t;&n; * Version:&t;$Id: ip_fragment.c,v 1.32 1998/03/08 05:56:21 davem Exp $&n; *&n; * Authors:&t;Fred N. van Kempen &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Split from ip.c , see ip_input.c for history.&n; *&t;&t;David S. Miller :&t;Begin massive cleanup...&n; *&t;&t;Andi Kleen&t;:&t;Add sysctls.&n; *&t;&t;xxxx&t;&t;:&t;Overlapfrag bug.&n; *&t;&t;Ultima          :       ip_expire() kernel panic.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP fragmentation functionality.&n; *&t;&t;&n; * Version:&t;$Id: ip_fragment.c,v 1.33 1998/03/19 08:34:08 davem Exp $&n; *&n; * Authors:&t;Fred N. van Kempen &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Split from ip.c , see ip_input.c for history.&n; *&t;&t;David S. Miller :&t;Begin massive cleanup...&n; *&t;&t;Andi Kleen&t;:&t;Add sysctls.&n; *&t;&t;xxxx&t;&t;:&t;Overlapfrag bug.&n; *&t;&t;Ultima          :       ip_expire() kernel panic.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1652,39 +1652,16 @@ l_int|8
 )paren
 suffix:semicolon
 )brace
-id|del_timer
+multiline_comment|/* about 30 seconds */
+id|mod_timer
 c_func
 (paren
 op_amp
 id|qp-&gt;timer
-)paren
-suffix:semicolon
-id|qp-&gt;timer.expires
-op_assign
+comma
 id|jiffies
 op_plus
 id|sysctl_ipfrag_time
-suffix:semicolon
-multiline_comment|/* about 30 seconds */
-id|qp-&gt;timer.data
-op_assign
-(paren
-r_int
-r_int
-)paren
-id|qp
-suffix:semicolon
-multiline_comment|/* pointer to queue */
-id|qp-&gt;timer.function
-op_assign
-id|ip_expire
-suffix:semicolon
-multiline_comment|/* expire function */
-id|add_timer
-c_func
-(paren
-op_amp
-id|qp-&gt;timer
 )paren
 suffix:semicolon
 )brace

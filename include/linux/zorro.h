@@ -1,779 +1,991 @@
-multiline_comment|/*&n; * linux/zorro.h -- Amiga AutoConfig (Zorro) Expansion Device Definitions&n; *&n; * Copyright (C) 1995 Geert Uytterhoeven&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
-macro_line|#ifndef __ZORRO_H
-DECL|macro|__ZORRO_H
-mdefine_line|#define __ZORRO_H
+multiline_comment|/*&n; *  linux/zorro.h -- Amiga AutoConfig (Zorro) Expansion Device Definitions&n; *&n; *  Copyright (C) 1995 Geert Uytterhoeven&n; *&n; *  Please update arch/m68k/amiga/zorro.c if you make changes here!&n; *&n; *  Many IDs were obtained from ExpName/Identify ((C) Richard K&#xfffd;rber)&n; *  and by looking at the NetBSD-Amiga kernel sources&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file COPYING in the main directory of this archive&n; *  for more details.&n; */
+macro_line|#ifndef _LINUX_ZORRO_H
+DECL|macro|_LINUX_ZORRO_H
+mdefine_line|#define _LINUX_ZORRO_H
 macro_line|#ifndef __ASSEMBLY__
-multiline_comment|/*&n; * Defined Board Manufacturers&n; *&n; * Please update arch/m68k/amiga/zorro.c if you make changes here&n; * Many IDs were obtained from ExpName/Identify ((C) Richard K&#xfffd;rber)&n; * and by looking at the NetBSD-Amiga kernel sources&n; */
-DECL|macro|MANUF_PACIFIC
-mdefine_line|#define MANUF_PACIFIC          (0x00D3)&t;/* Pacific Peripherals */
-DECL|macro|PROD_SE_2000_A500
-mdefine_line|#define PROD_SE_2000_A500      (0x00)&t;/* SE 2000 A500 */
-DECL|macro|PROD_PACIFIC_HD
-mdefine_line|#define PROD_PACIFIC_HD        (0x0A)&t;/* HD Controller */
-DECL|macro|MANUF_KUPKE
-mdefine_line|#define MANUF_KUPKE            (0x00DD)&t;/* Kupke */
-DECL|macro|PROD_GOLEM_BOX_2
-mdefine_line|#define PROD_GOLEM_BOX_2       (0x00)&t;/* Golem RAM Box 2MB */
-DECL|macro|MANUF_MEMPHIS
-mdefine_line|#define MANUF_MEMPHIS          (0x0100)&t;/* Memphis */
-DECL|macro|PROD_STORMBRINGER
-mdefine_line|#define PROD_STORMBRINGER      (0x00)&t;/* Stormbringer */
-DECL|macro|MANUF_3_STATE
-mdefine_line|#define MANUF_3_STATE          (0x0200)&t;/* 3-State */
-DECL|macro|PROD_MEGAMIX_2000
-mdefine_line|#define PROD_MEGAMIX_2000      (0x02)&t;/* Megamix 2000 RAM */
-DECL|macro|MANUF_COMMODORE2
-mdefine_line|#define MANUF_COMMODORE2       (0x0201)&t;/* Commodore Braunschweig */
-DECL|macro|PROD_A2088
-mdefine_line|#define PROD_A2088             (0x01)&t;/* CBM A2088 XT Bridgeboard */
-DECL|macro|PROD_A2286
-mdefine_line|#define PROD_A2286             (0x02)&t;/* CBM A2286 AT Bridgeboard */
-DECL|macro|PROD_A4091_2
-mdefine_line|#define PROD_A4091_2           (0x54)&t;/* CBM A4091 SCSI Controller */
-DECL|macro|PROD_A2386SX
-mdefine_line|#define PROD_A2386SX           (0x67)&t;/* CBM A2386-SX Bridgeboard */
-DECL|macro|MANUF_COMMODORE
-mdefine_line|#define MANUF_COMMODORE        (0x0202)&t;/* Commodore West Chester */
-DECL|macro|PROD_A2090A
-mdefine_line|#define PROD_A2090A            (0x01)&t;/* CBM A2090/A2090A HD Controller */
-DECL|macro|PROD_A590
-mdefine_line|#define PROD_A590              (0x02)&t;/* CBM A590 SCSI Controller */
-DECL|macro|PROD_A2091
-mdefine_line|#define PROD_A2091             (0x03)&t;/* CBM A2091 SCSI Controller */
-DECL|macro|PROD_A2090B
-mdefine_line|#define PROD_A2090B            (0x04)&t;/* CBM A2090B 2090 Autoboot Card */
-DECL|macro|PROD_ARCNET
-mdefine_line|#define PROD_ARCNET            (0x09)&t;/* CBM A2060 Arcnet Card */
-DECL|macro|PROD_CBMRAM
-mdefine_line|#define PROD_CBMRAM            (0x0A)&t;/* CBM A2052/58.RAM | 590/2091.RAM */
-DECL|macro|PROD_A560RAM
-mdefine_line|#define PROD_A560RAM           (0x20)&t;/* CBM A560 Memory Module */
-DECL|macro|PROD_A2232PROTO
-mdefine_line|#define PROD_A2232PROTO        (0x45)&t;/* CBM A2232 Serial Prototype */
-DECL|macro|PROD_A2232
-mdefine_line|#define PROD_A2232             (0x46)&t;/* CBM A2232 Serial Production */
-DECL|macro|PROD_A2620
-mdefine_line|#define PROD_A2620             (0x50)&t;/* CBM A2620 68020/RAM Card */
-DECL|macro|PROD_A2630
-mdefine_line|#define PROD_A2630             (0x51)&t;/* CBM A2630 68030/RAM Card */
-DECL|macro|PROD_A4091
-mdefine_line|#define PROD_A4091             (0x54)&t;/* CBM A4091 SCSI Controller */
-DECL|macro|PROD_A2065_2
-mdefine_line|#define PROD_A2065_2           (0x5A)&t;/* A2065 Ethernet Card */
-DECL|macro|PROD_ROMULATOR
-mdefine_line|#define PROD_ROMULATOR         (0x60)&t;/* CBM Romulator Card */
-DECL|macro|PROD_A3000TESTFIX
-mdefine_line|#define PROD_A3000TESTFIX      (0x61)&t;/* CBM A3000 Test Fixture */
-DECL|macro|PROD_A2386SX_2
-mdefine_line|#define PROD_A2386SX_2         (0x67)&t;/* A2386-SX Bridgeboard */
-DECL|macro|PROD_A2065
-mdefine_line|#define PROD_A2065             (0x70)&t;/* CBM A2065 Ethernet Card */
-DECL|macro|MANUF_COMMODORE3
-mdefine_line|#define MANUF_COMMODORE3       (0x0203)&t;/* Commodore West Chester */
-DECL|macro|PROD_A2090A_CM
-mdefine_line|#define PROD_A2090A_CM         (0x03)&t;/* A2090A Combitec/MacroSystem */
-DECL|macro|MANUF_KCS
-mdefine_line|#define MANUF_KCS              (0x02FF)&t;/* Kolff Computer Supplies */
-DECL|macro|PROD_POWER_BOARD
-mdefine_line|#define PROD_POWER_BOARD       (0x00)&t;/* KCS Power PC Board */
-DECL|macro|MANUF_CARDCO
-mdefine_line|#define MANUF_CARDCO           (0x03EC)&t;/* Cardco */
-DECL|macro|PROD_KRONOS_2000_SCSI
-mdefine_line|#define PROD_KRONOS_2000_SCSI  (0x04)&t;/* Kronos 2000 SCSI Controller */
-DECL|macro|PROD_A1000_SCSI
-mdefine_line|#define PROD_A1000_SCSI        (0x0C)&t;/* A1000 SCSI Controller */
-DECL|macro|PROD_ESCORT_SCSI
-mdefine_line|#define PROD_ESCORT_SCSI       (0x0E)&t;/* Escort SCSI Controller */
-DECL|macro|PROD_CC_A2410
-mdefine_line|#define PROD_CC_A2410          (0xF5)&t;/* Cardco A2410 Hires Graphics Card */
-DECL|macro|MANUF_A_SQUARED
-mdefine_line|#define MANUF_A_SQUARED        (0x03ED)&t;/* A-Squared */
-DECL|macro|PROD_LIVE_2000
-mdefine_line|#define PROD_LIVE_2000         (0x01)&t;/* Live! 2000 */
-DECL|macro|MANUF_COMSPEC
-mdefine_line|#define MANUF_COMSPEC          (0x03EE)&t;/* ComSpec Communications */
-DECL|macro|PROD_AX2000
-mdefine_line|#define PROD_AX2000            (0x01)&t;/* AX2000 */
-DECL|macro|MANUF_ANAKIN
-mdefine_line|#define MANUF_ANAKIN           (0x03F1)&t;/* Anakin */
-DECL|macro|PROD_EASYL
-mdefine_line|#define PROD_EASYL             (0x01)&t;/* Easyl Tablet */
-DECL|macro|MANUF_MICROBOTICS
-mdefine_line|#define MANUF_MICROBOTICS      (0x03F2)&t;/* MicroBotics */
-DECL|macro|PROD_STARBOARD_II
-mdefine_line|#define PROD_STARBOARD_II      (0x00)&t;/* StarBoard II */
-DECL|macro|PROD_STARDRIVE
-mdefine_line|#define PROD_STARDRIVE         (0x02)&t;/* StarDrive */
-DECL|macro|PROD_8_UP_A
-mdefine_line|#define PROD_8_UP_A            (0x03)&t;/* 8-Up (Rev A) */
-DECL|macro|PROD_8_UP_Z
-mdefine_line|#define PROD_8_UP_Z            (0x04)&t;/* 8-Up (Rev Z) */
-DECL|macro|PROD_DELTA_RAM
-mdefine_line|#define PROD_DELTA_RAM         (0x20)&t;/* Delta Card RAM */
-DECL|macro|PROD_8_STAR_RAM
-mdefine_line|#define PROD_8_STAR_RAM        (0x40)&t;/* 8-Star RAM */
-DECL|macro|PROD_8_STAR
-mdefine_line|#define PROD_8_STAR            (0x41)&t;/* 8-Star */
-DECL|macro|PROD_VXL_RAM
-mdefine_line|#define PROD_VXL_RAM           (0x44)&t;/* VXL RAM */
-DECL|macro|PROD_VXL_30
-mdefine_line|#define PROD_VXL_30            (0x45)&t;/* VXL-30 Turbo Board */
-DECL|macro|PROD_DELTA
-mdefine_line|#define PROD_DELTA             (0x60)&t;/* Delta Card */
-DECL|macro|PROD_MBX_1200
-mdefine_line|#define PROD_MBX_1200          (0x81)&t;/* MBX 1200 */
-DECL|macro|PROD_HARDFRAME_2000
-mdefine_line|#define PROD_HARDFRAME_2000    (0x9E)&t;/* Hardframe 2000 */
-DECL|macro|PROD_MBX_1200_2
-mdefine_line|#define PROD_MBX_1200_2        (0xC1)&t;/* MBX 1200 */
-DECL|macro|MANUF_ACCESS
-mdefine_line|#define MANUF_ACCESS           (0x03F4)&t;/* Access Associates */
-DECL|macro|MANUF_EXPANSION_TECH
-mdefine_line|#define MANUF_EXPANSION_TECH   (0x03F6)&t;/* Expansion Technologies */
-DECL|macro|MANUF_ASDG
-mdefine_line|#define MANUF_ASDG             (0x03FF)&t;/* ASDG */
-DECL|macro|PROD_ASDG_MEMORY
-mdefine_line|#define PROD_ASDG_MEMORY       (0x01)&t;/* Memory Expansion */
-DECL|macro|PROD_ASDG_MEMORY_2
-mdefine_line|#define PROD_ASDG_MEMORY_2     (0x02)&t;/* Memory Expansion */
-DECL|macro|PROD_LAN_ROVER
-mdefine_line|#define PROD_LAN_ROVER         (0xFE)&t;/* Lan Rover Ethernet */
-DECL|macro|PROD_TWIN_X
-mdefine_line|#define PROD_TWIN_X            (0xFF)&t;/* Twin-X Serial Card */
-DECL|macro|MANUF_IMTRONICS
-mdefine_line|#define MANUF_IMTRONICS        (0x0404)&t;/* Imtronics */
-DECL|macro|PROD_HURRICANE_2800
-mdefine_line|#define PROD_HURRICANE_2800    (0x39)&t;/* Hurricane 2800 68030 */
-DECL|macro|PROD_HURRICANE_2800_2
-mdefine_line|#define PROD_HURRICANE_2800_2  (0x57)&t;/* Hurricane 2800 68030 */
-DECL|macro|MANUF_UNIV_OF_LOWELL
-mdefine_line|#define MANUF_UNIV_OF_LOWELL   (0x0406)&t;/* University of Lowell */
-DECL|macro|PROD_A2410
-mdefine_line|#define PROD_A2410             (0x00)&t;/* CBM A2410 Hires Graphics Card */
-DECL|macro|MANUF_AMERISTAR
-mdefine_line|#define MANUF_AMERISTAR        (0x041D)&t;/* Ameristar */
-DECL|macro|PROD_AMERISTAR2065
-mdefine_line|#define PROD_AMERISTAR2065     (0x01)&t;/* A2065 Ethernet Card */
-DECL|macro|PROD_A560
-mdefine_line|#define PROD_A560              (0x09)&t;/* Arcnet Card */
-DECL|macro|PROD_A4066
-mdefine_line|#define PROD_A4066             (0x0A)&t;/* A4066 Ethernet Card */
-DECL|macro|MANUF_SUPRA
-mdefine_line|#define MANUF_SUPRA            (0x0420)&t;/* Supra */
-DECL|macro|PROD_SUPRADRIVE_4x4
-mdefine_line|#define PROD_SUPRADRIVE_4x4    (0x01)&t;/* SupraDrive 4x4 SCSI Controller */
-DECL|macro|PROD_SUPRA_2000
-mdefine_line|#define PROD_SUPRA_2000        (0x03)&t;/* 2000 DMA HD */
-DECL|macro|PROD_SUPRA_500
-mdefine_line|#define PROD_SUPRA_500         (0x05)&t;/* 500 HD/RAM */
-DECL|macro|PROD_SUPRA_500XP
-mdefine_line|#define PROD_SUPRA_500XP       (0x09)&t;/* 500XP/2000 RAM */
-DECL|macro|PROD_SUPRA_500RX
-mdefine_line|#define PROD_SUPRA_500RX       (0x0A)&t;/* 500RX/2000 RAM */
-DECL|macro|PROD_SUPRA_2400ZI
-mdefine_line|#define PROD_SUPRA_2400ZI      (0x0B)&t;/* 2400zi Modem */
-DECL|macro|PROD_WORDSYNC
-mdefine_line|#define PROD_WORDSYNC          (0x0C)&t;/* Supra Wordsync SCSI Controller */
-DECL|macro|PROD_WORDSYNC_II
-mdefine_line|#define PROD_WORDSYNC_II       (0x0D)&t;/* Supra Wordsync II SCSI Controller */
-DECL|macro|PROD_SUPRA_2400ZIPLUS
-mdefine_line|#define PROD_SUPRA_2400ZIPLUS  (0x10)&t;/* 2400zi+ Modem */
-DECL|macro|MANUF_CSA
-mdefine_line|#define MANUF_CSA              (0x0422)&t;/* Computer Systems Ass. */
-DECL|macro|PROD_MAGNUM
-mdefine_line|#define PROD_MAGNUM            (0x11)&t;/* Magnum 40 SCSI Controller */
-DECL|macro|PROD_12GAUGE
-mdefine_line|#define PROD_12GAUGE           (0x15)&t;/* 12 Gauge SCSI Controller */
-DECL|macro|MANUF_MTEC2
-mdefine_line|#define MANUF_MTEC2            (0x0502)&t;/* M-Tech */
-DECL|macro|PROD_AT500_2
-mdefine_line|#define PROD_AT500_2           (0x03)&t;/* AT500 RAM */
-DECL|macro|MANUF_GVP3
-mdefine_line|#define MANUF_GVP3             (0x06E1)&t;/* Great Valley Products */
-DECL|macro|PROD_IMPACT
-mdefine_line|#define PROD_IMPACT            (0x08)&t;/* Impact SCSI/Memory */
-DECL|macro|MANUF_BYTEBOX
-mdefine_line|#define MANUF_BYTEBOX          (0x07DA)&t;/* ByteBox */
-DECL|macro|PROD_BYTEBOX_A500
-mdefine_line|#define PROD_BYTEBOX_A500      (0x00)&t;/* A500 */
-DECL|macro|MANUF_HACKER
-mdefine_line|#define MANUF_HACKER           (0x07DB)&t;/* Test only: no product definitions */
-DECL|macro|MANUF_POWER_COMPUTING
-mdefine_line|#define MANUF_POWER_COMPUTING  (0x07DC)&t;/* Power Computing (DKB) */
-DECL|macro|PROD_DKB_3128
-mdefine_line|#define PROD_DKB_3128          (0x0E)&t;/* DKB 3128 RAM */
-DECL|macro|PROD_RAPID_FIRE
-mdefine_line|#define PROD_RAPID_FIRE        (0x0F)&t;/* Rapid Fire SCSI Controller */
-DECL|macro|PROD_DKB_1202
-mdefine_line|#define PROD_DKB_1202          (0x10)&t;/* DKB 1202 RAM */
-DECL|macro|PROD_VIPER_II_COBRA
-mdefine_line|#define PROD_VIPER_II_COBRA    (0x12)&t;/* Viper II Turbo Board (DKB Cobra) */
-DECL|macro|PROD_WILDFIRE_060
-mdefine_line|#define PROD_WILDFIRE_060      (0x17)&t;/* WildFire 060 Turbo Board */
-DECL|macro|PROD_WILDFIRE_060_2
-mdefine_line|#define PROD_WILDFIRE_060_2    (0xFF)&t;/* WildFire 060 Turbo Board */
-DECL|macro|MANUF_GVP
-mdefine_line|#define MANUF_GVP              (0x07E1)&t;/* Great Valley Products */
-DECL|macro|PROD_IMPACT_I_4K
-mdefine_line|#define PROD_IMPACT_I_4K       (0x01)&t;/* Impact Series-I SCSI 4K */
-DECL|macro|PROD_IMPACT_I_16K_2
-mdefine_line|#define PROD_IMPACT_I_16K_2    (0x02)&t;/* Impact Series-I SCSI 16K/2 */
-DECL|macro|PROD_IMPACT_I_16K_3
-mdefine_line|#define PROD_IMPACT_I_16K_3    (0x03)&t;/* Impact Series-I SCSI 16K/3 */
-DECL|macro|PROD_IMPACT_3001_IDE
-mdefine_line|#define PROD_IMPACT_3001_IDE   (0x08)&t;/* Impact 3001 IDE */
-DECL|macro|PROD_IMPACT_3001_RAM
-mdefine_line|#define PROD_IMPACT_3001_RAM   (0x09)&t;/* Impact 3001 RAM */
-DECL|macro|PROD_GVPIISCSI
-mdefine_line|#define PROD_GVPIISCSI         (0x0B)&t;/* GVP Series II SCSI Controller */
-DECL|macro|PROD_GVPIISCSI_2
-mdefine_line|#define PROD_GVPIISCSI_2       (0x09)&t;/* evidence that the driver works&n;&t;&t;&t;&t;&t;   for this product code also */
-DECL|macro|PROD_GVPIIRAM
-mdefine_line|#define PROD_GVPIIRAM          (0x0A)&t;/* GVP Series II RAM */
-DECL|macro|PROD_GVP
-mdefine_line|#define PROD_GVP               (0x0B)&t;/* This code is used by a wide range of&n;&t;&t;&t;&t;&t;   GVP products - use the epc to&n;&t;&t;&t;&t;&t;   identify it correctly */
-DECL|macro|PROD_GVP_A2000_030
-mdefine_line|#define PROD_GVP_A2000_030     (0x0D)&t;/* GVP A2000 68030 Turbo Board */
-DECL|macro|PROD_IMPACT_3001_IDE_2
-mdefine_line|#define PROD_IMPACT_3001_IDE_2 (0x0D)&t;/* Impact 3001 IDE */
-DECL|macro|PROD_GFORCE_040_SCSI
-mdefine_line|#define PROD_GFORCE_040_SCSI   (0x16)&t;/* GForce 040 with SCSI (new) */
-DECL|macro|PROD_GVPIV_24
-mdefine_line|#define PROD_GVPIV_24          (0x20)&t;/* GVP IV-24 Graphics Board */
-DECL|macro|PROD_GFORCE_040
-mdefine_line|#define PROD_GFORCE_040        (0xFF)&t;/* GForce 040 Turbo Board */
-multiline_comment|/* #define PROD_GVPIO_EXT      (0xFF)*/
-multiline_comment|/* GVP I/O Extender */
-DECL|macro|MANUF_SYNERGY
-mdefine_line|#define MANUF_SYNERGY          (0x07E5)&t;/* Synergy */
-DECL|macro|MANUF_XETEC
-mdefine_line|#define MANUF_XETEC            (0x07E6)&t;/* Xetec */
-DECL|macro|PROD_FASTCARD_SCSI
-mdefine_line|#define PROD_FASTCARD_SCSI     (0x01)&t;/* FastCard SCSI Controller */
-DECL|macro|PROD_FASTCARD_RAM
-mdefine_line|#define PROD_FASTCARD_RAM      (0x02)&t;/* FastCard RAM */
-DECL|macro|MANUF_PPI
-mdefine_line|#define MANUF_PPI              (0x07EA)&t;/* Progressive Peripherals Inc. */
-DECL|macro|PROD_MERCURY
-mdefine_line|#define PROD_MERCURY           (0x00)&t;/* Mercury Turbo Board */
-DECL|macro|PROD_PPS_A3000_040
-mdefine_line|#define PROD_PPS_A3000_040     (0x01)&t;/* PP&amp;S A3000 68040 Turbo Board */
-DECL|macro|PROD_PPS_A2000_040
-mdefine_line|#define PROD_PPS_A2000_040     (0x69)&t;/* PP&amp;S A2000 68040 Turbo Board */
-DECL|macro|PROD_ZEUS
-mdefine_line|#define PROD_ZEUS              (0x96)&t;/* Zeus SCSI Controller */
-DECL|macro|PROD_PPS_A500_040
-mdefine_line|#define PROD_PPS_A500_040      (0xBB)&t;/* PP&amp;S A500 68040 Turbo Board */
-DECL|macro|MANUF_XEBEC
-mdefine_line|#define MANUF_XEBEC            (0x07EC)&t;/* Xebec */
-DECL|macro|MANUF_SPIRIT
-mdefine_line|#define MANUF_SPIRIT           (0x07F2)&t;/* Spirit */
-DECL|macro|PROD_HDA_506
-mdefine_line|#define PROD_HDA_506           (0x04)&t;/* HDA 506 Harddisk */
-DECL|macro|PROD_OCTABYTE_RAM
-mdefine_line|#define PROD_OCTABYTE_RAM      (0x06)&t;/* OctaByte RAM */
-DECL|macro|MANUF_BSC
-mdefine_line|#define MANUF_BSC              (0x07FE)&t;/* BSC */
-DECL|macro|PROD_ALF_3_SCSI
-mdefine_line|#define PROD_ALF_3_SCSI        (0x03)&t;/* BSC ALF 3 SCSI Controller */
-DECL|macro|MANUF_BSC3
-mdefine_line|#define MANUF_BSC3             (0x0801)&t;/* BSC */
-DECL|macro|PROD_ALF_2_SCSI
-mdefine_line|#define PROD_ALF_2_SCSI        (0x01)&t;/* ALF 2 SCSI Controller */
-DECL|macro|PROD_ALF_2_SCSI_2
-mdefine_line|#define PROD_ALF_2_SCSI_2      (0x02)&t;/* ALF 2 SCSI Controller */
-DECL|macro|PROD_ALF_3_SCSI_2
-mdefine_line|#define PROD_ALF_3_SCSI_2      (0x03)&t;/* ALF 3 SCSI Controller */
-DECL|macro|MANUF_C_LTD
-mdefine_line|#define MANUF_C_LTD            (0x0802)&t;/* C Ltd. */
-DECL|macro|PROD_KRONOS_SCSI
-mdefine_line|#define PROD_KRONOS_SCSI       (0x04)&t;/* Kronos SCSI Controller */
-DECL|macro|PROD_A1000_SCSI_2
-mdefine_line|#define PROD_A1000_SCSI_2      (0x0C)&t;/* A1000 SCSI Controller */
-DECL|macro|MANUF_JOCHHEIM
-mdefine_line|#define MANUF_JOCHHEIM         (0x0804)&t;/* Jochheim */
-DECL|macro|PROD_JOCHHEIM_RAM
-mdefine_line|#define PROD_JOCHHEIM_RAM      (0x01)&t;/* Jochheim RAM */
-DECL|macro|MANUF_CHECKPOINT
-mdefine_line|#define MANUF_CHECKPOINT       (0x0807)&t;/* Checkpoint Technologies */
-DECL|macro|PROD_SERIAL_SOLUTION
-mdefine_line|#define PROD_SERIAL_SOLUTION   (0x00)&t;/* Serial Solution */
-DECL|macro|MANUF_ICD
-mdefine_line|#define MANUF_ICD              (0x0817)&t;/* ICD */
-DECL|macro|PROD_ADVANTAGE_2000
-mdefine_line|#define PROD_ADVANTAGE_2000    (0x01)&t;/* Advantage 2000 SCSI Controller */
-DECL|macro|MANUF_KUPKE2
-mdefine_line|#define MANUF_KUPKE2           (0x0819)&t;/* Kupke */
-DECL|macro|PROD_KUPKE_SCSI_II
-mdefine_line|#define PROD_KUPKE_SCSI_II     (0x02)&t;/* Golem SCSI-II Controller */
-DECL|macro|PROD_GOLEM_BOX
-mdefine_line|#define PROD_GOLEM_BOX         (0x03)&t;/* Golem Box */
-DECL|macro|PROD_KUPKE_TURBO
-mdefine_line|#define PROD_KUPKE_TURBO       (0x04)&t;/* 030/882 Turbo Board */
-DECL|macro|PROD_KUPKE_SCSI_AT
-mdefine_line|#define PROD_KUPKE_SCSI_AT     (0x05)&t;/* SCSI/AT Controller */
-DECL|macro|MANUF_GVP4
-mdefine_line|#define MANUF_GVP4             (0x081D)&t;/* Great Valley Products */
-DECL|macro|PROD_A2000_RAM8
-mdefine_line|#define PROD_A2000_RAM8        (0x09)&t;/* A2000-RAM8/2 */
-DECL|macro|MANUF_INTERWORKS_NET
-mdefine_line|#define MANUF_INTERWORKS_NET   (0x081E)&t;/* Interworks Network */
-DECL|macro|MANUF_HARDITAL
-mdefine_line|#define MANUF_HARDITAL         (0x0820)&t;/* Hardital Synthesis */
-DECL|macro|PROD_TQM
-mdefine_line|#define PROD_TQM               (0x14)&t;/* TQM 68030+68882 Turbo Board */
-DECL|macro|MANUF_BSC2
-mdefine_line|#define MANUF_BSC2             (0x082C)&t;/* BSC */
-DECL|macro|PROD_OKTAGON_SCSI
-mdefine_line|#define PROD_OKTAGON_SCSI      (0x05)&t;/* BSC Oktagon 2008 SCSI Controller */
-DECL|macro|PROD_TANDEM
-mdefine_line|#define PROD_TANDEM            (0x06)&t;/* BSC Tandem AT-2008/508 IDE */
-DECL|macro|PROD_ALPHA_RAM_1200
-mdefine_line|#define PROD_ALPHA_RAM_1200    (0x07)&t;/* Alpha RAM 1200 */
-DECL|macro|PROD_OKTAGON_RAM
-mdefine_line|#define PROD_OKTAGON_RAM       (0x08)&t;/* BSC Oktagon 2008 RAM */
-DECL|macro|PROD_MULTIFACE_I
-mdefine_line|#define PROD_MULTIFACE_I       (0x10)&t;/* Alfa Data MultiFace I */
-DECL|macro|PROD_MULTIFACE_II
-mdefine_line|#define PROD_MULTIFACE_II      (0x11)&t;/* Alfa Data MultiFace II */
-DECL|macro|PROD_MULTIFACE_III
-mdefine_line|#define PROD_MULTIFACE_III     (0x12)&t;/* Alfa Data MultiFace III */
-DECL|macro|PROD_BSC_FRAEMBUFFER
-mdefine_line|#define PROD_BSC_FRAEMBUFFER   (0x20)&t;/* Framebuffer */
-DECL|macro|PROD_GRAFFITI_RAM
-mdefine_line|#define PROD_GRAFFITI_RAM      (0x21)&t;/* Graffiti Graphics Board */
-DECL|macro|PROD_GRAFFITI_REG
-mdefine_line|#define PROD_GRAFFITI_REG      (0x22)
-DECL|macro|PROD_ISDN_MASTERCARD
-mdefine_line|#define PROD_ISDN_MASTERCARD   (0x40)&t;/* BSC ISDN MasterCard */
-DECL|macro|PROD_ISDN_MASTERCARD_2
-mdefine_line|#define PROD_ISDN_MASTERCARD_2 (0x41)&t;/* BSC ISDN MasterCard II */
-DECL|macro|MANUF_ADV_SYS_SOFT
-mdefine_line|#define MANUF_ADV_SYS_SOFT     (0x0836)&t;/* Advanced Systems &amp; Software */
-DECL|macro|PROD_NEXUS_SCSI
-mdefine_line|#define PROD_NEXUS_SCSI        (0x01)&t;/* Nexus SCSI Controller */
-DECL|macro|PROD_NEXUS_RAM
-mdefine_line|#define PROD_NEXUS_RAM         (0x08)&t;/* Nexus RAM */
-DECL|macro|MANUF_IMPULSE
-mdefine_line|#define MANUF_IMPULSE          (0x0838)&t;/* Impulse */
-DECL|macro|PROD_FIRECRACKER_24
-mdefine_line|#define PROD_FIRECRACKER_24    (0x00)&t;/* FireCracker 24 */
-DECL|macro|MANUF_IVS
-mdefine_line|#define MANUF_IVS              (0x0840)&t;/* IVS */
-DECL|macro|PROD_GRANDSLAM_PIC_2
-mdefine_line|#define PROD_GRANDSLAM_PIC_2   (0x02)&t;/* GrandSlam PIC 2 RAM */
-DECL|macro|PROD_GRANDSLAM_PIC_1
-mdefine_line|#define PROD_GRANDSLAM_PIC_1   (0x04)&t;/* GrandSlam PIC 1 RAM */
-DECL|macro|PROD_IVS_OVERDRIVE
-mdefine_line|#define PROD_IVS_OVERDRIVE     (0x10)&t;/* OverDrive HD */
-DECL|macro|PROD_TRUMPCARD_CLASSIC
-mdefine_line|#define PROD_TRUMPCARD_CLASSIC (0x30)&t;/* Trumpcard Classic SCSI Controller */
-DECL|macro|PROD_TRUMPCARD_PRO
-mdefine_line|#define PROD_TRUMPCARD_PRO     (0x34)&t;/* Trumpcard Pro SCSI Controller */
-DECL|macro|PROD_META_4
-mdefine_line|#define PROD_META_4            (0x40)&t;/* Meta-4 RAM */
-DECL|macro|PROD_WAVETOOLS
-mdefine_line|#define PROD_WAVETOOLS         (0xBF)&t;/* Wavetools Sound Board */
-DECL|macro|PROD_VECTOR
-mdefine_line|#define PROD_VECTOR            (0xF3)&t;/* Vector SCSI Controller */
-DECL|macro|PROD_VECTOR_2
-mdefine_line|#define PROD_VECTOR_2          (0xF4)&t;/* Vector SCSI Controller */
-DECL|macro|MANUF_VECTOR
-mdefine_line|#define MANUF_VECTOR           (0x0841)&t;/* Vector */
-DECL|macro|PROD_CONNECTION
-mdefine_line|#define PROD_CONNECTION        (0xE3)&t;/* Connection Serial IO */
-DECL|macro|MANUF_XPERT_PRODEV
-mdefine_line|#define MANUF_XPERT_PRODEV     (0x0845)&t;/* XPert/ProDev */
-DECL|macro|PROD_VISIONA_RAM
-mdefine_line|#define PROD_VISIONA_RAM       (0x01)&t;/* Visiona Graphics Board */
-DECL|macro|PROD_VISIONA_REG
-mdefine_line|#define PROD_VISIONA_REG       (0x02)
-DECL|macro|PROD_MERLIN_RAM
-mdefine_line|#define PROD_MERLIN_RAM        (0x03)&t;/* Merlin Graphics Board */
-DECL|macro|PROD_MERLIN_REG
-mdefine_line|#define PROD_MERLIN_REG        (0x04)
-DECL|macro|PROD_MERLIN_REG_2
-mdefine_line|#define PROD_MERLIN_REG_2      (0xC9)
-DECL|macro|MANUF_HYDRA_SYSTEMS
-mdefine_line|#define MANUF_HYDRA_SYSTEMS    (0x0849)&t;/* Hydra Systems */
-DECL|macro|PROD_AMIGANET
-mdefine_line|#define PROD_AMIGANET          (0x01)&t;/* Amiganet Board */
-DECL|macro|MANUF_SUNRIZE
-mdefine_line|#define MANUF_SUNRIZE          (0x084F)&t;/* Sunrize Industries */
-DECL|macro|PROD_AD1012
-mdefine_line|#define PROD_AD1012            (0x01)&t;/* AD1012 Sound Board */
-DECL|macro|PROD_AD516
-mdefine_line|#define PROD_AD516             (0x02)&t;/* AD516 Sound Board */
-DECL|macro|PROD_DD512
-mdefine_line|#define PROD_DD512             (0x03)&t;/* DD512 Sound Board */
-DECL|macro|MANUF_TRICERATOPS
-mdefine_line|#define MANUF_TRICERATOPS      (0x0850)&t;/* Triceratops */
-DECL|macro|PROD_TRICERATOPS
-mdefine_line|#define PROD_TRICERATOPS       (0x01)&t;/* Triceratops Multi I/O Board */
-DECL|macro|MANUF_APPLIED_MAGIC
-mdefine_line|#define MANUF_APPLIED_MAGIC    (0x0851)&t;/* Applied Magic Inc */
-DECL|macro|PROD_DMI_RESOLVER
-mdefine_line|#define PROD_DMI_RESOLVER      (0x01)&t;/* DMI Resolver Graphics Board */
-DECL|macro|PROD_DIGITAL_BCASTER
-mdefine_line|#define PROD_DIGITAL_BCASTER   (0x06)&t;/* Digital Broadcaster */
-DECL|macro|MANUF_GFX_BASE
-mdefine_line|#define MANUF_GFX_BASE         (0x085E)&t;/* GFX-Base */
-DECL|macro|PROD_GDA_1_RAM
-mdefine_line|#define PROD_GDA_1_RAM         (0x00)&t;/* GDA-1 Graphics Board */
-DECL|macro|PROD_GDA_1_REG
-mdefine_line|#define PROD_GDA_1_REG         (0x01)
-DECL|macro|MANUF_ROCTEC
-mdefine_line|#define MANUF_ROCTEC           (0x0860)&t;/* RocTec */
-DECL|macro|PROD_RH_800C
-mdefine_line|#define PROD_RH_800C           (0x01)&t;/* RH 800C Hard Disk Controller */
-DECL|macro|PROD_RH_800C_RAM
-mdefine_line|#define PROD_RH_800C_RAM       (0x01)&t;/* RH 800C RAM */
-DECL|macro|MANUF_HELFRICH1
-mdefine_line|#define MANUF_HELFRICH1        (0x0861)&t;/* Helfrich */
-DECL|macro|PROD_RAINBOW3
-mdefine_line|#define PROD_RAINBOW3          (0x21)&t;/* Rainbow3 Graphics Board */
-DECL|macro|MANUF_SW_RESULT_ENTS
-mdefine_line|#define MANUF_SW_RESULT_ENTS   (0x0866)&t;/* Software Result Enterprises */
-DECL|macro|PROD_GG2PLUS
-mdefine_line|#define PROD_GG2PLUS           (0x01)&t;/* GG2+ Bus Converter */
-DECL|macro|MANUF_MASOBOSHI
-mdefine_line|#define MANUF_MASOBOSHI        (0x086D)&t;/* Masoboshi */
-DECL|macro|PROD_MASTER_CARD_RAM
-mdefine_line|#define PROD_MASTER_CARD_RAM   (0x03)&t;/* Master Card RAM */
-DECL|macro|PROD_MASTER_CARD_SCSI
-mdefine_line|#define PROD_MASTER_CARD_SCSI  (0x04)&t;/* Master Card SCSI Controller */
-DECL|macro|PROD_MVD_819
-mdefine_line|#define PROD_MVD_819           (0x07)&t;/* MVD 819 */
-DECL|macro|MANUF_VILLAGE_TRONIC
-mdefine_line|#define MANUF_VILLAGE_TRONIC   (0x0877)&t;/* Village Tronic */
-DECL|macro|PROD_DOMINO_RAM
-mdefine_line|#define PROD_DOMINO_RAM        (0x01)&t;/* Domino Graphics Board */
-DECL|macro|PROD_DOMINO_REG
-mdefine_line|#define PROD_DOMINO_REG        (0x02)
-DECL|macro|PROD_PICASSO_II_RAM
-mdefine_line|#define PROD_PICASSO_II_RAM    (0x0B)&t;/* Picasso II/II+ Graphics Board */
-DECL|macro|PROD_PICASSO_II_REG
-mdefine_line|#define PROD_PICASSO_II_REG    (0x0C)
-DECL|macro|PROD_PICASSO_II_SEGM
-mdefine_line|#define PROD_PICASSO_II_SEGM   (0x0D)&t;/* Picasso II/II+ (Segmented Mode) */
-DECL|macro|PROD_PICASSO_IV
-mdefine_line|#define PROD_PICASSO_IV        (0x15)&t;/* Picassio IV Graphics Board */
-DECL|macro|PROD_PICASSO_IV_2
-mdefine_line|#define PROD_PICASSO_IV_2      (0x16)
-DECL|macro|PROD_PICASSO_IV_3
-mdefine_line|#define PROD_PICASSO_IV_3      (0x17)
-DECL|macro|PROD_PICASSO_IV_4
-mdefine_line|#define PROD_PICASSO_IV_4      (0x18)
-DECL|macro|PROD_ARIADNE
-mdefine_line|#define PROD_ARIADNE           (0xC9)&t;/* Ariadne Ethernet */
-DECL|macro|MANUF_UTILITIES_ULTD
-mdefine_line|#define MANUF_UTILITIES_ULTD   (0x087B)&t;/* Utilities Unlimited */
-DECL|macro|PROD_EMPLANT_DELUXE
-mdefine_line|#define PROD_EMPLANT_DELUXE    (0x15)&t;/* Emplant Deluxe SCSI Controller */
-DECL|macro|PROD_EMPLANT_DELUXE2
-mdefine_line|#define PROD_EMPLANT_DELUXE2   (0x20)&t;/* Emplant Deluxe SCSI Controller */
-DECL|macro|MANUF_AMITRIX
-mdefine_line|#define MANUF_AMITRIX          (0x0880)&t;/* Amitrix */
-DECL|macro|PROD_AMITRIX_MULTI_IO
-mdefine_line|#define PROD_AMITRIX_MULTI_IO  (0x01)&t;/* Multi-IO */
-DECL|macro|PROD_AMITRIX_CD_RAM
-mdefine_line|#define PROD_AMITRIX_CD_RAM    (0x02)&t;/* CD-RAM Memory */
-DECL|macro|MANUF_ARMAX
-mdefine_line|#define MANUF_ARMAX            (0x0885)&t;/* ArMax */
-DECL|macro|PROD_OMNIBUS
-mdefine_line|#define PROD_OMNIBUS           (0x00)&t;/* OmniBus Graphics Board */
-DECL|macro|MANUF_NEWTEK
-mdefine_line|#define MANUF_NEWTEK           (0x088F)&t;/* NewTek */
-DECL|macro|PROD_VIDEOTOASTER
-mdefine_line|#define PROD_VIDEOTOASTER      (0x00)&t;/* VideoToaster */
-DECL|macro|MANUF_MTEC
-mdefine_line|#define MANUF_MTEC             (0x0890)&t;/* M-Tech Germany */
-DECL|macro|PROD_AT500
-mdefine_line|#define PROD_AT500             (0x01)&t;/* AT500 IDE Controller */
-DECL|macro|PROD_MTEC_68030
-mdefine_line|#define PROD_MTEC_68030        (0x03)&t;/* 68030 Turbo Board */
-DECL|macro|PROD_MTEC_68020I
-mdefine_line|#define PROD_MTEC_68020I       (0x06)&t;/* 68020i Turbo Board */
-DECL|macro|PROD_MTEC_T1230
-mdefine_line|#define PROD_MTEC_T1230        (0x20)&t;/* A1200 T68030/42 RTC Turbo Board */
-DECL|macro|PROD_MTEC_RAM
-mdefine_line|#define PROD_MTEC_RAM          (0x22)&t;/* MTEC 8MB RAM */
-DECL|macro|MANUF_GVP2
-mdefine_line|#define MANUF_GVP2             (0x0891)&t;/* Great Valley Products */
-DECL|macro|PROD_SPECTRUM_RAM
-mdefine_line|#define PROD_SPECTRUM_RAM      (0x01)&t;/* EGS 28/24 Spectrum Graphics Board */
-DECL|macro|PROD_SPECTRUM_REG
-mdefine_line|#define PROD_SPECTRUM_REG      (0x02)
-DECL|macro|MANUF_HELFRICH2
-mdefine_line|#define MANUF_HELFRICH2        (0x0893)&t;/* Helfrich */
-DECL|macro|PROD_PICCOLO_RAM
-mdefine_line|#define PROD_PICCOLO_RAM       (0x05)&t;/* Piccolo Graphics Board */
-DECL|macro|PROD_PICCOLO_REG
-mdefine_line|#define PROD_PICCOLO_REG       (0x06)
-DECL|macro|PROD_PEGGY_PLUS
-mdefine_line|#define PROD_PEGGY_PLUS        (0x07)&t;/* PeggyPlus MPEG Decoder Board */
-DECL|macro|PROD_VIDEOCRUNCHER
-mdefine_line|#define PROD_VIDEOCRUNCHER     (0x08)&t;/* VideoCruncher */
-DECL|macro|PROD_SD64_RAM
-mdefine_line|#define PROD_SD64_RAM          (0x0A)&t;/* SD64 Graphics Board */
-DECL|macro|PROD_SD64_REG
-mdefine_line|#define PROD_SD64_REG          (0x0B)
-DECL|macro|MANUF_MACROSYSTEMS
-mdefine_line|#define MANUF_MACROSYSTEMS     (0x089B)&t;/* MacroSystems USA */
-DECL|macro|PROD_WARP_ENGINE
-mdefine_line|#define PROD_WARP_ENGINE       (0x13)&t;/* Warp Engine 40xx SCSI Controller */
-DECL|macro|MANUF_ELBOX
-mdefine_line|#define MANUF_ELBOX            (0x089E)&t;/* ElBox Computer */
-DECL|macro|PROD_ELBOX_1200
-mdefine_line|#define PROD_ELBOX_1200        (0x06)&t;/* Elbox 1200/4 RAM */
-DECL|macro|MANUF_HARMS_PROF
-mdefine_line|#define MANUF_HARMS_PROF       (0x0A00)&t;/* Harms Professional */
-DECL|macro|PROD_HARMS_030_PLUS
-mdefine_line|#define PROD_HARMS_030_PLUS    (0x10)&t;/* 030 plus */
-DECL|macro|PROD_3500_TURBO
-mdefine_line|#define PROD_3500_TURBO        (0xD0)&t;/* 3500 Turbo board */
-DECL|macro|MANUF_MICRONIK
-mdefine_line|#define MANUF_MICRONIK         (0x0A50)&t;/* Micronik */
-DECL|macro|PROD_RCA_120
-mdefine_line|#define PROD_RCA_120           (0x0A)&t;/* RCA 120 RAM */
-DECL|macro|MANUF_MEGA_MICRO
-mdefine_line|#define MANUF_MEGA_MICRO       (0x1000)&t;/* MegaMicro */
-DECL|macro|PROD_SCRAM_500_SCSI
-mdefine_line|#define PROD_SCRAM_500_SCSI    (0x03)&t;/* SCRAM 500 SCSI Controller */
-DECL|macro|PROD_SCRAM_500_RAM
-mdefine_line|#define PROD_SCRAM_500_RAM     (0x04)&t;/* SCRAM 500 RAM */
-DECL|macro|MANUF_IMTRONICS2
-mdefine_line|#define MANUF_IMTRONICS2       (0x1028)&t;/* Imtronics */
-DECL|macro|PROD_HURRICANE_2800_3
-mdefine_line|#define PROD_HURRICANE_2800_3  (0x39)&t;/* Hurricane 2800 68030 */
-DECL|macro|PROD_HURRICANE_2800_4
-mdefine_line|#define PROD_HURRICANE_2800_4  (0x57)&t;/* Hurricane 2800 68030 */
-DECL|macro|MANUF_KUPKE3
-mdefine_line|#define MANUF_KUPKE3           (0x1248)&t;/* Kupke */
-DECL|macro|PROD_GOLEM_3000
-mdefine_line|#define PROD_GOLEM_3000        (0x01)&t;/* Golem HD 3000 */
-DECL|macro|MANUF_ITH
-mdefine_line|#define MANUF_ITH              (0x1388)&t;/* ITH */
-DECL|macro|PROD_ISDN_MASTER_II
-mdefine_line|#define PROD_ISDN_MASTER_II    (0x01)&t;/* ISDN-Master II */
-DECL|macro|MANUF_VMC
-mdefine_line|#define MANUF_VMC              (0x1389)&t;/* VMC */
-DECL|macro|PROD_ISDN_BLASTER_Z2
-mdefine_line|#define PROD_ISDN_BLASTER_Z2   (0x01)&t;/* ISDN Blaster Z2 */
-DECL|macro|PROD_HYPERCOM_4
-mdefine_line|#define PROD_HYPERCOM_4        (0x02)&t;/* HyperCom 4 */
-DECL|macro|MANUF_INFORMATION
-mdefine_line|#define MANUF_INFORMATION      (0x157C)&t;/* Information */
-DECL|macro|PROD_ISDN_ENGINE_I
-mdefine_line|#define PROD_ISDN_ENGINE_I     (0x64)&t;/* ISDN Engine I */
-DECL|macro|MANUF_VORTEX
-mdefine_line|#define MANUF_VORTEX           (0x2017)&t;/* Vortex */
-DECL|macro|PROD_GOLDEN_GATE_386SX
-mdefine_line|#define PROD_GOLDEN_GATE_386SX (0x07)&t;/* Golden Gate 80386SX Board */
-DECL|macro|PROD_GOLDEN_GATE_RAM
-mdefine_line|#define PROD_GOLDEN_GATE_RAM   (0x08)&t;/* Golden Gate RAM */
-DECL|macro|PROD_GOLDEN_GATE_486
-mdefine_line|#define PROD_GOLDEN_GATE_486   (0x09)&t;/* Golden Gate 80486 Board */
-DECL|macro|MANUF_DATAFLYER
-mdefine_line|#define MANUF_DATAFLYER        (0x2062)&t;/* DataFlyer */
-DECL|macro|PROD_DATAFLYER_4000SXS
-mdefine_line|#define PROD_DATAFLYER_4000SXS (0x01)&t;/* DataFlyer 4000SX SCSI Controller */
-DECL|macro|PROD_DATAFLYER_4000SXR
-mdefine_line|#define PROD_DATAFLYER_4000SXR (0x02)&t;/* DataFlyer 4000SX RAM */
-DECL|macro|MANUF_READYSOFT
-mdefine_line|#define MANUF_READYSOFT        (0x2100)&t;/* ReadySoft */
-DECL|macro|PROD_AMAX
-mdefine_line|#define PROD_AMAX              (0x01)&t;/* AMax II/IV */
-DECL|macro|MANUF_PHASE5
-mdefine_line|#define MANUF_PHASE5           (0x2140)&t;/* Phase5 */
-DECL|macro|PROD_BLIZZARD_RAM
-mdefine_line|#define PROD_BLIZZARD_RAM      (0x01)&t;/* Blizzard RAM */
-DECL|macro|PROD_BLIZZARD
-mdefine_line|#define PROD_BLIZZARD          (0x02)&t;/* Blizzard */
-DECL|macro|PROD_BLIZZARD_1220_IV
-mdefine_line|#define PROD_BLIZZARD_1220_IV  (0x06)&t;/* Blizzard 1220-IV Turbo Board */
-DECL|macro|PROD_FASTLANE_RAM
-mdefine_line|#define PROD_FASTLANE_RAM      (0x0A)&t;/* FastLane RAM */
-DECL|macro|PROD_FASTLANE_SCSI
-mdefine_line|#define PROD_FASTLANE_SCSI     (0x0B)&t;/* FastLane/Blizzard 1230-II SCSI/CyberSCSI */
-DECL|macro|PROD_CYBERSTORM_SCSI
-mdefine_line|#define PROD_CYBERSTORM_SCSI   (0x0C)&t;/* Blizzard 1220/CyberStorm */
-DECL|macro|PROD_BLIZZARD_1230_III
-mdefine_line|#define PROD_BLIZZARD_1230_III (0x0D)&t;/* Blizzard 1230-III Turbo Board */
-DECL|macro|PROD_BLIZZARD_1230_IV
-mdefine_line|#define PROD_BLIZZARD_1230_IV  (0x11)&t;/* Blizzard 1230-IV/1260 Turbo Board */
-DECL|macro|PROD_BLIZZARD_2060SCSI
-mdefine_line|#define PROD_BLIZZARD_2060SCSI (0x18)&t;/* Blizzard 2060 SCSI Controller */
-DECL|macro|PROD_CYBERSTORM_II
-mdefine_line|#define PROD_CYBERSTORM_II     (0x19)&t;/* CyberStorm Mk II */
-DECL|macro|PROD_CYBERVISION
-mdefine_line|#define PROD_CYBERVISION       (0x22)&t;/* CyberVision64 Graphics Board */
-DECL|macro|PROD_CYBERVISION3D_PRT
-mdefine_line|#define PROD_CYBERVISION3D_PRT (0x32)&t;/* CyberVision64-3D Prototype */
-DECL|macro|PROD_CYBERVISION3D
-mdefine_line|#define PROD_CYBERVISION3D     (0x43)&t;/* CyberVision64-3D Graphics Board */
-DECL|macro|MANUF_DPS
-mdefine_line|#define MANUF_DPS              (0x2169)&t;/* DPS */
-DECL|macro|PROD_DPS_PAR
-mdefine_line|#define PROD_DPS_PAR           (0x01)&t;/* Personal Animation Recorder */
-DECL|macro|MANUF_APOLLO2
-mdefine_line|#define MANUF_APOLLO2          (0x2200)&t;/* Apollo */
-DECL|macro|PROD_A620
-mdefine_line|#define PROD_A620              (0x00)&t;/* A620 68020 Accelerator */
-DECL|macro|PROD_A620_2
-mdefine_line|#define PROD_A620_2            (0x01)&t;/* A620 68020 Accelerator */
-DECL|macro|MANUF_APOLLO
-mdefine_line|#define MANUF_APOLLO           (0x2222)&t;/* Apollo */
-DECL|macro|PROD_AT_APOLLO
-mdefine_line|#define PROD_AT_APOLLO         (0x22)&t;/* AT-Apollo */
-DECL|macro|PROD_APOLLO_TURBO
-mdefine_line|#define PROD_APOLLO_TURBO      (0x23)&t;/* Apollo Turbo Board */
-DECL|macro|MANUF_PETSOFF
-mdefine_line|#define MANUF_PETSOFF          (0x38A5)&t;/* Petsoff LP */
-DECL|macro|PROD_DELFINA
-mdefine_line|#define PROD_DELFINA           (0x00)&t;/* Delfina DSP */
-DECL|macro|MANUF_UWE_GERLACH
-mdefine_line|#define MANUF_UWE_GERLACH      (0x3FF7)&t;/* Uwe Gerlach */
-DECL|macro|PROD_UG_RAM_ROM
-mdefine_line|#define PROD_UG_RAM_ROM        (0xd4)&t;/* RAM/ROM */
-DECL|macro|MANUF_MACROSYSTEMS2
-mdefine_line|#define MANUF_MACROSYSTEMS2    (0x4754)&t;/* MacroSystems Germany */
-DECL|macro|PROD_MAESTRO
-mdefine_line|#define PROD_MAESTRO           (0x03)&t;/* Maestro */
-DECL|macro|PROD_VLAB
-mdefine_line|#define PROD_VLAB              (0x04)&t;/* VLab */
-DECL|macro|PROD_MAESTRO_PRO
-mdefine_line|#define PROD_MAESTRO_PRO       (0x05)&t;/* Maestro Pro */
-DECL|macro|PROD_RETINA_Z2
-mdefine_line|#define PROD_RETINA_Z2         (0x06)&t;/* Retina Z2 Graphics Board */
-DECL|macro|PROD_MULTI_EVOLUTION
-mdefine_line|#define PROD_MULTI_EVOLUTION   (0x08)&t;/* MultiEvolution */
-DECL|macro|PROD_TOCCATA
-mdefine_line|#define PROD_TOCCATA           (0x0C)&t;/* Toccata Sound Board */
-DECL|macro|PROD_RETINA_Z3
-mdefine_line|#define PROD_RETINA_Z3         (0x10)&t;/* Retina Z3 Graphics Board */
-DECL|macro|PROD_VLAB_MOTION
-mdefine_line|#define PROD_VLAB_MOTION       (0x12)&t;/* VLab Motion */
-DECL|macro|PROD_ALTAIS
-mdefine_line|#define PROD_ALTAIS            (0x13)&t;/* Altais Graphics Board */
-DECL|macro|PROD_FALCON_040
-mdefine_line|#define PROD_FALCON_040        (0xFD)&t;/* Falcon &squot;040 Turbo Board */
-DECL|macro|MANUF_COMBITEC
-mdefine_line|#define MANUF_COMBITEC         (0x6766)&t;/* Combitec */
-DECL|macro|MANUF_SKI
-mdefine_line|#define MANUF_SKI              (0x8000)&t;/* SKI Peripherals */
-DECL|macro|PROD_MAST_FIREBALL
-mdefine_line|#define PROD_MAST_FIREBALL     (0x08)&t;/* M.A.S.T. Fireball SCSI Controller */
-DECL|macro|PROD_SKI_SCSI_SERIAL
-mdefine_line|#define PROD_SKI_SCSI_SERIAL   (0x80)&t;/* SCSI / Dual Serial */
-DECL|macro|MANUF_CAMERON
-mdefine_line|#define MANUF_CAMERON          (0xAA01)&t;/* Cameron */
-DECL|macro|PROD_PERSONAL_A4
-mdefine_line|#define PROD_PERSONAL_A4       (0x10)&t;/* Personal A4 */
-DECL|macro|MANUF_REIS_WARE
-mdefine_line|#define MANUF_REIS_WARE        (0xAA11)&t;/* Reis-Ware */
-DECL|macro|PROD_RW_HANDYSCANNER
-mdefine_line|#define PROD_RW_HANDYSCANNER   (0x11)&t;/* Handyscanner */
-multiline_comment|/* Illegal Manufacturer IDs. These do NOT appear in arch/m68k/amiga/zorro.c! */
-DECL|macro|MANUF_HACKER_INC
-mdefine_line|#define MANUF_HACKER_INC       (0x07DB)&t;/* Hacker Inc. */
-DECL|macro|PROD_HACKER_SCSI
-mdefine_line|#define PROD_HACKER_SCSI       (0x01)&t;/* Hacker Inc. SCSI Controller */
-DECL|macro|MANUF_RES_MNGT_FORCE
-mdefine_line|#define MANUF_RES_MNGT_FORCE   (0x07DB)&t;/* Resource Management Force */
-DECL|macro|PROD_QUICKNET
-mdefine_line|#define PROD_QUICKNET          (0x02)&t;/* QuickNet Ethernet */
-DECL|macro|MANUF_VECTOR2
-mdefine_line|#define MANUF_VECTOR2          (0x07DB)&t;/* Vector */
-DECL|macro|PROD_CONNECTION_2
-mdefine_line|#define PROD_CONNECTION_2      (0xE0)&t;/* Vector Connection */
-DECL|macro|PROD_CONNECTION_3
-mdefine_line|#define PROD_CONNECTION_3      (0xE1)&t;/* Vector Connection */
-DECL|macro|PROD_CONNECTION_4
-mdefine_line|#define PROD_CONNECTION_4      (0xE2)&t;/* Vector Connection */
-DECL|macro|PROD_CONNECTION_5
-mdefine_line|#define PROD_CONNECTION_5      (0xE3)&t;/* Vector Connection */
-multiline_comment|/*&n; * GVP&squot;s identifies most of their product through the &squot;extended&n; * product code&squot; (epc). The epc has to be and&squot;ed with the GVP_PRODMASK&n; * before the identification.&n; */
-DECL|macro|GVP_PRODMASK
-mdefine_line|#define GVP_PRODMASK    (0xf8)
-DECL|macro|GVP_SCSICLKMASK
-mdefine_line|#define GVP_SCSICLKMASK (0x01)
-DECL|enum|GVP_ident
+multiline_comment|/*&n;     *  Zorro Product Classes&n;     *&n;     *  Make sure to keep these in sync with arch/m68k/amiga/zorro.c!&n;     */
+DECL|enum|Zorro_Classes
 r_enum
-id|GVP_ident
+id|Zorro_Classes
 (brace
-DECL|enumerator|GVP_GFORCE_040
-id|GVP_GFORCE_040
+DECL|enumerator|ZORRO_CLASS_UNKNOWN
+id|ZORRO_CLASS_UNKNOWN
 op_assign
-l_int|0x20
+l_int|0x00
 comma
-DECL|enumerator|GVP_GFORCE_040_SCSI
-id|GVP_GFORCE_040_SCSI
-op_assign
-l_int|0x30
+DECL|enumerator|ZORRO_CLASS_ARCNET
+id|ZORRO_CLASS_ARCNET
 comma
-DECL|enumerator|GVP_A1291_SCSI
-id|GVP_A1291_SCSI
-op_assign
-l_int|0x40
+DECL|enumerator|ZORRO_CLASS_AUDIO
+id|ZORRO_CLASS_AUDIO
 comma
-DECL|enumerator|GVP_COMBO_R4
-id|GVP_COMBO_R4
-op_assign
-l_int|0x60
+DECL|enumerator|ZORRO_CLASS_BRIDGE
+id|ZORRO_CLASS_BRIDGE
 comma
-DECL|enumerator|GVP_COMBO_R4_SCSI
-id|GVP_COMBO_R4_SCSI
-op_assign
-l_int|0x70
+DECL|enumerator|ZORRO_CLASS_DSP
+id|ZORRO_CLASS_DSP
 comma
-DECL|enumerator|GVP_PHONEPAK
-id|GVP_PHONEPAK
-op_assign
-l_int|0x78
+DECL|enumerator|ZORRO_CLASS_ETHERNET
+id|ZORRO_CLASS_ETHERNET
 comma
-DECL|enumerator|GVP_IOEXT
-id|GVP_IOEXT
-op_assign
-l_int|0x98
+DECL|enumerator|ZORRO_CLASS_ETHERNET_PARALLEL
+id|ZORRO_CLASS_ETHERNET_PARALLEL
 comma
-DECL|enumerator|GVP_GFORCE_030
-id|GVP_GFORCE_030
-op_assign
-l_int|0xa0
+DECL|enumerator|ZORRO_CLASS_FLASHROM
+id|ZORRO_CLASS_FLASHROM
 comma
-DECL|enumerator|GVP_GFORCE_030_SCSI
-id|GVP_GFORCE_030_SCSI
-op_assign
-l_int|0xb0
+DECL|enumerator|ZORRO_CLASS_FPU_RAM
+id|ZORRO_CLASS_FPU_RAM
 comma
-DECL|enumerator|GVP_A530
-id|GVP_A530
-op_assign
-l_int|0xc0
+DECL|enumerator|ZORRO_CLASS_GFX
+id|ZORRO_CLASS_GFX
 comma
-DECL|enumerator|GVP_A530_SCSI
-id|GVP_A530_SCSI
-op_assign
-l_int|0xd0
+DECL|enumerator|ZORRO_CLASS_GFXRAM
+id|ZORRO_CLASS_GFXRAM
 comma
-DECL|enumerator|GVP_COMBO_R3
-id|GVP_COMBO_R3
-op_assign
-l_int|0xe0
+DECL|enumerator|ZORRO_CLASS_HD
+id|ZORRO_CLASS_HD
 comma
-DECL|enumerator|GVP_COMBO_R3_SCSI
-id|GVP_COMBO_R3_SCSI
-op_assign
-l_int|0xf0
+DECL|enumerator|ZORRO_CLASS_HD_RAM
+id|ZORRO_CLASS_HD_RAM
 comma
-DECL|enumerator|GVP_SERIESII
-id|GVP_SERIESII
-op_assign
-l_int|0xf8
+DECL|enumerator|ZORRO_CLASS_IDE
+id|ZORRO_CLASS_IDE
+comma
+DECL|enumerator|ZORRO_CLASS_IDE_RAM
+id|ZORRO_CLASS_IDE_RAM
+comma
+DECL|enumerator|ZORRO_CLASS_IDE_FLOPPY
+id|ZORRO_CLASS_IDE_FLOPPY
+comma
+DECL|enumerator|ZORRO_CLASS_ISDN
+id|ZORRO_CLASS_ISDN
+comma
+DECL|enumerator|ZORRO_CLASS_MACEMU
+id|ZORRO_CLASS_MACEMU
+comma
+DECL|enumerator|ZORRO_CLASS_MISC
+id|ZORRO_CLASS_MISC
+comma
+DECL|enumerator|ZORRO_CLASS_MODEM
+id|ZORRO_CLASS_MODEM
+comma
+DECL|enumerator|ZORRO_CLASS_MULTIIO
+id|ZORRO_CLASS_MULTIIO
+comma
+DECL|enumerator|ZORRO_CLASS_RAM
+id|ZORRO_CLASS_RAM
+comma
+DECL|enumerator|ZORRO_CLASS_SCANNER
+id|ZORRO_CLASS_SCANNER
+comma
+DECL|enumerator|ZORRO_CLASS_SCSI
+id|ZORRO_CLASS_SCSI
+comma
+DECL|enumerator|ZORRO_CLASS_SCSI_IDE
+id|ZORRO_CLASS_SCSI_IDE
+comma
+DECL|enumerator|ZORRO_CLASS_SCSI_RAM
+id|ZORRO_CLASS_SCSI_RAM
+comma
+DECL|enumerator|ZORRO_CLASS_SCSI_SERIAL
+id|ZORRO_CLASS_SCSI_SERIAL
+comma
+DECL|enumerator|ZORRO_CLASS_SERIAL
+id|ZORRO_CLASS_SERIAL
+comma
+DECL|enumerator|ZORRO_CLASS_TABLET
+id|ZORRO_CLASS_TABLET
+comma
+DECL|enumerator|ZORRO_CLASS_TURBO
+id|ZORRO_CLASS_TURBO
+comma
+DECL|enumerator|ZORRO_CLASS_TURBO_RAM
+id|ZORRO_CLASS_TURBO_RAM
+comma
+DECL|enumerator|ZORRO_CLASS_TURBO_HD
+id|ZORRO_CLASS_TURBO_HD
+comma
+DECL|enumerator|ZORRO_CLASS_TURBO_IDE
+id|ZORRO_CLASS_TURBO_IDE
+comma
+DECL|enumerator|ZORRO_CLASS_TURBO_SCSI
+id|ZORRO_CLASS_TURBO_SCSI
+comma
+DECL|enumerator|ZORRO_CLASS_TURBO_SCSI_RAM
+id|ZORRO_CLASS_TURBO_SCSI_RAM
+comma
+DECL|enumerator|ZORRO_CLASS_VIDEO
+id|ZORRO_CLASS_VIDEO
 comma
 )brace
 suffix:semicolon
+multiline_comment|/*&n;     *  Known Zorro Boards&n;     *&n;     *  Each Zorro board has a 32-bit ID of the form&n;     *&n;     *      mmmmmmmmmmmmmmmmppppppppeeeeeeee&n;     *&n;     *  with&n;     *&n;     *      mmmmmmmmmmmmmmmm&t;16-bit Manufacturer ID (assigned by CBM (sigh))&n;     *      pppppppp&t;&t;8-bit Product ID (assigned by manufacturer)&n;     *      eeeeeeee&t;&t;8-bit Extended Product ID (currently only used&n;     *&t;&t;&t;&t;for some GVP boards)&n;     */
+DECL|macro|ZORRO_MANUF
+mdefine_line|#define ZORRO_MANUF(id)&t;&t;((id) &gt;&gt; 16)
+DECL|macro|ZORRO_PROD
+mdefine_line|#define ZORRO_PROD(id)&t;&t;(((id) &gt;&gt; 8) &amp; 0xff)
+DECL|macro|ZORRO_EPC
+mdefine_line|#define ZORRO_EPC(id)&t;&t;((id) &amp; 0xff)
+DECL|macro|ZORRO_ID
+mdefine_line|#define ZORRO_ID(manuf, prod, epc) &bslash;&n;    ((ZORRO_MANUF_##manuf &lt;&lt; 16) | ((prod) &lt;&lt; 8) | (epc))
+DECL|typedef|zorro_id
+r_typedef
+id|u32
+id|zorro_id
+suffix:semicolon
+DECL|macro|ZORRO_MANUF_PACIFIC_PERIPHERALS
+mdefine_line|#define ZORRO_MANUF_PACIFIC_PERIPHERALS&t;&t;&t;&t;0x00D3
+DECL|macro|ZORRO_PROD_PACIFIC_PERIPHERALS_SE_2000_A500
+mdefine_line|#define  ZORRO_PROD_PACIFIC_PERIPHERALS_SE_2000_A500&t;&t;ZORRO_ID(PACIFIC_PERIPHERALS, 0x00, 0)
+DECL|macro|ZORRO_PROD_PACIFIC_PERIPHERALS_SCSI
+mdefine_line|#define  ZORRO_PROD_PACIFIC_PERIPHERALS_SCSI&t;&t;&t;ZORRO_ID(PACIFIC_PERIPHERALS, 0x0A, 0)
+DECL|macro|ZORRO_MANUF_MACROSYSTEMS_USA_2
+mdefine_line|#define ZORRO_MANUF_MACROSYSTEMS_USA_2&t;&t;&t;&t;0x0100
+DECL|macro|ZORRO_PROD_MACROSYSTEMS_WARP_ENGINE
+mdefine_line|#define  ZORRO_PROD_MACROSYSTEMS_WARP_ENGINE&t;&t;&t;ZORRO_ID(MACROSYSTEMS_USA_2, 0x13, 0)
+DECL|macro|ZORRO_MANUF_KUPKE_1
+mdefine_line|#define ZORRO_MANUF_KUPKE_1&t;&t;&t;&t;&t;0x00DD
+DECL|macro|ZORRO_PROD_KUPKE_GOLEM_RAM_BOX_2MB
+mdefine_line|#define  ZORRO_PROD_KUPKE_GOLEM_RAM_BOX_2MB&t;&t;&t;ZORRO_ID(KUPKE_1, 0x00, 0)
+DECL|macro|ZORRO_MANUF_MEMPHIS
+mdefine_line|#define ZORRO_MANUF_MEMPHIS&t;&t;&t;&t;&t;0x0100
+DECL|macro|ZORRO_PROD_MEMPHIS_STORMBRINGER
+mdefine_line|#define  ZORRO_PROD_MEMPHIS_STORMBRINGER&t;&t;&t;ZORRO_ID(MEMPHIS, 0x00, 0)
+DECL|macro|ZORRO_MANUF_3_STATE
+mdefine_line|#define ZORRO_MANUF_3_STATE&t;&t;&t;&t;&t;0x0200
+DECL|macro|ZORRO_PROD_3_STATE_MEGAMIX_2000
+mdefine_line|#define  ZORRO_PROD_3_STATE_MEGAMIX_2000&t;&t;&t;ZORRO_ID(3_STATE, 0x02, 0)
+DECL|macro|ZORRO_MANUF_COMMODORE_BRAUNSCHWEIG
+mdefine_line|#define ZORRO_MANUF_COMMODORE_BRAUNSCHWEIG&t;&t;&t;0x0201
+DECL|macro|ZORRO_PROD_CBM_A2088_A2286
+mdefine_line|#define  ZORRO_PROD_CBM_A2088_A2286&t;&t;&t;&t;ZORRO_ID(COMMODORE_BRAUNSCHWEIG, 0x01, 0)
+DECL|macro|ZORRO_PROD_CBM_A2286
+mdefine_line|#define  ZORRO_PROD_CBM_A2286&t;&t;&t;&t;&t;ZORRO_ID(COMMODORE_BRAUNSCHWEIG, 0x02, 0)
+DECL|macro|ZORRO_PROD_CBM_A4091_1
+mdefine_line|#define  ZORRO_PROD_CBM_A4091_1&t;&t;&t;&t;&t;ZORRO_ID(COMMODORE_BRAUNSCHWEIG, 0x54, 0)
+DECL|macro|ZORRO_PROD_CBM_A2386SX_1
+mdefine_line|#define  ZORRO_PROD_CBM_A2386SX_1&t;&t;&t;&t;ZORRO_ID(COMMODORE_BRAUNSCHWEIG, 0x67, 0)
+DECL|macro|ZORRO_MANUF_COMMODORE_WEST_CHESTER_1
+mdefine_line|#define ZORRO_MANUF_COMMODORE_WEST_CHESTER_1&t;&t;&t;0x0202
+DECL|macro|ZORRO_PROD_CBM_A2090A
+mdefine_line|#define  ZORRO_PROD_CBM_A2090A&t;&t;&t;&t;&t;ZORRO_ID(COMMODORE_WEST_CHESTER_1, 0x01, 0)
+DECL|macro|ZORRO_PROD_CBM_A590_A2091_1
+mdefine_line|#define  ZORRO_PROD_CBM_A590_A2091_1&t;&t;&t;&t;ZORRO_ID(COMMODORE_WEST_CHESTER_1, 0x02, 0)
+DECL|macro|ZORRO_PROD_CBM_A590_A2091_2
+mdefine_line|#define  ZORRO_PROD_CBM_A590_A2091_2&t;&t;&t;&t;ZORRO_ID(COMMODORE_WEST_CHESTER_1, 0x03, 0)
+DECL|macro|ZORRO_PROD_CBM_A2090B
+mdefine_line|#define  ZORRO_PROD_CBM_A2090B&t;&t;&t;&t;&t;ZORRO_ID(COMMODORE_WEST_CHESTER_1, 0x04, 0)
+DECL|macro|ZORRO_PROD_CBM_A2060
+mdefine_line|#define  ZORRO_PROD_CBM_A2060&t;&t;&t;&t;&t;ZORRO_ID(COMMODORE_WEST_CHESTER_1, 0x09, 0)
+DECL|macro|ZORRO_PROD_CBM_A590_A2052_A2058_A2091
+mdefine_line|#define  ZORRO_PROD_CBM_A590_A2052_A2058_A2091&t;&t;&t;ZORRO_ID(COMMODORE_WEST_CHESTER_1, 0x0A, 0)
+DECL|macro|ZORRO_PROD_CBM_A560_RAM
+mdefine_line|#define  ZORRO_PROD_CBM_A560_RAM&t;&t;&t;&t;ZORRO_ID(COMMODORE_WEST_CHESTER_1, 0x20, 0)
+DECL|macro|ZORRO_PROD_CBM_A2232_PROTOTYPE
+mdefine_line|#define  ZORRO_PROD_CBM_A2232_PROTOTYPE&t;&t;&t;&t;ZORRO_ID(COMMODORE_WEST_CHESTER_1, 0x45, 0)
+DECL|macro|ZORRO_PROD_CBM_A2232
+mdefine_line|#define  ZORRO_PROD_CBM_A2232&t;&t;&t;&t;&t;ZORRO_ID(COMMODORE_WEST_CHESTER_1, 0x46, 0)
+DECL|macro|ZORRO_PROD_CBM_A2620
+mdefine_line|#define  ZORRO_PROD_CBM_A2620&t;&t;&t;&t;&t;ZORRO_ID(COMMODORE_WEST_CHESTER_1, 0x50, 0)
+DECL|macro|ZORRO_PROD_CBM_A2630
+mdefine_line|#define  ZORRO_PROD_CBM_A2630&t;&t;&t;&t;&t;ZORRO_ID(COMMODORE_WEST_CHESTER_1, 0x51, 0)
+DECL|macro|ZORRO_PROD_CBM_A4091_2
+mdefine_line|#define  ZORRO_PROD_CBM_A4091_2&t;&t;&t;&t;&t;ZORRO_ID(COMMODORE_WEST_CHESTER_1, 0x54, 0)
+DECL|macro|ZORRO_PROD_CBM_A2065_1
+mdefine_line|#define  ZORRO_PROD_CBM_A2065_1&t;&t;&t;&t;&t;ZORRO_ID(COMMODORE_WEST_CHESTER_1, 0x5A, 0)
+DECL|macro|ZORRO_PROD_CBM_ROMULATOR
+mdefine_line|#define  ZORRO_PROD_CBM_ROMULATOR&t;&t;&t;&t;ZORRO_ID(COMMODORE_WEST_CHESTER_1, 0x60, 0)
+DECL|macro|ZORRO_PROD_CBM_A3000_TEST_FIXTURE
+mdefine_line|#define  ZORRO_PROD_CBM_A3000_TEST_FIXTURE&t;&t;&t;ZORRO_ID(COMMODORE_WEST_CHESTER_1, 0x61, 0)
+DECL|macro|ZORRO_PROD_CBM_A2386SX_2
+mdefine_line|#define  ZORRO_PROD_CBM_A2386SX_2&t;&t;&t;&t;ZORRO_ID(COMMODORE_WEST_CHESTER_1, 0x67, 0)
+DECL|macro|ZORRO_PROD_CBM_A2065_2
+mdefine_line|#define  ZORRO_PROD_CBM_A2065_2&t;&t;&t;&t;&t;ZORRO_ID(COMMODORE_WEST_CHESTER_1, 0x70, 0)
+DECL|macro|ZORRO_MANUF_COMMODORE_WEST_CHESTER_2
+mdefine_line|#define ZORRO_MANUF_COMMODORE_WEST_CHESTER_2&t;&t;&t;0x0203
+DECL|macro|ZORRO_PROD_CBM_A2090A_CM
+mdefine_line|#define  ZORRO_PROD_CBM_A2090A_CM&t;&t;&t;&t;ZORRO_ID(COMMODORE_WEST_CHESTER_2, 0x03, 0)
+DECL|macro|ZORRO_MANUF_PROGRESSIVE_PERIPHERALS_AND_SYSTEMS_2
+mdefine_line|#define ZORRO_MANUF_PROGRESSIVE_PERIPHERALS_AND_SYSTEMS_2&t;0x02F4
+DECL|macro|ZORRO_PROD_PPS_EXP8000
+mdefine_line|#define  ZORRO_PROD_PPS_EXP8000&t;&t;&t;&t;&t;ZORRO_ID(PROGRESSIVE_PERIPHERALS_AND_SYSTEMS_2, 0x02, 0)
+DECL|macro|ZORRO_MANUF_KOLFF_COMPUTER_SUPPLIES
+mdefine_line|#define ZORRO_MANUF_KOLFF_COMPUTER_SUPPLIES&t;&t;&t;0x02FF
+DECL|macro|ZORRO_PROD_KCS_POWER_PC_BOARD
+mdefine_line|#define  ZORRO_PROD_KCS_POWER_PC_BOARD&t;&t;&t;&t;ZORRO_ID(KOLFF_COMPUTER_SUPPLIES, 0x00, 0)
+DECL|macro|ZORRO_MANUF_CARDCO_1
+mdefine_line|#define ZORRO_MANUF_CARDCO_1&t;&t;&t;&t;&t;0x03EC
+DECL|macro|ZORRO_PROD_CARDCO_KRONOS_2000_1
+mdefine_line|#define  ZORRO_PROD_CARDCO_KRONOS_2000_1&t;&t;&t;ZORRO_ID(CARDCO_1, 0x04, 0)
+DECL|macro|ZORRO_PROD_CARDCO_A1000_1
+mdefine_line|#define  ZORRO_PROD_CARDCO_A1000_1&t;&t;&t;&t;ZORRO_ID(CARDCO_1, 0x0C, 0)
+DECL|macro|ZORRO_PROD_CARDCO_ESCORT
+mdefine_line|#define  ZORRO_PROD_CARDCO_ESCORT&t;&t;&t;&t;ZORRO_ID(CARDCO_1, 0x0E, 0)
+DECL|macro|ZORRO_PROD_CARDCO_A2410
+mdefine_line|#define  ZORRO_PROD_CARDCO_A2410&t;&t;&t;&t;ZORRO_ID(CARDCO_1, 0xF5, 0)
+DECL|macro|ZORRO_MANUF_A_SQUARED
+mdefine_line|#define ZORRO_MANUF_A_SQUARED&t;&t;&t;&t;&t;0x03ED
+DECL|macro|ZORRO_PROD_A_SQUARED_LIVE_2000
+mdefine_line|#define  ZORRO_PROD_A_SQUARED_LIVE_2000&t;&t;&t;&t;ZORRO_ID(A_SQUARED, 0x01, 0)
+DECL|macro|ZORRO_MANUF_COMSPEC_COMMUNICATIONS
+mdefine_line|#define ZORRO_MANUF_COMSPEC_COMMUNICATIONS&t;&t;&t;0x03EE
+DECL|macro|ZORRO_PROD_COMSPEC_COMMUNICATIONS_AX2000
+mdefine_line|#define  ZORRO_PROD_COMSPEC_COMMUNICATIONS_AX2000&t;&t;ZORRO_ID(COMSPEC_COMMUNICATIONS, 0x01, 0)
+DECL|macro|ZORRO_MANUF_ANAKIN_RESEARCH
+mdefine_line|#define ZORRO_MANUF_ANAKIN_RESEARCH&t;&t;&t;&t;0x03F1
+DECL|macro|ZORRO_PROD_ANAKIN_RESEARCH_EASYL
+mdefine_line|#define  ZORRO_PROD_ANAKIN_RESEARCH_EASYL&t;&t;&t;ZORRO_ID(ANAKIN_RESEARCH, 0x01, 0)
+DECL|macro|ZORRO_MANUF_MICROBOTICS
+mdefine_line|#define ZORRO_MANUF_MICROBOTICS&t;&t;&t;&t;&t;0x03F2
+DECL|macro|ZORRO_PROD_MICROBOTICS_STARBOARD_II
+mdefine_line|#define  ZORRO_PROD_MICROBOTICS_STARBOARD_II&t;&t;&t;ZORRO_ID(MICROBOTICS, 0x00, 0)
+DECL|macro|ZORRO_PROD_MICROBOTICS_STARDRIVE
+mdefine_line|#define  ZORRO_PROD_MICROBOTICS_STARDRIVE&t;&t;&t;ZORRO_ID(MICROBOTICS, 0x02, 0)
+DECL|macro|ZORRO_PROD_MICROBOTICS_8_UP_A
+mdefine_line|#define  ZORRO_PROD_MICROBOTICS_8_UP_A&t;&t;&t;&t;ZORRO_ID(MICROBOTICS, 0x03, 0)
+DECL|macro|ZORRO_PROD_MICROBOTICS_8_UP_Z
+mdefine_line|#define  ZORRO_PROD_MICROBOTICS_8_UP_Z&t;&t;&t;&t;ZORRO_ID(MICROBOTICS, 0x04, 0)
+DECL|macro|ZORRO_PROD_MICROBOTICS_DELTA_RAM
+mdefine_line|#define  ZORRO_PROD_MICROBOTICS_DELTA_RAM&t;&t;&t;ZORRO_ID(MICROBOTICS, 0x20, 0)
+DECL|macro|ZORRO_PROD_MICROBOTICS_8_STAR_RAM
+mdefine_line|#define  ZORRO_PROD_MICROBOTICS_8_STAR_RAM&t;&t;&t;ZORRO_ID(MICROBOTICS, 0x40, 0)
+DECL|macro|ZORRO_PROD_MICROBOTICS_8_STAR
+mdefine_line|#define  ZORRO_PROD_MICROBOTICS_8_STAR&t;&t;&t;&t;ZORRO_ID(MICROBOTICS, 0x41, 0)
+DECL|macro|ZORRO_PROD_MICROBOTICS_VXL_RAM_32
+mdefine_line|#define  ZORRO_PROD_MICROBOTICS_VXL_RAM_32&t;&t;&t;ZORRO_ID(MICROBOTICS, 0x44, 0)
+DECL|macro|ZORRO_PROD_MICROBOTICS_VXL_68030
+mdefine_line|#define  ZORRO_PROD_MICROBOTICS_VXL_68030&t;&t;&t;ZORRO_ID(MICROBOTICS, 0x45, 0)
+DECL|macro|ZORRO_PROD_MICROBOTICS_DELTA
+mdefine_line|#define  ZORRO_PROD_MICROBOTICS_DELTA&t;&t;&t;&t;ZORRO_ID(MICROBOTICS, 0x60, 0)
+DECL|macro|ZORRO_PROD_MICROBOTICS_MBX_1200_1200Z_RAM
+mdefine_line|#define  ZORRO_PROD_MICROBOTICS_MBX_1200_1200Z_RAM&t;&t;ZORRO_ID(MICROBOTICS, 0x81, 0)
+DECL|macro|ZORRO_PROD_MICROBOTICS_HARDFRAME_2000_1
+mdefine_line|#define  ZORRO_PROD_MICROBOTICS_HARDFRAME_2000_1&t;&t;ZORRO_ID(MICROBOTICS, 0x96, 0)
+DECL|macro|ZORRO_PROD_MICROBOTICS_HARDFRAME_2000_2
+mdefine_line|#define  ZORRO_PROD_MICROBOTICS_HARDFRAME_2000_2&t;&t;ZORRO_ID(MICROBOTICS, 0x9E, 0)
+DECL|macro|ZORRO_PROD_MICROBOTICS_MBX_1200_1200Z
+mdefine_line|#define  ZORRO_PROD_MICROBOTICS_MBX_1200_1200Z&t;&t;&t;ZORRO_ID(MICROBOTICS, 0xC1, 0)
+DECL|macro|ZORRO_MANUF_ACCESS_ASSOCIATES_ALEGRA
+mdefine_line|#define ZORRO_MANUF_ACCESS_ASSOCIATES_ALEGRA&t;&t;&t;0x03F4
+DECL|macro|ZORRO_MANUF_EXPANSION_TECHNOLOGIES
+mdefine_line|#define ZORRO_MANUF_EXPANSION_TECHNOLOGIES&t;&t;&t;0x03F6
+DECL|macro|ZORRO_MANUF_ASDG
+mdefine_line|#define ZORRO_MANUF_ASDG&t;&t;&t;&t;&t;0x03FF
+DECL|macro|ZORRO_PROD_ASDG_MEMORY_1
+mdefine_line|#define  ZORRO_PROD_ASDG_MEMORY_1&t;&t;&t;&t;ZORRO_ID(ASDG, 0x01, 0)
+DECL|macro|ZORRO_PROD_ASDG_MEMORY_2
+mdefine_line|#define  ZORRO_PROD_ASDG_MEMORY_2&t;&t;&t;&t;ZORRO_ID(ASDG, 0x02, 0)
+DECL|macro|ZORRO_PROD_ASDG_EB920_LAN_ROVER
+mdefine_line|#define  ZORRO_PROD_ASDG_EB920_LAN_ROVER&t;&t;&t;ZORRO_ID(ASDG, 0xFE, 0)
+DECL|macro|ZORRO_PROD_ASDG_GPIB_DUALIEEE488_TWIN_X
+mdefine_line|#define  ZORRO_PROD_ASDG_GPIB_DUALIEEE488_TWIN_X&t;&t;ZORRO_ID(ASDG, 0xFF, 0)
+DECL|macro|ZORRO_MANUF_IMTRONICS_1
+mdefine_line|#define ZORRO_MANUF_IMTRONICS_1&t;&t;&t;&t;&t;0x0404
+DECL|macro|ZORRO_PROD_IMTRONICS_HURRICANE_2800_1
+mdefine_line|#define  ZORRO_PROD_IMTRONICS_HURRICANE_2800_1&t;&t;&t;ZORRO_ID(IMTRONICS_1, 0x39, 0)
+DECL|macro|ZORRO_PROD_IMTRONICS_HURRICANE_2800_2
+mdefine_line|#define  ZORRO_PROD_IMTRONICS_HURRICANE_2800_2&t;&t;&t;ZORRO_ID(IMTRONICS_1, 0x57, 0)
+DECL|macro|ZORRO_MANUF_CBM_UNIVERSITY_OF_LOWELL
+mdefine_line|#define ZORRO_MANUF_CBM_UNIVERSITY_OF_LOWELL&t;&t;&t;0x0406
+DECL|macro|ZORRO_PROD_CBM_A2410
+mdefine_line|#define  ZORRO_PROD_CBM_A2410&t;&t;&t;&t;&t;ZORRO_ID(CBM_UNIVERSITY_OF_LOWELL, 0x00, 0)
+DECL|macro|ZORRO_MANUF_AMERISTAR
+mdefine_line|#define ZORRO_MANUF_AMERISTAR&t;&t;&t;&t;&t;0x041D
+DECL|macro|ZORRO_PROD_AMERISTAR_A2065
+mdefine_line|#define  ZORRO_PROD_AMERISTAR_A2065&t;&t;&t;&t;ZORRO_ID(AMERISTAR, 0x01, 0)
+DECL|macro|ZORRO_PROD_AMERISTAR_A560
+mdefine_line|#define  ZORRO_PROD_AMERISTAR_A560&t;&t;&t;&t;ZORRO_ID(AMERISTAR, 0x09, 0)
+DECL|macro|ZORRO_PROD_AMERISTAR_A4066
+mdefine_line|#define  ZORRO_PROD_AMERISTAR_A4066&t;&t;&t;&t;ZORRO_ID(AMERISTAR, 0x0A, 0)
+DECL|macro|ZORRO_MANUF_SUPRA
+mdefine_line|#define ZORRO_MANUF_SUPRA&t;&t;&t;&t;&t;0x0420
+DECL|macro|ZORRO_PROD_SUPRA_SUPRADRIVE_4x4
+mdefine_line|#define  ZORRO_PROD_SUPRA_SUPRADRIVE_4x4&t;&t;&t;ZORRO_ID(SUPRA, 0x01, 0)
+DECL|macro|ZORRO_PROD_SUPRA_1000_RAM
+mdefine_line|#define  ZORRO_PROD_SUPRA_1000_RAM&t;&t;&t;&t;ZORRO_ID(SUPRA, 0x02, 0)
+DECL|macro|ZORRO_PROD_SUPRA_2000_DMA
+mdefine_line|#define  ZORRO_PROD_SUPRA_2000_DMA&t;&t;&t;&t;ZORRO_ID(SUPRA, 0x03, 0)
+DECL|macro|ZORRO_PROD_SUPRA_500
+mdefine_line|#define  ZORRO_PROD_SUPRA_500&t;&t;&t;&t;&t;ZORRO_ID(SUPRA, 0x05, 0)
+DECL|macro|ZORRO_PROD_SUPRA_500_SCSI
+mdefine_line|#define  ZORRO_PROD_SUPRA_500_SCSI&t;&t;&t;&t;ZORRO_ID(SUPRA, 0x08, 0)
+DECL|macro|ZORRO_PROD_SUPRA_500XP_2000_RAM
+mdefine_line|#define  ZORRO_PROD_SUPRA_500XP_2000_RAM&t;&t;&t;ZORRO_ID(SUPRA, 0x09, 0)
+DECL|macro|ZORRO_PROD_SUPRA_500RX_2000_RAM
+mdefine_line|#define  ZORRO_PROD_SUPRA_500RX_2000_RAM&t;&t;&t;ZORRO_ID(SUPRA, 0x0A, 0)
+DECL|macro|ZORRO_PROD_SUPRA_2400ZI
+mdefine_line|#define  ZORRO_PROD_SUPRA_2400ZI&t;&t;&t;&t;ZORRO_ID(SUPRA, 0x0B, 0)
+DECL|macro|ZORRO_PROD_SUPRA_500XP_SUPRADRIVE_WORDSYNC
+mdefine_line|#define  ZORRO_PROD_SUPRA_500XP_SUPRADRIVE_WORDSYNC&t;&t;ZORRO_ID(SUPRA, 0x0C, 0)
+DECL|macro|ZORRO_PROD_SUPRA_SUPRADRIVE_WORDSYNC_II
+mdefine_line|#define  ZORRO_PROD_SUPRA_SUPRADRIVE_WORDSYNC_II&t;&t;ZORRO_ID(SUPRA, 0x0D, 0)
+DECL|macro|ZORRO_PROD_SUPRA_2400ZIPLUS
+mdefine_line|#define  ZORRO_PROD_SUPRA_2400ZIPLUS&t;&t;&t;&t;ZORRO_ID(SUPRA, 0x10, 0)
+DECL|macro|ZORRO_MANUF_COMPUTER_SYSTEMS_ASSOCIATES
+mdefine_line|#define ZORRO_MANUF_COMPUTER_SYSTEMS_ASSOCIATES&t;&t;&t;0x0422
+DECL|macro|ZORRO_PROD_CSA_MAGNUM
+mdefine_line|#define  ZORRO_PROD_CSA_MAGNUM&t;&t;&t;&t;&t;ZORRO_ID(COMPUTER_SYSTEMS_ASSOCIATES, 0x11, 0)
+DECL|macro|ZORRO_PROD_CSA_12_GAUGE
+mdefine_line|#define  ZORRO_PROD_CSA_12_GAUGE&t;&t;&t;&t;ZORRO_ID(COMPUTER_SYSTEMS_ASSOCIATES, 0x15, 0)
+DECL|macro|ZORRO_MANUF_MARC_MICHAEL_GROTH
+mdefine_line|#define ZORRO_MANUF_MARC_MICHAEL_GROTH&t;&t;&t;&t;0x0439
+DECL|macro|ZORRO_MANUF_M_TECH
+mdefine_line|#define ZORRO_MANUF_M_TECH&t;&t;&t;&t;&t;0x0502
+DECL|macro|ZORRO_PROD_MTEC_AT500_1
+mdefine_line|#define  ZORRO_PROD_MTEC_AT500_1&t;&t;&t;&t;ZORRO_ID(M_TECH, 0x03, 0)
+DECL|macro|ZORRO_MANUF_GREAT_VALLEY_PRODUCTS_1
+mdefine_line|#define ZORRO_MANUF_GREAT_VALLEY_PRODUCTS_1&t;&t;&t;0x06E1
+DECL|macro|ZORRO_PROD_GVP_IMPACT_SERIES_I
+mdefine_line|#define  ZORRO_PROD_GVP_IMPACT_SERIES_I&t;&t;&t;&t;ZORRO_ID(GREAT_VALLEY_PRODUCTS_1, 0x08, 0)
+DECL|macro|ZORRO_MANUF_BYTEBOX
+mdefine_line|#define ZORRO_MANUF_BYTEBOX&t;&t;&t;&t;&t;0x07DA
+DECL|macro|ZORRO_PROD_BYTEBOX_A500
+mdefine_line|#define  ZORRO_PROD_BYTEBOX_A500&t;&t;&t;&t;ZORRO_ID(BYTEBOX, 0x00, 0)
+DECL|macro|ZORRO_MANUF_DKB_POWER_COMPUTING
+mdefine_line|#define ZORRO_MANUF_DKB_POWER_COMPUTING&t;&t;&t;&t;0x07DC
+DECL|macro|ZORRO_PROD_DKB_POWER_COMPUTING_SECUREKEY
+mdefine_line|#define  ZORRO_PROD_DKB_POWER_COMPUTING_SECUREKEY&t;&t;ZORRO_ID(DKB_POWER_COMPUTING, 0x09, 0)
+DECL|macro|ZORRO_PROD_DKB_POWER_COMPUTING_DKM_3128
+mdefine_line|#define  ZORRO_PROD_DKB_POWER_COMPUTING_DKM_3128&t;&t;ZORRO_ID(DKB_POWER_COMPUTING, 0x0E, 0)
+DECL|macro|ZORRO_PROD_DKB_POWER_COMPUTING_RAPID_FIRE
+mdefine_line|#define  ZORRO_PROD_DKB_POWER_COMPUTING_RAPID_FIRE&t;&t;ZORRO_ID(DKB_POWER_COMPUTING, 0x0F, 0)
+DECL|macro|ZORRO_PROD_DKB_POWER_COMPUTING_DKM_1202
+mdefine_line|#define  ZORRO_PROD_DKB_POWER_COMPUTING_DKM_1202&t;&t;ZORRO_ID(DKB_POWER_COMPUTING, 0x10, 0)
+DECL|macro|ZORRO_PROD_DKB_POWER_COMPUTING_COBRA_VIPER_II_68EC030
+mdefine_line|#define  ZORRO_PROD_DKB_POWER_COMPUTING_COBRA_VIPER_II_68EC030&t;ZORRO_ID(DKB_POWER_COMPUTING, 0x12, 0)
+DECL|macro|ZORRO_PROD_DKB_POWER_COMPUTING_WILDFIRE_060_1
+mdefine_line|#define  ZORRO_PROD_DKB_POWER_COMPUTING_WILDFIRE_060_1&t;&t;ZORRO_ID(DKB_POWER_COMPUTING, 0x17, 0)
+DECL|macro|ZORRO_PROD_DKB_POWER_COMPUTING_WILDFIRE_060_2
+mdefine_line|#define  ZORRO_PROD_DKB_POWER_COMPUTING_WILDFIRE_060_2&t;&t;ZORRO_ID(DKB_POWER_COMPUTING, 0xFF, 0)
+DECL|macro|ZORRO_MANUF_GREAT_VALLEY_PRODUCTS_2
+mdefine_line|#define ZORRO_MANUF_GREAT_VALLEY_PRODUCTS_2&t;&t;&t;0x07E1
+DECL|macro|ZORRO_PROD_GVP_IMPACT_SERIES_I_4K
+mdefine_line|#define  ZORRO_PROD_GVP_IMPACT_SERIES_I_4K&t;&t;&t;ZORRO_ID(GREAT_VALLEY_PRODUCTS_2, 0x01, 0)
+DECL|macro|ZORRO_PROD_GVP_IMPACT_SERIES_I_16K_2
+mdefine_line|#define  ZORRO_PROD_GVP_IMPACT_SERIES_I_16K_2&t;&t;&t;ZORRO_ID(GREAT_VALLEY_PRODUCTS_2, 0x02, 0)
+DECL|macro|ZORRO_PROD_GVP_IMPACT_SERIES_I_16K_3
+mdefine_line|#define  ZORRO_PROD_GVP_IMPACT_SERIES_I_16K_3&t;&t;&t;ZORRO_ID(GREAT_VALLEY_PRODUCTS_2, 0x03, 0)
+DECL|macro|ZORRO_PROD_GVP_IMPACT_3001_IDE_1
+mdefine_line|#define  ZORRO_PROD_GVP_IMPACT_3001_IDE_1&t;&t;&t;ZORRO_ID(GREAT_VALLEY_PRODUCTS_2, 0x08, 0)
+DECL|macro|ZORRO_PROD_GVP_IMPACT_3001_RAM
+mdefine_line|#define  ZORRO_PROD_GVP_IMPACT_3001_RAM&t;&t;&t;&t;ZORRO_ID(GREAT_VALLEY_PRODUCTS_2, 0x09, 0)
+DECL|macro|ZORRO_PROD_GVP_IMPACT_SERIES_II_RAM_1
+mdefine_line|#define  ZORRO_PROD_GVP_IMPACT_SERIES_II_RAM_1&t;&t;&t;ZORRO_ID(GREAT_VALLEY_PRODUCTS_2, 0x0A, 0)
+DECL|macro|ZORRO_PROD_GVP_EPC_BASE
+mdefine_line|#define  ZORRO_PROD_GVP_EPC_BASE&t;&t;&t;&t;ZORRO_ID(GREAT_VALLEY_PRODUCTS_2, 0x0B, 0)
+DECL|macro|ZORRO_PROD_GVP_GFORCE_040_1
+mdefine_line|#define  ZORRO_PROD_GVP_GFORCE_040_1&t;&t;&t;&t;ZORRO_ID(GREAT_VALLEY_PRODUCTS_2, 0x0B, 0x20)
+DECL|macro|ZORRO_PROD_GVP_GFORCE_040_SCSI_1
+mdefine_line|#define  ZORRO_PROD_GVP_GFORCE_040_SCSI_1&t;&t;&t;ZORRO_ID(GREAT_VALLEY_PRODUCTS_2, 0x0B, 0x30)
+DECL|macro|ZORRO_PROD_GVP_A1291
+mdefine_line|#define  ZORRO_PROD_GVP_A1291&t;&t;&t;&t;&t;ZORRO_ID(GREAT_VALLEY_PRODUCTS_2, 0x0B, 0x40)
+DECL|macro|ZORRO_PROD_GVP_COMBO_030_R4
+mdefine_line|#define  ZORRO_PROD_GVP_COMBO_030_R4&t;&t;&t;&t;ZORRO_ID(GREAT_VALLEY_PRODUCTS_2, 0x0B, 0x60)
+DECL|macro|ZORRO_PROD_GVP_COMBO_030_R4_SCSI
+mdefine_line|#define  ZORRO_PROD_GVP_COMBO_030_R4_SCSI&t;&t;&t;ZORRO_ID(GREAT_VALLEY_PRODUCTS_2, 0x0B, 0x70)
+DECL|macro|ZORRO_PROD_GVP_PHONEPAK
+mdefine_line|#define  ZORRO_PROD_GVP_PHONEPAK&t;&t;&t;&t;ZORRO_ID(GREAT_VALLEY_PRODUCTS_2, 0x0B, 0x78)
+DECL|macro|ZORRO_PROD_GVP_IO_EXTENDER
+mdefine_line|#define  ZORRO_PROD_GVP_IO_EXTENDER&t;&t;&t;&t;ZORRO_ID(GREAT_VALLEY_PRODUCTS_2, 0x0B, 0x98)
+DECL|macro|ZORRO_PROD_GVP_GFORCE_030
+mdefine_line|#define  ZORRO_PROD_GVP_GFORCE_030&t;&t;&t;&t;ZORRO_ID(GREAT_VALLEY_PRODUCTS_2, 0x0B, 0xa0)
+DECL|macro|ZORRO_PROD_GVP_GFORCE_030_SCSI
+mdefine_line|#define  ZORRO_PROD_GVP_GFORCE_030_SCSI&t;&t;&t;&t;ZORRO_ID(GREAT_VALLEY_PRODUCTS_2, 0x0B, 0xb0)
+DECL|macro|ZORRO_PROD_GVP_A530
+mdefine_line|#define  ZORRO_PROD_GVP_A530&t;&t;&t;&t;&t;ZORRO_ID(GREAT_VALLEY_PRODUCTS_2, 0x0B, 0xc0)
+DECL|macro|ZORRO_PROD_GVP_A530_SCSI
+mdefine_line|#define  ZORRO_PROD_GVP_A530_SCSI&t;&t;&t;&t;ZORRO_ID(GREAT_VALLEY_PRODUCTS_2, 0x0B, 0xd0)
+DECL|macro|ZORRO_PROD_GVP_COMBO_030_R3
+mdefine_line|#define  ZORRO_PROD_GVP_COMBO_030_R3&t;&t;&t;&t;ZORRO_ID(GREAT_VALLEY_PRODUCTS_2, 0x0B, 0xe0)
+DECL|macro|ZORRO_PROD_GVP_COMBO_030_R3_SCSI
+mdefine_line|#define  ZORRO_PROD_GVP_COMBO_030_R3_SCSI&t;&t;&t;ZORRO_ID(GREAT_VALLEY_PRODUCTS_2, 0x0B, 0xf0)
+DECL|macro|ZORRO_PROD_GVP_SERIES_II
+mdefine_line|#define  ZORRO_PROD_GVP_SERIES_II&t;&t;&t;&t;ZORRO_ID(GREAT_VALLEY_PRODUCTS_2, 0x0B, 0xf8)
+DECL|macro|ZORRO_PROD_GVP_IMPACT_3001_IDE_2
+mdefine_line|#define  ZORRO_PROD_GVP_IMPACT_3001_IDE_2&t;&t;&t;ZORRO_ID(GREAT_VALLEY_PRODUCTS_2, 0x0D, 0)
+multiline_comment|/*#define  ZORRO_PROD_GVP_A2000_030&t;&t;&t;&t;ZORRO_ID(GREAT_VALLEY_PRODUCTS_2, 0x0D, 0)*/
+multiline_comment|/*#define  ZORRO_PROD_GVP_GFORCE_040_SCSI_2&t;&t;&t;ZORRO_ID(GREAT_VALLEY_PRODUCTS_2, 0x0D, 0)*/
+DECL|macro|ZORRO_PROD_GVP_GFORCE_040_060
+mdefine_line|#define  ZORRO_PROD_GVP_GFORCE_040_060&t;&t;&t;&t;ZORRO_ID(GREAT_VALLEY_PRODUCTS_2, 0x16, 0)
+DECL|macro|ZORRO_PROD_GVP_IMPACT_VISION_24
+mdefine_line|#define  ZORRO_PROD_GVP_IMPACT_VISION_24&t;&t;&t;ZORRO_ID(GREAT_VALLEY_PRODUCTS_2, 0x20, 0)
+DECL|macro|ZORRO_PROD_GVP_GFORCE_040_2
+mdefine_line|#define  ZORRO_PROD_GVP_GFORCE_040_2&t;&t;&t;&t;ZORRO_ID(GREAT_VALLEY_PRODUCTS_2, 0xFF, 0)
+DECL|macro|ZORRO_MANUF_CALIFORNIA_ACCESS_SYNERGY
+mdefine_line|#define ZORRO_MANUF_CALIFORNIA_ACCESS_SYNERGY&t;&t;&t;0x07E5
+DECL|macro|ZORRO_PROD_CALIFORNIA_ACCESS_SYNERGY_MALIBU
+mdefine_line|#define  ZORRO_PROD_CALIFORNIA_ACCESS_SYNERGY_MALIBU&t;&t;ZORRO_ID(CALIFORNIA_ACCESS_SYNERGY, 0x01, 0)
+DECL|macro|ZORRO_MANUF_XETEC
+mdefine_line|#define ZORRO_MANUF_XETEC&t;&t;&t;&t;&t;0x07E6
+DECL|macro|ZORRO_PROD_XETEC_FASTCARD
+mdefine_line|#define  ZORRO_PROD_XETEC_FASTCARD&t;&t;&t;&t;ZORRO_ID(XETEC, 0x01, 0)
+DECL|macro|ZORRO_PROD_XETEC_FASTCARD_RAM
+mdefine_line|#define  ZORRO_PROD_XETEC_FASTCARD_RAM&t;&t;&t;&t;ZORRO_ID(XETEC, 0x02, 0)
+DECL|macro|ZORRO_PROD_XETEC_FASTCARD_PLUS
+mdefine_line|#define  ZORRO_PROD_XETEC_FASTCARD_PLUS&t;&t;&t;&t;ZORRO_ID(XETEC, 0x03, 0)
+DECL|macro|ZORRO_MANUF_PROGRESSIVE_PERIPHERALS_AND_SYSTEMS
+mdefine_line|#define ZORRO_MANUF_PROGRESSIVE_PERIPHERALS_AND_SYSTEMS&t;&t;0x07EA
+DECL|macro|ZORRO_PROD_PPS_MERCURY
+mdefine_line|#define  ZORRO_PROD_PPS_MERCURY&t;&t;&t;&t;&t;ZORRO_ID(PROGRESSIVE_PERIPHERALS_AND_SYSTEMS, 0x00, 0)
+DECL|macro|ZORRO_PROD_PPS_A3000_68040
+mdefine_line|#define  ZORRO_PROD_PPS_A3000_68040&t;&t;&t;&t;ZORRO_ID(PROGRESSIVE_PERIPHERALS_AND_SYSTEMS, 0x01, 0)
+DECL|macro|ZORRO_PROD_PPS_A2000_68040
+mdefine_line|#define  ZORRO_PROD_PPS_A2000_68040&t;&t;&t;&t;ZORRO_ID(PROGRESSIVE_PERIPHERALS_AND_SYSTEMS, 0x69, 0)
+DECL|macro|ZORRO_PROD_PPS_ZEUS
+mdefine_line|#define  ZORRO_PROD_PPS_ZEUS&t;&t;&t;&t;&t;ZORRO_ID(PROGRESSIVE_PERIPHERALS_AND_SYSTEMS, 0x96, 0)
+DECL|macro|ZORRO_PROD_PPS_A500_68040
+mdefine_line|#define  ZORRO_PROD_PPS_A500_68040&t;&t;&t;&t;ZORRO_ID(PROGRESSIVE_PERIPHERALS_AND_SYSTEMS, 0xBB, 0)
+DECL|macro|ZORRO_MANUF_XEBEC
+mdefine_line|#define ZORRO_MANUF_XEBEC&t;&t;&t;&t;&t;0x07EC
+DECL|macro|ZORRO_MANUF_SPIRIT_TECHNOLOGY
+mdefine_line|#define ZORRO_MANUF_SPIRIT_TECHNOLOGY&t;&t;&t;&t;0x07F2
+DECL|macro|ZORRO_PROD_SPIRIT_TECHNOLOGY_INSIDER_IN1000
+mdefine_line|#define  ZORRO_PROD_SPIRIT_TECHNOLOGY_INSIDER_IN1000&t;&t;ZORRO_ID(SPIRIT_TECHNOLOGY, 0x01, 0)
+DECL|macro|ZORRO_PROD_SPIRIT_TECHNOLOGY_INSIDER_IN500
+mdefine_line|#define  ZORRO_PROD_SPIRIT_TECHNOLOGY_INSIDER_IN500&t;&t;ZORRO_ID(SPIRIT_TECHNOLOGY, 0x02, 0)
+DECL|macro|ZORRO_PROD_SPIRIT_TECHNOLOGY_SIN500
+mdefine_line|#define  ZORRO_PROD_SPIRIT_TECHNOLOGY_SIN500&t;&t;&t;ZORRO_ID(SPIRIT_TECHNOLOGY, 0x03, 0)
+DECL|macro|ZORRO_PROD_SPIRIT_TECHNOLOGY_HDA_506
+mdefine_line|#define  ZORRO_PROD_SPIRIT_TECHNOLOGY_HDA_506&t;&t;&t;ZORRO_ID(SPIRIT_TECHNOLOGY, 0x04, 0)
+DECL|macro|ZORRO_PROD_SPIRIT_TECHNOLOGY_AX_S
+mdefine_line|#define  ZORRO_PROD_SPIRIT_TECHNOLOGY_AX_S&t;&t;&t;ZORRO_ID(SPIRIT_TECHNOLOGY, 0x05, 0)
+DECL|macro|ZORRO_PROD_SPIRIT_TECHNOLOGY_OCTABYTE
+mdefine_line|#define  ZORRO_PROD_SPIRIT_TECHNOLOGY_OCTABYTE&t;&t;&t;ZORRO_ID(SPIRIT_TECHNOLOGY, 0x06, 0)
+DECL|macro|ZORRO_PROD_SPIRIT_TECHNOLOGY_INMATE
+mdefine_line|#define  ZORRO_PROD_SPIRIT_TECHNOLOGY_INMATE&t;&t;&t;ZORRO_ID(SPIRIT_TECHNOLOGY, 0x08, 0)
+DECL|macro|ZORRO_MANUF_SPIRIT_TECHNOLOGY_2
+mdefine_line|#define ZORRO_MANUF_SPIRIT_TECHNOLOGY_2&t;&t;&t;&t;0x07F3
+DECL|macro|ZORRO_MANUF_BSC_ALFADATA_1
+mdefine_line|#define ZORRO_MANUF_BSC_ALFADATA_1&t;&t;&t;&t;0x07FE
+DECL|macro|ZORRO_PROD_BSC_ALF_3_1
+mdefine_line|#define  ZORRO_PROD_BSC_ALF_3_1&t;&t;&t;&t;&t;ZORRO_ID(BSC_ALFADATA_1, 0x03, 0)
+DECL|macro|ZORRO_MANUF_BSC_ALFADATA_2
+mdefine_line|#define ZORRO_MANUF_BSC_ALFADATA_2&t;&t;&t;&t;0x0801
+DECL|macro|ZORRO_PROD_BSC_ALF_2_1
+mdefine_line|#define  ZORRO_PROD_BSC_ALF_2_1&t;&t;&t;&t;&t;ZORRO_ID(BSC_ALFADATA_2, 0x01, 0)
+DECL|macro|ZORRO_PROD_BSC_ALF_2_2
+mdefine_line|#define  ZORRO_PROD_BSC_ALF_2_2&t;&t;&t;&t;&t;ZORRO_ID(BSC_ALFADATA_2, 0x02, 0)
+DECL|macro|ZORRO_PROD_BSC_ALF_3_2
+mdefine_line|#define  ZORRO_PROD_BSC_ALF_3_2&t;&t;&t;&t;&t;ZORRO_ID(BSC_ALFADATA_2, 0x03, 0)
+DECL|macro|ZORRO_MANUF_CARDCO_2
+mdefine_line|#define ZORRO_MANUF_CARDCO_2&t;&t;&t;&t;&t;0x0802
+DECL|macro|ZORRO_PROD_CARDCO_KRONOS_2000_2
+mdefine_line|#define  ZORRO_PROD_CARDCO_KRONOS_2000_2&t;&t;&t;ZORRO_ID(CARDCO_2, 0x04, 0)
+DECL|macro|ZORRO_PROD_CARDCO_A1000_2
+mdefine_line|#define  ZORRO_PROD_CARDCO_A1000_2&t;&t;&t;&t;ZORRO_ID(CARDCO_2, 0x0C, 0)
+DECL|macro|ZORRO_MANUF_JOCHHEIM
+mdefine_line|#define ZORRO_MANUF_JOCHHEIM&t;&t;&t;&t;&t;0x0804
+DECL|macro|ZORRO_PROD_JOCHHEIM_RAM
+mdefine_line|#define  ZORRO_PROD_JOCHHEIM_RAM&t;&t;&t;&t;ZORRO_ID(JOCHHEIM, 0x01, 0)
+DECL|macro|ZORRO_MANUF_CHECKPOINT_TECHNOLOGIES
+mdefine_line|#define ZORRO_MANUF_CHECKPOINT_TECHNOLOGIES&t;&t;&t;0x0807
+DECL|macro|ZORRO_PROD_CHECKPOINT_TECHNOLOGIES_SERIAL_SOLUTION
+mdefine_line|#define  ZORRO_PROD_CHECKPOINT_TECHNOLOGIES_SERIAL_SOLUTION&t;ZORRO_ID(CHECKPOINT_TECHNOLOGIES, 0x00, 0)
+DECL|macro|ZORRO_MANUF_EDOTRONIK
+mdefine_line|#define ZORRO_MANUF_EDOTRONIK&t;&t;&t;&t;&t;0x0810
+DECL|macro|ZORRO_PROD_EDOTRONIK_IEEE_488
+mdefine_line|#define  ZORRO_PROD_EDOTRONIK_IEEE_488&t;&t;&t;&t;ZORRO_ID(EDOTRONIK, 0x01, 0)
+DECL|macro|ZORRO_PROD_EDOTRONIK_8032
+mdefine_line|#define  ZORRO_PROD_EDOTRONIK_8032&t;&t;&t;&t;ZORRO_ID(EDOTRONIK, 0x02, 0)
+DECL|macro|ZORRO_PROD_EDOTRONIK_MULTISERIAL
+mdefine_line|#define  ZORRO_PROD_EDOTRONIK_MULTISERIAL&t;&t;&t;ZORRO_ID(EDOTRONIK, 0x03, 0)
+DECL|macro|ZORRO_PROD_EDOTRONIK_VIDEODIGITIZER
+mdefine_line|#define  ZORRO_PROD_EDOTRONIK_VIDEODIGITIZER&t;&t;&t;ZORRO_ID(EDOTRONIK, 0x04, 0)
+DECL|macro|ZORRO_PROD_EDOTRONIK_PARALLEL_IO
+mdefine_line|#define  ZORRO_PROD_EDOTRONIK_PARALLEL_IO&t;&t;&t;ZORRO_ID(EDOTRONIK, 0x05, 0)
+DECL|macro|ZORRO_PROD_EDOTRONIK_PIC_PROTOYPING
+mdefine_line|#define  ZORRO_PROD_EDOTRONIK_PIC_PROTOYPING&t;&t;&t;ZORRO_ID(EDOTRONIK, 0x06, 0)
+DECL|macro|ZORRO_PROD_EDOTRONIK_ADC
+mdefine_line|#define  ZORRO_PROD_EDOTRONIK_ADC&t;&t;&t;&t;ZORRO_ID(EDOTRONIK, 0x07, 0)
+DECL|macro|ZORRO_PROD_EDOTRONIK_VME
+mdefine_line|#define  ZORRO_PROD_EDOTRONIK_VME&t;&t;&t;&t;ZORRO_ID(EDOTRONIK, 0x08, 0)
+DECL|macro|ZORRO_PROD_EDOTRONIK_DSP96000
+mdefine_line|#define  ZORRO_PROD_EDOTRONIK_DSP96000&t;&t;&t;&t;ZORRO_ID(EDOTRONIK, 0x09, 0)
+DECL|macro|ZORRO_MANUF_NES_INC
+mdefine_line|#define ZORRO_MANUF_NES_INC&t;&t;&t;&t;&t;0x0813
+DECL|macro|ZORRO_PROD_NES_INC_RAM
+mdefine_line|#define  ZORRO_PROD_NES_INC_RAM&t;&t;&t;&t;&t;ZORRO_ID(NES_INC, 0x00, 0)
+DECL|macro|ZORRO_MANUF_ICD
+mdefine_line|#define ZORRO_MANUF_ICD&t;&t;&t;&t;&t;&t;0x0817
+DECL|macro|ZORRO_PROD_ICD_ADVANTAGE_2000_SCSI
+mdefine_line|#define  ZORRO_PROD_ICD_ADVANTAGE_2000_SCSI&t;&t;&t;ZORRO_ID(ICD, 0x01, 0)
+DECL|macro|ZORRO_PROD_ICD_ADVANTAGE_IDE
+mdefine_line|#define  ZORRO_PROD_ICD_ADVANTAGE_IDE&t;&t;&t;&t;ZORRO_ID(ICD, 0x03, 0)
+DECL|macro|ZORRO_PROD_ICD_ADVANTAGE_2080_RAM
+mdefine_line|#define  ZORRO_PROD_ICD_ADVANTAGE_2080_RAM&t;&t;&t;ZORRO_ID(ICD, 0x04, 0)
+DECL|macro|ZORRO_MANUF_KUPKE_2
+mdefine_line|#define ZORRO_MANUF_KUPKE_2&t;&t;&t;&t;&t;0x0819
+DECL|macro|ZORRO_PROD_KUPKE_OMTI
+mdefine_line|#define  ZORRO_PROD_KUPKE_OMTI&t;&t;&t;&t;&t;ZORRO_ID(KUPKE_2, 0x01, 0)
+DECL|macro|ZORRO_PROD_KUPKE_SCSI_II
+mdefine_line|#define  ZORRO_PROD_KUPKE_SCSI_II&t;&t;&t;&t;ZORRO_ID(KUPKE_2, 0x02, 0)
+DECL|macro|ZORRO_PROD_KUPKE_GOLEM_BOX
+mdefine_line|#define  ZORRO_PROD_KUPKE_GOLEM_BOX&t;&t;&t;&t;ZORRO_ID(KUPKE_2, 0x03, 0)
+DECL|macro|ZORRO_PROD_KUPKE_030_882
+mdefine_line|#define  ZORRO_PROD_KUPKE_030_882&t;&t;&t;&t;ZORRO_ID(KUPKE_2, 0x04, 0)
+DECL|macro|ZORRO_PROD_KUPKE_SCSI_AT
+mdefine_line|#define  ZORRO_PROD_KUPKE_SCSI_AT&t;&t;&t;&t;ZORRO_ID(KUPKE_2, 0x05, 0)
+DECL|macro|ZORRO_MANUF_GREAT_VALLEY_PRODUCTS_3
+mdefine_line|#define ZORRO_MANUF_GREAT_VALLEY_PRODUCTS_3&t;&t;&t;0x081D
+DECL|macro|ZORRO_PROD_GVP_A2000_RAM8
+mdefine_line|#define  ZORRO_PROD_GVP_A2000_RAM8&t;&t;&t;&t;ZORRO_ID(GREAT_VALLEY_PRODUCTS_3, 0x09, 0)
+DECL|macro|ZORRO_PROD_GVP_IMPACT_SERIES_II_RAM_2
+mdefine_line|#define  ZORRO_PROD_GVP_IMPACT_SERIES_II_RAM_2&t;&t;&t;ZORRO_ID(GREAT_VALLEY_PRODUCTS_3, 0x0A, 0)
+DECL|macro|ZORRO_MANUF_INTERWORKS_NETWORK
+mdefine_line|#define ZORRO_MANUF_INTERWORKS_NETWORK&t;&t;&t;&t;0x081E
+DECL|macro|ZORRO_MANUF_HARDITAL_SYNTHESIS
+mdefine_line|#define ZORRO_MANUF_HARDITAL_SYNTHESIS&t;&t;&t;&t;0x0820
+DECL|macro|ZORRO_PROD_HARDITAL_SYNTHESIS_TQM_68030_68882
+mdefine_line|#define  ZORRO_PROD_HARDITAL_SYNTHESIS_TQM_68030_68882&t;&t;ZORRO_ID(HARDITAL_SYNTHESIS, 0x14, 0)
+DECL|macro|ZORRO_MANUF_APPLIED_ENGINEERING
+mdefine_line|#define ZORRO_MANUF_APPLIED_ENGINEERING&t;&t;&t;&t;0x0828
+DECL|macro|ZORRO_PROD_APPLIED_ENGINEERING_DL2000
+mdefine_line|#define  ZORRO_PROD_APPLIED_ENGINEERING_DL2000&t;&t;&t;ZORRO_ID(APPLIED_ENGINEERING, 0x10, 0)
+DECL|macro|ZORRO_PROD_APPLIED_ENGINEERING_RAM_WORKS
+mdefine_line|#define  ZORRO_PROD_APPLIED_ENGINEERING_RAM_WORKS&t;&t;ZORRO_ID(APPLIED_ENGINEERING, 0xE0, 0)
+DECL|macro|ZORRO_MANUF_BSC_ALFADATA_3
+mdefine_line|#define ZORRO_MANUF_BSC_ALFADATA_3&t;&t;&t;&t;0x082C
+DECL|macro|ZORRO_PROD_BSC_OKTAGON_2008
+mdefine_line|#define  ZORRO_PROD_BSC_OKTAGON_2008&t;&t;&t;&t;ZORRO_ID(BSC_ALFADATA_3, 0x05, 0)
+DECL|macro|ZORRO_PROD_BSC_TANDEM_AT_2008_508
+mdefine_line|#define  ZORRO_PROD_BSC_TANDEM_AT_2008_508&t;&t;&t;ZORRO_ID(BSC_ALFADATA_3, 0x06, 0)
+DECL|macro|ZORRO_PROD_BSC_ALFA_RAM_1200
+mdefine_line|#define  ZORRO_PROD_BSC_ALFA_RAM_1200&t;&t;&t;&t;ZORRO_ID(BSC_ALFADATA_3, 0x07, 0)
+DECL|macro|ZORRO_PROD_BSC_OKTAGON_2008_RAM
+mdefine_line|#define  ZORRO_PROD_BSC_OKTAGON_2008_RAM&t;&t;&t;ZORRO_ID(BSC_ALFADATA_3, 0x08, 0)
+DECL|macro|ZORRO_PROD_BSC_MULTIFACE_I
+mdefine_line|#define  ZORRO_PROD_BSC_MULTIFACE_I&t;&t;&t;&t;ZORRO_ID(BSC_ALFADATA_3, 0x10, 0)
+DECL|macro|ZORRO_PROD_BSC_MULTIFACE_II
+mdefine_line|#define  ZORRO_PROD_BSC_MULTIFACE_II&t;&t;&t;&t;ZORRO_ID(BSC_ALFADATA_3, 0x11, 0)
+DECL|macro|ZORRO_PROD_BSC_MULTIFACE_III
+mdefine_line|#define  ZORRO_PROD_BSC_MULTIFACE_III&t;&t;&t;&t;ZORRO_ID(BSC_ALFADATA_3, 0x12, 0)
+DECL|macro|ZORRO_PROD_BSC_FRAMEBUFFER
+mdefine_line|#define  ZORRO_PROD_BSC_FRAMEBUFFER&t;&t;&t;&t;ZORRO_ID(BSC_ALFADATA_3, 0x20, 0)
+DECL|macro|ZORRO_PROD_BSC_GRAFFITI_RAM
+mdefine_line|#define  ZORRO_PROD_BSC_GRAFFITI_RAM&t;&t;&t;&t;ZORRO_ID(BSC_ALFADATA_3, 0x21, 0)
+DECL|macro|ZORRO_PROD_BSC_GRAFFITI_REG
+mdefine_line|#define  ZORRO_PROD_BSC_GRAFFITI_REG&t;&t;&t;&t;ZORRO_ID(BSC_ALFADATA_3, 0x22, 0)
+DECL|macro|ZORRO_PROD_BSC_ISDN_MASTERCARD
+mdefine_line|#define  ZORRO_PROD_BSC_ISDN_MASTERCARD&t;&t;&t;&t;ZORRO_ID(BSC_ALFADATA_3, 0x40, 0)
+DECL|macro|ZORRO_PROD_BSC_ISDN_MASTERCARD_II
+mdefine_line|#define  ZORRO_PROD_BSC_ISDN_MASTERCARD_II&t;&t;&t;ZORRO_ID(BSC_ALFADATA_3, 0x41, 0)
+DECL|macro|ZORRO_MANUF_PHOENIX
+mdefine_line|#define ZORRO_MANUF_PHOENIX&t;&t;&t;&t;&t;0x0835
+DECL|macro|ZORRO_PROD_PHOENIX_ST506
+mdefine_line|#define  ZORRO_PROD_PHOENIX_ST506&t;&t;&t;&t;ZORRO_ID(PHOENIX, 0x21, 0)
+DECL|macro|ZORRO_PROD_PHOENIX_SCSI
+mdefine_line|#define  ZORRO_PROD_PHOENIX_SCSI&t;&t;&t;&t;ZORRO_ID(PHOENIX, 0x22, 0)
+DECL|macro|ZORRO_PROD_PHOENIX_RAM
+mdefine_line|#define  ZORRO_PROD_PHOENIX_RAM&t;&t;&t;&t;&t;ZORRO_ID(PHOENIX, 0xBE, 0)
+DECL|macro|ZORRO_MANUF_ADVANCED_STORAGE_SYSTEMS
+mdefine_line|#define ZORRO_MANUF_ADVANCED_STORAGE_SYSTEMS&t;&t;&t;0x0836
+DECL|macro|ZORRO_PROD_ADVANCED_STORAGE_SYSTEMS_NEXUS
+mdefine_line|#define  ZORRO_PROD_ADVANCED_STORAGE_SYSTEMS_NEXUS&t;&t;ZORRO_ID(ADVANCED_STORAGE_SYSTEMS, 0x01, 0)
+DECL|macro|ZORRO_PROD_ADVANCED_STORAGE_SYSTEMS_NEXUS_RAM
+mdefine_line|#define  ZORRO_PROD_ADVANCED_STORAGE_SYSTEMS_NEXUS_RAM&t;&t;ZORRO_ID(ADVANCED_STORAGE_SYSTEMS, 0x08, 0)
+DECL|macro|ZORRO_MANUF_IMPULSE
+mdefine_line|#define ZORRO_MANUF_IMPULSE&t;&t;&t;&t;&t;0x0838
+DECL|macro|ZORRO_PROD_IMPULSE_FIRECRACKER_24
+mdefine_line|#define  ZORRO_PROD_IMPULSE_FIRECRACKER_24&t;&t;&t;ZORRO_ID(IMPULSE, 0x00, 0)
+DECL|macro|ZORRO_MANUF_IVS
+mdefine_line|#define ZORRO_MANUF_IVS&t;&t;&t;&t;&t;&t;0x0840
+DECL|macro|ZORRO_PROD_IVS_GRANDSLAM_PIC_2
+mdefine_line|#define  ZORRO_PROD_IVS_GRANDSLAM_PIC_2&t;&t;&t;&t;ZORRO_ID(IVS, 0x02, 0)
+DECL|macro|ZORRO_PROD_IVS_GRANDSLAM_PIC_1
+mdefine_line|#define  ZORRO_PROD_IVS_GRANDSLAM_PIC_1&t;&t;&t;&t;ZORRO_ID(IVS, 0x04, 0)
+DECL|macro|ZORRO_PROD_IVS_OVERDRIVE
+mdefine_line|#define  ZORRO_PROD_IVS_OVERDRIVE&t;&t;&t;&t;ZORRO_ID(IVS, 0x10, 0)
+DECL|macro|ZORRO_PROD_IVS_TRUMPCARD_CLASSIC
+mdefine_line|#define  ZORRO_PROD_IVS_TRUMPCARD_CLASSIC&t;&t;&t;ZORRO_ID(IVS, 0x30, 0)
+DECL|macro|ZORRO_PROD_IVS_TRUMPCARD_PRO_GRANDSLAM
+mdefine_line|#define  ZORRO_PROD_IVS_TRUMPCARD_PRO_GRANDSLAM&t;&t;&t;ZORRO_ID(IVS, 0x34, 0)
+DECL|macro|ZORRO_PROD_IVS_META_4
+mdefine_line|#define  ZORRO_PROD_IVS_META_4&t;&t;&t;&t;&t;ZORRO_ID(IVS, 0x40, 0)
+DECL|macro|ZORRO_PROD_IVS_WAVETOOLS
+mdefine_line|#define  ZORRO_PROD_IVS_WAVETOOLS&t;&t;&t;&t;ZORRO_ID(IVS, 0xBF, 0)
+DECL|macro|ZORRO_PROD_IVS_VECTOR_1
+mdefine_line|#define  ZORRO_PROD_IVS_VECTOR_1&t;&t;&t;&t;ZORRO_ID(IVS, 0xF3, 0)
+DECL|macro|ZORRO_PROD_IVS_VECTOR_2
+mdefine_line|#define  ZORRO_PROD_IVS_VECTOR_2&t;&t;&t;&t;ZORRO_ID(IVS, 0xF4, 0)
+DECL|macro|ZORRO_MANUF_VECTOR_1
+mdefine_line|#define ZORRO_MANUF_VECTOR_1&t;&t;&t;&t;&t;0x0841
+DECL|macro|ZORRO_PROD_VECTOR_CONNECTION_1
+mdefine_line|#define  ZORRO_PROD_VECTOR_CONNECTION_1&t;&t;&t;&t;ZORRO_ID(VECTOR_1, 0xE3, 0)
+DECL|macro|ZORRO_MANUF_XPERT_PRODEV
+mdefine_line|#define ZORRO_MANUF_XPERT_PRODEV&t;&t;&t;&t;0x0845
+DECL|macro|ZORRO_PROD_XPERT_PRODEV_VISIONA_RAM
+mdefine_line|#define  ZORRO_PROD_XPERT_PRODEV_VISIONA_RAM&t;&t;&t;ZORRO_ID(XPERT_PRODEV, 0x01, 0)
+DECL|macro|ZORRO_PROD_XPERT_PRODEV_VISIONA_REG
+mdefine_line|#define  ZORRO_PROD_XPERT_PRODEV_VISIONA_REG&t;&t;&t;ZORRO_ID(XPERT_PRODEV, 0x02, 0)
+DECL|macro|ZORRO_PROD_XPERT_PRODEV_MERLIN_RAM
+mdefine_line|#define  ZORRO_PROD_XPERT_PRODEV_MERLIN_RAM&t;&t;&t;ZORRO_ID(XPERT_PRODEV, 0x03, 0)
+DECL|macro|ZORRO_PROD_XPERT_PRODEV_MERLIN_REG_1
+mdefine_line|#define  ZORRO_PROD_XPERT_PRODEV_MERLIN_REG_1&t;&t;&t;ZORRO_ID(XPERT_PRODEV, 0x04, 0)
+DECL|macro|ZORRO_PROD_XPERT_PRODEV_MERLIN_REG_2
+mdefine_line|#define  ZORRO_PROD_XPERT_PRODEV_MERLIN_REG_2&t;&t;&t;ZORRO_ID(XPERT_PRODEV, 0xC9, 0)
+DECL|macro|ZORRO_MANUF_HYDRA_SYSTEMS
+mdefine_line|#define ZORRO_MANUF_HYDRA_SYSTEMS&t;&t;&t;&t;0x0849
+DECL|macro|ZORRO_PROD_HYDRA_SYSTEMS_AMIGANET
+mdefine_line|#define  ZORRO_PROD_HYDRA_SYSTEMS_AMIGANET&t;&t;&t;ZORRO_ID(HYDRA_SYSTEMS, 0x01, 0)
+DECL|macro|ZORRO_MANUF_SUNRIZE_INDUSTRIES
+mdefine_line|#define ZORRO_MANUF_SUNRIZE_INDUSTRIES&t;&t;&t;&t;0x084F
+DECL|macro|ZORRO_PROD_SUNRIZE_INDUSTRIES_AD1012
+mdefine_line|#define  ZORRO_PROD_SUNRIZE_INDUSTRIES_AD1012&t;&t;&t;ZORRO_ID(SUNRIZE_INDUSTRIES, 0x01, 0)
+DECL|macro|ZORRO_PROD_SUNRIZE_INDUSTRIES_AD516
+mdefine_line|#define  ZORRO_PROD_SUNRIZE_INDUSTRIES_AD516&t;&t;&t;ZORRO_ID(SUNRIZE_INDUSTRIES, 0x02, 0)
+DECL|macro|ZORRO_PROD_SUNRIZE_INDUSTRIES_DD512
+mdefine_line|#define  ZORRO_PROD_SUNRIZE_INDUSTRIES_DD512&t;&t;&t;ZORRO_ID(SUNRIZE_INDUSTRIES, 0x03, 0)
+DECL|macro|ZORRO_MANUF_TRICERATOPS
+mdefine_line|#define ZORRO_MANUF_TRICERATOPS&t;&t;&t;&t;&t;0x0850
+DECL|macro|ZORRO_PROD_TRICERATOPS_MULTI_IO
+mdefine_line|#define  ZORRO_PROD_TRICERATOPS_MULTI_IO&t;&t;&t;ZORRO_ID(TRICERATOPS, 0x01, 0)
+DECL|macro|ZORRO_MANUF_APPLIED_MAGIC
+mdefine_line|#define ZORRO_MANUF_APPLIED_MAGIC&t;&t;&t;&t;0x0851
+DECL|macro|ZORRO_PROD_APPLIED_MAGIC_DMI_RESOLVER
+mdefine_line|#define  ZORRO_PROD_APPLIED_MAGIC_DMI_RESOLVER&t;&t;&t;ZORRO_ID(APPLIED_MAGIC, 0x01, 0)
+DECL|macro|ZORRO_PROD_APPLIED_MAGIC_DIGITAL_BROADCASTER
+mdefine_line|#define  ZORRO_PROD_APPLIED_MAGIC_DIGITAL_BROADCASTER&t;&t;ZORRO_ID(APPLIED_MAGIC, 0x06, 0)
+DECL|macro|ZORRO_MANUF_GFX_BASE
+mdefine_line|#define ZORRO_MANUF_GFX_BASE&t;&t;&t;&t;&t;0x085E
+DECL|macro|ZORRO_PROD_GFX_BASE_GDA_1_VRAM
+mdefine_line|#define  ZORRO_PROD_GFX_BASE_GDA_1_VRAM&t;&t;&t;&t;ZORRO_ID(GFX_BASE, 0x00, 0)
+DECL|macro|ZORRO_PROD_GFX_BASE_GDA_1
+mdefine_line|#define  ZORRO_PROD_GFX_BASE_GDA_1&t;&t;&t;&t;ZORRO_ID(GFX_BASE, 0x01, 0)
+DECL|macro|ZORRO_MANUF_ROCTEC
+mdefine_line|#define ZORRO_MANUF_ROCTEC&t;&t;&t;&t;&t;0x0860
+DECL|macro|ZORRO_PROD_ROCTEC_RH_800C
+mdefine_line|#define  ZORRO_PROD_ROCTEC_RH_800C&t;&t;&t;&t;ZORRO_ID(ROCTEC, 0x01, 0)
+DECL|macro|ZORRO_PROD_ROCTEC_RH_800C_RAM
+mdefine_line|#define  ZORRO_PROD_ROCTEC_RH_800C_RAM&t;&t;&t;&t;ZORRO_ID(ROCTEC, 0x01, 0)
+DECL|macro|ZORRO_MANUF_KATO
+mdefine_line|#define ZORRO_MANUF_KATO&t;&t;&t;&t;&t;0x0861
+DECL|macro|ZORRO_PROD_KATO_MELODY
+mdefine_line|#define  ZORRO_PROD_KATO_MELODY&t;&t;&t;&t;&t;ZORRO_ID(KATO, 0x80, 0)
+multiline_comment|/* ID clash!! */
+DECL|macro|ZORRO_MANUF_HELFRICH_1
+mdefine_line|#define ZORRO_MANUF_HELFRICH_1&t;&t;&t;&t;&t;0x0861
+DECL|macro|ZORRO_PROD_HELFRICH_RAINBOW_II
+mdefine_line|#define  ZORRO_PROD_HELFRICH_RAINBOW_II&t;&t;&t;&t;ZORRO_ID(HELFRICH_1, 0x20, 0)
+DECL|macro|ZORRO_PROD_HELFRICH_RAINBOW_III
+mdefine_line|#define  ZORRO_PROD_HELFRICH_RAINBOW_III&t;&t;&t;ZORRO_ID(HELFRICH_1, 0x21, 0)
+DECL|macro|ZORRO_MANUF_ATLANTIS
+mdefine_line|#define ZORRO_MANUF_ATLANTIS&t;&t;&t;&t;&t;0x0862
+DECL|macro|ZORRO_MANUF_PROTAR
+mdefine_line|#define ZORRO_MANUF_PROTAR&t;&t;&t;&t;&t;0x0864
+DECL|macro|ZORRO_MANUF_ACS
+mdefine_line|#define ZORRO_MANUF_ACS&t;&t;&t;&t;&t;&t;0x0865
+DECL|macro|ZORRO_MANUF_SOFTWARE_RESULTS_ENTERPRISES
+mdefine_line|#define ZORRO_MANUF_SOFTWARE_RESULTS_ENTERPRISES&t;&t;0x0866
+DECL|macro|ZORRO_PROD_SOFTWARE_RESULTS_ENTERPRISES_GOLDEN_GATE_2_BUS_PLUS
+mdefine_line|#define  ZORRO_PROD_SOFTWARE_RESULTS_ENTERPRISES_GOLDEN_GATE_2_BUS_PLUS&t;ZORRO_ID(SOFTWARE_RESULTS_ENTERPRISES, 0x01, 0)
+DECL|macro|ZORRO_MANUF_MASOBOSHI
+mdefine_line|#define ZORRO_MANUF_MASOBOSHI&t;&t;&t;&t;&t;0x086D
+DECL|macro|ZORRO_PROD_MASOBOSHI_MASTER_CARD_SC201
+mdefine_line|#define  ZORRO_PROD_MASOBOSHI_MASTER_CARD_SC201&t;&t;&t;ZORRO_ID(MASOBOSHI, 0x03, 0)
+DECL|macro|ZORRO_PROD_MASOBOSHI_MASTER_CARD_MC702
+mdefine_line|#define  ZORRO_PROD_MASOBOSHI_MASTER_CARD_MC702&t;&t;&t;ZORRO_ID(MASOBOSHI, 0x04, 0)
+DECL|macro|ZORRO_PROD_MASOBOSHI_MVD_819
+mdefine_line|#define  ZORRO_PROD_MASOBOSHI_MVD_819&t;&t;&t;&t;ZORRO_ID(MASOBOSHI, 0x07, 0)
+DECL|macro|ZORRO_MANUF_MAINHATTAN_DATA
+mdefine_line|#define ZORRO_MANUF_MAINHATTAN_DATA&t;&t;&t;&t;0x086F
+DECL|macro|ZORRO_PROD_MAINHATTAN_DATA_IDE
+mdefine_line|#define  ZORRO_PROD_MAINHATTAN_DATA_IDE&t;&t;&t;&t;ZORRO_ID(MAINHATTAN_DATA, 0x01, 0)
+DECL|macro|ZORRO_MANUF_VILLAGE_TRONIC
+mdefine_line|#define ZORRO_MANUF_VILLAGE_TRONIC&t;&t;&t;&t;0x0877
+DECL|macro|ZORRO_PROD_VILLAGE_TRONIC_DOMINO_RAM
+mdefine_line|#define  ZORRO_PROD_VILLAGE_TRONIC_DOMINO_RAM&t;&t;&t;ZORRO_ID(VILLAGE_TRONIC, 0x01, 0)
+DECL|macro|ZORRO_PROD_VILLAGE_TRONIC_DOMINO_REG
+mdefine_line|#define  ZORRO_PROD_VILLAGE_TRONIC_DOMINO_REG&t;&t;&t;ZORRO_ID(VILLAGE_TRONIC, 0x02, 0)
+DECL|macro|ZORRO_PROD_VILLAGE_TRONIC_DOMINO_16M_PROTOTYPE
+mdefine_line|#define  ZORRO_PROD_VILLAGE_TRONIC_DOMINO_16M_PROTOTYPE&t;&t;ZORRO_ID(VILLAGE_TRONIC, 0x03, 0)
+DECL|macro|ZORRO_PROD_VILLAGE_TRONIC_PICASSO_II_II_PLUS_RAM
+mdefine_line|#define  ZORRO_PROD_VILLAGE_TRONIC_PICASSO_II_II_PLUS_RAM&t;ZORRO_ID(VILLAGE_TRONIC, 0x0B, 0)
+DECL|macro|ZORRO_PROD_VILLAGE_TRONIC_PICASSO_II_II_PLUS_REG
+mdefine_line|#define  ZORRO_PROD_VILLAGE_TRONIC_PICASSO_II_II_PLUS_REG&t;ZORRO_ID(VILLAGE_TRONIC, 0x0C, 0)
+DECL|macro|ZORRO_PROD_VILLAGE_TRONIC_PICASSO_II_II_PLUS_SEGMENTED_MODE
+mdefine_line|#define  ZORRO_PROD_VILLAGE_TRONIC_PICASSO_II_II_PLUS_SEGMENTED_MODE&t;ZORRO_ID(VILLAGE_TRONIC, 0x0D, 0)
+DECL|macro|ZORRO_PROD_VILLAGE_TRONIC_PICASSO_IV_Z2_MEM1
+mdefine_line|#define  ZORRO_PROD_VILLAGE_TRONIC_PICASSO_IV_Z2_MEM1&t;&t;ZORRO_ID(VILLAGE_TRONIC, 0x15, 0)
+DECL|macro|ZORRO_PROD_VILLAGE_TRONIC_PICASSO_IV_Z2_MEM2
+mdefine_line|#define  ZORRO_PROD_VILLAGE_TRONIC_PICASSO_IV_Z2_MEM2&t;&t;ZORRO_ID(VILLAGE_TRONIC, 0x16, 0)
+DECL|macro|ZORRO_PROD_VILLAGE_TRONIC_PICASSO_IV_Z2_REG
+mdefine_line|#define  ZORRO_PROD_VILLAGE_TRONIC_PICASSO_IV_Z2_REG&t;&t;ZORRO_ID(VILLAGE_TRONIC, 0x17, 0)
+DECL|macro|ZORRO_PROD_VILLAGE_TRONIC_PICASSO_IV_Z3
+mdefine_line|#define  ZORRO_PROD_VILLAGE_TRONIC_PICASSO_IV_Z3&t;&t;ZORRO_ID(VILLAGE_TRONIC, 0x18, 0)
+DECL|macro|ZORRO_PROD_VILLAGE_TRONIC_ARIADNE
+mdefine_line|#define  ZORRO_PROD_VILLAGE_TRONIC_ARIADNE&t;&t;&t;ZORRO_ID(VILLAGE_TRONIC, 0xC9, 0)
+DECL|macro|ZORRO_MANUF_UTILITIES_UNLIMITED
+mdefine_line|#define ZORRO_MANUF_UTILITIES_UNLIMITED&t;&t;&t;&t;0x087B
+DECL|macro|ZORRO_PROD_UTILITIES_UNLIMITED_EMPLANT_DELUXE
+mdefine_line|#define  ZORRO_PROD_UTILITIES_UNLIMITED_EMPLANT_DELUXE&t;&t;ZORRO_ID(UTILITIES_UNLIMITED, 0x15, 0)
+DECL|macro|ZORRO_PROD_UTILITIES_UNLIMITED_EMPLANT_DELUXE2
+mdefine_line|#define  ZORRO_PROD_UTILITIES_UNLIMITED_EMPLANT_DELUXE2&t;&t;ZORRO_ID(UTILITIES_UNLIMITED, 0x20, 0)
+DECL|macro|ZORRO_MANUF_AMITRIX
+mdefine_line|#define ZORRO_MANUF_AMITRIX&t;&t;&t;&t;&t;0x0880
+DECL|macro|ZORRO_PROD_AMITRIX_MULTI_IO
+mdefine_line|#define  ZORRO_PROD_AMITRIX_MULTI_IO&t;&t;&t;&t;ZORRO_ID(AMITRIX, 0x01, 0)
+DECL|macro|ZORRO_PROD_AMITRIX_CD_RAM
+mdefine_line|#define  ZORRO_PROD_AMITRIX_CD_RAM&t;&t;&t;&t;ZORRO_ID(AMITRIX, 0x02, 0)
+DECL|macro|ZORRO_MANUF_ARMAX
+mdefine_line|#define ZORRO_MANUF_ARMAX&t;&t;&t;&t;&t;0x0885
+DECL|macro|ZORRO_PROD_ARMAX_OMNIBUS
+mdefine_line|#define  ZORRO_PROD_ARMAX_OMNIBUS&t;&t;&t;&t;ZORRO_ID(ARMAX, 0x00, 0)
+DECL|macro|ZORRO_MANUF_NEWTEK
+mdefine_line|#define ZORRO_MANUF_NEWTEK&t;&t;&t;&t;&t;0x088F
+DECL|macro|ZORRO_PROD_NEWTEK_VIDEOTOASTER
+mdefine_line|#define  ZORRO_PROD_NEWTEK_VIDEOTOASTER&t;&t;&t;&t;ZORRO_ID(NEWTEK, 0x00, 0)
+DECL|macro|ZORRO_MANUF_M_TECH_GERMANY
+mdefine_line|#define ZORRO_MANUF_M_TECH_GERMANY&t;&t;&t;&t;0x0890
+DECL|macro|ZORRO_PROD_MTEC_AT500_2
+mdefine_line|#define  ZORRO_PROD_MTEC_AT500_2&t;&t;&t;&t;ZORRO_ID(M_TECH_GERMANY, 0x01, 0)
+DECL|macro|ZORRO_PROD_MTEC_68030
+mdefine_line|#define  ZORRO_PROD_MTEC_68030&t;&t;&t;&t;&t;ZORRO_ID(M_TECH_GERMANY, 0x03, 0)
+DECL|macro|ZORRO_PROD_MTEC_68020I
+mdefine_line|#define  ZORRO_PROD_MTEC_68020I&t;&t;&t;&t;&t;ZORRO_ID(M_TECH_GERMANY, 0x06, 0)
+DECL|macro|ZORRO_PROD_MTEC_A1200_T68030_RTC
+mdefine_line|#define  ZORRO_PROD_MTEC_A1200_T68030_RTC&t;&t;&t;ZORRO_ID(M_TECH_GERMANY, 0x20, 0)
+DECL|macro|ZORRO_PROD_MTEC_VIPER_MK_V_E_MATRIX_530
+mdefine_line|#define  ZORRO_PROD_MTEC_VIPER_MK_V_E_MATRIX_530&t;&t;ZORRO_ID(M_TECH_GERMANY, 0x21, 0)
+DECL|macro|ZORRO_PROD_MTEC_8_MB_RAM
+mdefine_line|#define  ZORRO_PROD_MTEC_8_MB_RAM&t;&t;&t;&t;ZORRO_ID(M_TECH_GERMANY, 0x22, 0)
+DECL|macro|ZORRO_PROD_MTEC_VIPER_MK_V_E_MATRIX_530_SCSI_IDE
+mdefine_line|#define  ZORRO_PROD_MTEC_VIPER_MK_V_E_MATRIX_530_SCSI_IDE&t;ZORRO_ID(M_TECH_GERMANY, 0x24, 0)
+DECL|macro|ZORRO_MANUF_GREAT_VALLEY_PRODUCTS_4
+mdefine_line|#define ZORRO_MANUF_GREAT_VALLEY_PRODUCTS_4&t;&t;&t;0x0891
+DECL|macro|ZORRO_PROD_GVP_EGS_28_24_SPECTRUM_REG
+mdefine_line|#define  ZORRO_PROD_GVP_EGS_28_24_SPECTRUM_REG&t;&t;&t;ZORRO_ID(GREAT_VALLEY_PRODUCTS_4, 0x01, 0)
+DECL|macro|ZORRO_PROD_GVP_EGS_28_24_SPECTRUM_RAM
+mdefine_line|#define  ZORRO_PROD_GVP_EGS_28_24_SPECTRUM_RAM&t;&t;&t;ZORRO_ID(GREAT_VALLEY_PRODUCTS_4, 0x02, 0)
+DECL|macro|ZORRO_MANUF_APOLLO_1
+mdefine_line|#define ZORRO_MANUF_APOLLO_1&t;&t;&t;&t;&t;0x0892
+DECL|macro|ZORRO_PROD_APOLLO_A1200
+mdefine_line|#define  ZORRO_PROD_APOLLO_A1200&t;&t;&t;&t;ZORRO_ID(APOLLO_1, 0x01, 0)
+DECL|macro|ZORRO_MANUF_HELFRICH_2
+mdefine_line|#define ZORRO_MANUF_HELFRICH_2&t;&t;&t;&t;&t;0x0893
+DECL|macro|ZORRO_PROD_HELFRICH_PICCOLO_RAM
+mdefine_line|#define  ZORRO_PROD_HELFRICH_PICCOLO_RAM&t;&t;&t;ZORRO_ID(HELFRICH_2, 0x05, 0)
+DECL|macro|ZORRO_PROD_HELFRICH_PICCOLO_REG
+mdefine_line|#define  ZORRO_PROD_HELFRICH_PICCOLO_REG&t;&t;&t;ZORRO_ID(HELFRICH_2, 0x06, 0)
+DECL|macro|ZORRO_PROD_HELFRICH_PEGGY_PLUS_MPEG
+mdefine_line|#define  ZORRO_PROD_HELFRICH_PEGGY_PLUS_MPEG&t;&t;&t;ZORRO_ID(HELFRICH_2, 0x07, 0)
+DECL|macro|ZORRO_PROD_HELFRICH_VIDEOCRUNCHER
+mdefine_line|#define  ZORRO_PROD_HELFRICH_VIDEOCRUNCHER&t;&t;&t;ZORRO_ID(HELFRICH_2, 0x08, 0)
+DECL|macro|ZORRO_PROD_HELFRICH_SD64_RAM
+mdefine_line|#define  ZORRO_PROD_HELFRICH_SD64_RAM&t;&t;&t;&t;ZORRO_ID(HELFRICH_2, 0x0A, 0)
+DECL|macro|ZORRO_PROD_HELFRICH_SD64_REG
+mdefine_line|#define  ZORRO_PROD_HELFRICH_SD64_REG&t;&t;&t;&t;ZORRO_ID(HELFRICH_2, 0x0B, 0)
+DECL|macro|ZORRO_MANUF_MACROSYSTEMS_USA
+mdefine_line|#define ZORRO_MANUF_MACROSYSTEMS_USA&t;&t;&t;&t;0x089B
+DECL|macro|ZORRO_PROD_MACROSYSTEMS_WARP_ENGINE_40xx
+mdefine_line|#define  ZORRO_PROD_MACROSYSTEMS_WARP_ENGINE_40xx&t;&t;ZORRO_ID(MACROSYSTEMS_USA, 0x13, 0)
+DECL|macro|ZORRO_MANUF_ELBOX_COMPUTER
+mdefine_line|#define ZORRO_MANUF_ELBOX_COMPUTER&t;&t;&t;&t;0x089E
+DECL|macro|ZORRO_PROD_ELBOX_COMPUTER_1200_4
+mdefine_line|#define  ZORRO_PROD_ELBOX_COMPUTER_1200_4&t;&t;&t;ZORRO_ID(ELBOX_COMPUTER, 0x06, 0)
+DECL|macro|ZORRO_MANUF_HARMS_PROFESSIONAL
+mdefine_line|#define ZORRO_MANUF_HARMS_PROFESSIONAL&t;&t;&t;&t;0x0A00
+DECL|macro|ZORRO_PROD_HARMS_PROFESSIONAL_030_PLUS
+mdefine_line|#define  ZORRO_PROD_HARMS_PROFESSIONAL_030_PLUS&t;&t;&t;ZORRO_ID(HARMS_PROFESSIONAL, 0x10, 0)
+DECL|macro|ZORRO_PROD_HARMS_PROFESSIONAL_3500
+mdefine_line|#define  ZORRO_PROD_HARMS_PROFESSIONAL_3500&t;&t;&t;ZORRO_ID(HARMS_PROFESSIONAL, 0xD0, 0)
+DECL|macro|ZORRO_MANUF_MICRONIK
+mdefine_line|#define ZORRO_MANUF_MICRONIK&t;&t;&t;&t;&t;0x0A50
+DECL|macro|ZORRO_PROD_MICRONIK_RCA_120
+mdefine_line|#define  ZORRO_PROD_MICRONIK_RCA_120&t;&t;&t;&t;ZORRO_ID(MICRONIK, 0x0A, 0)
+DECL|macro|ZORRO_MANUF_MICRONIK2
+mdefine_line|#define ZORRO_MANUF_MICRONIK2&t;&t;&t;&t;&t;0x0F0F
+DECL|macro|ZORRO_PROD_MICRONIK2_Z3I
+mdefine_line|#define  ZORRO_PROD_MICRONIK2_Z3I&t;&t;&t;&t;ZORRO_ID(MICRONIK2, 0x01, 0)
+DECL|macro|ZORRO_MANUF_MEGAMICRO
+mdefine_line|#define ZORRO_MANUF_MEGAMICRO&t;&t;&t;&t;&t;0x1000
+DECL|macro|ZORRO_PROD_MEGAMICRO_SCRAM_500
+mdefine_line|#define  ZORRO_PROD_MEGAMICRO_SCRAM_500&t;&t;&t;&t;ZORRO_ID(MEGAMICRO, 0x03, 0)
+DECL|macro|ZORRO_PROD_MEGAMICRO_SCRAM_500_RAM
+mdefine_line|#define  ZORRO_PROD_MEGAMICRO_SCRAM_500_RAM&t;&t;&t;ZORRO_ID(MEGAMICRO, 0x04, 0)
+DECL|macro|ZORRO_MANUF_IMTRONICS_2
+mdefine_line|#define ZORRO_MANUF_IMTRONICS_2&t;&t;&t;&t;&t;0x1028
+DECL|macro|ZORRO_PROD_IMTRONICS_HURRICANE_2800_3
+mdefine_line|#define  ZORRO_PROD_IMTRONICS_HURRICANE_2800_3&t;&t;&t;ZORRO_ID(IMTRONICS_2, 0x39, 0)
+DECL|macro|ZORRO_PROD_IMTRONICS_HURRICANE_2800_4
+mdefine_line|#define  ZORRO_PROD_IMTRONICS_HURRICANE_2800_4&t;&t;&t;ZORRO_ID(IMTRONICS_2, 0x57, 0)
+multiline_comment|/* unofficial ID */
+DECL|macro|ZORRO_MANUF_INDIVIDUAL_COMPUTERS
+mdefine_line|#define ZORRO_MANUF_INDIVIDUAL_COMPUTERS&t;&t;&t;0x1212
+DECL|macro|ZORRO_PROD_INDIVIDUAL_COMPUTERS_BUDDHA
+mdefine_line|#define  ZORRO_PROD_INDIVIDUAL_COMPUTERS_BUDDHA&t;&t;&t;ZORRO_ID(INDIVIDUAL_COMPUTERS, 0x00, 0)
+DECL|macro|ZORRO_PROD_INDIVIDUAL_COMPUTERS_CATWEASEL
+mdefine_line|#define  ZORRO_PROD_INDIVIDUAL_COMPUTERS_CATWEASEL&t;&t;ZORRO_ID(INDIVIDUAL_COMPUTERS, 0x2A, 0)
+DECL|macro|ZORRO_MANUF_KUPKE_3
+mdefine_line|#define ZORRO_MANUF_KUPKE_3&t;&t;&t;&t;&t;0x1248
+DECL|macro|ZORRO_PROD_KUPKE_GOLEM_HD_3000
+mdefine_line|#define  ZORRO_PROD_KUPKE_GOLEM_HD_3000&t;&t;&t;&t;ZORRO_ID(KUPKE_3, 0x01, 0)
+DECL|macro|ZORRO_MANUF_ITH
+mdefine_line|#define ZORRO_MANUF_ITH&t;&t;&t;&t;&t;&t;0x1388
+DECL|macro|ZORRO_PROD_ITH_ISDN_MASTER_II
+mdefine_line|#define  ZORRO_PROD_ITH_ISDN_MASTER_II&t;&t;&t;&t;ZORRO_ID(ITH, 0x01, 0)
+DECL|macro|ZORRO_MANUF_VMC
+mdefine_line|#define ZORRO_MANUF_VMC&t;&t;&t;&t;&t;&t;0x1389
+DECL|macro|ZORRO_PROD_VMC_ISDN_BLASTER_Z2
+mdefine_line|#define  ZORRO_PROD_VMC_ISDN_BLASTER_Z2&t;&t;&t;&t;ZORRO_ID(VMC, 0x01, 0)
+DECL|macro|ZORRO_PROD_VMC_HYPERCOM_4
+mdefine_line|#define  ZORRO_PROD_VMC_HYPERCOM_4&t;&t;&t;&t;ZORRO_ID(VMC, 0x02, 0)
+DECL|macro|ZORRO_MANUF_INFORMATION
+mdefine_line|#define ZORRO_MANUF_INFORMATION&t;&t;&t;&t;&t;0x157C
+DECL|macro|ZORRO_PROD_INFORMATION_ISDN_ENGINE_I
+mdefine_line|#define  ZORRO_PROD_INFORMATION_ISDN_ENGINE_I&t;&t;&t;ZORRO_ID(INFORMATION, 0x64, 0)
+DECL|macro|ZORRO_MANUF_VORTEX
+mdefine_line|#define ZORRO_MANUF_VORTEX&t;&t;&t;&t;&t;0x2017
+DECL|macro|ZORRO_PROD_VORTEX_GOLDEN_GATE_80386SX
+mdefine_line|#define  ZORRO_PROD_VORTEX_GOLDEN_GATE_80386SX&t;&t;&t;ZORRO_ID(VORTEX, 0x07, 0)
+DECL|macro|ZORRO_PROD_VORTEX_GOLDEN_GATE_RAM
+mdefine_line|#define  ZORRO_PROD_VORTEX_GOLDEN_GATE_RAM&t;&t;&t;ZORRO_ID(VORTEX, 0x08, 0)
+DECL|macro|ZORRO_PROD_VORTEX_GOLDEN_GATE_80486
+mdefine_line|#define  ZORRO_PROD_VORTEX_GOLDEN_GATE_80486&t;&t;&t;ZORRO_ID(VORTEX, 0x09, 0)
+DECL|macro|ZORRO_MANUF_EXPANSION_SYSTEMS
+mdefine_line|#define ZORRO_MANUF_EXPANSION_SYSTEMS&t;&t;&t;&t;0x2062
+DECL|macro|ZORRO_PROD_EXPANSION_SYSTEMS_DATAFLYER_4000SX
+mdefine_line|#define  ZORRO_PROD_EXPANSION_SYSTEMS_DATAFLYER_4000SX&t;&t;ZORRO_ID(EXPANSION_SYSTEMS, 0x01, 0)
+DECL|macro|ZORRO_PROD_EXPANSION_SYSTEMS_DATAFLYER_4000SX_RAM
+mdefine_line|#define  ZORRO_PROD_EXPANSION_SYSTEMS_DATAFLYER_4000SX_RAM&t;ZORRO_ID(EXPANSION_SYSTEMS, 0x02, 0)
+DECL|macro|ZORRO_MANUF_READYSOFT
+mdefine_line|#define ZORRO_MANUF_READYSOFT&t;&t;&t;&t;&t;0x2100
+DECL|macro|ZORRO_PROD_READYSOFT_AMAX_II_IV
+mdefine_line|#define  ZORRO_PROD_READYSOFT_AMAX_II_IV&t;&t;&t;ZORRO_ID(READYSOFT, 0x01, 0)
+DECL|macro|ZORRO_MANUF_PHASE5
+mdefine_line|#define ZORRO_MANUF_PHASE5&t;&t;&t;&t;&t;0x2140
+DECL|macro|ZORRO_PROD_PHASE5_BLIZZARD_RAM
+mdefine_line|#define  ZORRO_PROD_PHASE5_BLIZZARD_RAM&t;&t;&t;&t;ZORRO_ID(PHASE5, 0x01, 0)
+DECL|macro|ZORRO_PROD_PHASE5_BLIZZARD
+mdefine_line|#define  ZORRO_PROD_PHASE5_BLIZZARD&t;&t;&t;&t;ZORRO_ID(PHASE5, 0x02, 0)
+DECL|macro|ZORRO_PROD_PHASE5_BLIZZARD_1220_IV
+mdefine_line|#define  ZORRO_PROD_PHASE5_BLIZZARD_1220_IV&t;&t;&t;ZORRO_ID(PHASE5, 0x06, 0)
+DECL|macro|ZORRO_PROD_PHASE5_FASTLANE_Z3_RAM
+mdefine_line|#define  ZORRO_PROD_PHASE5_FASTLANE_Z3_RAM&t;&t;&t;ZORRO_ID(PHASE5, 0x0A, 0)
+DECL|macro|ZORRO_PROD_PHASE5_BLIZZARD_1230_II_FASTLANE_Z3_CYBERSCSI_CYBERSTORM060
+mdefine_line|#define  ZORRO_PROD_PHASE5_BLIZZARD_1230_II_FASTLANE_Z3_CYBERSCSI_CYBERSTORM060&t;ZORRO_ID(PHASE5, 0x0B, 0)
+DECL|macro|ZORRO_PROD_PHASE5_BLIZZARD_1220_CYBERSTORM
+mdefine_line|#define  ZORRO_PROD_PHASE5_BLIZZARD_1220_CYBERSTORM&t;&t;ZORRO_ID(PHASE5, 0x0C, 0)
+DECL|macro|ZORRO_PROD_PHASE5_BLIZZARD_1230
+mdefine_line|#define  ZORRO_PROD_PHASE5_BLIZZARD_1230&t;&t;&t;ZORRO_ID(PHASE5, 0x0D, 0)
+DECL|macro|ZORRO_PROD_PHASE5_BLIZZARD_1230_IV_1260
+mdefine_line|#define  ZORRO_PROD_PHASE5_BLIZZARD_1230_IV_1260&t;&t;ZORRO_ID(PHASE5, 0x11, 0)
+DECL|macro|ZORRO_PROD_PHASE5_BLIZZARD_2060
+mdefine_line|#define  ZORRO_PROD_PHASE5_BLIZZARD_2060&t;&t;&t;ZORRO_ID(PHASE5, 0x18, 0)
+DECL|macro|ZORRO_PROD_PHASE5_CYBERSTORM_MK_II
+mdefine_line|#define  ZORRO_PROD_PHASE5_CYBERSTORM_MK_II&t;&t;&t;ZORRO_ID(PHASE5, 0x19, 0)
+DECL|macro|ZORRO_PROD_PHASE5_CYBERVISION64
+mdefine_line|#define  ZORRO_PROD_PHASE5_CYBERVISION64&t;&t;&t;ZORRO_ID(PHASE5, 0x22, 0)
+DECL|macro|ZORRO_PROD_PHASE5_CYBERVISION64_3D_PROTOTYPE
+mdefine_line|#define  ZORRO_PROD_PHASE5_CYBERVISION64_3D_PROTOTYPE&t;&t;ZORRO_ID(PHASE5, 0x32, 0)
+DECL|macro|ZORRO_PROD_PHASE5_CYBERVISION64_3D
+mdefine_line|#define  ZORRO_PROD_PHASE5_CYBERVISION64_3D&t;&t;&t;ZORRO_ID(PHASE5, 0x43, 0)
+DECL|macro|ZORRO_PROD_PHASE5_CYBERSTORM_MK_III
+mdefine_line|#define  ZORRO_PROD_PHASE5_CYBERSTORM_MK_III&t;&t;&t;ZORRO_ID(PHASE5, 0x64, 0)
+DECL|macro|ZORRO_MANUF_DPS
+mdefine_line|#define ZORRO_MANUF_DPS&t;&t;&t;&t;&t;&t;0x2169
+DECL|macro|ZORRO_PROD_DPS_PERSONAL_ANIMATION_RECORDER
+mdefine_line|#define  ZORRO_PROD_DPS_PERSONAL_ANIMATION_RECORDER&t;&t;ZORRO_ID(DPS, 0x01, 0)
+DECL|macro|ZORRO_MANUF_APOLLO_2
+mdefine_line|#define ZORRO_MANUF_APOLLO_2&t;&t;&t;&t;&t;0x2200
+DECL|macro|ZORRO_PROD_APOLLO_A620_68020_1
+mdefine_line|#define  ZORRO_PROD_APOLLO_A620_68020_1&t;&t;&t;&t;ZORRO_ID(APOLLO_2, 0x00, 0)
+DECL|macro|ZORRO_PROD_APOLLO_A620_68020_2
+mdefine_line|#define  ZORRO_PROD_APOLLO_A620_68020_2&t;&t;&t;&t;ZORRO_ID(APOLLO_2, 0x01, 0)
+DECL|macro|ZORRO_MANUF_APOLLO_3
+mdefine_line|#define ZORRO_MANUF_APOLLO_3&t;&t;&t;&t;&t;0x2222
+DECL|macro|ZORRO_PROD_APOLLO_AT_APOLLO
+mdefine_line|#define  ZORRO_PROD_APOLLO_AT_APOLLO&t;&t;&t;&t;ZORRO_ID(APOLLO_3, 0x22, 0)
+DECL|macro|ZORRO_PROD_APOLLO_1230_1240_1260_2030_4040_4060
+mdefine_line|#define  ZORRO_PROD_APOLLO_1230_1240_1260_2030_4040_4060&t;ZORRO_ID(APOLLO_3, 0x23, 0)
+DECL|macro|ZORRO_MANUF_PETSOFF_LP
+mdefine_line|#define ZORRO_MANUF_PETSOFF_LP&t;&t;&t;&t;&t;0x38A5
+DECL|macro|ZORRO_PROD_PETSOFF_LP_DELFINA
+mdefine_line|#define  ZORRO_PROD_PETSOFF_LP_DELFINA&t;&t;&t;&t;ZORRO_ID(PETSOFF_LP, 0x00, 0)
+DECL|macro|ZORRO_PROD_PETSOFF_LP_DELFINA_LITE
+mdefine_line|#define  ZORRO_PROD_PETSOFF_LP_DELFINA_LITE&t;&t;&t;ZORRO_ID(PETSOFF_LP, 0x01, 0)
+DECL|macro|ZORRO_MANUF_UWE_GERLACH
+mdefine_line|#define ZORRO_MANUF_UWE_GERLACH&t;&t;&t;&t;&t;0x3FF7
+DECL|macro|ZORRO_PROD_UWE_GERLACH_RAM_ROM
+mdefine_line|#define  ZORRO_PROD_UWE_GERLACH_RAM_ROM&t;&t;&t;&t;ZORRO_ID(UWE_GERLACH, 0xd4, 0)
+DECL|macro|ZORRO_MANUF_MACROSYSTEMS_GERMANY
+mdefine_line|#define ZORRO_MANUF_MACROSYSTEMS_GERMANY&t;&t;&t;0x4754
+DECL|macro|ZORRO_PROD_MACROSYSTEMS_MAESTRO
+mdefine_line|#define  ZORRO_PROD_MACROSYSTEMS_MAESTRO&t;&t;&t;ZORRO_ID(MACROSYSTEMS_GERMANY, 0x03, 0)
+DECL|macro|ZORRO_PROD_MACROSYSTEMS_VLAB
+mdefine_line|#define  ZORRO_PROD_MACROSYSTEMS_VLAB&t;&t;&t;&t;ZORRO_ID(MACROSYSTEMS_GERMANY, 0x04, 0)
+DECL|macro|ZORRO_PROD_MACROSYSTEMS_MAESTRO_PRO
+mdefine_line|#define  ZORRO_PROD_MACROSYSTEMS_MAESTRO_PRO&t;&t;&t;ZORRO_ID(MACROSYSTEMS_GERMANY, 0x05, 0)
+DECL|macro|ZORRO_PROD_MACROSYSTEMS_RETINA
+mdefine_line|#define  ZORRO_PROD_MACROSYSTEMS_RETINA&t;&t;&t;&t;ZORRO_ID(MACROSYSTEMS_GERMANY, 0x06, 0)
+DECL|macro|ZORRO_PROD_MACROSYSTEMS_MULTI_EVOLUTION
+mdefine_line|#define  ZORRO_PROD_MACROSYSTEMS_MULTI_EVOLUTION&t;&t;ZORRO_ID(MACROSYSTEMS_GERMANY, 0x08, 0)
+DECL|macro|ZORRO_PROD_MACROSYSTEMS_TOCCATA
+mdefine_line|#define  ZORRO_PROD_MACROSYSTEMS_TOCCATA&t;&t;&t;ZORRO_ID(MACROSYSTEMS_GERMANY, 0x0C, 0)
+DECL|macro|ZORRO_PROD_MACROSYSTEMS_RETINA_Z3
+mdefine_line|#define  ZORRO_PROD_MACROSYSTEMS_RETINA_Z3&t;&t;&t;ZORRO_ID(MACROSYSTEMS_GERMANY, 0x10, 0)
+DECL|macro|ZORRO_PROD_MACROSYSTEMS_VLAB_MOTION
+mdefine_line|#define  ZORRO_PROD_MACROSYSTEMS_VLAB_MOTION&t;&t;&t;ZORRO_ID(MACROSYSTEMS_GERMANY, 0x12, 0)
+DECL|macro|ZORRO_PROD_MACROSYSTEMS_ALTAIS
+mdefine_line|#define  ZORRO_PROD_MACROSYSTEMS_ALTAIS&t;&t;&t;&t;ZORRO_ID(MACROSYSTEMS_GERMANY, 0x13, 0)
+DECL|macro|ZORRO_PROD_MACROSYSTEMS_FALCON_040
+mdefine_line|#define  ZORRO_PROD_MACROSYSTEMS_FALCON_040&t;&t;&t;ZORRO_ID(MACROSYSTEMS_GERMANY, 0xFD, 0)
+DECL|macro|ZORRO_MANUF_COMBITEC
+mdefine_line|#define ZORRO_MANUF_COMBITEC&t;&t;&t;&t;&t;0x6766
+DECL|macro|ZORRO_MANUF_SKI_PERIPHERALS
+mdefine_line|#define ZORRO_MANUF_SKI_PERIPHERALS&t;&t;&t;&t;0x8000
+DECL|macro|ZORRO_PROD_SKI_PERIPHERALS_MAST_FIREBALL
+mdefine_line|#define  ZORRO_PROD_SKI_PERIPHERALS_MAST_FIREBALL&t;&t;ZORRO_ID(SKI_PERIPHERALS, 0x08, 0)
+DECL|macro|ZORRO_PROD_SKI_PERIPHERALS_SCSI_DUAL_SERIAL
+mdefine_line|#define  ZORRO_PROD_SKI_PERIPHERALS_SCSI_DUAL_SERIAL&t;&t;ZORRO_ID(SKI_PERIPHERALS, 0x80, 0)
+DECL|macro|ZORRO_MANUF_REIS_WARE_2
+mdefine_line|#define ZORRO_MANUF_REIS_WARE_2&t;&t;&t;&t;&t;0xA9AD
+DECL|macro|ZORRO_PROD_REIS_WARE_SCAN_KING
+mdefine_line|#define  ZORRO_PROD_REIS_WARE_SCAN_KING&t;&t;&t;&t;ZORRO_ID(REIS_WARE_2, 0x11, 0)
+DECL|macro|ZORRO_MANUF_CAMERON
+mdefine_line|#define ZORRO_MANUF_CAMERON&t;&t;&t;&t;&t;0xAA01
+DECL|macro|ZORRO_PROD_CAMERON_PERSONAL_A4
+mdefine_line|#define  ZORRO_PROD_CAMERON_PERSONAL_A4&t;&t;&t;&t;ZORRO_ID(CAMERON, 0x10, 0)
+DECL|macro|ZORRO_MANUF_REIS_WARE
+mdefine_line|#define ZORRO_MANUF_REIS_WARE&t;&t;&t;&t;&t;0xAA11
+DECL|macro|ZORRO_PROD_REIS_WARE_HANDYSCANNER
+mdefine_line|#define  ZORRO_PROD_REIS_WARE_HANDYSCANNER&t;&t;&t;ZORRO_ID(REIS_WARE, 0x11, 0)
+DECL|macro|ZORRO_MANUF_PHOENIX_2
+mdefine_line|#define ZORRO_MANUF_PHOENIX_2&t;&t;&t;&t;&t;0xB5A8
+DECL|macro|ZORRO_PROD_PHOENIX_ST506_2
+mdefine_line|#define  ZORRO_PROD_PHOENIX_ST506_2&t;&t;&t;&t;ZORRO_ID(PHOENIX_2, 0x21, 0)
+DECL|macro|ZORRO_PROD_PHOENIX_SCSI_2
+mdefine_line|#define  ZORRO_PROD_PHOENIX_SCSI_2&t;&t;&t;&t;ZORRO_ID(PHOENIX_2, 0x22, 0)
+DECL|macro|ZORRO_PROD_PHOENIX_RAM_2
+mdefine_line|#define  ZORRO_PROD_PHOENIX_RAM_2&t;&t;&t;&t;ZORRO_ID(PHOENIX_2, 0xBE, 0)
+DECL|macro|ZORRO_MANUF_COMBITEC_2
+mdefine_line|#define ZORRO_MANUF_COMBITEC_2&t;&t;&t;&t;&t;0xC008
+DECL|macro|ZORRO_PROD_COMBITEC_HD
+mdefine_line|#define  ZORRO_PROD_COMBITEC_HD&t;&t;&t;&t;&t;ZORRO_ID(COMBITEC_2, 0x2A, 0)
+DECL|macro|ZORRO_PROD_COMBITEC_SRAM
+mdefine_line|#define  ZORRO_PROD_COMBITEC_SRAM&t;&t;&t;&t;ZORRO_ID(COMBITEC_2, 0x2B, 0)
+multiline_comment|/*&n;     *  Test and illegal Manufacturer IDs.&n;     *  These do NOT appear in arch/m68k/amiga/zorro.c!&n;     */
+DECL|macro|ZORRO_MANUF_HACKER
+mdefine_line|#define ZORRO_MANUF_HACKER&t;&t;&t;&t;&t;0x07DB
+DECL|macro|ZORRO_PROD_GENERAL_PROTOTYPE
+mdefine_line|#define  ZORRO_PROD_GENERAL_PROTOTYPE&t;&t;&t;&t;ZORRO_ID(HACKER, 0x00, 0)
+DECL|macro|ZORRO_PROD_HACKER_SCSI
+mdefine_line|#define  ZORRO_PROD_HACKER_SCSI&t;&t;&t;&t;&t;ZORRO_ID(HACKER, 0x01, 0)
+DECL|macro|ZORRO_PROD_RESOURCE_MANAGEMENT_FORCE_QUICKNET_QN2000
+mdefine_line|#define  ZORRO_PROD_RESOURCE_MANAGEMENT_FORCE_QUICKNET_QN2000&t;ZORRO_ID(HACKER, 0x02, 0)
+DECL|macro|ZORRO_PROD_VECTOR_CONNECTION_2
+mdefine_line|#define  ZORRO_PROD_VECTOR_CONNECTION_2&t;&t;&t;&t;ZORRO_ID(HACKER, 0xE0, 0)
+DECL|macro|ZORRO_PROD_VECTOR_CONNECTION_3
+mdefine_line|#define  ZORRO_PROD_VECTOR_CONNECTION_3&t;&t;&t;&t;ZORRO_ID(HACKER, 0xE1, 0)
+DECL|macro|ZORRO_PROD_VECTOR_CONNECTION_4
+mdefine_line|#define  ZORRO_PROD_VECTOR_CONNECTION_4&t;&t;&t;&t;ZORRO_ID(HACKER, 0xE2, 0)
+DECL|macro|ZORRO_PROD_VECTOR_CONNECTION_5
+mdefine_line|#define  ZORRO_PROD_VECTOR_CONNECTION_5&t;&t;&t;&t;ZORRO_ID(HACKER, 0xE3, 0)
+multiline_comment|/*&n;     *  GVP identifies most of its products through the &squot;extended product code&squot;&n;     *  (epc). The epc has to be and&squot;ed with the GVP_PRODMASK before the&n;     *  identification.&n;     */
+DECL|macro|GVP_PRODMASK
+mdefine_line|#define GVP_PRODMASK&t;&t;&t;(0xf8)
+DECL|macro|GVP_SCSICLKMASK
+mdefine_line|#define GVP_SCSICLKMASK&t;&t;&t;(0x01)
 DECL|enum|GVP_flags
 r_enum
 id|GVP_flags
@@ -989,7 +1201,7 @@ suffix:semicolon
 multiline_comment|/* for whatever the driver wants */
 )brace
 suffix:semicolon
-macro_line|#else&t;/* __ASSEMBLY__ */
+macro_line|#else /* __ASSEMBLY__ */
 id|LN_Succ
 op_assign
 l_int|0
@@ -1138,12 +1350,13 @@ l_int|4
 op_star
 l_int|4
 )paren
-macro_line|#endif&t;/* __ASSEMBLY__ */
+macro_line|#endif /* __ASSEMBLY__ */
 macro_line|#ifndef __ASSEMBLY__
 DECL|macro|ZORRO_NUM_AUTO
 mdefine_line|#define ZORRO_NUM_AUTO&t;&t;16
 macro_line|#ifdef __KERNEL__
 r_extern
+r_int
 r_int
 id|zorro_num_autocon
 suffix:semicolon
@@ -1156,32 +1369,34 @@ id|zorro_autocon
 id|ZORRO_NUM_AUTO
 )braket
 suffix:semicolon
-multiline_comment|/*&n; * Zorro Functions&n; */
+multiline_comment|/*&n;     *  Zorro Functions&n;     */
 r_extern
+r_int
 r_int
 id|zorro_find
 c_func
 (paren
-r_int
-id|manuf
+id|zorro_id
+id|id
 comma
 r_int
-id|prod
-comma
 r_int
 id|part
 comma
+r_int
 r_int
 id|index
 )paren
 suffix:semicolon
 r_extern
+r_const
 r_struct
 id|ConfigDev
 op_star
 id|zorro_get_board
 c_func
 (paren
+r_int
 r_int
 id|key
 )paren
@@ -1192,8 +1407,10 @@ id|zorro_config_board
 c_func
 (paren
 r_int
+r_int
 id|key
 comma
+r_int
 r_int
 id|part
 )paren
@@ -1204,15 +1421,17 @@ id|zorro_unconfig_board
 c_func
 (paren
 r_int
+r_int
 id|key
 comma
+r_int
 r_int
 id|part
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Bitmask indicating portions of available Zorro II RAM that are unused&n; * by the system. Every bit represents a 64K chunk, for a maximum of 8MB&n; * (128 chunks, physical 0x00200000-0x009fffff).&n; *&n; * If you want to use (= allocate) portions of this RAM, you should clear&n; * the corresponding bits.&n; */
+multiline_comment|/*&n;     *  Bitmask indicating portions of available Zorro II RAM that are unused&n;     *  by the system. Every bit represents a 64K chunk, for a maximum of 8MB&n;     *  (128 chunks, physical 0x00200000-0x009fffff).&n;     *&n;     *  If you want to use (= allocate) portions of this RAM, you should clear&n;     *  the corresponding bits.&n;     */
 r_extern
-id|u_long
+id|u32
 id|zorro_unused_z2ram
 (braket
 l_int|4
@@ -1230,7 +1449,7 @@ DECL|macro|Z2RAM_CHUNKMASK
 mdefine_line|#define Z2RAM_CHUNKMASK&t;&t;(0x0000ffff)
 DECL|macro|Z2RAM_CHUNKSHIFT
 mdefine_line|#define Z2RAM_CHUNKSHIFT&t;(16)
-multiline_comment|/*&n; * Verbose Board Identification&n; */
+multiline_comment|/*&n;     *  Verbose Board Identification&n;     */
 r_extern
 r_void
 id|zorro_identify
@@ -1249,7 +1468,7 @@ op_star
 id|buffer
 )paren
 suffix:semicolon
-macro_line|#endif&t;/* !__ASSEMBLY__ */
-macro_line|#endif&t;/* __KERNEL__ */
-macro_line|#endif /* __ZORRO_H */
+macro_line|#endif /* !__ASSEMBLY__ */
+macro_line|#endif /* __KERNEL__ */
+macro_line|#endif /* _LINUX_ZORRO_H */
 eof

@@ -3228,9 +3228,18 @@ c_func
 (paren
 l_string|&quot;Delfina&quot;
 comma
-id|DSP
+id|AUDIO
 comma
 id|PETSOFF_LP_DELFINA
+)paren
+id|PROD
+c_func
+(paren
+l_string|&quot;Delfina Lite&quot;
+comma
+id|AUDIO
+comma
+id|PETSOFF_LP_DELFINA_LITE
 )paren
 id|END
 id|BEGIN_PROD

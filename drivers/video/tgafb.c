@@ -1,5 +1,6 @@
 multiline_comment|/*&n; *  linux/drivers/video/tgafb.c -- DEC 21030 TGA frame buffer device&n; *&n; *&t;Copyright (C) 1997 Geert Uytterhoeven&n; *&n; *  This driver is partly based on the original TGA console driver&n; *&n; *&t;Copyright (C) 1995  Jay Estabrook&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License. See the file COPYING in the main directory of this archive for&n; *  more details.&n; */
-multiline_comment|/* KNOWN PROBLEMS/TO DO ===================================================== *&n; *&n; *&t;- How to set a single color register?&n; *&n; *&t;- We don&squot;t have support for CFB32 yet (fbcon-cfb32.c)&n; *&n; *&t;- Hardware cursor (useful for other graphics boards too)&n; *&n; * KNOWN PROBLEMS/TO DO ==================================================== */
+multiline_comment|/* KNOWN PROBLEMS/TO DO ===================================================== *&n; *&n; *&t;- How to set a single color register?&n; *&n; *&t;- Hardware cursor (useful for other graphics boards too)&n; *&n; * KNOWN PROBLEMS/TO DO ==================================================== */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -13,10 +14,11 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/fb.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/selection.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &quot;fbcon-cfb8.h&quot;
+macro_line|#include &quot;fbcon-cfb32.h&quot;
 multiline_comment|/* TGA hardware description (minimal) */
 multiline_comment|/*&n; * Offsets within Memory Space&n; */
 DECL|macro|TGA_ROM_OFFSET
@@ -306,6 +308,40 @@ l_int|64
 id|__initdata
 op_assign
 (brace
+macro_line|#if 1
+l_int|0x0000000000000000
+comma
+l_int|0x0000000000000000
+comma
+l_int|0x0000000000000000
+comma
+l_int|0x0000000000000000
+comma
+l_int|0x0000000000000000
+comma
+l_int|0x0000000000000000
+comma
+l_int|0x0000000000000000
+comma
+l_int|0x0000000000000000
+comma
+l_int|0x0000000000000000
+comma
+l_int|0x0000000000000000
+comma
+l_int|0x0000000000000000
+comma
+l_int|0x0000000000000000
+comma
+l_int|0x0000000000000000
+comma
+l_int|0x0000000000000000
+comma
+l_int|0x0000000000000000
+comma
+l_int|0x0000000000000000
+comma
+macro_line|#else
 l_int|0x00000000000000ff
 comma
 l_int|0x00000000000000ff
@@ -338,6 +374,7 @@ l_int|0x00000000000000ff
 comma
 l_int|0x00000000000000ff
 comma
+macro_line|#endif
 l_int|0
 comma
 l_int|0
@@ -1003,21 +1040,18 @@ id|palette
 l_int|256
 )braket
 suffix:semicolon
-DECL|variable|tgafb_name
-r_static
-r_char
-id|tgafb_name
-(braket
-l_int|16
-)braket
-op_assign
-l_string|&quot;DEC TGA &quot;
-suffix:semicolon
 DECL|variable|fb_fix
 r_static
 r_struct
 id|fb_fix_screeninfo
 id|fb_fix
+op_assign
+(brace
+(brace
+l_string|&quot;DEC TGA &quot;
+comma
+)brace
+)brace
 suffix:semicolon
 DECL|variable|fb_var
 r_static
@@ -1031,26 +1065,15 @@ comma
 )brace
 suffix:semicolon
 multiline_comment|/*&n;     *  Interface used by the world&n;     */
-r_void
-id|tgafb_video_setup
-c_func
-(paren
-r_char
-op_star
-id|options
-comma
-r_int
-op_star
-id|ints
-)paren
-suffix:semicolon
 r_static
 r_int
 id|tgafb_open
 c_func
 (paren
-r_int
-id|fbidx
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 suffix:semicolon
 r_static
@@ -1058,8 +1081,10 @@ r_int
 id|tgafb_release
 c_func
 (paren
-r_int
-id|fbidx
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 suffix:semicolon
 r_static
@@ -1074,6 +1099,11 @@ id|fix
 comma
 r_int
 id|con
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 suffix:semicolon
 r_static
@@ -1088,6 +1118,11 @@ id|var
 comma
 r_int
 id|con
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 suffix:semicolon
 r_static
@@ -1102,6 +1137,11 @@ id|var
 comma
 r_int
 id|con
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 suffix:semicolon
 r_static
@@ -1116,6 +1156,11 @@ id|var
 comma
 r_int
 id|con
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 suffix:semicolon
 r_static
@@ -1133,6 +1178,11 @@ id|kspc
 comma
 r_int
 id|con
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 suffix:semicolon
 r_static
@@ -1150,6 +1200,11 @@ id|kspc
 comma
 r_int
 id|con
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 suffix:semicolon
 r_static
@@ -1175,6 +1230,11 @@ id|arg
 comma
 r_int
 id|con
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 suffix:semicolon
 multiline_comment|/*&n;     *  Interface to the low level console driver&n;     */
@@ -1195,6 +1255,11 @@ c_func
 (paren
 r_int
 id|con
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 suffix:semicolon
 r_static
@@ -1204,6 +1269,11 @@ c_func
 (paren
 r_int
 id|con
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 suffix:semicolon
 r_static
@@ -1213,20 +1283,11 @@ c_func
 (paren
 r_int
 id|blank
-)paren
-suffix:semicolon
-r_static
-r_int
-id|tgafbcon_setcmap
-c_func
-(paren
-r_struct
-id|fb_cmap
-op_star
-id|cmap
 comma
-r_int
-id|con
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 suffix:semicolon
 multiline_comment|/*&n;     *  Internal routines&n;     */
@@ -1253,6 +1314,11 @@ comma
 id|u_int
 op_star
 id|transp
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 suffix:semicolon
 r_static
@@ -1274,6 +1340,11 @@ id|blue
 comma
 id|u_int
 id|transp
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 suffix:semicolon
 macro_line|#if 1
@@ -1293,6 +1364,11 @@ c_func
 (paren
 r_int
 id|con
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 suffix:semicolon
 DECL|variable|tgafb_ops
@@ -1318,6 +1394,8 @@ id|tgafb_set_cmap
 comma
 id|tgafb_pan_display
 comma
+l_int|NULL
+comma
 id|tgafb_ioctl
 )brace
 suffix:semicolon
@@ -1328,8 +1406,10 @@ r_int
 id|tgafb_open
 c_func
 (paren
-r_int
-id|fbidx
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 (brace
 multiline_comment|/*                                                                     &n;     *  Nothing, only a usage count for the moment                          &n;     */
@@ -1345,8 +1425,10 @@ r_int
 id|tgafb_release
 c_func
 (paren
-r_int
-id|fbidx
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 (brace
 id|MOD_DEC_USE_COUNT
@@ -1369,6 +1451,11 @@ id|fix
 comma
 r_int
 id|con
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 (brace
 id|memcpy
@@ -1403,6 +1490,11 @@ id|var
 comma
 r_int
 id|con
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 (brace
 id|memcpy
@@ -1437,6 +1529,11 @@ id|var
 comma
 r_int
 id|con
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 (brace
 r_struct
@@ -1580,6 +1677,8 @@ id|do_install_cmap
 c_func
 (paren
 id|con
+comma
+id|info
 )paren
 suffix:semicolon
 )brace
@@ -1601,6 +1700,11 @@ id|var
 comma
 r_int
 id|con
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 (brace
 r_if
@@ -1636,6 +1740,11 @@ id|kspc
 comma
 r_int
 id|con
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 (brace
 r_if
@@ -1663,6 +1772,8 @@ comma
 id|kspc
 comma
 id|tgafb_getcolreg
+comma
+id|info
 )paren
 suffix:semicolon
 r_else
@@ -1705,6 +1816,8 @@ c_func
 id|fb_default_cmap
 c_func
 (paren
+l_int|1
+op_lshift
 id|fb_display
 (braket
 id|con
@@ -1744,6 +1857,11 @@ id|kspc
 comma
 r_int
 id|con
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 (brace
 r_int
@@ -1823,6 +1941,8 @@ comma
 id|kspc
 comma
 id|tgafb_setcolreg
+comma
+id|info
 )paren
 suffix:semicolon
 macro_line|#if 1
@@ -1886,6 +2006,11 @@ id|arg
 comma
 r_int
 id|con
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 (brace
 r_return
@@ -1910,15 +2035,6 @@ id|mem_start
 )paren
 (brace
 r_int
-r_char
-id|pci_bus
-comma
-id|pci_devfn
-suffix:semicolon
-r_int
-id|status
-suffix:semicolon
-r_int
 id|i
 comma
 id|j
@@ -1932,51 +2048,40 @@ r_char
 op_star
 id|cbp
 suffix:semicolon
-id|status
+r_struct
+id|pci_dev
+op_star
+id|pdev
+suffix:semicolon
+id|pdev
 op_assign
-id|pcibios_find_device
+id|pci_find_device
+c_func
 (paren
 id|PCI_VENDOR_ID_DEC
 comma
 id|PCI_DEVICE_ID_DEC_TGA
 comma
-l_int|0
-comma
-op_amp
-id|pci_bus
-comma
-op_amp
-id|pci_devfn
+l_int|NULL
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|status
-op_eq
-id|PCIBIOS_DEVICE_NOT_FOUND
+op_logical_neg
+id|pdev
 )paren
 r_return
 id|mem_start
 suffix:semicolon
-multiline_comment|/*&n;     * read BASE_REG_0 for memory address&n;     */
-id|pcibios_read_config_dword
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_devfn
-comma
-id|PCI_BASE_ADDRESS_0
-comma
+id|tga_mem_base
+op_assign
+id|pdev-&gt;base_address
+(braket
+l_int|0
+)braket
 op_amp
-id|tga_mem_base
-)paren
-suffix:semicolon
-id|tga_mem_base
-op_and_assign
-op_complement
-l_int|15
+id|PCI_BASE_ADDRESS_MEM_MASK
 suffix:semicolon
 macro_line|#ifdef DEBUG
 id|printk
@@ -2018,7 +2123,7 @@ suffix:colon
 id|strcat
 c_func
 (paren
-id|tgafb_name
+id|fb_fix.id
 comma
 l_string|&quot;8plane&quot;
 )paren
@@ -2031,7 +2136,7 @@ suffix:colon
 id|strcat
 c_func
 (paren
-id|tgafb_name
+id|fb_fix.id
 comma
 l_string|&quot;24plane&quot;
 )paren
@@ -2044,7 +2149,7 @@ suffix:colon
 id|strcat
 c_func
 (paren
-id|tgafb_name
+id|fb_fix.id
 comma
 l_string|&quot;24plusZ&quot;
 )paren
@@ -2065,14 +2170,6 @@ r_return
 id|mem_start
 suffix:semicolon
 )brace
-id|strcpy
-c_func
-(paren
-id|fb_fix.id
-comma
-id|tgafb_name
-)paren
-suffix:semicolon
 id|tga_regs_base
 op_assign
 (paren
@@ -2475,6 +2572,42 @@ comma
 id|TGA_RAMDAC_REG
 )paren
 suffix:semicolon
+id|palette
+(braket
+id|i
+)braket
+dot
+id|red
+op_assign
+id|default_red
+(braket
+id|j
+)braket
+suffix:semicolon
+id|palette
+(braket
+id|i
+)braket
+dot
+id|green
+op_assign
+id|default_grn
+(braket
+id|j
+)braket
+suffix:semicolon
+id|palette
+(braket
+id|i
+)braket
+dot
+id|blue
+op_assign
+id|default_blu
+(braket
+id|j
+)braket
+suffix:semicolon
 )brace
 r_for
 c_loop
@@ -2563,7 +2696,7 @@ suffix:semicolon
 id|BT485_WRITE
 c_func
 (paren
-l_int|0xaa
+l_int|0x00
 comma
 id|BT485_DATA_CUR
 )paren
@@ -2572,7 +2705,7 @@ multiline_comment|/* overscan WHITE */
 id|BT485_WRITE
 c_func
 (paren
-l_int|0xaa
+l_int|0x00
 comma
 id|BT485_DATA_CUR
 )paren
@@ -2581,7 +2714,7 @@ multiline_comment|/* overscan WHITE */
 id|BT485_WRITE
 c_func
 (paren
-l_int|0xaa
+l_int|0x00
 comma
 id|BT485_DATA_CUR
 )paren
@@ -3431,7 +3564,11 @@ op_assign
 r_char
 op_star
 )paren
+(paren
 id|tga_fb_base
+op_plus
+id|LCA_DENSE_MEM
+)paren
 suffix:semicolon
 id|fb_fix.smem_len
 op_assign
@@ -3471,14 +3608,45 @@ id|fb_var.grayscale
 op_assign
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|tga_type
+op_eq
+l_int|0
+)paren
+(brace
+multiline_comment|/* 8-plane */
 id|fb_var.red.offset
 op_assign
+l_int|0
+suffix:semicolon
 id|fb_var.green.offset
 op_assign
+l_int|0
+suffix:semicolon
 id|fb_var.blue.offset
 op_assign
 l_int|0
 suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* 24-plane or 24plusZ */
+multiline_comment|/* XXX: is this correct?? */
+id|fb_var.red.offset
+op_assign
+l_int|16
+suffix:semicolon
+id|fb_var.green.offset
+op_assign
+l_int|8
+suffix:semicolon
+id|fb_var.blue.offset
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 id|fb_var.red.length
 op_assign
 id|fb_var.green.length
@@ -3616,12 +3784,55 @@ id|disp.inverse
 op_assign
 l_int|0
 suffix:semicolon
+r_switch
+c_cond
+(paren
+id|tga_type
+)paren
+(brace
+macro_line|#ifdef CONFIG_FBCON_CFB8
+r_case
+l_int|0
+suffix:colon
+multiline_comment|/* 8-plane */
+id|disp.dispsw
+op_assign
+op_amp
+id|fbcon_cfb8
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_FBCON_CFB32
+r_case
+l_int|1
+suffix:colon
+multiline_comment|/* 24-plane */
+r_case
+l_int|3
+suffix:colon
+multiline_comment|/* 24plusZ */
+id|disp.dispsw
+op_assign
+op_amp
+id|fbcon_cfb32
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
+r_default
+suffix:colon
+id|disp.dispsw
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
 id|strcpy
 c_func
 (paren
 id|fb_info.modename
 comma
-id|tgafb_name
+id|fb_fix.id
 )paren
 suffix:semicolon
 id|fb_info.node
@@ -3633,15 +3844,6 @@ id|fb_info.fbops
 op_assign
 op_amp
 id|tgafb_ops
-suffix:semicolon
-id|fb_info.fbvar_num
-op_assign
-l_int|1
-suffix:semicolon
-id|fb_info.fbvar
-op_assign
-op_amp
-id|fb_var
 suffix:semicolon
 id|fb_info.disp
 op_assign
@@ -3674,11 +3876,6 @@ op_assign
 op_amp
 id|tgafbcon_blank
 suffix:semicolon
-id|fb_info.setcmap
-op_assign
-op_amp
-id|tgafbcon_setcmap
-suffix:semicolon
 id|err
 op_assign
 id|register_framebuffer
@@ -3706,14 +3903,23 @@ id|fb_var
 comma
 op_minus
 l_int|1
+comma
+op_amp
+id|fb_info
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s frame buffer device&bslash;n&quot;
+l_string|&quot;fb%d: %s frame buffer device&bslash;n&quot;
 comma
-id|tgafb_name
+id|GET_FB_IDX
+c_func
+(paren
+id|fb_info.node
+)paren
+comma
+id|fb_fix.id
 )paren
 suffix:semicolon
 r_return
@@ -3728,6 +3934,11 @@ c_func
 (paren
 r_int
 id|con
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 (brace
 multiline_comment|/* Do we have to save the colormap? */
@@ -3763,6 +3974,8 @@ comma
 l_int|1
 comma
 id|tgafb_getcolreg
+comma
+id|info
 )paren
 suffix:semicolon
 id|currcon
@@ -3774,6 +3987,8 @@ id|do_install_cmap
 c_func
 (paren
 id|con
+comma
+id|info
 )paren
 suffix:semicolon
 r_return
@@ -3789,6 +4004,11 @@ c_func
 (paren
 r_int
 id|con
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 (brace
 multiline_comment|/* Nothing */
@@ -3805,37 +4025,14 @@ c_func
 (paren
 r_int
 id|blank
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 (brace
 multiline_comment|/* Nothing */
-)brace
-multiline_comment|/*&n;     *  Set the colormap&n;     */
-DECL|function|tgafbcon_setcmap
-r_static
-r_int
-id|tgafbcon_setcmap
-c_func
-(paren
-r_struct
-id|fb_cmap
-op_star
-id|cmap
-comma
-r_int
-id|con
-)paren
-(brace
-r_return
-id|tgafb_set_cmap
-c_func
-(paren
-id|cmap
-comma
-l_int|1
-comma
-id|con
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/*&n;     *  Read a single color register and split it into&n;     *  colors/transparent. Return != 0 for invalid regno.&n;     */
 DECL|function|tgafb_getcolreg
@@ -3862,6 +4059,11 @@ comma
 id|u_int
 op_star
 id|transp
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 (brace
 r_if
@@ -3929,6 +4131,11 @@ id|blue
 comma
 id|u_int
 id|transp
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 (brace
 r_if
@@ -3968,6 +4175,38 @@ id|blue
 op_assign
 id|blue
 suffix:semicolon
+macro_line|#ifdef CONFIG_FBCON_CFB32
+r_if
+c_cond
+(paren
+id|regno
+OL
+l_int|16
+op_logical_and
+id|tga_type
+op_ne
+l_int|0
+)paren
+id|fbcon_cfb32_cmap
+(braket
+id|regno
+)braket
+op_assign
+(paren
+id|red
+op_lshift
+l_int|16
+)paren
+op_or
+(paren
+id|green
+op_lshift
+l_int|8
+)paren
+op_or
+id|blue
+suffix:semicolon
+macro_line|#endif /* CONFIG_FBCON_CFB32 */
 multiline_comment|/* How to set a single color register?? */
 r_return
 l_int|0
@@ -4190,6 +4429,11 @@ c_func
 (paren
 r_int
 id|con
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 (brace
 r_if
@@ -4233,6 +4477,8 @@ comma
 l_int|1
 comma
 id|tgafb_setcolreg
+comma
+id|info
 )paren
 suffix:semicolon
 r_else
@@ -4242,6 +4488,8 @@ c_func
 id|fb_default_cmap
 c_func
 (paren
+l_int|1
+op_lshift
 id|fb_display
 (braket
 id|con
@@ -4261,6 +4509,8 @@ comma
 l_int|1
 comma
 id|tgafb_setcolreg
+comma
+id|info
 )paren
 suffix:semicolon
 macro_line|#if 1

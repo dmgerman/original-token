@@ -3254,7 +3254,7 @@ comma
 id|ntohs
 c_func
 (paren
-id|inet-&gt;dummy_th.source
+id|inet-&gt;sport
 )paren
 )paren
 suffix:semicolon

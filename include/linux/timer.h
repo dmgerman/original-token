@@ -75,6 +75,7 @@ id|timer_list
 op_star
 id|next
 suffix:semicolon
+multiline_comment|/* MUST be first element */
 DECL|member|prev
 r_struct
 id|timer_list
@@ -124,6 +125,21 @@ r_struct
 id|timer_list
 op_star
 id|timer
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * mod_timer is a more efficient way to update the expire field of an&n; * active timer (if the timer is inactive it will be activated)&n; * mod_timer(a,b) is equivalent to del_timer(a); a-&gt;expires = b; add_timer(a)&n; */
+r_void
+id|mod_timer
+c_func
+(paren
+r_struct
+id|timer_list
+op_star
+id|timer
+comma
+r_int
+r_int
+id|expires
 )paren
 suffix:semicolon
 r_extern

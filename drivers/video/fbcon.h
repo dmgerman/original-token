@@ -1,31 +1,24 @@
 multiline_comment|/*&n; *  linux/drivers/video/fbcon.h -- Low level frame buffer based console driver&n; *&n; *&t;Copyright (C) 1997 Geert Uytterhoeven&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file COPYING in the main directory of this archive&n; *  for more details.&n; */
+macro_line|#ifndef __VIDEO_FBCON_H
+DECL|macro|__VIDEO_FBCON_H
+mdefine_line|#define __VIDEO_FBCON_H
 macro_line|#include &lt;linux/console_struct.h&gt;
 multiline_comment|/*                                  &n;     *  `switch&squot; for the Low Level Operations&n;     */
 DECL|struct|display_switch
 r_struct
 id|display_switch
 (brace
-DECL|member|open
-r_int
+DECL|member|setup
+r_void
 (paren
 op_star
-id|open
+id|setup
 )paren
 (paren
 r_struct
 id|display
 op_star
 id|p
-)paren
-suffix:semicolon
-DECL|member|release
-r_void
-(paren
-op_star
-id|release
-)paren
-(paren
-r_void
 )paren
 suffix:semicolon
 DECL|member|bmove
@@ -148,11 +141,11 @@ r_int
 id|xx
 )paren
 suffix:semicolon
-DECL|member|rev_char
+DECL|member|revc
 r_void
 (paren
 op_star
-id|rev_char
+id|revc
 )paren
 (paren
 r_struct
@@ -167,38 +160,7 @@ r_int
 id|yy
 )paren
 suffix:semicolon
-DECL|member|next
-r_struct
-id|display_switch
-op_star
-id|next
-suffix:semicolon
 )brace
-suffix:semicolon
-multiline_comment|/*&n;     *  Driver registration&n;     */
-r_extern
-r_int
-id|fbcon_register_driver
-c_func
-(paren
-r_struct
-id|display_switch
-op_star
-id|dispsw
-comma
-r_int
-id|is_accel
-)paren
-suffix:semicolon
-r_int
-id|fbcon_unregister_driver
-c_func
-(paren
-r_struct
-id|display_switch
-op_star
-id|dispsw
-)paren
 suffix:semicolon
 multiline_comment|/*&n;     *  Attribute Decoding&n;     */
 multiline_comment|/* Color */
@@ -1121,4 +1083,5 @@ id|size
 suffix:semicolon
 )brace
 macro_line|#endif /* !m68k */
+macro_line|#endif /* __VIDEO_FBCON_H */
 eof

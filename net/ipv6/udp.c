@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;UDP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Based on linux/ipv4/udp.c&n; *&n; *&t;$Id: udp.c,v 1.24 1998/03/12 03:20:21 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;UDP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Based on linux/ipv4/udp.c&n; *&n; *&t;$Id: udp.c,v 1.27 1998/03/21 07:28:06 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -606,13 +606,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sk-&gt;dummy_th.dest
+id|sk-&gt;dport
 )paren
 (brace
 r_if
 c_cond
 (paren
-id|sk-&gt;dummy_th.dest
+id|sk-&gt;dport
 op_ne
 id|sport
 )paren
@@ -988,7 +988,7 @@ comma
 id|daddr
 )paren
 suffix:semicolon
-id|sk-&gt;dummy_th.dest
+id|sk-&gt;dport
 op_assign
 id|usin-&gt;sin6_port
 suffix:semicolon
@@ -1005,17 +1005,17 @@ id|fl.nl_u.ip6_u.saddr
 op_assign
 l_int|NULL
 suffix:semicolon
-id|fl.dev
+id|fl.oif
 op_assign
-l_int|NULL
+id|sk-&gt;bound_dev_if
 suffix:semicolon
 id|fl.uli_u.ports.dport
 op_assign
-id|sk-&gt;dummy_th.dest
+id|sk-&gt;dport
 suffix:semicolon
 id|fl.uli_u.ports.sport
 op_assign
-id|sk-&gt;dummy_th.source
+id|sk-&gt;sport
 suffix:semicolon
 id|dst
 op_assign
@@ -1446,6 +1446,11 @@ r_void
 id|udpv6_err
 c_func
 (paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+comma
 r_int
 id|type
 comma
@@ -1790,13 +1795,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|s-&gt;dummy_th.dest
+id|s-&gt;dport
 )paren
 (brace
 r_if
 c_cond
 (paren
-id|s-&gt;dummy_th.dest
+id|s-&gt;dport
 op_ne
 id|rmt_port
 )paren
@@ -2716,13 +2721,6 @@ op_assign
 l_int|NULL
 suffix:semicolon
 r_struct
-id|device
-op_star
-id|dev
-op_assign
-l_int|NULL
-suffix:semicolon
-r_struct
 id|flowi
 id|fl
 suffix:semicolon
@@ -2897,7 +2895,7 @@ id|EINVAL
 suffix:semicolon
 id|udh.uh.dest
 op_assign
-id|sk-&gt;dummy_th.dest
+id|sk-&gt;dport
 suffix:semicolon
 id|daddr
 op_assign
@@ -2952,6 +2950,10 @@ id|udh.daddr
 op_assign
 l_int|NULL
 suffix:semicolon
+id|fl.oif
+op_assign
+id|sk-&gt;bound_dev_if
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2985,7 +2987,7 @@ c_func
 id|msg
 comma
 op_amp
-id|dev
+id|fl.oif
 comma
 op_amp
 id|saddr
@@ -3003,18 +3005,9 @@ id|err
 OL
 l_int|0
 )paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;invalid msg_control&bslash;n&quot;
-)paren
-suffix:semicolon
 r_return
 id|err
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -3027,7 +3020,7 @@ suffix:semicolon
 )brace
 id|udh.uh.source
 op_assign
-id|sk-&gt;dummy_th.source
+id|sk-&gt;sport
 suffix:semicolon
 id|udh.uh.len
 op_assign
@@ -3064,10 +3057,6 @@ suffix:semicolon
 id|fl.nl_u.ip6_u.saddr
 op_assign
 id|saddr
-suffix:semicolon
-id|fl.dev
-op_assign
-id|dev
 suffix:semicolon
 id|fl.uli_u.ports.dport
 op_assign

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;AF_INET6 socket family&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Adapted from linux/net/ipv4/af_inet.c&n; *&n; *&t;$Id: af_inet6.c,v 1.28 1998/03/08 05:56:49 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;AF_INET6 socket family&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Adapted from linux/net/ipv4/af_inet.c&n; *&n; *&t;$Id: af_inet6.c,v 1.29 1998/03/18 07:52:11 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -169,7 +169,6 @@ l_int|NULL
 r_goto
 id|do_oom
 suffix:semicolon
-multiline_comment|/* Note for tcp that also wiped the dummy_th block for us. */
 r_if
 c_cond
 (paren
@@ -410,7 +409,7 @@ id|sk-&gt;num
 )paren
 (brace
 multiline_comment|/* It assumes that any protocol which allows&n;&t;&t; * the user to assign a number at socket&n;&t;&t; * creation time automatically shares.&n;&t;&t; */
-id|sk-&gt;dummy_th.source
+id|sk-&gt;sport
 op_assign
 id|ntohs
 c_func
@@ -846,7 +845,7 @@ id|sk-&gt;num
 op_assign
 id|snum
 suffix:semicolon
-id|sk-&gt;dummy_th.source
+id|sk-&gt;sport
 op_assign
 id|ntohs
 c_func
@@ -854,7 +853,7 @@ c_func
 id|sk-&gt;num
 )paren
 suffix:semicolon
-id|sk-&gt;dummy_th.dest
+id|sk-&gt;dport
 op_assign
 l_int|0
 suffix:semicolon
@@ -981,7 +980,7 @@ id|ENOTCONN
 suffix:semicolon
 id|sin-&gt;sin6_port
 op_assign
-id|sk-&gt;dummy_th.dest
+id|sk-&gt;dport
 suffix:semicolon
 id|memcpy
 c_func
@@ -1049,7 +1048,7 @@ id|in6_addr
 suffix:semicolon
 id|sin-&gt;sin6_port
 op_assign
-id|sk-&gt;dummy_th.source
+id|sk-&gt;sport
 suffix:semicolon
 )brace
 op_star

@@ -46,7 +46,8 @@ suffix:semicolon
 r_int
 id|NCR53c7x0_release
 (paren
-id|Scsi_Host_Template
+r_struct
+id|Scsi_Host
 op_star
 )paren
 suffix:semicolon

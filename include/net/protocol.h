@@ -140,6 +140,11 @@ op_star
 id|err_handler
 )paren
 (paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+comma
 r_int
 id|type
 comma

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IPv6 Address [auto]configuration&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: addrconf.c,v 1.37 1998/03/08 20:52:46 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;IPv6 Address [auto]configuration&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: addrconf.c,v 1.38 1998/03/20 09:12:14 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 multiline_comment|/*&n; *&t;Changes:&n; *&n; *&t;Janos Farkas&t;&t;&t;:&t;delete timer on ifdown&n; *&t;&lt;chexum@bankinf.banki.hu&gt;&n; *&t;Andi Kleen&t;&t;&t;:&t;kill doube kfree on module&n; *&t;&t;&t;&t;&t;&t;unload.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -1134,14 +1134,6 @@ suffix:semicolon
 r_int
 id|hash
 suffix:semicolon
-id|ipv6_ifa_notify
-c_func
-(paren
-id|RTM_DELADDR
-comma
-id|ifp
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1156,6 +1148,14 @@ id|addr_list_lock
 id|ifp-&gt;flags
 op_or_assign
 id|ADDR_INVALID
+suffix:semicolon
+id|ipv6_ifa_notify
+c_func
+(paren
+id|RTM_DELADDR
+comma
+id|ifp
+)paren
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -1271,6 +1271,14 @@ id|iter-&gt;if_next
 )paren
 suffix:semicolon
 )brace
+id|ipv6_ifa_notify
+c_func
+(paren
+id|RTM_DELADDR
+comma
+id|ifp
+)paren
+suffix:semicolon
 id|kfree
 c_func
 (paren
@@ -2129,7 +2137,10 @@ id|dev
 comma
 r_int
 r_int
-id|info
+id|expires
+comma
+r_int
+id|flags
 )paren
 (brace
 r_struct
@@ -2182,13 +2193,13 @@ id|dev-&gt;ifindex
 suffix:semicolon
 id|rtmsg.rtmsg_info
 op_assign
-id|info
+id|expires
 suffix:semicolon
 id|rtmsg.rtmsg_flags
 op_assign
 id|RTF_UP
 op_or
-id|RTF_ADDRCONF
+id|flags
 suffix:semicolon
 id|rtmsg.rtmsg_type
 op_assign
@@ -2422,6 +2433,8 @@ comma
 id|dev
 comma
 l_int|0
+comma
+id|RTF_ADDRCONF
 )paren
 suffix:semicolon
 )brace
@@ -2682,7 +2695,7 @@ id|pinfo-&gt;prefix
 comma
 l_int|NULL
 comma
-id|dev
+id|dev-&gt;ifindex
 comma
 id|RTF_LINKRT
 )paren
@@ -2705,6 +2718,14 @@ id|RTF_DEFAULT
 op_eq
 l_int|0
 )paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|rt-&gt;rt6i_flags
+op_amp
+id|RTF_EXPIRES
 )paren
 (brace
 r_if
@@ -2738,6 +2759,7 @@ id|rt_expires
 suffix:semicolon
 )brace
 )brace
+)brace
 r_else
 r_if
 c_cond
@@ -2758,6 +2780,10 @@ comma
 id|dev
 comma
 id|rt_expires
+comma
+id|RTF_ADDRCONF
+op_or
+id|RTF_EXPIRES
 )paren
 suffix:semicolon
 )brace
@@ -5133,6 +5159,12 @@ c_cond
 id|ifp-&gt;prefix_len
 op_ne
 l_int|128
+op_logical_and
+(paren
+id|ifp-&gt;flags
+op_amp
+id|ADDR_PERMANENT
+)paren
 )paren
 id|addrconf_prefix_route
 c_func
@@ -5145,6 +5177,8 @@ comma
 id|dev
 comma
 l_int|0
+comma
+id|RTF_ADDRCONF
 )paren
 suffix:semicolon
 r_if

@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  linux/drivers/video/vfb.c -- Virtual frame buffer device&n; *&n; *&t;Copyright (C) 1997 Geert Uytterhoeven&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License. See the file COPYING in the main directory of this archive for&n; *  more details.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -12,6 +13,13 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/fb.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &quot;fbcon-mfb.h&quot;
+macro_line|#include &quot;fbcon-cfb2.h&quot;
+macro_line|#include &quot;fbcon-cfb4.h&quot;
+macro_line|#include &quot;fbcon-cfb8.h&quot;
+macro_line|#include &quot;fbcon-cfb16.h&quot;
+macro_line|#include &quot;fbcon-cfb24.h&quot;
+macro_line|#include &quot;fbcon-cfb32.h&quot;
 DECL|macro|arraysize
 mdefine_line|#define arraysize(x)&t;(sizeof(x)/sizeof(*(x)))
 multiline_comment|/*&n;     *  RAM we reserve for the frame buffer. This defines the maximum screen&n;     *  size&n;     *&n;     *  The default can be overridden if the driver is compiled as a module&n;     */
@@ -77,26 +85,22 @@ id|palette
 l_int|256
 )braket
 suffix:semicolon
-DECL|variable|virtual_fb_name
+DECL|variable|vfb_name
 r_static
 r_char
-id|virtual_fb_name
+id|vfb_name
 (braket
 l_int|16
 )braket
 op_assign
 l_string|&quot;Virtual FB&quot;
 suffix:semicolon
-DECL|variable|virtual_fb_predefined
+DECL|variable|vfb_default
 r_static
 r_struct
 id|fb_var_screeninfo
-id|virtual_fb_predefined
-(braket
-)braket
+id|vfb_default
 op_assign
-(brace
-multiline_comment|/*&n;     *  Autodetect (Default) Video Mode&n;     */
 (brace
 multiline_comment|/* 640x480, 8 bpp */
 l_int|640
@@ -177,58 +181,18 @@ l_int|0
 comma
 id|FB_VMODE_NONINTERLACED
 )brace
-comma
-multiline_comment|/*&n;     *  User Defined Video Modes (8)&n;     */
-(brace
-l_int|0
-comma
-)brace
-comma
-(brace
-l_int|0
-comma
-)brace
-comma
-(brace
-l_int|0
-comma
-)brace
-comma
-(brace
-l_int|0
-comma
-)brace
-comma
-(brace
-l_int|0
-comma
-)brace
-comma
-(brace
-l_int|0
-comma
-)brace
-comma
-(brace
-l_int|0
-comma
-)brace
-comma
-(brace
-l_int|0
-comma
-)brace
-)brace
 suffix:semicolon
-DECL|macro|NUM_USER_MODES
-mdefine_line|#define NUM_USER_MODES&t;&t;(8)
-DECL|macro|NUM_TOTAL_MODES
-mdefine_line|#define NUM_TOTAL_MODES&t;&t;arraysize(virtual_fb_predefined)
-DECL|macro|NUM_PREDEF_MODES
-mdefine_line|#define NUM_PREDEF_MODES&t;(1)
+DECL|variable|vfb_enable
+r_static
+r_int
+id|vfb_enable
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* disabled by default */
 multiline_comment|/*&n;     *  Interface used by the world&n;     */
 r_void
-id|vfb_video_setup
+id|vfb_setup
 c_func
 (paren
 r_char
@@ -242,25 +206,29 @@ id|ints
 suffix:semicolon
 r_static
 r_int
-id|virtual_fb_open
+id|vfb_open
 c_func
 (paren
-r_int
-id|fbidx
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 suffix:semicolon
 r_static
 r_int
-id|virtual_fb_release
+id|vfb_release
 c_func
 (paren
-r_int
-id|fbidx
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 suffix:semicolon
 r_static
 r_int
-id|virtual_fb_get_fix
+id|vfb_get_fix
 c_func
 (paren
 r_struct
@@ -270,11 +238,16 @@ id|fix
 comma
 r_int
 id|con
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 suffix:semicolon
 r_static
 r_int
-id|virtual_fb_get_var
+id|vfb_get_var
 c_func
 (paren
 r_struct
@@ -284,11 +257,16 @@ id|var
 comma
 r_int
 id|con
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 suffix:semicolon
 r_static
 r_int
-id|virtual_fb_set_var
+id|vfb_set_var
 c_func
 (paren
 r_struct
@@ -298,11 +276,16 @@ id|var
 comma
 r_int
 id|con
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 suffix:semicolon
 r_static
 r_int
-id|virtual_fb_pan_display
+id|vfb_pan_display
 c_func
 (paren
 r_struct
@@ -312,11 +295,16 @@ id|var
 comma
 r_int
 id|con
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 suffix:semicolon
 r_static
 r_int
-id|virtual_fb_get_cmap
+id|vfb_get_cmap
 c_func
 (paren
 r_struct
@@ -329,11 +317,16 @@ id|kspc
 comma
 r_int
 id|con
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 suffix:semicolon
 r_static
 r_int
-id|virtual_fb_set_cmap
+id|vfb_set_cmap
 c_func
 (paren
 r_struct
@@ -346,11 +339,16 @@ id|kspc
 comma
 r_int
 id|con
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 suffix:semicolon
 r_static
 r_int
-id|virtual_fb_ioctl
+id|vfb_ioctl
 c_func
 (paren
 r_struct
@@ -371,12 +369,17 @@ id|arg
 comma
 r_int
 id|con
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 suffix:semicolon
 multiline_comment|/*&n;     *  Interface to the low level console driver&n;     */
 r_int
 r_int
-id|virtual_fb_init
+id|vfb_init
 c_func
 (paren
 r_int
@@ -391,6 +394,11 @@ c_func
 (paren
 r_int
 id|con
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 suffix:semicolon
 r_static
@@ -400,6 +408,11 @@ c_func
 (paren
 r_int
 id|con
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 suffix:semicolon
 r_static
@@ -409,20 +422,11 @@ c_func
 (paren
 r_int
 id|blank
-)paren
-suffix:semicolon
-r_static
-r_int
-id|vfbcon_setcmap
-c_func
-(paren
-r_struct
-id|fb_cmap
-op_star
-id|cmap
 comma
-r_int
-id|con
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 suffix:semicolon
 multiline_comment|/*&n;     *  Internal routines&n;     */
@@ -488,6 +492,11 @@ comma
 id|u_int
 op_star
 id|transp
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 suffix:semicolon
 r_static
@@ -509,6 +518,11 @@ id|blue
 comma
 id|u_int
 id|transp
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 suffix:semicolon
 r_static
@@ -518,43 +532,52 @@ c_func
 (paren
 r_int
 id|con
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 suffix:semicolon
-DECL|variable|virtual_fb_ops
+DECL|variable|vfb_ops
 r_static
 r_struct
 id|fb_ops
-id|virtual_fb_ops
+id|vfb_ops
 op_assign
 (brace
-id|virtual_fb_open
+id|vfb_open
 comma
-id|virtual_fb_release
+id|vfb_release
 comma
-id|virtual_fb_get_fix
+id|vfb_get_fix
 comma
-id|virtual_fb_get_var
+id|vfb_get_var
 comma
-id|virtual_fb_set_var
+id|vfb_set_var
 comma
-id|virtual_fb_get_cmap
+id|vfb_get_cmap
 comma
-id|virtual_fb_set_cmap
+id|vfb_set_cmap
 comma
-id|virtual_fb_pan_display
+id|vfb_pan_display
 comma
-id|virtual_fb_ioctl
+l_int|NULL
+comma
+id|vfb_ioctl
 )brace
 suffix:semicolon
 multiline_comment|/*&n;     *  Open/Release the frame buffer device&n;     */
-DECL|function|virtual_fb_open
+DECL|function|vfb_open
 r_static
 r_int
-id|virtual_fb_open
+id|vfb_open
 c_func
 (paren
-r_int
-id|fbidx
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 (brace
 multiline_comment|/*                                                                     &n;     *  Nothing, only a usage count for the moment                          &n;     */
@@ -564,14 +587,16 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|virtual_fb_release
+DECL|function|vfb_release
 r_static
 r_int
-id|virtual_fb_release
+id|vfb_release
 c_func
 (paren
-r_int
-id|fbidx
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 (brace
 id|MOD_DEC_USE_COUNT
@@ -581,10 +606,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n;     *  Get the Fixed Part of the Display&n;     */
-DECL|function|virtual_fb_get_fix
+DECL|function|vfb_get_fix
 r_static
 r_int
-id|virtual_fb_get_fix
+id|vfb_get_fix
 c_func
 (paren
 r_struct
@@ -594,6 +619,11 @@ id|fix
 comma
 r_int
 id|con
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 (brace
 r_struct
@@ -612,10 +642,7 @@ l_int|1
 id|var
 op_assign
 op_amp
-id|virtual_fb_predefined
-(braket
-l_int|0
-)braket
+id|vfb_default
 suffix:semicolon
 r_else
 id|var
@@ -641,10 +668,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n;     *  Get the User Defined Part of the Display&n;     */
-DECL|function|virtual_fb_get_var
+DECL|function|vfb_get_var
 r_static
 r_int
-id|virtual_fb_get_var
+id|vfb_get_var
 c_func
 (paren
 r_struct
@@ -654,6 +681,11 @@ id|var
 comma
 r_int
 id|con
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 (brace
 r_if
@@ -667,10 +699,7 @@ l_int|1
 op_star
 id|var
 op_assign
-id|virtual_fb_predefined
-(braket
-l_int|0
-)braket
+id|vfb_default
 suffix:semicolon
 r_else
 op_star
@@ -694,10 +723,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n;     *  Set the User Defined Part of the Display&n;     */
-DECL|function|virtual_fb_set_var
+DECL|function|vfb_set_var
 r_static
 r_int
-id|virtual_fb_set_var
+id|vfb_set_var
 c_func
 (paren
 r_struct
@@ -707,6 +736,11 @@ id|var
 comma
 r_int
 id|con
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 (brace
 r_int
@@ -1033,6 +1067,105 @@ id|display-&gt;inverse
 op_assign
 l_int|0
 suffix:semicolon
+r_switch
+c_cond
+(paren
+id|var-&gt;bits_per_pixel
+)paren
+(brace
+macro_line|#ifdef CONFIG_FBCON_MFB
+r_case
+l_int|1
+suffix:colon
+id|display-&gt;dispsw
+op_assign
+op_amp
+id|fbcon_mfb
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_FBCON_CFB2
+r_case
+l_int|2
+suffix:colon
+id|display-&gt;dispsw
+op_assign
+op_amp
+id|fbcon_cfb2
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_FBCON_CFB4
+r_case
+l_int|4
+suffix:colon
+id|display-&gt;dispsw
+op_assign
+op_amp
+id|fbcon_cfb4
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_FBCON_CFB8
+r_case
+l_int|8
+suffix:colon
+id|display-&gt;dispsw
+op_assign
+op_amp
+id|fbcon_cfb8
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_FBCON_CFB16
+r_case
+l_int|16
+suffix:colon
+id|display-&gt;dispsw
+op_assign
+op_amp
+id|fbcon_cfb16
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_FBCON_CFB24
+r_case
+l_int|24
+suffix:colon
+id|display-&gt;dispsw
+op_assign
+op_amp
+id|fbcon_cfb24
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_FBCON_CFB32
+r_case
+l_int|32
+suffix:colon
+id|display-&gt;dispsw
+op_assign
+op_amp
+id|fbcon_cfb32
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
+r_default
+suffix:colon
+id|display-&gt;dispsw
+op_assign
+l_int|NULL
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1080,6 +1213,8 @@ id|do_install_cmap
 c_func
 (paren
 id|con
+comma
+id|info
 )paren
 suffix:semicolon
 )brace
@@ -1089,10 +1224,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n;     *  Pan or Wrap the Display&n;     *&n;     *  This call looks only at xoffset, yoffset and the FB_VMODE_YWRAP flag&n;     */
-DECL|function|virtual_fb_pan_display
+DECL|function|vfb_pan_display
 r_static
 r_int
-id|virtual_fb_pan_display
+id|vfb_pan_display
 c_func
 (paren
 r_struct
@@ -1102,6 +1237,11 @@ id|var
 comma
 r_int
 id|con
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 (brace
 r_if
@@ -1227,10 +1367,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n;     *  Get the Colormap&n;     */
-DECL|function|virtual_fb_get_cmap
+DECL|function|vfb_get_cmap
 r_static
 r_int
-id|virtual_fb_get_cmap
+id|vfb_get_cmap
 c_func
 (paren
 r_struct
@@ -1243,6 +1383,11 @@ id|kspc
 comma
 r_int
 id|con
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 (brace
 r_if
@@ -1270,6 +1415,8 @@ comma
 id|kspc
 comma
 id|vfb_getcolreg
+comma
+id|info
 )paren
 suffix:semicolon
 r_else
@@ -1312,6 +1459,8 @@ c_func
 id|fb_default_cmap
 c_func
 (paren
+l_int|1
+op_lshift
 id|fb_display
 (braket
 id|con
@@ -1335,10 +1484,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n;     *  Set the Colormap&n;     */
-DECL|function|virtual_fb_set_cmap
+DECL|function|vfb_set_cmap
 r_static
 r_int
-id|virtual_fb_set_cmap
+id|vfb_set_cmap
 c_func
 (paren
 r_struct
@@ -1351,6 +1500,11 @@ id|kspc
 comma
 r_int
 id|con
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 (brace
 r_int
@@ -1428,6 +1582,8 @@ comma
 id|kspc
 comma
 id|vfb_setcolreg
+comma
+id|info
 )paren
 suffix:semicolon
 r_else
@@ -1457,10 +1613,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n;     *  Virtual Frame Buffer Specific ioctls&n;     */
-DECL|function|virtual_fb_ioctl
+DECL|function|vfb_ioctl
 r_static
 r_int
-id|virtual_fb_ioctl
+id|vfb_ioctl
 c_func
 (paren
 r_struct
@@ -1481,6 +1637,11 @@ id|arg
 comma
 r_int
 id|con
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 (brace
 r_return
@@ -1493,7 +1654,7 @@ id|__initfunc
 c_func
 (paren
 r_void
-id|vfb_video_setup
+id|vfb_setup
 c_func
 (paren
 r_char
@@ -1516,6 +1677,10 @@ l_int|0
 )braket
 op_assign
 l_char|&squot;&bslash;0&squot;
+suffix:semicolon
+id|vfb_enable
+op_assign
+l_int|1
 suffix:semicolon
 r_if
 c_cond
@@ -1588,7 +1753,7 @@ c_func
 (paren
 r_int
 r_int
-id|virtual_fb_init
+id|vfb_init
 c_func
 (paren
 r_int
@@ -1599,6 +1764,15 @@ id|mem_start
 (brace
 r_int
 id|err
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|vfb_enable
+)paren
+r_return
+id|mem_start
 suffix:semicolon
 r_if
 c_cond
@@ -1641,7 +1815,7 @@ c_func
 (paren
 id|fb_info.modename
 comma
-id|virtual_fb_name
+id|vfb_name
 )paren
 suffix:semicolon
 id|fb_info.changevar
@@ -1656,15 +1830,7 @@ suffix:semicolon
 id|fb_info.fbops
 op_assign
 op_amp
-id|virtual_fb_ops
-suffix:semicolon
-id|fb_info.fbvar_num
-op_assign
-id|NUM_TOTAL_MODES
-suffix:semicolon
-id|fb_info.fbvar
-op_assign
-id|virtual_fb_predefined
+id|vfb_ops
 suffix:semicolon
 id|fb_info.disp
 op_assign
@@ -1686,11 +1852,6 @@ op_assign
 op_amp
 id|vfbcon_blank
 suffix:semicolon
-id|fb_info.setcmap
-op_assign
-op_amp
-id|vfbcon_setcmap
-suffix:semicolon
 id|err
 op_assign
 id|register_framebuffer
@@ -1710,23 +1871,29 @@ l_int|0
 r_return
 id|mem_start
 suffix:semicolon
-id|virtual_fb_set_var
+id|vfb_set_var
 c_func
 (paren
 op_amp
-id|virtual_fb_predefined
-(braket
-l_int|0
-)braket
+id|vfb_default
 comma
 op_minus
 l_int|1
+comma
+op_amp
+id|fb_info
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Virtual frame buffer device, using %ldK of video memory&bslash;n&quot;
+l_string|&quot;fb%d: Virtual frame buffer device, using %ldK of video memory&bslash;n&quot;
+comma
+id|GET_FB_IDX
+c_func
+(paren
+id|fb_info.node
+)paren
 comma
 id|videomemorysize
 op_rshift
@@ -1745,6 +1912,11 @@ c_func
 (paren
 r_int
 id|con
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 (brace
 multiline_comment|/* Do we have to save the colormap? */
@@ -1780,6 +1952,8 @@ comma
 l_int|1
 comma
 id|vfb_getcolreg
+comma
+id|info
 )paren
 suffix:semicolon
 id|currcon
@@ -1791,6 +1965,8 @@ id|do_install_cmap
 c_func
 (paren
 id|con
+comma
+id|info
 )paren
 suffix:semicolon
 r_return
@@ -1806,6 +1982,11 @@ c_func
 (paren
 r_int
 id|con
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 (brace
 multiline_comment|/* Nothing */
@@ -1822,37 +2003,14 @@ c_func
 (paren
 r_int
 id|blank
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 (brace
 multiline_comment|/* Nothing */
-)brace
-multiline_comment|/*&n;     *  Set the colormap&n;     */
-DECL|function|vfbcon_setcmap
-r_static
-r_int
-id|vfbcon_setcmap
-c_func
-(paren
-r_struct
-id|fb_cmap
-op_star
-id|cmap
-comma
-r_int
-id|con
-)paren
-(brace
-r_return
-id|virtual_fb_set_cmap
-c_func
-(paren
-id|cmap
-comma
-l_int|1
-comma
-id|con
-)paren
-suffix:semicolon
 )brace
 DECL|function|get_line_length
 r_static
@@ -1937,7 +2095,7 @@ c_func
 (paren
 id|fix-&gt;id
 comma
-id|virtual_fb_name
+id|vfb_name
 )paren
 suffix:semicolon
 id|fix-&gt;smem_start
@@ -1974,6 +2132,12 @@ id|FB_VISUAL_MONO01
 suffix:semicolon
 r_break
 suffix:semicolon
+r_case
+l_int|2
+suffix:colon
+r_case
+l_int|4
+suffix:colon
 r_case
 l_int|8
 suffix:colon
@@ -2237,6 +2401,11 @@ comma
 id|u_int
 op_star
 id|transp
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 (brace
 r_if
@@ -2304,6 +2473,11 @@ id|blue
 comma
 id|u_int
 id|transp
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 (brace
 r_if
@@ -2355,6 +2529,11 @@ c_func
 (paren
 r_int
 id|con
+comma
+r_struct
+id|fb_info
+op_star
+id|info
 )paren
 (brace
 r_if
@@ -2398,6 +2577,8 @@ comma
 l_int|1
 comma
 id|vfb_setcolreg
+comma
+id|info
 )paren
 suffix:semicolon
 r_else
@@ -2407,6 +2588,8 @@ c_func
 id|fb_default_cmap
 c_func
 (paren
+l_int|1
+op_lshift
 id|fb_display
 (braket
 id|con
@@ -2426,6 +2609,8 @@ comma
 l_int|1
 comma
 id|vfb_setcolreg
+comma
+id|info
 )paren
 suffix:semicolon
 )brace
@@ -2439,7 +2624,7 @@ r_void
 )paren
 (brace
 r_return
-id|virtual_fb_init
+id|vfb_init
 c_func
 (paren
 l_int|NULL

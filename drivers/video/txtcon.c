@@ -1,14 +1,17 @@
 multiline_comment|/*&n; * linux/drivers/video/txtcon.c -- Low level text mode based console driver&n; *&n; *    Copyright (C) 1995 Geert Uytterhoeven&n; *&n; *&n; * This file is currently only a skeleton, since all Amigas and Ataris have&n; * bitmapped graphics.&n; *&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
+macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;linux/kdev_t.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
-multiline_comment|/*&n;    *    Interface used by the world&n;    */
+multiline_comment|/*&n;     *  Interface used by the world&n;     */
 r_static
+r_int
 r_int
 id|txtcon_startup
 c_func
 (paren
-id|u_long
-op_star
+r_int
+r_int
 id|kmem_start
 comma
 r_const
@@ -30,7 +33,7 @@ id|conp
 )paren
 suffix:semicolon
 r_static
-r_int
+r_void
 id|txtcon_deinit
 c_func
 (paren
@@ -41,7 +44,7 @@ id|conp
 )paren
 suffix:semicolon
 r_static
-r_int
+r_void
 id|txtcon_clear
 c_func
 (paren
@@ -64,7 +67,7 @@ id|width
 )paren
 suffix:semicolon
 r_static
-r_int
+r_void
 id|txtcon_putc
 c_func
 (paren
@@ -84,7 +87,7 @@ id|x
 )paren
 suffix:semicolon
 r_static
-r_int
+r_void
 id|txtcon_putcs
 c_func
 (paren
@@ -109,7 +112,7 @@ id|x
 )paren
 suffix:semicolon
 r_static
-r_int
+r_void
 id|txtcon_cursor
 c_func
 (paren
@@ -123,7 +126,7 @@ id|mode
 )paren
 suffix:semicolon
 r_static
-r_int
+r_void
 id|txtcon_scroll
 c_func
 (paren
@@ -146,7 +149,7 @@ id|count
 )paren
 suffix:semicolon
 r_static
-r_int
+r_void
 id|txtcon_bmove
 c_func
 (paren
@@ -263,14 +266,29 @@ r_int
 id|lines
 )paren
 suffix:semicolon
+r_static
+r_int
+id|txtcon_set_mode
+c_func
+(paren
+r_struct
+id|vc_data
+op_star
+id|conp
+comma
+r_int
+id|mode
+)paren
+suffix:semicolon
 DECL|function|txtcon_startup
 r_static
+r_int
 r_int
 id|txtcon_startup
 c_func
 (paren
-id|u_long
-op_star
+r_int
+r_int
 id|kmem_start
 comma
 r_const
@@ -281,8 +299,7 @@ id|display_desc
 )paren
 (brace
 r_return
-op_minus
-id|ENODEV
+id|kmem_start
 suffix:semicolon
 )brace
 DECL|function|txtcon_init
@@ -297,10 +314,11 @@ op_star
 id|conp
 )paren
 (brace
+multiline_comment|/* ... */
 )brace
 DECL|function|txtcon_deinit
 r_static
-r_int
+r_void
 id|txtcon_deinit
 c_func
 (paren
@@ -310,15 +328,13 @@ op_star
 id|conp
 )paren
 (brace
-r_return
-l_int|0
-suffix:semicolon
+multiline_comment|/* ... */
 )brace
 multiline_comment|/* ====================================================================== */
 multiline_comment|/* txtcon_XXX routines - interface used by the world */
 DECL|function|txtcon_clear
 r_static
-r_int
+r_void
 id|txtcon_clear
 c_func
 (paren
@@ -340,14 +356,11 @@ r_int
 id|width
 )paren
 (brace
-r_return
-op_minus
-id|ENOSYS
-suffix:semicolon
+multiline_comment|/* ... */
 )brace
 DECL|function|txtcon_putc
 r_static
-r_int
+r_void
 id|txtcon_putc
 c_func
 (paren
@@ -366,14 +379,11 @@ r_int
 id|x
 )paren
 (brace
-r_return
-op_minus
-id|ENOSYS
-suffix:semicolon
+multiline_comment|/* ... */
 )brace
 DECL|function|txtcon_putcs
 r_static
-r_int
+r_void
 id|txtcon_putcs
 c_func
 (paren
@@ -397,14 +407,11 @@ r_int
 id|x
 )paren
 (brace
-r_return
-op_minus
-id|ENOSYS
-suffix:semicolon
+multiline_comment|/* ... */
 )brace
 DECL|function|txtcon_cursor
 r_static
-r_int
+r_void
 id|txtcon_cursor
 c_func
 (paren
@@ -417,14 +424,11 @@ r_int
 id|mode
 )paren
 (brace
-r_return
-op_minus
-id|ENOSYS
-suffix:semicolon
+multiline_comment|/* ... */
 )brace
 DECL|function|txtcon_scroll
 r_static
-r_int
+r_void
 id|txtcon_scroll
 c_func
 (paren
@@ -446,14 +450,11 @@ r_int
 id|count
 )paren
 (brace
-r_return
-op_minus
-id|ENOSYS
-suffix:semicolon
+multiline_comment|/* ... */
 )brace
 DECL|function|txtcon_bmove
 r_static
-r_int
+r_void
 id|txtcon_bmove
 c_func
 (paren
@@ -481,10 +482,7 @@ r_int
 id|width
 )paren
 (brace
-r_return
-op_minus
-id|ENOSYS
-suffix:semicolon
+multiline_comment|/* ... */
 )brace
 DECL|function|txtcon_switch
 r_static
@@ -611,8 +609,28 @@ op_minus
 id|ENOSYS
 suffix:semicolon
 )brace
+DECL|function|txtcon_set_mode
+r_static
+r_int
+id|txtcon_set_mode
+c_func
+(paren
+r_struct
+id|vc_data
+op_star
+id|conp
+comma
+r_int
+id|mode
+)paren
+(brace
+r_return
+op_minus
+id|ENOSYS
+suffix:semicolon
+)brace
 multiline_comment|/* ====================================================================== */
-multiline_comment|/*&n;    *    The console `switch&squot; structure for the text mode based console&n;    */
+multiline_comment|/*&n;     *  The console `switch&squot; structure for the text mode based console&n;     */
 DECL|variable|txt_con
 r_struct
 id|consw
@@ -648,6 +666,8 @@ comma
 id|txtcon_set_palette
 comma
 id|txtcon_scrolldelta
+comma
+id|txtcon_set_mode
 )brace
 suffix:semicolon
 eof

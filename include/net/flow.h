@@ -49,11 +49,9 @@ DECL|member|nl_u
 )brace
 id|nl_u
 suffix:semicolon
-DECL|member|dev
-r_struct
-id|device
-op_star
-id|dev
+DECL|member|oif
+r_int
+id|oif
 suffix:semicolon
 r_union
 (brace

@@ -415,6 +415,10 @@ DECL|macro|MSG_URG
 mdefine_line|#define MSG_URG&t;&t;0x800
 DECL|macro|MSG_RST
 mdefine_line|#define MSG_RST&t;&t;0x1000
+DECL|macro|MSG_ERRQUEUE
+mdefine_line|#define MSG_ERRQUEUE&t;0x2000
+DECL|macro|MSG_NOSIGNAL
+mdefine_line|#define MSG_NOSIGNAL&t;0x4000
 DECL|macro|MSG_CTLIGNORE
 mdefine_line|#define MSG_CTLIGNORE   0x80000000
 DECL|macro|MSG_EOF

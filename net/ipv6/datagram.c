@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;common UDP/RAW code&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: datagram.c,v 1.13 1997/12/13 21:53:09 kuznet Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;common UDP/RAW code&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: datagram.c,v 1.14 1998/03/20 09:12:15 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -177,11 +177,9 @@ id|msghdr
 op_star
 id|msg
 comma
-r_struct
-id|device
+r_int
 op_star
-op_star
-id|src_dev
+id|oif
 comma
 r_struct
 id|in6_addr
@@ -319,19 +317,25 @@ c_cond
 id|src_info-&gt;ipi6_ifindex
 )paren
 (brace
-r_int
-id|index
-op_assign
+r_if
+c_cond
+(paren
+op_star
+id|oif
+op_logical_and
 id|src_info-&gt;ipi6_ifindex
+op_ne
+op_star
+id|oif
+)paren
+r_return
+op_minus
+id|EINVAL
 suffix:semicolon
 op_star
-id|src_dev
+id|oif
 op_assign
-id|dev_get_by_index
-c_func
-(paren
-id|index
-)paren
+id|src_info-&gt;ipi6_ifindex
 suffix:semicolon
 )brace
 r_if
@@ -359,8 +363,7 @@ c_func
 op_amp
 id|src_info-&gt;ipi6_addr
 comma
-op_star
-id|src_dev
+l_int|NULL
 comma
 l_int|0
 )paren

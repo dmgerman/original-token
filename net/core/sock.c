@@ -1923,7 +1923,7 @@ l_int|0
 r_goto
 id|failure
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; *&t;FIXME: Check 1003.1g should we deliver&n;&t;&t; *&t;a signal here ???&n;&t;&t; *&n;&t;&t; *&t;Alan, could we solve this question once and forever?&n;&t;&t; *&n;&t;&t; *&t;I believe, datagram sockets should never&n;&t;&t; *&t;generate SIGPIPE. Moreover, I DO think that&n;&t;&t; *&t;TCP is allowed to generate it only on write()&n;&t;&t; *&t;call, but never on send/sendto/sendmsg.&n;&t;&t; *&t;(btw, Solaris generates it even on read() :-))&n;&t;&t; *&n;&t;&t; *&t;The reason is that SIGPIPE is global flag,&n;&t;&t; *&t;so that library function using sockets (f.e. syslog()),&n;&t;&t; *&t;must save/disable it on entry and restore on exit.&n;&t;&t; *&t;As result, signal arriving for another thread will&n;&t;&t; *&t;be lost. Generation it on write() is still necessary&n;&t;&t; *&t;because a lot of stupid programs never check write()&n;&t;&t; *&t;return value.&n;&t;&t; *&n;&t;&t; *&t;Seems, SIGPIPE is very bad idea, sort of gets().&n;&t;&t; *&t;At least, we could have an option disabling&n;&t;&t; *&t;this behaviour on per-socket and/or per-message base.&n;&t;&t; *&t;BTW it is very easy - MSG_SIGPIPE flag, which&n;&t;&t; *&t;always set by read/write and checked here.&n;&t;&t; *&t;&t;&t;&t;&t;&t;--ANK&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *&t;We should send SIGPIPE in these cases according to&n;&t;&t; *&t;1003.1g draft 6.4. If we (the user) did a shutdown()&n;&t;&t; *&t;call however we should not. &n;&t;&t; *&n;&t;&t; *&t;Note: This routine isnt just used for datagrams and&n;&t;&t; *&t;anyway some datagram protocols have a notion of&n;&t;&t; *&t;close down.&n;&t;&t; */
 id|err
 op_assign
 op_minus

@@ -1049,7 +1049,7 @@ id|mmod
 suffix:semicolon
 id|mmod
 op_assign
-id|mmod-&gt;next
+id|mmod-&gt;next_reg
 )paren
 (brace
 r_if

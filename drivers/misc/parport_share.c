@@ -76,12 +76,14 @@ op_eq
 l_int|NULL
 )paren
 (brace
+macro_line|#if defined(CONFIG_PARPORT_PC_MODULE) || defined(CONFIG_PARPORT_AX_MODULE) || defined(CONFIG_PARPORT_ARC_MODULE)
 id|request_module
 c_func
 (paren
 l_string|&quot;parport_lowlevel&quot;
 )paren
 suffix:semicolon
+macro_line|#endif /* CONFIG_PARPORT_LOWLEVEL_MODULE */
 macro_line|#ifdef CONFIG_PNP_PARPORT_MODULE
 id|request_module
 c_func

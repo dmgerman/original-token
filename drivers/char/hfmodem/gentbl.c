@@ -158,10 +158,8 @@ c_func
 (paren
 )paren
 suffix:semicolon
-m_exit
-(paren
+r_return
 l_int|0
-)paren
 suffix:semicolon
 )brace
 multiline_comment|/* --------------------------------------------------------------------- */

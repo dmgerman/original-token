@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IPv6 BSD socket options interface&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Based on linux/net/ipv4/ip_sockglue.c&n; *&n; *&t;$Id: ipv6_sockglue.c,v 1.17 1998/03/08 05:56:51 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; *&n; *&t;FIXME: Make the setsockopt code POSIX compliant: That is&n; *&n; *&t;o&t;Return -EINVAL for setsockopt of short lengths&n; *&t;o&t;Truncate getsockopt returns&n; *&t;o&t;Return an optlen of the truncated length if need be&n; */
+multiline_comment|/*&n; *&t;IPv6 BSD socket options interface&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Based on linux/net/ipv4/ip_sockglue.c&n; *&n; *&t;$Id: ipv6_sockglue.c,v 1.18 1998/03/20 09:12:18 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; *&n; *&t;FIXME: Make the setsockopt code POSIX compliant: That is&n; *&n; *&t;o&t;Return -EINVAL for setsockopt of short lengths&n; *&t;o&t;Truncate getsockopt returns&n; *&t;o&t;Return an optlen of the truncated length if need be&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -415,12 +415,18 @@ r_case
 id|IPV6_MULTICAST_IF
 suffix:colon
 (brace
+r_int
+id|oif
+op_assign
+l_int|0
+suffix:semicolon
 r_struct
 id|in6_addr
 id|addr
 suffix:semicolon
-id|err
-op_assign
+r_if
+c_cond
+(paren
 id|copy_from_user
 c_func
 (paren
@@ -435,21 +441,15 @@ r_struct
 id|in6_addr
 )paren
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|err
 )paren
-(brace
 r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
+op_logical_neg
 id|ipv6_addr_any
 c_func
 (paren
@@ -457,13 +457,6 @@ op_amp
 id|addr
 )paren
 )paren
-(brace
-id|np-&gt;oif
-op_assign
-l_int|NULL
-suffix:semicolon
-)brace
-r_else
 (brace
 r_struct
 id|inet6_ifaddr
@@ -499,11 +492,33 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|np-&gt;oif
+id|oif
 op_assign
-id|ifp-&gt;idev-&gt;dev
+id|ifp-&gt;idev-&gt;dev-&gt;ifindex
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|sk-&gt;bound_dev_if
+op_logical_and
+id|sk-&gt;bound_dev_if
+op_ne
+id|oif
+)paren
+(brace
+id|retv
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+id|np-&gt;mcast_oif
+op_assign
+id|oif
+suffix:semicolon
 id|retv
 op_assign
 l_int|0

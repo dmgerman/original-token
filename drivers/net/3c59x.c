@@ -91,7 +91,7 @@ DECL|macro|RUN_AT
 mdefine_line|#define RUN_AT(x) (x)&t;&t;&t;/* What to put in timer-&gt;expires.  */
 DECL|macro|DEV_ALLOC_SKB
 mdefine_line|#define DEV_ALLOC_SKB(len) alloc_skb(len, GFP_ATOMIC)
-macro_line|#if defined(__alpha)
+macro_line|#if defined(__alpha__)
 macro_line|#error &quot;The Alpha architecture is only support with kernel version 2.0.&quot;
 macro_line|#endif
 DECL|macro|virt_to_bus

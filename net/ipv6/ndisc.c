@@ -3340,7 +3340,7 @@ id|skb-&gt;nh.ipv6h-&gt;saddr
 comma
 l_int|NULL
 comma
-id|dev
+id|dev-&gt;ifindex
 comma
 l_int|0
 )paren

@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * linux/drivers/video/fonts.c -- `Soft&squot; font definitions&n; *&n; *    Created 1995 by Geert Uytterhoeven&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
-macro_line|#include &lt;linux/config.h&gt; /* for CONFIG_AMIGA */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#ifdef __mc68000__
@@ -21,7 +21,7 @@ comma
 id|fontheight_8x8
 suffix:semicolon
 r_extern
-id|u_char
+id|u8
 id|fontdata_8x8
 (braket
 )braket
@@ -40,7 +40,7 @@ comma
 id|fontheight_8x16
 suffix:semicolon
 r_extern
-id|u_char
+id|u8
 id|fontdata_8x16
 (braket
 )braket
@@ -59,8 +59,27 @@ comma
 id|fontheight_pearl8x8
 suffix:semicolon
 r_extern
-id|u_char
+id|u8
 id|fontdata_pearl8x8
+(braket
+)braket
+suffix:semicolon
+multiline_comment|/* VGA6x11 */
+r_extern
+r_char
+id|fontname_6x11
+(braket
+)braket
+suffix:semicolon
+r_extern
+r_int
+id|fontwidth_6x11
+comma
+id|fontheight_6x11
+suffix:semicolon
+r_extern
+id|u8
+id|fontdata_6x11
 (braket
 )braket
 suffix:semicolon
@@ -85,7 +104,7 @@ op_star
 id|height
 suffix:semicolon
 DECL|member|data
-id|u_char
+id|u8
 op_star
 id|data
 suffix:semicolon
@@ -97,6 +116,8 @@ DECL|macro|VGA8x16_IDX
 mdefine_line|#define VGA8x16_IDX&t;1
 DECL|macro|PEARL8x8_IDX
 mdefine_line|#define PEARL8x8_IDX&t;2
+DECL|macro|VGA6x11_IDX
+mdefine_line|#define VGA6x11_IDX&t;3
 DECL|variable|softfonts
 r_static
 r_struct
@@ -142,6 +163,18 @@ comma
 id|fontdata_pearl8x8
 )brace
 comma
+(brace
+id|fontname_6x11
+comma
+op_amp
+id|fontwidth_6x11
+comma
+op_amp
+id|fontheight_6x11
+comma
+id|fontdata_6x11
+)brace
+comma
 )brace
 suffix:semicolon
 DECL|variable|numsoftfonts
@@ -179,7 +212,7 @@ r_int
 op_star
 id|height
 comma
-id|u_char
+id|u8
 op_star
 id|data
 (braket
@@ -303,7 +336,7 @@ r_int
 op_star
 id|height
 comma
-id|u_char
+id|u8
 op_star
 id|data
 (braket
@@ -342,6 +375,33 @@ id|i
 op_assign
 id|VGA8x16_IDX
 suffix:semicolon
+macro_line|#if defined(CONFIG_MAC)
+r_if
+c_cond
+(paren
+id|MACH_IS_MAC
+)paren
+(brace
+macro_line|#if 0  /* MSch: removed until 6x11 is debugged */
+id|i
+op_assign
+id|VGA6x11_IDX
+suffix:semicolon
+multiline_comment|/* I added this for fun ... I like 6x11 */
+macro_line|#endif
+r_if
+c_cond
+(paren
+id|xres
+OL
+l_int|640
+)paren
+id|i
+op_assign
+id|VGA6x11_IDX
+suffix:semicolon
+)brace
+macro_line|#endif
 r_if
 c_cond
 (paren

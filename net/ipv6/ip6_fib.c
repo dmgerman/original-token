@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Linux INET6 implementation &n; *&t;Forwarding Information Database&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: ip6_fib.c,v 1.11 1998/03/08 05:56:50 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Linux INET6 implementation &n; *&t;Forwarding Information Database&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: ip6_fib.c,v 1.12 1998/03/20 09:12:16 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -1145,25 +1145,42 @@ l_int|0
 r_if
 c_cond
 (paren
-id|rt-&gt;rt6i_expires
-op_eq
-l_int|0
-op_logical_or
+op_logical_neg
 (paren
-r_int
+id|iter-&gt;rt6i_flags
+op_amp
+id|RTF_EXPIRES
 )paren
-(paren
-id|rt-&gt;rt6i_expires
+)paren
+r_return
 op_minus
-id|iter-&gt;rt6i_expires
-)paren
-OG
-l_int|0
-)paren
-id|rt-&gt;rt6i_expires
-op_assign
-id|iter-&gt;rt6i_expires
+id|EEXIST
 suffix:semicolon
+id|iter-&gt;rt6i_expires
+op_assign
+id|rt-&gt;rt6i_expires
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|rt-&gt;rt6i_flags
+op_amp
+id|RTF_EXPIRES
+)paren
+)paren
+(brace
+id|iter-&gt;rt6i_flags
+op_and_assign
+op_complement
+id|RTF_EXPIRES
+suffix:semicolon
+id|iter-&gt;rt6i_expires
+op_assign
+id|rt-&gt;rt6i_expires
+suffix:semicolon
+)brace
 r_return
 op_minus
 id|EEXIST
@@ -2722,6 +2739,12 @@ multiline_comment|/*&n;&t;&t; *&t;check addrconf expiration here.&n;&t;&t; *&n;&
 r_if
 c_cond
 (paren
+(paren
+id|rt-&gt;rt6i_flags
+op_amp
+id|RTF_EXPIRES
+)paren
+op_logical_and
 id|rt-&gt;rt6i_expires
 op_logical_and
 (paren
@@ -2732,7 +2755,7 @@ id|now
 op_minus
 id|rt-&gt;rt6i_expires
 )paren
-OL
+OG
 l_int|0
 )paren
 (brace

@@ -1297,17 +1297,6 @@ r_void
 )paren
 suffix:semicolon
 r_extern
-r_void
-id|dev_tint
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-)paren
-suffix:semicolon
-r_extern
 r_int
 id|dev_get_info
 c_func

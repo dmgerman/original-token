@@ -289,9 +289,6 @@ r_int
 id|mode
 )paren
 (brace
-r_int
-id|fd
-suffix:semicolon
 r_struct
 id|inode
 op_star
@@ -305,6 +302,8 @@ op_star
 id|f
 suffix:semicolon
 r_int
+id|fd
+comma
 id|error
 suffix:semicolon
 id|error
@@ -417,12 +416,13 @@ r_goto
 id|out_filp
 suffix:semicolon
 )brace
-id|current-&gt;files-&gt;fd
-(braket
+id|fd_install
+c_func
+(paren
 id|fd
-)braket
-op_assign
+comma
 id|f
+)paren
 suffix:semicolon
 id|dget
 c_func
@@ -529,10 +529,11 @@ id|out
 suffix:semicolon
 id|file
 op_assign
-id|current-&gt;files-&gt;fd
-(braket
+id|fget
+c_func
+(paren
 id|fd
-)braket
+)paren
 suffix:semicolon
 id|retval
 op_assign
@@ -584,6 +585,7 @@ id|fn
 )paren
 r_continue
 suffix:semicolon
+multiline_comment|/* N.B. Should use file instead of fd */
 id|retval
 op_assign
 id|fn
@@ -604,6 +606,12 @@ r_break
 suffix:semicolon
 )brace
 )brace
+id|fput
+c_func
+(paren
+id|file
+)paren
+suffix:semicolon
 id|sys_close
 c_func
 (paren
@@ -1778,7 +1786,7 @@ c_cond
 (paren
 id|i
 op_ge
-id|NR_OPEN
+id|files-&gt;max_fds
 )paren
 r_break
 suffix:semicolon

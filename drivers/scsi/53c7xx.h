@@ -1006,7 +1006,7 @@ mdefine_line|#define DCNTL_00_RST&t;&t;0x01&t;/* Software reset, resets everythi
 DECL|macro|DCNTL_10_COM
 mdefine_line|#define DCNTL_10_COM&t;&t;0x01&t;/* 700 software compatibility mode */
 DECL|macro|DCNTL_10_EA
-mdefine_line|#define DCNTL_10_EA&t;&t;0x20&t;/* Enable Ack - needed for MVME166 */
+mdefine_line|#define DCNTL_10_EA&t;&t;0x20&t;/* Enable Ack - needed for MVME16x */
 DECL|macro|DCNTL_700_SAVE
 mdefine_line|#define DCNTL_700_SAVE ( DCNTL_CF_MASK | DCNTL_S16)
 multiline_comment|/* NCR53c700-66 only */

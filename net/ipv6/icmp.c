@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Internet Control Message Protocol (ICMPv6)&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&n; *&n; *&t;$Id: icmp.c,v 1.13 1998/02/12 07:43:41 davem Exp $&n; *&n; *&t;Based on net/ipv4/icmp.c&n; *&n; *&t;RFC 1885&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Internet Control Message Protocol (ICMPv6)&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&n; *&n; *&t;$Id: icmp.c,v 1.15 1998/03/21 07:28:03 davem Exp $&n; *&n; *&t;Based on net/ipv4/icmp.c&n; *&n; *&t;RFC 1885&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 multiline_comment|/*&n; *&t;Changes:&n; *&n; *&t;Andi Kleen&t;&t;:&t;exception handling&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
@@ -404,12 +404,10 @@ id|saddr
 op_assign
 l_int|NULL
 suffix:semicolon
-r_struct
-id|device
-op_star
-id|src_dev
+r_int
+id|iif
 op_assign
-l_int|NULL
+l_int|0
 suffix:semicolon
 r_struct
 id|icmpv6_msg
@@ -562,9 +560,9 @@ id|addr_type
 op_amp
 id|IPV6_ADDR_LINKLOCAL
 )paren
-id|src_dev
+id|iif
 op_assign
-id|skb-&gt;dev
+id|skb-&gt;dev-&gt;ifindex
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Must not send if we know that source is Anycast also.&n;&t; *&t;for now we don&squot;t know that.&n;&t; */
 r_if
@@ -708,9 +706,9 @@ id|fl.nl_u.ip6_u.saddr
 op_assign
 id|saddr
 suffix:semicolon
-id|fl.dev
+id|fl.oif
 op_assign
-id|src_dev
+id|iif
 suffix:semicolon
 id|fl.uli_u.icmpt.type
 op_assign
@@ -741,6 +739,20 @@ op_minus
 l_int|1
 comma
 id|MSG_DONTWAIT
+)paren
+suffix:semicolon
+multiline_comment|/* Oops! We must purge cached dst, otherwise&n;&t;   all the following ICMP messages will go there :) --ANK&n;&t; */
+id|dst_release
+c_func
+(paren
+id|xchg
+c_func
+(paren
+op_amp
+id|sk-&gt;dst_cache
+comma
+l_int|NULL
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -899,9 +911,9 @@ id|fl.nl_u.ip6_u.saddr
 op_assign
 id|saddr
 suffix:semicolon
-id|fl.dev
+id|fl.oif
 op_assign
-id|skb-&gt;dev
+id|skb-&gt;dev-&gt;ifindex
 suffix:semicolon
 id|fl.uli_u.icmpt.type
 op_assign
@@ -932,6 +944,20 @@ op_minus
 l_int|1
 comma
 id|MSG_DONTWAIT
+)paren
+suffix:semicolon
+multiline_comment|/* Oops! We must purge cached dst, otherwise&n;&t;   all the following ICMP messages will go there :) --ANK&n;&t; */
+id|dst_release
+c_func
+(paren
+id|xchg
+c_func
+(paren
+op_amp
+id|sk-&gt;dst_cache
+comma
+l_int|NULL
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -999,6 +1025,11 @@ r_void
 id|icmpv6_notify
 c_func
 (paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+comma
 r_int
 id|type
 comma
@@ -1215,6 +1246,8 @@ op_member_access_from_pointer
 id|err_handler
 c_func
 (paren
+id|skb
+comma
 id|type
 comma
 id|code
@@ -1659,6 +1692,8 @@ suffix:colon
 id|icmpv6_notify
 c_func
 (paren
+id|skb
+comma
 id|hdr-&gt;icmp6_type
 comma
 id|hdr-&gt;icmp6_code
@@ -1776,6 +1811,8 @@ multiline_comment|/* &n;&t;&t; * error of unkown type. &n;&t;&t; * must pass to 
 id|icmpv6_notify
 c_func
 (paren
+id|skb
+comma
 id|hdr-&gt;icmp6_type
 comma
 id|hdr-&gt;icmp6_code

@@ -198,22 +198,16 @@ id|spinlock_t
 id|page_alloc_lock
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n; * This routine is used by the kernel swap deamon to determine&n; * whether we have &quot;enough&quot; free pages. It is fairly arbitrary,&n; * but this had better return false if any reasonable &quot;get_free_page()&quot;&n; * allocation could currently fail..&n; *&n; * Currently we approve of the following situations:&n; * - the highest memory order has two entries&n; * - the highest memory order has one free entry and:&n; *&t;- the next-highest memory order has two free entries&n; * - the highest memory order has one free entry and:&n; *&t;- the next-highest memory order has one free entry&n; *&t;- the next-next-highest memory order has two free entries&n; *&n; * [previously, there had to be two entries of the highest memory&n; *  order, but this lead to problems on large-memory machines.]&n; */
+multiline_comment|/*&n; * This routine is used by the kernel swap deamon to determine&n; * whether we have &quot;enough&quot; free pages. It is fairly arbitrary,&n; * but this had better return false if any reasonable &quot;get_free_page()&quot;&n; * allocation could currently fail..&n; *&n; * Currently we approve of the following situations:&n; * - the highest memory order has two entries&n; * - the highest memory order has one free entry and:&n; *&t;- the next-highest memory order has two free entries&n; * - the highest memory order has one free entry and:&n; *&t;- the next-highest memory order has one free entry&n; *&t;- the next-next-highest memory order has two free entries&n; *&n; * [previously, there had to be two entries of the highest memory&n; *  order, but this lead to problems on large-memory machines.]&n; *&n; * This will return zero if no list was found, non-zero&n; * if there was memory (the bigger, the better).&n; */
 DECL|function|free_memory_available
 r_int
 id|free_memory_available
 c_func
 (paren
-r_void
+r_int
+id|nr
 )paren
 (brace
-r_int
-id|i
-comma
-id|retval
-op_assign
-l_int|0
-suffix:semicolon
 r_int
 r_int
 id|flags
@@ -225,6 +219,12 @@ id|list
 op_assign
 l_int|NULL
 suffix:semicolon
+id|list
+op_assign
+id|free_area
+op_plus
+id|NR_MEM_LISTS
+suffix:semicolon
 id|spin_lock_irqsave
 c_func
 (paren
@@ -235,29 +235,12 @@ id|flags
 )paren
 suffix:semicolon
 multiline_comment|/* We fall through the loop if the list contains one&n;&t; * item. -- thanks to Colin Plumb &lt;colin@nyx.net&gt;&n;&t; */
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|1
-suffix:semicolon
-id|i
-OL
-l_int|4
-suffix:semicolon
-op_increment
-id|i
-)paren
+r_do
 (brace
 id|list
-op_assign
-id|free_area
-op_plus
-id|NR_MEM_LISTS
-op_minus
-id|i
+op_decrement
 suffix:semicolon
+multiline_comment|/* Empty list? Bad - we need more memory */
 r_if
 c_cond
 (paren
@@ -271,6 +254,7 @@ id|list
 )paren
 r_break
 suffix:semicolon
+multiline_comment|/* One item on the list? Look further */
 r_if
 c_cond
 (paren
@@ -284,13 +268,19 @@ id|list
 )paren
 r_continue
 suffix:semicolon
-id|retval
-op_assign
-l_int|1
-suffix:semicolon
+multiline_comment|/* More than one item? We&squot;re ok */
 r_break
 suffix:semicolon
 )brace
+r_while
+c_loop
+(paren
+op_decrement
+id|nr
+op_ge
+l_int|0
+)paren
+suffix:semicolon
 id|spin_unlock_irqrestore
 c_func
 (paren
@@ -301,7 +291,9 @@ id|flags
 )paren
 suffix:semicolon
 r_return
-id|retval
+id|nr
+op_plus
+l_int|1
 suffix:semicolon
 )brace
 DECL|function|free_pages_ok

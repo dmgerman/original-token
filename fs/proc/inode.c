@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/limits.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -1006,7 +1007,8 @@ id|PROC_OPENPROM_FIRST
 op_plus
 id|PROC_NOPENPROM
 )paren
-r_return
+r_goto
+id|out
 suffix:semicolon
 id|inode-&gt;i_op
 op_assign
@@ -1044,7 +1046,8 @@ c_cond
 op_logical_neg
 id|pid
 )paren
-r_return
+r_goto
+id|out
 suffix:semicolon
 id|read_lock
 c_func
@@ -1061,21 +1064,14 @@ c_func
 id|pid
 )paren
 suffix:semicolon
-id|read_unlock
-c_func
-(paren
-op_amp
-id|tasklist_lock
-)paren
-suffix:semicolon
-multiline_comment|/* FIXME!! This should be done only after we have stopped using &squot;p&squot; */
 r_if
 c_cond
 (paren
 op_logical_neg
 id|p
 )paren
-r_return
+r_goto
+id|out_unlock
 suffix:semicolon
 id|ino
 op_and_assign
@@ -1108,6 +1104,11 @@ op_rshift
 l_int|8
 )paren
 (brace
+r_struct
+id|file
+op_star
+id|file
+suffix:semicolon
 r_case
 id|PROC_PID_FD_DIR
 suffix:colon
@@ -1115,20 +1116,24 @@ id|ino
 op_and_assign
 l_int|0xff
 suffix:semicolon
+id|file
+op_assign
+id|fcheck_task
+c_func
+(paren
+id|p
+comma
+id|ino
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|ino
-op_ge
-id|NR_OPEN
-op_logical_or
 op_logical_neg
-id|p-&gt;files-&gt;fd
-(braket
-id|ino
-)braket
+id|file
 )paren
-r_return
+r_goto
+id|out_unlock
 suffix:semicolon
 id|inode-&gt;i_op
 op_assign
@@ -1146,12 +1151,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|p-&gt;files-&gt;fd
-(braket
-id|ino
-)braket
-op_member_access_from_pointer
-id|f_mode
+id|file-&gt;f_mode
 op_amp
 l_int|1
 )paren
@@ -1164,12 +1164,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|p-&gt;files-&gt;fd
-(braket
-id|ino
-)braket
-op_member_access_from_pointer
-id|f_mode
+id|file-&gt;f_mode
 op_amp
 l_int|2
 )paren
@@ -1179,9 +1174,21 @@ id|S_IWUSR
 op_or
 id|S_IXUSR
 suffix:semicolon
+)brace
+id|out_unlock
+suffix:colon
+multiline_comment|/* Defer unlocking until we&squot;re done with the task */
+id|read_unlock
+c_func
+(paren
+op_amp
+id|tasklist_lock
+)paren
+suffix:semicolon
+id|out
+suffix:colon
 r_return
 suffix:semicolon
-)brace
 )brace
 DECL|function|proc_write_inode
 r_void

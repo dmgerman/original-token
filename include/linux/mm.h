@@ -548,14 +548,20 @@ id|page
 suffix:semicolon
 )brace
 multiline_comment|/* memory.c &amp; swap.c*/
+multiline_comment|/*&n; * This traverses &quot;nr&quot; memory size lists,&n; * and returns true if there is enough memory.&n; *&n; * For example, we want to keep on waking up&n; * kswapd every once in a while until the highest&n; * memory order has an entry (ie nr == 0), but&n; * we want to do it in the background.&n; *&n; * We want to do it in the foreground only if&n; * none of the three highest lists have enough&n; * memory. Random number.&n; */
 r_extern
 r_int
 id|free_memory_available
 c_func
 (paren
-r_void
+r_int
+id|nr
 )paren
 suffix:semicolon
+DECL|macro|kswapd_continue
+mdefine_line|#define kswapd_continue()&t;(!free_memory_available(3))
+DECL|macro|kswapd_wakeup
+mdefine_line|#define kswapd_wakeup()&t;&t;(!free_memory_available(0))
 DECL|macro|free_page
 mdefine_line|#define free_page(addr) free_pages((addr),0)
 r_extern

@@ -56,6 +56,16 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#if defined(CONFIG_FB)
+r_extern
+r_void
+id|fbmem_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|function|do_write_mem
 r_static
 id|ssize_t
@@ -2139,6 +2149,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#if defined (CONFIG_FB)
+id|fbmem_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 id|tty_init
 c_func
 (paren

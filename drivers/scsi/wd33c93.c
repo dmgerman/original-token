@@ -5300,7 +5300,7 @@ suffix:semicolon
 DECL|macro|MAX_WD33C93_HOSTS
 mdefine_line|#define MAX_WD33C93_HOSTS 4
 DECL|macro|MAX_SETUP_ARGS
-mdefine_line|#define MAX_SETUP_ARGS (sizeof(setup_args) / sizeof(char *))
+mdefine_line|#define MAX_SETUP_ARGS ((int)(sizeof(setup_args) / sizeof(char *)))
 DECL|macro|SETUP_BUFFER_SIZE
 mdefine_line|#define SETUP_BUFFER_SIZE 200
 DECL|variable|setup_buffer

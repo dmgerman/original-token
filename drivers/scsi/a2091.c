@@ -825,8 +825,10 @@ id|caddr_t
 id|address
 suffix:semicolon
 r_int
+r_int
 id|key
 suffix:semicolon
+r_const
 r_struct
 id|ConfigDev
 op_star
@@ -866,9 +868,7 @@ op_assign
 id|zorro_find
 c_func
 (paren
-id|MANUF_COMMODORE
-comma
-id|PROD_A2091
+id|ZORRO_PROD_CBM_A590_A2091_1
 comma
 l_int|0
 comma
@@ -882,9 +882,7 @@ op_assign
 id|zorro_find
 c_func
 (paren
-id|MANUF_COMMODORE
-comma
-id|PROD_A590
+id|ZORRO_PROD_CBM_A590_A2091_2
 comma
 l_int|0
 comma

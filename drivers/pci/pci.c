@@ -211,6 +211,8 @@ comma
 id|tmp
 comma
 id|hdr_type
+comma
+id|is_multi
 op_assign
 l_int|0
 suffix:semicolon
@@ -264,10 +266,15 @@ c_func
 (paren
 id|devfn
 )paren
-op_eq
-l_int|0
+op_logical_and
+op_logical_neg
+id|is_multi
 )paren
 (brace
+multiline_comment|/* not a multi-function device */
+r_continue
+suffix:semicolon
+)brace
 id|pcibios_read_config_byte
 c_func
 (paren
@@ -281,23 +288,22 @@ op_amp
 id|hdr_type
 )paren
 suffix:semicolon
-)brace
-r_else
 r_if
 c_cond
 (paren
 op_logical_neg
+id|PCI_FUNC
+c_func
 (paren
+id|devfn
+)paren
+)paren
+id|is_multi
+op_assign
 id|hdr_type
 op_amp
 l_int|0x80
-)paren
-)paren
-(brace
-multiline_comment|/* not a multi-function device */
-r_continue
 suffix:semicolon
-)brace
 id|pcibios_read_config_dword
 c_func
 (paren

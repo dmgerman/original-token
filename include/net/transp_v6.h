@@ -93,11 +93,9 @@ id|msghdr
 op_star
 id|msg
 comma
-r_struct
-id|device
+r_int
 op_star
-op_star
-id|src_dev
+id|oif
 comma
 r_struct
 id|in6_addr

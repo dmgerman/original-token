@@ -1,16 +1,18 @@
-multiline_comment|/*&n; * 53c710 driver.  Modified from Drew Eckhardts driver&n; * for 53c810 by Richard Hirst [richard@sleepie.demon.co.uk]&n; * Check out PERM_OPTIONS and EXPECTED_CLOCK, which may be defined in the&n; * relevant machine specific file (eg. mvme166.[ch], amiga7xx.[ch]).&n; * There are also currently some defines at the top of 53c7xx.scr.&n; * The chip type is #defined in script_asm.pl, as well as the Makefile.&n; * Host scsi ID expected to be 7 - see NCR53c7x0_init().&n; *&n; * I have removed the PCI code and some of the 53c8xx specific code - &n; * simply to make this file smaller and easier to manage.&n; *&n; * MVME166 issues:&n; *   Problems trying to read any chip registers in NCR53c7x0_init(), as they&n; *   may never have been set by 166Bug (eg. If kernel has come in over tftp).&n; */
+multiline_comment|/*&n; * 53c710 driver.  Modified from Drew Eckhardts driver&n; * for 53c810 by Richard Hirst [richard@sleepie.demon.co.uk]&n; * Check out PERM_OPTIONS and EXPECTED_CLOCK, which may be defined in the&n; * relevant machine specific file (eg. mvme16x.[ch], amiga7xx.[ch]).&n; * There are also currently some defines at the top of 53c7xx.scr.&n; * The chip type is #defined in script_asm.pl, as well as the Makefile.&n; * Host scsi ID expected to be 7 - see NCR53c7x0_init().&n; *&n; * I have removed the PCI code and some of the 53c8xx specific code - &n; * simply to make this file smaller and easier to manage.&n; *&n; * MVME16x issues:&n; *   Problems trying to read any chip registers in NCR53c7x0_init(), as they&n; *   may never have been set by 16xBug (eg. If kernel has come in over tftp).&n; */
 multiline_comment|/*&n; * Adapted for Linux/m68k Amiga platforms for the A4000T/A4091 and&n; * WarpEngine SCSI controllers.&n; * By Alan Hourihane &lt;alanh@fairlite.demon.co.uk&gt;&n; * Thanks to Richard Hirst for making it possible with the MVME additions&n; */
 multiline_comment|/*&n; * 53c710 rev 0 doesn&squot;t support add with carry.  Rev 1 and 2 does.  To&n; * overcome this problem you can define FORCE_DSA_ALIGNMENT, which ensures&n; * that the DSA address is always xxxxxx00.  If disconnection is not allowed,&n; * then the script only ever tries to add small (&lt; 256) positive offsets to&n; * DSA, so lack of carry isn&squot;t a problem.  FORCE_DSA_ALIGNMENT can, of course,&n; * be defined for all chip revisions at a small cost in memory usage.&n; */
 DECL|macro|FORCE_DSA_ALIGNMENT
 mdefine_line|#define FORCE_DSA_ALIGNMENT
-multiline_comment|/*&n; * Selection timer does not always work on the 53c710, depending on the&n; * timing at the last disconnect, if this is a problem for you, try&n; * using validids as detailed below.&n; *&n; * Options for the NCR7xx driver&n; *&n; * nosync:0&t;&t;-&t;disables synchronous negotiation&n; * nodisconnect:0&t;-&t;disables disconnection&n; * validids:0x??&t;-&t;Bitmask field that disallows certain ID&squot;s.&n; *&t;&t;&t;-&t;e.g.&t;0x03&t;allows ID 0,1&n; *&t;&t;&t;-&t;&t;0x1F&t;allows ID 0,1,2,3,4&n; */
-multiline_comment|/*&n; * PERM_OPTIONS are driver options which will be enabled for all NCR boards&n; * in the system at driver initialization time.&n; *&n; * Don&squot;t THINK about touching these in PERM_OPTIONS : &n; *   OPTION_MEMORY_MAPPED &n; * &t;680x0 doesn&squot;t have an IO map!&n; *&n; *   OPTION_DEBUG_TEST1&n; *&t;Test 1 does bus mastering and interrupt tests, which will help weed &n; *&t;out brain damaged main boards.&n; *&n; * Other PERM_OPTIONS settings are listed below.  Note the actual options&n; * required are set in the relevant file (mvme166.c, amiga7xx.c, etc):&n; *&n; *   OPTION_NO_ASYNC&n; *&t;Don&squot;t negotiate for asynchronous transfers on the first command &n; *&t;when OPTION_ALWAYS_SYNCHRONOUS is set.  Useful for dain bramaged&n; *&t;devices which do something bad rather than sending a MESSAGE &n; *&t;REJECT back to us like they should if they can&squot;t cope.&n; *&n; *   OPTION_SYNCHRONOUS&n; *&t;Enable support for synchronous transfers.  Target negotiated &n; *&t;synchronous transfers will be responded to.  To initiate &n; *&t;a synchronous transfer request,  call &n; *&n; *&t;    request_synchronous (hostno, target) &n; *&n; *&t;from within KGDB.&n; *&n; *   OPTION_ALWAYS_SYNCHRONOUS&n; *&t;Negotiate for synchronous transfers with every target after&n; *&t;driver initialization or a SCSI bus reset.  This is a bit dangerous, &n; *&t;since there are some dain bramaged SCSI devices which will accept&n; *&t;SDTR messages but keep talking asynchronously.&n; *&n; *   OPTION_DISCONNECT&n; *&t;Enable support for disconnect/reconnect.  To change the &n; *&t;default setting on a given host adapter, call&n; *&n; *&t;    request_disconnect (hostno, allow)&n; *&n; *&t;where allow is non-zero to allow, 0 to disallow.&n; * &n; *  If you really want to run 10MHz FAST SCSI-II transfers, you should &n; *  know that the NCR driver currently ignores parity information.  Most&n; *  systems do 5MHz SCSI fine.  I&squot;ve seen a lot that have problems faster&n; *  than 8MHz.  To play it safe, we only request 5MHz transfers.&n; *&n; *  If you&squot;d rather get 10MHz transfers, edit sdtr_message and change &n; *  the fourth byte from 50 to 25.&n; */
+multiline_comment|/*&n; * Selection timer does not always work on the 53c710, depending on the&n; * timing at the last disconnect, if this is a problem for you, try&n; * using validids as detailed below.&n; *&n; * Options for the NCR7xx driver&n; *&n; * nosync:0&t;&t;-&t;disables synchronous negotiation&n; * nodisconnect:0&t;-&t;disables disconnection&n; * validids:0x??&t;-&t;Bitmask field that disallows certain ID&squot;s.&n; *&t;&t;&t;-&t;e.g.&t;0x03&t;allows ID 0,1&n; *&t;&t;&t;-&t;&t;0x1F&t;allows ID 0,1,2,3,4&n; * opthi:n&t;&t;-&t;replace top word of options with &squot;n&squot;&n; * optlo:n&t;&t;-&t;replace bottom word of options with &squot;n&squot;&n; *&t;&t;&t;-&t;ALWAYS SPECIFY opthi THEN optlo &lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&n; */
+multiline_comment|/*&n; * PERM_OPTIONS are driver options which will be enabled for all NCR boards&n; * in the system at driver initialization time.&n; *&n; * Don&squot;t THINK about touching these in PERM_OPTIONS : &n; *   OPTION_MEMORY_MAPPED &n; * &t;680x0 doesn&squot;t have an IO map!&n; *&n; *   OPTION_DEBUG_TEST1&n; *&t;Test 1 does bus mastering and interrupt tests, which will help weed &n; *&t;out brain damaged main boards.&n; *&n; * Other PERM_OPTIONS settings are listed below.  Note the actual options&n; * required are set in the relevant file (mvme16x.c, amiga7xx.c, etc):&n; *&n; *   OPTION_NO_ASYNC&n; *&t;Don&squot;t negotiate for asynchronous transfers on the first command &n; *&t;when OPTION_ALWAYS_SYNCHRONOUS is set.  Useful for dain bramaged&n; *&t;devices which do something bad rather than sending a MESSAGE &n; *&t;REJECT back to us like they should if they can&squot;t cope.&n; *&n; *   OPTION_SYNCHRONOUS&n; *&t;Enable support for synchronous transfers.  Target negotiated &n; *&t;synchronous transfers will be responded to.  To initiate &n; *&t;a synchronous transfer request,  call &n; *&n; *&t;    request_synchronous (hostno, target) &n; *&n; *&t;from within KGDB.&n; *&n; *   OPTION_ALWAYS_SYNCHRONOUS&n; *&t;Negotiate for synchronous transfers with every target after&n; *&t;driver initialization or a SCSI bus reset.  This is a bit dangerous, &n; *&t;since there are some dain bramaged SCSI devices which will accept&n; *&t;SDTR messages but keep talking asynchronously.&n; *&n; *   OPTION_DISCONNECT&n; *&t;Enable support for disconnect/reconnect.  To change the &n; *&t;default setting on a given host adapter, call&n; *&n; *&t;    request_disconnect (hostno, allow)&n; *&n; *&t;where allow is non-zero to allow, 0 to disallow.&n; * &n; *  If you really want to run 10MHz FAST SCSI-II transfers, you should &n; *  know that the NCR driver currently ignores parity information.  Most&n; *  systems do 5MHz SCSI fine.  I&squot;ve seen a lot that have problems faster&n; *  than 8MHz.  To play it safe, we only request 5MHz transfers.&n; *&n; *  If you&squot;d rather get 10MHz transfers, edit sdtr_message and change &n; *  the fourth byte from 50 to 25.&n; */
 multiline_comment|/*&n; * Sponsored by &n; *&t;iX Multiuser Multitasking Magazine&n; *&t;Hannover, Germany&n; *&t;hm@ix.de&n; *&n; * Copyright 1993, 1994, 1995 Drew Eckhardt&n; *      Visionary Computing &n; *      (Unix and Linux consulting and custom programming)&n; *      drew@PoohSticks.ORG&n; *&t;+1 (303) 786-7975&n; *&n; * TolerANT and SCSI SCRIPTS are registered trademarks of NCR Corporation.&n; * &n; * For more information, please consult &n; *&n; * NCR53C810 &n; * SCSI I/O Processor&n; * Programmer&squot;s Guide&n; *&n; * NCR 53C810&n; * PCI-SCSI I/O Processor&n; * Data Manual&n; *&n; * NCR 53C810/53C820&n; * PCI-SCSI I/O Processor Design In Guide&n; *&n; * For literature on Symbios Logic Inc. formerly NCR, SCSI, &n; * and Communication products please call (800) 334-5454 or&n; * (719) 536-3300. &n; * &n; * PCI BIOS Specification Revision&n; * PCI Local Bus Specification&n; * PCI System Design Guide&n; *&n; * PCI Special Interest Group&n; * M/S HF3-15A&n; * 5200 N.E. Elam Young Parkway&n; * Hillsboro, Oregon 97124-6497&n; * +1 (503) 696-2000 &n; * +1 (800) 433-5177&n; */
 multiline_comment|/*&n; * Design issues : &n; * The cumulative latency needed to propagate a read/write request &n; * through the file system, buffer cache, driver stacks, SCSI host, and &n; * SCSI device is ultimately the limiting factor in throughput once we &n; * have a sufficiently fast host adapter.&n; *  &n; * So, to maximize performance we want to keep the ratio of latency to data &n; * transfer time to a minimum by&n; * 1.  Minimizing the total number of commands sent (typical command latency&n; *&t;including drive and bus mastering host overhead is as high as 4.5ms)&n; *&t;to transfer a given amount of data.  &n; *&n; *      This is accomplished by placing no arbitrary limit on the number&n; *&t;of scatter/gather buffers supported, since we can transfer 1K&n; *&t;per scatter/gather buffer without Eric&squot;s cluster patches, &n; *&t;4K with.  &n; *&n; * 2.  Minimizing the number of fatal interrupts serviced, since&n; * &t;fatal interrupts halt the SCSI I/O processor.  Basically,&n; *&t;this means offloading the practical maximum amount of processing &n; *&t;to the SCSI chip.&n; * &n; *&t;On the NCR53c810/820/720,  this is accomplished by using &n; *&t;&t;interrupt-on-the-fly signals when commands complete, &n; *&t;&t;and only handling fatal errors and SDTR / WDTR &t;messages &n; *&t;&t;in the host code.&n; *&n; *&t;On the NCR53c710, interrupts are generated as on the NCR53c8x0,&n; *&t;&t;only the lack of a interrupt-on-the-fly facility complicates&n; *&t;&t;things.   Also, SCSI ID registers and commands are &n; *&t;&t;bit fielded rather than binary encoded.&n; *&t;&t;&n; * &t;On the NCR53c700 and NCR53c700-66, operations that are done via &n; *&t;&t;indirect, table mode on the more advanced chips must be&n; *&t;        replaced by calls through a jump table which &n; *&t;&t;acts as a surrogate for the DSA.  Unfortunately, this &n; * &t;&t;will mean that we must service an interrupt for each &n; *&t;&t;disconnect/reconnect.&n; * &n; * 3.  Eliminating latency by pipelining operations at the different levels.&n; * &t;&n; *&t;This driver allows a configurable number of commands to be enqueued&n; *&t;for each target/lun combination (experimentally, I have discovered&n; *&t;that two seems to work best) and will ultimately allow for &n; *&t;SCSI-II tagged queuing.&n; * &t;&n; *&n; * Architecture : &n; * This driver is built around a Linux queue of commands waiting to &n; * be executed, and a shared Linux/NCR array of commands to start.  Commands&n; * are transfered to the array  by the run_process_issue_queue() function &n; * which is called whenever a command completes.&n; *&n; * As commands are completed, the interrupt routine is triggered,&n; * looks for commands in the linked list of completed commands with&n; * valid status, removes these commands from a list of running commands, &n; * calls the done routine, and flags their target/luns as not busy.&n; *&n; * Due to limitations in the intelligence of the NCR chips, certain&n; * concessions are made.  In many cases, it is easier to dynamically &n; * generate/fix-up code rather than calculate on the NCR at run time.  &n; * So, code is generated or fixed up for&n; *&n; * - Handling data transfers, using a variable number of MOVE instructions&n; *&t;interspersed with CALL MSG_IN, WHEN MSGIN instructions.&n; *&n; * &t;The DATAIN and DATAOUT routines&t;are separate, so that an incorrect&n; *&t;direction can be trapped, and space isn&squot;t wasted. &n; *&n; *&t;It may turn out that we&squot;re better off using some sort &n; *&t;of table indirect instruction in a loop with a variable&n; *&t;sized table on the NCR53c710 and newer chips.&n; *&n; * - Checking for reselection (NCR53c710 and better)&n; *&n; * - Handling the details of SCSI context switches (NCR53c710 and better),&n; *&t;such as reprogramming appropriate synchronous parameters, &n; *&t;removing the dsa structure from the NCR&squot;s queue of outstanding&n; *&t;commands, etc.&n; *&n; */
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#endif
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -38,12 +40,15 @@ mdefine_line|#define BIG_ENDIAN
 DECL|macro|NO_IO_SPACE
 mdefine_line|#define NO_IO_SPACE
 macro_line|#endif
-macro_line|#ifdef CONFIG_MVME166
-macro_line|#include &lt;asm/mvme166hw.h&gt;
+macro_line|#ifdef CONFIG_MVME16x
+macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/mvme16xhw.h&gt;
 DECL|macro|BIG_ENDIAN
 mdefine_line|#define BIG_ENDIAN
 DECL|macro|NO_IO_SPACE
 mdefine_line|#define NO_IO_SPACE
+DECL|macro|VALID_IDS
+mdefine_line|#define VALID_IDS
 macro_line|#endif
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
@@ -1042,6 +1047,7 @@ l_int|1
 multiline_comment|/* 2^1 bytes */
 )brace
 suffix:semicolon
+macro_line|#if 0
 multiline_comment|/*&n; * Function : struct Scsi_Host *find_host (int host)&n; * &n; * Purpose : KGDB support function which translates a host number &n; * &t;to a host structure. &n; *&n; * Inputs : host - number of SCSI host&n; *&n; * Returns : NULL on failure, pointer to host structure on success.&n; */
 r_static
 r_struct
@@ -1369,6 +1375,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*&n; * Function : static void NCR53c7x0_driver_init (struct Scsi_Host *host)&n; *&n; * Purpose : Initialize internal structures, as required on startup, or &n; *&t;after a SCSI bus reset.&n; * &n; * Inputs : host - pointer to this host adapter&squot;s structure&n; */
 r_static
 r_void
@@ -1401,35 +1408,6 @@ suffix:semicolon
 id|u32
 op_star
 id|ncrcurrent
-suffix:semicolon
-id|flush_cache_all
-c_func
-(paren
-)paren
-suffix:semicolon
-id|cache_push
-c_func
-(paren
-id|virt_to_bus
-c_func
-(paren
-id|hostdata-&gt;script
-)paren
-comma
-id|flushsize
-)paren
-suffix:semicolon
-id|cache_clear
-c_func
-(paren
-id|virt_to_bus
-c_func
-(paren
-id|hostdata-&gt;script
-)paren
-comma
-id|flushsize
-)paren
 suffix:semicolon
 r_for
 c_loop
@@ -1632,24 +1610,13 @@ id|hostdata-&gt;idle
 op_assign
 l_int|1
 suffix:semicolon
-id|flush_cache_all
-c_func
+r_if
+c_cond
 (paren
+op_logical_neg
+id|MACH_IS_MVME16x
 )paren
-suffix:semicolon
 id|cache_push
-c_func
-(paren
-id|virt_to_bus
-c_func
-(paren
-id|hostdata-&gt;script
-)paren
-comma
-id|flushsize
-)paren
-suffix:semicolon
-id|cache_clear
 c_func
 (paren
 id|virt_to_bus
@@ -1979,6 +1946,54 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|check_setup_strings
+c_func
+(paren
+l_string|&quot;opthi&quot;
+comma
+op_amp
+id|flags
+comma
+op_amp
+id|val
+comma
+id|buf
+)paren
+)paren
+id|hostdata-&gt;options
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|val
+op_lshift
+l_int|32
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|check_setup_strings
+c_func
+(paren
+l_string|&quot;optlo&quot;
+comma
+op_amp
+id|flags
+comma
+op_amp
+id|val
+comma
+id|buf
+)paren
+)paren
+id|hostdata-&gt;options
+op_or_assign
+id|val
+suffix:semicolon
 id|NCR53c7x0_local_setup
 c_func
 (paren
@@ -1993,6 +2008,9 @@ id|hostdata-&gt;chip
 (brace
 r_case
 l_int|710
+suffix:colon
+r_case
+l_int|770
 suffix:colon
 id|hostdata-&gt;dstat_sir_intr
 op_assign
@@ -2021,8 +2039,6 @@ suffix:semicolon
 id|expected_clock
 op_assign
 id|hostdata-&gt;scsi_clock
-op_assign
-l_int|50000000
 suffix:semicolon
 id|expected_id
 op_assign
@@ -2151,6 +2167,16 @@ c_cond
 id|ISTAT_REG_800
 suffix:colon
 id|ISTAT_REG_700
+suffix:semicolon
+multiline_comment|/* We have to assume that this may be the first access to the chip, so&n; * we must set EA in DCNTL. */
+id|NCR53c7x0_write8
+(paren
+id|DCNTL_REG
+comma
+id|DCNTL_10_EA
+op_or
+id|DCNTL_10_COM
+)paren
 suffix:semicolon
 multiline_comment|/* Only the ISTAT register is readable when the NCR is running, so make &n;   sure it&squot;s halted. */
 id|ncr_halt
@@ -2340,7 +2366,7 @@ comma
 id|revision
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * On NCR53c700 series chips, DCNTL controls the SCSI clock divisor,&n;     * on 800 series chips, it allows for a totem-pole IRQ driver.&n;     * NOTE saved_dcntl currently overwritten in init function.&n;     * The value read here may be garbage anyway, MVME166 board at least&n;     * does not initialise chip if kernel arrived via tftp.&n;     */
+multiline_comment|/*&n;     * On NCR53c700 series chips, DCNTL controls the SCSI clock divisor,&n;     * on 800 series chips, it allows for a totem-pole IRQ driver.&n;     * NOTE saved_dcntl currently overwritten in init function.&n;     * The value read here may be garbage anyway, MVME16x board at least&n;     * does not initialise chip if kernel arrived via tftp.&n;     */
 id|hostdata-&gt;saved_dcntl
 op_assign
 id|NCR53c7x0_read8
@@ -2349,7 +2375,7 @@ c_func
 id|DCNTL_REG
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * DMODE controls DMA burst length, and on 700 series chips,&n;     * 286 mode and bus width  &n;     * NOTE:  On MVME166, chip may have been reset, so this could be a&n;     * power-on/reset default value.&n;     */
+multiline_comment|/*&n;     * DMODE controls DMA burst length, and on 700 series chips,&n;     * 286 mode and bus width  &n;     * NOTE:  On MVME16x, chip may have been reset, so this could be a&n;     * power-on/reset default value.&n;     */
 id|hostdata-&gt;saved_dmode
 op_assign
 id|NCR53c7x0_read8
@@ -2477,14 +2503,14 @@ id|host
 )paren
 suffix:semicolon
 multiline_comment|/*&n;     * Set up an interrupt handler if we aren&squot;t already sharing an IRQ&n;     * with another board.&n;     */
-macro_line|#ifdef CONFIG_MVME166
+macro_line|#ifdef CONFIG_MVME16x
 r_if
 c_cond
 (paren
 id|request_irq
 c_func
 (paren
-id|IRQ_MVME166_SCSI
+id|IRQ_MVME16x_SCSI
 comma
 id|NCR53c7x0_intr
 comma
@@ -2500,7 +2526,7 @@ id|panic
 l_string|&quot;Couldn&squot;t get SCSI IRQ&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef MVME166_INTFLY
+macro_line|#ifdef MVME16x_INTFLY
 r_else
 r_if
 c_cond
@@ -2508,7 +2534,7 @@ c_cond
 id|request_irq
 c_func
 (paren
-id|IRQ_MVME166_FLY
+id|IRQ_MVME16x_FLY
 comma
 id|NCR53c7x0_intr
 comma
@@ -2727,7 +2753,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * Function : static int normal_init(Scsi_Host_Template *tpnt, int board, &n; *&t;int chip, u32 base, int io_port, int irq, int dma, int pcivalid,&n; *&t;unsigned char pci_bus, unsigned char pci_device_fn,&n; *&t;long long options);&n; *&n; * Purpose : initializes a NCR53c7,8x0 based on base addresses,&n; *&t;IRQ, and DMA channel.&t;&n; *&t;&n; *&t;Useful where a new NCR chip is backwards compatible with&n; *&t;a supported chip, but the DEVICE ID has changed so it &n; *&t;doesn&squot;t show up when the autoprobe does a pcibios_find_device.&n; *&n; * Inputs : tpnt - Template for this SCSI adapter, board - board level&n; *&t;product, chip - 710&n; * &n; * Returns : 0 on success, -1 on failure.&n; *&n; */
+multiline_comment|/* &n; * Function : static int ncr53c7xx_init(Scsi_Host_Template *tpnt, int board, &n; *&t;int chip, u32 base, int io_port, int irq, int dma,&n; *&t;long long options, int clock);&n; *&n; * Purpose : initializes a NCR53c7,8x0 based on base addresses,&n; *&t;IRQ, and DMA channel.&t;&n; *&t;&n; *&t;Useful where a new NCR chip is backwards compatible with&n; *&t;a supported chip, but the DEVICE ID has changed so it &n; *&t;doesn&squot;t show up when the autoprobe does a pcibios_find_device.&n; *&n; * Inputs : tpnt - Template for this SCSI adapter, board - board level&n; *&t;product, chip - 710&n; * &n; * Returns : 0 on success, -1 on failure.&n; *&n; */
 r_int
 DECL|function|ncr53c7xx_init
 id|ncr53c7xx_init
@@ -2815,6 +2841,9 @@ id|chip
 (brace
 r_case
 l_int|710
+suffix:colon
+r_case
+l_int|770
 suffix:colon
 id|schedule_size
 op_assign
@@ -3172,6 +3201,10 @@ suffix:semicolon
 id|hostdata-&gt;num_cmds
 op_assign
 l_int|1
+suffix:semicolon
+id|hostdata-&gt;scsi_clock
+op_assign
+id|clock
 suffix:semicolon
 multiline_comment|/* Initialize single command */
 id|tmp
@@ -3713,8 +3746,8 @@ id|Ent_dsa_zero
 )paren
 suffix:semicolon
 multiline_comment|/*&n;     * Just for the hell of it, preserve the settings of &n;     * Burst Length and Enable Read Line bits from the DMODE &n;     * register.  Make sure SCRIPTS start automagically.&n;     */
-macro_line|#if defined(CONFIG_MVME166)
-multiline_comment|/* We know better what we want than 166Bug does! */
+macro_line|#if defined(CONFIG_MVME16x)
+multiline_comment|/* We know better what we want than 16xBug does! */
 id|tmp
 op_assign
 id|DMODE_10_BL_8
@@ -4396,24 +4429,13 @@ comma
 id|hostdata-&gt;script
 )paren
 suffix:semicolon
-id|flush_cache_all
-c_func
+r_if
+c_cond
 (paren
+op_logical_neg
+id|MACH_IS_MVME16x
 )paren
-suffix:semicolon
 id|cache_push
-c_func
-(paren
-id|virt_to_bus
-c_func
-(paren
-id|hostdata-&gt;script
-)paren
-comma
-id|flushsize
-)paren
-suffix:semicolon
-id|cache_clear
 c_func
 (paren
 id|virt_to_bus
@@ -4570,24 +4592,13 @@ comma
 id|host-&gt;host_no
 )paren
 suffix:semicolon
-id|flush_cache_all
-c_func
+r_if
+c_cond
 (paren
+op_logical_neg
+id|MACH_IS_MVME16x
 )paren
-suffix:semicolon
 id|cache_push
-c_func
-(paren
-id|virt_to_bus
-c_func
-(paren
-id|hostdata-&gt;script
-)paren
-comma
-id|flushsize
-)paren
-suffix:semicolon
-id|cache_clear
 c_func
 (paren
 id|virt_to_bus
@@ -5091,11 +5102,13 @@ id|hostdata-&gt;state
 op_assign
 id|STATE_RUNNING
 suffix:semicolon
-id|flush_cache_all
-c_func
+r_if
+c_cond
 (paren
+op_logical_neg
+id|MACH_IS_MVME16x
 )paren
-suffix:semicolon
+(brace
 id|cache_clear
 c_func
 (paren
@@ -5108,6 +5121,7 @@ comma
 id|flushsize
 )paren
 suffix:semicolon
+)brace
 id|NCR53c7x0_write32
 (paren
 id|DSA_REG
@@ -5617,11 +5631,13 @@ id|cmd-&gt;dsa_addr
 )paren
 )paren
 suffix:semicolon
-id|flush_cache_all
-c_func
+r_if
+c_cond
 (paren
+op_logical_neg
+id|MACH_IS_MVME16x
 )paren
-suffix:semicolon
+(brace
 id|cache_push
 c_func
 (paren
@@ -5634,18 +5650,19 @@ comma
 id|flushsize
 )paren
 suffix:semicolon
-id|cache_clear
+id|cache_push
 c_func
 (paren
 id|virt_to_bus
 c_func
 (paren
-id|hostdata-&gt;script
+id|cmd-&gt;dsa
 )paren
 comma
 id|flushsize
 )paren
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/* &n; * Function : run_process_issue_queue (void)&n; * &n; * Purpose : insure that the coroutine is running and will process our &n; * &t;request.  process_issue_queue_running is checked/set here (in an &n; *&t;inline function) rather than in process_issue_queue itself to reduce &n; * &t;the chances of stack overflow.&n; *&n; */
 DECL|variable|process_issue_queue_running
@@ -6209,23 +6226,6 @@ suffix:semicolon
 id|cli
 c_func
 (paren
-)paren
-suffix:semicolon
-id|flush_cache_all
-c_func
-(paren
-)paren
-suffix:semicolon
-id|cache_push
-c_func
-(paren
-id|virt_to_bus
-c_func
-(paren
-id|hostdata-&gt;script
-)paren
-comma
-id|flushsize
 )paren
 suffix:semicolon
 id|dsp
@@ -7447,35 +7447,6 @@ op_star
 id|dsp
 suffix:semicolon
 multiline_comment|/* Argument of the INT instruction */
-id|flush_cache_all
-c_func
-(paren
-)paren
-suffix:semicolon
-id|cache_push
-c_func
-(paren
-id|virt_to_bus
-c_func
-(paren
-id|hostdata-&gt;script
-)paren
-comma
-id|flushsize
-)paren
-suffix:semicolon
-id|cache_clear
-c_func
-(paren
-id|virt_to_bus
-c_func
-(paren
-id|hostdata-&gt;script
-)paren
-comma
-id|flushsize
-)paren
-suffix:semicolon
 id|NCR53c7x0_local_setup
 c_func
 (paren
@@ -7506,6 +7477,27 @@ id|DSP_REG
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* RGH 150597:  Frig.  Commands which fail with Check Condition are&n;     * Flagged as successful - hack dsps to indicate check condition */
+macro_line|#if 0
+multiline_comment|/* RGH 200597:  Need to disable for BVME6000, as it gets Check Conditions&n;     * and then dies.  Seems to handle Check Condition at startup, but&n;     * not mid kernel build. */
+r_if
+c_cond
+(paren
+id|dsps
+op_eq
+id|A_int_norm_emulateintfly
+op_logical_and
+id|c
+op_logical_and
+id|c-&gt;result
+op_eq
+l_int|2
+)paren
+id|dsps
+op_assign
+id|A_int_err_check_condition
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -10237,33 +10229,15 @@ r_return
 id|SPECIFIC_INT_PANIC
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|MACH_IS_MVME16x
+)paren
 id|flush_cache_all
 c_func
 (paren
-)paren
-suffix:semicolon
-id|cache_push
-c_func
-(paren
-id|virt_to_bus
-c_func
-(paren
-id|hostdata-&gt;script
-)paren
-comma
-id|flushsize
-)paren
-suffix:semicolon
-id|cache_clear
-c_func
-(paren
-id|virt_to_bus
-c_func
-(paren
-id|hostdata-&gt;script
-)paren
-comma
-id|flushsize
 )paren
 suffix:semicolon
 )brace
@@ -10291,7 +10265,7 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-macro_line|#ifdef CONFIG_MVME166
+macro_line|#ifdef CONFIG_MVME16x
 r_volatile
 r_int
 r_int
@@ -10328,7 +10302,7 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* Disable scsi chip and s/w level 7 ints */
-macro_line|#ifdef CONFIG_MVME166
+macro_line|#ifdef CONFIG_MVME16x
 id|v
 op_assign
 op_star
@@ -10599,7 +10573,7 @@ op_or
 id|SIEN_MA
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_MVME166
+macro_line|#ifdef CONFIG_MVME16x
 multiline_comment|/* Enable scsi chip and s/w level 7 ints */
 id|v
 op_assign
@@ -11536,35 +11510,6 @@ id|cmd
 )paren
 )paren
 suffix:semicolon
-id|flush_cache_all
-c_func
-(paren
-)paren
-suffix:semicolon
-id|cache_push
-c_func
-(paren
-id|virt_to_bus
-c_func
-(paren
-id|hostdata-&gt;script
-)paren
-comma
-id|flushsize
-)paren
-suffix:semicolon
-id|cache_clear
-c_func
-(paren
-id|virt_to_bus
-c_func
-(paren
-id|hostdata-&gt;script
-)paren
-comma
-id|flushsize
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -11646,35 +11591,6 @@ id|cmd-&gt;target
 )braket
 dot
 id|select_indirect
-)paren
-suffix:semicolon
-id|flush_cache_all
-c_func
-(paren
-)paren
-suffix:semicolon
-id|cache_push
-c_func
-(paren
-id|virt_to_bus
-c_func
-(paren
-id|hostdata-&gt;script
-)paren
-comma
-id|flushsize
-)paren
-suffix:semicolon
-id|cache_clear
-c_func
-(paren
-id|virt_to_bus
-c_func
-(paren
-id|hostdata-&gt;script
-)paren
-comma
-id|flushsize
 )paren
 suffix:semicolon
 multiline_comment|/*&n;     * Right now, we&squot;ll do the WIDE and SYNCHRONOUS negotiations on&n;     * different commands; although it should be trivial to do them&n;     * both at the same time.&n;     */
@@ -11867,35 +11783,6 @@ id|OPTION_NO_ASYNC
 )paren
 )paren
 (brace
-id|flush_cache_all
-c_func
-(paren
-)paren
-suffix:semicolon
-id|cache_push
-c_func
-(paren
-id|virt_to_bus
-c_func
-(paren
-id|hostdata-&gt;script
-)paren
-comma
-id|flushsize
-)paren
-suffix:semicolon
-id|cache_clear
-c_func
-(paren
-id|virt_to_bus
-c_func
-(paren
-id|hostdata-&gt;script
-)paren
-comma
-id|flushsize
-)paren
-suffix:semicolon
 id|memcpy
 (paren
 (paren
@@ -11954,35 +11841,6 @@ comma
 l_int|0
 comma
 l_int|1
-)paren
-suffix:semicolon
-id|flush_cache_all
-c_func
-(paren
-)paren
-suffix:semicolon
-id|cache_push
-c_func
-(paren
-id|virt_to_bus
-c_func
-(paren
-id|hostdata-&gt;script
-)paren
-comma
-id|flushsize
-)paren
-suffix:semicolon
-id|cache_clear
-c_func
-(paren
-id|virt_to_bus
-c_func
-(paren
-id|hostdata-&gt;script
-)paren
-comma
-id|flushsize
 )paren
 suffix:semicolon
 id|hostdata-&gt;talked_to
@@ -12289,35 +12147,6 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/* &n; * XXX - I&squot;m undecided whether all of this nonsense is faster&n; * in the long run, or whether I should just go and implement a loop&n; * on the NCR chip using table indirect mode?&n; *&n; * In any case, this is how it _must_ be done for 53c700/700-66 chips,&n; * so this stays even when we come up with something better.&n; *&n; * When we&squot;re limited to 1 simultaneous command, no overlapping processing,&n; * we&squot;re seeing 630K/sec, with 7% CPU usage on a slow Syquest 45M&n; * drive.&n; *&n; * Not bad, not good. We&squot;ll see.&n; */
-id|flush_cache_all
-c_func
-(paren
-)paren
-suffix:semicolon
-id|cache_push
-c_func
-(paren
-id|virt_to_bus
-c_func
-(paren
-id|hostdata-&gt;script
-)paren
-comma
-id|flushsize
-)paren
-suffix:semicolon
-id|cache_clear
-c_func
-(paren
-id|virt_to_bus
-c_func
-(paren
-id|hostdata-&gt;script
-)paren
-comma
-id|flushsize
-)paren
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -12587,35 +12416,6 @@ suffix:semicolon
 macro_line|#endif
 )brace
 )brace
-id|flush_cache_all
-c_func
-(paren
-)paren
-suffix:semicolon
-id|cache_push
-c_func
-(paren
-id|virt_to_bus
-c_func
-(paren
-id|hostdata-&gt;script
-)paren
-comma
-id|flushsize
-)paren
-suffix:semicolon
-id|cache_clear
-c_func
-(paren
-id|virt_to_bus
-c_func
-(paren
-id|hostdata-&gt;script
-)paren
-comma
-id|flushsize
-)paren
-suffix:semicolon
 multiline_comment|/*&n;     * Install JUMP instructions after the data transfer routines to return&n;     * control to the do_other_transfer routines.&n;     */
 r_if
 c_cond
@@ -12752,35 +12552,6 @@ op_add_assign
 l_int|2
 suffix:semicolon
 )brace
-id|flush_cache_all
-c_func
-(paren
-)paren
-suffix:semicolon
-id|cache_push
-c_func
-(paren
-id|virt_to_bus
-c_func
-(paren
-id|hostdata-&gt;script
-)paren
-comma
-id|flushsize
-)paren
-suffix:semicolon
-id|cache_clear
-c_func
-(paren
-id|virt_to_bus
-c_func
-(paren
-id|hostdata-&gt;script
-)paren
-comma
-id|flushsize
-)paren
-suffix:semicolon
 r_return
 id|tmp
 suffix:semicolon
@@ -13378,35 +13149,6 @@ l_int|2
 multiline_comment|/* JUMP instructions are two words */
 )paren
 suffix:semicolon
-id|flush_cache_all
-c_func
-(paren
-)paren
-suffix:semicolon
-id|cache_push
-c_func
-(paren
-id|virt_to_bus
-c_func
-(paren
-id|hostdata-&gt;script
-)paren
-comma
-id|flushsize
-)paren
-suffix:semicolon
-id|cache_clear
-c_func
-(paren
-id|virt_to_bus
-c_func
-(paren
-id|hostdata-&gt;script
-)paren
-comma
-id|flushsize
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -13549,34 +13291,18 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|cache_push
-c_func
-(paren
-id|virt_to_bus
-c_func
-(paren
-id|cmd-&gt;dsa
-)paren
-comma
-id|hostdata-&gt;dsa_len
-)paren
-suffix:semicolon
-id|cache_push
-c_func
-(paren
-id|virt_to_bus
-c_func
-(paren
-id|ncrcurrent
-)paren
-comma
-r_sizeof
-(paren
-id|ncrcurrent
-)paren
-)paren
-suffix:semicolon
 multiline_comment|/* &n;     * If the NCR chip is in an idle state, start it running the scheduler&n;     * immediately.  Otherwise, signal the chip to jump to schedule as &n;     * soon as it is idle.&n;     */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|MACH_IS_MVME16x
+)paren
+id|flush_cache_all
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -14944,7 +14670,7 @@ c_cond
 id|host-&gt;hostt
 op_eq
 id|the_template
-macro_line|#if defined(MVME166_INTFLY)
+macro_line|#if defined(MVME16x_INTFLY)
 multiline_comment|/* We have two different interrupts pointing&n;&t;&t;&t; * at this routine, so remove this check */
 macro_line|#else
 op_logical_and
@@ -15009,7 +14735,7 @@ op_amp
 id|OPTION_INTFLY
 )paren
 op_logical_and
-macro_line|#ifdef MVME166_INTFLY
+macro_line|#ifdef MVME16x_INTFLY
 multiline_comment|/* the bit is set which indicates an on-the-fly int */
 (paren
 op_star
@@ -15047,7 +14773,7 @@ id|interrupted
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#ifdef MVME166_INTFLY
+macro_line|#ifdef MVME16x_INTFLY
 multiline_comment|/* clear the INTFLY bit */
 op_star
 (paren
@@ -15754,6 +15480,17 @@ macro_line|#endif
 id|hostdata-&gt;state
 op_assign
 id|STATE_RUNNING
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|MACH_IS_MVME16x
+)paren
+id|flush_cache_all
+c_func
+(paren
+)paren
 suffix:semicolon
 id|NCR53c7x0_write32
 (paren
@@ -16662,9 +16399,12 @@ op_plus
 id|hostdata-&gt;E_select_msgout
 op_div
 l_int|4
+op_plus
+l_int|2
 )paren
 )paren
 (brace
+multiline_comment|/* RGH 290697:  Added +2 above, to compensate for the script&n;&t; * instruction which disables the selection timer. */
 multiline_comment|/* Release ATN */
 id|NCR53c7x0_write8
 (paren
@@ -16958,6 +16698,12 @@ l_int|1
 suffix:semicolon
 )brace
 macro_line|#endif
+r_if
+c_cond
+(paren
+op_logical_neg
+id|MACH_IS_MVME16x
+)paren
 id|cache_push
 c_func
 (paren
@@ -17147,7 +16893,7 @@ id|printk
 c_func
 (paren
 id|KERN_ALERT
-l_string|&quot;          mail drew@PoohSticks.ORG&bslash;n&quot;
+l_string|&quot;          mail ricahrd@sleepie.demon.co.uk&bslash;n&quot;
 )paren
 suffix:semicolon
 id|FATAL
@@ -17969,7 +17715,7 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* &n; * FIXME : (void *) cast in virt_to_bus should be unnecessary, because&n; * &t;it should take const void * as argument.&n; */
-macro_line|#ifndef CONFIG_MVME166
+macro_line|#ifndef CONFIG_MVME16x
 id|sprintf
 c_func
 (paren
@@ -18100,7 +17846,7 @@ op_eq
 id|DCMD_TYPE_MMI
 )paren
 (brace
-macro_line|#ifndef CONFIG_MVME166
+macro_line|#ifndef CONFIG_MVME16x
 id|sprintf
 (paren
 id|tmp

@@ -4,7 +4,10 @@ mdefine_line|#define _ASM_M68K_AMIFD_H
 multiline_comment|/* Definitions for the Amiga floppy driver */
 macro_line|#include &lt;linux/fd.h&gt;
 DECL|macro|FD_MAX_UNITS
-mdefine_line|#define FD_MAX_UNITS    4
+mdefine_line|#define FD_MAX_UNITS    4&t;/* Max. Number of drives */
+DECL|macro|FLOPPY_MAX_SECTORS
+mdefine_line|#define FLOPPY_MAX_SECTORS&t;22&t;/* Max. Number of sectors per track */
+macro_line|#ifndef ASSEMBLER
 DECL|struct|fd_data_type
 r_struct
 id|fd_data_type
@@ -29,15 +32,6 @@ id|read_fkt
 )paren
 (paren
 r_int
-comma
-r_int
-r_char
-op_star
-comma
-r_int
-r_int
-comma
-r_int
 )paren
 suffix:semicolon
 DECL|member|write_fkt
@@ -47,15 +41,6 @@ op_star
 id|write_fkt
 )paren
 (paren
-r_int
-comma
-r_int
-r_int
-comma
-r_int
-r_char
-op_star
-comma
 r_int
 )paren
 suffix:semicolon
@@ -83,7 +68,6 @@ multiline_comment|/* write whole track */
 macro_line|#endif
 )brace
 suffix:semicolon
-macro_line|#ifndef ASSEMBLER
 multiline_comment|/*&n;** Floppy type descriptions&n;*/
 DECL|struct|fd_drive_type
 r_struct
@@ -186,16 +170,23 @@ r_int
 id|track
 suffix:semicolon
 multiline_comment|/* current track (-1 == unknown) */
+DECL|member|trackbuf
+r_int
+r_char
+op_star
+id|trackbuf
+suffix:semicolon
+multiline_comment|/* current track (kmaloc()&squot;d */
 DECL|member|blocks
 r_int
 id|blocks
 suffix:semicolon
 multiline_comment|/* total # blocks on disk */
-DECL|member|sects
+DECL|member|changed
 r_int
-id|sects
+id|changed
 suffix:semicolon
-multiline_comment|/* number of sectors per track */
+multiline_comment|/* true when not known */
 DECL|member|disk
 r_int
 id|disk
@@ -211,6 +202,11 @@ r_int
 id|busy
 suffix:semicolon
 multiline_comment|/* true when drive is active */
+DECL|member|dirty
+r_int
+id|dirty
+suffix:semicolon
+multiline_comment|/* true when trackbuf is not on disk */
 DECL|member|status
 r_int
 id|status

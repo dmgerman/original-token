@@ -583,7 +583,7 @@ c_func
 l_int|15
 )paren
 macro_line|#ifdef __SMP__
-multiline_comment|/*&n; * The IO-APIC (persent only in SMP boards) has 8 more hardware&n; * interrupt pins, for all of them we define an IRQ vector:&n; *&n; * raw PCI interrupts 0-3, basically these are the ones used&n; * heavily:&n; */
+multiline_comment|/*&n; * The IO-APIC (present only in SMP boards) has 8 more hardware&n; * interrupt pins, for all of them we define an IRQ vector:&n; *&n; * raw PCI interrupts 0-3, basically these are the ones used&n; * heavily:&n; */
 id|BUILD_IRQ
 c_func
 (paren
@@ -3703,9 +3703,9 @@ id|irqs
 op_and_assign
 op_complement
 (paren
-id|i
+l_int|1UL
 op_lshift
-l_int|1
+id|i
 )paren
 suffix:semicolon
 r_return
@@ -3796,9 +3796,9 @@ op_logical_and
 id|irqs
 op_amp
 (paren
-id|i
+l_int|1UL
 op_lshift
-l_int|1
+id|i
 )paren
 )paren
 )paren

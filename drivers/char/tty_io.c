@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/tty_flip.h&gt;
+macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
@@ -7301,7 +7302,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|NR_OPEN
+id|p-&gt;files-&gt;max_fds
 suffix:semicolon
 id|i
 op_increment
@@ -7309,10 +7310,13 @@ op_increment
 (brace
 id|filp
 op_assign
-id|p-&gt;files-&gt;fd
-(braket
+id|fcheck_task
+c_func
+(paren
+id|p
+comma
 id|i
-)braket
+)paren
 suffix:semicolon
 r_if
 c_cond

@@ -122,7 +122,7 @@ DECL|macro|MACH_TYPE
 macro_line|#  define MACH_TYPE (m68k_machtype)
 macro_line|#endif
 macro_line|#endif /* __KERNEL__ */
-multiline_comment|/*&n;     *  CPU, FPU and MMU types&n;     *&n;     *  Note: we may rely on the following equalities:&n;     *&n;     *      CPU_68020 == MMU_68851&n;     *      CPU_68030 == MMU_68030&n;     *      CPU_68040 == FPU_68040 == MMU_68040 (not strictly, think of 68LC040!)&n;     *      CPU_68060 == FPU_68060 == MMU_68060&n;     */
+multiline_comment|/*&n;     *  CPU, FPU and MMU types&n;     *&n;     *  Note: we may rely on the following equalities:&n;     *&n;     *      CPU_68020 == MMU_68851&n;     *      CPU_68030 == MMU_68030&n;     *      CPU_68040 == FPU_68040 == MMU_68040&n;     *      CPU_68060 == FPU_68060 == MMU_68060&n;     */
 DECL|macro|CPUB_68020
 mdefine_line|#define CPUB_68020     0
 DECL|macro|CPUB_68030

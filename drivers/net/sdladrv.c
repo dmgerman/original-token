@@ -1227,6 +1227,13 @@ r_void
 macro_line|#endif
 multiline_comment|/******* Kernel APIs ********************************************************/
 multiline_comment|/*============================================================================&n; * Set up adapter.&n; * o detect adapter type&n; * o verify hardware configuration options&n; * o check for hardware conflicts&n; * o set up adapter shared memory&n; * o test adapter memory&n; * o load firmware&n; * Return:&t;0&t;ok.&n; *&t;&t;&lt; 0&t;error&n; */
+DECL|variable|sdla_setup
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sdla_setup
+)paren
+suffix:semicolon
 DECL|function|sdla_setup
 r_int
 id|sdla_setup
@@ -1659,6 +1666,13 @@ id|err
 suffix:semicolon
 )brace
 multiline_comment|/*============================================================================&n; * Shut down SDLA: disable shared memory access and interrupts, stop CPU, etc.&n; */
+DECL|variable|sdla_down
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sdla_down
+)paren
+suffix:semicolon
 DECL|function|sdla_down
 r_int
 id|sdla_down
@@ -1832,6 +1846,13 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*============================================================================&n; * Map shared memory window into SDLA adress space.&n; */
+DECL|variable|sdla_mapmem
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sdla_mapmem
+)paren
+suffix:semicolon
 DECL|function|sdla_mapmem
 r_int
 id|sdla_mapmem
@@ -2085,6 +2106,13 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*============================================================================&n; * Enable interrupt generation.&n; */
+DECL|variable|sdla_inten
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sdla_inten
+)paren
+suffix:semicolon
 DECL|function|sdla_inten
 r_int
 id|sdla_inten
@@ -2311,6 +2339,13 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*============================================================================&n; * Disable interrupt generation.&n; */
+DECL|variable|sdla_intde
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sdla_intde
+)paren
+suffix:semicolon
 DECL|function|sdla_intde
 r_int
 id|sdla_intde
@@ -2528,6 +2563,13 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*============================================================================&n; * Acknowledge SDLA hardware interrupt.&n; */
+DECL|variable|sdla_intack
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sdla_intack
+)paren
+suffix:semicolon
 DECL|function|sdla_intack
 r_int
 id|sdla_intack
@@ -2690,6 +2732,13 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*============================================================================&n; * Generate an interrupt to adapter&squot;s CPU.&n; */
+DECL|variable|sdla_intr
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sdla_intr
+)paren
+suffix:semicolon
 DECL|function|sdla_intr
 r_int
 id|sdla_intr
@@ -2840,6 +2889,13 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*============================================================================&n; * Execute Adapter Command.&n; * o Set exec flag.&n; * o Busy-wait until flag is reset.&n; * o Return number of loops made, or 0 if command timed out.&n; */
+DECL|variable|sdla_exec
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sdla_exec
+)paren
+suffix:semicolon
 DECL|function|sdla_exec
 r_int
 id|sdla_exec
@@ -2929,6 +2985,13 @@ id|nloops
 suffix:semicolon
 )brace
 multiline_comment|/*============================================================================&n; * Read absolute adapter memory.&n; * Transfer data from adapter&squot;s memory to data buffer.&n; *&n; * Note:&n; * Care should be taken when crossing dual-port memory window boundary.&n; * This function is not atomic, so caller must disable interrupt if&n; * interrupt routines are accessing adapter shared memory.&n; */
+DECL|variable|sdla_peek
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sdla_peek
+)paren
+suffix:semicolon
 DECL|function|sdla_peek
 r_int
 id|sdla_peek
@@ -3098,6 +3161,13 @@ id|err
 suffix:semicolon
 )brace
 multiline_comment|/*============================================================================&n; * Write Absolute Adapter Memory.&n; * Transfer data from data buffer to adapter&squot;s memory.&n; *&n; * Note:&n; * Care should be taken when crossing dual-port memory window boundary.&n; * This function is not atomic, so caller must disable interrupt if&n; * interrupt routines are accessing adapter shared memory.&n; */
+DECL|variable|sdla_poke
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sdla_poke
+)paren
+suffix:semicolon
 DECL|function|sdla_poke
 r_int
 id|sdla_poke

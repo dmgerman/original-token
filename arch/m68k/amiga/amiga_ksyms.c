@@ -1,8 +1,8 @@
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/zorro.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
-macro_line|#include &lt;linux/pci.h&gt;
 r_extern
 r_volatile
 id|u_short
@@ -62,6 +62,13 @@ c_func
 id|amiga_chip_avail
 )paren
 suffix:semicolon
+DECL|variable|amiga_chip_size
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|amiga_chip_size
+)paren
+suffix:semicolon
 DECL|variable|amiga_audio_period
 id|EXPORT_SYMBOL
 c_func
@@ -111,13 +118,4 @@ c_func
 id|zorro_unused_z2ram
 )paren
 suffix:semicolon
-macro_line|#if CONFIG_PCI
-DECL|variable|pci_devices
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|pci_devices
-)paren
-suffix:semicolon
-macro_line|#endif
 eof

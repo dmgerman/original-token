@@ -185,7 +185,7 @@ r_char
 op_star
 id|stli_drvversion
 op_assign
-l_string|&quot;5.4.3&quot;
+l_string|&quot;5.4.5&quot;
 suffix:semicolon
 DECL|variable|stli_serialname
 r_static

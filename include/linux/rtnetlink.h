@@ -5,8 +5,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/netlink.h&gt;
 DECL|macro|RTNL_DEBUG
 mdefine_line|#define RTNL_DEBUG 1
-DECL|macro|CONFIG_RTNL_OLD_IFINFO
-mdefine_line|#define CONFIG_RTNL_OLD_IFINFO 1
+multiline_comment|/* #define CONFIG_RTNL_OLD_IFINFO 1 */
 multiline_comment|/****&n; *&t;&t;Routing/neighbour discovery messages.&n; ****/
 multiline_comment|/* Types of messages */
 DECL|macro|RTM_BASE

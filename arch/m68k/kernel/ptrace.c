@@ -2233,7 +2233,7 @@ r_int
 r_int
 )paren
 id|data
-op_ge
+OG
 id|_NSIG
 )paren
 r_goto
@@ -2388,7 +2388,7 @@ r_int
 r_int
 )paren
 id|data
-op_ge
+OG
 id|_NSIG
 )paren
 r_goto
@@ -2465,7 +2465,7 @@ r_int
 r_int
 )paren
 id|data
-op_ge
+OG
 id|_NSIG
 )paren
 r_goto

@@ -1,7 +1,8 @@
-multiline_comment|/*****************************************************************************&n;* sdla_x25.c&t;WANPIPE(tm) Multiprotocol WAN Link Driver.  X.25 module.&n;*&n;* Author:&t;Gene Kozin&t;&lt;genek@compuserve.com&gt;&n;*&n;* Copyright:&t;(c) 1995-1997 Sangoma Technologies Inc.&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* Nov 27, 1997&t;Jaspreet Singh&t; o Added protection against enabling of irqs&n;*&t;&t;&t;&t;   when they are disabled.&n;* Nov 17, 1997  Farhan Thawar    o Added IPX support&n;*&t;&t;&t;&t; o Changed if_send() to now buffer packets when&n;*&t;&t;&t;&t;   the board is busy&n;*&t;&t;&t;&t; o Removed queueing of packets via the polling&n;*&t;&t;&t;&t;   routing&n;*&t;&t;&t;&t; o Changed if_send() critical flags to properly&n;*&t;&t;&t;&t;   handle race conditions&n;* Nov 06, 1997  Farhan Thawar    o Added support for SVC timeouts&n;*&t;&t;&t;&t; o Changed PVC encapsulation to ETH_P_IP&n;* Jul 21, 1997  Jaspreet Singh&t; o Fixed freeing up of buffers using kfree()&n;*&t;&t;&t;&t;   when packets are received.&n;* Mar 11, 1997  Farhan Thawar   Version 3.1.1&n;*                                o added support for V35&n;*                                o changed if_send() to return 0 if&n;*                                  wandev.critical() is true&n;*                                o free socket buffer in if_send() if&n;*                                  returning 0&n;*                                o added support for single &squot;@&squot; address to&n;*                                  accept all incoming calls&n;*                                o fixed bug in set_chan_state() to disconnect&n;* Jan 15, 1997&t;Gene Kozin&t;Version 3.1.0&n;*&t;&t;&t;&t; o implemented exec() entry point&n;* Jan 07, 1997&t;Gene Kozin&t;Initial version.&n;*****************************************************************************/
+multiline_comment|/*****************************************************************************&n;* sdla_x25.c&t;WANPIPE(tm) Multiprotocol WAN Link Driver.  X.25 module.&n;*&n;* Author:&t;Gene Kozin&t;&lt;genek@compuserve.com&gt;&n;*&n;* Copyright:&t;(c) 1995-1997 Sangoma Technologies Inc.&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* Mar 15, 1998  Alan Cox&t; o 2.1.x porting&n;* Nov 27, 1997&t;Jaspreet Singh&t; o Added protection against enabling of irqs&n;*&t;&t;&t;&t;   when they are disabled.&n;* Nov 17, 1997  Farhan Thawar    o Added IPX support&n;*&t;&t;&t;&t; o Changed if_send() to now buffer packets when&n;*&t;&t;&t;&t;   the board is busy&n;*&t;&t;&t;&t; o Removed queueing of packets via the polling&n;*&t;&t;&t;&t;   routing&n;*&t;&t;&t;&t; o Changed if_send() critical flags to properly&n;*&t;&t;&t;&t;   handle race conditions&n;* Nov 06, 1997  Farhan Thawar    o Added support for SVC timeouts&n;*&t;&t;&t;&t; o Changed PVC encapsulation to ETH_P_IP&n;* Jul 21, 1997  Jaspreet Singh&t; o Fixed freeing up of buffers using kfree()&n;*&t;&t;&t;&t;   when packets are received.&n;* Mar 11, 1997  Farhan Thawar   Version 3.1.1&n;*                                o added support for V35&n;*                                o changed if_send() to return 0 if&n;*                                  wandev.critical() is true&n;*                                o free socket buffer in if_send() if&n;*                                  returning 0&n;*                                o added support for single &squot;@&squot; address to&n;*                                  accept all incoming calls&n;*                                o fixed bug in set_chan_state() to disconnect&n;* Jan 15, 1997&t;Gene Kozin&t;Version 3.1.0&n;*&t;&t;&t;&t; o implemented exec() entry point&n;* Jan 07, 1997&t;Gene Kozin&t;Initial version.&n;*****************************************************************************/
 macro_line|#if&t;!defined(__KERNEL__) || !defined(MODULE)
 macro_line|#error&t;This code MUST be compiled as a kernel module!
 macro_line|#endif
+macro_line|#include &lt;linux/config.h&gt;&t;/* OS configuration options */
 macro_line|#include &lt;linux/kernel.h&gt;&t;/* printk(), and other useful stuff */
 macro_line|#include &lt;linux/stddef.h&gt;&t;/* offsetof(), etc. */
 macro_line|#include &lt;linux/errno.h&gt;&t;/* return codes */
@@ -9,9 +10,8 @@ macro_line|#include &lt;linux/string.h&gt;&t;/* inline memset(), etc. */
 macro_line|#include &lt;linux/malloc.h&gt;&t;/* kmalloc(), kfree() */
 macro_line|#include &lt;linux/wanrouter.h&gt;&t;/* WAN router definitions */
 macro_line|#include &lt;linux/wanpipe.h&gt;&t;/* WANPIPE common user API definitions */
-macro_line|#include &lt;linux/init.h&gt;&t;&t;/* __initfunc et al. */
 macro_line|#include &lt;asm/byteorder.h&gt;&t;/* htons(), etc. */
-macro_line|#include &lt;asm/uaccess.h&gt;&t;/* copy_from_user, etc */
+macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|_GNUC_
 mdefine_line|#define&t;_GNUC_
 macro_line|#include &lt;linux/sdla_x25.h&gt;&t;/* X.25 firmware API definitions */
@@ -375,7 +375,7 @@ id|dev
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|if_stats
 (paren
@@ -979,10 +979,7 @@ suffix:semicolon
 multiline_comment|/****** Global Data **********************************************************&n; * Note: All data must be explicitly initialized!!!&n; */
 multiline_comment|/****** Public Functions ****************************************************/
 multiline_comment|/*============================================================================&n; * X.25 Protocol Initialization routine.&n; *&n; * This routine is called by the main WANPIPE module during setup.  At this&n; * point adapter is completely initialized and X.25 firmware is running.&n; *  o read firmware version (to make sure it&squot;s alive)&n; *  o configure adapter&n; *  o initialize protocol-specific fields of the adapter data space.&n; *&n; * Return:&t;0&t;o.k.&n; *&t;&t;&lt; 0&t;failure.&n; */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|wpx_init
 r_int
 id|wpx_init
 (paren
@@ -993,7 +990,6 @@ comma
 id|wandev_conf_t
 op_star
 id|conf
-)paren
 )paren
 (brace
 r_union
@@ -2127,6 +2123,7 @@ c_cond
 (paren
 id|cmd.length
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -2150,6 +2147,7 @@ r_return
 op_minus
 id|EFAULT
 suffix:semicolon
+)brace
 )brace
 r_if
 c_cond
@@ -2229,10 +2227,7 @@ c_cond
 id|len
 op_logical_and
 id|u_data
-)paren
-r_if
-c_cond
-(paren
+op_logical_and
 id|copy_to_user
 c_func
 (paren
@@ -2248,12 +2243,10 @@ comma
 id|len
 )paren
 )paren
-(brace
 r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -2290,9 +2283,6 @@ op_assign
 op_amp
 id|card-&gt;wandev
 suffix:semicolon
-r_int
-id|i
-suffix:semicolon
 multiline_comment|/* Initialize device driver entry points */
 id|dev-&gt;open
 op_assign
@@ -2325,11 +2315,6 @@ op_amp
 id|if_stats
 suffix:semicolon
 multiline_comment|/* Initialize media-specific parameters */
-id|dev-&gt;family
-op_assign
-id|AF_INET
-suffix:semicolon
-multiline_comment|/* address family */
 id|dev-&gt;type
 op_assign
 l_int|30
@@ -2450,8 +2435,8 @@ id|dev-&gt;start
 r_return
 op_minus
 id|EBUSY
-multiline_comment|/* only one open is allowed */
 suffix:semicolon
+multiline_comment|/* only one open is allowed */
 r_if
 c_cond
 (paren
@@ -2471,7 +2456,6 @@ id|card-&gt;wandev.critical
 r_return
 op_minus
 id|EAGAIN
-suffix:semicolon
 suffix:semicolon
 id|dev-&gt;interrupt
 op_assign
@@ -2556,7 +2540,6 @@ id|card-&gt;wandev.critical
 r_return
 op_minus
 id|EAGAIN
-suffix:semicolon
 suffix:semicolon
 id|dev-&gt;start
 op_assign
@@ -2708,11 +2691,18 @@ op_star
 id|skb
 )paren
 (brace
+r_struct
+id|device
+op_star
+id|dev
+op_assign
+id|skb-&gt;dev
+suffix:semicolon
 id|x25_channel_t
 op_star
 id|chan
 op_assign
-id|skb-&gt;dev-&gt;priv
+id|dev-&gt;priv
 suffix:semicolon
 id|sdla_t
 op_star
@@ -2728,7 +2718,7 @@ l_string|&quot;%s: rebuild_header() called for interface %s!&bslash;n&quot;
 comma
 id|card-&gt;devname
 comma
-id|skb-&gt;dev-&gt;name
+id|dev-&gt;name
 )paren
 suffix:semicolon
 r_return
@@ -2779,38 +2769,6 @@ r_int
 r_int
 id|host_cpu_flags
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|skb
-op_eq
-l_int|NULL
-)paren
-(brace
-multiline_comment|/* If we get here, some higher layer thinks we&squot;ve missed a&n;&t;&t; * tx-done interrupt.&n;&t;&t; */
-macro_line|#ifdef _DEBUG_
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;%s: interface %s got kicked!&bslash;n&quot;
-comma
-id|card-&gt;devname
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-macro_line|#endif
-id|dev_tint
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -2887,7 +2845,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|set_bit
+id|test_and_set_bit
 c_func
 (paren
 l_int|0
@@ -3038,11 +2996,9 @@ id|card-&gt;wandev.state
 op_ne
 id|WAN_CONNECTED
 )paren
-(brace
 op_increment
 id|chan-&gt;ifstats.tx_dropped
 suffix:semicolon
-)brace
 multiline_comment|/* Below is only until we have per-channel IPX going.... */
 r_else
 r_if
@@ -3090,7 +3046,7 @@ id|chan-&gt;state
 r_case
 id|WAN_DISCONNECTED
 suffix:colon
-multiline_comment|/* Try to establish connection. If succeded, then start&n;&t;&t; * transmission, else drop a packet.&n;&t;&t; */
+multiline_comment|/* Try to establish connection. If succeded, then start&n;&t;&t;&t; * transmission, else drop a packet.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -3198,14 +3154,12 @@ c_cond
 op_logical_neg
 id|dev-&gt;tbusy
 )paren
-(brace
 id|dev_kfree_skb
 c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
-)brace
 id|card-&gt;wandev.critical
 op_assign
 l_int|0
@@ -3253,11 +3207,11 @@ r_return
 id|dev-&gt;tbusy
 suffix:semicolon
 )brace
-multiline_comment|/*============================================================================&n; * Get ethernet-style interface statistics.&n; * Return a pointer to struct enet_statistics.&n; */
+multiline_comment|/*============================================================================&n; * Get ethernet-style interface statistics.&n; * Return a pointer to struct net_device_stats&n; */
 DECL|function|if_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|if_stats
 (paren
@@ -3511,11 +3465,13 @@ op_member_access_from_pointer
 id|devtint
 )paren
 (brace
-id|dev_tint
+id|mark_bh
 c_func
 (paren
-id|dev
+id|NET_BH
 )paren
+suffix:semicolon
+r_return
 suffix:semicolon
 )brace
 )brace
@@ -3901,7 +3857,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* increment IPX packet dropped statistic */
+multiline_comment|/* FIXME: increment IPX packet dropped statistic */
 )brace
 )brace
 r_else
@@ -4013,7 +3969,7 @@ id|card-&gt;devname
 suffix:semicolon
 )brace
 multiline_comment|/****** Background Polling Routines  ****************************************/
-multiline_comment|/*============================================================================&n; * Main polling routine.&n; * This routine is repeatedly called by the WANPIPE &squot;thead&squot; to allow for&n; * time-dependent housekeeping work.&n; *&n; * Notes:&n; * 1. This routine may be called on interrupt context with all interrupts&n; *    enabled. Beware!&n; */
+multiline_comment|/*============================================================================&n; * Main polling routine.&n; * This routine is repeatedly called by the WANPIPE &squot;thread&squot; to allow for&n; * time-dependent housekeeping work.&n; *&n; * Notes:&n; * 1. This routine may be called on interrupt context with all interrupts&n; *    enabled. Beware!&n; */
 DECL|function|wpx_poll
 r_static
 r_void
@@ -4040,7 +3996,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|set_bit
+id|test_and_set_bit
 c_func
 (paren
 l_int|0
@@ -4401,7 +4357,7 @@ OG
 id|chan-&gt;idle_timeout
 )paren
 (brace
-singleline_comment|//Close svc
+multiline_comment|/* Close svc */
 id|printk
 c_func
 (paren
@@ -6874,7 +6830,7 @@ l_int|0
 )paren
 r_break
 suffix:semicolon
-singleline_comment|// If just an &squot;@&squot; is specified, accept all incomming calls
+multiline_comment|/* If just an &squot;@&squot; is specified, accept all incomming calls */
 r_if
 c_cond
 (paren
@@ -7701,8 +7657,8 @@ l_int|0
 r_return
 op_minus
 id|EINVAL
-multiline_comment|/* no destination address */
 suffix:semicolon
+multiline_comment|/* no destination address */
 id|printk
 c_func
 (paren
@@ -8128,7 +8084,7 @@ multiline_comment|/* failure */
 op_increment
 id|chan-&gt;ifstats.tx_errors
 suffix:semicolon
-multiline_comment|/*&t;&t;return 1; */
+multiline_comment|/*&t;&t;&t;return 1; */
 )brace
 r_return
 l_int|0
@@ -8967,8 +8923,7 @@ comma
 id|devname
 )paren
 suffix:semicolon
-multiline_comment|/* Go through the routing options and answer no to every */
-multiline_comment|/* option except Unnumbered RIP/SAP */
+multiline_comment|/* Go through the routing options and answer no to every&n;&t;&t;&t; * option except Unnumbered RIP/SAP */
 r_for
 c_loop
 (paren
@@ -9328,14 +9283,22 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* printk(KERN_INFO &quot;%s: Sending IPXWAN Information Response packet&bslash;n&quot;,devname); */
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;%s: Sending IPXWAN Information Response packet&bslash;n&quot;
+comma
+id|devname
+)paren
+suffix:semicolon
 )brace
 r_else
 (brace
 id|printk
 c_func
 (paren
-id|KERN_WARNING
+id|KERN_INFO
 l_string|&quot;%s: Unknown IPXWAN packet!&bslash;n&quot;
 comma
 id|devname
@@ -9420,8 +9383,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* If we get here its an IPX-data packet, so it&squot;ll get passed up the stack. */
-multiline_comment|/* switch the network numbers */
+multiline_comment|/* If we get here its an IPX-data packet, so it&squot;ll get passed up the stack.&n;&t;&t;   switch the network numbers */
 id|switch_net_numbers
 c_func
 (paren

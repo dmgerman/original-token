@@ -90,6 +90,7 @@ macro_line|#include &quot;atari_scsi.h&quot;
 macro_line|#include &quot;NCR5380.h&quot;
 macro_line|#include &quot;constants.h&quot;
 macro_line|#include &lt;asm/atari_stdma.h&gt;
+macro_line|#include &lt;asm/atari_stram.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 DECL|variable|proc_scsi_atari
@@ -492,6 +493,9 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+macro_line|#if defined(CONFIG_TT_DMA_EMUL)
+macro_line|#include &quot;atari_dma_emul.c&quot;
+macro_line|#endif
 macro_line|#if defined(REAL_DMA)
 DECL|function|scsi_dma_is_ignored_buserr
 r_static
@@ -1794,16 +1798,35 @@ l_int|1
 (brace
 id|atari_dma_buffer
 op_assign
-id|scsi_init_malloc
+id|atari_stram_alloc
 c_func
 (paren
 id|STRAM_BUFFER_SIZE
 comma
-id|GFP_ATOMIC
-op_or
-id|GFP_DMA
+l_int|NULL
+comma
+l_string|&quot;SCSI&quot;
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|atari_dma_buffer
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;atari_scsi_detect: can&squot;t allocate ST-RAM &quot;
+l_string|&quot;double buffer&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 id|atari_dma_phys_buffer
 op_assign
 id|VTOP
@@ -1892,12 +1915,35 @@ l_int|0
 suffix:semicolon
 macro_line|#endif /* REAL_DMA */
 macro_line|#ifdef REAL_DMA
+macro_line|#ifdef CONFIG_TT_DMA_EMUL
 r_if
 c_cond
 (paren
-id|is_medusa
+id|MACH_IS_HADES
+)paren
+(brace
+id|request_irq
+c_func
+(paren
+id|IRQ_AUTO_2
+comma
+id|hades_dma_emulator
+comma
+id|IRQ_TYPE_PRIO
+comma
+l_string|&quot;Hades DMA emulator&quot;
+comma
+id|hades_dma_emulator
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+r_if
+c_cond
+(paren
+id|MACH_IS_MEDUSA
 op_logical_or
-id|is_hades
+id|MACH_IS_HADES
 )paren
 (brace
 multiline_comment|/* While the read overruns (described by Drew Eckhardt in&n;&t;&t;&t; * NCR5380.c) never happened on TTs, they do in fact on the Medusa&n;&t;&t;&t; * (This was the cause why SCSI didn&squot;t work right for so long&n;&t;&t;&t; * there.) Since handling the overruns slows down a bit, I turned&n;&t;&t;&t; * the #ifdef&squot;s into a runtime condition.&n;&t;&t;&t; *&n;&t;&t;&t; * In principle it should be sufficient to do max. 1 byte with&n;&t;&t;&t; * PIO, but there is another problem on the Medusa with the DMA&n;&t;&t;&t; * rest data register. So &squot;atari_read_overruns&squot; is currently set&n;&t;&t;&t; * to 4 to avoid having transfers that aren&squot;t a multiple of 4. If&n;&t;&t;&t; * the rest data bug is fixed, this can be lowered to 1.&n;&t;&t;&t; */
@@ -2018,11 +2064,9 @@ c_cond
 (paren
 id|atari_dma_buffer
 )paren
-id|scsi_init_free
+id|atari_stram_free
 (paren
 id|atari_dma_buffer
-comma
-id|STRAM_BUFFER_SIZE
 )paren
 suffix:semicolon
 r_return
@@ -3023,15 +3067,17 @@ id|possible_len
 comma
 id|limit
 suffix:semicolon
+macro_line|#ifndef CONFIG_TT_DMA_EMUL
 r_if
 c_cond
 (paren
-id|is_hades
+id|MACH_IS_HADES
 )paren
 multiline_comment|/* Hades has no SCSI DMA at all :-( Always force use of PIO */
 r_return
 l_int|0
 suffix:semicolon
+macro_line|#endif&t;
 r_if
 c_cond
 (paren

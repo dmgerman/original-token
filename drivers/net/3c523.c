@@ -1086,12 +1086,9 @@ id|scb_struct
 suffix:semicolon
 )brace
 multiline_comment|/*****************************************************************/
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_static
 r_int
+DECL|function|elmc_getinfo
 id|elmc_getinfo
 c_func
 (paren
@@ -1105,7 +1102,6 @@ comma
 r_void
 op_star
 id|d
-)paren
 )paren
 (brace
 r_int

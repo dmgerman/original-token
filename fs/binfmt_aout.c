@@ -1,6 +1,5 @@
 multiline_comment|/*&n; *  linux/fs/binfmt_aout.c&n; *&n; *  Copyright (C) 1991, 1992, 1996  Linus Torvalds&n; */
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -9,6 +8,8 @@ macro_line|#include &lt;linux/a.out.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
@@ -1947,10 +1948,11 @@ id|fd
 suffix:semicolon
 id|file
 op_assign
-id|current-&gt;files-&gt;fd
-(braket
+id|fcheck
+c_func
+(paren
 id|fd
-)braket
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -2348,101 +2350,75 @@ op_star
 id|file
 suffix:semicolon
 r_struct
-id|exec
-id|ex
-suffix:semicolon
-r_struct
-id|dentry
-op_star
-id|dentry
-suffix:semicolon
-r_struct
 id|inode
 op_star
 id|inode
-suffix:semicolon
-r_int
-r_int
-id|len
 suffix:semicolon
 r_int
 r_int
 id|bss
-suffix:semicolon
-r_int
-r_int
+comma
 id|start_addr
+comma
+id|len
 suffix:semicolon
 r_int
 r_int
 id|error
 suffix:semicolon
-id|file
-op_assign
-id|current-&gt;files-&gt;fd
-(braket
-id|fd
-)braket
+r_int
+id|retval
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|file
-op_logical_or
-op_logical_neg
-id|file-&gt;f_op
-)paren
-r_return
+id|loff_t
+id|offset
+op_assign
+l_int|0
+suffix:semicolon
+r_struct
+id|exec
+id|ex
+suffix:semicolon
+id|retval
+op_assign
 op_minus
 id|EACCES
 suffix:semicolon
-id|dentry
+id|file
 op_assign
-id|file-&gt;f_dentry
+id|fget
+c_func
+(paren
+id|fd
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|file
+)paren
+r_goto
+id|out
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|file-&gt;f_op
+)paren
+r_goto
+id|out_putf
 suffix:semicolon
 id|inode
 op_assign
-id|dentry-&gt;d_inode
+id|file-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
-multiline_comment|/* Seek into the file */
-r_if
-c_cond
-(paren
-id|file-&gt;f_op-&gt;llseek
-)paren
-(brace
-r_if
-c_cond
-(paren
-(paren
-id|error
+id|retval
 op_assign
-id|file-&gt;f_op
-op_member_access_from_pointer
-id|llseek
-c_func
-(paren
-id|file
-comma
-l_int|0
-comma
-l_int|0
-)paren
-)paren
-op_ne
-l_int|0
-)paren
-r_return
 op_minus
 id|ENOEXEC
 suffix:semicolon
-)brace
-r_else
-id|file-&gt;f_pos
-op_assign
-l_int|0
-suffix:semicolon
+multiline_comment|/* N.B. Save current fs? */
 id|set_fs
 c_func
 (paren
@@ -2471,7 +2447,7 @@ id|ex
 )paren
 comma
 op_amp
-id|file-&gt;f_pos
+id|offset
 )paren
 suffix:semicolon
 id|set_fs
@@ -2490,9 +2466,8 @@ r_sizeof
 id|ex
 )paren
 )paren
-r_return
-op_minus
-id|ENOEXEC
+r_goto
+id|out_putf
 suffix:semicolon
 multiline_comment|/* We come in here for the regular a.out style of shared libraries */
 r_if
@@ -2563,9 +2538,8 @@ id|ex
 )paren
 )paren
 (brace
-r_return
-op_minus
-id|ENOEXEC
+r_goto
+id|out_putf
 suffix:semicolon
 )brace
 r_if
@@ -2602,9 +2576,8 @@ c_func
 l_string|&quot;N_TXTOFF &lt; BLOCK_SIZE. Please convert library&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
-op_minus
-id|ENOEXEC
+r_goto
+id|out_putf
 suffix:semicolon
 )brace
 r_if
@@ -2616,9 +2589,8 @@ c_func
 id|ex
 )paren
 )paren
-r_return
-op_minus
-id|ENOEXEC
+r_goto
+id|out_putf
 suffix:semicolon
 multiline_comment|/* For  QMAGIC, the starting address is 0x20 into the page.  We mask&n;&t;   this off to get the starting address for the page */
 id|start_addr
@@ -2660,6 +2632,10 @@ id|ex
 )paren
 )paren
 suffix:semicolon
+id|retval
+op_assign
+id|error
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2667,8 +2643,8 @@ id|error
 op_ne
 id|start_addr
 )paren
-r_return
-id|error
+r_goto
+id|out_putf
 suffix:semicolon
 id|len
 op_assign
@@ -2724,6 +2700,10 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|retval
+op_assign
+id|error
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2733,12 +2713,26 @@ id|start_addr
 op_plus
 id|len
 )paren
-r_return
-id|error
+r_goto
+id|out_putf
 suffix:semicolon
 )brace
-r_return
+id|retval
+op_assign
 l_int|0
+suffix:semicolon
+id|out_putf
+suffix:colon
+id|fput
+c_func
+(paren
+id|file
+)paren
+suffix:semicolon
+id|out
+suffix:colon
+r_return
+id|retval
 suffix:semicolon
 )brace
 r_static

@@ -10,6 +10,8 @@ DECL|macro|HAVE_ALLOC_SKB
 mdefine_line|#define HAVE_ALLOC_SKB&t;&t;/* For the drivers to know */
 DECL|macro|HAVE_ALIGNABLE_SKB
 mdefine_line|#define HAVE_ALIGNABLE_SKB&t;/* Ditto 8)&t;&t;   */
+DECL|macro|SLAB_SKB
+mdefine_line|#define SLAB_SKB &t;&t;/* Slabified skbuffs &t;   */
 DECL|macro|CHECKSUM_NONE
 mdefine_line|#define CHECKSUM_NONE 0
 DECL|macro|CHECKSUM_HW
@@ -251,16 +253,17 @@ r_volatile
 r_char
 id|used
 suffix:semicolon
-DECL|member|tries
+multiline_comment|/* Data moved to user and not MSG_PEEK&t;&t;*/
+DECL|member|is_clone
 r_int
 r_char
-id|tries
+id|is_clone
 comma
-multiline_comment|/* Times tried&t;&t;&t;&t;&t;*/
-DECL|member|inclone
-id|inclone
+multiline_comment|/* We are a clone&t;&t;&t;&t;*/
+DECL|member|cloned
+id|cloned
 comma
-multiline_comment|/* Inline clone&t;&t;&t;&t;&t;*/
+multiline_comment|/* head may be cloned (check refcnt to be sure). */
 DECL|member|pkt_type
 id|pkt_type
 comma
@@ -277,6 +280,7 @@ DECL|member|priority
 id|__u32
 id|priority
 suffix:semicolon
+multiline_comment|/* Packet queueing priority&t;&t;&t;*/
 DECL|member|users
 id|atomic_t
 id|users
@@ -300,6 +304,7 @@ r_int
 id|truesize
 suffix:semicolon
 multiline_comment|/* Buffer size &t;&t;&t;&t;&t;*/
+macro_line|#ifndef SLAB_SKB
 DECL|member|count
 id|atomic_t
 id|count
@@ -312,6 +317,7 @@ op_star
 id|data_skb
 suffix:semicolon
 multiline_comment|/* Link to the actual data skb&t;&t;&t;*/
+macro_line|#endif
 DECL|member|head
 r_int
 r_char
@@ -353,10 +359,6 @@ op_star
 )paren
 suffix:semicolon
 multiline_comment|/* Destruct function&t;&t;*/
-DECL|macro|SKB_CLONE_ORIG
-mdefine_line|#define SKB_CLONE_ORIG&t;&t;1
-DECL|macro|SKB_CLONE_INLINE
-mdefine_line|#define SKB_CLONE_INLINE&t;2
 macro_line|#if defined(CONFIG_SHAPER) || defined(CONFIG_SHAPER_MODULE)
 DECL|member|shapelatency
 id|__u32
@@ -727,6 +729,31 @@ r_int
 id|len
 )paren
 suffix:semicolon
+multiline_comment|/* Internal */
+DECL|function|skb_datarefp
+r_extern
+id|__inline__
+id|atomic_t
+op_star
+id|skb_datarefp
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+)paren
+(brace
+r_return
+(paren
+id|atomic_t
+op_star
+)paren
+(paren
+id|skb-&gt;end
+)paren
+suffix:semicolon
+)brace
 DECL|function|skb_queue_empty
 r_extern
 id|__inline__
@@ -783,6 +810,37 @@ id|skb
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Use this if you didn&squot;t touch the skb state [for fast switching] */
+DECL|function|kfree_skb_fast
+r_extern
+id|__inline__
+r_void
+id|kfree_skb_fast
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|atomic_dec_and_test
+c_func
+(paren
+op_amp
+id|skb-&gt;users
+)paren
+)paren
+id|kfree_skbmem
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+)brace
 DECL|function|skb_cloned
 r_extern
 id|__inline__
@@ -797,16 +855,19 @@ id|skb
 )paren
 (brace
 r_return
-(paren
+id|skb-&gt;cloned
+op_logical_and
 id|atomic_read
 c_func
 (paren
-op_amp
-id|skb-&gt;data_skb-&gt;count
+id|skb_datarefp
+c_func
+(paren
+id|skb
+)paren
 )paren
 op_ne
 l_int|1
-)paren
 suffix:semicolon
 )brace
 DECL|function|skb_shared
@@ -1841,6 +1902,24 @@ id|skb-&gt;end
 id|__label__
 id|here
 suffix:semicolon
+macro_line|#if 1
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;skbput: over: %p:tail=%p:end=%p:len=%u&bslash;n&quot;
+comma
+op_logical_and
+id|here
+comma
+id|skb-&gt;tail
+comma
+id|skb-&gt;end
+comma
+id|len
+)paren
+suffix:semicolon
+macro_line|#else
 id|panic
 c_func
 (paren
@@ -1852,6 +1931,7 @@ comma
 id|len
 )paren
 suffix:semicolon
+macro_line|#endif
 id|here
 suffix:colon
 suffix:semicolon
@@ -2336,6 +2416,23 @@ r_struct
 id|sk_buff
 op_star
 id|skb
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|skb_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|skb_add_mtu
+c_func
+(paren
+r_int
+id|mtu
 )paren
 suffix:semicolon
 macro_line|#endif&t;/* __KERNEL__ */

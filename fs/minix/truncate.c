@@ -496,6 +496,7 @@ id|i
 op_ge
 l_int|512
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -527,6 +528,7 @@ comma
 id|tmp
 )paren
 suffix:semicolon
+)brace
 )brace
 id|brelse
 c_func
@@ -764,6 +766,7 @@ id|i
 op_ge
 l_int|512
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -801,6 +804,7 @@ comma
 id|tmp
 )paren
 suffix:semicolon
+)brace
 )brace
 id|brelse
 c_func
@@ -1413,6 +1417,7 @@ id|i
 op_ge
 l_int|256
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -1444,6 +1449,7 @@ comma
 id|tmp
 )paren
 suffix:semicolon
+)brace
 )brace
 id|brelse
 c_func
@@ -1681,6 +1687,7 @@ id|i
 op_ge
 l_int|256
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -1718,6 +1725,7 @@ comma
 id|tmp
 )paren
 suffix:semicolon
+)brace
 )brace
 id|brelse
 c_func
@@ -1955,6 +1963,7 @@ id|i
 op_ge
 l_int|256
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -1992,6 +2001,7 @@ comma
 id|tmp
 )paren
 suffix:semicolon
+)brace
 )brace
 id|brelse
 c_func

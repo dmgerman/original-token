@@ -909,6 +909,7 @@ id|start
 op_eq
 id|vma-&gt;vm_start
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -943,6 +944,7 @@ comma
 id|newprot
 )paren
 suffix:semicolon
+)brace
 r_else
 r_if
 c_cond

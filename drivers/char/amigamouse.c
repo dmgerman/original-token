@@ -842,7 +842,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
 id|put_user
 c_func
 (paren
@@ -852,7 +851,6 @@ l_int|0x80
 comma
 id|buffer
 op_increment
-)paren
 )paren
 op_logical_or
 id|put_user

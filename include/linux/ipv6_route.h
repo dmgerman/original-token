@@ -24,6 +24,8 @@ DECL|macro|RTF_LINKRT
 mdefine_line|#define RTF_LINKRT&t;0x00100000&t;/* link specific - device match&t;*/
 DECL|macro|RTF_NONEXTHOP
 mdefine_line|#define RTF_NONEXTHOP&t;0x00200000&t;/* route with no nexthop&t;*/
+DECL|macro|RTF_EXPIRES
+mdefine_line|#define RTF_EXPIRES&t;0x00400000
 DECL|macro|RTF_CACHE
 mdefine_line|#define RTF_CACHE&t;0x01000000&t;/* cache entry&t;&t;&t;*/
 DECL|macro|RTF_FLOW

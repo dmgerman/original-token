@@ -270,10 +270,8 @@ id|in6_addr
 op_star
 id|saddr
 comma
-r_struct
-id|device
-op_star
-id|dev
+r_int
+id|oif
 comma
 r_int
 id|flags

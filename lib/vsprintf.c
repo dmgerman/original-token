@@ -543,6 +543,7 @@ id|type
 op_amp
 id|SPECIAL
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -580,6 +581,7 @@ id|digits
 l_int|33
 )braket
 suffix:semicolon
+)brace
 )brace
 r_if
 c_cond
@@ -1397,6 +1399,7 @@ id|qualifier
 op_eq
 l_char|&squot;h&squot;
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -1426,6 +1429,7 @@ r_int
 r_int
 )paren
 suffix:semicolon
+)brace
 r_else
 r_if
 c_cond

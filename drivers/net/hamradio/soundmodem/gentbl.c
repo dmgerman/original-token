@@ -4505,7 +4505,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* -------------------------------------------------------------------- */
 DECL|function|main
-r_void
+r_int
 id|main
 c_func
 (paren
@@ -4885,10 +4885,8 @@ c_func
 id|f
 )paren
 suffix:semicolon
-m_exit
-(paren
+r_return
 l_int|0
-)paren
 suffix:semicolon
 )brace
 multiline_comment|/* -------------------------------------------------------------------- */

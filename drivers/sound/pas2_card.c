@@ -637,9 +637,9 @@ id|pas_irq
 comma
 id|pasintr
 comma
-l_string|&quot;PAS16&quot;
-comma
 l_int|0
+comma
+l_string|&quot;PAS16&quot;
 comma
 l_int|NULL
 )paren

@@ -709,6 +709,7 @@ id|i
 op_ge
 id|addr_per_block
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -780,6 +781,7 @@ id|ind_bh
 op_assign
 l_int|NULL
 suffix:semicolon
+)brace
 )brace
 r_if
 c_cond
@@ -1115,6 +1117,7 @@ id|i
 op_ge
 id|addr_per_block
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -1186,6 +1189,7 @@ id|dind_bh
 op_assign
 l_int|0
 suffix:semicolon
+)brace
 )brace
 r_if
 c_cond
@@ -1478,6 +1482,7 @@ id|i
 op_ge
 id|addr_per_block
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -1530,6 +1535,7 @@ id|tind_bh
 op_assign
 l_int|0
 suffix:semicolon
+)brace
 )brace
 r_if
 c_cond

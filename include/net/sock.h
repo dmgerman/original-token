@@ -233,6 +233,10 @@ DECL|member|mcast_hops
 r_int
 id|mcast_hops
 suffix:semicolon
+DECL|member|mcast_oif
+r_int
+id|mcast_oif
+suffix:semicolon
 DECL|member|priority
 id|__u8
 id|priority
@@ -273,13 +277,6 @@ DECL|member|unused
 id|unused
 suffix:colon
 l_int|2
-suffix:semicolon
-multiline_comment|/* device for outgoing packets */
-DECL|member|oif
-r_struct
-id|device
-op_star
-id|oif
 suffix:semicolon
 DECL|member|ipv6_mc_list
 r_struct
@@ -334,6 +331,21 @@ suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* This defines a selective acknowledgement block. */
+DECL|struct|tcp_sack_block
+r_struct
+id|tcp_sack_block
+(brace
+DECL|member|start_seq
+id|__u32
+id|start_seq
+suffix:semicolon
+DECL|member|end_seq
+id|__u32
+id|end_seq
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|struct|tcp_opt
 r_struct
 id|tcp_opt
@@ -532,8 +544,12 @@ comma
 multiline_comment|/* TIMESTAMP seen on SYN packet&t;&t;*/
 DECL|member|wscale_ok
 id|wscale_ok
-suffix:semicolon
+comma
 multiline_comment|/* Wscale seen on SYN packet&t;&t;*/
+DECL|member|sack_ok
+id|sack_ok
+suffix:semicolon
+multiline_comment|/* SACK seen on SYN packet&t;&t;*/
 DECL|member|saw_tstamp
 r_char
 id|saw_tstamp
@@ -574,6 +590,20 @@ id|__u32
 id|ts_recent_stamp
 suffix:semicolon
 multiline_comment|/* Time we stored ts_recent (for aging) */
+DECL|member|num_sacks
+r_int
+id|num_sacks
+suffix:semicolon
+multiline_comment|/* Number of SACK blocks&t;&t;*/
+DECL|member|selective_acks
+r_struct
+id|tcp_sack_block
+id|selective_acks
+(braket
+l_int|4
+)braket
+suffix:semicolon
+multiline_comment|/* The SACKS themselves*/
 DECL|member|probe_timer
 r_struct
 id|timer_list
@@ -721,12 +751,29 @@ DECL|member|zapped
 id|zapped
 suffix:semicolon
 multiline_comment|/* In ax25 &amp; ipx means not linked&t;*/
-DECL|member|dummy_th
-r_struct
-id|tcphdr
-id|dummy_th
+DECL|member|sport
+id|__u16
+id|sport
 suffix:semicolon
-multiline_comment|/* TCP header template&t;&t;&t;*/
+multiline_comment|/* Source port&t;&t;&t;&t;*/
+DECL|member|dport
+id|__u16
+id|dport
+suffix:semicolon
+multiline_comment|/* Destination port&t;&t;&t;*/
+DECL|member|family
+r_int
+r_int
+id|family
+suffix:semicolon
+DECL|member|reuse
+r_int
+r_char
+id|reuse
+comma
+DECL|member|nonagle
+id|nonagle
+suffix:semicolon
 DECL|member|sock_readers
 r_int
 id|sock_readers
@@ -810,9 +857,6 @@ comma
 DECL|member|urginline
 id|urginline
 comma
-DECL|member|reuse
-id|reuse
-comma
 DECL|member|keepopen
 id|keepopen
 comma
@@ -827,9 +871,6 @@ id|no_check
 comma
 DECL|member|broadcast
 id|broadcast
-comma
-DECL|member|nonagle
-id|nonagle
 comma
 DECL|member|bsdism
 id|bsdism
@@ -866,11 +907,6 @@ id|back_log
 comma
 DECL|member|error_queue
 id|error_queue
-suffix:semicolon
-DECL|member|family
-r_int
-r_int
-id|family
 suffix:semicolon
 DECL|member|prot
 r_struct

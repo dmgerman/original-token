@@ -6,6 +6,8 @@ macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/utsname.h&gt;
 macro_line|#include &lt;linux/sunrpc/clnt.h&gt;
 macro_line|#include &lt;linux/sunrpc/auth.h&gt;
+DECL|macro|NFS_NGROUPS
+mdefine_line|#define NFS_NGROUPS&t;16
 DECL|struct|unx_cred
 r_struct
 id|unx_cred
@@ -30,7 +32,7 @@ DECL|member|uc_gids
 id|gid_t
 id|uc_gids
 (braket
-l_int|16
+id|NFS_NGROUPS
 )braket
 suffix:semicolon
 )brace
@@ -275,6 +277,22 @@ suffix:semicolon
 )brace
 r_else
 (brace
+r_int
+id|groups
+op_assign
+id|current-&gt;ngroups
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|groups
+OG
+id|NFS_NGROUPS
+)paren
+id|groups
+op_assign
+id|NFS_NGROUPS
+suffix:semicolon
 id|cred-&gt;uc_uid
 op_assign
 id|current-&gt;uid
@@ -300,11 +318,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-l_int|16
-op_logical_and
-id|i
-OL
-id|NGROUPS
+id|groups
 suffix:semicolon
 id|i
 op_increment
@@ -321,6 +335,20 @@ id|current-&gt;groups
 (braket
 id|i
 )braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
+OL
+id|NFS_NGROUPS
+)paren
+id|cred-&gt;uc_gids
+(braket
+id|i
+)braket
+op_assign
+id|NOGROUP
 suffix:semicolon
 )brace
 r_return
@@ -504,6 +532,9 @@ id|task
 )paren
 )paren
 (brace
+r_int
+id|groups
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -526,6 +557,21 @@ id|current-&gt;fsgid
 r_return
 l_int|0
 suffix:semicolon
+id|groups
+op_assign
+id|current-&gt;ngroups
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|groups
+OG
+id|NFS_NGROUPS
+)paren
+id|groups
+op_assign
+id|NFS_NGROUPS
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -535,11 +581,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-l_int|16
-op_logical_and
-id|i
-OL
-id|NGROUPS
+id|groups
 suffix:semicolon
 id|i
 op_increment

@@ -274,8 +274,14 @@ DECL|macro|IS_ABORTING
 mdefine_line|#define IS_ABORTING     0x10
 DECL|macro|ASKED_FOR_SENSE
 mdefine_line|#define ASKED_FOR_SENSE 0x20
+macro_line|#ifdef __mc68000__
+macro_line|#include &lt;asm/pgtable.h&gt;
+DECL|macro|CONTIGUOUS_BUFFERS
+mdefine_line|#define CONTIGUOUS_BUFFERS(X,Y) &bslash;&n;&t;(virt_to_phys((X)-&gt;b_data+(X)-&gt;b_size-1)+1==virt_to_phys((Y)-&gt;b_data))
+macro_line|#else
 DECL|macro|CONTIGUOUS_BUFFERS
 mdefine_line|#define CONTIGUOUS_BUFFERS(X,Y) ((X-&gt;b_data+X-&gt;b_size) == Y-&gt;b_data)
+macro_line|#endif
 multiline_comment|/*&n; * This is the crap from the old error handling code.  We have it in a special&n; * place so that we can more easily delete it later on.&n; */
 macro_line|#include &quot;scsi_obsolete.h&quot;
 multiline_comment|/*&n; * Add some typedefs so that we can prototyope a bunch of the functions.&n; */
@@ -879,14 +885,6 @@ suffix:semicolon
 multiline_comment|/* Device returned QUEUE_FULL. */
 )brace
 suffix:semicolon
-macro_line|#ifdef __mc68000__
-macro_line|#include &lt;asm/pgtable.h&gt;
-DECL|macro|CONTIGUOUS_BUFFERS
-mdefine_line|#define CONTIGUOUS_BUFFERS(X,Y) &bslash;&n;&t;(virt_to_phys((X)-&gt;b_data+(X)-&gt;b_size-1)+1==virt_to_phys((Y)-&gt;b_data))
-macro_line|#else
-DECL|macro|CONTIGUOUS_BUFFERS
-mdefine_line|#define CONTIGUOUS_BUFFERS(X,Y) ((X-&gt;b_data+X-&gt;b_size) == Y-&gt;b_data)
-macro_line|#endif
 multiline_comment|/*&n; * The Scsi_Cmnd structure is used by scsi.c internally, and for communication&n; * with low level drivers that support multiple outstanding commands.&n; */
 DECL|struct|scsi_pointer
 r_typedef
