@@ -66,6 +66,8 @@ DECL|macro|AF_AX25
 mdefine_line|#define AF_AX25&t;&t;3
 DECL|macro|AF_IPX
 mdefine_line|#define AF_IPX&t;&t;4
+DECL|macro|AF_APPLETALK
+mdefine_line|#define AF_APPLETALK&t;5
 DECL|macro|AF_MAX
 mdefine_line|#define AF_MAX&t;&t;8&t;/* For now.. */
 multiline_comment|/* Protocol families, same as address families. */
@@ -79,6 +81,8 @@ DECL|macro|PF_AX25
 mdefine_line|#define PF_AX25&t;&t;AF_AX25
 DECL|macro|PF_IPX
 mdefine_line|#define PF_IPX&t;&t;AF_IPX
+DECL|macro|PF_APPLETALK
+mdefine_line|#define PF_APPLETALK&t;AF_APPLETALK
 DECL|macro|PF_MAX
 mdefine_line|#define PF_MAX&t;&t;AF_MAX
 multiline_comment|/* Flags we can use with send/ and recv. */
@@ -128,6 +132,7 @@ DECL|macro|SO_PRIORITY
 mdefine_line|#define SO_PRIORITY&t;12
 DECL|macro|SO_LINGER
 mdefine_line|#define SO_LINGER&t;13
+multiline_comment|/* To add :#define SO_REUSEPORT 14 */
 multiline_comment|/* IP options */
 DECL|macro|IP_TOS
 mdefine_line|#define IP_TOS&t;&t;1
@@ -139,6 +144,27 @@ DECL|macro|IPTOS_RELIABILITY
 mdefine_line|#define&t;IPTOS_RELIABILITY&t;0x04
 DECL|macro|IP_TTL
 mdefine_line|#define IP_TTL&t;&t;2
+DECL|macro|IP_HRDINCL
+mdefine_line|#define IP_HRDINCL&t;3
+DECL|macro|IP_OPTIONS
+mdefine_line|#define IP_OPTIONS&t;4
+DECL|macro|IP_MULTICAST_IF
+mdefine_line|#define IP_MULTICAST_IF&t;&t;&t;32
+DECL|macro|IP_MULTICAST_TTL
+mdefine_line|#define IP_MULTICAST_TTL &t;&t;33
+DECL|macro|IP_MULTICAST_LOOP
+mdefine_line|#define IP_MULTICAST_LOOP &t;&t;34
+DECL|macro|IP_ADD_MEMBERSHIP
+mdefine_line|#define IP_ADD_MEMBERSHIP&t;&t;35
+DECL|macro|IP_DROP_MEMBERSHIP
+mdefine_line|#define IP_DROP_MEMBERSHIP&t;&t;36
+multiline_comment|/* These need to appear somewhere around here */
+DECL|macro|IP_DEFAULT_MULTICAST_TTL
+mdefine_line|#define IP_DEFAULT_MULTICAST_TTL        1
+DECL|macro|IP_DEFAULT_MULTICAST_LOOP
+mdefine_line|#define IP_DEFAULT_MULTICAST_LOOP       1
+DECL|macro|IP_MAX_MEMBERSHIPS
+mdefine_line|#define IP_MAX_MEMBERSHIPS              20
 multiline_comment|/* IPX options */
 DECL|macro|IPX_TYPE
 mdefine_line|#define IPX_TYPE&t;1

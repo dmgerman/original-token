@@ -17,12 +17,12 @@ op_assign
 l_int|1
 comma
 multiline_comment|/* Internet Control Message Protocol&t;*/
-DECL|enumerator|IPPROTO_GGP
-id|IPPROTO_GGP
+DECL|enumerator|IPPROTO_IGMP
+id|IPPROTO_IGMP
 op_assign
 l_int|2
 comma
-multiline_comment|/* Gateway Protocol (deprecated)&t;*/
+multiline_comment|/* Internet Gateway Management Protocol */
 DECL|enumerator|IPPROTO_TCP
 id|IPPROTO_TCP
 op_assign
@@ -74,6 +74,25 @@ r_int
 r_int
 id|s_addr
 suffix:semicolon
+)brace
+suffix:semicolon
+multiline_comment|/* Request struct for multicast socket ops */
+DECL|struct|ip_mreq
+r_struct
+id|ip_mreq
+(brace
+DECL|member|imr_multiaddr
+r_struct
+id|in_addr
+id|imr_multiaddr
+suffix:semicolon
+multiline_comment|/* IP multicast address of group */
+DECL|member|imr_interface
+r_struct
+id|in_addr
+id|imr_interface
+suffix:semicolon
+multiline_comment|/* local IP address of interface */
 )brace
 suffix:semicolon
 multiline_comment|/* Structure describing an Internet (IP) socket address. */
@@ -249,7 +268,7 @@ r_int
 r_int
 )paren
 suffix:semicolon
-r_static
+r_extern
 id|__inline__
 r_int
 r_int
@@ -289,7 +308,7 @@ r_return
 id|x
 suffix:semicolon
 )brace
-r_static
+r_extern
 id|__inline__
 r_int
 r_int
@@ -348,7 +367,7 @@ l_int|24
 )paren
 suffix:semicolon
 )brace
-r_static
+r_extern
 id|__inline__
 r_int
 r_int
@@ -384,7 +403,7 @@ r_return
 id|x
 suffix:semicolon
 )brace
-r_static
+r_extern
 id|__inline__
 r_int
 r_int

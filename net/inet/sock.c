@@ -1120,12 +1120,14 @@ r_int
 id|size
 )paren
 (brace
+macro_line|#ifdef CONFIG_SKB_CHECK
 id|IS_SKB
 c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
+macro_line|#endif
 id|kfree_skbmem
 c_func
 (paren
@@ -1183,12 +1185,14 @@ r_int
 id|size
 )paren
 (brace
+macro_line|#ifdef CONFIG_SKB_CHECK
 id|IS_SKB
 c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
+macro_line|#endif&t;
 id|kfree_skbmem
 c_func
 (paren

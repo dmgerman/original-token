@@ -22,6 +22,36 @@ DECL|macro|IS_INVBCAST
 mdefine_line|#define IS_INVBCAST&t;4&t;&t;/* Wrong netmask bcast not for us (unused)*/
 DECL|macro|IS_MULTICAST
 mdefine_line|#define IS_MULTICAST&t;5&t;&t;/* Multicast IP address */
+multiline_comment|/*&n; *&t;We tag these structures with multicasts.&n; */
+DECL|struct|dev_mc_list
+r_struct
+id|dev_mc_list
+(brace
+DECL|member|next
+r_struct
+id|dev_mc_list
+op_star
+id|next
+suffix:semicolon
+DECL|member|dmi_addr
+r_char
+id|dmi_addr
+(braket
+id|MAX_ADDR_LEN
+)braket
+suffix:semicolon
+DECL|member|dmi_addrlen
+r_int
+r_int
+id|dmi_addrlen
+suffix:semicolon
+DECL|member|dmi_users
+r_int
+r_int
+id|dmi_users
+suffix:semicolon
+)brace
+suffix:semicolon
 multiline_comment|/*&n; * The DEVICE structure.&n; * Actually, this whole structure is a big mistake.  It mixes I/O&n; * data with strictly &quot;high-level&quot; data, and it has to know about&n; * almost every data structure used in the INET module.  &n; */
 DECL|struct|device
 r_struct
@@ -245,6 +275,25 @@ r_int
 id|pa_alen
 suffix:semicolon
 multiline_comment|/* protocol address length&t;*/
+DECL|member|mc_list
+r_struct
+id|dev_mc_list
+op_star
+id|mc_list
+suffix:semicolon
+multiline_comment|/* Multicast mac addresses&t;*/
+DECL|member|mc_count
+r_int
+id|mc_count
+suffix:semicolon
+multiline_comment|/* Number of installed mcasts&t;*/
+DECL|member|ip_mc_list
+r_struct
+id|ip_mc_list
+op_star
+id|ip_mc_list
+suffix:semicolon
+multiline_comment|/* IP multicast filter chain    */
 multiline_comment|/* For load balancing driver pair support */
 DECL|member|pkt_queue
 r_int
@@ -842,6 +891,71 @@ suffix:semicolon
 r_extern
 r_void
 id|unregister_netdev
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+multiline_comment|/* Functions used for multicast support */
+r_extern
+r_void
+id|dev_mc_upload
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|dev_mc_delete
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+comma
+r_void
+op_star
+id|addr
+comma
+r_int
+id|alen
+comma
+r_int
+id|all
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|dev_mc_add
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+comma
+r_void
+op_star
+id|addr
+comma
+r_int
+id|alen
+comma
+r_int
+id|newonly
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|dev_mc_discard
 c_func
 (paren
 r_struct

@@ -1007,7 +1007,7 @@ c_cond
 (paren
 id|sb-&gt;s_flags
 op_amp
-id|MS_SYNC
+id|MS_SYNCHRONOUS
 )paren
 (brace
 id|ll_rw_block
@@ -1657,7 +1657,7 @@ c_cond
 (paren
 id|sb-&gt;s_flags
 op_amp
-id|MS_SYNC
+id|MS_SYNCHRONOUS
 )paren
 (brace
 id|ll_rw_block
@@ -1959,7 +1959,7 @@ id|EXT2_SYNC_FL
 )paren
 id|inode-&gt;i_flags
 op_or_assign
-id|MS_SYNC
+id|MS_SYNCHRONOUS
 suffix:semicolon
 id|insert_inode_hash
 c_func

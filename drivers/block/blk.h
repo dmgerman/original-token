@@ -223,7 +223,7 @@ mdefine_line|#define DEVICE_NAME &quot;scsitape&quot;
 DECL|macro|DEVICE_INTR
 mdefine_line|#define DEVICE_INTR do_st  
 DECL|macro|DEVICE_NR
-mdefine_line|#define DEVICE_NR(device) (MINOR(device))
+mdefine_line|#define DEVICE_NR(device) (MINOR(device) &amp; 0x7f)
 DECL|macro|DEVICE_ON
 mdefine_line|#define DEVICE_ON(device)
 DECL|macro|DEVICE_OFF

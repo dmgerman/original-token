@@ -13,8 +13,9 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_IPX
 macro_line|#include &quot;ipx.h&quot;
 macro_line|#endif
+macro_line|#include &quot;igmp.h&quot;
 DECL|macro|SOCK_ARRAY_SIZE
-mdefine_line|#define SOCK_ARRAY_SIZE&t;64
+mdefine_line|#define SOCK_ARRAY_SIZE&t;256&t;&t;/* Think big (also on some systems a byte is faster */
 multiline_comment|/*&n; * This structure really needs to be cleaned up.&n; * Most of it is for TCP, and not used by any of&n; * the other protocols.&n; */
 DECL|struct|sock
 r_struct
@@ -497,6 +498,33 @@ r_struct
 id|tcphdr
 id|dummy_th
 suffix:semicolon
+macro_line|#ifdef CONFIG_IP_MULTICAST  
+DECL|member|ip_mc_ttl
+r_int
+id|ip_mc_ttl
+suffix:semicolon
+multiline_comment|/* Multicasting TTL */
+DECL|member|ip_mc_loop
+r_int
+id|ip_mc_loop
+suffix:semicolon
+multiline_comment|/* Loopback (not implemented yet) */
+DECL|member|ip_mc_name
+r_char
+id|ip_mc_name
+(braket
+id|MAX_ADDR_LEN
+)braket
+suffix:semicolon
+multiline_comment|/* Multicast device name */
+DECL|member|ip_mc_list
+r_struct
+id|ip_mc_socklist
+op_star
+id|ip_mc_list
+suffix:semicolon
+multiline_comment|/* Group array */
+macro_line|#endif  
 multiline_comment|/* This part is used for the timeout functions (timer.c). */
 DECL|member|timeout
 r_int
@@ -1285,13 +1313,48 @@ r_int
 )paren
 suffix:semicolon
 r_extern
-r_void
-id|print_sk
+r_struct
+id|sock
+op_star
+id|get_sock_mcast
 c_func
 (paren
 r_struct
 id|sock
 op_star
+comma
+r_int
+r_int
+comma
+r_int
+r_int
+comma
+r_int
+r_int
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_struct
+id|sock
+op_star
+id|get_sock_raw
+c_func
+(paren
+r_struct
+id|sock
+op_star
+comma
+r_int
+r_int
+comma
+r_int
+r_int
+comma
+r_int
+r_int
 )paren
 suffix:semicolon
 r_extern

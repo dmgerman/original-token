@@ -2968,7 +2968,7 @@ id|EXT2_SYNC_FL
 )paren
 id|inode-&gt;i_flags
 op_or_assign
-id|MS_SYNC
+id|MS_SYNCHRONOUS
 suffix:semicolon
 r_if
 c_cond

@@ -3004,7 +3004,8 @@ suffix:semicolon
 )brace
 multiline_comment|/* &n; *&t;This routine builds a generic TCP header. &n; */
 DECL|function|tcp_build_header
-r_static
+r_extern
+id|__inline
 r_int
 id|tcp_build_header
 c_func
@@ -10461,6 +10462,27 @@ id|jiffies
 )paren
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|sk-&gt;send_head-&gt;when
+op_plus
+id|sk-&gt;rto
+OL
+id|jiffies
+)paren
+(brace
+id|tcp_retransmit
+c_func
+(paren
+id|sk
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
 id|ip_do_retransmit
 c_func
 (paren
@@ -10479,6 +10501,7 @@ comma
 id|sk-&gt;rto
 )paren
 suffix:semicolon
+)brace
 )brace
 r_return
 l_int|1
@@ -11395,7 +11418,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* We missed a packet.  Send an ack to try to resync things. */
 id|tcp_send_ack
 c_func
 (paren
@@ -11896,9 +11918,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|sk-&gt;ack_backlog
-op_increment
-suffix:semicolon
+multiline_comment|/*&t;sk-&gt;ack_backlog++;     tcp_data has already dealt with ACK&squot;s */
 r_return
 l_int|0
 suffix:semicolon
@@ -13183,10 +13203,6 @@ id|skb-&gt;len
 op_assign
 id|len
 suffix:semicolon
-id|skb-&gt;sk
-op_assign
-id|sk
-suffix:semicolon
 id|skb-&gt;acked
 op_assign
 l_int|0
@@ -13283,10 +13299,6 @@ op_ge
 id|sk-&gt;rcvbuf
 )paren
 (brace
-id|skb-&gt;sk
-op_assign
-l_int|NULL
-suffix:semicolon
 id|kfree_skb
 c_func
 (paren
@@ -13305,6 +13317,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+id|skb-&gt;sk
+op_assign
+id|sk
+suffix:semicolon
 id|sk-&gt;rmem_alloc
 op_add_assign
 id|skb-&gt;mem_len
@@ -13788,6 +13804,15 @@ c_cond
 id|th-&gt;rst
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|sk-&gt;state
+op_ne
+id|TCP_TIME_WAIT
+)paren
+multiline_comment|/* RFC 1337 recommendation re RST in time wait */
+(brace
 id|tcp_statistics.TcpEstabResets
 op_increment
 suffix:semicolon
@@ -13813,7 +13838,6 @@ op_assign
 id|EPIPE
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t;&t;&t; * A reset with a fin just means that&n;&t;&t;&t;&t; * the data was not all read.&n;&t;&t;&t;&t; */
 id|tcp_set_state
 c_func
 (paren
@@ -13841,6 +13865,7 @@ c_func
 id|sk
 )paren
 suffix:semicolon
+)brace
 )brace
 id|kfree_skb
 c_func

@@ -575,6 +575,8 @@ multiline_comment|/* New-style flags. */
 id|dev-&gt;flags
 op_assign
 id|IFF_BROADCAST
+op_or
+id|IFF_MULTICAST
 suffix:semicolon
 id|dev-&gt;family
 op_assign

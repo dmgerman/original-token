@@ -1812,7 +1812,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * The per process internal structure for managing segments is&n; * `struct vm_area_struct&squot;.&n; * A shmat will add to and shmdt will remove from the list.&n; * shmd-&gt;vm_task&t;the attacher&n; * shmd-&gt;vm_start&t;virt addr of attach, multiple of SHMLBA&n; * shmd-&gt;vm_end&t;&t;multiple of SHMLBA&n; * shmd-&gt;vm_next&t;next attach for task&n; * shmd-&gt;vm_share&t;next attach for segment&n; * shmd-&gt;vm_offset&t;offset into segment&n; * shmd-&gt;vm_pte&t;&t;signature for this attach&n; */
+multiline_comment|/*&n; * The per process internal structure for managing segments is&n; * `struct vm_area_struct&squot;.&n; * A shmat will add to and shmdt will remove from the list.&n; * shmd-&gt;vm_task&t;the attacher&n; * shmd-&gt;vm_start&t;virt addr of attach, multiple of SHMLBA&n; * shmd-&gt;vm_end&t;&t;multiple of SHMLBA&n; * shmd-&gt;vm_next&t;next attach for task&n; * shmd-&gt;vm_next_share&t;next attach for segment&n; * shmd-&gt;vm_offset&t;offset into segment&n; * shmd-&gt;vm_pte&t;&t;signature for this attach&n; */
 DECL|variable|shm_vm_ops
 r_static
 r_struct
@@ -1828,16 +1828,22 @@ comma
 multiline_comment|/* close */
 l_int|NULL
 comma
+multiline_comment|/* unmap */
+l_int|NULL
+comma
+multiline_comment|/* protect */
+l_int|NULL
+comma
+multiline_comment|/* sync */
+l_int|NULL
+comma
+multiline_comment|/* advise */
+l_int|NULL
+comma
 multiline_comment|/* nopage (done with swapin) */
 l_int|NULL
 comma
 multiline_comment|/* wppage */
-l_int|NULL
-comma
-multiline_comment|/* share */
-l_int|NULL
-comma
-multiline_comment|/* unmap */
 l_int|NULL
 comma
 multiline_comment|/* swapout (hardcoded right now) */
@@ -2232,7 +2238,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Fix shmaddr, allocate descriptor, map shm, add attach descriptor to lists.&n; * raddr is needed to return addresses above 2Gig.&n; */
+multiline_comment|/*&n; * Fix shmaddr, allocate descriptor, map shm, add attach descriptor to lists.&n; */
 DECL|function|sys_shmat
 r_int
 id|sys_shmat
@@ -2285,36 +2291,6 @@ multiline_comment|/* printk(&quot;shmat() -&gt; EINVAL because shmid = %d &lt; 0
 r_return
 op_minus
 id|EINVAL
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|raddr
-)paren
-(brace
-id|err
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-id|raddr
-comma
-r_sizeof
-(paren
-id|ulong
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|err
-)paren
-r_return
-id|err
 suffix:semicolon
 )brace
 id|shp
@@ -2689,7 +2665,7 @@ op_or
 id|VM_WRITE
 )paren
 suffix:semicolon
-id|shmd-&gt;vm_share
+id|shmd-&gt;vm_next_share
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -2755,7 +2731,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
-id|shmd-&gt;vm_share
+id|shmd-&gt;vm_next_share
 op_assign
 id|shp-&gt;attaches
 suffix:semicolon
@@ -2771,21 +2747,10 @@ id|shp-&gt;shm_atime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
+op_star
 id|raddr
-)paren
-r_return
+op_assign
 id|addr
-suffix:semicolon
-id|put_fs_long
-(paren
-id|addr
-comma
-id|raddr
-)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -2848,7 +2813,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|shmd-&gt;vm_share
+id|shmd-&gt;vm_next_share
 op_assign
 id|shp-&gt;attaches
 suffix:semicolon
@@ -2940,7 +2905,7 @@ op_star
 id|shmdp
 )paren
 op_member_access_from_pointer
-id|vm_share
+id|vm_next_share
 )paren
 r_if
 c_cond
@@ -2954,7 +2919,7 @@ id|shmd
 op_star
 id|shmdp
 op_assign
-id|shmd-&gt;vm_share
+id|shmd-&gt;vm_next_share
 suffix:semicolon
 r_goto
 id|found
@@ -3650,7 +3615,7 @@ id|shmd
 suffix:semicolon
 id|shmd
 op_assign
-id|shmd-&gt;vm_share
+id|shmd-&gt;vm_next_share
 )paren
 (brace
 r_int

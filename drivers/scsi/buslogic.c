@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *&t;buslogic.c&t;(C) 1993, 1994 David B. Gentzel&n; *&t;Low-level scsi driver for BusLogic adapters&n; *&t;by David B. Gentzel, Whitfield Software Services, Carnegie, PA&n; *&t;    (gentzel@nova.enet.dec.com)&n; *&t;Thanks to BusLogic for providing the necessary documentation&n; *&n; *&t;The original version of this driver was derived from aha1542.[ch] which&n; *&t;is Copyright (C) 1992 Tommy Thorn.  Much has been reworked, but most of&n; *&t;basic structure and substantial chunks of code still remain.&n; *&n; *&t;Thanks to the following individuals who have made contributions (of&n; *&t;(code, information, support, or testing) to this driver:&n; *&t;&t;Eric Youngdale&t;&t;Leonard Zubkoff&n; *&t;&t;Tomas Hurka&t;&t;Andrew Walker&n; */
-multiline_comment|/*&n; * TODO:&n; *&t;1. Clean up error handling &amp; reporting.&n; *&t;2. Find out why scatter/gather is limited to 16 requests per command.&n; *&t;3. Test/improve/fix abort &amp; reset functions.&n; *&t;4. Look at command linking.&n; *&t;5. Allow multiple boards to share an IRQ if the bus allows (EISA, MCA,&n; *&t;   and PCI).&n; *&t;6. Avoid using the 445S workaround for board revs &gt;= D.&n; *&t;7. Get cmd_per_lun put in the Scsi_Host structure.&n; */
+multiline_comment|/*&n; * TODO:&n; *&t;1. Clean up error handling &amp; reporting.&n; *&t;2. Find out why scatter/gather is limited to 16 requests per command.&n; *&t;3. Test/improve/fix abort &amp; reset functions.&n; *&t;4. Look at command linking.&n; *&t;5. Allow multiple boards to share an IRQ if the bus allows (EISA, MCA,&n; *&t;   and PCI).&n; *&t;6. Avoid using the 445S workaround for board revs &gt;= D.&n; */
 multiline_comment|/*&n; * NOTES:&n; *    BusLogic (formerly BusTek) manufactures an extensive family of&n; *    intelligent, high performance SCSI-2 host adapters.  They all support&n; *    command queueing and scatter/gather I/O.  Most importantly, they all&n; *    support identical programming interfaces, so a single driver can be used&n; *    for all boards.&n; *&n; *    Actually, they all support TWO identical programming interfaces!  They&n; *    have an Adaptec 154x compatible interface (complete with 24 bit&n; *    addresses) as well as a &quot;native&quot; 32 bit interface.  As such, the Linux&n; *    aha1542 driver can be used to drive them, but with less than optimal&n; *    performance (at least for the EISA, VESA, and MCA boards).&n; *&n; *    Here is the scoop on the various models:&n; *&t;BT-542B - ISA first-party DMA with floppy support.&n; *&t;BT-545S - 542B + FAST SCSI and active termination.&n; *&t;BT-545D - 545S + differential termination.&n; *&t;BT-640A - MCA bus-master with floppy support.&n; *&t;BT-646S - 640A + FAST SCSI and active termination.&n; *&t;BT-646D - 646S + differential termination.&n; *&t;BT-742A - EISA bus-master with floppy support.&n; *&t;BT-747S - 742A + FAST SCSI, active termination, and 2.88M floppy.&n; *&t;BT-747D - 747S + differential termination.&n; *&t;BT-757S - 747S + WIDE SCSI.&n; *&t;BT-757D - 747D + WIDE SCSI.&n; *&t;BT-445S - VESA bus-master FAST SCSI with active termination and floppy&n; *&t;&t;  support.&n; *&t;BT-445C - 445S + enhanced BIOS &amp; firmware options.&n; *&t;BT-946C - PCI bus-master FAST SCSI. (??? Nothing else known.)&n; *&n; *    ??? I believe other boards besides the 445 now have a &quot;C&quot; model, but I&n; *    have no facts on them.&n; *&n; *    This driver SHOULD support all of these boards.  It has only been tested&n; *    with a 747S and 445S.&n; *&n; *    Should you require further information on any of these boards, BusLogic&n; *    can be reached at (408)492-9090.  Their BBS # is (408)492-1984 (maybe BBS&n; *    stands for &quot;Big Brother System&quot;?).&n; *&n; *    Places flagged with a triple question-mark are things which are either&n; *    unfinished, questionable, or wrong.&n; */
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -43,8 +43,8 @@ mdefine_line|#define BUSLOGIC_MAX_SG (BUSLOGIC_SG_MALLOC / sizeof (struct chain)
 multiline_comment|/* ??? Arbitrary.  If we can dynamically allocate the mailbox arrays, I may&n;   bump up this number. */
 DECL|macro|BUSLOGIC_MAILBOXES
 mdefine_line|#define BUSLOGIC_MAILBOXES 16
-DECL|macro|BUSLOGIC_NONISA_CMDLUN
-mdefine_line|#define BUSLOGIC_NONISA_CMDLUN 4&t;/* ??? Arbitrary (&gt; 1) */
+DECL|macro|BUSLOGIC_CMDLUN
+mdefine_line|#define BUSLOGIC_CMDLUN 4&t;&t;/* ??? Arbitrary */
 multiline_comment|/* BusLogic boards can be configured for quite a number of port addresses (six&n;   to be exact), but I generally do not want the driver poking around at&n;   random.  We allow two port addresses - this allows people to use a BusLogic&n;   with a MIDI card, which frequently also uses 0x330. */
 DECL|variable|bases
 r_static
@@ -969,6 +969,7 @@ op_or
 id|scsierr
 suffix:semicolon
 )brace
+multiline_comment|/* ??? this should really be &quot;const struct Scsi_Host *&quot; */
 DECL|function|buslogic_info
 r_const
 r_char
@@ -976,11 +977,14 @@ op_star
 id|buslogic_info
 c_func
 (paren
-r_void
+r_struct
+id|Scsi_Host
+op_star
+id|shpnt
 )paren
 (brace
 r_return
-l_string|&quot;BusLogic SCSI driver version &quot;
+l_string|&quot;BusLogic SCSI driver &quot;
 id|BUSLOGIC_VERSION
 suffix:semicolon
 )brace
@@ -2068,14 +2072,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-(paren
-id|COMMAND_SIZE
-c_func
-(paren
-op_star
-id|cmd
-)paren
-)paren
+id|scpnt-&gt;cmd_len
 suffix:semicolon
 id|i
 op_increment
@@ -2335,12 +2332,7 @@ id|mbo
 dot
 id|cdblen
 op_assign
-id|COMMAND_SIZE
-c_func
-(paren
-op_star
-id|cmd
-)paren
+id|scpnt-&gt;cmd_len
 suffix:semicolon
 multiline_comment|/* SCSI Command Descriptor&n;&t;&t;&t;&t;&t;&t;   Block Length */
 id|direction
@@ -5019,16 +5011,16 @@ macro_line|#endif
 )brace
 macro_line|#endif
 multiline_comment|/* Have to keep cmd_per_lun at 1 for ISA machines otherwise lots&n;&t;       of memory gets sucked up for bounce buffers.  */
-multiline_comment|/* ??? Unfortunately, cmd_per_lun is only in the&n;&t;       Scsi_Host_Template structure, not the Scsi_Host structure.&n;&t;       Therefore, this could cause high memory consumption if a system&n;&t;       has multiple BusLogic adapters which are a mix of ISA and&n;&t;       non-ISA. */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|shpnt-&gt;unchecked_isa_dma
-)paren
-id|shpnt-&gt;hostt-&gt;cmd_per_lun
+id|shpnt-&gt;cmd_per_lun
 op_assign
-id|BUSLOGIC_NONISA_CMDLUN
+(paren
+id|shpnt-&gt;unchecked_isa_dma
+ques
+c_cond
+l_int|1
+suffix:colon
+id|BUSLOGIC_CMDLUN
+)paren
 suffix:semicolon
 id|shpnt-&gt;sg_tablesize
 op_assign

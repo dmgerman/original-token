@@ -197,5 +197,9 @@ DECL|macro|SEAGATE
 mdefine_line|#define SEAGATE 1&t;/* these determine the type of the controller */
 DECL|macro|FD
 mdefine_line|#define FD&t;2
+DECL|macro|ST0X_ID_STR
+mdefine_line|#define ST0X_ID_STR&t;&quot;Seagate ST-01/ST-02&quot;
+DECL|macro|FD_ID_STR
+mdefine_line|#define FD_ID_STR&t;&quot;TMC-8XX/TMC-950&quot;
 macro_line|#endif
 eof

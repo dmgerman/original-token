@@ -11,6 +11,10 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &quot;../../tools/version.h&quot;
+macro_line|#endif
 macro_line|#ifdef LEAK_CHECK
 DECL|variable|check_malloc
 r_static
@@ -66,6 +70,10 @@ c_func
 id|sb
 )paren
 suffix:semicolon
+macro_line|#ifdef MODULE
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+macro_line|#endif
 r_return
 suffix:semicolon
 )brace
@@ -1467,6 +1475,10 @@ id|s-&gt;s_dev
 )paren
 )paren
 (brace
+macro_line|#ifdef MODULE
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+macro_line|#endif
 r_return
 id|s
 suffix:semicolon
@@ -3344,5 +3356,80 @@ id|bh
 suffix:semicolon
 )brace
 )def_block
+macro_line|#endif
+macro_line|#ifdef MODULE
+DECL|variable|kernel_version
+r_char
+id|kernel_version
+(braket
+)braket
+op_assign
+id|UTS_RELEASE
+suffix:semicolon
+DECL|variable|iso9660_fs_type
+r_static
+r_struct
+id|file_system_type
+id|iso9660_fs_type
+op_assign
+(brace
+id|isofs_read_super
+comma
+l_string|&quot;iso9660&quot;
+comma
+l_int|1
+comma
+l_int|NULL
+)brace
+suffix:semicolon
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+id|register_filesystem
+c_func
+(paren
+op_amp
+id|iso9660_fs_type
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|MOD_IN_USE
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;ne: device busy, remove delayed&bslash;n&quot;
+)paren
+suffix:semicolon
+r_else
+(brace
+id|unregister_filesystem
+c_func
+(paren
+op_amp
+id|iso9660_fs_type
+)paren
+suffix:semicolon
+)brace
+)brace
 macro_line|#endif
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * &t;NET3&t;Protocol independent device support routines.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Derived from the non IP parts of dev.c 1.0.19&n; * &t;&t;Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;Additional Authors:&n; *&t;&t;Florian la Roche &lt;rzsfl@rz.uni-sb.de&gt;&n; *&t;&t;Alan Cox &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;David Hinds &lt;dhinds@allegro.stanford.edu&gt;&n; *&n; *&t;Changes:&n; *&t;&t;Alan Cox&t;:&t;device private ioctl copies fields back.&n; *&t;&t;Alan Cox&t;:&t;Transmit queue code does relevant stunts to&n; *&t;&t;&t;&t;&t;keep the queue safe.&n; *&t;&t;Alan Cox&t;:&t;Fixed double lock.&n; *&t;&t;Alan Cox&t;:&t;Fixed promisc NULL pointer trap&n; *&n; *&t;Cleaned up and recommented by Alan Cox 2nd April 1994. I hope to have&n; *&t;the rest as well commented in the end.&n; */
+multiline_comment|/*&n; * &t;NET3&t;Protocol independent device support routines.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Derived from the non IP parts of dev.c 1.0.19&n; * &t;&t;Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;Additional Authors:&n; *&t;&t;Florian la Roche &lt;rzsfl@rz.uni-sb.de&gt;&n; *&t;&t;Alan Cox &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;David Hinds &lt;dhinds@allegro.stanford.edu&gt;&n; *&n; *&t;Changes:&n; *&t;&t;Alan Cox&t;:&t;device private ioctl copies fields back.&n; *&t;&t;Alan Cox&t;:&t;Transmit queue code does relevant stunts to&n; *&t;&t;&t;&t;&t;keep the queue safe.&n; *&t;&t;Alan Cox&t;:&t;Fixed double lock.&n; *&t;&t;Alan Cox&t;:&t;Fixed promisc NULL pointer trap&n; *&t;&t;????????&t;:&t;Support the full private ioctl range&n; *&t;&t;Alan Cox&t;:&t;Moved ioctl permission check into drivers&n; *&t;&t;Tim Kordas&t;:&t;SIOCADDMULTI/SIOCDELMULTI&n; *&n; *&t;Cleaned up and recommented by Alan Cox 2nd April 1994. I hope to have&n; *&t;the rest as well commented in the end.&n; */
 multiline_comment|/*&n; *&t;A lot of these includes will be going walkies very soon &n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -490,6 +490,13 @@ op_or
 id|IFF_RUNNING
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Initialise multicasting status &n;&t; */
+id|dev_mc_upload
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 r_return
 id|ret
 suffix:semicolon
@@ -561,6 +568,13 @@ id|dev
 )paren
 suffix:semicolon
 macro_line|#endif&t;
+multiline_comment|/*&n;&t;&t; *&t;Flush the multicast chain&n;&t;&t; */
+id|dev_mc_discard
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t;&t; *&t;Blank the IP addresses&n;&t;&t; */
 id|dev-&gt;pa_addr
 op_assign
@@ -757,12 +771,14 @@ id|flags
 )paren
 suffix:semicolon
 macro_line|#endif&t;&t;
+macro_line|#ifdef CONFIG_SKB_CHECK 
 id|IS_SKB
 c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
+macro_line|#endif    
 id|skb-&gt;dev
 op_assign
 id|dev
@@ -1157,12 +1173,14 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;Add it to the &quot;backlog&quot; queue. &n;&t; */
+macro_line|#ifdef CONFIG_SKB_CHECK
 id|IS_SKB
 c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
+macro_line|#endif&t;
 id|skb_queue_tail
 c_func
 (paren
@@ -2790,6 +2808,8 @@ op_or
 id|IFF_SLAVE
 op_or
 id|IFF_MASTER
+op_or
+id|IFF_MULTICAST
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_SLAVE_BALANCING&t;&t;&t;&t;
@@ -2816,7 +2836,15 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
-macro_line|#endif&t;&t;&t;&t;
+macro_line|#endif
+multiline_comment|/*&n;&t;&t;&t;&t; *&t;Load in the correct multicast list now the flags have changed.&n;&t;&t;&t;&t; */
+id|dev_mc_upload
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -2891,6 +2919,7 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif&t;&t;&t;  &t;&t;
 multiline_comment|/*&n;&t;&t;&t;  &t; *&t;Have we downed the interface&n;&t;&t;&t;  &t; */
 r_if
 c_cond
@@ -3870,6 +3899,94 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif&t;&t;&t;
+r_case
+id|SIOCADDMULTI
+suffix:colon
+r_if
+c_cond
+(paren
+id|dev-&gt;set_multicast_list
+op_eq
+l_int|NULL
+)paren
+(brace
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|ifr.ifr_hwaddr.sa_family
+op_ne
+id|AF_UNSPEC
+)paren
+(brace
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+id|dev_mc_add
+c_func
+(paren
+id|dev
+comma
+id|ifr.ifr_hwaddr.sa_data
+comma
+id|dev-&gt;addr_len
+comma
+l_int|1
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+r_case
+id|SIOCDELMULTI
+suffix:colon
+r_if
+c_cond
+(paren
+id|dev-&gt;set_multicast_list
+op_eq
+l_int|NULL
+)paren
+(brace
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|ifr.ifr_hwaddr.sa_family
+op_ne
+id|AF_UNSPEC
+)paren
+(brace
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+id|dev_mc_delete
+c_func
+(paren
+id|dev
+comma
+id|ifr.ifr_hwaddr.sa_data
+comma
+id|dev-&gt;addr_len
+comma
+l_int|1
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
 multiline_comment|/*&n;&t;&t; *&t;Unknown or private ioctl&n;&t;&t; */
 r_default
 suffix:colon
@@ -4125,19 +4242,6 @@ l_int|15
 )paren
 )paren
 (brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|suser
-c_func
-(paren
-)paren
-)paren
-r_return
-op_minus
-id|EPERM
-suffix:semicolon
 r_return
 id|dev_ifsioc
 c_func

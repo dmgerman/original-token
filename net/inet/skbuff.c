@@ -498,6 +498,7 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
+macro_line|#ifdef CONFIG_SKB_CHECK
 DECL|function|skb_queue_head_init
 r_void
 id|skb_queue_head_init
@@ -527,12 +528,10 @@ op_star
 )paren
 id|list
 suffix:semicolon
-macro_line|#if CONFIG_SKB_CHECK
 id|list-&gt;magic_debug_cookie
 op_assign
 id|SK_HEAD_SKB
 suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/*&n; *&t;Insert an sk_buff at the start of a list.&n; */
 DECL|function|skb_queue_head
@@ -578,7 +577,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#if CONFIG_SKB_CHECK
 id|IS_SKB
 c_func
 (paren
@@ -604,7 +602,6 @@ c_func
 l_string|&quot;Suspicious queue head: sk_buff on list!&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 id|newsk-&gt;next
 op_assign
 id|list-&gt;next
@@ -672,7 +669,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#if CONFIG_SKB_CHECK
 r_if
 c_cond
 (paren
@@ -698,7 +694,6 @@ c_func
 id|list
 )paren
 suffix:semicolon
-macro_line|#endif
 id|newsk-&gt;next
 op_assign
 id|list
@@ -848,7 +843,6 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-macro_line|#if CONFIG_SKB_CHECK
 id|IS_SKB
 c_func
 (paren
@@ -893,7 +887,6 @@ l_string|&quot;inserted item is already on a list.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 id|save_flags
 c_func
 (paren
@@ -949,7 +942,6 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-macro_line|#if CONFIG_SKB_CHECK
 id|IS_SKB
 c_func
 (paren
@@ -994,7 +986,6 @@ l_string|&quot;append item is already on a list.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 id|save_flags
 c_func
 (paren
@@ -1103,6 +1094,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*&n; *&t;Free an sk_buff. This still knows about things it should&n; *&t;not need to like protocols and sockets.&n; */
 DECL|function|kfree_skb
 r_void
@@ -1141,12 +1133,14 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_SKB_CHECK
 id|IS_SKB
 c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1571,6 +1565,7 @@ id|flags
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_SKB_CHECK
 id|IS_SKB
 c_func
 (paren
@@ -1654,6 +1649,44 @@ c_func
 l_string|&quot;kfree_skbmem: bad magic cookie&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#else
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|kfree_s
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
+id|skb
+comma
+id|size
+)paren
+suffix:semicolon
+id|net_skbcount
+op_decrement
+suffix:semicolon
+id|net_memory
+op_sub_assign
+id|size
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/*&n; *&t;Duplicate an sk_buff. The new one is not owned by a socket or locked&n; *&t;and will be freed on deletion.&n; */
 DECL|function|skb_clone

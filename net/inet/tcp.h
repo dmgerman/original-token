@@ -12,7 +12,7 @@ mdefine_line|#define MAX_ACK_SIZE&t;40 + MAX_HEADER
 DECL|macro|MAX_RESET_SIZE
 mdefine_line|#define MAX_RESET_SIZE&t;40 + MAX_HEADER
 DECL|macro|MAX_WINDOW
-mdefine_line|#define MAX_WINDOW&t;8192
+mdefine_line|#define MAX_WINDOW&t;16384
 DECL|macro|MIN_WINDOW
 mdefine_line|#define MIN_WINDOW&t;2048
 DECL|macro|MAX_ACK_BACKLOG
@@ -59,8 +59,8 @@ DECL|macro|TCPOPT_MSS
 mdefine_line|#define TCPOPT_MSS&t;&t;2
 multiline_comment|/*&n; * The next routines deal with comparing 32 bit unsigned ints&n; * and worry about wraparound (automatic with unsigned arithmetic).&n; */
 DECL|function|before
-r_static
-r_inline
+r_extern
+id|__inline
 r_int
 id|before
 c_func
@@ -88,8 +88,8 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|after
-r_static
-r_inline
+r_extern
+id|__inline
 r_int
 id|after
 c_func
@@ -118,8 +118,8 @@ suffix:semicolon
 )brace
 multiline_comment|/* is s2&lt;=s1&lt;=s3 ? */
 DECL|function|between
-r_static
-r_inline
+r_extern
+id|__inline
 r_int
 id|between
 c_func
@@ -162,8 +162,8 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * List all states of a TCP socket that can be viewed as a &quot;connected&quot;&n; * state.  This now includes TCP_SYN_RECV, although I am not yet fully&n; * convinced that this is the solution for the &squot;getpeername(2)&squot;&n; * problem. Thanks to Stephen A. Wood &lt;saw@cebaf.gov&gt;  -FvK&n; */
-r_static
-r_inline
+r_extern
+id|__inline
 r_const
 r_int
 DECL|function|tcp_connected

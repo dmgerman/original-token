@@ -376,6 +376,14 @@ l_string|&quot;4.3d&quot;
 )brace
 comma
 (brace
+l_string|&quot;SONY&quot;
+comma
+l_string|&quot;CD-ROM CDU-55S&quot;
+comma
+l_string|&quot;1.0i&quot;
+)brace
+comma
+(brace
 l_string|&quot;TANDBERG&quot;
 comma
 l_string|&quot;TDC 3600&quot;
@@ -3486,7 +3494,6 @@ id|block-&gt;block
 (brace
 id|block-&gt;host_busy
 op_or_assign
-op_complement
 id|SCSI_HOST_BLOCK
 suffix:semicolon
 )brace
@@ -6741,7 +6748,7 @@ l_int|0
 suffix:semicolon
 id|j
 OL
-id|SDpnt-&gt;host-&gt;hostt-&gt;cmd_per_lun
+id|SDpnt-&gt;host-&gt;cmd_per_lun
 suffix:semicolon
 id|j
 op_increment
@@ -6899,7 +6906,7 @@ op_rshift
 l_int|9
 )paren
 op_star
-id|host-&gt;hostt-&gt;cmd_per_lun
+id|host-&gt;cmd_per_lun
 suffix:semicolon
 )brace
 r_if
@@ -6928,7 +6935,7 @@ l_int|9
 op_star
 id|host-&gt;sg_tablesize
 op_star
-id|host-&gt;hostt-&gt;cmd_per_lun
+id|host-&gt;cmd_per_lun
 suffix:semicolon
 id|need_isa_buffer
 op_increment

@@ -43,7 +43,7 @@ r_void
 (brace
 r_return
 op_minus
-id|EINVAL
+id|ENOSYS
 suffix:semicolon
 )brace
 DECL|function|sys_idle

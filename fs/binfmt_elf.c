@@ -301,10 +301,6 @@ id|VM_GROWSDOWN
 suffix:semicolon
 macro_line|#  endif
 macro_line|#endif
-id|mpnt-&gt;vm_share
-op_assign
-l_int|NULL
-suffix:semicolon
 id|mpnt-&gt;vm_inode
 op_assign
 l_int|NULL

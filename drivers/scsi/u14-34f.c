@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *      u14-34f.c - Low-level SCSI driver for UltraStor 14F/34F&n; *&n; *      14 Nov 1994 rev. 1.10 for linux 1.1.63&n; *&n; *      28 Oct 1994 rev. 1.09 for linux 1.1.58  Final BETA release.&n; *      16 Jul 1994 rev. 1.00 for linux 1.1.29  Initial ALPHA release.&n; *&n; *          This driver is a total replacement of the original UltraStor &n; *          scsi driver, but it supports ONLY the 14F and 34F boards.&n; *          It can be configured in the same kernel in which the original&n; *          ultrastor driver is configured to allow the original U24F&n; *          support.&n; * &n; *          Multiple U14F and/or U34F host adapters are supported.&n; *&n; *      Released by Dario Ballabio (Dario_Ballabio@milano.europe.dg.com)&n; *&n; *      WARNING: if your 14F board has old firmware revision (see below)&n; *               keep the following statement, otherwise comment it.&n; */
+multiline_comment|/*&n; *      u14-34f.c - Low-level SCSI driver for UltraStor 14F/34F&n; *&n; *      30 Nov 1994 rev. 1.09 for linux 1.1.68&n; *          Redo i/o on target status CONDITION_GOOD for TYPE_DISK only.&n; *          Added optional support for using a single board at a time.&n; *&n; *      14 Nov 1994 rev. 1.10 for linux 1.1.63&n; *&n; *      28 Oct 1994 rev. 1.09 for linux 1.1.58  Final BETA release.&n; *      16 Jul 1994 rev. 1.00 for linux 1.1.29  Initial ALPHA release.&n; *&n; *          This driver is a total replacement of the original UltraStor &n; *          scsi driver, but it supports ONLY the 14F and 34F boards.&n; *          It can be configured in the same kernel in which the original&n; *          ultrastor driver is configured to allow the original U24F&n; *          support.&n; * &n; *          Multiple U14F and/or U34F host adapters are supported.&n; *&n; *      Released by Dario Ballabio (Dario_Ballabio@milano.europe.dg.com)&n; *&n; *      WARNING: if your 14F board has old firmware revision (see below)&n; *               keep the following statement, otherwise comment it.&n; */
 macro_line|#if 0
 mdefine_line|#define HAVE_OLD_U14F_FIRMWARE
 macro_line|#endif
@@ -71,6 +71,8 @@ DECL|macro|NO_DEBUG_INTERRUPT
 mdefine_line|#define NO_DEBUG_INTERRUPT
 DECL|macro|NO_DEBUG_STATISTICS
 mdefine_line|#define NO_DEBUG_STATISTICS
+DECL|macro|SINGLE_HOST_OPERATIONS
+mdefine_line|#define SINGLE_HOST_OPERATIONS
 DECL|macro|MAX_TARGET
 mdefine_line|#define MAX_TARGET 8
 DECL|macro|MAX_IRQ
@@ -1033,7 +1035,7 @@ id|sh
 id|j
 )braket
 op_member_access_from_pointer
-id|hostt-&gt;cmd_per_lun
+id|cmd_per_lun
 op_assign
 id|MAX_CMD_PER_LUN
 suffix:semicolon
@@ -1440,7 +1442,7 @@ id|sh
 id|j
 )braket
 op_member_access_from_pointer
-id|hostt-&gt;cmd_per_lun
+id|cmd_per_lun
 comma
 id|sh
 (braket
@@ -1599,6 +1601,64 @@ id|port_base
 op_increment
 suffix:semicolon
 )brace
+macro_line|#if defined (SINGLE_HOST_OPERATIONS)
+multiline_comment|/* Create a circular linked list among the detected boards. */
+r_if
+c_cond
+(paren
+id|j
+OG
+l_int|1
+)paren
+(brace
+r_for
+c_loop
+(paren
+id|k
+op_assign
+l_int|0
+suffix:semicolon
+id|k
+OL
+(paren
+id|j
+op_minus
+l_int|1
+)paren
+suffix:semicolon
+id|k
+op_increment
+)paren
+id|sh
+(braket
+id|k
+)braket
+op_member_access_from_pointer
+id|block
+op_assign
+id|sh
+(braket
+id|k
+op_plus
+l_int|1
+)braket
+suffix:semicolon
+id|sh
+(braket
+id|j
+op_minus
+l_int|1
+)braket
+op_member_access_from_pointer
+id|block
+op_assign
+id|sh
+(braket
+l_int|0
+)braket
+suffix:semicolon
+)brace
+macro_line|#endif
 id|restore_flags
 c_func
 (paren
@@ -4020,8 +4080,8 @@ op_eq
 id|CONDITION_GOOD
 op_logical_and
 id|SCpnt-&gt;device-&gt;type
-op_ne
-id|TYPE_TAPE
+op_eq
+id|TYPE_DISK
 op_logical_and
 id|HD
 c_func

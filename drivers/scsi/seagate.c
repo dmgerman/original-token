@@ -795,6 +795,19 @@ l_int|7
 suffix:colon
 l_int|6
 suffix:semicolon
+id|tpnt-&gt;name
+op_assign
+(paren
+id|controller_type
+op_eq
+id|SEAGATE
+)paren
+ques
+c_cond
+id|ST0X_ID_STR
+suffix:colon
+id|FD_ID_STR
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -861,7 +874,9 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;ST0x detected. Base address = %x, cr = %x, dr = %x&bslash;n&quot;
+l_string|&quot;%s detected. Base address = %x, cr = %x, dr = %x&bslash;n&quot;
+comma
+id|tpnt-&gt;name
 comma
 id|base_address
 comma
@@ -1001,9 +1016,9 @@ id|SEAGATE
 )paren
 ques
 c_cond
-l_string|&quot;seagate&quot;
+id|ST0X_ID_STR
 suffix:colon
-l_string|&quot;FD TMC-8xx&quot;
+id|FD_ID_STR
 comma
 id|irq
 comma

@@ -22,14 +22,16 @@ mdefine_line|#define&t;IFF_RUNNING&t;0x40&t;&t;/* resources allocated&t;&t;*/
 DECL|macro|IFF_NOARP
 mdefine_line|#define&t;IFF_NOARP&t;0x80&t;&t;/* no ARP protocol&t;&t;*/
 DECL|macro|IFF_PROMISC
-mdefine_line|#define&t;IFF_PROMISC&t;0x100&t;&t;/* recve all packets&t;&t;*/
-multiline_comment|/* These are not yet used: */
+mdefine_line|#define&t;IFF_PROMISC&t;0x100&t;&t;/* receive all packets&t;&t;*/
+multiline_comment|/* Not supported */
 DECL|macro|IFF_ALLMULTI
-mdefine_line|#define&t;IFF_ALLMULTI&t;0x200&t;&t;/* recve all multicast packets&t;*/
+mdefine_line|#define&t;IFF_ALLMULTI&t;0x200&t;&t;/* receive all multicast packets*/
 DECL|macro|IFF_MASTER
 mdefine_line|#define IFF_MASTER&t;0x400&t;&t;/* master of a load balancer &t;*/
 DECL|macro|IFF_SLAVE
 mdefine_line|#define IFF_SLAVE&t;0x800&t;&t;/* slave of a load balancer&t;*/
+DECL|macro|IFF_MULTICAST
+mdefine_line|#define IFF_MULTICAST&t;0x1000&t;&t;/* Supports multicast&t;&t;*/
 multiline_comment|/*&n; * The ifaddr structure contains information about one address&n; * of an interface.  They are maintained by the different address&n; * families, are allocated and attached when an address is set,&n; * and are linked together so all addresses for an interface can&n; * be located.&n; */
 DECL|struct|ifaddr
 r_struct

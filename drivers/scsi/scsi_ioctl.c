@@ -632,6 +632,16 @@ r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
+id|memset
+c_func
+(paren
+id|buf
+comma
+l_int|0
+comma
+id|buf_needed
+)paren
+suffix:semicolon
 )brace
 r_else
 id|buf

@@ -1495,10 +1495,6 @@ c_cond
 id|sector
 )paren
 (brace
-id|sector
-op_sub_assign
-id|CD_BLOCK_OFFSET
-suffix:semicolon
 id|printk
 c_func
 (paren

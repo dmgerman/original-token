@@ -115,17 +115,17 @@ DECL|macro|SEL_EX
 mdefine_line|#define SEL_EX&t;&t;4
 multiline_comment|/*&n; * These are the fs-independent mount-flags: up to 16 flags are supported&n; */
 DECL|macro|MS_RDONLY
-mdefine_line|#define MS_RDONLY    1 /* mount read-only */
+mdefine_line|#define MS_RDONLY&t; 1 /* mount read-only */
 DECL|macro|MS_NOSUID
-mdefine_line|#define MS_NOSUID    2 /* ignore suid and sgid bits */
+mdefine_line|#define MS_NOSUID&t; 2 /* ignore suid and sgid bits */
 DECL|macro|MS_NODEV
-mdefine_line|#define MS_NODEV     4 /* disallow access to device special files */
+mdefine_line|#define MS_NODEV&t; 4 /* disallow access to device special files */
 DECL|macro|MS_NOEXEC
-mdefine_line|#define MS_NOEXEC    8 /* disallow program execution */
-DECL|macro|MS_SYNC
-mdefine_line|#define MS_SYNC     16 /* writes are synced at once */
+mdefine_line|#define MS_NOEXEC&t; 8 /* disallow program execution */
+DECL|macro|MS_SYNCHRONOUS
+mdefine_line|#define MS_SYNCHRONOUS&t;16 /* writes are synced at once */
 DECL|macro|MS_REMOUNT
-mdefine_line|#define&t;MS_REMOUNT  32 /* alter flags of a mounted FS */
+mdefine_line|#define MS_REMOUNT&t;32 /* alter flags of a mounted FS */
 DECL|macro|S_APPEND
 mdefine_line|#define S_APPEND    256 /* append-only file */
 DECL|macro|S_IMMUTABLE
@@ -148,7 +148,7 @@ mdefine_line|#define IS_NODEV(inode) ((inode)-&gt;i_flags &amp; MS_NODEV)
 DECL|macro|IS_NOEXEC
 mdefine_line|#define IS_NOEXEC(inode) ((inode)-&gt;i_flags &amp; MS_NOEXEC)
 DECL|macro|IS_SYNC
-mdefine_line|#define IS_SYNC(inode) ((inode)-&gt;i_flags &amp; MS_SYNC)
+mdefine_line|#define IS_SYNC(inode) ((inode)-&gt;i_flags &amp; MS_SYNCHRONOUS)
 DECL|macro|IS_APPEND
 mdefine_line|#define IS_APPEND(inode) ((inode)-&gt;i_flags &amp; S_APPEND)
 DECL|macro|IS_IMMUTABLE

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *      eata.c - Low-level SCSI driver for EISA EATA SCSI controllers.&n; *&n; *      18 Nov 1994 rev. 1.08 for linux 1.1.64&n; *                  Forces sg_tablesize = 64 and can_queue = 64 if these&n; *                  values are not correctly detected (DPT PM2012).&n; *&n; *      14 Nov 1994 rev. 1.07 for linux 1.1.63  Final BETA release.&n; *      04 Aug 1994 rev. 1.00 for linux 1.1.39  First BETA release.&n; *&n; *&n; *          This driver is based on the CAM (Common Access Method Committee)&n; *          EATA (Enhanced AT Bus Attachment) rev. 2.0A.&n; *&n; *      Released by Dario Ballabio (Dario_Ballabio@milano.europe.dg.com)&n; *&n; */
+multiline_comment|/*&n; *      eata.c - Low-level SCSI driver for EISA EATA SCSI controllers.&n; *&n; *      30 Nov 1994 rev. 1.09 for linux 1.1.68&n; *          Redo i/o on target status CONDITION_GOOD for TYPE_DISK only.&n; *          Added optional support for using a single board at a time.&n; *&n; *      18 Nov 1994 rev. 1.08 for linux 1.1.64&n; *          Forces sg_tablesize = 64 and can_queue = 64 if these&n; *          values are not correctly detected (DPT PM2012).&n; *&n; *      14 Nov 1994 rev. 1.07 for linux 1.1.63  Final BETA release.&n; *      04 Aug 1994 rev. 1.00 for linux 1.1.39  First BETA release.&n; *&n; *&n; *          This driver is based on the CAM (Common Access Method Committee)&n; *          EATA (Enhanced AT Bus Attachment) rev. 2.0A.&n; *&n; *      Released by Dario Ballabio (Dario_Ballabio@milano.europe.dg.com)&n; *&n; */
 multiline_comment|/*&n; *&n; *  This code has been tested with up to 3 Distributed Processing Technology &n; *  PM2122A/9X (DPT SCSI BIOS v002.D1, firmware v05E.0) eisa controllers,&n; *  no on board cache and no RAID option. &n; *  BIOS must be enabled on the first board and must be disabled for all other &n; *  boards. &n; *  Support is provided for any number of DPT PM2122 eisa boards.&n; *  All boards should be configured at the same IRQ level.&n; *  Multiple IRQ configurations are supported too.&n; *  Boards can be located in any eisa slot (1-15) and are named EATA0, &n; *  EATA1,... in increasing eisa slot number.&n; *  In order to detect the boards, the IRQ must be _level_ triggered &n; *  (not _edge_ triggered).&n; *&n; *  Other eisa configuration parameters are:&n; *&n; *  COMMAND QUEUING   : ENABLED&n; *  COMMAND TIMEOUT   : ENABLED&n; *  CACHE             : DISABLED&n; *&n; */
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -19,6 +19,8 @@ DECL|macro|NO_DEBUG_INTERRUPT
 mdefine_line|#define NO_DEBUG_INTERRUPT
 DECL|macro|NO_DEBUG_STATISTICS
 mdefine_line|#define NO_DEBUG_STATISTICS
+DECL|macro|NO_SINGLE_HOST_OPERATIONS
+mdefine_line|#define NO_SINGLE_HOST_OPERATIONS
 DECL|macro|MAX_TARGET
 mdefine_line|#define MAX_TARGET 8
 DECL|macro|MAX_IRQ
@@ -1268,7 +1270,7 @@ id|sh
 id|j
 )braket
 op_member_access_from_pointer
-id|hostt-&gt;cmd_per_lun
+id|cmd_per_lun
 op_assign
 id|MAX_CMD_PER_LUN
 suffix:semicolon
@@ -1381,7 +1383,7 @@ id|sh
 id|j
 )braket
 op_member_access_from_pointer
-id|hostt-&gt;cmd_per_lun
+id|cmd_per_lun
 )paren
 suffix:semicolon
 multiline_comment|/* DPT PM2012 does not allow to detect sg_tablesize correctly */
@@ -1675,6 +1677,64 @@ id|port_base
 op_increment
 suffix:semicolon
 )brace
+macro_line|#if defined (SINGLE_HOST_OPERATIONS)
+multiline_comment|/* Create a circular linked list among the detected boards. */
+r_if
+c_cond
+(paren
+id|j
+OG
+l_int|1
+)paren
+(brace
+r_for
+c_loop
+(paren
+id|k
+op_assign
+l_int|0
+suffix:semicolon
+id|k
+OL
+(paren
+id|j
+op_minus
+l_int|1
+)paren
+suffix:semicolon
+id|k
+op_increment
+)paren
+id|sh
+(braket
+id|k
+)braket
+op_member_access_from_pointer
+id|block
+op_assign
+id|sh
+(braket
+id|k
+op_plus
+l_int|1
+)braket
+suffix:semicolon
+id|sh
+(braket
+id|j
+op_minus
+l_int|1
+)braket
+op_member_access_from_pointer
+id|block
+op_assign
+id|sh
+(braket
+l_int|0
+)braket
+suffix:semicolon
+)brace
+macro_line|#endif
 id|restore_flags
 c_func
 (paren
@@ -4239,8 +4299,8 @@ op_eq
 id|CONDITION_GOOD
 op_logical_and
 id|SCpnt-&gt;device-&gt;type
-op_ne
-id|TYPE_TAPE
+op_eq
+id|TYPE_DISK
 op_logical_and
 id|HD
 c_func

@@ -391,9 +391,24 @@ c_cond
 (paren
 id|tmp-&gt;vm_inode
 )paren
+(brace
 id|tmp-&gt;vm_inode-&gt;i_count
 op_increment
 suffix:semicolon
+multiline_comment|/* insert tmp into the share list, just after mpnt */
+id|tmp-&gt;vm_next_share-&gt;vm_prev_share
+op_assign
+id|tmp
+suffix:semicolon
+id|mpnt-&gt;vm_next_share
+op_assign
+id|tmp
+suffix:semicolon
+id|tmp-&gt;vm_prev_share
+op_assign
+id|mpnt
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

@@ -1411,16 +1411,12 @@ l_int|0
 op_assign
 l_int|0
 suffix:semicolon
-id|size
+id|opcode
 op_assign
-id|COMMAND_SIZE
-c_func
-(paren
 id|get_fs_byte
 c_func
 (paren
 id|buf
-)paren
 )paren
 suffix:semicolon
 id|size

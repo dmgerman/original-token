@@ -1367,10 +1367,6 @@ id|mpnt-&gt;vm_flags
 op_assign
 id|VM_STACK_FLAGS
 suffix:semicolon
-id|mpnt-&gt;vm_share
-op_assign
-l_int|NULL
-suffix:semicolon
 id|mpnt-&gt;vm_ops
 op_assign
 l_int|NULL
@@ -2493,6 +2489,12 @@ id|mpnt-&gt;vm_ops-&gt;close
 id|mpnt-&gt;vm_ops
 op_member_access_from_pointer
 id|close
+c_func
+(paren
+id|mpnt
+)paren
+suffix:semicolon
+id|remove_shared_vm_struct
 c_func
 (paren
 id|mpnt

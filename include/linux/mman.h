@@ -25,5 +25,11 @@ DECL|macro|MAP_DENYWRITE
 mdefine_line|#define MAP_DENYWRITE&t;0x0800&t;&t;/* ETXTBSY */
 DECL|macro|MAP_EXECUTABLE
 mdefine_line|#define MAP_EXECUTABLE&t;0x1000&t;&t;/* mark it as a executable */
+DECL|macro|MS_ASYNC
+mdefine_line|#define MS_ASYNC&t;1&t;/* sync memory asynchronously */
+DECL|macro|MS_INVALIDATE
+mdefine_line|#define MS_INVALIDATE&t;2&t;/* invalidate the caches */
+DECL|macro|MS_SYNC
+mdefine_line|#define MS_SYNC&t;&t;4&t;/* synchronous memory sync */
 macro_line|#endif /* _LINUX_MMAN_H */
 eof

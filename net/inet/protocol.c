@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &quot;ip.h&quot;
 macro_line|#include &quot;protocol.h&quot;
 macro_line|#include &quot;tcp.h&quot;
@@ -16,6 +17,7 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &quot;sock.h&quot;
 macro_line|#include &quot;icmp.h&quot;
 macro_line|#include &quot;udp.h&quot;
+macro_line|#include &quot;igmp.h&quot;
 DECL|variable|tcp_protocol
 r_static
 r_struct
@@ -114,6 +116,7 @@ l_string|&quot;ICMP&quot;
 multiline_comment|/* name&t;&t;&t;*/
 )brace
 suffix:semicolon
+macro_line|#ifndef CONFIG_IP_MULTICAST
 DECL|variable|inet_protocol_base
 r_struct
 id|inet_protocol
@@ -123,6 +126,50 @@ op_assign
 op_amp
 id|icmp_protocol
 suffix:semicolon
+macro_line|#else
+DECL|variable|igmp_protocol
+r_static
+r_struct
+id|inet_protocol
+id|igmp_protocol
+op_assign
+(brace
+id|igmp_rcv
+comma
+multiline_comment|/* IGMP handler&t;&t;*/
+l_int|NULL
+comma
+multiline_comment|/* IGMP never fragments anyway */
+l_int|NULL
+comma
+multiline_comment|/* IGMP error control&t;*/
+op_amp
+id|icmp_protocol
+comma
+multiline_comment|/* next&t;&t;&t;*/
+id|IPPROTO_IGMP
+comma
+multiline_comment|/* protocol ID&t;&t;*/
+l_int|0
+comma
+multiline_comment|/* copy&t;&t;&t;*/
+l_int|NULL
+comma
+multiline_comment|/* data&t;&t;&t;*/
+l_string|&quot;IGMP&quot;
+multiline_comment|/* name&t;&t;&t;*/
+)brace
+suffix:semicolon
+DECL|variable|inet_protocol_base
+r_struct
+id|inet_protocol
+op_star
+id|inet_protocol_base
+op_assign
+op_amp
+id|igmp_protocol
+suffix:semicolon
+macro_line|#endif
 DECL|variable|inet_protos
 r_struct
 id|inet_protocol

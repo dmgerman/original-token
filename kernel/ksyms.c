@@ -373,6 +373,12 @@ comma
 id|X
 c_func
 (paren
+id|breada
+)paren
+comma
+id|X
+c_func
+(paren
 id|brelse
 )paren
 comma
@@ -386,6 +392,18 @@ id|X
 c_func
 (paren
 id|__wait_on_buffer
+)paren
+comma
+id|X
+c_func
+(paren
+id|dcache_lookup
+)paren
+comma
+id|X
+c_func
+(paren
+id|dcache_add
 )paren
 comma
 multiline_comment|/* device registration */

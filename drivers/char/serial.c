@@ -7960,6 +7960,8 @@ id|tty
 )paren
 suffix:semicolon
 )brace
+macro_line|#if 0
+multiline_comment|/*&n;&t; * No need to wake up processes in open wait, since they&n;&t; * sample the CLOCAL flag once, and don&squot;t recheck it.&n;&t; * XXX  It&squot;s not clear whether the current behavior is correct&n;&t; * or not.  Hence, this may change.....&n;&t; */
 r_if
 c_cond
 (paren
@@ -7983,6 +7985,7 @@ op_amp
 id|info-&gt;open_wait
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/*&n; * ------------------------------------------------------------&n; * rs_close()&n; * &n; * This routine is called when the serial port gets closed.  First, we&n; * wait for the last remaining data to be sent.  Then, we unlink its&n; * async structure from the interrupt chain if necessary, and we free&n; * that IRQ if nothing is left in the chain.&n; * ------------------------------------------------------------&n; */
 DECL|function|rs_close
@@ -8683,6 +8686,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|info-&gt;flags
+op_amp
+id|ASYNC_CALLOUT_ACTIVE
+)paren
+(brace
+r_if
+c_cond
+(paren
 id|info-&gt;normal_termios.c_cflag
 op_amp
 id|CLOCAL
@@ -8691,6 +8702,21 @@ id|do_clocal
 op_assign
 l_int|1
 suffix:semicolon
+)brace
+r_else
+(brace
+r_if
+c_cond
+(paren
+id|tty-&gt;termios-&gt;c_cflag
+op_amp
+id|CLOCAL
+)paren
+id|do_clocal
+op_assign
+l_int|1
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; * Block waiting for the carrier detect and the line to become&n;&t; * free (i.e., not in use by the callout).  While we are in&n;&t; * this loop, info-&gt;count is dropped by one, so that&n;&t; * rs_close() knows when to free things.  We restore it upon&n;&t; * exit, either normal or abnormal.&n;&t; */
 id|retval
 op_assign

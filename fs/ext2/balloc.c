@@ -929,7 +929,7 @@ c_cond
 (paren
 id|sb-&gt;s_flags
 op_amp
-id|MS_SYNC
+id|MS_SYNCHRONOUS
 )paren
 (brace
 id|ll_rw_block
@@ -1929,7 +1929,7 @@ c_cond
 (paren
 id|sb-&gt;s_flags
 op_amp
-id|MS_SYNC
+id|MS_SYNCHRONOUS
 )paren
 (brace
 id|ll_rw_block

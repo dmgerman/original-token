@@ -109,6 +109,8 @@ DECL|macro|SHMGET
 mdefine_line|#define SHMGET &t;&t;23
 DECL|macro|SHMCTL
 mdefine_line|#define SHMCTL &t;&t;24
+DECL|macro|IPCCALL
+mdefine_line|#define IPCCALL(version,op)&t;((version)&lt;&lt;16 | (op))
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _LINUX_IPC_H */
 eof

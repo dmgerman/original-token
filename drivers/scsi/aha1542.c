@@ -21,7 +21,7 @@ DECL|macro|DEB
 mdefine_line|#define DEB(x)
 macro_line|#endif
 multiline_comment|/*&n;static const char RCSid[] = &quot;$Header: /usr/src/linux/kernel/blk_drv/scsi/RCS/aha1542.c,v 1.1 1992/07/24 06:27:38 root Exp root $&quot;;&n;*/
-multiline_comment|/* The adaptec can be configured for quite a number of addresses, but&n;I generally do not want the card poking around at random.  We allow&n;two addresses - this allows people to use the Adaptec with a Midi&n;card, which also used 0x330 -- can be overriden with LILO! */
+multiline_comment|/* The adaptec can be configured for quite a number of addresses, but&n;I generally do not want the card poking around at random.  We allow&n;two addresses - this allows people to use the Adaptec with a Midi&n;card, which also used 0x330 -- can be overridden with LILO! */
 DECL|macro|MAXBOARDS
 mdefine_line|#define MAXBOARDS 2&t;/* Increase this and the sizes of the&n;&t;&t;&t;   arrays below, if you need more.. */
 DECL|variable|bases

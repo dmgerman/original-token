@@ -269,6 +269,18 @@ multiline_comment|/* open */
 l_int|NULL
 comma
 multiline_comment|/* close */
+l_int|NULL
+comma
+multiline_comment|/* unmap */
+l_int|NULL
+comma
+multiline_comment|/* protect */
+l_int|NULL
+comma
+multiline_comment|/* sync */
+l_int|NULL
+comma
+multiline_comment|/* advise */
 id|nfs_file_mmap_nopage
 comma
 multiline_comment|/* nopage */
@@ -277,10 +289,10 @@ comma
 multiline_comment|/* wppage */
 l_int|NULL
 comma
-multiline_comment|/* share */
+multiline_comment|/* swapout */
 l_int|NULL
 comma
-multiline_comment|/* unmap */
+multiline_comment|/* swapin */
 )brace
 suffix:semicolon
 multiline_comment|/* This is used for a general mmap of a nfs file */

@@ -408,6 +408,10 @@ id|retval-&gt;sg_tablesize
 op_assign
 id|tpnt-&gt;sg_tablesize
 suffix:semicolon
+id|retval-&gt;cmd_per_lun
+op_assign
+id|tpnt-&gt;cmd_per_lun
+suffix:semicolon
 id|retval-&gt;unchecked_isa_dma
 op_assign
 id|tpnt-&gt;unchecked_isa_dma

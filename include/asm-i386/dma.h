@@ -17,7 +17,7 @@ DECL|macro|MAX_DMA_CHANNELS
 mdefine_line|#define MAX_DMA_CHANNELS&t;8
 multiline_comment|/* The maximum address that we can perform a DMA transfer to on this platform */
 DECL|macro|MAX_DMA_ADDRESS
-mdefine_line|#define MAX_DMA_ADDRESS      0xffffff
+mdefine_line|#define MAX_DMA_ADDRESS      0x1000000
 multiline_comment|/* 8237 DMA controllers */
 DECL|macro|IO_DMA1_BASE
 mdefine_line|#define IO_DMA1_BASE&t;0x00&t;/* 8 bit slave DMA, channels 0..3 */

@@ -80,6 +80,11 @@ r_int
 r_char
 id|rw
 suffix:semicolon
+DECL|member|ready
+r_int
+r_char
+id|ready
+suffix:semicolon
 DECL|member|eof
 r_int
 r_char
@@ -170,6 +175,11 @@ r_int
 r_char
 id|moves_after_eof
 suffix:semicolon
+DECL|member|at_sm
+r_int
+r_char
+id|at_sm
+suffix:semicolon
 DECL|member|mt_status
 r_struct
 id|mtget
@@ -202,6 +212,13 @@ DECL|macro|ST_READING
 mdefine_line|#define&t;ST_READING&t;1
 DECL|macro|ST_WRITING
 mdefine_line|#define&t;ST_WRITING&t;2
+multiline_comment|/* Values of ready state */
+DECL|macro|ST_READY
+mdefine_line|#define ST_READY&t;0
+DECL|macro|ST_NOT_READY
+mdefine_line|#define ST_NOT_READY&t;1
+DECL|macro|ST_NO_TAPE
+mdefine_line|#define ST_NO_TAPE&t;2
 multiline_comment|/* Positioning SCSI-commands for Tandberg, etc. drives */
 DECL|macro|QFA_REQUEST_BLOCK
 mdefine_line|#define&t;QFA_REQUEST_BLOCK&t;0x02

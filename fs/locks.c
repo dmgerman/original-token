@@ -848,7 +848,7 @@ c_loop
 (paren
 id|dlock_wait
 op_ne
-l_int|NULL
+id|fl-&gt;fl_wait
 )paren
 suffix:semicolon
 )brace
@@ -1779,12 +1779,6 @@ c_func
 l_string|&quot;alloc_lock: broken free list&bslash;n&quot;
 )paren
 suffix:semicolon
-op_star
-id|tmp
-op_assign
-op_star
-id|fl
-suffix:semicolon
 id|tmp-&gt;fl_next
 op_assign
 op_star
@@ -1809,6 +1803,22 @@ multiline_comment|/* FIXME: needed? */
 id|tmp-&gt;fl_wait
 op_assign
 l_int|NULL
+suffix:semicolon
+id|tmp-&gt;fl_type
+op_assign
+id|fl-&gt;fl_type
+suffix:semicolon
+id|tmp-&gt;fl_whence
+op_assign
+id|fl-&gt;fl_whence
+suffix:semicolon
+id|tmp-&gt;fl_start
+op_assign
+id|fl-&gt;fl_start
+suffix:semicolon
+id|tmp-&gt;fl_end
+op_assign
+id|fl-&gt;fl_end
 suffix:semicolon
 r_return
 id|tmp

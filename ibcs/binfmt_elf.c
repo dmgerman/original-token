@@ -250,10 +250,6 @@ id|mpnt-&gt;vm_flags
 op_assign
 id|VM_STACK_FLAGS
 suffix:semicolon
-id|mpnt-&gt;vm_share
-op_assign
-l_int|NULL
-suffix:semicolon
 id|mpnt-&gt;vm_ops
 op_assign
 l_int|NULL

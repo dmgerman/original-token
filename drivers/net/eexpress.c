@@ -1,5 +1,5 @@
 multiline_comment|/* eexpress.c: Intel EtherExpress device driver for Linux. */
-multiline_comment|/*&n;&t;Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the Director,&n;&t;National Security Agency.  This software may only be used and distributed&n;&t;according to the terms of the GNU Public License as modified by SRC,&n;&t;incorporated herein by reference.&n;&n;&t;The author may be reached as becker@super.org or&n;&t;C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;&n;&t;Things remaining to do:&n;&t;Check that the 586 and ASIC are reset/unreset at the right times.&n;&t;Check tx and rx buffer setup.&n;&t;The current Tx is single-buffer-only.&n;&t;Move the theory of operation and memory map documentation.&n;&t;Rework the board error reset&n;&t;The statistics need to be updated correctly.&n;&n;        Modularized my Pauline Middelink &lt;middelin@polyware.iaf.nl&gt;&n;*/
+multiline_comment|/*&n;&t;Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the Director,&n;&t;National Security Agency.  This software may only be used and distributed&n;&t;according to the terms of the GNU Public License as modified by SRC,&n;&t;incorporated herein by reference.&n;&n;&t;The author may be reached as becker@super.org or&n;&t;C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;&n;&t;Things remaining to do:&n;&t;Check that the 586 and ASIC are reset/unreset at the right times.&n;&t;Check tx and rx buffer setup.&n;&t;The current Tx is single-buffer-only.&n;&t;Move the theory of operation and memory map documentation.&n;&t;Rework the board error reset&n;&t;The statistics need to be updated correctly.&n;&n;        Modularized by Pauline Middelink &lt;middelin@polyware.iaf.nl&gt;&n;*/
 DECL|variable|version
 r_static
 r_char
@@ -2375,6 +2375,15 @@ id|dev-&gt;irq
 )braket
 op_assign
 l_int|0
+suffix:semicolon
+multiline_comment|/* release the ioport-region */
+id|release_region
+c_func
+(paren
+id|ioaddr
+comma
+l_int|16
+)paren
 suffix:semicolon
 multiline_comment|/* Update the statistics here. */
 macro_line|#ifdef MODULE

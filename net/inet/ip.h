@@ -18,6 +18,48 @@ DECL|macro|IP_OFFSET
 mdefine_line|#define IP_OFFSET&t;0x1FFF&t;&t;/* &quot;Fragment Offset&quot; part&t;*/
 DECL|macro|IP_FRAG_TIME
 mdefine_line|#define IP_FRAG_TIME&t;(30 * HZ)&t;&t;/* fragment lifetime&t;*/
+macro_line|#ifdef CONFIG_IP_MULTICAST
+r_extern
+r_void
+id|ip_mc_dropsocket
+c_func
+(paren
+r_struct
+id|sock
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|ip_mc_dropdevice
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|ip_mc_procinfo
+c_func
+(paren
+r_char
+op_star
+comma
+r_char
+op_star
+op_star
+comma
+id|off_t
+comma
+r_int
+)paren
+suffix:semicolon
+DECL|macro|MULTICAST
+mdefine_line|#define MULTICAST(x)&t;(IN_MULTICAST(htonl(x)))
+macro_line|#endif
 multiline_comment|/* Describe an IP fragment. */
 DECL|struct|ipfrag
 r_struct
