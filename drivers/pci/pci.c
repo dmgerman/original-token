@@ -730,14 +730,6 @@ id|newval
 )paren
 )paren
 suffix:semicolon
-id|res-&gt;end
-op_assign
-id|res-&gt;start
-op_plus
-id|size
-op_minus
-l_int|1
-suffix:semicolon
 multiline_comment|/* 64-bit memory? */
 r_if
 c_cond
@@ -830,6 +822,14 @@ suffix:semicolon
 macro_line|#endif
 )brace
 )brace
+id|res-&gt;end
+op_assign
+id|res-&gt;start
+op_plus
+id|size
+op_minus
+l_int|1
+suffix:semicolon
 id|request_resource
 c_func
 (paren

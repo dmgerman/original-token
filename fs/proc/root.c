@@ -2705,7 +2705,7 @@ op_assign
 (brace
 id|PROC_MEMORY
 comma
-l_int|6
+l_int|5
 comma
 l_string|&quot;iomem&quot;
 comma

@@ -23,7 +23,7 @@ comma
 id|__initcall_end
 suffix:semicolon
 DECL|macro|__initcall
-mdefine_line|#define __initcall(fn)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;static __attribute__ ((unused,__section__ (&quot;.initcall.init&quot;)))&t;&t;&bslash;&n;&t;&t;initcall_t __initcall_##fn = fn
+mdefine_line|#define __initcall(fn)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;static initcall_t __initcall_##fn __init_call = fn
 multiline_comment|/*&n; * Used for kernel command line parameter setup&n; */
 DECL|struct|kernel_param
 r_struct
@@ -56,16 +56,20 @@ comma
 id|__setup_end
 suffix:semicolon
 DECL|macro|__setup
-mdefine_line|#define __setup(str, fn)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;static __attribute__ ((__section__ (&quot;.data.init&quot;)))&t;&t;&t;&bslash;&n;&t;&t;char __setup_str_##fn[] = str;&t;&t;&t;&t;&t;&bslash;&n;&t;static __attribute__ ((unused,__section__ (&quot;.setup.init&quot;)))&t;&t;&bslash;&n;&t;&t;struct kernel_param __setup_##fn = { __setup_str_##fn, fn }
+mdefine_line|#define __setup(str, fn)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;static char __setup_str_##fn[] __initdata = str;&t;&t;&t;&t;&bslash;&n;&t;static struct kernel_param __setup_##fn __initsetup = { __setup_str_##fn, fn }
 multiline_comment|/*&n; * Mark functions and data as being only used at initialization&n; * or exit time.&n; */
 DECL|macro|__init
-mdefine_line|#define __init __attribute__ ((__section__ (&quot;.text.init&quot;)))
+mdefine_line|#define __init&t;&t;__attribute__ ((__section__ (&quot;.text.init&quot;)))
 DECL|macro|__exit
-mdefine_line|#define __exit __attribute__ ((unused, __section__(&quot;.text.init&quot;)))
+mdefine_line|#define __exit&t;&t;__attribute__ ((unused, __section__(&quot;.text.init&quot;)))
 DECL|macro|__initdata
-mdefine_line|#define __initdata __attribute__ ((__section__ (&quot;.data.init&quot;)))
+mdefine_line|#define __initdata&t;__attribute__ ((__section__ (&quot;.data.init&quot;)))
 DECL|macro|__exitdata
-mdefine_line|#define __exitdata __attribute__ ((unused, __section__ (&quot;.data.init&quot;)))
+mdefine_line|#define __exitdata&t;__attribute__ ((unused, __section__ (&quot;.data.init&quot;)))
+DECL|macro|__initsetup
+mdefine_line|#define __initsetup&t;__attribute__ ((unused,__section__ (&quot;.setup.init&quot;)))
+DECL|macro|__init_call
+mdefine_line|#define __init_call&t;__attribute__ ((unused,__section__ (&quot;.initcall.init&quot;)))
 DECL|macro|__initfunc
 mdefine_line|#define __initfunc(__arginit) &bslash;&n;&t;__arginit __init; &bslash;&n;&t;__arginit
 multiline_comment|/* For assembly routines */

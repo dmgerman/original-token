@@ -42,6 +42,15 @@ id|child
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * PCI-like IO resources have these defined flags.&n; * The low four bits come directly from the PCI specs,&n; * the rest are extended sw flags..&n; */
+DECL|macro|IORESOURCE_IOPORT
+mdefine_line|#define IORESOURCE_IOPORT&t;0x01&t;/* 0 - memory mapped, 1 - IO ports */
+DECL|macro|IORESOURCE_MEMTYPE_MASK
+mdefine_line|#define IORESOURCE_MEMTYPE_MASK&t;0x06&t;/* PCI-specific mapping info */
+DECL|macro|IORESOURCE_PREFETCH
+mdefine_line|#define IORESOURCE_PREFETCH&t;0x08&t;/* No side effects */
+DECL|macro|IORESOURCE_BUSY
+mdefine_line|#define IORESOURCE_BUSY&t;&t;0x10&t;/* Driver uses this resource */
 multiline_comment|/* PC/ISA/whatever - the normal PC address spaces: IO and memory */
 r_extern
 r_struct

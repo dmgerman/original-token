@@ -1548,6 +1548,8 @@ DECL|macro|PCI_DEVICE_ID_3DFX_VOODOO2
 mdefine_line|#define PCI_DEVICE_ID_3DFX_VOODOO2&t;0x0002
 DECL|macro|PCI_DEVICE_ID_3DFX_BANSHEE
 mdefine_line|#define PCI_DEVICE_ID_3DFX_BANSHEE      0x0003
+DECL|macro|PCI_DEVICE_ID_3DFX_VOODOO3
+mdefine_line|#define PCI_DEVICE_ID_3DFX_VOODOO3&t;0x0005
 DECL|macro|PCI_VENDOR_ID_SIGMADES
 mdefine_line|#define PCI_VENDOR_ID_SIGMADES&t;&t;0x1236
 DECL|macro|PCI_DEVICE_ID_SIGMADES_6425
@@ -2022,7 +2024,7 @@ DECL|member|name
 r_char
 id|name
 (braket
-l_int|32
+l_int|48
 )braket
 suffix:semicolon
 multiline_comment|/*&n;&t; * In theory, the irq level can be read from configuration&n;&t; * space and all would be fine.  However, old PCI chips don&squot;t&n;&t; * support these registers and return 0 instead.  For example,&n;&t; * the Vision864-P rev 0 chip can uses INTA, but returns 0 in&n;&t; * the interrupt line and pin registers.  pci_init()&n;&t; * initializes this field with the value at PCI_INTERRUPT_LINE&n;&t; * and it is the job of pcibios_fixup() to change it if&n;&t; * necessary.  The field must not be 0 unless the device&n;&t; * cannot generate interrupts at all.&n;&t; */
