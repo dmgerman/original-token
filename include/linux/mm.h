@@ -1184,11 +1184,7 @@ suffix:semicolon
 macro_line|#endif
 id|entry
 op_assign
-(paren
-r_int
-r_int
-)paren
-id|xchg_ptr
+id|xchg
 c_func
 (paren
 id|swap_cache
@@ -1199,7 +1195,7 @@ c_func
 id|addr
 )paren
 comma
-l_int|NULL
+l_int|0
 )paren
 suffix:semicolon
 macro_line|#ifdef SWAP_CACHE_INFO
@@ -1239,11 +1235,7 @@ suffix:semicolon
 macro_line|#endif&t;
 id|entry
 op_assign
-(paren
-r_int
-r_int
-)paren
-id|xchg_ptr
+id|xchg
 c_func
 (paren
 id|swap_cache
@@ -1254,7 +1246,7 @@ c_func
 id|addr
 )paren
 comma
-l_int|NULL
+l_int|0
 )paren
 suffix:semicolon
 r_if

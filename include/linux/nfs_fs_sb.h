@@ -12,6 +12,12 @@ id|file
 op_star
 id|file
 suffix:semicolon
+DECL|member|toaddr
+r_struct
+id|sockaddr
+id|toaddr
+suffix:semicolon
+multiline_comment|/* Added for change to NFS code to use sendto()  1995-06-02  JSP */
 DECL|member|lock
 r_int
 id|lock

@@ -272,11 +272,7 @@ id|SWP_WRITEOK
 (brace
 id|entry
 op_assign
-(paren
-r_int
-r_int
-)paren
-id|xchg_ptr
+id|xchg
 c_func
 (paren
 id|swap_cache
@@ -287,10 +283,6 @@ c_func
 id|addr
 )paren
 comma
-(paren
-r_void
-op_star
-)paren
 id|entry
 )paren
 suffix:semicolon

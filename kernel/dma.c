@@ -178,7 +178,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|xchg_u32
+id|xchg
 c_func
 (paren
 op_amp
@@ -245,7 +245,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|xchg_u32
+id|xchg
 c_func
 (paren
 op_amp

@@ -64,6 +64,7 @@ macro_line|#include &lt;linux/resource.h&gt;
 macro_line|#include &lt;linux/vm86.h&gt;
 macro_line|#include &lt;linux/math_emu.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
+macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 DECL|macro|TASK_RUNNING
 mdefine_line|#define TASK_RUNNING&t;&t;0
@@ -514,6 +515,11 @@ id|it_prof_incr
 comma
 id|it_virt_incr
 suffix:semicolon
+DECL|member|real_timer
+r_struct
+id|timer_list
+id|real_timer
+suffix:semicolon
 DECL|member|utime
 DECL|member|stime
 DECL|member|cutime
@@ -641,7 +647,7 @@ DECL|macro|_STK_LIM
 mdefine_line|#define _STK_LIM&t;(8*1024*1024)
 multiline_comment|/*&n; *  INIT_TASK is used to set up the first task table, touch at&n; * your own risk!. Base=0, limit=0x1fffff (=2MB)&n; */
 DECL|macro|INIT_TASK
-mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,15*HZ/100,15*HZ/100,0,0,0,0, &bslash;&n;/* debugregs */ { 0, },            &bslash;&n;/* exec domain */&amp;default_exec_domain, &bslash;&n;/* binfmt */&t;NULL, &bslash;&n;/* schedlink */&t;&amp;init_task,&amp;init_task, &amp;init_task, &amp;init_task, &bslash;&n;/* signals */&t;{{ 0, },}, &bslash;&n;/* stack */&t;0,(unsigned long) &amp;init_kernel_stack, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0,0, &bslash;&n;/* suppl grps*/ {NOGROUP,}, &bslash;&n;/* proc links*/ &amp;init_task,&amp;init_task,NULL,NULL,NULL,NULL, &bslash;&n;/* uid etc */&t;0,0,0,0,0,0,0,0, &bslash;&n;/* timeout */&t;0,0,0,0,0,0,0,0,0,0,0,0, &bslash;&n;/* rlimits */   { {LONG_MAX, LONG_MAX}, {LONG_MAX, LONG_MAX},  &bslash;&n;&t;&t;  {LONG_MAX, LONG_MAX}, {_STK_LIM, _STK_LIM},  &bslash;&n;&t;&t;  {       0, LONG_MAX}, {LONG_MAX, LONG_MAX}, &bslash;&n;&t;&t;  {MAX_TASKS_PER_USER, MAX_TASKS_PER_USER}, {NR_OPEN, NR_OPEN}}, &bslash;&n;/* math */&t;0, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* fs info */&t;0,NULL, &bslash;&n;/* ipc */&t;NULL, NULL, &bslash;&n;/* ldt */&t;NULL, &bslash;&n;/* tss */&t;INIT_TSS, &bslash;&n;/* fs */&t;{ INIT_FS }, &bslash;&n;/* files */&t;{ INIT_FILES }, &bslash;&n;/* mm */&t;{ INIT_MM } &bslash;&n;}
+mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,15*HZ/100,15*HZ/100,0,0,0,0, &bslash;&n;/* debugregs */ { 0, },            &bslash;&n;/* exec domain */&amp;default_exec_domain, &bslash;&n;/* binfmt */&t;NULL, &bslash;&n;/* schedlink */&t;&amp;init_task,&amp;init_task, &amp;init_task, &amp;init_task, &bslash;&n;/* signals */&t;{{ 0, },}, &bslash;&n;/* stack */&t;0,(unsigned long) &amp;init_kernel_stack, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0,0, &bslash;&n;/* suppl grps*/ {NOGROUP,}, &bslash;&n;/* proc links*/ &amp;init_task,&amp;init_task,NULL,NULL,NULL,NULL, &bslash;&n;/* uid etc */&t;0,0,0,0,0,0,0,0, &bslash;&n;/* timeout */&t;0,0,0,0,0,0,0, &bslash;&n;/* timer */&t;{ NULL, NULL, 0, 0, it_real_fn }, &bslash;&n;/* utime */&t;0,0,0,0,0, &bslash;&n;/* rlimits */   { {LONG_MAX, LONG_MAX}, {LONG_MAX, LONG_MAX},  &bslash;&n;&t;&t;  {LONG_MAX, LONG_MAX}, {_STK_LIM, _STK_LIM},  &bslash;&n;&t;&t;  {       0, LONG_MAX}, {LONG_MAX, LONG_MAX}, &bslash;&n;&t;&t;  {MAX_TASKS_PER_USER, MAX_TASKS_PER_USER}, {NR_OPEN, NR_OPEN}}, &bslash;&n;/* math */&t;0, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* fs info */&t;0,NULL, &bslash;&n;/* ipc */&t;NULL, NULL, &bslash;&n;/* ldt */&t;NULL, &bslash;&n;/* tss */&t;INIT_TSS, &bslash;&n;/* fs */&t;{ INIT_FS }, &bslash;&n;/* files */&t;{ INIT_FILES }, &bslash;&n;/* mm */&t;{ INIT_MM } &bslash;&n;}
 macro_line|#ifdef __KERNEL__
 r_extern
 r_struct
@@ -742,6 +748,17 @@ id|wait_queue
 op_star
 op_star
 id|p
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|wake_up_process
+c_func
+(paren
+r_struct
+id|task_struct
+op_star
+id|tsk
 )paren
 suffix:semicolon
 r_extern

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/nfs/inode.c&n; *&n; *  Copyright (C) 1992  Rick Sladkey&n; *&n; *  nfs inode and superblock handling functions&n; *&n; *  Modularised by Alan Cox &lt;Alan.Cox@linux.org&gt;, while hacking some&n; *  experimental NFS changes. Modularisation taken straight from SYS5 fs.&n; */
+multiline_comment|/*&n; *  linux/fs/nfs/inode.c&n; *&n; *  Copyright (C) 1992  Rick Sladkey&n; *&n; *  nfs inode and superblock handling functions&n; *&n; *  Modularised by Alan Cox &lt;Alan.Cox@linux.org&gt;, while hacking some&n; *  experimental NFS changes. Modularisation taken straight from SYS5 fs.&n; *&n; *  Change to nfs_read_super() to permit NFS mounts to multi-homed hosts.&n; *  J.S.Peatfield@damtp.cam.ac.uk&n; *&n; */
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
@@ -482,6 +482,123 @@ comma
 id|data-&gt;hostname
 )paren
 suffix:semicolon
+multiline_comment|/* Start of JSP NFS patch */
+multiline_comment|/* Check if passed address in data-&gt;addr */
+r_if
+c_cond
+(paren
+id|data-&gt;addr.sin_addr.s_addr
+op_eq
+id|INADDR_ANY
+)paren
+(brace
+multiline_comment|/* No address passed */
+r_if
+c_cond
+(paren
+(paren
+(paren
+r_struct
+id|sockaddr_in
+op_star
+)paren
+(paren
+op_amp
+id|server-&gt;toaddr
+)paren
+)paren
+op_member_access_from_pointer
+id|sin_addr.s_addr
+op_eq
+id|INADDR_ANY
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;NFS: Error passed unconnected socket and no address&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* Need access to socket internals  JSP */
+r_struct
+id|socket
+op_star
+id|sock
+suffix:semicolon
+r_int
+id|dummylen
+suffix:semicolon
+multiline_comment|/*   printk(&quot;NFS: using socket address&bslash;n&quot;) ;*/
+id|sock
+op_assign
+op_amp
+(paren
+(paren
+id|filp-&gt;f_inode
+)paren
+op_member_access_from_pointer
+id|u.socket_i
+)paren
+suffix:semicolon
+multiline_comment|/* extract the other end of the socket into server-&gt;toaddr */
+id|sock-&gt;ops
+op_member_access_from_pointer
+id|getname
+c_func
+(paren
+id|sock
+comma
+op_amp
+(paren
+id|server-&gt;toaddr
+)paren
+comma
+op_amp
+id|dummylen
+comma
+l_int|1
+)paren
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
+multiline_comment|/*  printk(&quot;NFS: coppying passed addr to server-&gt;toaddr&bslash;n&quot;) ;*/
+id|memcpy
+c_func
+(paren
+(paren
+r_char
+op_star
+)paren
+op_amp
+(paren
+id|server-&gt;toaddr
+)paren
+comma
+(paren
+r_char
+op_star
+)paren
+(paren
+op_amp
+id|data-&gt;addr
+)paren
+comma
+r_sizeof
+(paren
+id|server-&gt;toaddr
+)paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* End of JSP NFS patch */
 id|sb-&gt;u.nfs_sb.s_root
 op_assign
 id|data-&gt;root

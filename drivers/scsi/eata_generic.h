@@ -50,7 +50,7 @@ mdefine_line|#define SG_SIZE&t;&t;64
 DECL|macro|SG_SIZE_BIG
 mdefine_line|#define SG_SIZE_BIG&t;509&t;       /* max. 509 */
 DECL|macro|C_P_L_DIV
-mdefine_line|#define C_P_L_DIV&t;2 /* 1 &lt;= C_P_L_DIV &lt;= 8&t;    &n;&t;       * You can use this parameter to fine-tune&n;&t;       * the driver. Depending on the number of &n;&t;       * devices and their speed and ability to queue &n;&t;       * commands, you will get the best results with a&n;&t;       * value&n;&t;       * ~= numdevices-(devices_unable_to_queue_commands/2)&n;&t;       * The reason for this is that the disk driver &n;&t;       * tends to flood the queue, so that other &n;&t;       * drivers have problems to queue commands &n;&t;       * themselves. This can for example result in &n;&t;       * the effect that the tape stops during disk &n;&t;       * accesses. &n;&t;       */
+mdefine_line|#define C_P_L_DIV&t;2 /* 1 &lt;= C_P_L_DIV &lt;= 8&t;    &n;&t;&t;&t;   * You can use this parameter to fine-tune&n;&t;&t;&t;   * the driver. Depending on the number of &n;&t;&t;&t;   * devices and their speed and ability to queue &n;&t;&t;&t;   * commands, you will get the best results with a&n;&t;&t;&t;   * value&n;&t;&t;&t;   * ~= numdevices-(devices_unable_to_queue_commands/2)&n;&t;&t;&t;   * The reason for this is that the disk driver &n;&t;&t;&t;   * tends to flood the queue, so that other &n;&t;&t;&t;   * drivers have problems to queue commands &n;&t;&t;&t;   * themselves. This can for example result in &n;&t;&t;&t;   * the effect that the tape stops during disk &n;&t;&t;&t;   * accesses. &n;&t;&t;&t;   */
 DECL|macro|FREE
 mdefine_line|#define FREE&t;   0
 DECL|macro|OK
@@ -72,7 +72,7 @@ mdefine_line|#define CD(cmd)&t; ((struct eata_ccb *)(cmd-&gt;host_scribble))
 DECL|macro|SD
 mdefine_line|#define SD(host) ((hostdata *)&amp;(host-&gt;hostdata))
 DECL|macro|DELAY
-mdefine_line|#define DELAY(x) { __u32 i; i = jiffies + x; while (jiffies &lt; i); }
+mdefine_line|#define DELAY(x) { __u32 i; i = jiffies + (x * HZ); while (jiffies &lt; i) barrier(); }
 DECL|macro|DEL2
 mdefine_line|#define DEL2(x)&t; { __u32 i; for (i = 0; i &lt; 0xffff * x; i++); }
 multiline_comment|/***********************************************&n; *    EATA Command &amp; Register definitions      *&n; ***********************************************/
@@ -331,7 +331,7 @@ r_struct
 id|reg_bit
 id|status
 suffix:semicolon
-multiline_comment|/* R, see register_bit1&t;&t;    */
+multiline_comment|/* R, see register_bit1&t;&t;&t;*/
 DECL|member|statusbyte
 id|__u8
 id|statusbyte
@@ -374,7 +374,7 @@ id|version
 suffix:colon
 l_int|4
 suffix:semicolon
-multiline_comment|/* EATA Version level&t;&t;&t;    */
+multiline_comment|/* EATA Version level&t;&t;&t;*/
 DECL|member|OCS_enabled
 id|__u8
 id|OCS_enabled
@@ -387,33 +387,31 @@ id|TAR_support
 suffix:colon
 l_int|1
 comma
-multiline_comment|/* SCSI Target Mode supported&t;&t;    */
+multiline_comment|/* SCSI Target Mode supported&t;&t;*/
 DECL|member|TRNXFR
 id|TRNXFR
 suffix:colon
 l_int|1
 comma
-multiline_comment|/* Truncate Transfer Cmd not necessary    */
-multiline_comment|/* Only used in PIO Mode&t;&t;    */
+multiline_comment|/* Truncate Transfer Cmd not necessary&t;*&n;&t;&t;&t;       * Only used in PIO Mode&t;&t;&t;*/
 DECL|member|MORE_support
 id|MORE_support
 suffix:colon
 l_int|1
 comma
-multiline_comment|/* MORE supported (only PIO Mode)&t;    */
+multiline_comment|/* MORE supported (only PIO Mode)&t;&t;*/
 DECL|member|DMA_support
 id|DMA_support
 suffix:colon
 l_int|1
 comma
-multiline_comment|/* DMA supported Driver uses only&t;    */
-multiline_comment|/* this mode&t;&t;&t;&t;    */
+multiline_comment|/* DMA supported Driver uses only&t;&t;*&n;&t;&t;&t;       * this mode&t;&t;&t;&t;*/
 DECL|member|DMA_valid
 id|DMA_valid
 suffix:colon
 l_int|1
 comma
-multiline_comment|/* DRQ value in Byte 30 is valid&t;    */
+multiline_comment|/* DRQ value in Byte 30 is valid&t;&t;*/
 DECL|member|ATA
 id|ATA
 suffix:colon
@@ -425,13 +423,12 @@ id|HAA_valid
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* Hostadapter Address is valid&t;    */
+multiline_comment|/* Hostadapter Address is valid&t;&t;*/
 DECL|member|cppadlen
 id|__u16
 id|cppadlen
 suffix:semicolon
-multiline_comment|/* Number of pad bytes send after CD data */
-multiline_comment|/* set to zero for DMA commands&t;    */
+multiline_comment|/* Number of pad bytes send after CD data *&n;&t;&t;&t;       * set to zero for DMA commands&t;&t;*/
 DECL|member|scsi_id
 id|__u8
 id|scsi_id
@@ -439,8 +436,7 @@ id|scsi_id
 l_int|4
 )braket
 suffix:semicolon
-multiline_comment|/* SCSI ID of controller 2-0 Byte 0 res.&t;*/
-multiline_comment|/* if not, zero is returned&t;&t;    */
+multiline_comment|/* SCSI ID of controller 2-0 Byte 0 res.&t;*&n;&t;&t;&t;       * if not, zero is returned&t;&t;*/
 DECL|member|cplen
 id|__u32
 id|cplen
@@ -450,8 +446,7 @@ DECL|member|splen
 id|__u32
 id|splen
 suffix:semicolon
-multiline_comment|/* Number of bytes returned after&t;&t;*/
-multiline_comment|/* Receive SP command&t;&t;&t;    */
+multiline_comment|/* Number of bytes returned after&t;&t;* &n;&t;&t;&t;       * Receive SP command&t;&t;&t;*/
 DECL|member|queuesiz
 id|__u16
 id|queuesiz
@@ -478,13 +473,13 @@ id|IRQ_TR
 suffix:colon
 l_int|1
 comma
-multiline_comment|/* IRQ Trigger: 0=edge, 1=level&t;    */
+multiline_comment|/* IRQ Trigger: 0=edge, 1=level&t;&t;*/
 DECL|member|SECOND
 id|SECOND
 suffix:colon
 l_int|1
 comma
-multiline_comment|/* This is a secondary controller&t;    */
+multiline_comment|/* This is a secondary controller&t;&t;*/
 DECL|member|DMA_channel
 id|DMA_channel
 suffix:colon
@@ -495,8 +490,7 @@ DECL|member|sync
 id|__u8
 id|sync
 suffix:semicolon
-multiline_comment|/* device at ID 7 tru 0 is running in&t;*/
-multiline_comment|/* synchronous mode, this will disappear  */
+multiline_comment|/* device at ID 7 tru 0 is running in&t;*&n;&t;&t;&t;       * synchronous mode, this will disappear&t;*/
 DECL|member|DSBLE
 id|__u8
 id|DSBLE
@@ -509,7 +503,7 @@ id|FORCADR
 suffix:colon
 l_int|1
 comma
-multiline_comment|/* i/o address has been forced&t;    */
+multiline_comment|/* i/o address has been forced&t;&t;*/
 DECL|member|SG_64K
 id|SG_64K
 suffix:colon
@@ -535,7 +529,7 @@ id|MAX_CHAN
 suffix:colon
 l_int|3
 suffix:semicolon
-multiline_comment|/* Number of SCSI busses on HBA&t;    */
+multiline_comment|/* Number of SCSI busses on HBA&t;&t;*/
 DECL|member|MAX_LUN
 id|__u8
 id|MAX_LUN
@@ -561,19 +555,19 @@ id|ID_qest
 suffix:colon
 l_int|1
 comma
-multiline_comment|/* Raidnum ID is questionable&t;&t;    */
+multiline_comment|/* Raidnum ID is questionable&t;&t;*/
 DECL|member|is_PCI
 id|is_PCI
 suffix:colon
 l_int|1
 comma
-multiline_comment|/* HBA is PCI&t;&t;&t;&t;    */
+multiline_comment|/* HBA is PCI&t;&t;&t;&t;*/
 DECL|member|is_EISA
 id|is_EISA
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* HBA is EISA&t;&t;&t;    */
+multiline_comment|/* HBA is EISA&t;&t;&t;&t;*/
 DECL|member|unused
 id|__u8
 id|unused
@@ -608,7 +602,7 @@ id|SCSI_Reset
 suffix:colon
 l_int|1
 comma
-multiline_comment|/* Cause a SCSI Bus reset on the cmd  */
+multiline_comment|/* Cause a SCSI Bus reset on the cmd&t;*/
 DECL|member|HBA_Init
 id|HBA_Init
 suffix:colon
@@ -620,19 +614,19 @@ id|Auto_Req_Sen
 suffix:colon
 l_int|1
 comma
-multiline_comment|/* Do Auto Request Sense on errors    */
+multiline_comment|/* Do Auto Request Sense on errors&t;*/
 DECL|member|scatter
 id|scatter
 suffix:colon
 l_int|1
 comma
-multiline_comment|/* Data Ptr points to a SG Packet&t;*/
+multiline_comment|/* Data Ptr points to a SG Packet&t;&t;*/
 DECL|member|Resrvd
 id|Resrvd
 suffix:colon
 l_int|1
 comma
-multiline_comment|/* RFU&t;&t;&t;&t;*/
+multiline_comment|/* RFU&t;&t;&t;&t;&t;*/
 DECL|member|Interpret
 id|Interpret
 suffix:colon
@@ -644,7 +638,7 @@ id|DataOut
 suffix:colon
 l_int|1
 comma
-multiline_comment|/* Data Out phase with command&t;*/
+multiline_comment|/* Data Out phase with command&t;&t;*/
 DECL|member|DataIn
 id|DataIn
 suffix:colon
@@ -655,8 +649,7 @@ DECL|member|reqlen
 id|__u8
 id|reqlen
 suffix:semicolon
-multiline_comment|/* Request Sense Length&t;&t;    */
-multiline_comment|/* Valid if Auto_Req_Sen=1&t;&t;*/
+multiline_comment|/* Request Sense Length&t;&t;&t;* &n;&t;&t;&t;       * Valid if Auto_Req_Sen=1&t;&t;*/
 DECL|member|unused
 id|__u8
 id|unused
@@ -670,7 +663,7 @@ id|FWNEST
 suffix:colon
 l_int|1
 comma
-multiline_comment|/* send cmd to phys RAID component*/
+multiline_comment|/* send cmd to phys RAID component&t;*/
 DECL|member|unused2
 id|unused2
 suffix:colon
@@ -682,19 +675,19 @@ id|Phsunit
 suffix:colon
 l_int|1
 comma
-multiline_comment|/* physical unit on mirrored pair */
+multiline_comment|/* physical unit on mirrored pair&t;&t;*/
 DECL|member|I_AT
 id|I_AT
 suffix:colon
 l_int|1
 comma
-multiline_comment|/* inhibit address translation    */
+multiline_comment|/* inhibit address translation&t;&t;*/
 DECL|member|I_HBA_C
 id|I_HBA_C
 suffix:colon
 l_int|1
 comma
-multiline_comment|/* HBA inhibit caching&t;    */
+multiline_comment|/* HBA inhibit caching&t;&t;&t;*/
 DECL|member|unused3
 id|unused3
 suffix:colon
@@ -706,13 +699,13 @@ id|cp_id
 suffix:colon
 l_int|5
 comma
-multiline_comment|/* SCSI Device ID of target&t;*/
+multiline_comment|/* SCSI Device ID of target&t;&t;*/
 DECL|member|cp_channel
 id|cp_channel
 suffix:colon
 l_int|3
 suffix:semicolon
-multiline_comment|/* SCSI Channel # of HBA&t;    */
+multiline_comment|/* SCSI Channel # of HBA&t;&t;&t;*/
 DECL|member|cp_lun
 id|__u8
 id|cp_lun
@@ -727,24 +720,24 @@ id|cp_luntar
 suffix:colon
 l_int|1
 comma
-multiline_comment|/* CP is for target ROUTINE&t;    */
+multiline_comment|/* CP is for target ROUTINE&t;&t;*/
 DECL|member|cp_dispri
 id|cp_dispri
 suffix:colon
 l_int|1
 comma
-multiline_comment|/* Grant disconnect privilege&t;    */
+multiline_comment|/* Grant disconnect privilege&t;&t;*/
 DECL|member|cp_identify
 id|cp_identify
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* Always TRUE&t;&t;&t;*/
+multiline_comment|/* Always TRUE&t;&t;&t;&t;*/
 DECL|member|cp_msg1
 id|__u8
 id|cp_msg1
 suffix:semicolon
-multiline_comment|/* Message bytes 0-3&t;&t;*/
+multiline_comment|/* Message bytes 0-3&t;&t;&t;*/
 DECL|member|cp_msg2
 id|__u8
 id|cp_msg2
@@ -760,39 +753,50 @@ id|cp_cdb
 l_int|12
 )braket
 suffix:semicolon
-multiline_comment|/* Command Descriptor Block&t;*/
+multiline_comment|/* Command Descriptor Block&t;&t;*/
 DECL|member|cp_datalen
 id|__u32
 id|cp_datalen
 suffix:semicolon
-multiline_comment|/* Data Transfer Length&t;&t;*/
-multiline_comment|/* If scatter=1 len of sg package */
+multiline_comment|/* Data Transfer Length&t;&t;&t;*&n;&t;&t;&t;       * If scatter=1 len of sg package&t;&t;*/
 DECL|member|cp_viraddr
 r_void
 op_star
 id|cp_viraddr
 suffix:semicolon
-multiline_comment|/* address of this ccb&t;&t;*/
+multiline_comment|/* address of this ccb&t;&t;&t;*/
 DECL|member|cp_dataDMA
 id|__u32
 id|cp_dataDMA
 suffix:semicolon
-multiline_comment|/* Data Address, if scatter=1&t;*&n;&t;&t;   * address of scatter packet&t;    */
+multiline_comment|/* Data Address, if scatter=1&t;&t;*&n;&t;&t;&t;       * address of scatter packet&t;&t;*/
 DECL|member|cp_statDMA
 id|__u32
 id|cp_statDMA
 suffix:semicolon
-multiline_comment|/* address for Status Packet&t;*/
+multiline_comment|/* address for Status Packet&t;&t;*/
 DECL|member|cp_reqDMA
 id|__u32
 id|cp_reqDMA
 suffix:semicolon
-multiline_comment|/* Request Sense Address, used if */
-multiline_comment|/* CP command ends with error&t;    */
+multiline_comment|/* Request Sense Address, used if&t;&t;*&n;&t;&t;&t;       * CP command ends with error&t;&t;*/
 multiline_comment|/* Additional CP info begins here */
+DECL|member|timestamp
+id|__u32
+id|timestamp
+suffix:semicolon
+multiline_comment|/* Needed to measure command latency&t;*/
 DECL|member|timeout
 id|__u32
 id|timeout
+suffix:semicolon
+DECL|member|sizeindex
+id|__u8
+id|sizeindex
+suffix:semicolon
+DECL|member|rw_latency
+id|__u8
+id|rw_latency
 suffix:semicolon
 DECL|member|retries
 id|__u8
@@ -802,13 +806,13 @@ DECL|member|status
 id|__u8
 id|status
 suffix:semicolon
-multiline_comment|/* status of this queueslot&t;*/
+multiline_comment|/* status of this queueslot&t;&t;*/
 DECL|member|cmd
 id|Scsi_Cmnd
 op_star
 id|cmd
 suffix:semicolon
-multiline_comment|/* address of cmd&t;&t;&t;*/
+multiline_comment|/* address of cmd&t;&t;&t;&t;*/
 DECL|member|sg_list
 r_struct
 id|eata_sg_list
@@ -827,18 +831,18 @@ id|hba_stat
 suffix:colon
 l_int|7
 comma
-multiline_comment|/* HBA status&t;&t;&t;*/
+multiline_comment|/* HBA status&t;&t;&t;&t;*/
 DECL|member|EOC
 id|EOC
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* True if command finished&t;    */
+multiline_comment|/* True if command finished&t;&t;*/
 DECL|member|scsi_stat
 id|__u8
 id|scsi_stat
 suffix:semicolon
-multiline_comment|/* Target SCSI status&t;&t;*/
+multiline_comment|/* Target SCSI status&t;&t;&t;*/
 DECL|member|reserved
 id|__u8
 id|reserved
@@ -850,14 +854,14 @@ DECL|member|residue_len
 id|__u32
 id|residue_len
 suffix:semicolon
-multiline_comment|/* Number of bytes not transferred */
+multiline_comment|/* Number of bytes not transferred&t;*/
 DECL|member|ccb
 r_struct
 id|eata_ccb
 op_star
 id|ccb
 suffix:semicolon
-multiline_comment|/* Address set in COMMAND PACKET&t;*/
+multiline_comment|/* Address set in COMMAND PACKET&t;&t;*/
 DECL|member|msg
 id|__u8
 id|msg
@@ -923,7 +927,12 @@ id|broken_INQUIRY
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* This is an EISA HBA with   *&n;&t;&t;  * broken INQUIRY&t;       */
+multiline_comment|/* This is an EISA HBA with   *&n;&t;&t;&t;&t;  * broken INQUIRY&t;       */
+DECL|member|do_latency
+id|__u8
+id|do_latency
+suffix:semicolon
+multiline_comment|/* Latency measurement flag   */
 DECL|member|reads
 id|__u32
 id|reads
@@ -936,6 +945,26 @@ id|__u32
 id|writes
 (braket
 l_int|13
+)braket
+suffix:semicolon
+DECL|member|reads_lat
+id|__u32
+id|reads_lat
+(braket
+l_int|12
+)braket
+(braket
+l_int|4
+)braket
+suffix:semicolon
+DECL|member|writes_lat
+id|__u32
+id|writes_lat
+(braket
+l_int|12
+)braket
+(braket
+l_int|4
 )braket
 suffix:semicolon
 multiline_comment|/* state of Target (RESET,..) */
@@ -1089,5 +1118,5 @@ multiline_comment|/* drive structures&t;      */
 )brace
 suffix:semicolon
 macro_line|#endif /* _EATA_GENERIC_H */
-multiline_comment|/*&n; * Overrides for Emacs so that we almost follow Linus&squot;s tabbing style.&n; * Emacs will notice this stuff at the end of the file and automatically&n; * adjust the settings for this buffer only.  This must remain at the end&n; * of the file.&n; * ---------------------------------------------------------------------------&n; * Local variables:&n; * c-indent-level: 4&n; * c-brace-imaginary-offset: 0&n; * c-brace-offset: -4&n; * c-argdecl-indent: 4&n; * c-label-offset: -4&n; * c-continued-statement-offset: 4&n; * c-continued-brace-offset: 0&n; * indent-tabs-mode: nil&n; * tab-width: 8&n; * End:&n; */
+multiline_comment|/*&n; * Overrides for Emacs so that we almost follow Linus&squot;s tabbing style.&n; * Emacs will notice this stuff at the end of the file and automatically&n; * adjust the settings for this buffer only.  This must remain at the end&n; * of the file.&n; * ---------------------------------------------------------------------------&n; * Local variables:&n; * c-indent-level: 4&n; * c-brace-imaginary-offset: 0&n; * c-brace-offset: -4&n; * c-argdecl-indent: 4&n; * c-label-offset: -4&n; * c-continued-statement-offset: 4&n; * c-continued-brace-offset: 0&n; * tab-width: 8&n; * End:&n; */
 eof

@@ -5786,12 +5786,16 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|dev-&gt;id
+op_logical_and
+(paren
 id|dev-&gt;id-&gt;config
 op_amp
 (paren
 l_int|1
 op_lshift
 l_int|7
+)paren
 )paren
 )paren
 multiline_comment|/* for removeable disks */
@@ -7338,12 +7342,16 @@ macro_line|#endif&t;/* CONFIG_BLK_DEV_IDECD */
 r_if
 c_cond
 (paren
+id|dev-&gt;id
+op_logical_and
+(paren
 id|dev-&gt;id-&gt;config
 op_amp
 (paren
 l_int|1
 op_lshift
 l_int|7
+)paren
 )paren
 )paren
 multiline_comment|/* for removeable disks */

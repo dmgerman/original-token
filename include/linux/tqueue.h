@@ -286,7 +286,7 @@ l_int|1
 (brace
 id|p
 op_assign
-id|xchg_ptr
+id|xchg
 c_func
 (paren
 id|list

@@ -10,8 +10,13 @@ DECL|macro|DEV_NUMBUFFS
 mdefine_line|#define DEV_NUMBUFFS&t;3
 DECL|macro|MAX_ADDR_LEN
 mdefine_line|#define MAX_ADDR_LEN&t;7
+macro_line|#ifndef CONFIG_AX25
 DECL|macro|MAX_HEADER
-mdefine_line|#define MAX_HEADER&t;38
+mdefine_line|#define MAX_HEADER&t;32&t;&t;/* We really need about 18 worst case .. so 32 is aligned */
+macro_line|#else
+DECL|macro|MAX_HEADER
+mdefine_line|#define MAX_HEADER&t;96&t;&t;/* AX.25 + NetROM */
+macro_line|#endif
 DECL|macro|IS_MYADDR
 mdefine_line|#define IS_MYADDR&t;1&t;&t;/* address is (one of) our own&t;*/
 DECL|macro|IS_LOOPBACK
@@ -94,12 +99,6 @@ r_int
 id|base_addr
 suffix:semicolon
 multiline_comment|/* device I/O address&t;*/
-DECL|member|tbusy
-r_int
-r_int
-id|tbusy
-suffix:semicolon
-multiline_comment|/* transmitter busy must be long for bitops */
 DECL|member|irq
 r_int
 r_char
@@ -118,6 +117,12 @@ DECL|member|interrupt
 id|interrupt
 suffix:semicolon
 multiline_comment|/* interrupt arrived&t;*/
+DECL|member|tbusy
+r_int
+r_int
+id|tbusy
+suffix:semicolon
+multiline_comment|/* transmitter busy must be long for bitops */
 DECL|member|next
 r_struct
 id|device

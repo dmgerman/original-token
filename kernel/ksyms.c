@@ -453,6 +453,12 @@ c_func
 id|vfree
 )paren
 comma
+id|X
+c_func
+(paren
+id|mem_map
+)paren
+comma
 multiline_comment|/* filesystem internal functions */
 id|X
 c_func
@@ -906,6 +912,12 @@ c_func
 id|timer_table
 )paren
 comma
+id|X
+c_func
+(paren
+id|intr_count
+)paren
+comma
 multiline_comment|/* dma handling */
 id|X
 c_func
@@ -1189,6 +1201,12 @@ id|X
 c_func
 (paren
 id|slhc_uncompress
+)paren
+comma
+id|X
+c_func
+(paren
+id|slhc_toss
 )paren
 comma
 macro_line|#endif
@@ -1518,18 +1536,6 @@ comma
 id|X
 c_func
 (paren
-id|intr_count
-)paren
-comma
-id|X
-c_func
-(paren
-id|mem_map
-)paren
-comma
-id|X
-c_func
-(paren
 id|print_msg
 )paren
 comma
@@ -1555,18 +1561,6 @@ comma
 multiline_comment|/* Needed for sd.c */
 macro_line|#else
 multiline_comment|/*&n;&t; * With no scsi configured, we still need to export a few&n;&t; * symbols so that scsi can be loaded later via insmod.&n;&t; */
-id|X
-c_func
-(paren
-id|intr_count
-)paren
-comma
-id|X
-c_func
-(paren
-id|mem_map
-)paren
-comma
 id|X
 c_func
 (paren

@@ -112,6 +112,8 @@ DECL|macro|MODE_SELECT_10
 mdefine_line|#define MODE_SELECT_10        0x55
 DECL|macro|MODE_SENSE_10
 mdefine_line|#define MODE_SENSE_10         0x5a
+DECL|macro|READ_12
+mdefine_line|#define READ_12               0xa8
 DECL|macro|WRITE_12
 mdefine_line|#define WRITE_12              0xaa
 DECL|macro|WRITE_VERIFY_12

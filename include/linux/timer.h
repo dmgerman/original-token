@@ -127,6 +127,15 @@ op_star
 id|timer
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|it_real_fn
+c_func
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
 DECL|function|init_timer
 r_extern
 r_inline

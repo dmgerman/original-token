@@ -2590,10 +2590,10 @@ comma
 id|ms
 )paren
 suffix:semicolon
-id|skb
-op_assign
 op_star
 id|skb_ptr
+op_assign
+id|skb
 suffix:semicolon
 id|iph
 op_assign

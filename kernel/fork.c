@@ -861,6 +861,21 @@ id|p-&gt;it_prof_incr
 op_assign
 l_int|0
 suffix:semicolon
+id|init_timer
+c_func
+(paren
+op_amp
+id|p-&gt;real_timer
+)paren
+suffix:semicolon
+id|p-&gt;real_timer.data
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|p
+suffix:semicolon
 id|p-&gt;leader
 op_assign
 l_int|0
@@ -973,9 +988,11 @@ id|current-&gt;counter
 op_rshift
 l_int|1
 suffix:semicolon
-id|p-&gt;state
-op_assign
-id|TASK_RUNNING
+id|wake_up_process
+c_func
+(paren
+id|p
+)paren
 suffix:semicolon
 multiline_comment|/* do this last, just in case */
 r_return

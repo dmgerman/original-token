@@ -1,4 +1,3 @@
-multiline_comment|/* $Id: scc.h,v 1.9 1995/01/12 18:24:40 JReuter Exp JReuter $ */
 macro_line|#ifndef&t;_SCC_H
 DECL|macro|_SCC_H
 mdefine_line|#define&t;_SCC_H
@@ -19,11 +18,11 @@ multiline_comment|/* Constants */
 DECL|macro|MAXSCC
 mdefine_line|#define MAXSCC&t;&t;4&t;/* number of max. supported chips */
 DECL|macro|MAX_IBUFS
-mdefine_line|#define MAX_IBUFS&t;200&t;/* change this if you run out of memory */
+mdefine_line|#define MAX_IBUFS&t;300&t;/* change this if you run out of memory */
 DECL|macro|BUFSIZE
-mdefine_line|#define BUFSIZE&t;  &t;128&t;/* must not exceed 4096 */
+mdefine_line|#define BUFSIZE&t;  &t;64&t;/* must not exceed 4096 */
 DECL|macro|TPS
-mdefine_line|#define TPS&t;&t;25&t;/* scc_timer():  Ticks Per Second */
+mdefine_line|#define TPS&t;&t;25&t;/* scc_timer(): 25  Ticks Per Second */
 DECL|macro|SCC_TIMER
 mdefine_line|#define SCC_TIMER&t;3
 DECL|macro|SCC_PARANOIA_CHECK
@@ -180,7 +179,6 @@ mdefine_line|#define Expired(k) (scc-&gt;k != TIMER_STOPPED) &amp;&amp; (!(scc-&
 DECL|macro|Stop_Timer
 mdefine_line|#define Stop_Timer(k) scc-&gt;k = TIMER_STOPPED
 multiline_comment|/* Basic message buffer structure */
-multiline_comment|/* looks familiar? Hmm, yes... */
 DECL|struct|mbuf
 r_struct
 id|mbuf
@@ -206,9 +204,10 @@ suffix:semicolon
 multiline_comment|/* who allocated this buffer? */
 DECL|member|time_out
 r_int
+r_int
 id|time_out
 suffix:semicolon
-multiline_comment|/* unimplemented yet */
+multiline_comment|/* buffer time out */
 DECL|member|size
 r_int
 id|size
@@ -572,27 +571,19 @@ id|scc_modem
 id|modem
 suffix:semicolon
 multiline_comment|/* modem information */
-DECL|member|rbp
-r_struct
-id|mbuf
-op_star
-id|rbp
+DECL|member|rxbuf
+r_char
+id|rxbuf
+(braket
+l_int|2048
+)braket
 suffix:semicolon
-multiline_comment|/* rx: Head of mbuf chain being filled */
-DECL|member|rbp1
-r_struct
-id|mbuf
-op_star
-id|rbp1
+multiline_comment|/* Rx frame buffer max framesize * 2 */
+DECL|member|rxbufcnt
+r_int
+id|rxbufcnt
 suffix:semicolon
-multiline_comment|/* rx: Pointer to mbuf currently being written */
-DECL|member|rcvq
-r_struct
-id|mbuf
-op_star
-id|rcvq
-suffix:semicolon
-multiline_comment|/* Pointer to mbuf packets currently received */
+multiline_comment|/* Rx frame counter */
 DECL|member|sndq
 r_struct
 id|mbuf
@@ -621,6 +612,7 @@ op_star
 id|sndq2
 suffix:semicolon
 multiline_comment|/* Pointer to mbuf currently under construction */
+multiline_comment|/*&t;unsigned char &t;&t;*xmit_buf;&n;&t;int&t;&t;&t;xmit_head;&n;&t;int&t;&t;&t;xmit_tail;&n;&t;int&t;&t;&t;xmit_cnt;*/
 multiline_comment|/* Timer */
 DECL|member|t_dwait
 r_int

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Definitions for a Sanyo CD-ROM interface&n; *&n; *   Copyright (C) 1995  Vadim V. Model&n; *&n; *   model@cecmow.enet.dec.com&n; *   vadim@rbrf.msk.su&n; *   vadim@ipsun.ras.ru&n; *&n; */
+multiline_comment|/* -- sjcd.h&n; *&n; * Definitions for a Sanyo CD-ROM interface&n; *&n; *   Copyright (C) 1995  Vadim V. Model&n; *&n; *   model@cecmow.enet.dec.com&n; *   vadim@rbrf.msk.su&n; *   vadim@ipsun.ras.ru&n; *&n; */
 macro_line|#ifndef __SJCD_H__
 DECL|macro|__SJCD_H__
 mdefine_line|#define __SJCD_H__
@@ -8,6 +8,9 @@ mdefine_line|#define SJCD_BASE_ADDR      0x340
 multiline_comment|/*&n; * Change this to set the irq.&n; */
 DECL|macro|SJCD_INTR_NR
 mdefine_line|#define SJCD_INTR_NR        10
+multiline_comment|/*&n; * Change this to set the dma channel.&n; */
+DECL|macro|SJCD_DMA
+mdefine_line|#define SJCD_DMA            0
 multiline_comment|/*&n; * port access macros&n; */
 DECL|macro|SJCDPORT
 mdefine_line|#define SJCDPORT( x )       ( sjcd_port + ( x ) )

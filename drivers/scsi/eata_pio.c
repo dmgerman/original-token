@@ -1,4 +1,4 @@
-multiline_comment|/************************************************************&n; *                                                          *&n; *               Linux EATA SCSI PIO driver                 *&n; *                                                          *&n; *  based on the CAM document CAM/89-004 rev. 2.0c,         *&n; *  DPT&squot;s driver kit, some internal documents and source,   *&n; *  and several other Linux scsi drivers and kernel docs.   *&n; *                                                          *&n; *  The driver currently:                                   *&n; *      -supports all EATA-PIO boards                       *&n; *      -only supports DASD devices                         *&n; *                                                          *&n; *  (c)1993,94,95 Michael Neuffer, Alfred Arnold            *&n; *                neuffer@goofy.zdv.uni-mainz.de            *&n; *                a.arnold@kfa-juelich.de                   * &n; *                                                          *&n; *  This program is free software; you can redistribute it  *&n; *  and/or modify it under the terms of the GNU General     *&n; *  Public License as published by the Free Software        *&n; *  Foundation; either version 2 of the License, or         *&n; *  (at your option) any later version.                     *&n; *                                                          *&n; *  This program is distributed in the hope that it will be *&n; *  useful, but WITHOUT ANY WARRANTY; without even the      *&n; *  implied warranty of MERCHANTABILITY or FITNESS FOR A    *&n; *  PARTICULAR PURPOSE.  See the GNU General Public License *&n; *  for more details.                                       *&n; *                                                          *&n; *  You should have received a copy of the GNU General      *&n; *  Public License along with this kernel; if not, write to *&n; *  the Free Software Foundation, Inc., 675 Mass Ave,       *&n; *  Cambridge, MA 02139, USA.                               *&n; *                                                          *&n; ************************************************************&n; *  last change: 95/06/20 OS: Linux 1.3.3 + pre1.3 SCSI pat.*&n; ************************************************************/
+multiline_comment|/************************************************************&n; *                                                          *&n; *               Linux EATA SCSI PIO driver                 *&n; *                                                          *&n; *  based on the CAM document CAM/89-004 rev. 2.0c,         *&n; *  DPT&squot;s driver kit, some internal documents and source,   *&n; *  and several other Linux scsi drivers and kernel docs.   *&n; *                                                          *&n; *  The driver currently:                                   *&n; *      -supports all EATA-PIO boards                       *&n; *      -only supports DASD devices                         *&n; *                                                          *&n; *  (c)1993,94,95 Michael Neuffer, Alfred Arnold            *&n; *                neuffer@goofy.zdv.uni-mainz.de            *&n; *                a.arnold@kfa-juelich.de                   * &n; *                                                          *&n; *  This program is free software; you can redistribute it  *&n; *  and/or modify it under the terms of the GNU General     *&n; *  Public License as published by the Free Software        *&n; *  Foundation; either version 2 of the License, or         *&n; *  (at your option) any later version.                     *&n; *                                                          *&n; *  This program is distributed in the hope that it will be *&n; *  useful, but WITHOUT ANY WARRANTY; without even the      *&n; *  implied warranty of MERCHANTABILITY or FITNESS FOR A    *&n; *  PARTICULAR PURPOSE.  See the GNU General Public License *&n; *  for more details.                                       *&n; *                                                          *&n; *  You should have received a copy of the GNU General      *&n; *  Public License along with this kernel; if not, write to *&n; *  the Free Software Foundation, Inc., 675 Mass Ave,       *&n; *  Cambridge, MA 02139, USA.                               *&n; *                                                          *&n; ************************************************************&n; *  last change: 95/07/13                  OS: Linux 1.3.9  *&n; ************************************************************/
 multiline_comment|/* Look in eata_pio.h for configuration information */
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
@@ -2631,7 +2631,11 @@ OL
 (paren
 id|time
 op_plus
-l_int|300
+(paren
+l_int|3
+op_star
+id|HZ
+)paren
 )paren
 op_logical_and
 id|limit
@@ -3625,7 +3629,7 @@ comma
 id|DELAY
 c_func
 (paren
-l_int|1400
+l_int|14
 )paren
 )paren
 suffix:semicolon
@@ -5786,7 +5790,7 @@ comma
 id|DELAY
 c_func
 (paren
-l_int|1200
+l_int|12
 )paren
 )paren
 suffix:semicolon

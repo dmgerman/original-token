@@ -9,7 +9,7 @@ mdefine_line|#define VER_MAJOR 2
 DECL|macro|VER_MINOR
 mdefine_line|#define VER_MINOR 5
 DECL|macro|VER_SUB
-mdefine_line|#define VER_SUB   &quot;6a&quot;
+mdefine_line|#define VER_SUB   &quot;7a&quot;
 multiline_comment|/************************************************************************&n; * Here you can switch parts of the code on and of                      *&n; ************************************************************************/
 DECL|macro|CHECKPAL
 mdefine_line|#define CHECKPAL        0        /* EISA pal checking on/off            */

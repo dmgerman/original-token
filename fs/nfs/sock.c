@@ -327,11 +327,12 @@ op_lshift_assign
 l_int|1
 )paren
 (brace
+multiline_comment|/* JSP 1995-07-01  Use sendto() not send() to cope with multi-homed hosts&n;&t;     as we have set the socket to have INADDR_ANY as it&squot;s desination */
 id|result
 op_assign
 id|sock-&gt;ops
 op_member_access_from_pointer
-id|send
+id|sendto
 c_func
 (paren
 id|sock
@@ -347,6 +348,18 @@ comma
 l_int|0
 comma
 l_int|0
+comma
+op_amp
+(paren
+id|server-&gt;toaddr
+)paren
+comma
+r_sizeof
+(paren
+(paren
+id|server-&gt;toaddr
+)paren
+)paren
 )paren
 suffix:semicolon
 r_if
