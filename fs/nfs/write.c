@@ -145,7 +145,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;NFS:      nfs_writepage_sync(%s/%s %d@%ld)&bslash;n&quot;
+l_string|&quot;NFS:      nfs_writepage_sync(%s/%s %d@%lu/%ld)&bslash;n&quot;
 comma
 id|dentry-&gt;d_parent-&gt;d_name.name
 comma
@@ -153,8 +153,8 @@ id|dentry-&gt;d_name.name
 comma
 id|count
 comma
-id|page-&gt;offset
-op_plus
+id|page-&gt;pg_offset
+comma
 id|offset
 )paren
 suffix:semicolon
@@ -174,7 +174,9 @@ id|offset
 suffix:semicolon
 id|offset
 op_add_assign
-id|page-&gt;offset
+id|page-&gt;pg_offset
+op_lshift
+id|PAGE_CACHE_SHIFT
 suffix:semicolon
 r_do
 (brace
@@ -867,7 +869,11 @@ id|dentry-&gt;d_parent-&gt;d_name.name
 comma
 id|dentry-&gt;d_name.name
 comma
-id|page-&gt;offset
+(paren
+id|page-&gt;pg_offset
+op_lshift
+id|PAGE_CACHE_SHIFT
+)paren
 op_plus
 id|offset
 comma
@@ -1474,7 +1480,11 @@ id|dentry-&gt;d_name.name
 comma
 id|count
 comma
-id|page-&gt;offset
+(paren
+id|page-&gt;pg_offset
+op_lshift
+id|PAGE_CACHE_SHIFT
+)paren
 op_plus
 id|offset
 )paren
@@ -2032,7 +2042,11 @@ id|dentry
 suffix:semicolon
 id|req-&gt;wb_args.offset
 op_assign
-id|page-&gt;offset
+(paren
+id|page-&gt;pg_offset
+op_lshift
+id|PAGE_CACHE_SHIFT
+)paren
 op_plus
 id|req-&gt;wb_offset
 suffix:semicolon

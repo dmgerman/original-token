@@ -23,8 +23,36 @@ mdefine_line|#define memc_update_addr(mm,pte,log)&t;do { } while (0)
 DECL|macro|memc_clear
 mdefine_line|#define memc_clear(mm,physaddr)&t;&t;do { } while (0)
 multiline_comment|/*&n; * This flushes back any buffered write data.  We have to clean the entries&n; * in the cache for this page.  This does not invalidate either I or D caches.&n; */
-DECL|macro|flush_page_to_ram
-mdefine_line|#define flush_page_to_ram(_page)&t;&t;&t;&t;&t;&bslash;&n;&t;cpu_flush_ram_page((_page) &amp; PAGE_MASK);
+DECL|function|flush_page_to_ram
+r_static
+id|__inline__
+r_void
+id|flush_page_to_ram
+c_func
+(paren
+r_struct
+id|page
+op_star
+id|page
+)paren
+(brace
+r_int
+r_int
+id|virt
+op_assign
+id|page_address
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+id|cpu_flush_ram_page
+c_func
+(paren
+id|virt
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * TLB flushing:&n; *&n; *  - flush_tlb_all() flushes all processes TLBs&n; *  - flush_tlb_mm(mm) flushes the specified mm context TLB&squot;s&n; *  - flush_tlb_page(vma, vmaddr) flushes one page&n; *  - flush_tlb_range(mm, start, end) flushes a range of pages&n; *&n; * We drain the write buffer in here to ensure that the page tables in ram&n; * are really up to date.  It is more efficient to do this here...&n; */
 DECL|macro|flush_tlb_all
 mdefine_line|#define flush_tlb_all()&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;cpu_flush_tlb_all()

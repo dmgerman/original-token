@@ -2670,7 +2670,8 @@ suffix:semicolon
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|function|uss720_probe
 r_static
-r_int
+r_void
+op_star
 id|uss720_probe
 c_func
 (paren
@@ -2678,6 +2679,10 @@ r_struct
 id|usb_device
 op_star
 id|usbdev
+comma
+r_int
+r_int
+id|ifnum
 )paren
 (brace
 r_struct
@@ -2748,50 +2753,15 @@ l_int|0x1284
 )paren
 )paren
 r_return
-op_minus
-l_int|1
+l_int|NULL
 suffix:semicolon
-multiline_comment|/* We don&squot;t handle multiple configurations */
+multiline_comment|/* our known interfaces have 3 alternate settings */
 r_if
 c_cond
 (paren
-id|usbdev-&gt;descriptor.bNumConfigurations
-op_ne
-l_int|1
-)paren
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-multiline_comment|/* We don&squot;t handle multiple interfaces */
-r_if
-c_cond
-(paren
-id|usbdev-&gt;config
+id|usbdev-&gt;actconfig-&gt;interface
 (braket
-l_int|0
-)braket
-dot
-id|bNumInterfaces
-op_ne
-l_int|1
-)paren
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-multiline_comment|/* We don&squot;t handle multiple interfaces */
-r_if
-c_cond
-(paren
-id|usbdev-&gt;config
-(braket
-l_int|0
-)braket
-dot
-id|interface
-(braket
-l_int|0
+id|ifnum
 )braket
 dot
 id|num_altsetting
@@ -2799,28 +2769,7 @@ op_ne
 l_int|3
 )paren
 r_return
-op_minus
-l_int|1
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;uss720: set configuration&bslash;n&quot;
-)paren
-suffix:semicolon
-id|usb_set_configuration
-c_func
-(paren
-id|usbdev
-comma
-id|usbdev-&gt;config
-(braket
-l_int|0
-)braket
-dot
-id|bConfigurationValue
-)paren
+l_int|NULL
 suffix:semicolon
 id|i
 op_assign
@@ -2829,7 +2778,7 @@ c_func
 (paren
 id|usbdev
 comma
-l_int|0
+id|ifnum
 comma
 l_int|2
 )paren
@@ -2846,14 +2795,9 @@ suffix:semicolon
 id|interface
 op_assign
 op_amp
-id|usbdev-&gt;config
+id|usbdev-&gt;actconfig-&gt;interface
 (braket
-l_int|0
-)braket
-dot
-id|interface
-(braket
-l_int|0
+id|ifnum
 )braket
 dot
 id|altsetting
@@ -2861,9 +2805,6 @@ id|altsetting
 l_int|2
 )braket
 suffix:semicolon
-singleline_comment|//printk(KERN_DEBUG &quot;uss720: get interface&bslash;n&quot;);
-singleline_comment|//i = usb_get_interface(usbdev, 0);
-singleline_comment|//printk(KERN_DEBUG &quot;uss720: is in alternate setting %d&bslash;n&quot;, i);
 multiline_comment|/*&n;&t; * Allocate parport interface &n;&t; */
 id|printk
 c_func
@@ -2893,8 +2834,7 @@ id|GFP_KERNEL
 )paren
 )paren
 r_return
-op_minus
-l_int|1
+l_int|NULL
 suffix:semicolon
 r_if
 c_cond
@@ -2918,26 +2858,20 @@ id|parport_uss720_ops
 )paren
 )paren
 (brace
-id|kfree
+id|printk
 c_func
 (paren
-id|priv
+id|KERN_WARNING
+l_string|&quot;usb-uss720: could not register parport&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
-op_minus
-l_int|1
+r_goto
+id|probe_abort
 suffix:semicolon
 )brace
 id|pp-&gt;private_data
 op_assign
 id|priv
-suffix:semicolon
-id|usbdev
-op_member_access_from_pointer
-r_private
-op_assign
-id|pp
 suffix:semicolon
 id|priv-&gt;usbdev
 op_assign
@@ -3102,10 +3036,8 @@ comma
 id|i
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME: undo some stuff and free some memory. */
-r_return
-op_minus
-l_int|1
+r_goto
+id|probe_abort_port
 suffix:semicolon
 )brace
 macro_line|#endif
@@ -3124,7 +3056,26 @@ suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_return
-l_int|0
+id|pp
+suffix:semicolon
+id|probe_abort_port
+suffix:colon
+id|parport_unregister_port
+c_func
+(paren
+id|pp
+)paren
+suffix:semicolon
+id|probe_abort
+suffix:colon
+id|kfree
+c_func
+(paren
+id|priv
+)paren
+suffix:semicolon
+r_return
+l_int|NULL
 suffix:semicolon
 )brace
 DECL|function|uss720_disconnect
@@ -3137,6 +3088,10 @@ r_struct
 id|usb_device
 op_star
 id|usbdev
+comma
+r_void
+op_star
+id|ptr
 )paren
 (brace
 r_struct
@@ -3149,9 +3104,7 @@ r_struct
 id|parport
 op_star
 )paren
-id|usbdev
-op_member_access_from_pointer
-r_private
+id|ptr
 suffix:semicolon
 r_struct
 id|parport_uss720_private
@@ -3160,7 +3113,6 @@ id|priv
 op_assign
 id|pp-&gt;private_data
 suffix:semicolon
-macro_line|#if 0
 id|usb_release_irq
 c_func
 (paren
@@ -3170,13 +3122,6 @@ id|priv-&gt;irqhandle
 comma
 id|priv-&gt;irqpipe
 )paren
-suffix:semicolon
-macro_line|#endif
-id|usbdev
-op_member_access_from_pointer
-r_private
-op_assign
-l_int|NULL
 suffix:semicolon
 id|priv-&gt;usbdev
 op_assign

@@ -7086,11 +7086,6 @@ id|sk_buff
 op_star
 id|dummy_skb
 suffix:semicolon
-r_struct
-id|proc_dir_entry
-op_star
-id|ent
-suffix:semicolon
 id|printk
 c_func
 (paren
@@ -7138,9 +7133,7 @@ id|unix_family_ops
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
-id|ent
-op_assign
-id|create_proc_entry
+id|create_proc_read_entry
 c_func
 (paren
 l_string|&quot;net/unix&quot;
@@ -7148,11 +7141,11 @@ comma
 l_int|0
 comma
 l_int|0
-)paren
-suffix:semicolon
-id|ent-&gt;read_proc
-op_assign
+comma
 id|unix_read_proc
+comma
+l_int|NULL
+)paren
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef MODULE

@@ -18,13 +18,6 @@ id|hub_event_lock
 op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
-DECL|variable|hub_list_lock
-r_static
-id|spinlock_t
-id|hub_list_lock
-op_assign
-id|SPIN_LOCK_UNLOCKED
-suffix:semicolon
 r_static
 id|LIST_HEAD
 c_func
@@ -481,20 +474,6 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-multiline_comment|/* Set it to the first configuration */
-id|usb_set_configuration
-c_func
-(paren
-id|dev
-comma
-id|dev-&gt;config
-(braket
-l_int|0
-)braket
-dot
-id|bConfigurationValue
-)paren
-suffix:semicolon
 multiline_comment|/* Get the length first */
 r_if
 c_cond
@@ -905,7 +884,8 @@ suffix:semicolon
 )brace
 DECL|function|hub_probe
 r_static
-r_int
+r_void
+op_star
 id|hub_probe
 c_func
 (paren
@@ -913,6 +893,10 @@ r_struct
 id|usb_device
 op_star
 id|dev
+comma
+r_int
+r_int
+id|i
 )paren
 (brace
 r_struct
@@ -937,46 +921,12 @@ suffix:semicolon
 r_int
 id|ret
 suffix:semicolon
-multiline_comment|/* We don&squot;t handle multi-config hubs */
-r_if
-c_cond
-(paren
-id|dev-&gt;descriptor.bNumConfigurations
-op_ne
-l_int|1
-)paren
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-multiline_comment|/* We don&squot;t handle multi-interface hubs */
-r_if
-c_cond
-(paren
-id|dev-&gt;config
-(braket
-l_int|0
-)braket
-dot
-id|bNumInterfaces
-op_ne
-l_int|1
-)paren
-r_return
-op_minus
-l_int|1
-suffix:semicolon
 id|interface
 op_assign
 op_amp
-id|dev-&gt;config
+id|dev-&gt;actconfig-&gt;interface
 (braket
-l_int|0
-)braket
-dot
-id|interface
-(braket
-l_int|0
+id|i
 )braket
 dot
 id|altsetting
@@ -993,8 +943,7 @@ op_ne
 id|USB_CLASS_HUB
 )paren
 r_return
-op_minus
-l_int|1
+l_int|NULL
 suffix:semicolon
 multiline_comment|/* Some hubs have a subclass of 1, which AFAICT according to the */
 multiline_comment|/*  specs is not defined, but it works */
@@ -1014,8 +963,7 @@ l_int|1
 )paren
 )paren
 r_return
-op_minus
-l_int|1
+l_int|NULL
 suffix:semicolon
 multiline_comment|/* Multiple endpoints? What kind of mutant ninja-hub is this? */
 r_if
@@ -1026,8 +974,7 @@ op_ne
 l_int|1
 )paren
 r_return
-op_minus
-l_int|1
+l_int|NULL
 suffix:semicolon
 id|endpoint
 op_assign
@@ -1049,8 +996,7 @@ id|USB_DIR_IN
 )paren
 )paren
 r_return
-op_minus
-l_int|1
+l_int|NULL
 suffix:semicolon
 multiline_comment|/* If it&squot;s not an interrupt endpoint, we&squot;d better punt! */
 r_if
@@ -1065,8 +1011,7 @@ op_ne
 l_int|3
 )paren
 r_return
-op_minus
-l_int|1
+l_int|NULL
 suffix:semicolon
 multiline_comment|/* We found a hub */
 id|printk
@@ -1106,8 +1051,7 @@ l_string|&quot;couldn&squot;t kmalloc hub struct&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-op_minus
-l_int|1
+l_int|NULL
 suffix:semicolon
 )brace
 id|memset
@@ -1123,12 +1067,6 @@ op_star
 id|hub
 )paren
 )paren
-suffix:semicolon
-id|dev
-op_member_access_from_pointer
-r_private
-op_assign
-id|hub
 suffix:semicolon
 id|INIT_LIST_HEAD
 c_func
@@ -1146,7 +1084,7 @@ id|spin_lock_irqsave
 c_func
 (paren
 op_amp
-id|hub_list_lock
+id|hub_event_lock
 comma
 id|flags
 )paren
@@ -1172,7 +1110,7 @@ id|spin_unlock_irqrestore
 c_func
 (paren
 op_amp
-id|hub_list_lock
+id|hub_event_lock
 comma
 id|flags
 )paren
@@ -1232,10 +1170,62 @@ comma
 id|ret
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME: need to free &lt;hub&gt; but first clean up its list. */
+multiline_comment|/* free hub, but first clean up its list. */
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|hub_event_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+multiline_comment|/* Delete it and then reset it */
+id|list_del
+c_func
+(paren
+op_amp
+id|hub-&gt;event_list
+)paren
+suffix:semicolon
+id|INIT_LIST_HEAD
+c_func
+(paren
+op_amp
+id|hub-&gt;event_list
+)paren
+suffix:semicolon
+id|list_del
+c_func
+(paren
+op_amp
+id|hub-&gt;hub_list
+)paren
+suffix:semicolon
+id|INIT_LIST_HEAD
+c_func
+(paren
+op_amp
+id|hub-&gt;hub_list
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|hub_event_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|hub
+)paren
+suffix:semicolon
 r_return
-op_minus
-l_int|1
+l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/* Wake up khubd */
@@ -1248,7 +1238,7 @@ id|khubd_wait
 suffix:semicolon
 )brace
 r_return
-l_int|0
+id|hub
 suffix:semicolon
 )brace
 DECL|function|hub_disconnect
@@ -1261,6 +1251,10 @@ r_struct
 id|usb_device
 op_star
 id|dev
+comma
+r_void
+op_star
+id|ptr
 )paren
 (brace
 r_struct
@@ -1268,9 +1262,7 @@ id|usb_hub
 op_star
 id|hub
 op_assign
-id|dev
-op_member_access_from_pointer
-r_private
+id|ptr
 suffix:semicolon
 r_int
 r_int

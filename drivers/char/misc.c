@@ -158,14 +158,6 @@ r_void
 suffix:semicolon
 r_extern
 r_int
-id|nvram_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
 id|radio_init
 c_func
 (paren
@@ -730,13 +722,6 @@ c_func
 id|misc_deregister
 )paren
 suffix:semicolon
-DECL|variable|proc_misc
-r_static
-r_struct
-id|proc_dir_entry
-op_star
-id|proc_misc
-suffix:semicolon
 DECL|function|misc_init
 r_int
 id|__init
@@ -746,9 +731,7 @@ c_func
 r_void
 )paren
 (brace
-id|proc_misc
-op_assign
-id|create_proc_entry
+id|create_proc_read_entry
 c_func
 (paren
 l_string|&quot;misc&quot;
@@ -756,16 +739,11 @@ comma
 l_int|0
 comma
 l_int|0
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|proc_misc
-)paren
-id|proc_misc-&gt;read_proc
-op_assign
+comma
 id|misc_read_proc
+comma
+l_int|NULL
+)paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_BUSMOUSE
 id|bus_mouse_init
@@ -861,13 +839,6 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_ATARI_DSP56K
 id|dsp56k_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_NVRAM
-id|nvram_init
 c_func
 (paren
 )paren

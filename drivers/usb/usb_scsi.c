@@ -81,6 +81,11 @@ r_int
 id|flags
 suffix:semicolon
 multiline_comment|/* from filter initially*/
+DECL|member|ifnum
+id|__u8
+id|ifnum
+suffix:semicolon
+multiline_comment|/* interface number */
 DECL|member|ep_in
 id|__u8
 id|ep_in
@@ -276,7 +281,8 @@ op_star
 id|filters
 suffix:semicolon
 r_static
-r_int
+r_void
+op_star
 id|scsi_probe
 c_func
 (paren
@@ -284,6 +290,10 @@ r_struct
 id|usb_device
 op_star
 id|dev
+comma
+r_int
+r_int
+id|ifnum
 )paren
 suffix:semicolon
 r_static
@@ -295,6 +305,10 @@ r_struct
 id|usb_device
 op_star
 id|dev
+comma
+r_void
+op_star
+id|ptr
 )paren
 suffix:semicolon
 DECL|variable|scsi_driver
@@ -1019,7 +1033,7 @@ id|USB_RT_INTERFACE
 comma
 l_int|0
 comma
-id|us-&gt;pusb_dev-&gt;ifnum
+id|us-&gt;ifnum
 comma
 id|cmd
 comma
@@ -1325,7 +1339,7 @@ id|USB_RT_INTERFACE
 comma
 l_int|0
 comma
-id|us-&gt;pusb_dev-&gt;ifnum
+id|us-&gt;ifnum
 comma
 id|cmd
 comma
@@ -1414,7 +1428,7 @@ id|USB_RT_INTERFACE
 comma
 l_int|0
 comma
-id|us-&gt;pusb_dev-&gt;ifnum
+id|us-&gt;ifnum
 comma
 id|cmd
 comma
@@ -1463,7 +1477,7 @@ id|USB_RT_INTERFACE
 comma
 l_int|0
 comma
-id|us-&gt;pusb_dev-&gt;ifnum
+id|us-&gt;ifnum
 comma
 id|srb-&gt;cmnd
 comma
@@ -1579,7 +1593,7 @@ id|USB_RT_DEVICE
 comma
 l_int|0
 comma
-l_int|0
+id|us-&gt;ifnum
 comma
 id|status
 comma
@@ -2095,7 +2109,7 @@ id|USB_RT_INTERFACE
 comma
 id|US_BULK_RESET_HARD
 comma
-l_int|0
+id|us-&gt;ifnum
 comma
 l_int|NULL
 comma
@@ -4551,7 +4565,8 @@ suffix:semicolon
 )brace
 DECL|function|scsi_probe
 r_static
-r_int
+r_void
+op_star
 id|scsi_probe
 c_func
 (paren
@@ -4559,6 +4574,10 @@ r_struct
 id|usb_device
 op_star
 id|dev
+comma
+r_int
+r_int
+id|ifnum
 )paren
 (brace
 r_struct
@@ -4773,14 +4792,9 @@ id|dev-&gt;descriptor.bDeviceClass
 op_ne
 l_int|0
 op_logical_or
-id|dev-&gt;config
+id|dev-&gt;actconfig-&gt;interface
 (braket
-l_int|0
-)braket
-dot
-id|interface
-(braket
-l_int|0
+id|ifnum
 )braket
 dot
 id|altsetting
@@ -4792,14 +4806,9 @@ id|bInterfaceClass
 op_ne
 id|USB_CLASS_MASS_STORAGE
 op_logical_or
-id|dev-&gt;config
+id|dev-&gt;actconfig-&gt;interface
 (braket
-l_int|0
-)braket
-dot
-id|interface
-(braket
-l_int|0
+id|ifnum
 )braket
 dot
 id|altsetting
@@ -4813,8 +4822,7 @@ id|US_SC_MAX
 )paren
 (brace
 r_return
-op_minus
-l_int|1
+l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/* now check if we have seen it before */
@@ -4974,8 +4982,7 @@ id|fdata
 )paren
 suffix:semicolon
 r_return
-op_minus
-l_int|1
+l_int|NULL
 suffix:semicolon
 )brace
 id|memset
@@ -4996,14 +5003,9 @@ suffix:semicolon
 id|interface
 op_assign
 op_amp
-id|dev-&gt;config
+id|dev-&gt;actconfig-&gt;interface
 (braket
-l_int|0
-)braket
-dot
-id|interface
-(braket
-l_int|0
+id|ifnum
 )braket
 dot
 id|altsetting
@@ -5235,23 +5237,15 @@ comma
 id|ss-&gt;ep_int
 )paren
 suffix:semicolon
+multiline_comment|/* save the interface number */
+id|ss-&gt;ifnum
+op_assign
+id|ifnum
+suffix:semicolon
 multiline_comment|/* exit if strange looking */
 r_if
 c_cond
 (paren
-id|usb_set_configuration
-c_func
-(paren
-id|dev
-comma
-id|dev-&gt;config
-(braket
-l_int|0
-)braket
-dot
-id|bConfigurationValue
-)paren
-op_logical_or
 id|usb_set_interface
 c_func
 (paren
@@ -5332,32 +5326,21 @@ id|ss
 )paren
 suffix:semicolon
 r_return
-op_minus
-l_int|1
+l_int|NULL
 suffix:semicolon
 multiline_comment|/* no endpoints */
 )brace
 r_if
 c_cond
 (paren
-id|dev-&gt;config
-(braket
-l_int|0
-)braket
-dot
-id|iConfiguration
+id|dev-&gt;actconfig-&gt;iConfiguration
 op_logical_and
 id|usb_string
 c_func
 (paren
 id|dev
 comma
-id|dev-&gt;config
-(braket
-l_int|0
-)braket
-dot
-id|iConfiguration
+id|dev-&gt;actconfig-&gt;iConfiguration
 )paren
 )paren
 id|US_DEBUGP
@@ -5370,12 +5353,7 @@ c_func
 (paren
 id|dev
 comma
-id|dev-&gt;config
-(braket
-l_int|0
-)braket
-dot
-id|iConfiguration
+id|dev-&gt;actconfig-&gt;iConfiguration
 )paren
 )paren
 suffix:semicolon
@@ -5601,8 +5579,7 @@ id|ss
 )paren
 suffix:semicolon
 r_return
-op_minus
-l_int|1
+l_int|NULL
 suffix:semicolon
 )brace
 id|memcpy
@@ -5676,7 +5653,7 @@ l_int|0xC0
 comma
 l_int|0
 comma
-l_int|0
+id|ss-&gt;ifnum
 comma
 id|qstat
 comma
@@ -5749,8 +5726,7 @@ c_cond
 id|result
 )paren
 r_return
-op_minus
-l_int|1
+l_int|NULL
 suffix:semicolon
 id|interruptible_sleep_on_timeout
 c_func
@@ -5857,8 +5833,7 @@ id|ss
 )paren
 suffix:semicolon
 r_return
-op_minus
-l_int|1
+l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/* wait for it to start */
@@ -5913,14 +5888,8 @@ comma
 id|dev-&gt;devnum
 )paren
 suffix:semicolon
-id|dev
-op_member_access_from_pointer
-r_private
-op_assign
-id|ss
-suffix:semicolon
 r_return
-l_int|0
+id|ss
 suffix:semicolon
 )brace
 DECL|function|scsi_disconnect
@@ -5933,6 +5902,10 @@ r_struct
 id|usb_device
 op_star
 id|dev
+comma
+r_void
+op_star
+id|ptr
 )paren
 (brace
 r_struct
@@ -5940,9 +5913,7 @@ id|us_data
 op_star
 id|ss
 op_assign
-id|dev
-op_member_access_from_pointer
-r_private
+id|ptr
 suffix:semicolon
 r_if
 c_cond
@@ -5969,13 +5940,6 @@ id|ss-&gt;pusb_dev
 op_assign
 l_int|NULL
 suffix:semicolon
-id|dev
-op_member_access_from_pointer
-r_private
-op_assign
-l_int|NULL
-suffix:semicolon
-multiline_comment|/* just in case */
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace

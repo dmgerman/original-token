@@ -124,7 +124,7 @@ id|pte
 comma
 r_int
 r_int
-id|addr
+id|vaddr
 )paren
 (brace
 id|cpu_memc_update_entry
@@ -138,7 +138,7 @@ c_func
 id|pte
 )paren
 comma
-id|addr
+id|vaddr
 )paren
 suffix:semicolon
 r_if
@@ -169,9 +169,10 @@ id|mm_struct
 op_star
 id|mm
 comma
-r_int
-r_int
-id|phys_addr
+r_struct
+id|page
+op_star
+id|page
 )paren
 (brace
 id|cpu_memc_update_entry
@@ -179,7 +180,11 @@ c_func
 (paren
 id|mm-&gt;pgd
 comma
-id|phys_addr
+id|page_address
+c_func
+(paren
+id|page
+)paren
 comma
 l_int|0
 )paren

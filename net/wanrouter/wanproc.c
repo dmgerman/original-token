@@ -448,37 +448,6 @@ multiline_comment|/* .mode */
 l_int|2
 comma
 multiline_comment|/* .nlink */
-l_int|0
-comma
-multiline_comment|/* .uid */
-l_int|0
-comma
-multiline_comment|/* .gid */
-l_int|0
-comma
-multiline_comment|/* .size */
-op_amp
-id|proc_dir_inode_operations
-comma
-multiline_comment|/* .ops */
-l_int|NULL
-comma
-multiline_comment|/* .get_info */
-l_int|NULL
-comma
-multiline_comment|/* .fill_node */
-l_int|NULL
-comma
-multiline_comment|/* .next */
-l_int|NULL
-comma
-multiline_comment|/* .parent */
-l_int|NULL
-comma
-multiline_comment|/* .subdir */
-l_int|NULL
-comma
-multiline_comment|/* .data */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;/proc/net/router/config &n; */

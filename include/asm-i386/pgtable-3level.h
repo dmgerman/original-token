@@ -434,8 +434,5 @@ op_plus
 id|address
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Subtle. offset can overflow 32 bits and that&squot;s a feature - we can do&n; * up to 16 TB swap on PAE. (Not that anyone should need that much&n; * swapspace, but who knows?)&n; */
-DECL|macro|SWP_ENTRY
-mdefine_line|#define SWP_ENTRY(type,offset) __pte((((type) &lt;&lt; 1) | ((offset) &lt;&lt; 8ULL)))
 macro_line|#endif /* _I386_PGTABLE_3LEVEL_H */
 eof

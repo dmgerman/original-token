@@ -40,6 +40,7 @@ suffix:semicolon
 r_extern
 r_struct
 id|proc_dir_entry
+op_star
 id|proc_sys_root
 suffix:semicolon
 macro_line|#ifdef CONFIG_SYSCTL
@@ -105,13 +106,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|proc_dir_inode_operations
-)paren
-suffix:semicolon
-DECL|variable|proc_net_inode_operations
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|proc_net_inode_operations
 )paren
 suffix:semicolon
 DECL|variable|proc_net

@@ -191,15 +191,15 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|SEMMNI
-mdefine_line|#define SEMMNI  128             /* ?  max # of semaphore identifiers */
+mdefine_line|#define SEMMNI  128             /* &lt;= 32767  max # of semaphore identifiers */
 DECL|macro|SEMMSL
-mdefine_line|#define SEMMSL  32              /* &lt;= 512 max num of semaphores per id */
+mdefine_line|#define SEMMSL  250             /* &lt;= 512 max num of semaphores per id */
 DECL|macro|SEMMNS
-mdefine_line|#define SEMMNS  (SEMMNI*SEMMSL) /* ? max # of semaphores in system */
+mdefine_line|#define SEMMNS  (SEMMNI*SEMMSL) /* &lt;= MAX_INT max # of semaphores in system */
 DECL|macro|SEMOPM
-mdefine_line|#define SEMOPM  32&t;        /* ~ 100 max num of ops per semop call */
+mdefine_line|#define SEMOPM  32&t;        /* &lt;= 160 max num of ops per semop call */
 DECL|macro|SEMVMX
-mdefine_line|#define SEMVMX  32767           /* semaphore maximum value */
+mdefine_line|#define SEMVMX  32767           /* &lt;= 32767 semaphore maximum value */
 multiline_comment|/* unused */
 DECL|macro|SEMUME
 mdefine_line|#define SEMUME  SEMOPM          /* max num of undo entries per process */
@@ -229,7 +229,7 @@ suffix:semicolon
 multiline_comment|/* pid of last operation */
 )brace
 suffix:semicolon
-multiline_comment|/* One queue for each semaphore set in the system. */
+multiline_comment|/* One queue for each sleeping process in the system. */
 DECL|struct|sem_queue
 r_struct
 id|sem_queue
@@ -250,10 +250,12 @@ id|prev
 suffix:semicolon
 multiline_comment|/* previous entry in the queue, *(q-&gt;prev) == q */
 DECL|member|sleeper
-id|wait_queue_head_t
+r_struct
+id|task_struct
+op_star
 id|sleeper
 suffix:semicolon
-multiline_comment|/* sleeping process */
+multiline_comment|/* this process */
 DECL|member|undo
 r_struct
 id|sem_undo
@@ -278,6 +280,11 @@ op_star
 id|sma
 suffix:semicolon
 multiline_comment|/* semaphore array for operations */
+DECL|member|id
+r_int
+id|id
+suffix:semicolon
+multiline_comment|/* internal sem id */
 DECL|member|sops
 r_struct
 id|sembuf

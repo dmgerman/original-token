@@ -104,11 +104,12 @@ id|vm_operations_struct
 op_star
 id|vm_ops
 suffix:semicolon
-DECL|member|vm_offset
+DECL|member|vm_pgoff
 r_int
 r_int
-id|vm_offset
+id|vm_pgoff
 suffix:semicolon
+multiline_comment|/* offset in PAGE_SIZE units, *not* PAGE_CACHE_SIZE */
 DECL|member|vm_file
 r_struct
 id|file
@@ -343,6 +344,19 @@ op_star
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * A swap entry has to fit into a &quot;unsigned long&quot;, as&n; * the entry is hidden in the &quot;pg_offset&quot; field of the&n; * swapper address space.&n; */
+r_typedef
+r_struct
+(brace
+DECL|member|val
+r_int
+r_int
+id|val
+suffix:semicolon
+DECL|typedef|swp_entry_t
+)brace
+id|swp_entry_t
+suffix:semicolon
 multiline_comment|/*&n; * Try to keep the most commonly accessed fields in single cache lines&n; * here (16 bytes or greater).  This ordering should be particularly&n; * beneficial on 32-bit processors.&n; *&n; * The first line is data used in page cache lookup, the second line&n; * is used for linear searches (eg. clock algorithm scans). &n; */
 DECL|struct|page
 r_typedef
@@ -361,10 +375,10 @@ id|address_space
 op_star
 id|mapping
 suffix:semicolon
-DECL|member|offset
+DECL|member|pg_offset
 r_int
 r_int
-id|offset
+id|pg_offset
 suffix:semicolon
 DECL|member|next_hash
 r_struct
@@ -955,7 +969,7 @@ r_void
 id|swapin_readahead
 c_func
 (paren
-id|pte_t
+id|swp_entry_t
 )paren
 suffix:semicolon
 multiline_comment|/* mmap.c */
@@ -1204,9 +1218,13 @@ id|PAGE_MASK
 suffix:semicolon
 id|grow
 op_assign
+(paren
 id|vma-&gt;vm_start
 op_minus
 id|address
+)paren
+op_rshift
+id|PAGE_SHIFT
 suffix:semicolon
 r_if
 c_cond
@@ -1223,12 +1241,14 @@ dot
 id|rlim_cur
 op_logical_or
 (paren
+(paren
 id|vma-&gt;vm_mm-&gt;total_vm
+op_plus
+id|grow
+)paren
 op_lshift
 id|PAGE_SHIFT
 )paren
-op_plus
-id|grow
 OG
 id|current-&gt;rlim
 (braket
@@ -1245,15 +1265,13 @@ id|vma-&gt;vm_start
 op_assign
 id|address
 suffix:semicolon
-id|vma-&gt;vm_offset
+id|vma-&gt;vm_pgoff
 op_sub_assign
 id|grow
 suffix:semicolon
 id|vma-&gt;vm_mm-&gt;total_vm
 op_add_assign
 id|grow
-op_rshift
-id|PAGE_SHIFT
 suffix:semicolon
 r_if
 c_cond
@@ -1265,8 +1283,6 @@ id|VM_LOCKED
 id|vma-&gt;vm_mm-&gt;locked_vm
 op_add_assign
 id|grow
-op_rshift
-id|PAGE_SHIFT
 suffix:semicolon
 r_return
 l_int|0

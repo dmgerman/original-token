@@ -110,7 +110,9 @@ r_int
 r_int
 id|offset
 op_assign
-id|page-&gt;offset
+id|page-&gt;pg_offset
+op_lshift
+id|PAGE_CACHE_SHIFT
 suffix:semicolon
 r_int
 id|rsize
@@ -443,7 +445,9 @@ l_int|0
 suffix:semicolon
 id|offset
 op_add_assign
-id|page-&gt;offset
+id|page-&gt;pg_offset
+op_lshift
+id|PAGE_CACHE_SHIFT
 suffix:semicolon
 macro_line|#ifdef SMBFS_DEBUG_VERBOSE
 id|printk
@@ -698,7 +702,11 @@ id|dentry-&gt;d_name.name
 comma
 id|count
 comma
-id|page-&gt;offset
+(paren
+id|page-&gt;pg_offset
+op_lshift
+id|PAGE_CACHE_SHIFT
+)paren
 op_plus
 id|offset
 )paren

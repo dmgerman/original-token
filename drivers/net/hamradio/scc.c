@@ -8602,40 +8602,10 @@ id|len
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_PROC_FS
-DECL|variable|scc_proc_dir_entry
-r_struct
-id|proc_dir_entry
-id|scc_proc_dir_entry
-op_assign
-(brace
-id|PROC_NET_Z8530
-comma
-l_int|8
-comma
-l_string|&quot;z8530drv&quot;
-comma
-id|S_IFREG
-op_or
-id|S_IRUGO
-comma
-l_int|1
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-op_amp
-id|proc_net_inode_operations
-comma
-id|scc_net_get_info
-)brace
-suffix:semicolon
 DECL|macro|scc_net_procfs_init
-mdefine_line|#define scc_net_procfs_init()   proc_net_register(&amp;scc_proc_dir_entry);
+mdefine_line|#define scc_net_procfs_init() proc_net_create(&quot;z8530drv&quot;,0,scc_net_get_info)
 DECL|macro|scc_net_procfs_remove
-mdefine_line|#define scc_net_procfs_remove() proc_net_unregister(PROC_NET_Z8530);
+mdefine_line|#define scc_net_procfs_remove() proc_net_remove(&quot;z8530drv&quot;)
 macro_line|#else
 DECL|macro|scc_net_procfs_init
 mdefine_line|#define scc_net_procfs_init()

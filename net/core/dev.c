@@ -6802,74 +6802,6 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_8xx */
-macro_line|#ifdef CONFIG_PROC_FS
-DECL|variable|proc_net_dev
-r_static
-r_struct
-id|proc_dir_entry
-id|proc_net_dev
-op_assign
-(brace
-id|PROC_NET_DEV
-comma
-l_int|3
-comma
-l_string|&quot;dev&quot;
-comma
-id|S_IFREG
-op_or
-id|S_IRUGO
-comma
-l_int|1
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-op_amp
-id|proc_net_inode_operations
-comma
-id|dev_get_info
-)brace
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_NET_RADIO
-macro_line|#ifdef CONFIG_PROC_FS
-DECL|variable|proc_net_wireless
-r_static
-r_struct
-id|proc_dir_entry
-id|proc_net_wireless
-op_assign
-(brace
-id|PROC_NET_WIRELESS
-comma
-l_int|8
-comma
-l_string|&quot;wireless&quot;
-comma
-id|S_IFREG
-op_or
-id|S_IRUGO
-comma
-l_int|1
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-op_amp
-id|proc_net_inode_operations
-comma
-id|dev_get_wireless_info
-)brace
-suffix:semicolon
-macro_line|#endif&t;/* CONFIG_PROC_FS */
-macro_line|#endif&t;/* CONFIG_NET_RADIO */
 DECL|function|net_dev_init
 r_int
 id|__init
@@ -7152,20 +7084,17 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#ifdef CONFIG_PROC_FS
-id|proc_net_register
+id|proc_net_create
 c_func
 (paren
-op_amp
-id|proc_net_dev
+l_string|&quot;dev&quot;
+comma
+l_int|0
+comma
+id|dev_get_info
 )paren
 suffix:semicolon
-(brace
-r_struct
-id|proc_dir_entry
-op_star
-id|ent
-op_assign
-id|create_proc_entry
+id|create_proc_read_entry
 c_func
 (paren
 l_string|&quot;net/dev_stat&quot;
@@ -7173,25 +7102,25 @@ comma
 l_int|0
 comma
 l_int|0
+comma
+id|dev_proc_stats
+comma
+l_int|NULL
 )paren
 suffix:semicolon
-id|ent-&gt;read_proc
-op_assign
-id|dev_proc_stats
-suffix:semicolon
-)brace
-macro_line|#endif
 macro_line|#ifdef CONFIG_NET_RADIO
-macro_line|#ifdef CONFIG_PROC_FS
-id|proc_net_register
+id|proc_net_create
 c_func
 (paren
-op_amp
-id|proc_net_wireless
+l_string|&quot;wireless&quot;
+comma
+l_int|0
+comma
+id|dev_get_wireless_info
 )paren
 suffix:semicolon
-macro_line|#endif&t;/* CONFIG_PROC_FS */
 macro_line|#endif&t;/* CONFIG_NET_RADIO */
+macro_line|#endif&t;/* CONFIG_PROC_FS */
 id|init_bh
 c_func
 (paren

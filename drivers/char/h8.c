@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Hitachi H8/337 Microcontroller driver&n; *&n; * The H8 is used to deal with the power and thermal environment&n; * of a system.&n; */
+multiline_comment|/*&n; * Hitachi H8/337 Microcontroller driver&n; *&n; * The H8 is used to deal with the power and thermal environment&n; * of a system.&n; *&n; * Fixes:&n; *&t;June 1999, AV&t;added releasing /proc/driver/h8&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -10,10 +10,8 @@ macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/linkage.h&gt;
-macro_line|#ifdef CONFIG_PROC_FS
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/lists.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
@@ -96,6 +94,28 @@ comma
 r_int
 )paren
 suffix:semicolon
+macro_line|#else
+DECL|function|h8_get_info
+r_static
+r_int
+id|h8_get_info
+c_func
+(paren
+r_char
+op_star
+comma
+r_char
+op_star
+op_star
+comma
+id|off_t
+comma
+r_int
+comma
+r_int
+)paren
+(brace
+)brace
 macro_line|#endif
 multiline_comment|/*&n; * Support Routines.&n; */
 r_static
@@ -388,38 +408,6 @@ op_amp
 id|h8_fops
 )brace
 suffix:semicolon
-macro_line|#ifdef CONFIG_PROC_FS
-DECL|variable|h8_proc_entry
-r_static
-r_struct
-id|proc_dir_entry
-id|h8_proc_entry
-op_assign
-(brace
-l_int|0
-comma
-l_int|3
-comma
-l_string|&quot;h8&quot;
-comma
-id|S_IFREG
-op_or
-id|S_IRUGO
-comma
-l_int|1
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-id|h8_get_info
-)brace
-suffix:semicolon
-macro_line|#endif
 DECL|variable|intrbuf
 r_union
 id|intr_buf
@@ -1219,18 +1207,18 @@ comma
 l_string|&quot;h8&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PROC_FS
-id|proc_register
+id|create_proc_info_entry
 c_func
 (paren
-op_amp
-id|proc_root
+l_string|&quot;driver/h8&quot;
 comma
-op_amp
-id|h8_proc_entry
+l_int|0
+comma
+l_int|NULL
+comma
+id|h8_get_info
 )paren
 suffix:semicolon
-macro_line|#endif
 id|QUEUE_INIT
 c_func
 (paren
@@ -1299,6 +1287,14 @@ c_func
 r_void
 )paren
 (brace
+id|remove_proc_entry
+c_func
+(paren
+l_string|&quot;driver/h8&quot;
+comma
+l_int|NULL
+)paren
+suffix:semicolon
 id|misc_deregister
 c_func
 (paren
@@ -1373,18 +1369,18 @@ comma
 id|h8_irq
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PROC_FS
-id|proc_register
+id|create_proc_info_entry
 c_func
 (paren
-op_amp
-id|proc_root
+l_string|&quot;driver/h8&quot;
 comma
-op_amp
-id|h8_proc_entry
+l_int|0
+comma
+l_int|NULL
+comma
+id|h8_get_info
 )paren
 suffix:semicolon
-macro_line|#endif
 id|misc_register
 c_func
 (paren

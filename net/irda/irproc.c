@@ -251,7 +251,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-id|create_proc_entry
+id|create_proc_info_entry
 c_func
 (paren
 id|dir
@@ -264,16 +264,14 @@ comma
 l_int|0
 comma
 id|proc_irda
-)paren
-op_member_access_from_pointer
-id|get_info
-op_assign
+comma
 id|dir
 (braket
 id|i
 )braket
 dot
 id|fn
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irda_proc_unregister (void)&n; *&n; *    Unregister irda entry in /proc file system&n; *&n; */

@@ -241,6 +241,10 @@ mdefine_line|#define DECLARE_MUTEX(name) struct semaphore name = MUTEX
 DECL|macro|DECLARE_WAITQUEUE
 mdefine_line|#define DECLARE_WAITQUEUE(wait, current) struct wait_queue wait = { current, NULL }
 macro_line|#endif
+DECL|macro|RS_EVENT_WRITE_WAKEUP
+macro_line|#undef RS_EVENT_WRITE_WAKEUP
+DECL|macro|RS_EVENT_WRITE_WAKEUP
+mdefine_line|#define RS_EVENT_WRITE_WAKEUP&t;0
 macro_line|#include &quot;generic_serial.h&quot;
 macro_line|#include &quot;sx.h&quot;
 multiline_comment|/* ************************************************************** */

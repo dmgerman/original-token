@@ -12,6 +12,8 @@ mdefine_line|#define TASK_SIZE_26&t;&t;(0x04000000UL)
 multiline_comment|/*&n; * Page offset: 3GB&n; */
 DECL|macro|PAGE_OFFSET
 mdefine_line|#define PAGE_OFFSET&t;&t;(0xc0000000UL)
+DECL|macro|PHYS_OFFSET
+mdefine_line|#define PHYS_OFFSET&t;&t;(0x00000000UL)
 DECL|macro|__virt_to_bus__is_a_macro
 mdefine_line|#define __virt_to_bus__is_a_macro
 DECL|macro|__virt_to_bus
@@ -30,6 +32,8 @@ mdefine_line|#define TASK_SIZE_26&t;&t;(0x04000000UL)
 multiline_comment|/*&n; * Page offset: 1.5GB&n; */
 DECL|macro|PAGE_OFFSET
 mdefine_line|#define PAGE_OFFSET&t;&t;(0x60000000UL)
+DECL|macro|PHYS_OFFSET
+mdefine_line|#define PHYS_OFFSET&t;&t;(0x00000000UL)
 macro_line|#else
 macro_line|#error Add in your architecture here
 macro_line|#endif

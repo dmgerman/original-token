@@ -8018,7 +8018,6 @@ l_int|NULL
 comma
 )brace
 suffix:semicolon
-macro_line|#ifdef CONFIG_PROC_FS
 DECL|function|dn_get_info
 r_static
 r_int
@@ -8288,36 +8287,6 @@ r_return
 id|len
 suffix:semicolon
 )brace
-DECL|variable|decnet_linkinfo
-r_struct
-id|proc_dir_entry
-id|decnet_linkinfo
-op_assign
-(brace
-id|PROC_NET_DN_SKT
-comma
-l_int|6
-comma
-l_string|&quot;decnet&quot;
-comma
-id|S_IFREG
-op_or
-id|S_IRUGO
-comma
-l_int|1
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-op_amp
-id|proc_net_inode_operations
-comma
-id|dn_get_info
-)brace
-suffix:semicolon
 macro_line|#ifdef CONFIG_DECNET_RAW
 r_extern
 r_int
@@ -8338,38 +8307,7 @@ comma
 r_int
 )paren
 suffix:semicolon
-DECL|variable|decnet_rawinfo
-r_struct
-id|proc_dir_entry
-id|decnet_rawinfo
-op_assign
-(brace
-id|PROC_NET_DN_RAW
-comma
-l_int|10
-comma
-l_string|&quot;decnet_raw&quot;
-comma
-id|S_IFREG
-op_or
-id|S_IRUGO
-comma
-l_int|1
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-op_amp
-id|proc_net_inode_operations
-comma
-id|dn_raw_get_info
-)brace
-suffix:semicolon
 macro_line|#endif /* CONFIG_DECNET_RAW */
-macro_line|#endif /* CONFIG_PROC_FS */
 DECL|variable|dn_family_ops
 r_static
 r_struct
@@ -8473,23 +8411,27 @@ op_amp
 id|dn_dev_notifier
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PROC_FS
-id|proc_net_register
+id|proc_net_create
 c_func
 (paren
-op_amp
-id|decnet_linkinfo
+l_string|&quot;decnet&quot;
+comma
+l_int|0
+comma
+id|dn_get_info
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_DECNET_RAW
-id|proc_net_register
+id|proc_net_create
 c_func
 (paren
-op_amp
-id|decnet_rawinfo
+l_string|&quot;decnet_raw&quot;
+comma
+l_int|0
+comma
+id|dn_raw_get_info
 )paren
 suffix:semicolon
-macro_line|#endif
 macro_line|#endif
 id|dn_dev_init
 c_func
@@ -8973,21 +8915,19 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_DECNET_ROUTER */
-macro_line|#ifdef CONFIG_PROC_FS
-id|proc_net_unregister
+id|proc_net_remove
 c_func
 (paren
-id|PROC_NET_DN_SKT
+l_string|&quot;decnet&quot;
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_DECNET_RAW
-id|proc_net_unregister
+id|proc_net_remove
 c_func
 (paren
-id|PROC_NET_DN_RAW
+l_string|&quot;decnet_raw&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 macro_line|#endif
 id|dev_remove_pack
 c_func

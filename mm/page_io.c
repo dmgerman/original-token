@@ -15,7 +15,7 @@ c_func
 r_int
 id|rw
 comma
-id|pte_t
+id|swp_entry_t
 id|entry
 comma
 r_struct
@@ -146,10 +146,12 @@ id|offset
 )braket
 )paren
 (brace
-id|pte_ERROR
+id|printk
 c_func
 (paren
-id|entry
+l_string|&quot;VM: Bad swap entry %08lx&bslash;n&quot;
+comma
+id|entry.val
 )paren
 suffix:semicolon
 r_return
@@ -434,14 +436,12 @@ r_int
 id|wait
 )paren
 (brace
-id|pte_t
+id|swp_entry_t
 id|entry
+suffix:semicolon
+id|entry.val
 op_assign
-id|get_pagecache_pte
-c_func
-(paren
-id|page
-)paren
+id|page-&gt;pg_offset
 suffix:semicolon
 r_if
 c_cond
@@ -521,7 +521,7 @@ c_func
 r_int
 id|rw
 comma
-id|pte_t
+id|swp_entry_t
 id|entry
 comma
 r_char

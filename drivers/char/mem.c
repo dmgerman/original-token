@@ -663,19 +663,9 @@ r_int
 r_int
 id|offset
 op_assign
-id|vma-&gt;vm_offset
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|offset
-op_amp
-op_complement
-id|PAGE_MASK
-)paren
-r_return
-op_minus
-id|ENXIO
+id|vma-&gt;vm_pgoff
+op_lshift
+id|PAGE_SHIFT
 suffix:semicolon
 multiline_comment|/*&n;&t; * Accessing memory above the top the kernel knows about or&n;&t; * through a file pointer that was marked O_SYNC will be&n;&t; * done non-cached.&n;&t; */
 r_if

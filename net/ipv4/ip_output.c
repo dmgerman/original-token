@@ -3536,41 +3536,6 @@ l_int|NULL
 comma
 )brace
 suffix:semicolon
-macro_line|#ifdef CONFIG_PROC_FS
-macro_line|#ifdef CONFIG_IP_MULTICAST
-DECL|variable|proc_net_igmp
-r_static
-r_struct
-id|proc_dir_entry
-id|proc_net_igmp
-op_assign
-(brace
-id|PROC_NET_IGMP
-comma
-l_int|4
-comma
-l_string|&quot;igmp&quot;
-comma
-id|S_IFREG
-op_or
-id|S_IRUGO
-comma
-l_int|1
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-op_amp
-id|proc_net_inode_operations
-comma
-id|ip_mc_procinfo
-)brace
-suffix:semicolon
-macro_line|#endif
-macro_line|#endif&t;
 multiline_comment|/*&n; *&t;IP registers the packet type and then calls the subprotocol initialisers&n; */
 DECL|function|ip_init
 r_void
@@ -3593,16 +3558,19 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PROC_FS
 macro_line|#ifdef CONFIG_IP_MULTICAST
-id|proc_net_register
+id|proc_net_create
 c_func
 (paren
-op_amp
-id|proc_net_igmp
+l_string|&quot;igmp&quot;
+comma
+id|S_IFREG
+op_or
+id|S_IRUGO
+comma
+id|ip_mc_procinfo
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#endif&t;
 )brace
 eof

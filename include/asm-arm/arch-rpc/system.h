@@ -43,8 +43,8 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;mcr  p15, 0, %0, c1, c0, 0&bslash;n&bslash;t&quot;
-l_string|&quot;movs pc, #0&quot;
+l_string|&quot;mcr p15, 0, %0, c1, c0, 0&bslash;n&bslash;t&quot;
+l_string|&quot;mov pc, #0&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;r&quot;

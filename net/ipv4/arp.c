@@ -3752,10 +3752,41 @@ id|err
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Write the contents of the ARP cache to a PROCfs file.&n; */
-macro_line|#ifdef CONFIG_PROC_FS
+macro_line|#ifndef CONFIG_PROC_FS
+DECL|function|arp_get_info
+r_static
+r_int
+id|arp_get_info
+c_func
+(paren
+r_char
+op_star
+id|buffer
+comma
+r_char
+op_star
+op_star
+id|start
+comma
+id|off_t
+id|offset
+comma
+r_int
+id|length
+comma
+r_int
+id|dummy
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#else
 DECL|macro|HBUFFERLEN
 mdefine_line|#define HBUFFERLEN 30
 DECL|function|arp_get_info
+r_static
 r_int
 id|arp_get_info
 c_func
@@ -4376,39 +4407,6 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
-macro_line|#ifdef CONFIG_PROC_FS
-DECL|variable|proc_net_arp
-r_static
-r_struct
-id|proc_dir_entry
-id|proc_net_arp
-op_assign
-(brace
-id|PROC_NET_ARP
-comma
-l_int|3
-comma
-l_string|&quot;arp&quot;
-comma
-id|S_IFREG
-op_or
-id|S_IRUGO
-comma
-l_int|1
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-op_amp
-id|proc_net_inode_operations
-comma
-id|arp_get_info
-)brace
-suffix:semicolon
-macro_line|#endif
 DECL|function|arp_init
 r_void
 id|__init
@@ -4431,15 +4429,15 @@ op_amp
 id|arp_packet_type
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PROC_FS
-id|proc_net_register
-c_func
+id|proc_net_create
 (paren
-op_amp
-id|proc_net_arp
+l_string|&quot;arp&quot;
+comma
+l_int|0
+comma
+id|arp_get_info
 )paren
 suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_SYSCTL
 id|neigh_sysctl_register
 c_func

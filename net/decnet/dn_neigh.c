@@ -2953,37 +2953,6 @@ r_return
 id|len
 suffix:semicolon
 )brace
-DECL|variable|proc_net_dn_neigh
-r_static
-r_struct
-id|proc_dir_entry
-id|proc_net_dn_neigh
-op_assign
-(brace
-id|PROC_NET_DN_ADJ
-comma
-l_int|12
-comma
-l_string|&quot;decnet_neigh&quot;
-comma
-id|S_IFREG
-op_or
-id|S_IRUGO
-comma
-l_int|1
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-op_amp
-id|proc_net_inode_operations
-comma
-id|dn_neigh_get_info
-)brace
-suffix:semicolon
 macro_line|#endif
 DECL|function|dn_neigh_init
 r_void
@@ -3002,11 +2971,14 @@ id|dn_neigh_table
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
-id|proc_net_register
+id|proc_net_create
 c_func
 (paren
-op_amp
-id|proc_net_dn_neigh
+l_string|&quot;decnet_neigh&quot;
+comma
+l_int|0
+comma
+id|dn_neigh_get_info
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_PROC_FS */
@@ -3021,10 +2993,10 @@ r_void
 )paren
 (brace
 macro_line|#ifdef CONFIG_PROC_FS
-id|proc_net_unregister
+id|proc_net_remove
 c_func
 (paren
-id|PROC_NET_DN_ADJ
+l_string|&quot;decnet_neigh&quot;
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_PROC_FS */

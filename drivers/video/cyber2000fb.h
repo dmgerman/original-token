@@ -2,17 +2,17 @@ multiline_comment|/*&n; * linux/drivers/video/cyber2000fb.h&n; *&n; * Integraphi
 DECL|macro|arraysize
 mdefine_line|#define arraysize(x)    (sizeof(x)/sizeof(*(x)))
 DECL|macro|cyber2000_outb
-mdefine_line|#define cyber2000_outb(dat,reg)&t;(CyberRegs[reg] = dat)
+mdefine_line|#define cyber2000_outb(dat,reg)&t;writeb(dat, CyberRegs + reg)
 DECL|macro|cyber2000_outw
-mdefine_line|#define cyber2000_outw(dat,reg)&t;(*(unsigned short *)&amp;CyberRegs[reg] = dat)
+mdefine_line|#define cyber2000_outw(dat,reg)&t;writew(dat, CyberRegs + reg)
 DECL|macro|cyber2000_outl
-mdefine_line|#define cyber2000_outl(dat,reg)&t;(*(unsigned long *)&amp;CyberRegs[reg] = dat)
+mdefine_line|#define cyber2000_outl(dat,reg)&t;writel(dat, CyberRegs + reg)
 DECL|macro|cyber2000_inb
-mdefine_line|#define cyber2000_inb(reg)&t;(CyberRegs[reg])
+mdefine_line|#define cyber2000_inb(reg)&t;readb(CyberRegs + reg)
 DECL|macro|cyber2000_inw
-mdefine_line|#define cyber2000_inw(reg)&t;(*(unsigned short *)&amp;CyberRegs[reg])
+mdefine_line|#define cyber2000_inw(reg)&t;readw(CyberRegs + reg)
 DECL|macro|cyber2000_inl
-mdefine_line|#define cyber2000_inl(reg)&t;(*(unsigned long *)&amp;CyberRegs[reg])
+mdefine_line|#define cyber2000_inl(reg)&t;readl(CyberRegs + reg)
 DECL|function|cyber2000_crtcw
 r_static
 r_inline
@@ -154,8 +154,8 @@ r_struct
 id|cyber2000fb_par
 (brace
 DECL|member|screen_base
-r_int
-r_int
+r_char
+op_star
 id|screen_base
 suffix:semicolon
 DECL|member|screen_base_p
@@ -192,6 +192,18 @@ DECL|member|currcon
 r_int
 r_int
 id|currcon
+suffix:semicolon
+DECL|member|dev_name
+r_char
+id|dev_name
+(braket
+l_int|32
+)braket
+suffix:semicolon
+DECL|member|initialised
+r_int
+r_int
+id|initialised
 suffix:semicolon
 multiline_comment|/*&n;&t; * palette&n;&t; */
 r_struct
@@ -242,39 +254,54 @@ id|c_table
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|struct|res
-r_struct
-id|res
-(brace
-DECL|member|xres
-r_int
-id|xres
-suffix:semicolon
-DECL|member|yres
-r_int
-id|yres
-suffix:semicolon
-DECL|member|crtc_regs
-r_int
-r_char
-id|crtc_regs
-(braket
-l_int|18
-)braket
-suffix:semicolon
-DECL|member|crtc_ofl
-r_int
-r_char
-id|crtc_ofl
-suffix:semicolon
-DECL|member|clk_regs
-r_int
-r_char
-id|clk_regs
-(braket
-l_int|4
-)braket
-suffix:semicolon
-)brace
-suffix:semicolon
+DECL|macro|PIXFORMAT_8BPP
+mdefine_line|#define PIXFORMAT_8BPP&t;&t;0
+DECL|macro|PIXFORMAT_16BPP
+mdefine_line|#define PIXFORMAT_16BPP&t;&t;1
+DECL|macro|PIXFORMAT_24BPP
+mdefine_line|#define PIXFORMAT_24BPP&t;&t;2
+DECL|macro|VISUALID_256
+mdefine_line|#define VISUALID_256&t;&t;1
+DECL|macro|VISUALID_64K
+mdefine_line|#define VISUALID_64K&t;&t;2
+DECL|macro|VISUALID_16M
+mdefine_line|#define VISUALID_16M&t;&t;4
+DECL|macro|VISUALID_32K
+mdefine_line|#define VISUALID_32K&t;&t;6
+DECL|macro|CO_CMD_L_PATTERN_FGCOL
+mdefine_line|#define CO_CMD_L_PATTERN_FGCOL&t;0x8000
+DECL|macro|CO_CMD_L_INC_LEFT
+mdefine_line|#define CO_CMD_L_INC_LEFT&t;0x0004
+DECL|macro|CO_CMD_L_INC_UP
+mdefine_line|#define CO_CMD_L_INC_UP&t;&t;0x0002
+DECL|macro|CO_CMD_H_SRC_PIXMAP
+mdefine_line|#define CO_CMD_H_SRC_PIXMAP&t;0x2000
+DECL|macro|CO_CMD_H_BLITTER
+mdefine_line|#define CO_CMD_H_BLITTER&t;0x0800
+DECL|macro|CO_REG_CONTROL
+mdefine_line|#define CO_REG_CONTROL&t;&t;0xbf011
+DECL|macro|CO_REG_SRC_WIDTH
+mdefine_line|#define CO_REG_SRC_WIDTH&t;0xbf018
+DECL|macro|CO_REG_PIX_FORMAT
+mdefine_line|#define CO_REG_PIX_FORMAT&t;0xbf01c
+DECL|macro|CO_REG_FORE_MIX
+mdefine_line|#define CO_REG_FORE_MIX&t;&t;0xbf048
+DECL|macro|CO_REG_FOREGROUND
+mdefine_line|#define CO_REG_FOREGROUND&t;0xbf058
+DECL|macro|CO_REG_WIDTH
+mdefine_line|#define CO_REG_WIDTH&t;&t;0xbf060
+DECL|macro|CO_REG_HEIGHT
+mdefine_line|#define CO_REG_HEIGHT&t;&t;0xbf062
+DECL|macro|CO_REG_X_PHASE
+mdefine_line|#define CO_REG_X_PHASE&t;&t;0xbf078
+DECL|macro|CO_REG_CMD_L
+mdefine_line|#define CO_REG_CMD_L&t;&t;0xbf07c
+DECL|macro|CO_REG_CMD_H
+mdefine_line|#define CO_REG_CMD_H&t;&t;0xbf07e
+DECL|macro|CO_REG_SRC_PTR
+mdefine_line|#define CO_REG_SRC_PTR&t;&t;0xbf170
+DECL|macro|CO_REG_DEST_PTR
+mdefine_line|#define CO_REG_DEST_PTR&t;&t;0xbf178
+DECL|macro|CO_REG_DEST_WIDTH
+mdefine_line|#define CO_REG_DEST_WIDTH&t;0xbf218
 eof

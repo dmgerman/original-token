@@ -3,6 +3,7 @@ macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/shm.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 DECL|function|mlock_fixup_all
@@ -132,11 +133,15 @@ c_func
 id|vma-&gt;vm_mm
 )paren
 suffix:semicolon
-id|vma-&gt;vm_offset
+id|vma-&gt;vm_pgoff
 op_add_assign
+(paren
 id|end
 op_minus
 id|vma-&gt;vm_start
+)paren
+op_rshift
+id|PAGE_SHIFT
 suffix:semicolon
 id|vma-&gt;vm_start
 op_assign
@@ -215,11 +220,15 @@ id|n-&gt;vm_start
 op_assign
 id|start
 suffix:semicolon
-id|n-&gt;vm_offset
+id|n-&gt;vm_pgoff
 op_add_assign
+(paren
 id|n-&gt;vm_start
 op_minus
 id|vma-&gt;vm_start
+)paren
+op_rshift
+id|PAGE_SHIFT
 suffix:semicolon
 id|n-&gt;vm_flags
 op_assign
@@ -381,11 +390,15 @@ id|right-&gt;vm_start
 op_assign
 id|end
 suffix:semicolon
-id|right-&gt;vm_offset
+id|right-&gt;vm_pgoff
 op_add_assign
+(paren
 id|right-&gt;vm_start
 op_minus
 id|left-&gt;vm_start
+)paren
+op_rshift
+id|PAGE_SHIFT
 suffix:semicolon
 id|vma-&gt;vm_flags
 op_assign
@@ -436,11 +449,15 @@ c_func
 id|vma-&gt;vm_mm
 )paren
 suffix:semicolon
-id|vma-&gt;vm_offset
+id|vma-&gt;vm_pgoff
 op_add_assign
+(paren
 id|start
 op_minus
 id|vma-&gt;vm_start
+)paren
+op_rshift
+id|PAGE_SHIFT
 suffix:semicolon
 id|vma-&gt;vm_start
 op_assign

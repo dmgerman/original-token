@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/in6.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/elf.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/proc-fns.h&gt;
@@ -477,6 +478,20 @@ c_func
 id|system_serial_high
 )paren
 suffix:semicolon
+DECL|variable|__bug
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__bug
+)paren
+suffix:semicolon
+DECL|variable|__readwrite_bug
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__readwrite_bug
+)paren
+suffix:semicolon
 DECL|variable|enable_irq
 id|EXPORT_SYMBOL
 c_func
@@ -711,18 +726,18 @@ id|quicklists
 )paren
 suffix:semicolon
 macro_line|#endif
-DECL|variable|__bad_pmd
+DECL|variable|__handle_bad_pmd
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|__bad_pmd
+id|__handle_bad_pmd
 )paren
 suffix:semicolon
-DECL|variable|__bad_pmd_kernel
+DECL|variable|__handle_bad_pmd_kernel
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|__bad_pmd_kernel
+id|__handle_bad_pmd_kernel
 )paren
 suffix:semicolon
 multiline_comment|/* string / mem functions */

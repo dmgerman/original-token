@@ -22,6 +22,7 @@ macro_line|#include &lt;linux/udf_fs.h&gt;
 macro_line|#include &lt;linux/ntfs_fs.h&gt;
 macro_line|#include &lt;linux/hfs_fs.h&gt;
 macro_line|#include &lt;linux/devpts_fs.h&gt;
+macro_line|#include &lt;linux/bfs_fs.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
@@ -238,6 +239,13 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_UDF_FS
 id|init_udf_fs
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_BFS_FS
+id|init_bfs_fs
 c_func
 (paren
 )paren

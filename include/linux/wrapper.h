@@ -47,8 +47,8 @@ DECL|macro|vma_set_inode
 mdefine_line|#define vma_set_inode(v,i) v-&gt;vm_inode = i
 DECL|macro|vma_get_flags
 mdefine_line|#define vma_get_flags(v) v-&gt;vm_flags
-DECL|macro|vma_get_offset
-mdefine_line|#define vma_get_offset(v) v-&gt;vm_offset
+DECL|macro|vma_get_pgoff
+mdefine_line|#define vma_get_pgoff(v) v-&gt;vm_pgoff
 DECL|macro|vma_get_start
 mdefine_line|#define vma_get_start(v) v-&gt;vm_start
 DECL|macro|vma_get_end

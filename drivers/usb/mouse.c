@@ -1006,7 +1006,8 @@ comma
 suffix:semicolon
 DECL|function|mouse_probe
 r_static
-r_int
+r_void
+op_star
 id|mouse_probe
 c_func
 (paren
@@ -1014,6 +1015,10 @@ r_struct
 id|usb_device
 op_star
 id|dev
+comma
+r_int
+r_int
+id|i
 )paren
 (brace
 r_struct
@@ -1037,47 +1042,13 @@ suffix:semicolon
 r_int
 id|ret
 suffix:semicolon
-multiline_comment|/* We don&squot;t handle multi-config mice */
-r_if
-c_cond
-(paren
-id|dev-&gt;descriptor.bNumConfigurations
-op_ne
-l_int|1
-)paren
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-multiline_comment|/* We don&squot;t handle multi-interface mice */
-r_if
-c_cond
-(paren
-id|dev-&gt;config
-(braket
-l_int|0
-)braket
-dot
-id|bNumInterfaces
-op_ne
-l_int|1
-)paren
-r_return
-op_minus
-l_int|1
-suffix:semicolon
 multiline_comment|/* Is it a mouse interface? */
 id|interface
 op_assign
 op_amp
-id|dev-&gt;config
+id|dev-&gt;actconfig-&gt;interface
 (braket
-l_int|0
-)braket
-dot
-id|interface
-(braket
-l_int|0
+id|i
 )braket
 dot
 id|altsetting
@@ -1093,8 +1064,7 @@ op_ne
 l_int|3
 )paren
 r_return
-op_minus
-l_int|1
+l_int|NULL
 suffix:semicolon
 r_if
 c_cond
@@ -1104,8 +1074,7 @@ op_ne
 l_int|1
 )paren
 r_return
-op_minus
-l_int|1
+l_int|NULL
 suffix:semicolon
 r_if
 c_cond
@@ -1115,8 +1084,7 @@ op_ne
 l_int|2
 )paren
 r_return
-op_minus
-l_int|1
+l_int|NULL
 suffix:semicolon
 multiline_comment|/* Multiple endpoints? What kind of mutant ninja-mouse is this? */
 r_if
@@ -1127,8 +1095,7 @@ op_ne
 l_int|1
 )paren
 r_return
-op_minus
-l_int|1
+l_int|NULL
 suffix:semicolon
 id|endpoint
 op_assign
@@ -1150,8 +1117,7 @@ l_int|0x80
 )paren
 )paren
 r_return
-op_minus
-l_int|1
+l_int|NULL
 suffix:semicolon
 multiline_comment|/* If it&squot;s not an interrupt endpoint, we&squot;d better punt! */
 r_if
@@ -1166,8 +1132,7 @@ op_ne
 l_int|3
 )paren
 r_return
-op_minus
-l_int|1
+l_int|NULL
 suffix:semicolon
 id|printk
 c_func
@@ -1175,34 +1140,6 @@ c_func
 l_string|&quot;USB mouse found&bslash;n&quot;
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|usb_set_configuration
-c_func
-(paren
-id|dev
-comma
-id|dev-&gt;config
-(braket
-l_int|0
-)braket
-dot
-id|bConfigurationValue
-)paren
-)paren
-(brace
-id|printk
-(paren
-id|KERN_INFO
-l_string|&quot; Failed usb_set_configuration: mouse&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)brace
 multiline_comment|/* these are used to request the irq when the mouse is opened */
 id|mouse-&gt;dev
 op_assign
@@ -1280,7 +1217,7 @@ id|ret
 )paren
 suffix:semicolon
 r_return
-id|ret
+l_int|NULL
 suffix:semicolon
 )brace
 id|mouse-&gt;suspended
@@ -1289,7 +1226,7 @@ l_int|0
 suffix:semicolon
 )brace
 r_return
-l_int|0
+id|mouse
 suffix:semicolon
 )brace
 DECL|function|mouse_disconnect
@@ -1302,6 +1239,10 @@ r_struct
 id|usb_device
 op_star
 id|dev
+comma
+r_void
+op_star
+id|ptr
 )paren
 (brace
 r_struct
@@ -1309,8 +1250,7 @@ id|mouse_state
 op_star
 id|mouse
 op_assign
-op_amp
-id|static_mouse_state
+id|ptr
 suffix:semicolon
 multiline_comment|/* stop the usb interrupt transfer */
 r_if
@@ -1349,7 +1289,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Mouse disconnected&bslash;n&quot;
+l_string|&quot;USB Mouse disconnected&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

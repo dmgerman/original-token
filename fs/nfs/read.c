@@ -147,7 +147,9 @@ r_int
 r_int
 id|offset
 op_assign
-id|page-&gt;offset
+id|page-&gt;pg_offset
+op_lshift
+id|PAGE_CACHE_SHIFT
 suffix:semicolon
 r_char
 op_star
@@ -706,7 +708,9 @@ c_func
 id|dentry
 )paren
 comma
-id|page-&gt;offset
+id|page-&gt;pg_offset
+op_lshift
+id|PAGE_CACHE_SHIFT
 comma
 (paren
 r_void
@@ -849,13 +853,13 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;NFS: nfs_readpage (%p %ld@%ld)&bslash;n&quot;
+l_string|&quot;NFS: nfs_readpage (%p %ld@%lu)&bslash;n&quot;
 comma
 id|page
 comma
 id|PAGE_SIZE
 comma
-id|page-&gt;offset
+id|page-&gt;pg_offset
 )paren
 suffix:semicolon
 id|get_page

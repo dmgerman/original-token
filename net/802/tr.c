@@ -1823,7 +1823,33 @@ id|sysctl_tr_rif_timeout
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Generate the /proc/net information for the token ring RIF&n; *&t;routing.&n; */
-macro_line|#ifdef CONFIG_PROC_FS
+macro_line|#ifndef CONFIG_PROC_FS
+DECL|function|rif_get_info
+r_int
+id|rif_get_info
+c_func
+(paren
+r_char
+op_star
+id|buffer
+comma
+r_char
+op_star
+op_star
+id|start
+comma
+id|off_t
+id|offset
+comma
+r_int
+id|length
+comma
+r_int
+id|dummy
+)paren
+(brace
+)brace
+macro_line|#else
 DECL|function|rif_get_info
 r_int
 id|rif_get_info
@@ -2340,39 +2366,6 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/*&n; *&t;Called during bootup.  We don&squot;t actually have to initialise&n; *&t;too much for this.&n; */
-macro_line|#ifdef CONFIG_PROC_FS
-DECL|variable|tr_rif_proc
-r_static
-r_struct
-id|proc_dir_entry
-id|tr_rif_proc
-op_assign
-(brace
-id|PROC_NET_TR_RIF
-comma
-l_int|6
-comma
-l_string|&quot;tr_rif&quot;
-comma
-id|S_IFREG
-op_or
-id|S_IRUGO
-comma
-l_int|1
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-op_amp
-id|proc_net_inode_operations
-comma
-id|rif_get_info
-)brace
-suffix:semicolon
-macro_line|#endif
 DECL|function|rif_init
 r_void
 id|__init
@@ -2411,14 +2404,15 @@ op_amp
 id|rif_timer
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PROC_FS
-id|proc_net_register
+id|proc_net_create
 c_func
 (paren
-op_amp
-id|tr_rif_proc
+l_string|&quot;tr_rif&quot;
+comma
+l_int|0
+comma
+id|rif_get_info
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 eof

@@ -7,49 +7,6 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/termios.h&gt;
 macro_line|#include &lt;linux/tqueue.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
-multiline_comment|/*&n; * Counters of the input lines (CTS, DSR, RI, CD) interrupts&n; */
-DECL|struct|async_icount
-r_struct
-id|async_icount
-(brace
-DECL|member|cts
-DECL|member|dsr
-DECL|member|rng
-DECL|member|dcd
-DECL|member|tx
-DECL|member|rx
-id|__u32
-id|cts
-comma
-id|dsr
-comma
-id|rng
-comma
-id|dcd
-comma
-id|tx
-comma
-id|rx
-suffix:semicolon
-DECL|member|frame
-DECL|member|parity
-DECL|member|overrun
-DECL|member|brk
-id|__u32
-id|frame
-comma
-id|parity
-comma
-id|overrun
-comma
-id|brk
-suffix:semicolon
-DECL|member|buf_overrun
-id|__u32
-id|buf_overrun
-suffix:semicolon
-)brace
-suffix:semicolon
 DECL|struct|serial_state
 r_struct
 id|serial_state
@@ -352,9 +309,6 @@ DECL|macro|SERIAL_MAGIC
 mdefine_line|#define SERIAL_MAGIC 0x5301
 DECL|macro|SSTATE_MAGIC
 mdefine_line|#define SSTATE_MAGIC 0x5302
-multiline_comment|/*&n; * The size of the serial xmit buffer is 1 page, or 4096 bytes&n; */
-DECL|macro|SERIAL_XMIT_SIZE
-mdefine_line|#define SERIAL_XMIT_SIZE 4096
 multiline_comment|/*&n; * Events are used to schedule things to happen at timer-interrupt&n; * time, instead of at rs interrupt time.&n; */
 DECL|macro|RS_EVENT_WRITE_WAKEUP
 mdefine_line|#define RS_EVENT_WRITE_WAKEUP&t;0

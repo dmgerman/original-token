@@ -6706,36 +6706,6 @@ r_return
 id|len
 suffix:semicolon
 )brace
-DECL|variable|iface_proc_entry
-r_struct
-id|proc_dir_entry
-id|iface_proc_entry
-op_assign
-(brace
-l_int|0
-comma
-l_int|8
-comma
-l_string|&quot;if_inet6&quot;
-comma
-id|S_IFREG
-op_or
-id|S_IRUGO
-comma
-l_int|1
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|NULL
-comma
-op_amp
-id|iface_proc_info
-)brace
-suffix:semicolon
 macro_line|#endif&t;/* CONFIG_PROC_FS */
 multiline_comment|/*&n; *&t;Periodic address status verification&n; */
 DECL|function|addrconf_verify
@@ -9010,11 +8980,14 @@ c_func
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_PROC_FS
-id|proc_net_register
+id|proc_net_create
 c_func
 (paren
-op_amp
-id|iface_proc_entry
+l_string|&quot;if_inet6&quot;
+comma
+l_int|0
+comma
+id|iface_proc_info
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -9242,10 +9215,10 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
-id|proc_net_unregister
+id|proc_net_remove
 c_func
 (paren
-id|iface_proc_entry.low_ino
+l_string|&quot;if_inet6&quot;
 )paren
 suffix:semicolon
 macro_line|#endif

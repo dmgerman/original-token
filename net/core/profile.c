@@ -1186,14 +1186,7 @@ r_int
 id|i
 suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
-r_struct
-id|proc_dir_entry
-op_star
-id|ent
-suffix:semicolon
-id|ent
-op_assign
-id|create_proc_entry
+id|create_proc_read_entry
 c_func
 (paren
 l_string|&quot;net/profile&quot;
@@ -1201,11 +1194,11 @@ comma
 l_int|0
 comma
 l_int|0
-)paren
-suffix:semicolon
-id|ent-&gt;read_proc
-op_assign
+comma
 id|profile_read_proc
+comma
+l_int|NULL
+)paren
 suffix:semicolon
 macro_line|#endif
 id|register_netdevice

@@ -157,6 +157,7 @@ r_int
 r_int
 id|ai_multi
 suffix:semicolon
+macro_line|#ifdef CONFIG_SYSCTL
 DECL|function|proc_alignment_read
 r_static
 r_int
@@ -314,7 +315,6 @@ r_return
 id|len
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_SYSCTL
 multiline_comment|/*&n; * This needs to be done after sysctl_init, otherwise sys/&n; * will be overwritten.&n; */
 DECL|function|alignment_init
 r_void
@@ -325,33 +325,17 @@ c_func
 r_void
 )paren
 (brace
-r_struct
-id|proc_dir_entry
-op_star
-id|e
-suffix:semicolon
-id|e
-op_assign
-id|create_proc_entry
+id|create_proc_read_entry
 c_func
 (paren
 l_string|&quot;sys/debug/alignment&quot;
 comma
-id|S_IFREG
-op_or
-id|S_IRUGO
+l_int|0
 comma
 l_int|NULL
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|e
-)paren
-id|e-&gt;read_proc
-op_assign
+comma
 id|proc_alignment_read
+)paren
 suffix:semicolon
 )brace
 DECL|variable|alignment_init
@@ -361,7 +345,7 @@ c_func
 id|alignment_init
 )paren
 suffix:semicolon
-macro_line|#endif
+macro_line|#endif /* CONFIG_SYSCTL */
 r_static
 r_int
 DECL|function|do_alignment_exception

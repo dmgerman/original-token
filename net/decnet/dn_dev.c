@@ -5743,37 +5743,6 @@ r_return
 id|len
 suffix:semicolon
 )brace
-DECL|variable|proc_net_decnet_dev
-r_static
-r_struct
-id|proc_dir_entry
-id|proc_net_decnet_dev
-op_assign
-(brace
-id|PROC_NET_DN_DEV
-comma
-l_int|10
-comma
-l_string|&quot;decnet_dev&quot;
-comma
-id|S_IFREG
-op_or
-id|S_IRUGO
-comma
-l_int|1
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-op_amp
-id|proc_net_inode_operations
-comma
-id|decnet_dev_get_info
-)brace
-suffix:semicolon
 macro_line|#endif /* CONFIG_PROC_FS */
 macro_line|#ifdef CONFIG_RTNETLINK
 DECL|variable|dnet_rtnetlink_table
@@ -5997,11 +5966,14 @@ id|dnet_rtnetlink_table
 suffix:semicolon
 macro_line|#endif /* CONFIG_RTNETLINK */
 macro_line|#ifdef CONFIG_PROC_FS
-id|proc_net_register
+id|proc_net_create
 c_func
 (paren
-op_amp
-id|proc_net_decnet_dev
+l_string|&quot;decnet_dev&quot;
+comma
+l_int|0
+comma
+id|decnet_dev_get_info
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_PROC_FS */
@@ -6101,10 +6073,10 @@ suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_SYSCTL */
 macro_line|#ifdef CONFIG_PROC_FS
-id|proc_net_unregister
+id|proc_net_remove
 c_func
 (paren
-id|PROC_NET_DN_DEV
+l_string|&quot;decnet_dev&quot;
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_PROC_FS */

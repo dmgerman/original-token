@@ -88,6 +88,10 @@ c_func
 id|tq_specialix
 )paren
 suffix:semicolon
+DECL|macro|RS_EVENT_WRITE_WAKEUP
+macro_line|#undef RS_EVENT_WRITE_WAKEUP
+DECL|macro|RS_EVENT_WRITE_WAKEUP
+mdefine_line|#define RS_EVENT_WRITE_WAKEUP&t;0
 DECL|macro|SPECIALIX_TYPE_NORMAL
 mdefine_line|#define SPECIALIX_TYPE_NORMAL&t;1
 DECL|macro|SPECIALIX_TYPE_CALLOUT

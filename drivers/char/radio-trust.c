@@ -1343,7 +1343,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
 id|MODULE_AUTHOR
 c_func
 (paren
@@ -1374,7 +1373,6 @@ l_string|&quot;I/O address of the Trust FM Radio card (0x350 or 0x358)&quot;
 suffix:semicolon
 id|EXPORT_NO_SYMBOLS
 suffix:semicolon
-macro_line|#endif /* MODULE */
 DECL|function|cleanup_trust_module
 r_static
 r_void

@@ -67,9 +67,7 @@ macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
 macro_line|#include &lt;linux/nvram.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#ifdef CONFIG_PROC_FS
 macro_line|#include &lt;linux/proc_fs.h&gt;
-macro_line|#endif
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -1036,12 +1034,38 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_PROC_FS
-DECL|variable|proc_nvram
-r_struct
-id|proc_dir_entry
+DECL|function|nvram_read_proc
+r_static
+r_int
+id|nvram_read_proc
+c_func
+(paren
+r_char
 op_star
-id|proc_nvram
-suffix:semicolon
+id|buffer
+comma
+r_char
+op_star
+op_star
+id|start
+comma
+id|off_t
+id|offset
+comma
+r_int
+id|size
+comma
+r_int
+op_star
+id|eof
+comma
+r_void
+op_star
+id|data
+)paren
+(brace
+)brace
+macro_line|#else
 DECL|function|nvram_read_proc
 r_static
 r_int
@@ -1205,7 +1229,7 @@ suffix:semicolon
 multiline_comment|/* This macro frees the machine specific function from bounds checking and&n; * this like that... */
 DECL|macro|PRINT_PROC
 mdefine_line|#define&t;PRINT_PROC(fmt,args...)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;*len += sprintf( buffer+*len, fmt, ##args );&t;&bslash;&n;&t;&t;if (*begin + *len &gt; offset + size)&t;&t;&t;&t;&bslash;&n;&t;&t;&t;return( 0 );&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;if (*begin + *len &lt; offset) {&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;*begin += *len;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;*len = 0;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;} while(0)
-macro_line|#endif
+macro_line|#endif /* CONFIG_PROC_FS */
 DECL|variable|nvram_fops
 r_static
 r_struct
@@ -1254,6 +1278,7 @@ id|nvram_fops
 )brace
 suffix:semicolon
 DECL|function|nvram_init
+r_static
 r_int
 id|__init
 id|nvram_init
@@ -1292,70 +1317,41 @@ op_amp
 id|nvram_dev
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PROC_FS
-r_if
-c_cond
-(paren
-(paren
-id|proc_nvram
-op_assign
-id|create_proc_entry
+id|create_proc_read_entry
 c_func
 (paren
-l_string|&quot;nvram&quot;
+l_string|&quot;driver/nvram&quot;
 comma
 l_int|0
 comma
 l_int|0
-)paren
-)paren
-)paren
-id|proc_nvram-&gt;read_proc
-op_assign
+comma
 id|nvram_read_proc
+comma
+l_int|NULL
+)paren
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|init_module
-r_int
-id|init_module
+DECL|function|nvram_cleanup_module
+r_static
+r_void
+id|__exit
+id|nvram_cleanup_module
 (paren
 r_void
 )paren
 (brace
-r_return
-id|nvram_init
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
-(paren
-r_void
-)paren
-(brace
-macro_line|#ifdef CONFIG_PROC_FS
-r_if
-c_cond
-(paren
-id|proc_nvram
-)paren
 id|remove_proc_entry
 c_func
 (paren
-l_string|&quot;nvram&quot;
+l_string|&quot;driver/nvram&quot;
 comma
 l_int|0
 )paren
 suffix:semicolon
-macro_line|#endif
 id|misc_deregister
 c_func
 (paren
@@ -1364,7 +1360,20 @@ id|nvram_dev
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+DECL|variable|nvram_init
+id|module_init
+c_func
+(paren
+id|nvram_init
+)paren
+suffix:semicolon
+DECL|variable|nvram_cleanup_module
+id|module_exit
+c_func
+(paren
+id|nvram_cleanup_module
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Machine specific functions&n; */
 macro_line|#if MACH == PC
 DECL|function|pc_check_checksum

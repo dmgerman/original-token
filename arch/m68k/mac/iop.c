@@ -23,7 +23,7 @@ comma
 id|iop_ism_present
 suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
-multiline_comment|/*&n; * sneaky reuse of the PROC_MAC_VIA inode. It&squot;s not needed by via.c&n; * anymore so we&squot;ll use it to debut the IOPs.&n; */
+r_static
 r_int
 id|iop_get_proc_info
 c_func
@@ -42,38 +42,28 @@ comma
 r_int
 )paren
 suffix:semicolon
-DECL|variable|proc_mac_iop
+macro_line|#else
+DECL|function|iop_get_proc_info
 r_static
-r_struct
-id|proc_dir_entry
-id|proc_mac_iop
-op_assign
-(brace
-id|PROC_MAC_VIA
-comma
-l_int|7
-comma
-l_string|&quot;mac_iop&quot;
-comma
-id|S_IFREG
-op_or
-id|S_IRUGO
-comma
-l_int|1
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-op_amp
-id|proc_array_inode_operations
-comma
-op_amp
+r_int
 id|iop_get_proc_info
+c_func
+(paren
+r_char
+op_star
+comma
+r_char
+op_star
+op_star
+comma
+id|off_t
+comma
+r_int
+comma
+r_int
+)paren
+(brace
 )brace
-suffix:semicolon
 macro_line|#endif /* CONFIG_PROC_FS */
 multiline_comment|/* structure for tracking channel listeners */
 DECL|struct|listener
@@ -831,18 +821,18 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_PROC_FS
-id|proc_register
+id|create_proc_info_entry
 c_func
 (paren
-op_amp
-id|proc_root
+l_string|&quot;mac_iop&quot;
 comma
-op_amp
-id|proc_mac_iop
+l_int|0
+comma
+l_int|0
+comma
+id|iop_get_proc_info
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/*&n; * Register the interrupt handler for the IOPs.&n; * TODO: might be wrong for non-OSS machines. Anyone?&n; */
 DECL|function|iop_register_interrupts

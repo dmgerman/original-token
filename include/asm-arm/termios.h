@@ -138,6 +138,8 @@ DECL|macro|N_SMSBLOCK
 mdefine_line|#define N_SMSBLOCK&t;12&t;/* SMS block mode - for talking to GSM data cards about SMS messages */
 DECL|macro|N_HDLC
 mdefine_line|#define N_HDLC&t;&t;13&t;/* synchronous HDLC */
+DECL|macro|N_SYNC_PPP
+mdefine_line|#define N_SYNC_PPP&t;14
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/string.h&gt;
 multiline_comment|/*&n; * Translate a &quot;termio&quot; structure into a &quot;termios&quot;. Ugh.&n; */

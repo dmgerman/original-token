@@ -2,7 +2,7 @@ multiline_comment|/*&n; * include/asm/setup.h&n; *&n; * Structure passed to kern
 macro_line|#ifndef __ASMARM_SETUP_H
 DECL|macro|__ASMARM_SETUP_H
 mdefine_line|#define __ASMARM_SETUP_H
-multiline_comment|/*&n; * Usage:&n; *  - do not go blindly adding fields, add them at the end&n; *  - when adding fields, don&squot;t rely on the address until&n; *    a patch from me has been released&n; *  - unused fields should be zero (for future expansion)&n; */
+multiline_comment|/*&n; * Usage:&n; *  - do not go blindly adding fields, add them at the end&n; *  - when adding fields, don&squot;t rely on the address until&n; *    a patch from me has been released&n; *  - unused fields should be zero (for future expansion)&n; *  - this structure is relatively short-lived - only&n; *    guaranteed to contain useful data in setup_arch()&n; */
 DECL|macro|COMMAND_LINE_SIZE
 mdefine_line|#define COMMAND_LINE_SIZE 1024
 DECL|struct|param_struct
@@ -217,6 +217,48 @@ id|COMMAND_LINE_SIZE
 )braket
 suffix:semicolon
 )brace
+suffix:semicolon
+multiline_comment|/*&n; * Memory map description&n; */
+DECL|macro|NR_BANKS
+mdefine_line|#define NR_BANKS 4
+DECL|struct|meminfo
+r_struct
+id|meminfo
+(brace
+DECL|member|nr_banks
+r_int
+id|nr_banks
+suffix:semicolon
+DECL|member|end
+r_int
+r_int
+id|end
+suffix:semicolon
+r_struct
+(brace
+DECL|member|start
+r_int
+r_int
+id|start
+suffix:semicolon
+DECL|member|size
+r_int
+r_int
+id|size
+suffix:semicolon
+DECL|member|bank
+)brace
+id|bank
+(braket
+id|NR_BANKS
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
+r_extern
+r_struct
+id|meminfo
+id|meminfo
 suffix:semicolon
 macro_line|#endif
 eof

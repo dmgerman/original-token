@@ -735,6 +735,7 @@ id|kdev_t
 id|dev
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PROC_FS
 r_static
 r_void
 id|ida_procinit
@@ -773,6 +774,50 @@ op_star
 id|data
 )paren
 suffix:semicolon
+macro_line|#else
+DECL|function|ida_procinit
+r_static
+r_void
+id|ida_procinit
+c_func
+(paren
+r_int
+id|i
+)paren
+(brace
+)brace
+DECL|function|ida_proc_get_info
+r_static
+r_int
+id|ida_proc_get_info
+c_func
+(paren
+r_char
+op_star
+id|buffer
+comma
+r_char
+op_star
+op_star
+id|start
+comma
+id|off_t
+id|offset
+comma
+r_int
+id|length
+comma
+r_int
+op_star
+id|eof
+comma
+r_void
+op_star
+id|data
+)paren
+(brace
+)brace
+macro_line|#endif
 DECL|function|ida_geninit
 r_static
 r_void
@@ -984,10 +1029,12 @@ comma
 multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
+macro_line|#ifdef CONFIG_PROC_FS
 multiline_comment|/*&n; * Get us a file in /proc/array that says something about each controller.&n; * Create /proc/array if it doesn&squot;t exist yet.&n; */
 DECL|function|ida_procinit
 r_static
 r_void
+id|__init
 id|ida_procinit
 c_func
 (paren
@@ -995,12 +1042,6 @@ r_int
 id|i
 )paren
 (brace
-macro_line|#ifdef CONFIG_PROC_FS
-r_struct
-id|proc_dir_entry
-op_star
-id|pd
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1014,16 +1055,11 @@ op_assign
 id|create_proc_entry
 c_func
 (paren
-l_string|&quot;array&quot;
+l_string|&quot;driver/array&quot;
 comma
 id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
 comma
-op_amp
-id|proc_root
+l_int|NULL
 )paren
 suffix:semicolon
 r_if
@@ -1035,9 +1071,7 @@ id|proc_array
 r_return
 suffix:semicolon
 )brace
-id|pd
-op_assign
-id|create_proc_entry
+id|create_proc_read_entry
 c_func
 (paren
 id|hba
@@ -1047,33 +1081,18 @@ id|i
 op_member_access_from_pointer
 id|devname
 comma
-id|S_IFREG
-op_or
-id|S_IRUGO
+l_int|0
 comma
 id|proc_array
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|pd
-)paren
-r_return
-suffix:semicolon
-id|pd-&gt;read_proc
-op_assign
+comma
 id|ida_proc_get_info
-suffix:semicolon
-id|pd-&gt;data
-op_assign
+comma
 id|hba
 (braket
 id|i
 )braket
+)paren
 suffix:semicolon
-macro_line|#endif&t;
 )brace
 multiline_comment|/*&n; * Report information about this controller.&n; */
 DECL|function|ida_proc_get_info
@@ -1550,6 +1569,7 @@ r_return
 id|len
 suffix:semicolon
 )brace
+macro_line|#endif /* CONFIG_PROC_FS */
 macro_line|#ifdef MODULE
 id|MODULE_PARM
 c_func
@@ -1564,6 +1584,7 @@ suffix:semicolon
 multiline_comment|/* This is a bit of a hack... */
 DECL|function|init_module
 r_int
+id|__init
 id|init_module
 c_func
 (paren
@@ -1680,6 +1701,14 @@ r_struct
 id|gendisk
 op_star
 id|g
+suffix:semicolon
+id|remove_proc_entry
+c_func
+(paren
+l_string|&quot;driver/array&quot;
+comma
+l_int|NULL
+)paren
 suffix:semicolon
 r_for
 c_loop
@@ -1872,17 +1901,6 @@ suffix:semicolon
 )brace
 )brace
 )brace
-macro_line|#ifdef CONFIG_PROC_FS
-id|remove_proc_entry
-c_func
-(paren
-l_string|&quot;array&quot;
-comma
-op_amp
-id|proc_root
-)paren
-suffix:semicolon
-macro_line|#endif
 id|kfree
 c_func
 (paren
@@ -1912,6 +1930,7 @@ macro_line|#endif /* MODULE */
 multiline_comment|/*&n; *  This is it.  Find all the controllers and register them.  I really hate&n; *  stealing all these major device numbers.&n; */
 DECL|function|cpqarray_init
 r_void
+id|__init
 id|cpqarray_init
 c_func
 (paren

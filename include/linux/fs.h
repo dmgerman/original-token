@@ -468,6 +468,7 @@ macro_line|#include &lt;linux/smb_fs_i.h&gt;
 macro_line|#include &lt;linux/hfs_fs_i.h&gt;
 macro_line|#include &lt;linux/adfs_fs_i.h&gt;
 macro_line|#include &lt;linux/qnx4_fs_i.h&gt;
+macro_line|#include &lt;linux/bfs_fs_i.h&gt;
 macro_line|#include &lt;linux/udf_fs_i.h&gt;
 macro_line|#include &lt;linux/ncp_fs_i.h&gt;
 multiline_comment|/*&n; * Attribute flags.  These should be or-ed together to figure out what&n; * has been changed!&n; */
@@ -832,6 +833,11 @@ DECL|member|qnx4_i
 r_struct
 id|qnx4_inode_info
 id|qnx4_i
+suffix:semicolon
+DECL|member|bfs_i
+r_struct
+id|bfs_inode_info
+id|bfs_i
 suffix:semicolon
 DECL|member|udf_i
 r_struct
@@ -1342,6 +1348,7 @@ macro_line|#include &lt;linux/smb_fs_sb.h&gt;
 macro_line|#include &lt;linux/hfs_fs_sb.h&gt;
 macro_line|#include &lt;linux/adfs_fs_sb.h&gt;
 macro_line|#include &lt;linux/qnx4_fs_sb.h&gt;
+macro_line|#include &lt;linux/bfs_fs_sb.h&gt;
 macro_line|#include &lt;linux/udf_fs_sb.h&gt;
 macro_line|#include &lt;linux/ncp_fs_sb.h&gt;
 r_extern
@@ -1541,6 +1548,11 @@ DECL|member|qnx4_sb
 r_struct
 id|qnx4_sb_info
 id|qnx4_sb
+suffix:semicolon
+DECL|member|bfs_sb
+r_struct
+id|bfs_sb_info
+id|bfs_sb
 suffix:semicolon
 DECL|member|udf_sb
 r_struct

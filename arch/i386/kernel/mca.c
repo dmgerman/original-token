@@ -2593,7 +2593,6 @@ multiline_comment|/* Should never happen */
 id|proc_register
 c_func
 (paren
-op_amp
 id|proc_mca
 comma
 op_amp
@@ -2629,7 +2628,6 @@ suffix:semicolon
 id|proc_register
 c_func
 (paren
-op_amp
 id|proc_mca
 comma
 op_amp
@@ -2875,7 +2873,6 @@ suffix:semicolon
 id|proc_register
 c_func
 (paren
-op_amp
 id|proc_mca
 comma
 id|node

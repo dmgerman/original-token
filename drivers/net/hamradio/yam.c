@@ -4668,57 +4668,23 @@ id|len
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_INET
-macro_line|#ifndef PROC_NET_YAM
-DECL|macro|PROC_NET_YAM
-mdefine_line|#define PROC_NET_YAM (PROC_NET_LAST+10)&t;&t;/* Sorry again... */
-macro_line|#endif
 macro_line|#ifdef CONFIG_PROC_FS
-DECL|variable|yam_proc_dir_entry
-r_struct
-id|proc_dir_entry
-id|yam_proc_dir_entry
-op_assign
-(brace
-id|PROC_NET_YAM
-comma
-l_int|3
-comma
-l_string|&quot;yam&quot;
-comma
-id|S_IFREG
-op_or
-id|S_IRUGO
-comma
-l_int|1
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-op_amp
-id|proc_net_inode_operations
-comma
-id|yam_net_get_info
-)brace
-suffix:semicolon
 DECL|macro|yam_net_procfs_init
-mdefine_line|#define yam_net_procfs_init()   proc_net_register(&amp;yam_proc_dir_entry);
+mdefine_line|#define yam_net_procfs_init() proc_net_create(&quot;yam&quot;,0,yam_net_get_info)
 DECL|macro|yam_net_procfs_remove
-mdefine_line|#define yam_net_procfs_remove() proc_net_unregister(PROC_NET_YAM);
+mdefine_line|#define yam_net_procfs_remove() proc_net_remove(&quot;yam&quot;)
 macro_line|#else
 DECL|macro|yam_net_procfs_init
 mdefine_line|#define yam_net_procfs_init()
 DECL|macro|yam_net_procfs_remove
 mdefine_line|#define yam_net_procfs_remove()
-macro_line|#endif
+macro_line|#endif /* CONFIG_PROC_FS */
 macro_line|#else
 DECL|macro|yam_net_procfs_init
 mdefine_line|#define yam_net_procfs_init()
 DECL|macro|yam_net_procfs_remove
 mdefine_line|#define yam_net_procfs_remove()
-macro_line|#endif
+macro_line|#endif /* CONFIG_INET */
 multiline_comment|/* --------------------------------------------------------------------- */
 macro_line|#if LINUX_VERSION_CODE &gt;= 0x20119
 r_static

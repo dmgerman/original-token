@@ -61,7 +61,7 @@ mdefine_line|#define IPC_STAT 2     /* get ipc_perm options */
 DECL|macro|IPC_INFO
 mdefine_line|#define IPC_INFO 3     /* see ipcs */
 macro_line|#ifdef __KERNEL__
-multiline_comment|/* special shmsegs[id], msgque[id] or semary[id]  values */
+multiline_comment|/* special shmsegs[id]  values */
 DECL|macro|IPC_UNUSED
 mdefine_line|#define IPC_UNUSED&t;((void *) -1)
 DECL|macro|IPC_NOID

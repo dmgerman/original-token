@@ -5280,36 +5280,6 @@ r_return
 id|len
 suffix:semicolon
 )brace
-DECL|variable|ndisc_proc_entry
-r_struct
-id|proc_dir_entry
-id|ndisc_proc_entry
-op_assign
-(brace
-id|PROC_NET_NDISC
-comma
-l_int|5
-comma
-l_string|&quot;ndisc&quot;
-comma
-id|S_IFREG
-op_or
-id|S_IRUGO
-comma
-l_int|1
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|NULL
-comma
-op_amp
-id|ndisc_get_info
-)brace
-suffix:semicolon
 macro_line|#endif
 macro_line|#endif&t;/* CONFIG_PROC_FS */
 DECL|function|ndisc_init
@@ -5450,11 +5420,14 @@ id|nd_tbl
 suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
 macro_line|#ifndef CONFIG_RTNETLINK
-id|proc_net_register
+id|proc_net_create
 c_func
 (paren
-op_amp
-id|ndisc_proc_entry
+l_string|&quot;ndisc&quot;
+comma
+l_int|0
+comma
+id|ndisc_get_info
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -5490,10 +5463,10 @@ r_void
 (brace
 macro_line|#ifdef CONFIG_PROC_FS
 macro_line|#ifndef CONFIG_RTNETLINK
-id|proc_net_unregister
+id|proc_net_remove
 c_func
 (paren
-id|ndisc_proc_entry.low_ino
+l_string|&quot;ndisc&quot;
 )paren
 suffix:semicolon
 macro_line|#endif

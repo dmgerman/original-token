@@ -428,7 +428,7 @@ id|ENOMEM
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_PROC_FS
-id|create_proc_entry
+id|create_proc_info_entry
 c_func
 (paren
 l_string|&quot;irlan&quot;
@@ -436,11 +436,9 @@ comma
 l_int|0
 comma
 id|proc_irda
-)paren
-op_member_access_from_pointer
-id|get_info
-op_assign
+comma
 id|irlan_proc_read
+)paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_PROC_FS */
 id|DEBUG

@@ -2319,9 +2319,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dentry-&gt;d_parent
-op_ne
+op_logical_neg
+id|IS_ROOT
+c_func
+(paren
 id|dentry
+)paren
 op_logical_and
 id|list_empty
 c_func

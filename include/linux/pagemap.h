@@ -7,28 +7,6 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/highmem.h&gt;
 macro_line|#include &lt;linux/list.h&gt;
-DECL|function|get_pagecache_pte
-r_extern
-r_inline
-id|pte_t
-id|get_pagecache_pte
-c_func
-(paren
-r_struct
-id|page
-op_star
-id|page
-)paren
-(brace
-multiline_comment|/*&n;&t; * the pagecache is still machineword sized. The rest of the VM&n;&t; * can deal with arbitrary sized ptes.&n;&t; */
-r_return
-id|__pte
-c_func
-(paren
-id|page-&gt;offset
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * The page cache can done in larger chunks than&n; * one page, because it allows for more efficient&n; * throughput (it can then be mapped into user&n; * space in smaller chunks for same flexibility).&n; *&n; * Or rather, it _will_ be done in larger chunks.&n; */
 DECL|macro|PAGE_CACHE_SHIFT
 mdefine_line|#define PAGE_CACHE_SHIFT&t;PAGE_SHIFT
@@ -98,8 +76,6 @@ id|offset
 (brace
 DECL|macro|i
 mdefine_line|#define i (((unsigned long) mapping)/(sizeof(struct inode) &amp; ~ (sizeof(struct inode) - 1)))
-DECL|macro|o
-mdefine_line|#define o (offset &gt;&gt; PAGE_SHIFT)
 DECL|macro|s
 mdefine_line|#define s(x) ((x)+((x)&gt;&gt;PAGE_HASH_BITS))
 r_return
@@ -108,7 +84,7 @@ c_func
 (paren
 id|i
 op_plus
-id|o
+id|offset
 )paren
 op_amp
 (paren

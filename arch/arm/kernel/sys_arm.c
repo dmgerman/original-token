@@ -15,16 +15,6 @@ macro_line|#include &lt;linux/utsname.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/ipc.h&gt;
 multiline_comment|/*&n; * Constant strings used in inlined functions in header files&n; */
-multiline_comment|/* proc/system.h */
-DECL|variable|xchg_str
-r_const
-r_char
-id|xchg_str
-(braket
-)braket
-op_assign
-l_string|&quot;xchg&quot;
-suffix:semicolon
 multiline_comment|/*&n; * sys_pipe() is the normal C calling standard for creating&n; * a pipe. It&squot;s not the way unix traditionally does this, though.&n; */
 DECL|function|sys_pipe
 id|asmlinkage

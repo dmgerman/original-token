@@ -6,7 +6,7 @@ macro_line|#include&t;&lt;linux/slab.h&gt;
 macro_line|#include&t;&lt;linux/interrupt.h&gt;
 macro_line|#include&t;&lt;linux/init.h&gt;
 multiline_comment|/* If there is a different PAGE_SIZE around, and it works with this allocator,&n; * then change the following.&n; */
-macro_line|#if&t;(PAGE_SIZE != 8192 &amp;&amp; PAGE_SIZE != 4096)
+macro_line|#if&t;(PAGE_SIZE != 8192 &amp;&amp; PAGE_SIZE != 4096 &amp;&amp; PAGE_SIZE != 32768)
 macro_line|#error&t;Your page size is probably not correctly supported - please check
 macro_line|#endif
 multiline_comment|/* SLAB_MGMT_CHECKS&t;- 1 to enable extra checks in kmem_cache_create().&n; *&t;&t;&t;  0 if you wish to reduce memory usage.&n; *&n; * SLAB_DEBUG_SUPPORT&t;- 1 for kmem_cache_create() to honour; SLAB_DEBUG_FREE,&n; *&t;&t;&t;  SLAB_DEBUG_INITIAL, SLAB_RED_ZONE &amp; SLAB_POISON.&n; *&t;&t;&t;  0 for faster, smaller, code (especially in the critical paths).&n; *&n; * SLAB_STATS&t;&t;- 1 to collect stats for /proc/slabinfo.&n; *&t;&t;&t;  0 for faster, smaller, code (especially in the critical paths).&n; *&n; * SLAB_SELFTEST&t;- 1 to perform a few tests, mainly for development.&n; */

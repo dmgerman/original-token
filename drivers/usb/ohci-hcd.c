@@ -8741,12 +8741,14 @@ suffix:semicolon
 id|list_del
 c_func
 (paren
+op_amp
 id|ohci-&gt;ohci_hcd_list
 )paren
 suffix:semicolon
 id|INIT_LIST_HEAD
 c_func
 (paren
+op_amp
 id|ohci-&gt;ohci_hcd_list
 )paren
 suffix:semicolon

@@ -1443,6 +1443,7 @@ multiline_comment|/* All this just for in_interrupt() ... */
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/mmx.h&gt;
 multiline_comment|/*&n; *&t;This CPU favours 3DNow strongly (eg AMD Athlon)&n; */

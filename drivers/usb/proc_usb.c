@@ -25,8 +25,8 @@ r_char
 op_star
 id|format_topo
 op_assign
-multiline_comment|/* T:  Lev=dd Prnt=dd Port=dd Cnt=dd Dev#=ddd Spd=ddd If#=ddd MxCh=dd Driver=%s */
-l_string|&quot;T:  Lev=%2.2d Prnt=%2.2d Port=%2.2d Cnt=%2.2d Dev#=%3d Spd=%3s If#=%3d MxCh=%2d Driver=%s&bslash;n&quot;
+multiline_comment|/* T:  Lev=dd Prnt=dd Port=dd Cnt=dd Dev#=ddd Spd=ddd MxCh=dd */
+l_string|&quot;T:  Lev=%2.2d Prnt=%2.2d Port=%2.2d Cnt=%2.2d Dev#=%3d Spd=%3s MxCh=%2d&bslash;n&quot;
 suffix:semicolon
 DECL|variable|format_bandwidth
 r_static
@@ -71,7 +71,7 @@ op_star
 id|format_iface
 op_assign
 multiline_comment|/* I:  If#=dd Alt=dd #EPs=dd Cls=xx(sssss) Sub=xx Prot=xx */
-l_string|&quot;I:  If#=%2d Alt=%2d #EPs=%2d Cls=%02x(%-5s) Sub=%02x Prot=%02x&bslash;n&quot;
+l_string|&quot;I:  If#=%2d Alt=%2d #EPs=%2d Cls=%02x(%-5s) Sub=%02x Prot=%02x Driver=%s&bslash;n&quot;
 suffix:semicolon
 DECL|variable|format_endpt
 r_static
@@ -412,9 +412,12 @@ id|usb_dump_interface_descriptor
 (paren
 r_const
 r_struct
-id|usb_interface_descriptor
+id|usb_interface
 op_star
-id|desc
+id|iface
+comma
+r_int
+id|setno
 comma
 r_char
 op_star
@@ -425,6 +428,17 @@ op_star
 id|len
 )paren
 (brace
+r_struct
+id|usb_interface_descriptor
+op_star
+id|desc
+op_assign
+op_amp
+id|iface-&gt;altsetting
+(braket
+id|setno
+)braket
+suffix:semicolon
 op_star
 id|len
 op_add_assign
@@ -453,6 +467,13 @@ comma
 id|desc-&gt;bInterfaceSubClass
 comma
 id|desc-&gt;bInterfaceProtocol
+comma
+id|iface-&gt;driver
+ques
+c_cond
+id|iface-&gt;driver-&gt;name
+suffix:colon
+l_string|&quot;(none)&quot;
 )paren
 suffix:semicolon
 r_return
@@ -477,9 +498,12 @@ id|usb_dump_interface
 (paren
 r_const
 r_struct
-id|usb_interface_descriptor
+id|usb_interface
 op_star
-id|interface
+id|iface
+comma
+r_int
+id|setno
 comma
 r_char
 op_star
@@ -493,12 +517,25 @@ id|len
 r_int
 id|i
 suffix:semicolon
+r_struct
+id|usb_interface_descriptor
+op_star
+id|desc
+op_assign
+op_amp
+id|iface-&gt;altsetting
+(braket
+id|setno
+)braket
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|usb_dump_interface_descriptor
 (paren
-id|interface
+id|iface
+comma
+id|setno
 comma
 id|buf
 comma
@@ -520,7 +557,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|interface-&gt;bNumEndpoints
+id|desc-&gt;bNumEndpoints
 suffix:semicolon
 id|i
 op_increment
@@ -531,7 +568,7 @@ c_cond
 (paren
 id|usb_dump_endpoint
 (paren
-id|interface-&gt;endpoint
+id|desc-&gt;endpoint
 op_plus
 id|i
 comma
@@ -749,8 +786,8 @@ c_cond
 (paren
 id|usb_dump_interface
 (paren
-id|interface-&gt;altsetting
-op_plus
+id|interface
+comma
 id|j
 comma
 id|buf
@@ -1323,25 +1360,7 @@ l_string|&quot;1.5&quot;
 suffix:colon
 l_string|&quot;12 &quot;
 comma
-id|usbdev-&gt;ifnum
-comma
 id|usbdev-&gt;maxchild
-comma
-id|usbdev-&gt;driver
-ques
-c_cond
-id|usbdev-&gt;driver-&gt;name
-suffix:colon
-(paren
-id|level
-op_eq
-l_int|0
-)paren
-ques
-c_cond
-l_string|&quot;(root hub)&quot;
-suffix:colon
-l_string|&quot;(none)&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * level = topology-tier level;&n;&t;&t; * parent_devnum = parent device number;&n;&t;&t; * index = parent&squot;s connector number;&n;&t;&t; * count = device count at this level&n;&t;&t; */
@@ -5517,13 +5536,18 @@ suffix:semicolon
 )brace
 id|driversdir
 op_assign
-id|create_proc_entry
+id|create_proc_read_entry
+c_func
 (paren
 l_string|&quot;drivers&quot;
 comma
 l_int|0
 comma
 id|usbdir
+comma
+id|usb_driver_list_dump
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_if
@@ -5547,19 +5571,19 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-id|driversdir-&gt;read_proc
-op_assign
-id|usb_driver_list_dump
-suffix:semicolon
 id|devicesdir
 op_assign
-id|create_proc_entry
+id|create_proc_read_entry
 (paren
 l_string|&quot;devices&quot;
 comma
 l_int|0
 comma
 id|usbdir
+comma
+id|usb_bus_list_dump_devices
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_if
@@ -5583,10 +5607,6 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-id|devicesdir-&gt;read_proc
-op_assign
-id|usb_bus_list_dump_devices
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

@@ -94,6 +94,13 @@ c_func
 id|pci_set_master
 )paren
 suffix:semicolon
+DECL|variable|pci_simple_probe
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pci_simple_probe
+)paren
+suffix:semicolon
 macro_line|#ifdef&t;CONFIG_PROC_FS
 DECL|variable|pci_proc_attach_device
 id|EXPORT_SYMBOL

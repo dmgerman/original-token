@@ -256,7 +256,7 @@ r_void
 id|shm_unuse
 c_func
 (paren
-id|pte_t
+id|swp_entry_t
 id|entry
 comma
 r_struct

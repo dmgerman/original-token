@@ -4430,13 +4430,6 @@ op_star
 id|pro
 )paren
 (brace
-macro_line|#ifdef CONFIG_PROC_FS
-r_struct
-id|proc_dir_entry
-op_star
-id|ent
-suffix:semicolon
-macro_line|#endif
 r_struct
 id|sk_buff
 op_star
@@ -4475,9 +4468,7 @@ id|netlink_family_ops
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
-id|ent
-op_assign
-id|create_proc_entry
+id|create_proc_read_entry
 c_func
 (paren
 l_string|&quot;net/netlink&quot;
@@ -4485,11 +4476,11 @@ comma
 l_int|0
 comma
 l_int|0
-)paren
-suffix:semicolon
-id|ent-&gt;read_proc
-op_assign
+comma
 id|netlink_read_proc
+comma
+l_int|NULL
+)paren
 suffix:semicolon
 macro_line|#endif
 )brace

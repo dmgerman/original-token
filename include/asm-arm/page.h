@@ -17,12 +17,12 @@ r_void
 id|copy_page
 c_func
 (paren
-r_int
-r_int
+r_void
+op_star
 id|to
 comma
-r_int
-r_int
+r_void
+op_star
 id|from
 )paren
 suffix:semicolon
@@ -140,18 +140,36 @@ multiline_comment|/* to align the pointer to the (next) page boundary */
 DECL|macro|PAGE_ALIGN
 mdefine_line|#define PAGE_ALIGN(addr)&t;(((addr)+PAGE_SIZE-1)&amp;PAGE_MASK)
 macro_line|#ifndef __ASSEMBLY__
+r_extern
+r_void
+id|__bug
+c_func
+(paren
+r_const
+r_char
+op_star
+id|file
+comma
+r_int
+id|line
+comma
+r_void
+op_star
+id|data
+)paren
+suffix:semicolon
 DECL|macro|BUG
-mdefine_line|#define BUG() do { &bslash;&n;&t;printk(&quot;kernel BUG at %s:%d!&bslash;n&quot;, __FILE__, __LINE__); &bslash;&n;&t;*(int *)0 = 0; &bslash;&n;} while (0)
+mdefine_line|#define BUG()&t;&t;__bug(__FILE__, __LINE__, NULL)
 DECL|macro|PAGE_BUG
-mdefine_line|#define PAGE_BUG(page) do { &bslash;&n;&t;BUG(); &bslash;&n;} while (0)
+mdefine_line|#define PAGE_BUG(page)&t;__bug(__FILE__, __LINE__, page)
 macro_line|#endif /* !__ASSEMBLY__ */
 macro_line|#include &lt;asm/arch/memory.h&gt;
 DECL|macro|__pa
-mdefine_line|#define __pa(x)&t;&t;&t;__virt_to_phys((unsigned long)(x))
+mdefine_line|#define __pa(x)&t;&t;&t;((unsigned long)(x) - PAGE_OFFSET)
 DECL|macro|__va
-mdefine_line|#define __va(x)&t;&t;&t;((void *)(__phys_to_virt((unsigned long)(x))))
+mdefine_line|#define __va(x)&t;&t;&t;((void *)((unsigned long)(x) + PAGE_OFFSET))
 DECL|macro|MAP_NR
-mdefine_line|#define MAP_NR(addr)&t;&t;(((unsigned long)(addr) - PAGE_OFFSET) &gt;&gt; PAGE_SHIFT)
+mdefine_line|#define MAP_NR(addr)&t;&t;(__pa(addr) &gt;&gt; PAGE_SHIFT)
 macro_line|#endif
 macro_line|#endif
 eof

@@ -157,6 +157,11 @@ c_func
 r_void
 )paren
 (brace
+id|usb_major_cleanup
+c_func
+(paren
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_USB_PROC
 id|proc_usb_cleanup
 (paren

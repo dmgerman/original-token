@@ -5074,13 +5074,6 @@ op_star
 id|link_p
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_PROC_FS
-r_struct
-id|proc_dir_entry
-op_star
-id|ent
-suffix:semicolon
-macro_line|#endif
 macro_line|#if PSCHED_CLOCK_SOURCE == PSCHED_CPU
 r_if
 c_cond
@@ -5338,9 +5331,7 @@ c_func
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_PROC_FS
-id|ent
-op_assign
-id|create_proc_entry
+id|create_proc_read_entry
 c_func
 (paren
 l_string|&quot;net/psched&quot;
@@ -5348,11 +5339,11 @@ comma
 l_int|0
 comma
 l_int|0
-)paren
-suffix:semicolon
-id|ent-&gt;read_proc
-op_assign
+comma
 id|psched_read_proc
+comma
+l_int|NULL
+)paren
 suffix:semicolon
 macro_line|#endif
 r_return

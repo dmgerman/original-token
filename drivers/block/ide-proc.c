@@ -4150,11 +4150,6 @@ c_func
 r_void
 )paren
 (brace
-r_struct
-id|proc_dir_entry
-op_star
-id|ent
-suffix:semicolon
 id|proc_ide_root
 op_assign
 id|create_proc_entry
@@ -4180,9 +4175,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|ent
-op_assign
-id|create_proc_entry
+id|create_proc_read_entry
 c_func
 (paren
 l_string|&quot;drivers&quot;
@@ -4190,19 +4183,11 @@ comma
 l_int|0
 comma
 id|proc_ide_root
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|ent
-)paren
-r_return
-suffix:semicolon
-id|ent-&gt;read_proc
-op_assign
+comma
 id|proc_ide_read_drivers
+comma
+l_int|NULL
+)paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_ALI15X3
 r_if
@@ -4216,10 +4201,7 @@ op_logical_and
 id|ali_proc
 )paren
 )paren
-(brace
-id|ent
-op_assign
-id|create_proc_entry
+id|create_proc_info_entry
 c_func
 (paren
 l_string|&quot;ali&quot;
@@ -4227,13 +4209,10 @@ comma
 l_int|0
 comma
 id|proc_ide_root
+comma
+id|ali_display_info
 )paren
 suffix:semicolon
-id|ent-&gt;get_info
-op_assign
-id|ali_display_info
-suffix:semicolon
-)brace
 macro_line|#endif /* CONFIG_BLK_DEV_ALI15X3 */
 macro_line|#ifdef CONFIG_BLK_DEV_SIS5513
 r_if
@@ -4247,10 +4226,7 @@ op_logical_and
 id|sis_proc
 )paren
 )paren
-(brace
-id|ent
-op_assign
-id|create_proc_entry
+id|create_proc_info_entry
 c_func
 (paren
 l_string|&quot;sis&quot;
@@ -4258,13 +4234,10 @@ comma
 l_int|0
 comma
 id|proc_ide_root
+comma
+id|sis_display_info
 )paren
 suffix:semicolon
-id|ent-&gt;get_info
-op_assign
-id|sis_display_info
-suffix:semicolon
-)brace
 macro_line|#endif /* CONFIG_BLK_DEV_SIS5513 */
 macro_line|#ifdef CONFIG_BLK_DEV_VIA82CXXX
 r_if
@@ -4278,10 +4251,7 @@ op_logical_and
 id|via_proc
 )paren
 )paren
-(brace
-id|ent
-op_assign
-id|create_proc_entry
+id|create_proc_info_entry
 c_func
 (paren
 l_string|&quot;via&quot;
@@ -4289,13 +4259,10 @@ comma
 l_int|0
 comma
 id|proc_ide_root
+comma
+id|via_display_info
 )paren
 suffix:semicolon
-id|ent-&gt;get_info
-op_assign
-id|via_display_info
-suffix:semicolon
-)brace
 macro_line|#endif /* CONFIG_BLK_DEV_VIA82CXXX */
 )brace
 DECL|function|proc_ide_destroy

@@ -1998,7 +1998,7 @@ op_lshift
 l_int|8
 )paren
 suffix:semicolon
-id|memcpy_toio
+id|isa_memcpy_toio
 c_func
 (paren
 id|dest_addr
@@ -2258,7 +2258,7 @@ id|dev-&gt;mem_start
 )paren
 (brace
 multiline_comment|/* Use the shared memory. */
-id|memcpy_fromio
+id|isa_memcpy_fromio
 c_func
 (paren
 id|hdr
@@ -2506,7 +2506,7 @@ op_plus
 id|ring_offset
 )paren
 suffix:semicolon
-id|memcpy_fromio
+id|isa_memcpy_fromio
 c_func
 (paren
 id|skb-&gt;data
@@ -2522,7 +2522,7 @@ id|count
 op_sub_assign
 id|semi_count
 suffix:semicolon
-id|memcpy_fromio
+id|isa_memcpy_fromio
 c_func
 (paren
 id|skb-&gt;data
@@ -2538,7 +2538,7 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* Packet is in one chunk -- we can copy + cksum. */
-id|eth_io_copy_and_sum
+id|isa_eth_io_copy_and_sum
 c_func
 (paren
 id|skb

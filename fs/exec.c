@@ -1122,7 +1122,7 @@ id|mpnt-&gt;vm_ops
 op_assign
 l_int|NULL
 suffix:semicolon
-id|mpnt-&gt;vm_offset
+id|mpnt-&gt;vm_pgoff
 op_assign
 l_int|0
 suffix:semicolon

@@ -1,13 +1,8 @@
 multiline_comment|/*&n; *  linux/fs/ext2/truncate.c&n; *&n; * Copyright (C) 1992, 1993, 1994, 1995&n; * Remy Card (card@masi.ibp.fr)&n; * Laboratoire MASI - Institut Blaise Pascal&n; * Universite Pierre et Marie Curie (Paris VI)&n; *&n; *  from&n; *&n; *  linux/fs/minix/truncate.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  Big-endian to little-endian byte-swapping/bitmaps by&n; *        David S. Miller (davem@caip.rutgers.edu), 1995&n; *&n; *  General cleanup and race fixes, wsh, 1998&n; */
-multiline_comment|/*&n; * Real random numbers for secure rm added 94/02/18&n; * Idea from Pierre del Perugia &lt;delperug@gla.ecoledoc.ibp.fr&gt;&n; */
-macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
-macro_line|#include &lt;linux/ext2_fs.h&gt;
-macro_line|#include &lt;linux/fcntl.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
-macro_line|#include &lt;linux/string.h&gt;
+multiline_comment|/*&n; * Real random numbers for secure rm added 94/02/18&n; * Idea from Pierre del Perugia &lt;delperug@gla.ecoledoc.ibp.fr&gt;&n; */
 macro_line|#if 0
 multiline_comment|/*&n; * Secure deletion currently doesn&squot;t work. It interacts very badly&n; * with buffers shared with memory mappings, and for that reason&n; * can&squot;t be done in the truncate() routines. It should instead be&n; * done separately in &quot;release()&quot; before calling the truncate routines&n; * that will release the actual file blocks.&n; *&n; *&t;&t;Linus&n; */
 r_static

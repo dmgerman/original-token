@@ -178,6 +178,8 @@ DECL|macro|N_SMSBLOCK
 mdefine_line|#define N_SMSBLOCK&t;12&t;/* SMS block mode - for talking to GSM data cards about SMS messages */
 DECL|macro|N_HDLC
 mdefine_line|#define N_HDLC&t;&t;13&t;/* synchronous HDLC */
+DECL|macro|N_SYNC_PPP
+mdefine_line|#define N_SYNC_PPP&t;14
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * c_cc characters in the termio structure.  Oh, how I love being&n; * backwardly compatible.  Notice that character 4 and 5 are&n; * interpreted differently depending on whether ICANON is set in&n; * c_lflag.  If it&squot;s set, they are used as _VEOF and _VEOL, otherwise&n; * as _VMIN and V_TIME.  This is for compatibility with OSF/1 (which&n; * is compatible with sysV)...&n; */
 DECL|macro|_VMIN

@@ -41,6 +41,13 @@ r_void
 )paren
 suffix:semicolon
 r_void
+id|usb_major_cleanup
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_void
 id|usb_mouse_cleanup
 c_func
 (paren

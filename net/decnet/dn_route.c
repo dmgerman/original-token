@@ -4167,37 +4167,6 @@ r_return
 id|len
 suffix:semicolon
 )brace
-DECL|variable|proc_net_decnet_cache
-r_static
-r_struct
-id|proc_dir_entry
-id|proc_net_decnet_cache
-op_assign
-(brace
-id|PROC_NET_DN_CACHE
-comma
-l_int|12
-comma
-l_string|&quot;decnet_cache&quot;
-comma
-id|S_IFREG
-op_or
-id|S_IRUGO
-comma
-l_int|1
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-op_amp
-id|proc_net_inode_operations
-comma
-id|decnet_cache_get_info
-)brace
-suffix:semicolon
 macro_line|#endif /* CONFIG_PROC_FS */
 DECL|function|dn_route_init
 r_void
@@ -4267,11 +4236,14 @@ id|dn_route_timer
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
-id|proc_net_register
+id|proc_net_create
 c_func
 (paren
-op_amp
-id|proc_net_decnet_cache
+l_string|&quot;decnet_cache&quot;
+comma
+l_int|0
+comma
+id|decnet_cache_get_info
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_PROC_FS */
@@ -4299,10 +4271,10 @@ l_int|0
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
-id|proc_net_unregister
+id|proc_net_remove
 c_func
 (paren
-id|PROC_NET_DN_CACHE
+l_string|&quot;decnet_cache&quot;
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_PROC_FS */

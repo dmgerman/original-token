@@ -7,28 +7,6 @@ macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;map.h&quot;
 DECL|variable|__initdata
-r_struct
-id|mem_desc
-id|mem_desc
-(braket
-)braket
-id|__initdata
-op_assign
-(brace
-l_int|0
-comma
-l_int|0
-)brace
-suffix:semicolon
-DECL|variable|mem_desc_size
-r_int
-r_int
-id|__initdata
-id|mem_desc_size
-op_assign
-l_int|0
-suffix:semicolon
-DECL|variable|__initdata
 r_const
 r_struct
 id|map_desc

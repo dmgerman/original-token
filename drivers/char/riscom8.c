@@ -32,6 +32,8 @@ macro_line|#ifndef MIN
 DECL|macro|MIN
 mdefine_line|#define MIN(a,b) ((a) &lt; (b) ? (a) : (b))
 macro_line|#endif
+DECL|macro|RS_EVENT_WRITE_WAKEUP
+mdefine_line|#define RS_EVENT_WRITE_WAKEUP&t;0
 DECL|variable|tq_riscom
 id|DECLARE_TASK_QUEUE
 c_func

@@ -305,6 +305,8 @@ macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/list.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+DECL|macro|USB_MAJOR
+mdefine_line|#define USB_MAJOR 180
 r_extern
 r_int
 id|usb_hub_init
@@ -480,6 +482,32 @@ r_int
 id|devicemap
 (braket
 l_int|128
+op_div
+(paren
+l_int|8
+op_star
+r_sizeof
+(paren
+r_int
+r_int
+)paren
+)paren
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|macro|USB_MAXBUS
+mdefine_line|#define USB_MAXBUS&t;&t;64
+DECL|struct|usb_busmap
+r_struct
+id|usb_busmap
+(brace
+DECL|member|busmap
+r_int
+r_int
+id|busmap
+(braket
+id|USB_MAXBUS
 op_div
 (paren
 l_int|8
@@ -781,6 +809,18 @@ r_int
 id|num_altsetting
 suffix:semicolon
 multiline_comment|/* number of alternate settings */
+DECL|member|driver
+r_struct
+id|usb_driver
+op_star
+id|driver
+suffix:semicolon
+multiline_comment|/* driver */
+DECL|member|private_data
+r_void
+op_star
+id|private_data
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* Configuration descriptor information.. */
@@ -876,7 +916,8 @@ op_star
 id|name
 suffix:semicolon
 DECL|member|probe
-r_int
+r_void
+op_star
 (paren
 op_star
 id|probe
@@ -885,6 +926,9 @@ id|probe
 r_struct
 id|usb_device
 op_star
+comma
+r_int
+r_int
 )paren
 suffix:semicolon
 DECL|member|disconnect
@@ -896,6 +940,9 @@ id|disconnect
 (paren
 r_struct
 id|usb_device
+op_star
+comma
+r_void
 op_star
 )paren
 suffix:semicolon
@@ -1377,6 +1424,11 @@ DECL|struct|usb_bus
 r_struct
 id|usb_bus
 (brace
+DECL|member|busnum
+r_int
+id|busnum
+suffix:semicolon
+multiline_comment|/* Bus number (in order of reg) */
 DECL|member|devmap
 r_struct
 id|usb_devmap
@@ -1509,11 +1561,6 @@ l_int|16
 )braket
 suffix:semicolon
 multiline_comment|/* OUTput endpoint specific maximums */
-DECL|member|ifnum
-r_int
-id|ifnum
-suffix:semicolon
-multiline_comment|/* active interface number */
 DECL|member|parent
 r_struct
 id|usb_device
@@ -1527,13 +1574,6 @@ op_star
 id|bus
 suffix:semicolon
 multiline_comment|/* Bus we&squot;re part of */
-DECL|member|driver
-r_struct
-id|usb_driver
-op_star
-id|driver
-suffix:semicolon
-multiline_comment|/* Driver */
 DECL|member|descriptor
 r_struct
 id|usb_device_descriptor
@@ -1564,12 +1604,6 @@ op_star
 id|hcpriv
 suffix:semicolon
 multiline_comment|/* Host Controller private data */
-DECL|member|private
-r_void
-op_star
-r_private
-suffix:semicolon
-multiline_comment|/* Upper layer private data */
 DECL|member|audiopriv
 r_void
 op_star
@@ -1618,6 +1652,54 @@ c_func
 r_struct
 id|usb_driver
 op_star
+)paren
+suffix:semicolon
+multiline_comment|/* used these for multi-interface device registration */
+r_extern
+r_void
+id|usb_driver_claim_interface
+c_func
+(paren
+r_struct
+id|usb_driver
+op_star
+id|driver
+comma
+r_struct
+id|usb_interface
+op_star
+id|iface
+comma
+r_void
+op_star
+id|priv
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|usb_interface_claimed
+c_func
+(paren
+r_struct
+id|usb_interface
+op_star
+id|iface
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|usb_driver_release_interface
+c_func
+(paren
+r_struct
+id|usb_driver
+op_star
+id|driver
+comma
+r_struct
+id|usb_interface
+op_star
+id|iface
 )paren
 suffix:semicolon
 r_extern
@@ -1950,6 +2032,14 @@ DECL|macro|PIPE_CONTROL
 mdefine_line|#define PIPE_CONTROL&t;&t;&t;2
 DECL|macro|PIPE_BULK
 mdefine_line|#define PIPE_BULK&t;&t;&t;3
+DECL|macro|USB_ISOCHRONOUS
+mdefine_line|#define USB_ISOCHRONOUS&t;&t;0
+DECL|macro|USB_INTERRUPT
+mdefine_line|#define USB_INTERRUPT&t;&t;1
+DECL|macro|USB_CONTROL
+mdefine_line|#define USB_CONTROL&t;&t;2
+DECL|macro|USB_BULK
+mdefine_line|#define USB_BULK&t;&t;3
 DECL|macro|usb_maxpacket
 mdefine_line|#define usb_maxpacket(dev, pipe, out)&t;(out &bslash;&n;&t;&t;&t;&t;? (dev)-&gt;epmaxpacketout[usb_pipeendpoint(pipe)] &bslash;&n;&t;&t;&t;&t;: (dev)-&gt;epmaxpacketin [usb_pipeendpoint(pipe)] )
 DECL|macro|usb_packetid

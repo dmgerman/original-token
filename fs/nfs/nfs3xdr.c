@@ -3198,8 +3198,7 @@ l_int|0
 comma
 l_int|6
 comma
-op_amp
-id|proc_net_inode_operations
+l_int|NULL
 comma
 id|nfs_get_info
 )brace

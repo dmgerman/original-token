@@ -1208,15 +1208,6 @@ id|sysdata
 )paren
 suffix:semicolon
 r_int
-id|get_pci_list
-c_func
-(paren
-r_char
-op_star
-id|buf
-)paren
-suffix:semicolon
-r_int
 id|pci_proc_attach_device
 c_func
 (paren

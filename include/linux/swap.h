@@ -261,7 +261,7 @@ c_func
 (paren
 r_int
 comma
-id|pte_t
+id|swp_entry_t
 comma
 r_char
 op_star
@@ -288,7 +288,7 @@ r_struct
 id|page
 op_star
 comma
-id|pte_t
+id|swp_entry_t
 )paren
 suffix:semicolon
 r_extern
@@ -296,7 +296,7 @@ r_int
 id|swap_duplicate
 c_func
 (paren
-id|pte_t
+id|swp_entry_t
 )paren
 suffix:semicolon
 r_extern
@@ -308,13 +308,14 @@ r_int
 r_int
 )paren
 suffix:semicolon
+r_extern
 r_struct
 id|page
 op_star
 id|lookup_swap_cache
 c_func
 (paren
-id|pte_t
+id|swp_entry_t
 )paren
 suffix:semicolon
 r_extern
@@ -324,7 +325,7 @@ op_star
 id|read_swap_cache_async
 c_func
 (paren
-id|pte_t
+id|swp_entry_t
 comma
 r_int
 )paren
@@ -342,7 +343,7 @@ op_star
 )paren
 suffix:semicolon
 r_extern
-id|pte_t
+id|swp_entry_t
 id|acquire_swap_entry
 c_func
 (paren
@@ -407,6 +408,7 @@ c_func
 id|kdev_t
 )paren
 suffix:semicolon
+r_extern
 r_void
 id|si_swapinfo
 c_func
@@ -416,7 +418,8 @@ id|sysinfo
 op_star
 )paren
 suffix:semicolon
-id|pte_t
+r_extern
+id|swp_entry_t
 id|get_swap_page
 c_func
 (paren
@@ -428,7 +431,7 @@ r_void
 id|swap_free
 c_func
 (paren
-id|pte_t
+id|swp_entry_t
 )paren
 suffix:semicolon
 DECL|struct|swap_list_t

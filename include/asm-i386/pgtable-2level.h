@@ -175,7 +175,5 @@ op_star
 id|pgd
 suffix:semicolon
 )brace
-DECL|macro|SWP_ENTRY
-mdefine_line|#define SWP_ENTRY(type,offset) __pte((((type) &lt;&lt; 1) | ((offset) &lt;&lt; 8)))
 macro_line|#endif /* _I386_PGTABLE_2LEVEL_H */
 eof

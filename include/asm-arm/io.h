@@ -189,21 +189,30 @@ macro_line|#else
 mdefine_line|#define inl_p(port) __inl_p((port))
 macro_line|#endif
 macro_line|#endif
+r_extern
+r_void
+id|__readwrite_bug
+c_func
+(paren
+r_const
+r_char
+op_star
+id|fn
+)paren
+suffix:semicolon
 macro_line|#ifndef ARCH_READWRITE
-multiline_comment|/* for panic */
-macro_line|#include &lt;linux/kernel.h&gt;
 DECL|macro|readb
-mdefine_line|#define readb(p)&t;(panic(&quot;readb called, but not implemented&quot;),0)
+mdefine_line|#define readb(p)&t;(__readwrite_bug(&quot;readb&quot;),0)
 DECL|macro|readw
-mdefine_line|#define readw(p)&t;(panic(&quot;readw called, but not implemented&quot;),0)
+mdefine_line|#define readw(p)&t;(__readwrite_bug(&quot;readw&quot;),0)
 DECL|macro|readl
-mdefine_line|#define readl(p)&t;(panic(&quot;readl called, but not implemented&quot;),0)
+mdefine_line|#define readl(p)&t;(__readwrite_bug(&quot;readl&quot;),0)
 DECL|macro|writeb
-mdefine_line|#define writeb(v,p)&t;panic(&quot;writeb called, but not implemented&quot;)
+mdefine_line|#define writeb(v,p)&t;__readwrite_bug(&quot;writeb&quot;)
 DECL|macro|writew
-mdefine_line|#define writew(v,p)&t;panic(&quot;writew called, but not implemented&quot;)
+mdefine_line|#define writew(v,p)&t;__readwrite_bug(&quot;writew&quot;)
 DECL|macro|writel
-mdefine_line|#define writel(v,p)&t;panic(&quot;writel called, but not implemented&quot;)
+mdefine_line|#define writel(v,p)&t;__readwrite_bug(&quot;writel&quot;)
 macro_line|#endif
 macro_line|#ifndef memcpy_fromio
 multiline_comment|/*&n; * String version of IO memory access ops:&n; */

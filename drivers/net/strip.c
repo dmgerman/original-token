@@ -59,8 +59,8 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/if_strip.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
-macro_line|#include &lt;linux/serialP.h&gt;
 macro_line|#include &lt;linux/serial.h&gt;
+macro_line|#include &lt;linux/serialP.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
 macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &lt;linux/tcp.h&gt;
@@ -4271,76 +4271,6 @@ id|buf
 )paren
 suffix:semicolon
 )brace
-DECL|variable|proc_strip_status_name
-r_static
-r_const
-r_char
-id|proc_strip_status_name
-(braket
-)braket
-op_assign
-l_string|&quot;strip&quot;
-suffix:semicolon
-macro_line|#ifdef CONFIG_PROC_FS
-DECL|variable|proc_strip_get_status_info
-r_static
-r_struct
-id|proc_dir_entry
-id|proc_strip_get_status_info
-op_assign
-(brace
-id|PROC_NET_STRIP_STATUS
-comma
-multiline_comment|/* unsigned short low_ino */
-r_sizeof
-(paren
-id|proc_strip_status_name
-)paren
-op_minus
-l_int|1
-comma
-multiline_comment|/* unsigned short namelen */
-id|proc_strip_status_name
-comma
-multiline_comment|/* const char *name */
-id|S_IFREG
-op_or
-id|S_IRUGO
-comma
-multiline_comment|/* mode_t mode */
-l_int|1
-comma
-multiline_comment|/* nlink_t nlink */
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-multiline_comment|/* uid_t uid, gid_t gid, unsigned long size */
-op_amp
-id|proc_net_inode_operations
-comma
-multiline_comment|/* struct inode_operations * ops */
-op_amp
-id|get_status_info
-comma
-multiline_comment|/* int (*get_info)(...) */
-l_int|NULL
-comma
-multiline_comment|/* void (*fill_inode)(struct inode *); */
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-multiline_comment|/* struct proc_dir_entry *next, *parent, *subdir; */
-l_int|NULL
-multiline_comment|/* void *data; */
-)brace
-suffix:semicolon
-macro_line|#endif /* CONFIG_PROC_FS */
 multiline_comment|/************************************************************************/
 multiline_comment|/* Sending routines&t;&t;&t;&t;&t;&t;&t;*/
 DECL|function|ResetRadio
@@ -11029,29 +10959,17 @@ id|status
 suffix:semicolon
 )brace
 multiline_comment|/*&n;     * Register the status file with /proc&n;     */
-macro_line|#ifdef CONFIG_PROC_FS 
-r_if
-c_cond
+id|proc_net_create
 (paren
-id|proc_net_register
-c_func
-(paren
-op_amp
-id|proc_strip_get_status_info
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;strip: status proc_net_register() failed.&bslash;n&quot;
+l_string|&quot;strip&quot;
+comma
+id|S_IFREG
+op_or
+id|S_IRUGO
+comma
+id|get_status_info
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 macro_line|#ifdef MODULE
 r_return
 id|status
@@ -11105,14 +11023,11 @@ id|struct_strip_list
 )paren
 suffix:semicolon
 multiline_comment|/* Unregister with the /proc/net file here. */
-macro_line|#ifdef CONFIG_PROC_FS
-id|proc_net_unregister
-c_func
+id|proc_net_remove
 (paren
-id|PROC_NET_STRIP_STATUS
+l_string|&quot;strip&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren

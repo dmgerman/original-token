@@ -233,13 +233,13 @@ id|KM_WRITE
 )paren
 suffix:semicolon
 multiline_comment|/* Preserve the caching of the swap_entry. */
-id|highpage-&gt;offset
+id|highpage-&gt;pg_offset
 op_assign
-id|page-&gt;offset
+id|page-&gt;pg_offset
 suffix:semicolon
-id|highpage-&gt;inode
+id|highpage-&gt;mapping
 op_assign
-id|page-&gt;inode
+id|page-&gt;mapping
 suffix:semicolon
 multiline_comment|/*&n;&t; * We can just forget the old page since &n;&t; * we stored its data into the new highmem-page.&n;&t; */
 id|__free_page

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Network device driver for the BMAC ethernet controller on&n; * Apple Powermacs.  Assumes it&squot;s under a DBDMA controller.&n; *&n; * Copyright (C) 1998 Randy Gobbel.&n; */
+multiline_comment|/*&n; * Network device driver for the BMAC ethernet controller on&n; * Apple Powermacs.  Assumes it&squot;s under a DBDMA controller.&n; *&n; * Copyright (C) 1998 Randy Gobbel.&n; *&n; * May 1999, Al Viro: proper release of /proc/net/bmac entry, switched to&n; * dynamic procfs inode.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -7488,42 +7488,15 @@ r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
-macro_line|#ifdef CONFIG_PROC_FS
-id|proc_net_register
-c_func
+id|proc_net_create
 (paren
-op_amp
-(paren
-r_struct
-id|proc_dir_entry
-)paren
-(brace
-id|PROC_NET_BMAC
-comma
-l_int|4
-comma
 l_string|&quot;bmac&quot;
 comma
-id|S_IFREG
-op_or
-id|S_IRUGO
-comma
-l_int|1
-comma
 l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-op_amp
-id|proc_net_inode_operations
 comma
 id|bmac_proc_info
-)brace
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -8832,6 +8805,12 @@ id|unregister_netdev
 c_func
 (paren
 id|bmac_devs
+)paren
+suffix:semicolon
+id|proc_net_remove
+c_func
+(paren
+l_string|&quot;bmac&quot;
 )paren
 suffix:semicolon
 id|free_irq

@@ -233,7 +233,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|get_swap_page
-id|pte_t
+id|swp_entry_t
 id|get_swap_page
 c_func
 (paren
@@ -249,14 +249,8 @@ r_int
 r_int
 id|offset
 suffix:semicolon
-id|pte_t
+id|swp_entry_t
 id|entry
-op_assign
-id|__pte
-c_func
-(paren
-l_int|0
-)paren
 suffix:semicolon
 r_int
 id|type
@@ -265,6 +259,11 @@ id|wrapped
 op_assign
 l_int|0
 suffix:semicolon
+id|entry.val
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Out of memory */
 id|type
 op_assign
 id|swap_list.next
@@ -444,7 +443,7 @@ r_void
 id|swap_free
 c_func
 (paren
-id|pte_t
+id|swp_entry_t
 id|entry
 )paren
 (brace
@@ -463,11 +462,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|pte_val
-c_func
-(paren
-id|entry
-)paren
+id|entry.val
 )paren
 r_goto
 id|out
@@ -655,10 +650,12 @@ id|out
 suffix:semicolon
 id|bad_free
 suffix:colon
-id|pte_ERROR
+id|printk
 c_func
 (paren
-id|entry
+l_string|&quot;VM: Bad swap entry %08lx&bslash;n&quot;
+comma
+id|entry.val
 )paren
 suffix:semicolon
 r_goto
@@ -667,7 +664,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* needs the big kernel lock */
 DECL|function|acquire_swap_entry
-id|pte_t
+id|swp_entry_t
 id|acquire_swap_entry
 c_func
 (paren
@@ -688,7 +685,7 @@ id|offset
 comma
 id|type
 suffix:semicolon
-id|pte_t
+id|swp_entry_t
 id|entry
 suffix:semicolon
 r_if
@@ -712,18 +709,14 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|page-&gt;offset
+id|page-&gt;pg_offset
 )paren
 r_goto
 id|new_swap_entry
 suffix:semicolon
-id|entry
+id|entry.val
 op_assign
-id|get_pagecache_pte
-c_func
-(paren
-id|page
-)paren
+id|page-&gt;pg_offset
 suffix:semicolon
 id|type
 op_assign
@@ -847,7 +840,7 @@ id|pte_t
 op_star
 id|dir
 comma
-id|pte_t
+id|swp_entry_t
 id|entry
 comma
 r_struct
@@ -922,11 +915,7 @@ c_func
 id|pte
 )paren
 op_ne
-id|pte_val
-c_func
-(paren
-id|entry
-)paren
+id|entry.val
 )paren
 r_return
 suffix:semicolon
@@ -998,7 +987,7 @@ r_int
 r_int
 id|offset
 comma
-id|pte_t
+id|swp_entry_t
 id|entry
 comma
 r_struct
@@ -1157,7 +1146,7 @@ r_int
 r_int
 id|size
 comma
-id|pte_t
+id|swp_entry_t
 id|entry
 comma
 r_struct
@@ -1329,7 +1318,7 @@ id|pgd_t
 op_star
 id|pgdir
 comma
-id|pte_t
+id|swp_entry_t
 id|entry
 comma
 r_struct
@@ -1418,7 +1407,7 @@ id|mm_struct
 op_star
 id|mm
 comma
-id|pte_t
+id|swp_entry_t
 id|entry
 comma
 r_struct
@@ -1516,7 +1505,7 @@ id|page
 op_star
 id|page
 suffix:semicolon
-id|pte_t
+id|swp_entry_t
 id|entry
 suffix:semicolon
 r_int
@@ -1696,10 +1685,12 @@ id|i
 op_ne
 id|SWAP_MAP_MAX
 )paren
-id|pte_ERROR
+id|printk
 c_func
 (paren
-id|entry
+l_string|&quot;VM: Undead swap entry %08lx&bslash;n&quot;
+comma
+id|entry.val
 )paren
 suffix:semicolon
 id|si-&gt;swap_map

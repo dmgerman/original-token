@@ -91,7 +91,7 @@ id|page
 op_star
 id|page
 comma
-id|pte_t
+id|swp_entry_t
 id|entry
 )paren
 (brace
@@ -132,11 +132,7 @@ comma
 op_amp
 id|swapper_space
 comma
-id|pte_val
-c_func
-(paren
-id|entry
-)paren
+id|entry.val
 )paren
 suffix:semicolon
 )brace
@@ -146,7 +142,7 @@ r_int
 id|swap_duplicate
 c_func
 (paren
-id|pte_t
+id|swp_entry_t
 id|entry
 )paren
 (brace
@@ -166,15 +162,12 @@ id|result
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* Swap entry 0 is illegal */
 r_if
 c_cond
 (paren
 op_logical_neg
-id|pte_val
-c_func
-(paren
-id|entry
-)paren
+id|entry.val
 )paren
 r_goto
 id|out
@@ -276,10 +269,10 @@ op_increment
 OL
 l_int|5
 )paren
-id|pte_ERROR
+id|printk
 c_func
 (paren
-id|entry
+l_string|&quot;VM: swap entry overflow&bslash;n&quot;
 )paren
 suffix:semicolon
 id|p-&gt;swap_map
@@ -301,10 +294,12 @@ id|result
 suffix:semicolon
 id|bad_file
 suffix:colon
-id|pte_ERROR
+id|printk
 c_func
 (paren
-id|entry
+l_string|&quot;Bad swap file entry %08lx&bslash;n&quot;
+comma
+id|entry.val
 )paren
 suffix:semicolon
 r_goto
@@ -312,10 +307,12 @@ id|out
 suffix:semicolon
 id|bad_offset
 suffix:colon
-id|pte_ERROR
+id|printk
 c_func
 (paren
-id|entry
+l_string|&quot;Bad swap offset entry %08lx&bslash;n&quot;
+comma
+id|entry.val
 )paren
 suffix:semicolon
 r_goto
@@ -323,10 +320,12 @@ id|out
 suffix:semicolon
 id|bad_unused
 suffix:colon
-id|pte_ERROR
+id|printk
 c_func
 (paren
-id|entry
+l_string|&quot;Unused swap offset entry %08lx&bslash;n&quot;
+comma
+id|entry.val
 )paren
 suffix:semicolon
 r_goto
@@ -355,29 +354,23 @@ id|offset
 comma
 id|type
 suffix:semicolon
-id|pte_t
+id|swp_entry_t
 id|entry
-op_assign
-id|get_pagecache_pte
-c_func
-(paren
-id|page
-)paren
 suffix:semicolon
 r_int
 id|retval
 op_assign
 l_int|0
 suffix:semicolon
+id|entry.val
+op_assign
+id|page-&gt;pg_offset
+suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-id|pte_val
-c_func
-(paren
-id|entry
-)paren
+id|entry.val
 )paren
 r_goto
 id|bad_entry
@@ -472,10 +465,12 @@ id|out
 suffix:semicolon
 id|bad_file
 suffix:colon
-id|pte_ERROR
+id|printk
 c_func
 (paren
-id|entry
+l_string|&quot;Bad swap file entry %08lx&bslash;n&quot;
+comma
+id|entry.val
 )paren
 suffix:semicolon
 r_goto
@@ -483,10 +478,12 @@ id|out
 suffix:semicolon
 id|bad_offset
 suffix:colon
-id|pte_ERROR
+id|printk
 c_func
 (paren
-id|entry
+l_string|&quot;Bad swap offset entry %08lx&bslash;n&quot;
+comma
+id|entry.val
 )paren
 suffix:semicolon
 r_goto
@@ -494,10 +491,12 @@ id|out
 suffix:semicolon
 id|bad_unused
 suffix:colon
-id|pte_ERROR
+id|printk
 c_func
 (paren
-id|entry
+l_string|&quot;Unused swap offset entry %08lx&bslash;n&quot;
+comma
+id|entry.val
 )paren
 suffix:semicolon
 r_goto
@@ -578,14 +577,12 @@ op_star
 id|page
 )paren
 (brace
-id|pte_t
+id|swp_entry_t
 id|entry
+suffix:semicolon
+id|entry.val
 op_assign
-id|get_pagecache_pte
-c_func
-(paren
-id|page
-)paren
+id|page-&gt;pg_offset
 suffix:semicolon
 macro_line|#ifdef SWAP_CACHE_INFO
 id|swap_cache_del_total
@@ -769,7 +766,7 @@ op_star
 id|lookup_swap_cache
 c_func
 (paren
-id|pte_t
+id|swp_entry_t
 id|entry
 )paren
 (brace
@@ -789,7 +786,7 @@ c_loop
 l_int|1
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * Right now the pagecache is 32-bit only.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Right now the pagecache is 32-bit only.  But it&squot;s a 32 bit index. =)&n;&t;&t; */
 id|found
 op_assign
 id|find_lock_page
@@ -798,11 +795,7 @@ c_func
 op_amp
 id|swapper_space
 comma
-id|pte_val
-c_func
-(paren
-id|entry
-)paren
+id|entry.val
 )paren
 suffix:semicolon
 r_if
@@ -879,7 +872,7 @@ op_star
 id|read_swap_cache_async
 c_func
 (paren
-id|pte_t
+id|swp_entry_t
 id|entry
 comma
 r_int

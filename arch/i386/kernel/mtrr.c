@@ -6081,7 +6081,7 @@ id|proc_dir_entry
 id|proc_root_mtrr
 op_assign
 (brace
-id|PROC_MTRR
+l_int|0
 comma
 l_int|4
 comma
