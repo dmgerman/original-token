@@ -1666,20 +1666,10 @@ r_goto
 id|end_io
 suffix:semicolon
 multiline_comment|/* Hmmph! Nothing to write */
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|refile_buffer
 c_func
 (paren
 id|bh
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; * We don&squot;t allow the write-requests to fill up the&n;&t;&t;&t; * queue completely:  we want some room for reads,&n;&t;&t;&t; * as they take precedence. The last third of the&n;&t;&t;&t; * requests are only for reads.&n;&t;&t;&t; */
@@ -2355,7 +2345,7 @@ c_func
 (paren
 id|KERN_NOTICE
 l_string|&quot;ll_rw_block: device %s: &quot;
-l_string|&quot;only %d-char blocks implemented (%lu)&bslash;n&quot;
+l_string|&quot;only %d-char blocks implemented (%u)&bslash;n&quot;
 comma
 id|kdevname
 c_func

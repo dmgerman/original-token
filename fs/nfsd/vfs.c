@@ -1168,9 +1168,14 @@ id|filp-&gt;f_op
 op_assign
 id|inode-&gt;i_op-&gt;default_file_ops
 suffix:semicolon
+id|atomic_set
+c_func
+(paren
+op_amp
 id|filp-&gt;f_count
-op_assign
+comma
 l_int|1
+)paren
 suffix:semicolon
 id|filp-&gt;f_flags
 op_assign
@@ -1247,8 +1252,12 @@ id|inode
 )paren
 suffix:semicolon
 multiline_comment|/* I nearly added put_filp() call here, but this filp&n;&t;&t;&t; * is really on callers stack frame. -DaveM&n;&t;&t;&t; */
+id|atomic_dec
+c_func
+(paren
+op_amp
 id|filp-&gt;f_count
-op_decrement
+)paren
 suffix:semicolon
 )brace
 )brace

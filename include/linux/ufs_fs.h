@@ -136,7 +136,7 @@ mdefine_line|#define UFS_MOUNT_ONERROR_UMOUNT&t;0x00000004
 DECL|macro|UFS_MOUNT_ONERROR_REPAIR
 mdefine_line|#define UFS_MOUNT_ONERROR_REPAIR&t;0x00000008
 DECL|macro|UFS_MOUNT_UFSTYPE
-mdefine_line|#define UFS_MOUNT_UFSTYPE&t;&t;0x000003F0
+mdefine_line|#define UFS_MOUNT_UFSTYPE&t;&t;0x000007F0
 DECL|macro|UFS_MOUNT_UFSTYPE_OLD
 mdefine_line|#define UFS_MOUNT_UFSTYPE_OLD&t;&t;0x00000010
 DECL|macro|UFS_MOUNT_UFSTYPE_44BSD
@@ -145,10 +145,12 @@ DECL|macro|UFS_MOUNT_UFSTYPE_SUN
 mdefine_line|#define UFS_MOUNT_UFSTYPE_SUN&t;&t;0x00000040
 DECL|macro|UFS_MOUNT_UFSTYPE_NEXTSTEP
 mdefine_line|#define UFS_MOUNT_UFSTYPE_NEXTSTEP&t;0x00000080
+DECL|macro|UFS_MOUNT_UFSTYPE_NEXTSTEP_CD
+mdefine_line|#define UFS_MOUNT_UFSTYPE_NEXTSTEP_CD&t;0x00000100
 DECL|macro|UFS_MOUNT_UFSTYPE_OPENSTEP
-mdefine_line|#define UFS_MOUNT_UFSTYPE_OPENSTEP&t;0x00000100
+mdefine_line|#define UFS_MOUNT_UFSTYPE_OPENSTEP&t;0x00000200
 DECL|macro|UFS_MOUNT_UFSTYPE_SUNx86
-mdefine_line|#define UFS_MOUNT_UFSTYPE_SUNx86&t;0x00000200
+mdefine_line|#define UFS_MOUNT_UFSTYPE_SUNx86&t;0x00000400
 DECL|macro|ufs_clear_opt
 mdefine_line|#define ufs_clear_opt(o,opt)&t;o &amp;= ~UFS_MOUNT_##opt
 DECL|macro|ufs_set_opt

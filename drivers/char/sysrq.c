@@ -529,7 +529,12 @@ c_cond
 (paren
 id|file-&gt;f_dentry
 op_logical_and
+id|atomic_read
+c_func
+(paren
+op_amp
 id|file-&gt;f_count
+)paren
 op_logical_and
 id|S_ISREG
 c_func

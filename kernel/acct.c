@@ -797,8 +797,12 @@ id|file
 r_return
 l_int|0
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|file-&gt;f_count
-op_increment
+)paren
 suffix:semicolon
 r_if
 c_cond

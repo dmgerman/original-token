@@ -1037,7 +1037,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|bh-&gt;b_count
+)paren
 op_ne
 l_int|1
 )paren

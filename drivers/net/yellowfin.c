@@ -193,6 +193,7 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;&t;&t;/* Processor type for cache alignment. */
 macro_line|#include &lt;asm/bitops.h&gt;
+macro_line|#include &lt;asm/unaligned.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
@@ -5165,22 +5166,22 @@ suffix:semicolon
 id|s16
 id|frame_status
 op_assign
-op_star
+id|get_unaligned
+c_func
+(paren
 (paren
 id|s16
 op_star
 )paren
-op_amp
 (paren
 id|buf_addr
-(braket
+op_plus
 id|data_size
 op_minus
 l_int|2
-)braket
+)paren
 )paren
 suffix:semicolon
-multiline_comment|/* ?Alpha safe on 885? */
 r_if
 c_cond
 (paren

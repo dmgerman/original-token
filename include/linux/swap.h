@@ -190,7 +190,7 @@ id|atomic_t
 id|page_cache_size
 suffix:semicolon
 r_extern
-r_int
+id|atomic_t
 id|buffermem
 suffix:semicolon
 multiline_comment|/* Incomplete types for prototype declarations: */

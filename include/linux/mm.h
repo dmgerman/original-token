@@ -1305,7 +1305,7 @@ id|addr
 )paren
 suffix:semicolon
 DECL|macro|buffer_under_min
-mdefine_line|#define buffer_under_min()&t;((buffermem &gt;&gt; PAGE_SHIFT) * 100 &lt; &bslash;&n;&t;&t;&t;&t;buffer_mem.min_percent * num_physpages)
+mdefine_line|#define buffer_under_min()&t;((atomic_read(&amp;buffermem) &gt;&gt; PAGE_SHIFT) * 100 &lt; &bslash;&n;&t;&t;&t;&t;buffer_mem.min_percent * num_physpages)
 DECL|macro|pgcache_under_min
 mdefine_line|#define pgcache_under_min()&t;(atomic_read(&amp;page_cache_size) * 100 &lt; &bslash;&n;&t;&t;&t;&t;page_cache.min_percent * num_physpages)
 macro_line|#endif /* __KERNEL__ */

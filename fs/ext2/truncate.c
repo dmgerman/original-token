@@ -167,7 +167,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|bh-&gt;b_count
+)paren
 op_eq
 l_int|1
 )paren
@@ -287,7 +292,7 @@ id|retry
 suffix:semicolon
 )brace
 DECL|macro|DATA_BUFFER_USED
-mdefine_line|#define DATA_BUFFER_USED(bh) &bslash;&n;&t;(bh-&gt;b_count || buffer_locked(bh))
+mdefine_line|#define DATA_BUFFER_USED(bh) &bslash;&n;&t;(atomic_read(&amp;bh-&gt;b_count) || buffer_locked(bh))
 DECL|function|trunc_direct
 r_static
 r_int

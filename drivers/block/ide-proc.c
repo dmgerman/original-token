@@ -4054,16 +4054,21 @@ op_ne
 l_int|NULL
 )paren
 suffix:semicolon
-multiline_comment|/*&t;&t;if (!hwif-&gt;present)&n;&t;&t;&t;continue;*/
+macro_line|#if 0
 r_if
 c_cond
 (paren
 op_logical_neg
-id|hwif-&gt;proc
+id|hwif-&gt;present
 )paren
 r_continue
 suffix:semicolon
-r_else
+macro_line|#endif
+r_if
+c_cond
+(paren
+id|exist
+)paren
 (brace
 id|destroy_proc_ide_drives
 c_func
@@ -4092,6 +4097,9 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
+r_else
+r_continue
+suffix:semicolon
 )brace
 )brace
 DECL|function|proc_ide_create

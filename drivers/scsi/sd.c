@@ -3768,7 +3768,7 @@ id|bh
 id|printk
 c_func
 (paren
-l_string|&quot;[%p %lx] &quot;
+l_string|&quot;[%p %x] &quot;
 comma
 id|bh-&gt;b_data
 comma

@@ -144,8 +144,12 @@ op_amp
 id|bh
 )paren
 suffix:semicolon
+id|atomic_dec
+c_func
+(paren
+op_amp
 id|bh-&gt;b_count
-op_decrement
+)paren
 suffix:semicolon
 r_return
 l_int|0

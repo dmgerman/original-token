@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: process.c,v 1.94 1999/05/27 04:49:30 davem Exp $&n; *  arch/sparc64/kernel/process.c&n; *&n; *  Copyright (C) 1995, 1996 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996       Eddie C. Dost   (ecd@skynet.be)&n; *  Copyright (C) 1997, 1998 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: process.c,v 1.95 1999/06/28 08:48:51 davem Exp $&n; *  arch/sparc64/kernel/process.c&n; *&n; *  Copyright (C) 1995, 1996 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996       Eddie C. Dost   (ecd@skynet.be)&n; *  Copyright (C) 1997, 1998 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
@@ -1974,7 +1974,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;current_ds:        0x%016lx&bslash;n&quot;
+l_string|&quot;current_ds:        0x%x&bslash;n&quot;
 comma
 id|tss-&gt;current_ds.seg
 )paren

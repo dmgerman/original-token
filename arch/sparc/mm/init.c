@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: init.c,v 1.65 1999/04/09 16:28:03 davem Exp $&n; *  linux/arch/sparc/mm/init.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Eddie C. Dost (ecd@skynet.be)&n; *  Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: init.c,v 1.67 1999/06/29 12:33:59 davem Exp $&n; *  linux/arch/sparc/mm/init.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Eddie C. Dost (ecd@skynet.be)&n; *  Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -366,11 +366,6 @@ c_func
 l_string|&quot;%ld page dirs cached&bslash;n&quot;
 comma
 id|pgd_cache_size
-)paren
-suffix:semicolon
-id|show_buffers
-c_func
-(paren
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_NET
@@ -1883,7 +1878,12 @@ id|PAGE_SHIFT
 suffix:semicolon
 id|val-&gt;bufferram
 op_assign
+id|atomic_read
+c_func
+(paren
+op_amp
 id|buffermem
+)paren
 suffix:semicolon
 r_for
 c_loop

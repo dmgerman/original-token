@@ -1057,11 +1057,6 @@ comma
 id|free
 )paren
 suffix:semicolon
-id|show_buffers
-c_func
-(paren
-)paren
-suffix:semicolon
 macro_line|#ifdef CONFIG_NET
 id|show_net_buffers
 c_func
@@ -1632,7 +1627,12 @@ id|PAGE_SHIFT
 suffix:semicolon
 id|val-&gt;bufferram
 op_assign
+id|atomic_read
+c_func
+(paren
+op_amp
 id|buffermem
+)paren
 suffix:semicolon
 r_while
 c_loop

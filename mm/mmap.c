@@ -88,7 +88,12 @@ l_int|1
 suffix:semicolon
 id|free
 op_assign
+id|atomic_read
+c_func
+(paren
+op_amp
 id|buffermem
+)paren
 op_rshift
 id|PAGE_SHIFT
 suffix:semicolon

@@ -7419,7 +7419,12 @@ multiline_comment|/* Only one at a time from here on... */
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|filp-&gt;f_count
+)paren
 OG
 l_int|1
 )paren

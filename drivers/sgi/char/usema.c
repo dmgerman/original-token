@@ -72,8 +72,12 @@ id|newfd
 op_assign
 id|usema-&gt;filp
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|usema-&gt;filp-&gt;f_count
-op_increment
+)paren
 suffix:semicolon
 multiline_comment|/* Is that it? */
 id|printk

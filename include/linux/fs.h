@@ -259,7 +259,7 @@ DECL|macro|BH_New
 mdefine_line|#define BH_New&t;&t;5&t;/* 1 if the buffer is new and not yet written out */
 DECL|macro|BH_Protected
 mdefine_line|#define BH_Protected&t;6&t;/* 1 if the buffer is protected */
-multiline_comment|/*&n; * Try to keep the most commonly used fields in single cache lines (16&n; * bytes) to improve performance.  This ordering should be&n; * particularly beneficial on 32-bit processors.&n; * &n; * We use the first 16 bytes for the data which is used in searches&n; * over the block hash lists (ie. getblk(), find_buffer() and&n; * friends).&n; * &n; * The second 16 bytes we use for lru buffer scans, as used by&n; * sync_buffers() and refill_freelist().  -- sct&n; */
+multiline_comment|/*&n; * Try to keep the most commonly used fields in single cache lines (16&n; * bytes) to improve performance.  This ordering should be&n; * particularly beneficial on 32-bit processors.&n; * &n; * We use the first 16 bytes for the data which is used in searches&n; * over the block hash lists (ie. getblk() and friends).&n; * &n; * The second 16 bytes we use for lru buffer scans, as used by&n; * sync_buffers() and refill_freelist().  -- sct&n; */
 DECL|struct|buffer_head
 r_struct
 id|buffer_head
@@ -284,22 +284,53 @@ r_int
 id|b_size
 suffix:semicolon
 multiline_comment|/* block size */
+DECL|member|b_list
+r_int
+r_int
+id|b_list
+suffix:semicolon
+multiline_comment|/* List that this buffer appears */
 DECL|member|b_dev
 id|kdev_t
 id|b_dev
 suffix:semicolon
 multiline_comment|/* device (B_FREE = free) */
+DECL|member|b_count
+id|atomic_t
+id|b_count
+suffix:semicolon
+multiline_comment|/* users using this block */
 DECL|member|b_rdev
 id|kdev_t
 id|b_rdev
 suffix:semicolon
 multiline_comment|/* Real device */
-DECL|member|b_rsector
+DECL|member|b_state
 r_int
 r_int
-id|b_rsector
+id|b_state
 suffix:semicolon
-multiline_comment|/* Real buffer location on disk */
+multiline_comment|/* buffer state bitmap (see above) */
+DECL|member|b_flushtime
+r_int
+r_int
+id|b_flushtime
+suffix:semicolon
+multiline_comment|/* Time when (dirty) buffer should be written */
+DECL|member|b_next_free
+r_struct
+id|buffer_head
+op_star
+id|b_next_free
+suffix:semicolon
+multiline_comment|/* lru/free list linkage */
+DECL|member|b_prev_free
+r_struct
+id|buffer_head
+op_star
+id|b_prev_free
+suffix:semicolon
+multiline_comment|/* doubly linked list of buffers */
 DECL|member|b_this_page
 r_struct
 id|buffer_head
@@ -307,47 +338,13 @@ op_star
 id|b_this_page
 suffix:semicolon
 multiline_comment|/* circular list of buffers in one page */
-DECL|member|b_state
-r_int
-r_int
-id|b_state
-suffix:semicolon
-multiline_comment|/* buffer state bitmap (see above) */
-DECL|member|b_next_free
+DECL|member|b_reqnext
 r_struct
 id|buffer_head
 op_star
-id|b_next_free
+id|b_reqnext
 suffix:semicolon
-DECL|member|b_count
-r_int
-r_int
-id|b_count
-suffix:semicolon
-multiline_comment|/* users using this block */
-multiline_comment|/* Non-performance-critical data follows. */
-DECL|member|b_data
-r_char
-op_star
-id|b_data
-suffix:semicolon
-multiline_comment|/* pointer to data block (1024 bytes) */
-DECL|member|b_list
-r_int
-r_int
-id|b_list
-suffix:semicolon
-multiline_comment|/* List that this buffer appears */
-DECL|member|b_flushtime
-r_int
-r_int
-id|b_flushtime
-suffix:semicolon
-multiline_comment|/* Time when this (dirty) buffer&n;&t;&t;&t;&t;&t; * should be written */
-DECL|member|b_wait
-id|wait_queue_head_t
-id|b_wait
-suffix:semicolon
+multiline_comment|/* request queue */
 DECL|member|b_pprev
 r_struct
 id|buffer_head
@@ -356,21 +353,12 @@ op_star
 id|b_pprev
 suffix:semicolon
 multiline_comment|/* doubly linked list of hash-queue */
-DECL|member|b_prev_free
-r_struct
-id|buffer_head
+DECL|member|b_data
+r_char
 op_star
-id|b_prev_free
+id|b_data
 suffix:semicolon
-multiline_comment|/* doubly linked list of buffers */
-DECL|member|b_reqnext
-r_struct
-id|buffer_head
-op_star
-id|b_reqnext
-suffix:semicolon
-multiline_comment|/* request queue */
-multiline_comment|/*&n;&t; * I/O completion&n;&t; */
+multiline_comment|/* pointer to data block (1024 bytes) */
 DECL|member|b_end_io
 r_void
 (paren
@@ -387,10 +375,21 @@ r_int
 id|uptodate
 )paren
 suffix:semicolon
+multiline_comment|/* I/O completion */
 DECL|member|b_dev_id
 r_void
 op_star
 id|b_dev_id
+suffix:semicolon
+DECL|member|b_rsector
+r_int
+r_int
+id|b_rsector
+suffix:semicolon
+multiline_comment|/* Real buffer location on disk */
+DECL|member|b_wait
+id|wait_queue_head_t
+id|b_wait
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -3075,7 +3074,7 @@ id|buf
 )paren
 suffix:semicolon
 r_extern
-r_int
+id|atomic_t
 id|buffermem
 suffix:semicolon
 DECL|macro|BUF_CLEAN
@@ -3197,24 +3196,6 @@ id|flag
 )paren
 )paren
 suffix:semicolon
-r_extern
-r_void
-id|FASTCALL
-c_func
-(paren
-id|__atomic_mark_buffer_dirty
-c_func
-(paren
-r_struct
-id|buffer_head
-op_star
-id|bh
-comma
-r_int
-id|flag
-)paren
-)paren
-suffix:semicolon
 DECL|macro|atomic_set_buffer_dirty
 mdefine_line|#define atomic_set_buffer_dirty(bh) test_and_set_bit(BH_Dirty, &amp;(bh)-&gt;b_state)
 DECL|function|mark_buffer_dirty
@@ -3244,42 +3225,6 @@ id|bh
 )paren
 )paren
 id|__mark_buffer_dirty
-c_func
-(paren
-id|bh
-comma
-id|flag
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * SMP-safe version of the above - does synchronization with&n; * other users of buffer-cache data structures.&n; *&n; * since we test-set the dirty bit in a CPU-atomic way we also&n; * have optimized the common &squot;redirtying&squot; case away completely.&n; */
-DECL|function|atomic_mark_buffer_dirty
-r_extern
-r_inline
-r_void
-id|atomic_mark_buffer_dirty
-c_func
-(paren
-r_struct
-id|buffer_head
-op_star
-id|bh
-comma
-r_int
-id|flag
-)paren
-(brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|atomic_set_buffer_dirty
-c_func
-(paren
-id|bh
-)paren
-)paren
-id|__atomic_mark_buffer_dirty
 c_func
 (paren
 id|bh
@@ -3692,20 +3637,6 @@ r_int
 )paren
 suffix:semicolon
 r_extern
-r_struct
-id|buffer_head
-op_star
-id|find_buffer
-c_func
-(paren
-id|kdev_t
-comma
-r_int
-comma
-r_int
-)paren
-suffix:semicolon
-r_extern
 r_void
 id|ll_rw_block
 c_func
@@ -4074,14 +4005,6 @@ suffix:semicolon
 r_extern
 id|kdev_t
 id|ROOT_DEV
-suffix:semicolon
-r_extern
-r_void
-id|show_buffers
-c_func
-(paren
-r_void
-)paren
 suffix:semicolon
 r_extern
 r_void
