@@ -318,7 +318,7 @@ id|pte
 op_increment
 suffix:semicolon
 )brace
-id|invalidate
+id|flush_tlb
 c_func
 (paren
 )paren

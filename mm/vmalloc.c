@@ -445,6 +445,11 @@ comma
 id|address
 )paren
 suffix:semicolon
+id|flush_cache_all
+c_func
+(paren
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -479,7 +484,7 @@ id|dir
 op_increment
 suffix:semicolon
 )brace
-id|invalidate_all
+id|flush_tlb_all
 c_func
 (paren
 )paren
@@ -755,6 +760,11 @@ comma
 id|address
 )paren
 suffix:semicolon
+id|flush_cache_all
+c_func
+(paren
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -827,7 +837,7 @@ id|dir
 op_increment
 suffix:semicolon
 )brace
-id|invalidate_all
+id|flush_tlb_all
 c_func
 (paren
 )paren
@@ -1106,6 +1116,11 @@ comma
 id|address
 )paren
 suffix:semicolon
+id|flush_cache_all
+c_func
+(paren
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -1182,7 +1197,7 @@ id|dir
 op_increment
 suffix:semicolon
 )brace
-id|invalidate_all
+id|flush_tlb_all
 c_func
 (paren
 )paren

@@ -536,7 +536,7 @@ id|smp_invalidate_needed
 suffix:semicolon
 r_extern
 r_void
-id|smp_invalidate
+id|smp_flush_tlb
 c_func
 (paren
 r_void

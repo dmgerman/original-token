@@ -545,7 +545,7 @@ op_amp
 id|init_task.tss
 )paren
 suffix:semicolon
-id|invalidate_all
+id|flush_tlb_all
 c_func
 (paren
 )paren

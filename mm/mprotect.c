@@ -352,6 +352,16 @@ comma
 id|start
 )paren
 suffix:semicolon
+id|flush_cache_range
+c_func
+(paren
+id|current-&gt;mm
+comma
+id|beg
+comma
+id|end
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -388,7 +398,7 @@ id|dir
 op_increment
 suffix:semicolon
 )brace
-id|invalidate_range
+id|flush_tlb_range
 c_func
 (paren
 id|current-&gt;mm

@@ -6,26 +6,37 @@ multiline_comment|/*&n; * Define USE_PENTIUM_MM if you want the 4MB page table o
 DECL|macro|USE_PENTIUM_MM
 mdefine_line|#define USE_PENTIUM_MM 1
 multiline_comment|/*&n; * The Linux memory management assumes a three-level page table setup. On&n; * the i386, we use that, but &quot;fold&quot; the mid level into the top-level page&n; * table, so that we physically have the same two-level page table as the&n; * i386 mmu expects.&n; *&n; * This file contains the functions and defines necessary to modify and use&n; * the i386 page table tree.&n; */
-multiline_comment|/*&n; * TLB invalidation:&n; *&n; *  - invalidate() invalidates the current mm struct TLBs&n; *  - invalidate_all() invalidates all processes TLBs&n; *  - invalidate_mm(mm) invalidates the specified mm context TLB&squot;s&n; *  - invalidate_page(mm, vmaddr) invalidates one page&n; *  - invalidate_range(mm, start, end) invalidates a range of pages&n; *&n; * ..but the i386 has somewhat limited invalidation capabilities,&n; * and page-granular invalidates are available only on i486 and up.&n; */
-DECL|macro|__invalidate
-mdefine_line|#define __invalidate() &bslash;&n;__asm__ __volatile__(&quot;movl %%cr3,%%eax&bslash;n&bslash;tmovl %%eax,%%cr3&quot;: : :&quot;ax&quot;)
+multiline_comment|/* Caches aren&squot;t brain-dead on the intel. */
+DECL|macro|flush_cache_all
+mdefine_line|#define flush_cache_all()&t;&t;&t;do { } while (0)
+DECL|macro|flush_cache_mm
+mdefine_line|#define flush_cache_mm(mm)&t;&t;&t;do { } while (0)
+DECL|macro|flush_cache_range
+mdefine_line|#define flush_cache_range(mm, start, end)&t;do { } while (0)
+DECL|macro|flush_cache_page
+mdefine_line|#define flush_cache_page(vma, vmaddr)&t;&t;do { } while (0)
+DECL|macro|flush_page_to_ram
+mdefine_line|#define flush_page_to_ram(page)&t;&t;&t;do { } while (0)
+multiline_comment|/*&n; * TLB flushing:&n; *&n; *  - flush_tlb() flushes the current mm struct TLBs&n; *  - flush_tlb_all() flushes all processes TLBs&n; *  - flush_tlb_mm(mm) flushes the specified mm context TLB&squot;s&n; *  - flush_tlb_page(vma, vmaddr) flushes one page&n; *  - flush_tlb_range(mm, start, end) flushes a range of pages&n; *&n; * ..but the i386 has somewhat limited tlb flushing capabilities,&n; * and page-granular flushes are available only on i486 and up.&n; */
+DECL|macro|__flush_tlb
+mdefine_line|#define __flush_tlb() &bslash;&n;__asm__ __volatile__(&quot;movl %%cr3,%%eax&bslash;n&bslash;tmovl %%eax,%%cr3&quot;: : :&quot;ax&quot;)
 macro_line|#ifdef CONFIG_M386
-DECL|macro|__invalidate_one
-mdefine_line|#define __invalidate_one(addr) invalidate()
+DECL|macro|__flush_tlb_one
+mdefine_line|#define __flush_tlb_one(addr) flush_tlb()
 macro_line|#else
-DECL|macro|__invalidate_one
-mdefine_line|#define __invalidate_one(addr) &bslash;&n;__asm__ __volatile__(&quot;invlpg %0&quot;: :&quot;m&quot; (*(char *) addr))
+DECL|macro|__flush_tlb_one
+mdefine_line|#define __flush_tlb_one(addr) &bslash;&n;__asm__ __volatile__(&quot;invlpg %0&quot;: :&quot;m&quot; (*(char *) addr))
 macro_line|#endif
 macro_line|#ifndef __SMP__
-DECL|macro|invalidate
-mdefine_line|#define invalidate() __invalidate()
-DECL|macro|invalidate_all
-mdefine_line|#define invalidate_all() __invalidate()
-DECL|function|invalidate_mm
+DECL|macro|flush_tlb
+mdefine_line|#define flush_tlb() __flush_tlb()
+DECL|macro|flush_tlb_all
+mdefine_line|#define flush_tlb_all() __flush_tlb()
+DECL|function|flush_tlb_mm
 r_static
 r_inline
 r_void
-id|invalidate_mm
+id|flush_tlb_mm
 c_func
 (paren
 r_struct
@@ -41,17 +52,17 @@ id|mm
 op_eq
 id|current-&gt;mm
 )paren
-id|__invalidate
+id|__flush_tlb
 c_func
 (paren
 )paren
 suffix:semicolon
 )brace
-DECL|function|invalidate_page
+DECL|function|flush_tlb_page
 r_static
 r_inline
 r_void
-id|invalidate_page
+id|flush_tlb_page
 c_func
 (paren
 r_struct
@@ -71,18 +82,18 @@ id|vma-&gt;vm_mm
 op_eq
 id|current-&gt;mm
 )paren
-id|__invalidate_one
+id|__flush_tlb_one
 c_func
 (paren
 id|addr
 )paren
 suffix:semicolon
 )brace
-DECL|function|invalidate_range
+DECL|function|flush_tlb_range
 r_static
 r_inline
 r_void
-id|invalidate_range
+id|flush_tlb_range
 c_func
 (paren
 r_struct
@@ -106,26 +117,26 @@ id|mm
 op_eq
 id|current-&gt;mm
 )paren
-id|__invalidate
+id|__flush_tlb
 c_func
 (paren
 )paren
 suffix:semicolon
 )brace
 macro_line|#else
-multiline_comment|/*&n; * We aren&squot;t very clever about this yet -  SMP could certainly&n; * avoid some global invalidates..&n; */
+multiline_comment|/*&n; * We aren&squot;t very clever about this yet -  SMP could certainly&n; * avoid some global flushes..&n; */
 macro_line|#include &lt;asm/smp.h&gt;
-DECL|macro|local_invalidate
-mdefine_line|#define local_invalidate() &bslash;&n;&t;__invalidate()
+DECL|macro|local_flush_tlb
+mdefine_line|#define local_flush_tlb() &bslash;&n;&t;__flush_tlb()
 DECL|macro|CLEVER_SMP_INVALIDATE
 macro_line|#undef CLEVER_SMP_INVALIDATE
 macro_line|#ifdef CLEVER_SMP_INVALIDATE
-multiline_comment|/*&n; *&t;Smarter SMP invalidation macros. &n; *&t;&t;c/o Linus Torvalds.&n; *&n; *&t;These mean you can really definitely utterly forget about&n; *&t;writing to user space from interrupts. (Its not allowed anyway).&n; *&n; *&t;Doesn&squot;t currently work as Linus makes invalidate calls before&n; *&t;stuff like current/current-&gt;mm are setup properly&n; */
-DECL|function|invalidate_current_task
+multiline_comment|/*&n; *&t;Smarter SMP flushing macros. &n; *&t;&t;c/o Linus Torvalds.&n; *&n; *&t;These mean you can really definitely utterly forget about&n; *&t;writing to user space from interrupts. (Its not allowed anyway).&n; *&n; *&t;Doesn&squot;t currently work as Linus makes flush tlb calls before&n; *&t;stuff like current/current-&gt;mm are setup properly&n; */
+DECL|function|flush_tlb_current_task
 r_static
 r_inline
 r_void
-id|invalidate_current_task
+id|flush_tlb_current_task
 c_func
 (paren
 r_void
@@ -139,28 +150,28 @@ op_eq
 l_int|1
 )paren
 multiline_comment|/* just one copy of this mm */
-id|local_invalidate
+id|local_flush_tlb
 c_func
 (paren
 )paren
 suffix:semicolon
 multiline_comment|/* and that&squot;s us, so.. */
 r_else
-id|smp_invalidate
+id|smp_flush_tlb
 c_func
 (paren
 )paren
 suffix:semicolon
 )brace
-DECL|macro|invalidate
-mdefine_line|#define invalidate() invalidate_current_task()
-DECL|macro|invalidate_all
-mdefine_line|#define invalidate_all() smp_invalidate()
-DECL|function|invalidate_mm
+DECL|macro|flush_tlb
+mdefine_line|#define flush_tlb() flush_tlb_current_task()
+DECL|macro|flush_tlb_all
+mdefine_line|#define flush_tlb_all() smp_flush_tlb()
+DECL|function|flush_tlb_mm
 r_static
 r_inline
 r_void
-id|invalidate_mm
+id|flush_tlb_mm
 c_func
 (paren
 r_struct
@@ -180,23 +191,23 @@ id|mm-&gt;count
 op_eq
 l_int|1
 )paren
-id|local_invalidate
+id|local_flush_tlb
 c_func
 (paren
 )paren
 suffix:semicolon
 r_else
-id|smp_invalidate
+id|smp_flush_tlb
 c_func
 (paren
 )paren
 suffix:semicolon
 )brace
-DECL|function|invalidate_page
+DECL|function|flush_tlb_page
 r_static
 r_inline
 r_void
-id|invalidate_page
+id|flush_tlb_page
 c_func
 (paren
 r_struct
@@ -220,24 +231,24 @@ id|current-&gt;mm-&gt;count
 op_eq
 l_int|1
 )paren
-id|__invalidate_one
+id|__flush_tlb_one
 c_func
 (paren
 id|va
 )paren
 suffix:semicolon
 r_else
-id|smp_invalidate
+id|smp_flush_tlb
 c_func
 (paren
 )paren
 suffix:semicolon
 )brace
-DECL|function|invalidate_range
+DECL|function|flush_tlb_range
 r_static
 r_inline
 r_void
-id|invalidate_range
+id|flush_tlb_range
 c_func
 (paren
 r_struct
@@ -254,7 +265,7 @@ r_int
 id|end
 )paren
 (brace
-id|invalidate_mm
+id|flush_tlb_mm
 c_func
 (paren
 id|mm
@@ -262,15 +273,15 @@ id|mm
 suffix:semicolon
 )brace
 macro_line|#else
-DECL|macro|invalidate
-mdefine_line|#define invalidate() &bslash;&n;&t;smp_invalidate()
-DECL|macro|invalidate_all
-mdefine_line|#define invalidate_all() invalidate()
-DECL|function|invalidate_mm
+DECL|macro|flush_tlb
+mdefine_line|#define flush_tlb() &bslash;&n;&t;smp_flush_tlb()
+DECL|macro|flush_tlb_all
+mdefine_line|#define flush_tlb_all() flush_tlb()
+DECL|function|flush_tlb_mm
 r_static
 r_inline
 r_void
-id|invalidate_mm
+id|flush_tlb_mm
 c_func
 (paren
 r_struct
@@ -279,17 +290,17 @@ op_star
 id|mm
 )paren
 (brace
-id|invalidate
+id|flush_tlb
 c_func
 (paren
 )paren
 suffix:semicolon
 )brace
-DECL|function|invalidate_page
+DECL|function|flush_tlb_page
 r_static
 r_inline
 r_void
-id|invalidate_page
+id|flush_tlb_page
 c_func
 (paren
 r_struct
@@ -302,17 +313,17 @@ r_int
 id|addr
 )paren
 (brace
-id|invalidate
+id|flush_tlb
 c_func
 (paren
 )paren
 suffix:semicolon
 )brace
-DECL|function|invalidate_range
+DECL|function|flush_tlb_range
 r_static
 r_inline
 r_void
-id|invalidate_range
+id|flush_tlb_range
 c_func
 (paren
 r_struct
@@ -329,7 +340,7 @@ r_int
 id|end
 )paren
 (brace
-id|invalidate
+id|flush_tlb
 c_func
 (paren
 )paren

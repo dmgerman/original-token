@@ -2147,6 +2147,16 @@ op_lshift
 id|SHM_IDX_SHIFT
 )paren
 suffix:semicolon
+id|flush_cache_range
+c_func
+(paren
+id|shmd-&gt;vm_mm
+comma
+id|shmd-&gt;vm_start
+comma
+id|shmd-&gt;vm_end
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -2238,7 +2248,7 @@ id|shm_sgn
 )paren
 suffix:semicolon
 )brace
-id|invalidate_range
+id|flush_tlb_range
 c_func
 (paren
 id|shmd-&gt;vm_mm
@@ -3883,6 +3893,14 @@ c_func
 l_string|&quot;shm_swap_out: page and pte mismatch&bslash;n&quot;
 )paren
 suffix:semicolon
+id|flush_cache_page
+c_func
+(paren
+id|shmd
+comma
+id|tmp
+)paren
+suffix:semicolon
 id|set_pte
 c_func
 (paren
@@ -3931,7 +3949,7 @@ l_int|0
 id|shmd-&gt;vm_mm-&gt;rss
 op_decrement
 suffix:semicolon
-id|invalidate_page
+id|flush_tlb_page
 c_func
 (paren
 id|shmd

@@ -557,7 +557,7 @@ l_int|1
 op_assign
 l_int|0
 suffix:semicolon
-id|invalidate_all
+id|flush_tlb_all
 c_func
 (paren
 )paren

@@ -3,12 +3,23 @@ DECL|macro|_ALPHA_PGTABLE_H
 mdefine_line|#define _ALPHA_PGTABLE_H
 multiline_comment|/*&n; * This file contains the functions and defines necessary to modify and use&n; * the alpha page table tree.&n; *&n; * This hopefully works with any standard alpha page-size, as defined&n; * in &lt;asm/page.h&gt; (currently 8192).&n; */
 macro_line|#include &lt;asm/system.h&gt;
-multiline_comment|/*&n; * Invalidate current user mapping.&n; */
-DECL|function|invalidate
+multiline_comment|/* Caches aren&squot;t brain-dead on the alpha. */
+DECL|macro|flush_cache_all
+mdefine_line|#define flush_cache_all()&t;&t;&t;do { } while (0)
+DECL|macro|flush_cache_mm
+mdefine_line|#define flush_cache_mm(mm)&t;&t;&t;do { } while (0)
+DECL|macro|flush_cache_range
+mdefine_line|#define flush_cache_range(mm, start, end)&t;do { } while (0)
+DECL|macro|flush_cache_page
+mdefine_line|#define flush_cache_page(vma, vmaddr)&t;&t;do { } while (0)
+DECL|macro|flush_page_to_ram
+mdefine_line|#define flush_page_to_ram(page)&t;&t;&t;do { } while (0)
+multiline_comment|/*&n; * Flush current user mapping.&n; */
+DECL|function|flush_tlb
 r_static
 r_inline
 r_void
-id|invalidate
+id|flush_tlb
 c_func
 (paren
 r_void
@@ -20,12 +31,12 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Invalidate everything (kernel mapping may also have&n; * changed due to vmalloc/vfree)&n; */
-DECL|function|invalidate_all
+multiline_comment|/*&n; * Flush everything (kernel mapping may also have&n; * changed due to vmalloc/vfree)&n; */
+DECL|function|flush_tlb_all
 r_static
 r_inline
 r_void
-id|invalidate_all
+id|flush_tlb_all
 c_func
 (paren
 r_void
@@ -37,12 +48,12 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Invalidate a specified user mapping&n; */
-DECL|function|invalidate_mm
+multiline_comment|/*&n; * Flush a specified user mapping&n; */
+DECL|function|flush_tlb_mm
 r_static
 r_inline
 r_void
-id|invalidate_mm
+id|flush_tlb_mm
 c_func
 (paren
 r_struct
@@ -69,12 +80,12 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Page-granular invalidate.&n; *&n; * do a tbisd (type = 2) normally, and a tbis (type = 3)&n; * if it is an executable mapping.  We want to avoid the&n; * itlb invalidate, because that potentially also does a&n; * icache invalidate. &n; */
-DECL|function|invalidate_page
+multiline_comment|/*&n; * Page-granular tlb flush.&n; *&n; * do a tbisd (type = 2) normally, and a tbis (type = 3)&n; * if it is an executable mapping.  We want to avoid the&n; * itlb flush, because that potentially also does a&n; * icache flush.&n; */
+DECL|function|flush_tlb_page
 r_static
 r_inline
 r_void
-id|invalidate_page
+id|flush_tlb_page
 c_func
 (paren
 r_struct
@@ -125,12 +136,12 @@ id|addr
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Invalidate a specified range of user mapping: on the&n; * alpha we invalidate the whole user tlb&n; */
-DECL|function|invalidate_range
+multiline_comment|/*&n; * Flush a specified range of user mapping: on the&n; * alpha we flush the whole user tlb&n; */
+DECL|function|flush_tlb_range
 r_static
 r_inline
 r_void
-id|invalidate_range
+id|flush_tlb_range
 c_func
 (paren
 r_struct

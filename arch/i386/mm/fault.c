@@ -374,7 +374,7 @@ id|PAGE_SHARED
 )paren
 )paren
 suffix:semicolon
-id|invalidate
+id|flush_tlb
 c_func
 (paren
 )paren

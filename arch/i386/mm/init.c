@@ -693,7 +693,7 @@ id|PAGE_SIZE
 suffix:semicolon
 )brace
 )brace
-id|invalidate
+id|flush_tlb
 c_func
 (paren
 )paren
@@ -1053,7 +1053,7 @@ id|PAGE_READONLY
 )paren
 )paren
 suffix:semicolon
-id|invalidate
+id|flush_tlb
 c_func
 (paren
 )paren
@@ -1078,7 +1078,7 @@ l_int|0
 op_assign
 l_int|0
 suffix:semicolon
-id|invalidate
+id|flush_tlb
 c_func
 (paren
 )paren

@@ -125,19 +125,21 @@ id|next
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; * We need to use a memory barrier to make sure that this&n;&t; * works correctly even in SMP with weakly ordered writes.&n;&t; *&n;&t; * This is atomic wrt interrupts (and generally walking the&n;&t; * chain), but not wrt itself (so you can&squot;t call this from&n;&t; * an interrupt. Not that you&squot;d want to).&n;&t; */
 id|fw-&gt;next
 op_assign
 op_star
 id|p
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;We need to set p atomically in case someone runs down the list&n;&t; *&t;at the wrong moment. This saves locking it &n;&t; */
-id|xchg
+id|mb
 c_func
 (paren
-id|p
-comma
-id|fw
 )paren
+suffix:semicolon
+op_star
+id|p
+op_assign
+id|fw
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;And release the sleep lock&n;&t; */
 id|firewall_lock
@@ -236,13 +238,10 @@ id|f
 op_assign
 id|fw-&gt;next
 suffix:semicolon
-id|xchg
-c_func
-(paren
+op_star
 id|nl
-comma
+op_assign
 id|f
-)paren
 suffix:semicolon
 id|firewall_lock
 op_assign

@@ -106,6 +106,9 @@ comma
 DECL|enumerator|TQUEUE_BH
 id|TQUEUE_BH
 comma
+DECL|enumerator|DIGI_BH
+id|DIGI_BH
+comma
 DECL|enumerator|SERIAL_BH
 id|SERIAL_BH
 comma

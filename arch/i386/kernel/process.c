@@ -447,7 +447,7 @@ id|smp_invalidate_needed
 )paren
 )paren
 (brace
-id|local_invalidate
+id|local_flush_tlb
 c_func
 (paren
 )paren

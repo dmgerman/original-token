@@ -753,7 +753,7 @@ id|vma-&gt;vm_page_prot
 )paren
 )paren
 suffix:semicolon
-id|invalidate
+id|flush_tlb
 c_func
 (paren
 )paren

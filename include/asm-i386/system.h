@@ -210,7 +210,7 @@ c_func
 (paren
 l_string|&quot;xchgb %b0,%1&quot;
 suffix:colon
-l_string|&quot;=q&quot;
+l_string|&quot;=&amp;q&quot;
 (paren
 id|x
 )paren
@@ -251,7 +251,7 @@ c_func
 (paren
 l_string|&quot;xchgw %w0,%1&quot;
 suffix:colon
-l_string|&quot;=r&quot;
+l_string|&quot;=&amp;r&quot;
 (paren
 id|x
 )paren
@@ -292,7 +292,7 @@ c_func
 (paren
 l_string|&quot;xchgl %0,%1&quot;
 suffix:colon
-l_string|&quot;=r&quot;
+l_string|&quot;=&amp;r&quot;
 (paren
 id|x
 )paren

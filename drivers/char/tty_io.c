@@ -7895,6 +7895,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_DIGI
+id|pcxe_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 id|pty_init
 c_func
 (paren

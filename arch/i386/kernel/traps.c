@@ -987,7 +987,7 @@ id|error_code
 )paren
 (brace
 macro_line|#ifdef CONFIG_SMP_NMI_INVAL
-id|smp_invalidate_rcv
+id|smp_flush_tlb_rcv
 c_func
 (paren
 )paren

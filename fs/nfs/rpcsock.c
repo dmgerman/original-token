@@ -1621,16 +1621,10 @@ c_cond
 (paren
 id|slot-&gt;w_gotit
 )paren
-(brace
-id|result
-op_assign
+r_return
 id|slot-&gt;w_result
 suffix:semicolon
 multiline_comment|/* quite important */
-r_return
-id|result
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1689,7 +1683,8 @@ comma
 id|result
 )paren
 suffix:semicolon
-r_break
+r_return
+id|result
 suffix:semicolon
 )brace
 multiline_comment|/* Receive and dispatch */
@@ -1708,7 +1703,8 @@ id|rsock
 OL
 l_int|0
 )paren
-r_break
+r_return
+id|result
 suffix:semicolon
 )brace
 r_while
@@ -1724,7 +1720,7 @@ r_return
 id|slot-&gt;w_gotit
 ques
 c_cond
-id|result
+id|slot-&gt;w_result
 suffix:colon
 op_minus
 id|ETIMEDOUT

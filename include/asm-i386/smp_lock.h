@@ -110,7 +110,7 @@ op_amp
 id|smp_invalidate_needed
 )paren
 )paren
-id|local_invalidate
+id|local_flush_tlb
 c_func
 (paren
 )paren

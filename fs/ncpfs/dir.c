@@ -492,7 +492,7 @@ l_int|NULL
 multiline_comment|/* smap */
 )brace
 suffix:semicolon
-multiline_comment|/* Here we encapsulate the inode number handling that depends upon the&n; * mount mode: When we mount a complete server, the memory address of&n; * the npc_inode_info is used as an inode. When only a single volume&n; * is mounted, then the DosDirNum is used as the inode number. As this&n; * is unique for the complete volume, this should enable the NFS&n; * exportability of a ncpfs-mounted volume.&n; */
+multiline_comment|/* Here we encapsulate the inode number handling that depends upon the&n; * mount mode: When we mount a complete server, the memory address of&n; * the ncp_inode_info is used as the inode number. When only a single&n; * volume is mounted, then the DosDirNum is used as the inode&n; * number. As this is unique for the complete volume, this should&n; * enable the NFS exportability of a ncpfs-mounted volume.&n; */
 r_static
 r_inline
 r_int
@@ -714,7 +714,6 @@ op_minus
 id|EISDIR
 suffix:semicolon
 )brace
-multiline_comment|/* In ncpfs, we have unique inodes across all mounted filesystems, for&n;   all inodes that are in memory. That&squot;s why it&squot;s enough to index the&n;   directory cache by the inode number. */
 DECL|variable|c_dev
 r_static
 id|kdev_t
@@ -1289,7 +1288,6 @@ OL
 id|c_size
 )paren
 (brace
-multiline_comment|/* We found it.  For getwd(), we have to return the&n;                   correct inode in d_ino if the inode is currently in&n;                   use. Otherwise the inode number does not&n;                   matter. (You can argue a lot about this..) */
 id|ino_t
 id|ino
 suffix:semicolon
@@ -1315,6 +1313,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
+multiline_comment|/* For getwd() we have to return the correct&n;&t;&t;&t; * inode in d_ino if the inode is currently in&n;&t;&t;&t; * use. Otherwise the inode number does not&n;&t;&t;&t; * matter. (You can argue a lot about this..) */
 r_struct
 id|ncp_inode_info
 op_star

@@ -1518,6 +1518,7 @@ suffix:semicolon
 macro_line|#else
 r_return
 l_int|0
+suffix:semicolon
 macro_line|#endif
 )brace
 r_static
@@ -2987,12 +2988,13 @@ id|hw_config
 )paren
 (brace
 r_int
-id|prev_devs
-suffix:semicolon
-r_int
 id|ret
 suffix:semicolon
 macro_line|#if (defined(CONFIG_MPU401) || defined(CONFIG_MPU_EMU)) &amp;&amp; defined(CONFIG_MIDI)
+(brace
+r_int
+id|prev_devs
+suffix:semicolon
 id|prev_devs
 op_assign
 id|num_midis
@@ -3028,6 +3030,7 @@ op_assign
 op_amp
 id|pss_coproc_operations
 suffix:semicolon
+)brace
 macro_line|#endif
 r_return
 id|ret

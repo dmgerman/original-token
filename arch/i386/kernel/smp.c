@@ -1434,7 +1434,7 @@ op_or
 l_int|7
 )paren
 suffix:semicolon
-id|local_invalidate
+id|local_flush_tlb
 c_func
 (paren
 )paren
@@ -1464,7 +1464,7 @@ l_int|0
 op_assign
 id|cfg
 suffix:semicolon
-id|local_invalidate
+id|local_flush_tlb
 c_func
 (paren
 )paren
@@ -1996,7 +1996,7 @@ l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/*&t;printk(&quot;Testing faulting...&bslash;n&quot;);&n;&t;*(long *)0=1;&t;&t; OOPS... */
-id|local_invalidate
+id|local_flush_tlb
 c_func
 (paren
 )paren
@@ -2029,7 +2029,7 @@ l_int|1
 (brace
 suffix:semicolon
 )brace
-id|local_invalidate
+id|local_flush_tlb
 c_func
 (paren
 )paren
@@ -2447,7 +2447,7 @@ l_int|0
 op_assign
 l_int|7
 suffix:semicolon
-id|local_invalidate
+id|local_flush_tlb
 c_func
 (paren
 )paren
@@ -2494,7 +2494,7 @@ l_int|0
 op_assign
 id|cfg
 suffix:semicolon
-id|local_invalidate
+id|local_flush_tlb
 c_func
 (paren
 )paren
@@ -3080,7 +3080,7 @@ op_assign
 l_int|3
 suffix:semicolon
 multiline_comment|/* writeable, present, addr 0 */
-id|local_invalidate
+id|local_flush_tlb
 c_func
 (paren
 )paren
@@ -3114,7 +3114,7 @@ l_int|0
 op_assign
 id|cfg
 suffix:semicolon
-id|local_invalidate
+id|local_flush_tlb
 c_func
 (paren
 )paren
@@ -3234,7 +3234,7 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; *&t;A non wait message cannot pass data or cpu source info. This current setup&n; *&t;is only safe because the kernel lock owner is the only person who can send a message.&n; *&n; *&t;Wrapping this whole block in a spinlock is not the safe answer either. A processor may&n; *&t;get stuck with irq&squot;s off waiting to send a message and thus not replying to the person&n; *&t;spinning for a reply....&n; *&n; *&t;In the end invalidate ought to be the NMI and a very very short function (to avoid the old&n; *&t;IDE disk problems), and other messages sent with IRQ&squot;s enabled in a civilised fashion. That&n; *&t;will also boost performance.&n; */
+multiline_comment|/*&n; *&t;A non wait message cannot pass data or cpu source info. This current setup&n; *&t;is only safe because the kernel lock owner is the only person who can send a message.&n; *&n; *&t;Wrapping this whole block in a spinlock is not the safe answer either. A processor may&n; *&t;get stuck with irq&squot;s off waiting to send a message and thus not replying to the person&n; *&t;spinning for a reply....&n; *&n; *&t;In the end flush tlb ought to be the NMI and a very very short function (to avoid the old&n; *&t;IDE disk problems), and other messages sent with IRQ&squot;s enabled in a civilised fashion. That&n; *&t;will also boost performance.&n; */
 DECL|function|smp_message_pass
 r_void
 id|smp_message_pass
@@ -3329,7 +3329,7 @@ r_return
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t; *&t;Sanity check we don&squot;t re-enter this across CPU&squot;s. Only the kernel&n;&t; *&t;lock holder may send messages. For a STOP_CPU we are bringing the&n;&t; *&t;entire box to the fastest halt we can.. A reschedule carries&n;&t; *&t;no data and can occur during an invalidate.. guess what panic&n;&t; *&t;I got to notice this bug...&n;&t; */
+multiline_comment|/*&n;&t; *&t;Sanity check we don&squot;t re-enter this across CPU&squot;s. Only the kernel&n;&t; *&t;lock holder may send messages. For a STOP_CPU we are bringing the&n;&t; *&t;entire box to the fastest halt we can.. A reschedule carries&n;&t; *&t;no data and can occur during a flush.. guess what panic&n;&t; *&t;I got to notice this bug...&n;&t; */
 r_if
 c_cond
 (paren
@@ -3652,10 +3652,10 @@ op_assign
 id|NO_PROC_ID
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;This is fraught with deadlocks. Linus does an invalidate at a whim&n; *&t;even with IRQ&squot;s off. We have to avoid a pair of crossing invalidates&n; *&t;or we are doomed.  See the notes about smp_message_pass.&n; */
-DECL|function|smp_invalidate
+multiline_comment|/*&n; *&t;This is fraught with deadlocks. Linus does a flush tlb at a whim&n; *&t;even with IRQ&squot;s off. We have to avoid a pair of crossing flushes&n; *&t;or we are doomed.  See the notes about smp_message_pass.&n; */
+DECL|function|smp_flush_tlb
 r_void
-id|smp_invalidate
+id|smp_flush_tlb
 c_func
 (paren
 r_void
@@ -3681,7 +3681,7 @@ id|active_kernel_processor
 id|panic
 c_func
 (paren
-l_string|&quot;CPU #%d:Attempted invalidate IPI when not AKP(=%d)&bslash;n&quot;
+l_string|&quot;CPU #%d:Attempted flush tlb IPI when not AKP(=%d)&bslash;n&quot;
 comma
 id|smp_processor_id
 c_func
@@ -3693,7 +3693,7 @@ id|active_kernel_processor
 suffix:semicolon
 )brace
 multiline_comment|/*&t;printk(&quot;SMI-&quot;);*/
-multiline_comment|/*&n;&t; *&t;The assignment is safe because its volatile so the compiler cannot reorder it,&n;&t; *&t;because the i586 has strict memory ordering and because only the kernel lock holder&n;&t; *&t;may issue an invalidate. If you break any one of those three change this to an atomic&n;&t; *&t;bus locked or.&n;&t; */
+multiline_comment|/*&n;&t; *&t;The assignment is safe because its volatile so the compiler cannot reorder it,&n;&t; *&t;because the i586 has strict memory ordering and because only the kernel lock holder&n;&t; *&t;may issue a tlb flush. If you break any one of those three change this to an atomic&n;&t; *&t;bus locked or.&n;&t; */
 id|smp_invalidate_needed
 op_assign
 id|cpu_present_map
@@ -3708,7 +3708,7 @@ c_func
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Processors spinning on the lock will see this IRQ late. The smp_invalidate_needed map will&n;&t; *&t;ensure they dont do a spurious invalidate or miss one.&n;&t; */
+multiline_comment|/*&n;&t; *&t;Processors spinning on the lock will see this IRQ late. The smp_invalidate_needed map will&n;&t; *&t;ensure they dont do a spurious flush tlb or miss one.&n;&t; */
 id|save_flags
 c_func
 (paren
@@ -3733,7 +3733,7 @@ l_int|2
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Flush the local TLB&n;&t; */
-id|local_invalidate
+id|local_flush_tlb
 c_func
 (paren
 )paren
@@ -3903,7 +3903,7 @@ id|smp_invalidate_needed
 )paren
 )paren
 (brace
-id|local_invalidate
+id|local_flush_tlb
 c_func
 (paren
 )paren

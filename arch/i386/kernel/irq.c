@@ -1630,7 +1630,7 @@ id|irq_action
 )paren
 suffix:semicolon
 macro_line|#ifdef __SMP__
-multiline_comment|/* IRQ 13 is allowed - thats an invalidate */
+multiline_comment|/* IRQ 13 is allowed - thats a flush tlb */
 r_if
 c_cond
 (paren
