@@ -106,28 +106,8 @@ r_int
 r_int
 id|io_apic_irqs
 suffix:semicolon
-DECL|function|IO_APIC_VECTOR
-r_extern
-r_inline
-r_int
-id|IO_APIC_VECTOR
-(paren
-r_int
-id|irq
-)paren
-(brace
-r_return
-(paren
-l_int|0x51
-op_plus
-(paren
-id|irq
-op_lshift
-l_int|3
-)paren
-)paren
-suffix:semicolon
-)brace
+DECL|macro|IO_APIC_VECTOR
+mdefine_line|#define IO_APIC_VECTOR(irq)&t;(0x51+((irq)&lt;&lt;3))
 DECL|macro|MAX_IRQ_SOURCES
 mdefine_line|#define MAX_IRQ_SOURCES 128
 DECL|macro|MAX_MP_BUSSES

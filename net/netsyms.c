@@ -2108,6 +2108,13 @@ id|noop_qdisc
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_NET_SCHED
+DECL|variable|pfifo_qdisc_ops
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pfifo_qdisc_ops
+)paren
+suffix:semicolon
 DECL|variable|register_qdisc
 id|EXPORT_SYMBOL
 c_func

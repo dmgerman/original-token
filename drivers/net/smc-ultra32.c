@@ -924,6 +924,26 @@ op_minus
 id|ULTRA32_NIC_OFFSET
 suffix:semicolon
 multiline_comment|/* ASIC addr */
+r_int
+id|irq_flags
+op_assign
+(paren
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+id|ULTRA32_CFG5
+)paren
+op_amp
+l_int|0x08
+)paren
+ques
+c_cond
+l_int|0
+suffix:colon
+id|SA_SHIRQ
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -934,7 +954,7 @@ id|dev-&gt;irq
 comma
 id|ei_interrupt
 comma
-l_int|0
+id|irq_flags
 comma
 id|ei_status.name
 comma

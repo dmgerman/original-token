@@ -2,6 +2,7 @@ multiline_comment|/*  Generic MTRR (Memory Type Range Register) ioctls.&n;&n;   
 macro_line|#ifndef _LINUX_MTRR_H
 DECL|macro|_LINUX_MTRR_H
 mdefine_line|#define _LINUX_MTRR_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/ioctl.h&gt;
 DECL|macro|MTRR_IOCTL_BASE
 mdefine_line|#define&t;MTRR_IOCTL_BASE&t;&squot;M&squot;

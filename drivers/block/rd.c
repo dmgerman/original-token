@@ -939,7 +939,7 @@ suffix:semicolon
 macro_line|#endif  /* MODULE */
 multiline_comment|/* End of non-loading portions of the ramdisk driver */
 macro_line|#ifdef RD_LOADER 
-multiline_comment|/*&n; * This routine tries to a ramdisk image to load, and returns the&n; * number of blocks to read for a non-compressed image, 0 if the image&n; * is a compressed image, and -1 if an image with the right magic&n; * numbers could not be found.&n; *&n; * We currently check for the following magic numbers:&n; * &t;minix&n; * &t;ext2&n; *&t;romfs&n; * &t;gzip&n; */
+multiline_comment|/*&n; * This routine tries to find a ramdisk image to load, and returns the&n; * number of blocks to read for a non-compressed image, 0 if the image&n; * is a compressed image, and -1 if an image with the right magic&n; * numbers could not be found.&n; *&n; * We currently check for the following magic numbers:&n; * &t;minix&n; * &t;ext2&n; *&t;romfs&n; * &t;gzip&n; */
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -1760,6 +1760,31 @@ id|device
 )paren
 )braket
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
+r_if
+c_cond
+(paren
+id|MAJOR
+c_func
+(paren
+id|device
+)paren
+op_eq
+id|MAJOR_NR
+op_logical_and
+id|MINOR
+c_func
+(paren
+id|device
+)paren
+op_eq
+id|INITRD_MINOR
+)paren
+id|devblocks
+op_assign
+id|nblocks
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1783,15 +1808,30 @@ id|printk
 c_func
 (paren
 id|KERN_NOTICE
-l_string|&quot;RAMDISK: Loading %d blocks [%d disk(s)] into ram disk... &quot;
+l_string|&quot;RAMDISK: Loading %d blocks [%d disk%s] into ram disk... &quot;
 comma
 id|nblocks
 comma
+(paren
+(paren
 id|nblocks
+op_minus
+l_int|1
+)paren
 op_div
 id|devblocks
+)paren
 op_plus
 l_int|1
+comma
+id|nblocks
+OG
+id|devblocks
+ques
+c_cond
+l_string|&quot;s&quot;
+suffix:colon
+l_string|&quot;&quot;
 )paren
 suffix:semicolon
 r_for
@@ -1826,7 +1866,11 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;done.&bslash;n&quot;
+l_string|&quot;done disk #%d.&bslash;n&quot;
+comma
+id|i
+op_div
+id|devblocks
 )paren
 suffix:semicolon
 id|rotate

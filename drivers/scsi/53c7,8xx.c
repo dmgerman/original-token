@@ -3737,14 +3737,10 @@ id|revision
 (brace
 id|printk
 (paren
-l_string|&quot;scsi-ncr53c7,8xx : error %s not initializing due to error reading configuration space&bslash;n&quot;
+l_string|&quot;scsi-ncr53c7,8xx : error %d not initializing due to error reading configuration space&bslash;n&quot;
 l_string|&quot;&t; perhaps you specified an incorrect PCI bus, device, or function.&bslash;n&quot;
 comma
-id|pcibios_strerror
-c_func
-(paren
 id|error
-)paren
 )paren
 suffix:semicolon
 r_return

@@ -182,6 +182,8 @@ id|current-&gt;uid
 op_assign
 id|current-&gt;euid
 op_assign
+id|current-&gt;fsuid
+op_assign
 l_int|0
 suffix:semicolon
 r_if
