@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  joy-amiga.c  Version 1.2&n; *&n; *  Copyright (c) 1998 Vojtech Pavlik&n; */
+multiline_comment|/*&n; *  joy-amiga.c  Version 1.2&n; *&n; *  Copyright (c) 1998-1999 Vojtech Pavlik&n; *&n; *  Sponsored by SuSE&n; */
 multiline_comment|/*&n; * This is a module for the Linux joystick driver, supporting&n; * microswitch based joystick connected to Amiga joystick port.&n; */
 multiline_comment|/*&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA&n; *&n; * Should you need to contact me, the author, you can do so either by&n; * e-mail - mail your message to &lt;vojtech@suse.cz&gt;, or by paper mail:&n; * Vojtech Pavlik, Ucitelska 1576, Prague 8, 182 00 Czech Republic&n; */
 macro_line|#include &lt;asm/system.h&gt;
@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/joystick.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 DECL|variable|__initdata
 r_static
 r_struct
@@ -35,11 +36,16 @@ suffix:semicolon
 DECL|variable|js_am
 r_static
 r_int
+id|__initdata
 id|js_am
 (braket
 )braket
 op_assign
-initialization_block
+(brace
+l_int|0
+comma
+l_int|0
+)brace
 suffix:semicolon
 multiline_comment|/*&n; * js_am_read() reads and Amiga joystick data.&n; */
 DECL|function|js_am_read
@@ -186,7 +192,7 @@ id|axes
 l_int|0
 )braket
 (braket
-l_int|0
+l_int|1
 )braket
 op_assign
 (paren
@@ -380,22 +386,22 @@ suffix:semicolon
 )brace
 macro_line|#ifndef MODULE
 DECL|function|js_am_setup
-r_void
+r_int
 id|__init
 id|js_am_setup
 c_func
 (paren
-r_char
-op_star
-id|str
-comma
-r_int
-op_star
-id|ints
+id|SETUP_PARAM
 )paren
 (brace
 r_int
 id|i
+suffix:semicolon
+id|SETUP_PARSE
+c_func
+(paren
+l_int|2
+)paren
 suffix:semicolon
 r_for
 c_loop
@@ -430,7 +436,18 @@ op_plus
 l_int|1
 )braket
 suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
 )brace
+id|__setup
+c_func
+(paren
+l_string|&quot;js_am=&quot;
+comma
+id|js_am_setup
+)paren
+suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef MODULE
 DECL|function|init_module
@@ -565,8 +582,6 @@ r_while
 c_loop
 (paren
 id|js_am_port
-op_ne
-l_int|NULL
 )paren
 (brace
 r_if
@@ -576,8 +591,6 @@ id|js_am_port-&gt;devs
 (braket
 l_int|0
 )braket
-op_ne
-l_int|NULL
 )paren
 id|js_unregister_device
 c_func

@@ -1477,6 +1477,8 @@ DECL|variable|err_lock
 r_static
 id|spinlock_t
 id|err_lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 DECL|function|smp_error_interrupt
 id|asmlinkage

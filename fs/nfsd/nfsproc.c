@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * nfsproc2.c&t;Process version 2 NFS requests.&n; *&n; * Copyright (C) 1995 Olaf Kirch &lt;okir@monad.swb.de&gt;&n; */
+multiline_comment|/*&n; * nfsproc2.c&t;Process version 2 NFS requests.&n; * linux/fs/nfsd/nfs2proc.c&n; * &n; * Process version 2 NFS requests.&n; *&n; * Copyright (C) 1995-1997 Olaf Kirch &lt;okir@monad.swb.de&gt;&n; */
 macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -535,6 +535,8 @@ suffix:semicolon
 id|argp-&gt;count
 op_assign
 id|avail
+op_lshift
+l_int|2
 suffix:semicolon
 )brace
 id|resp-&gt;count
@@ -1052,13 +1054,12 @@ id|type
 op_eq
 id|S_IFCHR
 op_logical_and
-id|size
-op_eq
-op_complement
+op_logical_neg
 (paren
-id|u32
+id|attr-&gt;ia_valid
+op_amp
+id|ATTR_SIZE
 )paren
-l_int|0
 )paren
 (brace
 multiline_comment|/* If you think you&squot;ve seen the worst, grok this. */
@@ -1085,9 +1086,8 @@ id|rdev
 multiline_comment|/* dev got truncated because of 16bit Linux dev_t */
 id|nfserr
 op_assign
-id|nfserr_io
+id|nfserr_inval
 suffix:semicolon
-multiline_comment|/* or nfserr_inval? */
 r_goto
 id|out_unlock
 suffix:semicolon
@@ -1100,6 +1100,12 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+multiline_comment|/* we&squot;ve used the SIZE information, so discard it */
+id|attr-&gt;ia_valid
+op_and_assign
+op_complement
+id|ATTR_SIZE
+suffix:semicolon
 multiline_comment|/* Make sure the type and device matches */
 id|nfserr
 op_assign
@@ -2417,12 +2423,6 @@ id|ESTALE
 )brace
 comma
 (brace
-id|NFSERR_WFLUSH
-comma
-id|EIO
-)brace
-comma
-(brace
 op_minus
 l_int|1
 comma
@@ -2468,6 +2468,7 @@ id|errno
 )paren
 r_return
 id|htonl
+c_func
 (paren
 id|nfs_errtbl
 (braket
@@ -2490,119 +2491,4 @@ r_return
 id|nfserr_io
 suffix:semicolon
 )brace
-macro_line|#if 0
-r_static
-r_void
-id|nfsd_dump
-c_func
-(paren
-r_char
-op_star
-id|tag
-comma
-id|u32
-op_star
-id|buf
-comma
-r_int
-id|len
-)paren
-(brace
-r_int
-id|i
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_NOTICE
-l_string|&quot;nfsd: %s (%d words)&bslash;n&quot;
-comma
-id|tag
-comma
-id|len
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|len
-op_logical_and
-id|i
-OL
-l_int|32
-suffix:semicolon
-id|i
-op_add_assign
-l_int|8
-)paren
-id|printk
-c_func
-(paren
-id|KERN_NOTICE
-l_string|&quot; %08lx %08lx %08lx %08lx&quot;
-l_string|&quot; %08lx %08lx %08lx %08lx&bslash;n&quot;
-comma
-id|buf
-(braket
-id|i
-)braket
-comma
-id|buf
-(braket
-id|i
-op_plus
-l_int|1
-)braket
-comma
-id|buf
-(braket
-id|i
-op_plus
-l_int|2
-)braket
-comma
-id|buf
-(braket
-id|i
-op_plus
-l_int|3
-)braket
-comma
-id|buf
-(braket
-id|i
-op_plus
-l_int|4
-)braket
-comma
-id|buf
-(braket
-id|i
-op_plus
-l_int|5
-)braket
-comma
-id|buf
-(braket
-id|i
-op_plus
-l_int|6
-)braket
-comma
-id|buf
-(braket
-id|i
-op_plus
-l_int|7
-)braket
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 eof

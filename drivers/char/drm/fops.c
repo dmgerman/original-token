@@ -1,4 +1,4 @@
-multiline_comment|/* fops.c -- File operations for DRM -*- linux-c -*-&n; * Created: Mon Jan  4 08:58:31 1999 by faith@precisioninsight.com&n; * Revised: Fri Aug 20 11:31:46 1999 by faith@precisioninsight.com&n; *&n; * Copyright 1999 Precision Insight, Inc., Cedar Park, Texas.&n; * All Rights Reserved.&n; *&n; * Permission is hereby granted, free of charge, to any person obtaining a&n; * copy of this software and associated documentation files (the &quot;Software&quot;),&n; * to deal in the Software without restriction, including without limitation&n; * the rights to use, copy, modify, merge, publish, distribute, sublicense,&n; * and/or sell copies of the Software, and to permit persons to whom the&n; * Software is furnished to do so, subject to the following conditions:&n; * &n; * The above copyright notice and this permission notice (including the next&n; * paragraph) shall be included in all copies or substantial portions of the&n; * Software.&n; * &n; * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR&n; * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&n; * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL&n; * PRECISION INSIGHT AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM, DAMAGES OR&n; * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,&n; * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER&n; * DEALINGS IN THE SOFTWARE.&n; * &n; * $PI: xc/programs/Xserver/hw/xfree86/os-support/linux/drm/generic/fops.c,v 1.3 1999/08/20 15:36:45 faith Exp $&n; * $XFree86$&n; *&n; */
+multiline_comment|/* fops.c -- File operations for DRM -*- linux-c -*-&n; * Created: Mon Jan  4 08:58:31 1999 by faith@precisioninsight.com&n; * Revised: Fri Dec  3 10:26:26 1999 by faith@precisioninsight.com&n; *&n; * Copyright 1999 Precision Insight, Inc., Cedar Park, Texas.&n; * All Rights Reserved.&n; *&n; * Permission is hereby granted, free of charge, to any person obtaining a&n; * copy of this software and associated documentation files (the &quot;Software&quot;),&n; * to deal in the Software without restriction, including without limitation&n; * the rights to use, copy, modify, merge, publish, distribute, sublicense,&n; * and/or sell copies of the Software, and to permit persons to whom the&n; * Software is furnished to do so, subject to the following conditions:&n; * &n; * The above copyright notice and this permission notice (including the next&n; * paragraph) shall be included in all copies or substantial portions of the&n; * Software.&n; * &n; * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR&n; * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&n; * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL&n; * PRECISION INSIGHT AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM, DAMAGES OR&n; * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,&n; * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER&n; * DEALINGS IN THE SOFTWARE.&n; * &n; * $PI: xc/programs/Xserver/hw/xfree86/os-support/linux/drm/kernel/fops.c,v 1.3 1999/08/20 15:36:45 faith Exp $&n; * $XFree86: xc/programs/Xserver/hw/xfree86/os-support/linux/drm/kernel/fops.c,v 1.1 1999/09/25 14:37:59 dawes Exp $&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;drmP.h&quot;
@@ -205,20 +205,13 @@ suffix:semicolon
 id|DRM_DEBUG
 c_func
 (paren
-l_string|&quot;pid = %d, device = 0x%x, open_count = %d, f_count = %d&bslash;n&quot;
+l_string|&quot;pid = %d, device = 0x%x, open_count = %d&bslash;n&quot;
 comma
 id|current-&gt;pid
 comma
 id|dev-&gt;device
 comma
 id|dev-&gt;open_count
-comma
-id|atomic_read
-c_func
-(paren
-op_amp
-id|filp-&gt;f_count
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -266,6 +259,51 @@ comma
 id|dev-&gt;open_count
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|_DRM_LOCK_IS_HELD
+c_func
+(paren
+id|dev-&gt;lock.hw_lock-&gt;lock
+)paren
+op_logical_and
+id|dev-&gt;lock.pid
+op_eq
+id|current-&gt;pid
+)paren
+(brace
+id|DRM_ERROR
+c_func
+(paren
+l_string|&quot;Process %d dead, freeing lock for context %d&bslash;n&quot;
+comma
+id|current-&gt;pid
+comma
+id|_DRM_LOCKING_CONTEXT
+c_func
+(paren
+id|dev-&gt;lock.hw_lock-&gt;lock
+)paren
+)paren
+suffix:semicolon
+id|drm_lock_free
+c_func
+(paren
+id|dev
+comma
+op_amp
+id|dev-&gt;lock.hw_lock-&gt;lock
+comma
+id|_DRM_LOCKING_CONTEXT
+c_func
+(paren
+id|dev-&gt;lock.hw_lock-&gt;lock
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* FIXME: may require heavy-handed reset of&n;                                   hardware at this point, possibly&n;                                   processed via a callback to the X&n;                                   server. */
+)brace
 id|drm_reclaim_buffers
 c_func
 (paren
@@ -820,6 +858,22 @@ op_sub_assign
 id|count
 suffix:semicolon
 )brace
+macro_line|#if LINUX_VERSION_CODE &lt; 0x020315
+r_if
+c_cond
+(paren
+id|dev-&gt;buf_async
+)paren
+id|kill_fasync
+c_func
+(paren
+id|dev-&gt;buf_async
+comma
+id|SIGIO
+)paren
+suffix:semicolon
+macro_line|#else
+multiline_comment|/* Parameter added in 2.3.21 */
 r_if
 c_cond
 (paren
@@ -832,9 +886,10 @@ id|dev-&gt;buf_async
 comma
 id|SIGIO
 comma
-id|POLL_OUT
+id|POLL_IN
 )paren
 suffix:semicolon
+macro_line|#endif
 id|DRM_DEBUG
 c_func
 (paren

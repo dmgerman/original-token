@@ -14,8 +14,6 @@ DECL|macro|NFS3_MAXNAMLEN
 mdefine_line|#define NFS3_MAXNAMLEN&t;&t;NAME_MAX
 DECL|macro|NFS3_MAXGROUPS
 mdefine_line|#define NFS3_MAXGROUPS&t;&t;16
-DECL|macro|NFS3_FHSIZE
-mdefine_line|#define NFS3_FHSIZE&t;&t;NFS_FHSIZE
 DECL|macro|NFS3_COOKIESIZE
 mdefine_line|#define NFS3_COOKIESIZE&t;&t;4
 DECL|macro|NFS3_FIFO_DEV
@@ -36,174 +34,42 @@ DECL|macro|NFS3MODE_SOCK
 mdefine_line|#define NFS3MODE_SOCK&t;&t;0140000
 DECL|macro|NFS3MODE_FIFO
 mdefine_line|#define NFS3MODE_FIFO&t;&t;0010000
-DECL|enum|nfs3_stat
-r_enum
-id|nfs3_stat
-(brace
-DECL|enumerator|NFS3_OK
-id|NFS3_OK
-op_assign
-l_int|0
-comma
-DECL|enumerator|NFS3ERR_PERM
-id|NFS3ERR_PERM
-op_assign
-l_int|1
-comma
-DECL|enumerator|NFS3ERR_NOENT
-id|NFS3ERR_NOENT
-op_assign
-l_int|2
-comma
-DECL|enumerator|NFS3ERR_IO
-id|NFS3ERR_IO
-op_assign
-l_int|5
-comma
-DECL|enumerator|NFS3ERR_NXIO
-id|NFS3ERR_NXIO
-op_assign
-l_int|6
-comma
-DECL|enumerator|NFS3ERR_EAGAIN
-id|NFS3ERR_EAGAIN
-op_assign
-l_int|11
-comma
-DECL|enumerator|NFS3ERR_ACCES
-id|NFS3ERR_ACCES
-op_assign
-l_int|13
-comma
-DECL|enumerator|NFS3ERR_EXIST
-id|NFS3ERR_EXIST
-op_assign
-l_int|17
-comma
-DECL|enumerator|NFS3ERR_XDEV
-id|NFS3ERR_XDEV
-op_assign
-l_int|18
-comma
-multiline_comment|/* new in NFSv3 */
-DECL|enumerator|NFS3ERR_NODEV
-id|NFS3ERR_NODEV
-op_assign
-l_int|19
-comma
-DECL|enumerator|NFS3ERR_NOTDIR
-id|NFS3ERR_NOTDIR
-op_assign
-l_int|20
-comma
-DECL|enumerator|NFS3ERR_ISDIR
-id|NFS3ERR_ISDIR
-op_assign
-l_int|21
-comma
-DECL|enumerator|NFS3ERR_INVAL
-id|NFS3ERR_INVAL
-op_assign
-l_int|22
-comma
-multiline_comment|/* new in NFSv3 */
-DECL|enumerator|NFS3ERR_FBIG
-id|NFS3ERR_FBIG
-op_assign
-l_int|27
-comma
-DECL|enumerator|NFS3ERR_NOSPC
-id|NFS3ERR_NOSPC
-op_assign
-l_int|28
-comma
-DECL|enumerator|NFS3ERR_ROFS
-id|NFS3ERR_ROFS
-op_assign
-l_int|30
-comma
-DECL|enumerator|NFS3ERR_MLINK
-id|NFS3ERR_MLINK
-op_assign
-l_int|31
-comma
-multiline_comment|/* new in NFSv3 */
-DECL|enumerator|NFS3ERR_NAMETOOLONG
-id|NFS3ERR_NAMETOOLONG
-op_assign
-l_int|63
-comma
-DECL|enumerator|NFS3ERR_NOTEMPTY
-id|NFS3ERR_NOTEMPTY
-op_assign
-l_int|66
-comma
-DECL|enumerator|NFS3ERR_DQUOT
-id|NFS3ERR_DQUOT
-op_assign
-l_int|69
-comma
-DECL|enumerator|NFS3ERR_STALE
-id|NFS3ERR_STALE
-op_assign
-l_int|70
-comma
-DECL|enumerator|NFS3ERR_REMOTE
-id|NFS3ERR_REMOTE
-op_assign
-l_int|71
-comma
-multiline_comment|/* new in NFSv3 */
-DECL|enumerator|NFS3ERR_BADHANDLE
-id|NFS3ERR_BADHANDLE
-op_assign
-l_int|10001
-comma
-multiline_comment|/* ditto */
-DECL|enumerator|NFS3ERR_NOT_SYNC
-id|NFS3ERR_NOT_SYNC
-op_assign
-l_int|10002
-comma
-multiline_comment|/* ditto */
-DECL|enumerator|NFS3ERR_BAD_COOKIE
-id|NFS3ERR_BAD_COOKIE
-op_assign
-l_int|10003
-comma
-multiline_comment|/* ditto */
-DECL|enumerator|NFS3ERR_NOTSUPP
-id|NFS3ERR_NOTSUPP
-op_assign
-l_int|10004
-comma
-multiline_comment|/* ditto */
-DECL|enumerator|NFS3ERR_TOOSMALL
-id|NFS3ERR_TOOSMALL
-op_assign
-l_int|10005
-comma
-multiline_comment|/* ditto */
-DECL|enumerator|NFS3ERR_SERVERFAULT
-id|NFS3ERR_SERVERFAULT
-op_assign
-l_int|10006
-comma
-multiline_comment|/* ditto */
-DECL|enumerator|NFS3ERR_BADTYPE
-id|NFS3ERR_BADTYPE
-op_assign
-l_int|10007
-comma
-multiline_comment|/* ditto */
-DECL|enumerator|NFS3ERR_JUKEBOX
-id|NFS3ERR_JUKEBOX
-op_assign
-l_int|10008
-comma
-multiline_comment|/* ditto */
-)brace
-suffix:semicolon
+multiline_comment|/* Flags for access() call */
+DECL|macro|NFS3_ACCESS_READ
+mdefine_line|#define NFS3_ACCESS_READ&t;0x0001
+DECL|macro|NFS3_ACCESS_LOOKUP
+mdefine_line|#define NFS3_ACCESS_LOOKUP&t;0x0002
+DECL|macro|NFS3_ACCESS_MODIFY
+mdefine_line|#define NFS3_ACCESS_MODIFY&t;0x0004
+DECL|macro|NFS3_ACCESS_EXTEND
+mdefine_line|#define NFS3_ACCESS_EXTEND&t;0x0008
+DECL|macro|NFS3_ACCESS_DELETE
+mdefine_line|#define NFS3_ACCESS_DELETE&t;0x0010
+DECL|macro|NFS3_ACCESS_EXECUTE
+mdefine_line|#define NFS3_ACCESS_EXECUTE&t;0x0020
+multiline_comment|/* Flags for create mode */
+DECL|macro|NFS3_CREATE_UNCHECKED
+mdefine_line|#define NFS3_CREATE_UNCHECKED&t;0
+DECL|macro|NFS3_CREATE_GUARDED
+mdefine_line|#define NFS3_CREATE_GUARDED&t;1
+DECL|macro|NFS3_CREATE_EXCLUSIVE
+mdefine_line|#define NFS3_CREATE_EXCLUSIVE&t;2
+multiline_comment|/* NFSv3 file system properties */
+DECL|macro|NFS3_FSF_LINK
+mdefine_line|#define NFS3_FSF_LINK&t;&t;0x0001
+DECL|macro|NFS3_FSF_SYMLINK
+mdefine_line|#define NFS3_FSF_SYMLINK&t;0x0002
+DECL|macro|NFS3_FSF_HOMOGENEOUS
+mdefine_line|#define NFS3_FSF_HOMOGENEOUS&t;0x0008
+DECL|macro|NFS3_FSF_CANSETTIME
+mdefine_line|#define NFS3_FSF_CANSETTIME&t;0x0010
+multiline_comment|/* Some shorthands. See fs/nfsd/nfs3proc.c */
+DECL|macro|NFS3_FSF_DEFAULT
+mdefine_line|#define NFS3_FSF_DEFAULT&t;0x001B
+DECL|macro|NFS3_FSF_BILLYBOY
+mdefine_line|#define NFS3_FSF_BILLYBOY&t;0x0018
+DECL|macro|NFS3_FSF_READONLY
+mdefine_line|#define NFS3_FSF_READONLY&t;0x0008
 DECL|enum|nfs3_ftype
 r_enum
 id|nfs3_ftype
@@ -294,23 +160,9 @@ mdefine_line|#define NFSPROC_READDIR&t;&t;16
 DECL|macro|NFSPROC_STATFS
 mdefine_line|#define NFSPROC_STATFS&t;&t;17
 macro_line|#if defined(__KERNEL__) || defined(NFS_NEED_KERNEL_TYPES)
-DECL|struct|nfs3_fh
-r_struct
-id|nfs3_fh
-(brace
-DECL|member|size
-id|__u32
-id|size
-suffix:semicolon
-DECL|member|data
-id|__u8
-id|data
-(braket
-id|NFS3_FHSIZE
-)braket
-suffix:semicolon
-)brace
-suffix:semicolon
+multiline_comment|/* Number of 32bit words in post_op_attr */
+DECL|macro|NFS3_POST_OP_ATTR_WORDS
+mdefine_line|#define NFS3_POST_OP_ATTR_WORDS&t;&t;22
 DECL|struct|nfs3_fattr
 r_struct
 id|nfs3_fattr

@@ -1,4 +1,4 @@
-multiline_comment|/* memory.c -- Memory management wrappers for DRM -*- linux-c -*-&n; * Created: Thu Feb  4 14:00:34 1999 by faith@precisioninsight.com&n; * Revised: Fri Aug 20 13:04:33 1999 by faith@precisioninsight.com&n; *&n; * Copyright 1999 Precision Insight, Inc., Cedar Park, Texas.&n; * All Rights Reserved.&n; *&n; * Permission is hereby granted, free of charge, to any person obtaining a&n; * copy of this software and associated documentation files (the &quot;Software&quot;),&n; * to deal in the Software without restriction, including without limitation&n; * the rights to use, copy, modify, merge, publish, distribute, sublicense,&n; * and/or sell copies of the Software, and to permit persons to whom the&n; * Software is furnished to do so, subject to the following conditions:&n; * &n; * The above copyright notice and this permission notice (including the next&n; * paragraph) shall be included in all copies or substantial portions of the&n; * Software.&n; * &n; * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR&n; * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&n; * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL&n; * PRECISION INSIGHT AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM, DAMAGES OR&n; * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,&n; * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER&n; * DEALINGS IN THE SOFTWARE.&n; * &n; * $PI: xc/programs/Xserver/hw/xfree86/os-support/linux/drm/generic/memory.c,v 1.4 1999/08/20 20:00:53 faith Exp $&n; * $XFree86$&n; *&n; */
+multiline_comment|/* memory.c -- Memory management wrappers for DRM -*- linux-c -*-&n; * Created: Thu Feb  4 14:00:34 1999 by faith@precisioninsight.com&n; * Revised: Mon Dec  6 10:28:18 1999 by faith@precisioninsight.com&n; *&n; * Copyright 1999 Precision Insight, Inc., Cedar Park, Texas.&n; * All Rights Reserved.&n; *&n; * Permission is hereby granted, free of charge, to any person obtaining a&n; * copy of this software and associated documentation files (the &quot;Software&quot;),&n; * to deal in the Software without restriction, including without limitation&n; * the rights to use, copy, modify, merge, publish, distribute, sublicense,&n; * and/or sell copies of the Software, and to permit persons to whom the&n; * Software is furnished to do so, subject to the following conditions:&n; * &n; * The above copyright notice and this permission notice (including the next&n; * paragraph) shall be included in all copies or substantial portions of the&n; * Software.&n; * &n; * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR&n; * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&n; * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL&n; * PRECISION INSIGHT AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM, DAMAGES OR&n; * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,&n; * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER&n; * DEALINGS IN THE SOFTWARE.&n; * &n; * $PI: xc/programs/Xserver/hw/xfree86/os-support/linux/drm/kernel/memory.c,v 1.4 1999/08/20 20:00:53 faith Exp $&n; * $XFree86: xc/programs/Xserver/hw/xfree86/os-support/linux/drm/kernel/memory.c,v 1.1 1999/09/25 14:38:02 dawes Exp $&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;drmP.h&quot;
@@ -54,6 +54,7 @@ id|drm_ram_available
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* In pages */
 DECL|variable|drm_ram_used
 r_static
 r_int
@@ -256,10 +257,20 @@ op_amp
 id|si
 )paren
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &lt; 0x020317
+multiline_comment|/* Changed to page count in 2.3.23 */
+id|drm_ram_available
+op_assign
+id|si.totalram
+op_rshift
+id|PAGE_SHIFT
+suffix:semicolon
+macro_line|#else
 id|drm_ram_available
 op_assign
 id|si.totalram
 suffix:semicolon
+macro_line|#endif
 id|drm_ram_used
 op_assign
 l_int|0
@@ -337,7 +348,7 @@ suffix:semicolon
 id|DRM_PROC_PRINT
 c_func
 (paren
-l_string|&quot;%-9.9s %5d %5d %4d %10lu&t;    |&bslash;n&quot;
+l_string|&quot;%-9.9s %5d %5d %4d %10lu kB         |&bslash;n&quot;
 comma
 l_string|&quot;system&quot;
 comma
@@ -348,12 +359,18 @@ comma
 l_int|0
 comma
 id|drm_ram_available
+op_lshift
+(paren
+id|PAGE_SHIFT
+op_minus
+l_int|10
+)paren
 )paren
 suffix:semicolon
 id|DRM_PROC_PRINT
 c_func
 (paren
-l_string|&quot;%-9.9s %5d %5d %4d %10lu&t;    |&bslash;n&quot;
+l_string|&quot;%-9.9s %5d %5d %4d %10lu kB         |&bslash;n&quot;
 comma
 l_string|&quot;locked&quot;
 comma
@@ -364,6 +381,8 @@ comma
 l_int|0
 comma
 id|drm_ram_used
+op_rshift
+l_int|10
 )paren
 suffix:semicolon
 id|DRM_PROC_PRINT
@@ -956,9 +975,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|drm_ram_used
+op_rshift
+id|PAGE_SHIFT
+)paren
 OG
-op_plus
 (paren
 id|DRM_RAM_PERCENT
 op_star

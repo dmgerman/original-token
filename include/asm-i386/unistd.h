@@ -384,6 +384,8 @@ DECL|macro|__NR_vfork
 mdefine_line|#define __NR_vfork&t;&t;190
 DECL|macro|__NR_ugetrlimit
 mdefine_line|#define __NR_ugetrlimit&t;&t;191&t;/* SuS compliant getrlimit */
+DECL|macro|__NR_mmap2
+mdefine_line|#define __NR_mmap2&t;&t;192
 multiline_comment|/* user-visible error numbers are in the range -1 - -124: see &lt;asm-i386/errno.h&gt; */
 DECL|macro|__syscall_return
 mdefine_line|#define __syscall_return(type, res) &bslash;&n;do { &bslash;&n;&t;if ((unsigned long)(res) &gt;= (unsigned long)(-125)) { &bslash;&n;&t;&t;errno = -(res); &bslash;&n;&t;&t;res = -1; &bslash;&n;&t;} &bslash;&n;&t;return (type) (res); &bslash;&n;} while (0)
@@ -400,6 +402,8 @@ DECL|macro|_syscall4
 mdefine_line|#define _syscall4(type,name,type1,arg1,type2,arg2,type3,arg3,type4,arg4) &bslash;&n;type name (type1 arg1, type2 arg2, type3 arg3, type4 arg4) &bslash;&n;{ &bslash;&n;long __res; &bslash;&n;__asm__ volatile (&quot;int $0x80&quot; &bslash;&n;&t;: &quot;=a&quot; (__res) &bslash;&n;&t;: &quot;0&quot; (__NR_##name),&quot;b&quot; ((long)(arg1)),&quot;c&quot; ((long)(arg2)), &bslash;&n;&t;  &quot;d&quot; ((long)(arg3)),&quot;S&quot; ((long)(arg4))); &bslash;&n;__syscall_return(type,__res); &bslash;&n;} 
 DECL|macro|_syscall5
 mdefine_line|#define _syscall5(type,name,type1,arg1,type2,arg2,type3,arg3,type4,arg4, &bslash;&n;&t;  type5,arg5) &bslash;&n;type name (type1 arg1,type2 arg2,type3 arg3,type4 arg4,type5 arg5) &bslash;&n;{ &bslash;&n;long __res; &bslash;&n;__asm__ volatile (&quot;int $0x80&quot; &bslash;&n;&t;: &quot;=a&quot; (__res) &bslash;&n;&t;: &quot;0&quot; (__NR_##name),&quot;b&quot; ((long)(arg1)),&quot;c&quot; ((long)(arg2)), &bslash;&n;&t;  &quot;d&quot; ((long)(arg3)),&quot;S&quot; ((long)(arg4)),&quot;D&quot; ((long)(arg5))); &bslash;&n;__syscall_return(type,__res); &bslash;&n;}
+DECL|macro|_syscall6
+mdefine_line|#define _syscall6(type,name,type1,arg1,type2,arg2,type3,arg3,type4,arg4, &bslash;&n;&t;  type5,arg5,type6,arg6) &bslash;&n;type name (type1 arg1,type2 arg2,type3 arg3,type4 arg4,type5 arg5,type6 arg6) &bslash;&n;{ &bslash;&n;long __res; &bslash;&n;__asm__ volatile (&quot;push %%ebp ; movl %%eax,%%ebp ; movl %1,%%eax ; int $0x80 ; pop %%ebp&quot; &bslash;&n;&t;: &quot;=a&quot; (__res) &bslash;&n;&t;: &quot;i&quot; (__NR_##name),&quot;b&quot; ((long)(arg1)),&quot;c&quot; ((long)(arg2)), &bslash;&n;&t;  &quot;d&quot; ((long)(arg3)),&quot;S&quot; ((long)(arg4)),&quot;D&quot; ((long)(arg5)), &bslash;&n;&t;  &quot;0&quot; ((long)(arg6))); &bslash;&n;__syscall_return(type,__res); &bslash;&n;}
 macro_line|#ifdef __KERNEL_SYSCALLS__
 multiline_comment|/*&n; * we need this inline - forking from kernel space will result&n; * in NO COPY ON WRITE (!!!), until an execve is executed. This&n; * is no problem, but for the stack. This is handled by not letting&n; * main() use the stack at all after fork(). Thus, no function&n; * calls - which means inline code for fork too, as otherwise we&n; * would use the stack upon exit from &squot;fork()&squot;.&n; *&n; * Actually only pause and fork are needed inline, so that there&n; * won&squot;t be any messing with the stack from main(), but we define&n; * some others too.&n; */
 DECL|macro|__NR__exit

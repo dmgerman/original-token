@@ -4268,11 +4268,6 @@ r_int
 id|write_access
 )paren
 (brace
-r_int
-id|dograb
-op_assign
-l_int|0
-suffix:semicolon
 r_struct
 id|page
 op_star

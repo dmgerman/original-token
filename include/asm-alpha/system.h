@@ -675,47 +675,13 @@ DECL|macro|tbiap
 mdefine_line|#define tbiap()&t;&t;__tbi(-1, /* no second argument */)
 DECL|macro|tbia
 mdefine_line|#define tbia()&t;&t;__tbi(-2, /* no second argument */)
-multiline_comment|/*&n; * Give prototypes to shut up gcc.&n; */
+multiline_comment|/*&n; * Atomic exchange.&n; */
 r_extern
 id|__inline__
 r_int
 r_int
-id|xchg_u32
-c_func
-(paren
-r_volatile
-r_int
-op_star
-id|m
-comma
-r_int
-r_int
-id|val
-)paren
-suffix:semicolon
-r_extern
-id|__inline__
-r_int
-r_int
-id|xchg_u64
-c_func
-(paren
-r_volatile
-r_int
-op_star
-id|m
-comma
-r_int
-r_int
-id|val
-)paren
-suffix:semicolon
-DECL|function|xchg_u32
-r_extern
-id|__inline__
-r_int
-r_int
-id|xchg_u32
+DECL|function|__xchg_u32
+id|__xchg_u32
 c_func
 (paren
 r_volatile
@@ -777,12 +743,12 @@ r_return
 id|val
 suffix:semicolon
 )brace
-DECL|function|xchg_u64
 r_extern
 id|__inline__
 r_int
 r_int
-id|xchg_u64
+DECL|function|__xchg_u64
+id|__xchg_u64
 c_func
 (paren
 r_volatile
@@ -844,7 +810,7 @@ r_return
 id|val
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This function doesn&squot;t exist, so you&squot;ll get a linker error&n; * if something tries to do an invalid xchg().&n; *&n; * This only works if the compiler isn&squot;t horribly bad at optimizing.&n; * gcc-2.5.8 reportedly can&squot;t handle this, but as that doesn&squot;t work&n; * too well on the alpha anyway..&n; */
+multiline_comment|/* This function doesn&squot;t exist, so you&squot;ll get a linker error&n;   if something tries to do an invalid xchg().  */
 r_extern
 r_void
 id|__xchg_called_with_bad_pointer
@@ -861,14 +827,14 @@ DECL|function|__xchg
 id|__xchg
 c_func
 (paren
-r_int
-r_int
-id|x
-comma
 r_volatile
 r_void
 op_star
 id|ptr
+comma
+r_int
+r_int
+id|x
 comma
 r_int
 id|size
@@ -884,7 +850,7 @@ r_case
 l_int|4
 suffix:colon
 r_return
-id|xchg_u32
+id|__xchg_u32
 c_func
 (paren
 id|ptr
@@ -896,7 +862,7 @@ r_case
 l_int|8
 suffix:colon
 r_return
-id|xchg_u64
+id|__xchg_u64
 c_func
 (paren
 id|ptr
@@ -915,9 +881,256 @@ id|x
 suffix:semicolon
 )brace
 DECL|macro|xchg
-mdefine_line|#define xchg(ptr,x) &bslash;&n;  ((__typeof__(*(ptr)))__xchg((unsigned long)(x),(ptr),sizeof(*(ptr))))
+mdefine_line|#define xchg(ptr,x)&t;&t;&t;&t;&t;&t;&t;     &bslash;&n;  ({&t;&t;&t;&t;&t;&t;&t;&t;&t;     &bslash;&n;     __typeof__(*(ptr)) _x_ = (x);&t;&t;&t;&t;&t;     &bslash;&n;     (__typeof__(*(ptr))) __xchg((ptr), (unsigned long)_x_, sizeof(*(ptr))); &bslash;&n;  })
 DECL|macro|tas
 mdefine_line|#define tas(ptr) (xchg((ptr),1))
+multiline_comment|/* &n; * Atomic compare and exchange.  Compare OLD with MEM, if identical,&n; * store NEW in MEM.  Return the initial value in MEM.  Success is&n; * indicated by comparing RETURN with OLD.&n; */
+DECL|macro|__HAVE_ARCH_CMPXCHG
+mdefine_line|#define __HAVE_ARCH_CMPXCHG 1
+r_extern
+id|__inline__
+r_int
+r_int
+DECL|function|__cmpxchg_u32
+id|__cmpxchg_u32
+c_func
+(paren
+r_volatile
+r_int
+op_star
+id|m
+comma
+r_int
+id|old
+comma
+r_int
+r_new
+)paren
+(brace
+r_int
+r_int
+id|prev
+comma
+id|cmp
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;1:&t;ldl_l %0,%2&bslash;n&quot;
+l_string|&quot;&t;cmpeq %0,%3,%1&bslash;n&quot;
+l_string|&quot;&t;beq %1,2f&bslash;n&quot;
+l_string|&quot;&t;mov %4,%1&bslash;n&quot;
+l_string|&quot;&t;stl_c %1,%2&bslash;n&quot;
+l_string|&quot;&t;beq %1,3f&bslash;n&quot;
+l_string|&quot;2:&t;mb&bslash;n&quot;
+l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
+l_string|&quot;3:&t;br 1b&bslash;n&quot;
+l_string|&quot;.previous&quot;
+suffix:colon
+l_string|&quot;=&amp;r&quot;
+(paren
+id|prev
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|cmp
+)paren
+comma
+l_string|&quot;=m&quot;
+(paren
+op_star
+id|m
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+(paren
+r_int
+)paren
+id|old
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+r_new
+)paren
+comma
+l_string|&quot;m&quot;
+(paren
+op_star
+id|m
+)paren
+)paren
+suffix:semicolon
+r_return
+id|prev
+suffix:semicolon
+)brace
+r_extern
+id|__inline__
+r_int
+r_int
+DECL|function|__cmpxchg_u64
+id|__cmpxchg_u64
+c_func
+(paren
+r_volatile
+r_int
+op_star
+id|m
+comma
+r_int
+r_int
+id|old
+comma
+r_int
+r_int
+r_new
+)paren
+(brace
+r_int
+r_int
+id|prev
+comma
+id|cmp
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;1:&t;ldq_l %0,%2&bslash;n&quot;
+l_string|&quot;&t;cmpeq %0,%3,%1&bslash;n&quot;
+l_string|&quot;&t;beq %1,2f&bslash;n&quot;
+l_string|&quot;&t;mov %4,%1&bslash;n&quot;
+l_string|&quot;&t;stq_c %1,%2&bslash;n&quot;
+l_string|&quot;&t;beq %1,3f&bslash;n&quot;
+l_string|&quot;2:&t;mb&bslash;n&quot;
+l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
+l_string|&quot;3:&t;br 1b&bslash;n&quot;
+l_string|&quot;.previous&quot;
+suffix:colon
+l_string|&quot;=&amp;r&quot;
+(paren
+id|prev
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|cmp
+)paren
+comma
+l_string|&quot;=m&quot;
+(paren
+op_star
+id|m
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+(paren
+r_int
+)paren
+id|old
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+r_new
+)paren
+comma
+l_string|&quot;m&quot;
+(paren
+op_star
+id|m
+)paren
+)paren
+suffix:semicolon
+r_return
+id|prev
+suffix:semicolon
+)brace
+multiline_comment|/* This function doesn&squot;t exist, so you&squot;ll get a linker error&n;   if something tries to do an invalid cmpxchg().  */
+r_extern
+r_void
+id|__cmpxchg_called_with_bad_pointer
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_static
+id|__inline__
+r_int
+r_int
+DECL|function|__cmpxchg
+id|__cmpxchg
+c_func
+(paren
+r_volatile
+r_void
+op_star
+id|ptr
+comma
+r_int
+r_int
+id|old
+comma
+r_int
+r_int
+r_new
+comma
+r_int
+id|size
+)paren
+(brace
+r_switch
+c_cond
+(paren
+id|size
+)paren
+(brace
+r_case
+l_int|4
+suffix:colon
+r_return
+id|__cmpxchg_u32
+c_func
+(paren
+id|ptr
+comma
+id|old
+comma
+r_new
+)paren
+suffix:semicolon
+r_case
+l_int|8
+suffix:colon
+r_return
+id|__cmpxchg_u64
+c_func
+(paren
+id|ptr
+comma
+id|old
+comma
+r_new
+)paren
+suffix:semicolon
+)brace
+id|__cmpxchg_called_with_bad_pointer
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|old
+suffix:semicolon
+)brace
+DECL|macro|cmpxchg
+mdefine_line|#define cmpxchg(ptr,o,n)&t;&t;&t;&t;&t;&t; &bslash;&n;  ({&t;&t;&t;&t;&t;&t;&t;&t;&t; &bslash;&n;     __typeof__(*(ptr)) _o_ = (o);&t;&t;&t;&t;&t; &bslash;&n;     __typeof__(*(ptr)) _n_ = (n);&t;&t;&t;&t;&t; &bslash;&n;     (__typeof__(*(ptr))) __cmpxchg((ptr), (unsigned long)_o_,&t;&t; &bslash;&n;&t;&t;&t;&t;    (unsigned long)_n_, sizeof(*(ptr))); &bslash;&n;  })
 macro_line|#endif /* __ASSEMBLY__ */
 macro_line|#endif
 eof

@@ -190,10 +190,24 @@ DECL|member|dentry_ttl
 r_int
 id|dentry_ttl
 suffix:semicolon
+multiline_comment|/* miscellaneous */
+DECL|member|flags
+r_int
+r_int
+id|flags
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|ncp_sb_info
 mdefine_line|#define ncp_sb_info&t;ncp_server
+DECL|macro|NCP_FLAG_UTF8
+mdefine_line|#define NCP_FLAG_UTF8&t;1
+DECL|macro|NCP_CLR_FLAG
+mdefine_line|#define NCP_CLR_FLAG(server, flag)&t;((server)-&gt;flags &amp;= ~(flag))
+DECL|macro|NCP_SET_FLAG
+mdefine_line|#define NCP_SET_FLAG(server, flag)&t;((server)-&gt;flags |= (flag))
+DECL|macro|NCP_IS_FLAG
+mdefine_line|#define NCP_IS_FLAG(server, flag)&t;((server)-&gt;flags &amp; (flag))
 DECL|function|ncp_conn_valid
 r_static
 r_inline

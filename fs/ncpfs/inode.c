@@ -504,13 +504,13 @@ c_func
 id|le16_to_cpu
 c_func
 (paren
-id|nwinfo-&gt;i.modifyTime
+id|nwi-&gt;modifyTime
 )paren
 comma
 id|le16_to_cpu
 c_func
 (paren
-id|nwinfo-&gt;i.modifyDate
+id|nwi-&gt;modifyDate
 )paren
 )paren
 suffix:semicolon
@@ -522,13 +522,13 @@ c_func
 id|le16_to_cpu
 c_func
 (paren
-id|nwinfo-&gt;i.creationTime
+id|nwi-&gt;creationTime
 )paren
 comma
 id|le16_to_cpu
 c_func
 (paren
-id|nwinfo-&gt;i.creationDate
+id|nwi-&gt;creationDate
 )paren
 )paren
 suffix:semicolon
@@ -542,7 +542,7 @@ comma
 id|le16_to_cpu
 c_func
 (paren
-id|nwinfo-&gt;i.lastAccessDate
+id|nwi-&gt;lastAccessDate
 )paren
 )paren
 suffix:semicolon
@@ -554,7 +554,7 @@ id|inode
 op_member_access_from_pointer
 id|DosDirNum
 op_assign
-id|nwinfo-&gt;i.DosDirNum
+id|nwi-&gt;DosDirNum
 suffix:semicolon
 id|NCP_FINFO
 c_func
@@ -564,7 +564,7 @@ id|inode
 op_member_access_from_pointer
 id|dirEntNum
 op_assign
-id|nwinfo-&gt;i.dirEntNum
+id|nwi-&gt;dirEntNum
 suffix:semicolon
 id|NCP_FINFO
 c_func
@@ -574,7 +574,7 @@ id|inode
 op_member_access_from_pointer
 id|volNumber
 op_assign
-id|nwinfo-&gt;i.volNumber
+id|nwi-&gt;volNumber
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Fill in the inode based on the ncp_entry_info structure.&n; */

@@ -1,4 +1,4 @@
-multiline_comment|/* vm.c -- Memory mapping for DRM -*- linux-c -*-&n; * Created: Mon Jan  4 08:58:31 1999 by faith@precisioninsight.com&n; * Revised: Fri Aug 20 22:48:11 1999 by faith@precisioninsight.com&n; *&n; * Copyright 1999 Precision Insight, Inc., Cedar Park, Texas.&n; * All Rights Reserved.&n; *&n; * Permission is hereby granted, free of charge, to any person obtaining a&n; * copy of this software and associated documentation files (the &quot;Software&quot;),&n; * to deal in the Software without restriction, including without limitation&n; * the rights to use, copy, modify, merge, publish, distribute, sublicense,&n; * and/or sell copies of the Software, and to permit persons to whom the&n; * Software is furnished to do so, subject to the following conditions:&n; * &n; * The above copyright notice and this permission notice (including the next&n; * paragraph) shall be included in all copies or substantial portions of the&n; * Software.&n; * &n; * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR&n; * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&n; * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL&n; * PRECISION INSIGHT AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM, DAMAGES OR&n; * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,&n; * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER&n; * DEALINGS IN THE SOFTWARE.&n; * &n; * $PI: xc/programs/Xserver/hw/xfree86/os-support/linux/drm/generic/vm.c,v 1.7 1999/08/21 02:48:34 faith Exp $&n; * $XFree86$&n; *&n; */
+multiline_comment|/* vm.c -- Memory mapping for DRM -*- linux-c -*-&n; * Created: Mon Jan  4 08:58:31 1999 by faith@precisioninsight.com&n; * Revised: Mon Dec  6 16:54:35 1999 by faith@precisioninsight.com&n; *&n; * Copyright 1999 Precision Insight, Inc., Cedar Park, Texas.&n; * All Rights Reserved.&n; *&n; * Permission is hereby granted, free of charge, to any person obtaining a&n; * copy of this software and associated documentation files (the &quot;Software&quot;),&n; * to deal in the Software without restriction, including without limitation&n; * the rights to use, copy, modify, merge, publish, distribute, sublicense,&n; * and/or sell copies of the Software, and to permit persons to whom the&n; * Software is furnished to do so, subject to the following conditions:&n; * &n; * The above copyright notice and this permission notice (including the next&n; * paragraph) shall be included in all copies or substantial portions of the&n; * Software.&n; * &n; * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR&n; * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&n; * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL&n; * PRECISION INSIGHT AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM, DAMAGES OR&n; * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,&n; * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER&n; * DEALINGS IN THE SOFTWARE.&n; * &n; * $PI: xc/programs/Xserver/hw/xfree86/os-support/linux/drm/kernel/vm.c,v 1.7 1999/08/21 02:48:34 faith Exp $&n; * $XFree86: xc/programs/Xserver/hw/xfree86/os-support/linux/drm/kernel/vm.c,v 1.1 1999/09/25 14:38:02 dawes Exp $&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;drmP.h&quot;
@@ -62,6 +62,7 @@ id|drm_vm_close
 comma
 )brace
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &lt; 0x020317
 DECL|function|drm_vm_nopage
 r_int
 r_int
@@ -80,6 +81,27 @@ comma
 r_int
 id|write_access
 )paren
+macro_line|#else
+multiline_comment|/* Return type changed in 2.3.23 */
+r_struct
+id|page
+op_star
+id|drm_vm_nopage
+c_func
+(paren
+r_struct
+id|vm_area_struct
+op_star
+id|vma
+comma
+r_int
+r_int
+id|address
+comma
+r_int
+id|write_access
+)paren
+macro_line|#endif
 (brace
 id|DRM_DEBUG
 c_func
@@ -92,10 +114,11 @@ id|write_access
 )paren
 suffix:semicolon
 r_return
-l_int|0
+id|NOPAGE_SIGBUS
 suffix:semicolon
 multiline_comment|/* Disallow mremap */
 )brace
+macro_line|#if LINUX_VERSION_CODE &lt; 0x020317
 DECL|function|drm_vm_shm_nopage
 r_int
 r_int
@@ -114,6 +137,27 @@ comma
 r_int
 id|write_access
 )paren
+macro_line|#else
+multiline_comment|/* Return type changed in 2.3.23 */
+r_struct
+id|page
+op_star
+id|drm_vm_shm_nopage
+c_func
+(paren
+r_struct
+id|vm_area_struct
+op_star
+id|vma
+comma
+r_int
+r_int
+id|address
+comma
+r_int
+id|write_access
+)paren
+macro_line|#endif
 (brace
 id|drm_file_t
 op_star
@@ -147,7 +191,7 @@ OG
 id|vma-&gt;vm_end
 )paren
 r_return
-l_int|0
+id|NOPAGE_SIGBUS
 suffix:semicolon
 multiline_comment|/* Disallow mremap */
 r_if
@@ -157,7 +201,7 @@ op_logical_neg
 id|dev-&gt;lock.hw_lock
 )paren
 r_return
-l_int|0
+id|NOPAGE_OOM
 suffix:semicolon
 multiline_comment|/* Nothing allocated */
 id|offset
@@ -218,10 +262,23 @@ comma
 id|physical
 )paren
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &lt; 0x020317
 r_return
 id|physical
 suffix:semicolon
+macro_line|#else
+r_return
+id|mem_map
+op_plus
+id|MAP_NR
+c_func
+(paren
+id|physical
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
+macro_line|#if LINUX_VERSION_CODE &lt; 0x020317
 DECL|function|drm_vm_dma_nopage
 r_int
 r_int
@@ -240,6 +297,27 @@ comma
 r_int
 id|write_access
 )paren
+macro_line|#else
+multiline_comment|/* Return type changed in 2.3.23 */
+r_struct
+id|page
+op_star
+id|drm_vm_dma_nopage
+c_func
+(paren
+r_struct
+id|vm_area_struct
+op_star
+id|vma
+comma
+r_int
+r_int
+id|address
+comma
+r_int
+id|write_access
+)paren
+macro_line|#endif
 (brace
 id|drm_file_t
 op_star
@@ -278,7 +356,7 @@ op_logical_neg
 id|dma
 )paren
 r_return
-l_int|0
+id|NOPAGE_SIGBUS
 suffix:semicolon
 multiline_comment|/* Error */
 r_if
@@ -289,7 +367,7 @@ OG
 id|vma-&gt;vm_end
 )paren
 r_return
-l_int|0
+id|NOPAGE_SIGBUS
 suffix:semicolon
 multiline_comment|/* Disallow mremap */
 r_if
@@ -299,7 +377,7 @@ op_logical_neg
 id|dma-&gt;pagelist
 )paren
 r_return
-l_int|0
+id|NOPAGE_OOM
 suffix:semicolon
 multiline_comment|/* Nothing allocated */
 id|offset
@@ -308,7 +386,7 @@ id|address
 op_minus
 id|vma-&gt;vm_start
 suffix:semicolon
-multiline_comment|/* vm_pgoff should be 0 */
+multiline_comment|/* vm_[pg]off[set] should be 0 */
 id|page
 op_assign
 id|offset
@@ -360,9 +438,21 @@ comma
 id|physical
 )paren
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &lt; 0x020317
 r_return
 id|physical
 suffix:semicolon
+macro_line|#else
+r_return
+id|mem_map
+op_plus
+id|MAP_NR
+c_func
+(paren
+id|physical
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|drm_vm_open
 r_void
@@ -649,13 +739,17 @@ suffix:semicolon
 id|DRM_DEBUG
 c_func
 (paren
-l_string|&quot;start = 0x%lx, end = 0x%lx, pgoff = 0x%lx&bslash;n&quot;
+l_string|&quot;start = 0x%lx, end = 0x%lx, offset = 0x%lx&bslash;n&quot;
 comma
 id|vma-&gt;vm_start
 comma
 id|vma-&gt;vm_end
 comma
-id|vma-&gt;vm_pgoff
+id|VM_OFFSET
+c_func
+(paren
+id|vma
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* Length must match exact page count */
@@ -742,10 +836,6 @@ op_assign
 l_int|NULL
 suffix:semicolon
 r_int
-r_int
-id|off
-suffix:semicolon
-r_int
 id|i
 suffix:semicolon
 id|DRM_DEBUG
@@ -757,14 +847,22 @@ id|vma-&gt;vm_start
 comma
 id|vma-&gt;vm_end
 comma
-id|vma-&gt;vm_pgoff
+id|VM_OFFSET
+c_func
+(paren
+id|vma
+)paren
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-id|vma-&gt;vm_pgoff
+id|VM_OFFSET
+c_func
+(paren
+id|vma
+)paren
 )paren
 r_return
 id|drm_mmap_dma
@@ -774,29 +872,6 @@ id|filp
 comma
 id|vma
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|vma-&gt;vm_pgoff
-OG
-(paren
-op_complement
-l_int|0UL
-op_rshift
-id|PAGE_SHIFT
-)paren
-)paren
-multiline_comment|/* overflow? */
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-id|off
-op_assign
-id|vma-&gt;vm_pgoff
-op_lshift
-id|PAGE_SHIFT
 suffix:semicolon
 multiline_comment|/* A sequential search of a linked list is&n;&t;&t;&t;&t;   fine here because: 1) there will only be&n;&t;&t;&t;&t;   about 5-10 entries in the list and, 2) a&n;&t;&t;&t;&t;   DRI client only has to do this mapping&n;&t;&t;&t;&t;   once, so it doesn&squot;t have to be optimized&n;&t;&t;&t;&t;   for performance, even if the list was a&n;&t;&t;&t;&t;   bit longer. */
 r_for
@@ -826,7 +901,11 @@ c_cond
 (paren
 id|map-&gt;offset
 op_eq
-id|off
+id|VM_OFFSET
+c_func
+(paren
+id|vma
+)paren
 )paren
 r_break
 suffix:semicolon
@@ -896,7 +975,11 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|off
+id|VM_OFFSET
+c_func
+(paren
+id|vma
+)paren
 op_ge
 id|__pa
 c_func
@@ -947,7 +1030,11 @@ c_func
 (paren
 id|vma-&gt;vm_start
 comma
-id|off
+id|VM_OFFSET
+c_func
+(paren
+id|vma
+)paren
 comma
 id|vma-&gt;vm_end
 op_minus
@@ -1005,6 +1092,7 @@ op_amp
 id|_DRM_READ_ONLY
 )paren
 (brace
+macro_line|#if defined(__i386__)
 id|pgprot_val
 c_func
 (paren
@@ -1014,6 +1102,33 @@ op_and_assign
 op_complement
 id|_PAGE_RW
 suffix:semicolon
+macro_line|#else
+multiline_comment|/* Ye gads this is ugly.  With more thought&n;                                   we could move this up higher and use&n;                                   `protection_map&squot; instead.  */
+id|vma-&gt;vm_page_prot
+op_assign
+id|__pgprot
+c_func
+(paren
+id|pte_val
+c_func
+(paren
+id|pte_wrprotect
+c_func
+(paren
+id|__pte
+c_func
+(paren
+id|pgprot_val
+c_func
+(paren
+id|vma-&gt;vm_page_prot
+)paren
+)paren
+)paren
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 macro_line|#if LINUX_VERSION_CODE &lt; 0x020203 /* KERNEL_VERSION(2,2,3) */
 multiline_comment|/* In Linux 2.2.3 and above, this is&n;&t;&t;&t;&t;   handled in do_mmap() in mm/mmap.c. */

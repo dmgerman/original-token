@@ -1,4 +1,4 @@
-multiline_comment|/* proc.c -- /proc support for DRM -*- linux-c -*-&n; * Created: Mon Jan 11 09:48:47 1999 by faith@precisioninsight.com&n; * Revised: Fri Aug 20 11:31:48 1999 by faith@precisioninsight.com&n; *&n; * Copyright 1999 Precision Insight, Inc., Cedar Park, Texas.&n; * All Rights Reserved.&n; *&n; * Permission is hereby granted, free of charge, to any person obtaining a&n; * copy of this software and associated documentation files (the &quot;Software&quot;),&n; * to deal in the Software without restriction, including without limitation&n; * the rights to use, copy, modify, merge, publish, distribute, sublicense,&n; * and/or sell copies of the Software, and to permit persons to whom the&n; * Software is furnished to do so, subject to the following conditions:&n; * &n; * The above copyright notice and this permission notice (including the next&n; * paragraph) shall be included in all copies or substantial portions of the&n; * Software.&n; * &n; * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR&n; * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&n; * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL&n; * PRECISION INSIGHT AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM, DAMAGES OR&n; * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,&n; * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER&n; * DEALINGS IN THE SOFTWARE.&n; * &n; * $PI: xc/programs/Xserver/hw/xfree86/os-support/linux/drm/generic/proc.c,v 1.4 1999/08/20 15:36:46 faith Exp $&n; * $XFree86$&n; *&n; */
+multiline_comment|/* proc.c -- /proc support for DRM -*- linux-c -*-&n; * Created: Mon Jan 11 09:48:47 1999 by faith@precisioninsight.com&n; * Revised: Fri Dec  3 09:44:16 1999 by faith@precisioninsight.com&n; *&n; * Copyright 1999 Precision Insight, Inc., Cedar Park, Texas.&n; * All Rights Reserved.&n; *&n; * Permission is hereby granted, free of charge, to any person obtaining a&n; * copy of this software and associated documentation files (the &quot;Software&quot;),&n; * to deal in the Software without restriction, including without limitation&n; * the rights to use, copy, modify, merge, publish, distribute, sublicense,&n; * and/or sell copies of the Software, and to permit persons to whom the&n; * Software is furnished to do so, subject to the following conditions:&n; * &n; * The above copyright notice and this permission notice (including the next&n; * paragraph) shall be included in all copies or substantial portions of the&n; * Software.&n; * &n; * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR&n; * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&n; * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL&n; * PRECISION INSIGHT AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM, DAMAGES OR&n; * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,&n; * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER&n; * DEALINGS IN THE SOFTWARE.&n; * &n; * $PI: xc/programs/Xserver/hw/xfree86/os-support/linux/drm/kernel/proc.c,v 1.4 1999/08/20 15:36:46 faith Exp $&n; * $XFree86: xc/programs/Xserver/hw/xfree86/os-support/linux/drm/kernel/proc.c,v 1.1 1999/09/25 14:38:02 dawes Exp $&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;drmP.h&quot;
@@ -355,10 +355,12 @@ id|j
 suffix:semicolon
 id|drm_root
 op_assign
-id|proc_mkdir
+id|create_proc_entry
 c_func
 (paren
-l_string|&quot;video&quot;
+l_string|&quot;graphics&quot;
+comma
+id|S_IFDIR
 comma
 l_int|NULL
 )paren
@@ -373,7 +375,7 @@ id|drm_root
 id|DRM_ERROR
 c_func
 (paren
-l_string|&quot;Cannot create /proc/video&bslash;n&quot;
+l_string|&quot;Cannot create /proc/graphics&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -381,7 +383,7 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/* Instead of doing this search, we should&n;&t;&t;&t;&t;   add some global support for /proc/video. */
+multiline_comment|/* Instead of doing this search, we should&n;&t;&t;&t;&t;   add some global support for /proc/graphics. */
 r_for
 c_loop
 (paren
@@ -402,17 +404,19 @@ c_func
 (paren
 id|drm_slot_name
 comma
-l_string|&quot;video/%d&quot;
+l_string|&quot;graphics/%d&quot;
 comma
 id|i
 )paren
 suffix:semicolon
 id|drm_dev_root
 op_assign
-id|proc_mkdir
+id|create_proc_entry
 c_func
 (paren
 id|drm_slot_name
+comma
+id|S_IFDIR
 comma
 l_int|NULL
 )paren
@@ -435,7 +439,7 @@ suffix:semicolon
 id|remove_proc_entry
 c_func
 (paren
-l_string|&quot;video&quot;
+l_string|&quot;graphics&quot;
 comma
 l_int|NULL
 )paren
@@ -465,7 +469,7 @@ id|drm_dev_root
 id|DRM_ERROR
 c_func
 (paren
-l_string|&quot;Cannot find slot in /proc/video&bslash;n&quot;
+l_string|&quot;Cannot find slot in /proc/graphics&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -488,10 +492,9 @@ id|i
 op_increment
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|create_proc_read_entry
+id|ent
+op_assign
+id|create_proc_entry
 c_func
 (paren
 id|drm_proc_list
@@ -501,22 +504,20 @@ id|i
 dot
 id|name
 comma
-l_int|0
+id|S_IFREG
+op_or
+id|S_IRUGO
 comma
 id|drm_dev_root
-comma
-id|drm_proc_list
-(braket
-id|i
-)braket
-dot
-id|f
-comma
-id|dev
 )paren
-)paren
-r_continue
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ent
+)paren
+(brace
 id|DRM_ERROR
 c_func
 (paren
@@ -570,7 +571,7 @@ suffix:semicolon
 id|remove_proc_entry
 c_func
 (paren
-l_string|&quot;video&quot;
+l_string|&quot;graphics&quot;
 comma
 l_int|NULL
 )paren
@@ -578,6 +579,20 @@ suffix:semicolon
 r_return
 op_minus
 l_int|1
+suffix:semicolon
+)brace
+id|ent-&gt;read_proc
+op_assign
+id|drm_proc_list
+(braket
+id|i
+)braket
+dot
+id|f
+suffix:semicolon
+id|ent-&gt;data
+op_assign
+id|dev
 suffix:semicolon
 )brace
 r_return
@@ -648,7 +663,7 @@ suffix:semicolon
 id|remove_proc_entry
 c_func
 (paren
-l_string|&quot;video&quot;
+l_string|&quot;graphics&quot;
 comma
 l_int|NULL
 )paren
@@ -2092,9 +2107,11 @@ l_char|&squot;i&squot;
 suffix:colon
 l_char|&squot;-&squot;
 comma
-id|vma-&gt;vm_pgoff
-op_lshift
-id|PAGE_SHIFT
+id|VM_OFFSET
+c_func
+(paren
+id|vma
+)paren
 )paren
 suffix:semicolon
 macro_line|#if defined(__i386__)

@@ -1,6 +1,7 @@
-multiline_comment|/*&n; *  joy-analog.h  Version 1.2&n; *&n; *  Copyright (c) 1996-1998 Vojtech Pavlik&n; */
-multiline_comment|/*&n; * This file is designed to be included in any joystick driver&n; * that communicates with standard analog joysticks. This currently&n; * is: joy-analog.c, joy-assasin.c, and joy-lightning.c&n; */
+multiline_comment|/*&n; *  joy-analog.h  Version 1.2&n; *&n; *  Copyright (c) 1996-1999 Vojtech Pavlik&n; *&n; *  Sponsored by SuSE&n; */
+multiline_comment|/*&n; * This file is designed to be included in any joystick driver&n; * that communicates with standard analog joysticks. This currently&n; * is: joy-analog.c, joy-assassin.c, and joy-lightning.c&n; */
 multiline_comment|/*&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or &n; * (at your option) any later version.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA&n; * &n; * Should you need to contact me, the author, you can do so either by&n; * e-mail - mail your message to &lt;vojtech@suse.cz&gt;, or by paper mail:&n; * Vojtech Pavlik, Ucitelska 1576, Prague 8, 182 00 Czech Republic&n; */
+macro_line|#include &lt;linux/bitops.h&gt;
 DECL|macro|JS_AN_AXES_STD
 mdefine_line|#define JS_AN_AXES_STD&t;&t;0x0f
 DECL|macro|JS_AN_BUTTONS_STD
@@ -86,10 +87,6 @@ DECL|struct|js_an_info
 r_struct
 id|js_an_info
 (brace
-DECL|member|io
-r_int
-id|io
-suffix:semicolon
 DECL|member|mask
 r_int
 r_char
@@ -221,6 +218,8 @@ r_switch
 c_cond
 (paren
 id|info-&gt;buttons
+op_amp
+l_int|0xf
 )paren
 (brace
 r_case
@@ -858,45 +857,6 @@ id|y
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * js_an_count_bits() counts set bits in a byte.&n; */
-DECL|function|js_an_count_bits
-r_static
-r_inline
-r_int
-id|js_an_count_bits
-c_func
-(paren
-r_int
-r_int
-id|c
-)paren
-(brace
-r_int
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|c
-)paren
-(brace
-id|i
-op_add_assign
-id|c
-op_amp
-l_int|1
-suffix:semicolon
-id|c
-op_rshift_assign
-l_int|1
-suffix:semicolon
-)brace
-r_return
-id|i
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * js_an_init_corr() initializes the correction values for&n; * analog joysticks.&n; */
 DECL|function|js_an_init_corr
 r_static
@@ -955,7 +915,7 @@ l_int|0
 suffix:semicolon
 id|j
 OL
-id|js_an_count_bits
+id|hweight8
 c_func
 (paren
 id|info-&gt;mask
@@ -1175,7 +1135,7 @@ suffix:semicolon
 )brace
 id|i
 op_assign
-id|js_an_count_bits
+id|hweight8
 c_func
 (paren
 id|info-&gt;mask
@@ -1198,7 +1158,7 @@ OL
 id|i
 op_plus
 (paren
-id|js_an_count_bits
+id|hweight8
 c_func
 (paren
 id|info-&gt;extensions
@@ -1528,7 +1488,7 @@ op_complement
 (paren
 id|JS_AN_BUTTON_PXY_Y
 op_or
-id|JS_AN_BUTTON_PXY_U
+id|JS_AN_BUTTON_PXY_V
 )paren
 suffix:semicolon
 )brace
@@ -1638,16 +1598,9 @@ id|info-&gt;mask
 l_int|0
 )braket
 op_assign
-l_int|0x33
+l_int|0xff
 suffix:semicolon
-multiline_comment|/* joysticks 0 and 1 */
-id|info-&gt;mask
-(braket
-l_int|1
-)braket
-op_assign
-l_int|0xcc
-suffix:semicolon
+multiline_comment|/* 4-axis 4-button joystick */
 r_break
 suffix:semicolon
 r_default
@@ -1702,7 +1655,7 @@ id|info
 )paren
 (brace
 r_return
-id|js_an_count_bits
+id|hweight8
 c_func
 (paren
 id|info-&gt;mask
@@ -1713,7 +1666,7 @@ op_amp
 l_int|0x0f
 )paren
 op_plus
-id|js_an_count_bits
+id|hweight8
 c_func
 (paren
 id|info-&gt;extensions
@@ -1742,7 +1695,7 @@ id|info
 )paren
 (brace
 r_return
-id|js_an_count_bits
+id|hweight8
 c_func
 (paren
 id|info-&gt;mask
@@ -1761,7 +1714,7 @@ id|JS_AN_BUTTONS_CHF
 op_star
 l_int|2
 op_plus
-id|js_an_count_bits
+id|hweight8
 c_func
 (paren
 id|info-&gt;extensions
@@ -1806,7 +1759,7 @@ id|js_an_name_buf
 comma
 l_string|&quot;Analog %d-axis %d-button&quot;
 comma
-id|js_an_count_bits
+id|hweight8
 c_func
 (paren
 id|info-&gt;mask
@@ -1842,7 +1795,7 @@ l_string|&quot;%s %d-hat&quot;
 comma
 id|js_an_name_buf
 comma
-id|js_an_count_bits
+id|hweight8
 c_func
 (paren
 id|info-&gt;extensions
@@ -1896,7 +1849,7 @@ op_amp
 id|JS_AN_BUTTONS_PXY
 ques
 c_cond
-l_string|&quot; XY-button&quot;
+l_string|&quot; XY/UV&quot;
 suffix:colon
 l_string|&quot;&quot;
 )paren

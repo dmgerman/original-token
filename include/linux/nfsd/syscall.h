@@ -1,10 +1,13 @@
-multiline_comment|/*&n; * include/linux/nfsd/syscall.h&n; *&n; * This file holds all declarations for the knfsd syscall interface.&n; *&n; * Copyright (C) 1995 Olaf Kirch &lt;okir@monad.swb.de&gt;&n; */
+multiline_comment|/*&n; * include/linux/nfsd/syscall.h&n; *&n; * This file holds all declarations for the knfsd syscall interface.&n; *&n; * Copyright (C) 1995-1997 Olaf Kirch &lt;okir@monad.swb.de&gt;&n; */
 macro_line|#ifndef NFSD_SYSCALL_H
 DECL|macro|NFSD_SYSCALL_H
 mdefine_line|#define NFSD_SYSCALL_H
-macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &lt;linux/types.h&gt;
-macro_line|#include &lt;linux/socket.h&gt;
+macro_line|#include &lt;asm/types.h&gt;
+macro_line|#ifdef __KERNEL__
+macro_line|# include &lt;linux/config.h&gt;
+macro_line|# include &lt;linux/types.h&gt;
+macro_line|# include &lt;linux/in.h&gt;
+macro_line|#endif 
 macro_line|#include &lt;linux/posix_types.h&gt;
 macro_line|#include &lt;linux/nfsd/const.h&gt;
 macro_line|#include &lt;linux/nfsd/export.h&gt;

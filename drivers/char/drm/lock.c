@@ -1,4 +1,4 @@
-multiline_comment|/* lock.c -- IOCTLs for locking -*- linux-c -*-&n; * Created: Tue Feb  2 08:37:54 1999 by faith@precisioninsight.com&n; * Revised: Fri Aug 20 09:27:01 1999 by faith@precisioninsight.com&n; *&n; * Copyright 1999 Precision Insight, Inc., Cedar Park, Texas.&n; * All Rights Reserved.&n; *&n; * Permission is hereby granted, free of charge, to any person obtaining a&n; * copy of this software and associated documentation files (the &quot;Software&quot;),&n; * to deal in the Software without restriction, including without limitation&n; * the rights to use, copy, modify, merge, publish, distribute, sublicense,&n; * and/or sell copies of the Software, and to permit persons to whom the&n; * Software is furnished to do so, subject to the following conditions:&n; * &n; * The above copyright notice and this permission notice (including the next&n; * paragraph) shall be included in all copies or substantial portions of the&n; * Software.&n; * &n; * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR&n; * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&n; * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL&n; * PRECISION INSIGHT AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM, DAMAGES OR&n; * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,&n; * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER&n; * DEALINGS IN THE SOFTWARE.&n; * &n; * $PI: xc/programs/Xserver/hw/xfree86/os-support/linux/drm/generic/lock.c,v 1.5 1999/08/30 13:05:00 faith Exp $&n; * $XFree86$&n; *&n; */
+multiline_comment|/* lock.c -- IOCTLs for locking -*- linux-c -*-&n; * Created: Tue Feb  2 08:37:54 1999 by faith@precisioninsight.com&n; * Revised: Mon Dec  6 16:04:44 1999 by faith@precisioninsight.com&n; *&n; * Copyright 1999 Precision Insight, Inc., Cedar Park, Texas.&n; * All Rights Reserved.&n; *&n; * Permission is hereby granted, free of charge, to any person obtaining a&n; * copy of this software and associated documentation files (the &quot;Software&quot;),&n; * to deal in the Software without restriction, including without limitation&n; * the rights to use, copy, modify, merge, publish, distribute, sublicense,&n; * and/or sell copies of the Software, and to permit persons to whom the&n; * Software is furnished to do so, subject to the following conditions:&n; * &n; * The above copyright notice and this permission notice (including the next&n; * paragraph) shall be included in all copies or substantial portions of the&n; * Software.&n; * &n; * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR&n; * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&n; * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL&n; * PRECISION INSIGHT AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM, DAMAGES OR&n; * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,&n; * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER&n; * DEALINGS IN THE SOFTWARE.&n; * &n; * $PI: xc/programs/Xserver/hw/xfree86/os-support/linux/drm/kernel/lock.c,v 1.5 1999/08/30 13:05:00 faith Exp $&n; * $XFree86: xc/programs/Xserver/hw/xfree86/os-support/linux/drm/kernel/lock.c,v 1.1 1999/09/25 14:38:01 dawes Exp $&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;drmP.h&quot;
@@ -89,13 +89,10 @@ id|context
 r_int
 r_int
 id|old
-suffix:semicolon
-r_int
-r_int
+comma
 r_new
-suffix:semicolon
-r_char
-id|failed
+comma
+id|prev
 suffix:semicolon
 id|DRM_DEBUG
 c_func
@@ -132,7 +129,9 @@ id|context
 op_or
 id|_DRM_LOCK_HELD
 suffix:semicolon
-id|_DRM_CAS
+id|prev
+op_assign
+id|cmpxchg
 c_func
 (paren
 id|lock
@@ -140,15 +139,15 @@ comma
 id|old
 comma
 r_new
-comma
-id|failed
 )paren
 suffix:semicolon
 )brace
 r_while
 c_loop
 (paren
-id|failed
+id|prev
+op_ne
+id|old
 )paren
 suffix:semicolon
 r_if
@@ -242,6 +241,10 @@ r_int
 id|drm_lock_transfer
 c_func
 (paren
+id|drm_device_t
+op_star
+id|dev
+comma
 id|__volatile__
 r_int
 r_int
@@ -256,13 +259,14 @@ id|context
 r_int
 r_int
 id|old
-suffix:semicolon
-r_int
-r_int
+comma
 r_new
+comma
+id|prev
 suffix:semicolon
-r_char
-id|failed
+id|dev-&gt;lock.pid
+op_assign
+l_int|0
 suffix:semicolon
 r_do
 (brace
@@ -277,7 +281,9 @@ id|context
 op_or
 id|_DRM_LOCK_HELD
 suffix:semicolon
-id|_DRM_CAS
+id|prev
+op_assign
+id|cmpxchg
 c_func
 (paren
 id|lock
@@ -285,15 +291,15 @@ comma
 id|old
 comma
 r_new
-comma
-id|failed
 )paren
 suffix:semicolon
 )brace
 r_while
 c_loop
 (paren
-id|failed
+id|prev
+op_ne
+id|old
 )paren
 suffix:semicolon
 id|DRM_DEBUG
@@ -337,13 +343,15 @@ id|context
 r_int
 r_int
 id|old
-suffix:semicolon
-r_int
-r_int
+comma
 r_new
+comma
+id|prev
 suffix:semicolon
-r_char
-id|failed
+id|pid_t
+id|pid
+op_assign
+id|dev-&gt;lock.pid
 suffix:semicolon
 id|DRM_DEBUG
 c_func
@@ -352,6 +360,10 @@ l_string|&quot;%d&bslash;n&quot;
 comma
 id|context
 )paren
+suffix:semicolon
+id|dev-&gt;lock.pid
+op_assign
+l_int|0
 suffix:semicolon
 r_do
 (brace
@@ -364,7 +376,9 @@ r_new
 op_assign
 l_int|0
 suffix:semicolon
-id|_DRM_CAS
+id|prev
+op_assign
+id|cmpxchg
 c_func
 (paren
 id|lock
@@ -372,15 +386,15 @@ comma
 id|old
 comma
 r_new
-comma
-id|failed
 )paren
 suffix:semicolon
 )brace
 r_while
 c_loop
 (paren
-id|failed
+id|prev
+op_ne
+id|old
 )paren
 suffix:semicolon
 r_if
@@ -404,7 +418,7 @@ id|context
 id|DRM_ERROR
 c_func
 (paren
-l_string|&quot;%d freed heavyweight lock held by %d&bslash;n&quot;
+l_string|&quot;%d freed heavyweight lock held by %d (pid %d)&bslash;n&quot;
 comma
 id|context
 comma
@@ -413,16 +427,14 @@ c_func
 (paren
 id|old
 )paren
+comma
+id|pid
 )paren
 suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
 )brace
-id|dev-&gt;lock.pid
-op_assign
-l_int|0
-suffix:semicolon
 id|wake_up_interruptible
 c_func
 (paren

@@ -1,10 +1,13 @@
 multiline_comment|/*&n; * include/linux/nfsd/nfsfh.h&n; *&n; * This file describes the layout of the file handles as passed&n; * over the wire.&n; *&n; * Earlier versions of knfsd used to sign file handles using keyed MD5&n; * or SHA. I&squot;ve removed this code, because it doesn&squot;t give you more&n; * security than blocking external access to port 2049 on your firewall.&n; *&n; * Copyright (C) 1995, 1996, 1997 Olaf Kirch &lt;okir@monad.swb.de&gt;&n; */
-macro_line|#ifndef NFSD_FH_H
-DECL|macro|NFSD_FH_H
-mdefine_line|#define NFSD_FH_H
-macro_line|#include &lt;linux/types.h&gt;
-macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#ifndef _LINUX_NFSD_FH_H
+DECL|macro|_LINUX_NFSD_FH_H
+mdefine_line|#define _LINUX_NFSD_FH_H
+macro_line|#include &lt;asm/types.h&gt;
+macro_line|#ifdef __KERNEL__
+macro_line|# include &lt;linux/types.h&gt;
+macro_line|# include &lt;linux/string.h&gt;
+macro_line|# include &lt;linux/fs.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/nfsd/const.h&gt;
 macro_line|#include &lt;linux/nfsd/debug.h&gt;
 multiline_comment|/*&n; * This is the new &quot;dentry style&quot; Linux NFSv2 file handle.&n; *&n; * The xino and xdev fields are currently used to transport the&n; * ino/dev of the exported inode.&n; */
@@ -182,27 +185,6 @@ op_star
 id|fh_export
 suffix:semicolon
 multiline_comment|/* export pointer */
-DECL|member|fh_pre_size
-r_int
-id|fh_pre_size
-suffix:semicolon
-multiline_comment|/* size before operation */
-DECL|member|fh_pre_mtime
-id|time_t
-id|fh_pre_mtime
-suffix:semicolon
-multiline_comment|/* mtime before oper */
-DECL|member|fh_pre_ctime
-id|time_t
-id|fh_pre_ctime
-suffix:semicolon
-multiline_comment|/* ctime before oper */
-DECL|member|fh_post_version
-r_int
-r_int
-id|fh_post_version
-suffix:semicolon
-multiline_comment|/* inode version after oper */
 DECL|member|fh_locked
 r_int
 r_char
@@ -416,7 +398,31 @@ id|inode
 op_star
 id|inode
 suffix:semicolon
-multiline_comment|/*&n;&t;dfprintk(FILEOP, &quot;nfsd: fh_lock(%x/%ld) locked = %d&bslash;n&quot;,&n;&t;&t;&t;SVCFH_DEV(fhp), SVCFH_INO(fhp), fhp-&gt;fh_locked);&n;&t; */
+id|dfprintk
+c_func
+(paren
+id|FILEOP
+comma
+l_string|&quot;nfsd: fh_lock(%x/%ld) locked = %d&bslash;n&quot;
+comma
+id|SVCFH_DEV
+c_func
+(paren
+id|fhp
+)paren
+comma
+(paren
+r_int
+)paren
+id|SVCFH_INO
+c_func
+(paren
+id|fhp
+)paren
+comma
+id|fhp-&gt;fh_locked
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -464,16 +470,6 @@ c_func
 op_amp
 id|inode-&gt;i_sem
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|fhp-&gt;fh_pre_mtime
-)paren
-id|fhp-&gt;fh_pre_mtime
-op_assign
-id|inode-&gt;i_mtime
 suffix:semicolon
 id|fhp-&gt;fh_locked
 op_assign
@@ -527,16 +523,6 @@ id|inode
 op_assign
 id|dentry-&gt;d_inode
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|fhp-&gt;fh_post_version
-)paren
-id|fhp-&gt;fh_post_version
-op_assign
-id|inode-&gt;i_version
-suffix:semicolon
 id|fhp-&gt;fh_locked
 op_assign
 l_int|0
@@ -550,89 +536,6 @@ id|inode-&gt;i_sem
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Release an inode&n; */
-macro_line|#if 0
-mdefine_line|#define fh_put(fhp)&t;__fh_put(fhp, __FILE__, __LINE__)
-r_static
-r_inline
-r_void
-id|__fh_put
-c_func
-(paren
-r_struct
-id|svc_fh
-op_star
-id|fhp
-comma
-r_char
-op_star
-id|file
-comma
-r_int
-id|line
-)paren
-(brace
-r_struct
-id|dentry
-op_star
-id|dentry
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|fhp-&gt;fh_dverified
-)paren
-r_return
-suffix:semicolon
-id|dentry
-op_assign
-id|fhp-&gt;fh_dentry
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|dentry-&gt;d_count
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;nfsd: trying to free free dentry in %s:%d&bslash;n&quot;
-l_string|&quot;      file %s/%s&bslash;n&quot;
-comma
-id|file
-comma
-id|line
-comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|fh_unlock
-c_func
-(paren
-id|fhp
-)paren
-suffix:semicolon
-id|fhp-&gt;fh_dverified
-op_assign
-l_int|0
-suffix:semicolon
-id|dput
-c_func
-(paren
-id|dentry
-)paren
-suffix:semicolon
-)brace
-)brace
-macro_line|#endif
 macro_line|#endif /* __KERNEL__ */
-macro_line|#endif /* NFSD_FH_H */
+macro_line|#endif /* _LINUX_NFSD_FH_H */
 eof

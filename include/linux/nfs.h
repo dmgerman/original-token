@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * NFS protocol definitions&n; */
+multiline_comment|/*&n; * NFS protocol definitions&n; *&n; * This file contains constants mostly for Version 2 of the protocol,&n; * but also has a couple of NFSv3 bits in (notably the error codes).&n; */
 macro_line|#ifndef _LINUX_NFS_H
 DECL|macro|_LINUX_NFS_H
 mdefine_line|#define _LINUX_NFS_H
@@ -35,6 +35,7 @@ DECL|macro|NFSMODE_SOCK
 mdefine_line|#define NFSMODE_SOCK&t;0140000
 DECL|macro|NFSMODE_FIFO
 mdefine_line|#define NFSMODE_FIFO&t;0010000
+multiline_comment|/*&n; * NFS stats. The good thing with these values is that NFSv3 errors are&n; * a superset of NFSv2 errors (with the exception of NFSERR_WFLUSH which&n; * no-one uses anyway), so we can happily mix code as long as we make sure&n; * no NFSv3 errors are returned to NFSv2 clients.&n; * Error codes that have a `--&squot; in the v2 column are not part of the&n; * standard, but seem to be widely used nevertheless.&n; */
 DECL|enum|nfs_stat
 r_enum
 id|nfs_stat
@@ -44,113 +45,195 @@ id|NFS_OK
 op_assign
 l_int|0
 comma
+multiline_comment|/* v2 v3 */
 DECL|enumerator|NFSERR_PERM
 id|NFSERR_PERM
 op_assign
 l_int|1
 comma
+multiline_comment|/* v2 v3 */
 DECL|enumerator|NFSERR_NOENT
 id|NFSERR_NOENT
 op_assign
 l_int|2
 comma
+multiline_comment|/* v2 v3 */
 DECL|enumerator|NFSERR_IO
 id|NFSERR_IO
 op_assign
 l_int|5
 comma
+multiline_comment|/* v2 v3 */
 DECL|enumerator|NFSERR_NXIO
 id|NFSERR_NXIO
 op_assign
 l_int|6
 comma
+multiline_comment|/* v2 v3 */
 DECL|enumerator|NFSERR_EAGAIN
 id|NFSERR_EAGAIN
 op_assign
 l_int|11
 comma
+multiline_comment|/* v2 v3 */
 DECL|enumerator|NFSERR_ACCES
 id|NFSERR_ACCES
 op_assign
 l_int|13
 comma
+multiline_comment|/* v2 v3 */
 DECL|enumerator|NFSERR_EXIST
 id|NFSERR_EXIST
 op_assign
 l_int|17
 comma
+multiline_comment|/* v2 v3 */
 DECL|enumerator|NFSERR_XDEV
 id|NFSERR_XDEV
 op_assign
 l_int|18
 comma
+multiline_comment|/*    v3 */
 DECL|enumerator|NFSERR_NODEV
 id|NFSERR_NODEV
 op_assign
 l_int|19
 comma
+multiline_comment|/* v2 v3 */
 DECL|enumerator|NFSERR_NOTDIR
 id|NFSERR_NOTDIR
 op_assign
 l_int|20
 comma
+multiline_comment|/* v2 v3 */
 DECL|enumerator|NFSERR_ISDIR
 id|NFSERR_ISDIR
 op_assign
 l_int|21
 comma
+multiline_comment|/* v2 v3 */
 DECL|enumerator|NFSERR_INVAL
 id|NFSERR_INVAL
 op_assign
 l_int|22
 comma
-multiline_comment|/* that Sun forgot */
+multiline_comment|/* v2 v3 that Sun forgot */
 DECL|enumerator|NFSERR_FBIG
 id|NFSERR_FBIG
 op_assign
 l_int|27
 comma
+multiline_comment|/* v2 v3 */
 DECL|enumerator|NFSERR_NOSPC
 id|NFSERR_NOSPC
 op_assign
 l_int|28
 comma
+multiline_comment|/* v2 v3 */
 DECL|enumerator|NFSERR_ROFS
 id|NFSERR_ROFS
 op_assign
 l_int|30
 comma
+multiline_comment|/* v2 v3 */
+DECL|enumerator|NFSERR_MLINK
+id|NFSERR_MLINK
+op_assign
+l_int|31
+comma
+multiline_comment|/*    v3 */
 DECL|enumerator|NFSERR_OPNOTSUPP
 id|NFSERR_OPNOTSUPP
 op_assign
 l_int|45
 comma
+multiline_comment|/* v2 v3 */
 DECL|enumerator|NFSERR_NAMETOOLONG
 id|NFSERR_NAMETOOLONG
 op_assign
 l_int|63
 comma
+multiline_comment|/* v2 v3 */
 DECL|enumerator|NFSERR_NOTEMPTY
 id|NFSERR_NOTEMPTY
 op_assign
 l_int|66
 comma
+multiline_comment|/* v2 v3 */
 DECL|enumerator|NFSERR_DQUOT
 id|NFSERR_DQUOT
 op_assign
 l_int|69
 comma
+multiline_comment|/* v2 v3 */
 DECL|enumerator|NFSERR_STALE
 id|NFSERR_STALE
 op_assign
 l_int|70
 comma
+multiline_comment|/* v2 v3 */
+DECL|enumerator|NFSERR_REMOTE
+id|NFSERR_REMOTE
+op_assign
+l_int|71
+comma
+multiline_comment|/* v2 v3 */
 DECL|enumerator|NFSERR_WFLUSH
 id|NFSERR_WFLUSH
 op_assign
 l_int|99
+comma
+multiline_comment|/* v2    */
+DECL|enumerator|NFSERR_BADHANDLE
+id|NFSERR_BADHANDLE
+op_assign
+l_int|10001
+comma
+multiline_comment|/*    v3 */
+DECL|enumerator|NFSERR_NOT_SYNC
+id|NFSERR_NOT_SYNC
+op_assign
+l_int|10002
+comma
+multiline_comment|/*    v3 */
+DECL|enumerator|NFSERR_BAD_COOKIE
+id|NFSERR_BAD_COOKIE
+op_assign
+l_int|10003
+comma
+multiline_comment|/*    v3 */
+DECL|enumerator|NFSERR_NOTSUPP
+id|NFSERR_NOTSUPP
+op_assign
+l_int|10004
+comma
+multiline_comment|/*    v3 */
+DECL|enumerator|NFSERR_TOOSMALL
+id|NFSERR_TOOSMALL
+op_assign
+l_int|10005
+comma
+multiline_comment|/*    v3 */
+DECL|enumerator|NFSERR_SERVERFAULT
+id|NFSERR_SERVERFAULT
+op_assign
+l_int|10006
+comma
+multiline_comment|/*    v3 */
+DECL|enumerator|NFSERR_BADTYPE
+id|NFSERR_BADTYPE
+op_assign
+l_int|10007
+comma
+multiline_comment|/*    v3 */
+DECL|enumerator|NFSERR_JUKEBOX
+id|NFSERR_JUKEBOX
+op_assign
+l_int|10008
+multiline_comment|/*    v3 */
 )brace
 suffix:semicolon
+multiline_comment|/* NFSv2 file types - beware, these are not the same in NFSv3 */
 DECL|enum|nfs_ftype
 r_enum
 id|nfs_ftype
@@ -266,7 +349,10 @@ DECL|macro|NFS_MNTPROC_MNT
 mdefine_line|#define NFS_MNTPROC_MNT&t;&t;1
 DECL|macro|NFS_MNTPROC_UMNT
 mdefine_line|#define NFS_MNTPROC_UMNT&t;3
-macro_line|#endif
+multiline_comment|/*&n; * This is really a general kernel constant, but since nothing like&n; * this is defined in the kernel headers, I have to do it here.&n; */
+DECL|macro|NFS_OFFSET_MAX
+mdefine_line|#define NFS_OFFSET_MAX&t;&t;((__s64)((~(__u64)0) &gt;&gt; 1))
+macro_line|#endif /* __KERNEL__ */
 macro_line|#if defined(__KERNEL__) || defined(NFS_NEED_KERNEL_TYPES)
 r_extern
 r_struct

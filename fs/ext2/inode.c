@@ -48,6 +48,12 @@ id|inode
 r_if
 c_cond
 (paren
+id|is_bad_inode
+c_func
+(paren
+id|inode
+)paren
+op_logical_or
 id|inode-&gt;i_ino
 op_eq
 id|EXT2_ACL_IDX_INO

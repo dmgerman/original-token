@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  joy-turbografx.c  Version 1.2&n; *&n; *  Copyright (c) 1998 Vojtech Pavlik&n; */
+multiline_comment|/*&n; *  joy-turbografx.c  Version 1.2&n; *&n; *  Copyright (c) 1998-1999 Vojtech Pavlik&n; *&n; *  Sponsored by SuSE&n; */
 multiline_comment|/*&n; * This is a module for the Linux joystick driver, supporting&n; * Steffen Schwenke&squot;s &lt;schwenke@burg-halle.de&gt; TurboGraFX parallel port&n; * interface.&n; */
 multiline_comment|/*&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or &n; * (at your option) any later version.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA&n; * &n; * Should you need to contact me, the author, you can do so either by&n; * e-mail - mail your message to &lt;vojtech@suse.cz&gt;, or by paper mail:&n; * Vojtech Pavlik, Ucitelska 1576, Prague 8, 182 00 Czech Republic&n; */
 macro_line|#include &lt;asm/io.h&gt;
@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 id|MODULE_AUTHOR
 c_func
 (paren
@@ -58,12 +59,13 @@ DECL|macro|JS_TG_BUTTON4
 mdefine_line|#define JS_TG_BUTTON4&t;0x01
 DECL|macro|JS_TG_BUTTON5
 mdefine_line|#define JS_TG_BUTTON5&t;0x08
-DECL|variable|js_tg_port
+DECL|variable|__initdata
 r_static
 r_struct
 id|js_port
 op_star
 id|js_tg_port
+id|__initdata
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -152,7 +154,6 @@ DECL|struct|js_tg_info
 r_struct
 id|js_tg_info
 (brace
-macro_line|#ifdef USE_PARPORT
 DECL|member|port
 r_struct
 id|pardevice
@@ -160,12 +161,6 @@ op_star
 id|port
 suffix:semicolon
 multiline_comment|/* parport device */
-macro_line|#else
-r_int
-id|port
-suffix:semicolon
-multiline_comment|/* hw port */
-macro_line|#endif
 DECL|member|sticks
 r_int
 id|sticks
@@ -441,7 +436,6 @@ op_logical_neg
 id|MOD_IN_USE
 )paren
 (brace
-macro_line|#ifdef USE_PARPORT
 r_if
 c_cond
 (paren
@@ -455,7 +449,6 @@ r_return
 op_minus
 id|EBUSY
 suffix:semicolon
-macro_line|#endif
 id|JS_PAR_CTRL_OUT
 c_func
 (paren
@@ -507,14 +500,12 @@ comma
 id|info-&gt;port
 )paren
 suffix:semicolon
-macro_line|#ifdef USE_PARPORT
 id|parport_release
 c_func
 (paren
 id|info-&gt;port
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 r_return
 l_int|0
@@ -541,8 +532,6 @@ r_while
 c_loop
 (paren
 id|js_tg_port
-op_ne
-l_int|NULL
 )paren
 (brace
 r_for
@@ -566,8 +555,6 @@ id|js_tg_port-&gt;devs
 (braket
 id|i
 )braket
-op_ne
-l_int|NULL
 )paren
 id|js_unregister_device
 c_func
@@ -582,23 +569,12 @@ id|info
 op_assign
 id|js_tg_port-&gt;info
 suffix:semicolon
-macro_line|#ifdef USE_PARPORT
 id|parport_unregister_device
 c_func
 (paren
 id|info-&gt;port
 )paren
 suffix:semicolon
-macro_line|#else
-id|release_region
-c_func
-(paren
-id|info-&gt;port
-comma
-l_int|3
-)paren
-suffix:semicolon
-macro_line|#endif
 id|js_tg_port
 op_assign
 id|js_unregister_port
@@ -799,6 +775,11 @@ op_assign
 op_amp
 id|iniinfo
 suffix:semicolon
+r_struct
+id|parport
+op_star
+id|pp
+suffix:semicolon
 r_int
 id|i
 suffix:semicolon
@@ -814,13 +795,6 @@ l_int|0
 )paren
 r_return
 id|port
-suffix:semicolon
-macro_line|#ifdef USE_PARPORT
-(brace
-r_struct
-id|parport
-op_star
-id|pp
 suffix:semicolon
 r_if
 c_cond
@@ -843,8 +817,6 @@ c_func
 )paren
 suffix:semicolon
 id|pp
-op_ne
-l_int|NULL
 op_logical_and
 (paren
 id|pp-&gt;base
@@ -872,8 +844,6 @@ c_func
 )paren
 suffix:semicolon
 id|pp
-op_ne
-l_int|NULL
 op_logical_and
 (paren
 id|config
@@ -897,9 +867,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|pp
-op_eq
-l_int|NULL
 )paren
 (brace
 id|printk
@@ -942,40 +911,6 @@ id|info-&gt;port
 r_return
 id|port
 suffix:semicolon
-)brace
-macro_line|#else
-id|info-&gt;port
-op_assign
-id|config
-(braket
-l_int|0
-)braket
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|check_region
-c_func
-(paren
-id|info-&gt;port
-comma
-l_int|3
-)paren
-)paren
-r_return
-id|port
-suffix:semicolon
-id|request_region
-c_func
-(paren
-id|info-&gt;port
-comma
-l_int|3
-comma
-l_string|&quot;joystick (turbografx)&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 id|port
 op_assign
 id|js_register_port
@@ -1040,7 +975,6 @@ OL
 l_int|6
 )paren
 (brace
-macro_line|#ifdef USE_PARPORT
 id|printk
 c_func
 (paren
@@ -1073,40 +1007,6 @@ comma
 id|info-&gt;port-&gt;port-&gt;name
 )paren
 suffix:semicolon
-macro_line|#else
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;js%d: Multisystem joystick at %#x&bslash;n&quot;
-comma
-id|js_register_device
-c_func
-(paren
-id|port
-comma
-id|i
-comma
-l_int|2
-comma
-id|config
-(braket
-id|i
-op_plus
-l_int|1
-)braket
-comma
-l_string|&quot;Multisystem joystick&quot;
-comma
-id|js_tg_open
-comma
-id|js_tg_close
-)paren
-comma
-id|info-&gt;port
-)paren
-suffix:semicolon
-macro_line|#endif
 id|info-&gt;sticks
 op_or_assign
 (paren
@@ -1123,23 +1023,12 @@ op_logical_neg
 id|info-&gt;sticks
 )paren
 (brace
-macro_line|#ifdef USE_PARPORT
 id|parport_unregister_device
 c_func
 (paren
 id|info-&gt;port
 )paren
 suffix:semicolon
-macro_line|#else
-id|release_region
-c_func
-(paren
-id|info-&gt;port
-comma
-l_int|3
-)paren
-suffix:semicolon
-macro_line|#endif
 r_return
 id|port
 suffix:semicolon
@@ -1158,35 +1047,23 @@ suffix:semicolon
 )brace
 macro_line|#ifndef MODULE
 DECL|function|js_tg_setup
-r_void
+r_int
 id|__init
 id|js_tg_setup
 c_func
 (paren
-r_char
-op_star
-id|str
-comma
-r_int
-op_star
-id|ints
+id|SETUP_PARAM
 )paren
 (brace
 r_int
 id|i
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|strcmp
+id|SETUP_PARSE
 c_func
 (paren
-id|str
-comma
-l_string|&quot;js_tg&quot;
+l_int|2
 )paren
-)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1220,18 +1097,28 @@ op_plus
 l_int|1
 )braket
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|strcmp
+r_return
+l_int|1
+suffix:semicolon
+)brace
+DECL|function|js_tg_setup_2
+r_int
+id|__init
+id|js_tg_setup_2
 c_func
 (paren
-id|str
-comma
-l_string|&quot;js_tg_2&quot;
+id|SETUP_PARAM
 )paren
+(brace
+r_int
+id|i
+suffix:semicolon
+id|SETUP_PARSE
+c_func
+(paren
+l_int|2
 )paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1265,18 +1152,28 @@ op_plus
 l_int|1
 )braket
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|strcmp
+r_return
+l_int|1
+suffix:semicolon
+)brace
+DECL|function|js_tg_setup_3
+r_int
+id|__init
+id|js_tg_setup_3
 c_func
 (paren
-id|str
-comma
-l_string|&quot;js_tg_3&quot;
+id|SETUP_PARAM
 )paren
+(brace
+r_int
+id|i
+suffix:semicolon
+id|SETUP_PARSE
+c_func
+(paren
+l_int|2
 )paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1310,7 +1207,34 @@ op_plus
 l_int|1
 )braket
 suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
 )brace
+id|__setup
+c_func
+(paren
+l_string|&quot;js_tg=&quot;
+comma
+id|js_tg_setup
+)paren
+suffix:semicolon
+id|__setup
+c_func
+(paren
+l_string|&quot;js_tg_2=&quot;
+comma
+id|js_tg_setup_2
+)paren
+suffix:semicolon
+id|__setup
+c_func
+(paren
+l_string|&quot;js_tg_3=&quot;
+comma
+id|js_tg_setup_3
+)paren
+suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef MODULE
 DECL|function|init_module

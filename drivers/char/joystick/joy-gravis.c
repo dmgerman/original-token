@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  joy-gravis.c  Version 1.2&n; *&n; *  Copyright (c) 1998 Vojtech Pavlik&n; */
+multiline_comment|/*&n; *  joy-gravis.c  Version 1.2&n; *&n; *  Copyright (c) 1998-1999 Vojtech Pavlik&n; *&n; *  Sponsored by SuSE&n; */
 multiline_comment|/*&n; * This is a module for the Linux joystick driver, supporting&n; * Gravis GrIP digital joystick family.&n; */
 multiline_comment|/*&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or &n; * (at your option) any later version.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA&n; * &n; * Should you need to contact me, the author, you can do so either by&n; * e-mail - mail your message to &lt;vojtech@suse.cz&gt;, or by paper mail:&n; * Vojtech Pavlik, Ucitelska 1576, Prague 8, 182 00 Czech Republic&n; */
 macro_line|#include &lt;asm/io.h&gt;
@@ -9,12 +9,13 @@ macro_line|#include &lt;linux/joystick.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 DECL|macro|JS_GR_MODE_GPP
 mdefine_line|#define JS_GR_MODE_GPP&t;&t;1
 DECL|macro|JS_GR_LENGTH_GPP
 mdefine_line|#define JS_GR_LENGTH_GPP&t;24
 DECL|macro|JS_GR_STROBE_GPP
-mdefine_line|#define JS_GR_STROBE_GPP&t;75
+mdefine_line|#define JS_GR_STROBE_GPP&t;400
 DECL|macro|JS_GR_MODE_XT
 mdefine_line|#define JS_GR_MODE_XT&t;&t;2
 DECL|macro|JS_GR_MODE_BD
@@ -22,7 +23,7 @@ mdefine_line|#define JS_GR_MODE_BD&t;&t;3
 DECL|macro|JS_GR_LENGTH_XT
 mdefine_line|#define JS_GR_LENGTH_XT&t;&t;4
 DECL|macro|JS_GR_STROBE_XT
-mdefine_line|#define JS_GR_STROBE_XT&t;&t;30
+mdefine_line|#define JS_GR_STROBE_XT&t;&t;200
 DECL|macro|JS_GR_MAX_CHUNKS_XT
 mdefine_line|#define JS_GR_MAX_CHUNKS_XT&t;10&t;
 DECL|macro|JS_GR_MAX_BITS_XT
@@ -90,9 +91,7 @@ id|data
 (brace
 r_int
 r_int
-id|t
-comma
-id|t1
+id|flags
 suffix:semicolon
 r_int
 r_char
@@ -101,22 +100,13 @@ comma
 id|v
 suffix:semicolon
 r_int
+r_int
+id|t
+comma
+id|p
+suffix:semicolon
+r_int
 id|i
-suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
-r_int
-id|strobe
-op_assign
-(paren
-id|js_time_speed
-op_star
-id|JS_GR_STROBE_GPP
-)paren
-op_rshift
-l_int|10
 suffix:semicolon
 id|i
 op_assign
@@ -129,6 +119,16 @@ l_int|0
 op_assign
 l_int|0
 suffix:semicolon
+id|p
+op_assign
+id|t
+op_assign
+id|JS_GR_STROBE_GPP
+suffix:semicolon
+id|p
+op_add_assign
+id|JS_GR_STROBE_GPP
+suffix:semicolon
 id|__save_flags
 c_func
 (paren
@@ -140,7 +140,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|u
+id|v
 op_assign
 id|inb
 c_func
@@ -150,15 +150,15 @@ id|io
 op_rshift
 id|shift
 suffix:semicolon
-id|t
-op_assign
-id|js_get_time
-c_func
-(paren
-)paren
-suffix:semicolon
 r_do
 (brace
+id|t
+op_decrement
+suffix:semicolon
+id|u
+op_assign
+id|v
+suffix:semicolon
 id|v
 op_assign
 (paren
@@ -173,21 +173,11 @@ id|shift
 op_amp
 l_int|3
 suffix:semicolon
-id|t1
-op_assign
-id|js_get_time
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
-id|u
-op_xor
+op_complement
 id|v
-)paren
 op_amp
 id|u
 op_amp
@@ -208,32 +198,26 @@ op_lshift
 id|i
 op_increment
 suffix:semicolon
+id|p
+op_assign
 id|t
 op_assign
-id|t1
+(paren
+id|p
+op_minus
+id|t
+)paren
+op_lshift
+l_int|1
 suffix:semicolon
 )brace
-id|u
-op_assign
-id|v
-suffix:semicolon
 )brace
 r_while
 c_loop
 (paren
 id|i
-OL
-id|JS_GR_LENGTH_GPP
-op_logical_and
-id|js_delta
-c_func
-(paren
-id|t1
-comma
-id|t
-)paren
-OL
-id|strobe
+template_param
+l_int|0
 )paren
 suffix:semicolon
 id|__restore_flags
@@ -299,7 +283,11 @@ op_amp
 l_int|1
 )paren
 op_lshift
-l_int|23
+(paren
+id|JS_GR_LENGTH_GPP
+op_minus
+l_int|1
+)paren
 suffix:semicolon
 r_return
 op_minus
@@ -331,9 +319,13 @@ id|data
 (brace
 r_int
 r_int
-id|t
+id|i
 comma
-id|t1
+id|j
+comma
+id|buf
+comma
+id|crc
 suffix:semicolon
 r_int
 r_char
@@ -345,31 +337,16 @@ id|w
 suffix:semicolon
 r_int
 r_int
-id|i
-comma
-id|j
-comma
-id|buf
-comma
-id|crc
+id|flags
 suffix:semicolon
 r_int
 r_int
-id|flags
+id|t
+comma
+id|p
 suffix:semicolon
 r_char
 id|status
-suffix:semicolon
-r_int
-id|strobe
-op_assign
-(paren
-id|js_time_speed
-op_star
-id|JS_GR_STROBE_XT
-)paren
-op_rshift
-l_int|10
 suffix:semicolon
 id|data
 (braket
@@ -403,6 +380,16 @@ id|j
 op_assign
 l_int|0
 suffix:semicolon
+id|p
+op_assign
+id|t
+op_assign
+id|JS_GR_STROBE_XT
+suffix:semicolon
+id|p
+op_add_assign
+id|JS_GR_STROBE_XT
+suffix:semicolon
 id|__save_flags
 c_func
 (paren
@@ -430,15 +417,11 @@ id|shift
 op_amp
 l_int|3
 suffix:semicolon
-id|t
-op_assign
-id|js_get_time
-c_func
-(paren
-)paren
-suffix:semicolon
 r_do
 (brace
+id|t
+op_decrement
+suffix:semicolon
 id|u
 op_assign
 (paren
@@ -452,13 +435,6 @@ id|shift
 )paren
 op_amp
 l_int|3
-suffix:semicolon
-id|t1
-op_assign
-id|js_get_time
-c_func
-(paren
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -480,6 +456,18 @@ op_amp
 l_int|1
 )paren
 (brace
+id|p
+op_assign
+id|t
+op_assign
+(paren
+id|p
+op_minus
+id|t
+)paren
+op_lshift
+l_int|2
+suffix:semicolon
 id|buf
 op_assign
 (paren
@@ -532,6 +520,18 @@ op_amp
 l_int|1
 )paren
 (brace
+id|p
+op_assign
+id|t
+op_assign
+(paren
+id|p
+op_minus
+id|t
+)paren
+op_lshift
+l_int|2
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -618,10 +618,6 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-id|t
-op_assign
-id|t1
-suffix:semicolon
 id|w
 op_assign
 id|v
@@ -644,18 +640,8 @@ OL
 id|JS_GR_MAX_BITS_XT
 op_logical_and
 id|j
-OL
-id|JS_GR_MAX_CHUNKS_XT
-op_logical_and
-id|js_delta
-c_func
-(paren
-id|t1
-comma
-id|t
-)paren
-OL
-id|strobe
+template_param
+l_int|0
 )paren
 suffix:semicolon
 id|__restore_flags
@@ -1990,7 +1976,7 @@ r_break
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * js_gr_probe() probes fro GrIP joysticks.&n; */
+multiline_comment|/*&n; * js_gr_probe() probes for GrIP joysticks.&n; */
 DECL|function|js_gr_probe
 r_static
 r_struct
@@ -2439,8 +2425,6 @@ r_while
 c_loop
 (paren
 id|js_gr_port
-op_ne
-l_int|NULL
 )paren
 (brace
 r_for
@@ -2464,8 +2448,6 @@ id|js_gr_port-&gt;devs
 (braket
 id|i
 )braket
-op_ne
-l_int|NULL
 )paren
 id|js_unregister_device
 c_func

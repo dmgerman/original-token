@@ -240,6 +240,13 @@ comma
 id|xprt
 )paren
 suffix:semicolon
+macro_line|#ifdef RPC_DEBUG
+id|rpc_register_sysctl
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren

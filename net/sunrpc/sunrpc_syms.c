@@ -314,25 +314,11 @@ id|svc_makesock
 suffix:semicolon
 multiline_comment|/* RPC statistics */
 macro_line|#ifdef CONFIG_PROC_FS
-DECL|variable|rpc_proc_init
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|rpc_proc_init
-)paren
-suffix:semicolon
 DECL|variable|rpc_proc_register
 id|EXPORT_SYMBOL
 c_func
 (paren
 id|rpc_proc_register
-)paren
-suffix:semicolon
-DECL|variable|rpc_register_sysctl
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|rpc_register_sysctl
 )paren
 suffix:semicolon
 DECL|variable|rpc_proc_unregister

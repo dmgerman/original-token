@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  joy-lightning.c  Version 1.2&n; *&n; *  Copyright (c) 1998 Vojtech Pavlik&n; */
+multiline_comment|/*&n; *  joy-lightning.c  Version 1.2&n; *&n; *  Copyright (c) 1998-1999 Vojtech Pavlik&n; *&n; *  Sponsored by SuSE&n; */
 multiline_comment|/*&n; * This is a module for the Linux joystick driver, supporting&n; * PDPI Lightning 4 gamecards and analog joysticks connected&n; * to them.&n; */
 multiline_comment|/*&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or &n; * (at your option) any later version.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA&n; * &n; * Should you need to contact me, the author, you can do so either by&n; * e-mail - mail your message to &lt;vojtech@suse.cz&gt;, or by paper mail:&n; * Vojtech Pavlik, Ucitelska 1576, Prague 8, 182 00 Czech Republic&n; */
 macro_line|#include &lt;asm/io.h&gt;
@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/joystick.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 DECL|macro|JS_L4_PORT
 mdefine_line|#define JS_L4_PORT&t;&t;0x201
 DECL|macro|JS_L4_SELECT_ANALOG
@@ -56,11 +57,68 @@ suffix:semicolon
 DECL|variable|js_l4
 r_static
 r_int
+id|__initdata
 id|js_l4
 (braket
 )braket
 op_assign
-initialization_block
+(brace
+op_minus
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_minus
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_minus
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_minus
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_minus
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_minus
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_minus
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_minus
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+)brace
 suffix:semicolon
 macro_line|#include &quot;joy-analog.h&quot;
 DECL|struct|js_l4_info
@@ -91,29 +149,10 @@ r_void
 r_int
 r_int
 id|t
-comma
-id|t1
-comma
-id|timeout
-suffix:semicolon
-id|timeout
-op_assign
-(paren
-id|JS_L4_TIMEOUT
-op_star
-id|js_time_speed
-)paren
-op_rshift
-l_int|10
 suffix:semicolon
 id|t
 op_assign
-id|t1
-op_assign
-id|js_get_time
-c_func
-(paren
-)paren
+id|JS_L4_TIMEOUT
 suffix:semicolon
 r_while
 c_loop
@@ -128,36 +167,19 @@ op_amp
 id|JS_L4_BUSY
 )paren
 op_logical_and
-(paren
-id|js_delta
-c_func
-(paren
-id|t1
-op_assign
-id|js_get_time
-c_func
-(paren
-)paren
-comma
 id|t
+OG
+l_int|0
 )paren
-OL
-id|timeout
-)paren
-)paren
+id|t
+op_decrement
 suffix:semicolon
 r_return
 op_minus
 (paren
-id|js_delta
-c_func
-(paren
-id|t1
-comma
 id|t
-)paren
-op_ge
-id|timeout
+op_le
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -1197,6 +1219,10 @@ comma
 id|js_l4_read
 )paren
 suffix:semicolon
+id|info
+op_assign
+id|port-&gt;info
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1267,10 +1293,6 @@ id|info-&gt;an
 comma
 id|info-&gt;port
 )paren
-suffix:semicolon
-id|info
-op_assign
-id|port-&gt;info
 suffix:semicolon
 id|js_l4_calibrate
 c_func
@@ -1474,7 +1496,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;js: PDPI Lightning 4 %s card (ports %d-%d) firmware v%d.%d found at %#x&bslash;n&quot;
+l_string|&quot;js: PDPI Lightning 4 %s card (ports %d-%d) firmware v%d.%d at %#x&bslash;n&quot;
 comma
 id|i
 ques
@@ -1512,22 +1534,22 @@ suffix:semicolon
 )brace
 macro_line|#ifndef MODULE
 DECL|function|js_l4_setup
-r_void
+r_int
 id|__init
 id|js_l4_setup
 c_func
 (paren
-r_char
-op_star
-id|str
-comma
-r_int
-op_star
-id|ints
+id|SETUP_PARAM
 )paren
 (brace
 r_int
 id|i
+suffix:semicolon
+id|SETUP_PARSE
+c_func
+(paren
+l_int|24
+)paren
 suffix:semicolon
 r_for
 c_loop
@@ -1562,7 +1584,18 @@ op_plus
 l_int|1
 )braket
 suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
 )brace
+id|__setup
+c_func
+(paren
+l_string|&quot;js_l4=&quot;
+comma
+id|js_l4_setup
+)paren
+suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef MODULE
 DECL|function|init_module
@@ -1712,9 +1745,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|js_l4_port
-op_eq
-l_int|NULL
 )paren
 (brace
 macro_line|#ifdef MODULE
@@ -1782,8 +1814,6 @@ r_while
 c_loop
 (paren
 id|js_l4_port
-op_ne
-l_int|NULL
 )paren
 (brace
 r_for
@@ -1807,8 +1837,6 @@ id|js_l4_port-&gt;devs
 (braket
 id|i
 )braket
-op_ne
-l_int|NULL
 )paren
 id|js_unregister_device
 c_func

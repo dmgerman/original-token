@@ -3649,16 +3649,6 @@ r_return
 id|err
 suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
-id|rpc_register_sysctl
-c_func
-(paren
-)paren
-suffix:semicolon
-id|rpc_proc_init
-c_func
-(paren
-)paren
-suffix:semicolon
 id|rpc_proc_register
 c_func
 (paren

@@ -376,14 +376,6 @@ id|tmp
 suffix:semicolon
 r_int
 id|error
-op_assign
-op_minus
-id|EPERM
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -395,8 +387,14 @@ c_func
 id|CAP_SYS_PACCT
 )paren
 )paren
-r_goto
-id|out
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -751,10 +749,6 @@ id|exp
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Write an accounting entry for an exiting process&n; *&n; *  The acct_process() call is the workhorse of the process&n; *  accounting system. The struct acct is built here and then written&n; *  into the accounting file. This function should only be called from&n; *  do_exit().&n; */
-DECL|macro|KSTK_EIP
-mdefine_line|#define KSTK_EIP(stack) (((unsigned long *)(stack))[1019])
-DECL|macro|KSTK_ESP
-mdefine_line|#define KSTK_ESP(stack) (((unsigned long *)(stack))[1022])
 multiline_comment|/*&n; *  do_acct_process does all actual work.&n; */
 DECL|function|do_acct_process
 r_static

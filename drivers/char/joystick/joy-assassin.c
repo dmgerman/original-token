@@ -1,5 +1,5 @@
-multiline_comment|/*&n; *  joy-assasin.c  Version 1.2&n; *&n; *  Copyright (c) 1998 Vojtech Pavlik&n; */
-multiline_comment|/*&n; * This is a module for the Linux joystick driver, supporting&n; * joysticks using FP-Gaming&squot;s Assasin 3D protocol.&n; */
+multiline_comment|/*&n; *  joy-assassin.c  Version 1.2&n; *&n; *  Copyright (c) 1998-1999 Vojtech Pavlik&n; *&n; *  Sponsored by SuSE&n; */
+multiline_comment|/*&n; * This is a module for the Linux joystick driver, supporting&n; * joysticks using FP-Gaming&squot;s Assassin 3D protocol.&n; */
 multiline_comment|/*&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or &n; * (at your option) any later version.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA&n; * &n; * Should you need to contact me, the author, you can do so either by&n; * e-mail - mail your message to &lt;vojtech@suse.cz&gt;, or by paper mail:&n; * Vojtech Pavlik, Ucitelska 1576, Prague 8, 182 00 Czech Republic&n; */
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -10,16 +10,15 @@ macro_line|#include &lt;linux/joystick.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 DECL|macro|JS_AS_MAX_START
-mdefine_line|#define JS_AS_MAX_START&t;&t;250
-DECL|macro|JS_AS_MAX_STROBE
-mdefine_line|#define JS_AS_MAX_STROBE&t;50
-DECL|macro|JS_AS_MAX_TIME
-mdefine_line|#define JS_AS_MAX_TIME&t;&t;2400
+mdefine_line|#define JS_AS_MAX_START&t;&t;1000
+DECL|macro|JS_AS_DELAY_READ
+mdefine_line|#define JS_AS_DELAY_READ&t;3000
 DECL|macro|JS_AS_MAX_LENGTH
 mdefine_line|#define JS_AS_MAX_LENGTH&t;40
 DECL|macro|JS_AS_MODE_A3D
-mdefine_line|#define JS_AS_MODE_A3D&t;&t;1&t;/* Assasin 3D */
+mdefine_line|#define JS_AS_MODE_A3D&t;&t;1&t;/* Assassin 3D */
 DECL|macro|JS_AS_MODE_PAN
 mdefine_line|#define JS_AS_MODE_PAN&t;&t;2&t;/* Panther */
 DECL|macro|JS_AS_MODE_OEM
@@ -43,11 +42,68 @@ suffix:semicolon
 DECL|variable|js_as
 r_static
 r_int
+id|__initdata
 id|js_as
 (braket
 )braket
 op_assign
-initialization_block
+(brace
+op_minus
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_minus
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_minus
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_minus
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_minus
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_minus
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_minus
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_minus
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+)brace
 suffix:semicolon
 DECL|variable|__initdata
 r_static
@@ -97,7 +153,7 @@ id|an
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * js_as_read_packet() reads an Assasin 3D packet.&n; */
+multiline_comment|/*&n; * js_as_read_packet() reads an Assassin 3D packet.&n; */
 DECL|function|js_as_read_packet
 r_static
 r_int
@@ -128,33 +184,11 @@ r_int
 r_int
 id|t
 comma
-id|t1
+id|p
 suffix:semicolon
 r_int
 r_int
 id|flags
-suffix:semicolon
-r_int
-id|start
-op_assign
-(paren
-id|js_time_speed
-op_star
-id|JS_AS_MAX_START
-)paren
-op_rshift
-l_int|10
-suffix:semicolon
-r_int
-id|strobe
-op_assign
-(paren
-id|js_time_speed
-op_star
-id|JS_AS_MAX_STROBE
-)paren
-op_rshift
-l_int|10
 suffix:semicolon
 id|i
 op_assign
@@ -179,7 +213,7 @@ comma
 id|io
 )paren
 suffix:semicolon
-id|u
+id|v
 op_assign
 id|inb
 c_func
@@ -189,76 +223,42 @@ id|io
 suffix:semicolon
 id|t
 op_assign
-id|js_get_time
-c_func
-(paren
-)paren
-suffix:semicolon
-r_do
-(brace
-id|v
+id|p
 op_assign
-id|inb
-c_func
-(paren
-id|io
-)paren
+id|JS_AS_MAX_START
 suffix:semicolon
-id|t1
-op_assign
-id|js_get_time
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
 r_while
 c_loop
 (paren
-id|u
-op_eq
-id|v
+id|t
+OG
+l_int|0
 op_logical_and
-id|js_delta
-c_func
-(paren
-id|t1
-comma
-id|t
-)paren
+id|i
 OL
-id|start
+id|length
 )paren
-suffix:semicolon
-id|t
-op_assign
-id|t1
-suffix:semicolon
-r_do
 (brace
+id|t
+op_decrement
+suffix:semicolon
+id|u
+op_assign
+id|v
+suffix:semicolon
 id|v
 op_assign
 id|inb
 c_func
 (paren
 id|io
-)paren
-suffix:semicolon
-id|t1
-op_assign
-id|js_get_time
-c_func
-(paren
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
-id|u
-op_xor
+op_complement
 id|v
-)paren
 op_amp
 id|u
 op_amp
@@ -275,34 +275,20 @@ id|v
 op_rshift
 l_int|5
 suffix:semicolon
+id|p
+op_assign
 id|t
 op_assign
-id|t1
-suffix:semicolon
-)brace
-id|u
-op_assign
-id|v
-suffix:semicolon
-)brace
-r_while
-c_loop
 (paren
-id|i
-OL
-id|length
-op_logical_and
-id|js_delta
-c_func
-(paren
-id|t1
-comma
+id|p
+op_minus
 id|t
 )paren
-OL
-id|strobe
-)paren
+op_lshift
+l_int|3
 suffix:semicolon
+)brace
+)brace
 id|__restore_flags
 c_func
 (paren
@@ -1293,19 +1279,11 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-r_default
-suffix:colon
-id|printk
-c_func
-(paren
-l_string|&quot;Error.&bslash;n&quot;
-)paren
-suffix:semicolon
+)brace
 r_return
 op_minus
 l_int|1
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n; * js_as_open() is a callback from the file open routine.&n; */
 DECL|function|js_as_open
@@ -1830,7 +1808,7 @@ l_int|14
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * js_as_as_init_corr() initializes the correction values for&n; * the Panther and Assasin.&n; */
+multiline_comment|/*&n; * js_as_as_init_corr() initializes the correction values for&n; * the Panther and Assassin.&n; */
 DECL|function|js_as_as_init_corr
 r_static
 r_void
@@ -2250,56 +2228,31 @@ l_int|1
 r_return
 id|port
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-(paren
-id|u
+id|i
 op_assign
-id|inb
+id|js_as_read_packet
 c_func
 (paren
 id|io
-)paren
-)paren
-op_amp
-l_int|3
-)paren
-op_eq
-l_int|3
-)paren
-r_return
-id|port
-suffix:semicolon
-id|outb
-c_func
-(paren
-l_int|0xff
 comma
-id|io
+id|JS_AS_MAX_LENGTH
+comma
+id|data
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;%d&bslash;n&quot;
+comma
+id|i
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-(paren
-(paren
-id|inb
-c_func
-(paren
-id|io
-)paren
-op_xor
-id|u
-)paren
-op_amp
-op_complement
-id|u
-op_amp
-l_int|0xf
-)paren
+id|i
 )paren
 r_return
 id|port
@@ -2307,17 +2260,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|js_as_read_packet
+id|js_as_csum
 c_func
 (paren
-id|io
-comma
-l_int|1
-comma
 id|data
+comma
+id|i
 )paren
-op_ne
-l_int|1
 )paren
 r_return
 id|port
@@ -2356,7 +2305,7 @@ id|io
 comma
 l_int|1
 comma
-l_string|&quot;joystick (assasin)&quot;
+l_string|&quot;joystick (assassin)&quot;
 )paren
 suffix:semicolon
 id|port
@@ -2390,7 +2339,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;joy-assasin: unknown joystick device detected &quot;
+l_string|&quot;joy-assassin: unknown joystick device detected &quot;
 l_string|&quot;(io=%#x, id=%d), contact &lt;vojtech@suse.cz&gt;&bslash;n&quot;
 comma
 id|io
@@ -2408,7 +2357,7 @@ suffix:semicolon
 id|udelay
 c_func
 (paren
-id|JS_AS_MAX_TIME
+id|JS_AS_DELAY_READ
 )paren
 suffix:semicolon
 r_if
@@ -2541,7 +2490,7 @@ id|JS_AS_MODE_A3D
 suffix:colon
 id|name
 op_assign
-l_string|&quot;FP-Gaming Assasin 3D&quot;
+l_string|&quot;FP-Gaming Assassin 3D&quot;
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -2559,7 +2508,7 @@ id|JS_AS_MODE_OEM
 suffix:colon
 id|name
 op_assign
-l_string|&quot;OEM Assasin 3D&quot;
+l_string|&quot;OEM Assassin 3D&quot;
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -2787,22 +2736,22 @@ suffix:semicolon
 )brace
 macro_line|#ifndef MODULE
 DECL|function|js_as_setup
-r_void
+r_int
 id|__init
 id|js_as_setup
 c_func
 (paren
-r_char
-op_star
-id|str
-comma
-r_int
-op_star
-id|ints
+id|SETUP_PARAM
 )paren
 (brace
 r_int
 id|i
+suffix:semicolon
+id|SETUP_PARSE
+c_func
+(paren
+l_int|24
+)paren
 suffix:semicolon
 r_for
 c_loop
@@ -2837,7 +2786,18 @@ op_plus
 l_int|1
 )braket
 suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
 )brace
+id|__setup
+c_func
+(paren
+l_string|&quot;js_as=&quot;
+comma
+id|js_as_setup
+)paren
+suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef MODULE
 DECL|function|init_module
@@ -2978,7 +2938,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;joy-assasin: no joysticks found&bslash;n&quot;
+l_string|&quot;joy-assassin: no joysticks found&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -3008,8 +2968,6 @@ r_while
 c_loop
 (paren
 id|js_as_port
-op_ne
-l_int|NULL
 )paren
 (brace
 r_for
@@ -3033,8 +2991,6 @@ id|js_as_port-&gt;devs
 (braket
 id|i
 )braket
-op_ne
-l_int|NULL
 )paren
 id|js_unregister_device
 c_func

@@ -69,21 +69,8 @@ r_register
 r_int
 r_int
 id|eax
-id|asm
-c_func
-(paren
-l_string|&quot;ax&quot;
-)paren
-suffix:semicolon
-r_register
-r_int
-r_int
+comma
 id|edx
-id|asm
-c_func
-(paren
-l_string|&quot;dx&quot;
-)paren
 suffix:semicolon
 multiline_comment|/* Read the Time Stamp Counter */
 id|rdtsc

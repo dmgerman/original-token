@@ -1,7 +1,6 @@
-multiline_comment|/* bufs.c -- IOCTLs to manage buffers -*- linux-c -*-&n; * Created: Tue Feb  2 08:37:54 1999 by faith@precisioninsight.com&n; * Revised: Fri Aug 20 22:48:10 1999 by faith@precisioninsight.com&n; *&n; * Copyright 1999 Precision Insight, Inc., Cedar Park, Texas.&n; * All Rights Reserved.&n; *&n; * Permission is hereby granted, free of charge, to any person obtaining a&n; * copy of this software and associated documentation files (the &quot;Software&quot;),&n; * to deal in the Software without restriction, including without limitation&n; * the rights to use, copy, modify, merge, publish, distribute, sublicense,&n; * and/or sell copies of the Software, and to permit persons to whom the&n; * Software is furnished to do so, subject to the following conditions:&n; * &n; * The above copyright notice and this permission notice (including the next&n; * paragraph) shall be included in all copies or substantial portions of the&n; * Software.&n; * &n; * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR&n; * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&n; * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL&n; * PRECISION INSIGHT AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM, DAMAGES OR&n; * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,&n; * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER&n; * DEALINGS IN THE SOFTWARE.&n; * &n; * $PI: xc/programs/Xserver/hw/xfree86/os-support/linux/drm/generic/bufs.c,v 1.8 1999/08/30 13:05:00 faith Exp $&n; * $XFree86$&n; *&n; */
+multiline_comment|/* bufs.c -- IOCTLs to manage buffers -*- linux-c -*-&n; * Created: Tue Feb  2 08:37:54 1999 by faith@precisioninsight.com&n; * Revised: Fri Dec  3 12:11:11 1999 by faith@precisioninsight.com&n; *&n; * Copyright 1999 Precision Insight, Inc., Cedar Park, Texas.&n; * All Rights Reserved.&n; *&n; * Permission is hereby granted, free of charge, to any person obtaining a&n; * copy of this software and associated documentation files (the &quot;Software&quot;),&n; * to deal in the Software without restriction, including without limitation&n; * the rights to use, copy, modify, merge, publish, distribute, sublicense,&n; * and/or sell copies of the Software, and to permit persons to whom the&n; * Software is furnished to do so, subject to the following conditions:&n; * &n; * The above copyright notice and this permission notice (including the next&n; * paragraph) shall be included in all copies or substantial portions of the&n; * Software.&n; * &n; * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR&n; * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&n; * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL&n; * PRECISION INSIGHT AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM, DAMAGES OR&n; * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,&n; * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER&n; * DEALINGS IN THE SOFTWARE.&n; * &n; * $PI: xc/programs/Xserver/hw/xfree86/os-support/linux/drm/kernel/bufs.c,v 1.8 1999/08/30 13:05:00 faith Exp $&n; * $XFree86: xc/programs/Xserver/hw/xfree86/os-support/linux/drm/kernel/bufs.c,v 1.1 1999/09/25 14:37:57 dawes Exp $&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;drmP.h&quot;
 macro_line|#include &quot;linux/un.h&quot;
 multiline_comment|/* Compute order.  Can be made faster. */
@@ -337,20 +336,6 @@ suffix:semicolon
 r_case
 id|_DRM_SHM
 suffix:colon
-id|DRM_DEBUG
-c_func
-(paren
-l_string|&quot;%ld %d&bslash;n&quot;
-comma
-id|map-&gt;size
-comma
-id|drm_order
-c_func
-(paren
-id|map-&gt;size
-)paren
-)paren
-suffix:semicolon
 id|map-&gt;handle
 op_assign
 (paren
@@ -369,6 +354,22 @@ op_minus
 id|PAGE_SHIFT
 comma
 id|DRM_MEM_SAREA
+)paren
+suffix:semicolon
+id|DRM_DEBUG
+c_func
+(paren
+l_string|&quot;%ld %d %p&bslash;n&quot;
+comma
+id|map-&gt;size
+comma
+id|drm_order
+c_func
+(paren
+id|map-&gt;size
+)paren
+comma
+id|map-&gt;handle
 )paren
 suffix:semicolon
 r_if

@@ -1833,7 +1833,7 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * An insecure source has sent us a dentry, here we verify it.&n; *&n; * This is just to make knfsd able to have the dentry pointer&n; * in the NFS file handle.&n; *&n; * NOTE! Do _not_ dereference the pointers before we have&n; * validated them. We can test the pointer values, but we&n; * must not actually use them until we have found a valid&n; * copy of the pointer in kernel space..&n; */
+multiline_comment|/*&n; * An insecure source has sent us a dentry, here we verify it.&n; *&n; * This is used by ncpfs in its readdir implementation.&n; *&n; * NOTE! Do _not_ dereference the pointers before we have&n; * validated them. We can test the pointer values, but we&n; * must not actually use them until we have found a valid&n; * copy of the pointer in kernel space..&n; */
 DECL|function|d_validate
 r_int
 id|d_validate

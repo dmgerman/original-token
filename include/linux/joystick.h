@@ -1,13 +1,13 @@
 macro_line|#ifndef _LINUX_JOYSTICK_H
 DECL|macro|_LINUX_JOYSTICK_H
 mdefine_line|#define _LINUX_JOYSTICK_H
-multiline_comment|/*&n; * /usr/include/linux/joystick.h  Version 1.2&n; *&n; * Copyright (C) 1996-1998 Vojtech Pavlik&n; */
+multiline_comment|/*&n; * /usr/include/linux/joystick.h  Version 1.2&n; *&n; * Copyright (C) 1996-1999 Vojtech Pavlik&n; *&n; * Sponsored by SuSE&n; */
 multiline_comment|/*&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or &n; * (at your option) any later version.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA&n; * &n; * Should you need to contact me, the author, you can do so either by&n; * e-mail - mail your message to &lt;vojtech@suse.cz&gt;, or by paper mail:&n; * Vojtech Pavlik, Ucitelska 1576, Prague 8, 182 00 Czech Republic&n; */
 macro_line|#include &lt;asm/types.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 multiline_comment|/*&n; * Version&n; */
 DECL|macro|JS_VERSION
-mdefine_line|#define JS_VERSION&t;&t;0x01020d
+mdefine_line|#define JS_VERSION&t;&t;0x01020f
 multiline_comment|/*&n; * Types and constants for reading from /dev/js&n; */
 DECL|macro|JS_EVENT_BUTTON
 mdefine_line|#define JS_EVENT_BUTTON&t;&t;0x01&t;/* button pressed/released */
@@ -174,92 +174,77 @@ macro_line|#ifdef __KERNEL__
 DECL|macro|JS_BUFF_SIZE
 mdefine_line|#define JS_BUFF_SIZE&t;&t;64&t;&t;/* output buffer size */
 macro_line|#include &lt;linux/version.h&gt;
-macro_line|#ifndef KERNEL_VERSION
-DECL|macro|KERNEL_VERSION
-mdefine_line|#define KERNEL_VERSION(a,b,c) (((a) &lt;&lt; 16) + ((b) &lt;&lt; 8) + (c))
+macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,2,0)
+macro_line|#error &quot;You need to use at least v2.2 Linux kernel.&quot;
 macro_line|#endif
-macro_line|#ifndef LINUX_VERSION_CODE
-macro_line|#error &quot;You need to use at least 2.0 Linux kernel.&quot;
-macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,0,0)
-macro_line|#error &quot;You need to use at least 2.0 Linux kernel.&quot;
-macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,0)
-DECL|macro|JS_HAS_RDTSC
-mdefine_line|#define JS_HAS_RDTSC (current_cpu_data.x86_capability &amp; 0x10)
-macro_line|#include &lt;linux/init.h&gt;
-macro_line|#else
-macro_line|#ifdef MODULE
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,0,35)
-DECL|macro|JS_HAS_RDTSC
-mdefine_line|#define JS_HAS_RDTSC (x86_capability &amp; 0x10)
-macro_line|#else
-DECL|macro|JS_HAS_RDTSC
-mdefine_line|#define JS_HAS_RDTSC 0
-macro_line|#endif
-macro_line|#else
-DECL|macro|JS_HAS_RDTSC
-mdefine_line|#define JS_HAS_RDTSC (x86_capability &amp; 0x10)
-macro_line|#endif
-DECL|macro|__initdata
-mdefine_line|#define __initdata
-DECL|macro|__init
-mdefine_line|#define __init
-DECL|macro|__cli
-mdefine_line|#define __cli cli
-DECL|macro|__save_flags
-mdefine_line|#define __save_flags(flags) save_flags(flags)
-DECL|macro|__restore_flags
-mdefine_line|#define __restore_flags(flags)&t;restore_flags(flags)
-DECL|macro|spin_lock_irqsave
-mdefine_line|#define spin_lock_irqsave(x, flags) do { save_flags(flags); cli(); } while (0)
-DECL|macro|spin_unlock_irqrestore
-mdefine_line|#define spin_unlock_irqrestore(x, flags) restore_flags(flags)
-DECL|macro|spin_lock_init
-mdefine_line|#define spin_lock_init(x) do { } while (0)
-DECL|member|something
-DECL|typedef|spinlock_t
+macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,3,0)
+macro_line|#include &lt;asm/spinlock.h&gt;
+DECL|typedef|wait_queue_head_t
 r_typedef
 r_struct
-(brace
-r_int
-id|something
+id|wait_queue
+op_star
+id|wait_queue_head_t
 suffix:semicolon
-)brace
-id|spinlock_t
-suffix:semicolon
-DECL|macro|SPIN_LOCK_UNLOCKED
-mdefine_line|#define SPIN_LOCK_UNLOCKED { 0 }
-DECL|macro|MODULE_AUTHOR
-mdefine_line|#define MODULE_AUTHOR(x)
-DECL|macro|MODULE_PARM
-mdefine_line|#define MODULE_PARM(x,y)
-DECL|macro|MODULE_SUPPORTED_DEVICE
-mdefine_line|#define MODULE_SUPPORTED_DEVICE(x)
-DECL|macro|signal_pending
-mdefine_line|#define signal_pending(x) (((x)-&gt;signal) &amp; ~((x)-&gt;blocked))
+DECL|macro|__setup
+mdefine_line|#define __setup(a,b)
+DECL|macro|BASE_ADDRESS
+mdefine_line|#define BASE_ADDRESS(x,i)&t;((x)-&gt;base_address[i])
+DECL|macro|DECLARE_WAITQUEUE
+mdefine_line|#define DECLARE_WAITQUEUE(x,y)&t;struct wait_queue x = { y, NULL }
+DECL|macro|init_waitqueue_head
+mdefine_line|#define init_waitqueue_head(x)&t;do { *(x) = NULL; } while (0)
+DECL|macro|__set_current_state
+mdefine_line|#define __set_current_state(x)&t;current-&gt;state = x
+DECL|macro|SETUP_PARAM
+mdefine_line|#define SETUP_PARAM&t;&t;char *str, int *ints
+DECL|macro|SETUP_PARSE
+mdefine_line|#define SETUP_PARSE(x)&t;&t;do {} while (0)
+macro_line|#else
+macro_line|#include &lt;linux/spinlock.h&gt;
+DECL|macro|BASE_ADDRESS
+mdefine_line|#define BASE_ADDRESS(x,i)&t;((x)-&gt;resource[i].start)
+DECL|macro|SETUP_PARAM
+mdefine_line|#define SETUP_PARAM&t;&t;char *str
+DECL|macro|SETUP_PARSE
+mdefine_line|#define SETUP_PARSE(x)&t;&t;int ints[x]; get_options(str, x, ints)
 macro_line|#endif
+DECL|macro|PCI_VENDOR_ID_AUREAL
+mdefine_line|#define PCI_VENDOR_ID_AUREAL&t;0x12eb
 multiline_comment|/*&n; * Parport stuff&n; */
-DECL|macro|USE_PARPORT
-mdefine_line|#define USE_PARPORT
 macro_line|#include &lt;linux/parport.h&gt;
-macro_line|#include &lt;linux/parport_pc.h&gt;
+DECL|macro|JS_PAR_STATUS_INVERT
+mdefine_line|#define JS_PAR_STATUS_INVERT&t;(0x80)
+DECL|macro|JS_PAR_CTRL_INVERT
+mdefine_line|#define JS_PAR_CTRL_INVERT&t;(0x04)
 DECL|macro|JS_PAR_DATA_IN
 mdefine_line|#define JS_PAR_DATA_IN(y)&t;parport_read_data(y-&gt;port)
 DECL|macro|JS_PAR_DATA_OUT
 mdefine_line|#define JS_PAR_DATA_OUT(x,y)&t;parport_write_data(y-&gt;port, x)
 DECL|macro|JS_PAR_STATUS
 mdefine_line|#define JS_PAR_STATUS(y)&t;parport_read_status(y-&gt;port)
+macro_line|#ifndef PARPORT_NEED_GENERIC_OPS
 DECL|macro|JS_PAR_CTRL_IN
 mdefine_line|#define JS_PAR_CTRL_IN(y)&t;parport_read_control(y-&gt;port)
+macro_line|#else
+DECL|macro|JS_PAR_CTRL_IN
+mdefine_line|#define JS_PAR_CTRL_IN(y)&t;inb(y-&gt;port-&gt;base+2) 
+macro_line|#endif
+macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,3,0)
 DECL|macro|JS_PAR_CTRL_OUT
 mdefine_line|#define JS_PAR_CTRL_OUT(x,y)&t;parport_write_control(y-&gt;port, x)
 DECL|macro|JS_PAR_ECTRL_OUT
-mdefine_line|#define JS_PAR_ECTRL_OUT(x,y)&t;outb(x, ECONTROL(y-&gt;port))
-DECL|macro|JS_PAR_STATUS_INVERT
-mdefine_line|#define JS_PAR_STATUS_INVERT&t;(0x80)
-DECL|macro|JS_PAR_CTRL_INVERT
-mdefine_line|#define JS_PAR_CTRL_INVERT&t;(0x04)
+mdefine_line|#define JS_PAR_ECTRL_OUT(x,y)&t;parport_write_econtrol(y-&gt;port, x)
+macro_line|#else
+DECL|macro|JS_PAR_CTRL_OUT
+mdefine_line|#define JS_PAR_CTRL_OUT(x,y)&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;if ((x) &amp; 0x20) parport_data_reverse(y-&gt;port);&t;&bslash;&n;&t;&t;else parport_data_forward(y-&gt;port);&t;&t;&bslash;&n;&t;&t;parport_write_control(y-&gt;port, (x) &amp; ~0x20);&t;&bslash;&n;&t;} while (0)
+DECL|macro|JS_PAR_ECTRL_OUT
+mdefine_line|#define JS_PAR_ECTRL_OUT(x,y)&t;/*parport sets PS/2 mode on ECR chips */
+DECL|macro|PARPORT_MODE_PCPS2
+mdefine_line|#define PARPORT_MODE_PCPS2&t;PARPORT_MODE_TRISTATE
+DECL|macro|PARPORT_MODE_PCECPPS2
+mdefine_line|#define PARPORT_MODE_PCECPPS2&t;PARPORT_MODE_TRISTATE
+macro_line|#endif
 multiline_comment|/*&n; * Internal types&n; */
 r_struct
 id|js_dev
@@ -285,35 +270,6 @@ r_int
 op_star
 op_star
 id|buttons
-)paren
-suffix:semicolon
-DECL|typedef|js_time_func
-r_typedef
-r_int
-r_int
-(paren
-op_star
-id|js_time_func
-)paren
-(paren
-r_void
-)paren
-suffix:semicolon
-DECL|typedef|js_delta_func
-r_typedef
-r_int
-(paren
-op_star
-id|js_delta_func
-)paren
-(paren
-r_int
-r_int
-id|x
-comma
-r_int
-r_int
-id|y
 )paren
 suffix:semicolon
 DECL|typedef|js_ops_func
@@ -512,35 +468,17 @@ DECL|member|ndevs
 r_int
 id|ndevs
 suffix:semicolon
+DECL|member|fail
+r_int
+id|fail
+suffix:semicolon
+DECL|member|total
+r_int
+id|total
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Sub-module interface&n; */
-r_extern
-r_int
-r_int
-id|js_time_speed
-suffix:semicolon
-r_extern
-id|js_time_func
-id|js_get_time
-suffix:semicolon
-r_extern
-id|js_delta_func
-id|js_delta
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|js_time_speed_a
-suffix:semicolon
-r_extern
-id|js_time_func
-id|js_get_time_a
-suffix:semicolon
-r_extern
-id|js_delta_func
-id|js_delta_a
-suffix:semicolon
 r_extern
 r_struct
 id|js_port
@@ -664,6 +602,14 @@ r_void
 suffix:semicolon
 r_extern
 r_int
+id|js_cr_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|js_db9_init
 c_func
 (paren
@@ -696,7 +642,39 @@ r_void
 suffix:semicolon
 r_extern
 r_int
+id|js_mag_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|js_pci_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|js_sw_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|js_sball_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|js_orb_init
 c_func
 (paren
 r_void
@@ -711,87 +689,19 @@ r_void
 )paren
 suffix:semicolon
 r_extern
-r_void
-id|js_am_setup
+r_int
+id|js_tg_init
 c_func
 (paren
-r_char
-op_star
-id|str
-comma
-r_int
-op_star
-id|ints
+r_void
 )paren
 suffix:semicolon
 r_extern
-r_void
-id|js_an_setup
+r_int
+id|js_war_init
 c_func
 (paren
-r_char
-op_star
-id|str
-comma
-r_int
-op_star
-id|ints
-)paren
-suffix:semicolon
-r_extern
 r_void
-id|js_as_setup
-c_func
-(paren
-r_char
-op_star
-id|str
-comma
-r_int
-op_star
-id|ints
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|js_console_setup
-c_func
-(paren
-r_char
-op_star
-id|str
-comma
-r_int
-op_star
-id|ints
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|js_db9_setup
-c_func
-(paren
-r_char
-op_star
-id|str
-comma
-r_int
-op_star
-id|ints
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|js_l4_setup
-c_func
-(paren
-r_char
-op_star
-id|str
-comma
-r_int
-op_star
-id|ints
 )paren
 suffix:semicolon
 macro_line|#endif /* __KERNEL__ */

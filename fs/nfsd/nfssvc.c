@@ -627,7 +627,9 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd_dispatch: proc %d&bslash;n&quot;
+l_string|&quot;nfsd_dispatch: vers %d proc %d&bslash;n&quot;
+comma
+id|rqstp-&gt;rq_vers
 comma
 id|rqstp-&gt;rq_proc
 )paren

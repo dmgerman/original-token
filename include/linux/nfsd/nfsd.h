@@ -13,7 +13,7 @@ macro_line|#include &lt;linux/nfsd/auth.h&gt;
 macro_line|#include &lt;linux/nfsd/stats.h&gt;
 multiline_comment|/*&n; * nfsd version&n; */
 DECL|macro|NFSD_VERSION
-mdefine_line|#define NFSD_VERSION&t;&t;&quot;0.4&quot;
+mdefine_line|#define NFSD_VERSION&t;&t;&quot;0.5&quot;
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * Special flags for nfsd_permission. These must be different from MAY_READ,&n; * MAY_WRITE, and MAY_EXEC.&n; */
 DECL|macro|MAY_NOP
@@ -630,6 +630,8 @@ comma
 id|nfserr_mlink
 comma
 id|nfserr_nametoolong
+comma
+id|nfserr_notempty
 comma
 id|nfserr_dquot
 comma

@@ -1,4 +1,4 @@
-multiline_comment|/* Driver for USB SCSI-like devices&n; *&n; * (C) Michael Gee (michael@linuxspecific.com) 1999&n; *&n; * This driver is schizoid  - it makes a USB device appear as both a SCSI device&n; * and a character device. The latter is only available if the device has an&n; * interrupt endpoint, and is used specifically to receive interrupt events.&n; *&n; * In order to support various &squot;strange&squot; devices, this module supports plug-in&n; * device-specific filter modules, which can do their own thing when required.&n; *&n; * Further reference.&n; *&t;This driver is based on the &squot;USB Mass Storage Class&squot; document. This&n; *&t;describes in detail the transformation of SCSI command blocks to the&n; *&t;equivalent USB control and data transfer required.&n; *&t;It is important to note that in a number of cases this class exhibits&n; *&t;class-specific exemptions from the USB specification. Notably the&n; *&t;usage of NAK, STALL and ACK differs from the norm, in that they are&n; *&t;used to communicate wait, failed and OK on SCSI commands.&n; *&t;Also, for certain devices, the interrupt endpoint is used to convey&n; *&t;status of a command.&n; *&n; *&t;Basically, this stuff is WEIRD!!&n; *&n; */
+multiline_comment|/* Driver for USB SCSI-like devices&n; *&n; * (c) 1999 Michael Gee (michael@linuxspecific.com)&n; * (c) 1999 Matthew Dharm (mdharm@one-eyed-alien.net)&n; *&n; * This driver is schizoid  - it makes a USB device appear as both a SCSI&n; * device and a character device. The latter is only available if the device&n; * has an interrupt endpoint, and is used specifically to receive interrupt&n; * events.&n; *&n; * In order to support various &squot;strange&squot; devices, this module supports plug-in&n; * device-specific filter modules, which can do their own thing when required.&n; *&n; * Further reference.&n; *&t;This driver is based on the &squot;USB Mass Storage Class&squot; document. This&n; *&t;describes in detail the transformation of SCSI command blocks to the&n; *&t;equivalent USB control and data transfer required.&n; *&t;It is important to note that in a number of cases this class exhibits&n; *&t;class-specific exemptions from the USB specification. Notably the&n; *&t;usage of NAK, STALL and ACK differs from the norm, in that they are&n; *&t;used to communicate wait, failed and OK on SCSI commands.&n; *&t;Also, for certain devices, the interrupt endpoint is used to convey&n; *&t;status of a command.&n; *&n; *&t;Basically, this stuff is WEIRD!!&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -38,7 +38,7 @@ DECL|macro|IRQ_PERIOD
 mdefine_line|#define IRQ_PERIOD&t;&t;255
 macro_line|#else
 DECL|macro|IRQ_PERIOD
-mdefine_line|#define IRQ_PERIOD&t;&t;0&t;/* single IRQ transfer then remove it */
+mdefine_line|#define IRQ_PERIOD&t;&t;0    /* single IRQ transfer then remove it */
 macro_line|#endif
 multiline_comment|/*&n; * Per device data&n; */
 DECL|variable|my_host_number
@@ -122,7 +122,7 @@ DECL|member|attention_done
 id|__u8
 id|attention_done
 suffix:semicolon
-multiline_comment|/* force attention on first command */
+multiline_comment|/* force attn on first cmd */
 DECL|member|pop
 r_int
 (paren
@@ -147,7 +147,7 @@ id|us_data
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/* ................. device reset */
+multiline_comment|/* ........... device reset */
 id|GUID
 c_func
 (paren
@@ -231,19 +231,18 @@ r_void
 op_star
 id|irq_handle
 suffix:semicolon
-multiline_comment|/* for USB interrupt requests */
+multiline_comment|/* for USB int requests */
 DECL|member|irqpipe
 r_int
 r_int
 id|irqpipe
 suffix:semicolon
-multiline_comment|/* remember pipe for release_irq */
+multiline_comment|/* pipe for release_irq */
 DECL|member|mode_xlate
 r_int
 id|mode_xlate
 suffix:semicolon
-multiline_comment|/* if current SCSI command is MODE_6 */
-multiline_comment|/* but is translated to MODE_10 for UFI */
+multiline_comment|/* trans MODE_6 to _10? */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * kernel thread actions&n; */
@@ -402,7 +401,20 @@ id|this_xfer
 suffix:semicolon
 r_do
 (brace
-multiline_comment|/* US_DEBUGP(&quot;Bulk xfer %x(%d)&bslash;n&quot;, (unsigned int)buf, this_xfer); */
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;Bulk xfer %x(%d)&bslash;n&quot;
+comma
+(paren
+r_int
+r_int
+)paren
+id|buf
+comma
+id|this_xfer
+)paren
+suffix:semicolon
 id|result
 op_assign
 id|usb_bulk_msg
@@ -2186,7 +2198,7 @@ r_return
 id|result
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * The bulk only protocol handler.&n; * &t;Uses the in and out endpoints to transfer commands and data (nasty)&n; */
+multiline_comment|/*&n; * The bulk only protocol handler.&n; *&t;Uses the in and out endpoints to transfer commands and data (nasty)&n; */
 DECL|function|pop_Bulk
 r_static
 r_int
@@ -3225,7 +3237,7 @@ comma
 id|style
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * Calculate start of next buffer, and return value.&n;     */
+multiline_comment|/*&n;&t; * Calculate start of next buffer, and return value.&n;&t; */
 op_star
 id|start
 op_assign
@@ -3444,7 +3456,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * This thread doesn&squot;t need any user-level access,&n;     * so get rid of all our resources..&n;     */
+multiline_comment|/*&n;&t; * This thread doesn&squot;t need any user-level access,&n;&t; * so get rid of all our resources..&n;&t; */
 id|exit_mm
 c_func
 (paren
@@ -4264,7 +4276,7 @@ c_cond
 id|us-&gt;mode_xlate
 )paren
 (brace
-multiline_comment|/* convert MODE_SENSE_10 return data&n;&t;&t;&t;&t;&t; * format to MODE_SENSE_6 format */
+multiline_comment|/* convert MODE_SENSE_10 return data&n;&t;&t;&t;&t;&t;&t;&t;&t; * format to MODE_SENSE_6 format */
 r_int
 r_char
 op_star
@@ -5186,7 +5198,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     * We are expecting a minimum of 2 endpoints - in and out (bulk).&n;     * An optional interrupt is OK (necessary for CBI protocol).&n;     * We will ignore any others.&n;     */
+multiline_comment|/*&n;&t; * We are expecting a minimum of 2 endpoints - in and out (bulk).&n;&t; * An optional interrupt is OK (necessary for CBI protocol).&n;&t; * We will ignore any others.&n;&t; */
 r_for
 c_loop
 (paren
@@ -5801,7 +5813,7 @@ l_int|6
 )paren
 suffix:semicolon
 macro_line|#ifdef REWRITE_PROJECT
-multiline_comment|/* FIXME: Don&squot;t know if this release_irq() call is at the&n;&t;&t;right place/time. */
+multiline_comment|/* FIXME: Don&squot;t know if this release_irq() call is at the&n;&t;&t;&t;   right place/time. */
 id|usb_release_irq
 c_func
 (paren

@@ -32,8 +32,9 @@ DECL|macro|OPEN_WRITE
 mdefine_line|#define OPEN_WRITE&t;1
 multiline_comment|/* Hack until we have a macro check for mandatory locks. */
 macro_line|#ifndef IS_ISMNDLK
+multiline_comment|/* We must ignore files (but only file) which might have mandatory&n; * locks on them because there is no way to know if the accesser has&n; * the lock.&n; */
 DECL|macro|IS_ISMNDLK
-mdefine_line|#define IS_ISMNDLK(i)&t;(((i)-&gt;i_mode &amp; (S_ISGID|S_IXGRP)) == S_ISGID)
+mdefine_line|#define IS_ISMNDLK(i)&t;(((i)-&gt;i_mode &amp; (S_ISGID|S_IXGRP|S_IFMT)) &bslash;&n;&t;&t;&t; == (S_ISGID|S_IFREG))
 macro_line|#endif
 multiline_comment|/* Check for dir entries &squot;.&squot; and &squot;..&squot; */
 DECL|macro|isdotent
@@ -107,6 +108,9 @@ id|raparm_cache
 op_assign
 l_int|NULL
 suffix:semicolon
+multiline_comment|/*&n; * We need to do a check-parent every time&n; * after we have locked the parent - to verify&n; * that the parent is still our parent and&n; * that we are still hashed onto it..&n; *&n; * This is required in case two processes race&n; * on removing (or moving) the same entry: the&n; * parent lock will serialize them, but the&n; * other process will be too late..&n; *&n; * Note that this nfsd_check_parent is identical&n; * the check_parent in linux/fs/namei.c.&n; */
+DECL|macro|nfsd_check_parent
+mdefine_line|#define nfsd_check_parent(dir, dentry) &bslash;&n;&t;((dir) == (dentry)-&gt;d_parent &amp;&amp; !list_empty(&amp;dentry-&gt;d_hash))
 multiline_comment|/*&n; * Lock a parent directory following the VFS locking protocol.&n; */
 r_int
 DECL|function|fh_lock_parent
@@ -124,11 +128,6 @@ op_star
 id|dchild
 )paren
 (brace
-r_int
-id|nfserr
-op_assign
-l_int|0
-suffix:semicolon
 id|fh_lock
 c_func
 (paren
@@ -139,65 +138,27 @@ multiline_comment|/*&n;&t; * Make sure the parent-&gt;child relationship still h
 r_if
 c_cond
 (paren
-id|dchild-&gt;d_parent
-op_ne
+id|nfsd_check_parent
+c_func
+(paren
 id|parent_fh-&gt;fh_dentry
-)paren
-r_goto
-id|out_not_parent
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|list_empty
-c_func
-(paren
-op_amp
-id|dchild-&gt;d_hash
+comma
+id|dchild
 )paren
 )paren
-r_goto
-id|out_not_hashed
-suffix:semicolon
-id|out
-suffix:colon
 r_return
-id|nfserr
+l_int|0
 suffix:semicolon
-id|out_not_parent
-suffix:colon
 id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;fh_lock_parent: %s/%s parent changed&bslash;n&quot;
+l_string|&quot;fh_lock_parent: %s/%s parent changed or child unhashed&bslash;n&quot;
 comma
 id|dchild-&gt;d_parent-&gt;d_name.name
 comma
 id|dchild-&gt;d_name.name
 )paren
-suffix:semicolon
-r_goto
-id|out_unlock
-suffix:semicolon
-id|out_not_hashed
-suffix:colon
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;fh_lock_parent: %s/%s unhashed&bslash;n&quot;
-comma
-id|dchild-&gt;d_parent-&gt;d_name.name
-comma
-id|dchild-&gt;d_name.name
-)paren
-suffix:semicolon
-id|out_unlock
-suffix:colon
-id|nfserr
-op_assign
-id|nfserr_noent
 suffix:semicolon
 id|fh_unlock
 c_func
@@ -205,8 +166,8 @@ c_func
 id|parent_fh
 )paren
 suffix:semicolon
-r_goto
-id|out
+r_return
+id|nfserr_noent
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Deny access to certain file systems&n; */
@@ -720,6 +681,75 @@ comma
 id|iap
 )paren
 suffix:semicolon
+multiline_comment|/* could be a &quot;touch&quot; (utimes) request where the user is not the owner but does&n;&t; * have write permission. In this case the user should be allowed to set&n;&t; * both times to the current time.  We could just assume any such SETATTR&n;&t; * is intended to set the times to &quot;now&quot;, but we do a couple of simple tests&n;&t; * to increase our confidence.&n;&t; */
+DECL|macro|BOTH_TIME_SET
+mdefine_line|#define BOTH_TIME_SET (ATTR_ATIME_SET | ATTR_MTIME_SET)
+DECL|macro|MAX_TOUCH_TIME_ERROR
+mdefine_line|#define&t;MAX_TOUCH_TIME_ERROR (30*60)
+r_if
+c_cond
+(paren
+id|err
+op_logical_and
+(paren
+id|iap-&gt;ia_valid
+op_amp
+id|BOTH_TIME_SET
+)paren
+op_eq
+id|BOTH_TIME_SET
+op_logical_and
+id|iap-&gt;ia_mtime
+op_eq
+id|iap-&gt;ia_ctime
+)paren
+(brace
+multiline_comment|/* looks good.  now just make sure time is in the right ballpark.&n;&t;     * solaris, at least, doesn&squot;t seem to care what the time request is&n;&t;     */
+id|time_t
+id|delta
+op_assign
+id|iap-&gt;ia_atime
+op_minus
+id|CURRENT_TIME
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|delta
+OL
+l_int|0
+)paren
+id|delta
+op_assign
+op_minus
+id|delta
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|delta
+OL
+id|MAX_TOUCH_TIME_ERROR
+)paren
+(brace
+multiline_comment|/* turn off ATTR_[AM]TIME_SET but leave ATTR_[AM]TIME&n;&t;&t; * this will cause notify_change to setthese times to &quot;now&quot;&n;&t;&t; */
+id|iap-&gt;ia_valid
+op_and_assign
+op_complement
+id|BOTH_TIME_SET
+suffix:semicolon
+id|err
+op_assign
+id|inode_change_ok
+c_func
+(paren
+id|inode
+comma
+id|iap
+)paren
+suffix:semicolon
+)brace
+)brace
 r_if
 c_cond
 (paren
@@ -1455,23 +1485,33 @@ id|inode
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Sync a file&n; */
+multiline_comment|/*&n; * Sync a file&n; * As this calls fsync (not fdatasync) there is no need for a write_inode&n; * after it.&n; */
 r_void
 DECL|function|nfsd_sync
 id|nfsd_sync
 c_func
 (paren
 r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
 id|file
 op_star
 id|filp
 )paren
 (brace
+id|dprintk
+c_func
+(paren
+l_string|&quot;nfsd: sync file %s&bslash;n&quot;
+comma
+id|filp-&gt;f_dentry-&gt;d_name.name
+)paren
+suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+id|filp-&gt;f_dentry-&gt;d_inode-&gt;i_sem
+)paren
+suffix:semicolon
 id|filp-&gt;f_op
 op_member_access_from_pointer
 id|fsync
@@ -1482,6 +1522,68 @@ comma
 id|filp-&gt;f_dentry
 )paren
 suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|filp-&gt;f_dentry-&gt;d_inode-&gt;i_sem
+)paren
+suffix:semicolon
+)brace
+r_void
+DECL|function|nfsd_sync_dir
+id|nfsd_sync_dir
+c_func
+(paren
+r_struct
+id|dentry
+op_star
+id|dp
+)paren
+(brace
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|dp-&gt;d_inode
+suffix:semicolon
+r_int
+(paren
+op_star
+id|fsync
+)paren
+(paren
+r_struct
+id|file
+op_star
+comma
+r_struct
+id|dentry
+op_star
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|inode-&gt;i_op-&gt;default_file_ops
+op_logical_and
+(paren
+id|fsync
+op_assign
+id|inode-&gt;i_op-&gt;default_file_ops-&gt;fsync
+)paren
+)paren
+(brace
+id|fsync
+c_func
+(paren
+l_int|NULL
+comma
+id|dp
+)paren
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; * Obtain the readahead parameters for the file&n; * specified by (dev, ino).&n; */
 r_static
@@ -2142,6 +2244,8 @@ id|ia
 suffix:semicolon
 id|kernel_cap_t
 id|saved_cap
+op_assign
+l_int|0
 suffix:semicolon
 id|ia.ia_valid
 op_assign
@@ -2317,16 +2421,8 @@ suffix:semicolon
 id|nfsd_sync
 c_func
 (paren
-id|inode
-comma
 op_amp
 id|file
-)paren
-suffix:semicolon
-id|write_inode_now
-c_func
-(paren
-id|inode
 )paren
 suffix:semicolon
 )brace
@@ -2349,7 +2445,9 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: write complete&bslash;n&quot;
+l_string|&quot;nfsd: write complete err=%d&bslash;n&quot;
+comma
+id|err
 )paren
 suffix:semicolon
 r_if
@@ -2518,6 +2616,7 @@ op_logical_neg
 id|resfhp-&gt;fh_dverified
 )paren
 (brace
+multiline_comment|/* called from nfsd_proc_mkdir, or possibly nfsd3_proc_create */
 id|dchild
 op_assign
 id|lookup_dentry
@@ -2586,6 +2685,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
+multiline_comment|/* called from nfsd_proc_create */
 id|dchild
 op_assign
 id|resfhp-&gt;fh_dentry
@@ -2596,6 +2696,8 @@ c_cond
 op_logical_neg
 id|fhp-&gt;fh_locked
 )paren
+(brace
+multiline_comment|/* not actually possible */
 id|printk
 c_func
 (paren
@@ -2607,6 +2709,15 @@ comma
 id|dentry-&gt;d_name.name
 )paren
 suffix:semicolon
+id|err
+op_assign
+op_minus
+id|EIO
+suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n;&t; * Make sure the child dentry is still negative ...&n;&t; */
 id|err
@@ -2619,10 +2730,9 @@ c_cond
 id|dchild-&gt;d_inode
 )paren
 (brace
-id|printk
+id|dprintk
 c_func
 (paren
-id|KERN_WARNING
 l_string|&quot;nfsd_create: dentry %s/%s not negative!&bslash;n&quot;
 comma
 id|dentry-&gt;d_name.name
@@ -2720,6 +2830,20 @@ id|dirp-&gt;i_op-&gt;mknod
 suffix:semicolon
 r_break
 suffix:semicolon
+r_default
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;nfsd: bad file type %o in nfsd_create&bslash;n&quot;
+comma
+id|type
+)paren
+suffix:semicolon
+id|err
+op_assign
+id|nfserr_inval
+suffix:semicolon
 )brace
 r_if
 c_cond
@@ -2784,12 +2908,20 @@ c_func
 id|fhp-&gt;fh_export
 )paren
 )paren
+(brace
+id|nfsd_sync_dir
+c_func
+(paren
+id|dentry
+)paren
+suffix:semicolon
 id|write_inode_now
 c_func
 (paren
-id|dirp
+id|dchild-&gt;d_inode
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; * Update the file handle to get the new inode info.&n;&t; */
 id|fh_update
 c_func
@@ -2892,6 +3024,8 @@ id|err
 suffix:semicolon
 id|kernel_cap_t
 id|saved_cap
+op_assign
+l_int|0
 suffix:semicolon
 id|err
 op_assign
@@ -3079,6 +3213,21 @@ c_func
 id|inode
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|EX_ISSYNC
+c_func
+(paren
+id|fhp-&gt;fh_export
+)paren
+)paren
+id|nfsd_sync_dir
+c_func
+(paren
+id|dentry
+)paren
+suffix:semicolon
 id|fh_unlock
 c_func
 (paren
@@ -3200,7 +3349,7 @@ c_func
 id|inode
 )paren
 suffix:semicolon
-multiline_comment|/* N.B. Why does this call need a get_fs()?? */
+multiline_comment|/* N.B. Why does this call need a get_fs()??&n;&t; * Remove the set_fs and watch the fireworks:-) --okir&n;&t; */
 id|oldfs
 op_assign
 id|get_fs
@@ -3504,10 +3653,10 @@ c_func
 id|fhp-&gt;fh_export
 )paren
 )paren
-id|write_inode_now
+id|nfsd_sync_dir
 c_func
 (paren
-id|dirp
+id|dentry
 )paren
 suffix:semicolon
 )brace
@@ -3643,7 +3792,8 @@ id|rqstp
 comma
 id|tfhp
 comma
-id|S_IFREG
+op_minus
+id|S_IFDIR
 comma
 id|MAY_NOP
 )paren
@@ -3852,10 +4002,10 @@ id|ffhp-&gt;fh_export
 )paren
 )paren
 (brace
-id|write_inode_now
+id|nfsd_sync_dir
 c_func
 (paren
-id|dirp
+id|ddir
 )paren
 suffix:semicolon
 id|write_inode_now
@@ -3912,9 +4062,6 @@ r_goto
 id|out
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * We need to do a check-parent every time&n; * after we have locked the parent - to verify&n; * that the parent is still our parent and&n; * that we are still hashed onto it..&n; *&n; * This is required in case two processes race&n; * on removing (or moving) the same entry: the&n; * parent lock will serialize them, but the&n; * other process will be too late..&n; *&n; * Note that this nfsd_check_parent is different&n; * than the one in linux/include/dcache_func.h.&n; */
-DECL|macro|nfsd_check_parent
-mdefine_line|#define nfsd_check_parent(dir, dentry) &bslash;&n;&t;((dir) == (dentry)-&gt;d_parent-&gt;d_inode &amp;&amp; !list_empty(&amp;dentry-&gt;d_hash))
 multiline_comment|/*&n; * This follows the model of double_lock() in the VFS.&n; */
 DECL|function|nfsd_double_down
 r_static
@@ -3950,7 +4097,7 @@ r_int
 r_int
 )paren
 id|s1
-OG
+OL
 (paren
 r_int
 r_int
@@ -4329,7 +4476,7 @@ c_cond
 id|nfsd_check_parent
 c_func
 (paren
-id|fdir
+id|fdentry
 comma
 id|odentry
 )paren
@@ -4337,7 +4484,7 @@ op_logical_and
 id|nfsd_check_parent
 c_func
 (paren
-id|tdir
+id|tdentry
 comma
 id|ndentry
 )paren
@@ -4370,16 +4517,16 @@ id|tfhp-&gt;fh_export
 )paren
 )paren
 (brace
-id|write_inode_now
+id|nfsd_sync_dir
 c_func
 (paren
-id|fdir
+id|tdentry
 )paren
 suffix:semicolon
-id|write_inode_now
+id|nfsd_sync_dir
 c_func
 (paren
-id|tdir
+id|fdentry
 )paren
 suffix:semicolon
 )brace
@@ -4662,16 +4809,6 @@ op_amp
 id|rdentry-&gt;d_inode-&gt;i_sem
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|fhp-&gt;fh_pre_mtime
-)paren
-id|fhp-&gt;fh_pre_mtime
-op_assign
-id|dirp-&gt;i_mtime
-suffix:semicolon
 id|fhp-&gt;fh_locked
 op_assign
 l_int|1
@@ -4687,7 +4824,7 @@ c_cond
 id|nfsd_check_parent
 c_func
 (paren
-id|dirp
+id|dentry
 comma
 id|rdentry
 )paren
@@ -4704,16 +4841,6 @@ id|rdentry
 suffix:semicolon
 id|rdentry-&gt;d_count
 op_decrement
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|fhp-&gt;fh_post_version
-)paren
-id|fhp-&gt;fh_post_version
-op_assign
-id|dirp-&gt;i_version
 suffix:semicolon
 id|fhp-&gt;fh_locked
 op_assign
@@ -4753,12 +4880,28 @@ c_func
 id|fhp-&gt;fh_export
 )paren
 )paren
-id|write_inode_now
+(brace
+id|down
 c_func
 (paren
-id|dirp
+op_amp
+id|dentry-&gt;d_inode-&gt;i_sem
 )paren
 suffix:semicolon
+id|nfsd_sync_dir
+c_func
+(paren
+id|dentry
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|dentry-&gt;d_inode-&gt;i_sem
+)paren
+suffix:semicolon
+)brace
 id|out
 suffix:colon
 r_return
@@ -5279,6 +5422,8 @@ id|err
 suffix:semicolon
 id|kernel_cap_t
 id|saved_cap
+op_assign
+l_int|0
 suffix:semicolon
 r_if
 c_cond

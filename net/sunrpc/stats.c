@@ -533,6 +533,11 @@ r_int
 id|issvc
 )paren
 (brace
+id|rpc_proc_init
+c_func
+(paren
+)paren
+suffix:semicolon
 id|dprintk
 c_func
 (paren

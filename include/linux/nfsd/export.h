@@ -1,11 +1,12 @@
-multiline_comment|/*&n; * include/linux/nfsd/export.h&n; * &n; * Public declarations for NFS exports. The definitions for the&n; * syscall interface are in nfsctl.h&n; *&n; * Copyright (C) 1995, 1996 Olaf Kirch &lt;okir@monad.swb.de&gt;&n; */
+multiline_comment|/*&n; * include/linux/nfsd/export.h&n; * &n; * Public declarations for NFS exports. The definitions for the&n; * syscall interface are in nfsctl.h&n; *&n; * Copyright (C) 1995-1997 Olaf Kirch &lt;okir@monad.swb.de&gt;&n; */
 macro_line|#ifndef NFSD_EXPORT_H
 DECL|macro|NFSD_EXPORT_H
 mdefine_line|#define NFSD_EXPORT_H
-macro_line|#include &lt;linux/types.h&gt;
-macro_line|#include &lt;linux/socket.h&gt;
-macro_line|#include &lt;linux/in.h&gt;
-macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;asm/types.h&gt;
+macro_line|#ifdef __KERNEL__
+macro_line|# include &lt;linux/types.h&gt;
+macro_line|# include &lt;linux/in.h&gt;
+macro_line|#endif
 multiline_comment|/*&n; * Important limits for the exports stuff.&n; */
 DECL|macro|NFSCLNT_IDMAX
 mdefine_line|#define NFSCLNT_IDMAX&t;&t;1024

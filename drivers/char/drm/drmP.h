@@ -1,9 +1,8 @@
-multiline_comment|/* drmP.h -- Private header for Direct Rendering Manager -*- linux-c -*-&n; * Created: Mon Jan  4 10:05:05 1999 by faith@precisioninsight.com&n; * Revised: Fri Aug 20 13:04:33 1999 by faith@precisioninsight.com&n; *&n; * Copyright 1999 Precision Insight, Inc., Cedar Park, Texas.&n; * All rights reserved.&n; *&n; * Permission is hereby granted, free of charge, to any person obtaining a&n; * copy of this software and associated documentation files (the &quot;Software&quot;),&n; * to deal in the Software without restriction, including without limitation&n; * the rights to use, copy, modify, merge, publish, distribute, sublicense,&n; * and/or sell copies of the Software, and to permit persons to whom the&n; * Software is furnished to do so, subject to the following conditions:&n; * &n; * The above copyright notice and this permission notice (including the next&n; * paragraph) shall be included in all copies or substantial portions of the&n; * Software.&n; * &n; * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR&n; * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&n; * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL&n; * PRECISION INSIGHT AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM, DAMAGES OR&n; * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,&n; * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER&n; * DEALINGS IN THE SOFTWARE.&n; * &n; * $PI: xc/programs/Xserver/hw/xfree86/os-support/linux/drm/generic/drmP.h,v 1.58 1999/08/30 13:05:00 faith Exp $&n; * $XFree86: xc/programs/Xserver/hw/xfree86/os-support/linux/drm/generic/drmP.h,v 1.2 1999/06/27 14:08:24 dawes Exp $&n; * &n; */
+multiline_comment|/* drmP.h -- Private header for Direct Rendering Manager -*- linux-c -*-&n; * Created: Mon Jan  4 10:05:05 1999 by faith@precisioninsight.com&n; * Revised: Mon Dec  6 16:06:49 1999 by faith@precisioninsight.com&n; *&n; * Copyright 1999 Precision Insight, Inc., Cedar Park, Texas.&n; * All rights reserved.&n; *&n; * Permission is hereby granted, free of charge, to any person obtaining a&n; * copy of this software and associated documentation files (the &quot;Software&quot;),&n; * to deal in the Software without restriction, including without limitation&n; * the rights to use, copy, modify, merge, publish, distribute, sublicense,&n; * and/or sell copies of the Software, and to permit persons to whom the&n; * Software is furnished to do so, subject to the following conditions:&n; * &n; * The above copyright notice and this permission notice (including the next&n; * paragraph) shall be included in all copies or substantial portions of the&n; * Software.&n; * &n; * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR&n; * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&n; * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL&n; * PRECISION INSIGHT AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM, DAMAGES OR&n; * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,&n; * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER&n; * DEALINGS IN THE SOFTWARE.&n; * &n; * $PI: xc/programs/Xserver/hw/xfree86/os-support/linux/drm/kernel/drmP.h,v 1.58 1999/08/30 13:05:00 faith Exp $&n; * $XFree86: xc/programs/Xserver/hw/xfree86/os-support/linux/drm/kernel/drmP.h,v 1.1 1999/09/25 14:37:59 dawes Exp $&n; * &n; */
 macro_line|#ifndef _DRM_P_H_
 DECL|macro|_DRM_P_H_
 mdefine_line|#define _DRM_P_H_
 macro_line|#ifdef __KERNEL__
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/miscdevice.h&gt;
@@ -74,12 +73,12 @@ mdefine_line|#define DRM_MEM_MAPPINGS 13
 DECL|macro|DRM_MEM_BUFLISTS
 mdefine_line|#define DRM_MEM_BUFLISTS 14
 multiline_comment|/* Backward compatibility section */
+multiline_comment|/* _PAGE_WT changed to _PAGE_PWT in 2.2.6 */
 macro_line|#ifndef _PAGE_PWT
-multiline_comment|/* The name of _PAGE_WT was changed to&n;&t;&t;&t;&t;   _PAGE_PWT in Linux 2.2.6 */
 DECL|macro|_PAGE_PWT
 mdefine_line|#define _PAGE_PWT _PAGE_WT
 macro_line|#endif
-multiline_comment|/* Wait queue declarations changes in 2.3.1 */
+multiline_comment|/* Wait queue declarations changed in 2.3.1 */
 macro_line|#ifndef DECLARE_WAITQUEUE
 DECL|macro|DECLARE_WAITQUEUE
 mdefine_line|#define DECLARE_WAITQUEUE(w,c) struct wait_queue w = { c, NULL }
@@ -93,10 +92,202 @@ suffix:semicolon
 DECL|macro|init_waitqueue_head
 mdefine_line|#define init_waitqueue_head(q) *q = NULL;
 macro_line|#endif
-DECL|macro|__drm_dummy_lock
-mdefine_line|#define __drm_dummy_lock(lock) (*(__volatile__ unsigned int *)lock)
-DECL|macro|_DRM_CAS
-mdefine_line|#define _DRM_CAS(lock,old,new,__ret)&t;&t;&t;&t;       &bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;       &bslash;&n;&t;&t;int __dummy;&t;/* Can&squot;t mark eax as clobbered */      &bslash;&n;&t;&t;__asm__ __volatile__(&t;&t;&t;&t;       &bslash;&n;&t;&t;&t;&quot;lock ; cmpxchg %4,%1&bslash;n&bslash;t&quot;&t;&t;       &bslash;&n;&t;&t;&t;&quot;setnz %0&quot;&t;&t;&t;&t;       &bslash;&n;&t;&t;&t;: &quot;=d&quot; (__ret),&t;&t;&t;&t;       &bslash;&n;&t;&t;&t;  &quot;=m&quot; (__drm_dummy_lock(lock)),&t;       &bslash;&n;&t;&t;&t;  &quot;=a&quot; (__dummy)&t;&t;&t;       &bslash;&n;&t;&t;&t;: &quot;2&quot; (old),&t;&t;&t;&t;       &bslash;&n;&t;&t;&t;  &quot;r&quot; (new));&t;&t;&t;&t;       &bslash;&n;&t;} while (0)
+multiline_comment|/* _PAGE_4M changed to _PAGE_PSE in 2.3.23 */
+macro_line|#ifndef _PAGE_PSE
+DECL|macro|_PAGE_PSE
+mdefine_line|#define _PAGE_PSE _PAGE_4M
+macro_line|#endif
+multiline_comment|/* vm_offset changed to vm_pgoff in 2.3.25 */
+macro_line|#if LINUX_VERSION_CODE &lt; 0x020319
+DECL|macro|VM_OFFSET
+mdefine_line|#define VM_OFFSET(vma) ((vma)-&gt;vm_offset)
+macro_line|#else
+DECL|macro|VM_OFFSET
+mdefine_line|#define VM_OFFSET(vma) ((vma)-&gt;vm_pgoff &lt;&lt; PAGE_SHIFT)
+macro_line|#endif
+multiline_comment|/* *_nopage return values defined in 2.3.26 */
+macro_line|#ifndef NOPAGE_SIGBUS
+DECL|macro|NOPAGE_SIGBUS
+mdefine_line|#define NOPAGE_SIGBUS 0
+macro_line|#endif
+macro_line|#ifndef NOPAGE_OOM
+DECL|macro|NOPAGE_OOM
+mdefine_line|#define NOPAGE_OOM 0
+macro_line|#endif
+multiline_comment|/* Generic cmpxchg added in 2.3.x */
+macro_line|#if CPU != 386
+macro_line|#ifndef __HAVE_ARCH_CMPXCHG
+multiline_comment|/* Include this here so that driver can be&n;                                   used with older kernels. */
+DECL|function|__cmpxchg
+r_static
+r_inline
+r_int
+r_int
+id|__cmpxchg
+c_func
+(paren
+r_volatile
+r_void
+op_star
+id|ptr
+comma
+r_int
+r_int
+id|old
+comma
+r_int
+r_int
+r_new
+comma
+r_int
+id|size
+)paren
+(brace
+r_int
+r_int
+id|prev
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|size
+)paren
+(brace
+r_case
+l_int|1
+suffix:colon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+id|LOCK_PREFIX
+l_string|&quot;cmpxchgb %b1,%2&quot;
+suffix:colon
+l_string|&quot;=a&quot;
+(paren
+id|prev
+)paren
+suffix:colon
+l_string|&quot;q&quot;
+(paren
+r_new
+)paren
+comma
+l_string|&quot;m&quot;
+(paren
+op_star
+id|__xg
+c_func
+(paren
+id|ptr
+)paren
+)paren
+comma
+l_string|&quot;0&quot;
+(paren
+id|old
+)paren
+suffix:colon
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+r_return
+id|prev
+suffix:semicolon
+r_case
+l_int|2
+suffix:colon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+id|LOCK_PREFIX
+l_string|&quot;cmpxchgw %w1,%2&quot;
+suffix:colon
+l_string|&quot;=a&quot;
+(paren
+id|prev
+)paren
+suffix:colon
+l_string|&quot;q&quot;
+(paren
+r_new
+)paren
+comma
+l_string|&quot;m&quot;
+(paren
+op_star
+id|__xg
+c_func
+(paren
+id|ptr
+)paren
+)paren
+comma
+l_string|&quot;0&quot;
+(paren
+id|old
+)paren
+suffix:colon
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+r_return
+id|prev
+suffix:semicolon
+r_case
+l_int|4
+suffix:colon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+id|LOCK_PREFIX
+l_string|&quot;cmpxchgl %1,%2&quot;
+suffix:colon
+l_string|&quot;=a&quot;
+(paren
+id|prev
+)paren
+suffix:colon
+l_string|&quot;q&quot;
+(paren
+r_new
+)paren
+comma
+l_string|&quot;m&quot;
+(paren
+op_star
+id|__xg
+c_func
+(paren
+id|ptr
+)paren
+)paren
+comma
+l_string|&quot;0&quot;
+(paren
+id|old
+)paren
+suffix:colon
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+r_return
+id|prev
+suffix:semicolon
+)brace
+r_return
+id|old
+suffix:semicolon
+)brace
+DECL|macro|cmpxchg
+mdefine_line|#define cmpxchg(ptr,o,n)&t;&t;&t;&t;&t;&t;&bslash;&n;  ((__typeof__(*(ptr)))__cmpxchg((ptr),(unsigned long)(o),&t;&t;&bslash;&n;&t;&t;&t;&t; (unsigned long)(n),sizeof(*(ptr))))
+macro_line|#endif
+macro_line|#else
+multiline_comment|/* Compiling for a 386 proper... */
+macro_line|#error DRI not supported on Intel 80386
+macro_line|#endif
 multiline_comment|/* Macros to make printk easier */
 DECL|macro|DRM_ERROR
 mdefine_line|#define DRM_ERROR(fmt, arg...) &bslash;&n;&t;printk(KERN_ERR &quot;[&quot; DRM_NAME &quot;:&quot; __FUNCTION__ &quot;] *ERROR* &quot; fmt , ##arg)
@@ -1361,6 +1552,7 @@ id|s
 )paren
 suffix:semicolon
 multiline_comment|/* Mapping support (vm.c) */
+macro_line|#if LINUX_VERSION_CODE &lt; 0x020317
 r_extern
 r_int
 r_int
@@ -1418,6 +1610,69 @@ r_int
 id|write_access
 )paren
 suffix:semicolon
+macro_line|#else
+multiline_comment|/* Return type changed in 2.3.23 */
+r_extern
+r_struct
+id|page
+op_star
+id|drm_vm_nopage
+c_func
+(paren
+r_struct
+id|vm_area_struct
+op_star
+id|vma
+comma
+r_int
+r_int
+id|address
+comma
+r_int
+id|write_access
+)paren
+suffix:semicolon
+r_extern
+r_struct
+id|page
+op_star
+id|drm_vm_shm_nopage
+c_func
+(paren
+r_struct
+id|vm_area_struct
+op_star
+id|vma
+comma
+r_int
+r_int
+id|address
+comma
+r_int
+id|write_access
+)paren
+suffix:semicolon
+r_extern
+r_struct
+id|page
+op_star
+id|drm_vm_dma_nopage
+c_func
+(paren
+r_struct
+id|vm_area_struct
+op_star
+id|vma
+comma
+r_int
+r_int
+id|address
+comma
+r_int
+id|write_access
+)paren
+suffix:semicolon
+macro_line|#endif
 r_extern
 r_void
 id|drm_vm_open
@@ -2539,6 +2794,10 @@ r_int
 id|drm_lock_transfer
 c_func
 (paren
+id|drm_device_t
+op_star
+id|dev
+comma
 id|__volatile__
 r_int
 r_int
