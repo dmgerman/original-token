@@ -2192,6 +2192,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;rtc_init: no PC rtc found&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2245,6 +2246,7 @@ multiline_comment|/*&n;&t;&t; * Standard way for sparc to print irq&squot;s is t
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;rtc: cannot register IRQ %d&bslash;n&quot;
 comma
 id|rtc_irq
@@ -2517,6 +2519,7 @@ id|guess
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;rtc: %s epoch (%lu) detected&bslash;n&quot;
 comma
 id|guess
@@ -2754,7 +2757,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-id|KERN_INFO
+id|KERN_WARNING
 l_string|&quot;rtc: lost some interrupts at %ldHz.&bslash;n&quot;
 comma
 id|freq

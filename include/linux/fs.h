@@ -1465,11 +1465,6 @@ r_struct
 id|list_head
 id|file_lock_list
 suffix:semicolon
-r_extern
-r_struct
-id|semaphore
-id|file_lock_sem
-suffix:semicolon
 macro_line|#include &lt;linux/fcntl.h&gt;
 r_extern
 r_int

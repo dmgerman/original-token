@@ -3435,6 +3435,7 @@ multiline_comment|/*&n; * This is the hard disk IRQ description. The SA_INTERRUP
 DECL|function|hd_geninit
 r_static
 r_void
+id|__init
 id|hd_geninit
 c_func
 (paren

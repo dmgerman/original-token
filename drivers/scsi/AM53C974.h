@@ -163,22 +163,10 @@ multiline_comment|/* max. sync. offset (setup), only valid if corresponding sync
 )brace
 suffix:semicolon
 DECL|macro|AM53C974
-mdefine_line|#define AM53C974 {&t;&t;&t;&t;  &bslash;&n;    proc_name:      &quot;am53c974&quot;,    &t;          &bslash;&n;    name:           &quot;AM53C974&quot;,        &t;&t;  &bslash;&n;    detect:         AM53C974_detect,   &t;&t;  &bslash;&n;    release:        AM53C974_release,&t;&t;  &bslash;&n;    info:           AM53C974_info,     &t;&t;  &bslash;&n;    command:        AM53C974_command,  &t;&t;  &bslash;&n;    queuecommand:   AM53C974_queue_command,&t;  &bslash;&n;    abort:          AM53C974_abort,    &t;&t;  &bslash;&n;    reset:          AM53C974_reset,    &t;&t;  &bslash;&n;    bios_param:     scsicam_bios_param,&t;&t;  &bslash;&n;    can_queue:      12,                 &t;  &bslash;&n;    this_id:        -1,                           &bslash;&n;    sg_tablesize:   SG_ALL,            &t;&t;  &bslash;&n;    cmd_per_lun:    1,                 &t;&t;  &bslash;&n;    use_clustering: DISABLE_CLUSTERING &t;&t;  &bslash;&n;    }
-r_void
-id|AM53C974_setup
-c_func
-(paren
-r_char
-op_star
-id|str
-comma
+mdefine_line|#define AM53C974 {&t;&t;&t;&t;  &bslash;&n;    proc_name:      &quot;am53c974&quot;,    &t;          &bslash;&n;    name:           &quot;AM53C974&quot;,        &t;&t;  &bslash;&n;    detect:         AM53C974_pci_detect,&t;  &bslash;&n;    release:        AM53C974_release,&t;&t;  &bslash;&n;    info:           AM53C974_info,     &t;&t;  &bslash;&n;    command:        AM53C974_command,  &t;&t;  &bslash;&n;    queuecommand:   AM53C974_queue_command,&t;  &bslash;&n;    abort:          AM53C974_abort,    &t;&t;  &bslash;&n;    reset:          AM53C974_reset,    &t;&t;  &bslash;&n;    bios_param:     scsicam_bios_param,&t;&t;  &bslash;&n;    can_queue:      12,                 &t;  &bslash;&n;    this_id:        -1,                           &bslash;&n;    sg_tablesize:   SG_ALL,            &t;&t;  &bslash;&n;    cmd_per_lun:    1,                 &t;&t;  &bslash;&n;    use_clustering: DISABLE_CLUSTERING &t;&t;  &bslash;&n;    }
+r_static
 r_int
-op_star
-id|ints
-)paren
-suffix:semicolon
-r_int
-id|AM53C974_detect
+id|AM53C974_pci_detect
 c_func
 (paren
 id|Scsi_Host_Template
@@ -186,6 +174,7 @@ op_star
 id|tpnt
 )paren
 suffix:semicolon
+r_static
 r_int
 id|AM53C974_release
 c_func
@@ -196,22 +185,7 @@ op_star
 id|shp
 )paren
 suffix:semicolon
-r_int
-id|AM53C974_biosparm
-c_func
-(paren
-id|Disk
-op_star
-id|disk
-comma
-r_int
-id|dev
-comma
-r_int
-op_star
-id|info_array
-)paren
-suffix:semicolon
+r_static
 r_const
 r_char
 op_star
@@ -223,6 +197,7 @@ id|Scsi_Host
 op_star
 )paren
 suffix:semicolon
+r_static
 r_int
 id|AM53C974_command
 c_func
@@ -232,6 +207,7 @@ op_star
 id|SCpnt
 )paren
 suffix:semicolon
+r_static
 r_int
 id|AM53C974_queue_command
 c_func
@@ -251,6 +227,7 @@ op_star
 )paren
 )paren
 suffix:semicolon
+r_static
 r_int
 id|AM53C974_abort
 c_func
@@ -260,6 +237,7 @@ op_star
 id|cmd
 )paren
 suffix:semicolon
+r_static
 r_int
 id|AM53C974_reset
 c_func

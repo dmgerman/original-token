@@ -93,14 +93,6 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Default IO for Dayna */
-DECL|variable|irq
-r_static
-r_int
-id|irq
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Default IRQ */
 macro_line|#endif
 multiline_comment|/*&n; *&t;COPS Autoprobe information.&n; *&t;Right now if port address is right but IRQ is not 5 this will&n; *      return a 5 no matter what since we will still get a status response.&n; *      Need one more additional check to narrow down after we have gotten&n; *      the ioaddr. But since only other possible IRQs is 3 and 4 so no real&n; *&t;hurry on this. I *STRONGLY* recommend using IRQ 5 for your card with&n; *&t;this driver.&n; * &n; *&t;This driver has 2 modes and they are: Dayna mode and Tangent mode.&n; *&t;Each mode corresponds with the type of card. It has been found&n; *&t;that there are 2 main types of cards and all other cards are&n; *&t;the same and just have different names or only have minor differences&n; *&t;such as more IO ports. As this driver is tested it will&n; *&t;become more clear on exactly what cards are supported. The driver&n; *&t;defaults to using Dayna mode. To change the drivers mode, simply&n; *&t;select Dayna or Tangent mode when configuring the kernel.&n; *&n; *      This driver should support:&n; *      TANGENT driver mode:&n; *              Tangent ATB-II, Novell NL-1000, Daystar Digital LT-200,&n; *&t;&t;COPS LT-1&n; *      DAYNA driver mode:&n; *              Dayna DL2000/DaynaTalk PC (Half Length), COPS LT-95, &n; *&t;&t;Farallon PhoneNET PC III, Farallon PhoneNET PC II&n; *&t;Other cards possibly supported mode unkown though:&n; *&t;&t;Dayna DL2000 (Full length), COPS LT/M (Micro-Channel)&n; *&n; *&t;Cards NOT supported by this driver but supported by the ltpc.c&n; *&t;driver written by Bradford W. Johnson &lt;johns393@maroon.tc.umn.edu&gt;&n; *&t;&t;Farallon PhoneNET PC&n; *&t;&t;Original Apple LocalTalk PC card&n; * &n; *      N.B.&n; *&n; *      The Daystar Digital LT200 boards do not support interrupt-driven&n; *      IO.  You must specify &squot;irq=0xff&squot; as a module parameter to invoke&n; *      polled mode.  I also believe that the port probing logic is quite&n; *      dangerous at best and certainly hopeless for a polled card.  Best to &n; *      specify both. - Steve H.&n; *&n; */
 multiline_comment|/*&n; * Zero terminated list of IO ports to probe.&n; */
@@ -3684,30 +3676,8 @@ id|net_device
 id|cops0_dev
 op_assign
 (brace
-l_string|&quot;&quot;
-comma
-multiline_comment|/* device name */
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0x0
-comma
-l_int|0
-comma
-multiline_comment|/* I/O address, IRQ */
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|NULL
-comma
+id|init
+suffix:colon
 id|cops_probe
 )brace
 suffix:semicolon

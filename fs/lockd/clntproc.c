@@ -1749,20 +1749,10 @@ op_star
 id|fl
 )paren
 (brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|nlm_get_host
 c_func
 (paren
 id|fl-&gt;fl_u.nfs_fl.host
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace
@@ -1778,11 +1768,6 @@ op_star
 id|fl
 )paren
 (brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1800,11 +1785,6 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/*&n; * LOCK: Try to create a lock&n; *&n; *&t;&t;&t;Programmer Harassment Alert&n; *&n; * When given a blocking lock request in a sync RPC call, the HPUX lockd&n; * will faithfully return LCK_BLOCKED but never cares to notify us when&n; * the lock could be granted. This way, our local process could hang&n; * around forever waiting for the callback.&n; *&n; *  Solution A:&t;Implement busy-waiting&n; *  Solution B: Use the async version of the call (NLM_LOCK_{MSG,RES})&n; *&n; * For now I am implementing solution A, because I hate the idea of&n; * re-implementing lockd for a third time in two months. The async&n; * calls shouldn&squot;t be too hard to do, however.&n; *&n; * This is one of the lovely things about standards in the NFS area:&n; * they&squot;re so soft and squishy you can&squot;t really blame HP for doing this.&n; */
 r_static

@@ -1139,14 +1139,6 @@ comma
 id|dirty_tx
 suffix:semicolon
 multiline_comment|/* The ring entries to be free()ed. */
-DECL|member|tx_full
-r_int
-r_int
-id|tx_full
-suffix:colon
-l_int|1
-suffix:semicolon
-multiline_comment|/* The Tx queue is full. */
 DECL|member|full_duplex
 r_int
 r_int
@@ -1430,6 +1422,7 @@ id|addr_len
 suffix:semicolon
 multiline_comment|/* interrupt.c */
 r_extern
+r_int
 r_int
 id|tulip_max_interrupt_work
 suffix:semicolon

@@ -36,8 +36,6 @@ macro_line|#else
 DECL|macro|DPRINTK
 mdefine_line|#define DPRINTK(fmt, args...)
 macro_line|#endif
-DECL|macro|arraysize
-mdefine_line|#define arraysize(x)    (sizeof(x)/sizeof(*(x)))
 DECL|macro|wb_64
 mdefine_line|#define wb_64(regs,reg,dat) (*(((volatile unsigned char *)regs) + reg) = dat)
 DECL|macro|rb_64
@@ -892,7 +890,7 @@ id|FB_VMODE_INTERLACED
 )brace
 suffix:semicolon
 DECL|macro|NUM_TOTAL_MODES
-mdefine_line|#define NUM_TOTAL_MODES    arraysize(cyberfb_predefined)
+mdefine_line|#define NUM_TOTAL_MODES    ARRAY_SIZE(cyberfb_predefined)
 DECL|variable|Cyberfb_inverse
 r_static
 r_int

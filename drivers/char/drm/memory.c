@@ -1633,7 +1633,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|drm_agp.allocate_memory
+id|drm_agp_p-&gt;allocate_memory
 )paren
 (brace
 r_if
@@ -1644,7 +1644,9 @@ id|handle
 op_assign
 (paren
 op_star
-id|drm_agp.allocate_memory
+(paren
+id|drm_agp_p-&gt;allocate_memory
+)paren
 )paren
 (paren
 id|pages
@@ -1766,12 +1768,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|drm_agp.free_memory
+id|drm_agp_p-&gt;free_memory
 )paren
 (brace
 (paren
 op_star
-id|drm_agp.free_memory
+(paren
+id|drm_agp_p-&gt;free_memory
+)paren
 )paren
 (paren
 id|handle
@@ -1898,15 +1902,15 @@ suffix:semicolon
 id|DRM_DEBUG
 c_func
 (paren
-l_string|&quot;drm_agp.bind_memory : %p&bslash;n&quot;
+l_string|&quot;drm_agp_p-&gt;bind_memory : %p&bslash;n&quot;
 comma
-id|drm_agp.bind_memory
+id|drm_agp_p-&gt;bind_memory
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|drm_agp.bind_memory
+id|drm_agp_p-&gt;bind_memory
 )paren
 (brace
 r_if
@@ -1918,7 +1922,9 @@ id|retcode
 op_assign
 (paren
 op_star
-id|drm_agp.bind_memory
+(paren
+id|drm_agp_p-&gt;bind_memory
+)paren
 )paren
 (paren
 id|handle
@@ -1964,7 +1970,7 @@ suffix:semicolon
 id|DRM_DEBUG
 c_func
 (paren
-l_string|&quot;drm_agp.bind_memory: retcode %d&bslash;n&quot;
+l_string|&quot;drm_agp_p-&gt;bind_memory: retcode %d&bslash;n&quot;
 comma
 id|retcode
 )paren
@@ -2044,7 +2050,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|drm_agp.unbind_memory
+id|drm_agp_p-&gt;unbind_memory
 )paren
 (brace
 r_int
@@ -2060,7 +2066,9 @@ id|retcode
 op_assign
 (paren
 op_star
-id|drm_agp.unbind_memory
+(paren
+id|drm_agp_p-&gt;unbind_memory
+)paren
 )paren
 (paren
 id|handle

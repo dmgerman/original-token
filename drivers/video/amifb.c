@@ -404,8 +404,6 @@ DECL|macro|highw
 mdefine_line|#define highw(x)&t;((u_long)(x)&gt;&gt;16 &amp; 0xffff)
 DECL|macro|loww
 mdefine_line|#define loww(x)&t;&t;((u_long)(x) &amp; 0xffff)
-DECL|macro|arraysize
-mdefine_line|#define arraysize(x)&t;(sizeof(x)/sizeof(*(x)))
 DECL|macro|VBlankOn
 mdefine_line|#define VBlankOn()&t;custom.intena = IF_SETCLR|IF_COPER
 DECL|macro|VBlankOff
@@ -1648,7 +1646,7 @@ macro_line|#endif
 )brace
 suffix:semicolon
 DECL|macro|NUM_TOTAL_MODES
-mdefine_line|#define NUM_TOTAL_MODES  arraysize(ami_modedb)
+mdefine_line|#define NUM_TOTAL_MODES  ARRAY_SIZE(ami_modedb)
 DECL|variable|__initdata
 r_static
 r_const

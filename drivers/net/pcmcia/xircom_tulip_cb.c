@@ -1902,7 +1902,7 @@ suffix:semicolon
 )brace
 id|newcsr6
 op_and_assign
-l_int|0x726cfeca
+l_int|0x726cfecb
 suffix:semicolon
 multiline_comment|/* mask out the reserved CSR6 bits that always */
 multiline_comment|/* read 0 on the Xircom cards */
@@ -7515,14 +7515,10 @@ l_int|0
 dot
 id|buffer1
 op_assign
-(paren
 id|virt_to_bus
 c_func
 (paren
 id|tp-&gt;setup_frame
-)paren
-op_plus
-l_int|4
 )paren
 suffix:semicolon
 id|tp-&gt;tx_ring

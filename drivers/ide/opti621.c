@@ -870,6 +870,7 @@ multiline_comment|/* all CPUs */
 multiline_comment|/*&n; * ide_init_opti621() is called once for each hwif found at boot.&n; */
 DECL|function|ide_init_opti621
 r_void
+id|__init
 id|ide_init_opti621
 (paren
 id|ide_hwif_t

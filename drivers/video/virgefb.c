@@ -29,8 +29,6 @@ macro_line|#else
 DECL|macro|DPRINTK
 mdefine_line|#define DPRINTK(fmt, args...)
 macro_line|#endif
-DECL|macro|arraysize
-mdefine_line|#define arraysize(x)    (sizeof(x)/sizeof(*(x)))
 macro_line|#if 1
 DECL|macro|vgawb_3d
 mdefine_line|#define vgawb_3d(reg,dat) &bslash;&n;&t;if (cv3d_on_zorro2) { &bslash;&n;&t;*((unsigned char volatile *)((Cyber_vcode_switch_base) + 0x04)) = &bslash;&n;&t;(0x01 &amp; 0xffff); asm volatile (&quot;nop&quot;); &bslash;&n;&t;} &bslash;&n;&t;(*((unsigned char *)(CyberVGARegs + (reg ^ 3))) = dat); &bslash;&n;&t;if (cv3d_on_zorro2) { &bslash;&n;&t;*((unsigned char volatile *)((Cyber_vcode_switch_base) + 0x04)) = &bslash;&n;&t;(0x02 &amp; 0xffff); asm volatile (&quot;nop&quot;); &bslash;&n;&t;}
@@ -1452,7 +1450,7 @@ id|FB_VMODE_NONINTERLACED
 )brace
 suffix:semicolon
 DECL|macro|NUM_TOTAL_MODES
-mdefine_line|#define NUM_TOTAL_MODES    arraysize(virgefb_predefined)
+mdefine_line|#define NUM_TOTAL_MODES    ARRAY_SIZE(virgefb_predefined)
 DECL|variable|Cyberfb_inverse
 r_static
 r_int

@@ -318,6 +318,13 @@ l_int|0
 )braket
 suffix:semicolon
 multiline_comment|/* per-chip data structure for each chip */
+DECL|member|im_name
+r_const
+r_char
+op_star
+id|im_name
+suffix:semicolon
+multiline_comment|/* inter_module name for cmdset_setup */
 )brace
 suffix:semicolon
 DECL|macro|MAX_CFI_CHIPS

@@ -1,4 +1,4 @@
-multiline_comment|/* radio-cadet.c - A video4linux driver for the ADS Cadet AM/FM Radio Card &n; *&n; * by Fred Gleason &lt;fredg@wava.com&gt;&n; * Version 0.3.3&n; *&n; * (Loosely) based on code for the Aztech radio card by&n; *&n; * Russell Kroll    (rkroll@exploits.org)&n; * Quay Ly&n; * Donald Song&n; * Jason Lewis      (jlewis@twilight.vtc.vsc.edu) &n; * Scott McGrath    (smcgrath@twilight.vtc.vsc.edu)&n; * William McGrath  (wmcgrath@twilight.vtc.vsc.edu)&n; *&n;*/
+multiline_comment|/* radio-cadet.c - A video4linux driver for the ADS Cadet AM/FM Radio Card &n; *&n; * by Fred Gleason &lt;fredg@wava.com&gt;&n; * Version 0.3.3&n; *&n; * (Loosely) based on code for the Aztech radio card by&n; *&n; * Russell Kroll    (rkroll@exploits.org)&n; * Quay Ly&n; * Donald Song&n; * Jason Lewis      (jlewis@twilight.vtc.vsc.edu) &n; * Scott McGrath    (smcgrath@twilight.vtc.vsc.edu)&n; * William McGrath  (wmcgrath@twilight.vtc.vsc.edu)&n; *&n; * History:&n; * 2000-04-29&t;Russell Kroll &lt;rkroll@exploits.org&gt;&n; *&t;&t;Added ISAPnP detection for Linux 2.3/2.4&n; *&n;*/
 macro_line|#include &lt;linux/module.h&gt;&t;/* Modules &t;&t;&t;*/
 macro_line|#include &lt;linux/init.h&gt;&t;&t;/* Initdata&t;&t;&t;*/
 macro_line|#include &lt;linux/ioport.h&gt;&t;/* check_region, request_region&t;*/
@@ -104,6 +104,33 @@ id|cadet_lock
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifndef MODULE
+r_static
+r_int
+id|cadet_probe
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_ISAPNP
+macro_line|#include &lt;linux/isapnp.h&gt;
+DECL|variable|dev
+r_struct
+id|pci_dev
+op_star
+id|dev
+suffix:semicolon
+r_static
+r_int
+id|isapnp_cadet_probe
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; * Signal Strength Threshold Values&n; * The V4L API spec does not define any particular unit for the signal &n; * strength value.  These values are in microvolts of RF at the tuner&squot;s input.&n; */
 DECL|variable|sigtable
 r_static
@@ -2388,7 +2415,133 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
-macro_line|#ifndef MODULE
+macro_line|#ifdef CONFIG_ISAPNP
+DECL|function|isapnp_cadet_probe
+r_static
+r_int
+id|isapnp_cadet_probe
+c_func
+(paren
+r_void
+)paren
+(brace
+id|dev
+op_assign
+id|isapnp_find_dev
+(paren
+l_int|NULL
+comma
+id|ISAPNP_VENDOR
+c_func
+(paren
+l_char|&squot;M&squot;
+comma
+l_char|&squot;S&squot;
+comma
+l_char|&squot;M&squot;
+)paren
+comma
+id|ISAPNP_FUNCTION
+c_func
+(paren
+l_int|0x0c24
+)paren
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|dev
+)paren
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev
+op_member_access_from_pointer
+id|prepare
+c_func
+(paren
+id|dev
+)paren
+OL
+l_int|0
+)paren
+r_return
+op_minus
+id|EAGAIN
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|dev-&gt;resource
+(braket
+l_int|0
+)braket
+dot
+id|flags
+op_amp
+id|IORESOURCE_IO
+)paren
+)paren
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev
+op_member_access_from_pointer
+id|activate
+c_func
+(paren
+id|dev
+)paren
+OL
+l_int|0
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;radio-cadet: isapnp configure failed (out of resources?)&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
+)brace
+id|io
+op_assign
+id|dev-&gt;resource
+(braket
+l_int|0
+)braket
+dot
+id|start
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;radio-cadet: ISAPnP reports card at %#x&bslash;n&quot;
+comma
+id|io
+)paren
+suffix:semicolon
+r_return
+id|io
+suffix:semicolon
+)brace
+macro_line|#endif&t;&t;/* CONFIG_ISAPNP */
+macro_line|#ifdef MODULE
 DECL|function|cadet_probe
 r_static
 r_int
@@ -2474,7 +2627,7 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#endif
+macro_line|#endif&t;&t;/* MODULE */
 DECL|function|cadet_init
 r_static
 r_int
@@ -2485,14 +2638,36 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifndef MODULE        
+macro_line|#ifdef CONFIG_ISAPNP
+id|io
+op_assign
+id|isapnp_cadet_probe
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|io
+OL
+l_int|0
+)paren
+r_return
+(paren
+id|io
+)paren
+suffix:semicolon
+macro_line|#else
+macro_line|#ifndef MODULE&t;&t;/* only probe on non-ISAPnP monolithic compiles */
 id|io
 op_assign
 id|cadet_probe
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif
+macro_line|#endif /* MODULE */
+macro_line|#endif /* CONFIG_ISAPNP */
 r_if
 c_cond
 (paren
@@ -2630,6 +2805,21 @@ comma
 l_int|2
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_ISAPNP
+r_if
+c_cond
+(paren
+id|dev
+)paren
+id|dev
+op_member_access_from_pointer
+id|deactivate
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 DECL|variable|cadet_init
 id|module_init

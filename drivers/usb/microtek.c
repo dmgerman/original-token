@@ -1056,6 +1056,12 @@ id|desc-&gt;lock.count
 )paren
 (brace
 multiline_comment|/* Is there a function to check if the semaphore is locked? */
+id|set_current_state
+c_func
+(paren
+id|TASK_INTERRUPTIBLE
+)paren
+suffix:semicolon
 id|schedule_timeout
 c_func
 (paren

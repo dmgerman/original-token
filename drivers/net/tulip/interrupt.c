@@ -8,6 +8,7 @@ id|tulip_rx_copybreak
 suffix:semicolon
 DECL|variable|tulip_max_interrupt_work
 r_int
+r_int
 id|tulip_max_interrupt_work
 suffix:semicolon
 DECL|function|tulip_refill_rx
@@ -844,15 +845,12 @@ op_assign
 id|TX_RING_SIZE
 suffix:semicolon
 r_int
+r_int
 id|work_count
 op_assign
 id|tulip_max_interrupt_work
 suffix:semicolon
-id|tp-&gt;nir
-op_increment
-suffix:semicolon
-r_do
-(brace
+multiline_comment|/* Let&squot;s see whether the interrupt really is for us */
 id|csr5
 op_assign
 id|inl
@@ -863,6 +861,28 @@ op_plus
 id|CSR5
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|csr5
+op_amp
+(paren
+id|NormalIntr
+op_or
+id|AbnormalIntr
+)paren
+)paren
+op_eq
+l_int|0
+)paren
+r_return
+suffix:semicolon
+id|tp-&gt;nir
+op_increment
+suffix:semicolon
+r_do
+(brace
 multiline_comment|/* Acknowledge all of the current interrupt sources ASAP. */
 id|outl
 c_func
@@ -901,23 +921,6 @@ op_plus
 id|CSR5
 )paren
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|csr5
-op_amp
-(paren
-id|NormalIntr
-op_or
-id|AbnormalIntr
-)paren
-)paren
-op_eq
-l_int|0
-)paren
-r_break
 suffix:semicolon
 r_if
 c_cond
@@ -1254,15 +1257,13 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;%s: Out-of-sync dirty pointer, %d vs. %d, full=%d.&bslash;n&quot;
+l_string|&quot;%s: Out-of-sync dirty pointer, %d vs. %d.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
 id|dirty_tx
 comma
 id|tp-&gt;cur_tx
-comma
-id|tp-&gt;tx_full
 )paren
 suffix:semicolon
 id|dirty_tx
@@ -1274,8 +1275,6 @@ macro_line|#endif
 r_if
 c_cond
 (paren
-id|tp-&gt;tx_full
-op_logical_and
 id|tp-&gt;cur_tx
 op_minus
 id|dirty_tx
@@ -1284,19 +1283,12 @@ id|TX_RING_SIZE
 op_minus
 l_int|2
 )paren
-(brace
-multiline_comment|/* The ring is no longer full, clear tbusy. */
-id|tp-&gt;tx_full
-op_assign
-l_int|0
-suffix:semicolon
 id|netif_wake_queue
 c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
-)brace
 id|tp-&gt;dirty_tx
 op_assign
 id|dirty_tx
@@ -1649,7 +1641,7 @@ op_amp
 id|HAS_INTR_MITIGATION
 )paren
 (brace
-multiline_comment|/* Josip Loncaric at ICASE did extensive experimentation &n;&t;&t;&t;to develop a good interrupt mitigation setting.*/
+multiline_comment|/* Josip Loncaric at ICASE did extensive experimentation&n;&t;&t;&t;to develop a good interrupt mitigation setting.*/
 id|outl
 c_func
 (paren
@@ -1663,7 +1655,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* Mask all interrupting sources, set timer to &n;&t;&t;&t;&t;re-enable. */
+multiline_comment|/* Mask all interrupting sources, set timer to&n;&t;&t;&t;&t;re-enable. */
 id|outl
 c_func
 (paren
@@ -1699,13 +1691,42 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+id|work_count
+op_decrement
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|work_count
+op_eq
+l_int|0
+)paren
+r_break
+suffix:semicolon
+id|csr5
+op_assign
+id|inl
+c_func
+(paren
+id|ioaddr
+op_plus
+id|CSR5
+)paren
+suffix:semicolon
 )brace
 r_while
 c_loop
 (paren
-id|work_count
-op_decrement
-OG
+(paren
+id|csr5
+op_amp
+(paren
+id|NormalIntr
+op_or
+id|AbnormalIntr
+)paren
+)paren
+op_ne
 l_int|0
 )paren
 suffix:semicolon
@@ -1715,7 +1736,7 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-multiline_comment|/* check if we card is in suspend mode */
+multiline_comment|/* check if the card is in suspend mode */
 id|entry
 op_assign
 id|tp-&gt;dirty_rx

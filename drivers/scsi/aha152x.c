@@ -1,4 +1,4 @@
-multiline_comment|/* aha152x.c -- Adaptec AHA-152x driver&n; * Author: J&#xfffd;rgen E. Fischer, fischer@norbit.de&n; * Copyright 1993-1999 J&#xfffd;rgen E. Fischer&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; *&n; * $Id: aha152x.c,v 2.1 2000/05/17 16:23:17 fischer Exp fischer $&n; *&n; * $Log: aha152x.c,v $&n; * Revision 2.1  2000/05/17 16:23:17  fischer&n; * - signature update&n; * - fix for data out w/o scatter gather&n; *&n; * Revision 2.0  1999/12/25 15:07:32  fischer&n; * - interrupt routine completly reworked&n; * - basic support for new eh code&n; *&n; * Revision 1.21  1999/11/10 23:46:36  fischer&n; * - default to synchronous operation&n; * - synchronous negotiation fixed&n; * - added timeout to loops&n; * - debugging output can be controlled through procfs&n; *&n; * Revision 1.20  1999/11/07 18:37:31  fischer&n; * - synchronous operation works&n; * - resid support for sg driver&n; *&n; * Revision 1.19  1999/11/02 22:39:59  fischer&n; * - moved leading comments to README.aha152x&n; * - new additional module parameters&n; * - updates for 2.3&n; * - support for the Tripace TC1550 controller&n; * - interrupt handling changed&n; *&n; * Revision 1.18  1996/09/07 20:10:40  fischer&n; * - fixed can_queue handling (multiple outstanding commands working again)&n; *&n; * Revision 1.17  1996/08/17 16:05:14  fischer&n; * - biosparam improved&n; * - interrupt verification&n; * - updated documentation&n; * - cleanups&n; *&n; * Revision 1.16  1996/06/09 00:04:56  root&n; * - added configuration symbols for insmod (aha152x/aha152x1)&n; *&n; * Revision 1.15  1996/04/30 14:52:06  fischer&n; * - proc info fixed&n; * - support for extended translation for &gt;1GB disks&n; *&n; * Revision 1.14  1996/01/17  15:11:20  fischer&n; * - fixed lockup in MESSAGE IN phase after reconnection&n; *&n; * Revision 1.13  1996/01/09  02:15:53  fischer&n; * - some cleanups&n; * - moved request_irq behind controller initialization&n; *   (to avoid spurious interrupts)&n; *&n; * Revision 1.12  1995/12/16  12:26:07  fischer&n; * - barrier()s added&n; * - configurable RESET delay added&n; *&n; * Revision 1.11  1995/12/06  21:18:35  fischer&n; * - some minor updates&n; *&n; * Revision 1.10  1995/07/22  19:18:45  fischer&n; * - support for 2 controllers&n; * - started synchronous data transfers (not working yet)&n; *&n; * Revision 1.9  1995/03/18  09:20:24  root&n; * - patches for PCMCIA and modules&n; *&n; * Revision 1.8  1995/01/21  22:07:19  root&n; * - snarf_region =&gt; request_region&n; * - aha152x_intr interface change&n; *&n; * Revision 1.7  1995/01/02  23:19:36  root&n; * - updated COMMAND_SIZE to cmd_len&n; * - changed sti() to restore_flags()&n; * - fixed some #ifdef which generated warnings&n; *&n; * Revision 1.6  1994/11/24  20:35:27  root&n; * - problem with odd number of bytes in fifo fixed&n; *&n; * Revision 1.5  1994/10/30  14:39:56  root&n; * - abort code fixed&n; * - debugging improved&n; *&n; * Revision 1.4  1994/09/12  11:33:01  root&n; * - irqaction to request_irq&n; * - abortion updated&n; *&n; * Revision 1.3  1994/08/04  13:53:05  root&n; * - updates for mid-level-driver changes&n; * - accept unexpected BUSFREE phase as error condition&n; * - parity check now configurable&n; *&n; * Revision 1.2  1994/07/03  12:56:36  root&n; * - cleaned up debugging code&n; * - more tweaking on reset delays&n; * - updated abort/reset code (pretty untested...)&n; *&n; * Revision 1.1  1994/05/28  21:18:49  root&n; * - update for mid-level interface change (abort-reset)&n; * - delays after resets adjusted for some slow devices&n; *&n; * Revision 1.0  1994/03/25  12:52:00  root&n; * - Fixed &quot;more data than expected&quot; problem&n; * - added new BIOS signatures&n; *&n; * Revision 0.102  1994/01/31  20:44:12  root&n; * - minor changes in insw/outsw handling&n; *&n; * Revision 0.101  1993/12/13  01:16:27  root&n; * - fixed STATUS phase (non-GOOD stati were dropped sometimes;&n; *   fixes problems with CD-ROM sector size detection &amp; media change)&n; *&n; * Revision 0.100  1993/12/10  16:58:47  root&n; * - fix for unsuccessful selections in case of non-continuous id assignments&n; *   on the scsi bus.&n; *&n; * Revision 0.99  1993/10/24  16:19:59  root&n; * - fixed DATA IN (rare read errors gone)&n; *&n; * Revision 0.98  1993/10/17  12:54:44  root&n; * - fixed some recent fixes (shame on me)&n; * - moved initialization of scratch area to aha152x_queue&n; *&n; * Revision 0.97  1993/10/09  18:53:53  root&n; * - DATA IN fixed. Rarely left data in the fifo.&n; *&n; * Revision 0.96  1993/10/03  00:53:59  root&n; * - minor changes on DATA IN&n; *&n; * Revision 0.95  1993/09/24  10:36:01  root&n; * - change handling of MSGI after reselection&n; * - fixed sti/cli&n; * - minor changes&n; *&n; * Revision 0.94  1993/09/18  14:08:22  root&n; * - fixed bug in multiple outstanding command code&n; * - changed detection&n; * - support for kernel command line configuration&n; * - reset corrected&n; * - changed message handling&n; *&n; * Revision 0.93  1993/09/15  20:41:19  root&n; * - fixed bugs with multiple outstanding commands&n; *&n; * Revision 0.92  1993/09/13  02:46:33  root&n; * - multiple outstanding commands work (no problems with IBM drive)&n; *&n; * Revision 0.91  1993/09/12  20:51:46  root&n; * added multiple outstanding commands&n; * (some problem with this $%&amp;? IBM device remain)&n; *&n; * Revision 0.9  1993/09/12  11:11:22  root&n; * - corrected auto-configuration&n; * - changed the auto-configuration (added some &squot;#define&squot;s)&n; * - added support for dis-/reconnection&n; *&n; * Revision 0.8  1993/09/06  23:09:39  root&n; * - added support for the drive activity light&n; * - minor changes&n; *&n; * Revision 0.7  1993/09/05  14:30:15  root&n; * - improved phase detection&n; * - now using the new snarf_region code of 0.99pl13&n; *&n; * Revision 0.6  1993/09/02  11:01:38  root&n; * first public release; added some signatures and biosparam()&n; *&n; * Revision 0.5  1993/08/30  10:23:30  root&n; * fixed timing problems with my IBM drive&n; *&n; * Revision 0.4  1993/08/29  14:06:52  root&n; * fixed some problems with timeouts due incomplete commands&n; *&n; * Revision 0.3  1993/08/28  15:55:03  root&n; * writing data works too.  mounted and worked on a dos partition&n; *&n; * Revision 0.2  1993/08/27  22:42:07  root&n; * reading data works.  Mounted a msdos partition.&n; *&n; * Revision 0.1  1993/08/25  13:38:30  root&n; * first &quot;damn thing doesn&squot;t work&quot; version&n; *&n; * Revision 0.0  1993/08/14  19:54:25  root&n; * empty function bodies; detect() works.&n; *&n; *&n; **************************************************************************&n; &n; see README.aha152x for configuration details&n;&n; **************************************************************************/
+multiline_comment|/* aha152x.c -- Adaptec AHA-152x driver&n; * Author: J&#xfffd;rgen E. Fischer, fischer@norbit.de&n; * Copyright 1993-1999 J&#xfffd;rgen E. Fischer&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; *&n; * $Id: aha152x.c,v 2.3 2000/11/04 16:40:26 fischer Exp $&n; *&n; * $Log: aha152x.c,v $&n; * Revision 2.3  2000/11/04 16:40:26  fischer&n; * - handle data overruns&n; * - extend timeout for data phases&n; *&n; * Revision 2.2  2000/08/08 19:54:53  fischer&n; * - minor changes&n; *&n; * Revision 2.1  2000/05/17 16:23:17  fischer&n; * - signature update&n; * - fix for data out w/o scatter gather&n; *&n; * Revision 2.0  1999/12/25 15:07:32  fischer&n; * - interrupt routine completly reworked&n; * - basic support for new eh code&n; *&n; * Revision 1.21  1999/11/10 23:46:36  fischer&n; * - default to synchronous operation&n; * - synchronous negotiation fixed&n; * - added timeout to loops&n; * - debugging output can be controlled through procfs&n; *&n; * Revision 1.20  1999/11/07 18:37:31  fischer&n; * - synchronous operation works&n; * - resid support for sg driver&n; *&n; * Revision 1.19  1999/11/02 22:39:59  fischer&n; * - moved leading comments to README.aha152x&n; * - new additional module parameters&n; * - updates for 2.3&n; * - support for the Tripace TC1550 controller&n; * - interrupt handling changed&n; *&n; * Revision 1.18  1996/09/07 20:10:40  fischer&n; * - fixed can_queue handling (multiple outstanding commands working again)&n; *&n; * Revision 1.17  1996/08/17 16:05:14  fischer&n; * - biosparam improved&n; * - interrupt verification&n; * - updated documentation&n; * - cleanups&n; *&n; * Revision 1.16  1996/06/09 00:04:56  root&n; * - added configuration symbols for insmod (aha152x/aha152x1)&n; *&n; * Revision 1.15  1996/04/30 14:52:06  fischer&n; * - proc info fixed&n; * - support for extended translation for &gt;1GB disks&n; *&n; * Revision 1.14  1996/01/17  15:11:20  fischer&n; * - fixed lockup in MESSAGE IN phase after reconnection&n; *&n; * Revision 1.13  1996/01/09  02:15:53  fischer&n; * - some cleanups&n; * - moved request_irq behind controller initialization&n; *   (to avoid spurious interrupts)&n; *&n; * Revision 1.12  1995/12/16  12:26:07  fischer&n; * - barrier()s added&n; * - configurable RESET delay added&n; *&n; * Revision 1.11  1995/12/06  21:18:35  fischer&n; * - some minor updates&n; *&n; * Revision 1.10  1995/07/22  19:18:45  fischer&n; * - support for 2 controllers&n; * - started synchronous data transfers (not working yet)&n; *&n; * Revision 1.9  1995/03/18  09:20:24  root&n; * - patches for PCMCIA and modules&n; *&n; * Revision 1.8  1995/01/21  22:07:19  root&n; * - snarf_region =&gt; request_region&n; * - aha152x_intr interface change&n; *&n; * Revision 1.7  1995/01/02  23:19:36  root&n; * - updated COMMAND_SIZE to cmd_len&n; * - changed sti() to restore_flags()&n; * - fixed some #ifdef which generated warnings&n; *&n; * Revision 1.6  1994/11/24  20:35:27  root&n; * - problem with odd number of bytes in fifo fixed&n; *&n; * Revision 1.5  1994/10/30  14:39:56  root&n; * - abort code fixed&n; * - debugging improved&n; *&n; * Revision 1.4  1994/09/12  11:33:01  root&n; * - irqaction to request_irq&n; * - abortion updated&n; *&n; * Revision 1.3  1994/08/04  13:53:05  root&n; * - updates for mid-level-driver changes&n; * - accept unexpected BUSFREE phase as error condition&n; * - parity check now configurable&n; *&n; * Revision 1.2  1994/07/03  12:56:36  root&n; * - cleaned up debugging code&n; * - more tweaking on reset delays&n; * - updated abort/reset code (pretty untested...)&n; *&n; * Revision 1.1  1994/05/28  21:18:49  root&n; * - update for mid-level interface change (abort-reset)&n; * - delays after resets adjusted for some slow devices&n; *&n; * Revision 1.0  1994/03/25  12:52:00  root&n; * - Fixed &quot;more data than expected&quot; problem&n; * - added new BIOS signatures&n; *&n; * Revision 0.102  1994/01/31  20:44:12  root&n; * - minor changes in insw/outsw handling&n; *&n; * Revision 0.101  1993/12/13  01:16:27  root&n; * - fixed STATUS phase (non-GOOD stati were dropped sometimes;&n; *   fixes problems with CD-ROM sector size detection &amp; media change)&n; *&n; * Revision 0.100  1993/12/10  16:58:47  root&n; * - fix for unsuccessful selections in case of non-continuous id assignments&n; *   on the scsi bus.&n; *&n; * Revision 0.99  1993/10/24  16:19:59  root&n; * - fixed DATA IN (rare read errors gone)&n; *&n; * Revision 0.98  1993/10/17  12:54:44  root&n; * - fixed some recent fixes (shame on me)&n; * - moved initialization of scratch area to aha152x_queue&n; *&n; * Revision 0.97  1993/10/09  18:53:53  root&n; * - DATA IN fixed. Rarely left data in the fifo.&n; *&n; * Revision 0.96  1993/10/03  00:53:59  root&n; * - minor changes on DATA IN&n; *&n; * Revision 0.95  1993/09/24  10:36:01  root&n; * - change handling of MSGI after reselection&n; * - fixed sti/cli&n; * - minor changes&n; *&n; * Revision 0.94  1993/09/18  14:08:22  root&n; * - fixed bug in multiple outstanding command code&n; * - changed detection&n; * - support for kernel command line configuration&n; * - reset corrected&n; * - changed message handling&n; *&n; * Revision 0.93  1993/09/15  20:41:19  root&n; * - fixed bugs with multiple outstanding commands&n; *&n; * Revision 0.92  1993/09/13  02:46:33  root&n; * - multiple outstanding commands work (no problems with IBM drive)&n; *&n; * Revision 0.91  1993/09/12  20:51:46  root&n; * added multiple outstanding commands&n; * (some problem with this $%&amp;? IBM device remain)&n; *&n; * Revision 0.9  1993/09/12  11:11:22  root&n; * - corrected auto-configuration&n; * - changed the auto-configuration (added some &squot;#define&squot;s)&n; * - added support for dis-/reconnection&n; *&n; * Revision 0.8  1993/09/06  23:09:39  root&n; * - added support for the drive activity light&n; * - minor changes&n; *&n; * Revision 0.7  1993/09/05  14:30:15  root&n; * - improved phase detection&n; * - now using the new snarf_region code of 0.99pl13&n; *&n; * Revision 0.6  1993/09/02  11:01:38  root&n; * first public release; added some signatures and biosparam()&n; *&n; * Revision 0.5  1993/08/30  10:23:30  root&n; * fixed timing problems with my IBM drive&n; *&n; * Revision 0.4  1993/08/29  14:06:52  root&n; * fixed some problems with timeouts due incomplete commands&n; *&n; * Revision 0.3  1993/08/28  15:55:03  root&n; * writing data works too.  mounted and worked on a dos partition&n; *&n; * Revision 0.2  1993/08/27  22:42:07  root&n; * reading data works.  Mounted a msdos partition.&n; *&n; * Revision 0.1  1993/08/25  13:38:30  root&n; * first &quot;damn thing doesn&squot;t work&quot; version&n; *&n; * Revision 0.0  1993/08/14  19:54:25  root&n; * empty function bodies; detect() works.&n; *&n; *&n; **************************************************************************&n; &n; see README.aha152x for configuration details&n;&n; **************************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#if defined(PCMCIA)
 DECL|macro|MODULE
@@ -43,7 +43,7 @@ mdefine_line|#define DEBUG_DEFAULT debug_eh
 DECL|macro|DPRINTK
 mdefine_line|#define DPRINTK(when,msgs...) &bslash;&n;&t;do { if(HOSTDATA(shpnt)-&gt;debug &amp; (when)) printk(msgs); } while(0)
 DECL|macro|DO_LOCK
-mdefine_line|#define DO_LOCK(flags)&t;&bslash;&n;&t;do { &bslash;&n;&t;&t;if(QLOCK.lock) { &bslash;&n;&t;&t;&t;DPRINTK(debug_intr, DEBUG_LEAD &quot;(%s:%d) already locked at %s:%d&bslash;n&quot;, CMDINFO(CURRENT_SC), __FUNCTION__, __LINE__, QLOCKER, QLOCKERL); &bslash;&n;&t;&t;} &bslash;&n;&t;&t;DPRINTK(debug_locks, DEBUG_LEAD &quot;(%s:%d) locking&bslash;n&quot;, CMDINFO(CURRENT_SC), __FUNCTION__, __LINE__); &bslash;&n;&t;&t;spin_lock_irqsave(&amp;QLOCK,flags); &bslash;&n;&t;&t;DPRINTK(debug_locks, DEBUG_LEAD &quot;(%s:%d) locked&bslash;n&quot;, CMDINFO(CURRENT_SC), __FUNCTION__, __LINE__); &bslash;&n;&t;&t;QLOCKER=__FUNCTION__; &bslash;&n;&t;&t;QLOCKERL=__LINE__; &bslash;&n;&t;} while(0)
+mdefine_line|#define DO_LOCK(flags)&t;&bslash;&n;&t;do { &bslash;&n;&t;&t;if(spin_is_locked(&amp;QLOCK)) { &bslash;&n;&t;&t;&t;DPRINTK(debug_intr, DEBUG_LEAD &quot;(%s:%d) already locked at %s:%d&bslash;n&quot;, CMDINFO(CURRENT_SC), __FUNCTION__, __LINE__, QLOCKER, QLOCKERL); &bslash;&n;&t;&t;} &bslash;&n;&t;&t;DPRINTK(debug_locks, DEBUG_LEAD &quot;(%s:%d) locking&bslash;n&quot;, CMDINFO(CURRENT_SC), __FUNCTION__, __LINE__); &bslash;&n;&t;&t;spin_lock_irqsave(&amp;QLOCK,flags); &bslash;&n;&t;&t;DPRINTK(debug_locks, DEBUG_LEAD &quot;(%s:%d) locked&bslash;n&quot;, CMDINFO(CURRENT_SC), __FUNCTION__, __LINE__); &bslash;&n;&t;&t;QLOCKER=__FUNCTION__; &bslash;&n;&t;&t;QLOCKERL=__LINE__; &bslash;&n;&t;} while(0)
 DECL|macro|DO_UNLOCK
 mdefine_line|#define DO_UNLOCK(flags)&t;&bslash;&n;&t;do { &bslash;&n;&t;&t;DPRINTK(debug_locks, DEBUG_LEAD &quot;(%s:%d) unlocking (locked at %s:%d)&bslash;n&quot;, CMDINFO(CURRENT_SC), __FUNCTION__, __LINE__, QLOCKER, QLOCKERL); &bslash;&n;&t;&t;spin_unlock_irqrestore(&amp;QLOCK,flags); &bslash;&n;&t;&t;DPRINTK(debug_locks, DEBUG_LEAD &quot;(%s:%d) unlocked&bslash;n&quot;, CMDINFO(CURRENT_SC), __FUNCTION__, __LINE__); &bslash;&n;&t;&t;QLOCKER=&quot;(not locked)&quot;; &bslash;&n;&t;&t;QLOCKERL=0; &bslash;&n;&t;} while(0)
 macro_line|#else
@@ -70,8 +70,6 @@ DECL|macro|CMDINFO
 mdefine_line|#define CMDINFO(cmd) &bslash;&n;&t;&t;&t;(cmd) ? ((cmd)-&gt;host-&gt;host_no) : -1, &bslash;&n;                        (cmd) ? ((cmd)-&gt;target &amp; 0x0f) : -1, &bslash;&n;&t;&t;&t;(cmd) ? ((cmd)-&gt;lun &amp; 0x07) : -1
 DECL|macro|DELAY_DEFAULT
 mdefine_line|#define DELAY_DEFAULT 100
-DECL|macro|DEBUG_DEFAULT
-mdefine_line|#define DEBUG_DEFAULT 0
 multiline_comment|/* possible irq range */
 macro_line|#if defined(PCMCIA)
 DECL|macro|IRQ_MIN
@@ -437,13 +435,11 @@ l_int|1
 comma
 l_int|1
 comma
-l_int|1
+l_int|0
 comma
 id|DELAY_DEFAULT
 comma
 l_int|0
-comma
-id|DEBUG_DEFAULT
 )brace
 suffix:semicolon
 id|MODULE_PARM
@@ -480,13 +476,11 @@ l_int|1
 comma
 l_int|1
 comma
-l_int|1
+l_int|0
 comma
 id|DELAY_DEFAULT
 comma
 l_int|0
-comma
-id|DEBUG_DEFAULT
 )brace
 suffix:semicolon
 macro_line|#else
@@ -553,11 +547,13 @@ l_int|1
 comma
 l_int|1
 comma
-l_int|0
+l_int|1
 comma
 id|DELAY_DEFAULT
 comma
 l_int|0
+comma
+id|DEBUG_DEFAULT
 )brace
 suffix:semicolon
 id|MODULE_PARM
@@ -594,11 +590,13 @@ l_int|1
 comma
 l_int|1
 comma
-l_int|0
+l_int|1
 comma
 id|DELAY_DEFAULT
 comma
 l_int|0
+comma
+id|DEBUG_DEFAULT
 )brace
 suffix:semicolon
 macro_line|#endif /* !defined(AHA152X_DEBUG) */
@@ -3196,6 +3194,7 @@ dot
 id|io_port
 )paren
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -3242,6 +3241,7 @@ op_assign
 id|override
 suffix:semicolon
 )brace
+)brace
 macro_line|#endif
 macro_line|#if defined(SETUP1)
 r_if
@@ -3276,6 +3276,7 @@ dot
 id|io_port
 )paren
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -3321,6 +3322,7 @@ op_increment
 op_assign
 id|override
 suffix:semicolon
+)brace
 )brace
 macro_line|#endif
 macro_line|#if defined(MODULE)
@@ -10835,6 +10837,32 @@ comma
 id|MSGOLEN
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|SYNCNEG
+op_eq
+l_int|1
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|INFO_LEAD
+l_string|&quot;Synchronous Data Transfer Request was rejected&bslash;n&quot;
+comma
+id|CMDINFO
+c_func
+(paren
+id|CURRENT_SC
+)paren
+)paren
+suffix:semicolon
+id|SYNCNEG
+op_assign
+l_int|2
+suffix:semicolon
+)brace
 )brace
 id|MSGO_I
 op_assign
@@ -11347,7 +11375,7 @@ id|the_time
 op_assign
 id|jiffies
 op_plus
-l_int|100
+l_int|1000
 suffix:semicolon
 r_while
 c_loop
@@ -11507,6 +11535,14 @@ id|FIFOSTAT
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|CURRENT_SC-&gt;SCp.this_residual
+OG
+l_int|0
+)paren
+(brace
 r_while
 c_loop
 (paren
@@ -11679,15 +11715,13 @@ id|CURRENT_SC-&gt;SCp.buffer-&gt;length
 suffix:semicolon
 )brace
 )brace
+)brace
+r_else
 r_if
 c_cond
 (paren
 id|fifodata
 OG
-l_int|0
-op_logical_and
-id|CURRENT_SC-&gt;SCp.this_residual
-op_eq
 l_int|0
 )paren
 (brace
@@ -11712,7 +11746,68 @@ id|FIFOSTAT
 )paren
 )paren
 suffix:semicolon
-r_break
+id|SETPORT
+c_func
+(paren
+id|DMACNTRL0
+comma
+id|ENDMA
+op_or
+id|_8BIT
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|fifodata
+OG
+l_int|0
+)paren
+(brace
+r_int
+id|data
+suffix:semicolon
+id|data
+op_assign
+id|GETPORT
+c_func
+(paren
+id|DATAPORT
+)paren
+suffix:semicolon
+id|DPRINTK
+c_func
+(paren
+id|debug_datai
+comma
+id|DEBUG_LEAD
+l_string|&quot;data=%02x&bslash;n&quot;
+comma
+id|CMDINFO
+c_func
+(paren
+id|CURRENT_SC
+)paren
+comma
+id|data
+)paren
+suffix:semicolon
+id|fifodata
+op_decrement
+suffix:semicolon
+id|DATA_LEN
+op_increment
+suffix:semicolon
+)brace
+id|SETPORT
+c_func
+(paren
+id|DMACNTRL0
+comma
+id|ENDMA
+op_or
+id|_8BIT
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -12207,7 +12302,7 @@ id|the_time
 op_assign
 id|jiffies
 op_plus
-l_int|100
+l_int|1000
 suffix:semicolon
 r_while
 c_loop

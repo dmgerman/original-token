@@ -1954,6 +1954,11 @@ id|user_fxsr_struct
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* mxcsr bit 6 and 31-16 must be zero for security reasons */
+id|tsk-&gt;thread.i387.fxsave.mxcsr
+op_and_assign
+l_int|0xffbf
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

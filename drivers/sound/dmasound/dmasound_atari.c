@@ -1,5 +1,6 @@
 multiline_comment|/*&n; *  linux/drivers/sound/dmasound/dmasound_atari.c&n; *&n; *  Atari TT and Falcon DMA Sound Driver&n; *&n; *  See linux/drivers/sound/dmasound/dmasound_core.c for copyright and credits&n; */
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/soundcard.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -4433,7 +4434,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|arraysize
+id|ARRAY_SIZE
 c_func
 (paren
 id|freq
@@ -4921,7 +4922,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|arraysize
+id|ARRAY_SIZE
 c_func
 (paren
 id|freq

@@ -3633,6 +3633,7 @@ macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA */
 multiline_comment|/*&n; * We allow the BM-DMA driver only work on enabled interfaces.&n; */
 DECL|function|ide_dmacapable_via82cxxx
 r_void
+id|__init
 id|ide_dmacapable_via82cxxx
 c_func
 (paren

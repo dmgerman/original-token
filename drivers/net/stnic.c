@@ -349,18 +349,6 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|load_8390_module
-(paren
-l_string|&quot;stnic.c&quot;
-)paren
-)paren
-r_return
-op_minus
-id|ENOSYS
-suffix:semicolon
 multiline_comment|/* New style probing API */
 id|dev
 op_assign
@@ -1296,5 +1284,5 @@ c_func
 id|stnic_probe
 )paren
 suffix:semicolon
-multiline_comment|/* No cleanup routine - if there were one, it should do a:&n;   unload_8390_module()&n;*/
+multiline_comment|/* No cleanup routine. */
 eof

@@ -49,12 +49,6 @@ id|io
 (braket
 id|NUM_UNITS
 )braket
-op_assign
-(brace
-l_int|0
-comma
-l_int|0
-)brace
 suffix:semicolon
 DECL|variable|irq
 r_static
@@ -63,12 +57,6 @@ id|irq
 (braket
 id|NUM_UNITS
 )braket
-op_assign
-(brace
-l_int|0
-comma
-l_int|0
-)brace
 suffix:semicolon
 DECL|variable|xcvr
 r_static
@@ -77,12 +65,6 @@ id|xcvr
 (braket
 id|NUM_UNITS
 )braket
-op_assign
-(brace
-l_int|0
-comma
-l_int|0
-)brace
 suffix:semicolon
 multiline_comment|/* The data transfer mode. */
 multiline_comment|/* Operational parameters that are set at compile time. */
@@ -1606,12 +1588,14 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
+r_int
+id|ret
+suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
 multiline_comment|/* The interrupt line is turned off (tri-stated) when the device isn&squot;t in&n;&t;   use.  That&squot;s especially important for &quot;attached&quot; interfaces where the&n;&t;   port or interrupt may be shared. */
-r_if
-c_cond
-(paren
+id|ret
+op_assign
 id|request_irq
 c_func
 (paren
@@ -1622,17 +1606,21 @@ id|atp_interrupt
 comma
 l_int|0
 comma
-l_string|&quot;ATP Ethernet&quot;
+id|dev-&gt;name
 comma
 id|dev
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
 )paren
 (brace
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
-op_minus
-id|EAGAIN
+id|ret
 suffix:semicolon
 )brace
 id|hardware_init

@@ -1,21 +1,30 @@
 multiline_comment|/* ne.c: A general non-shared-memory NS8390 ethernet driver for linux. */
-multiline_comment|/*&n;    Written 1992-94 by Donald Becker.&n;&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.&n;&n;    This software may be used and distributed according to the terms&n;    of the GNU Public License, incorporated herein by reference.&n;&n;    The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;    Center of Excellence in Space Data and Information Sciences&n;        Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;    This driver should work with many programmed-I/O 8390-based ethernet&n;    boards.  Currently it supports the NE1000, NE2000, many clones,&n;    and some Cabletron products.&n;&n;    Changelog:&n;&n;    Paul Gortmaker&t;: use ENISR_RDC to monitor Tx PIO uploads, made&n;&t;&t;&t;  sanity checks and bad clone support optional.&n;    Paul Gortmaker&t;: new reset code, reset card after probe at boot.&n;    Paul Gortmaker&t;: multiple card support for module users.&n;    Paul Gortmaker&t;: Support for PCI ne2k clones, similar to lance.c&n;    Paul Gortmaker&t;: Allow users with bad cards to avoid full probe.&n;    Paul Gortmaker&t;: PCI probe changes, more PCI cards supported.&n;    rjohnson@analogic.com : Changed init order so an interrupt will only&n;    occur after memory is allocated for dev-&gt;priv. Deallocated memory&n;    last in cleanup_modue()&n;    Richard Guenther    : Added support for ISAPnP cards&n;    &n;*/
+multiline_comment|/*&n;    Written 1992-94 by Donald Becker.&n;&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.&n;&n;    This software may be used and distributed according to the terms&n;    of the GNU Public License, incorporated herein by reference.&n;&n;    The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;    Center of Excellence in Space Data and Information Sciences&n;        Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;    This driver should work with many programmed-I/O 8390-based ethernet&n;    boards.  Currently it supports the NE1000, NE2000, many clones,&n;    and some Cabletron products.&n;&n;    Changelog:&n;&n;    Paul Gortmaker&t;: use ENISR_RDC to monitor Tx PIO uploads, made&n;&t;&t;&t;  sanity checks and bad clone support optional.&n;    Paul Gortmaker&t;: new reset code, reset card after probe at boot.&n;    Paul Gortmaker&t;: multiple card support for module users.&n;    Paul Gortmaker&t;: Support for PCI ne2k clones, similar to lance.c&n;    Paul Gortmaker&t;: Allow users with bad cards to avoid full probe.&n;    Paul Gortmaker&t;: PCI probe changes, more PCI cards supported.&n;    rjohnson@analogic.com : Changed init order so an interrupt will only&n;    occur after memory is allocated for dev-&gt;priv. Deallocated memory&n;    last in cleanup_modue()&n;    Richard Guenther    : Added support for ISAPnP cards&n;    Paul Gortmaker&t;: Discontinued PCI support - use ne2k-pci.c instead.&n;&n;*/
 multiline_comment|/* Routines for the NatSemi-based designs (NE[12]000). */
-DECL|variable|version
+DECL|variable|version1
 r_static
 r_const
 r_char
-op_star
-id|version
+id|version1
+(braket
+)braket
 op_assign
-l_string|&quot;ne.c:v1.10 9/23/94 Donald Becker (becker@cesdis.gsfc.nasa.gov)&bslash;n&quot;
+l_string|&quot;ne.c:v1.10 9/23/94 Donald Becker (becker@scyld.com)&bslash;n&quot;
+suffix:semicolon
+DECL|variable|version2
+r_static
+r_const
+r_char
+id|version2
+(braket
+)braket
+op_assign
+l_string|&quot;Last modified Nov 1, 2000 by Paul Gortmaker&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/isapnp.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
@@ -60,102 +69,6 @@ l_int|0x380
 comma
 l_int|0
 )brace
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_PCI
-multiline_comment|/* Ack! People are making PCI ne2000 clones! Oh the horror, the horror... */
-DECL|member|vendor
-DECL|member|dev_id
-DECL|member|name
-r_static
-r_struct
-(brace
-r_int
-r_int
-id|vendor
-comma
-id|dev_id
-suffix:semicolon
-r_char
-op_star
-id|name
-suffix:semicolon
-)brace
-DECL|variable|__initdata
-id|pci_clone_list
-(braket
-)braket
-id|__initdata
-op_assign
-(brace
-(brace
-id|PCI_VENDOR_ID_REALTEK
-comma
-id|PCI_DEVICE_ID_REALTEK_8029
-comma
-l_string|&quot;Realtek 8029&quot;
-)brace
-comma
-(brace
-id|PCI_VENDOR_ID_WINBOND2
-comma
-id|PCI_DEVICE_ID_WINBOND2_89C940
-comma
-l_string|&quot;Winbond 89C940&quot;
-)brace
-comma
-(brace
-id|PCI_VENDOR_ID_COMPEX
-comma
-id|PCI_DEVICE_ID_COMPEX_RL2000
-comma
-l_string|&quot;Compex ReadyLink 2000&quot;
-)brace
-comma
-(brace
-id|PCI_VENDOR_ID_KTI
-comma
-id|PCI_DEVICE_ID_KTI_ET32P2
-comma
-l_string|&quot;KTI ET32P2&quot;
-)brace
-comma
-(brace
-id|PCI_VENDOR_ID_NETVIN
-comma
-id|PCI_DEVICE_ID_NETVIN_NV5000SC
-comma
-l_string|&quot;NetVin NV5000&quot;
-)brace
-comma
-(brace
-id|PCI_VENDOR_ID_VIA
-comma
-id|PCI_DEVICE_ID_VIA_82C926
-comma
-l_string|&quot;VIA 82C926 Amazon&quot;
-)brace
-comma
-(brace
-id|PCI_VENDOR_ID_SURECOM
-comma
-id|PCI_DEVICE_ID_SURECOM_NE34
-comma
-l_string|&quot;SureCom NE34&quot;
-)brace
-comma
-(brace
-l_int|0
-comma
-)brace
-)brace
-suffix:semicolon
-DECL|variable|probe_pci
-r_static
-r_int
-id|probe_pci
-op_assign
-l_int|1
 suffix:semicolon
 macro_line|#endif
 DECL|member|vendor
@@ -441,6 +354,36 @@ l_int|0x6c
 comma
 multiline_comment|/* Broken Advantech MoBo */
 (brace
+l_string|&quot;REALTEK&quot;
+comma
+l_string|&quot;RTL8019&quot;
+comma
+(brace
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_int|0xe8
+)brace
+)brace
+comma
+multiline_comment|/* no-name with Realtek chip */
+(brace
+l_string|&quot;LCS-8834&quot;
+comma
+l_string|&quot;LCS-8836&quot;
+comma
+(brace
+l_int|0x04
+comma
+l_int|0x04
+comma
+l_int|0x37
+)brace
+)brace
+comma
+multiline_comment|/* ShinyNet (SET) */
+(brace
 l_int|0
 comma
 )brace
@@ -466,15 +409,6 @@ DECL|macro|NESM_START_PG
 mdefine_line|#define NESM_START_PG&t;0x40&t;/* First page of TX buffer */
 DECL|macro|NESM_STOP_PG
 mdefine_line|#define NESM_STOP_PG&t;0x80&t;/* Last page +1 of RX ring */
-multiline_comment|/* Non-zero only if the current card is a PCI with BIOS-set IRQ. */
-DECL|variable|pci_irq_line
-r_static
-r_int
-r_int
-id|pci_irq_line
-op_assign
-l_int|0
-suffix:semicolon
 r_int
 id|ne_probe
 c_func
@@ -510,19 +444,6 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PCI
-r_static
-r_int
-id|ne_probe_pci
-c_func
-(paren
-r_struct
-id|net_device
-op_star
-id|dev
-)paren
-suffix:semicolon
-macro_line|#endif
 r_static
 r_int
 id|ne_open
@@ -624,7 +545,6 @@ id|start_page
 suffix:semicolon
 "&f;"
 multiline_comment|/*  Probe for various non-shared-memory ethercards.&n;&n;   NEx000-clone boards have a Station Address PROM (SAPROM) in the packet&n;   buffer memory space.  NE2000 clones have 0x57,0x57 in bytes 0x0e,0x0f of&n;   the SAPROM, while other supposed NE2000 clones must be detected by their&n;   SA prefix.&n;&n;   Reading the SAPROM from a word-wide card with the 8390 set in byte-wide&n;   mode results in doubled values, which can be detected and compensated for.&n;&n;   The probe is also responsible for initializing the card and filling&n;   in the &squot;dev&squot; and &squot;ei_status&squot; structures.&n;&n;   We use the minimum memory size for some ethercard product lines, iff we can&squot;t&n;   distinguish models.  You can increase the packet buffer size by setting&n;   PACKETBUF_MEMSIZE.  Reported Cabletron packet buffer locations are:&n;&t;E1010   starts at 0x100 and ends at 0x2000.&n;&t;E1010-x starts at 0x100 and ends at 0x8000. (&quot;-x&quot; means &quot;more memory&quot;)&n;&t;E2010&t; starts at 0x100 and ends at 0x4000.&n;&t;E2010-x starts at 0x100 and ends at 0xffff.  */
-multiline_comment|/*&n; * Note that at boot, this probe only picks up one card at a time, even for&n; * multiple PCI ne2k cards. Use &quot;ether=0,0,eth1&quot; if you have a second PCI&n; * ne2k card.  This keeps things consistent regardless of the bus type of&n; * the card.&n; */
 DECL|function|ne_probe
 r_int
 id|__init
@@ -637,6 +557,7 @@ op_star
 id|dev
 )paren
 (brace
+r_int
 r_int
 id|base_addr
 op_assign
@@ -678,32 +599,6 @@ r_return
 op_minus
 id|ENXIO
 suffix:semicolon
-macro_line|#ifdef CONFIG_PCI
-multiline_comment|/* Then look for any installed PCI clones */
-r_if
-c_cond
-(paren
-id|probe_pci
-op_logical_and
-id|pci_present
-c_func
-(paren
-)paren
-op_logical_and
-(paren
-id|ne_probe_pci
-c_func
-(paren
-id|dev
-)paren
-op_eq
-l_int|0
-)paren
-)paren
-r_return
-l_int|0
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Then look for any installed ISAPnP clones */
 r_if
 c_cond
@@ -757,19 +652,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|check_region
-c_func
-(paren
-id|ioaddr
-comma
-id|NE_IO_EXTENT
-)paren
-)paren
-r_continue
-suffix:semicolon
-r_if
-c_cond
-(paren
 id|ne_probe1
 c_func
 (paren
@@ -790,210 +672,6 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_PCI
-DECL|function|ne_probe_pci
-r_static
-r_int
-id|__init
-id|ne_probe_pci
-c_func
-(paren
-r_struct
-id|net_device
-op_star
-id|dev
-)paren
-(brace
-r_int
-id|i
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|pci_clone_list
-(braket
-id|i
-)braket
-dot
-id|vendor
-op_ne
-l_int|0
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-r_struct
-id|pci_dev
-op_star
-id|pdev
-op_assign
-l_int|NULL
-suffix:semicolon
-r_int
-r_int
-id|pci_ioaddr
-op_assign
-l_int|0
-suffix:semicolon
-r_while
-c_loop
-(paren
-(paren
-id|pdev
-op_assign
-id|pci_find_device
-c_func
-(paren
-id|pci_clone_list
-(braket
-id|i
-)braket
-dot
-id|vendor
-comma
-id|pci_clone_list
-(braket
-id|i
-)braket
-dot
-id|dev_id
-comma
-id|pdev
-)paren
-)paren
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|pci_enable_device
-c_func
-(paren
-id|pdev
-)paren
-)paren
-r_continue
-suffix:semicolon
-id|pci_ioaddr
-op_assign
-id|pci_resource_start
-(paren
-id|pdev
-comma
-l_int|0
-)paren
-suffix:semicolon
-multiline_comment|/* Avoid already found cards from previous calls */
-r_if
-c_cond
-(paren
-id|check_region
-c_func
-(paren
-id|pci_ioaddr
-comma
-id|NE_IO_EXTENT
-)paren
-)paren
-r_continue
-suffix:semicolon
-id|pci_irq_line
-op_assign
-id|pdev-&gt;irq
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|pci_irq_line
-)paren
-r_break
-suffix:semicolon
-multiline_comment|/* Found it */
-)brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|pdev
-)paren
-r_continue
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;ne.c: PCI BIOS reports %s at i/o %#x, irq %d.&bslash;n&quot;
-comma
-id|pci_clone_list
-(braket
-id|i
-)braket
-dot
-id|name
-comma
-id|pci_ioaddr
-comma
-id|pci_irq_line
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;*&bslash;n* Use of the PCI-NE2000 driver with this card is recommended!&bslash;n*&bslash;n&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ne_probe1
-c_func
-(paren
-id|dev
-comma
-id|pci_ioaddr
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-multiline_comment|/* Shouldn&squot;t happen. */
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;ne.c: Probe of PCI card at %#x failed.&bslash;n&quot;
-comma
-id|pci_ioaddr
-)paren
-suffix:semicolon
-id|pci_irq_line
-op_assign
-l_int|0
-suffix:semicolon
-r_return
-op_minus
-id|ENXIO
-suffix:semicolon
-)brace
-id|pci_irq_line
-op_assign
-l_int|0
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-r_return
-op_minus
-id|ENODEV
-suffix:semicolon
-)brace
-macro_line|#endif  /* CONFIG_PCI */
 DECL|function|ne_probe_isapnp
 r_static
 r_int
@@ -1094,7 +772,32 @@ id|idev
 )paren
 r_continue
 suffix:semicolon
-id|pci_irq_line
+multiline_comment|/* if no irq, search for next */
+r_if
+c_cond
+(paren
+id|idev-&gt;irq_resource
+(braket
+l_int|0
+)braket
+dot
+id|start
+op_eq
+l_int|0
+)paren
+r_continue
+suffix:semicolon
+multiline_comment|/* found it */
+id|dev-&gt;base_addr
+op_assign
+id|idev-&gt;resource
+(braket
+l_int|0
+)braket
+dot
+id|start
+suffix:semicolon
+id|dev-&gt;irq
 op_assign
 id|idev-&gt;irq_resource
 (braket
@@ -1103,16 +806,24 @@ l_int|0
 dot
 id|start
 suffix:semicolon
-multiline_comment|/* if no irq, search for next */
-r_if
-c_cond
+id|printk
+c_func
 (paren
-op_logical_neg
-id|pci_irq_line
+id|KERN_INFO
+l_string|&quot;ne.c: ISAPnP reports %s at i/o %#lx, irq %d.&bslash;n&quot;
+comma
+id|isapnp_clone_list
+(braket
+id|i
+)braket
+dot
+id|name
+comma
+id|dev-&gt;base_addr
+comma
+id|dev-&gt;irq
 )paren
-r_continue
 suffix:semicolon
-multiline_comment|/* found it */
 r_if
 c_cond
 (paren
@@ -1121,12 +832,7 @@ c_func
 (paren
 id|dev
 comma
-id|idev-&gt;resource
-(braket
-l_int|0
-)braket
-dot
-id|start
+id|dev-&gt;base_addr
 )paren
 op_ne
 l_int|0
@@ -1139,12 +845,7 @@ c_func
 id|KERN_ERR
 l_string|&quot;ne.c: Probe of ISAPnP card at %#lx failed.&bslash;n&quot;
 comma
-id|idev-&gt;resource
-(braket
-l_int|0
-)braket
-dot
-id|start
+id|dev-&gt;base_addr
 )paren
 suffix:semicolon
 r_return
@@ -1170,24 +871,6 @@ op_logical_neg
 id|idev
 )paren
 r_continue
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;ne.c: ISAPnP reports %s at i/o %#lx, irq %d.&bslash;n&quot;
-comma
-id|isapnp_clone_list
-(braket
-id|i
-)braket
-dot
-id|name
-comma
-id|dev-&gt;base_addr
-comma
-id|dev-&gt;irq
-)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -1252,12 +935,8 @@ id|bad_card
 suffix:semicolon
 r_int
 id|reg0
-op_assign
-id|inb_p
-c_func
-(paren
-id|ioaddr
-)paren
+comma
+id|ret
 suffix:semicolon
 r_static
 r_int
@@ -1268,14 +947,46 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+id|request_region
+c_func
+(paren
+id|ioaddr
+comma
+id|NE_IO_EXTENT
+comma
+id|dev-&gt;name
+)paren
+)paren
+r_return
+op_minus
+id|EBUSY
+suffix:semicolon
+id|reg0
+op_assign
+id|inb_p
+c_func
+(paren
+id|ioaddr
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|reg0
 op_eq
 l_int|0xFF
 )paren
-r_return
+(brace
+id|ret
+op_assign
 op_minus
 id|ENODEV
 suffix:semicolon
+r_goto
+id|err_out
+suffix:semicolon
+)brace
 multiline_comment|/* Do a preliminary verification that we have a 8390. */
 (brace
 r_int
@@ -1369,9 +1080,13 @@ l_int|0x0d
 )paren
 suffix:semicolon
 multiline_comment|/* Restore the old values. */
-r_return
+id|ret
+op_assign
 op_minus
 id|ENODEV
+suffix:semicolon
+r_goto
+id|err_out
 suffix:semicolon
 )brace
 )brace
@@ -1388,7 +1103,14 @@ l_int|0
 id|printk
 c_func
 (paren
-id|version
+id|KERN_INFO
+l_string|&quot;%s&quot;
+id|KERN_INFO
+l_string|&quot;%s&quot;
+comma
+id|version1
+comma
+id|version2
 )paren
 suffix:semicolon
 id|printk
@@ -1496,9 +1218,13 @@ c_func
 l_string|&quot; not found (no reset ack).&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
+id|ret
+op_assign
 op_minus
 id|ENODEV
+suffix:semicolon
+r_goto
+id|err_out
 suffix:semicolon
 )brace
 )brace
@@ -1734,7 +1460,6 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/* At this point, wordlength *only* tells us if the SA_prom is doubled&n;&t;   up or not because some broken PCI cards don&squot;t respect the byte-wide&n;&t;   request in program_seq above, and hence don&squot;t have doubled up values.&n;&t;   These broken cards would otherwise be detected as an ne1000.  */
 r_if
 c_cond
 (paren
@@ -1742,6 +1467,7 @@ id|wordlength
 op_eq
 l_int|2
 )paren
+(brace
 r_for
 c_loop
 (paren
@@ -1768,28 +1494,6 @@ op_plus
 id|i
 )braket
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|pci_irq_line
-op_logical_or
-id|ioaddr
-op_ge
-l_int|0x400
-)paren
-id|wordlength
-op_assign
-l_int|2
-suffix:semicolon
-multiline_comment|/* Catch broken PCI cards mentioned above. */
-r_if
-c_cond
-(paren
-id|wordlength
-op_eq
-l_int|2
-)paren
-(brace
 multiline_comment|/* We must set the 8390 for word mode. */
 id|outb_p
 c_func
@@ -2079,9 +1783,13 @@ l_int|15
 )braket
 )paren
 suffix:semicolon
-r_return
+id|ret
+op_assign
 op_minus
 id|ENXIO
+suffix:semicolon
+r_goto
+id|err_out
 suffix:semicolon
 )brace
 macro_line|#else
@@ -2091,21 +1799,16 @@ c_func
 l_string|&quot; not found.&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
+id|ret
+op_assign
 op_minus
 id|ENXIO
 suffix:semicolon
+r_goto
+id|err_out
+suffix:semicolon
 macro_line|#endif
 )brace
-r_if
-c_cond
-(paren
-id|pci_irq_line
-)paren
-id|dev-&gt;irq
-op_assign
-id|pci_irq_line
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2114,10 +1817,13 @@ OL
 l_int|2
 )paren
 (brace
-id|autoirq_setup
+r_int
+r_int
+id|cookie
+op_assign
+id|probe_irq_on
 c_func
 (paren
-l_int|0
 )paren
 suffix:semicolon
 id|outb_p
@@ -2182,10 +1888,10 @@ suffix:semicolon
 multiline_comment|/* Mask it again. */
 id|dev-&gt;irq
 op_assign
-id|autoirq_report
+id|probe_irq_off
 c_func
 (paren
-l_int|0
+id|cookie
 )paren
 suffix:semicolon
 r_if
@@ -2230,9 +1936,13 @@ c_func
 l_string|&quot; failed to detect IRQ line.&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
+id|ret
+op_assign
 op_minus
 id|EAGAIN
+suffix:semicolon
+r_goto
+id|err_out
 suffix:semicolon
 )brace
 multiline_comment|/* Allocate dev-&gt;priv and fill in 8390 specific dev fields. */
@@ -2251,15 +1961,17 @@ id|printk
 l_string|&quot; unable to get memory for dev-&gt;priv.&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
+id|ret
+op_assign
 op_minus
 id|ENOMEM
 suffix:semicolon
+r_goto
+id|err_out
+suffix:semicolon
 )brace
 multiline_comment|/* Snarf the interrupt now.  There&squot;s no point in waiting since we cannot&n;&t;   share and the board will usually be enabled. */
-(brace
-r_int
-id|irqval
+id|ret
 op_assign
 id|request_irq
 c_func
@@ -2268,11 +1980,6 @@ id|dev-&gt;irq
 comma
 id|ei_interrupt
 comma
-id|pci_irq_line
-ques
-c_cond
-id|SA_SHIRQ
-suffix:colon
 l_int|0
 comma
 id|name
@@ -2283,47 +1990,25 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|irqval
+id|ret
 )paren
 (brace
 id|printk
 (paren
-l_string|&quot; unable to get IRQ %d (irqval=%d).&bslash;n&quot;
+l_string|&quot; unable to get IRQ %d (errno=%d).&bslash;n&quot;
 comma
 id|dev-&gt;irq
 comma
-id|irqval
+id|ret
 )paren
 suffix:semicolon
-id|kfree
-c_func
-(paren
-id|dev-&gt;priv
-)paren
+r_goto
+id|err_out_kfree
 suffix:semicolon
-id|dev-&gt;priv
-op_assign
-l_int|NULL
-suffix:semicolon
-r_return
-op_minus
-id|EAGAIN
-suffix:semicolon
-)brace
 )brace
 id|dev-&gt;base_addr
 op_assign
 id|ioaddr
-suffix:semicolon
-id|request_region
-c_func
-(paren
-id|ioaddr
-comma
-id|NE_IO_EXTENT
-comma
-id|name
-)paren
 suffix:semicolon
 r_for
 c_loop
@@ -2455,6 +2140,31 @@ l_int|0
 suffix:semicolon
 r_return
 l_int|0
+suffix:semicolon
+id|err_out_kfree
+suffix:colon
+id|kfree
+c_func
+(paren
+id|dev-&gt;priv
+)paren
+suffix:semicolon
+id|dev-&gt;priv
+op_assign
+l_int|NULL
+suffix:semicolon
+id|err_out
+suffix:colon
+id|release_region
+c_func
+(paren
+id|ioaddr
+comma
+id|NE_IO_EXTENT
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 DECL|function|ne_open
@@ -3698,16 +3408,6 @@ id|MAX_NE_CARDS
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PCI
-id|MODULE_PARM
-c_func
-(paren
-id|probe_pci
-comma
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* This is set up so that no ISA autoprobe takes place. We can&squot;t guarantee&n;that the ne2k probe is the last 8390 based probe to take place (as it&n;is at boot) and so the probe will get confused by any other 8390 cards.&n;ISA device autoprobes on a running machine are not recommended anyway. */
 DECL|function|init_module
 r_int
@@ -3723,19 +3423,6 @@ comma
 id|found
 op_assign
 l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|load_8390_module
-c_func
-(paren
-l_string|&quot;ne.c&quot;
-)paren
-)paren
-r_return
-op_minus
-id|ENOSYS
 suffix:semicolon
 r_for
 c_loop
@@ -3846,12 +3533,7 @@ id|printk
 c_func
 (paren
 id|KERN_NOTICE
-l_string|&quot;ne.c: No PCI cards found. Use &bslash;&quot;io=0xNNN&bslash;&quot; value(s) for ISA cards.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|unload_8390_module
-c_func
-(paren
+l_string|&quot;ne.c: You must supply &bslash;&quot;io=0xNNN&bslash;&quot; value(s) for ISA cards.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -3969,11 +3651,6 @@ id|priv
 suffix:semicolon
 )brace
 )brace
-id|unload_8390_module
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 macro_line|#endif /* MODULE */
 "&f;"

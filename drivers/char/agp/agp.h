@@ -469,8 +469,6 @@ macro_line|#ifndef min
 DECL|macro|min
 mdefine_line|#define min(a,b)&t;(((a)&lt;(b))?(a):(b))
 macro_line|#endif
-DECL|macro|arraysize
-mdefine_line|#define arraysize(x)            (sizeof(x)/sizeof(*(x)))
 DECL|macro|AGPGART_MODULE_NAME
 mdefine_line|#define AGPGART_MODULE_NAME&t;&quot;agpgart&quot;
 DECL|macro|PFX

@@ -8052,7 +8052,6 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*--------------------------------------------------------------------*/
-macro_line|#ifdef CONFIG_SCSI_IBMMCA
 DECL|function|internal_ibmmca_scsi_setup
 r_void
 id|internal_ibmmca_scsi_setup
@@ -8422,7 +8421,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#endif
 multiline_comment|/*--------------------------------------------------------------------*/
 DECL|function|ibmmca_getinfo
 r_static

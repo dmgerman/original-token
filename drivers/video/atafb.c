@@ -42,8 +42,6 @@ DECL|macro|SWITCH_SND7
 mdefine_line|#define SWITCH_SND7 0x80
 DECL|macro|SWITCH_NONE
 mdefine_line|#define SWITCH_NONE 0x00
-DECL|macro|arraysize
-mdefine_line|#define arraysize(x)&t;&t;&t;(sizeof(x)/sizeof(*(x)))
 DECL|macro|up
 mdefine_line|#define up(x, r) (((x) + (r) - 1) &amp; ~((r)-1))
 DECL|variable|default_par
@@ -1994,7 +1992,7 @@ r_static
 r_int
 id|num_atafb_predefined
 op_assign
-id|arraysize
+id|ARRAY_SIZE
 c_func
 (paren
 id|atafb_predefined

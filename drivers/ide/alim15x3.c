@@ -3689,6 +3689,7 @@ suffix:semicolon
 )brace
 DECL|function|ide_dmacapable_ali15x3
 r_void
+id|__init
 id|ide_dmacapable_ali15x3
 (paren
 id|ide_hwif_t

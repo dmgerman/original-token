@@ -1571,10 +1571,6 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
-DECL|macro|module_map
-mdefine_line|#define module_map      vmalloc
-DECL|macro|module_unmap
-mdefine_line|#define module_unmap    vfree
 r_extern
 r_int
 r_int

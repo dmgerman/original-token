@@ -3279,6 +3279,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|socket-&gt;cb_irq
+op_logical_and
 id|request_irq
 c_func
 (paren

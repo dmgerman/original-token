@@ -2271,7 +2271,7 @@ op_ne
 l_int|1
 op_logical_or
 id|ifcom-&gt;bNumEndpoints
-op_ne
+OL
 l_int|1
 )paren
 r_continue

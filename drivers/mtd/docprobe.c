@@ -7,7 +7,6 @@ multiline_comment|/* DOC_PASSIVE_PROBE:&n;   In order to ensure that the BIOS ch
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#include &lt;asm/errno.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -94,30 +93,6 @@ l_int|0
 suffix:semicolon
 macro_line|#else 
 macro_line|#warning Unknown architecture for DiskOnChip. No default probe locations defined
-macro_line|#endif
-macro_line|#ifdef CONFIG_MTD_DOC2000
-r_extern
-r_void
-id|DoC2k_init
-c_func
-(paren
-r_struct
-id|mtd_info
-op_star
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_MTD_DOC2001
-r_extern
-r_void
-id|DoCMil_init
-c_func
-(paren
-r_struct
-id|mtd_info
-op_star
-)paren
-suffix:semicolon
 macro_line|#endif
 multiline_comment|/* doccheck: Probe a given memory window to see if there&squot;s a DiskOnChip present */
 DECL|function|doccheck
@@ -442,6 +417,18 @@ id|name
 op_assign
 id|namebuf
 suffix:semicolon
+r_char
+op_star
+id|im_funcname
+op_assign
+l_int|NULL
+suffix:semicolon
+r_char
+op_star
+id|im_modname
+op_assign
+l_int|NULL
+suffix:semicolon
 r_void
 (paren
 op_star
@@ -454,11 +441,6 @@ op_star
 )paren
 op_assign
 l_int|NULL
-suffix:semicolon
-r_int
-id|initroutinedynamic
-op_assign
-l_int|0
 suffix:semicolon
 id|docptr
 op_assign
@@ -634,62 +616,14 @@ id|name
 op_assign
 l_string|&quot;2000&quot;
 suffix:semicolon
-macro_line|#ifdef CONFIG_MTD_DOC2000
-id|initroutine
+id|im_funcname
 op_assign
-op_amp
-id|DoC2k_init
-suffix:semicolon
-macro_line|#elif CONFIG_MODULES
-id|initroutinedynamic
-op_assign
-l_int|1
-suffix:semicolon
-id|initroutine
-op_assign
-(paren
-r_void
-op_star
-)paren
-id|get_module_symbol
-c_func
-(paren
-l_int|NULL
-comma
 l_string|&quot;DoC2k_init&quot;
-)paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_KMOD
-r_if
-c_cond
-(paren
-op_logical_neg
-id|initroutine
-)paren
-(brace
-id|request_module
-c_func
-(paren
-l_string|&quot;doc2000&quot;
-)paren
-suffix:semicolon
-id|initroutine
+id|im_modname
 op_assign
-(paren
-r_void
-op_star
-)paren
-id|get_module_symbol
-c_func
-(paren
 l_string|&quot;doc2000&quot;
-comma
-l_string|&quot;DoC2k_init&quot;
-)paren
 suffix:semicolon
-)brace
-macro_line|#endif /* CONFIG_KMOD */
-macro_line|#endif
 r_break
 suffix:semicolon
 r_case
@@ -699,65 +633,32 @@ id|name
 op_assign
 l_string|&quot;Millennium&quot;
 suffix:semicolon
-macro_line|#ifdef CONFIG_MTD_DOC2001
-id|initroutine
+id|im_funcname
 op_assign
-op_amp
-id|DoCMil_init
-suffix:semicolon
-macro_line|#elif CONFIG_MODULES
-id|initroutinedynamic
-op_assign
-l_int|1
-suffix:semicolon
-id|initroutine
-op_assign
-(paren
-r_void
-op_star
-)paren
-id|get_module_symbol
-c_func
-(paren
-l_int|NULL
-comma
 l_string|&quot;DoCMil_init&quot;
-)paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_KMOD
-r_if
-c_cond
-(paren
-op_logical_neg
-id|initroutine
-)paren
-(brace
-id|request_module
-c_func
-(paren
-l_string|&quot;doc2001&quot;
-)paren
-suffix:semicolon
-id|initroutine
+id|im_modname
 op_assign
-(paren
-r_void
-op_star
-)paren
-id|get_module_symbol
-c_func
-(paren
 l_string|&quot;doc2001&quot;
-comma
-l_string|&quot;DoCMil_init&quot;
-)paren
 suffix:semicolon
-)brace
-macro_line|#endif /* CONFIG_KMOD */
-macro_line|#endif
 r_break
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|im_funcname
+)paren
+id|initroutine
+op_assign
+id|inter_module_get_request
+c_func
+(paren
+id|im_funcname
+comma
+id|im_modname
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -772,19 +673,12 @@ id|initroutine
 id|mtd
 )paren
 suffix:semicolon
-macro_line|#if defined(CONFIG_MODULES) &amp;&amp; LINUX_VERSION_CODE &gt;= 0x20400
-r_if
-c_cond
-(paren
-id|initroutinedynamic
-)paren
-id|put_module_symbol
+id|inter_module_put
 c_func
 (paren
-id|initroutine
+id|im_funcname
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 suffix:semicolon
 )brace

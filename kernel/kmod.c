@@ -2,20 +2,11 @@ multiline_comment|/*&n;&t;kmod, the new module loader (replaces kerneld)&n;&t;Ki
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-multiline_comment|/*&n;&t;modprobe_path is set via /proc/sys.&n;*/
-DECL|variable|modprobe_path
-r_char
-id|modprobe_path
-(braket
-l_int|256
-)braket
-op_assign
-l_string|&quot;/sbin/modprobe&quot;
-suffix:semicolon
 r_extern
 r_int
 id|max_threads
@@ -404,6 +395,17 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_KMOD
+multiline_comment|/*&n;&t;modprobe_path is set via /proc/sys.&n;*/
+DECL|variable|modprobe_path
+r_char
+id|modprobe_path
+(braket
+l_int|256
+)braket
+op_assign
+l_string|&quot;/sbin/modprobe&quot;
+suffix:semicolon
 DECL|function|exec_modprobe
 r_static
 r_int
@@ -786,6 +788,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif /* CONFIG_KMOD */
 macro_line|#ifdef CONFIG_HOTPLUG
 multiline_comment|/*&n;&t;hotplug path is set via /proc/sys&n;&t;invoked by hotplug-aware bus drivers,&n;&t;with exec_usermodehelper and some thread-spawner&n;&n;&t;argv [0] = hotplug_path;&n;&t;argv [1] = &quot;usb&quot;, &quot;scsi&quot;, &quot;pci&quot;, &quot;network&quot;, etc;&n;&t;... plus optional type-specific parameters&n;&t;argv [n] = 0;&n;&n;&t;envp [*] = HOME, PATH; optional type-specific parameters&n;&n;&t;a hotplug bus should invoke this for device add/remove&n;&t;events.  the command is expected to load drivers when&n;&t;necessary, and may perform additional system setup.&n;*/
 DECL|variable|hotplug_path
@@ -797,6 +800,14 @@ l_int|256
 op_assign
 l_string|&quot;/sbin/hotplug&quot;
 suffix:semicolon
+DECL|variable|hotplug_path
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|hotplug_path
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_HOTPLUG */
 DECL|function|exec_helper
 r_static
 r_int
@@ -1037,5 +1048,27 @@ r_return
 id|retval
 suffix:semicolon
 )brace
+DECL|variable|exec_usermodehelper
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|exec_usermodehelper
+)paren
+suffix:semicolon
+DECL|variable|call_usermodehelper
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|call_usermodehelper
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_KMOD
+DECL|variable|request_module
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|request_module
+)paren
+suffix:semicolon
 macro_line|#endif
 eof

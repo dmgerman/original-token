@@ -69,8 +69,6 @@ r_char
 op_star
 id|fm2fb_reg
 suffix:semicolon
-DECL|macro|arraysize
-mdefine_line|#define arraysize(x)&t;(sizeof(x)/sizeof(*(x)))
 DECL|variable|currcon
 r_static
 r_int

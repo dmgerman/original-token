@@ -79,6 +79,7 @@ id|modprobe_path
 (braket
 )braket
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_HOTPLUG
 r_extern
 r_char
@@ -86,7 +87,6 @@ id|hotplug_path
 (braket
 )braket
 suffix:semicolon
-macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_CHR_DEV_SG
 r_extern
@@ -917,6 +917,7 @@ op_amp
 id|sysctl_string
 )brace
 comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_HOTPLUG
 (brace
 id|KERN_HOTPLUG
@@ -939,7 +940,6 @@ op_amp
 id|sysctl_string
 )brace
 comma
-macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_CHR_DEV_SG
 (brace
@@ -6825,6 +6825,48 @@ suffix:semicolon
 DECL|function|sysctl_intvec
 r_int
 id|sysctl_intvec
+c_func
+(paren
+id|ctl_table
+op_star
+id|table
+comma
+r_int
+op_star
+id|name
+comma
+r_int
+id|nlen
+comma
+r_void
+op_star
+id|oldval
+comma
+r_int
+op_star
+id|oldlenp
+comma
+r_void
+op_star
+id|newval
+comma
+r_int
+id|newlen
+comma
+r_void
+op_star
+op_star
+id|context
+)paren
+(brace
+r_return
+op_minus
+id|ENOSYS
+suffix:semicolon
+)brace
+DECL|function|sysctl_jiffies
+r_int
+id|sysctl_jiffies
 c_func
 (paren
 id|ctl_table

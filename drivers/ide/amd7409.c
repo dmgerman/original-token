@@ -2170,6 +2170,7 @@ macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA */
 )brace
 DECL|function|ide_dmacapable_amd7409
 r_void
+id|__init
 id|ide_dmacapable_amd7409
 (paren
 id|ide_hwif_t

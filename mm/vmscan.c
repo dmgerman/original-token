@@ -449,6 +449,15 @@ r_goto
 id|out_unlock_restore
 suffix:semicolon
 multiline_comment|/* No swap space left */
+multiline_comment|/* Make sure to flush the TLB _before_ we start copying things.. */
+id|flush_tlb_page
+c_func
+(paren
+id|vma
+comma
+id|address
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -496,14 +505,6 @@ c_func
 (paren
 id|entry
 )paren
-)paren
-suffix:semicolon
-id|flush_tlb_page
-c_func
-(paren
-id|vma
-comma
-id|address
 )paren
 suffix:semicolon
 id|spin_unlock

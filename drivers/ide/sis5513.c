@@ -28,8 +28,6 @@ id|host_dev
 op_assign
 l_int|NULL
 suffix:semicolon
-DECL|macro|arraysize
-mdefine_line|#define arraysize(x)&t;&t;&t;(sizeof(x)/sizeof(*(x)))
 DECL|macro|SIS5513_FLAG_ATA_00
 mdefine_line|#define SIS5513_FLAG_ATA_00&t;&t;0x00000000
 DECL|macro|SIS5513_FLAG_ATA_16
@@ -3022,7 +3020,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|arraysize
+id|ARRAY_SIZE
 (paren
 id|SiSHostChipInfo
 )paren

@@ -1735,19 +1735,6 @@ id|found
 op_assign
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|load_8390_module
-c_func
-(paren
-l_string|&quot;wd.c&quot;
-)paren
-)paren
-r_return
-op_minus
-id|ENOSYS
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1817,11 +1804,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|unload_8390_module
-c_func
-(paren
-)paren
-suffix:semicolon
 id|printk
 c_func
 (paren
@@ -1934,11 +1916,6 @@ id|priv
 suffix:semicolon
 )brace
 )brace
-id|unload_8390_module
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 macro_line|#endif /* MODULE */
 multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -Wall -O6 -I/usr/src/linux/net/inet -c smc-mca.c&quot;&n; *  version-control: t&n; *  kept-new-versions: 5&n; *  c-indent-level: 8&n; *  tab-width: 8&n; * End:&n; */

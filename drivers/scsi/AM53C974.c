@@ -818,16 +818,12 @@ r_struct
 id|Scsi_Host
 op_star
 id|first_instance
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|the_template
 r_static
 id|Scsi_Host_Template
 op_star
 id|the_template
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|first_host
 r_static
@@ -835,8 +831,6 @@ r_struct
 id|Scsi_Host
 op_star
 id|first_host
-op_assign
-l_int|NULL
 suffix:semicolon
 multiline_comment|/* Head of list of AMD boards */
 DECL|variable|main_running
@@ -844,15 +838,11 @@ r_static
 r_volatile
 r_int
 id|main_running
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|commandline_current
 r_static
 r_int
 id|commandline_current
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|overrides
 id|override_t
@@ -1707,21 +1697,39 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/**************************************************************************&n;* Function : AM53C974_setup(char *str, int *ints)&n;*&n;* Purpose : LILO command line initialization of the overrides array,&n;* &n;* Inputs : str - unused, ints - array of integer parameters with ints[0]&n;*&t;    equal to the number of ints.&n;*&n;* NOTE : this function needs to be declared as an external function&n;*         in init/main.c and included there in the bootsetups list&n;***************************************************************************/
+macro_line|#ifndef MODULE
+multiline_comment|/**************************************************************************&n;* Function : AM53C974_setup(char *str)&n;*&n;* Purpose : LILO command line initialization of the overrides array,&n;* &n;* Input : str - parameter string.&n;*&n;* Returns : 1.&n;*&n;* NOTE : this function needs to be declared as an external function&n;*         in init/main.c and included there in the bootsetups list&n;***************************************************************************/
 DECL|function|AM53C974_setup
-r_void
+r_static
+r_int
 id|AM53C974_setup
 c_func
 (paren
 r_char
 op_star
 id|str
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
+r_int
+id|ints
+(braket
+l_int|5
+)braket
+suffix:semicolon
+id|get_options
+c_func
+(paren
+id|str
+comma
+id|ARRAY_SIZE
+c_func
+(paren
+id|ints
+)paren
+comma
+id|ints
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1922,13 +1930,24 @@ l_string|&quot;AM53C974_setup: too many overrides&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+r_return
+l_int|1
+suffix:semicolon
 )brace
-macro_line|#if defined (CONFIG_PCI)
+id|__setup
+c_func
+(paren
+l_string|&quot;AM53C974=&quot;
+comma
+id|AM53C974_setup
+)paren
+suffix:semicolon
+macro_line|#endif /* !MODULE */
 multiline_comment|/**************************************************************************&n;* Function : int AM53C974_pci_detect(Scsi_Host_Template *tpnt)&n;*&n;* Purpose : detects and initializes AM53C974 SCSI chips with PCI Bios&n;*&n;* Inputs : tpnt - host template&n;* &n;* Returns : number of host adapters detected&n;**************************************************************************/
 DECL|function|AM53C974_pci_detect
 r_static
-r_inline
 r_int
+id|__init
 id|AM53C974_pci_detect
 c_func
 (paren
@@ -2028,53 +2047,6 @@ id|count
 op_increment
 suffix:semicolon
 )brace
-r_return
-(paren
-id|count
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
-multiline_comment|/**************************************************************************&n;* Function : int AM53C974_detect(Scsi_Host_Template *tpnt)&n;*&n;* Purpose : detects and initializes AM53C974 SCSI chips&n;*&n;* Inputs : tpnt - host template&n;* &n;* Returns : number of host adapters detected&n;**************************************************************************/
-DECL|function|AM53C974_detect
-r_int
-id|__init
-id|AM53C974_detect
-c_func
-(paren
-id|Scsi_Host_Template
-op_star
-id|tpnt
-)paren
-(brace
-r_int
-id|count
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* number of boards detected */
-id|tpnt-&gt;proc_name
-op_assign
-l_string|&quot;am53c974&quot;
-suffix:semicolon
-macro_line|#if defined (CONFIG_PCI)
-r_if
-c_cond
-(paren
-id|pci_present
-c_func
-(paren
-)paren
-)paren
-id|count
-op_assign
-id|AM53C974_pci_detect
-c_func
-(paren
-id|tpnt
-)paren
-suffix:semicolon
-macro_line|#endif
 r_return
 (paren
 id|count
@@ -2792,6 +2764,7 @@ suffix:semicolon
 )brace
 multiline_comment|/***********************************************************************&n;* Function : const char *AM53C974_info(struct Scsi_Host *instance)     *&n;*                                                                      *&n;* Purpose : return device driver information                           *&n;*                                                                      *&n;* Inputs : instance - which AM53C974                                   *&n;*                                                                      *&n;* Returns : info string                                                *&n;************************************************************************/
 DECL|function|AM53C974_info
+r_static
 r_const
 r_char
 op_star
@@ -2835,6 +2808,7 @@ suffix:semicolon
 )brace
 multiline_comment|/************************************************************************** &n;* Function : int AM53C974_command (Scsi_Cmnd *SCpnt)                      *&n;*                                                                         *&n;* Purpose : the unqueued SCSI command function, replaced by the           *&n;*           AM53C974_queue_command function                               *&n;*                                                                         *&n;* Inputs : SCpnt - pointer to command structure                           *&n;*                                                                         *&n;* Returns :status, see hosts.h for details                                *&n;***************************************************************************/
 DECL|function|AM53C974_command
+r_static
 r_int
 id|AM53C974_command
 c_func
@@ -2982,6 +2956,7 @@ suffix:semicolon
 )brace
 multiline_comment|/************************************************************************** &n;* Function : int AM53C974_queue_command(Scsi_Cmnd *cmd, void (*done)(Scsi_Cmnd *))&n;*&n;* Purpose : writes SCSI command into AM53C974 FIFO &n;*&n;* Inputs : cmd - SCSI command, done - function called on completion, with&n;*&t;a pointer to the command descriptor.&n;* &n;* Returns : status, see hosts.h for details&n;*&n;* Side effects : &n;*      cmd is added to the per instance issue_queue, with minor &n;*&t;twiddling done to the host specific fields of cmd.  If the &n;*&t;main coroutine is not running, it is restarted.&n;**************************************************************************/
 DECL|function|AM53C974_queue_command
+r_static
 r_int
 id|AM53C974_queue_command
 c_func
@@ -9744,6 +9719,7 @@ suffix:semicolon
 )brace
 multiline_comment|/**************************************************************************&n;* Function : int AM53C974_abort(Scsi_Cmnd *cmd)&n;*&n;* Purpose : abort a command&n;*&n;* Inputs : cmd - the Scsi_Cmnd to abort, code - code to set the &n;* &t;host byte of the result field to, if zero DID_ABORTED is &n;*&t;used.&n;*&n;* Returns : 0 - success, -1 on failure.&n; **************************************************************************/
 DECL|function|AM53C974_abort
+r_static
 r_int
 id|AM53C974_abort
 c_func
@@ -10195,6 +10171,7 @@ suffix:semicolon
 )brace
 multiline_comment|/************************************************************************** &n;* Function : int AM53C974_reset(Scsi_Cmnd *cmd)&n;*&n;* Purpose : reset the SCSI controller and bus&n;*&n;* Inputs : cmd -- which command within the command block was responsible for the reset&n;* &n;* Returns : status (SCSI_ABORT_SUCCESS)&n;* &n;* FIXME(eric) the reset_flags are ignored.&n;**************************************************************************/
 DECL|function|AM53C974_reset
+r_static
 r_int
 id|AM53C974_reset
 c_func
@@ -10453,6 +10430,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * AM53C974_release()&n; *&n; * Release resources allocated for a single AM53C974 adapter.&n; */
 DECL|function|AM53C974_release
+r_static
 r_int
 id|AM53C974_release
 c_func
@@ -10481,7 +10459,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
 multiline_comment|/* You can specify overrides=a,b,c,d in the same format at AM53C974=a,b,c,d&n;   on boot up */
 id|MODULE_PARM
 c_func
@@ -10491,7 +10468,6 @@ comma
 l_string|&quot;1-32i&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 DECL|variable|driver_template
 r_static
 id|Scsi_Host_Template

@@ -1,6 +1,5 @@
 multiline_comment|/*&n;**&t;Pegasus: USB 10/100Mbps/HomePNA (1Mbps) Controller&n;**&n;**&t;Copyright (c) 1999,2000 Petko Manolov - Petkan (petkan@dce.bg)&n;**&t;&n;**&n;**&t;ChangeLog:&n;**&t;&t;....&t;Most of the time spend reading sources &amp; docs.&n;**&t;&t;v0.2.x&t;First official release for the Linux kernel.&n;**&t;&t;v0.3.0&t;Beutified and structured, some bugs fixed.&n;**&t;&t;v0.3.x&t;URBifying bulk requests and bugfixing. First relatively&n;**&t;&t;&t;stable release. Still can touch device&squot;s registers only&n;**&t;&t;&t;from top-halves.&n;**&t;&t;v0.4.0&t;Control messages remained unurbified are now URBs.&n;**&t;&t;&t;Now we can touch the HW at any time.&n;**&t;&t;v0.4.9&t;Control urbs again use process context to wait. Argh...&n;**&t;&t;&t;Some long standing bugs (enable_net_traffic) fixed.&n;**&t;&t;&t;Also nasty trick about resubmiting control urb from&n;**&t;&t;&t;interrupt context used. Please let me know how it&n;**&t;&t;&t;behaves. Pegasus II support added since this version.&n;**&t;&t;&t;TODO: suppressing HCD warnings spewage on disconnect.&n;**&t;&t;v0.4.13&t;Ethernet address is now set at probe(), not at open()&n;**&t;&t;&t;time as this seems to break dhcpd. &n;*/
 multiline_comment|/*&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA&n; */
-macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -8,6 +7,7 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/usb.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 DECL|variable|version
 r_static
 r_const
@@ -114,8 +114,6 @@ DECL|macro|PEGASUS_REQ_SET_REGS
 mdefine_line|#define&t;PEGASUS_REQ_SET_REGS&t;0xf1
 DECL|macro|PEGASUS_REQ_SET_REG
 mdefine_line|#define&t;PEGASUS_REQ_SET_REG&t;PEGASUS_REQ_SET_REGS
-DECL|macro|NUM_CTRL_URBS
-mdefine_line|#define&t;NUM_CTRL_URBS&t;&t;0x10
 DECL|macro|ALIGN
 mdefine_line|#define&t;ALIGN(x)&t;&t;x __attribute__((aligned(L1_CACHE_BYTES)))
 DECL|enum|pegasus_registers
@@ -402,7 +400,7 @@ suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
-id|mode
+id|mii_mode
 comma
 l_string|&quot;i&quot;
 )paren
@@ -418,7 +416,7 @@ suffix:semicolon
 id|MODULE_PARM_DESC
 c_func
 (paren
-id|mode
+id|mii_mode
 comma
 l_string|&quot;Enable HomePNA mode (bit 0) - default = MII mode = 0&quot;
 )paren
@@ -440,6 +438,40 @@ comma
 l_int|0x0986
 comma
 id|DEFAULT_GPIO_RESET
+)brace
+comma
+(brace
+l_string|&quot;Billionton USBLP-100&quot;
+comma
+l_int|0x08dd
+comma
+l_int|0x0987
+comma
+id|DEFAULT_GPIO_RESET
+op_or
+id|HAS_HOME_PNA
+)brace
+comma
+(brace
+l_string|&quot;Billionton USBEL-100&quot;
+comma
+l_int|0x08dd
+comma
+l_int|0x0988
+comma
+id|DEFAULT_GPIO_RESET
+)brace
+comma
+(brace
+l_string|&quot;Billionton USBE-100&quot;
+comma
+l_int|0x08dd
+comma
+l_int|0x8511
+comma
+id|DEFAULT_GPIO_RESET
+op_or
+id|PEGASUS_II
 )brace
 comma
 (brace
@@ -489,9 +521,9 @@ l_int|0x2001
 comma
 l_int|0x4003
 comma
-id|HAS_HOME_PNA
-op_or
 id|DEFAULT_GPIO_RESET
+op_or
+id|HAS_HOME_PNA
 )brace
 comma
 (brace
@@ -551,9 +583,9 @@ l_int|0x066b
 comma
 l_int|0x2204
 comma
-id|HAS_HOME_PNA
-op_or
 id|LINKSYS_GPIO_RESET
+op_or
+id|HAS_HOME_PNA
 )brace
 comma
 (brace
@@ -583,9 +615,9 @@ l_int|0x07a6
 comma
 l_int|0x0986
 comma
-id|HAS_HOME_PNA
-op_or
 id|DEFAULT_GPIO_RESET
+op_or
+id|HAS_HOME_PNA
 )brace
 comma
 (brace
@@ -635,9 +667,9 @@ l_int|0x07a6
 comma
 l_int|0x8511
 comma
-id|PEGASUS_II
-op_or
 id|DEFAULT_GPIO_RESET
+op_or
+id|PEGASUS_II
 )brace
 comma
 (brace
@@ -2444,19 +2476,18 @@ l_int|0x09
 suffix:colon
 l_int|0x01
 suffix:semicolon
-op_star
+id|memcpy
+c_func
 (paren
-r_int
-op_star
-)paren
 id|pegasus-&gt;eth_regs
-op_assign
-op_star
-(paren
-r_int
-op_star
-)paren
+comma
 id|data
+comma
+r_sizeof
+(paren
+id|data
+)paren
+)paren
 suffix:semicolon
 id|set_registers
 c_func
@@ -2865,6 +2896,10 @@ comma
 id|urb-&gt;status
 )paren
 suffix:semicolon
+id|pegasus-&gt;net-&gt;trans_start
+op_assign
+id|jiffies
+suffix:semicolon
 id|netif_wake_queue
 c_func
 (paren
@@ -3046,13 +3081,6 @@ id|pegasus
 )paren
 r_return
 suffix:semicolon
-id|usb_unlink_urb
-c_func
-(paren
-op_amp
-id|pegasus-&gt;tx_urb
-)paren
-suffix:semicolon
 id|warn
 c_func
 (paren
@@ -3061,18 +3089,19 @@ comma
 id|net-&gt;name
 )paren
 suffix:semicolon
-id|pegasus-&gt;stats.tx_errors
-op_increment
+id|pegasus-&gt;tx_urb.transfer_flags
+op_or_assign
+id|USB_ASYNC_UNLINK
 suffix:semicolon
-id|net-&gt;trans_start
-op_assign
-id|jiffies
-suffix:semicolon
-id|netif_wake_queue
+id|usb_unlink_urb
 c_func
 (paren
-id|net
+op_amp
+id|pegasus-&gt;tx_urb
 )paren
+suffix:semicolon
+id|pegasus-&gt;stats.tx_errors
+op_increment
 suffix:semicolon
 )brace
 DECL|function|pegasus_start_xmit
@@ -3182,10 +3211,6 @@ suffix:semicolon
 id|pegasus-&gt;tx_urb.transfer_buffer_length
 op_assign
 id|count
-suffix:semicolon
-id|pegasus-&gt;tx_urb.transfer_flags
-op_or_assign
-id|USB_ASYNC_UNLINK
 suffix:semicolon
 r_if
 c_cond
@@ -3589,6 +3614,7 @@ op_amp
 id|pegasus-&gt;ctrl_urb
 )paren
 suffix:semicolon
+macro_line|#ifdef&t;PEGASUS_USE_INTR
 id|usb_unlink_urb
 c_func
 (paren
@@ -3596,6 +3622,7 @@ op_amp
 id|pegasus-&gt;intr_urb
 )paren
 suffix:semicolon
+macro_line|#endif
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
@@ -4343,6 +4370,21 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+id|info
+c_func
+(paren
+l_string|&quot;%s: %s&quot;
+comma
+id|net-&gt;name
+comma
+id|usb_dev_id
+(braket
+id|dev_indx
+)braket
+dot
+id|name
+)paren
+suffix:semicolon
 id|set_ethernet_addr
 c_func
 (paren
@@ -4396,21 +4438,6 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-id|info
-c_func
-(paren
-l_string|&quot;%s: %s&quot;
-comma
-id|net-&gt;name
-comma
-id|usb_dev_id
-(braket
-id|dev_indx
-)braket
-dot
-id|name
-)paren
-suffix:semicolon
 r_return
 id|pegasus
 suffix:semicolon

@@ -53,8 +53,6 @@ macro_line|#else
 DECL|macro|assert
 mdefine_line|#define assert(expr)
 macro_line|#endif
-DECL|macro|arraysize
-mdefine_line|#define arraysize(x)    (sizeof(x)/sizeof(*(x)))
 macro_line|#ifdef TRUE
 DECL|macro|TRUE
 macro_line|#undef TRUE
@@ -1102,7 +1100,7 @@ id|FB_VMODE_NONINTERLACED
 )brace
 suffix:semicolon
 DECL|macro|NUM_TOTAL_MODES
-mdefine_line|#define NUM_TOTAL_MODES    arraysize(clgenfb_predefined)
+mdefine_line|#define NUM_TOTAL_MODES    ARRAY_SIZE(clgenfb_predefined)
 DECL|variable|clgenfb_default
 r_static
 r_struct
@@ -10343,7 +10341,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|arraysize
+id|ARRAY_SIZE
 c_func
 (paren
 id|clgen_pci_probe_list
@@ -10984,7 +10982,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|arraysize
+id|ARRAY_SIZE
 c_func
 (paren
 id|clgen_zorro_probe_list

@@ -15,6 +15,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
@@ -203,6 +204,11 @@ id|dev
 r_int
 id|i
 suffix:semicolon
+r_struct
+id|resource
+op_star
+id|r
+suffix:semicolon
 r_int
 id|base_addr
 op_assign
@@ -220,8 +226,33 @@ id|base_addr
 OG
 l_int|0x1ff
 )paren
-multiline_comment|/* Check a single specified location. */
+(brace
+multiline_comment|/* Check a user specified location. */
+id|r
+op_assign
+id|request_region
+c_func
+(paren
+id|base_addr
+comma
+id|WD_IO_EXTENT
+comma
+l_string|&quot;wd-probe&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|r
+op_eq
+l_int|NULL
+)paren
 r_return
+op_minus
+id|EBUSY
+suffix:semicolon
+id|i
+op_assign
 id|wd_probe1
 c_func
 (paren
@@ -230,6 +261,28 @@ comma
 id|base_addr
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
+op_ne
+l_int|0
+)paren
+id|release_resource
+c_func
+(paren
+id|r
+)paren
+suffix:semicolon
+r_else
+id|r-&gt;name
+op_assign
+id|ei_status.name
+suffix:semicolon
+r_return
+id|i
+suffix:semicolon
+)brace
 r_else
 r_if
 c_cond
@@ -267,16 +320,24 @@ id|wd_portlist
 id|i
 )braket
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|check_region
+id|r
+op_assign
+id|request_region
 c_func
 (paren
 id|ioaddr
 comma
 id|WD_IO_EXTENT
+comma
+l_string|&quot;wd-probe&quot;
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|r
+op_eq
+l_int|NULL
 )paren
 r_continue
 suffix:semicolon
@@ -293,8 +354,20 @@ id|ioaddr
 op_eq
 l_int|0
 )paren
+(brace
+id|r-&gt;name
+op_assign
+id|ei_status.name
+suffix:semicolon
 r_return
 l_int|0
+suffix:semicolon
+)brace
+id|release_resource
+c_func
+(paren
+id|r
+)paren
 suffix:semicolon
 )brace
 r_return
@@ -1292,16 +1365,6 @@ id|EAGAIN
 suffix:semicolon
 )brace
 multiline_comment|/* OK, were are certain this is going to work.  Setup the device. */
-id|request_region
-c_func
-(paren
-id|ioaddr
-comma
-id|WD_IO_EXTENT
-comma
-id|model_name
-)paren
-suffix:semicolon
 id|ei_status.name
 op_assign
 id|model_name
@@ -2180,19 +2243,6 @@ id|found
 op_assign
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|load_8390_module
-c_func
-(paren
-l_string|&quot;wd.c&quot;
-)paren
-)paren
-r_return
-op_minus
-id|ENOSYS
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -2317,11 +2367,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|unload_8390_module
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 op_minus
 id|ENXIO
@@ -2423,11 +2468,6 @@ id|priv
 suffix:semicolon
 )brace
 )brace
-id|unload_8390_module
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 macro_line|#endif /* MODULE */
 "&f;"

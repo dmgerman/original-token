@@ -19,8 +19,6 @@ macro_line|#include &lt;video/fbcon-mfb.h&gt;
 macro_line|#include &lt;video/fbcon-cfb2.h&gt;
 macro_line|#include &lt;video/fbcon-cfb4.h&gt;
 macro_line|#include &lt;video/fbcon-cfb8.h&gt;
-DECL|macro|arraysize
-mdefine_line|#define arraysize(x)    (sizeof(x)/sizeof(*(x)))
 DECL|variable|disp
 r_static
 r_struct
@@ -343,7 +341,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|arraysize
+id|ARRAY_SIZE
 c_func
 (paren
 id|var-&gt;reserved

@@ -343,6 +343,7 @@ suffix:semicolon
 macro_line|#endif
 DECL|function|ide_dmacapable_sl82c105
 r_void
+id|__init
 id|ide_dmacapable_sl82c105
 c_func
 (paren
@@ -424,6 +425,7 @@ suffix:semicolon
 )brace
 DECL|function|ide_init_sl82c105
 r_void
+id|__init
 id|ide_init_sl82c105
 c_func
 (paren

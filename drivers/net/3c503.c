@@ -1388,10 +1388,13 @@ id|EBUSY
 )paren
 (brace
 multiline_comment|/* Twinkle the interrupt, and check if it&squot;s seen. */
-id|autoirq_setup
+r_int
+r_int
+id|cookie
+op_assign
+id|probe_irq_on
 c_func
 (paren
-l_int|0
 )paren
 suffix:semicolon
 id|outb_p
@@ -1431,10 +1434,10 @@ c_cond
 op_star
 id|irqp
 op_eq
-id|autoirq_report
+id|probe_irq_off
 c_func
 (paren
-l_int|0
+id|cookie
 )paren
 multiline_comment|/* It&squot;s a good IRQ line! */
 op_logical_and
@@ -2813,19 +2816,6 @@ id|found
 op_assign
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|load_8390_module
-c_func
-(paren
-l_string|&quot;3c503.c&quot;
-)paren
-)paren
-r_return
-op_minus
-id|ENOSYS
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -2944,11 +2934,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|unload_8390_module
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 op_minus
 id|ENXIO
@@ -3036,11 +3021,6 @@ id|priv
 suffix:semicolon
 )brace
 )brace
-id|unload_8390_module
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 macro_line|#endif /* MODULE */
 "&f;"

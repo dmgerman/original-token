@@ -1575,7 +1575,19 @@ r_return
 id|retval
 suffix:semicolon
 )brace
+DECL|variable|im_name
+r_static
+r_const
+r_char
+id|im_name
+(braket
+)braket
+op_assign
+l_string|&quot;DoC2k_init&quot;
+suffix:semicolon
+multiline_comment|/* This routine is made available to other mtd code via&n; * inter_module_register.  It must only be accessed through&n; * inter_module_get which will bump the use count of this module.  The&n; * addresses passed back in mtd are valid as long as the use count of&n; * this module is non-zero, i.e. between inter_module_get and&n; * inter_module_put.  Keith Owens &lt;kaos@ocs.com.au&gt; 29 Oct 2000.&n; */
 DECL|function|DoC2k_init
+r_static
 r_void
 id|DoC2k_init
 c_func
@@ -1840,13 +1852,6 @@ r_return
 suffix:semicolon
 )brace
 )brace
-DECL|variable|DoC2k_init
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|DoC2k_init
-)paren
-suffix:semicolon
 DECL|function|doc_read
 r_static
 r_int
@@ -3516,6 +3521,31 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/****************************************************************************&n; *&n; * Module stuff&n; *&n; ****************************************************************************/
+DECL|function|init_doc2000
+r_static
+r_int
+id|__init
+id|init_doc2000
+c_func
+(paren
+r_void
+)paren
+(brace
+id|inter_module_register
+c_func
+(paren
+id|im_name
+comma
+id|THIS_MODULE
+comma
+op_amp
+id|DoC2k_init
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 macro_line|#if LINUX_VERSION_CODE &lt; 0x20300
 macro_line|#ifdef MODULE
 DECL|macro|cleanup_doc2000
@@ -3596,7 +3626,20 @@ id|mtd
 )paren
 suffix:semicolon
 )brace
+id|inter_module_unregister
+c_func
+(paren
+id|im_name
+)paren
+suffix:semicolon
 )brace
+DECL|variable|init_doc2000
+id|module_init
+c_func
+(paren
+id|init_doc2000
+)paren
+suffix:semicolon
 macro_line|#if LINUX_VERSION_CODE &gt; 0x20300
 DECL|variable|cleanup_doc2000
 id|module_exit

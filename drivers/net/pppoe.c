@@ -1005,11 +1005,10 @@ id|notifier_block
 id|pppoe_notifier
 op_assign
 (brace
+id|notifier_call
+suffix:colon
 id|pppoe_device_event
 comma
-l_int|NULL
-comma
-l_int|0
 )brace
 suffix:semicolon
 multiline_comment|/************************************************************************&n; *&n; * Do the real work of receiving a PPPoE Session frame.&n; *&n; ***********************************************************************/

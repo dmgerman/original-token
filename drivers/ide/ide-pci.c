@@ -3457,19 +3457,12 @@ op_assign
 l_int|1
 suffix:semicolon
 macro_line|#endif
-macro_line|#if 1&t;/* what do do with this useful tool ??? */
-r_if
-c_cond
-(paren
 id|pci_enable_device
 c_func
 (paren
 id|dev
 )paren
-)paren
-r_return
 suffix:semicolon
-macro_line|#endif
 id|check_if_enabled
 suffix:colon
 r_if

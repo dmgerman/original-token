@@ -5134,6 +5134,14 @@ id|pte
 id|pte_t
 id|entry
 suffix:semicolon
+multiline_comment|/*&n;&t; * We need the page table lock to synchronize with kswapd&n;&t; * and the SMP-safe atomic PTE updates.&n;&t; */
+id|spin_lock
+c_func
+(paren
+op_amp
+id|mm-&gt;page_table_lock
+)paren
+suffix:semicolon
 id|entry
 op_assign
 op_star
@@ -5150,6 +5158,14 @@ id|entry
 )paren
 )paren
 (brace
+multiline_comment|/*&n;&t;&t; * If it truly wasn&squot;t present, we know that kswapd&n;&t;&t; * and the PTE updates will not touch it later. So&n;&t;&t; * drop the lock.&n;&t;&t; */
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|mm-&gt;page_table_lock
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5196,27 +5212,6 @@ id|write_access
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Ok, the entry was present, we need to get the page table&n;&t; * lock to synchronize with kswapd, and verify that the entry&n;&t; * didn&squot;t change from under us..&n;&t; */
-id|spin_lock
-c_func
-(paren
-op_amp
-id|mm-&gt;page_table_lock
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|pte_same
-c_func
-(paren
-id|entry
-comma
-op_star
-id|pte
-)paren
-)paren
-(brace
 r_if
 c_cond
 (paren
@@ -5277,7 +5272,6 @@ comma
 id|entry
 )paren
 suffix:semicolon
-)brace
 id|spin_unlock
 c_func
 (paren

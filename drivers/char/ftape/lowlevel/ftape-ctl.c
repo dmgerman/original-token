@@ -12,6 +12,9 @@ macro_line|#else
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/io.h&gt;
+multiline_comment|/* ease porting between pre-2.4.x and later kernels */
+DECL|macro|vma_get_pgoff
+mdefine_line|#define vma_get_pgoff(v)      ((v)-&gt;vm_pgoff)
 macro_line|#include &quot;../lowlevel/ftape-tracing.h&quot;
 macro_line|#include &quot;../lowlevel/ftape-io.h&quot;
 macro_line|#include &quot;../lowlevel/ftape-ctl.h&quot;
@@ -2564,12 +2567,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 (paren
-id|vma_get_flags
-c_func
-(paren
-id|vma
-)paren
+id|vma-&gt;vm_flags
 op_amp
 (paren
 id|VM_READ
@@ -2577,8 +2577,6 @@ op_or
 id|VM_WRITE
 )paren
 )paren
-op_eq
-l_int|0
 )paren
 (brace
 id|TRACE_ABORT
@@ -2621,15 +2619,9 @@ r_if
 c_cond
 (paren
 (paren
-id|vma_get_end
-(paren
-id|vma
-)paren
+id|vma-&gt;vm_end
 op_minus
-id|vma_get_start
-(paren
-id|vma
-)paren
+id|vma-&gt;vm_start
 )paren
 op_mod
 id|FT_BUFF_SIZE
@@ -2647,15 +2639,9 @@ id|ft_t_err
 comma
 l_string|&quot;size = %ld, should be a multiple of %d&quot;
 comma
-id|vma_get_end
-(paren
-id|vma
-)paren
+id|vma-&gt;vm_end
 op_minus
-id|vma_get_start
-(paren
-id|vma
-)paren
+id|vma-&gt;vm_start
 comma
 id|FT_BUFF_SIZE
 )paren
@@ -2664,15 +2650,9 @@ suffix:semicolon
 id|num_buffers
 op_assign
 (paren
-id|vma_get_end
-(paren
-id|vma
-)paren
+id|vma-&gt;vm_end
 op_minus
-id|vma_get_start
-(paren
-id|vma
-)paren
+id|vma-&gt;vm_start
 )paren
 op_div
 id|FT_BUFF_SIZE
@@ -2695,15 +2675,9 @@ id|ft_t_err
 comma
 l_string|&quot;size = %ld, should be less than %d&quot;
 comma
-id|vma_get_end
-(paren
-id|vma
-)paren
+id|vma-&gt;vm_end
 op_minus
-id|vma_get_start
-(paren
-id|vma
-)paren
+id|vma-&gt;vm_start
 comma
 id|ft_nr_buffers
 op_star
@@ -2755,10 +2729,7 @@ c_func
 id|remap_page_range
 c_func
 (paren
-id|vma_get_start
-(paren
-id|vma
-)paren
+id|vma-&gt;vm_start
 op_plus
 id|i
 op_star
@@ -2777,10 +2748,7 @@ id|address
 comma
 id|FT_BUFF_SIZE
 comma
-id|vma_get_page_prot
-(paren
-id|vma
-)paren
+id|vma-&gt;vm_page_prot
 )paren
 comma
 id|_res
@@ -2808,11 +2776,7 @@ r_void
 op_star
 )paren
 (paren
-id|vma_get_start
-c_func
-(paren
-id|vma
-)paren
+id|vma-&gt;vm_start
 op_plus
 id|i
 op_star

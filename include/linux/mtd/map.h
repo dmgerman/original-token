@@ -5,7 +5,6 @@ DECL|macro|__LINUX_MTD_MAP_H__
 mdefine_line|#define __LINUX_MTD_MAP_H__
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mtd/mtd.h&gt;
-macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 multiline_comment|/* The map stuff is very simple. You fill in your struct map_info with&n;   a handful of routines for accessing the device, making sure they handle&n;   paging etc. correctly if your device needs it. Then you pass it off&n;   to a chip driver which deals with a mapped device - generally either&n;   do_cfi_probe() or do_ram_probe(), either of which will return a &n;   struct mtd_info if they liked what they saw. At which point, you&n;   fill in the mtd-&gt;module with your own module address, and register &n;   it.&n;   &n;   The mtd-&gt;priv field will point to the struct map_info, and any further&n;   private data required by the chip driver is linked from the &n;   mtd-&gt;priv-&gt;fldrv_priv field. This allows the map driver to get at &n;   the destructor function map-&gt;fldrv_destroy() when it&squot;s tired&n;   of living.&n;*/
 DECL|struct|map_info
@@ -193,6 +192,12 @@ id|mtd_info
 op_star
 )paren
 suffix:semicolon
+DECL|member|im_name
+r_const
+r_char
+op_star
+id|im_name
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* &n; * Probe for the contents of a map device and make an MTD structure&n; * if anything is recognised. Doesn&squot;t register it because the calling&n; * map driver needs to set the &squot;module&squot; field first.&n; */
@@ -210,10 +215,12 @@ id|map_info
 op_star
 id|map
 comma
+r_const
 r_char
 op_star
 id|funcname
 comma
+r_const
 r_char
 op_star
 id|modname
@@ -239,54 +246,21 @@ id|mtd
 op_assign
 l_int|NULL
 suffix:semicolon
-id|probe_p
-op_assign
-(paren
-r_void
-op_star
-)paren
-id|get_module_symbol
-c_func
-(paren
-l_int|NULL
-comma
-id|funcname
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
+(paren
 id|probe_p
-)paren
-(brace
-id|request_module
+op_assign
+id|inter_module_get_request
 c_func
 (paren
 id|modname
-)paren
-suffix:semicolon
-id|probe_p
-op_assign
-(paren
-r_void
-op_star
-)paren
-id|get_module_symbol
-c_func
-(paren
-l_int|NULL
 comma
 id|funcname
 )paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|probe_p
 )paren
-(brace
+)paren
 id|mtd
 op_assign
 (paren
@@ -297,17 +271,7 @@ id|probe_p
 id|map
 )paren
 suffix:semicolon
-id|put_module_symbol
-c_func
-(paren
-(paren
-r_int
-r_int
-)paren
-id|probe_p
-)paren
-suffix:semicolon
-)brace
+multiline_comment|/* map-&gt;im_name is set by probe */
 r_return
 id|mtd
 suffix:semicolon
@@ -350,14 +314,10 @@ c_func
 id|mtd
 )paren
 suffix:semicolon
-id|put_module_symbol
+id|inter_module_put
 c_func
 (paren
-(paren
-r_int
-r_int
-)paren
-id|map-&gt;fldrv_destroy
+id|map-&gt;im_name
 )paren
 suffix:semicolon
 id|kfree

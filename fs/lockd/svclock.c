@@ -1701,11 +1701,6 @@ c_func
 id|fl
 )paren
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1758,11 +1753,6 @@ r_return
 suffix:semicolon
 )brace
 )brace
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|printk
 c_func
 (paren

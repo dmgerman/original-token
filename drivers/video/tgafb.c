@@ -79,8 +79,6 @@ id|currcon
 op_assign
 l_int|0
 suffix:semicolon
-DECL|macro|arraysize
-mdefine_line|#define arraysize(x)&t;(sizeof(x)/sizeof(*(x)))
 DECL|member|red
 DECL|member|green
 DECL|member|blue
@@ -1756,7 +1754,7 @@ id|FB_VMODE_NONINTERLACED
 )brace
 suffix:semicolon
 DECL|macro|NUM_TOTAL_MODES
-mdefine_line|#define NUM_TOTAL_MODES    arraysize(tgafb_predefined)
+mdefine_line|#define NUM_TOTAL_MODES    ARRAY_SIZE(tgafb_predefined)
 multiline_comment|/*&n;     *  Interface used by the world&n;     */
 r_static
 r_void

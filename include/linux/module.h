@@ -4,6 +4,7 @@ DECL|macro|_LINUX_MODULE_H
 mdefine_line|#define _LINUX_MODULE_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
+macro_line|#include &lt;linux/list.h&gt;
 macro_line|#ifdef __GENKSYMS__
 DECL|macro|_set_ver
 macro_line|#  define _set_ver(sym) sym
@@ -205,7 +206,7 @@ r_int
 id|gp
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* Members past this point are extensions to the basic&n;&t;   module support and are optional.  Use mod_opt_member()&n;&t;   to examine them.  */
+multiline_comment|/* Members past this point are extensions to the basic&n;&t;   module support and are optional.  Use mod_member_present()&n;&t;   to examine them.  */
 DECL|member|persist_start
 r_const
 r_struct
@@ -230,6 +231,44 @@ id|can_unload
 r_void
 )paren
 suffix:semicolon
+DECL|member|runsize
+r_int
+id|runsize
+suffix:semicolon
+multiline_comment|/* In modutils, not currently used */
+DECL|member|kallsyms_start
+r_const
+r_char
+op_star
+id|kallsyms_start
+suffix:semicolon
+multiline_comment|/* All symbols for kernel debugging */
+DECL|member|kallsyms_end
+r_const
+r_char
+op_star
+id|kallsyms_end
+suffix:semicolon
+DECL|member|archdata_start
+r_const
+r_char
+op_star
+id|archdata_start
+suffix:semicolon
+multiline_comment|/* arch specific data for module */
+DECL|member|archdata_end
+r_const
+r_char
+op_star
+id|archdata_end
+suffix:semicolon
+DECL|member|kernel_data
+r_const
+r_char
+op_star
+id|kernel_data
+suffix:semicolon
+multiline_comment|/* Reserved for kernel internal use */
 )brace
 suffix:semicolon
 DECL|struct|module_info
@@ -291,6 +330,9 @@ mdefine_line|#define MOD_CAN_QUERY(mod) (((mod)-&gt;flags &amp; (MOD_RUNNING | M
 multiline_comment|/* When struct module is extended, we must test whether the new member&n;   is present in the header received from insmod before we can use it.  &n;   This function returns true if the member is present.  */
 DECL|macro|mod_member_present
 mdefine_line|#define mod_member_present(mod,member) &t;&t;&t;&t;&t;&bslash;&n;&t;((unsigned long)(&amp;((struct module *)0L)-&gt;member + 1)&t;&t;&bslash;&n;&t; &lt;= (mod)-&gt;size_of_struct)
+multiline_comment|/* Check if an address p with number of entries n is within the body of module m */
+DECL|macro|mod_bound
+mdefine_line|#define mod_bound(p, n, m) ((unsigned long)(p) &gt;= ((unsigned long)(m) + ((m)-&gt;size_of_struct)) &amp;&amp; &bslash;&n;&t;         (unsigned long)((p)+(n)) &lt;= (unsigned long)(m) + (m)-&gt;size)
 multiline_comment|/* Backwards compatibility definition.  */
 DECL|macro|GET_USE_COUNT
 mdefine_line|#define GET_USE_COUNT(module)&t;(atomic_read(&amp;(module)-&gt;uc.usecount))
@@ -306,68 +348,104 @@ DECL|macro|__MODULE_STRING_1
 mdefine_line|#define __MODULE_STRING_1(x)&t;#x
 DECL|macro|__MODULE_STRING
 mdefine_line|#define __MODULE_STRING(x)&t;__MODULE_STRING_1(x)
-multiline_comment|/* Find a symbol exported by the kernel or another module */
-macro_line|#ifdef CONFIG_MODULES
+multiline_comment|/* Generic inter module communication.&n; *&n; * NOTE: This interface is intended for small amounts of data that are&n; *       passed between two objects and either or both of the objects&n; *       might be compiled as modules.  Do not over use this interface.&n; *&n; *       If more than two objects need to communicate then you probably&n; *       need a specific interface instead of abusing this generic&n; *       interface.  If both objects are *always* built into the kernel&n; *       then a global extern variable is good enough, you do not need&n; *       this interface.&n; *&n; * Keith Owens &lt;kaos@ocs.com.au&gt; 28 Oct 2000.&n; */
+DECL|macro|HAVE_INTER_MODULE
+mdefine_line|#define HAVE_INTER_MODULE
 r_extern
-r_int
-r_int
-id|get_module_symbol
+r_void
+id|inter_module_register
 c_func
 (paren
+r_const
 r_char
 op_star
 comma
+r_struct
+id|module
+op_star
+comma
+r_const
+r_void
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|inter_module_unregister
+c_func
+(paren
+r_const
+r_char
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_const
+r_void
+op_star
+id|inter_module_get
+c_func
+(paren
+r_const
+r_char
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_const
+r_void
+op_star
+id|inter_module_get_request
+c_func
+(paren
+r_const
+r_char
+op_star
+comma
+r_const
 r_char
 op_star
 )paren
 suffix:semicolon
 r_extern
 r_void
-id|put_module_symbol
+id|inter_module_put
 c_func
 (paren
-r_int
-r_int
+r_const
+r_char
+op_star
 )paren
 suffix:semicolon
-macro_line|#else
-DECL|function|get_module_symbol
-r_static
-r_inline
-r_int
-r_int
-id|get_module_symbol
-c_func
-(paren
-r_char
-op_star
-id|unused1
-comma
-r_char
-op_star
-id|unused2
-)paren
+DECL|struct|inter_module_entry
+r_struct
+id|inter_module_entry
 (brace
-r_return
-l_int|0
+DECL|member|list
+r_struct
+id|list_head
+id|list
 suffix:semicolon
-)brace
+DECL|member|im_name
+r_const
+r_char
+op_star
+id|im_name
 suffix:semicolon
-DECL|function|put_module_symbol
-r_static
-r_inline
+DECL|member|owner
+r_struct
+id|module
+op_star
+id|owner
+suffix:semicolon
+DECL|member|userdata
+r_const
 r_void
-id|put_module_symbol
-c_func
-(paren
-r_int
-r_int
-id|unused
-)paren
-(brace
+op_star
+id|userdata
+suffix:semicolon
 )brace
 suffix:semicolon
-macro_line|#endif
 r_extern
 r_int
 id|try_inc_mod_count

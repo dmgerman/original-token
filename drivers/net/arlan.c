@@ -6475,9 +6475,8 @@ id|dev-&gt;priv
 op_member_access_from_pointer
 id|card
 suffix:semicolon
-r_if
-c_cond
-(paren
+id|ret
+op_assign
 id|request_irq
 c_func
 (paren
@@ -6492,6 +6491,11 @@ id|dev-&gt;name
 comma
 id|dev
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
 )paren
 (brace
 id|printk
@@ -6506,8 +6510,7 @@ id|dev-&gt;irq
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|EAGAIN
+id|ret
 suffix:semicolon
 )brace
 id|priv-&gt;bad

@@ -1,11 +1,12 @@
-multiline_comment|/* generic HDLC line discipline for Linux&n; *&n; * Written by Paul Fulghum paulkf@microgate.com&n; * for Microgate Corporation&n; *&n; * Microgate and SyncLink are registered trademarks of Microgate Corporation&n; *&n; * Adapted from ppp.c, written by Michael Callahan &lt;callahan@maths.ox.ac.uk&gt;,&n; *&t;Al Longyear &lt;longyear@netcom.com&gt;, Paul Mackerras &lt;Paul.Mackerras@cs.anu.edu.au&gt;&n; *&n; * Original release 01/11/99&n; * ==FILEDATE 20000706==&n; *&n; * This code is released under the GNU General Public License (GPL)&n; *&n; * This module implements the tty line discipline N_HDLC for use with&n; * tty device drivers that support bit-synchronous HDLC communications.&n; *&n; * All HDLC data is frame oriented which means:&n; *&n; * 1. tty write calls represent one complete transmit frame of data&n; *    The device driver should accept the complete frame or none of &n; *    the frame (busy) in the write method. Each write call should have&n; *    a byte count in the range of 2-65535 bytes (2 is min HDLC frame&n; *    with 1 addr byte and 1 ctrl byte). The max byte count of 65535&n; *    should include any crc bytes required. For example, when using&n; *    CCITT CRC32, 4 crc bytes are required, so the maximum size frame&n; *    the application may transmit is limited to 65531 bytes. For CCITT&n; *    CRC16, the maximum application frame size would be 65533.&n; *&n; *&n; * 2. receive callbacks from the device driver represents&n; *    one received frame. The device driver should bypass&n; *    the tty flip buffer and call the line discipline receive&n; *    callback directly to avoid fragmenting or concatenating&n; *    multiple frames into a single receive callback.&n; *&n; *    The HDLC line discipline queues the receive frames in seperate&n; *    buffers so complete receive frames can be returned by the&n; *    tty read calls.&n; *&n; * 3. tty read calls returns an entire frame of data or nothing.&n; *    &n; * 4. all send and receive data is considered raw. No processing&n; *    or translation is performed by the line discipline, regardless&n; *    of the tty flags&n; *&n; * 5. When line discipline is queried for the amount of receive&n; *    data available (FIOC), 0 is returned if no data available,&n; *    otherwise the count of the next available frame is returned.&n; *    (instead of the sum of all received frame counts).&n; *&n; * These conventions allow the standard tty programming interface&n; * to be used for synchronous HDLC applications when used with&n; * this line discipline (or another line discipline that is frame&n; * oriented such as N_PPP).&n; *&n; * The SyncLink driver (synclink.c) implements both asynchronous&n; * (using standard line discipline N_TTY) and synchronous HDLC&n; * (using N_HDLC) communications, with the latter using the above&n; * conventions.&n; *&n; * This implementation is very basic and does not maintain&n; * any statistics. The main point is to enforce the raw data&n; * and frame orientation of HDLC communications.&n; *&n; * THIS SOFTWARE IS PROVIDED ``AS IS&squot;&squot; AND ANY EXPRESS OR IMPLIED&n; * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES&n; * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT,&n; * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES&n; * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)&n; * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,&n; * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)&n; * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED&n; * OF THE POSSIBILITY OF SUCH DAMAGE.&n; */
+multiline_comment|/* generic HDLC line discipline for Linux&n; *&n; * Written by Paul Fulghum paulkf@microgate.com&n; * for Microgate Corporation&n; *&n; * Microgate and SyncLink are registered trademarks of Microgate Corporation&n; *&n; * Adapted from ppp.c, written by Michael Callahan &lt;callahan@maths.ox.ac.uk&gt;,&n; *&t;Al Longyear &lt;longyear@netcom.com&gt;, Paul Mackerras &lt;Paul.Mackerras@cs.anu.edu.au&gt;&n; *&n; * Original release 01/11/99&n; * $Id: n_hdlc.c,v 3.2 2000/11/06 22:34:38 paul Exp $&n; *&n; * This code is released under the GNU General Public License (GPL)&n; *&n; * This module implements the tty line discipline N_HDLC for use with&n; * tty device drivers that support bit-synchronous HDLC communications.&n; *&n; * All HDLC data is frame oriented which means:&n; *&n; * 1. tty write calls represent one complete transmit frame of data&n; *    The device driver should accept the complete frame or none of &n; *    the frame (busy) in the write method. Each write call should have&n; *    a byte count in the range of 2-65535 bytes (2 is min HDLC frame&n; *    with 1 addr byte and 1 ctrl byte). The max byte count of 65535&n; *    should include any crc bytes required. For example, when using&n; *    CCITT CRC32, 4 crc bytes are required, so the maximum size frame&n; *    the application may transmit is limited to 65531 bytes. For CCITT&n; *    CRC16, the maximum application frame size would be 65533.&n; *&n; *&n; * 2. receive callbacks from the device driver represents&n; *    one received frame. The device driver should bypass&n; *    the tty flip buffer and call the line discipline receive&n; *    callback directly to avoid fragmenting or concatenating&n; *    multiple frames into a single receive callback.&n; *&n; *    The HDLC line discipline queues the receive frames in seperate&n; *    buffers so complete receive frames can be returned by the&n; *    tty read calls.&n; *&n; * 3. tty read calls returns an entire frame of data or nothing.&n; *    &n; * 4. all send and receive data is considered raw. No processing&n; *    or translation is performed by the line discipline, regardless&n; *    of the tty flags&n; *&n; * 5. When line discipline is queried for the amount of receive&n; *    data available (FIOC), 0 is returned if no data available,&n; *    otherwise the count of the next available frame is returned.&n; *    (instead of the sum of all received frame counts).&n; *&n; * These conventions allow the standard tty programming interface&n; * to be used for synchronous HDLC applications when used with&n; * this line discipline (or another line discipline that is frame&n; * oriented such as N_PPP).&n; *&n; * The SyncLink driver (synclink.c) implements both asynchronous&n; * (using standard line discipline N_TTY) and synchronous HDLC&n; * (using N_HDLC) communications, with the latter using the above&n; * conventions.&n; *&n; * This implementation is very basic and does not maintain&n; * any statistics. The main point is to enforce the raw data&n; * and frame orientation of HDLC communications.&n; *&n; * THIS SOFTWARE IS PROVIDED ``AS IS&squot;&squot; AND ANY EXPRESS OR IMPLIED&n; * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES&n; * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT,&n; * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES&n; * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)&n; * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,&n; * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)&n; * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED&n; * OF THE POSSIBILITY OF SUCH DAMAGE.&n; */
 DECL|macro|HDLC_MAGIC
 mdefine_line|#define HDLC_MAGIC 0x239e
 DECL|macro|HDLC_VERSION
-mdefine_line|#define HDLC_VERSION &quot;1.16&quot;
+mdefine_line|#define HDLC_VERSION &quot;3.2&quot;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -16,12 +17,7 @@ DECL|macro|VERSION
 macro_line|#undef VERSION
 DECL|macro|VERSION
 mdefine_line|#define VERSION(major,minor,patch) (((((major)&lt;&lt;8)+(minor))&lt;&lt;8)+(patch))
-macro_line|#if LINUX_VERSION_CODE &lt; VERSION(2,1,14)
-macro_line|#include &lt;linux/ioport.h&gt;
-macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &gt;= VERSION(2,1,23)
 macro_line|#include &lt;linux/poll.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
@@ -36,22 +32,6 @@ macro_line|#include &lt;linux/ioctl.h&gt;
 macro_line|#ifdef CONFIG_KERNELD
 macro_line|#include &lt;linux/kerneld.h&gt;
 macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &lt; VERSION(2,3,0) 
-DECL|typedef|wait_queue_head_t
-r_typedef
-r_struct
-id|wait_queue
-op_star
-id|wait_queue_head_t
-suffix:semicolon
-DECL|macro|DECLARE_WAITQUEUE
-mdefine_line|#define DECLARE_WAITQUEUE(name,task) struct wait_queue (name) = {(task),NULL}
-DECL|macro|init_waitqueue_head
-mdefine_line|#define init_waitqueue_head(head) *(head) = NULL
-DECL|macro|set_current_state
-mdefine_line|#define set_current_state(a) current-&gt;state = (a)
-macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &gt;= VERSION(2,1,4)
 macro_line|#include &lt;asm/segment.h&gt;
 DECL|macro|GET_USER
 mdefine_line|#define GET_USER(error,value,addr) error = get_user(value,addr)
@@ -61,65 +41,7 @@ DECL|macro|PUT_USER
 mdefine_line|#define PUT_USER(error,value,addr) error = put_user(value,addr)
 DECL|macro|COPY_TO_USER
 mdefine_line|#define COPY_TO_USER(error,dest,src,size) error = copy_to_user(dest,src,size) ? -EFAULT : 0
-macro_line|#if LINUX_VERSION_CODE &gt;= VERSION(2,1,5)
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#endif
-macro_line|#else  /* 2.0.x and 2.1.x before 2.1.4 */
-DECL|macro|GET_USER
-mdefine_line|#define GET_USER(error,value,addr)&t;&t;&t;&t;&t;  &bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;  &bslash;&n;&t;error = verify_area (VERIFY_READ, (void *) addr, sizeof (value)); &bslash;&n;&t;if (error == 0)&t;&t;&t;&t;&t;&t;&t;  &bslash;&n;&t;&t;value = get_user(addr);&t;&t;&t;&t;&t;  &bslash;&n;} while (0)
-DECL|macro|COPY_FROM_USER
-mdefine_line|#define COPY_FROM_USER(error,dest,src,size)&t;&t;&t;&t;  &bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;  &bslash;&n;&t;error = verify_area (VERIFY_READ, (void *) src, size);&t;&t;  &bslash;&n;&t;if (error == 0)&t;&t;&t;&t;&t;&t;&t;  &bslash;&n;&t;&t;memcpy_fromfs (dest, src, size);&t;&t;&t;  &bslash;&n;} while (0)
-DECL|macro|PUT_USER
-mdefine_line|#define PUT_USER(error,value,addr)&t;&t;&t;&t;&t;   &bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;   &bslash;&n;&t;error = verify_area (VERIFY_WRITE, (void *) addr, sizeof (value)); &bslash;&n;&t;if (error == 0)&t;&t;&t;&t;&t;&t;&t;   &bslash;&n;&t;&t;put_user (value, addr);&t;&t;&t;&t;&t;   &bslash;&n;} while (0)
-DECL|macro|COPY_TO_USER
-mdefine_line|#define COPY_TO_USER(error,dest,src,size)&t;&t;&t;&t;  &bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;  &bslash;&n;&t;error = verify_area (VERIFY_WRITE, (void *) dest, size);&t;&t;  &bslash;&n;&t;if (error == 0)&t;&t;&t;&t;&t;&t;&t;  &bslash;&n;&t;&t;memcpy_tofs (dest, src, size);&t;&t;&t;&t;  &bslash;&n;} while (0)
-macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &lt; VERSION(2,1,0)
-DECL|macro|__init
-mdefine_line|#define __init
-DECL|typedef|spinlock_t
-r_typedef
-r_int
-id|spinlock_t
-suffix:semicolon
-DECL|macro|spin_lock_init
-mdefine_line|#define spin_lock_init(a)
-DECL|macro|spin_lock_irqsave
-mdefine_line|#define spin_lock_irqsave(a,b) {save_flags((b));cli();}
-DECL|macro|spin_unlock_irqrestore
-mdefine_line|#define spin_unlock_irqrestore(a,b) {restore_flags((b));}
-DECL|macro|spin_lock
-mdefine_line|#define spin_lock(a)
-DECL|macro|spin_unlock
-mdefine_line|#define spin_unlock(a)
-DECL|macro|schedule_timeout
-mdefine_line|#define schedule_timeout(a){current-&gt;timeout = jiffies + (a); schedule();}
-macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &lt; VERSION(2,1,37)
-DECL|macro|test_and_set_bit
-mdefine_line|#define test_and_set_bit(nr, addr)&t;set_bit(nr, addr)
-macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &lt; VERSION(2,1,57)
-DECL|macro|signal_pending
-mdefine_line|#define signal_pending(p)&t;((p)-&gt;signal &amp; ~(p)-&gt;blocked)
-macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &lt; VERSION(2,1,25)
-DECL|macro|net_device_stats
-mdefine_line|#define net_device_stats&t;enet_statistics
-macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &lt; VERSION(2,1,60)
-DECL|typedef|rw_ret_t
-r_typedef
-r_int
-id|rw_ret_t
-suffix:semicolon
-DECL|typedef|rw_count_t
-r_typedef
-r_int
-r_int
-id|rw_count_t
-suffix:semicolon
-macro_line|#else
 DECL|typedef|rw_ret_t
 r_typedef
 id|ssize_t
@@ -130,7 +52,6 @@ r_typedef
 r_int
 id|rw_count_t
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n; * Buffers for individual HDLC frames&n; */
 DECL|macro|MAX_HDLC_FRAME_SIZE
 mdefine_line|#define MAX_HDLC_FRAME_SIZE 65535 
@@ -317,7 +238,6 @@ id|n_hdlc_alloc
 r_void
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= VERSION(2,1,19) 
 id|MODULE_PARM
 c_func
 (paren
@@ -334,7 +254,6 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* debug level can be set by insmod for debugging purposes */
 DECL|macro|DEBUG_LEVEL_INFO
 mdefine_line|#define DEBUG_LEVEL_INFO&t;1
@@ -411,35 +330,6 @@ r_int
 r_int
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &lt; VERSION(2,1,23)
-r_static
-r_int
-id|n_hdlc_tty_select
-(paren
-r_struct
-id|tty_struct
-op_star
-id|tty
-comma
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|filp
-comma
-r_int
-id|sel_type
-comma
-id|select_table
-op_star
-id|wait
-)paren
-suffix:semicolon
-macro_line|#else
 r_static
 r_int
 r_int
@@ -460,7 +350,6 @@ op_star
 id|wait
 )paren
 suffix:semicolon
-macro_line|#endif
 r_static
 r_int
 id|n_hdlc_tty_open
@@ -1744,15 +1633,6 @@ id|n_hdlc-&gt;tty-&gt;fasync
 op_ne
 l_int|NULL
 )paren
-macro_line|#if LINUX_VERSION_CODE &lt; VERSION(2,3,0) 
-id|kill_fasync
-(paren
-id|n_hdlc-&gt;tty-&gt;fasync
-comma
-id|SIGIO
-)paren
-suffix:semicolon
-macro_line|#else
 id|kill_fasync
 (paren
 op_amp
@@ -1763,7 +1643,6 @@ comma
 id|POLL_IN
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/* end of n_hdlc_tty_receive() */
 multiline_comment|/* n_hdlc_tty_read()&n; * &n; * &t;Called to retreive one frame of data (if available)&n; * &t;&n; * Arguments:&n; * &n; * &t;tty&t;&t;pointer to tty instance data&n; * &t;file&t;&t;pointer to open file object&n; * &t;buf&t;&t;pointer to returned data buffer&n; * &t;nr&t;&t;size of returned data buffer&n; * &t;&n; * Return Value:&n; * &n; * &t;Number of bytes returned or error code&n; */
@@ -2575,187 +2454,6 @@ id|error
 suffix:semicolon
 )brace
 multiline_comment|/* end of n_hdlc_tty_ioctl() */
-macro_line|#if LINUX_VERSION_CODE &lt; VERSION(2,1,23)
-multiline_comment|/* n_hdlc_tty_select()&n; * &n; * &t;Device select method. Determine if operation requires&n; * &t;blocking and if so put appropriate wait queue in select&n; * &t;table and return 0, otherwise return 1.&n; * &t;&n; * Arguments:&n; * &n; * &t;tty&t;&t;pointer to tty device instance data&n; * &t;inode&t;&t;pointer to inode for device&n; * &t;filp&t;&t;pointer to file object&n; * &t;sel_type&t;identified the select type (read/write/exception)&n; * &t;wait&t;&t;select table for adding wait queue if appropriate&n; * &t;&n; * Return Value:&n; * &n; * &t;1 if no need to block on operation&n; * &t;0 if must block and wait queue added to select table&n; */
-DECL|function|n_hdlc_tty_select
-r_static
-r_int
-id|n_hdlc_tty_select
-(paren
-r_struct
-id|tty_struct
-op_star
-id|tty
-comma
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|filp
-comma
-r_int
-id|sel_type
-comma
-id|select_table
-op_star
-id|wait
-)paren
-(brace
-r_struct
-id|n_hdlc
-op_star
-id|n_hdlc
-op_assign
-id|tty2n_hdlc
-c_func
-(paren
-id|tty
-)paren
-suffix:semicolon
-r_int
-id|result
-op_assign
-l_int|1
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|debuglevel
-op_ge
-id|DEBUG_LEVEL_INFO
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;%s(%d)n_hdlc_tty_select() called&bslash;n&quot;
-comma
-id|__FILE__
-comma
-id|__LINE__
-)paren
-suffix:semicolon
-multiline_comment|/* Verify the status of the device */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|n_hdlc
-)paren
-r_return
-op_minus
-id|EBADF
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|n_hdlc-&gt;magic
-op_ne
-id|HDLC_MAGIC
-op_logical_or
-id|tty
-op_ne
-id|n_hdlc-&gt;tty
-)paren
-r_return
-op_minus
-id|EBADF
-suffix:semicolon
-r_switch
-c_cond
-(paren
-id|sel_type
-)paren
-(brace
-r_case
-id|SEL_IN
-suffix:colon
-r_if
-c_cond
-(paren
-id|n_hdlc-&gt;rx_buf_list.head
-)paren
-r_break
-suffix:semicolon
-r_case
-id|SEL_EX
-suffix:colon
-multiline_comment|/* Exceptions or read errors */
-multiline_comment|/* Is this a pty link and the remote disconnected? */
-r_if
-c_cond
-(paren
-id|tty-&gt;flags
-op_amp
-(paren
-l_int|1
-op_lshift
-id|TTY_OTHER_CLOSED
-)paren
-)paren
-r_break
-suffix:semicolon
-multiline_comment|/* Is this a local link and the modem disconnected? */
-r_if
-c_cond
-(paren
-id|tty_hung_up_p
-(paren
-id|filp
-)paren
-)paren
-r_break
-suffix:semicolon
-id|select_wait
-(paren
-op_amp
-id|n_hdlc-&gt;read_wait
-comma
-id|wait
-)paren
-suffix:semicolon
-id|result
-op_assign
-l_int|0
-suffix:semicolon
-r_break
-suffix:semicolon
-multiline_comment|/* Write mode. A write is allowed if there is no current transmission */
-r_case
-id|SEL_OUT
-suffix:colon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|n_hdlc-&gt;tx_free_buf_list.head
-)paren
-(brace
-id|select_wait
-(paren
-op_amp
-id|n_hdlc-&gt;write_wait
-comma
-id|wait
-)paren
-suffix:semicolon
-id|result
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-r_break
-suffix:semicolon
-)brace
-r_return
-id|result
-suffix:semicolon
-)brace
-multiline_comment|/* end of n_hdlc_tty_select() */
-macro_line|#else&t;/* 2.1.23 or later */
 multiline_comment|/* n_hdlc_tty_poll()&n; * &n; * &t;TTY callback for poll system call. Determine which &n; * &t;operations (read/write) will not block and return&n; * &t;info to caller.&n; * &t;&n; * Arguments:&n; * &n; * &t;tty&t;&t;pointer to tty instance data&n; * &t;filp&t;&t;pointer to open file object for device&n; * &t;poll_table&t;wait queue for operations&n; * &n; * Return Value:&n; * &n; * &t;bit mask containing info on which ops will not block&n; */
 DECL|function|n_hdlc_tty_poll
 r_static
@@ -2827,17 +2525,6 @@ id|n_hdlc-&gt;tty
 (brace
 multiline_comment|/* queue current process into any wait queue that */
 multiline_comment|/* may awaken in the future (read and write) */
-macro_line|#if LINUX_VERSION_CODE &lt; VERSION(2,1,89)
-id|poll_wait
-c_func
-(paren
-op_amp
-id|n_hdlc-&gt;poll_wait
-comma
-id|wait
-)paren
-suffix:semicolon
-macro_line|#else
 id|poll_wait
 c_func
 (paren
@@ -2849,7 +2536,6 @@ comma
 id|wait
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* set bits for operations that wont block */
 r_if
 c_cond
@@ -2917,7 +2603,6 @@ id|mask
 suffix:semicolon
 )brace
 multiline_comment|/* end of n_hdlc_tty_poll() */
-macro_line|#endif
 multiline_comment|/* n_hdlc_alloc()&n; * &n; * &t;Allocate an n_hdlc instance data structure&n; *&n; * Arguments:&t;&t;None&n; * Return Value:&t;pointer to structure if success, otherwise 0&t;&n; */
 DECL|function|n_hdlc_alloc
 r_static
@@ -3350,10 +3035,11 @@ id|buf
 suffix:semicolon
 )brace
 multiline_comment|/* end of n_hdlc_buf_get() */
-multiline_comment|/* init_module()&n; *&n; *&t;called when module is loading to register line discipline&n; * &t;&n; * Arguments:&t;&t;None&n; * Return Value:&t;0 if success, otherwise error code&n; */
-DECL|function|init_module
+DECL|function|n_hdlc_init
+r_static
 r_int
-id|init_module
+id|__init
+id|n_hdlc_init
 c_func
 (paren
 r_void
@@ -3420,12 +3106,10 @@ id|n_hdlc_ldisc.magic
 op_assign
 id|TTY_LDISC_MAGIC
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= VERSION(2,1,28)
 id|n_hdlc_ldisc.name
 op_assign
 l_string|&quot;hdlc&quot;
 suffix:semicolon
-macro_line|#endif
 id|n_hdlc_ldisc.open
 op_assign
 id|n_hdlc_tty_open
@@ -3446,17 +3130,10 @@ id|n_hdlc_ldisc.ioctl
 op_assign
 id|n_hdlc_tty_ioctl
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &lt; VERSION(2,1,23)
-id|n_hdlc_ldisc.select
-op_assign
-id|n_hdlc_tty_select
-suffix:semicolon
-macro_line|#else
 id|n_hdlc_ldisc.poll
 op_assign
 id|n_hdlc_tty_poll
 suffix:semicolon
-macro_line|#endif
 id|n_hdlc_ldisc.receive_room
 op_assign
 id|n_hdlc_tty_room
@@ -3522,10 +3199,11 @@ id|status
 suffix:semicolon
 )brace
 multiline_comment|/* end of init_module() */
-multiline_comment|/* cleanup_module()&n; *&n; *&t;called when module is unloading to unregister line discipline&n; * &t;&n; * Arguments:&t;&t;None&n; * Return Value:&t;None&n; */
-DECL|function|cleanup_module
+DECL|function|n_hdlc_exit
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|n_hdlc_exit
 c_func
 (paren
 r_void
@@ -3566,4 +3244,18 @@ l_string|&quot;N_HDLC: line discipline unregistered&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+DECL|variable|n_hdlc_init
+id|module_init
+c_func
+(paren
+id|n_hdlc_init
+)paren
+suffix:semicolon
+DECL|variable|n_hdlc_exit
+id|module_exit
+c_func
+(paren
+id|n_hdlc_exit
+)paren
+suffix:semicolon
 eof

@@ -27,8 +27,6 @@ DECL|macro|PAT_MEM_SIZE
 mdefine_line|#define PAT_MEM_SIZE 16*3
 DECL|macro|PAT_MEM_OFF
 mdefine_line|#define PAT_MEM_OFF  (4*1024*1024 - PAT_MEM_SIZE)
-DECL|macro|arraysize
-mdefine_line|#define arraysize(x)    (sizeof(x)/sizeof(*(x)))
 DECL|struct|retz3fb_par
 r_struct
 id|retz3fb_par
@@ -1024,7 +1022,7 @@ comma
 )brace
 suffix:semicolon
 DECL|macro|NUM_TOTAL_MODES
-mdefine_line|#define NUM_TOTAL_MODES    arraysize(retz3fb_predefined)
+mdefine_line|#define NUM_TOTAL_MODES    ARRAY_SIZE(retz3fb_predefined)
 DECL|variable|retz3fb_default
 r_static
 r_struct

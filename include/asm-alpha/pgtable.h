@@ -1223,10 +1223,6 @@ DECL|macro|pte_to_swp_entry
 mdefine_line|#define pte_to_swp_entry(pte)&t;&t;((swp_entry_t) { pte_val(pte) })
 DECL|macro|swp_entry_to_pte
 mdefine_line|#define swp_entry_to_pte(x)&t;&t;((pte_t) { (x).val })
-DECL|macro|module_map
-mdefine_line|#define module_map&t;vmalloc
-DECL|macro|module_unmap
-mdefine_line|#define module_unmap&t;vfree
 multiline_comment|/* Needs to be defined here and not in linux/mm.h, as it is arch dependent */
 DECL|macro|PageSkip
 mdefine_line|#define PageSkip(page)&t;&t;(0)

@@ -1596,19 +1596,6 @@ id|found
 op_assign
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|load_8390_module
-c_func
-(paren
-l_string|&quot;es3210.c&quot;
-)paren
-)paren
-r_return
-op_minus
-id|ENOSYS
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1715,11 +1702,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|unload_8390_module
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 op_minus
 id|ENXIO
@@ -1814,11 +1796,6 @@ id|priv
 suffix:semicolon
 )brace
 )brace
-id|unload_8390_module
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 macro_line|#endif /* MODULE */
 eof

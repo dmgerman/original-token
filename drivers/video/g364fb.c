@@ -94,8 +94,6 @@ DECL|macro|MON_ID_REG
 mdefine_line|#define MON_ID_REG &t;0xe4100000 &t;/* unused */
 DECL|macro|RESET_REG
 mdefine_line|#define RESET_REG &t;0xe4180000  &t;/* Write only */
-DECL|macro|arraysize
-mdefine_line|#define arraysize(x)&t;(sizeof(x)/sizeof(*(x)))
 DECL|variable|currcon
 r_static
 r_int

@@ -499,6 +499,8 @@ suffix:semicolon
 id|upcase-&gt;vol-&gt;upcase_length
 op_assign
 id|io.size
+op_div
+l_int|2
 suffix:semicolon
 )brace
 r_static

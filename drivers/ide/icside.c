@@ -404,6 +404,7 @@ multiline_comment|/* Prototype: icside_identifyif (struct expansion_card *ec)&n;
 DECL|function|icside_identifyif
 r_static
 id|iftype_t
+id|__init
 id|icside_identifyif
 (paren
 r_struct
@@ -1803,6 +1804,7 @@ suffix:semicolon
 DECL|function|icside_register_v5
 r_static
 r_int
+id|__init
 id|icside_register_v5
 c_func
 (paren
@@ -1906,6 +1908,7 @@ suffix:semicolon
 DECL|function|icside_register_v6
 r_static
 r_int
+id|__init
 id|icside_register_v6
 c_func
 (paren
@@ -2175,6 +2178,7 @@ suffix:semicolon
 )brace
 DECL|function|icside_init
 r_int
+id|__init
 id|icside_init
 c_func
 (paren

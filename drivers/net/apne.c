@@ -1035,9 +1035,8 @@ op_assign
 id|ioaddr
 suffix:semicolon
 multiline_comment|/* Install the Interrupt handler */
-r_if
-c_cond
-(paren
+id|i
+op_assign
 id|request_irq
 c_func
 (paren
@@ -1047,14 +1046,18 @@ id|apne_interrupt
 comma
 id|SA_SHIRQ
 comma
-l_string|&quot;apne Ethernet&quot;
+id|dev-&gt;name
 comma
 id|dev
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
 )paren
 r_return
-op_minus
-id|EAGAIN
+id|i
 suffix:semicolon
 multiline_comment|/* Allocate dev-&gt;priv and fill in 8390 specific dev fields. */
 r_if
@@ -2410,19 +2413,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|load_8390_module
-c_func
-(paren
-l_string|&quot;apne.c&quot;
-)paren
-)paren
-r_return
-op_minus
-id|ENOSYS
-suffix:semicolon
-r_if
-c_cond
-(paren
 (paren
 id|err
 op_assign
@@ -2447,11 +2437,6 @@ id|printk
 c_func
 (paren
 l_string|&quot;No PCMCIA NEx000 ethernet card found.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|unload_8390_module
-c_func
-(paren
 )paren
 suffix:semicolon
 r_return
@@ -2496,11 +2481,6 @@ id|apne_dev
 )paren
 suffix:semicolon
 id|pcmcia_reset
-c_func
-(paren
-)paren
-suffix:semicolon
-id|unload_8390_module
 c_func
 (paren
 )paren

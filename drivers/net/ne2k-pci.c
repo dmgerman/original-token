@@ -1,15 +1,56 @@
 multiline_comment|/* ne2k-pci.c: A NE2000 clone on PCI bus driver for Linux. */
-multiline_comment|/*&n;&t;A Linux device driver for PCI NE2000 clones.&n;&n;&t;Authorship and other copyrights:&n;&t;1992-1998 by Donald Becker, NE2000 core and various modifications.&n;&t;1995-1998 by Paul Gortmaker, core modifications and PCI support.&n;&n;&t;Copyright 1993 assigned to the United States Government as represented&n;&t;by the Director, National Security Agency.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;People are making PCI ne2000 clones! Oh the horror, the horror...&n;&n;&t;Issues remaining:&n;&t;No full-duplex support.&n;*/
-multiline_comment|/* Our copyright info must remain in the binary. */
-DECL|variable|version
+multiline_comment|/*&n;&t;A Linux device driver for PCI NE2000 clones.&n;&n;&t;Authors and other copyright holders:&n;&t;1992-2000 by Donald Becker, NE2000 core and various modifications.&n;&t;1995-1998 by Paul Gortmaker, core modifications and PCI support.&n;&t;Copyright 1993 assigned to the United States Government as represented&n;&t;by the Director, National Security Agency.&n;&n;&t;This software may be used and distributed according to the terms of&n;&t;the GNU General Public License (GPL), incorporated herein by reference.&n;&t;Drivers based on or derived from this code fall under the GPL and must&n;&t;retain the authorship, copyright and license notice.  This file is not&n;&t;a complete program and may only be used when the entire operating&n;&t;system is licensed under the GPL.&n;&n;&t;The author may be reached as becker@scyld.com, or C/O&n;&t;Scyld Computing Corporation&n;&t;410 Severn Ave., Suite 210&n;&t;Annapolis MD 21403&n;&n;&t;Issues remaining:&n;&t;People are making PCI ne2000 clones! Oh the horror, the horror...&n;&t;Limited full-duplex support.&n;*/
+multiline_comment|/* These identify the driver base version and may not be removed. */
+DECL|variable|version1
 r_static
 r_const
 r_char
-op_star
-id|version
+id|version1
+(braket
+)braket
 op_assign
-l_string|&quot;ne2k-pci.c:vpre-1.00e 5/27/99 D. Becker/P. Gortmaker http://cesdis.gsfc.nasa.gov/linux/drivers/ne2k-pci.html&bslash;n&quot;
+l_string|&quot;ne2k-pci.c:v1.02 10/19/2000 D. Becker/P. Gortmaker&bslash;n&quot;
 suffix:semicolon
+DECL|variable|version2
+r_static
+r_const
+r_char
+id|version2
+(braket
+)braket
+op_assign
+l_string|&quot;  http://www.scyld.com/network/ne2k-pci.html&bslash;n&quot;
+suffix:semicolon
+multiline_comment|/* The user-configurable values.&n;   These may be modified when a driver module is loaded.*/
+DECL|variable|debug
+r_static
+r_int
+id|debug
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* 1 normal messages, 0 quiet .. 7 verbose. */
+DECL|macro|MAX_UNITS
+mdefine_line|#define MAX_UNITS 8&t;&t;&t;&t;/* More are supported, limit only on options */
+multiline_comment|/* Used to pass the full-duplex flag, etc. */
+DECL|variable|full_duplex
+r_static
+r_int
+id|full_duplex
+(braket
+id|MAX_UNITS
+)braket
+suffix:semicolon
+DECL|variable|options
+r_static
+r_int
+id|options
+(braket
+id|MAX_UNITS
+)braket
+suffix:semicolon
+multiline_comment|/* Force a non std. amount of memory.  Units are 256 byte pages. */
+multiline_comment|/* #define PACKETBUF_MEMSIZE&t;0x40 */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -32,13 +73,53 @@ mdefine_line|#define insl insl_ns
 DECL|macro|outsl
 mdefine_line|#define outsl outsl_ns
 macro_line|#endif
-multiline_comment|/* Set statically or when loading the driver module. */
-DECL|variable|debug
-r_static
-r_int
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Donald Becker / Paul Gortmaker&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;PCI NE2000 clone driver&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
 id|debug
-op_assign
-l_int|1
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|options
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|MAX_UNITS
+)paren
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|full_duplex
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|MAX_UNITS
+)paren
+l_string|&quot;i&quot;
+)paren
 suffix:semicolon
 multiline_comment|/* Some defines that people can play with if so inclined. */
 multiline_comment|/* Use 32 bit data-movement operations instead of 16 bit. */
@@ -46,30 +127,39 @@ DECL|macro|USE_LONGIO
 mdefine_line|#define USE_LONGIO
 multiline_comment|/* Do we implement the read before write bugfix ? */
 multiline_comment|/* #define NE_RW_BUGFIX */
-multiline_comment|/* Do we have a non std. amount of memory? (in units of 256 byte pages) */
-multiline_comment|/* #define PACKETBUF_MEMSIZE&t;0x40 */
+multiline_comment|/* Flags.  We rename an existing ei_status field to store flags! */
+multiline_comment|/* Thus only the low 8 bits are usable for non-init-time flags. */
 DECL|macro|ne2k_flags
-mdefine_line|#define ne2k_flags reg0&t;&t;&t;/* Rename an existing field to store flags! */
-multiline_comment|/* Only the low 8 bits are usable for non-init-time flags! */
+mdefine_line|#define ne2k_flags reg0
 r_enum
 (brace
-DECL|enumerator|HOLTEK_FDX
-id|HOLTEK_FDX
-op_assign
-l_int|1
-comma
-multiline_comment|/* Full duplex -&gt; set 0x80 at offset 0x20. */
 DECL|enumerator|ONLY_16BIT_IO
 DECL|enumerator|ONLY_32BIT_IO
 id|ONLY_16BIT_IO
 op_assign
-l_int|2
+l_int|8
 comma
 id|ONLY_32BIT_IO
 op_assign
 l_int|4
 comma
 multiline_comment|/* Chip can do only 16/32-bit xfers. */
+DECL|enumerator|FORCE_FDX
+id|FORCE_FDX
+op_assign
+l_int|0x20
+comma
+multiline_comment|/* User override. */
+DECL|enumerator|REALTEK_FDX
+DECL|enumerator|HOLTEK_FDX
+id|REALTEK_FDX
+op_assign
+l_int|0x40
+comma
+id|HOLTEK_FDX
+op_assign
+l_int|0x80
+comma
 DECL|enumerator|STOP_PG_0x60
 id|STOP_PG_0x60
 op_assign
@@ -138,7 +228,7 @@ op_assign
 (brace
 l_string|&quot;RealTek RTL-8029&quot;
 comma
-l_int|0
+id|REALTEK_FDX
 )brace
 comma
 (brace
@@ -506,7 +596,7 @@ id|start_page
 )paren
 suffix:semicolon
 "&f;"
-multiline_comment|/* No room in the standard 8390 structure for extra info we need. */
+multiline_comment|/* There is no room in the standard 8390 structure for extra info we need,&n;   so we build a meta/outer-wrapper structure.. */
 DECL|struct|ne2k_pci_card
 r_struct
 id|ne2k_pci_card
@@ -551,14 +641,6 @@ id|dev
 suffix:semicolon
 r_int
 id|i
-comma
-id|irq
-comma
-id|reg0
-comma
-id|start_page
-comma
-id|stop_page
 suffix:semicolon
 r_int
 r_char
@@ -568,23 +650,41 @@ l_int|32
 )braket
 suffix:semicolon
 r_int
+id|start_page
+comma
+id|stop_page
+suffix:semicolon
+r_int
+id|irq
+comma
+id|reg0
+comma
 id|chip_idx
 op_assign
 id|ent-&gt;driver_data
 suffix:semicolon
 r_static
 r_int
-id|version_printed
-op_assign
-l_int|0
+r_int
+id|fnd_cnt
 suffix:semicolon
 r_int
 id|ioaddr
 suffix:semicolon
+r_int
+id|flags
+op_assign
+id|pci_clone_list
+(braket
+id|chip_idx
+)braket
+dot
+id|flags
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|version_printed
+id|fnd_cnt
 op_increment
 op_eq
 l_int|0
@@ -594,8 +694,12 @@ c_func
 (paren
 id|KERN_INFO
 l_string|&quot;%s&quot;
+id|KERN_INFO
+l_string|&quot;%s&quot;
 comma
-id|version
+id|version1
+comma
+id|version2
 )paren
 suffix:semicolon
 id|ioaddr
@@ -1066,11 +1170,6 @@ multiline_comment|/* Note: all PCI cards have at least 16 bit access, so we don&
 r_if
 c_cond
 (paren
-id|pci_clone_list
-(braket
-id|chip_idx
-)braket
-dot
 id|flags
 op_amp
 id|ONLY_32BIT_IO
@@ -1162,11 +1261,6 @@ id|NESM_START_PG
 suffix:semicolon
 id|stop_page
 op_assign
-id|pci_clone_list
-(braket
-id|chip_idx
-)braket
-dot
 id|flags
 op_amp
 id|STOP_PG_0x60
@@ -1304,13 +1398,40 @@ l_int|1
 suffix:semicolon
 id|ei_status.ne2k_flags
 op_assign
-id|pci_clone_list
-(braket
-id|chip_idx
-)braket
-dot
 id|flags
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|fnd_cnt
+OL
+id|MAX_UNITS
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|full_duplex
+(braket
+id|fnd_cnt
+)braket
+OG
+l_int|0
+op_logical_or
+(paren
+id|options
+(braket
+id|fnd_cnt
+)braket
+op_amp
+id|FORCE_FDX
+)paren
+)paren
+id|ei_status.ne2k_flags
+op_or_assign
+id|FORCE_FDX
+suffix:semicolon
+)brace
 id|ei_status.rx_start_page
 op_assign
 id|start_page
@@ -1393,9 +1514,9 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
+DECL|function|ne2k_pci_open
 r_static
 r_int
-DECL|function|ne2k_pci_open
 id|ne2k_pci_open
 c_func
 (paren
@@ -1432,6 +1553,87 @@ op_minus
 id|EAGAIN
 suffix:semicolon
 )brace
+multiline_comment|/* Set full duplex for the chips that we know about. */
+r_if
+c_cond
+(paren
+id|ei_status.ne2k_flags
+op_amp
+id|FORCE_FDX
+)paren
+(brace
+r_int
+id|ioaddr
+op_assign
+id|dev-&gt;base_addr
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ei_status.ne2k_flags
+op_amp
+id|REALTEK_FDX
+)paren
+(brace
+id|outb
+c_func
+(paren
+l_int|0xC0
+op_plus
+id|E8390_NODMA
+comma
+id|ioaddr
+op_plus
+id|NE_CMD
+)paren
+suffix:semicolon
+multiline_comment|/* Page 3 */
+id|outb
+c_func
+(paren
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+l_int|0x20
+)paren
+op_or
+l_int|0x80
+comma
+id|ioaddr
+op_plus
+l_int|0x20
+)paren
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|ei_status.ne2k_flags
+op_amp
+id|HOLTEK_FDX
+)paren
+id|outb
+c_func
+(paren
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+l_int|0x20
+)paren
+op_or
+l_int|0x80
+comma
+id|ioaddr
+op_plus
+l_int|0x20
+)paren
+suffix:semicolon
+)brace
 id|ei_open
 c_func
 (paren
@@ -1442,9 +1644,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|ne2k_pci_close
 r_static
 r_int
-DECL|function|ne2k_pci_close
 id|ne2k_pci_close
 c_func
 (paren
@@ -1475,9 +1677,9 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Hard reset the card.  This used to pause for the same period that a&n;   8390 reset command required, but that shouldn&squot;t be necessary. */
+DECL|function|ne2k_pci_reset_8390
 r_static
 r_void
-DECL|function|ne2k_pci_reset_8390
 id|ne2k_pci_reset_8390
 c_func
 (paren
@@ -1586,9 +1788,9 @@ suffix:semicolon
 multiline_comment|/* Ack intr. */
 )brace
 multiline_comment|/* Grab the 8390 specific header. Similar to the block_input routine, but&n;   we don&squot;t need to be concerned with ring wrap as the header will be at&n;   the start of a page, so we optimize accordingly. */
+DECL|function|ne2k_pci_get_8390_hdr
 r_static
 r_void
-DECL|function|ne2k_pci_get_8390_hdr
 id|ne2k_pci_get_8390_hdr
 c_func
 (paren
@@ -1783,9 +1985,9 @@ l_int|0x01
 suffix:semicolon
 )brace
 multiline_comment|/* Block input and output, similar to the Crynwr packet driver.  If you&n;   are porting to a new ethercard, look at the packet driver source for hints.&n;   The NEx000 doesn&squot;t share the on-board packet memory -- you have to put&n;   the packet out through the &quot;remote DMA&quot; dataport using outb. */
+DECL|function|ne2k_pci_block_input
 r_static
 r_void
-DECL|function|ne2k_pci_block_input
 id|ne2k_pci_block_input
 c_func
 (paren
@@ -2079,9 +2281,9 @@ op_complement
 l_int|0x01
 suffix:semicolon
 )brace
+DECL|function|ne2k_pci_block_output
 r_static
 r_void
-DECL|function|ne2k_pci_block_output
 id|ne2k_pci_block_output
 c_func
 (paren
@@ -2426,6 +2628,7 @@ multiline_comment|/* Avoid clock roll-over. */
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: timeout waiting for Tx RDC.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -2496,16 +2699,11 @@ c_cond
 op_logical_neg
 id|dev
 )paren
-(brace
-id|printk
+id|BUG
+c_func
 (paren
-id|KERN_ERR
-l_string|&quot;bug! ne2k_pci_remove_one called w/o net_device&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 id|unregister_netdev
 c_func
 (paren
@@ -2570,46 +2768,12 @@ c_func
 r_void
 )paren
 (brace
-r_int
-id|rc
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|load_8390_module
-c_func
-(paren
-l_string|&quot;ne2k-pci.c&quot;
-)paren
-)paren
 r_return
-op_minus
-id|ENOSYS
-suffix:semicolon
-id|rc
-op_assign
 id|pci_module_init
 (paren
 op_amp
 id|ne2k_driver
 )paren
-suffix:semicolon
-multiline_comment|/* XXX should this test CONFIG_HOTPLUG like pci_module_init? */
-multiline_comment|/* YYY No. If we&squot;re returning non-zero, we&squot;re being unloaded&n;&t; * &t;   immediately. dwmw2 &n;&t; */
-r_if
-c_cond
-(paren
-id|rc
-op_le
-l_int|0
-)paren
-id|unload_8390_module
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-id|rc
 suffix:semicolon
 )brace
 DECL|function|ne2k_pci_cleanup
@@ -2628,11 +2792,6 @@ op_amp
 id|ne2k_driver
 )paren
 suffix:semicolon
-id|unload_8390_module
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 DECL|variable|ne2k_pci_init
 id|module_init
@@ -2648,6 +2807,4 @@ c_func
 id|ne2k_pci_cleanup
 )paren
 suffix:semicolon
-"&f;"
-multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -DMODVERSIONS  -DMODULE -D__KERNEL__ -Wall -Wstrict-prototypes -O6 -fomit-frame-pointer -I/usr/src/linux/drivers/net/ -c ne2k-pci.c&quot;&n; *  alt-compile-command: &quot;gcc -DMODULE -D__KERNEL__ -Wall -Wstrict-prototypes -O6 -fomit-frame-pointer -I/usr/src/linux/drivers/net/ -c ne2k-pci.c&quot;&n; *  c-indent-level: 4&n; *  c-basic-offset: 4&n; *  tab-width: 4&n; *  version-control: t&n; *  kept-new-versions: 5&n; * End:&n; */
 eof

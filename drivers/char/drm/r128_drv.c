@@ -1372,11 +1372,13 @@ c_cond
 (paren
 id|dev-&gt;agp-&gt;acquired
 op_logical_and
-id|drm_agp.release
+id|drm_agp_p-&gt;release
 )paren
 (paren
 op_star
-id|drm_agp.release
+(paren
+id|drm_agp_p-&gt;release
+)paren
 )paren
 (paren
 )paren

@@ -38,8 +38,6 @@ DECL|macro|mem_out32
 mdefine_line|#define mem_out32(val, addr)    out_le32((void *)(addr), val)
 DECL|macro|IO_OUT16VAL
 mdefine_line|#define IO_OUT16VAL(v, r)       (((v) &lt;&lt; 8) | (r))
-DECL|macro|arraysize
-mdefine_line|#define arraysize(x)&t;(sizeof(x)/sizeof(*(x)))
 DECL|variable|currcon
 r_static
 r_int
