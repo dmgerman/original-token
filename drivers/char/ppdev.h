@@ -67,4 +67,10 @@ mdefine_line|#define PPDATADIR&t;_IOW(PP_IOCTL, 0x90, int)
 multiline_comment|/* Negotiate a particular IEEE 1284 mode. */
 DECL|macro|PPNEGOT
 mdefine_line|#define PPNEGOT&t;&t;_IOW(PP_IOCTL, 0x91, int)
+multiline_comment|/* Set control lines when an interrupt occurs. */
+DECL|macro|PPWCTLONIRQ
+mdefine_line|#define PPWCTLONIRQ&t;_IOW(PP_IOCTL, 0x92, unsigned char)
+multiline_comment|/* Clear (and return) interrupt count. */
+DECL|macro|PPCLRIRQ
+mdefine_line|#define PPCLRIRQ&t;_IOR(PP_IOCTL, 0x93, int)
 eof

@@ -1320,7 +1320,10 @@ op_amp
 id|PIPE_DEVEP_MASK
 )paren
 op_or
-l_int|0x69
+id|usb_packetid
+(paren
+id|pipe
+)paren
 suffix:semicolon
 multiline_comment|/* Status:    slow/fast,      Interrupt,   Active,    Short Packet Detect     Infinite Errors */
 id|status
@@ -1384,7 +1387,6 @@ id|td-&gt;status
 op_assign
 id|status
 suffix:semicolon
-multiline_comment|/* In */
 id|td-&gt;info
 op_assign
 id|destination
@@ -2674,27 +2676,13 @@ id|pipe
 op_amp
 id|PIPE_DEVEP_MASK
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|usb_pipeout
-c_func
+op_or
+id|usb_packetid
 (paren
 id|pipe
 )paren
-)paren
-id|destination
-op_or_assign
-l_int|0xE1
 suffix:semicolon
-multiline_comment|/* OUT */
-r_else
-id|destination
-op_or_assign
-l_int|0x69
-suffix:semicolon
-multiline_comment|/* IN */
+multiline_comment|/* add IN or OUT */
 multiline_comment|/* Status:    slow/fast,       Active,       Isochronous */
 id|status
 op_assign
@@ -4140,18 +4128,7 @@ comma
 id|maxsze
 )paren
 suffix:semicolon
-multiline_comment|/* The &quot;pipe&quot; thing contains the destination in bits 8--18, 0x69 is IN */
-multiline_comment|/*&n;&t;  IS THIS NECCESARY? PERHAPS WE CAN JUST USE THE PIPE&n;&t;  LOOK AT: usb_pipeout and the pipe bits&n;&t;  I FORGOT WHAT IT EXACTLY DOES&n;&t;*/
-r_if
-c_cond
-(paren
-id|usb_pipeout
-c_func
-(paren
-id|pipe
-)paren
-)paren
-(brace
+multiline_comment|/* The &quot;pipe&quot; thing contains the destination in bits 8--18 */
 id|destination
 op_assign
 (paren
@@ -4160,22 +4137,11 @@ op_amp
 id|PIPE_DEVEP_MASK
 )paren
 op_or
-l_int|0xE1
-suffix:semicolon
-)brace
-r_else
-(brace
-id|destination
-op_assign
+id|usb_packetid
 (paren
 id|pipe
-op_amp
-id|PIPE_DEVEP_MASK
 )paren
-op_or
-l_int|0x69
 suffix:semicolon
-)brace
 multiline_comment|/* Status:    slow/fast,       Active,    Short Packet Detect     Three Errors */
 id|status
 op_assign

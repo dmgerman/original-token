@@ -1329,6 +1329,8 @@ DECL|macro|usb_packetid
 mdefine_line|#define usb_packetid(pipe)&t;(((pipe) &amp; 0x80) ? 0x69 : 0xE1)
 DECL|macro|usb_pipeout
 mdefine_line|#define usb_pipeout(pipe)&t;((((pipe) &gt;&gt; 7) &amp; 1) ^ 1)
+DECL|macro|usb_pipein
+mdefine_line|#define usb_pipein(pipe)&t;(((pipe) &gt;&gt; 7) &amp; 1)
 DECL|macro|usb_pipedevice
 mdefine_line|#define usb_pipedevice(pipe)&t;(((pipe) &gt;&gt; 8) &amp; 0x7f)
 DECL|macro|usb_pipe_endpdev

@@ -5892,6 +5892,11 @@ op_star
 id|priv
 suffix:semicolon
 r_struct
+id|parport_operations
+op_star
+id|ops
+suffix:semicolon
+r_struct
 id|parport
 id|tmp
 suffix:semicolon
@@ -5954,6 +5959,57 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+id|ops
+op_assign
+id|kmalloc
+(paren
+r_sizeof
+(paren
+r_struct
+id|parport_operations
+)paren
+comma
+id|GFP_KERNEL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ops
+)paren
+(brace
+id|printk
+(paren
+id|KERN_DEBUG
+l_string|&quot;parport (0x%lx): no memory for ops!&bslash;n&quot;
+comma
+id|base
+)paren
+suffix:semicolon
+id|kfree
+(paren
+id|priv
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+id|memcpy
+(paren
+id|ops
+comma
+op_amp
+id|parport_pc_ops
+comma
+r_sizeof
+(paren
+r_struct
+id|parport_operations
+)paren
+)paren
+suffix:semicolon
 id|priv-&gt;ctr
 op_assign
 l_int|0xc
@@ -5996,8 +6052,7 @@ id|PARPORT_MODE_PCSPP
 suffix:semicolon
 id|p-&gt;ops
 op_assign
-op_amp
-id|parport_pc_ops
+id|ops
 suffix:semicolon
 id|p-&gt;private_data
 op_assign
@@ -6129,8 +6184,7 @@ id|PARPORT_IRQ_NONE
 comma
 id|PARPORT_DMA_NONE
 comma
-op_amp
-id|parport_pc_ops
+id|ops
 )paren
 )paren
 )paren
@@ -6138,6 +6192,11 @@ id|parport_pc_ops
 id|kfree
 (paren
 id|priv
+)paren
+suffix:semicolon
+id|kfree
+(paren
+id|ops
 )paren
 suffix:semicolon
 r_return
@@ -6695,57 +6754,6 @@ r_int
 id|dma
 )paren
 (brace
-multiline_comment|/* These need to go in pci.h: */
-macro_line|#ifndef PCI_VENDOR_ID_SIIG
-DECL|macro|PCI_VENDOR_ID_SIIG
-mdefine_line|#define PCI_VENDOR_ID_SIIG              0x131f
-DECL|macro|PCI_DEVICE_ID_SIIG_1S1P_10x_550
-mdefine_line|#define PCI_DEVICE_ID_SIIG_1S1P_10x_550 0x1010
-DECL|macro|PCI_DEVICE_ID_SIIG_1S1P_10x_650
-mdefine_line|#define PCI_DEVICE_ID_SIIG_1S1P_10x_650 0x1011
-DECL|macro|PCI_DEVICE_ID_SIIG_1S1P_10x_850
-mdefine_line|#define PCI_DEVICE_ID_SIIG_1S1P_10x_850 0x1012
-DECL|macro|PCI_DEVICE_ID_SIIG_1P_10x
-mdefine_line|#define PCI_DEVICE_ID_SIIG_1P_10x       0x1020
-DECL|macro|PCI_DEVICE_ID_SIIG_2P_10x
-mdefine_line|#define PCI_DEVICE_ID_SIIG_2P_10x       0x1021
-DECL|macro|PCI_DEVICE_ID_SIIG_2S1P_10x_550
-mdefine_line|#define PCI_DEVICE_ID_SIIG_2S1P_10x_550 0x1034
-DECL|macro|PCI_DEVICE_ID_SIIG_2S1P_10x_650
-mdefine_line|#define PCI_DEVICE_ID_SIIG_2S1P_10x_650 0x1035
-DECL|macro|PCI_DEVICE_ID_SIIG_2S1P_10x_850
-mdefine_line|#define PCI_DEVICE_ID_SIIG_2S1P_10x_850 0x1036
-DECL|macro|PCI_DEVICE_ID_SIIG_1P_20x
-mdefine_line|#define PCI_DEVICE_ID_SIIG_1P_20x       0x2020
-DECL|macro|PCI_DEVICE_ID_SIIG_2P_20x
-mdefine_line|#define PCI_DEVICE_ID_SIIG_2P_20x       0x2021
-DECL|macro|PCI_DEVICE_ID_SIIG_2P1S_20x_550
-mdefine_line|#define PCI_DEVICE_ID_SIIG_2P1S_20x_550 0x2040
-DECL|macro|PCI_DEVICE_ID_SIIG_2P1S_20x_650
-mdefine_line|#define PCI_DEVICE_ID_SIIG_2P1S_20x_650 0x2041
-DECL|macro|PCI_DEVICE_ID_SIIG_2P1S_20x_850
-mdefine_line|#define PCI_DEVICE_ID_SIIG_2P1S_20x_850 0x2042
-DECL|macro|PCI_DEVICE_ID_SIIG_1S1P_20x_550
-mdefine_line|#define PCI_DEVICE_ID_SIIG_1S1P_20x_550 0x2010
-DECL|macro|PCI_DEVICE_ID_SIIG_1S1P_20x_650
-mdefine_line|#define PCI_DEVICE_ID_SIIG_1S1P_20x_650 0x2011
-DECL|macro|PCI_DEVICE_ID_SIIG_1S1P_20x_850
-mdefine_line|#define PCI_DEVICE_ID_SIIG_1S1P_20x_850 0x2012
-DECL|macro|PCI_DEVICE_ID_SIIG_2S1P_20x_550
-mdefine_line|#define PCI_DEVICE_ID_SIIG_2S1P_20x_550 0x2060
-DECL|macro|PCI_DEVICE_ID_SIIG_2S1P_20x_650
-mdefine_line|#define PCI_DEVICE_ID_SIIG_2S1P_20x_650 0x2061
-DECL|macro|PCI_DEVICE_ID_SIIG_2S1P_20x_850
-mdefine_line|#define PCI_DEVICE_ID_SIIG_2S1P_20x_850 0x2062
-DECL|macro|PCI_VENDOR_ID_LAVA
-mdefine_line|#define PCI_VENDOR_ID_LAVA              0x1407
-DECL|macro|PCI_DEVICE_ID_LAVA_PARALLEL
-mdefine_line|#define PCI_DEVICE_ID_LAVA_PARALLEL     0x8000
-DECL|macro|PCI_DEVICE_ID_LAVA_DUAL_PAR_A
-mdefine_line|#define PCI_DEVICE_ID_LAVA_DUAL_PAR_A   0x8001 /* The Lava Dual Parallel is */
-DECL|macro|PCI_DEVICE_ID_LAVA_DUAL_PAR_B
-mdefine_line|#define PCI_DEVICE_ID_LAVA_DUAL_PAR_B   0x8002 /* two PCI devices on a card */
-macro_line|#endif
 r_struct
 (brace
 r_int
@@ -8065,6 +8073,12 @@ id|kfree
 id|p-&gt;private_data
 )paren
 suffix:semicolon
+id|kfree
+(paren
+id|p-&gt;ops
+)paren
+suffix:semicolon
+multiline_comment|/* hope no-one cached it */
 id|parport_unregister_port
 c_func
 (paren
