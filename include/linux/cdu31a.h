@@ -144,6 +144,13 @@ DECL|macro|SONY_SD_MECH_CONTROL
 mdefine_line|#define SONY_SD_MECH_CONTROL            0x05
 DECL|macro|SONY_SD_AUTO_SPIN_DOWN_TIME
 mdefine_line|#define SONY_SD_AUTO_SPIN_DOWN_TIME     0x06
+multiline_comment|/*&n; * The following are parameter bits for the mechanical control command&n; */
+DECL|macro|SONY_AUTO_SPIN_UP_BIT
+mdefine_line|#define SONY_AUTO_SPIN_UP_BIT           0x01
+DECL|macro|SONY_AUTO_EJECT_BIT
+mdefine_line|#define SONY_AUTO_EJECT_BIT             0x02
+DECL|macro|SONY_DOUBLE_SPEED_BIT
+mdefine_line|#define SONY_DOUBLE_SPEED_BIT           0x04
 multiline_comment|/*&n; * The following extract information from the drive configuration about&n; * the drive itself.&n; */
 DECL|macro|SONY_HWC_GET_LOAD_MECH
 mdefine_line|#define SONY_HWC_GET_LOAD_MECH(c)       (c.hw_config[0] &amp; 0x03)

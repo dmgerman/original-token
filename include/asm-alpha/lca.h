@@ -1201,6 +1201,14 @@ r_int
 id|exc_addr
 suffix:semicolon
 multiline_comment|/* exception address */
+DECL|member|pad1
+r_int
+r_int
+id|pad1
+(braket
+l_int|3
+)braket
+suffix:semicolon
 DECL|member|pal_base
 r_int
 r_int

@@ -186,6 +186,7 @@ suffix:semicolon
 DECL|macro|DDP_MAXHOPS
 mdefine_line|#define DDP_MAXHOPS&t;15&t;/* 4 bits of hop counter */
 macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;linux/if_ether.h&gt;
 DECL|struct|ddpehdr
 r_struct
 id|ddpehdr

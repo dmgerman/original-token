@@ -1686,22 +1686,6 @@ op_star
 id|p
 )paren
 (brace
-macro_line|#ifdef __i386__
-r_int
-r_int
-id|ebp
-comma
-id|eip
-suffix:semicolon
-r_int
-r_int
-id|stack_page
-suffix:semicolon
-r_int
-id|count
-op_assign
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1717,6 +1701,23 @@ op_eq
 id|TASK_RUNNING
 )paren
 r_return
+l_int|0
+suffix:semicolon
+macro_line|#if defined(__i386__)
+(brace
+r_int
+r_int
+id|ebp
+comma
+id|eip
+suffix:semicolon
+r_int
+r_int
+id|stack_page
+suffix:semicolon
+r_int
+id|count
+op_assign
 l_int|0
 suffix:semicolon
 id|stack_page
@@ -1810,15 +1811,98 @@ OL
 l_int|16
 )paren
 suffix:semicolon
+)brace
+macro_line|#elif defined(__alpha__)
+multiline_comment|/*&n;&t; * This one depends on the frame size of schedule().  Do a&n;&t; * &quot;disass schedule&quot; in gdb to find the frame size.  Also, the&n;&t; * code assumes that sleep_on() follows immediately after&n;&t; * interruptible_sleep_on() and that add_timer() follows&n;&t; * immediately after interruptible_sleep().  Ugly, isn&squot;t it?&n;&t; * Maybe adding a wchan field to task_struct would be better,&n;&t; * after all...&n;&t; */
+(brace
+r_int
+r_int
+id|schedule_frame
+suffix:semicolon
+r_int
+r_int
+id|pc
+suffix:semicolon
+id|pc
+op_assign
+id|thread_saved_pc
+c_func
+(paren
+op_amp
+id|p-&gt;tss
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pc
+op_ge
+(paren
+r_int
+r_int
+)paren
+id|interruptible_sleep_on
+op_logical_and
+id|pc
+OL
+(paren
+r_int
+r_int
+)paren
+id|add_timer
+)paren
+(brace
+id|schedule_frame
+op_assign
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+id|p-&gt;tss.ksp
+)paren
+(braket
+l_int|6
+)braket
+suffix:semicolon
+r_return
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+id|schedule_frame
+)paren
+(braket
+l_int|12
+)braket
+suffix:semicolon
+)brace
+r_return
+id|pc
+suffix:semicolon
+)brace
 macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#if defined(__i386__)
 DECL|macro|KSTK_EIP
-mdefine_line|#define&t;KSTK_EIP(stack)&t;(((unsigned long *)stack)[1019])
+macro_line|# define KSTK_EIP(tsk)&t;(((unsigned long *)tsk-&gt;kernel_stack_page)[1019])
 DECL|macro|KSTK_ESP
-mdefine_line|#define&t;KSTK_ESP(stack)&t;(((unsigned long *)stack)[1022])
+macro_line|# define KSTK_ESP(tsk)&t;(((unsigned long *)tsk-&gt;kernel_stack_page)[1022])
+macro_line|#elif defined(__alpha__)
+multiline_comment|/*&n;   * See arch/alpha/kernel/ptrace.c for details.&n;   */
+DECL|macro|PT_REG
+macro_line|# define PT_REG(reg)&t;&t;(PAGE_SIZE - sizeof(struct pt_regs)&t;&bslash;&n;&t;&t;&t;&t; + (long)&amp;((struct pt_regs *)0)-&gt;reg)
+DECL|macro|KSTK_EIP
+macro_line|# define KSTK_EIP(tsk)&t;(*(unsigned long *)(tsk-&gt;kernel_stack_page + PT_REG(pc)))
+DECL|macro|KSTK_ESP
+macro_line|# define KSTK_ESP(tsk)&t;((tsk) == current ? rdusp() : (tsk)-&gt;tss.usp)
+macro_line|#endif
 DECL|function|get_stat
 r_static
 r_int
@@ -1932,14 +2016,10 @@ c_cond
 id|tsk-&gt;mm
 )paren
 (brace
-id|vsize
-op_assign
-id|tsk-&gt;kernel_stack_page
-suffix:semicolon
 r_if
 c_cond
 (paren
-id|vsize
+id|tsk-&gt;kernel_stack_page
 )paren
 (brace
 id|eip
@@ -1947,7 +2027,7 @@ op_assign
 id|KSTK_EIP
 c_func
 (paren
-id|vsize
+id|tsk
 )paren
 suffix:semicolon
 id|esp
@@ -1955,30 +2035,48 @@ op_assign
 id|KSTK_ESP
 c_func
 (paren
-id|vsize
+id|tsk
 )paren
 suffix:semicolon
 id|vsize
 op_assign
-id|tsk-&gt;mm-&gt;brk
+(paren
+(paren
+id|tsk-&gt;mm-&gt;end_code
 op_minus
 id|tsk-&gt;mm-&gt;start_code
+)paren
+multiline_comment|/* text */
 op_plus
-id|PAGE_SIZE
+(paren
+id|tsk-&gt;mm-&gt;end_data
 op_minus
-l_int|1
+id|tsk-&gt;mm-&gt;start_data
+)paren
+multiline_comment|/* data */
+op_plus
+(paren
+id|tsk-&gt;mm-&gt;brk
+op_minus
+id|tsk-&gt;mm-&gt;start_brk
+)paren
+)paren
 suffix:semicolon
+multiline_comment|/* bss + heap */
 r_if
 c_cond
 (paren
 id|esp
 )paren
+(brace
 id|vsize
 op_add_assign
-id|TASK_SIZE
+id|tsk-&gt;mm-&gt;start_stack
 op_minus
 id|esp
 suffix:semicolon
+multiline_comment|/* stack */
+)brace
 )brace
 )brace
 id|wchan

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Intel MP v1.1 specification support routines for multi-pentium &n; *&t;hosts.&n; *&n; *&t;(c) 1995 Alan Cox, CymruNET Ltd  &lt;alan@cymru.net&gt;&n; *&t;Supported by Caldera http://www.caldera.com.&n; *&t;Much of the core SMP work is based on previous work by Thomas Radke, to&n; *&t;whom a great many thanks are extended.&n; *&n; *&t;This code is released under the GNU public license version 2 or&n; *&t;later.&n; *&n; *&t;Fixes&n; *&t;&t;Felix Koop:&t;NR_CPUS used properly&n; *&n; */
+multiline_comment|/*&n; *&t;Intel MP v1.1 specification support routines for multi-pentium &n; *&t;hosts.&n; *&n; *&t;(c) 1995 Alan Cox, CymruNET Ltd  &lt;alan@cymru.net&gt;&n; *&t;Supported by Caldera http://www.caldera.com.&n; *&t;Much of the core SMP work is based on previous work by Thomas Radke, to&n; *&t;whom a great many thanks are extended.&n; *&n; *&t;This code is released under the GNU public license version 2 or&n; *&t;later.&n; *&n; *&t;Fixes&n; *&t;&t;Felix Koop&t;:&t;NR_CPUS used properly&n; *&t;&t;Jose Renau&t;:&t;Handle single CPU case.&n; *&t;&t;Alan Cox&t;:&t;By repeated request 8) - Total BogoMIP report.&n; *&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -2134,17 +2134,92 @@ c_func
 l_string|&quot;Error: only one processor found.&bslash;n&quot;
 )paren
 suffix:semicolon
+id|cpu_present_map
+op_assign
+(paren
+l_int|1
+op_lshift
+id|smp_processor_id
+c_func
+(paren
+)paren
+)paren
+suffix:semicolon
 )brace
 r_else
 (brace
+r_int
+r_int
+id|bogosum
+op_assign
+l_int|0
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|32
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|cpu_present_map
+op_amp
+(paren
+l_int|1
+op_lshift
+id|i
+)paren
+)paren
+(brace
+id|bogosum
+op_add_assign
+id|cpu_data
+(braket
+id|i
+)braket
+dot
+id|udelay_val
+suffix:semicolon
+)brace
+)brace
 id|printk
 c_func
 (paren
-l_string|&quot;Total of %d processors activated.&bslash;n&quot;
+l_string|&quot;Total of %d processors activated (%lu.%02lu BogoMIPS).&bslash;n&quot;
 comma
 id|cpucount
 op_plus
 l_int|1
+comma
+(paren
+id|bogosum
+op_plus
+l_int|2500
+)paren
+op_div
+l_int|500000
+comma
+(paren
+(paren
+id|bogosum
+op_plus
+l_int|2500
+)paren
+op_div
+l_int|5000
+)paren
+op_mod
+l_int|100
 )paren
 suffix:semicolon
 id|smp_activated

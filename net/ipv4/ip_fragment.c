@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &lt;linux/icmp.h&gt;
+macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/icmp.h&gt;
@@ -14,6 +15,11 @@ macro_line|#include &lt;linux/udp.h&gt;
 macro_line|#include &lt;linux/firewall.h&gt;
 macro_line|#include &lt;linux/ip_fw.h&gt;
 macro_line|#include &lt;net/checksum.h&gt;
+multiline_comment|/*&n; *&t;Fragment cache limits. We will commit 256K at one time. Should we&n; *&t;cross that limit we will prune down to 192K. This should cope with&n; *&t;even the most extreme cases without allowing an attacker to measurably&n; *&t;harm machine performance.&n; */
+DECL|macro|IPFRAG_HIGH_THRESH
+mdefine_line|#define IPFRAG_HIGH_THRESH&t;&t;(256*1024)
+DECL|macro|IPFRAG_LOW_THRESH
+mdefine_line|#define IPFRAG_LOW_THRESH&t;&t;(192*1024)
 multiline_comment|/*&n; *&t;This fragment handler is a bit of a heap. On the other hand it works quite&n; *&t;happily and handles things quite well.&n; */
 DECL|variable|ipqueue
 r_static
@@ -25,6 +31,181 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* IP fragment queue&t;*/
+DECL|variable|ip_frag_mem
+r_int
+r_int
+id|ip_frag_mem
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Memory used for fragments */
+multiline_comment|/*&n; *&t;Memory Tracking Functions&n; */
+DECL|function|frag_kfree_skb
+r_extern
+id|__inline__
+r_void
+id|frag_kfree_skb
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+comma
+r_int
+id|type
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|ip_frag_mem
+op_sub_assign
+id|skb-&gt;truesize
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|type
+)paren
+suffix:semicolon
+)brace
+DECL|function|frag_kfree_s
+r_extern
+id|__inline__
+r_void
+id|frag_kfree_s
+c_func
+(paren
+r_void
+op_star
+id|ptr
+comma
+r_int
+id|len
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|ip_frag_mem
+op_sub_assign
+id|len
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|kfree_s
+c_func
+(paren
+id|ptr
+comma
+id|len
+)paren
+suffix:semicolon
+)brace
+DECL|function|frag_kmalloc
+r_extern
+id|__inline__
+r_void
+op_star
+id|frag_kmalloc
+c_func
+(paren
+r_int
+id|size
+comma
+r_int
+id|pri
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+r_void
+op_star
+id|vp
+op_assign
+id|kmalloc
+c_func
+(paren
+id|size
+comma
+id|pri
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|vp
+)paren
+(brace
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|ip_frag_mem
+op_add_assign
+id|size
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_return
+id|vp
+suffix:semicolon
+)brace
 multiline_comment|/*&n; *&t;Create a new fragment entry.&n; */
 DECL|function|ip_frag_create
 r_static
@@ -56,6 +237,10 @@ id|ipfrag
 op_star
 id|fp
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|fp
 op_assign
 (paren
@@ -63,7 +248,7 @@ r_struct
 id|ipfrag
 op_star
 )paren
-id|kmalloc
+id|frag_kmalloc
 c_func
 (paren
 r_sizeof
@@ -133,6 +318,28 @@ suffix:semicolon
 id|fp-&gt;ptr
 op_assign
 id|ptr
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Charge for the SKB as well.&n;&t; */
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|ip_frag_mem
+op_add_assign
+id|skb-&gt;truesize
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 r_return
 id|fp
@@ -341,7 +548,7 @@ c_func
 id|fp-&gt;skb
 )paren
 suffix:semicolon
-id|kfree_skb
+id|frag_kfree_skb
 c_func
 (paren
 id|fp-&gt;skb
@@ -349,7 +556,7 @@ comma
 id|FREE_READ
 )paren
 suffix:semicolon
-id|kfree_s
+id|frag_kfree_s
 c_func
 (paren
 id|fp
@@ -367,7 +574,7 @@ id|xp
 suffix:semicolon
 )brace
 multiline_comment|/* Release the IP header. */
-id|kfree_s
+id|frag_kfree_s
 c_func
 (paren
 id|qp-&gt;iph
@@ -378,7 +585,7 @@ l_int|8
 )paren
 suffix:semicolon
 multiline_comment|/* Finally, release the queue descriptor itself. */
-id|kfree_s
+id|frag_kfree_s
 c_func
 (paren
 id|qp
@@ -461,6 +668,46 @@ id|qp
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;Memory limiting on fragments. Evictor trashes the oldest &n; *&t;fragment queue until we are back under the low threshold&n; */
+DECL|function|ip_evictor
+r_static
+r_void
+id|ip_evictor
+c_func
+(paren
+r_void
+)paren
+(brace
+r_while
+c_loop
+(paren
+id|ip_frag_mem
+OG
+id|IPFRAG_LOW_THRESH
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ipqueue
+)paren
+(brace
+id|panic
+c_func
+(paren
+l_string|&quot;ip_evictor: memcount&quot;
+)paren
+suffix:semicolon
+)brace
+id|ip_free
+c_func
+(paren
+id|ipqueue
+)paren
+suffix:semicolon
+)brace
+)brace
 multiline_comment|/*&n; * &t;Add an entry to the &squot;ipq&squot; queue for a newly received IP datagram.&n; * &t;We will (hopefully :-) receive all other fragments of this datagram&n; * &t;in time, so we just create a queue for this datagram, in which we&n; * &t;will insert the received fragments at their respective positions.&n; */
 DECL|function|ip_create
 r_static
@@ -501,7 +748,7 @@ r_struct
 id|ipq
 op_star
 )paren
-id|kmalloc
+id|frag_kmalloc
 c_func
 (paren
 r_sizeof
@@ -567,7 +814,7 @@ r_struct
 id|iphdr
 op_star
 )paren
-id|kmalloc
+id|frag_kmalloc
 c_func
 (paren
 l_int|64
@@ -595,7 +842,7 @@ l_string|&quot;IP: create: no memory left !&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-id|kfree_s
+id|frag_kfree_s
 c_func
 (paren
 id|qp
@@ -959,7 +1206,7 @@ c_func
 id|qp
 )paren
 suffix:semicolon
-id|kfree_skb
+id|frag_kfree_skb
 c_func
 (paren
 id|skb
@@ -1108,7 +1355,22 @@ suffix:semicolon
 id|ip_statistics.IpReasmReqds
 op_increment
 suffix:semicolon
-multiline_comment|/* Find the entry of this IP datagram in the &quot;incomplete datagrams&quot; queue. */
+multiline_comment|/*&n;&t; *&t;Start by cleaning up the memory&n;&t; */
+r_if
+c_cond
+(paren
+id|ip_frag_mem
+OG
+id|IPFRAG_HIGH_THRESH
+)paren
+(brace
+id|ip_evictor
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* &n;&t; *&t;Find the entry of this IP datagram in the &quot;incomplete datagrams&quot; queue. &n;&t; */
 id|qp
 op_assign
 id|ip_find
@@ -1284,7 +1546,7 @@ id|skb-&gt;sk
 op_assign
 l_int|NULL
 suffix:semicolon
-id|kfree_skb
+id|frag_kfree_skb
 c_func
 (paren
 id|skb
@@ -1495,7 +1757,7 @@ op_assign
 id|tfp
 suffix:semicolon
 multiline_comment|/* We have killed the original next frame */
-id|kfree_skb
+id|frag_kfree_skb
 c_func
 (paren
 id|tmp-&gt;skb
@@ -1503,7 +1765,7 @@ comma
 id|FREE_READ
 )paren
 suffix:semicolon
-id|kfree_s
+id|frag_kfree_s
 c_func
 (paren
 id|tmp
@@ -1548,7 +1810,7 @@ id|skb-&gt;sk
 op_assign
 l_int|NULL
 suffix:semicolon
-id|kfree_skb
+id|frag_kfree_skb
 c_func
 (paren
 id|skb

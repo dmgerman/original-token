@@ -124,6 +124,26 @@ suffix:semicolon
 macro_line|#else /* !__KERNEL__ */
 multiline_comment|/*&n; * Define actual functions in private name-space so it&squot;s easier to&n; * accomodate things like XFree or svgalib that like to define their&n; * own versions of inb etc.&n; */
 r_extern
+r_void
+id|__sethae
+(paren
+r_int
+r_int
+id|addr
+)paren
+suffix:semicolon
+multiline_comment|/* syscall */
+r_extern
+r_void
+id|_sethae
+(paren
+r_int
+r_int
+id|addr
+)paren
+suffix:semicolon
+multiline_comment|/* cached version */
+r_extern
 r_int
 r_int
 id|_inb

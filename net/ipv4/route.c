@@ -1709,7 +1709,7 @@ suffix:semicolon
 r_int
 id|len
 op_assign
-l_int|0
+l_int|128
 suffix:semicolon
 id|off_t
 id|pos
@@ -1745,11 +1745,11 @@ comma
 l_string|&quot;Iface&bslash;tDestination&bslash;tGateway &bslash;tFlags&bslash;tRefCnt&bslash;tUse&bslash;tMetric&bslash;tMask&bslash;t&bslash;tMTU&bslash;tWindow&bslash;tIRTT&quot;
 )paren
 suffix:semicolon
+)brace
 id|pos
 op_assign
 l_int|128
 suffix:semicolon
-)brace
 r_for
 c_loop
 (paren

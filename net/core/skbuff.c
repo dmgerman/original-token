@@ -60,6 +60,11 @@ id|net_free_locked
 op_assign
 l_int|0
 suffix:semicolon
+r_extern
+r_int
+r_int
+id|ip_frag_mem
+suffix:semicolon
 DECL|function|show_net_buffers
 r_void
 id|show_net_buffers
@@ -108,6 +113,16 @@ comma
 id|net_free_locked
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_INET
+id|printk
+c_func
+(paren
+l_string|&quot;IP fragment buffer size            : %lu&bslash;n&quot;
+comma
+id|ip_frag_mem
+)paren
+suffix:semicolon
+macro_line|#endif&t;
 )brace
 macro_line|#if CONFIG_SKB_CHECK
 multiline_comment|/*&n; *&t;Debugging paranoia. Can go later when this crud stack works&n; */

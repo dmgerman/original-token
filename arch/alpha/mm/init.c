@@ -25,14 +25,6 @@ r_int
 suffix:semicolon
 r_extern
 r_void
-id|sound_mem_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
 id|die_if_kernel
 c_func
 (paren
@@ -670,13 +662,6 @@ id|scsi_mem_init
 c_func
 (paren
 id|high_memory
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_SOUND
-id|sound_mem_init
-c_func
-(paren
 )paren
 suffix:semicolon
 macro_line|#endif

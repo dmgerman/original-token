@@ -822,30 +822,12 @@ op_star
 )paren
 suffix:semicolon
 multiline_comment|/* check for various &quot;disk managers&quot; which do strange things */
-r_int
-id|ezstring
-op_assign
-op_logical_neg
-id|strncmp
-c_func
-(paren
-id|data
-op_plus
-l_int|0x1a3
-comma
-l_string|&quot;Micro House&quot;
-comma
-l_int|11
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
 id|p-&gt;sys_ind
 op_eq
 id|EZD_PARTITION
-op_logical_or
-id|ezstring
 )paren
 (brace
 multiline_comment|/*&n;&t;&t;&t; * The remainder of the disk must be accessed using&n;&t;&t;&t; * a translated geometry that reduces the number of &n;&t;&t;&t; * apparent cylinders to less than 1024 if possible.&n;&t;&t;&t; *&n;&t;&t;&t; * ide_xlate_1024() will take care of the necessary&n;&t;&t;&t; * adjustments to fool fdisk/LILO and partition check.&n;&t;&t;&t; */

@@ -696,6 +696,8 @@ comma
 id|flags
 comma
 id|sin.sin_port
+comma
+id|noblock
 )paren
 suffix:semicolon
 )brace
@@ -742,6 +744,8 @@ comma
 id|flags
 comma
 id|sin.sin_port
+comma
+id|noblock
 )paren
 suffix:semicolon
 )brace

@@ -1,6 +1,7 @@
 macro_line|#ifndef __ALPHA_A_OUT_H__
 DECL|macro|__ALPHA_A_OUT_H__
 mdefine_line|#define __ALPHA_A_OUT_H__
+macro_line|#include &lt;linux/types.h&gt;
 multiline_comment|/*&n; * OSF/1 ECOFF header structs.  ECOFF files consist of:&n; * &t;- a file header (struct filehdr),&n; *&t;- an a.out header (struct aouthdr),&n; *&t;- one or more section headers (struct scnhdr). &n; *&t;  The filhdr&squot;s &quot;f_nscns&quot; field contains the&n; *&t;  number of section headers.&n; */
 DECL|struct|filehdr
 r_struct

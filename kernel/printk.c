@@ -26,10 +26,14 @@ r_char
 op_star
 )paren
 suffix:semicolon
+multiline_comment|/* printk&squot;s without a loglevel use this.. */
 DECL|macro|DEFAULT_MESSAGE_LOGLEVEL
-mdefine_line|#define DEFAULT_MESSAGE_LOGLEVEL 6 /* KERN_INFO */
+mdefine_line|#define DEFAULT_MESSAGE_LOGLEVEL 5 /* KERN_NOTICE */
+multiline_comment|/* We show everything that is more important than this.. */
+DECL|macro|MINIMUM_CONSOLE_LOGLEVEL
+mdefine_line|#define MINIMUM_CONSOLE_LOGLEVEL 6 /* Minimum loglevel we let people use */
 DECL|macro|DEFAULT_CONSOLE_LOGLEVEL
-mdefine_line|#define DEFAULT_CONSOLE_LOGLEVEL 7 /* anything more serious than KERN_DEBUG */
+mdefine_line|#define DEFAULT_CONSOLE_LOGLEVEL 6 /* anything more serious than KERN_INFO */
 DECL|variable|log_size
 r_int
 r_int
@@ -490,9 +494,8 @@ suffix:colon
 multiline_comment|/* Disable logging to console */
 id|console_loglevel
 op_assign
-l_int|1
+id|MINIMUM_CONSOLE_LOGLEVEL
 suffix:semicolon
-multiline_comment|/* only panic messages shown */
 r_return
 l_int|0
 suffix:semicolon
@@ -520,6 +523,17 @@ l_int|8
 r_return
 op_minus
 id|EINVAL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OL
+id|MINIMUM_CONSOLE_LOGLEVEL
+)paren
+id|len
+op_assign
+id|MINIMUM_CONSOLE_LOGLEVEL
 suffix:semicolon
 id|console_loglevel
 op_assign

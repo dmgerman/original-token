@@ -533,13 +533,13 @@ id|skb
 suffix:semicolon
 macro_line|#else /* The 1.3.x kernel is here */
 DECL|macro|get_long_user
-mdefine_line|#define get_long_user(addr)&t;    get_user(((long *) addr))
+mdefine_line|#define get_long_user(addr)&t;    get_user(((int *) addr))
 DECL|macro|get_int_user
 mdefine_line|#define get_int_user(addr)&t;    ((int) get_user(((int *) addr)))
 DECL|macro|put_byte_user
 mdefine_line|#define put_byte_user(val,addr)&t;    put_user((val),((u_char *) (addr)))
 DECL|macro|put_long_user
-mdefine_line|#define put_long_user(val,addr)&t;    put_user((val),((long *) (addr)))
+mdefine_line|#define put_long_user(val,addr)&t;    put_user((val),((int *) (addr)))
 r_static
 r_int
 id|ppp_dev_header

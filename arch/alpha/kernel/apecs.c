@@ -33,7 +33,7 @@ multiline_comment|/*&n; * BIOS32-style PCI interface:&n; */
 macro_line|#ifdef CONFIG_ALPHA_APECS
 macro_line|#ifdef DEBUG
 DECL|macro|DBG
-macro_line|# define DBG(args)&t;printk(args)
+macro_line|# define DBG(args)&t;printk args
 macro_line|#else
 DECL|macro|DBG
 macro_line|# define DBG(args)
@@ -260,6 +260,128 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* to keep gcc quiet */
+macro_line|#ifdef CONFIG_ALPHA_AVANTI
+r_register
+r_int
+id|s0
+id|asm
+(paren
+l_string|&quot;9&quot;
+)paren
+suffix:semicolon
+r_register
+r_int
+id|s1
+id|asm
+(paren
+l_string|&quot;10&quot;
+)paren
+suffix:semicolon
+r_register
+r_int
+id|s2
+id|asm
+(paren
+l_string|&quot;11&quot;
+)paren
+suffix:semicolon
+r_register
+r_int
+id|s3
+id|asm
+(paren
+l_string|&quot;12&quot;
+)paren
+suffix:semicolon
+r_register
+r_int
+id|s4
+id|asm
+(paren
+l_string|&quot;13&quot;
+)paren
+suffix:semicolon
+r_register
+r_int
+id|s5
+id|asm
+(paren
+l_string|&quot;14&quot;
+)paren
+suffix:semicolon
+id|asm
+r_volatile
+(paren
+l_string|&quot;# %0&quot;
+suffix:colon
+l_string|&quot;r=&quot;
+(paren
+id|s0
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* SRM X4.2 on Avanti steps on this */
+id|asm
+r_volatile
+(paren
+l_string|&quot;# %0&quot;
+suffix:colon
+l_string|&quot;r=&quot;
+(paren
+id|s1
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* SRM X4.2 on Avanti steps on this */
+id|asm
+r_volatile
+(paren
+l_string|&quot;# %0&quot;
+suffix:colon
+l_string|&quot;r=&quot;
+(paren
+id|s2
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* SRM X4.2 on Avanti steps on this */
+id|asm
+r_volatile
+(paren
+l_string|&quot;# %0&quot;
+suffix:colon
+l_string|&quot;r=&quot;
+(paren
+id|s3
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* SRM X4.2 on Avanti steps on this */
+id|asm
+r_volatile
+(paren
+l_string|&quot;# %0&quot;
+suffix:colon
+l_string|&quot;r=&quot;
+(paren
+id|s4
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* SRM X4.2 on Avanti steps on this */
+id|asm
+r_volatile
+(paren
+l_string|&quot;# %0&quot;
+suffix:colon
+l_string|&quot;r=&quot;
+(paren
+id|s5
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* SRM X4.2 on Avanti steps on this */
+macro_line|#endif
 id|save_flags
 c_func
 (paren
@@ -570,6 +692,80 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_ALPHA_AVANTI
+id|asm
+r_volatile
+(paren
+l_string|&quot;# %0&quot;
+op_scope_resolution
+l_string|&quot;r&quot;
+(paren
+id|s0
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* SRM X4.2 on Avanti steps on this */
+id|asm
+r_volatile
+(paren
+l_string|&quot;# %0&quot;
+op_scope_resolution
+l_string|&quot;r&quot;
+(paren
+id|s1
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* SRM X4.2 on Avanti steps on this */
+id|asm
+r_volatile
+(paren
+l_string|&quot;# %0&quot;
+op_scope_resolution
+l_string|&quot;r&quot;
+(paren
+id|s2
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* SRM X4.2 on Avanti steps on this */
+id|asm
+r_volatile
+(paren
+l_string|&quot;# %0&quot;
+op_scope_resolution
+l_string|&quot;r&quot;
+(paren
+id|s3
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* SRM X4.2 on Avanti steps on this */
+id|asm
+r_volatile
+(paren
+l_string|&quot;# %0&quot;
+op_scope_resolution
+l_string|&quot;r&quot;
+(paren
+id|s4
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* SRM X4.2 on Avanti steps on this */
+id|asm
+r_volatile
+(paren
+l_string|&quot;# %0&quot;
+op_scope_resolution
+l_string|&quot;r&quot;
+(paren
+id|s5
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* SRM X4.2 on Avanti steps on this */
+macro_line|#endif
 r_return
 id|value
 suffix:semicolon
@@ -1516,7 +1712,7 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#ifdef CONFIG_ALPHA_CABRIOLET
-multiline_comment|/*&n;&t; * JAE: HACK!!! for now, hardwire if configured...&n;&t; * davidm: miniloader doesn&squot;t seem to get clockfrequency&n;&t; * right, so fix for now.&n;&t; */
+multiline_comment|/*&n;&t; * JAE: HACK!!! for now, hardwire if configured...&n;&t; * davidm: Older miniloader versions don&squot;t set the clockfrequency&n;&t; * right, so hardcode it for now.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1795,6 +1991,7 @@ id|mchk_sysdata-&gt;epic_pear
 )paren
 suffix:semicolon
 macro_line|#ifdef DEBUG
+(brace
 r_int
 r_int
 op_star
@@ -1836,7 +2033,7 @@ l_int|2
 id|printk
 c_func
 (paren
-l_string|&quot; +%x %lx %lx&bslash;n&quot;
+l_string|&quot; +%lx %lx %lx&bslash;n&quot;
 comma
 id|i
 op_star
@@ -1858,6 +2055,7 @@ l_int|1
 )braket
 )paren
 suffix:semicolon
+)brace
 )brace
 macro_line|#endif /* DEBUG */
 multiline_comment|/*&n;&t; * Check if machine check is due to a badaddr() and if so,&n;&t; * ignore the machine check.&n;&t; */

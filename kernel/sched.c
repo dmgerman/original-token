@@ -2373,6 +2373,7 @@ op_minus
 id|SHIFT_SCALE
 )paren
 suffix:semicolon
+macro_line|#if HZ == 100
 multiline_comment|/* compensate for (HZ==100) != 128. Add 25% to get 125; =&gt; only 3% error */
 r_if
 c_cond
@@ -2395,6 +2396,7 @@ id|time_adj
 op_rshift
 l_int|2
 suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/*&n; * disregard lost ticks for now.. We don&squot;t care enough.&n; */
 DECL|function|timer_bh

@@ -1769,12 +1769,12 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Fixup configuration for Noname boards (AXPpci33).&n; */
-DECL|function|noname_fixup
+multiline_comment|/*&n; * Fixup configuration for Noname (AXPpci33) and Avanti (AlphaStation 240).&n; */
+DECL|function|avanti_and_noname_fixup
 r_static
 r_inline
 r_void
-id|noname_fixup
+id|avanti_and_noname_fixup
 c_func
 (paren
 r_void
@@ -1785,13 +1785,12 @@ id|pci_dev
 op_star
 id|dev
 suffix:semicolon
-multiline_comment|/*&n;&t; * The Noname board has 5 PCI slots with each of the 4&n;&t; * interrupt pins routed to different pins on the PCI/ISA&n;&t; * bridge (PIRQ0-PIRQ3).  I don&squot;t have any information yet as&n;&t; * to how INTB, INTC, and INTD get routed (4/12/95,&n;&t; * davidm@cs.arizona.edu).  pirq_tab[0] is a fake entry to&n;&t; * deal with old PCI boards that have the interrupt pin number&n;&t; * hardwired to 0 (meaning that they use the default INTA&n;&t; * line, if they are interrupt driven at all).&n;&t; */
+multiline_comment|/*&n;&t; * The Noname board has 5 PCI slots with each of the 4&n;&t; * interrupt pins routed to different pins on the PCI/ISA&n;&t; * bridge (PIRQ0-PIRQ3).  The table below is based on&n;&t; * information available at:&n;&t; *&n;&t; *   http://ftp.digital.com/pub/DEC/axppci/ref_interrupts.txt&n;&t; *&n;&t; * I have no information on the Avanti interrupt routing, but&n;&t; * the routing seems to be identical to the Noname except&n;&t; * that the Avanti has an additional slot whose routing I&squot;m&n;&t; * unsure of.&n;&t; *&n;&t; * pirq_tab[0] is a fake entry to deal with old PCI boards&n;&t; * that have the interrupt pin number hardwired to 0 (meaning&n;&t; * that they use the default INTA line, if they are interrupt&n;&t; * driven at all).&n;&t; */
 r_static
 r_const
 r_char
 id|pirq_tab
 (braket
-l_int|7
 )braket
 (braket
 l_int|5
@@ -1803,14 +1802,11 @@ l_int|3
 comma
 l_int|3
 comma
-op_minus
-l_int|1
+l_int|3
 comma
-op_minus
-l_int|1
+l_int|3
 comma
-op_minus
-l_int|1
+l_int|3
 )brace
 comma
 multiline_comment|/* idsel  6 (53c810) */
@@ -1831,7 +1827,7 @@ op_minus
 l_int|1
 )brace
 comma
-multiline_comment|/* idsel  7 (PCI/ISA bridge) */
+multiline_comment|/* idsel  7 (SIO: PCI/ISA bridge) */
 (brace
 l_int|2
 comma
@@ -1889,17 +1885,28 @@ l_int|0
 comma
 l_int|0
 comma
-op_minus
+l_int|2
+comma
 l_int|1
 comma
-op_minus
+l_int|0
+)brace
+comma
+multiline_comment|/* idsel 11 (slot furthest from ISA) KN25_PCI_SLOT0 */
+(brace
 l_int|1
 comma
-op_minus
+l_int|1
+comma
+l_int|0
+comma
+l_int|2
+comma
 l_int|1
 )brace
 comma
-multiline_comment|/* idsel 11 (slot furthest from ISA) */
+multiline_comment|/* idsel 12 (middle slot) KN25_PCI_SLOT1 */
+macro_line|#ifdef CONFIG_ALPHA_AVANTI
 (brace
 l_int|1
 comma
@@ -1915,10 +1922,11 @@ op_minus
 l_int|1
 )brace
 comma
-multiline_comment|/* idsel 12 (middle slot) */
+multiline_comment|/* idsel 13 KN25_PCI_SLOT2 ??? */
+macro_line|#endif /* CONFIG_ALPHA_AVANTI */
 )brace
 suffix:semicolon
-multiline_comment|/*&n;&t; * route_tab selects irq routing in PCI/ISA bridge so that:&n;&t; *&t;&t;PIRQ0 -&gt; irq 15&n;&t; *&t;&t;PIRQ1 -&gt; irq  9&n;&t; *&t;&t;PIRQ2 -&gt; irq 10&n;&t; *&t;&t;PIRQ3 -&gt; irq 11&n;&t; */
+multiline_comment|/*&n;&t; * route_tab selects irq routing in PCI/ISA bridge so that:&n;&t; *&t;&t;PIRQ0 -&gt; irq 15&n;&t; *&t;&t;PIRQ1 -&gt; irq  9&n;&t; *&t;&t;PIRQ2 -&gt; irq 10&n;&t; *&t;&t;PIRQ3 -&gt; irq 11&n;&t; *&n;&t; * This probably ought to be configurable via MILO.  For&n;&t; * example, sound boards seem to like using IRQ 9.&n;&t; */
 r_const
 r_int
 r_int
@@ -2029,14 +2037,35 @@ c_func
 (paren
 id|dev-&gt;devfn
 )paren
-template_param
-l_int|12
+OL
+l_int|6
+op_logical_or
+id|PCI_SLOT
+c_func
+(paren
+id|dev-&gt;devfn
+)paren
+op_ge
+l_int|6
+op_plus
+r_sizeof
+(paren
+id|pirq_tab
+)paren
+op_div
+r_sizeof
+(paren
+id|pirq_tab
+(braket
+l_int|0
+)braket
+)paren
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;noname_set_irq: no dev on bus %d, slot %d!!&bslash;n&quot;
+l_string|&quot;bios32.avanti_and_noname_fixup: no dev on bus %d, slot %d!!&bslash;n&quot;
 comma
 id|dev-&gt;bus-&gt;number
 comma
@@ -2212,8 +2241,8 @@ id|pci_root
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n;&t; * Now is the time to do all those dirty little deeds...&n;&t; */
-macro_line|#if defined(CONFIG_ALPHA_NONAME)
-id|noname_fixup
+macro_line|#if defined(CONFIG_ALPHA_NONAME) || defined(CONFIG_ALPHA_AVANTI)
+id|avanti_and_noname_fixup
 c_func
 (paren
 )paren

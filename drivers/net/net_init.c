@@ -1006,14 +1006,6 @@ comma
 id|i
 )paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;loading device &squot;%s&squot;...&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
 id|ethdev_index
 (braket
 id|i

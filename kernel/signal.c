@@ -352,14 +352,8 @@ c_func
 r_int
 id|signum
 comma
-r_void
-(paren
-op_star
+id|__sighandler_t
 id|handler
-)paren
-(paren
-r_int
-)paren
 )paren
 (brace
 r_int

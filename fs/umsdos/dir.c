@@ -734,7 +734,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;Read count directory entries from directory filp&n;&t;Return a negative value from linux/errno.h.&n;&t;Return &gt; 0 if success (the amount of byte written to dirent)&n;*/
+multiline_comment|/*&n;&t;Read count directory entries from directory filp&n;&t;Return a negative value from linux/errno.h.&n;&t;Return 0 or positive if successful&n;*/
 DECL|function|UMSDOS_readdir
 r_static
 r_int
@@ -865,12 +865,8 @@ id|filp-&gt;f_pos
 suffix:semicolon
 r_return
 id|count
-op_eq
-l_int|0
 ques
 c_cond
-op_minus
-id|ENOENT
 suffix:colon
 id|ret
 suffix:semicolon

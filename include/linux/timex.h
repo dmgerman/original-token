@@ -50,6 +50,8 @@ DECL|macro|PPS_VALID
 mdefine_line|#define PPS_VALID 120&t;&t;/* pps signal watchdog max (s) */
 DECL|macro|MAXGLITCH
 mdefine_line|#define MAXGLITCH 30&t;&t;/* pps signal glitch max (s) */
+macro_line|#ifndef __alpha__
+multiline_comment|/*&n; * This definitively is wrong for the Alpha and none of the&n; * kernel code seems to reference this anymore.&n; */
 DECL|macro|CLOCK_TICK_RATE
 mdefine_line|#define CLOCK_TICK_RATE&t;1193180 /* Underlying HZ */
 DECL|macro|CLOCK_TICK_FACTOR
@@ -58,6 +60,7 @@ DECL|macro|LATCH
 mdefine_line|#define LATCH  ((CLOCK_TICK_RATE + HZ/2) / HZ)&t;/* For divider */
 DECL|macro|FINETUNE
 mdefine_line|#define FINETUNE ((((((long)LATCH * HZ - CLOCK_TICK_RATE) &lt;&lt; SHIFT_HZ) * &bslash;&n;&t;(1000000/CLOCK_TICK_FACTOR) / (CLOCK_TICK_RATE/CLOCK_TICK_FACTOR)) &bslash;&n;&t;&t;&lt;&lt; (SHIFT_SCALE-SHIFT_HZ)) / HZ)
+macro_line|#endif /* !__alpha__ */
 multiline_comment|/*&n; * syscall interface - used (mainly by NTP daemon)&n; * to discipline kernel clock oscillator&n; */
 DECL|struct|timex
 r_struct

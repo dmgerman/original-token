@@ -1,5 +1,5 @@
 multiline_comment|/* 3c503.c: A shared-memory NS8390 ethernet driver for linux. */
-multiline_comment|/*&n;    Written 1992-94 by Donald Becker.&n;&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;&n;    The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;    Center of Excellence in Space Data and Information Sciences&n;       Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;    This driver should work with the 3c503 and 3c503/16.  It should be used&n;    in shared memory mode for best performance, although it may also work&n;    in programmed-I/O mode.&n;&n;    Sources:&n;    EtherLink II Technical Reference Guide,&n;    3Com Corporation, 5400 Bayfront Plaza, Santa Clara CA 95052-8145&n;    &n;    The Crynwr 3c503 packet driver.&n;*/
+multiline_comment|/*&n;    Written 1992-94 by Donald Becker.&n;&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;&n;    The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;    Center of Excellence in Space Data and Information Sciences&n;       Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;    This driver should work with the 3c503 and 3c503/16.  It should be used&n;    in shared memory mode for best performance, although it may also work&n;    in programmed-I/O mode.&n;&n;    Sources:&n;    EtherLink II Technical Reference Manual,&n;    EtherLink II/16 Technical Reference Manual Supplement,&n;    3Com Corporation, 5400 Bayfront Plaza, Santa Clara CA 95052-8145&n;    &n;    The Crynwr 3c503 packet driver.&n;&n;    Changelog:&n;&n;    Paul Gortmaker&t;: add support for the 2nd 8kB of RAM on 16 bit cards.&n;&n;*/
 DECL|variable|version
 r_static
 r_const
@@ -548,6 +548,8 @@ comma
 id|membase_reg
 comma
 id|saved_406
+comma
+id|wordlength
 suffix:semicolon
 r_static
 r_int
@@ -739,16 +741,6 @@ r_return
 id|ENODEV
 suffix:semicolon
 )brace
-id|request_region
-c_func
-(paren
-id|ioaddr
-comma
-id|EL2_IO_EXTENT
-comma
-l_string|&quot;3c503&quot;
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -799,7 +791,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: 3c503 at %#3x,&quot;
+l_string|&quot;%s: 3c503 at i/o base %#3x, node address&quot;
 comma
 id|dev-&gt;name
 comma
@@ -849,6 +841,59 @@ comma
 id|ioaddr
 op_plus
 l_int|0x406
+)paren
+suffix:semicolon
+multiline_comment|/* Check for EL2/16 as described in tech. man. */
+id|outb_p
+c_func
+(paren
+id|E8390_PAGE0
+comma
+id|ioaddr
+op_plus
+id|E8390_CMD
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+l_int|0
+comma
+id|ioaddr
+op_plus
+id|EN0_DCFG
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+id|E8390_PAGE2
+comma
+id|ioaddr
+op_plus
+id|E8390_CMD
+)paren
+suffix:semicolon
+id|wordlength
+op_assign
+id|inb_p
+c_func
+(paren
+id|ioaddr
+op_plus
+id|EN0_DCFG
+)paren
+op_amp
+id|ENDCFG_WTS
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+id|E8390_PAGE0
+comma
+id|ioaddr
+op_plus
+id|E8390_CMD
 )paren
 suffix:semicolon
 multiline_comment|/* Probe for, turn on and clear the board&squot;s shared memory. */
@@ -908,6 +953,10 @@ id|dev-&gt;mem_start
 op_assign
 l_int|0
 suffix:semicolon
+id|ei_status.name
+op_assign
+l_string|&quot;3c503-PIO&quot;
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -940,9 +989,9 @@ l_int|0
 )paren
 suffix:semicolon
 DECL|macro|EL2_MEMSIZE
-mdefine_line|#define EL2_MEMSIZE (EL2SM_STOP_PG - EL2SM_START_PG)*256
+mdefine_line|#define EL2_MEMSIZE (EL2_MB1_STOP_PG - EL2_MB1_START_PG)*256
 macro_line|#ifdef EL2MEMTEST
-multiline_comment|/* This has never found an error, but someone might care. */
+multiline_comment|/* This has never found an error, but someone might care.&n;&t;   Note that it only tests the 2nd 8kB on 16kB 3c503/16&n;&t;   cards between card addr. 0x2000 and 0x3fff. */
 (brace
 multiline_comment|/* Check the card&squot;s memory. */
 r_int
@@ -1029,6 +1078,10 @@ id|dev-&gt;mem_start
 op_assign
 l_int|0
 suffix:semicolon
+id|ei_status.name
+op_assign
+l_string|&quot;3c503-PIO&quot;
+suffix:semicolon
 r_break
 suffix:semicolon
 )brace
@@ -1049,7 +1102,6 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif  /* EL2MEMTEST */
-multiline_comment|/* Divide the on-board memory into a single maximum-sized transmit&n;&t;   (double-sized for ping-pong transmit) buffer at the base, and&n;&t;   use the rest as a receive ring. */
 id|dev-&gt;mem_end
 op_assign
 id|dev-&gt;rmem_end
@@ -1058,6 +1110,24 @@ id|dev-&gt;mem_start
 op_plus
 id|EL2_MEMSIZE
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|wordlength
+)paren
+(brace
+multiline_comment|/* No Tx pages to skip over to get to Rx */
+id|dev-&gt;rmem_start
+op_assign
+id|dev-&gt;mem_start
+suffix:semicolon
+id|ei_status.name
+op_assign
+l_string|&quot;3c503/16&quot;
+suffix:semicolon
+)brace
+r_else
+(brace
 id|dev-&gt;rmem_start
 op_assign
 id|TX_PAGES
@@ -1066,25 +1136,49 @@ l_int|256
 op_plus
 id|dev-&gt;mem_start
 suffix:semicolon
-)brace
-multiline_comment|/* Finish setting the board&squot;s parameters. */
 id|ei_status.name
 op_assign
-l_string|&quot;3C503&quot;
+l_string|&quot;3c503&quot;
 suffix:semicolon
+)brace
+)brace
+multiline_comment|/*&n;&t;Divide up the memory on the card. This is the same regardless of&n;&t;whether shared-mem or PIO is used. For 16 bit cards (16kB RAM),&n;&t;we use the entire 8k of bank1 for an Rx ring. We only use 3k &n;&t;of the bank0 for 2 full size Tx packet slots. For 8 bit cards,&n;&t;(8kB RAM) we use 3kB of bank1 for two Tx slots, and the remaining &n;&t;5kB for an Rx ring.  */
+r_if
+c_cond
+(paren
+id|wordlength
+)paren
+(brace
 id|ei_status.tx_start_page
 op_assign
-id|EL2SM_START_PG
+id|EL2_MB0_START_PG
 suffix:semicolon
 id|ei_status.rx_start_page
 op_assign
-id|EL2SM_START_PG
+id|EL2_MB1_START_PG
+suffix:semicolon
+)brace
+r_else
+(brace
+id|ei_status.tx_start_page
+op_assign
+id|EL2_MB1_START_PG
+suffix:semicolon
+id|ei_status.rx_start_page
+op_assign
+id|EL2_MB1_START_PG
 op_plus
 id|TX_PAGES
 suffix:semicolon
+)brace
+multiline_comment|/* Finish setting the board&squot;s parameters. */
 id|ei_status.stop_page
 op_assign
-id|EL2SM_STOP_PG
+id|EL2_MB1_STOP_PG
+suffix:semicolon
+id|ei_status.word16
+op_assign
+id|wordlength
 suffix:semicolon
 id|ei_status.reset_8390
 op_assign
@@ -1105,6 +1199,16 @@ id|ei_status.block_output
 op_assign
 op_amp
 id|el2_block_output
+suffix:semicolon
+id|request_region
+c_func
+(paren
+id|ioaddr
+comma
+id|EL2_IO_EXTENT
+comma
+id|ei_status.name
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1133,7 +1237,7 @@ l_int|9
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;n3c503: configured interrupt %d invalid, using autoIRQ.&bslash;n&quot;
+l_string|&quot;&bslash;n3c503: configured interrupt %d invalid, will use autoIRQ.&bslash;n&quot;
 comma
 id|dev-&gt;irq
 )paren
@@ -1169,11 +1273,19 @@ id|dev-&gt;mem_start
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;n%s: %s with shared memory at %#6lx-%#6lx.&bslash;n&quot;
+l_string|&quot;&bslash;n%s: %s - %dkB RAM, 8kB shared mem window at %#6lx-%#6lx.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
 id|ei_status.name
+comma
+(paren
+id|wordlength
+op_plus
+l_int|1
+)paren
+op_lshift
+l_int|3
 comma
 id|dev-&gt;mem_start
 comma
@@ -1186,24 +1298,19 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;n%s: %s using programmed I/O (REJUMPER for SHARED MEMORY).&bslash;n&quot;
+l_string|&quot;&bslash;n%s: %s, %dkB RAM, using programmed I/O (REJUMPER for SHARED MEMORY).&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
 id|ei_status.name
-)paren
-suffix:semicolon
-r_if
-c_cond
+comma
 (paren
-id|ei_debug
-OG
+id|wordlength
+op_plus
 l_int|1
 )paren
-id|printk
-c_func
-(paren
-id|version
+op_lshift
+l_int|3
 )paren
 suffix:semicolon
 r_return
@@ -1347,7 +1454,7 @@ id|ei_interrupt
 comma
 l_int|0
 comma
-l_string|&quot;3c503&quot;
+id|ei_status.name
 )paren
 op_eq
 l_int|0
@@ -1403,7 +1510,7 @@ id|ei_interrupt
 comma
 l_int|0
 comma
-l_string|&quot;3c503&quot;
+id|ei_status.name
 )paren
 )paren
 (brace
@@ -1770,7 +1877,23 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* timeout counter */
-multiline_comment|/* This should really be set with during an open(). */
+r_if
+c_cond
+(paren
+id|ei_status.word16
+)paren
+multiline_comment|/* Tx packets go into bank 0 on EL2/16 card */
+id|outb
+c_func
+(paren
+id|EGACFR_RSEL
+op_or
+id|EGACFR_TCM
+comma
+id|E33G_GACFR
+)paren
+suffix:semicolon
+r_else
 id|outb
 c_func
 (paren
@@ -1779,7 +1902,6 @@ comma
 id|E33G_GACFR
 )paren
 suffix:semicolon
-multiline_comment|/* Enable RAM and interrupts. */
 r_if
 c_cond
 (paren
@@ -1813,6 +1935,15 @@ comma
 id|count
 )paren
 suffix:semicolon
+id|outb
+c_func
+(paren
+id|EGACFR_NORM
+comma
+id|E33G_GACFR
+)paren
+suffix:semicolon
+multiline_comment|/* Back to bank1 in case on bank0 */
 r_return
 suffix:semicolon
 )brace
@@ -1922,6 +2053,15 @@ comma
 id|boguscount
 )paren
 suffix:semicolon
+id|outb
+c_func
+(paren
+id|EGACFR_NORM
+comma
+id|E33G_GACFR
+)paren
+suffix:semicolon
+multiline_comment|/* To MB1 for EL2/16 */
 r_return
 suffix:semicolon
 )brace
@@ -1952,6 +2092,15 @@ comma
 id|E33G_CNTRL
 )paren
 suffix:semicolon
+id|outb
+c_func
+(paren
+id|EGACFR_NORM
+comma
+id|E33G_GACFR
+)paren
+suffix:semicolon
+multiline_comment|/* Back to bank1 in case on bank0 */
 r_return
 suffix:semicolon
 )brace
@@ -1990,7 +2139,7 @@ op_plus
 (paren
 id|ring_page
 op_minus
-id|EL2SM_START_PG
+id|EL2_MB1_START_PG
 )paren
 op_lshift
 l_int|8
@@ -2165,7 +2314,7 @@ multiline_comment|/* Use the shared memory. */
 id|ring_offset
 op_sub_assign
 (paren
-id|EL2SM_START_PG
+id|EL2_MB1_START_PG
 op_lshift
 l_int|8
 )paren

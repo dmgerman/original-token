@@ -328,14 +328,6 @@ id|firewall_chain
 id|pf
 )braket
 suffix:semicolon
-r_int
-id|result
-op_assign
-id|firewall_policy
-(braket
-id|pf
-)braket
-suffix:semicolon
 r_while
 c_loop
 (paren
@@ -378,9 +370,11 @@ op_assign
 id|fw-&gt;next
 suffix:semicolon
 )brace
-multiline_comment|/* alan, is this right? */
 r_return
-id|result
+id|firewall_policy
+(braket
+id|pf
+)braket
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Actual invocation of the chains&n; */
@@ -408,14 +402,6 @@ op_star
 id|fw
 op_assign
 id|firewall_chain
-(braket
-id|pf
-)braket
-suffix:semicolon
-r_int
-id|result
-op_assign
-id|firewall_policy
 (braket
 id|pf
 )braket
@@ -462,9 +448,11 @@ op_assign
 id|fw-&gt;next
 suffix:semicolon
 )brace
-multiline_comment|/* alan, is this right? */
 r_return
-id|result
+id|firewall_policy
+(braket
+id|pf
+)braket
 suffix:semicolon
 )brace
 DECL|function|call_out_firewall
@@ -491,14 +479,6 @@ op_star
 id|fw
 op_assign
 id|firewall_chain
-(braket
-id|pf
-)braket
-suffix:semicolon
-r_int
-id|result
-op_assign
-id|firewall_policy
 (braket
 id|pf
 )braket
@@ -547,7 +527,10 @@ suffix:semicolon
 )brace
 multiline_comment|/* alan, is this right? */
 r_return
-id|result
+id|firewall_policy
+(braket
+id|pf
+)braket
 suffix:semicolon
 )brace
 DECL|function|fwchain_init

@@ -153,6 +153,39 @@ DECL|macro|save_flags
 mdefine_line|#define save_flags(flags)&t;do { flags = getipl(); } while (0)
 DECL|macro|restore_flags
 mdefine_line|#define restore_flags(flags)&t;setipl(flags)
+multiline_comment|/*&n; * Give prototypes to shut up gcc.&n; */
+r_extern
+r_inline
+r_int
+r_int
+id|xchg_u32
+(paren
+r_volatile
+r_int
+op_star
+id|m
+comma
+r_int
+r_int
+id|val
+)paren
+suffix:semicolon
+r_extern
+r_inline
+r_int
+r_int
+id|xchg_u64
+(paren
+r_volatile
+r_int
+op_star
+id|m
+comma
+r_int
+r_int
+id|val
+)paren
+suffix:semicolon
 DECL|function|xchg_u32
 r_extern
 r_inline

@@ -453,6 +453,9 @@ id|flags
 comma
 r_int
 id|type
+comma
+r_int
+id|noblock
 )paren
 suffix:semicolon
 r_extern

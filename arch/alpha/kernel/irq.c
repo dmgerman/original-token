@@ -39,7 +39,7 @@ id|cache_A1
 op_assign
 l_int|0xff
 suffix:semicolon
-macro_line|#if defined(CONFIG_ALPHA_CABRIOLET) || defined(CONFIG_ALPHA_EB66P)
+macro_line|#if NR_IRQS == 33
 DECL|variable|cache_804
 r_static
 r_int
@@ -64,7 +64,7 @@ id|cache_806
 op_assign
 l_int|0xff
 suffix:semicolon
-macro_line|#elif defined(CONFIG_ALPHA_EB66) || defined(CONFIG_ALPHA_EB64P)
+macro_line|#elif NR_IRQS == 32
 DECL|variable|cache_26
 r_static
 r_int
@@ -163,7 +163,7 @@ comma
 l_int|0xA1
 )paren
 suffix:semicolon
-macro_line|#if defined(CONFIG_ALPHA_CABRIOLET) || defined(CONFIG_ALPHA_EB66P)
+macro_line|#if NR_IRQS == 33
 )brace
 r_else
 r_if
@@ -223,7 +223,7 @@ comma
 l_int|0x806
 )paren
 suffix:semicolon
-macro_line|#elif defined(CONFIG_ALPHA_EB66) || defined(CONFIG_ALPHA_EB64P) 
+macro_line|#elif NR_IRQS == 32 
 )brace
 r_else
 r_if
@@ -354,7 +354,7 @@ comma
 l_int|0xA1
 )paren
 suffix:semicolon
-macro_line|#if defined(CONFIG_ALPHA_CABRIOLET) || defined(CONFIG_ALPHA_EB66P)
+macro_line|#if NR_IRQS == 33
 )brace
 r_else
 r_if
@@ -414,7 +414,7 @@ comma
 l_int|0x806
 )paren
 suffix:semicolon
-macro_line|#elif defined(CONFIG_ALPHA_EB66) || defined(CONFIG_ALPHA_EB64P)
+macro_line|#elif NR_IRQS == 32
 )brace
 r_else
 r_if
@@ -722,7 +722,7 @@ comma
 l_int|0xA1
 )paren
 suffix:semicolon
-macro_line|#if defined(CONFIG_ALPHA_CABRIOLET) || defined(CONFIG_ALPHA_EB66P)
+macro_line|#if NR_IRQS == 33
 )brace
 r_else
 r_if
@@ -782,7 +782,7 @@ comma
 l_int|0x806
 )paren
 suffix:semicolon
-macro_line|#elif defined(CONFIG_ALPHA_EB66) || defined(CONFIG_ALPHA_EB66P)
+macro_line|#elif NR_IRQS == 32
 )brace
 r_else
 r_if
@@ -892,7 +892,7 @@ comma
 l_int|0xA1
 )paren
 suffix:semicolon
-macro_line|#if defined(CONFIG_ALPHA_CABRIOLET) || defined(CONFIG_ALPHA_EB66P)
+macro_line|#if NR_IRQS == 33
 )brace
 r_else
 r_if
@@ -1430,31 +1430,6 @@ c_func
 l_int|0
 comma
 l_int|0x461
-)paren
-suffix:semicolon
-macro_line|#elif defined(CONFIG_ALPHA_NONAME)
-id|printk
-c_func
-(paren
-l_string|&quot;61=%02x, 64=%02x, 60=%02x&bslash;n&quot;
-comma
-id|inb
-c_func
-(paren
-l_int|0x61
-)paren
-comma
-id|inb
-c_func
-(paren
-l_int|0x64
-)paren
-comma
-id|inb
-c_func
-(paren
-l_int|0x60
-)paren
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2281,7 +2256,7 @@ r_int
 )paren
 id|cache_21
 suffix:semicolon
-macro_line|#if defined(CONFIG_ALPHA_CABRIOLET) || defined(CONFIG_ALPHA_EB66P)
+macro_line|#if NR_IRQS == 33
 id|irqmask
 op_or_assign
 (paren
@@ -2322,7 +2297,7 @@ l_int|24
 )paren
 )paren
 suffix:semicolon
-macro_line|#elif defined(CONFIG_ALPHA_EB66) || defined(CONFIG_ALPHA_EB64P)
+macro_line|#elif NR_IRQS == 32
 id|irqmask
 op_or_assign
 (paren
@@ -2399,7 +2374,7 @@ r_int
 )paren
 id|cache_21
 suffix:semicolon
-macro_line|#if defined(CONFIG_ALPHA_CABRIOLET) || defined(CONFIG_ALPHA_EB66P)
+macro_line|#if NR_IRQS == 33
 id|irqmask
 op_or_assign
 (paren
@@ -2440,7 +2415,7 @@ l_int|24
 )paren
 )paren
 suffix:semicolon
-macro_line|#elif defined(CONFIG_ALPHA_EB66) || defined(CONFIG_ALPHA_EB64P)
+macro_line|#elif NR_IRQS == 32
 id|irqmask
 op_or_assign
 (paren
@@ -2678,7 +2653,7 @@ op_amp
 id|regs
 )paren
 suffix:semicolon
-r_break
+r_return
 suffix:semicolon
 r_case
 l_int|3
@@ -2693,7 +2668,7 @@ op_amp
 id|regs
 )paren
 suffix:semicolon
-macro_line|#elif defined(CONFIG_ALPHA_CABRIOLET) || defined(CONFIG_ALPHA_EB66P)
+macro_line|#elif NR_IRQS == 33
 id|cabriolet_and_eb66p_device_interrupt
 c_func
 (paren
@@ -2703,7 +2678,7 @@ op_amp
 id|regs
 )paren
 suffix:semicolon
-macro_line|#elif defined(CONFIG_ALPHA_EB66) || defined(CONFIG_ALPHA_EB64P)
+macro_line|#elif NR_IRQS == 32
 id|eb66_and_eb64p_device_interrupt
 c_func
 (paren
@@ -2809,7 +2784,7 @@ comma
 id|DMA2_CLR_MASK_REG
 )paren
 suffix:semicolon
-macro_line|#if defined(CONFIG_ALPHA_CABRIOLET) || defined(CONFIG_ALPHA_EB66P)
+macro_line|#if NR_IRQS == 33
 id|outb
 c_func
 (paren
@@ -2834,7 +2809,7 @@ comma
 l_int|0x806
 )paren
 suffix:semicolon
-macro_line|#elif defined(CONFIG_ALPHA_EB66) || defined(CONFIG_ALPHA_EB64P)
+macro_line|#elif NR_IRQS == 32
 id|outb
 c_func
 (paren

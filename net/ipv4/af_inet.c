@@ -637,6 +637,11 @@ id|mask
 )paren
 r_break
 suffix:semicolon
+id|skp
+op_assign
+op_amp
+id|tmp-&gt;next
+suffix:semicolon
 )brace
 id|sk-&gt;next
 op_assign

@@ -30,8 +30,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-DECL|macro|PZERO
-mdefine_line|#define&t;PZERO&t;15
 DECL|function|sys_ni_syscall
 id|asmlinkage
 r_int

@@ -73,7 +73,7 @@ mdefine_line|#define INIT_MMAP { &amp;init_mm, 0xfffffc0000000000,  0xfffffc0010
 DECL|macro|INIT_TSS
 mdefine_line|#define INIT_TSS  { &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, 0, 0, &bslash;&n;}
 macro_line|#include &lt;asm/ptrace.h&gt;
-multiline_comment|/*&n; * Return saved PC of a blocked thread.  This assumes the frame pointer&n; * is the 6th saved long on the kernel stack and that the saved return&n; * address is the first long in the frame.  This all holds provided the&n; * thread blocked through a call to schedule().&n; */
+multiline_comment|/*&n; * Return saved PC of a blocked thread.  This assumes the frame&n; * pointer is the 6th saved long on the kernel stack and that the&n; * saved return address is the first long in the frame.  This all&n; * holds provided the thread blocked through a call to schedule() ($15&n; * is the frame pointer in schedule() and $15 is saved at offset 48 by&n; * entry.S:do_switch_stack).&n; */
 DECL|function|thread_saved_pc
 r_extern
 r_inline

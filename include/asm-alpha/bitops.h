@@ -306,6 +306,7 @@ c_func
 r_int
 id|nr
 comma
+r_const
 r_void
 op_star
 id|addr

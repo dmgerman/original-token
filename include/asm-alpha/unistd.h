@@ -68,6 +68,8 @@ DECL|macro|__NR_execve
 mdefine_line|#define __NR_execve&t;&t; 59
 DECL|macro|__NR_umask
 mdefine_line|#define __NR_umask&t;&t; 60
+DECL|macro|__NR_chroot
+mdefine_line|#define __NR_chroot&t;&t; 61
 DECL|macro|__NR_getpgrp
 mdefine_line|#define __NR_getpgrp&t;&t; 63
 DECL|macro|__NR_getpagesize

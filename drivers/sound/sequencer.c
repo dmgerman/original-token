@@ -8511,6 +8511,7 @@ id|fileinfo
 op_star
 id|file
 comma
+r_const
 id|snd_rw_buf
 op_star
 id|buf
@@ -8572,8 +8573,7 @@ r_int
 r_int
 id|cmd
 comma
-r_int
-r_int
+id|ioctl_arg
 id|arg
 )paren
 (brace
