@@ -2165,6 +2165,14 @@ id|ROOT_DEV
 suffix:semicolon
 r_extern
 r_void
+id|show_buffers
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|mount_root
 c_func
 (paren

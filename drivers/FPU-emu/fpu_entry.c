@@ -2236,10 +2236,9 @@ id|override-&gt;segment
 op_assign
 id|PREFIX_DS
 suffix:semicolon
+multiline_comment|/* lock is not a valid prefix for FPU instructions,&n;   let the cpu handle it to generate a SIGILL. */
+multiline_comment|/*&t;case PREFIX_LOCK: */
 multiline_comment|/* rep.. prefixes have no meaning for FPU instructions */
-r_case
-id|PREFIX_LOCK
-suffix:colon
 r_case
 id|PREFIX_REPE
 suffix:colon
@@ -2320,6 +2319,13 @@ suffix:semicolon
 )brace
 r_else
 (brace
+multiline_comment|/* Not a valid sequence of prefix bytes followed by&n;&t;&t; an FPU instruction. */
+op_star
+id|Byte
+op_assign
+id|byte
+suffix:semicolon
+multiline_comment|/* Needed for error message. */
 id|FPU_EIP
 op_assign
 id|ip
