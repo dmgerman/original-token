@@ -25,8 +25,6 @@ macro_line|#include &lt;asm/segment.h&gt;
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR HD_MAJOR
 macro_line|#include &quot;blk.h&quot;
-DECL|macro|HD_IRQ
-mdefine_line|#define HD_IRQ 14
 r_static
 r_int
 id|revalidate_hddisk
@@ -5239,7 +5237,9 @@ r_void
 id|hd_geninit
 c_func
 (paren
-r_void
+r_struct
+id|gendisk
+op_star
 )paren
 suffix:semicolon
 DECL|variable|hd_gendisk
@@ -5356,7 +5356,10 @@ r_void
 id|hd_geninit
 c_func
 (paren
-r_void
+r_struct
+id|gendisk
+op_star
+id|ignored
 )paren
 (brace
 r_int

@@ -9,13 +9,13 @@ DECL|macro|htonl
 macro_line|#undef htonl
 DECL|macro|htons
 macro_line|#undef htons
-macro_line|#ifndef LITTLE_ENDIAN
-DECL|macro|LITTLE_ENDIAN
-mdefine_line|#define LITTLE_ENDIAN 1234
+macro_line|#ifndef __LITTLE_ENDIAN
+DECL|macro|__LITTLE_ENDIAN
+mdefine_line|#define __LITTLE_ENDIAN 1234
 macro_line|#endif
-macro_line|#ifndef LITTLE_ENDIAN_BITFIELD
-DECL|macro|LITTLE_ENDIAN_BITFIELD
-mdefine_line|#define LITTLE_ENDIAN_BITFIELD
+macro_line|#ifndef __LITTLE_ENDIAN_BITFIELD
+DECL|macro|__LITTLE_ENDIAN_BITFIELD
+mdefine_line|#define __LITTLE_ENDIAN_BITFIELD
 macro_line|#endif
 r_extern
 r_int

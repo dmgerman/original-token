@@ -10,6 +10,8 @@ DECL|macro|PORT_DATA
 mdefine_line|#define&t;PORT_DATA&t;0x04&t;/* read/write, 16-bit */
 DECL|macro|PORT_CONTROL
 mdefine_line|#define&t;PORT_CONTROL&t;0x06&t;/* read/write, 8-bit */
+DECL|macro|ELP_IO_EXTENT
+mdefine_line|#define ELP_IO_EXTENT&t;0x10&t;/* size of used IO registers */
 multiline_comment|/*&n; * host control registers bits&n; */
 DECL|macro|ATTN
 mdefine_line|#define&t;ATTN&t;0x80&t;/* attention */

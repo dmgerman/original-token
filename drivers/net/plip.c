@@ -307,7 +307,7 @@ r_union
 (brace
 r_struct
 (brace
-macro_line|#if defined(LITTLE_ENDIAN)
+macro_line|#if defined(__LITTLE_ENDIAN)
 DECL|member|lsb
 r_int
 r_char
@@ -318,7 +318,7 @@ r_int
 r_char
 id|msb
 suffix:semicolon
-macro_line|#elif defined(BIG_ENDIAN)
+macro_line|#elif defined(__BIG_ENDIAN)
 r_int
 r_char
 id|msb

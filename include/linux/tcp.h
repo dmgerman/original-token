@@ -24,7 +24,7 @@ DECL|member|ack_seq
 id|__u32
 id|ack_seq
 suffix:semicolon
-macro_line|#if defined(LITTLE_ENDIAN_BITFIELD)
+macro_line|#if defined(__LITTLE_ENDIAN_BITFIELD)
 DECL|member|res1
 id|__u16
 id|res1
@@ -71,7 +71,7 @@ id|res2
 suffix:colon
 l_int|2
 suffix:semicolon
-macro_line|#elif defined(BIG_ENDIAN_BITFIELD)
+macro_line|#elif defined(__BIG_ENDIAN_BITFIELD)
 DECL|member|doff
 id|__u16
 id|doff

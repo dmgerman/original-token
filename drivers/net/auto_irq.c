@@ -3,6 +3,7 @@ multiline_comment|/*&n;    Written 1994 by Donald Becker.&n;&n;    The author ma
 macro_line|#ifdef version
 DECL|variable|version
 r_static
+r_const
 r_char
 op_star
 id|version

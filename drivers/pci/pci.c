@@ -3820,6 +3820,10 @@ r_int
 r_int
 id|buses
 suffix:semicolon
+r_int
+r_int
+id|cr
+suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; * Insert it into the tree of buses.&n;&t;&t;&t; */
 id|child
 op_assign
@@ -3868,6 +3872,19 @@ op_assign
 l_int|0xff
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; * Clear all status bits and turn off memory,&n;&t;&t;&t; * I/O and master enables.&n;&t;&t;&t; */
+id|pcibios_read_config_word
+c_func
+(paren
+id|bus-&gt;number
+comma
+id|devfn
+comma
+id|PCI_COMMAND
+comma
+op_amp
+id|cr
+)paren
+suffix:semicolon
 id|pcibios_write_config_word
 c_func
 (paren
@@ -4008,6 +4025,18 @@ comma
 l_int|0x18
 comma
 id|buses
+)paren
+suffix:semicolon
+id|pcibios_write_config_word
+c_func
+(paren
+id|bus-&gt;number
+comma
+id|devfn
+comma
+id|PCI_COMMAND
+comma
+id|cr
 )paren
 suffix:semicolon
 )brace

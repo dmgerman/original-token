@@ -91,13 +91,13 @@ mdefine_line|#define __OUT1(s,x) &bslash;&n;extern inline void __out##s(unsigned
 DECL|macro|__OUT2
 mdefine_line|#define __OUT2(s,s1,s2) &bslash;&n;__asm__ __volatile__ (&quot;out&quot; #s &quot; %&quot; s1 &quot;0,%&quot; s2 &quot;1&quot;
 DECL|macro|__OUT
-mdefine_line|#define __OUT(s,s1,x) &bslash;&n;__OUT1(s,x) __OUT2(s,s1,&quot;w&quot;) : : &quot;a&quot; (value), &quot;d&quot; (port)); } &bslash;&n;__OUT1(s##c,x) __OUT2(s,s1,&quot;&quot;) : : &quot;a&quot; (value), &quot;i&quot; (port)); } &bslash;&n;__OUT1(s##_p,x) __OUT2(s,s1,&quot;w&quot;) : : &quot;a&quot; (value), &quot;d&quot; (port)); SLOW_DOWN_IO; } &bslash;&n;__OUT1(s##c_p,x) __OUT2(s,s1,&quot;&quot;) : : &quot;a&quot; (value), &quot;i&quot; (port)); SLOW_DOWN_IO; }
+mdefine_line|#define __OUT(s,s1,x) &bslash;&n;__OUT1(s,x) __OUT2(s,s1,&quot;w&quot;) : : &quot;a&quot; (value), &quot;d&quot; (port)); } &bslash;&n;__OUT1(s##c,x) __OUT2(s,s1,&quot;&quot;) : : &quot;a&quot; (value), &quot;id&quot; (port)); } &bslash;&n;__OUT1(s##_p,x) __OUT2(s,s1,&quot;w&quot;) : : &quot;a&quot; (value), &quot;d&quot; (port)); SLOW_DOWN_IO; } &bslash;&n;__OUT1(s##c_p,x) __OUT2(s,s1,&quot;&quot;) : : &quot;a&quot; (value), &quot;id&quot; (port)); SLOW_DOWN_IO; }
 DECL|macro|__IN1
 mdefine_line|#define __IN1(s) &bslash;&n;extern inline unsigned int __in##s(unsigned short port) { unsigned int _v;
 DECL|macro|__IN2
 mdefine_line|#define __IN2(s,s1,s2) &bslash;&n;__asm__ __volatile__ (&quot;in&quot; #s &quot; %&quot; s2 &quot;1,%&quot; s1 &quot;0&quot;
 DECL|macro|__IN
-mdefine_line|#define __IN(s,s1,i...) &bslash;&n;__IN1(s) __IN2(s,s1,&quot;w&quot;) : &quot;=a&quot; (_v) : &quot;d&quot; (port) ,##i ); return _v; } &bslash;&n;__IN1(s##c) __IN2(s,s1,&quot;&quot;) : &quot;=a&quot; (_v) : &quot;i&quot; (port) ,##i ); return _v; } &bslash;&n;__IN1(s##_p) __IN2(s,s1,&quot;w&quot;) : &quot;=a&quot; (_v) : &quot;d&quot; (port) ,##i ); SLOW_DOWN_IO; return _v; } &bslash;&n;__IN1(s##c_p) __IN2(s,s1,&quot;&quot;) : &quot;=a&quot; (_v) : &quot;i&quot; (port) ,##i ); SLOW_DOWN_IO; return _v; }
+mdefine_line|#define __IN(s,s1,i...) &bslash;&n;__IN1(s) __IN2(s,s1,&quot;w&quot;) : &quot;=a&quot; (_v) : &quot;d&quot; (port) ,##i ); return _v; } &bslash;&n;__IN1(s##c) __IN2(s,s1,&quot;&quot;) : &quot;=a&quot; (_v) : &quot;id&quot; (port) ,##i ); return _v; } &bslash;&n;__IN1(s##_p) __IN2(s,s1,&quot;w&quot;) : &quot;=a&quot; (_v) : &quot;d&quot; (port) ,##i ); SLOW_DOWN_IO; return _v; } &bslash;&n;__IN1(s##c_p) __IN2(s,s1,&quot;&quot;) : &quot;=a&quot; (_v) : &quot;id&quot; (port) ,##i ); SLOW_DOWN_IO; return _v; }
 DECL|macro|__INS
 mdefine_line|#define __INS(s) &bslash;&n;extern inline void ins##s(unsigned short port, void * addr, unsigned long count) &bslash;&n;{ __asm__ __volatile__ (&quot;cld ; rep ; ins&quot; #s &bslash;&n;: &quot;=D&quot; (addr), &quot;=c&quot; (count) : &quot;d&quot; (port),&quot;0&quot; (addr),&quot;1&quot; (count)); }
 DECL|macro|__OUTS

@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/if_ether.h&gt;
+macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
@@ -314,6 +315,9 @@ suffix:semicolon
 r_else
 id|dev-&gt;priv
 op_assign
+id|sizeof_priv
+ques
+c_cond
 id|kmalloc
 c_func
 (paren
@@ -321,7 +325,14 @@ id|sizeof_priv
 comma
 id|GFP_KERNEL
 )paren
+suffix:colon
+l_int|NULL
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;priv
+)paren
 id|memset
 c_func
 (paren

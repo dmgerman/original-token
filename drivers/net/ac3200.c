@@ -44,6 +44,9 @@ DECL|macro|AC_ENABLE
 mdefine_line|#define  AC_ENABLE&t;&t; 0x01
 DECL|macro|AC_CONFIG
 mdefine_line|#define AC_CONFIG&t;&t;0xC90&t;/* The configuration port. */
+DECL|macro|AC_IO_EXTENT
+mdefine_line|#define AC_IO_EXTENT 0x10&t;&t;/* IS THIS REALLY TRUE ??? */
+multiline_comment|/* Actually accessed is:&n;&t;&t;&t;&t;&t;&t;&t;&t; * AC_NIC_BASE (0-15)&n;&t;&t;&t;&t;&t;&t;&t;&t; * AC_SA_PROM (0-5)&n;&t;&t;&t;&t;&t;&t;&t;&t; * AC_ID_PORT (0-3)&n;&t;&t;&t;&t;&t;&t;&t;&t; * AC_RESET_PORT&n;&t;&t;&t;&t;&t;&t;&t;&t; * AC_CONFIG&n;&t;&t;&t;&t;&t;&t;&t;&t; */
 multiline_comment|/* Decoding of the configuration register. */
 DECL|variable|config2irqmap
 r_static
@@ -633,9 +636,19 @@ id|dev-&gt;irq
 )paren
 suffix:semicolon
 r_return
-l_int|0
+id|EAGAIN
 suffix:semicolon
 )brace
+id|request_region
+c_func
+(paren
+id|ioaddr
+comma
+id|AC_IO_EXTENT
+comma
+l_string|&quot;ac3200&quot;
+)paren
+suffix:semicolon
 id|dev-&gt;base_addr
 op_assign
 id|ioaddr
@@ -1255,6 +1268,19 @@ id|kernel_version
 op_assign
 id|UTS_RELEASE
 suffix:semicolon
+DECL|variable|devicename
+r_static
+r_char
+id|devicename
+(braket
+l_int|9
+)braket
+op_assign
+(brace
+l_int|0
+comma
+)brace
+suffix:semicolon
 DECL|variable|dev_ac3200
 r_static
 r_struct
@@ -1262,9 +1288,9 @@ id|device
 id|dev_ac3200
 op_assign
 (brace
-l_string|&quot;        &quot;
-multiline_comment|/*&quot;ac3200&quot;*/
+id|devicename
 comma
+multiline_comment|/* device name is inserted by linux/drivers/net/net_init.c */
 l_int|0
 comma
 l_int|0
@@ -1370,6 +1396,21 @@ c_func
 (paren
 op_amp
 id|dev_ac3200
+)paren
+suffix:semicolon
+multiline_comment|/* If we don&squot;t do this, we can&squot;t re-insmod it later. */
+id|free_irq
+c_func
+(paren
+id|dev_ac3200.irq
+)paren
+suffix:semicolon
+id|release_region
+c_func
+(paren
+id|dev_ac3200.base_addr
+comma
+id|AC_IO_EXTENT
 )paren
 suffix:semicolon
 )brace

@@ -3,7 +3,7 @@ macro_line|#ifndef _NET_INET_IPX_H_
 DECL|macro|_NET_INET_IPX_H_
 mdefine_line|#define _NET_INET_IPX_H_
 macro_line|#include &lt;linux/skbuff.h&gt;
-macro_line|#include &quot;datalink.h&quot;
+macro_line|#include &lt;net/datalink.h&gt;
 macro_line|#include &lt;linux/ipx.h&gt;
 r_typedef
 r_struct
@@ -101,7 +101,7 @@ r_struct
 id|sock
 id|ipx_socket
 suffix:semicolon
-macro_line|#include &quot;ipxcall.h&quot;
+macro_line|#include &lt;net/ipxcall.h&gt;
 r_extern
 r_int
 id|ipx_rcv

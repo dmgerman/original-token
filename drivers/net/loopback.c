@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/if_ether.h&gt;&t;/* For the statistics structure. */
+macro_line|#include &lt;linux/if_arp.h&gt;&t;/* For ARPHRD_ETHER */
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/io.h&gt;

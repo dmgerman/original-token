@@ -33,27 +33,6 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
-r_extern
-r_struct
-id|device
-op_star
-id|init_etherdev
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_int
-id|sizeof_private
-comma
-r_int
-r_int
-op_star
-id|mem_startp
-)paren
-suffix:semicolon
 multiline_comment|/* use 0 for production, 1 for verification, 2..7 for debug */
 macro_line|#ifndef NET_DEBUG
 DECL|macro|NET_DEBUG
@@ -3309,6 +3288,19 @@ id|kernel_version
 op_assign
 id|UTS_RELEASE
 suffix:semicolon
+DECL|variable|devicename
+r_static
+r_char
+id|devicename
+(braket
+l_int|9
+)braket
+op_assign
+(brace
+l_int|0
+comma
+)brace
+suffix:semicolon
 DECL|variable|dev_3c507
 r_static
 r_struct
@@ -3316,9 +3308,9 @@ id|device
 id|dev_3c507
 op_assign
 (brace
-l_string|&quot;        &quot;
-multiline_comment|/*&quot;3c507&quot;*/
+id|devicename
 comma
+multiline_comment|/* device name is inserted by linux/drivers/net/net_init.c */
 l_int|0
 comma
 l_int|0
@@ -3437,6 +3429,21 @@ c_func
 (paren
 op_amp
 id|dev_3c507
+)paren
+suffix:semicolon
+multiline_comment|/* If we don&squot;t do this, we can&squot;t re-insmod it later. */
+id|free_irq
+c_func
+(paren
+id|dev_3c507.irq
+)paren
+suffix:semicolon
+id|release_region
+c_func
+(paren
+id|dev_3c507.base_addr
+comma
+id|EL16_IO_EXTENT
 )paren
 suffix:semicolon
 )brace

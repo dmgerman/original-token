@@ -2700,7 +2700,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Unicode -&gt; current font conversion &n; *&n; * A font has at most 512 chars, usually 256.&n; * But one font position may represent several Unicode chars&n; * (and moreover, hashtables work best when they are not too full),&n; * so pick HASHSIZE somewhat larger than 512.&n; * Since there are likely to be long consecutive stretches&n; * (like U+0000 to U+00FF), HASHSTEP should not be too small.&n; * Searches longer than MAXHASHLEVEL steps are refused, unless&n; * requested explicitly.&n; *&n; * Note: no conversion tables are compiled in, so the user&n; * must supply an explicit mapping herself. See kbd-0.90 (or an&n; * earlier kernel version) for the default Unicode-to-PC mapping.&n; * Usually, the mapping will be loaded simultaneously with the font.&n; */
-macro_line|#include &quot;uni_hash_tbl.h&quot;&t;/* Include hash tables &amp; parameters */
+macro_line|#include &quot;uni_hash.tbl&quot;&t;&t;/* Include hash tables &amp; parameters */
 DECL|variable|hashtable_contents_valid
 r_int
 id|hashtable_contents_valid

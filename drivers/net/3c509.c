@@ -55,6 +55,8 @@ DECL|macro|ID_PORT
 mdefine_line|#define ID_PORT 0x100
 DECL|macro|EEPROM_READ
 mdefine_line|#define&t; EEPROM_READ 0x80
+DECL|macro|EL3_IO_EXTENT
+mdefine_line|#define EL3_IO_EXTENT&t;16
 DECL|macro|EL3WINDOW
 mdefine_line|#define EL3WINDOW(win_num) outw(SelectWindow + (win_num), ioaddr + EL3_CMD)
 multiline_comment|/* The top five bits written to EL3_CMD are a command, the lower&n;   11 bits are the parameter, if applicable. */
@@ -1000,7 +1002,7 @@ c_func
 (paren
 id|dev-&gt;base_addr
 comma
-l_int|16
+id|EL3_IO_EXTENT
 comma
 l_string|&quot;3c509&quot;
 )paren
@@ -3411,6 +3413,19 @@ id|kernel_version
 op_assign
 id|UTS_RELEASE
 suffix:semicolon
+DECL|variable|devicename
+r_static
+r_char
+id|devicename
+(braket
+l_int|9
+)braket
+op_assign
+(brace
+l_int|0
+comma
+)brace
+suffix:semicolon
 DECL|variable|dev_3c509
 r_static
 r_struct
@@ -3418,9 +3433,9 @@ id|device
 id|dev_3c509
 op_assign
 (brace
-l_string|&quot;        &quot;
-multiline_comment|/*&quot;3c509&quot;*/
+id|devicename
 comma
+multiline_comment|/* device name is inserted by linux/drivers/net/net_init.c */
 l_int|0
 comma
 l_int|0
@@ -3549,6 +3564,15 @@ suffix:semicolon
 id|dev_3c509.priv
 op_assign
 l_int|NULL
+suffix:semicolon
+multiline_comment|/* If we don&squot;t do this, we can&squot;t re-insmod it later. */
+id|release_region
+c_func
+(paren
+id|dev_3c509.base_addr
+comma
+id|EL3_IO_EXTENT
+)paren
 suffix:semicolon
 )brace
 )brace

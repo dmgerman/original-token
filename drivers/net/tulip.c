@@ -3267,6 +3267,19 @@ id|kernel_version
 op_assign
 id|UTS_RELEASE
 suffix:semicolon
+DECL|variable|devicename
+r_static
+r_char
+id|devicename
+(braket
+l_int|9
+)braket
+op_assign
+(brace
+l_int|0
+comma
+)brace
+suffix:semicolon
 DECL|variable|dev_tulip
 r_static
 r_struct
@@ -3274,9 +3287,9 @@ id|device
 id|dev_tulip
 op_assign
 (brace
-l_string|&quot;        &quot;
-multiline_comment|/*&quot;tulip&quot;*/
+id|devicename
 comma
+multiline_comment|/* device name is inserted by linux/drivers/net/net_init.c */
 l_int|0
 comma
 l_int|0

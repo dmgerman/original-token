@@ -21,29 +21,9 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &quot;8390.h&quot;
 macro_line|#include &quot;3c503.h&quot;
-r_extern
-r_struct
-id|device
-op_star
-id|init_etherdev
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_int
-id|sizeof_private
-comma
-r_int
-r_int
-op_star
-id|mem_startp
-)paren
-suffix:semicolon
 r_int
 id|el2_probe
 c_func
@@ -2476,12 +2456,19 @@ l_string|&quot;3c503: device busy, remove delayed&bslash;n&quot;
 suffix:semicolon
 r_else
 (brace
+r_int
+id|ioaddr
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|no_pio
 )paren
 (brace
+id|ioaddr
+op_assign
+id|el2_drv.base_addr
+suffix:semicolon
 id|unregister_netdev
 c_func
 (paren
@@ -2492,6 +2479,10 @@ suffix:semicolon
 )brace
 r_else
 (brace
+id|ioaddr
+op_assign
+id|el2pio_drv.base_addr
+suffix:semicolon
 id|unregister_netdev
 c_func
 (paren
@@ -2500,6 +2491,15 @@ id|el2pio_drv
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* If we don&squot;t do this, we can&squot;t re-insmod it later. */
+id|release_region
+c_func
+(paren
+id|ioaddr
+comma
+id|EL2_IO_EXTENT
+)paren
+suffix:semicolon
 )brace
 )brace
 macro_line|#endif /* MODULE */

@@ -1360,6 +1360,8 @@ suffix:semicolon
 )brace
 DECL|function|skb_pull
 r_int
+r_char
+op_star
 id|skb_pull
 c_func
 (paren
@@ -1386,9 +1388,8 @@ OG
 id|skb-&gt;len
 )paren
 (brace
-id|len
-op_assign
-id|skb-&gt;len
+r_return
+l_int|0
 suffix:semicolon
 )brace
 id|skb-&gt;data
@@ -1400,7 +1401,7 @@ op_sub_assign
 id|len
 suffix:semicolon
 r_return
-id|len
+id|skb-&gt;data
 suffix:semicolon
 )brace
 DECL|function|skb_headroom

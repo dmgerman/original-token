@@ -4471,6 +4471,19 @@ id|kernel_version
 op_assign
 id|UTS_RELEASE
 suffix:semicolon
+DECL|variable|devicename
+r_static
+r_char
+id|devicename
+(braket
+l_int|9
+)braket
+op_assign
+(brace
+l_int|0
+comma
+)brace
+suffix:semicolon
 DECL|variable|dev_apricot
 r_static
 r_struct
@@ -4478,7 +4491,7 @@ id|device
 id|dev_apricot
 op_assign
 (brace
-l_string|&quot;        &quot;
+id|devicename
 comma
 multiline_comment|/* device name inserted by /linux/drivers/net/net_init.c */
 l_int|0
@@ -4603,6 +4616,15 @@ suffix:semicolon
 id|dev_apricot.priv
 op_assign
 l_int|NULL
+suffix:semicolon
+multiline_comment|/* If we don&squot;t do this, we can&squot;t re-insmod it later. */
+id|release_region
+c_func
+(paren
+id|dev_apricot.base_addr
+comma
+id|APRICOT_TOTAL_SIZE
+)paren
 suffix:semicolon
 )brace
 )brace

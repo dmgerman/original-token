@@ -20,28 +20,8 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &quot;8390.h&quot;
-r_extern
-r_struct
-id|device
-op_star
-id|init_etherdev
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_int
-id|sizeof_private
-comma
-r_int
-r_int
-op_star
-id|mem_startp
-)paren
-suffix:semicolon
 multiline_comment|/* A zero-terminated list of I/O addresses to be probed. */
 DECL|variable|hppclan_portlist
 r_static
@@ -489,17 +469,6 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/* Grab the region so we can find another board if something fails. */
-id|request_region
-c_func
-(paren
-id|ioaddr
-comma
-id|HP_IO_EXTENT
-comma
-l_string|&quot;hp&quot;
-)paren
-suffix:semicolon
 id|printk
 c_func
 (paren
@@ -785,6 +754,17 @@ id|EBUSY
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/* Grab the region so we can find another board if something fails. */
+id|request_region
+c_func
+(paren
+id|ioaddr
+comma
+id|HP_IO_EXTENT
+comma
+l_string|&quot;hp&quot;
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1686,6 +1666,19 @@ id|kernel_version
 op_assign
 id|UTS_RELEASE
 suffix:semicolon
+DECL|variable|devicename
+r_static
+r_char
+id|devicename
+(braket
+l_int|9
+)braket
+op_assign
+(brace
+l_int|0
+comma
+)brace
+suffix:semicolon
 DECL|variable|dev_hp
 r_static
 r_struct
@@ -1693,9 +1686,9 @@ id|device
 id|dev_hp
 op_assign
 (brace
-l_string|&quot;        &quot;
-multiline_comment|/*&quot;hp&quot;*/
+id|devicename
 comma
+multiline_comment|/* device name is inserted by linux/drivers/net/net_init.c */
 l_int|0
 comma
 l_int|0
@@ -1809,11 +1802,33 @@ l_string|&quot;hp: device busy, remove delayed&bslash;n&quot;
 suffix:semicolon
 r_else
 (brace
+r_int
+id|ioaddr
+op_assign
+id|dev_hp.base_addr
+op_minus
+id|NIC_OFFSET
+suffix:semicolon
 id|unregister_netdev
 c_func
 (paren
 op_amp
 id|dev_hp
+)paren
+suffix:semicolon
+multiline_comment|/* If we don&squot;t do this, we can&squot;t re-insmod it later. */
+id|free_irq
+c_func
+(paren
+id|dev_hp.irq
+)paren
+suffix:semicolon
+id|release_region
+c_func
+(paren
+id|ioaddr
+comma
+id|HP_IO_EXTENT
 )paren
 suffix:semicolon
 )brace

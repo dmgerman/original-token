@@ -25,6 +25,7 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
 multiline_comment|/*&n; *&t;The list of packet types we will receive (as opposed to discard)&n; *&t;and the routines to invoke.&n; */
 DECL|variable|ptype_base
 r_struct
@@ -3727,6 +3728,21 @@ comma
 l_int|3
 comma
 l_string|&quot;dev&quot;
+comma
+id|S_IFREG
+op_or
+id|S_IRUGO
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|proc_net_inode_operations
 comma
 id|dev_get_info
 )brace

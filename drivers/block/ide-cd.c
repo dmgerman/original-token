@@ -1,11 +1,26 @@
-multiline_comment|/*&n; * linux/drivers/block/ide-cd.c&n; *&n; * 1.00  Oct 31, 1994 -- Initial version.&n; * 1.01  Nov  2, 1994 -- Fixed problem with starting request in&n; *                       cdrom_check_status.&n; * 1.03  Nov 25, 1994 -- leaving unmask_intr[] as a user-setting (as for disks)&n; * (from mlord)       -- minor changes to cdrom_setup()&n; *                    -- renamed ide_dev_s to ide_dev_t, enable irq on command&n; * 2.00  Nov 27, 1994 -- Generalize packet command interface;&n; *                       add audio ioctls.&n; * 2.01  Dec  3, 1994 -- Rework packet command interface to handle devices&n; *                       which send an interrupt when ready for a command.&n; * 2.02  Dec 11, 1994 -- Cache the TOC in the driver.&n; *                       Don&squot;t use SCMD_PLAYAUDIO_TI; it&squot;s not included&n; *                       in the current version of ATAPI.&n; *                       Try to use LBA instead of track or MSF addressing&n; *                       when possible.&n; *                       Don&squot;t wait for READY_STAT.&n; * 2.03  Jan 10, 1995 -- Rewrite block read routines to handle block sizes&n; *                       other than 2k and to move multiple sectors in a&n; *                       single transaction.&n; * 2.04  Apr 21, 1995 -- Add work-around for Creative Labs CD220E drives.&n; *                       Thanks to Nick Saw &lt;cwsaw@pts7.pts.mot.com&gt; for&n; *                       help in figuring this out.  Ditto for Acer and&n; *                       Aztech drives, which seem to have the same problem.&n; * 2.04b May 30, 1995 -- Fix to match changes in ide.c version 3.16 -ml&n; * 2.05  Jun  8, 1995 -- Don&squot;t attempt to retry after an illegal request&n; *                        or data protect error.&n; *                       Use HWIF and DEV_HWIF macros as in ide.c.&n; *                       Always try to do a request_sense after&n; *                        a failed command.&n; *                       Include an option to give textual descriptions&n; *                        of ATAPI errors.&n; *                       Fix a bug in handling the sector cache which&n; *                        showed up if the drive returned data in 512 byte&n; *                        blocks (like Pioneer drives).  Thanks to&n; *                        Richard Hirst &lt;srh@gpt.co.uk&gt; for diagnosing this.&n; *                       Properly supply the page number field in the&n; *                        MODE_SELECT command.&n; *                       PLAYAUDIO12 is broken on the Aztech; work around it.&n; *                       &n; *&n; * ATAPI cd-rom driver.  To be used with ide.c.&n; *&n; * Copyright (C) 1994, 1995  scott snyder  &lt;snyder@fnald0.fnal.gov&gt;&n; * May be copied or modified under the terms of the GNU General Public License&n; * (../../COPYING).&n; */
+multiline_comment|/*&n; * linux/drivers/block/ide-cd.c&n; *&n; * 1.00  Oct 31, 1994 -- Initial version.&n; * 1.01  Nov  2, 1994 -- Fixed problem with starting request in&n; *                       cdrom_check_status.&n; * 1.03  Nov 25, 1994 -- leaving unmask_intr[] as a user-setting (as for disks)&n; * (from mlord)       -- minor changes to cdrom_setup()&n; *                    -- renamed ide_dev_s to ide_drive_t, enable irq on command&n; * 2.00  Nov 27, 1994 -- Generalize packet command interface;&n; *                       add audio ioctls.&n; * 2.01  Dec  3, 1994 -- Rework packet command interface to handle devices&n; *                       which send an interrupt when ready for a command.&n; * 2.02  Dec 11, 1994 -- Cache the TOC in the driver.&n; *                       Don&squot;t use SCMD_PLAYAUDIO_TI; it&squot;s not included&n; *                       in the current version of ATAPI.&n; *                       Try to use LBA instead of track or MSF addressing&n; *                       when possible.&n; *                       Don&squot;t wait for READY_STAT.&n; * 2.03  Jan 10, 1995 -- Rewrite block read routines to handle block sizes&n; *                       other than 2k and to move multiple sectors in a&n; *                       single transaction.&n; * 2.04  Apr 21, 1995 -- Add work-around for Creative Labs CD220E drives.&n; *                       Thanks to Nick Saw &lt;cwsaw@pts7.pts.mot.com&gt; for&n; *                       help in figuring this out.  Ditto for Acer and&n; *                       Aztech drives, which seem to have the same problem.&n; * 2.04b May 30, 1995 -- Fix to match changes in ide.c version 3.16 -ml&n; * 2.05  Jun  8, 1995 -- Don&squot;t attempt to retry after an illegal request&n; *                        or data protect error.&n; *                       Use HWIF and DEV_HWIF macros as in ide.c.&n; *                       Always try to do a request_sense after&n; *                        a failed command.&n; *                       Include an option to give textual descriptions&n; *                        of ATAPI errors.&n; *                       Fix a bug in handling the sector cache which&n; *                        showed up if the drive returned data in 512 byte&n; *                        blocks (like Pioneer drives).  Thanks to&n; *                        Richard Hirst &lt;srh@gpt.co.uk&gt; for diagnosing this.&n; *                       Properly supply the page number field in the&n; *                        MODE_SELECT command.&n; *                       PLAYAUDIO12 is broken on the Aztech; work around it.&n; * 2.05x Aug 11, 1995 -- lots of data structure renaming/restructuring in ide.c&n; *                       (my apologies to Scott, but now ide-cd.c is independent)&n; *&n; * FIX ME!!  A day-one bug exists when the ide.c &quot;serialize&quot; option is used.&n; * For this to always work correctly, ide_set_handler() must be called&n; * *just before* the final trigger is given to the drive (to cause it to go&n; * off and get data and then interrupt us again).  Otherwise, we may get the&n; * interrupt before set_handler() has actually run, resulting in &quot;unexpected_intr&quot;.&n; *&n; * This can only happen in scenarios where we handle a &quot;final&quot; interrupt&n; * for one IDE port on, say irq14, and then initiate a new request for the&n; * other port on, say irq15, from the irq14 interrupt handler.  If we are&n; * running with &quot;unmask&quot; on, or have done sti(), then Whammo -- we&squot;re exposed.&n; *&n; * Places where this needs fixing have been identified in the code with &quot;BUG&quot;.&n; * -ml  August 11, 1995&n; *&n; *&n; * ATAPI cd-rom driver.  To be used with ide.c.&n; *&n; * Copyright (C) 1994, 1995  scott snyder  &lt;snyder@fnald0.fnal.gov&gt;&n; * May be copied or modified under the terms of the GNU General Public License&n; * (../../COPYING).&n; */
+multiline_comment|/***************************************************************************/
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/timer.h&gt;
+macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/blkdev.h&gt;
+macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/hdreg.h&gt;
+macro_line|#include &lt;linux/cdrom.h&gt;
+macro_line|#include &lt;asm/irq.h&gt;
+DECL|macro|_IDE_CD_C
+mdefine_line|#define _IDE_CD_C&t;/* used in blk.h */
+macro_line|#include &quot;ide.h&quot;
 multiline_comment|/* Turn this on to have the driver print out the meanings of the&n;   ATAPI error codes.  This will use up additional kernel-space&n;   memory, though. */
 macro_line|#ifndef VERBOSE_IDE_CD_ERRORS
 DECL|macro|VERBOSE_IDE_CD_ERRORS
 mdefine_line|#define VERBOSE_IDE_CD_ERRORS 0
 macro_line|#endif
-multiline_comment|/***************************************************************************/
-macro_line|#include &lt;linux/cdrom.h&gt;
 DECL|macro|SECTOR_SIZE
 mdefine_line|#define SECTOR_SIZE 512
 DECL|macro|SECTOR_BITS
@@ -16,14 +31,14 @@ DECL|macro|MIN
 mdefine_line|#define MIN(a,b) ((a) &lt; (b) ? (a) : (b))
 macro_line|#if 1&t;/* &quot;old&quot; method */
 DECL|macro|OUT_WORDS
-mdefine_line|#define OUT_WORDS(b,n)  outsw (IDE_PORT (HD_DATA, DEV_HWIF), (b), (n))
+mdefine_line|#define OUT_WORDS(b,n)  outsw (IDE_DATA_REG, (b), (n))
 DECL|macro|IN_WORDS
-mdefine_line|#define IN_WORDS(b,n)   insw  (IDE_PORT (HD_DATA, DEV_HWIF), (b), (n))
+mdefine_line|#define IN_WORDS(b,n)   insw  (IDE_DATA_REG, (b), (n))
 macro_line|#else&t;/* &quot;new&quot; method -- should really fix each instance instead of this */
 DECL|macro|OUT_WORDS
-mdefine_line|#define OUT_WORDS(b,n)&t;output_ide_data(dev,b,(n)/2)
+mdefine_line|#define OUT_WORDS(b,n)&t;output_ide_data(drive,b,(n)/2)
 DECL|macro|IN_WORDS
-mdefine_line|#define IN_WORDS(b,n)&t;input_ide_data(dev,b,(n)/2)
+mdefine_line|#define IN_WORDS(b,n)&t;input_ide_data(drive,b,(n)/2)
 macro_line|#endif
 multiline_comment|/* special command codes for strategy routine. */
 DECL|macro|PACKET_COMMAND
@@ -68,123 +83,7 @@ DECL|macro|ABORTED_COMMAND
 mdefine_line|#define ABORTED_COMMAND         0x0b
 DECL|macro|MISCOMPARE
 mdefine_line|#define MISCOMPARE              0x0e
-DECL|struct|packet_command
-r_struct
-id|packet_command
-(brace
-DECL|member|buffer
-r_char
-op_star
-id|buffer
-suffix:semicolon
-DECL|member|buflen
-r_int
-id|buflen
-suffix:semicolon
-DECL|member|stat
-r_int
-id|stat
-suffix:semicolon
-DECL|member|c
-r_int
-r_char
-id|c
-(braket
-l_int|12
-)braket
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|struct|atapi_request_sense
-r_struct
-id|atapi_request_sense
-(brace
-DECL|member|error_code
-r_int
-r_char
-id|error_code
-suffix:colon
-l_int|7
-suffix:semicolon
-DECL|member|valid
-r_int
-r_char
-id|valid
-suffix:colon
-l_int|1
-suffix:semicolon
-DECL|member|reserved1
-id|byte
-id|reserved1
-suffix:semicolon
-DECL|member|sense_key
-r_int
-r_char
-id|sense_key
-suffix:colon
-l_int|4
-suffix:semicolon
-DECL|member|reserved2
-r_int
-r_char
-id|reserved2
-suffix:colon
-l_int|1
-suffix:semicolon
-DECL|member|ili
-r_int
-r_char
-id|ili
-suffix:colon
-l_int|1
-suffix:semicolon
-DECL|member|reserved3
-r_int
-r_char
-id|reserved3
-suffix:colon
-l_int|2
-suffix:semicolon
-DECL|member|info
-id|byte
-id|info
-(braket
-l_int|4
-)braket
-suffix:semicolon
-DECL|member|sense_len
-id|byte
-id|sense_len
-suffix:semicolon
-DECL|member|command_info
-id|byte
-id|command_info
-(braket
-l_int|4
-)braket
-suffix:semicolon
-DECL|member|asc
-id|byte
-id|asc
-suffix:semicolon
-DECL|member|ascq
-id|byte
-id|ascq
-suffix:semicolon
-DECL|member|fru
-id|byte
-id|fru
-suffix:semicolon
-DECL|member|sense_key_specific
-id|byte
-id|sense_key_specific
-(braket
-l_int|3
-)braket
-suffix:semicolon
-)brace
-suffix:semicolon
-multiline_comment|/* We want some additional flags for cd-rom drives.&n;   To save space in the ide_dev_t struct, use one of the fields which&n;   doesn&squot;t make sense for cd-roms -- `bios_sect&squot;. */
+multiline_comment|/* We want some additional flags for cd-rom drives.&n;   To save space in the ide_drive_t struct, use one of the fields which&n;   doesn&squot;t make sense for cd-roms -- `bios_sect&squot;. */
 DECL|struct|ide_cd_flags
 r_struct
 id|ide_cd_flags
@@ -240,154 +139,9 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|CDROM_FLAGS
-mdefine_line|#define CDROM_FLAGS(dev) ((struct ide_cd_flags *)&amp;((dev)-&gt;bios_sect))
-multiline_comment|/* Space to hold the disk TOC. */
-DECL|macro|MAX_TRACKS
-mdefine_line|#define MAX_TRACKS 99
-DECL|struct|atapi_toc_header
-r_struct
-id|atapi_toc_header
-(brace
-DECL|member|toc_length
-r_int
-r_int
-id|toc_length
-suffix:semicolon
-DECL|member|first_track
-id|byte
-id|first_track
-suffix:semicolon
-DECL|member|last_track
-id|byte
-id|last_track
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|struct|atapi_toc_entry
-r_struct
-id|atapi_toc_entry
-(brace
-DECL|member|reserved1
-id|byte
-id|reserved1
-suffix:semicolon
-DECL|member|control
-r_int
-id|control
-suffix:colon
-l_int|4
-suffix:semicolon
-DECL|member|adr
-r_int
-id|adr
-suffix:colon
-l_int|4
-suffix:semicolon
-DECL|member|track
-id|byte
-id|track
-suffix:semicolon
-DECL|member|reserved2
-id|byte
-id|reserved2
-suffix:semicolon
-DECL|member|lba
-r_int
-id|lba
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|struct|atapi_toc
-r_struct
-id|atapi_toc
-(brace
-DECL|member|hdr
-r_struct
-id|atapi_toc_header
-id|hdr
-suffix:semicolon
-DECL|member|ent
-r_struct
-id|atapi_toc_entry
-id|ent
-(braket
-id|MAX_TRACKS
-op_plus
-l_int|1
-)braket
-suffix:semicolon
-multiline_comment|/* One extra for the leadout. */
-)brace
-suffix:semicolon
+mdefine_line|#define CDROM_FLAGS(drive) ((struct ide_cd_flags *)&amp;((drive)-&gt;bios_sect))
 DECL|macro|SECTOR_BUFFER_SIZE
 mdefine_line|#define SECTOR_BUFFER_SIZE CD_FRAMESIZE
-multiline_comment|/* Extra per-device info for cdrom drives. */
-DECL|struct|cdrom_info
-r_struct
-id|cdrom_info
-(brace
-multiline_comment|/* Buffer for table of contents.  NULL if we haven&squot;t allocated&n;     a TOC buffer for this device yet. */
-DECL|member|toc
-r_struct
-id|atapi_toc
-op_star
-id|toc
-suffix:semicolon
-multiline_comment|/* Sector buffer.  If a read request wants only the first part of a cdrom&n;     block, we cache the rest of the block here, in the expectation that that&n;     data is going to be wanted soon.  SECTOR_BUFFERED is the number of the&n;     first buffered sector, and NSECTORS_BUFFERED is the number of sectors&n;     in the buffer.  Before the buffer is allocated, we should have&n;     SECTOR_BUFFER == NULL and NSECTORS_BUFFERED == 0. */
-DECL|member|sector_buffered
-r_int
-r_int
-id|sector_buffered
-suffix:semicolon
-DECL|member|nsectors_buffered
-r_int
-r_int
-id|nsectors_buffered
-suffix:semicolon
-DECL|member|sector_buffer
-r_char
-op_star
-id|sector_buffer
-suffix:semicolon
-multiline_comment|/* The result of the last successful request sense command&n;     on this device. */
-DECL|member|sense_data
-r_struct
-id|atapi_request_sense
-id|sense_data
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|variable|cdrom_info
-r_static
-r_struct
-id|cdrom_info
-id|cdrom_info
-(braket
-l_int|2
-)braket
-(braket
-id|MAX_DRIVES
-)braket
-suffix:semicolon
-multiline_comment|/* Statically allocate one request packet and one packet command struct&n;   for each interface for retrieving sense data during error recovery. */
-DECL|variable|request_sense_request
-r_static
-r_struct
-id|request
-id|request_sense_request
-(braket
-l_int|2
-)braket
-suffix:semicolon
-DECL|variable|request_sense_pc
-r_static
-r_struct
-id|packet_command
-id|request_sense_pc
-(braket
-l_int|2
-)braket
-suffix:semicolon
 "&f;"
 multiline_comment|/****************************************************************************&n; * Descriptions of ATAPI error codes.&n; */
 DECL|macro|ARY_LEN
@@ -880,9 +634,9 @@ DECL|function|cdrom_analyze_sense_data
 r_void
 id|cdrom_analyze_sense_data
 (paren
-id|ide_dev_t
+id|ide_drive_t
 op_star
-id|dev
+id|drive
 comma
 r_struct
 id|atapi_request_sense
@@ -939,7 +693,7 @@ id|printk
 (paren
 l_string|&quot;ATAPI device %s:&bslash;n&quot;
 comma
-id|dev-&gt;name
+id|drive-&gt;name
 )paren
 suffix:semicolon
 id|printk
@@ -1213,7 +967,7 @@ id|printk
 (paren
 l_string|&quot;%s: code: %x  key: %x  asc: %x  ascq: %x&bslash;n&quot;
 comma
-id|dev-&gt;name
+id|drive-&gt;name
 comma
 id|reqbuf-&gt;error_code
 comma
@@ -1282,9 +1036,9 @@ r_static
 r_void
 id|cdrom_queue_request_sense
 (paren
-id|ide_dev_t
+id|ide_drive_t
 op_star
-id|dev
+id|drive
 )paren
 (brace
 r_struct
@@ -1309,10 +1063,13 @@ suffix:semicolon
 r_int
 id|major
 op_assign
-id|ide_major
-(braket
-id|DEV_HWIF
-)braket
+id|HWIF
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|major
 suffix:semicolon
 id|save_flags
 (paren
@@ -1326,10 +1083,13 @@ suffix:semicolon
 multiline_comment|/* safety */
 id|rq
 op_assign
-id|ide_cur_rq
-(braket
-id|DEV_HWIF
-)braket
+id|HWGROUP
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|rq
 suffix:semicolon
 multiline_comment|/* If we&squot;re processing a request, put it back on the request queue. */
 r_if
@@ -1363,10 +1123,13 @@ id|current_request
 op_assign
 id|rq
 suffix:semicolon
-id|ide_cur_rq
-(braket
-id|DEV_HWIF
-)braket
+id|HWGROUP
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|rq
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -1380,23 +1143,18 @@ multiline_comment|/* Make up a new request to retrieve sense information. */
 id|reqbuf
 op_assign
 op_amp
-id|cdrom_info
-(braket
-id|DEV_HWIF
-)braket
-(braket
-id|dev-&gt;select.b.drive
-)braket
-dot
-id|sense_data
+id|drive-&gt;cdrom_info.sense_data
 suffix:semicolon
 id|pc
 op_assign
 op_amp
+id|HWIF
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
 id|request_sense_pc
-(braket
-id|DEV_HWIF
-)braket
 suffix:semicolon
 id|memset
 (paren
@@ -1448,10 +1206,13 @@ suffix:semicolon
 id|rq
 op_assign
 op_amp
+id|HWIF
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
 id|request_sense_request
-(braket
-id|DEV_HWIF
-)braket
 suffix:semicolon
 id|rq-&gt;dev
 op_assign
@@ -1460,7 +1221,7 @@ id|MKDEV
 id|major
 comma
 (paren
-id|dev-&gt;select.b.drive
+id|drive-&gt;select.b.unit
 )paren
 op_lshift
 id|PARTN_BITS
@@ -1553,9 +1314,9 @@ id|cdrom_end_request
 r_int
 id|uptodate
 comma
-id|ide_dev_t
+id|ide_drive_t
 op_star
-id|dev
+id|drive
 )paren
 (brace
 r_struct
@@ -1563,10 +1324,13 @@ id|request
 op_star
 id|rq
 op_assign
-id|ide_cur_rq
-(braket
-id|DEV_HWIF
-)braket
+id|HWGROUP
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|rq
 suffix:semicolon
 multiline_comment|/* The code in blk.h can screw us up on error recovery if the block&n;     size is larger than 1k.  Fix that up here. */
 r_if
@@ -1614,19 +1378,11 @@ suffix:semicolon
 id|reqbuf
 op_assign
 op_amp
-id|cdrom_info
-(braket
-id|DEV_HWIF
-)braket
-(braket
-id|dev-&gt;select.b.drive
-)braket
-dot
-id|sense_data
+id|drive-&gt;cdrom_info.sense_data
 suffix:semicolon
 id|cdrom_analyze_sense_data
 (paren
-id|dev
+id|drive
 comma
 id|reqbuf
 comma
@@ -1634,11 +1390,15 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
-id|end_request
+id|ide_end_request
 (paren
 id|uptodate
 comma
-id|DEV_HWIF
+id|HWGROUP
+c_func
+(paren
+id|drive
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -1648,14 +1408,14 @@ r_static
 r_void
 id|cdrom_saw_media_change
 (paren
-id|ide_dev_t
+id|ide_drive_t
 op_star
-id|dev
+id|drive
 )paren
 (brace
 id|CDROM_FLAGS
 (paren
-id|dev
+id|drive
 )paren
 op_member_access_from_pointer
 id|media_changed
@@ -1664,22 +1424,14 @@ l_int|1
 suffix:semicolon
 id|CDROM_FLAGS
 (paren
-id|dev
+id|drive
 )paren
 op_member_access_from_pointer
 id|toc_valid
 op_assign
 l_int|0
 suffix:semicolon
-id|cdrom_info
-(braket
-id|DEV_HWIF
-)braket
-(braket
-id|dev-&gt;select.b.drive
-)braket
-dot
-id|nsectors_buffered
+id|drive-&gt;cdrom_info.nsectors_buffered
 op_assign
 l_int|0
 suffix:semicolon
@@ -1690,9 +1442,9 @@ r_static
 r_int
 id|cdrom_decode_status
 (paren
-id|ide_dev_t
+id|ide_drive_t
 op_star
-id|dev
+id|drive
 comma
 r_int
 id|good_stat
@@ -1707,10 +1459,13 @@ id|request
 op_star
 id|rq
 op_assign
-id|ide_cur_rq
-(braket
-id|DEV_HWIF
-)braket
+id|HWGROUP
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|rq
 suffix:semicolon
 r_int
 id|stat
@@ -1725,8 +1480,8 @@ multiline_comment|/* Check for errors. */
 id|stat
 op_assign
 id|GET_STAT
+c_func
 (paren
-id|DEV_HWIF
 )paren
 suffix:semicolon
 op_star
@@ -1754,9 +1509,7 @@ id|err
 op_assign
 id|IN_BYTE
 (paren
-id|HD_ERROR
-comma
-id|DEV_HWIF
+id|IDE_ERROR_REG
 )paren
 suffix:semicolon
 id|sense_key
@@ -1776,7 +1529,7 @@ id|printk
 (paren
 l_string|&quot;%s : missing request in cdrom_decode_status&bslash;n&quot;
 comma
-id|dev-&gt;name
+id|drive-&gt;name
 )paren
 suffix:semicolon
 r_else
@@ -1801,7 +1554,7 @@ id|pc
 suffix:semicolon
 id|cdrom_saw_media_change
 (paren
-id|dev
+id|drive
 )paren
 suffix:semicolon
 multiline_comment|/* Fail the request if this is a read command. */
@@ -1817,14 +1570,14 @@ id|printk
 (paren
 l_string|&quot;%s : tray open&bslash;n&quot;
 comma
-id|dev-&gt;name
+id|drive-&gt;name
 )paren
 suffix:semicolon
 id|cdrom_end_request
 (paren
 l_int|0
 comma
-id|dev
+id|drive
 )paren
 suffix:semicolon
 )brace
@@ -1854,7 +1607,7 @@ id|printk
 (paren
 l_string|&quot;%s : tray open&bslash;n&quot;
 comma
-id|dev-&gt;name
+id|drive-&gt;name
 )paren
 suffix:semicolon
 multiline_comment|/* Set the error flag and complete the request. */
@@ -1866,7 +1619,7 @@ id|cdrom_end_request
 (paren
 l_int|1
 comma
-id|dev
+id|drive
 )paren
 suffix:semicolon
 )brace
@@ -1883,14 +1636,14 @@ id|UNIT_ATTENTION
 (brace
 id|cdrom_saw_media_change
 (paren
-id|dev
+id|drive
 )paren
 suffix:semicolon
 id|printk
 (paren
 l_string|&quot;%s: media changed&bslash;n&quot;
 comma
-id|dev-&gt;name
+id|drive-&gt;name
 )paren
 suffix:semicolon
 multiline_comment|/* Return failure for a packet command, so that&n;&t;     cdrom_queue_packet_command can do a request sense before&n;&t;     the command gets retried. */
@@ -1922,7 +1675,7 @@ id|cdrom_end_request
 (paren
 l_int|1
 comma
-id|dev
+id|drive
 )paren
 suffix:semicolon
 )brace
@@ -1943,7 +1696,7 @@ id|cdrom_end_request
 (paren
 l_int|0
 comma
-id|dev
+id|drive
 )paren
 suffix:semicolon
 )brace
@@ -1970,9 +1723,9 @@ op_star
 )paren
 id|rq-&gt;buffer
 suffix:semicolon
-id|dump_status
+id|ide_dump_status
 (paren
-id|DEV_HWIF
+id|drive
 comma
 l_string|&quot;packet command error&quot;
 comma
@@ -1988,7 +1741,7 @@ id|cdrom_end_request
 (paren
 l_int|1
 comma
-id|dev
+id|drive
 )paren
 suffix:semicolon
 )brace
@@ -2006,9 +1759,9 @@ op_eq
 id|DATA_PROTECT
 )paren
 (brace
-id|dump_status
+id|ide_dump_status
 (paren
-id|DEV_HWIF
+id|drive
 comma
 l_string|&quot;command error&quot;
 comma
@@ -2019,7 +1772,7 @@ id|cdrom_end_request
 (paren
 l_int|0
 comma
-id|dev
+id|drive
 )paren
 suffix:semicolon
 )brace
@@ -2038,14 +1791,20 @@ op_ne
 l_int|0
 )paren
 (brace
+r_if
+c_cond
+(paren
 id|ide_error
 (paren
-id|dev
+id|drive
 comma
 l_string|&quot;cdrom_decode_status&quot;
 comma
 id|stat
 )paren
+)paren
+r_return
+l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* Else, abort if we&squot;ve racked up too many retries. */
@@ -2065,7 +1824,7 @@ id|cdrom_end_request
 (paren
 l_int|0
 comma
-id|dev
+id|drive
 )paren
 suffix:semicolon
 )brace
@@ -2087,12 +1846,12 @@ id|READ
 )paren
 id|cdrom_queue_request_sense
 (paren
-id|dev
+id|drive
 )paren
 suffix:semicolon
 )brace
 multiline_comment|/* Retry, or handle the next request. */
-id|DO_REQUEST
+id|IDE_DO_REQUEST
 suffix:semicolon
 r_return
 l_int|1
@@ -2104,9 +1863,9 @@ r_static
 r_int
 id|cdrom_start_packet_command
 (paren
-id|ide_dev_t
+id|ide_drive_t
 op_star
-id|dev
+id|drive
 comma
 r_int
 id|xferlen
@@ -2116,9 +1875,9 @@ multiline_comment|/* Wait for the controller to be idle. */
 r_if
 c_cond
 (paren
-id|wait_stat
+id|ide_wait_stat
 (paren
-id|dev
+id|drive
 comma
 l_int|0
 comma
@@ -2135,21 +1894,21 @@ id|OUT_BYTE
 (paren
 l_int|0
 comma
-id|HD_FEATURE
+id|IDE_FEATURE_REG
 )paren
 suffix:semicolon
 id|OUT_BYTE
 (paren
 l_int|0
 comma
-id|HD_NSECTOR
+id|IDE_NSECTOR_REG
 )paren
 suffix:semicolon
 id|OUT_BYTE
 (paren
 l_int|0
 comma
-id|HD_SECTOR
+id|IDE_SECTOR_REG
 )paren
 suffix:semicolon
 id|OUT_BYTE
@@ -2158,7 +1917,7 @@ id|xferlen
 op_amp
 l_int|0xff
 comma
-id|HD_LCYL
+id|IDE_LCYL_REG
 )paren
 suffix:semicolon
 id|OUT_BYTE
@@ -2167,21 +1926,21 @@ id|xferlen
 op_rshift
 l_int|8
 comma
-id|HD_HCYL
+id|IDE_HCYL_REG
 )paren
 suffix:semicolon
 id|OUT_BYTE
 (paren
-id|dev-&gt;ctl
+id|drive-&gt;ctl
 comma
-id|HD_CMD
+id|IDE_CONTROL_REG
 )paren
 suffix:semicolon
 id|OUT_BYTE
 (paren
 id|WIN_PACKETCMD
 comma
-id|HD_COMMAND
+id|IDE_COMMAND_REG
 )paren
 suffix:semicolon
 multiline_comment|/* packet command */
@@ -2195,9 +1954,9 @@ r_static
 r_int
 id|cdrom_transfer_packet_command
 (paren
-id|ide_dev_t
+id|ide_drive_t
 op_star
-id|dev
+id|drive
 comma
 r_char
 op_star
@@ -2212,7 +1971,7 @@ c_cond
 (paren
 id|CDROM_FLAGS
 (paren
-id|dev
+id|drive
 )paren
 op_member_access_from_pointer
 id|drq_interrupt
@@ -2228,7 +1987,7 @@ c_cond
 (paren
 id|cdrom_decode_status
 (paren
-id|dev
+id|drive
 comma
 id|DRQ_STAT
 comma
@@ -2246,9 +2005,9 @@ multiline_comment|/* Otherwise, we must wait for DRQ to get set. */
 r_if
 c_cond
 (paren
-id|wait_stat
+id|ide_wait_stat
 (paren
-id|dev
+id|drive
 comma
 id|DRQ_STAT
 comma
@@ -2283,9 +2042,9 @@ r_static
 r_void
 id|cdrom_buffer_sectors
 (paren
-id|ide_dev_t
+id|ide_drive_t
 op_star
-id|dev
+id|drive
 comma
 r_int
 r_int
@@ -2301,13 +2060,7 @@ op_star
 id|info
 op_assign
 op_amp
-id|cdrom_info
-(braket
-id|DEV_HWIF
-)braket
-(braket
-id|dev-&gt;select.b.drive
-)braket
+id|drive-&gt;cdrom_info
 suffix:semicolon
 multiline_comment|/* Number of sectors to read into the buffer. */
 r_int
@@ -2456,9 +2209,9 @@ DECL|function|cdrom_read_check_ireason
 r_int
 id|cdrom_read_check_ireason
 (paren
-id|ide_dev_t
+id|ide_drive_t
 op_star
-id|dev
+id|drive
 comma
 r_int
 id|len
@@ -2495,7 +2248,7 @@ id|printk
 l_string|&quot;%s: cdrom_read_intr: &quot;
 l_string|&quot;Drive wants to transfer data the wrong way!&bslash;n&quot;
 comma
-id|dev-&gt;name
+id|drive-&gt;name
 )paren
 suffix:semicolon
 multiline_comment|/* Throw some data at the drive so it doesn&squot;t hang&n;         and quit this request. */
@@ -2533,7 +2286,7 @@ id|printk
 (paren
 l_string|&quot;%s: cdrom_read_intr: bad interrupt reason %d&bslash;n&quot;
 comma
-id|dev-&gt;name
+id|drive-&gt;name
 comma
 id|ireason
 )paren
@@ -2543,10 +2296,10 @@ id|cdrom_end_request
 (paren
 l_int|0
 comma
-id|dev
+id|drive
 )paren
 suffix:semicolon
-id|DO_REQUEST
+id|IDE_DO_REQUEST
 suffix:semicolon
 r_return
 op_minus
@@ -2559,9 +2312,9 @@ r_static
 r_void
 id|cdrom_read_intr
 (paren
-id|ide_dev_t
+id|ide_drive_t
 op_star
-id|dev
+id|drive
 )paren
 (brace
 r_int
@@ -2581,10 +2334,13 @@ id|request
 op_star
 id|rq
 op_assign
-id|ide_cur_rq
-(braket
-id|DEV_HWIF
-)braket
+id|HWGROUP
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|rq
 suffix:semicolon
 multiline_comment|/* Check for errors. */
 r_if
@@ -2592,7 +2348,7 @@ c_cond
 (paren
 id|cdrom_decode_status
 (paren
-id|dev
+id|drive
 comma
 l_int|0
 comma
@@ -2607,27 +2363,21 @@ id|ireason
 op_assign
 id|IN_BYTE
 (paren
-id|HD_NSECTOR
-comma
-id|DEV_HWIF
+id|IDE_NSECTOR_REG
 )paren
 suffix:semicolon
 id|len
 op_assign
 id|IN_BYTE
 (paren
-id|HD_LCYL
-comma
-id|DEV_HWIF
+id|IDE_LCYL_REG
 )paren
 op_plus
 l_int|256
 op_star
 id|IN_BYTE
 (paren
-id|HD_HCYL
-comma
-id|DEV_HWIF
+id|IDE_HCYL_REG
 )paren
 suffix:semicolon
 multiline_comment|/* If DRQ is clear, the command has completed. */
@@ -2656,7 +2406,7 @@ id|printk
 (paren
 l_string|&quot;%s: cdrom_read_intr: data underrun (%ld blocks)&bslash;n&quot;
 comma
-id|dev-&gt;name
+id|drive-&gt;name
 comma
 id|rq-&gt;current_nr_sectors
 )paren
@@ -2665,7 +2415,7 @@ id|cdrom_end_request
 (paren
 l_int|0
 comma
-id|dev
+id|drive
 )paren
 suffix:semicolon
 )brace
@@ -2674,10 +2424,10 @@ id|cdrom_end_request
 (paren
 l_int|1
 comma
-id|dev
+id|drive
 )paren
 suffix:semicolon
-id|DO_REQUEST
+id|IDE_DO_REQUEST
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -2688,7 +2438,7 @@ c_cond
 (paren
 id|cdrom_read_check_ireason
 (paren
-id|dev
+id|drive
 comma
 id|len
 comma
@@ -2714,7 +2464,7 @@ id|printk
 (paren
 l_string|&quot;%s: cdrom_read_intr: Bad transfer size %d&bslash;n&quot;
 comma
-id|dev-&gt;name
+id|drive-&gt;name
 comma
 id|len
 )paren
@@ -2728,10 +2478,10 @@ id|cdrom_end_request
 (paren
 l_int|0
 comma
-id|dev
+id|drive
 )paren
 suffix:semicolon
-id|DO_REQUEST
+id|IDE_DO_REQUEST
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -2829,7 +2579,7 @@ id|cdrom_end_request
 (paren
 l_int|1
 comma
-id|dev
+id|drive
 )paren
 suffix:semicolon
 multiline_comment|/* If the buffers are full, cache the rest of the data in our&n;         internal buffer. */
@@ -2843,7 +2593,7 @@ l_int|0
 (brace
 id|cdrom_buffer_sectors
 (paren
-id|dev
+id|drive
 comma
 id|rq-&gt;sector
 comma
@@ -2908,13 +2658,16 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* Done moving data!&n;     Wait for another interrupt. */
-id|ide_handler
-(braket
-id|DEV_HWIF
-)braket
-op_assign
+id|ide_set_handler
+c_func
+(paren
+id|drive
+comma
+op_amp
 id|cdrom_read_intr
+)paren
 suffix:semicolon
+multiline_comment|/* this one is okay */
 )brace
 multiline_comment|/*&n; * Try to satisfy some of the current read request from our cached data.&n; * Returns nonzero if the request has been completed, zero otherwise.&n; */
 DECL|function|cdrom_read_from_buffer
@@ -2922,9 +2675,9 @@ r_static
 r_int
 id|cdrom_read_from_buffer
 (paren
-id|ide_dev_t
+id|ide_drive_t
 op_star
-id|dev
+id|drive
 )paren
 (brace
 r_struct
@@ -2933,23 +2686,20 @@ op_star
 id|info
 op_assign
 op_amp
-id|cdrom_info
-(braket
-id|DEV_HWIF
-)braket
-(braket
-id|dev-&gt;select.b.drive
-)braket
+id|drive-&gt;cdrom_info
 suffix:semicolon
 r_struct
 id|request
 op_star
 id|rq
 op_assign
-id|ide_cur_rq
-(braket
-id|DEV_HWIF
-)braket
+id|HWGROUP
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|rq
 suffix:semicolon
 multiline_comment|/* Can&squot;t do anything if there&squot;s no buffer. */
 r_if
@@ -2992,7 +2742,7 @@ id|cdrom_end_request
 (paren
 l_int|1
 comma
-id|dev
+id|drive
 )paren
 suffix:semicolon
 id|memcpy
@@ -3039,7 +2789,7 @@ id|cdrom_end_request
 (paren
 l_int|1
 comma
-id|dev
+id|drive
 )paren
 suffix:semicolon
 r_return
@@ -3059,7 +2809,7 @@ id|cdrom_end_request
 (paren
 l_int|1
 comma
-id|dev
+id|drive
 )paren
 suffix:semicolon
 multiline_comment|/* If this condition does not hold, then the kluge i use to&n;     represent the number of sectors to skip at the start of a transfer&n;     will fail.  I think that this will never happen, but let&squot;s be&n;     paranoid and check. */
@@ -3087,7 +2837,7 @@ id|printk
 (paren
 l_string|&quot;%s: cdrom_read_from_buffer: buffer botch (%ld)&bslash;n&quot;
 comma
-id|dev-&gt;name
+id|drive-&gt;name
 comma
 id|rq-&gt;sector
 )paren
@@ -3096,7 +2846,7 @@ id|cdrom_end_request
 (paren
 l_int|0
 comma
-id|dev
+id|drive
 )paren
 suffix:semicolon
 r_return
@@ -3114,9 +2864,9 @@ r_static
 r_int
 id|cdrom_start_read_continuation
 (paren
-id|ide_dev_t
+id|ide_drive_t
 op_star
-id|dev
+id|drive
 )paren
 (brace
 r_struct
@@ -3128,10 +2878,13 @@ id|request
 op_star
 id|rq
 op_assign
-id|ide_cur_rq
-(braket
-id|DEV_HWIF
-)braket
+id|HWGROUP
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|rq
 suffix:semicolon
 r_int
 id|nsect
@@ -3188,7 +2941,7 @@ id|printk
 (paren
 l_string|&quot;%s: cdrom_start_read_continuation: buffer botch (%ld)&bslash;n&quot;
 comma
-id|dev-&gt;name
+id|drive-&gt;name
 comma
 id|rq-&gt;current_nr_sectors
 )paren
@@ -3197,10 +2950,10 @@ id|cdrom_end_request
 (paren
 l_int|0
 comma
-id|dev
+id|drive
 )paren
 suffix:semicolon
-id|DO_REQUEST
+id|IDE_DO_REQUEST
 suffix:semicolon
 r_return
 l_int|1
@@ -3360,7 +3113,7 @@ c_cond
 (paren
 id|cdrom_transfer_packet_command
 (paren
-id|dev
+id|drive
 comma
 id|pc.c
 comma
@@ -3374,13 +3127,16 @@ r_return
 l_int|1
 suffix:semicolon
 multiline_comment|/* Set up our interrupt handler and return. */
-id|ide_handler
-(braket
-id|DEV_HWIF
-)braket
-op_assign
+id|ide_set_handler
+c_func
+(paren
+id|drive
+comma
+op_amp
 id|cdrom_read_intr
+)paren
 suffix:semicolon
+multiline_comment|/* BUG: do this BEFORE triggering drive */
 r_return
 l_int|0
 suffix:semicolon
@@ -3391,9 +3147,9 @@ r_static
 r_int
 id|cdrom_start_read
 (paren
-id|ide_dev_t
+id|ide_drive_t
 op_star
-id|dev
+id|drive
 comma
 r_int
 r_int
@@ -3405,10 +3161,13 @@ id|request
 op_star
 id|rq
 op_assign
-id|ide_cur_rq
-(braket
-id|DEV_HWIF
-)braket
+id|HWGROUP
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|rq
 suffix:semicolon
 multiline_comment|/* We may be retrying this request after an error.&n;     Fix up any weirdness which might be present in the request packet. */
 id|restore_request
@@ -3422,22 +3181,14 @@ c_cond
 (paren
 id|cdrom_read_from_buffer
 (paren
-id|dev
+id|drive
 )paren
 )paren
 r_return
 l_int|1
 suffix:semicolon
 multiline_comment|/* Clear the local sector buffer. */
-id|cdrom_info
-(braket
-id|DEV_HWIF
-)braket
-(braket
-id|dev-&gt;select.b.drive
-)braket
-dot
-id|nsectors_buffered
+id|drive-&gt;cdrom_info.nsectors_buffered
 op_assign
 l_int|0
 suffix:semicolon
@@ -3446,7 +3197,7 @@ c_cond
 (paren
 id|cdrom_start_packet_command
 (paren
-id|dev
+id|drive
 comma
 l_int|32768
 )paren
@@ -3459,28 +3210,25 @@ c_cond
 (paren
 id|CDROM_FLAGS
 (paren
-id|dev
+id|drive
 )paren
 op_member_access_from_pointer
 id|drq_interrupt
 )paren
-id|ide_handler
-(braket
-id|DEV_HWIF
-)braket
-op_assign
+id|ide_set_handler
+c_func
 (paren
-r_void
+id|drive
+comma
 (paren
+id|ide_handler_t
 op_star
 )paren
-(paren
-id|ide_dev_t
-op_star
-)paren
-)paren
+op_amp
 id|cdrom_start_read_continuation
+)paren
 suffix:semicolon
+multiline_comment|/* BUG: do this BEFORE triggering drive */
 r_else
 (brace
 r_if
@@ -3488,7 +3236,7 @@ c_cond
 (paren
 id|cdrom_start_read_continuation
 (paren
-id|dev
+id|drive
 )paren
 )paren
 r_return
@@ -3506,9 +3254,9 @@ r_static
 r_int
 id|cdrom_request_sense
 (paren
-id|ide_dev_t
+id|ide_drive_t
 op_star
-id|dev
+id|drive
 comma
 r_struct
 id|atapi_request_sense
@@ -3522,9 +3270,9 @@ r_static
 r_void
 id|cdrom_pc_intr
 (paren
-id|ide_dev_t
+id|ide_drive_t
 op_star
-id|dev
+id|drive
 )paren
 (brace
 r_int
@@ -3541,10 +3289,13 @@ id|request
 op_star
 id|rq
 op_assign
-id|ide_cur_rq
-(braket
-id|DEV_HWIF
-)braket
+id|HWGROUP
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|rq
 suffix:semicolon
 r_struct
 id|packet_command
@@ -3564,7 +3315,7 @@ c_cond
 (paren
 id|cdrom_decode_status
 (paren
-id|dev
+id|drive
 comma
 l_int|0
 comma
@@ -3579,27 +3330,21 @@ id|ireason
 op_assign
 id|IN_BYTE
 (paren
-id|HD_NSECTOR
-comma
-id|DEV_HWIF
+id|IDE_NSECTOR_REG
 )paren
 suffix:semicolon
 id|len
 op_assign
 id|IN_BYTE
 (paren
-id|HD_LCYL
-comma
-id|DEV_HWIF
+id|IDE_LCYL_REG
 )paren
 op_plus
 l_int|256
 op_star
 id|IN_BYTE
 (paren
-id|HD_HCYL
-comma
-id|DEV_HWIF
+id|IDE_HCYL_REG
 )paren
 suffix:semicolon
 multiline_comment|/* If DRQ is clear, the command has completed.&n;     Complain if we still have data left to transfer. */
@@ -3665,7 +3410,7 @@ id|cdrom_end_request
 (paren
 l_int|1
 comma
-id|dev
+id|drive
 )paren
 suffix:semicolon
 r_else
@@ -3674,7 +3419,7 @@ id|printk
 (paren
 l_string|&quot;%s: cdrom_pc_intr: data underrun %d&bslash;n&quot;
 comma
-id|dev-&gt;name
+id|drive-&gt;name
 comma
 id|pc-&gt;buflen
 )paren
@@ -3687,11 +3432,11 @@ id|cdrom_end_request
 (paren
 l_int|1
 comma
-id|dev
+id|drive
 )paren
 suffix:semicolon
 )brace
-id|DO_REQUEST
+id|IDE_DO_REQUEST
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -3750,7 +3495,7 @@ id|printk
 (paren
 l_string|&quot;%s: cdrom_pc_intr: Drive wants to transfer data the wrong way!&bslash;n&quot;
 comma
-id|dev-&gt;name
+id|drive-&gt;name
 )paren
 suffix:semicolon
 id|pc-&gt;stat
@@ -3836,7 +3581,7 @@ id|printk
 (paren
 l_string|&quot;%s: cdrom_pc_intr: Drive wants to transfer data the wrong way!&bslash;n&quot;
 comma
-id|dev-&gt;name
+id|drive-&gt;name
 )paren
 suffix:semicolon
 id|pc-&gt;stat
@@ -3901,7 +3646,7 @@ id|printk
 (paren
 l_string|&quot;%s: cdrom_pc_intr: The drive appears confused (ireason = 0x%2x)&bslash;n&quot;
 comma
-id|dev-&gt;name
+id|drive-&gt;name
 comma
 id|ireason
 )paren
@@ -3912,22 +3657,25 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* Now we wait for another interrupt. */
-id|ide_handler
-(braket
-id|DEV_HWIF
-)braket
-op_assign
+id|ide_set_handler
+c_func
+(paren
+id|drive
+comma
+op_amp
 id|cdrom_pc_intr
+)paren
 suffix:semicolon
+multiline_comment|/* this one is okay */
 )brace
 DECL|function|cdrom_do_pc_continuation
 r_static
 r_int
 id|cdrom_do_pc_continuation
 (paren
-id|ide_dev_t
+id|ide_drive_t
 op_star
-id|dev
+id|drive
 )paren
 (brace
 r_struct
@@ -3935,10 +3683,13 @@ id|request
 op_star
 id|rq
 op_assign
-id|ide_cur_rq
-(braket
-id|DEV_HWIF
-)braket
+id|HWGROUP
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|rq
 suffix:semicolon
 r_struct
 id|packet_command
@@ -3957,7 +3708,7 @@ c_cond
 (paren
 id|cdrom_transfer_packet_command
 (paren
-id|dev
+id|drive
 comma
 id|pc-&gt;c
 comma
@@ -3971,13 +3722,16 @@ r_return
 l_int|1
 suffix:semicolon
 multiline_comment|/* Set up our interrupt handler and return. */
-id|ide_handler
-(braket
-id|DEV_HWIF
-)braket
-op_assign
+id|ide_set_handler
+c_func
+(paren
+id|drive
+comma
+op_amp
 id|cdrom_pc_intr
+)paren
 suffix:semicolon
+multiline_comment|/* BUG: do this BEFORE triggering drive */
 r_return
 l_int|0
 suffix:semicolon
@@ -3987,9 +3741,9 @@ r_static
 r_int
 id|cdrom_do_packet_command
 (paren
-id|ide_dev_t
+id|ide_drive_t
 op_star
-id|dev
+id|drive
 )paren
 (brace
 r_int
@@ -4000,10 +3754,13 @@ id|request
 op_star
 id|rq
 op_assign
-id|ide_cur_rq
-(braket
-id|DEV_HWIF
-)braket
+id|HWGROUP
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|rq
 suffix:semicolon
 r_struct
 id|packet_command
@@ -4042,7 +3799,7 @@ c_cond
 (paren
 id|cdrom_start_packet_command
 (paren
-id|dev
+id|drive
 comma
 id|len
 )paren
@@ -4055,28 +3812,25 @@ c_cond
 (paren
 id|CDROM_FLAGS
 (paren
-id|dev
+id|drive
 )paren
 op_member_access_from_pointer
 id|drq_interrupt
 )paren
-id|ide_handler
-(braket
-id|DEV_HWIF
-)braket
-op_assign
+id|ide_set_handler
+c_func
 (paren
-r_void
+id|drive
+comma
 (paren
+id|ide_handler_t
 op_star
 )paren
-(paren
-id|ide_dev_t
-op_star
-)paren
-)paren
+op_amp
 id|cdrom_do_pc_continuation
+)paren
 suffix:semicolon
+multiline_comment|/* BUG: do this BEFORE triggering drive */
 r_else
 (brace
 r_if
@@ -4084,7 +3838,7 @@ c_cond
 (paren
 id|cdrom_do_pc_continuation
 (paren
-id|dev
+id|drive
 )paren
 )paren
 r_return
@@ -4100,9 +3854,9 @@ DECL|function|cdrom_queue_packet_command
 r_int
 id|cdrom_queue_packet_command
 (paren
-id|ide_dev_t
+id|ide_drive_t
 op_star
-id|dev
+id|drive
 comma
 r_struct
 id|packet_command
@@ -4140,10 +3894,13 @@ suffix:semicolon
 r_int
 id|major
 op_assign
-id|ide_major
-(braket
-id|DEV_HWIF
-)braket
+id|HWIF
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|major
 suffix:semicolon
 id|retry
 suffix:colon
@@ -4154,7 +3911,7 @@ id|MKDEV
 id|major
 comma
 (paren
-id|dev-&gt;select.b.drive
+id|drive-&gt;select.b.unit
 )paren
 op_lshift
 id|PARTN_BITS
@@ -4300,15 +4057,7 @@ op_star
 id|reqbuf
 op_assign
 op_amp
-id|cdrom_info
-(braket
-id|DEV_HWIF
-)braket
-(braket
-id|dev-&gt;select.b.drive
-)braket
-dot
-id|sense_data
+id|drive-&gt;cdrom_info.sense_data
 suffix:semicolon
 r_if
 c_cond
@@ -4322,7 +4071,7 @@ id|REQUEST_SENSE
 op_logical_or
 id|cdrom_request_sense
 (paren
-id|dev
+id|drive
 comma
 id|reqbuf
 )paren
@@ -4348,7 +4097,7 @@ suffix:semicolon
 )brace
 id|cdrom_analyze_sense_data
 (paren
-id|dev
+id|drive
 comma
 id|reqbuf
 comma
@@ -4387,14 +4136,13 @@ suffix:semicolon
 )brace
 "&f;"
 multiline_comment|/****************************************************************************&n; * cdrom driver request routine.&n; */
-DECL|function|do_rw_cdrom
-r_static
-r_int
-id|do_rw_cdrom
+DECL|function|ide_do_rw_cdrom
+r_void
+id|ide_do_rw_cdrom
 (paren
-id|ide_dev_t
+id|ide_drive_t
 op_star
-id|dev
+id|drive
 comma
 r_int
 r_int
@@ -4406,10 +4154,13 @@ id|request
 op_star
 id|rq
 op_assign
-id|ide_cur_rq
-(braket
-id|DEV_HWIF
-)braket
+id|HWGROUP
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|rq
 suffix:semicolon
 r_if
 c_cond
@@ -4426,12 +4177,12 @@ id|cmd
 op_eq
 id|REQUEST_SENSE_COMMAND
 )paren
-r_return
 id|cdrom_do_packet_command
 (paren
-id|dev
+id|drive
 )paren
 suffix:semicolon
+r_else
 r_if
 c_cond
 (paren
@@ -4455,17 +4206,14 @@ id|cdrom_end_request
 (paren
 l_int|0
 comma
-id|dev
+id|drive
 )paren
 suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
 )brace
-r_return
+r_else
 id|cdrom_start_read
 (paren
-id|dev
+id|drive
 comma
 id|block
 )paren
@@ -4725,9 +4473,9 @@ r_void
 DECL|function|cdrom_check_status
 id|cdrom_check_status
 (paren
-id|ide_dev_t
+id|ide_drive_t
 op_star
-id|dev
+id|drive
 )paren
 (brace
 r_struct
@@ -4759,7 +4507,7 @@ r_void
 )paren
 id|cdrom_queue_packet_command
 (paren
-id|dev
+id|drive
 comma
 op_amp
 id|pc
@@ -4771,9 +4519,9 @@ r_int
 DECL|function|cdrom_request_sense
 id|cdrom_request_sense
 (paren
-id|ide_dev_t
+id|ide_drive_t
 op_star
-id|dev
+id|drive
 comma
 r_struct
 id|atapi_request_sense
@@ -4835,7 +4583,7 @@ suffix:semicolon
 r_return
 id|cdrom_queue_packet_command
 (paren
-id|dev
+id|drive
 comma
 op_amp
 id|pc
@@ -4848,9 +4596,9 @@ r_static
 r_int
 id|cdrom_lockdoor
 (paren
-id|ide_dev_t
+id|ide_drive_t
 op_star
-id|dev
+id|drive
 comma
 r_int
 id|lockflag
@@ -4894,7 +4642,7 @@ suffix:semicolon
 r_return
 id|cdrom_queue_packet_command
 (paren
-id|dev
+id|drive
 comma
 op_amp
 id|pc
@@ -4908,9 +4656,9 @@ r_int
 DECL|function|cdrom_eject
 id|cdrom_eject
 (paren
-id|ide_dev_t
+id|ide_drive_t
 op_star
-id|dev
+id|drive
 comma
 r_int
 id|ejectflag
@@ -4956,7 +4704,7 @@ suffix:semicolon
 r_return
 id|cdrom_queue_packet_command
 (paren
-id|dev
+id|drive
 comma
 op_amp
 id|pc
@@ -4968,9 +4716,9 @@ r_int
 DECL|function|cdrom_pause
 id|cdrom_pause
 (paren
-id|ide_dev_t
+id|ide_drive_t
 op_star
-id|dev
+id|drive
 comma
 r_int
 id|pauseflag
@@ -5011,7 +4759,7 @@ suffix:semicolon
 r_return
 id|cdrom_queue_packet_command
 (paren
-id|dev
+id|drive
 comma
 op_amp
 id|pc
@@ -5023,9 +4771,9 @@ r_int
 DECL|function|cdrom_startstop
 id|cdrom_startstop
 (paren
-id|ide_dev_t
+id|ide_drive_t
 op_star
-id|dev
+id|drive
 comma
 r_int
 id|startflag
@@ -5072,7 +4820,7 @@ suffix:semicolon
 r_return
 id|cdrom_queue_packet_command
 (paren
-id|dev
+id|drive
 comma
 op_amp
 id|pc
@@ -5084,9 +4832,9 @@ r_int
 DECL|function|cdrom_read_tocentry
 id|cdrom_read_tocentry
 (paren
-id|ide_dev_t
+id|ide_drive_t
 op_star
-id|dev
+id|drive
 comma
 r_int
 id|trackno
@@ -5178,7 +4926,7 @@ suffix:semicolon
 r_return
 id|cdrom_queue_packet_command
 (paren
-id|dev
+id|drive
 comma
 op_amp
 id|pc
@@ -5191,9 +4939,9 @@ r_int
 DECL|function|cdrom_read_toc
 id|cdrom_read_toc
 (paren
-id|ide_dev_t
+id|ide_drive_t
 op_star
-id|dev
+id|drive
 )paren
 (brace
 r_int
@@ -5211,15 +4959,7 @@ id|atapi_toc
 op_star
 id|toc
 op_assign
-id|cdrom_info
-(braket
-id|DEV_HWIF
-)braket
-(braket
-id|dev-&gt;select.b.drive
-)braket
-dot
-id|toc
+id|drive-&gt;cdrom_info.toc
 suffix:semicolon
 r_if
 c_cond
@@ -5248,15 +4988,7 @@ comma
 id|GFP_KERNEL
 )paren
 suffix:semicolon
-id|cdrom_info
-(braket
-id|DEV_HWIF
-)braket
-(braket
-id|dev-&gt;select.b.drive
-)braket
-dot
-id|toc
+id|drive-&gt;cdrom_info.toc
 op_assign
 id|toc
 suffix:semicolon
@@ -5273,7 +5005,7 @@ id|printk
 (paren
 l_string|&quot;%s: No cdrom TOC buffer!&bslash;n&quot;
 comma
-id|dev-&gt;name
+id|drive-&gt;name
 )paren
 suffix:semicolon
 r_return
@@ -5287,14 +5019,14 @@ c_cond
 (paren
 id|CDROM_FLAGS
 (paren
-id|dev
+id|drive
 )paren
 op_member_access_from_pointer
 id|toc_valid
 )paren
 id|cdrom_check_status
 (paren
-id|dev
+id|drive
 )paren
 suffix:semicolon
 r_if
@@ -5302,7 +5034,7 @@ c_cond
 (paren
 id|CDROM_FLAGS
 (paren
-id|dev
+id|drive
 )paren
 op_member_access_from_pointer
 id|toc_valid
@@ -5316,7 +5048,7 @@ op_assign
 (paren
 id|CDROM_FLAGS
 (paren
-id|dev
+id|drive
 )paren
 op_member_access_from_pointer
 id|no_lba_toc
@@ -5327,7 +5059,7 @@ id|stat
 op_assign
 id|cdrom_read_tocentry
 (paren
-id|dev
+id|drive
 comma
 l_int|0
 comma
@@ -5395,7 +5127,7 @@ id|stat
 op_assign
 id|cdrom_read_tocentry
 (paren
-id|dev
+id|drive
 comma
 l_int|0
 comma
@@ -5521,7 +5253,7 @@ suffix:semicolon
 multiline_comment|/* Remember that we&squot;ve read this stuff. */
 id|CDROM_FLAGS
 (paren
-id|dev
+id|drive
 )paren
 op_member_access_from_pointer
 id|toc_valid
@@ -5537,9 +5269,9 @@ r_int
 DECL|function|cdrom_read_subchannel
 id|cdrom_read_subchannel
 (paren
-id|ide_dev_t
+id|ide_drive_t
 op_star
-id|dev
+id|drive
 comma
 r_char
 op_star
@@ -5622,7 +5354,7 @@ suffix:semicolon
 r_return
 id|cdrom_queue_packet_command
 (paren
-id|dev
+id|drive
 comma
 op_amp
 id|pc
@@ -5635,9 +5367,9 @@ r_int
 DECL|function|cdrom_mode_sense
 id|cdrom_mode_sense
 (paren
-id|ide_dev_t
+id|ide_drive_t
 op_star
-id|dev
+id|drive
 comma
 r_int
 id|pageno
@@ -5723,7 +5455,7 @@ suffix:semicolon
 r_return
 id|cdrom_queue_packet_command
 (paren
-id|dev
+id|drive
 comma
 op_amp
 id|pc
@@ -5735,9 +5467,9 @@ r_int
 DECL|function|cdrom_mode_select
 id|cdrom_mode_select
 (paren
-id|ide_dev_t
+id|ide_drive_t
 op_star
-id|dev
+id|drive
 comma
 r_int
 id|pageno
@@ -5822,7 +5554,7 @@ suffix:semicolon
 r_return
 id|cdrom_queue_packet_command
 (paren
-id|dev
+id|drive
 comma
 op_amp
 id|pc
@@ -5834,9 +5566,9 @@ r_int
 DECL|function|cdrom_play_lba_range_play12
 id|cdrom_play_lba_range_play12
 (paren
-id|ide_dev_t
+id|ide_drive_t
 op_star
-id|dev
+id|drive
 comma
 r_int
 id|lba_start
@@ -5934,7 +5666,7 @@ suffix:semicolon
 r_return
 id|cdrom_queue_packet_command
 (paren
-id|dev
+id|drive
 comma
 op_amp
 id|pc
@@ -5946,9 +5678,9 @@ r_int
 DECL|function|cdrom_play_lba_range_msf
 id|cdrom_play_lba_range_msf
 (paren
-id|ide_dev_t
+id|ide_drive_t
 op_star
-id|dev
+id|drive
 comma
 r_int
 id|lba_start
@@ -6034,7 +5766,7 @@ c_cond
 (paren
 id|CDROM_FLAGS
 (paren
-id|dev
+id|drive
 )paren
 op_member_access_from_pointer
 id|msf_as_bcd
@@ -6122,7 +5854,7 @@ suffix:semicolon
 r_return
 id|cdrom_queue_packet_command
 (paren
-id|dev
+id|drive
 comma
 op_amp
 id|pc
@@ -6135,9 +5867,9 @@ r_int
 DECL|function|cdrom_play_lba_range
 id|cdrom_play_lba_range
 (paren
-id|ide_dev_t
+id|ide_drive_t
 op_star
-id|dev
+id|drive
 comma
 r_int
 id|lba_start
@@ -6152,7 +5884,7 @@ c_cond
 (paren
 id|CDROM_FLAGS
 (paren
-id|dev
+id|drive
 )paren
 op_member_access_from_pointer
 id|no_playaudio12
@@ -6160,7 +5892,7 @@ id|no_playaudio12
 r_return
 id|cdrom_play_lba_range_msf
 (paren
-id|dev
+id|drive
 comma
 id|lba_start
 comma
@@ -6181,7 +5913,7 @@ id|stat
 op_assign
 id|cdrom_play_lba_range_play12
 (paren
-id|dev
+id|drive
 comma
 id|lba_start
 comma
@@ -6202,15 +5934,7 @@ multiline_comment|/* It failed.  Try to find out why. */
 id|reqbuf
 op_assign
 op_amp
-id|cdrom_info
-(braket
-id|DEV_HWIF
-)braket
-(braket
-id|dev-&gt;select.b.drive
-)braket
-dot
-id|sense_data
+id|drive-&gt;cdrom_info.sense_data
 suffix:semicolon
 r_if
 c_cond
@@ -6230,12 +5954,12 @@ id|printk
 l_string|&quot;%s: Drive does not support PLAYAUDIO12; &quot;
 l_string|&quot;trying PLAYAUDIO_MSF&bslash;n&quot;
 comma
-id|dev-&gt;name
+id|drive-&gt;name
 )paren
 suffix:semicolon
 id|CDROM_FLAGS
 (paren
-id|dev
+id|drive
 )paren
 op_member_access_from_pointer
 id|no_playaudio12
@@ -6244,7 +5968,7 @@ l_int|1
 suffix:semicolon
 id|CDROM_FLAGS
 (paren
-id|dev
+id|drive
 )paren
 op_member_access_from_pointer
 id|msf_as_bcd
@@ -6254,7 +5978,7 @@ suffix:semicolon
 r_return
 id|cdrom_play_lba_range_msf
 (paren
-id|dev
+id|drive
 comma
 id|lba_start
 comma
@@ -6273,9 +5997,9 @@ DECL|function|cdrom_get_toc_entry
 r_int
 id|cdrom_get_toc_entry
 (paren
-id|ide_dev_t
+id|ide_drive_t
 op_star
-id|dev
+id|drive
 comma
 r_int
 id|track
@@ -6302,7 +6026,7 @@ id|stat
 op_assign
 id|cdrom_read_toc
 (paren
-id|dev
+id|drive
 )paren
 suffix:semicolon
 r_if
@@ -6315,15 +6039,7 @@ id|stat
 suffix:semicolon
 id|toc
 op_assign
-id|cdrom_info
-(braket
-id|DEV_HWIF
-)braket
-(braket
-id|dev-&gt;select.b.drive
-)braket
-dot
-id|toc
+id|drive-&gt;cdrom_info.toc
 suffix:semicolon
 multiline_comment|/* Check validity of requested track number. */
 id|ntracks
@@ -6379,13 +6095,12 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|ide_cdrom_ioctl
-r_static
 r_int
 id|ide_cdrom_ioctl
 (paren
-id|ide_dev_t
+id|ide_drive_t
 op_star
-id|dev
+id|drive
 comma
 r_struct
 id|inode
@@ -6418,7 +6133,7 @@ suffix:colon
 r_return
 id|cdrom_eject
 (paren
-id|dev
+id|drive
 comma
 l_int|0
 )paren
@@ -6429,7 +6144,7 @@ suffix:colon
 r_return
 id|cdrom_pause
 (paren
-id|dev
+id|drive
 comma
 l_int|1
 )paren
@@ -6440,7 +6155,7 @@ suffix:colon
 r_return
 id|cdrom_pause
 (paren
-id|dev
+id|drive
 comma
 l_int|0
 )paren
@@ -6451,7 +6166,7 @@ suffix:colon
 r_return
 id|cdrom_startstop
 (paren
-id|dev
+id|drive
 comma
 l_int|1
 )paren
@@ -6462,7 +6177,7 @@ suffix:colon
 r_return
 id|cdrom_startstop
 (paren
-id|dev
+id|drive
 comma
 l_int|0
 )paren
@@ -6563,7 +6278,7 @@ suffix:semicolon
 r_return
 id|cdrom_play_lba_range
 (paren
-id|dev
+id|drive
 comma
 id|lba_start
 comma
@@ -6642,7 +6357,7 @@ id|stat
 op_assign
 id|cdrom_get_toc_entry
 (paren
-id|dev
+id|drive
 comma
 id|ti.cdti_trk0
 comma
@@ -6662,7 +6377,7 @@ id|stat
 op_assign
 id|cdrom_get_toc_entry
 (paren
-id|dev
+id|drive
 comma
 id|ti.cdti_trk1
 comma
@@ -6710,7 +6425,7 @@ suffix:semicolon
 r_return
 id|cdrom_play_lba_range
 (paren
-id|dev
+id|drive
 comma
 id|lba_start
 comma
@@ -6765,7 +6480,7 @@ id|stat
 op_assign
 id|cdrom_read_toc
 (paren
-id|dev
+id|drive
 )paren
 suffix:semicolon
 r_if
@@ -6778,15 +6493,7 @@ id|stat
 suffix:semicolon
 id|toc
 op_assign
-id|cdrom_info
-(braket
-id|DEV_HWIF
-)braket
-(braket
-id|dev-&gt;select.b.drive
-)braket
-dot
-id|toc
+id|drive-&gt;cdrom_info.toc
 suffix:semicolon
 id|tochdr.cdth_trk0
 op_assign
@@ -6906,7 +6613,7 @@ id|stat
 op_assign
 id|cdrom_get_toc_entry
 (paren
-id|dev
+id|drive
 comma
 id|tocentry.cdte_track
 comma
@@ -7074,7 +6781,7 @@ id|stat
 op_assign
 id|cdrom_read_subchannel
 (paren
-id|dev
+id|drive
 comma
 id|buffer
 comma
@@ -7298,7 +7005,7 @@ id|stat
 op_assign
 id|cdrom_mode_sense
 (paren
-id|dev
+id|drive
 comma
 l_int|0x0e
 comma
@@ -7324,7 +7031,7 @@ id|stat
 op_assign
 id|cdrom_mode_sense
 (paren
-id|dev
+id|drive
 comma
 l_int|0x0e
 comma
@@ -7409,7 +7116,7 @@ suffix:semicolon
 r_return
 id|cdrom_mode_select
 (paren
-id|dev
+id|drive
 comma
 l_int|0x0e
 comma
@@ -7493,7 +7200,7 @@ suffix:semicolon
 r_return
 id|cdrom_queue_packet_command
 (paren
-id|dev
+id|drive
 comma
 op_amp
 id|pc
@@ -7541,7 +7248,7 @@ id|stat
 op_assign
 id|cdrom_request_sense
 (paren
-id|dev
+id|drive
 comma
 op_amp
 id|reqbuf
@@ -7579,14 +7286,13 @@ suffix:semicolon
 )brace
 "&f;"
 multiline_comment|/****************************************************************************&n; * Other driver requests (open, close, check media change).&n; */
-DECL|function|cdrom_check_media_change
-r_static
+DECL|function|ide_cdrom_check_media_change
 r_int
-id|cdrom_check_media_change
+id|ide_cdrom_check_media_change
 (paren
-id|ide_dev_t
+id|ide_drive_t
 op_star
-id|dev
+id|drive
 )paren
 (brace
 r_int
@@ -7594,21 +7300,21 @@ id|retval
 suffix:semicolon
 id|cdrom_check_status
 (paren
-id|dev
+id|drive
 )paren
 suffix:semicolon
 id|retval
 op_assign
 id|CDROM_FLAGS
 (paren
-id|dev
+id|drive
 )paren
 op_member_access_from_pointer
 id|media_changed
 suffix:semicolon
 id|CDROM_FLAGS
 (paren
-id|dev
+id|drive
 )paren
 op_member_access_from_pointer
 id|media_changed
@@ -7619,10 +7325,9 @@ r_return
 id|retval
 suffix:semicolon
 )brace
-r_static
+DECL|function|ide_cdrom_open
 r_int
-DECL|function|cdrom_open
-id|cdrom_open
+id|ide_cdrom_open
 (paren
 r_struct
 id|inode
@@ -7634,9 +7339,9 @@ id|file
 op_star
 id|fp
 comma
-id|ide_dev_t
+id|ide_drive_t
 op_star
-id|dev
+id|drive
 )paren
 (brace
 multiline_comment|/* no write access */
@@ -7656,7 +7361,7 @@ multiline_comment|/* If this is the first open, lock the door. */
 r_if
 c_cond
 (paren
-id|dev-&gt;usage
+id|drive-&gt;usage
 op_eq
 l_int|1
 )paren
@@ -7665,7 +7370,7 @@ r_void
 )paren
 id|cdrom_lockdoor
 (paren
-id|dev
+id|drive
 comma
 l_int|1
 )paren
@@ -7677,10 +7382,9 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Close down the device.  Invalidate all cached blocks.&n; */
-r_static
+DECL|function|ide_cdrom_release
 r_void
-DECL|function|cdrom_release
-id|cdrom_release
+id|ide_cdrom_release
 (paren
 r_struct
 id|inode
@@ -7692,15 +7396,15 @@ id|file
 op_star
 id|file
 comma
-id|ide_dev_t
+id|ide_drive_t
 op_star
-id|dev
+id|drive
 )paren
 (brace
 r_if
 c_cond
 (paren
-id|dev-&gt;usage
+id|drive-&gt;usage
 op_eq
 l_int|0
 )paren
@@ -7717,7 +7421,7 @@ r_void
 )paren
 id|cdrom_lockdoor
 (paren
-id|dev
+id|drive
 comma
 l_int|0
 )paren
@@ -7727,46 +7431,44 @@ macro_line|#endif
 )brace
 "&f;"
 multiline_comment|/****************************************************************************&n; * Device initialization.&n; */
-DECL|function|cdrom_setup
-r_static
+DECL|function|ide_cdrom_setup
 r_void
-id|cdrom_setup
+id|ide_cdrom_setup
 (paren
-id|ide_dev_t
+id|ide_drive_t
 op_star
-id|dev
+id|drive
 )paren
 (brace
-multiline_comment|/* Just guess at capacity for now. */
-id|ide_capacity
+id|blksize_size
 (braket
-id|DEV_HWIF
+id|HWIF
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|major
 )braket
 (braket
-id|dev-&gt;select.b.drive
-)braket
-op_assign
-l_int|0x1fffff
-suffix:semicolon
-id|ide_blksizes
-(braket
-id|DEV_HWIF
-)braket
-(braket
-id|dev-&gt;select.b.drive
+id|drive-&gt;select.b.unit
 op_lshift
 id|PARTN_BITS
 )braket
 op_assign
 id|CD_FRAMESIZE
 suffix:semicolon
-id|dev-&gt;special.all
+id|drive-&gt;special.all
+op_assign
+l_int|0
+suffix:semicolon
+id|drive-&gt;ready_stat
 op_assign
 l_int|0
 suffix:semicolon
 id|CDROM_FLAGS
 (paren
-id|dev
+id|drive
 )paren
 op_member_access_from_pointer
 id|media_changed
@@ -7775,7 +7477,7 @@ l_int|0
 suffix:semicolon
 id|CDROM_FLAGS
 (paren
-id|dev
+id|drive
 )paren
 op_member_access_from_pointer
 id|toc_valid
@@ -7784,7 +7486,7 @@ l_int|0
 suffix:semicolon
 id|CDROM_FLAGS
 (paren
-id|dev
+id|drive
 )paren
 op_member_access_from_pointer
 id|no_playaudio12
@@ -7793,7 +7495,7 @@ l_int|0
 suffix:semicolon
 id|CDROM_FLAGS
 (paren
-id|dev
+id|drive
 )paren
 op_member_access_from_pointer
 id|no_lba_toc
@@ -7802,7 +7504,7 @@ l_int|0
 suffix:semicolon
 id|CDROM_FLAGS
 (paren
-id|dev
+id|drive
 )paren
 op_member_access_from_pointer
 id|msf_as_bcd
@@ -7811,14 +7513,14 @@ l_int|0
 suffix:semicolon
 id|CDROM_FLAGS
 (paren
-id|dev
+id|drive
 )paren
 op_member_access_from_pointer
 id|drq_interrupt
 op_assign
 (paren
 (paren
-id|dev-&gt;id-&gt;config
+id|drive-&gt;id-&gt;config
 op_amp
 l_int|0x0060
 )paren
@@ -7832,7 +7534,7 @@ c_cond
 (paren
 id|strcmp
 (paren
-id|dev-&gt;id-&gt;model
+id|drive-&gt;id-&gt;model
 comma
 l_string|&quot;CD220E&quot;
 )paren
@@ -7842,7 +7544,7 @@ l_int|0
 multiline_comment|/* Creative Labs */
 id|CDROM_FLAGS
 (paren
-id|dev
+id|drive
 )paren
 op_member_access_from_pointer
 id|no_lba_toc
@@ -7855,7 +7557,7 @@ c_cond
 (paren
 id|strcmp
 (paren
-id|dev-&gt;id-&gt;model
+id|drive-&gt;id-&gt;model
 comma
 l_string|&quot;TO-ICSLYAL&quot;
 )paren
@@ -7865,7 +7567,7 @@ op_logical_or
 multiline_comment|/* Acer CD525E */
 id|strcmp
 (paren
-id|dev-&gt;id-&gt;model
+id|drive-&gt;id-&gt;model
 comma
 l_string|&quot;OTI-SCYLLA&quot;
 )paren
@@ -7874,7 +7576,7 @@ l_int|0
 )paren
 id|CDROM_FLAGS
 (paren
-id|dev
+id|drive
 )paren
 op_member_access_from_pointer
 id|no_lba_toc
@@ -7887,7 +7589,7 @@ c_cond
 (paren
 id|strcmp
 (paren
-id|dev-&gt;id-&gt;model
+id|drive-&gt;id-&gt;model
 comma
 l_string|&quot;CDA26803I SE&quot;
 )paren
@@ -7898,7 +7600,7 @@ multiline_comment|/* Aztech */
 (brace
 id|CDROM_FLAGS
 (paren
-id|dev
+id|drive
 )paren
 op_member_access_from_pointer
 id|no_lba_toc
@@ -7908,7 +7610,7 @@ suffix:semicolon
 multiline_comment|/* This drive _also_ does not implement PLAYAUDIO12 correctly. */
 id|CDROM_FLAGS
 (paren
-id|dev
+id|drive
 )paren
 op_member_access_from_pointer
 id|no_playaudio12
@@ -7916,51 +7618,19 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-id|cdrom_info
-(braket
-id|DEV_HWIF
-)braket
-(braket
-id|dev-&gt;select.b.drive
-)braket
-dot
-id|toc
+id|drive-&gt;cdrom_info.toc
 op_assign
 l_int|NULL
 suffix:semicolon
-id|cdrom_info
-(braket
-id|DEV_HWIF
-)braket
-(braket
-id|dev-&gt;select.b.drive
-)braket
-dot
-id|sector_buffer
+id|drive-&gt;cdrom_info.sector_buffer
 op_assign
 l_int|NULL
 suffix:semicolon
-id|cdrom_info
-(braket
-id|DEV_HWIF
-)braket
-(braket
-id|dev-&gt;select.b.drive
-)braket
-dot
-id|sector_buffered
+id|drive-&gt;cdrom_info.sector_buffered
 op_assign
 l_int|0
 suffix:semicolon
-id|cdrom_info
-(braket
-id|DEV_HWIF
-)braket
-(braket
-id|dev-&gt;select.b.drive
-)braket
-dot
-id|nsectors_buffered
+id|drive-&gt;cdrom_info.nsectors_buffered
 op_assign
 l_int|0
 suffix:semicolon

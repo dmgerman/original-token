@@ -385,8 +385,6 @@ id|sb
 suffix:semicolon
 r_int
 id|err
-comma
-id|version
 suffix:semicolon
 r_if
 c_cond
@@ -782,6 +780,22 @@ id|de-&gt;inode
 )paren
 (brace
 multiline_comment|/* We might block in the next section&n;&t;&t;&t;&t; * if the data destination is&n;&t;&t;&t;&t; * currently swapped out.  So, use a&n;&t;&t;&t;&t; * version stamp to detect whether or&n;&t;&t;&t;&t; * not the directory has been modified&n;&t;&t;&t;&t; * during the copy operation. */
+r_int
+r_int
+id|version
+suffix:semicolon
+id|dcache_add
+c_func
+(paren
+id|inode
+comma
+id|de-&gt;name
+comma
+id|de-&gt;name_len
+comma
+id|de-&gt;inode
+)paren
+suffix:semicolon
 id|version
 op_assign
 id|inode-&gt;i_version

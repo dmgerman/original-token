@@ -2046,6 +2046,7 @@ multiline_comment|/*&n;&t; *&t;Frame size ok ?&n;&t; */
 r_if
 c_cond
 (paren
+op_logical_neg
 id|skb_pull
 c_func
 (paren
@@ -2056,12 +2057,6 @@ r_sizeof
 op_star
 id|ea
 )paren
-)paren
-OL
-r_sizeof
-(paren
-op_star
-id|ea
 )paren
 )paren
 (brace

@@ -9,6 +9,7 @@ macro_line|#include&t;&lt;linux/sched.h&gt;
 macro_line|#include&t;&lt;linux/types.h&gt;
 macro_line|#include&t;&lt;linux/fcntl.h&gt;
 macro_line|#include&t;&lt;linux/interrupt.h&gt;
+macro_line|#include&t;&lt;linux/stat.h&gt;
 macro_line|#include&t;&lt;linux/ptrace.h&gt;
 macro_line|#include&t;&lt;linux/ioport.h&gt;
 macro_line|#include&t;&lt;linux/in.h&gt;
@@ -3547,6 +3548,21 @@ comma
 l_int|7
 comma
 l_string|&quot;wavelan&quot;
+comma
+id|S_IFREG
+op_or
+id|S_IRUGO
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|proc_net_inode_operations
 comma
 id|wavelan_get_info
 )brace
@@ -9198,6 +9214,19 @@ id|kernel_version
 op_assign
 id|UTS_RELEASE
 suffix:semicolon
+DECL|variable|devicename
+r_static
+r_char
+id|devicename
+(braket
+l_int|9
+)braket
+op_assign
+(brace
+l_int|0
+comma
+)brace
+suffix:semicolon
 DECL|variable|dev_wavelan
 r_static
 r_struct
@@ -9205,9 +9234,9 @@ id|device
 id|dev_wavelan
 op_assign
 (brace
-l_string|&quot;       &quot;
-multiline_comment|/* &quot;wavelan&quot; */
+id|devicename
 comma
+multiline_comment|/* device name is inserted by linux/drivers/net/net_init.c */
 l_int|0
 comma
 l_int|0

@@ -55,6 +55,8 @@ DECL|macro|MMIOStartLocP
 mdefine_line|#define MMIOStartLocP   0x0a20  /* Primary adapter&squot;s starting MMIO area */
 DECL|macro|MMIOStartLocA
 mdefine_line|#define MMIOStartLocA   0x0a24  /* Alternate adapter&squot;s starting MMIO area */
+DECL|macro|TR_IO_EXTENT
+mdefine_line|#define TR_IO_EXTENT&t;4&t;/* size of used IO range */
 DECL|macro|GLOBAL_INT_ENABLE
 mdefine_line|#define GLOBAL_INT_ENABLE 0x02f0
 multiline_comment|/* MMIO bits 0-4 select register */

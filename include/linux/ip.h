@@ -35,7 +35,7 @@ id|ptr
 suffix:semicolon
 r_union
 (brace
-macro_line|#if defined(LITTLE_ENDIAN_BITFIELD)
+macro_line|#if defined(__LITTLE_ENDIAN_BITFIELD)
 id|__u8
 id|flags
 suffix:colon
@@ -45,7 +45,7 @@ id|overflow
 suffix:colon
 l_int|4
 suffix:semicolon
-macro_line|#elif defined(BIG_ENDIAN_BITFIELD)
+macro_line|#elif defined(__BIG_ENDIAN_BITFIELD)
 id|__u8
 id|overflow
 suffix:colon
@@ -153,7 +153,7 @@ DECL|struct|iphdr
 r_struct
 id|iphdr
 (brace
-macro_line|#if defined(LITTLE_ENDIAN_BITFIELD)
+macro_line|#if defined(__LITTLE_ENDIAN_BITFIELD)
 DECL|member|ihl
 id|__u8
 id|ihl
@@ -165,7 +165,7 @@ id|version
 suffix:colon
 l_int|4
 suffix:semicolon
-macro_line|#elif defined (BIG_ENDIAN_BITFIELD)
+macro_line|#elif defined (__BIG_ENDIAN_BITFIELD)
 id|__u8
 id|version
 suffix:colon

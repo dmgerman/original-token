@@ -32,6 +32,7 @@ macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;              
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/if.h&gt;
+macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/if_eql.h&gt;
 macro_line|#ifndef EQL_DEBUG

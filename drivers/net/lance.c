@@ -26,26 +26,6 @@ macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
-r_struct
-id|device
-op_star
-id|init_etherdev
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_int
-id|sizeof_private
-comma
-r_int
-r_int
-op_star
-id|mem_startp
-)paren
-suffix:semicolon
 DECL|variable|lance_portlist
 r_static
 r_int

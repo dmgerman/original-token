@@ -32,6 +32,7 @@ macro_line|#include &lt;net/netrom.h&gt;
 macro_line|#endif
 macro_line|#endif
 macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
 multiline_comment|/*&n; *&t;This structure defines the ARP mapping cache. As long as we make changes&n; *&t;in this structure, we keep interrupts of. But normally we can copy the&n; *&t;hardware address and the device pointer in a local variable and then make&n; *&t;any &quot;long calls&quot; to send a packet out.&n; */
 DECL|struct|arp_table
 r_struct
@@ -1931,13 +1932,21 @@ comma
 l_int|4
 )paren
 suffix:semicolon
-multiline_comment|/* &n; *&t;Check for bad requests for 127.0.0.1.  If this is one such, delete it.&n; */
+multiline_comment|/* &n; *&t;Check for bad requests for 127.x.x.x and requests for multicast&n; *&t;addresses.  If this is one such, delete it.&n; */
 r_if
 c_cond
 (paren
+id|IN_LOOPBACK
+c_func
+(paren
 id|tip
-op_eq
-id|INADDR_LOOPBACK
+)paren
+op_logical_or
+id|IN_MULTICAST
+c_func
+(paren
+id|tip
+)paren
 )paren
 (brace
 id|kfree_skb
@@ -4670,6 +4679,21 @@ comma
 l_int|3
 comma
 l_string|&quot;arp&quot;
+comma
+id|S_IFREG
+op_or
+id|S_IRUGO
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|proc_net_inode_operations
 comma
 id|arp_get_info
 )brace

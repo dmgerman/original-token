@@ -2,6 +2,7 @@ multiline_comment|/* skeleton.c: A network driver outline for linux. */
 multiline_comment|/*&n;&t;Written 1993-94 by Donald Becker.&n;&n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;This file is an outline for writing a network device driver for the&n;&t;the Linux operating system.&n;&n;&t;To write (or understand) a driver, have a look at the &quot;loopback.c&quot; file to&n;&t;get a feel of what is going on, and then use the code below as a skeleton&n;&t;for the new driver.&n;&n;*/
 DECL|variable|version
 r_static
+r_const
 r_char
 op_star
 id|version
@@ -11,6 +12,15 @@ suffix:semicolon
 multiline_comment|/* Always include &squot;config.h&squot; first in case the user wants to turn on&n;   or override something. */
 macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n;  Sources:&n;&t;List your sources of programming information to document that&n;&t;the driver is your own creation, and give due credit to others&n;&t;that contributed to the work.  Remember that GNU project code&n;&t;cannot use proprietary or trade secret information.&t; Interface&n;&t;definitions are generally considered non-copyrightable to the&n;&t;extent that the same names and structures must be used to be&n;&t;compatible.&n;&n;&t;Finally, keep in mind that the Linux kernel is has an API, not&n;&t;ABI.  Proprietary object-code-only distributions are not permitted&n;&t;under the GPL.&n;*/
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#else
+DECL|macro|MOD_INC_USE_COUNT
+mdefine_line|#define  MOD_INC_USE_COUNT do {} while (0)
+DECL|macro|MOD_DEC_USE_COUNT
+mdefine_line|#define  MOD_DEC_USE_COUNT do {} while (0)
+macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -29,26 +39,15 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
-r_extern
-r_struct
-id|device
+multiline_comment|/* The name of the card. Is used for messages and in the requests for&n; * io regions, irqs and dma channels&n; */
+DECL|variable|cardname
+r_static
+r_const
+r_char
 op_star
-id|init_etherdev
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_int
-id|sizeof_private
-comma
-r_int
-r_int
-op_star
-id|mem_startp
-)paren
+id|cardname
+op_assign
+l_string|&quot;netcard&quot;
 suffix:semicolon
 multiline_comment|/* First, a few definitions that the brave might change. */
 multiline_comment|/* A zero-terminated list of I/O addresses to be probed. */
@@ -281,7 +280,7 @@ id|netdev_entry
 id|netcard_drv
 op_assign
 (brace
-l_string|&quot;netcard&quot;
+id|cardname
 comma
 id|netcard_probe1
 comma
@@ -342,6 +341,7 @@ l_int|0
 )paren
 multiline_comment|/* Don&squot;t probe at all. */
 r_return
+op_minus
 id|ENXIO
 suffix:semicolon
 r_for
@@ -399,6 +399,7 @@ l_int|0
 suffix:semicolon
 )brace
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -428,7 +429,7 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-multiline_comment|/* For ethernet adaptors the first three octets of the station address contains&n;&t;   the manufacturer&squot;s unique code.  That might be a good probe method.&n;&t;   Ideally you would add additional checks.  */
+multiline_comment|/* For ethernet adaptors the first three octets of the station address &n;&t;   contains the manufacturer&squot;s unique code.  That might be a good probe&n;&t;   method. Ideally you would add additional checks.  */
 r_if
 c_cond
 (paren
@@ -464,6 +465,7 @@ id|SA_ADDR2
 )paren
 (brace
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -475,6 +477,8 @@ id|dev
 op_eq
 l_int|NULL
 )paren
+(brace
+multiline_comment|/* Don&squot;t allocate the private data here, it is done later&n;&t;&t; * This makes it easier to free the memory when this driver&n;&t;&t; * is used as a module.&n;&t;&t; */
 id|dev
 op_assign
 id|init_etherdev
@@ -482,15 +486,23 @@ c_func
 (paren
 l_int|0
 comma
-r_sizeof
-(paren
-r_struct
-id|net_local
-)paren
+l_int|0
 comma
 l_int|0
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev
+op_eq
+l_int|NULL
+)paren
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -504,17 +516,21 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
+l_string|&quot;%s&quot;
+comma
 id|version
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;%s: %s found at %#3x, &quot;
 comma
 id|dev-&gt;name
 comma
-l_string|&quot;network card&quot;
+id|cardname
 comma
 id|ioaddr
 )paren
@@ -619,7 +635,7 @@ id|dev-&gt;irq
 op_eq
 l_int|2
 )paren
-multiline_comment|/* Fixup for users that don&squot;t know that IRQ 2 is really IRQ 9,&n;&t; or don&squot;t know which one to set. */
+multiline_comment|/* Fixup for users that don&squot;t know that IRQ 2 is really IRQ 9,&n;&t;&t; * or don&squot;t know which one to set.&n;&t;&t; */
 id|dev-&gt;irq
 op_assign
 l_int|9
@@ -638,7 +654,7 @@ id|net_interrupt
 comma
 l_int|0
 comma
-l_string|&quot;skeleton&quot;
+id|cardname
 )paren
 suffix:semicolon
 r_if
@@ -648,6 +664,7 @@ id|irqval
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;%s: unable to get IRQ %d (irqval=%d).&bslash;n&quot;
 comma
@@ -659,6 +676,7 @@ id|irqval
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|EAGAIN
 suffix:semicolon
 )brace
@@ -682,7 +700,7 @@ c_func
 (paren
 id|dev-&gt;dma
 comma
-l_string|&quot;netcard&quot;
+id|cardname
 )paren
 )paren
 (brace
@@ -695,6 +713,7 @@ id|dev-&gt;dma
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|EAGAIN
 suffix:semicolon
 )brace
@@ -810,7 +829,7 @@ c_cond
 id|test_bit
 c_func
 (paren
-id|new_dma
+id|i
 comma
 op_amp
 id|new_dma_status
@@ -839,6 +858,7 @@ l_string|&quot;DMA probe failed.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|EAGAIN
 suffix:semicolon
 )brace
@@ -850,7 +870,7 @@ c_func
 (paren
 id|dev-&gt;dma
 comma
-l_string|&quot;netcard&quot;
+id|cardname
 )paren
 )paren
 (brace
@@ -863,22 +883,12 @@ id|dev-&gt;dma
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|EAGAIN
 suffix:semicolon
 )brace
 )brace
 macro_line|#endif&t;/* jumpered DMA */
-multiline_comment|/* Grab the region so we can find another board if autoIRQ fails. */
-id|request_region
-c_func
-(paren
-id|ioaddr
-comma
-id|NETCARD_IO_EXTENT
-comma
-l_string|&quot;skeleton&quot;
-)paren
-suffix:semicolon
 multiline_comment|/* Initialize the device structure. */
 r_if
 c_cond
@@ -887,6 +897,7 @@ id|dev-&gt;priv
 op_eq
 l_int|NULL
 )paren
+(brace
 id|dev-&gt;priv
 op_assign
 id|kmalloc
@@ -901,6 +912,18 @@ comma
 id|GFP_KERNEL
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;priv
+op_eq
+l_int|NULL
+)paren
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
+)brace
 id|memset
 c_func
 (paren
@@ -913,6 +936,17 @@ r_sizeof
 r_struct
 id|net_local
 )paren
+)paren
+suffix:semicolon
+multiline_comment|/* Grab the region so that no one else tries to probe our ioports. */
+id|request_region
+c_func
+(paren
+id|ioaddr
+comma
+id|NETCARD_IO_EXTENT
+comma
+id|cardname
 )paren
 suffix:semicolon
 id|dev-&gt;open
@@ -992,7 +1026,7 @@ id|net_interrupt
 comma
 l_int|0
 comma
-l_string|&quot;skeleton&quot;
+id|cardname
 )paren
 )paren
 (brace
@@ -1010,7 +1044,7 @@ c_func
 (paren
 id|dev-&gt;dma
 comma
-l_string|&quot;skeleton ethernet&quot;
+id|cardname
 )paren
 )paren
 (brace
@@ -1057,6 +1091,8 @@ suffix:semicolon
 id|dev-&gt;start
 op_assign
 l_int|1
+suffix:semicolon
+id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -1123,6 +1159,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: transmit timed out, %s?&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -1198,6 +1235,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: Transmitter access conflict.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -1323,8 +1361,12 @@ l_int|NULL
 )paren
 (brace
 id|printk
+c_func
 (paren
-l_string|&quot;net_interrupt(): irq %d for unknown device.&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;%s: irq %d for unknown device.&bslash;n&quot;
+comma
+id|cardname
 comma
 id|irq
 )paren
@@ -1573,6 +1615,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_NOTICE
 l_string|&quot;%s: Memory squeeze, dropping packet.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -1729,6 +1772,8 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Update the statistics here. */
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1844,5 +1889,199 @@ suffix:semicolon
 multiline_comment|/* Disable promiscuous mode, use normal mode */
 )brace
 "&f;"
-multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -m486 -c skeleton.c&quot;&n; *  version-control: t&n; *  kept-new-versions: 5&n; *  tab-width: 4&n; * End:&n; */
+macro_line|#ifdef MODULE
+DECL|variable|kernel_version
+r_char
+id|kernel_version
+(braket
+)braket
+op_assign
+id|UTS_RELEASE
+suffix:semicolon
+DECL|variable|devicename
+r_static
+r_char
+id|devicename
+(braket
+l_int|9
+)braket
+op_assign
+(brace
+l_int|0
+comma
+)brace
+suffix:semicolon
+DECL|variable|this_device
+r_static
+r_struct
+id|device
+id|this_device
+op_assign
+(brace
+id|devicename
+comma
+multiline_comment|/* device name is inserted by linux/drivers/net/net_init.c */
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+multiline_comment|/* I/O address, IRQ */
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|NULL
+comma
+id|netcard_probe
+)brace
+suffix:semicolon
+DECL|variable|io
+r_int
+id|io
+op_assign
+l_int|0x300
+suffix:semicolon
+DECL|variable|irq
+r_int
+id|irq
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|dma
+r_int
+id|dma
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|mem
+r_int
+id|mem
+op_assign
+l_int|0
+suffix:semicolon
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+id|result
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|io
+op_eq
+l_int|0
+)paren
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;%s: You shouldn&squot;t use auto-probing with insmod!&bslash;n&quot;
+comma
+id|cardname
+)paren
+suffix:semicolon
+multiline_comment|/* copy the parameters from insmod into the device structure */
+id|this_device.base_addr
+op_assign
+id|io
+suffix:semicolon
+id|this_device.irq
+op_assign
+id|irq
+suffix:semicolon
+id|this_device.dma
+op_assign
+id|dma
+suffix:semicolon
+id|this_device.mem_start
+op_assign
+id|mem
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|result
+op_assign
+id|register_netdev
+c_func
+(paren
+op_amp
+id|this_device
+)paren
+)paren
+op_ne
+l_int|0
+)paren
+r_return
+id|result
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_void
+DECL|function|cleanup_module
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+multiline_comment|/* No need to check MOD_IN_USE, as sys_delete_module() checks. */
+id|unregister_netdev
+c_func
+(paren
+op_amp
+id|this_device
+)paren
+suffix:semicolon
+multiline_comment|/* If we don&squot;t do this, we can&squot;t re-insmod it later. */
+multiline_comment|/* Release irq/dma here, when you have jumpered versions and snarfed&n;&t; * them in net_probe1().&n;&t; */
+multiline_comment|/*&n;&t;   free_irq(this_device.irq);&n;&t;   free_dma(this_device.dma);&n;&t;*/
+id|release_region
+c_func
+(paren
+id|this_device.base_addr
+comma
+id|NETCARD_IO_EXTENT
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|this_device.priv
+)paren
+id|kfree_s
+c_func
+(paren
+id|this_device.priv
+comma
+r_sizeof
+(paren
+r_struct
+id|net_local
+)paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif /* MODULE */
+"&f;"
+multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -Wall -Wstrict-prototypes -Wwrite-strings -Wredundant-decls -O2 -m486 -c skeleton.c&quot;&n; *  version-control: t&n; *  kept-new-versions: 5&n; *  tab-width: 4&n; *  c-indent-level: 4&n; * End:&n; */
 eof

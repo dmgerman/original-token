@@ -529,11 +529,11 @@ c_func
 (paren
 id|PIOaddr
 comma
-l_int|4
+id|TR_IO_EXTENT
 )paren
 )paren
 (brace
-multiline_comment|/* Make sure PIO address not&n;                                    already assigned elsewhere before&n;                                    we muck with I/O addresses */
+multiline_comment|/* Make sure PIO address not&n;&t;&t;&t;&t;&t;&t;   already assigned elsewhere&n;&t;&t;&t;&t;&t;&t;   before we muck with I/O&n;&t;&t;&t;&t;&t;&t;   addresses */
 r_if
 c_cond
 (paren
@@ -544,9 +544,11 @@ id|TRC_INIT
 id|DPRINTK
 c_func
 (paren
-l_string|&quot;check_region(%4hx,4) failed.&bslash;n&quot;
+l_string|&quot;check_region(%4hx,%d) failed.&bslash;n&quot;
 comma
 id|PIOaddr
+comma
+id|TR_IO_EXTENT
 )paren
 suffix:semicolon
 id|PIOaddr
@@ -895,18 +897,6 @@ id|ENODEV
 suffix:semicolon
 )brace
 multiline_comment|/*?? Now, allocate some of the pl0 buffers for this driver.. */
-multiline_comment|/*?? Now, allocate some of the PIO PORTs for this driver.. */
-id|request_region
-c_func
-(paren
-id|PIOaddr
-comma
-l_int|4
-comma
-l_string|&quot;ibmtr&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* record PIOaddr range as busy */
 r_if
 c_cond
 (paren
@@ -1663,9 +1653,7 @@ c_func
 l_string|&quot;Dual size shared RAM page (code=0xC), don&squot;t support it!&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* nb/dwm: I did this because RRR (3,2) bits are documented as&n;                R/O and I can&squot;t find how to select which page size */
-multiline_comment|/* Also, the above conditional statement sequence is invalid */
-multiline_comment|/*       as page_mask will always be set by the second stmt  */
+multiline_comment|/* nb/dwm: I did this because RRR (3,2) bits are documented as&n;&t; * R/O and I can&squot;t find how to select which page size&n;&t; * Also, the above conditional statement sequence is invalid&n;&t; *       as page_mask will always be set by the second stmt&n;&t; */
 id|badti
 op_assign
 id|ti
@@ -1943,6 +1931,18 @@ id|irq
 op_assign
 id|dev
 suffix:semicolon
+multiline_comment|/*?? Now, allocate some of the PIO PORTs for this driver.. */
+id|request_region
+c_func
+(paren
+id|PIOaddr
+comma
+id|TR_IO_EXTENT
+comma
+l_string|&quot;ibmtr&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* record PIOaddr range&n;&t;&t;&t;&t;&t;&t;    as busy */
 id|DPRINTK
 c_func
 (paren
@@ -6191,6 +6191,19 @@ id|kernel_version
 op_assign
 id|UTS_RELEASE
 suffix:semicolon
+DECL|variable|devicename
+r_static
+r_char
+id|devicename
+(braket
+l_int|9
+)braket
+op_assign
+(brace
+l_int|0
+comma
+)brace
+suffix:semicolon
 DECL|variable|dev_ibmtr
 r_static
 r_struct
@@ -6198,9 +6211,9 @@ id|device
 id|dev_ibmtr
 op_assign
 (brace
-l_string|&quot;        &quot;
-multiline_comment|/*&quot;ibmtr&quot;*/
+id|devicename
 comma
+multiline_comment|/* device name is inserted by linux/drivers/net/net_init.c */
 l_int|0
 comma
 l_int|0
@@ -6313,6 +6326,28 @@ c_func
 (paren
 op_amp
 id|dev_ibmtr
+)paren
+suffix:semicolon
+multiline_comment|/* If we don&squot;t do this, we can&squot;t re-insmod it later. */
+id|free_irq
+c_func
+(paren
+id|dev_ibmtr.irq
+)paren
+suffix:semicolon
+id|irq2dev_map
+(braket
+id|dev_ibmtr.irq
+)braket
+op_assign
+l_int|NULL
+suffix:semicolon
+id|release_region
+c_func
+(paren
+id|dev_ibmtr.base_addr
+comma
+id|TR_IO_EXTENT
 )paren
 suffix:semicolon
 )brace

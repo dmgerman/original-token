@@ -479,7 +479,7 @@ comma
 r_int
 )paren
 suffix:semicolon
-macro_line|#include &quot;ax25call.h&quot;
+macro_line|#include &lt;net/ax25call.h&gt;
 multiline_comment|/* ax25_in.c */
 r_extern
 r_int

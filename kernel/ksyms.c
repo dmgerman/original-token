@@ -26,7 +26,6 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_NET
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
-macro_line|#include &lt;net/eth.h&gt;
 macro_line|#ifdef CONFIG_INET
 macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
@@ -1859,13 +1858,13 @@ macro_line|#ifdef CONFIG_PROC_FS
 id|X
 c_func
 (paren
-id|proc_net_register
+id|proc_register
 )paren
 comma
 id|X
 c_func
 (paren
-id|proc_net_unregister
+id|proc_unregister
 )paren
 comma
 macro_line|#endif

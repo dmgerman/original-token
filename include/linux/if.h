@@ -268,8 +268,5 @@ DECL|macro|ifc_buf
 mdefine_line|#define&t;ifc_buf&t;ifc_ifcu.ifcu_buf&t;&t;/* buffer address&t;*/
 DECL|macro|ifc_req
 mdefine_line|#define&t;ifc_req&t;ifc_ifcu.ifcu_req&t;&t;/* array of structures&t;*/
-multiline_comment|/* BSD UNIX expects to find these here, so here we go: */
-macro_line|#include &lt;linux/if_arp.h&gt;
-macro_line|#include &lt;linux/route.h&gt;
 macro_line|#endif /* _LINUX_IF_H */
 eof

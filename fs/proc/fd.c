@@ -307,7 +307,7 @@ op_logical_neg
 op_star
 id|result
 op_assign
-id|iget
+id|proc_get_inode
 c_func
 (paren
 id|sb
@@ -319,6 +319,9 @@ l_int|16
 )paren
 op_plus
 id|PROC_PID_INO
+comma
+op_amp
+id|proc_pid
 )paren
 )paren
 )paren
@@ -507,12 +510,14 @@ op_logical_neg
 op_star
 id|result
 op_assign
-id|iget
+id|proc_get_inode
 c_func
 (paren
 id|sb
 comma
 id|ino
+comma
+l_int|NULL
 )paren
 )paren
 )paren

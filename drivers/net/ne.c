@@ -20,6 +20,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
+macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &quot;8390.h&quot;
 multiline_comment|/* Some defines that people can play with if so inclined. */
 multiline_comment|/* Do we support clones that don&squot;t adhere to 14,15 of the SAprom ? */
@@ -30,27 +31,6 @@ multiline_comment|/* #define CONFIG_NE_SANITY */
 multiline_comment|/* Do we implement the read before write bugfix ? */
 multiline_comment|/* #define CONFIG_NE_RW_BUGFIX */
 multiline_comment|/* ---- No user-serviceable parts below ---- */
-r_extern
-r_struct
-id|device
-op_star
-id|init_etherdev
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_int
-id|sizeof_private
-comma
-r_int
-r_int
-op_star
-id|mem_startp
-)paren
-suffix:semicolon
 multiline_comment|/* A zero-terminated list of I/O addresses to be probed. */
 DECL|variable|netcard_portlist
 r_static
@@ -2516,6 +2496,19 @@ id|kernel_version
 op_assign
 id|UTS_RELEASE
 suffix:semicolon
+DECL|variable|devicename
+r_static
+r_char
+id|devicename
+(braket
+l_int|9
+)braket
+op_assign
+(brace
+l_int|0
+comma
+)brace
+suffix:semicolon
 DECL|variable|dev_ne2000
 r_static
 r_struct
@@ -2523,9 +2516,9 @@ id|device
 id|dev_ne2000
 op_assign
 (brace
-l_string|&quot;        &quot;
-multiline_comment|/*&quot;ne2000&quot;*/
+id|devicename
 comma
+multiline_comment|/* device name is inserted by linux/drivers/net/net_init.c */
 l_int|0
 comma
 l_int|0
@@ -2636,6 +2629,21 @@ c_func
 (paren
 op_amp
 id|dev_ne2000
+)paren
+suffix:semicolon
+multiline_comment|/* If we don&squot;t do this, we can&squot;t re-insmod it later. */
+id|free_irq
+c_func
+(paren
+id|dev_ne2000.irq
+)paren
+suffix:semicolon
+id|release_region
+c_func
+(paren
+id|dev_ne2000.base_addr
+comma
+id|NE_IO_EXTENT
 )paren
 suffix:semicolon
 )brace

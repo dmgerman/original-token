@@ -8,7 +8,7 @@ multiline_comment|/* Set bit &squot;nr&squot; in 32-bit quantity at address &squ
 multiline_comment|/* For now, the sun4c implementation will disable and enable traps&n; * in order to insure atomicity. Things will have to be different&n; * for sun4m (ie. SMP) no doubt.&n; */
 multiline_comment|/* These routines now do things in little endian byte order. */
 multiline_comment|/* Our unsigned long accesses on the Sparc look like this:&n; * Big Endian:&n; *    byte 0    byte 1      byte 2    byte 3&n; *  0000 0000  0000 0000  0000 0000  0000 0000&n; *  31     24  23     16  15      8  7       0&n; *&n; * We want to set the bits in a little-endian fashion:&n; * Little Endian:&n; *    byte 3    byte 2      byte 1    byte 0&n; *  0000 0000  0000 0000  0000 0000  0000 0000&n; *  31     24  23     16  15      8  7       0&n; */
-multiline_comment|/* #define LITTLE_ENDIAN_BITOPS */
+multiline_comment|/* #define __LITTLE_ENDIAN_BITOPS */
 DECL|function|set_bit
 r_extern
 id|__inline__
@@ -26,7 +26,7 @@ op_star
 id|vaddr
 )paren
 (brace
-macro_line|#ifdef LITTLE_ENDIAN_BITOPS
+macro_line|#ifdef __LITTLE_ENDIAN_BITOPS
 r_int
 id|retval
 suffix:semicolon
@@ -204,7 +204,7 @@ op_star
 id|vaddr
 )paren
 (brace
-macro_line|#ifdef LITTLE_ENDIAN_BITOPS
+macro_line|#ifdef __LITTLE_ENDIAN_BITOPS
 r_int
 id|retval
 suffix:semicolon
@@ -384,7 +384,7 @@ op_star
 id|vaddr
 )paren
 (brace
-macro_line|#ifdef LITTLE_ENDIAN_BITOPS
+macro_line|#ifdef __LITTLE_ENDIAN_BITOPS
 r_int
 id|retval
 suffix:semicolon
@@ -562,7 +562,7 @@ op_star
 id|vaddr
 )paren
 (brace
-macro_line|#ifdef LITTLE_ENDIAN_BITOPS
+macro_line|#ifdef __LITTLE_ENDIAN_BITOPS
 r_int
 r_char
 id|mask
@@ -674,7 +674,7 @@ id|cnt
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef LITTLE_ENDIAN_BITOPS
+macro_line|#ifdef __LITTLE_ENDIAN_BITOPS
 r_for
 c_loop
 (paren
@@ -790,7 +790,7 @@ r_int
 id|offset
 )paren
 (brace
-macro_line|#ifdef LITTLE_ENDIAN_BITOPS
+macro_line|#ifdef __LITTLE_ENDIAN_BITOPS
 multiline_comment|/* FOO, needs to be written */
 macro_line|#else   /* BIG ENDIAN BITOPS */
 r_int

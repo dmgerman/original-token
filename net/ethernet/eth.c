@@ -692,6 +692,9 @@ id|iphdr
 op_star
 id|iph
 suffix:semicolon
+r_int
+id|ip_length
+suffix:semicolon
 id|IS_SKB
 c_func
 (paren
@@ -706,21 +709,6 @@ id|ethhdr
 op_star
 )paren
 id|dest-&gt;data
-suffix:semicolon
-id|memcpy
-c_func
-(paren
-id|dest-&gt;data
-comma
-id|src
-comma
-l_int|34
-)paren
-suffix:semicolon
-multiline_comment|/* ethernet is always &gt;= 60 */
-id|length
-op_sub_assign
-l_int|34
 suffix:semicolon
 r_if
 c_cond
@@ -738,12 +726,8 @@ id|memcpy
 c_func
 (paren
 id|dest-&gt;data
-op_plus
-l_int|34
 comma
 id|src
-op_plus
-l_int|34
 comma
 id|length
 )paren
@@ -751,7 +735,22 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * We have to watch for padded packets. The csum doesn&squot;t include the&n;&t; * padding, and there is no point in copying the padding anyway.&n;&t; */
+multiline_comment|/*&n;&t; * We have to watch for padded packets. The csum doesn&squot;t include the&n;&t; * padding, and there is no point in copying the padding anyway.&n;&t; * We have to use the smaller of length and ip_length because it&n;&t; * can happen that ip_length &gt; length.&n;&t; */
+id|memcpy
+c_func
+(paren
+id|dest-&gt;data
+comma
+id|src
+comma
+l_int|34
+)paren
+suffix:semicolon
+multiline_comment|/* ethernet is always &gt;= 34 */
+id|length
+op_sub_assign
+l_int|34
+suffix:semicolon
 id|iph
 op_assign
 (paren
@@ -766,24 +765,7 @@ l_int|14
 )paren
 suffix:semicolon
 multiline_comment|/* 14 = Rx_addr+Tx_addr+type_field */
-r_if
-c_cond
-(paren
-id|ntohs
-c_func
-(paren
-id|iph-&gt;tot_len
-)paren
-op_minus
-r_sizeof
-(paren
-r_struct
-id|iphdr
-)paren
-op_le
-id|length
-)paren
-id|length
+id|ip_length
 op_assign
 id|ntohs
 c_func
@@ -796,6 +778,17 @@ r_sizeof
 r_struct
 id|iphdr
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ip_length
+op_le
+id|length
+)paren
+id|length
+op_assign
+id|ip_length
 suffix:semicolon
 id|dest-&gt;csum
 op_assign

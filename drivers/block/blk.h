@@ -579,19 +579,34 @@ DECL|macro|INIT_REQUEST
 mdefine_line|#define INIT_REQUEST &bslash;&n;&t;if (!CURRENT) {&bslash;&n;&t;&t;CLEAR_INTR; &bslash;&n;&t;&t;return; &bslash;&n;&t;} &bslash;&n;&t;if (MAJOR(CURRENT-&gt;dev) != MAJOR_NR) &bslash;&n;&t;&t;panic(DEVICE_NAME &quot;: request list destroyed&quot;); &bslash;&n;&t;if (CURRENT-&gt;bh) { &bslash;&n;&t;&t;if (!CURRENT-&gt;bh-&gt;b_lock) &bslash;&n;&t;&t;&t;panic(DEVICE_NAME &quot;: block not locked&quot;); &bslash;&n;&t;}
 macro_line|#endif /* (MAJOR_NR != SCSI_TAPE_MAJOR) &amp;&amp; !defined(IDE_DRIVER) */
 multiline_comment|/* end_request() - SCSI devices have their own version */
+multiline_comment|/*               - IDE drivers have their own copy too */
 macro_line|#if ! SCSI_MAJOR(MAJOR_NR)
-macro_line|#ifdef IDE_DRIVER
-DECL|function|end_request
-r_static
+macro_line|#ifdef _IDE_CD_C&t;/* ide-cd.c uses copy from ide.c */
 r_void
-id|end_request
+id|ide_end_request
 c_func
 (paren
 id|byte
 id|uptodate
 comma
+id|ide_hwgroup_t
+op_star
+id|hwgroup
+)paren
+suffix:semicolon
+macro_line|#else
+macro_line|#ifdef IDE_DRIVER
+DECL|function|ide_end_request
+r_void
+id|ide_end_request
+c_func
+(paren
 id|byte
-id|hwif
+id|uptodate
+comma
+id|ide_hwgroup_t
+op_star
+id|hwgroup
 )paren
 (brace
 r_struct
@@ -599,10 +614,7 @@ id|request
 op_star
 id|req
 op_assign
-id|ide_cur_rq
-(braket
-id|HWIF
-)braket
+id|hwgroup-&gt;rq
 suffix:semicolon
 macro_line|#else
 r_static
@@ -761,10 +773,7 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#ifdef IDE_DRIVER
-id|ide_cur_rq
-(braket
-id|HWIF
-)braket
+id|hwgroup-&gt;rq
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -806,6 +815,7 @@ id|wait_for_request
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif /* ndef _IDE_CD_C */
 macro_line|#endif /* ! SCSI_MAJOR(MAJOR_NR) */
 macro_line|#endif /* defined(MAJOR_NR) || defined(IDE_DRIVER) */
 macro_line|#endif /* _BLK_H */

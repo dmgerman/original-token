@@ -950,8 +950,9 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-id|HD_MAJOR
+id|IDE0_MAJOR
 suffix:colon
+multiline_comment|/* same as HD_MAJOR */
 r_case
 id|XT_DISK_MAJOR
 suffix:colon
@@ -1289,6 +1290,12 @@ id|bh-&gt;b_req
 op_assign
 l_int|0
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;attempt to access beyond end of device&bslash;n&quot;
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -1390,6 +1397,14 @@ op_logical_or
 id|major
 op_eq
 id|SCSI_CDROM_MAJOR
+op_logical_or
+id|major
+op_eq
+id|IDE2_MAJOR
+op_logical_or
+id|major
+op_eq
+id|IDE3_MAJOR
 )paren
 op_logical_and
 (paren
@@ -2679,10 +2694,10 @@ id|ro_bits
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_BLK_DEV_HD
+macro_line|#ifdef CONFIG_BLK_DEV_IDE
 id|mem_start
 op_assign
-id|hd_init
+id|ide_init
 c_func
 (paren
 id|mem_start
@@ -2690,11 +2705,12 @@ comma
 id|mem_end
 )paren
 suffix:semicolon
+multiline_comment|/* this MUST preceed hd_init */
 macro_line|#endif
-macro_line|#ifdef CONFIG_BLK_DEV_IDE
+macro_line|#ifdef CONFIG_BLK_DEV_HD
 id|mem_start
 op_assign
-id|ide_init
+id|hd_init
 c_func
 (paren
 id|mem_start

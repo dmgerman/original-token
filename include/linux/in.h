@@ -212,6 +212,8 @@ mdefine_line|#define&t;IN_LOOPBACKNET&t;&t;127
 multiline_comment|/* Address to loopback in software to local host.  */
 DECL|macro|INADDR_LOOPBACK
 mdefine_line|#define&t;INADDR_LOOPBACK&t;&t;0x7f000001&t;/* 127.0.0.1   */
+DECL|macro|IN_LOOPBACK
+mdefine_line|#define&t;IN_LOOPBACK(a)&t;&t;((((long int) (a)) &amp; 0xff000000) == 0x7f000000)
 multiline_comment|/* Defines for Multicast INADDR */
 DECL|macro|INADDR_UNSPEC_GROUP
 mdefine_line|#define INADDR_UNSPEC_GROUP   &t;0xe0000000      /* 224.0.0.0   */

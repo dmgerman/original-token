@@ -8,15 +8,15 @@ macro_line|#include &lt;linux/in.h&gt;&t;&t;/* struct sockaddr_in */
 macro_line|#include &lt;linux/tcp.h&gt;&t;&t;/* struct tcphdr */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;&t;/* struct sk_buff */
-macro_line|#include &quot;protocol.h&quot;&t;&t;/* struct inet_protocol */
+macro_line|#include &lt;net/protocol.h&gt;&t;&t;/* struct inet_protocol */
 macro_line|#ifdef CONFIG_AX25
-macro_line|#include &quot;ax25.h&quot;
+macro_line|#include &lt;net/ax25.h&gt;
 macro_line|#ifdef CONFIG_NETROM
-macro_line|#include &quot;netrom.h&quot;
+macro_line|#include &lt;net/netrom.h&gt;
 macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_IPX
-macro_line|#include &quot;ipx.h&quot;
+macro_line|#include &lt;net/ipx.h&gt;
 macro_line|#endif
 macro_line|#ifdef CONFIG_ATALK
 macro_line|#include &lt;linux/atalk.h&gt;

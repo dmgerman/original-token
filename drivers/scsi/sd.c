@@ -515,7 +515,9 @@ r_void
 id|sd_geninit
 c_func
 (paren
-r_void
+r_struct
+id|gendisk
+op_star
 )paren
 suffix:semicolon
 DECL|variable|sd_fops
@@ -613,7 +615,10 @@ r_static
 r_void
 id|sd_geninit
 (paren
-r_void
+r_struct
+id|gendisk
+op_star
+id|ignored
 )paren
 (brace
 r_int

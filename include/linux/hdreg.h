@@ -2,9 +2,11 @@ macro_line|#ifndef _LINUX_HDREG_H
 DECL|macro|_LINUX_HDREG_H
 mdefine_line|#define _LINUX_HDREG_H
 macro_line|#include &lt;linux/config.h&gt;
-multiline_comment|/*&n; * This file contains some defines for the AT-hd-controller.&n; * Various sources. Check out some definitions (see comments with&n; * a ques).&n; */
+multiline_comment|/*&n; * This file contains some defines for the AT-hd-controller.&n; * Various sources.  &n; */
+DECL|macro|HD_IRQ
+mdefine_line|#define HD_IRQ 14&t;&t;/* the standard disk interrupt */
+multiline_comment|/* ide.c has it&squot;s own port definitions in &quot;ide.h&quot; */
 multiline_comment|/* Hd controller regs. Ref: IBM AT Bios-listing */
-multiline_comment|/* For a second IDE interface, xor all addresses with 0x80 */
 DECL|macro|HD_DATA
 mdefine_line|#define HD_DATA&t;&t;0x1f0&t;/* _CTL when writing */
 DECL|macro|HD_ERROR
@@ -31,6 +33,7 @@ DECL|macro|HD_CMD
 mdefine_line|#define HD_CMD&t;&t;0x3f6&t;/* used for resets */
 DECL|macro|HD_ALTSTATUS
 mdefine_line|#define HD_ALTSTATUS&t;0x3f6&t;/* same as HD_STATUS but doesn&squot;t clear irq */
+multiline_comment|/* remainder is shared between hd.c, ide.c, ide-cd.c, and the hdparm utility */
 multiline_comment|/* Bits of HD_STATUS */
 DECL|macro|ERR_STAT
 mdefine_line|#define ERR_STAT&t;0x01
@@ -66,11 +69,15 @@ mdefine_line|#define WIN_SEEK &t;&t;0x70
 DECL|macro|WIN_DIAGNOSE
 mdefine_line|#define WIN_DIAGNOSE&t;&t;0x90
 DECL|macro|WIN_SPECIFY
-mdefine_line|#define WIN_SPECIFY&t;&t;0x91
+mdefine_line|#define WIN_SPECIFY&t;&t;0x91&t;/* set drive geometry translation */
 DECL|macro|WIN_SETIDLE1
 mdefine_line|#define WIN_SETIDLE1&t;&t;0xE3
 DECL|macro|WIN_SETIDLE2
 mdefine_line|#define WIN_SETIDLE2&t;&t;0x97
+DECL|macro|WIN_DOORLOCK
+mdefine_line|#define WIN_DOORLOCK&t;&t;0xde&t;/* lock door on removeable drives */
+DECL|macro|WIN_DOORUNLOCK
+mdefine_line|#define WIN_DOORUNLOCK&t;&t;0xdf&t;/* unlock door on removeable drives */
 DECL|macro|WIN_PIDENTIFY
 mdefine_line|#define WIN_PIDENTIFY&t;&t;0xA1&t;/* identify ATA-PI device&t;*/
 DECL|macro|WIN_MULTREAD
@@ -457,53 +464,6 @@ id|ide_setup
 c_func
 (paren
 r_char
-op_star
-comma
-r_int
-op_star
-)paren
-suffix:semicolon
-r_void
-id|hda_setup
-c_func
-(paren
-r_char
-op_star
-comma
-r_int
-op_star
-)paren
-suffix:semicolon
-r_void
-id|hdb_setup
-c_func
-(paren
-r_char
-op_star
-comma
-r_int
-op_star
-)paren
-suffix:semicolon
-r_void
-id|hdc_setup
-c_func
-(paren
-r_char
-op_star
-comma
-r_int
-op_star
-)paren
-suffix:semicolon
-r_void
-id|hdd_setup
-c_func
-(paren
-r_char
-op_star
-comma
-r_int
 op_star
 )paren
 suffix:semicolon

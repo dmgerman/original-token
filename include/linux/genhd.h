@@ -12,6 +12,8 @@ DECL|macro|EXTENDED_PARTITION
 mdefine_line|#define EXTENDED_PARTITION 5
 DECL|macro|DM6_PARTITION
 mdefine_line|#define DM6_PARTITION&t;&t;0x54&t;/* has DDO: use xlated geom &amp; offset */
+DECL|macro|EZD_PARTITION
+mdefine_line|#define EZD_PARTITION&t;&t;0x55&t;/* EZ-DRIVE:  same as DM6 (we think) */
 DECL|macro|DM6_AUX1PARTITION
 mdefine_line|#define DM6_AUX1PARTITION&t;0x51&t;/* no DDO:  use xlated geom */
 DECL|macro|DM6_AUX3PARTITION
@@ -134,7 +136,9 @@ op_star
 id|init
 )paren
 (paren
-r_void
+r_struct
+id|gendisk
+op_star
 )paren
 suffix:semicolon
 multiline_comment|/* Initialization called before we do our thing */
@@ -150,7 +154,7 @@ r_int
 op_star
 id|sizes
 suffix:semicolon
-multiline_comment|/* size of device in blocks */
+multiline_comment|/* device size in blocks, copied to blk_size[] */
 DECL|member|nr_real
 r_int
 id|nr_real

@@ -1662,6 +1662,19 @@ id|kernel_version
 op_assign
 id|UTS_RELEASE
 suffix:semicolon
+DECL|variable|devicename
+r_static
+r_char
+id|devicename
+(braket
+l_int|9
+)braket
+op_assign
+(brace
+l_int|0
+comma
+)brace
+suffix:semicolon
 DECL|variable|dev_hp
 r_static
 r_struct
@@ -1669,9 +1682,9 @@ id|device
 id|dev_hp
 op_assign
 (brace
-l_string|&quot;        &quot;
-multiline_comment|/*&quot;hp&quot;*/
+id|devicename
 comma
+multiline_comment|/* device name is inserted by linux/drivers/net/net_init.c */
 l_int|0
 comma
 l_int|0
@@ -1752,7 +1765,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;hp: register_netdev() returned non-zero.&bslash;n&quot;
+l_string|&quot;HP-plus: register_netdev() returned non-zero.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1780,16 +1793,32 @@ id|MOD_IN_USE
 id|printk
 c_func
 (paren
-l_string|&quot;hp: device busy, remove delayed&bslash;n&quot;
+l_string|&quot;HP-plus: device busy, remove delayed&bslash;n&quot;
 )paren
 suffix:semicolon
 r_else
 (brace
+r_int
+id|ioaddr
+op_assign
+id|dev_hp.base_addr
+op_minus
+id|NIC_OFFSET
+suffix:semicolon
 id|unregister_netdev
 c_func
 (paren
 op_amp
 id|dev_hp
+)paren
+suffix:semicolon
+multiline_comment|/* If we don&squot;t do this, we can&squot;t re-insmod it later. */
+id|release_region
+c_func
+(paren
+id|ioaddr
+comma
+id|HP_IO_EXTENT
 )paren
 suffix:semicolon
 )brace

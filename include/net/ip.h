@@ -8,9 +8,9 @@ macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#ifndef _SNMP_H
-macro_line|#include &quot;snmp.h&quot;
+macro_line|#include &lt;net/snmp.h&gt;
 macro_line|#endif
-macro_line|#include &quot;sock.h&quot;&t;/* struct sock */
+macro_line|#include &lt;net/sock.h&gt;&t;/* struct sock */
 multiline_comment|/* IP flags. */
 DECL|macro|IP_CE
 mdefine_line|#define IP_CE&t;&t;0x8000&t;&t;/* Flag: &quot;Congestion&quot;&t;&t;*/

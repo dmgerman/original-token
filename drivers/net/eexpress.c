@@ -158,6 +158,8 @@ DECL|macro|EEPROM_Ctrl
 mdefine_line|#define EEPROM_Ctrl&t;&t;14
 DECL|macro|ID_PORT
 mdefine_line|#define ID_PORT&t;&t;15
+DECL|macro|EEXPRESS_IO_EXTENT
+mdefine_line|#define EEXPRESS_IO_EXTENT 16
 multiline_comment|/*&t;EEPROM_Ctrl bits. */
 DECL|macro|EE_SHIFT_CLK
 mdefine_line|#define EE_SHIFT_CLK&t;0x01&t;/* EEPROM shift clock. */
@@ -902,7 +904,7 @@ c_func
 (paren
 id|ioaddr
 comma
-l_int|16
+id|EEXPRESS_IO_EXTENT
 comma
 l_string|&quot;eexpress&quot;
 )paren
@@ -2370,15 +2372,6 @@ id|dev-&gt;irq
 )braket
 op_assign
 l_int|0
-suffix:semicolon
-multiline_comment|/* release the ioport-region */
-id|release_region
-c_func
-(paren
-id|ioaddr
-comma
-l_int|16
-)paren
 suffix:semicolon
 multiline_comment|/* Update the statistics here. */
 macro_line|#ifdef MODULE
@@ -4147,6 +4140,19 @@ id|kernel_version
 op_assign
 id|UTS_RELEASE
 suffix:semicolon
+DECL|variable|devicename
+r_static
+r_char
+id|devicename
+(braket
+l_int|9
+)braket
+op_assign
+(brace
+l_int|0
+comma
+)brace
+suffix:semicolon
 DECL|variable|dev_eexpress
 r_static
 r_struct
@@ -4154,9 +4160,9 @@ id|device
 id|dev_eexpress
 op_assign
 (brace
-l_string|&quot;        &quot;
-multiline_comment|/*&quot;eexpress&quot;*/
+id|devicename
 comma
+multiline_comment|/* device name is inserted by linux/drivers/net/net_init.c */
 l_int|0
 comma
 l_int|0
@@ -4257,7 +4263,7 @@ id|MOD_IN_USE
 id|printk
 c_func
 (paren
-l_string|&quot;express: device busy, remove delayed&bslash;n&quot;
+l_string|&quot;eexpress: device busy, remove delayed&bslash;n&quot;
 )paren
 suffix:semicolon
 r_else
@@ -4284,6 +4290,15 @@ suffix:semicolon
 id|dev_eexpress.priv
 op_assign
 l_int|NULL
+suffix:semicolon
+multiline_comment|/* If we don&squot;t do this, we can&squot;t re-insmod it later. */
+id|release_region
+c_func
+(paren
+id|dev_eexpress.base_addr
+comma
+id|EEXPRESS_IO_EXTENT
+)paren
 suffix:semicolon
 )brace
 )brace
