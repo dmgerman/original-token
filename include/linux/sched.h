@@ -211,6 +211,9 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|INIT_FS
 mdefine_line|#define INIT_FS { &bslash;&n;&t;1, &bslash;&n;&t;0022, &bslash;&n;&t;NULL, NULL &bslash;&n;}
+multiline_comment|/* Maximum number of active map areas.. This is a random (large) number */
+DECL|macro|MAX_MAP_COUNT
+mdefine_line|#define MAX_MAP_COUNT&t;(65536)
 DECL|struct|mm_struct
 r_struct
 id|mm_struct
@@ -231,8 +234,11 @@ op_star
 id|pgd
 suffix:semicolon
 DECL|member|count
+DECL|member|map_count
 r_int
 id|count
+comma
+id|map_count
 suffix:semicolon
 DECL|member|mmap_sem
 r_struct
@@ -307,7 +313,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|INIT_MM
-mdefine_line|#define INIT_MM {&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&amp;init_mmap, NULL, swapper_pg_dir, 1,&t;&bslash;&n;&t;&t;MUTEX,&t;&t;&t;&t;&t;&bslash;&n;&t;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, &t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0 }
+mdefine_line|#define INIT_MM {&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&amp;init_mmap, NULL, swapper_pg_dir, 1, 1,&t;&bslash;&n;&t;&t;MUTEX,&t;&t;&t;&t;&t;&bslash;&n;&t;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, &t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0 }
 DECL|struct|signal_struct
 r_struct
 id|signal_struct

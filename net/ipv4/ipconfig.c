@@ -3748,19 +3748,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|ic_gateway
-op_eq
-id|INADDR_NONE
-op_logical_and
-id|b-&gt;relay_ip
-)paren
-id|ic_gateway
-op_assign
-id|b-&gt;relay_ip
-suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Receive BOOTP request.&n; */
 DECL|function|__initfunc

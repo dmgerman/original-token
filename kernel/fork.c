@@ -949,6 +949,9 @@ id|tmp-&gt;vm_mm
 op_assign
 id|mm
 suffix:semicolon
+id|mm-&gt;map_count
+op_increment
+suffix:semicolon
 id|tmp-&gt;vm_next
 op_assign
 l_int|NULL
@@ -1150,6 +1153,10 @@ suffix:semicolon
 id|mm-&gt;count
 op_assign
 l_int|1
+suffix:semicolon
+id|mm-&gt;map_count
+op_assign
+l_int|0
 suffix:semicolon
 id|mm-&gt;def_flags
 op_assign

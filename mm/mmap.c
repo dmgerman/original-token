@@ -609,6 +609,18 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+multiline_comment|/* Too many mappings? */
+r_if
+c_cond
+(paren
+id|mm-&gt;map_count
+OG
+id|MAX_MAP_COUNT
+)paren
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
 multiline_comment|/* mlock MCL_FUTURE? */
 r_if
 c_cond
@@ -1665,6 +1677,11 @@ id|len
 )paren
 (brace
 r_struct
+id|mm_struct
+op_star
+id|mm
+suffix:semicolon
+r_struct
 id|vm_area_struct
 op_star
 id|mpnt
@@ -1724,9 +1741,13 @@ r_return
 l_int|0
 suffix:semicolon
 multiline_comment|/* Check if this memory area is ok - put it on the temporary&n;&t; * list if so..  The checks here are pretty simple --&n;&t; * every area affected in some way (by any overlap) is put&n;&t; * on the list.  If nothing is put on, nothing is affected.&n;&t; */
+id|mm
+op_assign
+id|current-&gt;mm
+suffix:semicolon
 id|mpnt
 op_assign
-id|current-&gt;mm-&gt;mmap
+id|mm-&gt;mmap
 suffix:semicolon
 r_while
 c_loop
@@ -1865,6 +1886,9 @@ id|freed
 op_assign
 l_int|1
 suffix:semicolon
+id|mm-&gt;map_count
+op_decrement
+suffix:semicolon
 id|remove_shared_vm_struct
 c_func
 (paren
@@ -1927,7 +1951,7 @@ suffix:semicolon
 id|flush_cache_range
 c_func
 (paren
-id|current-&gt;mm
+id|mm
 comma
 id|st
 comma
@@ -1937,7 +1961,7 @@ suffix:semicolon
 id|zap_page_range
 c_func
 (paren
-id|current-&gt;mm
+id|mm
 comma
 id|st
 comma
@@ -1947,7 +1971,7 @@ suffix:semicolon
 id|flush_tlb_range
 c_func
 (paren
-id|current-&gt;mm
+id|mm
 comma
 id|st
 comma
@@ -2000,7 +2024,7 @@ c_cond
 (paren
 id|freed
 )paren
-id|current-&gt;mm-&gt;mmap_cache
+id|mm-&gt;mmap_cache
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -2118,6 +2142,9 @@ id|mpnt
 )paren
 suffix:semicolon
 )brace
+id|mm-&gt;map_count
+op_decrement
+suffix:semicolon
 id|remove_shared_vm_struct
 c_func
 (paren
@@ -2158,6 +2185,20 @@ op_assign
 id|next
 suffix:semicolon
 )brace
+multiline_comment|/* This is just debugging */
+r_if
+c_cond
+(paren
+id|mm-&gt;map_count
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;exit_mmap: map count is %d&bslash;n&quot;
+comma
+id|mm-&gt;map_count
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/* Insert vm structure into process list sorted by address&n; * and into the inode&squot;s i_mmap ring.&n; */
 DECL|function|insert_vm_struct
@@ -2189,6 +2230,9 @@ r_struct
 id|dentry
 op_star
 id|dentry
+suffix:semicolon
+id|mm-&gt;map_count
+op_increment
 suffix:semicolon
 multiline_comment|/* Find where to link it in. */
 r_while
@@ -2548,6 +2592,9 @@ id|mpnt
 )paren
 suffix:semicolon
 )brace
+id|mm-&gt;map_count
+op_decrement
+suffix:semicolon
 id|remove_shared_vm_struct
 c_func
 (paren
