@@ -544,6 +544,12 @@ comma
 id|X
 c_func
 (paren
+id|hardsect_size
+)paren
+comma
+id|X
+c_func
+(paren
 id|blk_size
 )paren
 comma

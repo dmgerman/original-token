@@ -158,5 +158,13 @@ id|blksize_size
 id|MAX_BLKDEV
 )braket
 suffix:semicolon
+r_extern
+r_int
+op_star
+id|hardsect_size
+(braket
+id|MAX_BLKDEV
+)braket
+suffix:semicolon
 macro_line|#endif
 eof

@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &quot;msbuffer.h&quot;
 DECL|macro|MIN
 mdefine_line|#define MIN(a,b) (((a) &lt; (b)) ? (a) : (b))
 DECL|macro|MAX
@@ -111,6 +112,102 @@ l_int|NULL
 multiline_comment|/* smap */
 )brace
 suffix:semicolon
+multiline_comment|/* #Specification: msdos / special devices / mmap&t;&n;&t;Mmapping does work because a special mmap is provide in that case.&n;&t;Note that it is much less efficient than the generic_mmap normally&n;&t;used since it allocate extra buffer. generic_mmap is used for&n;&t;normal device (512 bytes hardware sectors).&n;*/
+DECL|variable|msdos_file_operations_1024
+r_static
+r_struct
+id|file_operations
+id|msdos_file_operations_1024
+op_assign
+(brace
+l_int|NULL
+comma
+multiline_comment|/* lseek - default */
+id|msdos_file_read
+comma
+multiline_comment|/* read */
+id|msdos_file_write
+comma
+multiline_comment|/* write */
+l_int|NULL
+comma
+multiline_comment|/* readdir - bad */
+l_int|NULL
+comma
+multiline_comment|/* select - default */
+l_int|NULL
+comma
+multiline_comment|/* ioctl - default */
+id|msdos_mmap
+comma
+multiline_comment|/* mmap */
+l_int|NULL
+comma
+multiline_comment|/* no special open is needed */
+l_int|NULL
+comma
+multiline_comment|/* release */
+id|file_fsync
+multiline_comment|/* fsync */
+)brace
+suffix:semicolon
+multiline_comment|/* #Specification: msdos / special devices / swap file&n;&t;Swap file can&squot;t work on special devices with a large sector&n;&t;size (1024 bytes hard sector). Those devices have a weird&n;&t;MsDOS filesystem layout. Generally a single hardware sector&n;&t;may contain 2 unrelated logical sector. This mean that there is&n;&t;no easy way to do a mapping between disk sector of a file and virtual&n;&t;memory. So swap file is difficult (not available right now)&n;&t;on those devices. Off course, Ext2 does not have this problem.&n;*/
+DECL|variable|msdos_file_inode_operations_1024
+r_struct
+id|inode_operations
+id|msdos_file_inode_operations_1024
+op_assign
+(brace
+op_amp
+id|msdos_file_operations_1024
+comma
+multiline_comment|/* default file operations */
+l_int|NULL
+comma
+multiline_comment|/* create */
+l_int|NULL
+comma
+multiline_comment|/* lookup */
+l_int|NULL
+comma
+multiline_comment|/* link */
+l_int|NULL
+comma
+multiline_comment|/* unlink */
+l_int|NULL
+comma
+multiline_comment|/* symlink */
+l_int|NULL
+comma
+multiline_comment|/* mkdir */
+l_int|NULL
+comma
+multiline_comment|/* rmdir */
+l_int|NULL
+comma
+multiline_comment|/* mknod */
+l_int|NULL
+comma
+multiline_comment|/* rename */
+l_int|NULL
+comma
+multiline_comment|/* readlink */
+l_int|NULL
+comma
+multiline_comment|/* follow_link */
+l_int|NULL
+comma
+multiline_comment|/* bmap */
+id|msdos_truncate
+comma
+multiline_comment|/* truncate */
+l_int|NULL
+comma
+multiline_comment|/* permission */
+l_int|NULL
+multiline_comment|/* smap */
+)brace
+suffix:semicolon
 DECL|macro|MSDOS_PREFETCH
 mdefine_line|#define MSDOS_PREFETCH&t;32
 DECL|struct|msdos_pre
@@ -166,6 +263,13 @@ id|nb
 )paren
 multiline_comment|/* How many must be prefetch at once */
 (brace
+r_struct
+id|super_block
+op_star
+id|sb
+op_assign
+id|inode-&gt;i_sb
+suffix:semicolon
 r_struct
 id|buffer_head
 op_star
@@ -273,7 +377,13 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|bh-&gt;b_uptodate
+id|msdos_is_uptodate
+c_func
+(paren
+id|sb
+comma
+id|bh
+)paren
 )paren
 id|bhreq
 (braket
@@ -297,8 +407,10 @@ id|nbreq
 OG
 l_int|0
 )paren
-id|ll_rw_block
+id|msdos_ll_rw_block
 (paren
+id|sb
+comma
 id|READ
 comma
 id|nbreq
@@ -352,6 +464,13 @@ r_int
 id|count
 )paren
 (brace
+r_struct
+id|super_block
+op_star
+id|sb
+op_assign
+id|inode-&gt;i_sb
+suffix:semicolon
 r_char
 op_star
 id|start
@@ -749,7 +868,13 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|bh-&gt;b_uptodate
+id|msdos_is_uptodate
+c_func
+(paren
+id|sb
+comma
+id|bh
+)paren
 )paren
 (brace
 multiline_comment|/* read error  ? */
@@ -1001,6 +1126,13 @@ r_int
 id|count
 )paren
 (brace
+r_struct
+id|super_block
+op_star
+id|sb
+op_assign
+id|inode-&gt;i_sb
+suffix:semicolon
 r_int
 id|sector
 comma
@@ -1275,12 +1407,14 @@ op_logical_neg
 (paren
 id|bh
 op_assign
-id|msdos_sread
+id|bread
 c_func
 (paren
 id|inode-&gt;i_dev
 comma
 id|sector
+comma
+id|SECTOR_SIZE
 )paren
 )paren
 )paren
@@ -1459,9 +1593,15 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-id|bh-&gt;b_uptodate
-op_assign
+id|msdos_set_uptodate
+c_func
+(paren
+id|sb
+comma
+id|bh
+comma
 l_int|1
+)paren
 suffix:semicolon
 id|mark_buffer_dirty
 c_func

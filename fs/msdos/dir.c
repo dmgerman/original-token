@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/msdos_fs.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &quot;msbuffer.h&quot;
 DECL|macro|NAME_OFFSET
 mdefine_line|#define NAME_OFFSET(de) ((int) ((de)-&gt;d_name - (char *) (de)))
 DECL|macro|ROUND_UP
@@ -156,6 +157,13 @@ r_int
 id|count
 )paren
 (brace
+r_struct
+id|super_block
+op_star
+id|sb
+op_assign
+id|inode-&gt;i_sb
+suffix:semicolon
 r_int
 id|ino
 comma

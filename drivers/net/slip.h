@@ -116,7 +116,7 @@ r_int
 r_int
 id|tx_errors
 suffix:semicolon
-multiline_comment|/* Palnned stuff                */
+multiline_comment|/* Planned stuff                */
 DECL|member|rx_dropped
 r_int
 r_int

@@ -4972,7 +4972,7 @@ id|bit
 OL
 l_int|32
 )paren
-id|current-&gt;screen_bitmap
+id|current-&gt;tss.screen_bitmap
 op_or_assign
 l_int|1
 op_lshift

@@ -203,7 +203,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;%2d: %08lX:%04X %08lX:%04X %02X %08lX:%08lX %02X:%08lX %08X %d&bslash;n&quot;
+l_string|&quot;%2d: %08lX:%04X %08lX:%04X %02X %08lX:%08lX %02X:%08lX %08X %d %d&bslash;n&quot;
 comma
 id|i
 comma
@@ -258,6 +258,13 @@ id|sp-&gt;socket
 )paren
 op_member_access_from_pointer
 id|i_uid
+suffix:colon
+l_int|0
+comma
+id|timer_active
+ques
+c_cond
+id|sp-&gt;timeout
 suffix:colon
 l_int|0
 )paren

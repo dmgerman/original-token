@@ -491,6 +491,24 @@ l_string|&quot;3226&quot;
 comma
 multiline_comment|/* scanjet iic */
 (brace
+l_string|&quot;HP&quot;
+comma
+l_string|&quot;C1790A&quot;
+comma
+l_string|&quot;&quot;
+)brace
+comma
+multiline_comment|/* scanjet iip */
+(brace
+l_string|&quot;HP&quot;
+comma
+l_string|&quot;C2500A&quot;
+comma
+l_string|&quot;&quot;
+)brace
+comma
+multiline_comment|/* scanjet iicx */
+(brace
 l_int|NULL
 comma
 l_int|NULL
@@ -8555,7 +8573,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Similarily, this entry point should be called by a loadable module if it&n; * is trying to remove a low level scsi driver from the system.&n; */
+multiline_comment|/*&n; * Similarly, this entry point should be called by a loadable module if it&n; * is trying to remove a low level scsi driver from the system.&n; */
 DECL|function|scsi_unregister_host
 r_static
 r_void

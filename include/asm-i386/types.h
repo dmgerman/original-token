@@ -66,7 +66,7 @@ r_int
 r_int
 id|__u32
 suffix:semicolon
-macro_line|#ifndef __STRICT_ANSI__
+macro_line|#if defined(__GNUC__) &amp;&amp; !defined(__STRICT_ANSI__)
 DECL|typedef|__s64
 r_typedef
 id|__signed__

@@ -1078,7 +1078,7 @@ op_assign
 m_offsetof
 (paren
 r_struct
-id|tss_struct
+id|thread_struct
 comma
 id|io_bitmap
 )paren

@@ -80,11 +80,204 @@ DECL|macro|PAL_rtsys
 mdefine_line|#define PAL_rtsys&t;61
 DECL|macro|PAL_rti
 mdefine_line|#define PAL_rti&t;&t;63
+DECL|macro|halt
+mdefine_line|#define halt() __asm__ __volatile__(&quot;.long 0&quot;);
+DECL|macro|move_to_user_mode
+mdefine_line|#define move_to_user_mode() halt()
+DECL|macro|switch_to
+mdefine_line|#define switch_to(x) halt()
 macro_line|#ifndef mb
 DECL|macro|mb
 mdefine_line|#define mb() __asm__ __volatile__(&quot;mb&quot;: : :&quot;memory&quot;)
 macro_line|#endif
 DECL|macro|swpipl
 mdefine_line|#define swpipl(__new_ipl) &bslash;&n;({ unsigned long __old_ipl; &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;bis %1,%1,$16&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.long 53&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;bis $0,$0,%0&quot; &bslash;&n;&t;: &quot;=r&quot; (__old_ipl) &bslash;&n;&t;: &quot;r&quot; (__new_ipl) &bslash;&n;&t;: &quot;$0&quot;, &quot;$1&quot;, &quot;$16&quot;, &quot;$22&quot;, &quot;$23&quot;, &quot;$24&quot;, &quot;$25&quot;); &bslash;&n;__old_ipl; })
+DECL|macro|cli
+mdefine_line|#define cli()&t;&t;&t;swpipl(7)
+DECL|macro|sti
+mdefine_line|#define sti()&t;&t;&t;swpipl(0)
+DECL|macro|save_flags
+mdefine_line|#define save_flags(flags)&t;do { flags = swpipl(7); } while (0)
+DECL|macro|restore_flags
+mdefine_line|#define restore_flags(flags)&t;swpipl(flags)
+DECL|function|xchg_u32
+r_extern
+r_inline
+r_int
+r_int
+id|xchg_u32
+c_func
+(paren
+r_int
+op_star
+id|m
+comma
+r_int
+r_int
+id|val
+)paren
+(brace
+r_int
+r_int
+id|dummy
+comma
+id|dummy2
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;&bslash;n1:&bslash;t&quot;
+l_string|&quot;ldl_l %0,%1&bslash;n&bslash;t&quot;
+l_string|&quot;bis %2,%2,%3&bslash;n&bslash;t&quot;
+l_string|&quot;stl_c %3,%1&bslash;n&bslash;t&quot;
+l_string|&quot;beq %3,1b&bslash;n&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|val
+)paren
+comma
+l_string|&quot;=m&quot;
+(paren
+op_star
+id|m
+)paren
+comma
+l_string|&quot;=r&quot;
+(paren
+id|dummy
+)paren
+comma
+l_string|&quot;=r&quot;
+(paren
+id|dummy2
+)paren
+suffix:colon
+l_string|&quot;1&quot;
+(paren
+op_star
+id|m
+)paren
+comma
+l_string|&quot;2&quot;
+(paren
+id|val
+)paren
+)paren
+suffix:semicolon
+r_return
+id|val
+suffix:semicolon
+)brace
+DECL|function|xchg_u64
+r_extern
+r_inline
+r_int
+r_int
+id|xchg_u64
+c_func
+(paren
+r_int
+op_star
+id|m
+comma
+r_int
+r_int
+id|val
+)paren
+(brace
+r_int
+r_int
+id|dummy
+comma
+id|dummy2
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;&bslash;n1:&bslash;t&quot;
+l_string|&quot;ldq_l %0,%1&bslash;n&bslash;t&quot;
+l_string|&quot;bis %2,%2,%3&bslash;n&bslash;t&quot;
+l_string|&quot;stq_c %3,%1&bslash;n&bslash;t&quot;
+l_string|&quot;beq %3,1b&bslash;n&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|val
+)paren
+comma
+l_string|&quot;=m&quot;
+(paren
+op_star
+id|m
+)paren
+comma
+l_string|&quot;=r&quot;
+(paren
+id|dummy
+)paren
+comma
+l_string|&quot;=r&quot;
+(paren
+id|dummy2
+)paren
+suffix:colon
+l_string|&quot;1&quot;
+(paren
+op_star
+id|m
+)paren
+comma
+l_string|&quot;2&quot;
+(paren
+id|val
+)paren
+)paren
+suffix:semicolon
+r_return
+id|val
+suffix:semicolon
+)brace
+DECL|function|xchg_ptr
+r_extern
+r_inline
+r_void
+op_star
+id|xchg_ptr
+c_func
+(paren
+r_void
+op_star
+id|m
+comma
+r_void
+op_star
+id|val
+)paren
+(brace
+r_return
+(paren
+r_void
+op_star
+)paren
+id|xchg_u64
+c_func
+(paren
+(paren
+r_int
+op_star
+)paren
+id|m
+comma
+(paren
+r_int
+r_int
+)paren
+id|val
+)paren
+suffix:semicolon
+)brace
 macro_line|#endif
 eof

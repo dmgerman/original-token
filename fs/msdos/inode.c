@@ -6,9 +6,11 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
+macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
+macro_line|#include &quot;msbuffer.h&quot;
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
@@ -287,6 +289,10 @@ comma
 r_int
 op_star
 id|quiet
+comma
+r_int
+op_star
+id|blksize
 )paren
 (brace
 r_char
@@ -870,6 +876,64 @@ l_int|1
 suffix:semicolon
 )brace
 r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strcmp
+c_func
+(paren
+id|this_char
+comma
+l_string|&quot;blocksize&quot;
+)paren
+)paren
+(brace
+op_star
+id|blksize
+op_assign
+id|simple_strtoul
+c_func
+(paren
+id|value
+comma
+op_amp
+id|value
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_star
+id|value
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_star
+id|blksize
+op_ne
+l_int|512
+op_logical_and
+op_star
+id|blksize
+op_ne
+l_int|1024
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;MSDOS FS: Invalid blocksize (512 or 1024)&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+)brace
+r_else
 r_return
 l_int|0
 suffix:semicolon
@@ -889,7 +953,7 @@ c_func
 r_struct
 id|super_block
 op_star
-id|s
+id|sb
 comma
 r_void
 op_star
@@ -939,6 +1003,61 @@ suffix:semicolon
 r_int
 id|umask
 suffix:semicolon
+r_int
+id|blksize
+op_assign
+l_int|512
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|hardsect_size
+(braket
+id|MAJOR
+c_func
+(paren
+id|sb-&gt;s_dev
+)paren
+)braket
+op_ne
+l_int|NULL
+)paren
+(brace
+id|blksize
+op_assign
+id|hardsect_size
+(braket
+id|MAJOR
+c_func
+(paren
+id|sb-&gt;s_dev
+)paren
+)braket
+(braket
+id|MINOR
+c_func
+(paren
+id|sb-&gt;s_dev
+)paren
+)braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|blksize
+op_ne
+l_int|512
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;MSDOS: Hardware sector size is %d&bslash;n&quot;
+comma
+id|blksize
+)paren
+suffix:semicolon
+)brace
+)brace
 r_if
 c_cond
 (paren
@@ -975,10 +1094,23 @@ id|fat
 comma
 op_amp
 id|quiet
+comma
+op_amp
+id|blksize
+)paren
+op_logical_or
+(paren
+id|blksize
+op_ne
+l_int|512
+op_logical_and
+id|blksize
+op_ne
+l_int|1024
 )paren
 )paren
 (brace
-id|s-&gt;s_dev
+id|sb-&gt;s_dev
 op_assign
 l_int|0
 suffix:semicolon
@@ -994,15 +1126,20 @@ suffix:semicolon
 id|lock_super
 c_func
 (paren
-id|s
+id|sb
 )paren
+suffix:semicolon
+multiline_comment|/* The first read is always 1024 bytes */
+id|sb-&gt;s_blocksize
+op_assign
+l_int|1024
 suffix:semicolon
 id|set_blocksize
 c_func
 (paren
-id|s-&gt;s_dev
+id|sb-&gt;s_dev
 comma
-id|SECTOR_SIZE
+l_int|1024
 )paren
 suffix:semicolon
 id|bh
@@ -1010,17 +1147,17 @@ op_assign
 id|bread
 c_func
 (paren
-id|s-&gt;s_dev
+id|sb-&gt;s_dev
 comma
 l_int|0
 comma
-id|SECTOR_SIZE
+l_int|1024
 )paren
 suffix:semicolon
 id|unlock_super
 c_func
 (paren
-id|s
+id|sb
 )paren
 suffix:semicolon
 r_if
@@ -1029,9 +1166,23 @@ c_cond
 id|bh
 op_eq
 l_int|NULL
+op_logical_or
+op_logical_neg
+id|msdos_is_uptodate
+c_func
+(paren
+id|sb
+comma
+id|bh
+)paren
 )paren
 (brace
-id|s-&gt;s_dev
+id|brelse
+(paren
+id|bh
+)paren
+suffix:semicolon
+id|sb-&gt;s_dev
 op_assign
 l_int|0
 suffix:semicolon
@@ -1054,19 +1205,14 @@ op_star
 )paren
 id|bh-&gt;b_data
 suffix:semicolon
-id|s-&gt;s_blocksize
-op_assign
-l_int|512
+id|set_blocksize
+c_func
+(paren
+id|sb-&gt;s_dev
+comma
+id|blksize
+)paren
 suffix:semicolon
-multiline_comment|/* Using this small block size solve the */
-multiline_comment|/* the misfit with buffer cache and cluster */
-multiline_comment|/* because cluster (DOS) are often aligned */
-multiline_comment|/* on odd sector */
-id|s-&gt;s_blocksize_bits
-op_assign
-l_int|9
-suffix:semicolon
-multiline_comment|/* we cannot handle anything else yet */
 multiline_comment|/*&n; * The DOS3 partition size limit is *not* 32M as many people think.  &n; * Instead, it is 64K sectors (with the usual sector size being&n; * 512 bytes, leading to a 32M limit).&n; * &n; * DOS 3 partition managers got around this problem by faking a &n; * larger sector size, ie treating multiple physical sectors as &n; * a single logical sector.&n; * &n; * We can accommodate this scheme by adjusting our cluster size,&n; * fat_start, and data_start by an appropriate value.&n; *&n; * (by Drew Eckhardt)&n; */
 DECL|macro|ROUND_TO_MULTIPLE
 mdefine_line|#define ROUND_TO_MULTIPLE(n,m) ((n) &amp;&amp; (m) ? (n)+(m)-1-((n)-1)%(m) : 0)
@@ -1095,7 +1241,7 @@ suffix:semicolon
 id|MSDOS_SB
 c_func
 (paren
-id|s
+id|sb
 )paren
 op_member_access_from_pointer
 id|cluster_size
@@ -1107,7 +1253,7 @@ suffix:semicolon
 id|MSDOS_SB
 c_func
 (paren
-id|s
+id|sb
 )paren
 op_member_access_from_pointer
 id|fats
@@ -1117,7 +1263,7 @@ suffix:semicolon
 id|MSDOS_SB
 c_func
 (paren
-id|s
+id|sb
 )paren
 op_member_access_from_pointer
 id|fat_start
@@ -1133,7 +1279,7 @@ suffix:semicolon
 id|MSDOS_SB
 c_func
 (paren
-id|s
+id|sb
 )paren
 op_member_access_from_pointer
 id|fat_length
@@ -1149,7 +1295,7 @@ suffix:semicolon
 id|MSDOS_SB
 c_func
 (paren
-id|s
+id|sb
 )paren
 op_member_access_from_pointer
 id|dir_start
@@ -1175,7 +1321,7 @@ suffix:semicolon
 id|MSDOS_SB
 c_func
 (paren
-id|s
+id|sb
 )paren
 op_member_access_from_pointer
 id|dir_entries
@@ -1198,7 +1344,7 @@ suffix:semicolon
 id|MSDOS_SB
 c_func
 (paren
-id|s
+id|sb
 )paren
 op_member_access_from_pointer
 id|data_start
@@ -1206,7 +1352,7 @@ op_assign
 id|MSDOS_SB
 c_func
 (paren
-id|s
+id|sb
 )paren
 op_member_access_from_pointer
 id|dir_start
@@ -1218,7 +1364,7 @@ c_func
 id|MSDOS_SB
 c_func
 (paren
-id|s
+id|sb
 )paren
 op_member_access_from_pointer
 id|dir_entries
@@ -1277,7 +1423,7 @@ op_minus
 id|MSDOS_SB
 c_func
 (paren
-id|s
+id|sb
 )paren
 op_member_access_from_pointer
 id|data_start
@@ -1300,7 +1446,7 @@ id|error
 id|MSDOS_SB
 c_func
 (paren
-id|s
+id|sb
 )paren
 op_member_access_from_pointer
 id|clusters
@@ -1319,7 +1465,7 @@ suffix:semicolon
 id|MSDOS_SB
 c_func
 (paren
-id|s
+id|sb
 )paren
 op_member_access_from_pointer
 id|fat_bits
@@ -1332,7 +1478,7 @@ suffix:colon
 id|MSDOS_SB
 c_func
 (paren
-id|s
+id|sb
 )paren
 op_member_access_from_pointer
 id|clusters
@@ -1350,7 +1496,7 @@ op_logical_neg
 id|MSDOS_SB
 c_func
 (paren
-id|s
+id|sb
 )paren
 op_member_access_from_pointer
 id|fats
@@ -1359,7 +1505,7 @@ op_logical_or
 id|MSDOS_SB
 c_func
 (paren
-id|s
+id|sb
 )paren
 op_member_access_from_pointer
 id|dir_entries
@@ -1374,7 +1520,7 @@ op_logical_or
 id|MSDOS_SB
 c_func
 (paren
-id|s
+id|sb
 )paren
 op_member_access_from_pointer
 id|clusters
@@ -1384,7 +1530,7 @@ OG
 id|MSDOS_SB
 c_func
 (paren
-id|s
+id|sb
 )paren
 op_member_access_from_pointer
 id|fat_length
@@ -1396,7 +1542,7 @@ op_div
 id|MSDOS_SB
 c_func
 (paren
-id|s
+id|sb
 )paren
 op_member_access_from_pointer
 id|fat_bits
@@ -1424,6 +1570,26 @@ c_func
 id|bh
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;This must be done after the brelse because the bh is a dummy&n;&t;&t;allocated by msdos_bread (see buffer.c)&n;&t;*/
+id|sb-&gt;s_blocksize
+op_assign
+id|blksize
+suffix:semicolon
+multiline_comment|/* Using this small block size solve the */
+multiline_comment|/* the misfit with buffer cache and cluster */
+multiline_comment|/* because cluster (DOS) are often aligned */
+multiline_comment|/* on odd sector */
+id|sb-&gt;s_blocksize_bits
+op_assign
+id|blksize
+op_eq
+l_int|512
+ques
+c_cond
+l_int|9
+suffix:colon
+l_int|10
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1442,7 +1608,7 @@ comma
 id|MSDOS_SB
 c_func
 (paren
-id|s
+id|sb
 )paren
 op_member_access_from_pointer
 id|fat_bits
@@ -1463,7 +1629,7 @@ c_func
 id|MSDOS_SB
 c_func
 (paren
-id|s
+id|sb
 )paren
 )paren
 ques
@@ -1484,7 +1650,7 @@ comma
 id|MSDOS_SB
 c_func
 (paren
-id|s
+id|sb
 )paren
 op_member_access_from_pointer
 id|cluster_size
@@ -1492,7 +1658,7 @@ comma
 id|MSDOS_SB
 c_func
 (paren
-id|s
+id|sb
 )paren
 op_member_access_from_pointer
 id|fats
@@ -1500,7 +1666,7 @@ comma
 id|MSDOS_SB
 c_func
 (paren
-id|s
+id|sb
 )paren
 op_member_access_from_pointer
 id|fat_start
@@ -1508,7 +1674,7 @@ comma
 id|MSDOS_SB
 c_func
 (paren
-id|s
+id|sb
 )paren
 op_member_access_from_pointer
 id|fat_length
@@ -1516,7 +1682,7 @@ comma
 id|MSDOS_SB
 c_func
 (paren
-id|s
+id|sb
 )paren
 op_member_access_from_pointer
 id|dir_start
@@ -1524,7 +1690,7 @@ comma
 id|MSDOS_SB
 c_func
 (paren
-id|s
+id|sb
 )paren
 op_member_access_from_pointer
 id|dir_entries
@@ -1532,7 +1698,7 @@ comma
 id|MSDOS_SB
 c_func
 (paren
-id|s
+id|sb
 )paren
 op_member_access_from_pointer
 id|data_start
@@ -1557,6 +1723,13 @@ comma
 id|logical_sector_size
 )paren
 suffix:semicolon
+id|printk
+(paren
+l_string|&quot;Transaction block size = %d&bslash;n&quot;
+comma
+id|blksize
+)paren
+suffix:semicolon
 )brace
 r_if
 c_cond
@@ -1575,10 +1748,10 @@ c_func
 (paren
 l_string|&quot;VFS: Can&squot;t find a valid MSDOS filesystem on dev 0x%04x.&bslash;n&quot;
 comma
-id|s-&gt;s_dev
+id|sb-&gt;s_dev
 )paren
 suffix:semicolon
-id|s-&gt;s_dev
+id|sb-&gt;s_dev
 op_assign
 l_int|0
 suffix:semicolon
@@ -1586,14 +1759,14 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-id|s-&gt;s_magic
+id|sb-&gt;s_magic
 op_assign
 id|MSDOS_SUPER_MAGIC
 suffix:semicolon
 id|MSDOS_SB
 c_func
 (paren
-id|s
+id|sb
 )paren
 op_member_access_from_pointer
 id|name_check
@@ -1603,7 +1776,7 @@ suffix:semicolon
 id|MSDOS_SB
 c_func
 (paren
-id|s
+id|sb
 )paren
 op_member_access_from_pointer
 id|conversion
@@ -1611,7 +1784,7 @@ op_assign
 id|conversion
 suffix:semicolon
 multiline_comment|/* set up enough so that it can read an inode */
-id|s-&gt;s_op
+id|sb-&gt;s_op
 op_assign
 op_amp
 id|msdos_sops
@@ -1619,7 +1792,7 @@ suffix:semicolon
 id|MSDOS_SB
 c_func
 (paren
-id|s
+id|sb
 )paren
 op_member_access_from_pointer
 id|fs_uid
@@ -1629,7 +1802,7 @@ suffix:semicolon
 id|MSDOS_SB
 c_func
 (paren
-id|s
+id|sb
 )paren
 op_member_access_from_pointer
 id|fs_gid
@@ -1639,7 +1812,7 @@ suffix:semicolon
 id|MSDOS_SB
 c_func
 (paren
-id|s
+id|sb
 )paren
 op_member_access_from_pointer
 id|fs_umask
@@ -1649,7 +1822,7 @@ suffix:semicolon
 id|MSDOS_SB
 c_func
 (paren
-id|s
+id|sb
 )paren
 op_member_access_from_pointer
 id|quiet
@@ -1659,7 +1832,7 @@ suffix:semicolon
 id|MSDOS_SB
 c_func
 (paren
-id|s
+id|sb
 )paren
 op_member_access_from_pointer
 id|free_clusters
@@ -1671,7 +1844,7 @@ multiline_comment|/* don&squot;t know yet */
 id|MSDOS_SB
 c_func
 (paren
-id|s
+id|sb
 )paren
 op_member_access_from_pointer
 id|fat_wait
@@ -1681,7 +1854,7 @@ suffix:semicolon
 id|MSDOS_SB
 c_func
 (paren
-id|s
+id|sb
 )paren
 op_member_access_from_pointer
 id|fat_lock
@@ -1691,7 +1864,7 @@ suffix:semicolon
 id|MSDOS_SB
 c_func
 (paren
-id|s
+id|sb
 )paren
 op_member_access_from_pointer
 id|prev_free
@@ -1703,19 +1876,19 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|s-&gt;s_mounted
+id|sb-&gt;s_mounted
 op_assign
 id|iget
 c_func
 (paren
-id|s
+id|sb
 comma
 id|MSDOS_ROOT_INO
 )paren
 )paren
 )paren
 (brace
-id|s-&gt;s_dev
+id|sb-&gt;s_dev
 op_assign
 l_int|0
 suffix:semicolon
@@ -1734,7 +1907,7 @@ id|MOD_INC_USE_COUNT
 suffix:semicolon
 macro_line|#endif
 r_return
-id|s
+id|sb
 suffix:semicolon
 )brace
 DECL|function|msdos_statfs
@@ -2040,6 +2213,13 @@ op_star
 id|inode
 )paren
 (brace
+r_struct
+id|super_block
+op_star
+id|sb
+op_assign
+id|inode-&gt;i_sb
+suffix:semicolon
 r_struct
 id|buffer_head
 op_star
@@ -2494,10 +2674,17 @@ id|S_IFREG
 suffix:semicolon
 id|inode-&gt;i_op
 op_assign
+id|sb-&gt;s_blocksize
+op_eq
+l_int|1024
+ques
+c_cond
+op_amp
+id|msdos_file_inode_operations_1024
+suffix:colon
 op_amp
 id|msdos_file_inode_operations
 suffix:semicolon
-multiline_comment|/* Now can always bmap */
 id|MSDOS_I
 c_func
 (paren
@@ -2632,6 +2819,13 @@ op_star
 id|inode
 )paren
 (brace
+r_struct
+id|super_block
+op_star
+id|sb
+op_assign
+id|inode-&gt;i_sb
+suffix:semicolon
 r_struct
 id|buffer_head
 op_star

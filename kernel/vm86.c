@@ -19,9 +19,9 @@ DECL|macro|SP
 mdefine_line|#define SP(regs)&t;(*(unsigned short *)&amp;((regs)-&gt;esp))
 multiline_comment|/*&n; * virtual flags (16 and 32-bit versions)&n; */
 DECL|macro|VFLAGS
-mdefine_line|#define VFLAGS&t;(*(unsigned short *)&amp;(current-&gt;v86flags))
+mdefine_line|#define VFLAGS&t;(*(unsigned short *)&amp;(current-&gt;tss.v86flags))
 DECL|macro|VEFLAGS
-mdefine_line|#define VEFLAGS&t;(current-&gt;v86flags)
+mdefine_line|#define VEFLAGS&t;(current-&gt;tss.v86flags)
 DECL|macro|set_flags
 mdefine_line|#define set_flags(X,new,mask) &bslash;&n;((X) = ((X) &amp; ~(mask)) | ((new) &amp; (mask)))
 DECL|macro|SAFE_MASK
@@ -50,7 +50,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|current-&gt;vm86_info
+id|current-&gt;tss.vm86_info
 )paren
 (brace
 id|printk
@@ -75,14 +75,14 @@ id|VEFLAGS
 comma
 id|VIF_MASK
 op_or
-id|current-&gt;v86mask
+id|current-&gt;tss.v86mask
 )paren
 suffix:semicolon
 id|memcpy_tofs
 c_func
 (paren
 op_amp
-id|current-&gt;vm86_info-&gt;regs
+id|current-&gt;tss.vm86_info-&gt;regs
 comma
 id|regs
 comma
@@ -96,10 +96,10 @@ suffix:semicolon
 id|put_fs_long
 c_func
 (paren
-id|current-&gt;screen_bitmap
+id|current-&gt;tss.screen_bitmap
 comma
 op_amp
-id|current-&gt;vm86_info-&gt;screen_bitmap
+id|current-&gt;tss.vm86_info-&gt;screen_bitmap
 )paren
 suffix:semicolon
 id|tmp
@@ -351,7 +351,7 @@ id|info.cpu_type
 r_case
 id|CPU_286
 suffix:colon
-id|current-&gt;v86mask
+id|current-&gt;tss.v86mask
 op_assign
 l_int|0
 suffix:semicolon
@@ -360,7 +360,7 @@ suffix:semicolon
 r_case
 id|CPU_386
 suffix:colon
-id|current-&gt;v86mask
+id|current-&gt;tss.v86mask
 op_assign
 id|NT_MASK
 op_or
@@ -371,7 +371,7 @@ suffix:semicolon
 r_case
 id|CPU_486
 suffix:colon
-id|current-&gt;v86mask
+id|current-&gt;tss.v86mask
 op_assign
 id|AC_MASK
 op_or
@@ -383,7 +383,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|current-&gt;v86mask
+id|current-&gt;tss.v86mask
 op_assign
 id|ID_MASK
 op_or
@@ -413,11 +413,11 @@ r_int
 )paren
 id|pt_regs
 suffix:semicolon
-id|current-&gt;vm86_info
+id|current-&gt;tss.vm86_info
 op_assign
 id|v86
 suffix:semicolon
-id|current-&gt;screen_bitmap
+id|current-&gt;tss.screen_bitmap
 op_assign
 id|info.screen_bitmap
 suffix:semicolon
@@ -597,7 +597,7 @@ id|VEFLAGS
 comma
 id|eflags
 comma
-id|current-&gt;v86mask
+id|current-&gt;tss.v86mask
 )paren
 suffix:semicolon
 id|set_flags
@@ -648,7 +648,7 @@ id|VFLAGS
 comma
 id|flags
 comma
-id|current-&gt;v86mask
+id|current-&gt;tss.v86mask
 )paren
 suffix:semicolon
 id|set_flags
@@ -714,7 +714,7 @@ op_or
 (paren
 id|VEFLAGS
 op_amp
-id|current-&gt;v86mask
+id|current-&gt;tss.v86mask
 )paren
 suffix:semicolon
 )brace
@@ -837,7 +837,7 @@ c_func
 id|i
 comma
 op_amp
-id|current-&gt;vm86_info-&gt;int_revectored
+id|current-&gt;tss.vm86_info-&gt;int_revectored
 )paren
 )paren
 id|return_to_32bit
@@ -871,7 +871,7 @@ id|regs
 )paren
 comma
 op_amp
-id|current-&gt;vm86_info-&gt;int21_revectored
+id|current-&gt;tss.vm86_info-&gt;int21_revectored
 )paren
 )paren
 id|return_to_32bit

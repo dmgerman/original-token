@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &quot;msbuffer.h&quot;
 DECL|macro|PRINTK
 mdefine_line|#define PRINTK(x)
 multiline_comment|/* MS-DOS &quot;device special files&quot; */
@@ -738,6 +739,13 @@ op_star
 id|result
 )paren
 (brace
+r_struct
+id|super_block
+op_star
+id|sb
+op_assign
+id|dir-&gt;i_sb
+suffix:semicolon
 r_int
 id|ino
 comma
@@ -1173,6 +1181,13 @@ id|result
 )paren
 (brace
 r_struct
+id|super_block
+op_star
+id|sb
+op_assign
+id|dir-&gt;i_sb
+suffix:semicolon
+r_struct
 id|buffer_head
 op_star
 id|bh
@@ -1462,6 +1477,13 @@ id|result
 )paren
 (brace
 r_struct
+id|super_block
+op_star
+id|sb
+op_assign
+id|dir-&gt;i_sb
+suffix:semicolon
+r_struct
 id|buffer_head
 op_star
 id|bh
@@ -1721,6 +1743,13 @@ r_int
 id|mode
 )paren
 (brace
+r_struct
+id|super_block
+op_star
+id|sb
+op_assign
+id|dir-&gt;i_sb
+suffix:semicolon
 r_struct
 id|buffer_head
 op_star
@@ -2116,6 +2145,13 @@ op_star
 id|dir
 )paren
 (brace
+r_struct
+id|super_block
+op_star
+id|sb
+op_assign
+id|dir-&gt;i_sb
+suffix:semicolon
 id|loff_t
 id|pos
 suffix:semicolon
@@ -2259,6 +2295,13 @@ r_int
 id|len
 )paren
 (brace
+r_struct
+id|super_block
+op_star
+id|sb
+op_assign
+id|dir-&gt;i_sb
+suffix:semicolon
 r_int
 id|res
 comma
@@ -2520,6 +2563,13 @@ id|nospc
 )paren
 multiline_comment|/* Flag special file ? */
 (brace
+r_struct
+id|super_block
+op_star
+id|sb
+op_assign
+id|dir-&gt;i_sb
+suffix:semicolon
 r_int
 id|res
 comma
@@ -2797,6 +2847,13 @@ r_int
 id|old_ino
 )paren
 (brace
+r_struct
+id|super_block
+op_star
+id|sb
+op_assign
+id|old_dir-&gt;i_sb
+suffix:semicolon
 r_struct
 id|buffer_head
 op_star
@@ -3152,6 +3209,13 @@ r_int
 id|old_ino
 )paren
 (brace
+r_struct
+id|super_block
+op_star
+id|sb
+op_assign
+id|old_dir-&gt;i_sb
+suffix:semicolon
 r_struct
 id|buffer_head
 op_star
@@ -3995,6 +4059,13 @@ r_int
 id|new_len
 )paren
 (brace
+r_struct
+id|super_block
+op_star
+id|sb
+op_assign
+id|old_dir-&gt;i_sb
+suffix:semicolon
 r_char
 id|old_msdos_name
 (braket

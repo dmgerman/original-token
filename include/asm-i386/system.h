@@ -4,6 +4,147 @@ mdefine_line|#define __ASM_SYSTEM_H
 macro_line|#include &lt;asm/segment.h&gt;
 DECL|macro|move_to_user_mode
 mdefine_line|#define move_to_user_mode() &bslash;&n;__asm__ __volatile__ (&quot;movl %%esp,%%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl %%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushfl&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl %1&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl $1f&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;iret&bslash;n&quot; &bslash;&n;&t;&quot;1:&bslash;tmovl %0,%%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov %%ax,%%ds&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov %%ax,%%es&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov %%ax,%%fs&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov %%ax,%%gs&quot; &bslash;&n;&t;: /* no outputs */ :&quot;i&quot; (USER_DS), &quot;i&quot; (USER_CS):&quot;ax&quot;)
+multiline_comment|/*&n; * Entry into gdt where to find first TSS. GDT layout:&n; *   0 - nul&n; *   1 - kernel code segment&n; *   2 - kernel data segment&n; *   3 - user code segment&n; *   4 - user data segment&n; * ...&n; *   8 - TSS #0&n; *   9 - LDT #0&n; *  10 - TSS #1&n; *  11 - LDT #1&n; */
+DECL|macro|FIRST_TSS_ENTRY
+mdefine_line|#define FIRST_TSS_ENTRY 8
+DECL|macro|FIRST_LDT_ENTRY
+mdefine_line|#define FIRST_LDT_ENTRY (FIRST_TSS_ENTRY+1)
+DECL|macro|_TSS
+mdefine_line|#define _TSS(n) ((((unsigned long) n)&lt;&lt;4)+(FIRST_TSS_ENTRY&lt;&lt;3))
+DECL|macro|_LDT
+mdefine_line|#define _LDT(n) ((((unsigned long) n)&lt;&lt;4)+(FIRST_LDT_ENTRY&lt;&lt;3))
+DECL|macro|load_TR
+mdefine_line|#define load_TR(n) __asm__(&quot;ltr %%ax&quot;: /* no output */ :&quot;a&quot; (_TSS(n)))
+DECL|macro|load_ldt
+mdefine_line|#define load_ldt(n) __asm__(&quot;lldt %%ax&quot;: /* no output */ :&quot;a&quot; (_LDT(n)))
+DECL|macro|store_TR
+mdefine_line|#define store_TR(n) &bslash;&n;__asm__(&quot;str %%ax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;subl %2,%%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;shrl $4,%%eax&quot; &bslash;&n;&t;:&quot;=a&quot; (n) &bslash;&n;&t;:&quot;0&quot; (0),&quot;i&quot; (FIRST_TSS_ENTRY&lt;&lt;3))
+multiline_comment|/* This special macro can be used to load a debugging register */
+DECL|macro|loaddebug
+mdefine_line|#define loaddebug(register) &bslash;&n;&t;&t;__asm__(&quot;movl %0,%%edx&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;&quot;movl %%edx,%%db&quot; #register &quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;: /* no output */ &bslash;&n;&t;&t;&t;:&quot;m&quot; (current-&gt;debugreg[register]) &bslash;&n;&t;&t;&t;:&quot;dx&quot;);
+multiline_comment|/*&n; *&t;switch_to(n) should switch tasks to task nr n, first&n; * checking that n isn&squot;t the current task, in which case it does nothing.&n; * This also clears the TS-flag if the task we switched to has used&n; * the math co-processor latest.&n; *&n; * It also reloads the debug regs if necessary..&n; */
+DECL|macro|switch_to
+mdefine_line|#define switch_to(tsk) do { &bslash;&n;__asm__(&quot;cli&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;xchgl %%ecx,_current&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;ljmp %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;sti&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;cmpl %%ecx,_last_task_used_math&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jne 1f&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;clts&bslash;n&quot; &bslash;&n;&t;&quot;1:&quot; &bslash;&n;&t;: /* no output */ &bslash;&n;&t;:&quot;m&quot; (*(((char *)&amp;tsk-&gt;tss.tr)-4)), &bslash;&n;&t; &quot;c&quot; (tsk) &bslash;&n;&t;:&quot;cx&quot;); &bslash;&n;&t;/* Now maybe reload the debug registers */ &bslash;&n;&t;if(current-&gt;debugreg[7]){ &bslash;&n;&t;&t;loaddebug(0); &bslash;&n;&t;&t;loaddebug(1); &bslash;&n;&t;&t;loaddebug(2); &bslash;&n;&t;&t;loaddebug(3); &bslash;&n;&t;&t;loaddebug(6); &bslash;&n;&t;} &bslash;&n;} while (0)
+DECL|macro|_set_base
+mdefine_line|#define _set_base(addr,base) &bslash;&n;__asm__(&quot;movw %%dx,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;rorl $16,%%edx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %%dl,%1&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %%dh,%2&quot; &bslash;&n;&t;: /* no output */ &bslash;&n;&t;:&quot;m&quot; (*((addr)+2)), &bslash;&n;&t; &quot;m&quot; (*((addr)+4)), &bslash;&n;&t; &quot;m&quot; (*((addr)+7)), &bslash;&n;&t; &quot;d&quot; (base) &bslash;&n;&t;:&quot;dx&quot;)
+DECL|macro|_set_limit
+mdefine_line|#define _set_limit(addr,limit) &bslash;&n;__asm__(&quot;movw %%dx,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;rorl $16,%%edx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %1,%%dh&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;andb $0xf0,%%dh&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;orb %%dh,%%dl&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %%dl,%1&quot; &bslash;&n;&t;: /* no output */ &bslash;&n;&t;:&quot;m&quot; (*(addr)), &bslash;&n;&t; &quot;m&quot; (*((addr)+6)), &bslash;&n;&t; &quot;d&quot; (limit) &bslash;&n;&t;:&quot;dx&quot;)
+DECL|macro|set_base
+mdefine_line|#define set_base(ldt,base) _set_base( ((char *)&amp;(ldt)) , base )
+DECL|macro|set_limit
+mdefine_line|#define set_limit(ldt,limit) _set_limit( ((char *)&amp;(ldt)) , (limit-1)&gt;&gt;12 )
+DECL|function|_get_base
+r_static
+r_inline
+r_int
+r_int
+id|_get_base
+c_func
+(paren
+r_char
+op_star
+id|addr
+)paren
+(brace
+r_int
+r_int
+id|__base
+suffix:semicolon
+id|__asm__
+c_func
+(paren
+l_string|&quot;movb %3,%%dh&bslash;n&bslash;t&quot;
+l_string|&quot;movb %2,%%dl&bslash;n&bslash;t&quot;
+l_string|&quot;shll $16,%%edx&bslash;n&bslash;t&quot;
+l_string|&quot;movw %1,%%dx&quot;
+suffix:colon
+l_string|&quot;=&amp;d&quot;
+(paren
+id|__base
+)paren
+suffix:colon
+l_string|&quot;m&quot;
+(paren
+op_star
+(paren
+(paren
+id|addr
+)paren
+op_plus
+l_int|2
+)paren
+)paren
+comma
+l_string|&quot;m&quot;
+(paren
+op_star
+(paren
+(paren
+id|addr
+)paren
+op_plus
+l_int|4
+)paren
+)paren
+comma
+l_string|&quot;m&quot;
+(paren
+op_star
+(paren
+(paren
+id|addr
+)paren
+op_plus
+l_int|7
+)paren
+)paren
+)paren
+suffix:semicolon
+r_return
+id|__base
+suffix:semicolon
+)brace
+DECL|macro|get_base
+mdefine_line|#define get_base(ldt) _get_base( ((char *)&amp;(ldt)) )
+DECL|function|get_limit
+r_static
+r_inline
+r_int
+r_int
+id|get_limit
+c_func
+(paren
+r_int
+r_int
+id|segment
+)paren
+(brace
+r_int
+r_int
+id|__limit
+suffix:semicolon
+id|__asm__
+c_func
+(paren
+l_string|&quot;lsll %1,%0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|__limit
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|segment
+)paren
+)paren
+suffix:semicolon
+r_return
+id|__limit
+op_plus
+l_int|1
+suffix:semicolon
+)brace
 DECL|macro|nop
 mdefine_line|#define nop() __asm__ __volatile__ (&quot;nop&quot;)
 multiline_comment|/*&n; * Clear and set &squot;TS&squot; bit respectively&n; */
@@ -11,6 +152,141 @@ DECL|macro|clts
 mdefine_line|#define clts() __asm__ __volatile__ (&quot;clts&quot;)
 DECL|macro|stts
 mdefine_line|#define stts() &bslash;&n;__asm__ __volatile__ ( &bslash;&n;&t;&quot;movl %%cr0,%%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;orl $8,%%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movl %%eax,%%cr0&quot; &bslash;&n;&t;: /* no outputs */ &bslash;&n;&t;: /* no inputs */ &bslash;&n;&t;:&quot;ax&quot;)
+DECL|function|xchg_u8
+r_extern
+r_inline
+r_int
+r_int
+id|xchg_u8
+c_func
+(paren
+r_char
+op_star
+id|m
+comma
+r_int
+r_int
+id|val
+)paren
+(brace
+id|__asm__
+c_func
+(paren
+l_string|&quot;xchgb %b0,%1&quot;
+suffix:colon
+l_string|&quot;=q&quot;
+(paren
+id|val
+)paren
+comma
+l_string|&quot;=m&quot;
+(paren
+op_star
+id|m
+)paren
+suffix:colon
+l_string|&quot;0&quot;
+(paren
+id|val
+)paren
+suffix:colon
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+r_return
+id|val
+suffix:semicolon
+)brace
+DECL|function|xchg_u16
+r_extern
+r_inline
+r_int
+r_int
+id|xchg_u16
+c_func
+(paren
+r_int
+op_star
+id|m
+comma
+r_int
+r_int
+id|val
+)paren
+(brace
+id|__asm__
+c_func
+(paren
+l_string|&quot;xchgw %w0,%1&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|val
+)paren
+comma
+l_string|&quot;=m&quot;
+(paren
+op_star
+id|m
+)paren
+suffix:colon
+l_string|&quot;0&quot;
+(paren
+id|val
+)paren
+suffix:colon
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+r_return
+id|val
+suffix:semicolon
+)brace
+DECL|function|xchg_u32
+r_extern
+r_inline
+r_int
+r_int
+id|xchg_u32
+c_func
+(paren
+r_int
+op_star
+id|m
+comma
+r_int
+r_int
+id|val
+)paren
+(brace
+id|__asm__
+c_func
+(paren
+l_string|&quot;xchgl %0,%1&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|val
+)paren
+comma
+l_string|&quot;=m&quot;
+(paren
+op_star
+id|m
+)paren
+suffix:colon
+l_string|&quot;0&quot;
+(paren
+id|val
+)paren
+suffix:colon
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+r_return
+id|val
+suffix:semicolon
+)brace
 DECL|function|tas
 r_extern
 r_inline
@@ -23,33 +299,49 @@ op_star
 id|m
 )paren
 (brace
-r_char
-id|res
-suffix:semicolon
-id|__asm__
+r_return
+id|xchg_u8
 c_func
 (paren
-l_string|&quot;xchgb %0,%1&quot;
-suffix:colon
-l_string|&quot;=q&quot;
-(paren
-id|res
-)paren
-comma
-l_string|&quot;=m&quot;
-(paren
-op_star
 id|m
-)paren
-suffix:colon
-l_string|&quot;0&quot;
-(paren
-l_int|0x1
-)paren
+comma
+l_int|1
 )paren
 suffix:semicolon
+)brace
+DECL|function|xchg_ptr
+r_extern
+r_inline
+r_void
+op_star
+id|xchg_ptr
+c_func
+(paren
+r_void
+op_star
+id|m
+comma
+r_void
+op_star
+id|val
+)paren
+(brace
 r_return
-id|res
+(paren
+r_void
+op_star
+)paren
+id|xchg_u32
+c_func
+(paren
+id|m
+comma
+(paren
+r_int
+r_int
+)paren
+id|val
+)paren
 suffix:semicolon
 )brace
 DECL|macro|sti
@@ -80,5 +372,11 @@ DECL|macro|set_tss_desc
 mdefine_line|#define set_tss_desc(n,addr) _set_tssldt_desc(((char *) (n)),((int)(addr)),235,&quot;0x89&quot;)
 DECL|macro|set_ldt_desc
 mdefine_line|#define set_ldt_desc(n,addr,size) &bslash;&n;&t;_set_tssldt_desc(((char *) (n)),((int)(addr)),((size &lt;&lt; 3) - 1),&quot;0x82&quot;)
+multiline_comment|/*&n; * This is the ldt that every process will get unless we need&n; * something other than this.&n; */
+r_extern
+r_struct
+id|desc_struct
+id|default_ldt
+suffix:semicolon
 macro_line|#endif
 eof

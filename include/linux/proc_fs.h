@@ -70,7 +70,7 @@ id|PROC_IOPORTS
 comma
 DECL|enumerator|PROC_PROFILE
 id|PROC_PROFILE
-multiline_comment|/* wether enabled or not */
+multiline_comment|/* whether enabled or not */
 )brace
 suffix:semicolon
 DECL|enum|pid_directory_inos

@@ -5,7 +5,7 @@ multiline_comment|/*&n; * _xx is ok: it doesn&squot;t pollute the POSIX namespac
 multiline_comment|/* NOTE: I will have to change these when the V9 sparcs come into play,&n; *       however this won&squot;t be for a while.&n; */
 DECL|typedef|__s8
 r_typedef
-r_int
+id|__signed__
 r_char
 id|__s8
 suffix:semicolon
@@ -17,7 +17,7 @@ id|__u8
 suffix:semicolon
 DECL|typedef|__s16
 r_typedef
-r_int
+id|__signed__
 r_int
 id|__s16
 suffix:semicolon
@@ -29,7 +29,7 @@ id|__u16
 suffix:semicolon
 DECL|typedef|__s32
 r_typedef
-r_int
+id|__signed__
 r_int
 id|__s32
 suffix:semicolon
@@ -40,9 +40,10 @@ r_int
 id|__u32
 suffix:semicolon
 multiline_comment|/* Only 32-bit sparcs for now so.... */
+macro_line|#if defined(__GNUC__) &amp;&amp; !defined(__STRICT_ANSI__)
 DECL|typedef|__s64
 r_typedef
-r_int
+id|__signed__
 r_int
 r_int
 id|__s64
@@ -54,6 +55,7 @@ r_int
 r_int
 id|__s64
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef __KERNEL__
 DECL|typedef|s8
 r_typedef

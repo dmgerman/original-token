@@ -2,8 +2,6 @@ macro_line|#ifndef _KBD_KERN_H
 DECL|macro|_KBD_KERN_H
 mdefine_line|#define _KBD_KERN_H
 macro_line|#include &lt;linux/interrupt.h&gt;
-DECL|macro|set_leds
-mdefine_line|#define set_leds() mark_bh(KEYBOARD_BH)
 macro_line|#include &lt;linux/keyboard.h&gt;
 r_extern
 r_char
@@ -168,6 +166,34 @@ r_int
 id|led
 )paren
 suffix:semicolon
+DECL|function|set_leds
+r_extern
+r_inline
+r_void
+id|set_leds
+c_func
+(paren
+r_void
+)paren
+(brace
+multiline_comment|/* con_init calls (indirectly) set_leds before kbd_init&n;          has been called; ignore these early calls */
+r_if
+c_cond
+(paren
+id|bh_base
+(braket
+id|KEYBOARD_BH
+)braket
+dot
+id|routine
+)paren
+id|mark_bh
+c_func
+(paren
+id|KEYBOARD_BH
+)paren
+suffix:semicolon
+)brace
 DECL|function|vc_kbd_mode
 r_extern
 r_inline

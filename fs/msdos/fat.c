@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &quot;msbuffer.h&quot;
 DECL|variable|fat_cache
 DECL|variable|cache
 r_static
@@ -134,7 +135,7 @@ op_logical_neg
 (paren
 id|bh
 op_assign
-id|msdos_sread
+id|bread
 c_func
 (paren
 id|sb-&gt;s_dev
@@ -152,6 +153,8 @@ id|first
 op_rshift
 id|SECTOR_BITS
 )paren
+comma
+id|SECTOR_SIZE
 )paren
 )paren
 )paren
@@ -194,7 +197,7 @@ op_logical_neg
 (paren
 id|bh2
 op_assign
-id|msdos_sread
+id|bread
 c_func
 (paren
 id|sb-&gt;s_dev
@@ -212,6 +215,8 @@ id|last
 op_rshift
 id|SECTOR_BITS
 )paren
+comma
+id|SECTOR_SIZE
 )paren
 )paren
 )paren
@@ -555,7 +560,7 @@ op_logical_neg
 (paren
 id|c_bh
 op_assign
-id|msdos_sread
+id|bread
 c_func
 (paren
 id|sb-&gt;s_dev
@@ -583,6 +588,8 @@ op_member_access_from_pointer
 id|fat_length
 op_star
 id|copy
+comma
+id|SECTOR_SIZE
 )paren
 )paren
 )paren
@@ -621,7 +628,7 @@ op_logical_neg
 (paren
 id|c_bh2
 op_assign
-id|msdos_sread
+id|bread
 c_func
 (paren
 id|sb-&gt;s_dev
@@ -651,6 +658,8 @@ op_star
 id|copy
 op_plus
 l_int|1
+comma
+id|SECTOR_SIZE
 )paren
 )paren
 )paren

@@ -4,56 +4,6 @@ mdefine_line|#define _LINUX_SCHED_H
 multiline_comment|/*&n; * define DEBUG if you want the wait-queues to have some extra&n; * debugging code. It&squot;s not normally used, but might catch some&n; * wait-queue coding errors.&n; *&n; *  #define DEBUG&n; */
 DECL|macro|HZ
 mdefine_line|#define HZ 100
-multiline_comment|/*&n; * System setup and hardware bug flags..&n; */
-r_extern
-r_char
-id|hard_math
-suffix:semicolon
-r_extern
-r_char
-id|x86
-suffix:semicolon
-multiline_comment|/* lower 4 bits */
-r_extern
-r_char
-id|x86_vendor_id
-(braket
-l_int|13
-)braket
-suffix:semicolon
-r_extern
-r_char
-id|x86_model
-suffix:semicolon
-multiline_comment|/* lower 4 bits */
-r_extern
-r_char
-id|x86_mask
-suffix:semicolon
-multiline_comment|/* lower 4 bits */
-r_extern
-r_int
-id|x86_capability
-suffix:semicolon
-multiline_comment|/* field of flags */
-r_extern
-r_int
-id|fdiv_bug
-suffix:semicolon
-r_extern
-r_char
-id|ignore_irq13
-suffix:semicolon
-r_extern
-r_char
-id|wp_works_ok
-suffix:semicolon
-multiline_comment|/* doesn&squot;t work on a 386 */
-r_extern
-r_char
-id|hlt_works_ok
-suffix:semicolon
-multiline_comment|/* problems on some 486Dx4&squot;s and old 386&squot;s */
 r_extern
 r_int
 r_int
@@ -64,27 +14,10 @@ r_int
 r_int
 id|event
 suffix:semicolon
-DECL|macro|start_bh_atomic
-mdefine_line|#define start_bh_atomic() &bslash;&n;__asm__ __volatile__(&quot;incl _intr_count&quot;)
-DECL|macro|end_bh_atomic
-mdefine_line|#define end_bh_atomic() &bslash;&n;__asm__ __volatile__(&quot;decl _intr_count&quot;)
-multiline_comment|/*&n; * Bus types (default is ISA, but people can check others with these..)&n; * MCA_bus hardcoded to 0 for now.&n; */
-r_extern
-r_int
-id|EISA_bus
-suffix:semicolon
-DECL|macro|MCA_bus
-mdefine_line|#define MCA_bus 0
 macro_line|#include &lt;linux/binfmts.h&gt;
 macro_line|#include &lt;linux/personality.h&gt;
 macro_line|#include &lt;linux/tasks.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-multiline_comment|/*&n; * User space process size: 3GB. This is hardcoded into a few places,&n; * so don&squot;t change it unless you know what you are doing.&n; */
-DECL|macro|TASK_SIZE
-mdefine_line|#define TASK_SIZE&t;0xc0000000
-multiline_comment|/*&n; * Size of io_bitmap in longwords: 32 is ports 0-0x3ff.&n; */
-DECL|macro|IO_BITMAP_SIZE
-mdefine_line|#define IO_BITMAP_SIZE&t;32
 multiline_comment|/*&n; * These are the constant used to fake the fixed-point load-average&n; * counting. Some notes:&n; *  - 11 bit fractions expand to 22 bits by the multiplies: this gives&n; *    a load-average precision of 10 bits integer + 11 bits fractional&n; *  - if you want to count load-averages more often, you need more&n; *    precision, or rounding will get you. With 2-second counting freq,&n; *    the EXP_n values would be 1981, 2034 and 2043 if still using only&n; *    11 bit fractions.&n; */
 r_extern
 r_int
@@ -126,6 +59,7 @@ macro_line|#include &lt;linux/resource.h&gt;
 macro_line|#include &lt;linux/vm86.h&gt;
 macro_line|#include &lt;linux/math_emu.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
+macro_line|#include &lt;asm/processor.h&gt;
 DECL|macro|TASK_RUNNING
 mdefine_line|#define TASK_RUNNING&t;&t;0
 DECL|macro|TASK_INTERRUPTIBLE
@@ -176,326 +110,6 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif /* __KERNEL__ */
-DECL|struct|i387_hard_struct
-r_struct
-id|i387_hard_struct
-(brace
-DECL|member|cwd
-r_int
-id|cwd
-suffix:semicolon
-DECL|member|swd
-r_int
-id|swd
-suffix:semicolon
-DECL|member|twd
-r_int
-id|twd
-suffix:semicolon
-DECL|member|fip
-r_int
-id|fip
-suffix:semicolon
-DECL|member|fcs
-r_int
-id|fcs
-suffix:semicolon
-DECL|member|foo
-r_int
-id|foo
-suffix:semicolon
-DECL|member|fos
-r_int
-id|fos
-suffix:semicolon
-DECL|member|st_space
-r_int
-id|st_space
-(braket
-l_int|20
-)braket
-suffix:semicolon
-multiline_comment|/* 8*10 bytes for each FP-reg = 80 bytes */
-)brace
-suffix:semicolon
-DECL|struct|i387_soft_struct
-r_struct
-id|i387_soft_struct
-(brace
-DECL|member|cwd
-r_int
-id|cwd
-suffix:semicolon
-DECL|member|swd
-r_int
-id|swd
-suffix:semicolon
-DECL|member|twd
-r_int
-id|twd
-suffix:semicolon
-DECL|member|fip
-r_int
-id|fip
-suffix:semicolon
-DECL|member|fcs
-r_int
-id|fcs
-suffix:semicolon
-DECL|member|foo
-r_int
-id|foo
-suffix:semicolon
-DECL|member|fos
-r_int
-id|fos
-suffix:semicolon
-DECL|member|top
-r_int
-id|top
-suffix:semicolon
-DECL|member|regs
-r_struct
-id|fpu_reg
-id|regs
-(braket
-l_int|8
-)braket
-suffix:semicolon
-multiline_comment|/* 8*16 bytes for each FP-reg = 128 bytes */
-DECL|member|lookahead
-r_int
-r_char
-id|lookahead
-suffix:semicolon
-DECL|member|info
-r_struct
-id|info
-op_star
-id|info
-suffix:semicolon
-DECL|member|entry_eip
-r_int
-r_int
-id|entry_eip
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|union|i387_union
-r_union
-id|i387_union
-(brace
-DECL|member|hard
-r_struct
-id|i387_hard_struct
-id|hard
-suffix:semicolon
-DECL|member|soft
-r_struct
-id|i387_soft_struct
-id|soft
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|struct|tss_struct
-r_struct
-id|tss_struct
-(brace
-DECL|member|back_link
-DECL|member|__blh
-r_int
-r_int
-id|back_link
-comma
-id|__blh
-suffix:semicolon
-DECL|member|esp0
-r_int
-r_int
-id|esp0
-suffix:semicolon
-DECL|member|ss0
-DECL|member|__ss0h
-r_int
-r_int
-id|ss0
-comma
-id|__ss0h
-suffix:semicolon
-DECL|member|esp1
-r_int
-r_int
-id|esp1
-suffix:semicolon
-DECL|member|ss1
-DECL|member|__ss1h
-r_int
-r_int
-id|ss1
-comma
-id|__ss1h
-suffix:semicolon
-DECL|member|esp2
-r_int
-r_int
-id|esp2
-suffix:semicolon
-DECL|member|ss2
-DECL|member|__ss2h
-r_int
-r_int
-id|ss2
-comma
-id|__ss2h
-suffix:semicolon
-DECL|member|cr3
-r_int
-r_int
-id|cr3
-suffix:semicolon
-DECL|member|eip
-r_int
-r_int
-id|eip
-suffix:semicolon
-DECL|member|eflags
-r_int
-r_int
-id|eflags
-suffix:semicolon
-DECL|member|eax
-DECL|member|ecx
-DECL|member|edx
-DECL|member|ebx
-r_int
-r_int
-id|eax
-comma
-id|ecx
-comma
-id|edx
-comma
-id|ebx
-suffix:semicolon
-DECL|member|esp
-r_int
-r_int
-id|esp
-suffix:semicolon
-DECL|member|ebp
-r_int
-r_int
-id|ebp
-suffix:semicolon
-DECL|member|esi
-r_int
-r_int
-id|esi
-suffix:semicolon
-DECL|member|edi
-r_int
-r_int
-id|edi
-suffix:semicolon
-DECL|member|es
-DECL|member|__esh
-r_int
-r_int
-id|es
-comma
-id|__esh
-suffix:semicolon
-DECL|member|cs
-DECL|member|__csh
-r_int
-r_int
-id|cs
-comma
-id|__csh
-suffix:semicolon
-DECL|member|ss
-DECL|member|__ssh
-r_int
-r_int
-id|ss
-comma
-id|__ssh
-suffix:semicolon
-DECL|member|ds
-DECL|member|__dsh
-r_int
-r_int
-id|ds
-comma
-id|__dsh
-suffix:semicolon
-DECL|member|fs
-DECL|member|__fsh
-r_int
-r_int
-id|fs
-comma
-id|__fsh
-suffix:semicolon
-DECL|member|gs
-DECL|member|__gsh
-r_int
-r_int
-id|gs
-comma
-id|__gsh
-suffix:semicolon
-DECL|member|ldt
-DECL|member|__ldth
-r_int
-r_int
-id|ldt
-comma
-id|__ldth
-suffix:semicolon
-DECL|member|trace
-DECL|member|bitmap
-r_int
-r_int
-id|trace
-comma
-id|bitmap
-suffix:semicolon
-DECL|member|io_bitmap
-r_int
-r_int
-id|io_bitmap
-(braket
-id|IO_BITMAP_SIZE
-op_plus
-l_int|1
-)braket
-suffix:semicolon
-DECL|member|tr
-r_int
-r_int
-id|tr
-suffix:semicolon
-DECL|member|cr2
-DECL|member|trap_no
-DECL|member|error_code
-r_int
-r_int
-id|cr2
-comma
-id|trap_no
-comma
-id|error_code
-suffix:semicolon
-DECL|member|i387
-r_union
-id|i387_union
-id|i387
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|macro|INIT_TSS
-mdefine_line|#define INIT_TSS  { &bslash;&n;&t;0,0, &bslash;&n;&t;sizeof(init_kernel_stack) + (long) &amp;init_kernel_stack, &bslash;&n;&t;KERNEL_DS, 0, &bslash;&n;&t;0,0,0,0,0,0, &bslash;&n;&t;(long) &amp;swapper_pg_dir, &bslash;&n;&t;0,0,0,0,0,0,0,0,0,0, &bslash;&n;&t;USER_DS,0,USER_DS,0,USER_DS,0,USER_DS,0,USER_DS,0,USER_DS,0, &bslash;&n;&t;_LDT(0),0, &bslash;&n;&t;0, 0x8000, &bslash;&n;&t;{~0, }, /* ioperm */ &bslash;&n;&t;_TSS(0), 0, 0,0, &bslash;&n;&t;{ { 0, }, }  /* 387 state */ &bslash;&n;}
 DECL|struct|files_struct
 r_struct
 id|files_struct
@@ -909,29 +523,6 @@ id|comm
 l_int|16
 )braket
 suffix:semicolon
-multiline_comment|/* virtual 86 mode stuff */
-DECL|member|vm86_info
-r_struct
-id|vm86_struct
-op_star
-id|vm86_info
-suffix:semicolon
-DECL|member|screen_bitmap
-r_int
-r_int
-id|screen_bitmap
-suffix:semicolon
-DECL|member|v86flags
-DECL|member|v86mask
-DECL|member|v86mode
-r_int
-r_int
-id|v86flags
-comma
-id|v86mask
-comma
-id|v86mode
-suffix:semicolon
 multiline_comment|/* file system info */
 DECL|member|link_count
 r_int
@@ -961,7 +552,7 @@ suffix:semicolon
 multiline_comment|/* tss for this task */
 DECL|member|tss
 r_struct
-id|tss_struct
+id|thread_struct
 id|tss
 suffix:semicolon
 multiline_comment|/* filesystem information */
@@ -1010,7 +601,7 @@ DECL|macro|COPYFD
 mdefine_line|#define COPYFD&t;&t;0x00000200&t;/* set if fd&squot;s should be copied, not shared (NI) */
 multiline_comment|/*&n; *  INIT_TASK is used to set up the first task table, touch at&n; * your own risk!. Base=0, limit=0x1fffff (=2MB)&n; */
 DECL|macro|INIT_TASK
-mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,15,15,0,0,0,0, &bslash;&n;/* debugregs */ { 0, },            &bslash;&n;/* exec domain */&amp;default_exec_domain, &bslash;&n;/* binfmt */&t;NULL, &bslash;&n;/* schedlink */&t;&amp;init_task,&amp;init_task, &bslash;&n;/* signals */&t;{{ 0, },}, &bslash;&n;/* stack */&t;0,(unsigned long) &amp;init_kernel_stack, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0, &bslash;&n;/* suppl grps*/ {NOGROUP,}, &bslash;&n;/* proc links*/ &amp;init_task,&amp;init_task,NULL,NULL,NULL,NULL, &bslash;&n;/* uid etc */&t;0,0,0,0,0,0,0,0, &bslash;&n;/* timeout */&t;0,0,0,0,0,0,0,0,0,0,0,0, &bslash;&n;/* rlimits */   { {LONG_MAX, LONG_MAX}, {LONG_MAX, LONG_MAX},  &bslash;&n;&t;&t;  {LONG_MAX, LONG_MAX}, {LONG_MAX, LONG_MAX},  &bslash;&n;&t;&t;  {       0, LONG_MAX}, {LONG_MAX, LONG_MAX}}, &bslash;&n;/* math */&t;0, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* vm86_info */&t;NULL, 0, 0, 0, 0, &bslash;&n;/* fs info */&t;0,NULL, &bslash;&n;/* ipc */&t;NULL, &bslash;&n;/* ldt */&t;NULL, &bslash;&n;/* tss */&t;INIT_TSS, &bslash;&n;/* fs */&t;{ INIT_FS }, &bslash;&n;/* files */&t;{ INIT_FILES }, &bslash;&n;/* mm */&t;{ INIT_MM } &bslash;&n;}
+mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,15,15,0,0,0,0, &bslash;&n;/* debugregs */ { 0, },            &bslash;&n;/* exec domain */&amp;default_exec_domain, &bslash;&n;/* binfmt */&t;NULL, &bslash;&n;/* schedlink */&t;&amp;init_task,&amp;init_task, &bslash;&n;/* signals */&t;{{ 0, },}, &bslash;&n;/* stack */&t;0,(unsigned long) &amp;init_kernel_stack, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0, &bslash;&n;/* suppl grps*/ {NOGROUP,}, &bslash;&n;/* proc links*/ &amp;init_task,&amp;init_task,NULL,NULL,NULL,NULL, &bslash;&n;/* uid etc */&t;0,0,0,0,0,0,0,0, &bslash;&n;/* timeout */&t;0,0,0,0,0,0,0,0,0,0,0,0, &bslash;&n;/* rlimits */   { {LONG_MAX, LONG_MAX}, {LONG_MAX, LONG_MAX},  &bslash;&n;&t;&t;  {LONG_MAX, LONG_MAX}, {LONG_MAX, LONG_MAX},  &bslash;&n;&t;&t;  {       0, LONG_MAX}, {LONG_MAX, LONG_MAX}}, &bslash;&n;/* math */&t;0, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* fs info */&t;0,NULL, &bslash;&n;/* ipc */&t;NULL, &bslash;&n;/* ldt */&t;NULL, &bslash;&n;/* tss */&t;INIT_TSS, &bslash;&n;/* fs */&t;{ INIT_FS }, &bslash;&n;/* files */&t;{ INIT_FILES }, &bslash;&n;/* mm */&t;{ INIT_MM } &bslash;&n;}
 macro_line|#ifdef __KERNEL__
 r_extern
 r_struct
@@ -1189,32 +780,6 @@ r_int
 id|irq
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Entry into gdt where to find first TSS. GDT layout:&n; *   0 - nul&n; *   1 - kernel code segment&n; *   2 - kernel data segment&n; *   3 - user code segment&n; *   4 - user data segment&n; * ...&n; *   8 - TSS #0&n; *   9 - LDT #0&n; *  10 - TSS #1&n; *  11 - LDT #1&n; */
-DECL|macro|FIRST_TSS_ENTRY
-mdefine_line|#define FIRST_TSS_ENTRY 8
-DECL|macro|FIRST_LDT_ENTRY
-mdefine_line|#define FIRST_LDT_ENTRY (FIRST_TSS_ENTRY+1)
-DECL|macro|_TSS
-mdefine_line|#define _TSS(n) ((((unsigned long) n)&lt;&lt;4)+(FIRST_TSS_ENTRY&lt;&lt;3))
-DECL|macro|_LDT
-mdefine_line|#define _LDT(n) ((((unsigned long) n)&lt;&lt;4)+(FIRST_LDT_ENTRY&lt;&lt;3))
-DECL|macro|load_TR
-mdefine_line|#define load_TR(n) __asm__(&quot;ltr %%ax&quot;: /* no output */ :&quot;a&quot; (_TSS(n)))
-DECL|macro|load_ldt
-mdefine_line|#define load_ldt(n) __asm__(&quot;lldt %%ax&quot;: /* no output */ :&quot;a&quot; (_LDT(n)))
-DECL|macro|store_TR
-mdefine_line|#define store_TR(n) &bslash;&n;__asm__(&quot;str %%ax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;subl %2,%%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;shrl $4,%%eax&quot; &bslash;&n;&t;:&quot;=a&quot; (n) &bslash;&n;&t;:&quot;0&quot; (0),&quot;i&quot; (FIRST_TSS_ENTRY&lt;&lt;3))
-multiline_comment|/*&n; *&t;switch_to(n) should switch tasks to task nr n, first&n; * checking that n isn&squot;t the current task, in which case it does nothing.&n; * This also clears the TS-flag if the task we switched to has used&n; * tha math co-processor latest.&n; */
-DECL|macro|switch_to
-mdefine_line|#define switch_to(tsk) &bslash;&n;__asm__(&quot;cli&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;xchgl %%ecx,_current&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;ljmp %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;sti&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;cmpl %%ecx,_last_task_used_math&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jne 1f&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;clts&bslash;n&quot; &bslash;&n;&t;&quot;1:&quot; &bslash;&n;&t;: /* no output */ &bslash;&n;&t;:&quot;m&quot; (*(((char *)&amp;tsk-&gt;tss.tr)-4)), &bslash;&n;&t; &quot;c&quot; (tsk) &bslash;&n;&t;:&quot;cx&quot;)
-DECL|macro|_set_base
-mdefine_line|#define _set_base(addr,base) &bslash;&n;__asm__(&quot;movw %%dx,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;rorl $16,%%edx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %%dl,%1&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %%dh,%2&quot; &bslash;&n;&t;: /* no output */ &bslash;&n;&t;:&quot;m&quot; (*((addr)+2)), &bslash;&n;&t; &quot;m&quot; (*((addr)+4)), &bslash;&n;&t; &quot;m&quot; (*((addr)+7)), &bslash;&n;&t; &quot;d&quot; (base) &bslash;&n;&t;:&quot;dx&quot;)
-DECL|macro|_set_limit
-mdefine_line|#define _set_limit(addr,limit) &bslash;&n;__asm__(&quot;movw %%dx,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;rorl $16,%%edx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %1,%%dh&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;andb $0xf0,%%dh&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;orb %%dh,%%dl&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %%dl,%1&quot; &bslash;&n;&t;: /* no output */ &bslash;&n;&t;:&quot;m&quot; (*(addr)), &bslash;&n;&t; &quot;m&quot; (*((addr)+6)), &bslash;&n;&t; &quot;d&quot; (limit) &bslash;&n;&t;:&quot;dx&quot;)
-DECL|macro|set_base
-mdefine_line|#define set_base(ldt,base) _set_base( ((char *)&amp;(ldt)) , base )
-DECL|macro|set_limit
-mdefine_line|#define set_limit(ldt,limit) _set_limit( ((char *)&amp;(ldt)) , (limit-1)&gt;&gt;12 )
 multiline_comment|/*&n; * The wait-queues are circular lists, and you have to be *very* sure&n; * to keep them correct. Use only these two functions to add/remove&n; * entries in the queues.&n; */
 DECL|function|add_wait_queue
 r_extern
@@ -1661,133 +1226,12 @@ id|sem-&gt;wait
 )paren
 suffix:semicolon
 )brace
-DECL|function|_get_base
-r_static
-r_inline
-r_int
-r_int
-id|_get_base
-c_func
-(paren
-r_char
-op_star
-id|addr
-)paren
-(brace
-r_int
-r_int
-id|__base
-suffix:semicolon
-id|__asm__
-c_func
-(paren
-l_string|&quot;movb %3,%%dh&bslash;n&bslash;t&quot;
-l_string|&quot;movb %2,%%dl&bslash;n&bslash;t&quot;
-l_string|&quot;shll $16,%%edx&bslash;n&bslash;t&quot;
-l_string|&quot;movw %1,%%dx&quot;
-suffix:colon
-l_string|&quot;=&amp;d&quot;
-(paren
-id|__base
-)paren
-suffix:colon
-l_string|&quot;m&quot;
-(paren
-op_star
-(paren
-(paren
-id|addr
-)paren
-op_plus
-l_int|2
-)paren
-)paren
-comma
-l_string|&quot;m&quot;
-(paren
-op_star
-(paren
-(paren
-id|addr
-)paren
-op_plus
-l_int|4
-)paren
-)paren
-comma
-l_string|&quot;m&quot;
-(paren
-op_star
-(paren
-(paren
-id|addr
-)paren
-op_plus
-l_int|7
-)paren
-)paren
-)paren
-suffix:semicolon
-r_return
-id|__base
-suffix:semicolon
-)brace
-DECL|macro|get_base
-mdefine_line|#define get_base(ldt) _get_base( ((char *)&amp;(ldt)) )
-DECL|function|get_limit
-r_static
-r_inline
-r_int
-r_int
-id|get_limit
-c_func
-(paren
-r_int
-r_int
-id|segment
-)paren
-(brace
-r_int
-r_int
-id|__limit
-suffix:semicolon
-id|__asm__
-c_func
-(paren
-l_string|&quot;lsll %1,%0&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|__limit
-)paren
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-id|segment
-)paren
-)paren
-suffix:semicolon
-r_return
-id|__limit
-op_plus
-l_int|1
-suffix:semicolon
-)brace
 DECL|macro|REMOVE_LINKS
 mdefine_line|#define REMOVE_LINKS(p) do { unsigned long flags; &bslash;&n;&t;save_flags(flags) ; cli(); &bslash;&n;&t;(p)-&gt;next_task-&gt;prev_task = (p)-&gt;prev_task; &bslash;&n;&t;(p)-&gt;prev_task-&gt;next_task = (p)-&gt;next_task; &bslash;&n;&t;restore_flags(flags); &bslash;&n;&t;if ((p)-&gt;p_osptr) &bslash;&n;&t;&t;(p)-&gt;p_osptr-&gt;p_ysptr = (p)-&gt;p_ysptr; &bslash;&n;&t;if ((p)-&gt;p_ysptr) &bslash;&n;&t;&t;(p)-&gt;p_ysptr-&gt;p_osptr = (p)-&gt;p_osptr; &bslash;&n;&t;else &bslash;&n;&t;&t;(p)-&gt;p_pptr-&gt;p_cptr = (p)-&gt;p_osptr; &bslash;&n;&t;} while (0)
 DECL|macro|SET_LINKS
 mdefine_line|#define SET_LINKS(p) do { unsigned long flags; &bslash;&n;&t;save_flags(flags); cli(); &bslash;&n;&t;(p)-&gt;next_task = &amp;init_task; &bslash;&n;&t;(p)-&gt;prev_task = init_task.prev_task; &bslash;&n;&t;init_task.prev_task-&gt;next_task = (p); &bslash;&n;&t;init_task.prev_task = (p); &bslash;&n;&t;restore_flags(flags); &bslash;&n;&t;(p)-&gt;p_ysptr = NULL; &bslash;&n;&t;if (((p)-&gt;p_osptr = (p)-&gt;p_pptr-&gt;p_cptr) != NULL) &bslash;&n;&t;&t;(p)-&gt;p_osptr-&gt;p_ysptr = p; &bslash;&n;&t;(p)-&gt;p_pptr-&gt;p_cptr = p; &bslash;&n;&t;} while (0)
 DECL|macro|for_each_task
 mdefine_line|#define for_each_task(p) &bslash;&n;&t;for (p = &amp;init_task ; (p = p-&gt;next_task) != &amp;init_task ; )
-multiline_comment|/*&n; * This is the ldt that every process will get unless we need&n; * something other than this.&n; */
-r_extern
-r_struct
-id|desc_struct
-id|default_ldt
-suffix:semicolon
-multiline_comment|/* This special macro can be used to load a debugging register */
-DECL|macro|loaddebug
-mdefine_line|#define loaddebug(register) &bslash;&n;&t;&t;__asm__(&quot;movl %0,%%edx&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;&quot;movl %%edx,%%db&quot; #register &quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;: /* no output */ &bslash;&n;&t;&t;&t;:&quot;m&quot; (current-&gt;debugreg[register]) &bslash;&n;&t;&t;&t;:&quot;dx&quot;);
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif
 eof

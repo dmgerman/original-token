@@ -155,6 +155,22 @@ l_int|NULL
 comma
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * hardsect_size contains the size of the hardware sector of a device.&n; *&n; * hardsect_size[MAJOR][MINOR]&n; *&n; * if (!hardsect_size[MAJOR])&n; *&t;&t;then 512 bytes is assumed.&n; * else&n; *&t;&t;sector_size is hardsect_size[MAJOR][MINOR]&n; * This is currently set by some scsi device and read by the msdos fs driver&n; * This might be a some uses later.&n; */
+DECL|variable|hardsect_size
+r_int
+op_star
+id|hardsect_size
+(braket
+id|MAX_BLKDEV
+)braket
+op_assign
+(brace
+l_int|NULL
+comma
+l_int|NULL
+comma
+)brace
+suffix:semicolon
 multiline_comment|/*&n; * look for a free request in the first N entries.&n; * NOTE: interrupts must be disabled on the way in, and will still&n; *       be disabled on the way out.&n; */
 DECL|function|get_request
 r_static

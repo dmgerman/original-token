@@ -48,7 +48,7 @@ DECL|macro|BUSLOGIC_MAILBOXES
 mdefine_line|#define BUSLOGIC_MAILBOXES 16
 DECL|macro|BUSLOGIC_CMDLUN
 mdefine_line|#define BUSLOGIC_CMDLUN 4&t;&t;/* ??? Arbitrary */
-multiline_comment|/* BusLogic boards can be configured for quite a number of port addresses (six&n;   to be exact), but I generally do not want the driver poking around at&n;   random.  We allow two port addresses - this allows people to use a BusLogic&n;   with a MIDI card, which frequently also uses 0x330.&n;&n;   This can also be overridden on the command line to the kernel, via LILO or&n;   LODLIN. */
+multiline_comment|/* BusLogic boards can be configured for quite a number of port addresses (six&n;   to be exact), but I generally do not want the driver poking around at&n;   random.  We allow two port addresses - this allows people to use a BusLogic&n;   with a MIDI card, which frequently also uses 0x330.&n;&n;   This can also be overridden on the command line to the kernel, via LILO or&n;   LOADLIN. */
 DECL|variable|bases
 r_static
 r_int

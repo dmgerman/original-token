@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &quot;msbuffer.h&quot;
 DECL|macro|PRINTK
 mdefine_line|#define PRINTK(x)
 multiline_comment|/* Well-known binary file extensions */
@@ -334,6 +335,13 @@ op_star
 id|inode
 )paren
 (brace
+r_struct
+id|super_block
+op_star
+id|sb
+op_assign
+id|inode-&gt;i_sb
+suffix:semicolon
 r_int
 id|count
 comma
@@ -831,9 +839,15 @@ comma
 id|SECTOR_SIZE
 )paren
 suffix:semicolon
-id|bh-&gt;b_uptodate
-op_assign
+id|msdos_set_uptodate
+c_func
+(paren
+id|sb
+comma
+id|bh
+comma
 l_int|1
+)paren
 suffix:semicolon
 id|mark_buffer_dirty
 c_func
@@ -1356,6 +1370,13 @@ op_star
 id|de
 )paren
 (brace
+r_struct
+id|super_block
+op_star
+id|sb
+op_assign
+id|dir-&gt;i_sb
+suffix:semicolon
 r_int
 id|sector
 comma
@@ -1465,12 +1486,14 @@ op_logical_neg
 op_star
 id|bh
 op_assign
-id|msdos_sread
+id|bread
 c_func
 (paren
 id|dir-&gt;i_dev
 comma
 id|sector
+comma
+id|SECTOR_SIZE
 )paren
 )paren
 )paren
@@ -1620,12 +1643,14 @@ op_logical_neg
 (paren
 id|bh
 op_assign
-id|msdos_sread
+id|bread
 c_func
 (paren
 id|sb-&gt;s_dev
 comma
 id|sector
+comma
+id|SECTOR_SIZE
 )paren
 )paren
 )paren

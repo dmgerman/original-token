@@ -7,7 +7,7 @@ multiline_comment|/*&n; * Don&squot;t bother caching long names.. They just take
 DECL|macro|DCACHE_NAME_LEN
 mdefine_line|#define DCACHE_NAME_LEN&t;15
 DECL|macro|DCACHE_SIZE
-mdefine_line|#define DCACHE_SIZE 64
+mdefine_line|#define DCACHE_SIZE 128
 DECL|struct|hash_list
 r_struct
 id|hash_list

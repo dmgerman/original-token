@@ -267,34 +267,6 @@ multiline_comment|/* Convert the UNIX mode to MS-DOS attribute bits. */
 DECL|macro|MSDOS_MKATTR
 mdefine_line|#define MSDOS_MKATTR(m) ((m &amp; S_IWUGO) ? ATTR_NONE : ATTR_RO)
 macro_line|#ifdef __KERNEL__
-DECL|function|msdos_sread
-r_static
-r_inline
-r_struct
-id|buffer_head
-op_star
-id|msdos_sread
-c_func
-(paren
-r_int
-id|dev
-comma
-r_int
-id|sector
-)paren
-(brace
-r_return
-id|bread
-c_func
-(paren
-id|dev
-comma
-id|sector
-comma
-id|SECTOR_SIZE
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/* misc.c */
 r_extern
 r_void
@@ -918,6 +890,11 @@ r_extern
 r_struct
 id|inode_operations
 id|msdos_file_inode_operations
+suffix:semicolon
+r_extern
+r_struct
+id|inode_operations
+id|msdos_file_inode_operations_1024
 suffix:semicolon
 r_extern
 r_int

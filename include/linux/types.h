@@ -81,7 +81,7 @@ r_typedef
 r_int
 id|off_t
 suffix:semicolon
-macro_line|#ifndef __STRICT_ANSI__
+macro_line|#if defined(__GNUC__) &amp;&amp; !defined(__STRICT_ANSI__)
 DECL|macro|_LOFF_T
 mdefine_line|#define _LOFF_T
 DECL|typedef|loff_t

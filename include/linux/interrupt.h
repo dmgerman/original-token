@@ -2,6 +2,7 @@ multiline_comment|/* interrupt.h */
 macro_line|#ifndef _LINUX_INTERRUPT_H
 DECL|macro|_LINUX_INTERRUPT_H
 mdefine_line|#define _LINUX_INTERRUPT_H
+macro_line|#include &lt;asm/bitops.h&gt;
 DECL|struct|bh_struct
 r_struct
 id|bh_struct
@@ -83,23 +84,13 @@ r_int
 id|nr
 )paren
 (brace
-id|__asm__
-id|__volatile__
+id|set_bit
 c_func
 (paren
-l_string|&quot;orl %1,%0&quot;
-suffix:colon
-l_string|&quot;=m&quot;
-(paren
-id|bh_active
-)paren
-suffix:colon
-l_string|&quot;ir&quot;
-(paren
-l_int|1
-op_lshift
 id|nr
-)paren
+comma
+op_amp
+id|bh_active
 )paren
 suffix:semicolon
 )brace
@@ -114,26 +105,13 @@ r_int
 id|nr
 )paren
 (brace
-id|__asm__
-id|__volatile__
+id|clear_bit
 c_func
 (paren
-l_string|&quot;andl %1,%0&quot;
-suffix:colon
-l_string|&quot;=m&quot;
-(paren
-id|bh_mask
-)paren
-suffix:colon
-l_string|&quot;ir&quot;
-(paren
-op_complement
-(paren
-l_int|1
-op_lshift
 id|nr
-)paren
-)paren
+comma
+op_amp
+id|bh_mask
 )paren
 suffix:semicolon
 )brace
@@ -148,23 +126,13 @@ r_int
 id|nr
 )paren
 (brace
-id|__asm__
-id|__volatile__
+id|set_bit
 c_func
 (paren
-l_string|&quot;orl %1,%0&quot;
-suffix:colon
-l_string|&quot;=m&quot;
-(paren
-id|bh_mask
-)paren
-suffix:colon
-l_string|&quot;ir&quot;
-(paren
-l_int|1
-op_lshift
 id|nr
-)paren
+comma
+op_amp
+id|bh_mask
 )paren
 suffix:semicolon
 )brace

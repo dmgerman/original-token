@@ -141,7 +141,7 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;See inode.c&n;&t;&n;&t;Some entry point are filled dynamically with function pointers&n;&t;from the msdos file_operations and file_inode_operations.&n;&t;&n;&t;The idea is to have the code as independent as possible from&n;&t;the msdos file system.&n;*/
+multiline_comment|/* Function for normal file system (512 bytes hardware sector size) */
 DECL|variable|umsdos_file_operations
 r_struct
 id|file_operations
@@ -222,7 +222,7 @@ multiline_comment|/* readlink */
 l_int|NULL
 comma
 multiline_comment|/* follow_link */
-l_int|NULL
+id|msdos_bmap
 comma
 multiline_comment|/* bmap */
 id|UMSDOS_truncate
@@ -232,6 +232,101 @@ l_int|NULL
 comma
 multiline_comment|/* permission */
 id|msdos_smap
+multiline_comment|/* smap */
+)brace
+suffix:semicolon
+multiline_comment|/* For other with larger and unaligned file system */
+DECL|variable|umsdos_file_operations_no_bmap
+r_struct
+id|file_operations
+id|umsdos_file_operations_no_bmap
+op_assign
+(brace
+l_int|NULL
+comma
+multiline_comment|/* lseek - default */
+id|UMSDOS_file_read
+comma
+multiline_comment|/* read */
+id|UMSDOS_file_write
+comma
+multiline_comment|/* write */
+l_int|NULL
+comma
+multiline_comment|/* readdir - bad */
+l_int|NULL
+comma
+multiline_comment|/* select - default */
+l_int|NULL
+comma
+multiline_comment|/* ioctl - default */
+id|msdos_mmap
+comma
+multiline_comment|/* mmap */
+l_int|NULL
+comma
+multiline_comment|/* no special open is needed */
+l_int|NULL
+comma
+multiline_comment|/* release */
+id|file_fsync
+multiline_comment|/* fsync */
+)brace
+suffix:semicolon
+DECL|variable|umsdos_file_inode_operations_no_bmap
+r_struct
+id|inode_operations
+id|umsdos_file_inode_operations_no_bmap
+op_assign
+(brace
+op_amp
+id|umsdos_file_operations_no_bmap
+comma
+multiline_comment|/* default file operations */
+l_int|NULL
+comma
+multiline_comment|/* create */
+l_int|NULL
+comma
+multiline_comment|/* lookup */
+l_int|NULL
+comma
+multiline_comment|/* link */
+l_int|NULL
+comma
+multiline_comment|/* unlink */
+l_int|NULL
+comma
+multiline_comment|/* symlink */
+l_int|NULL
+comma
+multiline_comment|/* mkdir */
+l_int|NULL
+comma
+multiline_comment|/* rmdir */
+l_int|NULL
+comma
+multiline_comment|/* mknod */
+l_int|NULL
+comma
+multiline_comment|/* rename */
+l_int|NULL
+comma
+multiline_comment|/* readlink */
+l_int|NULL
+comma
+multiline_comment|/* follow_link */
+l_int|NULL
+comma
+multiline_comment|/* bmap */
+id|UMSDOS_truncate
+comma
+multiline_comment|/* truncate */
+l_int|NULL
+comma
+multiline_comment|/* permission */
+l_int|NULL
+comma
 multiline_comment|/* smap */
 )brace
 suffix:semicolon
