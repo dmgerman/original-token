@@ -8,7 +8,7 @@ mdefine_line|#define STATUS(base) base
 DECL|macro|STST
 mdefine_line|#define STST&t;0x80&t;&t;/* Self Test in Progress */
 DECL|macro|DIAGF
-mdefine_line|#define DIAGF&t;0x40&t;&t;/* Internal Diagonostic Failure */
+mdefine_line|#define DIAGF&t;0x40&t;&t;/* Internal Diagnostic Failure */
 DECL|macro|INIT
 mdefine_line|#define INIT&t;0x20&t;&t;/* Mailbox Initialization Required */
 DECL|macro|IDLE

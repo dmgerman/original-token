@@ -235,7 +235,7 @@ id|status_word.sc
 )paren
 multiline_comment|/*Additional info available*/
 (brace
-multiline_comment|/* Use the supplied info for futher diagnostics */
+multiline_comment|/* Use the supplied info for further diagnostics */
 r_switch
 c_cond
 (paren
@@ -1730,7 +1730,7 @@ c_cond
 id|done
 )paren
 (brace
-multiline_comment|/*  You may question the code below, which contains potentially&n;&t;  non-terminating while loops with interrupts disabled.  So did&n;&t;  I when I wrote it, but the Adaptec Spec says the card is so fast,&n;&t;  that this problem virtually never occurs so I&squot;ve kept it.  We&n;          do printk a warning first, so that you&squot;ll know if it happens.&n;&t;  In practive the only time we&squot;ve seen this message is when some-&n;&t;  thing else is in the driver was broken, like _makecode(), or&n;&t;  when a scsi device hung the scsi bus.  Even under these conditions,&n;&t;  The loop actually only cycled &lt; 3 times (we instrumented it). */
+multiline_comment|/*  You may question the code below, which contains potentially&n;&t;  non-terminating while loops with interrupts disabled.  So did&n;&t;  I when I wrote it, but the Adaptec Spec says the card is so fast,&n;&t;  that this problem virtually never occurs so I&squot;ve kept it.  We&n;          do printk a warning first, so that you&squot;ll know if it happens.&n;&t;  In practice the only time we&squot;ve seen this message is when some-&n;&t;  thing else is in the driver was broken, like _makecode(), or&n;&t;  when a scsi device hung the scsi bus.  Even under these conditions,&n;&t;  The loop actually only cycled &lt; 3 times (we instrumented it). */
 id|ulong
 id|adrs
 suffix:semicolon

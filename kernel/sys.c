@@ -1229,7 +1229,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * &quot;setfsuid()&quot; sets the fsuid - the uid used for filesystem checks. This&n; * is used for &quot;access()&quot; and for the NFS deamon (letting nfsd stay at&n; * whatever uid it wants to). It normally shadows &quot;euid&quot;, except when&n; * explicitly set by setfsuid() or for access..&n; */
+multiline_comment|/*&n; * &quot;setfsuid()&quot; sets the fsuid - the uid used for filesystem checks. This&n; * is used for &quot;access()&quot; and for the NFS daemon (letting nfsd stay at&n; * whatever uid it wants to). It normally shadows &quot;euid&quot;, except when&n; * explicitly set by setfsuid() or for access..&n; */
 DECL|function|sys_setfsuid
 id|asmlinkage
 r_int

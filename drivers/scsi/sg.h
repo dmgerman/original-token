@@ -1,5 +1,5 @@
 multiline_comment|/*&n;   History:&n;    Started: Aug 9 by Lawrence Foard (entropy@world.std.com), to allow user &n;     process control of SCSI devices.&n;    Development Sponsored by Killy Corp. NY NY&n;*/
-multiline_comment|/* &n; An SG device is accessed by writting &quot;packets&quot; to it, the replies&n; are then read using the read call. The same header is used for &n; reply, just ignore reply_len field.&n;*/
+multiline_comment|/* &n; An SG device is accessed by writing &quot;packets&quot; to it, the replies&n; are then read using the read call. The same header is used for &n; reply, just ignore reply_len field.&n;*/
 DECL|struct|sg_header
 r_struct
 id|sg_header

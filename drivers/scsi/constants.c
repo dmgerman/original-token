@@ -181,7 +181,7 @@ l_string|&quot;Synchronize Cache&quot;
 comma
 l_string|&quot;Lock/Unlock Cache&quot;
 comma
-l_string|&quot;Read Deffect Data&quot;
+l_string|&quot;Read Defect Data&quot;
 comma
 multiline_comment|/* 38-3c */
 id|unknown
@@ -585,7 +585,7 @@ comma
 id|unknown
 comma
 multiline_comment|/* a-d */
-l_string|&quot;Interemediate Good&quot;
+l_string|&quot;Intermediate Good&quot;
 comma
 id|unknown
 comma
@@ -1560,7 +1560,7 @@ id|W
 op_or
 id|O
 comma
-l_string|&quot;Data resychronization error&quot;
+l_string|&quot;Data resynchronization error&quot;
 )brace
 comma
 (brace
@@ -4711,7 +4711,7 @@ comma
 multiline_comment|/* 0x02 */
 l_string|&quot;SCSI-I Extended Identify&quot;
 comma
-l_string|&quot;Wide Data Transfer Reqeust&quot;
+l_string|&quot;Wide Data Transfer Request&quot;
 )brace
 suffix:semicolon
 DECL|macro|NO_EXTENDED_MSGS

@@ -1733,7 +1733,7 @@ comma
 id|E33G_CNTRL
 )paren
 suffix:semicolon
-multiline_comment|/* This is the byte copy loop: it should probably be tuned for&n;       for speed once everything is working.  I think it is possible&n;       to output 8 bytes between each check of the status bit. */
+multiline_comment|/* This is the byte copy loop: it should probably be tuned for&n;       speed once everything is working.  I think it is possible&n;       to output 8 bytes between each check of the status bit. */
 r_for
 c_loop
 (paren
@@ -2022,7 +2022,7 @@ comma
 id|E33G_CNTRL
 )paren
 suffix:semicolon
-multiline_comment|/* This is the byte copy loop: it should probably be tuned for&n;       for speed once everything is working. */
+multiline_comment|/* This is the byte copy loop: it should probably be tuned for&n;       speed once everything is working. */
 r_for
 c_loop
 (paren

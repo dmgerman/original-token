@@ -789,6 +789,13 @@ id|FREE_WRITE
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n;  &t; *&t;Don&squot;t discard received data until the user side kills its&n;  &t; *&t;half of the socket.&n;  &t; */
+r_if
+c_cond
+(paren
+id|sk-&gt;dead
+)paren
+(brace
 r_while
 c_loop
 (paren
@@ -806,7 +813,7 @@ op_ne
 l_int|NULL
 )paren
 (brace
-multiline_comment|/*&n;&t; * This will take care of closing sockets that were&n;&t; * listening and didn&squot;t accept everything.&n;&t; */
+multiline_comment|/*&n;&t;&t; * This will take care of closing sockets that were&n;&t;&t; * listening and didn&squot;t accept everything.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -854,6 +861,7 @@ comma
 id|FREE_READ
 )paren
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/* Now we need to clean up the send head. */
 id|cli

@@ -20,9 +20,9 @@ DECL|macro|EXT2_PREALLOCATE
 mdefine_line|#define EXT2_PREALLOCATE
 multiline_comment|/*&n; * The second extended file system version&n; */
 DECL|macro|EXT2FS_DATE
-mdefine_line|#define EXT2FS_DATE&t;&t;&quot;94/03/10&quot;
+mdefine_line|#define EXT2FS_DATE&t;&t;&quot;94/08/12&quot;
 DECL|macro|EXT2FS_VERSION
-mdefine_line|#define EXT2FS_VERSION&t;&t;&quot;0.5&quot;
+mdefine_line|#define EXT2FS_VERSION&t;&t;&quot;0.5a&quot;
 multiline_comment|/*&n; * Debug code&n; */
 macro_line|#ifdef EXT2FS_DEBUG
 DECL|macro|ext2_debug
@@ -290,13 +290,19 @@ DECL|macro|EXT2_N_BLOCKS
 mdefine_line|#define&t;EXT2_N_BLOCKS&t;&t;&t;(EXT2_TIND_BLOCK + 1)
 multiline_comment|/*&n; * Inode flags&n; */
 DECL|macro|EXT2_SECRM_FL
-mdefine_line|#define&t;EXT2_SECRM_FL&t;&t;&t;0x0001&t;/* Secure deletion */
+mdefine_line|#define&t;EXT2_SECRM_FL&t;&t;&t;0x00000001 /* Secure deletion */
 DECL|macro|EXT2_UNRM_FL
-mdefine_line|#define&t;EXT2_UNRM_FL&t;&t;&t;0x0002&t;/* Undelete */
+mdefine_line|#define&t;EXT2_UNRM_FL&t;&t;&t;0x00000002 /* Undelete */
 DECL|macro|EXT2_COMPR_FL
-mdefine_line|#define&t;EXT2_COMPR_FL&t;&t;&t;0x0004&t;/* Compress file */
+mdefine_line|#define&t;EXT2_COMPR_FL&t;&t;&t;0x00000004 /* Compress file */
 DECL|macro|EXT2_SYNC_FL
-mdefine_line|#define EXT2_SYNC_FL&t;&t;&t;0x0008&t;/* Synchronous updates */
+mdefine_line|#define EXT2_SYNC_FL&t;&t;&t;0x00000008 /* Synchronous updates */
+DECL|macro|EXT2_IMMUTABLE_FL
+mdefine_line|#define EXT2_IMMUTABLE_FL&t;&t;0x00000010 /* Immutable file */
+DECL|macro|EXT2_APPEND_FL
+mdefine_line|#define EXT2_APPEND_FL&t;&t;&t;0x00000020 /* writes to file may only append */
+DECL|macro|EXT2_NODUMP_FL
+mdefine_line|#define EXT2_NODUMP_FL&t;&t;&t;0x00000040 /* do not dump file */
 multiline_comment|/*&n; * ioctl commands&n; */
 DECL|macro|EXT2_IOC_GETFLAGS
 mdefine_line|#define&t;EXT2_IOC_GETFLAGS&t;&t;_IOR(&squot;f&squot;, 1, long)
@@ -377,11 +383,46 @@ r_int
 id|i_flags
 suffix:semicolon
 multiline_comment|/* File flags */
-DECL|member|i_reserved1
+r_union
+(brace
+r_struct
+(brace
+DECL|member|l_i_reserved1
 r_int
 r_int
-id|i_reserved1
+id|l_i_reserved1
 suffix:semicolon
+DECL|member|linux1
+)brace
+id|linux1
+suffix:semicolon
+r_struct
+(brace
+DECL|member|h_i_translator
+r_int
+r_int
+id|h_i_translator
+suffix:semicolon
+DECL|member|hurd1
+)brace
+id|hurd1
+suffix:semicolon
+r_struct
+(brace
+DECL|member|m_i_reserved1
+r_int
+r_int
+id|m_i_reserved1
+suffix:semicolon
+DECL|member|masix1
+)brace
+id|masix1
+suffix:semicolon
+DECL|member|osd1
+)brace
+id|osd1
+suffix:semicolon
+multiline_comment|/* OS dependent 1 */
 DECL|member|i_block
 r_int
 r_int
@@ -415,16 +456,20 @@ r_int
 id|i_faddr
 suffix:semicolon
 multiline_comment|/* Fragment address */
-DECL|member|i_frag
+r_union
+(brace
+r_struct
+(brace
+DECL|member|l_i_frag
 r_int
 r_char
-id|i_frag
+id|l_i_frag
 suffix:semicolon
 multiline_comment|/* Fragment number */
-DECL|member|i_fsize
+DECL|member|l_i_fsize
 r_int
 r_char
-id|i_fsize
+id|l_i_fsize
 suffix:semicolon
 multiline_comment|/* Fragment size */
 DECL|member|i_pad1
@@ -432,16 +477,128 @@ r_int
 r_int
 id|i_pad1
 suffix:semicolon
-DECL|member|i_reserved2
+DECL|member|l_i_reserved2
 r_int
 r_int
-id|i_reserved2
+id|l_i_reserved2
 (braket
 l_int|2
 )braket
 suffix:semicolon
+DECL|member|linux2
+)brace
+id|linux2
+suffix:semicolon
+r_struct
+(brace
+DECL|member|h_i_frag
+r_int
+r_char
+id|h_i_frag
+suffix:semicolon
+multiline_comment|/* Fragment number */
+DECL|member|h_i_fsize
+r_int
+r_char
+id|h_i_fsize
+suffix:semicolon
+multiline_comment|/* Fragment size */
+DECL|member|h_i_mode_high
+r_int
+r_int
+id|h_i_mode_high
+suffix:semicolon
+DECL|member|h_i_uid_high
+r_int
+r_int
+id|h_i_uid_high
+suffix:semicolon
+DECL|member|h_i_gid_high
+r_int
+r_int
+id|h_i_gid_high
+suffix:semicolon
+DECL|member|h_i_author
+r_int
+r_int
+id|h_i_author
+suffix:semicolon
+DECL|member|hurd2
+)brace
+id|hurd2
+suffix:semicolon
+r_struct
+(brace
+DECL|member|m_i_frag
+r_int
+r_char
+id|m_i_frag
+suffix:semicolon
+multiline_comment|/* Fragment number */
+DECL|member|m_i_fsize
+r_int
+r_char
+id|m_i_fsize
+suffix:semicolon
+multiline_comment|/* Fragment size */
+DECL|member|m_pad1
+r_int
+r_int
+id|m_pad1
+suffix:semicolon
+DECL|member|m_i_reserved2
+r_int
+r_int
+id|m_i_reserved2
+(braket
+l_int|2
+)braket
+suffix:semicolon
+DECL|member|masix2
+)brace
+id|masix2
+suffix:semicolon
+DECL|member|osd2
+)brace
+id|osd2
+suffix:semicolon
+multiline_comment|/* OS dependent 2 */
 )brace
 suffix:semicolon
+macro_line|#ifdef&t;__linux__
+DECL|macro|i_reserved1
+mdefine_line|#define i_reserved1&t;osd1.linux1.l_i_reserved1
+DECL|macro|i_frag
+mdefine_line|#define i_frag&t;&t;osd2.linux2.l_i_frag
+DECL|macro|i_fsize
+mdefine_line|#define i_fsize&t;&t;osd2.linux2.l_i_fsize
+DECL|macro|i_reserved2
+mdefine_line|#define i_reserved2&t;osd2.linux2.l_i_reserved2
+macro_line|#endif
+macro_line|#ifdef&t;__hurd__
+DECL|macro|i_translator
+mdefine_line|#define i_translator&t;osd1.hurd1.h_i_translator
+DECL|macro|i_frag
+mdefine_line|#define i_frag&t;&t;osd2.hurd2.h_i_frag;
+DECL|macro|i_fsize
+mdefine_line|#define i_fsize&t;&t;osd2.hurd2.h_i_fsize;
+DECL|macro|i_uid_high
+mdefine_line|#define i_uid_high&t;osd2.hurd2.h_i_uid_high
+DECL|macro|i_gid_high
+mdefine_line|#define i_gid_high&t;osd2.hurd2.h_i_gid_high
+DECL|macro|i_author
+mdefine_line|#define i_author&t;osd2.hurd2.h_i_author
+macro_line|#endif
+macro_line|#ifdef&t;__masix__
+DECL|macro|i_reserved1
+mdefine_line|#define i_reserved1&t;osd1.masix1.m_i_reserved1
+DECL|macro|i_frag
+mdefine_line|#define i_frag&t;&t;osd2.masix2.m_i_frag
+DECL|macro|i_fsize
+mdefine_line|#define i_fsize&t;&t;osd2.masix2.m_i_fsize
+DECL|macro|i_reserved2
+mdefine_line|#define i_reserved2&t;osd2.masix2.m_i_reserved2
+macro_line|#endif
 multiline_comment|/*&n; * File system states&n; */
 DECL|macro|EXT2_VALID_FS
 mdefine_line|#define&t;EXT2_VALID_FS&t;&t;&t;0x0001&t;/* Unmounted cleanly */
@@ -464,6 +621,8 @@ DECL|macro|EXT2_MOUNT_ERRORS_RO
 mdefine_line|#define EXT2_MOUNT_ERRORS_RO&t;&t;0x0020&t;/* Remount fs ro on errors */
 DECL|macro|EXT2_MOUNT_ERRORS_PANIC
 mdefine_line|#define EXT2_MOUNT_ERRORS_PANIC&t;&t;0x0040&t;/* Panic on errors */
+DECL|macro|EXT2_MOUNT_MINIX_DF
+mdefine_line|#define EXT2_MOUNT_MINIX_DF&t;&t;0x0080&t;/* Mimics the Minix statfs */
 DECL|macro|clear_opt
 mdefine_line|#define clear_opt(o, opt)&t;&t;o &amp;= ~EXT2_MOUNT_##opt
 DECL|macro|set_opt
@@ -612,17 +771,29 @@ r_int
 id|s_checkinterval
 suffix:semicolon
 multiline_comment|/* max. time between checks */
+DECL|member|s_creator_os
+r_int
+r_int
+id|s_creator_os
+suffix:semicolon
+multiline_comment|/* OS */
 DECL|member|s_reserved
 r_int
 r_int
 id|s_reserved
 (braket
-l_int|238
+l_int|237
 )braket
 suffix:semicolon
 multiline_comment|/* Padding to the end of the block */
 )brace
 suffix:semicolon
+DECL|macro|EXT2_OS_LINUX
+mdefine_line|#define EXT2_OS_LINUX&t;&t;0
+DECL|macro|EXT2_OS_HURD
+mdefine_line|#define EXT2_OS_HURD&t;&t;1
+DECL|macro|EXT2_OS_MASIX
+mdefine_line|#define EXT2_OS_MASIX&t;&t;2
 multiline_comment|/*&n; * Structure of a directory entry&n; */
 DECL|macro|EXT2_NAME_LEN
 mdefine_line|#define EXT2_NAME_LEN 255
@@ -1008,19 +1179,6 @@ r_int
 )paren
 suffix:semicolon
 multiline_comment|/* namei.c */
-r_extern
-r_int
-id|ext2_open
-(paren
-r_struct
-id|inode
-op_star
-comma
-r_struct
-id|file
-op_star
-)paren
-suffix:semicolon
 r_extern
 r_void
 id|ext2_release

@@ -1625,7 +1625,7 @@ r_return
 id|i
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * &squot;copy_string()&squot; copies argument/envelope strings from user&n; * memory to free pages in kernel mem. These are in a format ready&n; * to be put directly into the top of new user memory.&n; *&n; * Modified by TYT, 11/24/91 to add the from_kmem argument, which specifies&n; * whether the string and the string array are from user or kernel segments:&n; * &n; * from_kmem     argv *        argv **&n; *    0          user space    user space&n; *    1          kernel space  user space&n; *    2          kernel space  kernel space&n; * &n; * We do this by playing games with the fs segment register.  Since it&n; * it is expensive to load a segment register, we try to avoid calling&n; * set_fs() unless we absolutely have to.&n; */
+multiline_comment|/*&n; * &squot;copy_string()&squot; copies argument/envelope strings from user&n; * memory to free pages in kernel mem. These are in a format ready&n; * to be put directly into the top of new user memory.&n; *&n; * Modified by TYT, 11/24/91 to add the from_kmem argument, which specifies&n; * whether the string and the string array are from user or kernel segments:&n; * &n; * from_kmem     argv *        argv **&n; *    0          user space    user space&n; *    1          kernel space  user space&n; *    2          kernel space  kernel space&n; * &n; * We do this by playing games with the fs segment register.  Since it&n; * is expensive to load a segment register, we try to avoid calling&n; * set_fs() unless we absolutely have to.&n; */
 DECL|function|copy_strings
 r_int
 r_int

@@ -653,12 +653,6 @@ c_func
 id|irq2dev_map
 )paren
 comma
-id|X
-c_func
-(paren
-id|dev_kfree_skb
-)paren
-comma
 macro_line|#endif
 multiline_comment|/********************************************************&n;&t; * Do not add anything below this line,&n;&t; * as the stacked modules depend on this!&n;&t; */
 (brace

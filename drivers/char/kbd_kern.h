@@ -21,26 +21,18 @@ r_int
 r_char
 id|default_ledstate
 suffix:semicolon
+DECL|member|lockstate
+r_int
+r_char
+id|lockstate
+suffix:semicolon
+multiline_comment|/* 3 bits */
 DECL|macro|VC_SCROLLOCK
 mdefine_line|#define VC_SCROLLOCK&t;0&t;/* scroll-lock mode */
 DECL|macro|VC_NUMLOCK
 mdefine_line|#define VC_NUMLOCK&t;1&t;/* numeric lock mode */
 DECL|macro|VC_CAPSLOCK
 mdefine_line|#define VC_CAPSLOCK&t;2&t;/* capslock mode */
-DECL|member|lockstate
-r_int
-r_char
-id|lockstate
-suffix:semicolon
-multiline_comment|/* 4 bits - must be in 0..15 */
-DECL|macro|VC_SHIFTLOCK
-mdefine_line|#define VC_SHIFTLOCK&t;KG_SHIFT&t;/* shift lock mode */
-DECL|macro|VC_ALTGRLOCK
-mdefine_line|#define VC_ALTGRLOCK&t;KG_ALTGR&t;/* altgr lock mode */
-DECL|macro|VC_CTRLLOCK
-mdefine_line|#define VC_CTRLLOCK&t;KG_CTRL &t;/* control lock mode */
-DECL|macro|VC_ALTLOCK
-mdefine_line|#define VC_ALTLOCK&t;KG_ALT  &t;/* alt lock mode */
 DECL|member|modeflags
 r_int
 r_char

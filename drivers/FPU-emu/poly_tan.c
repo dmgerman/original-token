@@ -591,7 +591,7 @@ op_eq
 l_int|0
 )paren
 (brace
-multiline_comment|/* accumulatoro must contain 1.0 here, (actually, 0) but it&n;&t; really doesn&squot;t matter what value we use because it will&n;&t; have neglibible effect in later calculations&n;&t; */
+multiline_comment|/* accumulatoro must contain 1.0 here, (actually, 0) but it&n;&t; really doesn&squot;t matter what value we use because it will&n;&t; have negligible effect in later calculations&n;&t; */
 id|XSIG_LL
 c_func
 (paren

@@ -3,7 +3,7 @@ macro_line|#ifndef PAS16_H
 DECL|macro|PAS16_H
 mdefine_line|#define PAS16_H
 DECL|macro|PAS16_PUBLIC_RELEASE
-mdefine_line|#define PAS16_PUBLIC_RELEASE 2
+mdefine_line|#define PAS16_PUBLIC_RELEASE 3
 DECL|macro|PDEBUG_INIT
 mdefine_line|#define PDEBUG_INIT&t;0x1
 DECL|macro|PDEBUG_TRANSFER
@@ -24,8 +24,8 @@ DECL|macro|PAS16_DEFAULT_BOARD_3_IRQ
 mdefine_line|#define PAS16_DEFAULT_BOARD_3_IRQ 14
 DECL|macro|PAS16_DEFAULT_BOARD_4_IRQ
 mdefine_line|#define PAS16_DEFAULT_BOARD_4_IRQ 15
-multiline_comment|/*&n; * The Pro Audio Spectrum boards are I/O mapped. They use a Zilog 5380&n; * SCSI controller, which is the equivalent of NCR&squot;s 5380.  &quot;Pseudo-DMA&quot;&n; * architecture is used, where a PAL drives the DMA signals on the 5380&n; * allowing fast, blind transfers with propper handshaking. &n; */
-multiline_comment|/* The Time-out Counter register is used to safe-guard against a stuck&n; * bus (in the case of RDY driven hadnshake) or a stuck byte (if 16-Bit&n; * DMA conversion is used).  The counter uses a 28.224MHz clock&n; * divided by 14 as its clock source.  In the case of a stuck byte in&n; * the holding register, an interrupt is generated (and mixed with the&n; * one with the drive) using the CD-ROM interrupt pointer.&n; */
+multiline_comment|/*&n; * The Pro Audio Spectrum boards are I/O mapped. They use a Zilog 5380&n; * SCSI controller, which is the equivalent of NCR&squot;s 5380.  &quot;Pseudo-DMA&quot;&n; * architecture is used, where a PAL drives the DMA signals on the 5380&n; * allowing fast, blind transfers with proper handshaking. &n; */
+multiline_comment|/* The Time-out Counter register is used to safe-guard against a stuck&n; * bus (in the case of RDY driven handshake) or a stuck byte (if 16-Bit&n; * DMA conversion is used).  The counter uses a 28.224MHz clock&n; * divided by 14 as its clock source.  In the case of a stuck byte in&n; * the holding register, an interrupt is generated (and mixed with the&n; * one with the drive) using the CD-ROM interrupt pointer.&n; */
 DECL|macro|P_TIMEOUT_COUNTER_REG
 mdefine_line|#define P_TIMEOUT_COUNTER_REG&t;0x4000
 DECL|macro|P_TC_DISABLE

@@ -2916,7 +2916,7 @@ r_return
 l_int|0
 suffix:semicolon
 multiline_comment|/* This is a special case: see sec 16.2.5.1 of the 80486 book. */
-multiline_comment|/* Masked respose is overflow to infinity. */
+multiline_comment|/* Masked response is overflow to infinity. */
 id|templ
 op_assign
 l_int|0x7f800000
@@ -4203,7 +4203,7 @@ suffix:semicolon
 multiline_comment|/*===========================================================================*/
 multiline_comment|/* r gets mangled such that sig is int, sign: &n;   it is NOT normalized */
 multiline_comment|/* The return value (in eax) is zero if the result is exact,&n;   if bits are changed due to rounding, truncation, etc, then&n;   a non-zero value is returned */
-multiline_comment|/* Overflow is signalled by a non-zero return value (in eax).&n;   In the case of overflow, the returned significand always has the&n;   the largest possible value */
+multiline_comment|/* Overflow is signalled by a non-zero return value (in eax).&n;   In the case of overflow, the returned significand always has the&n;   largest possible value */
 DECL|function|round_to_int
 r_int
 id|round_to_int
@@ -5887,7 +5887,7 @@ c_func
 suffix:semicolon
 )brace
 multiline_comment|/*===========================================================================*/
-multiline_comment|/*&n;  A call to this function must be preceeded by a call to&n;  FPU_verify_area() to verify access to the 10 bytes at d&n;  */
+multiline_comment|/*&n;  A call to this function must be preceded by a call to&n;  FPU_verify_area() to verify access to the 10 bytes at d&n;  */
 DECL|function|write_to_extended
 r_static
 r_void

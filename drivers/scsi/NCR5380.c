@@ -1,8 +1,8 @@
 DECL|macro|NDEBUG
 mdefine_line|#define NDEBUG (NDEBUG_RESTART_SELECT)
-multiline_comment|/* &n; * NCR 5380 generic driver routines.  These should make it *trivial*&n; * &t;to implement 5380 SCSI drivers under Linux with a non-trantor&n; *&t;architecture.&n; *&n; *&t;Note that these routines also work with NR53c400 family chips.&n; *&n; * Copyright 1993, Drew Eckhardt&n; *&t;Visionary Computing &n; *&t;(Unix and Linux consulting and custom programming)&n; * &t;drew@colorado.edu&n; *&t;+1 (303) 666-5836&n; *&n; * DISTRIBUTION REALEASE 6. &n; *&n; * For more information, please consult &n; *&n; * NCR 5380 Family&n; * SCSI Protocol Controller&n; * Databook&n; *&n; * NCR Microelectronics&n; * 1635 Aeroplaza Drive&n; * Colorado Springs, CO 80916&n; * 1+ (719) 578-3400&n; * 1+ (800) 334-5454&n; */
-multiline_comment|/*&n; * $Log: NCR5380.c,v $&n; * Revision 1.5  1994/01/19  09:14:57  drew&n; * Fixed udelay() hack that was being used on DATAOUT phases&n; * instead of a propper wait for the final handshake.&n; *&n; * Revision 1.4  1994/01/19  06:44:25  drew&n; * *** empty log message ***&n; *&n; * Revision 1.3  1994/01/19  05:24:40  drew&n; * Added support for TCR LAST_BYTE_SENT bit.&n; *&n; * Revision 1.2  1994/01/15  06:14:11  drew&n; * REAL DMA support, bug fixes.&n; *&n; * Revision 1.1  1994/01/15  06:00:54  drew&n; * Initial revision&n; *&n; */
-multiline_comment|/*&n; * Furthur development / testing that should be done : &n; * 1.  Cleanup the NCR5380_transfer_dma function and DMA operation complete&n; *     code so that everything does the same thing that&squot;s done at the &n; *     end of a pseudo-DMA read operation.&n; *&n; * 2.  Fix REAL_DMA (interrupt driven, polled works fine) -&n; *     basically, transfer size needs to be reduced by one &n; *     and the last byte read as is done with PSEUDO_DMA.&n; * &n; * 3.  Test USLEEP code &n; *&n; * 4.  Test SCSI-II tagged queueing (I have no devices which support &n; *&t;tagged queueing)&n; *&n; * 5.  Test linked command handling code after Eric is ready with &n; *      the high level code.&n; */
+multiline_comment|/* &n; * NCR 5380 generic driver routines.  These should make it *trivial*&n; * &t;to implement 5380 SCSI drivers under Linux with a non-trantor&n; *&t;architecture.&n; *&n; *&t;Note that these routines also work with NR53c400 family chips.&n; *&n; * Copyright 1993, Drew Eckhardt&n; *&t;Visionary Computing &n; *&t;(Unix and Linux consulting and custom programming)&n; * &t;drew@colorado.edu&n; *&t;+1 (303) 666-5836&n; *&n; * DISTRIBUTION RELEASE 6. &n; *&n; * For more information, please consult &n; *&n; * NCR 5380 Family&n; * SCSI Protocol Controller&n; * Databook&n; *&n; * NCR Microelectronics&n; * 1635 Aeroplaza Drive&n; * Colorado Springs, CO 80916&n; * 1+ (719) 578-3400&n; * 1+ (800) 334-5454&n; */
+multiline_comment|/*&n; * $Log: NCR5380.c,v $&n; * Revision 1.5  1994/01/19  09:14:57  drew&n; * Fixed udelay() hack that was being used on DATAOUT phases&n; * instead of a proper wait for the final handshake.&n; *&n; * Revision 1.4  1994/01/19  06:44:25  drew&n; * *** empty log message ***&n; *&n; * Revision 1.3  1994/01/19  05:24:40  drew&n; * Added support for TCR LAST_BYTE_SENT bit.&n; *&n; * Revision 1.2  1994/01/15  06:14:11  drew&n; * REAL DMA support, bug fixes.&n; *&n; * Revision 1.1  1994/01/15  06:00:54  drew&n; * Initial revision&n; *&n; */
+multiline_comment|/*&n; * Further development / testing that should be done : &n; * 1.  Cleanup the NCR5380_transfer_dma function and DMA operation complete&n; *     code so that everything does the same thing that&squot;s done at the &n; *     end of a pseudo-DMA read operation.&n; *&n; * 2.  Fix REAL_DMA (interrupt driven, polled works fine) -&n; *     basically, transfer size needs to be reduced by one &n; *     and the last byte read as is done with PSEUDO_DMA.&n; * &n; * 3.  Test USLEEP code &n; *&n; * 4.  Test SCSI-II tagged queueing (I have no devices which support &n; *&t;tagged queueing)&n; *&n; * 5.  Test linked command handling code after Eric is ready with &n; *      the high level code.&n; */
 macro_line|#ifndef notyet
 DECL|macro|LINKED
 macro_line|#undef LINKED
@@ -17,8 +17,8 @@ macro_line|#undef READ_OVERRUNS
 DECL|macro|READ_OVERRUNS
 mdefine_line|#define READ_OVERRUNS
 macro_line|#endif
-multiline_comment|/*&n; * Design&n; * Issues :&n; *&n; * The other Linux SCSI drivers were written when Linux was Intel PC-only,&n; * and specifically for each board rather than each chip.  This makes their&n; * adaptation to platforms like the Mac (Some of which use NCR5380&squot;s)&n; * more difficult than it has to be.&n; *&n; * Also, many of the SCSI drivers were written before the command queing&n; * routines were implemented, meaning their implementations of queued &n; * commands were hacked on rather than designed in from the start.&n; *&n; * When I designed the Linux SCSI drivers I figured that &n; * while having two different SCSI boards in a system might be useful&n; * for debugging things, two of the same type wouldn&squot;t be used.&n; * Well, I was wrong and a number of users have mailed me about running&n; * multiple high-performance SCSI boards in a server.&n; *&n; * Finally, when I get questions from users, I have no idea what &n; * revision of my driver they are running.&n; *&n; * This driver attempts to address these problems :&n; * This is a generic 5380 driver.  To use it on a different platform, &n; * one simply writes appropriate system specific macros (ie, data&n; * transfer - some PC&squot;s will use the I/O bus, 68K&squot;s must use &n; * memory mapped) and drops this file in their &squot;C&squot; wrapper.&n; *&n; * As far as command queueing, two queues are maintained for &n; * each 5380 in the system - commands that haven&squot;t been issued yet,&n; * and commands that are currently executing.  This means that an &n; * unlimited number of commands may be queued, letting &n; * more commands propogate from the higher driver levels giving higher &n; * througput.  Note that both I_T_L and I_T_L_Q nexuses are supported, &n; * allowing multiple commands to propogate all the way to a SCSI-II device &n; * while a command is allready executing.&n; *&n; * To solve the multiple-boards-in-the-same-system problem, &n; * there is a separate instance structure for each instance&n; * of a 5380 in the system.  So, mutliple NCR5380 drivers will&n; * be able to coexist with appropriate changes to the high level&n; * SCSI code.  &n; *&n; * A NCR5380_PUBLIC_REVISION macro is provided, with the release&n; * number (updated for each public release) printed by the &n; * NCR5380_print_options command, which should be called from the &n; * wrapper detect function, so that I know what release of the driver&n; * users are using.&n; *&n; * Issues specific to the NCR5380 : &n; *&n; * When used in a PIO or pseudo-dma mode, the NCR5380 is a braindead &n; * piece of hardware that requires you to sit in a loop polling for &n; * the REQ signal as long as you are connected.  Some devices are &n; * brain dead (ie, many TEXEL CD ROM drives) and won&squot;t disconnect &n; * while doing long seek operations.&n; * &n; * The workarround for this is to keep track of devices that have&n; * disconnected.  If the device hasn&squot;t disconnected, for commands that&n; * should disconnect, we do something like &n; *&n; * while (!REQ is asserted) { sleep for N usecs; poll for M usecs }&n; * &n; * Some tweaking of N and M needs to be done.  An algorithm based &n; * on &quot;time to data&quot; would give the best results as long as short time&n; * to datas (ie, on the same track) were considered, however these &n; * broken devices are the exception rather than the rule and I&squot;d rather&n; * spend my time optomizing for the normal case.&n; *&n; * Architecture :&n; *&n; * At the heart of the design is a corroutine, NCR5380_main,&n; * which is started when not running by the interrupt handler,&n; * timer, and queue command function.  It attempts to establish&n; * I_T_L or I_T_L_Q nexuses by removing the commands from the &n; * issue queue and calling NCR5380_select() if a nexus &n; * is not established. &n; *&n; * Once a nexus is established, the NCR5380_information_transfer()&n; * phase goes through the various phases as instructed by the target.&n; * if the target goes into MSG IN and sends a DISCONNECT message,&n; * the command structure is placed into the per instance disconnected&n; * queue, and NCR5380_main tries to find more work.  If USLEEP&n; * was defined, and the target is idle for too long, the system&n; * will try to sleep.&n; *&n; * If a command has disconnected, eventually an interrupt will trigger,&n; * calling NCR5380_intr()  which will inturn call NCR5380_reselect&n; * to restablish a nexus.  This will run main if necessary.&n; *&n; * On command termination, the done function will be called as &n; * appropriate.&n; *&n; * SCSI pointers are maintained in the SCp field of SCSI command &n; * structures, being initialized after the command is connected&n; * in NCR5380_select, and set as appropriate in NCR5380_information_transfer.&n; * Note that in violation of the standard, an implicit SAVE POINTERS operation&n; * is done, since some BROKEN disks fail to issue an explicit SAVE POINTERS.&n; */
-multiline_comment|/*&n; * Using this file :&n; * This file a skeleton Linux SCSI driver for the NCR 5380 series&n; * of chips.  To use it, you write a architecture specific functions &n; * and macros and include this file in your driver.&n; *&n; * These macros control options : &n; * AUTOPROBE_IRQ - if defined, the NCR5380_probe_irq() function will be &n; *&t;defined.&n; * &n; * AUTOSENSE - if defined, REQUEST SENSE will be performed automatically&n; *&t;for commands that return with a CHECK CONDITION status. &n; *&n; * DIFFERENTIAL - if defined, NCR53c81 chips will use external differential&n; * &t;tracievers. &n; *&n; * LINKED - if defined, linked commands are supported.&n; *&n; * PSEUDO_DMA - if defined, PSEUDO DMA is used during the data transfer phases.&n; *&n; * REAL_DMA - if defined, REAL DMA is used during the data transfer phases.&n; *&n; * REAL_DMA_POLL - if defined, REAL DMA is used but the driver doesn&squot;t&n; * &t;rely on phase mismatch and EOP interrupts to determine end &n; *&t;of phase.&n; *&n; * SCSI2 - if defined, SCSI-2 tagged queing is used where possible&n; *&n; * UNSAFE - leave interrupts enabled during pseudo-DMA transfers.  You&n; *&t;    only really want to use this if you&squot;re having a problem with&n; *&t;    dropped characters during high speed communications, and even&n; *&t;    then, you&squot;re going to be better off twiddling with transfersize&n; *&t;    in the high level code.&n; *&n; * USLEEP - if defined, on devices that aren&squot;t disconnecting from the &n; *&t;bus, we will go to sleep so that the CPU can get real work done &n; *&t;when we run a command that won&squot;t complete immediately.&n; *&n; * Note that if USLEEP is defined, NCR5380_TIMER *must* also be&n; * defined.&n; *&n; * Defaults for these will be provided if USLEEP is defined, although&n; * the user may want to adjust these to allocate CPU resources to &n; * the SCSI driver or &quot;real&quot; code.&n; * &n; * USLEEP_SLEEP - amount of time, in jiffies, to sleep&n; *&n; * USLEEP_POLL - amount of time, in jiffies, to poll&n; *&n; * These macros MUST be defined :&n; * NCR5380_local_declare() - declare any local variables needed for your transfer&n; *&t;routines.&n; *&n; * NCR5380_setup(instance) - initialize any local variables needed from a given&n; *&t;instance of the host adapter for NCR5380_{read,write,pread,pwrite}&n; * &n; * NCR5380_read(register)  - read from the specified register&n; *&n; * NCR5380_write(register, value) - write to the specific register &n; *&n; * NCR5380_implementation_fields  - additional fields needed for this &n; *&t;specific implementation of the NCR5380&n; *&n; * Either real DMA *or* pseudo DMA may be implemented&n; * REAL functions : &n; * NCR5380_REAL_DMA should be defined if real DMA is to be used.&n; * Note that the DMA setup functions should return the number of bytes &n; *&t;that they were able to program the controller for.&n; *&n; * Also note that generic i386/PC versions of these macros are &n; *&t;available as NCR5380_i386_dma_write_setup,&n; *&t;NCR5380_i386_dma_read_setup, and NCR5380_i386_dma_residual.&n; *&n; * NCR5380_dma_write_setup(instance, src, count) - initialize&n; * NCR5380_dma_read_setup(instance, dst, count) - initialize&n; * NCR5380_dma_residual(instance); - residual count&n; *&n; * PSEUDO functions :&n; * NCR5380_pwrite(instance, src, count)&n; * NCR5380_pread(instance, dst, count);&n; *&n; * If nothing specific to this implementation needs doing (ie, with external&n; * hardware), you must also define &n; *  &n; * NCR5380_queue_command&n; * NCR5380_reset&n; * NCR5380_abort&n; *&n; * to be the global entry points into the specific driver, ie &n; * #define NCR5380_queue_command t128_queue_command.&n; *&n; * If this is not done, the routines will be defined as static functions&n; * with the NCR5380* names and the user must provide a globally&n; * accessable wrapper function.&n; *&n; * The generic driver is initialized by calling NCR5380_init(instance),&n; * after setting the appropriate host specific fields and ID.  If the &n; * driver wishes to autoprobe for an IRQ line, the NCR5380_probe_irq(instance,&n; * possible) function may be used.  Before the specific driver initialization&n; * code finishes, NCR5380_print_options should be called.&n; */
+multiline_comment|/*&n; * Design&n; * Issues :&n; *&n; * The other Linux SCSI drivers were written when Linux was Intel PC-only,&n; * and specifically for each board rather than each chip.  This makes their&n; * adaptation to platforms like the Mac (Some of which use NCR5380&squot;s)&n; * more difficult than it has to be.&n; *&n; * Also, many of the SCSI drivers were written before the command queuing&n; * routines were implemented, meaning their implementations of queued &n; * commands were hacked on rather than designed in from the start.&n; *&n; * When I designed the Linux SCSI drivers I figured that &n; * while having two different SCSI boards in a system might be useful&n; * for debugging things, two of the same type wouldn&squot;t be used.&n; * Well, I was wrong and a number of users have mailed me about running&n; * multiple high-performance SCSI boards in a server.&n; *&n; * Finally, when I get questions from users, I have no idea what &n; * revision of my driver they are running.&n; *&n; * This driver attempts to address these problems :&n; * This is a generic 5380 driver.  To use it on a different platform, &n; * one simply writes appropriate system specific macros (ie, data&n; * transfer - some PC&squot;s will use the I/O bus, 68K&squot;s must use &n; * memory mapped) and drops this file in their &squot;C&squot; wrapper.&n; *&n; * As far as command queueing, two queues are maintained for &n; * each 5380 in the system - commands that haven&squot;t been issued yet,&n; * and commands that are currently executing.  This means that an &n; * unlimited number of commands may be queued, letting &n; * more commands propagate from the higher driver levels giving higher &n; * throughput.  Note that both I_T_L and I_T_L_Q nexuses are supported, &n; * allowing multiple commands to propagate all the way to a SCSI-II device &n; * while a command is already executing.&n; *&n; * To solve the multiple-boards-in-the-same-system problem, &n; * there is a separate instance structure for each instance&n; * of a 5380 in the system.  So, multiple NCR5380 drivers will&n; * be able to coexist with appropriate changes to the high level&n; * SCSI code.  &n; *&n; * A NCR5380_PUBLIC_REVISION macro is provided, with the release&n; * number (updated for each public release) printed by the &n; * NCR5380_print_options command, which should be called from the &n; * wrapper detect function, so that I know what release of the driver&n; * users are using.&n; *&n; * Issues specific to the NCR5380 : &n; *&n; * When used in a PIO or pseudo-dma mode, the NCR5380 is a braindead &n; * piece of hardware that requires you to sit in a loop polling for &n; * the REQ signal as long as you are connected.  Some devices are &n; * brain dead (ie, many TEXEL CD ROM drives) and won&squot;t disconnect &n; * while doing long seek operations.&n; * &n; * The workaround for this is to keep track of devices that have&n; * disconnected.  If the device hasn&squot;t disconnected, for commands that&n; * should disconnect, we do something like &n; *&n; * while (!REQ is asserted) { sleep for N usecs; poll for M usecs }&n; * &n; * Some tweaking of N and M needs to be done.  An algorithm based &n; * on &quot;time to data&quot; would give the best results as long as short time&n; * to datas (ie, on the same track) were considered, however these &n; * broken devices are the exception rather than the rule and I&squot;d rather&n; * spend my time optimizing for the normal case.&n; *&n; * Architecture :&n; *&n; * At the heart of the design is a coroutine, NCR5380_main,&n; * which is started when not running by the interrupt handler,&n; * timer, and queue command function.  It attempts to establish&n; * I_T_L or I_T_L_Q nexuses by removing the commands from the &n; * issue queue and calling NCR5380_select() if a nexus &n; * is not established. &n; *&n; * Once a nexus is established, the NCR5380_information_transfer()&n; * phase goes through the various phases as instructed by the target.&n; * if the target goes into MSG IN and sends a DISCONNECT message,&n; * the command structure is placed into the per instance disconnected&n; * queue, and NCR5380_main tries to find more work.  If USLEEP&n; * was defined, and the target is idle for too long, the system&n; * will try to sleep.&n; *&n; * If a command has disconnected, eventually an interrupt will trigger,&n; * calling NCR5380_intr()  which will in turn call NCR5380_reselect&n; * to reestablish a nexus.  This will run main if necessary.&n; *&n; * On command termination, the done function will be called as &n; * appropriate.&n; *&n; * SCSI pointers are maintained in the SCp field of SCSI command &n; * structures, being initialized after the command is connected&n; * in NCR5380_select, and set as appropriate in NCR5380_information_transfer.&n; * Note that in violation of the standard, an implicit SAVE POINTERS operation&n; * is done, since some BROKEN disks fail to issue an explicit SAVE POINTERS.&n; */
+multiline_comment|/*&n; * Using this file :&n; * This file a skeleton Linux SCSI driver for the NCR 5380 series&n; * of chips.  To use it, you write a architecture specific functions &n; * and macros and include this file in your driver.&n; *&n; * These macros control options : &n; * AUTOPROBE_IRQ - if defined, the NCR5380_probe_irq() function will be &n; *&t;defined.&n; * &n; * AUTOSENSE - if defined, REQUEST SENSE will be performed automatically&n; *&t;for commands that return with a CHECK CONDITION status. &n; *&n; * DIFFERENTIAL - if defined, NCR53c81 chips will use external differential&n; * &t;transceivers. &n; *&n; * LINKED - if defined, linked commands are supported.&n; *&n; * PSEUDO_DMA - if defined, PSEUDO DMA is used during the data transfer phases.&n; *&n; * REAL_DMA - if defined, REAL DMA is used during the data transfer phases.&n; *&n; * REAL_DMA_POLL - if defined, REAL DMA is used but the driver doesn&squot;t&n; * &t;rely on phase mismatch and EOP interrupts to determine end &n; *&t;of phase.&n; *&n; * SCSI2 - if defined, SCSI-2 tagged queuing is used where possible&n; *&n; * UNSAFE - leave interrupts enabled during pseudo-DMA transfers.  You&n; *&t;    only really want to use this if you&squot;re having a problem with&n; *&t;    dropped characters during high speed communications, and even&n; *&t;    then, you&squot;re going to be better off twiddling with transfersize&n; *&t;    in the high level code.&n; *&n; * USLEEP - if defined, on devices that aren&squot;t disconnecting from the &n; *&t;bus, we will go to sleep so that the CPU can get real work done &n; *&t;when we run a command that won&squot;t complete immediately.&n; *&n; * Note that if USLEEP is defined, NCR5380_TIMER *must* also be&n; * defined.&n; *&n; * Defaults for these will be provided if USLEEP is defined, although&n; * the user may want to adjust these to allocate CPU resources to &n; * the SCSI driver or &quot;real&quot; code.&n; * &n; * USLEEP_SLEEP - amount of time, in jiffies, to sleep&n; *&n; * USLEEP_POLL - amount of time, in jiffies, to poll&n; *&n; * These macros MUST be defined :&n; * NCR5380_local_declare() - declare any local variables needed for your transfer&n; *&t;routines.&n; *&n; * NCR5380_setup(instance) - initialize any local variables needed from a given&n; *&t;instance of the host adapter for NCR5380_{read,write,pread,pwrite}&n; * &n; * NCR5380_read(register)  - read from the specified register&n; *&n; * NCR5380_write(register, value) - write to the specific register &n; *&n; * NCR5380_implementation_fields  - additional fields needed for this &n; *&t;specific implementation of the NCR5380&n; *&n; * Either real DMA *or* pseudo DMA may be implemented&n; * REAL functions : &n; * NCR5380_REAL_DMA should be defined if real DMA is to be used.&n; * Note that the DMA setup functions should return the number of bytes &n; *&t;that they were able to program the controller for.&n; *&n; * Also note that generic i386/PC versions of these macros are &n; *&t;available as NCR5380_i386_dma_write_setup,&n; *&t;NCR5380_i386_dma_read_setup, and NCR5380_i386_dma_residual.&n; *&n; * NCR5380_dma_write_setup(instance, src, count) - initialize&n; * NCR5380_dma_read_setup(instance, dst, count) - initialize&n; * NCR5380_dma_residual(instance); - residual count&n; *&n; * PSEUDO functions :&n; * NCR5380_pwrite(instance, src, count)&n; * NCR5380_pread(instance, dst, count);&n; *&n; * If nothing specific to this implementation needs doing (ie, with external&n; * hardware), you must also define &n; *  &n; * NCR5380_queue_command&n; * NCR5380_reset&n; * NCR5380_abort&n; *&n; * to be the global entry points into the specific driver, ie &n; * #define NCR5380_queue_command t128_queue_command.&n; *&n; * If this is not done, the routines will be defined as static functions&n; * with the NCR5380* names and the user must provide a globally&n; * accessible wrapper function.&n; *&n; * The generic driver is initialized by calling NCR5380_init(instance),&n; * after setting the appropriate host specific fields and ID.  If the &n; * driver wishes to autoprobe for an IRQ line, the NCR5380_probe_irq(instance,&n; * possible) function may be used.  Before the specific driver initialization&n; * code finishes, NCR5380_print_options should be called.&n; */
 DECL|variable|first_instance
 r_static
 r_struct
@@ -754,7 +754,7 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
-multiline_comment|/*&n; * We need to have our corroutine active given these constraints : &n; * 1.  The mutex flag, main_running, can only be set when the main &n; *     routine can actually process data, otherwise SCSI commands&n; *     will never get issued.&n; *&n; * 2.  NCR5380_main() shouldn&squot;t be called before it has exited, because&n; *     other drivers have had kernel stack overflows in similar&n; *     situations.&n; *&n; * 3.  We don&squot;t want to inline NCR5380_main() because of space concerns,&n; *     even though it is only called in two places.&n; *&n; * So, the solution is to set the mutex in an inline wrapper for the &n; * main corroutine, and have the main corroutine exit with interrupts &n; * disabled after the final search through the queues so that no race &n; * conditions are possible.&n; */
+multiline_comment|/*&n; * We need to have our coroutine active given these constraints : &n; * 1.  The mutex flag, main_running, can only be set when the main &n; *     routine can actually process data, otherwise SCSI commands&n; *     will never get issued.&n; *&n; * 2.  NCR5380_main() shouldn&squot;t be called before it has exited, because&n; *     other drivers have had kernel stack overflows in similar&n; *     situations.&n; *&n; * 3.  We don&squot;t want to inline NCR5380_main() because of space concerns,&n; *     even though it is only called in two places.&n; *&n; * So, the solution is to set the mutex in an inline wrapper for the &n; * main coroutine, and have the main coroutine exit with interrupts &n; * disabled after the final search through the queues so that no race &n; * conditions are possible.&n; */
 DECL|variable|main_running
 r_static
 r_volatile
@@ -833,7 +833,7 @@ id|expires_first
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/* &n; * Function : int should_disconnect (unsigned char cmd)&n; *&n; * Purpose : decide weather a commmand would normally disconnect or &n; *&t;not, since if it won&squot;t disconnect we should go to sleep.&n; *&n; * Input : cmd - opcode of SCSI command&n; *&n; * Returns : DISCONNECT_LONG if we should disconnect for a really long &n; * &t;time (ie always, sleep, look for REQ active, sleep), &n; *&t;DISCONNECT_TIME_TO_DATA if we would only disconnect for a normal&n; * &t;time-to-data dealy, DISCONNECT_NONE if this command would return&n; * &t;immediately.&n; *&n; *      Future sleep algorithms based on time to data can exploit &n; *      something like this so they can differentiate between &quot;normal&quot; &n; *&t;(ie, read, write, seek) and unusual commands (ie, * format).&n; *&n; * Note : We don&squot;t deal with commands that handle an immediate disconnect,&n; *        &n; */
+multiline_comment|/* &n; * Function : int should_disconnect (unsigned char cmd)&n; *&n; * Purpose : decide weather a command would normally disconnect or &n; *&t;not, since if it won&squot;t disconnect we should go to sleep.&n; *&n; * Input : cmd - opcode of SCSI command&n; *&n; * Returns : DISCONNECT_LONG if we should disconnect for a really long &n; * &t;time (ie always, sleep, look for REQ active, sleep), &n; *&t;DISCONNECT_TIME_TO_DATA if we would only disconnect for a normal&n; * &t;time-to-data delay, DISCONNECT_NONE if this command would return&n; * &t;immediately.&n; *&n; *      Future sleep algorithms based on time to data can exploit &n; *      something like this so they can differentiate between &quot;normal&quot; &n; *&t;(ie, read, write, seek) and unusual commands (ie, * format).&n; *&n; * Note : We don&squot;t deal with commands that handle an immediate disconnect,&n; *        &n; */
 DECL|function|should_disconnect
 r_static
 r_int
@@ -1028,7 +1028,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Doing something about unwanted rentrancy here might be useful */
+multiline_comment|/* Doing something about unwanted reentrancy here might be useful */
 DECL|function|NCR5380_timer_fn
 r_void
 id|NCR5380_timer_fn
@@ -1221,7 +1221,7 @@ macro_line|#endif
 )brace
 )brace
 macro_line|#ifdef AUTOPROBE_IRQ
-multiline_comment|/*&n; * Function : int NCR5380_probe_irq (struct Scsi_Host *instance, int possible)&n; * &n; * Purpose : autoprobe for the IRQ line used by the NCR5380.  &n; *&n; * Inputs : instance - pointer to this instance of the NCR5380 driver,&n; *          possible - bitmask of permissable interrupts.&n; *&n; * Returns : number of the IRQ selected, IRQ_NONE if no interrupt fired.&n; * &n; * XXX no effort is made to deal with spurious interrupts. &n; */
+multiline_comment|/*&n; * Function : int NCR5380_probe_irq (struct Scsi_Host *instance, int possible)&n; * &n; * Purpose : autoprobe for the IRQ line used by the NCR5380.  &n; *&n; * Inputs : instance - pointer to this instance of the NCR5380 driver,&n; *          possible - bitmask of permissible interrupts.&n; *&n; * Returns : number of the IRQ selected, IRQ_NONE if no interrupt fired.&n; * &n; * XXX no effort is made to deal with spurious interrupts. &n; */
 DECL|variable|probe_irq
 r_static
 r_int
@@ -1701,7 +1701,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * Function : void NCR5380_init (struct Scsi_Host *instance, flags)&n; *&n; * Purpose : initializies *instance and corresponding 5380 chip,&n; *&t;with flags OR&squot;d into the initial flags value.&n; *&n; * Inputs : instance - instantiation of the 5380 driver.  &n; *&n; * Notes : I assume that the host, hostno, and id bits have been&n; * &t;set correctly.  I don&squot;t care about the irq and other fields. &n; * &n; */
+multiline_comment|/* &n; * Function : void NCR5380_init (struct Scsi_Host *instance, flags)&n; *&n; * Purpose : initializes *instance and corresponding 5380 chip,&n; *&t;with flags OR&squot;d into the initial flags value.&n; *&n; * Inputs : instance - instantiation of the 5380 driver.  &n; *&n; * Notes : I assume that the host, hostno, and id bits have been&n; * &t;set correctly.  I don&squot;t care about the irq and other fields. &n; * &n; */
 DECL|function|NCR5380_init
 r_static
 r_void
@@ -1889,7 +1889,7 @@ id|printk
 c_func
 (paren
 l_string|&quot;scsi%d : WARNING : support for multiple outstanding commands enabled&bslash;n&quot;
-l_string|&quot;         without AUTOSENSE option, contigent alligence conditions may&bslash;n&quot;
+l_string|&quot;         without AUTOSENSE option, contingent allegiance conditions may&bslash;n&quot;
 l_string|&quot;         be incorrectly cleared.&bslash;n&quot;
 comma
 id|instance-&gt;host_no
@@ -2044,7 +2044,7 @@ id|cmd-&gt;result
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* &n;     * Insert the cmd into the issue queue. Note that REQUEST SENSE &n;     * commands are added to the head of the queue since any command will&n;     * clear the contingent allegience condition that exists and the &n;     * sense data is only guranteed to be valid while the condition exists.&n;     */
+multiline_comment|/* &n;     * Insert the cmd into the issue queue. Note that REQUEST SENSE &n;     * commands are added to the head of the queue since any command will&n;     * clear the contingent allegiance condition that exists and the &n;     * sense data is only guaranteed to be valid while the condition exists.&n;     */
 id|cli
 c_func
 (paren
@@ -2140,7 +2140,7 @@ l_string|&quot;tail&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* Run the coroutine if it isn&squot;t allready running. */
+multiline_comment|/* Run the coroutine if it isn&squot;t already running. */
 id|run_main
 c_func
 (paren
@@ -2150,7 +2150,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function : NCR5380_main (void) &n; *&n; * Purpose : NCR5380_main is a corroutine that runs as long as more work can &n; *&t;be done on the NCR5380 host adapters in a system.  Both &n; *&t;NCR5380_queue_command() and NCR5380_intr() will try to start it &n; *&t;in case it is not running.&n; * &n; * NOTE : NCR5380_main exits with interrupts *disabled*, the caller should &n; *  reenable them.  This prevents rentrancy and kernel stack overflow.&n; */
+multiline_comment|/*&n; * Function : NCR5380_main (void) &n; *&n; * Purpose : NCR5380_main is a coroutine that runs as long as more work can &n; *&t;be done on the NCR5380 host adapters in a system.  Both &n; *&t;NCR5380_queue_command() and NCR5380_intr() will try to start it &n; *&t;in case it is not running.&n; * &n; * NOTE : NCR5380_main exits with interrupts *disabled*, the caller should &n; *  reenable them.  This prevents reentrancy and kernel stack overflow.&n; */
 DECL|function|NCR5380_main
 r_static
 r_void
@@ -2312,7 +2312,7 @@ id|tmp-&gt;host_scribble
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/* renable interrupts after finding one */
+multiline_comment|/* reenable interrupts after finding one */
 id|sti
 c_func
 (paren
@@ -2333,7 +2333,7 @@ id|tmp-&gt;lun
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* &n;    &t;&t;&t; * REQUEST SENSE commands are issued without tagged&n;    &t;&t;&t; * queueing, even on SCSI-II devices because the &n;    &t;&t;&t; * contingent alligence condition exists for the &n;    &t;&t;&t; * entire unit.&n;    &t;&t;&t; */
+multiline_comment|/* &n;    &t;&t;&t; * REQUEST SENSE commands are issued without tagged&n;    &t;&t;&t; * queueing, even on SCSI-II devices because the &n;    &t;&t;&t; * contingent allegiance condition exists for the &n;    &t;&t;&t; * entire unit.&n;    &t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2480,7 +2480,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function : void NCR5380_intr (int irq)&n; * &n; * Purpose : handle interrupts, restablishing I_T_L or I_T_L_Q nexuses&n; *&t;from the disconnected queue, and restarting NCR5380_main() &n; *&t;as required.&n; *&n; * Inputs : int irq, irq that caused this interrupt.&n; *&n; */
+multiline_comment|/*&n; * Function : void NCR5380_intr (int irq)&n; * &n; * Purpose : handle interrupts, reestablishing I_T_L or I_T_L_Q nexuses&n; *&t;from the disconnected queue, and restarting NCR5380_main() &n; *&t;as required.&n; *&n; * Inputs : int irq, irq that caused this interrupt.&n; *&n; */
 DECL|function|NCR5380_intr
 r_static
 r_void
@@ -2709,7 +2709,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*  &n; * XXX the rest of the interrupt conditions should *only* occur during a &n; * DMA transfer, which I haven&squot;t gotten arround to fixing yet.&n; */
+multiline_comment|/*  &n; * XXX the rest of the interrupt conditions should *only* occur during a &n; * DMA transfer, which I haven&squot;t gotten around to fixing yet.&n; */
 macro_line|#if defined(REAL_DMA)
 multiline_comment|/*&n;&t;&t;     * We should only get PHASE MISMATCH and EOP interrupts&n;&t;&t;     * if we have DMA enabled, so do a sanity check based on&n;&t;&t;     * the current setting of the MODE register.&n;&t;&t;     */
 r_if
@@ -2753,7 +2753,7 @@ id|hostdata-&gt;connected
 id|panic
 c_func
 (paren
-l_string|&quot;scsi%d : recieved end of DMA interrupt with no connected cmd&bslash;n&quot;
+l_string|&quot;scsi%d : received end of DMA interrupt with no connected cmd&bslash;n&quot;
 comma
 id|instance-&gt;hostno
 )paren
@@ -2922,7 +2922,7 @@ id|done
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * Function : int NCR5380_select (struct Scsi_Host *instance, Scsi_Cmnd *cmd, &n; *&t;int tag);&n; *&n; * Purpose : establishes I_T_L or I_T_L_Q nexus for new or existing command,&n; *&t;including ARBITRATION, SELECTION, and initial message out for &n; *&t;IDENTIFY and queue messages. &n; *&n; * Inputs : instance - instantiation of the 5380 driver on which this &n; * &t;target lives, cmd - SCSI command to execute, tag - set to TAG_NEXT for &n; *&t;new tag, TAG_NONE for untagged queueing, otherwise set to the tag for &n; *&t;the command that is presently connected.&n; * &n; * Returns : -1 if selection could not execute for some reason,&n; *&t;0 if selection succeeeded or failed because the target &n; * &t;did not respond.&n; *&n; * Side effects : &n; * &t;If bus busy, arbitration failed, etc, NCR5380_select() will exit &n; *&t;&t;with registers as they should have been on entry - ie&n; *&t;&t;SELECT_ENABLE will be set appropriately, the NCR5380&n; *&t;&t;will cease to drive any SCSI bus signals.&n; *&n; *&t;If successful : I_T_L or I_T_L_Q nexus will be established, &n; *&t;&t;instance-&gt;connected will be set to cmd.  &n; * &t;&t;SELECT interrupt will be disabled.&n; *&n; *&t;If failed (no target) : cmd-&gt;scsi_done() will be called, and the &n; *&t;&t;cmd-&gt;result host byte set to DID_BAD_TARGET.&n; */
+multiline_comment|/* &n; * Function : int NCR5380_select (struct Scsi_Host *instance, Scsi_Cmnd *cmd, &n; *&t;int tag);&n; *&n; * Purpose : establishes I_T_L or I_T_L_Q nexus for new or existing command,&n; *&t;including ARBITRATION, SELECTION, and initial message out for &n; *&t;IDENTIFY and queue messages. &n; *&n; * Inputs : instance - instantiation of the 5380 driver on which this &n; * &t;target lives, cmd - SCSI command to execute, tag - set to TAG_NEXT for &n; *&t;new tag, TAG_NONE for untagged queueing, otherwise set to the tag for &n; *&t;the command that is presently connected.&n; * &n; * Returns : -1 if selection could not execute for some reason,&n; *&t;0 if selection succeeded or failed because the target &n; * &t;did not respond.&n; *&n; * Side effects : &n; * &t;If bus busy, arbitration failed, etc, NCR5380_select() will exit &n; *&t;&t;with registers as they should have been on entry - ie&n; *&t;&t;SELECT_ENABLE will be set appropriately, the NCR5380&n; *&t;&t;will cease to drive any SCSI bus signals.&n; *&n; *&t;If successful : I_T_L or I_T_L_Q nexus will be established, &n; *&t;&t;instance-&gt;connected will be set to cmd.  &n; * &t;&t;SELECT interrupt will be disabled.&n; *&n; *&t;If failed (no target) : cmd-&gt;scsi_done() will be called, and the &n; *&t;&t;cmd-&gt;result host byte set to DID_BAD_TARGET.&n; */
 DECL|function|NCR5380_select
 r_static
 r_int
@@ -3147,7 +3147,7 @@ l_string|&quot;nop&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* &n;     * The arbitration delay is 2.2us, but this is a minimum and there is &n;     * no maximum so we can safely sleep for ceil(2.2) usecs to accomodate&n;     * the integral nature of udelay().&n;     *&n;     */
+multiline_comment|/* &n;     * The arbitration delay is 2.2us, but this is a minimum and there is &n;     * no maximum so we can safely sleep for ceil(2.2) usecs to accommodate&n;     * the integral nature of udelay().&n;     *&n;     */
 id|udelay
 c_func
 (paren
@@ -3299,7 +3299,7 @@ id|cmd-&gt;target
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* &n;     * Raise ATN while SEL is true before BSY goes false from arbitration,&n;     * since this is the only way to gurantee that we&squot;ll get a MESSAGE OUT&n;     * phase immediately after selection.&n;     */
+multiline_comment|/* &n;     * Raise ATN while SEL is true before BSY goes false from arbitration,&n;     * since this is the only way to guarantee that we&squot;ll get a MESSAGE OUT&n;     * phase immediately after selection.&n;     */
 id|NCR5380_write
 c_func
 (paren
@@ -3352,7 +3352,7 @@ id|ICR_ASSERT_SEL
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* &n;     * Something wierd happens when we cease to drive BSY - looks&n;     * like the board/chip is letting us do another read before the &n;     * appropriate propogation delay has expired, and we&squot;re confusing&n;     * a BSY signal from ourselves as the target&squot;s response to SELECTION.&n;     *&n;     * A small delay (the &squot;C++&squot; frontend breaks the pipeline with an&n;     * unecessary jump, making it work on my 386-33/Trantor T128, the&n;     * tighter &squot;C&squot; code breaks and requires this) solves the problem - &n;     * the 1 us delay is arbitrary, and only used because this delay will &n;     * be the same on other platforms and since it works here, it should &n;     * work there.&n;     */
+multiline_comment|/* &n;     * Something weird happens when we cease to drive BSY - looks&n;     * like the board/chip is letting us do another read before the &n;     * appropriate propagation delay has expired, and we&squot;re confusing&n;     * a BSY signal from ourselves as the target&squot;s response to SELECTION.&n;     *&n;     * A small delay (the &squot;C++&squot; frontend breaks the pipeline with an&n;     * unnecessary jump, making it work on my 386-33/Trantor T128, the&n;     * tighter &squot;C&squot; code breaks and requires this) solves the problem - &n;     * the 1 us delay is arbitrary, and only used because this delay will &n;     * be the same on other platforms and since it works here, it should &n;     * work there.&n;     */
 id|udelay
 c_func
 (paren
@@ -3378,7 +3378,7 @@ id|jiffies
 op_plus
 l_int|25
 suffix:semicolon
-multiline_comment|/* &n;     * XXX very interesting - we&squot;re seeing a bounce where the BSY we &n;     * asserted is being reflected / still asserted (propogation delay?)&n;     * and it&squot;s detecting as true.  Sigh.&n;     */
+multiline_comment|/* &n;     * XXX very interesting - we&squot;re seeing a bounce where the BSY we &n;     * asserted is being reflected / still asserted (propagation delay?)&n;     * and it&squot;s detecting as true.  Sigh.&n;     */
 r_while
 c_loop
 (paren
@@ -3510,7 +3510,7 @@ id|cmd-&gt;target
 id|printk
 c_func
 (paren
-l_string|&quot;scsi%d : wierdness&bslash;n&quot;
+l_string|&quot;scsi%d : weirdness&bslash;n&quot;
 comma
 id|instance-&gt;host_no
 )paren
@@ -3598,7 +3598,7 @@ op_lshift
 id|cmd-&gt;target
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * Since we followed the SCSI spec, and raised ATN while SEL &n;     * was true but before BSY was false during selection, the information&n;     * transfer phase should be a MESSAGE OUT phase so that we can send the&n;     * IDENTIFY message.&n;     * &n;     * If SCSI-II tagged queing is enabled, we also send a SIMPLE_QUEUE_TAG&n;     * message (2 bytes) with a tag ID that we increment with every command&n;     * until it wraps back to 0.&n;     *&n;     * XXX - it turns out that there are some broken SCSI-II devices,&n;     *&t;     which claim to support tagged queing but fail when more than&n;     *&t;     some number of commands are issued at once.&n;     */
+multiline_comment|/*&n;     * Since we followed the SCSI spec, and raised ATN while SEL &n;     * was true but before BSY was false during selection, the information&n;     * transfer phase should be a MESSAGE OUT phase so that we can send the&n;     * IDENTIFY message.&n;     * &n;     * If SCSI-II tagged queuing is enabled, we also send a SIMPLE_QUEUE_TAG&n;     * message (2 bytes) with a tag ID that we increment with every command&n;     * until it wraps back to 0.&n;     *&n;     * XXX - it turns out that there are some broken SCSI-II devices,&n;     *&t;     which claim to support tagged queuing but fail when more than&n;     *&t;     some number of commands are issued at once.&n;     */
 multiline_comment|/* Wait for start of REQ/ACK handshake */
 r_while
 c_loop
@@ -3804,7 +3804,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * Function : int NCR5380_transfer_pio (struct Scsi_Host *instance, &n; *      unsigned char *phase, int *count, unsigned char **data)&n; *&n; * Purpose : transfers data in given phase using polled I/O&n; *&n; * Inputs : instance - instance of driver, *phase - pointer to &n; *&t;what phase is expected, *count - pointer to number of &n; *&t;bytes to transfer, **data - pointer to data pointer.&n; * &n; * Returns : -1 when different phase is enterred without transfering&n; *&t;maximum number of bytes, 0 if all bytes or transfered or exit&n; *&t;is in same phase.&n; *&n; * &t;Also, *phase, *count, *data are modified in place.&n; *&n; * XXX Note : handling for bus free may be useful.&n; */
+multiline_comment|/* &n; * Function : int NCR5380_transfer_pio (struct Scsi_Host *instance, &n; *      unsigned char *phase, int *count, unsigned char **data)&n; *&n; * Purpose : transfers data in given phase using polled I/O&n; *&n; * Inputs : instance - instance of driver, *phase - pointer to &n; *&t;what phase is expected, *count - pointer to number of &n; *&t;bytes to transfer, **data - pointer to data pointer.&n; * &n; * Returns : -1 when different phase is entered without transferring&n; *&t;maximum number of bytes, 0 if all bytes or transfered or exit&n; *&t;is in same phase.&n; *&n; * &t;Also, *phase, *count, *data are modified in place.&n; *&n; * XXX Note : handling for bus free may be useful.&n; */
 multiline_comment|/*&n; * Note : this code is not as quick as it could be, however it &n; * IS 100% reliable, and for the actual data transfer where speed&n; * counts, we will always do a pseudo DMA or DMA transfer.&n; */
 DECL|function|NCR5380_transfer_pio
 r_static
@@ -4248,7 +4248,7 @@ l_int|1
 suffix:semicolon
 )brace
 macro_line|#if defined(REAL_DMA) || defined(PSEUDO_DMA) || defined (REAL_DMA_POLL)
-multiline_comment|/* &n; * Function : int NCR5380_transfer_dma (struct Scsi_Host *instance, &n; *      unsigned char *phase, int *count, unsigned char **data)&n; *&n; * Purpose : transfers data in given phase using either real&n; *&t;or pseudo DMA.&n; *&n; * Inputs : instance - instance of driver, *phase - pointer to &n; *&t;what phase is expected, *count - pointer to number of &n; *&t;bytes to transfer, **data - pointer to data pointer.&n; * &n; * Returns : -1 when different phase is enterred without transfering&n; *&t;maximum number of bytes, 0 if all bytes or transfered or exit&n; *&t;is in same phase.&n; *&n; * &t;Also, *phase, *count, *data are modified in place.&n; *&n; */
+multiline_comment|/* &n; * Function : int NCR5380_transfer_dma (struct Scsi_Host *instance, &n; *      unsigned char *phase, int *count, unsigned char **data)&n; *&n; * Purpose : transfers data in given phase using either real&n; *&t;or pseudo DMA.&n; *&n; * Inputs : instance - instance of driver, *phase - pointer to &n; *&t;what phase is expected, *count - pointer to number of &n; *&t;bytes to transfer, **data - pointer to data pointer.&n; * &n; * Returns : -1 when different phase is entered without transferring&n; *&t;maximum number of bytes, 0 if all bytes or transfered or exit&n; *&t;is in same phase.&n; *&n; * &t;Also, *phase, *count, *data are modified in place.&n; *&n; */
 DECL|function|NCR5380_transfer_dma
 r_static
 r_int
@@ -4539,7 +4539,7 @@ id|MODE_REG
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* &n; * FOO stuff. For some UNAPPARANT reason, I&squot;m getting &n; * watchdog timers fired on bootup for NO APPARANT REASON, meaning it&squot;s&n; * probably a timing problem.&n; *&n; * Since this is the only place I have back-to-back writes, perhaps this &n; * is the problem?&n; */
+multiline_comment|/* &n; * FOO stuff. For some UNAPPARENT reason, I&squot;m getting &n; * watchdog timers fired on bootup for NO APPARENT REASON, meaning it&squot;s&n; * probably a timing problem.&n; *&n; * Since this is the only place I have back-to-back writes, perhaps this &n; * is the problem?&n; */
 r_if
 c_cond
 (paren
@@ -4559,7 +4559,7 @@ macro_line|#endif
 id|NCR5380_write
 c_func
 (paren
-id|START_DMA_INITIATOR_RECIEVE_REG
+id|START_DMA_INITIATOR_RECEIVE_REG
 comma
 l_int|0
 )paren
@@ -4643,7 +4643,7 @@ id|BASR_END_DMA_TRANSFER
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;  At this point, either we&squot;ve completed DMA, or we have a phase mismatch,&n;  or we&squot;ve unexpectedly lost BUSY (which is a real error).&n;&n;  For write DMAs, we want to wait until the last byte has been&n;  transferred out over the bus before we turn off DMA mode.  Alas, there&n;  seems to be no terribly good way of doing this on a 5380 under all&n;  conditions.  For non-scatter-gather operations, we can wait until REQ&n;  and ACK both go false, or until a phase mismatch occurs.  Gather-writes&n;  are nastier, since the device will be expecting more data than we&n;  are prepared to send it, and REQ will remain asserted.  On a 53C8[01] we&n;  could test LAST BIT SENT to assure transfer (I imagine this is precisely&n;  why this signal was added to the newer chips) but on the older 538[01]&n;  this signal does not exist.  The workaround for this lack is a watchdog;&n;  we bail out of the wait-loop after a modest amount of wait-time if&n;  the usual exit conditions are not met.  Not a terribly clean or&n;  correct solution :-%&n;&n;  Reads are equally tricky due to a nasty characteristic of the NCR5380.&n;  If the chip is in DMA mode for an READ, it will respond to a target&squot;s&n;  REQ by latching the SCSI data into the INPUT DATA register and asserting&n;  ACK, even if it has _already_ been notified by the DMA controller that&n;  the current DMA transfer has completed!  If the NCR5380 is then taken&n;  out of DMA mode, this already-acknowledged byte is lost.&n;&n;  This is not a problem for &quot;one DMA transfer per command&quot; reads, because&n;  the situation will never arise... either all of the data is DMA&squot;ed&n;  properly, or the target switches to MESSAGE IN phase to signal a&n;  disconnection (either operation bringing the DMA to a clean halt).&n;  However, in order to handle scatter-reads, we must work around the&n;  problem.  The chosen fix is to DMA N-2 bytes, then check for the&n;  condition before taking the NCR5380 out of DMA mode.  One or two extra&n;  bytes are tranferred via PIO as necessary to fill out the original&n;  request.&n;*/
+multiline_comment|/*&n;  At this point, either we&squot;ve completed DMA, or we have a phase mismatch,&n;  or we&squot;ve unexpectedly lost BUSY (which is a real error).&n;&n;  For write DMAs, we want to wait until the last byte has been&n;  transferred out over the bus before we turn off DMA mode.  Alas, there&n;  seems to be no terribly good way of doing this on a 5380 under all&n;  conditions.  For non-scatter-gather operations, we can wait until REQ&n;  and ACK both go false, or until a phase mismatch occurs.  Gather-writes&n;  are nastier, since the device will be expecting more data than we&n;  are prepared to send it, and REQ will remain asserted.  On a 53C8[01] we&n;  could test LAST BIT SENT to assure transfer (I imagine this is precisely&n;  why this signal was added to the newer chips) but on the older 538[01]&n;  this signal does not exist.  The workaround for this lack is a watchdog;&n;  we bail out of the wait-loop after a modest amount of wait-time if&n;  the usual exit conditions are not met.  Not a terribly clean or&n;  correct solution :-%&n;&n;  Reads are equally tricky due to a nasty characteristic of the NCR5380.&n;  If the chip is in DMA mode for an READ, it will respond to a target&squot;s&n;  REQ by latching the SCSI data into the INPUT DATA register and asserting&n;  ACK, even if it has _already_ been notified by the DMA controller that&n;  the current DMA transfer has completed!  If the NCR5380 is then taken&n;  out of DMA mode, this already-acknowledged byte is lost.&n;&n;  This is not a problem for &quot;one DMA transfer per command&quot; reads, because&n;  the situation will never arise... either all of the data is DMA&squot;ed&n;  properly, or the target switches to MESSAGE IN phase to signal a&n;  disconnection (either operation bringing the DMA to a clean halt).&n;  However, in order to handle scatter-reads, we must work around the&n;  problem.  The chosen fix is to DMA N-2 bytes, then check for the&n;  condition before taking the NCR5380 out of DMA mode.  One or two extra&n;  bytes are transferred via PIO as necessary to fill out the original&n;  request.&n;*/
 r_if
 c_cond
 (paren
@@ -5004,7 +5004,7 @@ l_int|1
 )paren
 )paren
 (brace
-multiline_comment|/*&n;&t;     * We can&squot;t disable DMA mode after successfully transfering &n;&t;     * what we plan to be the last byte, since that would open up&n;&t;     * a race condition where if the target asserted REQ before &n;&t;     * we got the DMA mode reset, the NCR5380 would have latched&n;&t;     * an additional byte into the INPUT DATA register and we&squot;d&n;&t;     * have dropped it.&n;&t;     * &n;&t;     * The workarround was to transfer one fewer bytes than we &n;&t;     * intended to with the pseudo-DMA read function, wait for &n;&t;     * the chip to latch the last byte, read it, and then disable&n;&t;     * pseudo-DMA mode.&n;&t;     * &n;&t;     * After REQ is asserted, the NCR5380 asserts DRQ and ACK.&n;&t;     * REQ is deasserted when ACK is asserted, and not reasserted&n;&t;     * until ACK goes false.  Since the NCR5380 won&squot;t lower ACK&n;&t;     * until DACK is asserted, which won&squot;t happen unless we twiddle&n;&t;     * the DMA port or we take the NCR5380 out of DMA mode, we &n;&t;     * can gurantee that we won&squot;t handshake another extra &n;&t;     * byte.&n;    &t;     */
+multiline_comment|/*&n;&t;     * We can&squot;t disable DMA mode after successfully transferring &n;&t;     * what we plan to be the last byte, since that would open up&n;&t;     * a race condition where if the target asserted REQ before &n;&t;     * we got the DMA mode reset, the NCR5380 would have latched&n;&t;     * an additional byte into the INPUT DATA register and we&squot;d&n;&t;     * have dropped it.&n;&t;     * &n;&t;     * The workaround was to transfer one fewer bytes than we &n;&t;     * intended to with the pseudo-DMA read function, wait for &n;&t;     * the chip to latch the last byte, read it, and then disable&n;&t;     * pseudo-DMA mode.&n;&t;     * &n;&t;     * After REQ is asserted, the NCR5380 asserts DRQ and ACK.&n;&t;     * REQ is deasserted when ACK is asserted, and not reasserted&n;&t;     * until ACK goes false.  Since the NCR5380 won&squot;t lower ACK&n;&t;     * until DACK is asserted, which won&squot;t happen unless we twiddle&n;&t;     * the DMA port or we take the NCR5380 out of DMA mode, we &n;&t;     * can guarantee that we won&squot;t handshake another extra &n;&t;     * byte.&n;    &t;     */
 r_while
 c_loop
 (paren
@@ -5587,7 +5587,7 @@ id|cmd-&gt;SCp.buffers_residual
 suffix:semicolon
 macro_line|#endif
 )brace
-multiline_comment|/*&n;&t;&t; * The preffered transfer method is going to be &n;&t;&t; * PSEUDO-DMA for systems that are strictly PIO,&n;&t;&t; * since we can let the hardware do the handshaking.&n;&t;&t; *&n;&t;&t; * For this to work, we need to know the transfersize&n;&t;&t; * ahead of time, since the pseudo-DMA code will sit&n;&t;&t; * in an unconditional loop.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * The prefered transfer method is going to be &n;&t;&t; * PSEUDO-DMA for systems that are strictly PIO,&n;&t;&t; * since we can let the hardware do the handshaking.&n;&t;&t; *&n;&t;&t; * For this to work, we need to know the transfersize&n;&t;&t; * ahead of time, since the pseudo-DMA code will sit&n;&t;&t; * in an unconditional loop.&n;&t;&t; */
 macro_line|#if defined(PSEUDO_DMA) || defined(REAL_DMA_POLL)
 macro_line|#ifdef NCR5380_dma_xfer_len
 r_if
@@ -6280,7 +6280,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/* Enable reselect interupts */
+multiline_comment|/* Enable reselect interrupts */
 id|NCR5380_write
 c_func
 (paren
@@ -6309,7 +6309,7 @@ id|hostdata-&gt;connected
 suffix:semicolon
 r_return
 suffix:semicolon
-multiline_comment|/* &n;&t;&t; * The SCSI data pointer is *IMPLICITLY* saved on a disconnect&n;&t;&t; * operation, in violation of the SCSI spec so we can safely &n;&t;&t; * ignore SAVE/RESTORE pointers calls.&n;&t;&t; *&n;&t;&t; * Unfortunately, some disks violate the SCSI spec and &n;&t;&t; * don&squot;t issue the required SAVE_POINTERS message before&n;&t;&t; * disconnecting, and we have to break spec to remain &n;&t;&t; * compatable.&n;&t;&t; */
+multiline_comment|/* &n;&t;&t; * The SCSI data pointer is *IMPLICITLY* saved on a disconnect&n;&t;&t; * operation, in violation of the SCSI spec so we can safely &n;&t;&t; * ignore SAVE/RESTORE pointers calls.&n;&t;&t; *&n;&t;&t; * Unfortunately, some disks violate the SCSI spec and &n;&t;&t; * don&squot;t issue the required SAVE_POINTERS message before&n;&t;&t; * disconnecting, and we have to break spec to remain &n;&t;&t; * compatible.&n;&t;&t; */
 r_case
 id|SAVE_POINTERS
 suffix:colon
@@ -6525,7 +6525,7 @@ id|len
 id|printk
 c_func
 (paren
-l_string|&quot;scsi%d: error recieving extended message&bslash;n&quot;
+l_string|&quot;scsi%d: error receiving extended message&bslash;n&quot;
 comma
 id|instance-&gt;host_no
 )paren
@@ -6561,7 +6561,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Fall through to reject message */
-multiline_comment|/* &n;  &t;&t; * If we get something wierd that we aren&squot;t expecting, &n; &t;&t; * reject it.&n;&t;&t; */
+multiline_comment|/* &n;  &t;&t; * If we get something weird that we aren&squot;t expecting, &n; &t;&t; * reject it.&n;&t;&t; */
 r_default
 suffix:colon
 (brace
@@ -6619,7 +6619,7 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;scsi%d: rejecting unknown extended message code %02x, legnth %d from target %d, lun %d&bslash;n&quot;
+l_string|&quot;scsi%d: rejecting unknown extended message code %02x, length %d from target %d, lun %d&bslash;n&quot;
 comma
 id|instance-&gt;host_no
 comma
@@ -6926,7 +6926,7 @@ macro_line|#endif
 )brace
 multiline_comment|/* while (1) */
 )brace
-multiline_comment|/*&n; * Function : void NCR5380_reselect (struct Scsi_Host *instance)&n; *&n; * Purpose : does reselection, initializing the instance-&gt;connected &n; *&t;field to point to the Scsi_Cmnd for which the I_T_L or I_T_L_Q &n; *&t;nexus has been restablished,&n; *&t;&n; * Inputs : instance - this instance of the NCR5380.&n; *&n; */
+multiline_comment|/*&n; * Function : void NCR5380_reselect (struct Scsi_Host *instance)&n; *&n; * Purpose : does reselection, initializing the instance-&gt;connected &n; *&t;field to point to the Scsi_Cmnd for which the I_T_L or I_T_L_Q &n; *&t;nexus has been reestablished,&n; *&t;&n; * Inputs : instance - this instance of the NCR5380.&n; *&n; */
 DECL|function|NCR5380_reselect
 r_static
 r_void
@@ -7173,7 +7173,7 @@ multiline_comment|/* &n;&t; * We need to add code for SCSI-II to track which dev
 macro_line|#ifdef SCSI2
 macro_line|#error &quot;SCSI-II tagged queueing is not supported yet&quot;
 macro_line|#endif
-multiline_comment|/* &n;&t; * Find the command corresponding to the I_T_L or I_T_L_Q  nexus we &n;&t; * just restablished, and remove it from the disconnected queue.&n;&t; */
+multiline_comment|/* &n;&t; * Find the command corresponding to the I_T_L or I_T_L_Q  nexus we &n;&t; * just reestablished, and remove it from the disconnected queue.&n;&t; */
 r_for
 c_loop
 (paren
@@ -7372,7 +7372,7 @@ suffix:semicolon
 macro_line|#endif
 )brace
 )brace
-multiline_comment|/*&n; * Function : void NCR5380_dma_complete (struct Scsi_Host *instance)&n; *&n; * Purpose : called by interrupt handler when DMA finishes or a phase&n; *&t;mismatch occurs (which would finish the DMA transfer).  &n; *&n; * Inputs : instance - this instance of the NCR5380.&n; *&n; * Returns : pointer to the Scsi_Cmnd structure for which the I_T_L&n; * &t;nexus has been restablished, on failure NULL is returned.&n; */
+multiline_comment|/*&n; * Function : void NCR5380_dma_complete (struct Scsi_Host *instance)&n; *&n; * Purpose : called by interrupt handler when DMA finishes or a phase&n; *&t;mismatch occurs (which would finish the DMA transfer).  &n; *&n; * Inputs : instance - this instance of the NCR5380.&n; *&n; * Returns : pointer to the Scsi_Cmnd structure for which the I_T_L&n; * &t;nexus has been reestablished, on failure NULL is returned.&n; */
 macro_line|#ifdef REAL_DMA
 DECL|function|NCR5380_dma_complete
 r_static
@@ -7753,7 +7753,7 @@ r_return
 id|SCSI_ABORT_NOT_RUNNING
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Case 4: If the command is currently disconnected from the bus, and &n; * &t;there are no connected commands, we reconnect the I_T_L or &n; *&t;I_T_L_Q nexus associated with it, go into message out, and send &n; *      an abort message.&n; *&n; * This case is especially ugly. In order to resetablish the nexus, we&n; * need to call NCR5380_select().  The easiest way to implement this &n; * function was to abort if the bus was busy, and let the interrupt&n; * handler triggered on the SEL for reselect take care of lost arbitrations&n; * where necessary, meaning interrupts need to be enabled.&n; *&n; * When interrupts are enabled, the queues may change - so we &n; * can&squot;t remove it from the disconnected queue before selecting it&n; * because that could cause a failure in hashing the nexus if that &n; * device reselected.&n; * &n; * Since the queues may change, we can&squot;t use the pointers from when we&n; * first locate it.&n; *&n; * So, we must first locate the command, and if NCR5380_select()&n; * succeeds, then issue the abort, relocate the command and remove&n; * it from the disconnected queue.&n; */
+multiline_comment|/*&n; * Case 4: If the command is currently disconnected from the bus, and &n; * &t;there are no connected commands, we reconnect the I_T_L or &n; *&t;I_T_L_Q nexus associated with it, go into message out, and send &n; *      an abort message.&n; *&n; * This case is especially ugly. In order to reestablish the nexus, we&n; * need to call NCR5380_select().  The easiest way to implement this &n; * function was to abort if the bus was busy, and let the interrupt&n; * handler triggered on the SEL for reselect take care of lost arbitrations&n; * where necessary, meaning interrupts need to be enabled.&n; *&n; * When interrupts are enabled, the queues may change - so we &n; * can&squot;t remove it from the disconnected queue before selecting it&n; * because that could cause a failure in hashing the nexus if that &n; * device reselected.&n; * &n; * Since the queues may change, we can&squot;t use the pointers from when we&n; * first locate it.&n; *&n; * So, we must first locate the command, and if NCR5380_select()&n; * succeeds, then issue the abort, relocate the command and remove&n; * it from the disconnected queue.&n; */
 r_for
 c_loop
 (paren
@@ -7820,7 +7820,7 @@ macro_line|#if (NDEBUG &amp; NDEBUG_ABORT)
 id|printk
 c_func
 (paren
-l_string|&quot;scsi%d : nexus restablished.&bslash;n&quot;
+l_string|&quot;scsi%d : nexus reestablished.&bslash;n&quot;
 comma
 id|instance-&gt;host_no
 )paren
@@ -7962,7 +7962,7 @@ id|SCSI_ABORT_SUCCESS
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Case 5 : If we reached this point, the command was not found in any of &n; *&t;    the queues.&n; *&n; * We probably reached this point because of an unlikely race condition&n; * between the command completing successfully and the abortion code,&n; * so we won&squot;t panic, but we will notify the user in case somethign really&n; * broke.&n; */
+multiline_comment|/*&n; * Case 5 : If we reached this point, the command was not found in any of &n; *&t;    the queues.&n; *&n; * We probably reached this point because of an unlikely race condition&n; * between the command completing successfully and the abortion code,&n; * so we won&squot;t panic, but we will notify the user in case something really&n; * broke.&n; */
 id|sti
 c_func
 (paren

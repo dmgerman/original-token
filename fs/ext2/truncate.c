@@ -7,8 +7,7 @@ macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
-DECL|macro|clear_block
-mdefine_line|#define clear_block(addr,size,value) &bslash;&n;&t;__asm__(&quot;cld&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;rep&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;stosl&quot; &bslash;&n;&t;&t;: &bslash;&n;&t;&t;:&quot;a&quot; (value), &quot;c&quot; (size / 4), &quot;D&quot; ((long) (addr)) &bslash;&n;&t;&t;:&quot;cx&quot;, &quot;di&quot;)
+macro_line|#include &lt;linux/string.h&gt;
 DECL|variable|ext2_secrm_seed
 r_static
 r_int
@@ -210,13 +209,14 @@ op_amp
 id|EXT2_SECRM_FL
 )paren
 (brace
-id|clear_block
+id|memset
+c_func
 (paren
 id|bh-&gt;b_data
 comma
-id|inode-&gt;i_sb-&gt;s_blocksize
-comma
 id|RANDOM_INT
+comma
+id|inode-&gt;i_sb-&gt;s_blocksize
 )paren
 suffix:semicolon
 id|mark_buffer_dirty
@@ -605,13 +605,14 @@ op_amp
 id|EXT2_SECRM_FL
 )paren
 (brace
-id|clear_block
+id|memset
+c_func
 (paren
 id|bh-&gt;b_data
 comma
-id|inode-&gt;i_sb-&gt;s_blocksize
-comma
 id|RANDOM_INT
+comma
+id|inode-&gt;i_sb-&gt;s_blocksize
 )paren
 suffix:semicolon
 id|mark_buffer_dirty
@@ -1512,6 +1513,23 @@ c_func
 (paren
 id|inode-&gt;i_mode
 )paren
+)paren
+)paren
+r_return
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|IS_APPEND
+c_func
+(paren
+id|inode
+)paren
+op_logical_or
+id|IS_IMMUTABLE
+c_func
+(paren
+id|inode
 )paren
 )paren
 r_return

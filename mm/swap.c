@@ -1275,7 +1275,7 @@ id|entry
 r_return
 id|page
 op_or
-id|PAGE_PRIVATE
+id|PAGE_PRESENT
 suffix:semicolon
 id|swap_free
 c_func
@@ -1288,7 +1288,7 @@ id|page
 op_or
 id|PAGE_DIRTY
 op_or
-id|PAGE_PRIVATE
+id|PAGE_PRESENT
 suffix:semicolon
 )brace
 DECL|function|try_to_swap_out

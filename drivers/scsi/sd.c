@@ -1016,7 +1016,7 @@ l_int|0
 r_if
 c_cond
 (paren
-id|sugestion
+id|suggestion
 c_func
 (paren
 id|result
@@ -1129,7 +1129,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/* &t;If we had an ILLEGAL REQUEST returned, then we may have&n;performed an unsupported command.  The only thing this should be would&n;be a ten byte read where only a six byte read was supportted.  Also,&n;on a system where READ CAPACITY failed, we mave have read past the end&n;of the &t;disk. &n;*/
+multiline_comment|/* &t;If we had an ILLEGAL REQUEST returned, then we may have&n;performed an unsupported command.  The only thing this should be would&n;be a ten byte read where only a six byte read was supported.  Also,&n;on a system where READ CAPACITY failed, we have have read past the end&n;of the &t;disk. &n;*/
 r_if
 c_cond
 (paren
@@ -1381,7 +1381,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* This is a performance enhancement.  We dig down into the request list and&n;   try and find a queueable request (i.e. device not busy, and host able to&n;   accept another command.  If we find one, then we queue it. This can&n;   make a big difference on systems with more than one disk drive.  We want&n;   to have the interrupts off when monkeying with the request list, because&n;   otherwise the kernel might try and slip in a request inbetween somewhere. */
+multiline_comment|/* This is a performance enhancement.  We dig down into the request list and&n;   try and find a queueable request (i.e. device not busy, and host able to&n;   accept another command.  If we find one, then we queue it. This can&n;   make a big difference on systems with more than one disk drive.  We want&n;   to have the interrupts off when monkeying with the request list, because&n;   otherwise the kernel might try and slip in a request in between somewhere. */
 r_if
 c_cond
 (paren
@@ -4331,7 +4331,7 @@ id|SCpnt-&gt;device-&gt;device_wait
 )paren
 suffix:semicolon
 multiline_comment|/* Wake up a process waiting for device*/
-multiline_comment|/*&n;   *&t;The SCSI standard says &quot;READ CAPACITY is necessary for self confuring software&quot;&n;   *&t;While not mandatory, support of READ CAPACITY is strongly encouraged.&n;   *&t;We used to die if we couldn&squot;t successfully do a READ CAPACITY.&n;   *&t;But, now we go on about our way.  The side effects of this are&n;   *&n;   *&t;1.  We can&squot;t know block size with certainty.  I have said &quot;512 bytes is it&quot;&n;   *&t;   &t;as this is most common.&n;   *&n;   *&t;2.  Recovery from when some one attempts to read past the end of the raw device will&n;   *&t;    be slower.&n;   */
+multiline_comment|/*&n;   *&t;The SCSI standard says &quot;READ CAPACITY is necessary for self configuring software&quot;&n;   *&t;While not mandatory, support of READ CAPACITY is strongly encouraged.&n;   *&t;We used to die if we couldn&squot;t successfully do a READ CAPACITY.&n;   *&t;But, now we go on about our way.  The side effects of this are&n;   *&n;   *&t;1.  We can&squot;t know block size with certainty.  I have said &quot;512 bytes is it&quot;&n;   *&t;   &t;as this is most common.&n;   *&n;   *&t;2.  Recovery from when some one attempts to read past the end of the raw device will&n;   *&t;    be slower.&n;   */
 r_if
 c_cond
 (paren

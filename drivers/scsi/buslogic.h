@@ -99,7 +99,7 @@ mdefine_line|#define STATUS(base) (base)
 DECL|macro|DACT
 mdefine_line|#define DACT 0x80&t;&t;/* Diagnostic Active */
 DECL|macro|DFAIL
-mdefine_line|#define DFAIL 0x40&t;&t;/* Diagonostic Failure */
+mdefine_line|#define DFAIL 0x40&t;&t;/* Diagnostic Failure */
 DECL|macro|INREQ
 mdefine_line|#define INREQ 0x20&t;&t;/* Initialization Required */
 DECL|macro|HARDY
@@ -188,9 +188,9 @@ mdefine_line|#define CMD_INITEXTMB 0x81&t;/* Initialize Extended Mailbox */
 DECL|macro|CMD_INQEXTSETUP
 mdefine_line|#define CMD_INQEXTSETUP 0x8D&t;/* Inquire Extended Set-up Information */
 DECL|macro|CMD_WRITE_INQ_BUF
-mdefine_line|#define CMD_WRITE_INQ_BUF 0x9A&t;/* Write Inquery Data Buffer&n;&t;&t;&t;&t;   (Target Mode Only) */
+mdefine_line|#define CMD_WRITE_INQ_BUF 0x9A&t;/* Write Inquiry Data Buffer&n;&t;&t;&t;&t;   (Target Mode Only) */
 DECL|macro|CMD_READ_INQ_BUF
-mdefine_line|#define CMD_READ_INQ_BUF 0x9B&t;/* Read Inquery Data Buffer&n;&t;&t;&t;&t;   (Target Mode Only) */
+mdefine_line|#define CMD_READ_INQ_BUF 0x9B&t;/* Read Inquiry Data Buffer&n;&t;&t;&t;&t;   (Target Mode Only) */
 DECL|macro|MBX_NOT_IN_USE
 mdefine_line|#define MBX_NOT_IN_USE 0x00
 DECL|macro|MBX_ACTION_START

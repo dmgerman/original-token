@@ -173,9 +173,10 @@ id|count
 (brace
 r_int
 r_int
-id|offset
-comma
 id|i
+suffix:semicolon
+id|off_t
+id|offset
 suffix:semicolon
 r_char
 id|c
@@ -307,6 +308,9 @@ op_logical_or
 id|de-&gt;rec_len
 template_param
 (paren
+(paren
+id|off_t
+)paren
 id|filp-&gt;f_pos
 op_div
 l_int|1024
@@ -320,7 +324,7 @@ l_string|&quot;ext_readdir: bad dir entry, skipping&bslash;n&quot;
 suffix:semicolon
 id|printk
 (paren
-l_string|&quot;dev=%d, dir=%d, offset=%d, rec_len=%d, name_len=%d&bslash;n&quot;
+l_string|&quot;dev=%d, dir=%ld, offset=%ld, rec_len=%d, name_len=%d&bslash;n&quot;
 comma
 id|inode-&gt;i_dev
 comma

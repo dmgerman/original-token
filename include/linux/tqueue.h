@@ -2,6 +2,8 @@ multiline_comment|/*&n; * tqueue.h --- task queue handling for Linux.&n; *&n; * 
 macro_line|#ifndef _LINUX_TQUEUE_H
 DECL|macro|_LINUX_TQUEUE_H
 mdefine_line|#define _LINUX_TQUEUE_H
+macro_line|#include &lt;asm/bitops.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
 macro_line|#ifdef INCLUDE_INLINE_FUNCS
 DECL|macro|_INLINE_
 mdefine_line|#define _INLINE_ extern
@@ -100,48 +102,31 @@ op_star
 id|bh_list
 )paren
 (brace
-r_int
-id|l1
-suffix:semicolon
-id|__asm__
-id|__volatile__
+r_if
+c_cond
 (paren
-l_string|&quot;btsl $0,%1&bslash;n&bslash;t&quot;
-multiline_comment|/* bottom half already marked? */
-l_string|&quot;jc 1f&bslash;n&bslash;t&quot;
-l_string|&quot;leal %2,%3&bslash;n&bslash;t&quot;
-multiline_comment|/* address of the &quot;next&quot; field of bh_struct */
-l_string|&quot;xchgl %3,%0&bslash;n&bslash;t&quot;
-multiline_comment|/* link bottom half into list */
-l_string|&quot;movl %3,%2&bslash;n1:&quot;
-multiline_comment|/* save the pointer to next bottom half */
-suffix:colon
-l_string|&quot;=m&quot;
+op_logical_neg
+id|set_bit
+c_func
 (paren
+l_int|0
+comma
+op_amp
+id|bh_pointer-&gt;sync
+)paren
+)paren
+(brace
+id|bh_pointer-&gt;next
+op_assign
 op_star
 id|bh_list
-)paren
-comma
-l_string|&quot;=m&quot;
-(paren
-id|bh_pointer
-op_member_access_from_pointer
-id|sync
-)paren
-comma
-l_string|&quot;=m&quot;
-(paren
-id|bh_pointer
-op_member_access_from_pointer
-id|next
-)paren
-comma
-l_string|&quot;=r&quot;
-(paren
-id|l1
-)paren
-)paren
 suffix:semicolon
+op_star
+id|bh_list
+op_assign
+id|bh_pointer
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; * queue_task_irq_off: put the bottom half handler &quot;bh_pointer&quot; on the list&n; * &quot;bh_list&quot;.  You may call this function only when interrupts are off.&n; */
 DECL|function|queue_task_irq_off
@@ -160,49 +145,32 @@ op_star
 id|bh_list
 )paren
 (brace
-r_int
-id|l1
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|bh_pointer-&gt;sync
+op_amp
+l_int|1
+)paren
+)paren
+(brace
+id|bh_pointer-&gt;sync
+op_assign
+l_int|1
 suffix:semicolon
-id|__asm__
-id|__volatile__
-(paren
-l_string|&quot;testl $1,%1&bslash;n&bslash;t&quot;
-multiline_comment|/* bottom half already marked? */
-l_string|&quot;jne 1f&bslash;n&bslash;t&quot;
-l_string|&quot;movl $1,%1&bslash;n&bslash;t&quot;
-l_string|&quot;leal %2,%3&bslash;n&bslash;t&quot;
-multiline_comment|/* address of the &quot;next&quot; field of bh_struct */
-l_string|&quot;xchgl %3,%0&bslash;n&bslash;t&quot;
-multiline_comment|/* link bottom half into list */
-l_string|&quot;movl %3,%2&bslash;n1:&quot;
-multiline_comment|/* save the pointer to next bottom half */
-suffix:colon
-l_string|&quot;=m&quot;
-(paren
+id|bh_pointer-&gt;next
+op_assign
 op_star
 id|bh_list
-)paren
-comma
-l_string|&quot;=m&quot;
-(paren
-id|bh_pointer
-op_member_access_from_pointer
-id|sync
-)paren
-comma
-l_string|&quot;=m&quot;
-(paren
-id|bh_pointer
-op_member_access_from_pointer
-id|next
-)paren
-comma
-l_string|&quot;=r&quot;
-(paren
-id|l1
-)paren
-)paren
 suffix:semicolon
+op_star
+id|bh_list
+op_assign
+id|bh_pointer
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; * queue_task: as queue_task_irq, but can be called from anywhere.&n; */
 DECL|function|queue_task
@@ -221,51 +189,52 @@ op_star
 id|bh_list
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|set_bit
+c_func
+(paren
+l_int|0
+comma
+op_amp
+id|bh_pointer-&gt;sync
+)paren
+)paren
+(brace
 r_int
-id|l1
+r_int
+id|flags
 suffix:semicolon
-id|__asm__
-id|__volatile__
+id|save_flags
+c_func
 (paren
-l_string|&quot;btsl $0,%1&bslash;n&bslash;t&quot;
-l_string|&quot;jc 1f&bslash;n&bslash;t&quot;
-l_string|&quot;leal %2,%3&bslash;n&bslash;t&quot;
-l_string|&quot;pushfl&bslash;n&bslash;t&quot;
-multiline_comment|/* save interrupt flag */
-l_string|&quot;cli&bslash;n&bslash;t&quot;
-multiline_comment|/* turn off interrupts */
-l_string|&quot;xchgl %3,%0&bslash;n&bslash;t&quot;
-l_string|&quot;movl %3,%2&bslash;n&bslash;t&quot;
-multiline_comment|/* now the linking step is really atomic! */
-l_string|&quot;popfl&bslash;n1:&quot;
-multiline_comment|/* restore interrupt flag */
-suffix:colon
-l_string|&quot;=m&quot;
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
 (paren
+)paren
+suffix:semicolon
+id|bh_pointer-&gt;next
+op_assign
 op_star
 id|bh_list
-)paren
-comma
-l_string|&quot;=m&quot;
-(paren
+suffix:semicolon
+op_star
+id|bh_list
+op_assign
 id|bh_pointer
-op_member_access_from_pointer
-id|sync
-)paren
-comma
-l_string|&quot;=m&quot;
+suffix:semicolon
+id|restore_flags
+c_func
 (paren
-id|bh_pointer
-op_member_access_from_pointer
-id|next
-)paren
-comma
-l_string|&quot;=r&quot;
-(paren
-id|l1
-)paren
+id|flags
 )paren
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; * Call all &quot;bottom halfs&quot; on a given list.&n; */
 DECL|function|run_task_queue

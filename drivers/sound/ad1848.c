@@ -952,7 +952,7 @@ r_int
 id|arg
 )paren
 (brace
-multiline_comment|/*&n; * The sampling speed is encoded in the least significant nible of I8. The&n; * LSB selects the clock source (0=24.576 MHz, 1=16.9344 Mhz) and other&n; * three bits select the divisor (indirectly):&n; *&n; * The available speeds are in the following table. Keep the speeds in&n; * the increasing order.&n; */
+multiline_comment|/*&n; * The sampling speed is encoded in the least significant nibble of I8. The&n; * LSB selects the clock source (0=24.576 MHz, 1=16.9344 Mhz) and other&n; * three bits select the divisor (indirectly):&n; *&n; * The available speeds are in the following table. Keep the speeds in&n; * the increasing order.&n; */
 r_typedef
 r_struct
 (brace
@@ -2474,7 +2474,7 @@ comma
 id|fs
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * Write to I8 starts resyncronization. Wait until it completes.&n;   */
+multiline_comment|/*&n;   * Write to I8 starts resynchronization. Wait until it completes.&n;   */
 id|timeout
 op_assign
 l_int|10000
@@ -2539,7 +2539,7 @@ comma
 id|fs
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * Write to I28 starts resyncronization. Wait until it completes.&n;   */
+multiline_comment|/*&n;   * Write to I28 starts resynchronization. Wait until it completes.&n;   */
 id|timeout
 op_assign
 l_int|10000

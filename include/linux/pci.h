@@ -149,8 +149,8 @@ id|pcibios_present
 r_void
 )paren
 suffix:semicolon
-DECL|macro|PCIBIOS_SUCCESFUL
-mdefine_line|#define PCIBIOS_SUCCESFUL&t;&t;0x00
+DECL|macro|PCIBIOS_SUCCESSFUL
+mdefine_line|#define PCIBIOS_SUCCESSFUL&t;&t;0x00
 DECL|macro|PCIBIOS_FUNC_NOT_SUPPORTED
 mdefine_line|#define PCIBIOS_FUNC_NOT_SUPPORTED&t;0x81
 DECL|macro|PCIBIOS_BAD_VENDOR_ID

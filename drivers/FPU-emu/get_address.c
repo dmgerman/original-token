@@ -421,7 +421,7 @@ l_int|5
 )paren
 multiline_comment|/* The second condition also has mod==0 */
 (brace
-multiline_comment|/* 32 bit displacment */
+multiline_comment|/* 32 bit displacement */
 id|RE_ENTRANT_CHECK_OFF
 suffix:semicolon
 id|FPU_code_verify_area

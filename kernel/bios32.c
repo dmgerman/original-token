@@ -1529,10 +1529,10 @@ id|error
 )paren
 (brace
 r_case
-id|PCIBIOS_SUCCESFUL
+id|PCIBIOS_SUCCESSFUL
 suffix:colon
 r_return
-l_string|&quot;SUCCESFUL&quot;
+l_string|&quot;SUCCESSFUL&quot;
 suffix:semicolon
 r_case
 id|PCIBIOS_FUNC_NOT_SUPPORTED

@@ -400,7 +400,7 @@ comma
 suffix:semicolon
 DECL|macro|ADDRESS_COUNT
 mdefine_line|#define ADDRESS_COUNT (sizeof( addresses ) / sizeof( unsigned ))
-multiline_comment|/* possible i/o adresses for the AIC-6260 */
+multiline_comment|/* possible i/o addresses for the AIC-6260 */
 DECL|variable|ports
 r_static
 r_int
@@ -3374,7 +3374,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* disconnected target is trying to reconnect.&n;     Only possible, if we have disconnected nexuses and&n;     nothing is occuping the bus.&n;  */
+multiline_comment|/* disconnected target is trying to reconnect.&n;     Only possible, if we have disconnected nexuses and&n;     nothing is occupying the bus.&n;  */
 r_if
 c_cond
 (paren
@@ -3855,7 +3855,7 @@ macro_line|#if defined(DEBUG_INTR) || defined(DEBUG_SELECTION) || defined(DEBUG_
 id|printk
 c_func
 (paren
-l_string|&quot;issueing command, &quot;
+l_string|&quot;issuing command, &quot;
 )paren
 suffix:semicolon
 macro_line|#endif

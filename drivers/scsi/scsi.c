@@ -123,7 +123,7 @@ comma
 l_string|&quot;Communications   &quot;
 )brace
 suffix:semicolon
-multiline_comment|/*&n;&t;global variables : &n;&t;scsi_devices an array of these specifing the address for each &n;&t;(host, id, LUN)&n;*/
+multiline_comment|/*&n;&t;global variables : &n;&t;scsi_devices an array of these specifying the address for each &n;&t;(host, id, LUN)&n;*/
 DECL|variable|scsi_devices
 id|Scsi_Device
 op_star
@@ -170,7 +170,7 @@ id|last_cmnd
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n; *&t;As the scsi do command functions are inteligent, and may need to &n; *&t;redo a command, we need to keep track of the last command &n; *&t;executed on each one.&n; */
+multiline_comment|/*&n; *&t;As the scsi do command functions are intelligent, and may need to &n; *&t;redo a command, we need to keep track of the last command &n; *&t;executed on each one.&n; */
 DECL|macro|WAS_RESET
 mdefine_line|#define WAS_RESET &t;0x01
 DECL|macro|WAS_TIMEDOUT
@@ -1522,7 +1522,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Accomodate drivers that want to sleep when they should be in a polling&n; * loop.&n; */
+multiline_comment|/*&n; * Accommodate drivers that want to sleep when they should be in a polling&n; * loop.&n; */
 id|SDpnt-&gt;disconnect
 op_assign
 l_int|0
@@ -2953,7 +2953,7 @@ comma
 id|SCpnt-&gt;timeout_per_command
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;We will use a queued command if possible, otherwise we will emulate the&n;&t;queing and calling of completion function ourselves. &n;*/
+multiline_comment|/*&n;&t;We will use a queued command if possible, otherwise we will emulate the&n;&t;queuing and calling of completion function ourselves. &n;*/
 macro_line|#ifdef DEBUG
 id|printk
 c_func
@@ -3198,7 +3198,7 @@ op_assign
 id|SCpnt-&gt;old_use_sg
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;scsi_do_cmd sends all the commands out to the low-level driver.  It &n;&t;handles the specifics required for each low level driver - ie queued &n;&t;or non queud.  It also prevents conflicts when different high level &n;&t;drivers go for the same host at the same time.&n;*/
+multiline_comment|/*&n;&t;scsi_do_cmd sends all the commands out to the low-level driver.  It &n;&t;handles the specifics required for each low level driver - ie queued &n;&t;or non queued.  It also prevents conflicts when different high level &n;&t;drivers go for the same host at the same time.&n;*/
 DECL|function|scsi_do_cmd
 r_void
 id|scsi_do_cmd
@@ -3329,7 +3329,7 @@ id|host-&gt;host_no
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;We must prevent reentrancy to the lowlevel host driver.  This prevents &n;&t;it - we enter a loop until the host we want to talk to is not busy.   &n;&t;Race conditions are prevented, as interrupts are disabled inbetween the&n;&t;time we check for the host being not busy, and the time we mark it busy&n;&t;ourselves.&n;*/
+multiline_comment|/*&n;&t;We must prevent reentrancy to the lowlevel host driver.  This prevents &n;&t;it - we enter a loop until the host we want to talk to is not busy.   &n;&t;Race conditions are prevented, as interrupts are disabled in between the&n;&t;time we check for the host being not busy, and the time we mark it busy&n;&t;ourselves.&n;*/
 id|SCpnt-&gt;pid
 op_assign
 id|scsi_pid
@@ -4325,7 +4325,7 @@ suffix:colon
 id|panic
 c_func
 (paren
-l_string|&quot;scsi: unsupported message byte %d recieved&bslash;n&quot;
+l_string|&quot;scsi: unsupported message byte %d received&bslash;n&quot;
 comma
 id|msg_byte
 c_func
@@ -4822,7 +4822,7 @@ macro_line|#undef MAYREDO
 DECL|macro|PENDING
 macro_line|#undef PENDING
 )brace
-multiline_comment|/*&n;&t;The scsi_abort function interfaces with the abort() function of the host&n;&t;we are aborting, and causes the current command to not complete.  The &n;&t;caller should deal with any error messages or status returned on the &n;&t;next call.&n;&t;&n;&t;This will not be called rentrantly for a given host.&n;*/
+multiline_comment|/*&n;&t;The scsi_abort function interfaces with the abort() function of the host&n;&t;we are aborting, and causes the current command to not complete.  The &n;&t;caller should deal with any error messages or status returned on the &n;&t;next call.&n;&t;&n;&t;This will not be called reentrantly for a given host.&n;*/
 multiline_comment|/*&n;&t;Since we&squot;re nice guys and specified that abort() and reset()&n;&t;can be non-reentrant.  The internal_timeout flags are used for&n;&t;this.&n;*/
 DECL|function|scsi_abort
 r_int
@@ -6263,7 +6263,7 @@ r_int
 id|size
 )paren
 (brace
-multiline_comment|/* FIXME - not right.  We need to comare addresses to see whether this was&n;     kmalloc&squot;d or not */
+multiline_comment|/* FIXME - not right.  We need to compare addresses to see whether this was&n;     kmalloc&squot;d or not */
 r_if
 c_cond
 (paren
@@ -6312,7 +6312,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/*&n;&t;scsi_dev_init() is our initialization routine, which inturn calls host &n;&t;initialization, bus scanning, and sd/st initialization routines.  It &n;&t;should be called from main().&n;*/
+multiline_comment|/*&n;&t;scsi_dev_init() is our initialization routine, which in turn calls host &n;&t;initialization, bus scanning, and sd/st initialization routines.  It &n;&t;should be called from main().&n;*/
 DECL|function|scsi_dev_init
 r_int
 r_int

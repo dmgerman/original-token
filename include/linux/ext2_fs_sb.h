@@ -2,8 +2,8 @@ multiline_comment|/*&n; *  linux/include/linux/ext2_fs_sb.h&n; *&n; *  Copyright
 macro_line|#ifndef _LINUX_EXT2_FS_SB
 DECL|macro|_LINUX_EXT2_FS_SB
 mdefine_line|#define _LINUX_EXT2_FS_SB
-DECL|macro|EXT2_MAX_GROUP_DESC
-mdefine_line|#define EXT2_MAX_GROUP_DESC&t;8
+multiline_comment|/*&n; * The following is not needed anymore since the descriptors buffer&n; * heads are now dynamically allocated&n; */
+multiline_comment|/* #define EXT2_MAX_GROUP_DESC&t;8 */
 DECL|macro|EXT2_MAX_GROUP_LOADED
 mdefine_line|#define EXT2_MAX_GROUP_LOADED&t;8
 multiline_comment|/*&n; * second extended-fs super-block data in memory&n; */
@@ -53,6 +53,12 @@ r_int
 id|s_itb_per_group
 suffix:semicolon
 multiline_comment|/* Number of inode table blocks per group */
+DECL|member|s_db_per_group
+r_int
+r_int
+id|s_db_per_group
+suffix:semicolon
+multiline_comment|/* Number of descriptor blocks per group */
 DECL|member|s_desc_per_block
 r_int
 r_int
@@ -83,10 +89,8 @@ DECL|member|s_group_desc
 r_struct
 id|buffer_head
 op_star
+op_star
 id|s_group_desc
-(braket
-id|EXT2_MAX_GROUP_DESC
-)braket
 suffix:semicolon
 DECL|member|s_loaded_inode_bitmaps
 r_int

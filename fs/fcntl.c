@@ -379,6 +379,27 @@ suffix:semicolon
 r_case
 id|F_SETFL
 suffix:colon
+multiline_comment|/*&n;&t;&t;&t; * In the case of an append-only file, O_APPEND&n;&t;&t;&t; * cannot be cleared&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|IS_APPEND
+c_func
+(paren
+id|filp-&gt;f_inode
+)paren
+op_logical_and
+op_logical_neg
+(paren
+id|arg
+op_amp
+id|O_APPEND
+)paren
+)paren
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
 r_if
 c_cond
 (paren

@@ -13,7 +13,7 @@ mdefine_line|#define DISABLE_CLUSTERING 0
 DECL|macro|ENABLE_CLUSTERING
 mdefine_line|#define ENABLE_CLUSTERING 1
 multiline_comment|/* The various choices mean:&n;   NONE: Self evident.  Host adapter is not capable of scatter-gather.&n;   ALL:  Means that the host adapter module can do scatter-gather,&n;         and that there is no limit to the size of the table to which&n;&t; we scatter/gather data.&n;  Anything else:  Indicates the maximum number of chains that can be&n;        used in one scatter-gather request.&n;*/
-multiline_comment|/*&n;&t;The Scsi_Host_Template type has all that is needed to interface with a SCSI&n;&t;host in a device independant matter.  There is one entry for each different&n;&t;type of host adapter that is supported on the system.&n;*/
+multiline_comment|/*&n;&t;The Scsi_Host_Template type has all that is needed to interface with a SCSI&n;&t;host in a device independent matter.  There is one entry for each different&n;&t;type of host adapter that is supported on the system.&n;*/
 DECL|typedef|Disk
 r_typedef
 r_struct
@@ -38,7 +38,7 @@ r_char
 op_star
 id|name
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;The detect function shall return non zero on detection,&n;&t;&t;indicating the number of host adapters of this particular&n;&t;&t;type were found.  It should also&n;&t;&t;initialize all data necessary for this particular&n;&t;&t;SCSI driver.  It is passed the host number, so this host&n;&t;&t;knows where the first entry is in the scsi_hosts[] array.&n;&n;&t;&t;Note that the detect routine MUST not call any of the mid level&n;&t;&t;functions to queue commands because things are not guaranteed&n;&t;&t;to be set up yet.  The detect routine can send commands to&n;&t;&t;the host adapter as long as the program control will not be&n;&t;&t;passed to scsi.c in the processesing of the command.  Note&n;&t;&t;especially that scsi_malloc/scsi_free must not be called.&n;&t;*/
+multiline_comment|/*&n;&t;&t;The detect function shall return non zero on detection,&n;&t;&t;indicating the number of host adapters of this particular&n;&t;&t;type were found.  It should also&n;&t;&t;initialize all data necessary for this particular&n;&t;&t;SCSI driver.  It is passed the host number, so this host&n;&t;&t;knows where the first entry is in the scsi_hosts[] array.&n;&n;&t;&t;Note that the detect routine MUST not call any of the mid level&n;&t;&t;functions to queue commands because things are not guaranteed&n;&t;&t;to be set up yet.  The detect routine can send commands to&n;&t;&t;the host adapter as long as the program control will not be&n;&t;&t;passed to scsi.c in the processing of the command.  Note&n;&t;&t;especially that scsi_malloc/scsi_free must not be called.&n;&t;*/
 DECL|member|detect
 r_int
 (paren
@@ -166,12 +166,12 @@ r_int
 )braket
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;This determines if we will use a non-interrupt driven&n;&t;&t;or an interrupt driven scheme,  It is set to the maximum number&n;&t;&t;of simulataneous commands a given host adapter will accept.&n;&t;*/
+multiline_comment|/*&n;&t;&t;This determines if we will use a non-interrupt driven&n;&t;&t;or an interrupt driven scheme,  It is set to the maximum number&n;&t;&t;of simultaneous commands a given host adapter will accept.&n;&t;*/
 DECL|member|can_queue
 r_int
 id|can_queue
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;In many instances, especially where disconnect / reconnect are &n;&t;&t;supported, our host also has an ID on the SCSI bus.  If this is &n;&t;&t;the case, then it must be reserved.  Please set this_id to -1 if&n; &t;&t;your settup is in single initiator mode, and the host lacks an &n;&t;&t;ID.&n;&t;*/
+multiline_comment|/*&n;&t;&t;In many instances, especially where disconnect / reconnect are &n;&t;&t;supported, our host also has an ID on the SCSI bus.  If this is &n;&t;&t;the case, then it must be reserved.  Please set this_id to -1 if&n; &t;&t;your setup is in single initiator mode, and the host lacks an &n;&t;&t;ID.&n;&t;*/
 DECL|member|this_id
 r_int
 id|this_id
@@ -399,7 +399,6 @@ id|i
 suffix:semicolon
 DECL|macro|BLANK_HOST
 mdefine_line|#define BLANK_HOST {&quot;&quot;, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
-macro_line|#endif
 DECL|struct|Scsi_Device_Template
 r_struct
 id|Scsi_Device_Template
@@ -544,4 +543,5 @@ op_star
 id|sdpnt
 )paren
 suffix:semicolon
+macro_line|#endif
 eof

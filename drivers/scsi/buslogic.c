@@ -1,6 +1,6 @@
 multiline_comment|/*&n; *&t;buslogic.c&t;(C) 1993, 1994 David B. Gentzel&n; *&t;Low-level scsi driver for BusLogic adapters&n; *&t;by David B. Gentzel, Whitfield Software Services, Carnegie, PA&n; *&t;    (gentzel@nova.enet.dec.com)&n; *&t;Thanks to BusLogic for providing the necessary documentation&n; *&n; *&t;The original version of this driver was derived from aha1542.[ch] which&n; *&t;is Copyright (C) 1992 Tommy Thorn.  Much has been reworked, but most of&n; *&t;basic structure and substantial chunks of code still remain.&n; */
 multiline_comment|/*&n; * TODO:&n; *&t;1. Cleanup error handling &amp; reporting.&n; *&t;2. Find out why scatter/gather is limited to 16 requests per command.&n; *&t;3. Add multiple outstanding requests.&n; *&t;4. See if we can make good use of having more than one command per lun.&n; *&t;5. Test/improve/fix abort &amp; reset functions.&n; *&t;6. Look at command linking.&n; *&t;7. Allow multiple boards to share an IRQ if the bus allows (e.g. EISA).&n; */
-multiline_comment|/*&n; * NOTES:&n; *    BusLogic (formerly BusTek) manufactures an extensive family of&n; *    intelligent, high performance SCSI-2 host adapters.  They all support&n; *    command queueing and scatter/gather I/O.  Most importantly, they all&n; *    support identical programming interfaces, so a single driver can be used&n; *    for all boards.&n; *&n; *    Actually, they all support TWO identical programming interfaces!  They&n; *    have an Adaptec 154x compatible interface (complete with 24 bit&n; *    addresses) as well as a &quot;native&quot; 32 bit interface.  As such, the Linux&n; *    aha1542 driver can be used to drive them, but with less than optimal&n; *    performance (at least for the EISA, VESA, and MCA boards).&n; *&n; *    Here is the scoop on the various models:&n; *&t;BT-542B - ISA first-party DMA with floppy support.&n; *&t;BT-545S - 542B + FAST SCSI and active termination.&n; *&t;BT-545D - 545S + differential termination.&n; *&t;BT-445S - VESA bus-master FAST SCSI with active termination and floppy&n; *&t;&t;  support.&n; *&t;BT-640A - MCA bus-master with floppy support.&n; *&t;BT-646S - 640A + FAST SCSI and active termination.&n; *&t;BT-646D - 646S + differential termination.&n; *&t;BT-742A - EISA bus-master with floppy support.&n; *&t;BT-747S - 742A + FAST SCSI, active termination, and 2.88M floppy.&n; *&t;BT-747D - 747S + differential termination.&n; *&t;BT-757S - 747S + WIDE SCSI.&n; *&t;BT-757D - 747D + WIDE SCSI.&n; *&n; *    Should you require further information on any of these boards, BusLogic&n; *    can be reached at (408)492-9090.&n; *&n; *    This driver SHOULD support all of these boards.  It has only been tested&n; *    with a 747S.  An earlier version was tested with a 445S.&n; *&n; *    Places flagged with a triple question-mark are things which are either&n; *    unfinished, questionable, or wrong.&n; */
+multiline_comment|/*&n; * NOTES:&n; *    BusLogic (formerly BusTek) manufactures an extensive family of&n; *    intelligent, high performance SCSI-2 host adapters.  They all support&n; *    command queueing and scatter/gather I/O.  Most importantly, they all&n; *    support identical programming interfaces, so a single driver can be used&n; *    for all boards.&n; *&n; *    Actually, they all support TWO identical programming interfaces!  They&n; *    have an Adaptec 154x compatible interface (complete with 24 bit&n; *    addresses) as well as a &quot;native&quot; 32 bit interface.  As such, the Linux&n; *    aha1542 driver can be used to drive them, but with less than optimal&n; *    performance (at least for the EISA, VESA, and MCA boards).&n; *&n; *    Here is the scoop on the various models:&n; *&t;BT-542B - ISA first-party DMA with floppy support.&n; *&t;BT-545S - 542B + FAST SCSI and active termination.&n; *&t;BT-545D - 545S + differential termination.&n; *&t;BT-445S - VESA bus-master FAST SCSI with active termination and floppy&n; *&t;&t;  support.&n; *&t;BT-640A - MCA bus-master with floppy support.&n; *&t;BT-646S - 640A + FAST SCSI and active termination.&n; *&t;BT-646D - 646S + differential termination.&n; *&t;BT-742A - EISA bus-master with floppy support.&n; *&t;BT-747S - 742A + FAST SCSI, active termination, and 2.88M floppy.&n; *&t;BT-747D - 747S + differential termination.&n; *&t;BT-757S - 747S + WIDE SCSI.&n; *&t;BT-757D - 747D + WIDE SCSI.&n; *&t;BT-946C - PCI bus-master FAST SCSI. (??? Nothing else known.)&n; *&n; *    Should you require further information on any of these boards, BusLogic&n; *    can be reached at (408)492-9090.&n; *&n; *    This driver SHOULD support all of these boards.  It has only been tested&n; *    with a 747S and 445S.&n; *&n; *    Places flagged with a triple question-mark are things which are either&n; *    unfinished, questionable, or wrong.&n; */
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -66,10 +66,10 @@ multiline_comment|/* 0x130, 0x134, 0x230, 0x234 */
 macro_line|#endif
 )brace
 suffix:semicolon
-DECL|macro|BIOS_TRANSLATION_6432
-mdefine_line|#define BIOS_TRANSLATION_6432 0&t;&t;/* Default case */
-DECL|macro|BIOS_TRANSLATION_25563
-mdefine_line|#define BIOS_TRANSLATION_25563 1&t;/* Big disk case */
+DECL|macro|BIOS_TRANSLATION_DEFAULT
+mdefine_line|#define BIOS_TRANSLATION_DEFAULT 0&t;/* Default case */
+DECL|macro|BIOS_TRANSLATION_BIG
+mdefine_line|#define BIOS_TRANSLATION_BIG 1&t;&t;/* Big disk (&gt; 1G) case */
 DECL|struct|hostdata
 r_struct
 id|hostdata
@@ -1209,7 +1209,7 @@ id|errstatus
 comma
 id|mbistatus
 op_assign
-l_int|0
+id|MBX_NOT_IN_USE
 comma
 id|number_serviced
 comma
@@ -1744,9 +1744,8 @@ c_cond
 (paren
 id|mbistatus
 op_eq
-l_int|0x03
+id|MBX_COMPLETION_NOT_FOUND
 )paren
-multiline_comment|/* ??? 0x03 == Aborted CCB not found. */
 r_continue
 suffix:semicolon
 macro_line|#if BUSLOGIC_DEBUG
@@ -1893,7 +1892,7 @@ c_cond
 (paren
 id|mbistatus
 op_ne
-l_int|1
+id|MBX_COMPLETION_OK
 )paren
 multiline_comment|/* ??? This is surely wrong, but I don&squot;t know what&squot;s right. */
 id|errstatus
@@ -3736,7 +3735,7 @@ id|inquiry_result
 l_int|2
 )braket
 suffix:semicolon
-multiline_comment|/* We only need a DMA channel for ISA boards.  Some other types of boards&n;       (such as the 747S) have an option to report a DMA channel even though&n;       none is used (for compatability with Adaptec drivers which require a&n;       DMA channel).  We ignore this. */
+multiline_comment|/* We only need a DMA channel for ISA boards.  Some other types of boards&n;       (such as the 747S) have an option to report a DMA channel even though&n;       none is used (for compatibility with Adaptec drivers which require a&n;       DMA channel).  We ignore this. */
 r_if
 c_cond
 (paren
@@ -3845,9 +3844,9 @@ r_int
 id|base
 )paren
 (brace
-multiline_comment|/* ??? This is wrong if disk is configured for &gt; 1G mapping.&n;       Unfortunately, unlike UltraStor, I see know way of determining whether&n;       &gt; 1G mapping has been enabled. */
+multiline_comment|/* ??? Unlike UltraStor, I see no way of determining whether &gt; 1G mapping&n;       has been enabled.  However, it appears that BusLogic uses a mapping&n;       scheme which varies with the disk size when &gt; 1G mapping is enabled.&n;       For disks &lt;= 1G, this mapping is the same regardless of the setting of&n;       &gt; 1G mapping.  Therefore, we should be safe in always assuming that &gt; 1G&n;       mapping has been enabled. */
 r_return
-id|BIOS_TRANSLATION_6432
+id|BIOS_TRANSLATION_BIG
 suffix:semicolon
 )brace
 multiline_comment|/* Query the board to find out the model. */
@@ -3958,7 +3957,7 @@ c_func
 id|base
 )paren
 suffix:semicolon
-macro_line|#if 1 /* ??? Temporary */
+macro_line|#if 1&t;/* ??? Temporary */
 id|buslogic_printk
 c_func
 (paren
@@ -4558,7 +4557,11 @@ id|shpnt-&gt;hostt-&gt;can_queue
 op_assign
 id|BUSLOGIC_MAILBOXES
 suffix:semicolon
-multiline_comment|/*shpnt-&gt;base = ???;*/
+multiline_comment|/* No known way to determine BIOS base address, but we don&squot;t&n;&t;       care since we don&squot;t use it anyway. */
+id|shpnt-&gt;base
+op_assign
+l_int|NULL
+suffix:semicolon
 id|shpnt-&gt;io_port
 op_assign
 id|base
@@ -4586,7 +4589,7 @@ c_cond
 (paren
 id|trans
 op_eq
-id|BIOS_TRANSLATION_25563
+id|BIOS_TRANSLATION_BIG
 )paren
 id|buslogic_printk
 c_func
@@ -4998,9 +5001,9 @@ id|i
 dot
 id|status
 op_assign
-l_int|1
+id|MBX_ACTION_START
 suffix:semicolon
-multiline_comment|/* Indicate ready to&n;&t;&t;&t;&t;&t;&t;   restart... */
+multiline_comment|/* Indicate ready to restart... */
 macro_line|#endif
 id|count
 op_increment
@@ -5707,16 +5710,19 @@ op_star
 id|ip
 )paren
 (brace
+multiline_comment|/* ??? This truncates.  Should we round up to next MB? */
 r_int
-id|size
+r_int
+id|mb
 op_assign
 id|disk-&gt;capacity
+op_rshift
+l_int|11
 suffix:semicolon
-r_int
-id|translation_algorithm
-suffix:semicolon
-id|translation_algorithm
-op_assign
+multiline_comment|/* ip[0] == heads, ip[1] == sectors, ip[2] == cylinders */
+r_if
+c_cond
+(paren
 id|HOSTDATA
 c_func
 (paren
@@ -5724,50 +5730,106 @@ id|disk-&gt;device-&gt;host
 )paren
 op_member_access_from_pointer
 id|bios_translation
-suffix:semicolon
-multiline_comment|/* ??? Should this be &gt; 1024, or &gt;= 1024?  Enquiring minds want to know. */
+op_eq
+id|BIOS_TRANSLATION_BIG
+op_logical_and
+id|mb
+OG
+l_int|1024
+)paren
+(brace
 r_if
 c_cond
 (paren
-(paren
-id|size
-op_rshift
-l_int|11
-)paren
+id|mb
 OG
-l_int|1024
-op_logical_and
-id|translation_algorithm
-op_eq
-id|BIOS_TRANSLATION_25563
+l_int|4096
 )paren
 (brace
-multiline_comment|/* Please verify that this is the same as what DOS returns */
 id|ip
 (braket
 l_int|0
 )braket
 op_assign
-l_int|255
+l_int|256
 suffix:semicolon
 id|ip
 (braket
 l_int|1
 )braket
 op_assign
-l_int|63
+l_int|64
 suffix:semicolon
 id|ip
 (braket
 l_int|2
 )braket
 op_assign
-id|size
-op_div
-l_int|255
-op_div
-l_int|63
+id|mb
+op_rshift
+l_int|3
 suffix:semicolon
+multiline_comment|/*&t;    if (ip[2] &gt; 1024)&n;&t;&t;ip[2] = 1024; */
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|mb
+OG
+l_int|2048
+)paren
+(brace
+id|ip
+(braket
+l_int|0
+)braket
+op_assign
+l_int|256
+suffix:semicolon
+id|ip
+(braket
+l_int|1
+)braket
+op_assign
+l_int|32
+suffix:semicolon
+id|ip
+(braket
+l_int|2
+)braket
+op_assign
+id|mb
+op_rshift
+l_int|2
+suffix:semicolon
+)brace
+r_else
+(brace
+id|ip
+(braket
+l_int|0
+)braket
+op_assign
+l_int|128
+suffix:semicolon
+id|ip
+(braket
+l_int|1
+)braket
+op_assign
+l_int|32
+suffix:semicolon
+id|ip
+(braket
+l_int|2
+)braket
+op_assign
+id|mb
+op_rshift
+l_int|1
+suffix:semicolon
+)brace
 )brace
 r_else
 (brace
@@ -5790,12 +5852,10 @@ id|ip
 l_int|2
 )braket
 op_assign
-id|size
-op_rshift
-l_int|11
+id|mb
 suffix:semicolon
+multiline_comment|/*&t;if (ip[2] &gt; 1024)&n;&t;    ip[2] = 1024; */
 )brace
-multiline_comment|/*    if (ip[2] &gt; 1024)&n;      ip[2] = 1024; */
 r_return
 l_int|0
 suffix:semicolon

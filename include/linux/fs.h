@@ -128,6 +128,10 @@ DECL|macro|MS_SYNC
 mdefine_line|#define MS_SYNC     16 /* writes are synced at once */
 DECL|macro|MS_REMOUNT
 mdefine_line|#define&t;MS_REMOUNT  32 /* alter flags of a mounted FS */
+DECL|macro|S_APPEND
+mdefine_line|#define S_APPEND    256 /* append-only file */
+DECL|macro|S_IMMUTABLE
+mdefine_line|#define S_IMMUTABLE 512 /* immutable file */
 multiline_comment|/*&n; * Flags that can be altered by MS_REMOUNT&n; */
 DECL|macro|MS_RMT_MASK
 mdefine_line|#define MS_RMT_MASK (MS_RDONLY)
@@ -147,6 +151,10 @@ DECL|macro|IS_NOEXEC
 mdefine_line|#define IS_NOEXEC(inode) ((inode)-&gt;i_flags &amp; MS_NOEXEC)
 DECL|macro|IS_SYNC
 mdefine_line|#define IS_SYNC(inode) ((inode)-&gt;i_flags &amp; MS_SYNC)
+DECL|macro|IS_APPEND
+mdefine_line|#define IS_APPEND(inode) ((inode)-&gt;i_flags &amp; S_APPEND)
+DECL|macro|IS_IMMUTABLE
+mdefine_line|#define IS_IMMUTABLE(inode) ((inode)-&gt;i_flags &amp; S_IMMUTABLE)
 multiline_comment|/* the read-only stuff doesn&squot;t really belong here, but any other place is&n;   probably as bad and I don&squot;t want to create yet another include file. */
 DECL|macro|BLKROSET
 mdefine_line|#define BLKROSET 4701 /* set device read-only (0 = read-write) */
@@ -586,7 +594,7 @@ id|mode_t
 id|f_mode
 suffix:semicolon
 DECL|member|f_pos
-id|off_t
+id|loff_t
 id|f_pos
 suffix:semicolon
 DECL|member|f_flags

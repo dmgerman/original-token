@@ -170,7 +170,7 @@ id|device
 op_plus
 r_sizeof
 (paren
-l_string|&quot;eth%d &quot;
+l_string|&quot;eth%d   &quot;
 )paren
 op_plus
 id|sizeof_private
@@ -229,10 +229,15 @@ id|alloc_size
 )paren
 )paren
 suffix:semicolon
-id|dev-&gt;name
+r_if
+c_cond
+(paren
+id|sizeof_private
+)paren
+id|dev-&gt;priv
 op_assign
 (paren
-r_char
+r_void
 op_star
 )paren
 (paren
@@ -241,18 +246,18 @@ op_plus
 l_int|1
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sizeof_private
-)paren
-id|dev-&gt;priv
-op_assign
 id|dev-&gt;name
+op_assign
+id|sizeof_private
 op_plus
-r_sizeof
 (paren
-l_string|&quot;eth%d &quot;
+r_char
+op_star
+)paren
+(paren
+id|dev
+op_plus
+l_int|1
 )paren
 suffix:semicolon
 id|new_device

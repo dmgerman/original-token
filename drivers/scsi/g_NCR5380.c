@@ -2,7 +2,7 @@ DECL|macro|AUTOSENSE
 mdefine_line|#define AUTOSENSE
 multiline_comment|/*&n; * Generic Generic NCR5380 driver&n; *&t;&n; * Copyright 1993, Drew Eckhardt&n; *&t;Visionary Computing&n; *&t;(Unix and Linux consulting and custom programming)&n; *&t;drew@colorado.edu&n; *      +1 (303) 440-4894&n; *&n; * ALPHA RELEASE 1. &n; *&n; * For more information, please consult &n; *&n; * NCR 5380 Family&n; * SCSI Protocol Controller&n; * Databook&n; *&n; * NCR Microelectronics&n; * 1635 Aeroplaza Drive&n; * Colorado Springs, CO 80916&n; * 1+ (719) 578-3400&n; * 1+ (800) 334-5454&n; */
 multiline_comment|/* &n; * TODO : flesh out DMA support, find some one actually using this (I have&n; * &t;a memory mapped Trantor board that works fine)&n; */
-multiline_comment|/*&n; * Options :&n; *&n; * PARITY - enable parity checking.  Not supported.&n; *&n; * SCSI2 - enable support for SCSI-II tagged queueing.  Untested.&n; *&n; * USLEEP - enable support for devices that don&squot;t disconnect.  Untested.&n; *&n; * The card is detected and initialized in one of several ways : &n; * 1.  With command line overrides - NCR5380=port,irq may be &n; *     used on the LILO command line to override the defaults.&n; *&n; * 2.  With the GENERIC_NCR5380_OVERRIDE compile time define.  This is &n; *     specified as an array of address, irq tupples.  Ie, for&n; *     one board at the default 0xcc000 address, IRQ5, no dma, I could &n; *     say  -DGENERIC_NCR5380_OVERRIDE={{0xcc000, 5, DMA_NONE}}&n; * &n; * -1 should be specified for no or DMA interrupt, -2 to autoprobe for an &n; * &t;IRQ line if overriden on the command line.&n; */
+multiline_comment|/*&n; * Options :&n; *&n; * PARITY - enable parity checking.  Not supported.&n; *&n; * SCSI2 - enable support for SCSI-II tagged queueing.  Untested.&n; *&n; * USLEEP - enable support for devices that don&squot;t disconnect.  Untested.&n; *&n; * The card is detected and initialized in one of several ways : &n; * 1.  With command line overrides - NCR5380=port,irq may be &n; *     used on the LILO command line to override the defaults.&n; *&n; * 2.  With the GENERIC_NCR5380_OVERRIDE compile time define.  This is &n; *     specified as an array of address, irq tuples.  Ie, for&n; *     one board at the default 0xcc000 address, IRQ5, no dma, I could &n; *     say  -DGENERIC_NCR5380_OVERRIDE={{0xcc000, 5, DMA_NONE}}&n; * &n; * -1 should be specified for no or DMA interrupt, -2 to autoprobe for an &n; * &t;IRQ line if overridden on the command line.&n; */
 multiline_comment|/*&n; * $Log: generic_NCR5380.c,v $&n; */
 DECL|macro|AUTOPROBE_IRQ
 mdefine_line|#define AUTOPROBE_IRQ
@@ -56,7 +56,7 @@ suffix:semicolon
 macro_line|#endif
 DECL|macro|NO_OVERRIDES
 mdefine_line|#define NO_OVERRIDES (sizeof(overrides) / sizeof(struct override))
-multiline_comment|/*&n; * Function : generic_NCR5380_setup(char *str, int *ints)&n; *&n; * Purpose : LILO command line initialization of the overrides array,&n; * &n; * Inputs : str - unused, ints - array of integer paramters with ints[0]&n; *&t;equal to the number of ints.&n; *&n; */
+multiline_comment|/*&n; * Function : generic_NCR5380_setup(char *str, int *ints)&n; *&n; * Purpose : LILO command line initialization of the overrides array,&n; * &n; * Inputs : str - unused, ints - array of integer parameters with ints[0]&n; *&t;equal to the number of ints.&n; *&n; */
 r_void
 id|generic_NCR5380_setup
 c_func
@@ -142,7 +142,7 @@ id|commandline_current
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* &n; * Function : int generic_NCR5380_detect(Scsi_Host_Templace * tpnt)&n; *&n; * Purpose : initializes generic NCR5380 driver based on the &n; *&t;command line / compile time port and irq definitions.&n; *&n; * Inputs : tpnt - template for this SCSI adapter.&n; * &n; * Returns : 1 if a host adapter was found, 0 if not.&n; *&n; */
+multiline_comment|/* &n; * Function : int generic_NCR5380_detect(Scsi_Host_Template * tpnt)&n; *&n; * Purpose : initializes generic NCR5380 driver based on the &n; *&t;command line / compile time port and irq definitions.&n; *&n; * Inputs : tpnt - template for this SCSI adapter.&n; * &n; * Returns : 1 if a host adapter was found, 0 if not.&n; *&n; */
 r_int
 id|generic_NCR5380_detect
 c_func

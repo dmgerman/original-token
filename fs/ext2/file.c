@@ -101,7 +101,16 @@ id|ext2_release_file
 comma
 multiline_comment|/* release */
 id|ext2_sync_file
+comma
 multiline_comment|/* fsync */
+l_int|NULL
+comma
+multiline_comment|/* fasync */
+l_int|NULL
+comma
+multiline_comment|/* check_media_change */
+l_int|NULL
+multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 DECL|variable|ext2_file_inode_operations
@@ -154,7 +163,10 @@ id|ext2_truncate
 comma
 multiline_comment|/* truncate */
 id|ext2_permission
+comma
 multiline_comment|/* permission */
+l_int|NULL
+multiline_comment|/* smap */
 )brace
 suffix:semicolon
 DECL|function|ext2_file_read

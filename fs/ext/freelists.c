@@ -1097,7 +1097,7 @@ id|sb-&gt;u.ext_sb.s_ninodes
 (brace
 id|printk
 (paren
-l_string|&quot;efi-&gt;next = %d&bslash;n&quot;
+l_string|&quot;efi-&gt;next = %ld&bslash;n&quot;
 comma
 id|efi-&gt;next
 )paren

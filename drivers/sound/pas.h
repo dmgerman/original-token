@@ -123,7 +123,7 @@ mdefine_line|#define OPERATION_MODE_1&t;&t;0xEF8B&t;&t;/* R&t;Control&t;&t;&t;&t
 DECL|macro|O_M_1_CDROM_TYPE
 mdefine_line|#define&t;O_M_1_CDROM_TYPE&t;0x03&t;&t;/* R&t;CD-ROM&t;&t;3=SCSI, 2=Sony, 0=no CD-ROM interface&t;&t;*/
 DECL|macro|O_M_1_FM_TYPE
-mdefine_line|#define O_M_1_FM_TYPE&t;&t;0x04&t;&t;/* R&t;FM&t;&t;1=sterero, 0=mono FM chip&t;&t;&t;*/
+mdefine_line|#define O_M_1_FM_TYPE&t;&t;0x04&t;&t;/* R&t;FM&t;&t;1=stereo, 0=mono FM chip&t;&t;&t;*/
 DECL|macro|O_M_1_PCM_TYPE
 mdefine_line|#define O_M_1_PCM_TYPE &t;&t;0x08&t;&t;/* R&t;PCM&t;&t;1=16-bit Codec, 0=8-bit DAC&t;&t;&t;*/
 DECL|macro|OPERATION_MODE_2

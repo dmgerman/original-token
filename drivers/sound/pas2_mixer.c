@@ -149,7 +149,7 @@ op_eq
 id|P_M_MV508_TREBLE
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t;&t; * Bass and trebble are mono devices&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t; * Bass and treble are mono devices&n;&t;&t;&t;&t; */
 id|pas_write
 (paren
 id|P_M_MV508_ADDRESS

@@ -1365,7 +1365,7 @@ r_return
 id|FALSE
 suffix:semicolon
 )brace
-multiline_comment|/* Final consistancy check, verify previous info. */
+multiline_comment|/* Final consistency check, verify previous info. */
 r_if
 c_cond
 (paren
@@ -1391,7 +1391,7 @@ macro_line|#if (ULTRASTOR_DEBUG &amp; UD_DETECT)
 id|printk
 c_func
 (paren
-l_string|&quot;US14F: detect: consistancy check failed&bslash;n&quot;
+l_string|&quot;US14F: detect: consistency check failed&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif

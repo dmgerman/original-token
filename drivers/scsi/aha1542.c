@@ -565,7 +565,7 @@ suffix:semicolon
 r_case
 l_int|0x12
 suffix:colon
-multiline_comment|/* Data overrun/underrun-The target attempted to transfer more data&n;&t;&t;    thean was allocated by the Data Length field or the sum of the&n;&t;&t;    Scatter / Gather Data Length fields. */
+multiline_comment|/* Data overrun/underrun-The target attempted to transfer more data&n;&t;&t;    than was allocated by the Data Length field or the sum of the&n;&t;&t;    Scatter / Gather Data Length fields. */
 r_case
 l_int|0x13
 suffix:colon
@@ -715,7 +715,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Reset the adapter. I ought to make a hard reset, but it&squot;s not really nessesary */
+multiline_comment|/* Reset the adapter. I ought to make a hard reset, but it&squot;s not really necessary */
 multiline_comment|/*  DEB(printk(&quot;aha1542_test_port called &bslash;n&quot;)); */
 multiline_comment|/* In case some other card was probing here, reset interrupts */
 id|aha1542_intr_reset

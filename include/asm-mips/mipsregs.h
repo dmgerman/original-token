@@ -2,7 +2,7 @@ multiline_comment|/*&n; * include/asm-mips/mipsregs.h&n; *&n; * This file is sub
 macro_line|#ifndef _ASM_MIPS_MIPSREGS_H_
 DECL|macro|_ASM_MIPS_MIPSREGS_H_
 mdefine_line|#define _ASM_MIPS_MIPSREGS_H_
-multiline_comment|/*&n; * The following macros are espacially usefull for __asm__&n; * inline assembler.&n; */
+multiline_comment|/*&n; * The following macros are especially useful for __asm__&n; * inline assembler.&n; */
 macro_line|#ifndef __STR
 DECL|macro|__STR
 mdefine_line|#define __STR(x) #x
@@ -11,7 +11,7 @@ macro_line|#ifndef STR
 DECL|macro|STR
 mdefine_line|#define STR(x) __STR(x)
 macro_line|#endif
-multiline_comment|/*&n; * Coprozessor 0 register names&n; */
+multiline_comment|/*&n; * Coprocessor 0 register names&n; */
 DECL|macro|CP0_INDEX
 mdefine_line|#define CP0_INDEX $0
 DECL|macro|CP0_RANDOM

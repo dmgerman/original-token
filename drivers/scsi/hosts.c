@@ -55,7 +55,7 @@ macro_line|#ifdef CONFIG_SCSI_DEBUG
 macro_line|#include &quot;scsi_debug.h&quot;
 macro_line|#endif
 multiline_comment|/*&n;static const char RCSid[] = &quot;$Header: /usr/src/linux/kernel/blk_drv/scsi/RCS/hosts.c,v 1.3 1993/09/24 12:21:00 drew Exp drew $&quot;;&n;*/
-multiline_comment|/*&n; *&t;The scsi host entries should be in the order you wish the &n; *&t;cards to be detected.  A driver may appear more than once IFF&n; *&t;it can deal with being detected (and therefore initialized) &n; *&t;with more than one simulatenous host number, can handle being&n; *&t;rentrant, etc.&n; *&n; *&t;They may appear in any order, as each SCSI host  is told which host number it is&n; *&t;during detection.&n; */
+multiline_comment|/*&n; *&t;The scsi host entries should be in the order you wish the &n; *&t;cards to be detected.  A driver may appear more than once IFF&n; *&t;it can deal with being detected (and therefore initialized) &n; *&t;with more than one simultaneous host number, can handle being&n; *&t;reentrant, etc.&n; *&n; *&t;They may appear in any order, as each SCSI host  is told which host number it is&n; *&t;during detection.&n; */
 multiline_comment|/* This is a placeholder for controllers that are not configured into&n;   the system - we do this to ensure that the controller numbering is&n;   always consistent, no matter how the kernel is configured. */
 DECL|macro|NO_CONTROLLER
 mdefine_line|#define NO_CONTROLLER {NULL, NULL, NULL, NULL, NULL, NULL, NULL, &bslash;&n;&t;        NULL, NULL, 0, 0, 0, 0, 0, 0}
@@ -353,13 +353,11 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;Register %x %x: %d %d&bslash;n&quot;
+l_string|&quot;Register %x %x: %d&bslash;n&quot;
 comma
 id|retval
 comma
 id|retval-&gt;hostt
-comma
-id|i
 comma
 id|j
 )paren

@@ -25,6 +25,25 @@ id|mode
 op_assign
 id|inode-&gt;i_mode
 suffix:semicolon
+multiline_comment|/*&n;&t; * Nobody gets write access to an immutable file&n;&t; */
+r_if
+c_cond
+(paren
+(paren
+id|mask
+op_amp
+id|S_IWOTH
+)paren
+op_logical_and
+id|IS_IMMUTABLE
+c_func
+(paren
+id|inode
+)paren
+)paren
+r_return
+l_int|0
+suffix:semicolon
 multiline_comment|/*&n;&t; * Special case, access is always granted for root&n;&t; */
 r_if
 c_cond

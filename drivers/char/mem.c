@@ -477,7 +477,13 @@ comma
 r_char
 op_star
 )paren
+(paren
+(paren
+r_int
+r_int
+)paren
 id|file-&gt;f_pos
+)paren
 comma
 id|count
 op_minus

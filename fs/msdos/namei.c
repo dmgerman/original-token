@@ -2051,7 +2051,7 @@ op_star
 id|dir
 )paren
 (brace
-id|off_t
+id|loff_t
 id|pos
 suffix:semicolon
 r_struct

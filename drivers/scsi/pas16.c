@@ -3,7 +3,7 @@ mdefine_line|#define AUTOSENSE
 DECL|macro|PSEUDO_DMA
 mdefine_line|#define PSEUDO_DMA
 multiline_comment|/*&n; * This driver adapted from Drew Eckhardt&squot;s Trantor T128 driver&n; *&n; * Copyright 1993, Drew Eckhardt&n; *&t;Visionary Computing&n; *&t;(Unix and Linux consulting and custom programming)&n; *&t;drew@colorado.edu&n; *      +1 (303) 666-5836&n; *&n; *  ( Based on T128 - DISTRIBUTION RELEASE 3. ) &n; *&n; * Modified to work with the Pro Audio Spectrum/Studio 16&n; * by John Weidman.&n; *&n; *&n; * For more information, please consult &n; *&n; * Media Vision&n; * (510) 770-8600&n; * (800) 348-7116&n; * &n; * and &n; *&n; * NCR 5380 Family&n; * SCSI Protocol Controller&n; * Databook&n; *&n; * NCR Microelectronics&n; * 1635 Aeroplaza Drive&n; * Colorado Springs, CO 80916&n; * 1+ (719) 578-3400&n; * 1+ (800) 334-5454&n; */
-multiline_comment|/*&n; * Options : &n; * AUTOSENSE - if defined, REQUEST SENSE will be performed automatically&n; *      for commands that return with a CHECK CONDITION status. &n; *&n; * PSEUDO_DMA - enables PSEUDO-DMA hardware, should give a 3-4X performance&n; * increase compared to polled I/O.&n; *&n; * PARITY - enable parity checking.  Not supported.&n; * &n; * SCSI2 - enable support for SCSI-II tagged queueing.  Untested.&n; *&n; *&n; * UNSAFE - leave interrupts enabled during pseudo-DMA transfers.  You&n; *          only really want to use this if you&squot;re having a problem with&n; *          dropped characters during high speed communications, and even&n; *          then, you&squot;re going to be better off twiddling with transfersize.&n; *&n; * USLEEP - enable support for devices that don&squot;t disconnect.  Untested.&n; *&n; * The card is detected and initialized in one of several ways : &n; * 1.  Autoprobe (default) - There are many different models of&n; *     the Pro Audio Spectrum/Studio 16, and I only have one of&n; *     them, so this may require a little tweaking.  An interrupt&n; *     is triggered to autoprobe for the interrupt line.  Note:&n; *     with the newer model boards, the interrupt is set via&n; *     software after reset using the default_irq for the&n; *     current board number.&n; *&n; *&n; * 2.  With command line overrides - pas16=port,irq may be &n; *     used on the LILO command line to override the defaults.&n; *&n; * 3.  With the PAS16_OVERRIDE compile time define.  This is &n; *     specified as an array of address, irq tupples.  Ie, for&n; *     one board at the default 0x388 address, IRQ10, I could say &n; *     -DPAS16_OVERRIDE={{0x388, 10}}&n; *     NOTE:  Untested.&n; *&t;&n; *     Note that if the override methods are used, place holders must&n; *     be specified for other boards in the system.&n; *&n; *&n; * Configuration notes :&n; *   The current driver does not support interrupt sharing with the&n; *   sound portion of the card.  If you use the same irq for the&n; *   scsi port and sound you will have problems.  Either use&n; *   a different irq for the scsi port or don&squot;t use interrupts&n; *   for the scsi port.&n; *&n; *   If you have problems with your card not being recognized, use&n; *   the LILO command line override.  Try to get it recognized without&n; *   interrupts.  Ie, for a board at the default 0x388 base port,&n; *   boot: linux pas16=0x388,255&n; *&n; *     (255 is the IRQ_NONE constant in NCR5380.h)&n; */
+multiline_comment|/*&n; * Options : &n; * AUTOSENSE - if defined, REQUEST SENSE will be performed automatically&n; *      for commands that return with a CHECK CONDITION status. &n; *&n; * PSEUDO_DMA - enables PSEUDO-DMA hardware, should give a 3-4X performance&n; * increase compared to polled I/O.&n; *&n; * PARITY - enable parity checking.  Not supported.&n; * &n; * SCSI2 - enable support for SCSI-II tagged queueing.  Untested.&n; *&n; *&n; * UNSAFE - leave interrupts enabled during pseudo-DMA transfers.  You&n; *          only really want to use this if you&squot;re having a problem with&n; *          dropped characters during high speed communications, and even&n; *          then, you&squot;re going to be better off twiddling with transfersize.&n; *&n; * USLEEP - enable support for devices that don&squot;t disconnect.  Untested.&n; *&n; * The card is detected and initialized in one of several ways : &n; * 1.  Autoprobe (default) - There are many different models of&n; *     the Pro Audio Spectrum/Studio 16, and I only have one of&n; *     them, so this may require a little tweaking.  An interrupt&n; *     is triggered to autoprobe for the interrupt line.  Note:&n; *     with the newer model boards, the interrupt is set via&n; *     software after reset using the default_irq for the&n; *     current board number.&n; *&n; *&n; * 2.  With command line overrides - pas16=port,irq may be &n; *     used on the LILO command line to override the defaults.&n; *&n; * 3.  With the PAS16_OVERRIDE compile time define.  This is &n; *     specified as an array of address, irq tuples.  Ie, for&n; *     one board at the default 0x388 address, IRQ10, I could say &n; *     -DPAS16_OVERRIDE={{0x388, 10}}&n; *     NOTE:  Untested.&n; *&t;&n; *     Note that if the override methods are used, place holders must&n; *     be specified for other boards in the system.&n; *&n; *&n; * Configuration notes :&n; *   The current driver does not support interrupt sharing with the&n; *   sound portion of the card.  If you use the same irq for the&n; *   scsi port and sound you will have problems.  Either use&n; *   a different irq for the scsi port or don&squot;t use interrupts&n; *   for the scsi port.&n; *&n; *   If you have problems with your card not being recognized, use&n; *   the LILO command line override.  Try to get it recognized without&n; *   interrupts.  Ie, for a board at the default 0x388 base port,&n; *   boot: linux pas16=0x388,255&n; *&n; *     (255 is the IRQ_NONE constant in NCR5380.h)&n; */
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -208,10 +208,10 @@ comma
 multiline_comment|/* BUS_AND_STATUS_REG ro, START_DMA_SEND_REG wo */
 l_int|0x3c02
 comma
-multiline_comment|/* INPUT_DATA_REGISTER ro, (N/A on PAS16 ?)&n;                    * START_DMA_TARGET_RECIEVE_REG wo&n;                    */
+multiline_comment|/* INPUT_DATA_REGISTER ro, (N/A on PAS16 ?)&n;                    * START_DMA_TARGET_RECEIVE_REG wo&n;                    */
 l_int|0x3c03
 comma
-multiline_comment|/* RESET_PARITY_INTERRUPT_REG ro,&n;                    * START_DMA_INITIATOR_RECIEVE_REG wo&n;                    */
+multiline_comment|/* RESET_PARITY_INTERRUPT_REG ro,&n;                    * START_DMA_INITIATOR_RECEIVE_REG wo&n;                    */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Function : enable_board( int  board_num, unsigned short port )&n; *&n; * Purpose :  set address in new model board&n; *&n; * Inputs : board_num - logical board number 0-3, port - base address&n; *&n; */
@@ -366,7 +366,7 @@ id|printk
 c_func
 (paren
 l_string|&quot;pas16: WARNING: Can&squot;t use same irq as sound &quot;
-l_string|&quot;driver -- interrupts diabled&bslash;n&quot;
+l_string|&quot;driver -- interrupts disabled&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Set up the drive parameters, disable 5380 interrupts */
@@ -557,7 +557,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function : pas16_setup(char *str, int *ints)&n; *&n; * Purpose : LILO command line initialization of the overrides array,&n; * &n; * Inputs : str - unused, ints - array of integer paramters with ints[0]&n; *&t;equal to the number of ints.&n; *&n; */
+multiline_comment|/*&n; * Function : pas16_setup(char *str, int *ints)&n; *&n; * Purpose : LILO command line initialization of the overrides array,&n; * &n; * Inputs : str - unused, ints - array of integer parameters with ints[0]&n; *&t;equal to the number of ints.&n; *&n; */
 DECL|function|pas16_setup
 r_void
 id|pas16_setup
@@ -685,7 +685,7 @@ id|commandline_current
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* &n; * Function : int pas16_detect(Scsi_Host_Template * tpnt)&n; *&n; * Purpose : detects and initializes PAS16 controllers&n; *&t;that were autoprobed, overriden on the LILO command line, &n; *&t;or specified at compile time.&n; *&n; * Inputs : tpnt - template for this SCSI adapter.&n; * &n; * Returns : 1 if a host adapter was found, 0 if not.&n; *&n; */
+multiline_comment|/* &n; * Function : int pas16_detect(Scsi_Host_Template * tpnt)&n; *&n; * Purpose : detects and initializes PAS16 controllers&n; *&t;that were autoprobed, overridden on the LILO command line, &n; *&t;or specified at compile time.&n; *&n; * Inputs : tpnt - template for this SCSI adapter.&n; * &n; * Returns : 1 if a host adapter was found, 0 if not.&n; *&n; */
 DECL|function|pas16_detect
 r_int
 id|pas16_detect
@@ -1023,6 +1023,26 @@ op_plus
 id|SYS_CONFIG_4
 )paren
 suffix:semicolon
+id|outb
+c_func
+(paren
+(paren
+id|inb
+c_func
+(paren
+id|io_port
+op_plus
+id|IO_CONFIG_3
+)paren
+op_amp
+l_int|0x0f
+)paren
+comma
+id|io_port
+op_plus
+id|IO_CONFIG_3
+)paren
+suffix:semicolon
 )brace
 macro_line|#if defined(PDEBUG) &amp;&amp; (PDEBUG &amp; PDEBUG_INIT)
 id|printk
@@ -1104,7 +1124,7 @@ r_return
 id|count
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function : int pas16_biosparam(Disk *disk, int dev, int *ip)&n; *&n; * Purpose : Generates a BIOS / DOS compatable H-C-S mapping for &n; *&t;the specified device / size.&n; * &n; * Inputs : size = size of device in sectors (512 bytes), dev = block device&n; *&t;major / minor, ip[] = {heads, sectors, cylinders}  &n; *&n; * Returns : allways 0 (success), initializes ip&n; *&t;&n; */
+multiline_comment|/*&n; * Function : int pas16_biosparam(Disk *disk, int dev, int *ip)&n; *&n; * Purpose : Generates a BIOS / DOS compatible H-C-S mapping for &n; *&t;the specified device / size.&n; * &n; * Inputs : size = size of device in sectors (512 bytes), dev = block device&n; *&t;major / minor, ip[] = {heads, sectors, cylinders}  &n; *&n; * Returns : always 0 (success), initializes ip&n; *&t;&n; */
 multiline_comment|/* &n; * XXX Most SCSI boards use this mapping, I could be incorrect.  Some one&n; * using hard disks on a trantor should verify that this mapping corresponds&n; * to that used by the BIOS / ASPI driver by running the linux fdisk program&n; * and matching the H_C_S coordinates to what DOS uses.&n; */
 DECL|function|pas16_biosparam
 r_int
@@ -1207,6 +1227,8 @@ suffix:semicolon
 r_while
 c_loop
 (paren
+op_logical_neg
+(paren
 id|inb
 c_func
 (paren
@@ -1217,28 +1239,16 @@ id|P_STATUS_REG_OFFSET
 op_amp
 id|P_ST_RDY
 )paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-suffix:semicolon
-id|i
-suffix:semicolon
-op_decrement
-id|i
 )paren
-op_star
-id|d
-op_increment
-op_assign
-(paren
-r_int
-r_char
-)paren
-id|inb
+suffix:semicolon
+id|insb
 c_func
 (paren
 id|reg
+comma
+id|d
+comma
+id|i
 )paren
 suffix:semicolon
 r_if
@@ -1268,7 +1278,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;scsi%d : watchdog timer fired in NCR5480_pread()&bslash;n&quot;
+l_string|&quot;scsi%d : watchdog timer fired in NCR5380_pread()&bslash;n&quot;
 comma
 id|instance-&gt;host_no
 )paren
@@ -1331,6 +1341,8 @@ suffix:semicolon
 r_while
 c_loop
 (paren
+op_logical_neg
+(paren
 (paren
 id|inb
 c_func
@@ -1343,24 +1355,16 @@ id|P_STATUS_REG_OFFSET
 op_amp
 id|P_ST_RDY
 )paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-suffix:semicolon
-id|i
-suffix:semicolon
-op_decrement
-id|i
 )paren
-id|outb
+suffix:semicolon
+id|outsb
 c_func
 (paren
-op_star
-id|s
-op_increment
-comma
 id|reg
+comma
+id|s
+comma
+id|i
 )paren
 suffix:semicolon
 r_if
@@ -1390,7 +1394,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;scsi%d : watchdog timer fired in NCR5480_pwrite()&bslash;n&quot;
+l_string|&quot;scsi%d : watchdog timer fired in NCR5380_pwrite()&bslash;n&quot;
 comma
 id|instance-&gt;host_no
 )paren
@@ -1405,7 +1409,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function : const char *pas16_info(void)&n; *&n; * Purpose : provide furthur information about this driver.&n; *&n; * Returns : an empty string.&n; */
+multiline_comment|/*&n; * Function : const char *pas16_info(void)&n; *&n; * Purpose : provide further information about this driver.&n; *&n; * Returns : an empty string.&n; */
 DECL|function|pas16_info
 r_const
 r_char

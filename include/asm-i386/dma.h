@@ -4,8 +4,11 @@ DECL|macro|_ASM_DMA_H
 mdefine_line|#define _ASM_DMA_H
 macro_line|#include &lt;asm/io.h&gt;&t;&t;/* need byte IO */
 macro_line|#ifdef HAVE_REALLY_SLOW_DMA_CONTROLLER
-DECL|macro|outb
-mdefine_line|#define outb&t;outb_p
+DECL|macro|dma_outb
+mdefine_line|#define dma_outb&t;outb_p
+macro_line|#else
+DECL|macro|dma_outb
+mdefine_line|#define dma_outb&t;outb
 macro_line|#endif
 multiline_comment|/*&n; * NOTES about DMA transfers:&n; *&n; *  controller 1: channels 0-3, byte operations, ports 00-1F&n; *  controller 2: channels 4-7, word operations, ports C0-DF&n; *&n; *  - ALL registers are 8 bits only, regardless of transfer size&n; *  - channel 4 is not used - cascades 1 into 2.&n; *  - channels 0-3 are byte - addresses/counts are for physical bytes&n; *  - channels 5-7 are word - addresses/counts are for physical words&n; *  - transfers must not cross physical 64K (0-3) or 128K (5-7) boundaries&n; *  - transfer count loaded to registers is 1 less than actual count&n; *  - controller 2 offsets are all even (2x offsets for controller 1)&n; *  - page registers for 5-7 don&squot;t use data bit 0, represent 128K pages&n; *  - page registers for 0-3 use bit 0, represent 64K pages&n; *&n; * DMA transfers are limited to the lower 16MB of _physical_ memory.  &n; * Note that addresses loaded into registers must be _physical_ addresses,&n; * not logical addresses (which may differ if paging is active).&n; *&n; *  Address mapping for channels 0-3:&n; *&n; *   A23 ... A16 A15 ... A8  A7 ... A0    (Physical addresses)&n; *    |  ...  |   |  ... |   |  ... |&n; *    |  ...  |   |  ... |   |  ... |&n; *    |  ...  |   |  ... |   |  ... |&n; *   P7  ...  P0  A7 ... A0  A7 ... A0   &n; * |    Page    | Addr MSB | Addr LSB |   (DMA registers)&n; *&n; *  Address mapping for channels 5-7:&n; *&n; *   A23 ... A17 A16 A15 ... A9 A8 A7 ... A1 A0    (Physical addresses)&n; *    |  ...  |   &bslash;   &bslash;   ... &bslash;  &bslash;  &bslash;  ... &bslash;  &bslash;&n; *    |  ...  |    &bslash;   &bslash;   ... &bslash;  &bslash;  &bslash;  ... &bslash;  (not used)&n; *    |  ...  |     &bslash;   &bslash;   ... &bslash;  &bslash;  &bslash;  ... &bslash;&n; *   P7  ...  P1 (0) A7 A6  ... A0 A7 A6 ... A0   &n; * |      Page      |  Addr MSB   |  Addr LSB  |   (DMA registers)&n; *&n; * Again, channels 5-7 transfer _physical_ words (16 bits), so addresses&n; * and counts _must_ be word-aligned (the lowest address bit is _ignored_ at&n; * the hardware level, so odd-byte transfers aren&squot;t possible).&n; *&n; * Transfer count (_not # bytes_) is limited to 64K, represented as actual&n; * count - 1 : 64K =&gt; 0xFFFF, 1 =&gt; 0x0000.  Thus, count is always 1 or more,&n; * and up to 128K bytes may be transferred on channels 5-7 in one operation. &n; *&n; */
 DECL|macro|MAX_DMA_CHANNELS
@@ -128,7 +131,7 @@ id|dmanr
 op_le
 l_int|3
 )paren
-id|outb
+id|dma_outb
 c_func
 (paren
 id|dmanr
@@ -137,7 +140,7 @@ id|DMA1_MASK_REG
 )paren
 suffix:semicolon
 r_else
-id|outb
+id|dma_outb
 c_func
 (paren
 id|dmanr
@@ -167,7 +170,7 @@ id|dmanr
 op_le
 l_int|3
 )paren
-id|outb
+id|dma_outb
 c_func
 (paren
 id|dmanr
@@ -178,7 +181,7 @@ id|DMA1_MASK_REG
 )paren
 suffix:semicolon
 r_else
-id|outb
+id|dma_outb
 c_func
 (paren
 (paren
@@ -213,7 +216,7 @@ id|dmanr
 op_le
 l_int|3
 )paren
-id|outb
+id|dma_outb
 c_func
 (paren
 l_int|0
@@ -222,7 +225,7 @@ id|DMA1_CLEAR_FF_REG
 )paren
 suffix:semicolon
 r_else
-id|outb
+id|dma_outb
 c_func
 (paren
 l_int|0
@@ -254,7 +257,7 @@ id|dmanr
 op_le
 l_int|3
 )paren
-id|outb
+id|dma_outb
 c_func
 (paren
 id|mode
@@ -265,7 +268,7 @@ id|DMA1_MODE_REG
 )paren
 suffix:semicolon
 r_else
-id|outb
+id|dma_outb
 c_func
 (paren
 id|mode
@@ -305,7 +308,7 @@ id|dmanr
 r_case
 l_int|0
 suffix:colon
-id|outb
+id|dma_outb
 c_func
 (paren
 id|pagenr
@@ -318,7 +321,7 @@ suffix:semicolon
 r_case
 l_int|1
 suffix:colon
-id|outb
+id|dma_outb
 c_func
 (paren
 id|pagenr
@@ -331,7 +334,7 @@ suffix:semicolon
 r_case
 l_int|2
 suffix:colon
-id|outb
+id|dma_outb
 c_func
 (paren
 id|pagenr
@@ -344,7 +347,7 @@ suffix:semicolon
 r_case
 l_int|3
 suffix:colon
-id|outb
+id|dma_outb
 c_func
 (paren
 id|pagenr
@@ -357,7 +360,7 @@ suffix:semicolon
 r_case
 l_int|5
 suffix:colon
-id|outb
+id|dma_outb
 c_func
 (paren
 id|pagenr
@@ -372,7 +375,7 @@ suffix:semicolon
 r_case
 l_int|6
 suffix:colon
-id|outb
+id|dma_outb
 c_func
 (paren
 id|pagenr
@@ -387,7 +390,7 @@ suffix:semicolon
 r_case
 l_int|7
 suffix:colon
-id|outb
+id|dma_outb
 c_func
 (paren
 id|pagenr
@@ -436,7 +439,7 @@ op_le
 l_int|3
 )paren
 (brace
-id|outb
+id|dma_outb
 c_func
 (paren
 id|a
@@ -456,7 +459,7 @@ op_plus
 id|IO_DMA1_BASE
 )paren
 suffix:semicolon
-id|outb
+id|dma_outb
 c_func
 (paren
 (paren
@@ -483,7 +486,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|outb
+id|dma_outb
 c_func
 (paren
 (paren
@@ -507,7 +510,7 @@ op_plus
 id|IO_DMA2_BASE
 )paren
 suffix:semicolon
-id|outb
+id|dma_outb
 c_func
 (paren
 (paren
@@ -561,7 +564,7 @@ op_le
 l_int|3
 )paren
 (brace
-id|outb
+id|dma_outb
 c_func
 (paren
 id|count
@@ -583,7 +586,7 @@ op_plus
 id|IO_DMA1_BASE
 )paren
 suffix:semicolon
-id|outb
+id|dma_outb
 c_func
 (paren
 (paren
@@ -612,7 +615,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|outb
+id|dma_outb
 c_func
 (paren
 (paren
@@ -638,7 +641,7 @@ op_plus
 id|IO_DMA2_BASE
 )paren
 suffix:semicolon
-id|outb
+id|dma_outb
 c_func
 (paren
 (paren

@@ -1426,7 +1426,7 @@ id|inode
 op_star
 id|dir
 comma
-id|off_t
+id|loff_t
 op_star
 id|pos
 comma

@@ -2546,6 +2546,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 id|hd_request
 c_func
 (paren
@@ -3011,6 +3016,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 id|hd_request
 c_func
 (paren
@@ -3156,6 +3166,11 @@ id|hd_error
 suffix:semicolon
 )brace
 id|bad_rw_intr
+c_func
+(paren
+)paren
+suffix:semicolon
+id|cli
 c_func
 (paren
 )paren

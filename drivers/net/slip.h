@@ -1,10 +1,15 @@
-multiline_comment|/*&n; * slip.h&t;Define the SLIP device driver interface and constants.&n; *&n; * NOTE:&t;THIS FILE WILL BE MOVED TO THE LINUX INCLUDE DIRECTORY&n; *&t;&t;AS SOON AS POSSIBLE!&n; *&n; * Version:&t;@(#)slip.h&t;1.2.0&t;03/28/93&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;: &t;Added slip mtu field.&n; *&t;&t;Matt Dillon&t;:&t;Printable slip (borrowed from net2e)&n; *&n; * Author:&t;Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; */
+multiline_comment|/*&n; * slip.h&t;Define the SLIP device driver interface and constants.&n; *&n; * NOTE:&t;THIS FILE WILL BE MOVED TO THE LINUX INCLUDE DIRECTORY&n; *&t;&t;AS SOON AS POSSIBLE!&n; *&n; * Version:&t;@(#)slip.h&t;1.2.0&t;03/28/93&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;: &t;Added slip mtu field.&n; *&t;&t;Matt Dillon&t;:&t;Printable slip (borrowed from net2e)&n; *&t;&t;Alan Cox&t;:&t;Added SL_SLIP_LOTS&n; *&n; * Author:&t;Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; */
 macro_line|#ifndef _LINUX_SLIP_H
 DECL|macro|_LINUX_SLIP_H
 mdefine_line|#define _LINUX_SLIP_H
 multiline_comment|/* SLIP configuration. */
+macro_line|#ifndef SL_SLIP_LOTS
 DECL|macro|SL_NRUNIT
 mdefine_line|#define SL_NRUNIT&t;4&t;&t;/* number of SLIP channels&t;*/
+macro_line|#else
+DECL|macro|SL_NRUNIT
+mdefine_line|#define SL_NRUNIT&t;16
+macro_line|#endif
 DECL|macro|SL_MTU
 mdefine_line|#define SL_MTU&t;&t;296&t;&t;/* 296; I am used to 600- FvK&t;*/
 multiline_comment|/* SLIP protocol characters. */

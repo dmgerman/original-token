@@ -282,6 +282,8 @@ DECL|macro|__NR_setfsuid
 mdefine_line|#define __NR_setfsuid&t;&t;138
 DECL|macro|__NR_setfsgid
 mdefine_line|#define __NR_setfsgid&t;&t;139
+DECL|macro|__NR__llseek
+mdefine_line|#define __NR__llseek&t;&t;140
 r_extern
 r_int
 id|errno

@@ -90,7 +90,7 @@ DECL|macro|RELEASE_IRQ
 mdefine_line|#define RELEASE_IRQ&t;&t;&t;free_irq
 DECL|macro|RET_ERROR
 mdefine_line|#define RET_ERROR(err)&t;&t;&t;-err
-multiline_comment|/* DISABLE_INTR is used to disable interrupts.&n;   These macros store the current flags to the (unsigned long) variable given&n;   as a parameter. RESTORE_INTR returns the interrupt ebable bit to state&n;   before DISABLE_INTR or ENABLE_INTR */
+multiline_comment|/* DISABLE_INTR is used to disable interrupts.&n;   These macros store the current flags to the (unsigned long) variable given&n;   as a parameter. RESTORE_INTR returns the interrupt enable bit to state&n;   before DISABLE_INTR or ENABLE_INTR */
 DECL|macro|DISABLE_INTR
 mdefine_line|#define DISABLE_INTR(flags)&t;__asm__ __volatile__(&quot;pushfl ; popl %0 ; cli&quot;:&quot;=r&quot; (flags));
 DECL|macro|RESTORE_INTR

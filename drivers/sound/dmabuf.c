@@ -29,7 +29,7 @@ op_assign
 l_int|0
 )brace
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Primitive way to allocate&n;&t;&t; * such a large array.&n;&t;&t; * Needs dynamic run-time alloction.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Primitive way to allocate&n;&t;&t; * such a large array.&n;&t;&t; * Needs dynamic run-time allocation.&n;&t;&t; */
 r_static
 r_void
 DECL|function|reorganize_buffers
@@ -181,7 +181,7 @@ id|nc
 op_star
 id|sz
 suffix:semicolon
-multiline_comment|/*&n;   * Compute a buffer size for time not exeeding 1 second.&n;   * Usually this algorithm gives a buffer size for 0.5 to 1.0 seconds&n;   * of sound (using the current speed, sample size and #channels).&n;   */
+multiline_comment|/*&n;   * Compute a buffer size for time not exceeding 1 second.&n;   * Usually this algorithm gives a buffer size for 0.5 to 1.0 seconds&n;   * of sound (using the current speed, sample size and #channels).&n;   */
 id|bsz
 op_assign
 id|dsp_dev-&gt;buffsize
@@ -266,7 +266,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&n; * The process has specified the buffer sice with SNDCTL_DSP_SETFRAGMENT or&n; * the buffer sice computation has already been done.&n; */
+multiline_comment|/*&n; * The process has specified the buffer size with SNDCTL_DSP_SETFRAGMENT or&n; * the buffer size computation has already been done.&n; */
 r_if
 c_cond
 (paren
@@ -1669,7 +1669,7 @@ l_int|0
 op_logical_or
 id|dmap-&gt;fragment_size
 )paren
-multiline_comment|/* Loo late to change */
+multiline_comment|/* Too late to change */
 r_return
 id|RET_ERROR
 (paren
@@ -1772,7 +1772,7 @@ l_int|0
 op_logical_or
 id|dmap-&gt;fragment_size
 )paren
-multiline_comment|/* Loo late to change */
+multiline_comment|/* Too late to change */
 r_return
 id|RET_ERROR
 (paren

@@ -6844,7 +6844,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Initialize the console device. This is called *early*, so&n; * we can&squot;t necessarily depend on lots of kernel help here.&n; * Jus do some early initializations, and do the complex setup&n; * later.&n; */
+multiline_comment|/*&n; * Initialize the console device. This is called *early*, so&n; * we can&squot;t necessarily depend on lots of kernel help here.&n; * Just do some early initializations, and do the complex setup&n; * later.&n; */
 DECL|function|console_init
 r_int
 id|console_init

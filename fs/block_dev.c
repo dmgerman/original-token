@@ -58,7 +58,7 @@ id|block
 comma
 id|blocks
 suffix:semicolon
-r_int
+id|loff_t
 id|offset
 suffix:semicolon
 r_int
@@ -232,6 +232,9 @@ id|dev
 id|size
 op_assign
 (paren
+(paren
+id|loff_t
+)paren
 id|blk_size
 (braket
 id|MAJOR
@@ -799,8 +802,7 @@ r_int
 r_int
 id|block
 suffix:semicolon
-r_int
-r_int
+id|loff_t
 id|offset
 suffix:semicolon
 r_int
@@ -863,8 +865,7 @@ r_int
 r_int
 id|chars
 suffix:semicolon
-r_int
-r_int
+id|loff_t
 id|size
 suffix:semicolon
 r_int
@@ -970,6 +971,9 @@ id|dev
 )paren
 id|size
 op_assign
+(paren
+id|loff_t
+)paren
 id|blk_size
 (braket
 id|MAJOR

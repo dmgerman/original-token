@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *&t;seagate.c Copyright (C) 1992, 1993 Drew Eckhardt &n; *&t;low level scsi driver for ST01/ST02, Future Domain TMC-885, &n; *&t;TMC-950  by&n; *&n; *&t;&t;Drew Eckhardt &n; *&n; *&t;&lt;drew@colorado.edu&gt;&n; *&n; * &t;Note : TMC-880 boards don&squot;t work because they have two bits in &n; *&t;&t;the status register flipped, I&squot;ll fix this &quot;RSN&quot;&n; *&n; *      This card does all the I/O via memory mapped I/O, so there is no need&n; *      to check or snarf a region of the I/O address space.&n; */
-multiline_comment|/*&n; * Configuration : &n; * To use without BIOS -DOVERRIDE=base_address -DCONTROLLER=FD or SEAGATE&n; * -DIRQ will overide the default of 5.&n; * Note: You can now set these options from the kernel&squot;s &quot;command line&quot;.&n; * The syntax is:&n; *&n; *     st0x=ADDRESS,IRQ                (for a Seagate controller)&n; * or:&n; *     tmc8xx=ADDRESS,IRQ              (for a TMC-8xx or TMC-950 controller)&n; * eg:&n; *     tmc8xx=0xC8000,15&n; *&n; * will configure the driver for a TMC-8xx style controller using IRQ 15&n; * with a base address of 0xC8000.&n; * &n; * -DFAST or -DFAST32 will use blind transfers where possible&n; *&n; * -DARBITRATE will cause the host adapter to arbitrate for the &n; *&t;bus for better SCSI-II compatability, rather than just &n; *&t;waiting for BUS FREE and then doing its thing.  Should&n; *&t;let us do one command per Lun when I integrate my &n; *&t;reorganization changes into the distribution sources.&n; *&n; * -DSLOW_HANDSHAKE will allow compatability with broken devices that don&squot;t &n; *&t;handshake fast enough (ie, some CD ROM&squot;s) for the Seagate&n; * &t;code.&n; *&n; * -DSLOW_RATE=x, x some number will let you specify a default &n; *&t;transfer rate if handshaking isn&squot;t working correctly.&n; */
+multiline_comment|/*&n; * Configuration : &n; * To use without BIOS -DOVERRIDE=base_address -DCONTROLLER=FD or SEAGATE&n; * -DIRQ will override the default of 5.&n; * Note: You can now set these options from the kernel&squot;s &quot;command line&quot;.&n; * The syntax is:&n; *&n; *     st0x=ADDRESS,IRQ                (for a Seagate controller)&n; * or:&n; *     tmc8xx=ADDRESS,IRQ              (for a TMC-8xx or TMC-950 controller)&n; * eg:&n; *     tmc8xx=0xC8000,15&n; *&n; * will configure the driver for a TMC-8xx style controller using IRQ 15&n; * with a base address of 0xC8000.&n; * &n; * -DFAST or -DFAST32 will use blind transfers where possible&n; *&n; * -DARBITRATE will cause the host adapter to arbitrate for the &n; *&t;bus for better SCSI-II compatibility, rather than just &n; *&t;waiting for BUS FREE and then doing its thing.  Should&n; *&t;let us do one command per Lun when I integrate my &n; *&t;reorganization changes into the distribution sources.&n; *&n; * -DSLOW_HANDSHAKE will allow compatibility with broken devices that don&squot;t &n; *&t;handshake fast enough (ie, some CD ROM&squot;s) for the Seagate&n; * &t;code.&n; *&n; * -DSLOW_RATE=x, x some number will let you specify a default &n; *&t;transfer rate if handshaking isn&squot;t working correctly.&n; */
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -328,7 +328,7 @@ comma
 id|SEAGATE
 )brace
 comma
-multiline_comment|/*&n; * However, future domain makes several incompatable SCSI boards, so specific&n; * signatures must be used.&n; */
+multiline_comment|/*&n; * However, future domain makes several incompatible SCSI boards, so specific&n; * signatures must be used.&n; */
 (brace
 l_string|&quot;FUTURE DOMAIN CORP. (C) 1986-1989 V5.0C2/14/89&quot;
 comma
@@ -432,7 +432,7 @@ l_int|1
 suffix:semicolon
 macro_line|#endif 
 macro_line|#ifdef SLOW_HANDSHAKE
-multiline_comment|/* &n; * Support for broken devices : &n; * The Seagate board has a handshaking problem.  Namely, a lack &n; * thereof for slow devices.  You can blast 600K/second through &n; * it if you are polling for each byte, more if you do a blind &n; * transfer.  In the first case, with a fast device, REQ will &n; * transition high-low or high-low-high before your loop restarts &n; * and you&squot;ll have no problems.  In the second case, the board &n; * will insert wait states for up to 13.2 usecs for REQ to &n; * transition low-&gt;high, and everything will work.&n; *&n; * However, there&squot;s nothing in the state machine that says &n; * you *HAVE* to see a high-low-high set of transitions before&n; * sending the next byte, and slow things like the Trantor CD ROMS&n; * will break because of this.&n; * &n; * So, we need to slow things down, which isn&squot;t as simple as it &n; * seems.  We can&squot;t slow things down period, because then people&n; * who don&squot;t recompile their kernels will shoot me for ruining &n; * their performance.  We need to do it on a case per case basis.&n; *&n; * The best for performance will be to, only for borken devices &n; * (this is stored on a per-target basis in the scsi_devices array)&n; * &n; * Wait for a low-&gt;high transition before continuing with that &n; * transfer.  If we timeout, continue anyways.  We don&squot;t need &n; * a long timeout, because REQ should only be asserted until the &n; * corresponding ACK is recieved and processed.&n; *&n; * Note that we can&squot;t use the system timer for this, because of &n; * resolution, and we *really* can&squot;t use the timer chip since &n; * gettimeofday() and the beeper routines use that.  So,&n; * the best thing for us to do will be to calibrate a timing&n; * loop in the initialization code using the timer chip before&n; * gettimeofday() can screw with it.&n; */
+multiline_comment|/* &n; * Support for broken devices : &n; * The Seagate board has a handshaking problem.  Namely, a lack &n; * thereof for slow devices.  You can blast 600K/second through &n; * it if you are polling for each byte, more if you do a blind &n; * transfer.  In the first case, with a fast device, REQ will &n; * transition high-low or high-low-high before your loop restarts &n; * and you&squot;ll have no problems.  In the second case, the board &n; * will insert wait states for up to 13.2 usecs for REQ to &n; * transition low-&gt;high, and everything will work.&n; *&n; * However, there&squot;s nothing in the state machine that says &n; * you *HAVE* to see a high-low-high set of transitions before&n; * sending the next byte, and slow things like the Trantor CD ROMS&n; * will break because of this.&n; * &n; * So, we need to slow things down, which isn&squot;t as simple as it &n; * seems.  We can&squot;t slow things down period, because then people&n; * who don&squot;t recompile their kernels will shoot me for ruining &n; * their performance.  We need to do it on a case per case basis.&n; *&n; * The best for performance will be to, only for borken devices &n; * (this is stored on a per-target basis in the scsi_devices array)&n; * &n; * Wait for a low-&gt;high transition before continuing with that &n; * transfer.  If we timeout, continue anyways.  We don&squot;t need &n; * a long timeout, because REQ should only be asserted until the &n; * corresponding ACK is received and processed.&n; *&n; * Note that we can&squot;t use the system timer for this, because of &n; * resolution, and we *really* can&squot;t use the timer chip since &n; * gettimeofday() and the beeper routines use that.  So,&n; * the best thing for us to do will be to calibrate a timing&n; * loop in the initialization code using the timer chip before&n; * gettimeofday() can screw with it.&n; */
 DECL|variable|borken_calibration
 r_static
 r_int
@@ -486,7 +486,7 @@ op_increment
 id|count
 )paren
 suffix:semicolon
-multiline_comment|/* &n; * Ok, we now have a count for .25 seconds.  Convert to a &n; * count per second and divide by transer rate in K.&n; */
+multiline_comment|/* &n; * Ok, we now have a count for .25 seconds.  Convert to a &n; * count per second and divide by transfer rate in K.&n; */
 id|borken_calibration
 op_assign
 (paren
@@ -672,8 +672,8 @@ l_string|&quot;FD&quot;
 )paren
 suffix:semicolon
 macro_line|#endif 
-macro_line|#else /* OVERIDE */&t;
-multiline_comment|/*&n; *&t;To detect this card, we simply look for the signature&n; *&t;from the BIOS version notice in all the possible locations&n; *&t;of the ROM&squot;s.  This has a nice sideeffect of not trashing&n; * &t;any register locations that might be used by something else.&n; *&n; * XXX - note that we probably should be probing the address&n; * space for the on-board RAM instead.&n; */
+macro_line|#else /* OVERRIDE */&t;
+multiline_comment|/*&n; *&t;To detect this card, we simply look for the signature&n; *&t;from the BIOS version notice in all the possible locations&n; *&t;of the ROM&squot;s.  This has a nice side effect of not trashing&n; * &t;any register locations that might be used by something else.&n; *&n; * XXX - note that we probably should be probing the address&n; * space for the on-board RAM instead.&n; */
 r_for
 c_loop
 (paren
@@ -781,7 +781,7 @@ dot
 id|type
 suffix:semicolon
 )brace
-macro_line|#endif /* OVERIDE */
+macro_line|#endif /* OVERRIDE */
 )brace
 multiline_comment|/* (! controller_type) */
 id|tpnt-&gt;this_id
@@ -1795,7 +1795,7 @@ l_int|6
 r_return
 id|DID_BAD_TARGET
 suffix:semicolon
-multiline_comment|/*&n; *&t;We work it differently depending on if this is is &quot;the first time,&quot;&n; *&t;or a reconnect.  If this is a reselct phase, then SEL will &n; *&t;be asserted, and we must skip selection / arbitration phases.&n; */
+multiline_comment|/*&n; *&t;We work it differently depending on if this is is &quot;the first time,&quot;&n; *&t;or a reconnect.  If this is a reselect phase, then SEL will &n; *&t;be asserted, and we must skip selection / arbitration phases.&n; */
 r_switch
 c_cond
 (paren
@@ -1815,7 +1815,7 @@ id|hostno
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n; *&t;At this point, we should find the logical or of our ID and the original&n; *&t;target&squot;s ID on the BUS, with BSY, SEL, and I/O signals asserted.&n; *&n; *&t;After ARBITRATION phase is completed, only SEL, BSY, and the &n; *&t;target ID are asserted.  A valid initator ID is not on the bus&n; *&t;until IO is asserted, so we must wait for that.&n; */
+multiline_comment|/*&n; *&t;At this point, we should find the logical or of our ID and the original&n; *&t;target&squot;s ID on the BUS, with BSY, SEL, and I/O signals asserted.&n; *&n; *&t;After ARBITRATION phase is completed, only SEL, BSY, and the &n; *&t;target ID are asserted.  A valid initiator ID is not on the bus&n; *&t;until IO is asserted, so we must wait for that.&n; */
 id|clock
 op_assign
 id|jiffies
@@ -2289,7 +2289,7 @@ id|hostno
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif
-multiline_comment|/*&n; *&t;When the SCSI device decides that we&squot;re gawking at it, it will &n; *&t;respond by asserting BUSY on the bus.&n; *&n; * &t;Note : the Seagate ST-01/02 product manual says that we should &n; * &t;twiddle the DATA register before the control register.  However,&n; *&t;this does not work reliably so we do it the other way arround.&n; *&n; *&t;Probably could be a problem with arbitration too, we really should&n; *&t;try this with a SCSI protocol or logic analyzer to see what is &n; *&t;going on.&n; */
+multiline_comment|/*&n; *&t;When the SCSI device decides that we&squot;re gawking at it, it will &n; *&t;respond by asserting BUSY on the bus.&n; *&n; * &t;Note : the Seagate ST-01/02 product manual says that we should &n; * &t;twiddle the DATA register before the control register.  However,&n; *&t;this does not work reliably so we do it the other way around.&n; *&n; *&t;Probably could be a problem with arbitration too, we really should&n; *&t;try this with a SCSI protocol or logic analyzer to see what is &n; *&t;going on.&n; */
 id|cli
 c_func
 (paren
@@ -3801,7 +3801,7 @@ id|BASE_CMD
 op_or
 id|CMD_DRVR_ENABLE
 suffix:semicolon
-multiline_comment|/*&n; * &t;If we are reconecting, then we must send an IDENTIFY message in &n; *&t; response  to MSGOUT.&n; */
+multiline_comment|/*&n; * &t;If we are reconnecting, then we must send an IDENTIFY message in &n; *&t; response  to MSGOUT.&n; */
 r_switch
 c_cond
 (paren
@@ -3856,7 +3856,7 @@ macro_line|#if (DEBUG &amp; (PHASE_MSGOUT | DEBUG_LINKED))
 id|printk
 c_func
 (paren
-l_string|&quot;scsi%d : sent ABORT message to cancle incorrect I_T_L nexus.&bslash;n&quot;
+l_string|&quot;scsi%d : sent ABORT message to cancel incorrect I_T_L nexus.&bslash;n&quot;
 comma
 id|hostno
 )paren
@@ -4304,7 +4304,7 @@ id|hostno
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n; * We also will need to adjust status to accomodate intermediate conditions.&n; */
+multiline_comment|/*&n; * We also will need to adjust status to accommodate intermediate conditions.&n; */
 r_if
 c_cond
 (paren
@@ -4606,7 +4606,7 @@ l_int|5
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n; * We are transfering 0 bytes in the out direction, and expect to get back&n; * 24 bytes for each mode page.&n; */
+multiline_comment|/*&n; * We are transferring 0 bytes in the out direction, and expect to get back&n; * 24 bytes for each mode page.&n; */
 id|sizes
 (braket
 l_int|0
@@ -4860,7 +4860,7 @@ id|sectors
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Now, we need to do a sanity check on the geometry to see if it is &n; * BIOS compatable.  The maximum BIOS geometry is 1024 cylinders * &n; * 256 heads * 64 sectors. &n; */
+multiline_comment|/*&n; * Now, we need to do a sanity check on the geometry to see if it is &n; * BIOS compatible.  The maximum BIOS geometry is 1024 cylinders * &n; * 256 heads * 64 sectors. &n; */
 r_if
 c_cond
 (paren

@@ -413,7 +413,7 @@ l_string|&quot;ext_find_entry: bad dir entry&bslash;n&quot;
 suffix:semicolon
 id|printk
 (paren
-l_string|&quot;dev=%d, dir=%d, offset=%d, rec_len=%d, name_len=%d&bslash;n&quot;
+l_string|&quot;dev=%d, dir=%ld, offset=%ld, rec_len=%d, name_len=%d&bslash;n&quot;
 comma
 id|dir-&gt;i_dev
 comma
@@ -1172,7 +1172,7 @@ l_string|&quot;ext_addr_entry: bad dir entry&bslash;n&quot;
 suffix:semicolon
 id|printk
 (paren
-l_string|&quot;dev=%d, dir=%d, offset=%d, rec_len=%d, name_len=%d&bslash;n&quot;
+l_string|&quot;dev=%d, dir=%ld, offset=%ld, rec_len=%d, name_len=%d&bslash;n&quot;
 comma
 id|dir-&gt;i_dev
 comma
@@ -2480,7 +2480,7 @@ l_string|&quot;empty_dir: bad dir entry&bslash;n&quot;
 suffix:semicolon
 id|printk
 (paren
-l_string|&quot;dev=%d, dir=%d, offset=%d, rec_len=%d, name_len=%d&bslash;n&quot;
+l_string|&quot;dev=%d, dir=%ld, offset=%ld, rec_len=%d, name_len=%d&bslash;n&quot;
 comma
 id|inode-&gt;i_dev
 comma
@@ -3052,7 +3052,7 @@ id|inode-&gt;i_nlink
 id|printk
 c_func
 (paren
-l_string|&quot;Deleting nonexistent file (%04x:%d), %d&bslash;n&quot;
+l_string|&quot;Deleting nonexistent file (%04x:%ld), %d&bslash;n&quot;
 comma
 id|inode-&gt;i_dev
 comma

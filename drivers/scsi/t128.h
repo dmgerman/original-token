@@ -9,7 +9,7 @@ DECL|macro|TDEBUG_INIT
 mdefine_line|#define TDEBUG_INIT&t;0x1
 DECL|macro|TDEBUG_TRANSFER
 mdefine_line|#define TDEBUG_TRANSFER 0x2
-multiline_comment|/*&n; * The trantor boards are memory mapped. They use an NCR5380 or &n; * equivalent (my sample board had part second sourced from ZILOG).&n; * NCR&squot;s recommended &quot;Pseudo-DMA&quot; architecture is used, where &n; * a PAL drives the DMA signals on the 5380 allowing fast, blind&n; * transfers with propper handshaking. &n; */
+multiline_comment|/*&n; * The trantor boards are memory mapped. They use an NCR5380 or &n; * equivalent (my sample board had part second sourced from ZILOG).&n; * NCR&squot;s recommended &quot;Pseudo-DMA&quot; architecture is used, where &n; * a PAL drives the DMA signals on the 5380 allowing fast, blind&n; * transfers with proper handshaking. &n; */
 multiline_comment|/*&n; * Note : a boot switch is provided for the purpose of informing the &n; * firmware to boot or not boot from attached SCSI devices.  So, I imagine&n; * there are fewer people who&squot;ve yanked the ROM like they do on the Seagate&n; * to make bootup faster, and I&squot;ll probably use this for autodetection.&n; */
 DECL|macro|T_ROM_OFFSET
 mdefine_line|#define T_ROM_OFFSET&t;&t;0
@@ -28,7 +28,7 @@ mdefine_line|#define T_STATUS_REG_OFFSET&t;0x1c20&t;/* ro */
 DECL|macro|T_ST_BOOT
 mdefine_line|#define T_ST_BOOT&t;&t;0x80&t;/* Boot switch */
 DECL|macro|T_ST_S3
-mdefine_line|#define T_ST_S3&t;&t;&t;0x40&t;/* User setable switches, */
+mdefine_line|#define T_ST_S3&t;&t;&t;0x40&t;/* User settable switches, */
 DECL|macro|T_ST_S2
 mdefine_line|#define T_ST_S2&t;&t;&t;0x20&t;/* read 0 when switch is on, 1 off */
 DECL|macro|T_ST_S1
@@ -40,7 +40,7 @@ mdefine_line|#define T_ST_RDY&t;&t;0x04&t;/* 5380 DRQ */
 DECL|macro|T_ST_TIM
 mdefine_line|#define T_ST_TIM&t;&t;0x02&t;/* indicates 40us watchdog timer fired */
 DECL|macro|T_ST_ZERO
-mdefine_line|#define T_ST_ZERO&t;&t;0x01&t;/* Allways zero */
+mdefine_line|#define T_ST_ZERO&t;&t;0x01&t;/* Always zero */
 DECL|macro|T_5380_OFFSET
 mdefine_line|#define T_5380_OFFSET&t;&t;0x1d00&t;/* 8 registers here, see NCR5380.h */
 DECL|macro|T_DATA_REG_OFFSET

@@ -49,7 +49,7 @@ DECL|macro|NDEBUG_RESTART_SELECT
 mdefine_line|#define NDEBUG_RESTART_SELECT&t;0x40000
 DECL|macro|NDEBUG_EXTENDED
 mdefine_line|#define NDEBUG_EXTENDED&t;&t;0x80000
-multiline_comment|/* &n; * The contents of the OUTPUT DATA register are asserted on the bus when&n; * either arbitration is occuring or the phase-indicating signals (&n; * IO, CD, MSG) in the TARGET COMMAND register and the ASSERT DATA&n; * bit in the INTITIATOR COMMAND register is set.&n; */
+multiline_comment|/* &n; * The contents of the OUTPUT DATA register are asserted on the bus when&n; * either arbitration is occuring or the phase-indicating signals (&n; * IO, CD, MSG) in the TARGET COMMAND register and the ASSERT DATA&n; * bit in the INITIATOR COMMAND register is set.&n; */
 DECL|macro|OUTPUT_DATA_REG
 mdefine_line|#define OUTPUT_DATA_REG         0       /* wo DATA lines on SCSI bus */
 DECL|macro|CURRENT_SCSI_DATA_REG
@@ -95,7 +95,7 @@ mdefine_line|#define MR_ENABLE_PAR_CHECK   0x20&t;/* rw enable parity checking *
 DECL|macro|MR_ENABLE_PAR_INTR
 mdefine_line|#define MR_ENABLE_PAR_INTR&t;0x10&t;/* rw enable bad parity interrupt */
 DECL|macro|MR_ENABLE_EOP_INTR
-mdefine_line|#define MR_ENABLE_EOP_INTR&t;0x08&t;/* rw enabble eop interrupt */
+mdefine_line|#define MR_ENABLE_EOP_INTR&t;0x08&t;/* rw enable eop interrupt */
 DECL|macro|MR_MONITOR_BSY
 mdefine_line|#define MR_MONITOR_BSY&t;0x04&t;/* rw enable int on unexpected bsy fail */
 DECL|macro|MR_DMA_MODE
@@ -167,15 +167,15 @@ mdefine_line|#define START_DMA_SEND_REG&t;5&t;/* wo */
 multiline_comment|/* &n; * Used in DMA transfer mode, data is latched from the SCSI bus on&n; * the falling edge of REQ (ini) or ACK (tgt)&n; */
 DECL|macro|INPUT_DATA_REG
 mdefine_line|#define INPUT_DATA_REG&t;&t;&t;6&t;/* ro */
-multiline_comment|/* Write any value to this register to start a DMA recieve */
-DECL|macro|START_DMA_TARGET_RECIEVE_REG
-mdefine_line|#define START_DMA_TARGET_RECIEVE_REG&t;6&t;/* wo */
+multiline_comment|/* Write any value to this register to start a DMA receive */
+DECL|macro|START_DMA_TARGET_RECEIVE_REG
+mdefine_line|#define START_DMA_TARGET_RECEIVE_REG&t;6&t;/* wo */
 multiline_comment|/* Read this register to clear interrupt conditions */
 DECL|macro|RESET_PARITY_INTERRUPT_REG
 mdefine_line|#define RESET_PARITY_INTERRUPT_REG&t;7&t;/* ro */
-multiline_comment|/* Write any value to this register to start an ini mode DMA recieve */
-DECL|macro|START_DMA_INITIATOR_RECIEVE_REG
-mdefine_line|#define START_DMA_INITIATOR_RECIEVE_REG 7&t;/* wo */
+multiline_comment|/* Write any value to this register to start an ini mode DMA receive */
+DECL|macro|START_DMA_INITIATOR_RECEIVE_REG
+mdefine_line|#define START_DMA_INITIATOR_RECEIVE_REG 7&t;/* wo */
 macro_line|#ifdef NCR53C400
 DECL|macro|C400_CONTROL_STATUS_REG
 mdefine_line|#define C400_CONTROL_STATUS_REG                -8      /* rw */
@@ -188,9 +188,9 @@ mdefine_line|#define CSR_TRANS_DIR          0x40    /* rw  Data transfer directi
 DECL|macro|CSR_SCSI_BUFF_INTR
 mdefine_line|#define CSR_SCSI_BUFF_INTR     0x20    /* rw  Enable int on transfer ready */
 DECL|macro|CSR_53C80_INTR
-mdefine_line|#define CSR_53C80_INTR         0x10    /* rw  Enable 53c80 interupts */
+mdefine_line|#define CSR_53C80_INTR         0x10    /* rw  Enable 53c80 interrupts */
 DECL|macro|CSR_SHARED_INTR
-mdefine_line|#define CSR_SHARED_INTR                0x08    /* rw  Interupt sharing */
+mdefine_line|#define CSR_SHARED_INTR                0x08    /* rw  Interrupt sharing */
 DECL|macro|CSR_HOST_BUF_NOT_RDY
 mdefine_line|#define CSR_HOST_BUF_NOT_RDY   0x04    /* ro  Is Host buffer ready */
 DECL|macro|CSR_SCSI_BUF_RDY
@@ -264,7 +264,7 @@ id|NCR5380_hostdata
 DECL|member|NCR5380_implementation_fields
 id|NCR5380_implementation_fields
 suffix:semicolon
-multiline_comment|/* implmenentation specific */
+multiline_comment|/* implementation specific */
 DECL|member|id_mask
 DECL|member|id_higher_mask
 r_int
@@ -686,7 +686,7 @@ l_int|1
 )paren
 id|panic
 (paren
-l_string|&quot;scsi%d : attmpted unaligned DMA transfer&bslash;n&quot;
+l_string|&quot;scsi%d : attempted unaligned DMA transfer&bslash;n&quot;
 comma
 id|instance-&gt;host_no
 )paren

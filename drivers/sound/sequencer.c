@@ -51,7 +51,7 @@ id|max_synthdev
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n; * The seq_mode gives the operating mode of the sequencer:&n; *      1 = level1 (the default)&n; *      2 = level2 (extended capabilites)&n; */
+multiline_comment|/*&n; * The seq_mode gives the operating mode of the sequencer:&n; *      1 = level1 (the default)&n; *      2 = level2 (extended capabilities)&n; */
 DECL|macro|SEQ_1
 mdefine_line|#define SEQ_1&t;1
 DECL|macro|SEQ_2
@@ -1960,6 +1960,7 @@ id|seq_mode
 op_eq
 id|SEQ_2
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -2002,6 +2003,7 @@ op_assign
 l_int|64
 suffix:semicolon
 )brace
+)brace
 r_switch
 c_cond
 (paren
@@ -2017,6 +2019,10 @@ c_cond
 id|note
 OG
 l_int|127
+op_logical_and
+id|note
+op_ne
+l_int|255
 )paren
 r_return
 suffix:semicolon

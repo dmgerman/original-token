@@ -76,8 +76,8 @@ DECL|macro|PRE_FETCH
 mdefine_line|#define PRE_FETCH&t;&t;0x34
 DECL|macro|READ_POSITION
 mdefine_line|#define READ_POSITION&t;&t;0x34
-DECL|macro|SYNCRONIZE_CACHE
-mdefine_line|#define SYNCRONIZE_CACHE&t;0x35
+DECL|macro|SYNCHRONIZE_CACHE
+mdefine_line|#define SYNCHRONIZE_CACHE&t;0x35
 DECL|macro|LOCK_UNLOCK_CACHE
 mdefine_line|#define LOCK_UNLOCK_CACHE&t;0x36
 DECL|macro|READ_DEFECT_DATA
@@ -184,7 +184,7 @@ DECL|macro|RESERVATION_CONFLICT
 mdefine_line|#define RESERVATION_CONFLICT&t;0x0c
 DECL|macro|STATUS_MASK
 mdefine_line|#define STATUS_MASK&t;&t;0x1e
-multiline_comment|/*&n;&t;the return of the status word will be in the following format :&n;&t;The low byte is the status returned by the SCSI command, &n;&t;with vendor specific bits masked.&n;&n;&t;The next byte is the message which followed the SCSI status.&n;&t;This allows a stos to be used, since the Intel is a little&n;&t;endian machine.&n;&n;&t;The final byte is a host return code, which is one of the following.&n;&n;&t;IE &n;&t;lsb&t;&t;msb&n;&t;status&t;msg&t;host code&t;&n;&n;        Our errors returned by OUR driver, NOT SCSI message.  Orr&squot;d with&n;        SCSI message passed back to driver &lt;IF any&gt;.&n;*/
+multiline_comment|/*&n;&t;the return of the status word will be in the following format :&n;&t;The low byte is the status returned by the SCSI command, &n;&t;with vendor specific bits masked.&n;&n;&t;The next byte is the message which followed the SCSI status.&n;&t;This allows a stos to be used, since the Intel is a little&n;&t;endian machine.&n;&n;&t;The final byte is a host return code, which is one of the following.&n;&n;&t;IE &n;&t;lsb&t;&t;msb&n;&t;status&t;msg&t;host code&t;&n;&n;        Our errors returned by OUR driver, NOT SCSI message.  Or&squot;d with&n;        SCSI message passed back to driver &lt;IF any&gt;.&n;*/
 multiline_comment|/* &t;NO error&t;&t;&t;&t;&t;&t;&t;*/
 DECL|macro|DID_OK
 mdefine_line|#define DID_OK &t;&t;&t;0x00
@@ -424,14 +424,14 @@ id|tagged_supported
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* Supports SCSI-II tagged queing */
+multiline_comment|/* Supports SCSI-II tagged queuing */
 DECL|member|tagged_queue
 r_int
 id|tagged_queue
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/*SCSI-II tagged queing enabled */
+multiline_comment|/*SCSI-II tagged queuing enabled */
 DECL|member|disconnect
 r_int
 id|disconnect
@@ -484,8 +484,8 @@ DECL|macro|host_byte
 mdefine_line|#define host_byte(result) (((result) &gt;&gt; 16) &amp; 0xff)
 DECL|macro|driver_byte
 mdefine_line|#define driver_byte(result) (((result) &gt;&gt; 24) &amp; 0xff)
-DECL|macro|sugestion
-mdefine_line|#define sugestion(result) (driver_byte(result) &amp; SUGGEST_MASK)
+DECL|macro|suggestion
+mdefine_line|#define suggestion(result) (driver_byte(result) &amp; SUGGEST_MASK)
 DECL|macro|sense_class
 mdefine_line|#define sense_class(sense) (((sense) &gt;&gt; 4) &amp; 0x7)
 DECL|macro|sense_error
@@ -772,7 +772,7 @@ DECL|member|transfersize
 r_int
 id|transfersize
 suffix:semicolon
-multiline_comment|/* How much we are guranteed to transfer with&n;&t;&t;&t;&t;   each SCSI transfer (ie, between disconnect /&n;&t;&t;&t;&t;   reconnects.   Probably == sector size */
+multiline_comment|/* How much we are guaranteed to transfer with&n;&t;&t;&t;&t;   each SCSI transfer (ie, between disconnect /&n;&t;&t;&t;&t;   reconnects.   Probably == sector size */
 DECL|member|request
 r_struct
 id|request

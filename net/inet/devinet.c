@@ -235,7 +235,7 @@ r_int
 r_int
 id|mask
 suffix:semicolon
-multiline_comment|/* &n;&t; *&t;Accept both `all ones&squot; and `all zeros&squot; as BROADCAST. &n;&t; *&t;(Support old BSD in other words). This old BSD &n;&t; *&t;support will go very soon as it messes other things&n;&t; *&t;up.&n;&t; */
+multiline_comment|/* &n;&t; *&t;Accept both `all ones&squot; and `all zeros&squot; as BROADCAST. &n;&t; *&t;(Support old BSD in other words). This old BSD &n;&t; *&t;support will go very soon as it messes other things&n;&t; *&t;up.&n;&t; *&t;Also accept `loopback broadcast&squot; as BROADCAST.&n;&t; */
 r_if
 c_cond
 (paren
@@ -246,6 +246,14 @@ op_logical_or
 id|addr
 op_eq
 id|INADDR_BROADCAST
+op_logical_or
+id|addr
+op_eq
+id|htonl
+c_func
+(paren
+l_int|0x7FFFFFFFL
+)paren
 )paren
 r_return
 id|IS_BROADCAST

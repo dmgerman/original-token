@@ -388,6 +388,9 @@ id|inode-&gt;i_dev
 comma
 id|inode-&gt;i_ino
 comma
+(paren
+id|off_t
+)paren
 id|filp-&gt;f_pos
 op_minus
 id|SYSV_DIRSIZE

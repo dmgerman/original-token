@@ -1,4 +1,4 @@
-multiline_comment|/* Marc.Hoffman@analog.com&n;&n;   This is a pss driver.&n;&n;   it is based on Greg.Yukna@analog.com @file{host} for DOG&n;&n;   Unfortunately I can&squot;t distribute the ld file needed to&n;   make the pss card to emulate the SB stuff.&n;&n;   I have provided a simple interface to the PSS unlike the&n;   DOG version.  to download a new algorithim just cat it to&n;   /dev/pss 14,9.&n;&n;   You really need to rebuild this with the synth.ld file&n;&n;   get the &lt;synth&gt;.ld from your dos directory maybe&n;   voyetra&bslash;dsp001.ld&n;&n;   ld2inc &lt; synth.ld &gt; synth-ld.h&n;   (make config does the same).&n;&n;   rebuild&n;&n;   Okay if you blow things away no problem just&n;&n;   main(){ioctl(open(&quot;/dev/pss&quot;),SNDCTL_PSS_RESET)};&n;&n;   and everything will be okay.&n;&n;   At first I was going to wory about applications that were using&n;   the sound stuff and disallow the use of /dev/pss.  But for&n;   now I figured it doesn&squot;t matter.&n;&n;   And if you change algos all the other applications running die off&n;   due to DMA problems.  Yeah just pull the plug and watch em die.&n;&n;   If the registers get hosed&n;   main(){ioctl(open(&quot;/dev/pss&quot;),SNDCTL_PSS_SETUP_REGISTERS)};&n;&n;   Probably everything else can be done via mmap&n;&n;   Oh if you want to develope code for the ADSP-21xx or Program the&n;   1848 just send me mail and I will hook you up.&n;&n;               marc.hoffman@analog.com&n;&n;   */
+multiline_comment|/* Marc.Hoffman@analog.com&n;&n;   This is a pss driver.&n;&n;   it is based on Greg.Yukna@analog.com @file{host} for DOG&n;&n;   Unfortunately I can&squot;t distribute the ld file needed to&n;   make the pss card to emulate the SB stuff.&n;&n;   I have provided a simple interface to the PSS unlike the&n;   DOG version.  to download a new algorithm just cat it to&n;   /dev/pss 14,9.&n;&n;   You really need to rebuild this with the synth.ld file&n;&n;   get the &lt;synth&gt;.ld from your dos directory maybe&n;   voyetra&bslash;dsp001.ld&n;&n;   ld2inc &lt; synth.ld &gt; synth-ld.h&n;   (make config does the same).&n;&n;   rebuild&n;&n;   Okay if you blow things away no problem just&n;&n;   main(){ioctl(open(&quot;/dev/pss&quot;),SNDCTL_PSS_RESET)};&n;&n;   and everything will be okay.&n;&n;   At first I was going to worry about applications that were using&n;   the sound stuff and disallow the use of /dev/pss.  But for&n;   now I figured it doesn&squot;t matter.&n;&n;   And if you change algos all the other applications running die off&n;   due to DMA problems.  Yeah just pull the plug and watch em die.&n;&n;   If the registers get hosed&n;   main(){ioctl(open(&quot;/dev/pss&quot;),SNDCTL_PSS_SETUP_REGISTERS)};&n;&n;   Probably everything else can be done via mmap&n;&n;   Oh if you want to develop code for the ADSP-21xx or Program the&n;   1848 just send me mail and I will hook you up.&n;&n;               marc.hoffman@analog.com&n;&n;   */
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#if defined(CONFIGURE_SOUNDCARD) &amp;&amp; !defined(EXCLUDE_PSS)
 macro_line|#ifndef PSS_MSS_BASE
@@ -259,7 +259,7 @@ id|GET_TIME
 op_plus
 l_int|10
 suffix:semicolon
-multiline_comment|/* The timeout is 0.1 secods */
+multiline_comment|/* The timeout is 0.1 seconds */
 multiline_comment|/*&n;   * Note! the i&lt;5000000 is an emergency exit. The dsp_command() is sometimes&n;   * called while interrupts are disabled. This means that the timer is&n;   * disabled also. However the timeout situation is a abnormal condition.&n;   * Normally the DSP should be ready to accept commands after just couple of&n;   * loops.&n;   */
 r_for
 c_loop
@@ -363,7 +363,7 @@ id|val
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*_____ pss_checkint&n;         This function tests an interrupt number to see if&n;&t; it is availible. It takes the interrupt button&n;&t; as it&squot;s argument and returns TRUE if the interrupt&n;&t; is ok.&n;*/
+multiline_comment|/*_____ pss_checkint&n;         This function tests an interrupt number to see if&n;&t; it is available. It takes the interrupt button&n;&t; as it&squot;s argument and returns TRUE if the interrupt&n;&t; is ok.&n;*/
 r_static
 r_int
 DECL|function|pss_checkint
@@ -610,7 +610,7 @@ r_default
 suffix:colon
 id|printk
 (paren
-l_string|&quot;unknown interupt selected. %d&bslash;n&quot;
+l_string|&quot;unknown interrupt selected. %d&bslash;n&quot;
 comma
 id|intNum
 )paren
@@ -959,7 +959,7 @@ r_default
 suffix:colon
 id|printk
 (paren
-l_string|&quot;pss_setint unkown int&bslash;n&quot;
+l_string|&quot;pss_setint unknown int&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -2457,7 +2457,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/* The following is a simple device driver for the pss.&n;   All I really care about is comunication to and from the pss.&n;&n;   The ability to reinitialize the &lt;synth.ld&gt;  This will be&n;   default when release is choosen.&n;&n;   SNDCTL_PSS_DOWNLOAD:&n;&n;   Okay we need to creat new minor numbers for the&n;   DOWNLOAD functionality.&n;&n;   14,0x19 -- /dev/pssld where a read operation would output the&n;                         current ld to user space&n;                         where a write operation would effectively&n;&t;&t;&t; download a new ld.&n;&n;   14,0x09 -- /dev/psecho  would open up a comunication path to the&n;                         esc614 asic.  Given the ability to send&n;&t;&t;&t; messages to the asic and recive messages too.&n;&n;&t;&t;&t; All messages would get read and written in the&n;&t;&t;&t; same manner.  It would be up to the application&n;&t;&t;&t; and the ld to maintain a relationship&n;&t;&t;&t; of what the messages mean.&n;&t;&t;&t;&n;&t;&t;&t; for this device we need to implement select. */
+multiline_comment|/* The following is a simple device driver for the pss.&n;   All I really care about is communication to and from the pss.&n;&n;   The ability to reinitialize the &lt;synth.ld&gt;  This will be&n;   default when release is chosen.&n;&n;   SNDCTL_PSS_DOWNLOAD:&n;&n;   Okay we need to creat new minor numbers for the&n;   DOWNLOAD functionality.&n;&n;   14,0x19 -- /dev/pssld where a read operation would output the&n;                         current ld to user space&n;                         where a write operation would effectively&n;&t;&t;&t; download a new ld.&n;&n;   14,0x09 -- /dev/psecho  would open up a communication path to the&n;                         esc614 asic.  Given the ability to send&n;&t;&t;&t; messages to the asic and receive messages too.&n;&n;&t;&t;&t; All messages would get read and written in the&n;&t;&t;&t; same manner.  It would be up to the application&n;&t;&t;&t; and the ld to maintain a relationship&n;&t;&t;&t; of what the messages mean.&n;&t;&t;&t;&n;&t;&t;&t; for this device we need to implement select. */
 DECL|macro|CODE_BUFFER_LEN
 mdefine_line|#define CODE_BUFFER_LEN (64*1024)
 DECL|variable|code_buffer
@@ -2930,7 +2930,7 @@ id|EIO
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* This is going to be used to implement&n;   waiting on messages sent from the DSP and to the&n;   DSP when comunication is used via the pss directly.&n;&n;   We need to find out if the pss can generate a diffrent&n;   interupt other than the one it has been setup for.&n;&n;   This way we can carry on a conversation with the pss&n;   on a seprate chanel.  This would be usefull for debugging. */
+multiline_comment|/* This is going to be used to implement&n;   waiting on messages sent from the DSP and to the&n;   DSP when communication is used via the pss directly.&n;&n;   We need to find out if the pss can generate a different&n;   interrupt other than the one it has been setup for.&n;&n;   This way we can carry on a conversation with the pss&n;   on a separate channel.  This would be useful for debugging. */
 DECL|function|pss_select
 id|pss_select
 (paren

@@ -8,8 +8,6 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
-DECL|macro|clear_block
-mdefine_line|#define clear_block(addr,size) &bslash;&n;&t;__asm__(&quot;cld&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;rep&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&quot;stosl&quot; &bslash;&n;&t;&t;: &bslash;&n;&t;&t;:&quot;a&quot; (0), &quot;c&quot; (size / 4), &quot;D&quot; ((long) (addr)) &bslash;&n;&t;&t;:&quot;cx&quot;, &quot;di&quot;)
 DECL|function|ext2_put_inode
 r_void
 id|ext2_put_inode
@@ -264,9 +262,12 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|clear_block
+id|memset
+c_func
 (paren
 id|bh-&gt;b_data
+comma
+l_int|0
 comma
 id|inode-&gt;i_sb-&gt;s_blocksize
 )paren
@@ -2744,11 +2745,11 @@ id|inode-&gt;u.ext2_i.i_faddr
 op_assign
 id|raw_inode-&gt;i_faddr
 suffix:semicolon
-id|inode-&gt;u.ext2_i.i_frag
+id|inode-&gt;u.ext2_i.i_frag_no
 op_assign
 id|raw_inode-&gt;i_frag
 suffix:semicolon
-id|inode-&gt;u.ext2_i.i_fsize
+id|inode-&gt;u.ext2_i.i_frag_size
 op_assign
 id|raw_inode-&gt;i_fsize
 suffix:semicolon
@@ -2960,6 +2961,28 @@ id|EXT2_SYNC_FL
 id|inode-&gt;i_flags
 op_or_assign
 id|MS_SYNC
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|inode-&gt;u.ext2_i.i_flags
+op_amp
+id|EXT2_APPEND_FL
+)paren
+id|inode-&gt;i_flags
+op_or_assign
+id|S_APPEND
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|inode-&gt;u.ext2_i.i_flags
+op_amp
+id|EXT2_IMMUTABLE_FL
+)paren
+id|inode-&gt;i_flags
+op_or_assign
+id|S_IMMUTABLE
 suffix:semicolon
 )brace
 DECL|function|ext2_update_inode
@@ -3255,11 +3278,11 @@ id|inode-&gt;u.ext2_i.i_faddr
 suffix:semicolon
 id|raw_inode-&gt;i_frag
 op_assign
-id|inode-&gt;u.ext2_i.i_frag
+id|inode-&gt;u.ext2_i.i_frag_no
 suffix:semicolon
 id|raw_inode-&gt;i_fsize
 op_assign
-id|inode-&gt;u.ext2_i.i_fsize
+id|inode-&gt;u.ext2_i.i_frag_size
 suffix:semicolon
 id|raw_inode-&gt;i_file_acl
 op_assign

@@ -91,7 +91,10 @@ l_int|NULL
 comma
 multiline_comment|/* truncate */
 l_int|NULL
+comma
 multiline_comment|/* permission */
+l_int|NULL
+multiline_comment|/* smap */
 )brace
 suffix:semicolon
 DECL|function|ext2_follow_link

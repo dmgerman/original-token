@@ -87,7 +87,16 @@ l_int|NULL
 comma
 multiline_comment|/* no special release code */
 id|file_fsync
+comma
 multiline_comment|/* fsync */
+l_int|NULL
+comma
+multiline_comment|/* fasync */
+l_int|NULL
+comma
+multiline_comment|/* check_media_change */
+l_int|NULL
+multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * directories can handle most operations...&n; */
@@ -141,7 +150,10 @@ id|ext2_truncate
 comma
 multiline_comment|/* truncate */
 id|ext2_permission
+comma
 multiline_comment|/* permission */
+l_int|NULL
+multiline_comment|/* smap */
 )brace
 suffix:semicolon
 DECL|function|ext2_check_dir_entry
@@ -246,6 +258,20 @@ id|dir-&gt;i_sb-&gt;s_blocksize
 id|error_msg
 op_assign
 l_string|&quot;directory entry across blocks&quot;
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|dir
+op_logical_and
+id|de-&gt;inode
+OG
+id|dir-&gt;i_sb-&gt;u.ext2_sb.s_es-&gt;s_inodes_count
+)paren
+id|error_msg
+op_assign
+l_string|&quot;inode out of bounds&quot;
 suffix:semicolon
 r_if
 c_cond

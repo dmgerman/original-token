@@ -622,7 +622,7 @@ id|inode
 op_star
 id|inode
 comma
-id|off_t
+id|loff_t
 op_star
 id|posp
 comma
@@ -3096,6 +3096,9 @@ id|count
 OG
 id|inode-&gt;i_size
 op_minus
+(paren
+id|off_t
+)paren
 id|filp-&gt;f_pos
 )paren
 id|count
@@ -3247,6 +3250,9 @@ id|count
 OG
 id|inode-&gt;i_size
 op_minus
+(paren
+id|off_t
+)paren
 id|filp-&gt;f_pos
 op_minus
 id|n
@@ -4567,6 +4573,9 @@ suffix:semicolon
 r_switch
 c_cond
 (paren
+(paren
+id|off_t
+)paren
 id|filp-&gt;f_pos
 )paren
 (brace
@@ -4851,7 +4860,7 @@ id|inode
 op_star
 id|inode
 comma
-id|off_t
+id|loff_t
 op_star
 id|posp
 comma

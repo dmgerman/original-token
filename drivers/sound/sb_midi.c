@@ -9,7 +9,7 @@ r_extern
 r_int
 id|sb_dsp_ok
 suffix:semicolon
-multiline_comment|/* Set to 1 atfer successful initialization */
+multiline_comment|/* Set to 1 after successful initialization */
 r_extern
 r_int
 id|sbc_base

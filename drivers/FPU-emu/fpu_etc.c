@@ -148,7 +148,7 @@ c_func
 )paren
 (brace
 macro_line|#ifdef PECULIAR_486
-multiline_comment|/* This is wierd! */
+multiline_comment|/* This is weird! */
 r_if
 c_cond
 (paren
