@@ -108,8 +108,8 @@ DECL|macro|__NR_getegid
 mdefine_line|#define __NR_getegid&t;&t;&t;(__NR_SYSCALL_BASE+ 50)
 DECL|macro|__NR_acct
 mdefine_line|#define __NR_acct&t;&t;&t;(__NR_SYSCALL_BASE+ 51)
-DECL|macro|__NR_phys
-mdefine_line|#define __NR_phys&t;&t;&t;(__NR_SYSCALL_BASE+ 52)
+DECL|macro|__NR_umount2
+mdefine_line|#define __NR_umount2&t;&t;&t;(__NR_SYSCALL_BASE+ 52)
 DECL|macro|__NR_lock
 mdefine_line|#define __NR_lock&t;&t;&t;(__NR_SYSCALL_BASE+ 53)
 DECL|macro|__NR_ioctl

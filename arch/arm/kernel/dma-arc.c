@@ -1,4 +1,5 @@
-multiline_comment|/*&n; * arch/arm/kernel/dma-arc.c&n; *&n; * Copyright (C) 1998 Dave Gilbert / Russell King&n; *&n; * DMA functions specific to Archimedes architecture&n; */
+multiline_comment|/*&n; * arch/arm/kernel/dma-arc.c&n; *&n; * Copyright (C) 1998-1999 Dave Gilbert / Russell King&n; *&n; * DMA functions specific to Archimedes architecture&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
@@ -16,6 +17,11 @@ comma
 id|dma_t
 op_star
 id|dma
+comma
+r_const
+r_char
+op_star
+id|dev_id
 )paren
 (brace
 r_if
@@ -51,25 +57,6 @@ op_star
 id|dma
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|channel
-op_ne
-id|DMA_VIRTUAL_FLOPPY0
-op_logical_and
-id|channel
-op_ne
-id|DMA_VIRTUAL_FLOPPY1
-)paren
-r_return
-l_int|0
-suffix:semicolon
-r_else
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
 )brace
 DECL|function|arch_enable_dma
 r_void
@@ -90,6 +77,7 @@ c_cond
 id|channel
 )paren
 (brace
+macro_line|#ifdef CONFIG_BLK_DEV_FD
 r_case
 id|DMA_VIRTUAL_FLOPPY0
 suffix:colon
@@ -382,7 +370,89 @@ suffix:semicolon
 )brace
 r_break
 suffix:semicolon
+macro_line|#endif
 )brace
+)brace
+DECL|function|arch_get_dma_residue
+r_int
+id|arch_get_dma_residue
+c_func
+(paren
+id|dmach_t
+id|channel
+comma
+id|dma_t
+op_star
+id|dma
+)paren
+(brace
+r_switch
+c_cond
+(paren
+id|channel
+)paren
+(brace
+macro_line|#ifdef CONFIG_BLK_DEV_FD
+r_case
+id|DMA_VIRTUAL_FLOPPY0
+suffix:colon
+(brace
+multiline_comment|/* Data DMA */
+r_extern
+r_int
+r_int
+id|fdc1772_bytestogo
+suffix:semicolon
+multiline_comment|/* 10/1/1999 DAG - I presume its the number of bytes left? */
+r_return
+id|fdc1772_bytestogo
+suffix:semicolon
+)brace
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|DMA_VIRTUAL_FLOPPY1
+suffix:colon
+(brace
+multiline_comment|/* Command completed */
+multiline_comment|/* 10/1/1999 DAG - Presume whether there is an outstanding command? */
+r_extern
+r_int
+r_int
+id|fdc1772_fdc_int_done
+suffix:semicolon
+r_return
+(paren
+id|fdc1772_fdc_int_done
+op_eq
+l_int|0
+)paren
+ques
+c_cond
+l_int|1
+suffix:colon
+l_int|0
+suffix:semicolon
+multiline_comment|/* Explicit! If the int done is 0 then 1 int to go */
+)brace
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
+r_default
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;dma-arc.c:arch_get_dma_residue called with unknown/unconfigured DMA channel&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+suffix:semicolon
 )brace
 DECL|function|arch_disable_dma
 r_void
@@ -422,6 +492,26 @@ c_func
 (paren
 id|dma-&gt;dma_irq
 )paren
+suffix:semicolon
+)brace
+DECL|function|arch_set_dma_speed
+r_int
+id|arch_set_dma_speed
+c_func
+(paren
+id|dmach_t
+id|channel
+comma
+id|dma_t
+op_star
+id|dma
+comma
+r_int
+id|cycle_ns
+)paren
+(brace
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|__initfunc

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: namei.h,v 1.13 1999/04/06 06:54:36 jj Exp $&n; * linux/include/asm-sparc/namei.h&n; *&n; * Routines to handle famous /usr/gnemul/s*.&n; * Included from linux/fs/namei.c&n; */
+multiline_comment|/* $Id: namei.h,v 1.14 1999/06/10 05:23:12 davem Exp $&n; * linux/include/asm-sparc/namei.h&n; *&n; * Routines to handle famous /usr/gnemul/s*.&n; * Included from linux/fs/namei.c&n; */
 macro_line|#ifndef __SPARC_NAMEI_H
 DECL|macro|__SPARC_NAMEI_H
 mdefine_line|#define __SPARC_NAMEI_H

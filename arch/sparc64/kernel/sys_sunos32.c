@@ -609,7 +609,12 @@ id|PAGE_SHIFT
 suffix:semicolon
 id|freepages
 op_add_assign
+id|atomic_read
+c_func
+(paren
+op_amp
 id|page_cache_size
+)paren
 suffix:semicolon
 id|freepages
 op_rshift_assign

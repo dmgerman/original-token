@@ -1,10 +1,11 @@
 multiline_comment|/*&n; * arch/arm/kernel/leds-ebsa110.c&n; *&n; * Copyright (C) 1998 Russell King&n; *&n; * EBSA-110 LED control routines.  We use the led as follows:&n; *&n; *  - Red - toggles state every 50 timer interrupts&n; */
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/leds.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-DECL|function|leds_event
+DECL|function|ebsa110_leds_event
 r_void
-id|leds_event
+id|ebsa110_leds_event
 c_func
 (paren
 id|led_event_t
@@ -55,4 +56,23 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+DECL|variable|leds_event
+r_void
+(paren
+op_star
+id|leds_event
+)paren
+(paren
+id|led_event_t
+)paren
+op_assign
+id|ebsa110_leds_event
+suffix:semicolon
+DECL|variable|leds_event
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|leds_event
+)paren
+suffix:semicolon
 eof

@@ -2,10 +2,10 @@ multiline_comment|/*&n; * linux/include/asm-arm/arch-arc/ide.h&n; *&n; * Copyrig
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 multiline_comment|/*&n; * Set up a hw structure for a specified data port, control port and IRQ.&n; * This should follow whatever the default interface uses.&n; */
-DECL|function|ide_init_hwif_ports
 r_static
 id|__inline__
 r_void
+DECL|function|ide_init_hwif_ports
 id|ide_init_hwif_ports
 c_func
 (paren

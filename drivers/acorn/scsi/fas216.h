@@ -39,6 +39,8 @@ DECL|macro|CMD_INITCMDCOMPLETE
 mdefine_line|#define CMD_INITCMDCOMPLETE&t;0x11
 DECL|macro|CMD_MSGACCEPTED
 mdefine_line|#define CMD_MSGACCEPTED&t;&t;0x12
+DECL|macro|CMD_PADBYTES
+mdefine_line|#define CMD_PADBYTES&t;&t;0x18
 DECL|macro|CMD_SETATN
 mdefine_line|#define CMD_SETATN&t;&t;0x1a
 DECL|macro|CMD_RSETATN
@@ -250,6 +252,14 @@ DECL|enumerator|PHASE_SELECTION
 id|PHASE_SELECTION
 comma
 multiline_comment|/* selecting a device&t;&t;&t;*/
+DECL|enumerator|PHASE_SELSTEPS
+id|PHASE_SELSTEPS
+comma
+multiline_comment|/* selection with command steps&t;&t;*/
+DECL|enumerator|PHASE_COMMAND
+id|PHASE_COMMAND
+comma
+multiline_comment|/* command sent&t;&t;&t;&t;*/
 DECL|enumerator|PHASE_MESSAGESENT
 id|PHASE_MESSAGESENT
 comma
@@ -270,22 +280,22 @@ DECL|enumerator|PHASE_MSGIN
 id|PHASE_MSGIN
 comma
 multiline_comment|/* message in from device&t;&t;*/
+DECL|enumerator|PHASE_MSGIN_DISCONNECT
+id|PHASE_MSGIN_DISCONNECT
+comma
+multiline_comment|/* disconnecting from bus&t;&t;*/
 DECL|enumerator|PHASE_MSGOUT
 id|PHASE_MSGOUT
 comma
-multiline_comment|/* message out to device&t;&t;*/
-DECL|enumerator|PHASE_AFTERMSGOUT
-id|PHASE_AFTERMSGOUT
-comma
 multiline_comment|/* after message out phase&t;&t;*/
+DECL|enumerator|PHASE_MSGOUT_EXPECT
+id|PHASE_MSGOUT_EXPECT
+comma
+multiline_comment|/* expecting message out&t;&t;*/
 DECL|enumerator|PHASE_STATUS
 id|PHASE_STATUS
 comma
 multiline_comment|/* status from device&t;&t;&t;*/
-DECL|enumerator|PHASE_DISCONNECT
-id|PHASE_DISCONNECT
-comma
-multiline_comment|/* disconnecting from bus&t;&t;*/
 DECL|enumerator|PHASE_DONE
 id|PHASE_DONE
 multiline_comment|/* Command complete&t;&t;&t;*/
@@ -336,27 +346,33 @@ suffix:semicolon
 r_typedef
 r_enum
 (brace
-DECL|enumerator|syncneg_start
-id|syncneg_start
+DECL|enumerator|neg_wait
+id|neg_wait
 comma
-multiline_comment|/* Negociate with device for Sync xfers&t;*/
-DECL|enumerator|syncneg_sent
-id|syncneg_sent
+multiline_comment|/* Negociate with device&t;&t;*/
+DECL|enumerator|neg_inprogress
+id|neg_inprogress
 comma
-multiline_comment|/* Sync Xfer negociation sent&t;&t;*/
-DECL|enumerator|syncneg_complete
-id|syncneg_complete
+multiline_comment|/* Negociation sent&t;&t;&t;*/
+DECL|enumerator|neg_complete
+id|neg_complete
 comma
-multiline_comment|/* Sync Xfer complete&t;&t;&t;*/
-DECL|enumerator|syncneg_invalid
-id|syncneg_invalid
-multiline_comment|/* Sync Xfer not supported&t;&t;*/
-DECL|typedef|syncneg_t
+multiline_comment|/* Negociation complete&t;&t;&t;*/
+DECL|enumerator|neg_targcomplete
+id|neg_targcomplete
+comma
+multiline_comment|/* Target completed negociation&t;&t;*/
+DECL|enumerator|neg_invalid
+id|neg_invalid
+multiline_comment|/* Negociation not supported&t;&t;*/
+DECL|typedef|neg_t
 )brace
-id|syncneg_t
+id|neg_t
 suffix:semicolon
 DECL|macro|MAGIC
 mdefine_line|#define MAGIC&t;0x441296bdUL
+DECL|macro|NR_MSGS
+mdefine_line|#define NR_MSGS&t;8
 r_typedef
 r_struct
 (brace
@@ -466,12 +482,12 @@ r_int
 id|async_stp
 suffix:semicolon
 multiline_comment|/* Async transfer STP value&t;&t;*/
-DECL|member|last_message
+DECL|member|msgin_fifo
 r_int
-r_int
-id|last_message
+r_char
+id|msgin_fifo
 suffix:semicolon
-multiline_comment|/* last message to be sent&t;&t;*/
+multiline_comment|/* bytes in fifo at time of message in&t;*/
 DECL|member|disconnectable
 r_int
 r_char
@@ -565,6 +581,12 @@ r_char
 id|sync_max_depth
 suffix:semicolon
 multiline_comment|/* Synchronous xfer max fifo depth&t;*/
+DECL|member|wide_max_size
+r_int
+r_char
+id|wide_max_size
+suffix:semicolon
+multiline_comment|/* Maximum wide transfer size&t;&t;*/
 DECL|member|cntl3
 r_int
 r_char
@@ -607,7 +629,9 @@ DECL|member|queues
 id|queues
 suffix:semicolon
 multiline_comment|/* per-device info */
+DECL|struct|fas216_device
 r_struct
+id|fas216_device
 (brace
 DECL|member|disconnect_ok
 r_int
@@ -619,10 +643,10 @@ suffix:semicolon
 multiline_comment|/* device can disconnect&t;&t;*/
 DECL|member|period
 r_int
-r_int
+r_char
 id|period
 suffix:semicolon
-multiline_comment|/* sync xfer period (*4ns)&t;&t;*/
+multiline_comment|/* sync xfer period in (*4ns)&t;&t;*/
 DECL|member|stp
 r_int
 r_char
@@ -635,11 +659,22 @@ r_char
 id|sof
 suffix:semicolon
 multiline_comment|/* synchronous offset register&t;&t;*/
-DECL|member|negstate
-id|syncneg_t
-id|negstate
+DECL|member|wide_xfer
+r_int
+r_char
+id|wide_xfer
+suffix:semicolon
+multiline_comment|/* currently negociated wide transfer&t;*/
+DECL|member|sync_state
+id|neg_t
+id|sync_state
 suffix:semicolon
 multiline_comment|/* synchronous transfer mode&t;&t;*/
+DECL|member|wide_state
+id|neg_t
+id|wide_state
+suffix:semicolon
+multiline_comment|/* wide transfer mode&t;&t;&t;*/
 DECL|member|device
 )brace
 id|device
@@ -826,6 +861,38 @@ r_struct
 id|Scsi_Host
 op_star
 id|instance
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|fas216_print_stats
+c_func
+(paren
+id|FAS216_Info
+op_star
+id|info
+comma
+r_char
+op_star
+id|buffer
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|fas216_print_device
+c_func
+(paren
+id|FAS216_Info
+op_star
+id|info
+comma
+id|Scsi_Device
+op_star
+id|scd
+comma
+r_char
+op_star
+id|buffer
 )paren
 suffix:semicolon
 multiline_comment|/* Function: int fas216_eh_abort(Scsi_Cmnd *SCpnt)&n; * Purpose : abort this command&n; * Params  : SCpnt - command to abort&n; * Returns : FAILED if unable to abort&n; */

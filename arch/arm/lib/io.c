@@ -64,6 +64,7 @@ r_int
 r_int
 id|to
 comma
+r_const
 r_void
 op_star
 id|from

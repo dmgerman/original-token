@@ -16,6 +16,10 @@ DECL|macro|PAGE_MASK
 mdefine_line|#define PAGE_MASK    (~(PAGE_SIZE-1))
 macro_line|#ifdef __KERNEL__
 macro_line|#ifndef __ASSEMBLY__
+DECL|macro|BUG
+mdefine_line|#define BUG() do { printk(&quot;kernel BUG at %s:%d!&bslash;n&quot;, __FILE__, __LINE__); *(int *)0=0; } while (0)
+DECL|macro|PAGE_BUG
+mdefine_line|#define PAGE_BUG(page) do { &bslash;&n;&t;&t;&t;&t;BUG(); } while (0)
 r_extern
 r_void
 id|clear_page

@@ -3859,13 +3859,6 @@ id|vfsmount
 op_star
 id|vfsmnt
 suffix:semicolon
-multiline_comment|/*&n;&t; * Invalidate the inodes, as some mount options may be changed.&n;&t; * N.B. If we are changing media, we should check the return&n;&t; * from invalidate_inodes ... can&squot;t allow _any_ open files.&n;&t; */
-id|invalidate_inodes
-c_func
-(paren
-id|sb
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3983,6 +3976,13 @@ id|vfsmnt
 id|vfsmnt-&gt;mnt_flags
 op_assign
 id|sb-&gt;s_flags
+suffix:semicolon
+multiline_comment|/*&n;&t; * Invalidate the inodes, as some mount options may be changed.&n;&t; * N.B. If we are changing media, we should check the return&n;&t; * from invalidate_inodes ... can&squot;t allow _any_ open files.&n;&t; */
+id|invalidate_inodes
+c_func
+(paren
+id|sb
+)paren
 suffix:semicolon
 r_return
 l_int|0

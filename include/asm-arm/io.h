@@ -226,25 +226,21 @@ mdefine_line|#define inl_p(port)&t;&bslash;&n;  (__builtin_constant_p((port)) ? 
 macro_line|#else
 mdefine_line|#define inl_p(port) __inl_p((port))
 macro_line|#endif
-multiline_comment|/* Nothing to do */
-macro_line|#ifndef dma_cache_inv
-mdefine_line|#define dma_cache_inv(_start,_size)&t;&t;do { } while (0)
 macro_line|#endif
-macro_line|#ifndef dma_cache_wback
-mdefine_line|#define dma_cache_wback(_start,_size)&t;&t;do { } while (0)
 macro_line|#ifndef ARCH_READWRITE
-macro_line|#ifndef dma_cache_wback_inv
-mdefine_line|#define dma_cache_wback_inv(_start,_size)&t;do { } while (0)
-macro_line|#endif
-macro_line|#endif /* __KERNEL__ */
-macro_line|#endif /* __ASM_ARM_IO_H */
 multiline_comment|/* for panic */
 macro_line|#include &lt;linux/kernel.h&gt;
+DECL|macro|readb
 mdefine_line|#define readb(p)&t;(panic(&quot;readb called, but not implemented&quot;),0)
+DECL|macro|readw
 mdefine_line|#define readw(p)&t;(panic(&quot;readw called, but not implemented&quot;),0)
+DECL|macro|readl
 mdefine_line|#define readl(p)&t;(panic(&quot;readl called, but not implemented&quot;),0)
+DECL|macro|writeb
 mdefine_line|#define writeb(v,p)&t;panic(&quot;writeb called, but not implemented&quot;)
+DECL|macro|writew
 mdefine_line|#define writew(v,p)&t;panic(&quot;writew called, but not implemented&quot;)
+DECL|macro|writel
 mdefine_line|#define writel(v,p)&t;panic(&quot;writel called, but not implemented&quot;)
 macro_line|#endif
 multiline_comment|/*&n; * This isn&squot;t especially architecture dependent so it seems like it&n; * might as well go here as anywhere.&n; */

@@ -64,6 +64,7 @@ macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;asm/assembler.h&gt; 
 DECL|macro|NR_DEBUGS
 mdefine_line|#define NR_DEBUGS&t;5
+macro_line|#include &lt;asm/proc/ptrace.h&gt;
 macro_line|#include &lt;asm/arch/processor.h&gt;
 macro_line|#include &lt;asm/proc/processor.h&gt;
 DECL|struct|thread_struct
@@ -214,6 +215,9 @@ id|ret_from_sys_call
 suffix:semicolon
 )brace
 multiline_comment|/* Forward declaration, a strange C thing */
+r_struct
+id|task_struct
+suffix:semicolon
 r_struct
 id|mm_struct
 suffix:semicolon

@@ -183,7 +183,6 @@ id|inode
 comma
 l_int|0
 comma
-op_star
 id|hash
 )paren
 suffix:semicolon

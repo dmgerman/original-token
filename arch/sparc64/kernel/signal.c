@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: signal.c,v 1.40 1999/06/02 19:19:52 jj Exp $&n; *  arch/sparc64/kernel/signal.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; *  Copyright (C) 1997,1998 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: signal.c,v 1.41 1999/06/14 05:23:58 davem Exp $&n; *  arch/sparc64/kernel/signal.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; *  Copyright (C) 1997,1998 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -5318,6 +5318,12 @@ op_amp
 id|current-&gt;signal
 comma
 id|signr
+)paren
+suffix:semicolon
+id|recalc_sigpending
+c_func
+(paren
+id|current
 )paren
 suffix:semicolon
 id|current-&gt;flags

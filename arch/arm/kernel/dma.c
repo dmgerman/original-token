@@ -5,7 +5,6 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
-macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -733,6 +732,40 @@ id|channel
 )paren
 suffix:semicolon
 )brace
+DECL|function|set_dma_speed
+r_void
+id|set_dma_speed
+c_func
+(paren
+id|dmach_t
+id|channel
+comma
+r_int
+id|cycle_ns
+)paren
+(brace
+id|dma_chan
+(braket
+id|channel
+)braket
+dot
+id|speed
+op_assign
+id|arch_set_dma_speed
+c_func
+(paren
+id|channel
+comma
+op_amp
+id|dma_chan
+(braket
+id|channel
+)braket
+comma
+id|cycle_ns
+)paren
+suffix:semicolon
+)brace
 DECL|function|get_dma_residue
 r_int
 id|get_dma_residue
@@ -810,6 +843,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|set_dma_sg
+)paren
+suffix:semicolon
+DECL|variable|set_dma_speed
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|set_dma_speed
 )paren
 suffix:semicolon
 DECL|function|__initfunc

@@ -21,6 +21,14 @@ r_static
 r_int
 id|__serial_pcount
 suffix:semicolon
+DECL|variable|__serial_addr
+r_static
+r_int
+id|__serial_addr
+(braket
+id|NUM_SERIALS
+)braket
+suffix:semicolon
 DECL|variable|expcard
 r_static
 r_struct
@@ -34,7 +42,7 @@ suffix:semicolon
 DECL|macro|ADD_ECARD
 mdefine_line|#define ADD_ECARD(ec,card) expcard[(card)] = (ec)
 DECL|macro|ADD_PORT
-mdefine_line|#define ADD_PORT(port) __serial_ports[__serial_pcount++] = (port)
+mdefine_line|#define ADD_PORT(port,addr)&t;&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__serial_ports[__serial_pcount] = (port);&t;&bslash;&n;&t;&t;__serial_addr[__serial_pcount] = (addr);&t;&bslash;&n;&t;&t;__serial_pcount += 1;&t;&t;&t;&t;&bslash;&n;&t;} while (0)
 DECL|macro|MY_INIT
 macro_line|#undef MY_INIT
 DECL|macro|MY_INIT
@@ -43,7 +51,7 @@ macro_line|#else
 DECL|macro|ADD_ECARD
 mdefine_line|#define ADD_ECARD(ec,card)
 DECL|macro|ADD_PORT
-mdefine_line|#define ADD_PORT(port)
+mdefine_line|#define ADD_PORT(port,addr)
 macro_line|#endif
 DECL|variable|serial_cids
 r_static
@@ -177,12 +185,14 @@ op_increment
 )paren
 (brace
 r_int
+r_int
+id|address
+suffix:semicolon
+r_int
 id|line
 suffix:semicolon
-id|line
+id|address
 op_assign
-id|serial_register_onedev
-(paren
 id|MY_PORT_ADDRESS
 c_func
 (paren
@@ -190,6 +200,12 @@ id|port
 comma
 id|cardaddr
 )paren
+suffix:semicolon
+id|line
+op_assign
+id|serial_register_onedev
+(paren
+id|address
 comma
 id|ec-&gt;irq
 )paren
@@ -207,6 +223,8 @@ id|ADD_PORT
 c_func
 (paren
 id|line
+comma
+id|address
 )paren
 suffix:semicolon
 )brace
@@ -278,7 +296,9 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+(brace
 id|unregister_serial
+c_func
 (paren
 id|__serial_ports
 (braket
@@ -286,6 +306,18 @@ id|i
 )braket
 )paren
 suffix:semicolon
+id|release_region
+c_func
+(paren
+id|__serial_addr
+(braket
+id|i
+)braket
+comma
+l_int|8
+)paren
+suffix:semicolon
+)brace
 r_for
 c_loop
 (paren

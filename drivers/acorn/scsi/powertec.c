@@ -226,6 +226,10 @@ comma
 l_int|NULL
 comma
 l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
 )brace
 suffix:semicolon
 multiline_comment|/* Prototype: void powertecscsi_terminator_ctl(host, on_off)&n; * Purpose  : Turn the Powertec SCSI terminators on or off&n; * Params   : host   - card to turn on/off&n; *          : on_off - !0 to turn on, 0 to turn off&n; */
@@ -857,8 +861,7 @@ id|POWERTEC_SYNC_DEPTH
 suffix:semicolon
 id|info-&gt;info.ifcfg.cntl3
 op_assign
-id|CNTL3_BS8
-op_or
+multiline_comment|/*CNTL3_BS8 |*/
 id|CNTL3_FASTSCSI
 op_or
 id|CNTL3_FASTCLK
@@ -866,6 +869,10 @@ suffix:semicolon
 id|info-&gt;info.ifcfg.disconnect_ok
 op_assign
 l_int|1
+suffix:semicolon
+id|info-&gt;info.ifcfg.wide_max_size
+op_assign
+l_int|0
 suffix:semicolon
 id|info-&gt;info.dma.setup
 op_assign
@@ -1589,36 +1596,15 @@ l_string|&quot;off&quot;
 suffix:semicolon
 id|pos
 op_add_assign
-id|sprintf
+id|fas216_print_stats
 c_func
 (paren
+op_amp
+id|info-&gt;info
+comma
 id|buffer
 op_plus
 id|pos
-comma
-l_string|&quot;Queued commands: %-10u   Issued commands: %-10u&bslash;n&quot;
-l_string|&quot;Done commands  : %-10u   Reads          : %-10u&bslash;n&quot;
-l_string|&quot;Writes         : %-10u   Others         : %-10u&bslash;n&quot;
-l_string|&quot;Disconnects    : %-10u   Aborts         : %-10u&bslash;n&quot;
-l_string|&quot;Resets         : %-10u&bslash;n&quot;
-comma
-id|info-&gt;info.stats.queues
-comma
-id|info-&gt;info.stats.removes
-comma
-id|info-&gt;info.stats.fins
-comma
-id|info-&gt;info.stats.reads
-comma
-id|info-&gt;info.stats.writes
-comma
-id|info-&gt;info.stats.miscs
-comma
-id|info-&gt;info.stats.disconnects
-comma
-id|info-&gt;info.stats.aborts
-comma
-id|info-&gt;info.stats.resets
 )paren
 suffix:semicolon
 id|pos
@@ -1629,14 +1615,7 @@ id|buffer
 op_plus
 id|pos
 comma
-l_string|&quot;&bslash;nAttached devices:%s&bslash;n&quot;
-comma
-id|host-&gt;host_queue
-ques
-c_cond
-l_string|&quot;&quot;
-suffix:colon
-l_string|&quot; none&quot;
+l_string|&quot;&bslash;nAttached devices:&bslash;n&quot;
 )paren
 suffix:semicolon
 r_for
@@ -1653,70 +1632,19 @@ op_assign
 id|scd-&gt;next
 )paren
 (brace
-r_int
-id|len
-suffix:semicolon
-id|proc_print_scsidevice
+id|pos
+op_add_assign
+id|fas216_print_device
+c_func
 (paren
+op_amp
+id|info-&gt;info
+comma
 id|scd
 comma
 id|buffer
-comma
-op_amp
-id|len
-comma
-id|pos
-)paren
-suffix:semicolon
-id|pos
-op_add_assign
-id|len
-suffix:semicolon
-id|pos
-op_add_assign
-id|sprintf
-(paren
-id|buffer
 op_plus
 id|pos
-comma
-l_string|&quot;Extensions: &quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|scd-&gt;tagged_supported
-)paren
-id|pos
-op_add_assign
-id|sprintf
-(paren
-id|buffer
-op_plus
-id|pos
-comma
-l_string|&quot;TAG %sabled [%d] &quot;
-comma
-id|scd-&gt;tagged_queue
-ques
-c_cond
-l_string|&quot;en&quot;
-suffix:colon
-l_string|&quot;dis&quot;
-comma
-id|scd-&gt;current_tag
-)paren
-suffix:semicolon
-id|pos
-op_add_assign
-id|sprintf
-(paren
-id|buffer
-op_plus
-id|pos
-comma
-l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if

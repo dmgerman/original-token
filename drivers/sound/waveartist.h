@@ -1,18 +1,15 @@
 singleline_comment|// def file for Rockwell RWA010 chip set, as installed in Corel NetWinder
 singleline_comment|//registers
-DECL|macro|WA_BASE
-mdefine_line|#define&t;WA_BASE&t;0
-singleline_comment|//x250
 DECL|macro|CMDR
-mdefine_line|#define CMDR&t;WA_BASE+0
+mdefine_line|#define CMDR&t;0
 DECL|macro|DATR
-mdefine_line|#define DATR&t;WA_BASE+2
+mdefine_line|#define DATR&t;2
 DECL|macro|CTLR
-mdefine_line|#define CTLR&t;WA_BASE+4
+mdefine_line|#define CTLR&t;4
 DECL|macro|STATR
-mdefine_line|#define&t;STATR&t;WA_BASE+5
+mdefine_line|#define&t;STATR&t;5
 DECL|macro|IRQSTAT
-mdefine_line|#define&t;IRQSTAT&t;WA_BASE+12
+mdefine_line|#define&t;IRQSTAT&t;12
 singleline_comment|//bit defs
 singleline_comment|//reg STATR
 DECL|macro|CMD_WE

@@ -116,6 +116,15 @@ mdefine_line|#define __save_flags(x)&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t
 multiline_comment|/*&n; * restore saved IRQ &amp; FIQ state&n; */
 DECL|macro|__restore_flags
 mdefine_line|#define __restore_flags(x)&t;&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  unsigned long temp;&t;&t;&t;&t;&bslash;&n;&t;  __asm__ __volatile__(&t;&t;&t;&t;&bslash;&n;&quot;&t;mov&t;%0, pc&t;&t;@ restore_flags&bslash;n&quot;&t;&bslash;&n;&quot;&t;bic&t;%0, %0, #0x0c000000&bslash;n&quot;&t;&t;&t;&bslash;&n;&quot;&t;orr&t;%0, %0, %1&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&quot;&t;teqp&t;%0, #0&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;  : &quot;=r&quot; (temp)&t;&t;&t;&t;&t;&bslash;&n;&t;  : &quot;r&quot; (x)&t;&t;&t;&t;&t;&bslash;&n;&t;  : &quot;memory&quot;);&t;&t;&t;&t;&t;&bslash;&n;&t;} while (0)
+multiline_comment|/* For spinlocks etc */
+DECL|macro|local_irq_save
+mdefine_line|#define local_irq_save(x)&t;__save_flags_cli(x)
+DECL|macro|local_irq_restore
+mdefine_line|#define local_irq_restore(x)&t;__restore_flags(x)
+DECL|macro|local_irq_disable
+mdefine_line|#define local_irq_disable()&t;__cli()
+DECL|macro|local_irq_enable
+mdefine_line|#define local_irq_enable()&t;__sti()
 macro_line|#ifdef __SMP__
 macro_line|#error SMP not supported
 macro_line|#else

@@ -1253,6 +1253,11 @@ id|machine_is_ebsa285
 c_func
 (paren
 )paren
+op_logical_or
+id|machine_is_co285
+c_func
+(paren
+)paren
 )paren
 (brace
 id|gettimeoffset

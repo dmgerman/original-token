@@ -39,6 +39,11 @@ id|dmamode_t
 id|dma_mode
 suffix:semicolon
 multiline_comment|/* DMA mode&t;&t;&t;*/
+DECL|member|speed
+r_int
+id|speed
+suffix:semicolon
+multiline_comment|/* DMA speed&t;&t;&t;*/
 DECL|member|lock
 r_int
 r_int
@@ -145,6 +150,22 @@ comma
 id|dma_t
 op_star
 id|dma
+)paren
+suffix:semicolon
+multiline_comment|/* Prototype: int arch_set_dma_speed(channel, dma, cycle)&n; * Purpose  : Convert a cycle time to a register setting&n; * Params   : channel - DMA channel number&n; *          : dma     - DMA structure for channel&n; *          : cycle   - cycle time in NS&n; * Returns  : setting for &squot;dma-&gt;speed&squot;&n; */
+r_int
+id|arch_set_dma_speed
+c_func
+(paren
+id|dmach_t
+id|channel
+comma
+id|dma_t
+op_star
+id|dma
+comma
+r_int
+id|cycle
 )paren
 suffix:semicolon
 multiline_comment|/* Prototype: void arch_dma_init(dma)&n; * Purpose  : Initialise architecture specific DMA&n; * Params   : dma - pointer to array of DMA structures&n; */

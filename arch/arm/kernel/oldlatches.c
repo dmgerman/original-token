@@ -1,5 +1,6 @@
 multiline_comment|/* Support for the latches on the old Archimedes which control the floppy,&n; * hard disc and printer&n; *&n; * (c) David Alan Gilbert 1995/1996&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#ifdef LATCHAADDR
@@ -111,6 +112,7 @@ macro_line|#endif
 macro_line|#endif
 DECL|function|oldlatch_init
 r_void
+id|__init
 id|oldlatch_init
 c_func
 (paren

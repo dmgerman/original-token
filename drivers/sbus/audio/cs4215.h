@@ -22,27 +22,22 @@ l_int|4
 )braket
 suffix:semicolon
 multiline_comment|/* Ctrl mode: Time slots 1-4 */
-DECL|member|td
-id|__volatile__
-r_struct
-id|dbri_mem
-id|td
-suffix:semicolon
-DECL|member|rd
-id|__volatile__
-r_struct
-id|dbri_mem
-id|rd
-suffix:semicolon
 DECL|member|onboard
 id|__u8
 id|onboard
 suffix:semicolon
+DECL|member|offset
+id|__u8
+id|offset
+suffix:semicolon
+multiline_comment|/* Bit offset from frame sync to time slot 1 */
 DECL|member|status
+r_volatile
 id|__u32
 id|status
 suffix:semicolon
 DECL|member|version
+r_volatile
 id|__u32
 id|version
 suffix:semicolon

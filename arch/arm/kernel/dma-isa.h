@@ -68,4 +68,12 @@ op_star
 id|dma
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * Initialise DMA&n; */
+r_int
+id|isa_init_dma
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 eof

@@ -11,12 +11,22 @@ id|local_bh_count
 id|NR_CPUS
 )braket
 suffix:semicolon
-DECL|macro|in_bh
-mdefine_line|#define in_bh()&t;&t;&t;(local_bh_count[smp_processor_id()] != 0)
+DECL|macro|cpu_bh_disable
+mdefine_line|#define cpu_bh_disable(cpu)&t;do { local_bh_count[(cpu)]++; barrier(); } while (0)
+DECL|macro|cpu_bh_enable
+mdefine_line|#define cpu_bh_enable(cpu)&t;do { barrier(); local_bh_count[(cpu)]--; } while (0)
+DECL|macro|cpu_bh_trylock
+mdefine_line|#define cpu_bh_trylock(cpu)&t;(local_bh_count[(cpu)] ? 0 : (local_bh_count[(cpu)] = 1))
+DECL|macro|cpu_bh_endlock
+mdefine_line|#define cpu_bh_endlock(cpu)&t;(local_bh_count[(cpu)] = 0)
+DECL|macro|local_bh_disable
+mdefine_line|#define local_bh_disable()&t;cpu_bh_disable(smp_processor_id())
+DECL|macro|local_bh_enable
+mdefine_line|#define local_bh_enable()&t;cpu_bh_enable(smp_processor_id())
 DECL|macro|get_active_bhs
 mdefine_line|#define get_active_bhs()&t;(bh_mask &amp; bh_active)
 DECL|macro|clear_active_bhs
-mdefine_line|#define clear_active_bhs(x)&t;atomic_clear_mask((int)(x),&amp;bh_active)
+mdefine_line|#define clear_active_bhs(x)&t;atomic_clear_mask((x),&amp;bh_active)
 DECL|function|init_bh
 r_extern
 r_inline
@@ -74,13 +84,6 @@ r_int
 id|nr
 )paren
 (brace
-id|bh_base
-(braket
-id|nr
-)braket
-op_assign
-l_int|NULL
-suffix:semicolon
 id|bh_mask
 op_and_assign
 op_complement
@@ -89,6 +92,18 @@ l_int|1
 op_lshift
 id|nr
 )paren
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+id|bh_base
+(braket
+id|nr
+)braket
+op_assign
+l_int|NULL
 suffix:semicolon
 )brace
 DECL|function|mark_bh
@@ -125,14 +140,10 @@ c_func
 r_void
 )paren
 (brace
-id|local_bh_count
-(braket
-id|smp_processor_id
+id|local_bh_disable
 c_func
 (paren
 )paren
-)braket
-op_increment
 suffix:semicolon
 id|barrier
 c_func
@@ -155,23 +166,19 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|local_bh_count
-(braket
-id|smp_processor_id
+id|local_bh_enable
 c_func
 (paren
 )paren
-)braket
-op_decrement
 suffix:semicolon
 )brace
 multiline_comment|/* These are for the irq&squot;s testing the lock */
 DECL|macro|softirq_trylock
-mdefine_line|#define softirq_trylock(cpu)&t;(in_bh() ? 0 : (local_bh_count[smp_processor_id()]=1))
+mdefine_line|#define softirq_trylock(cpu)&t;(cpu_bh_trylock(cpu))
 DECL|macro|softirq_endlock
-mdefine_line|#define softirq_endlock(cpu)&t;(local_bh_count[smp_processor_id()] = 0)
+mdefine_line|#define softirq_endlock(cpu)&t;(cpu_bh_endlock(cpu))
 DECL|macro|synchronize_bh
-mdefine_line|#define synchronize_bh()&t;do { } while (0)
+mdefine_line|#define synchronize_bh()&t;barrier()
 macro_line|#endif&t;/* SMP */
 multiline_comment|/*&n; * These use a mask count to correctly handle&n; * nested disable/enable calls&n; */
 DECL|function|disable_bh

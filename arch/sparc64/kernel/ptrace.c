@@ -16,11 +16,11 @@ macro_line|#include &lt;asm/visasm.h&gt;
 DECL|macro|MAGIC_CONSTANT
 mdefine_line|#define MAGIC_CONSTANT 0x80000000
 multiline_comment|/*&n; * This routine gets a long from any process space by following the page&n; * tables. NOTE! You should check that the long isn&squot;t on a page boundary,&n; * and that it is in the task area before calling this: this routine does&n; * no checking.&n; */
-DECL|function|get_page
+DECL|function|ptrace_get_page
 r_static
 id|pte_t
 op_star
-id|get_page
+id|ptrace_get_page
 c_func
 (paren
 r_struct
@@ -507,7 +507,7 @@ op_logical_neg
 (paren
 id|pgtable
 op_assign
-id|get_page
+id|ptrace_get_page
 (paren
 id|tsk
 comma
@@ -612,7 +612,7 @@ op_logical_neg
 (paren
 id|pgtable
 op_assign
-id|get_page
+id|ptrace_get_page
 (paren
 id|tsk
 comma
@@ -768,7 +768,7 @@ op_logical_neg
 (paren
 id|pgtable
 op_assign
-id|get_page
+id|ptrace_get_page
 (paren
 id|tsk
 comma
@@ -873,7 +873,7 @@ op_logical_neg
 (paren
 id|pgtable
 op_assign
-id|get_page
+id|ptrace_get_page
 (paren
 id|tsk
 comma
@@ -4894,7 +4894,7 @@ suffix:semicolon
 )brace
 id|pgtable
 op_assign
-id|get_page
+id|ptrace_get_page
 (paren
 id|child
 comma
@@ -5180,7 +5180,7 @@ suffix:semicolon
 )brace
 id|pgtable
 op_assign
-id|get_page
+id|ptrace_get_page
 (paren
 id|child
 comma

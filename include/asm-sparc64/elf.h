@@ -1,10 +1,12 @@
-multiline_comment|/* $Id: elf.h,v 1.18 1998/09/09 05:36:08 davem Exp $ */
+multiline_comment|/* $Id: elf.h,v 1.19 1999/06/11 13:26:04 jj Exp $ */
 macro_line|#ifndef __ASM_SPARC64_ELF_H
 DECL|macro|__ASM_SPARC64_ELF_H
 mdefine_line|#define __ASM_SPARC64_ELF_H
 multiline_comment|/*&n; * ELF register definitions..&n; */
 macro_line|#include &lt;asm/ptrace.h&gt;
+macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;asm/processor.h&gt;
+macro_line|#endif
 multiline_comment|/*&n; * These are used to set parameters in the core dumps.&n; */
 macro_line|#ifndef ELF_ARCH
 DECL|macro|ELF_ARCH

@@ -15,6 +15,7 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/ecard.h&gt;
@@ -37,6 +38,7 @@ DECL|variable|etherh_cids
 r_static
 r_const
 id|card_ids
+id|__init
 id|etherh_cids
 (braket
 )braket
@@ -66,6 +68,18 @@ comma
 l_int|0xffff
 )brace
 )brace
+suffix:semicolon
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Russell King&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;i3 EtherH driver&quot;
+)paren
 suffix:semicolon
 DECL|variable|version
 r_static
@@ -99,9 +113,12 @@ DECL|macro|ETHERH_STOP_PAGE
 mdefine_line|#define ETHERH_STOP_PAGE&t;0x7f
 multiline_comment|/* --------------------------------------------------------------------------- */
 multiline_comment|/*&n; * Read the ethernet address string from the on board rom.&n; * This is an ascii string...&n; */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
-DECL|function|etherh_addr
 id|etherh_addr
 c_func
 (paren
@@ -113,6 +130,7 @@ r_struct
 id|expansion_card
 op_star
 id|ec
+)paren
 )paren
 (brace
 r_struct
@@ -716,7 +734,6 @@ op_rshift
 l_int|1
 )paren
 suffix:semicolon
-macro_line|#ifdef BIT8
 r_else
 id|outsb
 (paren
@@ -727,7 +744,6 @@ comma
 id|count
 )paren
 suffix:semicolon
-macro_line|#endif
 id|dma_start
 op_assign
 id|jiffies
@@ -974,7 +990,6 @@ id|dma_addr
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef BIT8
 r_else
 id|insb
 (paren
@@ -985,7 +1000,6 @@ comma
 id|count
 )paren
 suffix:semicolon
-macro_line|#endif
 id|outb
 (paren
 id|ENISR_RDC
@@ -1146,7 +1160,6 @@ op_rshift
 l_int|1
 )paren
 suffix:semicolon
-macro_line|#ifdef BIT8
 r_else
 id|insb
 (paren
@@ -1161,7 +1174,6 @@ id|hdr
 )paren
 )paren
 suffix:semicolon
-macro_line|#endif
 id|outb
 (paren
 id|ENISR_RDC
@@ -1265,9 +1277,12 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This is the real probe routine.&n; */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
-DECL|function|etherh_probe1
 id|etherh_probe1
 c_func
 (paren
@@ -1275,6 +1290,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_static
@@ -1782,12 +1798,20 @@ comma
 l_int|NULL
 comma
 l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
 )brace
 suffix:semicolon
-DECL|function|etherh_initdev
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|etherh_initdev
+c_func
 (paren
 id|ecard_t
 op_star
@@ -1797,6 +1821,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 id|ecard_claim
@@ -1920,6 +1945,7 @@ op_amp
 id|etherh_ops
 suffix:semicolon
 id|etherh_addr
+c_func
 (paren
 id|dev-&gt;dev_addr
 comma
@@ -1928,8 +1954,11 @@ id|ec
 suffix:semicolon
 )brace
 macro_line|#ifndef MODULE
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
-DECL|function|etherh_probe
 id|etherh_probe
 c_func
 (paren
@@ -1937,6 +1966,7 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
 )paren
 (brace
 r_if
@@ -1948,21 +1978,26 @@ id|dev
 r_return
 id|ENODEV
 suffix:semicolon
-id|ecard_startfind
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
 id|dev-&gt;base_addr
+op_logical_or
+id|dev-&gt;base_addr
+op_eq
+l_int|0xffe0
 )paren
 (brace
 r_struct
 id|expansion_card
 op_star
 id|ec
+suffix:semicolon
+id|ecard_startfind
+c_func
+(paren
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1984,6 +2019,7 @@ r_return
 id|ENODEV
 suffix:semicolon
 id|etherh_initdev
+c_func
 (paren
 id|ec
 comma
@@ -1993,6 +2029,7 @@ suffix:semicolon
 )brace
 r_return
 id|etherh_probe1
+c_func
 (paren
 id|dev
 )paren
@@ -2065,14 +2102,6 @@ id|dev
 op_assign
 l_int|NULL
 suffix:semicolon
-r_struct
-id|expansion_card
-op_star
-id|boguscards
-(braket
-id|MAX_ETHERH_CARDS
-)braket
-suffix:semicolon
 r_int
 id|i
 comma
@@ -2096,13 +2125,6 @@ op_increment
 )paren
 (brace
 id|my_ethers
-(braket
-id|i
-)braket
-op_assign
-l_int|NULL
-suffix:semicolon
-id|boguscards
 (braket
 id|i
 )braket
@@ -2322,15 +2344,14 @@ id|i
 )braket
 )paren
 (brace
-id|boguscards
-(braket
-id|i
-)braket
-op_assign
+id|ecard_release
+c_func
+(paren
 id|ec
 (braket
 id|i
 )braket
+)paren
 suffix:semicolon
 id|ec
 (braket
@@ -2361,47 +2382,6 @@ id|kfree
 id|dev
 )paren
 suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|MAX_ETHERH_CARDS
-suffix:semicolon
-id|i
-op_increment
-)paren
-r_if
-c_cond
-(paren
-id|boguscards
-(braket
-id|i
-)braket
-)paren
-(brace
-id|boguscards
-(braket
-id|i
-)braket
-op_member_access_from_pointer
-id|ops
-op_assign
-l_int|NULL
-suffix:semicolon
-id|ecard_release
-(paren
-id|boguscards
-(braket
-id|i
-)braket
-)paren
-suffix:semicolon
-)brace
 r_return
 id|found
 ques

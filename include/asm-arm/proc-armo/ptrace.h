@@ -72,6 +72,7 @@ DECL|macro|CC_Z_BIT
 mdefine_line|#define CC_Z_BIT&t;(1 &lt;&lt; 30)
 DECL|macro|CC_N_BIT
 mdefine_line|#define CC_N_BIT&t;(1 &lt;&lt; 31)
+macro_line|#ifdef __KERNEL__
 DECL|macro|processor_mode
 mdefine_line|#define processor_mode(regs) &bslash;&n;&t;((regs)-&gt;ARM_pc &amp; MODE_MASK)
 DECL|macro|user_mode
@@ -103,13 +104,13 @@ id|regs
 r_if
 c_cond
 (paren
-op_logical_neg
 id|user_mode
 c_func
 (paren
 id|regs
 )paren
-op_logical_or
+op_logical_and
+(paren
 id|regs-&gt;ARM_pc
 op_amp
 (paren
@@ -118,12 +119,28 @@ op_or
 id|I_BIT
 )paren
 )paren
+op_eq
+l_int|0
+)paren
 r_return
 l_int|1
+suffix:semicolon
+multiline_comment|/*&n;&t; * force it to be something sensible&n;&t; */
+id|regs-&gt;ARM_pc
+op_and_assign
+op_complement
+(paren
+id|MODE_MASK
+op_or
+id|F_BIT
+op_or
+id|I_BIT
+)paren
 suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif&t;/* __KERNEL__ */
 macro_line|#endif
 eof

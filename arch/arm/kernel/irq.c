@@ -8,7 +8,6 @@ macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
-macro_line|#include &lt;linux/timex.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
@@ -16,7 +15,6 @@ macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#ifndef SMP
 DECL|macro|irq_enter
@@ -30,6 +28,9 @@ macro_line|#ifndef cliIF
 DECL|macro|cliIF
 mdefine_line|#define cliIF()
 macro_line|#endif
+multiline_comment|/*&n; * Maximum IRQ count.  Currently, this is arbitary.&n; * However, it should not be set too low to prevent&n; * false triggering.  Conversely, if it is set too&n; * high, then you could miss a stuck IRQ.&n; *&n; * Maybe we ought to set a timer and re-enable the&n; * IRQ at a later time?&n; */
+DECL|macro|MAX_IRQ_CNT
+mdefine_line|#define MAX_IRQ_CNT&t;100000
 DECL|variable|local_bh_count
 r_int
 r_int
@@ -49,6 +50,17 @@ suffix:semicolon
 DECL|variable|irq_controller_lock
 id|spinlock_t
 id|irq_controller_lock
+suffix:semicolon
+r_int
+id|setup_arm_irq
+c_func
+(paren
+r_int
+comma
+r_struct
+id|irqaction
+op_star
+)paren
 suffix:semicolon
 r_extern
 r_int
@@ -119,12 +131,20 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* IRQ claimable&t;      */
+DECL|member|noautoenable
+r_int
+r_int
+id|noautoenable
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* don&squot;t automatically enable IRQ */
 DECL|member|unused
 r_int
 r_int
 id|unused
 suffix:colon
-l_int|26
+l_int|25
 suffix:semicolon
 DECL|member|mask_ack
 r_void
@@ -171,13 +191,21 @@ id|irqaction
 op_star
 id|action
 suffix:semicolon
-DECL|member|unused2
+multiline_comment|/*&n;&t; * IRQ lock detection&n;&t; */
+DECL|member|lck_cnt
 r_int
 r_int
-id|unused2
-(braket
-l_int|3
-)braket
+id|lck_cnt
+suffix:semicolon
+DECL|member|lck_pc
+r_int
+r_int
+id|lck_pc
+suffix:semicolon
+DECL|member|lck_jif
+r_int
+r_int
+id|lck_jif
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -190,6 +218,8 @@ id|irq_desc
 id|NR_IRQS
 )braket
 suffix:semicolon
+multiline_comment|/*&n; * Get architecture specific interrupt handlers&n; * and interrupt initialisation.&n; */
+macro_line|#include &lt;asm/arch/irq.h&gt;
 multiline_comment|/*&n; * Dummy mask/unmask handler&n; */
 DECL|function|dummy_mask_unmask_irq
 r_static
@@ -294,15 +324,6 @@ id|irq_desc
 id|irq
 )braket
 dot
-id|enabled
-op_assign
-l_int|1
-suffix:semicolon
-id|irq_desc
-(braket
-id|irq
-)braket
-dot
 id|probing
 op_assign
 l_int|0
@@ -316,6 +337,27 @@ id|triggered
 op_assign
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|irq_desc
+(braket
+id|irq
+)braket
+dot
+id|noautoenable
+)paren
+(brace
+id|irq_desc
+(braket
+id|irq
+)braket
+dot
+id|enabled
+op_assign
+l_int|1
+suffix:semicolon
 id|irq_desc
 (braket
 id|irq
@@ -327,6 +369,7 @@ c_func
 id|irq
 )paren
 suffix:semicolon
+)brace
 id|spin_unlock_irqrestore
 c_func
 (paren
@@ -447,7 +490,7 @@ op_assign
 l_char|&squot;&bslash;n&squot;
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_ACORN
+macro_line|#ifdef CONFIG_ARCH_ACORN
 id|p
 op_add_assign
 id|get_fiq_list
@@ -462,6 +505,104 @@ id|p
 op_minus
 id|buf
 suffix:semicolon
+)brace
+multiline_comment|/*&n; * IRQ lock detection.&n; *&n; * Hopefully, this should get us out of a few locked situations.&n; * However, it may take a while for this to happen, since we need&n; * a large number if IRQs to appear in the same jiffie with the&n; * same instruction pointer (or within 2 instructions).&n; */
+DECL|function|check_irq_lock
+r_static
+r_void
+id|check_irq_lock
+c_func
+(paren
+r_struct
+id|irqdesc
+op_star
+id|desc
+comma
+r_int
+id|irq
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+r_int
+r_int
+id|instr_ptr
+op_assign
+id|instruction_pointer
+c_func
+(paren
+id|regs
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|desc-&gt;lck_jif
+op_eq
+id|jiffies
+op_logical_and
+id|desc-&gt;lck_pc
+op_ge
+id|instr_ptr
+op_logical_and
+id|desc-&gt;lck_pc
+OL
+id|instr_ptr
+op_plus
+l_int|8
+)paren
+(brace
+id|desc-&gt;lck_cnt
+op_add_assign
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|desc-&gt;lck_cnt
+OG
+id|MAX_IRQ_CNT
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;IRQ LOCK: IRQ%d is locking the system, disabled&bslash;n&quot;
+comma
+id|irq
+)paren
+suffix:semicolon
+id|disable_irq
+c_func
+(paren
+id|irq
+)paren
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
+id|desc-&gt;lck_cnt
+op_assign
+l_int|0
+suffix:semicolon
+id|desc-&gt;lck_pc
+op_assign
+id|instruction_pointer
+c_func
+(paren
+id|regs
+)paren
+suffix:semicolon
+id|desc-&gt;lck_jif
+op_assign
+id|jiffies
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; * do_IRQ handles all normal device IRQ&squot;s&n; */
 DECL|function|do_IRQ
@@ -483,10 +624,6 @@ r_struct
 id|irqdesc
 op_star
 id|desc
-op_assign
-id|irq_desc
-op_plus
-id|irq
 suffix:semicolon
 r_struct
 id|irqaction
@@ -497,6 +634,20 @@ r_int
 id|status
 comma
 id|cpu
+suffix:semicolon
+id|irq
+op_assign
+id|fixup_irq
+c_func
+(paren
+id|irq
+)paren
+suffix:semicolon
+id|desc
+op_assign
+id|irq_desc
+op_plus
+id|irq
 suffix:semicolon
 id|spin_lock
 c_func
@@ -687,6 +838,17 @@ id|irq_controller_lock
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/*&n;&t; * Debug measure - hopefully we can continue if an&n;&t; * IRQ lockup problem occurs...&n;&t; */
+id|check_irq_lock
+c_func
+(paren
+id|desc
+comma
+id|irq
+comma
+id|regs
+)paren
+suffix:semicolon
 id|irq_exit
 c_func
 (paren
@@ -695,7 +857,7 @@ comma
 id|irq
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * This should be conditional: we should really get&n;&t; * a return code from the irq handler to tell us&n;&t; * whether the handler wants us to do software bottom&n;&t; * half handling or not..&n;&t; *&n;&t; * ** IMPORTANT NOTE: do_bottom_half() ENABLES IRQS!!! **&n;&t; * **  WE MUST DISABLE THEM AGAIN, ELSE IDE DISKS GO   **&n;&t; * **                       AWOL                       **&n;&t; */
+multiline_comment|/*&n;&t; * This should be conditional: we should really get&n;&t; * a return code from the irq handler to tell us&n;&t; * whether the handler wants us to do software bottom&n;&t; * half handling or not..&n;&t; */
 r_if
 c_cond
 (paren
@@ -710,11 +872,6 @@ op_amp
 id|bh_mask
 )paren
 id|do_bottom_half
-c_func
-(paren
-)paren
-suffix:semicolon
-id|__cli
 c_func
 (paren
 )paren
@@ -870,6 +1027,7 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+multiline_comment|/*&n;&t; * Some drivers like serial.c use request_irq() heavily,&n;&t; * so we have to be careful not to interfere with a&n;&t; * running system.&n;&t; */
 r_if
 c_cond
 (paren
@@ -879,12 +1037,16 @@ id|flags
 op_amp
 id|SA_SAMPLE_RANDOM
 )paren
+(brace
+multiline_comment|/*&n;&t;&t; * This function might sleep, we want to call it first,&n;&t;&t; * outside of the atomic block.&n;&t;&t; * Yes, this might clear the entropy pool if the wrong&n;&t;&t; * driver is attempted to be loaded, without actually&n;&t;&t; * installing a new handler, but is this really a problem,&n;&t;&t; * only the sysadmin is able to do this.&n;&t;&t; */
 id|rand_initialize_irq
 c_func
 (paren
 id|irq
 )paren
 suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; * The following block of code has to be executed atomically&n;&t; */
 id|spin_lock_irqsave
 c_func
 (paren
@@ -1009,18 +1171,30 @@ id|irq_desc
 id|irq
 )braket
 dot
-id|enabled
+id|probing
 op_assign
-l_int|1
+l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
 id|irq_desc
 (braket
 id|irq
 )braket
 dot
-id|probing
+id|noautoenable
+)paren
+(brace
+id|irq_desc
+(braket
+id|irq
+)braket
+dot
+id|enabled
 op_assign
-l_int|0
+l_int|1
 suffix:semicolon
 id|irq_desc
 (braket
@@ -1033,6 +1207,7 @@ c_func
 id|irq
 )paren
 suffix:semicolon
+)brace
 )brace
 id|spin_unlock_irqrestore
 c_func
@@ -1047,7 +1222,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Using &quot;struct sigaction&quot; is slightly silly, but there&n; * are historical reasons and it works well, so..&n; */
 DECL|function|request_irq
 r_int
 id|request_irq
@@ -1099,6 +1273,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|irq
+op_ge
+id|NR_IRQS
+op_logical_or
 op_logical_neg
 id|irq_desc
 (braket
@@ -1106,14 +1284,7 @@ id|irq
 )braket
 dot
 id|valid
-)paren
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-r_if
-c_cond
-(paren
+op_logical_or
 op_logical_neg
 id|handler
 )paren
@@ -1229,6 +1400,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|irq
+op_ge
+id|NR_IRQS
+op_logical_or
 op_logical_neg
 id|irq_desc
 (braket
@@ -1257,6 +1432,15 @@ macro_line|#endif
 r_return
 suffix:semicolon
 )brace
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|irq_controller_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1295,20 +1479,10 @@ id|dev_id
 r_continue
 suffix:semicolon
 multiline_comment|/* Found it - now free it */
-id|save_flags_cli
-(paren
-id|flags
-)paren
-suffix:semicolon
 op_star
 id|p
 op_assign
 id|action-&gt;next
-suffix:semicolon
-id|restore_flags
-(paren
-id|flags
-)paren
 suffix:semicolon
 id|kfree
 c_func
@@ -1316,7 +1490,8 @@ c_func
 id|action
 )paren
 suffix:semicolon
-r_return
+r_goto
+id|out
 suffix:semicolon
 )brace
 id|printk
@@ -1335,6 +1510,17 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+id|out
+suffix:colon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|irq_controller_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/* Start the interrupt probing.  Unlike other architectures,&n; * we don&squot;t return a mask of interrupts from probe_irq_on,&n; * but return the number of interrupts enabled for the probe.&n; * The interrupts which have been enabled for probing is&n; * instead recorded in the irq_desc structure.&n; */
 DECL|function|probe_irq_on
@@ -1415,15 +1601,6 @@ id|i
 )braket
 dot
 id|probing
-op_assign
-l_int|1
-suffix:semicolon
-id|irq_desc
-(braket
-id|i
-)braket
-dot
-id|enabled
 op_assign
 l_int|1
 suffix:semicolon
@@ -1568,8 +1745,7 @@ suffix:semicolon
 r_int
 id|irq_found
 op_assign
-op_minus
-l_int|1
+id|NO_IRQ
 suffix:semicolon
 multiline_comment|/*&n;&t; * look at the interrupts, and find exactly one&n;&t; * that we were probing has been triggered&n;&t; */
 id|spin_lock_irq
@@ -1617,8 +1793,7 @@ c_cond
 (paren
 id|irq_found
 op_ne
-op_minus
-l_int|1
+id|NO_IRQ
 )paren
 (brace
 id|irq_found
@@ -1660,8 +1835,6 @@ r_return
 id|irq_found
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Get architecture specific interrupt handlers&n; * and interrupt initialisation.&n; */
-macro_line|#include &lt;asm/arch/irq.h&gt;
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -1700,6 +1873,33 @@ id|irq
 op_increment
 )paren
 (brace
+id|irq_desc
+(braket
+id|irq
+)braket
+dot
+id|probe_ok
+op_assign
+l_int|0
+suffix:semicolon
+id|irq_desc
+(braket
+id|irq
+)braket
+dot
+id|valid
+op_assign
+l_int|0
+suffix:semicolon
+id|irq_desc
+(braket
+id|irq
+)braket
+dot
+id|noautoenable
+op_assign
+l_int|0
+suffix:semicolon
 id|irq_desc
 (braket
 id|irq

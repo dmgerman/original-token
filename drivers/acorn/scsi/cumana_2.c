@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/arch/arm/drivers/scsi/cumana_2.c&n; *&n; * Copyright (C) 1997-1998 Russell King&n; *&n; * Changelog:&n; *  30-08-1997&t;RMK&t;0.0.0&t;Created, READONLY version&n; *  22-01-1998&t;RMK&t;0.0.1&t;Updated to 2.1.80&n; *  15-04-1998&t;RMK&t;0.0.1&t;Only do PIO if FAS216 will allow it.&n; *  02-05-1998&t;RMK&t;0.0.2&t;Updated &amp; added DMA support&n; *  27-06-1998&t;RMK&t;&t;Changed asm/delay.h to linux/delay.h&n; *  18-08-1998&t;RMK&t;0.0.3&t;Fixed synchronous transfer depth&n; */
+multiline_comment|/*&n; * linux/arch/arm/drivers/scsi/cumana_2.c&n; *&n; * Copyright (C) 1997-1998 Russell King&n; *&n; * Changelog:&n; *  30-08-1997&t;RMK&t;0.0.0&t;Created, READONLY version.&n; *  22-01-1998&t;RMK&t;0.0.1&t;Updated to 2.1.80.&n; *  15-04-1998&t;RMK&t;0.0.1&t;Only do PIO if FAS216 will allow it.&n; *  02-05-1998&t;RMK&t;0.0.2&t;Updated &amp; added DMA support.&n; *  27-06-1998&t;RMK&t;&t;Changed asm/delay.h to linux/delay.h&n; *  18-08-1998&t;RMK&t;0.0.3&t;Fixed synchronous transfer depth.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -236,6 +236,10 @@ op_assign
 id|cumanascsi_2_irqenable
 comma
 id|cumanascsi_2_irqdisable
+comma
+l_int|NULL
+comma
+l_int|NULL
 comma
 l_int|NULL
 comma
@@ -1253,6 +1257,10 @@ suffix:semicolon
 id|info-&gt;info.ifcfg.disconnect_ok
 op_assign
 l_int|1
+suffix:semicolon
+id|info-&gt;info.ifcfg.wide_max_size
+op_assign
+l_int|0
 suffix:semicolon
 id|info-&gt;info.dma.setup
 op_assign

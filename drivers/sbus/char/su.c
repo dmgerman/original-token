@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: su.c,v 1.20 1999/06/03 15:02:40 davem Exp $&n; * su.c: Small serial driver for keyboard/mouse interface on sparc32/PCI&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; * Copyright (C) 1998-1999  Pete Zaitcev   (zaitcev@metabyte.com)&n; *&n; * This is mainly a variation of drivers/char/serial.c,&n; * credits go to authors mentioned therein.&n; */
+multiline_comment|/* $Id: su.c,v 1.21 1999/06/11 10:23:42 davem Exp $&n; * su.c: Small serial driver for keyboard/mouse interface on sparc32/PCI&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; * Copyright (C) 1998-1999  Pete Zaitcev   (zaitcev@metabyte.com)&n; *&n; * This is mainly a variation of drivers/char/serial.c,&n; * credits go to authors mentioned therein.&n; */
 multiline_comment|/*&n; * Configuration section.&n; */
 DECL|macro|SERIAL_PARANOIA_CHECK
 mdefine_line|#define SERIAL_PARANOIA_CHECK
@@ -4451,7 +4451,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|info-&gt;port_type
 op_ne
 id|SU_PORT_KBD
@@ -4462,7 +4461,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|info-&gt;port_type
 op_ne
 id|SU_PORT_KBD
@@ -4525,7 +4523,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|info-&gt;port_type
 op_ne
 id|SU_PORT_MS
@@ -4536,7 +4533,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|info-&gt;port_type
 op_ne
 id|SU_PORT_MS
@@ -9274,7 +9270,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.20 $&quot;
+l_string|&quot;$Revision: 1.21 $&quot;
 suffix:semicolon
 r_char
 op_star

@@ -261,22 +261,16 @@ id|regs
 suffix:semicolon
 DECL|member|tx_head
 r_int
-r_int
+r_char
 id|tx_head
 suffix:semicolon
-multiline_comment|/* address to insert next packet&t; */
+multiline_comment|/* buffer nr to insert next packet&t; */
 DECL|member|tx_tail
 r_int
-r_int
+r_char
 id|tx_tail
 suffix:semicolon
-multiline_comment|/* address of transmitting packet&t; */
-DECL|member|tx_used
-r_int
-r_int
-id|tx_used
-suffix:semicolon
-multiline_comment|/* number of &squot;slots&squot; used&t;&t; */
+multiline_comment|/* buffer nr of transmitting packet&t; */
 DECL|member|rx_head
 r_int
 r_int

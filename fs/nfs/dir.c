@@ -1240,7 +1240,6 @@ id|inode
 comma
 id|offset
 comma
-op_star
 id|hash
 )paren
 suffix:semicolon
@@ -1701,7 +1700,6 @@ id|inode
 comma
 id|offset
 comma
-op_star
 id|hash
 )paren
 suffix:semicolon

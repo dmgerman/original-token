@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sunos.c,v 1.98 1999/06/09 08:23:39 davem Exp $&n; * sys_sunos.c: SunOS specific syscall compatibility support.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * Based upon preliminary work which is:&n; *&n; * Copyright (C) 1995 Adrian M. Rodriguez (adrian@remus.rutgers.edu)&n; *&n; */
+multiline_comment|/* $Id: sys_sunos.c,v 1.99 1999/06/11 11:40:39 davem Exp $&n; * sys_sunos.c: SunOS specific syscall compatibility support.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * Based upon preliminary work which is:&n; *&n; * Copyright (C) 1995 Adrian M. Rodriguez (adrian@remus.rutgers.edu)&n; *&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -656,7 +656,12 @@ id|PAGE_SHIFT
 suffix:semicolon
 id|freepages
 op_add_assign
+id|atomic_read
+c_func
+(paren
+op_amp
 id|page_cache_size
+)paren
 suffix:semicolon
 id|freepages
 op_rshift_assign
@@ -710,6 +715,7 @@ id|newbrk
 op_minus
 id|oldbrk
 )paren
+suffix:semicolon
 id|retval
 op_assign
 l_int|0

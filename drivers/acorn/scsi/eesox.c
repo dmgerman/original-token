@@ -17,10 +17,6 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &quot;../../scsi/sd.h&quot;
 macro_line|#include &quot;../../scsi/hosts.h&quot;
 macro_line|#include &quot;eesox.h&quot;
-DECL|macro|NO_IRQ
-mdefine_line|#define NO_IRQ&t;255
-DECL|macro|NO_DMA
-mdefine_line|#define NO_DMA&t;255
 multiline_comment|/* Configuration */
 DECL|macro|EESOX_XTALFREQ
 mdefine_line|#define EESOX_XTALFREQ&t;&t;40
@@ -237,6 +233,10 @@ op_assign
 id|eesoxscsi_irqenable
 comma
 id|eesoxscsi_irqdisable
+comma
+l_int|NULL
+comma
+l_int|NULL
 comma
 l_int|NULL
 comma
@@ -1448,6 +1448,10 @@ suffix:semicolon
 id|info-&gt;info.ifcfg.disconnect_ok
 op_assign
 l_int|1
+suffix:semicolon
+id|info-&gt;info.ifcfg.wide_max_size
+op_assign
+l_int|0
 suffix:semicolon
 id|info-&gt;info.dma.setup
 op_assign

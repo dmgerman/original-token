@@ -18,7 +18,7 @@ id|sp
 suffix:semicolon
 id|__asm__
 (paren
-l_string|&quot;mov %0,sp&quot;
+l_string|&quot;mov&t;%0,sp&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
@@ -30,6 +30,7 @@ r_return
 id|sp
 suffix:semicolon
 )brace
+singleline_comment|//static inline struct task_struct *get_current(void) __attribute__ (( __const__ ));
 DECL|function|get_current
 r_static
 r_inline
@@ -49,7 +50,6 @@ id|ts
 suffix:semicolon
 id|__asm__
 id|__volatile__
-c_func
 (paren
 "&quot;"
 id|bic
@@ -58,7 +58,7 @@ l_int|0
 comma
 id|sp
 comma
-macro_line|#0x1f00
+macro_line|#0x1f00&t;&t;@ get_current
 id|bic
 op_mod
 l_int|0
@@ -66,11 +66,9 @@ comma
 op_mod
 l_int|0
 comma
-macro_line|#0x00ff
-l_string|&quot; : &quot;
-op_assign
-id|r
-"&quot;"
+macro_line|#0x00ff&quot; 
+suffix:colon
+l_string|&quot;=r&quot;
 (paren
 id|ts
 )paren

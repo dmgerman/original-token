@@ -592,6 +592,42 @@ id|datadir_t
 suffix:semicolon
 macro_line|#include &quot;queue.h&quot;
 macro_line|#include &quot;msgqueue.h&quot;
+DECL|macro|STATUS_BUFFER_SIZE
+mdefine_line|#define STATUS_BUFFER_SIZE&t;32
+multiline_comment|/*&n; * This is used to dump the previous states of the SBIC&n; */
+DECL|struct|status_entry
+r_struct
+id|status_entry
+(brace
+DECL|member|when
+r_int
+r_int
+id|when
+suffix:semicolon
+DECL|member|ssr
+r_int
+r_char
+id|ssr
+suffix:semicolon
+DECL|member|ph
+r_int
+r_char
+id|ph
+suffix:semicolon
+DECL|member|irq
+r_int
+r_char
+id|irq
+suffix:semicolon
+DECL|member|unused
+r_int
+r_char
+id|unused
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|macro|ADD_STATUS
+mdefine_line|#define ADD_STATUS(_q,_ssr,_ph,_irq) &bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;host-&gt;status[(_q)][host-&gt;status_ptr[(_q)]].when = jiffies;&t;&bslash;&n;&t;host-&gt;status[(_q)][host-&gt;status_ptr[(_q)]].ssr  = (_ssr);&t;&bslash;&n;&t;host-&gt;status[(_q)][host-&gt;status_ptr[(_q)]].ph   = (_ph);&t;&bslash;&n;&t;host-&gt;status[(_q)][host-&gt;status_ptr[(_q)]].irq  = (_irq);&t;&bslash;&n;&t;host-&gt;status_ptr[(_q)] = (host-&gt;status_ptr[(_q)] + 1) &amp; (STATUS_BUFFER_SIZE - 1); &bslash;&n;})
 multiline_comment|/*&n; * AcornSCSI host specific data&n; */
 DECL|struct|acornscsi_hostdata
 r_typedef
@@ -629,7 +665,7 @@ suffix:semicolon
 multiline_comment|/* base address of WD33C93&t;&t;*/
 DECL|member|irq
 r_int
-r_char
+r_int
 id|irq
 suffix:semicolon
 multiline_comment|/* interrupt&t;&t;&t;&t;*/
@@ -876,6 +912,14 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* set if DMA is setup&t;&t;&t;*/
+DECL|member|xfer_done
+r_int
+r_char
+id|xfer_done
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* set if DMA reached end of BH list&t;*/
 DECL|member|dma
 )brace
 id|dma
@@ -910,6 +954,25 @@ multiline_comment|/* current setting of page reg&t;&t;*/
 DECL|member|card
 )brace
 id|card
+suffix:semicolon
+DECL|member|status_ptr
+r_int
+r_char
+id|status_ptr
+(braket
+l_int|9
+)braket
+suffix:semicolon
+DECL|member|status
+r_struct
+id|status_entry
+id|status
+(braket
+l_int|9
+)braket
+(braket
+id|STATUS_BUFFER_SIZE
+)braket
 suffix:semicolon
 DECL|typedef|AS_Host
 )brace

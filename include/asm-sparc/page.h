@@ -22,6 +22,10 @@ multiline_comment|/* This is always 2048*sizeof(long), doesn&squot;t change with
 DECL|macro|TASK_UNION_SIZE
 mdefine_line|#define TASK_UNION_SIZE&t;&t;8192
 macro_line|#ifndef __ASSEMBLY__
+DECL|macro|BUG
+mdefine_line|#define BUG() do { printk(&quot;kernel BUG at %s:%d!&bslash;n&quot;, __FILE__, __LINE__); *(int *)0=0; } while (0)
+DECL|macro|PAGE_BUG
+mdefine_line|#define PAGE_BUG(page) do { &bslash;&n;&t;&t;&t;&t;BUG(); } while (0)
 DECL|macro|clear_page
 mdefine_line|#define clear_page(page)&t;memset((void *)(page), 0, PAGE_SIZE)
 DECL|macro|copy_page

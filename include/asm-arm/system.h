@@ -47,7 +47,7 @@ DECL|macro|MACH_TYPE_ARCHIMEDES
 mdefine_line|#define MACH_TYPE_ARCHIMEDES&t;10
 DECL|macro|MACH_TYPE_A5K
 mdefine_line|#define MACH_TYPE_A5K&t;&t;11
-multiline_comment|/*&n; * Sort out a definition for machine_arch_type&n; * The rules basically are:&n; * 1. If one architecture is selected, then all machine_is_xxx()&n; *    are constant.&n; * 2. If two or more architectures are selected, then the selected&n; *    machine_is_xxx() are variable, and the unselected machine_is_xxx()&n; *    are constant zero.&n; */
+multiline_comment|/*&n; * Sort out a definition for machine_arch_type&n; * The rules are:&n; * 1. If one architecture is selected, then all machine_is_xxx()&n; *    are constant.&n; * 2. If two or more architectures are selected, then the selected&n; *    machine_is_xxx() are variable, and the unselected machine_is_xxx()&n; *    are constant zero.&n; */
 macro_line|#ifdef CONFIG_ARCH_EBSA110
 macro_line|# ifdef machine_arch_type
 DECL|macro|machine_arch_type
@@ -148,11 +148,11 @@ macro_line|#ifndef machine_arch_type
 DECL|macro|machine_arch_type
 mdefine_line|#define machine_arch_type&t;__machine_arch_type
 macro_line|#endif
-multiline_comment|/*&n; * task_struct isn&squot;t always declared - forward-declare it here.&n; */
-r_struct
-id|task_struct
-suffix:semicolon
 macro_line|#include &lt;asm/proc-fns.h&gt;
+DECL|macro|xchg
+mdefine_line|#define xchg(ptr,x) &bslash;&n;&t;((__typeof__(*(ptr)))__xchg((unsigned long)(x),(ptr),sizeof(*(ptr))))
+DECL|macro|tas
+mdefine_line|#define tas(ptr) (xchg((ptr),1))
 r_extern
 r_void
 id|arm_malalignedptr
@@ -182,13 +182,15 @@ comma
 r_int
 )paren
 suffix:semicolon
-DECL|macro|xchg
-mdefine_line|#define xchg(ptr,x) &bslash;&n;&t;((__typeof__(*(ptr)))__xchg((unsigned long)(x),(ptr),sizeof(*(ptr))))
-DECL|macro|tas
-mdefine_line|#define tas(ptr) (xchg((ptr),1))
-multiline_comment|/*&n; * switch_to(prev, next) should switch from task `prev&squot; to `next&squot;&n; * `prev&squot; will never be the same as `next&squot;.&n; *&n; * `next&squot; and `prev&squot; should be struct task_struct, but it isn&squot;t always defined&n; */
-DECL|macro|switch_to
-mdefine_line|#define switch_to(prev,next,last) do { last = processor._switch_to(prev,next); } while (0)
+r_extern
+id|asmlinkage
+r_void
+id|__backtrace
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Include processor dependent parts&n; */
 macro_line|#include &lt;asm/proc/system.h&gt;
 macro_line|#include &lt;asm/arch/system.h&gt;
@@ -200,15 +202,9 @@ DECL|macro|wmb
 mdefine_line|#define wmb() mb()
 DECL|macro|nop
 mdefine_line|#define nop() __asm__ __volatile__(&quot;mov&bslash;tr0,r0&bslash;t@ nop&bslash;n&bslash;t&quot;);
-r_extern
-id|asmlinkage
-r_void
-id|__backtrace
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
+multiline_comment|/*&n; * switch_to(prev, next) should switch from task `prev&squot; to `next&squot;&n; * `prev&squot; will never be the same as `next&squot;.&n; * The `mb&squot; is to tell GCC not to cache `current&squot; across this call.&n; */
+DECL|macro|switch_to
+mdefine_line|#define switch_to(prev,next,last)&t;&t;&t;&bslash;&n;&t;do {&t;&t;&t; &t;&t;&t;&bslash;&n;&t;&t;last = processor._switch_to(prev,next);&t;&bslash;&n;&t;&t;mb();&t;&t;&t;&t;&t;&bslash;&n;&t;} while (0)
 macro_line|#endif
 macro_line|#endif
 eof

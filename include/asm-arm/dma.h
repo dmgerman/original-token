@@ -239,6 +239,19 @@ id|dmamode_t
 id|mode
 )paren
 suffix:semicolon
+multiline_comment|/* Set the transfer speed for this channel&n; */
+r_extern
+r_void
+id|set_dma_speed
+c_func
+(paren
+id|dmach_t
+id|channel
+comma
+r_int
+id|cycle_ns
+)paren
+suffix:semicolon
 multiline_comment|/* Get DMA residue count. After a DMA transfer, this&n; * should return zero. Reading this while a DMA transfer is&n; * still in progress will return unpredictable results.&n; * If called before the channel has been used, it may return 1.&n; * Otherwise, it returns the number of _bytes_ left to transfer.&n; */
 r_extern
 r_int

@@ -25,6 +25,7 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/ecard.h&gt;
+macro_line|#include &lt;asm/ioc.h&gt;
 multiline_comment|/*&n; * This sort of stuff should be in a header file shared with ide.c, hd.c, xd.c etc&n; */
 macro_line|#ifndef HDIO_GETGEO
 DECL|macro|HDIO_GETGEO
@@ -530,7 +531,7 @@ id|cont
 op_assign
 l_int|NULL
 suffix:semicolon
-DECL|variable|mfm_tq
+macro_line|#if 0
 r_static
 r_struct
 id|tq_struct
@@ -556,6 +557,7 @@ comma
 l_int|0
 )brace
 suffix:semicolon
+macro_line|#endif
 DECL|variable|number_mfm_drives
 r_int
 id|number_mfm_drives

@@ -4,6 +4,7 @@ DECL|macro|__ASM_ARM_SEMAPHORE_H
 mdefine_line|#define __ASM_ARM_SEMAPHORE_H
 macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
+macro_line|#include &lt;linux/wait.h&gt;
 DECL|struct|semaphore
 r_struct
 id|semaphore
@@ -22,10 +23,62 @@ id|wait
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|MUTEX
-mdefine_line|#define MUTEX ((struct semaphore) { ATOMIC_INIT(1), 0, NULL })
-DECL|macro|MUTEX_LOCKED
-mdefine_line|#define MUTEX_LOCKED ((struct semaphore) { ATOMIC_INIT(0), 0, NULL })
+DECL|macro|__SEMAPHORE_INIT
+mdefine_line|#define __SEMAPHORE_INIT(name,count)&t;&t;&t;&bslash;&n;&t;{ ATOMIC_INIT(count), 0,&t;&t;&t;&bslash;&n;&t;  __WAIT_QUEUE_HEAD_INITIALIZER((name).wait) }
+DECL|macro|__MUTEX_INITIALIZER
+mdefine_line|#define __MUTEX_INITIALIZER(name) &bslash;&n;&t;__SEMAPHORE_INIT(name,1)
+DECL|macro|__DECLARE_SEMAPHORE_GENERIC
+mdefine_line|#define __DECLARE_SEMAPHORE_GENERIC(name,count)&t;&bslash;&n;&t;struct semaphore name = __SEMAPHORE_INIT(name,count)
+DECL|macro|DECLARE_MUTEX
+mdefine_line|#define DECLARE_MUTEX(name)&t;&t;__DECLARE_SEMAPHORE_GENERIC(name,1)
+DECL|macro|DECLARE_MUTEX_LOCKED
+mdefine_line|#define DECLARE_MUTEX_LOCKED(name)&t;__DECLARE_SEMAPHORE_GENERIC(name,0)
+DECL|macro|sema_init
+mdefine_line|#define sema_init(sem, val)&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;atomic_set(&amp;((sem)-&gt;count), (val));&t;&bslash;&n;&t;(sem)-&gt;waking = 0;&t;&t;&t;&bslash;&n;&t;init_waitqueue_head(&amp;(sem)-&gt;wait);&t;&bslash;&n;} while (0)
+DECL|function|init_MUTEX
+r_static
+r_inline
+r_void
+id|init_MUTEX
+c_func
+(paren
+r_struct
+id|semaphore
+op_star
+id|sem
+)paren
+(brace
+id|sema_init
+c_func
+(paren
+id|sem
+comma
+l_int|1
+)paren
+suffix:semicolon
+)brace
+DECL|function|init_MUTEX_LOCKED
+r_static
+r_inline
+r_void
+id|init_MUTEX_LOCKED
+c_func
+(paren
+r_struct
+id|semaphore
+op_star
+id|sem
+)paren
+(brace
+id|sema_init
+c_func
+(paren
+id|sem
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
 id|asmlinkage
 r_void
 id|__down_failed
@@ -103,8 +156,10 @@ op_star
 id|sem
 )paren
 suffix:semicolon
-DECL|macro|sema_init
-mdefine_line|#define sema_init(sem, val)&t;atomic_set(&amp;((sem)-&gt;count), (val))
+r_extern
+id|spinlock_t
+id|semaphore_wake_lock
+suffix:semicolon
 macro_line|#include &lt;asm/proc/semaphore.h&gt;
 macro_line|#endif
 eof

@@ -2,7 +2,6 @@ multiline_comment|/*&n; * linux/include/asm-arm/arch-ebsa285/memory.h&n; *&n; * 
 macro_line|#ifndef __ASM_ARCH_MMU_H
 DECL|macro|__ASM_ARCH_MMU_H
 mdefine_line|#define __ASM_ARCH_MMU_H
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_HOST_FOOTBRIDGE)
 multiline_comment|/*&n; * Task size: 3GB&n; */
 DECL|macro|TASK_SIZE

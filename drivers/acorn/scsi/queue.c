@@ -137,6 +137,10 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
+id|q
+op_sub_assign
+l_int|1
+suffix:semicolon
 id|q-&gt;next
 op_assign
 l_int|NULL

@@ -17,6 +17,7 @@ macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/iomd.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 r_extern
 r_void
@@ -1059,45 +1060,9 @@ comma
 )brace
 suffix:semicolon
 macro_line|#endif
-DECL|function|ps2kbd_translate
-r_int
-id|ps2kbd_translate
-c_func
-(paren
-r_int
-r_char
-id|scancode
-comma
-r_int
-r_char
-op_star
-id|keycode_p
-comma
-r_char
-op_star
-id|uf_p
-)paren
-(brace
-op_star
-id|uf_p
-op_assign
-id|scancode
-op_amp
-l_int|0200
-suffix:semicolon
-op_star
-id|keycode_p
-op_assign
-id|scancode
-op_amp
-l_int|0x7f
-suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
 DECL|function|ps2kbd_key
 r_static
+r_inline
 r_void
 id|ps2kbd_key
 c_func

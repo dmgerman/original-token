@@ -124,6 +124,28 @@ suffix:semicolon
 multiline_comment|/* Xmit/receive descriptors */
 )brace
 suffix:semicolon
+DECL|enum|in_or_out
+DECL|enumerator|PIPEinput
+DECL|enumerator|PIPEoutput
+r_enum
+id|in_or_out
+(brace
+id|PIPEinput
+comma
+id|PIPEoutput
+)brace
+suffix:semicolon
+DECL|enum|direction
+DECL|enumerator|in
+DECL|enumerator|out
+r_enum
+id|direction
+(brace
+id|in
+comma
+id|out
+)brace
+suffix:semicolon
 DECL|struct|dbri_pipe
 r_struct
 id|dbri_pipe
@@ -133,11 +155,20 @@ id|u32
 id|sdp
 suffix:semicolon
 multiline_comment|/* SDP command word */
+DECL|member|direction
+r_enum
+id|direction
+id|direction
+suffix:semicolon
 DECL|member|nextpipe
 r_int
 id|nextpipe
 suffix:semicolon
 multiline_comment|/* Next pipe in linked list */
+DECL|member|prevpipe
+r_int
+id|prevpipe
+suffix:semicolon
 DECL|member|cycle
 r_int
 id|cycle
@@ -154,6 +185,7 @@ id|desc
 suffix:semicolon
 multiline_comment|/* Index of active descriptor*/
 DECL|member|recv_fixed_ptr
+r_volatile
 id|__u32
 op_star
 id|recv_fixed_ptr
@@ -277,6 +309,10 @@ r_int
 id|dbri_irqp
 suffix:semicolon
 multiline_comment|/* intr queue pointer */
+DECL|member|wait_seen
+r_int
+id|wait_seen
+suffix:semicolon
 DECL|member|pipes
 r_struct
 id|dbri_pipe
@@ -293,6 +329,18 @@ id|descs
 (braket
 id|DBRI_NO_DESCS
 )braket
+suffix:semicolon
+DECL|member|chi_in_pipe
+r_int
+id|chi_in_pipe
+suffix:semicolon
+DECL|member|chi_out_pipe
+r_int
+id|chi_out_pipe
+suffix:semicolon
+DECL|member|chi_bpf
+r_int
+id|chi_bpf
 suffix:semicolon
 DECL|member|mm
 r_struct
@@ -487,7 +535,7 @@ mdefine_line|#define D_TS_LEN(v)&t;((v)&lt;&lt;24)&t;/* Number of bits in this t
 DECL|macro|D_TS_CYCLE
 mdefine_line|#define D_TS_CYCLE(v)&t;((v)&lt;&lt;14)&t;/* Bit Count at start of TS */
 DECL|macro|D_TS_DI
-mdefine_line|#define D_TS_DI(v)&t;(1&lt;&lt;13)&t;/* Data Invert */
+mdefine_line|#define D_TS_DI&t;&t;(1&lt;&lt;13)&t;/* Data Invert */
 DECL|macro|D_TS_1CHANNEL
 mdefine_line|#define D_TS_1CHANNEL&t;(0&lt;&lt;10)&t;/* Single Channel / Normal mode */
 DECL|macro|D_TS_MONITOR
@@ -537,9 +585,9 @@ mdefine_line|#define D_NT_ACT&t;(1&lt;&lt;9)&t;/* Activate Interface */
 DECL|macro|D_NT_MFE
 mdefine_line|#define D_NT_MFE&t;(1&lt;&lt;8)&t;/* Multiframe Enable */
 DECL|macro|D_NT_RLB
-mdefine_line|#define D_NT_RLB(v)&t;(1&lt;&lt;5)&t;/* Remote Loopback */
+mdefine_line|#define D_NT_RLB(v)&t;((v)&lt;&lt;5)&t;/* Remote Loopback */
 DECL|macro|D_NT_LLB
-mdefine_line|#define D_NT_LLB(v)&t;(1&lt;&lt;2)&t;/* Local Loopback */
+mdefine_line|#define D_NT_LLB(v)&t;((v)&lt;&lt;2)&t;/* Local Loopback */
 DECL|macro|D_NT_FACT
 mdefine_line|#define D_NT_FACT&t;(1&lt;&lt;1)&t;/* Force Activation */
 DECL|macro|D_NT_ABV

@@ -88,6 +88,7 @@ DECL|macro|CC_Z_BIT
 mdefine_line|#define CC_Z_BIT&t;(1 &lt;&lt; 30)
 DECL|macro|CC_N_BIT
 mdefine_line|#define CC_N_BIT&t;(1 &lt;&lt; 31)
+macro_line|#ifdef __KERNEL__
 macro_line|#if 0 /* GCC/egcs should be able to optimise this, IMHO */
 mdefine_line|#define user_mode(regs)&t;&bslash;&n;&t;((((regs)-&gt;ARM_cpsr &amp; MODE_MASK) == USR_MODE) || &bslash;&n;&t; (((regs)-&gt;ARM_cpsr &amp; MODE_MASK) == USR26_MODE))
 macro_line|#else
@@ -130,7 +131,7 @@ l_int|0xf
 )paren
 op_eq
 l_int|0
-op_logical_or
+op_logical_and
 (paren
 id|regs-&gt;ARM_cpsr
 op_amp
@@ -140,6 +141,8 @@ op_or
 id|I_BIT
 )paren
 )paren
+op_eq
+l_int|0
 )paren
 r_return
 l_int|1
@@ -163,5 +166,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif&t;/* __KERNEL__ */
 macro_line|#endif
 eof

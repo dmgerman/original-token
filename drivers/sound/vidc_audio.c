@@ -2,6 +2,7 @@ multiline_comment|/*&n; * drivers/sound/vidc_audio.c&n; *&n; * Audio routines fo
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/iomd.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;vidc.h&quot;
 multiline_comment|/*&n; * VIDC sound&n; *&n; * When using SERIAL SOUND mode (external DAC), the number of physical&n; * channels is fixed at 2.  Therefore, the sample rate = vidc sample rate.&n; */
@@ -81,14 +82,6 @@ r_int
 id|fmt
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;setting format: %d&bslash;n&quot;
-comma
-id|fmt
-)paren
-suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -734,24 +727,6 @@ id|DMA_ACTIVE
 r_int
 r_int
 id|flags
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;kicking output: %lX+%lX [%lX]&bslash;n&quot;
-comma
-id|dma_start
-comma
-id|dma_count
-comma
-op_star
-(paren
-r_int
-r_int
-op_star
-)paren
-id|dma_start
-)paren
 suffix:semicolon
 id|save_flags_cli
 c_func

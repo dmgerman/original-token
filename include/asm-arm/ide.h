@@ -84,6 +84,11 @@ DECL|macro|ide_release_lock
 mdefine_line|#define ide_release_lock(lock)&t;&t;do {} while (0)
 DECL|macro|ide_get_lock
 mdefine_line|#define ide_get_lock(lock, hdlr, data)&t;do {} while (0)
+multiline_comment|/*&n; * We always use the new IDE port registering,&n; * so these are fixed here.&n; */
+DECL|macro|ide_default_io_base
+mdefine_line|#define ide_default_io_base(i)&t;&t;((ide_ioreg_t)0)
+DECL|macro|ide_default_irq
+mdefine_line|#define ide_default_irq(b)&t;&t;(0)
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* __ASMARM_IDE_H */
 eof

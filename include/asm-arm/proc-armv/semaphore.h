@@ -43,14 +43,6 @@ op_mod
 l_int|0
 comma
 macro_line|#128&t;&t;@ disable IRQs
-id|bic
-op_mod
-l_int|0
-comma
-op_mod
-l_int|0
-comma
-macro_line|#0x80000000&t;@ clear N
 id|msr
 id|cpsr
 comma
@@ -64,6 +56,14 @@ comma
 op_mod
 l_int|2
 )braket
+id|bic
+op_mod
+l_int|0
+comma
+op_mod
+l_int|0
+comma
+macro_line|#0x80000000&t;@ clear N
 id|subs
 op_mod
 l_int|1
@@ -72,14 +72,6 @@ op_mod
 l_int|1
 comma
 macro_line|#1
-id|orrmi
-op_mod
-l_int|0
-comma
-op_mod
-l_int|0
-comma
-macro_line|#0x80000000&t;@ set N
 id|str
 op_mod
 l_int|1
@@ -88,6 +80,14 @@ comma
 op_mod
 l_int|2
 )braket
+id|orrmi
+op_mod
+l_int|0
+comma
+op_mod
+l_int|0
+comma
+macro_line|#0x80000000&t;@ set N
 id|msr
 id|cpsr
 comma
@@ -170,14 +170,6 @@ op_mod
 l_int|0
 comma
 macro_line|#128&t;&t;@ disable IRQs
-id|bic
-op_mod
-l_int|0
-comma
-op_mod
-l_int|0
-comma
-macro_line|#0x80000000&t;@ clear N
 id|msr
 id|cpsr
 comma
@@ -191,6 +183,14 @@ comma
 op_mod
 l_int|2
 )braket
+id|bic
+op_mod
+l_int|0
+comma
+op_mod
+l_int|0
+comma
+macro_line|#0x80000000&t;@ clear N
 id|subs
 op_mod
 l_int|1
@@ -199,14 +199,6 @@ op_mod
 l_int|1
 comma
 macro_line|#1
-id|orrmi
-op_mod
-l_int|0
-comma
-op_mod
-l_int|0
-comma
-macro_line|#0x80000000&t;@ set N
 id|str
 op_mod
 l_int|1
@@ -215,6 +207,14 @@ comma
 op_mod
 l_int|2
 )braket
+id|orrmi
+op_mod
+l_int|0
+comma
+op_mod
+l_int|0
+comma
+macro_line|#0x80000000&t;@ set N
 id|msr
 id|cpsr
 comma
@@ -306,14 +306,6 @@ op_mod
 l_int|0
 comma
 macro_line|#128&t;&t;@ disable IRQs
-id|bic
-op_mod
-l_int|0
-comma
-op_mod
-l_int|0
-comma
-macro_line|#0x80000000&t;@ clear N
 id|msr
 id|cpsr
 comma
@@ -327,6 +319,14 @@ comma
 op_mod
 l_int|2
 )braket
+id|bic
+op_mod
+l_int|0
+comma
+op_mod
+l_int|0
+comma
+macro_line|#0x80000000&t;@ clear N
 id|subs
 op_mod
 l_int|1
@@ -335,14 +335,6 @@ op_mod
 l_int|1
 comma
 macro_line|#1
-id|orrmi
-op_mod
-l_int|0
-comma
-op_mod
-l_int|0
-comma
-macro_line|#0x80000000&t;@ set N
 id|str
 op_mod
 l_int|1
@@ -351,6 +343,14 @@ comma
 op_mod
 l_int|2
 )braket
+id|orrmi
+op_mod
+l_int|0
+comma
+op_mod
+l_int|0
+comma
+macro_line|#0x80000000&t;@ set N
 id|msr
 id|cpsr
 comma
@@ -441,14 +441,6 @@ op_mod
 l_int|0
 comma
 macro_line|#128&t;&t;@ disable IRQs
-id|bic
-op_mod
-l_int|0
-comma
-op_mod
-l_int|0
-comma
-macro_line|#0x80000000&t;@ clear N
 id|msr
 id|cpsr
 comma
@@ -462,6 +454,14 @@ comma
 op_mod
 l_int|2
 )braket
+id|bic
+op_mod
+l_int|0
+comma
+op_mod
+l_int|0
+comma
+macro_line|#0x80000000&t;@ clear N
 id|adds
 op_mod
 l_int|1
@@ -470,14 +470,6 @@ op_mod
 l_int|1
 comma
 macro_line|#1
-id|orrls
-op_mod
-l_int|0
-comma
-op_mod
-l_int|0
-comma
-macro_line|#0x80000000&t;@ set N
 id|str
 op_mod
 l_int|1
@@ -486,6 +478,14 @@ comma
 op_mod
 l_int|2
 )braket
+id|orrle
+op_mod
+l_int|0
+comma
+op_mod
+l_int|0
+comma
+macro_line|#0x80000000&t;@ set N
 id|msr
 id|cpsr
 comma

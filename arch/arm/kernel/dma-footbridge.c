@@ -1,16 +1,25 @@
-multiline_comment|/*&n; * arch/arm/kernel/dma-ebsa285.c&n; *&n; * Copyright (C) 1998 Phil Blundell&n; *&n; * DMA functions specific to EBSA-285/CATS architectures&n; *&n; * Changelog:&n; *  09/11/1998&t;RMK&t;Split out ISA DMA functions to dma-isa.c&n; */
+multiline_comment|/*&n; * arch/arm/kernel/dma-ebsa285.c&n; *&n; * Copyright (C) 1998 Phil Blundell&n; *&n; * DMA functions specific to EBSA-285/CATS architectures&n; *&n; * Changelog:&n; *  09-Nov-1998&t;RMK&t;Split out ISA DMA functions to dma-isa.c&n; *  17-Mar-1999&t;RMK&t;Allow any EBSA285-like architecture to have&n; *&t;&t;&t;ISA DMA controllers.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
-macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &quot;dma.h&quot;
 macro_line|#include &quot;dma-isa.h&quot;
+macro_line|#ifdef CONFIG_ISA_DMA
+DECL|variable|has_isa_dma
+r_static
+r_int
+id|has_isa_dma
+suffix:semicolon
+macro_line|#else
+DECL|macro|has_isa_dma
+mdefine_line|#define has_isa_dma 0
+macro_line|#endif
 DECL|function|arch_request_dma
 r_int
 id|arch_request_dma
@@ -36,29 +45,42 @@ id|channel
 )paren
 (brace
 r_case
+id|_DC21285_DMA
+c_func
+(paren
 l_int|0
+)paren
 suffix:colon
 r_case
+id|_DC21285_DMA
+c_func
+(paren
 l_int|1
+)paren
 suffix:colon
 multiline_comment|/* 21285 internal channels */
 r_return
 l_int|0
 suffix:semicolon
 r_case
-l_int|2
+id|_ISA_DMA
+c_func
+(paren
+l_int|0
+)paren
 dot
 dot
 dot
-l_int|9
+id|_ISA_DMA
+c_func
+(paren
+l_int|7
+)paren
 suffix:colon
 r_if
 c_cond
 (paren
-id|machine_is_cats
-c_func
-(paren
-)paren
+id|has_isa_dma
 )paren
 r_return
 id|isa_request_dma
@@ -66,7 +88,11 @@ c_func
 (paren
 id|channel
 op_minus
-l_int|2
+id|_ISA_DMA
+c_func
+(paren
+l_int|0
+)paren
 comma
 id|dma
 comma
@@ -119,28 +145,40 @@ id|channel
 )paren
 (brace
 r_case
+id|_DC21285_DMA
+c_func
+(paren
 l_int|0
+)paren
 suffix:colon
 r_case
+id|_DC21285_DMA
+c_func
+(paren
 l_int|1
+)paren
 suffix:colon
 r_break
 suffix:semicolon
-macro_line|#ifdef CONFIG_CATS
 r_case
-l_int|2
+id|_ISA_DMA
+c_func
+(paren
+l_int|0
+)paren
 dot
 dot
 dot
-l_int|9
+id|_ISA_DMA
+c_func
+(paren
+l_int|7
+)paren
 suffix:colon
 r_if
 c_cond
 (paren
-id|machine_is_cats
-c_func
-(paren
-)paren
+id|has_isa_dma
 )paren
 id|residue
 op_assign
@@ -149,10 +187,15 @@ c_func
 (paren
 id|channel
 op_minus
-l_int|2
+id|_ISA_DMA
+c_func
+(paren
+l_int|0
+)paren
+comma
+id|dma
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 r_return
 id|residue
@@ -178,41 +221,56 @@ id|channel
 )paren
 (brace
 r_case
+id|_DC21285_DMA
+c_func
+(paren
 l_int|0
+)paren
 suffix:colon
 r_case
+id|_DC21285_DMA
+c_func
+(paren
 l_int|1
+)paren
 suffix:colon
 multiline_comment|/*&n;&t;&t; * Not yet implemented&n;&t;&t; */
 r_break
 suffix:semicolon
-macro_line|#ifdef CONFIG_CATS
 r_case
-l_int|2
+id|_ISA_DMA
+c_func
+(paren
+l_int|0
+)paren
 dot
 dot
 dot
-l_int|9
+id|_ISA_DMA
+c_func
+(paren
+l_int|7
+)paren
 suffix:colon
 r_if
 c_cond
 (paren
-id|machine_is_cats
-c_func
-(paren
-)paren
+id|has_isa_dma
 )paren
 id|isa_enable_dma
 c_func
 (paren
 id|channel
 op_minus
-l_int|2
+id|_ISA_DMA
+c_func
+(paren
+l_int|0
+)paren
 comma
 id|dma
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 )brace
 DECL|function|arch_disable_dma
@@ -235,42 +293,77 @@ id|channel
 )paren
 (brace
 r_case
+id|_DC21285_DMA
+c_func
+(paren
 l_int|0
+)paren
 suffix:colon
 r_case
+id|_DC21285_DMA
+c_func
+(paren
 l_int|1
+)paren
 suffix:colon
 multiline_comment|/*&n;&t;&t; * Not yet implemented&n;&t;&t; */
 r_break
 suffix:semicolon
-macro_line|#ifdef CONFIG_CATS
 r_case
-l_int|2
+id|_ISA_DMA
+c_func
+(paren
+l_int|0
+)paren
 dot
 dot
 dot
-l_int|9
+id|_ISA_DMA
+c_func
+(paren
+l_int|7
+)paren
 suffix:colon
 r_if
 c_cond
 (paren
-id|machine_is_cats
-c_func
-(paren
-)paren
+id|has_isa_dma
 )paren
 id|isa_disable_dma
 c_func
 (paren
 id|channel
 op_minus
-l_int|2
+id|_ISA_DMA
+c_func
+(paren
+l_int|0
+)paren
 comma
 id|dma
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
+)brace
+DECL|function|arch_set_dma_speed
+r_int
+id|arch_set_dma_speed
+c_func
+(paren
+id|dmach_t
+id|channel
+comma
+id|dma_t
+op_star
+id|dma
+comma
+r_int
+id|cycle_ns
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 DECL|function|__initfunc
 id|__initfunc
@@ -286,6 +379,14 @@ id|dma
 )paren
 )paren
 (brace
-multiline_comment|/* Nothing to do */
+macro_line|#ifdef CONFIG_ISA_DMA
+id|has_isa_dma
+op_assign
+id|isa_init_dma
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 eof

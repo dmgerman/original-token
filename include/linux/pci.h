@@ -434,7 +434,7 @@ DECL|macro|PCI_CLASS_HOT_SWAP_CONTROLLER
 mdefine_line|#define PCI_CLASS_HOT_SWAP_CONTROLLER&t;0xff00
 DECL|macro|PCI_CLASS_OTHERS
 mdefine_line|#define PCI_CLASS_OTHERS&t;&t;0xff
-multiline_comment|/*&n; * Vendor and card ID&squot;s: sort these numerically according to vendor&n; * (and according to card ID within vendor). Send all updates to&n; * &lt;linux-pcisupport@cck.uni-kl.de&gt;.&n; */
+multiline_comment|/*&n; * Vendor and card ID&squot;s: sort these numerically according to vendor&n; * (and according to card ID within vendor). Send all updates to&n; * &lt;pci-ids@ucw.cz&gt;.&n; */
 DECL|macro|PCI_VENDOR_ID_COMPAQ
 mdefine_line|#define PCI_VENDOR_ID_COMPAQ&t;&t;0x0e11
 DECL|macro|PCI_DEVICE_ID_COMPAQ_1280
@@ -2413,6 +2413,8 @@ r_int
 id|devfn
 )paren
 suffix:semicolon
+DECL|macro|PCI_ANY_ID
+mdefine_line|#define PCI_ANY_ID (~0)
 DECL|macro|pci_present
 mdefine_line|#define pci_present pcibios_present
 r_int

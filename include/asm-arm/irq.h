@@ -35,9 +35,5 @@ r_int
 r_int
 )paren
 suffix:semicolon
-DECL|macro|__STR
-mdefine_line|#define __STR(x) #x
-DECL|macro|STR
-mdefine_line|#define STR(x) __STR(x)
 macro_line|#endif
 eof

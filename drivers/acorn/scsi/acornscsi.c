@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/arch/arm/drivers/scsi/acornscsi.c&n; *&n; *  Acorn SCSI 3 driver&n; *  By R.M.King.&n; *&n; * Abandoned using the Select and Transfer command since there were&n; * some nasty races between our software and the target devices that&n; * were not easy to solve, and the device errata had a lot of entries&n; * for this command, some of them quite nasty...&n; *&n; * Changelog:&n; *  26-Sep-1997&t;RMK&t;Re-jigged to use the queue module.&n; *&t;&t;&t;Re-coded state machine to be based on driver&n; *&t;&t;&t;state not scsi state.  Should be easier to debug.&n; *&t;&t;&t;Added acornscsi_release to clean up properly.&n; *&t;&t;&t;Updated proc/scsi reporting.&n; *  05-Oct-1997&t;RMK&t;Implemented writing to SCSI devices.&n; *  06-Oct-1997&t;RMK&t;Corrected small (non-serious) bug with the connect/&n; *&t;&t;&t;reconnect race condition causing a warning message.&n; *  12-Oct-1997&t;RMK&t;Added catch for re-entering interrupt routine.&n; *  15-Oct-1997&t;RMK&t;Improved handling of commands.&n; *  27-Jun-1998&t;RMK&t;Changed asm/delay.h to linux/delay.h.&n; */
+multiline_comment|/*&n; * linux/arch/arm/drivers/scsi/acornscsi.c&n; *&n; *  Acorn SCSI 3 driver&n; *  By R.M.King.&n; *&n; * Abandoned using the Select and Transfer command since there were&n; * some nasty races between our software and the target devices that&n; * were not easy to solve, and the device errata had a lot of entries&n; * for this command, some of them quite nasty...&n; *&n; * Changelog:&n; *  26-Sep-1997&t;RMK&t;Re-jigged to use the queue module.&n; *&t;&t;&t;Re-coded state machine to be based on driver&n; *&t;&t;&t;state not scsi state.  Should be easier to debug.&n; *&t;&t;&t;Added acornscsi_release to clean up properly.&n; *&t;&t;&t;Updated proc/scsi reporting.&n; *  05-Oct-1997&t;RMK&t;Implemented writing to SCSI devices.&n; *  06-Oct-1997&t;RMK&t;Corrected small (non-serious) bug with the connect/&n; *&t;&t;&t;reconnect race condition causing a warning message.&n; *  12-Oct-1997&t;RMK&t;Added catch for re-entering interrupt routine.&n; *  15-Oct-1997&t;RMK&t;Improved handling of commands.&n; *  27-Jun-1998&t;RMK&t;Changed asm/delay.h to linux/delay.h.&n; *  13-Dec-1998&t;RMK&t;Better abort code and command handling.  Extra state&n; *&t;&t;&t;transitions added to allow dodgy devices to work.&n; */
 DECL|macro|DEBUG_NO_WRITE
 mdefine_line|#define DEBUG_NO_WRITE&t;1
 DECL|macro|DEBUG_QUEUES
@@ -22,7 +22,7 @@ mdefine_line|#define DEBUG_MESSAGES&t;512
 DECL|macro|DEBUG_RESET
 mdefine_line|#define DEBUG_RESET&t;1024
 DECL|macro|DEBUG_ALL
-mdefine_line|#define DEBUG_ALL&t;(DEBUG_RESET|DEBUG_MESSAGES|DEBUG_LINK|DEBUG_WRITE|&bslash;&n;&t;&t;&t; DEBUG_PHASES|DEBUG_CONNECT|DEBUG_DISCON|DEBUG_ABORT|&bslash;&n;&t;&t;&t; DEBUG_DMA|DEBUG_QUEUES|DEBUG_NO_WRITE)
+mdefine_line|#define DEBUG_ALL&t;(DEBUG_RESET|DEBUG_MESSAGES|DEBUG_LINK|DEBUG_WRITE|&bslash;&n;&t;&t;&t; DEBUG_PHASES|DEBUG_CONNECT|DEBUG_DISCON|DEBUG_ABORT|&bslash;&n;&t;&t;&t; DEBUG_DMA|DEBUG_QUEUES)
 multiline_comment|/* DRIVER CONFIGURATION&n; *&n; * SCSI-II Tagged queue support.&n; *&n; * I don&squot;t have any SCSI devices that support it, so it is totally untested&n; * (except to make sure that it doesn&squot;t interfere with any non-tagging&n; * devices).  It is not fully implemented either - what happens when a&n; * tagging device reconnects???&n; *&n; * You can tell if you have a device that supports tagged queueing my&n; * cating (eg) /proc/scsi/acornscsi/0 and see if the SCSI revision is reported&n; * as &squot;2 TAG&squot;.&n; *&n; * Also note that CONFIG_SCSI_ACORNSCSI_TAGGED_QUEUE is normally set in the config&n; * scripts, but disabled here.  Once debugged, remove the #undef, otherwise to debug,&n; * comment out the undef.&n; */
 DECL|macro|CONFIG_SCSI_ACORNSCSI_TAGGED_QUEUE
 macro_line|#undef CONFIG_SCSI_ACORNSCSI_TAGGED_QUEUE
@@ -67,10 +67,10 @@ macro_line|#ifndef STRINGIFY
 DECL|macro|STRINGIFY
 mdefine_line|#define STRINGIFY(x) #x
 macro_line|#endif
-DECL|macro|STR
-mdefine_line|#define STR(x) STRINGIFY(x)
+DECL|macro|STRx
+mdefine_line|#define STRx(x) STRINGIFY(x)
 DECL|macro|NO_WRITE_STR
-mdefine_line|#define NO_WRITE_STR STR(NO_WRITE)
+mdefine_line|#define NO_WRITE_STR STRx(NO_WRITE)
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -86,6 +86,7 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/ecard.h&gt;
 macro_line|#include &quot;../../scsi/scsi.h&quot;
 macro_line|#include &quot;../../scsi/hosts.h&quot;
@@ -103,10 +104,6 @@ DECL|macro|ABORT_TAG
 mdefine_line|#define ABORT_TAG 0xd
 macro_line|#else
 macro_line|#error &quot;Yippee!  ABORT TAG is now defined!  Remove this error!&quot;
-macro_line|#endif
-macro_line|#ifndef NO_IRQ
-DECL|macro|NO_IRQ
-mdefine_line|#define NO_IRQ 255
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_ACORNSCSI_LINK
 macro_line|#error SCSI2 LINKed commands not supported (yet)!
@@ -129,58 +126,8 @@ multiline_comment|/*&n; * Size of on-board DMA buffer&n; */
 DECL|macro|DMAC_BUFFER_SIZE
 mdefine_line|#define DMAC_BUFFER_SIZE&t;65536
 macro_line|#endif
-multiline_comment|/*&n; * This is used to dump the previous states of the SBIC&n; */
-DECL|struct|status_entry
-r_static
-r_struct
-id|status_entry
-(brace
-DECL|member|when
-r_int
-r_int
-id|when
-suffix:semicolon
-DECL|member|ssr
-r_int
-r_char
-id|ssr
-suffix:semicolon
-DECL|member|ph
-r_int
-r_char
-id|ph
-suffix:semicolon
-DECL|member|irq
-r_int
-r_char
-id|irq
-suffix:semicolon
-DECL|member|unused
-r_int
-r_char
-id|unused
-suffix:semicolon
-DECL|variable|status
-)brace
-id|status
-(braket
-l_int|9
-)braket
-(braket
-l_int|16
-)braket
-suffix:semicolon
-DECL|variable|status_ptr
-r_static
-r_int
-r_char
-id|status_ptr
-(braket
-l_int|9
-)braket
-suffix:semicolon
-DECL|macro|ADD_STATUS
-mdefine_line|#define ADD_STATUS(_q,_ssr,_ph,_irq) &bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;status[(_q)][status_ptr[(_q)]].when = jiffies;&t;&bslash;&n;&t;status[(_q)][status_ptr[(_q)]].ssr  = (_ssr);&t;&bslash;&n;&t;status[(_q)][status_ptr[(_q)]].ph   = (_ph);&t;&bslash;&n;&t;status[(_q)][status_ptr[(_q)]].irq  = (_irq);&t;&bslash;&n;&t;status_ptr[(_q)] = (status_ptr[(_q)] + 1) &amp; 15;&t;&bslash;&n;})
+DECL|macro|STATUS_BUFFER_TO_PRINT
+mdefine_line|#define STATUS_BUFFER_TO_PRINT&t;24
 DECL|variable|sdtr_period
 r_int
 r_int
@@ -220,6 +167,7 @@ suffix:semicolon
 r_static
 r_void
 id|acornscsi_done
+c_func
 (paren
 id|AS_Host
 op_star
@@ -238,6 +186,7 @@ suffix:semicolon
 r_static
 r_int
 id|acornscsi_reconnect_finish
+c_func
 (paren
 id|AS_Host
 op_star
@@ -247,6 +196,7 @@ suffix:semicolon
 r_static
 r_void
 id|acornscsi_dma_cleanup
+c_func
 (paren
 id|AS_Host
 op_star
@@ -256,6 +206,7 @@ suffix:semicolon
 r_static
 r_void
 id|acornscsi_abortcmd
+c_func
 (paren
 id|AS_Host
 op_star
@@ -272,6 +223,7 @@ r_inline
 r_void
 DECL|function|sbic_arm_write
 id|sbic_arm_write
+c_func
 (paren
 r_int
 r_int
@@ -285,6 +237,7 @@ id|value
 )paren
 (brace
 id|outb_t
+c_func
 (paren
 id|reg
 comma
@@ -292,6 +245,7 @@ id|io_port
 )paren
 suffix:semicolon
 id|outb_t
+c_func
 (paren
 id|value
 comma
@@ -302,12 +256,13 @@ l_int|4
 suffix:semicolon
 )brace
 DECL|macro|sbic_arm_writenext
-mdefine_line|#define sbic_arm_writenext(io,val) &bslash;&n;&t;outb_t ((val), (io) + 4)
+mdefine_line|#define sbic_arm_writenext(io,val) &bslash;&n;&t;outb_t((val), (io) + 4)
 r_static
 r_inline
 DECL|function|sbic_arm_read
 r_int
 id|sbic_arm_read
+c_func
 (paren
 r_int
 r_int
@@ -336,6 +291,7 @@ l_int|255
 suffix:semicolon
 )brace
 id|outb_t
+c_func
 (paren
 id|reg
 comma
@@ -358,17 +314,18 @@ DECL|macro|sbic_arm_readnext
 mdefine_line|#define sbic_arm_readnext(io) &bslash;&n;&t;inb_t((io) + 4)
 macro_line|#ifdef USE_DMAC
 DECL|macro|dmac_read
-mdefine_line|#define dmac_read(io_port,reg) &bslash;&n;&t;inb ((io_port) + (reg))
+mdefine_line|#define dmac_read(io_port,reg) &bslash;&n;&t;inb((io_port) + (reg))
 DECL|macro|dmac_write
-mdefine_line|#define dmac_write(io_port,reg,value) &bslash;&n;&t;({ outb ((value), (io_port) + (reg)); })
+mdefine_line|#define dmac_write(io_port,reg,value) &bslash;&n;&t;({ outb((value), (io_port) + (reg)); })
 DECL|macro|dmac_clearintr
-mdefine_line|#define dmac_clearintr(io_port) &bslash;&n;&t;({ outb (0, (io_port)); })
+mdefine_line|#define dmac_clearintr(io_port) &bslash;&n;&t;({ outb(0, (io_port)); })
 r_static
 r_inline
 DECL|function|dmac_address
 r_int
 r_int
 id|dmac_address
+c_func
 (paren
 r_int
 r_int
@@ -377,6 +334,7 @@ id|io_port
 (brace
 r_return
 id|dmac_read
+c_func
 (paren
 id|io_port
 comma
@@ -386,6 +344,7 @@ op_lshift
 l_int|16
 op_or
 id|dmac_read
+c_func
 (paren
 id|io_port
 comma
@@ -395,6 +354,7 @@ op_lshift
 l_int|8
 op_or
 id|dmac_read
+c_func
 (paren
 id|io_port
 comma
@@ -406,6 +366,7 @@ r_static
 DECL|function|acornscsi_dumpdma
 r_void
 id|acornscsi_dumpdma
+c_func
 (paren
 id|AS_Host
 op_star
@@ -427,6 +388,7 @@ suffix:semicolon
 id|mode
 op_assign
 id|dmac_read
+c_func
 (paren
 id|host-&gt;dma.io_port
 comma
@@ -436,6 +398,7 @@ suffix:semicolon
 id|addr
 op_assign
 id|dmac_address
+c_func
 (paren
 id|host-&gt;dma.io_port
 )paren
@@ -443,6 +406,7 @@ suffix:semicolon
 id|len
 op_assign
 id|dmac_read
+c_func
 (paren
 id|host-&gt;dma.io_port
 comma
@@ -452,6 +416,7 @@ op_lshift
 l_int|8
 op_or
 id|dmac_read
+c_func
 (paren
 id|host-&gt;dma.io_port
 comma
@@ -459,6 +424,7 @@ id|TXCNTLO
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 l_string|&quot;scsi%d: %s: DMAC %02x @%06x+%04x msk %02x, &quot;
 comma
@@ -479,6 +445,7 @@ op_amp
 l_int|0xffff
 comma
 id|dmac_read
+c_func
 (paren
 id|host-&gt;dma.io_port
 comma
@@ -487,6 +454,7 @@ id|MASKREG
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 l_string|&quot;DMA @%06x, &quot;
 comma
@@ -494,6 +462,7 @@ id|host-&gt;dma.start_addr
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 l_string|&quot;BH @%p +%04x, &quot;
 comma
@@ -503,6 +472,7 @@ id|host-&gt;scsi.SCp.this_residual
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 l_string|&quot;DT @+%04x ST @+%04x&quot;
 comma
@@ -512,6 +482,7 @@ id|host-&gt;scsi.SCp.scsi_xferred
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 l_string|&quot;&bslash;n&quot;
 )paren
@@ -523,6 +494,7 @@ DECL|function|acornscsi_sbic_xfcount
 r_int
 r_int
 id|acornscsi_sbic_xfcount
+c_func
 (paren
 id|AS_Host
 op_star
@@ -536,6 +508,7 @@ suffix:semicolon
 id|length
 op_assign
 id|sbic_arm_read
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -547,6 +520,7 @@ suffix:semicolon
 id|length
 op_or_assign
 id|sbic_arm_readnext
+c_func
 (paren
 id|host-&gt;scsi.io_port
 )paren
@@ -556,6 +530,7 @@ suffix:semicolon
 id|length
 op_or_assign
 id|sbic_arm_readnext
+c_func
 (paren
 id|host-&gt;scsi.io_port
 )paren
@@ -565,16 +540,27 @@ id|length
 suffix:semicolon
 )brace
 r_static
-DECL|function|acornscsi_sbic_issuecmd
 r_int
-id|acornscsi_sbic_issuecmd
+DECL|function|acornscsi_sbic_wait
+id|acornscsi_sbic_wait
+c_func
 (paren
 id|AS_Host
 op_star
 id|host
 comma
 r_int
-id|command
+id|stat_mask
+comma
+r_int
+id|stat
+comma
+r_int
+id|timeout
+comma
+r_char
+op_star
+id|msg
 )paren
 (brace
 r_int
@@ -585,22 +571,93 @@ r_do
 id|asr
 op_assign
 id|sbic_arm_read
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
 id|ASR
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|asr
+op_amp
+id|stat_mask
+)paren
+op_eq
+id|stat
+)paren
+r_return
+l_int|0
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
 )brace
 r_while
 c_loop
 (paren
-id|asr
-op_amp
-id|ASR_CIP
+op_decrement
+id|timeout
 )paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;scsi%d: timeout while %s&bslash;n&quot;
+comma
+id|host-&gt;host-&gt;host_no
+comma
+id|msg
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+r_static
+DECL|function|acornscsi_sbic_issuecmd
+r_int
+id|acornscsi_sbic_issuecmd
+c_func
+(paren
+id|AS_Host
+op_star
+id|host
+comma
+r_int
+id|command
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|acornscsi_sbic_wait
+c_func
+(paren
+id|host
+comma
+id|ASR_CIP
+comma
+l_int|0
+comma
+l_int|1000
+comma
+l_string|&quot;issuing command&quot;
+)paren
+)paren
+r_return
+op_minus
+l_int|1
+suffix:semicolon
 id|sbic_arm_write
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -617,6 +674,7 @@ r_static
 r_void
 DECL|function|acornscsi_csdelay
 id|acornscsi_csdelay
+c_func
 (paren
 r_int
 r_int
@@ -642,11 +700,13 @@ op_div
 l_int|100
 suffix:semicolon
 id|save_flags
+c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|sti
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -667,6 +727,7 @@ c_func
 )paren
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -676,6 +737,7 @@ r_static
 DECL|function|acornscsi_resetcard
 r_void
 id|acornscsi_resetcard
+c_func
 (paren
 id|AS_Host
 op_star
@@ -685,6 +747,8 @@ id|host
 r_int
 r_int
 id|i
+comma
+id|timeout
 suffix:semicolon
 multiline_comment|/* assert reset line */
 id|host-&gt;card.page_reg
@@ -692,6 +756,7 @@ op_assign
 l_int|0x80
 suffix:semicolon
 id|outb
+c_func
 (paren
 id|host-&gt;card.page_reg
 comma
@@ -700,6 +765,7 @@ id|host-&gt;card.io_page
 suffix:semicolon
 multiline_comment|/* wait 3 cs.  SCSI standard says 25ms. */
 id|acornscsi_csdelay
+c_func
 (paren
 l_int|3
 )paren
@@ -709,6 +775,7 @@ op_assign
 l_int|0
 suffix:semicolon
 id|outb
+c_func
 (paren
 id|host-&gt;card.page_reg
 comma
@@ -716,21 +783,56 @@ id|host-&gt;card.io_page
 )paren
 suffix:semicolon
 multiline_comment|/*&n;     * Should get a reset from the card&n;     */
-r_while
-c_loop
-(paren
-op_logical_neg
+id|timeout
+op_assign
+l_int|1000
+suffix:semicolon
+r_do
+(brace
+r_if
+c_cond
 (paren
 id|inb
+c_func
 (paren
 id|host-&gt;card.io_intr
 )paren
 op_amp
 l_int|8
 )paren
+r_break
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+op_decrement
+id|timeout
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|timeout
+op_eq
+l_int|0
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;scsi%d: timeout while resetting card&bslash;n&quot;
+comma
+id|host-&gt;host-&gt;host_no
 )paren
 suffix:semicolon
 id|sbic_arm_read
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -738,6 +840,7 @@ id|ASR
 )paren
 suffix:semicolon
 id|sbic_arm_read
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -746,6 +849,7 @@ id|SSR
 suffix:semicolon
 multiline_comment|/* setup sbic - WD33C93A */
 id|sbic_arm_write
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -757,6 +861,7 @@ id|host-&gt;host-&gt;this_id
 )paren
 suffix:semicolon
 id|sbic_arm_write
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -766,21 +871,56 @@ id|CMND_RESET
 )paren
 suffix:semicolon
 multiline_comment|/*&n;     * Command should cause a reset interrupt&n;     */
-r_while
-c_loop
-(paren
-op_logical_neg
+id|timeout
+op_assign
+l_int|1000
+suffix:semicolon
+r_do
+(brace
+r_if
+c_cond
 (paren
 id|inb
+c_func
 (paren
 id|host-&gt;card.io_intr
 )paren
 op_amp
 l_int|8
 )paren
+r_break
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+op_decrement
+id|timeout
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|timeout
+op_eq
+l_int|0
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;scsi%d: timeout while resetting card&bslash;n&quot;
+comma
+id|host-&gt;host-&gt;host_no
 )paren
 suffix:semicolon
 id|sbic_arm_read
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -791,6 +931,7 @@ r_if
 c_cond
 (paren
 id|sbic_arm_read
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -800,6 +941,7 @@ op_ne
 l_int|0x01
 )paren
 id|printk
+c_func
 (paren
 id|KERN_CRIT
 l_string|&quot;scsi%d: WD33C93A didn&squot;t give enhanced reset interrupt&bslash;n&quot;
@@ -808,6 +950,7 @@ id|host-&gt;host-&gt;host_no
 )paren
 suffix:semicolon
 id|sbic_arm_write
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -819,6 +962,7 @@ id|CTRL_IDI
 )paren
 suffix:semicolon
 id|sbic_arm_write
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -828,6 +972,7 @@ id|TIMEOUT_TIME
 )paren
 suffix:semicolon
 id|sbic_arm_write
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -837,6 +982,7 @@ id|SYNCHTRANSFER_2DBA
 )paren
 suffix:semicolon
 id|sbic_arm_write
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -852,6 +998,7 @@ op_assign
 l_int|0x40
 suffix:semicolon
 id|outb
+c_func
 (paren
 id|host-&gt;card.page_reg
 comma
@@ -966,6 +1113,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* wait 25 cs.  SCSI standard says 250ms. */
 id|acornscsi_csdelay
+c_func
 (paren
 l_int|25
 )paren
@@ -1837,6 +1985,7 @@ r_static
 DECL|function|print_scsi_status
 r_void
 id|print_scsi_status
+c_func
 (paren
 r_int
 r_int
@@ -1855,6 +2004,7 @@ op_minus
 l_int|1
 )paren
 id|printk
+c_func
 (paren
 l_string|&quot;%s:%s&quot;
 comma
@@ -1878,6 +2028,7 @@ id|ssr
 suffix:semicolon
 r_else
 id|printk
+c_func
 (paren
 l_string|&quot;%X:%X&quot;
 comma
@@ -1896,6 +2047,7 @@ r_static
 DECL|function|print_sbic_status
 r_void
 id|print_sbic_status
+c_func
 (paren
 r_int
 id|asr
@@ -1909,6 +2061,7 @@ id|cmdphase
 (brace
 macro_line|#ifdef CONFIG_ACORNSCSI_CONSTANTS
 id|printk
+c_func
 (paren
 l_string|&quot;sbic: %c%c%c%c%c%c &quot;
 comma
@@ -1968,16 +2121,19 @@ l_char|&squot;d&squot;
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 l_string|&quot;scsi: &quot;
 )paren
 suffix:semicolon
 id|print_scsi_status
+c_func
 (paren
 id|ssr
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 l_string|&quot; ph %02X&bslash;n&quot;
 comma
@@ -1986,6 +2142,7 @@ id|cmdphase
 suffix:semicolon
 macro_line|#else
 id|printk
+c_func
 (paren
 l_string|&quot;sbic: %02X scsi: %X:%X ph: %02X&bslash;n&quot;
 comma
@@ -2009,9 +2166,285 @@ suffix:semicolon
 macro_line|#endif
 )brace
 r_static
+r_void
+DECL|function|acornscsi_dumplogline
+id|acornscsi_dumplogline
+c_func
+(paren
+id|AS_Host
+op_star
+id|host
+comma
+r_int
+id|target
+comma
+r_int
+id|line
+)paren
+(brace
+r_int
+r_int
+id|prev
+suffix:semicolon
+r_int
+r_int
+id|ptr
+suffix:semicolon
+id|ptr
+op_assign
+id|host-&gt;status_ptr
+(braket
+id|target
+)braket
+op_minus
+id|STATUS_BUFFER_TO_PRINT
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ptr
+OL
+l_int|0
+)paren
+id|ptr
+op_add_assign
+id|STATUS_BUFFER_SIZE
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;%c: %3s:&quot;
+comma
+id|target
+op_eq
+l_int|8
+ques
+c_cond
+l_char|&squot;H&squot;
+suffix:colon
+l_char|&squot;0&squot;
+op_plus
+id|target
+comma
+id|line
+op_eq
+l_int|0
+ques
+c_cond
+l_string|&quot;ph&quot;
+suffix:colon
+id|line
+op_eq
+l_int|1
+ques
+c_cond
+l_string|&quot;ssr&quot;
+suffix:colon
+l_string|&quot;int&quot;
+)paren
+suffix:semicolon
+id|prev
+op_assign
+id|host-&gt;status
+(braket
+id|target
+)braket
+(braket
+id|ptr
+)braket
+dot
+id|when
+suffix:semicolon
+r_for
+c_loop
+(paren
+suffix:semicolon
+id|ptr
+op_ne
+id|host-&gt;status_ptr
+(braket
+id|target
+)braket
+suffix:semicolon
+id|ptr
+op_assign
+(paren
+id|ptr
+op_plus
+l_int|1
+)paren
+op_amp
+(paren
+id|STATUS_BUFFER_SIZE
+op_minus
+l_int|1
+)paren
+)paren
+(brace
+r_int
+r_int
+id|time_diff
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|host-&gt;status
+(braket
+id|target
+)braket
+(braket
+id|ptr
+)braket
+dot
+id|when
+)paren
+r_continue
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|line
+)paren
+(brace
+r_case
+l_int|0
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;%c%02X&quot;
+comma
+id|host-&gt;status
+(braket
+id|target
+)braket
+(braket
+id|ptr
+)braket
+dot
+id|irq
+ques
+c_cond
+l_char|&squot;-&squot;
+suffix:colon
+l_char|&squot; &squot;
+comma
+id|host-&gt;status
+(braket
+id|target
+)braket
+(braket
+id|ptr
+)braket
+dot
+id|ph
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|1
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot; %02X&quot;
+comma
+id|host-&gt;status
+(braket
+id|target
+)braket
+(braket
+id|ptr
+)braket
+dot
+id|ssr
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|2
+suffix:colon
+id|time_diff
+op_assign
+id|host-&gt;status
+(braket
+id|target
+)braket
+(braket
+id|ptr
+)braket
+dot
+id|when
+op_minus
+id|prev
+suffix:semicolon
+id|prev
+op_assign
+id|host-&gt;status
+(braket
+id|target
+)braket
+(braket
+id|ptr
+)braket
+dot
+id|when
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|time_diff
+op_eq
+l_int|0
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;==^&quot;
+)paren
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|time_diff
+op_ge
+l_int|100
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;   &quot;
+)paren
+suffix:semicolon
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot; %02ld&quot;
+comma
+id|time_diff
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_static
 DECL|function|acornscsi_dumplog
 r_void
 id|acornscsi_dumplog
+c_func
 (paren
 id|AS_Host
 op_star
@@ -2021,243 +2454,36 @@ r_int
 id|target
 )paren
 (brace
-r_int
-r_int
-id|prev
-suffix:semicolon
 r_do
 (brace
-r_int
-r_int
-id|statptr
-suffix:semicolon
-id|printk
+id|acornscsi_dumplogline
+c_func
 (paren
-l_string|&quot;%c:&quot;
+id|host
 comma
 id|target
-op_eq
-l_int|8
-ques
-c_cond
-l_char|&squot;H&squot;
-suffix:colon
-(paren
-l_char|&squot;0&squot;
-op_plus
-id|target
-)paren
-)paren
-suffix:semicolon
-id|statptr
-op_assign
-id|status_ptr
-(braket
-id|target
-)braket
-op_minus
-l_int|10
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|statptr
-OL
+comma
 l_int|0
 )paren
-id|statptr
-op_add_assign
-l_int|16
 suffix:semicolon
-id|prev
-op_assign
-id|status
-(braket
-id|target
-)braket
-(braket
-id|statptr
-)braket
-dot
-id|when
-suffix:semicolon
-r_for
-c_loop
+id|acornscsi_dumplogline
+c_func
 (paren
-suffix:semicolon
-id|statptr
-op_ne
-id|status_ptr
-(braket
+id|host
+comma
 id|target
-)braket
-suffix:semicolon
-id|statptr
-op_assign
-(paren
-id|statptr
-op_plus
+comma
 l_int|1
 )paren
-op_amp
-l_int|15
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|status
-(braket
-id|target
-)braket
-(braket
-id|statptr
-)braket
-dot
-id|when
-)paren
-(brace
-macro_line|#ifdef CONFIG_ACORNSCSI_CONSTANTS
-id|printk
-(paren
-l_string|&quot;%c%02X:S=&quot;
-comma
-id|status
-(braket
-id|target
-)braket
-(braket
-id|statptr
-)braket
-dot
-id|irq
-ques
-c_cond
-l_char|&squot;-&squot;
-suffix:colon
-l_char|&squot; &squot;
-comma
-id|status
-(braket
-id|target
-)braket
-(braket
-id|statptr
-)braket
-dot
-id|ph
-)paren
 suffix:semicolon
-id|print_scsi_status
+id|acornscsi_dumplogline
+c_func
 (paren
-id|status
-(braket
-id|target
-)braket
-(braket
-id|statptr
-)braket
-dot
-id|ssr
-)paren
-suffix:semicolon
-macro_line|#else
-id|printk
-(paren
-l_string|&quot;%c%02X:%02X&quot;
+id|host
 comma
-id|status
-(braket
 id|target
-)braket
-(braket
-id|statptr
-)braket
-dot
-id|irq
-ques
-c_cond
-l_char|&squot;-&squot;
-suffix:colon
-l_char|&squot; &squot;
 comma
-id|status
-(braket
-id|target
-)braket
-(braket
-id|statptr
-)braket
-dot
-id|ph
-comma
-id|status
-(braket
-id|target
-)braket
-(braket
-id|statptr
-)braket
-dot
-id|ssr
-)paren
-suffix:semicolon
-macro_line|#endif
-id|printk
-(paren
-l_string|&quot;+%02ld&quot;
-comma
-(paren
-id|status
-(braket
-id|target
-)braket
-(braket
-id|statptr
-)braket
-dot
-id|when
-op_minus
-id|prev
-)paren
-OL
-l_int|100
-ques
-c_cond
-(paren
-id|status
-(braket
-id|target
-)braket
-(braket
-id|statptr
-)braket
-dot
-id|when
-op_minus
-id|prev
-)paren
-suffix:colon
-l_int|99
-)paren
-suffix:semicolon
-id|prev
-op_assign
-id|status
-(braket
-id|target
-)braket
-(braket
-id|statptr
-)braket
-dot
-id|when
-suffix:semicolon
-)brace
-)brace
-id|printk
-(paren
-l_string|&quot;&bslash;n&quot;
+l_int|2
 )paren
 suffix:semicolon
 r_if
@@ -2285,6 +2511,7 @@ r_static
 DECL|function|acornscsi_target
 r_char
 id|acornscsi_target
+c_func
 (paren
 id|AS_Host
 op_star
@@ -2305,12 +2532,13 @@ r_return
 l_char|&squot;H&squot;
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Prototype: cmdtype_t acornscsi_cmdtype (int command)&n; * Purpose  : differentiate READ from WRITE from other commands&n; * Params   : command - command to interpret&n; * Returns  : CMD_READ&t;- command reads data,&n; *&t;      CMD_WRITE - command writes data,&n; *&t;      CMD_MISC&t;- everything else&n; */
+multiline_comment|/*&n; * Prototype: cmdtype_t acornscsi_cmdtype(int command)&n; * Purpose  : differentiate READ from WRITE from other commands&n; * Params   : command - command to interpret&n; * Returns  : CMD_READ&t;- command reads data,&n; *&t;      CMD_WRITE - command writes data,&n; *&t;      CMD_MISC&t;- everything else&n; */
 r_static
 r_inline
 DECL|function|acornscsi_cmdtype
 id|cmdtype_t
 id|acornscsi_cmdtype
+c_func
 (paren
 r_int
 id|command
@@ -2353,11 +2581,12 @@ id|CMD_MISC
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Prototype: int acornscsi_datadirection (int command)&n; * Purpose  : differentiate between commands that have a DATA IN phase&n; *&t;      and a DATA OUT phase&n; * Params   : command - command to interpret&n; * Returns  : DATADIR_OUT - data out phase expected&n; *&t;      DATADIR_IN  - data in phase expected&n; */
+multiline_comment|/*&n; * Prototype: int acornscsi_datadirection(int command)&n; * Purpose  : differentiate between commands that have a DATA IN phase&n; *&t;      and a DATA OUT phase&n; * Params   : command - command to interpret&n; * Returns  : DATADIR_OUT - data out phase expected&n; *&t;      DATADIR_IN  - data in phase expected&n; */
 r_static
 DECL|function|acornscsi_datadirection
 id|datadir_t
 id|acornscsi_datadirection
+c_func
 (paren
 r_int
 id|command
@@ -2547,11 +2776,12 @@ l_int|0
 )brace
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Prototype: int acornscsi_getperiod (unsigned char syncxfer)&n; * Purpose  : period for the synchronous transfer setting&n; * Params   : syncxfer SYNCXFER register value&n; * Returns  : period in ns.&n; */
+multiline_comment|/*&n; * Prototype: int acornscsi_getperiod(unsigned char syncxfer)&n; * Purpose  : period for the synchronous transfer setting&n; * Params   : syncxfer SYNCXFER register value&n; * Returns  : period in ns.&n; */
 r_static
 DECL|function|acornscsi_getperiod
 r_int
 id|acornscsi_getperiod
+c_func
 (paren
 r_int
 r_char
@@ -2617,12 +2847,13 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Prototype: int round_period (unsigned int period)&n; * Purpose  : return index into above table for a required REQ period&n; * Params   : period - time (ns) for REQ&n; * Returns  : table index&n; * Copyright: Copyright (c) 1996 John Shifflett, GeoLog Consulting&n; */
+multiline_comment|/*&n; * Prototype: int round_period(unsigned int period)&n; * Purpose  : return index into above table for a required REQ period&n; * Params   : period - time (ns) for REQ&n; * Returns  : table index&n; * Copyright: Copyright (c) 1996 John Shifflett, GeoLog Consulting&n; */
 r_static
 r_inline
 DECL|function|round_period
 r_int
 id|round_period
+c_func
 (paren
 r_int
 r_int
@@ -2685,12 +2916,13 @@ r_return
 l_int|7
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Prototype: unsigned char calc_sync_xfer (unsigned int period, unsigned int offset)&n; * Purpose  : calculate value for 33c93s SYNC register&n; * Params   : period - time (ns) for REQ&n; *&t;      offset - offset in bytes between REQ/ACK&n; * Returns  : value for SYNC register&n; * Copyright: Copyright (c) 1996 John Shifflett, GeoLog Consulting&n; */
+multiline_comment|/*&n; * Prototype: unsigned char calc_sync_xfer(unsigned int period, unsigned int offset)&n; * Purpose  : calculate value for 33c93s SYNC register&n; * Params   : period - time (ns) for REQ&n; *&t;      offset - offset in bytes between REQ/ACK&n; * Returns  : value for SYNC register&n; * Copyright: Copyright (c) 1996 John Shifflett, GeoLog Consulting&n; */
 r_static
 DECL|function|calc_sync_xfer
 r_int
 r_char
 id|calc_sync_xfer
+c_func
 (paren
 r_int
 r_int
@@ -2728,11 +2960,12 @@ id|SDTR_SIZE
 suffix:semicolon
 )brace
 multiline_comment|/* ====================================================================================&n; * Command functions&n; */
-multiline_comment|/*&n; * Function: acornscsi_kick (AS_Host *host)&n; * Purpose : kick next command to interface&n; * Params  : host - host to send command to&n; * Returns : INTR_IDLE if idle, otherwise INTR_PROCESSING&n; * Notes   : interrupts are always disabled!&n; */
+multiline_comment|/*&n; * Function: acornscsi_kick(AS_Host *host)&n; * Purpose : kick next command to interface&n; * Params  : host - host to send command to&n; * Returns : INTR_IDLE if idle, otherwise INTR_PROCESSING&n; * Notes   : interrupts are always disabled!&n; */
 r_static
 DECL|function|acornscsi_kick
 id|intr_ret_t
 id|acornscsi_kick
+c_func
 (paren
 id|AS_Host
 op_star
@@ -2768,6 +3001,7 @@ id|SCpnt
 id|SCpnt
 op_assign
 id|queue_remove_exclude
+c_func
 (paren
 op_amp
 id|host-&gt;queues.issue
@@ -2798,6 +3032,7 @@ id|host-&gt;SCpnt
 )paren
 (brace
 id|queue_add_cmd_tail
+c_func
 (paren
 op_amp
 id|host-&gt;queues.disconnected
@@ -2816,12 +3051,14 @@ c_func
 id|host-&gt;SCpnt
 comma
 id|printk
+c_func
 (paren
 l_string|&quot;scsi%d.%c: moved command to disconnected queue&bslash;n&quot;
 comma
 id|host-&gt;host-&gt;host_no
 comma
 id|acornscsi_target
+c_func
 (paren
 id|host
 )paren
@@ -2841,6 +3078,7 @@ c_cond
 op_logical_neg
 (paren
 id|sbic_arm_read
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -2858,6 +3096,7 @@ id|ASR_CIP
 )paren
 (brace
 id|sbic_arm_write
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -2867,6 +3106,7 @@ id|SCpnt-&gt;target
 )paren
 suffix:semicolon
 id|sbic_arm_write
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -2897,6 +3137,10 @@ id|host-&gt;dma.xfer_required
 op_assign
 l_int|0
 suffix:semicolon
+id|host-&gt;dma.xfer_done
+op_assign
+l_int|0
+suffix:semicolon
 macro_line|#if (DEBUG &amp; (DEBUG_ABORT|DEBUG_CONNECT))
 id|DBG
 c_func
@@ -2904,6 +3148,7 @@ c_func
 id|SCpnt
 comma
 id|printk
+c_func
 (paren
 l_string|&quot;scsi%d.%c: starting cmd %02X&bslash;n&quot;
 comma
@@ -2958,6 +3203,7 @@ suffix:semicolon
 r_else
 macro_line|#endif
 id|set_bit
+c_func
 (paren
 id|SCpnt-&gt;target
 op_star
@@ -2976,6 +3222,7 @@ r_switch
 c_cond
 (paren
 id|acornscsi_cmdtype
+c_func
 (paren
 id|SCpnt-&gt;cmnd
 (braket
@@ -3017,11 +3264,12 @@ r_return
 id|INTR_PROCESSING
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function: void acornscsi_done (AS_Host *host, Scsi_Cmnd **SCpntp, unsigned int result)&n; * Purpose : complete processing for command&n; * Params  : host   - interface that completed&n; *&t;     result - driver byte of result&n; */
+multiline_comment|/*&n; * Function: void acornscsi_done(AS_Host *host, Scsi_Cmnd **SCpntp, unsigned int result)&n; * Purpose : complete processing for command&n; * Params  : host   - interface that completed&n; *&t;     result - driver byte of result&n; */
 r_static
 DECL|function|acornscsi_done
 r_void
 id|acornscsi_done
+c_func
 (paren
 id|AS_Host
 op_star
@@ -3046,6 +3294,7 @@ id|SCpntp
 suffix:semicolon
 multiline_comment|/* clean up */
 id|sbic_arm_write
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -3072,6 +3321,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 id|acornscsi_dma_cleanup
+c_func
 (paren
 id|host
 )paren
@@ -3092,13 +3342,31 @@ multiline_comment|/*&n;&t; * In theory, this should not happen.  In practice, it
 r_if
 c_cond
 (paren
-id|host-&gt;scsi.SCp.ptr
-op_logical_and
 id|result
 op_eq
 id|DID_OK
+)paren
+(brace
+r_int
+id|xfer_warn
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|SCpnt-&gt;underflow
+op_eq
+l_int|0
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|host-&gt;scsi.SCp.ptr
 op_logical_and
 id|acornscsi_cmdtype
+c_func
 (paren
 id|SCpnt-&gt;cmnd
 (braket
@@ -3108,11 +3376,50 @@ l_int|0
 op_ne
 id|CMD_MISC
 )paren
+id|xfer_warn
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+r_else
+(brace
+r_if
+c_cond
+(paren
+id|host-&gt;scsi.SCp.scsi_xferred
+OL
+id|SCpnt-&gt;underflow
+op_logical_or
+id|host-&gt;scsi.SCp.scsi_xferred
+op_ne
+id|host-&gt;dma.transferred
+)paren
+id|xfer_warn
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+multiline_comment|/* ANSI standard says: (SCSI-2 Rev 10c Sect 5.6.6)&n;&t;&t; *  Targets which break data transfers into multiple&n;&t;&t; *  connections shall end each successful connection&n;&t;&t; *  (except possibly the last) with a SAVE DATA&n;&t;&t; *  POINTER - DISCONNECT message sequence.&n;&t;&t; *&n;&t;&t; * This makes it difficult to ensure that a transfer has&n;&t;&t; * completed.  If we reach the end of a transfer during&n;&t;&t; * the command, then we can only have finished the transfer.&n;&t;&t; * therefore, if we seem to have some data remaining, this&n;&t;&t; * is not a problem.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|host-&gt;dma.xfer_done
+)paren
+id|xfer_warn
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|xfer_warn
+)paren
 (brace
 r_switch
 c_cond
 (paren
 id|status_byte
+c_func
 (paren
 id|SCpnt-&gt;result
 )paren
@@ -3138,6 +3445,7 @@ suffix:semicolon
 r_default
 suffix:colon
 id|printk
+c_func
 (paren
 id|KERN_ERR
 l_string|&quot;scsi%d.H: incomplete data transfer detected: result=%08X command=&quot;
@@ -3148,11 +3456,13 @@ id|SCpnt-&gt;result
 )paren
 suffix:semicolon
 id|print_command
+c_func
 (paren
 id|SCpnt-&gt;cmnd
 )paren
 suffix:semicolon
 id|acornscsi_dumpdma
+c_func
 (paren
 id|host
 comma
@@ -3160,6 +3470,7 @@ l_string|&quot;done&quot;
 )paren
 suffix:semicolon
 id|acornscsi_dumplog
+c_func
 (paren
 id|host
 comma
@@ -3178,6 +3489,7 @@ l_int|16
 suffix:semicolon
 )brace
 )brace
+)brace
 r_if
 c_cond
 (paren
@@ -3185,6 +3497,7 @@ op_logical_neg
 id|SCpnt-&gt;scsi_done
 )paren
 id|panic
+c_func
 (paren
 l_string|&quot;scsi%d.H: null scsi_done function in acornscsi_done&quot;
 comma
@@ -3192,6 +3505,7 @@ id|host-&gt;host-&gt;host_no
 )paren
 suffix:semicolon
 id|clear_bit
+c_func
 (paren
 id|SCpnt-&gt;target
 op_star
@@ -3202,7 +3516,10 @@ comma
 id|host-&gt;busyluns
 )paren
 suffix:semicolon
-id|SCpnt-&gt;scsi_done
+id|SCpnt
+op_member_access_from_pointer
+id|scsi_done
+c_func
 (paren
 id|SCpnt
 )paren
@@ -3210,6 +3527,7 @@ suffix:semicolon
 )brace
 r_else
 id|printk
+c_func
 (paren
 l_string|&quot;scsi%d: null command in acornscsi_done&quot;
 comma
@@ -3227,6 +3545,7 @@ r_static
 DECL|function|acornscsi_data_updateptr
 r_void
 id|acornscsi_data_updateptr
+c_func
 (paren
 id|AS_Host
 op_star
@@ -3282,17 +3601,24 @@ id|SCp-&gt;buffer-&gt;length
 suffix:semicolon
 )brace
 r_else
+(brace
 id|SCp-&gt;ptr
 op_assign
 l_int|NULL
 suffix:semicolon
+id|host-&gt;dma.xfer_done
+op_assign
+l_int|1
+suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Prototype: void acornscsi_data_read (AS_Host *host, char *ptr,&n; *&t;&t;&t;&t;unsigned int start_addr, unsigned int length)&n; * Purpose  : read data from DMA RAM&n; * Params   : host - host to transfer from&n; *&t;      ptr  - DRAM address&n; *&t;      start_addr - host mem address&n; *&t;      length - number of bytes to transfer&n; * Notes    : this will only be one SG entry or less&n; */
+)brace
+multiline_comment|/*&n; * Prototype: void acornscsi_data_read(AS_Host *host, char *ptr,&n; *&t;&t;&t;&t;unsigned int start_addr, unsigned int length)&n; * Purpose  : read data from DMA RAM&n; * Params   : host - host to transfer from&n; *&t;      ptr  - DRAM address&n; *&t;      start_addr - host mem address&n; *&t;      length - number of bytes to transfer&n; * Notes    : this will only be one SG entry or less&n; */
 r_static
 DECL|function|acornscsi_data_read
 r_void
 id|acornscsi_data_read
+c_func
 (paren
 id|AS_Host
 op_star
@@ -3314,6 +3640,7 @@ id|length
 r_extern
 r_void
 id|__acornscsi_in
+c_func
 (paren
 r_int
 id|port
@@ -3359,6 +3686,7 @@ l_int|1
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 id|page
@@ -3412,6 +3740,7 @@ op_assign
 id|len
 suffix:semicolon
 id|__acornscsi_in
+c_func
 (paren
 id|host-&gt;card.io_ram
 op_plus
@@ -3458,6 +3787,7 @@ id|page
 op_increment
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 id|page
@@ -3473,6 +3803,7 @@ suffix:semicolon
 )brace
 )brace
 id|outb
+c_func
 (paren
 id|host-&gt;card.page_reg
 comma
@@ -3480,11 +3811,12 @@ id|host-&gt;card.io_page
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Prototype: void acornscsi_data_write (AS_Host *host, char *ptr,&n; *&t;&t;&t;&t;unsigned int start_addr, unsigned int length)&n; * Purpose  : write data to DMA RAM&n; * Params   : host - host to transfer from&n; *&t;      ptr  - DRAM address&n; *&t;      start_addr - host mem address&n; *&t;      length - number of bytes to transfer&n; * Notes    : this will only be one SG entry or less&n; */
+multiline_comment|/*&n; * Prototype: void acornscsi_data_write(AS_Host *host, char *ptr,&n; *&t;&t;&t;&t;unsigned int start_addr, unsigned int length)&n; * Purpose  : write data to DMA RAM&n; * Params   : host - host to transfer from&n; *&t;      ptr  - DRAM address&n; *&t;      start_addr - host mem address&n; *&t;      length - number of bytes to transfer&n; * Notes    : this will only be one SG entry or less&n; */
 r_static
 DECL|function|acornscsi_data_write
 r_void
 id|acornscsi_data_write
+c_func
 (paren
 id|AS_Host
 op_star
@@ -3506,6 +3838,7 @@ id|length
 r_extern
 r_void
 id|__acornscsi_out
+c_func
 (paren
 r_int
 id|port
@@ -3551,6 +3884,7 @@ l_int|1
 )paren
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 id|page
@@ -3604,6 +3938,7 @@ op_assign
 id|len
 suffix:semicolon
 id|__acornscsi_out
+c_func
 (paren
 id|host-&gt;card.io_ram
 op_plus
@@ -3650,6 +3985,7 @@ id|page
 op_increment
 suffix:semicolon
 id|outb
+c_func
 (paren
 (paren
 id|page
@@ -3665,6 +4001,7 @@ suffix:semicolon
 )brace
 )brace
 id|outb
+c_func
 (paren
 id|host-&gt;card.page_reg
 comma
@@ -3674,12 +4011,13 @@ suffix:semicolon
 )brace
 multiline_comment|/* =========================================================================================&n; * On-board DMA routines&n; */
 macro_line|#ifdef USE_DMAC
-multiline_comment|/*&n; * Prototype: void acornscsi_dmastop (AS_Host *host)&n; * Purpose  : stop all DMA&n; * Params   : host - host on which to stop DMA&n; * Notes    : This is called when leaving DATA IN/OUT phase,&n; *&t;      or when interface is RESET&n; */
+multiline_comment|/*&n; * Prototype: void acornscsi_dmastop(AS_Host *host)&n; * Purpose  : stop all DMA&n; * Params   : host - host on which to stop DMA&n; * Notes    : This is called when leaving DATA IN/OUT phase,&n; *&t;      or when interface is RESET&n; */
 r_static
 r_inline
 DECL|function|acornscsi_dma_stop
 r_void
 id|acornscsi_dma_stop
+c_func
 (paren
 id|AS_Host
 op_star
@@ -3687,6 +4025,7 @@ id|host
 )paren
 (brace
 id|dmac_write
+c_func
 (paren
 id|host-&gt;dma.io_port
 comma
@@ -3696,6 +4035,7 @@ id|MASK_ON
 )paren
 suffix:semicolon
 id|dmac_clearintr
+c_func
 (paren
 id|host-&gt;dma.io_intr_clear
 )paren
@@ -3707,6 +4047,7 @@ c_func
 id|host-&gt;SCpnt
 comma
 id|acornscsi_dumpdma
+c_func
 (paren
 id|host
 comma
@@ -3716,11 +4057,12 @@ l_string|&quot;stop&quot;
 suffix:semicolon
 macro_line|#endif
 )brace
-multiline_comment|/*&n; * Function: void acornscsi_dma_setup (AS_Host *host, dmadir_t direction)&n; * Purpose : setup DMA controller for data transfer&n; * Params  : host - host to setup&n; *&t;     direction - data transfer direction&n; * Notes   : This is called when entering DATA I/O phase, not&n; *&t;     while we&squot;re in a DATA I/O phase&n; */
+multiline_comment|/*&n; * Function: void acornscsi_dma_setup(AS_Host *host, dmadir_t direction)&n; * Purpose : setup DMA controller for data transfer&n; * Params  : host - host to setup&n; *&t;     direction - data transfer direction&n; * Notes   : This is called when entering DATA I/O phase, not&n; *&t;     while we&squot;re in a DATA I/O phase&n; */
 r_static
 DECL|function|acornscsi_dma_setup
 r_void
 id|acornscsi_dma_setup
+c_func
 (paren
 id|AS_Host
 op_star
@@ -3743,6 +4085,7 @@ op_assign
 id|direction
 suffix:semicolon
 id|dmac_write
+c_func
 (paren
 id|host-&gt;dma.io_port
 comma
@@ -3773,6 +4116,7 @@ id|host-&gt;SCpnt-&gt;target
 )paren
 (brace
 id|printk
+c_func
 (paren
 id|KERN_CRIT
 l_string|&quot;scsi%d.%c: I can&squot;t handle DMA_OUT!&bslash;n&quot;
@@ -3780,6 +4124,7 @@ comma
 id|host-&gt;host-&gt;host_no
 comma
 id|acornscsi_target
+c_func
 (paren
 id|host
 )paren
@@ -3803,6 +4148,7 @@ multiline_comment|/*&n;     * Allocate some buffer space, limited to half the bu
 id|length
 op_assign
 id|min
+c_func
 (paren
 id|host-&gt;scsi.SCp.this_residual
 comma
@@ -3846,6 +4192,7 @@ op_eq
 id|DMA_OUT
 )paren
 id|acornscsi_data_write
+c_func
 (paren
 id|host
 comma
@@ -3861,6 +4208,7 @@ op_sub_assign
 l_int|1
 suffix:semicolon
 id|dmac_write
+c_func
 (paren
 id|host-&gt;dma.io_port
 comma
@@ -3870,6 +4218,7 @@ id|length
 )paren
 suffix:semicolon
 id|dmac_write
+c_func
 (paren
 id|host-&gt;dma.io_port
 comma
@@ -3881,6 +4230,7 @@ l_int|8
 )paren
 suffix:semicolon
 id|dmac_write
+c_func
 (paren
 id|host-&gt;dma.io_port
 comma
@@ -3890,6 +4240,7 @@ id|address
 )paren
 suffix:semicolon
 id|dmac_write
+c_func
 (paren
 id|host-&gt;dma.io_port
 comma
@@ -3901,6 +4252,7 @@ l_int|8
 )paren
 suffix:semicolon
 id|dmac_write
+c_func
 (paren
 id|host-&gt;dma.io_port
 comma
@@ -3910,6 +4262,7 @@ l_int|0
 )paren
 suffix:semicolon
 id|dmac_write
+c_func
 (paren
 id|host-&gt;dma.io_port
 comma
@@ -3919,6 +4272,7 @@ id|mode
 )paren
 suffix:semicolon
 id|dmac_write
+c_func
 (paren
 id|host-&gt;dma.io_port
 comma
@@ -3934,6 +4288,7 @@ c_func
 id|host-&gt;SCpnt
 comma
 id|acornscsi_dumpdma
+c_func
 (paren
 id|host
 comma
@@ -3948,11 +4303,12 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Function: void acornscsi_dma_cleanup (AS_Host *host)&n; * Purpose : ensure that all DMA transfers are up-to-date &amp; host-&gt;scsi.SCp is correct&n; * Params  : host - host to finish&n; * Notes   : This is called when a command is:&n; *&t;&t;terminating, RESTORE_POINTERS, SAVE_POINTERS, DISCONECT&n; *&t;   : This must not return until all transfers are completed.&n; */
+multiline_comment|/*&n; * Function: void acornscsi_dma_cleanup(AS_Host *host)&n; * Purpose : ensure that all DMA transfers are up-to-date &amp; host-&gt;scsi.SCp is correct&n; * Params  : host - host to finish&n; * Notes   : This is called when a command is:&n; *&t;&t;terminating, RESTORE_POINTERS, SAVE_POINTERS, DISCONECT&n; *&t;   : This must not return until all transfers are completed.&n; */
 r_static
 DECL|function|acornscsi_dma_cleanup
 r_void
 id|acornscsi_dma_cleanup
+c_func
 (paren
 id|AS_Host
 op_star
@@ -3960,6 +4316,7 @@ id|host
 )paren
 (brace
 id|dmac_write
+c_func
 (paren
 id|host-&gt;dma.io_port
 comma
@@ -3969,6 +4326,7 @@ id|MASK_ON
 )paren
 suffix:semicolon
 id|dmac_clearintr
+c_func
 (paren
 id|host-&gt;dma.io_intr_clear
 )paren
@@ -3992,6 +4350,7 @@ op_eq
 id|DMA_IN
 )paren
 id|acornscsi_data_read
+c_func
 (paren
 id|host
 comma
@@ -4038,6 +4397,7 @@ multiline_comment|/*&n;&t; * Calculate number of bytes transferred from DMA.&n;&
 id|transferred
 op_assign
 id|dmac_address
+c_func
 (paren
 id|host-&gt;dma.io_port
 )paren
@@ -4056,6 +4416,7 @@ op_eq
 id|DMA_IN
 )paren
 id|acornscsi_data_read
+c_func
 (paren
 id|host
 comma
@@ -4068,6 +4429,7 @@ id|transferred
 suffix:semicolon
 multiline_comment|/*&n;&t; * Update SCSI pointers&n;&t; */
 id|acornscsi_data_updateptr
+c_func
 (paren
 id|host
 comma
@@ -4095,11 +4457,12 @@ suffix:semicolon
 macro_line|#endif
 )brace
 )brace
-multiline_comment|/*&n; * Function: void acornscsi_dmacintr (AS_Host *host)&n; * Purpose : handle interrupts from DMAC device&n; * Params  : host - host to process&n; * Notes   : If reading, we schedule the read to main memory &amp;&n; *&t;     allow the transfer to continue.&n; *&t;   : If writing, we fill the onboard DMA memory from main&n; *&t;     memory.&n; *&t;   : Called whenever DMAC finished it&squot;s current transfer.&n; */
+multiline_comment|/*&n; * Function: void acornscsi_dmacintr(AS_Host *host)&n; * Purpose : handle interrupts from DMAC device&n; * Params  : host - host to process&n; * Notes   : If reading, we schedule the read to main memory &amp;&n; *&t;     allow the transfer to continue.&n; *&t;   : If writing, we fill the onboard DMA memory from main&n; *&t;     memory.&n; *&t;   : Called whenever DMAC finished it&squot;s current transfer.&n; */
 r_static
 DECL|function|acornscsi_dma_intr
 r_void
 id|acornscsi_dma_intr
+c_func
 (paren
 id|AS_Host
 op_star
@@ -4121,6 +4484,7 @@ c_func
 id|host-&gt;SCpnt
 comma
 id|acornscsi_dumpdma
+c_func
 (paren
 id|host
 comma
@@ -4130,6 +4494,7 @@ l_string|&quot;inti&quot;
 suffix:semicolon
 macro_line|#endif
 id|dmac_write
+c_func
 (paren
 id|host-&gt;dma.io_port
 comma
@@ -4139,6 +4504,7 @@ id|MASK_ON
 )paren
 suffix:semicolon
 id|dmac_clearintr
+c_func
 (paren
 id|host-&gt;dma.io_intr_clear
 )paren
@@ -4147,6 +4513,7 @@ multiline_comment|/*&n;     * Calculate amount transferred via DMA&n;     */
 id|transferred
 op_assign
 id|dmac_address
+c_func
 (paren
 id|host-&gt;dma.io_port
 )paren
@@ -4184,6 +4551,7 @@ l_int|1
 suffix:semicolon
 )brace
 id|acornscsi_data_updateptr
+c_func
 (paren
 id|host
 comma
@@ -4197,6 +4565,7 @@ multiline_comment|/*&n;     * Allocate some buffer space, limited to half the on
 id|length
 op_assign
 id|min
+c_func
 (paren
 id|host-&gt;scsi.SCp.this_residual
 comma
@@ -4240,6 +4609,7 @@ op_eq
 id|DMA_OUT
 )paren
 id|acornscsi_data_write
+c_func
 (paren
 id|host
 comma
@@ -4255,6 +4625,7 @@ op_sub_assign
 l_int|1
 suffix:semicolon
 id|dmac_write
+c_func
 (paren
 id|host-&gt;dma.io_port
 comma
@@ -4264,6 +4635,7 @@ id|length
 )paren
 suffix:semicolon
 id|dmac_write
+c_func
 (paren
 id|host-&gt;dma.io_port
 comma
@@ -4275,6 +4647,7 @@ l_int|8
 )paren
 suffix:semicolon
 id|dmac_write
+c_func
 (paren
 id|host-&gt;dma.io_port
 comma
@@ -4284,6 +4657,7 @@ id|address
 )paren
 suffix:semicolon
 id|dmac_write
+c_func
 (paren
 id|host-&gt;dma.io_port
 comma
@@ -4295,6 +4669,7 @@ l_int|8
 )paren
 suffix:semicolon
 id|dmac_write
+c_func
 (paren
 id|host-&gt;dma.io_port
 comma
@@ -4304,6 +4679,7 @@ l_int|0
 )paren
 suffix:semicolon
 id|dmac_write
+c_func
 (paren
 id|host-&gt;dma.io_port
 comma
@@ -4319,6 +4695,7 @@ c_func
 id|host-&gt;SCpnt
 comma
 id|acornscsi_dumpdma
+c_func
 (paren
 id|host
 comma
@@ -4340,6 +4717,7 @@ r_if
 c_cond
 (paren
 id|dmac_read
+c_func
 (paren
 id|host-&gt;dma.io_port
 comma
@@ -4350,6 +4728,7 @@ id|STATUS_RQ0
 )paren
 (brace
 id|acornscsi_abortcmd
+c_func
 (paren
 id|host
 comma
@@ -4357,6 +4736,7 @@ id|host-&gt;SCpnt-&gt;tag
 )paren
 suffix:semicolon
 id|dmac_write
+c_func
 (paren
 id|host-&gt;dma.io_port
 comma
@@ -4366,6 +4746,7 @@ l_int|0
 )paren
 suffix:semicolon
 id|dmac_write
+c_func
 (paren
 id|host-&gt;dma.io_port
 comma
@@ -4375,6 +4756,7 @@ l_int|0
 )paren
 suffix:semicolon
 id|dmac_write
+c_func
 (paren
 id|host-&gt;dma.io_port
 comma
@@ -4384,6 +4766,7 @@ l_int|0
 )paren
 suffix:semicolon
 id|dmac_write
+c_func
 (paren
 id|host-&gt;dma.io_port
 comma
@@ -4393,6 +4776,7 @@ l_int|0
 )paren
 suffix:semicolon
 id|dmac_write
+c_func
 (paren
 id|host-&gt;dma.io_port
 comma
@@ -4402,6 +4786,7 @@ l_int|0
 )paren
 suffix:semicolon
 id|dmac_write
+c_func
 (paren
 id|host-&gt;dma.io_port
 comma
@@ -4414,11 +4799,12 @@ suffix:semicolon
 macro_line|#endif
 )brace
 )brace
-multiline_comment|/*&n; * Function: void acornscsi_dma_xfer (AS_Host *host)&n; * Purpose : transfer data between AcornSCSI and memory&n; * Params  : host - host to process&n; */
+multiline_comment|/*&n; * Function: void acornscsi_dma_xfer(AS_Host *host)&n; * Purpose : transfer data between AcornSCSI and memory&n; * Params  : host - host to process&n; */
 r_static
 DECL|function|acornscsi_dma_xfer
 r_void
 id|acornscsi_dma_xfer
+c_func
 (paren
 id|AS_Host
 op_star
@@ -4437,6 +4823,7 @@ op_eq
 id|DMA_IN
 )paren
 id|acornscsi_data_read
+c_func
 (paren
 id|host
 comma
@@ -4448,11 +4835,12 @@ id|host-&gt;dma.xfer_length
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function: void acornscsi_dma_adjust (AS_Host *host)&n; * Purpose : adjust DMA pointers &amp; count for bytes transfered to&n; *&t;     SBIC but not SCSI bus.&n; * Params  : host - host to adjust DMA count for&n; */
+multiline_comment|/*&n; * Function: void acornscsi_dma_adjust(AS_Host *host)&n; * Purpose : adjust DMA pointers &amp; count for bytes transfered to&n; *&t;     SBIC but not SCSI bus.&n; * Params  : host - host to adjust DMA count for&n; */
 r_static
 DECL|function|acornscsi_dma_adjust
 r_void
 id|acornscsi_dma_adjust
+c_func
 (paren
 id|AS_Host
 op_star
@@ -4476,6 +4864,7 @@ c_func
 id|host-&gt;SCpnt
 comma
 id|acornscsi_dumpdma
+c_func
 (paren
 id|host
 comma
@@ -4499,12 +4888,14 @@ OL
 l_int|0
 )paren
 id|printk
+c_func
 (paren
 l_string|&quot;scsi%d.%c: Ack! DMA write correction %ld &lt; 0!&bslash;n&quot;
 comma
 id|host-&gt;host-&gt;host_no
 comma
 id|acornscsi_target
+c_func
 (paren
 id|host
 )paren
@@ -4531,6 +4922,7 @@ op_add_assign
 id|host-&gt;dma.start_addr
 suffix:semicolon
 id|dmac_write
+c_func
 (paren
 id|host-&gt;dma.io_port
 comma
@@ -4540,6 +4932,7 @@ id|transferred
 )paren
 suffix:semicolon
 id|dmac_write
+c_func
 (paren
 id|host-&gt;dma.io_port
 comma
@@ -4551,6 +4944,7 @@ l_int|8
 )paren
 suffix:semicolon
 id|dmac_write
+c_func
 (paren
 id|host-&gt;dma.io_port
 comma
@@ -4568,6 +4962,7 @@ c_func
 id|host-&gt;SCpnt
 comma
 id|acornscsi_dumpdma
+c_func
 (paren
 id|host
 comma
@@ -4581,90 +4976,58 @@ macro_line|#endif
 )brace
 macro_line|#endif
 multiline_comment|/* =========================================================================================&n; * Data I/O&n; */
-multiline_comment|/*&n; * Function: void acornscsi_sendcommand (AS_Host *host)&n; * Purpose : send a command to a target&n; * Params  : host - host which is connected to target&n; */
 r_static
-DECL|function|acornscsi_sendcommand
-r_void
-id|acornscsi_sendcommand
+r_int
+DECL|function|acornscsi_write_pio
+id|acornscsi_write_pio
+c_func
 (paren
 id|AS_Host
 op_star
 id|host
+comma
+r_char
+op_star
+id|bytes
+comma
+r_int
+op_star
+id|ptr
+comma
+r_int
+id|len
+comma
+r_int
+r_int
+id|max_timeout
 )paren
 (brace
-id|Scsi_Cmnd
-op_star
-id|SCpnt
-op_assign
-id|host-&gt;SCpnt
-suffix:semicolon
 r_int
 r_int
 id|asr
+comma
+id|timeout
+op_assign
+id|max_timeout
 suffix:semicolon
 r_int
-r_char
-op_star
-id|cmdptr
-comma
-op_star
-id|cmdend
-suffix:semicolon
-id|sbic_arm_write
-(paren
-id|host-&gt;scsi.io_port
-comma
-id|TRANSCNTH
-comma
-l_int|0
-)paren
-suffix:semicolon
-id|sbic_arm_writenext
-(paren
-id|host-&gt;scsi.io_port
-comma
-l_int|0
-)paren
-suffix:semicolon
-id|sbic_arm_writenext
-(paren
-id|host-&gt;scsi.io_port
-comma
-id|SCpnt-&gt;cmd_len
-op_minus
-id|host-&gt;scsi.SCp.sent_command
-)paren
-suffix:semicolon
-id|acornscsi_sbic_issuecmd
-(paren
-id|host
-comma
-id|CMND_XFERINFO
-)paren
-suffix:semicolon
-id|cmdptr
+id|my_ptr
 op_assign
-id|SCpnt-&gt;cmnd
-op_plus
-id|host-&gt;scsi.SCp.sent_command
-suffix:semicolon
-id|cmdend
-op_assign
-id|SCpnt-&gt;cmnd
-op_plus
-id|SCpnt-&gt;cmd_len
+op_star
+id|ptr
 suffix:semicolon
 r_while
 c_loop
 (paren
-id|cmdptr
+id|my_ptr
 OL
-id|cmdend
+id|len
 )paren
 (brace
 id|asr
 op_assign
 id|sbic_arm_read
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -4678,17 +5041,26 @@ id|asr
 op_amp
 id|ASR_DBR
 )paren
+(brace
+id|timeout
+op_assign
+id|max_timeout
+suffix:semicolon
 id|sbic_arm_write
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
 id|DATA
 comma
-op_star
-id|cmdptr
+id|bytes
+(braket
+id|my_ptr
 op_increment
+)braket
 )paren
 suffix:semicolon
+)brace
 r_else
 r_if
 c_cond
@@ -4699,19 +5071,126 @@ id|ASR_INT
 )paren
 r_break
 suffix:semicolon
-)brace
+r_else
 r_if
 c_cond
 (paren
-id|cmdptr
-op_ge
-id|cmdend
+op_decrement
+id|timeout
+op_eq
+l_int|0
 )paren
-id|host-&gt;scsi.SCp.sent_command
+r_break
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
+)brace
+op_star
+id|ptr
 op_assign
-id|cmdptr
+id|my_ptr
+suffix:semicolon
+r_return
+(paren
+id|timeout
+op_eq
+l_int|0
+)paren
+ques
+c_cond
 op_minus
+l_int|1
+suffix:colon
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Function: void acornscsi_sendcommand(AS_Host *host)&n; * Purpose : send a command to a target&n; * Params  : host - host which is connected to target&n; */
+r_static
+r_void
+DECL|function|acornscsi_sendcommand
+id|acornscsi_sendcommand
+c_func
+(paren
+id|AS_Host
+op_star
+id|host
+)paren
+(brace
+id|Scsi_Cmnd
+op_star
+id|SCpnt
+op_assign
+id|host-&gt;SCpnt
+suffix:semicolon
+id|sbic_arm_write
+c_func
+(paren
+id|host-&gt;scsi.io_port
+comma
+id|TRANSCNTH
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|sbic_arm_writenext
+c_func
+(paren
+id|host-&gt;scsi.io_port
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|sbic_arm_writenext
+c_func
+(paren
+id|host-&gt;scsi.io_port
+comma
+id|SCpnt-&gt;cmd_len
+op_minus
+id|host-&gt;scsi.SCp.sent_command
+)paren
+suffix:semicolon
+id|acornscsi_sbic_issuecmd
+c_func
+(paren
+id|host
+comma
+id|CMND_XFERINFO
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|acornscsi_write_pio
+c_func
+(paren
+id|host
+comma
 id|SCpnt-&gt;cmnd
+comma
+(paren
+r_int
+op_star
+)paren
+op_amp
+id|host-&gt;scsi.SCp.sent_command
+comma
+id|SCpnt-&gt;cmd_len
+comma
+l_int|1000000
+)paren
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;scsi%d: timeout while sending command&bslash;n&quot;
+comma
+id|host-&gt;host-&gt;host_no
+)paren
 suffix:semicolon
 id|host-&gt;scsi.phase
 op_assign
@@ -4722,6 +5201,7 @@ r_static
 DECL|function|acornscsi_sendmessage
 r_void
 id|acornscsi_sendmessage
+c_func
 (paren
 id|AS_Host
 op_star
@@ -4733,11 +5213,13 @@ r_int
 id|message_length
 op_assign
 id|msgqueue_msglength
+c_func
 (paren
 op_amp
 id|host-&gt;scsi.msgs
 )paren
 suffix:semicolon
+r_int
 r_int
 id|msgnr
 suffix:semicolon
@@ -4748,12 +5230,14 @@ id|msg
 suffix:semicolon
 macro_line|#if (DEBUG &amp; DEBUG_MESSAGES)
 id|printk
+c_func
 (paren
 l_string|&quot;scsi%d.%c: sending message &quot;
 comma
 id|host-&gt;host-&gt;host_no
 comma
 id|acornscsi_target
+c_func
 (paren
 id|host
 )paren
@@ -4770,6 +5254,7 @@ r_case
 l_int|0
 suffix:colon
 id|acornscsi_sbic_issuecmd
+c_func
 (paren
 id|host
 comma
@@ -4778,24 +5263,22 @@ op_or
 id|CMND_SBT
 )paren
 suffix:semicolon
-r_while
-c_loop
+id|acornscsi_sbic_wait
+c_func
 (paren
-(paren
-id|sbic_arm_read
-(paren
-id|host-&gt;scsi.io_port
+id|host
 comma
-id|ASR
-)paren
-op_amp
 id|ASR_DBR
-)paren
-op_eq
-l_int|0
+comma
+id|ASR_DBR
+comma
+l_int|1000
+comma
+l_string|&quot;sending message 1&quot;
 )paren
 suffix:semicolon
 id|sbic_arm_write
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -4810,6 +5293,7 @@ id|NOP
 suffix:semicolon
 macro_line|#if (DEBUG &amp; DEBUG_MESSAGES)
 id|printk
+c_func
 (paren
 l_string|&quot;NOP&quot;
 )paren
@@ -4821,6 +5305,7 @@ r_case
 l_int|1
 suffix:colon
 id|acornscsi_sbic_issuecmd
+c_func
 (paren
 id|host
 comma
@@ -4840,24 +5325,22 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-r_while
-c_loop
+id|acornscsi_sbic_wait
+c_func
 (paren
-(paren
-id|sbic_arm_read
-(paren
-id|host-&gt;scsi.io_port
+id|host
 comma
-id|ASR
-)paren
-op_amp
 id|ASR_DBR
-)paren
-op_eq
-l_int|0
+comma
+id|ASR_DBR
+comma
+l_int|1000
+comma
+l_string|&quot;sending message 2&quot;
 )paren
 suffix:semicolon
 id|sbic_arm_write
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -4890,6 +5373,7 @@ r_default
 suffix:colon
 multiline_comment|/*&n;&t; * ANSI standard says: (SCSI-2 Rev 10c Sect 5.6.14)&n;&t; * &squot;When a target sends this (MESSAGE_REJECT) message, it&n;&t; *  shall change to MESSAGE IN phase and send this message&n;&t; *  prior to requesting additional message bytes from the&n;&t; *  initiator.  This provides an interlock so that the&n;&t; *  initiator can determine which message byte is rejected.&n;&t; */
 id|sbic_arm_write
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -4899,6 +5383,7 @@ l_int|0
 )paren
 suffix:semicolon
 id|sbic_arm_writenext
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -4906,6 +5391,7 @@ l_int|0
 )paren
 suffix:semicolon
 id|sbic_arm_writenext
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -4913,6 +5399,7 @@ id|message_length
 )paren
 suffix:semicolon
 id|acornscsi_sbic_issuecmd
+c_func
 (paren
 id|host
 comma
@@ -4945,69 +5432,46 @@ l_int|NULL
 (brace
 r_int
 r_int
-id|asr
-comma
 id|i
 suffix:semicolon
 macro_line|#if (DEBUG &amp; DEBUG_MESSAGES)
 id|print_msg
+c_func
 (paren
 id|msg
 )paren
 suffix:semicolon
 macro_line|#endif
-r_for
-c_loop
-(paren
 id|i
 op_assign
 l_int|0
 suffix:semicolon
-id|i
-OL
-id|msg-&gt;length
-suffix:semicolon
-)paren
-(brace
-id|asr
-op_assign
-id|sbic_arm_read
-(paren
-id|host-&gt;scsi.io_port
-comma
-id|ASR
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
-id|asr
-op_amp
-id|ASR_DBR
-)paren
-id|sbic_arm_write
+id|acornscsi_write_pio
+c_func
 (paren
-id|host-&gt;scsi.io_port
-comma
-id|DATA
+id|host
 comma
 id|msg-&gt;msg
-(braket
-id|i
-op_increment
-)braket
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|asr
+comma
 op_amp
-id|ASR_INT
+id|i
+comma
+id|msg-&gt;length
+comma
+l_int|1000000
 )paren
-r_break
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;scsi%d: timeout while sending message&bslash;n&quot;
+comma
+id|host-&gt;host-&gt;host_no
+)paren
 suffix:semicolon
-)brace
 id|host-&gt;scsi.last_message
 op_assign
 id|msg-&gt;msg
@@ -5037,9 +5501,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|asr
-op_amp
-id|ASR_INT
+id|i
+op_ne
+id|msg-&gt;length
 )paren
 r_break
 suffix:semicolon
@@ -5049,17 +5513,19 @@ suffix:semicolon
 )brace
 macro_line|#if (DEBUG &amp; DEBUG_MESSAGES)
 id|printk
+c_func
 (paren
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
 )brace
-multiline_comment|/*&n; * Function: void acornscsi_readstatusbyte (AS_Host *host)&n; * Purpose : Read status byte from connected target&n; * Params  : host - host connected to target&n; */
+multiline_comment|/*&n; * Function: void acornscsi_readstatusbyte(AS_Host *host)&n; * Purpose : Read status byte from connected target&n; * Params  : host - host connected to target&n; */
 r_static
 DECL|function|acornscsi_readstatusbyte
 r_void
 id|acornscsi_readstatusbyte
+c_func
 (paren
 id|AS_Host
 op_star
@@ -5067,6 +5533,7 @@ id|host
 )paren
 (brace
 id|acornscsi_sbic_issuecmd
+c_func
 (paren
 id|host
 comma
@@ -5075,26 +5542,24 @@ op_or
 id|CMND_SBT
 )paren
 suffix:semicolon
-r_while
-c_loop
+id|acornscsi_sbic_wait
+c_func
 (paren
-(paren
-id|sbic_arm_read
-(paren
-id|host-&gt;scsi.io_port
+id|host
 comma
-id|ASR
-)paren
-op_amp
 id|ASR_DBR
-)paren
-op_eq
-l_int|0
+comma
+id|ASR_DBR
+comma
+l_int|1000
+comma
+l_string|&quot;reading status byte&quot;
 )paren
 suffix:semicolon
 id|host-&gt;scsi.SCp.Status
 op_assign
 id|sbic_arm_read
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -5102,12 +5567,13 @@ id|DATA
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function: unsigned char acornscsi_readmessagebyte (AS_Host *host)&n; * Purpose : Read one message byte from connected target&n; * Params  : host - host connected to target&n; */
+multiline_comment|/*&n; * Function: unsigned char acornscsi_readmessagebyte(AS_Host *host)&n; * Purpose : Read one message byte from connected target&n; * Params  : host - host connected to target&n; */
 r_static
 DECL|function|acornscsi_readmessagebyte
 r_int
 r_char
 id|acornscsi_readmessagebyte
+c_func
 (paren
 id|AS_Host
 op_star
@@ -5119,6 +5585,7 @@ r_char
 id|message
 suffix:semicolon
 id|acornscsi_sbic_issuecmd
+c_func
 (paren
 id|host
 comma
@@ -5127,26 +5594,24 @@ op_or
 id|CMND_SBT
 )paren
 suffix:semicolon
-r_while
-c_loop
+id|acornscsi_sbic_wait
+c_func
 (paren
-(paren
-id|sbic_arm_read
-(paren
-id|host-&gt;scsi.io_port
+id|host
 comma
-id|ASR
-)paren
-op_amp
 id|ASR_DBR
-)paren
-op_eq
-l_int|0
+comma
+id|ASR_DBR
+comma
+l_int|1000
+comma
+l_string|&quot;for message byte&quot;
 )paren
 suffix:semicolon
 id|message
 op_assign
 id|sbic_arm_read
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -5154,24 +5619,22 @@ id|DATA
 )paren
 suffix:semicolon
 multiline_comment|/* wait for MSGIN-XFER-PAUSED */
-r_while
-c_loop
+id|acornscsi_sbic_wait
+c_func
 (paren
-(paren
-id|sbic_arm_read
-(paren
-id|host-&gt;scsi.io_port
+id|host
 comma
-id|ASR
-)paren
-op_amp
 id|ASR_INT
-)paren
-op_eq
-l_int|0
+comma
+id|ASR_INT
+comma
+l_int|1000
+comma
+l_string|&quot;for interrupt after message byte&quot;
 )paren
 suffix:semicolon
 id|sbic_arm_read
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -5182,11 +5645,12 @@ r_return
 id|message
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function: void acornscsi_message (AS_Host *host)&n; * Purpose : Read complete message from connected target &amp; action message&n; * Params  : host - host connected to target&n; */
+multiline_comment|/*&n; * Function: void acornscsi_message(AS_Host *host)&n; * Purpose : Read complete message from connected target &amp; action message&n; * Params  : host - host connected to target&n; */
 r_static
 DECL|function|acornscsi_message
 r_void
 id|acornscsi_message
+c_func
 (paren
 id|AS_Host
 op_star
@@ -5218,6 +5682,7 @@ id|msgidx
 )braket
 op_assign
 id|acornscsi_readmessagebyte
+c_func
 (paren
 id|host
 )paren
@@ -5299,6 +5764,7 @@ id|msglen
 )paren
 (brace
 id|acornscsi_sbic_issuecmd
+c_func
 (paren
 id|host
 comma
@@ -5306,24 +5772,22 @@ id|CMND_NEGATEACK
 )paren
 suffix:semicolon
 multiline_comment|/* wait for next msg-in */
-r_while
-c_loop
+id|acornscsi_sbic_wait
+c_func
 (paren
-(paren
-id|sbic_arm_read
-(paren
-id|host-&gt;scsi.io_port
+id|host
 comma
-id|ASR
-)paren
-op_amp
 id|ASR_INT
-)paren
-op_eq
-l_int|0
+comma
+id|ASR_INT
+comma
+l_int|1000
+comma
+l_string|&quot;for interrupt after negate ack&quot;
 )paren
 suffix:semicolon
 id|sbic_arm_read
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -5349,6 +5813,7 @@ comma
 id|host-&gt;host-&gt;host_no
 comma
 id|acornscsi_target
+c_func
 (paren
 id|host
 )paren
@@ -5397,6 +5862,7 @@ r_if
 c_cond
 (paren
 id|acornscsi_reconnect_finish
+c_func
 (paren
 id|host
 )paren
@@ -5441,6 +5907,7 @@ comma
 id|host-&gt;host-&gt;host_no
 comma
 id|acornscsi_target
+c_func
 (paren
 id|host
 )paren
@@ -5473,6 +5940,7 @@ id|SAVE_POINTERS
 suffix:colon
 multiline_comment|/*&n;&t; * ANSI standard says: (Section SCSI-2 Rev. 10c Sect 5.6.20)&n;&t; * &squot;The SAVE DATA POINTER message is sent from a target to&n;&t; *  direct the initiator to copy the active data pointer to&n;&t; *  the saved data pointer for the current I/O process.&n;&t; */
 id|acornscsi_dma_cleanup
+c_func
 (paren
 id|host
 )paren
@@ -5496,6 +5964,7 @@ id|RESTORE_POINTERS
 suffix:colon
 multiline_comment|/*&n;&t; * ANSI standard says: (Section SCSI-2 Rev. 10c Sect 5.6.19)&n;&t; * &squot;The RESTORE POINTERS message is sent from a target to&n;&t; *  direct the initiator to copy the most recently saved&n;&t; *  command, data, and status pointers for the I/O process&n;&t; *  to the corresponding active pointers.  The command and&n;&t; *  status pointers shall be restored to the beginning of&n;&t; *  the present command and status areas.&squot;&n;&t; */
 id|acornscsi_dma_cleanup
+c_func
 (paren
 id|host
 )paren
@@ -5515,6 +5984,7 @@ id|DISCONNECT
 suffix:colon
 multiline_comment|/*&n;&t; * ANSI standard says: (Section SCSI-2 Rev. 10c Sect 6.4.2)&n;&t; * &squot;On those occasions when an error or exception condition occurs&n;&t; *  and the target elects to repeat the information transfer, the&n;&t; *  target may repeat the transfer either issuing a RESTORE POINTERS&n;&t; *  message or by disconnecting without issuing a SAVE POINTERS&n;&t; *  message.  When reconnection is completed, the most recent&n;&t; *  saved pointer values are restored.&squot;&n;&t; */
 id|acornscsi_dma_cleanup
+c_func
 (paren
 id|host
 )paren
@@ -5557,12 +6027,14 @@ r_if
 c_cond
 (paren
 id|msgqueue_msglength
+c_func
 (paren
 op_amp
 id|host-&gt;scsi.msgs
 )paren
 )paren
 id|acornscsi_sbic_issuecmd
+c_func
 (paren
 id|host
 comma
@@ -5587,6 +6059,7 @@ id|SIMPLE_QUEUE_TAG
 suffix:colon
 multiline_comment|/*&n;&t;     * ANSI standard says: (Section SCSI-2 Rev. 10c Sect 5.6.17)&n;&t;     *  If a target does not implement tagged queuing and a queue tag&n;&t;     *  message is received, it shall respond with a MESSAGE REJECT&n;&t;     *  message and accept the I/O process as if it were untagged.&n;&t;     */
 id|printk
+c_func
 (paren
 id|KERN_NOTICE
 l_string|&quot;scsi%d.%c: disabling tagged queueing&bslash;n&quot;
@@ -5594,6 +6067,7 @@ comma
 id|host-&gt;host-&gt;host_no
 comma
 id|acornscsi_target
+c_func
 (paren
 id|host
 )paren
@@ -5604,6 +6078,7 @@ op_assign
 l_int|0
 suffix:semicolon
 id|set_bit
+c_func
 (paren
 id|host-&gt;SCpnt-&gt;target
 op_star
@@ -5629,6 +6104,7 @@ l_int|8
 suffix:colon
 multiline_comment|/*&n;&t;     * Target can&squot;t handle synchronous transfers&n;&t;     */
 id|printk
+c_func
 (paren
 id|KERN_NOTICE
 l_string|&quot;scsi%d.%c: Using asynchronous transfer&bslash;n&quot;
@@ -5636,6 +6112,7 @@ comma
 id|host-&gt;host-&gt;host_no
 comma
 id|acornscsi_target
+c_func
 (paren
 id|host
 )paren
@@ -5660,6 +6137,7 @@ op_assign
 id|SYNC_ASYNCHRONOUS
 suffix:semicolon
 id|sbic_arm_write
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -5693,12 +6171,14 @@ id|SIMPLE_QUEUE_TAG
 suffix:colon
 multiline_comment|/* tag queue reconnect... message[1] = queue tag.  Print something to indicate something happened! */
 id|printk
+c_func
 (paren
 l_string|&quot;scsi%d.%c: reconnect queue tag %02X&bslash;n&quot;
 comma
 id|host-&gt;host-&gt;host_no
 comma
 id|acornscsi_target
+c_func
 (paren
 id|host
 )paren
@@ -5751,6 +6231,7 @@ op_assign
 id|SYNC_COMPLETED
 suffix:semicolon
 id|printk
+c_func
 (paren
 id|KERN_NOTICE
 l_string|&quot;scsi%d.%c: Using synchronous transfer, offset %d, %d ns&bslash;n&quot;
@@ -5784,6 +6265,7 @@ dot
 id|sync_xfer
 op_assign
 id|calc_sync_xfer
+c_func
 (paren
 id|message
 (braket
@@ -5809,6 +6291,7 @@ id|length
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Target requested synchronous transfers.  The agreement is only&n;&t;&t; * to be in operation AFTER the target leaves message out phase.&n;&t;&t; */
 id|acornscsi_sbic_issuecmd
+c_func
 (paren
 id|host
 comma
@@ -5818,6 +6301,7 @@ suffix:semicolon
 id|period
 op_assign
 id|max
+c_func
 (paren
 id|message
 (braket
@@ -5832,6 +6316,7 @@ suffix:semicolon
 id|length
 op_assign
 id|min
+c_func
 (paren
 id|message
 (braket
@@ -5842,6 +6327,7 @@ id|sdtr_size
 )paren
 suffix:semicolon
 id|msgqueue_addmsg
+c_func
 (paren
 op_amp
 id|host-&gt;scsi.msgs
@@ -5867,6 +6353,7 @@ dot
 id|sync_xfer
 op_assign
 id|calc_sync_xfer
+c_func
 (paren
 id|period
 op_star
@@ -5877,6 +6364,7 @@ id|length
 suffix:semicolon
 )brace
 id|sbic_arm_write
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -5902,6 +6390,7 @@ multiline_comment|/* The WD33C93A is only 8-bit.  We respond with a MESSAGE_REJE
 r_default
 suffix:colon
 id|acornscsi_sbic_issuecmd
+c_func
 (paren
 id|host
 comma
@@ -5909,12 +6398,14 @@ id|CMND_ASSERTATN
 )paren
 suffix:semicolon
 id|msgqueue_flush
+c_func
 (paren
 op_amp
 id|host-&gt;scsi.msgs
 )paren
 suffix:semicolon
 id|msgqueue_addmsg
+c_func
 (paren
 op_amp
 id|host-&gt;scsi.msgs
@@ -5970,6 +6461,7 @@ id|host-&gt;SCpnt-&gt;next_link
 )paren
 (brace
 id|printk
+c_func
 (paren
 id|KERN_WARNING
 l_string|&quot;scsi%d.%c: lun %d tag %d linked command complete, but no next_link&bslash;n&quot;
@@ -5977,6 +6469,7 @@ comma
 id|instance-&gt;host_no
 comma
 id|acornscsi_target
+c_func
 (paren
 id|host
 )paren
@@ -5985,6 +6478,7 @@ id|host-&gt;SCpnt-&gt;tag
 )paren
 suffix:semicolon
 id|acornscsi_sbic_issuecmd
+c_func
 (paren
 id|host
 comma
@@ -5992,6 +6486,7 @@ id|CMND_ASSERTATN
 )paren
 suffix:semicolon
 id|msgqueue_addmsg
+c_func
 (paren
 op_amp
 id|host-&gt;scsi.msgs
@@ -6011,6 +6506,7 @@ op_assign
 id|host-&gt;SCpnt
 suffix:semicolon
 id|acornscsi_dma_cleanup
+c_func
 (paren
 id|host
 )paren
@@ -6033,7 +6529,10 @@ l_int|8
 op_or
 id|host-&gt;Scsi.SCp.Status
 suffix:semicolon
-id|SCpnt-&gt;done
+id|SCpnt
+op_member_access_from_pointer
+id|done
+c_func
 (paren
 id|SCpnt
 )paren
@@ -6048,6 +6547,7 @@ r_default
 suffix:colon
 multiline_comment|/* reject message */
 id|printk
+c_func
 (paren
 id|KERN_ERR
 l_string|&quot;scsi%d.%c: unrecognised message %02X, rejecting&bslash;n&quot;
@@ -6055,6 +6555,7 @@ comma
 id|host-&gt;host-&gt;host_no
 comma
 id|acornscsi_target
+c_func
 (paren
 id|host
 )paren
@@ -6066,6 +6567,7 @@ l_int|0
 )paren
 suffix:semicolon
 id|acornscsi_sbic_issuecmd
+c_func
 (paren
 id|host
 comma
@@ -6073,12 +6575,14 @@ id|CMND_ASSERTATN
 )paren
 suffix:semicolon
 id|msgqueue_flush
+c_func
 (paren
 op_amp
 id|host-&gt;scsi.msgs
 )paren
 suffix:semicolon
 id|msgqueue_addmsg
+c_func
 (paren
 op_amp
 id|host-&gt;scsi.msgs
@@ -6096,6 +6600,7 @@ r_break
 suffix:semicolon
 )brace
 id|acornscsi_sbic_issuecmd
+c_func
 (paren
 id|host
 comma
@@ -6103,11 +6608,12 @@ id|CMND_NEGATEACK
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function: int acornscsi_buildmessages (AS_Host *host)&n; * Purpose : build the connection messages for a host&n; * Params  : host - host to add messages to&n; */
+multiline_comment|/*&n; * Function: int acornscsi_buildmessages(AS_Host *host)&n; * Purpose : build the connection messages for a host&n; * Params  : host - host to add messages to&n; */
 r_static
 DECL|function|acornscsi_buildmessages
 r_void
 id|acornscsi_buildmessages
+c_func
 (paren
 id|AS_Host
 op_star
@@ -6123,6 +6629,7 @@ id|cmd_reset
 )paren
 (brace
 id|msgqueue_addmsg
+c_func
 (paren
 op_amp
 id|host-&gt;scsi.msgs
@@ -6137,6 +6644,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 id|msgqueue_addmsg
+c_func
 (paren
 op_amp
 id|host-&gt;scsi.msgs
@@ -6166,6 +6674,7 @@ id|cmd_aborted
 )paren
 (brace
 id|acornscsi_abortcmd
+c_func
 (paren
 id|host-&gt;SCpnt-&gt;tag
 )paren
@@ -6219,6 +6728,7 @@ op_assign
 id|SIMPLE_QUEUE_TAG
 suffix:semicolon
 id|msgqueue_addmsg
+c_func
 (paren
 op_amp
 id|host-&gt;scsi.msgs
@@ -6256,6 +6766,7 @@ op_assign
 id|SYNC_SENT_REQUEST
 suffix:semicolon
 id|msgqueue_addmsg
+c_func
 (paren
 op_amp
 id|host-&gt;scsi.msgs
@@ -6278,11 +6789,12 @@ suffix:semicolon
 )brace
 macro_line|#endif
 )brace
-multiline_comment|/*&n; * Function: int acornscsi_starttransfer (AS_Host *host)&n; * Purpose : transfer data to/from connected target&n; * Params  : host - host to which target is connected&n; * Returns : 0 if failure&n; */
+multiline_comment|/*&n; * Function: int acornscsi_starttransfer(AS_Host *host)&n; * Purpose : transfer data to/from connected target&n; * Params  : host - host to which target is connected&n; * Returns : 0 if failure&n; */
 r_static
 DECL|function|acornscsi_starttransfer
 r_int
 id|acornscsi_starttransfer
+c_func
 (paren
 id|AS_Host
 op_star
@@ -6301,6 +6813,7 @@ multiline_comment|/*&amp;&amp; host-&gt;scsi.SCp.this_residual*/
 )paren
 (brace
 id|printk
+c_func
 (paren
 id|KERN_ERR
 l_string|&quot;scsi%d.%c: null buffer passed to acornscsi_starttransfer&bslash;n&quot;
@@ -6308,6 +6821,7 @@ comma
 id|host-&gt;host-&gt;host_no
 comma
 id|acornscsi_target
+c_func
 (paren
 id|host
 )paren
@@ -6324,6 +6838,7 @@ op_minus
 id|host-&gt;scsi.SCp.scsi_xferred
 suffix:semicolon
 id|sbic_arm_write
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -6338,6 +6853,7 @@ id|sync_xfer
 )paren
 suffix:semicolon
 id|sbic_arm_writenext
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -6347,6 +6863,7 @@ l_int|16
 )paren
 suffix:semicolon
 id|sbic_arm_writenext
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -6356,6 +6873,7 @@ l_int|8
 )paren
 suffix:semicolon
 id|sbic_arm_writenext
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -6363,6 +6881,7 @@ id|residual
 )paren
 suffix:semicolon
 id|acornscsi_sbic_issuecmd
+c_func
 (paren
 id|host
 comma
@@ -6374,11 +6893,12 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* =========================================================================================&n; * Connection &amp; Disconnection&n; */
-multiline_comment|/*&n; * Function : acornscsi_reconnect (AS_Host *host)&n; * Purpose  : reconnect a previously disconnected command&n; * Params   : host - host specific data&n; * Remarks  : SCSI spec says:&n; *&t;&t;&squot;The set of active pointers is restored from the set&n; *&t;&t; of saved pointers upon reconnection of the I/O process&squot;&n; */
+multiline_comment|/*&n; * Function : acornscsi_reconnect(AS_Host *host)&n; * Purpose  : reconnect a previously disconnected command&n; * Params   : host - host specific data&n; * Remarks  : SCSI spec says:&n; *&t;&t;&squot;The set of active pointers is restored from the set&n; *&t;&t; of saved pointers upon reconnection of the I/O process&squot;&n; */
 r_static
 DECL|function|acornscsi_reconnect
 r_int
 id|acornscsi_reconnect
+c_func
 (paren
 id|AS_Host
 op_star
@@ -6398,6 +6918,7 @@ suffix:semicolon
 id|target
 op_assign
 id|sbic_arm_read
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -6415,6 +6936,7 @@ l_int|8
 )paren
 )paren
 id|printk
+c_func
 (paren
 id|KERN_ERR
 l_string|&quot;scsi%d: invalid source id after reselection &quot;
@@ -6437,6 +6959,7 @@ id|host-&gt;scsi.disconnectable
 )paren
 (brace
 id|printk
+c_func
 (paren
 id|KERN_ERR
 l_string|&quot;scsi%d.%d: reconnected while command in &quot;
@@ -6457,6 +6980,7 @@ suffix:semicolon
 id|lun
 op_assign
 id|sbic_arm_read
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -6503,6 +7027,7 @@ op_logical_neg
 id|ok
 op_logical_and
 id|queue_probetgtlun
+c_func
 (paren
 op_amp
 id|host-&gt;queues.disconnected
@@ -6543,6 +7068,7 @@ r_else
 (brace
 multiline_comment|/* this doesn&squot;t seem to work */
 id|printk
+c_func
 (paren
 id|KERN_ERR
 l_string|&quot;scsi%d.%c: reselected with no command &quot;
@@ -6556,35 +7082,44 @@ id|target
 )paren
 suffix:semicolon
 id|acornscsi_dumplog
+c_func
 (paren
 id|host
 comma
 id|target
 )paren
 suffix:semicolon
-id|acornscsi_sbic_issuecmd
+id|acornscsi_abortcmd
+c_func
 (paren
 id|host
 comma
-id|CMND_ASSERTATN
+l_int|0
 )paren
 suffix:semicolon
-id|msgqueue_addmsg
+r_if
+c_cond
+(paren
+id|host-&gt;SCpnt
+)paren
+(brace
+id|queue_add_cmd_tail
+c_func
 (paren
 op_amp
-id|host-&gt;scsi.msgs
+id|host-&gt;queues.disconnected
 comma
-l_int|1
-comma
-id|ABORT
+id|host-&gt;SCpnt
 )paren
 suffix:semicolon
-id|host-&gt;scsi.phase
+id|host-&gt;SCpnt
 op_assign
-id|PHASE_ABORTED
+l_int|NULL
 suffix:semicolon
 )brace
+)brace
 id|acornscsi_sbic_issuecmd
+c_func
 (paren
 id|host
 comma
@@ -6596,11 +7131,12 @@ op_logical_neg
 id|ok
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function: int acornscsi_reconect_finish (AS_Host *host)&n; * Purpose : finish reconnecting a command&n; * Params  : host - host to complete&n; * Returns : 0 if failed&n; */
+multiline_comment|/*&n; * Function: int acornscsi_reconect_finish(AS_Host *host)&n; * Purpose : finish reconnecting a command&n; * Params  : host - host to complete&n; * Returns : 0 if failed&n; */
 r_static
 DECL|function|acornscsi_reconnect_finish
 r_int
 id|acornscsi_reconnect_finish
+c_func
 (paren
 id|AS_Host
 op_star
@@ -6642,12 +7178,14 @@ c_func
 id|host-&gt;SCpnt
 comma
 id|printk
+c_func
 (paren
 l_string|&quot;scsi%d.%c: reconnected&quot;
 comma
 id|host-&gt;host-&gt;host_no
 comma
 id|acornscsi_target
+c_func
 (paren
 id|host
 )paren
@@ -6659,6 +7197,7 @@ macro_line|#endif
 r_else
 (brace
 id|queue_add_cmd_tail
+c_func
 (paren
 op_amp
 id|host-&gt;queues.disconnected
@@ -6673,6 +7212,7 @@ c_func
 id|host-&gt;SCpnt
 comma
 id|printk
+c_func
 (paren
 l_string|&quot;scsi%d.%c: had to move command &quot;
 l_string|&quot;to disconnected queue&bslash;n&quot;
@@ -6680,6 +7220,7 @@ comma
 id|host-&gt;host-&gt;host_no
 comma
 id|acornscsi_target
+c_func
 (paren
 id|host
 )paren
@@ -6703,6 +7244,7 @@ id|host-&gt;SCpnt
 id|host-&gt;SCpnt
 op_assign
 id|queue_remove_tgtluntag
+c_func
 (paren
 op_amp
 id|host-&gt;queues.disconnected
@@ -6721,12 +7263,14 @@ c_func
 id|host-&gt;SCpnt
 comma
 id|printk
+c_func
 (paren
 l_string|&quot;scsi%d.%c: had to get command&quot;
 comma
 id|host-&gt;host-&gt;host_no
 comma
 id|acornscsi_target
+c_func
 (paren
 id|host
 )paren
@@ -6741,19 +7285,14 @@ c_cond
 op_logical_neg
 id|host-&gt;SCpnt
 )paren
-(brace
 id|acornscsi_abortcmd
+c_func
 (paren
 id|host
 comma
 id|host-&gt;scsi.reconnected.tag
 )paren
 suffix:semicolon
-id|host-&gt;scsi.phase
-op_assign
-id|PHASE_ABORTED
-suffix:semicolon
-)brace
 r_else
 (brace
 multiline_comment|/*&n;&t; * Restore data pointer from SAVED pointers.&n;&t; */
@@ -6763,6 +7302,7 @@ id|host-&gt;SCpnt-&gt;SCp
 suffix:semicolon
 macro_line|#if (DEBUG &amp; (DEBUG_QUEUES|DEBUG_DISCON))
 id|printk
+c_func
 (paren
 l_string|&quot;, data pointers: [%p, %X]&quot;
 comma
@@ -6775,6 +7315,7 @@ macro_line|#endif
 )brace
 macro_line|#if (DEBUG &amp; (DEBUG_QUEUES|DEBUG_DISCON))
 id|printk
+c_func
 (paren
 l_string|&quot;&bslash;n&quot;
 )paren
@@ -6790,11 +7331,12 @@ op_ne
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function: void acornscsi_disconnect_unexpected (AS_Host *host)&n; * Purpose : handle an unexpected disconnect&n; * Params  : host - host on which disconnect occurred&n; */
+multiline_comment|/*&n; * Function: void acornscsi_disconnect_unexpected(AS_Host *host)&n; * Purpose : handle an unexpected disconnect&n; * Params  : host - host on which disconnect occurred&n; */
 r_static
 DECL|function|acornscsi_disconnect_unexpected
 r_void
 id|acornscsi_disconnect_unexpected
+c_func
 (paren
 id|AS_Host
 op_star
@@ -6802,6 +7344,7 @@ id|host
 )paren
 (brace
 id|printk
+c_func
 (paren
 id|KERN_ERR
 l_string|&quot;scsi%d.%c: unexpected disconnect&bslash;n&quot;
@@ -6809,6 +7352,7 @@ comma
 id|host-&gt;host-&gt;host_no
 comma
 id|acornscsi_target
+c_func
 (paren
 id|host
 )paren
@@ -6816,6 +7360,7 @@ id|host
 suffix:semicolon
 macro_line|#if (DEBUG &amp; DEBUG_ABORT)
 id|acornscsi_dumplog
+c_func
 (paren
 id|host
 comma
@@ -6824,21 +7369,23 @@ l_int|8
 suffix:semicolon
 macro_line|#endif
 id|acornscsi_done
+c_func
 (paren
 id|host
 comma
 op_amp
 id|host-&gt;SCpnt
 comma
-id|DID_ABORT
+id|DID_ERROR
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function: void acornscsi_abortcmd (AS_host *host, unsigned char tag)&n; * Purpose : abort a currently executing command&n; * Params  : host - host with connected command to abort&n; *&t;     tag  - tag to abort&n; */
+multiline_comment|/*&n; * Function: void acornscsi_abortcmd(AS_host *host, unsigned char tag)&n; * Purpose : abort a currently executing command&n; * Params  : host - host with connected command to abort&n; *&t;     tag  - tag to abort&n; */
 r_static
 DECL|function|acornscsi_abortcmd
 r_void
 id|acornscsi_abortcmd
+c_func
 (paren
 id|AS_Host
 op_star
@@ -6849,7 +7396,12 @@ r_char
 id|tag
 )paren
 (brace
+id|host-&gt;scsi.phase
+op_assign
+id|PHASE_ABORTED
+suffix:semicolon
 id|sbic_arm_write
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -6859,6 +7411,7 @@ id|CMND_ASSERTATN
 )paren
 suffix:semicolon
 id|msgqueue_flush
+c_func
 (paren
 op_amp
 id|host-&gt;scsi.msgs
@@ -6871,6 +7424,7 @@ c_cond
 id|tag
 )paren
 id|msgqueue_addmsg
+c_func
 (paren
 op_amp
 id|host-&gt;scsi.msgs
@@ -6885,6 +7439,7 @@ suffix:semicolon
 r_else
 macro_line|#endif
 id|msgqueue_addmsg
+c_func
 (paren
 op_amp
 id|host-&gt;scsi.msgs
@@ -6896,11 +7451,12 @@ id|ABORT
 suffix:semicolon
 )brace
 multiline_comment|/* ==========================================================================================&n; * Interrupt routines.&n; */
-multiline_comment|/*&n; * Function: int acornscsi_sbicintr (AS_Host *host)&n; * Purpose : handle interrupts from SCSI device&n; * Params  : host - host to process&n; * Returns : INTR_PROCESS if expecting another SBIC interrupt&n; *&t;     INTR_IDLE if no interrupt&n; *&t;     INTR_NEXT_COMMAND if we have finished processing the command&n; */
+multiline_comment|/*&n; * Function: int acornscsi_sbicintr(AS_Host *host)&n; * Purpose : handle interrupts from SCSI device&n; * Params  : host - host to process&n; * Returns : INTR_PROCESS if expecting another SBIC interrupt&n; *&t;     INTR_IDLE if no interrupt&n; *&t;     INTR_NEXT_COMMAND if we have finished processing the command&n; */
 r_static
 DECL|function|acornscsi_sbicintr
 id|intr_ret_t
 id|acornscsi_sbicintr
+c_func
 (paren
 id|AS_Host
 op_star
@@ -6919,6 +7475,7 @@ suffix:semicolon
 id|asr
 op_assign
 id|sbic_arm_read
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -6941,6 +7498,7 @@ suffix:semicolon
 id|ssr
 op_assign
 id|sbic_arm_read
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -7002,6 +7560,7 @@ l_int|0x00
 suffix:colon
 multiline_comment|/* reset state - not advanced&t;&t;&t;*/
 id|printk
+c_func
 (paren
 id|KERN_ERR
 l_string|&quot;scsi%d: reset in standard mode but wanted advanced mode.&bslash;n&quot;
@@ -7011,6 +7570,7 @@ id|host-&gt;host-&gt;host_no
 suffix:semicolon
 multiline_comment|/* setup sbic - WD33C93A */
 id|sbic_arm_write
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -7022,6 +7582,7 @@ id|host-&gt;host-&gt;this_id
 )paren
 suffix:semicolon
 id|sbic_arm_write
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -7038,6 +7599,7 @@ l_int|0x01
 suffix:colon
 multiline_comment|/* reset state - advanced&t;&t;&t;*/
 id|sbic_arm_write
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -7049,6 +7611,7 @@ id|CTRL_IDI
 )paren
 suffix:semicolon
 id|sbic_arm_write
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -7058,6 +7621,7 @@ id|TIMEOUT_TIME
 )paren
 suffix:semicolon
 id|sbic_arm_write
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -7067,6 +7631,7 @@ id|SYNCHTRANSFER_2DBA
 )paren
 suffix:semicolon
 id|sbic_arm_write
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -7078,6 +7643,7 @@ id|SOURCEID_DSP
 )paren
 suffix:semicolon
 id|msgqueue_flush
+c_func
 (paren
 op_amp
 id|host-&gt;scsi.msgs
@@ -7091,6 +7657,7 @@ l_int|0x41
 suffix:colon
 multiline_comment|/* unexpected disconnect aborted command&t;*/
 id|acornscsi_disconnect_unexpected
+c_func
 (paren
 id|host
 )paren
@@ -7125,6 +7692,7 @@ op_assign
 id|PHASE_CONNECTED
 suffix:semicolon
 id|msgqueue_flush
+c_func
 (paren
 op_amp
 id|host-&gt;scsi.msgs
@@ -7138,6 +7706,7 @@ multiline_comment|/* 33C93 gives next interrupt indicating bus phase */
 id|asr
 op_assign
 id|sbic_arm_read
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -7159,6 +7728,7 @@ suffix:semicolon
 id|ssr
 op_assign
 id|sbic_arm_read
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -7198,6 +7768,7 @@ suffix:colon
 multiline_comment|/* select timed out&t;&t;&t;&t;*/
 multiline_comment|/* -&gt; PHASE_IDLE&t;&t;&t;&t;*/
 id|acornscsi_done
+c_func
 (paren
 id|host
 comma
@@ -7224,12 +7795,14 @@ op_assign
 l_int|NULL
 suffix:semicolon
 id|msgqueue_flush
+c_func
 (paren
 op_amp
 id|host-&gt;scsi.msgs
 )paren
 suffix:semicolon
 id|acornscsi_reconnect
+c_func
 (paren
 id|host
 )paren
@@ -7239,6 +7812,7 @@ suffix:semicolon
 r_default
 suffix:colon
 id|printk
+c_func
 (paren
 id|KERN_ERR
 l_string|&quot;scsi%d.%c: PHASE_CONNECTING, SSR %02X?&bslash;n&quot;
@@ -7246,6 +7820,7 @@ comma
 id|host-&gt;host-&gt;host_no
 comma
 id|acornscsi_target
+c_func
 (paren
 id|host
 )paren
@@ -7254,6 +7829,7 @@ id|ssr
 )paren
 suffix:semicolon
 id|acornscsi_dumplog
+c_func
 (paren
 id|host
 comma
@@ -7266,6 +7842,7 @@ l_int|8
 )paren
 suffix:semicolon
 id|acornscsi_abortcmd
+c_func
 (paren
 id|host
 comma
@@ -7295,6 +7872,7 @@ suffix:colon
 multiline_comment|/* -&gt; PHASE_COMMAND, PHASE_COMMANDPAUSED&t;*/
 multiline_comment|/* SELECTION -&gt; COMMAND */
 id|acornscsi_sendcommand
+c_func
 (paren
 id|host
 )paren
@@ -7307,6 +7885,7 @@ suffix:colon
 multiline_comment|/* -&gt; PHASE_STATUS&t;&t;&t;&t;*/
 multiline_comment|/* SELECTION -&gt; STATUS */
 id|acornscsi_readstatusbyte
+c_func
 (paren
 id|host
 )paren
@@ -7328,11 +7907,13 @@ op_assign
 id|PHASE_MSGOUT
 suffix:semicolon
 id|acornscsi_buildmessages
+c_func
 (paren
 id|host
 )paren
 suffix:semicolon
 id|acornscsi_sendmessage
+c_func
 (paren
 id|host
 )paren
@@ -7345,6 +7926,7 @@ l_int|0x85
 suffix:colon
 multiline_comment|/* target disconnected&t;&t;&t;&t;*/
 id|acornscsi_done
+c_func
 (paren
 id|host
 comma
@@ -7359,6 +7941,7 @@ suffix:semicolon
 r_default
 suffix:colon
 id|printk
+c_func
 (paren
 id|KERN_ERR
 l_string|&quot;scsi%d.%c: PHASE_CONNECTED, SSR %02X?&bslash;n&quot;
@@ -7366,6 +7949,7 @@ comma
 id|host-&gt;host-&gt;host_no
 comma
 id|acornscsi_target
+c_func
 (paren
 id|host
 )paren
@@ -7374,6 +7958,7 @@ id|ssr
 )paren
 suffix:semicolon
 id|acornscsi_dumplog
+c_func
 (paren
 id|host
 comma
@@ -7386,6 +7971,7 @@ l_int|8
 )paren
 suffix:semicolon
 id|acornscsi_abortcmd
+c_func
 (paren
 id|host
 comma
@@ -7400,7 +7986,7 @@ r_case
 id|PHASE_MSGOUT
 suffix:colon
 multiline_comment|/* STATE: connected &amp; sent IDENTIFY message&t;*/
-multiline_comment|/*&n;&t; * SCSI standard says th at a MESSAGE OUT phases can be followed by a DATA phase&n;&t; */
+multiline_comment|/*&n;&t; * SCSI standard says that MESSAGE OUT phases can be followed by a&n;&t; * DATA phase, STATUS phase, MESSAGE IN phase or COMMAND phase&n;&t; */
 r_switch
 c_cond
 (paren
@@ -7410,12 +7996,14 @@ id|ssr
 r_case
 l_int|0x8a
 suffix:colon
+multiline_comment|/* -&gt; PHASE_COMMAND, PHASE_COMMANDPAUSED&t;*/
 r_case
 l_int|0x1a
 suffix:colon
 multiline_comment|/* -&gt; PHASE_COMMAND, PHASE_COMMANDPAUSED&t;*/
 multiline_comment|/* MESSAGE OUT -&gt; COMMAND */
 id|acornscsi_sendcommand
+c_func
 (paren
 id|host
 )paren
@@ -7423,11 +8011,16 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
+l_int|0x8b
+suffix:colon
+multiline_comment|/* -&gt; PHASE_STATUS&t;&t;&t;&t;*/
+r_case
 l_int|0x1b
 suffix:colon
 multiline_comment|/* -&gt; PHASE_STATUS&t;&t;&t;&t;*/
 multiline_comment|/* MESSAGE OUT -&gt; STATUS */
 id|acornscsi_readstatusbyte
+c_func
 (paren
 id|host
 )paren
@@ -7444,6 +8037,7 @@ suffix:colon
 multiline_comment|/* -&gt; PHASE_MSGOUT&t;&t;&t;&t;*/
 multiline_comment|/* MESSAGE_OUT(MESSAGE_IN) -&gt;MESSAGE OUT */
 id|acornscsi_sendmessage
+c_func
 (paren
 id|host
 )paren
@@ -7453,12 +8047,14 @@ suffix:semicolon
 r_case
 l_int|0x4f
 suffix:colon
+multiline_comment|/* -&gt; PHASE_MSGIN, PHASE_DISCONNECT&t;&t;*/
 r_case
 l_int|0x1f
 suffix:colon
 multiline_comment|/* -&gt; PHASE_MSGIN, PHASE_DISCONNECT&t;&t;*/
 multiline_comment|/* MESSAGE OUT -&gt; MESSAGE IN */
 id|acornscsi_message
+c_func
 (paren
 id|host
 )paren
@@ -7468,6 +8064,7 @@ suffix:semicolon
 r_default
 suffix:colon
 id|printk
+c_func
 (paren
 id|KERN_ERR
 l_string|&quot;scsi%d.%c: PHASE_MSGOUT, SSR %02X?&bslash;n&quot;
@@ -7475,6 +8072,7 @@ comma
 id|host-&gt;host-&gt;host_no
 comma
 id|acornscsi_target
+c_func
 (paren
 id|host
 )paren
@@ -7483,6 +8081,7 @@ id|ssr
 )paren
 suffix:semicolon
 id|acornscsi_dumplog
+c_func
 (paren
 id|host
 comma
@@ -7521,6 +8120,7 @@ op_ne
 id|host-&gt;SCpnt-&gt;cmd_len
 )paren
 id|acornscsi_abortcmd
+c_func
 (paren
 id|host
 comma
@@ -7528,6 +8128,7 @@ id|host-&gt;SCpnt-&gt;tag
 )paren
 suffix:semicolon
 id|acornscsi_dma_setup
+c_func
 (paren
 id|host
 comma
@@ -7539,11 +8140,13 @@ c_cond
 (paren
 op_logical_neg
 id|acornscsi_starttransfer
+c_func
 (paren
 id|host
 )paren
 )paren
 id|acornscsi_abortcmd
+c_func
 (paren
 id|host
 comma
@@ -7570,6 +8173,7 @@ op_ne
 id|host-&gt;SCpnt-&gt;cmd_len
 )paren
 id|acornscsi_abortcmd
+c_func
 (paren
 id|host
 comma
@@ -7577,6 +8181,7 @@ id|host-&gt;SCpnt-&gt;tag
 )paren
 suffix:semicolon
 id|acornscsi_dma_setup
+c_func
 (paren
 id|host
 comma
@@ -7588,11 +8193,13 @@ c_cond
 (paren
 op_logical_neg
 id|acornscsi_starttransfer
+c_func
 (paren
 id|host
 )paren
 )paren
 id|acornscsi_abortcmd
+c_func
 (paren
 id|host
 comma
@@ -7612,6 +8219,7 @@ suffix:colon
 multiline_comment|/* -&gt; PHASE_STATUS&t;&t;&t;&t;*/
 multiline_comment|/* COMMAND -&gt; STATUS */
 id|acornscsi_readstatusbyte
+c_func
 (paren
 id|host
 )paren
@@ -7628,6 +8236,7 @@ suffix:colon
 multiline_comment|/* -&gt; PHASE_MSGOUT&t;&t;&t;&t;*/
 multiline_comment|/* COMMAND -&gt; MESSAGE OUT */
 id|acornscsi_sendmessage
+c_func
 (paren
 id|host
 )paren
@@ -7640,6 +8249,7 @@ suffix:colon
 multiline_comment|/* -&gt; PHASE_MSGIN, PHASE_DISCONNECT&t;&t;*/
 multiline_comment|/* COMMAND -&gt; MESSAGE IN */
 id|acornscsi_message
+c_func
 (paren
 id|host
 )paren
@@ -7649,6 +8259,7 @@ suffix:semicolon
 r_default
 suffix:colon
 id|printk
+c_func
 (paren
 id|KERN_ERR
 l_string|&quot;scsi%d.%c: PHASE_COMMAND, SSR %02X?&bslash;n&quot;
@@ -7656,6 +8267,7 @@ comma
 id|host-&gt;host-&gt;host_no
 comma
 id|acornscsi_target
+c_func
 (paren
 id|host
 )paren
@@ -7664,6 +8276,7 @@ id|ssr
 )paren
 suffix:semicolon
 id|acornscsi_dumplog
+c_func
 (paren
 id|host
 comma
@@ -7712,6 +8325,7 @@ suffix:semicolon
 r_else
 (brace
 id|printk
+c_func
 (paren
 id|KERN_ERR
 l_string|&quot;scsi%d.%c: PHASE_DISCONNECT, SSR %02X instead of disconnect?&bslash;n&quot;
@@ -7719,6 +8333,7 @@ comma
 id|host-&gt;host-&gt;host_no
 comma
 id|acornscsi_target
+c_func
 (paren
 id|host
 )paren
@@ -7727,6 +8342,7 @@ id|ssr
 )paren
 suffix:semicolon
 id|acornscsi_dumplog
+c_func
 (paren
 id|host
 comma
@@ -7755,6 +8371,7 @@ l_int|0x81
 )paren
 multiline_comment|/* -&gt; PHASE_RECONNECTED or PHASE_ABORTED&t;*/
 id|acornscsi_reconnect
+c_func
 (paren
 id|host
 )paren
@@ -7762,6 +8379,7 @@ suffix:semicolon
 r_else
 (brace
 id|printk
+c_func
 (paren
 id|KERN_ERR
 l_string|&quot;scsi%d.%c: PHASE_IDLE, SSR %02X while idle?&bslash;n&quot;
@@ -7769,6 +8387,7 @@ comma
 id|host-&gt;host-&gt;host_no
 comma
 id|acornscsi_target
+c_func
 (paren
 id|host
 )paren
@@ -7777,6 +8396,7 @@ id|ssr
 )paren
 suffix:semicolon
 id|acornscsi_dumplog
+c_func
 (paren
 id|host
 comma
@@ -7807,6 +8427,7 @@ l_int|0x8f
 op_logical_and
 op_logical_neg
 id|acornscsi_reconnect_finish
+c_func
 (paren
 id|host
 )paren
@@ -7839,6 +8460,7 @@ multiline_comment|/* data out phase&t;&t;&t;&t;*/
 multiline_comment|/* -&gt; PHASE_DATAOUT&t;&t;&t;&t;*/
 multiline_comment|/* MESSAGE IN -&gt; DATA OUT */
 id|acornscsi_dma_setup
+c_func
 (paren
 id|host
 comma
@@ -7850,11 +8472,13 @@ c_cond
 (paren
 op_logical_neg
 id|acornscsi_starttransfer
+c_func
 (paren
 id|host
 )paren
 )paren
 id|acornscsi_abortcmd
+c_func
 (paren
 id|host
 comma
@@ -7875,6 +8499,7 @@ multiline_comment|/* data in phase&t;&t;&t;&t;*/
 multiline_comment|/* -&gt; PHASE_DATAIN&t;&t;&t;&t;*/
 multiline_comment|/* MESSAGE IN -&gt; DATA IN */
 id|acornscsi_dma_setup
+c_func
 (paren
 id|host
 comma
@@ -7886,11 +8511,13 @@ c_cond
 (paren
 op_logical_neg
 id|acornscsi_starttransfer
+c_func
 (paren
 id|host
 )paren
 )paren
 id|acornscsi_abortcmd
+c_func
 (paren
 id|host
 comma
@@ -7910,6 +8537,7 @@ suffix:colon
 multiline_comment|/* command out&t;&t;&t;&t;&t;*/
 multiline_comment|/* MESSAGE IN -&gt; COMMAND */
 id|acornscsi_sendcommand
+c_func
 (paren
 id|host
 )paren
@@ -7924,6 +8552,7 @@ multiline_comment|/* status in&t;&t;&t;&t;&t;*/
 multiline_comment|/* -&gt; PHASE_STATUSIN&t;&t;&t;&t;*/
 multiline_comment|/* MESSAGE IN -&gt; STATUS */
 id|acornscsi_readstatusbyte
+c_func
 (paren
 id|host
 )paren
@@ -7941,6 +8570,7 @@ multiline_comment|/* message out&t;&t;&t;&t;&t;*/
 multiline_comment|/* -&gt; PHASE_MSGOUT&t;&t;&t;&t;*/
 multiline_comment|/* MESSAGE IN -&gt; MESSAGE OUT */
 id|acornscsi_sendmessage
+c_func
 (paren
 id|host
 )paren
@@ -7952,6 +8582,7 @@ l_int|0x8f
 suffix:colon
 multiline_comment|/* message in&t;&t;&t;&t;&t;*/
 id|acornscsi_message
+c_func
 (paren
 id|host
 )paren
@@ -7962,6 +8593,7 @@ suffix:semicolon
 r_default
 suffix:colon
 id|printk
+c_func
 (paren
 id|KERN_ERR
 l_string|&quot;scsi%d.%c: PHASE_RECONNECTED, SSR %02X after reconnect?&bslash;n&quot;
@@ -7969,6 +8601,7 @@ comma
 id|host-&gt;host-&gt;host_no
 comma
 id|acornscsi_target
+c_func
 (paren
 id|host
 )paren
@@ -7977,6 +8610,7 @@ id|ssr
 )paren
 suffix:semicolon
 id|acornscsi_dumplog
+c_func
 (paren
 id|host
 comma
@@ -8007,7 +8641,12 @@ r_case
 l_int|0x19
 suffix:colon
 multiline_comment|/* -&gt; PHASE_DATAIN&t;&t;&t;&t;*/
+r_case
+l_int|0x89
+suffix:colon
+multiline_comment|/* -&gt; PHASE_DATAIN&t;&t;&t;&t;*/
 id|acornscsi_abortcmd
+c_func
 (paren
 id|host
 comma
@@ -8018,11 +8657,15 @@ r_return
 id|INTR_IDLE
 suffix:semicolon
 r_case
+l_int|0x1b
+suffix:colon
+multiline_comment|/* -&gt; PHASE_STATUSIN&t;&t;&t;&t;*/
+r_case
 l_int|0x4b
 suffix:colon
 multiline_comment|/* -&gt; PHASE_STATUSIN&t;&t;&t;&t;*/
 r_case
-l_int|0x1b
+l_int|0x8b
 suffix:colon
 multiline_comment|/* -&gt; PHASE_STATUSIN&t;&t;&t;&t;*/
 multiline_comment|/* DATA IN -&gt; STATUS */
@@ -8031,16 +8674,19 @@ op_assign
 id|host-&gt;SCpnt-&gt;request_bufflen
 op_minus
 id|acornscsi_sbic_xfcount
+c_func
 (paren
 id|host
 )paren
 suffix:semicolon
 id|acornscsi_dma_stop
+c_func
 (paren
 id|host
 )paren
 suffix:semicolon
 id|acornscsi_readstatusbyte
+c_func
 (paren
 id|host
 )paren
@@ -8059,22 +8705,29 @@ r_case
 l_int|0x4e
 suffix:colon
 multiline_comment|/* -&gt; PHASE_MSGOUT&t;&t;&t;&t;*/
+r_case
+l_int|0x8e
+suffix:colon
+multiline_comment|/* -&gt; PHASE_MSGOUT&t;&t;&t;&t;*/
 multiline_comment|/* DATA IN -&gt; MESSAGE OUT */
 id|host-&gt;scsi.SCp.scsi_xferred
 op_assign
 id|host-&gt;SCpnt-&gt;request_bufflen
 op_minus
 id|acornscsi_sbic_xfcount
+c_func
 (paren
 id|host
 )paren
 suffix:semicolon
 id|acornscsi_dma_stop
+c_func
 (paren
 id|host
 )paren
 suffix:semicolon
 id|acornscsi_sendmessage
+c_func
 (paren
 id|host
 )paren
@@ -8089,22 +8742,29 @@ r_case
 l_int|0x4f
 suffix:colon
 multiline_comment|/* message in&t;&t;&t;&t;&t;*/
+r_case
+l_int|0x8f
+suffix:colon
+multiline_comment|/* message in&t;&t;&t;&t;&t;*/
 multiline_comment|/* DATA IN -&gt; MESSAGE IN */
 id|host-&gt;scsi.SCp.scsi_xferred
 op_assign
 id|host-&gt;SCpnt-&gt;request_bufflen
 op_minus
 id|acornscsi_sbic_xfcount
+c_func
 (paren
 id|host
 )paren
 suffix:semicolon
 id|acornscsi_dma_stop
+c_func
 (paren
 id|host
 )paren
 suffix:semicolon
 id|acornscsi_message
+c_func
 (paren
 id|host
 )paren
@@ -8115,6 +8775,7 @@ suffix:semicolon
 r_default
 suffix:colon
 id|printk
+c_func
 (paren
 id|KERN_ERR
 l_string|&quot;scsi%d.%c: PHASE_DATAIN, SSR %02X?&bslash;n&quot;
@@ -8122,6 +8783,7 @@ comma
 id|host-&gt;host-&gt;host_no
 comma
 id|acornscsi_target
+c_func
 (paren
 id|host
 )paren
@@ -8130,6 +8792,7 @@ id|ssr
 )paren
 suffix:semicolon
 id|acornscsi_dumplog
+c_func
 (paren
 id|host
 comma
@@ -8160,7 +8823,12 @@ r_case
 l_int|0x18
 suffix:colon
 multiline_comment|/* -&gt; PHASE_DATAOUT&t;&t;&t;&t;*/
+r_case
+l_int|0x88
+suffix:colon
+multiline_comment|/* -&gt; PHASE_DATAOUT&t;&t;&t;&t;*/
 id|acornscsi_abortcmd
+c_func
 (paren
 id|host
 comma
@@ -8171,11 +8839,15 @@ r_return
 id|INTR_IDLE
 suffix:semicolon
 r_case
+l_int|0x1b
+suffix:colon
+multiline_comment|/* -&gt; PHASE_STATUSIN&t;&t;&t;&t;*/
+r_case
 l_int|0x4b
 suffix:colon
 multiline_comment|/* -&gt; PHASE_STATUSIN&t;&t;&t;&t;*/
 r_case
-l_int|0x1b
+l_int|0x8b
 suffix:colon
 multiline_comment|/* -&gt; PHASE_STATUSIN&t;&t;&t;&t;*/
 multiline_comment|/* DATA OUT -&gt; STATUS */
@@ -8184,21 +8856,25 @@ op_assign
 id|host-&gt;SCpnt-&gt;request_bufflen
 op_minus
 id|acornscsi_sbic_xfcount
+c_func
 (paren
 id|host
 )paren
 suffix:semicolon
 id|acornscsi_dma_stop
+c_func
 (paren
 id|host
 )paren
 suffix:semicolon
 id|acornscsi_dma_adjust
+c_func
 (paren
 id|host
 )paren
 suffix:semicolon
 id|acornscsi_readstatusbyte
+c_func
 (paren
 id|host
 )paren
@@ -8217,27 +8893,35 @@ r_case
 l_int|0x4e
 suffix:colon
 multiline_comment|/* -&gt; PHASE_MSGOUT&t;&t;&t;&t;*/
+r_case
+l_int|0x8e
+suffix:colon
+multiline_comment|/* -&gt; PHASE_MSGOUT&t;&t;&t;&t;*/
 multiline_comment|/* DATA OUT -&gt; MESSAGE OUT */
 id|host-&gt;scsi.SCp.scsi_xferred
 op_assign
 id|host-&gt;SCpnt-&gt;request_bufflen
 op_minus
 id|acornscsi_sbic_xfcount
+c_func
 (paren
 id|host
 )paren
 suffix:semicolon
 id|acornscsi_dma_stop
+c_func
 (paren
 id|host
 )paren
 suffix:semicolon
 id|acornscsi_dma_adjust
+c_func
 (paren
 id|host
 )paren
 suffix:semicolon
 id|acornscsi_sendmessage
+c_func
 (paren
 id|host
 )paren
@@ -8252,27 +8936,35 @@ r_case
 l_int|0x4f
 suffix:colon
 multiline_comment|/* message in&t;&t;&t;&t;&t;*/
+r_case
+l_int|0x8f
+suffix:colon
+multiline_comment|/* message in&t;&t;&t;&t;&t;*/
 multiline_comment|/* DATA OUT -&gt; MESSAGE IN */
 id|host-&gt;scsi.SCp.scsi_xferred
 op_assign
 id|host-&gt;SCpnt-&gt;request_bufflen
 op_minus
 id|acornscsi_sbic_xfcount
+c_func
 (paren
 id|host
 )paren
 suffix:semicolon
 id|acornscsi_dma_stop
+c_func
 (paren
 id|host
 )paren
 suffix:semicolon
 id|acornscsi_dma_adjust
+c_func
 (paren
 id|host
 )paren
 suffix:semicolon
 id|acornscsi_message
+c_func
 (paren
 id|host
 )paren
@@ -8283,6 +8975,7 @@ suffix:semicolon
 r_default
 suffix:colon
 id|printk
+c_func
 (paren
 id|KERN_ERR
 l_string|&quot;scsi%d.%c: PHASE_DATAOUT, SSR %02X?&bslash;n&quot;
@@ -8290,6 +8983,7 @@ comma
 id|host-&gt;host-&gt;host_no
 comma
 id|acornscsi_target
+c_func
 (paren
 id|host
 )paren
@@ -8298,6 +8992,7 @@ id|ssr
 )paren
 suffix:semicolon
 id|acornscsi_dumplog
+c_func
 (paren
 id|host
 comma
@@ -8317,38 +9012,50 @@ r_case
 id|PHASE_STATUSIN
 suffix:colon
 multiline_comment|/* STATE: status in complete&t;&t;&t;*/
-r_if
+r_switch
 c_cond
 (paren
 id|ssr
-op_eq
-l_int|0x1f
 )paren
+(brace
+r_case
+l_int|0x1f
+suffix:colon
+multiline_comment|/* -&gt; PHASE_MSGIN, PHASE_DONE, PHASE_DISCONNECT */
+r_case
+l_int|0x8f
+suffix:colon
 multiline_comment|/* -&gt; PHASE_MSGIN, PHASE_DONE, PHASE_DISCONNECT */
 multiline_comment|/* STATUS -&gt; MESSAGE IN */
 id|acornscsi_message
+c_func
 (paren
 id|host
 )paren
 suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
-id|ssr
-op_eq
+r_break
+suffix:semicolon
+r_case
 l_int|0x1e
-)paren
+suffix:colon
+multiline_comment|/* -&gt; PHASE_MSGOUT&t;&t;&t;&t;*/
+r_case
+l_int|0x8e
+suffix:colon
 multiline_comment|/* -&gt; PHASE_MSGOUT&t;&t;&t;&t;*/
 multiline_comment|/* STATUS -&gt; MESSAGE OUT */
 id|acornscsi_sendmessage
+c_func
 (paren
 id|host
 )paren
 suffix:semicolon
-r_else
-(brace
+r_break
+suffix:semicolon
+r_default
+suffix:colon
 id|printk
+c_func
 (paren
 id|KERN_ERR
 l_string|&quot;scsi%d.%c: PHASE_STATUSIN, SSR %02X instead of MESSAGE_IN?&bslash;n&quot;
@@ -8356,6 +9063,7 @@ comma
 id|host-&gt;host-&gt;host_no
 comma
 id|acornscsi_target
+c_func
 (paren
 id|host
 )paren
@@ -8364,6 +9072,7 @@ id|ssr
 )paren
 suffix:semicolon
 id|acornscsi_dumplog
+c_func
 (paren
 id|host
 comma
@@ -8397,8 +9106,13 @@ r_case
 l_int|0x4e
 suffix:colon
 multiline_comment|/* -&gt; PHASE_MSGOUT&t;&t;&t;&t;*/
+r_case
+l_int|0x8e
+suffix:colon
+multiline_comment|/* -&gt; PHASE_MSGOUT&t;&t;&t;&t;*/
 multiline_comment|/* MESSAGE IN -&gt; MESSAGE OUT */
 id|acornscsi_sendmessage
+c_func
 (paren
 id|host
 )paren
@@ -8419,8 +9133,52 @@ r_case
 l_int|0x8f
 suffix:colon
 id|acornscsi_message
+c_func
 (paren
 id|host
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x85
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;scsi%d.%c: strange message in disconnection&bslash;n&quot;
+comma
+id|host-&gt;host-&gt;host_no
+comma
+id|acornscsi_target
+c_func
+(paren
+id|host
+)paren
+)paren
+suffix:semicolon
+id|acornscsi_dumplog
+c_func
+(paren
+id|host
+comma
+id|host-&gt;SCpnt
+ques
+c_cond
+id|host-&gt;SCpnt-&gt;target
+suffix:colon
+l_int|8
+)paren
+suffix:semicolon
+id|acornscsi_done
+c_func
+(paren
+id|host
+comma
+op_amp
+id|host-&gt;SCpnt
+comma
+id|DID_ERROR
 )paren
 suffix:semicolon
 r_break
@@ -8428,6 +9186,7 @@ suffix:semicolon
 r_default
 suffix:colon
 id|printk
+c_func
 (paren
 id|KERN_ERR
 l_string|&quot;scsi%d.%c: PHASE_MSGIN, SSR %02X after message in?&bslash;n&quot;
@@ -8435,6 +9194,7 @@ comma
 id|host-&gt;host-&gt;host_no
 comma
 id|acornscsi_target
+c_func
 (paren
 id|host
 )paren
@@ -8443,6 +9203,7 @@ id|ssr
 )paren
 suffix:semicolon
 id|acornscsi_dumplog
+c_func
 (paren
 id|host
 comma
@@ -8473,6 +9234,7 @@ l_int|0x85
 suffix:colon
 multiline_comment|/* -&gt; PHASE_IDLE&t;&t;&t;&t;*/
 id|acornscsi_done
+c_func
 (paren
 id|host
 comma
@@ -8486,9 +9248,13 @@ r_return
 id|INTR_NEXT_COMMAND
 suffix:semicolon
 r_case
+l_int|0x1e
+suffix:colon
+r_case
 l_int|0x8e
 suffix:colon
 id|acornscsi_sendmessage
+c_func
 (paren
 id|host
 )paren
@@ -8498,6 +9264,7 @@ suffix:semicolon
 r_default
 suffix:colon
 id|printk
+c_func
 (paren
 id|KERN_ERR
 l_string|&quot;scsi%d.%c: PHASE_DONE, SSR %02X instead of disconnect?&bslash;n&quot;
@@ -8505,6 +9272,7 @@ comma
 id|host-&gt;host-&gt;host_no
 comma
 id|acornscsi_target
+c_func
 (paren
 id|host
 )paren
@@ -8513,6 +9281,7 @@ id|ssr
 )paren
 suffix:semicolon
 id|acornscsi_dumplog
+c_func
 (paren
 id|host
 comma
@@ -8540,7 +9309,13 @@ id|ssr
 r_case
 l_int|0x85
 suffix:colon
+r_if
+c_cond
+(paren
+id|host-&gt;SCpnt
+)paren
 id|acornscsi_done
+c_func
 (paren
 id|host
 comma
@@ -8550,6 +9325,25 @@ comma
 id|DID_ABORT
 )paren
 suffix:semicolon
+r_else
+(brace
+id|clear_bit
+c_func
+(paren
+id|host-&gt;scsi.reconnected.target
+op_star
+l_int|8
+op_plus
+id|host-&gt;scsi.reconnected.lun
+comma
+id|host-&gt;busyluns
+)paren
+suffix:semicolon
+id|host-&gt;scsi.phase
+op_assign
+id|PHASE_IDLE
+suffix:semicolon
+)brace
 r_return
 id|INTR_NEXT_COMMAND
 suffix:semicolon
@@ -8566,6 +9360,7 @@ r_case
 l_int|0x8e
 suffix:colon
 id|acornscsi_sendmessage
+c_func
 (paren
 id|host
 )paren
@@ -8575,6 +9370,7 @@ suffix:semicolon
 r_default
 suffix:colon
 id|printk
+c_func
 (paren
 id|KERN_ERR
 l_string|&quot;scsi%d.%c: PHASE_ABORTED, SSR %02X?&bslash;n&quot;
@@ -8582,6 +9378,7 @@ comma
 id|host-&gt;host-&gt;host_no
 comma
 id|acornscsi_target
+c_func
 (paren
 id|host
 )paren
@@ -8590,6 +9387,7 @@ id|ssr
 )paren
 suffix:semicolon
 id|acornscsi_dumplog
+c_func
 (paren
 id|host
 comma
@@ -8608,6 +9406,7 @@ suffix:semicolon
 r_default
 suffix:colon
 id|printk
+c_func
 (paren
 id|KERN_ERR
 l_string|&quot;scsi%d.%c: unknown driver phase %d&bslash;n&quot;
@@ -8615,6 +9414,7 @@ comma
 id|host-&gt;host-&gt;host_no
 comma
 id|acornscsi_target
+c_func
 (paren
 id|host
 )paren
@@ -8623,6 +9423,7 @@ id|ssr
 )paren
 suffix:semicolon
 id|acornscsi_dumplog
+c_func
 (paren
 id|host
 comma
@@ -8639,11 +9440,12 @@ r_return
 id|INTR_PROCESSING
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Prototype: void acornscsi_intr (int irq, void *dev_id, struct pt_regs *regs)&n; * Purpose  : handle interrupts from Acorn SCSI card&n; * Params   : irq    - interrupt number&n; *&t;      dev_id - device specific data (AS_Host structure)&n; *&t;      regs   - processor registers when interrupt occurred&n; */
+multiline_comment|/*&n; * Prototype: void acornscsi_intr(int irq, void *dev_id, struct pt_regs *regs)&n; * Purpose  : handle interrupts from Acorn SCSI card&n; * Params   : irq    - interrupt number&n; *&t;      dev_id - device specific data (AS_Host structure)&n; *&t;      regs   - processor registers when interrupt occurred&n; */
 r_static
 DECL|function|acornscsi_intr
 r_void
 id|acornscsi_intr
+c_func
 (paren
 r_int
 id|irq
@@ -8685,6 +9487,7 @@ c_cond
 id|host-&gt;scsi.interrupt
 )paren
 id|printk
+c_func
 (paren
 l_string|&quot;scsi%d: interrupt re-entered&bslash;n&quot;
 comma
@@ -8704,6 +9507,7 @@ suffix:semicolon
 id|iostatus
 op_assign
 id|inb
+c_func
 (paren
 id|host-&gt;card.io_intr
 )paren
@@ -8717,6 +9521,7 @@ l_int|2
 )paren
 (brace
 id|acornscsi_dma_intr
+c_func
 (paren
 id|host
 )paren
@@ -8724,6 +9529,7 @@ suffix:semicolon
 id|iostatus
 op_assign
 id|inb
+c_func
 (paren
 id|host-&gt;card.io_intr
 )paren
@@ -8739,6 +9545,7 @@ l_int|8
 id|ret
 op_assign
 id|acornscsi_sbicintr
+c_func
 (paren
 id|host
 comma
@@ -8752,6 +9559,7 @@ c_cond
 id|host-&gt;dma.xfer_required
 )paren
 id|acornscsi_dma_xfer
+c_func
 (paren
 id|host
 )paren
@@ -8766,6 +9574,7 @@ id|INTR_NEXT_COMMAND
 id|ret
 op_assign
 id|acornscsi_kick
+c_func
 (paren
 id|host
 )paren
@@ -8789,10 +9598,11 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*=============================================================================================&n; * Interfaces between interrupt handler and rest of scsi code&n; */
-multiline_comment|/*&n; * Function : acornscsi_queuecmd (Scsi_Cmnd *cmd, void (*done)(Scsi_Cmnd *))&n; * Purpose  : queues a SCSI command&n; * Params   : cmd  - SCSI command&n; *&t;      done - function called on completion, with pointer to command descriptor&n; * Returns  : 0, or &lt; 0 on error.&n; */
+multiline_comment|/*&n; * Function : acornscsi_queuecmd(Scsi_Cmnd *cmd, void (*done)(Scsi_Cmnd *))&n; * Purpose  : queues a SCSI command&n; * Params   : cmd  - SCSI command&n; *&t;      done - function called on completion, with pointer to command descriptor&n; * Returns  : 0, or &lt; 0 on error.&n; */
 DECL|function|acornscsi_queuecmd
 r_int
 id|acornscsi_queuecmd
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -8828,6 +9638,7 @@ id|done
 (brace
 multiline_comment|/* there should be some way of rejecting errors like this without panicing... */
 id|panic
+c_func
 (paren
 l_string|&quot;scsi%d: queuecommand called with NULL done function [cmd=%p]&quot;
 comma
@@ -8846,6 +9657,7 @@ r_if
 c_cond
 (paren
 id|acornscsi_cmdtype
+c_func
 (paren
 id|SCpnt-&gt;cmnd
 (braket
@@ -8867,6 +9679,7 @@ id|SCpnt-&gt;target
 )paren
 (brace
 id|printk
+c_func
 (paren
 id|KERN_CRIT
 l_string|&quot;scsi%d.%c: WRITE attempted with NO_WRITE flag set&bslash;n&quot;
@@ -8885,6 +9698,7 @@ op_lshift
 l_int|16
 suffix:semicolon
 id|done
+c_func
 (paren
 id|SCpnt
 )paren
@@ -8916,6 +9730,7 @@ op_assign
 r_int
 )paren
 id|acornscsi_datadirection
+c_func
 (paren
 id|SCpnt-&gt;cmnd
 (braket
@@ -9010,6 +9825,7 @@ c_cond
 (paren
 op_logical_neg
 id|queue_add_cmd_ordered
+c_func
 (paren
 op_amp
 id|host-&gt;queues.issue
@@ -9025,6 +9841,7 @@ op_lshift
 l_int|16
 suffix:semicolon
 id|done
+c_func
 (paren
 id|SCpnt
 )paren
@@ -9034,6 +9851,7 @@ l_int|0
 suffix:semicolon
 )brace
 id|save_flags_cli
+c_func
 (paren
 id|flags
 )paren
@@ -9046,11 +9864,13 @@ op_eq
 id|PHASE_IDLE
 )paren
 id|acornscsi_kick
+c_func
 (paren
 id|host
 )paren
 suffix:semicolon
 id|restore_flags
+c_func
 (paren
 id|flags
 )paren
@@ -9060,12 +9880,13 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Prototype: void acornscsi_reportstatus (Scsi_Cmnd **SCpntp1, Scsi_Cmnd **SCpntp2, int result)&n; * Purpose  : pass a result to *SCpntp1, and check if *SCpntp1 = *SCpntp2&n; * Params   : SCpntp1 - pointer to command to return&n; *&t;      SCpntp2 - pointer to command to check&n; *&t;      result  - result to pass back to mid-level done function&n; * Returns  : *SCpntp2 = NULL if *SCpntp1 is the same command structure as *SCpntp2.&n; */
+multiline_comment|/*&n; * Prototype: void acornscsi_reportstatus(Scsi_Cmnd **SCpntp1, Scsi_Cmnd **SCpntp2, int result)&n; * Purpose  : pass a result to *SCpntp1, and check if *SCpntp1 = *SCpntp2&n; * Params   : SCpntp1 - pointer to command to return&n; *&t;      SCpntp2 - pointer to command to check&n; *&t;      result  - result to pass back to mid-level done function&n; * Returns  : *SCpntp2 = NULL if *SCpntp1 is the same command structure as *SCpntp2.&n; */
 r_static
 r_inline
 DECL|function|acornscsi_reportstatus
 r_void
 id|acornscsi_reportstatus
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -9103,7 +9924,10 @@ id|SCpnt-&gt;result
 op_assign
 id|result
 suffix:semicolon
-id|SCpnt-&gt;scsi_done
+id|SCpnt
+op_member_access_from_pointer
+id|scsi_done
+c_func
 (paren
 id|SCpnt
 )paren
@@ -9123,10 +9947,253 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Prototype: int acornscsi_abort (Scsi_Cmnd *SCpnt)&n; * Purpose  : abort a command on this host&n; * Params   : SCpnt - command to abort&n; * Returns  : one of SCSI_ABORT_ macros&n; */
+DECL|enum|res_abort
+DECL|enumerator|res_not_running
+DECL|enumerator|res_success
+DECL|enumerator|res_success_clear
+DECL|enumerator|res_snooze
+r_enum
+id|res_abort
+(brace
+id|res_not_running
+comma
+id|res_success
+comma
+id|res_success_clear
+comma
+id|res_snooze
+)brace
+suffix:semicolon
+multiline_comment|/*&n; * Prototype: enum res acornscsi_do_abort(Scsi_Cmnd *SCpnt)&n; * Purpose  : abort a command on this host&n; * Params   : SCpnt - command to abort&n; * Returns  : our abort status&n; */
+r_static
+r_enum
+id|res_abort
+DECL|function|acornscsi_do_abort
+id|acornscsi_do_abort
+c_func
+(paren
+id|AS_Host
+op_star
+id|host
+comma
+id|Scsi_Cmnd
+op_star
+id|SCpnt
+)paren
+(brace
+r_enum
+id|res_abort
+id|res
+op_assign
+id|res_not_running
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|queue_removecmd
+c_func
+(paren
+op_amp
+id|host-&gt;queues.issue
+comma
+id|SCpnt
+)paren
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; * The command was on the issue queue, and has not been&n;&t;&t; * issued yet.  We can remove the command from the queue,&n;&t;&t; * and acknowledge the abort.  Neither the devices nor the&n;&t;&t; * interface know about the command.&n;&t;&t; */
+singleline_comment|//#if (DEBUG &amp; DEBUG_ABORT)
+id|printk
+c_func
+(paren
+l_string|&quot;on issue queue &quot;
+)paren
+suffix:semicolon
+singleline_comment|//#endif
+id|res
+op_assign
+id|res_success
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|queue_removecmd
+c_func
+(paren
+op_amp
+id|host-&gt;queues.disconnected
+comma
+id|SCpnt
+)paren
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; * The command was on the disconnected queue.  Simply&n;&t;&t; * acknowledge the abort condition, and when the target&n;&t;&t; * reconnects, we will give it an ABORT message.  The&n;&t;&t; * target should then disconnect, and we will clear&n;&t;&t; * the busylun bit.&n;&t;&t; */
+singleline_comment|//#if (DEBUG &amp; DEBUG_ABORT)
+id|printk
+c_func
+(paren
+l_string|&quot;on disconnected queue &quot;
+)paren
+suffix:semicolon
+singleline_comment|//#endif
+id|res
+op_assign
+id|res_success
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|host-&gt;SCpnt
+op_eq
+id|SCpnt
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+singleline_comment|//#if (DEBUG &amp; DEBUG_ABORT)
+id|printk
+c_func
+(paren
+l_string|&quot;executing &quot;
+)paren
+suffix:semicolon
+singleline_comment|//#endif
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|host-&gt;scsi.phase
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; * If the interface is idle, and the command is &squot;disconnectable&squot;,&n;&t;&t; * then it is the same as on the disconnected queue.  We simply&n;&t;&t; * remove all traces of the command.  When the target reconnects,&n;&t;&t; * we will give it an ABORT message since the command could not&n;&t;&t; * be found.  When the target finally disconnects, we will clear&n;&t;&t; * the busylun bit.&n;&t;&t; */
+r_case
+id|PHASE_IDLE
+suffix:colon
+r_if
+c_cond
+(paren
+id|host-&gt;scsi.disconnectable
+)paren
+(brace
+id|host-&gt;scsi.disconnectable
+op_assign
+l_int|0
+suffix:semicolon
+id|host-&gt;SCpnt
+op_assign
+l_int|NULL
+suffix:semicolon
+id|res
+op_assign
+id|res_success
+suffix:semicolon
+)brace
+r_break
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * If the command has connected and done nothing further,&n;&t;&t; * simply force a disconnect.  We also need to clear the&n;&t;&t; * busylun bit.&n;&t;&t; */
+r_case
+id|PHASE_CONNECTED
+suffix:colon
+id|sbic_arm_write
+c_func
+(paren
+id|host-&gt;scsi.io_port
+comma
+id|CMND
+comma
+id|CMND_DISCONNECT
+)paren
+suffix:semicolon
+id|host-&gt;SCpnt
+op_assign
+l_int|NULL
+suffix:semicolon
+id|res
+op_assign
+id|res_success_clear
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|acornscsi_abortcmd
+c_func
+(paren
+id|host
+comma
+id|host-&gt;SCpnt-&gt;tag
+)paren
+suffix:semicolon
+id|res
+op_assign
+id|res_snooze
+suffix:semicolon
+)brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|host-&gt;origSCpnt
+op_eq
+id|SCpnt
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; * The command will be executed next, but a command&n;&t;&t; * is currently using the interface.  This is similar to&n;&t;&t; * being on the issue queue, except the busylun bit has&n;&t;&t; * been set.&n;&t;&t; */
+id|host-&gt;origSCpnt
+op_assign
+l_int|NULL
+suffix:semicolon
+singleline_comment|//#if (DEBUG &amp; DEBUG_ABORT)
+id|printk
+c_func
+(paren
+l_string|&quot;waiting for execution &quot;
+)paren
+suffix:semicolon
+singleline_comment|//#endif
+id|res
+op_assign
+id|res_success_clear
+suffix:semicolon
+)brace
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot;unknown &quot;
+)paren
+suffix:semicolon
+r_return
+id|res
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Prototype: int acornscsi_abort(Scsi_Cmnd *SCpnt)&n; * Purpose  : abort a command on this host&n; * Params   : SCpnt - command to abort&n; * Returns  : one of SCSI_ABORT_ macros&n; */
 DECL|function|acornscsi_abort
 r_int
 id|acornscsi_abort
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -9145,8 +10212,6 @@ id|SCpnt-&gt;host-&gt;hostdata
 suffix:semicolon
 r_int
 id|result
-op_assign
-id|SCSI_ABORT_NOT_RUNNING
 suffix:semicolon
 id|host-&gt;stats.aborts
 op_add_assign
@@ -9162,6 +10227,7 @@ suffix:semicolon
 id|asr
 op_assign
 id|sbic_arm_read
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -9171,6 +10237,7 @@ suffix:semicolon
 id|ssr
 op_assign
 id|sbic_arm_read
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -9178,6 +10245,7 @@ id|SSR
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 id|KERN_WARNING
 l_string|&quot;acornscsi_abort: &quot;
@@ -9194,6 +10262,7 @@ id|host-&gt;scsi.phase
 )paren
 suffix:semicolon
 id|acornscsi_dumplog
+c_func
 (paren
 id|host
 comma
@@ -9202,150 +10271,108 @@ id|SCpnt-&gt;target
 suffix:semicolon
 )brace
 macro_line|#endif
-r_if
-c_cond
-(paren
-id|queue_removecmd
-(paren
-op_amp
-id|host-&gt;queues.issue
-comma
-id|SCpnt
-)paren
-)paren
-(brace
-id|SCpnt-&gt;result
-op_assign
-id|DID_ABORT
-op_lshift
-l_int|16
-suffix:semicolon
-id|SCpnt-&gt;scsi_done
-(paren
-id|SCpnt
-)paren
-suffix:semicolon
-macro_line|#if (DEBUG &amp; DEBUG_ABORT)
 id|printk
+c_func
 (paren
-l_string|&quot;scsi%d: command on issue queue&bslash;n&quot;
+l_string|&quot;scsi%d: &quot;
 comma
 id|host-&gt;host-&gt;host_no
 )paren
 suffix:semicolon
-macro_line|#endif
-id|result
-op_assign
-id|SCSI_ABORT_SUCCESS
-suffix:semicolon
-)brace
-r_else
-r_if
+r_switch
 c_cond
 (paren
-id|queue_cmdonqueue
-(paren
-op_amp
-id|host-&gt;queues.disconnected
-comma
-id|SCpnt
-)paren
-)paren
-(brace
-id|printk
-(paren
-l_string|&quot;scsi%d: command on disconnected queue&bslash;n&quot;
-comma
-id|host-&gt;host-&gt;host_no
-)paren
-suffix:semicolon
-id|result
-op_assign
-id|SCSI_ABORT_SNOOZE
-suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|host-&gt;SCpnt
-op_eq
-id|SCpnt
-)paren
-(brace
-id|acornscsi_abortcmd
+id|acornscsi_do_abort
+c_func
 (paren
 id|host
 comma
-id|host-&gt;SCpnt-&gt;tag
-)paren
-suffix:semicolon
-id|printk
-(paren
-l_string|&quot;scsi%d: command executing&bslash;n&quot;
-comma
-id|host-&gt;host-&gt;host_no
-)paren
-suffix:semicolon
-id|result
-op_assign
-id|SCSI_ABORT_SNOOZE
-suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|host-&gt;origSCpnt
-op_eq
 id|SCpnt
 )paren
+)paren
 (brace
-id|host-&gt;origSCpnt
-op_assign
-l_int|NULL
+multiline_comment|/*&n;&t; * We managed to find the command and cleared it out.&n;&t; * We do not expect the command to be executing on the&n;&t; * target, but we have set the busylun bit.&n;&t; */
+r_case
+id|res_success_clear
+suffix:colon
+singleline_comment|//#if (DEBUG &amp; DEBUG_ABORT)
+id|printk
+c_func
+(paren
+l_string|&quot;clear &quot;
+)paren
 suffix:semicolon
+singleline_comment|//#endif
+id|clear_bit
+c_func
+(paren
+id|SCpnt-&gt;target
+op_star
+l_int|8
+op_plus
+id|SCpnt-&gt;lun
+comma
+id|host-&gt;busyluns
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * We found the command, and cleared it out.  Either&n;&t; * the command is still known to be executing on the&n;&t; * target, or the busylun bit is not set.&n;&t; */
+r_case
+id|res_success
+suffix:colon
+singleline_comment|//#if (DEBUG &amp; DEBUG_ABORT)
+id|printk
+c_func
+(paren
+l_string|&quot;success&bslash;n&quot;
+)paren
+suffix:semicolon
+singleline_comment|//#endif
 id|SCpnt-&gt;result
 op_assign
 id|DID_ABORT
 op_lshift
 l_int|16
 suffix:semicolon
-id|SCpnt-&gt;scsi_done
+id|SCpnt
+op_member_access_from_pointer
+id|scsi_done
+c_func
 (paren
 id|SCpnt
 )paren
 suffix:semicolon
-macro_line|#if (DEBUG &amp; DEBUG_ABORT)
-id|printk
-(paren
-l_string|&quot;scsi%d: command waiting for execution&bslash;n&quot;
-comma
-id|host-&gt;host-&gt;host_no
-)paren
-suffix:semicolon
-macro_line|#endif
 id|result
 op_assign
 id|SCSI_ABORT_SUCCESS
 suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|result
-op_eq
-id|SCSI_ABORT_NOT_RUNNING
-)paren
-(brace
+r_break
+suffix:semicolon
+multiline_comment|/*&n;&t; * We did find the command, but unfortunately we couldn&squot;t&n;&t; * unhook it from ourselves.  Wait some more, and if it&n;&t; * still doesn&squot;t complete, reset the interface.&n;&t; */
+r_case
+id|res_snooze
+suffix:colon
+singleline_comment|//#if (DEBUG &amp; DEBUG_ABORT)
 id|printk
+c_func
 (paren
-l_string|&quot;scsi%d: abort(): command not running&bslash;n&quot;
-comma
-id|host-&gt;host-&gt;host_no
+l_string|&quot;snooze&bslash;n&quot;
 )paren
 suffix:semicolon
+singleline_comment|//#endif
+id|result
+op_assign
+id|SCSI_ABORT_SNOOZE
+suffix:semicolon
+r_break
+suffix:semicolon
+multiline_comment|/*&n;&t; * The command could not be found (either because it completed,&n;&t; * or it got dropped.&n;&t; */
+r_default
+suffix:colon
+r_case
+id|res_not_running
+suffix:colon
 id|acornscsi_dumplog
+c_func
 (paren
 id|host
 comma
@@ -9357,16 +10384,32 @@ id|result
 op_assign
 id|SCSI_ABORT_SNOOZE
 suffix:semicolon
+macro_line|#else
+id|result
+op_assign
+id|SCSI_ABORT_NOT_RUNNING
+suffix:semicolon
 macro_line|#endif
+singleline_comment|//#if (DEBUG &amp; DEBUG_ABORT)
+id|printk
+c_func
+(paren
+l_string|&quot;not running&bslash;n&quot;
+)paren
+suffix:semicolon
+singleline_comment|//#endif
+r_break
+suffix:semicolon
 )brace
 r_return
 id|result
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Prototype: int acornscsi_reset (Scsi_Cmnd *SCpnt, unsigned int reset_flags)&n; * Purpose  : reset a command on this host/reset this host&n; * Params   : SCpnt  - command causing reset&n; *&t;      result - what type of reset to perform&n; * Returns  : one of SCSI_RESET_ macros&n; */
+multiline_comment|/*&n; * Prototype: int acornscsi_reset(Scsi_Cmnd *SCpnt, unsigned int reset_flags)&n; * Purpose  : reset a command on this host/reset this host&n; * Params   : SCpnt  - command causing reset&n; *&t;      result - what type of reset to perform&n; * Returns  : one of SCSI_RESET_ macros&n; */
 DECL|function|acornscsi_reset
 r_int
 id|acornscsi_reset
+c_func
 (paren
 id|Scsi_Cmnd
 op_star
@@ -9405,6 +10448,7 @@ suffix:semicolon
 id|asr
 op_assign
 id|sbic_arm_read
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -9414,6 +10458,7 @@ suffix:semicolon
 id|ssr
 op_assign
 id|sbic_arm_read
+c_func
 (paren
 id|host-&gt;scsi.io_port
 comma
@@ -9421,6 +10466,7 @@ id|SSR
 )paren
 suffix:semicolon
 id|printk
+c_func
 (paren
 id|KERN_WARNING
 l_string|&quot;acornscsi_reset: &quot;
@@ -9437,6 +10483,7 @@ id|host-&gt;scsi.phase
 )paren
 suffix:semicolon
 id|acornscsi_dumplog
+c_func
 (paren
 id|host
 comma
@@ -9446,6 +10493,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 id|acornscsi_dma_stop
+c_func
 (paren
 id|host
 )paren
@@ -9456,12 +10504,14 @@ id|host-&gt;SCpnt
 suffix:semicolon
 multiline_comment|/*&n;     * do hard reset.  This resets all devices on this host, and so we&n;     * must set the reset status on all commands.&n;     */
 id|acornscsi_resetcard
+c_func
 (paren
 id|host
 )paren
 suffix:semicolon
 multiline_comment|/*&n;     * report reset on commands current connected/disconnected&n;     */
 id|acornscsi_reportstatus
+c_func
 (paren
 op_amp
 id|host-&gt;SCpnt
@@ -9479,6 +10529,7 @@ c_loop
 id|SCptr
 op_assign
 id|queue_remove
+c_func
 (paren
 op_amp
 id|host-&gt;queues.disconnected
@@ -9488,6 +10539,7 @@ op_ne
 l_int|NULL
 )paren
 id|acornscsi_reportstatus
+c_func
 (paren
 op_amp
 id|SCptr
@@ -9510,7 +10562,10 @@ id|DID_RESET
 op_lshift
 l_int|16
 suffix:semicolon
-id|SCpnt-&gt;scsi_done
+id|SCpnt
+op_member_access_from_pointer
+id|scsi_done
+c_func
 (paren
 id|SCpnt
 )paren
@@ -9535,11 +10590,12 @@ id|ecs
 id|MAX_ECARDS
 )braket
 suffix:semicolon
-multiline_comment|/*&n; * Prototype: void acornscsi_init (AS_Host *host)&n; * Purpose  : initialise the AS_Host structure for one interface &amp; setup hardware&n; * Params   : host - host to setup&n; */
+multiline_comment|/*&n; * Prototype: void acornscsi_init(AS_Host *host)&n; * Purpose  : initialise the AS_Host structure for one interface &amp; setup hardware&n; * Params   : host - host to setup&n; */
 r_static
 DECL|function|acornscsi_init
 r_void
 id|acornscsi_init
+c_func
 (paren
 id|AS_Host
 op_star
@@ -9547,6 +10603,7 @@ id|host
 )paren
 (brace
 id|memset
+c_func
 (paren
 op_amp
 id|host-&gt;stats
@@ -9560,24 +10617,28 @@ id|host-&gt;stats
 )paren
 suffix:semicolon
 id|queue_initialise
+c_func
 (paren
 op_amp
 id|host-&gt;queues.issue
 )paren
 suffix:semicolon
 id|queue_initialise
+c_func
 (paren
 op_amp
 id|host-&gt;queues.disconnected
 )paren
 suffix:semicolon
 id|msgqueue_initialise
+c_func
 (paren
 op_amp
 id|host-&gt;scsi.msgs
 )paren
 suffix:semicolon
 id|acornscsi_resetcard
+c_func
 (paren
 id|host
 )paren
@@ -9653,6 +10714,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 id|ecard_startfind
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -9700,6 +10762,7 @@ l_int|0xff
 )paren
 (brace
 id|printk
+c_func
 (paren
 l_string|&quot;scsi: WD33C93 does not have IRQ enabled - ignoring&bslash;n&quot;
 )paren
@@ -9720,6 +10783,7 @@ multiline_comment|/* Must claim here - card produces irq on reset */
 id|instance
 op_assign
 id|scsi_register
+c_func
 (paren
 id|tpnt
 comma
@@ -9740,6 +10804,7 @@ suffix:semicolon
 id|instance-&gt;io_port
 op_assign
 id|ecard_address
+c_func
 (paren
 id|ecs
 (braket
@@ -9767,6 +10832,7 @@ suffix:semicolon
 id|host-&gt;scsi.io_port
 op_assign
 id|ioaddr
+c_func
 (paren
 id|instance-&gt;io_port
 op_plus
@@ -9800,6 +10866,7 @@ suffix:semicolon
 id|host-&gt;card.io_ram
 op_assign
 id|ioaddr
+c_func
 (paren
 id|instance-&gt;io_port
 )paren
@@ -9847,6 +10914,7 @@ op_assign
 l_int|0x0a
 suffix:semicolon
 id|request_region
+c_func
 (paren
 id|instance-&gt;io_port
 op_plus
@@ -9858,6 +10926,7 @@ l_string|&quot;acornscsi(sbic)&quot;
 )paren
 suffix:semicolon
 id|request_region
+c_func
 (paren
 id|host-&gt;card.io_intr
 comma
@@ -9867,6 +10936,7 @@ l_string|&quot;acornscsi(intr)&quot;
 )paren
 suffix:semicolon
 id|request_region
+c_func
 (paren
 id|host-&gt;card.io_page
 comma
@@ -9877,6 +10947,7 @@ l_string|&quot;acornscsi(page)&quot;
 suffix:semicolon
 macro_line|#ifdef USE_DMAC
 id|request_region
+c_func
 (paren
 id|host-&gt;dma.io_port
 comma
@@ -9887,6 +10958,7 @@ l_string|&quot;acornscsi(dmac)&quot;
 suffix:semicolon
 macro_line|#endif
 id|request_region
+c_func
 (paren
 id|instance-&gt;io_port
 comma
@@ -9930,6 +11002,7 @@ id|NO_IRQ
 suffix:semicolon
 )brace
 id|acornscsi_init
+c_func
 (paren
 id|host
 )paren
@@ -9942,10 +11015,11 @@ r_return
 id|count
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function: int acornscsi_release (struct Scsi_Host *host)&n; * Purpose : release all resources used by this adapter&n; * Params  : host - driver structure to release&n; * Returns : nothing of any consequence&n; */
+multiline_comment|/*&n; * Function: int acornscsi_release(struct Scsi_Host *host)&n; * Purpose : release all resources used by this adapter&n; * Params  : host - driver structure to release&n; * Returns : nothing of any consequence&n; */
 DECL|function|acornscsi_release
 r_int
 id|acornscsi_release
+c_func
 (paren
 r_struct
 id|Scsi_Host
@@ -9968,6 +11042,7 @@ id|i
 suffix:semicolon
 multiline_comment|/*&n;     * Put card into RESET state&n;     */
 id|outb
+c_func
 (paren
 l_int|0x80
 comma
@@ -9982,6 +11057,7 @@ op_ne
 id|NO_IRQ
 )paren
 id|free_irq
+c_func
 (paren
 id|host-&gt;scsi.irq
 comma
@@ -9989,6 +11065,7 @@ id|host
 )paren
 suffix:semicolon
 id|release_region
+c_func
 (paren
 id|instance-&gt;io_port
 op_plus
@@ -9998,6 +11075,7 @@ l_int|2
 )paren
 suffix:semicolon
 id|release_region
+c_func
 (paren
 id|host-&gt;card.io_intr
 comma
@@ -10005,6 +11083,7 @@ l_int|1
 )paren
 suffix:semicolon
 id|release_region
+c_func
 (paren
 id|host-&gt;card.io_page
 comma
@@ -10012,6 +11091,7 @@ l_int|1
 )paren
 suffix:semicolon
 id|release_region
+c_func
 (paren
 id|host-&gt;dma.io_port
 comma
@@ -10019,6 +11099,7 @@ l_int|256
 )paren
 suffix:semicolon
 id|release_region
+c_func
 (paren
 id|instance-&gt;io_port
 comma
@@ -10050,6 +11131,7 @@ op_logical_and
 id|instance-&gt;io_port
 op_eq
 id|ecard_address
+c_func
 (paren
 id|ecs
 (braket
@@ -10062,6 +11144,7 @@ l_int|0
 )paren
 )paren
 id|ecard_release
+c_func
 (paren
 id|ecs
 (braket
@@ -10070,18 +11153,21 @@ id|i
 )paren
 suffix:semicolon
 id|msgqueue_free
+c_func
 (paren
 op_amp
 id|host-&gt;scsi.msgs
 )paren
 suffix:semicolon
 id|queue_free
+c_func
 (paren
 op_amp
 id|host-&gt;queues.disconnected
 )paren
 suffix:semicolon
 id|queue_free
+c_func
 (paren
 op_amp
 id|host-&gt;queues.issue
@@ -10091,7 +11177,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function: char *acornscsi_info (struct Scsi_Host *host)&n; * Purpose : return a string describing this interface&n; * Params  : host - host to give information on&n; * Returns : a constant string&n; */
+multiline_comment|/*&n; * Function: char *acornscsi_info(struct Scsi_Host *host)&n; * Purpose : return a string describing this interface&n; * Params  : host - host to give information on&n; * Returns : a constant string&n; */
 r_const
 DECL|function|acornscsi_info
 r_char
@@ -10122,10 +11208,11 @@ suffix:semicolon
 id|p
 op_add_assign
 id|sprintf
+c_func
 (paren
 id|string
 comma
-l_string|&quot;%s at port %lX irq %d v%d.%d.%d&quot;
+l_string|&quot;%s at port %X irq %d v%d.%d.%d&quot;
 macro_line|#ifdef CONFIG_SCSI_ACORNSCSI_SYNC
 l_string|&quot; SYNC&quot;
 macro_line|#endif
@@ -10258,6 +11345,7 @@ suffix:semicolon
 id|p
 op_add_assign
 id|sprintf
+c_func
 (paren
 id|p
 comma
@@ -10288,6 +11376,7 @@ suffix:semicolon
 id|p
 op_add_assign
 id|sprintf
+c_func
 (paren
 id|p
 comma
@@ -10302,6 +11391,7 @@ macro_line|#ifdef USE_DMAC
 id|p
 op_add_assign
 id|sprintf
+c_func
 (paren
 id|p
 comma
@@ -10316,6 +11406,7 @@ macro_line|#endif
 id|p
 op_add_assign
 id|sprintf
+c_func
 (paren
 id|p
 comma
@@ -10369,6 +11460,7 @@ suffix:semicolon
 id|p
 op_add_assign
 id|sprintf
+c_func
 (paren
 id|p
 comma
@@ -10390,7 +11482,7 @@ id|devidx
 suffix:semicolon
 id|statptr
 op_assign
-id|status_ptr
+id|host-&gt;status_ptr
 (braket
 id|devidx
 )braket
@@ -10410,11 +11502,11 @@ l_int|0
 )paren
 id|statptr
 op_add_assign
-l_int|16
+id|STATUS_BUFFER_SIZE
 suffix:semicolon
 id|prev
 op_assign
-id|status
+id|host-&gt;status
 (braket
 id|devidx
 )braket
@@ -10430,7 +11522,7 @@ c_loop
 suffix:semicolon
 id|statptr
 op_ne
-id|status_ptr
+id|host-&gt;status_ptr
 (braket
 id|devidx
 )braket
@@ -10443,13 +11535,17 @@ op_plus
 l_int|1
 )paren
 op_amp
-l_int|15
+(paren
+id|STATUS_BUFFER_SIZE
+op_minus
+l_int|1
+)paren
 )paren
 (brace
 r_if
 c_cond
 (paren
-id|status
+id|host-&gt;status
 (braket
 id|devidx
 )braket
@@ -10463,12 +11559,13 @@ id|when
 id|p
 op_add_assign
 id|sprintf
+c_func
 (paren
 id|p
 comma
 l_string|&quot;%c%02X:%02X+%2ld&quot;
 comma
-id|status
+id|host-&gt;status
 (braket
 id|devidx
 )braket
@@ -10483,7 +11580,7 @@ l_char|&squot;-&squot;
 suffix:colon
 l_char|&squot; &squot;
 comma
-id|status
+id|host-&gt;status
 (braket
 id|devidx
 )braket
@@ -10493,7 +11590,7 @@ id|statptr
 dot
 id|ph
 comma
-id|status
+id|host-&gt;status
 (braket
 id|devidx
 )braket
@@ -10504,7 +11601,7 @@ dot
 id|ssr
 comma
 (paren
-id|status
+id|host-&gt;status
 (braket
 id|devidx
 )braket
@@ -10521,7 +11618,7 @@ l_int|100
 ques
 c_cond
 (paren
-id|status
+id|host-&gt;status
 (braket
 id|devidx
 )braket
@@ -10539,7 +11636,7 @@ l_int|99
 suffix:semicolon
 id|prev
 op_assign
-id|status
+id|host-&gt;status
 (braket
 id|devidx
 )braket
@@ -10555,6 +11652,7 @@ suffix:semicolon
 id|p
 op_add_assign
 id|sprintf
+c_func
 (paren
 id|p
 comma
@@ -10586,6 +11684,7 @@ r_int
 id|len
 suffix:semicolon
 id|proc_print_scsidevice
+c_func
 (paren
 id|scd
 comma
@@ -10604,6 +11703,7 @@ suffix:semicolon
 id|p
 op_add_assign
 id|sprintf
+c_func
 (paren
 id|p
 comma
@@ -10618,6 +11718,7 @@ id|scd-&gt;tagged_supported
 id|p
 op_add_assign
 id|sprintf
+c_func
 (paren
 id|p
 comma
@@ -10636,6 +11737,7 @@ suffix:semicolon
 id|p
 op_add_assign
 id|sprintf
+c_func
 (paren
 id|p
 comma
@@ -10657,6 +11759,7 @@ l_int|15
 id|p
 op_add_assign
 id|sprintf
+c_func
 (paren
 id|p
 comma
@@ -10672,6 +11775,7 @@ op_amp
 l_int|15
 comma
 id|acornscsi_getperiod
+c_func
 (paren
 id|host-&gt;device
 (braket
@@ -10686,6 +11790,7 @@ r_else
 id|p
 op_add_assign
 id|sprintf
+c_func
 (paren
 id|p
 comma

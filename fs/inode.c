@@ -1113,7 +1113,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * This is called with the inode lock held. It searches&n; * the in-use for freeable inodes, which are moved to a&n; * temporary list and then placed on the unused list by&n; * dispose_list. &n; *&n; * We don&squot;t expect to have to call this very often.&n; *&n; * N.B. The spinlock is released during the call to&n; *      dispose_list.&n; */
 DECL|macro|CAN_UNUSE
-mdefine_line|#define CAN_UNUSE(inode) &bslash;&n;&t;(((inode)-&gt;i_count | (inode)-&gt;i_state) == 0)
+mdefine_line|#define CAN_UNUSE(inode) &bslash;&n;&t;(((inode)-&gt;i_count | (inode)-&gt;i_state | (inode)-&gt;i_nrpages) == 0)
 DECL|macro|INODE
 mdefine_line|#define INODE(entry)&t;(list_entry(entry, struct inode, i_list))
 DECL|function|free_inodes
