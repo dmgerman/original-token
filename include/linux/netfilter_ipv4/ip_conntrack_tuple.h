@@ -132,13 +132,9 @@ id|dst
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|IP_PARTS_NATIVE
-mdefine_line|#define IP_PARTS_NATIVE(n)&t;&t;&t;&bslash;&n;(unsigned int)((n)&gt;&gt;24)&amp;0xFF,&t;&t;&t;&bslash;&n;(unsigned int)((n)&gt;&gt;16)&amp;0xFF,&t;&t;&t;&bslash;&n;(unsigned int)((n)&gt;&gt;8)&amp;0xFF,&t;&t;&t;&bslash;&n;(unsigned int)((n)&amp;0xFF)
-DECL|macro|IP_PARTS
-mdefine_line|#define IP_PARTS(n) IP_PARTS_NATIVE(ntohl(n))
 macro_line|#ifdef __KERNEL__
 DECL|macro|DUMP_TUPLE
-mdefine_line|#define DUMP_TUPLE(tp)&t;&t;&t;&t;&t;&t;&bslash;&n;DEBUGP(&quot;tuple %p: %u %u.%u.%u.%u:%u -&gt; %u.%u.%u.%u:%u&bslash;n&quot;,&t;&bslash;&n;       (tp), (tp)-&gt;dst.protonum,&t;&t;&t;&t;&bslash;&n;       IP_PARTS((tp)-&gt;src.ip), ntohs((tp)-&gt;src.u.all),&t;&t;&bslash;&n;       IP_PARTS((tp)-&gt;dst.ip), ntohs((tp)-&gt;dst.u.all))
+mdefine_line|#define DUMP_TUPLE(tp)&t;&t;&t;&t;&t;&t;&bslash;&n;DEBUGP(&quot;tuple %p: %u %u.%u.%u.%u:%hu -&gt; %u.%u.%u.%u:%hu&bslash;n&quot;,&t;&bslash;&n;       (tp), (tp)-&gt;dst.protonum,&t;&t;&t;&t;&bslash;&n;       NIPQUAD((tp)-&gt;src.ip), ntohs((tp)-&gt;src.u.all),&t;&t;&bslash;&n;       NIPQUAD((tp)-&gt;dst.ip), ntohs((tp)-&gt;dst.u.all))
 DECL|macro|CTINFO2DIR
 mdefine_line|#define CTINFO2DIR(ctinfo) ((ctinfo) &gt;= IP_CT_IS_REPLY ? IP_CT_DIR_REPLY : IP_CT_DIR_ORIGINAL)
 multiline_comment|/* If we&squot;re the first tuple, it&squot;s the original dir. */

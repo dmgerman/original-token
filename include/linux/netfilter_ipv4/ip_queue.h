@@ -63,6 +63,33 @@ id|IFNAMSIZ
 )braket
 suffix:semicolon
 multiline_comment|/* Name of outgoing interface */
+DECL|member|hw_protocol
+r_int
+r_int
+id|hw_protocol
+suffix:semicolon
+multiline_comment|/* Hardware protocol (network order) */
+DECL|member|hw_type
+r_int
+r_int
+id|hw_type
+suffix:semicolon
+multiline_comment|/* Hardware type */
+DECL|member|hw_addrlen
+r_int
+r_char
+id|hw_addrlen
+suffix:semicolon
+multiline_comment|/* Hardware address length */
+DECL|member|hw_addr
+r_int
+r_char
+id|hw_addr
+(braket
+l_int|8
+)braket
+suffix:semicolon
+multiline_comment|/* Hardware address */
 DECL|member|data_len
 r_int
 id|data_len

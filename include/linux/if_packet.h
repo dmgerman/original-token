@@ -96,6 +96,8 @@ DECL|macro|PACKET_RX_RING
 mdefine_line|#define PACKET_RX_RING&t;&t;&t;5
 DECL|macro|PACKET_STATISTICS
 mdefine_line|#define PACKET_STATISTICS&t;&t;6
+DECL|macro|PACKET_COPY_THRESH
+mdefine_line|#define PACKET_COPY_THRESH&t;&t;7
 DECL|struct|tpacket_stats
 r_struct
 id|tpacket_stats

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: page.h,v 1.35 2000/04/13 04:45:59 davem Exp $ */
+multiline_comment|/* $Id: page.h,v 1.36 2000/08/10 01:04:53 davem Exp $ */
 macro_line|#ifndef _SPARC64_PAGE_H
 DECL|macro|_SPARC64_PAGE_H
 mdefine_line|#define _SPARC64_PAGE_H

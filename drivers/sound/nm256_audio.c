@@ -7,7 +7,6 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/pm.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#include &quot;soundmodule.h&quot;
 macro_line|#include &quot;nm256.h&quot;
 macro_line|#include &quot;nm256_coeff.h&quot;
 DECL|variable|nm256_debug
@@ -3350,10 +3349,20 @@ id|mixer_operations
 id|nm256_mixer_operations
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
+id|id
+suffix:colon
 l_string|&quot;NeoMagic&quot;
 comma
+id|name
+suffix:colon
 l_string|&quot;NM256AC97Mixer&quot;
 comma
+id|ioctl
+suffix:colon
 id|nm256_default_mixer_ioctl
 )brace
 suffix:semicolon
@@ -5929,54 +5938,46 @@ id|audio_driver
 id|nm256_audio_driver
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
+id|open
+suffix:colon
 id|nm256_audio_open
 comma
-multiline_comment|/* open                 */
+id|close
+suffix:colon
 id|nm256_audio_close
 comma
-multiline_comment|/* close                */
+id|output_block
+suffix:colon
 id|nm256_audio_output_block
 comma
-multiline_comment|/* output_block         */
+id|start_input
+suffix:colon
 id|nm256_audio_start_input
 comma
-multiline_comment|/* start_input          */
+id|ioctl
+suffix:colon
 id|nm256_audio_ioctl
 comma
-multiline_comment|/* ioctl                */
+id|prepare_for_input
+suffix:colon
 id|nm256_audio_prepare_for_input
 comma
-multiline_comment|/* prepare_for_input    */
+id|prepare_for_output
+suffix:colon
 id|nm256_audio_prepare_for_output
 comma
-multiline_comment|/* prepare_for_output   */
+id|halt_io
+suffix:colon
 id|nm256_audio_reset
 comma
-multiline_comment|/* reset                */
+id|local_qlen
+suffix:colon
 id|nm256_audio_local_qlen
 comma
-multiline_comment|/*+local_qlen           */
-l_int|NULL
-comma
-multiline_comment|/*+copy_from_user       */
-l_int|NULL
-comma
-multiline_comment|/*+halt_input           */
-l_int|NULL
-comma
-multiline_comment|/* halt_output          */
-l_int|NULL
-comma
-multiline_comment|/*+trigger              */
-l_int|NULL
-comma
-multiline_comment|/*+set_speed            */
-l_int|NULL
-comma
-multiline_comment|/*+set_bits             */
-l_int|NULL
-comma
-multiline_comment|/*+set_channels         */
 )brace
 suffix:semicolon
 DECL|variable|init_nm256
@@ -6051,8 +6052,6 @@ op_eq
 l_int|0
 )paren
 (brace
-id|SOUND_LOCK
-suffix:semicolon
 id|loaded
 op_assign
 l_int|1
@@ -6091,8 +6090,6 @@ r_struct
 id|nm256_info
 op_star
 id|next_card
-suffix:semicolon
-id|SOUND_LOCK_END
 suffix:semicolon
 r_for
 c_loop

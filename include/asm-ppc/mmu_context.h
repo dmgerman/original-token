@@ -96,7 +96,7 @@ DECL|macro|get_mmu_context
 mdefine_line|#define get_mmu_context(mm)&t;&t;&t;&t;&t;&bslash;&n;do { &t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (mm-&gt;context == NO_CONTEXT) {&t;&t;&t;&bslash;&n;&t;&t;if (atomic_read(&amp;next_mmu_context) == LAST_CONTEXT)&t;&t;&bslash;&n;&t;&t;&t;mmu_context_overflow();&t;&t;&t;&bslash;&n;&t;&t;mm-&gt;context = MUNGE_CONTEXT(atomic_inc_return(&amp;next_mmu_context));&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&bslash;&n;} while (0)
 multiline_comment|/*&n; * Set up the context for a new address space.&n; */
 DECL|macro|init_new_context
-mdefine_line|#define init_new_context(tsk,mm)&t;((mm)-&gt;context = NO_CONTEXT)
+mdefine_line|#define init_new_context(tsk,mm)&t;(((mm)-&gt;context = NO_CONTEXT), 0)
 multiline_comment|/*&n; * We&squot;re finished using the context for an address space.&n; */
 DECL|macro|destroy_context
 mdefine_line|#define destroy_context(mm)     do { } while (0)

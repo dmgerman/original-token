@@ -1,4 +1,5 @@
 multiline_comment|/* $Id: setup_cqreek.c,v 1.1 2000/08/05 06:25:23 gniibe Exp $&n; *&n; * arch/sh/kernel/setup_cqreek.c&n; *&n; * Copyright (C) 2000  Niibe Yutaka&n; *&n; * CqREEK IDE/ISA Bridge Support.&n; *&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/irq.h&gt;

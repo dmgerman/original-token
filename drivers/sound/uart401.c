@@ -2,7 +2,6 @@ multiline_comment|/*&n; * sound/uart401.c&n; *&n; * MPU-401 UART driver (formerl
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#include &quot;soundmodule.h&quot;
 macro_line|#include &quot;mpu401.h&quot;
 DECL|struct|uart401_devc
 r_typedef
@@ -702,6 +701,12 @@ id|midi_operations
 id|uart401_operations
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
+id|info
+suffix:colon
 (brace
 l_string|&quot;MPU-401 (UART) MIDI&quot;
 comma
@@ -712,33 +717,45 @@ comma
 id|SNDCARD_MPU401
 )brace
 comma
+id|converter
+suffix:colon
 op_amp
 id|std_midi_synth
 comma
+id|in_info
+suffix:colon
 (brace
 l_int|0
 )brace
 comma
+id|open
+suffix:colon
 id|uart401_open
 comma
+id|close
+suffix:colon
 id|uart401_close
 comma
-l_int|NULL
-comma
-multiline_comment|/* ioctl */
+id|outputc
+suffix:colon
 id|uart401_out
 comma
+id|start_read
+suffix:colon
 id|uart401_start_read
 comma
+id|end_read
+suffix:colon
 id|uart401_end_read
 comma
+id|kick
+suffix:colon
 id|uart401_kick
 comma
-l_int|NULL
-comma
+id|buffer_status
+suffix:colon
 id|uart401_buffer_status
 comma
-l_int|NULL
 )brace
 suffix:semicolon
 DECL|function|enter_uart_mode
@@ -879,6 +896,11 @@ r_struct
 id|address_info
 op_star
 id|hw_config
+comma
+r_struct
+id|module
+op_star
+id|owner
 )paren
 (brace
 id|uart401_devc
@@ -1182,6 +1204,20 @@ r_struct
 id|midi_operations
 )paren
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|owner
+)paren
+id|midi_devs
+(braket
+id|devc-&gt;my_dev
+)braket
+op_member_access_from_pointer
+id|owner
+op_assign
+id|owner
 suffix:semicolon
 id|midi_devs
 (braket
@@ -1918,11 +1954,11 @@ c_func
 (paren
 op_amp
 id|cfg_mpu
+comma
+id|THIS_MODULE
 )paren
 suffix:semicolon
 )brace
-id|SOUND_LOCK
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1956,8 +1992,6 @@ c_func
 op_amp
 id|cfg_mpu
 )paren
-suffix:semicolon
-id|SOUND_LOCK_END
 suffix:semicolon
 )brace
 DECL|variable|init_uart401

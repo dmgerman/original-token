@@ -481,7 +481,7 @@ id|tmp_dev-&gt;offset
 (brace
 id|printk
 (paren
-l_string|&quot;linear_make_request: Block %ld out of bounds on dev %s size %d offset %d&bslash;n&quot;
+l_string|&quot;linear_make_request: Block %ld out of bounds on dev %s size %ld offset %ld&bslash;n&quot;
 comma
 id|block
 comma

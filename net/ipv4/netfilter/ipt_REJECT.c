@@ -1096,34 +1096,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Only for local input.  Rest is too dangerous. */
-r_if
-c_cond
-(paren
-(paren
-id|hook_mask
-op_amp
-op_complement
-(paren
-l_int|1
-op_lshift
-id|NF_IP_LOCAL_IN
-)paren
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-id|DEBUGP
-c_func
-(paren
-l_string|&quot;REJECT: TCP_RESET only from INPUT&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 )brace
 r_return
 l_int|1

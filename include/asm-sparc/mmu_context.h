@@ -27,7 +27,7 @@ id|cpu
 )brace
 multiline_comment|/*&n; * Initialize a new mmu context.  This is invoked when a new&n; * address space instance (unique or shared) is instantiated.&n; */
 DECL|macro|init_new_context
-mdefine_line|#define init_new_context(tsk, mm) ((mm)-&gt;context = NO_CONTEXT)
+mdefine_line|#define init_new_context(tsk, mm) (((mm)-&gt;context = NO_CONTEXT), 0)
 multiline_comment|/*&n; * Destroy a dead context.  This occurs when mmput drops the&n; * mm_users count to zero, the mmaps have been released, and&n; * all the page tables have been flushed.  Our job is to destroy&n; * any remaining processor-specific state.&n; */
 id|BTFIXUPDEF_CALL
 c_func

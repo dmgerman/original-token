@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&n; * Hardware accelerated Matrox Millennium I, II, Mystique, G100, G200 and G400&n; *&n; * (c) 1998,1999 Petr Vandrovec &lt;vandrove@vc.cvut.cz&gt;&n; *&n; */
+multiline_comment|/*&n; *&n; * Hardware accelerated Matrox Millennium I, II, Mystique, G100, G200 and G400&n; *&n; * (c) 1998,1999,2000 Petr Vandrovec &lt;vandrove@vc.cvut.cz&gt;&n; *&n; */
 macro_line|#ifndef __MATROXFB_H__
 DECL|macro|__MATROXFB_H__
 mdefine_line|#define __MATROXFB_H__
@@ -1802,6 +1802,10 @@ id|ydstorg
 suffix:semicolon
 multiline_comment|/* offset in bytes from video start to usable memory */
 multiline_comment|/* 0 except for 6MB Millenium */
+DECL|member|memtype
+r_int
+id|memtype
+suffix:semicolon
 DECL|member|devflags
 )brace
 id|devflags
@@ -2284,6 +2288,8 @@ DECL|macro|M_VCOUNT
 mdefine_line|#define M_VCOUNT&t;0x1E20
 DECL|macro|M_RESET
 mdefine_line|#define M_RESET&t;&t;0x1E40
+DECL|macro|M_MEMRDBK
+mdefine_line|#define M_MEMRDBK&t;0x1E44
 DECL|macro|M_AGP2PLL
 mdefine_line|#define M_AGP2PLL&t;0x1E4C
 DECL|macro|M_OPMODE

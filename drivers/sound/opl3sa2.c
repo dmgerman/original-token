@@ -3,7 +3,6 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#include &quot;soundmodule.h&quot;
 macro_line|#include &quot;ad1848.h&quot;
 macro_line|#include &quot;mpu401.h&quot;
 multiline_comment|/* Useful control port indexes: */
@@ -1702,10 +1701,21 @@ id|mixer_operations
 id|opl3sa2_mixer_operations
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
+id|id
+suffix:colon
 l_string|&quot;Yamaha&quot;
 comma
+id|name
+suffix:colon
 l_string|&quot;&quot;
 comma
+multiline_comment|/* hmm? */
+id|ioctl
+suffix:colon
 id|opl3sa2_mixer_ioctl
 )brace
 suffix:semicolon
@@ -1750,6 +1760,8 @@ id|attach_mpu401
 c_func
 (paren
 id|hw_config
+comma
+id|THIS_MODULE
 )paren
 suffix:semicolon
 )brace
@@ -1913,6 +1925,8 @@ id|attach_ms_sound
 c_func
 (paren
 id|hw_config
+comma
+id|THIS_MODULE
 )paren
 suffix:semicolon
 multiline_comment|/* Slot 0 */
@@ -2682,8 +2696,6 @@ id|cfg_mpu
 suffix:semicolon
 )brace
 )brace
-id|SOUND_LOCK
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -2731,8 +2743,6 @@ c_func
 op_amp
 id|cfg
 )paren
-suffix:semicolon
-id|SOUND_LOCK_END
 suffix:semicolon
 )brace
 DECL|variable|init_opl3sa2

@@ -479,10 +479,15 @@ id|RTAX_ADVMSS
 comma
 DECL|macro|RTAX_ADVMSS
 mdefine_line|#define RTAX_ADVMSS RTAX_ADVMSS
+DECL|enumerator|RTAX_REORDERING
+id|RTAX_REORDERING
+comma
+DECL|macro|RTAX_REORDERING
+mdefine_line|#define RTAX_REORDERING RTAX_REORDERING
 )brace
 suffix:semicolon
 DECL|macro|RTAX_MAX
-mdefine_line|#define RTAX_MAX RTAX_ADVMSS
+mdefine_line|#define RTAX_MAX RTAX_REORDERING
 multiline_comment|/*********************************************************&n; *&t;&t;Interface address.&n; ****/
 DECL|struct|ifaddrmsg
 r_struct

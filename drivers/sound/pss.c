@@ -4,7 +4,6 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;sound_firmware.h&quot;
-macro_line|#include &quot;soundmodule.h&quot;
 macro_line|#include &quot;ad1848.h&quot;
 macro_line|#include &quot;mpu401.h&quot;
 multiline_comment|/*&n; * PSS registers.&n; */
@@ -2742,10 +2741,20 @@ id|mixer_operations
 id|pss_mixer_operations
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
+id|id
+suffix:colon
 l_string|&quot;SOUNDPORT&quot;
 comma
+id|name
+suffix:colon
 l_string|&quot;PSS-AD1848&quot;
 comma
+id|ioctl
+suffix:colon
 id|pss_mixer_ioctl
 )brace
 suffix:semicolon
@@ -4576,6 +4585,8 @@ id|attach_mpu401
 c_func
 (paren
 id|hw_config
+comma
+id|THIS_MODULE
 )paren
 suffix:semicolon
 multiline_comment|/* Slot 1 */
@@ -4887,6 +4898,8 @@ id|attach_ms_sound
 c_func
 (paren
 id|hw_config
+comma
+id|THIS_MODULE
 )paren
 suffix:semicolon
 multiline_comment|/* Slot 0 */
@@ -5405,8 +5418,6 @@ id|cfg2
 )paren
 suffix:semicolon
 )brace
-id|SOUND_LOCK
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -5464,8 +5475,6 @@ c_func
 op_amp
 id|cfg
 )paren
-suffix:semicolon
-id|SOUND_LOCK_END
 suffix:semicolon
 )brace
 DECL|variable|init_pss

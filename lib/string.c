@@ -1056,8 +1056,10 @@ op_ne
 l_char|&squot;&bslash;0&squot;
 )paren
 op_star
+(paren
 op_star
 id|s
+)paren
 op_increment
 op_assign
 l_char|&squot;&bslash;0&squot;

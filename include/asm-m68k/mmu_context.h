@@ -30,7 +30,7 @@ id|cpu
 )brace
 r_extern
 r_inline
-r_void
+r_int
 DECL|function|init_new_context
 id|init_new_context
 c_func
@@ -53,6 +53,9 @@ c_func
 (paren
 id|mm-&gt;pgd
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|macro|destroy_context
@@ -359,7 +362,7 @@ multiline_comment|/* set the context for a new task to unmapped */
 DECL|function|init_new_context
 r_static
 r_inline
-r_void
+r_int
 id|init_new_context
 c_func
 (paren
@@ -377,6 +380,9 @@ id|mm
 id|mm-&gt;context
 op_assign
 id|SUN3_INVALID_CONTEXT
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* find the context given to this process, and if it hasn&squot;t already&n;   got one, go get one for it. */

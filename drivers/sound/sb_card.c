@@ -5,7 +5,6 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/isapnp.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#include &quot;soundmodule.h&quot;
 macro_line|#include &quot;sb_mixer.h&quot;
 macro_line|#include &quot;sb.h&quot;
 macro_line|#if defined CONFIG_ISAPNP || defined CONFIG_ISAPNP_MODULE
@@ -142,6 +141,8 @@ id|sb_dsp_init
 c_func
 (paren
 id|hw_config
+comma
+id|THIS_MODULE
 )paren
 )paren
 (brace
@@ -4719,11 +4720,11 @@ id|cfg_mpu
 (braket
 id|card
 )braket
+comma
+id|THIS_MODULE
 )paren
 suffix:semicolon
 )brace
-id|SOUND_LOCK
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4912,8 +4913,6 @@ suffix:semicolon
 )brace
 macro_line|#endif
 )brace
-id|SOUND_LOCK_END
-suffix:semicolon
 )brace
 DECL|variable|init_sb
 id|module_init

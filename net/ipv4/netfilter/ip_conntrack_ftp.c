@@ -32,10 +32,6 @@ macro_line|#else
 DECL|macro|DEBUGP
 mdefine_line|#define DEBUGP(format, args...)
 macro_line|#endif
-DECL|macro|IP_PARTS_NATIVE
-mdefine_line|#define IP_PARTS_NATIVE(n)&t;&t;&t;&bslash;&n;(unsigned int)((n)&gt;&gt;24)&amp;0xFF,&t;&t;&t;&bslash;&n;(unsigned int)((n)&gt;&gt;16)&amp;0xFF,&t;&t;&t;&bslash;&n;(unsigned int)((n)&gt;&gt;8)&amp;0xFF,&t;&t;&t;&bslash;&n;(unsigned int)((n)&amp;0xFF)
-DECL|macro|IP_PARTS
-mdefine_line|#define IP_PARTS(n) IP_PARTS_NATIVE(ntohl(n))
 r_static
 r_struct
 (brace
@@ -457,7 +453,7 @@ id|ip_conntrack_info
 id|ctinfo
 )paren
 (brace
-multiline_comment|/* tcplen not negative guarenteed by ip_conntrack_tcp.c */
+multiline_comment|/* tcplen not negative guaranteed by ip_conntrack_tcp.c */
 r_struct
 id|tcphdr
 op_star
@@ -656,13 +652,13 @@ id|tcph
 comma
 id|tcplen
 comma
-id|IP_PARTS
+id|NIPQUAD
 c_func
 (paren
 id|iph-&gt;saddr
 )paren
 comma
-id|IP_PARTS
+id|NIPQUAD
 c_func
 (paren
 id|iph-&gt;daddr

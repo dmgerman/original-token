@@ -2402,6 +2402,11 @@ r_struct
 id|address_info
 op_star
 id|hw_config
+comma
+r_struct
+id|module
+op_star
+id|owner
 )paren
 (brace
 id|sb_devc
@@ -3210,6 +3215,8 @@ id|sb_mixer_init
 c_func
 (paren
 id|devc
+comma
+id|owner
 )paren
 suffix:semicolon
 r_if
@@ -3226,6 +3233,8 @@ id|sb_dsp_midi_init
 c_func
 (paren
 id|devc
+comma
+id|owner
 )paren
 suffix:semicolon
 r_if
@@ -3443,6 +3452,8 @@ c_func
 id|devc
 comma
 id|name
+comma
+id|owner
 )paren
 suffix:semicolon
 id|hw_config-&gt;slots
@@ -4853,6 +4864,11 @@ r_struct
 id|address_info
 op_star
 id|hw_config
+comma
+r_struct
+id|module
+op_star
+id|owner
 )paren
 (brace
 r_if
@@ -4868,6 +4884,8 @@ id|attach_mpu401
 c_func
 (paren
 id|hw_config
+comma
+id|owner
 )paren
 suffix:semicolon
 r_if
@@ -4899,6 +4917,8 @@ id|attach_uart401
 c_func
 (paren
 id|hw_config
+comma
+id|THIS_MODULE
 )paren
 suffix:semicolon
 id|last_sb-&gt;midi_irq_cookie

@@ -11,7 +11,6 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#include &quot;soundmodule.h&quot;
 macro_line|#include &lt;linux/wavefront.h&gt;
 multiline_comment|/*&n; *&t;This sucks, hopefully it&squot;ll get standardised&n; */
 macro_line|#if defined(__alpha__)
@@ -7641,50 +7640,81 @@ id|synth_operations
 id|wavefront_operations
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
+id|id
+suffix:colon
 l_string|&quot;WaveFront&quot;
 comma
+id|info
+suffix:colon
 op_amp
 id|wavefront_info
 comma
+id|midi_dev
+suffix:colon
 l_int|0
 comma
+id|synth_type
+suffix:colon
 id|SYNTH_TYPE_SAMPLE
 comma
+id|synth_subtype
+suffix:colon
 id|SAMPLE_TYPE_WAVEFRONT
 comma
+id|open
+suffix:colon
 id|wavefront_oss_open
 comma
+id|close
+suffix:colon
 id|wavefront_oss_close
 comma
+id|ioctl
+suffix:colon
 id|wavefront_oss_ioctl
 comma
+id|kill_note
+suffix:colon
 id|midi_synth_kill_note
 comma
+id|start_note
+suffix:colon
 id|midi_synth_start_note
 comma
+id|set_instr
+suffix:colon
 id|midi_synth_set_instr
 comma
+id|reset
+suffix:colon
 id|midi_synth_reset
 comma
-l_int|NULL
-comma
-multiline_comment|/* hw_control */
+id|load_patch
+suffix:colon
 id|midi_synth_load_patch
 comma
+id|aftertouch
+suffix:colon
 id|midi_synth_aftertouch
 comma
+id|controller
+suffix:colon
 id|midi_synth_controller
 comma
+id|panning
+suffix:colon
 id|midi_synth_panning
 comma
-l_int|NULL
-comma
-multiline_comment|/* volume method */
+id|bender
+suffix:colon
 id|midi_synth_bender
 comma
-l_int|NULL
-comma
-multiline_comment|/* alloc voice */
+id|setup_voice
+suffix:colon
 id|midi_synth_setup_voice
 )brace
 suffix:semicolon
@@ -13905,8 +13935,6 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
-id|SOUND_LOCK
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -13923,8 +13951,6 @@ r_void
 id|uninstall_wavefront
 (paren
 )paren
-suffix:semicolon
-id|SOUND_LOCK_END
 suffix:semicolon
 )brace
 DECL|variable|init_wavfront

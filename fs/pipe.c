@@ -2485,11 +2485,6 @@ op_amp
 id|this
 )paren
 suffix:semicolon
-id|dentry-&gt;d_op
-op_assign
-op_amp
-id|pipefs_dentry_operations
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2498,6 +2493,11 @@ id|dentry
 )paren
 r_goto
 id|close_f12_inode_i_j
+suffix:semicolon
+id|dentry-&gt;d_op
+op_assign
+op_amp
+id|pipefs_dentry_operations
 suffix:semicolon
 id|d_add
 c_func

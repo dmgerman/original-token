@@ -1,5 +1,4 @@
 multiline_comment|/* $Id: cf-enabler.c,v 1.2 2000/06/08 05:50:10 gniibe Exp $&n; *&n; *  linux/drivers/block/cf-enabler.c&n; *&n; *  Copyright (C) 1999  Niibe Yutaka&n; *  Copyright (C) 2000  Toshiharu Nozawa&n; *&n; *  Enable the CF configuration.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;

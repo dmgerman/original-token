@@ -137,7 +137,7 @@ multiline_comment|/*&n; * Initialize the context related info for a new mm_struc
 DECL|function|init_new_context
 r_extern
 id|__inline__
-r_void
+r_int
 id|init_new_context
 c_func
 (paren
@@ -155,6 +155,9 @@ id|mm
 id|mm-&gt;context
 op_assign
 id|NO_CONTEXT
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Destroy context related info for an mm_struct that is about&n; * to be put to rest.&n; */

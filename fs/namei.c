@@ -7256,6 +7256,15 @@ op_amp
 id|target-&gt;i_zombie
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|d_unhashed
+c_func
+(paren
+id|new_dentry
+)paren
+)paren
 id|d_rehash
 c_func
 (paren

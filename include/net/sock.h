@@ -576,6 +576,12 @@ id|__u32
 id|ato
 suffix:semicolon
 multiline_comment|/* Predicted tick of soft clock&t;&t;*/
+DECL|member|timeout
+r_int
+r_int
+id|timeout
+suffix:semicolon
+multiline_comment|/* Currently scheduled timeout&t;&t;*/
 DECL|member|lrcvtime
 id|__u32
 id|lrcvtime
@@ -585,17 +591,22 @@ DECL|member|last_seg_size
 id|__u16
 id|last_seg_size
 suffix:semicolon
-multiline_comment|/* Size of last incoming segment */
+multiline_comment|/* Size of last incoming segment&t;*/
 DECL|member|rcv_mss
 id|__u16
 id|rcv_mss
 suffix:semicolon
-multiline_comment|/* MSS used for delayed ACK decisions */
-DECL|member|rcv_segs
-id|__u32
-id|rcv_segs
+multiline_comment|/* MSS used for delayed ACK decisions&t;*/
+DECL|member|rcv_small
+id|__u16
+id|rcv_small
 suffix:semicolon
-multiline_comment|/* Number of received segments since last ack */
+multiline_comment|/* Number of not ACKed small segments&t;*/
+DECL|member|rcv_thresh
+id|__u16
+id|rcv_thresh
+suffix:semicolon
+multiline_comment|/* Peer doing TCP_NODELAY&t;&t;*/
 DECL|member|ack
 )brace
 id|ack
@@ -637,11 +648,6 @@ id|__u32
 id|snd_wl1
 suffix:semicolon
 multiline_comment|/* Sequence for window update&t;&t;*/
-DECL|member|snd_wl2
-id|__u32
-id|snd_wl2
-suffix:semicolon
-multiline_comment|/* Ack sequence for update&t;&t;*/
 DECL|member|snd_wnd
 id|__u32
 id|snd_wnd
@@ -672,27 +678,31 @@ id|__u16
 id|ext_header_len
 suffix:semicolon
 multiline_comment|/* Network protocol overhead (IP/IPv6 options) */
-DECL|member|dup_acks
+DECL|member|ca_state
 id|__u8
-id|dup_acks
+id|ca_state
 suffix:semicolon
-multiline_comment|/* Consecutive duplicate acks seen from other end */
+multiline_comment|/* State of fast-retransmit machine &t;*/
 DECL|member|retransmits
 id|__u8
 id|retransmits
 suffix:semicolon
-DECL|member|__empty1
+multiline_comment|/* Number of unrecovered RTO timeouts.&t;*/
+DECL|member|reordering
 id|__u8
-id|__empty1
+id|reordering
 suffix:semicolon
-DECL|member|sorry
+multiline_comment|/* Packet reordering metric.&t;&t;*/
+DECL|member|queue_shrunk
 id|__u8
-id|sorry
+id|queue_shrunk
 suffix:semicolon
+multiline_comment|/* Write queue has been shrunk recently.*/
 DECL|member|defer_accept
 id|__u8
 id|defer_accept
 suffix:semicolon
+multiline_comment|/* User waits for some data after accept() */
 multiline_comment|/* RTT measurement */
 DECL|member|backoff
 id|__u8
@@ -719,21 +729,16 @@ id|__u32
 id|packets_out
 suffix:semicolon
 multiline_comment|/* Packets which are &quot;in flight&quot;&t;*/
-DECL|member|fackets_out
+DECL|member|left_out
 id|__u32
-id|fackets_out
+id|left_out
 suffix:semicolon
-multiline_comment|/* Non-retrans SACK&squot;d packets&t;&t;*/
+multiline_comment|/* Packets which leaved network&t;&t;*/
 DECL|member|retrans_out
 id|__u32
 id|retrans_out
 suffix:semicolon
-multiline_comment|/* Fast-retransmitted packets out&t;*/
-DECL|member|high_seq
-id|__u32
-id|high_seq
-suffix:semicolon
-multiline_comment|/* snd_nxt at onset of congestion&t;*/
+multiline_comment|/* Retransmitted packets out&t;&t;*/
 multiline_comment|/*&n; *&t;Slow start and congestion control (see also Nagle, and Karn &amp; Partridge)&n; */
 DECL|member|snd_ssthresh
 id|__u32
@@ -755,22 +760,20 @@ id|__u16
 id|snd_cwnd_clamp
 suffix:semicolon
 multiline_comment|/* Do not allow snd_cwnd to grow above this */
-DECL|member|nonagle
-id|__u8
-id|nonagle
+DECL|member|snd_cwnd_used
+id|__u32
+id|snd_cwnd_used
 suffix:semicolon
-multiline_comment|/* Disable Nagle algorithm?             */
-DECL|member|syn_retries
-id|__u8
-id|syn_retries
+DECL|member|snd_cwnd_stamp
+id|__u32
+id|snd_cwnd_stamp
 suffix:semicolon
-multiline_comment|/* num of allowed syn retries */
-DECL|member|user_mss
-id|__u16
-id|user_mss
-suffix:semicolon
-multiline_comment|/* mss requested by user in ioctl */
 multiline_comment|/* Two commonly used timers in both sender and receiver paths. */
+DECL|member|timeout
+r_int
+r_int
+id|timeout
+suffix:semicolon
 DECL|member|retransmit_timer
 r_struct
 id|timer_list
@@ -803,13 +806,6 @@ op_star
 id|send_head
 suffix:semicolon
 multiline_comment|/* Front of stuff to transmit&t;&t;&t;*/
-DECL|member|retrans_head
-r_struct
-id|sk_buff
-op_star
-id|retrans_head
-suffix:semicolon
-multiline_comment|/* retrans head can be &n;&t;&t;&t;&t;&t;&t; * different to the head of&n;&t;&t;&t;&t;&t;&t; * write queue if we are doing&n;&t;&t;&t;&t;&t;&t; * fast retransmit&n;&t;&t;&t;&t;&t;&t; */
 DECL|member|rcv_wnd
 id|__u32
 id|rcv_wnd
@@ -824,10 +820,17 @@ DECL|member|write_seq
 id|__u32
 id|write_seq
 suffix:semicolon
+multiline_comment|/* Tail(+1) of data held in tcp send buffer */
+DECL|member|pushed_seq
+id|__u32
+id|pushed_seq
+suffix:semicolon
+multiline_comment|/* Last pushed seq, required to talk to windows */
 DECL|member|copied_seq
 id|__u32
 id|copied_seq
 suffix:semicolon
+multiline_comment|/* Head of yet unread data&t;&t;*/
 multiline_comment|/*&n; *      Options received (usually on last packet, some only on SYN packets).&n; */
 DECL|member|tstamp_ok
 r_char
@@ -857,11 +860,11 @@ id|__u8
 id|rcv_wscale
 suffix:semicolon
 multiline_comment|/* Window scaling to send to receiver&t;*/
-DECL|member|rexmt_done
+DECL|member|nonagle
 id|__u8
-id|rexmt_done
+id|nonagle
 suffix:semicolon
-multiline_comment|/* Retransmitted up to send head?&t;*/
+multiline_comment|/* Disable Nagle algorithm?             */
 DECL|member|keepalive_probes
 id|__u8
 id|keepalive_probes
@@ -889,6 +892,30 @@ id|ts_recent_stamp
 suffix:semicolon
 multiline_comment|/* Time we stored ts_recent (for aging) */
 multiline_comment|/*&t;SACKs data&t;*/
+DECL|member|user_mss
+id|__u16
+id|user_mss
+suffix:semicolon
+multiline_comment|/* mss requested by user in ioctl */
+DECL|member|dsack
+id|__u8
+id|dsack
+suffix:semicolon
+multiline_comment|/* D-SACK is scheduled&t;&t;&t;*/
+DECL|member|eff_sacks
+id|__u8
+id|eff_sacks
+suffix:semicolon
+multiline_comment|/* Size of SACK array to send with next packet */
+DECL|member|duplicate_sack
+r_struct
+id|tcp_sack_block
+id|duplicate_sack
+(braket
+l_int|1
+)braket
+suffix:semicolon
+multiline_comment|/* D-SACK block */
 DECL|member|selective_acks
 r_struct
 id|tcp_sack_block
@@ -898,17 +925,16 @@ l_int|4
 )braket
 suffix:semicolon
 multiline_comment|/* The SACKS themselves*/
-DECL|member|probe_timer
-r_struct
-id|timer_list
-id|probe_timer
-suffix:semicolon
-multiline_comment|/* Probes&t;*/
 DECL|member|window_clamp
 id|__u32
 id|window_clamp
 suffix:semicolon
 multiline_comment|/* Maximal window to advertise&t;&t;*/
+DECL|member|rcv_ssthresh
+id|__u32
+id|rcv_ssthresh
+suffix:semicolon
+multiline_comment|/* Current window clamp&t;&t;&t;*/
 DECL|member|probes_out
 id|__u8
 id|probes_out
@@ -924,25 +950,84 @@ id|__u16
 id|advmss
 suffix:semicolon
 multiline_comment|/* Advertised MSS&t;&t;&t;*/
-DECL|member|syn_stamp
-id|__u32
-id|syn_stamp
+DECL|member|syn_retries
+id|__u8
+id|syn_retries
 suffix:semicolon
+multiline_comment|/* num of allowed syn retries */
+DECL|member|ecn_flags
+id|__u8
+id|ecn_flags
+suffix:semicolon
+multiline_comment|/* ECN status bits.&t;&t;&t;*/
+DECL|member|prior_ssthresh
+id|__u16
+id|prior_ssthresh
+suffix:semicolon
+multiline_comment|/* ssthresh saved at recovery start&t;*/
+DECL|member|lost_out
+id|__u32
+id|lost_out
+suffix:semicolon
+multiline_comment|/* Lost packets&t;&t;&t;&t;*/
+DECL|member|sacked_out
+id|__u32
+id|sacked_out
+suffix:semicolon
+multiline_comment|/* SACK&squot;d packets&t;&t;&t;*/
+DECL|member|fackets_out
+id|__u32
+id|fackets_out
+suffix:semicolon
+multiline_comment|/* FACK&squot;d packets&t;&t;&t;*/
+DECL|member|high_seq
+id|__u32
+id|high_seq
+suffix:semicolon
+multiline_comment|/* snd_nxt at onset of congestion&t;*/
+DECL|member|retrans_stamp
+id|__u32
+id|retrans_stamp
+suffix:semicolon
+multiline_comment|/* Timestamp of the last retransmit,&n;&t;&t;&t;&t; * also used in SYN-SENT to remember stamp of&n;&t;&t;&t;&t; * the first SYN. */
+DECL|member|undo_marker
+id|__u32
+id|undo_marker
+suffix:semicolon
+multiline_comment|/* tracking retrans started here. */
+DECL|member|undo_retrans
+r_int
+id|undo_retrans
+suffix:semicolon
+multiline_comment|/* number of undoable retransmissions. */
 DECL|member|syn_seq
 id|__u32
 id|syn_seq
 suffix:semicolon
+multiline_comment|/* Seq of received SYN. */
 DECL|member|fin_seq
 id|__u32
 id|fin_seq
 suffix:semicolon
+multiline_comment|/* Seq of received FIN. */
 DECL|member|urg_seq
 id|__u32
 id|urg_seq
 suffix:semicolon
+multiline_comment|/* Seq of received urgent pointer */
 DECL|member|urg_data
-id|__u32
+id|__u16
 id|urg_data
+suffix:semicolon
+multiline_comment|/* Saved octet of OOB data and control flags */
+DECL|member|pending
+id|__u8
+id|pending
+suffix:semicolon
+multiline_comment|/* Scheduled timer event&t;*/
+DECL|member|__empty
+id|__u8
+id|__empty
 suffix:semicolon
 multiline_comment|/* The syn_wait_lock is necessary only to avoid tcp_get_info having&n;&t; * to grab the main lock sock while browsing the listening hash&n;&t; * (otherwise it&squot;s deadlock prone).&n;&t; * This lock is acquired in read mode only from tcp_get_info() and&n;&t; * it&squot;s acquired in write mode _only_ from code that is actively&n;&t; * changing the syn_wait_queue. All readers that are holding&n;&t; * the master sock lock don&squot;t need to grab this lock in read mode&n;&t; * too as the syn_wait_queue writes are always protected from&n;&t; * the main sock lock.&n;&t; */
 DECL|member|syn_wait_lock
@@ -1110,10 +1195,12 @@ DECL|member|reuse
 r_int
 r_char
 id|reuse
-comma
+suffix:semicolon
 multiline_comment|/* SO_REUSEADDR setting&t;&t;&t;*/
-DECL|member|__unused
-id|__unused
+DECL|member|shutdown
+r_int
+r_char
+id|shutdown
 suffix:semicolon
 DECL|member|refcnt
 id|atomic_t
@@ -1174,6 +1261,16 @@ id|atomic_t
 id|omem_alloc
 suffix:semicolon
 multiline_comment|/* &quot;o&quot; is &quot;option&quot; or &quot;other&quot; */
+DECL|member|wmem_queued
+r_int
+id|wmem_queued
+suffix:semicolon
+multiline_comment|/* Persistent queue size */
+DECL|member|forward_alloc
+r_int
+id|forward_alloc
+suffix:semicolon
+multiline_comment|/* Space allocated forward. */
 DECL|member|saddr
 id|__u32
 id|saddr
@@ -1294,11 +1391,6 @@ r_struct
 id|proto
 op_star
 id|prot
-suffix:semicolon
-DECL|member|shutdown
-r_int
-r_int
-id|shutdown
 suffix:semicolon
 macro_line|#if defined(CONFIG_IPV6) || defined (CONFIG_IPV6_MODULE)
 r_union
@@ -2074,6 +2166,12 @@ DECL|macro|RCV_SHUTDOWN
 mdefine_line|#define RCV_SHUTDOWN&t;1
 DECL|macro|SEND_SHUTDOWN
 mdefine_line|#define SEND_SHUTDOWN&t;2
+DECL|macro|SOCK_SNDBUF_LOCK
+mdefine_line|#define SOCK_SNDBUF_LOCK&t;1
+DECL|macro|SOCK_RCVBUF_LOCK
+mdefine_line|#define SOCK_RCVBUF_LOCK&t;2
+DECL|macro|SOCK_BINDADDR_LOCK
+mdefine_line|#define SOCK_BINDADDR_LOCK&t;4
 multiline_comment|/* Used by processes to &quot;lock&quot; a socket state, so that&n; * interrupts and bottom half handlers won&squot;t change it&n; * from under us. It essentially blocks any incoming&n; * packets, so that we won&squot;t get any new data or any&n; * packets that change the state of the socket.&n; *&n; * While locked, BH processing will add new packets to&n; * the backlog queue.  This queue is processed by the&n; * owner of the socket lock right before it is released.&n; *&n; * Since ~2.3.5 it is also exclusive sleep lock serializing&n; * accesses from user process context.&n; */
 r_extern
 r_void
@@ -3013,7 +3111,7 @@ id|sk
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Detach socket from process context.&n; * Announce socket dead, detach it from wait queue and inode.&n; * Note that parent inode held reference count on this struct sock,&n; * we do not release it in this function, because protocol&n; * probably wants some additional cleanups or even continuing&n; * to work with this socket (TCP).&n; *&n; * NOTE: When softnet goes in replace _irq with _bh!&n; */
+multiline_comment|/* Detach socket from process context.&n; * Announce socket dead, detach it from wait queue and inode.&n; * Note that parent inode held reference count on this struct sock,&n; * we do not release it in this function, because protocol&n; * probably wants some additional cleanups or even continuing&n; * to work with this socket (TCP).&n; */
 DECL|function|sock_orphan
 r_extern
 id|__inline__
@@ -3098,6 +3196,94 @@ c_func
 op_amp
 id|sk-&gt;callback_lock
 )paren
+suffix:semicolon
+)brace
+DECL|function|sock_i_uid
+r_static
+r_inline
+r_int
+id|sock_i_uid
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+)paren
+(brace
+r_int
+id|uid
+suffix:semicolon
+id|read_lock
+c_func
+(paren
+op_amp
+id|sk-&gt;callback_lock
+)paren
+suffix:semicolon
+id|uid
+op_assign
+id|sk-&gt;socket
+ques
+c_cond
+id|sk-&gt;socket-&gt;inode-&gt;i_uid
+suffix:colon
+l_int|0
+suffix:semicolon
+id|read_unlock
+c_func
+(paren
+op_amp
+id|sk-&gt;callback_lock
+)paren
+suffix:semicolon
+r_return
+id|uid
+suffix:semicolon
+)brace
+DECL|function|sock_i_ino
+r_static
+r_inline
+r_int
+r_int
+id|sock_i_ino
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+)paren
+(brace
+r_int
+r_int
+id|ino
+suffix:semicolon
+id|read_lock
+c_func
+(paren
+op_amp
+id|sk-&gt;callback_lock
+)paren
+suffix:semicolon
+id|ino
+op_assign
+id|sk-&gt;socket
+ques
+c_cond
+id|sk-&gt;socket-&gt;inode-&gt;i_ino
+suffix:colon
+l_int|0
+suffix:semicolon
+id|read_unlock
+c_func
+(paren
+op_amp
+id|sk-&gt;callback_lock
+)paren
+suffix:semicolon
+r_return
+id|ino
 suffix:semicolon
 )brace
 r_extern
@@ -3897,7 +4083,7 @@ suffix:semicolon
 DECL|macro|SOCK_MIN_SNDBUF
 mdefine_line|#define SOCK_MIN_SNDBUF 2048
 DECL|macro|SOCK_MIN_RCVBUF
-mdefine_line|#define SOCK_MIN_RCVBUF 128
+mdefine_line|#define SOCK_MIN_RCVBUF 256
 multiline_comment|/* Must be less or equal SOCK_MIN_SNDBUF */
 DECL|macro|SOCK_MIN_WRITE_SPACE
 mdefine_line|#define SOCK_MIN_WRITE_SPACE&t;SOCK_MIN_SNDBUF

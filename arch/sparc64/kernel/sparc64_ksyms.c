@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sparc64_ksyms.c,v 1.91 2000/08/05 13:30:33 davem Exp $&n; * arch/sparc64/kernel/sparc64_ksyms.c: Sparc64 specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: sparc64_ksyms.c,v 1.92 2000/08/09 08:45:40 anton Exp $&n; * arch/sparc64/kernel/sparc64_ksyms.c: Sparc64 specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
 multiline_comment|/* Tell string.h we don&squot;t want memcpy etc. as cpp defines */
 DECL|macro|EXPORT_SYMTAB_STROPS
 mdefine_line|#define EXPORT_SYMTAB_STROPS
@@ -1689,6 +1689,21 @@ id|EXPORT_SYMBOL_NOVERS
 c_func
 (paren
 id|memmove
+)paren
+suffix:semicolon
+r_void
+id|VISenter
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+multiline_comment|/* RAID code needs this */
+DECL|variable|VISenter
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|VISenter
 )paren
 suffix:semicolon
 eof

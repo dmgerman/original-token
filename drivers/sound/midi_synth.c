@@ -1783,10 +1783,6 @@ l_int|0
 r_return
 id|err
 suffix:semicolon
-macro_line|#ifdef MODULE
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-macro_line|#endif
 id|inc
 op_assign
 op_amp
@@ -1888,10 +1884,6 @@ c_func
 id|orig_dev
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
-macro_line|#endif
 )brace
 r_void
 DECL|function|midi_synth_hw_control

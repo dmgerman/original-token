@@ -9,7 +9,7 @@ macro_line|#include &lt;asm/proc-fns.h&gt;
 DECL|macro|destroy_context
 mdefine_line|#define destroy_context(mm)&t;&t;do { } while(0)
 DECL|macro|init_new_context
-mdefine_line|#define init_new_context(tsk,mm)&t;do { } while(0)
+mdefine_line|#define init_new_context(tsk,mm)&t;0
 DECL|function|enter_lazy_tlb
 r_static
 r_inline

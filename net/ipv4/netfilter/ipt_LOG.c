@@ -1300,6 +1300,15 @@ id|pskb
 )paren
 op_member_access_from_pointer
 id|dev-&gt;hard_header_len
+op_logical_and
+(paren
+op_star
+id|pskb
+)paren
+op_member_access_from_pointer
+id|mac.raw
+op_ne
+id|iph
 )paren
 (brace
 r_int
@@ -1365,6 +1374,13 @@ l_char|&squot;:&squot;
 )paren
 suffix:semicolon
 )brace
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot; &quot;
+)paren
+suffix:semicolon
 )brace
 id|dump_packet
 c_func

@@ -16,6 +16,11 @@ r_struct
 id|address_info
 op_star
 id|hw_config
+comma
+r_struct
+id|module
+op_star
+id|owner
 )paren
 suffix:semicolon
 r_void
@@ -62,6 +67,11 @@ r_struct
 id|address_info
 op_star
 id|hw_config
+comma
+r_struct
+id|module
+op_star
+id|owner
 )paren
 suffix:semicolon
 r_void

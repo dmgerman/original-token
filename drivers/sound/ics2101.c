@@ -774,10 +774,20 @@ id|mixer_operations
 id|ics2101_mixer_operations
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
+id|id
+suffix:colon
 l_string|&quot;ICS2101&quot;
 comma
+id|name
+suffix:colon
 l_string|&quot;ICS2101 Multimedia Mixer&quot;
 comma
+id|ioctl
+suffix:colon
 id|ics2101_mixer_ioctl
 )brace
 suffix:semicolon

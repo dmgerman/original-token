@@ -2,7 +2,6 @@ multiline_comment|/*&n; * sound/sscape.c&n; *&n; * Low level driver for Ensoniq 
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#include &quot;soundmodule.h&quot;
 macro_line|#include &quot;sound_firmware.h&quot;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -2798,6 +2797,8 @@ id|attach_mpu401
 c_func
 (paren
 id|hw_config
+comma
+id|THIS_MODULE
 )paren
 suffix:semicolon
 id|hw_config-&gt;irq
@@ -6533,44 +6534,19 @@ id|KERN_WARNING
 l_string|&quot;soundscape: Warning! The WSS mode can&squot;t share IRQ with MIDI&bslash;n&quot;
 )paren
 suffix:semicolon
-r_if
-c_cond
+id|hw_config-&gt;slots
+(braket
+l_int|0
+)braket
+op_assign
+id|ad1848_init
+c_func
 (paren
-op_logical_neg
 id|sscape_is_pnp
-)paren
-id|hw_config-&gt;slots
-(braket
-l_int|0
-)braket
-op_assign
-id|ad1848_init
-c_func
-(paren
+ques
+c_cond
 l_string|&quot;SoundScape&quot;
-comma
-id|hw_config-&gt;io_base
-comma
-id|hw_config-&gt;irq
-comma
-id|hw_config-&gt;dma
-comma
-id|hw_config-&gt;dma
-comma
-l_int|0
-comma
-id|devc-&gt;osp
-)paren
-suffix:semicolon
-r_else
-id|hw_config-&gt;slots
-(braket
-l_int|0
-)braket
-op_assign
-id|ad1848_init
-c_func
-(paren
+suffix:colon
 l_string|&quot;SoundScape PNP&quot;
 comma
 id|hw_config-&gt;io_base
@@ -6584,6 +6560,8 @@ comma
 l_int|0
 comma
 id|devc-&gt;osp
+comma
+id|THIS_MODULE
 )paren
 suffix:semicolon
 r_if
@@ -7064,8 +7042,6 @@ op_amp
 id|cfg
 )paren
 suffix:semicolon
-id|SOUND_LOCK
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -7091,8 +7067,6 @@ c_func
 op_amp
 id|cfg
 )paren
-suffix:semicolon
-id|SOUND_LOCK_END
 suffix:semicolon
 id|unload_sscape
 c_func

@@ -5,7 +5,6 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#include &quot;soundmodule.h&quot;
 multiline_comment|/*&n; * Sanity checks&n; */
 macro_line|#if defined(CONFIG_SOUND_AEDSP16_SBPRO) &amp;&amp; defined(CONFIG_SOUND_AEDSP16_MSS)
 macro_line|#error You have to enable only one of the MSS and SBPRO emulations.
@@ -4294,8 +4293,6 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-id|SOUND_LOCK
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -4314,8 +4311,6 @@ id|uninit_aedsp16
 c_func
 (paren
 )paren
-suffix:semicolon
-id|SOUND_LOCK_END
 suffix:semicolon
 )brace
 DECL|variable|do_init_aedsp16

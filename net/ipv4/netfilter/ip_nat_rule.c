@@ -1170,7 +1170,7 @@ l_string|&quot;Allocating NULL binding for %p (%u.%u.%u.%u)&bslash;n&quot;
 comma
 id|conntrack
 comma
-id|IP_PARTS
+id|NIPQUAD
 c_func
 (paren
 id|ip

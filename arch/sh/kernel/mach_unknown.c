@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * linux/arch/sh/kernel/mach_unknown.c&n; *&n; * Copyright (C) 2000 Stuart Menefy (stuart.menefy@st.com)&n; *&n; * May be copied or modified under the terms of the GNU General Public&n; * License.  See linux/COPYING for more information.&n; *&n; * Machine specific code for an unknown machine (internal peripherials only)&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/machvec.h&gt;
 macro_line|#include &lt;asm/machvec_init.h&gt;

@@ -2,7 +2,6 @@ multiline_comment|/*&n; * sound/wf_midi.c&n; *&n; * The low level driver for the
 multiline_comment|/*&n; * Copyright (C) by Paul Barton-Davis 1998&n; * Some portions of this file are derived from work that is:&n; *&n; *    CopyriGht (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#include &quot;soundmodule.h&quot;
 macro_line|#include &lt;linux/wavefront.h&gt;
 macro_line|#ifdef MODULE
 DECL|struct|wf_mpu_config
@@ -1638,6 +1637,12 @@ id|midi_operations
 id|wf_mpu_midi_proto
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
+id|info
+suffix:colon
 (brace
 l_string|&quot;WF-MPU MIDI&quot;
 comma
@@ -1648,33 +1653,41 @@ comma
 id|SNDCARD_MPU401
 )brace
 comma
-l_int|NULL
-comma
-multiline_comment|/*converter*/
+id|in_info
+suffix:colon
 (brace
 l_int|0
 )brace
 comma
 multiline_comment|/* in_info */
+id|open
+suffix:colon
 id|wf_mpu_open
 comma
+id|close
+suffix:colon
 id|wf_mpu_close
 comma
+id|ioctl
+suffix:colon
 id|wf_mpu_ioctl
 comma
+id|outputc
+suffix:colon
 id|wf_mpu_out
 comma
+id|start_read
+suffix:colon
 id|wf_mpu_start_read
 comma
+id|end_read
+suffix:colon
 id|wf_mpu_end_read
 comma
-l_int|NULL
-comma
-l_int|NULL
-comma
+id|buffer_status
+suffix:colon
 id|wf_mpu_buffer_status
 comma
-l_int|NULL
 )brace
 suffix:semicolon
 DECL|variable|wf_mpu_synth_info_proto
@@ -2085,51 +2098,90 @@ id|synth_operations
 id|wf_mpu_synth_proto
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
+id|id
+suffix:colon
 l_string|&quot;WaveFront (ICS2115)&quot;
 comma
+id|info
+suffix:colon
 l_int|NULL
 comma
 multiline_comment|/* info field, filled in during configuration */
+id|midi_dev
+suffix:colon
 l_int|0
 comma
 multiline_comment|/* MIDI dev XXX should this be -1 ? */
+id|synth_type
+suffix:colon
 id|SYNTH_TYPE_MIDI
 comma
+id|synth_subtype
+suffix:colon
 id|SAMPLE_TYPE_WAVEFRONT
 comma
+id|open
+suffix:colon
 id|wf_mpu_synth_open
 comma
+id|close
+suffix:colon
 id|wf_mpu_synth_close
 comma
+id|ioctl
+suffix:colon
 id|wf_mpu_synth_ioctl
 comma
+id|kill_note
+suffix:colon
 id|midi_synth_kill_note
 comma
+id|start_note
+suffix:colon
 id|midi_synth_start_note
 comma
+id|set_instr
+suffix:colon
 id|midi_synth_set_instr
 comma
+id|reset
+suffix:colon
 id|midi_synth_reset
 comma
+id|hw_control
+suffix:colon
 id|midi_synth_hw_control
 comma
+id|load_patch
+suffix:colon
 id|midi_synth_load_patch
 comma
+id|aftertouch
+suffix:colon
 id|midi_synth_aftertouch
 comma
+id|controller
+suffix:colon
 id|midi_synth_controller
 comma
+id|panning
+suffix:colon
 id|midi_synth_panning
 comma
-l_int|NULL
-comma
+id|bender
+suffix:colon
 id|midi_synth_bender
 comma
-l_int|NULL
-comma
-multiline_comment|/* alloc */
+id|setup_voice
+suffix:colon
 id|midi_synth_setup_voice
 comma
+id|send_sysex
+suffix:colon
 id|midi_synth_send_sysex
 )brace
 suffix:semicolon

@@ -447,7 +447,7 @@ macro_line|# endif
 macro_line|#endif
 r_extern
 r_inline
-r_void
+r_int
 DECL|function|init_new_context
 id|init_new_context
 c_func
@@ -480,6 +480,9 @@ id|IDENT_ADDR
 )paren
 op_rshift
 id|PAGE_SHIFT
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 r_extern

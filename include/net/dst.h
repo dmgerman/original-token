@@ -93,6 +93,10 @@ DECL|member|advmss
 r_int
 id|advmss
 suffix:semicolon
+DECL|member|reordering
+r_int
+id|reordering
+suffix:semicolon
 DECL|member|rate_last
 r_int
 r_int

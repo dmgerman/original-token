@@ -7,7 +7,6 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#include &quot;soundmodule.h&quot;
 multiline_comment|/*&n; *&t;Define our PCI vendor ID here&n; */
 macro_line|#ifndef PCI_VENDOR_MYIDENT
 DECL|macro|PCI_VENDOR_MYIDENT
@@ -274,6 +273,26 @@ id|cards
 )braket
 dot
 id|irq
+comma
+id|mss_data
+(braket
+id|cards
+)braket
+dot
+id|dma
+comma
+id|mss_data
+(braket
+id|cards
+)braket
+dot
+id|dma
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|THIS_MODULE
 )paren
 suffix:semicolon
 id|cards
@@ -431,14 +450,11 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;Binds us to the sound subsystem&t;&n;&t; */
-id|SOUND_LOCK
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;This is called when it is removed. It will only be removed &n; *&t;when its use count is 0. For sound the SOUND_LOCK/SOUND_UNLOCK&n; *&t;macros hide the entire work for this.&n; */
+multiline_comment|/*&n; *&t;This is called when it is removed. It will only be removed &n; *&t;when its use count is 0.&n; */
 DECL|function|cleanup_module
 r_void
 id|cleanup_module
@@ -513,8 +529,5 @@ l_int|3
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;Final clean up with the sound layer&n;&t; */
-id|SOUND_LOCK_END
-suffix:semicolon
 )brace
 eof

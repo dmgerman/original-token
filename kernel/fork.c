@@ -1193,6 +1193,9 @@ id|retval
 r_goto
 id|free_pt
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|init_new_context
 c_func
 (paren
@@ -1200,6 +1203,9 @@ id|tsk
 comma
 id|mm
 )paren
+)paren
+r_goto
+id|free_pt
 suffix:semicolon
 id|good_mm
 suffix:colon

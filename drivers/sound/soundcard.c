@@ -19,27 +19,6 @@ macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
-macro_line|#include &lt;linux/notifier.h&gt;
-DECL|variable|sound_locker
-r_struct
-id|notifier_block
-op_star
-id|sound_locker
-op_assign
-(paren
-r_struct
-id|notifier_block
-op_star
-)paren
-l_int|0
-suffix:semicolon
-DECL|variable|lock_depth
-r_static
-r_int
-id|lock_depth
-op_assign
-l_int|0
-suffix:semicolon
 multiline_comment|/*&n; * This ought to be moved into include/asm/dma.h&n; */
 macro_line|#ifndef valid_dma
 DECL|macro|valid_dma
@@ -100,14 +79,6 @@ DECL|macro|DMA_MAP_FREE
 mdefine_line|#define DMA_MAP_FREE&t;&t;1
 DECL|macro|DMA_MAP_BUSY
 mdefine_line|#define DMA_MAP_BUSY&t;&t;2
-DECL|variable|in_use
-r_static
-r_int
-id|in_use
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Total # of open devices */
 DECL|variable|seq_time
 r_int
 r_int
@@ -844,7 +815,15 @@ l_int|0
 )paren
 )paren
 (brace
-multiline_comment|/* printk(KERN_ERR &quot;Invalid minor device %d&bslash;n&quot;, dev);*/
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;Invalid minor device %d&bslash;n&quot;
+comma
+id|dev
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ENXIO
@@ -928,6 +907,26 @@ l_int|NULL
 r_return
 op_minus
 id|ENXIO
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|mixer_devs
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
+id|owner
+)paren
+id|__MOD_INC_USE_COUNT
+(paren
+id|mixer_devs
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
+id|owner
+)paren
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -1031,23 +1030,6 @@ op_minus
 id|ENXIO
 suffix:semicolon
 )brace
-id|in_use
-op_increment
-suffix:semicolon
-id|notifier_call_chain
-c_func
-(paren
-op_amp
-id|sound_locker
-comma
-l_int|1
-comma
-l_int|0
-)paren
-suffix:semicolon
-id|lock_depth
-op_increment
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1106,6 +1088,26 @@ l_int|0x0f
 r_case
 id|SND_DEV_CTL
 suffix:colon
+r_if
+c_cond
+(paren
+id|mixer_devs
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
+id|owner
+)paren
+id|__MOD_DEC_USE_COUNT
+(paren
+id|mixer_devs
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
+id|owner
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -1168,23 +1170,6 @@ id|dev
 )paren
 suffix:semicolon
 )brace
-id|in_use
-op_decrement
-suffix:semicolon
-id|notifier_call_chain
-c_func
-(paren
-op_amp
-id|sound_locker
-comma
-l_int|0
-comma
-l_int|0
-)paren
-suffix:semicolon
-id|lock_depth
-op_decrement
-suffix:semicolon
 id|unlock_kernel
 c_func
 (paren
@@ -3711,58 +3696,5 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-)brace
-multiline_comment|/*&n; *&t;Module and lock management&n; */
-multiline_comment|/*&n; *&t;When a sound module is registered we need to bring it to the current&n; *&t;lock level...&n; */
-DECL|function|sound_notifier_chain_register
-r_void
-id|sound_notifier_chain_register
-c_func
-(paren
-r_struct
-id|notifier_block
-op_star
-id|bl
-)paren
-(brace
-r_int
-id|ct
-op_assign
-l_int|0
-suffix:semicolon
-id|notifier_chain_register
-c_func
-(paren
-op_amp
-id|sound_locker
-comma
-id|bl
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Normalise the lock count by calling the entry directly. We&n;&t; *&t;have to call the module as it owns its own use counter&n;&t; */
-r_while
-c_loop
-(paren
-id|ct
-OL
-id|lock_depth
-)paren
-(brace
-id|bl
-op_member_access_from_pointer
-id|notifier_call
-c_func
-(paren
-id|bl
-comma
-l_int|1
-comma
-l_int|0
-)paren
-suffix:semicolon
-id|ct
-op_increment
-suffix:semicolon
-)brace
 )brace
 eof

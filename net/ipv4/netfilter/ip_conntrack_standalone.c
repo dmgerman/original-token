@@ -1515,7 +1515,6 @@ c_func
 id|fini
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
 DECL|variable|ip_conntrack_protocol_register
 id|EXPORT_SYMBOL
 c_func
@@ -1607,5 +1606,4 @@ c_func
 id|ip_ct_gather_frags
 )paren
 suffix:semicolon
-macro_line|#endif
 eof

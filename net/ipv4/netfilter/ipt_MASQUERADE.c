@@ -371,7 +371,7 @@ c_func
 (paren
 l_string|&quot;newsrc = %u.%u.%u.%u&bslash;n&quot;
 comma
-id|IP_PARTS
+id|NIPQUAD
 c_func
 (paren
 id|newsrc

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;UDP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Based on linux/ipv4/udp.c&n; *&n; *&t;$Id: udp.c,v 1.55 2000/07/08 00:20:43 davem Exp $&n; *&n; *&t;Fixes:&n; *&t;Hideaki YOSHIFUJI&t;:&t;sin6_scope_id support&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;UDP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Based on linux/ipv4/udp.c&n; *&n; *&t;$Id: udp.c,v 1.56 2000/08/09 11:59:04 davem Exp $&n; *&n; *&t;Fixes:&n; *&t;Hideaki YOSHIFUJI&t;:&t;sin6_scope_id support&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -379,6 +379,20 @@ id|sk-&gt;net_pinfo.af_inet6.rcv_saddr
 comma
 op_amp
 id|sk2-&gt;net_pinfo.af_inet6.rcv_saddr
+)paren
+op_logical_or
+(paren
+id|addr_type
+op_eq
+id|IPV6_ADDR_MAPPED
+op_logical_and
+id|sk2-&gt;family
+op_eq
+id|AF_INET
+op_logical_and
+id|sk-&gt;rcv_saddr
+op_eq
+id|sk2-&gt;rcv_saddr
 )paren
 )paren
 op_logical_and
@@ -1481,7 +1495,7 @@ id|saddr
 suffix:semicolon
 id|sk-&gt;rcv_saddr
 op_assign
-l_int|0xffffffff
+id|LOOPBACK4_IPV6
 suffix:semicolon
 )brace
 id|sk-&gt;state
@@ -4294,16 +4308,19 @@ id|jiffies
 comma
 l_int|0
 comma
-id|sp-&gt;socket-&gt;inode-&gt;i_uid
+id|sock_i_uid
+c_func
+(paren
+id|sp
+)paren
 comma
 l_int|0
 comma
-id|sp-&gt;socket
-ques
-c_cond
-id|sp-&gt;socket-&gt;inode-&gt;i_ino
-suffix:colon
-l_int|0
+id|sock_i_ino
+c_func
+(paren
+id|sp
+)paren
 comma
 id|atomic_read
 c_func

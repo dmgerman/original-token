@@ -9,7 +9,6 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/ac97_codec.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#include &quot;soundmodule.h&quot;
 macro_line|#include &quot;sb.h&quot;
 macro_line|#include &quot;724hwmcode.h&quot;
 DECL|macro|YMF_DEBUG
@@ -17,12 +16,6 @@ macro_line|#undef YMF_DEBUG
 DECL|macro|SUPPORT_UART401_MIDI
 mdefine_line|#define SUPPORT_UART401_MIDI 1
 multiline_comment|/* ---------------------------------------------------------------------- */
-macro_line|#ifndef SOUND_LOCK
-DECL|macro|SOUND_LOCK
-mdefine_line|#define SOUND_LOCK do {} while (0)
-DECL|macro|SOUND_LOCK_END
-mdefine_line|#define SOUND_LOCK_END do {} while (0)
-macro_line|#endif
 macro_line|#ifndef PCI_VENDOR_ID_YAMAHA
 DECL|macro|PCI_VENDOR_ID_YAMAHA
 mdefine_line|#define PCI_VENDOR_ID_YAMAHA  0x1073
@@ -2139,6 +2132,8 @@ id|sb_dsp_init
 c_func
 (paren
 id|hw_config
+comma
+id|THIS_MODULE
 )paren
 )paren
 (brace
@@ -2896,6 +2891,8 @@ id|mpu_data
 (braket
 id|cards
 )braket
+comma
+id|THIS_MODULE
 )paren
 suffix:semicolon
 )brace
@@ -2941,9 +2938,6 @@ r_void
 (brace
 r_int
 id|i
-suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Binds us to the sound subsystem&t;&n;&t; */
-id|SOUND_LOCK
 suffix:semicolon
 r_if
 c_cond
@@ -3003,13 +2997,9 @@ id|i
 OL
 l_int|0
 )paren
-(brace
-id|SOUND_LOCK_END
-suffix:semicolon
 r_return
 id|i
 suffix:semicolon
-)brace
 id|printk
 (paren
 id|KERN_INFO
@@ -3140,9 +3130,6 @@ id|free_iomaps
 c_func
 (paren
 )paren
-suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Final clean up with the sound layer&n;&t; */
-id|SOUND_LOCK_END
 suffix:semicolon
 )brace
 id|MODULE_AUTHOR

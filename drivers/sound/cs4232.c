@@ -3,7 +3,6 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#include &quot;soundmodule.h&quot;
 macro_line|#include &quot;cs4232.h&quot;
 macro_line|#include &quot;ad1848.h&quot;
 macro_line|#include &quot;mpu401.h&quot;
@@ -702,6 +701,8 @@ multiline_comment|/* Capture DMA */
 l_int|0
 comma
 id|hw_config-&gt;osp
+comma
+id|THIS_MODULE
 )paren
 suffix:semicolon
 r_if
@@ -836,6 +837,8 @@ c_func
 (paren
 op_amp
 id|hw_config2
+comma
+id|THIS_MODULE
 )paren
 suffix:semicolon
 )brace
@@ -859,8 +862,6 @@ l_int|1
 )braket
 suffix:semicolon
 )brace
-id|SOUND_LOCK
-suffix:semicolon
 )brace
 DECL|function|unload_cs4232
 r_void
@@ -1349,8 +1350,6 @@ id|cfg
 )paren
 suffix:semicolon
 multiline_comment|/* unloads MPU as well, if needed */
-id|SOUND_LOCK_END
-suffix:semicolon
 )brace
 DECL|variable|init_cs4232
 id|module_init

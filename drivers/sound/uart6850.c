@@ -3,7 +3,6 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 multiline_comment|/* Mon Nov 22 22:38:35 MET 1993 marco@driq.home.usn.nl:&n; *      added 6850 support, used with COVOX SoundMaster II and custom cards.&n; */
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#include &quot;soundmodule.h&quot;
 DECL|variable|uart6850_base
 r_static
 r_int
@@ -413,8 +412,6 @@ id|EBUSY
 suffix:semicolon
 )brace
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|uart6850_cmd
 c_func
 (paren
@@ -471,8 +468,6 @@ suffix:semicolon
 id|uart6850_opened
 op_assign
 l_int|0
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
 DECL|function|uart6850_out
@@ -671,6 +666,12 @@ id|midi_operations
 id|uart6850_operations
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
+id|info
+suffix:colon
 (brace
 l_string|&quot;6850 UART&quot;
 comma
@@ -681,30 +682,47 @@ comma
 id|SNDCARD_UART6850
 )brace
 comma
+id|converter
+suffix:colon
 op_amp
 id|std_midi_synth
 comma
+id|in_info
+suffix:colon
 (brace
 l_int|0
 )brace
 comma
+id|open
+suffix:colon
 id|uart6850_open
 comma
+id|close
+suffix:colon
 id|uart6850_close
 comma
-l_int|NULL
-comma
-multiline_comment|/* ioctl */
+id|outputc
+suffix:colon
 id|uart6850_out
 comma
+id|start_read
+suffix:colon
 id|uart6850_start_read
 comma
+id|end_read
+suffix:colon
 id|uart6850_end_read
 comma
+id|kick
+suffix:colon
 id|uart6850_kick
 comma
+id|command
+suffix:colon
 id|uart6850_command
 comma
+id|buffer_status
+suffix:colon
 id|uart6850_buffer_status
 )brace
 suffix:semicolon
@@ -1081,8 +1099,6 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
-id|SOUND_LOCK
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1103,8 +1119,6 @@ c_func
 op_amp
 id|cfg_mpu
 )paren
-suffix:semicolon
-id|SOUND_LOCK_END
 suffix:semicolon
 )brace
 DECL|variable|init_uart6850

@@ -4,7 +4,6 @@ macro_line|#include &lt;linux/module.h&gt;
 DECL|macro|SB_OK
 macro_line|#undef  SB_OK
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#include &quot;soundmodule.h&quot;
 macro_line|#include &quot;ad1848.h&quot;
 macro_line|#include &quot;mpu401.h&quot;
 macro_line|#ifdef SB_OK
@@ -572,6 +571,8 @@ id|attach_ms_sound
 c_func
 (paren
 id|hw_config
+comma
+id|THIS_MODULE
 )paren
 suffix:semicolon
 r_if
@@ -630,6 +631,8 @@ id|attach_uart401
 c_func
 (paren
 id|hw_config
+comma
+id|THIS_MODULE
 )paren
 suffix:semicolon
 )brace
@@ -1218,8 +1221,6 @@ id|cfg_mpu
 )paren
 suffix:semicolon
 )brace
-id|SOUND_LOCK
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1254,8 +1255,6 @@ c_func
 op_amp
 id|cfg
 )paren
-suffix:semicolon
-id|SOUND_LOCK_END
 suffix:semicolon
 )brace
 DECL|variable|init_opl3sa

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ffb_drv.c,v 1.5 2000/07/26 01:03:57 davem Exp $&n; * ffb_drv.c: Creator/Creator3D direct rendering driver.&n; *&n; * Copyright (C) 2000 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: ffb_drv.c,v 1.6 2000/08/10 05:26:23 davem Exp $&n; * ffb_drv.c: Creator/Creator3D direct rendering driver.&n; *&n; * Copyright (C) 2000 David S. Miller (davem@redhat.com)&n; */
 macro_line|#include &quot;drmP.h&quot;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
@@ -3980,6 +3980,11 @@ r_struct
 id|vm_operations_struct
 id|drm_vm_shm_ops
 suffix:semicolon
+r_extern
+r_struct
+id|vm_operations_struct
+id|drm_vm_shm_lock_ops
+suffix:semicolon
 DECL|function|ffb_mmap
 r_static
 r_int
@@ -4038,11 +4043,6 @@ c_func
 (paren
 id|vma
 )paren
-)paren
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 id|minor
@@ -4104,17 +4104,10 @@ id|i
 op_ge
 id|ffb_dev_table_size
 )paren
-(brace
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-)brace
 multiline_comment|/* We don&squot;t support/need dma mappings, so... */
 r_if
 c_cond
@@ -4126,17 +4119,10 @@ c_func
 id|vma
 )paren
 )paren
-(brace
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-)brace
 r_for
 c_loop
 (paren
@@ -4193,17 +4179,10 @@ id|i
 op_ge
 id|dev-&gt;map_count
 )paren
-(brace
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -4225,17 +4204,10 @@ id|CAP_SYS_ADMIN
 )paren
 )paren
 )paren
-(brace
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 op_minus
 id|EPERM
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -4247,17 +4219,10 @@ op_minus
 id|vma-&gt;vm_start
 )paren
 )paren
-(brace
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-)brace
 multiline_comment|/* Set read-only attribute before mappings are created&n;&t; * so it works for fb/reg maps too.&n;&t; */
 r_if
 c_cond
@@ -4339,17 +4304,10 @@ comma
 l_int|0
 )paren
 )paren
-(brace
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 op_minus
 id|EAGAIN
 suffix:semicolon
-)brace
 id|vma-&gt;vm_ops
 op_assign
 op_amp
@@ -4372,11 +4330,34 @@ r_int
 id|dev-&gt;lock.hw_lock
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|map-&gt;flags
+op_amp
+id|_DRM_CONTAINS_LOCK
+)paren
+id|vma-&gt;vm_ops
+op_assign
+op_amp
+id|drm_vm_shm_lock_ops
+suffix:semicolon
+r_else
+(brace
 id|vma-&gt;vm_ops
 op_assign
 op_amp
 id|drm_vm_shm_ops
 suffix:semicolon
+id|vma-&gt;vm_private_data
+op_assign
+(paren
+r_void
+op_star
+)paren
+id|map
+suffix:semicolon
+)brace
 multiline_comment|/* Don&squot;t let this area swap.  Change when&n;&t;&t; * DRM_KERNEL advisory is supported.&n;&t;&t; */
 id|vma-&gt;vm_flags
 op_or_assign
@@ -4386,22 +4367,12 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
 multiline_comment|/* This should never happen. */
 )brace
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 id|vma-&gt;vm_flags
 op_or_assign

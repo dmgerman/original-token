@@ -364,7 +364,7 @@ r_return
 id|i
 suffix:semicolon
 )brace
-multiline_comment|/**&n; * blk_cleanup_queue: - release a &amp;request_queue_t when it is no longer needed&n; * @q:    the request queue to be released&n; *&n; * Description:  blk_cleanup_queue is the pair to blk_init_queue().  It should&n; *     be called when a request queue is being released; typically when a block&n; *     device is being de-registered.&n; *     Currently, its primary task it to free all the &amp;struct request structures&n; *     that were allocated to the queue.&n; * Caveat:&n; *     Hopefully the low level driver will have finished any outstanding requests&n; *     first...&n; **/
+multiline_comment|/**&n; * blk_cleanup_queue: - release a &amp;request_queue_t when it is no longer needed&n; * @q:    the request queue to be released&n; *&n; * Description:  blk_cleanup_queue is the pair to blk_init_queue().  It should&n; *     be called when a request queue is being released; typically when a block&n; *     device is being de-registered.&n; *     Currently, its primary task it to free all the &amp;struct request structures&n; *     that were allocated to the queue.&n; * Caveat:&n; *     Hopefully the low level driver will have finished any outstanding&n; *     requests first...&n; **/
 DECL|function|blk_cleanup_queue
 r_void
 id|blk_cleanup_queue
@@ -432,7 +432,7 @@ id|q
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/**&n; * blk_queue_headactive - indicate whether head of request queue may be active&n; * @q:       The queue which this applies to.&n; * @active:  A flag indication where the head of the queue is active.&n; *&n; * Description:&n; *    The driver for a block device may choose to leave the currently active request&n; *    on the request queue, removing it only when it has completed.  The queue&n; *    handling routines assume this by default and will not involved the head of the&n; *    request queue in any merging or reordering of requests.&n; *&n; *    If a driver removes requests from the queue before processing them, then it may&n; *    indicate that it does so, there by allowing the head of the queue to be involved&n; *    in merging and reordering.  This is done be calling blk_queue_headactive() with an&n; *    @active flag of %1.&n; *&n; *    If a driver processes several requests at once, it must remove them (or at least all&n; *    but one of them) from the request queue.&n; *&n; *    When a queue is plugged (see blk_queue_pluggable()) the head will be assumed to&n; *    be inactive.&n; **/
+multiline_comment|/**&n; * blk_queue_headactive - indicate whether head of request queue may be active&n; * @q:       The queue which this applies to.&n; * @active:  A flag indication where the head of the queue is active.&n; *&n; * Description:&n; *    The driver for a block device may choose to leave the currently active&n; *    request on the request queue, removing it only when it has completed.&n; *    The queue handling routines assume this by default for safety reasons&n; *    and will not involve the head of the request queue in any merging or&n; *    reordering of requests when the queue is unplugged (and thus may be&n; *    working on this particular request).&n; *&n; *    If a driver removes requests from the queue before processing them, then&n; *    it may indicate that it does so, there by allowing the head of the queue&n; *    to be involved in merging and reordering.  This is done be calling&n; *    blk_queue_headactive() with an @active flag of %0.&n; *&n; *    If a driver processes several requests at once, it must remove them (or&n; *    at least all but one of them) from the request queue.&n; *&n; *    When a queue is plugged (see blk_queue_pluggable()) the head will be&n; *    assumed to be inactive.&n; **/
 DECL|function|blk_queue_headactive
 r_void
 id|blk_queue_headactive
@@ -451,7 +451,7 @@ op_assign
 id|active
 suffix:semicolon
 )brace
-multiline_comment|/**&n; * blk_queue_pluggable - define a plugging function for a request queue&n; * @q:   the request queue to which the function will apply&n; * @plug: the function to be called to plug a queue&n; *&n; * Description:&n; *   A request queue will be &quot;plugged&quot; if a request is added to it while it&n; *   is empty.  This allows a number of requests to be added before any are&n; *   processed, thus providing an opportunity for these requests to be merged&n; *   or re-ordered.&n; *   The default plugging function (generic_plug_device()) sets the &quot;plugged&quot; flag&n; *   for the queue and adds a task the the $tq_disk task queue to unplug the&n; *   queue and call the request function at a later time.&n; *&n; *   A device driver may provide an alternate plugging function by passing it to&n; *   blk_queue_pluggable().   This function should set the &quot;plugged&quot; flag if it&n; *   want calls to the request_function to be blocked, and should place a&n; *   task on $tq_disk which will unplug the queue.  Alternately it can simply&n; *   do nothing and there-by disable plugging of the device.&n; **/
+multiline_comment|/**&n; * blk_queue_pluggable - define a plugging function for a request queue&n; * @q:   the request queue to which the function will apply&n; * @plug: the function to be called to plug a queue&n; *&n; * Description:&n; *   A request queue will be &quot;plugged&quot; if a request is added to it while it&n; *   is empty.  This allows a number of requests to be added before any are&n; *   processed, thus providing an opportunity for these requests to be merged&n; *   or re-ordered.&n; *   The default plugging function (generic_plug_device()) sets the &quot;plugged&quot;&n; *   flag for the queue and adds a task to the $tq_disk task queue to unplug&n; *   the queue and call the request function at a later time.&n; *&n; *   A device driver may provide an alternate plugging function by passing it to&n; *   blk_queue_pluggable().   This function should set the &quot;plugged&quot; flag if it&n; *   want calls to the request_function to be blocked, and should place a&n; *   task on $tq_disk which will unplug the queue.  Alternately it can simply&n; *   do nothing and there-by disable plugging of the device.&n; **/
 DECL|function|blk_queue_pluggable
 r_void
 id|blk_queue_pluggable
@@ -470,7 +470,7 @@ op_assign
 id|plug
 suffix:semicolon
 )brace
-multiline_comment|/**&n; * blk_queue_make_request - define an alternate make_request function for a device&n; * @q:  the request queue for the device to be affected&n; * @mfn: the alternate make_request function&n; *&n; * Description:&n; *    The normal way for &amp;struct buffer_heads to be passes to a device driver it to&n; *    collect into requests on a request queue, and allow the device driver to select&n; *    requests off that queue when it is ready.  This works well for many block devices.&n; *    However some block devices (typically virtual devices such as md or lvm) do not benefit&n; *    from the processes on the request queue, and are served best by having the requests passed&n; *    directly to them.  This can be achived by providing a function to blk_queue_make_request().&n; *    If this is done, then the rest of the &amp;request_queue_t structure is unused (unless the alternate&n; *    make_request function explicitly uses it).  In particular, there is no need to call&n; *    blk_init_queue() if blk_queue_make_request() has been called.&n; **/
+multiline_comment|/**&n; * blk_queue_make_request - define an alternate make_request function for a&n; * device&n; * @q:  the request queue for the device to be affected&n; * @mfn: the alternate make_request function&n; *&n; * Description:&n; *    The normal way for &amp;struct buffer_heads to be passed to a device driver&n; *    it to collect into requests on a request queue, and allow the device&n; *    driver to select requests off that queue when it is ready.  This works&n; *    well for many block devices. However some block devices (typically&n; *    virtual devices such as md or lvm) do not benefit from the processes on&n; *    the request queue, and are served best by having the requests passed&n; *    directly to them.  This can be achieved by providing a function to&n; *    blk_queue_make_request().&n; **/
 DECL|function|blk_queue_make_request
 r_void
 id|blk_queue_make_request
@@ -926,7 +926,7 @@ id|q-&gt;request_lock
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/**&n; * blk_init_queue  - prepare a request queue for use with a block device&n; * @q:    The &amp;request_queue_t to be initialised&n; * @rfn:  The function to be called to process requests that have been&n; *        placed on the queue.&n; *&n; * Description:&n; *    If a block device wishes to use the stand request handling procedures,&n; *    which sorts requests and coalesces adjactent requests, then it must&n; *    call blk_init_queue().  The function @rfn will be called when there&n; *    are requests on the queue that need to be processed.  If the device&n; *    supports plugging, then @rfn may not be called immediately that requests&n; *    are available on the queue, but may be called at some time later instead.&n; *&n; *    @rfn is not required, or even expected, to remove all requests off the queue, but&n; *    only as many as it can handle at a time.  If it does leave requests on the queue,&n; *    it is responsible for arranging that the requests get dealt with eventually.&n; *&n; *    A global spin lock $io_spin_lock must held while manipulating the requests&n; *    on the request queue.&n; *&n; *    The request on the head of the queue is by default assumed to be potentially active,&n; *    and it is not considered for re-ordering or merging.  This behaviour can&n; *    be changed with blk_queue_headactive().&n; *&n; * Note:&n; *    blk_init_queue() does not need to be called if&n; *    blk_queue_make_request() has been called to register an alternate&n; *    request handler.  Ofcourse, it may be called if the handler wants&n; *    to still use the fields on &amp;request_queue_t, but in a non-standard&n; *    way.&n; *&n; *    blk_init_queue() should be paired with a blk_cleanup-queue() call&n; *    when the block device is deactivated (such as at module unload).&n; **/
+multiline_comment|/**&n; * blk_init_queue  - prepare a request queue for use with a block device&n; * @q:    The &amp;request_queue_t to be initialised&n; * @rfn:  The function to be called to process requests that have been&n; *        placed on the queue.&n; *&n; * Description:&n; *    If a block device wishes to use the standard request handling procedures,&n; *    which sorts requests and coalesces adjacent requests, then it must&n; *    call blk_init_queue().  The function @rfn will be called when there&n; *    are requests on the queue that need to be processed.  If the device&n; *    supports plugging, then @rfn may not be called immediately when requests&n; *    are available on the queue, but may be called at some time later instead.&n; *    Plugged queues are generally unplugged when a buffer belonging to one&n; *    of the requests on the queue is needed, or due to memory pressure.&n; *&n; *    @rfn is not required, or even expected, to remove all requests off the&n; *    queue, but only as many as it can handle at a time.  If it does leave&n; *    requests on the queue, it is responsible for arranging that the requests&n; *    get dealt with eventually.&n; *&n; *    A global spin lock $io_request_lock must be held while manipulating the&n; *    requests on the request queue.&n; *&n; *    The request on the head of the queue is by default assumed to be&n; *    potentially active, and it is not considered for re-ordering or merging&n; *    whenever the given queue is unplugged. This behaviour can be changed with&n; *    blk_queue_headactive().&n; *&n; * Note:&n; *    blk_init_queue() must be paired with a blk_cleanup-queue() call&n; *    when the block device is deactivated (such as at module unload).&n; **/
 r_static
 r_int
 id|__make_request
@@ -3488,6 +3488,18 @@ comma
 l_int|NULL
 comma
 l_int|NULL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|request_cachep
+)paren
+id|panic
+c_func
+(paren
+l_string|&quot;Can&squot;t create request pool slab cache&bslash;n&quot;
 )paren
 suffix:semicolon
 r_for

@@ -187,13 +187,13 @@ c_func
 (paren
 l_string|&quot;nat_expected: PORT cmd. %u.%u.%u.%u-&gt;%u.%u.%u.%u&bslash;n&quot;
 comma
-id|IP_PARTS
+id|NIPQUAD
 c_func
 (paren
 id|newsrcip
 )paren
 comma
-id|IP_PARTS
+id|NIPQUAD
 c_func
 (paren
 id|newdstip
@@ -227,13 +227,13 @@ c_func
 (paren
 l_string|&quot;nat_expected: PASV cmd. %u.%u.%u.%u-&gt;%u.%u.%u.%u&bslash;n&quot;
 comma
-id|IP_PARTS
+id|NIPQUAD
 c_func
 (paren
 id|newsrcip
 )paren
 comma
-id|IP_PARTS
+id|NIPQUAD
 c_func
 (paren
 id|newdstip
@@ -273,7 +273,7 @@ c_func
 (paren
 l_string|&quot;nat_expected: IP to %u.%u.%u.%u&bslash;n&quot;
 comma
-id|IP_PARTS
+id|NIPQUAD
 c_func
 (paren
 id|newip
@@ -470,7 +470,7 @@ id|buffer
 comma
 l_string|&quot;%u,%u,%u,%u,%u,%u&quot;
 comma
-id|IP_PARTS
+id|NIPQUAD
 c_func
 (paren
 id|newip

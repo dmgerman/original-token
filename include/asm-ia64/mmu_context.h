@@ -129,7 +129,7 @@ suffix:semicolon
 )brace
 r_extern
 r_inline
-r_void
+r_int
 DECL|function|init_new_context
 id|init_new_context
 (paren
@@ -146,6 +146,9 @@ id|mm
 (brace
 id|mm-&gt;context
 op_assign
+l_int|0
+suffix:semicolon
+r_return
 l_int|0
 suffix:semicolon
 )brace

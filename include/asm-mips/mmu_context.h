@@ -113,7 +113,7 @@ suffix:semicolon
 multiline_comment|/*&n; * Initialize the context related info for a new mm_struct&n; * instance.&n; */
 r_extern
 r_inline
-r_void
+r_int
 DECL|function|init_new_context
 id|init_new_context
 c_func
@@ -131,6 +131,9 @@ id|mm
 (brace
 id|mm-&gt;context
 op_assign
+l_int|0
+suffix:semicolon
+r_return
 l_int|0
 suffix:semicolon
 )brace

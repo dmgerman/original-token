@@ -2492,6 +2492,8 @@ r_return
 id|skb
 suffix:semicolon
 )brace
+DECL|macro|skb_queue_walk
+mdefine_line|#define skb_queue_walk(queue, skb) &bslash;&n;&t;&t;for (skb = (queue)-&gt;next;&t;&t;&t;&bslash;&n;&t;&t;     (skb != (struct sk_buff *)(queue));&t;&bslash;&n;&t;&t;     skb=skb-&gt;next)
 r_extern
 r_struct
 id|sk_buff

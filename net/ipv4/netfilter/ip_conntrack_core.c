@@ -2871,7 +2871,7 @@ c_func
 (paren
 l_string|&quot;Should bcast: %u.%u.%u.%u-&gt;%u.%u.%u.%u (sk=%p, ptype=%u)&bslash;n&quot;
 comma
-id|IP_PARTS
+id|NIPQUAD
 c_func
 (paren
 (paren
@@ -2882,7 +2882,7 @@ op_member_access_from_pointer
 id|nh.iph-&gt;saddr
 )paren
 comma
-id|IP_PARTS
+id|NIPQUAD
 c_func
 (paren
 (paren
@@ -4509,7 +4509,7 @@ c_func
 (paren
 l_string|&quot;SO_ORIGINAL_DST: %u.%u.%u.%u %u&bslash;n&quot;
 comma
-id|IP_PARTS
+id|NIPQUAD
 c_func
 (paren
 id|sin.sin_addr.s_addr
@@ -4561,7 +4561,7 @@ c_func
 (paren
 l_string|&quot;SO_ORIGINAL_DST: Can&squot;t find %u.%u.%u.%u/%u-%u.%u.%u.%u/%u.&bslash;n&quot;
 comma
-id|IP_PARTS
+id|NIPQUAD
 c_func
 (paren
 id|tuple.src.ip
@@ -4573,7 +4573,7 @@ c_func
 id|tuple.src.u.tcp.port
 )paren
 comma
-id|IP_PARTS
+id|NIPQUAD
 c_func
 (paren
 id|tuple.dst.ip

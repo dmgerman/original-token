@@ -1439,10 +1439,20 @@ id|mixer_operations
 id|pas_mixer_operations
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
+id|id
+suffix:colon
 l_string|&quot;PAS16&quot;
 comma
+id|name
+suffix:colon
 l_string|&quot;Pro Audio Spectrum 16&quot;
 comma
+id|ioctl
+suffix:colon
 id|pas_mixer_ioctl
 )brace
 suffix:semicolon

@@ -25,7 +25,6 @@ macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/dec21285.h&gt;
 macro_line|#include &lt;asm/hardware.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &quot;soundmodule.h&quot;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;waveartist.h&quot;
 macro_line|#ifndef _ISA_DMA
@@ -3211,36 +3210,64 @@ id|audio_driver
 id|waveartist_audio_driver
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
+id|open
+suffix:colon
 id|waveartist_open
 comma
+id|close
+suffix:colon
 id|waveartist_close
 comma
+id|output_block
+suffix:colon
 id|waveartist_output_block
 comma
+id|start_input
+suffix:colon
 id|waveartist_start_input
 comma
+id|ioctl
+suffix:colon
 id|waveartist_ioctl
 comma
+id|prepare_for_input
+suffix:colon
 id|waveartist_prepare_for_input
 comma
+id|prepare_for_output
+suffix:colon
 id|waveartist_prepare_for_output
 comma
+id|halt_io
+suffix:colon
 id|waveartist_halt
 comma
-l_int|NULL
-comma
-l_int|NULL
-comma
+id|halt_input
+suffix:colon
 id|waveartist_halt_input
 comma
+id|halt_output
+suffix:colon
 id|waveartist_halt_output
 comma
+id|trigger
+suffix:colon
 id|waveartist_trigger
 comma
+id|set_speed
+suffix:colon
 id|waveartist_set_speed
 comma
+id|set_bits
+suffix:colon
 id|waveartist_set_bits
 comma
+id|set_channels
+suffix:colon
 id|waveartist_set_channels
 )brace
 suffix:semicolon
@@ -4751,10 +4778,20 @@ id|mixer_operations
 id|waveartist_mixer_operations
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
+id|id
+suffix:colon
 l_string|&quot;WaveArtist&quot;
 comma
+id|name
+suffix:colon
 l_string|&quot;WaveArtist NetWinder&quot;
 comma
+id|ioctl
+suffix:colon
 id|waveartist_mixer_ioctl
 )brace
 suffix:semicolon
@@ -7278,8 +7315,6 @@ id|attached
 op_assign
 l_int|1
 suffix:semicolon
-id|SOUND_LOCK
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -7299,9 +7334,6 @@ c_cond
 (paren
 id|attached
 )paren
-(brace
-id|SOUND_LOCK_END
-suffix:semicolon
 id|unload_waveartist
 c_func
 (paren
@@ -7309,7 +7341,6 @@ op_amp
 id|cfg
 )paren
 suffix:semicolon
-)brace
 )brace
 DECL|variable|init_waveartist
 id|module_init

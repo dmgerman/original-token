@@ -2,7 +2,6 @@ multiline_comment|/*&n; * sound/adlib_card.c&n; *&n; * Detection routine for the
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#include &quot;soundmodule.h&quot;
 macro_line|#include &quot;opl3.h&quot;
 DECL|function|attach_adlib_card
 r_static
@@ -28,6 +27,8 @@ c_func
 id|hw_config-&gt;io_base
 comma
 id|hw_config-&gt;osp
+comma
+id|THIS_MODULE
 )paren
 suffix:semicolon
 id|request_region
@@ -173,8 +174,6 @@ op_amp
 id|cfg
 )paren
 suffix:semicolon
-id|SOUND_LOCK
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -205,8 +204,6 @@ id|cfg.slots
 l_int|0
 )braket
 )paren
-suffix:semicolon
-id|SOUND_LOCK_END
 suffix:semicolon
 )brace
 DECL|variable|init_adlib

@@ -2,7 +2,6 @@ multiline_comment|/*&n; * sound/v_midi.c&n; *&n; * The low level driver for the 
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#include &quot;soundmodule.h&quot;
 macro_line|#include &quot;v_midi.h&quot;
 DECL|variable|v_devc
 r_static
@@ -406,6 +405,12 @@ id|midi_operations
 id|v_midi_operations
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
+id|info
+suffix:colon
 (brace
 l_string|&quot;Loopback MIDI Port 1&quot;
 comma
@@ -416,32 +421,41 @@ comma
 id|SNDCARD_VMIDI
 )brace
 comma
+id|converter
+suffix:colon
 op_amp
 id|std_midi_synth
 comma
+id|in_info
+suffix:colon
 (brace
 l_int|0
 )brace
 comma
+id|open
+suffix:colon
 id|v_midi_open
 comma
+id|close
+suffix:colon
 id|v_midi_close
 comma
+id|ioctl
+suffix:colon
 id|v_midi_ioctl
 comma
+id|outputc
+suffix:colon
 id|v_midi_out
 comma
+id|start_read
+suffix:colon
 id|v_midi_start_read
 comma
+id|end_read
+suffix:colon
 id|v_midi_end_read
 comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
 )brace
 suffix:semicolon
 DECL|variable|v_midi_operations2
@@ -451,6 +465,12 @@ id|midi_operations
 id|v_midi_operations2
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
+id|info
+suffix:colon
 (brace
 l_string|&quot;Loopback MIDI Port 2&quot;
 comma
@@ -461,32 +481,41 @@ comma
 id|SNDCARD_VMIDI
 )brace
 comma
+id|converter
+suffix:colon
 op_amp
 id|std_midi_synth
 comma
+id|in_info
+suffix:colon
 (brace
 l_int|0
 )brace
 comma
+id|open
+suffix:colon
 id|v_midi_open
 comma
+id|close
+suffix:colon
 id|v_midi_close
 comma
+id|ioctl
+suffix:colon
 id|v_midi_ioctl
 comma
+id|outputc
+suffix:colon
 id|v_midi_out
 comma
+id|start_read
+suffix:colon
 id|v_midi_start_read
 comma
+id|end_read
+suffix:colon
 id|v_midi_end_read
 comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;We kmalloc just one of these - it makes life simpler and the code&n; *&t;cleaner and the memory handling far more efficient&n; */
@@ -1083,8 +1112,6 @@ op_amp
 id|cfg
 )paren
 suffix:semicolon
-id|SOUND_LOCK
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1105,8 +1132,6 @@ c_func
 op_amp
 id|cfg
 )paren
-suffix:semicolon
-id|SOUND_LOCK_END
 suffix:semicolon
 )brace
 DECL|variable|init_vmidi

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * This is a module which is used for queueing IPv4 packets and&n; * communicating with userspace via netlink.&n; *&n; * (C) 2000 James Morris, this code is GPL.&n; *&n; * 2000-03-27: Simplified code (thanks to Andi Kleen for clues). (JM)&n; * 2000-05-20: Fixed notifier problems (following Miguel Freitas&squot; report). (JM)&n; * 2000-06-19: Fixed so nfmark is copied to metadata (reported by Sebastian &n; *             Zander). (JM)&n; *&n; */
+multiline_comment|/*&n; * This is a module which is used for queueing IPv4 packets and&n; * communicating with userspace via netlink.&n; *&n; * (C) 2000 James Morris, this code is GPL.&n; *&n; * 2000-03-27: Simplified code (thanks to Andi Kleen for clues).&n; * 2000-05-20: Fixed notifier problems (following Miguel Freitas&squot; report).&n; * 2000-06-19: Fixed so nfmark is copied to metadata (reported by Sebastian &n; *             Zander).&n; * 2000-08-01: Added Nick Williams&squot; MAC support.&n; *&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -1757,6 +1757,38 @@ l_int|0
 op_assign
 l_char|&squot;&bslash;0&squot;
 suffix:semicolon
+id|pm-&gt;hw_protocol
+op_assign
+id|e-&gt;skb-&gt;protocol
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|e-&gt;skb-&gt;rx_dev
+)paren
+(brace
+id|pm-&gt;hw_type
+op_assign
+id|e-&gt;skb-&gt;rx_dev-&gt;type
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|e-&gt;skb-&gt;rx_dev-&gt;hard_header_parse
+)paren
+id|pm-&gt;hw_addrlen
+op_assign
+id|e-&gt;skb-&gt;rx_dev
+op_member_access_from_pointer
+id|hard_header_parse
+c_func
+(paren
+id|e-&gt;skb
+comma
+id|pm-&gt;hw_addr
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

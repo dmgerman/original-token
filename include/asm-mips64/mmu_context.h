@@ -138,7 +138,7 @@ suffix:semicolon
 multiline_comment|/*&n; * Initialize the context related info for a new mm_struct&n; * instance.&n; */
 r_extern
 r_inline
-r_void
+r_int
 DECL|function|init_new_context
 id|init_new_context
 c_func
@@ -185,7 +185,13 @@ r_if
 c_cond
 (paren
 id|mm-&gt;context
+op_eq
+l_int|0
 )paren
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
 id|memset
 c_func
 (paren
@@ -206,14 +212,10 @@ r_int
 )paren
 )paren
 suffix:semicolon
-r_else
-id|printk
-c_func
-(paren
-l_string|&quot;Warning: init_new_context failed&bslash;n&quot;
-)paren
-suffix:semicolon
 macro_line|#endif
+r_return
+l_int|0
+suffix:semicolon
 )brace
 DECL|function|switch_mm
 r_extern

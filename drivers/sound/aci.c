@@ -2048,13 +2048,21 @@ id|mixer_operations
 id|aci_mixer_operations
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
+id|id
+suffix:colon
 l_string|&quot;ACI&quot;
 comma
+id|name
+suffix:colon
 l_string|&quot;ACI mixer&quot;
 comma
+id|ioctl
+suffix:colon
 id|aci_mixer_ioctl
-comma
-l_int|NULL
 )brace
 suffix:semicolon
 r_static

@@ -251,6 +251,8 @@ DECL|macro|ASYNC_LOW_LATENCY
 mdefine_line|#define ASYNC_LOW_LATENCY 0x2000 /* Request low latency behaviour */
 DECL|macro|ASYNC_BUGGY_UART
 mdefine_line|#define ASYNC_BUGGY_UART  0x4000 /* This is a buggy UART, skip some safety&n;&t;&t;&t;&t;  * checks.  Note: can be dangerous! */
+DECL|macro|ASYNC_AUTOPROBE
+mdefine_line|#define ASYNC_AUTOPROBE&t; 0x8000 /* Port was autoprobed by PCI or PNP code */
 DECL|macro|ASYNC_FLAGS
 mdefine_line|#define ASYNC_FLAGS&t;0x7FFF&t;/* Possible legal async flags */
 DECL|macro|ASYNC_USR_MASK
@@ -272,8 +274,6 @@ DECL|macro|ASYNC_CHECK_CD
 mdefine_line|#define ASYNC_CHECK_CD&t;&t;0x02000000 /* i.e., CLOCAL */
 DECL|macro|ASYNC_SHARE_IRQ
 mdefine_line|#define ASYNC_SHARE_IRQ&t;&t;0x01000000 /* for multifunction cards&n;&t;&t;&t;&t;&t;     --- no longer used */
-DECL|macro|ASYNC_AUTOPROBE
-mdefine_line|#define ASYNC_AUTOPROBE&t;&t;0x00800000 /* Port was autoprobed */
 DECL|macro|ASYNC_INTERNAL_FLAGS
 mdefine_line|#define ASYNC_INTERNAL_FLAGS&t;0xFF000000 /* Internal flags */
 multiline_comment|/*&n; * Multiport serial configuration structure --- external structure&n; */

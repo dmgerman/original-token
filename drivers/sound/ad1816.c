@@ -4,7 +4,6 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/isapnp.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
-macro_line|#include &quot;soundmodule.h&quot;
 macro_line|#include &quot;sound_config.h&quot;
 DECL|macro|DEBUGNOISE
 mdefine_line|#define DEBUGNOISE(x)
@@ -891,29 +890,6 @@ suffix:semicolon
 id|restore_flags
 (paren
 id|flags
-)paren
-suffix:semicolon
-)brace
-DECL|function|ad1816_ioctl
-r_static
-r_int
-id|ad1816_ioctl
-(paren
-r_int
-id|dev
-comma
-r_int
-r_int
-id|cmd
-comma
-id|caddr_t
-id|arg
-)paren
-(brace
-r_return
-op_minus
-(paren
-id|EINVAL
 )paren
 suffix:semicolon
 )brace
@@ -2093,41 +2069,62 @@ id|audio_driver
 id|ad1816_audio_driver
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
+id|open
+suffix:colon
 id|ad1816_open
 comma
+id|close
+suffix:colon
 id|ad1816_close
 comma
+id|output_block
+suffix:colon
 id|ad1816_output_block
 comma
+id|start_input
+suffix:colon
 id|ad1816_start_input
 comma
-id|ad1816_ioctl
-comma
+id|prepare_for_input
+suffix:colon
 id|ad1816_prepare_for_input
 comma
+id|prepare_for_output
+suffix:colon
 id|ad1816_prepare_for_output
 comma
+id|halt_io
+suffix:colon
 id|ad1816_halt
 comma
-l_int|NULL
-comma
-l_int|NULL
-comma
+id|halt_input
+suffix:colon
 id|ad1816_halt_input
 comma
+id|halt_output
+suffix:colon
 id|ad1816_halt_output
 comma
+id|trigger
+suffix:colon
 id|ad1816_trigger
 comma
+id|set_speed
+suffix:colon
 id|ad1816_set_speed
 comma
+id|set_bits
+suffix:colon
 id|ad1816_set_bits
 comma
+id|set_channels
+suffix:colon
 id|ad1816_set_channels
 comma
-l_int|NULL
-comma
-l_int|NULL
 )brace
 suffix:semicolon
 multiline_comment|/* ------------------------------------------------------------------- */
@@ -4367,10 +4364,20 @@ id|mixer_operations
 id|ad1816_mixer_operations
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
+id|id
+suffix:colon
 l_string|&quot;AD1816&quot;
 comma
+id|name
+suffix:colon
 l_string|&quot;AD1816 Mixer&quot;
 comma
+id|ioctl
+suffix:colon
 id|ad1816_mixer_ioctl
 )brace
 suffix:semicolon
@@ -6391,8 +6398,6 @@ op_amp
 id|cfg
 )paren
 suffix:semicolon
-id|SOUND_LOCK
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -6449,8 +6454,6 @@ suffix:semicolon
 id|nr_ad1816_devs
 op_assign
 l_int|0
-suffix:semicolon
-id|SOUND_LOCK_END
 suffix:semicolon
 macro_line|#if defined CONFIG_ISAPNP || defined CONFIG_ISAPNP_MODULE
 r_if

@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: init.c,v 1.90 2000/08/09 00:00:15 davem Exp $&n; *  linux/arch/sparc/mm/init.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Eddie C. Dost (ecd@skynet.be)&n; *  Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *  Copyright (C) 2000 Anton Blanchard (anton@linuxcare.com)&n; */
+multiline_comment|/*  $Id: init.c,v 1.91 2000/08/09 23:10:19 anton Exp $&n; *  linux/arch/sparc/mm/init.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Eddie C. Dost (ecd@skynet.be)&n; *  Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *  Copyright (C) 2000 Anton Blanchard (anton@linuxcare.com)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1924,11 +1924,6 @@ id|highmem_start_page
 op_assign
 id|mem_map
 op_plus
-id|highstart_pfn
-suffix:semicolon
-multiline_comment|/* cache the highmem_mapnr */
-id|highmem_mapnr
-op_assign
 id|highstart_pfn
 suffix:semicolon
 multiline_comment|/* Saves us work later. */

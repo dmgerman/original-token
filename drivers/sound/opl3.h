@@ -20,6 +20,11 @@ comma
 r_int
 op_star
 id|osp
+comma
+r_struct
+id|module
+op_star
+id|owner
 )paren
 suffix:semicolon
 r_void

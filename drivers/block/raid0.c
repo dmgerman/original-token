@@ -379,7 +379,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot; zone-&gt;nb_dev: %d, size: %d&bslash;n&quot;
+l_string|&quot; zone-&gt;nb_dev: %d, size: %ld&bslash;n&quot;
 comma
 id|zone-&gt;nb_dev
 comma
@@ -417,7 +417,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;current zone offset: %d&bslash;n&quot;
+l_string|&quot;current zone offset: %ld&bslash;n&quot;
 comma
 id|current_offset
 )paren
@@ -544,7 +544,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;raid0 : conf-&gt;smallest-&gt;size is %d blocks.&bslash;n&quot;
+l_string|&quot;raid0 : conf-&gt;smallest-&gt;size is %ld blocks.&bslash;n&quot;
 comma
 id|conf-&gt;smallest-&gt;size
 )paren

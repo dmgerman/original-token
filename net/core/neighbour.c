@@ -3445,6 +3445,16 @@ c_func
 id|neigh
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+r_new
+op_amp
+id|NUD_CONNECTED
+)paren
+)paren
 id|neigh-&gt;confirmed
 op_assign
 id|jiffies

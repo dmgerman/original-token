@@ -3,7 +3,6 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#include &quot;soundmodule.h&quot;
 macro_line|#include &quot;gus.h&quot;
 macro_line|#include &quot;gus_hw.h&quot;
 r_void
@@ -788,6 +787,8 @@ comma
 l_int|0
 comma
 id|hw_config-&gt;osp
+comma
+id|THIS_MODULE
 )paren
 suffix:semicolon
 )brace
@@ -1091,8 +1092,6 @@ op_amp
 id|cfg
 )paren
 suffix:semicolon
-id|SOUND_LOCK
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1127,8 +1126,6 @@ c_func
 op_amp
 id|cfg
 )paren
-suffix:semicolon
-id|SOUND_LOCK_END
 suffix:semicolon
 )brace
 DECL|variable|init_gus

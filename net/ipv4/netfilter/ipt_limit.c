@@ -5,10 +5,6 @@ macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/netfilter_ipv4/ip_tables.h&gt;
 macro_line|#include &lt;linux/netfilter_ipv4/ipt_limit.h&gt;
-DECL|macro|IP_PARTS_NATIVE
-mdefine_line|#define IP_PARTS_NATIVE(n)&t;&t;&t;&bslash;&n;(unsigned int)((n)&gt;&gt;24)&amp;0xFF,&t;&t;&t;&bslash;&n;(unsigned int)((n)&gt;&gt;16)&amp;0xFF,&t;&t;&t;&bslash;&n;(unsigned int)((n)&gt;&gt;8)&amp;0xFF,&t;&t;&t;&bslash;&n;(unsigned int)((n)&amp;0xFF)
-DECL|macro|IP_PARTS
-mdefine_line|#define IP_PARTS(n) IP_PARTS_NATIVE(ntohl(n))
 multiline_comment|/* The algorithm used is the Simple Token Bucket Filter (TBF)&n; * see net/sched/sch_tbf.c in the linux source tree&n; */
 DECL|variable|limit_lock
 r_static

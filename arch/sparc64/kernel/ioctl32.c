@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ioctl32.c,v 1.96 2000/08/02 06:22:35 davem Exp $&n; * ioctl32.c: Conversion between 32bit and 64bit native ioctls.&n; *&n; * Copyright (C) 1997-2000  Jakub Jelinek  (jakub@redhat.com)&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * ioctls.&n; */
+multiline_comment|/* $Id: ioctl32.c,v 1.97 2000/08/09 08:45:39 anton Exp $&n; * ioctl32.c: Conversion between 32bit and 64bit native ioctls.&n; *&n; * Copyright (C) 1997-2000  Jakub Jelinek  (jakub@redhat.com)&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * ioctls.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -9,9 +9,7 @@ macro_line|#include &lt;linux/ioctl.h&gt;
 macro_line|#include &lt;linux/if.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
-macro_line|#if 0 /* New RAID code is half-merged... -DaveM */
-macro_line|#include &lt;linux/md.h&gt;
-macro_line|#endif
+macro_line|#include &lt;linux/raid/md.h&gt;
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/route.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
@@ -19415,29 +19413,102 @@ c_func
 (paren
 id|BLKSSZGET
 )paren
-macro_line|#if 0&t;/* New RAID code is being merged, fix up to handle&n;&t; * new RAID ioctls when fully merged in 2.3.x -DaveM&n;&t; */
-multiline_comment|/* 0x09 */
+multiline_comment|/* RAID */
 id|COMPATIBLE_IOCTL
 c_func
 (paren
-id|REGISTER_DEV
+id|RAID_VERSION
 )paren
 id|COMPATIBLE_IOCTL
 c_func
 (paren
-id|REGISTER_DEV_NEW
+id|GET_ARRAY_INFO
 )paren
 id|COMPATIBLE_IOCTL
 c_func
 (paren
-id|START_MD
+id|GET_DISK_INFO
 )paren
 id|COMPATIBLE_IOCTL
 c_func
 (paren
-id|STOP_MD
+id|PRINT_RAID_DEBUG
 )paren
-macro_line|#endif
+id|COMPATIBLE_IOCTL
+c_func
+(paren
+id|CLEAR_ARRAY
+)paren
+id|COMPATIBLE_IOCTL
+c_func
+(paren
+id|ADD_NEW_DISK
+)paren
+id|COMPATIBLE_IOCTL
+c_func
+(paren
+id|HOT_REMOVE_DISK
+)paren
+id|COMPATIBLE_IOCTL
+c_func
+(paren
+id|SET_ARRAY_INFO
+)paren
+id|COMPATIBLE_IOCTL
+c_func
+(paren
+id|SET_DISK_INFO
+)paren
+id|COMPATIBLE_IOCTL
+c_func
+(paren
+id|WRITE_RAID_INFO
+)paren
+id|COMPATIBLE_IOCTL
+c_func
+(paren
+id|UNPROTECT_ARRAY
+)paren
+id|COMPATIBLE_IOCTL
+c_func
+(paren
+id|PROTECT_ARRAY
+)paren
+id|COMPATIBLE_IOCTL
+c_func
+(paren
+id|HOT_ADD_DISK
+)paren
+id|COMPATIBLE_IOCTL
+c_func
+(paren
+id|SET_DISK_FAULTY
+)paren
+id|COMPATIBLE_IOCTL
+c_func
+(paren
+id|RUN_ARRAY
+)paren
+id|COMPATIBLE_IOCTL
+c_func
+(paren
+id|START_ARRAY
+)paren
+id|COMPATIBLE_IOCTL
+c_func
+(paren
+id|STOP_ARRAY
+)paren
+id|COMPATIBLE_IOCTL
+c_func
+(paren
+id|STOP_ARRAY_RO
+)paren
+id|COMPATIBLE_IOCTL
+c_func
+(paren
+id|RESTART_ARRAY_RW
+)paren
 multiline_comment|/* Big K */
 id|COMPATIBLE_IOCTL
 c_func

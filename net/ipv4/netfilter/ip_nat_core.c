@@ -825,7 +825,7 @@ c_func
 (paren
 l_string|&quot;do_extra_mangle: Can&squot;t get route to %u.%u.%u.%u&bslash;n&quot;
 comma
-id|IP_PARTS
+id|NIPQUAD
 c_func
 (paren
 id|var_ip
@@ -1292,7 +1292,7 @@ l_string|&quot;Range %u %u.%u.%u.%u rt failed!&bslash;n&quot;
 comma
 id|i
 comma
-id|IP_PARTS
+id|NIPQUAD
 c_func
 (paren
 op_star
@@ -2158,7 +2158,7 @@ l_string|&quot; FULL&quot;
 suffix:colon
 l_string|&quot;&quot;
 comma
-id|IP_PARTS
+id|NIPQUAD
 c_func
 (paren
 id|mr-&gt;range
@@ -2169,7 +2169,7 @@ dot
 id|min_ip
 )paren
 comma
-id|IP_PARTS
+id|NIPQUAD
 c_func
 (paren
 id|mr-&gt;range
@@ -3077,7 +3077,7 @@ l_string|&quot;SRC&quot;
 suffix:colon
 l_string|&quot;DST&quot;
 comma
-id|IP_PARTS
+id|NIPQUAD
 c_func
 (paren
 id|info-&gt;manips
@@ -3514,7 +3514,7 @@ l_string|&quot;DST&quot;
 suffix:colon
 l_string|&quot;SRC&quot;
 comma
-id|IP_PARTS
+id|NIPQUAD
 c_func
 (paren
 id|info-&gt;manips
@@ -3616,7 +3616,7 @@ l_string|&quot;SRC&quot;
 suffix:colon
 l_string|&quot;DST&quot;
 comma
-id|IP_PARTS
+id|NIPQUAD
 c_func
 (paren
 id|info-&gt;manips

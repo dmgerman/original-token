@@ -157,6 +157,9 @@ comma
 r_int
 r_int
 id|type_mask
+comma
+r_int
+id|resno
 )paren
 (brace
 r_int
@@ -273,7 +276,7 @@ id|r
 comma
 id|res
 comma
-id|i
+id|resno
 )paren
 suffix:semicolon
 r_return
@@ -361,6 +364,8 @@ comma
 id|min
 comma
 id|IORESOURCE_PREFETCH
+comma
+id|i
 )paren
 OL
 l_int|0
@@ -391,6 +396,8 @@ comma
 id|min
 comma
 l_int|0
+comma
+id|i
 )paren
 OL
 l_int|0

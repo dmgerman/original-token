@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP to API glue.&n; *&t;&t;&n; * Version:&t;$Id: ip_sockglue.c,v 1.50 2000/07/26 01:04:17 davem Exp $&n; *&n; * Authors:&t;see ip.c&n; *&n; * Fixes:&n; *&t;&t;Many&t;&t;:&t;Split from ip.c , see ip.c for history.&n; *&t;&t;Martin Mares&t;:&t;TOS setting fixed.&n; *&t;&t;Alan Cox&t;:&t;Fixed a couple of oopses in Martin&squot;s &n; *&t;&t;&t;&t;&t;TOS tweaks.&n; *&t;&t;Mike McLagan&t;:&t;Routing by source&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP to API glue.&n; *&t;&t;&n; * Version:&t;$Id: ip_sockglue.c,v 1.51 2000/08/09 11:59:04 davem Exp $&n; *&n; * Authors:&t;see ip.c&n; *&n; * Fixes:&n; *&t;&t;Many&t;&t;:&t;Split from ip.c , see ip.c for history.&n; *&t;&t;Martin Mares&t;:&t;TOS setting fixed.&n; *&t;&t;Alan Cox&t;:&t;Fixed a couple of oopses in Martin&squot;s &n; *&t;&t;&t;&t;&t;TOS tweaks.&n; *&t;&t;Mike McLagan&t;:&t;Routing by source&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -3147,8 +3147,8 @@ id|IP_MULTICAST_IF
 suffix:colon
 (brace
 r_struct
-id|ip_mreqn
-id|mreq
+id|in_addr
+id|addr
 suffix:semicolon
 id|len
 op_assign
@@ -3160,21 +3160,13 @@ comma
 r_sizeof
 (paren
 r_struct
-id|ip_mreqn
+id|in_addr
 )paren
 )paren
 suffix:semicolon
-id|mreq.imr_ifindex
-op_assign
-id|sk-&gt;protinfo.af_inet.mc_index
-suffix:semicolon
-id|mreq.imr_address.s_addr
+id|addr.s_addr
 op_assign
 id|sk-&gt;protinfo.af_inet.mc_addr
-suffix:semicolon
-id|mreq.imr_multiaddr.s_addr
-op_assign
-l_int|0
 suffix:semicolon
 id|release_sock
 c_func
@@ -3212,7 +3204,7 @@ op_star
 id|optval
 comma
 op_amp
-id|mreq
+id|addr
 comma
 id|len
 )paren

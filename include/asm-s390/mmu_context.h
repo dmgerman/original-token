@@ -4,7 +4,7 @@ DECL|macro|__S390_MMU_CONTEXT_H
 mdefine_line|#define __S390_MMU_CONTEXT_H
 multiline_comment|/*&n; * get a new mmu context.. S390 don&squot;t know about contexts.&n; */
 DECL|macro|init_new_context
-mdefine_line|#define init_new_context(tsk,mm)        do { } while (0)
+mdefine_line|#define init_new_context(tsk,mm)        0
 DECL|macro|destroy_context
 mdefine_line|#define destroy_context(mm)             flush_tlb_mm(mm)
 DECL|function|enter_lazy_tlb

@@ -10,7 +10,6 @@ macro_line|#include &lt;asm/iomd.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#include &quot;soundmodule.h&quot;
 macro_line|#include &quot;vidc.h&quot;
 macro_line|#ifndef _SIOC_TYPE
 DECL|macro|_SIOC_TYPE
@@ -1254,6 +1253,10 @@ id|audio_driver
 id|vidc_audio_driver
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|open
 suffix:colon
 id|vidc_audio_open
@@ -1310,6 +1313,10 @@ id|mixer_operations
 id|vidc_mixer_operations
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|id
 suffix:colon
 l_string|&quot;VIDC&quot;
@@ -1964,7 +1971,6 @@ r_struct
 id|address_info
 id|cfg
 suffix:semicolon
-multiline_comment|/*&n; * Note! Module use count is handled by SOUNDLOCK/SOUND_LOCK_END&n; */
 DECL|function|init_vidc
 r_static
 r_int
@@ -1990,8 +1996,6 @@ l_int|0
 r_return
 op_minus
 id|ENODEV
-suffix:semicolon
-id|SOUND_LOCK
 suffix:semicolon
 id|attach_vidc
 c_func
@@ -2020,8 +2024,6 @@ c_func
 op_amp
 id|cfg
 )paren
-suffix:semicolon
-id|SOUND_LOCK_END
 suffix:semicolon
 )brace
 DECL|variable|init_vidc

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * JFFS -- Journalling Flash File System, Linux implementation.&n; *&n; * Copyright (C) 1999, 2000  Axis Communications AB.&n; *&n; * Created by Finn Hakansson &lt;finn@axis.com&gt;.&n; *&n; * This is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * $Id: inode-v23.c,v 1.33 2000/08/09 15:59:06 dwmw2 Exp $&n; *&n; *&n; * Ported to Linux 2.3.x and MTD:&n; * Copyright (C) 2000  Alexander Larsson (alex@cendio.se), Cendio Systems AB&n; *&n; */
+multiline_comment|/*&n; * JFFS -- Journalling Flash File System, Linux implementation.&n; *&n; * Copyright (C) 1999, 2000  Axis Communications AB.&n; *&n; * Created by Finn Hakansson &lt;finn@axis.com&gt;.&n; *&n; * This is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * $Id: inode-v23.c,v 1.34 2000/08/10 08:58:00 dwmw2 Exp $&n; *&n; *&n; * Ported to Linux 2.3.x and MTD:&n; * Copyright (C) 2000  Alexander Larsson (alex@cendio.se), Cendio Systems AB&n; *&n; */
 multiline_comment|/* inode.c -- Contains the code that is called from the VFS.  */
 multiline_comment|/* TODO-ALEX:&n; * uid and gid are just 16 bit.&n; * jffs_file_write reads from user-space pointers without xx_from_user&n; * maybe other stuff do to.&n; */
 multiline_comment|/* Argh. Some architectures have kernel_thread in asm/processor.h&n;   Some have it in unistd.h and you need to define __KERNEL_SYSCALLS__&n;   Pass me a baseball bat and the person responsible.&n;   dwmw2&n;*/
@@ -15,7 +15,6 @@ macro_line|#include &lt;linux/jffs.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/ioctl.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
@@ -1268,14 +1267,12 @@ suffix:semicolon
 id|inode-&gt;i_blocks
 op_assign
 (paren
-id|raw_inode-&gt;dsize
+id|inode-&gt;i_size
 op_plus
-id|PAGE_SIZE
-op_minus
-l_int|1
+l_int|511
 )paren
 op_rshift
-id|PAGE_SHIFT
+l_int|9
 suffix:semicolon
 id|inode-&gt;i_version
 op_assign
@@ -6942,12 +6939,10 @@ op_assign
 (paren
 id|inode-&gt;i_size
 op_plus
-id|PAGE_SIZE
-op_minus
-l_int|1
+l_int|511
 )paren
 op_rshift
-id|PAGE_SHIFT
+l_int|9
 suffix:semicolon
 r_if
 c_cond
