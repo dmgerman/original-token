@@ -302,12 +302,13 @@ c_loop
 (paren
 id|p
 op_ne
-id|skb_peek
-c_func
 (paren
+r_struct
+id|sk_buff
+op_star
+)paren
 op_amp
 id|s-&gt;receive_queue
-)paren
 )paren
 (brace
 suffix:semicolon
@@ -2942,8 +2943,6 @@ suffix:semicolon
 )brace
 multiline_comment|/* &n; *&t;This routine builds a generic TCP header. &n; */
 DECL|function|tcp_build_header
-r_extern
-id|__inline
 r_int
 id|tcp_build_header
 c_func
@@ -13742,15 +13741,6 @@ c_cond
 id|th-&gt;rst
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|sk-&gt;state
-op_ne
-id|TCP_TIME_WAIT
-)paren
-multiline_comment|/* RFC 1337 recommendation re RST in time wait */
-(brace
 id|tcp_statistics.TcpEstabResets
 op_increment
 suffix:semicolon
@@ -13803,7 +13793,6 @@ c_func
 id|sk
 )paren
 suffix:semicolon
-)brace
 )brace
 id|kfree_skb
 c_func

@@ -2409,17 +2409,6 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* Malloc up new buffer. */
-r_int
-id|sksize
-op_assign
-r_sizeof
-(paren
-r_struct
-id|sk_buff
-)paren
-op_plus
-id|pkt_len
-suffix:semicolon
 r_struct
 id|sk_buff
 op_star
@@ -2430,7 +2419,7 @@ op_assign
 id|alloc_skb
 c_func
 (paren
-id|sksize
+id|pkt_len
 comma
 id|GFP_ATOMIC
 )paren
@@ -2463,14 +2452,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|skb-&gt;mem_len
-op_assign
-id|sksize
-suffix:semicolon
-id|skb-&gt;mem_addr
-op_assign
-id|skb
-suffix:semicolon
 id|skb-&gt;len
 op_assign
 id|pkt_len

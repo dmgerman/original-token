@@ -2,8 +2,6 @@ multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol sui
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
-DECL|macro|LOOPBACK
-mdefine_line|#define LOOPBACK&t;&t;&t;/* always present, right?&t;*/
 DECL|macro|NEXT_DEV
 mdefine_line|#define&t;NEXT_DEV&t;NULL
 multiline_comment|/* A unified ethernet device probe.  This is the easiest way to have every&n;   ethernet adaptor have the name &quot;eth[0123...]&quot;.&n;   */
@@ -126,6 +124,16 @@ suffix:semicolon
 r_extern
 r_int
 id|depca_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|apricot_probe
 c_func
 (paren
 r_struct
@@ -389,6 +397,14 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_EWRK3             /* DEC EtherWORKS 3 */
 op_logical_and
 id|ewrk3_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#ifdef CONFIG_APRICOT&t;&t;/* Apricot I82596 */
+op_logical_and
+id|apricot_probe
 c_func
 (paren
 id|dev
@@ -1283,7 +1299,6 @@ macro_line|#   undef&t;NEXT_DEV
 DECL|macro|NEXT_DEV
 macro_line|#   define&t;NEXT_DEV&t;(&amp;dummy_dev)
 macro_line|#endif
-macro_line|#ifdef LOOPBACK
 r_extern
 r_int
 id|loopback_init
@@ -1296,7 +1311,6 @@ id|dev
 )paren
 suffix:semicolon
 DECL|variable|loopback_dev
-r_static
 r_struct
 id|device
 id|loopback_dev
@@ -1337,17 +1351,13 @@ id|loopback_init
 multiline_comment|/* loopback_init should set up the rest&t;*/
 )brace
 suffix:semicolon
-DECL|macro|NEXT_DEV
-macro_line|#   undef&t;NEXT_DEV
-DECL|macro|NEXT_DEV
-macro_line|#   define&t;NEXT_DEV&t;(&amp;loopback_dev)
-macro_line|#endif
 DECL|variable|dev_base
 r_struct
 id|device
 op_star
 id|dev_base
 op_assign
-id|NEXT_DEV
+op_amp
+id|loopback_dev
 suffix:semicolon
 eof

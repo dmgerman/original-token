@@ -593,6 +593,11 @@ suffix:semicolon
 r_extern
 r_struct
 id|device
+id|loopback_dev
+suffix:semicolon
+r_extern
+r_struct
+id|device
 op_star
 id|dev_base
 suffix:semicolon

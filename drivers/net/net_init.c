@@ -105,18 +105,6 @@ id|mem_end
 )paren
 suffix:semicolon
 macro_line|#endif&t;
-macro_line|#if defined(CONFIG_APRICOT)
-id|mem_start
-op_assign
-id|apricot_init
-c_func
-(paren
-id|mem_start
-comma
-id|mem_end
-)paren
-suffix:semicolon
-macro_line|#endif&t;
 r_return
 id|mem_start
 suffix:semicolon

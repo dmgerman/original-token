@@ -450,6 +450,20 @@ id|ints
 suffix:semicolon
 r_extern
 r_void
+id|floppy_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|mcd_setup
 c_func
 (paren
@@ -1154,6 +1168,14 @@ macro_line|#ifdef CONFIG_BLK_DEV_XD
 l_string|&quot;xd=&quot;
 comma
 id|xd_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_FD
+(brace
+l_string|&quot;floppy=&quot;
+comma
+id|floppy_setup
 )brace
 comma
 macro_line|#endif

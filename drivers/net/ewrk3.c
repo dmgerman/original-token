@@ -29,7 +29,7 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &quot;/linux/tools/version.h&quot;
+macro_line|#include &lt;linux/version.h&gt;
 macro_line|#endif /* MODULE */
 macro_line|#include &quot;ewrk3.h&quot;
 macro_line|#ifdef EWRK3_DEBUG

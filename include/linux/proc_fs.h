@@ -64,6 +64,9 @@ id|PROC_KSYMS
 comma
 DECL|enumerator|PROC_DMA
 id|PROC_DMA
+comma
+DECL|enumerator|PROC_IOPORTS
+id|PROC_IOPORTS
 )brace
 suffix:semicolon
 DECL|enum|pid_directory_inos

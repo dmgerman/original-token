@@ -81,7 +81,7 @@ DECL|macro|LP_NO
 mdefine_line|#define LP_NO 3
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &quot;../../tools/version.h&quot;
+macro_line|#include &lt;linux/version.h&gt;
 macro_line|#endif
 multiline_comment|/* &n; * All my debugging code assumes that you debug with only one printer at&n; * a time. RWWH&n; */
 DECL|macro|LP_DEBUG
@@ -2374,9 +2374,15 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;lp_init: lp%d exists, &quot;
+l_string|&quot;lp%d at 0x%04x, &quot;
 comma
 id|offset
+comma
+id|LP_B
+c_func
+(paren
+id|offset
+)paren
 )paren
 suffix:semicolon
 id|snarf_region
@@ -2583,9 +2589,27 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;lp_init: lp%d exists, &quot;
+l_string|&quot;lp%d at 0x%04x, &quot;
 comma
 id|offset
+comma
+id|LP_B
+c_func
+(paren
+id|offset
+)paren
+)paren
+suffix:semicolon
+id|snarf_region
+c_func
+(paren
+id|LP_B
+c_func
+(paren
+id|offset
+)paren
+comma
+l_int|3
 )paren
 suffix:semicolon
 r_if
@@ -2646,6 +2670,9 @@ c_func
 r_void
 )paren
 (brace
+r_int
+id|offset
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2668,6 +2695,45 @@ comma
 l_string|&quot;lp&quot;
 )paren
 suffix:semicolon
+r_for
+c_loop
+(paren
+id|offset
+op_assign
+l_int|0
+suffix:semicolon
+id|offset
+OL
+id|LP_NO
+suffix:semicolon
+id|offset
+op_increment
+)paren
+r_if
+c_cond
+(paren
+id|LP_F
+c_func
+(paren
+id|offset
+)paren
+op_logical_and
+id|LP_EXIST
+)paren
+(brace
+id|release_region
+c_func
+(paren
+id|LP_B
+c_func
+(paren
+id|offset
+)paren
+comma
+l_int|3
+)paren
+suffix:semicolon
+)brace
 )brace
 macro_line|#endif
 eof

@@ -1491,8 +1491,6 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif  /* CONFIG_IP_ACCT || CONFIG_IP_FIREWALL */
-macro_line|#ifdef CONFIG_IP_FIREWALL
 DECL|function|add_to_chain
 r_static
 r_int
@@ -2583,7 +2581,7 @@ r_return
 id|EINVAL
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_IP_FIREWALL */
+macro_line|#endif  /* CONFIG_IP_ACCT || CONFIG_IP_FIREWALL */
 DECL|function|check_ipfw_struct
 r_struct
 id|ip_fw

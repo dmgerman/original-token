@@ -61,6 +61,15 @@ r_int
 id|extent
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|get_ioport_list
+c_func
+(paren
+r_char
+op_star
+)paren
+suffix:semicolon
 DECL|macro|HAVE_AUTOIRQ
 mdefine_line|#define HAVE_AUTOIRQ
 r_extern

@@ -302,6 +302,14 @@ comma
 l_string|&quot;dma&quot;
 )brace
 comma
+(brace
+id|PROC_IOPORTS
+comma
+l_int|7
+comma
+l_string|&quot;ioports&quot;
+)brace
+comma
 )brace
 suffix:semicolon
 DECL|macro|NR_ROOT_DIRENTRY

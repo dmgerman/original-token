@@ -27,7 +27,7 @@ macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &quot;../../tools/version.h&quot;
+macro_line|#include &lt;linux/version.h&gt;
 macro_line|#endif
 r_extern
 r_struct

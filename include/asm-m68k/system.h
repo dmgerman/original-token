@@ -3,7 +3,7 @@ multiline_comment|/*&n; * 680x0 support added by Hamish Macdonald&n; */
 macro_line|#ifndef _M68K_SYSTEM_H
 DECL|macro|_M68K_SYSTEM_H
 mdefine_line|#define _M68K_SYSTEM_H
-macro_line|#include &lt;linux/autoconf.h&gt; /* get configuration makros */
+macro_line|#include &lt;linux/autoconf.h&gt; /* get configuration macros */
 macro_line|#if defined(CONFIG_ATARI) &amp;&amp; !defined(CONFIG_AMIGA) &amp;&amp; !defined(CONFIG_MAC)
 multiline_comment|/* block out HSYNC on the atari */
 DECL|macro|sti

@@ -196,6 +196,12 @@ multiline_comment|/* PCI BIOS support */
 id|X
 c_func
 (paren
+id|pcibios_present
+)paren
+comma
+id|X
+c_func
+(paren
 id|pcibios_find_class
 )paren
 comma
@@ -934,6 +940,12 @@ id|do_floppy
 )paren
 comma
 macro_line|#endif
+id|X
+c_func
+(paren
+id|floppy_track_buffer
+)paren
+comma
 macro_line|#ifdef CONFIG_INET
 multiline_comment|/* support for loadable net drivers */
 id|X
@@ -976,6 +988,12 @@ id|X
 c_func
 (paren
 id|snarf_region
+)paren
+comma
+id|X
+c_func
+(paren
+id|release_region
 )paren
 comma
 id|X

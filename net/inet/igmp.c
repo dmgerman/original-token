@@ -969,6 +969,10 @@ id|i-&gt;interface
 op_assign
 id|dev
 suffix:semicolon
+id|i-&gt;multiaddr
+op_assign
+id|addr
+suffix:semicolon
 id|i-&gt;next
 op_assign
 id|dev-&gt;ip_mc_list

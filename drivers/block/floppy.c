@@ -13,10 +13,8 @@ multiline_comment|/*&n; * 1994/8/8 -- Alain Knaff -- Switched to fdpatch driver:
 multiline_comment|/* 1994/9/17 -- Koen Holtman -- added logging of physical floppy write &n; * errors to allow safe writing by specialized programs.&n; */
 DECL|macro|CONFIG_FLOPPY_SANITY
 mdefine_line|#define CONFIG_FLOPPY_SANITY
-DECL|macro|CONFIG_FLOPPY_23
-macro_line|#undef  CONFIG_FLOPPY_23
 DECL|macro|CONFIG_FLOPPY_2_FDC
-macro_line|#undef  CONFIG_FLOPPY_2_FDC
+mdefine_line|#define  CONFIG_FLOPPY_2_FDC
 DECL|macro|CONFIG_FLOPPY_SILENT_DCL_CLEAR
 macro_line|#undef  CONFIG_FLOPPY_SILENT_DCL_CLEAR
 DECL|macro|REALLY_SLOW_IO
@@ -28,21 +26,27 @@ mdefine_line|#define DCL_DEBUG /* debug disk change line */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifndef FD_MODULE
 multiline_comment|/* the following is the mask of allowed drives. By default units 2 and&n; * 3 of both floppy controllers are disabled, because switching on the&n; * motor of these drives causes system hangs on some PCI computers. drive&n; * 0 is the low bit (0x1), and drive 7 is the high bit (0x80). Bits are on if&n; * a drive is allowed. */
-macro_line|#ifdef CONFIG_FLOPPY_23
-DECL|macro|ALLOWED_DRIVE_MASK
-mdefine_line|#define ALLOWED_DRIVE_MASK 0xff
-macro_line|#else
-DECL|macro|ALLOWED_DRIVE_MASK
-mdefine_line|#define ALLOWED_DRIVE_MASK 0x33
-macro_line|#endif
+DECL|variable|ALLOWED_DRIVE_MASK
+r_static
+r_int
+id|ALLOWED_DRIVE_MASK
+op_assign
+l_int|0x33
+suffix:semicolon
 DECL|macro|FLOPPY_IRQ
 mdefine_line|#define FLOPPY_IRQ 6
 DECL|macro|FLOPPY_DMA
 mdefine_line|#define FLOPPY_DMA 2
 DECL|macro|FDC1
 mdefine_line|#define FDC1 0x3f0
-DECL|macro|FDC2
-mdefine_line|#define FDC2 0x370
+DECL|variable|FDC2
+r_static
+r_int
+id|FDC2
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
 macro_line|#endif
 DECL|macro|MODULE_AWARE_DRIVER
 mdefine_line|#define MODULE_AWARE_DRIVER
@@ -216,6 +220,8 @@ DECL|macro|R_SECTOR
 mdefine_line|#define R_SECTOR (reply_buffer[5])
 DECL|macro|R_SIZECODE
 mdefine_line|#define R_SIZECODE (reply_buffer[6])
+DECL|macro|ARRAY_SIZE
+mdefine_line|#define ARRAY_SIZE(x) (sizeof(x) / sizeof( (x)[0] ))
 multiline_comment|/*&n; * this struct defines the different floppy drive types.&n; */
 r_static
 r_struct
@@ -6403,6 +6409,15 @@ id|i
 op_increment
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|FDCS-&gt;address
+op_ne
+op_minus
+l_int|1
+)paren
+(brace
 id|printk
 c_func
 (paren
@@ -6445,6 +6460,7 @@ l_int|1000
 )paren
 suffix:semicolon
 multiline_comment|/* maybe we&squot;ll catch an interrupt... */
+)brace
 )brace
 id|printk
 c_func
@@ -14303,6 +14319,239 @@ suffix:semicolon
 multiline_comment|/* Revised 82077AA passes all the tests */
 )brace
 multiline_comment|/* get_fdc_version */
+macro_line|#ifndef FD_MODULE
+multiline_comment|/* lilo configuration */
+DECL|function|invert_dcl
+r_static
+r_void
+id|invert_dcl
+c_func
+(paren
+r_int
+op_star
+id|ints
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|ARRAY_SIZE
+c_func
+(paren
+id|default_drive_params
+)paren
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|default_drive_params
+(braket
+id|i
+)braket
+dot
+id|params.flags
+op_or_assign
+l_int|0x80
+suffix:semicolon
+id|DPRINT
+c_func
+(paren
+l_string|&quot;Configuring drives for inverted dcl&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+DECL|function|allow_drives
+r_static
+r_void
+id|allow_drives
+c_func
+(paren
+r_int
+op_star
+id|ints
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|ints
+(braket
+l_int|1
+)braket
+op_ge
+l_int|1
+)paren
+(brace
+id|ALLOWED_DRIVE_MASK
+op_assign
+id|ints
+(braket
+l_int|1
+)braket
+suffix:semicolon
+id|DPRINT1
+c_func
+(paren
+l_string|&quot;setting allowed_drive_mask to 0x%x&bslash;n&quot;
+comma
+id|ints
+(braket
+l_int|1
+)braket
+)paren
+suffix:semicolon
+)brace
+r_else
+id|DPRINT
+c_func
+(paren
+l_string|&quot;allowed_drive_mask needs a parameter&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+macro_line|#ifdef  CONFIG_FLOPPY_2_FDC
+DECL|function|twofdc
+r_static
+r_void
+id|twofdc
+c_func
+(paren
+r_int
+op_star
+id|ints
+)paren
+(brace
+id|FDC2
+op_assign
+l_int|0x370
+suffix:semicolon
+id|DPRINT
+c_func
+(paren
+l_string|&quot;enabling second fdc at address 0x370&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+DECL|struct|param_table
+r_static
+r_struct
+id|param_table
+(brace
+DECL|member|name
+r_char
+op_star
+id|name
+suffix:semicolon
+DECL|member|fn
+r_void
+(paren
+op_star
+id|fn
+)paren
+(paren
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+DECL|variable|config_params
+)brace
+id|config_params
+(braket
+)braket
+op_assign
+initialization_block
+suffix:semicolon
+DECL|function|floppy_setup
+r_void
+id|floppy_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|ARRAY_SIZE
+c_func
+(paren
+id|config_params
+)paren
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|strcmp
+c_func
+(paren
+id|str
+comma
+id|config_params
+(braket
+id|i
+)braket
+dot
+id|name
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+id|config_params
+(braket
+id|i
+)braket
+dot
+id|fn
+c_func
+(paren
+id|ints
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;unknown floppy paramter %s&bslash;n&quot;
+comma
+id|str
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 macro_line|#ifdef FD_MODULE
 r_static
 macro_line|#endif
@@ -14651,6 +14900,11 @@ l_int|0
 )paren
 )paren
 (brace
+id|FDCS-&gt;address
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
@@ -14669,8 +14923,15 @@ id|FDCS-&gt;version
 op_eq
 id|FDC_NONE
 )paren
+(brace
+id|FDCS-&gt;address
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
 r_continue
 suffix:semicolon
+)brace
 id|have_no_fdc
 op_assign
 l_int|0
@@ -14802,6 +15063,15 @@ id|i
 op_increment
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|FDCS-&gt;address
+op_ne
+op_minus
+l_int|1
+)paren
+(brace
 id|fdc
 op_assign
 id|i
@@ -14820,6 +15090,7 @@ comma
 id|FD_DOR
 )paren
 suffix:semicolon
+)brace
 )brace
 id|set_dor
 c_func

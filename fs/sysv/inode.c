@@ -9,7 +9,7 @@ macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &quot;../../tools/version.h&quot;
+macro_line|#include &lt;linux/version.h&gt;
 macro_line|#else
 DECL|macro|MOD_INC_USE_COUNT
 mdefine_line|#define MOD_INC_USE_COUNT

@@ -40,7 +40,7 @@ macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &quot;../../tools/version.h&quot;
+macro_line|#include &lt;linux/version.h&gt;
 macro_line|#endif
 multiline_comment|/* use 0 for production, 1 for verification, &gt;2 for debug */
 macro_line|#ifndef NET_DEBUG

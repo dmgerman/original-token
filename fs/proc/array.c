@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/a.out.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 DECL|macro|LOAD_INT
@@ -2684,6 +2685,16 @@ id|PROC_DMA
 suffix:colon
 r_return
 id|get_dma_list
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+r_case
+id|PROC_IOPORTS
+suffix:colon
+r_return
+id|get_ioport_list
 c_func
 (paren
 id|page

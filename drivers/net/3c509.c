@@ -25,7 +25,7 @@ macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &quot;../../tools/version.h&quot;
+macro_line|#include &lt;linux/version.h&gt;
 macro_line|#endif
 macro_line|#ifdef EL3_DEBUG
 DECL|variable|el3_debug

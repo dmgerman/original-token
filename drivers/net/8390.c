@@ -31,7 +31,7 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &quot;8390.h&quot;
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &quot;../../tools/version.h&quot;
+macro_line|#include &lt;linux/version.h&gt;
 macro_line|#endif
 multiline_comment|/* These are the operational function interfaces to board-specific&n;   routines.&n;&t;void reset_8390(struct device *dev)&n;&t;&t;Resets the board associated with DEV, including a hardware reset of&n;&t;&t;the 8390.  This is only called when there is a transmit timeout, and&n;&t;&t;it is always followed by 8390_init().&n;&t;void block_output(struct device *dev, int count, const unsigned char *buf,&n;&t;&t;&t;&t;&t;  int start_page)&n;&t;&t;Write the COUNT bytes of BUF to the packet buffer at START_PAGE.  The&n;&t;&t;&quot;page&quot; value uses the 8390&squot;s 256-byte pages.&n;&t;int block_input(struct device *dev, int count, char *buf, int ring_offset)&n;&t;&t;Read COUNT bytes from the packet buffer into BUF.  Start reading from&n;&t;&t;RING_OFFSET, the address as the 8390 sees it.  The first read will&n;&t;&t;always be the 4 byte, page aligned 8390 header.  *If* there is a&n;&t;&t;subsequent read, it will be of the rest of the packet.&n;*/
 DECL|macro|ei_reset_8390
