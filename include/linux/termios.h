@@ -97,6 +97,8 @@ DECL|macro|TIOCSLCKTRMIOS
 mdefine_line|#define TIOCSLCKTRMIOS&t;0x5457
 DECL|macro|TIOCSERGSTRUCT
 mdefine_line|#define TIOCSERGSTRUCT&t;0x5458 /* For debugging only */
+DECL|macro|TIOCSERGETLSR
+mdefine_line|#define TIOCSERGETLSR   0x5459 /* Get line status register */
 multiline_comment|/* Used for packet mode */
 DECL|macro|TIOCPKT_DATA
 mdefine_line|#define TIOCPKT_DATA&t;&t; 0
@@ -472,6 +474,9 @@ DECL|macro|TIOCM_CD
 mdefine_line|#define TIOCM_CD&t;TIOCM_CAR
 DECL|macro|TIOCM_RI
 mdefine_line|#define TIOCM_RI&t;TIOCM_RNG
+multiline_comment|/* ioctl (fd, TIOCSERGTLSR, &amp;result) where result may be as below */
+DECL|macro|TIOCSER_TEMT
+mdefine_line|#define TIOCSER_TEMT    0x01&t;/* Transmitter physically empty */
 multiline_comment|/* tcflow() and TCXONC use these */
 DECL|macro|TCOOFF
 mdefine_line|#define&t;TCOOFF&t;&t;0

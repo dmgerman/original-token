@@ -13,6 +13,8 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+DECL|macro|TTY_DEBUG_WAIT_UNTIL_SENT
+macro_line|#undef TTY_DEBUG_WAIT_UNTIL_SENT
 DECL|macro|DEBUG
 macro_line|#undef&t;DEBUG
 macro_line|#ifdef DEBUG
@@ -53,6 +55,20 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
+macro_line|#ifdef TTY_DEBUG_WAIT_UNTIL_SENT
+id|printk
+c_func
+(paren
+l_string|&quot;%s wait until sent...&bslash;n&quot;
+comma
+id|tty_name
+c_func
+(paren
+id|tty
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -107,6 +123,28 @@ l_int|1
 suffix:semicolon
 r_do
 (brace
+macro_line|#ifdef TTY_DEBUG_WAIT_UNTIL_SENT
+id|printk
+c_func
+(paren
+l_string|&quot;waiting %s...(%d)&bslash;n&quot;
+comma
+id|tty_name
+c_func
+(paren
+id|tty
+)paren
+comma
+id|tty-&gt;driver
+dot
+id|chars_in_buffer
+c_func
+(paren
+id|tty
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
 id|current-&gt;state
 op_assign
 id|TASK_INTERRUPTIBLE

@@ -5,9 +5,22 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
+macro_line|#include &lt;linux/major.h&gt;
+macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &quot;../../tools/version.h&quot;
+macro_line|#endif
 macro_line|#include &lt;asm/segment.h&gt;
+r_extern
+r_int
+op_star
+id|blksize_size
+(braket
+)braket
+suffix:semicolon
 DECL|function|msdos_put_inode
 r_void
 id|msdos_put_inode
@@ -178,6 +191,13 @@ c_func
 id|sb-&gt;s_dev
 )paren
 suffix:semicolon
+id|set_blocksize
+(paren
+id|sb-&gt;s_dev
+comma
+id|BLOCK_SIZE
+)paren
+suffix:semicolon
 id|lock_super
 c_func
 (paren
@@ -194,6 +214,10 @@ c_func
 id|sb
 )paren
 suffix:semicolon
+macro_line|#ifdef MODULE
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+macro_line|#endif
 r_return
 suffix:semicolon
 )brace
@@ -973,6 +997,42 @@ c_func
 id|s
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|MAJOR
+c_func
+(paren
+id|s-&gt;s_dev
+)paren
+op_eq
+id|FLOPPY_MAJOR
+)paren
+(brace
+multiline_comment|/* Patch for floppy which lacks a table ??? */
+r_static
+r_int
+id|tbdef
+(braket
+)braket
+op_assign
+initialization_block
+suffix:semicolon
+id|blksize_size
+(braket
+id|FLOPPY_MAJOR
+)braket
+op_assign
+id|tbdef
+suffix:semicolon
+)brace
+id|set_blocksize
+(paren
+id|s-&gt;s_dev
+comma
+id|SECTOR_SIZE
+)paren
+suffix:semicolon
 id|bh
 op_assign
 id|bread
@@ -982,7 +1042,7 @@ id|s-&gt;s_dev
 comma
 l_int|0
 comma
-id|BLOCK_SIZE
+id|SECTOR_SIZE
 )paren
 suffix:semicolon
 id|unlock_super
@@ -1024,12 +1084,15 @@ id|bh-&gt;b_data
 suffix:semicolon
 id|s-&gt;s_blocksize
 op_assign
-l_int|1024
+l_int|512
 suffix:semicolon
-multiline_comment|/* we cannot handle anything else yet */
+multiline_comment|/* Using this small block size solve the */
+multiline_comment|/* the misfit with buffer cache and cluster */
+multiline_comment|/* because cluster (DOS) are often aligned */
+multiline_comment|/* on odd sector */
 id|s-&gt;s_blocksize_bits
 op_assign
-l_int|10
+l_int|9
 suffix:semicolon
 multiline_comment|/* we cannot handle anything else yet */
 multiline_comment|/*&n; * The DOS3 partition size limit is *not* 32M as many people think.  &n; * Instead, it is 64K sectors (with the usual sector size being&n; * 512 bytes, leading to a 32M limit).&n; * &n; * DOS 3 partition managers got around this problem by faking a &n; * larger sector size, ie treating multiple physical sectors as &n; * a single logical sector.&n; * &n; * We can accommodate this scheme by adjusting our cluster size,&n; * fat_start, and data_start by an appropriate value.&n; *&n; * (by Drew Eckhardt)&n; */
@@ -1397,6 +1460,7 @@ op_logical_or
 id|debug
 )paren
 (brace
+multiline_comment|/* The MSDOS_CAN_BMAP is obsolete, but left just to remember */
 id|printk
 c_func
 (paren
@@ -1693,6 +1757,10 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+macro_line|#endif
 r_return
 id|s
 suffix:semicolon
@@ -1933,66 +2001,26 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
-id|sb-&gt;cluster_size
-op_amp
-l_int|1
-)paren
-op_logical_or
-(paren
-id|sb-&gt;data_start
-op_amp
-l_int|1
-)paren
-)paren
-r_return
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
 id|inode-&gt;i_ino
 op_eq
 id|MSDOS_ROOT_INO
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|sb-&gt;dir_start
-op_amp
-l_int|1
-)paren
 r_return
-l_int|0
-suffix:semicolon
-r_return
-(paren
 id|sb-&gt;dir_start
-op_rshift
-l_int|1
-)paren
 op_plus
 id|block
 suffix:semicolon
 )brace
 id|cluster
 op_assign
-(paren
 id|block
-op_star
-l_int|2
-)paren
 op_div
 id|sb-&gt;cluster_size
 suffix:semicolon
 id|offset
 op_assign
-(paren
 id|block
-op_star
-l_int|2
-)paren
 op_mod
 id|sb-&gt;cluster_size
 suffix:semicolon
@@ -2017,7 +2045,6 @@ l_int|0
 suffix:semicolon
 r_return
 (paren
-(paren
 id|cluster
 op_minus
 l_int|2
@@ -2028,9 +2055,6 @@ op_plus
 id|sb-&gt;data_start
 op_plus
 id|offset
-)paren
-op_rshift
-l_int|1
 suffix:semicolon
 )brace
 DECL|function|msdos_read_inode
@@ -2252,7 +2276,7 @@ id|inode-&gt;i_ino
 op_rshift
 id|MSDOS_DPB_BITS
 comma
-id|BLOCK_SIZE
+id|SECTOR_SIZE
 )paren
 )paren
 )paren
@@ -2498,23 +2522,10 @@ id|S_IFREG
 suffix:semicolon
 id|inode-&gt;i_op
 op_assign
-id|MSDOS_CAN_BMAP
-c_func
-(paren
-id|MSDOS_SB
-c_func
-(paren
-id|inode-&gt;i_sb
-)paren
-)paren
-ques
-c_cond
 op_amp
 id|msdos_file_inode_operations
-suffix:colon
-op_amp
-id|msdos_file_inode_operations_no_bmap
 suffix:semicolon
+multiline_comment|/* Now can always bmap */
 id|MSDOS_I
 c_func
 (paren
@@ -2691,7 +2702,7 @@ id|inode-&gt;i_ino
 op_rshift
 id|MSDOS_DPB_BITS
 comma
-id|BLOCK_SIZE
+id|SECTOR_SIZE
 )paren
 )paren
 )paren
@@ -3049,4 +3060,88 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+DECL|variable|kernel_version
+r_char
+id|kernel_version
+(braket
+)braket
+op_assign
+id|UTS_RELEASE
+suffix:semicolon
+DECL|variable|msdos_fs_type
+r_static
+r_struct
+id|file_system_type
+id|msdos_fs_type
+op_assign
+(brace
+id|msdos_read_super
+comma
+l_string|&quot;msdos&quot;
+comma
+l_int|1
+comma
+l_int|NULL
+)brace
+suffix:semicolon
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+id|register_filesystem
+c_func
+(paren
+op_amp
+id|msdos_fs_type
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|MOD_IN_USE
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;ne: device busy, remove delayed&bslash;n&quot;
+)paren
+suffix:semicolon
+r_else
+(brace
+id|unregister_filesystem
+c_func
+(paren
+op_amp
+id|msdos_fs_type
+)paren
+suffix:semicolon
+multiline_comment|/* This is not clear why the floppy drivers does not initialise */
+multiline_comment|/* the table, but we left it the way we saw it first */
+id|blksize_size
+(braket
+id|FLOPPY_MAJOR
+)braket
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif
 eof

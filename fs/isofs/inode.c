@@ -405,7 +405,7 @@ op_logical_and
 id|strchr
 c_func
 (paren
-l_string|&quot;bta&quot;
+l_string|&quot;btma&quot;
 comma
 op_star
 id|value
@@ -616,7 +616,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-l_char|&squot;g&squot;
+l_char|&squot;u&squot;
 suffix:colon
 id|popt-&gt;uid
 op_assign
@@ -625,7 +625,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-l_char|&squot;u&squot;
+l_char|&squot;g&squot;
 suffix:colon
 id|popt-&gt;gid
 op_assign

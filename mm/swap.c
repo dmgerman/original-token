@@ -23,6 +23,13 @@ DECL|macro|SWP_OFFSET
 mdefine_line|#define SWP_OFFSET(entry) ((entry) &gt;&gt; PAGE_SHIFT)
 DECL|macro|SWP_ENTRY
 mdefine_line|#define SWP_ENTRY(type,offset) (((type) &lt;&lt; 1) | ((offset) &lt;&lt; PAGE_SHIFT))
+DECL|variable|min_free_pages
+r_static
+r_int
+id|min_free_pages
+op_assign
+l_int|20
+suffix:semicolon
 DECL|variable|nr_swapfiles
 r_static
 r_int
@@ -2642,7 +2649,7 @@ id|GFP_ATOMIC
 op_logical_or
 id|nr_free_pages
 OG
-id|MAX_SECONDARY_PAGES
+id|min_free_pages
 )paren
 (brace
 id|RMQUEUE
@@ -4300,6 +4307,32 @@ op_assign
 id|PAGE_MASK
 suffix:semicolon
 r_int
+id|i
+suffix:semicolon
+multiline_comment|/*&n;&t; * select nr of pages we try to keep free for important stuff&n;&t; * with a minimum of 16 pages. This is totally arbitrary&n;&t; */
+id|i
+op_assign
+id|end_mem
+op_rshift
+(paren
+id|PAGE_SHIFT
+op_plus
+l_int|6
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
+OL
+l_int|16
+)paren
+id|i
+op_assign
+l_int|16
+suffix:semicolon
+id|min_free_pages
+op_assign
 id|i
 suffix:semicolon
 id|start_mem

@@ -6,6 +6,8 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
+DECL|macro|PRINTK
+mdefine_line|#define PRINTK(x)
 multiline_comment|/* MS-DOS &quot;device special files&quot; */
 DECL|variable|reserved_names
 r_static
@@ -756,6 +758,13 @@ id|inode
 op_star
 id|next
 suffix:semicolon
+id|PRINTK
+(paren
+(paren
+l_string|&quot;msdos_lookup&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 op_star
 id|result
 op_assign
@@ -793,6 +802,13 @@ op_minus
 id|ENOENT
 suffix:semicolon
 )brace
+id|PRINTK
+(paren
+(paren
+l_string|&quot;msdos_lookup 2&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -890,6 +906,13 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+id|PRINTK
+(paren
+(paren
+l_string|&quot;msdos_lookup 3&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -929,6 +952,13 @@ r_return
 id|res
 suffix:semicolon
 )brace
+id|PRINTK
+(paren
+(paren
+l_string|&quot;msdos_lookup 4&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -938,6 +968,13 @@ id|brelse
 c_func
 (paren
 id|bh
+)paren
+suffix:semicolon
+id|PRINTK
+(paren
+(paren
+l_string|&quot;msdos_lookup 4.5&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* printk(&quot;lookup: ino=%d&bslash;n&quot;,ino); */
@@ -970,6 +1007,13 @@ op_minus
 id|EACCES
 suffix:semicolon
 )brace
+id|PRINTK
+(paren
+(paren
+l_string|&quot;msdos_lookup 5&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1002,6 +1046,13 @@ op_minus
 id|ENOENT
 suffix:semicolon
 )brace
+id|PRINTK
+(paren
+(paren
+l_string|&quot;msdos_lookup 6&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -1071,10 +1122,24 @@ id|ENOENT
 suffix:semicolon
 )brace
 )brace
+id|PRINTK
+(paren
+(paren
+l_string|&quot;msdos_lookup 7&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 id|iput
 c_func
 (paren
 id|dir
+)paren
+suffix:semicolon
+id|PRINTK
+(paren
+(paren
+l_string|&quot;msdos_lookup 8&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return

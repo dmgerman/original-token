@@ -701,6 +701,10 @@ id|filp.f_pos
 op_assign
 id|info-&gt;f_pos
 suffix:semicolon
+id|filp.f_reada
+op_assign
+l_int|0
+suffix:semicolon
 id|ret
 op_assign
 id|umsdos_emd_dir_write
@@ -1027,6 +1031,10 @@ suffix:semicolon
 id|buf.filp.f_pos
 op_assign
 l_int|0
+suffix:semicolon
+id|buf.filp.f_reada
+op_assign
+l_int|1
 suffix:semicolon
 id|empty.found
 op_assign
@@ -1657,6 +1665,10 @@ multiline_comment|/* Find an empty slot */
 id|filp.f_pos
 op_assign
 l_int|0
+suffix:semicolon
+id|filp.f_reada
+op_assign
+l_int|1
 suffix:semicolon
 id|filp.f_flags
 op_assign

@@ -10,6 +10,10 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/umsdos_fs.h&gt;
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &quot;../../tools/version.h&quot;
+macro_line|#endif
 DECL|variable|pseudo_root
 r_struct
 id|inode
@@ -75,6 +79,10 @@ c_func
 id|sb
 )paren
 suffix:semicolon
+macro_line|#ifdef MODULE
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|UMSDOS_statfs
 r_void
@@ -1157,7 +1165,7 @@ id|silent
 suffix:semicolon
 id|printk
 (paren
-l_string|&quot;UMSDOS Alpha 0.4 (compatibility level %d.%d)&bslash;n&quot;
+l_string|&quot;UMSDOS Alpha 0.5 (compatibility level %d.%d, fast msdos)&bslash;n&quot;
 comma
 id|UMSDOS_VERSION
 comma
@@ -1401,9 +1409,88 @@ id|pseudo
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+macro_line|#endif
 )brace
 r_return
 id|sb
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+DECL|variable|kernel_version
+r_char
+id|kernel_version
+(braket
+)braket
+op_assign
+id|UTS_RELEASE
+suffix:semicolon
+DECL|variable|umsdos_fs_type
+r_static
+r_struct
+id|file_system_type
+id|umsdos_fs_type
+op_assign
+(brace
+id|UMSDOS_read_super
+comma
+l_string|&quot;umsdos&quot;
+comma
+l_int|1
+comma
+l_int|NULL
+)brace
+suffix:semicolon
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+id|register_filesystem
+c_func
+(paren
+op_amp
+id|umsdos_fs_type
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|MOD_IN_USE
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;Umsdos: file system in use, remove delayed&bslash;n&quot;
+)paren
+suffix:semicolon
+r_else
+(brace
+id|unregister_filesystem
+c_func
+(paren
+op_amp
+id|umsdos_fs_type
+)paren
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif
 eof

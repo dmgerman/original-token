@@ -421,7 +421,7 @@ c_cond
 (paren
 id|ino
 op_eq
-l_int|1
+id|PROC_ROOT_INO
 )paren
 (brace
 op_star
@@ -438,7 +438,7 @@ c_cond
 (paren
 id|ino
 op_eq
-l_int|7
+id|PROC_SELF
 )paren
 multiline_comment|/* self modifying inode ... */
 id|ino

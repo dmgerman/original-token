@@ -1008,6 +1008,10 @@ r_struct
 id|file
 id|filp
 suffix:semicolon
+id|filp.f_reada
+op_assign
+l_int|1
+suffix:semicolon
 id|filp.f_pos
 op_assign
 l_int|0
@@ -1107,6 +1111,10 @@ multiline_comment|/* skip . and .. see umsdos_readdir_x() */
 r_struct
 id|file
 id|filp
+suffix:semicolon
+id|filp.f_reada
+op_assign
+l_int|1
 suffix:semicolon
 id|filp.f_pos
 op_assign
@@ -2206,6 +2214,10 @@ r_else
 r_struct
 id|file
 id|filp
+suffix:semicolon
+id|filp.f_reada
+op_assign
+l_int|1
 suffix:semicolon
 id|filp.f_pos
 op_assign

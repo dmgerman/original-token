@@ -1252,6 +1252,10 @@ op_complement
 id|S_ISGID
 suffix:semicolon
 )brace
+id|inode-&gt;i_dirt
+op_assign
+l_int|1
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * notify_change is called for inode-changing operations such as&n; * chown, chmod, utime, and truncate.  It is guaranteed (unlike&n; * write_inode) to be called from the context of the user requesting&n; * the change.  It is not called for ordinary access-time updates.&n; * NFS uses this to get the authentication correct.  -- jrs&n; */
 DECL|function|notify_change

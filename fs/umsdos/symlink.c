@@ -65,6 +65,10 @@ id|filp.f_pos
 op_assign
 l_int|0
 suffix:semicolon
+id|filp.f_reada
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren

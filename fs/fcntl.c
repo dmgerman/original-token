@@ -571,7 +571,7 @@ op_minus
 id|arg
 op_logical_or
 id|current-&gt;pid
-op_ne
+op_eq
 id|arg
 )paren
 r_goto

@@ -12,9 +12,9 @@ mdefine_line|#define SECTOR_SIZE     512 /* sector size (bytes) */
 DECL|macro|SECTOR_BITS
 mdefine_line|#define SECTOR_BITS&t;9 /* log2(SECTOR_SIZE) */
 DECL|macro|MSDOS_DPB
-mdefine_line|#define MSDOS_DPB&t;(MSDOS_DPS*2) /* dir entries per block */
+mdefine_line|#define MSDOS_DPB&t;(MSDOS_DPS) /* dir entries per block */
 DECL|macro|MSDOS_DPB_BITS
-mdefine_line|#define MSDOS_DPB_BITS&t;5 /* log2(MSDOS_DPB) */
+mdefine_line|#define MSDOS_DPB_BITS&t;4 /* log2(MSDOS_DPB) */
 DECL|macro|MSDOS_DPS
 mdefine_line|#define MSDOS_DPS&t;(SECTOR_SIZE/sizeof(struct msdos_dir_entry))
 DECL|macro|MSDOS_DPS_BITS
@@ -292,13 +292,6 @@ r_struct
 id|buffer_head
 op_star
 id|bh
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|bh
 op_assign
 id|bread
 c_func
@@ -306,31 +299,25 @@ c_func
 id|dev
 comma
 id|sector
-op_rshift
-l_int|1
 comma
-l_int|1024
+l_int|512
 )paren
-)paren
-)paren
-r_return
-l_int|NULL
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|bh
+op_ne
+l_int|NULL
+)paren
+(brace
 op_star
 id|start
 op_assign
 id|bh-&gt;b_data
-op_plus
-(paren
-(paren
-id|sector
-op_amp
-l_int|1
-)paren
-op_lshift
-id|SECTOR_BITS
-)paren
 suffix:semicolon
+multiline_comment|/* From the time of 1024 bytes block */
+)brace
 r_return
 id|bh
 suffix:semicolon

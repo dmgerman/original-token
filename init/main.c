@@ -570,6 +570,20 @@ id|ints
 suffix:semicolon
 r_extern
 r_void
+id|aha274x_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|scsi_luns_setup
 c_func
 (paren
@@ -600,6 +614,22 @@ macro_line|#ifdef CONFIG_SBPCD
 r_extern
 r_void
 id|sbpcd_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+macro_line|#endif CONFIG_SBPCD
+macro_line|#ifdef CONFIG_CDU31A
+r_extern
+r_void
+id|cdu31a_setup
 c_func
 (paren
 r_char
@@ -1097,6 +1127,14 @@ id|aha152x_setup
 )brace
 comma
 macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_AHA274X
+(brace
+l_string|&quot;aha274x=&quot;
+comma
+id|aha274x_setup
+)brace
+comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_XD
 (brace
 l_string|&quot;xd=&quot;
@@ -1129,6 +1167,14 @@ id|sbpcd_setup
 )brace
 comma
 macro_line|#endif CONFIG_SBPCD
+macro_line|#ifdef CONFIG_CDU31A
+(brace
+l_string|&quot;cdu31a=&quot;
+comma
+id|cdu31a_setup
+)brace
+comma
+macro_line|#endif CONFIG_CDU31A
 (brace
 l_int|0
 comma

@@ -9,6 +9,8 @@ DECL|macro|NAME_OFFSET
 mdefine_line|#define NAME_OFFSET(de) ((int) ((de)-&gt;d_name - (char *) (de)))
 DECL|macro|ROUND_UP
 mdefine_line|#define ROUND_UP(x) (((x)+3) &amp; ~3)
+DECL|macro|PRINTK
+mdefine_line|#define PRINTK(X)
 DECL|function|msdos_dir_read
 r_static
 r_int
@@ -623,10 +625,26 @@ op_amp
 id|dirent-&gt;d_reclen
 )paren
 suffix:semicolon
+id|PRINTK
+(paren
+(paren
+l_string|&quot;readdir avant brelse&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 id|brelse
 c_func
 (paren
 id|bh
+)paren
+suffix:semicolon
+id|PRINTK
+(paren
+(paren
+l_string|&quot;readdir retourne %d&bslash;n&quot;
+comma
+id|i
+)paren
 )paren
 suffix:semicolon
 r_return

@@ -21,8 +21,14 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_AHA1740
 macro_line|#include &quot;aha1740.h&quot;
 macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_AHA274X
+macro_line|#include &quot;aha274x.h&quot;
+macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_BUSLOGIC
 macro_line|#include &quot;buslogic.h&quot;
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_U14_34F
+macro_line|#include &quot;u14-34f.h&quot;
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_FUTURE_DOMAIN
 macro_line|#include &quot;fdomain.h&quot;
@@ -75,6 +81,10 @@ id|builtin_scsi_hosts
 )braket
 op_assign
 (brace
+macro_line|#ifdef CONFIG_SCSI_U14_34F
+id|ULTRASTOR_14_34F
+comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_ULTRASTOR
 id|ULTRASTOR_14F
 comma
@@ -94,6 +104,10 @@ comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_AHA1740
 id|AHA1740
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_AHA274X
+id|AHA274X
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_FUTURE_DOMAIN
