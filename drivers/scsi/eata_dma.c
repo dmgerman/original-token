@@ -3935,8 +3935,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-(paren
 id|strncmp
 c_func
 (paren
@@ -3950,7 +3948,7 @@ l_int|16
 comma
 l_int|6
 )paren
-op_logical_or
+op_logical_and
 id|strncmp
 c_func
 (paren
@@ -3964,7 +3962,7 @@ l_int|16
 comma
 l_int|6
 )paren
-op_logical_or
+op_logical_and
 id|strncmp
 c_func
 (paren
@@ -3978,7 +3976,7 @@ l_int|16
 comma
 l_int|6
 )paren
-op_logical_or
+op_logical_and
 id|strncmp
 c_func
 (paren
@@ -3991,7 +3989,6 @@ l_int|16
 )braket
 comma
 l_int|6
-)paren
 )paren
 )paren
 (brace
@@ -4288,6 +4285,17 @@ op_assign
 id|sh-&gt;can_queue
 op_div
 id|C_P_L_DIV
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sh-&gt;cmd_per_lun
+OL
+l_int|2
+)paren
+id|sh-&gt;cmd_per_lun
+op_assign
+l_int|2
 suffix:semicolon
 )brace
 r_else

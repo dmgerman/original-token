@@ -50,6 +50,23 @@ r_int
 id|mem_end
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_AZTCD
+r_extern
+r_int
+r_int
+id|aztcd_init
+c_func
+(paren
+r_int
+r_int
+id|mem_start
+comma
+r_int
+r_int
+id|mem_end
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_HD
 r_extern
 r_int
@@ -301,6 +318,17 @@ mdefine_line|#define DEVICE_NAME &quot;Mitsumi CD-ROM&quot;
 multiline_comment|/* #define DEVICE_INTR do_mcd */
 DECL|macro|DEVICE_REQUEST
 mdefine_line|#define DEVICE_REQUEST do_mcd_request
+DECL|macro|DEVICE_NR
+mdefine_line|#define DEVICE_NR(device) (MINOR(device))
+DECL|macro|DEVICE_ON
+mdefine_line|#define DEVICE_ON(device)
+DECL|macro|DEVICE_OFF
+mdefine_line|#define DEVICE_OFF(device)
+macro_line|#elif (MAJOR_NR == AZTECH_CDROM_MAJOR)
+DECL|macro|DEVICE_NAME
+mdefine_line|#define DEVICE_NAME &quot;Aztech CD-ROM&quot;
+DECL|macro|DEVICE_REQUEST
+mdefine_line|#define DEVICE_REQUEST do_aztcd_request
 DECL|macro|DEVICE_NR
 mdefine_line|#define DEVICE_NR(device) (MINOR(device))
 DECL|macro|DEVICE_ON

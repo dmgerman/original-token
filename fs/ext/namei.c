@@ -1217,6 +1217,10 @@ id|dir-&gt;i_ctime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
+id|dir-&gt;i_dirt
+op_assign
+l_int|1
+suffix:semicolon
 id|de-&gt;name_len
 op_assign
 id|namelen

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;sd.c Copyright (C) 1992 Drew Eckhardt &n; *&t;     Copyright (C) 1993, 1994 Eric Youngdale&n; *&t;Linux scsi disk driver by&n; *&t;&t;Drew Eckhardt &n; *&n; *&t;&lt;drew@colorado.edu&gt;&n; *&n; *       Modified by Eric Youngdale ericy@cais.com to&n; *       add scatter-gather, multiple outstanding request, and other&n; *       enhancements.&n; */
+multiline_comment|/*&n; *&t;sd.c Copyright (C) 1992 Drew Eckhardt &n; *&t;     Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *&t;Linux scsi disk driver&n; *&t;&t;Initial versions: Drew Eckhardt &n; *&t;&t;Subsequent revisions: Eric Youngdale&n; *&n; *&t;&lt;drew@colorado.edu&gt;&n; *&n; *       Modified by Eric Youngdale ericy@cais.com to&n; *       add scatter-gather, multiple outstanding request, and other&n; *       enhancements.&n; *&n; *&t; Modified by Eric Youngdale eric@aib.com to support loadable&n; *&t; low-level scsi drivers.&n; */
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -251,6 +251,27 @@ id|ENXIO
 suffix:semicolon
 )brace
 multiline_comment|/* No such device */
+multiline_comment|/*&n;&t; * See if we are requesting a non-existant partition.&n;&t; */
+r_if
+c_cond
+(paren
+id|sd_sizes
+(braket
+id|MINOR
+c_func
+(paren
+id|inode-&gt;i_rdev
+)paren
+)braket
+op_eq
+l_int|0
+)paren
+(brace
+r_return
+op_minus
+id|ENXIO
+suffix:semicolon
+)brace
 multiline_comment|/* Make sure that only one process can do a check_change_disk at one time.&n; This is also used to lock out further access when the partition table is being re-read. */
 r_while
 c_loop

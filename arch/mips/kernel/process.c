@@ -16,20 +16,6 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/mipsregs.h&gt;
 macro_line|#include &lt;asm/mipsconfig.h&gt;
 macro_line|#include &lt;asm/stackframe.h&gt;
-multiline_comment|/*&n; * Tell us the machine setup..&n; */
-macro_line|#pragma char wp_works_ok = 0;&t;&t;/* set if paging hardware honours WP */ 
-DECL|variable|wait_available
-r_char
-id|wait_available
-suffix:semicolon
-multiline_comment|/* set if the &quot;wait&quot; instruction available */
-multiline_comment|/*&n; * Bus types ..&n; */
-DECL|variable|EISA_bus
-r_int
-id|EISA_bus
-op_assign
-l_int|0
-suffix:semicolon
 id|asmlinkage
 r_void
 id|ret_from_sys_call
@@ -274,7 +260,7 @@ id|childregs-&gt;reg2
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t; * New tasks loose permission to use the fpu. This accelerates context&n;&t; * switching for non fp programms, which true for the most programms.&n;&t; */
+multiline_comment|/*&n;&t; * New tasks loose permission to use the fpu. This accelerates context&n;&t; * switching for non fp programs, which true for the most programs.&n;&t; */
 id|p-&gt;tss.cp0_status
 op_assign
 id|regs-&gt;cp0_status

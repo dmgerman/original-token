@@ -354,6 +354,11 @@ suffix:semicolon
 r_extern
 r_struct
 id|inode_operations
+id|proc_arraylong_inode_operations
+suffix:semicolon
+r_extern
+r_struct
+id|inode_operations
 id|proc_kcore_inode_operations
 suffix:semicolon
 r_extern

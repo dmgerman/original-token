@@ -24,6 +24,15 @@ multiline_comment|/*&n; * Enable debugging by &quot;-DDE620_DEBUG=3&quot; when c
 macro_line|#ifdef LOWSPEED
 multiline_comment|/*&n; * Enable this #define if you want to see debugging output that show how long&n; * we have to wait before the DE-620 is ready for the next read/write/command.&n; *&n;#define COUNT_LOOPS&n; */
 macro_line|#endif
+DECL|variable|bnc
+DECL|variable|utp
+r_static
+r_int
+id|bnc
+comma
+id|utp
+suffix:semicolon
+multiline_comment|/*&n; * Force media with insmod:&n; *&t;insmod de620.o bnc=1&n; * or&n; *&t;insmod de620.o utp=1&n; */
 "&f;"
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -31,6 +40,7 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
@@ -206,15 +216,6 @@ DECL|macro|DE620_RX_START_PAGE
 mdefine_line|#define DE620_RX_START_PAGE 12&t;&t;/* 12 pages (=3k) reserved for tx */
 DECL|macro|DEF_NIC_CMD
 mdefine_line|#define DEF_NIC_CMD IRQEN | ICEN | DS1
-r_extern
-r_struct
-id|device
-op_star
-id|irq2dev_map
-(braket
-l_int|16
-)braket
-suffix:semicolon
 DECL|variable|de620_debug
 r_int
 r_int
@@ -2191,6 +2192,26 @@ op_or
 id|NIS0
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|utp
+)paren
+id|EIPRegister
+op_assign
+id|NCTL0
+op_or
+id|NIS0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|bnc
+)paren
+id|EIPRegister
+op_assign
+id|NCTL0
+suffix:semicolon
 id|de620_send_command
 c_func
 (paren
@@ -2532,6 +2553,40 @@ r_return
 id|ENODEV
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|check_region
+c_func
+(paren
+id|DE620_IO
+comma
+l_int|3
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;, port 0x%x busy&bslash;n&quot;
+comma
+id|DE620_IO
+)paren
+suffix:semicolon
+r_return
+id|EBUSY
+suffix:semicolon
+)brace
+id|request_region
+c_func
+(paren
+id|DE620_IO
+comma
+l_int|3
+comma
+l_string|&quot;de620&quot;
+)paren
+suffix:semicolon
 multiline_comment|/* else, got it! */
 id|printk
 c_func
@@ -3314,6 +3369,14 @@ c_func
 (paren
 op_amp
 id|de620_dev
+)paren
+suffix:semicolon
+id|release_region
+c_func
+(paren
+id|DE620_IO
+comma
+l_int|3
 )paren
 suffix:semicolon
 )brace

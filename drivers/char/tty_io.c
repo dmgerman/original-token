@@ -6457,9 +6457,15 @@ suffix:colon
 r_if
 c_cond
 (paren
+(paren
 id|current-&gt;tty
 op_ne
 id|tty
+op_logical_or
+id|tty-&gt;driver.type
+op_ne
+id|TTY_DRIVER_TYPE_CONSOLE
+)paren
 op_logical_and
 op_logical_neg
 id|suser

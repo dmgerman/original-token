@@ -1093,9 +1093,9 @@ id|p_save
 suffix:colon
 l_int|1
 suffix:semicolon
-DECL|member|p_lenght
+DECL|member|p_length
 id|unchar
-id|p_lenght
+id|p_length
 suffix:semicolon
 DECL|member|cylinder
 id|ushort

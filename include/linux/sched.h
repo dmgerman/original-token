@@ -262,12 +262,18 @@ id|vm_area_struct
 op_star
 id|mmap
 suffix:semicolon
+DECL|member|mmap_avl
+r_struct
+id|vm_area_struct
+op_star
+id|mmap_avl
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|INIT_MMAP
 mdefine_line|#define INIT_MMAP { &amp;init_task, 0, 0x40000000, PAGE_SHARED, }
 DECL|macro|INIT_MM
-mdefine_line|#define INIT_MM { &bslash;&n;&t;&t;0, &bslash;&n;&t;&t;0, 0, 0, &bslash;&n;&t;&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, &bslash;&n;/* ?_flt */&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, &bslash;&n;/* swap */&t;0, 0, 0, 0, &bslash;&n;&t;&t;&amp;init_mmap }
+mdefine_line|#define INIT_MM { &bslash;&n;&t;&t;0, &bslash;&n;&t;&t;0, 0, 0, &bslash;&n;&t;&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, &bslash;&n;/* ?_flt */&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, &bslash;&n;/* swap */&t;0, 0, 0, 0, &bslash;&n;&t;&t;&amp;init_mmap, &amp;init_mmap }
 DECL|struct|task_struct
 r_struct
 id|task_struct

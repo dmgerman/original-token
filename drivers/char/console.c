@@ -4564,7 +4564,11 @@ l_int|4
 )paren
 op_or
 (paren
+(paren
 id|old
+op_amp
+l_int|0xff00
+)paren
 op_lshift
 l_int|4
 )paren
@@ -9030,6 +9034,14 @@ id|set_origin
 c_func
 (paren
 id|currcons
+)paren
+suffix:semicolon
+id|csi_J
+c_func
+(paren
+id|currcons
+comma
+l_int|0
 )paren
 suffix:semicolon
 id|printable

@@ -754,10 +754,16 @@ c_func
 id|inode
 )paren
 )paren
+(brace
 id|inode-&gt;i_atime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
+id|inode-&gt;i_dirt
+op_assign
+l_int|1
+suffix:semicolon
+)brace
 r_return
 id|read
 suffix:semicolon

@@ -6,6 +6,11 @@ r_void
 id|gusintr
 (paren
 r_int
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 suffix:semicolon
 DECL|variable|gus_base
@@ -249,6 +254,11 @@ id|gusintr
 (paren
 r_int
 id|irq
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 (brace
 r_int

@@ -158,15 +158,6 @@ r_int
 r_int
 id|tmp
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|cluster-&gt;usage
-op_amp
-l_int|1
-)paren
-r_continue
-suffix:semicolon
 id|tmp
 op_assign
 (paren
@@ -189,6 +180,21 @@ op_assign
 id|tmp
 suffix:semicolon
 )brace
+multiline_comment|/* round it up to an even number of pages.. */
+id|high
+op_assign
+(paren
+id|high
+op_plus
+id|PAGE_SIZE
+)paren
+op_amp
+(paren
+id|PAGE_MASK
+op_star
+l_int|2
+)paren
+suffix:semicolon
 r_return
 id|PAGE_OFFSET
 op_plus

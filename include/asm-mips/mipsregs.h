@@ -105,7 +105,7 @@ DECL|macro|VPN
 mdefine_line|#define VPN(addr,pagesizeshift) ((addr) &amp; ~((1 &lt;&lt; (pagesizeshift))-1))
 DECL|macro|PFN
 mdefine_line|#define PFN(addr,pagesizeshift) (((addr) &amp; ((1 &lt;&lt; (pagesizeshift))-1)) &lt;&lt; 6)
-multiline_comment|/*&n; * Macros to access the system control copprocessor&n; */
+multiline_comment|/*&n; * Macros to access the system control coprocessor&n; */
 DECL|macro|read_32bit_cp0_register
 mdefine_line|#define read_32bit_cp0_register(source)                                        &bslash;&n;({ int __res;                                                                  &bslash;&n;        __asm__ __volatile__(                                                  &bslash;&n;        &quot;mfc0&bslash;t%0,&quot;STR(source)                                                 &bslash;&n;        : &quot;=r&quot; (__res));                                                       &bslash;&n;        __res;})
 DECL|macro|read_64bit_cp0_register

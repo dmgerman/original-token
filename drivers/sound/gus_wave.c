@@ -3320,6 +3320,8 @@ multiline_comment|/* This disables writes to IRQ/DMA reg */
 id|gusintr
 (paren
 l_int|0
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 multiline_comment|/* Serve pending interrupts */

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/proc/array.c&n; *&n; *  Copyright (C) 1992  by Linus Torvalds&n; *  based on ideas by Darren Senn&n; *&n; * Fixes:&n; * Michael. K. Johnson: stat,statm extensions.&n; *                      &lt;johnsonm@stolaf.edu&gt;&n; *&n; * Pauline Middelink :  Made cmdline,envline only break at &squot;&bslash;0&squot;s, to&n; *                      make sure SET_PROCTITLE works. Also removed&n; *                      bad &squot;!&squot; which forced address recalculation for&n; *                      EVERY character on the current page.&n; *                      &lt;middelin@polyware.iaf.nl&gt;&n; *&n; * Danny ter Haar    :&t;Some minor additions for cpuinfo&n; *&t;&t;&t;&lt;danny@ow.nl&gt;&n; *&n; * Alessandro Rubini :  profile extension.&n; *                      &lt;rubini@ipvvis.unipv.it&gt;&n; *&n; * Jeff Tranter      :  added BogoMips field to cpuinfo&n; *                      &lt;Jeff_Tranter@Mitel.COM&gt;&n; */
+multiline_comment|/*&n; *  linux/fs/proc/array.c&n; *&n; *  Copyright (C) 1992  by Linus Torvalds&n; *  based on ideas by Darren Senn&n; *&n; * Fixes:&n; * Michael. K. Johnson: stat,statm extensions.&n; *                      &lt;johnsonm@stolaf.edu&gt;&n; *&n; * Pauline Middelink :  Made cmdline,envline only break at &squot;&bslash;0&squot;s, to&n; *                      make sure SET_PROCTITLE works. Also removed&n; *                      bad &squot;!&squot; which forced address recalculation for&n; *                      EVERY character on the current page.&n; *                      &lt;middelin@polyware.iaf.nl&gt;&n; *&n; * Danny ter Haar    :&t;Some minor additions for cpuinfo&n; *&t;&t;&t;&lt;danny@ow.nl&gt;&n; *&n; * Alessandro Rubini :  profile extension.&n; *                      &lt;rubini@ipvvis.unipv.it&gt;&n; *&n; * Jeff Tranter      :  added BogoMips field to cpuinfo&n; *                      &lt;Jeff_Tranter@Mitel.COM&gt;&n; *&n; * Bruno Haible      :  remove 4K limit for the maps file&n; * &lt;haible@ma2s2.mathematik.uni-karlsruhe.de&gt;&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -2703,25 +2703,38 @@ id|dt
 )paren
 suffix:semicolon
 )brace
-DECL|function|get_maps
+multiline_comment|/*&n; * The way we support synthetic files &gt; 4K&n; * - without storing their contents in some buffer and&n; * - without walking through the entire synthetic file until we reach the&n; *   position of the requested data&n; * is to cleverly encode the current position in the file&squot;s f_pos field.&n; * There is no requirement that a read() call which returns `count&squot; bytes&n; * of data increases f_pos by exactly `count&squot;.&n; *&n; * This idea is Linus&squot; one. Bruno implemented it.&n; */
+multiline_comment|/*&n; * For the /proc/&lt;pid&gt;/maps file, we use fixed length records, each containing&n; * a single line.&n; */
+DECL|macro|MAPS_LINE_LENGTH
+mdefine_line|#define MAPS_LINE_LENGTH&t;1024
+DECL|macro|MAPS_LINE_SHIFT
+mdefine_line|#define MAPS_LINE_SHIFT&t;&t;10
+multiline_comment|/*&n; * f_pos = (number of the vma in the task-&gt;mm-&gt;mmap list) * MAPS_LINE_LENGTH&n; *         + (index into the line)&n; */
+DECL|macro|MAPS_LINE_FORMAT
+mdefine_line|#define MAPS_LINE_FORMAT&t;  &quot;%08lx-%08lx %s %08lx %02x:%02x %lu&bslash;n&quot;
+DECL|macro|MAPS_LINE_MAX
+mdefine_line|#define MAPS_LINE_MAX&t;49 /* sum of 8  1  8  1 4 1 8  1  2 1  2 1 10 1 */
+DECL|function|read_maps
 r_static
 r_int
-id|get_maps
-c_func
+id|read_maps
 (paren
 r_int
 id|pid
 comma
+r_struct
+id|file
+op_star
+id|file
+comma
 r_char
 op_star
 id|buf
+comma
+r_int
+id|count
 )paren
 (brace
-r_int
-id|sz
-op_assign
-l_int|0
-suffix:semicolon
 r_struct
 id|task_struct
 op_star
@@ -2734,10 +2747,23 @@ c_func
 id|pid
 )paren
 suffix:semicolon
+r_char
+op_star
+id|destptr
+suffix:semicolon
+id|loff_t
+id|lineno
+suffix:semicolon
+r_int
+id|column
+suffix:semicolon
 r_struct
 id|vm_area_struct
 op_star
 id|map
+suffix:semicolon
+r_int
+id|i
 suffix:semicolon
 r_if
 c_cond
@@ -2750,8 +2776,37 @@ op_star
 id|p
 )paren
 r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|count
+op_eq
+l_int|0
+)paren
+r_return
 l_int|0
 suffix:semicolon
+multiline_comment|/* decode f_pos */
+id|lineno
+op_assign
+id|file-&gt;f_pos
+op_rshift
+id|MAPS_LINE_SHIFT
+suffix:semicolon
+id|column
+op_assign
+id|file-&gt;f_pos
+op_amp
+(paren
+id|MAPS_LINE_LENGTH
+op_minus
+l_int|1
+)paren
+suffix:semicolon
+multiline_comment|/* quickly go to line lineno */
 r_for
 c_loop
 (paren
@@ -2763,20 +2818,53 @@ id|p
 )paren
 op_member_access_from_pointer
 id|mm-&gt;mmap
+comma
+id|i
+op_assign
+l_int|0
 suffix:semicolon
 id|map
-op_ne
-l_int|NULL
+op_logical_and
+(paren
+id|i
+OL
+id|lineno
+)paren
 suffix:semicolon
 id|map
 op_assign
 id|map-&gt;vm_next
+comma
+id|i
+op_increment
+)paren
+r_continue
+suffix:semicolon
+id|destptr
+op_assign
+id|buf
+suffix:semicolon
+r_for
+c_loop
+(paren
+suffix:semicolon
+id|map
+suffix:semicolon
 )paren
 (brace
+multiline_comment|/* produce the next line */
+r_char
+id|line
+(braket
+id|MAPS_LINE_MAX
+op_plus
+l_int|1
+)braket
+suffix:semicolon
 r_char
 id|str
 (braket
-l_int|7
+l_int|5
 )braket
 comma
 op_star
@@ -2787,20 +2875,15 @@ suffix:semicolon
 r_int
 id|flags
 suffix:semicolon
-r_int
-id|end
-op_assign
-id|sz
-op_plus
-l_int|80
-suffix:semicolon
-multiline_comment|/* Length of line */
 id|dev_t
 id|dev
 suffix:semicolon
 r_int
 r_int
 id|ino
+suffix:semicolon
+r_int
+id|len
 suffix:semicolon
 id|flags
 op_assign
@@ -2867,27 +2950,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|end
-op_ge
-id|PAGE_SIZE
-)paren
-(brace
-id|sprintf
-c_func
-(paren
-id|buf
-op_plus
-id|sz
-comma
-l_string|&quot;...&bslash;n&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
 id|map-&gt;vm_inode
 op_ne
 l_int|NULL
@@ -2913,16 +2975,14 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-id|sz
-op_add_assign
+id|len
+op_assign
 id|sprintf
 c_func
 (paren
-id|buf
-op_plus
-id|sz
+id|line
 comma
-l_string|&quot;%08lx-%08lx %s %08lx %02x:%02x %lu&bslash;n&quot;
+id|MAPS_LINE_FORMAT
 comma
 id|map-&gt;vm_start
 comma
@@ -2950,27 +3010,125 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sz
-OG
-id|end
+id|column
+op_ge
+id|len
 )paren
 (brace
-id|printk
+id|column
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* continue with next line at column 0 */
+id|lineno
+op_increment
+suffix:semicolon
+id|map
+op_assign
+id|map-&gt;vm_next
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
+id|i
+op_assign
+id|len
+op_minus
+id|column
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
+OG
+id|count
+)paren
+id|i
+op_assign
+id|count
+suffix:semicolon
+id|memcpy_tofs
 c_func
 (paren
-l_string|&quot;get_maps: end(%d) &lt; sz(%d)&bslash;n&quot;
+id|destptr
 comma
-id|end
+id|line
+op_plus
+id|column
 comma
-id|sz
+id|i
 )paren
 suffix:semicolon
+id|destptr
+op_add_assign
+id|i
+suffix:semicolon
+id|count
+op_sub_assign
+id|i
+suffix:semicolon
+id|column
+op_add_assign
+id|i
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|column
+op_ge
+id|len
+)paren
+(brace
+id|column
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* next time: next line at column 0 */
+id|lineno
+op_increment
+suffix:semicolon
+id|map
+op_assign
+id|map-&gt;vm_next
+suffix:semicolon
+)brace
+multiline_comment|/* done? */
+r_if
+c_cond
+(paren
+id|count
+op_eq
+l_int|0
+)paren
+r_break
+suffix:semicolon
+multiline_comment|/* By writing to user space, we might have slept.&n;&t;&t; * Stop the loop, to avoid a race condition.&n;&t;&t; */
+r_if
+c_cond
+(paren
+op_star
+id|p
+op_ne
+id|current
+)paren
 r_break
 suffix:semicolon
 )brace
-)brace
+multiline_comment|/* encode f_pos */
+id|file-&gt;f_pos
+op_assign
+(paren
+id|lineno
+op_lshift
+id|MAPS_LINE_SHIFT
+)paren
+op_plus
+id|column
+suffix:semicolon
 r_return
-id|sz
+id|destptr
+op_minus
+id|buf
 suffix:semicolon
 )brace
 r_extern
@@ -3296,18 +3454,6 @@ comma
 id|page
 )paren
 suffix:semicolon
-r_case
-id|PROC_PID_MAPS
-suffix:colon
-r_return
-id|get_maps
-c_func
-(paren
-id|pid
-comma
-id|page
-)paren
-suffix:semicolon
 )brace
 r_return
 op_minus
@@ -3589,6 +3735,174 @@ op_assign
 (brace
 op_amp
 id|proc_array_operations
+comma
+multiline_comment|/* default base directory file-ops */
+l_int|NULL
+comma
+multiline_comment|/* create */
+l_int|NULL
+comma
+multiline_comment|/* lookup */
+l_int|NULL
+comma
+multiline_comment|/* link */
+l_int|NULL
+comma
+multiline_comment|/* unlink */
+l_int|NULL
+comma
+multiline_comment|/* symlink */
+l_int|NULL
+comma
+multiline_comment|/* mkdir */
+l_int|NULL
+comma
+multiline_comment|/* rmdir */
+l_int|NULL
+comma
+multiline_comment|/* mknod */
+l_int|NULL
+comma
+multiline_comment|/* rename */
+l_int|NULL
+comma
+multiline_comment|/* readlink */
+l_int|NULL
+comma
+multiline_comment|/* follow_link */
+l_int|NULL
+comma
+multiline_comment|/* bmap */
+l_int|NULL
+comma
+multiline_comment|/* truncate */
+l_int|NULL
+multiline_comment|/* permission */
+)brace
+suffix:semicolon
+DECL|function|arraylong_read
+r_static
+r_int
+id|arraylong_read
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|file
+comma
+r_char
+op_star
+id|buf
+comma
+r_int
+id|count
+)paren
+(brace
+r_int
+r_int
+id|pid
+op_assign
+id|inode-&gt;i_ino
+op_rshift
+l_int|16
+suffix:semicolon
+r_int
+r_int
+id|type
+op_assign
+id|inode-&gt;i_ino
+op_amp
+l_int|0x0000ffff
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|count
+OL
+l_int|0
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|type
+)paren
+(brace
+r_case
+id|PROC_PID_MAPS
+suffix:colon
+r_return
+id|read_maps
+c_func
+(paren
+id|pid
+comma
+id|file
+comma
+id|buf
+comma
+id|count
+)paren
+suffix:semicolon
+)brace
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+DECL|variable|proc_arraylong_operations
+r_static
+r_struct
+id|file_operations
+id|proc_arraylong_operations
+op_assign
+(brace
+l_int|NULL
+comma
+multiline_comment|/* array_lseek */
+id|arraylong_read
+comma
+l_int|NULL
+comma
+multiline_comment|/* array_write */
+l_int|NULL
+comma
+multiline_comment|/* array_readdir */
+l_int|NULL
+comma
+multiline_comment|/* array_select */
+l_int|NULL
+comma
+multiline_comment|/* array_ioctl */
+l_int|NULL
+comma
+multiline_comment|/* mmap */
+l_int|NULL
+comma
+multiline_comment|/* no special open code */
+l_int|NULL
+comma
+multiline_comment|/* no special release code */
+l_int|NULL
+multiline_comment|/* can&squot;t fsync */
+)brace
+suffix:semicolon
+DECL|variable|proc_arraylong_inode_operations
+r_struct
+id|inode_operations
+id|proc_arraylong_inode_operations
+op_assign
+(brace
+op_amp
+id|proc_arraylong_operations
 comma
 multiline_comment|/* default base directory file-ops */
 l_int|NULL

@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 r_extern
@@ -68,19 +69,16 @@ id|address
 )paren
 )paren
 suffix:semicolon
-r_for
-c_loop
+id|vma
+op_assign
+id|find_vma
+c_func
 (paren
-id|vma
-op_assign
-id|current-&gt;mm-&gt;mmap
-suffix:semicolon
-suffix:semicolon
-id|vma
-op_assign
-id|vma-&gt;vm_next
+id|current
+comma
+id|address
 )paren
-(brace
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -90,16 +88,6 @@ id|vma
 r_goto
 id|bad_area
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|vma-&gt;vm_end
-OG
-id|address
-)paren
-r_break
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren

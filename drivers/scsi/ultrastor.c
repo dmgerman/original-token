@@ -3108,6 +3108,8 @@ id|ultrastor_interrupt
 c_func
 (paren
 l_int|0
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 id|restore_flags

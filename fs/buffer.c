@@ -3559,31 +3559,6 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-DECL|variable|buffer_disposition
-r_static
-r_char
-id|buffer_disposition
-(braket
-)braket
-op_assign
-(brace
-id|BUF_CLEAN
-comma
-id|BUF_SHARED
-comma
-id|BUF_LOCKED
-comma
-id|BUF_SHARED
-comma
-id|BUF_DIRTY
-comma
-id|BUF_DIRTY
-comma
-id|BUF_DIRTY
-comma
-id|BUF_DIRTY
-)brace
-suffix:semicolon
 DECL|function|refile_buffer
 r_void
 (def_block
@@ -3597,13 +3572,7 @@ id|buf
 )paren
 (brace
 r_int
-id|i
-comma
 id|dispose
-suffix:semicolon
-id|i
-op_assign
-l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -3623,6 +3592,16 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|buf-&gt;b_dirt
+)paren
+id|dispose
+op_assign
+id|BUF_DIRTY
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
 id|mem_map
 (braket
 id|MAP_NR
@@ -3635,79 +3614,40 @@ r_int
 id|buf-&gt;b_data
 )paren
 )braket
-op_ne
+OG
 l_int|1
 )paren
-(brace
-id|i
+id|dispose
 op_assign
-l_int|1
+id|BUF_SHARED
 suffix:semicolon
-)brace
+r_else
 r_if
 c_cond
 (paren
 id|buf-&gt;b_lock
 )paren
-(brace
-id|i
-op_or_assign
-l_int|2
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|buf-&gt;b_dirt
-)paren
-(brace
-id|i
-op_or_assign
-l_int|4
-suffix:semicolon
-)brace
 id|dispose
 op_assign
-id|buffer_disposition
-(braket
-id|i
-)braket
+id|BUF_LOCKED
 suffix:semicolon
+r_else
 r_if
 c_cond
 (paren
 id|buf-&gt;b_list
 op_eq
 id|BUF_SHARED
-op_logical_and
-id|dispose
-op_eq
-id|BUF_CLEAN
 )paren
-(brace
 id|dispose
 op_assign
 id|BUF_UNSHARED
 suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
+r_else
 id|dispose
-op_eq
-op_minus
-l_int|1
-)paren
-(brace
-id|panic
-c_func
-(paren
-l_string|&quot;Bad buffer settings (%d)&bslash;n&quot;
-comma
-id|i
-)paren
+op_assign
+id|BUF_CLEAN
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -5919,6 +5859,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+multiline_comment|/* =========== Reduce the buffer memory ============= */
 multiline_comment|/*&n; * try_to_free() checks if all the buffers on this particular page&n; * are unused, and free&squot;s the page if so.&n; */
 DECL|function|try_to_free
 r_static
@@ -6749,6 +6690,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* ================== Debugging =================== */
 DECL|function|show_buffers
 r_void
 id|show_buffers
@@ -7039,6 +6981,7 @@ l_string|&quot;&bslash;n&quot;
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/* ====================== Cluster patches for ext2 ==================== */
 multiline_comment|/*&n; * try_to_reassign() checks if all the buffers on this particular page&n; * are unused, and reassign to a new cluster them if this is true.&n; */
 DECL|function|try_to_reassign
 r_static
@@ -7622,6 +7565,7 @@ suffix:semicolon
 r_return
 l_int|4
 suffix:semicolon
+multiline_comment|/* ?? */
 id|not_aligned
 suffix:colon
 r_while
@@ -7832,6 +7776,7 @@ id|size
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* ===================== Init ======================= */
 multiline_comment|/*&n; * This initializes the initial buffer free list.  nr_buffers_type is set&n; * to one less the actual number of buffers, as a sop to backwards&n; * compatibility --- the old code did this (I think unintentionally,&n; * but I&squot;m not sure), and programs in the ps package expect it.&n; * &t;&t;&t;&t;&t;- TYT 8/30/92&n; */
 DECL|function|buffer_init
 r_void
@@ -8021,6 +7966,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/* ====================== bdflush support =================== */
 multiline_comment|/* This is a simple kernel daemon, whose job it is to provide a dynamically&n; * response to dirty buffers.  Once this process is activated, we write back&n; * a limited number of buffers to the disks and then go back to sleep again.&n; * In effect this is a process which never leaves kernel mode, and does not have&n; * any user memory associated with it except for the stack.  There is also&n; * a kernel stack page, which obviously must be separate from the user stack.&n; */
 DECL|variable|bdflush_wait
 r_struct

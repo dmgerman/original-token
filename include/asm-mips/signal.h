@@ -1,7 +1,6 @@
 macro_line|#ifndef __ASM_MIPS_SIGNAL_H
 DECL|macro|__ASM_MIPS_SIGNAL_H
 mdefine_line|#define __ASM_MIPS_SIGNAL_H
-macro_line|#ifdef __KERNEL__
 DECL|struct|sigcontext_struct
 r_struct
 id|sigcontext_struct
@@ -118,6 +117,5 @@ id|oldmask
 suffix:semicolon
 )brace
 suffix:semicolon
-macro_line|#endif
 macro_line|#endif /* __ASM_MIPS_SIGNAL_H */
 eof

@@ -318,6 +318,11 @@ id|ad1848_interrupt
 (paren
 r_int
 id|dev
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 suffix:semicolon
 r_static
@@ -3511,6 +3516,11 @@ id|ad1848_interrupt
 (paren
 r_int
 id|irq
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 (brace
 r_int

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: aha1542.c,v 1.1 1992/07/24 06:27:38 root Exp root $&n; *  linux/kernel/aha1542.c&n; *&n; *  Copyright (C) 1992  Tommy Thorn&n; *  Copyright (C) 1993, 1994 Eric Youngdale&n; *&n; *  Modified by Eric Youngdale&n; *        Use request_irq and request_dma to help prevent unexpected conflicts&n; *        Set up on-board DMA controller, such that we do not have to&n; *        have the bios enabled to use the aha1542.&n; *  Modified by David Gentzel&n; *&t;  Don&squot;t call request_dma if dma mask is 0 (for BusLogic BT-445S VL-Bus controller).&n; *  Modified by Matti Aarnio&n; *        Accept parameters from LILO cmd-line. -- 1-Oct-94&n; */
+multiline_comment|/* $Id: aha1542.c,v 1.1 1992/07/24 06:27:38 root Exp root $&n; *  linux/kernel/aha1542.c&n; *&n; *  Copyright (C) 1992  Tommy Thorn&n; *  Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  Modified by Eric Youngdale&n; *        Use request_irq and request_dma to help prevent unexpected conflicts&n; *        Set up on-board DMA controller, such that we do not have to&n; *        have the bios enabled to use the aha1542.&n; *  Modified by David Gentzel&n; *&t;  Don&squot;t call request_dma if dma mask is 0 (for BusLogic BT-445S VL-Bus controller).&n; *  Modified by Matti Aarnio&n; *        Accept parameters from LILO cmd-line. -- 1-Oct-94&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -5573,12 +5573,6 @@ id|SCpnt
 )paren
 (brace
 macro_line|#if 0
-r_int
-id|intval
-(braket
-l_int|3
-)braket
-suffix:semicolon
 id|unchar
 id|ahacmd
 op_assign
@@ -5746,24 +5740,12 @@ comma
 id|SCpnt-&gt;host-&gt;irq
 )paren
 suffix:semicolon
-id|intval
-(braket
-l_int|0
-)braket
-op_assign
-id|SCpnt-&gt;host-&gt;irq
-suffix:semicolon
 id|aha1542_intr_handle
 c_func
 (paren
-(paren
-r_int
-)paren
-op_amp
-id|intval
-(braket
-l_int|2
-)braket
+id|SCpnt-&gt;host-&gt;irq
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_return

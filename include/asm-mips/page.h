@@ -1,8 +1,8 @@
 macro_line|#ifndef __ASM_MIPS_PAGE_H
 DECL|macro|__ASM_MIPS_PAGE_H
 mdefine_line|#define __ASM_MIPS_PAGE_H
-macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#ifndef __ASSEMBLY__
+macro_line|#include &lt;linux/linkage.h&gt;
 DECL|macro|invalidate
 mdefine_line|#define invalidate()&t;tlbflush();
 r_extern
@@ -24,7 +24,109 @@ DECL|macro|PAGE_SIZE
 mdefine_line|#define PAGE_SIZE&t;&t;&t;(1UL &lt;&lt; PAGE_SHIFT)
 DECL|macro|PGDIR_SIZE
 mdefine_line|#define PGDIR_SIZE&t;&t;&t;(1UL &lt;&lt; PGDIR_SHIFT)
+DECL|macro|PAGE_OFFSET
+mdefine_line|#define PAGE_OFFSET&t;0
+DECL|macro|MAP_NR
+mdefine_line|#define MAP_NR(addr) ((addr) &gt;&gt; PAGE_SHIFT)
+DECL|macro|MAP_PAGE_RESERVED
+mdefine_line|#define MAP_PAGE_RESERVED (1&lt;&lt;15)
+DECL|typedef|mem_map_t
+r_typedef
+r_int
+r_int
+id|mem_map_t
+suffix:semicolon
+multiline_comment|/*&n; * Note that we shift the lower 32bits of each EntryLo[01] entry&n; * 6 bits to the left. That way we can convert the PFN into the&n; * physical address by a single &squot;and&squot; operation and gain 6 aditional&n; * bits for storing information which isn&squot;t present in a normal&n; * MIPS page table.&n; * I&squot;ve also changed the naming of some bits so that they conform&n; * the i386 naming as much as possible.&n; * PAGE_USER isn&squot;t implemented in software yet.&n; */
+DECL|macro|PAGE_PRESENT
+mdefine_line|#define PAGE_PRESENT               (1&lt;&lt;0)   /* implemented in software */
+DECL|macro|PAGE_COW
+mdefine_line|#define PAGE_COW                   (1&lt;&lt;1)   /* implemented in software */
+DECL|macro|PAGE_DIRTY
+mdefine_line|#define PAGE_DIRTY                 (1&lt;&lt;2)   /* implemented in software */
+DECL|macro|PAGE_USER
+mdefine_line|#define PAGE_USER                  (1&lt;&lt;3)   /* implemented in software */
+DECL|macro|PAGE_UNUSED1
+mdefine_line|#define PAGE_UNUSED1               (1&lt;&lt;4)   /* implemented in software */
+DECL|macro|PAGE_UNUSED2
+mdefine_line|#define PAGE_UNUSED2               (1&lt;&lt;5)   /* implemented in software */
+DECL|macro|PAGE_GLOBAL
+mdefine_line|#define PAGE_GLOBAL                (1&lt;&lt;6)
+DECL|macro|PAGE_ACCESSED
+mdefine_line|#define PAGE_ACCESSED              (1&lt;&lt;7)   /* The MIPS valid bit      */
+DECL|macro|PAGE_RW
+mdefine_line|#define PAGE_RW                    (1&lt;&lt;8)   /* The MIPS dirty bit      */
+DECL|macro|CACHE_CACHABLE_NO_WA
+mdefine_line|#define CACHE_CACHABLE_NO_WA       (0&lt;&lt;9)
+DECL|macro|CACHE_CACHABLE_WA
+mdefine_line|#define CACHE_CACHABLE_WA          (1&lt;&lt;9)
+DECL|macro|CACHE_UNCACHED
+mdefine_line|#define CACHE_UNCACHED             (2&lt;&lt;9)
+DECL|macro|CACHE_CACHABLE_NONCOHERENT
+mdefine_line|#define CACHE_CACHABLE_NONCOHERENT (3&lt;&lt;9)
+DECL|macro|CACHE_CACHABLE_CE
+mdefine_line|#define CACHE_CACHABLE_CE          (4&lt;&lt;9)
+DECL|macro|CACHE_CACHABLE_COW
+mdefine_line|#define CACHE_CACHABLE_COW         (5&lt;&lt;9)
+DECL|macro|CACHE_CACHABLE_CUW
+mdefine_line|#define CACHE_CACHABLE_CUW         (6&lt;&lt;9)
+DECL|macro|CACHE_MASK
+mdefine_line|#define CACHE_MASK                 (7&lt;&lt;9)
+DECL|macro|PAGE_PRIVATE
+mdefine_line|#define PAGE_PRIVATE    (PAGE_PRESENT | PAGE_ACCESSED | PAGE_DIRTY | PAGE_RW | &bslash;&n;                         PAGE_COW | CACHE_CACHABLE_NO_WA)
+DECL|macro|PAGE_SHARED
+mdefine_line|#define PAGE_SHARED     (PAGE_PRESENT | PAGE_ACCESSED | PAGE_DIRTY | PAGE_RW | &bslash;&n;                         CACHE_CACHABLE_NO_WA)
+DECL|macro|PAGE_COPY
+mdefine_line|#define PAGE_COPY       (PAGE_PRESENT | PAGE_ACCESSED | PAGE_COW | &bslash;&n;                         CACHE_CACHABLE_NO_WA)
+DECL|macro|PAGE_READONLY
+mdefine_line|#define PAGE_READONLY   (PAGE_PRESENT | PAGE_ACCESSED | CACHE_CACHABLE_NO_WA)
+DECL|macro|PAGE_TABLE
+mdefine_line|#define PAGE_TABLE      (PAGE_PRESENT | PAGE_ACCESSED | PAGE_DIRTY | PAGE_RW | &bslash;&n;                         CACHE_CACHABLE_NO_WA)
+DECL|macro|PAGE_CHG_MASK
+mdefine_line|#define PAGE_CHG_MASK (PAGE_MASK | PAGE_ACCESSED | PAGE_DIRTY | CACHE_MASK)
 macro_line|#ifdef __KERNEL__
+multiline_comment|/* page table for 0-4MB for everybody */
+r_extern
+r_int
+r_int
+id|pg0
+(braket
+l_int|1024
+)braket
+suffix:semicolon
+multiline_comment|/*&n; * BAD_PAGETABLE is used when we need a bogus page-table, while&n; * BAD_PAGE is used for a bogus page.&n; *&n; * ZERO_PAGE is a global shared page that is always zero: used&n; * for zero-mapped memory areas etc..&n; */
+r_extern
+r_int
+r_int
+id|__bad_page
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|__bad_pagetable
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|__zero_page
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+DECL|macro|BAD_PAGETABLE
+mdefine_line|#define BAD_PAGETABLE __bad_pagetable()
+DECL|macro|BAD_PAGE
+mdefine_line|#define BAD_PAGE __bad_page()
+DECL|macro|ZERO_PAGE
+mdefine_line|#define ZERO_PAGE __zero_page()
 multiline_comment|/* number of bits that fit into a memory pointer */
 DECL|macro|BITS_PER_PTR
 mdefine_line|#define BITS_PER_PTR&t;&t;&t;(8*sizeof(unsigned long))

@@ -446,6 +446,20 @@ id|ints
 suffix:semicolon
 r_extern
 r_void
+id|aztcd_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|st_setup
 c_func
 (paren
@@ -1143,6 +1157,14 @@ macro_line|#ifdef CONFIG_MCD
 l_string|&quot;mcd=&quot;
 comma
 id|mcd_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_AZTCD
+(brace
+l_string|&quot;aztcd=&quot;
+comma
+id|aztcd_setup
 )brace
 comma
 macro_line|#endif
@@ -2005,11 +2027,6 @@ c_func
 )paren
 suffix:semicolon
 id|calibrate_delay
-c_func
-(paren
-)paren
-suffix:semicolon
-id|cli
 c_func
 (paren
 )paren

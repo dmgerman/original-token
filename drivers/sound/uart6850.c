@@ -159,6 +159,11 @@ id|m6850intr
 (paren
 r_int
 id|unit
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 (brace
 id|printk

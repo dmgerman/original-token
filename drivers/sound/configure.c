@@ -505,7 +505,7 @@ l_string|&quot;SoundBlaster Pro support&quot;
 comma
 l_string|&quot;SoundBlaster 16 support&quot;
 comma
-l_string|&quot;digitized voice support&quot;
+l_string|&quot;/dev/dsp and /dev/audio support (_recommended_)&quot;
 comma
 l_string|&quot;This should not be asked&quot;
 comma

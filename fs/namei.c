@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 DECL|macro|ACC_MODE
 mdefine_line|#define ACC_MODE(x) (&quot;&bslash;000&bslash;004&bslash;002&bslash;006&quot;[(x)&amp;O_ACCMODE])
 multiline_comment|/*&n; * How long a filename can we get from user space?&n; *  -EFAULT if invalid area&n; *  0 if ok (ENAMETOOLONG before EFAULT)&n; *  &gt;0 EFAULT after xx bytes&n; */
@@ -40,42 +41,22 @@ id|KERNEL_DS
 r_return
 l_int|0
 suffix:semicolon
-r_for
-c_loop
+id|vma
+op_assign
+id|find_vma
+c_func
 (paren
-id|vma
-op_assign
-id|current-&gt;mm-&gt;mmap
-suffix:semicolon
-suffix:semicolon
-id|vma
-op_assign
-id|vma-&gt;vm_next
+id|current
+comma
+id|address
 )paren
-(brace
+suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
 id|vma
-)paren
-r_return
-op_minus
-id|EFAULT
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|vma-&gt;vm_end
-OG
-id|address
-)paren
-r_break
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
+op_logical_or
 id|vma-&gt;vm_start
 OG
 id|address

@@ -1852,6 +1852,10 @@ id|inode-&gt;i_mtime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
+id|inode-&gt;i_dirt
+op_assign
+l_int|1
+suffix:semicolon
 id|dir_block
 op_assign
 id|xiafs_bread

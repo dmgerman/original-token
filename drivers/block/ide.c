@@ -5125,6 +5125,11 @@ id|ide_shared_intr
 (paren
 r_int
 id|irq
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 (brace
 id|IDE_INTR

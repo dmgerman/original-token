@@ -36,6 +36,8 @@ DECL|macro|TCP_TIMEOUT_LEN
 mdefine_line|#define TCP_TIMEOUT_LEN&t;(15*60*HZ) /* should be about 15 mins&t;&t;*/
 DECL|macro|TCP_TIMEWAIT_LEN
 mdefine_line|#define TCP_TIMEWAIT_LEN (60*HZ) /* how long to wait to successfully &n;&t;&t;&t;&t;  * close the socket, about 60 seconds&t;*/
+DECL|macro|TCP_FIN_TIMEOUT
+mdefine_line|#define TCP_FIN_TIMEOUT (3*60*HZ) /* BSD style FIN_WAIT2 deadlock breaker */&t;&t;&t;&t;  
 DECL|macro|TCP_ACK_TIME
 mdefine_line|#define TCP_ACK_TIME&t;(3*HZ)&t;/* time to delay before sending an ACK&t;*/
 DECL|macro|TCP_DONE_TIME
@@ -52,11 +54,16 @@ DECL|macro|TCP_NO_CHECK
 mdefine_line|#define TCP_NO_CHECK&t;0&t;/* turn to one if you want the default&n;&t;&t;&t;&t; * to be no checksum&t;&t;&t;*/
 multiline_comment|/*&n; *&t;TCP option&n; */
 DECL|macro|TCPOPT_NOP
-mdefine_line|#define TCPOPT_NOP&t;&t;1
+mdefine_line|#define TCPOPT_NOP&t;&t;1&t;/* Padding */
 DECL|macro|TCPOPT_EOL
-mdefine_line|#define TCPOPT_EOL&t;&t;0
+mdefine_line|#define TCPOPT_EOL&t;&t;0&t;/* End of options */
 DECL|macro|TCPOPT_MSS
-mdefine_line|#define TCPOPT_MSS&t;&t;2
+mdefine_line|#define TCPOPT_MSS&t;&t;2&t;/* Segment size negotiating */
+multiline_comment|/*&n; *&t;We don&squot;t use these yet, but they are for PAWS and big windows&n; */
+DECL|macro|TCPOPT_WINDOW
+mdefine_line|#define TCPOPT_WINDOW&t;&t;3&t;/* Window scaling */
+DECL|macro|TCPOPT_TIMESTAMP
+mdefine_line|#define TCPOPT_TIMESTAMP&t;8&t;/* Better RTT estimations/PAWS */
 multiline_comment|/*&n; * The next routines deal with comparing 32 bit unsigned ints&n; * and worry about wraparound (automatic with unsigned arithmetic).&n; */
 DECL|function|before
 r_extern

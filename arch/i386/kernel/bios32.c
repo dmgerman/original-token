@@ -2239,7 +2239,7 @@ op_plus
 id|i
 )braket
 dot
-id|adress
+id|address
 op_eq
 l_int|0
 )paren
@@ -2265,7 +2265,7 @@ op_plus
 id|i
 )braket
 dot
-id|adress
+id|address
 comma
 op_amp
 id|val
@@ -2332,7 +2332,7 @@ op_plus
 id|i
 )braket
 dot
-id|adress
+id|address
 comma
 (paren
 id|val
@@ -2409,7 +2409,7 @@ op_plus
 id|i
 )braket
 dot
-id|adress
+id|address
 comma
 (paren
 id|val
@@ -2688,7 +2688,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;PLEASE MAIL POTTER@CAO-VLSI.IBP.FR your harware description and /proc/pci.&bslash;n&quot;
+l_string|&quot;PLEASE MAIL POTTER@CAO-VLSI.IBP.FR your hardware description and /proc/pci.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return

@@ -1,8 +1,8 @@
-multiline_comment|/*&n; * linux/include/asm-mips/ptrace.h&n; *&n; * machine dependend structs and defines to help the user use&n; * the ptrace system call.&n; */
+multiline_comment|/*&n; * linux/include/asm-mips/ptrace.h&n; *&n; * machine dependent structs and defines to help the user use&n; * the ptrace system call.&n; */
 macro_line|#ifndef __ASM_MIPS_PTRACE_H
 DECL|macro|__ASM_MIPS_PTRACE_H
 mdefine_line|#define __ASM_MIPS_PTRACE_H
-multiline_comment|/*&n; * use ptrace (3 or 6, pid, PT_EXCL, data); to read or write&n; * the processes registers.&n; *&n; * This defines/structures corrospond to the register layout on stack -&n; * if the order here is changed, it needs to be updated in&n; * arch/mips/fork.c:copy_process, asm/mips/signal.c:do_signal,&n; * asm-mips/ptrace.c, include/asm-mips/ptrace.h.&n; */
+multiline_comment|/*&n; * use ptrace (3 or 6, pid, PT_EXCL, data); to read or write&n; * the processes registers.&n; *&n; * This defines/structures correspond to the register layout on stack -&n; * if the order here is changed, it needs to be updated in&n; * arch/mips/fork.c:copy_process, asm/mips/signal.c:do_signal,&n; * asm-mips/ptrace.c, include/asm-mips/ptrace.h.&n; */
 macro_line|#include &lt;asm/stackframe.h&gt;
 multiline_comment|/*&n; * This struct defines the way the registers are stored on the &n; * stack during a system call/exception. As usual the registers&n; * k0/k1 aren&squot;t being saved.&n; */
 DECL|struct|pt_regs
@@ -153,7 +153,6 @@ id|orig_reg2
 suffix:semicolon
 )brace
 suffix:semicolon
-macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * Does the process account for user or for system time?&n; */
 macro_line|#if defined (__R4000__)
 DECL|macro|user_mode
@@ -161,9 +160,5 @@ mdefine_line|#define user_mode(regs) (!((regs)-&gt;cp0_status &amp; 0x18))
 macro_line|#else /* !defined (__R4000__) */
 macro_line|#error &quot;#define user_mode(regs) for R3000!&quot;
 macro_line|#endif /* !defined (__R4000__) */
-macro_line|#endif /* __KERNEL */
-multiline_comment|/*&n; * This function computes the interrupt number from the stack frame&n; */
-DECL|macro|pt_regs2irq
-mdefine_line|#define pt_regs2irq(p) ((int) ((struct pt_regs *)p)-&gt;interrupt)        
 macro_line|#endif /* __ASM_MIPS_PTRACE_H */
 eof

@@ -60,6 +60,19 @@ DECL|macro|CL_SIZE
 mdefine_line|#define CL_SIZE      (80)
 macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/*&n; * Some machine parameters passed by MILO. Note that bootinfo&n; * *must* be in the data segment since the kernel clears the&n; * bss segment directly after startup.&n; */
+DECL|struct|drive_info_struct
+r_struct
+id|drive_info_struct
+(brace
+DECL|member|dummy
+r_char
+id|dummy
+(braket
+l_int|32
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|struct|bootinfo
 r_struct
 id|bootinfo
@@ -148,6 +161,17 @@ r_int
 id|ramdisk_base
 suffix:semicolon
 multiline_comment|/* address of the ram disk in mem */
+multiline_comment|/*&n;&t; * Boot flags for the kernel&n;&t; */
+DECL|member|mount_root_rdonly
+r_int
+r_int
+id|mount_root_rdonly
+suffix:semicolon
+DECL|member|drive_info
+r_struct
+id|drive_info_struct
+id|drive_info
+suffix:semicolon
 multiline_comment|/*&n;&t; * Video ram info (not in tty.h)&n;&t; */
 DECL|member|vram_base
 r_int

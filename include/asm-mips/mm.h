@@ -2,7 +2,7 @@ macro_line|#ifndef __ASM_MIPS_MM_H
 DECL|macro|__ASM_MIPS_MM_H
 mdefine_line|#define __ASM_MIPS_MM_H
 macro_line|#if defined (__KERNEL__)
-multiline_comment|/*&n; * Note that we shift the lower 32bits of each EntryLo[01] entry&n; * 6 bits to the left. That way we can convert the PFN into the&n; * physical address by a single &squot;and&squot; operation and gain 6 aditional&n; * bits for storing information which isn&squot;t present in a normal&n; * MIPS page table.&n; * I&squot;ve also changed the naming of some bits so that they conform&n; * the i386 naming as much as possible.&n; * PAGE_USER isn&squot;t implemented in software yet.&n; */
+multiline_comment|/*&n; * Note that we shift the lower 32bits of each EntryLo[01] entry&n; * 6 bits to the left. That way we can convert the PFN into the&n; * physical address by a single &squot;and&squot; operation and gain 6 additional&n; * bits for storing information which isn&squot;t present in a normal&n; * MIPS page table.&n; * I&squot;ve also changed the naming of some bits so that they conform&n; * the i386 naming as much as possible.&n; * PAGE_USER isn&squot;t implemented in software yet.&n; */
 DECL|macro|PAGE_PRESENT
 mdefine_line|#define PAGE_PRESENT               (1&lt;&lt;0)   /* implemented in software */
 DECL|macro|PAGE_COW

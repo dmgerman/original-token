@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 multiline_comment|/*&n; * this indicates whether you can reboot with ctrl-alt-del: the default is yes&n; */
@@ -1413,11 +1414,6 @@ id|newbrk
 comma
 id|oldbrk
 suffix:semicolon
-r_struct
-id|vm_area_struct
-op_star
-id|vma
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1524,40 +1520,22 @@ r_return
 id|current-&gt;mm-&gt;brk
 suffix:semicolon
 multiline_comment|/*&n;&t; * Check against existing mmap mappings.&n;&t; */
-r_for
-c_loop
-(paren
-id|vma
-op_assign
-id|current-&gt;mm-&gt;mmap
-suffix:semicolon
-id|vma
-suffix:semicolon
-id|vma
-op_assign
-id|vma-&gt;vm_next
-)paren
-(brace
 r_if
 c_cond
 (paren
-id|newbrk
-op_le
-id|vma-&gt;vm_start
-)paren
-r_break
-suffix:semicolon
-r_if
-c_cond
+id|find_vma_intersection
+c_func
 (paren
+id|current
+comma
 id|oldbrk
-OL
-id|vma-&gt;vm_end
+comma
+id|newbrk
+)paren
 )paren
 r_return
 id|current-&gt;mm-&gt;brk
 suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; * stupid algorithm to decide if we have enough memory: while&n;&t; * simple, it hopefully works in most obvious cases.. Easy to&n;&t; * fool it, but this should catch most mistakes.&n;&t; */
 id|freepages
 op_assign

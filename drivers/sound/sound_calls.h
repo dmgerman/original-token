@@ -786,6 +786,10 @@ id|hndlr
 )paren
 (paren
 r_int
+comma
+r_struct
+id|pt_regs
+op_star
 )paren
 )paren
 suffix:semicolon
@@ -1281,6 +1285,11 @@ id|gusintr
 c_func
 (paren
 r_int
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 suffix:semicolon
 r_int

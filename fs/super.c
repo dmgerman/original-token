@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -2351,16 +2352,20 @@ id|data
 r_return
 l_int|0
 suffix:semicolon
-r_for
-c_loop
-(paren
 id|vma
 op_assign
-id|current-&gt;mm-&gt;mmap
-suffix:semicolon
-suffix:semicolon
+id|find_vma
+c_func
+(paren
+id|current
+comma
+(paren
+r_int
+r_int
 )paren
-(brace
+id|data
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2375,30 +2380,10 @@ id|data
 OL
 id|vma-&gt;vm_start
 )paren
-(brace
 r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-(paren
-r_int
-r_int
-)paren
-id|data
-OL
-id|vma-&gt;vm_end
-)paren
-r_break
-suffix:semicolon
-id|vma
-op_assign
-id|vma-&gt;vm_next
-suffix:semicolon
-)brace
 id|i
 op_assign
 id|vma-&gt;vm_end

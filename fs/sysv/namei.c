@@ -771,6 +771,10 @@ id|dir-&gt;i_ctime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
+id|dir-&gt;i_dirt
+op_assign
+l_int|1
+suffix:semicolon
 r_for
 c_loop
 (paren

@@ -47,6 +47,7 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
@@ -326,15 +327,6 @@ id|dev
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * D-Link driver variables:&n; */
-r_extern
-r_struct
-id|device
-op_star
-id|irq2dev_map
-(braket
-l_int|16
-)braket
-suffix:semicolon
 DECL|variable|rx_page
 r_static
 r_volatile
@@ -1931,6 +1923,40 @@ r_return
 id|ENODEV
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|check_region
+c_func
+(paren
+id|DE600_IO
+comma
+l_int|3
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;, port 0x%x busy&bslash;n&quot;
+comma
+id|DE600_IO
+)paren
+suffix:semicolon
+r_return
+id|EBUSY
+suffix:semicolon
+)brace
+id|request_region
+c_func
+(paren
+id|DE600_IO
+comma
+l_int|3
+comma
+l_string|&quot;de600&quot;
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -2461,6 +2487,14 @@ c_func
 (paren
 op_amp
 id|de600_dev
+)paren
+suffix:semicolon
+id|release_region
+c_func
+(paren
+id|DE600_IO
+comma
+l_int|3
 )paren
 suffix:semicolon
 )brace

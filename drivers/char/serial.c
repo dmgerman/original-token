@@ -3898,6 +3898,20 @@ op_or
 id|UART_MCR_RTS
 suffix:semicolon
 )brace
+macro_line|#ifdef __alpha__
+id|info-&gt;MCR
+op_or_assign
+id|UART_MCR_OUT1
+op_or
+id|UART_MCR_OUT2
+suffix:semicolon
+id|info-&gt;MCR_noint
+op_or_assign
+id|UART_MCR_OUT1
+op_or
+id|UART_MCR_OUT2
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -10303,6 +10317,19 @@ l_string|&quot;serial(auto)&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Reset the UART.&n;&t; */
+macro_line|#ifdef __alpha__
+multiline_comment|/*&n;&t; * I wonder what DEC did to the OUT1 and OUT2 lines?&n;&t; * clearing them results in endless interrupts.&n;&t; */
+id|serial_outp
+c_func
+(paren
+id|info
+comma
+id|UART_MCR
+comma
+l_int|0x0c
+)paren
+suffix:semicolon
+macro_line|#else
 id|serial_outp
 c_func
 (paren
@@ -10313,6 +10340,7 @@ comma
 l_int|0x00
 )paren
 suffix:semicolon
+macro_line|#endif
 id|serial_outp
 c_func
 (paren

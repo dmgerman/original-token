@@ -75,6 +75,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;Where the card ROM starts,&n;&t;&t;&t;&t;&t;&t;used to calculate memory mapped&n;&t;&t;&t;&t;&t;&t;register location.&n;&t;&t;&t;&t;&t;*/
+macro_line|#ifdef notyet
 DECL|variable|abort_confirm
 r_static
 r_volatile
@@ -83,6 +84,7 @@ id|abort_confirm
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#endif
 DECL|variable|st0x_cr_sr
 r_static
 r_volatile

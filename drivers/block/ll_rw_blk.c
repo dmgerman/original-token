@@ -2413,6 +2413,18 @@ id|mem_end
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_AZTCD
+id|mem_start
+op_assign
+id|aztcd_init
+c_func
+(paren
+id|mem_start
+comma
+id|mem_end
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_FD
 id|floppy_init
 c_func

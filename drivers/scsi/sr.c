@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *      sr.c Copyright (C) 1992 David Giller&n; *&t;     Copyright (C) 1993, 1994 Eric Youngdale&n; *&n; *      adapted from:&n; *&t;sd.c Copyright (C) 1992 Drew Eckhardt &n; *&t;Linux scsi disk driver by&n; *&t;&t;Drew Eckhardt &n; *&n; *&t;&lt;drew@colorado.edu&gt;&n; *&n; *       Modified by Eric Youngdale ericy@cais.com to&n; *       add scatter-gather, multiple outstanding request, and other&n; *       enhancements.&n; */
+multiline_comment|/*&n; *      sr.c Copyright (C) 1992 David Giller&n; *&t;     Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *      adapted from:&n; *&t;sd.c Copyright (C) 1992 Drew Eckhardt &n; *&t;Linux scsi disk driver by&n; *&t;&t;Drew Eckhardt &n; *&n; *&t;&lt;drew@colorado.edu&gt;&n; *&n; *       Modified by Eric Youngdale ericy@cais.com to&n; *       add scatter-gather, multiple outstanding request, and other&n; *       enhancements.&n; *&n; *&t; Modified by Eric Youngdale eric@aib.com to support loadable&n; *&t; low-level scsi drivers.&n; */
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -17,7 +17,7 @@ macro_line|#include &quot;constants.h&quot;
 DECL|macro|MAX_RETRIES
 mdefine_line|#define MAX_RETRIES 3
 DECL|macro|SR_TIMEOUT
-mdefine_line|#define SR_TIMEOUT 5000
+mdefine_line|#define SR_TIMEOUT 15000
 r_static
 r_void
 id|sr_init
@@ -1008,7 +1008,27 @@ id|ILLEGAL_REQUEST
 id|printk
 c_func
 (paren
-l_string|&quot;CD-ROM error: Drive reports ILLEGAL REQUEST.&bslash;n&quot;
+l_string|&quot;CD-ROM error: &quot;
+)paren
+suffix:semicolon
+id|print_sense
+c_func
+(paren
+l_string|&quot;sr&quot;
+comma
+id|SCpnt
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;command was: &quot;
+)paren
+suffix:semicolon
+id|print_command
+c_func
+(paren
+id|SCpnt-&gt;cmnd
 )paren
 suffix:semicolon
 r_if
@@ -1054,17 +1074,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;CD-ROM error: Drive reports %d.&bslash;n&quot;
-comma
-id|SCpnt-&gt;sense_buffer
-(braket
-l_int|2
-)braket
-)paren
-suffix:semicolon
 id|SCpnt
 op_assign
 id|end_scsi_request
@@ -4963,6 +4972,36 @@ id|capacity
 )paren
 r_continue
 suffix:semicolon
+id|scsi_CDs
+(braket
+id|i
+)braket
+dot
+id|capacity
+op_assign
+l_int|0x1fffff
+suffix:semicolon
+id|scsi_CDs
+(braket
+id|i
+)braket
+dot
+id|sector_size
+op_assign
+l_int|2048
+suffix:semicolon
+multiline_comment|/* A guess, just in case */
+id|scsi_CDs
+(braket
+id|i
+)braket
+dot
+id|needs_sector_size
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#if 0
+multiline_comment|/* seems better to leave this for later */
 id|get_sectorsize
 c_func
 (paren
@@ -4982,6 +5021,7 @@ dot
 id|sector_size
 )paren
 suffix:semicolon
+macro_line|#endif
 id|scsi_CDs
 (braket
 id|i

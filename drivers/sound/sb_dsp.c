@@ -265,6 +265,11 @@ id|sbintr
 (paren
 r_int
 id|unit
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 (brace
 r_int
@@ -2339,7 +2344,7 @@ op_ge
 l_int|3
 )paren
 (brace
-macro_line|#ifndef SCO
+macro_line|#if !defined(SCO) &amp;&amp; !defined(EXCLUDE_AUDIO)
 macro_line|#  ifdef __SGNXPRO__
 r_if
 c_cond

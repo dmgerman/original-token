@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;scsi.c Copyright (C) 1992 Drew Eckhardt &n; *&t;       Copyright (C) 1993, 1994 Eric Youngdale&n; *&n; *&t;generic mid-level SCSI driver by&n; *&t;&t;Drew Eckhardt &n; *&n; *&t;&lt;drew@colorado.edu&gt;&n; *&n; *&t;Bug correction thanks go to : &n; *&t;&t;Rik Faith &lt;faith@cs.unc.edu&gt;&n; *&t;&t;Tommy Thorn &lt;tthorn&gt;&n; *&t;&t;Thomas Wuensche &lt;tw@fgb1.fgb.mw.tu-muenchen.de&gt;&n; * &n; *       Modified by Eric Youngdale ericy@cais.com to&n; *       add scatter-gather, multiple outstanding request, and other&n; *       enhancements.&n; */
+multiline_comment|/*&n; *&t;scsi.c Copyright (C) 1992 Drew Eckhardt &n; *&t;       Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *&t;generic mid-level SCSI driver&n; *&t;&t;Initial versions: Drew Eckhardt &n; *&t;&t;Subsequent revisions: Eric Youngdale&n; *&n; *&t;&lt;drew@colorado.edu&gt;&n; *&n; *&t;Bug correction thanks go to : &n; *&t;&t;Rik Faith &lt;faith@cs.unc.edu&gt;&n; *&t;&t;Tommy Thorn &lt;tthorn&gt;&n; *&t;&t;Thomas Wuensche &lt;tw@fgb1.fgb.mw.tu-muenchen.de&gt;&n; * &n; *       Modified by Eric Youngdale ericy@cais.com to&n; *       add scatter-gather, multiple outstanding request, and other&n; *       enhancements.&n; */
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
@@ -4433,19 +4433,8 @@ suffix:semicolon
 r_case
 id|RECOVERED_ERROR
 suffix:colon
-r_if
-c_cond
-(paren
-id|SCpnt-&gt;device-&gt;type
-op_eq
-id|TYPE_TAPE
-)paren
 r_return
 id|SUGGEST_IS_OK
-suffix:semicolon
-r_else
-r_return
-l_int|0
 suffix:semicolon
 r_case
 id|ABORTED_COMMAND

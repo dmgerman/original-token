@@ -1076,7 +1076,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;CP1 instruction - enabeling cp1.&bslash;n&quot;
+l_string|&quot;CP1 instruction - enabling cp1.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|regs-&gt;cp0_status
@@ -1088,7 +1088,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-multiline_comment|/*&n;&t;&t;&t; * This wasn&squot;t a cp1 instruction and therfore illegal.&n;&t;&t;&t; * Default is to kill the process.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * This wasn&squot;t a cp1 instruction and therefore illegal.&n;&t;&t;&t; * Default is to kill the process.&n;&t;&t;&t; */
 id|send_sig
 c_func
 (paren
@@ -1169,7 +1169,7 @@ op_star
 id|regs
 )paren
 (brace
-multiline_comment|/*&n;&t; * Game over - no way to handle this if it ever occours.&n;&t; * Most probably caused by a new unknown cpu type or a&n;&t; * after another deadly hard/software error.&n;&t; */
+multiline_comment|/*&n;&t; * Game over - no way to handle this if it ever occurs.&n;&t; * Most probably caused by a new unknown cpu type or a&n;&t; * after another deadly hard/software error.&n;&t; */
 id|panic
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;hosts.c Copyright (C) 1992 Drew Eckhardt&n; *&t;mid to lowlevel SCSI driver interface by&n; *&t;&t;Drew Eckhardt&n; *&n; *&t;&lt;drew@colorado.edu&gt;&n; */
+multiline_comment|/*&n; *&t;hosts.c Copyright (C) 1992 Drew Eckhardt&n; *&t;        Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *&t;mid to lowlevel SCSI driver interface&n; *&t;&t;Initial versions: Drew Eckhardt&n; *&t;&t;Subsequent revisions: Eric Youngdale&n; *&n; *&t;&lt;drew@colorado.edu&gt;&n; */
 multiline_comment|/*&n; *&t;This file contains the medium level SCSI&n; *&t;host interface initialization, as well as the scsi_hosts array of SCSI&n; *&t;hosts currently present in the system.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;../block/blk.h&quot;
@@ -716,9 +716,20 @@ suffix:semicolon
 )brace
 id|printk
 (paren
-l_string|&quot;scsi : %d hosts.&bslash;n&quot;
+l_string|&quot;scsi : %d host%s.&bslash;n&quot;
 comma
 id|next_scsi_host
+comma
+(paren
+id|next_scsi_host
+op_eq
+l_int|1
+)paren
+ques
+c_cond
+l_string|&quot;&quot;
+suffix:colon
+l_string|&quot;s&quot;
 )paren
 suffix:semicolon
 (brace
