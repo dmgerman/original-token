@@ -1,11 +1,15 @@
 multiline_comment|/*&n; *&t;6522 Versatile Interface Adapter (VIA)&n; *&n; *&t;There are two of these on the Mac II. Some IRQ&squot;s are vectored&n; *&t;via them as are assorted bits and bobs - eg rtc, adb.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;asm/adb.h&gt; 
+macro_line|#include &lt;asm/bootinfo.h&gt; 
 macro_line|#include &lt;asm/macintosh.h&gt; 
 macro_line|#include &lt;asm/macints.h&gt; 
 macro_line|#include &quot;via6522.h&quot;
-macro_line|#include &quot;psc.h&quot;
+macro_line|#include &lt;asm/mac_psc.h&gt;
 DECL|variable|via1
 r_volatile
 r_int
@@ -47,6 +51,19 @@ r_char
 op_star
 )paren
 id|PSCBASE
+suffix:semicolon
+DECL|variable|via_memory_bogon
+r_volatile
+r_int
+op_star
+id|via_memory_bogon
+op_assign
+(paren
+r_int
+op_star
+)paren
+op_amp
+id|via_memory_bogon
 suffix:semicolon
 DECL|variable|via1_clock
 DECL|variable|via1_datab
@@ -107,32 +124,14 @@ DECL|macro|MAC_CLOCK_LOW
 mdefine_line|#define MAC_CLOCK_LOW&t;&t;(MAC_CLOCK_TICK&amp;0xFF)
 DECL|macro|MAC_CLOCK_HIGH
 mdefine_line|#define MAC_CLOCK_HIGH&t;&t;(MAC_CLOCK_TICK&gt;&gt;8)
-DECL|function|via_init_clock
+DECL|function|via_configure_base
 r_void
-id|via_init_clock
+id|via_configure_base
 c_func
 (paren
 r_void
-(paren
-op_star
-id|func
-)paren
-(paren
-r_int
-comma
-r_void
-op_star
-comma
-r_struct
-id|pt_regs
-op_star
-)paren
 )paren
 (brace
-r_int
-r_char
-id|c
-suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -216,6 +215,33 @@ suffix:colon
 (brace
 )brace
 )brace
+)brace
+DECL|function|via_init_clock
+r_void
+id|via_init_clock
+c_func
+(paren
+r_void
+(paren
+op_star
+id|func
+)paren
+(paren
+r_int
+comma
+r_void
+op_star
+comma
+r_struct
+id|pt_regs
+op_star
+)paren
+)paren
+(brace
+r_int
+r_char
+id|c
+suffix:semicolon
 id|via1_clock
 op_assign
 id|via_read
@@ -755,7 +781,7 @@ l_int|0x66
 suffix:semicolon
 macro_line|#endif                                                                  
 )brace
-multiline_comment|/*&n; * get time offset between scheduling timer ticks&n; * Code stolen from arch/m68k/atari/time.c; underflow check probably&n; * wrong.&n; */
+multiline_comment|/*&n; * TBI: get time offset between scheduling timer ticks&n; */
 DECL|macro|TICK_SIZE
 mdefine_line|#define TICK_SIZE 10000
 multiline_comment|/* This is always executed with interrupts disabled.  */
@@ -908,7 +934,7 @@ l_int|0x07
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;The power switch - yes its software!&n; */
+multiline_comment|/*&n; *&t;The power switch - yes it&squot;s software!&n; */
 DECL|function|mac_poweroff
 r_void
 id|mac_poweroff
@@ -917,8 +943,15 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#if 0
-multiline_comment|/*&n;&t; * Powerdown, for the Macs that support it&n;&t; */
+multiline_comment|/*&n;&t; * MAC_ADB_IISI may need to be moved up here if it doesn&squot;t actually&n;&t; * work using the ADB packet method.  --David Kilzer&n;&t; */
+r_if
+c_cond
+(paren
+id|macintosh_config-&gt;adb_type
+op_eq
+id|MAC_ADB_II
+)paren
+(brace
 r_if
 c_cond
 (paren
@@ -986,9 +1019,20 @@ op_complement
 l_int|0x04
 )paren
 suffix:semicolon
+multiline_comment|/* Otherwise it prints &quot;It is now..&quot; then shuts off */
+id|mdelay
+c_func
+(paren
+l_int|1000
+)paren
+suffix:semicolon
 )brace
-macro_line|#endif
 multiline_comment|/* We should never make it this far... */
+id|printk
+(paren
+l_string|&quot;It is now safe to switch off your machine.&bslash;n&quot;
+)paren
+suffix:semicolon
 multiline_comment|/* XXX - delay do we need to spin here ? */
 r_while
 c_loop
@@ -1000,6 +1044,64 @@ suffix:semicolon
 )brace
 multiline_comment|/* Just in case .. */
 )brace
+multiline_comment|/*&n;&t; * Initially discovered this technique in the Mach kernel of MkLinux in&n;&t; * osfmk/src/mach_kernel/ppc/POWERMAC/cuda_power.c.  Found equivalent LinuxPPC&n;&t; * code in arch/ppc/kernel/setup.c, which also has a PMU technique for PowerBooks!&n;&t; * --David Kilzer&n;&t; */
+r_else
+r_if
+c_cond
+(paren
+id|macintosh_config-&gt;adb_type
+op_eq
+id|MAC_ADB_IISI
+op_logical_or
+id|macintosh_config-&gt;adb_type
+op_eq
+id|MAC_ADB_CUDA
+)paren
+(brace
+r_struct
+id|adb_request
+id|req
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Print our &quot;safe&quot; message before we send the request&n;&t;&t; * just in case the request never returns.&n;&t;&t; */
+id|printk
+(paren
+l_string|&quot;It is now safe to switch off your machine.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|adb_request
+(paren
+op_amp
+id|req
+comma
+l_int|NULL
+comma
+l_int|2
+comma
+id|CUDA_PACKET
+comma
+id|CUDA_POWERDOWN
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;ADB powerdown request sent.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+suffix:semicolon
+suffix:semicolon
+)paren
+(brace
+id|adb_poll
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+)brace
+)brace
 multiline_comment|/* &n; * Not all Macs support software power down; for the rest, just &n; * try the ROM reset vector ...&n; */
 DECL|function|mac_reset
 r_void
@@ -1007,6 +1109,15 @@ id|mac_reset
 c_func
 (paren
 r_void
+)paren
+(brace
+multiline_comment|/*&n;&t; * MAC_ADB_IISI may need to be moved up here if it doesn&squot;t actually&n;&t; * work using the ADB packet method.  --David Kilzer&n;&t; */
+r_if
+c_cond
+(paren
+id|macintosh_config-&gt;adb_type
+op_eq
+id|MAC_ADB_II
 )paren
 (brace
 r_int
@@ -1029,17 +1140,22 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#if 0&t;/* need ROMBASE in booter */
-macro_line|#if 0&t;/* works on some */
+multiline_comment|/* need ROMBASE in booter */
+multiline_comment|/* works on some */
 id|rom_reset
 op_assign
 (paren
-id|boot_info.bi_mac.rombase
+r_void
+op_star
+)paren
+(paren
+id|mac_bi_data.rombase
 op_plus
 l_int|0xa
 )paren
 suffix:semicolon
-macro_line|#else&t;/* testing, doesn&squot;t work on SE/30 either */
+macro_line|#if 0
+multiline_comment|/* testing, doesn&squot;t work on SE/30 either */
 id|reset_hook
 op_assign
 (paren
@@ -1048,7 +1164,7 @@ r_int
 op_star
 )paren
 (paren
-id|boot_info.bi_mac.rombase
+id|mac_bi_data.rombase
 op_plus
 l_int|0x4
 )paren
@@ -1073,7 +1189,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif
 id|restore_flags
 c_func
 (paren
@@ -1082,9 +1197,8 @@ id|flags
 suffix:semicolon
 multiline_comment|/* We never make it this far... */
 id|printk
-c_func
 (paren
-l_string|&quot; reboot failed, reboot manually!&bslash;n&quot;
+l_string|&quot;Restart failed.  Please restart manually.&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* XXX - delay do we need to spin here ? */
@@ -1097,6 +1211,58 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* Just in case .. */
+)brace
+multiline_comment|/*&n;&t; * Initially discovered this technique in the Mach kernel of MkLinux in&n;&t; * osfmk/src/mach_kernel/ppc/POWERMAC/cuda_power.c.  Found equivalent LinuxPPC&n;&t; * code in arch/ppc/kernel/setup.c, which also has a PMU technique!&n;&t; * --David Kilzer&n;&t; * &n;&t; * I suspect the MAC_ADB_CUDA code might work with other ADB types of machines&n;&t; * but have no way to test this myself.  --DDK&n;&t; */
+r_else
+r_if
+c_cond
+(paren
+id|macintosh_config-&gt;adb_type
+op_eq
+id|MAC_ADB_IISI
+op_logical_or
+id|macintosh_config-&gt;adb_type
+op_eq
+id|MAC_ADB_CUDA
+)paren
+(brace
+r_struct
+id|adb_request
+id|req
+suffix:semicolon
+id|adb_request
+(paren
+op_amp
+id|req
+comma
+l_int|NULL
+comma
+l_int|2
+comma
+id|CUDA_PACKET
+comma
+id|CUDA_RESET_SYSTEM
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;Restart failed.  Please restart manually.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+suffix:semicolon
+suffix:semicolon
+)paren
+(brace
+id|adb_poll
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+)brace
 )brace
 multiline_comment|/*&n; *&t;Set up the keyboard&n; */
 DECL|function|via_setup_keyboard

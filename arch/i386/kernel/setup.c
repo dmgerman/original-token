@@ -190,18 +190,18 @@ suffix:semicolon
 multiline_comment|/*&n; * This is set up by the setup-routine at boot-time&n; */
 DECL|macro|PARAM
 mdefine_line|#define PARAM&t;((unsigned char *)empty_zero_page)
+DECL|macro|SCREEN_INFO
+mdefine_line|#define SCREEN_INFO (*(struct screen_info *) (PARAM+0))
 DECL|macro|EXT_MEM_K
 mdefine_line|#define EXT_MEM_K (*(unsigned short *) (PARAM+2))
 DECL|macro|ALT_MEM_K
 mdefine_line|#define ALT_MEM_K (*(unsigned long *) (PARAM+0x1e0))
-macro_line|#ifdef CONFIG_APM
 DECL|macro|APM_BIOS_INFO
-mdefine_line|#define APM_BIOS_INFO (*(struct apm_bios_info *) (PARAM+64))
-macro_line|#endif
+mdefine_line|#define APM_BIOS_INFO (*(struct apm_bios_info *) (PARAM+0x40))
 DECL|macro|DRIVE_INFO
 mdefine_line|#define DRIVE_INFO (*(struct drive_info_struct *) (PARAM+0x80))
-DECL|macro|SCREEN_INFO
-mdefine_line|#define SCREEN_INFO (*(struct screen_info *) (PARAM+0))
+DECL|macro|SYS_DESC_TABLE
+mdefine_line|#define SYS_DESC_TABLE (*(struct sys_desc_table_struct*)(PARAM+0xa0))
 DECL|macro|MOUNT_ROOT_RDONLY
 mdefine_line|#define MOUNT_ROOT_RDONLY (*(unsigned short *) (PARAM+0x1F2))
 DECL|macro|RAMDISK_FLAGS
@@ -218,8 +218,6 @@ DECL|macro|INITRD_START
 mdefine_line|#define INITRD_START (*(unsigned long *) (PARAM+0x218))
 DECL|macro|INITRD_SIZE
 mdefine_line|#define INITRD_SIZE (*(unsigned long *) (PARAM+0x21c))
-DECL|macro|SYS_DESC_TABLE
-mdefine_line|#define SYS_DESC_TABLE (*(struct sys_desc_table_struct*)(PARAM+0x220))
 DECL|macro|COMMAND_LINE
 mdefine_line|#define COMMAND_LINE ((char *) (PARAM+2048))
 DECL|macro|COMMAND_LINE_SIZE

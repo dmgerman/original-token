@@ -461,7 +461,7 @@ r_void
 id|openpic_init
 c_func
 (paren
-r_void
+r_int
 )paren
 suffix:semicolon
 r_extern

@@ -814,7 +814,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-l_int|30
+l_int|60
 suffix:semicolon
 id|i
 op_increment
@@ -853,6 +853,19 @@ id|TREQ
 r_break
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|i
+op_eq
+l_int|60
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;adb_IIsi: maybe bus jammed ??&bslash;n&quot;
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t;&t; &t; *&t;Ok we probably ;) have a ready to use adb bus. Its also&n; &t;&t;&t; */
 id|request_irq
 c_func

@@ -2378,11 +2378,6 @@ id|mtrr_init_secondary_cpu
 )paren
 suffix:semicolon
 macro_line|#endif
-id|stts
-c_func
-(paren
-)paren
-suffix:semicolon
 id|smp_callin
 c_func
 (paren
@@ -2425,14 +2420,7 @@ op_assign
 op_amp
 id|current-&gt;tss
 suffix:semicolon
-multiline_comment|/*&n;&t; * We don&squot;t actually need to load the full TSS,&n;&t; * basically just the stack pointer and the eip.&n;&t; *&n;&t; * Get the scheduler lock, because we&squot;re going&n;&t; * to release it as part of the &quot;reschedule&quot; return.&n;&t; */
-id|spin_lock
-c_func
-(paren
-op_amp
-id|scheduler_lock
-)paren
-suffix:semicolon
+multiline_comment|/*&n;&t; * Load up the LDT and the task register.&n;&t; */
 id|asm
 r_volatile
 (paren
@@ -2455,6 +2443,19 @@ l_string|&quot;a&quot;
 (paren
 id|p-&gt;tr
 )paren
+)paren
+suffix:semicolon
+id|stts
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * We don&squot;t actually need to load the full TSS,&n;&t; * basically just the stack pointer and the eip.&n;&t; *&n;&t; * Get the scheduler lock, because we&squot;re going&n;&t; * to release it as part of the &quot;reschedule&quot; return.&n;&t; */
+id|spin_lock
+c_func
+(paren
+op_amp
+id|scheduler_lock
 )paren
 suffix:semicolon
 id|asm

@@ -249,7 +249,7 @@ id|mac_gettimeoffset
 r_void
 )paren
 suffix:semicolon
-r_extern
+r_static
 r_void
 id|mac_gettod
 (paren
@@ -272,7 +272,7 @@ r_int
 op_star
 )paren
 suffix:semicolon
-r_extern
+r_static
 r_int
 id|mac_hwclk
 (paren
@@ -283,7 +283,7 @@ id|hwclk_time
 op_star
 )paren
 suffix:semicolon
-r_extern
+r_static
 r_int
 id|mac_set_clock_mmss
 (paren
@@ -469,6 +469,7 @@ c_func
 suffix:semicolon
 )brace
 DECL|function|mac_sched_init
+r_static
 r_void
 id|mac_sched_init
 c_func
@@ -503,6 +504,7 @@ id|console_loglevel
 suffix:semicolon
 multiline_comment|/*&n; * This function translates the boot timeval into a proper date, to initialize&n; * the system time.&n; */
 DECL|function|mac_gettod
+r_static
 r_void
 id|mac_gettod
 (paren
@@ -845,6 +847,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* &n; * TBI: read and write hwclock&n; */
 DECL|function|mac_hwclk
+r_static
 r_int
 id|mac_hwclk
 c_func
@@ -864,6 +867,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * TBI: set minutes/seconds in hwclock&n; */
 DECL|function|mac_set_clock_mmss
+r_static
 r_int
 id|mac_set_clock_mmss
 (paren
@@ -1129,6 +1133,76 @@ r_return
 id|unknown
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;Flip into 24bit mode for an instant - flushes the L2 cache card. We&n; *&t;have to disable interrupts for this. Our IRQ handlers will crap &n; *&t;themselves if they take an IRQ in 24bit mode!&n; */
+DECL|function|mac_cache_card_flush
+r_static
+r_void
+id|mac_cache_card_flush
+c_func
+(paren
+r_int
+id|writeback
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|via_write
+c_func
+(paren
+id|via2
+comma
+id|vBufB
+comma
+id|via_read
+c_func
+(paren
+id|via2
+comma
+id|vBufB
+)paren
+op_amp
+op_complement
+id|VIA2B_vMode32
+)paren
+suffix:semicolon
+id|via_write
+c_func
+(paren
+id|via2
+comma
+id|vBufB
+comma
+id|via_read
+c_func
+(paren
+id|via2
+comma
+id|vBufB
+)paren
+op_or
+id|VIA2B_vMode32
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+)brace
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -1144,9 +1218,8 @@ r_void
 r_if
 c_cond
 (paren
-id|MACH_IS_ATARI
-op_logical_or
-id|MACH_IS_AMIGA
+op_logical_neg
+id|MACH_IS_MAC
 )paren
 (brace
 id|printk
@@ -1309,6 +1382,33 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+multiline_comment|/* Cache cards */
+id|macintosh_config-&gt;ident
+op_eq
+id|MAC_MODEL_IICI
+op_logical_or
+id|macintosh_config-&gt;ident
+op_eq
+id|MAC_MODEL_IISI
+op_logical_or
+id|macintosh_config-&gt;ident
+op_eq
+id|MAC_MODEL_IICX
+op_logical_or
+multiline_comment|/* On board L2 cache */
+id|macintosh_config-&gt;ident
+op_eq
+id|MAC_MODEL_IIFX
+)paren
+(brace
+id|mach_l2_flush
+op_assign
+id|mac_cache_card_flush
+suffix:semicolon
+)brace
 multiline_comment|/* goes on forever if timers broken */
 macro_line|#ifdef MAC_DEBUG_SOUND
 id|mac_mksound
@@ -1619,7 +1719,7 @@ comma
 id|MAC_NUBUS
 )brace
 comma
-multiline_comment|/*&n;&t; *&t;Quadra (only 68030 ones will actually work!). Not much odd. Video is at&n;&t; *&t;0xF9000000, via is like a MacII. We label it differently as some of the&n;&t; *&t;stuff connected to VIA2 seems different. Better SCSI chip and ???? onboard ethernet&n;&t; *&t;in all cases using a NatSemi SONIC. The 700, 900 and 950 have some I/O chips in the wrong&n;&t; *&t;place to confuse us. The 840AV seems to have a scsi location of its own&n;&t; */
+multiline_comment|/*&n;&t; *&t;Quadra. Video is at 0xF9000000, via is like a MacII. We label it differently &n;&t; *&t;as some of the stuff connected to VIA2 seems different. Better SCSI chip and &n;&t; *&t;onboard ethernet using a NatSemi SONIC except the 660AV and 840AV which use an &n;&t; *&t;AMD 79C940 (MACE).&n;&t; *&t;The 700, 900 and 950 have some I/O chips in the wrong place to&n;&t; *&t;confuse us. The 840AV has a SCSI location of its own (same as&n;&t; *&t;the 660AV).&n;&t; */
 (brace
 id|MAC_MODEL_Q605
 comma
@@ -1635,7 +1735,7 @@ id|MAC_IDE_NONE
 comma
 id|MAC_SCC_QUADRA
 comma
-id|MAC_ETHER_SONIC
+id|MAC_ETHER_NONE
 comma
 id|MAC_NUBUS
 )brace
@@ -1741,7 +1841,6 @@ comma
 id|MAC_NUBUS
 )brace
 comma
-multiline_comment|/* Does the 840AV have ethernet ??? documents seem to indicate its not quite a&n;&t;   Quadra in this respect ? */
 (brace
 id|MAC_MODEL_Q840
 comma
@@ -1757,7 +1856,7 @@ id|MAC_IDE_NONE
 comma
 id|MAC_SCC_II
 comma
-id|MAC_ETHER_NONE
+id|MAC_ETHER_MACE
 comma
 id|MAC_NUBUS
 )brace
@@ -1891,7 +1990,7 @@ l_string|&quot;Performa 550&quot;
 comma
 id|MAC_ADB_CUDA
 comma
-id|MAC_VIA_QUADRA
+id|MAC_VIA_IIci
 comma
 id|MAC_SCSI_QUADRA
 comma
@@ -2198,7 +2297,7 @@ id|MAC_ADB_PB1
 comma
 id|MAC_VIA_QUADRA
 comma
-id|MAC_SCSI_QUADRA
+id|MAC_SCSI_OLD
 comma
 id|MAC_IDE_NONE
 comma
@@ -2252,7 +2351,7 @@ comma
 (brace
 id|MAC_MODEL_PB190
 comma
-l_string|&quot;PowerBook 190cs&quot;
+l_string|&quot;PowerBook 190&quot;
 comma
 id|MAC_ADB_PB1
 comma
@@ -2607,23 +2706,13 @@ id|mac_bi_data.videorow
 comma
 id|mac_bi_data.videodepth
 comma
-(paren
-r_int
-)paren
-(paren
 id|mac_bi_data.dimensions
 op_amp
 l_int|0xFFFF
-)paren
 comma
-(paren
-r_int
-)paren
-(paren
 id|mac_bi_data.dimensions
 op_rshift
 l_int|16
-)paren
 )paren
 suffix:semicolon
 id|printk
@@ -2746,6 +2835,11 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+id|via_configure_base
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 DECL|function|mac_report_hardware
 r_void
@@ -2791,6 +2885,34 @@ comma
 id|macintosh_config-&gt;name
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|mach_l2_flush
+op_logical_and
+op_logical_neg
+(paren
+id|via_read
+c_func
+(paren
+id|via2
+comma
+id|vBufB
+)paren
+op_amp
+id|VIA2B_vCDis
+)paren
+)paren
+(brace
+id|strcat
+c_func
+(paren
+id|str
+comma
+l_string|&quot;(+L2 cache)&quot;
+)paren
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; * Local variables:&n; *  c-indent-level: 4&n; *  tab-width: 8&n; * End:&n; */
 eof

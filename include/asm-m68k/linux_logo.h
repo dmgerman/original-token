@@ -13421,7 +13421,7 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#else
 DECL|macro|LINUX_LOGO_COLORS
-mdefine_line|#define LINUX_LOGO_COLORS 221
+mdefine_line|#define LINUX_LOGO_COLORS 214
 macro_line|#endif
 macro_line|#ifdef INCLUDE_LINUX_LOGO_DATA
 DECL|macro|INCLUDE_LINUX_LOGOBW

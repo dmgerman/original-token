@@ -2,8 +2,6 @@ multiline_comment|/*&n; * These are the public elements of the Linux kernel X.25
 macro_line|#ifndef&t;X25_KERNEL_H
 DECL|macro|X25_KERNEL_H
 mdefine_line|#define&t;X25_KERNEL_H
-DECL|macro|PF_X25
-mdefine_line|#define PF_X25&t;&t;&t;AF_X25
 DECL|macro|SIOCX25GSUBSCRIP
 mdefine_line|#define&t;SIOCX25GSUBSCRIP&t;(SIOCPROTOPRIVATE + 0)
 DECL|macro|SIOCX25SSUBSCRIP

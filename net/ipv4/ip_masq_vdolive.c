@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *&t;&t;IP_MASQ_VDOLIVE  - VDO Live masquerading module&n; *&n; *&n; * Version:&t;@(#)$Id: ip_masq_vdolive.c,v 1.3 1998/08/29 23:51:18 davem Exp $&n; *&n; * Author:&t;Nigel Metheringham &lt;Nigel.Metheringham@ThePLAnet.net&gt;&n; *&t;&t;PLAnet Online Ltd&n; *&n; * Fixes:&t;Minor changes for 2.1 by&n; *&t;&t;Steven Clarke &lt;Steven.Clarke@ThePlanet.Net&gt;, Planet Online Ltd&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; * Thanks:&n; *&t;Thank you to VDOnet Corporation for allowing me access to&n; *&t;a protocol description without an NDA.  This means that&n; *&t;this module can be distributed as source - a great help!&n; *&t;&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

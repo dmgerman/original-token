@@ -926,6 +926,12 @@ id|dev_id
 r_int
 id|vector
 suffix:semicolon
+r_int
+r_int
+id|oflags
+op_assign
+id|flags
+suffix:semicolon
 multiline_comment|/*&n;&t; * The following is a hack to make some PCI card drivers work,&n;&t; * which set the SA_SHIRQ flag.&n;&t; */
 id|flags
 op_and_assign
@@ -936,17 +942,41 @@ r_if
 c_cond
 (paren
 id|flags
+op_eq
+id|SA_INTERRUPT
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;%s: SA_INTERRUPT changed to IRQ_TYPE_SLOW for %s&bslash;n&quot;
+comma
+id|__FUNCTION__
+comma
+id|devname
+)paren
+suffix:semicolon
+id|flags
+op_assign
+id|IRQ_TYPE_SLOW
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|flags
 template_param
 id|IRQ_TYPE_PRIO
 )paren
 (brace
 id|printk
 (paren
-l_string|&quot;%s: Bad irq type %ld requested from %s&bslash;n&quot;
+l_string|&quot;%s: Bad irq type 0x%lx &lt;0x%lx&gt; requested from %s&bslash;n&quot;
 comma
 id|__FUNCTION__
 comma
 id|flags
+comma
+id|oflags
 comma
 id|devname
 )paren

@@ -270,6 +270,8 @@ DECL|macro|MAC_ETHER_NONE
 mdefine_line|#define MAC_ETHER_NONE&t;&t;0&t;
 DECL|macro|MAC_ETHER_SONIC
 mdefine_line|#define MAC_ETHER_SONIC&t;&t;1
+DECL|macro|MAC_ETHER_MACE
+mdefine_line|#define MAC_ETHER_MACE&t;&t;2
 DECL|macro|MAC_NO_NUBUS
 mdefine_line|#define MAC_NO_NUBUS&t;&t;0
 DECL|macro|MAC_NUBUS
@@ -298,11 +300,11 @@ mdefine_line|#define MAC_MODEL_PB170&t;&t;21
 DECL|macro|MAC_MODEL_Q700
 mdefine_line|#define MAC_MODEL_Q700&t;&t;22
 DECL|macro|MAC_MODEL_CLII
-mdefine_line|#define MAC_MODEL_CLII&t;&t;23
+mdefine_line|#define MAC_MODEL_CLII&t;&t;23&t;/* aka: P200 */
 DECL|macro|MAC_MODEL_PB140
 mdefine_line|#define MAC_MODEL_PB140&t;&t;25
 DECL|macro|MAC_MODEL_Q950
-mdefine_line|#define MAC_MODEL_Q950&t;&t;26
+mdefine_line|#define MAC_MODEL_Q950&t;&t;26&t;/* aka: WGS95 */
 DECL|macro|MAC_MODEL_LCIII
 mdefine_line|#define MAC_MODEL_LCIII&t;&t;27&t;/* aka: P450 */
 DECL|macro|MAC_MODEL_PB210
@@ -316,7 +318,7 @@ mdefine_line|#define MAC_MODEL_PB180&t;&t;33
 DECL|macro|MAC_MODEL_PB160
 mdefine_line|#define MAC_MODEL_PB160&t;&t;34
 DECL|macro|MAC_MODEL_Q800
-mdefine_line|#define MAC_MODEL_Q800&t;&t;35
+mdefine_line|#define MAC_MODEL_Q800&t;&t;35&t;/* aka: WGS80 */
 DECL|macro|MAC_MODEL_Q650
 mdefine_line|#define MAC_MODEL_Q650&t;&t;36 
 DECL|macro|MAC_MODEL_LCII
@@ -326,41 +328,39 @@ mdefine_line|#define MAC_MODEL_PB250&t;&t;38
 DECL|macro|MAC_MODEL_IIVI
 mdefine_line|#define MAC_MODEL_IIVI&t;&t;44
 DECL|macro|MAC_MODEL_P600
-mdefine_line|#define MAC_MODEL_P600&t;&t;45
+mdefine_line|#define MAC_MODEL_P600&t;&t;45&t;/* aka: P600CD */
 DECL|macro|MAC_MODEL_IIVX
 mdefine_line|#define MAC_MODEL_IIVX&t;&t;48
 DECL|macro|MAC_MODEL_CCL
-mdefine_line|#define MAC_MODEL_CCL&t;&t;49
+mdefine_line|#define MAC_MODEL_CCL&t;&t;49&t;/* aka: P250 */
 DECL|macro|MAC_MODEL_PB165C
 mdefine_line|#define MAC_MODEL_PB165C&t;50
 DECL|macro|MAC_MODEL_C610
-mdefine_line|#define MAC_MODEL_C610&t;&t;52
+mdefine_line|#define MAC_MODEL_C610&t;&t;52&t;/* aka: WGS60 */
 DECL|macro|MAC_MODEL_Q610
 mdefine_line|#define MAC_MODEL_Q610&t;&t;53
 DECL|macro|MAC_MODEL_PB145
-mdefine_line|#define MAC_MODEL_PB145&t;&t;54
+mdefine_line|#define MAC_MODEL_PB145&t;&t;54&t;/* aka: PB145B */
 DECL|macro|MAC_MODEL_P520
 mdefine_line|#define MAC_MODEL_P520&t;&t;56&t;/* aka: LC520 */
 DECL|macro|MAC_MODEL_C660
 mdefine_line|#define MAC_MODEL_C660&t;&t;60
 DECL|macro|MAC_MODEL_P460
-mdefine_line|#define MAC_MODEL_P460&t;&t;62&t;/* aka: LCIII+, P466/7 */
+mdefine_line|#define MAC_MODEL_P460&t;&t;62&t;/* aka: LCIII+, P466/P467 */
 DECL|macro|MAC_MODEL_PB180C
 mdefine_line|#define MAC_MODEL_PB180C&t;71
 DECL|macro|MAC_MODEL_PB520
-mdefine_line|#define MAC_MODEL_PB520&t;&t;72
+mdefine_line|#define MAC_MODEL_PB520&t;&t;72&t;/* aka: PB520C, PB540, PB540C, PB550C */
 DECL|macro|MAC_MODEL_PB270C
 mdefine_line|#define MAC_MODEL_PB270C&t;77
 DECL|macro|MAC_MODEL_Q840
 mdefine_line|#define MAC_MODEL_Q840&t;&t;78
 DECL|macro|MAC_MODEL_P550
-mdefine_line|#define MAC_MODEL_P550&t;&t;80
+mdefine_line|#define MAC_MODEL_P550&t;&t;80&t;/* aka: LC550, P560 */
 DECL|macro|MAC_MODEL_CCLII
-mdefine_line|#define MAC_MODEL_CCLII&t;&t;83
+mdefine_line|#define MAC_MODEL_CCLII&t;&t;83&t;/* aka: P275 */
 DECL|macro|MAC_MODEL_PB165
 mdefine_line|#define MAC_MODEL_PB165&t;&t;84
-DECL|macro|MAC_MODEL_PB190
-mdefine_line|#define MAC_MODEL_PB190 &t;85
 DECL|macro|MAC_MODEL_TV
 mdefine_line|#define MAC_MODEL_TV&t;&t;88
 DECL|macro|MAC_MODEL_P475
@@ -368,19 +368,21 @@ mdefine_line|#define MAC_MODEL_P475&t;&t;89&t;/* aka: LC475, P476 */
 DECL|macro|MAC_MODEL_P475F
 mdefine_line|#define MAC_MODEL_P475F&t;&t;90&t;/* aka: P475 w/ FPU (no LC040) */
 DECL|macro|MAC_MODEL_P575
-mdefine_line|#define MAC_MODEL_P575&t;&t;92&t;/* aka: LC575/580, P577/578/508 */
+mdefine_line|#define MAC_MODEL_P575&t;&t;92&t;/* aka: LC575, P577/P578 */
 DECL|macro|MAC_MODEL_Q605
 mdefine_line|#define MAC_MODEL_Q605&t;&t;94
 DECL|macro|MAC_MODEL_Q630
-mdefine_line|#define MAC_MODEL_Q630&t;&t;98&t;/* aka: LC630, P630/631/636/640 */
+mdefine_line|#define MAC_MODEL_Q630&t;&t;98&t;/* aka: LC630, P630/631/635/636/637/638/640 */
 DECL|macro|MAC_MODEL_P588
-mdefine_line|#define MAC_MODEL_P588&t;&t;99&t;/* aka: ?? */
+mdefine_line|#define MAC_MODEL_P588&t;&t;99&t;/* aka: LC580, P580 */
 DECL|macro|MAC_MODEL_PB280
 mdefine_line|#define MAC_MODEL_PB280&t;&t;102
 DECL|macro|MAC_MODEL_PB280C
 mdefine_line|#define MAC_MODEL_PB280C&t;103
 DECL|macro|MAC_MODEL_PB150
 mdefine_line|#define MAC_MODEL_PB150&t;&t;115
+DECL|macro|MAC_MODEL_PB190
+mdefine_line|#define MAC_MODEL_PB190&t;&t;122&t;/* aka: PB190CS */
 r_extern
 r_struct
 id|mac_model

@@ -18,6 +18,7 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
 macro_line|#include &lt;asm/amigaints.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
+macro_line|#include &lt;video/fbcon.h&gt;
 macro_line|#include &lt;video/fbcon-afb.h&gt;
 macro_line|#include &lt;video/fbcon-ilbm.h&gt;
 macro_line|#include &lt;video/fbcon-mfb.h&gt;

@@ -659,6 +659,10 @@ suffix:semicolon
 multiline_comment|/* determine whether kernel code resides in ST-RAM (then ST-RAM is the&n;&t; * first memory block at virtual 0x0) */
 id|stram_start
 op_assign
+(paren
+r_int
+r_int
+)paren
 id|phys_to_virt
 c_func
 (paren
@@ -5928,12 +5932,20 @@ comma
 id|virt_to_phys
 c_func
 (paren
+(paren
+r_void
+op_star
+)paren
 id|p-&gt;start
 )paren
 comma
 id|virt_to_phys
 c_func
 (paren
+(paren
+r_void
+op_star
+)paren
 id|p-&gt;start
 op_plus
 id|p-&gt;size

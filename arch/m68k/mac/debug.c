@@ -736,8 +736,6 @@ macro_line|#endif
 )brace
 macro_line|#ifdef DEBUG_SERIAL
 multiline_comment|/*&n; * TODO: serial debug code&n; */
-DECL|macro|SCC_BAS
-mdefine_line|#define SCC_BAS (0x50F04000)
 DECL|struct|SCC
 r_struct
 id|SCC
@@ -773,7 +771,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|scc
-macro_line|# define scc ((*(volatile struct SCC*)SCC_BAS))
+macro_line|# define scc (*((volatile struct SCC*)mac_bi_data.sccbase))
 multiline_comment|/* Flag that serial port is already initialized and used */
 DECL|variable|mac_SCC_init_done
 r_int
@@ -787,6 +785,14 @@ r_int
 id|mac_SCC_reset_done
 op_assign
 l_int|0
+suffix:semicolon
+DECL|variable|scc_port
+r_static
+r_int
+id|scc_port
+op_assign
+op_minus
+l_int|1
 suffix:semicolon
 DECL|variable|mac_console_driver
 r_static
@@ -825,14 +831,9 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
-DECL|variable|scc_port
-r_static
-r_int
-id|scc_port
-suffix:semicolon
 multiline_comment|/* Mac: loops_per_sec min. 1900000 ^= .5 us; MFPDELAY was 0.6 us*/
-DECL|macro|US
-mdefine_line|#define US 1
+DECL|macro|uSEC
+mdefine_line|#define uSEC 1
 DECL|function|mac_sccb_out
 r_static
 r_inline
@@ -853,7 +854,7 @@ c_loop
 (paren
 id|i
 op_assign
-id|US
+id|uSEC
 suffix:semicolon
 id|i
 OG
@@ -887,7 +888,7 @@ c_loop
 (paren
 id|i
 op_assign
-id|US
+id|uSEC
 suffix:semicolon
 id|i
 OG
@@ -928,7 +929,7 @@ c_loop
 (paren
 id|i
 op_assign
-id|US
+id|uSEC
 suffix:semicolon
 id|i
 OG
@@ -962,7 +963,7 @@ c_loop
 (paren
 id|i
 op_assign
-id|US
+id|uSEC
 suffix:semicolon
 id|i
 OG
@@ -1105,7 +1106,7 @@ c_loop
 (paren
 id|i
 op_assign
-id|US
+id|uSEC
 suffix:semicolon
 id|i
 OG
@@ -1141,7 +1142,7 @@ c_loop
 (paren
 id|i
 op_assign
-id|US
+id|uSEC
 suffix:semicolon
 id|i
 OG
@@ -1182,7 +1183,7 @@ c_loop
 (paren
 id|i
 op_assign
-id|US
+id|uSEC
 suffix:semicolon
 id|i
 OG
@@ -1218,7 +1219,7 @@ c_loop
 (paren
 id|i
 op_assign
-id|US
+id|uSEC
 suffix:semicolon
 id|i
 OG
@@ -1241,13 +1242,13 @@ suffix:semicolon
 macro_line|#endif
 multiline_comment|/* The following two functions do a quick&squot;n&squot;dirty initialization of the MFP or&n; * SCC serial ports. They&squot;re used by the debugging interface, kgdb, and the&n; * serial console code. */
 DECL|macro|SCCB_WRITE
-mdefine_line|#define SCCB_WRITE(reg,val)&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;int i;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;scc.cha_b_ctrl = (reg);&t;&t;&t;&t;&bslash;&n;&t;for( i = US; i &gt; 0; --i )&t;&t;&t;&bslash;&n;&t;&t;barrier();&t;&t;&t;&t;&bslash;&n;&t;scc.cha_b_ctrl = (val);&t;&t;&t;&t;&bslash;&n;&t;for( i = US; i &gt; 0; --i )&t;&t;&t;&bslash;&n;&t;&t;barrier();&t;&t;&t;&t;&bslash;&n;    } while(0)
+mdefine_line|#define SCCB_WRITE(reg,val)&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;int i;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;scc.cha_b_ctrl = (reg);&t;&t;&t;&t;&bslash;&n;&t;for( i = uSEC; i &gt; 0; --i )&t;&t;&t;&bslash;&n;&t;&t;barrier();&t;&t;&t;&t;&bslash;&n;&t;scc.cha_b_ctrl = (val);&t;&t;&t;&t;&bslash;&n;&t;for( i = uSEC; i &gt; 0; --i )&t;&t;&t;&bslash;&n;&t;&t;barrier();&t;&t;&t;&t;&bslash;&n;    } while(0)
 DECL|macro|SCCA_WRITE
-mdefine_line|#define SCCA_WRITE(reg,val)&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;int i;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;scc.cha_a_ctrl = (reg);&t;&t;&t;&t;&bslash;&n;&t;for( i = US; i &gt; 0; --i )&t;&t;&t;&bslash;&n;&t;&t;barrier();&t;&t;&t;&t;&bslash;&n;&t;scc.cha_a_ctrl = (val);&t;&t;&t;&t;&bslash;&n;&t;for( i = US; i &gt; 0; --i )&t;&t;&t;&bslash;&n;&t;&t;barrier();&t;&t;&t;&t;&bslash;&n;    } while(0)
+mdefine_line|#define SCCA_WRITE(reg,val)&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;int i;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;scc.cha_a_ctrl = (reg);&t;&t;&t;&t;&bslash;&n;&t;for( i = uSEC; i &gt; 0; --i )&t;&t;&t;&bslash;&n;&t;&t;barrier();&t;&t;&t;&t;&bslash;&n;&t;scc.cha_a_ctrl = (val);&t;&t;&t;&t;&bslash;&n;&t;for( i = uSEC; i &gt; 0; --i )&t;&t;&t;&bslash;&n;&t;&t;barrier();&t;&t;&t;&t;&bslash;&n;    } while(0)
 multiline_comment|/* loops_per_sec isn&squot;t initialized yet, so we can&squot;t use udelay(). This does a&n; * delay of ~ 60us. */
 multiline_comment|/* Mac: loops_per_sec min. 1900000 ^= .5 us; MFPDELAY was 0.6 us*/
 DECL|macro|LONG_DELAY
-mdefine_line|#define LONG_DELAY()&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&bslash;&n;&t;int i;&t;&t;&t;&t;&t;&bslash;&n;&t;for( i = 60*US; i &gt; 0; --i )&t;&t;&bslash;&n;&t;    barrier();&t;&t;&t;&t;&bslash;&n;    } while(0)
+mdefine_line|#define LONG_DELAY()&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&bslash;&n;&t;int i;&t;&t;&t;&t;&t;&bslash;&n;&t;for( i = 60*uSEC; i &gt; 0; --i )&t;&t;&bslash;&n;&t;    barrier();&t;&t;&t;&t;&bslash;&n;    } while(0)
 macro_line|#ifndef CONFIG_SERIAL_CONSOLE
 DECL|function|__initfunc
 id|__initfunc
@@ -1282,6 +1283,7 @@ r_extern
 r_int
 id|mac_SCC_reset_done
 suffix:semicolon
+multiline_comment|/*&n;&t; * baud rates: 1200, 1800, 2400, 4800, 9600, 19.2k, 38.4k, 57.6k, 115.2k&n;&t; */
 r_static
 r_int
 id|clksrc_table
@@ -1308,34 +1310,6 @@ comma
 l_int|0x00
 comma
 l_int|0x00
-)brace
-suffix:semicolon
-r_static
-r_int
-id|brgsrc_table
-(braket
-l_int|9
-)braket
-op_assign
-multiline_comment|/* reg 14: 0 = RTxC, 2 = PCLK */
-(brace
-l_int|2
-comma
-l_int|2
-comma
-l_int|2
-comma
-l_int|2
-comma
-l_int|2
-comma
-l_int|2
-comma
-l_int|0
-comma
-l_int|2
-comma
-l_int|2
 )brace
 suffix:semicolon
 r_static
@@ -1375,17 +1349,17 @@ l_int|9
 op_assign
 multiline_comment|/* reg12 (BRG low) */
 (brace
-l_int|208
+l_int|94
 comma
-l_int|138
+l_int|62
 comma
-l_int|103
+l_int|46
 comma
-l_int|50
+l_int|22
 comma
-l_int|24
+l_int|10
 comma
-l_int|11
+l_int|4
 comma
 l_int|1
 comma
@@ -1466,20 +1440,26 @@ suffix:semicolon
 id|reg3
 op_assign
 (paren
+(paren
+(paren
 id|cflag
 op_amp
 id|CSIZE
 )paren
 op_eq
 id|CS8
+)paren
 ques
 c_cond
 l_int|0xc0
 suffix:colon
 l_int|0x40
+)paren
 suffix:semicolon
 id|reg5
 op_assign
+(paren
+(paren
 (paren
 id|cflag
 op_amp
@@ -1487,23 +1467,25 @@ id|CSIZE
 )paren
 op_eq
 id|CS8
+)paren
 ques
 c_cond
 l_int|0x60
 suffix:colon
 l_int|0x20
+)paren
 op_or
 l_int|0x82
 multiline_comment|/* assert DTR/RTS */
 suffix:semicolon
-macro_line|#if 0    
 r_if
 c_cond
 (paren
 id|port
+op_eq
+l_int|1
 )paren
 (brace
-macro_line|#endif
 (paren
 r_void
 )paren
@@ -1630,30 +1612,7 @@ c_func
 (paren
 l_int|14
 comma
-id|brgsrc_table
-(braket
-id|baud
-)braket
-)paren
-suffix:semicolon
-id|SCCB_WRITE
-c_func
-(paren
-l_int|14
-comma
-id|brgsrc_table
-(braket
-id|baud
-)braket
-op_or
-(paren
-id|div
-ques
-c_cond
 l_int|1
-suffix:colon
-l_int|0
-)paren
 )paren
 suffix:semicolon
 id|SCCB_WRITE
@@ -1676,11 +1635,16 @@ op_or
 l_int|8
 )paren
 suffix:semicolon
-macro_line|#if 0
 )brace
 r_else
+r_if
+c_cond
+(paren
+id|port
+op_eq
+l_int|0
+)paren
 (brace
-macro_line|#endif
 (paren
 r_void
 )paren
@@ -1807,30 +1771,7 @@ c_func
 (paren
 l_int|14
 comma
-id|brgsrc_table
-(braket
-id|baud
-)braket
-)paren
-suffix:semicolon
-id|SCCA_WRITE
-c_func
-(paren
-l_int|14
-comma
-id|brgsrc_table
-(braket
-id|baud
-)braket
-op_or
-(paren
-id|div
-ques
-c_cond
 l_int|1
-suffix:colon
-l_int|0
-)paren
 )paren
 suffix:semicolon
 id|SCCA_WRITE
@@ -1853,9 +1794,7 @@ op_or
 l_int|8
 )paren
 suffix:semicolon
-macro_line|#if 0
 )brace
-macro_line|#endif
 id|mac_SCC_reset_done
 op_assign
 l_int|1
@@ -1895,20 +1834,7 @@ id|m68k_debug_device
 comma
 l_string|&quot;ser&quot;
 )paren
-)paren
-(brace
-id|strcpy
-c_func
-(paren
-id|m68k_debug_device
-comma
-l_string|&quot;ser1&quot;
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
+op_logical_or
 op_logical_neg
 id|strcmp
 c_func
@@ -1919,7 +1845,7 @@ l_string|&quot;ser1&quot;
 )paren
 )paren
 (brace
-multiline_comment|/* ST-MFP Modem1 serial port */
+multiline_comment|/* Mac modem port */
 id|mac_init_scc_port
 c_func
 (paren
@@ -1933,6 +1859,14 @@ suffix:semicolon
 id|mac_console_driver.write
 op_assign
 id|mac_scca_console_write
+suffix:semicolon
+id|mac_console_driver.wait_key
+op_assign
+id|mac_scca_console_wait_key
+suffix:semicolon
+id|scc_port
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 r_else
@@ -1949,7 +1883,7 @@ l_string|&quot;ser2&quot;
 )paren
 )paren
 (brace
-multiline_comment|/* SCC Modem2 serial port */
+multiline_comment|/* Mac printer port */
 id|mac_init_scc_port
 c_func
 (paren
@@ -1963,6 +1897,14 @@ suffix:semicolon
 id|mac_console_driver.write
 op_assign
 id|mac_sccb_console_write
+suffix:semicolon
+id|mac_console_driver.wait_key
+op_assign
+id|mac_sccb_console_wait_key
+suffix:semicolon
+id|scc_port
+op_assign
+l_int|1
 suffix:semicolon
 )brace
 r_if

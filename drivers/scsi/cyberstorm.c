@@ -449,7 +449,7 @@ id|cmd_buffer
 suffix:semicolon
 id|esp-&gt;esp_command_dvma
 op_assign
-id|VTOP
+id|virt_to_bus
 c_func
 (paren
 (paren

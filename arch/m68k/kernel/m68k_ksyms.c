@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/elfcore.h&gt;
 macro_line|#include &lt;linux/in6.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
@@ -91,6 +92,7 @@ c_func
 id|cache_clear
 )paren
 suffix:semicolon
+macro_line|#ifndef CONFIG_SINGLE_MEMORY_CHUNK
 DECL|variable|mm_vtop
 id|EXPORT_SYMBOL
 c_func
@@ -110,6 +112,21 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|mm_end_of_chunk
+)paren
+suffix:semicolon
+macro_line|#endif
+DECL|variable|mm_vtop_fallback
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|mm_vtop_fallback
+)paren
+suffix:semicolon
+DECL|variable|m68k_memory
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|m68k_memory
 )paren
 suffix:semicolon
 DECL|variable|kernel_map
@@ -187,6 +204,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|disable_irq
+)paren
+suffix:semicolon
+DECL|variable|checksignals
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|checksignals
 )paren
 suffix:semicolon
 multiline_comment|/* Networking helper routines. */

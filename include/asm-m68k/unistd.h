@@ -2,8 +2,6 @@ macro_line|#ifndef _ASM_M68K_UNISTD_H_
 DECL|macro|_ASM_M68K_UNISTD_H_
 mdefine_line|#define _ASM_M68K_UNISTD_H_
 multiline_comment|/*&n; * This file contains the system call numbers.&n; */
-DECL|macro|__NR_setup
-mdefine_line|#define __NR_setup&t;&t;  0&t;/* used only by init, to get system going */
 DECL|macro|__NR_exit
 mdefine_line|#define __NR_exit&t;&t;  1
 DECL|macro|__NR_fork
@@ -376,10 +374,10 @@ DECL|macro|__NR_sigaltstack
 mdefine_line|#define __NR_sigaltstack&t;186
 DECL|macro|__NR_sendfile
 mdefine_line|#define __NR_sendfile&t;&t;187
-DECL|macro|__NR_streams1
-mdefine_line|#define __NR_streams1&t;&t;188&t;/* some people actually want it */
-DECL|macro|__NR_streams2
-mdefine_line|#define __NR_streams2&t;&t;189&t;/* some people actually want it */
+DECL|macro|__NR_getpmsg
+mdefine_line|#define __NR_getpmsg&t;&t;188&t;/* some people actually want streams */
+DECL|macro|__NR_putpmsg
+mdefine_line|#define __NR_putpmsg&t;&t;189&t;/* some people actually want streams */
 multiline_comment|/* user-visible error numbers are in the range -1 - -122: see&n;   &lt;asm-m68k/errno.h&gt; */
 DECL|macro|__syscall_return
 mdefine_line|#define __syscall_return(type, res) &bslash;&n;do { &bslash;&n;&t;if ((unsigned long)(res) &gt;= (unsigned long)(-125)) { &bslash;&n;&t;/* avoid using res which is declared to be in register d0; &bslash;&n;&t;   errno might expand to a function call and clobber it.  */ &bslash;&n;&t;&t;int __err = -(res); &bslash;&n;&t;&t;errno = __err; &bslash;&n;&t;&t;res = -1; &bslash;&n;&t;} &bslash;&n;&t;return (type) (res); &bslash;&n;} while (0)
@@ -416,19 +414,6 @@ c_func
 r_int
 comma
 id|pause
-)paren
-r_static
-r_inline
-id|_syscall1
-c_func
-(paren
-r_int
-comma
-id|setup
-comma
-r_int
-comma
-id|magic
 )paren
 r_static
 r_inline

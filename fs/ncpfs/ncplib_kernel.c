@@ -1566,6 +1566,7 @@ r_return
 id|result
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_NCPFS_NFS_NS
 r_static
 r_int
 DECL|function|ncp_obtain_DOS_dir_base
@@ -1713,6 +1714,7 @@ r_return
 id|result
 suffix:semicolon
 )brace
+macro_line|#endif /* CONFIG_NCPFS_NFS_NS */
 r_static
 r_inline
 r_int

@@ -1,5 +1,6 @@
 multiline_comment|/* sun4d_smp.c: Sparc SS1000/SC2000 SMP support.&n; *&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *&n; * Based on sun4m&squot;s smp.c, which is:&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;asm/head.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/tasks.h&gt;

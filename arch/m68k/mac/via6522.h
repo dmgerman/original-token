@@ -1,4 +1,7 @@
 multiline_comment|/*&n; *&t;6522 Versatile Interface Adapter (VIA)&n; *&n; *&t;There are two of these on the Mac II. Some IRQ&squot;s are vectored&n; *&t;via them as are assorted bits and bobs - eg rtc, adb. The picture&n; *&t;is a bit incomplete as the Mac documentation doesnt cover this well&n; */
+macro_line|#ifndef _ASM_VIA6522_H_
+DECL|macro|_ASM_VIA6522_H_
+mdefine_line|#define _ASM_VIA6522_H_
 DECL|macro|VIABASE
 mdefine_line|#define VIABASE&t;&t;0x50F00000
 DECL|macro|VIABASE2
@@ -46,12 +49,21 @@ mdefine_line|#define VIA2A_vIRQA&t;0x02
 DECL|macro|VIA2A_vIRQ9
 mdefine_line|#define VIA2A_vIRQ9&t;0x01
 multiline_comment|/*&n; *&t;Register B has the fun stuff in it&n; */
+DECL|macro|VIA2B_vMode32
+mdefine_line|#define VIA2B_vMode32&t;0x08&t;/* 24/32bit switch - doubles as cache flush */
 DECL|macro|VIA2B_vPower
 mdefine_line|#define VIA2B_vPower&t;0x04&t;/* Off switch */
 DECL|macro|VIA2B_vBusLk
-mdefine_line|#define VIA2B_vBusLk&t;0x02
+mdefine_line|#define VIA2B_vBusLk&t;0x02&t;/* Nubus in use ?? */
 DECL|macro|VIA2B_vCDis
-mdefine_line|#define VIA2B_vCDis&t;0x01
+mdefine_line|#define VIA2B_vCDis&t;0x01&t;/* Cache disable */
+multiline_comment|/*&n; *&t;The 6522 via is a 2MHz part, and needs a delay. MacOS seems to&n; *&t;execute MOV (Ax),(Ax) for this... Oh and we can&squot;t use udelay&n; *&t;here... see we need the via to calibrate the udelay loop ...&n; */
+r_extern
+r_volatile
+r_int
+op_star
+id|via_memory_bogon
+suffix:semicolon
 DECL|function|via_write
 r_extern
 id|__inline__
@@ -72,6 +84,15 @@ r_int
 id|v
 )paren
 (brace
+op_star
+id|via_memory_bogon
+suffix:semicolon
+op_star
+id|via_memory_bogon
+suffix:semicolon
+op_star
+id|via_memory_bogon
+suffix:semicolon
 id|via
 (braket
 id|reg
@@ -97,6 +118,15 @@ r_int
 id|reg
 )paren
 (brace
+op_star
+id|via_memory_bogon
+suffix:semicolon
+op_star
+id|via_memory_bogon
+suffix:semicolon
+op_star
+id|via_memory_bogon
+suffix:semicolon
 r_return
 (paren
 r_int
@@ -230,4 +260,5 @@ c_func
 r_void
 )paren
 suffix:semicolon
+macro_line|#endif /* _ASM_VIA6522_H_ */
 eof

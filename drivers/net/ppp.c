@@ -1,4 +1,4 @@
-multiline_comment|/*  PPP for Linux&n; *&n; *  Michael Callahan &lt;callahan@maths.ox.ac.uk&gt;&n; *  Al Longyear &lt;longyear@netcom.com&gt;&n; *  Extensively rewritten by Paul Mackerras &lt;paulus@cs.anu.edu.au&gt;&n; *&n; *  ==FILEVERSION 980704==&n; *&n; *  NOTE TO MAINTAINERS:&n; *     If you modify this file at all, please set the number above to the&n; *     date of the modification as YYMMDD (year month day).&n; *     ppp.c is shipped with a PPP distribution as well as with the kernel;&n; *     if everyone increases the FILEVERSION number above, then scripts&n; *     can do the right thing when deciding whether to install a new ppp.c&n; *     file.  Don&squot;t change the format of that line otherwise, so the&n; *     installation script can recognize it.&n; */
+multiline_comment|/*  PPP for Linux&n; *&n; *  Michael Callahan &lt;callahan@maths.ox.ac.uk&gt;&n; *  Al Longyear &lt;longyear@netcom.com&gt;&n; *  Extensively rewritten by Paul Mackerras &lt;paulus@cs.anu.edu.au&gt;&n; *&n; *  ==FILEVERSION 981004==&n; *&n; *  NOTE TO MAINTAINERS:&n; *     If you modify this file at all, please set the number above to the&n; *     date of the modification as YYMMDD (year month day).&n; *     ppp.c is shipped with a PPP distribution as well as with the kernel;&n; *     if everyone increases the FILEVERSION number above, then scripts&n; *     can do the right thing when deciding whether to install a new ppp.c&n; *     file.  Don&squot;t change the format of that line otherwise, so the&n; *     installation script can recognize it.&n; */
 multiline_comment|/*&n;   Sources:&n;&n;   slip.c&n;&n;   RFC1331: The Point-to-Point Protocol (PPP) for the Transmission of&n;   Multi-protocol Datagrams over Point-to-Point Links&n;&n;   RFC1332: IPCP&n;&n;   ppp-2.0&n;&n;   Flags for this module (any combination is acceptable for testing.):&n;&n;   OPTIMIZE_FLAG_TIME - Number of jiffies to force sending of leading flag&n;&t;&t;&t;character. This is normally set to ((HZ * 3) / 2).&n;&t;&t;&t;This is 1.5 seconds. If zero then the leading&n;&t;&t;&t;flag is always sent.&n;&n;   CHECK_CHARACTERS   - Enable the checking on all received characters for&n;&t;&t;&t;8 data bits, no parity. This adds a small amount of&n;&t;&t;&t;processing for each received character.&n;*/
 DECL|macro|OPTIMIZE_FLAG_TIME
 mdefine_line|#define OPTIMIZE_FLAG_TIME&t;((HZ * 3)/2)
@@ -257,6 +257,17 @@ r_struct
 id|sk_buff
 op_star
 id|skb
+)paren
+suffix:semicolon
+r_static
+r_void
+id|ppp_send_frames
+c_func
+(paren
+r_struct
+id|ppp
+op_star
+id|ppp
 )paren
 suffix:semicolon
 r_static
@@ -1716,6 +1727,21 @@ id|ppp-&gt;tty
 op_assign
 id|ppp-&gt;backup_tty
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ppp_tty_push
+c_func
+(paren
+id|ppp
+)paren
+)paren
+id|ppp_output_wakeup
+c_func
+(paren
+id|ppp
+)paren
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -1760,10 +1786,6 @@ c_func
 (paren
 id|ppp
 )paren
-suffix:semicolon
-id|ppp-&gt;inuse
-op_assign
-l_int|0
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
@@ -7989,7 +8011,7 @@ r_return
 id|p
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Compress and send an frame to the peer.&n; * Should be called with dev-&gt;tbusy == 1, having been set by the caller.&n; * That is, we use dev-&gt;tbusy as a lock to prevent reentry of this&n; * procedure.&n; */
+multiline_comment|/*&n; * Compress and send an frame to the peer.&n; * Should be called with xmit_busy == 1, having been set by the caller.&n; * That is, we use xmit_busy as a lock to prevent reentry of this&n; * procedure.&n; */
 r_static
 r_void
 DECL|function|ppp_send_frame
@@ -8256,7 +8278,7 @@ c_func
 id|skb
 )paren
 suffix:semicolon
-id|ppp-&gt;dev.tbusy
+id|ppp-&gt;xmit_busy
 op_assign
 l_int|0
 suffix:semicolon
@@ -8349,7 +8371,7 @@ l_int|0
 )paren
 (brace
 multiline_comment|/* we can release the lock */
-id|ppp-&gt;dev.tbusy
+id|ppp-&gt;xmit_busy
 op_assign
 l_int|0
 suffix:semicolon
@@ -8363,7 +8385,7 @@ OL
 l_int|0
 )paren
 (brace
-multiline_comment|/* this can&squot;t happen, since the caller got the tbusy lock */
+multiline_comment|/* can&squot;t happen, since the caller got the xmit_busy lock */
 id|printk
 c_func
 (paren
@@ -8629,7 +8651,7 @@ c_func
 l_int|0
 comma
 op_amp
-id|ppp-&gt;dev.tbusy
+id|ppp-&gt;xmit_busy
 )paren
 )paren
 (brace
@@ -8650,15 +8672,9 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|ppp-&gt;dev.tbusy
+id|ppp-&gt;xmit_busy
 op_assign
 l_int|0
-suffix:semicolon
-id|mark_bh
-c_func
-(paren
-id|NET_BH
-)paren
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -8669,6 +8685,26 @@ c_func
 id|ppp
 comma
 id|skb
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ppp-&gt;xmit_busy
+op_logical_and
+id|ppp-&gt;dev.tbusy
+)paren
+(brace
+id|ppp-&gt;dev.tbusy
+op_assign
+l_int|0
+suffix:semicolon
+id|mark_bh
+c_func
+(paren
+id|NET_BH
 )paren
 suffix:semicolon
 )brace
@@ -8695,20 +8731,20 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|ppp-&gt;dev.tbusy
+id|ppp-&gt;xmit_busy
 )paren
 (brace
 id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;ppp_output_wakeup called but tbusy==0&bslash;n&quot;
+l_string|&quot;ppp_output_wakeup called but xmit_busy==0&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|ppp-&gt;dev.tbusy
+id|ppp-&gt;xmit_busy
 op_assign
 l_int|0
 suffix:semicolon
@@ -9072,7 +9108,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * The dev-&gt;tbusy field acts as a lock to allow only&n;&t; * one packet to be processed at a time.  If we can&squot;t&n;&t; * get the lock, try again later.&n;&t; */
+multiline_comment|/*&n;&t; * The dev-&gt;tbusy field acts as a lock to allow only&n;&t; * one packet to be processed at a time.  If we can&squot;t&n;&t; * get the lock, try again later.&n;&t; * We deliberately queue as little as possible inside&n;&t; * the ppp driver in order to minimize the latency&n;&t; * for high-priority packets.&n;&t; */
 r_if
 c_cond
 (paren
@@ -9082,11 +9118,22 @@ c_func
 l_int|0
 comma
 op_amp
+id|ppp-&gt;xmit_busy
+)paren
+)paren
+(brace
 id|dev-&gt;tbusy
-)paren
-)paren
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* can&squot;t take it now */
 r_return
 l_int|1
+suffix:semicolon
+)brace
+id|dev-&gt;tbusy
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t; * Put the 4-byte PPP header on the packet.&n;&t; * If there isn&squot;t room for it, we have to copy the packet.&n;&t; */
 r_if
@@ -9141,9 +9188,15 @@ c_func
 id|skb
 )paren
 suffix:semicolon
-id|dev-&gt;tbusy
+id|ppp-&gt;xmit_busy
 op_assign
 l_int|0
+suffix:semicolon
+id|ppp_send_frames
+c_func
+(paren
+id|ppp
+)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -9230,6 +9283,18 @@ c_func
 id|ppp
 comma
 id|skb
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ppp-&gt;xmit_busy
+)paren
+id|ppp_send_frames
+c_func
+(paren
+id|ppp
 )paren
 suffix:semicolon
 r_return
@@ -9739,6 +9804,10 @@ id|ppp-&gt;last_recv
 op_assign
 id|jiffies
 suffix:semicolon
+id|ppp-&gt;xmit_busy
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/* clear statistics */
 id|memset
 c_func
@@ -9916,6 +9985,27 @@ c_func
 id|skb
 )paren
 suffix:semicolon
+id|ppp-&gt;inuse
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ppp-&gt;dev.tbusy
+)paren
+(brace
+id|ppp-&gt;dev.tbusy
+op_assign
+l_int|0
+suffix:semicolon
+id|mark_bh
+c_func
+(paren
+id|NET_BH
+)paren
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; * Utility procedures to print a buffer in hex/ascii&n; */
 r_static

@@ -993,6 +993,8 @@ r_struct
 id|hpfs_dirent
 op_star
 id|de
+op_assign
+l_int|NULL
 suffix:semicolon
 r_struct
 id|buffer_head

@@ -289,6 +289,16 @@ id|regs
 )paren
 suffix:semicolon
 r_static
+r_void
+id|NCR53c7x0_intfly
+(paren
+r_struct
+id|Scsi_Host
+op_star
+id|host
+)paren
+suffix:semicolon
+r_static
 r_int
 id|ncr_halt
 (paren
@@ -1742,11 +1752,6 @@ id|host-&gt;hostdata
 l_int|0
 )braket
 suffix:semicolon
-r_struct
-id|Scsi_Host
-op_star
-id|search
-suffix:semicolon
 multiline_comment|/* &n;     * There are some things which we need to know about in order to provide&n;     * a semblance of support.  Print &squot;em if they aren&squot;t what we expect, &n;     * otherwise don&squot;t add to the noise.&n;     * &n;     * -1 means we don&squot;t know what to expect.&n;     */
 r_int
 id|val
@@ -2577,43 +2582,6 @@ id|NCR53c7x0_driver_init
 id|host
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * Set up an interrupt handler if we aren&squot;t already sharing an IRQ&n;     * with another board.&n;     */
-r_for
-c_loop
-(paren
-id|search
-op_assign
-id|first_host
-suffix:semicolon
-id|search
-op_logical_and
-op_logical_neg
-(paren
-id|search-&gt;hostt
-op_eq
-id|the_template
-op_logical_and
-id|search-&gt;irq
-op_eq
-id|host-&gt;irq
-op_logical_and
-id|search
-op_ne
-id|host
-)paren
-suffix:semicolon
-id|search
-op_assign
-id|search-&gt;next
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|search
-)paren
-(brace
 r_if
 c_cond
 (paren
@@ -2628,7 +2596,7 @@ l_int|0
 comma
 l_string|&quot;53c7xx&quot;
 comma
-id|NCR53c7x0_intr
+id|host
 )paren
 )paren
 (brace
@@ -2650,20 +2618,6 @@ suffix:semicolon
 r_return
 op_minus
 l_int|1
-suffix:semicolon
-)brace
-)brace
-r_else
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;scsi%d : using interrupt handler previously installed for scsi%d&bslash;n&quot;
-comma
-id|host-&gt;host_no
-comma
-id|search-&gt;host_no
-)paren
 suffix:semicolon
 )brace
 r_if
@@ -8451,19 +8405,10 @@ suffix:semicolon
 r_case
 id|A_int_norm_emulateintfly
 suffix:colon
-multiline_comment|/* I&squot;m not sure this is the right ! thing to do, but it works&n;&t; * with the A4000T when copyback is disabled, and also the&n;&t; * WarpEngine with copyback enabled, so it looks as though&n;&t; * it does work to some extent.&n;&t; *&n;&t; * RGH:  I don&squot;t really like it - You get an interrupt which&n;&t; * calls NCR53c7x0_intr(), which calls this function (via&n;&t; * intr_dma()), which calls NCR53c7x0_intr().....&n;&t; * Anyway let&squot;s see how it goes for now.&n;&t; */
-id|hostdata-&gt;emulated_intfly
-op_assign
-l_int|1
-suffix:semicolon
-id|NCR53c7x0_intr
+id|NCR53c7x0_intfly
 c_func
 (paren
-id|host-&gt;irq
-comma
-l_int|NULL
-comma
-l_int|NULL
+id|host
 )paren
 suffix:semicolon
 r_return
@@ -14975,23 +14920,16 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
-multiline_comment|/*&n; * Function : static void NCR53c7x0_intr (int irq, void *dev_id, struct pt_regs * regs)&n; *&n; * Purpose : handle NCR53c7x0 interrupts for all NCR devices sharing&n; *&t;the same IRQ line.  &n; * &n; * Inputs : Since we&squot;re using the SA_INTERRUPT interrupt handler&n; *&t;semantics, irq indicates the interrupt which invoked &n; *&t;this handler.  &n; *&n; * On the 710 we simualte an INTFLY with a script interrupt, and the&n; * script interrupt handler will call back to this function.&n; */
+multiline_comment|/*&n; * Function : static void NCR53c7x0_intfly (struct Scsi_Host *host)&n; *&n; * Purpose : Scan command queue for specified host, looking for completed&n; *           commands.&n; * &n; * Inputs : Scsi_Host pointer.&n; *&n; * &t;This is called from the interrupt handler, when a simulated INTFLY&n; * &t;interrupt occurs.&n; */
 r_static
 r_void
-DECL|function|NCR53c7x0_intr
-id|NCR53c7x0_intr
+DECL|function|NCR53c7x0_intfly
+id|NCR53c7x0_intfly
 (paren
-r_int
-id|irq
-comma
-r_void
-op_star
-id|dev_id
-comma
 r_struct
-id|pt_regs
+id|Scsi_Host
 op_star
-id|regs
+id|host
 )paren
 (brace
 id|NCR53c7x0_local_declare
@@ -14999,17 +14937,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_struct
-id|Scsi_Host
-op_star
-id|host
-suffix:semicolon
-multiline_comment|/* Host we are looking at */
-r_int
-r_char
-id|istat
-suffix:semicolon
-multiline_comment|/* Values of interrupt regs */
 r_struct
 id|NCR53c7x0_hostdata
 op_star
@@ -15026,91 +14953,16 @@ op_star
 op_star
 id|cmd_prev_ptr
 suffix:semicolon
-id|u32
-op_star
-id|dsa
-suffix:semicolon
-multiline_comment|/* DSA */
-r_int
-id|done
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* Indicates when handler &n;&t;&t;&t;&t;&t;&t;   should terminate */
-r_int
-id|interrupted
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* This HA generated &n;&t;&t;&t;&t;&t;&t;   an interrupt */
-r_int
-id|have_intfly
-suffix:semicolon
-multiline_comment|/* Don&squot;t print warning &n;&t;&t;&t;&t;&t;&t;   messages when we stack&n;&t;&t;&t;&t;&t;&t;   INTFLYs */
 r_int
 r_int
 id|flags
 suffix:semicolon
-macro_line|#ifdef NCR_DEBUG
 r_char
-id|buf
-(braket
-l_int|80
-)braket
-suffix:semicolon
-multiline_comment|/* Debugging sprintf buffer */
-r_int
-id|buflen
-suffix:semicolon
-multiline_comment|/* Length of same */
-macro_line|#endif
-macro_line|#if defined(CONFIG_AMIGA)
-id|custom.intena
+id|search_found
 op_assign
-id|IF_PORTS
+l_int|0
 suffix:semicolon
-macro_line|#endif
-r_do
-(brace
-id|done
-op_assign
-l_int|1
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|host
-op_assign
-id|first_host
-suffix:semicolon
-id|host
-suffix:semicolon
-id|host
-op_assign
-id|host-&gt;next
-)paren
-r_if
-c_cond
-(paren
-id|host-&gt;hostt
-op_eq
-id|the_template
-macro_line|#if defined(MVME16x_INTFLY)
-multiline_comment|/* We have two different interrupts pointing&n;&t;&t;&t; * at this routine, so remove this check */
-macro_line|#else
-op_logical_and
-id|host-&gt;irq
-op_eq
-id|irq
-macro_line|#endif
-)paren
-(brace
-id|NCR53c7x0_local_setup
-c_func
-(paren
-id|host
-)paren
-suffix:semicolon
+multiline_comment|/* Got at least one ? */
 id|hostdata
 op_assign
 (paren
@@ -15123,98 +14975,12 @@ id|host-&gt;hostdata
 l_int|0
 )braket
 suffix:semicolon
-id|hostdata-&gt;dsp_changed
-op_assign
-l_int|0
-suffix:semicolon
-id|interrupted
-op_assign
-l_int|0
-suffix:semicolon
-id|have_intfly
-op_assign
-l_int|0
-suffix:semicolon
-r_do
-(brace
-id|hostdata-&gt;dstat_valid
-op_assign
-l_int|0
-suffix:semicolon
-id|interrupted
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Only read istat once, since reading it again will unstack&n;&t;&t; * interrupts?&n;&t;&t; */
-id|istat
-op_assign
-id|NCR53c7x0_read8
+id|NCR53c7x0_local_setup
 c_func
 (paren
-id|hostdata-&gt;istat
+id|host
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|hostdata-&gt;options
-op_amp
-id|OPTION_INTFLY
-)paren
-op_logical_and
-macro_line|#ifdef MVME16x_INTFLY
-multiline_comment|/* the bit is set which indicates an on-the-fly int */
-(paren
-op_star
-(paren
-r_volatile
-r_int
-r_int
-op_star
-)paren
-l_int|0xfff40068
-op_amp
-l_int|0x8000
-)paren
-)paren
-macro_line|#else
-(paren
-id|hostdata-&gt;emulated_intfly
-op_ne
-l_int|0
-)paren
-)paren
-macro_line|#endif
-(brace
-r_char
-id|search_found
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Got at least one ? */
-id|done
-op_assign
-l_int|0
-suffix:semicolon
-id|interrupted
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#ifdef MVME16x_INTFLY
-multiline_comment|/* clear the INTFLY bit */
-op_star
-(paren
-r_volatile
-r_int
-r_int
-op_star
-)paren
-l_int|0xfff40074
-op_assign
-l_int|0x8000
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -15229,7 +14995,7 @@ comma
 id|host-&gt;host_no
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;     * Traverse our list of running commands, and look&n;&t;&t;     * for those with valid (non-0xff ff) status and message&n;&t;&t;     * bytes encoded in the result which signify command&n;&t;&t;     * completion.&n;&t;&t;     */
+multiline_comment|/*&n;    * Traverse our list of running commands, and look&n;    * for those with valid (non-0xff ff) status and message&n;    * bytes encoded in the result which signify command&n;    * completion.&n;    */
 id|save_flags
 c_func
 (paren
@@ -15337,22 +15103,11 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-multiline_comment|/* Copy the result over now; may not be complete,&n;&t;&t;&t; * but subsequent tests may as well be done on&n;                         * cached memory.&n;                         */
+multiline_comment|/* Copy the result over now; may not be complete,&n;&t; * but subsequent tests may as well be done on&n;&t; * cached memory.&n;&t; */
 id|tmp-&gt;result
 op_assign
 id|cmd-&gt;result
 suffix:semicolon
-macro_line|#if 0
-id|printk
-(paren
-l_string|&quot;scsi%d : looking at result of 0x%x&bslash;n&quot;
-comma
-id|host-&gt;host_no
-comma
-id|cmd-&gt;cmd-&gt;result
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -15470,13 +15225,6 @@ id|tmp-&gt;cmnd
 )paren
 suffix:semicolon
 )brace
-macro_line|#if 0
-id|hostdata-&gt;options
-op_and_assign
-op_complement
-id|OPTION_DEBUG_INTR
-suffix:semicolon
-macro_line|#endif
 id|tmp
 op_member_access_from_pointer
 id|scsi_done
@@ -15500,9 +15248,6 @@ c_cond
 (paren
 op_logical_neg
 id|search_found
-op_logical_and
-op_logical_neg
-id|have_intfly
 )paren
 (brace
 id|printk
@@ -15514,41 +15259,121 @@ id|host-&gt;host_no
 suffix:semicolon
 )brace
 r_else
-r_if
-c_cond
-(paren
-op_logical_neg
-id|have_intfly
-)paren
 (brace
-id|have_intfly
-op_assign
-l_int|1
-suffix:semicolon
 id|run_process_issue_queue
 c_func
 (paren
 )paren
 suffix:semicolon
 )brace
-)brace
-r_if
-c_cond
-(paren
-id|hostdata-&gt;emulated_intfly
-)paren
-(brace
-id|hostdata-&gt;emulated_intfly
-op_assign
-l_int|0
-suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-r_if
-c_cond
+multiline_comment|/*&n; * Function : static void NCR53c7x0_intr (int irq, void *dev_id, struct pt_regs * regs)&n; *&n; * Purpose : handle NCR53c7x0 interrupts for all NCR devices sharing&n; *&t;the same IRQ line.  &n; * &n; * Inputs : Since we&squot;re using the SA_INTERRUPT interrupt handler&n; *&t;semantics, irq indicates the interrupt which invoked &n; *&t;this handler.  &n; *&n; * On the 710 we simualte an INTFLY with a script interrupt, and the&n; * script interrupt handler will call back to this function.&n; */
+r_static
+r_void
+DECL|function|NCR53c7x0_intr
+id|NCR53c7x0_intr
+(paren
+r_int
+id|irq
+comma
+r_void
+op_star
+id|dev_id
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+id|NCR53c7x0_local_declare
+c_func
+(paren
+)paren
+suffix:semicolon
+r_struct
+id|Scsi_Host
+op_star
+id|host
+suffix:semicolon
+multiline_comment|/* Host we are looking at */
+r_int
+r_char
+id|istat
+suffix:semicolon
+multiline_comment|/* Values of interrupt regs */
+r_struct
+id|NCR53c7x0_hostdata
+op_star
+id|hostdata
+suffix:semicolon
+multiline_comment|/* host-&gt;hostdata[0] */
+r_struct
+id|NCR53c7x0_cmd
+op_star
+id|cmd
+suffix:semicolon
+multiline_comment|/* command which halted */
+id|u32
+op_star
+id|dsa
+suffix:semicolon
+multiline_comment|/* DSA */
+macro_line|#ifdef NCR_DEBUG
+r_char
+id|buf
+(braket
+l_int|80
+)braket
+suffix:semicolon
+multiline_comment|/* Debugging sprintf buffer */
+r_int
+id|buflen
+suffix:semicolon
+multiline_comment|/* Length of same */
+macro_line|#endif
+id|host
+op_assign
+(paren
+r_struct
+id|Scsi_Host
+op_star
+)paren
+id|dev_id
+suffix:semicolon
+id|hostdata
+op_assign
+(paren
+r_struct
+id|NCR53c7x0_hostdata
+op_star
+)paren
+id|host-&gt;hostdata
+(braket
+l_int|0
+)braket
+suffix:semicolon
+id|NCR53c7x0_local_setup
+c_func
+(paren
+id|host
+)paren
+suffix:semicolon
+multiline_comment|/*&n;     * Only read istat once per loop, since reading it again will unstack&n;     * interrupts&n;     */
+r_while
+c_loop
+(paren
 (paren
 id|istat
+op_assign
+id|NCR53c7x0_read8
+c_func
+(paren
+id|hostdata-&gt;istat
+)paren
+)paren
 op_amp
 (paren
 id|ISTAT_SIP
@@ -15557,13 +15382,13 @@ id|ISTAT_DIP
 )paren
 )paren
 (brace
-id|done
+id|hostdata-&gt;dsp_changed
 op_assign
 l_int|0
 suffix:semicolon
-id|interrupted
+id|hostdata-&gt;dstat_valid
 op_assign
-l_int|1
+l_int|0
 suffix:semicolon
 id|hostdata-&gt;state
 op_assign
@@ -15586,7 +15411,7 @@ comma
 id|host-&gt;host_no
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;     * NCR53c700 and NCR53c700-66 change the current SCSI&n;&t;&t;     * process, hostdata-&gt;ncrcurrent, in the Linux driver so&n;&t;&t;     * cmd = hostdata-&gt;ncrcurrent.&n;&t;&t;     *&n;&t;&t;     * With other chips, we must look through the commands&n;&t;&t;     * executing and find the command structure which &n;&t;&t;     * corresponds to the DSA register.&n;&t;&t;     */
+multiline_comment|/*&n;&t; * NCR53c700 and NCR53c700-66 change the current SCSI&n;&t; * process, hostdata-&gt;ncrcurrent, in the Linux driver so&n;&t; * cmd = hostdata-&gt;ncrcurrent.&n;&t; *&n;&t; * With other chips, we must look through the commands&n;&t; * executing and find the command structure which &n;&t; * corresponds to the DSA register.&n;&t; */
 r_if
 c_cond
 (paren
@@ -15835,50 +15660,6 @@ op_or_assign
 id|DSTAT_DFE
 suffix:semicolon
 )brace
-)brace
-)brace
-r_while
-c_loop
-(paren
-id|interrupted
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|hostdata-&gt;intrs
-op_ne
-op_minus
-l_int|1
-)paren
-id|hostdata-&gt;intrs
-op_increment
-suffix:semicolon
-macro_line|#if 0
-r_if
-c_cond
-(paren
-id|hostdata-&gt;intrs
-OG
-l_int|40
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;scsi%d : too many interrupts, halting&quot;
-comma
-id|host-&gt;host_no
-)paren
-suffix:semicolon
-id|disable
-c_func
-(paren
-id|host
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -15896,7 +15677,6 @@ c_cond
 op_logical_neg
 id|hostdata-&gt;dsp_changed
 )paren
-(brace
 id|hostdata-&gt;dsp
 op_assign
 (paren
@@ -15913,7 +15693,6 @@ id|DSP_REG
 )paren
 )paren
 suffix:semicolon
-)brace
 macro_line|#if 0
 id|printk
 c_func
@@ -15988,22 +15767,6 @@ suffix:semicolon
 )brace
 )brace
 )brace
-)brace
-r_while
-c_loop
-(paren
-op_logical_neg
-id|done
-)paren
-suffix:semicolon
-macro_line|#ifdef CONFIG_AMIGA
-id|custom.intena
-op_assign
-id|IF_SETCLR
-op_or
-id|IF_PORTS
-suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/* &n; * Function : static int abort_connected (struct Scsi_Host *host)&n; *&n; * Purpose : Assuming that the NCR SCSI processor is currently &n; * &t;halted, break the currently established nexus.  Clean&n; *&t;up of the NCR53c7x0_cmd and Scsi_Cmnd structures should&n; *&t;be done on receipt of the abort interrupt.&n; *&n; * Inputs : host - SCSI host&n; *&n; */
 r_static

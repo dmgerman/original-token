@@ -2098,9 +2098,11 @@ op_amp
 id|RW
 )paren
 op_logical_or
+(paren
 id|ssw
 op_amp
 id|RM
+)paren
 )paren
 id|errorcode
 op_or_assign

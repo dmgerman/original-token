@@ -1,5 +1,5 @@
 multiline_comment|/******************************************************************************&n;**  Device driver for the PCI-SCSI NCR538XX controller family.&n;**&n;**  Copyright (C) 1994  Wolfgang Stanglmeier&n;**&n;**  This program is free software; you can redistribute it and/or modify&n;**  it under the terms of the GNU General Public License as published by&n;**  the Free Software Foundation; either version 2 of the License, or&n;**  (at your option) any later version.&n;**&n;**  This program is distributed in the hope that it will be useful,&n;**  but WITHOUT ANY WARRANTY; without even the implied warranty of&n;**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;**  GNU General Public License for more details.&n;**&n;**  You should have received a copy of the GNU General Public License&n;**  along with this program; if not, write to the Free Software&n;**  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;**&n;**-----------------------------------------------------------------------------&n;**&n;**  This driver has been ported to Linux from the FreeBSD NCR53C8XX driver&n;**  and is currently maintained by&n;**&n;**          Gerard Roudier              &lt;groudier@club-internet.fr&gt;&n;**&n;**  Being given that this driver originates from the FreeBSD version, and&n;**  in order to keep synergy on both, any suggested enhancements and corrections&n;**  received on Linux are automatically a potential candidate for the FreeBSD &n;**  version.&n;**&n;**  The original driver has been written for 386bsd and FreeBSD by&n;**          Wolfgang Stanglmeier        &lt;wolf@cologne.de&gt;&n;**          Stefan Esser                &lt;se@mi.Uni-Koeln.de&gt;&n;**&n;**  And has been ported to NetBSD by&n;**          Charles M. Hannum           &lt;mycroft@gnu.ai.mit.edu&gt;&n;**&n;**-----------------------------------------------------------------------------&n;**&n;**                     Brief history&n;**&n;**  December 10 1995 by Gerard Roudier:&n;**     Initial port to Linux.&n;**&n;**  June 23 1996 by Gerard Roudier:&n;**     Support for 64 bits architectures (Alpha).&n;**&n;**  November 30 1996 by Gerard Roudier:&n;**     Support for Fast-20 scsi.&n;**     Support for large DMA fifo and 128 dwords bursting.&n;**&n;**  February 27 1997 by Gerard Roudier:&n;**     Support for Fast-40 scsi.&n;**     Support for on-Board RAM.&n;**&n;**  May 3 1997 by Gerard Roudier:&n;**     Full support for scsi scripts instructions pre-fetching.&n;**&n;**  May 19 1997 by Richard Waltham &lt;dormouse@farsrobt.demon.co.uk&gt;:&n;**     Support for NvRAM detection and reading.&n;**&n;**  August 18 1997 by Cort &lt;cort@cs.nmt.edu&gt;:&n;**     Support for Power/PC (Big Endian).&n;**&n;**  June 20 1998 by Gerard Roudier &lt;groudier@club-internet.fr&gt;:&n;**     Support for up to 64 tags per lun.&n;**     O(1) everywhere (C and SCRIPTS) for normal cases.&n;**     Low PCI traffic for command handling when on-chip RAM is present.&n;**     Aggressive SCSI SCRIPTS optimizations.&n;**&n;*******************************************************************************&n;*/
-multiline_comment|/*&n;**&t;16 July 1998, version 3.0g&n;**&n;**&t;Supported SCSI-II features:&n;**&t;    Synchronous negotiation&n;**&t;    Wide negotiation        (depends on the NCR Chip)&n;**&t;    Enable disconnection&n;**&t;    Tagged command queuing&n;**&t;    Parity checking&n;**&t;    Etc...&n;**&n;**&t;Supported NCR chips:&n;**&t;&t;53C810&t;&t;(8 bits, Fast SCSI-2, no rom BIOS) &n;**&t;&t;53C815&t;&t;(8 bits, Fast SCSI-2, on board rom BIOS)&n;**&t;&t;53C820&t;&t;(Wide,   Fast SCSI-2, no rom BIOS)&n;**&t;&t;53C825&t;&t;(Wide,   Fast SCSI-2, on board rom BIOS)&n;**&t;&t;53C860&t;&t;(8 bits, Fast 20,     no rom BIOS)&n;**&t;&t;53C875&t;&t;(Wide,   Fast 20,     on board rom BIOS)&n;**&t;&t;53C895&t;&t;(Wide,   Fast 40,     on board rom BIOS)&n;**&n;**&t;Other features:&n;**&t;&t;Memory mapped IO (linux-1.3.X and above only)&n;**&t;&t;Module&n;**&t;&t;Shared IRQ (since linux-1.3.72)&n;*/
+multiline_comment|/*&n;**&t;October 4 1998, version 3.0i&n;**&n;**&t;Supported SCSI-II features:&n;**&t;    Synchronous negotiation&n;**&t;    Wide negotiation        (depends on the NCR Chip)&n;**&t;    Enable disconnection&n;**&t;    Tagged command queuing&n;**&t;    Parity checking&n;**&t;    Etc...&n;**&n;**&t;Supported NCR chips:&n;**&t;&t;53C810&t;&t;(8 bits, Fast SCSI-2, no rom BIOS) &n;**&t;&t;53C815&t;&t;(8 bits, Fast SCSI-2, on board rom BIOS)&n;**&t;&t;53C820&t;&t;(Wide,   Fast SCSI-2, no rom BIOS)&n;**&t;&t;53C825&t;&t;(Wide,   Fast SCSI-2, on board rom BIOS)&n;**&t;&t;53C860&t;&t;(8 bits, Fast 20,     no rom BIOS)&n;**&t;&t;53C875&t;&t;(Wide,   Fast 20,     on board rom BIOS)&n;**&t;&t;53C895&t;&t;(Wide,   Fast 40,     on board rom BIOS)&n;**&n;**&t;Other features:&n;**&t;&t;Memory mapped IO (linux-1.3.X and above only)&n;**&t;&t;Module&n;**&t;&t;Shared IRQ (since linux-1.3.72)&n;*/
 DECL|macro|SCSI_NCR_DEBUG_FLAGS
 mdefine_line|#define SCSI_NCR_DEBUG_FLAGS&t;(0)
 multiline_comment|/*==========================================================&n;**&n;**      Include files&n;**&n;**==========================================================&n;*/
@@ -572,6 +572,7 @@ DECL|macro|iounmap
 mdefine_line|#define iounmap vfree
 macro_line|#endif
 macro_line|#ifdef __sparc__
+macro_line|#include &lt;asm/irq.h&gt;
 DECL|macro|remap_pci_mem
 mdefine_line|#define remap_pci_mem(base, size)&t;((vm_offset_t) __va(base))
 DECL|macro|unmap_pci_mem
@@ -3170,7 +3171,7 @@ DECL|member|select2
 id|ncrcmd
 id|select2
 (braket
-l_int|7
+l_int|9
 )braket
 suffix:semicolon
 DECL|member|loadpos
@@ -3184,7 +3185,7 @@ DECL|member|send_ident
 id|ncrcmd
 id|send_ident
 (braket
-l_int|7
+l_int|9
 )braket
 suffix:semicolon
 DECL|member|prepare
@@ -4551,6 +4552,19 @@ multiline_comment|/*-------------------------&lt; SELECT2 &gt;------------------
 comma
 (brace
 multiline_comment|/*&n;&t;**&t;Now there are 4 possibilities:&n;&t;**&n;&t;**&t;(1) The ncr looses arbitration.&n;&t;**&t;This is ok, because it will try again,&n;&t;**&t;when the bus becomes idle.&n;&t;**&t;(But beware of the timeout function!)&n;&t;**&n;&t;**&t;(2) The ncr is reselected.&n;&t;**&t;Then the script processor takes the jump&n;&t;**&t;to the RESELECT label.&n;&t;**&n;&t;**&t;(3) The ncr wins arbitration.&n;&t;**&t;Then it will execute SCRIPTS instruction until &n;&t;**&t;the next instruction that checks SCSI phase.&n;&t;**&t;Then will stop and wait for selection to be &n;&t;**&t;complete or selection time-out to occur.&n;&t;**&t;As a result the SCRIPTS instructions until &n;&t;**&t;LOADPOS + 2 should be executed in parallel with &n;&t;**&t;the SCSI core performing selection.&n;&t;*/
+multiline_comment|/*&n;&t;**&t;The M_REJECT problem seems to be due to a selection &n;&t;**&t;timing problem.&n;&t;**&t;Wait immediately for the selection to complete. &n;&t;**&t;(2.5x behaves so)&n;&t;*/
+id|SCR_JUMPR
+op_xor
+id|IFFALSE
+(paren
+id|WHEN
+(paren
+id|SCR_MSG_OUT
+)paren
+)paren
+comma
+l_int|0
+comma
 multiline_comment|/*&n;&t;**&t;Next time use the next slot.&n;&t;*/
 id|SCR_COPY
 (paren
@@ -4653,6 +4667,15 @@ id|PADDRH
 id|resend_ident
 )paren
 comma
+id|SCR_LOAD_REG
+(paren
+id|scratcha
+comma
+l_int|0x80
+)paren
+comma
+l_int|0
+comma
 id|SCR_COPY
 (paren
 l_int|1
@@ -4660,7 +4683,7 @@ l_int|1
 comma
 id|RADDR
 (paren
-id|sfbr
+id|scratcha
 )paren
 comma
 id|NADDR
@@ -5883,9 +5906,9 @@ id|SCR_COPY
 l_int|1
 )paren
 comma
-id|RADDR
+id|NADDR
 (paren
-id|sfbr
+id|msgout
 )paren
 comma
 id|NADDR
@@ -7050,9 +7073,9 @@ id|SCR_COPY
 l_int|1
 )paren
 comma
-id|RADDR
+id|NADDR
 (paren
-id|sfbr
+id|msgout
 )paren
 comma
 id|NADDR
@@ -7228,9 +7251,9 @@ id|SCR_COPY
 l_int|1
 )paren
 comma
-id|RADDR
+id|NADDR
 (paren
-id|sfbr
+id|msgout
 )paren
 comma
 id|NADDR
@@ -7443,9 +7466,9 @@ id|SCR_COPY
 l_int|1
 )paren
 comma
-id|RADDR
+id|NADDR
 (paren
-id|sfbr
+id|msgout
 )paren
 comma
 id|NADDR
@@ -11298,7 +11321,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;ncr53c%s-%d: rev=0x%02x, base=0x%lx, io_port=0x%lx, irq=0x%x&bslash;n&quot;
+l_string|&quot;ncr53c%s-%d: rev=0x%02x, base=0x%lx, io_port=0x%lx, irq=%s&bslash;n&quot;
 comma
 id|device-&gt;chip.name
 comma
@@ -11310,7 +11333,11 @@ id|device-&gt;slot.base
 comma
 id|device-&gt;slot.io_port
 comma
+id|__irq_itoa
+c_func
+(paren
 id|device-&gt;slot.irq
+)paren
 )paren
 suffix:semicolon
 macro_line|#else
@@ -12079,6 +12106,32 @@ id|bootverbose
 OG
 l_int|1
 )paren
+macro_line|#ifdef __sparc__
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;%s: requesting shared irq %s (dev_id=0x%lx)&bslash;n&quot;
+comma
+id|ncr_name
+c_func
+(paren
+id|np
+)paren
+comma
+id|__irq_itoa
+c_func
+(paren
+id|device-&gt;slot.irq
+)paren
+comma
+(paren
+id|u_long
+)paren
+id|np
+)paren
+suffix:semicolon
+macro_line|#else
 id|printk
 c_func
 (paren
@@ -12099,6 +12152,7 @@ id|u_long
 id|np
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#else
 mdefine_line|#define&t;NCR_SA_INTERRUPT_FLAGS SA_INTERRUPT
 macro_line|#endif
@@ -12120,6 +12174,27 @@ id|np
 )paren
 )paren
 (brace
+macro_line|#ifdef __sparc__
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;%s: request irq %s failure&bslash;n&quot;
+comma
+id|ncr_name
+c_func
+(paren
+id|np
+)paren
+comma
+id|__irq_itoa
+c_func
+(paren
+id|device-&gt;slot.irq
+)paren
+)paren
+suffix:semicolon
+macro_line|#else
 id|printk
 c_func
 (paren
@@ -12135,6 +12210,7 @@ comma
 id|device-&gt;slot.irq
 )paren
 suffix:semicolon
+macro_line|#endif
 r_goto
 id|attach_error
 suffix:semicolon
@@ -12405,7 +12481,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;%s: freeing irq 0x%x&bslash;n&quot;
+l_string|&quot;%s: freeing irq %s&bslash;n&quot;
 comma
 id|ncr_name
 c_func
@@ -12413,7 +12489,11 @@ c_func
 id|np
 )paren
 comma
+id|__irq_itoa
+c_func
+(paren
 id|np-&gt;irq
+)paren
 )paren
 suffix:semicolon
 macro_line|#else
@@ -12795,6 +12875,8 @@ op_logical_neg
 id|tp-&gt;nego_cp
 op_logical_and
 id|tp-&gt;inq_done
+op_logical_and
+id|lp
 )paren
 (brace
 multiline_comment|/*&n;&t;&t;**&t;negotiate wide transfers ?&n;&t;&t;*/
@@ -14890,6 +14972,26 @@ l_int|0
 suffix:semicolon
 multiline_comment|/*&n;**&t;Free irq&n;*/
 macro_line|#ifdef DEBUG_NCR53C8XX
+macro_line|#ifdef __sparc__
+id|printk
+c_func
+(paren
+l_string|&quot;%s: freeing irq %s&bslash;n&quot;
+comma
+id|ncr_name
+c_func
+(paren
+id|np
+)paren
+comma
+id|__irq_itoa
+c_func
+(paren
+id|np-&gt;irq
+)paren
+)paren
+suffix:semicolon
+macro_line|#else
 id|printk
 c_func
 (paren
@@ -14904,6 +15006,7 @@ comma
 id|np-&gt;irq
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 id|free_irq
 c_func
@@ -15746,14 +15849,15 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+id|PRINT_ADDR
+c_func
+(paren
+id|cmd
+)paren
+suffix:semicolon
 id|printk
 (paren
-l_string|&quot;&bslash;n%s: sense data:&quot;
-comma
-id|ncr_name
-(paren
-id|np
-)paren
+l_string|&quot;sense data:&quot;
 )paren
 suffix:semicolon
 r_for
@@ -29976,7 +30080,7 @@ id|cache_line_size
 (brace
 id|cache_line_size
 op_assign
-l_int|16
+id|CACHE_LINE_SIZE
 suffix:semicolon
 r_if
 c_cond
@@ -33789,6 +33893,23 @@ id|u_long
 id|np-&gt;port
 )paren
 suffix:semicolon
+macro_line|#ifdef __sparc__
+id|copy_info
+c_func
+(paren
+op_amp
+id|info
+comma
+l_string|&quot;IRQ number %s&bslash;n&quot;
+comma
+id|__irq_itoa
+c_func
+(paren
+id|np-&gt;irq
+)paren
+)paren
+suffix:semicolon
+macro_line|#else
 id|copy_info
 c_func
 (paren
@@ -33803,6 +33924,7 @@ r_int
 id|np-&gt;irq
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifndef NCR_IOMAPPED
 r_if
 c_cond

@@ -82,6 +82,14 @@ id|kbd_table
 suffix:semicolon
 r_extern
 r_void
+id|adb_bus_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|handle_scancode
 c_func
 (paren
@@ -148,7 +156,6 @@ op_star
 id|adb_mouse_interrupt_hook
 )paren
 (paren
-r_int
 r_char
 op_star
 comma
@@ -158,11 +165,13 @@ suffix:semicolon
 multiline_comment|/* The mouse driver - for debugging */
 r_extern
 r_void
-id|mac_mouse_interrupt
+id|adb_mouse_interrupt
 c_func
 (paren
 r_char
 op_star
+comma
+r_int
 )paren
 suffix:semicolon
 multiline_comment|/* end keyb */
@@ -3894,6 +3903,12 @@ c_func
 l_string|&quot;Configuring keyboard:&bslash;n&quot;
 )paren
 suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|3000
+)paren
+suffix:semicolon
 multiline_comment|/* &n;&t; * turn on all leds - the keyboard driver will turn them back off &n;&t; * via mac_kbd_leds if everything works ok!&n;&t; */
 id|printk
 c_func
@@ -3977,6 +3992,12 @@ c_func
 l_string|&quot;configuring coding mode ...&bslash;n&quot;
 )paren
 suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|3000
+)paren
+suffix:semicolon
 multiline_comment|/* &n;&t; * get the keyboard to send separate codes for&n;&t; * left and right shift, control, option keys. &n;&t; */
 id|adb_request
 c_func
@@ -4051,6 +4072,12 @@ id|printk
 c_func
 (paren
 l_string|&quot;Configuring mouse (3-button mode) ...&bslash;n&quot;
+)paren
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|3000
 )paren
 suffix:semicolon
 multiline_comment|/* &n;&t; * XXX: taken from the PPC driver again ... &n;&t; * Try to switch the mouse (id 3) to handler 4, for three-button&n;&t; * mode. (0x20 is Service Request Enable, 0x03 is Device ID). &n;&t; */
@@ -4161,26 +4188,6 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-)brace
-multiline_comment|/* for &quot;kbd-reset&quot; cmdline param */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
-r_void
-id|mac_kbd_reset_setup
-c_func
-(paren
-r_char
-op_star
-id|str
-comma
-r_int
-op_star
-id|ints
-)paren
-)paren
-(brace
 )brace
 multiline_comment|/* for &quot;kbd-reset&quot; cmdline param */
 DECL|function|__initfunc

@@ -17,6 +17,8 @@ macro_line|#include &lt;asm/unaligned.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;asm/namei.h&gt;
+macro_line|#include &lt;asm/page.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 multiline_comment|/* This can be removed after the beta phase. */
 DECL|macro|CACHE_SUPERVISE
 mdefine_line|#define CACHE_SUPERVISE&t;/* debug the correctness of dcache entries */

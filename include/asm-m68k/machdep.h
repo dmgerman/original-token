@@ -379,6 +379,16 @@ r_int
 )paren
 suffix:semicolon
 r_extern
+r_void
+(paren
+op_star
+id|mach_l2_flush
+)paren
+(paren
+r_int
+)paren
+suffix:semicolon
+r_extern
 r_int
 id|mach_sysrq_key
 suffix:semicolon

@@ -376,10 +376,10 @@ DECL|macro|__NR_sigaltstack
 mdefine_line|#define __NR_sigaltstack&t;186
 DECL|macro|__NR_sendfile
 mdefine_line|#define __NR_sendfile&t;&t;187
-DECL|macro|__NR_streams1
-mdefine_line|#define __NR_streams1&t;&t;188&t;/* some people actually want it */
-DECL|macro|__NR_streams2
-mdefine_line|#define __NR_streams2&t;&t;189&t;/* some people actually want it */
+DECL|macro|__NR_getpmsg
+mdefine_line|#define __NR_getpmsg&t;&t;188&t;/* some people actually want streams */
+DECL|macro|__NR_putpmsg
+mdefine_line|#define __NR_putpmsg&t;&t;189&t;/* some people actually want streams */
 multiline_comment|/* user-visible error numbers are in the range -1 - -122: see &lt;asm-i386/errno.h&gt; */
 DECL|macro|__syscall_return
 mdefine_line|#define __syscall_return(type, res) &bslash;&n;do { &bslash;&n;&t;if ((unsigned long)(res) &gt;= (unsigned long)(-125)) { &bslash;&n;&t;&t;errno = -(res); &bslash;&n;&t;&t;res = -1; &bslash;&n;&t;} &bslash;&n;&t;return (type) (res); &bslash;&n;} while (0)

@@ -1,6 +1,7 @@
 macro_line|#ifndef _LINUX_ERRQUEUE_H
 DECL|macro|_LINUX_ERRQUEUE_H
 mdefine_line|#define _LINUX_ERRQUEUE_H 1
+macro_line|#include &lt;linux/config.h&gt;
 DECL|struct|sock_extended_err
 r_struct
 id|sock_extended_err

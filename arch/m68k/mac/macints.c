@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *&t;Macintosh interrupts&n; *&n; * General design:&n; * In contrary to the Amiga and Atari platforms, the Mac hardware seems to &n; * exclusively use the autovector interrupts (the &squot;generic level0-level7&squot; &n; * interrupts with exception vectors 0x19-0x1f). The following interrupt levels&n; * are used:&n; *&t;1&t;- VIA1&n; *&t;&t;  - slot 0: one second interrupt&n; *&t;&t;  - slot 1: VBlank&n; *&t;&t;  - slot 2: ADB data ready (SR full)&n; *&t;&t;  - slot 3: ADB data  (CB2)&n; *&t;&t;  - slot 4: ADB clock (CB1)&n; *&t;&t;  - slot 5: timer 2&n; *&t;&t;  - slot 6: timer 1&n; *&t;&t;  - slot 7: status of IRQ; signals &squot;any enabled int.&squot;&n; *&n; *&t;2&t;- VIA2, RBV or OSS&n; *&t;&t;  - slot 0: SCSI DRQ&n; *&t;&t;  - slot 1: NUBUS IRQ&n; *&t;&t;  - slot 3: SCSI IRQ&n; *&n; *&t;4&t;- SCC&n; *&t;&t;  - subdivided into Channel B and Channel A interrupts &n; *&n; *&t;6&t;- Off switch (??)&n; *&n; *&t;7&t;- Debug output&n; *&n; * AV Macs only, handled by PSC:&n; *&n; *&t;3&t;- MACE ethernet IRQ (DMA complete on level 4)&n; *&n; *&t;5&t;- DSP ?? &n; *&n; * Using the autovector irq numbers for Linux/m68k hardware interrupts without&n; * the IRQ_MACHSPEC bit set would interfere with the general m68k interrupt &n; * handling in kernel versions 2.0.x, so the following strategy is used:&n; *&n; * - mac_init_IRQ installs the low-level entry points for the via1 and via2 &n; *   exception vectors and the corresponding handlers (C functions); these &n; *   entry points just add the machspec bit and call the handlers proper.&n; *   (in principle, the C functions can be installed as the exception vectors &n; *   directly, as they are hardcoded anyway; that&squot;s the current method). &n; *&n; * - via[12]_irq determine what interrupt sources have triggered the interrupt,&n; *   and call the corresponding device interrupt handlers. &n; *   (currently, via1_irq and via2_irq just call via_irq, passing the via base&n; *   address. RBV interrupts are handled by (you guessed it) rbv_irq).&n; *   Some interrupt functions want to have the interrupt number passed, so &n; *   via_irq and rbv_irq need to generate the &squot;fake&squot; numbers from scratch.&n; *&n; * - for the request/free/enable/disable business, interrupt sources are &n; *   numbered internally (suggestion: keep irq 0-7 unused :-). One bit in the &n; *   irq number specifies the via# to use, i.e. via1 interrupts are 8-16, &n; *   via2 interrupts 17-32, rbv interrupts ...&n; *   The device interrupt table and the irq_enable bitmap is maintained by &n; *   the machspec interrupt code; all device drivers should only use these &n; *   functions ! &n; *&n; * - For future porting to version 2.1 (and removing of the machspec bit) it &n; *   should be sufficient to use the same numbers (everything &gt; 7 is assumed &n; *   to be machspec, according to Jes!).&n; *&n; *   TODO:&n; * - integrate Nubus interrupts in request/free_irq&n; *&n; * - &n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -611,7 +610,10 @@ op_star
 id|regs
 )paren
 suffix:semicolon
-multiline_comment|/*#define DEBUG_VIA*/
+multiline_comment|/* #define DEBUG_MACINTS */
+multiline_comment|/* #define DEBUG_NUBUS_INT */
+multiline_comment|/* #define DEBUG_VIA */
+multiline_comment|/* #define DEBUG_VIA_NUBUS */
 DECL|function|mac_init_IRQ
 r_void
 id|mac_init_IRQ
@@ -777,22 +779,6 @@ id|via2_irq
 )paren
 suffix:semicolon
 multiline_comment|/* &n;&t; * level 4 IRQ: SCC - use &squot;master&squot; interrupt routine that calls the &n;&t; *&t;&t;registered channel-specific interrupts in turn.&n;&t; *&t;&t;Currently, one interrupt per channel is used, solely&n;&t; *&t;&t;to pass the correct async_info as parameter!&n;&t; */
-macro_line|#if 0&t;/* want to install debug/SCC shutup routine until SCC init */
-id|sys_request_irq
-c_func
-(paren
-l_int|4
-comma
-id|mac_SCC_handler
-comma
-id|IRQ_FLG_STD
-comma
-l_string|&quot;INT4&quot;
-comma
-id|mac_SCC_handler
-)paren
-suffix:semicolon
-macro_line|#else
 id|sys_request_irq
 c_func
 (paren
@@ -803,22 +789,6 @@ comma
 id|IRQ_FLG_STD
 comma
 l_string|&quot;INT4&quot;
-comma
-id|mac_debug_handler
-)paren
-suffix:semicolon
-macro_line|#endif
-multiline_comment|/* Alan uses IRQ 5 for SCC ?? */
-id|sys_request_irq
-c_func
-(paren
-l_int|5
-comma
-id|mac_debug_handler
-comma
-id|IRQ_FLG_STD
-comma
-l_string|&quot;INT5&quot;
 comma
 id|mac_debug_handler
 )paren
@@ -1912,6 +1882,14 @@ c_cond
 op_logical_neg
 id|via2_is_oss
 )paren
+r_if
+c_cond
+(paren
+id|macintosh_config-&gt;scsi_type
+op_eq
+id|MAC_SCSI_OLD
+)paren
+(brace
 multiline_comment|/* CB2 (IRQ) indep. interrupt input, positive edge */
 multiline_comment|/* CA2 (DRQ) indep. interrupt input, positive edge */
 id|via_write
@@ -1924,6 +1902,22 @@ comma
 l_int|0x66
 )paren
 suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* CB2 (IRQ) indep. interrupt input, negative edge */
+multiline_comment|/* CA2 (DRQ) indep. interrupt input, negative edge */
+id|via_write
+c_func
+(paren
+id|via
+comma
+id|vPCR
+comma
+l_int|0x22
+)paren
+suffix:semicolon
+)brace
 macro_line|#if 0
 r_else
 multiline_comment|/* CB2 (IRQ) indep. interrupt input, negative edge */
@@ -2543,7 +2537,7 @@ r_if
 c_cond
 (paren
 id|srcidx
-op_ge
+OG
 id|SRC_VIA2
 )paren
 id|via_write
@@ -2731,12 +2725,13 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;VIA2 is fixed. The stuff above VIA2 is for later&n;&t; *&t;macintoshes only.&n;&t; */
 r_else
 r_if
 c_cond
 (paren
 id|srcidx
-op_ge
+OG
 id|SRC_VIA2
 )paren
 id|via_write
@@ -2996,7 +2991,7 @@ r_if
 c_cond
 (paren
 id|srcidx
-op_ge
+OG
 id|SRC_VIA2
 )paren
 id|pending
@@ -5141,7 +5136,7 @@ multiline_comment|/* SCSI IRQ */
 id|printk
 c_func
 (paren
-l_string|&quot;oss_irq: irq %d events %x %x %x !&bslash;n&quot;
+l_string|&quot;oss_irq: irq %d srcidx+1 %d events %x %x %x !&bslash;n&quot;
 comma
 id|irq
 comma
@@ -5812,7 +5807,7 @@ multiline_comment|/* SCSI IRQ */
 id|printk
 c_func
 (paren
-l_string|&quot;psc_irq: irq %d events %x !&bslash;n&quot;
+l_string|&quot;psc_irq: irq %d srcidx+1 %d events %x !&bslash;n&quot;
 comma
 id|irq
 comma

@@ -6983,7 +6983,13 @@ comma
 (paren
 id|__u32
 )paren
+(paren
+(paren
+r_int
+r_int
+)paren
 id|buf
+)paren
 )paren
 suffix:semicolon
 id|x

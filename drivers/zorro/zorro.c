@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *    $Id: zorro.c,v 1.1.2.1 1998/06/07 23:21:02 geert Exp $&n; *&n; *    Zorro Bus Services&n; *&n; *    Copyright (C) 1995-1998 Geert Uytterhoeven&n; *&n; *    This file is subject to the terms and conditions of the GNU General Public&n; *    License.  See the file COPYING in the main directory of this archive&n; *    for more details.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -669,13 +670,6 @@ r_void
 (brace
 id|u_int
 id|i
-comma
-id|j
-suffix:semicolon
-id|u32
-id|disabled_z2mem
-op_assign
-l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -797,82 +791,6 @@ l_int|1024
 op_star
 l_int|1024
 )paren
-(brace
-r_if
-c_cond
-(paren
-id|AMIGAHW_PRESENT
-c_func
-(paren
-id|ZORRO3
-)paren
-)paren
-(brace
-multiline_comment|/* don&squot;t use Zorro II RAM as system memory on Zorro III */
-multiline_comment|/* capable machines */
-r_if
-c_cond
-(paren
-id|i
-op_eq
-l_int|0
-)paren
-(brace
-multiline_comment|/* don&squot;t cut off the branch we&squot;re sitting on */
-id|printk
-c_func
-(paren
-l_string|&quot;Warning: kernel runs in Zorro II memory&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|disabled_z2mem
-op_add_assign
-id|m68k_memory
-(braket
-id|i
-)braket
-dot
-id|size
-suffix:semicolon
-id|m68k_num_memory
-op_decrement
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|j
-op_assign
-id|i
-suffix:semicolon
-id|j
-OL
-id|m68k_num_memory
-suffix:semicolon
-id|j
-op_increment
-)paren
-id|m68k_memory
-(braket
-id|j
-)braket
-op_assign
-id|m68k_memory
-(braket
-id|j
-op_plus
-l_int|1
-)braket
-suffix:semicolon
-id|i
-op_decrement
-suffix:semicolon
-r_continue
-suffix:semicolon
-)brace
-)brace
 id|mark_region
 c_func
 (paren
@@ -893,21 +811,12 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|disabled_z2mem
-)paren
-id|printk
+macro_line|#ifdef CONFIG_PROC_FS
+id|zorro_proc_init
 c_func
 (paren
-l_string|&quot;%dK of Zorro II memory will not be used as system memory&bslash;n&quot;
-comma
-id|disabled_z2mem
-op_rshift
-l_int|10
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 eof
