@@ -1,5 +1,5 @@
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *&t;baycom_ser_hdx.c  -- baycom ser12 halfduplex radio modem driver.&n; *&n; *&t;Copyright (C) 1996-1999  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  Please note that the GPL allows you to use the driver, NOT the radio.&n; *  In order to use the radio, you need a license from the communications&n; *  authority of your country.&n; *&n; *&n; *  Supported modems&n; *&n; *  ser12:  This is a very simple 1200 baud AFSK modem. The modem consists only&n; *          of a modulator/demodulator chip, usually a TI TCM3105. The computer&n; *          is responsible for regenerating the receiver bit clock, as well as&n; *          for handling the HDLC protocol. The modem connects to a serial port,&n; *          hence the name. Since the serial port is not used as an async serial&n; *          port, the kernel driver for serial ports cannot be used, and this&n; *          driver only supports standard serial hardware (8250, 16450, 16550A)&n; *&n; *&n; *  Command line options (insmod command line)&n; *&n; *  mode     ser12    hardware DCD&n; *           ser12*   software DCD&n; *           ser12@   hardware/software DCD, i.e. no explicit DCD signal but hardware&n; *                    mutes audio input to the modem&n; *           ser12+   hardware DCD, inverted signal at DCD pin&n; *  iobase   base address of the port; common values are 0x3f8, 0x2f8, 0x3e8, 0x2e8&n; *  irq      interrupt line of the port; common values are 4,3&n; *&n; *&n; *  History:&n; *   0.1  26.06.96  Adapted from baycom.c and made network driver interface&n; *        18.10.96  Changed to new user space access routines (copy_{to,from}_user)&n; *   0.3  26.04.97  init code/data tagged&n; *   0.4  08.07.97  alternative ser12 decoding algorithm (uses delta CTS ints)&n; *   0.5  11.11.97  ser12/par96 split into separate files&n; *   0.6  14.04.98  cleanups&n; *   0.7  03.08.99  adapt to Linus&squot; new __setup/__initcall&n; *   0.8  10.08.99  use module_init/module_exit&n; */
+multiline_comment|/*&n; *&t;baycom_ser_hdx.c  -- baycom ser12 halfduplex radio modem driver.&n; *&n; *&t;Copyright (C) 1996-2000  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  Please note that the GPL allows you to use the driver, NOT the radio.&n; *  In order to use the radio, you need a license from the communications&n; *  authority of your country.&n; *&n; *&n; *  Supported modems&n; *&n; *  ser12:  This is a very simple 1200 baud AFSK modem. The modem consists only&n; *          of a modulator/demodulator chip, usually a TI TCM3105. The computer&n; *          is responsible for regenerating the receiver bit clock, as well as&n; *          for handling the HDLC protocol. The modem connects to a serial port,&n; *          hence the name. Since the serial port is not used as an async serial&n; *          port, the kernel driver for serial ports cannot be used, and this&n; *          driver only supports standard serial hardware (8250, 16450, 16550A)&n; *&n; *&n; *  Command line options (insmod command line)&n; *&n; *  mode     ser12    hardware DCD&n; *           ser12*   software DCD&n; *           ser12@   hardware/software DCD, i.e. no explicit DCD signal but hardware&n; *                    mutes audio input to the modem&n; *           ser12+   hardware DCD, inverted signal at DCD pin&n; *  iobase   base address of the port; common values are 0x3f8, 0x2f8, 0x3e8, 0x2e8&n; *  irq      interrupt line of the port; common values are 4,3&n; *&n; *&n; *  History:&n; *   0.1  26.06.1996  Adapted from baycom.c and made network driver interface&n; *        18.10.1996  Changed to new user space access routines (copy_{to,from}_user)&n; *   0.3  26.04.1997  init code/data tagged&n; *   0.4  08.07.1997  alternative ser12 decoding algorithm (uses delta CTS ints)&n; *   0.5  11.11.1997  ser12/par96 split into separate files&n; *   0.6  14.04.1998  cleanups&n; *   0.7  03.08.1999  adapt to Linus&squot; new __setup/__initcall&n; *   0.8  10.08.1999  use module_init/module_exit&n; *   0.9  12.02.2000  adapted to softnet driver interface&n; */
 multiline_comment|/*****************************************************************************/
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -33,9 +33,9 @@ id|bc_drvinfo
 )braket
 op_assign
 id|KERN_INFO
-l_string|&quot;baycom_ser_hdx: (C) 1996-1999 Thomas Sailer, HB9JNX/AE4WA&bslash;n&quot;
+l_string|&quot;baycom_ser_hdx: (C) 1996-2000 Thomas Sailer, HB9JNX/AE4WA&bslash;n&quot;
 id|KERN_INFO
-l_string|&quot;baycom_ser_hdx: version 0.7 compiled &quot;
+l_string|&quot;baycom_ser_hdx: version 0.9 compiled &quot;
 id|__TIME__
 l_string|&quot; &quot;
 id|__DATE__
@@ -2352,7 +2352,14 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|dev-&gt;start
+id|test_bit
+c_func
+(paren
+id|LINK_STATE_START
+comma
+op_amp
+id|dev-&gt;state
+)paren
 op_logical_or
 op_logical_neg
 id|suser

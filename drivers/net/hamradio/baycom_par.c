@@ -1,5 +1,5 @@
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *&t;baycom_par.c  -- baycom par96 and picpar radio modem driver.&n; *&n; *&t;Copyright (C) 1996-2000  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  Please note that the GPL allows you to use the driver, NOT the radio.&n; *  In order to use the radio, you need a license from the communications&n; *  authority of your country.&n; *&n; *&n; *  Supported modems&n; *&n; *  par96:  This is a modem for 9600 baud FSK compatible to the G3RUH standard.&n; *          The modem does all the filtering and regenerates the receiver clock.&n; *          Data is transferred from and to the PC via a shift register.&n; *          The shift register is filled with 16 bits and an interrupt is&n; *          signalled. The PC then empties the shift register in a burst. This&n; *          modem connects to the parallel port, hence the name. The modem&n; *          leaves the implementation of the HDLC protocol and the scrambler&n; *          polynomial to the PC. This modem is no longer available (at least&n; *          from Baycom) and has been replaced by the PICPAR modem (see below).&n; *          You may however still build one from the schematics published in&n; *          cq-DL :-).&n; *&n; *  picpar: This is a redesign of the par96 modem by Henning Rech, DF9IC. The&n; *          modem is protocol compatible to par96, but uses only three low&n; *          power ICs and can therefore be fed from the parallel port and&n; *          does not require an additional power supply. It features&n; *          built in DCD circuitry. The driver should therefore be configured&n; *          for hardware DCD.&n; *&n; *&n; *  Command line options (insmod command line)&n; *&n; *  mode     driver mode string. Valid choices are par96 and picpar.&n; *  iobase   base address of the port; common values are 0x378, 0x278, 0x3bc&n; *&n; *&n; *  History:&n; *   0.1  26.06.96  Adapted from baycom.c and made network driver interface&n; *        18.10.96  Changed to new user space access routines (copy_{to,from}_user)&n; *   0.3  26.04.97  init code/data tagged&n; *   0.4  08.07.97  alternative ser12 decoding algorithm (uses delta CTS ints)&n; *   0.5  11.11.97  split into separate files for ser12/par96&n; *   0.6  03.08.99  adapt to Linus&squot; new __setup/__initcall&n; *                  removed some pre-2.2 kernel compatibility cruft&n; *   0.7  10.08.99  Check if parport can do SPP and is safe to access during interrupt contexts&n; */
+multiline_comment|/*&n; *&t;baycom_par.c  -- baycom par96 and picpar radio modem driver.&n; *&n; *&t;Copyright (C) 1996-2000  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  Please note that the GPL allows you to use the driver, NOT the radio.&n; *  In order to use the radio, you need a license from the communications&n; *  authority of your country.&n; *&n; *&n; *  Supported modems&n; *&n; *  par96:  This is a modem for 9600 baud FSK compatible to the G3RUH standard.&n; *          The modem does all the filtering and regenerates the receiver clock.&n; *          Data is transferred from and to the PC via a shift register.&n; *          The shift register is filled with 16 bits and an interrupt is&n; *          signalled. The PC then empties the shift register in a burst. This&n; *          modem connects to the parallel port, hence the name. The modem&n; *          leaves the implementation of the HDLC protocol and the scrambler&n; *          polynomial to the PC. This modem is no longer available (at least&n; *          from Baycom) and has been replaced by the PICPAR modem (see below).&n; *          You may however still build one from the schematics published in&n; *          cq-DL :-).&n; *&n; *  picpar: This is a redesign of the par96 modem by Henning Rech, DF9IC. The&n; *          modem is protocol compatible to par96, but uses only three low&n; *          power ICs and can therefore be fed from the parallel port and&n; *          does not require an additional power supply. It features&n; *          built in DCD circuitry. The driver should therefore be configured&n; *          for hardware DCD.&n; *&n; *&n; *  Command line options (insmod command line)&n; *&n; *  mode     driver mode string. Valid choices are par96 and picpar.&n; *  iobase   base address of the port; common values are 0x378, 0x278, 0x3bc&n; *&n; *&n; *  History:&n; *   0.1  26.06.1996  Adapted from baycom.c and made network driver interface&n; *        18.10.1996  Changed to new user space access routines (copy_{to,from}_user)&n; *   0.3  26.04.1997  init code/data tagged&n; *   0.4  08.07.1997  alternative ser12 decoding algorithm (uses delta CTS ints)&n; *   0.5  11.11.1997  split into separate files for ser12/par96&n; *   0.6  03.08.1999  adapt to Linus&squot; new __setup/__initcall&n; *                    removed some pre-2.2 kernel compatibility cruft&n; *   0.7  10.08.1999  Check if parport can do SPP and is safe to access during interrupt contexts&n; *   0.8  12.02.2000  adapted to softnet driver interface&n; *                    removed direct parport access, uses parport driver methods&n; */
 multiline_comment|/*****************************************************************************/
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -13,7 +13,6 @@ macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
-macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
@@ -48,9 +47,9 @@ id|bc_drvinfo
 )braket
 op_assign
 id|KERN_INFO
-l_string|&quot;baycom_par: (C) 1996-1999 Thomas Sailer, HB9JNX/AE4WA&bslash;n&quot;
+l_string|&quot;baycom_par: (C) 1996-2000 Thomas Sailer, HB9JNX/AE4WA&bslash;n&quot;
 id|KERN_INFO
-l_string|&quot;baycom_par: version 0.6 compiled &quot;
+l_string|&quot;baycom_par: version 0.8 compiled &quot;
 id|__TIME__
 l_string|&quot; &quot;
 id|__DATE__
@@ -69,16 +68,6 @@ id|NR_PORTS
 )braket
 suffix:semicolon
 multiline_comment|/* --------------------------------------------------------------------- */
-DECL|macro|SER12_EXTENT
-mdefine_line|#define SER12_EXTENT 8
-DECL|macro|LPT_DATA
-mdefine_line|#define LPT_DATA(dev)    ((dev)-&gt;base_addr+0)
-DECL|macro|LPT_STATUS
-mdefine_line|#define LPT_STATUS(dev)  ((dev)-&gt;base_addr+1)
-DECL|macro|LPT_CONTROL
-mdefine_line|#define LPT_CONTROL(dev) ((dev)-&gt;base_addr+2)
-DECL|macro|LPT_IRQ_ENABLE
-mdefine_line|#define LPT_IRQ_ENABLE      0x10
 DECL|macro|PAR96_BURSTBITS
 mdefine_line|#define PAR96_BURSTBITS 16
 DECL|macro|PAR96_BURST
@@ -315,6 +304,13 @@ op_amp
 id|bc-&gt;hdrv
 )paren
 suffix:semicolon
+r_struct
+id|parport
+op_star
+id|pp
+op_assign
+id|bc-&gt;pdev-&gt;port
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -404,30 +400,26 @@ id|val
 op_or_assign
 id|PAR96_TXBIT
 suffix:semicolon
-id|outb
+id|pp-&gt;ops
+op_member_access_from_pointer
+id|write_data
 c_func
 (paren
-id|val
+id|pp
 comma
-id|LPT_DATA
-c_func
-(paren
-id|dev
-)paren
+id|val
 )paren
 suffix:semicolon
-id|outb
+id|pp-&gt;ops
+op_member_access_from_pointer
+id|write_data
 c_func
 (paren
+id|pp
+comma
 id|val
 op_or
 id|PAR96_BURST
-comma
-id|LPT_DATA
-c_func
-(paren
-id|dev
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -464,6 +456,13 @@ id|mask2
 comma
 id|descx
 suffix:semicolon
+r_struct
+id|parport
+op_star
+id|pp
+op_assign
+id|bc-&gt;pdev-&gt;port
+suffix:semicolon
 multiline_comment|/*&n;&t; * do receiver; differential decode and descramble on the fly&n;&t; */
 r_for
 c_loop
@@ -493,14 +492,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|inb
+id|pp-&gt;ops
+op_member_access_from_pointer
+id|read_status
 c_func
 (paren
-id|LPT_STATUS
-c_func
-(paren
-id|dev
-)paren
+id|pp
 )paren
 op_amp
 id|PAR96_RXBIT
@@ -520,18 +517,16 @@ l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* now the diff decoded data is inverted in descram */
-id|outb
+id|pp-&gt;ops
+op_member_access_from_pointer
+id|write_data
 c_func
 (paren
+id|pp
+comma
 id|PAR97_POWER
 op_or
 id|PAR96_PTT
-comma
-id|LPT_DATA
-c_func
-(paren
-id|dev
-)paren
 )paren
 suffix:semicolon
 id|descx
@@ -568,20 +563,18 @@ id|data
 op_or_assign
 l_int|0x8000
 suffix:semicolon
-id|outb
+id|pp-&gt;ops
+op_member_access_from_pointer
+id|write_data
 c_func
 (paren
+id|pp
+comma
 id|PAR97_POWER
 op_or
 id|PAR96_PTT
 op_or
 id|PAR96_BURST
-comma
-id|LPT_DATA
-c_func
-(paren
-id|dev
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -756,14 +749,12 @@ comma
 op_logical_neg
 op_logical_neg
 (paren
-id|inb
+id|pp-&gt;ops
+op_member_access_from_pointer
+id|read_status
 c_func
 (paren
-id|LPT_STATUS
-c_func
-(paren
-id|dev
-)paren
+id|pp
 )paren
 op_amp
 id|PAR96_DCD
@@ -1211,41 +1202,45 @@ op_minus
 id|EBUSY
 suffix:semicolon
 )brace
+id|pp
+op_assign
+id|bc-&gt;pdev-&gt;port
+suffix:semicolon
 id|dev-&gt;irq
 op_assign
 id|pp-&gt;irq
 suffix:semicolon
-multiline_comment|/* bc-&gt;pdev-&gt;port-&gt;ops-&gt;change_mode(bc-&gt;pdev-&gt;port, PARPORT_MODE_PCSPP);  not yet implemented */
+id|pp-&gt;ops
+op_member_access_from_pointer
+id|data_forward
+c_func
+(paren
+id|pp
+)paren
+suffix:semicolon
 id|bc-&gt;hdrv.par.bitrate
 op_assign
 l_int|9600
 suffix:semicolon
-multiline_comment|/* switch off PTT */
-id|outb
+id|pp-&gt;ops
+op_member_access_from_pointer
+id|write_data
 c_func
 (paren
+id|pp
+comma
 id|PAR96_PTT
 op_or
 id|PAR97_POWER
-comma
-id|LPT_DATA
-c_func
-(paren
-id|dev
-)paren
 )paren
 suffix:semicolon
-multiline_comment|/*bc-&gt;pdev-&gt;port-&gt;ops-&gt;enable_irq(bc-&gt;pdev-&gt;port);  not yet implemented */
-id|outb
+multiline_comment|/* switch off PTT */
+id|pp-&gt;ops
+op_member_access_from_pointer
+id|enable_irq
 c_func
 (paren
-id|LPT_IRQ_ENABLE
-comma
-id|LPT_CONTROL
-c_func
-(paren
-id|dev
-)paren
+id|pp
 )paren
 suffix:semicolon
 id|printk
@@ -1294,6 +1289,11 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
+r_struct
+id|parport
+op_star
+id|pp
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1307,33 +1307,30 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+id|pp
+op_assign
+id|bc-&gt;pdev-&gt;port
+suffix:semicolon
 multiline_comment|/* disable interrupt */
-id|outb
+id|pp-&gt;ops
+op_member_access_from_pointer
+id|disable_irq
 c_func
 (paren
-l_int|0
-comma
-id|LPT_CONTROL
-c_func
-(paren
-id|dev
-)paren
+id|pp
 )paren
 suffix:semicolon
-multiline_comment|/*bc-&gt;pdev-&gt;port-&gt;ops-&gt;disable_irq(bc-&gt;pdev-&gt;port);  not yet implemented */
 multiline_comment|/* switch off PTT */
-id|outb
+id|pp-&gt;ops
+op_member_access_from_pointer
+id|write_data
 c_func
 (paren
+id|pp
+comma
 id|PAR96_PTT
 op_or
 id|PAR97_POWER
-comma
-id|LPT_DATA
-c_func
-(paren
-id|dev
-)paren
 )paren
 suffix:semicolon
 id|parport_release

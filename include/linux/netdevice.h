@@ -221,6 +221,7 @@ id|if_port_text
 (braket
 )braket
 suffix:semicolon
+macro_line|#include &lt;linux/cache.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 r_struct
 id|neighbour

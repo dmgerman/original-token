@@ -1,5 +1,5 @@
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *&t;baycom_epp.c  -- baycom epp radio modem driver.&n; *&n; *&t;Copyright (C) 1998-2000&n; *          Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  Please note that the GPL allows you to use the driver, NOT the radio.&n; *  In order to use the radio, you need a license from the communications&n; *  authority of your country.&n; *&n; *&n; *  History:&n; *   0.1  xx.xx.98  Initial version by Matthias Welwarsky (dg2fef)&n; *   0.2  21.04.98  Massive rework by Thomas Sailer&n; *                  Integrated FPGA EPP modem configuration routines&n; *   0.3  11.05.98  Took FPGA config out and moved it into a separate program&n; *   0.4  26.07.99  Adapted to new lowlevel parport driver interface&n; *   0.5  03.08.99  adapt to Linus&squot; new __setup/__initcall&n; *                  removed some pre-2.2 kernel compatibility cruft&n; *   0.6  10.08.99  Check if parport can do SPP and is safe to access during interrupt contexts&n; *&n; */
+multiline_comment|/*&n; *&t;baycom_epp.c  -- baycom epp radio modem driver.&n; *&n; *&t;Copyright (C) 1998-2000&n; *          Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  Please note that the GPL allows you to use the driver, NOT the radio.&n; *  In order to use the radio, you need a license from the communications&n; *  authority of your country.&n; *&n; *&n; *  History:&n; *   0.1  xx.xx.1998  Initial version by Matthias Welwarsky (dg2fef)&n; *   0.2  21.04.1998  Massive rework by Thomas Sailer&n; *                    Integrated FPGA EPP modem configuration routines&n; *   0.3  11.05.1998  Took FPGA config out and moved it into a separate program&n; *   0.4  26.07.1999  Adapted to new lowlevel parport driver interface&n; *   0.5  03.08.1999  adapt to Linus&squot; new __setup/__initcall&n; *                    removed some pre-2.2 kernel compatibility cruft&n; *   0.6  10.08.1999  Check if parport can do SPP and is safe to access during interrupt contexts&n; *   0.7  12.02.2000  adapted to softnet driver interface&n; *&n; */
 multiline_comment|/*****************************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/parport.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
+macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#include &lt;linux/hdlcdrv.h&gt;
 macro_line|#include &lt;linux/baycom.h&gt;
 macro_line|#include &lt;linux/soundmodem.h&gt;
@@ -63,9 +64,9 @@ id|bc_drvinfo
 )braket
 op_assign
 id|KERN_INFO
-l_string|&quot;baycom_epp: (C) 1998-1999 Thomas Sailer, HB9JNX/AE4WA&bslash;n&quot;
+l_string|&quot;baycom_epp: (C) 1998-2000 Thomas Sailer, HB9JNX/AE4WA&bslash;n&quot;
 id|KERN_INFO
-l_string|&quot;baycom_epp: version 0.5 compiled &quot;
+l_string|&quot;baycom_epp: version 0.7 compiled &quot;
 id|__TIME__
 l_string|&quot; &quot;
 id|__DATE__
@@ -1306,76 +1307,6 @@ r_static
 r_int
 id|errno
 suffix:semicolon
-DECL|function|use_init_fs_context
-r_static
-r_inline
-r_void
-id|use_init_fs_context
-c_func
-(paren
-r_void
-)paren
-(brace
-r_struct
-id|fs_struct
-op_star
-id|our_fs
-comma
-op_star
-id|init_fs
-suffix:semicolon
-multiline_comment|/*&n;         * Make modprobe&squot;s fs context be a copy of init&squot;s.&n;         *&n;         * We cannot use the user&squot;s fs context, because it&n;         * may have a different root than init.&n;         * Since init was created with CLONE_FS, we can grab&n;         * its fs context from &quot;init_task&quot;.&n;         *&n;         * The fs context has to be a copy. If it is shared&n;         * with init, then any chdir() call in modprobe will&n;         * also affect init and the other threads sharing&n;         * init_task&squot;s fs context.&n;         *&n;         * We created the exec_modprobe thread without CLONE_FS,&n;         * so we can update the fields in our fs context freely.&n;         */
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-id|our_fs
-op_assign
-id|current-&gt;fs
-suffix:semicolon
-id|dput
-c_func
-(paren
-id|our_fs-&gt;root
-)paren
-suffix:semicolon
-id|dput
-c_func
-(paren
-id|our_fs-&gt;pwd
-)paren
-suffix:semicolon
-id|init_fs
-op_assign
-id|init_task.fs
-suffix:semicolon
-id|our_fs-&gt;umask
-op_assign
-id|init_fs-&gt;umask
-suffix:semicolon
-id|our_fs-&gt;root
-op_assign
-id|dget
-c_func
-(paren
-id|init_fs-&gt;root
-)paren
-suffix:semicolon
-id|our_fs-&gt;pwd
-op_assign
-id|dget
-c_func
-(paren
-id|init_fs-&gt;pwd
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
 DECL|function|exec_eppfpga
 r_static
 r_int
@@ -1509,115 +1440,9 @@ comma
 id|modearg
 )paren
 suffix:semicolon
-id|current-&gt;session
-op_assign
-l_int|1
-suffix:semicolon
-id|current-&gt;pgrp
-op_assign
-l_int|1
-suffix:semicolon
-id|use_init_fs_context
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* Prevent parent user process from sending signals to child.&n;           Otherwise, if the modprobe program does not exist, it might&n;           be possible to get a user defined signal handler to execute&n;           as the super user right after the execve fails if you time&n;           the signal just right.&n;        */
-id|spin_lock_irq
-c_func
-(paren
-op_amp
-id|current-&gt;sigmask_lock
-)paren
-suffix:semicolon
-id|flush_signals
-c_func
-(paren
-id|current
-)paren
-suffix:semicolon
-id|flush_signal_handlers
-c_func
-(paren
-id|current
-)paren
-suffix:semicolon
-id|spin_unlock_irq
-c_func
-(paren
-op_amp
-id|current-&gt;sigmask_lock
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
 id|i
 op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|current-&gt;files-&gt;max_fds
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|current-&gt;files-&gt;fd
-(braket
-id|i
-)braket
-)paren
-id|close
-c_func
-(paren
-id|i
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* Drop the &quot;current user&quot; thing */
-id|free_uid
-c_func
-(paren
-id|current
-)paren
-suffix:semicolon
-multiline_comment|/* Give kmod all privileges.. */
-id|current-&gt;uid
-op_assign
-id|current-&gt;euid
-op_assign
-id|current-&gt;fsuid
-op_assign
-l_int|0
-suffix:semicolon
-id|cap_set_full
-c_func
-(paren
-id|current-&gt;cap_inheritable
-)paren
-suffix:semicolon
-id|cap_set_full
-c_func
-(paren
-id|current-&gt;cap_effective
-)paren
-suffix:semicolon
-multiline_comment|/* Allow execve args to be in kernel space. */
-id|set_fs
-c_func
-(paren
-id|KERNEL_DS
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|execve
+id|exec_usermodehelper
 c_func
 (paren
 id|eppconfig_path
@@ -1626,6 +1451,11 @@ id|argv
 comma
 id|envp
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
 OL
 l_int|0
 )paren
@@ -1644,12 +1474,11 @@ id|portarg
 comma
 id|modearg
 comma
-id|errno
+id|i
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|errno
+id|i
 suffix:semicolon
 )brace
 r_return
@@ -6499,6 +6328,10 @@ id|ax25_nocall
 comma
 id|AX25_ADDR_LEN
 )paren
+suffix:semicolon
+id|dev-&gt;tx_queue_len
+op_assign
+l_int|16
 suffix:semicolon
 multiline_comment|/* New style flags */
 id|dev-&gt;flags

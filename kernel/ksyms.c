@@ -144,6 +144,13 @@ c_func
 id|request_module
 )paren
 suffix:semicolon
+DECL|variable|exec_usermodehelper
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|exec_usermodehelper
+)paren
+suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_MODULES
 DECL|variable|get_module_symbol

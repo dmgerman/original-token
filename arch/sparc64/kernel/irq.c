@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: irq.c,v 1.82 2000/02/09 11:15:07 davem Exp $&n; * irq.c: UltraSparc IRQ handling/init/registry.&n; *&n; * Copyright (C) 1997  David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1998  Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1998  Jakub Jelinek    (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: irq.c,v 1.83 2000/02/11 06:57:17 jj Exp $&n; * irq.c: UltraSparc IRQ handling/init/registry.&n; *&n; * Copyright (C) 1997  David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1998  Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1998  Jakub Jelinek    (jj@ultra.linux.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -75,7 +75,7 @@ l_int|64
 )paren
 suffix:semicolon
 DECL|macro|irq_work
-mdefine_line|#define irq_work(__cpu, __pil)&t;&amp;(__up_workvec[(__pil)])
+mdefine_line|#define irq_work(__cpu, __pil)&t;&amp;(__up_workvec[(void)(__cpu), (__pil)])
 macro_line|#else
 DECL|macro|irq_work
 mdefine_line|#define irq_work(__cpu, __pil)&t;&amp;(cpu_data[(__cpu)].irq_worklists[(__pil)])

@@ -1747,12 +1747,6 @@ id|ei_local-&gt;tx1
 op_assign
 l_int|0
 suffix:semicolon
-id|netif_start_queue
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1838,12 +1832,6 @@ id|ei_local-&gt;tx2
 op_assign
 l_int|0
 suffix:semicolon
-id|netif_start_queue
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1907,12 +1895,6 @@ multiline_comment|/*&n;&t; *  Single Tx buffer: mark it free so another packet c
 id|ei_local-&gt;txing
 op_assign
 l_int|0
-suffix:semicolon
-id|netif_start_queue
-c_func
-(paren
-id|dev
-)paren
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Minimize Tx latency: update the statistics after we restart TXing. */

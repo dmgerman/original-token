@@ -169,13 +169,6 @@ macro_line|#else
 DECL|macro|PCI_SUPPORT_VER2
 mdefine_line|#define PCI_SUPPORT_VER2
 macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20159
-DECL|macro|dev_free_skb
-mdefine_line|#define dev_free_skb(skb) dev_kfree_skb(skb, FREE_WRITE);
-macro_line|#else
-DECL|macro|dev_free_skb
-mdefine_line|#define dev_free_skb(skb) dev_kfree_skb(skb);
-macro_line|#endif
 multiline_comment|/* The I/O extent. */
 DECL|macro|RTL8129_TOTAL_SIZE
 mdefine_line|#define RTL8129_TOTAL_SIZE 0x80
@@ -7329,7 +7322,7 @@ comma
 id|skb-&gt;len
 )paren
 suffix:semicolon
-id|dev_free_skb
+id|dev_kfree_skb
 c_func
 (paren
 id|skb

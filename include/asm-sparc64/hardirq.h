@@ -21,13 +21,13 @@ DECL|macro|in_irq
 mdefine_line|#define in_irq() (local_irq_count != 0)
 macro_line|#ifndef __SMP__
 DECL|macro|hardirq_trylock
-mdefine_line|#define hardirq_trylock(cpu)&t;(local_irq_count == 0)
+mdefine_line|#define hardirq_trylock(cpu)&t;((void)(cpu), local_irq_count == 0)
 DECL|macro|hardirq_endlock
-mdefine_line|#define hardirq_endlock(cpu)&t;do { } while(0)
+mdefine_line|#define hardirq_endlock(cpu)&t;do { (void)(cpu); } while(0)
 DECL|macro|hardirq_enter
-mdefine_line|#define hardirq_enter(cpu)&t;(local_irq_count++)
+mdefine_line|#define hardirq_enter(cpu)&t;((void)(cpu), local_irq_count++)
 DECL|macro|hardirq_exit
-mdefine_line|#define hardirq_exit(cpu)&t;(local_irq_count--)
+mdefine_line|#define hardirq_exit(cpu)&t;((void)(cpu), local_irq_count--)
 DECL|macro|synchronize_irq
 mdefine_line|#define synchronize_irq()&t;barrier()
 macro_line|#else /* (__SMP__) */
@@ -186,7 +186,7 @@ id|global_irq_lock
 suffix:semicolon
 )brace
 DECL|macro|hardirq_endlock
-mdefine_line|#define hardirq_endlock(cpu)&t;do { } while (0)
+mdefine_line|#define hardirq_endlock(cpu)&t;do { (void)(cpu); } while (0)
 r_extern
 r_void
 id|synchronize_irq

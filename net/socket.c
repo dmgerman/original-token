@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/wanrouter.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
+macro_line|#include &lt;linux/cache.h&gt;
 macro_line|#if defined(CONFIG_KMOD) &amp;&amp; defined(CONFIG_NET)
 macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#endif

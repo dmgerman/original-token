@@ -4,6 +4,7 @@ DECL|macro|_SOCK_H
 mdefine_line|#define _SOCK_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
+macro_line|#include &lt;linux/cache.h&gt;
 macro_line|#include &lt;linux/in.h&gt;&t;&t;/* struct sockaddr_in */
 macro_line|#if defined(CONFIG_IPV6) || defined (CONFIG_IPV6_MODULE)
 macro_line|#include &lt;linux/in6.h&gt;&t;&t;/* struct sockaddr_in6 */

@@ -2817,7 +2817,8 @@ op_star
 )paren
 id|buffer
 comma
-l_int|512
+l_int|0
+multiline_comment|/*512*/
 comma
 id|SD_TIMEOUT
 comma

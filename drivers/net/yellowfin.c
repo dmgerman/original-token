@@ -201,8 +201,6 @@ macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 DECL|macro|RUN_AT
 mdefine_line|#define RUN_AT(x) (jiffies + (x))
-DECL|macro|DEV_FREE_SKB
-mdefine_line|#define DEV_FREE_SKB(skb) dev_kfree_skb(skb);
 multiline_comment|/* The PCI I/O space extent. */
 DECL|macro|YELLOWFIN_TOTAL_SIZE
 mdefine_line|#define YELLOWFIN_TOTAL_SIZE 0x100
@@ -4306,7 +4304,7 @@ l_int|0
 r_break
 suffix:semicolon
 multiline_comment|/* Free the original skb. */
-id|DEV_FREE_SKB
+id|dev_kfree_skb_irq
 c_func
 (paren
 id|yp-&gt;tx_skbuff
@@ -4600,7 +4598,7 @@ op_increment
 suffix:semicolon
 )brace
 multiline_comment|/* Free the original skb. */
-id|DEV_FREE_SKB
+id|dev_kfree_skb_irq
 c_func
 (paren
 id|yp-&gt;tx_skbuff
@@ -6330,7 +6328,7 @@ id|i
 )braket
 )paren
 (brace
-id|DEV_FREE_SKB
+id|dev_kfree_skb
 c_func
 (paren
 id|yp-&gt;rx_skbuff
@@ -6371,7 +6369,7 @@ id|yp-&gt;tx_skbuff
 id|i
 )braket
 )paren
-id|DEV_FREE_SKB
+id|dev_kfree_skb
 c_func
 (paren
 id|yp-&gt;tx_skbuff

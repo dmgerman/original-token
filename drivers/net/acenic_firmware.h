@@ -1,3 +1,4 @@
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * Declare these here even if Tigon I support is disabled to avoid&n; * the compiler complaining about undefined symbols.&n; */
 DECL|macro|tigonFwReleaseMajor
 mdefine_line|#define tigonFwReleaseMajor 0xc

@@ -13,9 +13,9 @@ multiline_comment|/*&n; * Are we in an interrupt context? Either doing bottom ha
 DECL|macro|in_interrupt
 mdefine_line|#define in_interrupt()  ((local_irq_count + local_bh_count) != 0)
 DECL|macro|hardirq_trylock
-mdefine_line|#define hardirq_trylock(cpu)&t;(local_irq_count == 0)
+mdefine_line|#define hardirq_trylock(cpu)&t;((void)(cpu), local_irq_count == 0)
 DECL|macro|hardirq_endlock
-mdefine_line|#define hardirq_endlock(cpu)&t;do { } while (0)
+mdefine_line|#define hardirq_endlock(cpu)&t;do { (void)(cpu); } while (0)
 DECL|macro|hardirq_enter
 mdefine_line|#define hardirq_enter(cpu)&t;(local_irq_count++)
 DECL|macro|hardirq_exit
