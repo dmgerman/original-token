@@ -1198,6 +1198,60 @@ op_logical_neg
 id|the_result
 )paren
 (brace
+multiline_comment|/* It would seem some TOSHIBA CD-ROM gets things wrong */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strncmp
+c_func
+(paren
+id|scsi_result
+op_plus
+l_int|8
+comma
+l_string|&quot;TOSHIBA&quot;
+comma
+l_int|7
+)paren
+op_logical_and
+op_logical_neg
+id|strncmp
+c_func
+(paren
+id|scsi_result
+op_plus
+l_int|16
+comma
+l_string|&quot;CD-ROM&quot;
+comma
+l_int|6
+)paren
+op_logical_and
+id|scsi_result
+(braket
+l_int|0
+)braket
+op_eq
+id|TYPE_DISK
+)paren
+(brace
+id|scsi_result
+(braket
+l_int|0
+)braket
+op_assign
+id|TYPE_ROM
+suffix:semicolon
+id|scsi_result
+(braket
+l_int|1
+)braket
+op_or_assign
+l_int|0x80
+suffix:semicolon
+multiline_comment|/* removable */
+)brace
 id|SDpnt-&gt;removable
 op_assign
 (paren
@@ -2395,7 +2449,7 @@ id|req-&gt;buffer
 op_assign
 id|bh-&gt;b_data
 suffix:semicolon
-id|SCpnt-&gt;request.waiting
+id|SCpnt-&gt;request.sem
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -2425,7 +2479,7 @@ op_assign
 l_int|0xffff
 suffix:semicolon
 multiline_comment|/* Busy, but no request */
-id|SCpnt-&gt;request.waiting
+id|SCpnt-&gt;request.sem
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -2861,7 +2915,7 @@ id|req-&gt;buffer
 op_assign
 id|bh-&gt;b_data
 suffix:semicolon
-id|SCpnt-&gt;request.waiting
+id|SCpnt-&gt;request.sem
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -2896,7 +2950,7 @@ op_assign
 l_int|0xffff
 suffix:semicolon
 multiline_comment|/* Busy */
-id|SCpnt-&gt;request.waiting
+id|SCpnt-&gt;request.sem
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -7243,7 +7297,7 @@ multiline_comment|/*  (0) 0:0:0 (802 123434 8 8 0) (3 3 2) (%d %d %d) %d %x     
 id|printk
 c_func
 (paren
-l_string|&quot;(%d) %d:%d:%d (%4.4x %d %d %d %d) (%d %d %x) (%d %d %d) %x %x %d %x&bslash;n&quot;
+l_string|&quot;(%d) %d:%d:%d (%4.4x %d %d %d %d) (%d %d %x) (%d %d %d) %x %x %x&bslash;n&quot;
 comma
 id|i
 comma
@@ -7284,15 +7338,6 @@ id|SCpnt-&gt;sense_buffer
 (braket
 l_int|2
 )braket
-comma
-(paren
-id|SCpnt-&gt;request.waiting
-ques
-c_cond
-id|SCpnt-&gt;request.waiting-&gt;pid
-suffix:colon
-l_int|0
-)paren
 comma
 id|SCpnt-&gt;result
 )paren
@@ -7370,7 +7415,7 @@ id|req
 id|printk
 c_func
 (paren
-l_string|&quot;(%x %d %d %d %d %d) &quot;
+l_string|&quot;(%x %d %d %d %d) &quot;
 comma
 id|req-&gt;dev
 comma
@@ -7381,15 +7426,6 @@ comma
 id|req-&gt;nr_sectors
 comma
 id|req-&gt;current_nr_sectors
-comma
-(paren
-id|req-&gt;waiting
-ques
-c_cond
-id|req-&gt;waiting-&gt;pid
-suffix:colon
-l_int|0
-)paren
 )paren
 suffix:semicolon
 id|req

@@ -373,6 +373,11 @@ r_int
 r_int
 id|i_blocks
 suffix:semicolon
+DECL|member|i_version
+r_int
+r_int
+id|i_version
+suffix:semicolon
 DECL|member|i_sem
 r_struct
 id|semaphore

@@ -8,7 +8,7 @@ macro_line|#include &lt;linux/genhd.h&gt;
 multiline_comment|/*&n; * NR_REQUEST is the number of entries in the request-queue.&n; * NOTE that writes may use only the low 2/3 of these: reads&n; * take precedence.&n; *&n; * 32 seems to be a reasonable number: enough to get some benefit&n; * from the elevator-mechanism, but not so much as to lock a lot of&n; * buffers when they are in the queue. 64 seems to be too many (easily&n; * long pauses in reading when heavy writing/syncing is going on)&n; */
 DECL|macro|NR_REQUEST
 mdefine_line|#define NR_REQUEST&t;64
-multiline_comment|/*&n; * Ok, this is an expanded form so that we can use the same&n; * request for paging requests when that is implemented. In&n; * paging, &squot;bh&squot; is NULL, and &squot;waiting&squot; is used to wait for&n; * read/write completion.&n; */
+multiline_comment|/*&n; * Ok, this is an expanded form so that we can use the same&n; * request for paging requests when that is implemented. In&n; * paging, &squot;bh&squot; is NULL, and the semaphore is used to wait&n; * for read/write completion.&n; */
 DECL|struct|request
 r_struct
 id|request
@@ -47,11 +47,11 @@ r_char
 op_star
 id|buffer
 suffix:semicolon
-DECL|member|waiting
+DECL|member|sem
 r_struct
-id|task_struct
+id|semaphore
 op_star
-id|waiting
+id|sem
 suffix:semicolon
 DECL|member|bh
 r_struct
@@ -540,11 +540,6 @@ id|buffer_head
 op_star
 id|bh
 suffix:semicolon
-r_struct
-id|task_struct
-op_star
-id|p
-suffix:semicolon
 id|req
 op_assign
 id|CURRENT
@@ -691,39 +686,16 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
-id|p
-op_assign
-id|req-&gt;waiting
-)paren
+id|req-&gt;sem
 op_ne
 l_int|NULL
 )paren
-(brace
-id|req-&gt;waiting
-op_assign
-l_int|NULL
-suffix:semicolon
-id|p-&gt;swapping
-op_assign
-l_int|0
-suffix:semicolon
-id|p-&gt;state
-op_assign
-id|TASK_RUNNING
-suffix:semicolon
-r_if
-c_cond
+id|up
+c_func
 (paren
-id|p-&gt;counter
-OG
-id|current-&gt;counter
+id|req-&gt;sem
 )paren
-id|need_resched
-op_assign
-l_int|1
 suffix:semicolon
-)brace
 id|req-&gt;dev
 op_assign
 op_minus

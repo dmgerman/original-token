@@ -43,6 +43,8 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|MUTEX
 mdefine_line|#define MUTEX ((struct semaphore) { 1, NULL })
+DECL|macro|MUTEX_LOCKED
+mdefine_line|#define MUTEX_LOCKED ((struct semaphore) { 0, NULL })
 DECL|struct|select_table_entry
 r_struct
 id|select_table_entry
