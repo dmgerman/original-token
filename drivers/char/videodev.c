@@ -982,35 +982,40 @@ id|file_operations
 id|video_fops
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|video_lseek
 comma
+id|read
+suffix:colon
 id|video_read
 comma
+id|write
+suffix:colon
 id|video_write
 comma
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
-id|video_poll
-comma
-multiline_comment|/* poll */
-macro_line|#else
-l_int|NULL
-comma
-macro_line|#endif
+id|ioctl
+suffix:colon
 id|video_ioctl
 comma
+id|mmap
+suffix:colon
 id|video_mmap
 comma
+id|open
+suffix:colon
 id|video_open
 comma
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
-l_int|NULL
-comma
-multiline_comment|/* flush */
-macro_line|#endif
+id|release
+suffix:colon
 id|video_release
+comma
+macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,0)
+id|poll
+suffix:colon
+id|video_poll
+comma
+macro_line|#endif
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;Initialise video for linux&n; */

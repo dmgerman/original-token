@@ -370,38 +370,14 @@ id|file_operations
 id|proc_sys_file_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek   */
+id|read
+suffix:colon
 id|proc_readsys
 comma
-multiline_comment|/* read&t;   */
+id|write
+suffix:colon
 id|proc_writesys
 comma
-multiline_comment|/* write   */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll    */
-l_int|NULL
-comma
-multiline_comment|/* ioctl   */
-l_int|NULL
-comma
-multiline_comment|/* mmap&t;   */
-l_int|NULL
-comma
-multiline_comment|/* no special open code&t;   */
-l_int|NULL
-comma
-multiline_comment|/* no special flush code */
-l_int|NULL
-comma
-multiline_comment|/* no special release code */
-l_int|NULL
-multiline_comment|/* can&squot;t fsync */
 )brace
 suffix:semicolon
 DECL|variable|proc_sys_inode_operations

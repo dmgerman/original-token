@@ -9313,42 +9313,31 @@ id|file_operations
 id|qic02_tape_fops
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|qic02_tape_lseek
 comma
 multiline_comment|/* not allowed */
+id|read
+suffix:colon
 id|qic02_tape_read
 comma
-multiline_comment|/* read */
+id|write
+suffix:colon
 id|qic02_tape_write
 comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir not allowed */
-l_int|NULL
-comma
-multiline_comment|/* poll ??? */
+id|ioctl
+suffix:colon
 id|qic02_tape_ioctl
 comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap not allowed */
+id|open
+suffix:colon
 id|qic02_tape_open
 comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|qic02_tape_release
 comma
-multiline_comment|/* release */
-l_int|NULL
-comma
-multiline_comment|/* fsync */
-l_int|NULL
-comma
-multiline_comment|/* fasync */
 )brace
 suffix:semicolon
 multiline_comment|/* Why is this not is one place? */

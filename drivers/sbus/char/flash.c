@@ -488,30 +488,27 @@ id|file_operations
 id|flash_fops
 op_assign
 (brace
+multiline_comment|/* no write to the Flash, use mmap&n;&t; * and play flash dependent tricks.&n;&t; */
+id|llseek
+suffix:colon
 id|flash_llseek
 comma
+id|read
+suffix:colon
 id|flash_read
 comma
-l_int|NULL
-comma
-multiline_comment|/* no write to the Flash, use mmap&n;&t;&t;&t; * and play flash dependent tricks.&n;&t;&t;&t; */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll */
-l_int|NULL
-comma
-multiline_comment|/* ioctl */
+id|ioctl
+suffix:colon
 id|flash_mmap
 comma
+id|mmap
+suffix:colon
 id|flash_open
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|flush
+suffix:colon
 id|flash_release
+comma
 )brace
 suffix:semicolon
 DECL|variable|flash_dev

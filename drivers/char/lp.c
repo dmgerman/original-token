@@ -2444,38 +2444,32 @@ id|file_operations
 id|lp_fops
 op_assign
 (brace
-id|lp_lseek
-comma
-macro_line|#ifdef CONFIG_PARPORT_1284
-id|lp_read
-comma
-macro_line|#else
-l_int|NULL
-comma
-macro_line|#endif
+id|write
+suffix:colon
 id|lp_write
 comma
-l_int|NULL
-comma
-multiline_comment|/* lp_readdir */
-macro_line|#ifdef CONFIG_PARPORT_1284
-id|lp_poll
-comma
-macro_line|#else
-l_int|NULL
-comma
-macro_line|#endif
+id|ioctl
+suffix:colon
 id|lp_ioctl
 comma
-l_int|NULL
-comma
-multiline_comment|/* lp_mmap */
+id|open
+suffix:colon
 id|lp_open
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|lp_release
+comma
+macro_line|#ifdef CONFIG_PARPORT_1284
+id|read
+suffix:colon
+id|lp_read
+comma
+id|poll
+suffix:colon
+id|lp_poll
+comma
+macro_line|#endif
 )brace
 suffix:semicolon
 multiline_comment|/* --- support for console on the line printer ----------------- */

@@ -18641,40 +18641,30 @@ id|file_operations
 id|ixj_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* ixj_lseek */
+id|read
+suffix:colon
 id|ixj_enhanced_read
 comma
+id|write
+suffix:colon
 id|ixj_enhanced_write
 comma
-l_int|NULL
-comma
-multiline_comment|/* ixj_readdir */
+id|poll
+suffix:colon
 id|ixj_poll
 comma
+id|ioctl
+suffix:colon
 id|ixj_ioctl
 comma
-l_int|NULL
-comma
-multiline_comment|/* ixj_mmap */
-singleline_comment|//  ixj_open,
-l_int|NULL
-comma
-multiline_comment|/* ixj_open */
-l_int|NULL
-comma
-multiline_comment|/* ixj_flush */
+id|release
+suffix:colon
 id|ixj_release
 comma
-l_int|NULL
-comma
-multiline_comment|/* ixj_fsync */
+id|fasync
+suffix:colon
 id|ixj_fasync
 comma
-multiline_comment|/* ixj_fasync */
-l_int|NULL
-multiline_comment|/* lock */
 )brace
 suffix:semicolon
 DECL|function|ixj_linetest

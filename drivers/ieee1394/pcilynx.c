@@ -3122,7 +3122,7 @@ id|file_operations
 id|aux_ops
 op_assign
 (brace
-multiline_comment|/* FIXME: should have custom llseek with bounds checking*/
+multiline_comment|/* FIXME: should have custom llseek with bounds checking */
 id|read
 suffix:colon
 id|mem_read
@@ -3142,6 +3142,7 @@ comma
 id|release
 suffix:colon
 id|mem_release
+comma
 )brace
 suffix:semicolon
 DECL|function|aux_setup_pcls

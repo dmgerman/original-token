@@ -576,42 +576,22 @@ id|file_operations
 id|pg_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek - default */
+id|read
+suffix:colon
 id|pg_read
 comma
-multiline_comment|/* read */
+id|write
+suffix:colon
 id|pg_write
 comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir - bad */
-l_int|NULL
-comma
-multiline_comment|/* select */
-l_int|NULL
-comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|pg_open
 comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|pg_release
 comma
-multiline_comment|/* release */
-l_int|NULL
-comma
-multiline_comment|/* fsync */
-l_int|NULL
-comma
-multiline_comment|/* fasync */
 )brace
 suffix:semicolon
 DECL|function|pg_init_units

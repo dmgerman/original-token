@@ -229,41 +229,18 @@ id|file_operations
 id|sgi_gfx_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* llseek */
-l_int|NULL
-comma
-multiline_comment|/* read */
-l_int|NULL
-comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll */
+id|ioctl
+suffix:colon
 id|sgi_gfx_ioctl
 comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|sgi_gfx_open
 comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|sgi_gfx_close
 comma
-multiline_comment|/* release */
-l_int|NULL
-comma
-multiline_comment|/* fsync */
-l_int|NULL
-multiline_comment|/* lock */
 )brace
 suffix:semicolon
 DECL|variable|dev_gfx
@@ -679,41 +656,14 @@ id|file_operations
 id|sgi_keyb_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* llseek */
-l_int|NULL
-comma
-multiline_comment|/* read */
-l_int|NULL
-comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll */
+id|ioctl
+suffix:colon
 id|sgi_keyb_ioctl
 comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|sgi_keyb_open
 comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
-l_int|NULL
-comma
-multiline_comment|/* release */
-l_int|NULL
-comma
-multiline_comment|/* fsync */
-l_int|NULL
-multiline_comment|/* lock */
 )brace
 suffix:semicolon
 DECL|variable|dev_input_keyboard
@@ -1189,41 +1139,18 @@ id|file_operations
 id|sgi_mouse_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* llseek */
-l_int|NULL
-comma
-multiline_comment|/* read */
-l_int|NULL
-comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll */
+id|ioctl
+suffix:colon
 id|sgi_mouse_ioctl
 comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|sgi_mouse_open
 comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|sgi_mouse_close
 comma
-multiline_comment|/* release */
-l_int|NULL
-comma
-multiline_comment|/* fsync */
-l_int|NULL
-multiline_comment|/* lock */
 )brace
 suffix:semicolon
 multiline_comment|/* /dev/input/mouse */

@@ -889,6 +889,11 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -968,6 +973,11 @@ op_or_assign
 id|sysv_sync_inode
 (paren
 id|inode
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return

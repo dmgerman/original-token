@@ -541,18 +541,10 @@ id|file_operations
 id|proc_root_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek - default */
-l_int|NULL
-comma
-multiline_comment|/* read - bad */
-l_int|NULL
-comma
-multiline_comment|/* write - bad */
+id|readdir
+suffix:colon
 id|proc_root_readdir
 comma
-multiline_comment|/* readdir */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * proc root can do almost nothing..&n; */

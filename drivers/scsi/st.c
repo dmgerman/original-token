@@ -17966,38 +17966,30 @@ id|file_operations
 id|st_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek - default */
+id|read
+suffix:colon
 id|st_read
 comma
-multiline_comment|/* read - general block-dev read */
+id|write
+suffix:colon
 id|st_write
 comma
-multiline_comment|/* write - general block-dev write */
-l_int|NULL
-comma
-multiline_comment|/* readdir - bad */
-l_int|NULL
-comma
-multiline_comment|/* select */
+id|ioctl
+suffix:colon
 id|st_ioctl
 comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|scsi_tape_open
 comma
-multiline_comment|/* open */
+id|flush
+suffix:colon
 id|scsi_tape_flush
 comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|scsi_tape_close
 comma
-multiline_comment|/* release */
-l_int|NULL
-multiline_comment|/* fsync */
 )brace
 suffix:semicolon
 DECL|function|st_attach

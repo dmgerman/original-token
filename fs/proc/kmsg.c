@@ -178,35 +178,22 @@ id|file_operations
 id|proc_kmsg_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* kmsg_lseek */
+id|read
+suffix:colon
 id|kmsg_read
 comma
-l_int|NULL
-comma
-multiline_comment|/* kmsg_write */
-l_int|NULL
-comma
-multiline_comment|/* kmsg_readdir */
+id|poll
+suffix:colon
 id|kmsg_poll
 comma
-multiline_comment|/* kmsg_poll */
-l_int|NULL
-comma
-multiline_comment|/* kmsg_ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|kmsg_open
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|kmsg_release
 comma
-l_int|NULL
-multiline_comment|/* can&squot;t fsync */
 )brace
 suffix:semicolon
 DECL|variable|proc_kmsg_inode_operations

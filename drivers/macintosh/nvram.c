@@ -370,33 +370,26 @@ id|file_operations
 id|nvram_fops
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|nvram_llseek
 comma
+id|read
+suffix:colon
 id|read_nvram
 comma
+id|write
+suffix:colon
 id|write_nvram
 comma
-l_int|NULL
-comma
-multiline_comment|/* nvram_readdir */
-l_int|NULL
-comma
-multiline_comment|/* nvram_select */
-l_int|NULL
-comma
-multiline_comment|/* nvram_ioctl */
-l_int|NULL
-comma
-multiline_comment|/* nvram_mmap */
+id|open
+suffix:colon
 id|nvram_open
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|nvram_release
 comma
-l_int|NULL
-multiline_comment|/* fsync */
 )brace
 suffix:semicolon
 DECL|variable|nvram_dev

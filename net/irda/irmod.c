@@ -287,38 +287,30 @@ id|file_operations
 id|irda_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* seek */
+id|read
+suffix:colon
 id|irda_read
 comma
-multiline_comment|/* read */
+id|write
+suffix:colon
 id|irda_write
 comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
+id|poll
+suffix:colon
 id|irda_poll
 comma
-multiline_comment|/* poll */
+id|ioctl
+suffix:colon
 id|irda_ioctl
 comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|irda_open
 comma
-l_int|NULL
-comma
+id|release
+suffix:colon
 id|irda_close
 comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-multiline_comment|/* fasync */
 )brace
 suffix:semicolon
 multiline_comment|/* IrTTP */

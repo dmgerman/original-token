@@ -5230,44 +5230,26 @@ id|file_operations
 id|dev_fileops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* llseek */
+id|read
+suffix:colon
 id|dev_read
 comma
-multiline_comment|/* read */
+id|write
+suffix:colon
 id|dev_write
 comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll */
+id|ioctl
+suffix:colon
 id|dev_ioctl
 comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|dev_open
 comma
-multiline_comment|/* open */
-macro_line|#ifndef LINUX20
-l_int|NULL
-comma
-multiline_comment|/* flush */
-macro_line|#endif
+id|release
+suffix:colon
 id|dev_release
 comma
-multiline_comment|/* release */
-l_int|NULL
-comma
-multiline_comment|/* fsync */
-l_int|NULL
-comma
-multiline_comment|/* fasync */
 )brace
 suffix:semicolon
 DECL|function|reset_dsp

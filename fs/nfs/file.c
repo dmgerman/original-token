@@ -98,45 +98,38 @@ id|file_operations
 id|nfs_file_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek - default */
+id|read
+suffix:colon
 id|nfs_file_read
 comma
-multiline_comment|/* read */
+id|write
+suffix:colon
 id|nfs_file_write
 comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir - bad */
-l_int|NULL
-comma
-multiline_comment|/* select - default */
-l_int|NULL
-comma
-multiline_comment|/* ioctl - default */
+id|mmap
+suffix:colon
 id|nfs_file_mmap
 comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|nfs_open
 comma
-multiline_comment|/* open */
+id|flush
+suffix:colon
 id|nfs_file_flush
 comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|nfs_release
 comma
-multiline_comment|/* release */
+id|fsync
+suffix:colon
 id|nfs_fsync
 comma
-multiline_comment|/* fsync */
-l_int|NULL
-comma
-multiline_comment|/* fasync */
+id|lock
+suffix:colon
 id|nfs_lock
 comma
-multiline_comment|/* lock */
 )brace
 suffix:semicolon
 DECL|variable|nfs_file_inode_operations
@@ -481,6 +474,11 @@ comma
 id|inode-&gt;i_ino
 )paren
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|status
 op_assign
 id|nfs_wb_file
@@ -507,6 +505,11 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|status
 suffix:semicolon

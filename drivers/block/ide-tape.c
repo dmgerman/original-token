@@ -24844,42 +24844,26 @@ id|file_operations
 id|idetape_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek - default */
+id|read
+suffix:colon
 id|idetape_chrdev_read
 comma
-multiline_comment|/* read  */
+id|write
+suffix:colon
 id|idetape_chrdev_write
 comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir - bad */
-l_int|NULL
-comma
-multiline_comment|/* poll */
+id|ioctl
+suffix:colon
 id|idetape_chrdev_ioctl
 comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|idetape_chrdev_open
 comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|idetape_chrdev_release
 comma
-multiline_comment|/* release */
-l_int|NULL
-comma
-multiline_comment|/* fsync */
-l_int|NULL
-comma
-multiline_comment|/* fasync */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;idetape_init will register the driver for each tape.&n; */

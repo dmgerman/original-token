@@ -285,36 +285,14 @@ id|file_operations
 id|proc_bus_zorro_operations
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|proc_bus_zorro_lseek
 comma
+id|read
+suffix:colon
 id|proc_bus_zorro_read
 comma
-l_int|NULL
-comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll */
-l_int|NULL
-comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
-l_int|NULL
-comma
-multiline_comment|/* no special open code */
-l_int|NULL
-comma
-multiline_comment|/* flush */
-l_int|NULL
-comma
-multiline_comment|/* no special release code */
-l_int|NULL
-multiline_comment|/* can&squot;t fsync */
 )brace
 suffix:semicolon
 DECL|variable|proc_bus_zorro_inode_operations

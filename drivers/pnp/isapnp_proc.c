@@ -928,45 +928,30 @@ id|file_operations
 id|isapnp_info_entry_operations
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|isapnp_info_entry_lseek
 comma
-multiline_comment|/* lseek */
+id|read
+suffix:colon
 id|isapnp_info_entry_read
 comma
-multiline_comment|/* read */
+id|write
+suffix:colon
 id|isapnp_info_entry_write
 comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
+id|poll
+suffix:colon
 id|isapnp_info_entry_poll
 comma
-multiline_comment|/* poll */
-l_int|NULL
-comma
-multiline_comment|/* ioctl - default */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|isapnp_info_entry_open
 comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|isapnp_info_entry_release
 comma
-multiline_comment|/* release */
-l_int|NULL
-comma
-multiline_comment|/* can&squot;t fsync */
-l_int|NULL
-comma
-multiline_comment|/* fasync */
-l_int|NULL
-comma
-multiline_comment|/* lock */
 )brace
 suffix:semicolon
 DECL|variable|isapnp_info_entry_inode_operations
@@ -1249,45 +1234,14 @@ id|file_operations
 id|isapnp_proc_bus_file_operations
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|isapnp_proc_bus_lseek
 comma
-multiline_comment|/* lseek */
+id|read
+suffix:colon
 id|isapnp_proc_bus_read
 comma
-multiline_comment|/* read */
-l_int|NULL
-comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll */
-l_int|NULL
-comma
-multiline_comment|/* ioctl - default */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
-l_int|NULL
-comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
-l_int|NULL
-comma
-multiline_comment|/* release */
-l_int|NULL
-comma
-multiline_comment|/* can&squot;t fsync */
-l_int|NULL
-comma
-multiline_comment|/* fasync */
-l_int|NULL
-comma
-multiline_comment|/* lock */
 )brace
 suffix:semicolon
 DECL|variable|isapnp_proc_bus_inode_operations

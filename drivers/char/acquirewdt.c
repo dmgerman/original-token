@@ -425,29 +425,26 @@ id|file_operations
 id|acq_fops
 op_assign
 (brace
-l_int|NULL
-comma
+id|read
+suffix:colon
 id|acq_read
 comma
+id|write
+suffix:colon
 id|acq_write
 comma
-l_int|NULL
-comma
-multiline_comment|/* No Readdir */
-l_int|NULL
-comma
-multiline_comment|/* No Select */
+id|ioctl
+suffix:colon
 id|acq_ioctl
 comma
-l_int|NULL
-comma
-multiline_comment|/* No mmap */
+id|open
+suffix:colon
 id|acq_open
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|acq_close
+comma
 )brace
 suffix:semicolon
 DECL|variable|acq_miscdev

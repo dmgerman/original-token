@@ -311,27 +311,10 @@ id|file_operations
 id|phone_fops
 op_assign
 (brace
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
+id|open
+suffix:colon
 id|phone_open
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
-l_int|NULL
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;Board init functions&n; */

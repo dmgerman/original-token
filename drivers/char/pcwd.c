@@ -2061,45 +2061,26 @@ id|file_operations
 id|pcwd_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* Seek */
+id|read
+suffix:colon
 id|pcwd_read
 comma
-multiline_comment|/* Read */
+id|write
+suffix:colon
 id|pcwd_write
 comma
-multiline_comment|/* Write */
-l_int|NULL
-comma
-multiline_comment|/* Readdir */
-l_int|NULL
-comma
-multiline_comment|/* Poll */
+id|ioctl
+suffix:colon
 id|pcwd_ioctl
 comma
-multiline_comment|/* IOctl */
-l_int|NULL
-comma
-multiline_comment|/* MMAP */
+id|open
+suffix:colon
 id|pcwd_open
 comma
-multiline_comment|/* Open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|pcwd_close
 comma
-multiline_comment|/* Release */
-l_int|NULL
-comma
-multiline_comment|/* Fsync */
-l_int|NULL
-comma
-multiline_comment|/* Fasync */
-l_int|NULL
-comma
-multiline_comment|/* Lock */
 )brace
 suffix:semicolon
 DECL|variable|pcwd_miscdev

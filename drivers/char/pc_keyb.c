@@ -3260,33 +3260,28 @@ id|file_operations
 id|psaux_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* seek */
+id|read
+suffix:colon
 id|read_aux
 comma
+id|write
+suffix:colon
 id|write_aux
 comma
-l_int|NULL
-comma
-multiline_comment|/* readdir */
+id|poll
+suffix:colon
 id|aux_poll
 comma
-l_int|NULL
-comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|open_aux
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|release_aux
 comma
-l_int|NULL
-comma
+id|fasync
+suffix:colon
 id|fasync_aux
 comma
 )brace

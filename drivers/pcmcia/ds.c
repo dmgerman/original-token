@@ -3914,6 +3914,7 @@ comma
 id|poll
 suffix:colon
 id|ds_poll
+comma
 )brace
 suffix:semicolon
 DECL|variable|register_pccard_driver

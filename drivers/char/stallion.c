@@ -2966,44 +2966,18 @@ id|file_operations
 id|stl_fsiomem
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* llseek */
-l_int|NULL
-comma
-multiline_comment|/* read */
-l_int|NULL
-comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll */
+id|ioctl
+suffix:colon
 id|stl_memioctl
 comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|stl_memopen
 comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|stl_memclose
 comma
-multiline_comment|/* release */
-l_int|NULL
-comma
-multiline_comment|/* fsync */
-l_int|NULL
-comma
-multiline_comment|/* fasync */
-l_int|NULL
-multiline_comment|/* lock */
 )brace
 suffix:semicolon
 multiline_comment|/*****************************************************************************/

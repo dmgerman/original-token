@@ -1031,41 +1031,22 @@ id|file_operations
 id|sgi_graphics_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* llseek */
-l_int|NULL
-comma
-multiline_comment|/* read */
-l_int|NULL
-comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll */
+id|ioctl
+suffix:colon
 id|sgi_graphics_ioctl
 comma
-multiline_comment|/* ioctl */
+id|mmap
+suffix:colon
 id|sgi_graphics_mmap
 comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|sgi_graphics_open
 comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|sgi_graphics_close
 comma
-multiline_comment|/* release */
-l_int|NULL
-comma
-multiline_comment|/* fsync */
-l_int|NULL
-multiline_comment|/* lock */
 )brace
 suffix:semicolon
 multiline_comment|/* /dev/graphics */

@@ -1534,7 +1534,7 @@ id|usbdev-&gt;maxchild
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * level = topology-tier level;&n;&t; * parent_devnum = parent device number;&n;&t; * index = parent&squot;s connector number;&n;&t; * count = device count at this level&n;&t; */
-multiline_comment|/* If this is the root hub, display the bandwidth information but not the descriptors */
+multiline_comment|/* If this is the root hub, display the bandwidth information */
 r_if
 c_cond
 (paren
@@ -1572,7 +1572,6 @@ comma
 id|bus-&gt;bandwidth_isoc_reqs
 )paren
 suffix:semicolon
-r_else
 id|start
 op_assign
 id|usb_dump_desc
@@ -2198,38 +2197,26 @@ id|file_operations
 id|usbdevfs_devices_fops
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|usb_device_lseek
 comma
-multiline_comment|/* lseek   */
+id|read
+suffix:colon
 id|usb_device_read
 comma
-multiline_comment|/* read    */
-l_int|NULL
-comma
-multiline_comment|/* write   */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
+id|poll
+suffix:colon
 id|usb_device_poll
 comma
-multiline_comment|/* poll    */
-l_int|NULL
-comma
-multiline_comment|/* ioctl   */
-l_int|NULL
-comma
-multiline_comment|/* mmap    */
+id|open
+suffix:colon
 id|usb_device_open
 comma
-multiline_comment|/* open    */
-l_int|NULL
-comma
-multiline_comment|/* flush   */
+id|release
+suffix:colon
 id|usb_device_release
 comma
-multiline_comment|/* release */
-l_int|NULL
-multiline_comment|/* fsync   */
 )brace
 suffix:semicolon
 eof

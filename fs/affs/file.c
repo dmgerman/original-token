@@ -139,44 +139,22 @@ id|file_operations
 id|affs_file_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek - default */
+id|read
+suffix:colon
 id|generic_file_read
 comma
-multiline_comment|/* read */
+id|write
+suffix:colon
 id|affs_file_write
 comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir - bad */
-l_int|NULL
-comma
-multiline_comment|/* poll - default */
-l_int|NULL
-comma
-multiline_comment|/* ioctl - default */
+id|mmap
+suffix:colon
 id|generic_file_mmap
 comma
-multiline_comment|/* mmap */
-l_int|NULL
-comma
-multiline_comment|/* no special open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
-l_int|NULL
-comma
-multiline_comment|/* release */
+id|fsync
+suffix:colon
 id|file_fsync
 comma
-multiline_comment|/* brute force, but works */
-l_int|NULL
-comma
-multiline_comment|/* fasync */
-l_int|NULL
-multiline_comment|/* lock */
 )brace
 suffix:semicolon
 DECL|variable|affs_file_inode_operations
@@ -248,44 +226,18 @@ id|file_operations
 id|affs_file_operations_ofs
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek - default */
+id|read
+suffix:colon
 id|affs_file_read_ofs
 comma
-multiline_comment|/* read */
+id|write
+suffix:colon
 id|affs_file_write_ofs
 comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir - bad */
-l_int|NULL
-comma
-multiline_comment|/* poll - default */
-l_int|NULL
-comma
-multiline_comment|/* ioctl - default */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
-l_int|NULL
-comma
-multiline_comment|/* no special open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
-l_int|NULL
-comma
-multiline_comment|/* release */
+id|fsync
+suffix:colon
 id|file_fsync
 comma
-multiline_comment|/* brute force, but works */
-l_int|NULL
-comma
-multiline_comment|/* fasync */
-l_int|NULL
-multiline_comment|/* lock */
 )brace
 suffix:semicolon
 DECL|variable|affs_file_inode_operations_ofs

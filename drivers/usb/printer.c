@@ -673,14 +673,6 @@ op_star
 id|ppos
 )paren
 (brace
-id|DECLARE_WAITQUEUE
-c_func
-(paren
-id|wait
-comma
-id|current
-)paren
-suffix:semicolon
 r_struct
 id|usblp
 op_star
@@ -950,14 +942,6 @@ op_star
 id|usblp
 op_assign
 id|file-&gt;private_data
-suffix:semicolon
-id|DECLARE_WAITQUEUE
-c_func
-(paren
-id|wait
-comma
-id|current
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1736,6 +1720,7 @@ comma
 id|poll
 suffix:colon
 id|usblp_poll
+comma
 )brace
 suffix:semicolon
 DECL|variable|usblp_driver

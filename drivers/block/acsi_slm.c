@@ -788,38 +788,26 @@ id|file_operations
 id|slm_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek - default */
+id|read
+suffix:colon
 id|slm_read
 comma
-multiline_comment|/* read - status reading */
+id|write
+suffix:colon
 id|slm_write
 comma
-multiline_comment|/* write - printing data write */
-l_int|NULL
-comma
-multiline_comment|/* readdir - bad */
-l_int|NULL
-comma
-multiline_comment|/* poll */
+id|ioctl
+suffix:colon
 id|slm_ioctl
 comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|slm_open
 comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|slm_release
 comma
-multiline_comment|/* release */
-l_int|NULL
-multiline_comment|/* fsync */
 )brace
 suffix:semicolon
 multiline_comment|/* ---------------------------------------------------------------------- */

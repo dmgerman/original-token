@@ -1247,6 +1247,14 @@ suffix:semicolon
 id|kdev_t
 id|dev
 suffix:semicolon
+r_int
+id|ret
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/* sync the inode to buffers */
 id|write_inode_now
 c_func
@@ -1285,7 +1293,8 @@ id|dev
 op_assign
 id|inode-&gt;i_dev
 suffix:semicolon
-r_return
+id|ret
+op_assign
 id|sync_buffers
 c_func
 (paren
@@ -1293,6 +1302,14 @@ id|dev
 comma
 l_int|1
 )paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 DECL|function|sys_fsync
@@ -1323,11 +1340,6 @@ id|inode
 suffix:semicolon
 r_int
 id|err
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 id|err
 op_assign
@@ -1431,11 +1443,6 @@ id|file
 suffix:semicolon
 id|out
 suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|err
 suffix:semicolon
@@ -1468,11 +1475,6 @@ id|inode
 suffix:semicolon
 r_int
 id|err
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 id|err
 op_assign
@@ -1576,11 +1578,6 @@ id|file
 suffix:semicolon
 id|out
 suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|err
 suffix:semicolon

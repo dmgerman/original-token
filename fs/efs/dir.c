@@ -22,42 +22,10 @@ id|file_operations
 id|efs_dir_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek */
-l_int|NULL
-comma
-multiline_comment|/* read */
-l_int|NULL
-comma
-multiline_comment|/* write */
+id|readdir
+suffix:colon
 id|efs_readdir
 comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll */
-l_int|NULL
-comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
-l_int|NULL
-comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
-l_int|NULL
-comma
-multiline_comment|/* release */
-l_int|NULL
-comma
-multiline_comment|/* fsync */
-l_int|NULL
-comma
-multiline_comment|/* fasync */
 )brace
 suffix:semicolon
 r_extern

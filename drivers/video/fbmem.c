@@ -2935,38 +2935,30 @@ id|file_operations
 id|fb_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek&t;*/
+id|read
+suffix:colon
 id|fb_read
 comma
-multiline_comment|/* read&t;&t;*/
+id|write
+suffix:colon
 id|fb_write
 comma
-multiline_comment|/* write&t;*/
-l_int|NULL
-comma
-multiline_comment|/* readdir &t;*/
-l_int|NULL
-comma
-multiline_comment|/* poll &t;*/
+id|ioctl
+suffix:colon
 id|fb_ioctl
 comma
-multiline_comment|/* ioctl &t;*/
+id|mmap
+suffix:colon
 id|fb_mmap
 comma
-multiline_comment|/* mmap&t;&t;*/
+id|open
+suffix:colon
 id|fb_open
 comma
-multiline_comment|/* open &t;*/
-l_int|NULL
-comma
-multiline_comment|/* flush&t;*/
+id|release
+suffix:colon
 id|fb_release
 comma
-multiline_comment|/* release &t;*/
-l_int|NULL
-multiline_comment|/* fsync &t;*/
 )brace
 suffix:semicolon
 r_int

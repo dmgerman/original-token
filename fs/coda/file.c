@@ -176,43 +176,30 @@ id|file_operations
 id|coda_file_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek - default should work for coda */
+id|read
+suffix:colon
 id|coda_file_read
 comma
-multiline_comment|/* read */
+id|write
+suffix:colon
 id|coda_file_write
 comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* select - default */
-l_int|NULL
-comma
-multiline_comment|/* ioctl */
+id|mmap
+suffix:colon
 id|coda_file_mmap
 comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|coda_open
 comma
-multiline_comment|/* open */
-l_int|NULL
-comma
+id|release
+suffix:colon
 id|coda_release
 comma
-multiline_comment|/* release */
+id|fsync
+suffix:colon
 id|coda_fsync
 comma
-multiline_comment|/* fsync */
-l_int|NULL
-comma
-multiline_comment|/* fasync */
-l_int|NULL
-multiline_comment|/* lock */
 )brace
 suffix:semicolon
 multiline_comment|/*  File file operations */
@@ -843,6 +830,11 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|cnp
 op_assign
 id|ITOC
@@ -873,6 +865,11 @@ id|printk
 c_func
 (paren
 l_string|&quot;coda_file_write: cached inode is 0!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return
@@ -955,6 +952,11 @@ id|cont_inode
 comma
 op_amp
 id|cont_file
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return

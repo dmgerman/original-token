@@ -5937,45 +5937,22 @@ id|file_operations
 id|mtrr_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/*  Seek              */
+id|read
+suffix:colon
 id|mtrr_read
 comma
-multiline_comment|/*  Read              */
+id|write
+suffix:colon
 id|mtrr_write
 comma
-multiline_comment|/*  Write             */
-l_int|NULL
-comma
-multiline_comment|/*  Readdir           */
-l_int|NULL
-comma
-multiline_comment|/*  Poll              */
+id|ioctl
+suffix:colon
 id|mtrr_ioctl
 comma
-multiline_comment|/*  IOctl             */
-l_int|NULL
-comma
-multiline_comment|/*  MMAP              */
-l_int|NULL
-comma
-multiline_comment|/*  Open              */
-l_int|NULL
-comma
-multiline_comment|/*  Flush             */
+id|release
+suffix:colon
 id|mtrr_close
 comma
-multiline_comment|/*  Release           */
-l_int|NULL
-comma
-multiline_comment|/*  Fsync             */
-l_int|NULL
-comma
-multiline_comment|/*  Fasync            */
-l_int|NULL
-comma
-multiline_comment|/*  Lock              */
 )brace
 suffix:semicolon
 DECL|variable|proc_mtrr_inode_operations

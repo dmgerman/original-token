@@ -2077,37 +2077,34 @@ id|file_operations
 id|pad_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* pad_seek */
+id|read
+suffix:colon
 id|read_pad
 comma
+id|write
+suffix:colon
 id|write_pad
 comma
-l_int|NULL
-comma
-multiline_comment|/* pad_readdir */
+id|poll
+suffix:colon
 id|pad_poll
 comma
+id|ioctl
+suffix:colon
 id|pad_ioctl
 comma
-l_int|NULL
-comma
-multiline_comment|/* pad_mmap */
+id|open
+suffix:colon
 id|open_pad
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|close_pad
 comma
-l_int|NULL
-comma
-multiline_comment|/* fsync */
+id|fasync
+suffix:colon
 id|fasync_pad
 comma
-l_int|NULL
-multiline_comment|/* lock */
 )brace
 suffix:semicolon
 DECL|variable|pc110_pad

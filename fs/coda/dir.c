@@ -368,38 +368,22 @@ id|file_operations
 id|coda_dir_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek */
-l_int|NULL
-comma
-multiline_comment|/* read -- bad  */
-l_int|NULL
-comma
-multiline_comment|/* write */
+id|readdir
+suffix:colon
 id|coda_readdir
 comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* select */
-l_int|NULL
-comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|coda_open
 comma
-multiline_comment|/* open */
-l_int|NULL
-comma
+id|release
+suffix:colon
 id|coda_release
 comma
-multiline_comment|/* release */
+id|fsync
+suffix:colon
 id|coda_fsync
 comma
-multiline_comment|/* fsync */
 )brace
 suffix:semicolon
 multiline_comment|/* inode operations for directories */

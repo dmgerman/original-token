@@ -769,42 +769,14 @@ id|file_operations
 id|ufs_dir_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek */
-l_int|NULL
-comma
-multiline_comment|/* read */
-l_int|NULL
-comma
-multiline_comment|/* write */
+id|readdir
+suffix:colon
 id|ufs_readdir
 comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* select */
-l_int|NULL
-comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
-l_int|NULL
-comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
-l_int|NULL
-comma
-multiline_comment|/* release */
+id|fsync
+suffix:colon
 id|file_fsync
 comma
-multiline_comment|/* fsync */
-l_int|NULL
-comma
-multiline_comment|/* fasync */
 )brace
 suffix:semicolon
 DECL|variable|ufs_dir_inode_operations

@@ -63,45 +63,58 @@ id|file_operations
 id|bad_file_ops
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|EIO_ERROR
 comma
-multiline_comment|/* lseek */
+id|read
+suffix:colon
 id|EIO_ERROR
 comma
-multiline_comment|/* read */
+id|write
+suffix:colon
 id|EIO_ERROR
 comma
-multiline_comment|/* write */
+id|readdir
+suffix:colon
 id|EIO_ERROR
 comma
-multiline_comment|/* readdir */
+id|poll
+suffix:colon
 id|EIO_ERROR
 comma
-multiline_comment|/* select */
+id|ioctl
+suffix:colon
 id|EIO_ERROR
 comma
-multiline_comment|/* ioctl */
+id|mmap
+suffix:colon
 id|EIO_ERROR
 comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|EIO_ERROR
 comma
-multiline_comment|/* open */
+id|flush
+suffix:colon
 id|EIO_ERROR
 comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|EIO_ERROR
 comma
-multiline_comment|/* release */
+id|fsync
+suffix:colon
 id|EIO_ERROR
 comma
-multiline_comment|/* fsync */
+id|fasync
+suffix:colon
 id|EIO_ERROR
 comma
-multiline_comment|/* fasync */
+id|lock
+suffix:colon
 id|EIO_ERROR
 comma
-multiline_comment|/* lock */
 )brace
 suffix:semicolon
 DECL|variable|bad_inode_ops

@@ -204,8 +204,8 @@ id|file_operations
 id|i2cproc_operations
 op_assign
 (brace
-l_int|NULL
-comma
+id|read
+suffix:colon
 id|i2cproc_bus_read
 comma
 )brace

@@ -872,31 +872,22 @@ id|file_operations
 id|uctrl_fops
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|uctrl_llseek
 comma
-l_int|NULL
-comma
-multiline_comment|/* read */
-l_int|NULL
-comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll */
+id|ioctl
+suffix:colon
 id|uctrl_ioctl
 comma
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|uctrl_open
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|uctrl_release
+comma
 )brace
 suffix:semicolon
 DECL|variable|uctrl_dev

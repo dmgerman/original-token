@@ -318,13 +318,6 @@ comma
 multiline_comment|/* Parsing lines */
 )brace
 suffix:semicolon
-DECL|struct|ov511_frame_header
-r_struct
-id|ov511_frame_header
-(brace
-singleline_comment|// FIXME - nothing here yet
-)brace
-suffix:semicolon
 r_struct
 id|usb_device
 suffix:semicolon
@@ -368,6 +361,37 @@ comma
 multiline_comment|/* Something bad happened while processing */
 )brace
 suffix:semicolon
+DECL|struct|ov511_regvals
+r_struct
+id|ov511_regvals
+(brace
+r_enum
+(brace
+DECL|enumerator|OV511_DONE_BUS
+id|OV511_DONE_BUS
+comma
+DECL|enumerator|OV511_REG_BUS
+id|OV511_REG_BUS
+comma
+DECL|enumerator|OV511_I2C_BUS
+id|OV511_I2C_BUS
+comma
+DECL|member|bus
+)brace
+id|bus
+suffix:semicolon
+DECL|member|reg
+r_int
+r_char
+id|reg
+suffix:semicolon
+DECL|member|val
+r_int
+r_char
+id|val
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|struct|ov511_frame
 r_struct
 id|ov511_frame
@@ -378,12 +402,11 @@ op_star
 id|data
 suffix:semicolon
 multiline_comment|/* Frame buffer */
-DECL|member|header
-r_struct
-id|ov511_frame_header
-id|header
+DECL|member|depth
+r_int
+id|depth
 suffix:semicolon
-multiline_comment|/* Header from stream */
+multiline_comment|/* Bytes per pixel */
 DECL|member|width
 r_int
 id|width
@@ -404,6 +427,21 @@ r_int
 id|hdrheight
 suffix:semicolon
 multiline_comment|/* Height */
+DECL|member|sub_flag
+r_int
+id|sub_flag
+suffix:semicolon
+multiline_comment|/* Sub-capture mode for this frame? */
+DECL|member|format
+r_int
+id|format
+suffix:semicolon
+multiline_comment|/* Format for this frame */
+DECL|member|segsize
+r_int
+id|segsize
+suffix:semicolon
+multiline_comment|/* How big is each segment from the camera? */
 DECL|member|grabstate
 r_volatile
 r_int
@@ -508,6 +546,31 @@ op_star
 id|fbuf
 suffix:semicolon
 multiline_comment|/* Videodev buffer area */
+DECL|member|sub_flag
+r_int
+id|sub_flag
+suffix:semicolon
+multiline_comment|/* Pix Array subcapture on flag */
+DECL|member|subx
+r_int
+id|subx
+suffix:semicolon
+multiline_comment|/* Pix Array subcapture x offset */
+DECL|member|suby
+r_int
+id|suby
+suffix:semicolon
+multiline_comment|/* Pix Array subcapture y offset */
+DECL|member|subw
+r_int
+id|subw
+suffix:semicolon
+multiline_comment|/* Pix Array subcapture width */
+DECL|member|subh
+r_int
+id|subh
+suffix:semicolon
+multiline_comment|/* Pix Array subcapture height */
 DECL|member|curframe
 r_int
 id|curframe
@@ -547,6 +610,11 @@ DECL|member|scratchlen
 r_int
 id|scratchlen
 suffix:semicolon
+DECL|member|wq
+id|wait_queue_head_t
+id|wq
+suffix:semicolon
+multiline_comment|/* Processes waiting */
 )brace
 suffix:semicolon
 macro_line|#endif

@@ -8985,29 +8985,30 @@ id|file_operations
 id|envctrl_fops
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|envctrl_llseek
 comma
+id|read
+suffix:colon
 id|envctrl_read
 comma
+id|write
+suffix:colon
 id|envctrl_write
 comma
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll */
+id|ioctl
+suffix:colon
 id|envctrl_ioctl
 comma
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|envctrl_open
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|envctrl_release
+comma
 )brace
 suffix:semicolon
 DECL|variable|envctrl_dev

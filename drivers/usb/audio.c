@@ -10865,45 +10865,22 @@ id|file_operations
 id|usb_mixer_fops
 op_assign
 (brace
-op_amp
+id|llseek
+suffix:colon
 id|usb_audio_llseek
 comma
-l_int|NULL
-comma
-multiline_comment|/* read */
-l_int|NULL
-comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll */
-op_amp
+id|ioctl
+suffix:colon
 id|usb_audio_ioctl_mixdev
 comma
-l_int|NULL
-comma
-multiline_comment|/* mmap */
-op_amp
+id|open
+suffix:colon
 id|usb_audio_open_mixdev
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
-op_amp
+id|release
+suffix:colon
 id|usb_audio_release_mixdev
 comma
-l_int|NULL
-comma
-multiline_comment|/* fsync */
-l_int|NULL
-comma
-multiline_comment|/* fasync */
-l_int|NULL
-comma
-multiline_comment|/* lock */
 )brace
 suffix:semicolon
 multiline_comment|/* --------------------------------------------------------------------- */
@@ -14552,45 +14529,38 @@ id|file_operations
 id|usb_audio_fops
 op_assign
 (brace
-op_amp
+id|llseek
+suffix:colon
 id|usb_audio_llseek
 comma
-op_amp
+id|read
+suffix:colon
 id|usb_audio_read
 comma
-op_amp
+id|write
+suffix:colon
 id|usb_audio_write
 comma
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-op_amp
+id|poll
+suffix:colon
 id|usb_audio_poll
 comma
-op_amp
+id|ioctl
+suffix:colon
 id|usb_audio_ioctl
 comma
-op_amp
+id|mmap
+suffix:colon
 id|usb_audio_mmap
 comma
-op_amp
+id|open
+suffix:colon
 id|usb_audio_open
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
-op_amp
+id|release
+suffix:colon
 id|usb_audio_release
 comma
-l_int|NULL
-comma
-multiline_comment|/* fsync */
-l_int|NULL
-comma
-multiline_comment|/* fasync */
-l_int|NULL
-comma
-multiline_comment|/* lock */
 )brace
 suffix:semicolon
 multiline_comment|/* --------------------------------------------------------------------- */

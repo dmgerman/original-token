@@ -3021,30 +3021,24 @@ id|file_operations
 id|vfc_fops
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|vfc_lseek
 comma
-multiline_comment|/* vfc_lseek */
-l_int|NULL
-comma
-multiline_comment|/* vfc_write */
-l_int|NULL
-comma
-multiline_comment|/* vfc_read */
-l_int|NULL
-comma
-multiline_comment|/* vfc_readdir */
-l_int|NULL
-comma
-multiline_comment|/* vfc_select */
+id|ioctl
+suffix:colon
 id|vfc_ioctl
 comma
+id|mmap
+suffix:colon
 id|vfc_mmap
 comma
+id|open
+suffix:colon
 id|vfc_open
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|vfc_release
 comma
 )brace

@@ -544,31 +544,22 @@ id|file_operations
 id|rtc_fops
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|rtc_lseek
 comma
-l_int|NULL
-comma
-multiline_comment|/* rtc_read */
-l_int|NULL
-comma
-multiline_comment|/* rtc_write */
-l_int|NULL
-comma
-multiline_comment|/* rtc_readdir */
-l_int|NULL
-comma
-multiline_comment|/* rtc_poll */
+id|ioctl
+suffix:colon
 id|rtc_ioctl
 comma
-l_int|NULL
-comma
-multiline_comment|/* rtc_mmap */
+id|open
+suffix:colon
 id|rtc_open
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|rtc_release
+comma
 )brace
 suffix:semicolon
 DECL|variable|rtc_dev

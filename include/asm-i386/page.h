@@ -65,6 +65,8 @@ suffix:semicolon
 )brace
 id|pgd_t
 suffix:semicolon
+DECL|macro|PTE_MASK
+mdefine_line|#define PTE_MASK&t;(~(unsigned long long) (PAGE_SIZE-1))
 macro_line|#else
 DECL|member|pte
 DECL|typedef|pte_t
@@ -102,6 +104,8 @@ suffix:semicolon
 )brace
 id|pgd_t
 suffix:semicolon
+DECL|macro|PTE_MASK
+mdefine_line|#define PTE_MASK&t;PAGE_MASK
 macro_line|#endif
 DECL|member|pgprot
 DECL|typedef|pgprot_t

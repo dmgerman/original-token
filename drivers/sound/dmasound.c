@@ -25482,30 +25482,20 @@ id|file_operations
 id|mixer_fops
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|sound_lseek
 comma
-l_int|NULL
-comma
-multiline_comment|/* mixer_read */
-l_int|NULL
-comma
-multiline_comment|/* mixer_write */
-l_int|NULL
-comma
-multiline_comment|/* mixer_readdir */
-l_int|NULL
-comma
-multiline_comment|/* mixer_poll */
+id|ioctl
+suffix:colon
 id|mixer_ioctl
 comma
-l_int|NULL
-comma
-multiline_comment|/* mixer_mmap */
+id|open
+suffix:colon
 id|mixer_open
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|mixer_release
 comma
 )brace
@@ -28146,37 +28136,33 @@ id|file_operations
 id|sq_fops
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|sound_lseek
 comma
+id|write
+suffix:colon
+id|sq_write
+comma
+id|ioctl
+suffix:colon
+id|sq_ioctl
+comma
+id|open
+suffix:colon
+id|sq_open
+comma
+id|release
+suffix:colon
+id|sq_release
+comma
 macro_line|#ifdef CONFIG_PPC
+id|read
+suffix:colon
 id|sq_read
 comma
 multiline_comment|/* sq_read */
-macro_line|#else
-l_int|NULL
-comma
-multiline_comment|/* sq_read */
 macro_line|#endif
-id|sq_write
-comma
-l_int|NULL
-comma
-multiline_comment|/* sq_readdir */
-l_int|NULL
-comma
-multiline_comment|/* sq_poll */
-id|sq_ioctl
-comma
-l_int|NULL
-comma
-multiline_comment|/* sq_mmap */
-id|sq_open
-comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
-id|sq_release
-comma
 )brace
 suffix:semicolon
 DECL|function|sq_init
@@ -28993,30 +28979,20 @@ id|file_operations
 id|state_fops
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|sound_lseek
 comma
+id|read
+suffix:colon
 id|state_read
 comma
-l_int|NULL
-comma
-multiline_comment|/* state_write */
-l_int|NULL
-comma
-multiline_comment|/* state_readdir */
-l_int|NULL
-comma
-multiline_comment|/* state_poll */
-l_int|NULL
-comma
-multiline_comment|/* state_ioctl */
-l_int|NULL
-comma
-multiline_comment|/* state_mmap */
+id|open
+suffix:colon
 id|state_open
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|state_release
 comma
 )brace

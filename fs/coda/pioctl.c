@@ -153,38 +153,18 @@ id|file_operations
 id|coda_ioctl_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek - default should work for coda */
-l_int|NULL
-comma
-multiline_comment|/* read */
-l_int|NULL
-comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* select - default */
+id|ioctl
+suffix:colon
 id|coda_pioctl
 comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|coda_ioctl_open
 comma
-multiline_comment|/* open */
-l_int|NULL
-comma
+id|release
+suffix:colon
 id|coda_ioctl_release
 comma
-multiline_comment|/* release */
-l_int|NULL
-comma
-multiline_comment|/* fsync */
 )brace
 suffix:semicolon
 multiline_comment|/* the coda pioctl inode ops */

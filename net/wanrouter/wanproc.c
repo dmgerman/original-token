@@ -170,38 +170,10 @@ id|file_operations
 id|router_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek   */
+id|read
+suffix:colon
 id|router_proc_read
 comma
-multiline_comment|/* read&t;   */
-l_int|NULL
-comma
-multiline_comment|/* write   */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* select  */
-l_int|NULL
-comma
-multiline_comment|/* ioctl   */
-l_int|NULL
-comma
-multiline_comment|/* mmap&t;   */
-l_int|NULL
-comma
-multiline_comment|/* no special open code&t;   */
-l_int|NULL
-comma
-multiline_comment|/* flush */
-l_int|NULL
-comma
-multiline_comment|/* no special release code */
-l_int|NULL
-multiline_comment|/* can&squot;t fsync */
 )brace
 suffix:semicolon
 DECL|variable|router_inode
@@ -274,38 +246,14 @@ id|file_operations
 id|wandev_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek   */
+id|read
+suffix:colon
 id|router_proc_read
 comma
-multiline_comment|/* read&t;   */
-l_int|NULL
-comma
-multiline_comment|/* write   */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* select  */
+id|ioctl
+suffix:colon
 id|wanrouter_ioctl
 comma
-multiline_comment|/* ioctl   */
-l_int|NULL
-comma
-multiline_comment|/* mmap&t;   */
-l_int|NULL
-comma
-multiline_comment|/* no special open code&t;   */
-l_int|NULL
-comma
-multiline_comment|/* flush */
-l_int|NULL
-comma
-multiline_comment|/* no special release code */
-l_int|NULL
-multiline_comment|/* can&squot;t fsync */
 )brace
 suffix:semicolon
 DECL|variable|wandev_inode

@@ -30,38 +30,22 @@ id|file_operations
 id|fat_file_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek - default */
+id|read
+suffix:colon
 id|fat_file_read
 comma
-multiline_comment|/* read */
+id|write
+suffix:colon
 id|fat_file_write
 comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir - bad */
-l_int|NULL
-comma
-multiline_comment|/* select v2.0.x/poll v2.1.x - default */
-l_int|NULL
-comma
-multiline_comment|/* ioctl - default */
+id|mmap
+suffix:colon
 id|generic_file_mmap
 comma
-multiline_comment|/* mmap */
-l_int|NULL
-comma
-multiline_comment|/* no special open is needed */
-l_int|NULL
-comma
-multiline_comment|/* flush */
-l_int|NULL
-comma
-multiline_comment|/* release */
+id|fsync
+suffix:colon
 id|file_fsync
-multiline_comment|/* fsync */
+comma
 )brace
 suffix:semicolon
 DECL|variable|fat_file_inode_operations

@@ -359,38 +359,14 @@ id|file_operations
 id|usbdevfs_drivers_fops
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|usb_driver_lseek
 comma
-multiline_comment|/* lseek   */
+id|read
+suffix:colon
 id|usb_driver_read
 comma
-multiline_comment|/* read    */
-l_int|NULL
-comma
-multiline_comment|/* write   */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll    */
-l_int|NULL
-comma
-multiline_comment|/* ioctl   */
-l_int|NULL
-comma
-multiline_comment|/* mmap    */
-l_int|NULL
-comma
-multiline_comment|/* open    */
-l_int|NULL
-comma
-multiline_comment|/* flush   */
-l_int|NULL
-comma
-multiline_comment|/* release */
-l_int|NULL
-multiline_comment|/* fsync   */
 )brace
 suffix:semicolon
 eof

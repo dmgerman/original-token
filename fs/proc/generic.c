@@ -125,15 +125,18 @@ id|file_operations
 id|proc_file_operations
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|proc_file_lseek
 comma
-multiline_comment|/* lseek   */
+id|read
+suffix:colon
 id|proc_file_read
 comma
-multiline_comment|/* read&t;   */
+id|write
+suffix:colon
 id|proc_file_write
 comma
-multiline_comment|/* write   */
 )brace
 suffix:semicolon
 DECL|variable|proc_file_inode_operations
@@ -1390,18 +1393,10 @@ id|file_operations
 id|proc_dir_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek - default */
-l_int|NULL
-comma
-multiline_comment|/* read - bad */
-l_int|NULL
-comma
-multiline_comment|/* write - bad */
+id|readdir
+suffix:colon
 id|proc_readdir
 comma
-multiline_comment|/* readdir */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * proc directories can do almost nothing..&n; */

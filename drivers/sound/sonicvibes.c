@@ -6314,45 +6314,22 @@ id|file_operations
 id|sv_mixer_fops
 op_assign
 (brace
-op_amp
+id|llseek
+suffix:colon
 id|sv_llseek
 comma
-l_int|NULL
-comma
-multiline_comment|/* read */
-l_int|NULL
-comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll */
-op_amp
+id|ioctl
+suffix:colon
 id|sv_ioctl_mixdev
 comma
-l_int|NULL
-comma
-multiline_comment|/* mmap */
-op_amp
+id|open
+suffix:colon
 id|sv_open_mixdev
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
-op_amp
+id|release
+suffix:colon
 id|sv_release_mixdev
 comma
-l_int|NULL
-comma
-multiline_comment|/* fsync */
-l_int|NULL
-comma
-multiline_comment|/* fasync */
-l_int|NULL
-comma
-multiline_comment|/* lock */
 )brace
 suffix:semicolon
 multiline_comment|/* --------------------------------------------------------------------- */
@@ -10466,45 +10443,38 @@ id|file_operations
 id|sv_audio_fops
 op_assign
 (brace
-op_amp
+id|llseek
+suffix:colon
 id|sv_llseek
 comma
-op_amp
+id|read
+suffix:colon
 id|sv_read
 comma
-op_amp
+id|write
+suffix:colon
 id|sv_write
 comma
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-op_amp
+id|poll
+suffix:colon
 id|sv_poll
 comma
-op_amp
+id|ioctl
+suffix:colon
 id|sv_ioctl
 comma
-op_amp
+id|mmap
+suffix:colon
 id|sv_mmap
 comma
-op_amp
+id|open
+suffix:colon
 id|sv_open
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
-op_amp
+id|release
+suffix:colon
 id|sv_release
 comma
-l_int|NULL
-comma
-multiline_comment|/* fsync */
-l_int|NULL
-comma
-multiline_comment|/* fasync */
-l_int|NULL
-comma
-multiline_comment|/* lock */
 )brace
 suffix:semicolon
 multiline_comment|/* --------------------------------------------------------------------- */
@@ -12155,45 +12125,30 @@ id|file_operations
 id|sv_midi_fops
 op_assign
 (brace
-op_amp
+id|llseek
+suffix:colon
 id|sv_llseek
 comma
-op_amp
+id|read
+suffix:colon
 id|sv_midi_read
 comma
-op_amp
+id|write
+suffix:colon
 id|sv_midi_write
 comma
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-op_amp
+id|poll
+suffix:colon
 id|sv_midi_poll
 comma
-l_int|NULL
-comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
-op_amp
+id|open
+suffix:colon
 id|sv_midi_open
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
-op_amp
+id|release
+suffix:colon
 id|sv_midi_release
 comma
-l_int|NULL
-comma
-multiline_comment|/* fsync */
-l_int|NULL
-comma
-multiline_comment|/* fasync */
-l_int|NULL
-comma
-multiline_comment|/* lock */
 )brace
 suffix:semicolon
 multiline_comment|/* --------------------------------------------------------------------- */
@@ -13472,45 +13427,22 @@ id|file_operations
 id|sv_dmfm_fops
 op_assign
 (brace
-op_amp
+id|llseek
+suffix:colon
 id|sv_llseek
 comma
-l_int|NULL
-comma
-multiline_comment|/* read */
-l_int|NULL
-comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll */
-op_amp
+id|ioctl
+suffix:colon
 id|sv_dmfm_ioctl
 comma
-l_int|NULL
-comma
-multiline_comment|/* mmap */
-op_amp
+id|open
+suffix:colon
 id|sv_dmfm_open
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
-op_amp
+id|release
+suffix:colon
 id|sv_dmfm_release
 comma
-l_int|NULL
-comma
-multiline_comment|/* fsync */
-l_int|NULL
-comma
-multiline_comment|/* fasync */
-l_int|NULL
-comma
-multiline_comment|/* lock */
 )brace
 suffix:semicolon
 multiline_comment|/* --------------------------------------------------------------------- */

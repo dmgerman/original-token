@@ -3791,27 +3791,38 @@ id|file_operations
 id|oss_sound_fops
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|sound_lseek
 comma
+id|read
+suffix:colon
 id|sound_read
 comma
+id|write
+suffix:colon
 id|sound_write
 comma
-l_int|NULL
-comma
-multiline_comment|/* sound_readdir */
+id|poll
+suffix:colon
 id|sound_poll
 comma
+id|ioctl
+suffix:colon
 id|sound_ioctl
 comma
+id|mmap
+suffix:colon
 id|sound_mmap
 comma
+id|open
+suffix:colon
 id|sound_open
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|sound_release
+comma
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;Create the required special subdevices&n; */

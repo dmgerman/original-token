@@ -3672,33 +3672,28 @@ id|file_operations
 id|psaux_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* seek */
+id|read
+suffix:colon
 id|aux_read
 comma
+id|write
+suffix:colon
 id|aux_write
 comma
-l_int|NULL
-comma
-multiline_comment|/* readdir */
+id|poll
+suffix:colon
 id|aux_poll
 comma
-l_int|NULL
-comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|aux_open
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|aux_release
 comma
-l_int|NULL
-comma
+id|fasync
+suffix:colon
 id|aux_fasync
 comma
 )brace
@@ -3731,24 +3726,8 @@ id|file_operations
 id|psaux_no_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* seek */
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-l_int|NULL
-comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|aux_no_open
 comma
 )brace

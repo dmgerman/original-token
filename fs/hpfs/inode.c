@@ -8,45 +8,30 @@ id|file_operations
 id|hpfs_file_ops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek - default */
+id|read
+suffix:colon
 id|generic_file_read
 comma
-multiline_comment|/* read */
+id|write
+suffix:colon
 id|hpfs_file_write
 comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir - bad */
-l_int|NULL
-comma
-multiline_comment|/* poll - default */
-l_int|NULL
-comma
-multiline_comment|/* ioctl - default */
+id|mmap
+suffix:colon
 id|generic_file_mmap
 comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|hpfs_open
 comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|hpfs_file_release
 comma
-multiline_comment|/* release */
+id|fsync
+suffix:colon
 id|hpfs_file_fsync
 comma
-multiline_comment|/* fsync */
-l_int|NULL
-comma
-multiline_comment|/* fasync */
-l_int|NULL
-comma
-multiline_comment|/* lock */
 )brace
 suffix:semicolon
 DECL|variable|hpfs_file_iops
@@ -127,45 +112,30 @@ id|file_operations
 id|hpfs_dir_ops
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|hpfs_dir_lseek
 comma
-multiline_comment|/* lseek */
+id|read
+suffix:colon
 id|hpfs_dir_read
 comma
-multiline_comment|/* read */
-l_int|NULL
-comma
-multiline_comment|/* write - bad */
+id|readdir
+suffix:colon
 id|hpfs_readdir
 comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll - default */
-l_int|NULL
-comma
-multiline_comment|/* ioctl - default */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|hpfs_open
 comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|hpfs_dir_release
 comma
-multiline_comment|/* no special release code */
+id|fsync
+suffix:colon
 id|hpfs_file_fsync
 comma
-multiline_comment|/* fsync */
-l_int|NULL
-comma
-multiline_comment|/* fasync */
-l_int|NULL
-comma
-multiline_comment|/* lock */
 )brace
 suffix:semicolon
 DECL|variable|hpfs_dir_iops

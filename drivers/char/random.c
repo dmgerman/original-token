@@ -8635,32 +8635,22 @@ id|file_operations
 id|random_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* random_lseek */
+id|read
+suffix:colon
 id|random_read
 comma
+id|write
+suffix:colon
 id|random_write
 comma
-l_int|NULL
-comma
-multiline_comment|/* random_readdir */
+id|poll
+suffix:colon
 id|random_poll
 comma
-multiline_comment|/* random_poll */
+id|ioctl
+suffix:colon
 id|random_ioctl
 comma
-l_int|NULL
-comma
-multiline_comment|/* random_mmap */
-l_int|NULL
-comma
-multiline_comment|/* no special open code */
-l_int|NULL
-comma
-multiline_comment|/* flush */
-l_int|NULL
-multiline_comment|/* no special release code */
 )brace
 suffix:semicolon
 DECL|variable|urandom_fops
@@ -8669,32 +8659,18 @@ id|file_operations
 id|urandom_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* unrandom_lseek */
+id|read
+suffix:colon
 id|urandom_read
 comma
+id|write
+suffix:colon
 id|random_write
 comma
-l_int|NULL
-comma
-multiline_comment|/* urandom_readdir */
-l_int|NULL
-comma
-multiline_comment|/* urandom_poll */
+id|ioctl
+suffix:colon
 id|random_ioctl
 comma
-l_int|NULL
-comma
-multiline_comment|/* urandom_mmap */
-l_int|NULL
-comma
-multiline_comment|/* no special open code */
-l_int|NULL
-comma
-multiline_comment|/* flush */
-l_int|NULL
-multiline_comment|/* no special release code */
 )brace
 suffix:semicolon
 multiline_comment|/***************************************************************&n; * Random UUID interface&n; * &n; * Used here for a Boot ID, but can be useful for other kernel &n; * drivers.&n; ***************************************************************/

@@ -3334,38 +3334,18 @@ id|file_operations
 id|openpromfs_prop_ops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek - default */
+id|read
+suffix:colon
 id|property_read
 comma
-multiline_comment|/* read */
+id|write
+suffix:colon
 id|property_write
 comma
-multiline_comment|/* write - bad */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll - default */
-l_int|NULL
-comma
-multiline_comment|/* ioctl - default */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
-l_int|NULL
-comma
-multiline_comment|/* no special open code */
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|property_release
 comma
-multiline_comment|/* no special release code */
-l_int|NULL
-multiline_comment|/* can&squot;t fsync */
 )brace
 suffix:semicolon
 DECL|variable|openpromfs_prop_inode_ops
@@ -3388,38 +3368,10 @@ id|file_operations
 id|openpromfs_nodenum_ops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek - default */
+id|read
+suffix:colon
 id|nodenum_read
 comma
-multiline_comment|/* read */
-l_int|NULL
-comma
-multiline_comment|/* write - bad */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll - default */
-l_int|NULL
-comma
-multiline_comment|/* ioctl - default */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
-l_int|NULL
-comma
-multiline_comment|/* no special open code */
-l_int|NULL
-comma
-multiline_comment|/* flush */
-l_int|NULL
-comma
-multiline_comment|/* no special release code */
-l_int|NULL
-multiline_comment|/* can&squot;t fsync */
 )brace
 suffix:semicolon
 DECL|variable|openpromfs_nodenum_inode_ops
@@ -3442,38 +3394,10 @@ id|file_operations
 id|openprom_alias_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek - default */
-l_int|NULL
-comma
-multiline_comment|/* read - bad */
-l_int|NULL
-comma
-multiline_comment|/* write - bad */
+id|readdir
+suffix:colon
 id|openpromfs_readdir
 comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll - default */
-l_int|NULL
-comma
-multiline_comment|/* ioctl - default */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
-l_int|NULL
-comma
-multiline_comment|/* no special open code */
-l_int|NULL
-comma
-multiline_comment|/* flush */
-l_int|NULL
-comma
-multiline_comment|/* no special release code */
-l_int|NULL
-multiline_comment|/* can&squot;t fsync */
 )brace
 suffix:semicolon
 DECL|variable|openprom_alias_inode_operations
@@ -5973,18 +5897,10 @@ id|file_operations
 id|openprom_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek - default */
-l_int|NULL
-comma
-multiline_comment|/* read - bad */
-l_int|NULL
-comma
-multiline_comment|/* write - bad */
+id|readdir
+suffix:colon
 id|openpromfs_readdir
 comma
-multiline_comment|/* readdir */
 )brace
 suffix:semicolon
 DECL|variable|openprom_inode_operations

@@ -655,28 +655,34 @@ id|file_operations
 id|netlink_fops
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|netlink_lseek
 comma
+id|read
+suffix:colon
 id|netlink_read
 comma
+id|write
+suffix:colon
 id|netlink_write
 comma
-l_int|NULL
-comma
-multiline_comment|/* netlink_readdir */
+id|poll
+suffix:colon
 id|netlink_poll
 comma
+id|ioctl
+suffix:colon
 id|netlink_ioctl
 comma
-l_int|NULL
-comma
-multiline_comment|/* netlink_mmap */
+id|open
+suffix:colon
 id|netlink_open
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|netlink_release
+comma
 )brace
 suffix:semicolon
 DECL|function|init_netlink

@@ -7198,45 +7198,22 @@ id|file_operations
 id|wavefront_fops
 op_assign
 (brace
-op_amp
+id|llseek
+suffix:colon
 id|wavefront_llseek
 comma
-l_int|NULL
-comma
-multiline_comment|/* read */
-l_int|NULL
-comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll */
-op_amp
+id|ioctl
+suffix:colon
 id|wavefront_ioctl
 comma
-l_int|NULL
-comma
-multiline_comment|/* mmap */
-op_amp
+id|open
+suffix:colon
 id|wavefront_open
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
-op_amp
+id|release
+suffix:colon
 id|wavefront_release
 comma
-l_int|NULL
-comma
-multiline_comment|/* fsync */
-l_int|NULL
-comma
-multiline_comment|/* fasync */
-l_int|NULL
-comma
-multiline_comment|/* lock */
 )brace
 suffix:semicolon
 "&f;"

@@ -1069,41 +1069,40 @@ id|file_operations
 id|cosa_fops
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|cosa_lseek
 comma
+id|read
+suffix:colon
 id|cosa_read
 comma
+id|write
+suffix:colon
 id|cosa_write
 comma
-l_int|NULL
-comma
-multiline_comment|/* readdir */
+id|poll
+suffix:colon
 id|cosa_poll
 comma
+id|ioctl
+suffix:colon
 id|cosa_chardev_ioctl
 comma
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|cosa_open
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|cosa_release
 comma
-l_int|NULL
-comma
-multiline_comment|/* fsync */
 macro_line|#ifdef COSA_FASYNC_WORKING
+id|fasync
+suffix:colon
 id|cosa_fasync
 comma
-macro_line|#else
-l_int|NULL
-comma
 macro_line|#endif
-l_int|NULL
-multiline_comment|/* lock */
 )brace
 suffix:semicolon
 multiline_comment|/* Ioctls */

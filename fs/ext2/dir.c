@@ -49,42 +49,22 @@ id|file_operations
 id|ext2_dir_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek - default */
+id|read
+suffix:colon
 id|ext2_dir_read
 comma
-multiline_comment|/* read */
-l_int|NULL
-comma
-multiline_comment|/* write - bad */
+id|readdir
+suffix:colon
 id|ext2_readdir
 comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll - default */
+id|ioctl
+suffix:colon
 id|ext2_ioctl
 comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
-l_int|NULL
-comma
-multiline_comment|/* no special open code */
-l_int|NULL
-comma
-multiline_comment|/* flush */
-l_int|NULL
-comma
-multiline_comment|/* no special release code */
+id|fsync
+suffix:colon
 id|ext2_sync_file
 comma
-multiline_comment|/* fsync */
-l_int|NULL
-comma
-multiline_comment|/* fasync */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * directories can handle most operations...&n; */

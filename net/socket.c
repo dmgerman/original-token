@@ -198,32 +198,41 @@ id|file_operations
 id|socket_file_ops
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|sock_lseek
 comma
+id|read
+suffix:colon
 id|sock_read
 comma
+id|write
+suffix:colon
 id|sock_write
 comma
-l_int|NULL
-comma
-multiline_comment|/* readdir */
+id|poll
+suffix:colon
 id|sock_poll
 comma
+id|ioctl
+suffix:colon
 id|sock_ioctl
 comma
+id|mmap
+suffix:colon
 id|sock_mmap
 comma
+id|open
+suffix:colon
 id|sock_no_open
 comma
 multiline_comment|/* special open code to disallow open via /proc */
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|sock_close
 comma
-l_int|NULL
-comma
-multiline_comment|/* no fsync */
+id|fasync
+suffix:colon
 id|sock_fasync
 )brace
 suffix:semicolon

@@ -437,41 +437,38 @@ id|file_operations
 id|ext2_file_operations
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|ext2_file_lseek
 comma
-multiline_comment|/* lseek */
+id|read
+suffix:colon
 id|generic_file_read
 comma
-multiline_comment|/* read */
+id|write
+suffix:colon
 id|ext2_file_write
 comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir - bad */
-l_int|NULL
-comma
-multiline_comment|/* poll - default */
+id|ioctl
+suffix:colon
 id|ext2_ioctl
 comma
-multiline_comment|/* ioctl */
+id|mmap
+suffix:colon
 id|generic_file_mmap
 comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|ext2_open_file
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|ext2_release_file
 comma
-multiline_comment|/* release */
+id|fsync
+suffix:colon
 id|ext2_sync_file
 comma
-multiline_comment|/* fsync */
-l_int|NULL
-comma
-multiline_comment|/* fasync */
 )brace
 suffix:semicolon
 DECL|variable|ext2_file_inode_operations

@@ -148,38 +148,18 @@ id|file_operations
 id|ppc_htab_operations
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|ppc_htab_lseek
 comma
-multiline_comment|/* lseek   */
+id|read
+suffix:colon
 id|ppc_htab_read
 comma
-multiline_comment|/* read&t;   */
+id|write
+suffix:colon
 id|ppc_htab_write
 comma
-multiline_comment|/* write   */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll    */
-l_int|NULL
-comma
-multiline_comment|/* ioctl   */
-l_int|NULL
-comma
-multiline_comment|/* mmap&t;   */
-l_int|NULL
-comma
-multiline_comment|/* no special open code&t;   */
-l_int|NULL
-comma
-multiline_comment|/* flush */
-l_int|NULL
-comma
-multiline_comment|/* no special release code */
-l_int|NULL
-multiline_comment|/* can&squot;t fsync */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * proc files can do almost nothing..&n; */

@@ -93,47 +93,24 @@ id|file_operations
 id|adfs_file_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek&t;&t;*/
+id|read
+suffix:colon
 id|generic_file_read
 comma
-multiline_comment|/* read&t;&t;&t;*/
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,3,0)
-id|adfs_file_write
-comma
-multiline_comment|/* write&t;&t;*/
-macro_line|#else
-l_int|NULL
-comma
-macro_line|#endif
-l_int|NULL
-comma
-multiline_comment|/* readdir&t;&t;*/
-l_int|NULL
-comma
-multiline_comment|/* poll&t;&t;&t;*/
-l_int|NULL
-comma
-multiline_comment|/* ioctl&t;&t;*/
+id|mmap
+suffix:colon
 id|generic_file_mmap
 comma
-multiline_comment|/* mmap&t;&t;&t;*/
-l_int|NULL
-comma
-multiline_comment|/* open&t;&t;&t;*/
-l_int|NULL
-comma
-multiline_comment|/* flush&t;&t;*/
-l_int|NULL
-comma
-multiline_comment|/* release&t;&t;*/
+id|fsync
+suffix:colon
 id|file_fsync
 comma
-multiline_comment|/* fsync&t;&t;*/
-l_int|NULL
+macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,3,0)
+id|write
+suffix:colon
+id|adfs_file_write
 comma
-multiline_comment|/* fasync&t;&t;*/
+macro_line|#endif
 )brace
 suffix:semicolon
 DECL|variable|adfs_file_inode_operations

@@ -140,24 +140,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|current
-op_eq
-id|init_tasks
-(braket
-l_int|0
-)braket
-)paren
-id|printk
-c_func
-(paren
-id|KERN_EMERG
-l_string|&quot;In swapper task - not syncing&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
 id|in_interrupt
 c_func
 (paren
@@ -168,6 +150,20 @@ c_func
 (paren
 id|KERN_EMERG
 l_string|&quot;In interrupt handler - not syncing&bslash;n&quot;
+)paren
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|current-&gt;pid
+)paren
+id|printk
+c_func
+(paren
+id|KERN_EMERG
+l_string|&quot;In idle task - not syncing&bslash;n&quot;
 )paren
 suffix:semicolon
 r_else

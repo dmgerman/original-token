@@ -374,39 +374,30 @@ id|file_operations
 id|zft_cdev
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* llseek */
+id|read
+suffix:colon
 id|zft_read
 comma
-multiline_comment|/* read */
+id|write
+suffix:colon
 id|zft_write
 comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* select */
+id|ioctl
+suffix:colon
 id|zft_ioctl
 comma
-multiline_comment|/* ioctl */
+id|mmap
+suffix:colon
 id|zft_mmap
 comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|zft_open
 comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|zft_close
 comma
-multiline_comment|/* release */
-l_int|NULL
-comma
-multiline_comment|/* fsync */
 )brace
 suffix:semicolon
 multiline_comment|/*      Open floppy tape device&n; */

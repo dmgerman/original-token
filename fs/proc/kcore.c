@@ -64,27 +64,14 @@ id|file_operations
 id|proc_kcore_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek */
+id|read
+suffix:colon
 id|read_kcore
 comma
-l_int|NULL
-comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll */
-l_int|NULL
-comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|open_kcore
+comma
 )brace
 suffix:semicolon
 DECL|variable|proc_kcore_inode_operations

@@ -77,44 +77,22 @@ id|file_operations
 id|hfs_file_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek - default */
+id|read
+suffix:colon
 id|hfs_file_read
 comma
-multiline_comment|/* read */
+id|write
+suffix:colon
 id|hfs_file_write
 comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir - bad */
-l_int|NULL
-comma
-multiline_comment|/* select - default */
-l_int|NULL
-comma
-multiline_comment|/* ioctl - default */
+id|mmap
+suffix:colon
 id|generic_file_mmap
 comma
-multiline_comment|/* mmap */
-l_int|NULL
-comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
-l_int|NULL
-comma
-multiline_comment|/* release */
+id|fsync
+suffix:colon
 id|file_fsync
 comma
-multiline_comment|/* fsync - default */
-l_int|NULL
-comma
-multiline_comment|/* fasync - default */
-l_int|NULL
-multiline_comment|/* lock - none */
 )brace
 suffix:semicolon
 DECL|variable|hfs_file_inode_operations

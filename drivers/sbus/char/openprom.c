@@ -2858,31 +2858,22 @@ id|file_operations
 id|openprom_fops
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|openprom_lseek
 comma
-l_int|NULL
-comma
-multiline_comment|/* openprom_read */
-l_int|NULL
-comma
-multiline_comment|/* openprom_write */
-l_int|NULL
-comma
-multiline_comment|/* openprom_readdir */
-l_int|NULL
-comma
-multiline_comment|/* openprom_poll */
+id|ioctl
+suffix:colon
 id|openprom_ioctl
 comma
-l_int|NULL
-comma
-multiline_comment|/* openprom_mmap */
+id|open
+suffix:colon
 id|openprom_open
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|openprom_release
+comma
 )brace
 suffix:semicolon
 DECL|variable|openprom_dev

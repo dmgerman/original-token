@@ -5450,38 +5450,30 @@ id|file_operations
 id|usbdevfs_device_file_operations
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|usbdev_lseek
 comma
-multiline_comment|/* lseek   */
+id|read
+suffix:colon
 id|usbdev_read
 comma
-multiline_comment|/* read    */
-l_int|NULL
-comma
-multiline_comment|/* write   */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
+id|poll
+suffix:colon
 id|usbdev_poll
 comma
-multiline_comment|/* poll    */
+id|ioctl
+suffix:colon
 id|usbdev_ioctl
 comma
-multiline_comment|/* ioctl   */
-l_int|NULL
-comma
-multiline_comment|/* mmap    */
+id|open
+suffix:colon
 id|usbdev_open
 comma
-multiline_comment|/* open    */
-l_int|NULL
-comma
-multiline_comment|/* flush   */
+id|release
+suffix:colon
 id|usbdev_release
 comma
-multiline_comment|/* release */
-l_int|NULL
-multiline_comment|/* fsync   */
 )brace
 suffix:semicolon
 DECL|variable|usbdevfs_device_inode_operations

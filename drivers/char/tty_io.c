@@ -1290,33 +1290,38 @@ id|file_operations
 id|tty_fops
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|tty_lseek
 comma
+id|read
+suffix:colon
 id|tty_read
 comma
+id|write
+suffix:colon
 id|tty_write
 comma
-l_int|NULL
-comma
-multiline_comment|/* tty_readdir */
+id|poll
+suffix:colon
 id|tty_poll
 comma
+id|ioctl
+suffix:colon
 id|tty_ioctl
 comma
-l_int|NULL
-comma
-multiline_comment|/* tty_mmap */
+id|open
+suffix:colon
 id|tty_open
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|tty_release
 comma
-l_int|NULL
-comma
-multiline_comment|/* tty_fsync */
+id|fasync
+suffix:colon
 id|tty_fasync
+comma
 )brace
 suffix:semicolon
 DECL|variable|hung_up_tty_fops
@@ -1326,36 +1331,30 @@ id|file_operations
 id|hung_up_tty_fops
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|tty_lseek
 comma
+id|read
+suffix:colon
 id|hung_up_tty_read
 comma
+id|write
+suffix:colon
 id|hung_up_tty_write
 comma
-l_int|NULL
-comma
-multiline_comment|/* hung_up_tty_readdir */
+id|poll
+suffix:colon
 id|hung_up_tty_poll
 comma
+id|ioctl
+suffix:colon
 id|hung_up_tty_ioctl
 comma
-l_int|NULL
-comma
-multiline_comment|/* hung_up_tty_mmap */
-l_int|NULL
-comma
-multiline_comment|/* hung_up_tty_open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|tty_release
 comma
-multiline_comment|/* hung_up_tty_release */
-l_int|NULL
-comma
-multiline_comment|/* hung_up_tty_fsync  */
-l_int|NULL
-multiline_comment|/* hung_up_tty_fasync */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * This can be called through the &quot;tq_scheduler&quot; &n; * task-list. That is process synchronous, but&n; * doesn&squot;t hold any locks, so we need to make&n; * sure we have the appropriate locks for what&n; * we&squot;re doing..&n; */

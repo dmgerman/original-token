@@ -1974,6 +1974,7 @@ op_assign
 id|readdir
 suffix:colon
 id|usbdevfs_root_readdir
+comma
 )brace
 suffix:semicolon
 DECL|variable|usbdevfs_root_inode_operations
@@ -1991,6 +1992,7 @@ comma
 id|lookup
 suffix:colon
 id|usbdevfs_root_lookup
+comma
 )brace
 suffix:semicolon
 DECL|variable|usbdevfs_bus_file_operations
@@ -2003,6 +2005,7 @@ op_assign
 id|readdir
 suffix:colon
 id|usbdevfs_bus_readdir
+comma
 )brace
 suffix:semicolon
 DECL|variable|usbdevfs_bus_inode_operations
@@ -2020,6 +2023,7 @@ comma
 id|lookup
 suffix:colon
 id|usbdevfs_bus_lookup
+comma
 )brace
 suffix:semicolon
 DECL|function|usbdevfs_read_inode

@@ -969,38 +969,14 @@ id|file_operations
 id|initrd_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek */
+id|read
+suffix:colon
 id|initrd_read
 comma
-multiline_comment|/* read */
-l_int|NULL
-comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll */
-l_int|NULL
-comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
-l_int|NULL
-comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|initrd_release
 comma
-multiline_comment|/* release */
-l_int|NULL
-multiline_comment|/* fsync */
 )brace
 suffix:semicolon
 macro_line|#endif

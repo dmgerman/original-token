@@ -2025,33 +2025,26 @@ id|file_operations
 id|mem_fops
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|memory_lseek
 comma
+id|read
+suffix:colon
 id|read_mem
 comma
+id|write
+suffix:colon
 id|write_mem
 comma
-l_int|NULL
-comma
-multiline_comment|/* mem_readdir */
-l_int|NULL
-comma
-multiline_comment|/* mem_poll */
-l_int|NULL
-comma
-multiline_comment|/* mem_ioctl */
+id|mmap
+suffix:colon
 id|mmap_mem
 comma
+id|open
+suffix:colon
 id|open_mem
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
-l_int|NULL
-comma
-multiline_comment|/* no special release code */
-l_int|NULL
-multiline_comment|/* fsync */
 )brace
 suffix:semicolon
 DECL|variable|kmem_fops
@@ -2061,33 +2054,26 @@ id|file_operations
 id|kmem_fops
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|memory_lseek
 comma
+id|read
+suffix:colon
 id|read_kmem
 comma
+id|write
+suffix:colon
 id|write_kmem
 comma
-l_int|NULL
-comma
-multiline_comment|/* kmem_readdir */
-l_int|NULL
-comma
-multiline_comment|/* kmem_poll */
-l_int|NULL
-comma
-multiline_comment|/* kmem_ioctl */
+id|mmap
+suffix:colon
 id|mmap_kmem
 comma
+id|open
+suffix:colon
 id|open_kmem
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
-l_int|NULL
-comma
-multiline_comment|/* no special release code */
-l_int|NULL
-multiline_comment|/* fsync */
 )brace
 suffix:semicolon
 DECL|variable|null_fops
@@ -2097,35 +2083,18 @@ id|file_operations
 id|null_fops
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|null_lseek
 comma
+id|read
+suffix:colon
 id|read_null
 comma
+id|write
+suffix:colon
 id|write_null
 comma
-l_int|NULL
-comma
-multiline_comment|/* null_readdir */
-l_int|NULL
-comma
-multiline_comment|/* null_poll */
-l_int|NULL
-comma
-multiline_comment|/* null_ioctl */
-l_int|NULL
-comma
-multiline_comment|/* null_mmap */
-l_int|NULL
-comma
-multiline_comment|/* no special open code */
-l_int|NULL
-comma
-multiline_comment|/* flush */
-l_int|NULL
-comma
-multiline_comment|/* no special release code */
-l_int|NULL
-multiline_comment|/* fsync */
 )brace
 suffix:semicolon
 macro_line|#if !defined(CONFIG_PPC) &amp;&amp; !defined(__mc68000__)
@@ -2136,34 +2105,22 @@ id|file_operations
 id|port_fops
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|memory_lseek
 comma
+id|read
+suffix:colon
 id|read_port
 comma
+id|write
+suffix:colon
 id|write_port
 comma
-l_int|NULL
-comma
-multiline_comment|/* port_readdir */
-l_int|NULL
-comma
-multiline_comment|/* port_poll */
-l_int|NULL
-comma
-multiline_comment|/* port_ioctl */
-l_int|NULL
-comma
-multiline_comment|/* port_mmap */
+id|open
+suffix:colon
 id|open_port
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
-l_int|NULL
-comma
-multiline_comment|/* no special release code */
-l_int|NULL
-multiline_comment|/* fsync */
 )brace
 suffix:semicolon
 macro_line|#endif
@@ -2174,31 +2131,22 @@ id|file_operations
 id|zero_fops
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|zero_lseek
 comma
+id|read
+suffix:colon
 id|read_zero
 comma
+id|write
+suffix:colon
 id|write_zero
 comma
-l_int|NULL
-comma
-multiline_comment|/* zero_readdir */
-l_int|NULL
-comma
-multiline_comment|/* zero_poll */
-l_int|NULL
-comma
-multiline_comment|/* zero_ioctl */
+id|mmap
+suffix:colon
 id|mmap_zero
 comma
-l_int|NULL
-comma
-multiline_comment|/* no special open code */
-l_int|NULL
-comma
-multiline_comment|/* flush */
-l_int|NULL
-multiline_comment|/* no special release code */
 )brace
 suffix:semicolon
 DECL|variable|full_fops
@@ -2208,32 +2156,18 @@ id|file_operations
 id|full_fops
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|full_lseek
 comma
+id|read
+suffix:colon
 id|read_full
 comma
+id|write
+suffix:colon
 id|write_full
 comma
-l_int|NULL
-comma
-multiline_comment|/* full_readdir */
-l_int|NULL
-comma
-multiline_comment|/* full_poll */
-l_int|NULL
-comma
-multiline_comment|/* full_ioctl */
-l_int|NULL
-comma
-multiline_comment|/* full_mmap */
-l_int|NULL
-comma
-multiline_comment|/* no special open code */
-l_int|NULL
-comma
-multiline_comment|/* flush */
-l_int|NULL
-multiline_comment|/* no special release code */
 )brace
 suffix:semicolon
 DECL|function|memory_open
@@ -2381,38 +2315,11 @@ id|file_operations
 id|memory_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek */
-l_int|NULL
-comma
-multiline_comment|/* read */
-l_int|NULL
-comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll */
-l_int|NULL
-comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|memory_open
 comma
 multiline_comment|/* just a selector for the real open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
-l_int|NULL
-comma
-multiline_comment|/* release */
-l_int|NULL
-multiline_comment|/* fsync */
 )brace
 suffix:semicolon
 DECL|function|chr_dev_init

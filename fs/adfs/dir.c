@@ -773,42 +773,18 @@ id|file_operations
 id|adfs_dir_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek - default&t;*/
+id|read
+suffix:colon
 id|adfs_dir_no_read
 comma
-multiline_comment|/* read&t;&t;&t;*/
-l_int|NULL
-comma
-multiline_comment|/* write - bad&t;&t;*/
+id|readdir
+suffix:colon
 id|adfs_readdir
 comma
-multiline_comment|/* readdir&t;&t;*/
-l_int|NULL
-comma
-multiline_comment|/* poll - default&t;*/
-l_int|NULL
-comma
-multiline_comment|/* ioctl&t;&t;*/
-l_int|NULL
-comma
-multiline_comment|/* mmap&t;&t;&t;*/
-l_int|NULL
-comma
-multiline_comment|/* no special open code&t;*/
-l_int|NULL
-comma
-multiline_comment|/* flush&t;&t;*/
-l_int|NULL
-comma
-multiline_comment|/* no special release code */
+id|fsync
+suffix:colon
 id|file_fsync
 comma
-multiline_comment|/* fsync&t;&t;*/
-l_int|NULL
-comma
-multiline_comment|/* fasync&t;&t;*/
 )brace
 suffix:semicolon
 r_static

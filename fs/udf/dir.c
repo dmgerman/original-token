@@ -54,44 +54,18 @@ id|file_operations
 id|udf_dir_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lllseek */
-l_int|NULL
-comma
-multiline_comment|/* read */
-l_int|NULL
-comma
-multiline_comment|/* write */
+id|readdir
+suffix:colon
 id|udf_readdir
 comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll */
+id|ioctl
+suffix:colon
 id|udf_ioctl
 comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
-l_int|NULL
-comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
-l_int|NULL
-comma
-multiline_comment|/* release */
+id|fsync
+suffix:colon
 id|udf_sync_file
 comma
-multiline_comment|/* fsync */
-l_int|NULL
-comma
-multiline_comment|/* fasync */
-l_int|NULL
-multiline_comment|/* lock */
 )brace
 suffix:semicolon
 DECL|variable|udf_dir_inode_operations

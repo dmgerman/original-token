@@ -1240,33 +1240,28 @@ id|file_operations
 id|busmouse_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* busmouse_seek */
+id|read
+suffix:colon
 id|busmouse_read
 comma
+id|write
+suffix:colon
 id|busmouse_write
 comma
-l_int|NULL
-comma
-multiline_comment|/* busmouse_readdir */
+id|poll
+suffix:colon
 id|busmouse_poll
 comma
-l_int|NULL
-comma
-multiline_comment|/* busmouse_ioctl */
-l_int|NULL
-comma
-multiline_comment|/* busmouse_mmap */
+id|open
+suffix:colon
 id|busmouse_open
 comma
-l_int|NULL
-comma
-multiline_comment|/* busmouse_flush */
+id|release
+suffix:colon
 id|busmouse_release
 comma
-l_int|NULL
-comma
+id|fasync
+suffix:colon
 id|busmouse_fasync
 comma
 )brace

@@ -1240,29 +1240,30 @@ id|file_operations
 id|nvram_fops
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|nvram_llseek
 comma
+id|read
+suffix:colon
 id|nvram_read
 comma
+id|write
+suffix:colon
 id|nvram_write
 comma
-l_int|NULL
-comma
-multiline_comment|/* No readdir */
-l_int|NULL
-comma
-multiline_comment|/* No poll */
+id|ioctl
+suffix:colon
 id|nvram_ioctl
 comma
-l_int|NULL
-comma
-multiline_comment|/* No mmap */
+id|open
+suffix:colon
 id|nvram_open
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|nvram_release
+comma
 )brace
 suffix:semicolon
 DECL|variable|nvram_dev

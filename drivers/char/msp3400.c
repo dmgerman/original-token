@@ -6658,40 +6658,22 @@ id|file_operations
 id|msp3400c_mixer_fops
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|msp3400c_mixer_llseek
 comma
-l_int|NULL
-comma
-multiline_comment|/* read */
-l_int|NULL
-comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll */
+id|ioctl
+suffix:colon
 id|msp3400c_mixer_ioctl
 comma
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|msp3400c_mixer_open
 comma
-l_int|NULL
-comma
+id|release
+suffix:colon
 id|msp3400c_mixer_release
 comma
-l_int|NULL
-comma
-multiline_comment|/* fsync */
-l_int|NULL
-comma
-multiline_comment|/* fasync */
-l_int|NULL
-comma
-multiline_comment|/* lock */
 )brace
 suffix:semicolon
 macro_line|#endif

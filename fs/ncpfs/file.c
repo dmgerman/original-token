@@ -1175,39 +1175,26 @@ id|file_operations
 id|ncp_file_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek - default */
+id|read
+suffix:colon
 id|ncp_file_read
 comma
-multiline_comment|/* read */
+id|write
+suffix:colon
 id|ncp_file_write
 comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir - bad */
-l_int|NULL
-comma
-multiline_comment|/* poll - default */
+id|ioctl
+suffix:colon
 id|ncp_ioctl
 comma
-multiline_comment|/* ioctl */
+id|mmap
+suffix:colon
 id|ncp_mmap
 comma
-multiline_comment|/* mmap */
-l_int|NULL
-comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
-l_int|NULL
-comma
-multiline_comment|/* release */
+id|fsync
+suffix:colon
 id|ncp_fsync
 comma
-multiline_comment|/* fsync */
 )brace
 suffix:semicolon
 DECL|variable|ncp_file_inode_operations

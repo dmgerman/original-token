@@ -5037,45 +5037,34 @@ id|file_operations
 id|sg_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek */
+id|read
+suffix:colon
 id|sg_read
 comma
-multiline_comment|/* read */
+id|write
+suffix:colon
 id|sg_write
 comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
+id|poll
+suffix:colon
 id|sg_poll
 comma
-multiline_comment|/* poll */
+id|ioctl
+suffix:colon
 id|sg_ioctl
 comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|sg_open
 comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|sg_release
 comma
-multiline_comment|/* release, was formerly sg_close */
-l_int|NULL
-comma
-multiline_comment|/* fsync */
+id|fasync
+suffix:colon
 id|sg_fasync
 comma
-multiline_comment|/* fasync */
-l_int|NULL
-comma
-multiline_comment|/* lock */
 )brace
 suffix:semicolon
 DECL|function|sg_detect

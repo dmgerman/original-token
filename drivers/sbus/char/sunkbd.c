@@ -6497,49 +6497,37 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|variable|kbd_fops
 r_static
 r_struct
-DECL|variable|kbd_fops
 id|file_operations
 id|kbd_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* seek */
+id|read
+suffix:colon
 id|kbd_read
 comma
-multiline_comment|/* read */
-l_int|NULL
-comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
+id|poll
+suffix:colon
 id|kbd_poll
 comma
-multiline_comment|/* poll */
+id|ioctl
+suffix:colon
 id|kbd_ioctl
 comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|kbd_open
 comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|kbd_close
 comma
-multiline_comment|/* close */
-l_int|NULL
-comma
-multiline_comment|/* fsync */
+id|fasync
+suffix:colon
 id|kbd_fasync
 comma
-multiline_comment|/* fasync */
 )brace
 suffix:semicolon
 DECL|function|keyboard_zsinit

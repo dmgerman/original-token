@@ -1201,43 +1201,26 @@ id|file_operations
 id|coda_psdev_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* llseek */
+id|read
+suffix:colon
 id|coda_psdev_read
 comma
-multiline_comment|/* read */
+id|write
+suffix:colon
 id|coda_psdev_write
 comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* coda_psdev_readdir */
+id|poll
+suffix:colon
 id|coda_psdev_poll
 comma
-multiline_comment|/* poll */
-l_int|NULL
-comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* coda_psdev_mmap */
+id|open
+suffix:colon
 id|coda_psdev_open
 comma
-multiline_comment|/* open */
-l_int|NULL
-comma
+id|release
+suffix:colon
 id|coda_psdev_release
 comma
-multiline_comment|/* release */
-l_int|NULL
-comma
-multiline_comment|/* fsync */
-l_int|NULL
-comma
-multiline_comment|/* fasync */
-l_int|NULL
-multiline_comment|/* lock */
 )brace
 suffix:semicolon
 DECL|function|init_coda

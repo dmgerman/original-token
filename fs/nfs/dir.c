@@ -219,38 +219,22 @@ id|file_operations
 id|nfs_dir_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek - default */
+id|read
+suffix:colon
 id|nfs_dir_read
 comma
-multiline_comment|/* read - bad */
-l_int|NULL
-comma
-multiline_comment|/* write - bad */
+id|readdir
+suffix:colon
 id|nfs_readdir
 comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* select - default */
-l_int|NULL
-comma
-multiline_comment|/* ioctl - default */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|nfs_open
 comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|nfs_release
 comma
-multiline_comment|/* release */
-l_int|NULL
-multiline_comment|/* fsync */
 )brace
 suffix:semicolon
 DECL|variable|nfs_dir_inode_operations

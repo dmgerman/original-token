@@ -702,6 +702,11 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -734,6 +739,11 @@ id|qnx4_sync_inode
 c_func
 (paren
 id|inode
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return

@@ -123,24 +123,14 @@ id|file_operations
 id|autofs_root_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* llseek */
-l_int|NULL
-comma
-multiline_comment|/* read */
-l_int|NULL
-comma
-multiline_comment|/* write */
+id|readdir
+suffix:colon
 id|autofs_root_readdir
 comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll */
+id|ioctl
+suffix:colon
 id|autofs_root_ioctl
 comma
-multiline_comment|/* ioctl */
 )brace
 suffix:semicolon
 DECL|variable|autofs_root_inode_operations

@@ -932,9 +932,8 @@ id|file_operations
 id|proc_maps_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* array_lseek */
+id|read
+suffix:colon
 id|pid_maps_read
 comma
 )brace
@@ -1174,12 +1173,10 @@ id|file_operations
 id|proc_info_file_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek   */
+id|read
+suffix:colon
 id|proc_info_read
 comma
-multiline_comment|/* read&t;   */
 )brace
 suffix:semicolon
 DECL|variable|proc_info_inode_operations
@@ -1611,11 +1608,12 @@ id|file_operations
 id|proc_mem_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek - default */
+id|read
+suffix:colon
 id|mem_read
 comma
+id|write
+suffix:colon
 id|mem_write
 comma
 )brace
@@ -3459,15 +3457,13 @@ id|file_operations
 id|proc_fd_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek - default */
+id|read
+suffix:colon
 id|proc_dir_read
 comma
 multiline_comment|/* read - bad */
-l_int|NULL
-comma
-multiline_comment|/* write - bad */
+id|readdir
+suffix:colon
 id|proc_readfd
 comma
 multiline_comment|/* readdir */
@@ -3888,15 +3884,13 @@ id|file_operations
 id|proc_base_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek - default */
+id|read
+suffix:colon
 id|proc_dir_read
 comma
 multiline_comment|/* read - bad */
-l_int|NULL
-comma
-multiline_comment|/* write - bad */
+id|readdir
+suffix:colon
 id|proc_base_readdir
 comma
 multiline_comment|/* readdir */

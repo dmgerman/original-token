@@ -2767,13 +2767,6 @@ id|version
 op_assign
 id|DABUSB_VERSION
 suffix:semicolon
-id|DECLARE_WAITQUEUE
-(paren
-id|wait
-comma
-id|current
-)paren
-suffix:semicolon
 id|dbg
 c_func
 (paren
@@ -2982,47 +2975,26 @@ id|file_operations
 id|dabusb_fops
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|dabusb_llseek
 comma
+id|read
+suffix:colon
 id|dabusb_read
 comma
-l_int|NULL
-comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll */
+id|ioctl
+suffix:colon
 id|dabusb_ioctl
 comma
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|dabusb_open
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|dabusb_release
 comma
-l_int|NULL
-comma
-multiline_comment|/* fsync */
-l_int|NULL
-comma
-multiline_comment|/* fasync */
-macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,3,38)
-l_int|NULL
-comma
-multiline_comment|/* check_media_change */
-l_int|NULL
-comma
-multiline_comment|/* revalidate */
-macro_line|#endif
-l_int|NULL
-multiline_comment|/* lock */
 )brace
 suffix:semicolon
 DECL|function|dabusb_find_struct

@@ -3489,11 +3489,12 @@ id|file_operations
 id|proc_profile_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek */
+id|read
+suffix:colon
 id|read_profile
 comma
+id|write
+suffix:colon
 id|write_profile
 comma
 )brace

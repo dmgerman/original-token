@@ -1069,33 +1069,28 @@ id|file_operations
 id|qp_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* seek */
+id|read
+suffix:colon
 id|read_qp
 comma
+id|write
+suffix:colon
 id|write_qp
 comma
-l_int|NULL
-comma
-multiline_comment|/* readdir */
+id|poll
+suffix:colon
 id|poll_qp
 comma
-l_int|NULL
-comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|open_qp
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|release_qp
 comma
-l_int|NULL
-comma
+id|fasync
+suffix:colon
 id|fasync_qp
 comma
 )brace

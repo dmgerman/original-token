@@ -1,6 +1,7 @@
 multiline_comment|/*&n; *  linux/fs/ext2/fsync.c&n; *&n; *  Copyright (C) 1993  Stephen Tweedie (sct@dcs.ed.ac.uk)&n; *  from&n; *  Copyright (C) 1992  Remy Card (card@masi.ibp.fr)&n; *                      Laboratoire MASI - Institut Blaise Pascal&n; *                      Universite Pierre et Marie Curie (Paris VI)&n; *  from&n; *  linux/fs/minix/truncate.c   Copyright (C) 1991, 1992  Linus Torvalds&n; * &n; *  ext2fs fsync primitive&n; *&n; *  Big-endian to little-endian byte-swapping/bitmaps by&n; *        David S. Miller (davem@caip.rutgers.edu), 1995&n; * &n; *  Removed unnecessary code duplication for little endian machines&n; *  and excessive __inline__s. &n; *        Andi Kleen, 1997&n; *&n; * Major simplications and cleanup - we only need to do the metadata, because&n; * we can depend on generic_block_fdatasync() to sync the data blocks.&n; */
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 DECL|macro|blocksize
 mdefine_line|#define blocksize&t;(EXT2_BLOCK_SIZE(inode-&gt;i_sb))
 DECL|macro|addr_per_block
@@ -539,6 +540,11 @@ id|inode
 op_assign
 id|dentry-&gt;d_inode
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -635,6 +641,11 @@ op_or_assign
 id|ext2_sync_inode
 (paren
 id|inode
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return

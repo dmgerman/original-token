@@ -2252,28 +2252,28 @@ id|file_operations
 id|ppp_device_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* seek */
+id|read
+suffix:colon
 id|ppp_read
 comma
+id|write
+suffix:colon
 id|ppp_write
 comma
-l_int|NULL
-comma
-multiline_comment|/* readdir */
+id|poll
+suffix:colon
 id|ppp_poll
 comma
+id|ioctl
+suffix:colon
 id|ppp_ioctl
 comma
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|ppp_open
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|ppp_release
 )brace
 suffix:semicolon

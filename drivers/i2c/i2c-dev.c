@@ -212,28 +212,28 @@ id|file_operations
 id|i2cdev_fops
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|i2cdev_lseek
 comma
+id|read
+suffix:colon
 id|i2cdev_read
 comma
+id|write
+suffix:colon
 id|i2cdev_write
 comma
-l_int|NULL
-comma
-multiline_comment|/* i2cdev_readdir&t;*/
-l_int|NULL
-comma
-multiline_comment|/* i2cdev_select&t;*/
+id|ioctl
+suffix:colon
 id|i2cdev_ioctl
 comma
-l_int|NULL
-comma
-multiline_comment|/* i2cdev_mmap&t;&t;*/
+id|open
+suffix:colon
 id|i2cdev_open
 comma
-l_int|NULL
-comma
-multiline_comment|/* i2cdev_flush&t;&t;*/
+id|release
+suffix:colon
 id|i2cdev_release
 comma
 )brace

@@ -2204,28 +2204,34 @@ id|file_operations
 id|pp_fops
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|pp_lseek
 comma
+id|read
+suffix:colon
 id|pp_read
 comma
+id|write
+suffix:colon
 id|pp_write
 comma
-l_int|NULL
-comma
-multiline_comment|/* pp_readdir */
+id|poll
+suffix:colon
 id|pp_poll
 comma
+id|ioctl
+suffix:colon
 id|pp_ioctl
 comma
-l_int|NULL
-comma
-multiline_comment|/* pp_mmap */
+id|open
+suffix:colon
 id|pp_open
 comma
-l_int|NULL
-comma
-multiline_comment|/* pp_flush */
+id|release
+suffix:colon
 id|pp_release
+comma
 )brace
 suffix:semicolon
 DECL|function|ppdev_init

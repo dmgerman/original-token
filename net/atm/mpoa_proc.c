@@ -101,15 +101,14 @@ id|file_operations
 id|mpc_file_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek */
+id|read
+suffix:colon
 id|proc_mpc_read
 comma
-multiline_comment|/* read */
+id|write
+suffix:colon
 id|proc_mpc_write
 comma
-multiline_comment|/* write */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *   Define allowed INODE OPERATIONS&n; */

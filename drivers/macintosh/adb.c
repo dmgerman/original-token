@@ -2812,30 +2812,26 @@ id|file_operations
 id|adb_fops
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|adb_lseek
 comma
+id|read
+suffix:colon
 id|adb_read
 comma
+id|write
+suffix:colon
 id|adb_write
 comma
-l_int|NULL
-comma
-multiline_comment|/* no readdir */
-l_int|NULL
-comma
-multiline_comment|/* no poll yet */
-l_int|NULL
-comma
-multiline_comment|/* no ioctl yet */
-l_int|NULL
-comma
-multiline_comment|/* no mmap */
+id|open
+suffix:colon
 id|adb_open
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|adb_release
+comma
 )brace
 suffix:semicolon
 DECL|function|adbdev_init

@@ -54,18 +54,10 @@ id|file_operations
 id|devpts_root_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* llseek */
-l_int|NULL
-comma
-multiline_comment|/* read */
-l_int|NULL
-comma
-multiline_comment|/* write */
+id|readdir
+suffix:colon
 id|devpts_root_readdir
 comma
-multiline_comment|/* readdir */
 )brace
 suffix:semicolon
 DECL|variable|devpts_root_inode_operations

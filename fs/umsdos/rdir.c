@@ -606,38 +606,18 @@ id|file_operations
 id|umsdos_rdir_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek - default */
+id|read
+suffix:colon
 id|dummy_dir_read
 comma
-multiline_comment|/* read */
-l_int|NULL
-comma
-multiline_comment|/* write - bad */
+id|readdir
+suffix:colon
 id|UMSDOS_rreaddir
 comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll - default */
+id|ioctl
+suffix:colon
 id|UMSDOS_ioctl_dir
 comma
-multiline_comment|/* ioctl - default */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
-l_int|NULL
-comma
-multiline_comment|/* no special open code */
-l_int|NULL
-comma
-multiline_comment|/* flush */
-l_int|NULL
-comma
-multiline_comment|/* no special release code */
-l_int|NULL
-multiline_comment|/* fsync */
 )brace
 suffix:semicolon
 DECL|variable|umsdos_rdir_inode_operations

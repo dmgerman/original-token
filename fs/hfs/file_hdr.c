@@ -70,44 +70,18 @@ id|file_operations
 id|hfs_hdr_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek - default */
+id|read
+suffix:colon
 id|hdr_read
 comma
-multiline_comment|/* read */
+id|write
+suffix:colon
 id|hdr_write
 comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir - bad */
-l_int|NULL
-comma
-multiline_comment|/* select - default */
-l_int|NULL
-comma
-multiline_comment|/* ioctl - default */
-l_int|NULL
-comma
-multiline_comment|/* mmap - XXX: not yet */
-l_int|NULL
-comma
-multiline_comment|/* no special open code */
-l_int|NULL
-comma
-multiline_comment|/* flush */
-l_int|NULL
-comma
-multiline_comment|/* no special release code */
+id|fsync
+suffix:colon
 id|file_fsync
 comma
-multiline_comment|/* fsync - default */
-l_int|NULL
-comma
-multiline_comment|/* fasync - default */
-l_int|NULL
-multiline_comment|/* lock - none */
 )brace
 suffix:semicolon
 DECL|variable|hfs_hdr_inode_operations

@@ -128,36 +128,7 @@ id|file_operations
 id|socksys_file_ops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek */
-l_int|NULL
-comma
-multiline_comment|/* read */
-l_int|NULL
-comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll */
-l_int|NULL
-comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
-l_int|NULL
-comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
-l_int|NULL
-comma
-multiline_comment|/* release */
+multiline_comment|/* Currently empty */
 )brace
 suffix:semicolon
 DECL|function|socksys_open
@@ -708,36 +679,14 @@ id|file_operations
 id|socksys_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek */
-l_int|NULL
-comma
-multiline_comment|/* read */
-l_int|NULL
-comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll */
-l_int|NULL
-comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|socksys_open
 comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|socksys_release
 comma
-multiline_comment|/* release */
 )brace
 suffix:semicolon
 r_int

@@ -1214,44 +1214,38 @@ id|file_operations
 id|udf_file_operations
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|udf_file_llseek
 comma
-multiline_comment|/* llseek */
+id|read
+suffix:colon
 id|generic_file_read
 comma
-multiline_comment|/* read */
+id|write
+suffix:colon
 id|udf_file_write
 comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll */
+id|ioctl
+suffix:colon
 id|udf_ioctl
 comma
-multiline_comment|/* ioctl */
+id|mmap
+suffix:colon
 id|generic_file_mmap
 comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|udf_open_file
 comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|udf_release_file
 comma
-multiline_comment|/* release */
+id|fsync
+suffix:colon
 id|udf_sync_file
 comma
-multiline_comment|/* fsync */
-l_int|NULL
-comma
-multiline_comment|/* fasync */
-l_int|NULL
-multiline_comment|/* lock */
 )brace
 suffix:semicolon
 DECL|variable|udf_file_inode_operations
@@ -1328,44 +1322,30 @@ id|file_operations
 id|udf_file_operations_adinicb
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|udf_file_llseek
 comma
-multiline_comment|/* llseek */
+id|read
+suffix:colon
 id|generic_file_read
 comma
-multiline_comment|/* read */
+id|write
+suffix:colon
 id|udf_file_write_adinicb
 comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll */
+id|ioctl
+suffix:colon
 id|udf_ioctl
 comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
-l_int|NULL
-comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|udf_release_file
 comma
-multiline_comment|/* release */
+id|fsync
+suffix:colon
 id|udf_sync_file_adinicb
 comma
-multiline_comment|/* fsync */
-l_int|NULL
-comma
-multiline_comment|/* fasync */
-l_int|NULL
-multiline_comment|/* lock */
 )brace
 suffix:semicolon
 DECL|variable|udf_file_inode_operations_adinicb

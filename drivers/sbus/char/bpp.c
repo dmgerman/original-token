@@ -3500,40 +3500,26 @@ id|file_operations
 id|bpp_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* bpp_lseek */
+id|read
+suffix:colon
 id|bpp_read
 comma
+id|write
+suffix:colon
 id|bpp_write
 comma
-l_int|NULL
-comma
-multiline_comment|/* bpp_readdir */
-l_int|NULL
-comma
-multiline_comment|/* bpp_select */
+id|ioctl
+suffix:colon
 id|bpp_ioctl
 comma
-l_int|NULL
-comma
-multiline_comment|/* bpp_mmap */
+id|open
+suffix:colon
 id|bpp_open
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|bpp_release
 comma
-l_int|NULL
-comma
-multiline_comment|/* fsync */
-l_int|NULL
-comma
-multiline_comment|/* fasync */
-l_int|NULL
-comma
-multiline_comment|/* lock */
 )brace
 suffix:semicolon
 macro_line|#if defined(__i386__)

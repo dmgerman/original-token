@@ -7699,34 +7699,10 @@ id|file_operations
 id|usb_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* seek */
-l_int|NULL
-comma
-multiline_comment|/* read */
-l_int|NULL
-comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll */
-l_int|NULL
-comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|usb_open
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
-l_int|NULL
-multiline_comment|/* release */
 )brace
 suffix:semicolon
 DECL|function|usb_major_init

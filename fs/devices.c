@@ -627,6 +627,7 @@ op_assign
 id|open
 suffix:colon
 id|chrdev_open
+comma
 )brace
 suffix:semicolon
 DECL|variable|chrdev_inode_operations

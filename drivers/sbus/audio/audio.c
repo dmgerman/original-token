@@ -9025,29 +9025,16 @@ id|file_operations
 id|sparcaudioctl_fops
 op_assign
 (brace
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-multiline_comment|/* sparcaudio_readdir */
+id|poll
+suffix:colon
 id|sparcaudio_select
 comma
+id|ioctl
+suffix:colon
 id|sparcaudio_ioctl
 comma
-l_int|NULL
-comma
-multiline_comment|/* sparcaudio_mmap */
-l_int|NULL
-comma
-macro_line|#if defined (LINUX_VERSION_CODE) &amp;&amp; LINUX_VERSION_CODE &gt; 0x200ff
-l_int|NULL
-comma
-multiline_comment|/* sparcaudio_flush */
-macro_line|#endif
+id|release
+suffix:colon
 id|sparcaudioctl_release
 comma
 )brace
@@ -9821,30 +9808,34 @@ id|file_operations
 id|sparcaudio_fops
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|sparcaudio_lseek
 comma
+id|read
+suffix:colon
 id|sparcaudio_read
 comma
+id|write
+suffix:colon
 id|sparcaudio_write
 comma
-l_int|NULL
-comma
-multiline_comment|/* sparcaudio_readdir */
+id|poll
+suffix:colon
 id|sparcaudio_select
 comma
+id|ioctl
+suffix:colon
 id|sparcaudio_ioctl
 comma
-l_int|NULL
-comma
-multiline_comment|/* sparcaudio_mmap */
+id|open
+suffix:colon
 id|sparcaudio_open
 comma
-macro_line|#if defined (LINUX_VERSION_CODE) &amp;&amp; LINUX_VERSION_CODE &gt; 0x200ff
-l_int|NULL
-comma
-multiline_comment|/* sparcaudio_flush */
-macro_line|#endif
+id|release
+suffix:colon
 id|sparcaudio_release
+comma
 )brace
 suffix:semicolon
 macro_line|#if defined (LINUX_VERSION_CODE) &amp;&amp; LINUX_VERSION_CODE &lt; 0x20100

@@ -138,18 +138,10 @@ id|file_operations
 id|autofs_dir_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* llseek */
-l_int|NULL
-comma
-multiline_comment|/* read */
-l_int|NULL
-comma
-multiline_comment|/* write */
+id|readdir
+suffix:colon
 id|autofs_dir_readdir
 comma
-multiline_comment|/* readdir */
 )brace
 suffix:semicolon
 DECL|variable|autofs_dir_inode_operations

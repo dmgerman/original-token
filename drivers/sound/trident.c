@@ -8415,45 +8415,38 @@ id|file_operations
 id|trident_audio_fops
 op_assign
 (brace
-op_amp
+id|llseek
+suffix:colon
 id|trident_llseek
 comma
-op_amp
+id|read
+suffix:colon
 id|trident_read
 comma
-op_amp
+id|write
+suffix:colon
 id|trident_write
 comma
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-op_amp
+id|poll
+suffix:colon
 id|trident_poll
 comma
-op_amp
+id|ioctl
+suffix:colon
 id|trident_ioctl
 comma
-op_amp
+id|mmap
+suffix:colon
 id|trident_mmap
 comma
-op_amp
+id|open
+suffix:colon
 id|trident_open
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
-op_amp
+id|release
+suffix:colon
 id|trident_release
 comma
-l_int|NULL
-comma
-multiline_comment|/* fsync */
-l_int|NULL
-comma
-multiline_comment|/* fasync */
-l_int|NULL
-comma
-multiline_comment|/* lock */
 )brace
 suffix:semicolon
 multiline_comment|/* trident specific AC97 functions */
@@ -9141,45 +9134,22 @@ id|file_operations
 id|trident_mixer_fops
 op_assign
 (brace
-op_amp
+id|llseek
+suffix:colon
 id|trident_llseek
 comma
-l_int|NULL
-comma
-multiline_comment|/* read */
-l_int|NULL
-comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll */
-op_amp
+id|ioctl
+suffix:colon
 id|trident_ioctl_mixdev
 comma
-l_int|NULL
-comma
-multiline_comment|/* mmap */
-op_amp
+id|open
+suffix:colon
 id|trident_open_mixdev
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
-op_amp
+id|release
+suffix:colon
 id|trident_release_mixdev
 comma
-l_int|NULL
-comma
-multiline_comment|/* fsync */
-l_int|NULL
-comma
-multiline_comment|/* fasync */
-l_int|NULL
-comma
-multiline_comment|/* lock */
 )brace
 suffix:semicolon
 multiline_comment|/* AC97 codec initialisation. */

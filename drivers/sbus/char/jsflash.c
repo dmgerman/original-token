@@ -1146,31 +1146,34 @@ id|file_operations
 id|jsf_fops
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|jsf_lseek
 comma
+id|read
+suffix:colon
 id|jsf_read
 comma
+id|write
+suffix:colon
 id|jsf_write
 comma
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll */
+id|ioctl
+suffix:colon
 id|jsf_ioctl
 comma
+id|mmap
+suffix:colon
 id|jsf_mmap
 comma
+id|open
+suffix:colon
 id|jsf_open
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|jsf_release
 comma
-l_int|NULL
-multiline_comment|/* fsync */
 )brace
 suffix:semicolon
 DECL|variable|jsf_dev

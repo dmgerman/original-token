@@ -602,30 +602,26 @@ id|file_operations
 id|atari_joystick_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* joystick_seek */
+id|read
+suffix:colon
 id|read_joystick
 comma
+id|write
+suffix:colon
 id|write_joystick
 comma
-l_int|NULL
-comma
-multiline_comment|/* joystick_readdir */
+id|poll
+suffix:colon
 id|joystick_poll
 comma
-l_int|NULL
-comma
-multiline_comment|/* joystick_ioctl */
-l_int|NULL
-comma
-multiline_comment|/* joystick_mmap */
+id|open
+suffix:colon
 id|open_joystick
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|release_joystick
+comma
 )brace
 suffix:semicolon
 DECL|function|atari_joystick_init

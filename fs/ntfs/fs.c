@@ -2178,48 +2178,16 @@ id|file_operations
 id|ntfs_file_operations_nommap
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek */
+id|read
+suffix:colon
 id|ntfs_read
 comma
 macro_line|#ifdef CONFIG_NTFS_RW
+id|write
+suffix:colon
 id|ntfs_write
 comma
-macro_line|#else
-l_int|NULL
-comma
 macro_line|#endif
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* select */
-l_int|NULL
-comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
-l_int|NULL
-comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
-l_int|NULL
-comma
-multiline_comment|/* release */
-l_int|NULL
-comma
-multiline_comment|/* fsync */
-l_int|NULL
-comma
-multiline_comment|/* fasync */
-l_int|NULL
-comma
-multiline_comment|/* lock */
 )brace
 suffix:semicolon
 DECL|variable|ntfs_inode_operations_nobmap
@@ -3015,47 +2983,20 @@ id|file_operations
 id|ntfs_file_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek */
+id|read
+suffix:colon
 id|ntfs_read
 comma
-macro_line|#ifdef CONFIG_NTFS_RW
-id|ntfs_write
-comma
-macro_line|#else
-l_int|NULL
-comma
-macro_line|#endif
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* select */
-l_int|NULL
-comma
-multiline_comment|/* ioctl */
+id|mmap
+suffix:colon
 id|generic_file_mmap
 comma
-l_int|NULL
+macro_line|#ifdef CONFIG_NTFS_RW
+id|write
+suffix:colon
+id|ntfs_write
 comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
-l_int|NULL
-comma
-multiline_comment|/* release */
-l_int|NULL
-comma
-multiline_comment|/* fsync */
-l_int|NULL
-comma
-multiline_comment|/* fasync */
-l_int|NULL
-comma
-multiline_comment|/* lock */
+macro_line|#endif
 )brace
 suffix:semicolon
 DECL|variable|ntfs_inode_operations
@@ -3128,18 +3069,10 @@ id|file_operations
 id|ntfs_dir_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek */
-l_int|NULL
-comma
-multiline_comment|/* read */
-l_int|NULL
-comma
-multiline_comment|/* write */
+id|readdir
+suffix:colon
 id|ntfs_readdir
 comma
-multiline_comment|/* readdir */
 )brace
 suffix:semicolon
 DECL|variable|ntfs_dir_inode_operations

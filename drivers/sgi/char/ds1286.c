@@ -1441,28 +1441,30 @@ id|file_operations
 id|ds1286_fops
 op_assign
 (brace
+id|llseek
+suffix:colon
 id|ds1286_llseek
 comma
+id|read
+suffix:colon
 id|ds1286_read
 comma
-l_int|NULL
-comma
-multiline_comment|/* No write */
-l_int|NULL
-comma
-multiline_comment|/* No readdir */
+id|poll
+suffix:colon
 id|ds1286_poll
 comma
+id|ioctl
+suffix:colon
 id|ds1286_ioctl
 comma
-l_int|NULL
-comma
-multiline_comment|/* No mmap */
+id|open
+suffix:colon
 id|ds1286_open
 comma
-l_int|NULL
-comma
+id|release
+suffix:colon
 id|ds1286_release
+comma
 )brace
 suffix:semicolon
 DECL|variable|ds1286_dev

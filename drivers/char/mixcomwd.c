@@ -474,38 +474,22 @@ id|file_operations
 id|mixcomwd_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* Seek */
-l_int|NULL
-comma
-multiline_comment|/* Read */
+id|write
+suffix:colon
 id|mixcomwd_write
 comma
-multiline_comment|/* Write */
-l_int|NULL
-comma
-multiline_comment|/* Readdir */
-l_int|NULL
-comma
-multiline_comment|/* Select */
+id|ioctl
+suffix:colon
 id|mixcomwd_ioctl
 comma
-multiline_comment|/* Ioctl */
-l_int|NULL
-comma
-multiline_comment|/* MMap */
+id|open
+suffix:colon
 id|mixcomwd_open
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|mixcomwd_release
 comma
-l_int|NULL
-comma
-l_int|NULL
-multiline_comment|/* Fasync */
 )brace
 suffix:semicolon
 DECL|variable|mixcomwd_miscdev

@@ -1675,49 +1675,37 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|variable|shmiq_fops
 r_static
 r_struct
-DECL|variable|shmiq_fops
 id|file_operations
 id|shmiq_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* seek */
-l_int|NULL
-comma
-multiline_comment|/* read */
-l_int|NULL
-comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
+id|poll
+suffix:colon
 id|shmiq_qcntl_poll
 comma
-multiline_comment|/* poll */
+id|ioctl
+suffix:colon
 id|shmiq_qcntl_ioctl
 comma
-multiline_comment|/* ioctl */
+id|mmap
+suffix:colon
 id|shmiq_qcntl_mmap
 comma
-multiline_comment|/* mmap */
+id|open
+suffix:colon
 id|shmiq_qcntl_open
 comma
-multiline_comment|/* open */
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|shmiq_qcntl_close
 comma
-multiline_comment|/* close */
-l_int|NULL
-comma
-multiline_comment|/* fsync */
+id|fasync
+suffix:colon
 id|shmiq_qcntl_fasync
 comma
-multiline_comment|/* fasync */
 )brace
 suffix:semicolon
 r_void

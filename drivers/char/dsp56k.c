@@ -2395,37 +2395,26 @@ id|file_operations
 id|dsp56k_fops
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* no special dsp56k_lseek */
+id|read
+suffix:colon
 id|dsp56k_read
 comma
+id|write
+suffix:colon
 id|dsp56k_write
 comma
-l_int|NULL
-comma
-multiline_comment|/* no special dsp56k_readdir */
-l_int|NULL
-comma
-multiline_comment|/* dsp56k_poll? */
+id|ioctl
+suffix:colon
 id|dsp56k_ioctl
 comma
-l_int|NULL
-comma
-multiline_comment|/* no special dsp56k_mmap */
+id|open
+suffix:colon
 id|dsp56k_open
 comma
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|dsp56k_release
 comma
-l_int|NULL
-comma
-multiline_comment|/* no special dsp56k_fsync */
-l_int|NULL
-comma
-multiline_comment|/* no special dsp56k_fasync */
 )brace
 suffix:semicolon
 multiline_comment|/****** Init and module functions ******/

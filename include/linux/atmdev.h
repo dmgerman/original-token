@@ -192,7 +192,6 @@ macro_line|#include &lt;linux/sched.h&gt; /* wait_queue_head_t */
 macro_line|#include &lt;linux/time.h&gt; /* struct timeval */
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt; /* struct sk_buff */
-macro_line|#include &lt;linux/atm.h&gt;
 macro_line|#include &lt;linux/uio.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;

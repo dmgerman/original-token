@@ -1351,44 +1351,34 @@ id|file_operations
 id|smb_file_operations
 op_assign
 (brace
-l_int|NULL
-comma
-multiline_comment|/* lseek - default */
+id|read
+suffix:colon
 id|smb_file_read
 comma
-multiline_comment|/* read */
+id|write
+suffix:colon
 id|smb_file_write
 comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir - bad */
-l_int|NULL
-comma
-multiline_comment|/* poll - default */
+id|ioctl
+suffix:colon
 id|smb_ioctl
 comma
-multiline_comment|/* ioctl */
+id|mmap
+suffix:colon
 id|smb_file_mmap
 comma
-multiline_comment|/* mmap(struct file*, struct vm_area_struct*) */
+id|open
+suffix:colon
 id|smb_file_open
 comma
-multiline_comment|/* open(struct inode*, struct file*) */
-l_int|NULL
-comma
-multiline_comment|/* flush */
+id|release
+suffix:colon
 id|smb_file_release
 comma
-multiline_comment|/* release(struct inode*, struct file*) */
+id|fsync
+suffix:colon
 id|smb_fsync
 comma
-multiline_comment|/* fsync(struct file*, struct dentry*) */
-l_int|NULL
-comma
-multiline_comment|/* fasync(struct file*, int) */
-l_int|NULL
-multiline_comment|/* lock(struct file*, int, struct file_lock*) */
 )brace
 suffix:semicolon
 DECL|variable|smb_file_inode_operations
