@@ -2,6 +2,7 @@ macro_line|#ifndef NFS_CLUSTER_H
 DECL|macro|NFS_CLUSTER_H
 mdefine_line|#define NFS_CLUSTER_H
 macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;linux/nfs_fs_sb.h&gt;
 multiline_comment|/*&n; * Counters of total number and pending number of requests.&n; * When the total number of requests exceeds the soft limit, we start&n; * flushing out requests. If it exceeds the hard limit, we stall until&n; * it drops again.&n; */
 DECL|macro|MAX_REQUEST_SOFT
@@ -93,8 +94,7 @@ r_struct
 id|nfs_reqlist
 (brace
 DECL|member|nr_requests
-r_int
-r_int
+id|atomic_t
 id|nr_requests
 suffix:semicolon
 DECL|member|runat

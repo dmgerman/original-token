@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/i386/kernel/signal.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  1997-11-28  Modified for POSIX.1b signals by Richard Henderson&n; */
+multiline_comment|/*&n; *  linux/arch/i386/kernel/signal.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  1997-11-28  Modified for POSIX.1b signals by Richard Henderson&n; *  Pentium III support by Ingo Molnar, modifications and OS Exception support&n; *              by Goutham Rao&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -673,19 +673,13 @@ id|tsk
 )paren
 suffix:semicolon
 r_return
-id|__copy_from_user
+id|i387_user_to_hard
 c_func
 (paren
 op_amp
 id|tsk-&gt;thread.i387.hard
 comma
 id|buf
-comma
-r_sizeof
-(paren
-op_star
-id|buf
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -1383,19 +1377,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|__copy_to_user
+id|i387_hard_to_user
 c_func
 (paren
 id|buf
 comma
 op_amp
 id|tsk-&gt;thread.i387.hard
-comma
-r_sizeof
-(paren
-op_star
-id|buf
-)paren
 )paren
 )paren
 r_return

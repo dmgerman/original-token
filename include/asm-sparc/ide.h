@@ -138,6 +138,13 @@ id|irq
 op_assign
 l_int|0
 suffix:semicolon
+id|hw-&gt;io_ports
+(braket
+id|IDE_IRQ_OFFSET
+)braket
+op_assign
+l_int|0
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * This registers the standard ports for this architecture with the IDE&n; * driver.&n; */
 DECL|function|ide_init_default_hwifs
@@ -172,20 +179,6 @@ id|index
 op_increment
 )paren
 (brace
-id|memset
-c_func
-(paren
-op_amp
-id|hw
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-id|hw_regs_t
-)paren
-)paren
-suffix:semicolon
 id|ide_init_hwif_ports
 c_func
 (paren

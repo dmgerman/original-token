@@ -1569,7 +1569,7 @@ suffix:semicolon
 DECL|macro|arraysize
 mdefine_line|#define arraysize(x)&t;(sizeof(x)/sizeof(*(x)))
 DECL|macro|DISPLAY_VIA_TIMINGS
-mdefine_line|#define DISPLAY_VIA_TIMINGS
+macro_line|#undef DISPLAY_VIA_TIMINGS
 macro_line|#if defined(DISPLAY_VIA_TIMINGS) &amp;&amp; defined(CONFIG_PROC_FS)
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
@@ -3882,6 +3882,20 @@ op_assign
 l_int|NULL
 suffix:semicolon
 id|byte
+id|unit
+op_assign
+(paren
+id|drive-&gt;select.b.unit
+op_amp
+l_int|0x01
+)paren
+ques
+c_cond
+l_int|1
+suffix:colon
+l_int|0
+suffix:semicolon
+id|byte
 id|ata2_pci
 op_assign
 l_int|0x00
@@ -3998,6 +4012,13 @@ id|via82cxxx_type_four
 )paren
 op_logical_and
 (paren
+op_logical_neg
+(paren
+id|hwif-&gt;udma_four
+)paren
+)paren
+op_logical_and
+(paren
 id|speed
 op_le
 id|XFER_UDMA_2
@@ -4071,6 +4092,21 @@ id|bus_speed
 comma
 id|temp_table
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|unit
+)paren
+op_logical_and
+(paren
+id|hwif-&gt;udma_four
+)paren
+)paren
+id|ultra
+op_or_assign
+l_int|0x04
 suffix:semicolon
 id|pci_write_config_byte
 c_func

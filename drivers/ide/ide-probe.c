@@ -2000,6 +2000,7 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+macro_line|#if defined(CONFIG_AMIGA) || defined(CONFIG_MAC)
 r_if
 c_cond
 (paren
@@ -2021,6 +2022,7 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+macro_line|#endif /* (CONFIG_AMIGA) || (CONFIG_MAC) */
 multiline_comment|/*&n;&t; * If any errors are return, we drop the hwif interface.&n;&t; */
 r_return
 id|region_errors
@@ -2040,6 +2042,10 @@ r_if
 c_cond
 (paren
 (paren
+(paren
+r_int
+r_int
+)paren
 id|hwif-&gt;io_ports
 (braket
 id|IDE_DATA_OFFSET
@@ -2049,6 +2055,10 @@ l_int|7
 )paren
 op_eq
 (paren
+(paren
+r_int
+r_int
+)paren
 id|hwif-&gt;io_ports
 (braket
 id|IDE_STATUS_OFFSET
@@ -2268,6 +2278,7 @@ comma
 id|hwif-&gt;name
 )paren
 suffix:semicolon
+macro_line|#if defined(CONFIG_AMIGA) || defined(CONFIG_MAC)
 r_if
 c_cond
 (paren
@@ -2289,6 +2300,7 @@ comma
 id|hwif-&gt;name
 )paren
 suffix:semicolon
+macro_line|#endif /* (CONFIG_AMIGA) || (CONFIG_MAC) */
 )brace
 multiline_comment|/*&n; * This routine only knows how to look for drive units 0 and 1&n; * on an interface, so any setting of MAX_DRIVES &gt; 2 won&squot;t work here.&n; */
 DECL|function|probe_hwif

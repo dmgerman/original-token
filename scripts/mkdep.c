@@ -896,11 +896,11 @@ DECL|macro|MAX2
 mdefine_line|#define MAX2(a,b) ((a)&gt;(b)?(a):(b))
 DECL|macro|MIN2
 mdefine_line|#define MIN2(a,b) ((a)&lt;(b)?(a):(b))
-DECL|macro|MAX6
-mdefine_line|#define MAX6(a,b,c,d,e,f) (MAX2(a,MAX2(b,MAX2(c,MAX2(d,MAX2(e,f))))))
-DECL|macro|MIN6
-mdefine_line|#define MIN6(a,b,c,d,e,f) (MIN2(a,MIN2(b,MIN2(c,MIN2(d,MIN2(e,f))))))
-multiline_comment|/*&n; * The state machine looks for (approximately) these Perl regular expressions:&n; *&n; *    m|&bslash;/&bslash;*.*?&bslash;*&bslash;/|&n; *    m|&squot;.*?&squot;|&n; *    m|&quot;.*?&quot;|&n; *    m|#&bslash;s*include&bslash;s*&quot;(.*?)&quot;|&n; *    m|#&bslash;s*include&bslash;s*&lt;(.*?&gt;&quot;|&n; *    m|#&bslash;s*(?define|undef)&bslash;s*CONFIG_(&bslash;w*)|&n; *    m|(?!&bslash;w)CONFIG_|&n; *&n; * About 98% of the CPU time is spent here, and most of that is in&n; * the &squot;start&squot; paragraph.  Because the current characters are&n; * in a register, the start loop usually eats 4 or 8 characters&n; * per memory read.  The MAX6 and MIN6 tests dispose of most&n; * input characters with 1 or 2 comparisons.&n; */
+DECL|macro|MAX5
+mdefine_line|#define MAX5(a,b,c,d,e) (MAX2(a,MAX2(b,MAX2(c,MAX2(d,e)))))
+DECL|macro|MIN5
+mdefine_line|#define MIN5(a,b,c,d,e) (MIN2(a,MIN2(b,MIN2(c,MIN2(d,e)))))
+multiline_comment|/*&n; * The state machine looks for (approximately) these Perl regular expressions:&n; *&n; *    m|&bslash;/&bslash;*.*?&bslash;*&bslash;/|&n; *    m|&squot;.*?&squot;|&n; *    m|&quot;.*?&quot;|&n; *    m|#&bslash;s*include&bslash;s*&quot;(.*?)&quot;|&n; *    m|#&bslash;s*include&bslash;s*&lt;(.*?&gt;&quot;|&n; *    m|#&bslash;s*(?define|undef)&bslash;s*CONFIG_(&bslash;w*)|&n; *    m|(?!&bslash;w)CONFIG_|&n; *&n; * About 98% of the CPU time is spent here, and most of that is in&n; * the &squot;start&squot; paragraph.  Because the current characters are&n; * in a register, the start loop usually eats 4 or 8 characters&n; * per memory read.  The MAX5 and MIN5 tests dispose of most&n; * input characters with 1 or 2 comparisons.&n; */
 DECL|function|state_machine
 r_void
 id|state_machine
@@ -952,7 +952,7 @@ c_cond
 (paren
 id|current
 OG
-id|MAX6
+id|MAX5
 c_func
 (paren
 l_char|&squot;/&squot;
@@ -964,8 +964,6 @@ comma
 l_char|&squot;#&squot;
 comma
 l_char|&squot;C&squot;
-comma
-l_char|&squot;_&squot;
 )paren
 )paren
 r_goto
@@ -976,7 +974,7 @@ c_cond
 (paren
 id|current
 OL
-id|MIN6
+id|MIN5
 c_func
 (paren
 l_char|&squot;/&squot;
@@ -988,8 +986,6 @@ comma
 l_char|&squot;#&squot;
 comma
 l_char|&squot;C&squot;
-comma
-l_char|&squot;_&squot;
 )paren
 )paren
 r_goto

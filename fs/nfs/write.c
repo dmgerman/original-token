@@ -25,11 +25,14 @@ id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 DECL|variable|nfs_nr_requests
 r_static
-r_int
-r_int
+id|atomic_t
 id|nfs_nr_requests
 op_assign
+id|ATOMIC_INIT
+c_func
+(paren
 l_int|0
+)paren
 suffix:semicolon
 multiline_comment|/*&n; * Local structures&n; *&n; * This is the struct where the WRITE/COMMIT arguments go.&n; */
 DECL|struct|nfs_write_data
@@ -1907,7 +1910,12 @@ multiline_comment|/* If we&squot;re over the global soft limit, wake up all requ
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|nfs_nr_requests
+)paren
 op_ge
 id|MAX_REQUEST_SOFT
 )paren
@@ -1917,7 +1925,12 @@ c_func
 (paren
 l_string|&quot;NFS:      hit soft limit (%d requests)&bslash;n&quot;
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|nfs_nr_requests
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -1946,7 +1959,12 @@ multiline_comment|/* If we haven&squot;t reached the local hard limit yet,&n;&t;
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|cache-&gt;nr_requests
+)paren
 OL
 id|MAX_REQUEST_HARD
 )paren
@@ -1974,7 +1992,12 @@ c_func
 (paren
 l_string|&quot;NFS:      create_request sleeping (total %d pid %d)&bslash;n&quot;
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|cache-&gt;nr_requests
+)paren
 comma
 id|current-&gt;pid
 )paren
@@ -2034,7 +2057,12 @@ c_func
 (paren
 l_string|&quot;NFS:      create_request waking up (tot %d pid %d)&bslash;n&quot;
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|cache-&gt;nr_requests
+)paren
 comma
 id|current-&gt;pid
 )paren
@@ -2102,11 +2130,19 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* register request&squot;s existence */
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|cache-&gt;nr_requests
-op_increment
+)paren
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|nfs_nr_requests
-op_increment
+)paren
 suffix:semicolon
 r_return
 id|req
@@ -2267,11 +2303,19 @@ id|req
 )paren
 suffix:semicolon
 multiline_comment|/* wake up anyone waiting to allocate a request */
+id|atomic_dec
+c_func
+(paren
+op_amp
 id|cache-&gt;nr_requests
-op_decrement
+)paren
 suffix:semicolon
+id|atomic_dec
+c_func
+(paren
+op_amp
 id|nfs_nr_requests
-op_decrement
+)paren
 suffix:semicolon
 id|wake_up
 c_func
@@ -2280,6 +2324,42 @@ op_amp
 id|cache-&gt;request_wait
 )paren
 suffix:semicolon
+macro_line|#ifdef NFS_PARANOIA
+r_if
+c_cond
+(paren
+id|atomic_read
+c_func
+(paren
+op_amp
+id|cache-&gt;nr_requests
+)paren
+OL
+l_int|0
+)paren
+id|BUG
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|atomic_read
+c_func
+(paren
+op_amp
+id|nfs_nr_requests
+)paren
+OL
+l_int|0
+)paren
+id|BUG
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/*&n; * Wait for a request to complete.&n; *&n; * Interruptible by signals only if mounted with intr flag.&n; */
 r_static
@@ -3825,7 +3905,12 @@ id|NFS_STRATEGY_PAGES
 op_star
 id|wpages
 op_logical_and
+id|atomic_read
+c_func
+(paren
+op_amp
 id|nfs_nr_requests
+)paren
 OG
 id|MAX_REQUEST_SOFT
 )paren

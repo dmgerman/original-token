@@ -13622,9 +13622,7 @@ l_int|0x4040
 )brace
 suffix:semicolon
 DECL|macro|RSRCISIOREGION
-mdefine_line|#define RSRCISIOREGION(dev,num) ((dev)-&gt;resource[(num)].start != 0 &amp;&amp; &bslash;&n;&t;&t;&t;&t; ((dev)-&gt;resource[(num)].flags &amp; PCI_BASE_ADDRESS_SPACE) == PCI_BASE_ADDRESS_SPACE_IO)
-DECL|macro|RSRCADDRESS
-mdefine_line|#define RSRCADDRESS(dev,num) ((dev)-&gt;resource[(num)].start)
+mdefine_line|#define RSRCISIOREGION(dev,num) (pci_resource_start((dev), (num)) != 0 &amp;&amp; &bslash;&n;&t;&t;&t;&t; (pci_resource_flags((dev), (num)) &amp; IORESOURCE_IO))
 DECL|function|sv_probe
 r_static
 r_int
@@ -14004,7 +14002,7 @@ id|pcidev
 suffix:semicolon
 id|s-&gt;iosb
 op_assign
-id|RSRCADDRESS
+id|pci_resource_start
 c_func
 (paren
 id|pcidev
@@ -14014,7 +14012,7 @@ id|RESOURCE_SB
 suffix:semicolon
 id|s-&gt;ioenh
 op_assign
-id|RSRCADDRESS
+id|pci_resource_start
 c_func
 (paren
 id|pcidev
@@ -14024,7 +14022,7 @@ id|RESOURCE_ENH
 suffix:semicolon
 id|s-&gt;iosynth
 op_assign
-id|RSRCADDRESS
+id|pci_resource_start
 c_func
 (paren
 id|pcidev
@@ -14034,7 +14032,7 @@ id|RESOURCE_SYNTH
 suffix:semicolon
 id|s-&gt;iomidi
 op_assign
-id|RSRCADDRESS
+id|pci_resource_start
 c_func
 (paren
 id|pcidev
@@ -14044,7 +14042,7 @@ id|RESOURCE_MIDI
 suffix:semicolon
 id|s-&gt;iogame
 op_assign
-id|RSRCADDRESS
+id|pci_resource_start
 c_func
 (paren
 id|pcidev
@@ -14054,7 +14052,7 @@ id|RESOURCE_GAME
 suffix:semicolon
 id|s-&gt;iodmaa
 op_assign
-id|RSRCADDRESS
+id|pci_resource_start
 c_func
 (paren
 id|pcidev
@@ -14064,7 +14062,7 @@ id|RESOURCE_DDMA
 suffix:semicolon
 id|s-&gt;iodmac
 op_assign
-id|RSRCADDRESS
+id|pci_resource_start
 c_func
 (paren
 id|pcidev
@@ -15230,32 +15228,13 @@ l_string|&quot;sv: cannot allocate 1MB of contiguous nonpageable memory for wave
 )paren
 suffix:semicolon
 macro_line|#endif
-r_if
-c_cond
-(paren
-op_logical_neg
-id|pci_register_driver
+r_return
+id|pci_module_init
 c_func
 (paren
 op_amp
 id|sv_driver
 )paren
-)paren
-(brace
-id|pci_unregister_driver
-c_func
-(paren
-op_amp
-id|sv_driver
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|ENODEV
-suffix:semicolon
-)brace
-r_return
-l_int|0
 suffix:semicolon
 )brace
 DECL|function|cleanup_sonicvibes

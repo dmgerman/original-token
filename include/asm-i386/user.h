@@ -28,13 +28,13 @@ DECL|member|fcs
 r_int
 id|fcs
 suffix:semicolon
-DECL|member|foo
+DECL|member|fdp
 r_int
-id|foo
+id|fdp
 suffix:semicolon
-DECL|member|fos
+DECL|member|fds
 r_int
-id|fos
+id|fds
 suffix:semicolon
 DECL|member|st_space
 r_int

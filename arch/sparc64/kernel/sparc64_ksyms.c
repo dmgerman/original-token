@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sparc64_ksyms.c,v 1.84 2000/05/09 17:40:14 davem Exp $&n; * arch/sparc64/kernel/sparc64_ksyms.c: Sparc64 specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: sparc64_ksyms.c,v 1.85 2000/05/23 02:14:25 davem Exp $&n; * arch/sparc64/kernel/sparc64_ksyms.c: Sparc64 specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
 multiline_comment|/* Tell string.h we don&squot;t want memcpy etc. as cpp defines */
 DECL|macro|EXPORT_SYMTAB_STROPS
 mdefine_line|#define EXPORT_SYMTAB_STROPS
@@ -444,6 +444,30 @@ c_func
 r_int
 r_int
 id|cmd
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|io_remap_page_range
+c_func
+(paren
+r_int
+r_int
+id|from
+comma
+r_int
+r_int
+id|offset
+comma
+r_int
+r_int
+id|size
+comma
+id|pgprot_t
+id|prot
+comma
+r_int
+id|space
 )paren
 suffix:semicolon
 r_extern
@@ -1104,6 +1128,14 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|unregister_ioctl32_conversion
+)paren
+suffix:semicolon
+multiline_comment|/* I/O device mmaping on Sparc64. */
+DECL|variable|io_remap_page_range
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|io_remap_page_range
 )paren
 suffix:semicolon
 multiline_comment|/* Solaris/SunOS binary compatibility */

@@ -1715,6 +1715,17 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|server-&gt;dtsize
+OG
+id|PAGE_CACHE_SIZE
+)paren
+id|server-&gt;dtsize
+op_assign
+id|PAGE_CACHE_SIZE
+suffix:semicolon
 multiline_comment|/* NFSv3: we don&squot;t have bsize, but rather rtmult and wtmult... */
 r_if
 c_cond

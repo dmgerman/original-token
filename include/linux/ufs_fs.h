@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/include/linux/ufs_fs.h&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * Clean swab support by Fare &lt;fare@tunes.org&gt;&n; * just hope no one is using NNUUXXI on __?64 structure elements&n; * 64-bit clean thanks to Maciej W. Rozycki &lt;macro@ds2.pg.gda.pl&gt;&n; *&n; * 4.4BSD (FreeBSD) support added on February 1st 1998 by&n; * Niels Kristian Bech Jensen &lt;nkbj@image.dk&gt; partially based&n; * on code by Martin von Loewis &lt;martin@mira.isdn.cs.tu-berlin.de&gt;.&n; *&n; * NeXTstep support added on February 5th 1998 by&n; * Niels Kristian Bech Jensen &lt;nkbj@image.dk&gt;.&n; *&n; * Write support by Daniel Pirkl &lt;daniel.pirkl@email.cz&gt;&n; */
+multiline_comment|/*&n; *  linux/include/linux/ufs_fs.h&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * Clean swab support by Fare &lt;fare@tunes.org&gt;&n; * just hope no one is using NNUUXXI on __?64 structure elements&n; * 64-bit clean thanks to Maciej W. Rozycki &lt;macro@ds2.pg.gda.pl&gt;&n; *&n; * 4.4BSD (FreeBSD) support added on February 1st 1998 by&n; * Niels Kristian Bech Jensen &lt;nkbj@image.dk&gt; partially based&n; * on code by Martin von Loewis &lt;martin@mira.isdn.cs.tu-berlin.de&gt;.&n; *&n; * NeXTstep support added on February 5th 1998 by&n; * Niels Kristian Bech Jensen &lt;nkbj@image.dk&gt;.&n; *&n; * Write support by Daniel Pirkl &lt;daniel.pirkl@email.cz&gt;&n; *&n; * HP/UX hfs filesystem support added by&n; * Martin K. Petersen &lt;mkp@mkp.net&gt;, August 1999&n; *&n; */
 macro_line|#ifndef __LINUX_UFS_FS_H
 DECL|macro|__LINUX_UFS_FS_H
 mdefine_line|#define __LINUX_UFS_FS_H
@@ -22,6 +22,33 @@ DECL|macro|UFS_MAGIC
 mdefine_line|#define UFS_MAGIC 0x00011954
 DECL|macro|UFS_CIGAM
 mdefine_line|#define UFS_CIGAM 0x54190100 /* byteswapped MAGIC */
+multiline_comment|/* HP specific MAGIC values */
+DECL|macro|UFS_MAGIC_LFN
+mdefine_line|#define UFS_MAGIC_LFN   0x00095014 /* fs supports filenames &gt; 14 chars */
+DECL|macro|UFS_CIGAM_LFN
+mdefine_line|#define UFS_CIGAM_LFN   0x14500900 /* srahc 41 &lt; semanelif stroppus sf */
+DECL|macro|UFS_MAGIC_SEC
+mdefine_line|#define UFS_MAGIC_SEC   0x00612195 /* B1 security fs */
+DECL|macro|UFS_CIGAM_SEC
+mdefine_line|#define UFS_CIGAM_SEC   0x95216100
+DECL|macro|UFS_MAGIC_FEA
+mdefine_line|#define UFS_MAGIC_FEA   0x00195612 /* fs_featurebits supported */
+DECL|macro|UFS_CIGAM_FEA
+mdefine_line|#define UFS_CIGAM_FEA   0x12561900
+DECL|macro|UFS_MAGIC_4GB
+mdefine_line|#define UFS_MAGIC_4GB   0x05231994 /* fs &gt; 4 GB &amp;&amp; fs_featurebits */
+DECL|macro|UFS_CIGAM_4GB
+mdefine_line|#define UFS_CIGAM_4GB   0x94192305
+multiline_comment|/* Seems somebody at HP goofed here. B1 and lfs are both 0x2 !?! */
+DECL|macro|UFS_FSF_LFN
+mdefine_line|#define UFS_FSF_LFN     0x00000001 /* long file names */
+DECL|macro|UFS_FSF_B1
+mdefine_line|#define UFS_FSF_B1      0x00000002 /* B1 security */
+DECL|macro|UFS_FSF_LFS
+mdefine_line|#define UFS_FSF_LFS     0x00000002 /* large files */
+DECL|macro|UFS_FSF_LUID
+mdefine_line|#define UFS_FSF_LUID    0x00000004 /* large UIDs */
+multiline_comment|/* End of HP stuff */
 DECL|macro|UFS_BSIZE
 mdefine_line|#define UFS_BSIZE&t;8192
 DECL|macro|UFS_MINBSIZE
@@ -136,7 +163,7 @@ mdefine_line|#define UFS_MOUNT_ONERROR_UMOUNT&t;0x00000004
 DECL|macro|UFS_MOUNT_ONERROR_REPAIR
 mdefine_line|#define UFS_MOUNT_ONERROR_REPAIR&t;0x00000008
 DECL|macro|UFS_MOUNT_UFSTYPE
-mdefine_line|#define UFS_MOUNT_UFSTYPE&t;&t;0x000007F0
+mdefine_line|#define UFS_MOUNT_UFSTYPE&t;&t;0x00000FF0
 DECL|macro|UFS_MOUNT_UFSTYPE_OLD
 mdefine_line|#define UFS_MOUNT_UFSTYPE_OLD&t;&t;0x00000010
 DECL|macro|UFS_MOUNT_UFSTYPE_44BSD
@@ -151,6 +178,8 @@ DECL|macro|UFS_MOUNT_UFSTYPE_OPENSTEP
 mdefine_line|#define UFS_MOUNT_UFSTYPE_OPENSTEP&t;0x00000200
 DECL|macro|UFS_MOUNT_UFSTYPE_SUNx86
 mdefine_line|#define UFS_MOUNT_UFSTYPE_SUNx86&t;0x00000400
+DECL|macro|UFS_MOUNT_UFSTYPE_HP
+mdefine_line|#define UFS_MOUNT_UFSTYPE_HP&t;        0x00000800
 DECL|macro|ufs_clear_opt
 mdefine_line|#define ufs_clear_opt(o,opt)&t;o &amp;= ~UFS_MOUNT_##opt
 DECL|macro|ufs_set_opt

@@ -7,7 +7,7 @@ macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifndef MAX_HWIFS
 DECL|macro|MAX_HWIFS
-mdefine_line|#define MAX_HWIFS&t;1
+mdefine_line|#define MAX_HWIFS&t;1&t;/* XXX: For my board -- gniibe */
 macro_line|#endif
 DECL|macro|ide__sti
 mdefine_line|#define ide__sti()&t;__sti()
@@ -29,16 +29,16 @@ id|base
 )paren
 (brace
 r_case
-l_int|0x01f0
+l_int|0xba0001f0
 suffix:colon
 r_return
 l_int|14
 suffix:semicolon
 r_case
-l_int|0x0170
+l_int|0xba000170
 suffix:colon
 r_return
-l_int|15
+l_int|14
 suffix:semicolon
 r_default
 suffix:colon
@@ -68,13 +68,13 @@ r_case
 l_int|0
 suffix:colon
 r_return
-l_int|0x01f0
+l_int|0xba0001f0
 suffix:semicolon
 r_case
 l_int|1
 suffix:colon
 r_return
-l_int|0x0170
+l_int|0xba000170
 suffix:semicolon
 r_default
 suffix:colon
@@ -181,6 +181,13 @@ id|irq
 op_assign
 l_int|0
 suffix:semicolon
+id|hw-&gt;io_ports
+(braket
+id|IDE_IRQ_OFFSET
+)braket
+op_assign
+l_int|0
+suffix:semicolon
 )brace
 DECL|function|ide_init_default_hwifs
 r_static
@@ -214,20 +221,6 @@ id|index
 op_increment
 )paren
 (brace
-id|memset
-c_func
-(paren
-op_amp
-id|hw
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-id|hw_regs_t
-)paren
-)paren
-suffix:semicolon
 id|ide_init_hwif_ports
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/i386/traps.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
+multiline_comment|/*&n; *  linux/arch/i386/traps.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  FXSAVE/FXRSTOR support by Ingo Molnar, OS exception support by Goutham Rao&n; */
 multiline_comment|/*&n; * &squot;Traps.c&squot; handles hardware traps and faults after we have saved some&n; * state in &squot;asm.s&squot;.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -321,6 +321,14 @@ suffix:semicolon
 id|asmlinkage
 r_void
 id|spurious_interrupt_bug
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+id|asmlinkage
+r_void
+id|xmm_fault
 c_func
 (paren
 r_void
@@ -1198,86 +1206,19 @@ id|reserved
 comma
 id|current
 )paren
-multiline_comment|/* I don&squot;t have documents for this but it does seem to cover the cache&n;   flush from user space exception some people get. */
-id|DO_ERROR
+id|DO_VM86_ERROR
 c_func
 (paren
 l_int|19
 comma
-id|SIGSEGV
+id|SIGFPE
 comma
-l_string|&quot;cache flush denied&quot;
+l_string|&quot;XMM fault&quot;
 comma
-id|cache_flush_denied
-comma
-id|current
-)paren
-DECL|function|cache_flush_denied
-id|asmlinkage
-r_void
-id|cache_flush_denied
-c_func
-(paren
-r_struct
-id|pt_regs
-op_star
-id|regs
-comma
-r_int
-id|error_code
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|regs-&gt;eflags
-op_amp
-id|VM_MASK
-)paren
-(brace
-id|handle_vm86_fault
-c_func
-(paren
-(paren
-r_struct
-id|kernel_vm86_regs
-op_star
-)paren
-id|regs
-comma
-id|error_code
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-id|die_if_kernel
-c_func
-(paren
-l_string|&quot;cache flush denied&quot;
-comma
-id|regs
-comma
-id|error_code
-)paren
-suffix:semicolon
-id|current-&gt;thread.error_code
-op_assign
-id|error_code
-suffix:semicolon
-id|current-&gt;thread.trap_no
-op_assign
-l_int|19
-suffix:semicolon
-id|force_sig
-c_func
-(paren
-id|SIGSEGV
+id|xmm_fault
 comma
 id|current
 )paren
-suffix:semicolon
-)brace
 DECL|function|do_general_protection
 id|asmlinkage
 r_void
@@ -2269,16 +2210,10 @@ c_cond
 id|current-&gt;used_math
 )paren
 (brace
-id|__asm__
+id|i387_restore_hard
 c_func
 (paren
-l_string|&quot;frstor %0&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;m&quot;
-(paren
 id|current-&gt;thread.i387
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -3240,6 +3175,15 @@ l_int|17
 comma
 op_amp
 id|alignment_check
+)paren
+suffix:semicolon
+id|set_trap_gate
+c_func
+(paren
+l_int|19
+comma
+op_amp
+id|xmm_fault
 )paren
 suffix:semicolon
 id|set_system_gate

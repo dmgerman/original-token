@@ -1,5 +1,6 @@
 multiline_comment|/* ptrace.c */
 multiline_comment|/* By Ross Biro 1/23/92 */
+multiline_comment|/* FXSAVE/FXRSTOR support by Ingo Molnar and modifications by Goutham Rao */
 multiline_comment|/* edited by Linus Torvalds */
 macro_line|#include &lt;linux/config.h&gt; /* for CONFIG_MATH_EMULATION */
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1867,17 +1868,29 @@ id|child-&gt;used_math
 )paren
 (brace
 multiline_comment|/* Simulate an empty FPU. */
-id|child-&gt;thread.i387.hard.cwd
-op_assign
-l_int|0xffff037f
+id|i387_set_cwd
+c_func
+(paren
+id|child-&gt;thread.i387.hard
+comma
+l_int|0x037f
+)paren
 suffix:semicolon
-id|child-&gt;thread.i387.hard.swd
-op_assign
-l_int|0xffff0000
+id|i387_set_swd
+c_func
+(paren
+id|child-&gt;thread.i387.hard
+comma
+l_int|0x0000
+)paren
 suffix:semicolon
-id|child-&gt;thread.i387.hard.twd
-op_assign
-l_int|0xffffffff
+id|i387_set_twd
+c_func
+(paren
+id|child-&gt;thread.i387.hard
+comma
+l_int|0xffff
+)paren
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_MATH_EMULATION
@@ -1888,23 +1901,18 @@ id|boot_cpu_data.hard_math
 )paren
 (brace
 macro_line|#endif
-id|__copy_to_user
+id|i387_hard_to_user
 c_func
 (paren
 (paren
-r_void
+r_struct
+id|_fpstate
 op_star
 )paren
 id|data
 comma
 op_amp
 id|child-&gt;thread.i387.hard
-comma
-r_sizeof
-(paren
-r_struct
-id|user_i387_struct
-)paren
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_MATH_EMULATION
@@ -1978,23 +1986,18 @@ id|boot_cpu_data.hard_math
 )paren
 (brace
 macro_line|#endif
-id|__copy_from_user
+id|i387_user_to_hard
 c_func
 (paren
 op_amp
 id|child-&gt;thread.i387.hard
 comma
 (paren
-r_void
+r_struct
+id|_fpstate
 op_star
 )paren
 id|data
-comma
-r_sizeof
-(paren
-r_struct
-id|user_i387_struct
-)paren
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_MATH_EMULATION

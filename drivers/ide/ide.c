@@ -2972,6 +2972,8 @@ id|ICRC_ERR
 id|printk
 c_func
 (paren
+l_string|&quot;%s&quot;
+comma
 (paren
 id|err
 op_amp
@@ -8088,6 +8090,7 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+macro_line|#if defined(CONFIG_AMIGA) || defined(CONFIG_MAC)
 r_if
 c_cond
 (paren
@@ -8107,6 +8110,7 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+macro_line|#endif /* (CONFIG_AMIGA) || (CONFIG_MAC) */
 )brace
 DECL|function|ide_unregister
 r_void
@@ -8608,7 +8612,7 @@ c_func
 id|hwgroup-&gt;drive
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA
+macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA_PCI
 r_if
 c_cond
 (paren
@@ -8629,7 +8633,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA */
+macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA_PCI */
 multiline_comment|/*&n;&t; * Remove us from the kernel&squot;s knowledge&n;&t; */
 id|unregister_blkdev
 c_func
@@ -8982,6 +8986,7 @@ id|ctrl
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#if defined(CONFIG_AMIGA) || defined(CONFIG_MAC)
 r_case
 id|IDE_IRQ_OFFSET
 suffix:colon
@@ -8994,6 +8999,7 @@ id|intr
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#endif /* (CONFIG_AMIGA) || (CONFIG_MAC) */
 r_default
 suffix:colon
 id|hw-&gt;io_ports
@@ -12134,17 +12140,6 @@ id|ide_driveid_update
 c_func
 (paren
 id|drive
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;%s: &bslash;n&quot;
-comma
-id|drive-&gt;name
 )paren
 suffix:semicolon
 )brace
@@ -16877,7 +16872,7 @@ c_func
 id|index
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA
+macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA_PCI
 r_if
 c_cond
 (paren
@@ -16901,7 +16896,7 @@ id|index
 )braket
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA */
+macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA_PCI */
 )brace
 macro_line|#ifdef CONFIG_PROC_FS
 id|proc_ide_destroy

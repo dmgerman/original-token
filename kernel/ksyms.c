@@ -356,13 +356,6 @@ c_func
 id|kfree_s
 )paren
 suffix:semicolon
-DECL|variable|vmalloc
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|vmalloc
-)paren
-suffix:semicolon
 DECL|variable|vfree
 id|EXPORT_SYMBOL
 c_func

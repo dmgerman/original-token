@@ -7,7 +7,7 @@ id|version
 (braket
 )braket
 op_assign
-l_string|&quot;1.14&quot;
+l_string|&quot;1.15&quot;
 suffix:semicolon
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
@@ -814,7 +814,7 @@ id|mem
 suffix:semicolon
 )brace
 multiline_comment|/**********************************************************************&n; * /proc interface&n; * Based on the CPiA driver version 0.7.4 -claudio&n; **********************************************************************/
-macro_line|#ifdef CONFIG_PROC_FS
+macro_line|#if defined(CONFIG_PROC_FS) &amp;&amp; defined(CONFIG_VIDEO_PROC_FS)
 DECL|variable|ov511_proc_entry
 r_static
 r_struct
@@ -824,14 +824,11 @@ id|ov511_proc_entry
 op_assign
 l_int|NULL
 suffix:semicolon
-DECL|variable|video_proc_entry
-r_static
+r_extern
 r_struct
 id|proc_dir_entry
 op_star
 id|video_proc_entry
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|macro|YES_NO
 mdefine_line|#define YES_NO(x) ((x) ? &quot;yes&quot; : &quot;no&quot;)
@@ -1481,13 +1478,6 @@ id|proc_dir_entry
 op_star
 id|ent
 suffix:semicolon
-id|PDEBUG
-(paren
-l_int|4
-comma
-l_string|&quot;creating /proc/video/ov511/videoX entry&quot;
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1513,7 +1503,7 @@ id|PDEBUG
 (paren
 l_int|4
 comma
-l_string|&quot;creating %s&quot;
+l_string|&quot;creating /proc/video/ov511/%s&quot;
 comma
 id|name
 )paren
@@ -1554,11 +1544,6 @@ id|ent-&gt;write_proc
 op_assign
 id|ov511_write_proc
 suffix:semicolon
-id|ent-&gt;size
-op_assign
-l_int|3626
-suffix:semicolon
-multiline_comment|/* FIXME */
 id|ov511-&gt;proc_entry
 op_assign
 id|ent
@@ -1633,69 +1618,23 @@ c_func
 r_void
 )paren
 (brace
-r_struct
-id|proc_dir_entry
-op_star
-id|p
-op_assign
-l_int|NULL
-suffix:semicolon
 multiline_comment|/* No current standard here. Alan prefers /proc/video/ as it keeps&n;&t; * /proc &quot;less cluttered than /proc/randomcardifoundintheshed/&quot;&n;&t; * -claudio&n;&t; */
-id|PDEBUG
-(paren
-l_int|3
-comma
-l_string|&quot;creating /proc/video&quot;
-)paren
-suffix:semicolon
-id|video_proc_entry
-op_assign
-id|proc_mkdir
-c_func
-(paren
-l_string|&quot;video&quot;
-comma
-id|p
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|video_proc_entry
-)paren
-(brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|p
+op_eq
+l_int|NULL
 )paren
 (brace
 id|err
 c_func
 (paren
-l_string|&quot;Unable to initialise /proc/video&bslash;n&quot;
+l_string|&quot;Unable to initialise /proc/video/ov511&quot;
 )paren
 suffix:semicolon
 r_return
 suffix:semicolon
-)brace
-r_else
-(brace
-multiline_comment|/* FIXME - this doesn&squot;t work */
-id|PDEBUG
-(paren
-l_int|3
-comma
-l_string|&quot;/proc/video already exists&quot;
-)paren
-suffix:semicolon
-id|video_proc_entry
-op_assign
-id|p
-suffix:semicolon
-)brace
 )brace
 id|ov511_proc_entry
 op_assign
@@ -1722,7 +1661,7 @@ r_else
 id|err
 c_func
 (paren
-l_string|&quot;Unable to initialise /proc/video/ov511&bslash;n&quot;
+l_string|&quot;Unable to initialise /proc/ov511&quot;
 )paren
 suffix:semicolon
 )brace
@@ -1742,6 +1681,15 @@ comma
 l_string|&quot;removing /proc/video/ov511&quot;
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ov511_proc_entry
+op_eq
+l_int|NULL
+)paren
+r_return
+suffix:semicolon
 id|remove_proc_entry
 c_func
 (paren
@@ -1750,16 +1698,8 @@ comma
 id|video_proc_entry
 )paren
 suffix:semicolon
-id|remove_proc_entry
-c_func
-(paren
-l_string|&quot;video&quot;
-comma
-l_int|NULL
-)paren
-suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_PROC_FS */
+macro_line|#endif /* CONFIG_PROC_FS &amp;&amp; CONFIG_VIDEO_PROC_FS */
 multiline_comment|/**********************************************************************&n; *&n; * Camera interface&n; *&n; **********************************************************************/
 DECL|function|ov511_reg_write
 r_static
@@ -4028,7 +3968,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* FIXME: add 176x144, 160x140 */
+multiline_comment|/* FIXME: add 400x300, 176x144, 160x140 */
 DECL|variable|mlist
 r_static
 r_struct
@@ -4226,6 +4166,142 @@ comma
 l_int|0x2b
 comma
 l_int|0x25
+comma
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_int|0x01
+comma
+l_int|0x03
+comma
+l_int|0x04
+comma
+l_int|0x04
+comma
+l_int|0x1e
+)brace
+comma
+(brace
+l_int|384
+comma
+l_int|288
+comma
+id|VIDEO_PALETTE_GREY
+comma
+l_int|0x2f
+comma
+l_int|0x25
+comma
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_int|0x2f
+comma
+l_int|0x25
+comma
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_int|0x01
+comma
+l_int|0x03
+comma
+l_int|0x04
+comma
+l_int|0x04
+comma
+l_int|0x1e
+)brace
+comma
+(brace
+l_int|384
+comma
+l_int|288
+comma
+id|VIDEO_PALETTE_RGB24
+comma
+l_int|0x2f
+comma
+l_int|0x25
+comma
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_int|0x2f
+comma
+l_int|0x25
+comma
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_int|0x01
+comma
+l_int|0x03
+comma
+l_int|0x04
+comma
+l_int|0x04
+comma
+l_int|0x1e
+)brace
+comma
+(brace
+l_int|448
+comma
+l_int|336
+comma
+id|VIDEO_PALETTE_GREY
+comma
+l_int|0x37
+comma
+l_int|0x29
+comma
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_int|0x37
+comma
+l_int|0x29
+comma
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_int|0x01
+comma
+l_int|0x03
+comma
+l_int|0x04
+comma
+l_int|0x04
+comma
+l_int|0x1e
+)brace
+comma
+(brace
+l_int|448
+comma
+l_int|336
+comma
+id|VIDEO_PALETTE_RGB24
+comma
+l_int|0x37
+comma
+l_int|0x29
+comma
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_int|0x37
+comma
+l_int|0x29
 comma
 l_int|0x00
 comma
@@ -6629,12 +6705,21 @@ id|ov511_frame
 op_star
 id|frame
 suffix:semicolon
+r_int
+r_char
+op_star
+id|pData
+suffix:semicolon
+r_int
+id|iPix
+suffix:semicolon
 id|PDEBUG
-c_func
 (paren
 l_int|4
 comma
-l_string|&quot;ov511_move_data&quot;
+l_string|&quot;Moving %d packets&quot;
+comma
+id|urb-&gt;number_of_packets
 )paren
 suffix:semicolon
 r_for
@@ -6759,7 +6844,8 @@ id|ov511-&gt;frame
 id|ov511-&gt;curframe
 )braket
 suffix:semicolon
-multiline_comment|/* Can we find a frame end */
+multiline_comment|/* SOF/EOF packets have 1st to 8th bytes zeroed and the 9th&n;&t;&t; * byte non-zero. The EOF packet has image width/height in the&n;&t;&t; * 10th and 11th packets. The 9th bit is given as follows:&n;&t;&t; *&n;&t;&t; * bit 7: EOF&n;&t;&t; *     6: compression enabled&n;&t;&t; *     5: 422/420/400 modes&n;&t;&t; *     4: 422/420/400 modes&n;&t;&t; *     3: 1&n;&t;&t; *     2: snapshot bottom on&n;&t;&t; *     1: snapshot frame&n;&t;&t; *     0: even/odd field&n;&t;&t; */
+multiline_comment|/* Check for SOF/EOF packet */
 r_if
 c_cond
 (paren
@@ -6804,18 +6890,23 @@ id|cdata
 l_int|7
 )braket
 )paren
-op_eq
-l_int|0
-op_logical_and
+op_logical_or
 (paren
+op_complement
 id|cdata
 (braket
 l_int|8
 )braket
 op_amp
-l_int|8
+l_int|0x08
 )paren
-op_logical_and
+)paren
+r_goto
+id|check_middle
+suffix:semicolon
+multiline_comment|/* Frame end */
+r_if
+c_cond
 (paren
 id|cdata
 (braket
@@ -6824,8 +6915,8 @@ l_int|8
 op_amp
 l_int|0x80
 )paren
-)paren
 (brace
+macro_line|#if 0
 r_struct
 id|timeval
 op_star
@@ -6845,17 +6936,17 @@ id|MAX_FRAME_SIZE
 )paren
 suffix:semicolon
 id|do_gettimeofday
-c_func
 (paren
 id|ts
 )paren
 suffix:semicolon
+macro_line|#endif
 id|PDEBUG
 c_func
 (paren
 l_int|4
 comma
-l_string|&quot;Frame End, curframe = %d, packnum=%d, hw=%d, vw=%d&quot;
+l_string|&quot;Frame end, curframe = %d, packnum=%d, hw=%d, vw=%d&quot;
 comma
 id|ov511-&gt;curframe
 comma
@@ -6941,7 +7032,7 @@ id|frame-&gt;wq
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* If next frame is ready or grabbing, point to it */
+multiline_comment|/* If next frame is ready or grabbing,&n;                                 * point to it */
 id|iFrameNext
 op_assign
 (paren
@@ -6990,6 +7081,25 @@ suffix:semicolon
 )brace
 r_else
 (brace
+r_if
+c_cond
+(paren
+id|frame-&gt;grabstate
+op_eq
+id|FRAME_DONE
+)paren
+(brace
+id|PDEBUG
+c_func
+(paren
+l_int|4
+comma
+l_string|&quot;Frame done! congratulations&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
 id|PDEBUG
 c_func
 (paren
@@ -7005,6 +7115,7 @@ dot
 id|grabstate
 )paren
 suffix:semicolon
+)brace
 id|ov511-&gt;curframe
 op_assign
 op_minus
@@ -7012,72 +7123,17 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/* Image corruption caused by misplaced frame-&gt;segment = 0&n;&t;&t;&t; * fixed by carlosf@conectiva.com.br&n;&t;&t;&t; */
 )brace
-multiline_comment|/* Can we find a frame start */
 r_else
-r_if
-c_cond
-(paren
-(paren
-id|cdata
-(braket
-l_int|0
-)braket
-op_or
-id|cdata
-(braket
-l_int|1
-)braket
-op_or
-id|cdata
-(braket
-l_int|2
-)braket
-op_or
-id|cdata
-(braket
-l_int|3
-)braket
-op_or
-id|cdata
-(braket
-l_int|4
-)braket
-op_or
-id|cdata
-(braket
-l_int|5
-)braket
-op_or
-id|cdata
-(braket
-l_int|6
-)braket
-op_or
-id|cdata
-(braket
-l_int|7
-)braket
-)paren
-op_eq
-l_int|0
-op_logical_and
-(paren
-id|cdata
-(braket
-l_int|8
-)braket
-op_amp
-l_int|8
-)paren
-)paren
 (brace
+multiline_comment|/* Frame start */
 id|PDEBUG
 c_func
 (paren
 l_int|4
 comma
-l_string|&quot;ov511: Found Frame Start!, framenum = %d&quot;
+l_string|&quot;Frame start, framenum = %d&quot;
 comma
 id|ov511-&gt;curframe
 )paren
@@ -7104,7 +7160,7 @@ c_func
 (paren
 l_int|3
 comma
-l_string|&quot;ov511_move_data: snapshot detected&quot;
+l_string|&quot;snapshot detected&quot;
 )paren
 suffix:semicolon
 )brace
@@ -7117,22 +7173,17 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+id|check_middle
+suffix:colon
 multiline_comment|/* Are we in a frame? */
 r_if
 c_cond
 (paren
 id|frame-&gt;scanstate
-op_eq
+op_ne
 id|STATE_LINES
 )paren
-(brace
-r_int
-r_char
-op_star
-id|pData
-suffix:semicolon
-r_int
-id|iPix
+r_continue
 suffix:semicolon
 multiline_comment|/* Deal with leftover from last segment, if any */
 r_if
@@ -7203,8 +7254,7 @@ l_int|256
 (brace
 r_int
 id|iSegY
-suffix:semicolon
-r_int
+comma
 id|iSegUV
 suffix:semicolon
 r_int
@@ -7243,6 +7293,7 @@ id|iPix
 op_add_assign
 id|frame-&gt;segsize
 suffix:semicolon
+multiline_comment|/* Handle subwindow */
 r_if
 c_cond
 (paren
@@ -7335,9 +7386,14 @@ op_star
 id|frame-&gt;width
 )paren
 op_star
+(paren
 id|frame-&gt;depth
+op_rshift
+l_int|3
+)paren
 suffix:semicolon
 )brace
+multiline_comment|/* &n;&t;&t;&t; * iY counts segment lines&n;&t;&t;&t; * jY counts segment columns&n;&t;&t;&t; * iOutY is the offset (in bytes) of the segment upper left corner&n;&t;&t;&t; */
 id|iY
 op_assign
 id|iSegY
@@ -7374,7 +7430,11 @@ op_star
 id|WDIV
 )paren
 op_star
+(paren
 id|frame-&gt;depth
+op_rshift
+l_int|3
+)paren
 suffix:semicolon
 id|iUV
 op_assign
@@ -7420,7 +7480,11 @@ op_div
 l_int|2
 )paren
 op_star
+(paren
 id|frame-&gt;depth
+op_rshift
+l_int|3
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -7429,9 +7493,7 @@ id|frame-&gt;format
 op_eq
 id|VIDEO_PALETTE_GREY
 )paren
-(brace
 id|ov511_parse_data_grey
-c_func
 (paren
 id|pData
 comma
@@ -7442,7 +7504,6 @@ comma
 id|frame-&gt;width
 )paren
 suffix:semicolon
-)brace
 r_else
 r_if
 c_cond
@@ -7451,9 +7512,7 @@ id|frame-&gt;format
 op_eq
 id|VIDEO_PALETTE_RGB24
 )paren
-(brace
 id|ov511_parse_data_rgb24
-c_func
 (paren
 id|pData
 comma
@@ -7470,7 +7529,6 @@ comma
 id|frame-&gt;width
 )paren
 suffix:semicolon
-)brace
 id|pData
 op_assign
 op_amp
@@ -7510,7 +7568,6 @@ id|ov511-&gt;scratchlen
 OL
 id|frame-&gt;segsize
 )paren
-(brace
 id|memmove
 c_func
 (paren
@@ -7521,15 +7578,11 @@ comma
 id|ov511-&gt;scratchlen
 )paren
 suffix:semicolon
-)brace
 r_else
-(brace
 id|ov511-&gt;scratchlen
 op_assign
 l_int|0
 suffix:semicolon
-)brace
-)brace
 )brace
 )brace
 id|PDEBUG
@@ -7537,7 +7590,7 @@ c_func
 (paren
 l_int|5
 comma
-l_string|&quot;pn: %d %d %d %d %d %d %d %d %d %d&bslash;n&quot;
+l_string|&quot;pn: %d %d %d %d %d %d %d %d %d %d&quot;
 comma
 id|aPackNum
 (braket
@@ -7645,17 +7698,6 @@ l_string|&quot;hmmm... not streaming, but got interrupt&quot;
 )paren
 suffix:semicolon
 r_return
-suffix:semicolon
-)brace
-r_else
-(brace
-id|PDEBUG
-c_func
-(paren
-l_int|5
-comma
-l_string|&quot;streaming. got interrupt&quot;
-)paren
 suffix:semicolon
 )brace
 id|sbuf
@@ -8851,7 +8893,7 @@ op_star
 id|dev
 )paren
 (brace
-macro_line|#ifdef CONFIG_PROC_FS
+macro_line|#if defined(CONFIG_PROC_FS) &amp;&amp; defined(CONFIG_VIDEO_PROC_FS)
 id|create_proc_ov511_cam
 c_func
 (paren
@@ -8962,6 +9004,13 @@ suffix:colon
 r_struct
 id|video_capability
 id|b
+suffix:semicolon
+id|PDEBUG
+(paren
+l_int|4
+comma
+l_string|&quot;VIDIOCGCAP&quot;
+)paren
 suffix:semicolon
 id|strcpy
 c_func
@@ -9162,6 +9211,13 @@ r_struct
 id|video_picture
 id|p
 suffix:semicolon
+id|PDEBUG
+(paren
+l_int|4
+comma
+l_string|&quot;VIDIOCGPICT&quot;
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -9211,6 +9267,16 @@ r_struct
 id|video_picture
 id|p
 suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+id|PDEBUG
+(paren
+l_int|4
+comma
+l_string|&quot;VIDIOCSPICT&quot;
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -9248,6 +9314,66 @@ r_return
 op_minus
 id|EIO
 suffix:semicolon
+multiline_comment|/* FIXME: check validity */
+id|PDEBUG
+c_func
+(paren
+l_int|4
+comma
+l_string|&quot;Setting depth=%d, palette=%d&quot;
+comma
+id|p.depth
+comma
+id|p.palette
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|OV511_NUMFRAMES
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|ov511-&gt;frame
+(braket
+id|i
+)braket
+dot
+id|depth
+op_assign
+id|p.depth
+suffix:semicolon
+id|ov511-&gt;frame
+(braket
+id|i
+)braket
+dot
+id|format
+op_assign
+id|p.palette
+suffix:semicolon
+id|ov511-&gt;frame
+(braket
+id|i
+)braket
+dot
+id|segsize
+op_assign
+id|GET_SEGSIZE
+c_func
+(paren
+id|p.palette
+)paren
+suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -9258,6 +9384,13 @@ suffix:colon
 (brace
 r_int
 id|vf
+suffix:semicolon
+id|PDEBUG
+(paren
+l_int|4
+comma
+l_string|&quot;VIDIOCGCAPTURE&quot;
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -9335,6 +9468,7 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+macro_line|#if 0
 id|vc.x
 op_div_assign
 l_int|4
@@ -9359,6 +9493,23 @@ id|vc.width
 op_mul_assign
 l_int|32
 suffix:semicolon
+macro_line|#else
+id|vc.x
+op_and_assign
+op_complement
+l_int|3L
+suffix:semicolon
+id|vc.y
+op_and_assign
+op_complement
+l_int|1L
+suffix:semicolon
+id|vc.y
+op_and_assign
+op_complement
+l_int|31L
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -9417,6 +9568,11 @@ r_struct
 id|video_window
 id|vw
 suffix:semicolon
+r_int
+id|i
+comma
+id|result
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -9438,6 +9594,18 @@ r_return
 op_minus
 id|EFAULT
 suffix:semicolon
+id|PDEBUG
+(paren
+l_int|4
+comma
+l_string|&quot;VIDIOCSWIN: width=%d, height=%d&quot;
+comma
+id|vw.width
+comma
+id|vw.height
+)paren
+suffix:semicolon
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -9478,10 +9646,93 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-id|ov511-&gt;compress
+macro_line|#endif
+multiline_comment|/* If we&squot;re collecting previous frame wait&n;&t;&t;   before changing modes */
+id|interruptible_sleep_on
+c_func
+(paren
+op_amp
+id|ov511-&gt;wq
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|signal_pending
+c_func
+(paren
+id|current
+)paren
+)paren
+r_return
+op_minus
+id|EINTR
+suffix:semicolon
+id|result
+op_assign
+id|ov511_mode_init_regs
+c_func
+(paren
+id|ov511
+comma
+id|vw.width
+comma
+id|vw.height
+comma
+id|ov511-&gt;frame
+(braket
+l_int|0
+)braket
+dot
+id|format
+comma
+id|ov511-&gt;sub_flag
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|result
+OL
+l_int|0
+)paren
+r_return
+id|result
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
 op_assign
 l_int|0
 suffix:semicolon
+id|i
+OL
+id|OV511_NUMFRAMES
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|ov511-&gt;frame
+(braket
+id|i
+)braket
+dot
+id|width
+op_assign
+id|vw.width
+suffix:semicolon
+id|ov511-&gt;frame
+(braket
+id|i
+)braket
+dot
+id|height
+op_assign
+id|vw.height
+suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -9498,17 +9749,28 @@ id|vw.x
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* FIXME */
 id|vw.y
 op_assign
 l_int|0
 suffix:semicolon
 id|vw.width
 op_assign
-id|DEFAULT_WIDTH
+id|ov511-&gt;frame
+(braket
+l_int|0
+)braket
+dot
+id|width
 suffix:semicolon
 id|vw.height
 op_assign
-id|DEFAULT_HEIGHT
+id|ov511-&gt;frame
+(braket
+l_int|0
+)braket
+dot
+id|height
 suffix:semicolon
 id|vw.chromakey
 op_assign
@@ -9517,6 +9779,17 @@ suffix:semicolon
 id|vw.flags
 op_assign
 l_int|30
+suffix:semicolon
+id|PDEBUG
+(paren
+l_int|4
+comma
+l_string|&quot;VIDIOCGWIN: %dx%d&quot;
+comma
+id|vw.width
+comma
+id|vw.height
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -9867,14 +10140,11 @@ id|vm.frame
 dot
 id|segsize
 op_assign
+id|GET_SEGSIZE
+c_func
+(paren
 id|vm.format
-op_eq
-id|VIDEO_PALETTE_RGB24
-ques
-c_cond
-l_int|384
-suffix:colon
-l_int|256
+)paren
 suffix:semicolon
 id|ov511-&gt;frame
 (braket
@@ -9883,14 +10153,11 @@ id|vm.frame
 dot
 id|depth
 op_assign
+id|GET_DEPTH
+c_func
+(paren
 id|vm.format
-op_eq
-id|VIDEO_PALETTE_RGB24
-ques
-c_cond
-l_int|3
-suffix:colon
-l_int|1
+)paren
 suffix:semicolon
 multiline_comment|/* Mark it as ready */
 id|ov511-&gt;frame
@@ -10107,18 +10374,6 @@ id|grabstate
 op_assign
 id|FRAME_UNUSED
 suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-id|ov511-&gt;frame
-(braket
-id|frame
-)braket
-dot
-id|grabstate
-op_assign
-id|FRAME_UNUSED
-suffix:semicolon
 multiline_comment|/* Reset the hardware snapshot button */
 multiline_comment|/* FIXME - Is this the best place for this? */
 r_if
@@ -10152,7 +10407,7 @@ c_func
 (paren
 id|ov511-&gt;dev
 comma
-l_int|0x52
+id|OV511_REG_SYSTEM_SNAPSHOT
 comma
 l_int|0x01
 )paren
@@ -10162,7 +10417,7 @@ c_func
 (paren
 id|ov511-&gt;dev
 comma
-l_int|0x52
+id|OV511_REG_SYSTEM_SNAPSHOT
 comma
 l_int|0x03
 )paren
@@ -10172,12 +10427,16 @@ c_func
 (paren
 id|ov511-&gt;dev
 comma
-l_int|0x52
+id|OV511_REG_SYSTEM_SNAPSHOT
 comma
 l_int|0x01
 )paren
 suffix:semicolon
 )brace
+r_break
+suffix:semicolon
+)brace
+multiline_comment|/* end switch */
 r_return
 l_int|0
 suffix:semicolon
@@ -10299,7 +10558,7 @@ op_minus
 id|ENOIOCTLCMD
 suffix:semicolon
 )brace
-multiline_comment|/* End switch(cmd) */
+multiline_comment|/* end switch */
 r_return
 l_int|0
 suffix:semicolon
@@ -13403,7 +13662,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_PROC_FS
+macro_line|#if defined(CONFIG_PROC_FS) &amp;&amp; defined(CONFIG_VIDEO_PROC_FS)
 id|destroy_proc_ov511_cam
 c_func
 (paren
@@ -13462,15 +13721,7 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifdef CONFIG_PROC_FS
-id|PDEBUG
-c_func
-(paren
-l_int|3
-comma
-l_string|&quot;creating /proc/ov511&quot;
-)paren
-suffix:semicolon
+macro_line|#if defined(CONFIG_PROC_FS) &amp;&amp; defined(CONFIG_VIDEO_PROC_FS)
 id|proc_ov511_create
 c_func
 (paren
@@ -13528,7 +13779,7 @@ c_func
 l_string|&quot;ov511 driver deregistered&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PROC_FS
+macro_line|#if defined(CONFIG_PROC_FS) &amp;&amp; defined(CONFIG_VIDEO_PROC_FS)
 id|proc_ov511_destroy
 c_func
 (paren

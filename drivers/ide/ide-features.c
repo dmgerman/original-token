@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * linux/drivers/block/ide-features.c&t;Version 0.03&t;Feb. 10, 2000&n; *&n; *  Copyright (C) 1999-2000&t;Linus Torvalds &amp; authors (see below)&n; *  &n; *  Copyright (C) 1999-2000&t;Andre Hedrick &lt;andre@suse.com&gt;&n; *&n; *  Extracts if ide.c to address the evolving transfer rate code for&n; *  the SETFEATURES_XFER callouts.  Various parts of any given function&n; *  are credited to previous ATA-IDE maintainers.&n; *&n; *  May be copied or modified under the terms of the GNU General Public License&n; */
+macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
@@ -986,6 +987,10 @@ op_assign
 l_int|1
 suffix:semicolon
 id|byte
+id|stat
+suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA_PCI
+id|byte
 id|unit
 op_assign
 (paren
@@ -993,9 +998,6 @@ id|drive-&gt;select.b.unit
 op_amp
 l_int|0x01
 )paren
-suffix:semicolon
-id|byte
-id|stat
 suffix:semicolon
 id|outb
 c_func
@@ -1024,6 +1026,7 @@ op_plus
 l_int|2
 )paren
 suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA_PCI */
 multiline_comment|/*&n;&t; * Don&squot;t use ide_wait_cmd here - it will&n;&t; * attempt to set_geometry and recalibrate,&n;&t; * but for some reason these don&squot;t work at&n;&t; * this point (lost interrupt).&n;&t; */
 multiline_comment|/*&n;         * Select the drive, and issue the SETFEATURES command&n;         */
 id|disable_irq
@@ -1302,6 +1305,7 @@ op_and_assign
 op_complement
 l_int|0x0F00
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA_PCI
 r_if
 c_cond
 (paren
@@ -1367,6 +1371,7 @@ l_int|2
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA_PCI */
 r_switch
 c_cond
 (paren

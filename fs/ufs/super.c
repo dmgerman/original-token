@@ -1,6 +1,6 @@
 multiline_comment|/*&n; *  linux/fs/ufs/super.c&n; *&n; * Copyright (C) 1998&n; * Daniel Pirkl &lt;daniel.pirkl@email.cz&gt;&n; * Charles University, Faculty of Mathematics and Physics&n; */
 multiline_comment|/* Derived from&n; *&n; *  linux/fs/ext2/super.c&n; *&n; * Copyright (C) 1992, 1993, 1994, 1995&n; * Remy Card (card@masi.ibp.fr)&n; * Laboratoire MASI - Institut Blaise Pascal&n; * Universite Pierre et Marie Curie (Paris VI)&n; *&n; *  from&n; *&n; *  linux/fs/minix/inode.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  Big-endian to little-endian byte-swapping/bitmaps by&n; *        David S. Miller (davem@caip.rutgers.edu), 1995&n; */
-multiline_comment|/*&n; * Inspired by&n; *&n; *  linux/fs/ufs/super.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * Copyright (C) 1996  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * Kernel module support added on 96/04/26 by&n; * Stefan Reinauer &lt;stepan@home.culture.mipt.ru&gt;&n; *&n; * Module usage counts added on 96/04/29 by&n; * Gertjan van Wingerde &lt;gertjan@cs.vu.nl&gt;&n; *&n; * Clean swab support on 19970406 by&n; * Francois-Rene Rideau &lt;fare@tunes.org&gt;&n; *&n; * 4.4BSD (FreeBSD) support added on February 1st 1998 by&n; * Niels Kristian Bech Jensen &lt;nkbj@image.dk&gt; partially based&n; * on code by Martin von Loewis &lt;martin@mira.isdn.cs.tu-berlin.de&gt;.&n; *&n; * NeXTstep support added on February 5th 1998 by&n; * Niels Kristian Bech Jensen &lt;nkbj@image.dk&gt;.&n; *&n; * write support Daniel Pirkl &lt;daniel.pirkl@email.cz&gt; 1998&n; * &n; */
+multiline_comment|/*&n; * Inspired by&n; *&n; *  linux/fs/ufs/super.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * Copyright (C) 1996  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * Kernel module support added on 96/04/26 by&n; * Stefan Reinauer &lt;stepan@home.culture.mipt.ru&gt;&n; *&n; * Module usage counts added on 96/04/29 by&n; * Gertjan van Wingerde &lt;gertjan@cs.vu.nl&gt;&n; *&n; * Clean swab support on 19970406 by&n; * Francois-Rene Rideau &lt;fare@tunes.org&gt;&n; *&n; * 4.4BSD (FreeBSD) support added on February 1st 1998 by&n; * Niels Kristian Bech Jensen &lt;nkbj@image.dk&gt; partially based&n; * on code by Martin von Loewis &lt;martin@mira.isdn.cs.tu-berlin.de&gt;.&n; *&n; * NeXTstep support added on February 5th 1998 by&n; * Niels Kristian Bech Jensen &lt;nkbj@image.dk&gt;.&n; *&n; * write support Daniel Pirkl &lt;daniel.pirkl@email.cz&gt; 1998&n; * &n; * HP/UX hfs filesystem support added by&n; * Martin K. Petersen &lt;mkp@mkp.net&gt;, August 1999&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;stdarg.h&gt;
@@ -1447,6 +1447,26 @@ id|UFSTYPE_SUNx86
 )paren
 suffix:semicolon
 r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strcmp
+(paren
+id|value
+comma
+l_string|&quot;hp&quot;
+)paren
+)paren
+id|ufs_set_opt
+(paren
+op_star
+id|mount_options
+comma
+id|UFSTYPE_HP
+)paren
+suffix:semicolon
+r_else
 (brace
 id|printk
 (paren
@@ -2546,7 +2566,7 @@ c_func
 (paren
 l_string|&quot;You didn&squot;t specify the type of your ufs filesystem&bslash;n&bslash;n&quot;
 l_string|&quot;mount -t ufs -o ufstype=&quot;
-l_string|&quot;sun|sunx86|44bsd|old|nextstep|netxstep-cd|openstep ...&bslash;n&bslash;n&quot;
+l_string|&quot;sun|sunx86|44bsd|old|hp|nextstep|netxstep-cd|openstep ...&bslash;n&bslash;n&quot;
 l_string|&quot;&gt;&gt;&gt;WARNING&lt;&lt;&lt; Wrong ufstype may corrupt your filesystem, &quot;
 l_string|&quot;default is ufstype=old&bslash;n&quot;
 )paren
@@ -3048,6 +3068,80 @@ suffix:semicolon
 )brace
 r_break
 suffix:semicolon
+r_case
+id|UFS_MOUNT_UFSTYPE_HP
+suffix:colon
+id|UFSD
+c_func
+(paren
+(paren
+l_string|&quot;ufstype=hp&bslash;n&quot;
+)paren
+)paren
+id|uspi-&gt;s_fsize
+op_assign
+id|block_size
+op_assign
+l_int|1024
+suffix:semicolon
+id|uspi-&gt;s_fmask
+op_assign
+op_complement
+(paren
+l_int|1024
+op_minus
+l_int|1
+)paren
+suffix:semicolon
+id|uspi-&gt;s_fshift
+op_assign
+l_int|10
+suffix:semicolon
+id|uspi-&gt;s_sbsize
+op_assign
+id|super_block_size
+op_assign
+l_int|2048
+suffix:semicolon
+id|uspi-&gt;s_sbbase
+op_assign
+l_int|0
+suffix:semicolon
+id|flags
+op_or_assign
+id|UFS_DE_OLD
+op_or
+id|UFS_UID_OLD
+op_or
+id|UFS_ST_OLD
+op_or
+id|UFS_CG_OLD
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|sb-&gt;s_flags
+op_amp
+id|MS_RDONLY
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;ufstype=hp is supported read-only&bslash;n&quot;
+)paren
+suffix:semicolon
+id|sb-&gt;s_flags
+op_or_assign
+id|MS_RDONLY
+suffix:semicolon
+)brace
+r_break
+suffix:semicolon
 r_default
 suffix:colon
 id|printk
@@ -3131,6 +3225,15 @@ id|usb3-&gt;fs_magic
 r_case
 id|UFS_MAGIC
 suffix:colon
+r_case
+id|UFS_MAGIC_LFN
+suffix:colon
+r_case
+id|UFS_MAGIC_FEA
+suffix:colon
+r_case
+id|UFS_MAGIC_4GB
+suffix:colon
 id|swab
 op_assign
 id|UFS_NATIVE_ENDIAN
@@ -3140,6 +3243,15 @@ id|magic_found
 suffix:semicolon
 r_case
 id|UFS_CIGAM
+suffix:colon
+r_case
+id|UFS_CIGAM_LFN
+suffix:colon
+r_case
+id|UFS_CIGAM_FEA
+suffix:colon
+r_case
+id|UFS_CIGAM_4GB
 suffix:colon
 id|swab
 op_assign
@@ -3164,6 +3276,15 @@ id|usb3-&gt;fs_magic
 r_case
 id|UFS_MAGIC
 suffix:colon
+r_case
+id|UFS_MAGIC_LFN
+suffix:colon
+r_case
+id|UFS_MAGIC_FEA
+suffix:colon
+r_case
+id|UFS_MAGIC_4GB
+suffix:colon
 id|swab
 op_assign
 id|UFS_LITTLE_ENDIAN
@@ -3173,6 +3294,15 @@ id|magic_found
 suffix:semicolon
 r_case
 id|UFS_CIGAM
+suffix:colon
+r_case
+id|UFS_CIGAM_LFN
+suffix:colon
+r_case
+id|UFS_CIGAM_FEA
+suffix:colon
+r_case
+id|UFS_CIGAM_4GB
 suffix:colon
 id|swab
 op_assign

@@ -13500,9 +13500,7 @@ l_int|0x4040
 )brace
 suffix:semicolon
 DECL|macro|RSRCISIOREGION
-mdefine_line|#define RSRCISIOREGION(dev,num) ((dev)-&gt;resource[(num)].start != 0 &amp;&amp; &bslash;&n;&t;&t;&t;&t; ((dev)-&gt;resource[(num)].flags &amp; PCI_BASE_ADDRESS_SPACE) == PCI_BASE_ADDRESS_SPACE_IO)
-DECL|macro|RSRCADDRESS
-mdefine_line|#define RSRCADDRESS(dev,num) ((dev)-&gt;resource[(num)].start)
+mdefine_line|#define RSRCISIOREGION(dev,num) (pci_resource_start((dev), (num)) != 0 &amp;&amp; &bslash;&n;&t;&t;&t;&t; pci_resource_flags((dev), (num)) &amp; IORESOURCE_IO)
 DECL|function|es1370_probe
 r_static
 r_int
@@ -13700,7 +13698,7 @@ id|pcidev
 suffix:semicolon
 id|s-&gt;io
 op_assign
-id|RSRCADDRESS
+id|pci_resource_start
 c_func
 (paren
 id|pcidev
@@ -14565,32 +14563,13 @@ id|__DATE__
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|pci_register_driver
+r_return
+id|pci_module_init
 c_func
 (paren
 op_amp
 id|es1370_driver
 )paren
-)paren
-(brace
-id|pci_unregister_driver
-c_func
-(paren
-op_amp
-id|es1370_driver
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|ENODEV
-suffix:semicolon
-)brace
-r_return
-l_int|0
 suffix:semicolon
 )brace
 DECL|function|cleanup_es1370

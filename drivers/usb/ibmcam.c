@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * USB IBM C-It Video Camera driver&n; *&n; * Supports IBM C-It Video Camera.&n; *&n; * This driver is based on earlier work of:&n; *&n; * (C) Copyright 1999 Johannes Erdfelt&n; * (C) Copyright 1999 Randy Dunlap&n; */
+multiline_comment|/*&n; * USB IBM C-It Video Camera driver&n; *&n; * Supports IBM C-It Video Camera.&n; *&n; * This driver is based on earlier work of:&n; *&n; * (C) Copyright 1999 Johannes Erdfelt&n; * (C) Copyright 1999 Randy Dunlap&n; *&n; * 5/24/00 Removed optional (and unnecessary) locking of the driver while&n; * the device remains plugged in. Corrected race conditions in ibmcam_open&n; * and ibmcam_probe() routines using this as a guideline:&n; *&n; * (2) The big kernel lock is automatically released when a process sleeps&n; *   in the kernel and is automatically reacquired on reschedule if the&n; *   process had the lock originally.  Any code that can be compiled as&n; *   a module and is entered with the big kernel lock held *MUST*&n; *   increment the use count to activate the indirect module protection&n; *   before doing anything that might sleep.&n; *&n; *   In practice, this means that all routines that live in modules and&n; *   are invoked under the big kernel lock should do MOD_INC_USE_COUNT&n; *   as their very first action.  And all failure paths from that&n; *   routine must do MOD_DEC_USE_COUNT before returning.&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/list.h&gt;
@@ -13,9 +13,6 @@ macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;linux/usb.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;ibmcam.h&quot;
-multiline_comment|/*&n; * IBMCAM_LOCKS_DRIVER_WHILE_DEVICE_IS_PLUGGED: This symbol controls&n; * the locking of the driver. If non-zero, the driver counts the&n; * probe() call as usage and increments module usage counter; this&n; * effectively prevents removal of the module (with rmmod) until the&n; * device is unplugged (then disconnect() callback reduces the module&n; * usage counter back, and module can be removed).&n; *&n; * This behavior may be useful if you prefer to lock the driver in&n; * memory until device is unplugged. However you can&squot;t reload the&n; * driver if you want to alter some parameters - you&squot;d need to unplug&n; * the camera first. Therefore, I recommend setting 0.&n; */
-DECL|macro|IBMCAM_LOCKS_DRIVER_WHILE_DEVICE_IS_PLUGGED
-mdefine_line|#define IBMCAM_LOCKS_DRIVER_WHILE_DEVICE_IS_PLUGGED&t;0
 DECL|macro|ENABLE_HEXDUMP
 mdefine_line|#define&t;ENABLE_HEXDUMP&t;0&t;/* Enable if you need it */
 DECL|variable|debug
@@ -10872,7 +10869,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * ibmcam_open()&n; *&n; * This is part of Video 4 Linux API. The driver can be opened by one&n; * client only (checks internal counter &squot;ibmcam-&gt;user&squot;). The procedure&n; * then allocates buffers needed for video processing.&n; *&n; * History:&n; * 1/22/00  Rewrote, moved scratch buffer allocation here. Now the&n; *          camera is also initialized here (once per connect), at&n; *          expense of V4L client (it waits on open() call).&n; * 1/27/00  Used IBMCAM_NUMSBUF as number of URB buffers.&n; */
+multiline_comment|/*&n; * ibmcam_open()&n; *&n; * This is part of Video 4 Linux API. The driver can be opened by one&n; * client only (checks internal counter &squot;ibmcam-&gt;user&squot;). The procedure&n; * then allocates buffers needed for video processing.&n; *&n; * History:&n; * 1/22/00  Rewrote, moved scratch buffer allocation here. Now the&n; *          camera is also initialized here (once per connect), at&n; *          expense of V4L client (it waits on open() call).&n; * 1/27/00  Used IBMCAM_NUMSBUF as number of URB buffers.&n; * 5/24/00  Corrected to prevent race condition (MOD_xxx_USE_COUNT).&n; */
 DECL|function|ibmcam_open
 r_static
 r_int
@@ -10914,6 +10911,8 @@ comma
 id|err
 op_assign
 l_int|0
+suffix:semicolon
+id|MOD_INC_USE_COUNT
 suffix:semicolon
 id|down
 c_func
@@ -11316,13 +11315,9 @@ c_cond
 op_logical_neg
 id|err
 )paren
-(brace
 id|ibmcam-&gt;user
 op_increment
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-)brace
 )brace
 )brace
 id|up
@@ -11332,11 +11327,18 @@ op_amp
 id|ibmcam-&gt;lock
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 id|err
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * ibmcam_close()&n; *&n; * This is part of Video 4 Linux API. The procedure&n; * stops streaming and deallocates all buffers that were earlier&n; * allocated in ibmcam_open().&n; *&n; * History:&n; * 1/22/00  Moved scratch buffer deallocation here.&n; * 1/27/00  Used IBMCAM_NUMSBUF as number of URB buffers.&n; */
+multiline_comment|/*&n; * ibmcam_close()&n; *&n; * This is part of Video 4 Linux API. The procedure&n; * stops streaming and deallocates all buffers that were earlier&n; * allocated in ibmcam_open().&n; *&n; * History:&n; * 1/22/00  Moved scratch buffer deallocation here.&n; * 1/27/00  Used IBMCAM_NUMSBUF as number of URB buffers.&n; * 5/24/00  Moved MOD_DEC_USE_COUNT outside of code that can sleep.&n; */
 DECL|function|ibmcam_close
 r_static
 r_void
@@ -11419,8 +11421,6 @@ suffix:semicolon
 id|ibmcam-&gt;user
 op_decrement
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -11447,6 +11447,8 @@ c_func
 op_amp
 id|ibmcam-&gt;lock
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
 DECL|function|ibmcam_init_done
@@ -13389,7 +13391,7 @@ l_string|&quot;Camera&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * usb_ibmcam_release()&n; *&n; * This code searches the array of preallocated (static) structures&n; * and returns index of the first one that isn&squot;t in use. Returns -1&n; * if there are no free structures.&n; *&n; * History:&n; * 1/27/00  Created.&n; */
+multiline_comment|/*&n; * ibmcam_find_struct()&n; *&n; * This code searches the array of preallocated (static) structures&n; * and returns index of the first one that isn&squot;t in use. Returns -1&n; * if there are no free structures.&n; *&n; * History:&n; * 1/27/00  Created.&n; */
 DECL|function|ibmcam_find_struct
 r_static
 r_int
@@ -13506,7 +13508,7 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * usb_ibmcam_probe()&n; *&n; * This procedure queries device descriptor and accepts the interface&n; * if it looks like IBM C-it camera.&n; *&n; * History:&n; * 1/22/00  Moved camera init code to ibmcam_open()&n; * 1/27/00  Changed to use static structures, added locking.&n; */
+multiline_comment|/*&n; * usb_ibmcam_probe()&n; *&n; * This procedure queries device descriptor and accepts the interface&n; * if it looks like IBM C-it camera.&n; *&n; * History:&n; * 1/22/00  Moved camera init code to ibmcam_open()&n; * 1/27/00  Changed to use static structures, added locking.&n; * 5/24/00  Corrected to prevent race condition (MOD_xxx_USE_COUNT).&n; */
 DECL|function|usb_ibmcam_probe
 r_static
 r_void
@@ -13873,6 +13875,9 @@ id|VIDEOSIZE_352x240
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Code below may sleep, need to lock module while we are here */
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 id|devnum
 op_assign
 id|ibmcam_find_struct
@@ -13896,8 +13901,13 @@ id|KERN_INFO
 l_string|&quot;IBM USB camera driver: Too many devices!&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
+id|ibmcam
+op_assign
 l_int|NULL
+suffix:semicolon
+multiline_comment|/* Do not free, it&squot;s preallocated */
+r_goto
+id|probe_done
 suffix:semicolon
 )brace
 id|ibmcam
@@ -13971,10 +13981,6 @@ op_amp
 id|ibmcam-&gt;lock
 )paren
 suffix:semicolon
-macro_line|#if IBMCAM_LOCKS_DRIVER_WHILE_DEVICE_IS_PLUGGED
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -13998,9 +14004,11 @@ id|KERN_ERR
 l_string|&quot;video_register_device failed&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
+id|ibmcam
+op_assign
 l_int|NULL
 suffix:semicolon
+multiline_comment|/* Do not free, it&squot;s preallocated */
 )brace
 r_if
 c_cond
@@ -14015,6 +14023,10 @@ c_func
 id|KERN_DEBUG
 l_string|&quot;video_register_device() successful&bslash;n&quot;
 )paren
+suffix:semicolon
+id|probe_done
+suffix:colon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 id|ibmcam
@@ -14059,7 +14071,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * usb_ibmcam_disconnect()&n; *&n; * This procedure stops all driver activity, deallocates interface-private&n; * structure (pointed by &squot;ptr&squot;) and after that driver should be removable&n; * with no ill consequences.&n; *&n; * TODO: This code behaves badly on surprise removal!&n; *&n; * History:&n; * 1/22/00  Added polling of MOD_IN_USE to delay removal until all users gone.&n; * 1/27/00  Reworked to allow pending disconnects; see ibmcam_close()&n; */
+multiline_comment|/*&n; * usb_ibmcam_disconnect()&n; *&n; * This procedure stops all driver activity, deallocates interface-private&n; * structure (pointed by &squot;ptr&squot;) and after that driver should be removable&n; * with no ill consequences.&n; *&n; * This code handles surprise removal. The ibmcam-&gt;user is a counter which&n; * increments on open() and decrements on close(). If we see here that&n; * this counter is not 0 then we have a client who still has us opened.&n; * We set ibmcam-&gt;remove_pending flag as early as possible, and after that&n; * all access to the camera will gracefully fail. These failures should&n; * prompt client to (eventually) close the video device, and then - in&n; * ibmcam_close() - we decrement ibmcam-&gt;ibmcam_used and usage counter.&n; *&n; * History:&n; * 1/22/00  Added polling of MOD_IN_USE to delay removal until all users gone.&n; * 1/27/00  Reworked to allow pending disconnects; see ibmcam_close()&n; * 5/24/00  Corrected to prevent race condition (MOD_xxx_USE_COUNT).&n; */
 DECL|function|usb_ibmcam_disconnect
 r_static
 r_void
@@ -14096,6 +14108,8 @@ id|usb_ibmcam
 op_star
 )paren
 id|ptr
+suffix:semicolon
+id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_if
 c_cond
@@ -14141,10 +14155,6 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* USB device is no more */
-macro_line|#if IBMCAM_LOCKS_DRIVER_WHILE_DEVICE_IS_PLUGGED
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -14179,6 +14189,8 @@ c_func
 id|KERN_INFO
 l_string|&quot;IBM USB camera disconnected.&bslash;n&quot;
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
 DECL|variable|ibmcam_driver

@@ -7,6 +7,7 @@ macro_line|#include &lt;asm/math_emu.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/types.h&gt;
+macro_line|#include &lt;asm/sigcontext.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/threads.h&gt;
 multiline_comment|/*&n; * Default implementation of macro that returns current&n; * instruction pointer (&quot;program counter&quot;).&n; */
@@ -190,8 +191,8 @@ DECL|macro|X86_FEATURE_MMX
 mdefine_line|#define X86_FEATURE_MMX&t;&t;0x00800000&t;/* multimedia extensions */
 DECL|macro|X86_FEATURE_FXSR
 mdefine_line|#define X86_FEATURE_FXSR&t;0x01000000&t;/* FXSAVE and FXRSTOR instructions (fast save and restore of FPU context), and CR4.OSFXSR (OS uses these instructions) available */
-DECL|macro|X86_FEATURE_25
-mdefine_line|#define X86_FEATURE_25&t;&t;0x02000000
+DECL|macro|X86_FEATURE_XMM
+mdefine_line|#define X86_FEATURE_XMM         0x02000000      /* Intel MMX2 instruction set */
 DECL|macro|X86_FEATURE_26
 mdefine_line|#define X86_FEATURE_26&t;&t;0x04000000
 DECL|macro|X86_FEATURE_27
@@ -204,6 +205,10 @@ DECL|macro|X86_FEATURE_30
 mdefine_line|#define X86_FEATURE_30&t;&t;0x40000000
 DECL|macro|X86_FEATURE_AMD3D
 mdefine_line|#define X86_FEATURE_AMD3D&t;0x80000000
+DECL|macro|X86_CR4_OSFXSR
+mdefine_line|#define X86_CR4_OSFXSR&t;&t;0x0200 &t;&t;/* fast FPU save/restore */
+DECL|macro|X86_CR4_OSXMMEXCPT
+mdefine_line|#define X86_CR4_OSXMMEXCPT&t;0x0400 &t;&t;/* KNI (MMX2) unmasked exception 16 */
 r_extern
 r_struct
 id|cpuinfo_x86
@@ -505,6 +510,21 @@ DECL|macro|IO_BITMAP_OFFSET
 mdefine_line|#define IO_BITMAP_OFFSET offsetof(struct tss_struct,io_bitmap)
 DECL|macro|INVALID_IO_BITMAP_OFFSET
 mdefine_line|#define INVALID_IO_BITMAP_OFFSET 0x8000
+macro_line|#ifndef CONFIG_X86_FX
+DECL|macro|i387_save_hard
+mdefine_line|#define i387_save_hard(x) &bslash;&n;&t;__asm__(&quot;fnsave %0&bslash;n&bslash;tfwait&quot;: :&quot;m&quot; (x))
+DECL|macro|i387_restore_hard
+mdefine_line|#define i387_restore_hard(x) &bslash;&n;&t;__asm__(&quot;frstor %0&quot;: :&quot;m&quot; (x))
+DECL|macro|i387_hard_to_user
+mdefine_line|#define i387_hard_to_user(uaddr, x) &bslash;&n;&t;__copy_to_user((uaddr), (x), sizeof(struct i387_hard_struct))
+DECL|macro|i387_user_to_hard
+mdefine_line|#define i387_user_to_hard(x, uaddr) &bslash;&n;&t;__copy_from_user((x), (uaddr), sizeof(struct i387_hard_struct))
+DECL|macro|i387_set_cwd
+mdefine_line|#define i387_set_cwd(x,v) do { (x).cwd = 0xffff0000 | (v); } while (0)
+DECL|macro|i387_set_swd
+mdefine_line|#define i387_set_swd(x,v) do { (x).swd = 0xffff0000 | (v); } while (0)
+DECL|macro|i387_set_twd
+mdefine_line|#define i387_set_twd(x,v) do { (x).twd = 0xffff0000 | (v); } while (0)
 DECL|struct|i387_hard_struct
 r_struct
 id|i387_hard_struct
@@ -552,6 +572,301 @@ suffix:semicolon
 multiline_comment|/* software status information */
 )brace
 suffix:semicolon
+macro_line|#else
+multiline_comment|/*&n; * has to be 128-bit aligned&n; */
+DECL|struct|i387_hard_struct
+r_struct
+id|i387_hard_struct
+(brace
+DECL|member|cwd
+r_int
+r_int
+id|cwd
+suffix:semicolon
+DECL|member|swd
+r_int
+r_int
+id|swd
+suffix:semicolon
+DECL|member|twd
+r_int
+r_int
+id|twd
+suffix:semicolon
+DECL|member|fopcode
+r_int
+r_int
+id|fopcode
+suffix:semicolon
+DECL|member|fip
+r_int
+r_int
+id|fip
+suffix:semicolon
+DECL|member|fcs
+r_int
+r_int
+id|fcs
+suffix:semicolon
+DECL|member|__reserved_01
+r_int
+r_int
+id|__reserved_01
+suffix:semicolon
+DECL|member|fdp
+r_int
+r_int
+id|fdp
+suffix:semicolon
+DECL|member|fds
+r_int
+r_int
+id|fds
+suffix:semicolon
+DECL|member|__reserved_02
+r_int
+r_int
+id|__reserved_02
+suffix:semicolon
+DECL|member|mxcsr
+r_int
+r_int
+id|mxcsr
+suffix:semicolon
+DECL|member|__reserved_03
+r_int
+r_int
+id|__reserved_03
+suffix:semicolon
+DECL|member|st_space
+r_int
+r_int
+id|st_space
+(braket
+l_int|32
+)braket
+suffix:semicolon
+multiline_comment|/* 8*16 bytes for each FP/MMX-reg = 128 bytes */
+DECL|member|xmm_space
+r_int
+r_int
+id|xmm_space
+(braket
+l_int|22
+op_star
+l_int|4
+)braket
+suffix:semicolon
+multiline_comment|/* 22 cachelines for MMX2 registers */
+DECL|member|status
+r_int
+r_int
+id|status
+suffix:semicolon
+)brace
+id|__attribute__
+(paren
+(paren
+id|aligned
+(paren
+l_int|16
+)paren
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * tag word conversion (thanks to Gabriel Paubert for noticing the&n; * subtle format difference and implementing these functions)&n; *&n; * there are several erratas wrt. the tag word in the i387, thus&n; * any software relying on it&squot;s value is questionable, but we&n; * definitely want to be as close as possible.&n; */
+DECL|function|fputag_KNIto387
+r_static
+r_inline
+r_int
+r_int
+id|fputag_KNIto387
+c_func
+(paren
+r_int
+r_char
+id|tb
+)paren
+(brace
+r_int
+r_int
+id|tw
+op_assign
+id|tb
+suffix:semicolon
+id|tw
+op_assign
+(paren
+(paren
+id|tw
+op_lshift
+l_int|4
+)paren
+op_or
+id|tw
+)paren
+op_amp
+l_int|0x0f0f
+suffix:semicolon
+multiline_comment|/* zzzz7654zzzz3210 */
+id|tw
+op_assign
+(paren
+(paren
+id|tw
+op_lshift
+l_int|2
+)paren
+op_or
+id|tw
+)paren
+op_amp
+l_int|0x3333
+suffix:semicolon
+multiline_comment|/* zz76zz54zz32zz10 */
+id|tw
+op_assign
+(paren
+(paren
+id|tw
+op_lshift
+l_int|1
+)paren
+op_or
+id|tw
+)paren
+op_amp
+l_int|0x5555
+suffix:semicolon
+multiline_comment|/* z7z6z5z4z3z2z1z0 */
+r_return
+op_complement
+(paren
+id|tw
+op_star
+l_int|3
+)paren
+suffix:semicolon
+)brace
+DECL|function|fputag_387toKNI
+r_static
+r_inline
+r_int
+r_char
+id|fputag_387toKNI
+c_func
+(paren
+r_int
+r_int
+id|tw
+)paren
+(brace
+id|tw
+op_assign
+op_complement
+id|tw
+suffix:semicolon
+id|tw
+op_assign
+(paren
+id|tw
+op_or
+(paren
+id|tw
+op_rshift
+l_int|1
+)paren
+)paren
+op_amp
+l_int|0x5555
+suffix:semicolon
+multiline_comment|/* z7z6z5z4z3z2z1z0 */
+id|tw
+op_assign
+(paren
+id|tw
+op_or
+(paren
+id|tw
+op_rshift
+l_int|1
+)paren
+)paren
+op_amp
+l_int|0x3333
+suffix:semicolon
+multiline_comment|/* zz76zz54zz32zz10 */
+id|tw
+op_assign
+(paren
+id|tw
+op_or
+(paren
+id|tw
+op_rshift
+l_int|3
+)paren
+)paren
+op_amp
+l_int|0x0f0f
+suffix:semicolon
+multiline_comment|/* zzzz7654zzzz3210 */
+r_return
+(paren
+id|tw
+op_or
+(paren
+id|tw
+op_rshift
+l_int|4
+)paren
+)paren
+op_amp
+l_int|0x00ff
+suffix:semicolon
+multiline_comment|/* zzzzzzzz76543210 */
+)brace
+DECL|macro|i387_set_cwd
+mdefine_line|#define i387_set_cwd(x,v) do { (x).cwd = (short)(v); } while (0)
+DECL|macro|i387_set_swd
+mdefine_line|#define i387_set_swd(x,v) do { (x).swd = (short)(v); } while (0)
+DECL|macro|i387_set_twd
+mdefine_line|#define i387_set_twd(x,v) do { (x).twd = fputag_387toKNI(v); } while (0)
+DECL|macro|i387_save_hard
+mdefine_line|#define i387_save_hard(x) &bslash;&n; { __asm__ __volatile__(&quot;.byte 0x0f, 0xae, 0x06&quot;: :&quot;S&quot; (&amp;(x))); } while (0)
+DECL|macro|i387_restore_hard
+mdefine_line|#define i387_restore_hard(x) &bslash;&n;do { __asm__ __volatile__(&quot;.byte 0x0f, 0xae, 0x4f, 0x00&quot;: :&quot;D&quot; (&amp;(x))); } while(0)
+r_extern
+r_int
+id|i387_hard_to_user
+(paren
+r_struct
+id|_fpstate
+op_star
+id|user
+comma
+r_struct
+id|i387_hard_struct
+op_star
+id|hard
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|i387_user_to_hard
+(paren
+r_struct
+id|i387_hard_struct
+op_star
+id|hard
+comma
+r_struct
+id|_fpstate
+op_star
+id|user
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|struct|i387_soft_struct
 r_struct
 id|i387_soft_struct
@@ -1027,7 +1342,7 @@ r_void
 suffix:semicolon
 multiline_comment|/*&n; * FPU lazy state save handling..&n; */
 DECL|macro|save_fpu
-mdefine_line|#define save_fpu(tsk) do { &bslash;&n;&t;asm volatile(&quot;fnsave %0&bslash;n&bslash;tfwait&quot;:&quot;=m&quot; (tsk-&gt;thread.i387)); &bslash;&n;&t;tsk-&gt;flags &amp;= ~PF_USEDFPU; &bslash;&n;&t;stts(); &bslash;&n;} while (0)
+mdefine_line|#define save_fpu(tsk) do { &bslash;&n;        i387_save_hard(tsk-&gt;thread.i387); &bslash;&n;&t;tsk-&gt;flags &amp;= ~PF_USEDFPU; &bslash;&n;&t;stts(); &bslash;&n;} while (0)
 DECL|macro|unlazy_fpu
 mdefine_line|#define unlazy_fpu(tsk) do { &bslash;&n;&t;if (tsk-&gt;flags &amp; PF_USEDFPU) &bslash;&n;&t;&t;save_fpu(tsk); &bslash;&n;} while (0)
 DECL|macro|clear_fpu

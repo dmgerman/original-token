@@ -61,6 +61,23 @@ r_int
 r_int
 id|status
 suffix:semicolon
+macro_line|#ifdef CONFIG_X86_FX
+DECL|member|mxcsr
+r_int
+r_int
+id|mxcsr
+suffix:semicolon
+DECL|member|_xmm
+r_int
+r_int
+id|_xmm
+(braket
+l_int|4
+op_star
+l_int|22
+)braket
+suffix:semicolon
+macro_line|#endif
 )brace
 suffix:semicolon
 DECL|struct|sigcontext
