@@ -21,7 +21,7 @@ op_star
 id|name
 comma
 r_int
-id|follow_link
+id|lookup_flags
 )paren
 (brace
 r_struct
@@ -77,7 +77,13 @@ id|dget
 id|current-&gt;fs-&gt;root
 )paren
 comma
-l_int|1
+(paren
+id|LOOKUP_FOLLOW
+op_or
+id|LOOKUP_DIRECTORY
+op_or
+id|LOOKUP_SLASHOK
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -99,7 +105,7 @@ id|name
 comma
 id|base
 comma
-id|follow_link
+id|lookup_flags
 )paren
 suffix:semicolon
 r_if
@@ -136,7 +142,7 @@ id|dget
 id|current-&gt;fs-&gt;root
 )paren
 comma
-id|follow_link
+id|lookup_flags
 )paren
 suffix:semicolon
 r_if
@@ -178,6 +184,6 @@ id|base
 suffix:semicolon
 )brace
 DECL|macro|__prefix_lookup_dentry
-mdefine_line|#define __prefix_lookup_dentry(name, follow_link)&t;&t;&t;&t;&bslash;&n;&t;if (current-&gt;personality) {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;dentry = __sparc64_lookup_dentry (name, follow_link);&t;&t;&bslash;&n;&t;&t;if (dentry) return dentry;&t;&t;&t;&t;&t;&bslash;&n;&t;}
+mdefine_line|#define __prefix_lookup_dentry(name, lookup_flags)&t;&t;&t;&t;&bslash;&n;&t;if (current-&gt;personality) {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;dentry = __sparc64_lookup_dentry (name, lookup_flags);&t;&t;&bslash;&n;&t;&t;if (dentry) return dentry;&t;&t;&t;&t;&t;&bslash;&n;&t;}
 macro_line|#endif /* __SPARC64_NAMEI_H */
 eof

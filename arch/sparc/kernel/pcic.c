@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pcic.c,v 1.2 1998/09/29 03:21:56 jj Exp $&n; * pcic.c: Sparc/PCI controller support&n; *&n; * Copyright (C) 1998 V. Roganov and G. Raiko&n; *&n; * Code is derived from Ultra/PCI PSYCHO controller support, see that&n; * for author info.&n; */
+multiline_comment|/* $Id: pcic.c,v 1.3 1998/10/07 11:34:56 jj Exp $&n; * pcic.c: Sparc/PCI controller support&n; *&n; * Copyright (C) 1998 V. Roganov and G. Raiko&n; *&n; * Code is derived from Ultra/PCI PSYCHO controller support, see that&n; * for author info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -187,7 +187,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|pci_present
+id|pcibios_present
 c_func
 (paren
 )paren
@@ -1713,6 +1713,7 @@ op_or
 (paren
 (paren
 (paren
+(paren
 r_int
 r_int
 )paren
@@ -1723,6 +1724,9 @@ r_int
 r_int
 )paren
 id|do_gettimeofday
+)paren
+op_rshift
+l_int|2
 )paren
 op_amp
 l_int|0x003fffff

@@ -1,4 +1,4 @@
-multiline_comment|/* -*- linux-c -*- --------------------------------------------------------- *&n; *&n; * linux/fs/autofs/root.c&n; *&n; *  Copyright 1997 Transmeta Corporation -- All Rights Reserved&n; *&n; * This file is part of the Linux kernel and is made available under&n; * the terms of the GNU General Public License, version 2, or at your&n; * option, any later version, incorporated herein by reference.&n; *&n; * ------------------------------------------------------------------------- */
+multiline_comment|/* -*- linux-c -*- --------------------------------------------------------- *&n; *&n; * linux/fs/autofs/root.c&n; *&n; *  Copyright 1997-1998 Transmeta Corporation -- All Rights Reserved&n; *&n; * This file is part of the Linux kernel and is made available under&n; * the terms of the GNU General Public License, version 2, or at your&n; * option, any later version, incorporated herein by reference.&n; *&n; * ------------------------------------------------------------------------- */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/param.h&gt;
@@ -258,6 +258,8 @@ r_struct
 id|autofs_dir_ent
 op_star
 id|ent
+op_assign
+l_int|NULL
 suffix:semicolon
 r_struct
 id|autofs_dirhash
@@ -399,7 +401,20 @@ id|dirhash
 comma
 op_amp
 id|nr
+comma
+id|ent
 )paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ent-&gt;dentry
+op_logical_or
+id|ent-&gt;dentry-&gt;d_mounts
+op_ne
+id|ent-&gt;dentry
 )paren
 (brace
 r_if
@@ -428,6 +443,7 @@ id|filp-&gt;f_pos
 op_assign
 id|nr
 suffix:semicolon
+)brace
 )brace
 r_break
 suffix:semicolon
@@ -505,15 +521,17 @@ id|dentry-&gt;d_inode
 id|printk
 c_func
 (paren
-l_string|&quot;autofs warning: lookup failure on existing dentry, status = %d, name = %s&bslash;n&quot;
+l_string|&quot;autofs warning: lookup failure on positive dentry, status = %d, name = %s&bslash;n&quot;
 comma
 id|status
 comma
 id|dentry-&gt;d_name.name
 )paren
 suffix:semicolon
-r_break
+r_return
+l_int|0
 suffix:semicolon
+multiline_comment|/* Try to get the kernel to invalidate this dentry */
 )brace
 multiline_comment|/* Turn this into a real negative dentry? */
 r_if
@@ -665,6 +683,7 @@ c_func
 id|sbi
 )paren
 )paren
+(brace
 id|autofs_update_usage
 c_func
 (paren
@@ -674,6 +693,7 @@ comma
 id|ent
 )paren
 suffix:semicolon
+)brace
 id|dentry-&gt;d_flags
 op_and_assign
 op_complement
@@ -833,6 +853,11 @@ op_star
 )paren
 id|dentry-&gt;d_time
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ent
+)paren
 id|autofs_update_usage
 c_func
 (paren
@@ -887,11 +912,6 @@ id|autofs_sb_info
 op_star
 id|sbi
 suffix:semicolon
-r_struct
-id|inode
-op_star
-id|res
-suffix:semicolon
 r_int
 id|oz_mode
 suffix:semicolon
@@ -924,10 +944,6 @@ id|dir-&gt;i_mode
 r_return
 op_minus
 id|ENOTDIR
-suffix:semicolon
-id|res
-op_assign
-l_int|NULL
 suffix:semicolon
 id|sbi
 op_assign
@@ -1023,6 +1039,23 @@ op_minus
 id|ERESTARTNOINTR
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; * If this dentry is unhashed, then we shouldn&squot;t honour this&n;&t; * lookup even if the dentry is positive.  Returning ENOENT here&n;&t; * doesn&squot;t do the right thing for all system calls, but it should&n;&t; * be OK for the operations we permit from an autofs.&n;&t; */
+r_if
+c_cond
+(paren
+id|dentry-&gt;d_inode
+op_logical_and
+id|list_empty
+c_func
+(paren
+op_amp
+id|dentry-&gt;d_hash
+)paren
+)paren
+r_return
+op_minus
+id|ENOENT
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1337,6 +1370,11 @@ id|dentry-&gt;d_name.len
 )paren
 )paren
 suffix:semicolon
+id|ent-&gt;dentry
+op_assign
+l_int|NULL
+suffix:semicolon
+multiline_comment|/* We don&squot;t keep the dentry for symlinks */
 id|autofs_hash_insert
 c_func
 (paren
@@ -1472,6 +1510,19 @@ op_minus
 id|EINVAL
 suffix:semicolon
 multiline_comment|/* Not a symlink inode, can&squot;t unlink */
+id|dentry-&gt;d_time
+op_assign
+(paren
+r_int
+r_int
+)paren
+(paren
+r_struct
+id|autofs_dirhash
+op_star
+)paren
+l_int|NULL
+suffix:semicolon
 id|autofs_hash_delete
 c_func
 (paren
@@ -1600,6 +1651,36 @@ op_minus
 id|ENOTDIR
 suffix:semicolon
 multiline_comment|/* Not a directory */
+r_if
+c_cond
+(paren
+id|ent-&gt;dentry
+op_ne
+id|dentry
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;autofs_rmdir: odentry != dentry for entry %s&bslash;n&quot;
+comma
+id|dentry-&gt;d_name.name
+)paren
+suffix:semicolon
+)brace
+id|dentry-&gt;d_time
+op_assign
+(paren
+r_int
+r_int
+)paren
+(paren
+r_struct
+id|autofs_dir_ent
+op_star
+)paren
+l_int|NULL
+suffix:semicolon
 id|autofs_hash_delete
 c_func
 (paren
@@ -1771,6 +1852,23 @@ op_minus
 id|ENOSPC
 suffix:semicolon
 )brace
+id|dir-&gt;i_nlink
+op_increment
+suffix:semicolon
+id|d_instantiate
+c_func
+(paren
+id|dentry
+comma
+id|iget
+c_func
+(paren
+id|dir-&gt;i_sb
+comma
+id|ent-&gt;ino
+)paren
+)paren
+suffix:semicolon
 id|ent-&gt;hash
 op_assign
 id|dentry-&gt;d_name.hash
@@ -1796,29 +1894,16 @@ op_assign
 id|sbi-&gt;next_dir_ino
 op_increment
 suffix:semicolon
+id|ent-&gt;dentry
+op_assign
+id|dentry
+suffix:semicolon
 id|autofs_hash_insert
 c_func
 (paren
 id|dh
 comma
 id|ent
-)paren
-suffix:semicolon
-id|dir-&gt;i_nlink
-op_increment
-suffix:semicolon
-id|d_instantiate
-c_func
-(paren
-id|dentry
-comma
-id|iget
-c_func
-(paren
-id|dir-&gt;i_sb
-comma
-id|ent-&gt;ino
-)paren
 )paren
 suffix:semicolon
 r_return

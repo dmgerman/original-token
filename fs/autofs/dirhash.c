@@ -188,34 +188,19 @@ multiline_comment|/* Symlinks are always expirable */
 multiline_comment|/* Get the dentry for the autofs subdirectory */
 id|dentry
 op_assign
-id|lookup_dentry
-c_func
-(paren
-id|ent-&gt;name
-comma
-id|dget
-c_func
-(paren
-id|sb-&gt;s_root
-)paren
-comma
-l_int|0
-)paren
+id|ent-&gt;dentry
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|IS_ERR
-c_func
-(paren
+op_logical_neg
 id|dentry
-)paren
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;autofs: no such dentry on expiry queue: %s&bslash;n&quot;
+l_string|&quot;autofs: dentry == NULL but inode range is directory, entry %s&bslash;n&quot;
 comma
 id|ent-&gt;name
 )paren
@@ -225,8 +210,6 @@ c_func
 (paren
 id|ent
 )paren
-suffix:semicolon
-r_continue
 suffix:semicolon
 )brace
 r_if
@@ -270,17 +253,11 @@ c_func
 id|dentry-&gt;d_inode-&gt;i_mode
 )paren
 op_logical_or
-id|dentry-&gt;d_covers
+id|dentry-&gt;d_mounts
 op_eq
 id|dentry
 )paren
 (brace
-id|dput
-c_func
-(paren
-id|dentry
-)paren
-suffix:semicolon
 id|DPRINTK
 c_func
 (paren
@@ -294,13 +271,6 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t; * Now, this is known to be a mount point; therefore the dentry&n;&t;&t; * will be held by the superblock.  is_root_busy() will break if&n;&t;&t; * we hold a use count here, so we have to dput() it before calling&n;&t;&t; * is_root_busy().  However, since it is a mount point (already&n;&t;&t; * verified), dput() will be a nonblocking operation and the use&n;&t;&t; * count will not go to zero; therefore the call to is_root_busy()&n;&t;&t; * here is legal.&n;&t;&t; */
-id|dput
-c_func
-(paren
-id|dentry
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -308,7 +278,7 @@ op_logical_neg
 id|is_root_busy
 c_func
 (paren
-id|dentry
+id|dentry-&gt;d_mounts
 )paren
 )paren
 (brace
@@ -521,6 +491,14 @@ comma
 id|ent
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ent-&gt;dentry
+)paren
+id|ent-&gt;dentry-&gt;d_count
+op_increment
+suffix:semicolon
 id|dhnp
 op_assign
 op_amp
@@ -594,6 +572,17 @@ c_func
 id|ent
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ent-&gt;dentry
+)paren
+id|dput
+c_func
+(paren
+id|ent-&gt;dentry
+)paren
+suffix:semicolon
 id|kfree
 c_func
 (paren
@@ -607,7 +596,7 @@ id|ent
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Used by readdir().  We must validate &quot;ptr&quot;, so we can&squot;t simply make it&n; * a pointer.  Values below 0xffff are reserved; calling with any value&n; * &lt;= 0x10000 will return the first entry found.&n; */
+multiline_comment|/*&n; * Used by readdir().  We must validate &quot;ptr&quot;, so we can&squot;t simply make it&n; * a pointer.  Values below 0xffff are reserved; calling with any value&n; * &lt;= 0x10000 will return the first entry found.&n; *&n; * &quot;last&quot; can be NULL or the value returned by the last search *if* we&n; * want the next sequential entry.&n; */
 DECL|function|autofs_hash_enum
 r_struct
 id|autofs_dir_ent
@@ -624,6 +613,11 @@ comma
 id|off_t
 op_star
 id|ptr
+comma
+r_struct
+id|autofs_dir_ent
+op_star
+id|last
 )paren
 (brace
 r_int
@@ -685,8 +679,25 @@ id|ecount
 suffix:semicolon
 id|ent
 op_assign
+id|last
+ques
+c_cond
+id|last-&gt;next
+suffix:colon
 l_int|NULL
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ent
+)paren
+(brace
+id|ecount
+op_increment
+suffix:semicolon
+)brace
+r_else
+(brace
 r_while
 c_loop
 (paren
@@ -740,6 +751,7 @@ id|ecount
 op_assign
 l_int|0
 suffix:semicolon
+)brace
 )brace
 macro_line|#ifdef DEBUG
 r_if
@@ -851,6 +863,17 @@ id|nent
 id|nent
 op_assign
 id|ent-&gt;next
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ent-&gt;dentry
+)paren
+id|dput
+c_func
+(paren
+id|ent-&gt;dentry
+)paren
 suffix:semicolon
 id|kfree
 c_func

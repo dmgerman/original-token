@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ebus.c,v 1.1 1998/09/18 10:43:43 jj Exp $&n; * ebus.c: PCI to EBus bridge device.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * Adopted for sparc by V. Roganov and G. Raiko.&n; */
+multiline_comment|/* $Id: ebus.c,v 1.2 1998/10/07 11:35:16 jj Exp $&n; * ebus.c: PCI to EBus bridge device.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * Adopted for sparc by V. Roganov and G. Raiko.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -707,6 +707,20 @@ comma
 l_int|0
 comma
 l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/* Some drivers call &squot;check_region&squot;, so we release it */
+id|release_region
+c_func
+(paren
+id|dev-&gt;base_address
+(braket
+id|i
+)braket
+op_amp
+id|PAGE_MASK
+comma
+id|PAGE_SIZE
 )paren
 suffix:semicolon
 r_if

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: oplib.h,v 1.8 1997/07/24 12:15:15 davem Exp $&n; * oplib.h:  Describes the interface and available routines in the&n; *           Linux Prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: oplib.h,v 1.9 1998/10/06 20:56:05 ecd Exp $&n; * oplib.h:  Describes the interface and available routines in the&n; *           Linux Prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#ifndef __SPARC64_OPLIB_H
 DECL|macro|__SPARC64_OPLIB_H
 mdefine_line|#define __SPARC64_OPLIB_H
@@ -237,12 +237,12 @@ id|noreturn
 )paren
 suffix:semicolon
 multiline_comment|/* Set the PROM &squot;sync&squot; callback function to the passed function pointer.&n; * When the user gives the &squot;sync&squot; command at the prom prompt while the&n; * kernel is still active, the prom will call this routine.&n; *&n; */
-DECL|typedef|sync_func_t
+DECL|typedef|callback_func_t
 r_typedef
-r_void
+r_int
 (paren
 op_star
-id|sync_func_t
+id|callback_func_t
 )paren
 (paren
 r_int
@@ -252,10 +252,10 @@ id|cmd
 suffix:semicolon
 r_extern
 r_void
-id|prom_setsync
+id|prom_setcallback
 c_func
 (paren
-id|sync_func_t
+id|callback_func_t
 id|func_ptr
 )paren
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/* -*- linux-c -*- --------------------------------------------------------- *&n; *&n; * linux/fs/autofs/waitq.c&n; *&n; *  Copyright 1997 Transmeta Corporation -- All Rights Reserved&n; *&n; * This file is part of the Linux kernel and is made available under&n; * the terms of the GNU General Public License, version 2, or at your&n; * option, any later version, incorporated herein by reference.&n; *&n; * ------------------------------------------------------------------------- */
+multiline_comment|/* -*- linux-c -*- --------------------------------------------------------- *&n; *&n; * linux/fs/autofs/waitq.c&n; *&n; *  Copyright 1997-1998 Transmeta Corporation -- All Rights Reserved&n; *&n; * This file is part of the Linux kernel and is made available under&n; * the terms of the GNU General Public License, version 2, or at your&n; * option, any later version, incorporated herein by reference.&n; *&n; * ------------------------------------------------------------------------- */
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -12,6 +12,9 @@ id|autofs_next_wait_queue
 op_assign
 l_int|1
 suffix:semicolon
+multiline_comment|/* These are the signals we allow interrupting a pending mount */
+DECL|macro|SHUTDOWN_SIGS
+mdefine_line|#define SHUTDOWN_SIGS&t;(sigmask(SIGKILL) | sigmask(SIGINT) | sigmask(SIGQUIT))
 DECL|function|autofs_catatonic_mode
 r_void
 id|autofs_catatonic_mode
@@ -564,18 +567,97 @@ r_else
 id|wq-&gt;wait_ctr
 op_increment
 suffix:semicolon
+multiline_comment|/* wq-&gt;name is NULL if and only if the lock is already released */
 r_if
 c_cond
 (paren
 id|wq-&gt;name
 )paren
 (brace
-multiline_comment|/* wq-&gt;name is NULL if and only if the lock is released */
+multiline_comment|/* Block all but &quot;shutdown&quot; signals while waiting */
+id|sigset_t
+id|oldset
+suffix:semicolon
+r_int
+r_int
+id|irqflags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|current-&gt;sigmask_lock
+comma
+id|irqflags
+)paren
+suffix:semicolon
+id|oldset
+op_assign
+id|current-&gt;blocked
+suffix:semicolon
+id|siginitsetinv
+c_func
+(paren
+op_amp
+id|current-&gt;blocked
+comma
+id|SHUTDOWN_SIGS
+op_amp
+op_complement
+id|oldset.sig
+(braket
+l_int|0
+)braket
+)paren
+suffix:semicolon
+id|recalc_sigpending
+c_func
+(paren
+id|current
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|current-&gt;sigmask_lock
+comma
+id|irqflags
+)paren
+suffix:semicolon
 id|interruptible_sleep_on
 c_func
 (paren
 op_amp
 id|wq-&gt;queue
+)paren
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|current-&gt;sigmask_lock
+comma
+id|irqflags
+)paren
+suffix:semicolon
+id|current-&gt;blocked
+op_assign
+id|oldset
+suffix:semicolon
+id|recalc_sigpending
+c_func
+(paren
+id|current
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|current-&gt;sigmask_lock
+comma
+id|irqflags
 )paren
 suffix:semicolon
 )brace

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sigcontext.h,v 1.10 1997/12/11 15:16:11 jj Exp $ */
+multiline_comment|/* $Id: sigcontext.h,v 1.11 1998/10/06 09:28:37 jj Exp $ */
 macro_line|#ifndef __SPARC64_SIGCONTEXT_H
 DECL|macro|__SPARC64_SIGCONTEXT_H
 mdefine_line|#define __SPARC64_SIGCONTEXT_H
@@ -230,6 +230,32 @@ suffix:semicolon
 DECL|typedef|__siginfo_fpu_t
 )brace
 id|__siginfo_fpu_t
+suffix:semicolon
+multiline_comment|/* This magic should be in g_upper[0] for all upper parts&n;   to be valid.  */
+DECL|macro|SIGINFO_EXTRA_V8PLUS_MAGIC
+mdefine_line|#define SIGINFO_EXTRA_V8PLUS_MAGIC&t;0x130e269
+r_typedef
+r_struct
+(brace
+DECL|member|g_upper
+r_int
+r_int
+id|g_upper
+(braket
+l_int|8
+)braket
+suffix:semicolon
+DECL|member|o_upper
+r_int
+r_int
+id|o_upper
+(braket
+l_int|8
+)braket
+suffix:semicolon
+DECL|typedef|siginfo_extra_v8plus_t
+)brace
+id|siginfo_extra_v8plus_t
 suffix:semicolon
 macro_line|#endif /* !(__ASSEMBLY__) */
 macro_line|#endif /* !(__SPARC64_SIGCONTEXT_H) */

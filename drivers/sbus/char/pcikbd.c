@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pcikbd.c,v 1.22 1998/09/21 05:06:45 jj Exp $&n; * pcikbd.c: Ultra/AX PC keyboard support.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; * JavaStation(MrCoffee) support by Pete A. Zaitcev.&n; *&n; * This code is mainly put together from various places in&n; * drivers/char, please refer to these sources for credits&n; * to the original authors.&n; */
+multiline_comment|/* $Id: pcikbd.c,v 1.23 1998/10/07 11:35:24 jj Exp $&n; * pcikbd.c: Ultra/AX PC keyboard support.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; * JavaStation(MrCoffee) support by Pete A. Zaitcev.&n; *&n; * This code is mainly put together from various places in&n; * drivers/char, please refer to these sources for credits&n; * to the original authors.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -28,7 +28,6 @@ DECL|macro|PCI_KB_NAME
 mdefine_line|#define PCI_KB_NAME&t;&quot;keyboard&quot;
 DECL|macro|PCI_MS_NAME
 mdefine_line|#define PCI_MS_NAME&t;&quot;mouse&quot;
-multiline_comment|/*&n; * XXX.&n; * Gleb defines check_region and request_region here.&n; * This looks suspicios because he neglects to call&n; * sparc_alloc_io, but the conflict with sparc_alloc_io is what&n; * causes problems.&n; */
 macro_line|#endif
 macro_line|#include &quot;pcikbd.h&quot;
 macro_line|#include &quot;sunserial.h&quot;
@@ -2254,7 +2253,7 @@ c_func
 (paren
 id|child-&gt;prom_name
 comma
-l_string|&quot;kb_ps2&quot;
+id|PCI_KB_NAME
 )paren
 )paren
 r_goto

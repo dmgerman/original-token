@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: zs.c,v 1.29 1998/09/21 05:06:53 jj Exp $&n; * zs.c: Zilog serial port driver for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; * Fixes by Pete A. Zaitcev &lt;zaitcev@metabyte.com&gt;.&n; */
+multiline_comment|/* $Id: zs.c,v 1.31 1998/10/07 11:35:29 jj Exp $&n; * zs.c: Zilog serial port driver for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; * Fixes by Pete A. Zaitcev &lt;zaitcev@metabyte.com&gt;.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -7625,7 +7625,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.29 $&quot;
+l_string|&quot;$Revision: 1.31 $&quot;
 suffix:semicolon
 r_char
 op_star
@@ -7704,6 +7704,12 @@ l_int|0
 comma
 l_int|0
 )brace
+suffix:semicolon
+r_int
+r_int
+id|mapped_addr
+op_assign
+l_int|0
 suffix:semicolon
 r_int
 id|busnode
@@ -7871,6 +7877,114 @@ r_if
 c_cond
 (paren
 id|len
+op_eq
+op_minus
+l_int|1
+)paren
+(brace
+r_struct
+id|linux_sbus
+op_star
+id|sbus
+suffix:semicolon
+r_struct
+id|linux_sbus_device
+op_star
+id|sdev
+op_assign
+l_int|NULL
+suffix:semicolon
+multiline_comment|/* &quot;address&quot; property is not guarenteed,&n;&t;&t;&t;&t; * everything in I/O is implicitly mapped&n;&t;&t;&t;&t; * anyways by our clever TLB miss handling&n;&t;&t;&t;&t; * scheme, so don&squot;t fail here.  -DaveM&n;&t;&t;&t;&t; */
+id|for_each_sbus
+c_func
+(paren
+id|sbus
+)paren
+(brace
+id|for_each_sbusdev
+c_func
+(paren
+id|sdev
+comma
+id|sbus
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|sdev-&gt;prom_node
+op_eq
+id|zsnode
+)paren
+r_goto
+id|found
+suffix:semicolon
+)brace
+)brace
+id|found
+suffix:colon
+r_if
+c_cond
+(paren
+id|sdev
+op_eq
+l_int|NULL
+)paren
+id|prom_halt
+c_func
+(paren
+)paren
+suffix:semicolon
+id|prom_apply_sbus_ranges
+c_func
+(paren
+id|sbus
+comma
+id|sdev-&gt;reg_addrs
+comma
+l_int|1
+comma
+id|sdev
+)paren
+suffix:semicolon
+id|mapped_addr
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|sparc_alloc_io
+c_func
+(paren
+id|sdev-&gt;reg_addrs
+(braket
+l_int|0
+)braket
+dot
+id|phys_addr
+comma
+l_int|0
+comma
+id|PAGE_SIZE
+comma
+l_string|&quot;Zilog Registers&quot;
+comma
+id|sdev-&gt;reg_addrs
+(braket
+l_int|0
+)braket
+dot
+id|which_io
+comma
+l_int|0x0
+)paren
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|len
 op_mod
 r_sizeof
 (paren
@@ -8020,6 +8134,9 @@ id|vaddr
 (braket
 l_int|0
 )braket
+op_logical_and
+op_logical_neg
+id|mapped_addr
 )paren
 (brace
 id|panic
@@ -8029,6 +8146,22 @@ l_string|&quot;get_zs: whee no serial chip mappable&quot;
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|mapped_addr
+op_ne
+l_int|0
+)paren
+r_return
+(paren
+r_struct
+id|sun_zslayout
+op_star
+)paren
+id|mapped_addr
+suffix:semicolon
+r_else
 r_return
 (paren
 r_struct
@@ -9469,7 +9602,7 @@ id|kbd_ops.getkeycode
 op_assign
 id|sun_getkeycode
 suffix:semicolon
-macro_line|#ifdef CONFIG_PCI
+macro_line|#if defined(__sparc_v9__) &amp;&amp; defined(CONFIG_PCI)
 id|sunkbd_install_keymaps
 c_func
 (paren

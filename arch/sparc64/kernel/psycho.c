@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: psycho.c,v 1.64 1998/09/01 07:24:24 jj Exp $&n; * psycho.c: Ultra/AX U2P PCI controller support.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caipfs.rutgers.edu)&n; * Copyright (C) 1998 Eddie C. Dost   (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: psycho.c,v 1.65 1998/10/20 14:41:28 ecd Exp $&n; * psycho.c: Ultra/AX U2P PCI controller support.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caipfs.rutgers.edu)&n; * Copyright (C) 1998 Eddie C. Dost   (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -7828,57 +7828,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* See if we find a matching interrupt-map entry. */
-r_if
-c_cond
-(paren
-id|pbm_intmap_match
-c_func
-(paren
-id|pbm
-comma
-id|pdev
-comma
-id|preg
-comma
-op_amp
-id|prom_irq
-)paren
-)paren
-(brace
-id|pdev-&gt;irq
-op_assign
-id|psycho_irq_build
-c_func
-(paren
-id|pbm
-comma
-id|pdev
-comma
-(paren
-id|pbm-&gt;parent-&gt;upa_portid
-op_lshift
-l_int|6
-)paren
-op_or
-id|prom_irq
-)paren
-suffix:semicolon
-macro_line|#ifdef FIXUP_IRQ_DEBUG
-id|dprintf
-c_func
-(paren
-l_string|&quot;interrupt-map specified: prom_irq[%x] pdev-&gt;irq[%x]&quot;
-comma
-id|prom_irq
-comma
-id|pdev-&gt;irq
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* See if fully specified already (ie. for onboard devices like hme) */
-)brace
-r_else
 r_if
 c_cond
 (paren
@@ -7957,6 +7907,56 @@ id|dprintf
 c_func
 (paren
 l_string|&quot;partially specified prom_irq[%x] pdev-&gt;irq[%x]&quot;
+comma
+id|prom_irq
+comma
+id|pdev-&gt;irq
+)paren
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/* See if we find a matching interrupt-map entry. */
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|pbm_intmap_match
+c_func
+(paren
+id|pbm
+comma
+id|pdev
+comma
+id|preg
+comma
+op_amp
+id|prom_irq
+)paren
+)paren
+(brace
+id|pdev-&gt;irq
+op_assign
+id|psycho_irq_build
+c_func
+(paren
+id|pbm
+comma
+id|pdev
+comma
+(paren
+id|pbm-&gt;parent-&gt;upa_portid
+op_lshift
+l_int|6
+)paren
+op_or
+id|prom_irq
+)paren
+suffix:semicolon
+macro_line|#ifdef FIXUP_IRQ_DEBUG
+id|dprintf
+c_func
+(paren
+l_string|&quot;interrupt-map specified: prom_irq[%x] pdev-&gt;irq[%x]&quot;
 comma
 id|prom_irq
 comma

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: string.h,v 1.12 1998/10/04 08:44:27 davem Exp $&n; * string.h: External definitions for optimized assembly string&n; *           routines for the Linux Kernel.&n; *&n; * Copyright (C) 1995,1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: string.h,v 1.14 1998/10/20 03:09:18 jj Exp $&n; * string.h: External definitions for optimized assembly string&n; *           routines for the Linux Kernel.&n; *&n; * Copyright (C) 1995,1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#ifndef __SPARC64_STRING_H__
 DECL|macro|__SPARC64_STRING_H__
 mdefine_line|#define __SPARC64_STRING_H__
@@ -241,99 +241,12 @@ DECL|macro|memcpy
 mdefine_line|#define memcpy(t, f, n) &bslash;&n;(__builtin_constant_p(n) ? &bslash;&n; __constant_memcpy((t),(f),(n)) : &bslash;&n; __nonconstant_memcpy((t),(f),(n)))
 DECL|macro|__HAVE_ARCH_MEMSET
 mdefine_line|#define __HAVE_ARCH_MEMSET
-DECL|function|__constant_c_and_count_memset
+DECL|function|__constant_memset
 r_extern
 r_inline
 r_void
 op_star
-id|__constant_c_and_count_memset
-c_func
-(paren
-r_void
-op_star
-id|s
-comma
-r_char
-id|c
-comma
-id|__kernel_size_t
-id|count
-)paren
-(brace
-r_extern
-id|__kernel_size_t
-id|__bzero
-c_func
-(paren
-r_void
-op_star
-comma
-id|__kernel_size_t
-)paren
-suffix:semicolon
-r_extern
-r_void
-op_star
-id|__bzero_1page
-c_func
-(paren
-r_void
-op_star
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|c
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|count
-op_eq
-l_int|8192
-)paren
-id|__bzero_1page
-c_func
-(paren
-id|s
-)paren
-suffix:semicolon
-r_else
-id|__bzero
-c_func
-(paren
-id|s
-comma
-id|count
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|__memset
-c_func
-(paren
-id|s
-comma
-id|c
-comma
-id|count
-)paren
-suffix:semicolon
-)brace
-r_return
-id|s
-suffix:semicolon
-)brace
-DECL|function|__constant_c_memset
-r_extern
-r_inline
-r_void
-op_star
-id|__constant_c_memset
+id|__constant_memset
 c_func
 (paren
 r_void
@@ -425,7 +338,7 @@ suffix:semicolon
 DECL|macro|memset
 macro_line|#undef memset
 DECL|macro|memset
-mdefine_line|#define memset(s, c, count) &bslash;&n;(__builtin_constant_p(c) ? (__builtin_constant_p(count) ? &bslash;&n;                            __constant_c_and_count_memset((s), (c), (count)) : &bslash;&n;                            __constant_c_memset((s), (c), (count))) &bslash;&n;                          : __nonconstant_memset((s), (c), (count)))
+mdefine_line|#define memset(s, c, count) &bslash;&n;(__builtin_constant_p(c) ? &bslash;&n; __constant_memset((s), (c), (count)) : &bslash;&n; __nonconstant_memset((s), (c), (count)))
 DECL|macro|__HAVE_ARCH_MEMSCAN
 mdefine_line|#define __HAVE_ARCH_MEMSCAN
 DECL|macro|memscan
@@ -437,7 +350,6 @@ mdefine_line|#define __HAVE_ARCH_MEMCMP
 multiline_comment|/* Now the str*() stuff... */
 DECL|macro|__HAVE_ARCH_STRLEN
 mdefine_line|#define __HAVE_ARCH_STRLEN
-multiline_comment|/* Ugly but it works around a bug in our original sparc64-linux-gcc.  */
 r_extern
 id|__kernel_size_t
 id|__strlen
@@ -448,10 +360,24 @@ r_char
 op_star
 )paren
 suffix:semicolon
+macro_line|#if __GNUC__ &gt; 2 || __GNUC_MINOR__ &gt;= 91
+r_extern
+id|__kernel_size_t
+id|strlen
+c_func
+(paren
+r_const
+r_char
+op_star
+)paren
+suffix:semicolon
+macro_line|#else /* !EGCS */
+multiline_comment|/* Ugly but it works around a bug in our original sparc64-linux-gcc.  */
 DECL|macro|strlen
 macro_line|#undef strlen
 DECL|macro|strlen
 mdefine_line|#define strlen(__arg0)&t;&t;&t;&t;&t;&bslash;&n;({&t;int __strlen_res = __strlen(__arg0) + 1;&t;&bslash;&n;&t;__strlen_res -= 1;&t;&t;&t;&t;&bslash;&n;&t;__strlen_res;&t;&t;&t;&t;&t;&bslash;&n;})
+macro_line|#endif /* !EGCS */
 DECL|macro|__HAVE_ARCH_STRNCMP
 mdefine_line|#define __HAVE_ARCH_STRNCMP
 r_extern

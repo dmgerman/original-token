@@ -46,6 +46,16 @@ r_void
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif
+macro_line|#ifdef CONFIG_SPARCAUDIO
+r_extern
+r_int
+id|sparcaudio_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_ISDN
 r_int
 id|isdn_init
@@ -2276,6 +2286,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif&t;
+macro_line|#endif
+macro_line|#ifdef CONFIG_SPARCAUDIO
+id|sparcaudio_init
+c_func
+(paren
+)paren
+suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_JOYSTICK
 multiline_comment|/*&n;&t; *&t;Some joysticks only appear when the sound card they are&n;&t; *&t;connected to is configured. Keep the sound/joystick ordering.&n;&t; */

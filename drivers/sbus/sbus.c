@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sbus.c,v 1.72 1998/09/05 17:25:51 jj Exp $&n; * sbus.c:  SBus support routines.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: sbus.c,v 1.73 1998/10/07 11:35:50 jj Exp $&n; * sbus.c:  SBus support routines.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -1507,6 +1507,32 @@ op_eq
 l_int|0
 )paren
 (brace
+macro_line|#ifdef CONFIG_PCI
+r_if
+c_cond
+(paren
+op_logical_neg
+id|pcibios_present
+c_func
+(paren
+)paren
+)paren
+(brace
+id|prom_printf
+c_func
+(paren
+l_string|&quot;Neither SBUS nor PCI found.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|prom_halt
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+r_return
+suffix:semicolon
+macro_line|#else
 multiline_comment|/* No reason to run further - the data access trap will occur. */
 id|panic
 c_func
@@ -1514,6 +1540,7 @@ c_func
 l_string|&quot;sbus not found&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 )brace
 multiline_comment|/* Ok, we&squot;ve found the first one, allocate first SBus struct&n;&t; * and place in chain.&n;&t; */

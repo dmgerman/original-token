@@ -178,6 +178,14 @@ id|kernel_flag
 op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
+multiline_comment|/* Used to make bitops atomic */
+DECL|variable|bitops_spinlock
+r_int
+r_char
+id|bitops_spinlock
+op_assign
+l_int|0
+suffix:semicolon
 DECL|variable|ipi_count
 r_volatile
 r_int

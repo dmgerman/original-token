@@ -2623,6 +2623,8 @@ suffix:semicolon
 multiline_comment|/* Try and get dynamic programs out of the way of the default mmap&n;&t;   base, as well as whatever program they might try to exec.  This&n;&t;   is because the brk will follow the loader, and is not movable.  */
 id|load_bias
 op_assign
+id|ELF_PAGESTART
+c_func
 (paren
 id|elf_ex.e_type
 op_eq
@@ -2673,14 +2675,6 @@ id|elf_ppnt
 op_increment
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|elf_ppnt-&gt;p_type
-op_eq
-id|PT_LOAD
-)paren
-(brace
 r_int
 id|elf_prot
 op_assign
@@ -2691,6 +2685,15 @@ suffix:semicolon
 r_int
 r_int
 id|vaddr
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|elf_ppnt-&gt;p_type
+op_ne
+id|PT_LOAD
+)paren
+r_continue
 suffix:semicolon
 r_if
 c_cond
@@ -2820,7 +2823,7 @@ id|ET_DYN
 )paren
 (brace
 id|load_bias
-op_assign
+op_add_assign
 id|error
 op_minus
 id|ELF_PAGESTART
@@ -2914,7 +2917,6 @@ id|elf_brk
 op_assign
 id|k
 suffix:semicolon
-)brace
 )brace
 id|set_fs
 c_func

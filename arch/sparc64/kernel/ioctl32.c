@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ioctl32.c,v 1.52 1998/09/25 17:09:22 jj Exp $&n; * ioctl32.c: Conversion between 32bit and 64bit native ioctls.&n; *&n; * Copyright (C) 1997  Jakub Jelinek  (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * ioctls.&n; */
+multiline_comment|/* $Id: ioctl32.c,v 1.53 1998/10/26 08:01:01 jj Exp $&n; * ioctl32.c: Conversion between 32bit and 64bit native ioctls.&n; *&n; * Copyright (C) 1997  Jakub Jelinek  (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * ioctls.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -10634,8 +10634,10 @@ suffix:semicolon
 r_goto
 id|out
 suffix:semicolon
+DECL|macro|AUTOFS_IOC_SETTIMEOUT32
+mdefine_line|#define AUTOFS_IOC_SETTIMEOUT32 _IOWR(0x93,0x64,unsigned int)
 r_case
-id|AUTOFS_IOC_SETTIMEOUT
+id|AUTOFS_IOC_SETTIMEOUT32
 suffix:colon
 id|error
 op_assign
@@ -10644,7 +10646,7 @@ c_func
 (paren
 id|fd
 comma
-id|cmd
+id|AUTOFS_IOC_SETTIMEOUT
 comma
 id|arg
 )paren

@@ -4,17 +4,6 @@ DECL|macro|__SPARC_SPINLOCK_H
 mdefine_line|#define __SPARC_SPINLOCK_H
 macro_line|#ifndef __ASSEMBLY__
 macro_line|#ifndef __SMP__
-macro_line|#if (__GNUC__ &gt; 2) || (__GNUC_MINOR__ &gt;= 8)
-DECL|typedef|spinlock_t
-r_typedef
-r_struct
-(brace
-)brace
-id|spinlock_t
-suffix:semicolon
-DECL|macro|SPIN_LOCK_UNLOCKED
-mdefine_line|#define SPIN_LOCK_UNLOCKED { }
-macro_line|#else
 DECL|typedef|spinlock_t
 r_typedef
 r_int
@@ -23,7 +12,6 @@ id|spinlock_t
 suffix:semicolon
 DECL|macro|SPIN_LOCK_UNLOCKED
 mdefine_line|#define SPIN_LOCK_UNLOCKED 0
-macro_line|#endif
 DECL|macro|spin_lock_init
 mdefine_line|#define spin_lock_init(lock)&t;do { } while(0)
 DECL|macro|spin_lock
@@ -763,7 +751,7 @@ id|rwlock_t
 suffix:semicolon
 DECL|macro|RW_LOCK_UNLOCKED
 mdefine_line|#define RW_LOCK_UNLOCKED { 0 }
-multiline_comment|/* Sort of like atomic_t&squot;s on Sparc, but even more clever.&n; *&n; *&t;------------------------------------&n; *&t;| 16-bit counter   | clock | wlock |  rwlock_t&n; *&t;------------------------------------&n; *&t; 31              16 15    8 7     0&n; *&n; * wlock signifies the one writer is in, the clock protects&n; * counter bumping, however a reader must acquire wlock&n; * before he can bump the counter on a read_lock().&n; * Similarly a writer, once he has the wlock, must await&n; * for the top 24 bits to all clear before he can finish&n; * going in (this includes the clock of course).&n; *&n; * Unfortunately this scheme limits us to ~65,000 cpus.&n; */
+multiline_comment|/* Sort of like atomic_t&squot;s on Sparc, but even more clever.&n; *&n; *&t;------------------------------------&n; *&t;| 24-bit counter           | wlock |  rwlock_t&n; *&t;------------------------------------&n; *&t; 31                       8 7     0&n; *&n; * wlock signifies the one writer is in or somebody is updating&n; * counter. For a writer, if he successfully acquires the wlock,&n; * but counter is non-zero, he has to release the lock and wait,&n; * till both counter and wlock are zero.&n; *&n; * Unfortunately this scheme limits us to ~16,000,000 cpus.&n; */
 DECL|function|_read_lock
 r_extern
 id|__inline__
@@ -887,7 +875,7 @@ op_mod
 op_mod
 id|g1
 op_plus
-l_int|2
+l_int|3
 )braket
 comma
 op_mod

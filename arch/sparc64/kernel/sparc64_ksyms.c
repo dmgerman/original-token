@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sparc64_ksyms.c,v 1.42 1998/10/05 03:18:50 davem Exp $&n; * arch/sparc64/kernel/sparc64_ksyms.c: Sparc64 specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: sparc64_ksyms.c,v 1.48 1998/10/20 03:09:08 jj Exp $&n; * arch/sparc64/kernel/sparc64_ksyms.c: Sparc64 specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
 multiline_comment|/* Tell string.h we don&squot;t want memcpy etc. as cpp defines */
 DECL|macro|EXPORT_SYMTAB_STROPS
 mdefine_line|#define EXPORT_SYMTAB_STROPS
@@ -8,8 +8,10 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/in6.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -117,16 +119,6 @@ suffix:semicolon
 r_extern
 r_void
 op_star
-id|__bzero_1page
-c_func
-(paren
-r_void
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_void
-op_star
 id|__bzero
 c_func
 (paren
@@ -209,6 +201,16 @@ suffix:semicolon
 r_extern
 id|__kernel_size_t
 id|__strlen
+c_func
+(paren
+r_const
+r_char
+op_star
+)paren
+suffix:semicolon
+r_extern
+id|__kernel_size_t
+id|strlen
 c_func
 (paren
 r_const
@@ -432,12 +434,106 @@ r_extern
 id|spinlock_t
 id|scheduler_lock
 suffix:semicolon
+r_extern
+id|spinlock_t
+id|kernel_flag
+suffix:semicolon
+r_extern
+r_int
+id|smp_num_cpus
+suffix:semicolon
+macro_line|#ifdef SPIN_LOCK_DEBUG
+r_extern
+r_void
+id|_do_spin_lock
+(paren
+id|spinlock_t
+op_star
+id|lock
+comma
+r_char
+op_star
+id|str
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|_do_spin_unlock
+(paren
+id|spinlock_t
+op_star
+id|lock
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|_spin_trylock
+(paren
+id|spinlock_t
+op_star
+id|lock
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|_do_read_lock
+c_func
+(paren
+id|rwlock_t
+op_star
+id|rw
+comma
+r_char
+op_star
+id|str
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|_do_read_unlock
+c_func
+(paren
+id|rwlock_t
+op_star
+id|rw
+comma
+r_char
+op_star
+id|str
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|_do_write_lock
+c_func
+(paren
+id|rwlock_t
+op_star
+id|rw
+comma
+r_char
+op_star
+id|str
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|_do_write_unlock
+c_func
+(paren
+id|rwlock_t
+op_star
+id|rw
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 multiline_comment|/* One thing to note is that the way the symbols of the mul/div&n; * support routines are named is a mess, they all start with&n; * a &squot;.&squot; which makes it a bitch to export, here is the trick:&n; */
 DECL|macro|EXPORT_SYMBOL_PRIVATE
 mdefine_line|#define EXPORT_SYMBOL_PRIVATE(sym)&t;&t;&t;&t;&bslash;&n;extern int __sparc_priv_ ## sym (int) __asm__(&quot;__&quot; ## #sym);&t;&bslash;&n;const struct module_symbol __export_priv_##sym&t;&t;&t;&bslash;&n;__attribute__((section(&quot;__ksymtab&quot;))) =&t;&t;&t;&t;&bslash;&n;{ (unsigned long) &amp;__sparc_priv_ ## sym, &quot;__&quot; ## #sym }
 multiline_comment|/* used by various drivers */
 macro_line|#ifdef __SMP__
+multiline_comment|/* Kernel wide locking */
 DECL|variable|scheduler_lock
 id|EXPORT_SYMBOL
 c_func
@@ -445,6 +541,14 @@ c_func
 id|scheduler_lock
 )paren
 suffix:semicolon
+DECL|variable|kernel_flag
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|kernel_flag
+)paren
+suffix:semicolon
+multiline_comment|/* Software-IRQ BH locking */
 DECL|variable|global_bh_lock
 id|EXPORT_SYMBOL
 c_func
@@ -452,6 +556,21 @@ c_func
 id|global_bh_lock
 )paren
 suffix:semicolon
+DECL|variable|global_bh_count
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|global_bh_count
+)paren
+suffix:semicolon
+DECL|variable|synchronize_bh
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|synchronize_bh
+)paren
+suffix:semicolon
+multiline_comment|/* Hard IRQ locking */
 DECL|variable|global_irq_holder
 id|EXPORT_SYMBOL
 c_func
@@ -459,18 +578,25 @@ c_func
 id|global_irq_holder
 )paren
 suffix:semicolon
+DECL|variable|global_irq_lock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|global_irq_lock
+)paren
+suffix:semicolon
+DECL|variable|global_irq_count
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|global_irq_count
+)paren
+suffix:semicolon
 DECL|variable|synchronize_irq
 id|EXPORT_SYMBOL
 c_func
 (paren
 id|synchronize_irq
-)paren
-suffix:semicolon
-DECL|variable|cpu_data
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|cpu_data
 )paren
 suffix:semicolon
 DECL|variable|global_cli
@@ -487,6 +613,13 @@ c_func
 id|global_sti
 )paren
 suffix:semicolon
+DECL|variable|global_save_flags
+id|EXPORT_SYMBOL_PRIVATE
+c_func
+(paren
+id|global_save_flags
+)paren
+suffix:semicolon
 DECL|variable|global_restore_flags
 id|EXPORT_SYMBOL_PRIVATE
 c_func
@@ -494,6 +627,74 @@ c_func
 id|global_restore_flags
 )paren
 suffix:semicolon
+multiline_comment|/* Per-CPU information table */
+DECL|variable|cpu_data
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|cpu_data
+)paren
+suffix:semicolon
+multiline_comment|/* Misc SMP information */
+DECL|variable|smp_num_cpus
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|smp_num_cpus
+)paren
+suffix:semicolon
+multiline_comment|/* Spinlock debugging library, optional. */
+macro_line|#ifdef SPIN_LOCK_DEBUG
+DECL|variable|_do_spin_lock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|_do_spin_lock
+)paren
+suffix:semicolon
+DECL|variable|_do_spin_unlock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|_do_spin_unlock
+)paren
+suffix:semicolon
+DECL|variable|_spin_trylock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|_spin_trylock
+)paren
+suffix:semicolon
+DECL|variable|_do_read_lock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|_do_read_lock
+)paren
+suffix:semicolon
+DECL|variable|_do_read_unlock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|_do_read_unlock
+)paren
+suffix:semicolon
+DECL|variable|_do_write_lock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|_do_write_lock
+)paren
+suffix:semicolon
+DECL|variable|_do_write_unlock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|_do_write_unlock
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#else
 DECL|variable|local_irq_count
 id|EXPORT_SYMBOL
@@ -502,21 +703,14 @@ c_func
 id|local_irq_count
 )paren
 suffix:semicolon
+DECL|variable|local_bh_count
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|local_bh_count
+)paren
+suffix:semicolon
 macro_line|#endif
-DECL|variable|_lock_kernel
-id|EXPORT_SYMBOL_PRIVATE
-c_func
-(paren
-id|_lock_kernel
-)paren
-suffix:semicolon
-DECL|variable|_unlock_kernel
-id|EXPORT_SYMBOL_PRIVATE
-c_func
-(paren
-id|_unlock_kernel
-)paren
-suffix:semicolon
 DECL|variable|enable_irq
 id|EXPORT_SYMBOL
 c_func
@@ -564,13 +758,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|sparc_free_io
-)paren
-suffix:semicolon
-DECL|variable|__sparc64_bh_counter
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|__sparc64_bh_counter
 )paren
 suffix:semicolon
 DECL|variable|sparc_ultra_unmapioaddr
@@ -904,6 +1091,15 @@ c_func
 id|__strlen
 )paren
 suffix:semicolon
+macro_line|#if __GNUC__ &gt; 2 || __GNUC_MINOR__ &gt;= 91
+DECL|variable|strlen
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|strlen
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|variable|strnlen
 id|EXPORT_SYMBOL
 c_func
@@ -1117,11 +1313,11 @@ c_func
 id|__memset
 )paren
 suffix:semicolon
-DECL|variable|__bzero_1page
+DECL|variable|clear_page
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|__bzero_1page
+id|clear_page
 )paren
 suffix:semicolon
 DECL|variable|__bzero

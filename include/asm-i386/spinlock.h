@@ -15,7 +15,7 @@ r_struct
 id|spinlock_t
 suffix:semicolon
 DECL|macro|SPIN_LOCK_UNLOCKED
-mdefine_line|#define SPIN_LOCK_UNLOCKED { }
+mdefine_line|#define SPIN_LOCK_UNLOCKED (spinlock_t) { }
 macro_line|#else
 DECL|member|gcc_is_buggy
 DECL|typedef|spinlock_t
@@ -29,7 +29,7 @@ suffix:semicolon
 id|spinlock_t
 suffix:semicolon
 DECL|macro|SPIN_LOCK_UNLOCKED
-mdefine_line|#define SPIN_LOCK_UNLOCKED { 0 }
+mdefine_line|#define SPIN_LOCK_UNLOCKED (spinlock_t) { 0 }
 macro_line|#endif
 DECL|macro|spin_lock_init
 mdefine_line|#define spin_lock_init(lock)&t;do { } while(0)
@@ -64,7 +64,7 @@ DECL|typedef|spinlock_t
 id|spinlock_t
 suffix:semicolon
 DECL|macro|SPIN_LOCK_UNLOCKED
-mdefine_line|#define SPIN_LOCK_UNLOCKED { 0 }
+mdefine_line|#define SPIN_LOCK_UNLOCKED (spinlock_t) { 0 }
 DECL|macro|spin_lock_init
 mdefine_line|#define spin_lock_init(x)&t;do { (x)-&gt;lock = 0; } while (0)
 DECL|macro|spin_trylock
@@ -110,7 +110,7 @@ DECL|typedef|spinlock_t
 id|spinlock_t
 suffix:semicolon
 DECL|macro|SPIN_LOCK_UNLOCKED
-mdefine_line|#define SPIN_LOCK_UNLOCKED { 0, 25, __BASE_FILE__ }
+mdefine_line|#define SPIN_LOCK_UNLOCKED (spinlock_t) { 0, 25, __BASE_FILE__ }
 macro_line|#include &lt;linux/kernel.h&gt;
 DECL|macro|spin_lock_init
 mdefine_line|#define spin_lock_init(x)&t;do { (x)-&gt;lock = 0; } while (0)
@@ -140,7 +140,7 @@ r_struct
 id|rwlock_t
 suffix:semicolon
 DECL|macro|RW_LOCK_UNLOCKED
-mdefine_line|#define RW_LOCK_UNLOCKED { }
+mdefine_line|#define RW_LOCK_UNLOCKED (rwlock_t) { }
 DECL|macro|read_lock
 mdefine_line|#define read_lock(lock)&t;&t;do { } while(0)
 DECL|macro|read_unlock
@@ -181,7 +181,7 @@ DECL|typedef|spinlock_t
 id|spinlock_t
 suffix:semicolon
 DECL|macro|SPIN_LOCK_UNLOCKED
-mdefine_line|#define SPIN_LOCK_UNLOCKED { 0 }
+mdefine_line|#define SPIN_LOCK_UNLOCKED (spinlock_t) { 0 }
 DECL|macro|spin_lock_init
 mdefine_line|#define spin_lock_init(x)&t;do { (x)-&gt;lock = 0; } while(0)
 multiline_comment|/*&n; * Simple spin lock operations.  There are two variants, one clears IRQ&squot;s&n; * on the local processor, one does not.&n; *&n; * We make no fairness assumptions. They have a cost.&n; */
@@ -242,7 +242,7 @@ DECL|typedef|rwlock_t
 id|rwlock_t
 suffix:semicolon
 DECL|macro|RW_LOCK_UNLOCKED
-mdefine_line|#define RW_LOCK_UNLOCKED { 0, 0 }
+mdefine_line|#define RW_LOCK_UNLOCKED (rwlock_t) { 0, 0 }
 multiline_comment|/*&n; * On x86, we implement read-write locks as a 32-bit counter&n; * with the high bit (sign) being the &quot;write&quot; bit.&n; *&n; * The inline assembly is non-obvious. Think about it.&n; */
 DECL|macro|read_lock
 mdefine_line|#define read_lock(rw)&t;&bslash;&n;&t;asm volatile(&quot;&bslash;n1:&bslash;t&quot; &bslash;&n;&t;&t;     &quot;lock ; incl %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;     &quot;js 2f&bslash;n&quot; &bslash;&n;&t;&t;     &quot;.section .text.lock,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot; &bslash;&n;&t;&t;     &quot;2:&bslash;tlock ; decl %0&bslash;n&quot; &bslash;&n;&t;&t;     &quot;3:&bslash;tcmpl $0,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;     &quot;js 3b&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;     &quot;jmp 1b&bslash;n&quot; &bslash;&n;&t;&t;     &quot;.previous&quot; &bslash;&n;&t;&t;     :&quot;=m&quot; (__dummy_lock(&amp;(rw)-&gt;lock)))

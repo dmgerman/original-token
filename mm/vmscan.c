@@ -1815,7 +1815,7 @@ r_while
 c_loop
 (paren
 id|jiffies
-op_ne
+op_eq
 id|start_time
 )paren
 suffix:semicolon

@@ -384,14 +384,11 @@ id|NET_IPV4_FIB_HASH
 op_assign
 l_int|19
 comma
-DECL|enumerator|NET_IPV4_TCP_HOE_RETRANSMITS
-multiline_comment|/*32*/
-id|NET_IPV4_TCP_HOE_RETRANSMITS
-op_assign
-l_int|32
-comma
 DECL|enumerator|NET_IPV4_TCP_TIMESTAMPS
+multiline_comment|/*33*/
 id|NET_IPV4_TCP_TIMESTAMPS
+op_assign
+l_int|33
 comma
 DECL|enumerator|NET_IPV4_TCP_WINDOW_SCALING
 id|NET_IPV4_TCP_WINDOW_SCALING

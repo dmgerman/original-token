@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ioctl.h,v 1.1 1996/12/02 00:05:36 davem Exp $ */
+multiline_comment|/* $Id: ioctl.h,v 1.2 1998/10/15 05:40:38 jj Exp $ */
 macro_line|#ifndef _SPARC64_IOCTL_H
 DECL|macro|_SPARC64_IOCTL_H
 mdefine_line|#define _SPARC64_IOCTL_H
@@ -56,5 +56,16 @@ DECL|macro|_IOC_NR
 mdefine_line|#define _IOC_NR(nr)         (((nr) &gt;&gt; _IOC_NRSHIFT) &amp; _IOC_NRMASK)
 DECL|macro|_IOC_SIZE
 mdefine_line|#define _IOC_SIZE(nr)       (((nr) &gt;&gt; _IOC_SIZESHIFT) &amp; _IOC_SIZEMASK)
+multiline_comment|/* ...and for the PCMCIA... */
+DECL|macro|IOC_IN
+mdefine_line|#define IOC_IN          (_IOC_WRITE &lt;&lt; _IOC_DIRSHIFT)
+DECL|macro|IOC_OUT
+mdefine_line|#define IOC_OUT         (_IOC_READ &lt;&lt; _IOC_DIRSHIFT)
+DECL|macro|IOC_INOUT
+mdefine_line|#define IOC_INOUT       ((_IOC_WRITE|_IOC_READ) &lt;&lt; _IOC_DIRSHIFT)
+DECL|macro|IOCSIZE_MASK
+mdefine_line|#define IOCSIZE_MASK    (_IOC_SIZEMASK &lt;&lt; _IOC_SIZESHIFT)
+DECL|macro|IOCSIZE_SHIFT
+mdefine_line|#define IOCSIZE_SHIFT   (_IOC_SIZESHIFT)
 macro_line|#endif /* !(_SPARC64_IOCTL_H) */
 eof

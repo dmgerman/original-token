@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sunos.c,v 1.92 1998/08/31 03:40:53 davem Exp $&n; * sys_sunos.c: SunOS specific syscall compatibility support.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * Based upon preliminary work which is:&n; *&n; * Copyright (C) 1995 Adrian M. Rodriguez (adrian@remus.rutgers.edu)&n; *&n; */
+multiline_comment|/* $Id: sys_sunos.c,v 1.94 1998/10/12 06:15:04 jj Exp $&n; * sys_sunos.c: SunOS specific syscall compatibility support.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * Based upon preliminary work which is:&n; *&n; * Copyright (C) 1995 Adrian M. Rodriguez (adrian@remus.rutgers.edu)&n; *&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -89,6 +89,13 @@ r_int
 id|retval
 comma
 id|ret_type
+suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
+)paren
 suffix:semicolon
 id|lock_kernel
 c_func
@@ -411,6 +418,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
+)paren
+suffix:semicolon
 r_return
 id|retval
 suffix:semicolon
@@ -471,6 +485,13 @@ r_int
 id|newbrk
 comma
 id|oldbrk
+suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
+)paren
 suffix:semicolon
 id|lock_kernel
 c_func
@@ -718,6 +739,13 @@ suffix:colon
 id|unlock_kernel
 c_func
 (paren
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
 )paren
 suffix:semicolon
 r_return
@@ -2348,9 +2376,6 @@ id|name
 (brace
 r_int
 id|ret
-op_assign
-op_minus
-id|EFAULT
 suffix:semicolon
 id|down
 c_func
@@ -2359,20 +2384,8 @@ op_amp
 id|uts_sem
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|name
-)paren
-(brace
-r_goto
-id|out
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
+id|ret
+op_assign
 id|copy_to_user
 c_func
 (paren
@@ -2395,13 +2408,17 @@ id|name-&gt;sname
 op_minus
 l_int|1
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ret
 )paren
 (brace
-r_goto
-id|out
-suffix:semicolon
-)brace
-id|copy_to_user
+id|ret
+op_or_assign
+id|__copy_to_user
 c_func
 (paren
 op_amp
@@ -2424,7 +2441,9 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
-id|put_user
+id|ret
+op_or_assign
+id|__put_user
 c_func
 (paren
 l_char|&squot;&bslash;0&squot;
@@ -2436,7 +2455,9 @@ l_int|8
 )braket
 )paren
 suffix:semicolon
-id|copy_to_user
+id|ret
+op_or_assign
+id|__copy_to_user
 c_func
 (paren
 op_amp
@@ -2459,7 +2480,9 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
-id|copy_to_user
+id|ret
+op_or_assign
+id|__copy_to_user
 c_func
 (paren
 op_amp
@@ -2482,7 +2505,9 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
-id|copy_to_user
+id|ret
+op_or_assign
+id|__copy_to_user
 c_func
 (paren
 op_amp
@@ -2505,12 +2530,7 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
-id|ret
-op_assign
-l_int|0
-suffix:semicolon
-id|out
-suffix:colon
+)brace
 id|up
 c_func
 (paren
@@ -3662,6 +3682,19 @@ op_star
 id|dev_fname
 op_assign
 l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|capable
+(paren
+id|CAP_SYS_ADMIN
+)paren
+)paren
+r_return
+op_minus
+id|EPERM
 suffix:semicolon
 id|lock_kernel
 c_func

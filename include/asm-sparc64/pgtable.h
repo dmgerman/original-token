@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtable.h,v 1.90 1998/09/24 03:21:56 davem Exp $&n; * pgtable.h: SpitFire page table operations.&n; *&n; * Copyright 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: pgtable.h,v 1.95 1998/10/22 03:05:57 davem Exp $&n; * pgtable.h: SpitFire page table operations.&n; *&n; * Copyright 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#ifndef _SPARC64_PGTABLE_H
 DECL|macro|_SPARC64_PGTABLE_H
 mdefine_line|#define _SPARC64_PGTABLE_H
@@ -212,19 +212,11 @@ DECL|macro|flush_cache_range
 mdefine_line|#define flush_cache_range(mm, start, end)&t;flushw_user()
 DECL|macro|flush_cache_page
 mdefine_line|#define flush_cache_page(vma, page)&t;&t;flushw_user()
-r_extern
-r_void
-id|flush_page_to_ram
-c_func
-(paren
-r_int
-r_int
-id|page
-)paren
-suffix:semicolon
-multiline_comment|/* This operation in unnecessary on the SpitFire since D-CACHE is write-through. */
+multiline_comment|/* These operations are unnecessary on the SpitFire since D-CACHE is write-through. */
 DECL|macro|flush_icache_range
 mdefine_line|#define flush_icache_range(start, end)&t;&t;do { } while (0)
+DECL|macro|flush_page_to_ram
+mdefine_line|#define flush_page_to_ram(page)&t;&t;&t;do { } while (0)
 r_extern
 r_void
 id|__flush_dcache_range
@@ -1034,10 +1026,14 @@ c_func
 id|ret
 )paren
 suffix:semicolon
-id|clear_page
+id|memset
 c_func
 (paren
 id|ret
+comma
+l_int|0
+comma
+id|PAGE_SIZE
 )paren
 suffix:semicolon
 (paren
@@ -1191,10 +1187,14 @@ c_cond
 id|ret
 )paren
 (brace
-id|clear_page
+id|memset
 c_func
 (paren
 id|ret
+comma
+l_int|0
+comma
+id|PAGE_SIZE
 )paren
 suffix:semicolon
 )brace
@@ -1988,8 +1988,19 @@ DECL|macro|mmu_lockarea
 mdefine_line|#define mmu_lockarea(vaddr, len)&t;&t;(vaddr)
 DECL|macro|mmu_unlockarea
 mdefine_line|#define mmu_unlockarea(vaddr, len)&t;&t;do { } while(0)
+multiline_comment|/* There used to be some funny code here which tried to guess which&n; * TLB wanted the mapping, that wasn&squot;t accurate enough to justify it&squot;s&n; * existance.  The real way to do that is to have each TLB miss handler&n; * pass in a distinct code to do_sparc64_fault() and do it more accurately&n; * there.&n; *&n; * What we do need to handle here is prevent I-cache corruption.  The&n; * deal is that the I-cache snoops stores from other CPUs and all DMA&n; * activity, however stores from the local processor are not snooped.&n; * The dynamic linker and our signal handler mechanism take care of&n; * the cases where they write into instruction space, but when a page&n; * is copied in the kernel and then executed in user-space is not handled&n; * right.  This leads to corruptions if things are &quot;just right&quot;, consider&n; * the following scenerio:&n; * 1) Process 1 frees up a page that was used for the PLT of libc in&n; *    it&squot;s address space.&n; * 2) Process 2 writes into a page in the PLT of libc for the first&n; *    time.  do_wp_page() copies the page locally, the local I-cache of&n; *    the processor does not notice the writes during the page copy.&n; *    The new page used just so happens to be the one just freed in #1.&n; * 3) After the PLT write, later the cpu calls into an unresolved PLT&n; *    entry, the CPU executes old instructions from process 1&squot;s PLT&n; *    table.&n; * 4) Splat.&n; */
+r_extern
+r_void
+id|flush_icache_page
+c_func
+(paren
+r_int
+r_int
+id|phys_page
+)paren
+suffix:semicolon
 DECL|macro|update_mmu_cache
-mdefine_line|#define update_mmu_cache(__vma, __address, _pte) &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;rdpr&t;%%pstate, %%g1&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;wrpr&t;%%g1, %0, %%pstate&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;brz,pt&t;%1, 1f&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot; mov&t;%2, %%g2&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stxa&t;%3, [%%g2] %5&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;ba,pt&t;%%xcc, 2f&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot; stxa&t;%4, [%%g0] %6&bslash;n&bslash;t&quot; &bslash;&n;&quot;1:&t;stxa&t;%3, [%%g2] %7&bslash;n&bslash;t&quot; &bslash;&n;&quot;&t;stxa&t;%4, [%%g0] %8&bslash;n&bslash;t&quot; &bslash;&n;&quot;2:&t;wrpr&t;%%g1, 0x0, %%pstate&bslash;n&quot; &bslash;&n;&t;: /* no outputs */ &bslash;&n;&t;: &quot;i&quot; (PSTATE_IE), &bslash;&n;          &quot;r&quot; (((__vma)-&gt;vm_flags&amp;(VM_READ|VM_WRITE|VM_EXEC))==(VM_READ|VM_EXEC)), &bslash;&n;&t;  &quot;i&quot; (TLB_TAG_ACCESS), &bslash;&n;&t;  &quot;r&quot; ((__address) | ((__vma)-&gt;vm_mm-&gt;context &amp; 0x3ff)), &bslash;&n;&t;  &quot;r&quot; (pte_val(_pte)), &quot;i&quot; (ASI_IMMU), &quot;i&quot; (ASI_ITLB_DATA_IN), &bslash;&n;&t;  &quot;i&quot; (ASI_DMMU), &quot;i&quot; (ASI_DTLB_DATA_IN) &bslash;&n;&t;: &quot;g1&quot;, &quot;g2&quot;)
+mdefine_line|#define update_mmu_cache(__vma, __address, _pte) &bslash;&n;do { &bslash;&n;&t;unsigned short __flags = ((__vma)-&gt;vm_flags); &bslash;&n;&t;if ((__flags &amp; VM_EXEC) != 0 &amp;&amp; &bslash;&n;&t;    ((pte_val(_pte) &amp; (_PAGE_PRESENT | _PAGE_WRITE | _PAGE_MODIFIED)) == &bslash;&n;&t;     (_PAGE_PRESENT | _PAGE_WRITE | _PAGE_MODIFIED))) { &bslash;&n;&t;&t;flush_icache_page(pte_page(_pte) - page_offset); &bslash;&n;&t;} &bslash;&n;} while(0)
 multiline_comment|/* Make a non-present pseudo-TTE. */
 DECL|function|mk_swap_pte
 r_extern

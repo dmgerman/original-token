@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: mmu_context.h,v 1.31 1998/09/24 03:22:01 davem Exp $ */
+multiline_comment|/* $Id: mmu_context.h,v 1.32 1998/10/13 14:03:52 davem Exp $ */
 macro_line|#ifndef __SPARC64_MMU_CONTEXT_H
 DECL|macro|__SPARC64_MMU_CONTEXT_H
 mdefine_line|#define __SPARC64_MMU_CONTEXT_H
@@ -377,7 +377,7 @@ DECL|macro|get_mmu_context
 mdefine_line|#define get_mmu_context(x)&t;do { } while(0)
 multiline_comment|/*&n; * After we have set current-&gt;mm to a new value, this activates&n; * the context for the new mm so we see the new mappings.&n; */
 DECL|macro|activate_context
-mdefine_line|#define activate_context(__tsk)&t;&t;&bslash;&n;do {&t;unsigned long __flags;&t;&t;&bslash;&n;&t;__save_and_cli(__flags);&t;&bslash;&n;&t;flushw_user();&t;&t;&t;&bslash;&n;&t;__get_mmu_context(__tsk);&t;&bslash;&n;&t;__restore_flags(__flags);&t;&bslash;&n;} while(0)
+mdefine_line|#define activate_context(__tsk)&t;&t;&bslash;&n;do {&t;flushw_user();&t;&t;&t;&bslash;&n;&t;spin_lock(&amp;scheduler_lock);&t;&bslash;&n;&t;__get_mmu_context(__tsk);&t;&bslash;&n;&t;spin_unlock(&amp;scheduler_lock);&t;&bslash;&n;} while(0)
 macro_line|#endif /* !(__ASSEMBLY__) */
 macro_line|#endif /* !(__SPARC64_MMU_CONTEXT_H) */
 eof

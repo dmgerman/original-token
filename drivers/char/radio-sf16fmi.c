@@ -55,7 +55,7 @@ multiline_comment|/* It is only usefull to give freq in intervall of 800 (=0.05M
 DECL|macro|RSF16_ENCODE
 mdefine_line|#define RSF16_ENCODE(x)&t;((x)/800+214)
 DECL|macro|RSF16_MINFREQ
-mdefine_line|#define RSF16_MINFREQ 88*16000
+mdefine_line|#define RSF16_MINFREQ 87*16000
 DECL|macro|RSF16_MAXFREQ
 mdefine_line|#define RSF16_MAXFREQ 108*16000
 DECL|function|outbits
@@ -158,6 +158,7 @@ suffix:semicolon
 )brace
 DECL|function|fmi_mute
 r_static
+r_inline
 r_void
 id|fmi_mute
 c_func
@@ -177,6 +178,7 @@ suffix:semicolon
 )brace
 DECL|function|fmi_unmute
 r_static
+r_inline
 r_void
 id|fmi_unmute
 c_func
@@ -196,6 +198,7 @@ suffix:semicolon
 )brace
 DECL|function|fmi_setfreq
 r_static
+r_inline
 r_int
 id|fmi_setfreq
 c_func
@@ -239,13 +242,43 @@ comma
 id|myport
 )paren
 suffix:semicolon
-multiline_comment|/* we should wait here... */
+multiline_comment|/* it is better than udelay(140000), isn&squot;t it? */
+id|current-&gt;state
+op_assign
+id|TASK_INTERRUPTIBLE
+suffix:semicolon
+id|current-&gt;timeout
+op_assign
+id|jiffies
+op_plus
+id|HZ
+op_div
+l_int|7
+suffix:semicolon
+id|schedule
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* ignore signals, we really should restore volume */
+r_if
+c_cond
+(paren
+id|dev-&gt;curvol
+)paren
+id|fmi_unmute
+c_func
+(paren
+id|myport
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
 DECL|function|fmi_getsigstr
 r_static
+r_inline
 r_int
 id|fmi_getsigstr
 c_func
@@ -295,12 +328,25 @@ comma
 id|myport
 )paren
 suffix:semicolon
-id|udelay
+multiline_comment|/* it is better than udelay(140000), isn&squot;t it? */
+id|current-&gt;state
+op_assign
+id|TASK_INTERRUPTIBLE
+suffix:semicolon
+id|current-&gt;timeout
+op_assign
+id|jiffies
+op_plus
+id|HZ
+op_div
+l_int|7
+suffix:semicolon
+id|schedule
 c_func
 (paren
-l_int|140000
 )paren
 suffix:semicolon
+multiline_comment|/* do not do it..., 140ms is very looong time to get signal in real program &n;&t;if (signal_pending(current))&n;&t;    return -EINTR;&n;&t;*/
 id|res
 op_assign
 (paren
@@ -332,7 +378,7 @@ ques
 c_cond
 l_int|0
 suffix:colon
-l_int|1
+l_int|0xFFFF
 suffix:semicolon
 )brace
 DECL|function|fmi_ioctl
@@ -531,8 +577,6 @@ id|VIDEO_MODE_AUTO
 suffix:semicolon
 id|v.signal
 op_assign
-l_int|0xFFFF
-op_star
 id|fmi_getsigstr
 c_func
 (paren

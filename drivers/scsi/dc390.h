@@ -1,9 +1,14 @@
 multiline_comment|/***********************************************************************&n; *&t;FILE NAME : DC390.H&t;&t;&t;&t;&t;       *&n; *&t;     BY   : C.L. Huang&t;&t;&t;&t;&t;       *&n; *&t;Description: Device Driver for Tekram DC-390(T) PCI SCSI       *&n; *&t;&t;     Bus Master Host Adapter&t;&t;&t;       *&n; ***********************************************************************/
+multiline_comment|/* $Id: dc390.h,v 2.3 1998/10/24 08:45:02 garloff Exp $ */
 macro_line|#include &lt;linux/version.h&gt;
-multiline_comment|/*&n; * AMD 53C974 driver, header file&n; */
+multiline_comment|/*&n; * DC390/AMD 53C974 driver, header file&n; */
 macro_line|#ifndef DC390_H
 DECL|macro|DC390_H
 mdefine_line|#define DC390_H
+DECL|macro|DC390_BANNER
+mdefine_line|#define DC390_BANNER &quot;Tekram DC390/AM53C974&quot;
+DECL|macro|DC390_VERSION
+mdefine_line|#define DC390_VERSION &quot;2.0b 1998/10/24&quot;
 macro_line|#if defined(HOSTS_C) || defined(MODULE)
 macro_line|#include &lt;scsi/scsicam.h&gt;
 r_extern
@@ -96,11 +101,11 @@ macro_line|#endif
 r_extern
 r_struct
 id|proc_dir_entry
-id|proc_scsi_tmscsim
+id|DC390_proc_scsi_tmscsim
 suffix:semicolon
 r_extern
 r_int
-id|tmscsim_proc_info
+id|DC390_proc_info
 c_func
 (paren
 r_char
@@ -126,7 +131,7 @@ id|inout
 )paren
 suffix:semicolon
 DECL|macro|DC390_T
-mdefine_line|#define DC390_T    {&t;&t;&t;          &bslash;&n;   proc_dir:       &amp;proc_scsi_tmscsim,            &bslash;&n;   proc_info:      tmscsim_proc_info,             &bslash;&n;   name:           &quot;Tekram DC390(T) V1.12 Feb-25-1998&quot;,&bslash;&n;   detect:         DC390_detect,   &t;&t;  &bslash;&n;   release:        DC390_release,&t;&t;  &bslash;&n;   queuecommand:   DC390_queue_command,&t;          &bslash;&n;   abort:          DC390_abort,    &t;&t;  &bslash;&n;   reset:          DC390_reset,    &t;&t;  &bslash;&n;   bios_param:     DC390_bios_param,&t;&t;  &bslash;&n;   can_queue:      10,                 &t;          &bslash;&n;   this_id:        7,                             &bslash;&n;   sg_tablesize:   SG_ALL,            &t;&t;  &bslash;&n;   cmd_per_lun:    2,                 &t;&t;  &bslash;&n;   use_clustering: DISABLE_CLUSTERING &t;&t;  &bslash;&n;   }
+mdefine_line|#define DC390_T    {&t;&t;&t;&t;&t;&bslash;&n;   proc_dir:       &amp;DC390_proc_scsi_tmscsim,&t;&t;&bslash;&n;   proc_info:      DC390_proc_info,&t;&t;&t;&bslash;&n;   name:           DC390_BANNER &quot; V&quot; DC390_VERSION,&t;&bslash;&n;   detect:         DC390_detect,&t;&t;&t;&bslash;&n;   release:        DC390_release,&t;&t;&t;&bslash;&n;   queuecommand:   DC390_queue_command,&t;&t;&t;&bslash;&n;   abort:          DC390_abort,&t;&t;&t;&t;&bslash;&n;   reset:          DC390_reset,&t;&t;&t;&t;&bslash;&n;   bios_param:     DC390_bios_param,&t;&t;&t;&bslash;&n;   can_queue:      17,&t;&t;&t;&t;&t;&bslash;&n;   this_id:        7,&t;&t;&t;&t;&t;&bslash;&n;   sg_tablesize:   SG_ALL,&t;&t;&t;&t;&bslash;&n;   cmd_per_lun:    8,&t;&t;&t;&t;&t;&bslash;&n;   use_clustering: DISABLE_CLUSTERING&t;&t;&t;&bslash;&n;   }
 macro_line|#endif /* defined(HOSTS_C) || defined(MODULE) */
 macro_line|#endif /* DC390_H */
 eof

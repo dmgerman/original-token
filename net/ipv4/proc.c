@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;This file implements the various access functions for the&n; *&t;&t;PROC file system.  It is mainly used for debugging and&n; *&t;&t;statistics.&n; *&n; * Version:&t;$Id: proc.c,v 1.32 1998/10/03 09:37:42 davem Exp $&n; *&n; * Authors:&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Gerald J. Heim, &lt;heim@peanuts.informatik.uni-tuebingen.de&gt;&n; *&t;&t;Fred Baumgarten, &lt;dc6iq@insu1.etec.uni-karlsruhe.de&gt;&n; *&t;&t;Erik Schoenfelder, &lt;schoenfr@ibr.cs.tu-bs.de&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;UDP sockets show the rxqueue/txqueue&n; *&t;&t;&t;&t;&t;using hint flag for the netinfo.&n; *&t;Pauline Middelink&t;:&t;identd support&n; *&t;&t;Alan Cox&t;:&t;Make /proc safer.&n; *&t;Erik Schoenfelder&t;:&t;/proc/net/snmp&n; *&t;&t;Alan Cox&t;:&t;Handle dead sockets properly.&n; *&t;Gerhard Koerting&t;:&t;Show both timers&n; *&t;&t;Alan Cox&t;:&t;Allow inode to be NULL (kernel socket)&n; *&t;Andi Kleen&t;&t;:&t;Add support for open_requests and &n; *&t;&t;&t;&t;&t;split functions for more readibility.&n; *&t;Andi Kleen&t;&t;:&t;Add support for /proc/net/netstat&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;This file implements the various access functions for the&n; *&t;&t;PROC file system.  It is mainly used for debugging and&n; *&t;&t;statistics.&n; *&n; * Version:&t;$Id: proc.c,v 1.33 1998/10/21 05:44:35 davem Exp $&n; *&n; * Authors:&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Gerald J. Heim, &lt;heim@peanuts.informatik.uni-tuebingen.de&gt;&n; *&t;&t;Fred Baumgarten, &lt;dc6iq@insu1.etec.uni-karlsruhe.de&gt;&n; *&t;&t;Erik Schoenfelder, &lt;schoenfr@ibr.cs.tu-bs.de&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;UDP sockets show the rxqueue/txqueue&n; *&t;&t;&t;&t;&t;using hint flag for the netinfo.&n; *&t;Pauline Middelink&t;:&t;identd support&n; *&t;&t;Alan Cox&t;:&t;Make /proc safer.&n; *&t;Erik Schoenfelder&t;:&t;/proc/net/snmp&n; *&t;&t;Alan Cox&t;:&t;Handle dead sockets properly.&n; *&t;Gerhard Koerting&t;:&t;Show both timers&n; *&t;&t;Alan Cox&t;:&t;Allow inode to be NULL (kernel socket)&n; *&t;Andi Kleen&t;&t;:&t;Add support for open_requests and &n; *&t;&t;&t;&t;&t;split functions for more readibility.&n; *&t;Andi Kleen&t;&t;:&t;Add support for /proc/net/netstat&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -42,14 +42,13 @@ r_int
 id|i
 )paren
 (brace
-multiline_comment|/* FIXME: I&squot;m not sure if the timer fields are correct. */
 id|sprintf
 c_func
 (paren
 id|tmpbuf
 comma
 l_string|&quot;%4d: %08lX:%04X %08lX:%04X&quot;
-l_string|&quot; %02X %08X:%08X %02X:%08lX %08X %5d %8d %lu&quot;
+l_string|&quot; %02X %08X:%08X %02X:%08lX %08X %5d %8d %u&quot;
 comma
 id|i
 comma
@@ -73,7 +72,11 @@ r_int
 )paren
 id|req-&gt;af.v4_req.rmt_addr
 comma
+id|ntohs
+c_func
+(paren
 id|req-&gt;rmt_port
+)paren
 comma
 id|TCP_SYN_RECV
 comma
@@ -81,9 +84,10 @@ l_int|0
 comma
 l_int|0
 comma
-multiline_comment|/* use sizeof(struct open_request) here? */
-l_int|0
+multiline_comment|/* could print option size, but that is af dependent. */
+l_int|1
 comma
+multiline_comment|/* timers active (only the expire timer) */
 (paren
 r_int
 r_int
@@ -94,7 +98,6 @@ op_minus
 id|jiffies
 )paren
 comma
-multiline_comment|/* ??? */
 id|req-&gt;retrans
 comma
 id|sk-&gt;socket
@@ -106,13 +109,9 @@ l_int|0
 comma
 l_int|0
 comma
-multiline_comment|/* ??? */
-id|sk-&gt;socket
-ques
-c_cond
-id|sk-&gt;socket-&gt;inode-&gt;i_ino
-suffix:colon
+multiline_comment|/* non standard timer */
 l_int|0
+multiline_comment|/* open_requests have no inode */
 )paren
 suffix:semicolon
 )brace
@@ -550,7 +549,7 @@ id|sp-&gt;timer
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Get__netinfo returns the length of that string.&n; *&n; * KNOWN BUGS&n; *  As in get_unix_netinfo, the buffer might be too small. If this&n; *  happens, get__netinfo returns only part of the available infos.&n; */
+multiline_comment|/*&n; * Get__netinfo returns the length of that string.&n; *&n; * KNOWN BUGS&n; *  As in get_unix_netinfo, the buffer might be too small. If this&n; *  happens, get__netinfo returns only part of the available infos.&n; *&n; *  Assumes that buffer length is a multiply of 128 - if not it will&n; *  write past the end.   &n; */
 r_static
 r_int
 DECL|function|get__netinfo
@@ -636,7 +635,6 @@ id|pos
 op_assign
 l_int|128
 suffix:semicolon
-multiline_comment|/*&n; *&t;This was very pretty but didn&squot;t work when a socket is destroyed&n; *&t;at the wrong moment (eg a syn recv socket getting a reset), or&n; *&t;a memory timer destroy. Instead of playing with timers we just&n; *&t;concede defeat and do a start_bh_atomic().&n; * &t;Why not just use lock_sock()? As far as I can see all timer routines&n; *&t;check for sock_readers before doing anything. -AK&n; *      [Disabled for now again, because it hard-locked my machine, and there&n; *&t; is an theoretical situation then, where an user could prevent&n; *&t; sockets from being destroyed by constantly reading /proc/net/tcp.]&n; */
 id|SOCKHASH_LOCK
 c_func
 (paren
@@ -740,7 +738,8 @@ op_ge
 id|length
 )paren
 (brace
-r_break
+r_goto
+id|out
 suffix:semicolon
 )brace
 )brace
@@ -810,6 +809,8 @@ id|i
 op_increment
 suffix:semicolon
 )brace
+id|out
+suffix:colon
 id|SOCKHASH_UNLOCK
 c_func
 (paren
@@ -849,6 +850,17 @@ op_assign
 id|length
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|len
+OL
+l_int|0
+)paren
+id|len
+op_assign
+l_int|0
+suffix:semicolon
 r_return
 id|len
 suffix:semicolon
@@ -1127,6 +1139,17 @@ id|len
 op_assign
 id|length
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OL
+l_int|0
+)paren
+id|len
+op_assign
+l_int|0
+suffix:semicolon
 r_return
 id|len
 suffix:semicolon
@@ -1381,6 +1404,17 @@ id|len
 op_assign
 id|length
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OL
+l_int|0
+)paren
+id|len
+op_assign
+l_int|0
+suffix:semicolon
 r_return
 id|len
 suffix:semicolon
@@ -1487,6 +1521,17 @@ id|length
 id|len
 op_assign
 id|length
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OL
+l_int|0
+)paren
+id|len
+op_assign
+l_int|0
 suffix:semicolon
 r_return
 id|len

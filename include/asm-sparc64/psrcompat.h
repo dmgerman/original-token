@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: psrcompat.h,v 1.4 1997/06/20 11:54:39 davem Exp $ */
+multiline_comment|/* $Id: psrcompat.h,v 1.5 1998/10/06 09:28:39 jj Exp $ */
 macro_line|#ifndef _SPARC64_PSRCOMPAT_H
 DECL|macro|_SPARC64_PSRCOMPAT_H
 mdefine_line|#define _SPARC64_PSRCOMPAT_H
@@ -34,6 +34,10 @@ DECL|macro|PSR_VERS
 mdefine_line|#define PSR_VERS    0x0f000000         /* cpu-version field          */
 DECL|macro|PSR_IMPL
 mdefine_line|#define PSR_IMPL    0xf0000000         /* cpu-implementation field   */
+DECL|macro|PSR_V8PLUS
+mdefine_line|#define PSR_V8PLUS  0xff000000         /* fake impl/ver, meaning a 64bit CPU is present */
+DECL|macro|PSR_XCC
+mdefine_line|#define PSR_XCC&t;    0x000f0000         /* if PSR_V8PLUS, this is %xcc */
 DECL|function|tstate_to_psr
 r_extern
 r_inline
@@ -47,22 +51,6 @@ r_int
 id|tstate
 )paren
 (brace
-r_int
-r_int
-id|vers
-suffix:semicolon
-id|__asm__
-id|__volatile__
-c_func
-(paren
-l_string|&quot;rdpr&t;%%ver, %0&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|vers
-)paren
-)paren
-suffix:semicolon
 r_return
 (paren
 (paren
@@ -85,31 +73,15 @@ l_int|12
 op_or
 (paren
 (paren
-(paren
-id|vers
-op_lshift
-l_int|8
+id|tstate
+op_amp
+id|TSTATE_XCC
 )paren
 op_rshift
-l_int|32
-)paren
-op_amp
-id|PSR_IMPL
+l_int|20
 )paren
 op_or
-(paren
-(paren
-(paren
-id|vers
-op_lshift
-l_int|24
-)paren
-op_rshift
-l_int|36
-)paren
-op_amp
-id|PSR_VERS
-)paren
+id|PSR_V8PLUS
 )paren
 suffix:semicolon
 )brace
@@ -126,7 +98,10 @@ r_int
 id|psr
 )paren
 (brace
-r_return
+r_int
+r_int
+id|tstate
+op_assign
 (paren
 (paren
 r_int
@@ -140,6 +115,40 @@ id|PSR_ICC
 )paren
 op_lshift
 l_int|12
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|psr
+op_amp
+(paren
+id|PSR_VERS
+op_or
+id|PSR_IMPL
+)paren
+)paren
+op_eq
+id|PSR_V8PLUS
+)paren
+id|tstate
+op_or_assign
+(paren
+(paren
+r_int
+r_int
+)paren
+(paren
+id|psr
+op_amp
+id|PSR_XCC
+)paren
+)paren
+op_lshift
+l_int|20
+suffix:semicolon
+r_return
+id|tstate
 suffix:semicolon
 )brace
 macro_line|#endif /* !(_SPARC64_PSRCOMPAT_H) */

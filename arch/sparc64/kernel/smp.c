@@ -84,12 +84,12 @@ l_int|64
 )paren
 )paren
 suffix:semicolon
-DECL|variable|__initdata
+multiline_comment|/* Please don&squot;t make this initdata!!!  --DaveM */
+DECL|variable|boot_cpu_id
 r_static
 r_int
 r_char
 id|boot_cpu_id
-id|__initdata
 op_assign
 l_int|0
 suffix:semicolon
@@ -315,15 +315,6 @@ id|cpu_data
 id|id
 )braket
 dot
-id|udelay_val
-op_assign
-id|loops_per_sec
-suffix:semicolon
-id|cpu_data
-(braket
-id|id
-)braket
-dot
 id|irq_count
 op_assign
 l_int|0
@@ -333,9 +324,37 @@ id|cpu_data
 id|id
 )braket
 dot
+id|bh_count
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* multiplier and counter set by&n;&t;   smp_setup_percpu_timer()  */
+id|cpu_data
+(braket
+id|id
+)braket
+dot
+id|udelay_val
+op_assign
+id|loops_per_sec
+suffix:semicolon
+id|cpu_data
+(braket
+id|id
+)braket
+dot
 id|pgcache_size
 op_assign
 l_int|0
+suffix:semicolon
+id|cpu_data
+(braket
+id|id
+)braket
+dot
+id|pte_cache
+op_assign
+l_int|NULL
 suffix:semicolon
 id|cpu_data
 (braket
@@ -352,15 +371,6 @@ id|id
 )braket
 dot
 id|pgd_cache
-op_assign
-l_int|NULL
-suffix:semicolon
-id|cpu_data
-(braket
-id|id
-)braket
-dot
-id|pte_cache
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -580,6 +590,14 @@ suffix:colon
 suffix:colon
 suffix:colon
 l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* Clear this or we will die instantly when we&n;&t; * schedule back to this idler...&n;&t; */
+id|current-&gt;tss.flags
+op_and_assign
+op_complement
+(paren
+id|SPARC_FLAG_NEWCHILD
 )paren
 suffix:semicolon
 r_while
@@ -1945,6 +1963,14 @@ id|mm-&gt;context
 op_amp
 l_int|0x3ff
 suffix:semicolon
+id|start
+op_and_assign
+id|PAGE_MASK
+suffix:semicolon
+id|end
+op_and_assign
+id|PAGE_MASK
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2004,14 +2030,6 @@ id|end
 suffix:semicolon
 id|local_flush_and_out
 suffix:colon
-id|start
-op_and_assign
-id|PAGE_MASK
-suffix:semicolon
-id|end
-op_and_assign
-id|PAGE_MASK
-suffix:semicolon
 id|__flush_tlb_range
 c_func
 (paren
@@ -2054,6 +2072,10 @@ op_assign
 id|mm-&gt;context
 op_amp
 l_int|0x3ff
+suffix:semicolon
+id|page
+op_and_assign
+id|PAGE_MASK
 suffix:semicolon
 r_if
 c_cond
@@ -2172,19 +2194,14 @@ c_func
 (paren
 id|ctx
 comma
-(paren
 id|page
-op_amp
-id|PAGE_MASK
-)paren
 comma
 id|SECONDARY_CONTEXT
 )paren
 suffix:semicolon
 )brace
 multiline_comment|/* CPU capture. */
-DECL|macro|CAPTURE_DEBUG
-mdefine_line|#define CAPTURE_DEBUG
+multiline_comment|/* #define CAPTURE_DEBUG */
 r_extern
 r_int
 r_int
@@ -2226,6 +2243,12 @@ id|smp_capture
 c_func
 (paren
 r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|smp_processors_ready
 )paren
 (brace
 r_int
@@ -2332,12 +2355,19 @@ suffix:semicolon
 macro_line|#endif
 )brace
 )brace
+)brace
 DECL|function|smp_release
 r_void
 id|smp_release
 c_func
 (paren
 r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|smp_processors_ready
 )paren
 (brace
 r_if
@@ -2381,6 +2411,7 @@ op_amp
 id|smp_capture_registry
 )paren
 suffix:semicolon
+)brace
 )brace
 )brace
 multiline_comment|/* Imprisoned penguins run with %pil == 15, but PSTATE_IE set, so they&n; * can service tlb flush xcalls...&n; */
@@ -2657,26 +2688,11 @@ op_eq
 id|boot_cpu_id
 )paren
 (brace
-r_extern
-r_void
-id|irq_enter
-c_func
-(paren
-r_int
-comma
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|irq_exit
-c_func
-(paren
-r_int
-comma
-r_int
-)paren
-suffix:semicolon
+multiline_comment|/* XXX Keep this in sync with irq.c --DaveM */
+DECL|macro|irq_enter
+mdefine_line|#define irq_enter(cpu, irq)&t;&t;&t;&bslash;&n;do {&t;hardirq_enter(cpu);&t;&t;&t;&bslash;&n;&t;spin_unlock_wait(&amp;global_irq_lock);&t;&bslash;&n;} while(0)
+DECL|macro|irq_exit
+mdefine_line|#define irq_exit(cpu, irq)&t;hardirq_exit(cpu)
 id|irq_enter
 c_func
 (paren
@@ -2708,6 +2724,10 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+DECL|macro|irq_enter
+macro_line|#undef irq_enter
+DECL|macro|irq_exit
+macro_line|#undef irq_exit
 )brace
 r_if
 c_cond

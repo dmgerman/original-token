@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fcntl.h,v 1.4 1998/08/26 10:33:36 davem Exp $ */
+multiline_comment|/* $Id: fcntl.h,v 1.5 1998/10/26 20:03:15 davem Exp $ */
 macro_line|#ifndef _SPARC64_FCNTL_H
 DECL|macro|_SPARC64_FCNTL_H
 mdefine_line|#define _SPARC64_FCNTL_H

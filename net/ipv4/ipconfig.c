@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  $Id: ipconfig.c,v 1.15 1998/06/19 13:22:33 davem Exp $&n; *&n; *  Automatic Configuration of IP -- use BOOTP or RARP or user-supplied&n; *  information to configure own IP address and routes.&n; *&n; *  Copyright (C) 1996, 1997 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&n; *  Derived from network configuration code in fs/nfs/nfsroot.c,&n; *  originally Copyright (C) 1995, 1996 Gero Kuhlmann and me.&n; */
+multiline_comment|/*&n; *  $Id: ipconfig.c,v 1.16 1998/10/21 22:27:26 davem Exp $&n; *&n; *  Automatic Configuration of IP -- use BOOTP or RARP or user-supplied&n; *  information to configure own IP address and routes.&n; *&n; *  Copyright (C) 1996, 1997 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&n; *  Derived from network configuration code in fs/nfs/nfsroot.c,&n; *  originally Copyright (C) 1995, 1996 Gero Kuhlmann and me.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -1124,12 +1124,20 @@ c_cond
 id|IN_CLASSA
 c_func
 (paren
+id|ntohl
+c_func
+(paren
 id|ic_myaddr
+)paren
 )paren
 )paren
 id|ic_netmask
 op_assign
+id|htonl
+c_func
+(paren
 id|IN_CLASSA_NET
+)paren
 suffix:semicolon
 r_else
 r_if
@@ -1138,12 +1146,20 @@ c_cond
 id|IN_CLASSB
 c_func
 (paren
+id|ntohl
+c_func
+(paren
 id|ic_myaddr
+)paren
 )paren
 )paren
 id|ic_netmask
 op_assign
+id|htonl
+c_func
+(paren
 id|IN_CLASSB_NET
+)paren
 suffix:semicolon
 r_else
 r_if
@@ -1152,12 +1168,20 @@ c_cond
 id|IN_CLASSC
 c_func
 (paren
+id|ntohl
+c_func
+(paren
 id|ic_myaddr
+)paren
 )paren
 )paren
 id|ic_netmask
 op_assign
+id|htonl
+c_func
+(paren
 id|IN_CLASSC_NET
+)paren
 suffix:semicolon
 r_else
 (brace

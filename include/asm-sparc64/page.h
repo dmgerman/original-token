@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: page.h,v 1.23 1998/06/12 14:54:33 jj Exp $ */
+multiline_comment|/* $Id: page.h,v 1.24 1998/10/20 03:09:16 jj Exp $ */
 macro_line|#ifndef _SPARC64_PAGE_H
 DECL|macro|_SPARC64_PAGE_H
 mdefine_line|#define _SPARC64_PAGE_H
@@ -16,8 +16,16 @@ DECL|macro|PAGE_MASK
 mdefine_line|#define PAGE_MASK    (~(PAGE_SIZE-1))
 macro_line|#ifdef __KERNEL__
 macro_line|#ifndef __ASSEMBLY__
-DECL|macro|clear_page
-mdefine_line|#define clear_page(page)&t;&t;memset((void *)(page), 0, PAGE_SIZE)
+r_extern
+r_void
+id|clear_page
+c_func
+(paren
+r_int
+r_int
+id|page
+)paren
+suffix:semicolon
 r_extern
 r_void
 id|copy_page

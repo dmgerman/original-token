@@ -1,4 +1,4 @@
-multiline_comment|/* devices.c: Initial scan of the prom device tree for important&n; *            Sparc device nodes which we need to find.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* devices.c: Initial scan of the prom device tree for important&n; *&t;      Sparc device nodes which we need to find.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/tasks.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -12,12 +12,14 @@ r_struct
 id|prom_cpuinfo
 id|linux_cpus
 (braket
-id|NR_CPUS
+l_int|32
 )braket
 suffix:semicolon
 DECL|variable|linux_num_cpus
 r_int
 id|linux_num_cpus
+op_assign
+l_int|0
 suffix:semicolon
 r_extern
 r_void
@@ -66,23 +68,7 @@ l_int|128
 )braket
 suffix:semicolon
 r_int
-id|nd
-comma
-id|prom_node_cpu
-comma
 id|thismid
-suffix:semicolon
-r_int
-id|cpu_nds
-(braket
-id|NR_CPUS
-)braket
-suffix:semicolon
-multiline_comment|/* One node for each cpu */
-r_int
-id|cpu_ctr
-op_assign
-l_int|0
 suffix:semicolon
 id|prom_getstring
 c_func
@@ -113,14 +99,7 @@ op_eq
 l_int|0
 )paren
 (brace
-id|cpu_nds
-(braket
-l_int|0
-)braket
-op_assign
-id|prom_root_node
-suffix:semicolon
-id|cpu_ctr
+id|linux_num_cpus
 op_increment
 suffix:semicolon
 )brace
@@ -148,10 +127,6 @@ r_int
 )paren
 id|scan
 )paren
-suffix:semicolon
-id|nd
-op_assign
-l_int|0
 suffix:semicolon
 r_while
 c_loop
@@ -198,16 +173,9 @@ op_eq
 l_int|0
 )paren
 (brace
-id|cpu_nds
-(braket
-id|cpu_ctr
-)braket
-op_assign
-id|scan
-suffix:semicolon
 id|linux_cpus
 (braket
-id|cpu_ctr
+id|linux_num_cpus
 )braket
 dot
 id|prom_node
@@ -236,7 +204,7 @@ id|thismid
 suffix:semicolon
 id|linux_cpus
 (braket
-id|cpu_ctr
+id|linux_num_cpus
 )braket
 dot
 id|mid
@@ -248,7 +216,7 @@ c_func
 (paren
 l_string|&quot;Found CPU %d &lt;node=%08lx,mid=%d&gt;&bslash;n&quot;
 comma
-id|cpu_ctr
+id|linux_num_cpus
 comma
 (paren
 r_int
@@ -259,7 +227,7 @@ comma
 id|thismid
 )paren
 suffix:semicolon
-id|cpu_ctr
+id|linux_num_cpus
 op_increment
 suffix:semicolon
 )brace
@@ -268,7 +236,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|cpu_ctr
+id|linux_num_cpus
 op_eq
 l_int|0
 )paren
@@ -377,16 +345,9 @@ id|thismid
 )paren
 )paren
 suffix:semicolon
-id|cpu_nds
-(braket
-id|cpu_ctr
-)braket
-op_assign
-id|node
-suffix:semicolon
 id|linux_cpus
 (braket
-id|cpu_ctr
+id|linux_num_cpus
 )braket
 dot
 id|prom_node
@@ -395,7 +356,7 @@ id|node
 suffix:semicolon
 id|linux_cpus
 (braket
-id|cpu_ctr
+id|linux_num_cpus
 )braket
 dot
 id|mid
@@ -407,7 +368,7 @@ c_func
 (paren
 l_string|&quot;Found CPU %d &lt;node=%08lx,mid=%d&gt;&bslash;n&quot;
 comma
-id|cpu_ctr
+id|linux_num_cpus
 comma
 (paren
 r_int
@@ -418,7 +379,7 @@ comma
 id|thismid
 )paren
 suffix:semicolon
-id|cpu_ctr
+id|linux_num_cpus
 op_increment
 suffix:semicolon
 )brace
@@ -428,7 +389,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|cpu_ctr
+id|linux_num_cpus
 op_eq
 l_int|0
 )paren
@@ -451,21 +412,10 @@ c_func
 (paren
 l_string|&quot;Found %d CPU prom device tree node(s).&bslash;n&quot;
 comma
-id|cpu_ctr
+id|linux_num_cpus
 )paren
 suffix:semicolon
 )brace
-suffix:semicolon
-id|prom_node_cpu
-op_assign
-id|cpu_nds
-(braket
-l_int|0
-)braket
-suffix:semicolon
-id|linux_num_cpus
-op_assign
-id|cpu_ctr
 suffix:semicolon
 id|cpu_probe
 c_func

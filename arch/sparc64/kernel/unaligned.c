@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: unaligned.c,v 1.11 1998/09/22 03:24:52 davem Exp $&n; * unaligned.c: Unaligned load/store trap handling with special&n; *              cases for the kernel to do them more quickly.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: unaligned.c,v 1.13 1998/10/07 22:43:13 davem Exp $&n; * unaligned.c: Unaligned load/store trap handling with special&n; *              cases for the kernel to do them more quickly.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -145,9 +145,8 @@ r_int
 r_int
 id|tmp
 suffix:semicolon
-r_if
-c_cond
-(paren
+id|tmp
+op_assign
 (paren
 (paren
 id|insn
@@ -157,21 +156,24 @@ l_int|19
 op_amp
 l_int|0xf
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tmp
+op_eq
+l_int|11
+op_logical_or
+id|tmp
 op_eq
 l_int|14
 )paren
+multiline_comment|/* ldx/stx */
 r_return
 l_int|8
 suffix:semicolon
-multiline_comment|/* stx* */
 id|tmp
-op_assign
-(paren
-id|insn
-op_rshift
-l_int|19
-)paren
-op_amp
+op_and_assign
 l_int|3
 suffix:semicolon
 r_if

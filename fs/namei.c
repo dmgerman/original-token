@@ -16,9 +16,18 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/unaligned.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
-macro_line|#include &lt;asm/namei.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+multiline_comment|/*&n; * The bitmask for a lookup event:&n; *  - follow links at the end&n; *  - require a directory&n; *  - ending slashes ok even for nonexistent files&n; *  - internal &quot;there are more path compnents&quot; flag&n; */
+DECL|macro|LOOKUP_FOLLOW
+mdefine_line|#define LOOKUP_FOLLOW&t;&t;(1)
+DECL|macro|LOOKUP_DIRECTORY
+mdefine_line|#define LOOKUP_DIRECTORY&t;(2)
+DECL|macro|LOOKUP_SLASHOK
+mdefine_line|#define LOOKUP_SLASHOK&t;&t;(4)
+DECL|macro|LOOKUP_CONTINUE
+mdefine_line|#define LOOKUP_CONTINUE&t;&t;(8)
+macro_line|#include &lt;asm/namei.h&gt;
 multiline_comment|/* This can be removed after the beta phase. */
 DECL|macro|CACHE_SUPERVISE
 mdefine_line|#define CACHE_SUPERVISE&t;/* debug the correctness of dcache entries */
@@ -853,15 +862,6 @@ r_return
 id|result
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * The bitmask for a lookup event:&n; *  - follow links at the end&n; *  - require a directory&n; *  - ending slashes ok even for nonexistent files&n; *  - internal &quot;there are more path compnents&quot; flag&n; */
-DECL|macro|LOOKUP_FOLLOW
-mdefine_line|#define LOOKUP_FOLLOW&t;&t;(1)
-DECL|macro|LOOKUP_DIRECTORY
-mdefine_line|#define LOOKUP_DIRECTORY&t;(2)
-DECL|macro|LOOKUP_SLASHOK
-mdefine_line|#define LOOKUP_SLASHOK&t;&t;(4)
-DECL|macro|LOOKUP_CONTINUE
-mdefine_line|#define LOOKUP_CONTINUE&t;&t;(8)
 DECL|function|do_follow_link
 r_static
 r_struct
@@ -1076,14 +1076,6 @@ c_func
 id|base
 )paren
 suffix:semicolon
-id|base
-op_assign
-id|dget
-c_func
-(paren
-id|current-&gt;fs-&gt;root
-)paren
-suffix:semicolon
 r_do
 (brace
 id|name
@@ -1097,6 +1089,14 @@ op_star
 id|name
 op_eq
 l_char|&squot;/&squot;
+)paren
+suffix:semicolon
+id|base
+op_assign
+id|dget
+c_func
+(paren
+id|current-&gt;fs-&gt;root
 )paren
 suffix:semicolon
 )brace

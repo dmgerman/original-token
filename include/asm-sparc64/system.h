@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: system.h,v 1.44 1998/09/21 03:57:22 davem Exp $ */
+multiline_comment|/* $Id: system.h,v 1.47 1998/10/21 03:21:20 davem Exp $ */
 macro_line|#ifndef __SPARC64_SYSTEM_H
 DECL|macro|__SPARC64_SYSTEM_H
 mdefine_line|#define __SPARC64_SYSTEM_H
@@ -106,17 +106,6 @@ mdefine_line|#define save_and_cli(x) __save_and_cli(x)
 macro_line|#else
 macro_line|#ifndef __ASSEMBLY__
 r_extern
-r_int
-r_char
-id|global_irq_holder
-suffix:semicolon
-macro_line|#endif
-DECL|macro|save_flags
-mdefine_line|#define save_flags(x) &bslash;&n;do {&t;((x) = ((global_irq_holder == (unsigned char) smp_processor_id()) ? 1 : &bslash;&n;&t;&t;((getipl() != 0) ? 2 : 0))); } while(0)
-DECL|macro|save_and_cli
-mdefine_line|#define save_and_cli(flags)   do { save_flags(flags); cli(); } while(0)
-macro_line|#ifndef __ASSEMBLY__
-r_extern
 r_void
 id|__global_cli
 c_func
@@ -127,6 +116,15 @@ suffix:semicolon
 r_extern
 r_void
 id|__global_sti
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|__global_save_flags
 c_func
 (paren
 r_void
@@ -147,8 +145,12 @@ DECL|macro|cli
 mdefine_line|#define cli()&t;&t;&t;__global_cli()
 DECL|macro|sti
 mdefine_line|#define sti()&t;&t;&t;__global_sti()
+DECL|macro|save_flags
+mdefine_line|#define save_flags(x)&t;&t;((x) = __global_save_flags())
 DECL|macro|restore_flags
 mdefine_line|#define restore_flags(flags)&t;__global_restore_flags(flags)
+DECL|macro|save_and_cli
+mdefine_line|#define save_and_cli(flags)&t;do { save_flags(flags); cli(); } while(0)
 macro_line|#endif
 DECL|macro|mb
 mdefine_line|#define mb()  &t;&t;__asm__ __volatile__ (&quot;stbar&quot; : : : &quot;memory&quot;)
@@ -160,6 +162,15 @@ DECL|macro|flushi
 mdefine_line|#define flushi(addr)&t;__asm__ __volatile__ (&quot;flush %0&quot; : : &quot;r&quot; (addr) : &quot;memory&quot;)
 DECL|macro|flushw_all
 mdefine_line|#define flushw_all()&t;__asm__ __volatile__(&quot;flushw&quot;)
+multiline_comment|/* Performance counter register access. */
+DECL|macro|read_pcr
+mdefine_line|#define read_pcr(__p)  __asm__ __volatile__(&quot;rd&t;%%pcr, %0&quot; : &quot;=r&quot; (__p))
+DECL|macro|write_pcr
+mdefine_line|#define write_pcr(__p) __asm__ __volatile__(&quot;wr&t;%0, 0x0, %%pcr&quot; : : &quot;r&quot; (__p));
+DECL|macro|read_pic
+mdefine_line|#define read_pic(__p)  __asm__ __volatile__(&quot;rd %%pic, %0&quot; : &quot;=r&quot; (__p))
+DECL|macro|reset_pic
+mdefine_line|#define reset_pic()    __asm__ __volatile__(&quot;wr&t;%g0, 0x0, %pic&quot;);
 macro_line|#ifndef __ASSEMBLY__
 r_extern
 r_void
@@ -228,18 +239,9 @@ suffix:semicolon
 )brace
 DECL|macro|flush_user_windows
 mdefine_line|#define flush_user_windows flushw_user
-DECL|macro|DEBUG_SWITCH
-mdefine_line|#define DEBUG_SWITCH
-macro_line|#ifdef DEBUG_SWITCH
-DECL|macro|SWITCH_CTX_CHECK
-mdefine_line|#define SWITCH_CTX_CHECK(__tsk) &bslash;&n;do {&t;unsigned short ctx_now; &bslash;&n;&t;ctx_now = spitfire_get_secondary_context(); &bslash;&n;&t;if(ctx_now != (__tsk)-&gt;tss.ctx) &bslash;&n;&t;&t;printk(&quot;[%s:%d] Bogus ctx after switch [%x:%x]&bslash;n&quot;, &bslash;&n;&t;&t;       (__tsk)-&gt;comm, (__tsk)-&gt;pid, &bslash;&n;&t;&t;       (__tsk)-&gt;tss.ctx, ctx_now); &bslash;&n;} while(0)
-macro_line|#else
-DECL|macro|SWITCH_CTX_CHECK
-mdefine_line|#define SWITCH_CTX_CHECK(__tsk)&t;do { } while(0)
-macro_line|#endif
 multiline_comment|/* See what happens when you design the chip correctly?&n;&t; *&n;&t; * XXX What we are doing here assumes a lot about gcc reload&n;&t; * XXX internals, it heavily risks compiler aborts due to&n;&t; * XXX forbidden registers being spilled.  Rewrite me...  -DaveM&n;&t; *&n;&t; * SMP NOTE: At first glance it looks like there is a tiny&n;&t; *           race window here at the end.  The possible problem&n;&t; *           would be if a tlbcachesync MONDO vector got delivered&n;&t; *           to us right before we set the final %g6 thread reg&n;&t; *           value.  But that is impossible since only the holder&n;&t; *           of scheduler_lock can send a tlbcachesync MONDO and&n;&t; *           by definition we hold it right now.  Normal tlb&n;&t; *           flush xcalls can come in, but those are safe and do&n;&t; *           not reference %g6.&n;&t; */
 DECL|macro|switch_to
-mdefine_line|#define switch_to(prev, next)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;do {&t;save_and_clear_fpu();&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;flushw&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wrpr&t;%g0, 0x94, %pstate&bslash;n&bslash;t&quot;);&t;&t;&t;&t;&t;&bslash;&n;&t;__get_mmu_context(next);&t;&t;&t;&t;&t;&t;&bslash;&n;&t;(next)-&gt;mm-&gt;cpu_vm_mask |= (1UL &lt;&lt; smp_processor_id());&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wrpr&t;%%g0, 0x95, %%pstate&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;stx&t;%%l0, [%%sp + 2047 + 0x60]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;stx&t;%%l1, [%%sp + 2047 + 0x68]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;stx&t;%%i6, [%%sp + 2047 + 0x70]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;stx&t;%%i7, [%%sp + 2047 + 0x78]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;rdpr&t;%%wstate, %%o5&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;stx&t;%%o6, [%%g6 + %2]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;sth&t;%%o5, [%%g6 + %1]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;rdpr&t;%%cwp, %%o5&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;sth&t;%%o5, [%%g6 + %4]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;mov&t;%0, %%g6&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;lduh&t;[%0 + %4], %%g1&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wrpr&t;%%g1, %%cwp&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldx&t;[%%g6 + %2], %%o6&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;lduh&t;[%%g6 + %1], %%o5&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;lduh&t;[%%g6 + %3], %%o7&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;mov&t;%%g6, %%l2&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wrpr&t;%%o5, 0x0, %%wstate&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldx&t;[%%sp + 2047 + 0x60], %%l0&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldx&t;[%%sp + 2047 + 0x68], %%l1&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldx&t;[%%sp + 2047 + 0x70], %%i6&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldx&t;[%%sp + 2047 + 0x78], %%i7&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wrpr&t;%%g0, 0x94, %%pstate&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;mov&t;%%l2, %%g6&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wrpr&t;%%g0, 0x96, %%pstate&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;andcc&t;%%o7, 0x100, %%g0&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;bne,pn&t;%%icc, ret_from_syscall&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot; nop&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;: &t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;: &quot;r&quot; (next),&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  &quot;i&quot; ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;tss.wstate)),&t;&bslash;&n;&t;  &quot;i&quot; ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;tss.ksp)),&t;&bslash;&n;&t;  &quot;i&quot; ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;tss.flags)),&t;&bslash;&n;&t;  &quot;i&quot; ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;tss.cwp))&t;&bslash;&n;&t;: &quot;cc&quot;, &quot;g1&quot;, &quot;g2&quot;, &quot;g3&quot;, &quot;g5&quot;, &quot;g7&quot;,&t;&t;&t;&t;&t;&bslash;&n;&t;  &quot;l2&quot;, &quot;l3&quot;, &quot;l4&quot;, &quot;l5&quot;, &quot;l6&quot;, &quot;l7&quot;,&t;&t;&t;&t;&t;&bslash;&n;&t;  &quot;i0&quot;, &quot;i1&quot;, &quot;i2&quot;, &quot;i3&quot;, &quot;i4&quot;, &quot;i5&quot;,&t;&t;&t;&t;&t;&bslash;&n;&t;  &quot;o0&quot;, &quot;o1&quot;, &quot;o2&quot;, &quot;o3&quot;, &quot;o4&quot;, &quot;o5&quot;, &quot;o7&quot;);&t;&t;&t;&t;&bslash;&n;&t;SWITCH_CTX_CHECK(current);&t;&t;&t;&t;&t;&t;&bslash;&n;} while(0)
+mdefine_line|#define switch_to(prev, next)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;do {&t;if (current-&gt;tss.flags &amp; SPARC_FLAG_PERFCTR) {&t;&t;&t;&t;&bslash;&n;&t;&t;unsigned long __tmp;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;read_pcr(__tmp);&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;current-&gt;tss.pcr_reg = __tmp;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;read_pic(__tmp);&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;current-&gt;tss.kernel_cntd0 += (unsigned int)(__tmp);&t;&t;&bslash;&n;&t;&t;current-&gt;tss.kernel_cntd1 += ((__tmp) &gt;&gt; 32);&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;save_and_clear_fpu();&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;flushw&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wrpr&t;%g0, 0x94, %pstate&bslash;n&bslash;t&quot;);&t;&t;&t;&t;&t;&bslash;&n;&t;__get_mmu_context(next);&t;&t;&t;&t;&t;&t;&bslash;&n;&t;(next)-&gt;mm-&gt;cpu_vm_mask |= (1UL &lt;&lt; smp_processor_id());&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wrpr&t;%%g0, 0x95, %%pstate&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;stx&t;%%l0, [%%sp + 2047 + 0x60]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;stx&t;%%l1, [%%sp + 2047 + 0x68]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;stx&t;%%i6, [%%sp + 2047 + 0x70]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;stx&t;%%i7, [%%sp + 2047 + 0x78]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;rdpr&t;%%wstate, %%o5&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;stx&t;%%o6, [%%g6 + %2]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;sth&t;%%o5, [%%g6 + %1]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;rdpr&t;%%cwp, %%o5&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;sth&t;%%o5, [%%g6 + %4]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;mov&t;%0, %%g6&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;lduh&t;[%0 + %4], %%g1&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wrpr&t;%%g1, %%cwp&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldx&t;[%%g6 + %2], %%o6&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;lduh&t;[%%g6 + %1], %%o5&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;lduh&t;[%%g6 + %3], %%o7&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;mov&t;%%g6, %%l2&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wrpr&t;%%o5, 0x0, %%wstate&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldx&t;[%%sp + 2047 + 0x60], %%l0&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldx&t;[%%sp + 2047 + 0x68], %%l1&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldx&t;[%%sp + 2047 + 0x70], %%i6&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldx&t;[%%sp + 2047 + 0x78], %%i7&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wrpr&t;%%g0, 0x94, %%pstate&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;mov&t;%%l2, %%g6&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wrpr&t;%%g0, 0x96, %%pstate&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;andcc&t;%%o7, 0x100, %%g0&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;bne,pn&t;%%icc, ret_from_syscall&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot; nop&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;: &t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;: &quot;r&quot; (next),&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  &quot;i&quot; ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;tss.wstate)),&t;&bslash;&n;&t;  &quot;i&quot; ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;tss.ksp)),&t;&bslash;&n;&t;  &quot;i&quot; ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;tss.flags)),&t;&bslash;&n;&t;  &quot;i&quot; ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;tss.cwp))&t;&bslash;&n;&t;: &quot;cc&quot;, &quot;g1&quot;, &quot;g2&quot;, &quot;g3&quot;, &quot;g5&quot;, &quot;g7&quot;,&t;&t;&t;&t;&t;&bslash;&n;&t;  &quot;l2&quot;, &quot;l3&quot;, &quot;l4&quot;, &quot;l5&quot;, &quot;l6&quot;, &quot;l7&quot;,&t;&t;&t;&t;&t;&bslash;&n;&t;  &quot;i0&quot;, &quot;i1&quot;, &quot;i2&quot;, &quot;i3&quot;, &quot;i4&quot;, &quot;i5&quot;,&t;&t;&t;&t;&t;&bslash;&n;&t;  &quot;o0&quot;, &quot;o1&quot;, &quot;o2&quot;, &quot;o3&quot;, &quot;o4&quot;, &quot;o5&quot;, &quot;o7&quot;);&t;&t;&t;&t;&bslash;&n;&t;/* If you fuck with this, update ret_from_syscall code too. */&t;&t;&bslash;&n;&t;if (current-&gt;tss.flags &amp; SPARC_FLAG_PERFCTR) {&t;&t;&t;&t;&bslash;&n;&t;&t;write_pcr(current-&gt;tss.pcr_reg);&t;&t;&t;&t;&bslash;&n;&t;&t;reset_pic();&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;} while(0)
 DECL|function|xchg32
 r_extern
 id|__inline__

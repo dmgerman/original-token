@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunserial.c,v 1.66 1998/09/21 05:48:48 jj Exp $&n; * serial.c: Serial port driver infrastructure for the Sparc.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: sunserial.c,v 1.67 1998/10/25 03:22:46 jj Exp $&n; * serial.c: Serial port driver infrastructure for the Sparc.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -1784,6 +1784,32 @@ id|ret
 r_return
 id|memory_start
 suffix:semicolon
+macro_line|#ifdef __sparc_v9__
+id|ret
+op_assign
+id|prom_finddevice
+c_func
+(paren
+l_string|&quot;/ssp-serial&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
+op_logical_and
+id|ret
+op_ne
+op_minus
+l_int|1
+)paren
+(brace
+multiline_comment|/* Hello, Starfire. Pleased to meet you :) */
+r_return
+id|memory_start
+suffix:semicolon
+)brace
+macro_line|#endif
 id|prom_printf
 c_func
 (paren

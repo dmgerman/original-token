@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: signal.c,v 1.86 1998/09/29 09:46:04 davem Exp $&n; *  linux/arch/sparc/kernel/signal.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; */
+multiline_comment|/*  $Id: signal.c,v 1.90 1998/10/18 03:31:05 davem Exp $&n; *  linux/arch/sparc/kernel/signal.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -194,6 +194,12 @@ op_minus
 l_int|1
 )braket
 suffix:semicolon
+DECL|member|extra_size
+r_int
+r_int
+id|extra_size
+suffix:semicolon
+multiline_comment|/* Should be 0 */
 DECL|member|fpu_state
 id|__siginfo_fpu_t
 id|fpu_state
@@ -239,6 +245,12 @@ DECL|member|stack
 id|stack_t
 id|stack
 suffix:semicolon
+DECL|member|extra_size
+r_int
+r_int
+id|extra_size
+suffix:semicolon
+multiline_comment|/* Should be 0 */
 DECL|member|fpu_state
 id|__siginfo_fpu_t
 id|fpu_state
@@ -650,9 +662,29 @@ op_and_assign
 op_complement
 id|PF_USEDFPU
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|verify_area
+(paren
+id|VERIFY_READ
+comma
+id|fpu
+comma
+r_sizeof
+(paren
+op_star
+id|fpu
+)paren
+)paren
+)paren
+r_return
+op_minus
+id|EFAULT
+suffix:semicolon
 id|err
 op_assign
-id|copy_from_user
+id|__copy_from_user
 c_func
 (paren
 op_amp
@@ -709,7 +741,7 @@ l_int|0
 )paren
 id|err
 op_or_assign
-id|copy_from_user
+id|__copy_from_user
 c_func
 (paren
 op_amp
@@ -875,7 +907,7 @@ id|regs-&gt;psr
 suffix:semicolon
 id|err
 op_or_assign
-id|copy_from_user
+id|__copy_from_user
 c_func
 (paren
 id|regs
@@ -937,7 +969,7 @@ c_func
 (paren
 id|regs
 comma
-id|sf-&gt;fpu_save
+id|fpu_save
 )paren
 suffix:semicolon
 multiline_comment|/* This is pretty much atomic, no amount locking would prevent&n;&t; * the races which exist anyways.&n;&t; */
@@ -957,7 +989,7 @@ id|sf-&gt;info.si_mask
 suffix:semicolon
 id|err
 op_or_assign
-id|copy_from_user
+id|__copy_from_user
 c_func
 (paren
 op_amp
@@ -1028,12 +1060,6 @@ r_return
 suffix:semicolon
 id|segv_and_exit
 suffix:colon
-multiline_comment|/* Ugh, we need to grab master lock in these rare cases ;-( */
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|do_exit
 c_func
 (paren
@@ -1191,7 +1217,7 @@ suffix:semicolon
 multiline_comment|/* Note that scptr + 1 points to extramask */
 id|err
 op_or_assign
-id|copy_from_user
+id|__copy_from_user
 c_func
 (paren
 op_amp
@@ -1450,7 +1476,7 @@ suffix:semicolon
 )brace
 id|err
 op_assign
-id|get_user
+id|__get_user
 c_func
 (paren
 id|pc
@@ -1568,14 +1594,13 @@ c_func
 (paren
 id|regs
 comma
-op_amp
-id|sf-&gt;fpu_state
+id|fpu_save
 )paren
 suffix:semicolon
 )brace
 id|err
 op_or_assign
-id|copy_from_user
+id|__copy_from_user
 c_func
 (paren
 op_amp
@@ -2157,7 +2182,7 @@ id|window
 suffix:semicolon
 id|err
 op_or_assign
-id|copy_to_user
+id|__copy_to_user
 c_func
 (paren
 op_amp
@@ -2183,7 +2208,7 @@ suffix:semicolon
 r_else
 id|err
 op_or_assign
-id|copy_to_user
+id|__copy_to_user
 c_func
 (paren
 id|sframep
@@ -2342,12 +2367,6 @@ r_return
 suffix:semicolon
 id|sigill_and_return
 suffix:colon
-multiline_comment|/* Ugh, we need to grab master lock in these rare cases ;-( */
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|do_exit
 c_func
 (paren
@@ -2356,11 +2375,6 @@ id|SIGILL
 suffix:semicolon
 id|sigsegv
 suffix:colon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|do_exit
 c_func
 (paren
@@ -2504,7 +2518,7 @@ suffix:semicolon
 macro_line|#endif
 id|err
 op_or_assign
-id|copy_to_user
+id|__copy_to_user
 c_func
 (paren
 op_amp
@@ -2561,7 +2575,7 @@ l_int|0
 )paren
 id|err
 op_or_assign
-id|copy_to_user
+id|__copy_to_user
 c_func
 (paren
 op_amp
@@ -2722,7 +2736,7 @@ suffix:semicolon
 multiline_comment|/* 2. Save the current process state */
 id|err
 op_assign
-id|copy_to_user
+id|__copy_to_user
 c_func
 (paren
 op_amp
@@ -2735,6 +2749,17 @@ r_sizeof
 r_struct
 id|pt_regs
 )paren
+)paren
+suffix:semicolon
+id|err
+op_or_assign
+id|__put_user
+c_func
+(paren
+l_int|0
+comma
+op_amp
+id|sf-&gt;extra_size
 )paren
 suffix:semicolon
 r_if
@@ -2823,7 +2848,7 @@ r_int
 suffix:semicolon
 id|err
 op_or_assign
-id|copy_to_user
+id|__copy_to_user
 c_func
 (paren
 id|sf
@@ -3002,11 +3027,6 @@ r_return
 suffix:semicolon
 id|sigill_and_return
 suffix:colon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|do_exit
 c_func
 (paren
@@ -3015,11 +3035,6 @@ id|SIGILL
 suffix:semicolon
 id|sigsegv
 suffix:colon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|do_exit
 c_func
 (paren
@@ -3069,8 +3084,6 @@ r_int
 id|psr
 suffix:semicolon
 r_int
-id|i
-comma
 id|err
 suffix:semicolon
 id|synchronize_user_stack
@@ -3145,7 +3158,7 @@ suffix:semicolon
 )brace
 id|err
 op_assign
-id|put_user
+id|__put_user
 c_func
 (paren
 id|regs-&gt;pc
@@ -3202,39 +3215,33 @@ op_amp
 id|sf-&gt;regs.psr
 )paren
 suffix:semicolon
-r_for
-c_loop
+id|err
+op_or_assign
+id|__copy_to_user
+c_func
 (paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|16
-suffix:semicolon
-id|i
-op_increment
+op_amp
+id|sf-&gt;regs.u_regs
+comma
+id|regs-&gt;u_regs
+comma
+r_sizeof
+(paren
+id|regs-&gt;u_regs
 )paren
-(brace
+)paren
+suffix:semicolon
 id|err
 op_or_assign
 id|__put_user
 c_func
 (paren
-id|regs-&gt;u_regs
-(braket
-id|i
-)braket
+l_int|0
 comma
 op_amp
-id|sf-&gt;regs.u_regs
-(braket
-id|i
-)braket
+id|sf-&gt;extra_size
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -3344,7 +3351,7 @@ id|sf-&gt;stack.ss_size
 suffix:semicolon
 id|err
 op_or_assign
-id|copy_to_user
+id|__copy_to_user
 c_func
 (paren
 id|sf
@@ -3522,11 +3529,6 @@ r_return
 suffix:semicolon
 id|sigill
 suffix:colon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|do_exit
 c_func
 (paren
@@ -3535,11 +3537,6 @@ id|SIGILL
 suffix:semicolon
 id|sigsegv
 suffix:colon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|do_exit
 c_func
 (paren
@@ -3667,7 +3664,7 @@ suffix:semicolon
 multiline_comment|/* Start with a clean frame pointer and fill it */
 id|err
 op_assign
-id|clear_user
+id|__clear_user
 c_func
 (paren
 id|sfp
@@ -3873,7 +3870,7 @@ suffix:semicolon
 multiline_comment|/* Copy g [1..7] and o [0..7] registers */
 id|err
 op_or_assign
-id|copy_to_user
+id|__copy_to_user
 c_func
 (paren
 op_amp
@@ -3901,7 +3898,7 @@ l_int|7
 suffix:semicolon
 id|err
 op_or_assign
-id|copy_to_user
+id|__copy_to_user
 c_func
 (paren
 op_amp
@@ -4035,7 +4032,7 @@ id|window
 suffix:semicolon
 id|err
 op_or_assign
-id|copy_to_user
+id|__copy_to_user
 c_func
 (paren
 op_amp
@@ -4273,11 +4270,6 @@ r_return
 suffix:semicolon
 id|sigill_and_return
 suffix:colon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|do_exit
 c_func
 (paren
@@ -4286,11 +4278,6 @@ id|SIGILL
 suffix:semicolon
 id|sigsegv
 suffix:colon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|do_exit
 c_func
 (paren
@@ -4355,6 +4342,15 @@ op_star
 id|uc
 )paren
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 multiline_comment|/* Setup convenience variables */
 id|mc
@@ -4514,7 +4510,7 @@ suffix:semicolon
 multiline_comment|/* Copy g [1..7] and o [0..7] registers */
 id|err
 op_or_assign
-id|copy_to_user
+id|__copy_to_user
 c_func
 (paren
 op_amp
@@ -4542,7 +4538,7 @@ l_int|7
 suffix:semicolon
 id|err
 op_or_assign
-id|copy_to_user
+id|__copy_to_user
 c_func
 (paren
 op_amp
@@ -4623,11 +4619,6 @@ l_int|0
 suffix:semicolon
 id|sigsegv_and_return
 suffix:colon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|do_exit
 c_func
 (paren
@@ -5023,7 +5014,7 @@ suffix:semicolon
 multiline_comment|/* Restore g[1..7] and o[0..7] registers */
 id|err
 op_or_assign
-id|copy_from_user
+id|__copy_from_user
 c_func
 (paren
 op_amp
@@ -5051,7 +5042,7 @@ l_int|7
 suffix:semicolon
 id|err
 op_or_assign
-id|copy_from_user
+id|__copy_from_user
 c_func
 (paren
 op_amp
@@ -5090,11 +5081,6 @@ l_int|0
 suffix:semicolon
 id|sigsegv_and_return
 suffix:colon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|do_exit
 c_func
 (paren
@@ -5796,6 +5782,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|current-&gt;binfmt
+op_logical_and
+id|current-&gt;binfmt-&gt;core_dump
+op_logical_and
 id|current-&gt;binfmt
 op_member_access_from_pointer
 id|core_dump

@@ -930,7 +930,6 @@ r_sizeof
 r_char
 )paren
 )paren
-suffix:semicolon
 )paren
 (brace
 id|kfree_s

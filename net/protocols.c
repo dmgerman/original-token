@@ -24,6 +24,19 @@ id|pro
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif&t;/* INET */
+macro_line|#ifdef CONFIG_ECONET
+r_extern
+r_void
+id|econet_proto_init
+c_func
+(paren
+r_struct
+id|net_proto
+op_star
+id|pro
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_NETLINK
 r_extern
 r_void
@@ -267,6 +280,15 @@ id|x25_proto_init
 )brace
 comma
 multiline_comment|/* CCITT X.25 Packet Layer */
+macro_line|#endif
+macro_line|#ifdef CONFIG_ECONET
+(brace
+l_string|&quot;Econet&quot;
+comma
+id|econet_proto_init
+)brace
+comma
+multiline_comment|/* Acorn Econet */
 macro_line|#endif
 (brace
 l_int|NULL

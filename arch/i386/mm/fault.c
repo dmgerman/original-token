@@ -542,7 +542,7 @@ id|write
 )paren
 )paren
 r_goto
-id|bad_area
+id|do_sigbus
 suffix:semicolon
 multiline_comment|/*&n;&t; * Did it hit the DOS screen memory VA from vm86 mode?&n;&t; */
 r_if
@@ -894,6 +894,51 @@ c_func
 (paren
 id|SIGKILL
 )paren
+suffix:semicolon
+multiline_comment|/*&n; * We ran out of memory, or some other thing happened to us that made&n; * us unable to handle the page fault gracefully.&n; */
+id|do_sigbus
+suffix:colon
+id|up
+c_func
+(paren
+op_amp
+id|mm-&gt;mmap_sem
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Send a sigbus, regardless of whether we were in kernel&n;&t; * or user mode.&n;&t; */
+id|tsk-&gt;tss.cr2
+op_assign
+id|address
+suffix:semicolon
+id|tsk-&gt;tss.error_code
+op_assign
+id|error_code
+suffix:semicolon
+id|tsk-&gt;tss.trap_no
+op_assign
+l_int|14
+suffix:semicolon
+id|force_sig
+c_func
+(paren
+id|SIGBUS
+comma
+id|tsk
+)paren
+suffix:semicolon
+multiline_comment|/* Kernel mode? Handle exceptions or die */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|error_code
+op_amp
+l_int|4
+)paren
+)paren
+r_goto
+id|no_context
 suffix:semicolon
 )brace
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/* hardirq.h: 64-bit Sparc hard IRQ support.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* hardirq.h: 64-bit Sparc hard IRQ support.&n; *&n; * Copyright (C) 1997, 1998 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __SPARC64_HARDIRQ_H
 DECL|macro|__SPARC64_HARDIRQ_H
 mdefine_line|#define __SPARC64_HARDIRQ_H
@@ -13,8 +13,9 @@ macro_line|#else
 DECL|macro|local_irq_count
 mdefine_line|#define local_irq_count&t;&t;(cpu_data[smp_processor_id()].irq_count)
 macro_line|#endif
+multiline_comment|/*&n; * Are we in an interrupt context? Either doing bottom half&n; * or hardware interrupt processing?&n; */
 DECL|macro|in_interrupt
-mdefine_line|#define in_interrupt()&t;&t;(local_irq_count != 0)
+mdefine_line|#define in_interrupt() ((local_irq_count + local_bh_count) != 0)
 macro_line|#ifndef __SMP__
 DECL|macro|hardirq_trylock
 mdefine_line|#define hardirq_trylock(cpu)&t;(local_irq_count == 0)
@@ -93,12 +94,14 @@ id|cpu
 )paren
 (brace
 op_increment
+(paren
 id|cpu_data
 (braket
 id|cpu
 )braket
 dot
 id|irq_count
+)paren
 suffix:semicolon
 id|atomic_inc
 c_func
@@ -139,12 +142,14 @@ id|global_irq_count
 )paren
 suffix:semicolon
 op_decrement
+(paren
 id|cpu_data
 (braket
 id|cpu
 )braket
 dot
 id|irq_count
+)paren
 suffix:semicolon
 )brace
 DECL|function|hardirq_trylock
@@ -158,112 +163,27 @@ r_int
 id|cpu
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|__save_and_cli
-c_func
+r_return
 (paren
-id|flags
-)paren
-suffix:semicolon
-id|atomic_inc
-c_func
-(paren
-op_amp
-id|global_irq_count
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
+op_logical_neg
 id|atomic_read
 c_func
 (paren
 op_amp
 id|global_irq_count
 )paren
-op_ne
-l_int|1
-op_logical_or
-(paren
-op_star
-(paren
-(paren
-(paren
-r_int
-r_char
-op_star
-)paren
+op_logical_and
+op_logical_neg
+id|spin_is_locked
 (paren
 op_amp
 id|global_irq_lock
 )paren
 )paren
-)paren
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-id|atomic_dec
-c_func
-(paren
-op_amp
-id|global_irq_count
-)paren
-suffix:semicolon
-id|__restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
-op_increment
-id|cpu_data
-(braket
-id|cpu
-)braket
-dot
-id|irq_count
-suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
-DECL|function|hardirq_endlock
-r_static
-r_inline
-r_void
-id|hardirq_endlock
-c_func
-(paren
-r_int
-id|cpu
-)paren
-(brace
-id|__cli
-c_func
-(paren
-)paren
-suffix:semicolon
-id|hardirq_exit
-c_func
-(paren
-id|cpu
-)paren
-suffix:semicolon
-id|__sti
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
+DECL|macro|hardirq_endlock
+mdefine_line|#define hardirq_endlock(cpu)&t;do { } while (0)
 r_extern
 r_void
 id|synchronize_irq

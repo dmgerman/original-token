@@ -28,8 +28,7 @@ DECL|macro|LP_ERR
 mdefine_line|#define LP_ERR   0x0020
 DECL|macro|LP_ABORT
 mdefine_line|#define LP_ABORT 0x0040
-macro_line|#ifdef LP_NEED_CAREFUL
-DECL|macro|LP_CAREFUL
+macro_line|#if 0
 mdefine_line|#define LP_CAREFUL 0x0080
 macro_line|#endif
 DECL|macro|LP_ABORTOPEN
@@ -212,6 +211,13 @@ id|irq_missed
 suffix:colon
 l_int|1
 suffix:semicolon
+DECL|member|polled
+r_int
+r_int
+id|polled
+suffix:colon
+l_int|1
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * The following constants describe the various signals of the printer port&n; * hardware.  Note that the hardware inverts some signals and that some&n; * signals are active low.  An example is LP_STROBE, which must be programmed&n; * with 1 for being active and 0 for being inactive, because the strobe signal&n; * gets inverted, but it is also active low.&n; */
@@ -244,7 +250,7 @@ multiline_comment|/*&n; * This is the port delay time, in microseconds.&n; * It 
 DECL|macro|LP_DELAY
 mdefine_line|#define LP_DELAY &t;50
 DECL|macro|LP_POLLED
-mdefine_line|#define LP_POLLED(minor) (lp_table[(minor)].dev-&gt;port-&gt;irq == PARPORT_IRQ_NONE)
+mdefine_line|#define LP_POLLED(minor) (lp_table[(minor)].polled)
 DECL|macro|LP_PREEMPTED
 mdefine_line|#define LP_PREEMPTED(minor) (lp_table[(minor)].dev-&gt;port-&gt;waithead != NULL)
 multiline_comment|/*&n; * function prototypes&n; */

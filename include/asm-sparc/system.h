@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: system.h,v 1.70 1998/09/29 09:46:32 davem Exp $ */
+multiline_comment|/* $Id: system.h,v 1.71 1998/10/13 03:51:06 jj Exp $ */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifndef __SPARC_SYSTEM_H
 DECL|macro|__SPARC_SYSTEM_H
@@ -613,8 +613,6 @@ r_int
 r_char
 id|global_irq_holder
 suffix:semicolon
-DECL|macro|save_flags
-mdefine_line|#define save_flags(x) &bslash;&n;do {&t;((x) = ((global_irq_holder == (unsigned char) smp_processor_id()) ? 1 : &bslash;&n;&t;&t;((getipl() &amp; PSR_PIL) ? 2 : 0))); } while(0)
 DECL|macro|save_and_cli
 mdefine_line|#define save_and_cli(flags)   do { save_flags(flags); cli(); } while(0)
 macro_line|#ifdef DEBUG_IRQLOCK
@@ -635,6 +633,15 @@ r_void
 )paren
 suffix:semicolon
 r_extern
+r_int
+r_int
+id|__global_save_flags
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
 r_void
 id|__global_restore_flags
 c_func
@@ -648,6 +655,8 @@ DECL|macro|cli
 mdefine_line|#define cli()&t;&t;&t;__global_cli()
 DECL|macro|sti
 mdefine_line|#define sti()&t;&t;&t;__global_sti()
+DECL|macro|save_flags
+mdefine_line|#define save_flags(flags)&t;((flags)=__global_save_flags())
 DECL|macro|restore_flags
 mdefine_line|#define restore_flags(flags)&t;__global_restore_flags(flags)
 macro_line|#else

@@ -1,4 +1,4 @@
-multiline_comment|/* -*- linux-c -*- ------------------------------------------------------- *&n; *   &n; * linux/fs/autofs/autofs_i.h&n; *&n; *   Copyright 1997 Transmeta Corporation - All Rights Reserved&n; *&n; * This file is part of the Linux kernel and is made available under&n; * the terms of the GNU General Public License, version 2, or at your&n; * option, any later version, incorporated herein by reference.&n; *&n; * ----------------------------------------------------------------------- */
+multiline_comment|/* -*- linux-c -*- ------------------------------------------------------- *&n; *   &n; * linux/fs/autofs/autofs_i.h&n; *&n; *   Copyright 1997-1998 Transmeta Corporation - All Rights Reserved&n; *&n; * This file is part of the Linux kernel and is made available under&n; * the terms of the GNU General Public License, version 2, or at your&n; * option, any later version, incorporated herein by reference.&n; *&n; * ----------------------------------------------------------------------- */
 multiline_comment|/* Internal header file for autofs */
 macro_line|#include &lt;linux/auto_fs.h&gt;
 multiline_comment|/* This is the range of ioctl() numbers we claim as ours */
@@ -35,19 +35,6 @@ DECL|member|hash
 r_int
 id|hash
 suffix:semicolon
-DECL|member|next
-r_struct
-id|autofs_dir_ent
-op_star
-id|next
-suffix:semicolon
-DECL|member|back
-r_struct
-id|autofs_dir_ent
-op_star
-op_star
-id|back
-suffix:semicolon
 DECL|member|name
 r_char
 op_star
@@ -60,6 +47,26 @@ suffix:semicolon
 DECL|member|ino
 id|ino_t
 id|ino
+suffix:semicolon
+DECL|member|dentry
+r_struct
+id|dentry
+op_star
+id|dentry
+suffix:semicolon
+multiline_comment|/* Linked list of entries */
+DECL|member|next
+r_struct
+id|autofs_dir_ent
+op_star
+id|next
+suffix:semicolon
+DECL|member|back
+r_struct
+id|autofs_dir_ent
+op_star
+op_star
+id|back
 suffix:semicolon
 multiline_comment|/* The following entries are for the expiry system */
 DECL|member|last_usage
@@ -325,6 +332,10 @@ id|autofs_dirhash
 op_star
 comma
 id|off_t
+op_star
+comma
+r_struct
+id|autofs_dir_ent
 op_star
 )paren
 suffix:semicolon

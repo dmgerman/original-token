@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: sun4d_irq.c,v 1.15 1998/09/29 09:46:12 davem Exp $&n; *  arch/sparc/kernel/sun4d_irq.c:&n; *&t;&t;&t;SS1000/SC2000 interrupt handling.&n; *&n; *  Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *  Heavily based on arch/sparc/kernel/irq.c.&n; */
+multiline_comment|/*  $Id: sun4d_irq.c,v 1.17 1998/10/18 03:31:03 davem Exp $&n; *  arch/sparc/kernel/sun4d_irq.c:&n; *&t;&t;&t;SS1000/SC2000 interrupt handling.&n; *&n; *  Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *  Heavily based on arch/sparc/kernel/irq.c.&n; */
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/linkage.h&gt;
@@ -2259,12 +2259,17 @@ r_int
 id|cpu
 suffix:semicolon
 multiline_comment|/* Map the User Timer registers. */
+macro_line|#ifdef __SMP__
 id|sun4d_timers
 op_assign
 id|sparc_alloc_io
 c_func
 (paren
-id|BW_LOCAL_BASE
+id|CSR_BASE
+c_func
+(paren
+id|boot_cpu_id
+)paren
 op_plus
 id|BW_TIMER_LIMIT
 comma
@@ -2279,6 +2284,32 @@ comma
 l_int|0x0
 )paren
 suffix:semicolon
+macro_line|#else
+id|sun4d_timers
+op_assign
+id|sparc_alloc_io
+c_func
+(paren
+id|CSR_BASE
+c_func
+(paren
+l_int|0
+)paren
+op_plus
+id|BW_TIMER_LIMIT
+comma
+l_int|0
+comma
+id|PAGE_SIZE
+comma
+l_string|&quot;user timer&quot;
+comma
+l_int|0xf
+comma
+l_int|0x0
+)paren
+suffix:semicolon
+macro_line|#endif
 id|sun4d_timers-&gt;l10_timer_limit
 op_assign
 (paren

@@ -46,20 +46,6 @@ r_int
 id|seq
 suffix:semicolon
 multiline_comment|/* Connection seqno&t;*/
-DECL|member|file
-r_struct
-id|file
-op_star
-id|file
-suffix:semicolon
-multiline_comment|/* file for socket&t;*/
-DECL|member|sock
-r_struct
-id|socket
-op_star
-id|sock
-suffix:semicolon
-multiline_comment|/* Passed socket&t;*/
 )brace
 suffix:semicolon
 r_extern
@@ -198,10 +184,6 @@ suffix:semicolon
 id|scm-&gt;creds.pid
 op_assign
 id|current-&gt;pid
-suffix:semicolon
-id|scm-&gt;sock
-op_assign
-id|sock
 suffix:semicolon
 r_if
 c_cond

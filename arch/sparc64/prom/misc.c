@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: misc.c,v 1.10 1998/07/21 10:36:29 jj Exp $&n; * misc.c:  Miscellaneous prom functions that don&squot;t belong&n; *          anywhere else.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: misc.c,v 1.13 1998/10/13 14:03:49 davem Exp $&n; * misc.c:  Miscellaneous prom functions that don&squot;t belong&n; *          anywhere else.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -110,7 +110,6 @@ id|serial_console
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Drop into the prom, with the chance to continue with the &squot;go&squot;&n; * prom command.&n; */
-multiline_comment|/* XXX Fix the pre and post calls as it locks up my Ultra at the moment -DaveM */
 r_void
 DECL|function|prom_cmdline
 id|prom_cmdline
@@ -119,21 +118,10 @@ c_func
 r_void
 )paren
 (brace
-r_extern
-r_void
-id|kernel_enter_debugger
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-multiline_comment|/* extern void install_obp_ticker(void); */
-multiline_comment|/* extern void install_linux_ticker(void); */
 r_int
 r_int
 id|flags
 suffix:semicolon
-multiline_comment|/* kernel_enter_debugger(); */
 macro_line|#ifdef CONFIG_SUN_CONSOLE
 r_if
 c_cond
@@ -151,16 +139,10 @@ l_int|1
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/* install_obp_ticker(); */
-id|save_flags
+id|__save_and_cli
 c_func
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|p1275_cmd
@@ -176,13 +158,12 @@ l_int|0
 )paren
 )paren
 suffix:semicolon
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/* install_linux_ticker(); */
 macro_line|#ifdef CONFIG_SUN_CONSOLE
 r_if
 c_cond
@@ -232,11 +213,11 @@ multiline_comment|/* PROM is out to get me -DaveM */
 )brace
 multiline_comment|/* Set prom sync handler to call function &squot;funcp&squot;. */
 r_void
-DECL|function|prom_setsync
-id|prom_setsync
+DECL|function|prom_setcallback
+id|prom_setcallback
 c_func
 (paren
-id|sync_func_t
+id|callback_func_t
 id|funcp
 )paren
 (brace

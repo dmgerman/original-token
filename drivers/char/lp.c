@@ -1,7 +1,7 @@
-multiline_comment|/*&n; * Generic parallel printer driver&n; *&n; * Copyright (C) 1992 by Jim Weigand and Linus Torvalds&n; * Copyright (C) 1992,1993 by Michael K. Johnson&n; * - Thanks much to Gunter Windau for pointing out to me where the error&n; *   checking ought to be.&n; * Copyright (C) 1993 by Nigel Gamble (added interrupt code)&n; * Copyright (C) 1994 by Alan Cox (Modularised it)&n; * LPCAREFUL, LPABORT, LPGETSTATUS added by Chris Metcalf, metcalf@lcs.mit.edu&n; * Statistics and support for slow printers by Rob Janssen, rob@knoware.nl&n; * &quot;lp=&quot; command line parameters added by Grant Guenther, grant@torque.net&n; * lp_read (Status readback) support added by Carsten Gross,&n; *                                             carsten@sol.wohnheim.uni-ulm.de&n; * Support for parport by Philip Blundell &lt;Philip.Blundell@pobox.com&gt;&n; * Parport sharing hacking by Andrea Arcangeli&n; * Fixed kernel_(to/from)_user memory copy to check for errors&n; * &t;&t;&t;&t;by Riccardo Facchetti &lt;fizban@tin.it&gt;&n; * Interrupt handling workaround for printers with buggy handshake&n; *&t;&t;&t;&t;by Andrea Arcangeli, 11 May 98&n; */
+multiline_comment|/*&n; * Generic parallel printer driver&n; *&n; * Copyright (C) 1992 by Jim Weigand and Linus Torvalds&n; * Copyright (C) 1992,1993 by Michael K. Johnson&n; * - Thanks much to Gunter Windau for pointing out to me where the error&n; *   checking ought to be.&n; * Copyright (C) 1993 by Nigel Gamble (added interrupt code)&n; * Copyright (C) 1994 by Alan Cox (Modularised it)&n; * LPCAREFUL, LPABORT, LPGETSTATUS added by Chris Metcalf, metcalf@lcs.mit.edu&n; * Statistics and support for slow printers by Rob Janssen, rob@knoware.nl&n; * &quot;lp=&quot; command line parameters added by Grant Guenther, grant@torque.net&n; * lp_read (Status readback) support added by Carsten Gross,&n; *                                             carsten@sol.wohnheim.uni-ulm.de&n; * Support for parport by Philip Blundell &lt;Philip.Blundell@pobox.com&gt;&n; * Parport sharing hacking by Andrea Arcangeli&n; * Fixed kernel_(to/from)_user memory copy to check for errors&n; * &t;&t;&t;&t;by Riccardo Facchetti &lt;fizban@tin.it&gt;&n; * Redesigned interrupt handling for handle printers with buggy handshake&n; *&t;&t;&t;&t;by Andrea Arcangeli, 11 May 1998&n; * Full efficient handling of printer with buggy irq handshake (now I have&n; * understood the meaning of the strange handshake). This is done sending new&n; * characters if the interrupt is just happened, even if the printer say to&n; * be still BUSY. This is needed at least with Epson Stylus Color.&n; * I also fixed the irq on the rising edge of the strobe problem.&n; *&t;&t;&t;&t;Andrea Arcangeli, 15 Oct 1998&n; */
 multiline_comment|/* This driver should, in theory, work with any parallel port that has an&n; * appropriate low-level driver; all I/O is done through the parport&n; * abstraction layer.&n; *&n; * If this driver is built into the kernel, you can configure it using the&n; * kernel command-line.  For example:&n; *&n; *&t;lp=parport1,none,parport2&t;(bind lp0 to parport1, disable lp1 and&n; *&t;&t;&t;&t;&t; bind lp2 to parport2)&n; *&n; *&t;lp=auto&t;&t;&t;&t;(assign lp devices to all ports that&n; *&t;&t;&t;&t;         have printers attached, as determined&n; *&t;&t;&t;&t;&t; by the IEEE-1284 autoprobe)&n; * &n; *&t;lp=reset&t;&t;&t;(reset the printer during &n; *&t;&t;&t;&t;&t; initialisation)&n; *&n; *&t;lp=off&t;&t;&t;&t;(disable the printer driver entirely)&n; *&n; * If the driver is loaded as a module, similar functionality is available&n; * using module parameters.  The equivalent of the above commands would be:&n; *&n; *&t;# insmod lp.o parport=1,none,2&n; *&n; *&t;# insmod lp.o parport=auto&n; *&n; *&t;# insmod lp.o reset=1&n; */
 multiline_comment|/* COMPATIBILITY WITH OLD KERNELS&n; *&n; * Under Linux 2.0 and previous versions, lp devices were bound to ports at&n; * particular I/O addresses, as follows:&n; *&n; *&t;lp0&t;&t;0x3bc&n; *&t;lp1&t;&t;0x378&n; *&t;lp2&t;&t;0x278&n; *&n; * The new driver, by default, binds lp devices to parport devices as it&n; * finds them.  This means that if you only have one port, it will be bound&n; * to lp0 regardless of its I/O address.  If you need the old behaviour, you&n; * can force it using the parameters described above.&n; */
-multiline_comment|/*&n; * The new interrupt handling code take care of the buggy handshake&n; * of some HP and Epson printer:&n; * ___&n; * ACK    _______________    ___________&n; *                       |__|&n; * ____&n; * BUSY   _________              _______&n; *                 |____________|&n; *&n; * I discovered this using the printer scanner that you can find at:&n; *&n; *&t;ftp://e-mind.com/pub/linux/pscan/&n; *&n; *&t;&t;&t;&t;&t;11 May 98, Andrea Arcangeli&n; */
+multiline_comment|/*&n; * The new interrupt handling code take care of the buggy handshake&n; * of some HP and Epson printer:&n; * ___&n; * ACK    _______________    ___________&n; *                       |__|&n; * ____&n; * BUSY   _________              _______&n; *                 |____________|&n; *&n; * I discovered this using the printer scanner that you can find at:&n; *&n; *&t;ftp://e-mind.com/pub/linux/pscan/&n; *&n; * My printer scanner run on an Epson Stylus Color show that such printer&n; * generates the irq on the _rising_ edge of the STROBE. Now lp handle&n; * this case fine too.&n; *&n; * I also understood that on such printer we are just allowed to send&n; * new characters after the interrupt even if the BUSY line is still active.&n; *&n; *&t;&t;&t;&t;&t;15 Oct 1998, Andrea Arcangeli&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -15,8 +15,6 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/parport.h&gt;
 DECL|macro|LP_STATS
 macro_line|#undef LP_STATS
-DECL|macro|LP_NEED_CAREFUL
-macro_line|#undef LP_NEED_CAREFUL
 macro_line|#include &lt;linux/lp.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -76,16 +74,14 @@ l_int|0
 )brace
 )brace
 suffix:semicolon
-multiline_comment|/* Test if printer is ready (and optionally has no error conditions) */
-macro_line|#ifdef LP_NEED_CAREFUL
+multiline_comment|/*&n; * Test if printer is ready.&n; */
 DECL|macro|LP_READY
-mdefine_line|#define LP_READY(minor, status) &bslash;&n;  ((LP_F(minor) &amp; LP_CAREFUL) ? _LP_CAREFUL_READY(status) : ((status) &amp; LP_PBUSY))
-DECL|macro|_LP_CAREFUL_READY
-mdefine_line|#define _LP_CAREFUL_READY(status) &bslash;&n;   ((status) &amp; (LP_PBUSY|LP_POUTPA|LP_PSELECD|LP_PERRORP)) == &bslash;&n;      (LP_PBUSY|LP_PSELECD|LP_PERRORP)
-macro_line|#else
-DECL|macro|LP_READY
-mdefine_line|#define LP_READY(minor, status) ((status) &amp; LP_PBUSY)
-macro_line|#endif
+mdefine_line|#define LP_READY(status) &bslash;&n;   ((status) &amp; (LP_PBUSY|LP_POUTPA|LP_PSELECD|LP_PERRORP)) == &bslash;&n;      (LP_PBUSY|LP_PSELECD|LP_PERRORP)
+multiline_comment|/*&n; * Test if the printer has error conditions.&n; */
+DECL|macro|LP_NO_ERROR
+mdefine_line|#define LP_NO_ERROR(status) &bslash;&n;   ((status) &amp; (LP_POUTPA|LP_PSELECD|LP_PERRORP)) == &bslash;&n;      (LP_PSELECD|LP_PERRORP)
+DECL|macro|LP_NO_ACKING
+mdefine_line|#define LP_NO_ACKING(status) ((status) &amp; LP_PACK)
 DECL|macro|LP_DEBUG
 macro_line|#undef LP_DEBUG
 DECL|macro|LP_READ_DEBUG
@@ -336,6 +332,47 @@ r_return
 id|retval
 suffix:semicolon
 )brace
+DECL|function|lp_wait
+r_static
+r_inline
+r_void
+id|lp_wait
+c_func
+(paren
+r_int
+id|minor
+)paren
+(brace
+r_int
+r_int
+id|wait
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#ifndef __sparc__
+multiline_comment|/* FIXME: should be function(time) */
+r_while
+c_loop
+(paren
+id|wait
+op_increment
+op_ne
+id|LP_WAIT
+c_func
+(paren
+id|minor
+)paren
+)paren
+suffix:semicolon
+macro_line|#else
+id|udelay
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
 DECL|function|lp_char
 r_static
 r_inline
@@ -352,12 +389,6 @@ id|minor
 (brace
 r_int
 r_int
-id|wait
-op_assign
-l_int|0
-suffix:semicolon
-r_int
-r_int
 id|count
 op_assign
 l_int|0
@@ -369,6 +400,18 @@ op_star
 id|stats
 suffix:semicolon
 macro_line|#endif
+r_if
+c_cond
+(paren
+id|signal_pending
+c_func
+(paren
+id|current
+)paren
+)paren
+r_return
+l_int|0
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -376,29 +419,60 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
+r_int
+r_char
+id|status
+suffix:semicolon
 id|lp_yield
 c_func
 (paren
 id|minor
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|LP_READY
-c_func
-(paren
-id|minor
-comma
+id|status
+op_assign
 id|r_str
 c_func
 (paren
 id|minor
 )paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * On Epson Stylus Color we must continue even if LP_READY()&n;&t;&t; * is false to be efficient. This way is backwards&n;&t;&t; * compatible with old not-buggy printers. -arca&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|LP_NO_ERROR
+c_func
+(paren
+id|status
+)paren
+op_logical_and
+(paren
+(paren
+id|lp_table
+(braket
+id|minor
+)braket
+dot
+id|irq_detected
+op_logical_and
+id|LP_NO_ACKING
+c_func
+(paren
+id|status
+)paren
+)paren
+op_logical_or
+id|LP_READY
+c_func
+(paren
+id|status
+)paren
 )paren
 )paren
 r_break
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * To have a chance to sleep on the interrupt we should break&n;&t;&t; * the polling loop ASAP. Unfortunately there seems to be&n;&t;&t; * some hardware that underperform so we leave this&n;&t;&t; * configurable at runtime. So when printing with irqs&n;&t;&t; * `tunelp /dev/lp0 -c 1&squot; is a must to take the full&n;&t;&t; * advantage of the irq. -arca&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -409,12 +483,6 @@ id|LP_CHAR
 c_func
 (paren
 id|minor
-)paren
-op_logical_or
-id|signal_pending
-c_func
-(paren
-id|current
 )paren
 )paren
 r_return
@@ -443,85 +511,7 @@ id|stats-&gt;chars
 op_increment
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* must wait before taking strobe high, and after taking strobe&n;&t;   low, according spec.  Some printers need it, others don&squot;t. */
-macro_line|#ifndef __sparc__
-r_while
-c_loop
-(paren
-id|wait
-op_ne
-id|LP_WAIT
-c_func
-(paren
-id|minor
-)paren
-)paren
-multiline_comment|/* FIXME: should be a udelay() */
-id|wait
-op_increment
-suffix:semicolon
-macro_line|#else
-id|udelay
-c_func
-(paren
-l_int|1
-)paren
-suffix:semicolon
-macro_line|#endif
-multiline_comment|/* control port takes strobe high */
-id|w_ctr
-c_func
-(paren
-id|minor
-comma
-id|LP_PSELECP
-op_or
-id|LP_PINITP
-op_or
-id|LP_PSTROBE
-)paren
-suffix:semicolon
-macro_line|#ifndef __sparc__
-r_while
-c_loop
-(paren
-id|wait
-)paren
-multiline_comment|/* FIXME: should be a udelay() */
-id|wait
-op_decrement
-suffix:semicolon
-macro_line|#else
-id|udelay
-c_func
-(paren
-l_int|1
-)paren
-suffix:semicolon
-macro_line|#endif
-multiline_comment|/* take strobe low */
-r_if
-c_cond
-(paren
-id|LP_POLLED
-c_func
-(paren
-id|minor
-)paren
-)paren
-multiline_comment|/* take strobe low */
-id|w_ctr
-c_func
-(paren
-id|minor
-comma
-id|LP_PSELECP
-op_or
-id|LP_PINITP
-)paren
-suffix:semicolon
-r_else
-(brace
+multiline_comment|/*&n;&t; * Epson Stylus Color generate the IRQ on the rising edge of&n;&t; * strobe so clean the irq&squot;s information before playing with&n;&t; * the strobe. -arca&n;&t; */
 id|lp_table
 (braket
 id|minor
@@ -539,6 +529,81 @@ dot
 id|irq_missed
 op_assign
 l_int|0
+suffix:semicolon
+multiline_comment|/*&n;&t; * Be sure that the CPU doesn&squot; t reorder instruction. I am not sure&n;&t; * if it&squot; s needed also before an outb(). If not tell me ;-). -arca&n;&t; */
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* must wait before taking strobe high, and after taking strobe&n;&t;   low, according spec.  Some printers need it, others don&squot;t. */
+id|lp_wait
+c_func
+(paren
+id|minor
+)paren
+suffix:semicolon
+multiline_comment|/* control port takes strobe high */
+r_if
+c_cond
+(paren
+id|LP_POLLED
+c_func
+(paren
+id|minor
+)paren
+)paren
+(brace
+id|w_ctr
+c_func
+(paren
+id|minor
+comma
+id|LP_PSELECP
+op_or
+id|LP_PINITP
+op_or
+id|LP_PSTROBE
+)paren
+suffix:semicolon
+id|lp_wait
+c_func
+(paren
+id|minor
+)paren
+suffix:semicolon
+id|w_ctr
+c_func
+(paren
+id|minor
+comma
+id|LP_PSELECP
+op_or
+id|LP_PINITP
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|w_ctr
+c_func
+(paren
+id|minor
+comma
+id|LP_PSELECP
+op_or
+id|LP_PINITP
+op_or
+id|LP_PSTROBE
+op_or
+id|LP_PINTEN
+)paren
+suffix:semicolon
+id|lp_wait
+c_func
+(paren
+id|minor
+)paren
 suffix:semicolon
 id|w_ctr
 c_func
@@ -1031,6 +1096,30 @@ id|irq_missed
 op_assign
 l_int|1
 suffix:semicolon
+id|LP_POLLED
+c_func
+(paren
+id|minor
+)paren
+op_assign
+id|lp_table
+(braket
+id|minor
+)braket
+dot
+id|dev-&gt;port-&gt;irq
+op_eq
+id|PARPORT_IRQ_NONE
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|LP_POLLED
+c_func
+(paren
+id|minor
+)paren
+)paren
 id|w_ctr
 c_func
 (paren
@@ -1039,6 +1128,19 @@ comma
 id|LP_PSELECP
 op_or
 id|LP_PINITP
+)paren
+suffix:semicolon
+r_else
+id|w_ctr
+c_func
+(paren
+id|minor
+comma
+id|LP_PSELECP
+op_or
+id|LP_PINITP
+op_or
+id|LP_PINTEN
 )paren
 suffix:semicolon
 r_do
@@ -2657,36 +2759,6 @@ id|LP_ABORTOPEN
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#ifdef LP_NEED_CAREFUL
-r_case
-id|LPCAREFUL
-suffix:colon
-r_if
-c_cond
-(paren
-id|arg
-)paren
-id|LP_F
-c_func
-(paren
-id|minor
-)paren
-op_or_assign
-id|LP_CAREFUL
-suffix:semicolon
-r_else
-id|LP_F
-c_func
-(paren
-id|minor
-)paren
-op_and_assign
-op_complement
-id|LP_CAREFUL
-suffix:semicolon
-r_break
-suffix:semicolon
-macro_line|#endif
 r_case
 id|LPWAIT
 suffix:colon

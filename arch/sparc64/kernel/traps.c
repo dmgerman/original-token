@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: traps.c,v 1.54 1998/09/25 01:09:02 davem Exp $&n; * arch/sparc64/kernel/traps.c&n; *&n; * Copyright (C) 1995,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: traps.c,v 1.55 1998/10/11 06:58:22 davem Exp $&n; * arch/sparc64/kernel/traps.c&n; *&n; * Copyright (C) 1995,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 multiline_comment|/*&n; * I like traps on v9, :))))&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;  /* for jiffies */
@@ -3750,7 +3750,7 @@ dot
 id|prom_node
 suffix:semicolon
 macro_line|#else
-macro_line|#error SMP not supported on sparc64 yet
+macro_line|#error cache_flush_trap not supported on sparc64/SMP yet
 macro_line|#endif
 macro_line|#if 0
 multiline_comment|/* Broken */

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sysctl_net_ipv4.c: sysctl interface to net IPV4 subsystem.&n; *&n; * $Id: sysctl_net_ipv4.c,v 1.35 1998/10/03 09:37:54 davem Exp $&n; *&n; * Begun April 1, 1996, Mike Shaver.&n; * Added /proc/sys/net/ipv4 directory entry (empty =) ). [MS]&n; */
+multiline_comment|/*&n; * sysctl_net_ipv4.c: sysctl interface to net IPV4 subsystem.&n; *&n; * $Id: sysctl_net_ipv4.c,v 1.36 1998/10/21 05:26:59 davem Exp $&n; *&n; * Begun April 1, 1996, Mike Shaver.&n; * Added /proc/sys/net/ipv4 directory entry (empty =) ). [MS]&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sysctl.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -58,10 +58,6 @@ multiline_comment|/* From ip_masq.c */
 r_extern
 r_int
 id|sysctl_ip_masq_debug
-suffix:semicolon
-r_extern
-r_int
-id|sysctl_tcp_hoe_retransmits
 suffix:semicolon
 r_extern
 r_int
@@ -238,27 +234,6 @@ id|ipv4_table
 )braket
 op_assign
 (brace
-(brace
-id|NET_IPV4_TCP_HOE_RETRANSMITS
-comma
-l_string|&quot;tcp_hoe_retransmits&quot;
-comma
-op_amp
-id|sysctl_tcp_hoe_retransmits
-comma
-r_sizeof
-(paren
-r_int
-)paren
-comma
-l_int|0644
-comma
-l_int|NULL
-comma
-op_amp
-id|proc_dointvec
-)brace
-comma
 (brace
 id|NET_IPV4_TCP_TIMESTAMPS
 comma

@@ -246,7 +246,7 @@ id|mem_end
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * sio_route_tab selects irq routing in PCI/ISA bridge so that:&n; *&t;&t;PIRQ0 -&gt; irq 15&n; *&t;&t;PIRQ1 -&gt; irq  9&n; *&t;&t;PIRQ2 -&gt; irq 10&n; *&t;&t;PIRQ3 -&gt; irq 11&n; *&n; * This probably ought to be configurable via MILO.  For&n; * example, sound boards seem to like using IRQ 9.&n; */
+multiline_comment|/*&n; * sio_route_tab selects irq routing in PCI/ISA bridge so that:&n; *&t;&t;PIRQ0 -&gt; irq 15&n; *&t;&t;PIRQ1 -&gt; irq  9&n; *&t;&t;PIRQ2 -&gt; irq 10&n; *&t;&t;PIRQ3 -&gt; irq 11&n; *&n; * This probably ought to be configurable via MILO.  For&n; * example, sound boards seem to like using IRQ 9.&n; *&n; * This is NOT how we should do it. PIRQ0-X should have&n; * their own IRQ&squot;s, the way intel uses the IO-APIC irq&squot;s.&n; */
 DECL|variable|__initdata
 r_static
 r_int
@@ -786,7 +786,7 @@ c_func
 (paren
 id|noname_map_irq
 comma
-l_int|0x0b0a090f
+l_int|0x0b0a0e0f
 )paren
 suffix:semicolon
 id|sio_fixup_irq_levels

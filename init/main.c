@@ -1034,6 +1034,20 @@ id|ints
 suffix:semicolon
 r_extern
 r_void
+id|dc390_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|scsi_luns_setup
 c_func
 (paren
@@ -3245,6 +3259,14 @@ macro_line|#ifdef CONFIG_SCSI_IBMMCA
 l_string|&quot;ibmmcascsi=&quot;
 comma
 id|ibmmca_scsi_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#if defined(CONFIG_SCSI_DC390T) &amp;&amp; ! defined(CONFIG_SCSI_DC390T_NOGENSUPP)
+(brace
+l_string|&quot;tmscsim=&quot;
+comma
+id|dc390_setup
 )brace
 comma
 macro_line|#endif

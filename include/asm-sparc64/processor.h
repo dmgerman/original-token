@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: processor.h,v 1.49 1998/07/31 10:42:40 jj Exp $&n; * include/asm-sparc64/processor.h&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: processor.h,v 1.51 1998/10/21 03:21:19 davem Exp $&n; * include/asm-sparc64/processor.h&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __ASM_SPARC64_PROCESSOR_H
 DECL|macro|__ASM_SPARC64_PROCESSOR_H
 mdefine_line|#define __ASM_SPARC64_PROCESSOR_H
@@ -172,6 +172,27 @@ r_int
 r_int
 id|sig_desc
 suffix:semicolon
+multiline_comment|/* Performance counter state */
+DECL|member|user_cntd0
+DECL|member|user_cntd1
+id|u64
+op_star
+id|user_cntd0
+comma
+op_star
+id|user_cntd1
+suffix:semicolon
+DECL|member|kernel_cntd0
+DECL|member|kernel_cntd1
+id|u64
+id|kernel_cntd0
+comma
+id|kernel_cntd1
+suffix:semicolon
+DECL|member|pcr_reg
+id|u64
+id|pcr_reg
+suffix:semicolon
 DECL|member|fpdepth
 r_int
 r_char
@@ -214,10 +235,12 @@ DECL|macro|SPARC_FLAG_32BIT
 mdefine_line|#define SPARC_FLAG_32BIT        0x080    /* task is older 32-bit binary */
 DECL|macro|SPARC_FLAG_NEWCHILD
 mdefine_line|#define SPARC_FLAG_NEWCHILD     0x100    /* task is just-spawned child process */
+DECL|macro|SPARC_FLAG_PERFCTR
+mdefine_line|#define SPARC_FLAG_PERFCTR&t;0x200    /* task has performance counters active */
 DECL|macro|INIT_MMAP
 mdefine_line|#define INIT_MMAP { &amp;init_mm, 0xfffff80000000000, 0xfffff80001000000, &bslash;&n;&t;&t;    PAGE_SHARED , VM_READ | VM_WRITE | VM_EXEC, NULL, &amp;init_mm.mmap }
 DECL|macro|INIT_TSS
-mdefine_line|#define INIT_TSS  {&t;&t;&t;&t;&t;&t;&bslash;&n;/* ksp, wstate, cwp, flags,              ctx, */ &t;&t;&bslash;&n;   0,   0,      0,   SPARC_FLAG_KTHREAD, 0,&t;&t;&t;&bslash;&n;/* w_saved, new_signal, padding, current_ds, */&t;&t;&t;&bslash;&n;   0,       0,          0,       KERNEL_DS,&t;&t;&t;&bslash;&n;/* kregs,   utraps, */&t;&t;&t;&t;&t;&t;&bslash;&n;   0,       0,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;/* reg_window */&t;&t;&t;&t;&t;&t;&bslash;&n;   { { { 0, }, { 0, } }, }, &t;&t;&t;&t;&t;&bslash;&n;/* rwbuf_stkptrs */&t;&t;&t;&t;&t;&t;&bslash;&n;   { 0, 0, 0, 0, 0, 0, 0, },&t;&t;&t;&t;&t;&bslash;&n;/* sig_address, sig_desc */&t;&t;&t;&t;&t;&bslash;&n;   0,           0,&t;&t;&t;&t;&t;&t;&bslash;&n;/* fpdepth, fpsaved, gsr,   xfsr */&t;&t;&t;&t;&bslash;&n;   0,       { 0 },   { 0 }, { 0 },&t;&t;&t;&t;&bslash;&n;}
+mdefine_line|#define INIT_TSS  {&t;&t;&t;&t;&t;&t;&bslash;&n;/* ksp, wstate, cwp, flags,              ctx, */ &t;&t;&bslash;&n;   0,   0,      0,   SPARC_FLAG_KTHREAD, 0,&t;&t;&t;&bslash;&n;/* w_saved, new_signal, padding, current_ds, */&t;&t;&t;&bslash;&n;   0,       0,          0,       KERNEL_DS,&t;&t;&t;&bslash;&n;/* kregs,   utraps, */&t;&t;&t;&t;&t;&t;&bslash;&n;   0,       0,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;/* reg_window */&t;&t;&t;&t;&t;&t;&bslash;&n;   { { { 0, }, { 0, } }, }, &t;&t;&t;&t;&t;&bslash;&n;/* rwbuf_stkptrs */&t;&t;&t;&t;&t;&t;&bslash;&n;   { 0, 0, 0, 0, 0, 0, 0, },&t;&t;&t;&t;&t;&bslash;&n;/* sig_address, sig_desc */&t;&t;&t;&t;&t;&bslash;&n;   0,           0,&t;&t;&t;&t;&t;&t;&bslash;&n;/* user_cntd0, user_cndd1, kernel_cntd0, kernel_cntd0, pcr_reg */ &bslash;&n;   0,          0,          0,&t;&t; 0,            0,&t;&bslash;&n;/* fpdepth, fpsaved, gsr,   xfsr */&t;&t;&t;&t;&bslash;&n;   0,       { 0 },   { 0 }, { 0 },&t;&t;&t;&t;&bslash;&n;}
 macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/* Return saved PC of a blocked thread. */
 DECL|function|thread_saved_pc

@@ -708,8 +708,6 @@ id|wait_table.entry
 )paren
 suffix:semicolon
 )brace
-id|out_nowait
-suffix:colon
 id|unlock_kernel
 c_func
 (paren
