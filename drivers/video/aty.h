@@ -78,6 +78,8 @@ DECL|macro|CUR_HORZ_VERT_POSN
 mdefine_line|#define CUR_HORZ_VERT_POSN&t;0x006C&t;/* Dword offset 0_1B */
 DECL|macro|CUR_HORZ_VERT_OFF
 mdefine_line|#define CUR_HORZ_VERT_OFF&t;0x0070&t;/* Dword offset 0_1C */
+DECL|macro|CONFIG_PANEL_LG
+mdefine_line|#define CONFIG_PANEL_LG&t;&t;0x0074&t;/* Dword offset 0_1D */
 DECL|macro|GP_IO
 mdefine_line|#define GP_IO&t;&t;&t;0x0078&t;/* Dword offset 0_1E */
 DECL|macro|HW_DEBUG
@@ -96,6 +98,10 @@ DECL|macro|CONFIG_STAT2
 mdefine_line|#define CONFIG_STAT2&t;&t;0x0098&t;/* Dword offset 0_26 */
 DECL|macro|BUS_CNTL
 mdefine_line|#define BUS_CNTL&t;&t;0x00A0&t;/* Dword offset 0_28 */
+DECL|macro|LCD_INDEX
+mdefine_line|#define LCD_INDEX&t;&t;0x00A4&t;/* Dword offset 0_29 */
+DECL|macro|LCD_DATA
+mdefine_line|#define LCD_DATA&t;&t;0x00A8&t;/* Dword offset 0_2A */
 DECL|macro|EXT_MEM_CNTL
 mdefine_line|#define EXT_MEM_CNTL&t;&t;0x00AC&t;/* Dword offset 0_2B */
 DECL|macro|MEM_CNTL
@@ -124,8 +130,10 @@ DECL|macro|GEN_TEST_CNTL
 mdefine_line|#define GEN_TEST_CNTL&t;&t;0x00D0&t;/* Dword offset 0_34 */
 DECL|macro|CUSTOM_MACRO_CNTL
 mdefine_line|#define CUSTOM_MACRO_CNTL&t;0x00D4&t;/* Dword offset 0_35 */
-DECL|macro|POWER_MANAGEMENT
-mdefine_line|#define POWER_MANAGEMENT&t;0x00D8&t;/* Dword offset 0_36 (LG) */
+DECL|macro|LCD_GEN_CNTL_LG
+mdefine_line|#define LCD_GEN_CNTL_LG&t;&t;0x00D4&t;/* Dword offset 0_35 */
+DECL|macro|POWER_MANAGEMENT_LG
+mdefine_line|#define POWER_MANAGEMENT_LG&t;0x00D8&t;/* Dword offset 0_36 (LG) */
 DECL|macro|CONFIG_CNTL
 mdefine_line|#define CONFIG_CNTL&t;&t;0x00DC&t;/* Dword offset 0_37 (CT, ET, VT) */
 DECL|macro|CONFIG_CHIP_ID
@@ -1151,7 +1159,7 @@ mdefine_line|#define LB_CHIP_ID&t;0x4c42&t;/* RAGE LT PRO, AGP */
 DECL|macro|LD_CHIP_ID
 mdefine_line|#define LD_CHIP_ID&t;0x4c44&t;/* RAGE LT PRO */
 DECL|macro|LG_CHIP_ID
-mdefine_line|#define LG_CHIP_ID&t;0x4c47&t;/* RAGE LT PRO */
+mdefine_line|#define LG_CHIP_ID&t;0x4c47&t;/* RAGE LT */
 DECL|macro|LI_CHIP_ID
 mdefine_line|#define LI_CHIP_ID&t;0x4c49&t;/* RAGE LT PRO */
 DECL|macro|LP_CHIP_ID
@@ -1178,6 +1186,8 @@ DECL|macro|GP_CHIP_ID
 mdefine_line|#define GP_CHIP_ID&t;0x4750&t;/* RAGE PRO, PQFP, PCI33, full 3D */
 DECL|macro|GQ_CHIP_ID
 mdefine_line|#define GQ_CHIP_ID&t;0x4751&t;/* RAGE PRO, PQFP, PCI33, limited 3D */
+DECL|macro|LN_CHIP_ID
+mdefine_line|#define LN_CHIP_ID&t;0x4c4d&t;/* RAGE Mobility AGP */
 multiline_comment|/* Mach64 major ASIC revisions */
 DECL|macro|MACH64_ASIC_NEC_VT_A3
 mdefine_line|#define MACH64_ASIC_NEC_VT_A3&t;&t;0x08
@@ -1532,13 +1542,17 @@ DECL|macro|MACH64_NUM_CLOCKS
 mdefine_line|#define MACH64_NUM_CLOCKS&t;16
 DECL|macro|MACH64_NUM_FREQS
 mdefine_line|#define MACH64_NUM_FREQS&t;50
-multiline_comment|/* Power Management register constants (LTG and LT Pro) */
+multiline_comment|/* Power Management register constants (LT &amp; LT Pro) */
 DECL|macro|PWR_MGT_ON
 mdefine_line|#define PWR_MGT_ON&t;&t;0x00000001
 DECL|macro|PWR_MGT_MODE_MASK
 mdefine_line|#define PWR_MGT_MODE_MASK&t;0x00000006
 DECL|macro|AUTO_PWR_UP
 mdefine_line|#define AUTO_PWR_UP&t;&t;0x00000008
+DECL|macro|USE_F32KHZ
+mdefine_line|#define USE_F32KHZ&t;&t;0x00000400
+DECL|macro|TRISTATE_MEM_EN
+mdefine_line|#define TRISTATE_MEM_EN&t;&t;0x00000800
 DECL|macro|SELF_REFRESH
 mdefine_line|#define SELF_REFRESH&t;&t;0x00000080
 DECL|macro|PWR_BLON
@@ -1551,5 +1565,45 @@ DECL|macro|PWR_MGT_STATUS_MASK
 mdefine_line|#define PWR_MGT_STATUS_MASK&t;0xC0000000
 DECL|macro|PWR_MGT_STATUS_SUSPEND
 mdefine_line|#define PWR_MGT_STATUS_SUSPEND&t;0x80000000
+multiline_comment|/* PM Mode constants  */
+DECL|macro|PWR_MGT_MODE_PIN
+mdefine_line|#define PWR_MGT_MODE_PIN&t;0x00000000
+DECL|macro|PWR_MGT_MODE_REG
+mdefine_line|#define PWR_MGT_MODE_REG&t;0x00000002
+DECL|macro|PWR_MGT_MODE_TIMER
+mdefine_line|#define PWR_MGT_MODE_TIMER&t;0x00000004
+DECL|macro|PWR_MGT_MODE_PCI
+mdefine_line|#define PWR_MGT_MODE_PCI&t;0x00000006
+multiline_comment|/* LCD registers (LT Pro) */
+multiline_comment|/* LCD Index register */
+DECL|macro|LCD_INDEX_MASK
+mdefine_line|#define LCD_INDEX_MASK&t;&t;0x0000003F
+DECL|macro|LCD_DISPLAY_DIS
+mdefine_line|#define LCD_DISPLAY_DIS&t;&t;0x00000100
+DECL|macro|LCD_SRC_SEL
+mdefine_line|#define LCD_SRC_SEL&t;&t;0x00000200
+DECL|macro|CRTC2_DISPLAY_DIS
+mdefine_line|#define CRTC2_DISPLAY_DIS&t;0x00000400
+multiline_comment|/* LCD register indices */
+DECL|macro|LCD_CONFIG_PANEL
+mdefine_line|#define LCD_CONFIG_PANEL&t;0x00
+DECL|macro|LCD_GEN_CTRL
+mdefine_line|#define LCD_GEN_CTRL&t;&t;0x01
+DECL|macro|LCD_DSTN_CONTROL
+mdefine_line|#define LCD_DSTN_CONTROL&t;0x02
+DECL|macro|LCD_HFB_PITCH_ADDR
+mdefine_line|#define LCD_HFB_PITCH_ADDR&t;0x03
+DECL|macro|LCD_HORZ_STRETCHING
+mdefine_line|#define LCD_HORZ_STRETCHING&t;0x04
+DECL|macro|LCD_VERT_STRETCHING
+mdefine_line|#define LCD_VERT_STRETCHING&t;0x05
+DECL|macro|LCD_EXT_VERT_STRETCH
+mdefine_line|#define LCD_EXT_VERT_STRETCH&t;0x06
+DECL|macro|LCD_LT_GIO
+mdefine_line|#define LCD_LT_GIO&t;&t;0x07
+DECL|macro|LCD_POWER_MANAGEMENT
+mdefine_line|#define LCD_POWER_MANAGEMENT&t;0x08
+DECL|macro|LCD_ZVGPIO
+mdefine_line|#define LCD_ZVGPIO&t;&t;0x09
 macro_line|#endif /* REGMACH64_H */
 eof

@@ -5845,8 +5845,6 @@ id|fcount
 op_assign
 id|file-&gt;private_data
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5939,6 +5937,10 @@ id|file_operations
 id|mtrr_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|read
 suffix:colon
 id|mtrr_read
@@ -7409,6 +7411,10 @@ comma
 op_amp
 id|proc_root
 )paren
+suffix:semicolon
+id|proc_root_mtrr-&gt;owner
+op_assign
+id|THIS_MODULE
 suffix:semicolon
 id|proc_root_mtrr-&gt;proc_fops
 op_assign

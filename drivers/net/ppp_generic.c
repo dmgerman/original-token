@@ -999,8 +999,6 @@ r_return
 op_minus
 id|EPERM
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1096,8 +1094,6 @@ suffix:semicolon
 )brace
 )brace
 )brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -2893,6 +2889,10 @@ id|file_operations
 id|ppp_device_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|read
 suffix:colon
 id|ppp_read

@@ -56,11 +56,6 @@ id|proc_dir_entry
 op_star
 id|proc_entry
 suffix:semicolon
-DECL|member|vcap
-r_struct
-id|video_capability
-id|vcap
-suffix:semicolon
 )brace
 suffix:semicolon
 DECL|variable|video_dev_proc_entry

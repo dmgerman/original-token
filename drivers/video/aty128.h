@@ -486,6 +486,10 @@ DECL|macro|DAC_BLANKING
 mdefine_line|#define DAC_BLANKING&t;&t;&t;&t;0x00000004
 DECL|macro|DAC_RANGE_CNTL
 mdefine_line|#define DAC_RANGE_CNTL&t;&t;&t;&t;0x00000003
+DECL|macro|DAC_RANGE_CNTL
+mdefine_line|#define DAC_RANGE_CNTL&t;&t;&t;&t;0x00000003
+DECL|macro|PALETTE_ACCESS_CNTL
+mdefine_line|#define PALETTE_ACCESS_CNTL&t;&t;&t;0x00000020
 multiline_comment|/* GEN_RESET_CNTL bit constants */
 DECL|macro|SOFT_RESET_GUI
 mdefine_line|#define SOFT_RESET_GUI&t;&t;&t;&t;0x00000001

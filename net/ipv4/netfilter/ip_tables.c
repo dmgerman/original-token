@@ -2703,7 +2703,7 @@ c_func
 (paren
 l_string|&quot;check_match: `%s&squot; not found&bslash;n&quot;
 comma
-id|m-&gt;u.name
+id|m-&gt;u.user.name
 )paren
 suffix:semicolon
 r_return
@@ -2940,11 +2940,11 @@ c_func
 (paren
 l_string|&quot;check_entry: `%s&squot; not found&bslash;n&quot;
 comma
-id|t-&gt;u.name
+id|t-&gt;u.user.name
 )paren
 suffix:semicolon
-r_return
-id|ret
+r_goto
+id|cleanup_matches
 suffix:semicolon
 )brace
 r_if
@@ -5812,9 +5812,13 @@ id|ret
 op_ne
 l_int|0
 )paren
+(brace
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 id|ret
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -5935,6 +5939,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|list_named_insert
 c_func
 (paren
@@ -5944,13 +5949,6 @@ comma
 id|match
 )paren
 )paren
-(brace
-id|ret
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-r_else
 (brace
 id|duprintf
 c_func

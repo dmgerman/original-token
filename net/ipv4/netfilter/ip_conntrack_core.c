@@ -304,21 +304,6 @@ id|tuple
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_NETFILTER_DEBUG
-r_if
-c_cond
-(paren
-id|tuple-&gt;src.pad
-)paren
-id|DEBUGP
-c_func
-(paren
-l_string|&quot;Tuple %p has non-zero padding.&bslash;n&quot;
-comma
-id|tuple
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* ntohl because more differences in low bits. */
 multiline_comment|/* To ensure that halves of the same connection don&squot;t hash&n;&t;   clash, we add the source per-proto again. */
 r_return
@@ -376,7 +361,7 @@ id|protocol
 r_int
 id|ret
 suffix:semicolon
-multiline_comment|/* Can only happen when extracting tuples from inside ICMP&n;           packets */
+multiline_comment|/* Never happen */
 r_if
 c_cond
 (paren
@@ -389,14 +374,6 @@ id|IP_OFFSET
 )paren
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|net_ratelimit
-c_func
-(paren
-)paren
-)paren
 id|printk
 c_func
 (paren
@@ -428,10 +405,6 @@ suffix:semicolon
 id|tuple-&gt;src.ip
 op_assign
 id|iph-&gt;saddr
-suffix:semicolon
-id|tuple-&gt;src.pad
-op_assign
-l_int|0
 suffix:semicolon
 id|tuple-&gt;dst.ip
 op_assign
@@ -496,10 +469,6 @@ id|protocol
 id|inverse-&gt;src.ip
 op_assign
 id|orig-&gt;dst.ip
-suffix:semicolon
-id|inverse-&gt;src.pad
-op_assign
-l_int|0
 suffix:semicolon
 id|inverse-&gt;dst.ip
 op_assign
@@ -812,6 +781,14 @@ op_amp
 id|ip_conntrack_lock
 )paren
 suffix:semicolon
+id|IP_NF_ASSERT
+c_func
+(paren
+id|ct-&gt;status
+op_amp
+id|IPS_CONFIRMED
+)paren
+suffix:semicolon
 id|clean_from_lists
 c_func
 (paren
@@ -870,22 +847,14 @@ id|i-&gt;ctrack
 op_ne
 id|ignored_conntrack
 op_logical_and
-id|memcmp
+id|ip_ct_tuple_equal
 c_func
 (paren
 id|tuple
 comma
 op_amp
 id|i-&gt;tuple
-comma
-r_sizeof
-(paren
-op_star
-id|tuple
 )paren
-)paren
-op_eq
-l_int|0
 suffix:semicolon
 )brace
 r_static
@@ -1068,9 +1037,14 @@ id|ct-&gt;timeout
 )paren
 )paren
 suffix:semicolon
+id|set_bit
+c_func
+(paren
+id|IPS_CONFIRMED_BIT
+comma
+op_amp
 id|ct-&gt;status
-op_or_assign
-id|IPS_CONFIRMED
+)paren
 suffix:semicolon
 multiline_comment|/* Timer relative to confirmation time, not original&n;&t;&t;   setting time, otherwise we&squot;d get timer wrap in&n;&t;&t;   wierd delay cases. */
 id|ct-&gt;timeout.expires
@@ -1171,6 +1145,10 @@ r_enum
 id|ip_conntrack_info
 op_star
 id|ctinfo
+comma
+r_int
+r_int
+id|hooknum
 )paren
 (brace
 r_const
@@ -1316,6 +1294,31 @@ id|ICMP_REDIRECT
 r_return
 l_int|NULL
 suffix:semicolon
+multiline_comment|/* Ignore ICMP&squot;s containing fragments (shouldn&squot;t happen) */
+r_if
+c_cond
+(paren
+id|inner-&gt;frag_off
+op_amp
+id|htons
+c_func
+(paren
+id|IP_OFFSET
+)paren
+)paren
+(brace
+id|DEBUGP
+c_func
+(paren
+l_string|&quot;icmp_error_track: fragment of proto %u&bslash;n&quot;
+comma
+id|inner-&gt;protocol
+)paren
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
 multiline_comment|/* Ignore it if the checksum&squot;s bogus. */
 r_if
 c_cond
@@ -1459,6 +1462,7 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+multiline_comment|/* REJECT target does this commonly, so allow locally&n;           generated ICMP errors --RR */
 r_if
 c_cond
 (paren
@@ -1468,6 +1472,10 @@ id|h-&gt;ctrack-&gt;status
 op_amp
 id|IPS_CONFIRMED
 )paren
+op_logical_and
+id|hooknum
+op_ne
+id|NF_IP_LOCAL_OUT
 )paren
 (brace
 id|DEBUGP
@@ -1841,6 +1849,17 @@ id|ip_conntrack_max
 )paren
 suffix:semicolon
 multiline_comment|/* Try dropping from random chain, or else from the&n;                   chain about to put into (in case they&squot;re trying to&n;                   bomb one hash chain). */
+r_if
+c_cond
+(paren
+id|drop_next
+op_ge
+id|ip_conntrack_htable_size
+)paren
+id|drop_next
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2286,6 +2305,10 @@ id|ip_conntrack_protocol
 op_star
 id|proto
 comma
+r_int
+op_star
+id|set_reply
+comma
 r_enum
 id|ip_conntrack_info
 op_star
@@ -2300,6 +2323,22 @@ r_struct
 id|ip_conntrack_tuple_hash
 op_star
 id|h
+suffix:semicolon
+id|IP_NF_ASSERT
+c_func
+(paren
+(paren
+id|skb-&gt;nh.iph-&gt;frag_off
+op_amp
+id|htons
+c_func
+(paren
+id|IP_OFFSET
+)paren
+)paren
+op_eq
+l_int|0
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -2412,9 +2451,11 @@ id|IP_CT_ESTABLISHED
 op_plus
 id|IP_CT_IS_REPLY
 suffix:semicolon
-id|h-&gt;ctrack-&gt;status
-op_or_assign
-id|IPS_SEEN_REPLY
+multiline_comment|/* Please set reply bit if this packet OK */
+op_star
+id|set_reply
+op_assign
+l_int|1
 suffix:semicolon
 )brace
 r_else
@@ -2481,6 +2522,11 @@ op_assign
 id|IP_CT_NEW
 suffix:semicolon
 )brace
+op_star
+id|set_reply
+op_assign
+l_int|0
+suffix:semicolon
 )brace
 id|skb-&gt;nfct
 op_assign
@@ -2619,6 +2665,9 @@ op_star
 id|proto
 suffix:semicolon
 r_int
+id|set_reply
+suffix:semicolon
+r_int
 id|ret
 suffix:semicolon
 multiline_comment|/* FIXME: Do this right please. --RR */
@@ -2631,6 +2680,102 @@ id|nfcache
 op_or_assign
 id|NFC_UNKNOWN
 suffix:semicolon
+multiline_comment|/* Doesn&squot;t cover locally-generated broadcast, so not worth it. */
+macro_line|#if 0
+multiline_comment|/* Ignore broadcast: no `connection&squot;. */
+r_if
+c_cond
+(paren
+(paren
+op_star
+id|pskb
+)paren
+op_member_access_from_pointer
+id|pkt_type
+op_eq
+id|PACKET_BROADCAST
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Broadcast packet!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+id|NF_ACCEPT
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+(paren
+(paren
+op_star
+id|pskb
+)paren
+op_member_access_from_pointer
+id|nh.iph-&gt;daddr
+op_amp
+id|htonl
+c_func
+(paren
+l_int|0x000000FF
+)paren
+)paren
+op_eq
+id|htonl
+c_func
+(paren
+l_int|0x000000FF
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Should bcast: %u.%u.%u.%u-&gt;%u.%u.%u.%u (sk=%p, ptype=%u)&bslash;n&quot;
+comma
+id|IP_PARTS
+c_func
+(paren
+(paren
+op_star
+id|pskb
+)paren
+op_member_access_from_pointer
+id|nh.iph-&gt;saddr
+)paren
+comma
+id|IP_PARTS
+c_func
+(paren
+(paren
+op_star
+id|pskb
+)paren
+op_member_access_from_pointer
+id|nh.iph-&gt;daddr
+)paren
+comma
+(paren
+op_star
+id|pskb
+)paren
+op_member_access_from_pointer
+id|sk
+comma
+(paren
+op_star
+id|pskb
+)paren
+op_member_access_from_pointer
+id|pkt_type
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 multiline_comment|/* Previously seen (loopback)?  Ignore.  Do this before&n;           fragment check. */
 r_if
 c_cond
@@ -2709,13 +2854,9 @@ id|pskb
 )paren
 op_member_access_from_pointer
 id|nh.iph-&gt;protocol
-op_ne
+op_eq
 id|IPPROTO_ICMP
-op_logical_or
-op_logical_neg
-(paren
-id|ct
-op_assign
+op_logical_and
 id|icmp_error_track
 c_func
 (paren
@@ -2724,10 +2865,13 @@ id|pskb
 comma
 op_amp
 id|ctinfo
+comma
+id|hooknum
 )paren
 )paren
-)paren
-(brace
+r_return
+id|NF_ACCEPT
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2744,17 +2888,17 @@ comma
 id|proto
 comma
 op_amp
+id|set_reply
+comma
+op_amp
 id|ctinfo
 )paren
 )paren
 )paren
-(brace
 multiline_comment|/* Not valid part of a connection */
 r_return
 id|NF_ACCEPT
 suffix:semicolon
-)brace
-)brace
 id|IP_NF_ASSERT
 c_func
 (paren
@@ -2897,6 +3041,20 @@ id|NF_ACCEPT
 suffix:semicolon
 )brace
 )brace
+r_if
+c_cond
+(paren
+id|set_reply
+)paren
+id|set_bit
+c_func
+(paren
+id|IPS_SEEN_REPLY_BIT
+comma
+op_amp
+id|ct-&gt;status
+)paren
+suffix:semicolon
 r_return
 id|ret
 suffix:semicolon
@@ -3809,7 +3967,7 @@ id|IPS_CONFIRMED
 )paren
 )paren
 (brace
-multiline_comment|/* Unconfirmed connection.  Clean from lists,&n;&t;&t;&t;   mark confirmed so it gets cleaned as soon&n;&t;&t;&t;   as packet comes back. */
+multiline_comment|/* Unconfirmed connection.  Clean from lists,&n;&t;&t;&t;   mark confirmed so it gets cleaned as soon&n;&t;&t;&t;   as skb freed. */
 id|WRITE_LOCK
 c_func
 (paren
@@ -3817,6 +3975,7 @@ op_amp
 id|ip_conntrack_lock
 )paren
 suffix:semicolon
+multiline_comment|/* Lock protects race against another setting&n;                           of confirmed bit.  set_bit isolates this&n;                           bit from the others. */
 r_if
 c_cond
 (paren
@@ -3834,9 +3993,14 @@ c_func
 id|h-&gt;ctrack
 )paren
 suffix:semicolon
+id|set_bit
+c_func
+(paren
+id|IPS_CONFIRMED_BIT
+comma
+op_amp
 id|h-&gt;ctrack-&gt;status
-op_or_assign
-id|IPS_CONFIRMED
+)paren
 suffix:semicolon
 )brace
 id|WRITE_UNLOCK
@@ -3897,8 +4061,6 @@ comma
 (brace
 id|sk-&gt;sport
 )brace
-comma
-l_int|0
 )brace
 comma
 (brace

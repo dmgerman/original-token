@@ -6,7 +6,9 @@ macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/udp.h&gt;
 macro_line|#include &lt;linux/netfilter_ipv4/ip_conntrack_protocol.h&gt;
 DECL|macro|UDP_TIMEOUT
-mdefine_line|#define UDP_TIMEOUT (60*HZ)
+mdefine_line|#define UDP_TIMEOUT (30*HZ)
+DECL|macro|UDP_STREAM_TIMEOUT
+mdefine_line|#define UDP_STREAM_TIMEOUT (180*HZ)
 DECL|function|udp_pkt_to_tuple
 r_static
 r_int
@@ -166,7 +168,23 @@ id|ip_conntrack_info
 id|conntrackinfo
 )paren
 (brace
-multiline_comment|/* Refresh. */
+multiline_comment|/* If we&squot;ve seen traffic both ways, this is some kind of UDP&n;&t;   stream.  Extend timeout. */
+r_if
+c_cond
+(paren
+id|conntrack-&gt;status
+op_amp
+id|IPS_SEEN_REPLY
+)paren
+id|ip_ct_refresh
+c_func
+(paren
+id|conntrack
+comma
+id|UDP_STREAM_TIMEOUT
+)paren
+suffix:semicolon
+r_else
 id|ip_ct_refresh
 c_func
 (paren

@@ -14,6 +14,7 @@ macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/msr.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+multiline_comment|/* Note: &quot;err&quot; is handled in a funny way below.  Otherwise one version&n;   of gcc or another breaks. */
 DECL|function|wrmsr_eio
 r_extern
 r_inline
@@ -33,8 +34,6 @@ id|edx
 (brace
 r_int
 id|err
-op_assign
-l_int|0
 suffix:semicolon
 id|asm
 r_volatile
@@ -43,14 +42,14 @@ l_string|&quot;1:&t;wrmsr&bslash;n&quot;
 l_string|&quot;2:&bslash;n&quot;
 l_string|&quot;.section .fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;3:&t;movl %4,%0&bslash;n&quot;
-l_string|&quot;&t;jmp 1b&bslash;n&quot;
+l_string|&quot;&t;jmp 2b&bslash;n&quot;
 l_string|&quot;.previous&bslash;n&quot;
 l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
 l_string|&quot;&t;.align 4&bslash;n&quot;
 l_string|&quot;&t;.long 1b,3b&bslash;n&quot;
 l_string|&quot;.previous&quot;
 suffix:colon
-l_string|&quot;+r&quot;
+l_string|&quot;=&amp;bDS&quot;
 (paren
 id|err
 )paren
@@ -74,6 +73,11 @@ l_string|&quot;i&quot;
 (paren
 op_minus
 id|EIO
+)paren
+comma
+l_string|&quot;0&quot;
+(paren
+l_int|0
 )paren
 )paren
 suffix:semicolon
@@ -102,8 +106,6 @@ id|edx
 (brace
 r_int
 id|err
-op_assign
-l_int|0
 suffix:semicolon
 id|asm
 r_volatile
@@ -112,14 +114,14 @@ l_string|&quot;1:&t;rdmsr&bslash;n&quot;
 l_string|&quot;2:&bslash;n&quot;
 l_string|&quot;.section .fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;3:&t;movl %4,%0&bslash;n&quot;
-l_string|&quot;&t;jmp 1b&bslash;n&quot;
+l_string|&quot;&t;jmp 2b&bslash;n&quot;
 l_string|&quot;.previous&bslash;n&quot;
 l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
 l_string|&quot;&t;.align 4&bslash;n&quot;
 l_string|&quot;&t;.long 1b,3b&bslash;n&quot;
 l_string|&quot;.previous&quot;
 suffix:colon
-l_string|&quot;+r&quot;
+l_string|&quot;=&amp;bDS&quot;
 (paren
 id|err
 )paren
@@ -133,7 +135,7 @@ comma
 l_string|&quot;=d&quot;
 (paren
 op_star
-id|eax
+id|edx
 )paren
 suffix:colon
 l_string|&quot;c&quot;
@@ -145,6 +147,11 @@ l_string|&quot;i&quot;
 (paren
 op_minus
 id|EIO
+)paren
+comma
+l_string|&quot;0&quot;
+(paren
+l_int|0
 )paren
 )paren
 suffix:semicolon
@@ -218,13 +225,11 @@ c_func
 (paren
 id|cmd-&gt;reg
 comma
-op_amp
 id|cmd-&gt;data
 (braket
 l_int|0
 )braket
 comma
-op_amp
 id|cmd-&gt;data
 (braket
 l_int|1
@@ -362,10 +367,7 @@ c_func
 (paren
 id|msr_smp_wrmsr
 comma
-(paren
-r_void
-op_star
-)paren
+op_amp
 id|cmd
 comma
 l_int|1
@@ -442,10 +444,7 @@ c_func
 (paren
 id|msr_smp_rdmsr
 comma
-(paren
-r_void
-op_star
-)paren
+op_amp
 id|cmd
 comma
 l_int|1
@@ -924,6 +923,19 @@ c_func
 id|file-&gt;f_dentry-&gt;d_inode-&gt;i_rdev
 )paren
 suffix:semicolon
+r_struct
+id|cpuinfo_x86
+op_star
+id|c
+op_assign
+op_amp
+(paren
+id|cpu_data
+)paren
+(braket
+id|cpu
+)braket
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -937,51 +949,27 @@ op_lshift
 id|cpu
 )paren
 )paren
-op_logical_or
-op_logical_neg
-(paren
-(paren
-id|cpu_data
-)paren
-(braket
-id|cpu
-)braket
-dot
-id|x86_capability
-op_amp
-id|X86_FEATURE_MSR
-)paren
 )paren
 r_return
 op_minus
 id|ENXIO
 suffix:semicolon
 multiline_comment|/* No such CPU */
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-DECL|function|msr_release
-r_static
-r_int
-id|msr_release
-c_func
+r_if
+c_cond
 (paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|file
+op_logical_neg
+(paren
+id|c-&gt;x86_capability
+op_amp
+id|X86_FEATURE_MSR
 )paren
-(brace
-id|MOD_DEC_USE_COUNT
+)paren
+r_return
+op_minus
+id|EIO
 suffix:semicolon
+multiline_comment|/* MSR not supported */
 r_return
 l_int|0
 suffix:semicolon
@@ -994,6 +982,10 @@ id|file_operations
 id|msr_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|llseek
 suffix:colon
 id|msr_seek
@@ -1009,10 +1001,6 @@ comma
 id|open
 suffix:colon
 id|msr_open
-comma
-id|release
-suffix:colon
-id|msr_release
 comma
 )brace
 suffix:semicolon

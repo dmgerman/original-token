@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Definitions for the Interfaces handler.&n; *&n; * Version:&t;@(#)dev.h&t;1.0.10&t;08/12/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Donald J. Becker, &lt;becker@cesdis.gsfc.nasa.gov&gt;&n; *&t;&t;Alan Cox, &lt;Alan.Cox@linux.org&gt;&n; *&t;&t;Bjorn Ekwall. &lt;bj0rn@blox.se&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;&t;Moved to /usr/include/linux for NET3&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Definitions for the Interfaces handler.&n; *&n; * Version:&t;@(#)dev.h&t;1.0.10&t;08/12/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Donald J. Becker, &lt;becker@cesdis.gsfc.nasa.gov&gt;&n; *&t;&t;Alan Cox, &lt;Alan.Cox@linux.org&gt;&n; *&t;&t;Bjorn Ekwall. &lt;bj0rn@blox.se&gt;&n; *              Pekka Riikonen &lt;priikone@poseidon.pspt.fi&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;&t;Moved to /usr/include/linux for NET3&n; */
 macro_line|#ifndef _LINUX_NETDEVICE_H
 DECL|macro|_LINUX_NETDEVICE_H
 mdefine_line|#define _LINUX_NETDEVICE_H
@@ -414,6 +414,27 @@ DECL|enumerator|__LINK_STATE_NOCARRIER
 id|__LINK_STATE_NOCARRIER
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * This structure holds at boot time configured netdevice settings. They&n; * are then used in the device probing. &n; */
+DECL|struct|netdev_boot_setup
+r_struct
+id|netdev_boot_setup
+(brace
+DECL|member|name
+r_char
+id|name
+(braket
+id|IFNAMSIZ
+)braket
+suffix:semicolon
+DECL|member|map
+r_struct
+id|ifmap
+id|map
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|macro|NETDEV_BOOT_SETUP_MAX
+mdefine_line|#define NETDEV_BOOT_SETUP_MAX 8
 multiline_comment|/*&n; *&t;The DEVICE structure.&n; *&t;Actually, this whole structure is a big mistake.  It mixes I/O&n; *&t;data with strictly &quot;high-level&quot; data, and it has to know about&n; *&t;almost every data structure used in the INET module.&n; *&n; *&t;FIXME: cleanup struct net_device such that network protocol info&n; *&t;moves out.&n; */
 DECL|struct|net_device
 r_struct
@@ -1179,6 +1200,39 @@ suffix:semicolon
 multiline_comment|/* Device list lock */
 r_extern
 r_struct
+id|netdev_boot_setup
+id|dev_boot_setup
+(braket
+)braket
+suffix:semicolon
+r_extern
+r_int
+id|netdev_boot_setup_add
+c_func
+(paren
+r_char
+op_star
+id|name
+comma
+r_struct
+id|ifmap
+op_star
+id|map
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|netdev_boot_setup_check
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_struct
 id|net_device
 op_star
 id|dev_getbyhwaddr
@@ -1448,8 +1502,8 @@ id|gifconf
 )paren
 suffix:semicolon
 DECL|function|unregister_gifconf
-r_extern
-id|__inline__
+r_static
+r_inline
 r_int
 id|unregister_gifconf
 c_func
@@ -1519,8 +1573,8 @@ suffix:semicolon
 DECL|macro|HAVE_NETIF_QUEUE
 mdefine_line|#define HAVE_NETIF_QUEUE
 DECL|function|__netif_schedule
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|__netif_schedule
 c_func
@@ -1598,8 +1652,8 @@ suffix:semicolon
 )brace
 )brace
 DECL|function|netif_schedule
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|netif_schedule
 c_func
@@ -1631,8 +1685,8 @@ id|dev
 suffix:semicolon
 )brace
 DECL|function|netif_start_queue
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|netif_start_queue
 c_func
@@ -1654,8 +1708,8 @@ id|dev-&gt;state
 suffix:semicolon
 )brace
 DECL|function|netif_wake_queue
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|netif_wake_queue
 c_func
@@ -1686,8 +1740,8 @@ id|dev
 suffix:semicolon
 )brace
 DECL|function|netif_stop_queue
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|netif_stop_queue
 c_func
@@ -1709,8 +1763,8 @@ id|dev-&gt;state
 suffix:semicolon
 )brace
 DECL|function|netif_queue_stopped
-r_extern
-id|__inline__
+r_static
+r_inline
 r_int
 id|netif_queue_stopped
 c_func
@@ -1733,8 +1787,8 @@ id|dev-&gt;state
 suffix:semicolon
 )brace
 DECL|function|netif_running
-r_extern
-id|__inline__
+r_static
+r_inline
 r_int
 id|netif_running
 c_func
@@ -1758,8 +1812,8 @@ suffix:semicolon
 )brace
 multiline_comment|/* Use this variant when it is known for sure that it&n; * is executing from interrupt context.&n; */
 DECL|function|dev_kfree_skb_irq
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|dev_kfree_skb_irq
 c_func
@@ -1835,8 +1889,8 @@ suffix:semicolon
 )brace
 multiline_comment|/* Use this variant in places where it could be invoked&n; * either from interrupt or non-interrupt context.&n; */
 DECL|function|dev_kfree_skb_any
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|dev_kfree_skb_any
 c_func
@@ -1951,8 +2005,8 @@ r_int
 id|netdev_nit
 suffix:semicolon
 DECL|function|dev_init_buffers
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|dev_init_buffers
 c_func
@@ -1977,8 +2031,8 @@ id|dev
 )paren
 suffix:semicolon
 DECL|function|dev_put
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|dev_put
 c_func
@@ -2012,8 +2066,8 @@ DECL|macro|dev_hold
 mdefine_line|#define dev_hold(dev) atomic_inc(&amp;(dev)-&gt;refcnt)
 multiline_comment|/* Carrier loss detection, dial on demand. The functions netif_carrier_on&n; * and _off may be called from IRQ context, but it is caller&n; * who is responsible for serialization of these calls.&n; */
 DECL|function|netif_carrier_ok
-r_extern
-id|__inline__
+r_static
+r_inline
 r_int
 id|netif_carrier_ok
 c_func
@@ -2048,8 +2102,8 @@ id|dev
 )paren
 suffix:semicolon
 DECL|function|netif_carrier_on
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|netif_carrier_on
 c_func
@@ -2086,8 +2140,8 @@ id|dev
 suffix:semicolon
 )brace
 DECL|function|netif_carrier_off
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|netif_carrier_off
 c_func
@@ -2110,8 +2164,8 @@ suffix:semicolon
 )brace
 multiline_comment|/* Hot-plugging. */
 DECL|function|netif_device_present
-r_extern
-id|__inline__
+r_static
+r_inline
 r_int
 id|netif_device_present
 c_func
@@ -2134,8 +2188,8 @@ id|dev-&gt;state
 suffix:semicolon
 )brace
 DECL|function|netif_device_detach
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|netif_device_detach
 c_func
@@ -2174,8 +2228,8 @@ suffix:semicolon
 )brace
 )brace
 DECL|function|netif_device_attach
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|netif_device_attach
 c_func

@@ -258,6 +258,24 @@ id|multiinfo
 op_assign
 id|matchinfo
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|matchsize
+op_ne
+id|IPT_ALIGN
+c_func
+(paren
+r_sizeof
+(paren
+r_struct
+id|ipt_multiport
+)paren
+)paren
+)paren
+r_return
+l_int|0
+suffix:semicolon
 multiline_comment|/* Must specify proto == TCP/UDP, no unknown flags or bad count */
 r_return
 (paren

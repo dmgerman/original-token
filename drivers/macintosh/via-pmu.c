@@ -7593,10 +7593,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* The PGD is only a placeholder until Dan finds a way to make&n;&t; * this work properly on the 8xx processors.  It is only used on&n;&t; * 8xx processors, it is ignored here.&n;&t; */
 id|set_context
 c_func
 (paren
 id|current-&gt;mm-&gt;context
+comma
+id|current-&gt;mm-&gt;pgd
 )paren
 suffix:semicolon
 multiline_comment|/* Restore L2 cache */

@@ -1,8 +1,7 @@
 multiline_comment|/*&n; * drivers/video/clgenfb.c - driver for Cirrus Logic chipsets&n; *&n; * Copyright 1999,2000 Jeff Garzik &lt;jgarzik@mandrakesoft.com&gt;&n; *&n; * Contributors (thanks, all!)&n; *&n; *      Jeff Rugen:&n; *      Major contributions;  Motorola PowerStack (PPC and PCI) support,&n; *      GD54xx, 1280x1024 mode support, change MCLK based on VCLK.&n; *&n; *&t;Geert Uytterhoeven:&n; *&t;Excellent code review.&n; *&n; *&t;Lars Hecking:&n; *&t;Amiga updates and testing.&n; *&n; * Original clgenfb author:  Frank Neumann&n; *&n; * Based on retz3fb.c and clgen.c:&n; *      Copyright (C) 1997 Jes Sorensen&n; *      Copyright (C) 1996 Frank Neumann&n; *&n; ***************************************************************&n; *&n; * Format this code with GNU indent &squot;-kr -i8 -pcs&squot; options.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; *&n; */
 DECL|macro|CLGEN_VERSION
-mdefine_line|#define CLGEN_VERSION &quot;1.9.6&quot;
+mdefine_line|#define CLGEN_VERSION &quot;1.9.8&quot;
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -1216,27 +1215,46 @@ id|fb_ops
 id|clgenfb_ops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
+id|fb_open
+suffix:colon
 id|clgenfb_open
 comma
+id|fb_release
+suffix:colon
 id|clgenfb_release
 comma
+id|fb_get_fix
+suffix:colon
 id|fbgen_get_fix
 comma
-multiline_comment|/* using the generic functions */
+id|fb_get_var
+suffix:colon
 id|fbgen_get_var
 comma
-multiline_comment|/* makes things much easier... */
+id|fb_set_var
+suffix:colon
 id|fbgen_set_var
 comma
+id|fb_get_cmap
+suffix:colon
 id|fbgen_get_cmap
 comma
+id|fb_set_cmap
+suffix:colon
 id|fbgen_set_cmap
 comma
+id|fb_pan_display
+suffix:colon
 id|fbgen_pan_display
 comma
+id|fb_ioctl
+suffix:colon
 id|clgenfb_ioctl
 comma
-l_int|NULL
 )brace
 suffix:semicolon
 multiline_comment|/*--- Hardware Specific Routines -------------------------------------------*/
@@ -2040,42 +2058,6 @@ r_int
 id|maxfreq
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PCI
-r_static
-r_struct
-id|pci_dev
-op_star
-id|clgen_pci_dev_get
-(paren
-id|clgen_board_t
-op_star
-id|btype
-)paren
-suffix:semicolon
-r_static
-r_int
-r_int
-id|clgen_get_memsize
-(paren
-id|caddr_t
-id|regbase
-)paren
-suffix:semicolon
-r_static
-r_int
-id|clgen_pci_setup
-(paren
-r_struct
-id|clgenfb_info
-op_star
-id|fb_info
-comma
-id|clgen_board_t
-op_star
-id|btype
-)paren
-suffix:semicolon
-macro_line|#endif&t;&t;&t;&t;/* CONFIG_PCI */
 macro_line|#ifdef CLGEN_DEBUG
 r_static
 r_void
@@ -2147,8 +2129,6 @@ r_int
 id|user
 )paren
 (brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2207,8 +2187,6 @@ id|info
 comma
 l_int|0
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -10510,8 +10488,6 @@ r_struct
 id|pci_dev
 op_star
 id|pdev
-op_assign
-l_int|NULL
 suffix:semicolon
 r_int
 id|i
@@ -10535,13 +10511,19 @@ c_func
 (paren
 id|clgen_pci_probe_list
 )paren
-op_logical_and
-op_logical_neg
-id|pdev
 suffix:semicolon
 id|i
 op_increment
 )paren
+(brace
+id|pdev
+op_assign
+l_int|NULL
+suffix:semicolon
+r_while
+c_loop
+(paren
+(paren
 id|pdev
 op_assign
 id|pci_find_device
@@ -10555,14 +10537,25 @@ id|i
 dot
 id|device
 comma
+id|pdev
+)paren
+)paren
+op_ne
 l_int|NULL
 )paren
-suffix:semicolon
+(brace
 r_if
 c_cond
 (paren
+id|pci_enable_device
+c_func
+(paren
 id|pdev
 )paren
+op_eq
+l_int|0
+)paren
+(brace
 op_star
 id|btype
 op_assign
@@ -10577,13 +10570,24 @@ id|btype
 suffix:semicolon
 id|DPRINTK
 (paren
-l_string|&quot;EXIT, returning %p&bslash;n&quot;
+l_string|&quot;EXIT, returning pdev=%p&bslash;n&quot;
 comma
 id|pdev
 )paren
 suffix:semicolon
 r_return
 id|pdev
+suffix:semicolon
+)brace
+)brace
+)brace
+id|DPRINTK
+(paren
+l_string|&quot;EXIT, returning NULL&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|NULL
 suffix:semicolon
 )brace
 DECL|function|get_pci_addrs
@@ -10646,64 +10650,16 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* This is a best-guess for now */
-macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,3,13)
-op_star
-id|display
-op_assign
-id|pdev-&gt;base_address
-(braket
-l_int|0
-)braket
-suffix:semicolon
 r_if
 c_cond
 (paren
+id|pci_resource_flags
+c_func
 (paren
-op_star
-id|display
-op_amp
-id|PCI_BASE_ADDRESS_SPACE
-)paren
-op_eq
-id|PCI_BASE_ADDRESS_SPACE_IO
-)paren
-(brace
-op_star
-id|registers
-op_assign
-op_star
-id|display
-suffix:semicolon
-op_star
-id|display
-op_assign
-id|pdev-&gt;base_address
-(braket
-l_int|1
-)braket
-suffix:semicolon
-)brace
-r_else
-(brace
-op_star
-id|registers
-op_assign
-id|pdev-&gt;base_address
-(braket
-l_int|1
-)braket
-suffix:semicolon
-)brace
-macro_line|#else
-r_if
-c_cond
-(paren
-id|pdev-&gt;resource
-(braket
+id|pdev
+comma
 l_int|0
-)braket
-dot
-id|flags
+)paren
 op_amp
 id|IORESOURCE_IO
 )paren
@@ -10711,22 +10667,24 @@ id|IORESOURCE_IO
 op_star
 id|display
 op_assign
-id|pdev-&gt;resource
-(braket
+id|pci_resource_start
+c_func
+(paren
+id|pdev
+comma
 l_int|1
-)braket
-dot
-id|start
+)paren
 suffix:semicolon
 op_star
 id|registers
 op_assign
-id|pdev-&gt;resource
-(braket
+id|pci_resource_start
+c_func
+(paren
+id|pdev
+comma
 l_int|0
-)braket
-dot
-id|start
+)paren
 suffix:semicolon
 )brace
 r_else
@@ -10734,25 +10692,26 @@ r_else
 op_star
 id|display
 op_assign
-id|pdev-&gt;resource
-(braket
+id|pci_resource_start
+c_func
+(paren
+id|pdev
+comma
 l_int|0
-)braket
-dot
-id|start
+)paren
 suffix:semicolon
 op_star
 id|registers
 op_assign
-id|pdev-&gt;resource
-(braket
+id|pci_resource_start
+c_func
+(paren
+id|pdev
+comma
 l_int|1
-)braket
-dot
-id|start
+)paren
 suffix:semicolon
 )brace
-macro_line|#endif&t;&t;/* kernel older than 2.3.13 */
 m_assert
 (paren
 op_star
@@ -10767,11 +10726,10 @@ l_string|&quot;EXIT&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* clgen_pci_unmap only used in modules */
-macro_line|#ifdef MODULE
 DECL|function|clgen_pci_unmap
 r_static
 r_void
+id|__exit
 id|clgen_pci_unmap
 (paren
 r_struct
@@ -10785,7 +10743,6 @@ id|iounmap
 id|info-&gt;fbmem
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt; KERNEL_VERSION(2,3,13)
 id|release_mem_region
 c_func
 (paren
@@ -10817,9 +10774,7 @@ comma
 l_int|32
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
-macro_line|#endif /* MODULE */
 DECL|function|clgen_pci_setup
 r_static
 r_int
@@ -10936,50 +10891,6 @@ l_int|0x00000000
 )paren
 suffix:semicolon
 macro_line|#endif
-id|pci_read_config_word
-(paren
-id|pdev
-comma
-id|PCI_COMMAND
-comma
-op_amp
-id|tmp16
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|tmp16
-op_amp
-(paren
-id|PCI_COMMAND_MEMORY
-op_or
-id|PCI_COMMAND_IO
-)paren
-)paren
-)paren
-(brace
-id|u16
-id|tmp16_o
-op_assign
-id|tmp16
-op_or
-id|PCI_COMMAND_MEMORY
-op_or
-id|PCI_COMMAND_IO
-suffix:semicolon
-id|pci_write_config_word
-(paren
-id|pdev
-comma
-id|PCI_COMMAND
-comma
-id|tmp16_o
-)paren
-suffix:semicolon
-)brace
 macro_line|#ifdef CONFIG_FB_OF
 multiline_comment|/* Ok, so its an ugly hack, since we could have passed it down from&n;&t; * clgen_of_init() if we&squot;d done it right. */
 id|DPRINTK
@@ -11123,7 +11034,6 @@ id|info-&gt;regs
 )paren
 suffix:semicolon
 )brace
-macro_line|#if LINUX_VERSION_CODE &gt; KERNEL_VERSION(2,3,13)
 r_if
 c_cond
 (paren
@@ -11227,7 +11137,6 @@ id|release_io_ports
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#endif /* kernel &gt; 2.3.13 */
 id|info-&gt;fbmem
 op_assign
 id|ioremap
@@ -11444,11 +11353,10 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/* clgen_zorro_unmap only used in modules */
-macro_line|#ifdef MODULE
 DECL|function|clgen_zorro_unmap
 r_static
 r_void
+id|__exit
 id|clgen_zorro_unmap
 (paren
 r_struct
@@ -11457,7 +11365,6 @@ op_star
 id|info
 )paren
 (brace
-macro_line|#if LINUX_VERSION_CODE &gt; KERNEL_VERSION(2,3,13)
 id|release_mem_region
 c_func
 (paren
@@ -11466,7 +11373,6 @@ comma
 id|info-&gt;board_size
 )paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -11502,7 +11408,6 @@ id|info-&gt;board_addr
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif /* MODULE */
 DECL|function|clgen_zorro_setup
 r_static
 r_int
@@ -11890,7 +11795,7 @@ id|ENXIO
 suffix:semicolon
 )brace
 macro_line|#else
-macro_line|#error Unsupported bus.  Supported: PCI, Zorro
+macro_line|#error This driver requires Zorro or PCI bus.
 macro_line|#endif&t;&t;&t;&t;/* !CONFIG_PCI, !CONFIG_ZORRO */
 multiline_comment|/* sanity checks */
 m_assert

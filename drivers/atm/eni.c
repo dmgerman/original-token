@@ -9667,12 +9667,13 @@ id|eni_dev-&gt;pci_dev
 suffix:semicolon
 id|real_base
 op_assign
-id|pci_dev-&gt;resource
-(braket
+id|pci_resource_start
+c_func
+(paren
+id|pci_dev
+comma
 l_int|0
-)braket
-dot
-id|start
+)paren
 suffix:semicolon
 id|eni_dev-&gt;irq
 op_assign
@@ -12927,6 +12928,28 @@ c_func
 l_string|&quot;eni_init_one&bslash;n&quot;
 )paren
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+multiline_comment|/* @@@ we don&squot;t support unloading yet */
+r_if
+c_cond
+(paren
+id|pci_enable_device
+c_func
+(paren
+id|pci_dev
+)paren
+)paren
+(brace
+id|error
+op_assign
+op_minus
+id|EIO
+suffix:semicolon
+r_goto
+id|out0
+suffix:semicolon
+)brace
 id|eni_dev
 op_assign
 (paren
@@ -12952,9 +12975,8 @@ c_cond
 op_logical_neg
 id|eni_dev
 )paren
-r_return
-op_minus
-id|ENOMEM
+r_goto
+id|out0
 suffix:semicolon
 r_if
 c_cond
@@ -13071,9 +13093,6 @@ id|eni_boards
 op_assign
 id|dev
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-multiline_comment|/* @@@ we don&squot;t support unloading yet */
 r_return
 l_int|0
 suffix:semicolon
@@ -13111,6 +13130,11 @@ c_func
 id|eni_dev
 )paren
 suffix:semicolon
+id|out0
+suffix:colon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+multiline_comment|/* @@@ we don&squot;t support unloading yet */
 r_return
 id|error
 suffix:semicolon

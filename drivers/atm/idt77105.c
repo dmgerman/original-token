@@ -1407,10 +1407,8 @@ op_star
 id|dev
 )paren
 (brace
-macro_line|#ifdef MODULE
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-macro_line|#endif /* MODULE */
 id|dev-&gt;phy
 op_assign
 op_amp

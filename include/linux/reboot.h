@@ -26,12 +26,6 @@ mdefine_line|#define&t;LINUX_REBOOT_CMD_RESTART2&t;0xA1B2C3D4
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/notifier.h&gt;
 r_extern
-r_struct
-id|notifier_block
-op_star
-id|reboot_notifier_list
-suffix:semicolon
-r_extern
 r_int
 id|register_reboot_notifier
 c_func

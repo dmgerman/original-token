@@ -26,9 +26,6 @@ id|tcp_lock
 )paren
 suffix:semicolon
 multiline_comment|/* FIXME: Examine ipfilter&squot;s timeouts and conntrack transitions more&n;   closely.  They&squot;re more complex. --RR */
-multiline_comment|/* We steal a bit to indicate no reply yet (can&squot;t use status, because&n;   it&squot;s set before we get into packet handling). */
-DECL|macro|TCP_REPLY_BIT
-mdefine_line|#define TCP_REPLY_BIT 0x1000
 multiline_comment|/* Actually, I believe that neither ipmasq (where this code is stolen&n;   from) nor ipfilter do it exactly right.  A new conntrack machine taking&n;   into account packet loss (which creates uncertainty as to exactly&n;   the conntrack of the connection) is required.  RSN.  --RR */
 DECL|enum|tcp_conntrack
 r_enum
@@ -578,12 +575,7 @@ id|tcp_lock
 suffix:semicolon
 id|state
 op_assign
-(paren
 id|conntrack-&gt;proto.tcp_state
-op_amp
-op_complement
-id|TCP_REPLY_BIT
-)paren
 suffix:semicolon
 id|READ_UNLOCK
 c_func
@@ -768,9 +760,6 @@ id|tcph
 )braket
 (braket
 id|oldtcpstate
-op_amp
-op_complement
-id|TCP_REPLY_BIT
 )braket
 suffix:semicolon
 multiline_comment|/* Invalid */
@@ -818,23 +807,6 @@ id|conntrack-&gt;proto.tcp_state
 op_assign
 id|newconntrack
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|oldtcpstate
-op_amp
-id|TCP_REPLY_BIT
-)paren
-op_logical_or
-id|ctinfo
-op_ge
-id|IP_CT_IS_REPLY
-)paren
-id|conntrack-&gt;proto.tcp_state
-op_or_assign
-id|TCP_REPLY_BIT
-suffix:semicolon
 id|WRITE_UNLOCK
 c_func
 (paren
@@ -848,9 +820,9 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|oldtcpstate
+id|conntrack-&gt;status
 op_amp
-id|TCP_REPLY_BIT
+id|IPS_SEEN_REPLY
 )paren
 op_logical_and
 id|tcph-&gt;rst

@@ -4,7 +4,7 @@ macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/netfilter.h&gt;
 macro_line|#include &lt;linux/netfilter_ipv4/ip_conntrack_protocol.h&gt;
 DECL|macro|GENERIC_TIMEOUT
-mdefine_line|#define GENERIC_TIMEOUT (3600*HZ)
+mdefine_line|#define GENERIC_TIMEOUT (600*HZ)
 DECL|function|generic_pkt_to_tuple
 r_static
 r_int

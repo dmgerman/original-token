@@ -1317,7 +1317,7 @@ l_int|16
 suffix:semicolon
 id|palette_cmap.start
 op_assign
-l_int|1
+id|i
 suffix:semicolon
 id|palette_cmap.len
 op_assign

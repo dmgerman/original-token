@@ -1084,6 +1084,10 @@ id|file_operations
 id|cosa_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|llseek
 suffix:colon
 id|cosa_lseek
@@ -4365,10 +4369,6 @@ id|chan-&gt;rx_done
 op_assign
 id|chrdev_rx_done
 suffix:semicolon
-macro_line|#ifdef MODULE
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-macro_line|#endif
 id|spin_unlock_irqrestore
 c_func
 (paren
@@ -4437,10 +4437,6 @@ suffix:semicolon
 id|channel-&gt;usage
 op_decrement
 suffix:semicolon
-macro_line|#ifdef MODULE
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
-macro_line|#endif
 id|spin_unlock_irqrestore
 c_func
 (paren

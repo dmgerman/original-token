@@ -118,22 +118,9 @@ id|cp
 op_minus
 l_char|&squot;0&squot;
 suffix:colon
-(paren
-id|islower
-c_func
-(paren
-op_star
-id|cp
-)paren
-ques
-c_cond
 id|toupper
 c_func
 (paren
-op_star
-id|cp
-)paren
-suffix:colon
 op_star
 id|cp
 )paren
@@ -232,9 +219,6 @@ id|base
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* we use this so that we can do without the ctype library */
-DECL|macro|is_digit
-mdefine_line|#define is_digit(c)&t;((c) &gt;= &squot;0&squot; &amp;&amp; (c) &lt;= &squot;9&squot;)
 DECL|function|skip_atoi
 r_static
 r_int
@@ -256,7 +240,7 @@ suffix:semicolon
 r_while
 c_loop
 (paren
-id|is_digit
+id|isdigit
 c_func
 (paren
 op_star
@@ -900,7 +884,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|is_digit
+id|isdigit
 c_func
 (paren
 op_star
@@ -980,7 +964,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|is_digit
+id|isdigit
 c_func
 (paren
 op_star

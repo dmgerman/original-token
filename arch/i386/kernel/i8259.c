@@ -1178,6 +1178,7 @@ id|regs-&gt;eip
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * New motherboards sometimes make IRQ 13 be a PCI interrupt,&n; * so allow interrupt sharing.&n; */
 DECL|variable|irq13
 r_static
 r_struct
@@ -1187,7 +1188,7 @@ op_assign
 (brace
 id|math_error_irq
 comma
-l_int|0
+id|SA_SHIRQ
 comma
 l_int|0
 comma

@@ -5556,6 +5556,8 @@ id|fore200e_vcc
 op_star
 id|fore200e_vcc
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 multiline_comment|/* find a free VPI/VCI */
 id|fore200e_walk_vccs
 c_func
@@ -5589,9 +5591,13 @@ id|vpi
 op_eq
 id|ATM_VPI_UNSPEC
 )paren
+(brace
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+)brace
 id|set_bit
 c_func
 (paren
@@ -5690,6 +5696,8 @@ op_amp
 id|fore200e-&gt;rate_sf
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 op_minus
 id|EAGAIN
@@ -5748,6 +5756,8 @@ op_amp
 id|fore200e-&gt;rate_sf
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 op_minus
 id|ENOMEM
@@ -5803,15 +5813,13 @@ op_amp
 id|fore200e-&gt;rate_sf
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 op_minus
 id|EBUSY
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* compute rate control parameters */
 r_if
 c_cond
@@ -11028,6 +11036,10 @@ id|FORE200E_VERSION
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#if 0 /* XXX uncomment this to forbid module unloading */
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* for each configured bus interface */
 r_for
 c_loop
@@ -11136,17 +11148,15 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#if 0 /* XXX uncomment this to forbid module unloading */
-macro_line|#ifdef MODULE
 r_if
 c_cond
 (paren
 id|link
-OG
+op_le
 l_int|0
 )paren
-id|MOD_INC_USE_COUNT
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 macro_line|#endif
 r_return
 id|link

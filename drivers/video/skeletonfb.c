@@ -944,6 +944,7 @@ multiline_comment|/* Parse user speficied options (`video=xxxfb:&squot;) */
 )brace
 multiline_comment|/* ------------------------------------------------------------------------- */
 multiline_comment|/*&n;     *  Frame buffer operations&n;     */
+multiline_comment|/* If all you need is that - just don&squot;t define -&gt;fb_open */
 DECL|function|xxxfb_open
 r_static
 r_int
@@ -960,13 +961,11 @@ r_int
 id|user
 )paren
 (brace
-multiline_comment|/* Nothing, only a usage count for the moment */
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* If all you need is that - just don&squot;t define -&gt;fb_release */
 DECL|function|xxxfb_release
 r_static
 r_int
@@ -983,8 +982,6 @@ r_int
 id|user
 )paren
 (brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -997,23 +994,48 @@ id|fb_ops
 id|xxxfb_ops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
+id|fb_open
+suffix:colon
 id|xxxfb_open
 comma
+multiline_comment|/* only if you need it to do something */
+id|fb_release
+suffix:colon
 id|xxxfb_release
 comma
+multiline_comment|/* only if you need it to do something */
+id|fb_get_fix
+suffix:colon
 id|fbgen_get_fix
 comma
+id|fb_get_var
+suffix:colon
 id|fbgen_get_var
 comma
+id|fb_set_var
+suffix:colon
 id|fbgen_set_var
 comma
+id|fb_get_cmap
+suffix:colon
 id|fbgen_get_cmap
 comma
+id|fb_set_cmap
+suffix:colon
 id|fbgen_set_cmap
 comma
+id|fb_pan_display
+suffix:colon
 id|fbgen_pan_display
 comma
+id|fb_ioctl
+suffix:colon
 id|fbgen_ioctl
+comma
 )brace
 suffix:semicolon
 multiline_comment|/* ------------------------------------------------------------------------- */

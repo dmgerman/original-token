@@ -63,7 +63,7 @@ id|reject
 op_assign
 id|targinfo
 suffix:semicolon
-multiline_comment|/* WARNING: This code has causes reentry within iptables.&n;&t;   This means that the iptables jump stack is now crap.  We&n;&t;   must return an absolute verdict. --RR */
+multiline_comment|/* WARNING: This code causes reentry within iptables.&n;&t;   This means that the iptables jump stack is now crap.  We&n;&t;   must return an absolute verdict. --RR */
 r_switch
 c_cond
 (paren
@@ -395,6 +395,32 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Only allow these for packet filtering. */
+r_if
+c_cond
+(paren
+id|strcmp
+c_func
+(paren
+id|tablename
+comma
+l_string|&quot;filter&quot;
+)paren
+op_ne
+l_int|0
+)paren
+(brace
+id|DEBUGP
+c_func
+(paren
+l_string|&quot;REJECT: bad table `%s&squot;.&bslash;n&quot;
+comma
+id|table
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

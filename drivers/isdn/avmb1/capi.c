@@ -4971,8 +4971,6 @@ r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 macro_line|#ifdef _DEBUG_REFCOUNT
 id|printk
 c_func
@@ -5035,8 +5033,6 @@ c_func
 id|cdev
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 macro_line|#ifdef _DEBUG_REFCOUNT
 id|printk
 c_func
@@ -5063,6 +5059,10 @@ id|file_operations
 id|capi_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|llseek
 suffix:colon
 id|capi_llseek
@@ -6002,35 +6002,38 @@ id|file_operations
 id|capinc_raw_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
+id|llseek
+suffix:colon
 id|capinc_raw_llseek
 comma
+id|read
+suffix:colon
 id|capinc_raw_read
 comma
+id|write
+suffix:colon
 id|capinc_raw_write
 comma
-l_int|NULL
-comma
-multiline_comment|/* capi_readdir */
+id|poll
+suffix:colon
 id|capinc_raw_poll
 comma
+id|ioctl
+suffix:colon
 id|capinc_raw_ioctl
 comma
-l_int|NULL
-comma
-multiline_comment|/* capi_mmap */
+id|open
+suffix:colon
 id|capinc_raw_open
 comma
-l_int|NULL
-comma
-multiline_comment|/* capi_flush */
+id|release
+suffix:colon
 id|capinc_raw_release
 comma
-l_int|NULL
-comma
-multiline_comment|/* capi_fsync */
-l_int|NULL
-comma
-multiline_comment|/* capi_fasync */
 )brace
 suffix:semicolon
 multiline_comment|/* -------- tty_operations for capincci ----------------------------- */
@@ -8087,9 +8090,9 @@ op_assign
 id|page
 op_plus
 (paren
-id|begin
-op_minus
 id|off
+op_minus
+id|begin
 )paren
 suffix:semicolon
 r_return

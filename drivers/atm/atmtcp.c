@@ -1731,6 +1731,8 @@ id|atm_dev
 op_star
 id|dev
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 id|dev_data
 op_assign
 id|kmalloc
@@ -1751,10 +1753,14 @@ c_cond
 op_logical_neg
 id|dev_data
 )paren
+(brace
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
+)brace
 id|dev
 op_assign
 id|atm_dev_register
@@ -1783,6 +1789,8 @@ c_func
 id|dev_data
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 id|itf
 op_eq
@@ -1797,8 +1805,6 @@ op_minus
 id|EBUSY
 suffix:semicolon
 )brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|dev-&gt;ci_range.vpi_bits
 op_assign
 id|MAX_VPI_BITS

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Linux/drivers/video/cyber2000fb.c&n; *&n; * Copyright (C) 1998-2000 Russell King&n; *&n; * Integraphics CyberPro 2000, 2010 and 5000 frame buffer device&n; *&n; * Based on cyberfb.c.&n; *&n; * Note that we now use the new fbcon fix, var and cmap scheme.  We do still&n; * have to check which console is the currently displayed one however, since&n; * especially for the colourmap stuff.  Once fbcon has been fully migrated,&n; * we can kill the last 5 references to cfb-&gt;currcon.&n; *&n; * We also use the new hotplug PCI subsystem.  This doesn&squot;t work fully in&n; * the case of multiple CyberPro cards yet however.&n; */
+multiline_comment|/*&n; * Linux/drivers/video/cyber2000fb.c&n; *&n; * Copyright (C) 1998-2000 Russell King&n; *&n; * Integraphics CyberPro 2000, 2010 and 5000 frame buffer device&n; *&n; * Based on cyberfb.c.&n; *&n; * Note that we now use the new fbcon fix, var and cmap scheme.  We do still&n; * have to check which console is the currently displayed one however, since&n; * especially for the colourmap stuff.  Once fbcon has been fully migrated,&n; * we can kill the last 5 references to cfb-&gt;currcon.&n; *&n; * We also use the new hotplug PCI subsystem.  I&squot;m not sure if there are any&n; * such cards, but I&squot;m erring on the side of caution.  We don&squot;t want to go&n; * pop just because someone does have one.&n; *&n; * Note that this doesn&squot;t work fully in the case of multiple CyberPro cards&n; * with grabbers.  We currently can only attach to the first CyberPro card&n; * found.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -23,7 +23,7 @@ macro_line|#include &lt;video/fbcon-cfb24.h&gt;
 multiline_comment|/*&n; * Define this if you don&squot;t want RGB565, but RGB555 for 16bpp displays.&n; */
 multiline_comment|/*#define CFB16_IS_CFB15*/
 multiline_comment|/*&n; * This is the offset of the PCI space in physical memory&n; */
-macro_line|#ifdef CONFIG_ARCH_FOOTBRIDGE
+macro_line|#ifdef CONFIG_FOOTBRIDGE
 DECL|macro|PCI_PHYS_OFFSET
 mdefine_line|#define PCI_PHYS_OFFSET&t;0x80000000
 macro_line|#else
@@ -63,6 +63,14 @@ r_int
 r_int
 id|currcon
 suffix:semicolon
+DECL|member|func_use_count
+r_int
+id|func_use_count
+suffix:semicolon
+DECL|member|ref_ps
+id|u_long
+id|ref_ps
+suffix:semicolon
 multiline_comment|/*&n;&t; * Clock divisors&n;&t; */
 DECL|member|divisors
 id|u_int
@@ -90,9 +98,21 @@ id|palette
 id|NR_PALETTE
 )braket
 suffix:semicolon
+DECL|member|mem_ctl1
+id|u_char
+id|mem_ctl1
+suffix:semicolon
 DECL|member|mem_ctl2
 id|u_char
 id|mem_ctl2
+suffix:semicolon
+DECL|member|mclk_mult
+id|u_char
+id|mclk_mult
+suffix:semicolon
+DECL|member|mclk_div
+id|u_char
+id|mclk_div
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -1494,6 +1514,11 @@ id|cyber2000fb_set_timing
 c_func
 (paren
 r_struct
+id|cfb_info
+op_star
+id|cfb
+comma
+r_struct
 id|par_info
 op_star
 id|hw
@@ -1823,7 +1848,7 @@ multiline_comment|/* PLL registers */
 id|cyber2000_grphw
 c_func
 (paren
-l_int|0xb0
+id|DCLK_MULT
 comma
 id|hw-&gt;clock_mult
 )paren
@@ -1831,7 +1856,7 @@ suffix:semicolon
 id|cyber2000_grphw
 c_func
 (paren
-l_int|0xb1
+id|DCLK_DIV
 comma
 id|hw-&gt;clock_div
 )paren
@@ -1839,20 +1864,19 @@ suffix:semicolon
 id|cyber2000_grphw
 c_func
 (paren
-l_int|0xb2
+id|MCLK_MULT
 comma
-l_int|0xdb
+id|cfb-&gt;mclk_mult
 )paren
 suffix:semicolon
 id|cyber2000_grphw
 c_func
 (paren
-l_int|0xb3
+id|MCLK_DIV
 comma
-l_int|0x54
+id|cfb-&gt;mclk_div
 )paren
 suffix:semicolon
-multiline_comment|/* MCLK: 75MHz */
 id|cyber2000_grphw
 c_func
 (paren
@@ -1977,12 +2001,13 @@ comma
 id|hw-&gt;visualid
 )paren
 suffix:semicolon
+multiline_comment|/* make sure we stay in linear mode */
 id|cyber2000_grphw
 c_func
 (paren
 l_int|0x33
 comma
-l_int|0x0c
+l_int|0x0d
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Set up accelerator registers&n;&t; */
@@ -2086,49 +2111,6 @@ l_int|0x0d
 comma
 id|base
 )paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/*&n; *  Open/Release the frame buffer device&n; */
-DECL|function|cyber2000fb_open
-r_static
-r_int
-id|cyber2000fb_open
-c_func
-(paren
-r_struct
-id|fb_info
-op_star
-id|info
-comma
-r_int
-id|user
-)paren
-(brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-DECL|function|cyber2000fb_release
-r_static
-r_int
-id|cyber2000fb_release
-c_func
-(paren
-r_struct
-id|fb_info
-op_star
-id|info
-comma
-r_int
-id|user
-)paren
-(brace
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -2869,7 +2851,7 @@ r_const
 id|u_long
 id|ref_ps
 op_assign
-l_int|69842
+id|cfb-&gt;ref_ps
 suffix:semicolon
 id|u_int
 id|div2
@@ -2942,7 +2924,6 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-macro_line|#if 1
 multiline_comment|/*&n;&t; * Step 2:&n;&t; *  Given pll_ps and ref_ps, find:&n;&t; *    pll_ps * 0.995 &lt; pll_ps_calc &lt; pll_ps * 1.005&n;&t; *  where { 1 &lt; best_div1 &lt; 32, 1 &lt; best_mult &lt; 256 }&n;&t; *    pll_ps_calc = best_div1 / (ref_ps * best_mult)&n;&t; */
 id|best_diff
 op_assign
@@ -3078,400 +3059,6 @@ l_int|0
 r_break
 suffix:semicolon
 )brace
-macro_line|#else
-multiline_comment|/* Note! This table will be killed shortly. --rmk */
-multiline_comment|/*&n;&t; *&t;&t;&t;&t;1600x1200 1280x1024 1152x864 1024x768 800x600 640x480&n;&t; * 5051&t;&t;5051&t;yes&t;   76*&n;&t; * 5814&t;&t;5814&t;no&t;   66&n;&t; * 6411&t;&t;6411&t;no&t;   60&n;&t; * 7408&t;&t;7408&t;yes&t;             75*&n;&t; *&t;&t;&t;&t;             74*&n;&t; * 7937&t;&t;7937&t;yes&t;             70*&n;&t; * 9091&t;&t;4545&t;yes&t;                       80*&n;&t; *&t;&t;&t;&t;                       75*     100*&n;&t; * 9260&t;&t;4630&t;yes&t;             60*&n;&t; * 10000&t;5000&t;no&t;                       70       90&n;&t; * 12500&t;6250&t;yes&t;             47-lace*  60*&n;&t; *&t;&t;&t;&t;             43-lace*&n;&t; * 12699&t;6349&t;yes&t;                                75*&n;&t; * 13334&t;6667&t;no&t;                                72&n;&t; *&t;&t;&t;&t;                                70&n;&t; * 14815&t;7407&t;yes&t;                                       100*&n;&t; * 15385&t;7692&t;yes&t;                       47-lace* 60*&n;&t; *&t;&t;&t;&t;                       43-lace*&n;&t; * 17656&t;4414&t;no&t;                                        90&n;&t; * 20000&t;5000&t;no&t;                                        72&n;&t; * 20203&t;5050&t;yes&t;                                        75*&n;&t; * 22272&t;5568&t;yes&t;                               43-lace* 70*    100*&n;&t; * 25000&t;6250&t;yes&t;                                        60*&n;&t; * 25057&t;6264&t;no&t;                                                90&n;&t; * 27778&t;6944&t;yes&t;                                        56*&n;&t; *&t;&t;&t;&t;&t;&t;&t;&t;&t;48-lace*&n;&t; * 31747&t;7936&t;yes&t;                                                75*&n;&t; * 32052&t;8013&t;no&t;                                                72&n;&t; * 39722 /6&t;6620&t;no&n;&t; * 39722 /8&t;4965&t;yes&t;                                                60*&n;&t; */
-multiline_comment|/*  /1     /2     /4     /6     /8    */
-multiline_comment|/*                      (2010) (2000) */
-r_if
-c_cond
-(paren
-id|pll_ps
-op_ge
-l_int|4543
-op_logical_and
-id|pll_ps
-op_le
-l_int|4549
-)paren
-(brace
-id|best_mult
-op_assign
-l_int|169
-suffix:semicolon
-multiline_comment|/*u220.0  110.0  54.99  36.663 27.497 */
-id|best_div1
-op_assign
-l_int|11
-suffix:semicolon
-multiline_comment|/* 4546    9092  18184  27276  36367  */
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|pll_ps
-op_ge
-l_int|4596
-op_logical_and
-id|pll_ps
-op_le
-l_int|4602
-)paren
-(brace
-id|best_mult
-op_assign
-l_int|243
-suffix:semicolon
-multiline_comment|/* 217.5  108.7  54.36  36.243 27.181 */
-id|best_div1
-op_assign
-l_int|16
-suffix:semicolon
-multiline_comment|/* 4599    9197  18395  27592  36789  */
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|pll_ps
-op_ge
-l_int|4627
-op_logical_and
-id|pll_ps
-op_le
-l_int|4633
-)paren
-(brace
-id|best_mult
-op_assign
-l_int|181
-suffix:semicolon
-multiline_comment|/*u216.0, 108.0, 54.00, 36.000 27.000 */
-id|best_div1
-op_assign
-l_int|12
-suffix:semicolon
-multiline_comment|/* 4630    9260  18520  27780  37040  */
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|pll_ps
-op_ge
-l_int|4962
-op_logical_and
-id|pll_ps
-op_le
-l_int|4968
-)paren
-(brace
-id|best_mult
-op_assign
-l_int|211
-suffix:semicolon
-multiline_comment|/*u201.0, 100.5, 50.25, 33.500 25.125 */
-id|best_div1
-op_assign
-l_int|15
-suffix:semicolon
-multiline_comment|/* 4965    9930  19860  29790  39720  */
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|pll_ps
-op_ge
-l_int|5005
-op_logical_and
-id|pll_ps
-op_le
-l_int|5011
-)paren
-(brace
-id|best_mult
-op_assign
-l_int|251
-suffix:semicolon
-multiline_comment|/* 200.0   99.8  49.92  33.280 24.960 */
-id|best_div1
-op_assign
-l_int|18
-suffix:semicolon
-multiline_comment|/* 5008   10016  20032  30048  40064  */
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|pll_ps
-op_ge
-l_int|5047
-op_logical_and
-id|pll_ps
-op_le
-l_int|5053
-)paren
-(brace
-id|best_mult
-op_assign
-l_int|83
-suffix:semicolon
-multiline_comment|/*u198.0,  99.0, 49.50, 33.000 24.750 */
-id|best_div1
-op_assign
-l_int|6
-suffix:semicolon
-multiline_comment|/* 5050   10100  20200  30300  40400  */
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|pll_ps
-op_ge
-l_int|5490
-op_logical_and
-id|pll_ps
-op_le
-l_int|5496
-)paren
-(brace
-id|best_mult
-op_assign
-l_int|89
-suffix:semicolon
-multiline_comment|/* 182.0   91.0  45.51  30.342 22.756 */
-id|best_div1
-op_assign
-l_int|7
-suffix:semicolon
-multiline_comment|/* 5493   10986  21972  32958  43944  */
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|pll_ps
-op_ge
-l_int|5567
-op_logical_and
-id|pll_ps
-op_le
-l_int|5573
-)paren
-(brace
-id|best_mult
-op_assign
-l_int|163
-suffix:semicolon
-multiline_comment|/*u179.5   89.8  44.88  29.921 22.441 */
-id|best_div1
-op_assign
-l_int|13
-suffix:semicolon
-multiline_comment|/* 5570   11140  22281  33421  44562  */
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|pll_ps
-op_ge
-l_int|6246
-op_logical_and
-id|pll_ps
-op_le
-l_int|6252
-)paren
-(brace
-id|best_mult
-op_assign
-l_int|190
-suffix:semicolon
-multiline_comment|/*u160.0,  80.0, 40.00, 26.671 20.003 */
-id|best_div1
-op_assign
-l_int|17
-suffix:semicolon
-multiline_comment|/* 6249   12498  24996  37494  49992  */
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|pll_ps
-op_ge
-l_int|6346
-op_logical_and
-id|pll_ps
-op_le
-l_int|6352
-)paren
-(brace
-id|best_mult
-op_assign
-l_int|209
-suffix:semicolon
-multiline_comment|/*u158.0,  79.0, 39.50, 26.333 19.750 */
-id|best_div1
-op_assign
-l_int|19
-suffix:semicolon
-multiline_comment|/* 6349   12698  25396  38094  50792  */
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|pll_ps
-op_ge
-l_int|6648
-op_logical_and
-id|pll_ps
-op_le
-l_int|6655
-)paren
-(brace
-id|best_mult
-op_assign
-l_int|210
-suffix:semicolon
-multiline_comment|/*u150.3   75.2  37.58  25.057 18.792 */
-id|best_div1
-op_assign
-l_int|20
-suffix:semicolon
-multiline_comment|/* 6652   13303  26606  39909  53213  */
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|pll_ps
-op_ge
-l_int|6943
-op_logical_and
-id|pll_ps
-op_le
-l_int|6949
-)paren
-(brace
-id|best_mult
-op_assign
-l_int|181
-suffix:semicolon
-multiline_comment|/*u144.0   72.0  36.00  23.996 17.997 */
-id|best_div1
-op_assign
-l_int|18
-suffix:semicolon
-multiline_comment|/* 6946   13891  27782  41674  55565  */
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|pll_ps
-op_ge
-l_int|7404
-op_logical_and
-id|pll_ps
-op_le
-l_int|7410
-)paren
-(brace
-id|best_mult
-op_assign
-l_int|198
-suffix:semicolon
-multiline_comment|/*u134.0   67.5  33.75  22.500 16.875 */
-id|best_div1
-op_assign
-l_int|21
-suffix:semicolon
-multiline_comment|/* 7407   14815  29630  44445  59260  */
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|pll_ps
-op_ge
-l_int|7689
-op_logical_and
-id|pll_ps
-op_le
-l_int|7695
-)paren
-(brace
-id|best_mult
-op_assign
-l_int|227
-suffix:semicolon
-multiline_comment|/*u130.0   65.0  32.50  21.667 16.251 */
-id|best_div1
-op_assign
-l_int|25
-suffix:semicolon
-multiline_comment|/* 7692   15384  30768  46152  61536  */
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|pll_ps
-op_ge
-l_int|7808
-op_logical_and
-id|pll_ps
-op_le
-l_int|7814
-)paren
-(brace
-id|best_mult
-op_assign
-l_int|152
-suffix:semicolon
-multiline_comment|/* 128.0   64.0  32.00  21.337 16.003 */
-id|best_div1
-op_assign
-l_int|17
-suffix:semicolon
-multiline_comment|/* 7811   15623  31245  46868  62490  */
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|pll_ps
-op_ge
-l_int|7934
-op_logical_and
-id|pll_ps
-op_le
-l_int|7940
-)paren
-(brace
-id|best_mult
-op_assign
-l_int|44
-suffix:semicolon
-multiline_comment|/*u126.0   63.0  31.498 20.999 15.749 */
-id|best_div1
-op_assign
-l_int|5
-suffix:semicolon
-multiline_comment|/* 7937   15874  31748  47622  63494  */
-)brace
-r_else
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n;&t; * Step 3:&n;&t; *  combine values&n;&t; */
 id|hw-&gt;clock_mult
 op_assign
@@ -4286,6 +3873,8 @@ suffix:semicolon
 id|cyber2000fb_set_timing
 c_func
 (paren
+id|cfb
+comma
 op_amp
 id|hw
 )paren
@@ -4921,13 +4510,9 @@ id|fb_ops
 id|cyber2000fb_ops
 op_assign
 (brace
-id|fb_open
+id|owner
 suffix:colon
-id|cyber2000fb_open
-comma
-id|fb_release
-suffix:colon
-id|cyber2000fb_release
+id|THIS_MODULE
 comma
 id|fb_set_var
 suffix:colon
@@ -4959,14 +4544,29 @@ id|gen_get_cmap
 comma
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Enable access to the extended registers&n; *  Bug: this should track the usage of these registers&n; */
+multiline_comment|/*&n; * Enable access to the extended registers&n; */
 DECL|function|cyber2000fb_enable_extregs
 r_static
 r_void
 id|cyber2000fb_enable_extregs
 c_func
 (paren
-r_void
+r_struct
+id|cfb_info
+op_star
+id|cfb
+)paren
+(brace
+id|cfb-&gt;func_use_count
+op_add_assign
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|cfb-&gt;func_use_count
+op_eq
+l_int|1
 )paren
 (brace
 r_int
@@ -4991,14 +4591,26 @@ id|FUNC_CTL_EXTREGENBL
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Disable access to the extended registers&n; *  Bug: this should track the usage of these registers&n; */
+)brace
+multiline_comment|/*&n; * Disable access to the extended registers&n; */
 DECL|function|cyber2000fb_disable_extregs
 r_static
 r_void
 id|cyber2000fb_disable_extregs
 c_func
 (paren
-r_void
+r_struct
+id|cfb_info
+op_star
+id|cfb
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|cfb-&gt;func_use_count
+op_eq
+l_int|1
 )paren
 (brace
 r_int
@@ -5024,6 +4636,11 @@ id|FUNC_CTL_EXTREGENBL
 )paren
 suffix:semicolon
 )brace
+id|cfb-&gt;func_use_count
+op_sub_assign
+l_int|1
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * This is the only &quot;static&quot; reference to the internal data structures&n; * of this driver.  It is here solely at the moment to support the other&n; * CyberPro modules external to this driver.&n; */
 DECL|variable|int_cfb_info
 r_static
@@ -5042,6 +4659,9 @@ r_struct
 id|cyberpro_info
 op_star
 id|info
+comma
+r_int
+id|idx
 )paren
 (brace
 r_if
@@ -5076,6 +4696,10 @@ id|info-&gt;disable_extregs
 op_assign
 id|cyber2000fb_disable_extregs
 suffix:semicolon
+id|info-&gt;info
+op_assign
+id|int_cfb_info
+suffix:semicolon
 id|strncpy
 c_func
 (paren
@@ -5104,7 +4728,8 @@ r_void
 id|cyber2000fb_detach
 c_func
 (paren
-r_void
+r_int
+id|idx
 )paren
 (brace
 id|MOD_DEC_USE_COUNT
@@ -5208,10 +4833,6 @@ id|igs_regs
 id|__devinitdata
 op_assign
 (brace
-l_int|0x10
-comma
-l_int|0x10
-comma
 l_int|0x12
 comma
 l_int|0x00
@@ -5227,10 +4848,6 @@ comma
 l_int|0x32
 comma
 l_int|0x00
-comma
-l_int|0x33
-comma
-l_int|0x01
 comma
 l_int|0x50
 comma
@@ -5301,6 +4918,7 @@ comma
 l_int|0xc8
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * We need to wake up the CyberPro, and make sure its in linear memory&n; * mode.  Unfortunately, this is specific to the platform and card that&n; * we are running on.&n; *&n; * On x86 and ARM, should we be initialising the CyberPro first via the&n; * IO registers, and then the MMIO registers to catch all cases?  Can we&n; * end up in the situation where the chip is in MMIO mode, but not awake&n; * on an x86 system?&n; *&n; * Note that on the NetWinder, the firmware automatically detects the&n; * type, width and size, and leaves this in extended registers 0x71 and&n; * 0x72 for us.&n; */
 DECL|function|cyberpro_init_hw
 r_static
 r_inline
@@ -5312,12 +4930,210 @@ r_struct
 id|cfb_info
 op_star
 id|cfb
+comma
+r_int
+id|at_boot
 )paren
 (brace
 r_int
 id|i
 suffix:semicolon
-multiline_comment|/*&n;&t; * Wake up the CyberPro&n;&t; */
+multiline_comment|/*&n;&t; * Wake up the CyberPro.&n;&t; */
+macro_line|#ifdef __sparc__
+macro_line|#ifdef __sparc_v9__
+macro_line|#error &quot;You loose, consult DaveM.&quot;
+macro_line|#else
+multiline_comment|/*&n;&t; * SPARC does not have an &quot;outb&quot; instruction, so we generate&n;&t; * I/O cycles storing into a reserved memory space at&n;&t; * physical address 0x3000000&n;&t; */
+(brace
+r_int
+r_char
+op_star
+id|iop
+suffix:semicolon
+id|iop
+op_assign
+id|ioremap
+c_func
+(paren
+l_int|0x3000000
+comma
+l_int|0x5000
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|iop
+op_eq
+l_int|NULL
+)paren
+(brace
+id|prom_printf
+c_func
+(paren
+l_string|&quot;iga5000: cannot map I/O&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
+)brace
+id|writeb
+c_func
+(paren
+l_int|0x18
+comma
+id|iop
+op_plus
+l_int|0x46e8
+)paren
+suffix:semicolon
+id|writeb
+c_func
+(paren
+l_int|0x01
+comma
+id|iop
+op_plus
+l_int|0x102
+)paren
+suffix:semicolon
+id|writeb
+c_func
+(paren
+l_int|0x08
+comma
+id|iop
+op_plus
+l_int|0x46e8
+)paren
+suffix:semicolon
+id|writeb
+c_func
+(paren
+l_int|0x33
+comma
+id|iop
+op_plus
+l_int|0x3ce
+)paren
+suffix:semicolon
+id|writeb
+c_func
+(paren
+l_int|0x01
+comma
+id|iop
+op_plus
+l_int|0x3cf
+)paren
+suffix:semicolon
+id|iounmap
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
+id|iop
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+r_if
+c_cond
+(paren
+id|at_boot
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; * Use mclk from BIOS.  Only read this if we&squot;re&n;&t;&t; * initialising this card for the first time.&n;&t;&t; * FIXME: what about hotplug?&n;&t;&t; */
+id|cfb-&gt;mclk_mult
+op_assign
+id|cyber2000_grphr
+c_func
+(paren
+id|MCLK_MULT
+)paren
+suffix:semicolon
+id|cfb-&gt;mclk_div
+op_assign
+id|cyber2000_grphr
+c_func
+(paren
+id|MCLK_DIV
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+macro_line|#ifdef __i386__
+multiline_comment|/*&n;&t; * x86 is simple, we just do regular outb&squot;s instead of&n;&t; * cyber2000_outb.&n;&t; */
+id|outb
+c_func
+(paren
+l_int|0x18
+comma
+l_int|0x46e8
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x01
+comma
+l_int|0x102
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x08
+comma
+l_int|0x46e8
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x33
+comma
+l_int|0x3ce
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x01
+comma
+l_int|0x3cf
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|at_boot
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; * Use mclk from BIOS.  Only read this if we&squot;re&n;&t;&t; * initialising this card for the first time.&n;&t;&t; * FIXME: what about hotplug?&n;&t;&t; */
+id|cfb-&gt;mclk_mult
+op_assign
+id|cyber2000_grphr
+c_func
+(paren
+id|MCLK_MULT
+)paren
+suffix:semicolon
+id|cfb-&gt;mclk_div
+op_assign
+id|cyber2000_grphr
+c_func
+(paren
+id|MCLK_DIV
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+macro_line|#ifdef __arm__
 id|cyber2000_outb
 c_func
 (paren
@@ -5342,6 +5158,32 @@ comma
 l_int|0x46e8
 )paren
 suffix:semicolon
+id|cyber2000_outb
+c_func
+(paren
+l_int|0x33
+comma
+l_int|0x3ce
+)paren
+suffix:semicolon
+id|cyber2000_outb
+c_func
+(paren
+l_int|0x01
+comma
+l_int|0x3cf
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * MCLK on the NetWinder is fixed at 75MHz&n;&t; */
+id|cfb-&gt;mclk_mult
+op_assign
+l_int|0xdb
+suffix:semicolon
+id|cfb-&gt;mclk_div
+op_assign
+l_int|0x54
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t; * Initialise the CyberPro&n;&t; */
 r_for
 c_loop
@@ -5375,6 +5217,73 @@ id|i
 op_plus
 l_int|1
 )braket
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|at_boot
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; * get the video RAM size and width from the VGA register.&n;&t;&t; * This should have been already initialised by the BIOS,&n;&t;&t; * but if it&squot;s garbage, claim default 1MB VRAM (woody)&n;&t;&t; */
+id|cfb-&gt;mem_ctl1
+op_assign
+id|cyber2000_grphr
+c_func
+(paren
+id|MEM_CTL1
+)paren
+suffix:semicolon
+id|cfb-&gt;mem_ctl2
+op_assign
+id|cyber2000_grphr
+c_func
+(paren
+id|MEM_CTL2
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/*&n;&t;&t; * Reprogram the MEM_CTL1 and MEM_CTL2 registers&n;&t;&t; */
+id|cyber2000_grphw
+c_func
+(paren
+id|MEM_CTL1
+comma
+id|cfb-&gt;mem_ctl1
+)paren
+suffix:semicolon
+id|cyber2000_grphw
+c_func
+(paren
+id|MEM_CTL2
+comma
+id|cfb-&gt;mem_ctl2
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; * Ensure thatwe are using the correct PLL.&n;&t; * (CyberPro 5000&squot;s may be programmed to use&n;&t; * an additional set of PLLs.&n;&t; */
+id|cyber2000_outb
+c_func
+(paren
+l_int|0xba
+comma
+l_int|0x3ce
+)paren
+suffix:semicolon
+id|cyber2000_outb
+c_func
+(paren
+id|cyber2000_inb
+c_func
+(paren
+l_int|0x3cf
+)paren
+op_amp
+l_int|0x80
+comma
+l_int|0x3cf
 )paren
 suffix:semicolon
 )brace
@@ -5468,6 +5377,10 @@ suffix:semicolon
 id|cfb-&gt;dev
 op_assign
 id|dev
+suffix:semicolon
+id|cfb-&gt;ref_ps
+op_assign
+l_int|69842
 suffix:semicolon
 id|cfb-&gt;divisors
 (braket
@@ -6023,16 +5936,6 @@ suffix:semicolon
 r_int
 id|err
 suffix:semicolon
-multiline_comment|/*&n;&t; * We can only accept one CyberPro device at the moment.  We can&n;&t; * kill this once int_cfb_info and CyberRegs have been killed.&n;&t; */
-r_if
-c_cond
-(paren
-id|int_cfb_info
-)paren
-r_return
-op_minus
-id|EBUSY
-suffix:semicolon
 id|err
 op_assign
 id|pci_enable_device
@@ -6095,15 +5998,8 @@ id|cyberpro_init_hw
 c_func
 (paren
 id|cfb
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * get the video RAM size and width from the VGA register.&n;&t; * This should have been already initialised by the BIOS,&n;&t; * but if it&squot;s garbage, claim default 1MB VRAM (woody)&n;&t; */
-id|cfb-&gt;mem_ctl2
-op_assign
-id|cyber2000_grphr
-c_func
-(paren
-id|MEM_CTL2
+comma
+l_int|1
 )paren
 suffix:semicolon
 r_switch
@@ -6235,6 +6131,7 @@ op_amp
 id|cfb-&gt;fb
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * Calculate the hsync and vsync frequencies.  Note that&n;&t; * we split the 1e12 constant up so that we can preserve&n;&t; * the precision and fit the results into 32-bit registers.&n;&t; *  (1953125000 * 512 = 1e12)&n;&t; */
 id|h_sync
 op_assign
 l_int|1953125000
@@ -6322,6 +6219,13 @@ id|dev-&gt;driver_data
 op_assign
 id|cfb
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|int_cfb_info
+op_eq
+l_int|NULL
+)paren
 id|int_cfb_info
 op_assign
 id|cfb
@@ -6384,11 +6288,25 @@ c_cond
 id|cfb
 )paren
 (brace
+multiline_comment|/*&n;&t;&t; * If unregister_framebuffer fails, then&n;&t;&t; * we will be leaving hooks that could cause&n;&t;&t; * oopsen laying around.&n;&t;&t; */
+r_if
+c_cond
+(paren
 id|unregister_framebuffer
 c_func
 (paren
 op_amp
 id|cfb-&gt;fb
+)paren
+)paren
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;%s: danger Will Robinson, &quot;
+l_string|&quot;danger danger!  Oopsen imminent!&bslash;n&quot;
+comma
+id|cfb-&gt;fb.fix.id
 )paren
 suffix:semicolon
 id|cyberpro_unmap_smem
@@ -6414,6 +6332,13 @@ id|dev-&gt;driver_data
 op_assign
 l_int|NULL
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|cfb
+op_eq
+id|int_cfb_info
+)paren
 id|int_cfb_info
 op_assign
 l_int|NULL
@@ -6468,15 +6393,8 @@ id|cyberpro_init_hw
 c_func
 (paren
 id|cfb
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Reprogram the MEM_CTL2 register&n;&t;&t; */
-id|cyber2000_grphw
-c_func
-(paren
-id|MEM_CTL2
 comma
-id|cfb-&gt;mem_ctl2
+l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Restore the old video mode and the palette.&n;&t;&t; * We also need to tell fbcon to redraw the console.&n;&t;&t; */
@@ -6603,7 +6521,7 @@ suffix:colon
 id|cyberpro_pci_table
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * I don&squot;t think we can use the &quot;module_init&quot; stuff here because&n; * the fbcon stuff may not be initialised yet.&n; */
+multiline_comment|/*&n; * I don&squot;t think we can use the &quot;module_init&quot; stuff here because&n; * the fbcon stuff may not be initialised yet.  Hence the #ifdef&n; * around module_init.&n; */
 DECL|function|cyber2000fb_init
 r_int
 id|__init
@@ -6654,14 +6572,6 @@ id|module_exit
 c_func
 (paren
 id|cyberpro_exit
-)paren
-suffix:semicolon
-id|MODULE_DEVICE_TABLE
-c_func
-(paren
-id|pci
-comma
-id|cyberpro_pci_table
 )paren
 suffix:semicolon
 eof

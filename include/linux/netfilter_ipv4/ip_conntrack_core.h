@@ -107,6 +107,10 @@ r_enum
 id|ip_conntrack_info
 op_star
 id|ctinfo
+comma
+r_int
+r_int
+id|hooknum
 )paren
 suffix:semicolon
 r_extern

@@ -25,10 +25,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_extern
-r_int
-id|C_A_D
-suffix:semicolon
 DECL|variable|panic_timeout
 r_int
 id|panic_timeout

@@ -2242,14 +2242,8 @@ id|timer_list
 id|repeat_timer
 op_assign
 (brace
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|0
-comma
-l_int|0
-comma
+id|function
+suffix:colon
 id|kbd_repeat
 )brace
 suffix:semicolon

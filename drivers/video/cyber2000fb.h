@@ -339,6 +339,8 @@ DECL|macro|CAP_DDA_Y_INIT
 mdefine_line|#define CAP_DDA_Y_INIT&t;&t;0x6c
 DECL|macro|CAP_DDA_Y_INC
 mdefine_line|#define CAP_DDA_Y_INC&t;&t;0x6e
+DECL|macro|MEM_CTL1
+mdefine_line|#define MEM_CTL1&t;&t;0x71
 DECL|macro|MEM_CTL2
 mdefine_line|#define MEM_CTL2&t;&t;0x72
 DECL|macro|MEM_CTL2_SIZE_2MB
@@ -383,6 +385,14 @@ DECL|macro|CAP_MODE1_MIRRORY
 mdefine_line|#define CAP_MODE1_MIRRORY&t;&t;0x40&t;/* mirror vertically&t;&t;&t;*/
 DECL|macro|CAP_MODE1_MIRRORX
 mdefine_line|#define CAP_MODE1_MIRRORX&t;&t;0x80&t;/* mirror horizontally&t;&t;&t;*/
+DECL|macro|DCLK_MULT
+mdefine_line|#define DCLK_MULT&t;&t;0xb0
+DECL|macro|DCLK_DIV
+mdefine_line|#define DCLK_DIV&t;&t;0xb1
+DECL|macro|MCLK_MULT
+mdefine_line|#define MCLK_MULT&t;&t;0xb2
+DECL|macro|MCLK_DIV
+mdefine_line|#define MCLK_DIV&t;&t;0xb3
 DECL|macro|CAP_MODE2
 mdefine_line|#define CAP_MODE2&t;&t;0xa5
 DECL|macro|Y_TV_CTL
@@ -589,6 +599,10 @@ DECL|macro|CO_REG_DEST_PTR
 mdefine_line|#define CO_REG_DEST_PTR&t;&t;0xbf178
 DECL|macro|CO_REG_DEST_WIDTH
 mdefine_line|#define CO_REG_DEST_WIDTH&t;0xbf218
+multiline_comment|/*&n; * Private structure&n; */
+r_struct
+id|cfb_info
+suffix:semicolon
 DECL|struct|cyberpro_info
 r_struct
 id|cyberpro_info
@@ -622,7 +636,14 @@ r_int
 r_int
 id|fb_size
 suffix:semicolon
-multiline_comment|/*&n;&t; * Use these to enable the BM or TV registers.&n;&t; */
+multiline_comment|/*&n;&t; * The following is a pointer to be passed into the&n;&t; * functions below.  The modules outside the main&n;&t; * cyber2000fb.c driver have no knowledge as to what&n;&t; * is within this structure.&n;&t; */
+DECL|member|info
+r_struct
+id|cfb_info
+op_star
+id|info
+suffix:semicolon
+multiline_comment|/*&n;&t; * Use these to enable the BM or TV registers.  In an SMP&n;&t; * environment, these two function pointers should only be&n;&t; * called from the module_init() or module_exit()&n;&t; * functions.&n;&t; */
 DECL|member|enable_extregs
 r_void
 (paren
@@ -630,7 +651,9 @@ op_star
 id|enable_extregs
 )paren
 (paren
-r_void
+r_struct
+id|cfb_info
+op_star
 )paren
 suffix:semicolon
 DECL|member|disable_extregs
@@ -640,7 +663,9 @@ op_star
 id|disable_extregs
 )paren
 (paren
-r_void
+r_struct
+id|cfb_info
+op_star
 )paren
 suffix:semicolon
 )brace
@@ -654,13 +679,17 @@ r_struct
 id|cyberpro_info
 op_star
 id|info
+comma
+r_int
+id|idx
 )paren
 suffix:semicolon
 r_void
 id|cyber2000fb_detach
 c_func
 (paren
-r_void
+r_int
+id|idx
 )paren
 suffix:semicolon
 eof

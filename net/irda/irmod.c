@@ -287,6 +287,10 @@ id|file_operations
 id|irda_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|read
 suffix:colon
 id|irda_read
@@ -1493,8 +1497,6 @@ id|irda.in_use
 op_assign
 id|TRUE
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1712,8 +1714,6 @@ comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 id|irda.in_use
 op_assign

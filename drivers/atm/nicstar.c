@@ -1962,12 +1962,13 @@ id|pcidev
 suffix:semicolon
 id|card-&gt;membase
 op_assign
-id|pcidev-&gt;resource
-(braket
+id|pci_resource_start
+c_func
+(paren
+id|pcidev
+comma
 l_int|1
-)braket
-dot
-id|start
+)paren
 suffix:semicolon
 macro_line|#ifdef __powerpc__
 multiline_comment|/* Compensate for different memory map between host CPU and PCI bus.&n;      Shouldn&squot;t we use a macro for this? */
@@ -4329,11 +4330,9 @@ c_func
 id|card-&gt;atmdev
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|MOD_INC_USE_COUNT
 suffix:semicolon
 multiline_comment|/* Can&squot;t remove the nicstar driver or the suni driver would oops */
-macro_line|#endif /* MODULE */
 )brace
 macro_line|#endif /* CONFIG_ATM_NICSTAR_USE_SUNI */
 macro_line|#ifdef CONFIG_ATM_NICSTAR_USE_IDT77105

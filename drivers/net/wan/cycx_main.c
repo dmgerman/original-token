@@ -1,4 +1,4 @@
-multiline_comment|/*&n;* cycx_main.c&t;Cyclades Cyclom 2X WAN Link Driver. Main module.&n;*&n;* Author:&t;Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt;&n;*&n;* Copyright:&t;(c) 1998-2000 Arnaldo Carvalho de Melo&n;*&n;* Based on sdlamain.c by Gene Kozin &lt;genek@compuserve.com&gt; &amp;&n;*&t;&t;&t; Jaspreet Singh&t;&lt;jaspreet@sangoma.com&gt;&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* 2000/04/02&t;acme&t;&t;dprintk and cycx_debug&n;* &t;&t;&t;&t;module_init/module_exit&n;* 2000/01/21&t;acme&t;&t;rename cyclomx_open to cyclomx_mod_inc_use_count&n;*&t;&t;&t;&t;and cyclomx_close to cyclomx_mod_dec_use_count&n;* 2000/01/08&t;acme&t;&t;cleanup&n;* 1999/11/06&t;acme&t;&t;cycx_down back to life (it needs to be&n;*&t;&t;&t;&t;called to iounmap the dpmbase)&n;* 1999/08/09&t;acme&t;&t;removed references to enable_tx_int&n;*&t;&t;&t;&t;use spinlocks instead of cli/sti in&n;*&t;&t;&t;&t;cyclomx_set_state&n;* 1999/05/19&t;acme&t;&t;works directly linked into the kernel&n;*&t;&t;&t;&t;init_waitqueue_head for 2.3.* kernel&n;* 1999/05/18&t;acme&t;&t;major cleanup (polling not needed), etc&n;* 1998/08/28&t;acme&t;&t;minor cleanup (ioctls for firmware deleted)&n;*&t;&t;&t;&t;queue_task activated&n;* 1998/08/08&t;acme&t;&t;Initial version.&n;*/
+multiline_comment|/*&n;* cycx_main.c&t;Cyclades Cyclom 2X WAN Link Driver. Main module.&n;*&n;* Author:&t;Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt;&n;*&n;* Copyright:&t;(c) 1998-2000 Arnaldo Carvalho de Melo&n;*&n;* Based on sdlamain.c by Gene Kozin &lt;genek@compuserve.com&gt; &amp;&n;*&t;&t;&t; Jaspreet Singh&t;&lt;jaspreet@sangoma.com&gt;&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* 2000/07/06&t;acme&t;&t;__exit at cyclomx_cleanup&n;* 2000/04/02&t;acme&t;&t;dprintk and cycx_debug&n;* &t;&t;&t;&t;module_init/module_exit&n;* 2000/01/21&t;acme&t;&t;rename cyclomx_open to cyclomx_mod_inc_use_count&n;*&t;&t;&t;&t;and cyclomx_close to cyclomx_mod_dec_use_count&n;* 2000/01/08&t;acme&t;&t;cleanup&n;* 1999/11/06&t;acme&t;&t;cycx_down back to life (it needs to be&n;*&t;&t;&t;&t;called to iounmap the dpmbase)&n;* 1999/08/09&t;acme&t;&t;removed references to enable_tx_int&n;*&t;&t;&t;&t;use spinlocks instead of cli/sti in&n;*&t;&t;&t;&t;cyclomx_set_state&n;* 1999/05/19&t;acme&t;&t;works directly linked into the kernel&n;*&t;&t;&t;&t;init_waitqueue_head for 2.3.* kernel&n;* 1999/05/18&t;acme&t;&t;major cleanup (polling not needed), etc&n;* 1998/08/28&t;acme&t;&t;minor cleanup (ioctls for firmware deleted)&n;*&t;&t;&t;&t;queue_task activated&n;* 1998/08/08&t;acme&t;&t;Initial version.&n;*/
 macro_line|#include &lt;linux/config.h&gt;&t;/* OS configuration options */
 macro_line|#include &lt;linux/stddef.h&gt;&t;/* offsetof(), etc. */
 macro_line|#include &lt;linux/errno.h&gt;&t;/* return codes */
@@ -54,7 +54,7 @@ multiline_comment|/* Defines &amp; Macros */
 DECL|macro|DRV_VERSION
 mdefine_line|#define&t;DRV_VERSION&t;0&t;&t;/* version number */
 DECL|macro|DRV_RELEASE
-mdefine_line|#define&t;DRV_RELEASE&t;7&t;&t;/* release (minor version) number */
+mdefine_line|#define&t;DRV_RELEASE&t;8&t;&t;/* release (minor version) number */
 DECL|macro|MAX_CARDS
 mdefine_line|#define&t;MAX_CARDS&t;1&t;&t;/* max number of adapters */
 macro_line|#ifndef&t;CONFIG_CYCLOMX_CARDS&t;&t;/* configurable option */
@@ -168,6 +168,7 @@ multiline_comment|/* adapter data space */
 multiline_comment|/* Kernel Loadable Module Entry Points */
 multiline_comment|/*&n; * Module &squot;insert&squot; entry point.&n; * o print announcement&n; * o allocate adapter data space&n; * o initialize static data&n; * o register all cards with WAN router&n; * o calibrate Cyclom 2X shared memory access delay.&n; *&n; * Return:&t;0&t;Ok&n; *&t;&t;&lt; 0&t;error.&n; * Context:&t;process&n; */
 DECL|function|cyclomx_init
+r_static
 r_int
 id|__init
 id|cyclomx_init
@@ -396,7 +397,9 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Module &squot;remove&squot; entry point.&n; * o unregister all adapters from the WAN router&n; * o release all remaining system resources&n; */
 DECL|function|cyclomx_cleanup
+r_static
 r_void
+id|__exit
 id|cyclomx_cleanup
 (paren
 r_void

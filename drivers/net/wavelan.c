@@ -14793,6 +14793,7 @@ id|ha_t
 )paren
 )paren
 r_return
+op_minus
 id|EADDRINUSE
 suffix:semicolon
 multiline_comment|/* ioaddr already used */
@@ -14929,6 +14930,7 @@ l_int|2
 suffix:semicolon
 macro_line|#endif
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -16078,6 +16080,7 @@ id|irq_mask
 suffix:semicolon
 macro_line|#endif
 r_return
+op_minus
 id|EAGAIN
 suffix:semicolon
 )brace
@@ -16351,6 +16354,7 @@ c_func
 )paren
 suffix:semicolon
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace
@@ -16381,6 +16385,7 @@ id|dev-&gt;name
 suffix:semicolon
 macro_line|#endif
 r_return
+op_minus
 id|ENXIO
 suffix:semicolon
 )brace
@@ -16570,6 +16575,7 @@ id|dev-&gt;name
 suffix:semicolon
 macro_line|#endif
 r_return
+op_minus
 id|ENODEV
 suffix:semicolon
 )brace

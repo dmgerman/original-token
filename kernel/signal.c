@@ -1433,8 +1433,8 @@ op_ne
 l_int|1
 op_logical_and
 id|info-&gt;si_code
-OL
-l_int|0
+op_ne
+id|SI_USER
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; * Queue overflow, abort.  We may abort if the signal was rt&n;&t;&t; * and sent by user using something other than kill().&n;&t;&t; */
@@ -4497,7 +4497,7 @@ id|old
 suffix:semicolon
 )brace
 macro_line|#endif /* !defined(__alpha__) */
-macro_line|#if !defined(__alpha__) &amp;&amp; !defined(__mips__)
+macro_line|#if !defined(__alpha__) &amp;&amp; !defined(__ia64__) &amp;&amp; !defined(__mips__)
 multiline_comment|/*&n; * For backwards compatibility.  Functionality superseded by sigaction.&n; */
 id|asmlinkage
 r_int

@@ -274,6 +274,32 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;  failed root[%lx:%lx] min[%lx] size[%lx]&bslash;n&quot;
+comma
+id|root-&gt;start
+comma
+id|root-&gt;end
+comma
+id|min
+comma
+id|size
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;  failed res[%lx:%lx]&bslash;n&quot;
+comma
+id|res-&gt;start
+comma
+id|res-&gt;end
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EBUSY

@@ -397,8 +397,6 @@ op_lshift
 id|minor
 )paren
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|err
 op_assign
 id|sock_create
@@ -509,8 +507,6 @@ op_lshift
 id|minor
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 id|err
 suffix:semicolon
@@ -573,8 +569,6 @@ c_func
 (paren
 id|sock
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -656,6 +650,10 @@ id|file_operations
 id|netlink_fops
 op_assign
 (brace
+id|owner
+suffix:colon
+id|THIS_MODULE
+comma
 id|llseek
 suffix:colon
 id|netlink_lseek

@@ -86,7 +86,7 @@ mdefine_line|#define MSDOS_DOT    &quot;.          &quot; /* &quot;.&quot;, padd
 DECL|macro|MSDOS_DOTDOT
 mdefine_line|#define MSDOS_DOTDOT &quot;..         &quot; /* &quot;..&quot;, padded to MSDOS_NAME chars */
 DECL|macro|MSDOS_FAT12
-mdefine_line|#define MSDOS_FAT12 4078 /* maximum number of clusters in a 12 bit FAT */
+mdefine_line|#define MSDOS_FAT12 4084 /* maximum number of clusters in a 12 bit FAT */
 DECL|macro|EOF_FAT12
 mdefine_line|#define EOF_FAT12 0xFF8&t;&t;/* standard EOF */
 DECL|macro|EOF_FAT16
