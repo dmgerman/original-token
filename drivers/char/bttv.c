@@ -13758,34 +13758,29 @@ id|triton1
 op_assign
 id|BT848_INT_ETBF
 suffix:semicolon
-r_while
-c_loop
+r_if
+c_cond
 (paren
-(paren
-id|dev
-op_assign
-id|pci_find_device
-c_func
-(paren
-id|PCI_VENDOR_ID_SI
-comma
-id|PCI_DEVICE_ID_SI_496
-comma
-id|dev
-)paren
-)paren
+id|pci_pci_problems
+op_amp
+id|PCIPCI_FAIL
 )paren
 (brace
-multiline_comment|/* Beware the SiS 85C496 my friend - rev 49 don&squot;t work with a bttv */
 id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;BT848 and SIS 85C496 chipset don&squot;t always work together.&bslash;n&quot;
+l_string|&quot;bttv: This configuration is known to have PCI to PCI DMA problems&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;bttv: You may not be able to use overlay mode.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* dev == NULL */
 r_while
 c_loop
 (paren

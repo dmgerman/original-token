@@ -3514,6 +3514,20 @@ l_int|4
 suffix:colon
 multiline_comment|/* MediaGX/GXm */
 multiline_comment|/*&n;&t;&t; *&t;Life sometimes gets weiiiiiiiird if we use this&n;&t;&t; *&t;on the MediaGX. So we turn it off for now. &n;&t;&t; */
+macro_line|#ifdef CONFIG_PCI
+multiline_comment|/* It isnt really a PCI quirk directly, but the cure is the&n;&t;&t;   same. The MediaGX has deep magic SMM stuff that handles the&n;&t;&t;   SB emulation. It thows away the fifo on disable_dma() which&n;&t;&t;   is wrong and ruins the audio. */
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;Working around Cyrix MediaGX virtual DMA bug.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|isa_dma_bridge_buggy
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#endif&t;&t;
 multiline_comment|/* GXm supports extended cpuid levels &squot;ala&squot; AMD */
 r_if
 c_cond
@@ -3582,20 +3596,6 @@ op_complement
 id|X86_FEATURE_TSC
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_PCI
-multiline_comment|/* It isnt really a PCI quirk directly, but the cure is the&n;&t;&t;   same. The MediaGX has deep magic SMM stuff that handles the&n;&t;&t;   SB emulation. It thows away the fifo on disable_dma() which&n;&t;&t;   is wrong and ruins the audio. */
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;Working around Cyrix MediaGX virtual DMA bug.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|isa_dma_bridge_buggy
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#endif&t;&t;
 r_break
 suffix:semicolon
 r_case
