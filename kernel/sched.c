@@ -3416,11 +3416,6 @@ id|TIMER_BH
 )paren
 suffix:semicolon
 )brace
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3446,11 +3441,6 @@ id|mark_bh
 c_func
 (paren
 id|TQUEUE_BH
-)paren
-suffix:semicolon
-id|sti
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace

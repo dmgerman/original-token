@@ -1,4 +1,4 @@
-multiline_comment|/* -*- linux-c -*-&n; * APM BIOS driver for Linux&n; * Copyright 1994, 1995 Stephen Rothwell (Stephen.Rothwell@pd.necisa.oz.au)&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * $Id: apm_bios.c,v 0.22 1995/03/09 14:12:02 sfr Exp $&n; *&n; * October 1995, Rik Faith (faith@cs.unc.edu):&n; *    Minor enhancements and updates (to the patch set) for 1.3.x&n; *    Documentation&n; * January 1996, Rik Faith (faith@cs.unc.edu):&n; *    Make /proc/apm easy to format (bump driver version)&n; *&n; * History:&n; *    0.6b: first version in official kernel, Linux 1.3.46&n; *    0.7: changed /proc/apm format, Linux 1.3.58&n; *    0.8: fixed gcc 2.7.[12] compilation problems, Linux 1.3.59&n; *&n; * Reference:&n; *&n; *   Intel Corporation, Microsoft Corporation. Advanced Power Management&n; *   (APM) BIOS Interface Specification, Revision 1.1, September 1993.&n; *   Intel Order Number 241704-001.  Microsoft Part Number 781-110-X01.&n; *&n; * [This document is available free from Intel by calling 800.628.8686 (fax&n; * 916.356.6100) or 800.548.4725; or via anonymous ftp from&n; * ftp://ftp.intel.com/pub/IAL/software_specs/apmv11.doc.  It is also&n; * available from Microsoft by calling 206.882.8080.]&n; *&n; */
+multiline_comment|/* -*- linux-c -*-&n; * APM BIOS driver for Linux&n; * Copyright 1994, 1995 Stephen Rothwell (Stephen.Rothwell@pd.necisa.oz.au)&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * $Id: apm_bios.c,v 0.22 1995/03/09 14:12:02 sfr Exp $&n; *&n; * October 1995, Rik Faith (faith@cs.unc.edu):&n; *    Minor enhancements and updates (to the patch set) for 1.3.x&n; *    Documentation&n; * January 1996, Rik Faith (faith@cs.unc.edu):&n; *    Make /proc/apm easy to format (bump driver version)&n; * March 1996, Rik Faith (faith@cs.unc.edu):&n; *    Prohibit APM BIOS calls unless apm_enabled.&n; *    (Thanks to Ulrich Windl &lt;Ulrich.Windl@rz.uni-regensburg.de&gt;)&n; *&n; * History:&n; *    0.6b: first version in official kernel, Linux 1.3.46&n; *    0.7: changed /proc/apm format, Linux 1.3.58&n; *    0.8: fixed gcc 2.7.[12] compilation problems, Linux 1.3.59&n; *    0.9: only call bios if bios is present, Linux 1.3.72&n; *&n; * Reference:&n; *&n; *   Intel Corporation, Microsoft Corporation. Advanced Power Management&n; *   (APM) BIOS Interface Specification, Revision 1.1, September 1993.&n; *   Intel Order Number 241704-001.  Microsoft Part Number 781-110-X01.&n; *&n; * [This document is available free from Intel by calling 800.628.8686 (fax&n; * 916.356.6100) or 800.548.4725; or via anonymous ftp from&n; * ftp://ftp.intel.com/pub/IAL/software_specs/apmv11.doc.  It is also&n; * available from Microsoft by calling 206.882.8080.]&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -360,7 +360,7 @@ id|driver_version
 (braket
 )braket
 op_assign
-l_string|&quot;0.8&quot;
+l_string|&quot;0.9&quot;
 suffix:semicolon
 multiline_comment|/* no spaces */
 macro_line|#ifdef APM_DEBUG
@@ -693,6 +693,7 @@ id|APM_SUCCESS
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_APM_DISPLAY_BLANK
+multiline_comment|/* Called by apm_display_blank and apm_display_unblank when apm_enabled. */
 DECL|function|apm_set_display_power_state
 r_static
 r_int
@@ -734,6 +735,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 macro_line|#ifdef CONFIG_APM_DO_ENABLE
+multiline_comment|/* Called by apm_setup if apm_enabled will be true. */
 DECL|function|apm_enable_power_management
 r_static
 r_int
@@ -955,6 +957,7 @@ id|err
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Called from console driver -- must make sure apm_enabled. */
 DECL|function|apm_display_blank
 r_int
 id|apm_display_blank
@@ -970,6 +973,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+id|apm_enabled
+op_logical_or
 id|apm_bios_info.version
 op_eq
 l_int|0
@@ -1008,6 +1014,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* Called from console driver -- must make sure apm_enabled. */
 DECL|function|apm_display_unblank
 r_int
 id|apm_display_unblank
@@ -1023,6 +1030,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+id|apm_enabled
+op_logical_or
 id|apm_bios_info.version
 op_eq
 l_int|0
@@ -2034,6 +2044,7 @@ id|apm_timer
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Called from sys_idle, must make sure apm_enabled. */
 DECL|function|apm_do_idle
 r_int
 id|apm_do_idle
@@ -2091,6 +2102,7 @@ l_int|0
 suffix:semicolon
 macro_line|#endif
 )brace
+multiline_comment|/* Called from sys_idle, must make sure apm_enabled. */
 DECL|function|apm_do_busy
 r_void
 id|apm_do_busy
@@ -2104,21 +2116,20 @@ r_int
 r_int
 id|error
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|apm_enabled
+)paren
+r_return
+suffix:semicolon
 macro_line|#ifndef ALWAYS_CALL_BUSY
 r_if
 c_cond
 (paren
 op_logical_neg
 id|clock_slowed
-)paren
-r_return
-suffix:semicolon
-macro_line|#else
-r_if
-c_cond
-(paren
-op_logical_neg
-id|apm_enabled
 )paren
 r_return
 suffix:semicolon

@@ -728,6 +728,8 @@ l_int|5
 comma
 l_int|7
 comma
+l_int|9
+comma
 l_int|0
 )brace
 suffix:semicolon
@@ -7418,9 +7420,6 @@ c_func
 (paren
 l_string|&quot;0x%8.8x  &quot;
 comma
-(paren
-id|u32
-)paren
 id|readl
 c_func
 (paren
@@ -7441,9 +7440,6 @@ c_func
 (paren
 l_string|&quot;...0x%8.8x&bslash;n&quot;
 comma
-(paren
-id|u32
-)paren
 id|readl
 c_func
 (paren
@@ -7491,9 +7487,6 @@ c_func
 (paren
 l_string|&quot;0x%8.8x  &quot;
 comma
-(paren
-id|u32
-)paren
 id|readl
 c_func
 (paren
@@ -7514,9 +7507,6 @@ c_func
 (paren
 l_string|&quot;...0x%8.8x&bslash;n&quot;
 comma
-(paren
-id|u32
-)paren
 id|readl
 c_func
 (paren
@@ -7543,9 +7533,6 @@ c_func
 (paren
 l_string|&quot;&bslash;tmode: 0x%4.4x&bslash;n&quot;
 comma
-(paren
-id|u16
-)paren
 id|readw
 c_func
 (paren
@@ -7687,9 +7674,6 @@ c_func
 (paren
 l_string|&quot;&bslash;trx_ring at: 0x%8.8x&bslash;n&quot;
 comma
-(paren
-id|u32
-)paren
 id|readl
 c_func
 (paren
@@ -7703,9 +7687,6 @@ c_func
 (paren
 l_string|&quot;&bslash;ttx_ring at: 0x%8.8x&bslash;n&quot;
 comma
-(paren
-id|u32
-)paren
 id|readl
 c_func
 (paren
@@ -8825,14 +8806,6 @@ c_func
 r_void
 )paren
 (brace
-id|release_region
-c_func
-(paren
-id|thisDepca.base_addr
-comma
-id|DEPCA_TOTAL_SIZE
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -8859,6 +8832,14 @@ c_func
 (paren
 op_amp
 id|thisDepca
+)paren
+suffix:semicolon
+id|release_region
+c_func
+(paren
+id|thisDepca.base_addr
+comma
+id|DEPCA_TOTAL_SIZE
 )paren
 suffix:semicolon
 )brace

@@ -64,6 +64,8 @@ DECL|macro|RS_STROBE_TIME
 mdefine_line|#define RS_STROBE_TIME (10*HZ)
 DECL|macro|RS_ISR_PASS_LIMIT
 mdefine_line|#define RS_ISR_PASS_LIMIT 256
+DECL|macro|IRQ_T
+mdefine_line|#define IRQ_T(info) ((info-&gt;flags &amp; ASYNC_SHARE_IRQ) ? SA_SHIRQ : SA_INTERRUPT)
 DECL|macro|_INLINE_
 mdefine_line|#define _INLINE_ inline
 multiline_comment|/*&n; * IRQ_timeout&t;&t;- How long the timeout should be for each IRQ&n; * &t;&t;&t;&t;should be after the IRQ has been active.&n; */
@@ -4074,7 +4076,11 @@ id|info-&gt;irq
 comma
 id|handler
 comma
-id|SA_INTERRUPT
+id|IRQ_T
+c_func
+(paren
+id|info
+)paren
 comma
 l_string|&quot;serial&quot;
 comma
@@ -4586,7 +4592,11 @@ id|info-&gt;irq
 comma
 id|rs_interrupt_single
 comma
-id|SA_INTERRUPT
+id|IRQ_T
+c_func
+(paren
+id|info
+)paren
 comma
 l_string|&quot;serial&quot;
 comma
@@ -8266,7 +8276,11 @@ id|info-&gt;irq
 comma
 id|handler
 comma
-id|SA_INTERRUPT
+id|IRQ_T
+c_func
+(paren
+id|info
+)paren
 comma
 l_string|&quot;serial&quot;
 comma
@@ -12487,6 +12501,10 @@ suffix:semicolon
 id|info-&gt;port
 op_assign
 id|req-&gt;port
+suffix:semicolon
+id|info-&gt;flags
+op_assign
+id|req-&gt;flags
 suffix:semicolon
 id|autoconfig
 c_func

@@ -28,6 +28,8 @@ DECL|macro|NFS_READTIME
 mdefine_line|#define NFS_READTIME(inode)&t;&t;((inode)-&gt;u.nfs_i.read_cache_jiffies)
 DECL|macro|NFS_OLDMTIME
 mdefine_line|#define NFS_OLDMTIME(inode)&t;&t;((inode)-&gt;u.nfs_i.read_cache_mtime)
+DECL|macro|NFS_CACHEINV
+mdefine_line|#define NFS_CACHEINV(inode) &bslash;&n;do { &bslash;&n;&t;NFS_READTIME(inode) = jiffies - 1000000; &bslash;&n;&t;NFS_OLDMTIME(inode) = 0; &bslash;&n;} while (0)
 macro_line|#ifdef __KERNEL__
 multiline_comment|/* linux/fs/nfs/proc.c */
 r_extern

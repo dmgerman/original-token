@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/mouse.h&gt;
 macro_line|#include &lt;linux/tpqic02.h&gt;
+macro_line|#include &lt;linux/ftape.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -1522,7 +1523,7 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if defined (CONFIG_BUSMOUSE) || defined (CONFIG_82C710_MOUSE) || &bslash;&n;    defined (CONFIG_PSMOUSE) || defined (CONFIG_MS_BUSMOUSE) || &bslash;&n;    defined (CONFIG_ATIXL_BUSMOUSE) || defined(CONFIG_SOFT_WATCHDOG)
+macro_line|#if defined (CONFIG_BUSMOUSE) || &bslash;&n;    defined (CONFIG_PSMOUSE) || defined (CONFIG_MS_BUSMOUSE) || &bslash;&n;    defined (CONFIG_ATIXL_BUSMOUSE) || defined(CONFIG_SOFT_WATCHDOG)
 id|mouse_init
 c_func
 (paren
@@ -1545,6 +1546,13 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#if CONFIG_ISDN
 id|isdn_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_FTAPE
+id|ftape_init
 c_func
 (paren
 )paren

@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * drivers/scsi/sd_ioctl.c&n; *&n; * ioctl handling for SCSI disks&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -125,27 +126,68 @@ l_int|4
 dot
 id|device-&gt;host
 suffix:semicolon
+multiline_comment|/* default to most commonly used values */
 id|diskinfo
 (braket
 l_int|0
 )braket
 op_assign
-l_int|0
+l_int|0x40
 suffix:semicolon
 id|diskinfo
 (braket
 l_int|1
 )braket
 op_assign
-l_int|0
+l_int|0x20
 suffix:semicolon
 id|diskinfo
 (braket
 l_int|2
 )braket
 op_assign
-l_int|0
+id|rscsi_disks
+(braket
+id|MINOR
+c_func
+(paren
+id|dev
+)paren
+op_rshift
+l_int|4
+)braket
+dot
+id|capacity
+op_rshift
+l_int|11
 suffix:semicolon
+multiline_comment|/* override with calculated, extended default, or driver values */
+macro_line|#ifdef CONFIG_SCSI_AUTO_BIOSP
+id|scsicam_bios_param
+c_func
+(paren
+op_amp
+id|rscsi_disks
+(braket
+id|MINOR
+c_func
+(paren
+id|dev
+)paren
+op_rshift
+l_int|4
+)braket
+comma
+id|dev
+comma
+op_amp
+id|diskinfo
+(braket
+l_int|0
+)braket
+)paren
+suffix:semicolon
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -181,6 +223,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 id|put_user
 c_func
 (paren

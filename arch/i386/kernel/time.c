@@ -7,11 +7,10 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
 macro_line|#include &lt;linux/timex.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
-DECL|macro|TIMER_IRQ
-mdefine_line|#define TIMER_IRQ 0
 multiline_comment|/* Cycle counter value at the previous timer interrupt.. */
 DECL|variable|last_timer_cc
 r_static

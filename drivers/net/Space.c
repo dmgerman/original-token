@@ -304,6 +304,16 @@ id|device
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|smc9_init
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/* Detachable devices (&quot;pocket adaptors&quot;) */
 r_extern
 r_int
@@ -402,6 +412,14 @@ macro_line|#endif&t;
 macro_line|#if defined(CONFIG_ULTRA)
 op_logical_and
 id|ultra_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#if defined(CONFIG_SMC9194)
+op_logical_and
+id|smc9_init
 c_func
 (paren
 id|dev

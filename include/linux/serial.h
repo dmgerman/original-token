@@ -143,6 +143,8 @@ DECL|macro|ASYNC_CTS_FLOW
 mdefine_line|#define ASYNC_CTS_FLOW&t;&t;0x04000000 /* Do CTS flow control */
 DECL|macro|ASYNC_CHECK_CD
 mdefine_line|#define ASYNC_CHECK_CD&t;&t;0x02000000 /* i.e., CLOCAL */
+DECL|macro|ASYNC_SHARE_IRQ
+mdefine_line|#define ASYNC_SHARE_IRQ&t;&t;0x01000000 /* for multifunction cards */
 multiline_comment|/*&n; * Multiport serial configuration structure --- external structure&n; */
 DECL|struct|serial_multiport_struct
 r_struct

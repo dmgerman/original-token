@@ -38,12 +38,37 @@ id|i
 comma
 id|j
 suffix:semicolon
+r_char
+id|menu_item
+(braket
+id|menu_width
+op_plus
+l_int|1
+)braket
+suffix:semicolon
+id|strncpy
+c_func
+(paren
+id|menu_item
+comma
+id|item
+comma
+id|menu_width
+)paren
+suffix:semicolon
+id|menu_item
+(braket
+id|menu_width
+)braket
+op_assign
+l_int|0
+suffix:semicolon
 id|j
 op_assign
 id|first_alpha
 c_func
 (paren
-id|item
+id|menu_item
 )paren
 suffix:semicolon
 multiline_comment|/* Clear &squot;residue&squot; of last item */
@@ -104,11 +129,7 @@ id|choice
 comma
 id|item_x
 comma
-(paren
-r_char
-op_star
-)paren
-id|item
+id|menu_item
 )paren
 suffix:semicolon
 r_if
@@ -140,7 +161,7 @@ id|item_x
 op_plus
 id|j
 comma
-id|item
+id|menu_item
 (braket
 id|j
 )braket
@@ -890,6 +911,11 @@ id|MAX
 (paren
 id|item_x
 comma
+id|MIN
+c_func
+(paren
+id|menu_width
+comma
 id|strlen
 (paren
 id|items
@@ -903,6 +929,7 @@ l_int|1
 )paren
 op_plus
 l_int|2
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -1852,7 +1879,7 @@ c_func
 (paren
 id|stderr
 comma
-l_string|&quot;&bslash;&quot;%s&bslash;&quot; &bslash;&quot;%s&bslash;&quot;&quot;
+l_string|&quot;%s &bslash;&quot;%s&bslash;&quot;&quot;
 comma
 id|items
 (braket

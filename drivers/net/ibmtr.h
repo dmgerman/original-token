@@ -81,14 +81,14 @@ DECL|macro|WRBR_EVEN
 mdefine_line|#define WRBR_EVEN       0x02    /* Write region base registers - even and odd */
 DECL|macro|WRBR_ODD
 mdefine_line|#define WRBR_ODD        0x03
-DECL|macro|WWCR_EVEN
-mdefine_line|#define WWCR_EVEN       0x04    /* Write window close registers - even and odd */
-DECL|macro|WWCR_ODD
-mdefine_line|#define WWCR_ODD        0x05
 DECL|macro|WWOR_EVEN
-mdefine_line|#define WWOR_EVEN       0x06    /* Write window open registers - even and odd */
+mdefine_line|#define WWOR_EVEN       0x04    /* Write window open registers - even and odd */
 DECL|macro|WWOR_ODD
-mdefine_line|#define WWOR_ODD        0x07
+mdefine_line|#define WWOR_ODD        0x05
+DECL|macro|WWCR_EVEN
+mdefine_line|#define WWCR_EVEN       0x06    /* Write window close registers - even and odd */
+DECL|macro|WWCR_ODD
+mdefine_line|#define WWCR_ODD        0x07
 multiline_comment|/* Interrupt status registers - PC system  - even and odd */
 DECL|macro|ISRP_EVEN
 mdefine_line|#define ISRP_EVEN       0x08

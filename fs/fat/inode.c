@@ -1058,10 +1058,6 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-r_else
-r_return
-l_int|1
-suffix:semicolon
 )brace
 r_return
 l_int|1
@@ -2568,6 +2564,11 @@ id|inode-&gt;i_sb
 )paren
 op_member_access_from_pointer
 id|fs_gid
+suffix:semicolon
+id|inode-&gt;i_version
+op_assign
+op_increment
+id|event
 suffix:semicolon
 r_if
 c_cond

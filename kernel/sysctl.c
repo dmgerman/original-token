@@ -12,6 +12,11 @@ macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/utsname.h&gt;
 macro_line|#include &lt;linux/swapctl.h&gt;
+multiline_comment|/* External variables not in a header file. */
+r_extern
+r_int
+id|panic_timeout
+suffix:semicolon
 DECL|variable|root_table
 r_static
 id|ctl_table
@@ -570,6 +575,27 @@ op_star
 )paren
 op_amp
 id|do_securelevel_strategy
+)brace
+comma
+(brace
+id|KERN_PANIC
+comma
+l_string|&quot;panic&quot;
+comma
+op_amp
+id|panic_timeout
+comma
+r_sizeof
+(paren
+r_int
+)paren
+comma
+l_int|0644
+comma
+l_int|NULL
+comma
+op_amp
+id|proc_dointvec
 )brace
 comma
 (brace

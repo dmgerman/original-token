@@ -1,0 +1,54 @@
+macro_line|#ifndef _CALIBRATE_H
+DECL|macro|_CALIBRATE_H
+mdefine_line|#define _CALIBRATE_H
+multiline_comment|/*&n; *      Copyright (C) 1993-1995 Bas Laarhoven.&n;&n; This program is free software; you can redistribute it and/or modify&n; it under the terms of the GNU General Public License as published by&n; the Free Software Foundation; either version 2, or (at your option)&n; any later version.&n;&n; This program is distributed in the hope that it will be useful,&n; but WITHOUT ANY WARRANTY; without even the implied warranty of&n; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; GNU General Public License for more details.&n;&n; You should have received a copy of the GNU General Public License&n; along with this program; see the file COPYING.  If not, write to&n; the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n;&n; *&n; $Source: /home/bas/distr/ftape-2.03b/RCS/calibr.h,v $&n; $Author: bas $&n; *&n; $Revision: 1.20 $&n; $Date: 1995/04/22 07:30:15 $&n; $State: Beta $&n; *&n; *      This file contains a gp calibration routine for&n; *      hardware dependent timeout functions.&n; */
+macro_line|#include &lt;linux/timex.h&gt;
+r_extern
+r_int
+id|calibrate
+c_func
+(paren
+r_char
+op_star
+id|name
+comma
+r_void
+(paren
+op_star
+id|fun
+)paren
+(paren
+r_int
+)paren
+comma
+r_int
+op_star
+id|calibr_count
+comma
+r_int
+op_star
+id|calibr_time
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|timestamp
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|timediff
+c_func
+(paren
+r_int
+id|t0
+comma
+r_int
+id|t1
+)paren
+suffix:semicolon
+macro_line|#endif
+eof

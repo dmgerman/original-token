@@ -84,7 +84,7 @@ multiline_comment|/*&n; *&t;4.4BSD changed to these new names for no apparent re
 DECL|macro|msg_control
 mdefine_line|#define msg_control&t;msg_accrights&t;
 DECL|macro|msg_controllen
-mdefine_line|#define msg_controllen&t;msg_accrightslen;&t;
+mdefine_line|#define msg_controllen&t;msg_accrightslen
 multiline_comment|/* Control Messages */
 DECL|macro|SCM_RIGHTS
 mdefine_line|#define SCM_RIGHTS&t;&t;1

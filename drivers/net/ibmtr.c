@@ -1,7 +1,15 @@
 multiline_comment|/* ibmtr.c:  A shared-memory IBM Token Ring 16/4 driver for linux */
 multiline_comment|/*&n;&t;Written 1993 by Mark Swanson and Peter De Schrijver.&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;This device driver should work with Any IBM Token Ring Card that does&n;   not use DMA.&n;&n;&t;I used Donald Becker&squot;s (becker@super.org) device driver work&n;&t;as a base for most of my initial work.&n;*/
-multiline_comment|/*&n;   Changes by Peter De Schrijver (Peter.Deschrijver@linux.cc.kuleuven.ac.be) :&n;&t;&n;&t;+ changed name to ibmtr.c in anticipation of other tr boards.&n;&t;+ changed reset code and adapter open code.&n;&t;+ added SAP open code.&n;&t;+ a first attempt to write interrupt, transmit and receive routines.&n;&n;   Changes by David W. Morris (dwm@shell.portal.com) :&n;     941003 dwm: - Restructure tok_probe for multiple adapters, devices&n;                 - Add comments, misc reorg for clarity&n;                 - Flatten interrupt handler levels&n;&n;   Changes by Farzad Farid (farzy@zen.via.ecp.fr)&n;   and Pascal Andre (andre@chimay.via.ecp.fr) (March 9 1995) :&n;        - multi ring support clean up&n;        - RFC1042 compliance enhanced&n;&n;   Changes by Pascal Andre (andre@chimay.via.ecp.fr) (September 7 1995) :&n;        - bug correction in tr_tx&n;        - removed redundant information display&n;        - some code reworking&n;&n;   Warnings !!!!!!!!!!!!!!&n;      This driver is only partially sanitized for support of multiple&n;      adapters.  It will almost definately fail if more than one&n;      active adapter is identified.&n;*/
+multiline_comment|/*&n;   Changes by Peter De Schrijver (Peter.Deschrijver@linux.cc.kuleuven.ac.be) :&n;&t;&n;&t;+ changed name to ibmtr.c in anticipation of other tr boards.&n;&t;+ changed reset code and adapter open code.&n;&t;+ added SAP open code.&n;&t;+ a first attempt to write interrupt, transmit and receive routines.&n;&n;   Changes by David W. Morris (dwm@shell.portal.com) :&n;     941003 dwm: - Restructure tok_probe for multiple adapters, devices&n;                 - Add comments, misc reorg for clarity&n;                 - Flatten interrupt handler levels&n;&n;   Changes by Farzad Farid (farzy@zen.via.ecp.fr)&n;   and Pascal Andre (andre@chimay.via.ecp.fr) (March 9 1995) :&n;        - multi ring support clean up&n;        - RFC1042 compliance enhanced&n;&n;   Changes by Pascal Andre (andre@chimay.via.ecp.fr) (September 7 1995) :&n;        - bug correction in tr_tx&n;        - removed redundant information display&n;        - some code reworking&n;&n;   Chagnes by Steve Kipisz (bungy@ibm.net or kipisz@vnet.ibm.com)&n;                           (January 18 1996):&n;        - swapped WWOR and WWCR in ibmtr.h&n;        - moved some init code from tok_probe into trdev_init.  The&n;          PCMCIA code can call trdev_init to complete initializing&n;          the driver.&n;&t;- added -DPCMCIA to support PCMCIA&n;&t;- detecting PCMCIA Card Removal in interrupt handler.  if&n;&t;  ISRP is FF, then a PCMCIA card has been removed&n;&n;   Warnings !!!!!!!!!!!!!!&n;      This driver is only partially sanitized for support of multiple&n;      adapters.  It will almost definately fail if more than one&n;      active adapter is identified.&n;*/
+macro_line|#ifdef PCMCIA
+DECL|macro|MODULE
+mdefine_line|#define MODULE
+macro_line|#endif
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#ifdef PCMCIA
+DECL|macro|MODULE
+macro_line|#undef MODULE
+macro_line|#endif
 DECL|macro|NO_AUTODETECT
 mdefine_line|#define NO_AUTODETECT 1
 DECL|macro|NO_AUTODETECT
@@ -61,6 +69,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/trdevice.h&gt;
 macro_line|#include &lt;stddef.h&gt;
@@ -210,16 +219,26 @@ id|adapt_info
 )paren
 suffix:semicolon
 r_static
-r_void
+r_int
 id|tok_init_card
 c_func
 (paren
-r_int
-r_int
-id|dev_addr
+r_struct
+id|device
+op_star
+id|dev
 )paren
 suffix:semicolon
-r_static
+r_int
+id|trdev_init
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
 r_void
 id|tok_interrupt
 c_func
@@ -2144,31 +2163,7 @@ op_assign
 id|PIOaddr
 suffix:semicolon
 multiline_comment|/* set the value for device */
-id|dev-&gt;open
-op_assign
-id|tok_open
-suffix:semicolon
-id|dev-&gt;stop
-op_assign
-id|tok_close
-suffix:semicolon
-id|dev-&gt;hard_start_xmit
-op_assign
-id|tok_send_packet
-suffix:semicolon
-id|dev-&gt;get_stats
-op_assign
-l_int|NULL
-suffix:semicolon
-id|dev-&gt;get_stats
-op_assign
-id|tok_get_stats
-suffix:semicolon
-id|dev-&gt;set_multicast_list
-op_assign
-l_int|NULL
-suffix:semicolon
-id|tr_setup
+id|trdev_init
 c_func
 (paren
 id|dev
@@ -2177,10 +2172,6 @@ suffix:semicolon
 id|tok_init_card
 c_func
 (paren
-(paren
-r_int
-r_int
-)paren
 id|dev
 )paren
 suffix:semicolon
@@ -2272,6 +2263,71 @@ l_int|4
 )paren
 suffix:semicolon
 )brace
+DECL|function|trdev_init
+r_int
+id|trdev_init
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+(brace
+r_struct
+id|tok_info
+op_star
+id|ti
+op_assign
+(paren
+r_struct
+id|tok_info
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
+id|ti-&gt;open_status
+op_assign
+id|CLOSED
+suffix:semicolon
+id|dev-&gt;init
+op_assign
+id|tok_init_card
+suffix:semicolon
+id|dev-&gt;open
+op_assign
+id|tok_open
+suffix:semicolon
+id|dev-&gt;stop
+op_assign
+id|tok_close
+suffix:semicolon
+id|dev-&gt;hard_start_xmit
+op_assign
+id|tok_send_packet
+suffix:semicolon
+id|dev-&gt;get_stats
+op_assign
+l_int|NULL
+suffix:semicolon
+id|dev-&gt;get_stats
+op_assign
+id|tok_get_stats
+suffix:semicolon
+id|dev-&gt;set_multicast_list
+op_assign
+l_int|NULL
+suffix:semicolon
+id|tr_setup
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 DECL|function|tok_open
 r_static
 r_int
@@ -2307,10 +2363,6 @@ id|CLOSED
 id|tok_init_card
 c_func
 (paren
-(paren
-r_int
-r_int
-)paren
 id|dev
 )paren
 suffix:semicolon
@@ -2455,7 +2507,6 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|tok_interrupt
-r_static
 r_void
 id|tok_interrupt
 (paren
@@ -2588,6 +2639,66 @@ op_plus
 id|ISRP_ODD
 )paren
 suffix:semicolon
+macro_line|#ifdef PCMCIA
+multiline_comment|/* Check if the PCMCIA card was pulled. */
+r_if
+c_cond
+(paren
+id|status
+op_eq
+l_int|0xFF
+)paren
+(brace
+id|DPRINTK
+c_func
+(paren
+l_string|&quot;PCMCIA card removed.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|dev-&gt;interrupt
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+multiline_comment|/* Check ISRP EVEN too. */
+r_if
+c_cond
+(paren
+op_star
+(paren
+r_int
+r_char
+op_star
+)paren
+(paren
+id|ti-&gt;mmio
+op_plus
+id|ACA_OFFSET
+op_plus
+id|ACA_RW
+op_plus
+id|ISRP_EVEN
+)paren
+op_eq
+l_int|0xFF
+)paren
+(brace
+id|DPRINTK
+c_func
+(paren
+l_string|&quot;PCMCIA card removed.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|dev-&gt;interrupt
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2604,7 +2715,7 @@ r_char
 op_star
 id|check_reason
 op_assign
-id|ti-&gt;mmio
+id|ti-&gt;sram
 op_plus
 id|ntohs
 c_func
@@ -4512,13 +4623,14 @@ suffix:semicolon
 )brace
 DECL|function|tok_init_card
 r_static
-r_void
+r_int
 id|tok_init_card
 c_func
 (paren
-r_int
-r_int
-id|dev_addr
+r_struct
+id|device
+op_star
+id|dev
 )paren
 (brace
 r_struct
@@ -4528,21 +4640,6 @@ id|ti
 suffix:semicolon
 r_int
 id|PIOaddr
-suffix:semicolon
-r_int
-id|i
-suffix:semicolon
-r_struct
-id|device
-op_star
-id|dev
-op_assign
-(paren
-r_struct
-id|device
-op_star
-)paren
-id|dev_addr
 suffix:semicolon
 id|PIOaddr
 op_assign
@@ -4634,24 +4731,12 @@ op_plus
 id|ADAPTRESET
 )paren
 suffix:semicolon
-r_for
-c_loop
+id|udelay
+c_func
 (paren
-id|i
-op_assign
-id|jiffies
-op_plus
-l_int|5
-suffix:semicolon
-id|jiffies
-op_le
-id|i
-suffix:semicolon
+l_int|50000
 )paren
-(brace
 suffix:semicolon
-)brace
-multiline_comment|/* wait 50ms */
 id|outb
 c_func
 (paren
@@ -4691,6 +4776,9 @@ id|ISRP_EVEN
 )paren
 op_assign
 id|INT_ENABLE
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|open_sap

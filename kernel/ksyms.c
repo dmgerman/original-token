@@ -31,6 +31,7 @@ macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/mount.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/sysctl.h&gt;
+macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
@@ -812,12 +813,6 @@ comma
 id|X
 c_func
 (paren
-id|get_binfmt_list
-)paren
-comma
-id|X
-c_func
-(paren
 id|search_binary_handler
 )paren
 comma
@@ -906,6 +901,12 @@ id|X
 c_func
 (paren
 id|bh_mask
+)paren
+comma
+id|X
+c_func
+(paren
+id|bh_mask_count
 )paren
 comma
 id|X
@@ -1749,6 +1750,20 @@ id|X
 c_func
 (paren
 id|tr_type_trans
+)paren
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_IDE
+id|X
+c_func
+(paren
+id|ide_register
+)paren
+comma
+id|X
+c_func
+(paren
+id|ide_unregister
 )paren
 comma
 macro_line|#endif

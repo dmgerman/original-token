@@ -18,7 +18,6 @@ macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 multiline_comment|/*&n; * this indicates whether you can reboot with ctrl-alt-del: the default is yes&n; */
 DECL|variable|C_A_D
-r_static
 r_int
 id|C_A_D
 op_assign

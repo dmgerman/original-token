@@ -481,6 +481,8 @@ DECL|macro|BLIST_KEY
 mdefine_line|#define BLIST_KEY       0x08
 DECL|macro|BLIST_SINGLELUN
 mdefine_line|#define BLIST_SINGLELUN 0x10
+DECL|macro|BLIST_NOTQ
+mdefine_line|#define BLIST_NOTQ&t;0x20
 DECL|struct|dev_info
 r_struct
 id|dev_info
@@ -652,6 +654,17 @@ id|BLIST_NOLUN
 )brace
 comma
 multiline_comment|/*Responds to all lun */
+(brace
+l_string|&quot;MICROP&quot;
+comma
+l_string|&quot;4110&quot;
+comma
+l_string|&quot;*&quot;
+comma
+id|BLIST_NOTQ
+)brace
+comma
+multiline_comment|/* Buggy Tagged Queuing */
 (brace
 l_string|&quot;NEC&quot;
 comma
@@ -2927,6 +2940,19 @@ l_int|1
 id|SDpnt-&gt;scsi_level
 op_increment
 suffix:semicolon
+multiline_comment|/*&n;   * Accommodate drivers that want to sleep when they should be in a polling&n;   * loop.&n;   */
+id|SDpnt-&gt;disconnect
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/*&n;   * Get any flags for this device.&n;   */
+id|bflags
+op_assign
+id|get_device_flags
+(paren
+id|scsi_result
+)paren
+suffix:semicolon
 multiline_comment|/*&n;   * Set the tagged_queue flag for SCSI-II devices that purport to support&n;   * tagged queuing in the INQUIRY data.&n;   */
 id|SDpnt-&gt;tagged_queue
 op_assign
@@ -2949,6 +2975,13 @@ l_int|7
 op_amp
 l_int|2
 )paren
+op_logical_and
+op_logical_neg
+(paren
+id|bflags
+op_amp
+id|BLIST_NOTQ
+)paren
 )paren
 (brace
 id|SDpnt-&gt;tagged_supported
@@ -2960,19 +2993,6 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * Accommodate drivers that want to sleep when they should be in a polling&n;   * loop.&n;   */
-id|SDpnt-&gt;disconnect
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/*&n;   * Get any flags for this device.&n;   */
-id|bflags
-op_assign
-id|get_device_flags
-(paren
-id|scsi_result
-)paren
-suffix:semicolon
 multiline_comment|/*&n;   * Some revisions of the Texel CD ROM drives have handshaking problems when&n;   * used with the Seagate controllers.  Before we know what type of device&n;   * we&squot;re talking to, we assume it&squot;s borken and then change it here if it&n;   * turns out that it isn&squot;t a TEXEL drive.&n;   */
 r_if
 c_cond

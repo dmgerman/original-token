@@ -481,6 +481,28 @@ r_char
 op_star
 )paren
 suffix:semicolon
+r_int
+id|ide_register
+c_func
+(paren
+r_int
+id|io_port
+comma
+r_int
+id|ctl_port
+comma
+r_int
+id|irq
+)paren
+suffix:semicolon
+r_void
+id|ide_unregister
+c_func
+(paren
+r_int
+id|h
+)paren
+suffix:semicolon
 macro_line|#endif&t;/* CONFIG_BLK_DEV_IDE */
 macro_line|#endif  /* __KERNEL__ */
 macro_line|#endif&t;/* _LINUX_HDREG_H */

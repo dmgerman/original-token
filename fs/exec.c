@@ -229,19 +229,6 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-DECL|function|get_binfmt_list
-r_struct
-id|linux_binfmt
-op_star
-id|get_binfmt_list
-c_func
-(paren
-)paren
-(brace
-r_return
-id|formats
-suffix:semicolon
-)brace
 macro_line|#endif&t;/* CONFIG_MODULES */
 DECL|function|open_inode
 r_int
@@ -2367,10 +2354,7 @@ c_loop
 (paren
 id|fmt
 op_assign
-id|get_binfmt_list
-c_func
-(paren
-)paren
+id|formats
 suffix:semicolon
 id|fmt
 suffix:semicolon

@@ -101,6 +101,8 @@ DECL|macro|KERN_MAXID
 mdefine_line|#define KERN_MAXID&t;13
 DECL|macro|KERN_SECURELVL
 mdefine_line|#define KERN_SECURELVL&t;14&t;/* int: system security level */
+DECL|macro|KERN_PANIC
+mdefine_line|#define KERN_PANIC&t;15&t;/* int: panic timeout */
 multiline_comment|/* CTL_VM names: */
 DECL|macro|VM_SWAPCTL
 mdefine_line|#define VM_SWAPCTL&t;1&t;/* struct: Set vm swapping control */

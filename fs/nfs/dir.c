@@ -3286,6 +3286,20 @@ id|inode-&gt;i_gid
 op_assign
 id|fattr-&gt;gid
 suffix:semicolon
+multiline_comment|/* Size changed from outside: invalidate caches on next read */
+r_if
+c_cond
+(paren
+id|inode-&gt;i_size
+op_ne
+id|fattr-&gt;size
+)paren
+id|NFS_CACHEINV
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
 id|inode-&gt;i_size
 op_assign
 id|fattr-&gt;size

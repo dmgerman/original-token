@@ -115,16 +115,32 @@ r_char
 id|sys_immutable
 suffix:semicolon
 multiline_comment|/* system files are immutable */
-DECL|member|vfat
-r_int
-id|vfat
-suffix:semicolon
-multiline_comment|/* 0=no vfat long filename support, 1=vfat support */
 DECL|member|umsdos
 r_int
 id|umsdos
 suffix:semicolon
 multiline_comment|/* 1 if mounted by umsdos, 0 if not */
+multiline_comment|/* vfat specific flags follow */
+DECL|member|vfat
+r_int
+id|vfat
+suffix:semicolon
+multiline_comment|/* 0=no vfat long filename support, 1=vfat support */
+DECL|member|unicode_xlate
+r_char
+id|unicode_xlate
+suffix:semicolon
+multiline_comment|/* create escape sequences for unhandled Unicode */
+DECL|member|posix
+r_char
+id|posix
+suffix:semicolon
+multiline_comment|/* Allow names like makefile and Makefile to coexist */
+DECL|member|numtail
+r_char
+id|numtail
+suffix:semicolon
+multiline_comment|/* Does first alias have a numeric &squot;~1&squot; type tail? */
 )brace
 suffix:semicolon
 macro_line|#endif

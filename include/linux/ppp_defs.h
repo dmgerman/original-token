@@ -1,6 +1,6 @@
 multiline_comment|/*&t;$Id: ppp_defs.h,v 1.2 1994/09/21 01:31:06 paulus Exp $&t;*/
 multiline_comment|/*&n; * ppp_defs.h - PPP definitions.&n; *&n; * Copyright (c) 1994 The Australian National University.&n; * All rights reserved.&n; *&n; * Permission to use, copy, modify, and distribute this software and its&n; * documentation is hereby granted, provided that the above copyright&n; * notice appears in all copies.  This software is provided without any&n; * warranty, express or implied. The Australian National University&n; * makes no representations about the suitability of this software for&n; * any purpose.&n; *&n; * IN NO EVENT SHALL THE AUSTRALIAN NATIONAL UNIVERSITY BE LIABLE TO ANY&n; * PARTY FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES&n; * ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF&n; * THE AUSTRALIAN NATIONAL UNIVERSITY HAVE BEEN ADVISED OF THE POSSIBILITY&n; * OF SUCH DAMAGE.&n; *&n; * THE AUSTRALIAN NATIONAL UNIVERSITY SPECIFICALLY DISCLAIMS ANY WARRANTIES,&n; * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY&n; * AND FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS&n; * ON AN &quot;AS IS&quot; BASIS, AND THE AUSTRALIAN NATIONAL UNIVERSITY HAS NO&n; * OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS,&n; * OR MODIFICATIONS.&n; */
-multiline_comment|/*&n; *  ==FILEVERSION 5==&n; *&n; *  NOTE TO MAINTAINERS:&n; *     If you modify this file at all, increment the number above.&n; *     ppp_defs.h is shipped with a PPP distribution as well as with the kernel;&n; *     if everyone increases the FILEVERSION number above, then scripts&n; *     can do the right thing when deciding whether to install a new ppp_defs.h&n; *     file.  Don&squot;t change the format of that line otherwise, so the&n; *     installation script can recognize it.&n; */
+multiline_comment|/*&n; *  ==FILEVERSION 960302==&n; *&n; *  NOTE TO MAINTAINERS:&n; *     If you modify this file at all, please set the above date.&n; *     ppp_defs.h is shipped with a PPP distribution as well as with the kernel;&n; *     if everyone increases the FILEVERSION number above, then scripts&n; *     can do the right thing when deciding whether to install a new ppp_defs.h&n; *     file.  Don&squot;t change the format of that line otherwise, so the&n; *     installation script can recognize it.&n; */
 macro_line|#ifndef _PPP_DEFS_H_
 DECL|macro|_PPP_DEFS_H_
 mdefine_line|#define _PPP_DEFS_H_
@@ -12,11 +12,11 @@ mdefine_line|#define PPP_FCSLEN&t;2&t;/* octets for FCS */
 DECL|macro|PPP_MRU
 mdefine_line|#define PPP_MRU&t;&t;1500&t;/* default MRU = max length of info field */
 DECL|macro|PPP_ADDRESS
-mdefine_line|#define PPP_ADDRESS(p)&t;(((u_char *)(p))[0])
+mdefine_line|#define PPP_ADDRESS(p)&t;(((__u8 *)(p))[0])
 DECL|macro|PPP_CONTROL
-mdefine_line|#define PPP_CONTROL(p)&t;(((u_char *)(p))[1])
+mdefine_line|#define PPP_CONTROL(p)&t;(((__u8 *)(p))[1])
 DECL|macro|PPP_PROTOCOL
-mdefine_line|#define PPP_PROTOCOL(p)&t;((((u_char *)(p))[2] &lt;&lt; 8) + ((u_char *)(p))[3])
+mdefine_line|#define PPP_PROTOCOL(p)&t;((((__u8 *)(p))[2] &lt;&lt; 8) + ((__u8 *)(p))[3])
 multiline_comment|/*&n; * Significant octet values.&n; */
 DECL|macro|PPP_ALLSTATIONS
 mdefine_line|#define&t;PPP_ALLSTATIONS&t;0xff&t;/* All-Stations broadcast address */
@@ -53,27 +53,17 @@ DECL|macro|PPP_LQR
 mdefine_line|#define PPP_LQR&t;&t;0xc025&t;/* Link Quality Report protocol */
 DECL|macro|PPP_CHAP
 mdefine_line|#define PPP_CHAP&t;0xc223&t;/* Cryptographic Handshake Auth. Protocol */
-multiline_comment|/*&n; * A 32-bit unsigned integral type.&n; */
-macro_line|#ifndef __BIT_TYPES_DEFINED__
-macro_line|#ifdef&t;UINT32_T
-DECL|typedef|u_int32_t
-r_typedef
-id|UINT32_T
-id|u_int32_t
-suffix:semicolon
-macro_line|#else
-DECL|typedef|u_int32_t
-r_typedef
-r_int
-r_int
-id|u_int32_t
-suffix:semicolon
-macro_line|#endif
-macro_line|#endif
+multiline_comment|/*&n; * Values for FCS calculations.&n; */
+DECL|macro|PPP_INITFCS
+mdefine_line|#define PPP_INITFCS&t;0xffff&t;/* Initial FCS value */
+DECL|macro|PPP_GOODFCS
+mdefine_line|#define PPP_GOODFCS&t;0xf0b8&t;/* Good final FCS value */
+DECL|macro|PPP_FCS
+mdefine_line|#define PPP_FCS(fcs, c)&t;(((fcs) &gt;&gt; 8) ^ fcstab[((fcs) ^ (c)) &amp; 0xff])
 multiline_comment|/*&n; * Extended asyncmap - allows any character to be escaped.&n; */
 DECL|typedef|ext_accm
 r_typedef
-id|u_int32_t
+id|__u32
 id|ext_accm
 (braket
 l_int|8
@@ -107,57 +97,57 @@ r_struct
 id|pppstat
 (brace
 DECL|member|ppp_discards
-id|u_int
+id|__u32
 id|ppp_discards
 suffix:semicolon
 multiline_comment|/* # frames discarded */
 DECL|member|ppp_ibytes
-id|u_int
+id|__u32
 id|ppp_ibytes
 suffix:semicolon
 multiline_comment|/* bytes received */
 DECL|member|ppp_ioctects
-id|u_int
+id|__u32
 id|ppp_ioctects
 suffix:semicolon
 multiline_comment|/* bytes received not in error */
 DECL|member|ppp_ipackets
-id|u_int
+id|__u32
 id|ppp_ipackets
 suffix:semicolon
 multiline_comment|/* packets received */
 DECL|member|ppp_ierrors
-id|u_int
+id|__u32
 id|ppp_ierrors
 suffix:semicolon
 multiline_comment|/* receive errors */
 DECL|member|ppp_ilqrs
-id|u_int
+id|__u32
 id|ppp_ilqrs
 suffix:semicolon
 multiline_comment|/* # LQR frames received */
 DECL|member|ppp_obytes
-id|u_int
+id|__u32
 id|ppp_obytes
 suffix:semicolon
 multiline_comment|/* raw bytes sent */
 DECL|member|ppp_ooctects
-id|u_int
+id|__u32
 id|ppp_ooctects
 suffix:semicolon
 multiline_comment|/* frame bytes sent */
 DECL|member|ppp_opackets
-id|u_int
+id|__u32
 id|ppp_opackets
 suffix:semicolon
 multiline_comment|/* packets sent */
 DECL|member|ppp_oerrors
-id|u_int
+id|__u32
 id|ppp_oerrors
 suffix:semicolon
 multiline_comment|/* transmit errors */
 DECL|member|ppp_olqrs
-id|u_int
+id|__u32
 id|ppp_olqrs
 suffix:semicolon
 multiline_comment|/* # LQR frames sent */
@@ -168,42 +158,42 @@ r_struct
 id|vjstat
 (brace
 DECL|member|vjs_packets
-id|u_int
+id|__u32
 id|vjs_packets
 suffix:semicolon
 multiline_comment|/* outbound packets */
 DECL|member|vjs_compressed
-id|u_int
+id|__u32
 id|vjs_compressed
 suffix:semicolon
 multiline_comment|/* outbound compressed packets */
 DECL|member|vjs_searches
-id|u_int
+id|__u32
 id|vjs_searches
 suffix:semicolon
 multiline_comment|/* searches for connection state */
 DECL|member|vjs_misses
-id|u_int
+id|__u32
 id|vjs_misses
 suffix:semicolon
 multiline_comment|/* times couldn&squot;t find conn. state */
 DECL|member|vjs_uncompressedin
-id|u_int
+id|__u32
 id|vjs_uncompressedin
 suffix:semicolon
 multiline_comment|/* inbound uncompressed packets */
 DECL|member|vjs_compressedin
-id|u_int
+id|__u32
 id|vjs_compressedin
 suffix:semicolon
 multiline_comment|/* inbound compressed packets */
 DECL|member|vjs_errorin
-id|u_int
+id|__u32
 id|vjs_errorin
 suffix:semicolon
 multiline_comment|/* inbound unknown type packets */
 DECL|member|vjs_tossed
-id|u_int
+id|__u32
 id|vjs_tossed
 suffix:semicolon
 multiline_comment|/* inbound packets tossed because of error */
@@ -214,43 +204,43 @@ r_struct
 id|compstat
 (brace
 DECL|member|unc_bytes
-id|u_int
+id|__u32
 id|unc_bytes
 suffix:semicolon
 multiline_comment|/* total uncompressed bytes */
 DECL|member|unc_packets
-id|u_int
+id|__u32
 id|unc_packets
 suffix:semicolon
 multiline_comment|/* total uncompressed packets */
 DECL|member|comp_bytes
-id|u_int
+id|__u32
 id|comp_bytes
 suffix:semicolon
 multiline_comment|/* compressed bytes */
 DECL|member|comp_packets
-id|u_int
+id|__u32
 id|comp_packets
 suffix:semicolon
 multiline_comment|/* compressed packets */
 DECL|member|inc_bytes
-id|u_int
+id|__u32
 id|inc_bytes
 suffix:semicolon
 multiline_comment|/* incompressible bytes */
 DECL|member|inc_packets
-id|u_int
+id|__u32
 id|inc_packets
 suffix:semicolon
 multiline_comment|/* incompressible packets */
 multiline_comment|/* the compression ratio is defined as in_count / bytes_out */
 DECL|member|in_count
-id|u_int
+id|__u32
 id|in_count
 suffix:semicolon
 multiline_comment|/* Bytes received */
 DECL|member|bytes_out
-id|u_int
+id|__u32
 id|bytes_out
 suffix:semicolon
 multiline_comment|/* Bytes transmitted */

@@ -158,16 +158,6 @@ op_star
 )paren
 suffix:semicolon
 r_extern
-r_struct
-id|linux_binfmt
-op_star
-id|get_binfmt_list
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
 r_int
 id|read_exec
 c_func

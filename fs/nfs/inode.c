@@ -113,7 +113,7 @@ multiline_comment|/* stat filesystem */
 l_int|NULL
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * The &quot;read_inode&quot; function doesn&squot;t actually do anything:&n; * the real data is filled in later in nfs_fhget. Here we&n; * just mark the cache times invalid.&n; */
+multiline_comment|/*&n; * The &quot;read_inode&quot; function doesn&squot;t actually do anything:&n; * the real data is filled in later in nfs_fhget. Here we&n; * just mark the cache times invalid, and zero out i_mode&n; * (the latter makes &quot;nfs_refresh_inode&quot; do the right thing)&n; */
 DECL|function|nfs_read_inode
 r_static
 r_void
@@ -126,23 +126,15 @@ op_star
 id|inode
 )paren
 (brace
-id|NFS_READTIME
-c_func
-(paren
-id|inode
-)paren
-op_assign
-id|jiffies
-op_minus
-l_int|1000000
-suffix:semicolon
-id|NFS_OLDMTIME
-c_func
-(paren
-id|inode
-)paren
+id|inode-&gt;i_mode
 op_assign
 l_int|0
+suffix:semicolon
+id|NFS_CACHEINV
+c_func
+(paren
+id|inode
+)paren
 suffix:semicolon
 )brace
 DECL|function|nfs_put_inode

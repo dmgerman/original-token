@@ -1,20 +1,11 @@
-multiline_comment|/*  PPP for Linux&n; *&n; *  Michael Callahan &lt;callahan@maths.ox.ac.uk&gt;&n; *  Al Longyear &lt;longyear@netcom.com&gt;&n; *&n; *  Dynamic PPP devices by Jim Freeman &lt;jfree@caldera.com&gt;.&n; *  ppp_tty_receive ``noisy-raise-bug&squot;&squot; fixed by Ove Ewerlid &lt;ewerlid@syscon.uu.se&gt;&n; *&n; *  ==FILEVERSION 7==&n; *&n; *  NOTE TO MAINTAINERS:&n; *     If you modify this file at all, increment the number above.&n; *     ppp.c is shipped with a PPP distribution as well as with the kernel;&n; *     if everyone increases the FILEVERSION number above, then scripts&n; *     can do the right thing when deciding whether to install a new ppp.c&n; *     file.  Don&squot;t change the format of that line otherwise, so the&n; *     installation script can recognize it.&n; */
-multiline_comment|/*&n;   Sources:&n;&n;   slip.c&n;&n;   RFC1331: The Point-to-Point Protocol (PPP) for the Transmission of&n;   Multi-protocol Datagrams over Point-to-Point Links&n;&n;   RFC1332: IPCP&n;&n;   ppp-2.0&n;&n;   Flags for this module (any combination is acceptable for testing.):&n;&n;   OPTIMIZE_FLAG_TIME - Number of jiffies to force sending of leading flag&n;&t;&t;&t;character. This is normally set to ((HZ * 3) / 2).&n;&t;&t;&t;This is 1.5 seconds. If zero then the leading&n;&t;&t;&t;flag is always sent.&n;&n;   CHECK_CHARACTERS   - Enable the checking on all received characters for&n;&t;&t;&t;8 data bits, no parity. This adds a small amount of&n;&t;&t;&t;processing for each received character.&n;&t;&t;&t;&n;   NEW_SKBUFF&t;      - Use NET3.020 sk_buff&squot;s&n;*/
-multiline_comment|/* #define NEW_SKBUFF&t;&t;1 */
+multiline_comment|/*  PPP for Linux&n; *&n; *  Michael Callahan &lt;callahan@maths.ox.ac.uk&gt;&n; *  Al Longyear &lt;longyear@netcom.com&gt;&n; *&n; *  Dynamic PPP devices by Jim Freeman &lt;jfree@caldera.com&gt;.&n; *  ppp_tty_receive ``noisy-raise-bug&squot;&squot; fixed by Ove Ewerlid &lt;ewerlid@syscon.uu.se&gt;&n; *&n; *  ==FILEVERSION 960303==&n; *&n; *  NOTE TO MAINTAINERS:&n; *     If you modify this file at all, please set the number above to the&n; *     date of the modification as YYMMDD (year month day).&n; *     ppp.c is shipped with a PPP distribution as well as with the kernel;&n; *     if everyone increases the FILEVERSION number above, then scripts&n; *     can do the right thing when deciding whether to install a new ppp.c&n; *     file.  Don&squot;t change the format of that line otherwise, so the&n; *     installation script can recognize it.&n; */
+multiline_comment|/*&n;   Sources:&n;&n;   slip.c&n;&n;   RFC1331: The Point-to-Point Protocol (PPP) for the Transmission of&n;   Multi-protocol Datagrams over Point-to-Point Links&n;&n;   RFC1332: IPCP&n;&n;   ppp-2.0&n;&n;   Flags for this module (any combination is acceptable for testing.):&n;&n;   OPTIMIZE_FLAG_TIME - Number of jiffies to force sending of leading flag&n;&t;&t;&t;character. This is normally set to ((HZ * 3) / 2).&n;&t;&t;&t;This is 1.5 seconds. If zero then the leading&n;&t;&t;&t;flag is always sent.&n;&n;   CHECK_CHARACTERS   - Enable the checking on all received characters for&n;&t;&t;&t;8 data bits, no parity. This adds a small amount of&n;&t;&t;&t;processing for each received character.&n;*/
 DECL|macro|OPTIMIZE_FLAG_TIME
 mdefine_line|#define OPTIMIZE_FLAG_TIME&t;((HZ * 3)/2)
 DECL|macro|CHECK_CHARACTERS
 mdefine_line|#define CHECK_CHARACTERS&t;1
 DECL|macro|PPP_COMPRESS
 mdefine_line|#define PPP_COMPRESS&t;&t;1
-DECL|macro|USE_SKB_PROTOCOL
-mdefine_line|#define USE_SKB_PROTOCOL 1  /* Set by the installation program! */
-macro_line|#ifdef  NEW_SKBUFF
-DECL|macro|USE_SKB_PROTOCOL
-macro_line|#undef  USE_SKB_PROTOCOL
-DECL|macro|USE_SKB_PROTOCOL
-mdefine_line|#define USE_SKB_PROTOCOL 2
-macro_line|#endif
 macro_line|#ifndef PPP_MAX_DEV
 DECL|macro|PPP_MAX_DEV
 mdefine_line|#define PPP_MAX_DEV&t;256
@@ -45,9 +36,6 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/ioctl.h&gt;
-macro_line|#ifdef NEW_SKBUFF
-macro_line|#include &lt;linux/netprotocol.h&gt;
-macro_line|#else
 DECL|typedef|sk_buff
 r_typedef
 r_struct
@@ -55,23 +43,24 @@ id|sk_buff
 id|sk_buff
 suffix:semicolon
 DECL|macro|skb_data
-mdefine_line|#define skb_data(skb)&t;     ((unsigned char *) (skb)-&gt;data)
-macro_line|#endif
+mdefine_line|#define skb_data(skb)&t;     ((__u8 *) (skb)-&gt;data)
 macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &lt;linux/tcp.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &quot;slhc.h&quot;
+DECL|macro|fcstab
+mdefine_line|#define fcstab&t;ppp_crc16_table&t;&t;/* Name of the table in the kernel */
 macro_line|#include &lt;linux/ppp_defs.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/if_ppp.h&gt;
 macro_line|#include &lt;linux/if_pppvar.h&gt;
 DECL|macro|PACKETPTR
-macro_line|#undef   PACKETPTR
+macro_line|#undef&t; PACKETPTR
 DECL|macro|PACKETPTR
-mdefine_line|#define  PACKETPTR 1
+mdefine_line|#define&t; PACKETPTR 1
 macro_line|#include &lt;linux/ppp-comp.h&gt;
 DECL|macro|PACKETPTR
-macro_line|#undef   PACKETPTR
+macro_line|#undef&t; PACKETPTR
 DECL|macro|bsd_decompress
 mdefine_line|#define bsd_decompress&t;(*ppp-&gt;sc_rcomp-&gt;decompress)
 DECL|macro|bsd_compress
@@ -82,8 +71,9 @@ mdefine_line|#define PPP_IPX 0x2b  /* IPX protocol over PPP */
 macro_line|#endif
 macro_line|#ifndef PPP_LQR
 DECL|macro|PPP_LQR
-mdefine_line|#define PPP_LQR 0xc025  /* Link Quality Reporting Protocol */
+mdefine_line|#define PPP_LQR 0xc025&t;/* Link Quality Reporting Protocol */
 macro_line|#endif
+r_static
 r_int
 id|ppp_register_compressor
 (paren
@@ -93,6 +83,7 @@ op_star
 id|cp
 )paren
 suffix:semicolon
+r_static
 r_void
 id|ppp_unregister_compressor
 (paren
@@ -156,15 +147,25 @@ r_void
 )paren
 suffix:semicolon
 r_static
+r_struct
+id|ppp
+op_star
+id|ppp_find
+(paren
+r_int
+id|pid_value
+)paren
+suffix:semicolon
+r_static
 r_void
 id|ppp_print_buffer
 (paren
 r_const
-id|u_char
+id|__u8
 op_star
 comma
 r_const
-id|u_char
+id|__u8
 op_star
 comma
 r_int
@@ -187,7 +188,7 @@ op_star
 id|buf
 comma
 r_register
-id|u_char
+id|__u8
 id|chr
 )paren
 suffix:semicolon
@@ -211,9 +212,9 @@ r_struct
 id|ppp
 op_star
 comma
-id|u_short
+id|__u16
 comma
-id|u_char
+id|__u8
 op_star
 comma
 r_int
@@ -227,9 +228,9 @@ r_struct
 id|ppp
 op_star
 comma
-id|u_short
+id|__u16
 comma
-id|u_char
+id|__u8
 op_star
 comma
 r_int
@@ -243,9 +244,9 @@ r_struct
 id|ppp
 op_star
 comma
-id|u_short
+id|__u16
 comma
-id|u_char
+id|__u8
 op_star
 comma
 r_int
@@ -259,9 +260,9 @@ r_struct
 id|ppp
 op_star
 comma
-id|u_short
+id|__u16
 comma
-id|u_char
+id|__u8
 op_star
 comma
 r_int
@@ -275,9 +276,9 @@ r_struct
 id|ppp
 op_star
 comma
-id|u_short
+id|__u16
 comma
-id|u_char
+id|__u8
 op_star
 comma
 r_int
@@ -291,9 +292,9 @@ r_struct
 id|ppp
 op_star
 comma
-id|u_short
+id|__u16
 comma
-id|u_char
+id|__u8
 op_star
 comma
 r_int
@@ -307,7 +308,7 @@ r_struct
 id|ppp
 op_star
 comma
-id|u_char
+id|__u8
 op_star
 comma
 r_int
@@ -339,7 +340,7 @@ id|ppp
 op_star
 id|ppp
 comma
-id|u_char
+id|__u8
 op_star
 id|dp
 comma
@@ -358,16 +359,16 @@ r_struct
 id|ppp
 op_star
 comma
-id|u_short
+id|__u16
 comma
-id|u_char
+id|__u8
 op_star
 comma
 r_int
 )paren
 suffix:semicolon
 DECL|macro|ins_char
-mdefine_line|#define ins_char(pbuf,c) (buf_base(pbuf) [(pbuf)-&gt;count++] = (u_char)(c))
+mdefine_line|#define ins_char(pbuf,c) (buf_base(pbuf) [(pbuf)-&gt;count++] = (__u8)(c))
 macro_line|#ifndef OPTIMIZE_FLAG_TIME
 DECL|macro|OPTIMIZE_FLAG_TIME
 mdefine_line|#define OPTIMIZE_FLAG_TIME&t;0
@@ -460,23 +461,9 @@ id|device
 op_star
 )paren
 suffix:semicolon
-macro_line|#if USE_SKB_PROTOCOL == 0  /* The 1.2.x kernel is here */
-DECL|macro|dev_alloc_skb
-mdefine_line|#define dev_alloc_skb(count)        alloc_skb(count, GFP_ATOMIC)
-DECL|macro|skb_put
-mdefine_line|#define skb_put(skb,count)          skb_data(skb)
-DECL|macro|get_long_user
-mdefine_line|#define get_long_user(addr)&t;    get_user_long((void *) addr)
-DECL|macro|get_int_user
-mdefine_line|#define get_int_user(addr)&t;    ((int) get_user_long((void *) addr))
-DECL|macro|put_byte_user
-mdefine_line|#define put_byte_user(val,addr)&t;    put_fs_byte(val,((u_char *) (addr)))
-DECL|macro|put_long_user
-mdefine_line|#define put_long_user(val,addr)&t;    put_fs_long((val),((void *) (addr)))
 r_static
 r_int
-r_int
-id|ppp_dev_type
+id|ppp_dev_header
 (paren
 id|sk_buff
 op_star
@@ -484,16 +471,26 @@ comma
 r_struct
 id|device
 op_star
+comma
+id|__u16
+comma
+r_void
+op_star
+comma
+r_void
+op_star
+comma
+r_int
+r_int
 )paren
 suffix:semicolon
 r_static
 r_int
-id|ppp_dev_header
+id|ppp_dev_rebuild
 (paren
-r_int
-r_char
+r_void
 op_star
-id|buff
+id|eth
 comma
 r_struct
 id|device
@@ -502,18 +499,7 @@ id|dev
 comma
 r_int
 r_int
-id|type
-comma
-r_void
-op_star
-id|daddr
-comma
-r_void
-op_star
-id|saddr
-comma
-r_int
-id|len
+id|raddr
 comma
 r_struct
 id|sk_buff
@@ -521,136 +507,6 @@ op_star
 id|skb
 )paren
 suffix:semicolon
-macro_line|#else /* The 1.3.x kernel is here */
-DECL|macro|get_long_user
-mdefine_line|#define get_long_user(addr)&t;    get_user(((int *) addr))
-DECL|macro|get_int_user
-mdefine_line|#define get_int_user(addr)&t;    ((int) get_user(((int *) addr)))
-DECL|macro|put_byte_user
-mdefine_line|#define put_byte_user(val,addr)&t;    put_user((val),((u_char *) (addr)))
-DECL|macro|put_long_user
-mdefine_line|#define put_long_user(val,addr)&t;    put_user((val),((int *) (addr)))
-r_static
-r_int
-id|ppp_dev_header
-(paren
-id|sk_buff
-op_star
-comma
-r_struct
-id|device
-op_star
-comma
-r_int
-r_int
-comma
-r_void
-op_star
-comma
-r_void
-op_star
-comma
-r_int
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef NEW_SKBUFF
-r_static
-r_int
-id|ppp_dev_input
-(paren
-r_struct
-id|protocol
-op_star
-id|self
-comma
-r_struct
-id|protocol
-op_star
-id|lower
-comma
-id|sk_buff
-op_star
-id|skb
-comma
-r_void
-op_star
-id|saddr
-comma
-r_void
-op_star
-id|daddr
-)paren
-suffix:semicolon
-r_static
-r_int
-id|ppp_dev_output
-(paren
-r_struct
-id|protocol
-op_star
-id|self
-comma
-id|sk_buff
-op_star
-id|skb
-comma
-r_int
-id|type
-comma
-r_int
-id|subid
-comma
-r_void
-op_star
-id|saddr
-comma
-r_void
-op_star
-id|daddr
-comma
-r_void
-op_star
-id|opt
-)paren
-suffix:semicolon
-r_static
-r_int
-id|ppp_dev_getkey
-c_func
-(paren
-r_int
-id|protocol
-comma
-r_int
-id|subid
-comma
-r_int
-r_char
-op_star
-id|key
-)paren
-suffix:semicolon
-macro_line|#else
-r_static
-r_int
-id|ppp_dev_rebuild
-(paren
-r_void
-op_star
-comma
-r_struct
-id|device
-op_star
-comma
-r_int
-r_int
-comma
-id|sk_buff
-op_star
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n; * TTY callbacks&n; */
 r_static
 r_int
@@ -664,7 +520,7 @@ r_struct
 id|file
 op_star
 comma
-id|u_char
+id|__u8
 op_star
 comma
 r_int
@@ -684,7 +540,7 @@ id|file
 op_star
 comma
 r_const
-id|u_char
+id|__u8
 op_star
 comma
 r_int
@@ -775,7 +631,7 @@ op_star
 id|tty
 comma
 r_const
-id|u_char
+id|__u8
 op_star
 id|cp
 comma
@@ -804,7 +660,7 @@ mdefine_line|#define CHECK_PPP_VOID()  if (!ppp-&gt;inuse) { printk (ppp_warning
 DECL|macro|in_xmap
 mdefine_line|#define in_xmap(ppp,c)&t;(ppp-&gt;xmit_async_map[(c) &gt;&gt; 5] &amp; (1 &lt;&lt; ((c) &amp; 0x1f)))
 DECL|macro|in_rmap
-mdefine_line|#define in_rmap(ppp,c)&t;((((unsigned int) (u_char) (c)) &lt; 0x20) &amp;&amp; &bslash;&n;&t;&t;&t;ppp-&gt;recv_async_map &amp; (1 &lt;&lt; (c)))
+mdefine_line|#define in_rmap(ppp,c)&t;((((unsigned int) (__u8) (c)) &lt; 0x20) &amp;&amp; &bslash;&n;&t;&t;&t;ppp-&gt;recv_async_map &amp; (1 &lt;&lt; (c)))
 DECL|macro|bset
 mdefine_line|#define bset(p,b)&t;((p)[(b) &gt;&gt; 5] |= (1 &lt;&lt; ((b) &amp; 0x1f)))
 DECL|macro|tty2ppp
@@ -820,18 +676,15 @@ r_struct
 id|ppp_hdr
 (brace
 DECL|member|address
-r_int
-r_char
+id|__u8
 id|address
 suffix:semicolon
 DECL|member|control
-r_int
-r_char
+id|__u8
 id|control
 suffix:semicolon
 DECL|member|protocol
-r_int
-r_char
+id|__u8
 id|protocol
 (braket
 l_int|2
@@ -890,16 +743,16 @@ mdefine_line|#define ctl2ppp(ctl) (struct ppp *)    &amp;ctl-&gt;ppp
 DECL|macro|ctl2dev
 mdefine_line|#define ctl2dev(ctl) (struct device *) &amp;ctl-&gt;dev
 DECL|macro|PPP_NRUNIT
-macro_line|#undef  PPP_NRUNIT
+macro_line|#undef&t;PPP_NRUNIT
 multiline_comment|/* Buffer types */
 DECL|macro|BUFFER_TYPE_DEV_RD
-mdefine_line|#define BUFFER_TYPE_DEV_RD&t;0  /* ppp read buffer       */
+mdefine_line|#define BUFFER_TYPE_DEV_RD&t;0  /* ppp read buffer&t;    */
 DECL|macro|BUFFER_TYPE_TTY_WR
-mdefine_line|#define BUFFER_TYPE_TTY_WR&t;1  /* tty write buffer      */
+mdefine_line|#define BUFFER_TYPE_TTY_WR&t;1  /* tty write buffer&t;    */
 DECL|macro|BUFFER_TYPE_DEV_WR
-mdefine_line|#define BUFFER_TYPE_DEV_WR&t;2  /* ppp write buffer      */
+mdefine_line|#define BUFFER_TYPE_DEV_WR&t;2  /* ppp write buffer&t;    */
 DECL|macro|BUFFER_TYPE_TTY_RD
-mdefine_line|#define BUFFER_TYPE_TTY_RD&t;3  /* tty read buffer       */
+mdefine_line|#define BUFFER_TYPE_TTY_RD&t;3  /* tty read buffer&t;    */
 DECL|macro|BUFFER_TYPE_VJ
 mdefine_line|#define BUFFER_TYPE_VJ&t;&t;4  /* vj compression buffer */
 multiline_comment|/* Define this string only once for all macro envocations */
@@ -922,14 +775,6 @@ id|szVersion
 op_assign
 id|PPP_VERSION
 suffix:semicolon
-macro_line|#ifdef NEW_SKBUFF
-DECL|variable|proto_ppp
-r_static
-r_struct
-id|protocol
-id|proto_ppp
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n; * Information for the protocol decoder&n; */
 DECL|typedef|pfn_proto
 r_typedef
@@ -943,9 +788,9 @@ r_struct
 id|ppp
 op_star
 comma
-id|u_short
+id|__u16
 comma
-id|u_char
+id|__u8
 op_star
 comma
 r_int
@@ -1020,16 +865,8 @@ id|rcv_proto_unknown
 multiline_comment|/* !!! MUST BE LAST !!! */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Values for FCS calculations.&n; */
-DECL|macro|PPP_INITFCS
-mdefine_line|#define PPP_INITFCS&t;0xffff&t;/* Initial FCS value */
-DECL|macro|PPP_GOODFCS
-mdefine_line|#define PPP_GOODFCS&t;0xf0b8&t;/* Good final FCS value */
-DECL|macro|PPP_FCS
-mdefine_line|#define PPP_FCS(fcs, c)&t;(((fcs) &gt;&gt; 8) ^ ppp_crc16_table[((fcs) ^ (c)) &amp; 0xff])
 DECL|variable|ppp_crc16_table
-r_int
-r_int
+id|__u16
 id|ppp_crc16_table
 (braket
 l_int|256
@@ -1552,7 +1389,7 @@ suffix:semicolon
 macro_line|#ifdef CHECK_CHARACTERS
 DECL|variable|paritytab
 r_static
-r_int
+id|__u32
 id|paritytab
 (braket
 l_int|8
@@ -1581,12 +1418,12 @@ multiline_comment|/* local function to store a value into the LQR frame */
 DECL|function|store_long
 r_extern
 r_inline
-id|u_char
+id|__u8
 op_star
 id|store_long
 (paren
 r_register
-id|u_char
+id|__u8
 op_star
 id|p
 comma
@@ -1600,7 +1437,7 @@ id|p
 op_increment
 op_assign
 (paren
-id|u_char
+id|__u8
 )paren
 (paren
 id|value
@@ -1613,7 +1450,7 @@ id|p
 op_increment
 op_assign
 (paren
-id|u_char
+id|__u8
 )paren
 (paren
 id|value
@@ -1626,7 +1463,7 @@ id|p
 op_increment
 op_assign
 (paren
-id|u_char
+id|__u8
 )paren
 (paren
 id|value
@@ -1639,7 +1476,7 @@ id|p
 op_increment
 op_assign
 (paren
-id|u_char
+id|__u8
 )paren
 id|value
 suffix:semicolon
@@ -1669,9 +1506,6 @@ id|printk
 (paren
 id|KERN_INFO
 l_string|&quot;PPP: version %s (dynamic channel allocation)&quot;
-macro_line|#ifdef NEW_SKBUFF
-l_string|&quot; NEW_SKBUFF&quot;
-macro_line|#endif
 l_string|&quot;&bslash;n&quot;
 comma
 id|szVersion
@@ -1693,58 +1527,6 @@ l_string|&quot;PPP Dynamic channel allocation code copyright 1995 &quot;
 l_string|&quot;Caldera, Inc.&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Register the protocol for the device&n; */
-macro_line|#ifdef NEW_SKBUFF  
-id|memset
-(paren
-op_amp
-id|proto_ppp
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-id|proto_ppp
-)paren
-)paren
-suffix:semicolon
-id|proto_ppp.name
-op_assign
-l_string|&quot;PPP&quot;
-suffix:semicolon
-id|proto_ppp.output
-op_assign
-id|ppp_dev_output
-suffix:semicolon
-id|proto_ppp.input
-op_assign
-id|ppp_dev_input
-suffix:semicolon
-id|proto_ppp.bh_input
-op_assign
-id|ppp_dev_input
-suffix:semicolon
-id|proto_ppp.control_event
-op_assign
-id|default_protocol_control
-suffix:semicolon
-id|proto_ppp.get_binding
-op_assign
-id|ppp_dev_getkey
-suffix:semicolon
-id|proto_ppp.header_space
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* PPP_HARD_HDR_LEN; */
-id|protocol_register
-c_func
-(paren
-op_amp
-id|proto_ppp
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n; * Register the tty dicipline&n; */
 (paren
 r_void
@@ -1854,34 +1636,18 @@ id|dev
 r_int
 id|indx
 suffix:semicolon
-macro_line|#ifdef NEW_SKBUFF  
-id|dev-&gt;default_protocol
-op_assign
-op_amp
-id|proto_ppp
-suffix:semicolon
-multiline_comment|/* Our protocol layer is PPP */
-macro_line|#else
 id|dev-&gt;hard_header
 op_assign
 id|ppp_dev_header
 suffix:semicolon
-macro_line|#if USE_SKB_PROTOCOL == 0
-id|dev-&gt;type_trans
-op_assign
-id|ppp_dev_type
-suffix:semicolon
-macro_line|#endif
 id|dev-&gt;rebuild_header
 op_assign
 id|ppp_dev_rebuild
 suffix:semicolon
 id|dev-&gt;hard_header_len
 op_assign
-l_int|0
+id|PPP_HARD_HDR_LEN
 suffix:semicolon
-multiline_comment|/* PPP_HARD_HDR_LEN; */
-macro_line|#endif
 multiline_comment|/* device INFO */
 id|dev-&gt;mtu
 op_assign
@@ -1914,10 +1680,6 @@ suffix:semicolon
 id|dev-&gt;type
 op_assign
 id|ARPHRD_PPP
-suffix:semicolon
-id|dev-&gt;tx_queue_len
-op_assign
-l_int|10
 suffix:semicolon
 r_for
 c_loop
@@ -1967,7 +1729,7 @@ id|dev-&gt;pa_alen
 op_assign
 l_int|4
 suffix:semicolon
-multiline_comment|/* sizeof (unsigned long) */
+multiline_comment|/* sizeof (__u32) */
 r_return
 l_int|0
 suffix:semicolon
@@ -2195,13 +1957,16 @@ r_if
 c_cond
 (paren
 id|answer
+op_eq
+l_int|0
 )paren
+id|answer
+op_assign
+op_minus
+id|ENODEV
+suffix:semicolon
 r_return
 id|answer
-suffix:semicolon
-multiline_comment|/*&n;&t; * Return &quot;not found&quot;, so that dev_init() will unlink&n;&t; * the placeholder device entry for us.&n;&t; */
-r_return
-id|ENODEV
 suffix:semicolon
 )brace
 macro_line|#endif
@@ -2362,7 +2127,6 @@ id|buf-&gt;locked
 op_assign
 l_int|2
 suffix:semicolon
-multiline_comment|/*&n; * Restore the flags and return the previous state. 0 implies success.&n; */
 id|restore_flags
 (paren
 id|flags
@@ -2651,8 +2415,7 @@ multiline_comment|/* reserve space for vj header expansion */
 id|dev-&gt;mem_start
 op_assign
 (paren
-r_int
-r_int
+id|__u32
 )paren
 id|buf_base
 (paren
@@ -2662,8 +2425,7 @@ suffix:semicolon
 id|dev-&gt;mem_end
 op_assign
 (paren
-r_int
-r_int
+id|__u32
 )paren
 (paren
 id|dev-&gt;mem_start
@@ -2674,8 +2436,7 @@ suffix:semicolon
 id|dev-&gt;rmem_start
 op_assign
 (paren
-r_int
-r_int
+id|__u32
 )paren
 id|buf_base
 (paren
@@ -2685,8 +2446,7 @@ suffix:semicolon
 id|dev-&gt;rmem_end
 op_assign
 (paren
-r_int
-r_int
+id|__u32
 )paren
 (paren
 id|dev-&gt;rmem_start
@@ -2862,6 +2622,19 @@ id|ppp_ccp_closed
 id|ppp
 )paren
 suffix:semicolon
+multiline_comment|/* Ensure that the pppd process is not hanging on select() */
+id|wake_up_interruptible
+(paren
+op_amp
+id|ppp-&gt;read_wait
+)paren
+suffix:semicolon
+id|wake_up_interruptible
+(paren
+op_amp
+id|ppp-&gt;write_wait
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2971,13 +2744,16 @@ suffix:semicolon
 multiline_comment|/*&n; * Device callback.&n; *&n; * Called when the PPP device goes down in response to an ifconfig request.&n; */
 r_static
 r_void
-DECL|function|ppp_tty_close
-id|ppp_tty_close
+DECL|function|ppp_tty_close_local
+id|ppp_tty_close_local
 (paren
 r_struct
 id|tty_struct
 op_star
 id|tty
+comma
+r_int
+id|sc_xfer
 )paren
 (brace
 r_struct
@@ -3027,6 +2803,10 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|ppp-&gt;sc_xfer
+op_assign
+id|sc_xfer
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3058,6 +2838,25 @@ suffix:semicolon
 )brace
 )brace
 )brace
+r_static
+r_void
+DECL|function|ppp_tty_close
+id|ppp_tty_close
+(paren
+r_struct
+id|tty_struct
+op_star
+id|tty
+)paren
+(brace
+id|ppp_tty_close_local
+(paren
+id|tty
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * TTY callback.&n; *&n; * Called when the tty discipline is switched to PPP.&n; */
 r_static
 r_int
@@ -3079,6 +2878,9 @@ id|tty2ppp
 (paren
 id|tty
 )paren
+suffix:semicolon
+r_int
+id|indx
 suffix:semicolon
 multiline_comment|/*&n; * There should not be an existing table for this slot.&n; */
 r_if
@@ -3123,11 +2925,43 @@ suffix:semicolon
 multiline_comment|/*&n; * Allocate the structure from the system&n; */
 id|ppp
 op_assign
+id|ppp_find
+c_func
+(paren
+id|current-&gt;pid
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ppp
+op_eq
+l_int|NULL
+)paren
+(brace
+id|ppp
+op_assign
+id|ppp_find
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ppp
+op_eq
+l_int|NULL
+)paren
+id|ppp
+op_assign
 id|ppp_alloc
 c_func
 (paren
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -3323,6 +3157,27 @@ id|ppp
 op_member_access_from_pointer
 id|name
 )paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|indx
+op_assign
+l_int|0
+suffix:semicolon
+id|indx
+OL
+id|NUM_NP
+suffix:semicolon
+op_increment
+id|indx
+)paren
+id|ppp-&gt;sc_npmode
+(braket
+id|indx
+)braket
+op_assign
+id|NPMODE_PASS
 suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
@@ -3815,7 +3670,7 @@ op_star
 id|tty
 comma
 r_const
-id|u_char
+id|__u8
 op_star
 id|data
 comma
@@ -3846,7 +3701,7 @@ id|buf
 op_assign
 l_int|NULL
 suffix:semicolon
-id|u_char
+id|__u8
 id|chr
 suffix:semicolon
 multiline_comment|/*&n; * Fetch the pointer to the buffer. Be careful about race conditions.&n; */
@@ -4180,11 +4035,10 @@ id|ppp
 op_star
 id|ppp
 comma
-r_int
-r_int
+id|__u16
 id|proto
 comma
-id|u_char
+id|__u8
 op_star
 id|data
 comma
@@ -4243,12 +4097,6 @@ id|ppp
 )paren
 suffix:semicolon
 multiline_comment|/* We are the device */
-macro_line|#if USE_SKB_PROTOCOL == 0
-id|skb-&gt;len
-op_assign
-id|count
-suffix:semicolon
-macro_line|#else
 id|skb-&gt;protocol
 op_assign
 id|proto
@@ -4261,7 +4109,6 @@ c_func
 id|skb
 )paren
 suffix:semicolon
-macro_line|#endif
 id|memcpy
 (paren
 id|skb_put
@@ -4307,11 +4154,10 @@ id|ppp
 op_star
 id|ppp
 comma
-r_int
-r_int
+id|__u16
 id|proto
 comma
-id|u_char
+id|__u8
 op_star
 id|data
 comma
@@ -4322,6 +4168,7 @@ id|count
 r_if
 c_cond
 (paren
+(paren
 id|ppp2dev
 (paren
 id|ppp
@@ -4331,13 +4178,22 @@ id|flags
 op_amp
 id|IFF_UP
 )paren
-(brace
-r_if
-c_cond
+op_logical_and
 (paren
 id|count
 OG
 l_int|0
+)paren
+)paren
+r_if
+c_cond
+(paren
+id|ppp-&gt;sc_npmode
+(braket
+id|NP_IP
+)braket
+op_eq
+id|NPMODE_PASS
 )paren
 r_return
 id|ppp_rcv_rx
@@ -4354,7 +4210,6 @@ comma
 id|count
 )paren
 suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -4370,11 +4225,10 @@ id|ppp
 op_star
 id|ppp
 comma
-r_int
-r_int
+id|__u16
 id|proto
 comma
-id|u_char
+id|__u8
 op_star
 id|data
 comma
@@ -4382,9 +4236,10 @@ r_int
 id|count
 )paren
 (brace
-macro_line|#ifdef NEW_SKBUFF
 r_if
 c_cond
+(paren
+(paren
 (paren
 id|ppp2dev
 (paren
@@ -4395,13 +4250,15 @@ id|flags
 op_amp
 id|IFF_UP
 )paren
-(brace
-r_if
-c_cond
+op_ne
+l_int|0
+)paren
+op_logical_and
 (paren
 id|count
 OG
 l_int|0
+)paren
 )paren
 r_return
 id|ppp_rcv_rx
@@ -4418,9 +4275,6 @@ comma
 id|count
 )paren
 suffix:semicolon
-)brace
-r_else
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -4436,11 +4290,10 @@ id|ppp
 op_star
 id|ppp
 comma
-r_int
-r_int
+id|__u16
 id|proto
 comma
-id|u_char
+id|__u8
 op_star
 id|data
 comma
@@ -4522,11 +4375,10 @@ id|ppp
 op_star
 id|ppp
 comma
-r_int
-r_int
+id|__u16
 id|proto
 comma
-id|u_char
+id|__u8
 op_star
 id|data
 comma
@@ -4603,11 +4455,10 @@ id|ppp
 op_star
 id|ppp
 comma
-r_int
-r_int
+id|__u16
 id|proto
 comma
-id|u_char
+id|__u8
 op_star
 id|data
 comma
@@ -4623,7 +4474,7 @@ r_int
 id|current_idx
 suffix:semicolon
 DECL|macro|PUTC
-mdefine_line|#define PUTC(c)&t;&t;&t;&t;&t;&t; &bslash;&n;{&t;&t;&t;&t;&t;&t;&t; &bslash;&n;    buf_base (ppp-&gt;ubuf) [current_idx++] = (u_char) (c); &bslash;&n;    current_idx &amp;= ppp-&gt;ubuf-&gt;size;&t;&t;&t; &bslash;&n;    if (current_idx == ppp-&gt;ubuf-&gt;tail)&t;&t;&t; &bslash;&n;&t;    goto failure;&t;&t;&t;&t; &bslash;&n;}
+mdefine_line|#define PUTC(c)&t;&t;&t;&t;&t;&t; &bslash;&n;{&t;&t;&t;&t;&t;&t;&t; &bslash;&n;    buf_base (ppp-&gt;ubuf) [current_idx++] = (__u8) (c); &bslash;&n;    current_idx &amp;= ppp-&gt;ubuf-&gt;size;&t;&t;&t; &bslash;&n;    if (current_idx == ppp-&gt;ubuf-&gt;tail)&t;&t;&t; &bslash;&n;&t;    goto failure;&t;&t;&t;&t; &bslash;&n;}
 multiline_comment|/*&n; * The total length includes the protocol data.&n; * Lock the user information buffer.&n; */
 r_if
 c_cond
@@ -4825,7 +4676,7 @@ id|ppp
 op_star
 id|ppp
 comma
-id|u_char
+id|__u8
 op_star
 id|dp
 comma
@@ -4845,7 +4696,7 @@ c_func
 id|dp
 )paren
 suffix:semicolon
-id|u_char
+id|__u8
 op_star
 id|opt
 op_assign
@@ -5006,8 +4857,6 @@ comma
 l_int|0
 comma
 id|ppp-&gt;flags
-op_amp
-id|SC_DEBUG
 )paren
 )paren
 id|ppp-&gt;flags
@@ -5053,8 +4902,6 @@ comma
 id|ppp-&gt;mru
 comma
 id|ppp-&gt;flags
-op_amp
-id|SC_DEBUG
 )paren
 )paren
 (brace
@@ -5161,11 +5008,10 @@ id|ppp
 op_star
 id|ppp
 comma
-r_int
-r_int
+id|__u16
 id|proto
 comma
-id|u_char
+id|__u8
 op_star
 id|dp
 comma
@@ -5197,7 +5043,7 @@ id|len
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Handle a LQR packet.&n; *&n; * The LQR packet is passed along to the pppd process just like any&n; * other PPP frame. The difference is that some processing needs to be&n; * performed to append the current data to the end of the frame.&n; */
+multiline_comment|/*&n; * Handle a LQR packet.&n; */
 r_static
 r_int
 DECL|function|rcv_proto_lqr
@@ -5208,11 +5054,10 @@ id|ppp
 op_star
 id|ppp
 comma
-r_int
-r_int
+id|__u16
 id|proto
 comma
-id|u_char
+id|__u8
 op_star
 id|data
 comma
@@ -5220,106 +5065,6 @@ r_int
 id|len
 )paren
 (brace
-macro_line|#if 0 /* until support is in the pppd process don&squot;t corrupt the reject. */
-r_register
-id|u_char
-op_star
-id|p
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|len
-OG
-l_int|8
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|len
-OL
-l_int|48
-)paren
-id|memset
-(paren
-op_amp
-id|data
-(braket
-id|len
-)braket
-comma
-l_char|&squot;&bslash;0&squot;
-comma
-l_int|48
-op_minus
-id|len
-)paren
-suffix:semicolon
-multiline_comment|/*&n; * Fill in the fields from the driver data&n; */
-id|p
-op_assign
-op_amp
-id|data
-(braket
-l_int|48
-)braket
-suffix:semicolon
-id|p
-op_assign
-id|store_long
-(paren
-id|p
-comma
-op_increment
-id|ppp-&gt;stats.ppp_ilqrs
-)paren
-suffix:semicolon
-id|p
-op_assign
-id|store_long
-(paren
-id|p
-comma
-id|ppp-&gt;stats.ppp_ipackets
-)paren
-suffix:semicolon
-id|p
-op_assign
-id|store_long
-(paren
-id|p
-comma
-id|ppp-&gt;stats.ppp_discards
-)paren
-suffix:semicolon
-id|p
-op_assign
-id|store_long
-(paren
-id|p
-comma
-id|ppp-&gt;stats.ppp_ierrors
-)paren
-suffix:semicolon
-id|p
-op_assign
-id|store_long
-(paren
-id|p
-comma
-id|ppp-&gt;stats.ppp_ioctects
-op_plus
-id|len
-)paren
-suffix:semicolon
-id|len
-op_assign
-l_int|68
-suffix:semicolon
-)brace
-macro_line|#endif
-multiline_comment|/*&n; * Pass the frame to the pppd daemon.&n; */
 r_return
 id|rcv_proto_unknown
 (paren
@@ -5344,7 +5089,7 @@ id|ppp
 op_star
 id|ppp
 comma
-id|u_char
+id|__u8
 op_star
 id|data
 comma
@@ -5352,7 +5097,7 @@ r_int
 id|count
 )paren
 (brace
-id|u_short
+id|__u16
 id|proto
 op_assign
 id|PPP_PROTOCOL
@@ -5458,7 +5203,7 @@ op_star
 id|ppp
 )paren
 (brace
-id|u_char
+id|__u8
 op_star
 id|data
 op_assign
@@ -5482,7 +5227,7 @@ suffix:semicolon
 r_int
 id|new_count
 suffix:semicolon
-id|u_char
+id|__u8
 op_star
 id|new_data
 suffix:semicolon
@@ -5644,7 +5389,7 @@ multiline_comment|/*&n; * Obtain the protocol from the frame&n; */
 id|proto
 op_assign
 (paren
-id|u_short
+id|__u16
 )paren
 op_star
 id|data
@@ -5671,7 +5416,7 @@ l_int|8
 )paren
 op_or
 (paren
-id|u_short
+id|__u16
 )paren
 op_star
 id|data
@@ -5960,7 +5705,7 @@ id|file
 op_star
 id|file
 comma
-id|u_char
+id|__u8
 op_star
 id|buf
 comma
@@ -5979,7 +5724,7 @@ id|tty2ppp
 id|tty
 )paren
 suffix:semicolon
-id|u_char
+id|__u8
 id|c
 suffix:semicolon
 r_int
@@ -5989,7 +5734,7 @@ id|indx
 suffix:semicolon
 DECL|macro|GETC
 mdefine_line|#define GETC(c)&t;&t;&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;c = buf_base (ppp-&gt;ubuf) [ppp-&gt;ubuf-&gt;tail++];&t;&bslash;&n;&t;ppp-&gt;ubuf-&gt;tail &amp;= ppp-&gt;ubuf-&gt;size;&t;&t;&bslash;&n;}
-multiline_comment|/*&n; * Validate the pointer to the PPP structure&n; */
+multiline_comment|/*&n; * Validate the pointers&n; */
 r_if
 c_cond
 (paren
@@ -6277,7 +6022,7 @@ comma
 id|len
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Ensure that the frame will fit within the caller&squot;s buffer. If not, then&n; * discard the frame from the input buffer and return an error to the caller.&n; */
+multiline_comment|/*&n; * Ensure that the frame will fit within the caller&squot;s buffer. If not, then&n; * discard the frame from the input buffer.&n; */
 r_if
 c_cond
 (paren
@@ -6378,7 +6123,7 @@ id|indx
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Fake the insertion of the ADDRESS and CONTROL information because these&n; * were not saved in the buffer.&n; */
-id|put_byte_user
+id|put_user
 (paren
 id|PPP_ALLSTATIONS
 comma
@@ -6386,7 +6131,7 @@ id|buf
 op_increment
 )paren
 suffix:semicolon
-id|put_byte_user
+id|put_user
 (paren
 id|PPP_UI
 comma
@@ -6413,7 +6158,7 @@ id|GETC
 id|c
 )paren
 suffix:semicolon
-id|put_byte_user
+id|put_user
 (paren
 id|c
 comma
@@ -6424,7 +6169,6 @@ op_increment
 id|buf
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Release the lock and return the character count in the buffer area.&n; */
 id|clear_bit
 (paren
 l_int|0
@@ -6479,7 +6223,7 @@ op_star
 id|buf
 comma
 r_register
-id|u_char
+id|__u8
 id|chr
 )paren
 (brace
@@ -6584,7 +6328,7 @@ id|ppp_buffer
 op_star
 id|buf
 comma
-id|u_char
+id|__u8
 op_star
 id|data
 comma
@@ -6595,9 +6339,7 @@ r_int
 id|non_ip
 )paren
 (brace
-r_int
-r_int
-r_int
+id|__u16
 id|write_fcs
 suffix:semicolon
 r_int
@@ -6884,7 +6626,7 @@ id|buf
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Send an frame to the remote with the proper bsd compression.&n; *&n; * Return 0 if frame was queued for transmission.&n; *        1 if frame must be re-queued for later driver support.&n; */
+multiline_comment|/*&n; * Send an frame to the remote with the proper bsd compression.&n; *&n; * Return 0 if frame was queued for transmission.&n; *&t;  1 if frame must be re-queued for later driver support.&n; */
 r_static
 r_int
 DECL|function|ppp_dev_xmit_frame
@@ -6900,7 +6642,7 @@ id|ppp_buffer
 op_star
 id|buf
 comma
-id|u_char
+id|__u8
 op_star
 id|data
 comma
@@ -6916,7 +6658,7 @@ id|address
 comma
 id|control
 suffix:semicolon
-id|u_char
+id|__u8
 op_star
 id|new_data
 suffix:semicolon
@@ -7147,7 +6889,7 @@ id|ppp
 op_star
 id|ppp
 comma
-id|u_char
+id|__u8
 op_star
 id|data
 comma
@@ -7155,7 +6897,7 @@ r_int
 id|len
 )paren
 (brace
-id|u_char
+id|__u8
 op_star
 id|p
 suffix:semicolon
@@ -7180,7 +6922,7 @@ multiline_comment|/* total size of this frame */
 id|p
 op_assign
 (paren
-id|u_char
+id|__u8
 op_star
 )paren
 op_amp
@@ -7235,7 +6977,6 @@ l_int|0
 suffix:semicolon
 r_break
 suffix:semicolon
-multiline_comment|/*&n; * All other frame types&n; */
 r_default
 suffix:colon
 r_break
@@ -7262,7 +7003,7 @@ op_star
 id|file
 comma
 r_const
-id|u_char
+id|__u8
 op_star
 id|data
 comma
@@ -7281,14 +7022,14 @@ id|tty2ppp
 id|tty
 )paren
 suffix:semicolon
-id|u_char
+id|__u8
 op_star
 id|new_data
 suffix:semicolon
 r_int
 id|status
 suffix:semicolon
-multiline_comment|/*&n; * Verify the pointer to the PPP data and that the tty is still in PPP mode.&n; */
+multiline_comment|/*&n; * Verify the pointers.&n; */
 r_if
 c_cond
 (paren
@@ -7578,11 +7319,11 @@ suffix:semicolon
 r_int
 id|nb
 suffix:semicolon
-id|u_char
+id|__u8
 op_star
 id|ptr
 suffix:semicolon
-id|u_char
+id|__u8
 id|ccp_option
 (braket
 id|CCP_MAX_OPTION_LENGTH
@@ -7636,14 +7377,12 @@ r_if
 c_cond
 (paren
 (paren
-r_int
-r_int
+id|__u32
 )paren
 id|nb
 op_ge
 (paren
-r_int
-r_int
+id|__u32
 )paren
 id|CCP_MAX_OPTION_LENGTH
 )paren
@@ -7708,10 +7447,10 @@ r_int
 )paren
 (paren
 r_int
+r_int
 )paren
 (paren
-r_int
-r_char
+id|__u8
 )paren
 id|ccp_option
 (braket
@@ -7981,6 +7720,8 @@ l_int|0
 suffix:semicolon
 r_int
 id|error
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/*&n; * Verify the status of the PPP device.&n; */
 r_if
@@ -8061,7 +7802,7 @@ l_int|0
 (brace
 id|temp_i
 op_assign
-id|get_int_user
+id|get_user
 (paren
 (paren
 r_int
@@ -8159,13 +7900,14 @@ op_or
 id|SC_RCV_EVNP
 suffix:semicolon
 macro_line|#endif
-id|put_long_user
+id|put_user
 (paren
-(paren
-r_int
-)paren
 id|temp_i
 comma
+(paren
+r_int
+op_star
+)paren
 id|param3
 )paren
 suffix:semicolon
@@ -8222,8 +7964,12 @@ l_int|0
 (brace
 id|temp_i
 op_assign
-id|get_int_user
+id|get_user
 (paren
+(paren
+r_int
+op_star
+)paren
 id|param3
 )paren
 op_amp
@@ -8336,13 +8082,17 @@ op_eq
 l_int|0
 )paren
 (brace
-id|put_long_user
+id|put_user
 (paren
 id|ppp-&gt;xmit_async_map
 (braket
 l_int|0
 )braket
 comma
+(paren
+r_int
+op_star
+)paren
 id|param3
 )paren
 suffix:semicolon
@@ -8357,14 +8107,10 @@ id|printk
 (paren
 id|KERN_INFO
 l_string|&quot;ppp_tty_ioctl: get asyncmap: addr &quot;
-l_string|&quot;%lx asyncmap %lx&bslash;n&quot;
+l_string|&quot;%lx asyncmap %x&bslash;n&quot;
 comma
 id|param3
 comma
-(paren
-r_int
-r_int
-)paren
 id|ppp-&gt;xmit_async_map
 (braket
 l_int|0
@@ -8409,8 +8155,12 @@ id|ppp-&gt;xmit_async_map
 l_int|0
 )braket
 op_assign
-id|get_long_user
+id|get_user
 (paren
+(paren
+r_int
+op_star
+)paren
 id|param3
 )paren
 suffix:semicolon
@@ -8424,12 +8174,8 @@ id|SC_DEBUG
 id|printk
 (paren
 id|KERN_INFO
-l_string|&quot;ppp_tty_ioctl: set xmit asyncmap %lx&bslash;n&quot;
+l_string|&quot;ppp_tty_ioctl: set xmit asyncmap %x&bslash;n&quot;
 comma
-(paren
-r_int
-r_int
-)paren
 id|ppp-&gt;xmit_async_map
 (braket
 l_int|0
@@ -8471,8 +8217,12 @@ l_int|0
 (brace
 id|ppp-&gt;recv_async_map
 op_assign
-id|get_long_user
+id|get_user
 (paren
+(paren
+r_int
+op_star
+)paren
 id|param3
 )paren
 suffix:semicolon
@@ -8486,12 +8236,8 @@ id|SC_DEBUG
 id|printk
 (paren
 id|KERN_INFO
-l_string|&quot;ppp_tty_ioctl: set rcv asyncmap %lx&bslash;n&quot;
+l_string|&quot;ppp_tty_ioctl: set rcv asyncmap %x&bslash;n&quot;
 comma
-(paren
-r_int
-r_int
-)paren
 id|ppp-&gt;recv_async_map
 )paren
 suffix:semicolon
@@ -8528,7 +8274,7 @@ op_eq
 l_int|0
 )paren
 (brace
-id|put_long_user
+id|put_user
 (paren
 id|ppp2dev
 (paren
@@ -8537,6 +8283,10 @@ id|ppp
 op_member_access_from_pointer
 id|base_addr
 comma
+(paren
+r_int
+op_star
+)paren
 id|param3
 )paren
 suffix:semicolon
@@ -8596,8 +8346,12 @@ l_int|0
 id|temp_i
 op_assign
 (paren
-id|get_int_user
+id|get_user
 (paren
+(paren
+r_int
+op_star
+)paren
 id|param3
 )paren
 op_amp
@@ -8681,13 +8435,14 @@ l_int|16
 op_amp
 l_int|0x1F
 suffix:semicolon
-id|put_long_user
+id|put_user
 (paren
-(paren
-r_int
-)paren
 id|temp_i
 comma
+(paren
+r_int
+op_star
+)paren
 id|param3
 )paren
 suffix:semicolon
@@ -8744,8 +8499,7 @@ r_struct
 id|ppp_idle
 id|cur_ddinfo
 suffix:semicolon
-r_int
-r_int
+id|__u32
 id|cur_jiffies
 op_assign
 id|jiffies
@@ -9055,8 +8809,12 @@ l_int|0
 (brace
 id|temp_i
 op_assign
-id|get_int_user
+id|get_user
 (paren
+(paren
+r_int
+op_star
+)paren
 id|param3
 )paren
 op_plus
@@ -9133,6 +8891,207 @@ suffix:semicolon
 )brace
 r_break
 suffix:semicolon
+r_case
+id|PPPIOCXFERUNIT
+suffix:colon
+id|ppp_tty_close_local
+(paren
+id|tty
+comma
+id|current-&gt;pid
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|PPPIOCGNPMODE
+suffix:colon
+r_case
+id|PPPIOCSNPMODE
+suffix:colon
+id|error
+op_assign
+id|verify_area
+(paren
+id|VERIFY_READ
+comma
+(paren
+r_void
+op_star
+)paren
+id|param3
+comma
+r_sizeof
+(paren
+r_struct
+id|npioctl
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+op_eq
+l_int|0
+)paren
+(brace
+r_struct
+id|npioctl
+id|npi
+suffix:semicolon
+id|memcpy_fromfs
+(paren
+op_amp
+id|npi
+comma
+(paren
+r_void
+op_star
+)paren
+id|param3
+comma
+r_sizeof
+(paren
+id|npi
+)paren
+)paren
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|npi.protocol
+)paren
+(brace
+r_case
+id|PPP_IP
+suffix:colon
+id|npi.protocol
+op_assign
+id|NP_IP
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|error
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|error
+op_ne
+l_int|0
+)paren
+r_break
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|param2
+op_eq
+id|PPPIOCGNPMODE
+)paren
+(brace
+id|npi.mode
+op_assign
+id|ppp-&gt;sc_npmode
+(braket
+id|npi.protocol
+)braket
+suffix:semicolon
+id|error
+op_assign
+id|verify_area
+(paren
+id|VERIFY_WRITE
+comma
+(paren
+r_void
+op_star
+)paren
+id|param3
+comma
+r_sizeof
+(paren
+id|npi
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+op_ne
+l_int|0
+)paren
+r_break
+suffix:semicolon
+id|memcpy_tofs
+(paren
+(paren
+r_void
+op_star
+)paren
+id|param3
+comma
+op_amp
+id|npi
+comma
+r_sizeof
+(paren
+id|npi
+)paren
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|npi.mode
+op_ne
+id|ppp-&gt;sc_npmode
+(braket
+id|npi.protocol
+)braket
+)paren
+(brace
+id|ppp-&gt;sc_npmode
+(braket
+id|npi.protocol
+)braket
+op_assign
+id|npi.mode
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|npi.mode
+op_ne
+id|NPMODE_QUEUE
+)paren
+(brace
+multiline_comment|/* ppp_requeue(ppp); maybe needed */
+id|ppp_tty_wakeup
+(paren
+id|ppp2tty
+c_func
+(paren
+id|ppp
+)paren
+)paren
+suffix:semicolon
+)brace
+)brace
+)brace
+r_break
+suffix:semicolon
 multiline_comment|/*&n; * Allow users to read, but not set, the serial port parameters&n; */
 r_case
 id|TCGETS
@@ -9153,6 +9112,71 @@ comma
 id|param3
 )paren
 suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|FIONREAD
+suffix:colon
+id|error
+op_assign
+id|verify_area
+(paren
+id|VERIFY_WRITE
+comma
+(paren
+r_void
+op_star
+)paren
+id|param3
+comma
+r_sizeof
+(paren
+r_int
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+op_eq
+l_int|0
+)paren
+(brace
+r_int
+id|count
+op_assign
+id|ppp-&gt;ubuf-&gt;tail
+op_minus
+id|ppp-&gt;ubuf-&gt;head
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|count
+OL
+l_int|0
+)paren
+id|count
+op_add_assign
+(paren
+id|ppp-&gt;ubuf-&gt;size
+op_plus
+l_int|1
+)paren
+suffix:semicolon
+id|put_user
+(paren
+id|count
+comma
+(paren
+r_int
+op_star
+)paren
+id|param3
+)paren
+suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 multiline_comment|/*&n; *  All other ioctl() events will come here.&n; */
@@ -9770,7 +9794,6 @@ id|ppp-&gt;slcomp-&gt;sls_i_compressed
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Move the data to the caller&squot;s buffer&n; */
 r_if
 c_cond
 (paren
@@ -10039,11 +10062,11 @@ r_return
 id|error
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Send an IP frame to the remote with vj header compression.&n; *&n; * Return 0 if frame was queued for transmission.&n; *        1 if frame must be re-queued for later driver support.&n; */
+multiline_comment|/*&n; * Send an IP frame to the remote with vj header compression.&n; *&n; * Return 0 if frame was queued for transmission.&n; *&t;  1 if frame must be re-queued for later driver support.&n; */
 r_static
 r_int
-DECL|function|ppp_dev_xmit_ip1
-id|ppp_dev_xmit_ip1
+DECL|function|ppp_dev_xmit_ip
+id|ppp_dev_xmit_ip
 (paren
 r_struct
 id|device
@@ -10055,7 +10078,7 @@ id|ppp
 op_star
 id|ppp
 comma
-id|u_char
+id|__u8
 op_star
 id|data
 )paren
@@ -10164,6 +10187,96 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Branch on the type of processing for the IP frame.&n; */
+r_switch
+c_cond
+(paren
+id|ppp-&gt;sc_npmode
+(braket
+id|NP_IP
+)braket
+)paren
+(brace
+r_case
+id|NPMODE_PASS
+suffix:colon
+r_break
+suffix:semicolon
+r_case
+id|NPMODE_ERROR
+suffix:colon
+r_if
+c_cond
+(paren
+id|ppp-&gt;flags
+op_amp
+id|SC_DEBUG
+)paren
+id|printk
+(paren
+id|KERN_WARNING
+l_string|&quot;ppp_dev_xmit: npmode = NPMODE_ERROR on %s&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+r_case
+id|NPMODE_DROP
+suffix:colon
+r_if
+c_cond
+(paren
+id|ppp-&gt;flags
+op_amp
+id|SC_DEBUG
+)paren
+id|printk
+(paren
+id|KERN_WARNING
+l_string|&quot;ppp_dev_xmit: npmode = NPMODE_DROP on %s&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+r_case
+id|NPMODE_QUEUE
+suffix:colon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+(brace
+)brace
+r_if
+c_cond
+(paren
+id|ppp-&gt;flags
+op_amp
+id|SC_DEBUG
+)paren
+id|printk
+(paren
+id|KERN_WARNING
+l_string|&quot;ppp_dev_xmit: unknown npmode %d on %s&bslash;n&quot;
+comma
+id|ppp-&gt;sc_npmode
+(braket
+id|NP_IP
+)braket
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * Detect a change in the transfer size&n; */
 r_if
 c_cond
@@ -10193,7 +10306,7 @@ id|ppp-&gt;mru
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Acquire the lock on the transmission buffer. If the buffer was busy then&n; * mark the device as busy and return &quot;failure to send, try back later&quot; error.&n; */
+multiline_comment|/*&n; * Acquire the lock on the transmission buffer. If the buffer was busy then&n; * mark the device as busy.&n; */
 r_if
 c_cond
 (paren
@@ -10376,7 +10489,7 @@ comma
 id|ppp-&gt;wbuf
 comma
 (paren
-id|u_char
+id|__u8
 op_star
 )paren
 id|hdr
@@ -10385,11 +10498,11 @@ id|len
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This is just an interum solution until the 1.3 kernel&squot;s networking is&n; * available. The 1.2 kernel has problems with device headers before the&n; * buffers.&n; *&n; * This routine should be deleted, and the ppp_dev_xmit_ip1 routine called&n; * by this name.&n; */
+multiline_comment|/*&n; * Send an IPX (or any other non-IP) frame to the remote.&n; *&n; * Return 0 if frame was queued for transmission.&n; *&t;  1 if frame must be re-queued for later driver support.&n; */
 r_static
 r_int
-DECL|function|ppp_dev_xmit_ip
-id|ppp_dev_xmit_ip
+DECL|function|ppp_dev_xmit_ipx
+id|ppp_dev_xmit_ipx
 (paren
 r_struct
 id|device
@@ -10401,135 +10514,7 @@ id|ppp
 op_star
 id|ppp
 comma
-id|u_char
-op_star
-id|data
-)paren
-(brace
-r_struct
-id|ppp_hdr
-op_star
-id|hdr
-suffix:semicolon
-r_int
-id|len
-suffix:semicolon
-r_int
-id|answer
-suffix:semicolon
-id|len
-op_assign
-(paren
-(paren
-r_struct
-id|iphdr
-op_star
-)paren
-id|data
-)paren
-op_member_access_from_pointer
-id|tot_len
-suffix:semicolon
-id|len
-op_assign
-id|ntohs
-(paren
-id|len
-)paren
-suffix:semicolon
-id|hdr
-op_assign
-(paren
-r_struct
-id|ppp_hdr
-op_star
-)paren
-id|kmalloc
-(paren
-id|len
-op_plus
-r_sizeof
-(paren
-r_struct
-id|ppp_hdr
-)paren
-comma
-id|GFP_ATOMIC
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|hdr
-op_eq
-l_int|NULL
-)paren
-id|answer
-op_assign
-l_int|1
-suffix:semicolon
-r_else
-(brace
-id|memcpy
-(paren
-op_amp
-id|hdr
-(braket
-l_int|1
-)braket
-comma
-id|data
-comma
-id|len
-)paren
-suffix:semicolon
-id|answer
-op_assign
-id|ppp_dev_xmit_ip1
-(paren
-id|dev
-comma
-id|ppp
-comma
-(paren
-id|u_char
-op_star
-)paren
-op_amp
-id|hdr
-(braket
-l_int|1
-)braket
-)paren
-suffix:semicolon
-id|kfree
-(paren
-id|hdr
-)paren
-suffix:semicolon
-)brace
-r_return
-id|answer
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * Send an IPX (or any other non-IP) frame to the remote.&n; *&n; * Return 0 if frame was queued for transmission.&n; *        1 if frame must be re-queued for later driver support.&n; */
-macro_line|#ifdef NEW_SKBUFF
-r_static
-r_int
-DECL|function|ppp_dev_xmit_ipx1
-id|ppp_dev_xmit_ipx1
-(paren
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_struct
-id|ppp
-op_star
-id|ppp
-comma
-id|u_char
+id|__u8
 op_star
 id|data
 comma
@@ -10644,7 +10629,7 @@ id|ppp-&gt;mru
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Acquire the lock on the transmission buffer. If the buffer was busy then&n; * mark the device as busy and return &quot;failure to send, try back later&quot; error.&n; */
+multiline_comment|/*&n; * Acquire the lock on the transmission buffer. If the buffer was busy then&n; * mark the device as busy.&n; */
 r_if
 c_cond
 (paren
@@ -10734,7 +10719,7 @@ comma
 id|ppp-&gt;wbuf
 comma
 (paren
-id|u_char
+id|__u8
 op_star
 )paren
 id|hdr
@@ -10743,121 +10728,6 @@ id|len
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This is just an interum solution until the 1.3 kernel&squot;s networking is&n; * available. The 1.2 kernel has problems with device headers before the&n; * buffers.&n; *&n; * This routine should be deleted, and the ppp_dev_xmit_ipx1 routine called&n; * by this name.&n; */
-r_static
-r_int
-DECL|function|ppp_dev_xmit_ipx
-id|ppp_dev_xmit_ipx
-(paren
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_struct
-id|ppp
-op_star
-id|ppp
-comma
-id|u_char
-op_star
-id|data
-comma
-r_int
-id|len
-comma
-r_int
-id|proto
-)paren
-(brace
-r_struct
-id|ppp_hdr
-op_star
-id|hdr
-suffix:semicolon
-r_int
-id|answer
-suffix:semicolon
-id|hdr
-op_assign
-(paren
-r_struct
-id|ppp_hdr
-op_star
-)paren
-id|kmalloc
-(paren
-id|len
-op_plus
-r_sizeof
-(paren
-r_struct
-id|ppp_hdr
-)paren
-comma
-id|GFP_ATOMIC
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|hdr
-op_eq
-l_int|NULL
-)paren
-id|answer
-op_assign
-l_int|1
-suffix:semicolon
-r_else
-(brace
-id|memcpy
-(paren
-op_amp
-id|hdr
-(braket
-l_int|1
-)braket
-comma
-id|data
-comma
-id|len
-)paren
-suffix:semicolon
-id|answer
-op_assign
-id|ppp_dev_xmit_ipx1
-(paren
-id|dev
-comma
-id|ppp
-comma
-(paren
-id|u_char
-op_star
-)paren
-op_amp
-id|hdr
-(braket
-l_int|1
-)braket
-comma
-id|len
-comma
-id|proto
-)paren
-suffix:semicolon
-id|kfree
-(paren
-id|hdr
-)paren
-suffix:semicolon
-)brace
-r_return
-id|answer
-suffix:semicolon
-)brace
-macro_line|#endif
 multiline_comment|/*&n; * Send a frame to the remote.&n; */
 r_static
 r_int
@@ -10879,7 +10749,7 @@ id|answer
 comma
 id|len
 suffix:semicolon
-id|u_char
+id|__u8
 op_star
 id|data
 suffix:semicolon
@@ -11020,18 +10890,17 @@ id|skb
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Look at the protocol in the skb to determine the difference between&n; * an IP frame and an IPX frame.&n; */
-macro_line|#ifdef NEW_SKBUFF
 r_switch
 c_cond
 (paren
+id|ntohs
+(paren
 id|skb-&gt;protocol
+)paren
 )paren
 (brace
 r_case
-id|htons
-(paren
 id|ETH_P_IPX
-)paren
 suffix:colon
 id|answer
 op_assign
@@ -11051,10 +10920,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-id|htons
-(paren
 id|ETH_P_IP
-)paren
 suffix:colon
 id|answer
 op_assign
@@ -11083,19 +10949,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#else
-id|answer
-op_assign
-id|ppp_dev_xmit_ip
-(paren
-id|dev
-comma
-id|ppp
-comma
-id|data
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n; * This is the end of the transmission. Release the buffer if it was sent.&n; */
 r_if
 c_cond
@@ -11236,222 +11089,21 @@ op_amp
 id|ppp_stats
 suffix:semicolon
 )brace
-macro_line|#ifdef NEW_SKBUFF
-multiline_comment|/*&n; *&t;The PPP protocol is currently pure IP (no IPX yet). This defines&n; *      the protocol layer which is blank since the driver does all the&n; *      cooking.&n; */
-DECL|function|ppp_dev_input
-r_static
-r_int
-id|ppp_dev_input
-(paren
-r_struct
-id|protocol
-op_star
-id|self
-comma
-r_struct
-id|protocol
-op_star
-id|lower
-comma
-id|sk_buff
-op_star
-id|skb
-comma
-r_void
-op_star
-id|saddr
-comma
-r_void
-op_star
-id|daddr
-)paren
-(brace
-r_return
-id|protocol_pass_demultiplex
-c_func
-(paren
-id|self
-comma
-l_int|NULL
-comma
-id|skb
-comma
-l_int|NULL
-comma
-l_int|NULL
-)paren
-suffix:semicolon
-)brace
-DECL|function|ppp_dev_output
-r_static
-r_int
-id|ppp_dev_output
-(paren
-r_struct
-id|protocol
-op_star
-id|self
-comma
-id|sk_buff
-op_star
-id|skb
-comma
-r_int
-id|type
-comma
-r_int
-id|subid
-comma
-r_void
-op_star
-id|saddr
-comma
-r_void
-op_star
-id|daddr
-comma
-r_void
-op_star
-id|opt
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|skb-&gt;dev
-op_eq
-l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;ppp_dev_output: No device.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|kfree_skb
-c_func
-(paren
-id|skb
-comma
-id|FREE_WRITE
-)paren
-suffix:semicolon
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)brace
-id|dev_queue_xmit
-c_func
-(paren
-id|skb
-comma
-id|skb-&gt;dev
-comma
-id|skb-&gt;priority
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-DECL|function|ppp_dev_getkey
-r_static
-r_int
-id|ppp_dev_getkey
-c_func
-(paren
-r_int
-id|protocol
-comma
-r_int
-id|subid
-comma
-r_int
-r_char
-op_star
-id|key
-)paren
-(brace
-r_switch
-c_cond
-(paren
-id|protocol
-)paren
-(brace
-r_case
-id|htons
-(paren
-id|ETH_P_IP
-)paren
-suffix:colon
-r_case
-id|htons
-(paren
-id|ETH_P_IPX
-)paren
-suffix:colon
-r_return
-l_int|0
-suffix:semicolon
-r_default
-suffix:colon
-r_break
-suffix:semicolon
-)brace
-r_return
-op_minus
-id|EAFNOSUPPORT
-suffix:semicolon
-)brace
-macro_line|#else
-macro_line|#if USE_SKB_PROTOCOL == 0
-multiline_comment|/*&n; * Called to enquire about the type of the frame in the buffer. Return&n; * ETH_P_IP for an IP frame, ETH_P_IPX for an IPX frame.&n; */
-r_static
-r_int
-r_int
-DECL|function|ppp_dev_type
-id|ppp_dev_type
-(paren
-id|sk_buff
-op_star
-id|skb
-comma
-r_struct
-id|device
-op_star
-id|dev
-)paren
-(brace
-r_return
-(paren
-id|htons
-(paren
-id|ETH_P_IP
-)paren
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
-macro_line|#if USE_SKB_PROTOCOL == 0
 DECL|function|ppp_dev_header
 r_static
 r_int
 id|ppp_dev_header
 (paren
-r_int
-r_char
+id|sk_buff
 op_star
-id|buff
+id|skb
 comma
 r_struct
 id|device
 op_star
 id|dev
 comma
-r_int
-r_int
+id|__u16
 id|type
 comma
 r_void
@@ -11463,43 +11115,9 @@ op_star
 id|saddr
 comma
 r_int
-id|len
-comma
-r_struct
-id|sk_buff
-op_star
-id|skb
-)paren
-macro_line|#else
-r_static
-r_int
-id|ppp_dev_header
-(paren
-id|sk_buff
-op_star
-id|skb
-comma
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_int
-r_int
-id|type
-comma
-r_void
-op_star
-id|daddr
-comma
-r_void
-op_star
-id|saddr
-comma
 r_int
 id|len
 )paren
-macro_line|#endif
 (brace
 r_return
 (paren
@@ -11514,7 +11132,7 @@ id|ppp_dev_rebuild
 (paren
 r_void
 op_star
-id|buff
+id|eth
 comma
 r_struct
 id|device
@@ -11525,6 +11143,7 @@ r_int
 r_int
 id|raddr
 comma
+r_struct
 id|sk_buff
 op_star
 id|skb
@@ -11536,8 +11155,113 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 multiline_comment|/*************************************************************&n; * UTILITIES&n; *    Miscellany called by various functions above.&n; *************************************************************/
+multiline_comment|/* Locate the previous instance of the PPP channel */
+r_static
+r_struct
+id|ppp
+op_star
+DECL|function|ppp_find
+id|ppp_find
+(paren
+r_int
+id|pid_value
+)paren
+(brace
+r_int
+id|if_num
+suffix:semicolon
+id|ppp_ctrl_t
+op_star
+id|ctl
+suffix:semicolon
+r_struct
+id|ppp
+op_star
+id|ppp
+suffix:semicolon
+multiline_comment|/* try to find the exact same free device which we had before */
+id|ctl
+op_assign
+id|ppp_list
+suffix:semicolon
+id|if_num
+op_assign
+l_int|0
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|ctl
+)paren
+(brace
+id|ppp
+op_assign
+id|ctl2ppp
+(paren
+id|ctl
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|set_bit
+c_func
+(paren
+l_int|0
+comma
+op_amp
+id|ppp-&gt;inuse
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|ppp-&gt;sc_xfer
+op_eq
+id|pid_value
+)paren
+(brace
+id|ppp-&gt;sc_xfer
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+(paren
+id|ppp
+)paren
+suffix:semicolon
+)brace
+id|clear_bit
+(paren
+l_int|0
+comma
+op_amp
+id|ppp-&gt;inuse
+)paren
+suffix:semicolon
+)brace
+id|ctl
+op_assign
+id|ctl-&gt;next
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_increment
+id|if_num
+op_eq
+id|max_dev
+)paren
+r_break
+suffix:semicolon
+)brace
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
 multiline_comment|/* allocate or create a PPP channel */
 r_static
 r_struct
@@ -11717,8 +11441,7 @@ suffix:semicolon
 id|dev-&gt;base_addr
 op_assign
 (paren
-r_int
-r_int
+id|__u32
 )paren
 id|if_num
 suffix:semicolon
@@ -11804,12 +11527,12 @@ DECL|function|ppp_print_hex
 id|ppp_print_hex
 (paren
 r_register
-id|u_char
+id|__u8
 op_star
 id|out
 comma
 r_const
-id|u_char
+id|__u8
 op_star
 id|in
 comma
@@ -11818,7 +11541,7 @@ id|count
 )paren
 (brace
 r_register
-id|u_char
+id|__u8
 id|next_ch
 suffix:semicolon
 r_static
@@ -11881,12 +11604,12 @@ DECL|function|ppp_print_char
 id|ppp_print_char
 (paren
 r_register
-id|u_char
+id|__u8
 op_star
 id|out
 comma
 r_const
-id|u_char
+id|__u8
 op_star
 id|in
 comma
@@ -11895,7 +11618,7 @@ id|count
 )paren
 (brace
 r_register
-id|u_char
+id|__u8
 id|next_ch
 suffix:semicolon
 r_while
@@ -11962,12 +11685,12 @@ DECL|function|ppp_print_buffer
 id|ppp_print_buffer
 (paren
 r_const
-id|u_char
+id|__u8
 op_star
 id|name
 comma
 r_const
-id|u_char
+id|__u8
 op_star
 id|buf
 comma
@@ -11975,7 +11698,7 @@ r_int
 id|count
 )paren
 (brace
-id|u_char
+id|__u8
 id|line
 (braket
 l_int|44
@@ -11987,7 +11710,7 @@ c_cond
 id|name
 op_ne
 (paren
-id|u_char
+id|__u8
 op_star
 )paren
 l_int|NULL
@@ -12160,8 +11883,7 @@ id|compressor_link
 op_star
 id|lnk
 suffix:semicolon
-r_int
-r_int
+id|__u32
 id|flags
 suffix:semicolon
 id|save_flags
@@ -12199,8 +11921,7 @@ c_cond
 r_int
 )paren
 (paren
-r_int
-r_char
+id|__u8
 )paren
 id|lnk-&gt;comp-&gt;compress_proto
 op_eq
@@ -12238,6 +11959,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|ppp_register_compressor
+r_static
 r_int
 id|ppp_register_compressor
 (paren
@@ -12252,8 +11974,7 @@ id|compressor_link
 op_star
 r_new
 suffix:semicolon
-r_int
-r_int
+id|__u32
 id|flags
 suffix:semicolon
 r_new
@@ -12351,6 +12072,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|ppp_unregister_compressor
+r_static
 r_void
 id|ppp_unregister_compressor
 (paren
@@ -12377,8 +12099,7 @@ id|compressor_link
 op_star
 id|lnk
 suffix:semicolon
-r_int
-r_int
+id|__u32
 id|flags
 suffix:semicolon
 id|save_flags
@@ -12608,10 +12329,6 @@ multiline_comment|/*&n; * Ensure that there are no compressor modules registered
 r_if
 c_cond
 (paren
-id|busy_flag
-op_eq
-l_int|0
-op_logical_and
 id|ppp_compressors
 op_ne
 l_int|NULL
