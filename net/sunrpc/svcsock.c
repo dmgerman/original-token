@@ -2703,6 +2703,9 @@ r_struct
 id|svc_rqst
 op_star
 id|rqstp
+comma
+r_int
+id|timeout
 )paren
 (brace
 r_struct
@@ -2730,7 +2733,7 @@ l_string|&quot;svc: server %p waiting for data (to = %ld)&bslash;n&quot;
 comma
 id|rqstp
 comma
-id|current-&gt;timeout
+id|timeout
 )paren
 suffix:semicolon
 r_if
@@ -2849,9 +2852,10 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|schedule
+id|schedule_timeout
 c_func
 (paren
+id|timeout
 )paren
 suffix:semicolon
 id|remove_wait_queue

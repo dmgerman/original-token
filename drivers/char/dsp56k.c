@@ -41,7 +41,7 @@ mdefine_line|#define max(a,b) ((a) &gt; (b) ? (a) : (b))
 DECL|macro|min
 mdefine_line|#define min(a,b) ((a) &lt; (b) ? (a) : (b))
 DECL|macro|wait_some
-mdefine_line|#define wait_some(n) &bslash;&n;{ &bslash;&n;&t;current-&gt;state = TASK_INTERRUPTIBLE; &bslash;&n;&t;current-&gt;timeout = jiffies + n; &bslash;&n;&t;schedule(); &bslash;&n;}
+mdefine_line|#define wait_some(n) &bslash;&n;{ &bslash;&n;&t;current-&gt;state = TASK_INTERRUPTIBLE; &bslash;&n;&t;schedule_timeout(n); &bslash;&n;}
 DECL|macro|handshake
 mdefine_line|#define handshake(count, maxio, timeout, ENABLE, f) &bslash;&n;{ &bslash;&n;&t;long i, t, m; &bslash;&n;&t;while (count &gt; 0) { &bslash;&n;&t;&t;m = min(count, maxio); &bslash;&n;&t;&t;for (i = 0; i &lt; m; i++) { &bslash;&n;&t;&t;&t;for (t = 0; t &lt; timeout &amp;&amp; !ENABLE; t++) &bslash;&n;&t;&t;&t;&t;wait_some(2); &bslash;&n;&t;&t;&t;if(!ENABLE) &bslash;&n;&t;&t;&t;&t;return -EIO; &bslash;&n;&t;&t;&t;f; &bslash;&n;&t;&t;} &bslash;&n;&t;&t;count -= m; &bslash;&n;&t;&t;if (m == maxio) wait_some(2); &bslash;&n;&t;} &bslash;&n;}
 DECL|macro|tx_wait

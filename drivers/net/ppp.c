@@ -1957,10 +1957,6 @@ id|O_NONBLOCK
 )paren
 r_break
 suffix:semicolon
-id|current-&gt;timeout
-op_assign
-l_int|0
-suffix:semicolon
 id|interruptible_sleep_on
 c_func
 (paren

@@ -2705,6 +2705,12 @@ id|ppos
 op_assign
 id|pos
 suffix:semicolon
+id|mark_inode_dirty
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
 )brace
 r_return
 id|read
@@ -4064,6 +4070,12 @@ id|inode-&gt;i_atime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
+id|mark_inode_dirty
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
 )brace
 r_return
 id|written
@@ -4082,7 +4094,6 @@ op_star
 id|inode
 )paren
 (brace
-multiline_comment|/*struct inode *inode = dentry-&gt;d_inode;*/
 r_struct
 id|hfs_cat_entry
 op_star

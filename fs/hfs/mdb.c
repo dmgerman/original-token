@@ -255,6 +255,13 @@ id|mdb-&gt;sys_mdb
 op_assign
 id|sys_mdb
 suffix:semicolon
+id|INIT_LIST_HEAD
+c_func
+(paren
+op_amp
+id|mdb-&gt;entry_dirty
+)paren
+suffix:semicolon
 multiline_comment|/* See if this is an HFS filesystem */
 id|buf
 op_assign
@@ -285,6 +292,12 @@ id|hfs_warn
 c_func
 (paren
 l_string|&quot;hfs_fs: Unable to read superblock&bslash;n&quot;
+)paren
+suffix:semicolon
+id|HFS_DELETE
+c_func
+(paren
+id|mdb
 )paren
 suffix:semicolon
 r_goto
@@ -324,6 +337,12 @@ id|hfs_buffer_put
 c_func
 (paren
 id|buf
+)paren
+suffix:semicolon
+id|HFS_DELETE
+c_func
+(paren
+id|mdb
 )paren
 suffix:semicolon
 r_goto
@@ -371,8 +390,20 @@ comma
 id|bs
 )paren
 suffix:semicolon
+id|hfs_buffer_put
+c_func
+(paren
+id|buf
+)paren
+suffix:semicolon
+id|HFS_DELETE
+c_func
+(paren
+id|mdb
+)paren
+suffix:semicolon
 r_goto
-id|bail1
+id|bail2
 suffix:semicolon
 )brace
 id|mdb-&gt;alloc_blksz
@@ -437,7 +468,10 @@ id|mdb-&gt;vname
 comma
 id|raw-&gt;drVN
 comma
-l_int|28
+r_sizeof
+(paren
+id|raw-&gt;drVN
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* These parameters are read from and written to the MDB */
@@ -513,7 +547,7 @@ c_func
 id|raw-&gt;drDirCnt
 )paren
 suffix:semicolon
-multiline_comment|/* TRY to get the alternate (backup) MDB */
+multiline_comment|/* TRY to get the alternate (backup) MDB. */
 id|lcv
 op_assign
 id|mdb-&gt;fs_start
@@ -601,13 +635,13 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+)brace
 id|hfs_buffer_put
 c_func
 (paren
 id|buf
 )paren
 suffix:semicolon
-)brace
 )brace
 r_if
 c_cond
@@ -993,14 +1027,7 @@ comma
 id|raw-&gt;drDirCnt
 )paren
 suffix:semicolon
-multiline_comment|/* write MDB to disk */
-id|hfs_buffer_dirty
-c_func
-(paren
-id|mdb-&gt;buf
-)paren
-suffix:semicolon
-multiline_comment|/* write the backup MDB, not returning until it is written */
+multiline_comment|/* write the backup MDB, not returning until it is written. &n;         * we only do this when either the catalog or extents overflow&n;         * files grow. */
 r_if
 c_cond
 (paren
@@ -1010,6 +1037,54 @@ id|hfs_buffer_ok
 c_func
 (paren
 id|mdb-&gt;alt_buf
+)paren
+)paren
+(brace
+r_struct
+id|raw_mdb
+op_star
+id|tmp
+op_assign
+(paren
+r_struct
+id|raw_mdb
+op_star
+)paren
+id|hfs_buffer_data
+c_func
+(paren
+id|mdb-&gt;alt_buf
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|hfs_get_hl
+c_func
+(paren
+id|tmp-&gt;drCTFlSize
+)paren
+OL
+id|hfs_get_hl
+c_func
+(paren
+id|raw-&gt;drCTFlSize
+)paren
+)paren
+op_logical_or
+(paren
+id|hfs_get_hl
+c_func
+(paren
+id|tmp-&gt;drXTFlSize
+)paren
+OL
+id|hfs_get_hl
+c_func
+(paren
+id|raw-&gt;drXTFlSize
+)paren
 )paren
 )paren
 (brace
@@ -1045,7 +1120,8 @@ id|mdb-&gt;alt_buf
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * hfs_mdb_put()&n; *&n; * Release the resources associated with the in-core MDB.&n; */
+)brace
+multiline_comment|/*&n; * hfs_mdb_put()&n; *&n; * Release the resources associated with the in-core MDB.  */
 DECL|function|hfs_mdb_put
 r_void
 id|hfs_mdb_put

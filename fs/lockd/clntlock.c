@@ -143,14 +143,8 @@ op_assign
 id|host-&gt;h_state
 suffix:semicolon
 multiline_comment|/* Go to sleep waiting for GRANT callback. Some servers seem&n;&t; * to lose callbacks, however, so we&squot;re going to poll from&n;&t; * time to time just to make sure.&n;&t; *&n;&t; * For now, the retry frequency is pretty high; normally &n;&t; * a 1 minute timeout would do. See the comment before&n;&t; * nlmclnt_lock for an explanation.&n;&t; */
-id|current-&gt;timeout
-op_assign
-id|jiffies
-op_plus
-l_int|30
-op_star
-id|HZ
-suffix:semicolon
+multiline_comment|/*&n;&t; * FIXME, can we be not interruptible and so be allowed to use&n;&t; * a timeout here? -arca&n;&t; */
+multiline_comment|/*  &t;current-&gt;timeout = jiffies + 30 * HZ; */
 id|sleep_on
 c_func
 (paren

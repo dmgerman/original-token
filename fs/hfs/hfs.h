@@ -80,15 +80,23 @@ DECL|macro|HFS_CAT_CNID
 mdefine_line|#define HFS_CAT_CNID&t;4&t;/* CATalog B-tree */
 DECL|macro|HFS_BAD_CNID
 mdefine_line|#define HFS_BAD_CNID&t;5&t;/* BAD blocks file */
+DECL|macro|HFS_ALLOC_CNID
+mdefine_line|#define HFS_ALLOC_CNID  6       /* ALLOCation file (HFS+) */
+DECL|macro|HFS_START_CNID
+mdefine_line|#define HFS_START_CNID  7       /* STARTup file (HFS+) */
+DECL|macro|HFS_ATTR_CNID
+mdefine_line|#define HFS_ATTR_CNID   8       /* ATTRibutes file (HFS+) */
+DECL|macro|HFS_EXCH_CNID
+mdefine_line|#define HFS_EXCH_CNID  15       /* ExchangeFiles temp id */
 multiline_comment|/* values for hfs_cat_rec.cdrType */
 DECL|macro|HFS_CDR_DIR
-mdefine_line|#define HFS_CDR_DIR&t;0x01
+mdefine_line|#define HFS_CDR_DIR    0x01    /* folder (directory) */
 DECL|macro|HFS_CDR_FIL
-mdefine_line|#define HFS_CDR_FIL&t;0x02
+mdefine_line|#define HFS_CDR_FIL    0x02    /* file */
 DECL|macro|HFS_CDR_THD
-mdefine_line|#define HFS_CDR_THD&t;0x03
+mdefine_line|#define HFS_CDR_THD    0x03    /* folder (directory) thread */
 DECL|macro|HFS_CDR_FTH
-mdefine_line|#define HFS_CDR_FTH&t;0x04
+mdefine_line|#define HFS_CDR_FTH    0x04    /* file thread */
 multiline_comment|/* legal values for hfs_ext_key.FkType and hfs_file.fork */
 DECL|macro|HFS_FK_DATA
 mdefine_line|#define HFS_FK_DATA&t;0x00
@@ -1544,9 +1552,12 @@ id|hfs_strhash
 c_func
 (paren
 r_const
-r_struct
-id|hfs_name
+r_int
+r_char
 op_star
+comma
+r_int
+r_int
 )paren
 suffix:semicolon
 r_extern
@@ -1555,14 +1566,20 @@ id|hfs_strcmp
 c_func
 (paren
 r_const
-r_struct
-id|hfs_name
+r_int
+r_char
 op_star
 comma
+r_int
+r_int
+comma
 r_const
-r_struct
-id|hfs_name
+r_int
+r_char
 op_star
+comma
+r_int
+r_int
 )paren
 suffix:semicolon
 r_extern
@@ -1571,14 +1588,20 @@ id|hfs_streq
 c_func
 (paren
 r_const
-r_struct
-id|hfs_name
+r_int
+r_char
 op_star
 comma
+r_int
+r_int
+comma
 r_const
-r_struct
-id|hfs_name
+r_int
+r_char
 op_star
+comma
+r_int
+r_int
 )paren
 suffix:semicolon
 r_extern
@@ -1593,7 +1616,7 @@ comma
 r_int
 )paren
 suffix:semicolon
-r_extern
+r_static
 id|__inline__
 r_struct
 id|dentry
@@ -1602,6 +1625,11 @@ op_star
 id|hfs_lookup_dentry
 c_func
 (paren
+r_struct
+id|dentry
+op_star
+id|base
+comma
 r_const
 r_char
 op_star
@@ -1610,11 +1638,6 @@ comma
 r_const
 r_int
 id|len
-comma
-r_struct
-id|dentry
-op_star
-id|base
 )paren
 (brace
 r_struct
@@ -1631,7 +1654,7 @@ id|len
 suffix:semicolon
 id|this.hash
 op_assign
-id|full_name_hash
+id|hfs_strhash
 c_func
 (paren
 id|name
@@ -1650,24 +1673,24 @@ id|this
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* drop a dentry for one of the special subdirectories */
+multiline_comment|/* drop a dentry for one of the special directories.&n; * it&squot;s in the form of base/name/dentry. */
 DECL|function|hfs_drop_special
-r_extern
+r_static
 id|__inline__
 r_void
 id|hfs_drop_special
 c_func
 (paren
+r_struct
+id|dentry
+op_star
+id|base
+comma
 r_const
 r_struct
 id|hfs_name
 op_star
 id|name
-comma
-r_struct
-id|dentry
-op_star
-id|base
 comma
 r_struct
 id|dentry
@@ -1688,11 +1711,11 @@ op_assign
 id|hfs_lookup_dentry
 c_func
 (paren
+id|base
+comma
 id|name-&gt;Name
 comma
 id|name-&gt;Len
-comma
-id|base
 )paren
 suffix:semicolon
 r_if
@@ -1706,17 +1729,11 @@ op_assign
 id|hfs_lookup_dentry
 c_func
 (paren
+id|dparent
+comma
 id|dentry-&gt;d_name.name
 comma
 id|dentry-&gt;d_name.len
-comma
-id|dparent
-)paren
-suffix:semicolon
-id|dput
-c_func
-(paren
-id|dparent
 )paren
 suffix:semicolon
 r_if
@@ -1744,6 +1761,12 @@ id|de
 )paren
 suffix:semicolon
 )brace
+id|dput
+c_func
+(paren
+id|dparent
+)paren
+suffix:semicolon
 )brace
 )brace
 r_extern

@@ -1445,7 +1445,6 @@ id|sk
 )paren
 (brace
 r_int
-r_int
 id|timeout
 suffix:semicolon
 multiline_comment|/* Begin closedown and wake up sleepers. */
@@ -1495,8 +1494,7 @@ id|PF_EXITING
 (brace
 id|timeout
 op_assign
-op_complement
-l_int|0UL
+id|MAX_SCHEDULE_TIMEOUT
 suffix:semicolon
 multiline_comment|/* XXX This makes no sense whatsoever... -DaveM */
 r_if
@@ -1507,8 +1505,6 @@ id|sk-&gt;lingertime
 )paren
 id|timeout
 op_assign
-id|jiffies
-op_plus
 id|HZ
 op_star
 id|sk-&gt;lingertime

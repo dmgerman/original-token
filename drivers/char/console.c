@@ -11817,8 +11817,12 @@ c_func
 l_string|&quot;consoles %d-%d &quot;
 comma
 id|first
+op_plus
+l_int|1
 comma
 id|last
+op_plus
+l_int|1
 )paren
 suffix:semicolon
 r_if
@@ -12492,8 +12496,9 @@ id|BLANK_TIMER
 dot
 id|expires
 op_assign
-l_int|0
+id|jiffies
 suffix:semicolon
+multiline_comment|/* Now */
 id|timer_active
 op_or_assign
 l_int|1

@@ -2494,15 +2494,10 @@ id|current-&gt;state
 op_assign
 id|TASK_INTERRUPTIBLE
 suffix:semicolon
-id|current-&gt;timeout
-op_assign
-id|jiffies
-op_plus
-id|ch-&gt;close_delay
-suffix:semicolon
-id|schedule
+id|schedule_timeout
 c_func
 (paren
+id|ch-&gt;close_delay
 )paren
 suffix:semicolon
 )brace

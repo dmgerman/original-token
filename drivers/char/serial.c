@@ -9624,15 +9624,10 @@ id|current-&gt;state
 op_assign
 id|TASK_INTERRUPTIBLE
 suffix:semicolon
-id|current-&gt;timeout
-op_assign
-id|jiffies
-op_plus
-id|info-&gt;close_delay
-suffix:semicolon
-id|schedule
+id|schedule_timeout
 c_func
 (paren
+id|info-&gt;close_delay
 )paren
 suffix:semicolon
 )brace
@@ -9853,15 +9848,10 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* make us low-priority */
-id|current-&gt;timeout
-op_assign
-id|jiffies
-op_plus
-id|char_time
-suffix:semicolon
-id|schedule
+id|schedule_timeout
 c_func
 (paren
+id|char_time
 )paren
 suffix:semicolon
 r_if

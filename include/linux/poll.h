@@ -431,7 +431,7 @@ op_star
 id|fds
 comma
 r_int
-r_int
+op_star
 id|timeout
 )paren
 suffix:semicolon

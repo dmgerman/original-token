@@ -50,6 +50,7 @@ id|core_table
 )braket
 op_assign
 (brace
+macro_line|#ifdef CONFIG_NET
 (brace
 id|NET_CORE_WMEM_MAX
 comma
@@ -241,6 +242,7 @@ op_amp
 id|proc_dointvec
 )brace
 comma
+macro_line|#endif
 (brace
 l_int|0
 )brace

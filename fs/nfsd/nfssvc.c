@@ -358,6 +358,8 @@ c_func
 id|serv
 comma
 id|rqstp
+comma
+id|MAX_SCHEDULE_TIMEOUT
 )paren
 )paren
 op_eq

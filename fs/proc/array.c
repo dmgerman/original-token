@@ -3826,7 +3826,8 @@ id|priority
 comma
 id|nice
 comma
-id|tsk-&gt;timeout
+l_int|0UL
+multiline_comment|/* removed */
 comma
 id|tsk-&gt;it_real_value
 comma

@@ -5268,15 +5268,10 @@ id|current-&gt;state
 op_assign
 id|TASK_INTERRUPTIBLE
 suffix:semicolon
-id|current-&gt;timeout
-op_assign
-id|jiffies
-op_plus
-l_int|1
-suffix:semicolon
-id|schedule
+id|schedule_timeout
 c_func
 (paren
+l_int|1
 )paren
 suffix:semicolon
 )brace

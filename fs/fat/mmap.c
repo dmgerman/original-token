@@ -145,6 +145,10 @@ id|filp.f_pos
 op_assign
 id|pos
 suffix:semicolon
+id|filp.f_dentry
+op_assign
+id|area-&gt;vm_file-&gt;f_dentry
+suffix:semicolon
 id|need_read
 op_assign
 id|PAGE_SIZE

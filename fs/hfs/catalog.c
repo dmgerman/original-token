@@ -342,8 +342,6 @@ op_star
 id|key
 )paren
 (brace
-DECL|macro|LSB
-mdefine_line|#define LSB(X) (((unsigned char *)(&amp;X))[3])
 r_int
 r_int
 id|hash
@@ -368,8 +366,9 @@ op_or
 id|hfs_strhash
 c_func
 (paren
-op_amp
-id|key-&gt;CName
+id|key-&gt;CName.Name
+comma
+id|key-&gt;CName.Len
 )paren
 suffix:semicolon
 id|hash
@@ -395,8 +394,6 @@ id|hash
 op_amp
 id|C_HASHMASK
 suffix:semicolon
-DECL|macro|LSB
-macro_line|#undef LSB
 )brace
 multiline_comment|/*&n; * hash()&n; *&n; * hash an (struct mdb *) and a (struct hfs_cat_key *)&n; * to a pointer to a slot in the hash table.&n; */
 DECL|function|hash
@@ -2135,10 +2132,6 @@ id|HFS_BFIND_READ_EQ
 )paren
 (brace
 multiline_comment|/* uh oh. we failed to read the record.&n;&t;&t;&t; * the entry doesn&squot;t actually exist. */
-id|entry-&gt;state
-op_or_assign
-id|HFS_DELETED
-suffix:semicolon
 r_goto
 id|read_fail
 suffix:semicolon
@@ -2206,29 +2199,52 @@ l_int|NULL
 suffix:semicolon
 id|read_fail
 suffix:colon
-multiline_comment|/* spinlock unlocked already. we don&squot;t need to mark the entry&n;&t; * dirty here because we know that it doesn&squot;t exist. */
-id|remove_hash
-c_func
-(paren
-id|entry
-)paren
-suffix:semicolon
-id|entry-&gt;state
-op_and_assign
-op_complement
-id|HFS_LOCK
-suffix:semicolon
-id|hfs_wake_up
+multiline_comment|/* short-cut hfs_cat_put by doing everything here. */
+id|spin_lock
 c_func
 (paren
 op_amp
-id|entry-&gt;wait
+id|entry_lock
 )paren
 suffix:semicolon
-id|hfs_cat_put
+id|list_del
+c_func
+(paren
+op_amp
+id|entry-&gt;hash
+)paren
+suffix:semicolon
+id|list_del
+c_func
+(paren
+op_amp
+id|entry-&gt;list
+)paren
+suffix:semicolon
+id|init_entry
 c_func
 (paren
 id|entry
+)paren
+suffix:semicolon
+id|list_add
+c_func
+(paren
+op_amp
+id|entry-&gt;list
+comma
+op_amp
+id|entry_unused
+)paren
+suffix:semicolon
+id|entries_stat.nr_free_entries
+op_increment
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|entry_lock
 )paren
 suffix:semicolon
 r_return
@@ -2265,6 +2281,20 @@ id|hfs_cat_entry
 op_star
 id|entry
 suffix:semicolon
+macro_line|#if defined(DEBUG_CATALOG) || defined(DEBUG_ALL)
+id|hfs_warn
+c_func
+(paren
+l_string|&quot;hfs_get_entry: mdb=%p key=%s read=%d&bslash;n&quot;
+comma
+id|mdb
+comma
+id|key-&gt;CName.Name
+comma
+id|read
+)paren
+suffix:semicolon
+macro_line|#endif
 id|spin_lock
 c_func
 (paren
@@ -3000,7 +3030,7 @@ id|error
 suffix:semicolon
 )brace
 multiline_comment|/*================ Global functions ================*/
-multiline_comment|/* &n; * hfs_cat_put()&n; *&n; * Release an entry we aren&squot;t using anymore.&n; *&n; * NOTE: We must be careful any time we sleep on a non-deleted&n; * entry that the entry is in a consistent state, since another&n; * process may get the entry while we sleep. That is why we&n; * &squot;goto repeat&squot; after each operation that might sleep.&n; *&n; * ADDITIONAL NOTE: the sys_entries will remove themselves from &n; *                  the sys_entry list on the final iput, so we don&squot;t need &n; *                  to worry about them here.&n; *&n; *                  nothing in hfs_cat_put goes to sleep now except &n; *                  on the initial entry.&n; */
+multiline_comment|/* &n; * hfs_cat_put()&n; *&n; * Release an entry we aren&squot;t using anymore.&n; *&n; * nothing in hfs_cat_put goes to sleep now except on the initial entry.  &n; */
 DECL|function|hfs_cat_put
 r_void
 id|hfs_cat_put
@@ -3043,6 +3073,22 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#if defined(DEBUG_CATALOG) || defined(DEBUG_ALL)
+id|hfs_warn
+c_func
+(paren
+l_string|&quot;hfs_cat_put: %p(%u) type=%d state=%lu&bslash;n&quot;
+comma
+id|entry
+comma
+id|entry-&gt;count
+comma
+id|entry-&gt;type
+comma
+id|entry-&gt;state
+)paren
+suffix:semicolon
+macro_line|#endif
 id|spin_lock
 c_func
 (paren
@@ -3176,30 +3222,10 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|spin_unlock
-c_func
-(paren
-op_amp
-id|entry_lock
-)paren
-suffix:semicolon
-id|wait_on_entry
-c_func
-(paren
-id|entry
-)paren
-suffix:semicolon
 id|init_entry
 c_func
 (paren
 id|entry
-)paren
-suffix:semicolon
-id|spin_lock
-c_func
-(paren
-op_amp
-id|entry_lock
 )paren
 suffix:semicolon
 id|list_add
@@ -3479,7 +3505,7 @@ id|entry
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* &n; * hfs_cat_invalidate()&n; *&n; * Called by hfs_mdb_put() to remove all the entries&n; * in the cache which are associated with a given MDB.&n; */
+multiline_comment|/* &n; * hfs_cat_invalidate()&n; *&n; * Called by hfs_mdb_put() to remove all the entries&n; * in the cache that are associated with a given MDB.&n; */
 DECL|function|hfs_cat_invalidate
 r_void
 id|hfs_cat_invalidate
@@ -3542,6 +3568,18 @@ op_amp
 id|throw_away
 )paren
 suffix:semicolon
+macro_line|#if defined(DEBUG_CATALOG) || defined(DEBUG_ALL)
+id|hfs_warn
+c_func
+(paren
+l_string|&quot;hfs_cat_invalidate: free=%d total=%d&bslash;n&quot;
+comma
+id|entries_stat.nr_free_entries
+comma
+id|entries_stat.nr_entries
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/*&n; * hfs_cat_commit()&n; *&n; * Called by hfs_mdb_commit() to write dirty entries to the disk buffers.&n; */
 DECL|function|hfs_cat_commit
@@ -3800,11 +3838,13 @@ op_assign
 id|hfs_strcmp
 c_func
 (paren
-op_amp
-id|key1-&gt;CName
+id|key1-&gt;CName.Name
 comma
-op_amp
-id|key2-&gt;CName
+id|key1-&gt;CName.Len
+comma
+id|key2-&gt;CName.Name
+comma
+id|key2-&gt;CName.Len
 )paren
 suffix:semicolon
 )brace
@@ -4337,7 +4377,7 @@ r_return
 id|retval
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * hfs_cat_create()&n; *&n; * Create a new file with the indicated name in the indicated directory.&n; * The file will have the indicated flags, type and creator.&n; * If successful an (struct hfs_cat_entry) is returned in &squot;*result&squot;.&n; *&n; * XXX: the presence of &quot;record&quot; probably means that the following two&n; *      aren&squot;t currently SMP safe and need spinlocks.&n; */
+multiline_comment|/*&n; * hfs_cat_create()&n; *&n; * Create a new file with the indicated name in the indicated directory.&n; * The file will have the indicated flags, type and creator.&n; * If successful an (struct hfs_cat_entry) is returned in &squot;*result&squot;.&n; */
 DECL|function|hfs_cat_create
 r_int
 id|hfs_cat_create
@@ -4390,6 +4430,22 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#if defined(DEBUG_CATALOG) || defined(DEBUG_ALL)
+id|hfs_warn
+c_func
+(paren
+l_string|&quot;hfs_cat_create: %p/%s flags=%d res=%p&bslash;n&quot;
+comma
+id|parent
+comma
+id|key-&gt;CName.Name
+comma
+id|flags
+comma
+id|result
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* init some fields for the file record */
 id|memset
 c_func
@@ -4526,6 +4582,20 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#if defined(DEBUG_CATALOG) || defined(DEBUG_ALL)
+id|hfs_warn
+c_func
+(paren
+l_string|&quot;hfs_cat_mkdir: %p/%s res=%p&bslash;n&quot;
+comma
+id|parent
+comma
+id|key-&gt;CName.Name
+comma
+id|result
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* init some fields for the directory record */
 id|memset
 c_func
@@ -4642,6 +4712,24 @@ id|error
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#if defined(DEBUG_CATALOG) || defined(DEBUG_ALL)
+id|hfs_warn
+c_func
+(paren
+l_string|&quot;hfs_cat_delete: %p/%p type=%d state=%lu, thread=%d&bslash;n&quot;
+comma
+id|parent
+comma
+id|entry
+comma
+id|entry-&gt;type
+comma
+id|entry-&gt;state
+comma
+id|with_thread
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -4707,6 +4795,11 @@ c_func
 id|entry
 )paren
 suffix:semicolon
+id|error
+op_assign
+op_minus
+id|ENOTEMPTY
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4714,27 +4807,21 @@ id|entry-&gt;u.dir.files
 op_logical_or
 id|entry-&gt;u.dir.dirs
 )paren
-(brace
-id|error
-op_assign
-op_minus
-id|ENOTEMPTY
+r_goto
+id|hfs_delete_end
 suffix:semicolon
 )brace
-)brace
 multiline_comment|/* try to delete the file or directory */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|error
-)paren
-(brace
 id|lock_entry
 c_func
 (paren
 id|entry
 )paren
+suffix:semicolon
+id|error
+op_assign
+op_minus
+id|ENOENT
 suffix:semicolon
 r_if
 c_cond
@@ -4746,15 +4833,16 @@ id|HFS_DELETED
 )paren
 )paren
 (brace
-multiline_comment|/* somebody beat us to it */
-id|error
-op_assign
-op_minus
-id|ENOENT
+multiline_comment|/* somebody beat us to it. */
+r_goto
+id|hfs_delete_unlock
 suffix:semicolon
 )brace
-r_else
-(brace
+multiline_comment|/* delete the catalog record */
+r_if
+c_cond
+(paren
+(paren
 id|error
 op_assign
 id|hfs_bdelete
@@ -4769,29 +4857,14 @@ op_amp
 id|entry-&gt;key
 )paren
 )paren
-suffix:semicolon
-)brace
-id|unlock_entry
-c_func
-(paren
-id|entry
 )paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|error
 )paren
 (brace
-multiline_comment|/* Mark the entry deleted and remove it from the cache */
-id|lock_entry
-c_func
-(paren
-id|entry
-)paren
+r_goto
+id|hfs_delete_unlock
 suffix:semicolon
+)brace
+multiline_comment|/* Mark the entry deleted and remove it from the cache */
 id|delete_entry
 c_func
 (paren
@@ -4833,12 +4906,6 @@ id|key
 )paren
 suffix:semicolon
 )brace
-id|unlock_entry
-c_func
-(paren
-id|entry
-)paren
-suffix:semicolon
 id|update_dir
 c_func
 (paren
@@ -4852,7 +4919,16 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
-)brace
+id|hfs_delete_unlock
+suffix:colon
+id|unlock_entry
+c_func
+(paren
+id|entry
+)paren
+suffix:semicolon
+id|hfs_delete_end
+suffix:colon
 r_if
 c_cond
 (paren
@@ -5021,13 +5097,6 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-id|spin_lock
-c_func
-(paren
-op_amp
-id|entry_lock
-)paren
-suffix:semicolon
 r_while
 c_loop
 (paren
@@ -5042,6 +5111,13 @@ id|mdb-&gt;rename_wait
 )paren
 suffix:semicolon
 )brace
+id|spin_lock
+c_func
+(paren
+op_amp
+id|entry_lock
+)paren
+suffix:semicolon
 id|mdb-&gt;rename_lock
 op_assign
 l_int|1

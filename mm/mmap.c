@@ -219,6 +219,7 @@ op_amp
 id|mm-&gt;mmap_sem
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * This lock-kernel is one of the main contention points for&n;&t; * certain normal loads.  And it really should not be here: almost&n;&t; * everything in brk()/mmap()/munmap() is protected sufficiently by&n;&t; * the mmap semaphore that we got above.&n;&t; *&n;&t; * We should move this into the few things that really want the&n;&t; * lock, namely anything that actually touches a file descriptor&n;&t; * etc.  We can do all the normal anonymous mapping cases without&n;&t; * ever getting the lock at all - the actual memory management&n;&t; * code is already completely thread-safe.&n;&t; */
 id|lock_kernel
 c_func
 (paren

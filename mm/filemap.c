@@ -1173,7 +1173,7 @@ op_assign
 id|__get_free_page
 c_func
 (paren
-id|GFP_KERNEL
+id|GFP_USER
 )paren
 suffix:semicolon
 r_if
@@ -2372,7 +2372,7 @@ op_assign
 id|__get_free_page
 c_func
 (paren
-id|GFP_KERNEL
+id|GFP_USER
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; * That could have slept, so go around to the&n;&t;&t;&t; * very beginning..&n;&t;&t;&t; */
@@ -3421,7 +3421,7 @@ op_assign
 id|__get_free_page
 c_func
 (paren
-id|GFP_KERNEL
+id|GFP_USER
 )paren
 suffix:semicolon
 r_if
@@ -3530,7 +3530,7 @@ op_assign
 id|__get_free_page
 c_func
 (paren
-id|GFP_KERNEL
+id|GFP_USER
 )paren
 suffix:semicolon
 r_if
@@ -5873,7 +5873,7 @@ op_assign
 id|__get_free_page
 c_func
 (paren
-id|GFP_KERNEL
+id|GFP_USER
 )paren
 suffix:semicolon
 r_if

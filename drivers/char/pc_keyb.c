@@ -62,7 +62,6 @@ id|data
 )paren
 suffix:semicolon
 DECL|variable|kbd_controller_lock
-r_static
 id|spinlock_t
 id|kbd_controller_lock
 op_assign

@@ -1062,8 +1062,6 @@ c_cond
 id|pos
 OL
 id|count
-op_plus
-id|offset
 op_logical_or
 op_logical_neg
 id|size

@@ -2998,11 +2998,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|le32_to_cpu
-c_func
-(paren
 id|sb-&gt;u.ext2_sb.s_feature_ro_compat
-)paren
 op_amp
 id|EXT2_FEATURE_RO_COMPAT_SPARSE_SUPER
 )paren

@@ -4,11 +4,15 @@ DECL|macro|__LINUX_SPECIALIX_H
 mdefine_line|#define __LINUX_SPECIALIX_H
 macro_line|#include &lt;linux/serial.h&gt;
 macro_line|#ifdef __KERNEL__
+multiline_comment|/* You can have max 4 ISA cards in one PC, and I recommend not much &n;more than a few  PCI versions of the card. */
 DECL|macro|SX_NBOARD
-mdefine_line|#define SX_NBOARD&t;&t;4
+mdefine_line|#define SX_NBOARD&t;&t;8
 multiline_comment|/* NOTE: Specialix decoder recognizes 4 addresses, but only two are used.... */
 DECL|macro|SX_IO_SPACE
 mdefine_line|#define SX_IO_SPACE             4
+multiline_comment|/* The PCI version decodes 8 addresses, but still only 2 are used. */
+DECL|macro|SX_PCI_IO_SPACE
+mdefine_line|#define SX_PCI_IO_SPACE         8
 multiline_comment|/* eight ports per board. */
 DECL|macro|SX_NPORT
 mdefine_line|#define SX_NPORT        &t;8
@@ -83,6 +87,8 @@ DECL|macro|SX_BOARD_PRESENT
 mdefine_line|#define SX_BOARD_PRESENT&t;0x00000001
 DECL|macro|SX_BOARD_ACTIVE
 mdefine_line|#define SX_BOARD_ACTIVE&t;&t;0x00000002
+DECL|macro|SX_BOARD_IS_PCI
+mdefine_line|#define SX_BOARD_IS_PCI&t;&t;0x00000004
 DECL|struct|specialix_port
 r_struct
 id|specialix_port

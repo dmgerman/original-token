@@ -6670,12 +6670,6 @@ id|current-&gt;state
 op_assign
 id|TASK_INTERRUPTIBLE
 suffix:semicolon
-id|current-&gt;timeout
-op_assign
-id|jiffies
-op_plus
-id|duration
-suffix:semicolon
 id|tty-&gt;driver
 dot
 id|break_ctl
@@ -6697,9 +6691,10 @@ c_func
 id|current
 )paren
 )paren
-id|schedule
+id|schedule_timeout
 c_func
 (paren
+id|duration
 )paren
 suffix:semicolon
 id|tty-&gt;driver
@@ -8466,16 +8461,21 @@ suffix:semicolon
 )brace
 DECL|variable|dev_tty_driver
 DECL|variable|dev_syscons_driver
-DECL|variable|dev_ptmx_driver
 r_static
 r_struct
 id|tty_driver
 id|dev_tty_driver
 comma
 id|dev_syscons_driver
-comma
+suffix:semicolon
+macro_line|#ifdef CONFIG_UNIX98_PTYS
+DECL|variable|dev_ptmx_driver
+r_static
+r_struct
+id|tty_driver
 id|dev_ptmx_driver
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_VT
 DECL|variable|dev_console_driver
 r_static

@@ -4842,15 +4842,10 @@ id|current-&gt;state
 op_assign
 id|TASK_INTERRUPTIBLE
 suffix:semicolon
-id|current-&gt;timeout
-op_assign
-id|jiffies
-op_plus
-id|len
-suffix:semicolon
-id|schedule
+id|schedule_timeout
 c_func
 (paren
+id|len
 )paren
 suffix:semicolon
 id|current-&gt;state
@@ -9684,11 +9679,8 @@ id|portp
 suffix:semicolon
 r_int
 id|arg
-comma
-id|savestate
-comma
-id|savetime
 suffix:semicolon
+multiline_comment|/* long savestate, savetime; */
 macro_line|#if DEBUG
 id|printk
 c_func
@@ -9772,15 +9764,7 @@ l_int|NULL
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/*&n; *&t;Due to a bug in the tty send_break() code we need to preserve&n; *&t;the current process state and timeout...&n; */
-id|savetime
-op_assign
-id|current-&gt;timeout
-suffix:semicolon
-id|savestate
-op_assign
-id|current-&gt;state
-suffix:semicolon
+multiline_comment|/*&n; *&t;Due to a bug in the tty send_break() code we need to preserve&n; *&t;the current process state and timeout...&n;&t;savetime = current-&gt;timeout;&n;&t;savestate = current-&gt;state;&n; */
 id|arg
 op_assign
 (paren
@@ -9815,14 +9799,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-id|current-&gt;timeout
-op_assign
-id|savetime
-suffix:semicolon
-id|current-&gt;state
-op_assign
-id|savestate
-suffix:semicolon
+multiline_comment|/*&n; *&n;&t;current-&gt;timeout = savetime;&n;&t;current-&gt;state = savestate;&n; */
 )brace
 multiline_comment|/*****************************************************************************/
 DECL|function|stli_waituntilsent

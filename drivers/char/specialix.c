@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *      specialix.c  -- specialix IO8+ multiport serial driver.&n; *&n; *      Copyright (C) 1997  Roger Wolff (R.E.Wolff@BitWizard.nl)&n; *      Copyright (C) 1994-1996  Dmitry Gorodchanin (pgmdsg@ibi.com)&n; *&n; *      Specialix pays for the development and support of this driver.&n; *      Please DO contact io8-linux@specialix.co.uk if you require&n; *      support. But please read the documentation (specialix.txt)&n; *      first.&n; *&n; *      This driver was developped in the BitWizard linux device&n; *      driver service. If you require a linux device driver for your&n; *      product, please contact devices@BitWizard.nl for a quote.&n; *&n; *      This code is firmly based on the riscom/8 serial driver,&n; *      written by Dmitry Gorodchanin. The specialix IO8+ card&n; *      programming information was obtained from the CL-CD1865 Data&n; *      Book, and Specialix document number 6200059: IO8+ Hardware&n; *      Functional Specification.&n; *&n; *      This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License as&n; *      published by the Free Software Foundation; either version 2 of&n; *      the License, or (at your option) any later version.&n; *&n; *      This program is distributed in the hope that it will be&n; *      useful, but WITHOUT ANY WARRANTY; without even the implied&n; *      warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR&n; *      PURPOSE.  See the GNU General Public License for more details.&n; *&n; *      You should have received a copy of the GNU General Public&n; *      License along with this program; if not, write to the Free&n; *      Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,&n; *      USA.&n; *&n; * Revision history:&n; *&n; * Revision 1.0:  April 1st 1997.&n; *                Initial release for alpha testing.&n; * Revision 1.1:  April 14th 1997. &n; *                Incorporated Richard Hudsons suggestions, &n; *                removed some debugging printk&squot;s.&n; * Revision 1.2:  April 15th 1997.&n; *                Ported to 2.1.x kernels.&n; * Revision 1.3:  April 17th 1997 &n; *                Backported to 2.0. (Compatibility macros). &n; * Revision 1.4:  April 18th 1997&n; *                Fixed DTR/RTS bug that caused the card to indicate &n; *                &quot;don&squot;t send data&quot; to a modem after the password prompt.  &n; *                Fixed bug for premature (fake) interrupts.&n; * Revision 1.5:  April 19th 1997&n; *                fixed a minor typo in the header file, cleanup a little. &n; *                performance warnings are now MAXed at once per minute.&n; * Revision 1.6:  May 23 1997&n; *                Changed the specialix=... format to include interrupt.&n; * Revision 1.7:  May 27 1997&n; *                Made many more debug printk&squot;s a compile time option.&n; * Revision 1.8:  Jul 1  1997&n; *                port to linux-2.1.43 kernel.&n; * &n; */
+multiline_comment|/*&n; *      specialix.c  -- specialix IO8+ multiport serial driver.&n; *&n; *      Copyright (C) 1997  Roger Wolff (R.E.Wolff@BitWizard.nl)&n; *      Copyright (C) 1994-1996  Dmitry Gorodchanin (pgmdsg@ibi.com)&n; *&n; *      Specialix pays for the development and support of this driver.&n; *      Please DO contact io8-linux@specialix.co.uk if you require&n; *      support. But please read the documentation (specialix.txt)&n; *      first.&n; *&n; *      This driver was developped in the BitWizard linux device&n; *      driver service. If you require a linux device driver for your&n; *      product, please contact devices@BitWizard.nl for a quote.&n; *&n; *      This code is firmly based on the riscom/8 serial driver,&n; *      written by Dmitry Gorodchanin. The specialix IO8+ card&n; *      programming information was obtained from the CL-CD1865 Data&n; *      Book, and Specialix document number 6200059: IO8+ Hardware&n; *      Functional Specification.&n; *&n; *      This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License as&n; *      published by the Free Software Foundation; either version 2 of&n; *      the License, or (at your option) any later version.&n; *&n; *      This program is distributed in the hope that it will be&n; *      useful, but WITHOUT ANY WARRANTY; without even the implied&n; *      warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR&n; *      PURPOSE.  See the GNU General Public License for more details.&n; *&n; *      You should have received a copy of the GNU General Public&n; *      License along with this program; if not, write to the Free&n; *      Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,&n; *      USA.&n; *&n; * Revision history:&n; *&n; * Revision 1.0:  April 1st 1997.&n; *                Initial release for alpha testing.&n; * Revision 1.1:  April 14th 1997. &n; *                Incorporated Richard Hudsons suggestions, &n; *                removed some debugging printk&squot;s.&n; * Revision 1.2:  April 15th 1997.&n; *                Ported to 2.1.x kernels.&n; * Revision 1.3:  April 17th 1997 &n; *                Backported to 2.0. (Compatibility macros). &n; * Revision 1.4:  April 18th 1997&n; *                Fixed DTR/RTS bug that caused the card to indicate &n; *                &quot;don&squot;t send data&quot; to a modem after the password prompt.  &n; *                Fixed bug for premature (fake) interrupts.&n; * Revision 1.5:  April 19th 1997&n; *                fixed a minor typo in the header file, cleanup a little. &n; *                performance warnings are now MAXed at once per minute.&n; * Revision 1.6:  May 23 1997&n; *                Changed the specialix=... format to include interrupt.&n; * Revision 1.7:  May 27 1997&n; *                Made many more debug printk&squot;s a compile time option.&n; * Revision 1.8:  Jul 1  1997&n; *                port to linux-2.1.43 kernel.&n; * Revision 1.9:  Oct 9  1998&n; *                Added stuff for the IO8+/PCI version. . &n; * &n; */
 DECL|macro|VERSION
 mdefine_line|#define VERSION &quot;1.8&quot;
 multiline_comment|/*&n; * There is a bunch of documentation about the card, jumpers, config&n; * settings, restrictions, cables, device names and numbers in&n; * ../../Documentation/specialix.txt &n; */
@@ -18,6 +18,7 @@ macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/tqueue.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
+macro_line|#include &lt;linux/pci.h&gt;
 multiline_comment|/* ************************************************************** */
 multiline_comment|/* * This section can be removed when 2.0 becomes outdated....  * */
 multiline_comment|/* ************************************************************** */
@@ -91,21 +92,6 @@ DECL|macro|SPECIALIX_TYPE_NORMAL
 mdefine_line|#define SPECIALIX_TYPE_NORMAL&t;1
 DECL|macro|SPECIALIX_TYPE_CALLOUT
 mdefine_line|#define SPECIALIX_TYPE_CALLOUT&t;2
-DECL|variable|IRQ_to_board
-r_static
-r_struct
-id|specialix_board
-op_star
-id|IRQ_to_board
-(braket
-l_int|16
-)braket
-op_assign
-(brace
-l_int|NULL
-comma
-)brace
-suffix:semicolon
 DECL|variable|specialix_driver
 DECL|variable|specialix_callout_driver
 r_static
@@ -841,6 +827,13 @@ c_func
 (paren
 id|bp-&gt;base
 comma
+id|bp-&gt;flags
+op_amp
+id|SX_BOARD_IS_PCI
+ques
+c_cond
+id|SX_PCI_IO_SPACE
+suffix:colon
 id|SX_IO_SPACE
 comma
 l_string|&quot;specialix IO8+&quot;
@@ -865,11 +858,19 @@ c_func
 (paren
 id|bp-&gt;base
 comma
+id|bp-&gt;flags
+op_amp
+id|SX_BOARD_IS_PCI
+ques
+c_cond
+id|SX_PCI_IO_SPACE
+suffix:colon
 id|SX_IO_SPACE
 )paren
 suffix:semicolon
 )brace
 multiline_comment|/* Must be called with enabled interrupts */
+multiline_comment|/* Ugly. Very ugly. Don&squot;t use this for anything else than initialization &n;   code */
 DECL|function|sx_long_delay
 r_extern
 r_inline
@@ -918,6 +919,16 @@ id|virq
 suffix:semicolon
 r_int
 id|i
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|bp-&gt;flags
+op_amp
+id|SX_BOARD_IS_PCI
+)paren
+r_return
+l_int|1
 suffix:semicolon
 r_switch
 c_cond
@@ -1558,19 +1569,33 @@ id|val2
 )paren
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* They managed to switch the bit order between the docs and&n;&t;   the IO8+ card. The new PCI card now conforms to old docs.&n;&t;   They changed the PCI docs to reflect the situation on the&n;&t;   old card. */
+id|val2
+op_assign
+(paren
+id|bp-&gt;flags
+op_amp
+id|SX_BOARD_IS_PCI
+)paren
+ques
+c_cond
+l_int|0x4d
+suffix:colon
+l_int|0xb2
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|val1
 op_ne
-l_int|0xb2
+id|val2
 )paren
 (brace
 id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;sx%d: specialix IO8+ ID at 0x%03x not found.&bslash;n&quot;
+l_string|&quot;sx%d: specialix IO8+ ID %02x at 0x%03x not found (%02x).&bslash;n&quot;
 comma
 id|board_No
 c_func
@@ -1578,7 +1603,11 @@ c_func
 id|bp
 )paren
 comma
+id|val2
+comma
 id|bp-&gt;base
+comma
+id|val1
 )paren
 suffix:semicolon
 r_return
@@ -3364,10 +3393,7 @@ id|saved_reg
 suffix:semicolon
 id|bp
 op_assign
-id|IRQ_to_board
-(braket
-id|irq
-)braket
+id|dev_id
 suffix:semicolon
 r_if
 c_cond
@@ -3636,6 +3662,70 @@ id|SX_ADDR_REG
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Routines for open &amp; close processing.&n; */
+DECL|function|turn_ints_off
+r_void
+id|turn_ints_off
+(paren
+r_struct
+id|specialix_board
+op_star
+id|bp
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|bp-&gt;flags
+op_amp
+id|SX_BOARD_IS_PCI
+)paren
+(brace
+multiline_comment|/* This was intended for enabeling the interrupt on the&n;&t;&t; * PCI card. However it seems that it&squot;s already enabled&n;&t;&t; * and as PCI interrupts can be shared, there is no real&n;&t;&t; * reason to have to turn it off. */
+)brace
+(paren
+r_void
+)paren
+id|sx_in_off
+(paren
+id|bp
+comma
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/* Turn off interrupts. */
+)brace
+DECL|function|turn_ints_on
+r_void
+id|turn_ints_on
+(paren
+r_struct
+id|specialix_board
+op_star
+id|bp
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|bp-&gt;flags
+op_amp
+id|SX_BOARD_IS_PCI
+)paren
+(brace
+multiline_comment|/* play with the PCI chip. See comment above. */
+)brace
+(paren
+r_void
+)paren
+id|sx_in
+(paren
+id|bp
+comma
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/* Turn ON interrupts. */
+)brace
 multiline_comment|/* Called with disabled interrupts */
 DECL|function|sx_setup_board
 r_extern
@@ -3676,7 +3766,7 @@ id|SA_INTERRUPT
 comma
 l_string|&quot;specialix IO8+&quot;
 comma
-l_int|NULL
+id|bp
 )paren
 suffix:semicolon
 r_if
@@ -3687,24 +3777,11 @@ id|error
 r_return
 id|error
 suffix:semicolon
-id|IRQ_to_board
-(braket
-id|bp-&gt;irq
-)braket
-op_assign
-id|bp
-suffix:semicolon
-(paren
-r_void
-)paren
-id|sx_in
+id|turn_ints_on
 (paren
 id|bp
-comma
-l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/* Turn ON interrupts. */
 id|bp-&gt;flags
 op_or_assign
 id|SX_BOARD_ACTIVE
@@ -3746,31 +3823,32 @@ op_and_assign
 op_complement
 id|SX_BOARD_ACTIVE
 suffix:semicolon
+macro_line|#if SPECIALIX_DEBUG &gt; 2
+id|printk
+(paren
+l_string|&quot;Freeing IRQ%d for board %d.&bslash;n&quot;
+comma
+id|bp-&gt;irq
+comma
+id|board_No
+(paren
+id|bp
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
 id|free_irq
 c_func
 (paren
 id|bp-&gt;irq
 comma
-l_int|NULL
+id|bp
 )paren
 suffix:semicolon
-(paren
-r_void
-)paren
-id|sx_in_off
+id|turn_ints_off
 (paren
 id|bp
-comma
-l_int|0
 )paren
-suffix:semicolon
-multiline_comment|/* Turn off interrupts. */
-id|IRQ_to_board
-(braket
-id|bp-&gt;irq
-)braket
-op_assign
-l_int|NULL
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
@@ -4145,6 +4223,7 @@ id|printk
 id|KERN_INFO
 l_string|&quot;sx%d: Baud rate divisor is %ld. &bslash;n&quot;
 l_string|&quot;Performance degradation is possible.&bslash;n&quot;
+l_string|&quot;Read specialix.txt for more info.&bslash;n&quot;
 comma
 id|port_No
 (paren
@@ -4163,6 +4242,7 @@ id|KERN_INFO
 l_string|&quot;sx%d: Baud rate divisor is %ld. &bslash;n&quot;
 l_string|&quot;Warning: overstressing Cirrus chip. &quot;
 l_string|&quot;This might not work.&bslash;n&quot;
+l_string|&quot;Read specialix.txt for more info.&bslash;n&quot;
 comma
 id|port_No
 (paren
@@ -9678,19 +9758,6 @@ suffix:semicolon
 id|memset
 c_func
 (paren
-id|IRQ_to_board
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-id|IRQ_to_board
-)paren
-)paren
-suffix:semicolon
-id|memset
-c_func
-(paren
 op_amp
 id|specialix_driver
 comma
@@ -10216,7 +10283,7 @@ c_func
 id|KERN_INFO
 l_string|&quot;sx: Specialix IO8+ driver v&quot;
 id|VERSION
-l_string|&quot;, (c) R.E.Wolff 1997.&bslash;n&quot;
+l_string|&quot;, (c) R.E.Wolff 1997/1998.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
@@ -10291,6 +10358,138 @@ id|i
 id|found
 op_increment
 suffix:semicolon
+macro_line|#ifdef CONFIG_PCI
+r_if
+c_cond
+(paren
+id|pci_present
+c_func
+(paren
+)paren
+)paren
+(brace
+r_struct
+id|pci_dev
+op_star
+id|pdev
+op_assign
+l_int|NULL
+suffix:semicolon
+r_int
+r_int
+id|tint
+suffix:semicolon
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|i
+op_le
+id|SX_NBOARD
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|sx_board
+(braket
+id|i
+)braket
+dot
+id|flags
+op_amp
+id|SX_BOARD_PRESENT
+)paren
+(brace
+id|i
+op_increment
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
+id|pdev
+op_assign
+id|pci_find_device
+(paren
+id|PCI_VENDOR_ID_SPECIALIX
+comma
+id|PCI_DEVICE_ID_SPECIALIX_IO8
+comma
+id|pdev
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|pdev
+)paren
+r_break
+suffix:semicolon
+id|sx_board
+(braket
+id|i
+)braket
+dot
+id|irq
+op_assign
+id|pdev-&gt;irq
+suffix:semicolon
+id|pci_read_config_dword
+c_func
+(paren
+id|pdev
+comma
+id|PCI_BASE_ADDRESS_2
+comma
+op_amp
+id|tint
+)paren
+suffix:semicolon
+multiline_comment|/* Mask out the fact that it&squot;s IO-space */
+id|sx_board
+(braket
+id|i
+)braket
+dot
+id|base
+op_assign
+id|tint
+op_amp
+id|PCI_BASE_ADDRESS_IO_MASK
+suffix:semicolon
+id|sx_board
+(braket
+id|i
+)braket
+dot
+id|flags
+op_or_assign
+id|SX_BOARD_IS_PCI
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|sx_probe
+c_func
+(paren
+op_amp
+id|sx_board
+(braket
+id|i
+)braket
+)paren
+)paren
+id|found
+op_increment
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -10344,7 +10543,7 @@ l_int|0
 comma
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * You can setup up to 4 boards.&n; * by specifying &quot;iobase=0xXXX iobase1=0xXXX ...&quot; as insmod parameter.&n; * &n; * More than 4 boards in one computer is not possible, as the card can&n; * only use 4 different interrupts. &n; *&n; */
+multiline_comment|/*&n; * You can setup up to 4 boards.&n; * by specifying &quot;iobase=0xXXX,0xXXX ...&quot; as insmod parameter.&n; * You should specify the IRQs too in that case &quot;irq=....,...&quot;. &n; * &n; * More than 4 boards in one computer is not possible, as the card can&n; * only use 4 different interrupts. &n; *&n; */
 DECL|function|init_module
 r_int
 id|init_module

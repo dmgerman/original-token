@@ -706,11 +706,19 @@ id|ppos
 OG
 id|inode-&gt;i_size
 )paren
+(brace
 id|inode-&gt;i_size
 op_assign
 op_star
 id|ppos
 suffix:semicolon
+id|mark_inode_dirty
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
+)brace
 r_return
 id|written
 suffix:semicolon
@@ -728,7 +736,6 @@ op_star
 id|inode
 )paren
 (brace
-multiline_comment|/*struct inode *inode = dentry-&gt;d_inode;*/
 r_struct
 id|hfs_fork
 op_star
@@ -771,6 +778,12 @@ suffix:semicolon
 id|inode-&gt;i_blocks
 op_assign
 id|fork-&gt;psize
+suffix:semicolon
+id|mark_inode_dirty
+c_func
+(paren
+id|inode
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * xlate_to_user()&n; *&n; * Like copy_to_user() while translating CR-&gt;NL.&n; */

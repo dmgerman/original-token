@@ -187,6 +187,11 @@ id|_edata
 comma
 id|_end
 suffix:semicolon
+r_extern
+r_int
+r_int
+id|cpu_hz
+suffix:semicolon
 multiline_comment|/*&n; * This is set up by the setup-routine at boot-time&n; */
 DECL|macro|PARAM
 mdefine_line|#define PARAM&t;((unsigned char *)empty_zero_page)
@@ -3017,6 +3022,35 @@ comma
 l_string|&quot;stepping&bslash;t: unknown&bslash;n&quot;
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|c-&gt;x86_capability
+op_amp
+id|X86_FEATURE_TSC
+)paren
+(brace
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;cpu MHz&bslash;t&bslash;t: %lu.%06lu&bslash;n&quot;
+comma
+id|cpu_hz
+op_div
+l_int|1000000
+comma
+(paren
+id|cpu_hz
+op_mod
+l_int|1000000
+)paren
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* Cache size */
 r_if
 c_cond

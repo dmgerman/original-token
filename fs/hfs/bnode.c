@@ -1170,6 +1170,18 @@ comma
 id|bnode_count
 )paren
 suffix:semicolon
+id|hfs_warn
+c_func
+(paren
+l_string|&quot;hfs_bnode_find: blnk %u flnk %u recs %u&bslash;n&quot;
+comma
+id|bn-&gt;ndBLink
+comma
+id|bn-&gt;ndFLink
+comma
+id|bn-&gt;ndNRecs
+)paren
+suffix:semicolon
 )brace
 macro_line|#endif
 r_return

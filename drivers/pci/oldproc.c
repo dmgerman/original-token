@@ -3720,6 +3720,16 @@ c_func
 (paren
 id|SPECIALIX
 comma
+id|SPECIALIX_IO8
+comma
+l_string|&quot;IO8+/PCI&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|SPECIALIX
+comma
 id|SPECIALIX_XIO
 comma
 l_string|&quot;XIO/SIO host&quot;

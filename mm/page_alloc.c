@@ -773,12 +773,7 @@ comma
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * If we failed to find anything, we&squot;ll return NULL, but we&squot;ll&n;&t; * wake up kswapd _now_ and even yield to it if we can..&n;&t; * This way we&squot;ll at least make some forward progress&n;&t; * over time.&n;&t; */
-id|wakeup_kswapd
-c_func
-(paren
-)paren
-suffix:semicolon
+multiline_comment|/*&n;&t; * If we can schedule, do so, and make sure to yield.&n;&t; * We may be a real-time process, and if kswapd is&n;&t; * waiting for us we need to allow it to run a bit.&n;&t; */
 r_if
 c_cond
 (paren

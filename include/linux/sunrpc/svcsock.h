@@ -208,6 +208,8 @@ comma
 r_struct
 id|svc_rqst
 op_star
+comma
+r_int
 )paren
 suffix:semicolon
 r_int

@@ -3764,11 +3764,7 @@ multiline_comment|/*&n;&t;&t; * Add the overhead attributed to the superblock an
 r_if
 c_cond
 (paren
-id|le32_to_cpu
-c_func
-(paren
 id|sb-&gt;u.ext2_sb.s_feature_ro_compat
-)paren
 op_amp
 id|EXT2_FEATURE_RO_COMPAT_SPARSE_SUPER
 )paren

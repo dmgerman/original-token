@@ -16,7 +16,6 @@ c_func
 r_struct
 id|inode
 op_star
-id|inode
 )paren
 suffix:semicolon
 r_static
@@ -74,7 +73,7 @@ comma
 multiline_comment|/* put_inode     - in inode.c */
 l_int|NULL
 comma
-multiline_comment|/* delete inode */
+multiline_comment|/* delete_inode  */
 id|hfs_notify_change
 comma
 multiline_comment|/* notify_change - in inode.c */
@@ -270,10 +269,8 @@ id|BLOCK_SIZE
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-r_return
-suffix:semicolon
 )brace
-multiline_comment|/*&n; * hfs_statfs()&n; *&n; * This is the statfs() entry in the super_operations structure for&n; * HFS filesystems.  The purpose is to return various data about the&n; * filesystem.&n; *&n; * XXX: changed f_files/f_ffree to reflect the fs_ablock/free_ablocks.&n; */
+multiline_comment|/*&n; * hfs_statfs()&n; *&n; * This is the statfs() entry in the super_operations structure for&n; * HFS filesystems.  The purpose is to return various data about the&n; * filesystem.&n; *&n; * changed f_files/f_ffree to reflect the fs_ablock/free_ablocks.&n; */
 DECL|function|hfs_statfs
 r_static
 r_int
@@ -1696,7 +1693,7 @@ op_logical_neg
 id|silent
 )paren
 (brace
-id|printk
+id|hfs_warn
 c_func
 (paren
 l_string|&quot;VFS: Can&squot;t find a HFS filesystem on dev %s.&bslash;n&quot;
@@ -1722,13 +1719,6 @@ op_member_access_from_pointer
 id|s_mdb
 op_assign
 id|mdb
-suffix:semicolon
-id|INIT_LIST_HEAD
-c_func
-(paren
-op_amp
-id|mdb-&gt;entry_dirty
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1908,13 +1898,13 @@ comma
 id|BLOCK_SIZE
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 id|unlock_super
 c_func
 (paren
 id|s
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 id|bail3
 suffix:colon

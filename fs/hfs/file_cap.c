@@ -587,6 +587,12 @@ id|ppos
 op_assign
 id|pos
 suffix:semicolon
+id|mark_inode_dirty
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
 )brace
 r_return
 id|read
@@ -1031,6 +1037,12 @@ id|inode-&gt;i_ctime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
+id|mark_inode_dirty
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
 r_return
 id|count
 suffix:semicolon
@@ -1048,7 +1060,6 @@ op_star
 id|inode
 )paren
 (brace
-multiline_comment|/*struct inode *inode = dentry-&gt;d_inode;*/
 r_if
 c_cond
 (paren
@@ -1060,6 +1071,12 @@ id|HFS_FORK_MAX
 id|inode-&gt;i_size
 op_assign
 id|HFS_FORK_MAX
+suffix:semicolon
+id|mark_inode_dirty
+c_func
+(paren
+id|inode
+)paren
 suffix:semicolon
 )brace
 )brace

@@ -2789,7 +2789,7 @@ op_assign
 id|__get_free_page
 c_func
 (paren
-id|GFP_KERNEL
+id|GFP_USER
 )paren
 suffix:semicolon
 multiline_comment|/* Did someone else copy this page for us while we slept? */
@@ -3832,7 +3832,7 @@ op_assign
 id|__get_free_page
 c_func
 (paren
-id|GFP_KERNEL
+id|GFP_USER
 )paren
 suffix:semicolon
 r_if
