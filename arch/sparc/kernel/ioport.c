@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ioport.c,v 1.38 2000/06/04 06:23:52 anton Exp $&n; * ioport.c:  Simple io mapping allocator.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * 1996: sparc_free_io, 1999: ioremap()/iounmap() by Pete Zaitcev.&n; *&n; * 2000/01/29&n; * &lt;rth&gt; zait: as long as pci_alloc_consistent produces something addressable, &n; *&t;things are ok.&n; * &lt;zaitcev&gt; rth: no, it is relevant, because get_free_pages returns you a&n; *&t;pointer into the big page mapping&n; * &lt;rth&gt; zait: so what?&n; * &lt;rth&gt; zait: remap_it_my_way(virt_to_phys(get_free_page()))&n; * &lt;zaitcev&gt; Hmm&n; * &lt;zaitcev&gt; Suppose I did this remap_it_my_way(virt_to_phys(get_free_page())).&n; *&t;So far so good.&n; * &lt;zaitcev&gt; Now, driver calls pci_free_consistent(with result of&n; *&t;remap_it_my_way()).&n; * &lt;zaitcev&gt; How do you find the address to pass to free_pages()?&n; * &lt;rth&gt; zait: walk the page tables?  It&squot;s only two or three level after all.&n; * &lt;rth&gt; zait: you have to walk them anyway to remove the mapping.&n; * &lt;zaitcev&gt; Hmm&n; * &lt;zaitcev&gt; Sounds reasonable&n; */
+multiline_comment|/* $Id: ioport.c,v 1.39 2000/06/20 01:10:00 anton Exp $&n; * ioport.c:  Simple io mapping allocator.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * 1996: sparc_free_io, 1999: ioremap()/iounmap() by Pete Zaitcev.&n; *&n; * 2000/01/29&n; * &lt;rth&gt; zait: as long as pci_alloc_consistent produces something addressable, &n; *&t;things are ok.&n; * &lt;zaitcev&gt; rth: no, it is relevant, because get_free_pages returns you a&n; *&t;pointer into the big page mapping&n; * &lt;rth&gt; zait: so what?&n; * &lt;rth&gt; zait: remap_it_my_way(virt_to_phys(get_free_page()))&n; * &lt;zaitcev&gt; Hmm&n; * &lt;zaitcev&gt; Suppose I did this remap_it_my_way(virt_to_phys(get_free_page())).&n; *&t;So far so good.&n; * &lt;zaitcev&gt; Now, driver calls pci_free_consistent(with result of&n; *&t;remap_it_my_way()).&n; * &lt;zaitcev&gt; How do you find the address to pass to free_pages()?&n; * &lt;rth&gt; zait: walk the page tables?  It&squot;s only two or three level after all.&n; * &lt;rth&gt; zait: you have to walk them anyway to remove the mapping.&n; * &lt;zaitcev&gt; Hmm&n; * &lt;zaitcev&gt; Sounds reasonable&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -15,6 +15,8 @@ macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgalloc.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+DECL|macro|mmu_inval_dma_area
+mdefine_line|#define mmu_inval_dma_area(p, l)&t;/* Anton pulled it out for 2.4.0-xx */
 r_struct
 id|resource
 op_star

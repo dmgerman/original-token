@@ -125,6 +125,19 @@ id|dev
 (brace
 multiline_comment|/* No special bus mastering setup handling */
 )brace
+DECL|function|pcibios_penalize_isa_irq
+r_extern
+r_inline
+r_void
+id|pcibios_penalize_isa_irq
+c_func
+(paren
+r_int
+id|irq
+)paren
+(brace
+multiline_comment|/* We don&squot;t do dynamic PCI IRQ allocation */
+)brace
 multiline_comment|/* IOMMU controls.  */
 multiline_comment|/* Allocate and map kernel buffer using consistant mode DMA for PCI&n;   device.  Returns non-NULL cpu-view pointer to the buffer if&n;   successful and sets *DMA_ADDRP to the pci side dma address as well,&n;   else DMA_ADDRP is undefined.  */
 r_extern

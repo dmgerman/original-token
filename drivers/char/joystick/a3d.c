@@ -340,6 +340,7 @@ id|a3d
 op_star
 id|a3d
 comma
+r_int
 r_char
 op_star
 id|data
@@ -512,6 +513,7 @@ l_int|0
 op_assign
 (paren
 (paren
+r_int
 r_char
 )paren
 (paren
@@ -551,6 +553,7 @@ l_int|1
 op_assign
 (paren
 (paren
+r_int
 r_char
 )paren
 (paren
@@ -590,6 +593,7 @@ l_int|2
 op_assign
 (paren
 (paren
+r_int
 r_char
 )paren
 (paren
@@ -629,6 +633,7 @@ l_int|3
 op_assign
 (paren
 (paren
+r_int
 r_char
 )paren
 (paren
@@ -862,6 +867,7 @@ id|ABS_X
 comma
 (paren
 (paren
+r_int
 r_char
 )paren
 (paren
@@ -904,6 +910,7 @@ id|ABS_Y
 comma
 (paren
 (paren
+r_int
 r_char
 )paren
 (paren
@@ -946,6 +953,7 @@ id|ABS_RUDDER
 comma
 (paren
 (paren
+r_int
 r_char
 )paren
 (paren
@@ -988,6 +996,7 @@ id|ABS_THROTTLE
 comma
 (paren
 (paren
+r_int
 r_char
 )paren
 (paren
@@ -1232,6 +1241,7 @@ op_star
 )paren
 r_private
 suffix:semicolon
+r_int
 r_char
 id|data
 (braket
@@ -1565,6 +1575,7 @@ id|a3d
 op_star
 id|a3d
 suffix:semicolon
+r_int
 r_char
 id|data
 (braket

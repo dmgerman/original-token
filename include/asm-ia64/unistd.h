@@ -198,12 +198,12 @@ DECL|macro|__NR_setitimer
 mdefine_line|#define __NR_setitimer&t;&t;&t;1118
 DECL|macro|__NR_getitimer
 mdefine_line|#define __NR_getitimer&t;&t;&t;1119
-DECL|macro|__NR_stat
-mdefine_line|#define __NR_stat&t;&t;&t;1120
-DECL|macro|__NR_lstat
-mdefine_line|#define __NR_lstat&t;&t;&t;1121
-DECL|macro|__NR_fstat
-mdefine_line|#define __NR_fstat&t;&t;&t;1122
+DECL|macro|__NR_old_stat
+mdefine_line|#define __NR_old_stat&t;&t;&t;1120
+DECL|macro|__NR_old_lstat
+mdefine_line|#define __NR_old_lstat&t;&t;&t;1121
+DECL|macro|__NR_old_fstat
+mdefine_line|#define __NR_old_fstat&t;&t;&t;1122
 DECL|macro|__NR_vhangup
 mdefine_line|#define __NR_vhangup&t;&t;&t;1123
 DECL|macro|__NR_lchown
@@ -378,6 +378,12 @@ DECL|macro|__NR_mincore
 mdefine_line|#define __NR_mincore&t;&t;&t;1208
 DECL|macro|__NR_madvise
 mdefine_line|#define __NR_madvise&t;&t;&t;1209
+DECL|macro|__NR_stat
+mdefine_line|#define __NR_stat&t;&t;&t;1210
+DECL|macro|__NR_lstat
+mdefine_line|#define __NR_lstat&t;&t;&t;1211
+DECL|macro|__NR_fstat
+mdefine_line|#define __NR_fstat&t;&t;&t;1212
 macro_line|#if !defined(__ASSEMBLY__) &amp;&amp; !defined(ASSEMBLER)
 r_extern
 r_int
@@ -413,7 +419,7 @@ mdefine_line|#define _syscall3(type,name,type1,arg1,type2,arg2,type3,arg3)&t;&t;
 DECL|macro|_syscall4
 mdefine_line|#define _syscall4(type,name,type1,arg1,type2,arg2,type3,arg3,type4,arg4)&t;&bslash;&n;type&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;name (type1 arg1, type2 arg2, type3 arg3, type4 arg4)&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;register long dummy5 __asm__ (&quot;out4&quot;);&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;return __ia64_syscall((long) arg1, (long) arg2, (long) arg3,&t;&t;&bslash;&n;&t;&t;&t;      (long) arg4, dummy5, __NR_##name);&t;&t;&bslash;&n;}
 DECL|macro|_syscall5
-mdefine_line|#define _syscall5(type,name,type1,arg1,type2,arg2,type3,arg3,type4,arg4,type5,arg5)&t;&bslash;&n;type&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;name (type1 arg1, type2 arg2, type3 arg3, type4 arg4, type5 arg5)&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;return __ia64_syscall((long) arg1, (long) arg2, (long) arg3,&t;&t;&t;&bslash;&n;&t;&t;&t;      (long) arg4, (long), __NR_##name);&t;&t;&t;&bslash;&n;}
+mdefine_line|#define _syscall5(type,name,type1,arg1,type2,arg2,type3,arg3,type4,arg4,type5,arg5)&t;&bslash;&n;type&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;name (type1 arg1, type2 arg2, type3 arg3, type4 arg4, type5 arg5)&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;return __ia64_syscall((long) arg1, (long) arg2, (long) arg3,&t;&t;&t;&bslash;&n;&t;&t;&t;      (long) arg4, (long) arg5, __NR_##name);&t;&t;&t;&bslash;&n;}
 macro_line|#ifdef __KERNEL_SYSCALLS__
 r_static
 r_inline

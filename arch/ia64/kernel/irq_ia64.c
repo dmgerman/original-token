@@ -20,7 +20,9 @@ macro_line|#include &lt;asm/hw_irq.h&gt;
 macro_line|#include &lt;asm/machvec.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#ifdef CONFIG_ITANIUM_ASTEP_SPECIFIC
+DECL|macro|IRQ_DEBUG
+mdefine_line|#define IRQ_DEBUG&t;0
+macro_line|#ifdef CONFIG_ITANIUM_A1_SPECIFIC
 DECL|variable|ivr_read_lock
 id|spinlock_t
 id|ivr_read_lock
@@ -77,7 +79,7 @@ comma
 l_int|0x41
 )brace
 suffix:semicolon
-macro_line|#ifdef CONFIG_ITANIUM_ASTEP_SPECIFIC
+macro_line|#ifdef CONFIG_ITANIUM_A1_SPECIFIC
 DECL|variable|usbfix
 r_int
 id|usbfix
@@ -115,7 +117,7 @@ comma
 id|usbfix_option
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_ITANIUM_ASTEP_SPECIFIC */
+macro_line|#endif /* CONFIG_ITANIUM_A1_SPECIFIC */
 multiline_comment|/*&n; * That&squot;s where the IVT branches when we get an external&n; * interrupt. This branches to the correct hardware IRQ handler via&n; * function ptr.&n; */
 r_void
 DECL|function|ia64_handle_irq
@@ -133,26 +135,9 @@ id|regs
 (brace
 r_int
 r_int
-id|bsp
-comma
-id|sp
-comma
 id|saved_tpr
 suffix:semicolon
-macro_line|#ifdef CONFIG_ITANIUM_ASTEP_SPECIFIC
-macro_line|# ifndef CONFIG_SMP
-r_static
-r_int
-r_int
-id|max_prio
-op_assign
-l_int|0
-suffix:semicolon
-r_int
-r_int
-id|prev_prio
-suffix:semicolon
-macro_line|# endif
+macro_line|#ifdef CONFIG_ITANIUM_A1_SPECIFIC
 r_int
 r_int
 id|eoi_ptr
@@ -267,59 +252,14 @@ c_func
 )paren
 suffix:semicolon
 macro_line|# endif
-macro_line|# ifndef CONFIG_SMP
-id|prev_prio
-op_assign
-id|max_prio
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|vector
-OL
-id|max_prio
-)paren
+macro_line|#endif /* CONFIG_ITANIUM_A1_SPECIFIC */
+macro_line|#if IRQ_DEBUG
 (brace
-id|printk
-(paren
-l_string|&quot;ia64_handle_irq: got vector %lu while %u was in progress!&bslash;n&quot;
+r_int
+r_int
+id|bsp
 comma
-id|vector
-comma
-id|max_prio
-)paren
-suffix:semicolon
-)brace
-r_else
-id|max_prio
-op_assign
-id|vector
-suffix:semicolon
-macro_line|# endif /* !CONFIG_SMP */
-macro_line|#endif /* CONFIG_ITANIUM_ASTEP_SPECIFIC */
-multiline_comment|/*&n;&t; * Always set TPR to limit maximum interrupt nesting depth to&n;&t; * 16 (without this, it would be ~240, which could easily lead&n;&t; * to kernel stack overflows.&n;&t; */
-id|saved_tpr
-op_assign
-id|ia64_get_tpr
-c_func
-(paren
-)paren
-suffix:semicolon
-id|ia64_srlz_d
-c_func
-(paren
-)paren
-suffix:semicolon
-id|ia64_set_tpr
-c_func
-(paren
-id|vector
-)paren
-suffix:semicolon
-id|ia64_srlz_d
-c_func
-(paren
-)paren
+id|sp
 suffix:semicolon
 id|asm
 (paren
@@ -355,12 +295,12 @@ l_int|1024
 (brace
 r_static
 r_int
-id|last_time
+r_char
+id|count
 suffix:semicolon
 r_static
 r_int
-r_char
-id|count
+id|last_time
 suffix:semicolon
 r_if
 c_cond
@@ -397,7 +337,8 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;ia64_handle_irq: DANGER: less than 1KB of free stack space!!&bslash;n&quot;
+l_string|&quot;ia64_handle_irq: DANGER: less than &quot;
+l_string|&quot;1KB of free stack space!!&bslash;n&quot;
 l_string|&quot;(bsp=0x%lx, sp=%lx)&bslash;n&quot;
 comma
 id|bsp
@@ -407,7 +348,23 @@ id|sp
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t; * The interrupt is now said to be in service&n;&t; */
+)brace
+macro_line|#endif /* IRQ_DEBUG */
+multiline_comment|/*&n;&t; * Always set TPR to limit maximum interrupt nesting depth to&n;&t; * 16 (without this, it would be ~240, which could easily lead&n;&t; * to kernel stack overflows).&n;&t; */
+id|saved_tpr
+op_assign
+id|ia64_get_tpr
+c_func
+(paren
+)paren
+suffix:semicolon
+id|ia64_srlz_d
+c_func
+(paren
+)paren
+suffix:semicolon
+r_do
+(brace
 r_if
 c_cond
 (paren
@@ -424,10 +381,31 @@ comma
 id|vector
 )paren
 suffix:semicolon
-r_goto
-id|out
+id|ia64_set_tpr
+c_func
+(paren
+id|saved_tpr
+)paren
+suffix:semicolon
+id|ia64_srlz_d
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
 suffix:semicolon
 )brace
+id|ia64_set_tpr
+c_func
+(paren
+id|vector
+)paren
+suffix:semicolon
+id|ia64_srlz_d
+c_func
+(paren
+)paren
+suffix:semicolon
 id|do_IRQ
 c_func
 (paren
@@ -436,69 +414,8 @@ comma
 id|regs
 )paren
 suffix:semicolon
-id|out
-suffix:colon
-macro_line|#ifdef CONFIG_ITANIUM_ASTEP_SPECIFIC
-(brace
-r_int
-id|pEOI
-suffix:semicolon
-id|asm
-(paren
-l_string|&quot;mov %0=0;; (p1) mov %0=1&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|pEOI
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|pEOI
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Yikes: ia64_handle_irq() without pEOI!!&bslash;n&quot;
-)paren
-suffix:semicolon
-id|asm
-r_volatile
-(paren
-l_string|&quot;cmp.eq p1,p0=r0,r0&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|pEOI
-)paren
-)paren
-suffix:semicolon
-)brace
-)brace
+multiline_comment|/*&n;&t;&t; * Disable interrupts and send EOI:&n;&t;&t; */
 id|local_irq_disable
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|# ifndef CONFIG_SMP
-r_if
-c_cond
-(paren
-id|max_prio
-op_eq
-id|vector
-)paren
-id|max_prio
-op_assign
-id|prev_prio
-suffix:semicolon
-macro_line|# endif /* !CONFIG_SMP */
-macro_line|#endif /* CONFIG_ITANIUM_ASTEP_SPECIFIC */
-id|ia64_srlz_d
 c_func
 (paren
 )paren
@@ -509,9 +426,29 @@ c_func
 id|saved_tpr
 )paren
 suffix:semicolon
-id|ia64_srlz_d
+id|ia64_eoi
 c_func
 (paren
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_ITANIUM_A1_SPECIFIC
+r_break
+suffix:semicolon
+macro_line|#endif
+id|vector
+op_assign
+id|ia64_get_ivr
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+id|vector
+op_ne
+id|IA64_SPURIOUS_INT
 )paren
 suffix:semicolon
 )brace
@@ -589,16 +526,6 @@ l_int|1
 suffix:semicolon
 id|irq_desc
 (braket
-id|TIMER_IRQ
-)braket
-dot
-id|handler
-op_assign
-op_amp
-id|irq_type_ia64_sapic
-suffix:semicolon
-id|irq_desc
-(braket
 id|IA64_SPURIOUS_INT
 )braket
 dot
@@ -609,6 +536,15 @@ id|irq_type_ia64_sapic
 suffix:semicolon
 macro_line|#ifdef CONFIG_SMP
 multiline_comment|/* &n;&t; * Configure the IPI vector and handler&n;&t; */
+id|irq_desc
+(braket
+id|IPI_IRQ
+)braket
+dot
+id|status
+op_or_assign
+id|IRQ_PER_CPU
+suffix:semicolon
 id|irq_desc
 (braket
 id|IPI_IRQ
@@ -682,7 +618,7 @@ r_int
 r_int
 id|ipi_data
 suffix:semicolon
-macro_line|#ifdef&t;CONFIG_ITANIUM_ASTEP_SPECIFIC
+macro_line|#ifdef CONFIG_ITANIUM_A1_SPECIFIC
 r_int
 r_int
 id|flags
@@ -730,7 +666,7 @@ op_lshift
 l_int|3
 )paren
 suffix:semicolon
-macro_line|#ifdef&t;CONFIG_ITANIUM_ASTEP_SPECIFIC
+macro_line|#ifdef CONFIG_ITANIUM_A1_SPECIFIC
 id|spin_lock_irqsave
 c_func
 (paren
@@ -740,7 +676,7 @@ comma
 id|flags
 )paren
 suffix:semicolon
-macro_line|#endif&t;/* CONFIG_ITANIUM_ASTEP_SPECIFIC */
+macro_line|#endif
 id|writeq
 c_func
 (paren
@@ -749,7 +685,7 @@ comma
 id|ipi_addr
 )paren
 suffix:semicolon
-macro_line|#ifdef&t;CONFIG_ITANIUM_ASTEP_SPECIFIC
+macro_line|#ifdef CONFIG_ITANIUM_A1_SPECIFIC
 id|spin_unlock_irqrestore
 c_func
 (paren

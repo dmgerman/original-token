@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pcic.c,v 1.14 2000/03/01 02:53:28 davem Exp $&n; * pcic.c: Sparc/PCI controller support&n; *&n; * Copyright (C) 1998 V. Roganov and G. Raiko&n; *&n; * Code is derived from Ultra/PCI PSYCHO controller support, see that&n; * for author info.&n; *&n; * Support for diverse IIep based platforms by Pete Zaitcev.&n; * CP-1200 by Eric Brower.&n; */
+multiline_comment|/* $Id: pcic.c,v 1.15 2000/06/20 01:10:00 anton Exp $&n; * pcic.c: Sparc/PCI controller support&n; *&n; * Copyright (C) 1998 V. Roganov and G. Raiko&n; *&n; * Code is derived from Ultra/PCI PSYCHO controller support, see that&n; * for author info.&n; *&n; * Support for diverse IIep based platforms by Pete Zaitcev.&n; * CP-1200 by Eric Brower.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -414,7 +414,7 @@ comma
 multiline_comment|/* EBus&t;*/
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Krups (courtesy of Varol Kaptan)&n; * No documentation available, so we guess it, based on Espresso layout.&n; * Since we always run PROLL on Krups we may put map in there.&n; */
+multiline_comment|/*&n; * Krups (courtesy of Varol Kaptan)&n; * No documentation available, but it was easy to guess&n; * because it was very similar to Espresso.&n; *  &n; * pin 0 - kbd, mouse, serial;&n; * pin 1 - Ethernet;&n; * pin 2 - igs (we do not use it);&n; * pin 3 - audio;&n; * pin 4,5,6 - unused;&n; * pin 7 - RTC (from P2 onwards as David B. says).&n; */
 DECL|variable|pcic_i_jk
 r_static
 r_struct
@@ -2561,22 +2561,9 @@ suffix:semicolon
 (brace
 )brace
 )brace
-multiline_comment|/* P3 remove later */
-id|printk
-c_func
-(paren
-l_string|&quot;PCIC: device %s pin %d ivec 0x%x irq %x&bslash;n&quot;
-comma
-id|namebuf
-comma
-id|i
-comma
-id|ivec
-comma
-id|dev-&gt;irq
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * dev-&gt;irq=0 means PROM did not bothered to program the upper&n;&t; * half of PCIC. This happens on JS-E with PROM 3.11, for instance.&n;&t; */
+multiline_comment|/* P3 */
+multiline_comment|/* printk(&quot;PCIC: device %s pin %d ivec 0x%x irq %x&bslash;n&quot;, namebuf, i, ivec, dev-&gt;irq); */
+multiline_comment|/*&n;&t; * dev-&gt;irq=0 means PROM did not bother to program the upper&n;&t; * half of PCIC. This happens on JS-E with PROM 3.11, for instance.&n;&t; */
 r_if
 c_cond
 (paren
@@ -3214,21 +3201,8 @@ suffix:semicolon
 )brace
 multiline_comment|/* XXX Cannot panic properly in case of PROLL */
 )brace
-multiline_comment|/* P3 remove later */
-id|printk
-c_func
-(paren
-l_string|&quot;PCIC: dev %s pin %d ivec 0x%x irq %x&bslash;n&quot;
-comma
-id|name
-comma
-id|pin
-comma
-id|ivec
-comma
-id|irq
-)paren
-suffix:semicolon
+multiline_comment|/* P3 */
+multiline_comment|/* printk(&quot;PCIC: dev %s pin %d ivec 0x%x irq %x&bslash;n&quot;, name, pin, ivec, irq); */
 r_return
 id|irq
 suffix:semicolon

@@ -1,7 +1,7 @@
 macro_line|#ifndef _ASM_IA64_PAL_H
 DECL|macro|_ASM_IA64_PAL_H
 mdefine_line|#define _ASM_IA64_PAL_H
-multiline_comment|/*&n; * Processor Abstraction Layer definitions.&n; *&n; * This is based on version 2.4 of the manual &quot;Enhanced Mode Processor&n; * Abstraction Layer&quot;.&n; *&n; * Copyright (C) 1998-2000 Hewlett-Packard Co&n; * Copyright (C) 1998-2000 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; * Copyright (C) 1999 VA Linux Systems&n; * Copyright (C) 1999 Walt Drummond &lt;drummond@valinux.com&gt;&n; * Copyright (C) 1999 Srinivasa Prasad Thirumalachar &lt;sprasad@sprasad.engr.sgi.com&gt;&n; *&n; * 99/10/01&t;davidm&t;Make sure we pass zero for reserved parameters.&n; * 00/03/07&t;davidm&t;Updated pal_cache_flush() to be in sync with PAL v2.6.&n; * 00/03/23     cfleck  Modified processor min-state save area to match updated PAL &amp; SAL info&n; */
+multiline_comment|/*&n; * Processor Abstraction Layer definitions.&n; *&n; * This is based on Intel IA-64 Architecture Software Developer&squot;s Manual rev 1.0&n; * chapter 11 IA-64 Processor Abstraction Layer&n; *&n; * Copyright (C) 1998-2000 Hewlett-Packard Co&n; * Copyright (C) 1998-2000 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; * Copyright (C) 2000 Stephane Eranian &lt;eranian@hpl.hp.com&gt;&n; * Copyright (C) 1999 VA Linux Systems&n; * Copyright (C) 1999 Walt Drummond &lt;drummond@valinux.com&gt;&n; * Copyright (C) 1999 Srinivasa Prasad Thirumalachar &lt;sprasad@sprasad.engr.sgi.com&gt;&n; *&n; * 99/10/01&t;davidm&t;Make sure we pass zero for reserved parameters.&n; * 00/03/07&t;davidm&t;Updated pal_cache_flush() to be in sync with PAL v2.6.&n; * 00/03/23     cfleck  Modified processor min-state save area to match updated PAL &amp; SAL info&n; * 00/05/24     eranian Updated to latest PAL spec, fix structures bugs, added &n; * 00/05/25&t;eranian Support for stack calls, and statis physical calls&n; */
 multiline_comment|/*&n; * Note that some of these calls use a static-register only calling&n; * convention which has nothing to do with the regular calling&n; * convention.&n; */
 DECL|macro|PAL_CACHE_FLUSH
 mdefine_line|#define PAL_CACHE_FLUSH&t;&t;1&t;/* flush i/d cache */
@@ -196,18 +196,18 @@ suffix:colon
 l_int|1
 comma
 multiline_comment|/* 0 Unified cache ? */
-DECL|member|reserved
-id|reserved
-suffix:colon
-l_int|5
-comma
-multiline_comment|/* 7-3 Reserved */
 DECL|member|at
 id|at
 suffix:colon
 l_int|2
 comma
 multiline_comment|/* 2-1 Cache mem attr*/
+DECL|member|reserved
+id|reserved
+suffix:colon
+l_int|5
+comma
+multiline_comment|/* 7-3 Reserved */
 DECL|member|associativity
 id|associativity
 suffix:colon
@@ -337,10 +337,10 @@ DECL|typedef|pal_cache_config_info_t
 )brace
 id|pal_cache_config_info_t
 suffix:semicolon
-DECL|macro|pcci_ld_hint
-mdefine_line|#define pcci_ld_hint&t;&t;pcci_info_1.pcci1.load_hints
-DECL|macro|pcci_st_hint
-mdefine_line|#define pcci_st_hint&t;&t;pcci_info_1.pcci1_bits.store_hints
+DECL|macro|pcci_ld_hints
+mdefine_line|#define pcci_ld_hints&t;&t;pcci_info_1.pcci1_bits.load_hints
+DECL|macro|pcci_st_hints
+mdefine_line|#define pcci_st_hints&t;&t;pcci_info_1.pcci1_bits.store_hints
 DECL|macro|pcci_ld_latency
 mdefine_line|#define pcci_ld_latency&t;&t;pcci_info_1.pcci1_bits.load_latency
 DECL|macro|pcci_st_latency
@@ -1413,7 +1413,6 @@ suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Note: Currently unused PAL arguments are generally labeled&n; * &quot;reserved&quot; so the value specified in the PAL documentation&n; * (generally 0) MUST be passed.  Reserved parameters are not optional&n; * parameters.&n; */
-macro_line|#ifdef __GCC_MULTIREG_RETVALS__
 r_extern
 r_struct
 id|ia64_pal_retval
@@ -1428,18 +1427,11 @@ comma
 id|u64
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * If multi-register return values are returned according to the&n;   * ia-64 calling convention, we can call ia64_pal_call_static&n;   * directly.&n;   */
-DECL|macro|PAL_CALL
-macro_line|# define PAL_CALL(iprv,a0,a1,a2,a3)&t;iprv = ia64_pal_call_static(a0,a1, a2, a3)
-macro_line|#else
 r_extern
-r_void
-id|ia64_pal_call_static
-(paren
 r_struct
 id|ia64_pal_retval
-op_star
-comma
+id|ia64_pal_call_stacked
+(paren
 id|u64
 comma
 id|u64
@@ -1449,10 +1441,26 @@ comma
 id|u64
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * If multi-register return values are returned through an aggregate&n;   * allocated in the caller, we need to use the stub implemented in&n;   * sal-stub.S.&n;   */
+r_extern
+r_struct
+id|ia64_pal_retval
+id|ia64_pal_call_phys_static
+(paren
+id|u64
+comma
+id|u64
+comma
+id|u64
+comma
+id|u64
+)paren
+suffix:semicolon
 DECL|macro|PAL_CALL
-macro_line|# define PAL_CALL(iprv,a0,a1,a2,a3)&t;ia64_pal_call_static(&amp;iprv, a0, a1, a2, a3)
-macro_line|#endif
+mdefine_line|#define PAL_CALL(iprv,a0,a1,a2,a3)&t;iprv = ia64_pal_call_static(a0, a1, a2, a3)
+DECL|macro|PAL_CALL_STK
+mdefine_line|#define PAL_CALL_STK(iprv,a0,a1,a2,a3)&t;iprv = ia64_pal_call_stacked(a0, a1, a2, a3)
+DECL|macro|PAL_CALL_PHYS
+mdefine_line|#define PAL_CALL_PHYS(iprv,a0,a1,a2,a3) iprv = ia64_pal_call_phys_static(a0, a1, a2, a3)
 DECL|typedef|ia64_pal_handler
 r_typedef
 r_int
@@ -1685,7 +1693,7 @@ r_struct
 id|ia64_pal_retval
 id|iprv
 suffix:semicolon
-id|PAL_CALL
+id|PAL_CALL_PHYS
 c_func
 (paren
 id|iprv
@@ -1745,7 +1753,7 @@ r_struct
 id|ia64_pal_retval
 id|iprv
 suffix:semicolon
-id|PAL_CALL
+id|PAL_CALL_PHYS
 c_func
 (paren
 id|iprv
@@ -1759,6 +1767,190 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+r_return
+id|iprv.status
+suffix:semicolon
+)brace
+multiline_comment|/* Get detailed cache information */
+r_extern
+r_inline
+id|s64
+DECL|function|ia64_pal_cache_config_info
+id|ia64_pal_cache_config_info
+(paren
+id|u64
+id|cache_level
+comma
+id|u64
+id|cache_type
+comma
+id|pal_cache_config_info_t
+op_star
+id|conf
+)paren
+(brace
+r_struct
+id|ia64_pal_retval
+id|iprv
+suffix:semicolon
+id|PAL_CALL
+c_func
+(paren
+id|iprv
+comma
+id|PAL_CACHE_INFO
+comma
+id|cache_level
+comma
+id|cache_type
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|iprv.status
+op_eq
+l_int|0
+)paren
+(brace
+id|conf-&gt;pcci_status
+op_assign
+id|iprv.status
+suffix:semicolon
+id|conf-&gt;pcci_info_1.pcci1_data
+op_assign
+id|iprv.v0
+suffix:semicolon
+id|conf-&gt;pcci_info_2.pcci2_data
+op_assign
+id|iprv.v1
+suffix:semicolon
+id|conf-&gt;pcci_reserved
+op_assign
+id|iprv.v2
+suffix:semicolon
+)brace
+r_return
+id|iprv.status
+suffix:semicolon
+)brace
+multiline_comment|/* Get detailed cche protection information */
+r_extern
+r_inline
+id|s64
+DECL|function|ia64_pal_cache_prot_info
+id|ia64_pal_cache_prot_info
+(paren
+id|u64
+id|cache_level
+comma
+id|u64
+id|cache_type
+comma
+id|pal_cache_protection_info_t
+op_star
+id|prot
+)paren
+(brace
+r_struct
+id|ia64_pal_retval
+id|iprv
+suffix:semicolon
+id|PAL_CALL
+c_func
+(paren
+id|iprv
+comma
+id|PAL_CACHE_PROT_INFO
+comma
+id|cache_level
+comma
+id|cache_type
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|iprv.status
+op_eq
+l_int|0
+)paren
+(brace
+id|prot-&gt;pcpi_status
+op_assign
+id|iprv.status
+suffix:semicolon
+id|prot-&gt;pcp_info
+(braket
+l_int|0
+)braket
+dot
+id|pcpi_data
+op_assign
+id|iprv.v0
+op_amp
+l_int|0xffffffff
+suffix:semicolon
+id|prot-&gt;pcp_info
+(braket
+l_int|1
+)braket
+dot
+id|pcpi_data
+op_assign
+id|iprv.v0
+op_rshift
+l_int|32
+suffix:semicolon
+id|prot-&gt;pcp_info
+(braket
+l_int|2
+)braket
+dot
+id|pcpi_data
+op_assign
+id|iprv.v1
+op_amp
+l_int|0xffffffff
+suffix:semicolon
+id|prot-&gt;pcp_info
+(braket
+l_int|3
+)braket
+dot
+id|pcpi_data
+op_assign
+id|iprv.v1
+op_rshift
+l_int|32
+suffix:semicolon
+id|prot-&gt;pcp_info
+(braket
+l_int|4
+)braket
+dot
+id|pcpi_data
+op_assign
+id|iprv.v2
+op_amp
+l_int|0xffffffff
+suffix:semicolon
+id|prot-&gt;pcp_info
+(braket
+l_int|5
+)braket
+dot
+id|pcpi_data
+op_assign
+id|iprv.v2
+op_rshift
+l_int|32
+suffix:semicolon
+)brace
 r_return
 id|iprv.status
 suffix:semicolon
@@ -2466,7 +2658,22 @@ comma
 DECL|member|power_consumption
 id|power_consumption
 suffix:colon
-l_int|32
+l_int|28
+comma
+DECL|member|im
+id|im
+suffix:colon
+l_int|1
+comma
+DECL|member|co
+id|co
+suffix:colon
+l_int|1
+comma
+DECL|member|reserved
+id|reserved
+suffix:colon
+l_int|2
 suffix:semicolon
 DECL|member|pal_power_mgmt_info_s
 )brace
@@ -2492,7 +2699,7 @@ r_struct
 id|ia64_pal_retval
 id|iprv
 suffix:semicolon
-id|PAL_CALL
+id|PAL_CALL_STK
 c_func
 (paren
 id|iprv
@@ -2902,6 +3109,8 @@ op_star
 id|mem_attrib
 op_assign
 id|iprv.v0
+op_amp
+l_int|0xff
 suffix:semicolon
 r_return
 id|iprv.status
@@ -3130,7 +3339,6 @@ r_return
 id|iprv.status
 suffix:semicolon
 )brace
-macro_line|#ifdef TBD
 r_struct
 id|pal_features_s
 suffix:semicolon
@@ -3141,18 +3349,15 @@ id|s64
 DECL|function|ia64_pal_proc_get_features
 id|ia64_pal_proc_get_features
 (paren
-r_struct
-id|pal_features_s
+id|u64
 op_star
 id|features_avail
 comma
-r_struct
-id|pal_features_s
+id|u64
 op_star
 id|features_status
 comma
-r_struct
-id|pal_features_s
+id|u64
 op_star
 id|features_control
 )paren
@@ -3161,7 +3366,7 @@ r_struct
 id|ia64_pal_retval
 id|iprv
 suffix:semicolon
-id|PAL_CALL
+id|PAL_CALL_PHYS
 c_func
 (paren
 id|iprv
@@ -3175,6 +3380,30 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|iprv.status
+op_eq
+l_int|0
+)paren
+(brace
+op_star
+id|features_avail
+op_assign
+id|iprv.v0
+suffix:semicolon
+op_star
+id|features_status
+op_assign
+id|iprv.v1
+suffix:semicolon
+op_star
+id|features_control
+op_assign
+id|iprv.v2
+suffix:semicolon
+)brace
 r_return
 id|iprv.status
 suffix:semicolon
@@ -3186,6 +3415,7 @@ id|s64
 DECL|function|ia64_pal_proc_set_features
 id|ia64_pal_proc_set_features
 (paren
+id|u64
 id|feature_select
 )paren
 (brace
@@ -3193,7 +3423,7 @@ r_struct
 id|ia64_pal_retval
 id|iprv
 suffix:semicolon
-id|PAL_CALL
+id|PAL_CALL_PHYS
 c_func
 (paren
 id|iprv
@@ -3211,7 +3441,6 @@ r_return
 id|iprv.status
 suffix:semicolon
 )brace
-macro_line|#endif 
 multiline_comment|/*&n; * Put everything in a struct so we avoid the global offset table whenever&n; * possible.&n; */
 DECL|struct|ia64_ptce_info_s
 r_typedef
@@ -3641,7 +3870,11 @@ id|ia64_pal_version
 (paren
 id|pal_version_u_t
 op_star
-id|pal_version
+id|pal_min_version
+comma
+id|pal_version_u_t
+op_star
+id|pal_cur_version
 )paren
 (brace
 r_struct
@@ -3665,11 +3898,20 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|pal_version
+id|pal_min_version
 )paren
-id|pal_version-&gt;pal_version_val
+id|pal_min_version-&gt;pal_version_val
 op_assign
 id|iprv.v0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pal_cur_version
+)paren
+id|pal_cur_version-&gt;pal_version_val
+op_assign
+id|iprv.v1
 suffix:semicolon
 r_return
 id|iprv.status
@@ -3730,6 +3972,18 @@ DECL|typedef|pal_tc_info_u_t
 )brace
 id|pal_tc_info_u_t
 suffix:semicolon
+DECL|macro|tc_reduce_tr
+mdefine_line|#define tc_reduce_tr&t;&t;pal_tc_info_s.reduce_tr
+DECL|macro|tc_unified
+mdefine_line|#define tc_unified&t;&t;pal_tc_info_s.unified
+DECL|macro|tc_pf
+mdefine_line|#define tc_pf&t;&t;&t;pal_tc_info_s.pf
+DECL|macro|tc_num_entries
+mdefine_line|#define tc_num_entries&t;&t;pal_tc_info_s.num_entries
+DECL|macro|tc_associativity
+mdefine_line|#define tc_associativity&t;pal_tc_info_s.associativity
+DECL|macro|tc_num_sets
+mdefine_line|#define tc_num_sets&t;&t;pal_tc_info_s.num_sets
 multiline_comment|/* Return information about the virtual memory characteristics of the processor &n; * implementation.&n; */
 r_extern
 r_inline
@@ -3876,7 +4130,7 @@ comma
 DECL|member|key_size
 id|key_size
 suffix:colon
-l_int|16
+l_int|8
 comma
 DECL|member|max_pkr
 id|max_pkr

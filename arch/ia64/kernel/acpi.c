@@ -221,7 +221,7 @@ suffix:semicolon
 r_int
 id|l
 comma
-id|pins
+id|max_pin
 suffix:semicolon
 id|ver
 op_assign
@@ -231,7 +231,7 @@ c_func
 id|iosapic-&gt;address
 )paren
 suffix:semicolon
-id|pins
+id|max_pin
 op_assign
 (paren
 id|ver
@@ -266,7 +266,7 @@ id|iosapic-&gt;irq_base
 comma
 id|iosapic-&gt;irq_base
 op_plus
-id|pins
+id|max_pin
 )paren
 suffix:semicolon
 r_for
@@ -277,8 +277,8 @@ op_assign
 l_int|0
 suffix:semicolon
 id|l
-OL
-id|pins
+op_le
+id|max_pin
 suffix:semicolon
 id|l
 op_increment
@@ -356,6 +356,8 @@ id|iosapic_init
 c_func
 (paren
 id|iosapic-&gt;address
+comma
+id|iosapic-&gt;irq_base
 )paren
 suffix:semicolon
 macro_line|#endif

@@ -1934,10 +1934,8 @@ id|SHpnt-&gt;in_recovery
 op_logical_or
 id|q-&gt;plugged
 )paren
-(brace
 r_return
 suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; * To start with, we keep looping until the queue is empty, or until&n;&t; * the host is no longer able to accept any more requests.&n;&t; */
 r_while
 c_loop
@@ -1955,10 +1953,8 @@ id|SHpnt-&gt;in_recovery
 op_logical_or
 id|q-&gt;plugged
 )paren
-(brace
 r_return
 suffix:semicolon
-)brace
 multiline_comment|/*&n;&t;&t; * If the device cannot accept another request, then quit.&n;&t;&t; */
 r_if
 c_cond
@@ -2280,15 +2276,10 @@ id|request
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; * We have copied the data out of the request block - it is now in&n;&t;&t;&t; * a field in SCpnt.  Release the request block.&n;&t;&t;&t; */
-id|req-&gt;rq_status
-op_assign
-id|RQ_INACTIVE
-suffix:semicolon
-id|wake_up
+id|blkdev_release_request
 c_func
 (paren
-op_amp
-id|wait_for_request
+id|req
 )paren
 suffix:semicolon
 )brace

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ebus.c,v 1.9 2000/01/22 07:35:25 zaitcev Exp $&n; * ebus.c: PCI to EBus bridge device.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * Adopted for sparc by V. Roganov and G. Raiko.&n; * Fixes for different platforms by Pete Zaitcev.&n; */
+multiline_comment|/* $Id: ebus.c,v 1.10 2000/06/20 01:10:00 anton Exp $&n; * ebus.c: PCI to EBus bridge device.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * Adopted for sparc by V. Roganov and G. Raiko.&n; * Fixes for different platforms by Pete Zaitcev.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -518,16 +518,14 @@ r_sizeof
 id|irqs
 )paren
 )paren
+)paren
 op_eq
 op_minus
 l_int|1
-)paren
 op_logical_or
-(paren
 id|len
 op_eq
 l_int|0
-)paren
 )paren
 (brace
 id|dev-&gt;num_irqs
@@ -563,20 +561,8 @@ id|dev-&gt;parent-&gt;irqs
 l_int|0
 )braket
 suffix:semicolon
-multiline_comment|/* P3 remove */
-id|printk
-c_func
-(paren
-l_string|&quot;EBUS: dev %s irq %d from parent&bslash;n&quot;
-comma
-id|dev-&gt;prom_name
-comma
-id|dev-&gt;irqs
-(braket
-l_int|0
-)braket
-)paren
-suffix:semicolon
+multiline_comment|/* P3 */
+multiline_comment|/* printk(&quot;EBUS: dev %s irq %d from parent&bslash;n&quot;, dev-&gt;prom_name, dev-&gt;irqs[0]); */
 )brace
 )brace
 r_else
@@ -991,16 +977,14 @@ r_sizeof
 id|irqs
 )paren
 )paren
+)paren
 op_eq
 op_minus
 l_int|1
-)paren
 op_logical_or
-(paren
 id|len
 op_eq
 l_int|0
-)paren
 )paren
 (brace
 id|dev-&gt;num_irqs
@@ -1026,20 +1010,8 @@ id|dev-&gt;num_irqs
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* P3 remove */
-id|printk
-c_func
-(paren
-l_string|&quot;EBUS: child %s irq %d from parent&bslash;n&quot;
-comma
-id|dev-&gt;prom_name
-comma
-id|dev-&gt;irqs
-(braket
-l_int|0
-)braket
-)paren
-suffix:semicolon
+multiline_comment|/* P3 */
+multiline_comment|/* printk(&quot;EBUS: child %s irq %d from parent&bslash;n&quot;, dev-&gt;prom_name, dev-&gt;irqs[0]); */
 )brace
 )brace
 r_else

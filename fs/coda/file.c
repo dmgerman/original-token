@@ -96,9 +96,6 @@ r_struct
 id|dentry
 op_star
 id|coda_dentry
-comma
-r_int
-id|datasync
 )paren
 (brace
 r_struct
@@ -195,8 +192,6 @@ l_int|NULL
 comma
 op_amp
 id|cont_dentry
-comma
-id|datasync
 )paren
 suffix:semicolon
 id|up
@@ -209,9 +204,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|datasync
-op_logical_and
 id|result
 op_eq
 l_int|0

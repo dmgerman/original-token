@@ -9,28 +9,8 @@ r_extern
 id|spinlock_t
 id|sal_lock
 suffix:semicolon
-macro_line|#ifdef __GCC_MULTIREG_RETVALS__
-multiline_comment|/* If multi-register return values are returned according to the&n;     ia-64 calling convention, we can call ia64_sal directly.  */
 DECL|macro|__SAL_CALL
-macro_line|# define __SAL_CALL(result,args...)&t;result = (*ia64_sal)(args)
-macro_line|#else
-multiline_comment|/* If multi-register return values are returned through an aggregate&n;     allocated in the caller, we need to use the stub implemented in&n;     sal-stub.S.  */
-r_extern
-r_struct
-id|ia64_sal_retval
-id|ia64_sal_stub
-(paren
-id|u64
-id|index
-comma
-dot
-dot
-dot
-)paren
-suffix:semicolon
-DECL|macro|__SAL_CALL
-macro_line|# define __SAL_CALL(result,args...)&t;result = ia64_sal_stub(args)
-macro_line|#endif
+mdefine_line|#define __SAL_CALL(result,args...)&t;result = (*ia64_sal)(args)
 macro_line|#ifdef CONFIG_SMP
 DECL|macro|SAL_CALL
 macro_line|# define SAL_CALL(result,args...) do {&t;&t;&bslash;&n;&t;  spin_lock(&amp;sal_lock);&t;&t;&t;&bslash;&n;&t;  __SAL_CALL(result,args);&t;&t;&bslash;&n;&t;  spin_unlock(&amp;sal_lock);&t;&t;&bslash;&n;} while (0)
@@ -1534,6 +1514,26 @@ r_struct
 id|ia64_sal_retval
 id|isrv
 suffix:semicolon
+macro_line|#ifdef CONFIG_ITANIUM_A1_SPECIFIC
+r_extern
+id|spinlock_t
+id|ivr_read_lock
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+multiline_comment|/*&n;&t; * Avoid PCI configuration read/write overwrite -- A0 Interrupt loss workaround&n;&t; */
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|ivr_read_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+macro_line|#endif
 id|SAL_CALL
 c_func
 (paren
@@ -1546,6 +1546,17 @@ comma
 id|size
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_ITANIUM_A1_SPECIFIC
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|ivr_read_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1581,7 +1592,7 @@ r_struct
 id|ia64_sal_retval
 id|isrv
 suffix:semicolon
-macro_line|#if defined(CONFIG_ITANIUM_ASTEP_SPECIFIC) &amp;&amp; !defined(SAPIC_FIXED)
+macro_line|#ifdef CONFIG_ITANIUM_A1_SPECIFIC
 r_extern
 id|spinlock_t
 id|ivr_read_lock
@@ -1615,7 +1626,7 @@ comma
 id|value
 )paren
 suffix:semicolon
-macro_line|#if defined(CONFIG_ITANIUM_ASTEP_SPECIFIC) &amp;&amp; !defined(SAPIC_FIXED)
+macro_line|#ifdef CONFIG_ITANIUM_A1_SPECIFIC
 id|spin_unlock_irqrestore
 c_func
 (paren

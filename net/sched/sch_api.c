@@ -4969,14 +4969,8 @@ id|timer_list
 id|psched_timer
 op_assign
 (brace
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|0
-comma
-l_int|0L
-comma
+id|function
+suffix:colon
 id|psched_tick
 )brace
 suffix:semicolon

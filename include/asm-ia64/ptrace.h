@@ -268,13 +268,13 @@ r_int
 r_int
 id|ar_ccv
 suffix:semicolon
-multiline_comment|/* compare/exchange value  */
+multiline_comment|/* compare/exchange value (scratch) */
 DECL|member|ar_fpsr
 r_int
 r_int
 id|ar_fpsr
 suffix:semicolon
-multiline_comment|/* floating point status*/
+multiline_comment|/* floating point status (preserved) */
 DECL|member|b0
 r_int
 r_int
@@ -642,6 +642,50 @@ r_int
 id|val
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|ia64_sync_fph
+(paren
+r_struct
+id|task_struct
+op_star
+id|t
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_IA64_NEW_UNWIND
+multiline_comment|/* get nat bits for scratch registers such that bit N==1 iff scratch register rN is a NaT */
+r_extern
+r_int
+r_int
+id|ia64_get_scratch_nat_bits
+(paren
+r_struct
+id|pt_regs
+op_star
+id|pt
+comma
+r_int
+r_int
+id|scratch_unat
+)paren
+suffix:semicolon
+multiline_comment|/* put nat bits for scratch registers such that scratch register rN is a NaT iff bit N==1 */
+r_extern
+r_int
+r_int
+id|ia64_put_scratch_nat_bits
+(paren
+r_struct
+id|pt_regs
+op_star
+id|pt
+comma
+r_int
+r_int
+id|nat
+)paren
+suffix:semicolon
+macro_line|#else
 multiline_comment|/* get nat bits for r1-r31 such that bit N==1 iff rN is a NaT */
 r_extern
 r_int
@@ -678,6 +722,7 @@ r_int
 id|nat
 )paren
 suffix:semicolon
+macro_line|#endif
 r_extern
 r_void
 id|ia64_increment_ip

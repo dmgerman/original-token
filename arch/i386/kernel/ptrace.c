@@ -1,7 +1,6 @@
 multiline_comment|/* ptrace.c */
 multiline_comment|/* By Ross Biro 1/23/92 */
 multiline_comment|/*&n; * Pentium III FXSR, SSE support&n; *&t;Gareth Hughes &lt;gareth@valinux.com&gt;, May 2000&n; */
-macro_line|#include &lt;linux/config.h&gt; /* for CONFIG_MATH_EMULATION */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;

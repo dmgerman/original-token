@@ -284,7 +284,7 @@ id|printk
 c_func
 (paren
 id|KERN_NOTICE
-l_string|&quot;lockd: bad fhandle size %x (should be %Zu)&bslash;n&quot;
+l_string|&quot;lockd: bad fhandle size %x (should be %u)&bslash;n&quot;
 comma
 id|len
 comma

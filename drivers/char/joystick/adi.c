@@ -480,6 +480,7 @@ r_char
 id|axes8
 suffix:semicolon
 DECL|member|pad
+r_int
 r_char
 id|pad
 suffix:semicolon

@@ -177,8 +177,6 @@ op_star
 id|serio
 )paren
 (brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|serio-&gt;number
 op_assign
 id|serio_number
@@ -272,8 +270,6 @@ suffix:semicolon
 id|serio_number
 op_decrement
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 )brace
 DECL|function|serio_register_device
 r_void
@@ -292,8 +288,6 @@ op_star
 id|serio
 op_assign
 id|serio_list
-suffix:semicolon
-id|MOD_INC_USE_COUNT
 suffix:semicolon
 id|dev-&gt;next
 op_assign
@@ -429,8 +423,6 @@ op_assign
 id|serio-&gt;next
 suffix:semicolon
 )brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 )brace
 DECL|function|serio_open
 r_int
@@ -448,8 +440,6 @@ op_star
 id|dev
 )paren
 (brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -461,14 +451,10 @@ c_func
 id|serio
 )paren
 )paren
-(brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 op_minus
 l_int|1
 suffix:semicolon
-)brace
 id|serio-&gt;dev
 op_assign
 id|dev
@@ -488,8 +474,6 @@ op_star
 id|serio
 )paren
 (brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 id|serio
 op_member_access_from_pointer
 id|close

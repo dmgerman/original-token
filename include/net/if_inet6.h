@@ -142,8 +142,16 @@ r_int
 id|mca_flags
 suffix:semicolon
 DECL|member|mca_users
-id|atomic_t
+r_int
 id|mca_users
+suffix:semicolon
+DECL|member|mca_refcnt
+id|atomic_t
+id|mca_refcnt
+suffix:semicolon
+DECL|member|mca_lock
+id|spinlock_t
+id|mca_lock
 suffix:semicolon
 )brace
 suffix:semicolon

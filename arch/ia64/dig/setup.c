@@ -67,6 +67,17 @@ l_int|0x0802
 )paren
 suffix:semicolon
 multiline_comment|/* default to second partition on first drive */
+macro_line|#ifdef&t;CONFIG_IA64_SOFTSDV_HACKS
+id|ROOT_DEV
+op_assign
+id|to_kdev_t
+c_func
+(paren
+l_int|0x0302
+)paren
+suffix:semicolon
+multiline_comment|/* 2nd partion on 1st IDE */
+macro_line|#endif /* CONFIG_IA64_SOFTSDV_HACKS */
 macro_line|#ifdef CONFIG_SMP
 id|init_smp_config
 c_func

@@ -2,7 +2,6 @@ multiline_comment|/*&n; * include/asm-i386/i387.h&n; *&n; * Copyright (C) 1994 L
 macro_line|#ifndef __ASM_I386_I387_H
 DECL|macro|__ASM_I386_I387_H
 mdefine_line|#define __ASM_I386_I387_H
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/sigcontext.h&gt;

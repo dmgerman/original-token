@@ -230,6 +230,14 @@ DECL|macro|__pa
 mdefine_line|#define __pa(x)&t;&t;({ia64_va _v; _v.l = (long) (x); _v.f.reg = 0; _v.l;})
 DECL|macro|__va
 mdefine_line|#define __va(x)&t;&t;({ia64_va _v; _v.l = (long) (x); _v.f.reg = -1; _v.p;})
+DECL|macro|REGION_NUMBER
+mdefine_line|#define REGION_NUMBER(x)&t;({ia64_va _v; _v.l = (long) (x); _v.f.reg;})
+DECL|macro|REGION_OFFSET
+mdefine_line|#define REGION_OFFSET(x)&t;({ia64_va _v; _v.l = (long) (x); _v.f.off;})
+DECL|macro|REGION_SIZE
+mdefine_line|#define REGION_SIZE&t;&t;REGION_NUMBER(1)
+DECL|macro|REGION_KERNEL
+mdefine_line|#define REGION_KERNEL&t;7
 DECL|macro|BUG
 mdefine_line|#define BUG() do { printk(&quot;kernel BUG at %s:%d!&bslash;n&quot;, __FILE__, __LINE__); *(int *)0=0; } while (0)
 DECL|macro|PAGE_BUG

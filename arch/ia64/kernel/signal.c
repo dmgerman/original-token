@@ -32,6 +32,35 @@ macro_line|# define PUT_SIGSET(k,u)&t;__put_user((k)-&gt;sig[0], &amp;(u)-&gt;si
 DECL|macro|GET_SIGSET
 macro_line|# define GET_SIGSET(k,u)&t;__get_user((k)-&gt;sig[0], &amp;(u)-&gt;sig[0])
 macro_line|#endif
+DECL|struct|sigscratch
+r_struct
+id|sigscratch
+(brace
+macro_line|#ifdef CONFIG_IA64_NEW_UNWIND
+DECL|member|scratch_unat
+r_int
+r_int
+id|scratch_unat
+suffix:semicolon
+multiline_comment|/* ar.unat for the general registers saved in pt */
+DECL|member|pad
+r_int
+r_int
+id|pad
+suffix:semicolon
+macro_line|#else
+r_struct
+id|switch_stack
+id|sw
+suffix:semicolon
+macro_line|#endif
+DECL|member|pt
+r_struct
+id|pt_regs
+id|pt
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|struct|sigframe
 r_struct
 id|sigframe
@@ -72,7 +101,7 @@ id|sigset_t
 op_star
 comma
 r_struct
-id|pt_regs
+id|sigscratch
 op_star
 comma
 r_int
@@ -91,9 +120,9 @@ r_int
 id|sigsetsize
 comma
 r_struct
-id|pt_regs
+id|sigscratch
 op_star
-id|pt
+id|scr
 )paren
 (brace
 id|sigset_t
@@ -173,15 +202,37 @@ id|current-&gt;sigmask_lock
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * The return below usually returns to the signal handler.  We need to&n;&t; * pre-set the correct error code here to ensure that the right values&n;&t; * get saved in sigcontext by ia64_do_signal.&n;&t; */
-id|pt-&gt;r8
+macro_line|#ifdef CONFIG_IA32_SUPPORT
+r_if
+c_cond
+(paren
+id|IS_IA32_PROCESS
+c_func
+(paren
+op_amp
+id|scr-&gt;pt
+)paren
+)paren
+(brace
+id|scr-&gt;pt.r8
+op_assign
+op_minus
+id|EINTR
+suffix:semicolon
+)brace
+r_else
+macro_line|#endif
+(brace
+id|scr-&gt;pt.r8
 op_assign
 id|EINTR
 suffix:semicolon
-id|pt-&gt;r10
+id|scr-&gt;pt.r10
 op_assign
 op_minus
 l_int|1
 suffix:semicolon
+)brace
 r_while
 c_loop
 (paren
@@ -208,7 +259,7 @@ c_func
 op_amp
 id|oldset
 comma
-id|pt
+id|scr
 comma
 l_int|1
 )paren
@@ -291,25 +342,11 @@ op_star
 id|sc
 comma
 r_struct
-id|pt_regs
+id|sigscratch
 op_star
-id|pt
+id|scr
 )paren
 (brace
-r_struct
-id|switch_stack
-op_star
-id|sw
-op_assign
-(paren
-r_struct
-id|switch_stack
-op_star
-)paren
-id|pt
-op_minus
-l_int|1
-suffix:semicolon
 r_int
 r_int
 id|ip
@@ -388,7 +425,7 @@ op_or_assign
 id|__get_user
 c_func
 (paren
-id|pt-&gt;ar_rsc
+id|scr-&gt;pt.ar_rsc
 comma
 op_amp
 id|sc-&gt;sc_ar_rsc
@@ -399,7 +436,7 @@ op_or_assign
 id|__get_user
 c_func
 (paren
-id|pt-&gt;ar_ccv
+id|scr-&gt;pt.ar_ccv
 comma
 op_amp
 id|sc-&gt;sc_ar_ccv
@@ -410,7 +447,7 @@ op_or_assign
 id|__get_user
 c_func
 (paren
-id|pt-&gt;ar_unat
+id|scr-&gt;pt.ar_unat
 comma
 op_amp
 id|sc-&gt;sc_ar_unat
@@ -421,7 +458,7 @@ op_or_assign
 id|__get_user
 c_func
 (paren
-id|pt-&gt;ar_fpsr
+id|scr-&gt;pt.ar_fpsr
 comma
 op_amp
 id|sc-&gt;sc_ar_fpsr
@@ -432,7 +469,7 @@ op_or_assign
 id|__get_user
 c_func
 (paren
-id|pt-&gt;ar_pfs
+id|scr-&gt;pt.ar_pfs
 comma
 op_amp
 id|sc-&gt;sc_ar_pfs
@@ -443,7 +480,7 @@ op_or_assign
 id|__get_user
 c_func
 (paren
-id|pt-&gt;pr
+id|scr-&gt;pt.pr
 comma
 op_amp
 id|sc-&gt;sc_pr
@@ -455,7 +492,7 @@ op_or_assign
 id|__get_user
 c_func
 (paren
-id|pt-&gt;b0
+id|scr-&gt;pt.b0
 comma
 op_amp
 id|sc-&gt;sc_br
@@ -470,7 +507,7 @@ op_or_assign
 id|__get_user
 c_func
 (paren
-id|pt-&gt;b6
+id|scr-&gt;pt.b6
 comma
 op_amp
 id|sc-&gt;sc_br
@@ -485,7 +522,7 @@ op_or_assign
 id|__get_user
 c_func
 (paren
-id|pt-&gt;b7
+id|scr-&gt;pt.b7
 comma
 op_amp
 id|sc-&gt;sc_br
@@ -501,7 +538,7 @@ id|__copy_from_user
 c_func
 (paren
 op_amp
-id|pt-&gt;r1
+id|scr-&gt;pt.r1
 comma
 op_amp
 id|sc-&gt;sc_gr
@@ -521,7 +558,7 @@ id|__copy_from_user
 c_func
 (paren
 op_amp
-id|pt-&gt;r8
+id|scr-&gt;pt.r8
 comma
 op_amp
 id|sc-&gt;sc_gr
@@ -541,7 +578,7 @@ id|__copy_from_user
 c_func
 (paren
 op_amp
-id|pt-&gt;r12
+id|scr-&gt;pt.r12
 comma
 op_amp
 id|sc-&gt;sc_gr
@@ -561,7 +598,7 @@ id|__copy_from_user
 c_func
 (paren
 op_amp
-id|pt-&gt;r16
+id|scr-&gt;pt.r16
 comma
 op_amp
 id|sc-&gt;sc_gr
@@ -575,7 +612,7 @@ l_int|8
 )paren
 suffix:semicolon
 multiline_comment|/* r16-r31 */
-id|pt-&gt;cr_ifs
+id|scr-&gt;pt.cr_ifs
 op_assign
 id|cfm
 op_or
@@ -586,7 +623,7 @@ l_int|63
 )paren
 suffix:semicolon
 multiline_comment|/* establish new instruction pointer: */
-id|pt-&gt;cr_iip
+id|scr-&gt;pt.cr_iip
 op_assign
 id|ip
 op_amp
@@ -596,7 +633,8 @@ suffix:semicolon
 id|ia64_psr
 c_func
 (paren
-id|pt
+op_amp
+id|scr-&gt;pt
 )paren
 op_member_access_from_pointer
 id|ri
@@ -605,10 +643,10 @@ id|ip
 op_amp
 l_int|0x3
 suffix:semicolon
-id|pt-&gt;cr_ipsr
+id|scr-&gt;pt.cr_ipsr
 op_assign
 (paren
-id|pt-&gt;cr_ipsr
+id|scr-&gt;pt.cr_ipsr
 op_amp
 op_complement
 id|IA64_PSR_UM
@@ -620,16 +658,33 @@ op_amp
 id|IA64_PSR_UM
 )paren
 suffix:semicolon
-id|ia64_put_nat_bits
+macro_line|#ifdef CONFIG_IA64_NEW_UNWIND
+id|scr-&gt;scratch_unat
+op_assign
+id|ia64_put_scratch_nat_bits
+c_func
 (paren
-id|pt
+op_amp
+id|scr-&gt;pt
 comma
-id|sw
+id|nat
+)paren
+suffix:semicolon
+macro_line|#else
+id|ia64_put_nat_bits
+c_func
+(paren
+op_amp
+id|scr-&gt;pt
+comma
+op_amp
+id|scr-&gt;sw
 comma
 id|nat
 )paren
 suffix:semicolon
 multiline_comment|/* restore the original scratch NaT bits */
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -684,10 +739,9 @@ r_return
 id|err
 suffix:semicolon
 )brace
-DECL|function|copy_siginfo_to_user
 r_int
+DECL|function|copy_siginfo_to_user
 id|copy_siginfo_to_user
-c_func
 (paren
 id|siginfo_t
 op_star
@@ -744,7 +798,7 @@ r_else
 r_int
 id|err
 suffix:semicolon
-multiline_comment|/* If you change siginfo_t structure, please be sure&n;&t;&t;   this code is fixed accordingly.&n;&t;&t;   It should never copy any pad contained in the structure&n;&t;&t;   to avoid security leaks, but must copy the generic&n;&t;&t;   3 ints plus the relevant union member.  */
+multiline_comment|/*&n;&t;&t; * If you change siginfo_t structure, please be sure&n;&t;&t; * this code is fixed accordingly.  It should never&n;&t;&t; * copy any pad contained in the structure to avoid&n;&t;&t; * security leaks, but must copy the generic 3 ints&n;&t;&t; * plus the relevant union member.&n;&t;&t; */
 id|err
 op_assign
 id|__put_user
@@ -794,6 +848,17 @@ id|__SI_FAULT
 op_rshift
 l_int|16
 suffix:colon
+id|err
+op_or_assign
+id|__put_user
+c_func
+(paren
+id|from-&gt;si_isr
+comma
+op_amp
+id|to-&gt;si_isr
+)paren
+suffix:semicolon
 r_case
 id|__SI_POLL
 op_rshift
@@ -894,15 +959,14 @@ id|err
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * When we get here, ((struct switch_stack *) pt - 1) is a&n; * switch_stack frame that has no defined value.  Upon return, we&n; * expect sw-&gt;caller_unat to contain the new unat value.  The reason&n; * we use a full switch_stack frame is so everything is symmetric&n; * with ia64_do_signal().&n; */
 r_int
 DECL|function|ia64_rt_sigreturn
 id|ia64_rt_sigreturn
 (paren
 r_struct
-id|pt_regs
+id|sigscratch
 op_star
-id|pt
+id|scr
 )paren
 (brace
 r_extern
@@ -936,7 +1000,7 @@ id|sigframe
 op_star
 )paren
 (paren
-id|pt-&gt;r12
+id|scr-&gt;pt.r12
 op_plus
 l_int|16
 )paren
@@ -952,24 +1016,15 @@ r_int
 )paren
 op_amp
 id|ia64_leave_kernel
-op_or
-l_int|1
 suffix:semicolon
 r_if
 c_cond
-(paren
 (paren
 id|current-&gt;flags
 op_amp
 id|PF_TRACESYS
 )paren
-op_logical_and
-(paren
-id|sc-&gt;sc_flags
-op_amp
-id|IA64_SC_FLAG_IN_SYSCALL
-)paren
-)paren
+multiline_comment|/*&n;&t;&t; * strace expects to be notified after sigreturn&n;&t;&t; * returns even though the context to which we return&n;&t;&t; * may not be in the middle of a syscall.  Thus, the&n;&t;&t; * return-value that strace displays for sigreturn is&n;&t;&t; * meaningless.&n;&t;&t; */
 id|retval
 op_assign
 (paren
@@ -1057,7 +1112,7 @@ c_func
 (paren
 id|sc
 comma
-id|pt
+id|scr
 )paren
 )paren
 r_goto
@@ -1073,9 +1128,9 @@ id|current-&gt;comm
 comma
 id|current-&gt;pid
 comma
-id|pt-&gt;r12
+id|scr-&gt;pt.r12
 comma
-id|pt-&gt;cr_iip
+id|scr-&gt;pt.cr_iip
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1088,7 +1143,7 @@ id|sc-&gt;sc_stack
 comma
 l_int|0
 comma
-id|pt-&gt;r12
+id|scr-&gt;pt.r12
 )paren
 suffix:semicolon
 r_return
@@ -1151,25 +1206,11 @@ op_star
 id|mask
 comma
 r_struct
-id|pt_regs
+id|sigscratch
 op_star
-id|pt
+id|scr
 )paren
 (brace
-r_struct
-id|switch_stack
-op_star
-id|sw
-op_assign
-(paren
-r_struct
-id|switch_stack
-op_star
-)paren
-id|pt
-op_minus
-l_int|1
-suffix:semicolon
 r_struct
 id|task_struct
 op_star
@@ -1195,7 +1236,7 @@ id|err
 suffix:semicolon
 id|ifs
 op_assign
-id|pt-&gt;cr_ifs
+id|scr-&gt;pt.cr_ifs
 suffix:semicolon
 r_if
 c_cond
@@ -1288,17 +1329,33 @@ l_int|16
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Note: sw-&gt;ar_unat is UNDEFINED unless the process is being&n;&t; * PTRACED.  However, this is OK because the NaT bits of the&n;&t; * preserved registers (r4-r7) are never being looked at by&n;&t; * the signal handler (register r4-r7 are used instead).&n;&t; */
+multiline_comment|/*&n;&t; * Note: sw-&gt;ar_unat is UNDEFINED unless the process is being&n;&t; * PTRACED.  However, this is OK because the NaT bits of the&n;&t; * preserved registers (r4-r7) are never being looked at by&n;&t; * the signal handler (registers r4-r7 are used instead).&n;&t; */
+macro_line|#ifdef CONFIG_IA64_NEW_UNWIND
+id|nat
+op_assign
+id|ia64_get_scratch_nat_bits
+c_func
+(paren
+op_amp
+id|scr-&gt;pt
+comma
+id|scr-&gt;scratch_unat
+)paren
+suffix:semicolon
+macro_line|#else
 id|nat
 op_assign
 id|ia64_get_nat_bits
 c_func
 (paren
-id|pt
+op_amp
+id|scr-&gt;pt
 comma
-id|sw
+op_amp
+id|scr-&gt;sw
 )paren
 suffix:semicolon
+macro_line|#endif
 id|err
 op_assign
 id|__put_user
@@ -1337,7 +1394,7 @@ op_or_assign
 id|__put_user
 c_func
 (paren
-id|pt-&gt;cr_ipsr
+id|scr-&gt;pt.cr_ipsr
 op_amp
 id|IA64_PSR_UM
 comma
@@ -1350,7 +1407,7 @@ op_or_assign
 id|__put_user
 c_func
 (paren
-id|pt-&gt;ar_rsc
+id|scr-&gt;pt.ar_rsc
 comma
 op_amp
 id|sc-&gt;sc_ar_rsc
@@ -1361,7 +1418,7 @@ op_or_assign
 id|__put_user
 c_func
 (paren
-id|pt-&gt;ar_ccv
+id|scr-&gt;pt.ar_ccv
 comma
 op_amp
 id|sc-&gt;sc_ar_ccv
@@ -1372,7 +1429,7 @@ op_or_assign
 id|__put_user
 c_func
 (paren
-id|pt-&gt;ar_unat
+id|scr-&gt;pt.ar_unat
 comma
 op_amp
 id|sc-&gt;sc_ar_unat
@@ -1384,7 +1441,7 @@ op_or_assign
 id|__put_user
 c_func
 (paren
-id|pt-&gt;ar_fpsr
+id|scr-&gt;pt.ar_fpsr
 comma
 op_amp
 id|sc-&gt;sc_ar_fpsr
@@ -1396,7 +1453,7 @@ op_or_assign
 id|__put_user
 c_func
 (paren
-id|pt-&gt;ar_pfs
+id|scr-&gt;pt.ar_pfs
 comma
 op_amp
 id|sc-&gt;sc_ar_pfs
@@ -1407,7 +1464,7 @@ op_or_assign
 id|__put_user
 c_func
 (paren
-id|pt-&gt;pr
+id|scr-&gt;pt.pr
 comma
 op_amp
 id|sc-&gt;sc_pr
@@ -1419,7 +1476,7 @@ op_or_assign
 id|__put_user
 c_func
 (paren
-id|pt-&gt;b0
+id|scr-&gt;pt.b0
 comma
 op_amp
 id|sc-&gt;sc_br
@@ -1434,7 +1491,7 @@ op_or_assign
 id|__put_user
 c_func
 (paren
-id|pt-&gt;b6
+id|scr-&gt;pt.b6
 comma
 op_amp
 id|sc-&gt;sc_br
@@ -1449,7 +1506,7 @@ op_or_assign
 id|__put_user
 c_func
 (paren
-id|pt-&gt;b7
+id|scr-&gt;pt.b7
 comma
 op_amp
 id|sc-&gt;sc_br
@@ -1471,7 +1528,7 @@ l_int|1
 )braket
 comma
 op_amp
-id|pt-&gt;r1
+id|scr-&gt;pt.r1
 comma
 l_int|3
 op_star
@@ -1491,7 +1548,7 @@ l_int|8
 )braket
 comma
 op_amp
-id|pt-&gt;r8
+id|scr-&gt;pt.r8
 comma
 l_int|4
 op_star
@@ -1511,7 +1568,7 @@ l_int|12
 )braket
 comma
 op_amp
-id|pt-&gt;r12
+id|scr-&gt;pt.r12
 comma
 l_int|4
 op_star
@@ -1531,7 +1588,7 @@ l_int|16
 )braket
 comma
 op_amp
-id|pt-&gt;r16
+id|scr-&gt;pt.r16
 comma
 l_int|16
 op_star
@@ -1544,12 +1601,13 @@ op_or_assign
 id|__put_user
 c_func
 (paren
-id|pt-&gt;cr_iip
+id|scr-&gt;pt.cr_iip
 op_plus
 id|ia64_psr
 c_func
 (paren
-id|pt
+op_amp
+id|scr-&gt;pt
 )paren
 op_member_access_from_pointer
 id|ri
@@ -1558,21 +1616,6 @@ op_amp
 id|sc-&gt;sc_ip
 )paren
 suffix:semicolon
-id|err
-op_or_assign
-id|__put_user
-c_func
-(paren
-id|pt-&gt;r12
-comma
-op_amp
-id|sc-&gt;sc_gr
-(braket
-l_int|12
-)braket
-)paren
-suffix:semicolon
-multiline_comment|/* r12 */
 r_return
 id|err
 suffix:semicolon
@@ -1599,25 +1642,11 @@ op_star
 id|set
 comma
 r_struct
-id|pt_regs
+id|sigscratch
 op_star
-id|pt
+id|scr
 )paren
 (brace
-r_struct
-id|switch_stack
-op_star
-id|sw
-op_assign
-(paren
-r_struct
-id|switch_stack
-op_star
-)paren
-id|pt
-op_minus
-l_int|1
-suffix:semicolon
 r_extern
 r_char
 id|ia64_sigtramp
@@ -1654,7 +1683,7 @@ op_assign
 r_void
 op_star
 )paren
-id|pt-&gt;r12
+id|scr-&gt;pt.r12
 suffix:semicolon
 id|tramp_addr
 op_assign
@@ -1825,7 +1854,7 @@ c_func
 id|sas_ss_flags
 c_func
 (paren
-id|pt-&gt;r12
+id|scr-&gt;pt.r12
 )paren
 comma
 op_amp
@@ -1842,7 +1871,7 @@ id|frame-&gt;sc
 comma
 id|set
 comma
-id|pt
+id|scr
 )paren
 suffix:semicolon
 r_if
@@ -1853,7 +1882,7 @@ id|err
 r_goto
 id|give_sigsegv
 suffix:semicolon
-id|pt-&gt;r12
+id|scr-&gt;pt.r12
 op_assign
 (paren
 r_int
@@ -1864,12 +1893,12 @@ op_minus
 l_int|16
 suffix:semicolon
 multiline_comment|/* new stack pointer */
-id|pt-&gt;r2
+id|scr-&gt;pt.r2
 op_assign
 id|sig
 suffix:semicolon
 multiline_comment|/* signal number */
-id|pt-&gt;r3
+id|scr-&gt;pt.r3
 op_assign
 (paren
 r_int
@@ -1877,24 +1906,25 @@ r_int
 )paren
 id|ka-&gt;sa.sa_handler
 suffix:semicolon
-multiline_comment|/* addr. of handler&squot;s proc. descriptor */
-id|pt-&gt;r15
+multiline_comment|/* addr. of handler&squot;s proc desc */
+id|scr-&gt;pt.r15
 op_assign
 id|new_rbs
 suffix:semicolon
-id|pt-&gt;ar_fpsr
+id|scr-&gt;pt.ar_fpsr
 op_assign
 id|FPSR_DEFAULT
 suffix:semicolon
 multiline_comment|/* reset fpsr for signal handler */
-id|pt-&gt;cr_iip
+id|scr-&gt;pt.cr_iip
 op_assign
 id|tramp_addr
 suffix:semicolon
 id|ia64_psr
 c_func
 (paren
-id|pt
+op_amp
+id|scr-&gt;pt
 )paren
 op_member_access_from_pointer
 id|ri
@@ -1902,12 +1932,21 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* start executing in first slot */
-multiline_comment|/*&n;&t; * Note: this affects only the NaT bits of the scratch regs&n;&t; * (the ones saved in pt_regs, which is exactly what we want.&n;&t; * The NaT bits for the preserved regs (r4-r7) are in&n;&t; * sw-&gt;ar_unat iff this process is being PTRACED.&n;&t; */
-id|sw-&gt;caller_unat
+macro_line|#ifdef CONFIG_IA64_NEW_UNWIND
+multiline_comment|/*&n;&t; * Note: this affects only the NaT bits of the scratch regs&n;&t; * (the ones saved in pt_regs), which is exactly what we want.&n;&t; */
+id|scr-&gt;scratch_unat
 op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* ensure NaT bits of at least r2, r3, r12, and r15 are clear */
+macro_line|#else
+multiline_comment|/*&n;&t; * Note: this affects only the NaT bits of the scratch regs&n;&t; * (the ones saved in pt_regs), which is exactly what we want.&n;&t; * The NaT bits for the preserved regs (r4-r7) are in&n;&t; * sw-&gt;ar_unat iff this process is being PTRACED.&n;&t; */
+id|scr-&gt;sw.caller_unat
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* ensure NaT bits of at least r2, r3, r12, and r15 are clear */
+macro_line|#endif
 macro_line|#if DEBUG_SIG
 id|printk
 c_func
@@ -1920,11 +1959,11 @@ id|current-&gt;pid
 comma
 id|sig
 comma
-id|pt-&gt;r12
+id|scr-&gt;pt.r12
 comma
-id|pt-&gt;cr_iip
+id|scr-&gt;pt.cr_iip
 comma
-id|pt-&gt;r3
+id|scr-&gt;pt.r3
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2006,9 +2045,9 @@ op_star
 id|oldset
 comma
 r_struct
-id|pt_regs
+id|sigscratch
 op_star
-id|pt
+id|scr
 )paren
 (brace
 macro_line|#ifdef CONFIG_IA32_SUPPORT
@@ -2018,7 +2057,8 @@ c_cond
 id|IS_IA32_PROCESS
 c_func
 (paren
-id|pt
+op_amp
+id|scr-&gt;pt
 )paren
 )paren
 (brace
@@ -2038,7 +2078,8 @@ id|info
 comma
 id|oldset
 comma
-id|pt
+op_amp
+id|scr-&gt;pt
 )paren
 )paren
 r_return
@@ -2063,7 +2104,7 @@ id|info
 comma
 id|oldset
 comma
-id|pt
+id|scr
 )paren
 )paren
 r_return
@@ -2138,7 +2179,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * When we get here, `pt&squot; points to struct pt_regs and ((struct&n; * switch_stack *) pt - 1) points to a switch stack structure.&n; * HOWEVER, in the normal case, the ONLY value valid in the&n; * switch_stack is the caller_unat field.  The entire switch_stack is&n; * valid ONLY if current-&gt;flags has PF_PTRACED set.&n; *&n; * Note that `init&squot; is a special process: it doesn&squot;t get signals it&n; * doesn&squot;t want to handle.  Thus you cannot kill init even with a&n; * SIGKILL even by mistake.&n; *&n; * Note that we go through the signals twice: once to check the&n; * signals that the kernel can handle, and then we build all the&n; * user-level signal handling stack-frames in one go after that.&n; */
+multiline_comment|/*&n; * Note that `init&squot; is a special process: it doesn&squot;t get signals it&n; * doesn&squot;t want to handle.  Thus you cannot kill init even with a&n; * SIGKILL even by mistake.&n; *&n; * Note that we go through the signals twice: once to check the&n; * signals that the kernel can handle, and then we build all the&n; * user-level signal handling stack-frames in one go after that.&n; */
 r_int
 DECL|function|ia64_do_signal
 id|ia64_do_signal
@@ -2148,9 +2189,9 @@ op_star
 id|oldset
 comma
 r_struct
-id|pt_regs
+id|sigscratch
 op_star
-id|pt
+id|scr
 comma
 r_int
 id|in_syscall
@@ -2169,6 +2210,11 @@ id|restart
 op_assign
 id|in_syscall
 suffix:semicolon
+r_int
+id|errno
+op_assign
+id|scr-&gt;pt.r8
+suffix:semicolon
 multiline_comment|/*&n;&t; * In the ia64_leave_kernel code path, we want the common case&n;&t; * to go fast, which is why we may in certain cases get here&n;&t; * from kernel mode. Just return without doing anything if so.&n;&t; */
 r_if
 c_cond
@@ -2177,7 +2223,8 @@ op_logical_neg
 id|user_mode
 c_func
 (paren
-id|pt
+op_amp
+id|scr-&gt;pt
 )paren
 )paren
 r_return
@@ -2194,10 +2241,49 @@ op_assign
 op_amp
 id|current-&gt;blocked
 suffix:semicolon
+macro_line|#ifdef CONFIG_IA32_SUPPORT
 r_if
 c_cond
 (paren
-id|pt-&gt;r10
+id|IS_IA32_PROCESS
+c_func
+(paren
+op_amp
+id|scr-&gt;pt
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|in_syscall
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|errno
+op_ge
+l_int|0
+)paren
+id|restart
+op_assign
+l_int|0
+suffix:semicolon
+r_else
+id|errno
+op_assign
+op_minus
+id|errno
+suffix:semicolon
+)brace
+)brace
+r_else
+macro_line|#endif
+r_if
+c_cond
+(paren
+id|scr-&gt;pt.r10
 op_ne
 op_minus
 l_int|1
@@ -2582,7 +2668,8 @@ c_func
 (paren
 id|signr
 comma
-id|pt
+op_amp
+id|scr-&gt;pt
 )paren
 )paren
 id|exit_code
@@ -2634,7 +2721,7 @@ id|restart
 r_switch
 c_cond
 (paren
-id|pt-&gt;r8
+id|errno
 )paren
 (brace
 r_case
@@ -2655,21 +2742,63 @@ l_int|0
 r_case
 id|ERESTARTNOHAND
 suffix:colon
-id|pt-&gt;r8
+macro_line|#ifdef CONFIG_IA32_SUPPORT
+r_if
+c_cond
+(paren
+id|IS_IA32_PROCESS
+c_func
+(paren
+op_amp
+id|scr-&gt;pt
+)paren
+)paren
+id|scr-&gt;pt.r8
+op_assign
+op_minus
+id|EINTR
+suffix:semicolon
+r_else
+macro_line|#endif
+id|scr-&gt;pt.r8
 op_assign
 id|EINTR
 suffix:semicolon
-multiline_comment|/* note: pt-&gt;r10 is already -1 */
+multiline_comment|/* note: scr-&gt;pt.r10 is already -1 */
 r_break
 suffix:semicolon
 )brace
 r_case
 id|ERESTARTNOINTR
 suffix:colon
+macro_line|#ifdef CONFIG_IA32_SUPPORT
+r_if
+c_cond
+(paren
+id|IS_IA32_PROCESS
+c_func
+(paren
+op_amp
+id|scr-&gt;pt
+)paren
+)paren
+(brace
+id|scr-&gt;pt.r8
+op_assign
+id|scr-&gt;pt.r1
+suffix:semicolon
+id|scr-&gt;pt.cr_iip
+op_sub_assign
+l_int|2
+suffix:semicolon
+)brace
+r_else
+macro_line|#endif
 id|ia64_decrement_ip
 c_func
 (paren
-id|pt
+op_amp
+id|scr-&gt;pt
 )paren
 suffix:semicolon
 )brace
@@ -2690,7 +2819,7 @@ id|info
 comma
 id|oldset
 comma
-id|pt
+id|scr
 )paren
 )paren
 r_return
@@ -2708,24 +2837,48 @@ multiline_comment|/* Restart the system call - no handlers present */
 r_if
 c_cond
 (paren
-id|pt-&gt;r8
+id|errno
 op_eq
 id|ERESTARTNOHAND
 op_logical_or
-id|pt-&gt;r8
+id|errno
 op_eq
 id|ERESTARTSYS
 op_logical_or
-id|pt-&gt;r8
+id|errno
 op_eq
 id|ERESTARTNOINTR
 )paren
 (brace
+macro_line|#ifdef CONFIG_IA32_SUPPORT
+r_if
+c_cond
+(paren
+id|IS_IA32_PROCESS
+c_func
+(paren
+op_amp
+id|scr-&gt;pt
+)paren
+)paren
+(brace
+id|scr-&gt;pt.r8
+op_assign
+id|scr-&gt;pt.r1
+suffix:semicolon
+id|scr-&gt;pt.cr_iip
+op_sub_assign
+l_int|2
+suffix:semicolon
+)brace
+r_else
+macro_line|#endif
 multiline_comment|/*&n;&t;&t;&t; * Note: the syscall number is in r15 which is&n;&t;&t;&t; * saved in pt_regs so all we need to do here&n;&t;&t;&t; * is adjust ip so that the &quot;break&quot;&n;&t;&t;&t; * instruction gets re-executed.&n;&t;&t;&t; */
 id|ia64_decrement_ip
 c_func
 (paren
-id|pt
+op_amp
+id|scr-&gt;pt
 )paren
 suffix:semicolon
 )brace

@@ -698,7 +698,7 @@ id|EINVAL
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * P3: OS SIMM Cannot be read in other size but a 32bits word.&n; */
+multiline_comment|/*&n; * OS SIMM Cannot be read in other size but a 32bits word.&n; */
 DECL|function|jsf_read
 r_static
 id|ssize_t
@@ -2374,16 +2374,9 @@ op_eq
 l_int|0
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;jsfd_init: no flash&bslash;n&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* P3 */
 r_return
 op_minus
-id|EIO
+id|ENXIO
 suffix:semicolon
 )brace
 r_if
@@ -2414,15 +2407,6 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
-id|printk
-c_func
-(paren
-l_string|&quot;jsfd0: at major %d&bslash;n&quot;
-comma
-id|MAJOR_NR
-)paren
-suffix:semicolon
-multiline_comment|/* P3 */
 id|blksize_size
 (braket
 id|JSFD_MAJOR

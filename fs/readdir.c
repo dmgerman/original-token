@@ -363,6 +363,7 @@ DECL|macro|NAME_OFFSET
 mdefine_line|#define NAME_OFFSET(de) ((int) ((de)-&gt;d_name - (char *) (de)))
 DECL|macro|ROUND_UP
 mdefine_line|#define ROUND_UP(x) (((x)+sizeof(long)-1) &amp; ~(sizeof(long)-1))
+macro_line|#ifndef __ia64__
 DECL|struct|old_linux_dirent
 r_struct
 id|old_linux_dirent
@@ -623,6 +624,7 @@ r_return
 id|error
 suffix:semicolon
 )brace
+macro_line|#endif /* !__ia64__ */
 multiline_comment|/*&n; * New, all-improved, singing, dancing, iBCS2-compliant getdents()&n; * interface. &n; */
 DECL|struct|linux_dirent
 r_struct

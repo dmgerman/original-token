@@ -1632,8 +1632,6 @@ id|dir
 comma
 l_string|&quot;disc&quot;
 comma
-l_int|4
-comma
 id|devfs_flags
 comma
 id|dev-&gt;major
@@ -1645,10 +1643,6 @@ op_or
 id|S_IRUSR
 op_or
 id|S_IWUSR
-comma
-l_int|0
-comma
-l_int|0
 comma
 id|dev-&gt;fops
 comma

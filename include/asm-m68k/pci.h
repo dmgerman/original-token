@@ -74,5 +74,18 @@ id|dev
 (brace
 multiline_comment|/* No special bus mastering setup handling */
 )brace
+DECL|function|pcibios_penalize_isa_irq
+r_extern
+r_inline
+r_void
+id|pcibios_penalize_isa_irq
+c_func
+(paren
+r_int
+id|irq
+)paren
+(brace
+multiline_comment|/* We don&squot;t do dynamic PCI IRQ allocation */
+)brace
 macro_line|#endif /* _ASM_M68K_PCI_H */
 eof

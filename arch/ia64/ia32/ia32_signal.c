@@ -107,7 +107,6 @@ r_static
 r_int
 DECL|function|copy_siginfo_to_user32
 id|copy_siginfo_to_user32
-c_func
 (paren
 id|siginfo_t32
 op_star
@@ -361,6 +360,10 @@ id|err
 op_assign
 l_int|0
 suffix:semicolon
+r_int
+r_int
+id|flag
+suffix:semicolon
 id|err
 op_or_assign
 id|__put_user
@@ -586,19 +589,33 @@ op_amp
 id|sc-&gt;cs
 )paren
 suffix:semicolon
-macro_line|#if 0
+multiline_comment|/*&n;&t;*  `eflags&squot; is in an ar register for this context&n;&t;*/
+id|asm
+r_volatile
+(paren
+l_string|&quot;mov %0=ar.eflag ;;&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|flag
+)paren
+)paren
+suffix:semicolon
 id|err
 op_or_assign
 id|__put_user
 c_func
 (paren
-id|regs-&gt;eflags
+(paren
+r_int
+r_int
+)paren
+id|flag
 comma
 op_amp
 id|sc-&gt;eflags
 )paren
 suffix:semicolon
-macro_line|#endif
 id|err
 op_or_assign
 id|__put_user
@@ -853,12 +870,16 @@ c_func
 id|ss
 )paren
 suffix:semicolon
-macro_line|#if 0
 (brace
 r_int
 r_int
 id|tmpflags
 suffix:semicolon
+r_int
+r_int
+id|flag
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; *  IA32 `eflags&squot; is not part of `pt_regs&squot;, it&squot;s&n;&t;&t; *  in an ar register which is part of the thread&n;&t;&t; *  context.  Fortunately, we are executing in the&n;&t;&t; *  IA32 process&squot;s context.&n;&t;&t; */
 id|err
 op_or_assign
 id|__get_user
@@ -870,29 +891,49 @@ op_amp
 id|sc-&gt;eflags
 )paren
 suffix:semicolon
-multiline_comment|/* XXX: Change this to ar.eflags */
-id|regs-&gt;eflags
-op_assign
+id|asm
+r_volatile
 (paren
-id|regs-&gt;eflags
-op_amp
+l_string|&quot;mov %0=ar.eflag ;;&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|flag
+)paren
+)paren
+suffix:semicolon
+id|flag
+op_and_assign
 op_complement
 l_int|0x40DD5
-)paren
-op_or
+suffix:semicolon
+id|flag
+op_or_assign
 (paren
 id|tmpflags
 op_amp
 l_int|0x40DD5
 )paren
 suffix:semicolon
-id|regs-&gt;orig_eax
+id|asm
+r_volatile
+(paren
+l_string|&quot;mov ar.eflag=%0 ;;&quot;
+op_scope_resolution
+l_string|&quot;r&quot;
+(paren
+id|flag
+)paren
+)paren
+suffix:semicolon
+id|regs-&gt;r1
 op_assign
 op_minus
 l_int|1
 suffix:semicolon
-multiline_comment|/* disable syscall checks */
+multiline_comment|/* disable syscall checks, r1 is orig_eax */
 )brace
+macro_line|#if 0
 (brace
 r_struct
 id|_fpstate
@@ -1212,6 +1253,9 @@ op_or_assign
 id|__put_user
 c_func
 (paren
+(paren
+r_int
+)paren
 id|frame-&gt;retcode
 comma
 op_amp
@@ -1513,6 +1557,9 @@ op_or_assign
 id|__put_user
 c_func
 (paren
+(paren
+r_int
+)paren
 op_amp
 id|frame-&gt;info
 comma
@@ -1525,6 +1572,9 @@ op_or_assign
 id|__put_user
 c_func
 (paren
+(paren
+r_int
+)paren
 op_amp
 id|frame-&gt;uc
 comma
@@ -1644,6 +1694,9 @@ op_or_assign
 id|__put_user
 c_func
 (paren
+(paren
+r_int
+)paren
 id|frame-&gt;retcode
 comma
 op_amp

@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/threads.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;asm/acpi-ext.h&gt;
+macro_line|#include &lt;asm/ia32.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/machvec.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
@@ -17,6 +18,9 @@ macro_line|#include &lt;asm/sal.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/efi.h&gt;
 macro_line|#include &lt;asm/mca.h&gt;
+macro_line|#ifdef CONFIG_BLK_DEV_RAM
+macro_line|# include &lt;linux/blk.h&gt;
+macro_line|#endif
 r_extern
 r_char
 id|_end
@@ -283,6 +287,11 @@ id|bootmap_start
 comma
 id|bootmap_size
 suffix:semicolon
+id|unw_init
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * The secondary bootstrap loader passes us the boot&n;&t; * parameters at the beginning of the ZERO_PAGE, so let&squot;s&n;&t; * stash away those values before ZERO_PAGE gets cleared out.&n;&t; */
 id|memcpy
 c_func
@@ -334,6 +343,21 @@ id|_end
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ia64_boot_param.initrd_size
+)paren
+id|bootmap_start
+op_assign
+id|PAGE_ALIGN
+c_func
+(paren
+id|bootmap_start
+op_plus
+id|ia64_boot_param.initrd_size
+)paren
+suffix:semicolon
 id|bootmap_size
 op_assign
 id|init_bootmem
@@ -362,6 +386,51 @@ comma
 id|bootmap_size
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
+id|initrd_start
+op_assign
+id|ia64_boot_param.initrd_start
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|initrd_start
+)paren
+(brace
+id|initrd_end
+op_assign
+id|initrd_start
+op_plus
+id|ia64_boot_param.initrd_size
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Initial ramdisk at: 0x%p (%lu bytes)&bslash;n&quot;
+comma
+(paren
+r_void
+op_star
+)paren
+id|initrd_start
+comma
+id|ia64_boot_param.initrd_size
+)paren
+suffix:semicolon
+id|reserve_bootmem
+c_func
+(paren
+id|virt_to_phys
+c_func
+(paren
+id|initrd_start
+)paren
+comma
+id|ia64_boot_param.initrd_size
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 macro_line|#if 0
 multiline_comment|/* XXX fix me */
 id|init_mm.start_code
@@ -502,23 +571,13 @@ id|current-&gt;processor
 op_assign
 id|bootstrap_processor
 suffix:semicolon
-macro_line|#else
+macro_line|#endif
 id|cpu_init
 c_func
 (paren
 )paren
 suffix:semicolon
-id|identify_cpu
-c_func
-(paren
-op_amp
-id|cpu_data
-(braket
-l_int|0
-)braket
-)paren
-suffix:semicolon
-macro_line|#endif
+multiline_comment|/* initialize the bootstrap CPU */
 r_if
 c_cond
 (paren
@@ -946,6 +1005,26 @@ suffix:semicolon
 )brace
 id|cpuid
 suffix:semicolon
+id|pal_vm_info_1_u_t
+id|vm1
+suffix:semicolon
+id|pal_vm_info_2_u_t
+id|vm2
+suffix:semicolon
+id|pal_status_t
+id|status
+suffix:semicolon
+r_int
+r_int
+id|impl_va_msb
+op_assign
+l_int|50
+comma
+id|phys_addr_size
+op_assign
+l_int|44
+suffix:semicolon
+multiline_comment|/* Itanium defaults */
 r_int
 id|i
 suffix:semicolon
@@ -963,7 +1042,6 @@ suffix:semicolon
 op_increment
 id|i
 )paren
-(brace
 id|cpuid.bits
 (braket
 id|i
@@ -975,21 +1053,6 @@ c_func
 id|i
 )paren
 suffix:semicolon
-)brace
-macro_line|#ifdef CONFIG_SMP
-multiline_comment|/*&n;&t; * XXX Instead of copying the ITC info from the bootstrap&n;&t; * processor, ia64_init_itm() should be done per CPU.  That&n;&t; * should get you the right info.  --davidm 1/24/00&n;&t; */
-r_if
-c_cond
-(paren
-id|c
-op_ne
-op_amp
-id|cpu_data
-(braket
-id|bootstrap_processor
-)braket
-)paren
-(brace
 id|memset
 c_func
 (paren
@@ -1004,59 +1067,6 @@ id|cpuinfo_ia64
 )paren
 )paren
 suffix:semicolon
-id|c-&gt;proc_freq
-op_assign
-id|cpu_data
-(braket
-id|bootstrap_processor
-)braket
-dot
-id|proc_freq
-suffix:semicolon
-id|c-&gt;itc_freq
-op_assign
-id|cpu_data
-(braket
-id|bootstrap_processor
-)braket
-dot
-id|itc_freq
-suffix:semicolon
-id|c-&gt;cyc_per_usec
-op_assign
-id|cpu_data
-(braket
-id|bootstrap_processor
-)braket
-dot
-id|cyc_per_usec
-suffix:semicolon
-id|c-&gt;usec_per_cyc
-op_assign
-id|cpu_data
-(braket
-id|bootstrap_processor
-)braket
-dot
-id|usec_per_cyc
-suffix:semicolon
-)brace
-macro_line|#else
-id|memset
-c_func
-(paren
-id|c
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-r_struct
-id|cpuinfo_ia64
-)paren
-)paren
-suffix:semicolon
-macro_line|#endif
 id|memcpy
 c_func
 (paren
@@ -1067,29 +1077,6 @@ comma
 l_int|16
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_IA64_SOFTSDV_HACKS
-multiline_comment|/* BUG: SoftSDV doesn&squot;t support the cpuid registers. */
-r_if
-c_cond
-(paren
-id|c-&gt;vendor
-(braket
-l_int|0
-)braket
-op_eq
-l_char|&squot;&bslash;0&squot;
-)paren
-id|memcpy
-c_func
-(paren
-id|c-&gt;vendor
-comma
-l_string|&quot;Intel&quot;
-comma
-l_int|6
-)paren
-suffix:semicolon
-macro_line|#endif                                   
 id|c-&gt;ppn
 op_assign
 id|cpuid.field.ppn
@@ -1118,10 +1105,122 @@ id|c-&gt;features
 op_assign
 id|cpuid.field.features
 suffix:semicolon
-macro_line|#ifdef CONFIG_SMP
-id|c-&gt;loops_per_sec
+id|status
 op_assign
-id|loops_per_sec
+id|ia64_pal_vm_summary
+c_func
+(paren
+op_amp
+id|vm1
+comma
+op_amp
+id|vm2
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|status
+op_eq
+id|PAL_STATUS_SUCCESS
+)paren
+(brace
+macro_line|#if 1
+multiline_comment|/*&n;&t;&t; * XXX the current PAL code returns IMPL_VA_MSB==60, which is dead-wrong.&n;&t;&t; * --davidm 00/05/26&n;&t;&t; s*/
+id|impl_va_msb
+op_assign
+l_int|50
+suffix:semicolon
+macro_line|#else
+id|impl_va_msb
+op_assign
+id|vm2.pal_vm_info_2_s.impl_va_msb
+suffix:semicolon
+macro_line|#endif
+id|phys_addr_size
+op_assign
+id|vm1.pal_vm_info_1_s.phys_add_size
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;processor implements %lu virtual and %lu physical address bits&bslash;n&quot;
+comma
+id|impl_va_msb
+op_plus
+l_int|1
+comma
+id|phys_addr_size
+)paren
+suffix:semicolon
+id|c-&gt;unimpl_va_mask
+op_assign
+op_complement
+(paren
+(paren
+l_int|7L
+op_lshift
+l_int|61
+)paren
+op_or
+(paren
+(paren
+l_int|1L
+op_lshift
+(paren
+id|impl_va_msb
+op_plus
+l_int|1
+)paren
+)paren
+op_minus
+l_int|1
+)paren
+)paren
+suffix:semicolon
+id|c-&gt;unimpl_pa_mask
+op_assign
+op_complement
+(paren
+(paren
+l_int|1L
+op_lshift
+l_int|63
+)paren
+op_or
+(paren
+(paren
+l_int|1L
+op_lshift
+id|phys_addr_size
+)paren
+op_minus
+l_int|1
+)paren
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_IA64_SOFTSDV_HACKS
+multiline_comment|/* BUG: SoftSDV doesn&squot;t support the cpuid registers. */
+r_if
+c_cond
+(paren
+id|c-&gt;vendor
+(braket
+l_int|0
+)braket
+op_eq
+l_char|&squot;&bslash;0&squot;
+)paren
+id|memcpy
+c_func
+(paren
+id|c-&gt;vendor
+comma
+l_string|&quot;Intel&quot;
+comma
+l_int|6
+)paren
 suffix:semicolon
 macro_line|#endif
 )brace
@@ -1133,6 +1232,29 @@ id|cpu_init
 r_void
 )paren
 (brace
+r_extern
+r_void
+id|__init
+id|ia64_rid_init
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|__init
+id|ia64_tlb_init
+(paren
+r_void
+)paren
+suffix:semicolon
+id|identify_cpu
+c_func
+(paren
+op_amp
+id|my_cpu_data
+)paren
+suffix:semicolon
 multiline_comment|/* Clear the stack memory reserved for pt_regs: */
 id|memset
 c_func
@@ -1184,5 +1306,47 @@ op_assign
 op_amp
 id|init_mm
 suffix:semicolon
+id|ia64_rid_init
+c_func
+(paren
+)paren
+suffix:semicolon
+id|ia64_tlb_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#ifdef&t;CONFIG_IA32_SUPPORT
+multiline_comment|/* initialize global ia32 state - CR0 and CR4 */
+id|__asm__
+c_func
+(paren
+l_string|&quot;mov ar.cflg = %0&quot;
+suffix:colon
+multiline_comment|/* no outputs */
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+(paren
+(paren
+id|ulong
+)paren
+id|IA32_CR4
+op_lshift
+l_int|32
+)paren
+op_or
+id|IA32_CR0
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_SMP
+id|normal_xtp
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 eof

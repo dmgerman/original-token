@@ -10,9 +10,9 @@ r_int
 id|dn_address
 suffix:semicolon
 DECL|macro|dn_ntohs
-mdefine_line|#define dn_ntohs(x) le16_to_cpu(x)
+mdefine_line|#define dn_ntohs(x) le16_to_cpu((unsigned short)(x))
 DECL|macro|dn_htons
-mdefine_line|#define dn_htons(x) cpu_to_le16(x)
+mdefine_line|#define dn_htons(x) cpu_to_le16((unsigned short)(x))
 DECL|struct|dn_scp
 r_struct
 id|dn_scp

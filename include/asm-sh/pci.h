@@ -20,6 +20,19 @@ id|dev
 (brace
 multiline_comment|/* No special bus mastering setup handling */
 )brace
+DECL|function|pcibios_penalize_isa_irq
+r_extern
+r_inline
+r_void
+id|pcibios_penalize_isa_irq
+c_func
+(paren
+r_int
+id|irq
+)paren
+(brace
+multiline_comment|/* We don&squot;t do dynamic PCI IRQ allocation */
+)brace
 multiline_comment|/* Dynamic DMA mapping stuff.&n; * SuperH has everything mapped statically like x86.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;

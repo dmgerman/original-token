@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * IA32 helper functions&n; */
+multiline_comment|/*&n; * IA32 helper functions&n; *&n; * 06/16/00&t;A. Mallick&t;added csd/ssd/tssd for ia32 thread context&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -34,6 +34,233 @@ r_int
 id|err
 )paren
 suffix:semicolon
+r_void
+DECL|function|ia32_save_state
+id|ia32_save_state
+(paren
+r_struct
+id|thread_struct
+op_star
+id|thread
+)paren
+(brace
+r_int
+r_int
+id|eflag
+comma
+id|fsr
+comma
+id|fcr
+comma
+id|fir
+comma
+id|fdr
+comma
+id|csd
+comma
+id|ssd
+comma
+id|tssd
+suffix:semicolon
+id|asm
+(paren
+l_string|&quot;mov %0=ar.eflag;&quot;
+l_string|&quot;mov %1=ar.fsr;&quot;
+l_string|&quot;mov %2=ar.fcr;&quot;
+l_string|&quot;mov %3=ar.fir;&quot;
+l_string|&quot;mov %4=ar.fdr;&quot;
+l_string|&quot;mov %5=ar.csd;&quot;
+l_string|&quot;mov %6=ar.ssd;&quot;
+l_string|&quot;mov %7=ar.k1&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|eflag
+)paren
+comma
+l_string|&quot;=r&quot;
+(paren
+id|fsr
+)paren
+comma
+l_string|&quot;=r&quot;
+(paren
+id|fcr
+)paren
+comma
+l_string|&quot;=r&quot;
+(paren
+id|fir
+)paren
+comma
+l_string|&quot;=r&quot;
+(paren
+id|fdr
+)paren
+comma
+l_string|&quot;=r&quot;
+(paren
+id|csd
+)paren
+comma
+l_string|&quot;=r&quot;
+(paren
+id|ssd
+)paren
+comma
+l_string|&quot;=r&quot;
+(paren
+id|tssd
+)paren
+)paren
+suffix:semicolon
+id|thread-&gt;eflag
+op_assign
+id|eflag
+suffix:semicolon
+id|thread-&gt;fsr
+op_assign
+id|fsr
+suffix:semicolon
+id|thread-&gt;fcr
+op_assign
+id|fcr
+suffix:semicolon
+id|thread-&gt;fir
+op_assign
+id|fir
+suffix:semicolon
+id|thread-&gt;fdr
+op_assign
+id|fdr
+suffix:semicolon
+id|thread-&gt;csd
+op_assign
+id|csd
+suffix:semicolon
+id|thread-&gt;ssd
+op_assign
+id|ssd
+suffix:semicolon
+id|thread-&gt;tssd
+op_assign
+id|tssd
+suffix:semicolon
+)brace
+r_void
+DECL|function|ia32_load_state
+id|ia32_load_state
+(paren
+r_struct
+id|thread_struct
+op_star
+id|thread
+)paren
+(brace
+r_int
+r_int
+id|eflag
+comma
+id|fsr
+comma
+id|fcr
+comma
+id|fir
+comma
+id|fdr
+comma
+id|csd
+comma
+id|ssd
+comma
+id|tssd
+suffix:semicolon
+id|eflag
+op_assign
+id|thread-&gt;eflag
+suffix:semicolon
+id|fsr
+op_assign
+id|thread-&gt;fsr
+suffix:semicolon
+id|fcr
+op_assign
+id|thread-&gt;fcr
+suffix:semicolon
+id|fir
+op_assign
+id|thread-&gt;fir
+suffix:semicolon
+id|fdr
+op_assign
+id|thread-&gt;fdr
+suffix:semicolon
+id|csd
+op_assign
+id|thread-&gt;csd
+suffix:semicolon
+id|ssd
+op_assign
+id|thread-&gt;ssd
+suffix:semicolon
+id|tssd
+op_assign
+id|thread-&gt;tssd
+suffix:semicolon
+id|asm
+r_volatile
+(paren
+l_string|&quot;mov ar.eflag=%0;&quot;
+l_string|&quot;mov ar.fsr=%1;&quot;
+l_string|&quot;mov ar.fcr=%2;&quot;
+l_string|&quot;mov ar.fir=%3;&quot;
+l_string|&quot;mov ar.fdr=%4;&quot;
+l_string|&quot;mov ar.csd=%5;&quot;
+l_string|&quot;mov ar.ssd=%6;&quot;
+l_string|&quot;mov ar.k1=%7&quot;
+op_scope_resolution
+l_string|&quot;r&quot;
+(paren
+id|eflag
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|fsr
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|fcr
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|fir
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|fdr
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|csd
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|ssd
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|tssd
+)paren
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * Setup IA32 GDT and TSS &n; */
 r_void
 DECL|function|ia32_gdt_init

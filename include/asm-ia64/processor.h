@@ -1,7 +1,7 @@
 macro_line|#ifndef _ASM_IA64_PROCESSOR_H
 DECL|macro|_ASM_IA64_PROCESSOR_H
 mdefine_line|#define _ASM_IA64_PROCESSOR_H
-multiline_comment|/*&n; * Copyright (C) 1998-2000 Hewlett-Packard Co&n; * Copyright (C) 1998-2000 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; * Copyright (C) 1998, 1999 Stephane Eranian &lt;eranian@hpl.hp.com&gt;&n; * Copyright (C) 1999 Asit Mallick &lt;asit.k.mallick@intel.com&gt;&n; * Copyright (C) 1999 Don Dugger &lt;don.dugger@intel.com&gt;&n; *&n; * 11/24/98&t;S.Eranian&t;added ia64_set_iva()&n; * 12/03/99&t;D. Mosberger&t;implement thread_saved_pc() via kernel unwind API&n; */
+multiline_comment|/*&n; * Copyright (C) 1998-2000 Hewlett-Packard Co&n; * Copyright (C) 1998-2000 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; * Copyright (C) 1998, 1999 Stephane Eranian &lt;eranian@hpl.hp.com&gt;&n; * Copyright (C) 1999 Asit Mallick &lt;asit.k.mallick@intel.com&gt;&n; * Copyright (C) 1999 Don Dugger &lt;don.dugger@intel.com&gt;&n; *&n; * 11/24/98&t;S.Eranian&t;added ia64_set_iva()&n; * 12/03/99&t;D. Mosberger&t;implement thread_saved_pc() via kernel unwind API&n; * 06/16/00&t;A. Mallick&t;added csd/ssd/tssd for ia32 support&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/types.h&gt;
@@ -542,6 +542,16 @@ id|__u64
 id|usec_per_cyc
 suffix:semicolon
 multiline_comment|/* 2^IA64_USEC_PER_CYC_SHIFT*1000000/itc_freq */
+DECL|member|unimpl_va_mask
+id|__u64
+id|unimpl_va_mask
+suffix:semicolon
+multiline_comment|/* mask of unimplemented virtual address bits (from PAL) */
+DECL|member|unimpl_pa_mask
+id|__u64
+id|unimpl_pa_mask
+suffix:semicolon
+multiline_comment|/* mask of unimplemented physical address bits (from PAL) */
 macro_line|#ifdef CONFIG_SMP
 DECL|member|loops_per_sec
 id|__u64
@@ -610,7 +620,7 @@ DECL|typedef|mm_segment_t
 id|mm_segment_t
 suffix:semicolon
 DECL|macro|SET_UNALIGN_CTL
-mdefine_line|#define SET_UNALIGN_CTL(task,value)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;(task)-&gt;thread.flags |= ((value) &lt;&lt; IA64_THREAD_UAC_SHIFT) &amp; IA64_THREAD_UAC_MASK;&t;&bslash;&n;&t;0;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
+mdefine_line|#define SET_UNALIGN_CTL(task,value)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;(task)-&gt;thread.flags = (((task)-&gt;thread.flags &amp; ~IA64_THREAD_UAC_MASK)&t;&t;&t;&bslash;&n;&t;&t;&t;&t;| (((value) &lt;&lt; IA64_THREAD_UAC_SHIFT) &amp; IA64_THREAD_UAC_MASK));&t;&bslash;&n;&t;0;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
 DECL|macro|GET_UNALIGN_CTL
 mdefine_line|#define GET_UNALIGN_CTL(task,addr)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;put_user(((task)-&gt;thread.flags &amp; IA64_THREAD_UAC_MASK) &gt;&gt; IA64_THREAD_UAC_SHIFT,&t;&bslash;&n;&t;&t; (int *) (addr));&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
 r_struct
@@ -685,6 +695,21 @@ id|__u64
 id|fdr
 suffix:semicolon
 multiline_comment|/* IA32 fp except. data reg */
+DECL|member|csd
+id|__u64
+id|csd
+suffix:semicolon
+multiline_comment|/* IA32 code selector descriptor */
+DECL|member|ssd
+id|__u64
+id|ssd
+suffix:semicolon
+multiline_comment|/* IA32 stack selector descriptor */
+DECL|member|tssd
+id|__u64
+id|tssd
+suffix:semicolon
+multiline_comment|/* IA32 TSS descriptor */
 r_union
 (brace
 DECL|member|sigmask
@@ -697,7 +722,7 @@ DECL|member|un
 id|un
 suffix:semicolon
 DECL|macro|INIT_THREAD_IA32
-macro_line|# define INIT_THREAD_IA32&t;, 0, 0, 0, 0, 0, {0}
+macro_line|# define INIT_THREAD_IA32&t;, 0, 0, 0x17800000037fULL, 0, 0, 0, 0, 0, {0}
 macro_line|#else
 DECL|macro|INIT_THREAD_IA32
 macro_line|# define INIT_THREAD_IA32
@@ -716,7 +741,7 @@ mdefine_line|#define INIT_MMAP {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&amp;init_
 DECL|macro|INIT_THREAD
 mdefine_line|#define INIT_THREAD {&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;/* ksp */&t;&bslash;&n;&t;0,&t;&t;&t;&t;/* flags */&t;&bslash;&n;&t;{{{{0}}}, },&t;&t;&t;/* fph */&t;&bslash;&n;&t;{0, },&t;&t;&t;&t;/* dbr */&t;&bslash;&n;&t;{0, },&t;&t;&t;&t;/* ibr */&t;&bslash;&n;&t;0x2000000000000000&t;&t;/* map_base */&t;&bslash;&n;&t;INIT_THREAD_IA32,&t;&t;&t;&t;&bslash;&n;&t;0&t;&t;&t;&t;/* siginfo */&t;&bslash;&n;}
 DECL|macro|start_thread
-mdefine_line|#define start_thread(regs,new_ip,new_sp) do {&t;&t;&t;&t;&t;&bslash;&n;&t;set_fs(USER_DS);&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;ia64_psr(regs)-&gt;cpl = 3;&t;/* set user mode */&t;&t;&t;&bslash;&n;&t;ia64_psr(regs)-&gt;ri = 0;&t;&t;/* clear return slot number */&t;&t;&bslash;&n;&t;regs-&gt;cr_iip = new_ip;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;ar_rsc = 0xf;&t;&t;/* eager mode, privilege level 3 */&t;&bslash;&n;&t;regs-&gt;r12 = new_sp - 16;&t;/* allocate 16 byte scratch area */&t;&bslash;&n;&t;regs-&gt;ar_bspstore = IA64_RBS_BOT;&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;ar_rnat = 0;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;loadrs = 0;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;} while (0)
+mdefine_line|#define start_thread(regs,new_ip,new_sp) do {&t;&t;&t;&t;&t;&bslash;&n;&t;set_fs(USER_DS);&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;ia64_psr(regs)-&gt;cpl = 3;&t;/* set user mode */&t;&t;&t;&bslash;&n;&t;ia64_psr(regs)-&gt;ri = 0;&t;&t;/* clear return slot number */&t;&t;&bslash;&n;&t;ia64_psr(regs)-&gt;is = 0;&t;&t;/* IA-64 instruction set */&t;&t;&bslash;&n;&t;regs-&gt;cr_iip = new_ip;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;ar_rsc = 0xf;&t;&t;/* eager mode, privilege level 3 */&t;&bslash;&n;&t;regs-&gt;r12 = new_sp - 16;&t;/* allocate 16 byte scratch area */&t;&bslash;&n;&t;regs-&gt;ar_bspstore = IA64_RBS_BOT;&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;ar_rnat = 0;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;loadrs = 0;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;} while (0)
 multiline_comment|/* Forward declarations, a strange C thing... */
 r_struct
 id|mm_struct
@@ -1034,6 +1059,41 @@ op_scope_resolution
 suffix:colon
 l_string|&quot;memory&quot;
 )paren
+suffix:semicolon
+)brace
+r_extern
+r_inline
+id|__u64
+DECL|function|ia64_get_rr
+id|ia64_get_rr
+(paren
+id|__u64
+id|reg_bits
+)paren
+(brace
+id|__u64
+id|r
+suffix:semicolon
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;mov %0=rr[%1]&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|r
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|reg_bits
+)paren
+suffix:colon
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+r_return
+id|r
 suffix:semicolon
 )brace
 r_extern
@@ -1865,8 +1925,12 @@ id|t
 )paren
 (brace
 r_struct
-id|ia64_frame_info
+id|unw_frame_info
 id|info
+suffix:semicolon
+r_int
+r_int
+id|ip
 suffix:semicolon
 multiline_comment|/* XXX ouch: Linus, please pass the task pointer to thread_saved_pc() instead! */
 r_struct
@@ -1888,7 +1952,7 @@ op_minus
 id|IA64_TASK_THREAD_OFFSET
 )paren
 suffix:semicolon
-id|ia64_unwind_init_from_blocked_task
+id|unw_init_from_blocked_task
 c_func
 (paren
 op_amp
@@ -1900,7 +1964,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|ia64_unwind_to_previous_frame
+id|unw_unwind
 c_func
 (paren
 op_amp
@@ -1912,13 +1976,18 @@ l_int|0
 r_return
 l_int|0
 suffix:semicolon
-r_return
-id|ia64_unwind_get_ip
+id|unw_get_ip
 c_func
 (paren
 op_amp
 id|info
+comma
+op_amp
+id|ip
 )paren
+suffix:semicolon
+r_return
+id|ip
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Get the current instruction/program counter value.&n; */

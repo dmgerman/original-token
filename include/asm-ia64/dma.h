@@ -18,7 +18,7 @@ mdefine_line|#define dma_inb&t;&t;inb
 DECL|macro|MAX_DMA_CHANNELS
 mdefine_line|#define MAX_DMA_CHANNELS&t;8
 DECL|macro|MAX_DMA_ADDRESS
-mdefine_line|#define MAX_DMA_ADDRESS&t;&t;(~0UL)&t;&t;/* no limits on DMAing, for now */
+mdefine_line|#define MAX_DMA_ADDRESS&t;&t;0xffffffffUL
 r_extern
 id|spinlock_t
 id|dma_spin_lock

@@ -10,9 +10,6 @@ r_extern
 id|spinlock_t
 id|io_request_lock
 suffix:semicolon
-multiline_comment|/*&n; * NR_REQUEST is the number of entries in the request-queue.&n; * NOTE that writes may use only the low 2/3 of these: reads&n; * take precedence.&n; */
-DECL|macro|NR_REQUEST
-mdefine_line|#define NR_REQUEST&t;256
 multiline_comment|/*&n; * Initialization functions.&n; */
 r_extern
 r_int
@@ -384,24 +381,18 @@ id|req
 r_if
 c_cond
 (paren
-id|req-&gt;q
+id|req-&gt;e
 )paren
 (brace
-r_if
-c_cond
+id|req-&gt;e
+op_member_access_from_pointer
+id|dequeue_fn
+c_func
 (paren
-id|req-&gt;cmd
-op_eq
-id|READ
+id|req
 )paren
-id|req-&gt;q-&gt;elevator.read_pendings
-op_decrement
 suffix:semicolon
-id|req-&gt;q-&gt;elevator.nr_segments
-op_sub_assign
-id|req-&gt;nr_segments
-suffix:semicolon
-id|req-&gt;q
+id|req-&gt;e
 op_assign
 l_int|NULL
 suffix:semicolon

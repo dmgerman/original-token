@@ -8,7 +8,6 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#include &quot;pci-i386.h&quot;
 DECL|variable|pci_probe
 r_int
@@ -4694,68 +4693,12 @@ l_int|0
 r_return
 id|err
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|dev-&gt;irq
-)paren
-(brace
-id|u8
-id|pin
-suffix:semicolon
-id|pci_read_config_byte
+id|pcibios_enable_irq
 c_func
 (paren
 id|dev
-comma
-id|PCI_INTERRUPT_PIN
-comma
-op_amp
-id|pin
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|pin
-op_logical_and
-op_logical_neg
-id|pcibios_lookup_irq
-c_func
-(paren
-id|dev
-comma
-l_int|1
-)paren
-)paren
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;PCI: No IRQ known for interrupt pin %c of device %s.%s&bslash;n&quot;
-comma
-l_char|&squot;A&squot;
-op_plus
-id|pin
-op_minus
-l_int|1
-comma
-id|dev-&gt;slot_name
-comma
-(paren
-id|pci_probe
-op_amp
-id|PCI_BIOS_IRQ_SCAN
-)paren
-ques
-c_cond
-l_string|&quot;&quot;
-suffix:colon
-l_string|&quot; Please try using pci=biosirq.&quot;
-)paren
-suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon

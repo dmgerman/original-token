@@ -19,6 +19,14 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+r_void
+id|pcibios_penalize_isa_irq
+c_func
+(paren
+r_int
+id|irq
+)paren
+suffix:semicolon
 multiline_comment|/* Dynamic DMA mapping stuff.&n; * i386 has everything mapped statically.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;

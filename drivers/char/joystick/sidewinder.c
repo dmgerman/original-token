@@ -1239,6 +1239,7 @@ id|__u64
 id|t
 )paren
 (brace
+r_int
 r_char
 id|sum
 op_assign

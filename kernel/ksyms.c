@@ -1366,13 +1366,6 @@ c_func
 id|block_write
 )paren
 suffix:semicolon
-DECL|variable|wait_for_request
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|wait_for_request
-)paren
-suffix:semicolon
 DECL|variable|blksize_size
 id|EXPORT_SYMBOL
 c_func

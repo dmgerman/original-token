@@ -197,10 +197,8 @@ mdefine_line|#define PT_F126&t;&t;&t;0x05e0
 DECL|macro|PT_F127
 mdefine_line|#define PT_F127&t;&t;&t;0x05f0
 multiline_comment|/* switch stack: */
-DECL|macro|PT_CALLER_UNAT
-mdefine_line|#define PT_CALLER_UNAT&t;&t;0x0600
-DECL|macro|PT_KERNEL_FPSR
-mdefine_line|#define PT_KERNEL_FPSR&t;&t;0x0608
+DECL|macro|PT_NAT_BITS
+mdefine_line|#define PT_NAT_BITS&t;&t;0x0600
 DECL|macro|PT_F2
 mdefine_line|#define PT_F2&t;&t;&t;0x0610
 DECL|macro|PT_F3
@@ -261,8 +259,6 @@ DECL|macro|PT_R6
 mdefine_line|#define PT_R6&t;&t;&t;0x07c0
 DECL|macro|PT_R7
 mdefine_line|#define PT_R7&t;&t;&t;0x07c8
-DECL|macro|PT_K_B0
-mdefine_line|#define PT_K_B0&t;&t;&t;0x07d0
 DECL|macro|PT_B1
 mdefine_line|#define PT_B1&t;&t;&t;0x07d8
 DECL|macro|PT_B2
@@ -273,18 +269,8 @@ DECL|macro|PT_B4
 mdefine_line|#define PT_B4&t;&t;&t;0x07f0
 DECL|macro|PT_B5
 mdefine_line|#define PT_B5&t;&t;&t;0x07f8
-DECL|macro|PT_K_AR_PFS
-mdefine_line|#define PT_K_AR_PFS&t;&t;0x0800
 DECL|macro|PT_AR_LC
 mdefine_line|#define PT_AR_LC&t;&t;0x0808
-DECL|macro|PT_K_AR_UNAT
-mdefine_line|#define PT_K_AR_UNAT&t;&t;0x0810
-DECL|macro|PT_K_AR_RNAT
-mdefine_line|#define PT_K_AR_RNAT&t;&t;0x0818
-DECL|macro|PT_K_AR_BSPSTORE
-mdefine_line|#define PT_K_AR_BSPSTORE&t;0x0820
-DECL|macro|PT_K_PR
-mdefine_line|#define PT_K_PR&t;&t;&t;0x0828
 multiline_comment|/* pt_regs */
 DECL|macro|PT_CR_IPSR
 mdefine_line|#define PT_CR_IPSR&t;&t;0x0830
@@ -292,8 +278,6 @@ DECL|macro|PT_CR_IIP
 mdefine_line|#define PT_CR_IIP&t;&t;0x0838
 DECL|macro|PT_CFM
 mdefine_line|#define PT_CFM&t;&t;&t;0x0840
-DECL|macro|PT_CR_IFS
-mdefine_line|#define PT_CR_IFS&t;&t;PT_CFM&t;&t;/* Use of PT_CR_IFS is deprecated */
 DECL|macro|PT_AR_UNAT
 mdefine_line|#define PT_AR_UNAT&t;&t;0x0848
 DECL|macro|PT_AR_PFS

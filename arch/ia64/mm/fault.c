@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * MMU fault handling support.&n; *&n; * Copyright (C) 1998, 1999 Hewlett-Packard Co&n; * Copyright (C) 1998, 1999 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; */
+multiline_comment|/*&n; * MMU fault handling support.&n; *&n; * Copyright (C) 1998-2000 Hewlett-Packard Co&n; * Copyright (C) 1998-2000 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -290,10 +290,9 @@ r_goto
 id|bad_area
 suffix:semicolon
 multiline_comment|/*&n;&t; * If for any reason at all we couldn&squot;t handle the fault, make&n;&t; * sure we exit gracefully rather than endlessly redo the&n;&t; * fault.&n;&t; */
-r_if
+r_switch
 c_cond
 (paren
-op_logical_neg
 id|handle_mm_fault
 c_func
 (paren
@@ -304,15 +303,34 @@ comma
 id|address
 comma
 (paren
-id|isr
+id|mask
 op_amp
-id|IA64_ISR_W
+id|VM_WRITE
 )paren
 op_ne
 l_int|0
 )paren
 )paren
 (brace
+r_case
+l_int|1
+suffix:colon
+op_increment
+id|current-&gt;min_flt
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|2
+suffix:colon
+op_increment
+id|current-&gt;maj_flt
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0
+suffix:colon
 multiline_comment|/*&n;&t;&t; * We ran out of memory, or some other thing happened&n;&t;&t; * to us that made us unable to handle the page fault&n;&t;&t; * gracefully.&n;&t;&t; */
 id|signal
 op_assign
@@ -320,6 +338,11 @@ id|SIGBUS
 suffix:semicolon
 r_goto
 id|bad_area
+suffix:semicolon
+r_default
+suffix:colon
+r_goto
+id|out_of_memory
 suffix:semicolon
 )brace
 id|up
@@ -441,26 +464,6 @@ id|regs
 )paren
 )paren
 (brace
-macro_line|#if 0
-id|printk
-c_func
-(paren
-l_string|&quot;%s(%d): segfault accessing %lx&bslash;n&quot;
-comma
-id|current-&gt;comm
-comma
-id|current-&gt;pid
-comma
-id|address
-)paren
-suffix:semicolon
-id|show_regs
-c_func
-(paren
-id|regs
-)paren
-suffix:semicolon
-macro_line|#endif
 id|si.si_signo
 op_assign
 id|signal
@@ -484,7 +487,7 @@ suffix:semicolon
 id|force_sig_info
 c_func
 (paren
-id|SIGSEGV
+id|signal
 comma
 op_amp
 id|si
@@ -578,6 +581,41 @@ id|SIGKILL
 )paren
 suffix:semicolon
 r_return
+suffix:semicolon
+id|out_of_memory
+suffix:colon
+id|up
+c_func
+(paren
+op_amp
+id|mm-&gt;mmap_sem
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;VM: killing process %s&bslash;n&quot;
+comma
+id|current-&gt;comm
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|user_mode
+c_func
+(paren
+id|regs
+)paren
+)paren
+id|do_exit
+c_func
+(paren
+id|SIGKILL
+)paren
+suffix:semicolon
+r_goto
+id|no_context
 suffix:semicolon
 )brace
 eof

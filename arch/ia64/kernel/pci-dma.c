@@ -38,13 +38,14 @@ op_logical_neg
 id|hwdev
 op_logical_or
 id|hwdev-&gt;dma_mask
-op_ne
+op_eq
 l_int|0xffffffff
 )paren
 id|gfp
 op_or_assign
 id|GFP_DMA
 suffix:semicolon
+multiline_comment|/* XXX fix me: should change this to GFP_32BIT or ZONE_32BIT */
 id|ret
 op_assign
 (paren

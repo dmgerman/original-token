@@ -3956,16 +3956,6 @@ id|MAJOR_NR
 op_assign
 l_int|NULL
 suffix:semicolon
-id|blk_cleanup_queue
-c_func
-(paren
-id|BLK_DEFAULT_QUEUE
-c_func
-(paren
-id|MAJOR_NR
-)paren
-)paren
-suffix:semicolon
 id|blk_size
 (braket
 id|MAJOR_NR

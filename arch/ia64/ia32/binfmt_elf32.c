@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * IA-32 ELF support.&n; *&n; * Copyright (C) 1999 Arun Sharma &lt;arun.sharma@intel.com&gt;&n; */
+multiline_comment|/*&n; * IA-32 ELF support.&n; *&n; * Copyright (C) 1999 Arun Sharma &lt;arun.sharma@intel.com&gt;&n; *&n; * 06/16/00&t;A. Mallick&t;initialize csd/ssd/tssd/cflg for ia32_load_state&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/posix_types.h&gt;
 macro_line|#include &lt;asm/signal.h&gt;
@@ -311,6 +311,79 @@ id|current-&gt;thread.map_base
 op_assign
 l_int|0x40000000
 suffix:semicolon
+multiline_comment|/* setup ia32 state for ia32_load_state */
+id|current-&gt;thread.eflag
+op_assign
+id|IA32_EFLAG
+suffix:semicolon
+id|current-&gt;thread.csd
+op_assign
+id|IA64_SEG_DESCRIPTOR
+c_func
+(paren
+l_int|0L
+comma
+l_int|0xFFFFFL
+comma
+l_int|0xBL
+comma
+l_int|1L
+comma
+l_int|3L
+comma
+l_int|1L
+comma
+l_int|1L
+comma
+l_int|1L
+)paren
+suffix:semicolon
+id|current-&gt;thread.ssd
+op_assign
+id|IA64_SEG_DESCRIPTOR
+c_func
+(paren
+l_int|0L
+comma
+l_int|0xFFFFFL
+comma
+l_int|0x3L
+comma
+l_int|1L
+comma
+l_int|3L
+comma
+l_int|1L
+comma
+l_int|1L
+comma
+l_int|1L
+)paren
+suffix:semicolon
+id|current-&gt;thread.tssd
+op_assign
+id|IA64_SEG_DESCRIPTOR
+c_func
+(paren
+id|IA32_PAGE_OFFSET
+op_plus
+id|PAGE_SIZE
+comma
+l_int|0x1FFFL
+comma
+l_int|0xBL
+comma
+l_int|1L
+comma
+l_int|3L
+comma
+l_int|1L
+comma
+l_int|1L
+comma
+l_int|1L
+)paren
+suffix:semicolon
 multiline_comment|/* CS descriptor */
 id|__asm__
 c_func
@@ -386,28 +459,6 @@ id|IA32_EFLAG
 )paren
 suffix:semicolon
 multiline_comment|/* Control registers */
-id|__asm__
-c_func
-(paren
-l_string|&quot;mov ar.cflg = %0&quot;
-suffix:colon
-multiline_comment|/* no outputs */
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-(paren
-(paren
-id|ulong
-)paren
-id|IA32_CR4
-op_lshift
-l_int|32
-)paren
-op_or
-id|IA32_CR0
-)paren
-)paren
-suffix:semicolon
 id|__asm__
 c_func
 (paren

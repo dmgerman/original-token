@@ -367,8 +367,8 @@ id|pci_conf
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Initialization. Uses the SAL interface&n; */
-DECL|macro|PCI_BUSSES_TO_SCAN
-mdefine_line|#define PCI_BUSSES_TO_SCAN 2&t;/* On &quot;real&quot; ;) hardware this will be 255 */
+DECL|macro|PCI_BUSES_TO_SCAN
+mdefine_line|#define PCI_BUSES_TO_SCAN 255
 r_void
 id|__init
 DECL|function|pcibios_init
@@ -427,7 +427,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|PCI_BUSSES_TO_SCAN
+id|PCI_BUSES_TO_SCAN
 suffix:semicolon
 id|i
 op_increment
@@ -644,7 +644,6 @@ id|start
 suffix:semicolon
 )brace
 r_int
-id|__init
 DECL|function|pcibios_enable_device
 id|pcibios_enable_device
 (paren

@@ -613,4 +613,14 @@ id|dev
 )paren
 suffix:semicolon
 )brace
+DECL|function|pcibios_penalize_isa_irq
+r_void
+id|__init
+id|pcibios_penalize_isa_irq
+c_func
+(paren
+id|irq
+)paren
+(brace
+)brace
 eof

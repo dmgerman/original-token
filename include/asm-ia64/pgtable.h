@@ -5,27 +5,16 @@ multiline_comment|/*&n; * This file contains the functions and defines necessary
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/mman.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
+macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/types.h&gt;
-multiline_comment|/* Size of virtuaql and physical address spaces: */
-macro_line|#ifdef CONFIG_ITANIUM
-DECL|macro|IA64_IMPL_VA_MSB
-macro_line|# define IA64_IMPL_VA_MSB&t;50
-DECL|macro|IA64_PHYS_BITS
-macro_line|# define IA64_PHYS_BITS&t;&t;44&t;&t;/* Itanium PRM defines 44 bits of ppn */
-macro_line|#else
-DECL|macro|IA64_IMPL_VA_MSB
-macro_line|# define IA64_IMPL_VA_MSB&t;60&t;&t;/* maximum value (bits 61-63 are region bits) */
-DECL|macro|IA64_PHYS_BITS
-macro_line|# define IA64_PHYS_BITS&t;&t;50&t;&t;/* EAS2.6 allows up to 50 bits of ppn */
-macro_line|#endif
-DECL|macro|IA64_PHYS_SIZE
-mdefine_line|#define IA64_PHYS_SIZE&t;&t;(__IA64_UL(1) &lt;&lt; IA64_PHYS_BITS)
+DECL|macro|IA64_MAX_PHYS_BITS
+mdefine_line|#define IA64_MAX_PHYS_BITS&t;50&t;/* max. number of physical address bits (architected) */
 multiline_comment|/* Is ADDR a valid kernel address? */
 DECL|macro|kern_addr_valid
 mdefine_line|#define kern_addr_valid(addr)&t;((addr) &gt;= TASK_SIZE)
 multiline_comment|/* Is ADDR a valid physical address? */
 DECL|macro|phys_addr_valid
-mdefine_line|#define phys_addr_valid(addr)&t;((addr) &lt; IA64_PHYS_SIZE)
+mdefine_line|#define phys_addr_valid(addr)&t;(((addr) &amp; my_cpu_data.unimpl_pa_mask) == 0)
 multiline_comment|/*&n; * First, define the various bits in a PTE.  Note that the PTE format&n; * matches the VHPT short format, the firt doubleword of the VHPD long&n; * format, and the first doubleword of the TLB insertion format.&n; */
 DECL|macro|_PAGE_P
 mdefine_line|#define _PAGE_P&t;&t;&t;(1 &lt;&lt;  0)&t;/* page present bit */
@@ -76,7 +65,7 @@ mdefine_line|#define _PAGE_A&t;&t;&t;(1 &lt;&lt;  5)&t;/* page accessed bit */
 DECL|macro|_PAGE_D
 mdefine_line|#define _PAGE_D&t;&t;&t;(1 &lt;&lt;  6)&t;/* page dirty bit */
 DECL|macro|_PAGE_PPN_MASK
-mdefine_line|#define _PAGE_PPN_MASK&t;&t;((IA64_PHYS_SIZE - 1) &amp; ~0xfffUL)
+mdefine_line|#define _PAGE_PPN_MASK&t;&t;(((__IA64_UL(1) &lt;&lt; IA64_MAX_PHYS_BITS) - 1) &amp; ~0xfffUL)
 DECL|macro|_PAGE_ED
 mdefine_line|#define _PAGE_ED&t;&t;(__IA64_UL(1) &lt;&lt; 52)&t;/* exception deferral */
 DECL|macro|_PAGE_PROTNONE
@@ -156,7 +145,7 @@ mdefine_line|#define PAGE_COPY&t;__pgprot(__ACCESS_BITS | _PAGE_PL_3 | _PAGE_AR_
 DECL|macro|PAGE_GATE
 mdefine_line|#define PAGE_GATE&t;__pgprot(__ACCESS_BITS | _PAGE_PL_0 | _PAGE_AR_X_RX)
 DECL|macro|PAGE_KERNEL
-mdefine_line|#define PAGE_KERNEL&t;__pgprot(__DIRTY_BITS  | _PAGE_PL_0 | _PAGE_AR_RW)
+mdefine_line|#define PAGE_KERNEL&t;__pgprot(__DIRTY_BITS  | _PAGE_PL_0 | _PAGE_AR_RWX)
 multiline_comment|/*&n; * Next come the mappings that determine how mmap() protection bits&n; * (PROT_EXEC, PROT_READ, PROT_WRITE, PROT_NONE) get implemented.  The&n; * _P version gets used for a private shared memory segment, the _S&n; * version gets used for a shared memory segment with MAP_SHARED on.&n; * In a private shared memory segment, we do a copy-on-write if a task&n; * attempts to write to the page.&n; */
 multiline_comment|/* xwr */
 DECL|macro|__P000

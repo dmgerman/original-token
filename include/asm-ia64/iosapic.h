@@ -135,6 +135,8 @@ c_func
 (paren
 r_int
 r_int
+comma
+r_int
 )paren
 suffix:semicolon
 DECL|struct|iosapic_vector

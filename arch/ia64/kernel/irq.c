@@ -725,15 +725,9 @@ c_func
 l_string|&quot; ]&bslash;nStack dumps:&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef __ia64__
-id|printk
-c_func
-(paren
-l_string|&quot; ]&bslash;nStack dumps: &lt;unimplemented on IA-64---please fix me&gt;&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* for now we don&squot;t have stack dumping support... */
-macro_line|#elif __i386__
+macro_line|#if defined(__ia64__)
+multiline_comment|/*&n;&t; * We can&squot;t unwind the stack of another CPU without access to&n;&t; * the registers of that CPU.  And sending an IPI when we&squot;re&n;&t; * in a potentially wedged state doesn&squot;t sound like a smart&n;&t; * idea.&n;&t; */
+macro_line|#elif defined(__i386__)
 r_for
 c_loop
 (paren
@@ -842,14 +836,12 @@ comma
 id|cpu
 )paren
 suffix:semicolon
-macro_line|#ifdef __i386__
 id|show_stack
 c_func
 (paren
 l_int|NULL
 )paren
 suffix:semicolon
-macro_line|#endif
 id|printk
 c_func
 (paren
@@ -1955,6 +1947,16 @@ op_complement
 id|IRQ_PENDING
 suffix:semicolon
 multiline_comment|/* we commit to handling */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|status
+op_amp
+id|IRQ_PER_CPU
+)paren
+)paren
 id|status
 op_or_assign
 id|IRQ_INPROGRESS

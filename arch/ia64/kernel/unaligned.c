@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Architecture-specific unaligned trap handling.&n; *&n; * Copyright (C) 1999 Hewlett-Packard Co&n; * Copyright (C) 1999 Stephane Eranian &lt;eranian@hpl.hp.com&gt;&n; */
+multiline_comment|/*&n; * Architecture-specific unaligned trap handling.&n; *&n; * Copyright (C) 1999-2000 Hewlett-Packard Co&n; * Copyright (C) 1999-2000 Stephane Eranian &lt;eranian@hpl.hp.com&gt;&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
@@ -2800,7 +2800,7 @@ r_int
 r_int
 id|addr
 suffix:semicolon
-multiline_comment|/*&n;&t; * From EAS-2.5: FPDisableFault has higher priority than &n;&t; * Unaligned Fault. Thus, when we get here, we know the partition is &n;&t; * enabled.&n;&t; *&n;&t; * The registers [32-127] are ususally saved in the tss. When get here,&n;&t; * they are NECESSARY live because they are only saved explicitely.&n;&t; * We have 3 ways of updating the values: force a save of the range&n;&t; * in tss, use a gigantic switch/case statement or generate code on the&n;&t; * fly to store to the right register.&n;&t; * For now, we are using the (slow) save/restore way.&n;&t; */
+multiline_comment|/*&n;&t; * From EAS-2.5: FPDisableFault has higher priority than &n;&t; * Unaligned Fault. Thus, when we get here, we know the partition is &n;&t; * enabled.&n;&t; *&n;&t; * The registers [32-127] are ususally saved in the tss. When get here,&n;&t; * they are NECESSARILY live because they are only saved explicitely.&n;&t; * We have 3 ways of updating the values: force a save of the range&n;&t; * in tss, use a gigantic switch/case statement or generate code on the&n;&t; * fly to store to the right register.&n;&t; * For now, we are using the (slow) save/restore way.&n;&t; */
 r_if
 c_cond
 (paren
@@ -2809,15 +2809,10 @@ op_ge
 id|IA64_FIRST_ROTATING_FR
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * force a save of [32-127] to tss&n;&t;&t; * we use the __() form to avoid fiddling with the dfh bit&n;&t;&t; */
-id|__ia64_save_fpu
+id|ia64_sync_fph
 c_func
 (paren
-op_amp
-id|current-&gt;thread.fph
-(braket
-l_int|0
-)braket
+id|current
 )paren
 suffix:semicolon
 id|current-&gt;thread.fph
@@ -2831,21 +2826,6 @@ id|regnum
 op_assign
 op_star
 id|fpval
-suffix:semicolon
-id|__ia64_load_fpu
-c_func
-(paren
-op_amp
-id|current-&gt;thread.fph
-(braket
-l_int|0
-)braket
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; &t; * mark the high partition as being used now&n;&t;&t; *&n;&t;&t; * This is REQUIRED because the disabled_fph_fault() does&n;&t;&t; * not set it, it&squot;s relying on the faulting instruction to&n;&t;&t; * do it. In our case the faulty instruction never gets executed&n;&t;&t; * completely, so we need to toggle the bit.&n;&t; &t; */
-id|regs-&gt;cr_ipsr
-op_or_assign
-id|IA64_PSR_MFH
 suffix:semicolon
 )brace
 r_else
@@ -3026,15 +3006,10 @@ op_ge
 id|IA64_FIRST_ROTATING_FR
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * force a save of [32-127] to tss&n;&t;&t; * we use the__ia64_save_fpu() form to avoid fiddling with&n;&t;&t; * the dfh bit.&n;&t;&t; */
-id|__ia64_save_fpu
+id|ia64_sync_fph
 c_func
 (paren
-op_amp
-id|current-&gt;thread.fph
-(braket
-l_int|0
-)braket
+id|current
 )paren
 suffix:semicolon
 op_star
@@ -5833,6 +5808,75 @@ l_int|30
 suffix:semicolon
 multiline_comment|/* NOT_REACHED */
 )brace
+multiline_comment|/*&n;&t; * For now, we don&squot;t support user processes running big-endian&n;&t; * which do unaligned accesses&n;&t; */
+r_if
+c_cond
+(paren
+id|ia64_psr
+c_func
+(paren
+id|regs
+)paren
+op_member_access_from_pointer
+id|be
+)paren
+(brace
+r_struct
+id|siginfo
+id|si
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;%s(%d): big-endian unaligned access %016lx (ip=%016lx) not &quot;
+l_string|&quot;yet supported&bslash;n&quot;
+comma
+id|current-&gt;comm
+comma
+id|current-&gt;pid
+comma
+id|ifa
+comma
+id|regs-&gt;cr_iip
+op_plus
+id|ipsr-&gt;ri
+)paren
+suffix:semicolon
+id|si.si_signo
+op_assign
+id|SIGBUS
+suffix:semicolon
+id|si.si_errno
+op_assign
+l_int|0
+suffix:semicolon
+id|si.si_code
+op_assign
+id|BUS_ADRALN
+suffix:semicolon
+id|si.si_addr
+op_assign
+(paren
+r_void
+op_star
+)paren
+id|ifa
+suffix:semicolon
+id|force_sig_info
+c_func
+(paren
+id|SIGBUS
+comma
+op_amp
+id|si
+comma
+id|current
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -5865,7 +5909,8 @@ op_star
 )paren
 id|ifa
 suffix:semicolon
-id|send_sig_info
+id|force_sig_info
+c_func
 (paren
 id|SIGBUS
 comma

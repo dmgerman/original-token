@@ -4,14 +4,11 @@ multiline_comment|/*&n; * This program is free software; you can redistribute it
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/gameport.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/isapnp.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
-macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/gameport.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 id|MODULE_AUTHOR
 c_func

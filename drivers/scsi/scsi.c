@@ -268,6 +268,23 @@ comma
 id|scsi_request_fn
 )paren
 suffix:semicolon
+id|blk_queue_headactive
+c_func
+(paren
+op_amp
+id|SDpnt-&gt;request_queue
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|SDpnt-&gt;request_queue.queuedata
+op_assign
+(paren
+r_void
+op_star
+)paren
+id|SDpnt
+suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
 id|MODULE_PARM
@@ -8047,15 +8064,6 @@ suffix:semicolon
 )brace
 )brace
 )brace
-id|printk
-c_func
-(paren
-l_string|&quot;wait_for_request = %p&bslash;n&quot;
-comma
-op_amp
-id|wait_for_request
-)paren
-suffix:semicolon
 macro_line|#endif&t;/* CONFIG_SCSI_LOGGING */ /* } */
 )brace
 macro_line|#endif&t;&t;&t;&t;/* CONFIG_PROC_FS */
@@ -8594,23 +8602,6 @@ id|SDpnt
 comma
 id|SHpnt
 )paren
-suffix:semicolon
-id|blk_queue_headactive
-c_func
-(paren
-op_amp
-id|SDpnt-&gt;request_queue
-comma
-l_int|0
-)paren
-suffix:semicolon
-id|SDpnt-&gt;request_queue.queuedata
-op_assign
-(paren
-r_void
-op_star
-)paren
-id|SDpnt
 suffix:semicolon
 id|SDpnt-&gt;online
 op_assign

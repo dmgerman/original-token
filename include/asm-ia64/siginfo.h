@@ -150,6 +150,16 @@ r_int
 id|_imm
 suffix:semicolon
 multiline_comment|/* immediate value for &quot;break&quot; */
+DECL|member|_pad0
+r_int
+id|_pad0
+suffix:semicolon
+DECL|member|_isr
+r_int
+r_int
+id|_isr
+suffix:semicolon
+multiline_comment|/* isr */
 DECL|member|_sigfault
 )brace
 id|_sigfault
@@ -199,6 +209,8 @@ DECL|macro|si_addr
 mdefine_line|#define si_addr&t;&t;_sifields._sigfault._addr
 DECL|macro|si_imm
 mdefine_line|#define si_imm&t;&t;_sifields._sigfault._imm&t;/* as per UNIX SysV ABI spec */
+DECL|macro|si_isr
+mdefine_line|#define si_isr&t;&t;_sifields._sigfault._isr&t;/* valid if si_code==FPE_FLTxxx */
 DECL|macro|si_band
 mdefine_line|#define si_band&t;&t;_sifields._sigpoll._band
 DECL|macro|si_fd

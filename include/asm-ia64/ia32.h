@@ -392,6 +392,29 @@ suffix:semicolon
 multiline_comment|/* A 32 bit mask */
 )brace
 suffix:semicolon
+DECL|struct|sigaltstack_ia32
+r_typedef
+r_struct
+id|sigaltstack_ia32
+(brace
+DECL|member|ss_sp
+r_int
+r_int
+id|ss_sp
+suffix:semicolon
+DECL|member|ss_flags
+r_int
+id|ss_flags
+suffix:semicolon
+DECL|member|ss_size
+r_int
+r_int
+id|ss_size
+suffix:semicolon
+DECL|typedef|stack_ia32_t
+)brace
+id|stack_ia32_t
+suffix:semicolon
 DECL|struct|ucontext_ia32
 r_struct
 id|ucontext_ia32
@@ -402,13 +425,12 @@ r_int
 id|uc_flags
 suffix:semicolon
 DECL|member|uc_link
-r_struct
-id|ucontext_ia32
-op_star
+r_int
+r_int
 id|uc_link
 suffix:semicolon
 DECL|member|uc_stack
-id|stack_t
+id|stack_ia32_t
 id|uc_stack
 suffix:semicolon
 DECL|member|uc_mcontext
@@ -854,7 +876,7 @@ DECL|macro|ELF_PLATFORM
 mdefine_line|#define ELF_PLATFORM&t;0
 macro_line|#ifdef __KERNEL__
 DECL|macro|SET_PERSONALITY
-mdefine_line|#define SET_PERSONALITY(ex, ibcs2) set_personality((ibcs2)?PER_SVR4:PER_LINUX)
+macro_line|# define SET_PERSONALITY(EX,IBCS2)&t;&t;&t;&t;&bslash;&n;&t;(current-&gt;personality = (IBCS2) ? PER_SVR4 : PER_LINUX)
 macro_line|#endif
 DECL|macro|IA32_EFLAG
 mdefine_line|#define IA32_EFLAG&t;0x200
@@ -915,9 +937,9 @@ DECL|macro|IA32_CR4
 mdefine_line|#define IA32_CR4       0&t;       /* No architectural extensions */
 multiline_comment|/*&n; *  IA32 floating point control registers starting values&n; */
 DECL|macro|IA32_FSR_DEFAULT
-mdefine_line|#define IA32_FSR_DEFAULT&t;0x55550000&t;/* set all tag bits */
+mdefine_line|#define IA32_FSR_DEFAULT&t;0x55550000&t;&t;/* set all tag bits */
 DECL|macro|IA32_FCR_DEFAULT
-mdefine_line|#define IA32_FCR_DEFAULT&t;0x33f&t;&t;/* single precision, all masks */
+mdefine_line|#define IA32_FCR_DEFAULT&t;0x17800000037fULL&t;/* extended precision, all masks */
 DECL|macro|IA32_PTRACE_GETREGS
 mdefine_line|#define IA32_PTRACE_GETREGS&t;12
 DECL|macro|IA32_PTRACE_SETREGS

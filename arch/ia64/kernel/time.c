@@ -36,9 +36,23 @@ r_int
 r_int
 id|delta
 suffix:semicolon
+r_union
+(brace
+DECL|member|count
+r_int
+r_int
+id|count
+suffix:semicolon
+DECL|member|pad
+r_int
+r_char
+id|pad
+(braket
+id|SMP_CACHE_BYTES
+)braket
+suffix:semicolon
 DECL|member|next
-r_int
-r_int
+)brace
 id|next
 (braket
 id|NR_CPUS
@@ -150,6 +164,12 @@ id|gettimeoffset
 r_void
 )paren
 (brace
+macro_line|#ifdef CONFIG_SMP
+multiline_comment|/*&n;&t; * The code below doesn&squot;t work for SMP because only CPU 0&n;&t; * keeps track of the time.&n;&t; */
+r_return
+l_int|0
+suffix:semicolon
+macro_line|#else
 r_int
 r_int
 id|now
@@ -158,17 +178,19 @@ id|ia64_get_itc
 c_func
 (paren
 )paren
+comma
+id|last_tick
 suffix:semicolon
 r_int
 r_int
 id|elapsed_cycles
 comma
 id|lost
-suffix:semicolon
-id|elapsed_cycles
 op_assign
-id|now
-op_minus
+id|lost_ticks
+suffix:semicolon
+id|last_tick
+op_assign
 (paren
 id|itm.next
 (braket
@@ -177,24 +199,54 @@ c_func
 (paren
 )paren
 )braket
+dot
+id|count
 op_minus
+(paren
+id|lost
+op_plus
+l_int|1
+)paren
+op_star
 id|itm.delta
 )paren
 suffix:semicolon
-id|lost
-op_assign
-id|lost_ticks
-suffix:semicolon
+macro_line|# if 1
 r_if
 c_cond
 (paren
-id|lost
+(paren
+r_int
 )paren
+(paren
+id|now
+op_minus
+id|last_tick
+)paren
+OL
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Yikes: now &lt; last_tick (now=0x%lx,last_tick=%lx)!  No can do.&bslash;n&quot;
+comma
+id|now
+comma
+id|last_tick
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|# endif
 id|elapsed_cycles
-op_add_assign
-id|lost
-op_star
-id|itm.delta
+op_assign
+id|now
+op_minus
+id|last_tick
 suffix:semicolon
 r_return
 (paren
@@ -205,6 +257,7 @@ id|my_cpu_data.usec_per_cyc
 op_rshift
 id|IA64_USEC_PER_CYC_SHIFT
 suffix:semicolon
+macro_line|#endif
 )brace
 r_void
 DECL|function|do_settimeofday
@@ -395,6 +448,10 @@ c_func
 )paren
 suffix:semicolon
 r_int
+r_int
+id|new_itm
+suffix:semicolon
+r_int
 id|printed
 op_assign
 l_int|0
@@ -405,6 +462,43 @@ c_func
 (paren
 op_amp
 id|xtime_lock
+)paren
+suffix:semicolon
+id|new_itm
+op_assign
+id|itm.next
+(braket
+id|cpu
+)braket
+dot
+id|count
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|time_after
+c_func
+(paren
+id|ia64_get_itc
+c_func
+(paren
+)paren
+comma
+id|new_itm
+)paren
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;Oops: timer tick before it&squot;s due (itc=%lx,itm=%lx)&bslash;n&quot;
+comma
+id|ia64_get_itc
+c_func
+(paren
+)paren
+comma
+id|new_itm
 )paren
 suffix:semicolon
 r_while
@@ -471,48 +565,35 @@ id|regs
 )paren
 suffix:semicolon
 macro_line|#endif
+id|new_itm
+op_add_assign
+id|itm.delta
+suffix:semicolon
 id|itm.next
 (braket
 id|cpu
 )braket
-op_add_assign
-id|itm.delta
+dot
+id|count
+op_assign
+id|new_itm
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * There is a race condition here: to be on the &quot;safe&quot;&n;&t;&t; * side, we process timer ticks until itm.next is&n;&t;&t; * ahead of the itc by at least half the timer&n;&t;&t; * interval.  This should give us enough time to set&n;&t;&t; * the new itm value without losing a timer tick.&n;&t;&t; */
 r_if
 c_cond
 (paren
 id|time_after
 c_func
 (paren
-id|itm.next
-(braket
-id|cpu
-)braket
+id|new_itm
 comma
 id|ia64_get_itc
 c_func
 (paren
 )paren
-op_plus
-id|itm.delta
-op_div
-l_int|2
 )paren
 )paren
-(brace
-id|ia64_set_itm
-c_func
-(paren
-id|itm.next
-(braket
-id|cpu
-)braket
-)paren
-suffix:semicolon
 r_break
 suffix:semicolon
-)brace
 macro_line|#if !(defined(CONFIG_IA64_SOFTSDV_HACKS) &amp;&amp; defined(CONFIG_SMP))
 multiline_comment|/*&n;&t;&t; * SoftSDV in SMP mode is _slow_, so we do &quot;lose&quot; ticks, &n;&t;&t; * but it&squot;s really OK...&n;&t;&t; */
 r_if
@@ -570,13 +651,14 @@ id|itm.next
 (braket
 id|cpu
 )braket
+dot
+id|count
 )paren
 suffix:semicolon
 id|printed
 op_assign
 l_int|1
 suffix:semicolon
-)brace
 macro_line|# ifdef CONFIG_IA64_DEBUG_IRQ
 id|printk
 c_func
@@ -588,6 +670,7 @@ id|last_cli_ip
 suffix:semicolon
 macro_line|# endif
 )brace
+)brace
 macro_line|#endif
 )brace
 id|write_unlock
@@ -597,8 +680,39 @@ op_amp
 id|xtime_lock
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * If we&squot;re too close to the next clock tick for comfort, we&n;&t; * increase the saftey margin by intentionally dropping the&n;&t; * next tick(s).  We do NOT update itm.next accordingly&n;&t; * because that would force us to call do_timer() which in&n;&t; * turn would let our clock run too fast (with the potentially&n;&t; * devastating effect of losing monotony of time).&n;&t; */
+r_while
+c_loop
+(paren
+op_logical_neg
+id|time_after
+c_func
+(paren
+id|new_itm
+comma
+id|ia64_get_itc
+c_func
+(paren
+)paren
+op_plus
+id|itm.delta
+op_div
+l_int|2
+)paren
+)paren
+id|new_itm
+op_add_assign
+id|itm.delta
+suffix:semicolon
+id|ia64_set_itm
+c_func
+(paren
+id|new_itm
+)paren
+suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_ITANIUM_ASTEP_SPECIFIC
+macro_line|#if defined(CONFIG_ITANIUM_ASTEP_SPECIFIC) || defined(CONFIG_IA64_SOFTSDV_HACKS)
+multiline_comment|/*&n; * Interrupts must be disabled before calling this routine.&n; */
 r_void
 DECL|function|ia64_reset_itm
 id|ia64_reset_itm
@@ -606,16 +720,6 @@ id|ia64_reset_itm
 r_void
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|local_irq_save
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 id|timer_interrupt
 c_func
 (paren
@@ -630,12 +734,6 @@ id|current
 )paren
 )paren
 suffix:semicolon
-id|local_irq_restore
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_ITANIUM_ASTEP_SPECIFIC */
 multiline_comment|/*&n; * Encapsulate access to the itm structure for SMP.&n; */
@@ -648,18 +746,20 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#ifdef CONFIG_IA64_SOFTSDV_HACKS
+id|ia64_set_itc
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* arrange for the cycle counter to generate a timer interrupt: */
 id|ia64_set_itv
 c_func
 (paren
 id|TIMER_IRQ
 comma
-l_int|0
-)paren
-suffix:semicolon
-id|ia64_set_itc
-c_func
-(paren
 l_int|0
 )paren
 suffix:semicolon
@@ -670,6 +770,8 @@ c_func
 (paren
 )paren
 )braket
+dot
+id|count
 op_assign
 id|ia64_get_itc
 c_func
@@ -688,6 +790,8 @@ c_func
 (paren
 )paren
 )braket
+dot
+id|count
 )paren
 suffix:semicolon
 )brace
@@ -812,67 +916,7 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#if defined(CONFIG_IA64_LION_HACKS)
-multiline_comment|/* Our Lion currently returns base freq 104.857MHz, which&n;&t;   ain&squot;t right (it really is 100MHz).  */
-id|printk
-c_func
-(paren
-l_string|&quot;SAL/PAL returned: base-freq=%lu, itc-ratio=%lu/%lu, proc-ratio=%lu/%lu&bslash;n&quot;
-comma
-id|platform_base_freq
-comma
-id|itc_ratio.num
-comma
-id|itc_ratio.den
-comma
-id|proc_ratio.num
-comma
-id|proc_ratio.den
-)paren
-suffix:semicolon
-id|platform_base_freq
-op_assign
-l_int|100000000
-suffix:semicolon
-macro_line|#elif 0 &amp;&amp; defined(CONFIG_IA64_BIGSUR_HACKS)
-multiline_comment|/* BigSur with 991020 firmware returned itc-ratio=9/2 and base&n;&t;   freq 75MHz, which wasn&squot;t right.  The 991119 firmware seems&n;&t;   to return the right values, so this isn&squot;t necessary&n;&t;   anymore... */
-id|printk
-c_func
-(paren
-l_string|&quot;SAL/PAL returned: base-freq=%lu, itc-ratio=%lu/%lu, proc-ratio=%lu/%lu&bslash;n&quot;
-comma
-id|platform_base_freq
-comma
-id|itc_ratio.num
-comma
-id|itc_ratio.den
-comma
-id|proc_ratio.num
-comma
-id|proc_ratio.den
-)paren
-suffix:semicolon
-id|platform_base_freq
-op_assign
-l_int|100000000
-suffix:semicolon
-id|proc_ratio.num
-op_assign
-l_int|5
-suffix:semicolon
-id|proc_ratio.den
-op_assign
-l_int|1
-suffix:semicolon
-id|itc_ratio.num
-op_assign
-l_int|5
-suffix:semicolon
-id|itc_ratio.den
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#elif defined(CONFIG_IA64_SOFTSDV_HACKS)
+macro_line|#ifdef CONFIG_IA64_SOFTSDV_HACKS
 id|platform_base_freq
 op_assign
 l_int|10000000
@@ -957,7 +1001,12 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;timer: base freq=%lu.%03luMHz, ITC ratio=%lu/%lu, ITC freq=%lu.%03luMHz&bslash;n&quot;
+l_string|&quot;timer: CPU %d base freq=%lu.%03luMHz, ITC ratio=%lu/%lu, ITC freq=%lu.%03luMHz&bslash;n&quot;
+comma
+id|smp_processor_id
+c_func
+(paren
+)paren
 comma
 id|platform_base_freq
 op_div
@@ -1054,6 +1103,25 @@ r_void
 )paren
 (brace
 multiline_comment|/* we can&squot;t do request_irq() here because the kmalloc() would fail... */
+id|irq_desc
+(braket
+id|TIMER_IRQ
+)braket
+dot
+id|status
+op_or_assign
+id|IRQ_PER_CPU
+suffix:semicolon
+id|irq_desc
+(braket
+id|TIMER_IRQ
+)braket
+dot
+id|handler
+op_assign
+op_amp
+id|irq_type_ia64_sapic
+suffix:semicolon
 id|setup_irq
 c_func
 (paren

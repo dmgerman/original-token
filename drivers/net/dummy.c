@@ -248,12 +248,6 @@ id|net_device_stats
 op_star
 id|stats
 suffix:semicolon
-id|dev_kfree_skb
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
 id|stats
 op_assign
 (paren
@@ -269,6 +263,12 @@ suffix:semicolon
 id|stats-&gt;tx_bytes
 op_add_assign
 id|skb-&gt;len
+suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
 suffix:semicolon
 r_return
 l_int|0

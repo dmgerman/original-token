@@ -22,6 +22,8 @@ DECL|macro|IRQ_LEVEL
 mdefine_line|#define IRQ_LEVEL&t;64&t;/* IRQ level triggered */
 DECL|macro|IRQ_MASKED
 mdefine_line|#define IRQ_MASKED&t;128&t;/* IRQ masked - shouldn&squot;t be seen again */
+DECL|macro|IRQ_PER_CPU
+mdefine_line|#define IRQ_PER_CPU&t;256&t;/* IRQ is per CPU */
 multiline_comment|/*&n; * Interrupt controller descriptor. This is all we need&n; * to describe about the low-level hardware. &n; */
 DECL|struct|hw_interrupt_type
 r_struct

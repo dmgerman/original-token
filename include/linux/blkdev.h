@@ -15,6 +15,15 @@ r_struct
 id|request_queue
 id|request_queue_t
 suffix:semicolon
+r_struct
+id|elevator_s
+suffix:semicolon
+DECL|typedef|elevator_t
+r_typedef
+r_struct
+id|elevator_s
+id|elevator_t
+suffix:semicolon
 multiline_comment|/*&n; * Ok, this is an expanded form so that we can use the same&n; * request for paging requests when that is implemented. In&n; * paging, &squot;bh&squot; is NULL, and the semaphore is used to wait&n; * for read/write completion.&n; */
 DECL|struct|request
 r_struct
@@ -29,6 +38,12 @@ DECL|member|elevator_sequence
 r_int
 id|elevator_sequence
 suffix:semicolon
+DECL|member|table
+r_struct
+id|list_head
+id|table
+suffix:semicolon
+multiline_comment|/*&n;&t; * queue free list belongs to&n;&t; */
 DECL|member|rq_status
 r_volatile
 r_int
@@ -123,6 +138,11 @@ DECL|member|q
 id|request_queue_t
 op_star
 id|q
+suffix:semicolon
+DECL|member|e
+id|elevator_t
+op_star
+id|e
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -246,16 +266,31 @@ op_star
 id|q
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * Default nr free requests per queue&n; */
+DECL|macro|QUEUE_NR_REQUESTS
+mdefine_line|#define QUEUE_NR_REQUESTS&t;512
+DECL|macro|QUEUE_WRITES_MAX
+mdefine_line|#define QUEUE_WRITES_MAX&t;((2 * QUEUE_NR_REQUESTS) / 3)
 DECL|struct|request_queue
 r_struct
 id|request_queue
 (brace
+multiline_comment|/*&n;&t; * the queue request freelist, one for reads and one for writes&n;&t; */
+DECL|member|request_freelist
+r_struct
+id|list_head
+id|request_freelist
+suffix:semicolon
+DECL|member|queue_requests
+r_int
+id|queue_requests
+suffix:semicolon
+multiline_comment|/*&n;&t; * Together with queue_head for cacheline sharing&n;&t; */
 DECL|member|queue_head
 r_struct
 id|list_head
 id|queue_head
 suffix:semicolon
-multiline_comment|/* together with queue_head for cacheline sharing */
 DECL|member|elevator
 id|elevator_t
 id|elevator
@@ -311,6 +346,16 @@ multiline_comment|/*&n;&t; * Boolean that indicates whether current_request is a
 DECL|member|head_active
 r_char
 id|head_active
+suffix:semicolon
+multiline_comment|/*&n;&t; * Is meant to protect the queue in the future instead of&n;&t; * io_request_lock&n;&t; */
+DECL|member|request_lock
+id|spinlock_t
+id|request_lock
+suffix:semicolon
+multiline_comment|/*&n;&t; * Tasks wait here for free request&n;&t; */
+DECL|member|wait_for_request
+id|wait_queue_head_t
+id|wait_for_request
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -368,10 +413,6 @@ id|blk_dev
 (braket
 id|MAX_BLKDEV
 )braket
-suffix:semicolon
-r_extern
-id|wait_queue_head_t
-id|wait_for_request
 suffix:semicolon
 r_extern
 r_void
@@ -454,6 +495,16 @@ c_func
 (paren
 id|kdev_t
 id|dev
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|blkdev_release_request
+c_func
+(paren
+r_struct
+id|request
+op_star
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Access functions for manipulating queue properties&n; */

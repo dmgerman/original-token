@@ -217,6 +217,24 @@ op_or
 id|vector
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_IA64_AZUSA_HACKS
+multiline_comment|/* set Flush Disable bit */
+r_if
+c_cond
+(paren
+id|iosapic_addr
+op_ne
+l_int|0xc0000000fec00000
+)paren
+id|low32
+op_or_assign
+(paren
+l_int|1
+op_lshift
+l_int|17
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* dest contains both id and eid */
 id|high32
 op_assign
@@ -737,6 +755,9 @@ id|iosapic_init
 r_int
 r_int
 id|address
+comma
+r_int
+id|irqbase
 )paren
 (brace
 r_struct
@@ -754,7 +775,14 @@ id|i
 comma
 id|irq
 suffix:semicolon
-multiline_comment|/* &n;&t; * Map the legacy ISA devices into the IOSAPIC data.  Some of&n;&t; * these may get reprogrammed later on with data from the ACPI&n;&t; * Interrupt Source Override table.&n;&t; */
+r_if
+c_cond
+(paren
+id|irqbase
+op_eq
+l_int|0
+)paren
+multiline_comment|/* &n;&t;&t; * Map the legacy ISA devices into the IOSAPIC data.&n;&t;&t; * Some of these may get reprogrammed later on with&n;&t;&t; * data from the ACPI Interrupt Source Override table.&n;&t;&t; */
 r_for
 c_loop
 (paren
@@ -845,6 +873,7 @@ id|irq
 suffix:semicolon
 macro_line|#endif
 )brace
+macro_line|#ifndef CONFIG_IA64_SOFTSDV_HACKS
 multiline_comment|/* &n;&t; * Map the PCI Interrupt data into the ACPI IOSAPIC data using&n;&t; * the info that the bootstrap loader passed to us.&n;&t; */
 id|ia64_boot_param.pci_vectors
 op_assign
@@ -904,6 +933,19 @@ c_func
 (paren
 id|irq
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|iosapic_baseirq
+c_func
+(paren
+id|irq
+)paren
+op_ne
+id|irqbase
+)paren
+r_continue
 suffix:semicolon
 id|iosapic_bustype
 c_func
@@ -1037,6 +1079,7 @@ id|irq
 suffix:semicolon
 macro_line|#endif
 )brace
+macro_line|#endif /* CONFIG_IA64_SOFTSDV_HACKS */
 r_for
 c_loop
 (paren
@@ -1052,6 +1095,19 @@ op_increment
 id|i
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|iosapic_baseirq
+c_func
+(paren
+id|i
+)paren
+op_ne
+id|irqbase
+)paren
+r_continue
+suffix:semicolon
 r_if
 c_cond
 (paren

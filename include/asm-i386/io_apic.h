@@ -3,6 +3,7 @@ DECL|macro|__ASM_IO_APIC_H
 mdefine_line|#define __ASM_IO_APIC_H
 macro_line|#include &lt;asm/types.h&gt;
 multiline_comment|/*&n; * Intel IO-APIC support for SMP and UP systems.&n; *&n; * Copyright (C) 1997, 1998, 1999, 2000 Ingo Molnar&n; */
+macro_line|#ifdef CONFIG_X86_IO_APIC
 DECL|macro|IO_APIC_BASE
 mdefine_line|#define IO_APIC_BASE(idx) &bslash;&n;&t;&t;((volatile int *)__fix_to_virt(FIX_IO_APIC_BASE_0 + idx))
 multiline_comment|/*&n; * The structure of the IO-APIC:&n; */
@@ -445,5 +446,12 @@ id|IO_APIC_init_uniprocessor
 r_void
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * If we use the IO-APIC for IRQ routing, disable automatic&n; * assignment of PCI IRQ&squot;s.&n; */
+DECL|macro|io_apic_assign_pci_irqs
+mdefine_line|#define io_apic_assign_pci_irqs (!mp_irq_entries)
+macro_line|#else  /* !CONFIG_X86_IO_APIC */
+DECL|macro|io_apic_assign_pci_irqs
+mdefine_line|#define io_apic_assign_pci_irqs 0
+macro_line|#endif
 macro_line|#endif
 eof

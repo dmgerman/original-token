@@ -2808,9 +2808,11 @@ id|rq
 op_assign
 l_int|NULL
 suffix:semicolon
-id|rq-&gt;rq_status
-op_assign
-id|RQ_INACTIVE
+id|blkdev_release_request
+c_func
+(paren
+id|rq
+)paren
 suffix:semicolon
 id|spin_unlock_irqrestore
 c_func

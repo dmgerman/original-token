@@ -119,6 +119,14 @@ id|__u64
 id|fpswa
 suffix:semicolon
 multiline_comment|/* physical address of the the fpswa interface */
+DECL|member|initrd_start
+id|__u64
+id|initrd_start
+suffix:semicolon
+DECL|member|initrd_size
+id|__u64
+id|initrd_size
+suffix:semicolon
 )brace
 id|ia64_boot_param
 suffix:semicolon
@@ -168,7 +176,7 @@ macro_line|# define local_irq_save(x)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;do {&t;&
 DECL|macro|local_irq_disable
 macro_line|# define local_irq_disable()&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long ip, psr;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__ (&quot;mov %0=psr;; rsm psr.i;;&quot; : &quot;=r&quot; (psr) :: &quot;memory&quot;);&t;&bslash;&n;&t;if (psr &amp; (1UL &lt;&lt; 14)) {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__asm__ (&quot;mov %0=ip&quot; : &quot;=r&quot;(ip));&t;&t;&t;&t;&t;&bslash;&n;&t;&t;last_cli_ip = ip;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;} while (0)
 DECL|macro|local_irq_restore
-macro_line|# define local_irq_restore(x)&t;&t;&t;&t;&t;&t; &bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&t; &bslash;&n;&t;unsigned long ip, old_psr, psr = (x);&t;&t;&t;&t; &bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; &bslash;&n;&t;__asm__ __volatile__ (&quot;mov %0=psr; mov psr.l=%1;; srlz.d&quot;&t; &bslash;&n;&t;&t;&t;      : &quot;=&amp;r&quot; (old_psr) : &quot;r&quot; (psr) : &quot;memory&quot;); &bslash;&n;&t;if ((old_psr &amp; (1UL &lt;&lt; 14)) &amp;&amp; !(psr &amp; (1UL &lt;&lt; 14))) {&t;&t; &bslash;&n;&t;&t;__asm__ (&quot;mov %0=ip&quot; : &quot;=r&quot;(ip));&t;&t;&t; &bslash;&n;&t;&t;last_cli_ip = ip;&t;&t;&t;&t;&t; &bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t; &bslash;&n;} while (0)
+macro_line|# define local_irq_restore(x)&t;&t;&t;&t;&t;&t; &bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&t; &bslash;&n;&t;unsigned long ip, old_psr, psr = (x);&t;&t;&t;&t; &bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; &bslash;&n;&t;__asm__ __volatile__ (&quot;;;mov %0=psr; mov psr.l=%1;; srlz.d&quot;&t; &bslash;&n;&t;&t;&t;      : &quot;=&amp;r&quot; (old_psr) : &quot;r&quot; (psr) : &quot;memory&quot;); &bslash;&n;&t;if ((old_psr &amp; (1UL &lt;&lt; 14)) &amp;&amp; !(psr &amp; (1UL &lt;&lt; 14))) {&t;&t; &bslash;&n;&t;&t;__asm__ (&quot;mov %0=ip&quot; : &quot;=r&quot;(ip));&t;&t;&t; &bslash;&n;&t;&t;last_cli_ip = ip;&t;&t;&t;&t;&t; &bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t; &bslash;&n;} while (0)
 macro_line|#else /* !CONFIG_IA64_DEBUG_IRQ */
 multiline_comment|/* clearing of psr.i is implicitly serialized (visible by next insn) */
 DECL|macro|local_irq_save
@@ -177,7 +185,7 @@ DECL|macro|local_irq_disable
 macro_line|# define local_irq_disable()&t;__asm__ __volatile__ (&quot;;; rsm psr.i;;&quot; ::: &quot;memory&quot;)
 multiline_comment|/* (potentially) setting psr.i requires data serialization: */
 DECL|macro|local_irq_restore
-macro_line|# define local_irq_restore(x)&t;__asm__ __volatile__ (&quot;mov psr.l=%0;; srlz.d&quot;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;      :: &quot;r&quot; (x) : &quot;memory&quot;)
+macro_line|# define local_irq_restore(x)&t;__asm__ __volatile__ (&quot;;; mov psr.l=%0;; srlz.d&quot;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;      :: &quot;r&quot; (x) : &quot;memory&quot;)
 macro_line|#endif /* !CONFIG_IA64_DEBUG_IRQ */
 DECL|macro|local_irq_enable
 mdefine_line|#define local_irq_enable()&t;__asm__ __volatile__ (&quot;;; ssm psr.i;; srlz.d&quot; ::: &quot;memory&quot;)
@@ -514,39 +522,15 @@ DECL|macro|CMPXCHG_BUGCHECK
 macro_line|# define CMPXCHG_BUGCHECK(v)
 macro_line|#endif /* !CONFIG_IA64_DEBUG_CMPXCHG */
 macro_line|#ifdef __KERNEL__
-r_extern
-r_void
-id|ia64_save_debug_regs
-(paren
-r_int
-r_int
-op_star
-id|save_area
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|ia64_load_debug_regs
-(paren
-r_int
-r_int
-op_star
-id|save_area
-)paren
-suffix:semicolon
 DECL|macro|prepare_to_switch
 mdefine_line|#define prepare_to_switch()    do { } while(0)
 macro_line|#ifdef CONFIG_IA32_SUPPORT
 DECL|macro|IS_IA32_PROCESS
 macro_line|# define IS_IA32_PROCESS(regs)&t;(ia64_psr(regs)-&gt;is != 0)
-DECL|macro|IA32_STATE
-macro_line|# define IA32_STATE(prev,next)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (IS_IA32_PROCESS(ia64_task_regs(prev))) {&t;&t;&t;&t;&bslash;&n;&t;    __asm__ __volatile__(&quot;mov %0=ar.eflag&quot;:&quot;=r&quot;((prev)-&gt;thread.eflag));&t;&bslash;&n;&t;    __asm__ __volatile__(&quot;mov %0=ar.fsr&quot;:&quot;=r&quot;((prev)-&gt;thread.fsr));&t;&bslash;&n;&t;    __asm__ __volatile__(&quot;mov %0=ar.fcr&quot;:&quot;=r&quot;((prev)-&gt;thread.fcr));&t;&bslash;&n;&t;    __asm__ __volatile__(&quot;mov %0=ar.fir&quot;:&quot;=r&quot;((prev)-&gt;thread.fir));&t;&bslash;&n;&t;    __asm__ __volatile__(&quot;mov %0=ar.fdr&quot;:&quot;=r&quot;((prev)-&gt;thread.fdr));&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (IS_IA32_PROCESS(ia64_task_regs(next))) {&t;&t;&t;&t;&bslash;&n;&t;    __asm__ __volatile__(&quot;mov ar.eflag=%0&quot;::&quot;r&quot;((next)-&gt;thread.eflag));&t;&bslash;&n;&t;    __asm__ __volatile__(&quot;mov ar.fsr=%0&quot;::&quot;r&quot;((next)-&gt;thread.fsr));&t;&bslash;&n;&t;    __asm__ __volatile__(&quot;mov ar.fcr=%0&quot;::&quot;r&quot;((next)-&gt;thread.fcr));&t;&bslash;&n;&t;    __asm__ __volatile__(&quot;mov ar.fir=%0&quot;::&quot;r&quot;((next)-&gt;thread.fir));&t;&bslash;&n;&t;    __asm__ __volatile__(&quot;mov ar.fdr=%0&quot;::&quot;r&quot;((next)-&gt;thread.fdr));&t;&bslash;&n;&t;}
-macro_line|#else /* !CONFIG_IA32_SUPPORT */
-DECL|macro|IA32_STATE
-macro_line|# define IA32_STATE(prev,next)
+macro_line|#else
 DECL|macro|IS_IA32_PROCESS
 macro_line|# define IS_IA32_PROCESS(regs)&t;&t;0
-macro_line|#endif /* CONFIG_IA32_SUPPORT */
+macro_line|#endif
 multiline_comment|/*&n; * Context switch from one thread to another.  If the two threads have&n; * different address spaces, schedule() has already taken care of&n; * switching to the new address space by calling switch_mm().&n; *&n; * Disabling access to the fph partition and the debug-register&n; * context switch MUST be done before calling ia64_switch_to() since a&n; * newly created thread returns directly to&n; * ia64_ret_from_syscall_clear_r8.&n; */
 r_extern
 r_struct
@@ -559,8 +543,28 @@ op_star
 id|next_task
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|ia64_save_extra
+(paren
+r_struct
+id|task_struct
+op_star
+id|task
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|ia64_load_extra
+(paren
+r_struct
+id|task_struct
+op_star
+id|task
+)paren
+suffix:semicolon
 DECL|macro|__switch_to
-mdefine_line|#define __switch_to(prev,next,last) do {&t;&t;&t;&t;&t;&bslash;&n;&t;ia64_psr(ia64_task_regs(next))-&gt;dfh = (ia64_get_fpu_owner() != (next));&t;&bslash;&n;&t;if ((prev)-&gt;thread.flags &amp; IA64_THREAD_DBG_VALID) {&t;&t;&t;&bslash;&n;&t;&t;ia64_save_debug_regs(&amp;(prev)-&gt;thread.dbr[0]);&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if ((next)-&gt;thread.flags &amp; IA64_THREAD_DBG_VALID) {&t;&t;&t;&bslash;&n;&t;&t;ia64_load_debug_regs(&amp;(next)-&gt;thread.dbr[0]);&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;IA32_STATE(prev,next);&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;(last) = ia64_switch_to((next));&t;&t;&t;&t;&t;&bslash;&n;} while (0)
+mdefine_line|#define __switch_to(prev,next,last) do {&t;&t;&t;&t;&t;&bslash;&n;&t;if (((prev)-&gt;thread.flags &amp; IA64_THREAD_DBG_VALID)&t;&t;&t;&bslash;&n;&t;    || IS_IA32_PROCESS(ia64_task_regs(prev)))&t;&t;&t;&t;&bslash;&n;&t;&t;ia64_save_extra(prev);&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (((next)-&gt;thread.flags &amp; IA64_THREAD_DBG_VALID)&t;&t;&t;&bslash;&n;&t;    || IS_IA32_PROCESS(ia64_task_regs(next)))&t;&t;&t;&t;&bslash;&n;&t;&t;ia64_load_extra(next);&t;&t;&t;&t;&t;&t;&bslash;&n;&t;ia64_psr(ia64_task_regs(next))-&gt;dfh = (ia64_get_fpu_owner() != (next));&t;&bslash;&n;&t;(last) = ia64_switch_to((next));&t;&t;&t;&t;&t;&bslash;&n;} while (0)
 macro_line|#ifdef CONFIG_SMP 
 multiline_comment|/*&n;   * In the SMP case, we save the fph state when context-switching&n;   * away from a thread that owned and modified fph.  This way, when&n;   * the thread gets scheduled on another CPU, the CPU can pick up the&n;   * state frm task-&gt;thread.fph, avoiding the complication of having&n;   * to fetch the latest fph state from another CPU.  If the thread&n;   * happens to be rescheduled on the same CPU later on and nobody&n;   * else has touched the FPU in the meantime, the thread will fault&n;   * upon the first access to fph but since the state in fph is still&n;   * valid, no other overheads are incurred.  In other words, CPU&n;   * affinity is a Good Thing.&n;   */
 DECL|macro|switch_to

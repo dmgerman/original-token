@@ -1503,7 +1503,7 @@ id|Scsi_Device
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Register the queue for the device.  All I/O requests will come&n;&t;&t; * in through here.  We also need to register a pointer to&n;&t;&t; * ourselves, since the queue handler won&squot;t know what device&n;&t;&t; * the queue actually represents.   We could look it up, but it&n;&t;&t; * is pointless work.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Register the queue for the device.  All I/O requests will&n;&t;&t; * come in through here.  We also need to register a pointer to&n;&t;&t; * ourselves, since the queue handler won&squot;t know what device&n;&t;&t; * the queue actually represents.   We could look it up, but it&n;&t;&t; * is pointless work.&n;&t;&t; */
 id|scsi_initialize_queue
 c_func
 (paren
