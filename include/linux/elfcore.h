@@ -44,6 +44,11 @@ r_typedef
 id|elf_fpregset_t
 id|fpregset_t
 suffix:semicolon
+DECL|typedef|fpxregset_t
+r_typedef
+id|elf_fpxregset_t
+id|fpxregset_t
+suffix:semicolon
 DECL|macro|NGREG
 mdefine_line|#define NGREG ELF_NGREG
 macro_line|#endif

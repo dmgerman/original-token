@@ -26,6 +26,12 @@ r_struct
 id|user_i387_struct
 id|elf_fpregset_t
 suffix:semicolon
+DECL|typedef|elf_fpxregset_t
+r_typedef
+r_struct
+id|user_fxsr_struct
+id|elf_fpxregset_t
+suffix:semicolon
 multiline_comment|/*&n; * This is used to ensure we don&squot;t load something for the wrong architecture.&n; */
 DECL|macro|elf_check_arch
 mdefine_line|#define elf_check_arch(x) ( ((x) == EM_386) || ((x) == EM_486) )

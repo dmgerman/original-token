@@ -4,6 +4,7 @@ mdefine_line|#define _I386_USER_H
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 multiline_comment|/* Core file format: The core file is written in such a way that gdb&n;   can understand it and provide useful information to the user (under&n;   linux we use the &squot;trad-core&squot; bfd).  There are quite a number of&n;   obstacles to being able to view the contents of the floating point&n;   registers, and until these are solved you will not be able to view the&n;   contents of them.  Actually, you can read in the core file and look at&n;   the contents of the user struct to find out what the floating point&n;   registers contain.&n;   The actual file contents are as follows:&n;   UPAGE: 1 page consisting of a user struct that tells gdb what is present&n;   in the file.  Directly after this is a copy of the task_struct, which&n;   is currently not used by gdb, but it may come in useful at some point.&n;   All of the registers are stored as part of the upage.  The upage should&n;   always be only one page.&n;   DATA: The data area is stored.  We use current-&gt;end_text to&n;   current-&gt;brk to pick up all of the user variables, plus any memory&n;   that may have been malloced.  No attempt is made to determine if a page&n;   is demand-zero or if a page is totally unused, we just cover the entire&n;   range.  All of the addresses are rounded in such a way that an integral&n;   number of pages is written.&n;   STACK: We need the stack information in order to get a meaningful&n;   backtrace.  We need to write the data from (esp) to&n;   current-&gt;start_stack, so we round each of these off in order to be able&n;   to write an integer number of pages.&n;   The minimum core file size is 3 pages, or 12288 bytes.&n;*/
+multiline_comment|/*&n; * Pentium III FXSR, SSE support&n; *&t;Gareth Hughes &lt;gareth@valinux.com&gt;, May 2000&n; *&n; * Provide support for the GDB 5.0+ PTRACE_{GET|SET}FPXREGS requests for&n; * interacting with the FXSR-format floating point environment.  Floating&n; * point data can be accessed in the regular format in the usual manner,&n; * and both the standard and SIMD floating point data can be accessed via&n; * the new ptrace requests.  In either case, changes to the FPU environment&n; * will be reflected in the task&squot;s state as expected.&n; */
 DECL|struct|user_i387_struct
 r_struct
 id|user_i387_struct
@@ -44,6 +45,79 @@ l_int|20
 )braket
 suffix:semicolon
 multiline_comment|/* 8*10 bytes for each FP-reg = 80 bytes */
+)brace
+suffix:semicolon
+DECL|struct|user_fxsr_struct
+r_struct
+id|user_fxsr_struct
+(brace
+DECL|member|cwd
+r_int
+r_int
+id|cwd
+suffix:semicolon
+DECL|member|swd
+r_int
+r_int
+id|swd
+suffix:semicolon
+DECL|member|twd
+r_int
+r_int
+id|twd
+suffix:semicolon
+DECL|member|fop
+r_int
+r_int
+id|fop
+suffix:semicolon
+DECL|member|fip
+r_int
+id|fip
+suffix:semicolon
+DECL|member|fcs
+r_int
+id|fcs
+suffix:semicolon
+DECL|member|foo
+r_int
+id|foo
+suffix:semicolon
+DECL|member|fos
+r_int
+id|fos
+suffix:semicolon
+DECL|member|mxcsr
+r_int
+id|mxcsr
+suffix:semicolon
+DECL|member|reserved
+r_int
+id|reserved
+suffix:semicolon
+DECL|member|st_space
+r_int
+id|st_space
+(braket
+l_int|32
+)braket
+suffix:semicolon
+multiline_comment|/* 8*16 bytes for each FP-reg = 128 bytes */
+DECL|member|xmm_space
+r_int
+id|xmm_space
+(braket
+l_int|32
+)braket
+suffix:semicolon
+multiline_comment|/* 8*16 bytes for each XMM-reg = 128 bytes */
+DECL|member|padding
+r_int
+id|padding
+(braket
+l_int|56
+)braket
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * This is the old layout of &quot;struct pt_regs&quot;, and&n; * is still the layout used by user mode (the new&n; * pt_regs doesn&squot;t have all registers as the kernel&n; * doesn&squot;t use the extra segment registers)&n; */

@@ -111,6 +111,10 @@ DECL|macro|PTRACE_GETFPREGS
 mdefine_line|#define PTRACE_GETFPREGS          14
 DECL|macro|PTRACE_SETFPREGS
 mdefine_line|#define PTRACE_SETFPREGS          15
+DECL|macro|PTRACE_GETFPXREGS
+mdefine_line|#define PTRACE_GETFPXREGS         18
+DECL|macro|PTRACE_SETFPXREGS
+mdefine_line|#define PTRACE_SETFPXREGS         19
 macro_line|#ifdef __KERNEL__
 DECL|macro|user_mode
 mdefine_line|#define user_mode(regs) ((VM_MASK &amp; (regs)-&gt;eflags) || (3 &amp; (regs)-&gt;xcs))

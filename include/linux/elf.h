@@ -1271,6 +1271,8 @@ DECL|macro|NT_PRPSINFO
 mdefine_line|#define NT_PRPSINFO&t;3
 DECL|macro|NT_TASKSTRUCT
 mdefine_line|#define NT_TASKSTRUCT&t;4
+DECL|macro|NT_PRFPXREG
+mdefine_line|#define NT_PRFPXREG&t;20
 multiline_comment|/* Note header in a PT_NOTE section */
 DECL|struct|elf32_note
 r_typedef

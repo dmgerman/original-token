@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/i386/kernel/setup.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *&n; *  Enhanced CPU type detection by Mike Jagdis, Patrick St. Jean&n; *  and Martin Mares, November 1997.&n; *&n; *  Force Cyrix 6x86(MX) and M II processors to report MTRR capability&n; *  and Cyrix &quot;coma bug&quot; recognition by&n; *      Zolt&#xfffd;n B&#xfffd;sz&#xfffd;rm&#xfffd;nyi &lt;zboszor@mail.externet.hu&gt; February 1999.&n; * &n; *  Force Centaur C6 processors to report MTRR capability.&n; *      Bart Hartgers &lt;bart@etpmod.phys.tue.nl&gt;, May 1999.&n; *&n; *  Intel Mobile Pentium II detection fix. Sean Gilley, June 1999.&n; *&n; *  IDT Winchip tweaks, misc clean ups.&n; *&t;Dave Jones &lt;dave@powertweak.com&gt;, August 1999&n; *&n; *  Support of BIGMEM added by Gerhard Wichert, Siemens AG, July 1999&n; *&n; *  Better detection of Centaur/IDT WinChip models.&n; *      Bart Hartgers &lt;bart@etpmod.phys.tue.nl&gt;, August 1999.&n; *&n; *  Memory region support&n; *&t;David Parsons &lt;orc@pell.chi.il.us&gt;, July-August 1999&n; *&n; *  Cleaned up cache-detection code&n; *&t;Dave Jones &lt;dave@powertweak.com&gt;, October 1999&n; *&n; *&t;Added proper L2 cache detection for Coppermine&n; *&t;Dragan Stancevic &lt;visitor@valinux.com&gt;, October 1999&n; *&n; *  Added the original array for capability flags but forgot to credit &n; *  myself :) (~1998) Fixed/cleaned up some cpu_model_info and other stuff&n; *  &t;Jauder Ho &lt;jauderho@carumba.com&gt;, January 2000&n; *&n; *  Detection for Celeron coppermine, identify_cpu() overhauled,&n; *  and a few other clean ups.&n; *  Dave Jones &lt;dave@powertweak.com&gt;, April 2000&n; *  Pentium-III code by Ingo Molnar and modifications by Goutham Rao&n; *&n; */
+multiline_comment|/*&n; *  linux/arch/i386/kernel/setup.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *&n; *  Enhanced CPU type detection by Mike Jagdis, Patrick St. Jean&n; *  and Martin Mares, November 1997.&n; *&n; *  Force Cyrix 6x86(MX) and M II processors to report MTRR capability&n; *  and Cyrix &quot;coma bug&quot; recognition by&n; *      Zolt&#xfffd;n B&#xfffd;sz&#xfffd;rm&#xfffd;nyi &lt;zboszor@mail.externet.hu&gt; February 1999.&n; * &n; *  Force Centaur C6 processors to report MTRR capability.&n; *      Bart Hartgers &lt;bart@etpmod.phys.tue.nl&gt;, May 1999.&n; *&n; *  Intel Mobile Pentium II detection fix. Sean Gilley, June 1999.&n; *&n; *  IDT Winchip tweaks, misc clean ups.&n; *&t;Dave Jones &lt;dave@powertweak.com&gt;, August 1999&n; *&n; *  Support of BIGMEM added by Gerhard Wichert, Siemens AG, July 1999&n; *&n; *  Better detection of Centaur/IDT WinChip models.&n; *      Bart Hartgers &lt;bart@etpmod.phys.tue.nl&gt;, August 1999.&n; *&n; *  Memory region support&n; *&t;David Parsons &lt;orc@pell.chi.il.us&gt;, July-August 1999&n; *&n; *  Cleaned up cache-detection code&n; *&t;Dave Jones &lt;dave@powertweak.com&gt;, October 1999&n; *&n; *&t;Added proper L2 cache detection for Coppermine&n; *&t;Dragan Stancevic &lt;visitor@valinux.com&gt;, October 1999&n; *&n; *  Added the original array for capability flags but forgot to credit &n; *  myself :) (~1998) Fixed/cleaned up some cpu_model_info and other stuff&n; *  &t;Jauder Ho &lt;jauderho@carumba.com&gt;, January 2000&n; *&n; *  Detection for Celeron coppermine, identify_cpu() overhauled,&n; *  and a few other clean ups.&n; *  Dave Jones &lt;dave@powertweak.com&gt;, April 2000&n; *&n; *  Pentium III FXSR, SSE support&n; *  General FPU state handling cleanups&n; *&t;Gareth Hughes &lt;gareth@valinux.com&gt;, May 2000&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of initialization&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -2758,62 +2758,6 @@ op_amp
 id|dummy_con
 suffix:semicolon
 macro_line|#endif
-macro_line|#endif
-macro_line|#ifdef CONFIG_X86_FXSR
-r_if
-c_cond
-(paren
-id|boot_cpu_data.x86_capability
-op_amp
-id|X86_FEATURE_FXSR
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Enabling extended fast FPU save and restore ... &quot;
-)paren
-suffix:semicolon
-id|set_in_cr4
-c_func
-(paren
-id|X86_CR4_OSFXSR
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;done.&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|boot_cpu_data.x86_capability
-op_amp
-id|X86_FEATURE_XMM
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Enabling KNI unmasked exception support ... &quot;
-)paren
-suffix:semicolon
-id|set_in_cr4
-c_func
-(paren
-id|X86_CR4_OSXMMEXCPT
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;done.&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
 macro_line|#endif
 )brace
 DECL|function|get_model_name

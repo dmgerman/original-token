@@ -1,7 +1,8 @@
-multiline_comment|/*&n; *  include/asm-i386/bugs.h&n; *&n; *  Copyright (C) 1994  Linus Torvalds&n; *&n; *  Cyrix stuff, June 1998 by:&n; *&t;- Rafael R. Reilova (moved everything from head.S),&n; *        &lt;rreilova@ececs.uc.edu&gt;&n; *&t;- Channing Corn (tests &amp; fixes),&n; *&t;- Andrew D. Balsa (code cleanup).&n; */
+multiline_comment|/*&n; *  include/asm-i386/bugs.h&n; *&n; *  Copyright (C) 1994  Linus Torvalds&n; *&n; *  Cyrix stuff, June 1998 by:&n; *&t;- Rafael R. Reilova (moved everything from head.S),&n; *        &lt;rreilova@ececs.uc.edu&gt;&n; *&t;- Channing Corn (tests &amp; fixes),&n; *&t;- Andrew D. Balsa (code cleanup).&n; *&n; *  Pentium III FXSR, SSE support&n; *&t;Gareth Hughes &lt;gareth@valinux.com&gt;, May 2000&n; */
 multiline_comment|/*&n; * This is included by init/main.c to check for architecture-dependent bugs.&n; *&n; * Needs:&n; *&t;void check_bugs(void);&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
+macro_line|#include &lt;asm/i387.h&gt;
 macro_line|#include &lt;asm/msr.h&gt;
 DECL|function|no_halt
 r_static
@@ -186,6 +187,44 @@ id|__initdata
 id|y
 op_assign
 l_float|3145727.0
+suffix:semicolon
+DECL|variable|zero
+r_static
+r_float
+id|__initdata
+id|zero
+(braket
+l_int|4
+)braket
+op_assign
+(brace
+l_float|0.0
+comma
+l_float|0.0
+comma
+l_float|0.0
+comma
+l_float|0.0
+)brace
+suffix:semicolon
+DECL|variable|one
+r_static
+r_float
+id|__initdata
+id|one
+(braket
+l_int|4
+)braket
+op_assign
+(brace
+l_float|1.0
+comma
+l_float|1.0
+comma
+l_float|1.0
+comma
+l_float|1.0
+)brace
 suffix:semicolon
 DECL|function|check_fpu
 r_static
@@ -481,6 +520,131 @@ c_func
 l_string|&quot;Hmm, FPU using exception 16 error reporting with FDIV bug.&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#if defined(CONFIG_X86_FXSR) || defined(CONFIG_X86_RUNTIME_FXSR)
+multiline_comment|/*&n;&t; * Verify that the FXSAVE/FXRSTOR data will be 16-byte aligned.&n;&t; */
+r_if
+c_cond
+(paren
+m_offsetof
+(paren
+r_struct
+id|task_struct
+comma
+id|thread.i387.fxsave
+)paren
+op_amp
+l_int|15
+)paren
+id|panic
+c_func
+(paren
+l_string|&quot;Kernel compiled for PII/PIII+ with FXSR, data not 16-byte aligned!&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|cpu_has_fxsr
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;Enabling fast FPU save and restore... &quot;
+)paren
+suffix:semicolon
+id|set_in_cr4
+c_func
+(paren
+id|X86_CR4_OSFXSR
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;done.&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+macro_line|#ifdef CONFIG_X86_XMM
+r_if
+c_cond
+(paren
+id|cpu_has_xmm
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;Enabling unmasked SIMD FPU exception support... &quot;
+)paren
+suffix:semicolon
+id|set_in_cr4
+c_func
+(paren
+id|X86_CR4_OSXMMEXCPT
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;done.&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* Check if exception 19 works okay. */
+id|load_mxcsr
+c_func
+(paren
+l_int|0x0000
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;Checking SIMD FPU exceptions... &quot;
+)paren
+suffix:semicolon
+id|__asm__
+c_func
+(paren
+l_string|&quot;movups %0,%%xmm0&bslash;n&bslash;t&quot;
+l_string|&quot;movups %1,%%xmm1&bslash;n&bslash;t&quot;
+l_string|&quot;divps %%xmm0,%%xmm1&bslash;n&bslash;t&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;m&quot;
+(paren
+op_star
+op_amp
+id|zero
+)paren
+comma
+l_string|&quot;m&quot;
+(paren
+op_star
+op_amp
+id|one
+)paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;OK, SIMD FPU using exception 19 error reporting.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|load_mxcsr
+c_func
+(paren
+l_int|0x1f80
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 )brace
 DECL|function|check_hlt
 r_static
@@ -1316,6 +1480,21 @@ id|panic
 c_func
 (paren
 l_string|&quot;Kernel compiled for PPro+, assumes a local APIC without the read-before-write bug!&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/*&n; * If we configured ourselves for FXSR, we&squot;d better have it.&n; */
+macro_line|#ifdef CONFIG_X86_FXSR
+r_if
+c_cond
+(paren
+op_logical_neg
+id|cpu_has_fxsr
+)paren
+id|panic
+c_func
+(paren
+l_string|&quot;Kernel compiled for PII/PIII+, requires FXSR feature!&quot;
 )paren
 suffix:semicolon
 macro_line|#endif

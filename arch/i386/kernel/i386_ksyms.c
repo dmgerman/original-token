@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/apm_bios.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
+macro_line|#include &lt;asm/i387.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/checksum.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -32,15 +33,6 @@ op_star
 comma
 r_struct
 id|user
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|dump_fpu
-c_func
-(paren
-id|elf_fpregset_t
 op_star
 )paren
 suffix:semicolon
@@ -163,6 +155,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|dump_fpu
+)paren
+suffix:semicolon
+DECL|variable|dump_extended_fpu
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|dump_extended_fpu
 )paren
 suffix:semicolon
 DECL|variable|__ioremap
