@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sound/sscape.c&n; *&n; * Low level driver for Ensoniq Soundscape&n; */
+multiline_comment|/*&n; * sound/sscape.c&n; *&n; * Low level driver for Ensoniq SoundScape&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
@@ -1038,7 +1038,7 @@ id|devc
 )paren
 suffix:semicolon
 )brace
-macro_line|#if defined(CONFIG_UART401) &amp;&amp; defined(CONFIG_MIDI)
+macro_line|#if defined(CONFIG_MPU401) &amp;&amp; defined(CONFIG_MIDI)
 r_if
 c_cond
 (paren
@@ -1047,7 +1047,7 @@ op_amp
 l_int|0x01
 )paren
 (brace
-id|uart401intr
+id|mpuintr
 (paren
 id|irq
 comma
@@ -1498,6 +1498,7 @@ comma
 id|GA_CDCFG_REG
 )paren
 suffix:semicolon
+macro_line|#if 0
 id|sscape_write
 (paren
 id|devc
@@ -1511,6 +1512,7 @@ l_int|0x08
 )paren
 suffix:semicolon
 multiline_comment|/* Disable codec DMA */
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2475,7 +2477,7 @@ id|valid_interrupts_old
 suffix:semicolon
 id|conf_printf
 (paren
-l_string|&quot;Ensoniq Soundscape (old)&quot;
+l_string|&quot;Ensoniq SoundScape (old)&quot;
 comma
 id|hw_config
 )paren
@@ -2484,7 +2486,7 @@ suffix:semicolon
 r_else
 id|conf_printf
 (paren
-l_string|&quot;Ensoniq Soundscape&quot;
+l_string|&quot;Ensoniq SoundScape&quot;
 comma
 id|hw_config
 )paren
@@ -2762,11 +2764,11 @@ id|i
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#if defined(CONFIG_MIDI) &amp;&amp; defined(CONFIG_UART401)
+macro_line|#if defined(CONFIG_MIDI) &amp;&amp; defined(CONFIG_MPU401)
 r_if
 c_cond
 (paren
-id|probe_uart401
+id|probe_mpu401
 (paren
 id|hw_config
 )paren
@@ -2785,7 +2787,7 @@ id|num_midis
 suffix:semicolon
 id|hw_config-&gt;name
 op_assign
-l_string|&quot;Soundscape&quot;
+l_string|&quot;SoundScape&quot;
 suffix:semicolon
 id|hw_config-&gt;irq
 op_mul_assign
@@ -2793,7 +2795,7 @@ op_minus
 l_int|1
 suffix:semicolon
 multiline_comment|/* Negative value signals IRQ sharing */
-id|attach_uart401
+id|attach_mpu401
 (paren
 id|hw_config
 )paren
@@ -2895,7 +2897,7 @@ id|hw_config-&gt;io_base
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;     * First check that the address register of &quot;ODIE&quot; is&n;     * there and that it has exactly 4 writeable bits.&n;     * First 4 bits&n;   */
+multiline_comment|/*&n;     * First check that the address register of &quot;ODIE&quot; is&n;     * there and that it has exactly 4 writable bits.&n;     * First 4 bits&n;   */
 r_if
 c_cond
 (paren
@@ -3290,7 +3292,7 @@ comma
 l_int|0x50
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * Take the gate-arry off of the DMA channel.&n;   */
+multiline_comment|/*&n;     * Take the gate-array off of the DMA channel.&n;   */
 id|sscape_write
 (paren
 id|devc
@@ -3459,8 +3461,8 @@ op_star
 id|hw_config
 )paren
 (brace
-macro_line|#if defined(CONFIG_UART401) &amp;&amp; defined(CONFIG_MIDI)
-id|unload_uart401
+macro_line|#if defined(CONFIG_MPU401) &amp;&amp; defined(CONFIG_MIDI)
+id|unload_mpu401
 (paren
 id|hw_config
 )paren

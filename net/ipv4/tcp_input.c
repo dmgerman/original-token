@@ -5012,13 +5012,13 @@ c_func
 (paren
 id|daddr
 )paren
+)paren
 op_eq
 id|IS_BROADCAST
 op_logical_or
 id|r
 op_eq
 id|IS_MULTICAST
-)paren
 )paren
 macro_line|#else
 r_if

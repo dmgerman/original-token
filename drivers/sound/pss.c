@@ -934,7 +934,7 @@ r_else
 (brace
 id|printk
 (paren
-l_string|&quot;&bslash;nPSS: DownLoad timeout problems, byte %d=%d&bslash;n&quot;
+l_string|&quot;&bslash;nPSS: Download timeout problems, byte %d=%d&bslash;n&quot;
 comma
 id|count
 comma
@@ -2831,7 +2831,7 @@ op_amp
 id|tmp
 )paren
 )paren
-multiline_comment|/* Read msb */
+multiline_comment|/* Read MSB */
 (brace
 id|restore_flags
 (paren
@@ -2863,7 +2863,7 @@ op_amp
 id|tmp
 )paren
 )paren
-multiline_comment|/* Read lsb */
+multiline_comment|/* Read LSB */
 (brace
 id|restore_flags
 (paren
@@ -3113,7 +3113,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     * For some reason the card returns 0xff in the WSS status register&n;     * immediately after boot. Propably MIDI+SB emulation algorithm&n;     * downloaded to the ADSP2115 spends some time initializing the card.&n;     * Let&squot;s try to wait until it finishes this task.&n;   */
+multiline_comment|/*&n;     * For some reason the card returns 0xff in the WSS status register&n;     * immediately after boot. Probably MIDI+SB emulation algorithm&n;     * downloaded to the ADSP2115 spends some time initializing the card.&n;     * Let&squot;s try to wait until it finishes this task.&n;   */
 r_for
 c_loop
 (paren

@@ -131,6 +131,6 @@ mdefine_line|#define __FD_ISSET(fd,fdsetp) (__extension__ ({ &bslash;&n;&t;&t;un
 DECL|macro|__FD_ZERO
 macro_line|#undef&t;__FD_ZERO
 DECL|macro|__FD_ZERO
-mdefine_line|#define __FD_ZERO(fdsetp) &bslash;&n;&t;&t;__asm__ __volatile__(&quot;cld ; rep ; stosl&quot; &bslash;&n;&t;&t;&t;:&quot;=m&quot; (*(__kernel_fd_set *) (fdsetp)) &bslash;&n;&t;&t;&t;:&quot;a&quot; (0), &quot;c&quot; (__FDSET_INTS), &bslash;&n;&t;&t;&t;&quot;D&quot; ((__kernel_fd_set *) (fdsetp)) :&quot;cx&quot;,&quot;di&quot;)
+mdefine_line|#define __FD_ZERO(fdsetp) &bslash;&n;&t;&t;__asm__ __volatile__(&quot;cld ; rep ; stosl&quot; &bslash;&n;&t;&t;&t;:&quot;=m&quot; (*(__kernel_fd_set *) (fdsetp)) &bslash;&n;&t;&t;&t;:&quot;a&quot; (0), &quot;c&quot; (__FDSET_LONGS), &bslash;&n;&t;&t;&t;&quot;D&quot; ((__kernel_fd_set *) (fdsetp)) :&quot;cx&quot;,&quot;di&quot;)
 macro_line|#endif
 eof

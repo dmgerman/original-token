@@ -7348,7 +7348,7 @@ OL
 l_int|0
 )paren
 (brace
-multiline_comment|/* printk (&quot;GUS: Loading saples without DMA&bslash;n&quot;); */
+multiline_comment|/* printk (&quot;GUS: Loading samples without DMA&bslash;n&quot;); */
 id|gus_no_dma
 op_assign
 l_int|1
@@ -7803,7 +7803,7 @@ r_int
 r_int
 id|tmp_mem
 op_assign
-multiline_comment|/* Aling to 256K */
+multiline_comment|/* Align to 256K */
 (paren
 (paren
 id|free_mem_ptr
@@ -10716,7 +10716,7 @@ comma
 id|dma_command
 )paren
 suffix:semicolon
-multiline_comment|/* Kickstart */
+multiline_comment|/* Kick start */
 r_if
 c_cond
 (paren
@@ -11537,7 +11537,7 @@ id|info-&gt;controllers
 id|CTL_EXPRESSION
 )braket
 suffix:semicolon
-multiline_comment|/* Just msb */
+multiline_comment|/* Just MSB */
 id|voices
 (braket
 id|voice
@@ -12175,7 +12175,7 @@ id|sample_ptrs
 id|sample
 )braket
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * Begin offsess + offset to DRAM&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * Begin offsets + offset to DRAM&n;&t;&t;&t;&t;&t; */
 r_for
 c_loop
 (paren
@@ -12336,7 +12336,7 @@ id|sample_ptrs
 id|sample
 )braket
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * Begin offsess + offset to DRAM&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * Begin offsets + offset to DRAM&n;&t;&t;&t;&t;&t; */
 r_for
 c_loop
 (paren

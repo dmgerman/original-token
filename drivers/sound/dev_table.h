@@ -24,7 +24,7 @@ DECL|member|card_subtype
 r_int
 id|card_subtype
 suffix:semicolon
-multiline_comment|/* Driver spesific. Usually 0 */
+multiline_comment|/* Driver specific. Usually 0 */
 DECL|member|card_type
 r_int
 id|card_type
@@ -1901,7 +1901,7 @@ l_int|0
 comma
 id|SNDCARD_SB
 comma
-l_string|&quot;SoundBlaster&quot;
+l_string|&quot;Sound Blaster&quot;
 comma
 id|attach_sb_card
 comma
@@ -1989,7 +1989,7 @@ l_int|0
 comma
 id|SNDCARD_SSCAPE
 comma
-l_string|&quot;Ensoniq Soundscape&quot;
+l_string|&quot;Ensoniq SoundScape&quot;
 comma
 id|attach_sscape
 comma
@@ -2023,7 +2023,7 @@ l_int|0
 comma
 id|SNDCARD_TRXPRO
 comma
-l_string|&quot;MediaTriX AudioTriX Pro&quot;
+l_string|&quot;MediaTrix AudioTrix Pro&quot;
 comma
 id|attach_trix_wss
 comma
@@ -2039,7 +2039,7 @@ l_int|0
 comma
 id|SNDCARD_TRXPRO_SB
 comma
-l_string|&quot;AudioTriX (SB mode)&quot;
+l_string|&quot;AudioTrix (SB mode)&quot;
 comma
 id|attach_trix_sb
 comma
@@ -2055,7 +2055,7 @@ l_int|0
 comma
 id|SNDCARD_TRXPRO_MPU
 comma
-l_string|&quot;AudioTriX MIDI&quot;
+l_string|&quot;AudioTrix MIDI&quot;
 comma
 id|attach_trix_mpu
 comma
@@ -2996,7 +2996,7 @@ id|dmap
 suffix:semicolon
 r_extern
 r_int
-id|soud_map_buffer
+id|sound_map_buffer
 (paren
 r_int
 id|dev

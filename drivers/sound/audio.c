@@ -25,7 +25,7 @@ id|dev_nblock
 id|MAX_AUDIO_DEV
 )braket
 suffix:semicolon
-multiline_comment|/* 1 if in noblocking mode */
+multiline_comment|/* 1 if in nonblocking mode */
 DECL|macro|AM_NONE
 mdefine_line|#define&t;&t;AM_NONE&t;&t;0
 DECL|macro|AM_WRITE

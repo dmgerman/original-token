@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sound/cs4232.c&n; *&n; * The low level driver for Crystal CS4232 based cards. The CS4232 is&n; * a PnP compatible chip which contains a CS4231A codec, SB emulation,&n; * a MPU401 compatible MIDI port, joystick and synthesizer and IDE CD-ROM &n; * interfaces. This is just a temporary driver until full PnP support&n; * gets inplemented. Just the WSS codec, FM synth and the MIDI ports are&n; * supported. Other interfaces are left uninitialized.&n; */
+multiline_comment|/*&n; * sound/cs4232.c&n; *&n; * The low level driver for Crystal CS4232 based cards. The CS4232 is&n; * a PnP compatible chip which contains a CS4231A codec, SB emulation,&n; * a MPU401 compatible MIDI port, joystick and synthesizer and IDE CD-ROM &n; * interfaces. This is just a temporary driver until full PnP support&n; * gets implemented. Just the WSS codec, FM synth and the MIDI ports are&n; * supported. Other interfaces are left uninitialized.&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
@@ -410,7 +410,7 @@ op_amp
 l_int|0xff
 )paren
 suffix:semicolon
-multiline_comment|/* WSSbase */
+multiline_comment|/* WSS base */
 r_if
 c_cond
 (paren
@@ -430,7 +430,7 @@ l_int|0x00
 comma
 l_int|0x00
 )paren
-multiline_comment|/* FMbase off */
+multiline_comment|/* FM base off */
 r_else
 id|CS_OUT3
 (paren
@@ -441,7 +441,7 @@ comma
 l_int|0x88
 )paren
 suffix:semicolon
-multiline_comment|/* FMbase 0x388 */
+multiline_comment|/* FM base 0x388 */
 id|CS_OUT3
 (paren
 l_int|0x42
@@ -451,7 +451,7 @@ comma
 l_int|0x00
 )paren
 suffix:semicolon
-multiline_comment|/* SBbase off */
+multiline_comment|/* SB base off */
 id|CS_OUT2
 (paren
 l_int|0x22
@@ -615,7 +615,7 @@ op_amp
 l_int|0xff
 )paren
 suffix:semicolon
-multiline_comment|/* MPUbase */
+multiline_comment|/* MPU base */
 id|CS_OUT2
 (paren
 l_int|0x22

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sound/sb_dsp.c&n; *&n; * The low level driver for the SoundBlaster DS chips.&n; */
+multiline_comment|/*&n; * sound/sb_dsp.c&n; *&n; * The low level driver for the Sound Blaster DS chips.&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
@@ -431,7 +431,7 @@ id|flags
 suffix:semicolon
 )brace
 DECL|macro|MIDI_SYNTH_NAME
-mdefine_line|#define MIDI_SYNTH_NAME&t;&quot;SoundBlaster Midi&quot;
+mdefine_line|#define MIDI_SYNTH_NAME&t;&quot;Sound Blaster Midi&quot;
 DECL|macro|MIDI_SYNTH_CAPS
 mdefine_line|#define MIDI_SYNTH_CAPS&t;0
 macro_line|#include &quot;midi_synth.h&quot;
@@ -443,7 +443,7 @@ id|sb_midi_operations
 op_assign
 (brace
 (brace
-l_string|&quot;SoundBlaster&quot;
+l_string|&quot;Sound Blaster&quot;
 comma
 l_int|0
 comma

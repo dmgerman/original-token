@@ -89,6 +89,9 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_NCR53C7xx
 macro_line|#include &quot;53c7,8xx.h&quot;
 macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_NCR53C8XX
+macro_line|#include &quot;ncr53c8xx.h&quot;
+macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_ULTRASTOR
 macro_line|#include &quot;ultrastor.h&quot;
 macro_line|#endif
@@ -225,6 +228,10 @@ comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_NCR53C7xx
 id|NCR53c7xx
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_NCR53C8XX
+id|NCR53C8XX
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_EATA_DMA

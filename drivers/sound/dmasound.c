@@ -1,5 +1,5 @@
 multiline_comment|/* linux/drivers/sound/dmasound.c */
-multiline_comment|/*&n;&n;VoxWare compatible Atari TT DMA sound driver for 680x0 Linux&n;&n;(c) 1995 by Michael Schlueter &amp; Michael Marte&n;&n;Michael Schlueter (michael@duck.syd.de) did the basic structure of the VFS&n;interface and the u-law to signed byte conversion.&n;&n;Michael Marte (marte@informatik.uni-muenchen.de) did the sound queue,&n;/dev/mixer, /dev/sndstat and complemented the VFS interface. He would like&n;to thank:&n;Michael Schlueter for initial ideas and documentation on the MFP and&n;the DMA sound hardware.&n;Therapy? for their CD &squot;Troublegum&squot; which really made me rock.&n;&n;/dev/sndstat is based on code by Hannu Savolainen, the author of the&n;VoxWare family of drivers.&n;&n;This file is subject to the terms and conditions of the GNU General Public&n;License.  See the file COPYING in the main directory of this archive&n;for more details.&n;&n;History:&n;1995/8/25&t;first release&n;&n;1995/9/02&t;++roman: fixed atari_stram_alloc() call, the timer programming&n;&t;&t;&t;and several race conditions&n;&n;1995/9/14&t;++roman: After some discussion with Michael Schlueter, revised&n;&t;&t;&t;the interrupt disabling&n;&t;&t;&t;Slightly speeded up U8-&gt;S8 translation by using long&n;&t;&t;&t;operations where possible&n;&t;&t;&t;Added 4:3 interpolation for /dev/audio&n;&n;1995/9/20&t;++TeSche: Fixed a bug in sq_write and changed /dev/audio&n;&t;&t;&t;converting to play at 12517Hz instead of 6258Hz.&n;&n;1995/9/23&t;++TeSche: Changed sq_interrupt() and sq_play() to pre-program&n;&t;&t;&t;the DMA for another frame while there&squot;s still one&n;&t;&t;&t;running. This allows the IRQ response to be&n;&t;&t;&t;arbitrarily delayed and playing will still continue.&n;&n;1995/10/14&t;++Guenther_Kelleter@ac3.maus.de, ++TeSche: better support for&n;&t;&t;&t;Falcon audio (the Falcon doesn&squot;t raise an IRQ at the&n;&t;&t;&t;end of a frame, but at the beginning instead!). uses&n;&t;&t;&t;&squot;if (codec_dma)&squot; in lots of places to simply switch&n;&t;&t;&t;between Falcon and TT code.&n;&n;1995/11/06&t;++TeSche: started introducing a hardware abstraction scheme&n;&t;&t;&t;(may perhaps also serve for Amigas?), can now play&n;&t;&t;&t;samples at almost all frequencies by means of a more&n;&t;&t;&t;generalized expand routine, takes a good deal of care&n;&t;&t;&t;to cut data only at sample sizes, buffer size is now&n;&t;&t;&t;a kernel runtime option, implemented fsync() &amp; several&n;&t;&t;&t;minor improvements&n;&t;&t;++Guenther: useful hints and bugfixes, cross-checked it for&n;&t;&t;&t;Falcons&n;&n;1996/3/9&t;++geert: support added for Amiga, A-law, 16-bit little endian.&n;&t;&t;&t;Unification to drivers/sound/dmasound.c.&n;1996/4/6&t;++Martin Mitchell: updated to 1.3 kernel.&n;*/
+multiline_comment|/*&n;&n;VoxWare compatible Atari TT DMA sound driver for 680x0 Linux&n;&n;(c) 1995 by Michael Schlueter &amp; Michael Marte&n;&n;Michael Schlueter (michael@duck.syd.de) did the basic structure of the VFS&n;interface and the u-law to signed byte conversion.&n;&n;Michael Marte (marte@informatik.uni-muenchen.de) did the sound queue,&n;/dev/mixer, /dev/sndstat and complemented the VFS interface. He would like&n;to thank:&n;Michael Schlueter for initial ideas and documentation on the MFP and&n;the DMA sound hardware.&n;Therapy? for their CD &squot;Troublegum&squot; which really made me rock.&n;&n;/dev/sndstat is based on code by Hannu Savolainen, the author of the&n;VoxWare family of drivers.&n;&n;This file is subject to the terms and conditions of the GNU General Public&n;License.  See the file COPYING in the main directory of this archive&n;for more details.&n;&n;History:&n;1995/8/25&t;first release&n;&n;1995/9/02&t;++roman: fixed atari_stram_alloc() call, the timer programming&n;&t;&t;&t;and several race conditions&n;&n;1995/9/14&t;++roman: After some discussion with Michael Schlueter, revised&n;&t;&t;&t;the interrupt disabling&n;&t;&t;&t;Slightly speeded up U8-&gt;S8 translation by using long&n;&t;&t;&t;operations where possible&n;&t;&t;&t;Added 4:3 interpolation for /dev/audio&n;&n;1995/9/20&t;++TeSche: Fixed a bug in sq_write and changed /dev/audio&n;&t;&t;&t;converting to play at 12517Hz instead of 6258Hz.&n;&n;1995/9/23&t;++TeSche: Changed sq_interrupt() and sq_play() to pre-program&n;&t;&t;&t;the DMA for another frame while there&squot;s still one&n;&t;&t;&t;running. This allows the IRQ response to be&n;&t;&t;&t;arbitrarily delayed and playing will still continue.&n;&n;1995/10/14&t;++Guenther_Kelleter@ac3.maus.de, ++TeSche: better support for&n;&t;&t;&t;Falcon audio (the Falcon doesn&squot;t raise an IRQ at the&n;&t;&t;&t;end of a frame, but at the beginning instead!). uses&n;&t;&t;&t;&squot;if (codec_dma)&squot; in lots of places to simply switch&n;&t;&t;&t;between Falcon and TT code.&n;&n;1995/11/06&t;++TeSche: started introducing a hardware abstraction scheme&n;&t;&t;&t;(may perhaps also serve for Amigas?), can now play&n;&t;&t;&t;samples at almost all frequencies by means of a more&n;&t;&t;&t;generalized expand routine, takes a good deal of care&n;&t;&t;&t;to cut data only at sample sizes, buffer size is now&n;&t;&t;&t;a kernel runtime option, implemented fsync() &amp; several&n;&t;&t;&t;minor improvements&n;&t;&t;++Guenther: useful hints and bug fixes, cross-checked it for&n;&t;&t;&t;Falcons&n;&n;1996/3/9&t;++geert: support added for Amiga, A-law, 16-bit little endian.&n;&t;&t;&t;Unification to drivers/sound/dmasound.c.&n;1996/4/6&t;++Martin Mitchell: updated to 1.3 kernel.&n;*/
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
@@ -34,7 +34,7 @@ id|cmd
 suffix:semicolon
 macro_line|#endif /* CONFIG_ATARI */
 macro_line|#ifdef CONFIG_AMIGA
-multiline_comment|/*&n;    *&t;The minimum period for audio depends on htotal (for OCS/ECS/AGA)&n;    *&t;(Imported from arch/m68k/amiga/amisound.c)&n;    */
+multiline_comment|/*&n;    *&t;The minimum period for audio depends on total (for OCS/ECS/AGA)&n;    *&t;(Imported from arch/m68k/amiga/amisound.c)&n;    */
 r_extern
 r_volatile
 id|u_short
@@ -2701,7 +2701,7 @@ comma
 suffix:semicolon
 macro_line|#endif /* HAS_16BIT_TABLES */
 macro_line|#ifdef HAS_14BIT_TABLES
-multiline_comment|/* 14 bit mu-law (lsb) */
+multiline_comment|/* 14 bit mu-law (LSB) */
 DECL|variable|alaw2dma14l
 r_static
 r_char
@@ -3223,7 +3223,7 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-multiline_comment|/* 14 bit A-law (lsb) */
+multiline_comment|/* 14 bit A-law (LSB) */
 DECL|variable|alaw2dma14l
 r_static
 r_char

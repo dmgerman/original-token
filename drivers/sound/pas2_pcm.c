@@ -200,7 +200,7 @@ id|pas_read
 l_int|0x0B8A
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * Set anti-aliasing filters according to sample rate. You reall *NEED*&n;     * to enable this feature for all normal recording unless you want to&n;     * experiment with aliasing effects.&n;     * These filters apply to the selected &quot;recording&quot; source.&n;     * I (pfw) don&squot;t know the encoding of these 5 bits. The values shown&n;     * come from the SDK found on ftp.uwp.edu:/pub/msdos/proaudio/.&n;     *&n;     * I cleared bit 5 of these values, since that bit controls the master&n;     * mute flag. (Olav W&#xfffd;lfelschneider)&n;     *&n;   */
+multiline_comment|/*&n;     * Set anti-aliasing filters according to sample rate. You really *NEED*&n;     * to enable this feature for all normal recording unless you want to&n;     * experiment with aliasing effects.&n;     * These filters apply to the selected &quot;recording&quot; source.&n;     * I (pfw) don&squot;t know the encoding of these 5 bits. The values shown&n;     * come from the SDK found on ftp.uwp.edu:/pub/msdos/proaudio/.&n;     *&n;     * I cleared bit 5 of these values, since that bit controls the master&n;     * mute flag. (Olav W&#xfffd;lfelschneider)&n;     *&n;   */
 macro_line|#if !defined NO_AUTO_FILTER_SET
 id|tmp
 op_and_assign

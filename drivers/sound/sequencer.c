@@ -53,7 +53,7 @@ id|max_synthdev
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n; * The seq_mode gives the operating mode of the sequencer:&n; *      1 = level1 (the default)&n; *      2 = level2 (extended capabilites)&n; */
+multiline_comment|/*&n; * The seq_mode gives the operating mode of the sequencer:&n; *      1 = level1 (the default)&n; *      2 = level2 (extended capabilities)&n; */
 DECL|macro|SEQ_1
 mdefine_line|#define SEQ_1&t;1
 DECL|macro|SEQ_2
@@ -220,10 +220,10 @@ id|sequencer_busy
 op_assign
 l_int|0
 suffix:semicolon
-DECL|variable|output_treshold
+DECL|variable|output_threshold
 r_static
 r_int
-id|output_treshold
+id|output_threshold
 suffix:semicolon
 DECL|variable|pre_event_timeout
 r_static
@@ -3119,7 +3119,7 @@ op_minus
 id|qlen
 )paren
 op_ge
-id|output_treshold
+id|output_threshold
 )paren
 (brace
 r_int
@@ -3224,7 +3224,7 @@ op_minus
 id|qlen
 )paren
 op_ge
-id|output_treshold
+id|output_threshold
 )paren
 (brace
 r_int
@@ -3766,7 +3766,7 @@ op_minus
 id|qlen
 )paren
 op_ge
-id|output_treshold
+id|output_threshold
 )paren
 (brace
 r_int
@@ -4206,7 +4206,7 @@ op_minus
 id|qlen
 )paren
 op_ge
-id|output_treshold
+id|output_threshold
 )paren
 (brace
 r_int
@@ -5057,7 +5057,7 @@ id|midi_sleep_flag.flags
 op_assign
 id|WK_NONE
 suffix:semicolon
-id|output_treshold
+id|output_threshold
 op_assign
 id|SEQ_MAX_QUEUE
 op_div
@@ -5713,7 +5713,7 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-multiline_comment|/*&n;   * This routine sends one byte to the Midi channel.&n;   * If the output Fifo is full, it waits until there&n;   * is space in the queue&n;   */
+multiline_comment|/*&n;   * This routine sends one byte to the Midi channel.&n;   * If the output FIFO is full, it waits until there&n;   * is space in the queue&n;   */
 id|n
 op_assign
 l_int|3
@@ -7717,7 +7717,7 @@ id|SEQ_MAX_QUEUE
 op_minus
 l_int|1
 suffix:semicolon
-id|output_treshold
+id|output_threshold
 op_assign
 id|tmp
 suffix:semicolon
@@ -7979,7 +7979,7 @@ op_minus
 id|qlen
 )paren
 OL
-id|output_treshold
+id|output_threshold
 )paren
 (brace
 id|seq_sleep_flag.flags

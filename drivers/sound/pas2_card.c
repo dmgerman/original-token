@@ -139,9 +139,9 @@ l_int|0
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * The Address Translation code is used to convert I/O register addresses to&n; * be relative to the given base -register&n; */
-DECL|variable|translat_code
+DECL|variable|translate_code
 r_int
-id|translat_code
+id|translate_code
 suffix:semicolon
 DECL|variable|pas_intr_mask
 r_static
@@ -220,7 +220,7 @@ id|inb
 (paren
 id|ioaddr
 op_xor
-id|translat_code
+id|translate_code
 )paren
 suffix:semicolon
 )brace
@@ -242,7 +242,7 @@ id|data
 comma
 id|ioaddr
 op_xor
-id|translat_code
+id|translate_code
 )paren
 suffix:semicolon
 )brace
@@ -948,7 +948,7 @@ l_int|0x9A01
 )paren
 suffix:semicolon
 multiline_comment|/* Set base address */
-id|translat_code
+id|translate_code
 op_assign
 l_int|0x388
 op_xor

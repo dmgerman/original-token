@@ -613,7 +613,7 @@ l_int|0x80
 (brace
 id|printk
 (paren
-l_string|&quot;Doanload not acknowledged&bslash;n&quot;
+l_string|&quot;Download not acknowledged&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1692,7 +1692,7 @@ id|synth_operations
 op_star
 id|synth
 suffix:semicolon
-multiline_comment|/*&n;       * Intercept patch loading calls so that they canbe handled&n;       * by the Maui driver.&n;       */
+multiline_comment|/*&n;       * Intercept patch loading calls so that they can be handled&n;       * by the Maui driver.&n;       */
 id|synth
 op_assign
 id|midi_devs

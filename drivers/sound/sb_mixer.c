@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sound/sb_mixer.c&n; *&n; * The low level mixer driver for the SoundBlaster compatible cards.&n; */
+multiline_comment|/*&n; * sound/sb_mixer.c&n; *&n; * The low level mixer driver for the Sound Blaster compatible cards.&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
@@ -1614,7 +1614,7 @@ op_assign
 (brace
 l_string|&quot;SB&quot;
 comma
-l_string|&quot;SoundBlaster&quot;
+l_string|&quot;Sound Blaster&quot;
 comma
 id|sb_mixer_ioctl
 )brace

@@ -314,7 +314,7 @@ l_int|0x15
 op_ne
 l_int|0x71
 )paren
-multiline_comment|/* No asic signature */
+multiline_comment|/* No ASIC signature */
 (brace
 id|DDB
 (paren

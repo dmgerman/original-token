@@ -1612,7 +1612,7 @@ id|EBUSY
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     *  Verify that the device is really running.&n;     *  Some devices (such as Ensoniq SoundScape don&squot;t&n;     *  work before the on board processor (OBP) is initialized&n;     *  by downloadin it&squot;s microcode.&n;   */
+multiline_comment|/*&n;     *  Verify that the device is really running.&n;     *  Some devices (such as Ensoniq SoundScape don&squot;t&n;     *  work before the on board processor (OBP) is initialized&n;     *  by downloading its microcode.&n;   */
 r_if
 c_cond
 (paren
@@ -2121,7 +2121,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* Device is not currently open. Use simplier method */
+multiline_comment|/* Device is not currently open. Use simpler method */
 r_if
 c_cond
 (paren
@@ -2974,7 +2974,7 @@ id|dev_conf
 id|midi_dev
 )braket
 suffix:semicolon
-multiline_comment|/*&n;     *  Verify that the device is really running.&n;     *  Some devices (such as Ensoniq SoundScape don&squot;t&n;     *  work before the on board processor (OBP) is initialized&n;     *  by downloadin it&squot;s microcode.&n;   */
+multiline_comment|/*&n;     *  Verify that the device is really running.&n;     *  Some devices (such as Ensoniq SoundScape don&squot;t&n;     *  work before the on board processor (OBP) is initialized&n;     *  by downloading its microcode.&n;   */
 r_if
 c_cond
 (paren
@@ -4708,7 +4708,7 @@ r_int
 id|clocks
 )paren
 (brace
-multiline_comment|/*&n;     * The MPU-401 supports just a limited set of possible timebase values.&n;     * Since the applications require more choices, the driver has to&n;     * program the HW to do it&squot;s best and to convert between the HW and&n;     * actual timebases.&n;   */
+multiline_comment|/*&n;     * The MPU-401 supports just a limited set of possible timebase values.&n;     * Since the applications require more choices, the driver has to&n;     * program the HW to do its best and to convert between the HW and&n;     * actual timebases.&n;   */
 r_return
 (paren
 (paren

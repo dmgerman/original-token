@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sound/sb_audio.c&n; *&n; * Audio routines for SoundBlaster compatible cards.&n; */
+multiline_comment|/*&n; * sound/sb_audio.c&n; *&n; * Audio routines for Sound Blaster compatible cards.&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
@@ -1549,7 +1549,7 @@ op_assign
 id|bits
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * SB2.01 spesific speed setup&n; */
+multiline_comment|/*&n; * SB2.01 specific speed setup&n; */
 r_static
 r_int
 DECL|function|sb201_audio_set_speed
@@ -1683,7 +1683,7 @@ r_return
 id|devc-&gt;speed
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * SB Pro spesific routines&n; */
+multiline_comment|/*&n; * SB Pro specific routines&n; */
 r_static
 r_int
 DECL|function|sbpro_audio_prepare_for_input
@@ -2320,7 +2320,7 @@ r_return
 id|devc-&gt;speed
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * ESS spesific routines&n; */
+multiline_comment|/*&n; * ESS specific routines&n; */
 r_static
 r_void
 DECL|function|ess_speed
@@ -2440,7 +2440,7 @@ l_int|9
 op_div
 l_int|20
 suffix:semicolon
-multiline_comment|/* Set filter rolloff to 90% of speed/2 */
+multiline_comment|/* Set filter roll-off to 90% of speed/2 */
 id|divider
 op_assign
 l_int|256
@@ -3399,7 +3399,7 @@ op_assign
 id|bits
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * SB16 spesific routines&n; */
+multiline_comment|/*&n; * SB16 specific routines&n; */
 r_static
 r_int
 DECL|function|sb16_audio_set_speed

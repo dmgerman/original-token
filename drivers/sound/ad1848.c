@@ -2290,7 +2290,7 @@ id|dev
 op_member_access_from_pointer
 id|devc
 suffix:semicolon
-multiline_comment|/*&n;     * The sampling speed is encoded in the least significant nible of I8. The&n;     * LSB selects the clock source (0=24.576 MHz, 1=16.9344 Mhz) and other&n;     * three bits select the divisor (indirectly):&n;     *&n;     * The available speeds are in the following table. Keep the speeds in&n;     * the increasing order.&n;   */
+multiline_comment|/*&n;     * The sampling speed is encoded in the least significant nibble of I8. The&n;     * LSB selects the clock source (0=24.576 MHz, 1=16.9344 MHz) and other&n;     * three bits select the divisor (indirectly):&n;     *&n;     * The available speeds are in the following table. Keep the speeds in&n;     * the increasing order.&n;   */
 r_typedef
 r_struct
 (brace
@@ -4076,7 +4076,7 @@ comma
 id|fs
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * Write to I8 starts resyncronization. Wait until it completes.&n;   */
+multiline_comment|/*&n;   * Write to I8 starts resynchronization. Wait until it completes.&n;   */
 id|timeout
 op_assign
 l_int|10000
@@ -4116,7 +4116,7 @@ comma
 id|fs
 )paren
 suffix:semicolon
-multiline_comment|/*&n;         * Write to I28 starts resyncronization. Wait until it completes.&n;       */
+multiline_comment|/*&n;         * Write to I28 starts resynchronization. Wait until it completes.&n;       */
 id|timeout
 op_assign
 l_int|10000
@@ -5036,7 +5036,7 @@ id|devc-&gt;debug_flag
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;     * Check that the I/O address is in use.&n;     *&n;     * The bit 0x80 of the base I/O port is known to be 0 after the&n;     * chip has performed it&squot;s power on initialization. Just assume&n;     * this has happened before the OS is starting.&n;     *&n;     * If the I/O address is unused, it typically returns 0xff.&n;   */
+multiline_comment|/*&n;     * Check that the I/O address is in use.&n;     *&n;     * The bit 0x80 of the base I/O port is known to be 0 after the&n;     * chip has performed its power on initialization. Just assume&n;     * this has happened before the OS is starting.&n;     *&n;     * If the I/O address is unused, it typically returns 0xff.&n;   */
 id|DDB
 (paren
 id|printk
@@ -6220,7 +6220,7 @@ op_eq
 id|MD_IWAVE
 )paren
 (brace
-multiline_comment|/* Some magic Interwave spesific initialization */
+multiline_comment|/* Some magic Interwave specific initialization */
 id|ad_write
 (paren
 id|devc
@@ -6455,7 +6455,7 @@ comma
 l_int|0x00
 )paren
 suffix:semicolon
-multiline_comment|/* Timer msb */
+multiline_comment|/* Timer MSB */
 id|ad_write
 (paren
 id|devc
@@ -6465,7 +6465,7 @@ comma
 l_int|0x10
 )paren
 suffix:semicolon
-multiline_comment|/* Timer lsb */
+multiline_comment|/* Timer LSB */
 id|ad_write
 (paren
 id|devc
@@ -6834,7 +6834,7 @@ suffix:semicolon
 r_else
 id|printk
 (paren
-l_string|&quot;ad1848: Can&squot;t find device to be undoaded. Base=%x&bslash;n&quot;
+l_string|&quot;ad1848: Can&squot;t find device to be unloaded. Base=%x&bslash;n&quot;
 comma
 id|io_base
 )paren
@@ -7457,7 +7457,7 @@ l_int|0xc44
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n; * I/O port 0xc45 FM Address Decode/MSS ID Register.&n; *&n; * bank=0, bits 0xfe:   FM synthesis Decode Comare bits 7:1 (default=0x88)&n; * bank=0, bit 0x01:    SBIC Power Control Bit&n; *                      0x00 = Powered up&n; *                      0x01 = Powered down&n; * bank=1, bits 0xfc:   MSS ID (default=0x40)&n; */
+multiline_comment|/*&n; * I/O port 0xc45 FM Address Decode/MSS ID Register.&n; *&n; * bank=0, bits 0xfe:   FM synthesis Decode Compare bits 7:1 (default=0x88)&n; * bank=0, bit 0x01:    SBIC Power Control Bit&n; *                      0x00 = Powered up&n; *                      0x01 = Powered down&n; * bank=1, bits 0xfc:   MSS ID (default=0x40)&n; */
 macro_line|#ifdef DEBUGXL
 multiline_comment|/* Debug printing */
 id|printk
@@ -7729,7 +7729,7 @@ l_int|0xc46
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n; * I/O port 0xc47 FM Address Decode Register.&n; *&n; * bank=0, bits 0xff:   Decode enble selection for various FM address bits&n; * bank=1, bits 0xff:   Reserved&n; */
+multiline_comment|/*&n; * I/O port 0xc47 FM Address Decode Register.&n; *&n; * bank=0, bits 0xff:   Decode enable selection for various FM address bits&n; * bank=1, bits 0xff:   Reserved&n; */
 macro_line|#ifdef DEBUGXL
 multiline_comment|/* Debug printing */
 id|printk
@@ -8806,7 +8806,7 @@ r_int
 r_int
 id|xtal_nsecs
 suffix:semicolon
-multiline_comment|/* nanoseconds per xtal oscillaror tick */
+multiline_comment|/* nanoseconds per xtal oscillator tick */
 r_int
 r_int
 id|divider

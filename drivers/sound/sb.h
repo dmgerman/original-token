@@ -61,7 +61,7 @@ mdefine_line|#define MDL_SB16&t;5&t;/* SB16/32/AWE */
 DECL|macro|MDL_JAZZ
 mdefine_line|#define MDL_JAZZ&t;10&t;/* Media Vision Jazz16 */
 DECL|macro|MDL_SMW
-mdefine_line|#define MDL_SMW&t;&t;11&t;/* Logitech Soundman Wave (Jazz16) */
+mdefine_line|#define MDL_SMW&t;&t;11&t;/* Logitech SoundMan Wave (Jazz16) */
 DECL|macro|MDL_ESS
 mdefine_line|#define MDL_ESS&t;&t;12&t;/* ESS ES688 and ES1688 */
 DECL|macro|MDL_AZTECH

@@ -10,7 +10,7 @@ mdefine_line|#define DEB(what)&t;&t;/* (what) */
 macro_line|#endif
 r_extern
 r_int
-id|translat_code
+id|translate_code
 suffix:semicolon
 r_extern
 r_char
@@ -127,7 +127,7 @@ comma
 (paren
 id|ioaddr
 op_xor
-id|translat_code
+id|translate_code
 )paren
 op_minus
 l_int|1

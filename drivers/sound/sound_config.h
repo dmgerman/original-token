@@ -16,7 +16,7 @@ DECL|macro|MAX_REALTIME_FACTOR
 mdefine_line|#define MAX_REALTIME_FACTOR&t;4
 macro_line|#endif
 multiline_comment|/************* PCM DMA buffer sizes *******************/
-multiline_comment|/* If you are using high playback or recording speeds, the default buffersize&n;   is too small. DSP_BUFFSIZE must be 64k or less.&n;&n;   A rule of thumb is 64k for PAS16, 32k for PAS+, 16k for SB Pro and&n;   4k for SB.&n;&n;   If you change the DSP_BUFFSIZE, don&squot;t modify this file.&n;   Use the make config command instead. */
+multiline_comment|/* If you are using high playback or recording speeds, the default buffer size&n;   is too small. DSP_BUFFSIZE must be 64k or less.&n;&n;   A rule of thumb is 64k for PAS16, 32k for PAS+, 16k for SB Pro and&n;   4k for SB.&n;&n;   If you change the DSP_BUFFSIZE, don&squot;t modify this file.&n;   Use the make config command instead. */
 macro_line|#ifndef DSP_BUFFSIZE
 DECL|macro|DSP_BUFFSIZE
 mdefine_line|#define DSP_BUFFSIZE&t;&t;(4096)
@@ -71,7 +71,7 @@ mdefine_line|#define SND_DEV_STATUS&t;6&t;/* /dev/sndstat */
 DECL|macro|SND_DEV_AWFM
 mdefine_line|#define SND_DEV_AWFM&t;7&t;/* Reserved */
 DECL|macro|SND_DEV_SEQ2
-mdefine_line|#define SND_DEV_SEQ2&t;8&t;/* /dev/sequecer, level 2 interface */
+mdefine_line|#define SND_DEV_SEQ2&t;8&t;/* /dev/sequencer, level 2 interface */
 DECL|macro|SND_DEV_SNDPROC
 mdefine_line|#define SND_DEV_SNDPROC 9&t;/* /dev/sndproc for programmable devices */
 DECL|macro|SND_DEV_PSS
@@ -157,12 +157,12 @@ r_int
 op_star
 id|osp
 suffix:semicolon
-multiline_comment|/* OS spesific info */
+multiline_comment|/* OS specific info */
 DECL|member|card_subtype
 r_int
 id|card_subtype
 suffix:semicolon
-multiline_comment|/* Driver spesific. Usually 0 */
+multiline_comment|/* Driver specific. Usually 0 */
 )brace
 suffix:semicolon
 DECL|macro|SYNTH_MAX_VOICES

@@ -72,9 +72,9 @@ mdefine_line|#define ANY_DEVS (B(OPT_AUDIO)|B(OPT_MIDI)|B(OPT_GUS)| &bslash;&n;&
 DECL|macro|AUDIO_CARDS
 mdefine_line|#define AUDIO_CARDS (B (OPT_PSS) | B (OPT_SB) | B (OPT_PAS) | B (OPT_GUS) | &bslash;&n;&t;&t;B (OPT_MSS) | B (OPT_GUS16) | B (OPT_GUSMAX) | B (OPT_TRIX) | &bslash;&n;&t;&t;B (OPT_SSCAPE)| B(OPT_MAD16) | B(OPT_CS4232))
 DECL|macro|MPU_DEVS
-mdefine_line|#define MPU_DEVS (B(OPT_PSS)|&bslash;&n;&t;&t;  B(OPT_CS4232)|B(OPT_SPNP)|B(OPT_MAUI))
+mdefine_line|#define MPU_DEVS (B(OPT_PSS)|&bslash;&n;&t;&t;  B(OPT_CS4232)|B(OPT_SPNP)|B(OPT_MAUI)|B(OPT_SSCAPE))
 DECL|macro|UART401_DEVS
-mdefine_line|#define UART401_DEVS (SBDSP_DEVS|B(OPT_TRIX)|B(OPT_MAD16)|B(OPT_SSCAPE))
+mdefine_line|#define UART401_DEVS (SBDSP_DEVS|B(OPT_TRIX)|B(OPT_MAD16))
 DECL|macro|MIDI_CARDS
 mdefine_line|#define MIDI_CARDS (MPU_DEVS | UART401_DEVS | &bslash;&n;&t;&t;    B (OPT_PSS) | B (OPT_SB) | B (OPT_PAS) | B (OPT_MPU401) | &bslash;&n;&t;&t;    B (OPT_GUS) | B (OPT_TRIX) | B (OPT_SSCAPE)|B(OPT_MAD16) | &bslash;&n;&t;&t;    B (OPT_CS4232)|B(OPT_MAUI))
 DECL|macro|AD1848_DEVS
@@ -565,7 +565,7 @@ op_assign
 (brace
 l_string|&quot;ProAudioSpectrum 16 support&quot;
 comma
-l_string|&quot;SoundBlaster (SB, SBPro, SB16, clones) support&quot;
+l_string|&quot;Sound Blaster (SB, SBPro, SB16, clones) support&quot;
 comma
 l_string|&quot;Generic OPL2/OPL3 FM synthesizer support&quot;
 comma
@@ -583,7 +583,7 @@ l_string|&quot;GUS MAX support&quot;
 comma
 l_string|&quot;Microsoft Sound System support&quot;
 comma
-l_string|&quot;Ensoniq Soundscape support&quot;
+l_string|&quot;Ensoniq SoundScape support&quot;
 comma
 l_string|&quot;MediaTrix AudioTrix Pro support&quot;
 comma
@@ -628,10 +628,10 @@ l_string|&quot;Pro Audio Studio 16, or Logitech SoundMan 16. Don&squot;t enable 
 l_string|&quot;you have some other card made by MediaVision or Logitech as&bslash;n&quot;
 l_string|&quot;they are not PAS16 compatible.&bslash;n&quot;
 comma
-l_string|&quot;Enable this if you have an original SoundBlaster card made by&bslash;n&quot;
+l_string|&quot;Enable this if you have an original Sound Blaster card made by&bslash;n&quot;
 l_string|&quot;Creative Labs or a 100%% hardware compatible clone. For an&bslash;n&quot;
 l_string|&quot;unknown card you may want to try this if it claims to be&bslash;n&quot;
-l_string|&quot;SoundBlaster compatible.&bslash;n&quot;
+l_string|&quot;Sound Blaster compatible.&bslash;n&quot;
 comma
 l_string|&quot;Enable this option if your sound card has a Yamaha OPL2 or OPL3&bslash;n&quot;
 l_string|&quot;FM synthesizer chip.&bslash;n&quot;
@@ -664,7 +664,7 @@ l_string|&quot;Enable this option if you have the original Windows Sound System&
 l_string|&quot;card made by Microsoft or the Aztech SG 16 Pro or NX16 Pro.&bslash;n&quot;
 comma
 l_string|&quot;Enable this if you have a sound card based on the Ensoniq&bslash;n&quot;
-l_string|&quot;Soundscape chipset. Such cards are being manufactured by Ensoniq,&bslash;n&quot;
+l_string|&quot;SoundScape chipset. Such cards are being manufactured by Ensoniq,&bslash;n&quot;
 l_string|&quot;Spea and Reveal (Reveal makes other cards as well).&bslash;n&quot;
 comma
 l_string|&quot;Enable this option if you have the AudioTrix Pro sound card&bslash;n&quot;
@@ -685,10 +685,10 @@ comma
 l_string|&quot;Use this option to enable experimental support for cards that&bslash;n&quot;
 l_string|&quot;use the Plug and Play protocol.&bslash;n&quot;
 comma
-l_string|&quot;Enable this option if your card is a SoundBlaster Pro or&bslash;n&quot;
-l_string|&quot;SoundBlaster 16. It also works with many SoundBlaster Pro clones.&bslash;n&quot;
+l_string|&quot;Enable this option if your card is a Sound Blaster Pro or&bslash;n&quot;
+l_string|&quot;Sound Blaster 16. It also works with many Sound Blaster Pro clones.&bslash;n&quot;
 comma
-l_string|&quot;Enable this if you have a SoundBlaster 16, including the AWE32.&bslash;n&quot;
+l_string|&quot;Enable this if you have a Sound Blaster 16, including the AWE32.&bslash;n&quot;
 comma
 l_string|&quot;Enable this if you have an Audio Excel DSP16 card. See the file&bslash;n&quot;
 l_string|&quot;Readme.aedsp16 for more information.&bslash;n&quot;
@@ -2842,7 +2842,7 @@ id|OPT_SB
 comma
 l_string|&quot;SBC_IRQ&quot;
 comma
-l_string|&quot;SoundBlaster IRQ&quot;
+l_string|&quot;Sound Blaster IRQ&quot;
 comma
 id|FMT_INT
 comma
@@ -2860,7 +2860,7 @@ id|OPT_SB
 comma
 l_string|&quot;SBC_DMA&quot;
 comma
-l_string|&quot;SoundBlaster DMA&quot;
+l_string|&quot;Sound Blaster DMA&quot;
 comma
 id|FMT_INT
 comma
@@ -2878,7 +2878,7 @@ id|OPT_SB
 comma
 l_string|&quot;SB_DMA2&quot;
 comma
-l_string|&quot;SoundBlaster 16 bit DMA (_REQUIRED_for SB16, Jazz16, SMW)&quot;
+l_string|&quot;Sound Blaster 16 bit DMA (_REQUIRED_for SB16, Jazz16, SMW)&quot;
 comma
 id|FMT_INT
 comma
@@ -2921,7 +2921,7 @@ comma
 op_minus
 l_int|1
 comma
-l_string|&quot;Check from manual of the card&quot;
+l_string|&quot;Use -1 with SB16&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice
@@ -3435,7 +3435,7 @@ id|OPT_SSCAPE
 comma
 l_string|&quot;SSCAPE_BASE&quot;
 comma
-l_string|&quot;Soundscape MIDI I/O base&quot;
+l_string|&quot;SoundScape MIDI I/O base&quot;
 comma
 id|FMT_HEX
 comma
@@ -3453,7 +3453,7 @@ id|OPT_SSCAPE
 comma
 l_string|&quot;SSCAPE_IRQ&quot;
 comma
-l_string|&quot;Soundscape MIDI IRQ&quot;
+l_string|&quot;SoundScape MIDI IRQ&quot;
 comma
 id|FMT_INT
 comma
@@ -3471,7 +3471,7 @@ id|OPT_SSCAPE
 comma
 l_string|&quot;SSCAPE_DMA&quot;
 comma
-l_string|&quot;Soundscape initialization DMA&quot;
+l_string|&quot;SoundScape initialization DMA&quot;
 comma
 id|FMT_INT
 comma
@@ -3489,7 +3489,7 @@ id|OPT_SSCAPE
 comma
 l_string|&quot;SSCAPE_MSS_BASE&quot;
 comma
-l_string|&quot;Soundscape audio I/O base&quot;
+l_string|&quot;SoundScape audio I/O base&quot;
 comma
 id|FMT_HEX
 comma
@@ -3507,7 +3507,7 @@ id|OPT_SSCAPE
 comma
 l_string|&quot;SSCAPE_MSS_IRQ&quot;
 comma
-l_string|&quot;Soundscape audio IRQ&quot;
+l_string|&quot;SoundScape audio IRQ&quot;
 comma
 id|FMT_INT
 comma
@@ -4974,12 +4974,12 @@ c_cond
 (paren
 id|think_positively
 (paren
-l_string|&quot;Do you want support for the Audio Excel SoundBlaster Pro mode&quot;
+l_string|&quot;Do you want support for the Audio Excel Sound Blaster Pro mode&quot;
 comma
 l_int|1
 comma
 l_string|&quot;Enable this option if you want the Audio Excel sound card to operate&bslash;n&quot;
-l_string|&quot;in SoundBlaster Pro mode.&bslash;n&quot;
+l_string|&quot;in Sound Blaster Pro mode.&bslash;n&quot;
 )paren
 )paren
 (brace
@@ -5103,7 +5103,7 @@ l_string|&quot;Do you wish to include an LD file&quot;
 comma
 l_int|1
 comma
-l_string|&quot;If you want to emulate the SoundBlaster card and you have a DSPxxx.LD&bslash;n&quot;
+l_string|&quot;If you want to emulate the Sound Blaster card and you have a DSPxxx.LD&bslash;n&quot;
 l_string|&quot;file then you must include the LD in the kernel.&bslash;n&quot;
 )paren
 )paren
@@ -5209,7 +5209,7 @@ id|fprintf
 (paren
 id|sf
 comma
-l_string|&quot;/* automaticaly generated by configure */&bslash;n&quot;
+l_string|&quot;/* automatically generated by configure */&bslash;n&quot;
 )paren
 suffix:semicolon
 id|fprintf
@@ -5249,7 +5249,7 @@ l_string|&quot;Do you want to include TRXPRO.HEX in your kernel&quot;
 comma
 l_int|1
 comma
-l_string|&quot;The MediaTrix AudioTrix Pro has an onboard microcontroller which&bslash;n&quot;
+l_string|&quot;The MediaTrix AudioTrix Pro has an on-board microcontroller which&bslash;n&quot;
 l_string|&quot;needs to be initialized by downloading the code from the file TRXPRO.HEX&bslash;n&quot;
 l_string|&quot;in the DOS driver directory. If you don&squot;t have the TRXPRO.HEX file handy&bslash;n&quot;
 l_string|&quot;you may skip this step. However, the SB and MPU-401 modes of AudioTrix&bslash;n&quot;

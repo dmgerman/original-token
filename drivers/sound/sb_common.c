@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sound/sb_common.c&n; *&n; * Common routines for SoundBlaster compatible cards.&n; */
+multiline_comment|/*&n; * sound/sb_common.c&n; *&n; * Common routines for Sound Blaster compatible cards.&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
@@ -25,7 +25,7 @@ id|last_devc
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/* For MPU401 initalization */
+multiline_comment|/* For MPU401 initialization */
 DECL|variable|irq2devc
 r_static
 id|sb_devc
@@ -107,7 +107,7 @@ comma
 l_int|4
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Jazz16 chipset spesific control variables&n; */
+multiline_comment|/*&n; * Jazz16 chipset specific control variables&n; */
 DECL|variable|jazz16_base
 r_static
 r_int
@@ -125,7 +125,7 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* I/O relocation bits */
-multiline_comment|/*&n; * Logitech Soundman Wave spesific initialization code&n; */
+multiline_comment|/*&n; * Logitech SoundMan Wave specific initialization code&n; */
 macro_line|#ifdef SMW_MIDI0001_INCLUDED
 macro_line|#include &quot;smw-midi0001.h&quot;
 macro_line|#else
@@ -172,7 +172,7 @@ id|HZ
 op_div
 l_int|10
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;   * The timeout is 0.1 secods&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;   * The timeout is 0.1 seconds&n;&t;&t;&t;&t; */
 multiline_comment|/*&n;   * Note! the i&lt;500000 is an emergency exit. The sb_dsp_command() is sometimes&n;   * called while interrupts are disabled. This means that the timer is&n;   * disabled also. However the timeout situation is a abnormal condition.&n;   * Normally the DSP should be ready to accept commands after just couple of&n;   * loops.&n;   */
 r_for
 c_loop
@@ -222,7 +222,7 @@ suffix:semicolon
 )brace
 id|printk
 (paren
-l_string|&quot;SoundBlaster: DSP Command(%x) Timeout.&bslash;n&quot;
+l_string|&quot;Sound Blaster: DSP Command(%x) Timeout.&bslash;n&quot;
 comma
 id|val
 )paren
@@ -539,7 +539,7 @@ r_default
 suffix:colon
 id|printk
 (paren
-l_string|&quot;SoundBlaster: Unexpected interrupt&bslash;n&quot;
+l_string|&quot;Sound Blaster: Unexpected interrupt&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -1133,7 +1133,7 @@ l_int|0x12
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n; * OK so far. Now configure the IRQ and DMA channel used by the acrd.&n; */
+multiline_comment|/*&n; * OK so far. Now configure the IRQ and DMA channel used by the card.&n; */
 r_if
 c_cond
 (paren
@@ -1716,7 +1716,7 @@ id|cfg
 op_assign
 l_int|0x50
 suffix:semicolon
-multiline_comment|/* Extended mode DMA ebable */
+multiline_comment|/* Extended mode DMA enable */
 r_if
 c_cond
 (paren
@@ -2277,7 +2277,7 @@ id|hw_config-&gt;irq
 comma
 id|sbintr
 comma
-l_string|&quot;soundblaster&quot;
+l_string|&quot;sound blaster&quot;
 comma
 id|devc-&gt;osp
 )paren
@@ -2507,7 +2507,7 @@ id|hw_config-&gt;io_base
 comma
 l_int|16
 comma
-l_string|&quot;soundblaster&quot;
+l_string|&quot;sound blaster&quot;
 )paren
 suffix:semicolon
 r_switch
@@ -2753,7 +2753,7 @@ id|sound_alloc_dma
 (paren
 id|devc-&gt;dma8
 comma
-l_string|&quot;SoundBlaster8&quot;
+l_string|&quot;Sound Blaster8&quot;
 )paren
 )paren
 (brace
@@ -2783,7 +2783,7 @@ id|sound_alloc_dma
 (paren
 id|devc-&gt;dma16
 comma
-l_string|&quot;SoundBlaster16&quot;
+l_string|&quot;Sound Blaster16&quot;
 )paren
 )paren
 (brace
@@ -3519,7 +3519,7 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#ifdef SMW_SCSI_IRQ
-multiline_comment|/*&n;     * Set the SCSI interrupt (IRQ2/9, IRQ3 or IRQ10). The SCSI interrupt&n;     * is disabled by default.&n;     *&n;     * Btw the Zilog 5380 SCSI controller is located at MPU base + 0x10.&n;   */
+multiline_comment|/*&n;     * Set the SCSI interrupt (IRQ2/9, IRQ3 or IRQ10). The SCSI interrupt&n;     * is disabled by default.&n;     *&n;     * BTW the Zilog 5380 SCSI controller is located at MPU base + 0x10.&n;   */
 (brace
 r_static
 r_int

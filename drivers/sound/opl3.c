@@ -628,7 +628,7 @@ op_star
 id|osp
 )paren
 (brace
-multiline_comment|/*&n;   * This function returns 1 if the FM chicp is present at the given I/O port&n;   * The detection algorithm plays with the timer built in the FM chip and&n;   * looks for a change in the status register.&n;   *&n;   * Note! The timers of the FM chip are not connected to AdLib (and compatible)&n;   * boards.&n;   *&n;   * Note2! The chip is initialized if detected.&n;   */
+multiline_comment|/*&n;   * This function returns 1 if the FM chip is present at the given I/O port&n;   * The detection algorithm plays with the timer built in the FM chip and&n;   * looks for a change in the status register.&n;   *&n;   * Note! The timers of the FM chip are not connected to AdLib (and compatible)&n;   * boards.&n;   *&n;   * Note2! The chip is initialized if detected.&n;   */
 r_int
 r_char
 id|stat1
@@ -848,7 +848,7 @@ l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t; * There is no YM3812&n;&t;&t;&t;&t; */
 )brace
-multiline_comment|/*&n;   * There is a FM chicp in this address. Detect the type (OPL2 to OPL4)&n;   */
+multiline_comment|/*&n;   * There is a FM chip in this address. Detect the type (OPL2 to OPL4)&n;   */
 r_if
 c_cond
 (paren
@@ -884,7 +884,7 @@ id|detected_model
 op_assign
 l_int|3
 suffix:semicolon
-multiline_comment|/*&n;       * Detect availability of OPL4 (_experimental_). Works propably&n;       * only after a cold boot. In addition the OPL4 port&n;       * of the chip may not be connected to the PC bus at all.&n;       */
+multiline_comment|/*&n;       * Detect availability of OPL4 (_experimental_). Works probably&n;       * only after a cold boot. In addition the OPL4 port&n;       * of the chip may not be connected to the PC bus at all.&n;       */
 id|opl3_command
 (paren
 id|ioaddr

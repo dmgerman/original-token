@@ -346,7 +346,7 @@ id|SND_DEV_STATUS
 (brace
 id|printk
 (paren
-l_string|&quot;SoundCard Error: The soundcard system has not been configured&bslash;n&quot;
+l_string|&quot;Sound Card Error: The soundcard system has not been configured&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2695,8 +2695,8 @@ l_int|NULL
 suffix:semicolon
 )brace
 r_int
-DECL|function|soud_map_buffer
-id|soud_map_buffer
+DECL|function|sound_map_buffer
+id|sound_map_buffer
 (paren
 r_int
 id|dev

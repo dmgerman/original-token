@@ -164,7 +164,7 @@ op_or
 l_int|255
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * Convert to gus&squot;s logarithmic form with 4 bit exponent i and 8 bit&n;   * mantissa m.&n;   */
+multiline_comment|/*&n;   * Convert to GUS&squot;s logarithmic form with 4 bit exponent i and 8 bit&n;   * mantissa m.&n;   */
 id|n
 op_assign
 id|x

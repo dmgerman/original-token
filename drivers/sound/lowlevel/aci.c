@@ -10,7 +10,7 @@ id|aci_port
 op_assign
 l_int|0x354
 suffix:semicolon
-multiline_comment|/* as determined by bit 4 in the Opti 929 MC4 register */
+multiline_comment|/* as determined by bit 4 in the OPTi 929 MC4 register */
 DECL|variable|aci_idcode
 r_int
 r_char
@@ -179,7 +179,7 @@ r_return
 id|status
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * The four ACI command types (implied, write, read and indexed) can&n; * be sent to the microcontroller using the following four functions.&n; * If a problem occured, they return -1.&n; */
+multiline_comment|/*&n; * The four ACI command types (implied, write, read and indexed) can&n; * be sent to the microcontroller using the following four functions.&n; * If a problem occurred, they return -1.&n; */
 DECL|function|implied_cmd
 r_static
 r_int
