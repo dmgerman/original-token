@@ -6210,7 +6210,7 @@ suffix:semicolon
 id|disable_bh
 c_func
 (paren
-id|KEYBOARD_BH
+id|CONSOLE_BH
 )paren
 suffix:semicolon
 r_while
@@ -8566,7 +8566,7 @@ suffix:semicolon
 id|enable_bh
 c_func
 (paren
-id|KEYBOARD_BH
+id|CONSOLE_BH
 )paren
 suffix:semicolon
 r_return

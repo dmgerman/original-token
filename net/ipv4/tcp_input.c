@@ -5456,6 +5456,37 @@ id|FREE_READ
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; * Finally, if we&squot;ve moved to TCP_CLOSE, check if we should&n;&t; * get rid of the socket&n;&t; */
+r_if
+c_cond
+(paren
+id|sk-&gt;dead
+op_logical_and
+id|sk-&gt;state
+op_eq
+id|TCP_CLOSE
+)paren
+(brace
+multiline_comment|/* Should be about 2 rtt&squot;s */
+id|reset_timer
+c_func
+(paren
+id|sk
+comma
+id|TIME_DONE
+comma
+id|min
+c_func
+(paren
+id|sk-&gt;rtt
+op_star
+l_int|2
+comma
+id|TCP_DONE_TIME
+)paren
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; *&t;And done&n;&t; */
 r_return
 l_int|0

@@ -1526,6 +1526,12 @@ id|do_poke_blanked_console
 op_assign
 l_int|1
 suffix:semicolon
+id|mark_bh
+c_func
+(paren
+id|CONSOLE_BH
+)paren
+suffix:semicolon
 id|add_keyboard_randomness
 c_func
 (paren

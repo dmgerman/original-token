@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IP firewalling code. This is taken from 4.4BSD. Please note the &n; *&t;copyright message below. As per the GPL it must be maintained&n; *&t;and the licenses thus do not conflict. While this port is subject&n; *&t;to the GPL I also place my modifications under the original &n; *&t;license in recognition of the original copyright. &n; *&n; *&t;Ported from BSD to Linux,&n; *&t;&t;Alan Cox 22/Nov/1994.&n; *&t;Merged and included the FreeBSD-Current changes at Ugen&squot;s request&n; *&t;(but hey it&squot;s a lot cleaner now). Ugen would prefer in some ways&n; *&t;we waited for his final product but since Linux 1.2.0 is about to&n; *&t;appear it&squot;s not practical - Read: It works, it&squot;s not clean but please&n; *&t;don&squot;t consider it to be his standard of finished work.&n; *&t;&t;Alan.&n; *&n; * Fixes:&n; *&t;Pauline Middelink&t;:&t;Added masquerading.&n; *&t;Jos Vos&t;&t;&t;:&t;Separate input  and output firewall&n; *&t;&t;&t;&t;&t;chains, new &quot;insert&quot; and &quot;append&quot;&n; *&t;&t;&t;&t;&t;commands to replace &quot;add&quot; commands,&n; *&t;&t;&t;&t;&t;add ICMP header to struct ip_fwpkt.&n; *&n; *&t;All the real work was done by .....&n; */
+multiline_comment|/*&n; *&t;IP firewalling code. This is taken from 4.4BSD. Please note the &n; *&t;copyright message below. As per the GPL it must be maintained&n; *&t;and the licenses thus do not conflict. While this port is subject&n; *&t;to the GPL I also place my modifications under the original &n; *&t;license in recognition of the original copyright. &n; *&n; *&t;Ported from BSD to Linux,&n; *&t;&t;Alan Cox 22/Nov/1994.&n; *&t;Merged and included the FreeBSD-Current changes at Ugen&squot;s request&n; *&t;(but hey it&squot;s a lot cleaner now). Ugen would prefer in some ways&n; *&t;we waited for his final product but since Linux 1.2.0 is about to&n; *&t;appear it&squot;s not practical - Read: It works, it&squot;s not clean but please&n; *&t;don&squot;t consider it to be his standard of finished work.&n; *&t;&t;Alan.&n; *&n; * Fixes:&n; *&t;Pauline Middelink&t;:&t;Added masquerading.&n; *&t;Jos Vos&t;&t;&t;:&t;Separate input  and output firewall&n; *&t;&t;&t;&t;&t;chains, new &quot;insert&quot; and &quot;append&quot;&n; *&t;&t;&t;&t;&t;commands to replace &quot;add&quot; commands,&n; *&t;&t;&t;&t;&t;add ICMP header to struct ip_fwpkt.&n; *&t;Jos Vos&t;&t;&t;:&t;Add support for matching device names.&n; *&n; *&t;All the real work was done by .....&n; */
 multiline_comment|/*&n; * Copyright (c) 1993 Daniel Boulet&n; * Copyright (c) 1994 Ugen J.S.Antsilevich&n; *&n; * Redistribution and use in source forms, with and without modification,&n; * are permitted provided that this entire comment appears intact.&n; *&n; * Redistribution in binary form may occur without any restrictions.&n; * Obviously, it would be nice if you gave credit where credit is due&n; * but requiring it would be too onerous.&n; *&n; * This software is provided ``AS IS&squot;&squot; without any warranties of any kind.&n; */
 multiline_comment|/*&n; * &t;Format of an IP firewall descriptor&n; *&n; * &t;src, dst, src_mask, dst_mask are always stored in network byte order.&n; * &t;flags and num_*_ports are stored in host byte order (of course).&n; * &t;Port numbers are stored in HOST byte order.&n; */
 macro_line|#ifndef _IP_FW_H
@@ -39,6 +39,13 @@ id|in_addr
 id|fw_via
 suffix:semicolon
 multiline_comment|/* IP address of interface &quot;via&quot; */
+DECL|member|fw_viadev
+r_struct
+id|device
+op_star
+id|fw_viadev
+suffix:semicolon
+multiline_comment|/* device of interface &quot;via&quot; */
 DECL|member|fw_flg
 r_int
 r_int
@@ -86,6 +93,14 @@ comma
 id|fw_tosxor
 suffix:semicolon
 multiline_comment|/* Revised packet priority */
+DECL|member|fw_vianame
+r_char
+id|fw_vianame
+(braket
+id|IFNAMSIZ
+)braket
+suffix:semicolon
+multiline_comment|/* name of interface &quot;via&quot; */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;Values for &quot;flags&quot; field .&n; */
@@ -136,6 +151,8 @@ DECL|macro|IP_FW_OUT
 mdefine_line|#define IP_FW_OUT&t;&t;2
 DECL|macro|IP_FW_ACCT
 mdefine_line|#define IP_FW_ACCT&t;&t;3
+DECL|macro|IP_FW_CHAINS
+mdefine_line|#define IP_FW_CHAINS&t;&t;4&t;/* total number of ip_fw chains */
 DECL|macro|IP_FW_INSERT
 mdefine_line|#define IP_FW_INSERT&t;&t;(IP_FW_BASE_CTL)
 DECL|macro|IP_FW_APPEND
@@ -242,6 +259,14 @@ id|in_addr
 id|fwp_via
 suffix:semicolon
 multiline_comment|/* interface address */
+DECL|member|fwp_vianame
+r_char
+id|fwp_vianame
+(braket
+id|IFNAMSIZ
+)braket
+suffix:semicolon
+multiline_comment|/* interface name */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;Main firewall chains definitions and global var&squot;s definitions.&n; */
