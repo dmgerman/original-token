@@ -209,7 +209,7 @@ id|sb-&gt;s_dirt
 op_assign
 l_int|1
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|sb-&gt;u.ext_sb.s_firstfreeblock
@@ -303,7 +303,7 @@ op_decrement
 id|efb-&gt;count
 )braket
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|sb-&gt;u.ext_sb.s_firstfreeblock
@@ -446,7 +446,7 @@ id|bh-&gt;b_uptodate
 op_assign
 l_int|1
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh
@@ -934,7 +934,7 @@ id|sb-&gt;s_dirt
 op_assign
 l_int|1
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|sb-&gt;u.ext_sb.s_firstfreeinodeblock
@@ -1062,7 +1062,7 @@ op_decrement
 id|efi-&gt;count
 )braket
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|sb-&gt;u.ext_sb.s_firstfreeinodeblock

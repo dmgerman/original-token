@@ -7,7 +7,7 @@ mdefine_line|#define NR_syscalls 256
 multiline_comment|/*&n; * These are system calls with the same entry-point&n; */
 DECL|macro|_sys_clone
 mdefine_line|#define _sys_clone _sys_fork
-multiline_comment|/*&n; * These are system calls that will be removed at some time&n; * due to newer versions existing..&n; */
+multiline_comment|/*&n; * These are system calls that will be removed at some time&n; * due to newer versions existing..&n; * (please be careful - ibcs2 may need some of these).&n; */
 macro_line|#ifdef notdef
 DECL|macro|_sys_waitpid
 mdefine_line|#define _sys_waitpid&t;_sys_old_syscall&t;/* _sys_wait4 */
@@ -31,7 +31,5 @@ macro_line|#endif
 multiline_comment|/*&n; * These are system calls that haven&squot;t been implemented yet&n; * but have an entry in the table for future expansion..&n; */
 DECL|macro|_sys_quotactl
 mdefine_line|#define _sys_quotactl&t;_sys_ni_syscall
-DECL|macro|_sys_bdflush
-mdefine_line|#define _sys_bdflush&t;_sys_ni_syscall
 macro_line|#endif
 eof

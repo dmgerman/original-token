@@ -60,7 +60,7 @@ op_star
 id|ms
 )paren
 (brace
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|sb-&gt;u.minix_sb.s_sbh
@@ -163,7 +163,7 @@ id|sb-&gt;u.minix_sb.s_ms-&gt;s_state
 op_assign
 id|sb-&gt;u.minix_sb.s_mount_state
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|sb-&gt;u.minix_sb.s_sbh
@@ -341,7 +341,7 @@ id|ms-&gt;s_state
 op_assign
 id|sb-&gt;u.minix_sb.s_mount_state
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|sb-&gt;u.minix_sb.s_sbh
@@ -373,7 +373,7 @@ op_and_assign
 op_complement
 id|MINIX_VALID_FS
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|sb-&gt;u.minix_sb.s_sbh
@@ -968,7 +968,7 @@ op_and_assign
 op_complement
 id|MINIX_VALID_FS
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh
@@ -1782,7 +1782,7 @@ id|p
 op_assign
 id|tmp
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh
@@ -2562,7 +2562,7 @@ id|inode-&gt;i_dirt
 op_assign
 l_int|0
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh

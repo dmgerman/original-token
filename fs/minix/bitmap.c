@@ -400,7 +400,7 @@ comma
 id|block
 )paren
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh
@@ -539,7 +539,7 @@ r_goto
 id|repeat
 suffix:semicolon
 )brace
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh
@@ -610,7 +610,7 @@ id|bh-&gt;b_uptodate
 op_assign
 l_int|1
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh
@@ -832,7 +832,7 @@ comma
 id|ino
 )paren
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh
@@ -1005,7 +1005,7 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh

@@ -20,8 +20,6 @@ DECL|macro|NR_FILE
 mdefine_line|#define NR_FILE 1024&t;/* this can well be larger on a larger system */
 DECL|macro|NR_SUPER
 mdefine_line|#define NR_SUPER 32
-DECL|macro|NR_HASH
-mdefine_line|#define NR_HASH 997
 DECL|macro|NR_IHASH
 mdefine_line|#define NR_IHASH 131
 DECL|macro|NR_FILE_LOCKS
@@ -232,6 +230,30 @@ r_char
 id|b_req
 suffix:semicolon
 multiline_comment|/* 0 if the buffer has been invalidated */
+DECL|member|b_list
+r_int
+r_char
+id|b_list
+suffix:semicolon
+multiline_comment|/* List that this buffer appears */
+DECL|member|b_retain
+r_int
+r_char
+id|b_retain
+suffix:semicolon
+multiline_comment|/* Expected number of times this will&n;&t;&t;&t;&t;&t;   be used.  Put on freelist when 0 */
+DECL|member|b_flushtime
+r_int
+r_int
+id|b_flushtime
+suffix:semicolon
+multiline_comment|/* Time when this (dirty) buffer should be written */
+DECL|member|b_lru_time
+r_int
+r_int
+id|b_lru_time
+suffix:semicolon
+multiline_comment|/* Time when this buffer was last used. */
 DECL|member|b_wait
 r_struct
 id|wait_queue
@@ -1700,6 +1722,37 @@ id|priority
 )paren
 suffix:semicolon
 r_extern
+r_void
+id|refile_buffer
+c_func
+(paren
+r_struct
+id|buffer_head
+op_star
+id|buf
+)paren
+suffix:semicolon
+r_void
+id|set_writetime
+c_func
+(paren
+r_struct
+id|buffer_head
+op_star
+id|buf
+comma
+r_int
+id|flag
+)paren
+suffix:semicolon
+DECL|variable|buffer_pages
+r_struct
+id|buffer_head
+op_star
+op_star
+id|buffer_pages
+suffix:semicolon
+r_extern
 r_int
 id|nr_buffers
 suffix:semicolon
@@ -1711,12 +1764,65 @@ r_extern
 r_int
 id|nr_buffer_heads
 suffix:semicolon
-multiline_comment|/* Once the full cluster diffs are in place, this will be filled out a bit. */
-DECL|function|dirtify_buffer
+DECL|macro|BUF_CLEAN
+mdefine_line|#define BUF_CLEAN 0
+DECL|macro|BUF_UNSHARED
+mdefine_line|#define BUF_UNSHARED 1 /* Buffers that were shared but are not any more */
+DECL|macro|BUF_LOCKED
+mdefine_line|#define BUF_LOCKED 2   /* Buffers scheduled for write */
+DECL|macro|BUF_LOCKED1
+mdefine_line|#define BUF_LOCKED1 3  /* Supers, inodes */
+DECL|macro|BUF_DIRTY
+mdefine_line|#define BUF_DIRTY 4    /* Dirty buffers, not yet scheduled for write */
+DECL|macro|BUF_SHARED
+mdefine_line|#define BUF_SHARED 5   /* Buffers shared */
+DECL|macro|NR_LIST
+mdefine_line|#define NR_LIST 6
+DECL|function|mark_buffer_clean
 r_extern
 r_inline
 r_void
-id|dirtify_buffer
+id|mark_buffer_clean
+c_func
+(paren
+r_struct
+id|buffer_head
+op_star
+id|bh
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|bh-&gt;b_dirt
+)paren
+(brace
+id|bh-&gt;b_dirt
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|bh-&gt;b_list
+op_eq
+id|BUF_DIRTY
+)paren
+(brace
+id|refile_buffer
+c_func
+(paren
+id|bh
+)paren
+suffix:semicolon
+)brace
+)brace
+)brace
+DECL|function|mark_buffer_dirty
+r_extern
+r_inline
+r_void
+id|mark_buffer_dirty
 c_func
 (paren
 r_struct
@@ -1728,10 +1834,41 @@ r_int
 id|flag
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|bh-&gt;b_dirt
+)paren
+(brace
 id|bh-&gt;b_dirt
 op_assign
 l_int|1
 suffix:semicolon
+id|set_writetime
+c_func
+(paren
+id|bh
+comma
+id|flag
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|bh-&gt;b_list
+op_ne
+id|BUF_DIRTY
+)paren
+(brace
+id|refile_buffer
+c_func
+(paren
+id|bh
+)paren
+suffix:semicolon
+)brace
+)brace
 )brace
 r_extern
 r_void
@@ -2217,6 +2354,23 @@ c_func
 (paren
 id|dev_t
 id|dev
+)paren
+suffix:semicolon
+r_int
+r_int
+id|generate_cluster
+c_func
+(paren
+id|dev_t
+id|dev
+comma
+r_int
+id|b
+(braket
+)braket
+comma
+r_int
+id|size
 )paren
 suffix:semicolon
 r_extern

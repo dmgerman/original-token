@@ -1139,7 +1139,7 @@ id|bh-&gt;b_uptodate
 op_assign
 l_int|1
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh

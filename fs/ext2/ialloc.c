@@ -820,7 +820,7 @@ id|raw_inode-&gt;i_dtime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh
@@ -1119,7 +1119,7 @@ id|inode-&gt;i_mode
 id|gdp-&gt;bg_used_dirs_count
 op_decrement
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh2
@@ -1130,7 +1130,7 @@ suffix:semicolon
 id|es-&gt;s_free_inodes_count
 op_increment
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|sb-&gt;u.ext2_sb.s_sbh
@@ -1146,7 +1146,7 @@ id|gdp
 )paren
 suffix:semicolon
 )brace
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh
@@ -1332,7 +1332,7 @@ id|inode-&gt;u.ext2_i.i_version
 op_assign
 id|raw_inode-&gt;i_version
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh
@@ -1796,7 +1796,7 @@ r_goto
 id|repeat
 suffix:semicolon
 )brace
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh
@@ -1931,7 +1931,7 @@ id|mode
 id|gdp-&gt;bg_used_dirs_count
 op_increment
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh2
@@ -1942,7 +1942,7 @@ suffix:semicolon
 id|es-&gt;s_free_inodes_count
 op_decrement
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|sb-&gt;u.ext2_sb.s_sbh

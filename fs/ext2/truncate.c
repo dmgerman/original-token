@@ -219,7 +219,7 @@ comma
 id|RANDOM_INT
 )paren
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh
@@ -589,7 +589,7 @@ id|ind
 op_assign
 l_int|0
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|ind_bh
@@ -614,7 +614,7 @@ comma
 id|RANDOM_INT
 )paren
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh
@@ -1026,7 +1026,7 @@ comma
 id|dind
 )paren
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|dind_bh
@@ -1349,7 +1349,7 @@ comma
 id|tind
 )paren
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|tind_bh

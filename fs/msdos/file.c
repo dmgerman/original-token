@@ -998,7 +998,7 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh

@@ -1019,6 +1019,8 @@ DECL|macro|GFP_USER
 mdefine_line|#define GFP_USER&t;0x02
 DECL|macro|GFP_KERNEL
 mdefine_line|#define GFP_KERNEL&t;0x03
+DECL|macro|GFP_NOBUFFER
+mdefine_line|#define GFP_NOBUFFER&t;0x04
 multiline_comment|/* vm_ops not present page codes */
 DECL|macro|SHM_SWP_TYPE
 mdefine_line|#define SHM_SWP_TYPE 0x41

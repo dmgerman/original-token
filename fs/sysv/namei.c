@@ -845,7 +845,7 @@ id|i
 suffix:colon
 l_int|0
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh
@@ -1062,7 +1062,7 @@ id|de-&gt;inode
 op_assign
 id|inode-&gt;i_ino
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh
@@ -1411,7 +1411,7 @@ id|de-&gt;inode
 op_assign
 id|inode-&gt;i_ino
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh
@@ -1706,7 +1706,7 @@ id|inode-&gt;i_nlink
 op_assign
 l_int|2
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|dir_block
@@ -1796,7 +1796,7 @@ id|de-&gt;inode
 op_assign
 id|inode-&gt;i_ino
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh
@@ -2379,7 +2379,7 @@ id|de-&gt;inode
 op_assign
 l_int|0
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh
@@ -2650,7 +2650,7 @@ id|de-&gt;inode
 op_assign
 l_int|0
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh
@@ -2889,7 +2889,7 @@ id|i
 op_assign
 l_int|0
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|name_block
@@ -3013,7 +3013,7 @@ id|de-&gt;inode
 op_assign
 id|inode-&gt;i_ino
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh
@@ -3220,7 +3220,7 @@ id|de-&gt;inode
 op_assign
 id|oldinode-&gt;i_ino
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh
@@ -3990,7 +3990,7 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|old_bh
@@ -3998,7 +3998,7 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|new_bh
@@ -4020,7 +4020,7 @@ id|dir_bh_data
 op_assign
 id|new_dir-&gt;i_ino
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|dir_bh

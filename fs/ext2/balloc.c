@@ -1280,7 +1280,7 @@ op_increment
 suffix:semicolon
 )brace
 )brace
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh2
@@ -1288,7 +1288,7 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|sb-&gt;u.ext2_sb.s_sbh
@@ -1296,7 +1296,7 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh
@@ -2279,7 +2279,7 @@ id|j
 op_assign
 id|tmp
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh
@@ -2391,7 +2391,7 @@ id|bh-&gt;b_uptodate
 op_assign
 l_int|1
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh
@@ -2419,7 +2419,7 @@ suffix:semicolon
 id|gdp-&gt;bg_free_blocks_count
 op_decrement
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh2
@@ -2430,7 +2430,7 @@ suffix:semicolon
 id|es-&gt;s_free_blocks_count
 op_decrement
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|sb-&gt;u.ext2_sb.s_sbh

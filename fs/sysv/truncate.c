@@ -307,7 +307,7 @@ id|ind
 op_assign
 l_int|0
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh
@@ -1685,7 +1685,7 @@ id|ind
 op_assign
 l_int|0
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|indbh

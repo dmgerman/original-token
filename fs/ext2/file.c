@@ -199,6 +199,9 @@ id|bhrequest
 comma
 id|uptodate
 suffix:semicolon
+r_int
+id|clusterblocks
+suffix:semicolon
 r_struct
 id|buffer_head
 op_star
@@ -462,6 +465,10 @@ id|block
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * We do this in a two stage process.  We first try and request&n;&t; * as many blocks as we can, then we wait for the first one to&n;&t; * complete, and then we try and wrap up as many as are actually&n;&t; * done.  This routine is rather generic, in that it can be used&n;&t; * in a filesystem by substituting the appropriate function in&n;&t; * for getblk&n;&t; *&n;&t; * This routine is optimized to make maximum use of the various&n;&t; * buffers and caches.&n;&t; */
+id|clusterblocks
+op_assign
+l_int|0
+suffix:semicolon
 r_do
 (brace
 id|bhrequest
@@ -481,6 +488,36 @@ id|blocks
 op_decrement
 id|blocks
 suffix:semicolon
+macro_line|#if 1
+r_if
+c_cond
+(paren
+op_logical_neg
+id|clusterblocks
+)paren
+(brace
+id|clusterblocks
+op_assign
+id|ext2_getcluster
+c_func
+(paren
+id|inode
+comma
+id|block
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|clusterblocks
+)paren
+(brace
+id|clusterblocks
+op_decrement
+suffix:semicolon
+)brace
+macro_line|#endif
 op_star
 id|bhb
 op_assign
@@ -1156,7 +1193,7 @@ id|bh-&gt;b_uptodate
 op_assign
 l_int|1
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh

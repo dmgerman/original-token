@@ -426,7 +426,7 @@ id|sysv_zone_t
 )paren
 )paren
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh
@@ -552,7 +552,7 @@ id|sb-&gt;sv_block_size
 )paren
 suffix:semicolon
 multiline_comment|/* this implies ((struct ..._freelist_chunk *) bh_data)-&gt;flc_count = 0; */
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh
@@ -673,7 +673,7 @@ id|sb-&gt;sv_sb_total_free_blocks
 op_plus
 l_int|1
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|sb-&gt;sv_bh
@@ -1250,7 +1250,7 @@ comma
 id|sb-&gt;sv_block_size
 )paren
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh
@@ -1298,7 +1298,7 @@ id|sb-&gt;sv_sb_total_free_blocks
 op_minus
 l_int|1
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|sb-&gt;sv_bh
@@ -1847,7 +1847,7 @@ suffix:colon
 id|count
 )paren
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|sb-&gt;sv_bh

@@ -75,7 +75,7 @@ id|sb-&gt;u.ext2_sb.s_es-&gt;s_state
 op_or_assign
 id|EXT2_ERROR_FS
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|sb-&gt;u.ext2_sb.s_sbh
@@ -281,7 +281,7 @@ id|sb-&gt;u.ext2_sb.s_es-&gt;s_state
 op_or_assign
 id|EXT2_ERROR_FS
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|sb-&gt;u.ext2_sb.s_sbh
@@ -447,7 +447,7 @@ id|sb-&gt;u.ext2_sb.s_es-&gt;s_state
 op_assign
 id|sb-&gt;u.ext2_sb.s_mount_state
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|sb-&gt;u.ext2_sb.s_sbh
@@ -824,7 +824,7 @@ dot
 id|bg_free_inodes_count
 suffix:semicolon
 )brace
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh2
@@ -841,7 +841,7 @@ id|es-&gt;s_magic
 op_assign
 id|EXT2_SUPER_MAGIC
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh
@@ -1540,7 +1540,7 @@ id|es-&gt;s_mtime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|sb-&gt;u.ext2_sb.s_sbh
@@ -2903,7 +2903,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|sb-&gt;u.ext2_sb.s_group_desc
@@ -2951,7 +2951,7 @@ id|es-&gt;s_wtime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|sb-&gt;u.ext2_sb.s_sbh
@@ -3135,7 +3135,7 @@ id|es-&gt;s_mtime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|sb-&gt;u.ext2_sb.s_sbh

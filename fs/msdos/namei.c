@@ -1269,7 +1269,7 @@ id|de-&gt;size
 op_assign
 l_int|0
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh
@@ -2382,7 +2382,7 @@ l_int|0
 op_assign
 id|DELETED_FLAG
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh
@@ -2577,7 +2577,7 @@ l_int|0
 op_assign
 id|DELETED_FLAG
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh
@@ -2876,7 +2876,7 @@ l_int|0
 op_assign
 id|DELETED_FLAG
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|new_bh
@@ -2907,7 +2907,7 @@ comma
 id|MSDOS_NAME
 )paren
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|old_bh
@@ -3461,7 +3461,7 @@ l_int|0
 op_assign
 id|DELETED_FLAG
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|new_bh
@@ -3602,7 +3602,7 @@ l_int|0
 op_assign
 id|DELETED_FLAG
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|old_bh
@@ -3610,7 +3610,7 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|free_bh
@@ -3759,7 +3759,7 @@ id|dotdot_inode-&gt;i_dirt
 op_assign
 l_int|1
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|dotdot_bh

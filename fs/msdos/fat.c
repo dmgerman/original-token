@@ -534,7 +534,7 @@ l_int|8
 )paren
 suffix:semicolon
 )brace
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh2
@@ -543,7 +543,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh
@@ -625,7 +625,7 @@ comma
 id|SECTOR_SIZE
 )paren
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|c_bh

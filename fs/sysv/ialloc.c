@@ -256,7 +256,7 @@ id|sb-&gt;sv_sb_total_free_inodes
 )paren
 op_increment
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|sb-&gt;sv_bh
@@ -284,7 +284,7 @@ id|sysv_inode
 )paren
 )paren
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh
@@ -602,7 +602,7 @@ id|sb-&gt;sv_sb_fic_count
 )paren
 )braket
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|sb-&gt;sv_bh
@@ -716,7 +716,7 @@ id|sb-&gt;sv_sb_total_free_inodes
 )paren
 op_decrement
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|sb-&gt;sv_bh
@@ -934,7 +934,7 @@ id|sb-&gt;sv_sb_total_free_inodes
 op_assign
 id|count
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|sb-&gt;sv_bh

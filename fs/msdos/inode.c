@@ -2828,7 +2828,7 @@ c_func
 id|raw_entry-&gt;date
 )paren
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh

@@ -548,7 +548,7 @@ id|es-&gt;s_freeinodescount
 op_assign
 id|sb-&gt;u.ext_sb.s_freeinodescount
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh
@@ -1447,7 +1447,7 @@ id|p
 op_assign
 id|tmp
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh
@@ -2217,7 +2217,7 @@ id|inode-&gt;u.ext_i.i_data
 id|block
 )braket
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh

@@ -254,6 +254,14 @@ comma
 l_string|&quot;stat&quot;
 )brace
 comma
+(brace
+l_int|18
+comma
+l_int|7
+comma
+l_string|&quot;devices&quot;
+)brace
+comma
 )brace
 suffix:semicolon
 DECL|macro|NR_ROOT_DIRENTRY

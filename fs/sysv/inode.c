@@ -3003,7 +3003,7 @@ suffix:colon
 id|block
 )paren
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh
@@ -4432,7 +4432,7 @@ id|inode-&gt;i_dirt
 op_assign
 l_int|0
 suffix:semicolon
-id|dirtify_buffer
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh
