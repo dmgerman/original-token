@@ -11,8 +11,7 @@ macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 DECL|function|iABI_emulate
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|iABI_emulate
 c_func

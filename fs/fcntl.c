@@ -156,8 +156,7 @@ id|arg
 suffix:semicolon
 )brace
 DECL|function|sys_dup2
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_dup2
 c_func
@@ -243,8 +242,7 @@ id|newfd
 suffix:semicolon
 )brace
 DECL|function|sys_dup
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_dup
 c_func
@@ -265,8 +263,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|sys_fcntl
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_fcntl
 c_func

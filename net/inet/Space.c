@@ -6,6 +6,259 @@ DECL|macro|LOOPBACK
 mdefine_line|#define LOOPBACK&t;&t;&t;/* always present, right?&t;*/
 DECL|macro|NEXT_DEV
 mdefine_line|#define&t;NEXT_DEV&t;NULL
+multiline_comment|/* A unifed ethernet device probe.  This is the easiest way to have every&n;   ethernet adaptor have the name &quot;eth[0123...]&quot;.&n;   */
+r_extern
+r_int
+id|wd_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|el2_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|ne_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|hp_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|znet_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|express_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|el3_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|atp_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|at1500_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|depca_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|el1_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+r_static
+r_int
+DECL|function|ethif_probe
+id|ethif_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+(brace
+r_int
+id|base_addr
+op_assign
+id|dev-&gt;base_addr
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|base_addr
+OL
+l_int|0
+op_logical_or
+id|base_addr
+op_eq
+l_int|1
+)paren
+r_return
+l_int|1
+suffix:semicolon
+multiline_comment|/* ENXIO */
+r_if
+c_cond
+(paren
+l_int|1
+macro_line|#if defined(CONFIG_WD80x3) || defined(WD80x3)
+op_logical_and
+id|wd_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#if defined(CONFIG_EL2) || defined(EL2)
+op_logical_and
+id|el2_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#if defined(CONFIG_NE2000) || defined(NE2000)
+op_logical_and
+id|ne_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#if defined(CONFIG_HPLAN) || defined(HPLAN)
+op_logical_and
+id|hp_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#ifdef CONFIG_AT1500
+op_logical_and
+id|at1500_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#ifdef CONFIG_EL3
+op_logical_and
+id|el3_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#ifdef CONFIG_ZNET
+op_logical_and
+id|znet_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#ifdef CONFIG_EEXPRESS
+op_logical_and
+id|express_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#ifdef CONFIG_ATP&t;&t;/* AT-LAN-TEC (RealTek) pocket adaptor. */
+op_logical_and
+id|atp_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#ifdef CONFIG_DEPCA
+op_logical_and
+id|depca_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#ifdef CONFIG_EL1
+op_logical_and
+id|el1_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+op_logical_and
+l_int|1
+)paren
+(brace
+r_return
+l_int|1
+suffix:semicolon
+multiline_comment|/* -ENODEV or -EAGAIN would be more accurate. */
+)brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/* This remains seperate because it requires the addr and IRQ to be&n;   set. */
 macro_line|#if defined(D_LINK) || defined(CONFIG_DE600)
 r_extern
 r_int
@@ -54,34 +307,30 @@ macro_line|#   undef NEXT_DEV
 DECL|macro|NEXT_DEV
 macro_line|#   define NEXT_DEV&t;(&amp;d_link_dev)
 macro_line|#endif
-macro_line|#ifdef CONFIG_EL1
-macro_line|#error 
-macro_line|#   ifndef EL1_IRQ
-DECL|macro|EL1_IRQ
-macro_line|#&t;define EL1_IRQ 9
-macro_line|#   endif
-macro_line|#   ifndef EL1
-DECL|macro|EL1
-macro_line|#&t;define EL1 0
-macro_line|#   endif
-r_extern
-r_int
-id|el1_init
-c_func
-(paren
-r_struct
-id|device
-op_star
-)paren
-suffix:semicolon
-DECL|variable|el1_dev
+multiline_comment|/* The first device defaults to I/O base &squot;0&squot;, which means autoprobe. */
+macro_line|#ifdef EI8390
+DECL|macro|ETH0_ADDR
+macro_line|# define ETH0_ADDR EI8390
+macro_line|#else
+DECL|macro|ETH0_ADDR
+macro_line|# define ETH0_ADDR 0
+macro_line|#endif
+macro_line|#ifdef EI8390_IRQ
+DECL|macro|ETH0_IRQ
+macro_line|# define ETH0_IRQ EI8390_IRQ
+macro_line|#else
+DECL|macro|ETH0_IRQ
+macro_line|# define ETH0_IRQ 0
+macro_line|#endif
+multiline_comment|/* &quot;eth0&quot; defaults to autoprobe, other use a base of &quot;-0x20&quot;, &quot;don&squot;t probe&quot;.&n;   Enable these with boot-time setup. 0.99pl13+ can optionally autoprobe. */
+DECL|variable|eth3_dev
 r_static
 r_struct
 id|device
-id|el1_dev
+id|eth3_dev
 op_assign
 (brace
-l_string|&quot;el0&quot;
+l_string|&quot;eth3&quot;
 comma
 l_int|0
 comma
@@ -91,55 +340,8 @@ l_int|0
 comma
 l_int|0
 comma
-id|EL1
-comma
-id|EL1_IRQ
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-id|NEXT_DEV
-comma
-id|el1_init
-)brace
-suffix:semicolon
-DECL|macro|NEXT_DEV
-macro_line|#   undef NEXT_DEV
-DECL|macro|NEXT_DEV
-macro_line|#   define NEXT_DEV&t;(&amp;el1_dev)
-macro_line|#endif  /* EL1 */
-macro_line|#ifdef CONFIG_DEPCA
-r_extern
-r_int
-id|depca_probe
-c_func
-(paren
-r_struct
-id|device
-op_star
-)paren
-suffix:semicolon
-DECL|variable|depca_dev
-r_static
-r_struct
-id|device
-id|depca_dev
-op_assign
-(brace
-l_string|&quot;depca0&quot;
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
+l_int|0xffe0
+multiline_comment|/* I/O base*/
 comma
 l_int|0
 comma
@@ -151,34 +353,17 @@ l_int|0
 comma
 id|NEXT_DEV
 comma
-id|depca_probe
-comma
+id|ethif_probe
 )brace
 suffix:semicolon
-DECL|macro|NEXT_DEV
-macro_line|#   undef NEXT_DEV
-DECL|macro|NEXT_DEV
-macro_line|#   define NEXT_DEV&t;(&amp;depca_dev)
-macro_line|#endif  /* CONFIG_DEPCA */
-macro_line|#ifdef CONFIG_ATP&t;&t;/* AT-LAN-TEC (RealTek) pocket adaptor. */
-r_extern
-r_int
-id|atp_probe
-c_func
-(paren
-r_struct
-id|device
-op_star
-)paren
-suffix:semicolon
-DECL|variable|atp_dev
+DECL|variable|eth2_dev
 r_static
 r_struct
 id|device
-id|atp_dev
+id|eth2_dev
 op_assign
 (brace
-l_string|&quot;atp0&quot;
+l_string|&quot;eth2&quot;
 comma
 l_int|0
 comma
@@ -188,7 +373,8 @@ l_int|0
 comma
 l_int|0
 comma
-l_int|0
+l_int|0xffe0
+multiline_comment|/* I/O base*/
 comma
 l_int|0
 comma
@@ -198,36 +384,20 @@ l_int|0
 comma
 l_int|0
 comma
-id|NEXT_DEV
+op_amp
+id|eth3_dev
 comma
-id|atp_probe
-comma
+id|ethif_probe
 )brace
 suffix:semicolon
-DECL|macro|NEXT_DEV
-macro_line|#   undef NEXT_DEV
-DECL|macro|NEXT_DEV
-macro_line|#   define NEXT_DEV&t;(&amp;atp_dev)
-macro_line|#endif  /* CONFIG_ATP */
-macro_line|#ifdef CONFIG_EL3
-r_extern
-r_int
-id|el3_probe
-c_func
-(paren
-r_struct
-id|device
-op_star
-)paren
-suffix:semicolon
-DECL|variable|eliii0_dev
+DECL|variable|eth1_dev
 r_static
 r_struct
 id|device
-id|eliii0_dev
+id|eth1_dev
 op_assign
 (brace
-l_string|&quot;eliii0&quot;
+l_string|&quot;eth1&quot;
 comma
 l_int|0
 comma
@@ -237,7 +407,8 @@ l_int|0
 comma
 l_int|0
 comma
-l_int|0
+l_int|0xffe0
+multiline_comment|/* I/O base*/
 comma
 l_int|0
 comma
@@ -247,223 +418,49 @@ l_int|0
 comma
 l_int|0
 comma
-id|NEXT_DEV
+op_amp
+id|eth2_dev
 comma
-id|el3_probe
-comma
+id|ethif_probe
 )brace
 suffix:semicolon
-DECL|macro|NEXT_DEV
-macro_line|#   undef NEXT_DEV
-DECL|macro|NEXT_DEV
-macro_line|#   define NEXT_DEV&t;(&amp;eliii0_dev)
-macro_line|#endif  /* CONFIG_3C509 aka EL3 */
-macro_line|#ifdef CONFIG_ZNET
-r_extern
-r_int
-id|znet_probe
-c_func
-(paren
-r_struct
-id|device
-op_star
-)paren
-suffix:semicolon
-DECL|variable|znet_dev
+DECL|variable|eth0_dev
 r_static
 r_struct
 id|device
-id|znet_dev
-op_assign
-(brace
-l_string|&quot;znet&quot;
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-id|NEXT_DEV
-comma
-id|znet_probe
-comma
-)brace
-suffix:semicolon
-DECL|macro|NEXT_DEV
-macro_line|#   undef NEXT_DEV
-DECL|macro|NEXT_DEV
-macro_line|#   define NEXT_DEV&t;(&amp;znet_dev)
-macro_line|#endif  /* CONFIG_ZNET */
-macro_line|#ifdef CONFIG_EEXPRESS
-r_extern
-r_int
-id|express_probe
-c_func
-(paren
-r_struct
-id|device
-op_star
-)paren
-suffix:semicolon
-DECL|variable|express0_dev
-r_static
-r_struct
-id|device
-id|express0_dev
-op_assign
-(brace
-l_string|&quot;exp0&quot;
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-id|NEXT_DEV
-comma
-id|express_probe
-comma
-)brace
-suffix:semicolon
-DECL|macro|NEXT_DEV
-macro_line|#   undef NEXT_DEV
-DECL|macro|NEXT_DEV
-macro_line|#   define NEXT_DEV&t;(&amp;express0_dev)
-macro_line|#endif  /* CONFIG_EEPRESS */
-macro_line|#ifdef CONFIG_AT1500
-r_extern
-r_int
-id|at1500_probe
-c_func
-(paren
-r_struct
-id|device
-op_star
-)paren
-suffix:semicolon
-DECL|variable|lance_dev
-r_static
-r_struct
-id|device
-id|lance_dev
-op_assign
-(brace
-l_string|&quot;le0&quot;
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-multiline_comment|/* I/O Base */
-comma
-l_int|0
-multiline_comment|/* pre-set IRQ */
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-id|NEXT_DEV
-comma
-id|at1500_probe
-comma
-)brace
-suffix:semicolon
-DECL|macro|NEXT_DEV
-macro_line|#   undef NEXT_DEV
-DECL|macro|NEXT_DEV
-macro_line|#   define NEXT_DEV&t;(&amp;lance_dev)
-macro_line|#endif  /* AT1500BT */
-macro_line|#if defined(EI8390) || defined(CONFIG_EL2) || defined(CONFIG_NE2000) &bslash;&n;    || defined(CONFIG_WD80x3) || defined(CONFIG_HPLAN)
-macro_line|#   ifndef EI8390
-DECL|macro|EI8390
-macro_line|#&t;define EI8390 0
-macro_line|#   endif
-macro_line|#   ifndef EI8390_IRQ
-DECL|macro|EI8390_IRQ
-macro_line|#&t;define EI8390_IRQ 0
-macro_line|#   endif
-r_extern
-r_int
-id|ethif_init
-c_func
-(paren
-r_struct
-id|device
-op_star
-)paren
-suffix:semicolon
-DECL|variable|ei8390_dev
-r_static
-r_struct
-id|device
-id|ei8390_dev
+id|eth0_dev
 op_assign
 (brace
 l_string|&quot;eth0&quot;
 comma
 l_int|0
 comma
-multiline_comment|/* auto-config&t;&t;&t;*/
 l_int|0
 comma
 l_int|0
 comma
 l_int|0
 comma
-id|EI8390
+id|ETH0_ADDR
 comma
-id|EI8390_IRQ
-comma
-l_int|0
+id|ETH0_IRQ
 comma
 l_int|0
 comma
 l_int|0
 comma
-id|NEXT_DEV
+l_int|0
 comma
-id|ethif_init
+op_amp
+id|eth1_dev
+comma
+id|ethif_probe
 )brace
 suffix:semicolon
 DECL|macro|NEXT_DEV
 macro_line|#   undef NEXT_DEV
 DECL|macro|NEXT_DEV
-macro_line|#   define NEXT_DEV&t;(&amp;ei8390_dev)
-macro_line|#endif  /* The EI8390 drivers. */
+macro_line|#   define NEXT_DEV&t;(&amp;eth0_dev)
 macro_line|#if defined(PLIP) || defined(CONFIG_PLIP)
 r_extern
 r_int

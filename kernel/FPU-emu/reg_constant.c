@@ -291,14 +291,11 @@ comma
 id|FPU_st0_ptr
 )paren
 suffix:semicolon
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 )brace
 DECL|function|fld1
 r_static

@@ -26,6 +26,10 @@ r_struct
 id|flock
 op_star
 id|l
+comma
+r_int
+r_int
+id|fd
 )paren
 suffix:semicolon
 r_static
@@ -74,6 +78,10 @@ r_struct
 id|file_lock
 op_star
 id|caller
+comma
+r_int
+r_int
+id|fd
 )paren
 suffix:semicolon
 r_static
@@ -93,6 +101,10 @@ r_struct
 id|file_lock
 op_star
 id|fl
+comma
+r_int
+r_int
+id|fd
 )paren
 suffix:semicolon
 r_static
@@ -320,6 +332,8 @@ id|file_lock
 comma
 op_amp
 id|flock
+comma
+id|fd
 )paren
 )paren
 r_return
@@ -541,6 +555,8 @@ id|file_lock
 comma
 op_amp
 id|flock
+comma
+id|fd
 )paren
 )paren
 r_return
@@ -744,6 +760,8 @@ id|filp
 comma
 op_amp
 id|file_lock
+comma
+id|fd
 )paren
 suffix:semicolon
 )brace
@@ -762,6 +780,10 @@ r_struct
 id|file
 op_star
 id|filp
+comma
+r_int
+r_int
+id|fd
 )paren
 (brace
 r_struct
@@ -794,13 +816,17 @@ op_logical_and
 id|task
 op_ne
 id|fl-&gt;fl_owner
+op_logical_and
+id|fd
+op_ne
+id|fl-&gt;fl_fd
 )paren
 id|before
 op_assign
 op_amp
 id|fl-&gt;fl_next
 suffix:semicolon
-multiline_comment|/* The list is sorted by owner ... */
+multiline_comment|/* The list is sorted by owner and fd ... */
 r_while
 c_loop
 (paren
@@ -814,6 +840,10 @@ op_logical_and
 id|task
 op_eq
 id|fl-&gt;fl_owner
+op_logical_and
+id|fd
+op_eq
+id|fl-&gt;fl_fd
 )paren
 id|free_lock
 c_func
@@ -843,6 +873,10 @@ r_struct
 id|flock
 op_star
 id|l
+comma
+r_int
+r_int
+id|fd
 )paren
 (brace
 id|off_t
@@ -998,6 +1032,10 @@ id|fl-&gt;fl_owner
 op_assign
 id|current
 suffix:semicolon
+id|fl-&gt;fl_fd
+op_assign
+id|fd
+suffix:semicolon
 id|fl-&gt;fl_wait
 op_assign
 l_int|NULL
@@ -1031,6 +1069,10 @@ c_cond
 id|caller_fl-&gt;fl_owner
 op_eq
 id|sys_fl-&gt;fl_owner
+op_logical_and
+id|caller_fl-&gt;fl_fd
+op_eq
+id|sys_fl-&gt;fl_fd
 )paren
 r_return
 l_int|0
@@ -1121,6 +1163,10 @@ r_struct
 id|file_lock
 op_star
 id|caller
+comma
+r_int
+r_int
+id|fd
 )paren
 (brace
 r_struct
@@ -1172,6 +1218,10 @@ op_logical_and
 id|caller-&gt;fl_owner
 op_ne
 id|fl-&gt;fl_owner
+op_logical_and
+id|caller-&gt;fl_fd
+op_ne
+id|fl-&gt;fl_fd
 )paren
 id|before
 op_assign
@@ -1192,6 +1242,10 @@ op_logical_and
 id|caller-&gt;fl_owner
 op_eq
 id|fl-&gt;fl_owner
+op_logical_and
+id|caller-&gt;fl_fd
+op_eq
+id|fl-&gt;fl_fd
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; * Detect adjacent or overlapping regions (if same lock type)&n;&t;&t; */
@@ -1447,6 +1501,8 @@ c_func
 id|before
 comma
 id|caller
+comma
+id|fd
 )paren
 )paren
 )paren
@@ -1483,6 +1539,8 @@ c_func
 id|before
 comma
 id|right
+comma
+id|fd
 )paren
 )paren
 )paren
@@ -1546,6 +1604,10 @@ r_struct
 id|file_lock
 op_star
 id|fl
+comma
+r_int
+r_int
+id|fd
 )paren
 (brace
 r_struct
@@ -1606,6 +1668,11 @@ suffix:semicolon
 id|tmp-&gt;fl_owner
 op_assign
 id|current
+suffix:semicolon
+multiline_comment|/* FIXME: needed? */
+id|tmp-&gt;fl_fd
+op_assign
+id|fd
 suffix:semicolon
 multiline_comment|/* FIXME: needed? */
 id|tmp-&gt;fl_wait

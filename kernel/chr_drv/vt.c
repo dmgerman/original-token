@@ -21,8 +21,7 @@ id|vt_cons
 id|NR_CONSOLES
 )braket
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_ioperm
 c_func

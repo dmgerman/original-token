@@ -186,8 +186,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|sys_getitimer
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_getitimer
 c_func
@@ -405,8 +404,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|sys_setitimer
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_setitimer
 c_func

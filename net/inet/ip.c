@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The Internet Protocol (IP) module.&n; *&n; * Version:&t;@(#)ip.c&t;1.0.16&t;06/02/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The Internet Protocol (IP) module.&n; *&n; * Version:&t;@(#)ip.c&t;1.0.16b&t;9/1/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Donald Becker, &lt;becker@super.org&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -1774,6 +1774,87 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* This is a version of ip_compute_csum() optimized for IP headers, which&n;   always checksum on 4 octet boundaries. */
+r_static
+r_inline
+r_int
+r_int
+DECL|function|ip_fast_csum
+id|ip_fast_csum
+c_func
+(paren
+r_int
+r_char
+op_star
+id|buff
+comma
+r_int
+id|wlen
+)paren
+(brace
+r_int
+r_int
+id|sum
+op_assign
+l_int|0
+suffix:semicolon
+id|__asm__
+c_func
+(paren
+l_string|&quot;&bslash;t clc&bslash;n&quot;
+l_string|&quot;1:&bslash;n&quot;
+l_string|&quot;&bslash;t lodsl&bslash;n&quot;
+l_string|&quot;&bslash;t adcl %%eax, %%ebx&bslash;n&quot;
+l_string|&quot;&bslash;t loop 1b&bslash;n&quot;
+l_string|&quot;&bslash;t adcl $0, %%ebx&bslash;n&quot;
+l_string|&quot;&bslash;t movl %%ebx, %%eax&bslash;n&quot;
+l_string|&quot;&bslash;t shrl $16, %%eax&bslash;n&quot;
+l_string|&quot;&bslash;t addw %%ax, %%bx&bslash;n&quot;
+l_string|&quot;&bslash;t adcw $0, %%bx&bslash;n&quot;
+suffix:colon
+l_string|&quot;=b&quot;
+(paren
+id|sum
+)paren
+comma
+l_string|&quot;=S&quot;
+(paren
+id|buff
+)paren
+suffix:colon
+l_string|&quot;0&quot;
+(paren
+id|sum
+)paren
+comma
+l_string|&quot;c&quot;
+(paren
+id|wlen
+)paren
+comma
+l_string|&quot;1&quot;
+(paren
+id|buff
+)paren
+suffix:colon
+l_string|&quot;ax&quot;
+comma
+l_string|&quot;cx&quot;
+comma
+l_string|&quot;si&quot;
+comma
+l_string|&quot;bx&quot;
+)paren
+suffix:semicolon
+r_return
+(paren
+op_complement
+id|sum
+)paren
+op_amp
+l_int|0xffff
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * This routine does all the checksum computations that don&squot;t&n; * require anything special (like copying or special headers).&n; */
 r_int
 r_int
@@ -1954,7 +2035,7 @@ op_amp
 l_int|0xffff
 suffix:semicolon
 )brace
-multiline_comment|/* Check the header of an incoming IP datagram. */
+multiline_comment|/* Check the header of an incoming IP datagram.  This version is still used in slhc.c. */
 r_int
 DECL|function|ip_csum
 id|ip_csum
@@ -1972,14 +2053,8 @@ c_cond
 id|iph-&gt;check
 op_eq
 l_int|0
-)paren
-r_return
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ip_compute_csum
+op_logical_or
+id|ip_fast_csum
 c_func
 (paren
 (paren
@@ -1990,8 +2065,6 @@ op_star
 id|iph
 comma
 id|iph-&gt;ihl
-op_star
-l_int|4
 )paren
 op_eq
 l_int|0
@@ -2022,7 +2095,7 @@ l_int|0
 suffix:semicolon
 id|iph-&gt;check
 op_assign
-id|ip_compute_csum
+id|ip_fast_csum
 c_func
 (paren
 (paren
@@ -2033,8 +2106,6 @@ op_star
 id|iph
 comma
 id|iph-&gt;ihl
-op_star
-l_int|4
 )paren
 suffix:semicolon
 )brace
@@ -2498,6 +2569,8 @@ r_struct
 id|iphdr
 op_star
 id|iph
+op_assign
+id|skb-&gt;h.iph
 suffix:semicolon
 r_int
 r_char
@@ -2509,6 +2582,13 @@ id|flag
 op_assign
 l_int|0
 suffix:semicolon
+r_int
+r_char
+id|opts_p
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Set iff the packet has options. */
 r_struct
 id|inet_protocol
 op_star
@@ -2523,28 +2603,6 @@ multiline_comment|/* since we don&squot;t use these yet, and they&n;&t;&t;&t;&t;
 r_int
 id|brd
 suffix:semicolon
-id|iph
-op_assign
-id|skb-&gt;h.iph
-suffix:semicolon
-id|memset
-c_func
-(paren
-(paren
-r_char
-op_star
-)paren
-op_amp
-id|opt
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-id|opt
-)paren
-)paren
-suffix:semicolon
 id|DPRINTF
 c_func
 (paren
@@ -2555,34 +2613,34 @@ l_string|&quot;&lt;&lt;&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-id|ip_print
-c_func
-(paren
-id|iph
-)paren
-suffix:semicolon
 multiline_comment|/* Is the datagram acceptable? */
 r_if
 c_cond
 (paren
-id|ip_csum
-c_func
-(paren
-id|iph
-)paren
-op_logical_or
-id|do_options
-c_func
-(paren
-id|iph
-comma
-op_amp
-id|opt
-)paren
-op_logical_or
 id|iph-&gt;version
 op_ne
 l_int|4
+op_logical_or
+(paren
+id|iph-&gt;check
+op_ne
+l_int|0
+op_logical_and
+id|ip_fast_csum
+c_func
+(paren
+(paren
+r_int
+r_char
+op_star
+)paren
+id|iph
+comma
+id|iph-&gt;ihl
+)paren
+op_ne
+l_int|0
+)paren
 )paren
 (brace
 id|DPRINTF
@@ -2643,7 +2701,63 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Do any IP forwarding required. */
+r_if
+c_cond
+(paren
+id|iph-&gt;ihl
+op_ne
+l_int|5
+)paren
+(brace
+multiline_comment|/* Fast path for the typical optionless IP packet. */
+id|ip_print
+c_func
+(paren
+id|iph
+)paren
+suffix:semicolon
+multiline_comment|/* Bogus, only for debugging. */
+id|memset
+c_func
+(paren
+(paren
+r_char
+op_star
+)paren
+op_amp
+id|opt
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|opt
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|do_options
+c_func
+(paren
+id|iph
+comma
+op_amp
+id|opt
+)paren
+op_ne
+l_int|0
+)paren
+r_return
+l_int|0
+suffix:semicolon
+id|opts_p
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+multiline_comment|/* Do any IP forwarding required.  chk_addr() is expensive -- avoid it someday. */
 r_if
 c_cond
 (paren
@@ -2686,14 +2800,14 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * Deal with fragments: not really...&n;   * Fragmentation is definitely a required part of IP (yeah, guys,&n;   * I read Linux-Activists.NET too :-), but the current &quot;sk_buff&quot;&n;   * allocation stuff doesn&squot;t make things simpler.  When we&squot;re all&n;   * done cleaning up the mess, we&squot;ll add Ross Biro&squot;s &quot;mbuf&quot; stuff&n;   * to the code, which will replace the sk_buff stuff completely.&n;   * That will (a) make the code even cleaner, (b) allow me to do&n;   * the DDI (Device Driver Interface) the way I want to, and (c),&n;   * it will allow for easy addition of fragging.  Any takers? -FvK&n;   */
+multiline_comment|/*&n;   * Reassemble IP fragments. */
 r_if
 c_cond
 (paren
 (paren
 id|iph-&gt;frag_off
 op_amp
-l_int|32
+l_int|0x0020
 )paren
 op_logical_or
 (paren
@@ -2707,6 +2821,14 @@ l_int|0x1fff
 )paren
 )paren
 (brace
+macro_line|#ifdef CONFIG_IP_DEFRAG
+id|ip_defrag
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+macro_line|#else
 id|printk
 c_func
 (paren
@@ -2764,6 +2886,7 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/* Point into the IP datagram, just past the header. */
 id|skb-&gt;h.raw
@@ -2940,8 +3063,13 @@ id|skb2
 comma
 id|dev
 comma
+id|opts_p
+ques
+c_cond
 op_amp
 id|opt
+suffix:colon
+l_int|0
 comma
 id|iph-&gt;daddr
 comma
@@ -3372,6 +3500,25 @@ id|dev
 op_assign
 id|skb-&gt;dev
 suffix:semicolon
+multiline_comment|/* I know this can&squot;t happen but as it does.. */
+r_if
+c_cond
+(paren
+id|dev
+op_eq
+l_int|NULL
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;ip_forward: NULL device bug!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_goto
+id|oops
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; * The rebuild_header function sees if the ARP is done.&n;&t; * If not it sends a new ARP request, and if so it builds&n;&t; * the header.&n;&t; */
 r_if
 c_cond
@@ -3472,6 +3619,8 @@ id|SOPRI_NORMAL
 )paren
 suffix:semicolon
 )brace
+id|oops
+suffix:colon
 id|sk-&gt;retransmits
 op_increment
 suffix:semicolon

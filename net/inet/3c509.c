@@ -1,12 +1,12 @@
-multiline_comment|/* el3.c: An 3c509 EtherLink3 ethernet driver for linux. */
-multiline_comment|/*&n;    Written 1993 by Donald Becker.&n;&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;    &n;    This driver should work with the 3Com EtherLinkIII series.&n;&n;    The author may be reached as becker@super.org or&n;    C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;*/
+multiline_comment|/* 3c509.c: A 3c509 EtherLink3 ethernet driver for linux. */
+multiline_comment|/*&n;    Written 1993 by Donald Becker.&n;&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;    &n;    This driver is for the 3Com EtherLinkIII series.&n;&n;    The author may be reached as becker@super.org or&n;    C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;*/
 DECL|variable|version
 r_static
 r_char
 op_star
 id|version
 op_assign
-l_string|&quot;el3.c: v0.02 8/13/93 becker@super.org&bslash;n&quot;
+l_string|&quot;3c509.c: v0.06 9/3/93 becker@super.org&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -16,6 +16,14 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
+macro_line|#ifndef PRE_PL13
+macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#else
+DECL|macro|snarf_region
+mdefine_line|#define snarf_region(base,extent) do {;}while(0)
+DECL|macro|check_region
+mdefine_line|#define check_region(base,extent) (0)
+macro_line|#endif
 multiline_comment|/*#include &lt;asm/system.h&gt;*/
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#ifndef port_read
@@ -25,6 +33,7 @@ macro_line|#include &quot;dev.h&quot;
 macro_line|#include &quot;eth.h&quot;
 macro_line|#include &quot;skbuff.h&quot;
 macro_line|#include &quot;arp.h&quot;
+macro_line|#ifndef HAVE_AUTOIRQ
 multiline_comment|/* From auto_irq.c, should be in a *.h file. */
 r_extern
 r_void
@@ -53,6 +62,7 @@ id|irq2dev_map
 l_int|16
 )braket
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* These should be in &lt;asm/io.h&gt;. */
 DECL|macro|port_read_l
 mdefine_line|#define port_read_l(port,buf,nr) &bslash;&n;__asm__(&quot;cld;rep;insl&quot;: :&quot;d&quot; (port),&quot;D&quot; (buf),&quot;c&quot; (nr):&quot;cx&quot;,&quot;di&quot;)
@@ -70,9 +80,10 @@ DECL|variable|el3_debug
 r_int
 id|el3_debug
 op_assign
-l_int|1
+l_int|2
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* To minimize the size of the driver source I only define operating&n;   constants if they are used several times.  You&squot;ll need the manual&n;   if you want to understand driver details. */
 multiline_comment|/* Offsets from base I/O address. */
 DECL|macro|EL3_DATA
 mdefine_line|#define EL3_DATA 0x00
@@ -84,6 +95,8 @@ DECL|macro|ID_PORT
 mdefine_line|#define ID_PORT 0x100
 DECL|macro|EEPROM_READ
 mdefine_line|#define  EEPROM_READ 0x80
+DECL|macro|EL3WINDOW
+mdefine_line|#define EL3WINDOW(win_num) outw(0x0800+(win_num), ioaddr + EL3_CMD)
 multiline_comment|/* Register window 1 offsets, used in normal operation. */
 DECL|macro|TX_FREE
 mdefine_line|#define TX_FREE 0x0C
@@ -95,6 +108,8 @@ DECL|macro|RX_STATUS
 mdefine_line|#define RX_STATUS 0x08
 DECL|macro|RX_FIFO
 mdefine_line|#define RX_FIFO 0x00
+DECL|macro|WN4_MEDIA
+mdefine_line|#define WN4_MEDIA&t;0x0A
 DECL|struct|el3_private
 r_struct
 id|el3_private
@@ -105,17 +120,6 @@ id|enet_statistics
 id|stats
 suffix:semicolon
 )brace
-suffix:semicolon
-r_static
-r_int
-id|el3_init
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-)paren
 suffix:semicolon
 r_static
 r_int
@@ -231,8 +235,23 @@ comma
 id|i
 suffix:semicolon
 r_int
+id|ioaddr
+comma
+id|irq
+suffix:semicolon
 r_int
-id|iobase
+op_star
+id|phys_addr
+op_assign
+(paren
+r_int
+op_star
+)paren
+id|dev-&gt;dev_addr
+suffix:semicolon
+r_static
+r_int
+id|current_tag
 op_assign
 l_int|0
 suffix:semicolon
@@ -294,50 +313,68 @@ suffix:colon
 id|lrs_state
 suffix:semicolon
 )brace
-multiline_comment|/* The current Space.c initialization makes it difficult to have more&n;       than one adaptor initialized.  Send me email if you have a need for&n;       multiple adaptors. */
-multiline_comment|/* Read in EEPROM data.&n;       Only the highest address board will stay on-line. */
-(brace
-r_int
-op_star
-id|phys_addr
-op_assign
+multiline_comment|/* For the first probe, clear all board&squot;s tag registers. */
+r_if
+c_cond
 (paren
-r_int
-op_star
+id|current_tag
+op_eq
+l_int|0
 )paren
-id|dev-&gt;dev_addr
+id|outb
+c_func
+(paren
+l_int|0xd0
+comma
+id|ID_PORT
+)paren
 suffix:semicolon
-id|phys_addr
-(braket
-l_int|0
-)braket
-op_assign
-id|htons
+r_else
+multiline_comment|/* Otherwise kill off already-found boards. */
+id|outb
 c_func
 (paren
-id|read_eeprom
-c_func
-(paren
-l_int|0
-)paren
+l_int|0xd8
+comma
+id|ID_PORT
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|phys_addr
-(braket
-l_int|0
-)braket
+id|read_eeprom
+c_func
+(paren
+l_int|7
+)paren
 op_ne
-l_int|0x6000
+l_int|0x6d50
 )paren
+(brace
 r_return
-l_int|1
+op_minus
+id|ENODEV
 suffix:semicolon
+)brace
+multiline_comment|/* Read in EEPROM data, which does contention-select.&n;       Only the lowest address board will stay &quot;on-line&quot;.&n;       3Com got the byte order backwards. */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|3
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
 id|phys_addr
 (braket
-l_int|1
+id|i
 )braket
 op_assign
 id|htons
@@ -346,26 +383,14 @@ c_func
 id|read_eeprom
 c_func
 (paren
-l_int|1
-)paren
-)paren
-suffix:semicolon
-id|phys_addr
-(braket
-l_int|2
-)braket
-op_assign
-id|htons
-c_func
-(paren
-id|read_eeprom
-c_func
-(paren
-l_int|2
+id|i
 )paren
 )paren
 suffix:semicolon
 )brace
+(brace
+r_int
+r_int
 id|iobase
 op_assign
 id|read_eeprom
@@ -374,41 +399,13 @@ c_func
 l_int|8
 )paren
 suffix:semicolon
-id|dev-&gt;irq
+id|dev-&gt;if_port
 op_assign
-id|read_eeprom
-c_func
-(paren
-l_int|9
-)paren
-op_rshift
-l_int|12
-suffix:semicolon
-multiline_comment|/* Activate the adaptor at the EEPROM location (if set), else 0x320. */
-r_if
-c_cond
-(paren
 id|iobase
-op_eq
-l_int|0x0000
-)paren
-(brace
-id|dev-&gt;base_addr
-op_assign
-l_int|0x320
+op_rshift
+l_int|14
 suffix:semicolon
-id|outb
-c_func
-(paren
-l_int|0xf2
-comma
-id|ID_PORT
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|dev-&gt;base_addr
+id|ioaddr
 op_assign
 l_int|0x200
 op_plus
@@ -422,6 +419,52 @@ op_lshift
 l_int|4
 )paren
 suffix:semicolon
+)brace
+id|irq
+op_assign
+id|read_eeprom
+c_func
+(paren
+l_int|9
+)paren
+op_rshift
+l_int|12
+suffix:semicolon
+multiline_comment|/* The current Space.c structure makes it difficult to have more&n;       than one adaptor initialized.  Send me email if you have a need for&n;       multiple adaptors, and we&squot;ll work out something.  -becker@super.org */
+r_if
+c_cond
+(paren
+id|dev-&gt;base_addr
+op_ne
+l_int|0
+op_logical_and
+id|dev-&gt;base_addr
+op_ne
+(paren
+r_int
+r_int
+)paren
+id|ioaddr
+)paren
+(brace
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+)brace
+multiline_comment|/* Set the adaptor tag so that the next card can be found. */
+id|outb
+c_func
+(paren
+l_int|0xd0
+op_plus
+op_increment
+id|current_tag
+comma
+id|ID_PORT
+)paren
+suffix:semicolon
+multiline_comment|/* Activate the adaptor at the EEPROM location. */
 id|outb
 c_func
 (paren
@@ -430,34 +473,10 @@ comma
 id|ID_PORT
 )paren
 suffix:semicolon
-)brace
-id|outw
+id|EL3WINDOW
 c_func
 (paren
-l_int|0x0800
-comma
-id|dev-&gt;base_addr
-op_plus
-id|EL3_CMD
-)paren
-suffix:semicolon
-multiline_comment|/* Window 0. */
-id|printk
-c_func
-(paren
-l_string|&quot;%s: 3c509 at %#3.3x  key %4.4x iobase %4.4x.&bslash;n&quot;
-comma
-id|dev-&gt;name
-comma
-id|dev-&gt;base_addr
-comma
-id|inw
-c_func
-(paren
-id|dev-&gt;base_addr
-)paren
-comma
-id|iobase
+l_int|0
 )paren
 suffix:semicolon
 r_if
@@ -466,166 +485,66 @@ c_cond
 id|inw
 c_func
 (paren
-id|dev-&gt;base_addr
+id|ioaddr
 )paren
-op_eq
+op_ne
 l_int|0x6d50
 )paren
-(brace
-id|el3_init
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-r_else
 r_return
 op_minus
 id|ENODEV
 suffix:semicolon
-)brace
-r_static
-r_int
-DECL|function|read_eeprom
-id|read_eeprom
-c_func
-(paren
-r_int
-id|index
-)paren
-(brace
-r_int
-id|timer
-comma
-id|bit
-comma
-id|word
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Issue read command, and pause for at least 162 us. for it to complete.&n;       Assume extra-fast 16Mhz bus. */
-id|outb
-c_func
-(paren
-id|EEPROM_READ
-op_plus
-id|index
-comma
-id|ID_PORT
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|timer
-op_assign
-l_int|0
-suffix:semicolon
-id|timer
-OL
-l_int|162
-op_star
-l_int|4
-op_plus
-l_int|400
-suffix:semicolon
-id|timer
-op_increment
-)paren
-id|SLOW_DOWN_IO
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|bit
-op_assign
-l_int|15
-suffix:semicolon
-id|bit
-op_ge
-l_int|0
-suffix:semicolon
-id|bit
-op_decrement
-)paren
-id|word
-op_assign
-(paren
-id|word
-op_lshift
-l_int|1
-)paren
-op_plus
-(paren
-id|inb
-c_func
-(paren
-id|ID_PORT
-)paren
-op_amp
-l_int|0x01
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|el3_debug
-OG
-l_int|3
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;  3c509 EEPROM word %d %#4.4x.&bslash;n&quot;
-comma
-id|index
-comma
-id|word
-)paren
-suffix:semicolon
-r_return
-id|word
-suffix:semicolon
-)brace
-r_static
-r_int
-DECL|function|el3_init
-id|el3_init
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-)paren
-(brace
-r_struct
-id|el3_private
-op_star
-id|lp
-suffix:semicolon
-r_int
-id|ioaddr
-op_assign
 id|dev-&gt;base_addr
+op_assign
+id|ioaddr
 suffix:semicolon
-r_int
-id|i
+id|dev-&gt;irq
+op_assign
+id|irq
+suffix:semicolon
+id|snarf_region
+c_func
+(paren
+id|dev-&gt;base_addr
+comma
+l_int|16
+)paren
+suffix:semicolon
+(brace
+r_char
+op_star
+id|if_names
+(braket
+)braket
+op_assign
+(brace
+l_string|&quot;10baseT&quot;
+comma
+l_string|&quot;AUI&quot;
+comma
+l_string|&quot;undefined&quot;
+comma
+l_string|&quot;BNC&quot;
+)brace
 suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: EL3 at %#3x, address&quot;
+l_string|&quot;%s: 3c509 at %#3.3x  tag %d, %s port, address &quot;
 comma
 id|dev-&gt;name
 comma
-id|ioaddr
+id|dev-&gt;base_addr
+comma
+id|current_tag
+comma
+id|if_names
+(braket
+id|dev-&gt;if_port
+)braket
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/* Read in the station address. */
 r_for
 c_loop
@@ -689,21 +608,12 @@ id|el3_private
 )paren
 )paren
 suffix:semicolon
-id|lp
-op_assign
-(paren
-r_struct
-id|el3_private
-op_star
-)paren
-id|dev-&gt;priv
-suffix:semicolon
 r_if
 c_cond
 (paren
 id|el3_debug
 OG
-l_int|1
+l_int|0
 )paren
 id|printk
 c_func
@@ -800,7 +710,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|dev-&gt;addr_len
+id|ETH_ALEN
 suffix:semicolon
 id|i
 op_increment
@@ -847,6 +757,110 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+r_static
+r_int
+DECL|function|read_eeprom
+id|read_eeprom
+c_func
+(paren
+r_int
+id|index
+)paren
+(brace
+r_int
+id|timer
+comma
+id|bit
+comma
+id|word
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Issue read command, and pause for at least 162 us. for it to complete.&n;       Assume extra-fast 16Mhz bus. */
+id|outb
+c_func
+(paren
+id|EEPROM_READ
+op_plus
+id|index
+comma
+id|ID_PORT
+)paren
+suffix:semicolon
+multiline_comment|/* This should really be done by looking at one of the timer channels. */
+r_for
+c_loop
+(paren
+id|timer
+op_assign
+l_int|0
+suffix:semicolon
+id|timer
+OL
+l_int|162
+op_star
+l_int|4
+op_plus
+l_int|400
+suffix:semicolon
+id|timer
+op_increment
+)paren
+id|SLOW_DOWN_IO
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|bit
+op_assign
+l_int|15
+suffix:semicolon
+id|bit
+op_ge
+l_int|0
+suffix:semicolon
+id|bit
+op_decrement
+)paren
+id|word
+op_assign
+(paren
+id|word
+op_lshift
+l_int|1
+)paren
+op_plus
+(paren
+id|inb
+c_func
+(paren
+id|ID_PORT
+)paren
+op_amp
+l_int|0x01
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|el3_debug
+OG
+l_int|3
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;  3c509 EEPROM word %d %#4.4x.&bslash;n&quot;
+comma
+id|index
+comma
+id|word
+)paren
+suffix:semicolon
+r_return
+id|word
+suffix:semicolon
+)brace
 "&f;"
 r_static
 r_int
@@ -886,6 +900,12 @@ op_minus
 id|EAGAIN
 suffix:semicolon
 )brace
+id|EL3WINDOW
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -896,7 +916,7 @@ l_int|3
 id|printk
 c_func
 (paren
-l_string|&quot;%s: Opening, IRQ %d  status@%x %4.4x reg4 %4.4x.&bslash;n&quot;
+l_string|&quot;%s: Opening, IRQ %d  status@%x %4.4x.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -913,28 +933,9 @@ id|ioaddr
 op_plus
 id|EL3_STATUS
 )paren
-comma
-id|inw
-c_func
-(paren
-id|ioaddr
-op_plus
-l_int|4
-)paren
 )paren
 suffix:semicolon
-id|outw
-c_func
-(paren
-l_int|0x0800
-comma
-id|ioaddr
-op_plus
-id|EL3_CMD
-)paren
-suffix:semicolon
-multiline_comment|/* Make certain we are in window 0. */
-multiline_comment|/* This is probably unnecessary. */
+multiline_comment|/* Activate board: this is probably unnecessary. */
 id|outw
 c_func
 (paren
@@ -945,6 +946,14 @@ op_plus
 l_int|4
 )paren
 suffix:semicolon
+id|irq2dev_map
+(braket
+id|dev-&gt;irq
+)braket
+op_assign
+id|dev
+suffix:semicolon
+multiline_comment|/* Set the IRQ line. */
 id|outw
 c_func
 (paren
@@ -961,22 +970,11 @@ op_plus
 l_int|8
 )paren
 suffix:semicolon
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_assign
-id|dev
-suffix:semicolon
 multiline_comment|/* Set the station address in window 2 each time opened. */
-id|outw
+id|EL3WINDOW
 c_func
 (paren
-l_int|0x0802
-comma
-id|ioaddr
-op_plus
-id|EL3_CMD
+l_int|2
 )paren
 suffix:semicolon
 r_for
@@ -1006,6 +1004,14 @@ op_plus
 id|i
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;if_port
+op_eq
+l_int|3
+)paren
+multiline_comment|/* Start the thinnet transceiver. We should really wait 50ms...*/
 id|outw
 c_func
 (paren
@@ -1016,7 +1022,48 @@ op_plus
 id|EL3_CMD
 )paren
 suffix:semicolon
-multiline_comment|/* Start the thinnet transceiver. */
+r_else
+r_if
+c_cond
+(paren
+id|dev-&gt;if_port
+op_eq
+l_int|0
+)paren
+(brace
+multiline_comment|/* 10baseT interface, enabled link beat and jabber check. */
+id|EL3WINDOW
+c_func
+(paren
+l_int|4
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+id|inw
+c_func
+(paren
+id|ioaddr
+op_plus
+id|WN4_MEDIA
+)paren
+op_or
+l_int|0x00C0
+comma
+id|ioaddr
+op_plus
+id|WN4_MEDIA
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* Switch to register set 1 for normal use. */
+id|EL3WINDOW
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
 id|outw
 c_func
 (paren
@@ -1072,6 +1119,18 @@ id|EL3_CMD
 )paren
 suffix:semicolon
 multiline_comment|/* Allow all status bits to be seen. */
+id|dev-&gt;interrupt
+op_assign
+l_int|0
+suffix:semicolon
+id|dev-&gt;tbusy
+op_assign
+l_int|0
+suffix:semicolon
+id|dev-&gt;start
+op_assign
+l_int|1
+suffix:semicolon
 id|outw
 c_func
 (paren
@@ -1083,17 +1142,6 @@ id|EL3_CMD
 )paren
 suffix:semicolon
 multiline_comment|/* Set interrupt mask. */
-multiline_comment|/* Switch to register set 1 for normal use. */
-id|outw
-c_func
-(paren
-l_int|0x0801
-comma
-id|ioaddr
-op_plus
-id|EL3_CMD
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1118,18 +1166,6 @@ op_plus
 id|EL3_STATUS
 )paren
 )paren
-suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
 suffix:semicolon
 r_return
 l_int|0
@@ -1197,7 +1233,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: transmit timed out, tx_status %4.4x status %4.4x.&bslash;n&quot;
+l_string|&quot;%s: transmit timed out, tx_status %2.2x status %4.4x.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -1356,7 +1392,7 @@ multiline_comment|/* IRQ line active, missed one. */
 id|printk
 c_func
 (paren
-l_string|&quot;%s: Missed interrupt, status %4.4x.&bslash;n&quot;
+l_string|&quot;%s: Missed interrupt, status %4.4x  Tx %2.2x Rx %4.4x.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -1366,6 +1402,22 @@ c_func
 id|ioaddr
 op_plus
 id|EL3_STATUS
+)paren
+comma
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+id|TX_STATUS
+)paren
+comma
+id|inw
+c_func
+(paren
+id|ioaddr
+op_plus
+id|RX_STATUS
 )paren
 )paren
 suffix:semicolon
@@ -1430,7 +1482,7 @@ id|TX_FIFO
 )paren
 suffix:semicolon
 multiline_comment|/* ... and the packet rounded to a doubleword. */
-id|port_write
+id|port_write_l
 c_func
 (paren
 id|ioaddr
@@ -1448,17 +1500,12 @@ l_int|1
 )paren
 comma
 (paren
-(paren
 id|skb-&gt;len
 op_plus
 l_int|3
 )paren
 op_rshift
-l_int|1
-)paren
-op_amp
-op_complement
-l_int|0x1
+l_int|2
 )paren
 suffix:semicolon
 id|dev-&gt;trans_start
@@ -1675,15 +1722,27 @@ id|device
 op_star
 id|dev
 op_assign
+(paren
+r_struct
+id|device
+op_star
+)paren
+(paren
 id|irq2dev_map
 (braket
 id|irq
 )braket
+)paren
 suffix:semicolon
 r_int
 id|ioaddr
 comma
 id|status
+suffix:semicolon
+r_int
+id|i
+op_assign
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -1774,6 +1833,19 @@ c_cond
 (paren
 id|status
 op_amp
+l_int|0x10
+)paren
+id|el3_rx
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|status
+op_amp
 l_int|0x08
 )paren
 (brace
@@ -1832,17 +1904,26 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|status
-op_amp
-l_int|0x10
+op_increment
+id|i
+OG
+l_int|10
 )paren
-id|el3_rx
+(brace
+id|printk
 c_func
 (paren
-id|dev
+l_string|&quot;%s: Infinite loop in interrupt, status %4.4x.&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+id|status
 )paren
 suffix:semicolon
-multiline_comment|/* Clear the interrupts we&squot;ve handled. */
+r_break
+suffix:semicolon
+)brace
+multiline_comment|/* Clear the other interrupts we have handled. */
 id|outw
 c_func
 (paren
@@ -1877,87 +1958,6 @@ id|ioaddr
 op_plus
 id|EL3_STATUS
 )paren
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|inw
-c_func
-(paren
-id|ioaddr
-op_plus
-id|EL3_STATUS
-)paren
-op_amp
-l_int|0x01
-)paren
-(brace
-r_int
-id|i
-op_assign
-l_int|100000
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;%s: exiting interrupt with status %4.4x.&bslash;n&quot;
-comma
-id|dev-&gt;name
-comma
-id|inw
-c_func
-(paren
-id|ioaddr
-op_plus
-id|EL3_STATUS
-)paren
-)paren
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|i
-op_decrement
-)paren
-multiline_comment|/* Delay loop to see the message. */
-id|inw
-c_func
-(paren
-id|ioaddr
-op_plus
-id|EL3_STATUS
-)paren
-suffix:semicolon
-r_while
-c_loop
-(paren
-(paren
-id|inw
-c_func
-(paren
-id|ioaddr
-op_plus
-id|EL3_STATUS
-)paren
-op_amp
-l_int|0x0010
-)paren
-op_logical_and
-id|i
-op_increment
-OL
-l_int|20
-)paren
-id|outw
-c_func
-(paren
-l_int|0x00
-comma
-id|ioaddr
-op_plus
-id|RX_STATUS
 )paren
 suffix:semicolon
 )brace
@@ -2017,7 +2017,7 @@ op_amp
 id|lp-&gt;stats
 suffix:semicolon
 )brace
-multiline_comment|/* Update statistics.  We change to register window 6, so this&n;   must be run single-threaded. */
+multiline_comment|/* Update statistics.  We change to register window 6, so this&n;   should be run single-threaded if the device is active. This&n;   is expected to be a rare operation, and not worth a special&n;   window-state variable. */
 DECL|function|update_stats
 r_static
 r_void
@@ -2070,14 +2070,10 @@ id|EL3_CMD
 )paren
 suffix:semicolon
 multiline_comment|/* Switch to the stats window, and read everything. */
-id|outw
+id|EL3WINDOW
 c_func
 (paren
-l_int|0x0806
-comma
-id|ioaddr
-op_plus
-id|EL3_CMD
+l_int|6
 )paren
 suffix:semicolon
 id|lp-&gt;stats.tx_carrier_errors
@@ -2186,14 +2182,10 @@ l_int|12
 )paren
 suffix:semicolon
 multiline_comment|/* Back to window 1, and turn statistics back on. */
-id|outw
+id|EL3WINDOW
 c_func
 (paren
-l_int|0x0801
-comma
-id|ioaddr
-op_plus
-id|EL3_CMD
+l_int|1
 )paren
 suffix:semicolon
 id|outw
@@ -2204,63 +2196,6 @@ comma
 id|ioaddr
 op_plus
 id|EL3_CMD
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-multiline_comment|/* Print statistics on the kernel error output. */
-DECL|function|printk_stats
-r_void
-id|printk_stats
-c_func
-(paren
-r_struct
-id|enet_statistics
-op_star
-id|stats
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;  Ethernet statistics:  Rx packets %6d  Tx packets %6d.&bslash;n&quot;
-comma
-id|stats-&gt;rx_packets
-comma
-id|stats-&gt;tx_packets
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;   Carrier errors:   %6d.&bslash;n&quot;
-comma
-id|stats-&gt;tx_carrier_errors
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;   Heartbeat errors: %6d.&bslash;n&quot;
-comma
-id|stats-&gt;tx_heartbeat_errors
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;   Collisions:       %6d.&bslash;n&quot;
-comma
-id|stats-&gt;collisions
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;   Rx FIFO problems: %6d.&bslash;n&quot;
-comma
-id|stats-&gt;rx_fifo_errors
 )paren
 suffix:semicolon
 r_return
@@ -2442,11 +2377,11 @@ l_int|0x2000
 (brace
 multiline_comment|/* Dribble bits are OK. */
 r_int
-id|length
+id|pkt_len
 op_assign
 id|rx_status
 op_amp
-l_int|0x3ff
+l_int|0x7ff
 suffix:semicolon
 r_int
 id|sksize
@@ -2457,7 +2392,7 @@ r_struct
 id|sk_buff
 )paren
 op_plus
-id|length
+id|pkt_len
 op_plus
 l_int|3
 suffix:semicolon
@@ -2493,7 +2428,7 @@ c_func
 (paren
 l_string|&quot;       Receiving packet size %d status %4.4x.&bslash;n&quot;
 comma
-id|length
+id|pkt_len
 comma
 id|rx_status
 )paren
@@ -2506,10 +2441,6 @@ op_ne
 l_int|NULL
 )paren
 (brace
-id|skb-&gt;lock
-op_assign
-l_int|0
-suffix:semicolon
 id|skb-&gt;mem_len
 op_assign
 id|sksize
@@ -2518,8 +2449,16 @@ id|skb-&gt;mem_addr
 op_assign
 id|skb
 suffix:semicolon
+id|skb-&gt;len
+op_assign
+id|pkt_len
+suffix:semicolon
+id|skb-&gt;dev
+op_assign
+id|dev
+suffix:semicolon
 multiline_comment|/* &squot;skb+1&squot; points to the start of sk_buff data area. */
-id|port_read
+id|port_read_l
 c_func
 (paren
 id|ioaddr
@@ -2537,17 +2476,38 @@ l_int|1
 )paren
 comma
 (paren
-(paren
-id|length
+id|pkt_len
 op_plus
 l_int|3
 )paren
 op_rshift
 l_int|2
 )paren
-op_lshift
-l_int|1
+suffix:semicolon
+macro_line|#ifdef HAVE_NETIF_RX
+id|netif_rx
+c_func
+(paren
+id|skb
 )paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+l_int|0x4000
+comma
+id|ioaddr
+op_plus
+id|EL3_CMD
+)paren
+suffix:semicolon
+multiline_comment|/* Rx discard */
+r_continue
+suffix:semicolon
+macro_line|#else
+id|skb-&gt;lock
+op_assign
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -2562,7 +2522,7 @@ op_star
 )paren
 id|skb
 comma
-id|length
+id|pkt_len
 comma
 id|IN_SKBUFF
 comma
@@ -2674,6 +2634,7 @@ id|sksize
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 )brace
 r_else
 r_if
@@ -2839,6 +2800,13 @@ op_plus
 id|EL3_CMD
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;if_port
+op_eq
+l_int|3
+)paren
 multiline_comment|/* Turn off thinnet power. */
 id|outw
 c_func
@@ -2850,67 +2818,56 @@ op_plus
 id|EL3_CMD
 )paren
 suffix:semicolon
+r_else
 r_if
 c_cond
 (paren
-id|el3_debug
-OG
-l_int|2
+id|dev-&gt;if_port
+op_eq
+l_int|0
 )paren
 (brace
-r_struct
-id|el3_private
-op_star
-id|lp
-op_assign
-(paren
-r_struct
-id|el3_private
-op_star
-)paren
-id|dev-&gt;priv
-suffix:semicolon
-id|printk
+multiline_comment|/* Disable link beat and jabber, if_port may change ere next open(). */
+id|EL3WINDOW
 c_func
 (paren
-l_string|&quot;%s: Status was %4.4x.&bslash;n&quot;
-comma
-id|dev-&gt;name
-comma
+l_int|4
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
 id|inw
 c_func
 (paren
 id|ioaddr
 op_plus
-id|EL3_STATUS
+id|WN4_MEDIA
 )paren
-)paren
-suffix:semicolon
-id|printk_stats
-c_func
-(paren
 op_amp
-id|lp-&gt;stats
+op_complement
+l_int|0x00C0
+comma
+id|ioaddr
+op_plus
+id|WN4_MEDIA
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Free the interrupt line. */
 id|free_irq
 c_func
 (paren
 id|dev-&gt;irq
 )paren
 suffix:semicolon
-id|outw
+multiline_comment|/* Switching back to window 0 disables the IRQ. */
+id|EL3WINDOW
 c_func
 (paren
-l_int|0x1000
-comma
-id|ioaddr
-op_plus
-id|EL3_CMD
+l_int|0
 )paren
 suffix:semicolon
+multiline_comment|/* But we explicitly zero the IRQ line select anyway. */
 id|outw
 c_func
 (paren
@@ -2919,17 +2876,6 @@ comma
 id|ioaddr
 op_plus
 l_int|8
-)paren
-suffix:semicolon
-multiline_comment|/* Switch back to register window 0. */
-id|outw
-c_func
-(paren
-l_int|0x0800
-comma
-id|ioaddr
-op_plus
-id|EL3_CMD
 )paren
 suffix:semicolon
 id|irq2dev_map

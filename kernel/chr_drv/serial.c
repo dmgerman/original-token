@@ -1886,6 +1886,8 @@ id|RS_TIMER
 dot
 id|expires
 op_assign
+id|jiffies
+op_plus
 id|timeout
 suffix:semicolon
 id|timer_active
@@ -2146,12 +2148,16 @@ multiline_comment|/* Prevent infinite loops */
 r_if
 c_cond
 (paren
+(paren
 id|info
 op_assign
 id|IRQ_ports
 (braket
 id|irq
 )braket
+)paren
+op_ne
+l_int|NULL
 )paren
 (brace
 macro_line|#ifdef 0
@@ -5810,12 +5816,6 @@ r_case
 id|TCSBRK
 suffix:colon
 multiline_comment|/* SVID version: non-zero arg --&gt; no break */
-id|wait_until_sent
-c_func
-(paren
-id|tty
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5840,12 +5840,6 @@ r_case
 id|TCSBRKP
 suffix:colon
 multiline_comment|/* support for POSIX tcsendbreak() */
-id|wait_until_sent
-c_func
-(paren
-id|tty
-)paren
-suffix:semicolon
 id|send_break
 c_func
 (paren

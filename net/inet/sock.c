@@ -87,7 +87,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;  send_head = %X&bslash;n&quot;
+l_string|&quot;  send_head = %p&bslash;n&quot;
 comma
 id|sk-&gt;send_head
 )paren
@@ -103,7 +103,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;  wback = %X, rqueue = %X&bslash;n&quot;
+l_string|&quot;  wback = %p, rqueue = %p&bslash;n&quot;
 comma
 id|sk-&gt;wback
 comma
@@ -113,7 +113,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;  wfront = %X&bslash;n&quot;
+l_string|&quot;  wfront = %p&bslash;n&quot;
 comma
 id|sk-&gt;wfront
 )paren
@@ -139,7 +139,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot; next = %X&bslash;n&quot;
+l_string|&quot; next = %p&bslash;n&quot;
 comma
 id|sk-&gt;next
 )paren
@@ -171,7 +171,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;  prot = %X&bslash;n&quot;
+l_string|&quot;  prot = %p&bslash;n&quot;
 comma
 id|sk-&gt;prot
 )paren
@@ -179,7 +179,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;  pair = %X, back_log = %X&bslash;n&quot;
+l_string|&quot;  pair = %p, back_log = %p&bslash;n&quot;
 comma
 id|sk-&gt;pair
 comma
@@ -267,7 +267,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;  prev = %X, next = %X&bslash;n&quot;
+l_string|&quot;  prev = %p, next = %p&bslash;n&quot;
 comma
 id|skb-&gt;prev
 comma
@@ -277,7 +277,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;  sk = %X link3 = %X&bslash;n&quot;
+l_string|&quot;  sk = %p link3 = %p&bslash;n&quot;
 comma
 id|skb-&gt;sk
 comma
@@ -287,7 +287,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;  mem_addr = %X, mem_len = %d&bslash;n&quot;
+l_string|&quot;  mem_addr = %p, mem_len = %d&bslash;n&quot;
 comma
 id|skb-&gt;mem_addr
 comma
@@ -3944,6 +3944,26 @@ op_minus
 id|EADDRINUSE
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|sk2-&gt;num
+op_ne
+id|snum
+)paren
+r_continue
+suffix:semicolon
+multiline_comment|/* more than one */
+r_if
+c_cond
+(paren
+id|sk2-&gt;saddr
+op_ne
+id|sk-&gt;saddr
+)paren
+r_continue
+suffix:semicolon
+multiline_comment|/* socket per slot ! -FB */
 r_if
 c_cond
 (paren

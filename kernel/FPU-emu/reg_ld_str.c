@@ -1038,15 +1038,11 @@ id|EXP_BIAS
 op_plus
 l_int|63
 suffix:semicolon
-op_star
+id|significand
+c_func
 (paren
-(paren
-r_int
-r_int
-op_star
-)paren
 op_amp
-id|FPU_loaded_data.sigl
+id|FPU_loaded_data
 )paren
 op_assign
 id|s
@@ -1453,15 +1449,11 @@ suffix:semicolon
 )brace
 r_else
 (brace
-op_star
+id|significand
+c_func
 (paren
-(paren
-r_int
-r_int
-op_star
-)paren
 op_amp
-id|FPU_loaded_data.sigl
+id|FPU_loaded_data
 )paren
 op_assign
 id|l
@@ -3890,16 +3882,11 @@ id|t
 suffix:semicolon
 id|ll
 op_assign
-op_star
-(paren
-r_int
-r_int
-r_int
-op_star
-)paren
+id|significand
+c_func
 (paren
 op_amp
-id|t.sigl
+id|t
 )paren
 suffix:semicolon
 multiline_comment|/* Check for overflow, by comparing with 999999999999999999 decimal. */
@@ -3941,7 +3928,7 @@ c_cond
 (paren
 id|control_word
 op_amp
-id|EX_Invalid
+id|CW_Invalid
 )paren
 (brace
 multiline_comment|/* Produce the QNaN &quot;indefinite&quot; */
@@ -3956,10 +3943,40 @@ comma
 l_int|10
 )paren
 suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|7
+suffix:semicolon
+id|i
+op_increment
+)paren
 id|put_fs_byte
 c_func
 (paren
-l_int|0xff
+l_int|0
+comma
+(paren
+r_int
+r_char
+op_star
+)paren
+id|d
+op_plus
+id|i
+)paren
+suffix:semicolon
+multiline_comment|/* These bytes &quot;undefined&quot; */
+id|put_fs_byte
+c_func
+(paren
+l_int|0xc0
 comma
 (paren
 r_int
@@ -3971,7 +3988,7 @@ op_plus
 l_int|7
 )paren
 suffix:semicolon
-multiline_comment|/* This byte undefined */
+multiline_comment|/* This byte &quot;undefined&quot; */
 id|put_fs_byte
 c_func
 (paren
@@ -4019,17 +4036,12 @@ c_cond
 id|precision_loss
 )paren
 (brace
-r_if
-c_cond
-(paren
+multiline_comment|/* Precision loss doesn&squot;t stop the data transfer */
 id|set_precision_flag
 c_func
 (paren
 id|precision_loss
 )paren
-)paren
-r_return
-l_int|0
 suffix:semicolon
 )brace
 id|verify_area
@@ -4151,14 +4163,11 @@ id|TW_Zero
 )paren
 (brace
 multiline_comment|/* Make sure that zero is returned */
-op_star
+id|significand
+c_func
 (paren
-r_int
-r_int
-op_star
+id|r
 )paren
-op_amp
-id|r-&gt;sigl
 op_assign
 l_int|0
 suffix:semicolon
@@ -4265,17 +4274,10 @@ r_return
 l_int|1
 suffix:semicolon
 multiline_comment|/* overflow */
+id|significand
+c_func
 (paren
-op_star
-(paren
-r_int
-r_int
-op_star
-)paren
-(paren
-op_amp
-id|r-&gt;sigl
-)paren
+id|r
 )paren
 op_increment
 suffix:semicolon
@@ -4305,17 +4307,10 @@ r_return
 l_int|1
 suffix:semicolon
 multiline_comment|/* overflow */
+id|significand
+c_func
 (paren
-op_star
-(paren
-r_int
-r_int
-op_star
-)paren
-(paren
-op_amp
-id|r-&gt;sigl
-)paren
+id|r
 )paren
 op_increment
 suffix:semicolon
@@ -4346,17 +4341,10 @@ r_return
 l_int|1
 suffix:semicolon
 multiline_comment|/* overflow */
+id|significand
+c_func
 (paren
-op_star
-(paren
-r_int
-r_int
-op_star
-)paren
-(paren
-op_amp
-id|r-&gt;sigl
-)paren
+id|r
 )paren
 op_increment
 suffix:semicolon

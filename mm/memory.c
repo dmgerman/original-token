@@ -198,7 +198,7 @@ id|PAGE_PRESENT
 id|printk
 c_func
 (paren
-l_string|&quot;Bad page table: [%08x]=%08x&bslash;n&quot;
+l_string|&quot;Bad page table: [%p]=%08x&bslash;n&quot;
 comma
 id|page_dir
 comma
@@ -1181,9 +1181,11 @@ op_rshift
 id|PAGE_SHIFT
 )paren
 op_amp
+(paren
 id|PTRS_PER_PAGE
 op_minus
 l_int|1
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1534,9 +1536,11 @@ op_rshift
 id|PAGE_SHIFT
 )paren
 op_amp
+(paren
 id|PTRS_PER_PAGE
 op_minus
 l_int|1
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1924,9 +1928,11 @@ op_rshift
 id|PAGE_SHIFT
 )paren
 op_amp
+(paren
 id|PTRS_PER_PAGE
 op_minus
 l_int|1
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -2306,7 +2312,7 @@ id|high_memory
 id|printk
 c_func
 (paren
-l_string|&quot;put_page: trying to put page %p at %p&bslash;n&quot;
+l_string|&quot;put_page: trying to put page %08x at %08x&bslash;n&quot;
 comma
 id|page
 comma
@@ -2384,9 +2390,11 @@ op_rshift
 id|PAGE_SHIFT
 )paren
 op_amp
+(paren
 id|PTRS_PER_PAGE
 op_minus
 l_int|1
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -2462,7 +2470,7 @@ id|high_memory
 id|printk
 c_func
 (paren
-l_string|&quot;put_dirty_page: trying to put page %p at %p&bslash;n&quot;
+l_string|&quot;put_dirty_page: trying to put page %08x at %08x&bslash;n&quot;
 comma
 id|page
 comma
@@ -2486,7 +2494,7 @@ l_int|1
 id|printk
 c_func
 (paren
-l_string|&quot;mem_map disagrees with %p at %p&bslash;n&quot;
+l_string|&quot;mem_map disagrees with %08x at %08x&bslash;n&quot;
 comma
 id|page
 comma
@@ -2602,9 +2610,11 @@ op_rshift
 id|PAGE_SHIFT
 )paren
 op_amp
+(paren
 id|PTRS_PER_PAGE
 op_minus
 l_int|1
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -3805,6 +3815,9 @@ op_logical_or
 id|inode-&gt;i_count
 OL
 l_int|2
+op_logical_or
+op_logical_neg
+id|area-&gt;vm_ops
 )paren
 r_return
 l_int|0
@@ -3902,8 +3915,6 @@ id|mpnt-&gt;vm_next
 r_if
 c_cond
 (paren
-id|mpnt-&gt;vm_ops
-op_logical_and
 id|mpnt-&gt;vm_ops
 op_eq
 id|area-&gt;vm_ops
@@ -4299,6 +4310,17 @@ l_int|1
 )paren
 r_continue
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|mpnt-&gt;vm_ops
+op_logical_or
+op_logical_neg
+id|mpnt-&gt;vm_ops-&gt;nopage
+)paren
+r_break
+suffix:semicolon
 id|mpnt-&gt;vm_ops
 op_member_access_from_pointer
 id|nopage
@@ -4337,6 +4359,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|address
+op_ge
+id|tsk-&gt;end_data
+op_logical_and
 id|address
 OL
 id|tsk-&gt;brk
@@ -4377,8 +4403,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * This routine handles page faults.  It determines the address,&n; * and the problem, and then passes it off to one of the appropriate&n; * routines.&n; */
 DECL|function|do_page_fault
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|do_page_fault
 c_func
@@ -4802,9 +4827,11 @@ l_string|&quot;Free pages:      %6dkB&bslash;n&quot;
 comma
 id|nr_free_pages
 op_lshift
+(paren
 id|PAGE_SHIFT
 op_minus
 l_int|10
+)paren
 )paren
 suffix:semicolon
 id|printk
@@ -4814,9 +4841,11 @@ l_string|&quot;Secondary pages: %6dkB&bslash;n&quot;
 comma
 id|nr_secondary_pages
 op_lshift
+(paren
 id|PAGE_SHIFT
 op_minus
 l_int|10
+)paren
 )paren
 suffix:semicolon
 id|printk
@@ -4826,9 +4855,11 @@ l_string|&quot;Free swap:       %6dkB&bslash;n&quot;
 comma
 id|nr_swap_pages
 op_lshift
+(paren
 id|PAGE_SHIFT
 op_minus
 l_int|10
+)paren
 )paren
 suffix:semicolon
 id|printk
@@ -5426,21 +5457,27 @@ l_int|10
 comma
 id|codepages
 op_lshift
+(paren
 id|PAGE_SHIFT
 op_minus
 l_int|10
+)paren
 comma
 id|reservedpages
 op_lshift
+(paren
 id|PAGE_SHIFT
 op_minus
 l_int|10
+)paren
 comma
 id|datapages
 op_lshift
+(paren
 id|PAGE_SHIFT
 op_minus
 l_int|10
+)paren
 )paren
 suffix:semicolon
 r_return

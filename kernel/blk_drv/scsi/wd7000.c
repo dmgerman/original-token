@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &quot;../blk.h&quot;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
@@ -2101,6 +2102,23 @@ id|base_address
 op_assign
 l_int|NULL
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|check_region
+c_func
+(paren
+id|IO_BASE
+comma
+l_int|4
+)paren
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/* IO ports in use */
 r_for
 c_loop
 (paren
@@ -2213,6 +2231,15 @@ l_int|NULL
 r_return
 l_int|0
 suffix:semicolon
+id|snarf_region
+c_func
+(paren
+id|IO_BASE
+comma
+l_int|4
+)paren
+suffix:semicolon
+multiline_comment|/* Register our ports */
 multiline_comment|/* Store our host number */
 id|wd7000_host
 op_assign

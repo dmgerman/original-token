@@ -18,6 +18,10 @@ r_struct
 id|file
 op_star
 id|filp
+comma
+r_int
+r_int
+id|fd
 )paren
 suffix:semicolon
 r_static
@@ -127,10 +131,13 @@ op_star
 id|sb
 )paren
 (brace
+multiline_comment|/* No locks should be open on this, so 0 should be safe as a fd. */
 id|close_fp
 c_func
 (paren
 id|sb-&gt;u.nfs_sb.s_server.file
+comma
+l_int|0
 )paren
 suffix:semicolon
 id|lock_super

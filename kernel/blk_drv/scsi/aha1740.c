@@ -3,6 +3,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -2145,6 +2146,23 @@ c_func
 id|slot
 )paren
 suffix:semicolon
+multiline_comment|/* The ioports for eisa boards are generally beyond that used in the&n;&t;   check,snarf_region code, but this may change at some point, so we&n;&t;   go through the motions. */
+r_if
+c_cond
+(paren
+id|check_region
+c_func
+(paren
+id|base
+comma
+l_int|0x5c
+)paren
+)paren
+(brace
+r_continue
+suffix:semicolon
+)brace
+multiline_comment|/* See if in use */
 r_if
 c_cond
 (paren
@@ -2253,6 +2271,15 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+id|snarf_region
+c_func
+(paren
+id|base
+comma
+l_int|0x5c
+)paren
+suffix:semicolon
+multiline_comment|/* Reserve the space that we need to use */
 r_return
 l_int|1
 suffix:semicolon

@@ -3,6 +3,10 @@ macro_line|#ifndef _SOCK_H
 DECL|macro|_SOCK_H
 mdefine_line|#define _SOCK_H
 macro_line|#include &lt;linux/timer.h&gt;
+macro_line|#include &lt;linux/ip.h&gt;&t;&t;/* struct options */
+macro_line|#include &lt;linux/tcp.h&gt;&t;&t;/* struct tcphdr */
+macro_line|#include &quot;skbuff.h&quot;&t;&t;/* struct sk_buff */
+macro_line|#include &quot;protocol.h&quot;&t;&t;/* struct inet_protocol */
 DECL|macro|SOCK_ARRAY_SIZE
 mdefine_line|#define SOCK_ARRAY_SIZE&t;64
 multiline_comment|/*&n; * This structure really needs to be cleaned up.&n; * Most of it is for TCP, and not used by any of&n; * the other protocols.&n; */
@@ -123,12 +127,14 @@ DECL|member|send_tail
 r_struct
 id|sk_buff
 op_star
+r_volatile
 id|send_tail
 suffix:semicolon
 DECL|member|send_head
 r_struct
 id|sk_buff
 op_star
+r_volatile
 id|send_head
 suffix:semicolon
 DECL|member|back_log
@@ -152,14 +158,17 @@ DECL|member|wback
 r_struct
 id|sk_buff
 op_star
+r_volatile
 id|wback
 comma
 DECL|member|wfront
 op_star
+r_volatile
 id|wfront
 comma
 DECL|member|rqueue
 op_star
+r_volatile
 id|rqueue
 suffix:semicolon
 DECL|member|prot

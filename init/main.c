@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/utsname.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
 r_extern
 r_int
 r_int
@@ -38,8 +39,7 @@ r_char
 op_star
 id|linux_banner
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|lcall7
 c_func
@@ -53,6 +53,8 @@ id|desc_struct
 id|default_ldt
 suffix:semicolon
 multiline_comment|/*&n; * we need this inline - forking from kernel space will result&n; * in NO COPY ON WRITE (!!!), until an execve is executed. This&n; * is no problem, but for the stack. This is handled by not letting&n; * main() use the stack at all after fork(). Thus, no function&n; * calls - which means inline code for fork too, as otherwise we&n; * would use the stack upon exit from &squot;fork()&squot;.&n; *&n; * Actually only pause and fork are needed inline, so that there&n; * won&squot;t be any messing with the stack from main(), but we define&n; * some others too.&n; */
+DECL|macro|__NR__exit
+mdefine_line|#define __NR__exit __NR_exit
 r_static
 r_inline
 id|_syscall0
@@ -218,7 +220,7 @@ c_func
 (paren
 r_int
 comma
-m_exit
+id|_exit
 comma
 r_int
 comma
@@ -948,6 +950,12 @@ id|bootsetups
 )braket
 op_assign
 (brace
+(brace
+l_string|&quot;reserve=&quot;
+comma
+id|reserve_setup
+)brace
+comma
 macro_line|#ifdef CONFIG_INET
 (brace
 l_string|&quot;ether=&quot;
@@ -1655,8 +1663,7 @@ l_int|0xf0
 suffix:semicolon
 )brace
 DECL|function|start_kernel
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|start_kernel
 c_func
@@ -2351,7 +2358,8 @@ comma
 l_int|0
 )paren
 )paren
-m_exit
+id|_exit
+c_func
 (paren
 l_int|1
 )paren
@@ -2366,7 +2374,8 @@ comma
 id|envp_rc
 )paren
 suffix:semicolon
-m_exit
+id|_exit
+c_func
 (paren
 l_int|2
 )paren
@@ -2484,7 +2493,8 @@ c_func
 l_int|0
 )paren
 suffix:semicolon
-m_exit
+id|_exit
+c_func
 (paren
 id|execve
 c_func
@@ -2533,7 +2543,8 @@ c_func
 )paren
 suffix:semicolon
 )brace
-m_exit
+id|_exit
+c_func
 (paren
 l_int|0
 )paren

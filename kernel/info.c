@@ -7,8 +7,7 @@ macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 DECL|function|sys_sysinfo
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_sysinfo
 c_func

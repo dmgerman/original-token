@@ -138,20 +138,21 @@ mdefine_line|#define NMAGIC 0410
 multiline_comment|/* Code indicating demand-paged executable.  */
 DECL|macro|ZMAGIC
 mdefine_line|#define ZMAGIC 0413
+multiline_comment|/* This indicates a demand-paged executable with the header in the text. &n;   The first page is unmapped to help trap NULL pointer references */
+DECL|macro|QMAGIC
+mdefine_line|#define QMAGIC 0314
 multiline_comment|/* Code indicating core file.  */
 DECL|macro|CMAGIC
 mdefine_line|#define CMAGIC 0421
 macro_line|#if !defined (N_BADMAG)
 DECL|macro|N_BADMAG
-mdefine_line|#define N_BADMAG(x)&t;&t;&t;&t;&t;&bslash;&n; (N_MAGIC(x) != OMAGIC &amp;&amp; N_MAGIC(x) != NMAGIC&t;&t;&bslash;&n;  &amp;&amp; N_MAGIC(x) != ZMAGIC)
+mdefine_line|#define N_BADMAG(x)&t;  (N_MAGIC(x) != OMAGIC&t;&t;&bslash;&n;&t;&t;&t;&amp;&amp; N_MAGIC(x) != NMAGIC&t;&t;&bslash;&n;  &t;&t;&t;&amp;&amp; N_MAGIC(x) != ZMAGIC &bslash;&n;&t;&t;        &amp;&amp; N_MAGIC(x) != QMAGIC)
 macro_line|#endif
-DECL|macro|_N_BADMAG
-mdefine_line|#define _N_BADMAG(x)&t;&t;&t;&t;&t;&bslash;&n; (N_MAGIC(x) != OMAGIC &amp;&amp; N_MAGIC(x) != NMAGIC&t;&t;&bslash;&n;  &amp;&amp; N_MAGIC(x) != ZMAGIC)
 DECL|macro|_N_HDROFF
 mdefine_line|#define _N_HDROFF(x) (1024 - sizeof (struct exec))
 macro_line|#if !defined (N_TXTOFF)
 DECL|macro|N_TXTOFF
-mdefine_line|#define N_TXTOFF(x) &bslash;&n; (N_MAGIC(x) == ZMAGIC ? _N_HDROFF((x)) + sizeof (struct exec) : sizeof (struct exec))
+mdefine_line|#define N_TXTOFF(x) &bslash;&n; (N_MAGIC(x) == ZMAGIC ? _N_HDROFF((x)) + sizeof (struct exec) : &bslash;&n;  (N_MAGIC(x) == QMAGIC ? 0 : sizeof (struct exec)))
 macro_line|#endif
 macro_line|#if !defined (N_DATOFF)
 DECL|macro|N_DATOFF
@@ -176,7 +177,7 @@ macro_line|#endif
 multiline_comment|/* Address of text segment in memory after it is loaded.  */
 macro_line|#if !defined (N_TXTADDR)
 DECL|macro|N_TXTADDR
-mdefine_line|#define N_TXTADDR(x) 0
+mdefine_line|#define N_TXTADDR(x) (N_MAGIC(x) == QMAGIC ? PAGE_SIZE : 0)
 macro_line|#endif
 multiline_comment|/* Address of data segment in memory after it is loaded.&n;   Note that it is up to you to define SEGMENT_SIZE&n;   on machines not listed here.  */
 macro_line|#if defined(vax) || defined(hp300) || defined(pyr)

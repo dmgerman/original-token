@@ -223,14 +223,11 @@ r_case
 l_int|000
 suffix:colon
 multiline_comment|/* fld m32real */
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 id|reg_load_single
 c_func
 (paren
@@ -280,14 +277,11 @@ r_case
 l_int|001
 suffix:colon
 multiline_comment|/* fild m32int */
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 id|reg_load_int32
 c_func
 (paren
@@ -308,14 +302,11 @@ r_case
 l_int|002
 suffix:colon
 multiline_comment|/* fld m64real */
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 id|reg_load_double
 c_func
 (paren
@@ -365,14 +356,11 @@ r_case
 l_int|003
 suffix:colon
 multiline_comment|/* fild m16int */
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 id|reg_load_int16
 c_func
 (paren
@@ -393,14 +381,11 @@ r_case
 l_int|010
 suffix:colon
 multiline_comment|/* fst m32real */
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 id|reg_store_single
 c_func
 (paren
@@ -412,14 +397,11 @@ r_case
 l_int|011
 suffix:colon
 multiline_comment|/* fist m32int */
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 id|reg_store_int32
 c_func
 (paren
@@ -431,14 +413,11 @@ r_case
 l_int|012
 suffix:colon
 multiline_comment|/* fst m64real */
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 id|reg_store_double
 c_func
 (paren
@@ -450,14 +429,11 @@ r_case
 l_int|013
 suffix:colon
 multiline_comment|/* fist m16int */
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 id|reg_store_int16
 c_func
 (paren
@@ -469,14 +445,11 @@ r_case
 l_int|014
 suffix:colon
 multiline_comment|/* fstp m32real */
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 r_if
 c_cond
 (paren
@@ -497,14 +470,11 @@ r_case
 l_int|015
 suffix:colon
 multiline_comment|/* fistp m32int */
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 r_if
 c_cond
 (paren
@@ -525,14 +495,11 @@ r_case
 l_int|016
 suffix:colon
 multiline_comment|/* fstp m64real */
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 r_if
 c_cond
 (paren
@@ -553,14 +520,11 @@ r_case
 l_int|017
 suffix:colon
 multiline_comment|/* fistp m16int */
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 r_if
 c_cond
 (paren
@@ -603,14 +567,11 @@ r_case
 l_int|023
 suffix:colon
 multiline_comment|/* fbld m80dec */
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 id|reg_load_bcd
 c_func
 (paren
@@ -693,14 +654,11 @@ r_case
 l_int|025
 suffix:colon
 multiline_comment|/* fld m80real */
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 id|reg_load_extended
 c_func
 (paren
@@ -721,14 +679,11 @@ r_case
 l_int|027
 suffix:colon
 multiline_comment|/* fild m64int */
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 id|reg_load_int64
 c_func
 (paren
@@ -775,14 +730,11 @@ r_case
 l_int|033
 suffix:colon
 multiline_comment|/* fbstp m80dec */
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 r_if
 c_cond
 (paren
@@ -839,14 +791,11 @@ r_case
 l_int|035
 suffix:colon
 multiline_comment|/* fstp m80real */
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 r_if
 c_cond
 (paren
@@ -906,14 +855,11 @@ r_case
 l_int|037
 suffix:colon
 multiline_comment|/* fistp m64int */
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 r_if
 c_cond
 (paren

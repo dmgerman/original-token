@@ -6,20 +6,9 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;8390.c:v0.99-12 8/9/93 for 0.99.12+ Donald Becker (becker@super.org)&bslash;n&quot;
+l_string|&quot;8390.c:v0.99-13 9/3/93 for 0.99.13 Donald Becker (becker@super.org)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#if !defined(EL2) &amp;&amp; !defined(NE2000) &amp;&amp; !defined(WD80x3) &amp;&amp; !defined(HPLAN)
-multiline_comment|/* They don&squot;t know what they want -- give it all to them! */
-DECL|macro|EL2
-mdefine_line|#define EL2
-DECL|macro|NE2000
-mdefine_line|#define NE2000
-DECL|macro|WD80x3
-mdefine_line|#define WD80x3
-DECL|macro|HPLAN
-mdefine_line|#define HPLAN
-macro_line|#endif
 multiline_comment|/*&n;  Braindamage remaining:&n;&n;  Ethernet devices should use a chr_drv device interface, with ioctl()s to&n;  configure the card, bring the interface up or down, allow access to&n;  statistics, and maybe read() and write() access to raw packets.&n;  This won&squot;t be done until after Linux 1.00.&n;&n;Sources:&n;  The National Semiconductor LAN Databook, and the 3Com 3c503 databook.&n;  The NE* programming info came from the Crynwr packet driver, and figuring&n;  out that the those boards are similar to the NatSemi evaluation board&n;  described in AN-729.  Thanks NS, no thanks to Novell/Eagle.&n;  */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -153,76 +142,6 @@ id|length
 comma
 r_int
 id|start_page
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|el2autoprobe
-c_func
-(paren
-r_int
-id|ioaddr
-comma
-r_struct
-id|device
-op_star
-id|dev
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|el2probe
-c_func
-(paren
-r_int
-id|ioaddr
-comma
-r_struct
-id|device
-op_star
-id|dev
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|neprobe
-c_func
-(paren
-r_int
-id|ioaddr
-comma
-r_struct
-id|device
-op_star
-id|dev
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|wdprobe
-c_func
-(paren
-r_int
-id|ioaddr
-comma
-r_struct
-id|device
-op_star
-id|dev
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|hpprobe
-c_func
-(paren
-r_int
-id|ioaddr
-comma
-r_struct
-id|device
-op_star
-id|dev
 )paren
 suffix:semicolon
 DECL|variable|ei_sigaction
@@ -1005,10 +924,17 @@ id|device
 op_star
 id|dev
 op_assign
+(paren
+r_struct
+id|device
+op_star
+)paren
+(paren
 id|irq2dev_map
 (braket
 id|irq
 )braket
+)paren
 suffix:semicolon
 r_int
 id|e8390_base
@@ -2593,92 +2519,7 @@ op_amp
 id|ei_local-&gt;stat
 suffix:semicolon
 )brace
-r_int
-DECL|function|ethif_init
-id|ethif_init
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-)paren
-(brace
-r_if
-c_cond
-(paren
-l_int|1
-macro_line|#ifdef WD80x3
-op_logical_and
-op_logical_neg
-id|wdprobe
-c_func
-(paren
-id|dev-&gt;base_addr
-comma
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef EL2
-op_logical_and
-op_logical_neg
-id|el2autoprobe
-c_func
-(paren
-id|dev-&gt;base_addr
-comma
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef NE2000
-op_logical_and
-op_logical_neg
-id|neprobe
-c_func
-(paren
-id|dev-&gt;base_addr
-comma
-id|dev
-)paren
-macro_line|#endif
-macro_line|#ifdef HPLAN
-op_logical_and
-op_logical_neg
-id|hpprobe
-c_func
-(paren
-id|dev-&gt;base_addr
-comma
-id|dev
-)paren
-macro_line|#endif
-op_logical_and
-l_int|1
-)paren
-(brace
-r_return
-l_int|1
-suffix:semicolon
-multiline_comment|/* -ENODEV or -EAGAIN would be more accurate. */
-)brace
-r_if
-c_cond
-(paren
-id|ei_debug
-OG
-l_int|1
-)paren
-id|printk
-c_func
-(paren
-id|version
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/* Initialize the rest of the device structure. */
+multiline_comment|/* Initialize the rest of the 8390 device structure. */
 r_int
 DECL|function|ethdev_init
 id|ethdev_init
@@ -2692,6 +2533,19 @@ id|dev
 (brace
 r_int
 id|i
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ei_debug
+OG
+l_int|1
+)paren
+id|printk
+c_func
+(paren
+id|version
+)paren
 suffix:semicolon
 r_for
 c_loop

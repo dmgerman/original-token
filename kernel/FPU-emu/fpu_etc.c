@@ -25,14 +25,11 @@ id|SIGN_POS
 op_xor
 id|SIGN_NEG
 suffix:semicolon
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 )brace
 r_else
 id|stack_underflow
@@ -62,14 +59,11 @@ id|FPU_st0_ptr-&gt;sign
 op_assign
 id|SIGN_POS
 suffix:semicolon
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 )brace
 r_else
 id|stack_underflow

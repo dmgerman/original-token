@@ -3899,14 +3899,17 @@ id|end_rename
 suffix:semicolon
 id|old_inode
 op_assign
-id|iget
+id|__iget
 c_func
 (paren
 id|old_dir-&gt;i_sb
 comma
 id|old_de-&gt;inode
+comma
+l_int|0
 )paren
 suffix:semicolon
+multiline_comment|/* don&squot;t cross mnt-points */
 r_if
 c_cond
 (paren
@@ -3974,14 +3977,17 @@ id|new_bh
 (brace
 id|new_inode
 op_assign
-id|iget
+id|__iget
 c_func
 (paren
 id|new_dir-&gt;i_sb
 comma
 id|new_de-&gt;inode
+comma
+l_int|0
 )paren
 suffix:semicolon
+multiline_comment|/* don&squot;t cross mnt-points */
 r_if
 c_cond
 (paren

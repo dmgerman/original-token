@@ -1706,7 +1706,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Bad address passed to kernel kfree_s(%X, %d)&bslash;n&quot;
+l_string|&quot;Bad address passed to kernel kfree_s(%p, %d)&bslash;n&quot;
 comma
 id|obj
 comma

@@ -10,8 +10,7 @@ macro_line|#include &lt;linux/segment.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|ret_from_sys_call
 c_func
@@ -24,8 +23,11 @@ c_func
 l_string|&quot;ret_from_sys_call&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* These should maybe be in &lt;linux/tasks.h&gt; */
 DECL|macro|MAX_TASKS_PER_USER
 mdefine_line|#define MAX_TASKS_PER_USER (NR_TASKS/2)
+DECL|macro|MIN_TASKS_LEFT_FOR_ROOT
+mdefine_line|#define MIN_TASKS_LEFT_FOR_ROOT 4
 r_extern
 r_int
 id|shm_fork
@@ -59,6 +61,8 @@ r_int
 id|i
 comma
 id|task_nr
+comma
+id|tasks_free
 suffix:semicolon
 r_int
 id|this_user_tasks
@@ -162,7 +166,11 @@ r_return
 op_minus
 id|EAGAIN
 suffix:semicolon
-multiline_comment|/* Only the super-user can fill the last available slot */
+multiline_comment|/* Only the super-user can fill the last MIN_TASKS_LEFT_FOR_ROOT slots */
+id|tasks_free
+op_assign
+l_int|0
+suffix:semicolon
 id|task_nr
 op_assign
 l_int|0
@@ -172,15 +180,18 @@ c_loop
 (paren
 id|i
 op_assign
+id|NR_TASKS
+op_minus
 l_int|1
 suffix:semicolon
 id|i
-OL
-id|NR_TASKS
+OG
+l_int|0
 suffix:semicolon
 id|i
-op_increment
+op_decrement
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -190,35 +201,31 @@ id|task
 id|i
 )braket
 )paren
-r_if
-c_cond
-(paren
-id|task_nr
-)paren
-r_return
-id|task_nr
+(brace
+id|tasks_free
+op_increment
 suffix:semicolon
-r_else
 id|task_nr
 op_assign
 id|i
 suffix:semicolon
+)brace
+)brace
 r_if
 c_cond
 (paren
-id|task_nr
+id|tasks_free
+op_le
+id|MIN_TASKS_LEFT_FOR_ROOT
 op_logical_and
-id|suser
-c_func
-(paren
+id|current-&gt;uid
 )paren
-)paren
-r_return
-id|task_nr
-suffix:semicolon
 r_return
 op_minus
 id|EAGAIN
+suffix:semicolon
+r_return
+id|task_nr
 suffix:semicolon
 )brace
 DECL|function|copy_fd
@@ -445,8 +452,7 @@ DECL|macro|copy_vm
 mdefine_line|#define copy_vm(p) ((clone_flags &amp; COPYVM)?copy_page_tables(p):clone_page_tables(p))
 multiline_comment|/*&n; *  Ok, this is the main fork-routine. It copies the system process&n; * information (task[nr]) and sets up the necessary registers. It&n; * also copies the data segment in it&squot;s entirety.&n; */
 DECL|function|sys_fork
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_fork
 c_func
@@ -799,6 +805,7 @@ id|p-&gt;ldt
 r_if
 c_cond
 (paren
+(paren
 id|p-&gt;ldt
 op_assign
 (paren
@@ -811,6 +818,9 @@ c_func
 (paren
 id|GFP_KERNEL
 )paren
+)paren
+op_ne
+l_int|NULL
 )paren
 id|memcpy
 c_func

@@ -596,6 +596,21 @@ id|dst
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/*  Kludge to check IP address before sending an ARP request &n;     to fix invalid IP addresses on ARP calls.  jacob@mayhem 9/5/93  */
+r_if
+c_cond
+(paren
+id|src
+op_ne
+id|dev-&gt;pa_addr
+)paren
+(brace
+multiline_comment|/*&t;&n;     printk(&quot;Got bad arp_find request in eth_rebuild_header: %s&bslash;n&quot;, in_ntoa(src));&n;     printk(&quot;Replacing with correct source IP address: %s&bslash;n&quot;, in_ntoa(dev-&gt;pa_addr));&n;   */
+id|src
+op_assign
+id|dev-&gt;pa_addr
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

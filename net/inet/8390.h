@@ -4,6 +4,7 @@ macro_line|#ifndef _8390_h
 DECL|macro|_8390_h
 mdefine_line|#define _8390_h
 macro_line|#include &lt;linux/if_ether.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
 DECL|macro|TX_2X_PAGES
 mdefine_line|#define TX_2X_PAGES 12
 DECL|macro|TX_1X_PAGES
@@ -78,6 +79,7 @@ r_int
 id|reg_ptr
 )paren
 suffix:semicolon
+macro_line|#ifndef HAVE_AUTOIRQ
 multiline_comment|/* From auto_irq.c */
 r_extern
 r_struct
@@ -106,6 +108,7 @@ r_int
 id|waittime
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Most of these entries should be in &squot;struct device&squot; (or most of the&n;   things in there should be here!) */
 multiline_comment|/* You have one of these per-board */
 DECL|struct|ei_device

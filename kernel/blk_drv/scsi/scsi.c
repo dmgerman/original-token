@@ -142,6 +142,8 @@ DECL|macro|WAS_SENSE
 mdefine_line|#define WAS_SENSE&t;0x04
 DECL|macro|IS_RESETTING
 mdefine_line|#define IS_RESETTING&t;0x08
+DECL|macro|ASKED_FOR_SENSE
+mdefine_line|#define ASKED_FOR_SENSE 0x10
 r_extern
 r_int
 id|last_reset
@@ -2729,6 +2731,8 @@ suffix:semicolon
 id|SCpnt-&gt;flags
 op_or_assign
 id|WAS_SENSE
+op_or
+id|ASKED_FOR_SENSE
 suffix:semicolon
 id|update_timeout
 c_func
@@ -3234,7 +3238,7 @@ op_star
 id|SCpnt
 )paren
 (brace
-multiline_comment|/* If there is no sense information, request it.  */
+multiline_comment|/* If there is no sense information, request it.  If we have already&n;     requested it, there is no point in asking again - the firmware must be&n;     confused. */
 r_if
 c_cond
 (paren
@@ -3253,8 +3257,31 @@ l_int|4
 op_ne
 l_int|7
 )paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|SCpnt-&gt;flags
+op_amp
+id|ASKED_FOR_SENSE
+)paren
+)paren
+(brace
 r_return
 id|SUGGEST_SENSE
+suffix:semicolon
+)brace
+r_else
+r_return
+id|SUGGEST_RETRY
+suffix:semicolon
+)brace
+id|SCpnt-&gt;flags
+op_and_assign
+op_complement
+id|ASKED_FOR_SENSE
 suffix:semicolon
 macro_line|#ifdef DEBUG_INIT
 id|printk

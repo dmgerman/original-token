@@ -6,7 +6,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;el2.c:v0.99.12B 8/12/93 Donald Becker (becker@super.org)&bslash;n&quot;
+l_string|&quot;el2.c:v0.99.13 8/30/93 Donald Becker (becker@super.org)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -18,12 +18,9 @@ macro_line|#include &quot;dev.h&quot;
 macro_line|#include &quot;8390.h&quot;
 macro_line|#include &quot;el2reg.h&quot;
 r_int
-id|el2autoprobe
+id|el2_probe
 c_func
 (paren
-r_int
-id|ioaddr
-comma
 r_struct
 id|device
 op_star
@@ -41,7 +38,7 @@ id|dev
 )paren
 suffix:semicolon
 r_int
-id|el2probe
+id|el2probe1
 c_func
 (paren
 r_int
@@ -171,13 +168,10 @@ l_int|0
 )brace
 suffix:semicolon
 r_int
-DECL|function|el2autoprobe
-id|el2autoprobe
+DECL|function|el2_probe
+id|el2_probe
 c_func
 (paren
-r_int
-id|ioaddr
-comma
 r_struct
 id|device
 op_star
@@ -204,7 +198,22 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-multiline_comment|/* Non-autoprobe case first: */
+r_int
+id|ioaddr
+op_assign
+id|dev-&gt;base_addr
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ioaddr
+OL
+l_int|0
+)paren
+r_return
+id|ENXIO
+suffix:semicolon
+multiline_comment|/* Don&squot;t probe at all. */
 r_if
 c_cond
 (paren
@@ -213,7 +222,8 @@ OG
 l_int|0
 )paren
 r_return
-id|el2probe
+op_logical_neg
+id|el2probe1
 c_func
 (paren
 id|ioaddr
@@ -283,10 +293,33 @@ r_if
 c_cond
 (paren
 id|base_bits
-op_eq
+op_ne
 l_int|1
-op_logical_and
-id|el2probe
+)paren
+r_continue
+suffix:semicolon
+macro_line|#ifdef HAVE_PORTRESERVE
+r_if
+c_cond
+(paren
+id|check_region
+c_func
+(paren
+id|ports
+(braket
+id|i
+)braket
+comma
+l_int|16
+)paren
+)paren
+r_continue
+suffix:semicolon
+macro_line|#endif
+r_if
+c_cond
+(paren
+id|el2probe1
 c_func
 (paren
 id|ports
@@ -298,10 +331,10 @@ id|dev
 )paren
 )paren
 r_return
-id|dev-&gt;base_addr
+l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef probe_nonshared_memory
+macro_line|#ifndef no_probe_nonshared_memory
 r_return
 id|el2_pio_autoprobe
 c_func
@@ -311,7 +344,7 @@ id|dev
 suffix:semicolon
 macro_line|#else
 r_return
-l_int|0
+id|ENODEV
 suffix:semicolon
 macro_line|#endif
 )brace
@@ -345,6 +378,24 @@ id|i
 op_increment
 )paren
 (brace
+macro_line|#ifdef HAVE_PORTRESERVE
+r_if
+c_cond
+(paren
+id|check_region
+c_func
+(paren
+id|ports
+(braket
+id|i
+)braket
+comma
+l_int|16
+)paren
+)paren
+r_continue
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Reset and/or avoid any lurking NE2000 */
 r_if
 c_cond
@@ -385,7 +436,7 @@ id|i
 )paren
 multiline_comment|/* Preliminary check */
 op_logical_and
-id|el2probe
+id|el2probe1
 c_func
 (paren
 id|ports
@@ -397,17 +448,17 @@ id|dev
 )paren
 )paren
 r_return
-id|dev-&gt;base_addr
+l_int|0
 suffix:semicolon
 )brace
 r_return
-l_int|0
+id|ENODEV
 suffix:semicolon
 )brace
 multiline_comment|/* Probe for the Etherlink II card at I/O port base IOADDR,&n;   returning non-zero on sucess.  If found, set the station&n;   address and memory parameters in DEVICE. */
 r_int
-DECL|function|el2probe
-id|el2probe
+DECL|function|el2probe1
+id|el2probe1
 c_func
 (paren
 r_int
@@ -628,6 +679,16 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef HAVE_PORTRESERVE
+id|snarf_region
+c_func
+(paren
+id|ioaddr
+comma
+l_int|16
+)paren
+suffix:semicolon
+macro_line|#endif
 id|ethdev_init
 c_func
 (paren
@@ -1622,6 +1683,9 @@ l_string|&quot;%s: 3c503 send_packet() bad memory copy @ %#5x.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
+(paren
+r_int
+)paren
 id|dest_addr
 )paren
 suffix:semicolon
@@ -1640,6 +1704,9 @@ l_string|&quot;%s: 3c503 send_packet() good memory copy @ %#5x.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
+(paren
+r_int
+)paren
 id|dest_addr
 )paren
 suffix:semicolon
@@ -1880,10 +1947,6 @@ id|dev-&gt;mem_start
 comma
 id|ring_offset
 comma
-(paren
-r_char
-op_star
-)paren
 id|dev-&gt;mem_start
 op_plus
 id|ring_offset
@@ -1949,10 +2012,6 @@ id|dev-&gt;mem_start
 comma
 id|ring_offset
 comma
-(paren
-r_char
-op_star
-)paren
 id|dev-&gt;mem_start
 op_plus
 id|ring_offset

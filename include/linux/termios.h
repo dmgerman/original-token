@@ -103,10 +103,10 @@ DECL|macro|TIOCPKT_STOP
 mdefine_line|#define TIOCPKT_STOP&t;&t; 4
 DECL|macro|TIOCPKT_START
 mdefine_line|#define TIOCPKT_START&t;&t; 8
-DECL|macro|TIOCPKT_DOSTOP
-mdefine_line|#define TIOCPKT_DOSTOP&t;&t;16
 DECL|macro|TIOCPKT_NOSTOP
-mdefine_line|#define TIOCPKT_NOSTOP&t;&t;32
+mdefine_line|#define TIOCPKT_NOSTOP&t;&t;16
+DECL|macro|TIOCPKT_DOSTOP
+mdefine_line|#define TIOCPKT_DOSTOP&t;&t;32
 DECL|struct|winsize
 r_struct
 id|winsize

@@ -3,6 +3,25 @@ DECL|macro|_ASM_IRQ_H
 mdefine_line|#define _ASM_IRQ_H
 multiline_comment|/*&n; *&t;linux/include/asm/irq.h&n; *&n; *&t;(C) 1992, 1993 Linus Torvalds&n; */
 macro_line|#include &lt;linux/segment.h&gt;
+macro_line|#include &lt;linux/linkage.h&gt;
+r_extern
+r_void
+id|disable_irq
+c_func
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|enable_irq
+c_func
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
 DECL|macro|__STR
 mdefine_line|#define __STR(x) #x
 DECL|macro|STR
@@ -32,6 +51,6 @@ mdefine_line|#define FAST_IRQ_NAME(nr) IRQ_NAME2(fast_IRQ##nr)
 DECL|macro|BAD_IRQ_NAME
 mdefine_line|#define BAD_IRQ_NAME(nr) IRQ_NAME2(bad_IRQ##nr)
 DECL|macro|BUILD_IRQ
-mdefine_line|#define BUILD_IRQ(chip,nr,mask) &bslash;&n;extern &quot;C&quot; void IRQ_NAME(nr); &bslash;&n;extern &quot;C&quot; void FAST_IRQ_NAME(nr); &bslash;&n;extern &quot;C&quot; void BAD_IRQ_NAME(nr); &bslash;&n;__asm__( &bslash;&n;&quot;&bslash;n.align 4&bslash;n&quot; &bslash;&n;&quot;_IRQ&quot; #nr &quot;_interrupt:&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl $-&quot;#nr&quot;-2&bslash;n&bslash;t&quot; &bslash;&n;&t;SAVE_ALL &bslash;&n;&t;ACK_##chip(mask) &bslash;&n;&t;&quot;incl _intr_count&bslash;n&bslash;t&quot;&bslash;&n;&t;&quot;sti&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movl %esp,%ebx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl %ebx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl $&quot; #nr &quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;call _do_IRQ&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;addl $8,%esp&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;cli&bslash;n&bslash;t&quot; &bslash;&n;&t;UNBLK_##chip(mask) &bslash;&n;&t;&quot;decl _intr_count&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jmp ret_from_sys_call&bslash;n&quot; &bslash;&n;&quot;&bslash;n.align 4&bslash;n&quot; &bslash;&n;&quot;_fast_IRQ&quot; #nr &quot;_interrupt:&bslash;n&bslash;t&quot; &bslash;&n;&t;SAVE_MOST &bslash;&n;&t;ACK_##chip(mask) &bslash;&n;&t;&quot;incl _intr_count&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl $&quot; #nr &quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;call _do_fast_IRQ&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;addl $4,%esp&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;cli&bslash;n&bslash;t&quot; &bslash;&n;&t;UNBLK_##chip(mask) &bslash;&n;&t;&quot;decl _intr_count&bslash;n&bslash;t&quot; &bslash;&n;&t;RESTORE_MOST &bslash;&n;&quot;&bslash;n&bslash;n.align 4&bslash;n&quot; &bslash;&n;&quot;_bad_IRQ&quot; #nr &quot;_interrupt:&bslash;n&bslash;t&quot; &bslash;&n;&t;SAVE_MOST &bslash;&n;&t;ACK_##chip(mask) &bslash;&n;&t;RESTORE_MOST);
+mdefine_line|#define BUILD_IRQ(chip,nr,mask) &bslash;&n;asmlinkage void IRQ_NAME(nr); &bslash;&n;asmlinkage void FAST_IRQ_NAME(nr); &bslash;&n;asmlinkage void BAD_IRQ_NAME(nr); &bslash;&n;__asm__( &bslash;&n;&quot;&bslash;n.align 4&bslash;n&quot; &bslash;&n;&quot;_IRQ&quot; #nr &quot;_interrupt:&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl $-&quot;#nr&quot;-2&bslash;n&bslash;t&quot; &bslash;&n;&t;SAVE_ALL &bslash;&n;&t;ACK_##chip(mask) &bslash;&n;&t;&quot;incl _intr_count&bslash;n&bslash;t&quot;&bslash;&n;&t;&quot;sti&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movl %esp,%ebx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl %ebx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl $&quot; #nr &quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;call _do_IRQ&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;addl $8,%esp&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;cli&bslash;n&bslash;t&quot; &bslash;&n;&t;UNBLK_##chip(mask) &bslash;&n;&t;&quot;decl _intr_count&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jmp ret_from_sys_call&bslash;n&quot; &bslash;&n;&quot;&bslash;n.align 4&bslash;n&quot; &bslash;&n;&quot;_fast_IRQ&quot; #nr &quot;_interrupt:&bslash;n&bslash;t&quot; &bslash;&n;&t;SAVE_MOST &bslash;&n;&t;ACK_##chip(mask) &bslash;&n;&t;&quot;incl _intr_count&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl $&quot; #nr &quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;call _do_fast_IRQ&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;addl $4,%esp&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;cli&bslash;n&bslash;t&quot; &bslash;&n;&t;UNBLK_##chip(mask) &bslash;&n;&t;&quot;decl _intr_count&bslash;n&bslash;t&quot; &bslash;&n;&t;RESTORE_MOST &bslash;&n;&quot;&bslash;n&bslash;n.align 4&bslash;n&quot; &bslash;&n;&quot;_bad_IRQ&quot; #nr &quot;_interrupt:&bslash;n&bslash;t&quot; &bslash;&n;&t;SAVE_MOST &bslash;&n;&t;ACK_##chip(mask) &bslash;&n;&t;RESTORE_MOST);
 macro_line|#endif
 eof

@@ -46,6 +46,7 @@ DECL|macro|TW_Empty
 mdefine_line|#define TW_Empty&t;Const(7)&t;/* empty */
 macro_line|#ifndef __ASSEMBLER__
 macro_line|#include &lt;linux/math_emu.h&gt;
+macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#ifdef PARANOID
 r_extern
 r_char
@@ -128,14 +129,16 @@ DECL|macro|push
 mdefine_line|#define push()&t;{ top--; FPU_st0_ptr = st_new_ptr; }
 DECL|macro|reg_move
 mdefine_line|#define reg_move(x, y) { &bslash;&n;&t;&t; *(short *)&amp;((y)-&gt;sign) = *(short *)&amp;((x)-&gt;sign); &bslash;&n;&t;&t; *(long *)&amp;((y)-&gt;exp) = *(long *)&amp;((x)-&gt;exp); &bslash;&n;&t;&t; *(long long *)&amp;((y)-&gt;sigl) = *(long long *)&amp;((x)-&gt;sigl); }
+DECL|macro|significand
+mdefine_line|#define significand(x) ( ((unsigned long long *)&amp;((x)-&gt;sigl))[0] )
 multiline_comment|/*----- Prototypes for functions written in assembler -----*/
 multiline_comment|/* extern void reg_move(FPU_REG *a, FPU_REG *b); */
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|mul64
 c_func
 (paren
+r_int
 r_int
 r_int
 op_star
@@ -143,53 +146,54 @@ id|a
 comma
 r_int
 r_int
+r_int
 op_star
 id|b
 comma
+r_int
 r_int
 r_int
 op_star
 id|result
 )paren
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|poly_div2
 c_func
 (paren
 r_int
 r_int
+r_int
 op_star
 id|x
 )paren
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|poly_div4
 c_func
 (paren
 r_int
 r_int
+r_int
 op_star
 id|x
 )paren
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|poly_div16
 c_func
 (paren
 r_int
 r_int
+r_int
 op_star
 id|x
 )paren
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|polynomial
 c_func
@@ -217,8 +221,7 @@ r_int
 id|n
 )paren
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|normalize
 c_func
@@ -228,8 +231,7 @@ op_star
 id|x
 )paren
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|normalize_nuo
 c_func
@@ -239,8 +241,7 @@ op_star
 id|x
 )paren
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|reg_div
 c_func
@@ -262,8 +263,7 @@ r_int
 id|control_w
 )paren
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|reg_u_sub
 c_func
@@ -285,8 +285,7 @@ r_int
 id|control_w
 )paren
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|reg_u_mul
 c_func
@@ -308,8 +307,7 @@ r_int
 id|control_w
 )paren
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|reg_u_div
 c_func
@@ -331,8 +329,7 @@ r_int
 id|control_w
 )paren
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|reg_u_add
 c_func
@@ -354,8 +351,7 @@ r_int
 id|control_w
 )paren
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|wm_sqrt
 c_func
@@ -369,8 +365,7 @@ r_int
 id|control_w
 )paren
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|shrx
 c_func
@@ -383,8 +378,7 @@ r_int
 id|x
 )paren
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|shrxs
 c_func
@@ -397,8 +391,7 @@ r_int
 id|x
 )paren
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 r_int
 id|div_small
@@ -415,8 +408,7 @@ r_int
 id|y
 )paren
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|round_reg
 c_func

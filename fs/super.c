@@ -1056,8 +1056,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Now umount can handle mount points as well as block devices.&n; * This is important for filesystems which use unnamed block devices.&n; *&n; * There is a little kludge here with the dummy_inode.  The current&n; * vfs release functions only use the r_dev field in the inode so&n; * we give them the info they need without using a real inode.&n; * If any other fields are ever needed by any block device release&n; * functions, they should be faked here.  -- jrs&n; */
 DECL|function|sys_umount
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_umount
 c_func
@@ -1709,8 +1708,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Flags is a 16-bit value that allows up to 16 non-fs dependent flags to&n; * be given to the mount() call (ie: read-only, no-dev, no-suid etc).&n; *&n; * data is a (void *) that can point to any structure up to PAGE_SIZE-1 bytes, which&n; * can contain arbitrary fs-dependent information (or be NULL).&n; *&n; * NOTE! As old versions of mount() didn&squot;t use this setup, the flags has to have&n; * a special 16-bit magic number in the hight word: 0xC0ED. If this magic word&n; * isn&squot;t present, the flags and data info isn&squot;t used, as the syscall assumes we&n; * are talking to an older version that didn&squot;t understand them.&n; */
 DECL|function|sys_mount
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_mount
 c_func

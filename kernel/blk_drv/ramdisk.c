@@ -73,7 +73,7 @@ l_int|9
 suffix:semicolon
 id|len
 op_assign
-id|CURRENT-&gt;nr_sectors
+id|CURRENT-&gt;current_nr_sectors
 op_lshift
 l_int|9
 suffix:semicolon

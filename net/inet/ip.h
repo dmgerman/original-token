@@ -3,6 +3,7 @@ macro_line|#ifndef _IP_H
 DECL|macro|_IP_H
 mdefine_line|#define _IP_H
 macro_line|#include &lt;linux/ip.h&gt;
+macro_line|#include &quot;sock.h&quot;&t;/* struct sock */
 r_extern
 r_int
 id|backoff

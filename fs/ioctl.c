@@ -252,8 +252,7 @@ id|EINVAL
 suffix:semicolon
 )brace
 DECL|function|sys_ioctl
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_ioctl
 c_func

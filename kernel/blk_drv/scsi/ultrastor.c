@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
@@ -663,6 +664,45 @@ id|ultrastor_ports_14f
 id|i
 )braket
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|check_region
+c_func
+(paren
+id|PORT_ADDRESS
+comma
+l_int|4
+)paren
+)paren
+(brace
+r_continue
+suffix:semicolon
+)brace
+macro_line|#else
+r_if
+c_cond
+(paren
+id|check_region
+c_func
+(paren
+id|PORT_ADDRESS
+comma
+l_int|4
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Ultrastor I/O space already in use&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+id|FALSE
+suffix:semicolon
+)brace
+suffix:semicolon
 macro_line|#endif
 macro_line|#if (ULTRASTOR_DEBUG &amp; UD_DETECT)
 id|printk
@@ -826,6 +866,15 @@ id|PORT_ADDRESS
 )paren
 suffix:semicolon
 macro_line|#endif
+id|snarf_region
+c_func
+(paren
+id|PORT_ADDRESS
+comma
+l_int|4
+)paren
+suffix:semicolon
+multiline_comment|/* Register the I/O space that we use */
 multiline_comment|/* All above tests passed, must be the right thing.  Get some useful&n;       info. */
 op_star
 (paren
@@ -1294,6 +1343,10 @@ id|i
 dot
 id|address
 op_assign
+(paren
+r_int
+r_int
+)paren
 id|sl
 (braket
 id|i

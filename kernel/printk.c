@@ -105,8 +105,7 @@ l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n; * Commands to sys_syslog:&n; *&n; * &t;0 -- Close the log.  Currently a NOP.&n; * &t;1 -- Open the log. Currently a NOP.&n; * &t;2 -- Read from the log.&n; * &t;3 -- Read up to the last 4k of messages in the ring buffer.&n; * &t;4 -- Read and clear last 4k of messages in the ring buffer&n; * &t;5 -- Clear ring buffer.&n; * &t;6 -- Disable printk&squot;s to console&n; * &t;7 -- Enable printk&squot;s to console&n; */
 DECL|function|sys_syslog
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_syslog
 c_func
@@ -442,9 +441,11 @@ op_plus
 id|j
 op_increment
 op_amp
+(paren
 id|LOG_BUF_LEN
 op_minus
 l_int|1
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -510,8 +511,7 @@ id|EINVAL
 suffix:semicolon
 )brace
 DECL|function|printk
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|printk
 c_func
@@ -583,9 +583,11 @@ op_plus
 id|log_size
 )paren
 op_amp
+(paren
 id|LOG_BUF_LEN
 op_minus
 l_int|1
+)paren
 )braket
 op_assign
 id|buf

@@ -989,8 +989,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* This may be used only once, enforced by &squot;static int callable&squot; */
 DECL|function|sys_setup
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_setup
 c_func

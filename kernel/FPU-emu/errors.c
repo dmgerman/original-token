@@ -59,7 +59,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Unimplemented FPU Opcode at eip=%p : %02x &quot;
+l_string|&quot;Unimplemented FPU Opcode at eip=%08x : %02x &quot;
 comma
 id|FPU_ORIG_EIP
 comma
@@ -363,7 +363,7 @@ macro_line|#endif DEBUGGING
 id|printk
 c_func
 (paren
-l_string|&quot;At %p: %02x &quot;
+l_string|&quot;At %08x: %02x &quot;
 comma
 id|FPU_ORIG_EIP
 comma
@@ -1251,8 +1251,7 @@ macro_line|#endif __DEBUG__
 multiline_comment|/* Real operation attempted on two operands, one a NaN. */
 multiline_comment|/* Returns nz if the exception is unmasked */
 DECL|function|real_2op_NaN
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|real_2op_NaN
 c_func
@@ -1313,26 +1312,16 @@ multiline_comment|/* find the &quot;larger&quot; */
 r_if
 c_cond
 (paren
-op_star
+id|significand
+c_func
 (paren
-r_int
-r_int
-op_star
-)paren
-op_amp
-(paren
-id|a-&gt;sigl
+id|a
 )paren
 OL
-op_star
+id|significand
+c_func
 (paren
-r_int
-r_int
-op_star
-)paren
-op_amp
-(paren
-id|b-&gt;sigl
+id|b
 )paren
 )paren
 id|x
@@ -1493,8 +1482,7 @@ suffix:semicolon
 multiline_comment|/* Invalid arith operation on Valid registers */
 multiline_comment|/* Returns nz if the exception is unmasked */
 DECL|function|arith_invalid
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|arith_invalid
 c_func
@@ -1540,8 +1528,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* Divide a finite number by zero */
 DECL|function|divide_by_zero
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|divide_by_zero
 c_func
@@ -1647,8 +1634,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* This may be called often, so keep it lean */
 DECL|function|set_precision_flag_up
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|set_precision_flag_up
 c_func
@@ -1684,8 +1670,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* This may be called often, so keep it lean */
 DECL|function|set_precision_flag_down
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|set_precision_flag_down
 c_func
@@ -1721,8 +1706,7 @@ id|EX_Precision
 suffix:semicolon
 )brace
 DECL|function|denormal_operand
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|denormal_operand
 c_func
@@ -1761,8 +1745,7 @@ suffix:semicolon
 )brace
 )brace
 DECL|function|arith_overflow
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|arith_overflow
 c_func
@@ -1862,8 +1845,7 @@ id|CW_Overflow
 suffix:semicolon
 )brace
 DECL|function|arith_underflow
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|arith_underflow
 c_func

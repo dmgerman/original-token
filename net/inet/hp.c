@@ -6,7 +6,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;hp.c:v0.99.12+ 8/12/93 Donald Becker (becker@super.org)&bslash;n&quot;
+l_string|&quot;hp.c:v0.99.13 8/30/93 Donald Becker (becker@super.org)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -40,12 +40,9 @@ mdefine_line|#define HP_8BSTOP_PG&t;0x80&t;/* Last page +1 of RX ring */
 DECL|macro|HP_16BSTOP_PG
 mdefine_line|#define HP_16BSTOP_PG&t;0xFF&t;/* Last page +1 of RX ring */
 r_int
-id|hpprobe
+id|hp_probe
 c_func
 (paren
-r_int
-id|ioaddr
-comma
 r_struct
 id|device
 op_star
@@ -177,14 +174,11 @@ l_int|0
 suffix:semicolon
 "&f;"
 multiline_comment|/*  Probe for an HP LAN adaptor.&n;    Also initialize the card and fill in STATION_ADDR with the station&n;   address. */
-DECL|function|hpprobe
+DECL|function|hp_probe
 r_int
-id|hpprobe
+id|hp_probe
 c_func
 (paren
-r_int
-id|ioaddr
-comma
 r_struct
 id|device
 op_star
@@ -217,6 +211,22 @@ comma
 l_int|0
 )brace
 suffix:semicolon
+r_int
+id|ioaddr
+op_assign
+id|dev-&gt;base_addr
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ioaddr
+OL
+l_int|0
+)paren
+r_return
+id|ENXIO
+suffix:semicolon
+multiline_comment|/* Don&squot;t probe at all. */
 r_if
 c_cond
 (paren
@@ -225,6 +235,7 @@ OG
 l_int|0x100
 )paren
 r_return
+op_logical_neg
 id|hpprobe1
 c_func
 (paren
@@ -250,6 +261,23 @@ suffix:semicolon
 id|port
 op_increment
 )paren
+(brace
+macro_line|#ifdef HAVE_PORTRESERVE
+r_if
+c_cond
+(paren
+id|check_region
+c_func
+(paren
+op_star
+id|port
+comma
+l_int|32
+)paren
+)paren
+r_continue
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -271,11 +299,18 @@ comma
 id|dev
 )paren
 )paren
-r_return
-id|dev-&gt;base_addr
-suffix:semicolon
+(brace
 r_return
 l_int|0
+suffix:semicolon
+)brace
+)brace
+id|dev-&gt;base_addr
+op_assign
+id|ioaddr
+suffix:semicolon
+r_return
+id|ENODEV
 suffix:semicolon
 )brace
 DECL|function|hpprobe1
@@ -676,6 +711,16 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
+macro_line|#ifdef HAVE_PORTRESERVE
+id|snarf_region
+c_func
+(paren
+id|ioaddr
+comma
+l_int|32
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -880,7 +925,7 @@ l_int|1
 id|printk
 c_func
 (paren
-l_string|&quot;8390 reset done.&quot;
+l_string|&quot;8390 reset done (%d).&quot;
 comma
 id|jiffies
 )paren

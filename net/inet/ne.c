@@ -7,11 +7,12 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;ne.c:v0.99-12B 8/12/93 Donald Becker (becker@super.org)&bslash;n&quot;
+l_string|&quot;ne.c:v0.99-13 8/30/93 Donald Becker (becker@super.org)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#ifndef port_read
@@ -36,12 +37,9 @@ mdefine_line|#define NESM_START_PG&t;0x40&t;/* First page of TX buffer */
 DECL|macro|NESM_STOP_PG
 mdefine_line|#define NESM_STOP_PG&t;0x80&t;/* Last page +1 of RX ring */
 r_int
-id|neprobe
+id|ne_probe
 c_func
 (paren
-r_int
-id|ioaddr
-comma
 r_struct
 id|device
 op_star
@@ -124,14 +122,11 @@ id|start_page
 suffix:semicolon
 "&f;"
 multiline_comment|/*  Probe for various non-shared-memory ethercards.&n;&n;   NEx000-clone boards have a Station Address PROM (SAPROM) in the packet&n;   buffer memory space.  NE2000 clones have 0x57,0x57 in bytes 0x0e,0x0f of&n;   the SAPROM, while other supposed NE2000 clones must be detected by their&n;   SA prefix.&n;&n;   Reading the SAPROM from a word-wide card with the 8390 set in byte-wide&n;   mode results in doubled values, which can be detected and compansated for.&n;&n;   The probe is also responsible for initializing the card and filling&n;   in the &squot;dev&squot; and &squot;ei_status&squot; structures.&n;&n;   We use the minimum memory size for some ethercard product lines, iff we can&squot;t&n;   distinguish models.  You can increase the packet buffer size by setting&n;   PACKETBUF_MEMSIZE.  Reported Cabletron packet buffer locations are:&n;&t;E1010   starts at 0x100 and ends at 0x2000.&n;&t;E1010-x starts at 0x100 and ends at 0x8000. (&quot;-x&quot; means &quot;more memory&quot;)&n;&t;E2010&t; starts at 0x100 and ends at 0x4000.&n;&t;E2010-x starts at 0x100 and ends at 0xffff.  */
-DECL|function|neprobe
+DECL|function|ne_probe
 r_int
-id|neprobe
+id|ne_probe
 c_func
 (paren
-r_int
-id|ioaddr
-comma
 r_struct
 id|device
 op_star
@@ -160,6 +155,22 @@ comma
 l_int|0
 )brace
 suffix:semicolon
+r_int
+id|ioaddr
+op_assign
+id|dev-&gt;base_addr
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ioaddr
+OL
+l_int|0
+)paren
+r_return
+id|ENXIO
+suffix:semicolon
+multiline_comment|/* Don&squot;t probe at all. */
 r_if
 c_cond
 (paren
@@ -168,6 +179,7 @@ OG
 l_int|0x100
 )paren
 r_return
+op_logical_neg
 id|neprobe1
 c_func
 (paren
@@ -195,6 +207,23 @@ suffix:semicolon
 id|port
 op_increment
 )paren
+(brace
+macro_line|#ifdef HAVE_PORTRESERVE
+r_if
+c_cond
+(paren
+id|check_region
+c_func
+(paren
+op_star
+id|port
+comma
+l_int|32
+)paren
+)paren
+r_continue
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -218,7 +247,7 @@ comma
 l_int|0
 )paren
 )paren
-r_return
+(brace
 id|dev-&gt;base_addr
 op_assign
 op_star
@@ -226,6 +255,15 @@ id|port
 suffix:semicolon
 r_return
 l_int|0
+suffix:semicolon
+)brace
+)brace
+id|dev-&gt;base_addr
+op_assign
+id|ioaddr
+suffix:semicolon
+r_return
+id|ENODEV
 suffix:semicolon
 )brace
 DECL|function|neprobe1
@@ -1064,6 +1102,26 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
+id|dev-&gt;base_addr
+op_assign
+id|ioaddr
+suffix:semicolon
+macro_line|#ifdef HAVE_PORTRESERVE
+id|snarf_region
+c_func
+(paren
+id|ioaddr
+comma
+l_int|32
+)paren
+suffix:semicolon
+macro_line|#endif
+id|ethdev_init
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -1076,16 +1134,6 @@ comma
 id|ioaddr
 comma
 id|dev-&gt;irq
-)paren
-suffix:semicolon
-id|dev-&gt;base_addr
-op_assign
-id|ioaddr
-suffix:semicolon
-id|ethdev_init
-c_func
-(paren
-id|dev
 )paren
 suffix:semicolon
 r_if

@@ -13,8 +13,7 @@ id|ipc_init
 r_void
 )paren
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_ipc
 (paren
@@ -397,8 +396,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|sys_ipc
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_ipc
 (paren
@@ -703,8 +701,7 @@ suffix:semicolon
 )brace
 macro_line|#else /* not CONFIG_SYSVIPC */
 DECL|function|sys_ipc
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_ipc
 (paren

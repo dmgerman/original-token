@@ -58,8 +58,7 @@ r_int
 id|flags
 )paren
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|exception
 c_func
@@ -68,8 +67,7 @@ r_int
 id|n
 )paren
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|real_2op_NaN
 c_func
@@ -87,8 +85,7 @@ op_star
 id|dest
 )paren
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|arith_invalid
 c_func
@@ -98,8 +95,7 @@ op_star
 id|dest
 )paren
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|divide_by_zero
 c_func
@@ -112,8 +108,7 @@ op_star
 id|dest
 )paren
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|set_precision_flag_up
 c_func
@@ -121,8 +116,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|set_precision_flag_down
 c_func
@@ -130,8 +124,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|denormal_operand
 c_func
@@ -139,8 +132,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|arith_overflow
 c_func
@@ -150,8 +142,7 @@ op_star
 id|dest
 )paren
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|arith_underflow
 c_func
@@ -396,8 +387,7 @@ r_void
 )paren
 suffix:semicolon
 multiline_comment|/* fpu_entry.c */
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|math_emulate
 c_func

@@ -3795,7 +3795,7 @@ r_else
 id|put_fs_long
 c_func
 (paren
-l_int|1
+l_int|0
 comma
 (paren
 r_int
@@ -3805,7 +3805,6 @@ op_star
 id|arg
 )paren
 suffix:semicolon
-multiline_comment|/* read EOF */
 r_break
 suffix:semicolon
 r_case

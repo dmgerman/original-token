@@ -6620,10 +6620,39 @@ op_assign
 id|th-&gt;ack_seq
 suffix:semicolon
 multiline_comment|/* add one so it will be in the right range */
+id|t1-&gt;ack_seq
+op_assign
+id|htonl
+c_func
+(paren
+id|ntohl
+c_func
+(paren
+id|th-&gt;seq
+)paren
+op_plus
+l_int|1
+)paren
+suffix:semicolon
 id|t1-&gt;rst
 op_assign
 l_int|1
 suffix:semicolon
+id|t1-&gt;ack_seq
+op_assign
+id|htonl
+c_func
+(paren
+id|ntohl
+c_func
+(paren
+id|th-&gt;seq
+)paren
+op_plus
+l_int|1
+)paren
+suffix:semicolon
+multiline_comment|/* send correct ack -FB */
 id|t1-&gt;window
 op_assign
 l_int|0
@@ -6631,7 +6660,7 @@ suffix:semicolon
 multiline_comment|/* should be set to 0 -FB */
 id|t1-&gt;ack
 op_assign
-l_int|0
+l_int|1
 suffix:semicolon
 id|t1-&gt;syn
 op_assign

@@ -6,11 +6,12 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;wd.c:v0.99-12 8/12/93 Donald Becker (becker@super.org)&bslash;n&quot;
+l_string|&quot;wd.c:v0.99-13 8/30/93 Donald Becker (becker@super.org)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;memory.h&gt;
@@ -142,14 +143,11 @@ DECL|macro|WD_NIC_OFFSET
 mdefine_line|#define WD_NIC_OFFSET&t;16&t;/* Offset to the 8390 NIC from the base_addr. */
 "&f;"
 multiline_comment|/*  Probe for the WD8003 and WD8013.  These cards have the station&n;    address PROM at I/O ports &lt;base&gt;+8 to &lt;base&gt;+13, with a checksum&n;    following. A Soundblaster can have the same checksum as an WDethercard,&n;    so we have an extra exclusionary check for it.&n;&n;    The wdprobe1() routine initializes the card and fills the&n;    station address field. */
-DECL|function|wdprobe
+DECL|function|wd_probe
 r_int
-id|wdprobe
+id|wd_probe
 c_func
 (paren
-r_int
-id|ioaddr
-comma
 r_struct
 id|device
 op_star
@@ -176,6 +174,22 @@ comma
 l_int|0
 )brace
 suffix:semicolon
+r_int
+id|ioaddr
+op_assign
+id|dev-&gt;base_addr
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ioaddr
+OL
+l_int|0
+)paren
+r_return
+id|ENXIO
+suffix:semicolon
+multiline_comment|/* Don&squot;t probe at all. */
 r_if
 c_cond
 (paren
@@ -184,6 +198,7 @@ OG
 l_int|0x100
 )paren
 r_return
+op_logical_neg
 id|wdprobe1
 c_func
 (paren
@@ -209,6 +224,23 @@ suffix:semicolon
 id|port
 op_increment
 )paren
+(brace
+macro_line|#ifdef HAVE_PORTRESERVE
+r_if
+c_cond
+(paren
+id|check_region
+c_func
+(paren
+op_star
+id|port
+comma
+l_int|32
+)paren
+)paren
+r_continue
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -245,11 +277,15 @@ id|dev
 )paren
 )paren
 r_return
-op_star
-id|port
+l_int|0
+suffix:semicolon
+)brace
+id|dev-&gt;base_addr
+op_assign
+id|ioaddr
 suffix:semicolon
 r_return
-l_int|0
+id|ENODEV
 suffix:semicolon
 )brace
 DECL|function|wdprobe1
@@ -382,7 +418,7 @@ id|i
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* The following PureData probe code was contributed by&n;     Mike Jagdis &lt;jaggy@purplet.demon.co.uk&gt;. Puredata seem to do software&n;     configuration differently from others so we have to check for them.&n;     This detects an 8 bit, 16 bit or dumb (Toshiba, jumpered) card.&n;     */
+multiline_comment|/* The following PureData probe code was contributed by&n;     Mike Jagdis &lt;jaggy@purplet.demon.co.uk&gt;. Puredata does software&n;     configuration differently from others so we have to check for them.&n;     This detects an 8 bit, 16 bit or dumb (Toshiba, jumpered) card.&n;     */
 r_if
 c_cond
 (paren
@@ -1018,6 +1054,16 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* OK, were are certain this is going to work.  Setup the device. */
+macro_line|#ifdef HAVE_PORTRESERVE
+id|snarf_region
+c_func
+(paren
+id|ioaddr
+comma
+l_int|32
+)paren
+suffix:semicolon
+macro_line|#endif
 id|ethdev_init
 c_func
 (paren
@@ -1197,8 +1243,6 @@ id|ei_status.word16
 id|outb
 c_func
 (paren
-id|ISA16
-op_or
 id|ei_status.reg5
 comma
 id|ioaddr
@@ -1404,7 +1448,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* Block input and output are easy on shared memory ethercards, and trivial&n;   on the Western digital card where there is no choice of how to do it. */
+multiline_comment|/* Block input and output are easy on shared memory ethercards, and trivial&n;   on the Western digital card where there is no choice of how to do it.&n;   The only complication is if the ring buffer wraps. */
 r_static
 r_int
 DECL|function|wd_block_input
@@ -1447,7 +1491,7 @@ l_int|8
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* This mapout won&squot;t be necessary when wd_close_card is called. */
+multiline_comment|/* This mapout isn&squot;t necessary if wd_close_card is called. */
 macro_line|#if !defined(WD_no_mapout)
 r_int
 id|wd_cmdreg
@@ -1556,57 +1600,6 @@ comma
 id|count
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|ei_debug
-OG
-l_int|4
-)paren
-(brace
-r_int
-r_int
-op_star
-id|board
-op_assign
-(paren
-r_int
-r_int
-op_star
-)paren
-id|xfer_start
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;%s: wd8013 block_input(cnt=%d offset=%3x addr=%#x) = %2x %2x %2x...&bslash;n&quot;
-comma
-id|dev-&gt;name
-comma
-id|count
-comma
-id|ring_offset
-comma
-id|xfer_start
-comma
-id|board
-(braket
-op_minus
-l_int|1
-)braket
-comma
-id|board
-(braket
-l_int|0
-)braket
-comma
-id|board
-(braket
-l_int|1
-)braket
-)paren
-suffix:semicolon
-)brace
 macro_line|#if !defined(WD_no_mapout)
 multiline_comment|/* Turn off 16 bit access so that reboot works. */
 r_if
@@ -1631,7 +1624,6 @@ op_plus
 id|count
 suffix:semicolon
 )brace
-multiline_comment|/* This could only be outputting to the transmit buffer.  The&n;   ping-pong transmit setup doesn&squot;t work with this yet. */
 r_static
 r_void
 DECL|function|wd_block_output
@@ -1722,53 +1714,6 @@ comma
 id|buf
 comma
 id|count
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ei_debug
-OG
-l_int|4
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;%s: wd80*3 block_output(addr=%#x cnt=%d) -&gt; %2x=%2x %2x=%2x %d...&bslash;n&quot;
-comma
-id|shmem
-comma
-id|count
-comma
-id|shmem
-(braket
-l_int|23
-)braket
-comma
-id|buf
-(braket
-l_int|23
-)braket
-comma
-id|shmem
-(braket
-l_int|24
-)braket
-comma
-id|buf
-(braket
-l_int|24
-)braket
-comma
-id|memcmp
-c_func
-(paren
-id|shmem
-comma
-id|buf
-comma
-id|count
-)paren
 )paren
 suffix:semicolon
 macro_line|#if !defined(WD_no_mapout)

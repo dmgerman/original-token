@@ -28,7 +28,7 @@ DECL|macro|PAGE_DIR_OFFSET
 mdefine_line|#define PAGE_DIR_OFFSET(base,address)&t;((unsigned long*)((base)+&bslash;&n;  ((unsigned long)(address)&gt;&gt;(PAGE_SHIFT-SIZEOF_PTR_LOG2)*2&amp;PTR_MASK&amp;~PAGE_MASK)))
 multiline_comment|/* to find an entry in a page-table */
 DECL|macro|PAGE_PTR
-mdefine_line|#define PAGE_PTR(address)&t;&t;&bslash;&n;  ((unsigned long)(address)&gt;&gt;PAGE_SHIFT-SIZEOF_PTR_LOG2&amp;PTR_MASK&amp;~PAGE_MASK)
+mdefine_line|#define PAGE_PTR(address)&t;&t;&bslash;&n;  ((unsigned long)(address)&gt;&gt;(PAGE_SHIFT-SIZEOF_PTR_LOG2)&amp;PTR_MASK&amp;~PAGE_MASK)
 multiline_comment|/* the no. of pointers that fit on a page */
 DECL|macro|PTRS_PER_PAGE
 mdefine_line|#define PTRS_PER_PAGE&t;&t;&t;(PAGE_SIZE/sizeof(void*))

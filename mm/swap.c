@@ -1244,8 +1244,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * sys_idle() does nothing much: it just searches for likely candidates for&n; * swapping out or forgetting about. This speeds up the search when we&n; * actually have to swap.&n; */
 DECL|function|sys_idle
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_idle
 c_func
@@ -2596,8 +2595,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|sys_swapoff
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_swapoff
 c_func
@@ -2830,8 +2828,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Written 01/25/92 by Simmule Turner, heavily changed by Linus.&n; *&n; * The swapon system call&n; */
 DECL|function|sys_swapon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_swapon
 c_func

@@ -180,7 +180,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%x %d&bslash;n&quot;
+l_string|&quot;%p %d&bslash;n&quot;
 comma
 id|ptr
 comma
@@ -2781,6 +2781,12 @@ comma
 id|SLIP_VERSION
 comma
 id|SL_NRUNIT
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;CSLIP code copyright 1989 Regents of the University of California&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Fill in our LDISC request block. */

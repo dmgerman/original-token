@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;seagate.c Copyright (C) 1992, 1993 Drew Eckhardt &n; *&t;low level scsi driver for ST01/ST02, Future Domain TMC-885, &n; *&t;TMC-950  by&n; *&n; *&t;&t;Drew Eckhardt &n; *&n; *&t;&lt;drew@colorado.edu&gt;&n; *&n; * &t;Note : TMC-880 boards don&squot;t work because they have two bits in &n; *&t;&t;the status register flipped, I&squot;ll fix this &quot;RSN&quot;&n; *&n; */
+multiline_comment|/*&n; *&t;seagate.c Copyright (C) 1992, 1993 Drew Eckhardt &n; *&t;low level scsi driver for ST01/ST02, Future Domain TMC-885, &n; *&t;TMC-950  by&n; *&n; *&t;&t;Drew Eckhardt &n; *&n; *&t;&lt;drew@colorado.edu&gt;&n; *&n; * &t;Note : TMC-880 boards don&squot;t work because they have two bits in &n; *&t;&t;the status register flipped, I&squot;ll fix this &quot;RSN&quot;&n; *&n; *      This card does all the I/O via memory mapped I/O, so there is no need&n; *      to check or snarf a region of the I/O address space.&n; */
 multiline_comment|/*&n; * Configuration : &n; * To use without BIOS -DOVERRIDE=base_address -DCONTROLLER=FD or SEAGATE&n; * -DIRQ will overide the default of 5.&n; * &n; * -DFAST or -DFAST32 will use blind transfers where possible&n; *&n; * -DARBITRATE will cause the host adapter to arbitrate for the &n; *&t;bus for better SCSI-II compatability, rather than just &n; *&t;waiting for BUS FREE and then doing it&squot;s thing.  Should&n; *&t;let us do one command per Lun when I integrate my &n; *&t;reorganization changes into the distribution sources.&n; *&n; * -DSLOW_HANDSHAKE will allow compatability with broken devices that don&squot;t &n; *&t;handshake fast enough (ie, some CD ROM&squot;s) for the Seagate&n; * &t;code.&n; *&n; * -DSLOW_RATE=x, x some number will let you specify a default &n; *&t;transfer rate if handshaking isn&squot;t working correctly.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_SCSI_SEAGATE) || defined(CONFIG_SCSI_FD_88x) 
@@ -2186,23 +2186,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|CONTROL
-op_assign
-id|BASE_CMD
-op_or
-id|CMD_DRVR_ENABLE
-op_or
-id|CMD_SEL
-op_or
-(paren
-id|reselect
-ques
-c_cond
-id|CMD_ATTN
-suffix:colon
-l_int|0
-)paren
-suffix:semicolon
 id|DATA
 op_assign
 (paren
@@ -2226,6 +2209,23 @@ l_int|0x80
 suffix:colon
 l_int|0x40
 )paren
+)paren
+suffix:semicolon
+id|CONTROL
+op_assign
+id|BASE_CMD
+op_or
+id|CMD_DRVR_ENABLE
+op_or
+id|CMD_SEL
+op_or
+(paren
+id|reselect
+ques
+c_cond
+id|CMD_ATTN
+suffix:colon
+l_int|0
 )paren
 suffix:semicolon
 id|sti

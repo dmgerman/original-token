@@ -1,4 +1,6 @@
-multiline_comment|/*&n; * linux/kernel/chr_drv/psaux.c&n; *&n; * Driver for PS/2 type mouse by Johan Myreen.&n; *&n; * Supports pointing devices attached to a PS/2 type&n; * Keyboard and Auxiliary Device Controller.&n; *&n; * Modified by Dean Troyer (troyer@saifr00.cfsat.Honeywell.COM) 03Oct92&n; *   to perform (some of) the hardware initialization formerly done in&n; *   setup.S by the BIOS&n; *&n; * Modified by Dean Troyer (troyer@saifr00.cfsat.Honeywell.COM) 09Oct92&n; *   to perform the hardware initialization formerly done in setup.S by&n; *   the BIOS.  Mouse characteristic setup is now included.&n; *&n; */
+multiline_comment|/*&n; * linux/kernel/chr_drv/psaux.c&n; *&n; * Driver for PS/2 type mouse by Johan Myreen.&n; *&n; * Supports pointing devices attached to a PS/2 type&n; * Keyboard and Auxiliary Device Controller.&n; *&n; * Corrections in device setup for some laptop mice &amp; trackballs.&n; * 02Feb93  (troyer@saifr00.cfsat.Honeywell.COM,mch@wimsey.bc.ca)&n; *&n; * Changed to prevent keyboard lockups on AST Power Exec.&n; * 28Jul93  Brad Bosch - brad@lachman.com&n; *&n; * Modified by Johan Myreen (jem@cs.hut.fi) 04Aug93&n; *   to include support for QuickPort mouse.&n; */
+multiline_comment|/* Uncomment the following line if your mouse needs initialization. */
+multiline_comment|/* #define INITIALIZE_DEVICE */
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -7,6 +9,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* aux controller ports */
 DECL|macro|AUX_INPUT_PORT
 mdefine_line|#define AUX_INPUT_PORT&t;0x60&t;&t;/* Aux device output buffer */
@@ -18,7 +21,7 @@ DECL|macro|AUX_STATUS
 mdefine_line|#define AUX_STATUS&t;0x64&t;&t;/* Aux device status reg */
 multiline_comment|/* aux controller status bits */
 DECL|macro|AUX_OBUF_FULL
-mdefine_line|#define AUX_OBUF_FULL&t;0x01&t;&t;/* output buffer (from device) full */
+mdefine_line|#define AUX_OBUF_FULL&t;0x21&t;&t;/* output buffer (from device) full */
 DECL|macro|AUX_IBUF_FULL
 mdefine_line|#define AUX_IBUF_FULL&t;0x02&t;&t;/* input buffer (to device) full */
 multiline_comment|/* aux controller commands */
@@ -37,8 +40,12 @@ mdefine_line|#define AUX_ENABLE&t;0xa8&t;&t;/* enable aux */
 multiline_comment|/* aux device commands */
 DECL|macro|AUX_SET_RES
 mdefine_line|#define AUX_SET_RES&t;0xe8&t;&t;/* set resolution */
-DECL|macro|AUX_SET_SCALE
-mdefine_line|#define AUX_SET_SCALE&t;0xe9&t;&t;/* set scaling factor */
+DECL|macro|AUX_SET_SCALE11
+mdefine_line|#define AUX_SET_SCALE11&t;0xe6&t;&t;/* set 1:1 scaling */
+DECL|macro|AUX_SET_SCALE21
+mdefine_line|#define AUX_SET_SCALE21&t;0xe7&t;&t;/* set 2:1 scaling */
+DECL|macro|AUX_GET_SCALE
+mdefine_line|#define AUX_GET_SCALE&t;0xe9&t;&t;/* get scaling factor */
 DECL|macro|AUX_SET_STREAM
 mdefine_line|#define AUX_SET_STREAM&t;0xea&t;&t;/* set stream mode */
 DECL|macro|AUX_SET_SAMPLE
@@ -50,16 +57,45 @@ mdefine_line|#define AUX_DISABLE_DEV&t;0xf5&t;&t;/* disable aux device */
 DECL|macro|AUX_RESET
 mdefine_line|#define AUX_RESET&t;0xff&t;&t;/* reset aux device */
 DECL|macro|MAX_RETRIES
-mdefine_line|#define MAX_RETRIES&t;3
+mdefine_line|#define MAX_RETRIES&t;30&t;&t;/* some aux operations take long time*/
 DECL|macro|AUX_IRQ
 mdefine_line|#define AUX_IRQ&t;&t;12
 DECL|macro|AUX_BUF_SIZE
 mdefine_line|#define AUX_BUF_SIZE&t;2048
+multiline_comment|/* QuickPort definitions */
+DECL|macro|QP_DATA
+mdefine_line|#define QP_DATA         0x310&t;&t;/* Data Port I/O Address */
+DECL|macro|QP_STATUS
+mdefine_line|#define QP_STATUS       0x311&t;&t;/* Status Port I/O Address */
+DECL|macro|QP_DEV_IDLE
+mdefine_line|#define QP_DEV_IDLE     0x01&t;        /* Device Idle */
+DECL|macro|QP_RX_FULL
+mdefine_line|#define QP_RX_FULL      0x02&t;&t;/* Device Char received */
+DECL|macro|QP_TX_IDLE
+mdefine_line|#define QP_TX_IDLE      0x04&t;&t;/* Device XMIT Idle */
+DECL|macro|QP_RESET
+mdefine_line|#define QP_RESET        0x08&t;&t;/* Device Reset */
+DECL|macro|QP_INTS_ON
+mdefine_line|#define QP_INTS_ON      0x10&t;&t;/* Device Interrupt On */
+DECL|macro|QP_ERROR_FLAG
+mdefine_line|#define QP_ERROR_FLAG   0x20&t;&t;/* Device Error */
+DECL|macro|QP_CLEAR
+mdefine_line|#define QP_CLEAR        0x40&t;&t;/* Device Clear */
+DECL|macro|QP_ENABLE
+mdefine_line|#define QP_ENABLE       0x80&t;&t;/* Device Enable */
+DECL|macro|QP_IRQ
+mdefine_line|#define QP_IRQ          12
 r_extern
 r_int
 r_char
 id|aux_device_present
 suffix:semicolon
+r_extern
+r_int
+r_char
+id|kbd_read_mask
+suffix:semicolon
+multiline_comment|/* from keyboard.c */
 DECL|struct|aux_queue
 r_struct
 id|aux_queue
@@ -120,12 +156,58 @@ l_int|0
 suffix:semicolon
 r_static
 r_int
-id|poll_status
+id|poll_aux_status
 c_func
 (paren
 r_void
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_QUICKPORT_MOUSE
+DECL|variable|qp_present
+r_static
+r_int
+id|qp_present
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|qp_busy
+r_static
+r_int
+id|qp_busy
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|qp_data
+r_static
+r_int
+id|qp_data
+op_assign
+id|QP_DATA
+suffix:semicolon
+DECL|variable|qp_status
+r_static
+r_int
+id|qp_status
+op_assign
+id|QP_STATUS
+suffix:semicolon
+r_static
+r_int
+id|poll_qp_status
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_static
+r_int
+id|probe_qp
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; * Write to aux device&n; */
 DECL|function|aux_write_dev
 r_static
@@ -137,7 +219,7 @@ r_int
 id|val
 )paren
 (brace
-id|poll_status
+id|poll_aux_status
 c_func
 (paren
 )paren
@@ -151,7 +233,7 @@ id|AUX_COMMAND
 )paren
 suffix:semicolon
 multiline_comment|/* write magic cookie */
-id|poll_status
+id|poll_aux_status
 c_func
 (paren
 )paren
@@ -166,8 +248,9 @@ id|AUX_OUTPUT_PORT
 suffix:semicolon
 multiline_comment|/* write data */
 )brace
-macro_line|#if 0
 multiline_comment|/*&n; * Write to device &amp; handle returned ack&n; */
+macro_line|#if defined INITIALIZE_DEVICE
+DECL|function|aux_write_ack
 r_static
 r_int
 id|aux_write_ack
@@ -177,6 +260,11 @@ r_int
 id|val
 )paren
 (brace
+r_int
+id|retries
+op_assign
+l_int|0
+suffix:semicolon
 id|aux_write_dev
 c_func
 (paren
@@ -196,11 +284,34 @@ id|AUX_STATUS
 op_amp
 id|AUX_OBUF_FULL
 )paren
-op_eq
-l_int|0
+op_ne
+id|AUX_OBUF_FULL
+op_logical_and
+id|retries
+OL
+id|MAX_RETRIES
+)paren
+(brace
+multiline_comment|/* wait for ack */
+id|current-&gt;state
+op_assign
+id|TASK_INTERRUPTIBLE
+suffix:semicolon
+id|current-&gt;timeout
+op_assign
+id|jiffies
+op_plus
+l_int|5
+suffix:semicolon
+id|schedule
+c_func
+(paren
 )paren
 suffix:semicolon
-multiline_comment|/* wait for ack */
+id|retries
+op_increment
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -211,10 +322,10 @@ c_func
 id|AUX_STATUS
 )paren
 op_amp
-l_int|0x20
+id|AUX_OBUF_FULL
 )paren
 op_eq
-l_int|0x20
+id|AUX_OBUF_FULL
 )paren
 (brace
 r_return
@@ -231,7 +342,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif
+macro_line|#endif /* INITIALIZE_DEVICE */
 multiline_comment|/*&n; * Write aux device command&n; */
 DECL|function|aux_write_cmd
 r_static
@@ -243,7 +354,7 @@ r_int
 id|val
 )paren
 (brace
-id|poll_status
+id|poll_aux_status
 c_func
 (paren
 )paren
@@ -256,7 +367,7 @@ comma
 id|AUX_COMMAND
 )paren
 suffix:semicolon
-id|poll_status
+id|poll_aux_status
 c_func
 (paren
 )paren
@@ -422,6 +533,84 @@ id|queue-&gt;proc_list
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Interrupt handler for the QuickPort. A character&n; * is waiting in the 82C710.&n; */
+macro_line|#ifdef CONFIG_QUICKPORT_MOUSE
+DECL|function|qp_interrupt
+r_static
+r_void
+id|qp_interrupt
+c_func
+(paren
+r_int
+id|cpl
+)paren
+(brace
+r_int
+id|head
+op_assign
+id|queue-&gt;head
+suffix:semicolon
+r_int
+id|maxhead
+op_assign
+(paren
+id|queue-&gt;tail
+op_minus
+l_int|1
+)paren
+op_amp
+(paren
+id|AUX_BUF_SIZE
+op_minus
+l_int|1
+)paren
+suffix:semicolon
+id|queue-&gt;buf
+(braket
+id|head
+)braket
+op_assign
+id|inb
+c_func
+(paren
+id|qp_data
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|head
+op_ne
+id|maxhead
+)paren
+(brace
+id|head
+op_increment
+suffix:semicolon
+id|head
+op_and_assign
+id|AUX_BUF_SIZE
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+id|queue-&gt;head
+op_assign
+id|head
+suffix:semicolon
+id|aux_ready
+op_assign
+l_int|1
+suffix:semicolon
+id|wake_up_interruptible
+c_func
+(paren
+op_amp
+id|queue-&gt;proc_list
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 DECL|function|release_aux
 r_static
 r_void
@@ -439,11 +628,6 @@ op_star
 id|file
 )paren
 (brace
-id|poll_status
-c_func
-(paren
-)paren
-suffix:semicolon
 id|aux_write_dev
 c_func
 (paren
@@ -451,7 +635,14 @@ id|AUX_DISABLE_DEV
 )paren
 suffix:semicolon
 multiline_comment|/* disable aux device */
-id|poll_status
+id|aux_write_cmd
+c_func
+(paren
+id|AUX_INTS_OFF
+)paren
+suffix:semicolon
+multiline_comment|/* disable controller ints */
+id|poll_aux_status
 c_func
 (paren
 )paren
@@ -465,13 +656,11 @@ id|AUX_COMMAND
 )paren
 suffix:semicolon
 multiline_comment|/* Disable Aux device */
-id|aux_write_cmd
+id|poll_aux_status
 c_func
 (paren
-id|AUX_INTS_OFF
 )paren
 suffix:semicolon
-multiline_comment|/* disable controller ints */
 id|free_irq
 c_func
 (paren
@@ -483,6 +672,93 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_QUICKPORT_MOUSE
+DECL|function|release_qp
+r_static
+r_void
+id|release_qp
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|file
+)paren
+(brace
+r_int
+r_char
+id|status
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|poll_qp_status
+c_func
+(paren
+)paren
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;Warning: QuickPort device busy in release_qp()&bslash;n&quot;
+)paren
+suffix:semicolon
+id|status
+op_assign
+id|inb_p
+c_func
+(paren
+id|qp_status
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+id|status
+op_amp
+op_complement
+(paren
+id|QP_ENABLE
+op_or
+id|QP_INTS_ON
+)paren
+comma
+id|qp_status
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|poll_qp_status
+c_func
+(paren
+)paren
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;Warning: QuickPort device busy in release_qp()&bslash;n&quot;
+)paren
+suffix:semicolon
+id|free_irq
+c_func
+(paren
+id|QP_IRQ
+)paren
+suffix:semicolon
+id|qp_busy
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif
 multiline_comment|/*&n; * Install interrupt handler.&n; * Enable auxiliary device.&n; */
 DECL|function|open_aux
 r_static
@@ -524,7 +800,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|poll_status
+id|poll_aux_status
 c_func
 (paren
 )paren
@@ -555,10 +831,30 @@ comma
 id|aux_interrupt
 )paren
 )paren
+(brace
+id|aux_busy
+op_assign
+l_int|0
+suffix:semicolon
 r_return
 op_minus
 id|EBUSY
 suffix:semicolon
+)brace
+id|poll_aux_status
+c_func
+(paren
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+id|AUX_ENABLE
+comma
+id|AUX_COMMAND
+)paren
+suffix:semicolon
+multiline_comment|/* Enable Aux */
 id|aux_write_dev
 c_func
 (paren
@@ -573,24 +869,174 @@ id|AUX_INTS_ON
 )paren
 suffix:semicolon
 multiline_comment|/* enable controller ints */
-id|poll_status
+id|poll_aux_status
 c_func
 (paren
+)paren
+suffix:semicolon
+id|aux_ready
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#ifdef CONFIG_QUICKPORT_MOUSE
+multiline_comment|/*&n; * Install interrupt handler.&n; * Enable the device, enable interrupts. Set qp_busy&n; * (allow only one opener at a time.)&n; */
+DECL|function|open_qp
+r_static
+r_int
+id|open_qp
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|file
+)paren
+(brace
+r_int
+r_char
+id|status
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|qp_present
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|qp_busy
+)paren
+r_return
+op_minus
+id|EBUSY
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|request_irq
+c_func
+(paren
+id|QP_IRQ
+comma
+id|qp_interrupt
+)paren
+)paren
+r_return
+op_minus
+id|EBUSY
+suffix:semicolon
+id|qp_busy
+op_assign
+l_int|1
+suffix:semicolon
+id|status
+op_assign
+id|inb_p
+c_func
+(paren
+id|qp_status
+)paren
+suffix:semicolon
+id|status
+op_or_assign
+(paren
+id|QP_ENABLE
+op_or
+id|QP_RESET
 )paren
 suffix:semicolon
 id|outb_p
 c_func
 (paren
-id|AUX_ENABLE
+id|status
 comma
-id|AUX_COMMAND
+id|qp_status
 )paren
 suffix:semicolon
-multiline_comment|/* Enable Aux */
+id|status
+op_and_assign
+op_complement
+(paren
+id|QP_RESET
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+id|status
+comma
+id|qp_status
+)paren
+suffix:semicolon
+id|queue-&gt;head
+op_assign
+id|queue-&gt;tail
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Flush input queue */
+id|status
+op_or_assign
+id|QP_INTS_ON
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+id|status
+comma
+id|qp_status
+)paren
+suffix:semicolon
+multiline_comment|/* Enable interrupts */
+r_while
+c_loop
+(paren
+op_logical_neg
+id|poll_qp_status
+c_func
+(paren
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Error: QuickPort device busy in open_qp()&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EBUSY
+suffix:semicolon
+)brace
+id|outb_p
+c_func
+(paren
+id|AUX_ENABLE_DEV
+comma
+id|qp_data
+)paren
+suffix:semicolon
+multiline_comment|/* Wake up mouse */
 r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*&n; * Write to the aux device.&n; */
 DECL|function|write_aux
 r_static
@@ -632,7 +1078,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|poll_status
+id|poll_aux_status
 c_func
 (paren
 )paren
@@ -653,7 +1099,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|poll_status
+id|poll_aux_status
 c_func
 (paren
 )paren
@@ -684,6 +1130,80 @@ r_return
 id|count
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_QUICKPORT_MOUSE
+multiline_comment|/*&n; * Write to the QuickPort device.&n; */
+DECL|function|write_qp
+r_static
+r_int
+id|write_qp
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|file
+comma
+r_char
+op_star
+id|buffer
+comma
+r_int
+id|count
+)paren
+(brace
+r_int
+id|i
+op_assign
+id|count
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|i
+op_decrement
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|poll_qp_status
+c_func
+(paren
+)paren
+)paren
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+id|get_fs_byte
+c_func
+(paren
+id|buffer
+op_increment
+)paren
+comma
+id|qp_data
+)paren
+suffix:semicolon
+)brace
+id|inode-&gt;i_mtime
+op_assign
+id|CURRENT_TIME
+suffix:semicolon
+r_return
+id|count
+suffix:semicolon
+)brace
+macro_line|#endif
 multiline_comment|/*&n; * Put bytes from input queue to buffer.&n; */
 DECL|function|read_aux
 r_static
@@ -966,6 +1486,7 @@ id|release_aux
 comma
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * Initialize driver. First check for QuickPort device; if found&n; * forget about the Aux port and use the QuickPort functions.&n; */
 DECL|function|psaux_init
 r_int
 r_int
@@ -977,24 +1498,95 @@ r_int
 id|kmem_start
 )paren
 (brace
+r_int
+id|qp_found
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#ifdef CONFIG_QUICKPORT_MOUSE
+id|printk
+c_func
+(paren
+l_string|&quot;Probing QuickPort device.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|qp_found
+op_assign
+id|probe_qp
+c_func
+(paren
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;QuickPort pointing device detected -- driver installed.&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/*&t;&t;printk(&quot;QuickPort address = %x (should be 0x310)&bslash;n&quot;, qp_data); */
+id|qp_present
+op_assign
+l_int|1
+suffix:semicolon
+id|psaux_fops.write
+op_assign
+id|write_qp
+suffix:semicolon
+id|psaux_fops.open
+op_assign
+id|open_qp
+suffix:semicolon
+id|psaux_fops.release
+op_assign
+id|release_qp
+suffix:semicolon
+id|poll_qp_status
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+r_else
+macro_line|#endif
 r_if
 c_cond
 (paren
 id|aux_device_present
-op_ne
+op_eq
 l_int|0xaa
 )paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;PS/2 auxiliary pointing device detected -- driver installed.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|aux_present
+op_assign
+l_int|1
+suffix:semicolon
+id|kbd_read_mask
+op_assign
+id|AUX_OBUF_FULL
+suffix:semicolon
+id|poll_aux_status
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+r_else
 (brace
 r_return
 id|kmem_start
 suffix:semicolon
+multiline_comment|/* No mouse at all */
 )brace
-id|printk
-c_func
-(paren
-l_string|&quot;PS/2 type pointing device detected and installed.&bslash;n&quot;
-)paren
-suffix:semicolon
 id|queue
 op_assign
 (paren
@@ -1022,15 +1614,62 @@ id|queue-&gt;proc_list
 op_assign
 l_int|NULL
 suffix:semicolon
-id|aux_present
-op_assign
-l_int|1
+r_if
+c_cond
+(paren
+op_logical_neg
+id|qp_found
+)paren
+(brace
+macro_line|#if defined INITIALIZE_DEVICE
+id|outb_p
+c_func
+(paren
+id|AUX_ENABLE
+comma
+id|AUX_COMMAND
+)paren
 suffix:semicolon
-id|poll_status
+multiline_comment|/* Enable Aux */
+id|aux_write_ack
+c_func
+(paren
+id|AUX_SET_SAMPLE
+)paren
+suffix:semicolon
+id|aux_write_ack
+c_func
+(paren
+l_int|100
+)paren
+suffix:semicolon
+multiline_comment|/* 100 samples/sec */
+id|aux_write_ack
+c_func
+(paren
+id|AUX_SET_RES
+)paren
+suffix:semicolon
+id|aux_write_ack
+c_func
+(paren
+l_int|3
+)paren
+suffix:semicolon
+multiline_comment|/* 8 counts per mm */
+id|aux_write_ack
+c_func
+(paren
+id|AUX_SET_SCALE21
+)paren
+suffix:semicolon
+multiline_comment|/* 2:1 scaling */
+id|poll_aux_status
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif /* INITIALIZE_DEVICE */
 id|outb_p
 c_func
 (paren
@@ -1047,14 +1686,20 @@ id|AUX_INTS_OFF
 )paren
 suffix:semicolon
 multiline_comment|/* disable controller ints */
+id|poll_aux_status
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 r_return
 id|kmem_start
 suffix:semicolon
 )brace
-DECL|function|poll_status
+DECL|function|poll_aux_status
 r_static
 r_int
-id|poll_status
+id|poll_aux_status
 c_func
 (paren
 r_void
@@ -1079,7 +1724,6 @@ l_int|0x03
 )paren
 op_logical_and
 id|retries
-op_increment
 OL
 id|MAX_RETRIES
 )paren
@@ -1093,7 +1737,9 @@ c_func
 id|AUX_STATUS
 )paren
 op_amp
-l_int|0x01
+id|AUX_OBUF_FULL
+op_eq
+id|AUX_OBUF_FULL
 )paren
 id|inb_p
 c_func
@@ -1116,6 +1762,9 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|retries
+op_increment
+suffix:semicolon
 )brace
 r_return
 op_logical_neg
@@ -1126,4 +1775,239 @@ id|MAX_RETRIES
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_QUICKPORT_MOUSE
+multiline_comment|/*&n; * Wait for device to send output char and flush any input char.&n; */
+DECL|function|poll_qp_status
+r_static
+r_int
+id|poll_qp_status
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+id|retries
+op_assign
+l_int|0
+suffix:semicolon
+r_while
+c_loop
+(paren
+(paren
+id|inb
+c_func
+(paren
+id|qp_status
+)paren
+op_amp
+(paren
+id|QP_RX_FULL
+op_or
+id|QP_TX_IDLE
+op_or
+id|QP_DEV_IDLE
+)paren
+)paren
+op_ne
+(paren
+id|QP_DEV_IDLE
+op_or
+id|QP_TX_IDLE
+)paren
+op_logical_and
+id|retries
+OL
+id|MAX_RETRIES
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|inb_p
+c_func
+(paren
+id|qp_status
+)paren
+op_amp
+(paren
+id|QP_RX_FULL
+)paren
+)paren
+id|inb_p
+c_func
+(paren
+id|qp_data
+)paren
+suffix:semicolon
+id|current-&gt;state
+op_assign
+id|TASK_INTERRUPTIBLE
+suffix:semicolon
+id|current-&gt;timeout
+op_assign
+id|jiffies
+op_plus
+l_int|5
+suffix:semicolon
+id|schedule
+c_func
+(paren
+)paren
+suffix:semicolon
+id|retries
+op_increment
+suffix:semicolon
+)brace
+r_return
+op_logical_neg
+(paren
+id|retries
+op_eq
+id|MAX_RETRIES
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Function to read register in 82C710.&n; */
+DECL|function|read_710
+r_static
+r_inline
+r_int
+r_char
+id|read_710
+c_func
+(paren
+r_int
+r_char
+id|index
+)paren
+(brace
+id|outb_p
+c_func
+(paren
+id|index
+comma
+l_int|0x390
+)paren
+suffix:semicolon
+multiline_comment|/* Write index */
+r_return
+id|inb_p
+c_func
+(paren
+l_int|0x391
+)paren
+suffix:semicolon
+multiline_comment|/* Read the data */
+)brace
+multiline_comment|/*&n; * See if we can find a QuickPort device. Read mouse address.&n; */
+DECL|function|probe_qp
+r_static
+r_int
+id|probe_qp
+c_func
+(paren
+r_void
+)paren
+(brace
+id|outb_p
+c_func
+(paren
+l_int|0x55
+comma
+l_int|0x2fa
+)paren
+suffix:semicolon
+multiline_comment|/* Any value except 9, ff or 36 */
+id|outb_p
+c_func
+(paren
+l_int|0xaa
+comma
+l_int|0x3fa
+)paren
+suffix:semicolon
+multiline_comment|/* Inverse of 55 */
+id|outb_p
+c_func
+(paren
+l_int|0x36
+comma
+l_int|0x3fa
+)paren
+suffix:semicolon
+multiline_comment|/* Address the chip */
+id|outb_p
+c_func
+(paren
+l_int|0xe4
+comma
+l_int|0x3fa
+)paren
+suffix:semicolon
+multiline_comment|/* 390/4; 390 = config address */
+id|outb_p
+c_func
+(paren
+l_int|0x1b
+comma
+l_int|0x2fa
+)paren
+suffix:semicolon
+multiline_comment|/* Inverse of e4 */
+r_if
+c_cond
+(paren
+id|read_710
+c_func
+(paren
+l_int|0x0f
+)paren
+op_ne
+l_int|0xe4
+)paren
+multiline_comment|/* Config address found? */
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/* No: no 82C710 here */
+id|qp_data
+op_assign
+id|read_710
+c_func
+(paren
+l_int|0x0d
+)paren
+op_star
+l_int|4
+suffix:semicolon
+multiline_comment|/* Get mouse I/O address */
+id|qp_status
+op_assign
+id|qp_data
+op_plus
+l_int|1
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+l_int|0x0f
+comma
+l_int|0x390
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+l_int|0x0f
+comma
+l_int|0x391
+)paren
+suffix:semicolon
+multiline_comment|/* Close config mode */
+r_return
+l_int|1
+suffix:semicolon
+)brace
+macro_line|#endif
 eof

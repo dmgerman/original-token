@@ -470,14 +470,11 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 id|reg_move
 c_func
 (paren

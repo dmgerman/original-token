@@ -681,8 +681,7 @@ id|byte
 )paren
 suffix:semicolon
 DECL|function|math_emulate
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|math_emulate
 c_func
@@ -774,15 +773,11 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-id|FPU_info
-op_assign
+id|SETUP_DATA_AREA
+c_func
 (paren
-r_struct
-id|info
-op_star
-)paren
-op_amp
 id|arg
+)paren
 suffix:semicolon
 multiline_comment|/* We cannot handle emulation in v86-mode */
 r_if
@@ -1519,14 +1514,11 @@ r_case
 l_int|0
 suffix:colon
 multiline_comment|/* fadd */
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* Default, this conveys no information,&n;&t;&t;     but an 80486 does it. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 id|reg_add
 c_func
 (paren
@@ -1546,14 +1538,11 @@ r_case
 l_int|1
 suffix:colon
 multiline_comment|/* fmul */
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* Default, this conveys no information,&n;&t;&t;     but an 80486 does it. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 id|reg_mul
 c_func
 (paren
@@ -1607,14 +1596,11 @@ r_case
 l_int|4
 suffix:colon
 multiline_comment|/* fsub */
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* Default, this conveys no information,&n;&t;&t;     but an 80486 does it. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 id|reg_sub
 c_func
 (paren
@@ -1634,14 +1620,11 @@ r_case
 l_int|5
 suffix:colon
 multiline_comment|/* fsubr */
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* Default, this conveys no information,&n;&t;&t;     but an 80486 does it. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 id|reg_sub
 c_func
 (paren
@@ -1661,14 +1644,11 @@ r_case
 l_int|6
 suffix:colon
 multiline_comment|/* fdiv */
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* Default, this conveys no information,&n;&t;&t;     but an 80486 does it. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 id|reg_div
 c_func
 (paren
@@ -1688,14 +1668,11 @@ r_case
 l_int|7
 suffix:colon
 multiline_comment|/* fdivr */
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* Default, this conveys no information,&n;&t;&t;     but an 80486 does it. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 r_if
 c_cond
 (paren
@@ -2303,8 +2280,7 @@ macro_line|#else /* no math emulation */
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 DECL|function|math_emulate
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|math_emulate
 c_func

@@ -501,8 +501,7 @@ l_int|1
 suffix:semicolon
 )brace
 DECL|function|sys_sync
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_sync
 c_func
@@ -544,8 +543,7 @@ id|inode-&gt;i_dev
 suffix:semicolon
 )brace
 DECL|function|sys_fsync
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_fsync
 c_func

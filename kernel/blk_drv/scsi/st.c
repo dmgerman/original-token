@@ -251,16 +251,19 @@ op_star
 id|SCpnt
 )paren
 (brace
+macro_line|#ifdef DEBUG
 r_int
 id|dev
 op_assign
 id|SCpnt-&gt;request.dev
 suffix:semicolon
+macro_line|#endif
 r_int
 id|result
 op_assign
 id|SCpnt-&gt;result
 suffix:semicolon
+r_int
 r_char
 op_star
 id|sense

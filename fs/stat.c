@@ -300,8 +300,7 @@ id|tmp
 suffix:semicolon
 )brace
 DECL|function|sys_stat
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_stat
 c_func
@@ -386,8 +385,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|sys_newstat
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_newstat
 c_func
@@ -472,8 +470,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|sys_lstat
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_lstat
 c_func
@@ -558,8 +555,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|sys_newlstat
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_newlstat
 c_func
@@ -644,8 +640,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|sys_fstat
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_fstat
 c_func
@@ -738,8 +733,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|sys_newfstat
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_newfstat
 c_func
@@ -832,8 +826,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|sys_readlink
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_readlink
 c_func

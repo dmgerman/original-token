@@ -23,8 +23,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|divide_error
 c_func
@@ -32,8 +31,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|debug
 c_func
@@ -41,8 +39,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|nmi
 c_func
@@ -50,8 +47,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|int3
 c_func
@@ -59,8 +55,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|overflow
 c_func
@@ -68,8 +63,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|bounds
 c_func
@@ -77,8 +71,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|invalid_op
 c_func
@@ -86,8 +79,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|device_not_available
 c_func
@@ -95,8 +87,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|double_fault
 c_func
@@ -104,8 +95,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|coprocessor_segment_overrun
 c_func
@@ -113,8 +103,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|invalid_TSS
 c_func
@@ -122,8 +111,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|segment_not_present
 c_func
@@ -131,8 +119,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|stack_segment
 c_func
@@ -140,8 +127,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|general_protection
 c_func
@@ -149,8 +135,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|page_fault
 c_func
@@ -158,8 +143,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|coprocessor_error
 c_func
@@ -167,8 +151,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|reserved
 c_func
@@ -176,8 +159,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|alignment_check
 c_func
@@ -217,14 +199,12 @@ id|VM_MASK
 )paren
 op_logical_or
 (paren
-(paren
-l_int|0xffff
+l_int|3
 op_amp
 id|regs-&gt;cs
 )paren
 op_eq
-id|USER_CS
-)paren
+l_int|3
 )paren
 r_return
 suffix:semicolon
@@ -243,7 +223,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;EIP:    %04x:%p&bslash;nEFLAGS: %p&bslash;n&quot;
+l_string|&quot;EIP:    %04x:%08x&bslash;nEFLAGS: %08x&bslash;n&quot;
 comma
 l_int|0xffff
 op_amp
@@ -366,8 +346,7 @@ id|SIGSEGV
 suffix:semicolon
 )brace
 DECL|function|do_double_fault
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|do_double_fault
 c_func
@@ -403,8 +382,7 @@ id|error_code
 suffix:semicolon
 )brace
 DECL|function|do_general_protection
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|do_general_protection
 c_func
@@ -440,8 +418,7 @@ id|error_code
 suffix:semicolon
 )brace
 DECL|function|do_alignment_check
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|do_alignment_check
 c_func
@@ -477,8 +454,7 @@ id|error_code
 suffix:semicolon
 )brace
 DECL|function|do_divide_error
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|do_divide_error
 c_func
@@ -514,8 +490,7 @@ id|error_code
 suffix:semicolon
 )brace
 DECL|function|do_int3
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|do_int3
 c_func
@@ -571,8 +546,7 @@ id|error_code
 suffix:semicolon
 )brace
 DECL|function|do_nmi
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|do_nmi
 c_func
@@ -594,8 +568,7 @@ l_string|&quot;Uhhuh. NMI received. Dazed and confused, but trying to continue&b
 suffix:semicolon
 )brace
 DECL|function|do_debug
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|do_debug
 c_func
@@ -651,8 +624,7 @@ id|error_code
 suffix:semicolon
 )brace
 DECL|function|do_overflow
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|do_overflow
 c_func
@@ -688,8 +660,7 @@ id|error_code
 suffix:semicolon
 )brace
 DECL|function|do_bounds
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|do_bounds
 c_func
@@ -725,8 +696,7 @@ id|error_code
 suffix:semicolon
 )brace
 DECL|function|do_invalid_op
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|do_invalid_op
 c_func
@@ -762,8 +732,7 @@ id|error_code
 suffix:semicolon
 )brace
 DECL|function|do_device_not_available
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|do_device_not_available
 c_func
@@ -799,8 +768,7 @@ id|error_code
 suffix:semicolon
 )brace
 DECL|function|do_coprocessor_segment_overrun
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|do_coprocessor_segment_overrun
 c_func
@@ -836,8 +804,7 @@ id|error_code
 suffix:semicolon
 )brace
 DECL|function|do_invalid_TSS
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|do_invalid_TSS
 c_func
@@ -873,8 +840,7 @@ id|error_code
 suffix:semicolon
 )brace
 DECL|function|do_segment_not_present
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|do_segment_not_present
 c_func
@@ -910,8 +876,7 @@ id|error_code
 suffix:semicolon
 )brace
 DECL|function|do_stack_segment
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|do_stack_segment
 c_func
@@ -1046,8 +1011,7 @@ l_int|0xffffffff
 suffix:semicolon
 )brace
 DECL|function|do_coprocessor_error
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|do_coprocessor_error
 c_func
@@ -1072,8 +1036,7 @@ c_func
 suffix:semicolon
 )brace
 DECL|function|do_reserved
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|do_reserved
 c_func

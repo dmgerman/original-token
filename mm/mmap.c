@@ -99,7 +99,7 @@ l_int|2
 )paren
 r_return
 op_minus
-id|EINVAL
+id|EACCES
 suffix:semicolon
 multiline_comment|/* fall through */
 r_case
@@ -117,7 +117,7 @@ l_int|1
 )paren
 r_return
 op_minus
-id|EINVAL
+id|EACCES
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -373,8 +373,7 @@ l_int|1
 suffix:semicolon
 )brace
 DECL|function|sys_mmap
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_mmap
 c_func
@@ -472,8 +471,7 @@ l_int|5
 suffix:semicolon
 )brace
 DECL|function|sys_munmap
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_munmap
 c_func
@@ -636,6 +634,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|mpnt-&gt;vm_ops
+op_logical_and
 id|mpnt-&gt;vm_ops-&gt;close
 )paren
 id|mpnt-&gt;vm_ops
@@ -763,39 +763,6 @@ id|inode-&gt;i_sb-&gt;s_blocksize
 op_minus
 l_int|1
 )paren
-)paren
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|len
-OG
-id|high_memory
-op_logical_or
-id|off
-OG
-id|high_memory
-op_minus
-id|len
-)paren
-multiline_comment|/* avoid overflow */
-r_return
-op_minus
-id|ENXIO
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|get_limit
-c_func
-(paren
-id|USER_DS
-)paren
-op_ne
-id|TASK_SIZE
 )paren
 r_return
 op_minus
@@ -968,18 +935,6 @@ id|current-&gt;mmap
 op_assign
 id|mpnt
 suffix:semicolon
-macro_line|#if 0
-id|printk
-c_func
-(paren
-l_string|&quot;VFS: Loaded mmap at %08x -  %08x&bslash;n&quot;
-comma
-id|mpnt-&gt;vm_start
-comma
-id|mpnt-&gt;vm_end
-)paren
-suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon

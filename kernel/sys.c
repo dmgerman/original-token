@@ -140,8 +140,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|sys_setpriority
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_setpriority
 c_func
@@ -325,8 +324,7 @@ id|error
 suffix:semicolon
 )brace
 DECL|function|sys_getpriority
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_getpriority
 c_func
@@ -435,8 +433,7 @@ id|ESRCH
 suffix:semicolon
 )brace
 DECL|function|sys_profil
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_profil
 c_func
@@ -450,8 +447,7 @@ id|ENOSYS
 suffix:semicolon
 )brace
 DECL|function|sys_ftime
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_ftime
 c_func
@@ -465,8 +461,7 @@ id|ENOSYS
 suffix:semicolon
 )brace
 DECL|function|sys_break
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_break
 c_func
@@ -480,8 +475,7 @@ id|ENOSYS
 suffix:semicolon
 )brace
 DECL|function|sys_stty
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_stty
 c_func
@@ -495,8 +489,7 @@ id|ENOSYS
 suffix:semicolon
 )brace
 DECL|function|sys_gtty
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_gtty
 c_func
@@ -510,8 +503,7 @@ id|ENOSYS
 suffix:semicolon
 )brace
 DECL|function|sys_prof
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_prof
 c_func
@@ -525,8 +517,7 @@ id|ENOSYS
 suffix:semicolon
 )brace
 DECL|function|save_v86_state
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 r_int
 id|save_v86_state
@@ -709,8 +700,7 @@ suffix:semicolon
 )brace
 )brace
 DECL|function|sys_vm86
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_vm86
 c_func
@@ -868,8 +858,7 @@ r_void
 suffix:semicolon
 multiline_comment|/*&n; * Reboot system call: for obvious reasons only root may call it,&n; * and even root needs to set up some magic numbers in the registers&n; * so that some mistake won&squot;t make this reboot the whole machine.&n; * You can also set the meaning of the ctrl-alt-del-key here.&n; *&n; * reboot doesn&squot;t sync: do that yourself before calling this.&n; */
 DECL|function|sys_reboot
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_reboot
 c_func
@@ -994,8 +983,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * This is done BSD-style, with no consideration of the saved gid, except&n; * that if you set the effective gid, it sets the saved gid too.  This &n; * makes it possible for a setgid program to completely drop its privileges,&n; * which is often a useful assertion to make when you are doing a security&n; * audit over a program.&n; *&n; * The general idea is that a program which uses just setregid() will be&n; * 100% compatible with BSD.  A program which uses just setgid() will be&n; * 100% compatible with POSIX w/ Saved ID&squot;s. &n; */
 DECL|function|sys_setregid
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_setregid
 c_func
@@ -1114,8 +1102,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * setgid() is implemeneted like SysV w/ SAVED_IDS &n; */
 DECL|function|sys_setgid
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_setgid
 c_func
@@ -1170,8 +1157,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|sys_acct
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_acct
 c_func
@@ -1185,8 +1171,7 @@ id|ENOSYS
 suffix:semicolon
 )brace
 DECL|function|sys_phys
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_phys
 c_func
@@ -1200,8 +1185,7 @@ id|ENOSYS
 suffix:semicolon
 )brace
 DECL|function|sys_lock
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_lock
 c_func
@@ -1215,8 +1199,7 @@ id|ENOSYS
 suffix:semicolon
 )brace
 DECL|function|sys_mpx
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_mpx
 c_func
@@ -1230,8 +1213,7 @@ id|ENOSYS
 suffix:semicolon
 )brace
 DECL|function|sys_ulimit
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_ulimit
 c_func
@@ -1245,8 +1227,7 @@ id|ENOSYS
 suffix:semicolon
 )brace
 DECL|function|sys_old_syscall
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_old_syscall
 c_func
@@ -1260,8 +1241,7 @@ id|ENOSYS
 suffix:semicolon
 )brace
 DECL|function|sys_time
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_time
 c_func
@@ -1326,8 +1306,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Unprivileged users may change the real user id to the effective uid&n; * or vice versa.  (BSD-style)&n; *&n; * When you set the effective uid, it sets the saved uid too.  This &n; * makes it possible for a setuid program to completely drop its privileges,&n; * which is often a useful assertion to make when you are doing a security&n; * audit over a program.&n; *&n; * The general idea is that a program which uses just setreuid() will be&n; * 100% compatible with BSD.  A program which uses just setuid() will be&n; * 100% compatible with POSIX w/ Saved ID&squot;s. &n; */
 DECL|function|sys_setreuid
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_setreuid
 c_func
@@ -1446,8 +1425,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * setuid() is implemeneted like SysV w/ SAVED_IDS &n; * &n; * Note that SAVED_ID&squot;s is deficient in that a setuid root program&n; * like sendmail, for example, cannot set its uid to be a normal &n; * user and then switch back, because if you&squot;re root, setuid() sets&n; * the saved uid too.  If you don&squot;t like this, blame the bright people&n; * in the POSIX commmittee and/or USG.  Note that the BSD-style setreuid()&n; * will allow a root program to temporarily drop privileges and be able to&n; * regain them by swapping the real and effective uid.  &n; */
 DECL|function|sys_setuid
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_setuid
 c_func
@@ -1502,8 +1480,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|sys_stime
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_stime
 c_func
@@ -1552,8 +1529,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|sys_times
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_times
 c_func
@@ -1655,8 +1631,7 @@ id|jiffies
 suffix:semicolon
 )brace
 DECL|function|sys_brk
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_brk
 c_func
@@ -1862,8 +1837,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * This needs some heave checking ...&n; * I just haven&squot;t get the stomach for it. I also don&squot;t fully&n; * understand sessions/pgrp etc. Let somebody who does explain it.&n; *&n; * OK, I think I have the protection semantics right.... this is really&n; * only important on a multi-user system anyway, to make sure one user&n; * can&squot;t send a signal to a process owned by another.  -TYT, 12/12/91&n; */
 DECL|function|sys_setpgid
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_setpgid
 c_func
@@ -2034,8 +2008,7 @@ id|ESRCH
 suffix:semicolon
 )brace
 DECL|function|sys_getpgrp
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_getpgrp
 c_func
@@ -2048,8 +2021,7 @@ id|current-&gt;pgrp
 suffix:semicolon
 )brace
 DECL|function|sys_setsid
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_setsid
 c_func
@@ -2093,8 +2065,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Supplementary group ID&squot;s&n; */
 DECL|function|sys_getgroups
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_getgroups
 c_func
@@ -2209,8 +2180,7 @@ id|i
 suffix:semicolon
 )brace
 DECL|function|sys_setgroups
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_setgroups
 c_func
@@ -2371,8 +2341,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|sys_newuname
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_newuname
 c_func
@@ -2434,8 +2403,7 @@ id|error
 suffix:semicolon
 )brace
 DECL|function|sys_uname
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_uname
 c_func
@@ -2561,8 +2529,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|sys_olduname
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_olduname
 c_func
@@ -2724,8 +2691,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Only sethostname; gethostname can be implemented by calling uname()&n; */
 DECL|function|sys_sethostname
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_sethostname
 c_func
@@ -2817,8 +2783,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Only setdomainname; getdomainname can be implemented by calling&n; * uname()&n; */
 DECL|function|sys_setdomainname
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_setdomainname
 c_func
@@ -2909,8 +2874,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|sys_getrlimit
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_getrlimit
 c_func
@@ -3006,8 +2970,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|sys_setrlimit
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_setrlimit
 c_func
@@ -3404,8 +3367,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|sys_getrusage
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_getrusage
 c_func
@@ -3628,8 +3590,7 @@ suffix:semicolon
 macro_line|#endif /* not __i386__ */
 )brace
 DECL|function|sys_gettimeofday
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_gettimeofday
 c_func
@@ -3781,8 +3742,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * The first time we set the timezone, we will warp the clock so that&n; * it is ticking GMT time instead of local time.  Presumably, &n; * if someone is setting the timezone then we are running in an&n; * environment where the programs understand about timezones.&n; * This should be done at boot time in the /etc/rc script, as&n; * soon as possible, so that the clock can be set right.  Otherwise,&n; * various programs will get confused when the clock gets warped.&n; */
 DECL|function|sys_settimeofday
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_settimeofday
 c_func
@@ -3959,8 +3919,7 @@ l_int|60
 suffix:semicolon
 )brace
 DECL|function|sys_umask
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_umask
 c_func

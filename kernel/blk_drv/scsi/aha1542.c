@@ -3,6 +3,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -435,7 +436,7 @@ multiline_comment|/*  DEB(printk(&quot;aha1542_test_port called &bslash;n&quot;)
 id|outb
 c_func
 (paren
-id|SRST
+id|HRST
 op_or
 id|IRST
 multiline_comment|/*|SCRST*/
@@ -3192,6 +3193,22 @@ l_int|0
 )paren
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|check_region
+c_func
+(paren
+id|bases
+(braket
+id|indx
+)braket
+comma
+l_int|4
+)paren
+)paren
+(brace
 id|i
 op_assign
 id|aha1542_test_port
@@ -3209,6 +3226,8 @@ c_cond
 id|i
 )paren
 r_break
+suffix:semicolon
+)brace
 suffix:semicolon
 id|indx
 op_increment
@@ -3752,6 +3771,18 @@ l_int|512
 suffix:semicolon
 )brace
 macro_line|#endif
+id|snarf_region
+c_func
+(paren
+id|bases
+(braket
+id|indx
+)braket
+comma
+l_int|4
+)paren
+suffix:semicolon
+multiline_comment|/* Register the IO ports that we use */
 id|aha1542_host
 op_assign
 id|hostnum

@@ -429,8 +429,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|sys_modify_ldt
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_modify_ldt
 c_func

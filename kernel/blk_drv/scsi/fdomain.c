@@ -8,6 +8,7 @@ macro_line|#include &quot;fdomain.h&quot;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
 DECL|macro|VERSION
 mdefine_line|#define VERSION          &quot;$Revision: 3.18 $&quot;
 multiline_comment|/* START OF USER DEFINABLE OPTIONS */
@@ -1485,6 +1486,22 @@ id|ports
 id|i
 )braket
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|check_region
+c_func
+(paren
+id|port_base
+comma
+l_int|0x10
+)paren
+)paren
+(brace
+r_continue
+suffix:semicolon
+)brace
+multiline_comment|/* skip if I/O port in&n;&t;&t;&t;&t;&t;&t;&t; use */
 macro_line|#if DEBUG_DETECT
 id|printk
 c_func
@@ -1819,6 +1836,15 @@ op_assign
 l_int|7
 suffix:semicolon
 )brace
+id|snarf_region
+c_func
+(paren
+id|port_base
+comma
+l_int|0x10
+)paren
+suffix:semicolon
+multiline_comment|/* Register */
 macro_line|#if DO_DETECT
 multiline_comment|/* These routines are here because of the way the SCSI bus behaves after&n;      a reset.  This appropriate behavior was not handled correctly by the&n;      higher level SCSI routines when I first wrote this driver.  Now,&n;      however, correct scan routines are part of scsi.c and these routines&n;      are no longer needed.  However, this code is still good for&n;      debugging.&n;    */
 id|SCinit.request_buffer

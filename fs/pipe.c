@@ -1480,8 +1480,7 @@ multiline_comment|/* permission */
 )brace
 suffix:semicolon
 DECL|function|sys_pipe
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_pipe
 c_func

@@ -1398,8 +1398,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * POSIX specifies that kill(-1,sig) is unspecified, but what we have&n; * is probably wrong.  Should make it like BSD or SYSV.&n; */
 DECL|function|sys_kill
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_kill
 c_func
@@ -1851,6 +1850,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|mpnt-&gt;vm_ops
+op_logical_and
 id|mpnt-&gt;vm_ops-&gt;close
 )paren
 id|mpnt-&gt;vm_ops
@@ -2260,8 +2261,7 @@ id|fake_volatile
 suffix:semicolon
 )brace
 DECL|function|sys_exit
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_exit
 c_func
@@ -2284,8 +2284,7 @@ l_int|8
 suffix:semicolon
 )brace
 DECL|function|sys_wait4
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_wait4
 c_func
@@ -2754,8 +2753,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * sys_waitpid() remains for compatibility. waitpid() should be&n; * implemented by calling sys_wait4() from libc.a.&n; */
 DECL|function|sys_waitpid
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_waitpid
 c_func

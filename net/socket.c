@@ -3997,8 +3997,7 @@ id|EINVAL
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * System call vectors. Since I (RIB) want to rewrite sockets as streams,&n; * we have this level of indirection. Not a lot of overhead, since more of&n; * the work is done via read/write/select directly.&n; */
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 DECL|function|sys_socketcall
 id|sys_socketcall

@@ -5,6 +5,9 @@ mdefine_line|#define _FPU_SYSTEM_H
 multiline_comment|/* system dependent definitions */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+multiline_comment|/* This sets the pointer FPU_info to point to the argument part&n;   of the stack frame of math_emulate() */
+DECL|macro|SETUP_DATA_AREA
+mdefine_line|#define SETUP_DATA_AREA(arg)    FPU_info = (struct info *) &amp;arg
 DECL|macro|I387
 mdefine_line|#define I387&t;&t;&t;(current-&gt;tss.i387)
 DECL|macro|FPU_info

@@ -2,6 +2,7 @@ multiline_comment|/*------------------------------------------------------------
 macro_line|#ifndef _STATUS_H_
 DECL|macro|_STATUS_H_
 mdefine_line|#define _STATUS_H_
+macro_line|#include &quot;fpu_emu.h&quot;    /* for definition of PECULIAR_486 */
 macro_line|#ifdef __ASSEMBLER__
 DECL|macro|Const__
 mdefine_line|#define&t;Const__(x)&t;$##x
@@ -60,9 +61,15 @@ DECL|macro|status_word
 mdefine_line|#define status_word() &bslash;&n;  ((partial_status &amp; ~SW_Top &amp; 0xffff) | ((top &lt;&lt; SW_Top_Shift) &amp; SW_Top))
 DECL|macro|setcc
 mdefine_line|#define setcc(cc) ({ &bslash;&n;  partial_status &amp;= ~(SW_C0|SW_C1|SW_C2|SW_C3); &bslash;&n;  partial_status |= (cc) &amp; (SW_C0|SW_C1|SW_C2|SW_C3); })
-multiline_comment|/* Clear the SW_C1 bit, &quot;other bits undefined&quot; */
+macro_line|#ifdef PECULIAR_486
+multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
+multiline_comment|/* Clear the SW_C1 bit, &quot;other bits undefined&quot;. */
 DECL|macro|clear_C1
-mdefine_line|#define clear_C1()  { partial_status &amp;= ~SW_C1; }
+macro_line|#  define clear_C1()  { partial_status &amp;= ~SW_C1; }
+macro_line|# else
+DECL|macro|clear_C1
+macro_line|#  define clear_C1()
+macro_line|#endif PECULIAR_486
 macro_line|#endif __ASSEMBLER__
 macro_line|#endif _STATUS_H_
 eof

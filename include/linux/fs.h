@@ -2,6 +2,7 @@ macro_line|#ifndef _LINUX_FS_H
 DECL|macro|_LINUX_FS_H
 mdefine_line|#define _LINUX_FS_H
 multiline_comment|/*&n; * This file has definitions for some important file table&n; * structures etc.&n; */
+macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;linux/limits.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -565,6 +566,12 @@ op_star
 id|fl_owner
 suffix:semicolon
 multiline_comment|/* NULL if on free list, for sanity checks */
+DECL|member|fl_fd
+r_int
+r_int
+id|fl_fd
+suffix:semicolon
+multiline_comment|/* File descriptor for this lock */
 DECL|member|fl_wait
 r_struct
 id|wait_queue
@@ -1357,8 +1364,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#ifdef __KERNEL__
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_open
 c_func
@@ -1372,8 +1378,7 @@ comma
 r_int
 )paren
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_close
 c_func
@@ -1823,6 +1828,25 @@ r_struct
 id|inode
 op_star
 id|inode
+)paren
+suffix:semicolon
+r_extern
+r_struct
+id|inode
+op_star
+id|__iget
+c_func
+(paren
+r_struct
+id|super_block
+op_star
+id|sb
+comma
+r_int
+id|nr
+comma
+r_int
+id|crsmnt
 )paren
 suffix:semicolon
 r_extern

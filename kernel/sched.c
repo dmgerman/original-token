@@ -103,8 +103,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|system_call
 c_func
@@ -220,8 +219,7 @@ id|KERNEL_DS
 suffix:semicolon
 multiline_comment|/*&n; *  &squot;math_state_restore()&squot; saves the current math information in the&n; * old math state array, and gets the new ones from the current task&n; *&n; * Careful.. There are problems with IBM-designed IRQ13 behaviour.&n; * Don&squot;t touch unless you *really* know how it works.&n; */
 DECL|function|math_state_restore
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|math_state_restore
 c_func
@@ -333,8 +331,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; *  &squot;schedule()&squot; is the scheduler function. It&squot;s a very simple and nice&n; * scheduler: it&squot;s not perfect, but certainly works for most things.&n; * The one thing you might take a look at is the signal-handler code here.&n; *&n; *   NOTE!!  Task 0 is the &squot;idle&squot; task, which gets called when no other&n; * tasks can run. It can not be killed, and it cannot sleep. The &squot;state&squot;&n; * information in task[0] is never used.&n; *&n; * The &quot;confuse_gcc&quot; goto is used only to get better assembly code..&n; * Djikstra probably hates me.&n; */
 DECL|function|schedule
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|schedule
 c_func
@@ -440,6 +437,33 @@ suffix:semicolon
 id|confuse_gcc1
 suffix:colon
 multiline_comment|/* this is the scheduler proper: */
+macro_line|#if 0
+multiline_comment|/* give processes that go to sleep a bit higher priority.. */
+multiline_comment|/* This depends on the values for TASK_XXX */
+multiline_comment|/* This gives smoother scheduling for some things, but */
+multiline_comment|/* can be very unfair under some circumstances, so.. */
+r_if
+c_cond
+(paren
+id|TASK_UNINTERRUPTIBLE
+op_ge
+(paren
+r_int
+)paren
+id|current-&gt;state
+op_logical_and
+id|current-&gt;counter
+OL
+id|current-&gt;priority
+op_star
+l_int|2
+)paren
+(brace
+op_increment
+id|current-&gt;counter
+suffix:semicolon
+)brace
+macro_line|#endif
 id|c
 op_assign
 op_minus
@@ -527,8 +551,7 @@ id|next
 suffix:semicolon
 )brace
 DECL|function|sys_pause
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_pause
 c_func
@@ -665,7 +688,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;        q = %08x&bslash;n&quot;
+l_string|&quot;        q = %p&bslash;n&quot;
 comma
 id|q
 )paren
@@ -673,7 +696,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;       *q = %08x&bslash;n&quot;
+l_string|&quot;       *q = %p&bslash;n&quot;
 comma
 op_star
 id|q
@@ -682,7 +705,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;      tmp = %08x&bslash;n&quot;
+l_string|&quot;      tmp = %p&bslash;n&quot;
 comma
 id|tmp
 )paren
@@ -811,7 +834,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;        q = %08x&bslash;n&quot;
+l_string|&quot;        q = %p&bslash;n&quot;
 comma
 id|q
 )paren
@@ -819,7 +842,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;       *q = %08x&bslash;n&quot;
+l_string|&quot;       *q = %p&bslash;n&quot;
 comma
 op_star
 id|q
@@ -828,7 +851,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;      tmp = %08x&bslash;n&quot;
+l_string|&quot;      tmp = %p&bslash;n&quot;
 comma
 id|tmp
 )paren
@@ -1783,8 +1806,7 @@ c_func
 suffix:semicolon
 )brace
 DECL|function|sys_alarm
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_alarm
 c_func
@@ -1836,8 +1858,7 @@ l_int|1000000
 suffix:semicolon
 )brace
 DECL|function|sys_getpid
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_getpid
 c_func
@@ -1850,8 +1871,7 @@ id|current-&gt;pid
 suffix:semicolon
 )brace
 DECL|function|sys_getppid
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_getppid
 c_func
@@ -1864,8 +1884,7 @@ id|current-&gt;p_pptr-&gt;pid
 suffix:semicolon
 )brace
 DECL|function|sys_getuid
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_getuid
 c_func
@@ -1878,8 +1897,7 @@ id|current-&gt;uid
 suffix:semicolon
 )brace
 DECL|function|sys_geteuid
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_geteuid
 c_func
@@ -1892,8 +1910,7 @@ id|current-&gt;euid
 suffix:semicolon
 )brace
 DECL|function|sys_getgid
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_getgid
 c_func
@@ -1906,8 +1923,7 @@ id|current-&gt;gid
 suffix:semicolon
 )brace
 DECL|function|sys_getegid
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_getegid
 c_func
@@ -1920,8 +1936,7 @@ id|current-&gt;egid
 suffix:semicolon
 )brace
 DECL|function|sys_nice
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_int
 id|sys_nice
 c_func

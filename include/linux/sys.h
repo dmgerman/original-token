@@ -1,9 +1,11 @@
 multiline_comment|/*&n; * Why isn&squot;t this a .c file?  Enquiring minds....&n; */
 DECL|macro|sys_clone
 mdefine_line|#define sys_clone sys_fork
+macro_line|#ifdef __cplusplus
 r_extern
 l_string|&quot;C&quot;
 (brace
+macro_line|#endif
 r_extern
 r_int
 id|sys_setup
@@ -1153,7 +1155,9 @@ comma
 id|sys_modify_ldt
 )brace
 suffix:semicolon
+macro_line|#ifdef __cplusplus
 )brace
+macro_line|#endif
 multiline_comment|/* So we don&squot;t have to do any more manual updating.... */
 DECL|variable|NR_syscalls
 r_int

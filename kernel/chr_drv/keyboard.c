@@ -80,6 +80,14 @@ r_int
 suffix:semicolon
 DECL|macro|fake_keyboard_interrupt
 mdefine_line|#define fake_keyboard_interrupt() &bslash;&n;__asm__ __volatile__(&quot;int $0x21&quot;)
+DECL|variable|kbd_read_mask
+r_int
+r_char
+id|kbd_read_mask
+op_assign
+l_int|0x01
+suffix:semicolon
+multiline_comment|/* modified by psaux.c */
 DECL|variable|kbd_dead_keys
 r_int
 r_int
@@ -94,6 +102,7 @@ id|kbd_prev_dead_keys
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* shift state counters.. */
 DECL|variable|k_down
 r_static
 r_int
@@ -101,6 +110,21 @@ r_char
 id|k_down
 (braket
 id|NR_SHIFT
+)braket
+op_assign
+(brace
+l_int|0
+comma
+)brace
+suffix:semicolon
+multiline_comment|/* keyboard key bitmap */
+DECL|variable|key_down
+r_static
+r_int
+r_int
+id|key_down
+(braket
+l_int|8
 )braket
 op_assign
 (brace
@@ -554,7 +578,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 (paren
 id|inb_p
 c_func
@@ -562,8 +585,10 @@ c_func
 l_int|0x64
 )paren
 op_amp
-l_int|0x01
+id|kbd_read_mask
 )paren
+op_ne
+l_int|0x01
 )paren
 r_goto
 id|end_kbd_intr
@@ -654,6 +679,19 @@ id|k_down
 )paren
 )paren
 suffix:semicolon
+id|memset
+c_func
+(paren
+id|key_down
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|key_down
+)paren
+)paren
+suffix:semicolon
 id|put_queue
 c_func
 (paren
@@ -690,19 +728,6 @@ id|scancode
 (brace
 r_char
 id|break_flag
-suffix:semicolon
-r_static
-r_int
-r_int
-id|key_down
-(braket
-l_int|8
-)braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 r_static
 r_int
@@ -2601,6 +2626,15 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|value
+OG
+l_int|3
+)paren
+r_return
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|up_flag
 )paren
 (brace
@@ -2988,12 +3022,16 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|inb_p
 c_func
 (paren
 l_int|0x64
 )paren
 op_amp
+id|kbd_read_mask
+)paren
+op_eq
 l_int|0x01
 )paren
 id|fake_keyboard_interrupt

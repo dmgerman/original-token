@@ -1801,9 +1801,11 @@ op_rshift
 id|PAGE_SHIFT
 )paren
 op_amp
+(paren
 id|PTRS_PER_PAGE
 op_minus
 l_int|1
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -1975,9 +1977,11 @@ op_rshift
 id|PAGE_SHIFT
 )paren
 op_amp
+(paren
 id|PTRS_PER_PAGE
 op_minus
 l_int|1
+)paren
 suffix:semicolon
 op_star
 id|page_table
@@ -3627,9 +3631,11 @@ op_rshift
 id|PAGE_SHIFT
 )paren
 op_amp
+(paren
 id|PTRS_PER_PAGE
 op_minus
 l_int|1
+)paren
 )paren
 suffix:semicolon
 id|tmp

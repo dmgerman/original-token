@@ -11,14 +11,11 @@ c_func
 )paren
 (brace
 multiline_comment|/* fadd st,st(i) */
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 id|reg_add
 c_func
 (paren
@@ -45,14 +42,11 @@ c_func
 )paren
 (brace
 multiline_comment|/* fmul st,st(i) */
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 id|reg_mul
 c_func
 (paren
@@ -79,14 +73,11 @@ c_func
 )paren
 (brace
 multiline_comment|/* fsub st,st(i) */
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 id|reg_sub
 c_func
 (paren
@@ -113,14 +104,11 @@ c_func
 )paren
 (brace
 multiline_comment|/* fsubr st,st(i) */
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 id|reg_sub
 c_func
 (paren
@@ -147,14 +135,11 @@ c_func
 )paren
 (brace
 multiline_comment|/* fdiv st,st(i) */
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 id|reg_div
 c_func
 (paren
@@ -181,14 +166,11 @@ c_func
 )paren
 (brace
 multiline_comment|/* fdivr st,st(i) */
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 id|reg_div
 c_func
 (paren
@@ -215,14 +197,11 @@ c_func
 )paren
 (brace
 multiline_comment|/* fadd st(i),st */
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 id|reg_add
 c_func
 (paren
@@ -254,14 +233,11 @@ c_func
 )paren
 (brace
 multiline_comment|/* fmul st(i),st */
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 id|reg_mul
 c_func
 (paren
@@ -294,14 +270,11 @@ c_func
 (brace
 multiline_comment|/* fsubr st(i),st */
 multiline_comment|/* This is the sense of the 80486 manual&n;     reg_sub(&amp;st(FPU_rm), FPU_st0_ptr, &amp;st(FPU_rm), control_word); */
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 id|reg_sub
 c_func
 (paren
@@ -334,14 +307,11 @@ c_func
 (brace
 multiline_comment|/* fsub st(i),st */
 multiline_comment|/* This is the sense of the 80486 manual&n;     reg_sub(FPU_st0_ptr, &amp;st(FPU_rm), &amp;st(FPU_rm), control_word); */
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 id|reg_sub
 c_func
 (paren
@@ -373,14 +343,11 @@ c_func
 )paren
 (brace
 multiline_comment|/* fdivr st(i),st */
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 id|reg_div
 c_func
 (paren
@@ -412,14 +379,11 @@ c_func
 )paren
 (brace
 multiline_comment|/* fdiv st(i),st */
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 id|reg_div
 c_func
 (paren
@@ -451,14 +415,11 @@ c_func
 )paren
 (brace
 multiline_comment|/* faddp st(i),st */
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 r_if
 c_cond
 (paren
@@ -499,14 +460,11 @@ c_func
 )paren
 (brace
 multiline_comment|/* fmulp st(i),st */
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 r_if
 c_cond
 (paren
@@ -548,14 +506,11 @@ c_func
 (brace
 multiline_comment|/* fsubrp st(i),st */
 multiline_comment|/* This is the sense of the 80486 manual&n;     reg_sub(&amp;st(FPU_rm), FPU_st0_ptr, &amp;st(FPU_rm), control_word); */
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 r_if
 c_cond
 (paren
@@ -597,14 +552,11 @@ c_func
 (brace
 multiline_comment|/* fsubp st(i),st */
 multiline_comment|/* This is the sense of the 80486 manual&n;     reg_sub(FPU_st0_ptr, &amp;st(FPU_rm), &amp;st(FPU_rm), control_word); */
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 r_if
 c_cond
 (paren
@@ -645,14 +597,11 @@ c_func
 )paren
 (brace
 multiline_comment|/* fdivrp st(i),st */
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 r_if
 c_cond
 (paren
@@ -693,14 +642,11 @@ c_func
 )paren
 (brace
 multiline_comment|/* fdivp st(i),st */
-macro_line|#ifdef PECULIAR_486
-multiline_comment|/* Default, this conveys no information, but an 80486 does it. */
 id|clear_C1
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif PECULIAR_486
 r_if
 c_cond
 (paren

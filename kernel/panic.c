@@ -1,9 +1,9 @@
 multiline_comment|/*&n; *  linux/kernel/panic.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
 multiline_comment|/*&n; * This function is used through-out the kernel (includeinh mm and fs)&n; * to indicate a major problem.&n; */
+macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-r_extern
-l_string|&quot;C&quot;
+id|asmlinkage
 r_void
 id|sys_sync
 c_func
@@ -12,6 +12,24 @@ r_void
 )paren
 suffix:semicolon
 multiline_comment|/* it&squot;s really int */
+r_extern
+r_int
+id|vsprintf
+c_func
+(paren
+r_char
+op_star
+id|buf
+comma
+r_const
+r_char
+op_star
+id|fmt
+comma
+id|va_list
+id|args
+)paren
+suffix:semicolon
 DECL|function|panic
 r_volatile
 r_void
@@ -21,12 +39,50 @@ c_func
 r_const
 r_char
 op_star
-id|s
+id|fmt
+comma
+dot
+dot
+dot
 )paren
 (brace
 r_extern
 r_int
 id|log_to_console
+suffix:semicolon
+r_static
+r_char
+id|buf
+(braket
+l_int|1024
+)braket
+suffix:semicolon
+id|va_list
+id|args
+suffix:semicolon
+id|va_start
+c_func
+(paren
+id|args
+comma
+id|fmt
+)paren
+suffix:semicolon
+id|vsprintf
+c_func
+(paren
+id|buf
+comma
+id|fmt
+comma
+id|args
+)paren
+suffix:semicolon
+id|va_end
+c_func
+(paren
+id|args
+)paren
 suffix:semicolon
 id|log_to_console
 op_assign
@@ -37,7 +93,7 @@ c_func
 (paren
 l_string|&quot;Kernel panic: %s&bslash;n&quot;
 comma
-id|s
+id|buf
 )paren
 suffix:semicolon
 r_if

@@ -2793,7 +2793,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-id|sync_dev
+id|fsync_dev
 c_func
 (paren
 id|inode-&gt;i_rdev

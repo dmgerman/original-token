@@ -598,6 +598,20 @@ r_int
 id|pri
 )paren
 suffix:semicolon
+DECL|macro|HAVE_NETIF_RX
+mdefine_line|#define HAVE_NETIF_RX 1
+r_extern
+r_void
+id|netif_rx
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+)paren
+suffix:semicolon
+multiline_comment|/* The old interface to netif_rx(). */
 r_extern
 r_int
 id|dev_rint
