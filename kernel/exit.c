@@ -28,6 +28,12 @@ id|sem_exit
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_struct
+id|task_struct
+op_star
+id|child_reaper
+suffix:semicolon
 r_int
 id|getrusage
 c_func
@@ -519,17 +525,7 @@ id|SIGCHLD
 suffix:semicolon
 id|p-&gt;p_opptr
 op_assign
-id|task
-(braket
-id|smp_num_cpus
-)braket
-ques
-c_cond
-suffix:colon
-id|task
-(braket
-l_int|0
-)braket
+id|child_reaper
 suffix:semicolon
 multiline_comment|/* init */
 r_if

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * memory.c: PROM library functions for acquiring/using memory descriptors&n; *           given to us from the ARCS firmware.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: memory.c,v 1.2 1998/05/01 01:35:25 ralf Exp $&n; */
+multiline_comment|/*&n; * memory.c: PROM library functions for acquiring/using memory descriptors&n; *           given to us from the ARCS firmware.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: memory.c,v 1.2 1998/03/27 08:53:47 ralf Exp $&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;

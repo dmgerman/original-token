@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sgialib.h,v 1.2 1998/05/01 01:36:06 ralf Exp $&n; * sgialib.h: SGI ARCS firmware interface library for the Linux kernel.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/* $Id: sgialib.h,v 1.2 1998/07/08 16:01:13 ralf Exp $&n; * sgialib.h: SGI ARCS firmware interface library for the Linux kernel.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
 macro_line|#ifndef _MIPS_SGIALIB_H
 DECL|macro|_MIPS_SGIALIB_H
 mdefine_line|#define _MIPS_SGIALIB_H
@@ -580,6 +580,13 @@ c_func
 (paren
 r_void
 )paren
+id|__attribute__
+c_func
+(paren
+(paren
+id|noreturn
+)paren
+)paren
 suffix:semicolon
 r_extern
 r_void
@@ -587,6 +594,13 @@ id|prom_powerdown
 c_func
 (paren
 r_void
+)paren
+id|__attribute__
+c_func
+(paren
+(paren
+id|noreturn
+)paren
 )paren
 suffix:semicolon
 r_extern
@@ -596,6 +610,13 @@ c_func
 (paren
 r_void
 )paren
+id|__attribute__
+c_func
+(paren
+(paren
+id|noreturn
+)paren
+)paren
 suffix:semicolon
 r_extern
 r_void
@@ -604,6 +625,13 @@ c_func
 (paren
 r_void
 )paren
+id|__attribute__
+c_func
+(paren
+(paren
+id|noreturn
+)paren
+)paren
 suffix:semicolon
 r_extern
 r_void
@@ -611,6 +639,13 @@ id|prom_imode
 c_func
 (paren
 r_void
+)paren
+id|__attribute__
+c_func
+(paren
+(paren
+id|noreturn
+)paren
 )paren
 suffix:semicolon
 r_extern

@@ -127,29 +127,31 @@ DECL|macro|MS_MGC_VAL
 mdefine_line|#define MS_MGC_VAL 0xC0ED0000&t;/* magic flag number to indicate &quot;new&quot; flags */
 DECL|macro|MS_MGC_MSK
 mdefine_line|#define MS_MGC_MSK 0xffff0000&t;/* magic flag number mask */
-multiline_comment|/*&n; * Note that read-only etc flags are inode-specific: setting some file-system&n; * flags just means all the inodes inherit those flags by default. It might be&n; * possible to override it selectively if you really wanted to with some&n; * ioctl() that is not currently implemented.&n; *&n; * Exception: MS_RDONLY is always applied to the entire file system.&n; */
+multiline_comment|/*&n; * Note that read-only etc flags are inode-specific: setting some file-system&n; * flags just means all the inodes inherit those flags by default. It might be&n; * possible to override it selectively if you really wanted to with some&n; * ioctl() that is not currently implemented.&n; *&n; * Exception: MS_RDONLY is always applied to the entire file system.&n; *&n; * Unfortunately, it is possible to change a filesystems flags with it mounted&n; * with files in use.  This means that all of the inodes will not have their&n; * i_flags updated.  Hence, i_flags no longer inherit the superblock mount&n; * flags, so these have to be checked separately. -- rmk@arm.uk.linux.org&n; */
+DECL|macro|__IS_FLG
+mdefine_line|#define __IS_FLG(inode,flg) (((inode)-&gt;i_sb &amp;&amp; (inode)-&gt;i_sb-&gt;s_flags &amp; (flg)) &bslash;&n;&t;&t;&t;&t;|| (inode)-&gt;i_flags &amp; (flg))
 DECL|macro|IS_RDONLY
 mdefine_line|#define IS_RDONLY(inode) (((inode)-&gt;i_sb) &amp;&amp; ((inode)-&gt;i_sb-&gt;s_flags &amp; MS_RDONLY))
 DECL|macro|IS_NOSUID
-mdefine_line|#define IS_NOSUID(inode) ((inode)-&gt;i_flags &amp; MS_NOSUID)
+mdefine_line|#define IS_NOSUID(inode)&t;__IS_FLG(inode, MS_NOSUID)
 DECL|macro|IS_NODEV
-mdefine_line|#define IS_NODEV(inode) ((inode)-&gt;i_flags &amp; MS_NODEV)
+mdefine_line|#define IS_NODEV(inode)&t;&t;__IS_FLG(inode, MS_NODEV)
 DECL|macro|IS_NOEXEC
-mdefine_line|#define IS_NOEXEC(inode) ((inode)-&gt;i_flags &amp; MS_NOEXEC)
+mdefine_line|#define IS_NOEXEC(inode)&t;__IS_FLG(inode, MS_NOEXEC)
 DECL|macro|IS_SYNC
-mdefine_line|#define IS_SYNC(inode) ((inode)-&gt;i_flags &amp; MS_SYNCHRONOUS)
+mdefine_line|#define IS_SYNC(inode)&t;&t;__IS_FLG(inode, MS_SYNCHRONOUS)
 DECL|macro|IS_MANDLOCK
-mdefine_line|#define IS_MANDLOCK(inode) ((inode)-&gt;i_flags &amp; MS_MANDLOCK)
+mdefine_line|#define IS_MANDLOCK(inode)&t;__IS_FLG(inode, MS_MANDLOCK)
 DECL|macro|IS_QUOTAINIT
-mdefine_line|#define IS_QUOTAINIT(inode) ((inode)-&gt;i_flags &amp; S_QUOTA)
+mdefine_line|#define IS_QUOTAINIT(inode)&t;((inode)-&gt;i_flags &amp; S_QUOTA)
 DECL|macro|IS_APPEND
-mdefine_line|#define IS_APPEND(inode) ((inode)-&gt;i_flags &amp; S_APPEND)
+mdefine_line|#define IS_APPEND(inode)&t;((inode)-&gt;i_flags &amp; S_APPEND)
 DECL|macro|IS_IMMUTABLE
-mdefine_line|#define IS_IMMUTABLE(inode) ((inode)-&gt;i_flags &amp; S_IMMUTABLE)
+mdefine_line|#define IS_IMMUTABLE(inode)&t;((inode)-&gt;i_flags &amp; S_IMMUTABLE)
 DECL|macro|IS_NOATIME
-mdefine_line|#define IS_NOATIME(inode) ((inode)-&gt;i_flags &amp; MS_NOATIME)
+mdefine_line|#define IS_NOATIME(inode)&t;__IS_FLG(inode, MS_NOATIME)
 DECL|macro|IS_NODIRATIME
-mdefine_line|#define IS_NODIRATIME(inode) ((inode)-&gt;i_flags &amp; MS_NODIRATIME)
+mdefine_line|#define IS_NODIRATIME(inode)&t;__IS_FLG(inode, MS_NODIRATIME)
 multiline_comment|/* the read-only stuff doesn&squot;t really belong here, but any other place is&n;   probably as bad and I don&squot;t want to create yet another include file. */
 DECL|macro|BLKROSET
 mdefine_line|#define BLKROSET   _IO(0x12,93)&t;/* set device read-only (0 = read-write) */
@@ -1391,168 +1393,6 @@ op_star
 )paren
 suffix:semicolon
 macro_line|#include &lt;linux/stat.h&gt;
-DECL|macro|FLOCK_VERIFY_READ
-mdefine_line|#define FLOCK_VERIFY_READ  1
-DECL|macro|FLOCK_VERIFY_WRITE
-mdefine_line|#define FLOCK_VERIFY_WRITE 2
-r_extern
-r_int
-id|locks_mandatory_locked
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|locks_mandatory_area
-c_func
-(paren
-r_int
-id|read_write
-comma
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|filp
-comma
-id|loff_t
-id|offset
-comma
-r_int
-id|count
-)paren
-suffix:semicolon
-DECL|function|locks_verify_locked
-r_extern
-r_inline
-r_int
-id|locks_verify_locked
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-)paren
-(brace
-multiline_comment|/* Candidates for mandatory locking have the setgid bit set&n;&t; * but no group execute bit -  an otherwise meaningless combination.&n;&t; */
-r_if
-c_cond
-(paren
-id|IS_MANDLOCK
-c_func
-(paren
-id|inode
-)paren
-op_logical_and
-(paren
-id|inode-&gt;i_mode
-op_amp
-(paren
-id|S_ISGID
-op_or
-id|S_IXGRP
-)paren
-)paren
-op_eq
-id|S_ISGID
-)paren
-r_return
-(paren
-id|locks_mandatory_locked
-c_func
-(paren
-id|inode
-)paren
-)paren
-suffix:semicolon
-r_return
-(paren
-l_int|0
-)paren
-suffix:semicolon
-)brace
-DECL|function|locks_verify_area
-r_extern
-r_inline
-r_int
-id|locks_verify_area
-c_func
-(paren
-r_int
-id|read_write
-comma
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|filp
-comma
-id|loff_t
-id|offset
-comma
-r_int
-id|count
-)paren
-(brace
-multiline_comment|/* Candidates for mandatory locking have the setgid bit set&n;&t; * but no group execute bit -  an otherwise meaningless combination.&n;&t; */
-r_if
-c_cond
-(paren
-id|IS_MANDLOCK
-c_func
-(paren
-id|inode
-)paren
-op_logical_and
-(paren
-id|inode-&gt;i_mode
-op_amp
-(paren
-id|S_ISGID
-op_or
-id|S_IXGRP
-)paren
-)paren
-op_eq
-id|S_ISGID
-)paren
-r_return
-(paren
-id|locks_mandatory_area
-c_func
-(paren
-id|read_write
-comma
-id|inode
-comma
-id|filp
-comma
-id|offset
-comma
-id|count
-)paren
-)paren
-suffix:semicolon
-r_return
-(paren
-l_int|0
-)paren
-suffix:semicolon
-)brace
 DECL|struct|fasync_struct
 r_struct
 id|fasync_struct
@@ -2772,6 +2612,168 @@ id|file_system_type
 op_star
 )paren
 suffix:semicolon
+DECL|macro|FLOCK_VERIFY_READ
+mdefine_line|#define FLOCK_VERIFY_READ  1
+DECL|macro|FLOCK_VERIFY_WRITE
+mdefine_line|#define FLOCK_VERIFY_WRITE 2
+r_extern
+r_int
+id|locks_mandatory_locked
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|locks_mandatory_area
+c_func
+(paren
+r_int
+id|read_write
+comma
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|filp
+comma
+id|loff_t
+id|offset
+comma
+r_int
+id|count
+)paren
+suffix:semicolon
+DECL|function|locks_verify_locked
+r_extern
+r_inline
+r_int
+id|locks_verify_locked
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+)paren
+(brace
+multiline_comment|/* Candidates for mandatory locking have the setgid bit set&n;&t; * but no group execute bit -  an otherwise meaningless combination.&n;&t; */
+r_if
+c_cond
+(paren
+id|IS_MANDLOCK
+c_func
+(paren
+id|inode
+)paren
+op_logical_and
+(paren
+id|inode-&gt;i_mode
+op_amp
+(paren
+id|S_ISGID
+op_or
+id|S_IXGRP
+)paren
+)paren
+op_eq
+id|S_ISGID
+)paren
+r_return
+(paren
+id|locks_mandatory_locked
+c_func
+(paren
+id|inode
+)paren
+)paren
+suffix:semicolon
+r_return
+(paren
+l_int|0
+)paren
+suffix:semicolon
+)brace
+DECL|function|locks_verify_area
+r_extern
+r_inline
+r_int
+id|locks_verify_area
+c_func
+(paren
+r_int
+id|read_write
+comma
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|filp
+comma
+id|loff_t
+id|offset
+comma
+r_int
+id|count
+)paren
+(brace
+multiline_comment|/* Candidates for mandatory locking have the setgid bit set&n;&t; * but no group execute bit -  an otherwise meaningless combination.&n;&t; */
+r_if
+c_cond
+(paren
+id|IS_MANDLOCK
+c_func
+(paren
+id|inode
+)paren
+op_logical_and
+(paren
+id|inode-&gt;i_mode
+op_amp
+(paren
+id|S_ISGID
+op_or
+id|S_IXGRP
+)paren
+)paren
+op_eq
+id|S_ISGID
+)paren
+r_return
+(paren
+id|locks_mandatory_area
+c_func
+(paren
+id|read_write
+comma
+id|inode
+comma
+id|filp
+comma
+id|offset
+comma
+id|count
+)paren
+)paren
+suffix:semicolon
+r_return
+(paren
+l_int|0
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* fs/open.c */
 id|asmlinkage
 r_int

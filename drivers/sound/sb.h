@@ -196,6 +196,15 @@ DECL|member|opened
 r_int
 id|opened
 suffix:semicolon
+multiline_comment|/* new audio fields for full duplex support */
+DECL|member|fullduplex
+r_int
+id|fullduplex
+suffix:semicolon
+DECL|member|duplex
+r_int
+id|duplex
+suffix:semicolon
 DECL|member|speed
 DECL|member|bits
 DECL|member|channels
@@ -219,6 +228,15 @@ id|intr_active
 comma
 id|irq_mode
 suffix:semicolon
+multiline_comment|/* duplicate audio fields for full duplex support */
+DECL|member|intr_active_2
+DECL|member|irq_mode_2
+r_volatile
+r_int
+id|intr_active_2
+comma
+id|irq_mode_2
+suffix:semicolon
 multiline_comment|/* Mixer fields */
 DECL|member|levels
 r_int
@@ -232,17 +250,23 @@ id|iomap
 suffix:semicolon
 DECL|member|mixer_caps
 DECL|member|recmask
+DECL|member|outmask
 DECL|member|supported_devices
 r_int
 id|mixer_caps
 comma
 id|recmask
 comma
+id|outmask
+comma
 id|supported_devices
 suffix:semicolon
 DECL|member|supported_rec_devices
+DECL|member|supported_out_devices
 r_int
 id|supported_rec_devices
+comma
+id|supported_out_devices
 suffix:semicolon
 DECL|member|my_mixerdev
 r_int
@@ -273,6 +297,28 @@ suffix:semicolon
 DECL|member|trg_restart
 r_int
 id|trg_restart
+suffix:semicolon
+multiline_comment|/* duplicate audio fields for full duplex support */
+DECL|member|trg_buf_2
+r_int
+r_int
+id|trg_buf_2
+suffix:semicolon
+DECL|member|trigger_bits_2
+r_int
+id|trigger_bits_2
+suffix:semicolon
+DECL|member|trg_bytes_2
+r_int
+id|trg_bytes_2
+suffix:semicolon
+DECL|member|trg_intrflag_2
+r_int
+id|trg_intrflag_2
+suffix:semicolon
+DECL|member|trg_restart_2
+r_int
+id|trg_restart_2
 suffix:semicolon
 DECL|member|tconst
 r_int

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * console.c: SGI arcs console code.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@sgi.com)&n; *&n; * $Id: console.c,v 1.2 1998/05/01 01:35:23 ralf Exp $&n; */
+multiline_comment|/*&n; * console.c: SGI arcs console code.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@sgi.com)&n; *&n; * $Id: console.c,v 1.2 1998/03/27 08:53:46 ralf Exp $&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;
 DECL|function|__initfunc

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * bootinfo.h -- Definition of the Linux/MIPS boot information structure&n; *&n; * Copyright (C) 1995, 1996 by Ralf Baechle, Andreas Busse,&n; *                             Stoned Elipot and Paul M. Antoine.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; *&n; * $Id: bootinfo.h,v 1.7 1998/05/01 01:35:46 ralf Exp $&n; */
+multiline_comment|/* $Id: bootinfo.h,v 1.5 1998/08/19 21:58:10 ralf Exp $&n; *&n; * bootinfo.h -- Definition of the Linux/MIPS boot information structure&n; *&n; * Copyright (C) 1995, 1996 by Ralf Baechle, Andreas Busse,&n; *                             Stoned Elipot and Paul M. Antoine.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
 macro_line|#ifndef __ASM_MIPS_BOOTINFO_H
 DECL|macro|__ASM_MIPS_BOOTINFO_H
 mdefine_line|#define __ASM_MIPS_BOOTINFO_H
@@ -129,7 +129,7 @@ DECL|macro|CPU_NAMES
 mdefine_line|#define CPU_NAMES { &quot;unknown&quot;, &quot;R2000&quot;, &quot;R3000&quot;, &quot;R3000A&quot;, &quot;R3041&quot;, &quot;R3051&quot;, &bslash;&n;        &quot;R3052&quot;, &quot;R3081&quot;, &quot;R3081E&quot;, &quot;R4000PC&quot;, &quot;R4000SC&quot;, &quot;R4000MC&quot;,         &bslash;&n;        &quot;R4200&quot;, &quot;R4400PC&quot;, &quot;R4400SC&quot;, &quot;R4400MC&quot;, &quot;R4600&quot;, &quot;R6000&quot;,          &bslash;&n;        &quot;R6000A&quot;, &quot;R8000&quot;, &quot;R10000&quot;, &quot;R4300&quot;, &quot;R4650&quot;, &quot;R4700&quot;, &quot;R5000&quot;,     &bslash;&n;        &quot;R5000A&quot;, &quot;R4640&quot;, &quot;Nevada&quot; }
 DECL|macro|CL_SIZE
 mdefine_line|#define CL_SIZE      (80)
-macro_line|#ifndef __LANGUAGE_ASSEMBLY__
+macro_line|#ifndef _LANGUAGE_ASSEMBLY
 multiline_comment|/*&n; * Some machine parameters passed by the bootloaders. &n; */
 DECL|struct|drive_info_struct
 r_struct
@@ -374,18 +374,19 @@ r_void
 suffix:semicolon
 macro_line|#ifdef CONFIG_SGI
 multiline_comment|/* screen info will dissapear... soon */
+singleline_comment|//#define DEFAULT_SCREEN_INFO {0, 0, 0, 0, 0, 158, 0, 0, 0, 62, 0, 16}
 DECL|macro|DEFAULT_SCREEN_INFO
-mdefine_line|#define DEFAULT_SCREEN_INFO {0, 0, {0, 0, }, 0, 0, 158, 0, 0, 0, 62, 0, 16}
+mdefine_line|#define DEFAULT_SCREEN_INFO {0, 0, 0, 0, 0, 160, 0, 0, 0, 64, 0, 16}
 DECL|macro|DEFAULT_DRIVE_INFO
 mdefine_line|#define DEFAULT_DRIVE_INFO { {0,}}
 macro_line|#else
 multiline_comment|/* default values for screen_info variable */
 DECL|macro|DEFAULT_SCREEN_INFO
-mdefine_line|#define DEFAULT_SCREEN_INFO {0, 0, {0, }, 52, 3, 80, 4626, 3, 9, 50}
+mdefine_line|#define DEFAULT_SCREEN_INFO {0, 0, 0, 52, 3, 80, 4626, 3, 9, 50}
+macro_line|#endif
 multiline_comment|/* default values for drive info */
 DECL|macro|DEFAULT_DRIVE_INFO
 mdefine_line|#define DEFAULT_DRIVE_INFO { {0,}}
-macro_line|#endif
 multiline_comment|/*&n; * These are the kernel variables initialized from&n; * the tag. And they have to be initialized to dummy/default&n; * values in setup.c (or whereever suitable) so they are in&n; * .data section&n; */
 r_extern
 r_int
@@ -427,6 +428,6 @@ r_int
 r_int
 id|mips_dma_cache_base
 suffix:semicolon
-macro_line|#endif /* __LANGUAGE_ASSEMBLY__ */
+macro_line|#endif /* _LANGUAGE_ASSEMBLY */
 macro_line|#endif /* __ASM_MIPS_BOOTINFO_H */
 eof

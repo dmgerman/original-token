@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * tfp.c: MMU and cache routines specific to the r8000 (TFP).&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; */
+multiline_comment|/* $Id: tfp.c,v 1.6 1998/10/16 19:22:44 ralf Exp $&n; *&n; * tfp.c: MMU and cache routines specific to the r8000 (TFP).&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -7,6 +7,7 @@ macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;
+macro_line|#include &lt;asm/mmu_context.h&gt;
 r_extern
 r_int
 r_int
@@ -294,6 +295,11 @@ suffix:semicolon
 id|flush_tlb_page
 op_assign
 id|tfp_flush_tlb_page
+suffix:semicolon
+id|tfp_asid_setup
+c_func
+(paren
+)paren
 suffix:semicolon
 id|add_wired_entry
 op_assign

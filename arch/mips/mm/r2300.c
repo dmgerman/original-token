@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * r2300.c: R2000 and R3000 specific mmu/cache code.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: r2300.c,v 1.5 1998/05/01 01:34:55 ralf Exp $&n; */
+multiline_comment|/* $Id: r2300.c,v 1.7 1998/10/16 19:22:43 ralf Exp $&n; *&n; * r2300.c: R2000 and R3000 specific mmu/cache code.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -7,6 +7,7 @@ macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;
+macro_line|#include &lt;asm/mmu_context.h&gt;
 r_extern
 r_int
 r_int
@@ -585,16 +586,9 @@ id|page
 comma
 l_string|&quot;1&quot;
 (paren
-id|PAGE_SIZE
+id|USER_PTRS_PER_PGD
 op_div
-(paren
-r_sizeof
-(paren
-id|pmd_t
-)paren
-op_star
 l_int|8
-)paren
 )paren
 )paren
 suffix:semicolon
@@ -1059,6 +1053,11 @@ suffix:semicolon
 id|flush_tlb_page
 op_assign
 id|r2300_flush_tlb_page
+suffix:semicolon
+id|r3000_asid_setup
+c_func
+(paren
+)paren
 suffix:semicolon
 id|load_pgd
 op_assign

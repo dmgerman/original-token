@@ -13,6 +13,10 @@ macro_line|#if defined(__sparc__) || defined(CONFIG_SMD_DISKLABEL)
 DECL|macro|CONFIG_SUN_PARTITION
 mdefine_line|#define CONFIG_SUN_PARTITION 1
 macro_line|#endif
+macro_line|#if defined(CONFIG_SGI)
+DECL|macro|CONFIG_SGI_PARTITION
+mdefine_line|#define CONFIG_SGI_PARTITION 1
+macro_line|#endif
 multiline_comment|/* These three have identical behaviour; use the second one if DOS fdisk gets&n;   confused about extended/logical partitions starting past cylinder 1023. */
 DECL|macro|DOS_EXTENDED_PARTITION
 mdefine_line|#define DOS_EXTENDED_PARTITION 5

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * SNI specific definitions&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1997 by Ralf Baechle&n; */
+multiline_comment|/* $Id: sni.h,v 1.2 1998/09/16 22:52:43 ralf Exp $&n; *&n; * SNI specific definitions&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1997, 1998 by Ralf Baechle&n; */
 macro_line|#ifndef __ASM_MIPS_SNI_H 
 DECL|macro|__ASM_MIPS_SNI_H
 mdefine_line|#define __ASM_MIPS_SNI_H 
@@ -114,5 +114,8 @@ mdefine_line|#define PCIMT_IRQ_SCSI&t;&t;25
 multiline_comment|/*&n; * Base address for the mapped 16mb EISA bus segment.&n; */
 DECL|macro|PCIMT_EISA_BASE
 mdefine_line|#define PCIMT_EISA_BASE&t;&t;0xb0000000
+multiline_comment|/*&n; * The keyboard interrupt is an ISA interrupt&n; */
+DECL|macro|SNI_KEYBOARD_IRQ
+mdefine_line|#define SNI_KEYBOARD_IRQ 1
 macro_line|#endif /* __ASM_MIPS_SNI_H */
 eof

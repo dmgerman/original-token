@@ -619,13 +619,13 @@ c_func
 (paren
 id|VFS
 comma
-l_string|&quot;nfs: write(%s/%s (%d), %lu@%lu)&bslash;n&quot;
+l_string|&quot;nfs: write(%s/%s(%ld), %lu@%lu)&bslash;n&quot;
 comma
 id|dentry-&gt;d_parent-&gt;d_name.name
 comma
 id|dentry-&gt;d_name.name
 comma
-id|inode-&gt;i_count
+id|inode-&gt;i_ino
 comma
 (paren
 r_int
@@ -641,24 +641,6 @@ op_star
 id|ppos
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|inode
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;nfs_file_write: inode = NULL&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-)brace
 id|result
 op_assign
 op_minus
@@ -698,33 +680,6 @@ id|result
 r_goto
 id|out
 suffix:semicolon
-macro_line|#ifdef NFS_PARANOIA
-multiline_comment|/* N.B. This should be impossible now -- inodes can&squot;t change mode */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|S_ISREG
-c_func
-(paren
-id|inode-&gt;i_mode
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;nfs_file_write: write to non-file, mode %07o&bslash;n&quot;
-comma
-id|inode-&gt;i_mode
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-)brace
-macro_line|#endif
 id|result
 op_assign
 id|count
@@ -777,7 +732,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-id|KERN_ERR
+id|KERN_INFO
 l_string|&quot;NFS: attempt to write to active swap file!&bslash;n&quot;
 )paren
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sgimc.h,v 1.2 1998/05/01 01:36:08 ralf Exp $&n; * sgimc.h: Definitions for memory controller hardware found on&n; *          SGI IP20, IP22, IP26, and IP28 machines.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/* $Id: sgimc.h,v 1.1.1.1 1997/06/01 03:17:13 ralf Exp $&n; * sgimc.h: Definitions for memory controller hardware found on&n; *          SGI IP20, IP22, IP26, and IP28 machines.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
 macro_line|#ifndef _MIPS_SGIMC_H
 DECL|macro|_MIPS_SGIMC_H
 mdefine_line|#define _MIPS_SGIMC_H

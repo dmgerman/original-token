@@ -43,13 +43,6 @@ macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
-r_extern
-r_int
-r_char
-id|aux_device_present
-comma
-id|pckbd_read_mask
-suffix:semicolon
 macro_line|#if defined(CONFIG_PROC_FS)
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#endif
@@ -846,6 +839,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|is_subdir
+)paren
+suffix:semicolon
+DECL|variable|get_unused_fd
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|get_unused_fd
 )paren
 suffix:semicolon
 macro_line|#if !defined(CONFIG_NFSD) &amp;&amp; defined(CONFIG_NFSD_MODULE)
@@ -1889,25 +1889,6 @@ c_func
 id|fasync_helper
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PSMOUSE_MODULE
-multiline_comment|/* psaux mouse */
-DECL|variable|aux_device_present
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|aux_device_present
-)paren
-suffix:semicolon
-macro_line|#ifdef CONFIG_VT
-DECL|variable|pckbd_read_mask
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|pckbd_read_mask
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_MD
 DECL|variable|disk_name
 id|EXPORT_SYMBOL

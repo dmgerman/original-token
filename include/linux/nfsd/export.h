@@ -249,6 +249,10 @@ id|kdev_t
 comma
 id|ino_t
 comma
+r_char
+op_star
+id|path
+comma
 r_struct
 id|knfs_fh
 op_star

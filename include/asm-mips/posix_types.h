@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * POSIX types&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996 by Ralf Baechle&n; */
+multiline_comment|/* $Id: posix_types.h,v 1.5 1998/08/17 13:59:34 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997, 1998 by Ralf Baechle&n; */
 macro_line|#ifndef __ARCH_MIPS_POSIX_TYPES_H
 DECL|macro|__ARCH_MIPS_POSIX_TYPES_H
 mdefine_line|#define __ARCH_MIPS_POSIX_TYPES_H
@@ -120,6 +120,7 @@ DECL|typedef|__kernel_fsid_t
 )brace
 id|__kernel_fsid_t
 suffix:semicolon
+macro_line|#if defined(__KERNEL__) || !defined(__GLIBC__) || (__GLIBC__ &lt; 2)
 DECL|macro|__FD_SET
 macro_line|#undef __FD_SET
 DECL|function|__FD_SET
@@ -542,5 +543,6 @@ op_increment
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif /* defined(__KERNEL__) || !defined(__GLIBC__) || (__GLIBC__ &lt; 2) */
 macro_line|#endif /* __ARCH_MIPS_POSIX_TYPES_H */
 eof

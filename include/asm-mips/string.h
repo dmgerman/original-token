@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * include/asm-mips/string.h&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (c) 1994, 1995, 1996, 1997 by Ralf Baechle&n; *&n; * $Id: string.h,v 1.7 1998/05/04 09:19:02 ralf Exp $&n; */
+multiline_comment|/* $Id: string.h,v 1.6 1998/07/20 17:52:21 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (c) 1994, 1995, 1996, 1997, 1998 by Ralf Baechle&n; */
 macro_line|#ifndef __ASM_MIPS_STRING_H
 DECL|macro|__ASM_MIPS_STRING_H
 mdefine_line|#define __ASM_MIPS_STRING_H
@@ -390,40 +390,9 @@ r_int
 id|__n
 )paren
 suffix:semicolon
+multiline_comment|/* Don&squot;t build bcopy at all ...  */
 DECL|macro|__HAVE_ARCH_BCOPY
 mdefine_line|#define __HAVE_ARCH_BCOPY
-DECL|function|bcopy
-r_extern
-id|__inline__
-r_char
-op_star
-id|bcopy
-c_func
-(paren
-r_const
-r_char
-op_star
-id|src
-comma
-r_char
-op_star
-id|dest
-comma
-r_int
-id|count
-)paren
-(brace
-id|memmove
-c_func
-(paren
-id|dest
-comma
-id|src
-comma
-id|count
-)paren
-suffix:semicolon
-)brace
 DECL|macro|__HAVE_ARCH_MEMSCAN
 mdefine_line|#define __HAVE_ARCH_MEMSCAN
 DECL|function|memscan

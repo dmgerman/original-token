@@ -1,7 +1,4 @@
-multiline_comment|/* ptrace.c */
-multiline_comment|/* By Ross Biro 1/23/92 */
-multiline_comment|/* edited by Linus Torvalds */
-multiline_comment|/* further hacked for MIPS by David S. Miller (dm@engr.sgi.com) */
+multiline_comment|/* $Id: ptrace.c,v 1.11 1998/10/19 16:26:31 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1992 Ross Biro&n; * Copyright (C) Linus Torvalds&n; * Copyright (C) 1994, 1995, 1996, 1997, 1998 Ralf Baechle&n; * Copyright (C) 1996 David S. Miller&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -10,10 +7,12 @@ macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
-macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;asm/fp.h&gt;
+macro_line|#include &lt;asm/mipsregs.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/*&n; * This routine gets a long from any process space by following the page&n; * tables. NOTE! You should check that the long isn&squot;t on a page boundary,&n; * and that it is in the task area before calling this: this routine does&n; * no checking.&n; */
 DECL|function|get_long
 r_static
@@ -288,6 +287,12 @@ op_star
 )paren
 id|page
 suffix:semicolon
+id|flush_cache_all
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* VCED avoidance  */
 r_return
 id|retval
 suffix:semicolon
@@ -568,12 +573,9 @@ c_func
 id|high_memory
 )paren
 )paren
-id|flush_cache_page
+id|flush_cache_all
 c_func
 (paren
-id|vma
-comma
-id|addr
 )paren
 suffix:semicolon
 op_star
@@ -610,10 +612,9 @@ c_func
 id|high_memory
 )paren
 )paren
-id|flush_page_to_ram
+id|flush_cache_all
 c_func
 (paren
-id|page
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * We&squot;re bypassing pagetables, so we have to set the dirty bit&n;&t; * ourselves this should also re-instate whatever read-only mode&n;&t; * there was before&n;&t; */
@@ -1682,7 +1683,6 @@ c_cond
 id|request
 )paren
 (brace
-multiline_comment|/* when I and D space are separate, these will need to be fixed. */
 r_case
 id|PTRACE_PEEKTEXT
 suffix:colon
@@ -1793,7 +1793,6 @@ id|addr
 op_ge
 l_int|0
 )paren
-(brace
 id|tmp
 op_assign
 id|regs-&gt;regs
@@ -1801,7 +1800,6 @@ id|regs-&gt;regs
 id|addr
 )braket
 suffix:semicolon
-)brace
 r_else
 r_if
 c_cond
@@ -1821,7 +1819,41 @@ r_int
 op_star
 id|fregs
 suffix:semicolon
-multiline_comment|/* We don&squot;t want to do a FPU operation here. */
+r_if
+c_cond
+(paren
+id|child-&gt;used_math
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|last_task_used_math
+op_eq
+id|child
+)paren
+(brace
+id|enable_cp1
+c_func
+(paren
+)paren
+suffix:semicolon
+id|r4xx0_save_fp
+c_func
+(paren
+id|child
+)paren
+suffix:semicolon
+id|disable_cp1
+c_func
+(paren
+)paren
+suffix:semicolon
+id|last_task_used_math
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
 id|fregs
 op_assign
 (paren
@@ -1851,6 +1883,16 @@ l_int|32
 )paren
 )braket
 suffix:semicolon
+)brace
+r_else
+(brace
+id|tmp
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+multiline_comment|/* FP not yet used  */
+)brace
 )brace
 r_else
 (brace
@@ -1926,6 +1968,7 @@ id|tmp
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* XXX */
 r_break
 suffix:semicolon
 r_default
@@ -1943,7 +1986,6 @@ r_goto
 id|out
 suffix:semicolon
 )brace
-suffix:semicolon
 )brace
 id|res
 op_assign
@@ -1964,7 +2006,6 @@ r_goto
 id|out
 suffix:semicolon
 )brace
-multiline_comment|/* when I and D space are separate, this will have to be fixed. */
 r_case
 id|PTRACE_POKETEXT
 suffix:colon
@@ -2037,7 +2078,6 @@ id|addr
 op_ge
 l_int|0
 )paren
-(brace
 id|regs-&gt;regs
 (braket
 id|addr
@@ -2045,7 +2085,6 @@ id|addr
 op_assign
 id|data
 suffix:semicolon
-)brace
 r_else
 r_if
 c_cond
@@ -2065,7 +2104,65 @@ r_int
 op_star
 id|fregs
 suffix:semicolon
-multiline_comment|/* We don&squot;t want to do a FPU operation here. */
+r_if
+c_cond
+(paren
+id|child-&gt;used_math
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|last_task_used_math
+op_eq
+id|child
+)paren
+(brace
+id|enable_cp1
+c_func
+(paren
+)paren
+suffix:semicolon
+id|r4xx0_save_fp
+c_func
+(paren
+id|child
+)paren
+suffix:semicolon
+id|disable_cp1
+c_func
+(paren
+)paren
+suffix:semicolon
+id|last_task_used_math
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
+multiline_comment|/* FP not yet used  */
+id|memset
+c_func
+(paren
+op_amp
+id|child-&gt;tss.fpu.hard
+comma
+op_complement
+l_int|0
+comma
+r_sizeof
+(paren
+id|child-&gt;tss.fpu.hard
+)paren
+)paren
+suffix:semicolon
+id|child-&gt;tss.fpu.hard.control
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 id|fregs
 op_assign
 (paren
@@ -2227,7 +2324,7 @@ r_goto
 id|out
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * make the child exit.  Best I can do is send it a sigkill. &n; * perhaps it should be put in the status that it wants to &n; * exit.&n; */
+multiline_comment|/*&n;&t; * make the child exit.  Best I can do is send it a sigkill. &n;&t; * perhaps it should be put in the status that it wants to &n;&t; * exit.&n;&t; */
 r_case
 id|PTRACE_KILL
 suffix:colon
@@ -2240,15 +2337,15 @@ op_ne
 id|TASK_ZOMBIE
 )paren
 (brace
+id|child-&gt;exit_code
+op_assign
+id|SIGKILL
+suffix:semicolon
 id|wake_up_process
 c_func
 (paren
 id|child
 )paren
-suffix:semicolon
-id|child-&gt;exit_code
-op_assign
-id|SIGKILL
 suffix:semicolon
 )brace
 id|res
@@ -2294,12 +2391,6 @@ op_or
 id|PF_TRACESYS
 )paren
 suffix:semicolon
-id|wake_up_process
-c_func
-(paren
-id|child
-)paren
-suffix:semicolon
 id|child-&gt;exit_code
 op_assign
 id|data
@@ -2315,6 +2406,12 @@ op_assign
 id|child-&gt;p_opptr
 suffix:semicolon
 id|SET_LINKS
+c_func
+(paren
+id|child
+)paren
+suffix:semicolon
+id|wake_up_process
 c_func
 (paren
 id|child

@@ -1,8 +1,6 @@
-multiline_comment|/*&n; * indy_hpc.c: Routines for generic manipulation of the HPC controllers.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: indy_hpc.c,v 1.2 1998/05/01 01:35:14 ralf Exp $&n; */
+multiline_comment|/* $Id: indy_hpc.c,v 1.4 1998/07/14 09:12:27 ralf Exp $&n; *&n; * indy_hpc.c: Routines for generic manipulation of the HPC controllers.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; * Copyright (C) 1998 Ralf Baechle&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/addrspace.h&gt;
-macro_line|#include &lt;asm/ptrace.h&gt;
-macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/sgihpc.h&gt;
 macro_line|#include &lt;asm/sgint23.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;
@@ -24,14 +22,13 @@ op_star
 id|hpc3mregs
 suffix:semicolon
 multiline_comment|/* We need software copies of these because they are write only. */
-DECL|variable|write1
-DECL|variable|write2
-r_static
+DECL|variable|sgi_hpc_write1
+DECL|variable|sgi_hpc_write2
 r_int
 r_int
-id|write1
+id|sgi_hpc_write1
 comma
-id|write2
+id|sgi_hpc_write2
 suffix:semicolon
 multiline_comment|/* Machine specific identifier knobs. */
 DECL|variable|sgi_has_ioc2
@@ -50,58 +47,6 @@ DECL|variable|sgi_boardid
 r_int
 id|sgi_boardid
 suffix:semicolon
-DECL|function|sgihpc_write1_modify
-r_void
-id|sgihpc_write1_modify
-c_func
-(paren
-r_int
-id|set
-comma
-r_int
-id|clear
-)paren
-(brace
-id|write1
-op_or_assign
-id|set
-suffix:semicolon
-id|write1
-op_and_assign
-op_complement
-id|clear
-suffix:semicolon
-id|hpc3mregs-&gt;write1
-op_assign
-id|write1
-suffix:semicolon
-)brace
-DECL|function|sgihpc_write2_modify
-r_void
-id|sgihpc_write2_modify
-c_func
-(paren
-r_int
-id|set
-comma
-r_int
-id|clear
-)paren
-(brace
-id|write2
-op_or_assign
-id|set
-suffix:semicolon
-id|write2
-op_and_assign
-op_complement
-id|clear
-suffix:semicolon
-id|hpc3mregs-&gt;write2
-op_assign
-id|write2
-suffix:semicolon
-)brace
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -325,7 +270,7 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-id|write1
+id|sgi_hpc_write1
 op_assign
 (paren
 id|HPC3_WRITE1_PRESET
@@ -337,7 +282,7 @@ op_or
 id|HPC3_WRITE1_LC0OFF
 )paren
 suffix:semicolon
-id|write2
+id|sgi_hpc_write2
 op_assign
 (paren
 id|HPC3_WRITE2_EASEL
@@ -360,18 +305,18 @@ op_logical_neg
 id|sgi_guiness
 )paren
 (brace
-id|write1
+id|sgi_hpc_write1
 op_or_assign
 id|HPC3_WRITE1_GRESET
 suffix:semicolon
 )brace
 id|hpc3mregs-&gt;write1
 op_assign
-id|write1
+id|sgi_hpc_write1
 suffix:semicolon
 id|hpc3mregs-&gt;write2
 op_assign
-id|write2
+id|sgi_hpc_write2
 suffix:semicolon
 id|hpc3c0-&gt;pbus_piocfgs
 (braket

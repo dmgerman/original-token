@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * indy_timer.c: Setting up the clock on the INDY 8254 controller.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: indy_timer.c,v 1.5 1998/05/01 01:35:17 ralf Exp $&n; */
+multiline_comment|/* $Id: indy_timer.c,v 1.9 1998/06/25 20:15:02 ralf Exp $&n; *&n; * indy_timer.c: Setting up the clock on the INDY 8254 controller.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; * Copytight (C) 1997, 1998 Ralf Baechle (ralf@gnu.org)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -18,108 +18,6 @@ macro_line|#include &lt;asm/sgi.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;
 macro_line|#include &lt;asm/sgihpc.h&gt;
 macro_line|#include &lt;asm/sgint23.h&gt;
-multiline_comment|/* The layout of registers for the INDY Dallas 1286 clock chipset. */
-DECL|struct|indy_clock
-r_struct
-id|indy_clock
-(brace
-DECL|member|hsec
-r_volatile
-r_int
-r_int
-id|hsec
-suffix:semicolon
-DECL|member|sec
-r_volatile
-r_int
-r_int
-id|sec
-suffix:semicolon
-DECL|member|min
-r_volatile
-r_int
-r_int
-id|min
-suffix:semicolon
-DECL|member|malarm
-r_volatile
-r_int
-r_int
-id|malarm
-suffix:semicolon
-DECL|member|hr
-r_volatile
-r_int
-r_int
-id|hr
-suffix:semicolon
-DECL|member|halarm
-r_volatile
-r_int
-r_int
-id|halarm
-suffix:semicolon
-DECL|member|day
-r_volatile
-r_int
-r_int
-id|day
-suffix:semicolon
-DECL|member|dalarm
-r_volatile
-r_int
-r_int
-id|dalarm
-suffix:semicolon
-DECL|member|date
-r_volatile
-r_int
-r_int
-id|date
-suffix:semicolon
-DECL|member|month
-r_volatile
-r_int
-r_int
-id|month
-suffix:semicolon
-DECL|member|year
-r_volatile
-r_int
-r_int
-id|year
-suffix:semicolon
-DECL|member|cmd
-r_volatile
-r_int
-r_int
-id|cmd
-suffix:semicolon
-DECL|member|whsec
-r_volatile
-r_int
-r_int
-id|whsec
-suffix:semicolon
-DECL|member|wsec
-r_volatile
-r_int
-r_int
-id|wsec
-suffix:semicolon
-DECL|member|_unused0
-r_volatile
-r_int
-r_int
-id|_unused0
-(braket
-l_int|50
-)braket
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|macro|INDY_CLOCK_REGS
-mdefine_line|#define INDY_CLOCK_REGS ((struct indy_clock *)(KSEG1ADDR(0x1fbe0000)))
 multiline_comment|/* Because of a bug in the i8254 timer we need to use the onchip r4k&n; * counter as our system wide timer interrupt running at 100HZ.&n; */
 DECL|variable|r4k_offset
 r_static
@@ -172,6 +70,11 @@ id|indy_clock
 op_star
 id|clock
 op_assign
+(paren
+r_struct
+id|indy_clock
+op_star
+)paren
 id|INDY_CLOCK_REGS
 suffix:semicolon
 r_int
@@ -731,6 +634,11 @@ id|indy_clock
 op_star
 id|clock
 op_assign
+(paren
+r_struct
+id|indy_clock
+op_star
+)paren
 id|INDY_CLOCK_REGS
 suffix:semicolon
 r_int

@@ -275,9 +275,13 @@ id|ai-&gt;osp
 )paren
 )paren
 r_return
-l_int|1
+id|probe_ms_sound
+c_func
+(paren
+id|ai
+)paren
 suffix:semicolon
-multiline_comment|/* The card is already active */
+multiline_comment|/* The card is already active, check irq etc... */
 r_if
 c_cond
 (paren

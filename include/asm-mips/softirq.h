@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * include/asm-mips/softirq.h&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1997, 1998 by Ralf Baechle&n; *&n; * $Id: softirq.h,v 1.2 1998/05/01 01:36:13 ralf Exp $&n; */
+multiline_comment|/* $Id: softirq.h,v 1.5 1998/08/29 21:20:22 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1997, 1998 by Ralf Baechle&n; */
 macro_line|#ifndef __ASM_MIPS_SOFTIRQ_H
 DECL|macro|__ASM_MIPS_SOFTIRQ_H
 mdefine_line|#define __ASM_MIPS_SOFTIRQ_H
@@ -267,6 +267,6 @@ mdefine_line|#define softirq_trylock(cpu)&t;(local_bh_count[cpu] ? 0 : (local_bh
 DECL|macro|softirq_endlock
 mdefine_line|#define softirq_endlock(cpu)&t;(local_bh_count[cpu] = 0)
 DECL|macro|synchronize_bh
-mdefine_line|#define synchronize_bh()&t;do { } while (0)
+mdefine_line|#define synchronize_bh()&t;barrier()
 macro_line|#endif /* __ASM_MIPS_SOFTIRQ_H */
 eof

@@ -9,6 +9,17 @@ mdefine_line|#define&t;NEXT_DEV&t;NULL
 multiline_comment|/* A unified ethernet device probe.  This is the easiest way to have every&n;   ethernet adaptor have the name &quot;eth[0123...]&quot;.&n;   */
 r_extern
 r_int
+id|ne2_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|tulip_probe
 c_func
 (paren
@@ -714,6 +725,17 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|via_rhine_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
 multiline_comment|/* Gigabit Ethernet adapters */
 r_extern
 r_int
@@ -1026,6 +1048,14 @@ l_int|0
 )brace
 comma
 macro_line|#endif
+macro_line|#ifdef CONFIG_VIA_RHINE
+(brace
+id|via_rhine_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
 (brace
 l_int|NULL
 comma
@@ -1153,6 +1183,14 @@ op_assign
 macro_line|#ifdef CONFIG_ULTRAMCA 
 (brace
 id|ultramca_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_NE2_MCA
+(brace
+id|ne2_probe
 comma
 l_int|0
 )brace

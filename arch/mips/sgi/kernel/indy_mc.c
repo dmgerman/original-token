@@ -1,9 +1,8 @@
-multiline_comment|/*&n; * indy_mc.c: Routines for manipulating the INDY memory controller.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: indy_mc.c,v 1.3 1998/05/04 09:18:37 ralf Exp $&n; */
+multiline_comment|/*&n; * indy_mc.c: Routines for manipulating the INDY memory controller.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: indy_mc.c,v 1.3 1998/04/25 15:43:32 ralf Exp $&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/addrspace.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
-macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/sgimc.h&gt;
 macro_line|#include &lt;asm/sgihpc.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;

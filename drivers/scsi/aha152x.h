@@ -49,6 +49,16 @@ op_star
 )paren
 suffix:semicolon
 r_int
+id|aha152x_release
+c_func
+(paren
+r_struct
+id|Scsi_Host
+op_star
+id|shpnt
+)paren
+suffix:semicolon
+r_int
 id|aha152x_reset
 c_func
 (paren

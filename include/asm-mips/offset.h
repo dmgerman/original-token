@@ -84,61 +84,63 @@ mdefine_line|#define PT_SIZE   176
 multiline_comment|/* MIPS task_struct offsets. */
 DECL|macro|TASK_STATE
 mdefine_line|#define TASK_STATE         0
-DECL|macro|TASK_COUNTER
-mdefine_line|#define TASK_COUNTER       52
-DECL|macro|TASK_PRIORITY
-mdefine_line|#define TASK_PRIORITY      56
 DECL|macro|TASK_FLAGS
 mdefine_line|#define TASK_FLAGS         4
 DECL|macro|TASK_SIGPENDING
 mdefine_line|#define TASK_SIGPENDING    8
+DECL|macro|TASK_NEED_RESCHED
+mdefine_line|#define TASK_NEED_RESCHED  20
+DECL|macro|TASK_COUNTER
+mdefine_line|#define TASK_COUNTER       24
+DECL|macro|TASK_PRIORITY
+mdefine_line|#define TASK_PRIORITY      28
 DECL|macro|TASK_MM
-mdefine_line|#define TASK_MM            936
+mdefine_line|#define TASK_MM            928
 multiline_comment|/* MIPS specific thread_struct offsets. */
 DECL|macro|THREAD_REG16
-mdefine_line|#define THREAD_REG16   576
+mdefine_line|#define THREAD_REG16   568
 DECL|macro|THREAD_REG17
-mdefine_line|#define THREAD_REG17   580
+mdefine_line|#define THREAD_REG17   572
 DECL|macro|THREAD_REG18
-mdefine_line|#define THREAD_REG18   584
+mdefine_line|#define THREAD_REG18   576
 DECL|macro|THREAD_REG19
-mdefine_line|#define THREAD_REG19   588
+mdefine_line|#define THREAD_REG19   580
 DECL|macro|THREAD_REG20
-mdefine_line|#define THREAD_REG20   592
+mdefine_line|#define THREAD_REG20   584
 DECL|macro|THREAD_REG21
-mdefine_line|#define THREAD_REG21   596
+mdefine_line|#define THREAD_REG21   588
 DECL|macro|THREAD_REG22
-mdefine_line|#define THREAD_REG22   600
+mdefine_line|#define THREAD_REG22   592
 DECL|macro|THREAD_REG23
-mdefine_line|#define THREAD_REG23   604
+mdefine_line|#define THREAD_REG23   596
 DECL|macro|THREAD_REG29
-mdefine_line|#define THREAD_REG29   608
+mdefine_line|#define THREAD_REG29   600
 DECL|macro|THREAD_REG30
-mdefine_line|#define THREAD_REG30   612
+mdefine_line|#define THREAD_REG30   604
 DECL|macro|THREAD_REG31
-mdefine_line|#define THREAD_REG31   616
+mdefine_line|#define THREAD_REG31   608
 DECL|macro|THREAD_STATUS
-mdefine_line|#define THREAD_STATUS  620
+mdefine_line|#define THREAD_STATUS  612
 DECL|macro|THREAD_FPU
-mdefine_line|#define THREAD_FPU     624
+mdefine_line|#define THREAD_FPU     616
 DECL|macro|THREAD_BVADDR
-mdefine_line|#define THREAD_BVADDR  888
+mdefine_line|#define THREAD_BVADDR  880
 DECL|macro|THREAD_BUADDR
-mdefine_line|#define THREAD_BUADDR  892
+mdefine_line|#define THREAD_BUADDR  884
 DECL|macro|THREAD_ECODE
-mdefine_line|#define THREAD_ECODE   896
+mdefine_line|#define THREAD_ECODE   888
 DECL|macro|THREAD_TRAPNO
-mdefine_line|#define THREAD_TRAPNO  900
+mdefine_line|#define THREAD_TRAPNO  892
 DECL|macro|THREAD_PGDIR
-mdefine_line|#define THREAD_PGDIR   904
+mdefine_line|#define THREAD_PGDIR   896
 DECL|macro|THREAD_MFLAGS
-mdefine_line|#define THREAD_MFLAGS  908
+mdefine_line|#define THREAD_MFLAGS  900
 DECL|macro|THREAD_CURDS
-mdefine_line|#define THREAD_CURDS   912
+mdefine_line|#define THREAD_CURDS   904
 DECL|macro|THREAD_TRAMP
-mdefine_line|#define THREAD_TRAMP   916
+mdefine_line|#define THREAD_TRAMP   908
 DECL|macro|THREAD_OLDCTX
-mdefine_line|#define THREAD_OLDCTX  920
+mdefine_line|#define THREAD_OLDCTX  912
 multiline_comment|/* Linux mm_struct offsets. */
 DECL|macro|MM_COUNT
 mdefine_line|#define MM_COUNT      12

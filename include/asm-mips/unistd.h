@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * This file contains the system call numbers.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997 by Ralf Baechle&n; *&n; * Changed system calls macros _syscall5 - _syscall7 to push args 5 to 7 onto&n; * the stack. Robin Farine for ACN S.A, Copyright (C) 1996 by ACN S.A&n; */
+multiline_comment|/* $Id: unistd.h,v 1.21 1998/10/19 21:29:15 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997, 1998 by Ralf Baechle&n; *&n; * Changed system calls macros _syscall5 - _syscall7 to push args 5 to 7 onto&n; * the stack. Robin Farine for ACN S.A, Copyright (C) 1996 by ACN S.A&n; */
 macro_line|#ifndef __ASM_MIPS_UNISTD_H
 DECL|macro|__ASM_MIPS_UNISTD_H
 mdefine_line|#define __ASM_MIPS_UNISTD_H
@@ -2006,8 +2006,8 @@ DECL|macro|__NR_getegid
 mdefine_line|#define __NR_getegid&t;&t;&t;(__NR_Linux +  50)
 DECL|macro|__NR_acct
 mdefine_line|#define __NR_acct&t;&t;&t;(__NR_Linux +  51)
-DECL|macro|__NR_phys
-mdefine_line|#define __NR_phys&t;&t;&t;(__NR_Linux +  52)
+DECL|macro|__NR_umount2
+mdefine_line|#define __NR_umount2&t;&t;&t;(__NR_Linux +  52)
 DECL|macro|__NR_lock
 mdefine_line|#define __NR_lock&t;&t;&t;(__NR_Linux +  53)
 DECL|macro|__NR_ioctl
@@ -2202,8 +2202,8 @@ DECL|macro|__NR_cachectl
 mdefine_line|#define __NR_cachectl&t;&t;&t;(__NR_Linux + 148)
 DECL|macro|__NR_sysmips
 mdefine_line|#define __NR_sysmips&t;&t;&t;(__NR_Linux + 149)
-DECL|macro|__NR_setup
-mdefine_line|#define __NR_setup&t;&t;&t;(__NR_Linux + 150)&t;/* used only by init, to get system going */
+DECL|macro|__NR_unused150
+mdefine_line|#define __NR_unused150&t;&t;&t;(__NR_Linux + 150)
 DECL|macro|__NR_getsid
 mdefine_line|#define __NR_getsid&t;&t;&t;(__NR_Linux + 151)
 DECL|macro|__NR_fdatasync
@@ -2310,10 +2310,22 @@ DECL|macro|__NR_chown
 mdefine_line|#define __NR_chown&t;&t;&t;(__NR_Linux + 202)
 DECL|macro|__NR_getcwd
 mdefine_line|#define __NR_getcwd&t;&t;&t;(__NR_Linux + 203)
+DECL|macro|__NR_capget
+mdefine_line|#define __NR_capget&t;&t;&t;(__NR_Linux + 204)
+DECL|macro|__NR_capset
+mdefine_line|#define __NR_capset&t;&t;&t;(__NR_Linux + 205)
+DECL|macro|__NR_sigaltstack
+mdefine_line|#define __NR_sigaltstack&t;&t;(__NR_Linux + 206)
+DECL|macro|__NR_sendfile
+mdefine_line|#define __NR_sendfile&t;&t;&t;(__NR_Linux + 207)
+DECL|macro|__NR_getpmsg
+mdefine_line|#define __NR_getpmsg&t;&t;&t;(__NR_Linux + 208)
+DECL|macro|__NR_putpmsg
+mdefine_line|#define __NR_putpmsg&t;&t;&t;(__NR_Linux + 209)
 multiline_comment|/*&n; * Offset of the last Linux flavoured syscall&n; */
 DECL|macro|__NR_Linux_syscalls
-mdefine_line|#define __NR_Linux_syscalls&t;&t;203
-macro_line|#ifndef __LANGUAGE_ASSEMBLY__
+mdefine_line|#define __NR_Linux_syscalls&t;&t;209
+macro_line|#ifndef _LANGUAGE_ASSEMBLY
 multiline_comment|/* XXX - _foo needs to be __foo, while __NR_bar could be _NR_bar. */
 DECL|macro|_syscall0
 mdefine_line|#define _syscall0(type,name) &bslash;&n;type name(void) &bslash;&n;{ &bslash;&n;register long __res __asm__ (&quot;$2&quot;); &bslash;&n;register long __err __asm__ (&quot;$7&quot;); &bslash;&n;__asm__ volatile (&quot;li&bslash;t$2,%2&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;  &quot;syscall&quot; &bslash;&n;                  : &quot;=r&quot; (__res), &quot;=r&quot; (__err) &bslash;&n;                  : &quot;i&quot; (__NR_##name) &bslash;&n;                  : &quot;$8&quot;,&quot;$9&quot;,&quot;$10&quot;,&quot;$11&quot;,&quot;$12&quot;,&quot;$13&quot;,&quot;$14&quot;,&quot;$15&quot;,&quot;$24&quot;); &bslash;&n;if (__err == 0) &bslash;&n;&t;return (type) __res; &bslash;&n;errno = __res; &bslash;&n;return -1; &bslash;&n;}
@@ -2353,19 +2365,6 @@ c_func
 r_int
 comma
 id|pause
-)paren
-r_static
-r_inline
-id|_syscall1
-c_func
-(paren
-r_int
-comma
-id|setup
-comma
-r_int
-comma
-id|magic
 )paren
 r_static
 r_inline
@@ -2684,6 +2683,6 @@ id|retval
 suffix:semicolon
 )brace
 macro_line|#endif /* !defined (__KERNEL_SYSCALLS__) */
-macro_line|#endif /* !defined (__LANGUAGE_ASSEMBLY__) */
+macro_line|#endif /* !defined (_LANGUAGE_ASSEMBLY) */
 macro_line|#endif /* __ASM_MIPS_UNISTD_H */
 eof

@@ -1423,6 +1423,15 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/* The page is unshared, and we want write access.  In this&n;&t;   case, it is safe to tear down the swap cache and give the&n;&t;   page over entirely to this process. */
+r_if
+c_cond
+(paren
+id|PageSwapCache
+c_func
+(paren
+id|page_map
+)paren
+)paren
 id|delete_from_swap_cache
 c_func
 (paren

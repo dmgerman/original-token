@@ -43,8 +43,8 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;ino %lu  mode 0%6.6o  nlink %d  uid %d  gid %d&quot;
-l_string|&quot;  size %lu blocks %lu&bslash;n&quot;
+l_string|&quot;ino %lu  mode 0%6.6o  nlink %d  uid %d  uid32 %u&quot;
+l_string|&quot;  gid %d  gid32 %u  size %lu blocks %lu&bslash;n&quot;
 comma
 id|inode-&gt;i_ino
 comma
@@ -54,7 +54,11 @@ id|inode-&gt;i_nlink
 comma
 id|inode-&gt;i_uid
 comma
+id|inode-&gt;u.ufs_i.i_uid
+comma
 id|inode-&gt;i_gid
+comma
+id|inode-&gt;u.ufs_i.i_gid
 comma
 id|inode-&gt;i_size
 comma
@@ -2469,8 +2473,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|inode-&gt;i_uid
-op_eq
+id|inode-&gt;u.ufs_i.i_uid
+op_ge
 id|UFS_USEEFT
 )paren
 (brace
@@ -2482,8 +2486,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|inode-&gt;i_gid
-op_eq
+id|inode-&gt;u.ufs_i.i_gid
+op_ge
 id|UFS_USEEFT
 )paren
 (brace
@@ -3136,6 +3140,18 @@ c_func
 id|inode-&gt;u.ufs_i.i_gen
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|flags
+op_amp
+id|UFS_UID_MASK
+)paren
+op_eq
+id|UFS_UID_EFT
+)paren
+(brace
 id|ufs_inode-&gt;ui_u3.ui_sun.ui_shadow
 op_assign
 id|SWAB32
@@ -3152,6 +3168,7 @@ c_func
 id|inode-&gt;u.ufs_i.i_oeftflag
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

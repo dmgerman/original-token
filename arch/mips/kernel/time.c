@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/mips/kernel/time.c&n; *&n; *  Copyright (C) 1991, 1992, 1995  Linus Torvalds&n; *&n; * This file contains the time handling details for PC-style clocks as&n; * found in some MIPS systems.&n; *&n; * $Id: time.c,v 1.9 1998/06/10 07:21:13 davem Exp $&n; */
+multiline_comment|/*&n; *  linux/arch/mips/kernel/time.c&n; *&n; *  Copyright (C) 1991, 1992, 1995  Linus Torvalds&n; *&n; * This file contains the time handling details for PC-style clocks as&n; * found in some MIPS systems.&n; *&n; * $Id: time.c,v 1.6 1998/08/17 13:57:44 ralf Exp $&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

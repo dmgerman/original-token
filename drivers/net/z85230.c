@@ -4582,8 +4582,6 @@ c_func
 (paren
 id|c-&gt;rxdma
 )paren
-op_minus
-l_int|4
 suffix:semicolon
 r_if
 c_cond
@@ -4727,14 +4725,6 @@ comma
 id|rxb
 comma
 id|ct
-)paren
-suffix:semicolon
-id|skb_pull
-c_func
-(paren
-id|skb
-comma
-l_int|2
 )paren
 suffix:semicolon
 )brace

@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * sound/sb_common.c&n; *&n; * Common routines for Sound Blaster compatible cards.&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; * Daniel J. Rodriksson: Modified sbintr to handle 8 and 16 bit interrupts&n; *                       for full duplex support ( only sb16 by now )&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/init.h&gt;
@@ -478,6 +479,17 @@ r_if
 c_cond
 (paren
 id|devc-&gt;intr_active
+op_logical_and
+(paren
+op_logical_neg
+id|devc-&gt;fullduplex
+op_logical_or
+(paren
+id|src
+op_amp
+l_int|0x01
+)paren
+)paren
 )paren
 (brace
 r_switch
@@ -531,6 +543,49 @@ suffix:semicolon
 r_default
 suffix:colon
 multiline_comment|/* printk(KERN_WARN &quot;Sound Blaster: Unexpected interrupt&bslash;n&quot;); */
+suffix:semicolon
+)brace
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|devc-&gt;intr_active_2
+op_logical_and
+(paren
+id|src
+op_amp
+l_int|0x02
+)paren
+)paren
+(brace
+r_switch
+c_cond
+(paren
+id|devc-&gt;irq_mode_2
+)paren
+(brace
+r_case
+id|IMODE_OUTPUT
+suffix:colon
+id|DMAbuf_outputintr
+(paren
+id|devc-&gt;dev
+comma
+l_int|1
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|IMODE_INPUT
+suffix:colon
+id|DMAbuf_inputintr
+(paren
+id|devc-&gt;dev
+)paren
+suffix:semicolon
+r_break
 suffix:semicolon
 )brace
 )brace

@@ -17,9 +17,6 @@ l_int|256
 op_assign
 l_string|&quot;/sbin/modprobe&quot;
 suffix:semicolon
-multiline_comment|/*&n;&t;exec_modprobe is spawned from a kernel-mode user process,&n;&t;then changes its state to behave _as_if_ it was spawned&n;&t;from the kernel&squot;s init process&n;&t;(ppid and {e,}gid are not adjusted, but that shouldn&squot;t&n;&t;be a problem since we trust modprobe)&n;*/
-DECL|macro|task_init
-mdefine_line|#define task_init task[smp_num_cpus]
 r_static
 r_inline
 r_void
@@ -30,12 +27,17 @@ c_func
 r_void
 )paren
 (brace
+r_struct
+id|fs_struct
+op_star
+id|fs
+suffix:semicolon
 id|lock_kernel
 c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* don&squot;t use the user&squot;s root, use init&squot;s root instead */
+multiline_comment|/*&n;&t; * Don&squot;t use the user&squot;s root, use init&squot;s root instead.&n;&t; * Note that we can use &quot;init_task&quot; (which is not actually&n;&t; * the same as the user-level &quot;init&quot; process) because we&n;&t; * started &quot;init&quot; with a CLONE_FS&n;&t; */
 id|exit_fs
 c_func
 (paren
@@ -43,15 +45,19 @@ id|current
 )paren
 suffix:semicolon
 multiline_comment|/* current-&gt;fs-&gt;count--; */
+id|fs
+op_assign
+id|init_task.fs
+suffix:semicolon
 id|current-&gt;fs
 op_assign
-id|task_init-&gt;fs
+id|fs
 suffix:semicolon
 id|atomic_inc
 c_func
 (paren
 op_amp
-id|current-&gt;fs-&gt;count
+id|fs-&gt;count
 )paren
 suffix:semicolon
 id|unlock_kernel

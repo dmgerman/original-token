@@ -4266,6 +4266,7 @@ id|SCBCmd
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef oh_no_you_dont_unless_you_honour_the_options_passed_in_to_us
 multiline_comment|/* Reset the MII transceiver, suggested by Fred Young @ scalable.com. */
 r_if
 c_cond
@@ -4360,6 +4361,7 @@ l_int|7
 suffix:semicolon
 macro_line|#endif
 )brace
+macro_line|#endif
 id|sp-&gt;stats.tx_errors
 op_increment
 suffix:semicolon

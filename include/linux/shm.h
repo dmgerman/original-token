@@ -49,6 +49,17 @@ r_int
 id|shm_nattch
 suffix:semicolon
 multiline_comment|/* no. of current attaches */
+)brace
+suffix:semicolon
+DECL|struct|shmid_kernel
+r_struct
+id|shmid_kernel
+(brace
+DECL|member|u
+r_struct
+id|shmid_ds
+id|u
+suffix:semicolon
 multiline_comment|/* the following are private */
 DECL|member|shm_npages
 r_int

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Linux/MIPS specific definitions for signals.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997 by Ralf Baechle&n; *&n; * $Id: signal.h,v 1.8 1998/05/01 01:36:11 ralf Exp $&n; */
+multiline_comment|/* $Id: signal.h,v 1.4 1998/08/18 20:46:42 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997, 1998 by Ralf Baechle&n; */
 macro_line|#ifndef __ASM_MIPS_SIGNAL_H
 DECL|macro|__ASM_MIPS_SIGNAL_H
 mdefine_line|#define __ASM_MIPS_SIGNAL_H
@@ -104,7 +104,7 @@ DECL|macro|SIGRTMIN
 mdefine_line|#define SIGRTMIN&t;32
 DECL|macro|SIGRTMAX
 mdefine_line|#define SIGRTMAX&t;(_NSIG-1)
-multiline_comment|/*&n; * SA_FLAGS values:&n; *&n; * SA_ONSTACK is not currently supported, but will allow sigaltstack(2).&n; * SA_INTERRUPT is a no-op, but left due to historical reasons. Use the&n; * SA_RESTART flag to get restarting signals (which were the default long ago)&n; * SA_NOCLDSTOP flag to turn off SIGCHLD when children stop.&n; * SA_RESETHAND clears the handler when the signal is delivered.&n; * SA_NOCLDWAIT flag on SIGCHLD to inhibit zombies.&n; * SA_NODEFER prevents the current signal from being masked in the handler.&n; *&n; * SA_ONESHOT and SA_NOMASK are the historical Linux names for the Single&n; * Unix names RESETHAND and NODEFER respectively.&n; */
+multiline_comment|/*&n; * SA_FLAGS values:&n; *&n; * SA_ONSTACK indicates that a registered stack_t will be used.&n; * SA_INTERRUPT is a no-op, but left due to historical reasons. Use the&n; * SA_RESTART flag to get restarting signals (which were the default long ago)&n; * SA_NOCLDSTOP flag to turn off SIGCHLD when children stop.&n; * SA_RESETHAND clears the handler when the signal is delivered.&n; * SA_NOCLDWAIT flag on SIGCHLD to inhibit zombies.&n; * SA_NODEFER prevents the current signal from being masked in the handler.&n; *&n; * SA_ONESHOT and SA_NOMASK are the historical Linux names for the Single&n; * Unix names RESETHAND and NODEFER respectively.&n; */
 DECL|macro|SA_STACK
 mdefine_line|#define SA_STACK&t;0x00000001
 DECL|macro|SA_RESETHAND
@@ -120,9 +120,18 @@ mdefine_line|#define SA_NOCLDWAIT&t;0x00010000&t;/* Not supported yet */
 DECL|macro|SA_NOCLDSTOP
 mdefine_line|#define SA_NOCLDSTOP&t;0x00020000
 DECL|macro|SA_NOMASK
-mdefine_line|#define SA_NOMASK&t;SA_NODEFER&t;/* DANGER: was 0x02000000 */
+mdefine_line|#define SA_NOMASK&t;SA_NODEFER
 DECL|macro|SA_ONESHOT
-mdefine_line|#define SA_ONESHOT&t;SA_RESETHAND&t;/* DANGER: was 0x04000000 */
+mdefine_line|#define SA_ONESHOT&t;SA_RESETHAND
+multiline_comment|/* &n; * sigaltstack controls&n; */
+DECL|macro|SS_ONSTACK
+mdefine_line|#define SS_ONSTACK     1
+DECL|macro|SS_DISABLE
+mdefine_line|#define SS_DISABLE     2
+DECL|macro|MINSIGSTKSZ
+mdefine_line|#define MINSIGSTKSZ    2048
+DECL|macro|SIGSTKSZ
+mdefine_line|#define SIGSTKSZ       8192
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * These values of sa_flags are used only by the kernel as part of the&n; * irq handling routines.&n; *&n; * SA_INTERRUPT is a no-op, but left due to historical reasons. Use the&n; * SA_RESTART flag to get restarting signals (which were the default long ago)&n; * SA_SHIRQ flag is for shared interrupt support on PCI and EISA.&n; */
 DECL|macro|SA_INTERRUPT
@@ -209,6 +218,29 @@ r_void
 )paren
 suffix:semicolon
 )brace
+suffix:semicolon
+multiline_comment|/* IRIX compatible stack_t  */
+DECL|struct|sigaltstack
+r_typedef
+r_struct
+id|sigaltstack
+(brace
+DECL|member|ss_sp
+r_void
+op_star
+id|ss_sp
+suffix:semicolon
+DECL|member|ss_size
+r_int
+id|ss_size
+suffix:semicolon
+DECL|member|ss_flags
+r_int
+id|ss_flags
+suffix:semicolon
+DECL|typedef|stack_t
+)brace
+id|stack_t
 suffix:semicolon
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;asm/sigcontext.h&gt;

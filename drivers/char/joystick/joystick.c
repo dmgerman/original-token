@@ -4146,6 +4146,9 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+r_int
+id|result
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4189,6 +4192,12 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|result
+op_assign
 id|jd
 op_member_access_from_pointer
 id|open
@@ -4196,6 +4205,10 @@ c_func
 (paren
 id|jd
 )paren
+)paren
+)paren
+r_return
+id|result
 suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon

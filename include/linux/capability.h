@@ -49,6 +49,8 @@ op_star
 id|cap_user_data_t
 suffix:semicolon
 macro_line|#ifdef __KERNEL__
+multiline_comment|/* #define STRICT_CAP_T_TYPECHECKS */
+macro_line|#ifdef STRICT_CAP_T_TYPECHECKS
 DECL|struct|kernel_cap_struct
 r_typedef
 r_struct
@@ -62,6 +64,13 @@ DECL|typedef|kernel_cap_t
 )brace
 id|kernel_cap_t
 suffix:semicolon
+macro_line|#else
+DECL|typedef|kernel_cap_t
+r_typedef
+id|__u32
+id|kernel_cap_t
+suffix:semicolon
+macro_line|#endif
 DECL|macro|_USER_CAP_HEADER_SIZE
 mdefine_line|#define _USER_CAP_HEADER_SIZE  (2*sizeof(__u32))
 DECL|macro|_KERNEL_CAP_T_SIZE
@@ -215,22 +224,33 @@ DECL|macro|CAP_SYS_TTY_CONFIG
 mdefine_line|#define CAP_SYS_TTY_CONFIG   26
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * Internal kernel functions only&n; */
+macro_line|#ifdef STRICT_CAP_T_TYPECHECKS
+DECL|macro|to_cap_t
+mdefine_line|#define to_cap_t(x) { x }
+DECL|macro|cap_t
+mdefine_line|#define cap_t(x) (x).cap
+macro_line|#else
+DECL|macro|to_cap_t
+mdefine_line|#define to_cap_t(x) (x)
+DECL|macro|cap_t
+mdefine_line|#define cap_t(x) (x)
+macro_line|#endif
 DECL|macro|CAP_EMPTY_SET
-mdefine_line|#define CAP_EMPTY_SET       {  0 }
+mdefine_line|#define CAP_EMPTY_SET       to_cap_t(0)
 DECL|macro|CAP_FULL_SET
-mdefine_line|#define CAP_FULL_SET        { ~0 }
+mdefine_line|#define CAP_FULL_SET        to_cap_t(~0)
 DECL|macro|CAP_INIT_EFF_SET
-mdefine_line|#define CAP_INIT_EFF_SET    { ~0 &amp; ~CAP_TO_MASK(CAP_SETPCAP) }
+mdefine_line|#define CAP_INIT_EFF_SET    to_cap_t(~0 &amp; ~CAP_TO_MASK(CAP_SETPCAP))
 DECL|macro|CAP_INIT_INH_SET
-mdefine_line|#define CAP_INIT_INH_SET    { ~0 &amp; ~CAP_TO_MASK(CAP_SETPCAP) }
+mdefine_line|#define CAP_INIT_INH_SET    to_cap_t(~0 &amp; ~CAP_TO_MASK(CAP_SETPCAP))
 DECL|macro|CAP_TO_MASK
 mdefine_line|#define CAP_TO_MASK(x) (1 &lt;&lt; (x))
 DECL|macro|cap_raise
-mdefine_line|#define cap_raise(c, flag)   ((c).cap |=  CAP_TO_MASK(flag))
+mdefine_line|#define cap_raise(c, flag)   (cap_t(c) |=  CAP_TO_MASK(flag))
 DECL|macro|cap_lower
-mdefine_line|#define cap_lower(c, flag)   ((c).cap &amp;= ~CAP_TO_MASK(flag))
+mdefine_line|#define cap_lower(c, flag)   (cap_t(c) &amp;= ~CAP_TO_MASK(flag))
 DECL|macro|cap_raised
-mdefine_line|#define cap_raised(c, flag)  ((c).cap &amp;   CAP_TO_MASK(flag))
+mdefine_line|#define cap_raised(c, flag)  (cap_t(c) &amp;   CAP_TO_MASK(flag))
 DECL|function|cap_combine
 r_static
 r_inline
@@ -248,11 +268,23 @@ id|b
 id|kernel_cap_t
 id|dest
 suffix:semicolon
-id|dest.cap
+id|cap_t
+c_func
+(paren
+id|dest
+)paren
 op_assign
-id|a.cap
+id|cap_t
+c_func
+(paren
+id|a
+)paren
 op_or
-id|b.cap
+id|cap_t
+c_func
+(paren
+id|b
+)paren
 suffix:semicolon
 r_return
 id|dest
@@ -275,11 +307,23 @@ id|b
 id|kernel_cap_t
 id|dest
 suffix:semicolon
-id|dest.cap
+id|cap_t
+c_func
+(paren
+id|dest
+)paren
 op_assign
-id|a.cap
+id|cap_t
+c_func
+(paren
+id|a
+)paren
 op_amp
-id|b.cap
+id|cap_t
+c_func
+(paren
+id|b
+)paren
 suffix:semicolon
 r_return
 id|dest
@@ -302,12 +346,24 @@ id|drop
 id|kernel_cap_t
 id|dest
 suffix:semicolon
-id|dest.cap
+id|cap_t
+c_func
+(paren
+id|dest
+)paren
 op_assign
-id|a.cap
+id|cap_t
+c_func
+(paren
+id|a
+)paren
 op_amp
 op_complement
-id|drop.cap
+id|cap_t
+c_func
+(paren
+id|drop
+)paren
 suffix:semicolon
 r_return
 id|dest
@@ -327,25 +383,33 @@ id|c
 id|kernel_cap_t
 id|dest
 suffix:semicolon
-id|dest.cap
+id|cap_t
+c_func
+(paren
+id|dest
+)paren
 op_assign
 op_complement
-id|c.cap
+id|cap_t
+c_func
+(paren
+id|c
+)paren
 suffix:semicolon
 r_return
 id|dest
 suffix:semicolon
 )brace
 DECL|macro|cap_isclear
-mdefine_line|#define cap_isclear(c)       (!(c).cap)
+mdefine_line|#define cap_isclear(c)       (!cap_t(c))
 DECL|macro|cap_issubset
-mdefine_line|#define cap_issubset(a,set)  (!((a).cap &amp; ~(set).cap))
+mdefine_line|#define cap_issubset(a,set)  (!(cap_t(a) &amp; ~cap_t(set)))
 DECL|macro|cap_clear
-mdefine_line|#define cap_clear(c)         do { (c).cap =  0; } while(0)
+mdefine_line|#define cap_clear(c)         do { cap_t(c) =  0; } while(0)
 DECL|macro|cap_set_full
-mdefine_line|#define cap_set_full(c)      do { (c).cap = ~0; } while(0)
+mdefine_line|#define cap_set_full(c)      do { cap_t(c) = ~0; } while(0)
 DECL|macro|cap_mask
-mdefine_line|#define cap_mask(c,mask)     do { (c).cap &amp;= (mask).cap; } while(0)
+mdefine_line|#define cap_mask(c,mask)     do { cap_t(c) &amp;= cap_t(mask); } while(0)
 DECL|macro|cap_is_fs_cap
 mdefine_line|#define cap_is_fs_cap(c)     (CAP_TO_MASK(c) &amp; CAP_FS_MASK)
 macro_line|#endif /* __KERNEL__ */

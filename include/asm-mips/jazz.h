@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Hardware info about Mips JAZZ and similar systems&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995 by Andreas Busse and Ralf Baechle&n; *&n; * This file is a mess. It really needs some reorganisation!&n; *&n; * $Id: jazz.h,v 1.6 1998/05/01 01:35:56 ralf Exp $&n; */
+multiline_comment|/* $Id: jazz.h,v 1.8 1998/09/16 22:52:41 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995 - 1998 by Andreas Busse and Ralf Baechle&n; */
 macro_line|#ifndef __ASM_MIPS_JAZZ_H 
 DECL|macro|__ASM_MIPS_JAZZ_H
 mdefine_line|#define __ASM_MIPS_JAZZ_H 
@@ -48,7 +48,7 @@ DECL|macro|LED_E
 mdefine_line|#define LED_E                   0x9e
 DECL|macro|LED_F
 mdefine_line|#define LED_F                   0x8e
-macro_line|#ifndef __LANGUAGE_ASSEMBLY__
+macro_line|#ifndef _LANGUAGE_ASSEMBLY
 DECL|function|pica_set_led
 r_extern
 id|__inline__
@@ -94,7 +94,7 @@ DECL|macro|JAZZ_KEYBOARD_DATA
 mdefine_line|#define JAZZ_KEYBOARD_DATA      0xe0005000
 DECL|macro|JAZZ_KEYBOARD_COMMAND
 mdefine_line|#define JAZZ_KEYBOARD_COMMAND   0xe0005001
-macro_line|#ifndef __LANGUAGE_ASSEMBLY__
+macro_line|#ifndef _LANGUAGE_ASSEMBLY
 r_typedef
 r_struct
 (brace
@@ -172,7 +172,7 @@ mdefine_line|#define JAZZ_TIMER_INTERVAL     0xe0000228
 DECL|macro|JAZZ_TIMER_REGISTER
 mdefine_line|#define JAZZ_TIMER_REGISTER     0xe0000230
 multiline_comment|/*&n; * DRAM configuration register&n; */
-macro_line|#ifndef __LANGUAGE_ASSEMBLY__
+macro_line|#ifndef _LANGUAGE_ASSEMBLY
 macro_line|#ifdef __MIPSEL__
 r_typedef
 r_struct
@@ -274,7 +274,7 @@ DECL|typedef|dram_configuration
 id|dram_configuration
 suffix:semicolon
 macro_line|#endif
-macro_line|#endif /* __LANGUAGE_ASSEMBLY__ */
+macro_line|#endif /* _LANGUAGE_ASSEMBLY */
 DECL|macro|PICA_DRAM_CONFIG
 mdefine_line|#define PICA_DRAM_CONFIG        0xe00fffe0
 multiline_comment|/*&n; * JAZZ interrupt control registers&n; */
@@ -303,7 +303,7 @@ DECL|macro|JAZZ_IE_SERIAL1
 mdefine_line|#define JAZZ_IE_SERIAL1             (1 &lt;&lt; 8)
 DECL|macro|JAZZ_IE_SERIAL2
 mdefine_line|#define JAZZ_IE_SERIAL2             (1 &lt;&lt; 9)
-multiline_comment|/*&n; * JAZZ Interrupt Level definitions&n; */
+multiline_comment|/*&n; * JAZZ Interrupt Level definitions&n; *&n; * This is somewhat broken.  For reasons which nobody can remember anymore&n; * we remap the Jazz interrupts to the usual ISA style interrupt numbers.&n; */
 DECL|macro|JAZZ_TIMER_IRQ
 mdefine_line|#define JAZZ_TIMER_IRQ          0
 DECL|macro|JAZZ_KEYBOARD_IRQ
@@ -320,6 +320,8 @@ DECL|macro|JAZZ_SERIAL2_IRQ
 mdefine_line|#define JAZZ_SERIAL2_IRQ        19
 DECL|macro|JAZZ_PARALLEL_IRQ
 mdefine_line|#define JAZZ_PARALLEL_IRQ       20
+DECL|macro|JAZZ_MOUSE_IRQ
+mdefine_line|#define JAZZ_MOUSE_IRQ          21
 multiline_comment|/*&n; * JAZZ DMA Channels&n; * Note: Channels 4...7 are not used with respect to the Acer PICA-61&n; * chipset which does not provide these DMA channels.&n; */
 DECL|macro|JAZZ_SCSI_DMA
 mdefine_line|#define JAZZ_SCSI_DMA           0              /* SCSI */
@@ -372,7 +374,7 @@ multiline_comment|/*&n; * Virtual (E)ISA controller address&n; */
 DECL|macro|JAZZ_EISA_IRQ_ACK
 mdefine_line|#define JAZZ_EISA_IRQ_ACK&t;0xE0000238&t;/* EISA interrupt acknowledge */
 multiline_comment|/*&n; * Access the R4030 DMA and I/O Controller&n; */
-macro_line|#ifndef __LANGUAGE_ASSEMBLY__
+macro_line|#ifndef _LANGUAGE_ASSEMBLY
 DECL|function|r4030_delay
 r_extern
 r_inline
@@ -504,8 +506,7 @@ suffix:semicolon
 DECL|function|r4030_write_reg32
 r_extern
 r_inline
-r_int
-r_int
+r_void
 id|r4030_write_reg32
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * include/asm-mips/irq.h&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 by Waldorf GMBH&n; * written by Ralf Baechle&n; *&n; */
+multiline_comment|/* $Id: irq.h,v 1.4 1998/05/28 03:18:13 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 by Waldorf GMBH, written by Ralf Baechle&n; * Copyright (C) 1995, 1996, 1997, 1998 by Ralf Baechle&n; */
 macro_line|#ifndef __ASM_MIPS_IRQ_H
 DECL|macro|__ASM_MIPS_IRQ_H
 mdefine_line|#define __ASM_MIPS_IRQ_H
@@ -68,5 +68,16 @@ mdefine_line|#define irq_enter(cpu, irq)     (++local_irq_count[cpu])
 DECL|macro|irq_exit
 mdefine_line|#define irq_exit(cpu, irq)      (--local_irq_count[cpu])
 macro_line|#endif
+multiline_comment|/* Machine specific interrupt initialization  */
+r_extern
+r_void
+(paren
+op_star
+id|irq_setup
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
 macro_line|#endif /* __ASM_MIPS_IRQ_H */
 eof

@@ -1,5 +1,5 @@
-multiline_comment|/*&n; * List of Linux/MIPS syscalls.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996 by Ralf Baechle&n; *&n; * $Id: syscalls.h,v 1.14 1998/05/07 00:39:37 ralf Exp $&n; */
-multiline_comment|/*&n; * This file is being included twice - once to build a list of all&n; * syscalls and once to build a table of how many arguments each syscall&n; * accepts.  Syscalls that receive a pointer to the saved registers are&n; * marked as having zero arguments.&n; *&n; * The binary compatibility calls are still missing in this list.&n; */
+multiline_comment|/* $Id: syscalls.h,v 1.16 1998/09/16 22:50:43 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997, 1998 by Ralf Baechle&n; */
+multiline_comment|/*&n; * This file is being included twice - once to build a list of all&n; * syscalls and once to build a table of how many arguments each syscall&n; * accepts.  Syscalls that receive a pointer to the saved registers are&n; * marked as having zero arguments.&n; *&n; * The binary compatibility calls are in a separate list.&n; */
 id|SYS
 c_func
 (paren
@@ -162,7 +162,7 @@ l_int|5
 id|SYS
 c_func
 (paren
-id|sys_umount
+id|sys_oldumount
 comma
 l_int|1
 )paren
@@ -379,9 +379,9 @@ l_int|0
 id|SYS
 c_func
 (paren
-id|sys_ni_syscall
+id|sys_umount
 comma
-l_int|0
+l_int|2
 )paren
 id|SYS
 c_func
@@ -1088,9 +1088,9 @@ l_int|4
 id|SYS
 c_func
 (paren
-id|sys_setup
+id|sys_ni_syscall
 comma
-l_int|1
+l_int|0
 )paren
 multiline_comment|/* 4150 */
 id|SYS
@@ -1473,5 +1473,48 @@ c_func
 id|sys_getcwd
 comma
 l_int|2
+)paren
+id|SYS
+c_func
+(paren
+id|sys_capget
+comma
+l_int|2
+)paren
+id|SYS
+c_func
+(paren
+id|sys_capset
+comma
+l_int|2
+)paren
+multiline_comment|/* 4205 */
+id|SYS
+c_func
+(paren
+id|sys_sigaltstack
+comma
+l_int|2
+)paren
+id|SYS
+c_func
+(paren
+id|sys_sendfile
+comma
+l_int|3
+)paren
+id|SYS
+c_func
+(paren
+id|sys_ni_syscall
+comma
+l_int|0
+)paren
+id|SYS
+c_func
+(paren
+id|sys_ni_syscall
+comma
+l_int|0
 )paren
 eof

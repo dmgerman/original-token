@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/mips/jazz/process.c&n; *&n; *  Reset a Jazz machine.&n; *&n; *  $Id: reset.c,v 1.2 1998/05/01 01:33:40 ralf Exp $&n; */
+multiline_comment|/*&n; *  linux/arch/mips/jazz/process.c&n; *&n; *  Reset a Jazz machine.&n; *&n; *  $Id: reset.c,v 1.2 1998/03/04 12:17:40 ralf Exp $&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/jazz.h&gt;
 macro_line|#include &lt;asm/io.h&gt;

@@ -156,7 +156,7 @@ id|optimize
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * js_sw_init_digital() switches a SideWinder into digital mode.&n; * It currently switches to 2-bit mode only (FIXME).&n; */
+multiline_comment|/*&n; * js_sw_init_digital() switches a SideWinder into digital mode.&n; */
 DECL|function|js_sw_init_digital
 r_static
 r_void
@@ -190,11 +190,15 @@ id|delays
 )braket
 op_assign
 (brace
-l_int|100
+l_int|140
 comma
-l_int|850
+l_int|140
+op_plus
+l_int|726
 comma
-l_int|400
+l_int|140
+op_plus
+l_int|300
 comma
 l_int|0
 )brace
@@ -224,11 +228,7 @@ r_do
 id|outb
 c_func
 (paren
-id|inb
-c_func
-(paren
-id|io
-)paren
+l_int|0xff
 comma
 id|io
 )paren
@@ -400,11 +400,7 @@ suffix:semicolon
 id|outb
 c_func
 (paren
-id|inb
-c_func
-(paren
-id|io
-)paren
+l_int|0xff
 comma
 id|io
 )paren
@@ -2161,7 +2157,7 @@ suffix:semicolon
 id|outb
 c_func
 (paren
-id|u
+l_int|0xff
 comma
 id|io
 )paren
@@ -2292,11 +2288,7 @@ suffix:semicolon
 id|outb
 c_func
 (paren
-id|inb
-c_func
-(paren
-id|io
-)paren
+l_int|0xff
 comma
 id|io
 )paren

@@ -1,6 +1,7 @@
-multiline_comment|/*&n; *  arch/mips/mm/fault.c&n; *&n; *  Copyright (C) 1995, 1996, 1997 by Ralf Baechle&n; */
+multiline_comment|/* $Id: fault.c,v 1.12 1998/10/19 21:27:37 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997, 1998 by Ralf Baechle&n; */
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -10,14 +11,18 @@ macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/mmu_context.h&gt;
+macro_line|#include &lt;asm/softirq.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+DECL|macro|development_version
+mdefine_line|#define development_version (LINUX_VERSION_CODE &amp; 0x100)
 r_extern
 r_void
-id|die_if_kernel
+id|die
 c_func
 (paren
 r_char
@@ -28,14 +33,14 @@ id|pt_regs
 op_star
 comma
 r_int
+r_int
+id|write
 )paren
 suffix:semicolon
 DECL|variable|asid_cache
 r_int
 r_int
 id|asid_cache
-op_assign
-id|ASID_FIRST_VERSION
 suffix:semicolon
 multiline_comment|/*&n; * Macro for exception fixup code to access integer registers.&n; */
 DECL|macro|dpf_reg
@@ -84,33 +89,22 @@ r_int
 r_int
 id|fixup
 suffix:semicolon
+multiline_comment|/*&n;&t; * If we&squot;re in an interrupt or have no user&n;&t; * context, we must not take the fault..&n;&t; */
 r_if
 c_cond
 (paren
-id|local_irq_count
-(braket
-id|smp_processor_id
+id|in_interrupt
 c_func
 (paren
 )paren
-)braket
-op_ne
-l_int|0
+op_logical_or
+id|mm
+op_eq
+op_amp
+id|init_mm
 )paren
-id|die_if_kernel
-c_func
-(paren
-l_string|&quot;page fault from irq handler&quot;
-comma
-id|regs
-comma
-id|writeaccess
-)paren
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
+r_goto
+id|no_context
 suffix:semicolon
 macro_line|#if 0
 id|printk
@@ -255,8 +249,7 @@ op_amp
 id|mm-&gt;mmap_sem
 )paren
 suffix:semicolon
-r_goto
-id|out
+r_return
 suffix:semicolon
 multiline_comment|/*&n; * Something tried to access memory that isn&squot;t in our memory map..&n; * Fix it, but check if it&squot;s kernel or user first..&n; */
 id|bad_area
@@ -329,11 +322,12 @@ comma
 id|tsk
 )paren
 suffix:semicolon
-r_goto
-id|out
+r_return
 suffix:semicolon
 )brace
-multiline_comment|/* Did we have an exception handler installed? */
+id|no_context
+suffix:colon
+multiline_comment|/* Are we prepared to handle this kernel fault?  */
 id|fixup
 op_assign
 id|search_exception_table
@@ -367,6 +361,11 @@ comma
 id|regs-&gt;cp0_epc
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|development_version
+)paren
 id|printk
 c_func
 (paren
@@ -384,8 +383,7 @@ id|regs-&gt;cp0_epc
 op_assign
 id|new_epc
 suffix:semicolon
-r_goto
-id|out
+r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Oops. The kernel tried to access some bad page. We&squot;ll have to&n;&t; * terminate things with extreme prejudice.&n;&t; */
@@ -406,7 +404,7 @@ l_int|31
 )braket
 )paren
 suffix:semicolon
-id|die_if_kernel
+id|die
 c_func
 (paren
 l_string|&quot;Oops&quot;
@@ -420,13 +418,6 @@ id|do_exit
 c_func
 (paren
 id|SIGKILL
-)paren
-suffix:semicolon
-id|out
-suffix:colon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace

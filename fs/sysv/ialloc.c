@@ -473,7 +473,7 @@ id|sb
 suffix:semicolon
 id|inode-&gt;i_flags
 op_assign
-id|inode-&gt;i_sb-&gt;s_flags
+l_int|0
 suffix:semicolon
 id|lock_super
 c_func

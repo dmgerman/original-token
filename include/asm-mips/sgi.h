@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sgi.h,v 1.2 1998/05/01 01:36:05 ralf Exp $&n; * sgi.h: Definitions specific to SGI machines.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@sgi.com)&n; */
+multiline_comment|/* $Id: sgi.h,v 1.1.1.1 1997/06/01 03:17:12 ralf Exp $&n; * sgi.h: Definitions specific to SGI machines.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@sgi.com)&n; */
 macro_line|#ifndef _MIPS_SGI_H
 DECL|macro|_MIPS_SGI_H
 mdefine_line|#define _MIPS_SGI_H

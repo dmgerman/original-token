@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: irix5sys.h,v 1.3 1998/05/01 01:33:55 ralf Exp $&n; * irix5sys.h: 32-bit IRIX5 ABI system call table.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/* $Id: irix5sys.h,v 1.2 1998/08/17 10:16:25 ralf Exp $&n; *&n; * irix5sys.h: 32-bit IRIX5 ABI system call table.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
 multiline_comment|/* This file is being included twice - once to build a list of all&n; * syscalls and once to build a table of how many arguments each syscall&n; * accepts.  Syscalls that receive a pointer to the saved registers are&n; * marked as having zero arguments.&n; */
 multiline_comment|/* Keys:&n; *         V == Valid and should work as expected for most cases.&n; *        HV == Half Valid, some things will work, some likely will not&n; *        IV == InValid, certainly will not work at all yet&n; *        ?V == ?&squot;ably Valid, I have not done enough looking into it&n; *        DC == Don&squot;t Care, a rats ass we couldn&squot;t give&n; */
 id|SYS
@@ -132,7 +132,7 @@ multiline_comment|/* 1015  chmod()&t;       V*/
 id|SYS
 c_func
 (paren
-id|irix_chown
+id|sys_chown
 comma
 l_int|3
 )paren
@@ -1428,7 +1428,7 @@ multiline_comment|/* 1177  XXX putpmsg()&t;      DC*/
 id|SYS
 c_func
 (paren
-id|irix_lchown
+id|sys_lchown
 comma
 l_int|3
 )paren

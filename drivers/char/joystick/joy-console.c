@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * joy-console.c  Version 0.10&n; *&n; * Copyright (c) 1998 Andree Borrmann&n; */
+multiline_comment|/*&n; * joy-console.c  Version 0.11V&n; *&n; * Copyright (c) 1998 Andree Borrmann&n; */
 multiline_comment|/*&n; * This is a module for the Linux joystick driver, supporting&n; * console (NES, SNES, Multi1, Multi2, PSX) gamepads connected&n; * via parallel port. Up to five such controllers can be&n; * connected to one parallel port.&n; */
 multiline_comment|/*&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or &n; * (at your option) any later version.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA&n; */
 macro_line|#include &lt;asm/io.h&gt;
@@ -68,16 +68,6 @@ op_star
 id|port
 suffix:semicolon
 multiline_comment|/* parport device */
-DECL|member|use
-r_int
-id|use
-suffix:semicolon
-multiline_comment|/* use count */
-DECL|member|wanted
-r_int
-id|wanted
-suffix:semicolon
-multiline_comment|/* parport wanted */
 macro_line|#else
 r_int
 id|port
@@ -1722,10 +1712,7 @@ op_star
 id|dev
 )paren
 (brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 macro_line|#ifdef USE_PARPORT
-(brace
 r_struct
 id|js_console_info
 op_star
@@ -1737,7 +1724,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|info-&gt;use
+id|MOD_IN_USE
 op_logical_and
 id|parport_claim
 c_func
@@ -1745,28 +1732,13 @@ c_func
 id|info-&gt;port
 )paren
 )paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;joy-console: parport busy!&bslash;n&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* port currently not available ... */
-id|info-&gt;wanted
-op_increment
-suffix:semicolon
-multiline_comment|/* we&squot;ll claim it on wakeup */
 r_return
-l_int|0
+op_minus
+id|EBUSY
 suffix:semicolon
-)brace
-id|info-&gt;use
-op_increment
-suffix:semicolon
-)brace
 macro_line|#endif
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1791,12 +1763,15 @@ id|info
 op_assign
 id|dev-&gt;port-&gt;info
 suffix:semicolon
+macro_line|#endif
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+macro_line|#ifdef USE_PARPORT
 r_if
 c_cond
 (paren
 op_logical_neg
-op_decrement
-id|info-&gt;use
+id|MOD_IN_USE
 )paren
 id|parport_release
 c_func
@@ -1805,57 +1780,10 @@ id|info-&gt;port
 )paren
 suffix:semicolon
 macro_line|#endif
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * parport wakeup callback: claim the port!&n; */
-macro_line|#ifdef USE_PARPORT
-DECL|function|js_console_wakeup
-r_static
-r_void
-id|js_console_wakeup
-c_func
-(paren
-r_void
-op_star
-id|v
-)paren
-(brace
-r_struct
-id|js_console_info
-op_star
-id|info
-op_assign
-id|js_console_port-&gt;info
-suffix:semicolon
-multiline_comment|/* FIXME! We can have more than 1 port! */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|info-&gt;use
-op_logical_and
-id|info-&gt;wanted
-)paren
-(brace
-id|parport_claim
-c_func
-(paren
-id|info-&gt;port
-)paren
-suffix:semicolon
-id|info-&gt;use
-op_increment
-suffix:semicolon
-id|info-&gt;wanted
-op_decrement
-suffix:semicolon
-)brace
-)brace
-macro_line|#endif
 macro_line|#ifdef MODULE
 DECL|function|cleanup_module
 r_void
@@ -2239,7 +2167,7 @@ l_string|&quot;joystick (console)&quot;
 comma
 l_int|NULL
 comma
-id|js_console_wakeup
+l_int|NULL
 comma
 l_int|NULL
 comma
@@ -2256,14 +2184,6 @@ id|info.port
 )paren
 r_return
 id|port
-suffix:semicolon
-id|info.wanted
-op_assign
-l_int|0
-suffix:semicolon
-id|info.use
-op_assign
-l_int|0
 suffix:semicolon
 )brace
 r_if

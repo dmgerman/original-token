@@ -1874,7 +1874,7 @@ id|sb-&gt;s_dev
 suffix:semicolon
 id|inode-&gt;i_flags
 op_assign
-id|sb-&gt;s_flags
+l_int|0
 suffix:semicolon
 id|inode-&gt;i_ino
 op_assign

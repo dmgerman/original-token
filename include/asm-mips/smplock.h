@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * &lt;asm/smplock.h&gt;&n; *&n; * Default SMP lock implementation&n; */
+multiline_comment|/* $Id$&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Default SMP lock implementation&n; */
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
 r_extern

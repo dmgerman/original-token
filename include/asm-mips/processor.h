@@ -1,13 +1,36 @@
-multiline_comment|/*&n; * include/asm-mips/processor.h&n; *&n; * Copyright (C) 1994  Waldorf Electronics&n; * written by Ralf Baechle&n; * Modified further for R[236]000 compatibility by Paul M. Antoine&n; *&n; * $Id: processor.h,v 1.22 1998/05/11 08:40:07 davem Exp $&n; */
+multiline_comment|/* $Id: processor.h,v 1.18 1998/10/14 20:31:12 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 Waldorf GMBH&n; * Copyright (C) 1995, 1996, 1997, 1998 Ralf Baechle&n; * Modified further for R[236]000 compatibility by Paul M. Antoine&n; */
 macro_line|#ifndef __ASM_MIPS_PROCESSOR_H
 DECL|macro|__ASM_MIPS_PROCESSOR_H
 mdefine_line|#define __ASM_MIPS_PROCESSOR_H
-macro_line|#if !defined (__LANGUAGE_ASSEMBLY__)
+macro_line|#if !defined (_LANGUAGE_ASSEMBLY)
 macro_line|#include &lt;asm/cachectl.h&gt;
 macro_line|#include &lt;asm/mipsregs.h&gt;
 macro_line|#include &lt;asm/reg.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-multiline_comment|/*&n; * System setup and hardware flags..&n; */
+DECL|struct|mips_cpuinfo
+r_struct
+id|mips_cpuinfo
+(brace
+DECL|member|pgd_quick
+r_int
+r_int
+op_star
+id|pgd_quick
+suffix:semicolon
+DECL|member|pte_quick
+r_int
+r_int
+op_star
+id|pte_quick
+suffix:semicolon
+DECL|member|pgtable_cache_sz
+r_int
+r_int
+id|pgtable_cache_sz
+suffix:semicolon
+)brace
+suffix:semicolon
+multiline_comment|/*&n; * System setup and hardware flags..&n; * XXX: Should go into mips_cpuinfo.&n; */
 r_extern
 r_char
 id|wait_available
@@ -23,6 +46,39 @@ r_char
 id|dedicated_iv_available
 suffix:semicolon
 multiline_comment|/* some embedded MIPS like Nevada */
+r_extern
+r_char
+id|vce_available
+suffix:semicolon
+multiline_comment|/* Supports VCED / VCEI exceptions */
+r_extern
+r_struct
+id|mips_cpuinfo
+id|boot_cpu_data
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|vced_count
+comma
+id|vcei_count
+suffix:semicolon
+macro_line|#ifdef __SMP__
+r_extern
+r_struct
+id|mips_cpuinfo
+id|cpu_data
+(braket
+)braket
+suffix:semicolon
+DECL|macro|current_cpu_data
+mdefine_line|#define current_cpu_data cpu_data[smp_processor_id()]
+macro_line|#else
+DECL|macro|cpu_data
+mdefine_line|#define cpu_data &amp;boot_cpu_data
+DECL|macro|current_cpu_data
+mdefine_line|#define current_cpu_data boot_cpu_data
+macro_line|#endif
 multiline_comment|/*&n; * Bus types (default is ISA, but people can check others with these..)&n; * MCA_bus hardcoded to 0 for now.&n; *&n; * This needs to be extended since MIPS systems are being delivered with&n; * numerous different types of bus systems.&n; */
 r_extern
 r_int
@@ -37,6 +93,13 @@ DECL|macro|wp_works_ok
 mdefine_line|#define wp_works_ok 1
 DECL|macro|wp_works_ok__is_a_macro
 mdefine_line|#define wp_works_ok__is_a_macro /* for versions in ksyms.c */
+multiline_comment|/* Lazy FPU handling on uni-processor */
+r_extern
+r_struct
+id|task_struct
+op_star
+id|last_task_used_math
+suffix:semicolon
 multiline_comment|/*&n; * User space process size: 2GB. This is hardcoded into a few places,&n; * so don&squot;t change it unless you know what you are doing.  TASK_SIZE&n; * for a 64 bit kernel expandable to 8192EB, of which the current MIPS&n; * implementations will &quot;only&quot; be able to use 1TB ...&n; */
 DECL|macro|TASK_SIZE
 mdefine_line|#define TASK_SIZE&t;(0x80000000UL)
@@ -219,7 +282,7 @@ id|irix_oldctx
 suffix:semicolon
 )brace
 suffix:semicolon
-macro_line|#endif /* !defined (__LANGUAGE_ASSEMBLY__) */
+macro_line|#endif /* !defined (_LANGUAGE_ASSEMBLY) */
 DECL|macro|INIT_MMAP
 mdefine_line|#define INIT_MMAP { &amp;init_mm, KSEG0, KSEG1, PAGE_SHARED, &bslash;&n;                    VM_READ | VM_WRITE | VM_EXEC, NULL, &amp;init_mm.mmap }
 DECL|macro|INIT_TSS
@@ -227,7 +290,7 @@ mdefine_line|#define INIT_TSS  { &bslash;&n;        /* &bslash;&n;         * sav
 macro_line|#ifdef __KERNEL__
 DECL|macro|KERNEL_STACK_SIZE
 mdefine_line|#define KERNEL_STACK_SIZE 8192
-macro_line|#if !defined (__LANGUAGE_ASSEMBLY__)
+macro_line|#if !defined (_LANGUAGE_ASSEMBLY)
 multiline_comment|/* Free all resources held by a thread. */
 r_extern
 r_void
@@ -338,7 +401,7 @@ DECL|macro|init_task
 mdefine_line|#define init_task&t;(init_task_union.task)
 DECL|macro|init_stack
 mdefine_line|#define init_stack&t;(init_task_union.stack)
-macro_line|#endif /* !defined (__LANGUAGE_ASSEMBLY__) */
+macro_line|#endif /* !defined (_LANGUAGE_ASSEMBLY) */
 macro_line|#endif /* __KERNEL__ */
 multiline_comment|/*&n; * Return_address is a replacement for __builtin_return_address(count)&n; * which on certain architectures cannot reasonably be implemented in GCC&n; * (MIPS, Alpha) or is unuseable with -fomit-frame-pointer (i386).&n; * Note that __builtin_return_address(x&gt;=1) is forbidden because GCC&n; * aborts compilation on some CPUs.  It&squot;s simply not possible to unwind&n; * some CPU&squot;s stackframes.&n; */
 macro_line|#if (__GNUC__ &gt; 2 || (__GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &gt;= 8))

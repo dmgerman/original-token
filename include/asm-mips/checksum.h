@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: checksum.h,v 1.8 1998/05/07 00:39:59 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997, 1998 by Ralf Baechle&n; */
+multiline_comment|/* $Id: checksum.h,v 1.6 1998/09/16 13:30:51 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997, 1998 by Ralf Baechle&n; */
 macro_line|#ifndef __ASM_MIPS_CHECKSUM_H
 DECL|macro|__ASM_MIPS_CHECKSUM_H
 mdefine_line|#define __ASM_MIPS_CHECKSUM_H
@@ -23,28 +23,8 @@ id|sum
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * this is a new version of the above that records errors it finds in *errp,&n; * but continues and zeros the rest of the buffer.&n; */
-r_int
-r_int
-id|csum_partial_copy_nocheck
-c_func
-(paren
-r_const
-r_char
-op_star
-id|src
-comma
-r_char
-op_star
-id|dst
-comma
-r_int
-id|len
-comma
-r_int
-r_int
-id|sum
-)paren
-suffix:semicolon
+DECL|macro|csum_partial_copy_nocheck
+mdefine_line|#define csum_partial_copy_nocheck csum_partial_copy
 multiline_comment|/*&n; * this is a new version of the above that records errors it finds in *errp,&n; * but continues and zeros the rest of the buffer.&n; */
 r_int
 r_int
@@ -70,6 +50,32 @@ comma
 r_int
 op_star
 id|errp
+)paren
+suffix:semicolon
+DECL|macro|HAVE_CSUM_COPY_USER
+mdefine_line|#define HAVE_CSUM_COPY_USER
+r_int
+r_int
+id|csum_and_copy_to_user
+(paren
+r_const
+r_char
+op_star
+id|src
+comma
+r_char
+op_star
+id|dst
+comma
+r_int
+id|len
+comma
+r_int
+id|sum
+comma
+r_int
+op_star
+id|err_ptr
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * the same as csum_partial, but copies from user space (but on MIPS&n; * we have just one address space, so this is identical to the above)&n; *&n; * this is obsolete and will go away.&n; */

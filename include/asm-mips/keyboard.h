@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * CPU specific parts of the keyboard driver&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * $Id: keyboard.h,v 1.8 1998/05/07 00:40:03 ralf Exp $&n; */
+multiline_comment|/*&n; * CPU specific parts of the keyboard driver&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * $Id: keyboard.h,v 1.12 1998/09/16 22:52:41 ralf Exp $&n; */
 macro_line|#ifndef __ASM_MIPS_KEYBOARD_H
 DECL|macro|__ASM_MIPS_KEYBOARD_H
 mdefine_line|#define __ASM_MIPS_KEYBOARD_H
@@ -177,16 +177,30 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_MIPS_JAZZ
-multiline_comment|/* Not true for Jazz machines, we cheat a bit for &squot;em. */
-DECL|macro|KEYBOARD_IRQ
-mdefine_line|#define KEYBOARD_IRQ 1
-multiline_comment|/*&n; * No PS/2 style mouse support for Jazz machines&n; */
+r_extern
+r_int
+id|jazz_ps2_request_irq
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|jazz_ps2_free_irq
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+DECL|macro|ps2_request_irq
+mdefine_line|#define ps2_request_irq()      jazz_ps2_request_irq()
+DECL|macro|ps2_free_irq
+mdefine_line|#define ps2_free_irq(inode)    jazz_ps2_free_irq()
 macro_line|#endif /* CONFIG_MIPS_JAZZ */
 macro_line|#ifdef CONFIG_SGI
 DECL|macro|DISABLE_KBD_DURING_INTERRUPTS
 mdefine_line|#define DISABLE_KBD_DURING_INTERRUPTS 1
-DECL|macro|KEYBOARD_IRQ
-mdefine_line|#define KEYBOARD_IRQ 20
 multiline_comment|/*&n; * Machine specific bits for the PS/2 driver.&n; * Aux device and keyboard share the interrupt on the Indy.&n; */
 DECL|macro|ps2_request_irq
 mdefine_line|#define ps2_request_irq() 0
@@ -200,8 +214,6 @@ macro_line|#endif
 macro_line|#ifdef CONF_KEYBOARD_USES_IO_PORTS
 multiline_comment|/*&n; * Most other MIPS machines access the keyboard controller via&n; * memory mapped I/O ports.&n; */
 macro_line|#include &lt;asm/io.h&gt;
-DECL|macro|KEYBOARD_IRQ
-mdefine_line|#define KEYBOARD_IRQ 1
 multiline_comment|/*&n; * Machine specific bits for the PS/2 driver&n; */
 DECL|macro|AUX_IRQ
 mdefine_line|#define AUX_IRQ 12

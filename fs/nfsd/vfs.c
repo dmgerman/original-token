@@ -22,6 +22,8 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#endif
 DECL|macro|NFSDDBG_FACILITY
 mdefine_line|#define NFSDDBG_FACILITY&t;&t;NFSDDBG_FILEOP
+DECL|macro|NFSD_PARANOIA
+mdefine_line|#define NFSD_PARANOIA
 multiline_comment|/* Open mode for nfsd_open */
 DECL|macro|OPEN_READ
 mdefine_line|#define OPEN_READ&t;0
@@ -432,7 +434,7 @@ id|dchild
 r_goto
 id|out_nfserr
 suffix:semicolon
-multiline_comment|/*&n;&t; * Make sure we haven&squot;t crossed a mount point ...&n;&t; */
+multiline_comment|/*&n;&t; * check if we have crossed a mount point ...&n;&t; */
 r_if
 c_cond
 (paren
@@ -441,7 +443,47 @@ op_ne
 id|dparent-&gt;d_sb
 )paren
 (brace
-macro_line|#ifdef NFSD_PARANOIA
+r_struct
+id|dentry
+op_star
+id|tdentry
+suffix:semicolon
+id|tdentry
+op_assign
+id|dchild-&gt;d_covers
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tdentry
+op_eq
+id|dchild
+)paren
+r_goto
+id|out_dput
+suffix:semicolon
+id|dput
+c_func
+(paren
+id|dchild
+)paren
+suffix:semicolon
+id|dchild
+op_assign
+id|dget
+c_func
+(paren
+id|tdentry
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dchild-&gt;d_sb
+op_ne
+id|dparent-&gt;d_sb
+)paren
+(brace
 id|printk
 c_func
 (paren
@@ -449,13 +491,13 @@ l_string|&quot;nfsd_lookup: %s/%s crossed mount point!&bslash;n&quot;
 comma
 id|dparent-&gt;d_name.name
 comma
-id|name
+id|dchild-&gt;d_name.name
 )paren
 suffix:semicolon
-macro_line|#endif
 r_goto
 id|out_dput
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n;&t; * Note: we compose the file handle now, but as the&n;&t; * dentry may be negative, it may need to be updated.&n;&t; */
 id|fh_compose
@@ -4906,6 +4948,20 @@ r_return
 l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t;dprintk(&quot;nfsd: permission 0x%x%s%s%s%s%s mode 0%o%s%s%s&bslash;n&quot;,&n;&t;&t;acc,&n;&t;&t;(acc &amp; MAY_READ)?&t;&quot; read&quot;  : &quot;&quot;,&n;&t;&t;(acc &amp; MAY_WRITE)?&t;&quot; write&quot; : &quot;&quot;,&n;&t;&t;(acc &amp; MAY_EXEC)?&t;&quot; exec&quot;  : &quot;&quot;,&n;&t;&t;(acc &amp; MAY_SATTR)?&t;&quot; sattr&quot; : &quot;&quot;,&n;&t;&t;(acc &amp; MAY_TRUNC)?&t;&quot; trunc&quot; : &quot;&quot;,&n;&t;&t;inode-&gt;i_mode,&n;&t;&t;IS_IMMUTABLE(inode)?&t;&quot; immut&quot; : &quot;&quot;,&n;&t;&t;IS_APPEND(inode)?&t;&quot; append&quot; : &quot;&quot;,&n;&t;&t;IS_RDONLY(inode)?&t;&quot; ro&quot; : &quot;&quot;);&n;&t;dprintk(&quot;      owner %d/%d user %d/%d&bslash;n&quot;,&n;&t;&t;inode-&gt;i_uid, inode-&gt;i_gid, current-&gt;fsuid, current-&gt;fsgid);&n;&t; */
+macro_line|#ifndef CONFIG_NFSD_SUN
+r_if
+c_cond
+(paren
+id|dentry-&gt;d_mounts
+op_ne
+id|dentry
+)paren
+(brace
+r_return
+id|nfserr_perm
+suffix:semicolon
+)brace
+macro_line|#endif
 r_if
 c_cond
 (paren

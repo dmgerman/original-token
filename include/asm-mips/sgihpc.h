@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sgihpc.h,v 1.2 1998/05/01 01:36:07 ralf Exp $&n; * sgihpc.h: Various HPC I/O controller defines.  The HPC is basically&n; *           the approximate functional equivalent of the Sun SYSIO&n; *           on SGI INDY machines.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/* $Id: sgihpc.h,v 1.4 1998/09/16 22:52:42 ralf Exp $&n; *&n; * sgihpc.h: Various HPC I/O controller defines.  The HPC is basically&n; *           the approximate functional equivalent of the Sun SYSIO&n; *           on SGI INDY machines.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; * Copyright (C) 1998 Ralf Baechle (ralf@gnu.org)&n; */
 macro_line|#ifndef _MIPS_SGIHPC_H
 DECL|macro|_MIPS_SGIHPC_H
 mdefine_line|#define _MIPS_SGIHPC_H
@@ -981,6 +981,16 @@ id|hpc3mregs
 suffix:semicolon
 DECL|macro|HPC3_MREGS_PBASE
 mdefine_line|#define HPC3_MREGS_PBASE   0x1fbd9800 /* physical */
+multiline_comment|/* We need software copies of these because they are write only. */
+r_extern
+r_int
+r_int
+id|sgi_hpc_write1
+comma
+id|sgi_hpc_write2
+suffix:semicolon
+DECL|macro|SGI_KEYBOARD_IRQ
+mdefine_line|#define SGI_KEYBOARD_IRQ 20
 DECL|struct|hpc_keyb
 r_struct
 id|hpc_keyb
@@ -1042,6 +1052,109 @@ suffix:semicolon
 macro_line|#endif
 )brace
 suffix:semicolon
+multiline_comment|/* Indy RTC  */
+multiline_comment|/* The layout of registers for the INDY Dallas 1286 clock chipset. */
+DECL|struct|indy_clock
+r_struct
+id|indy_clock
+(brace
+DECL|member|hsec
+r_volatile
+r_int
+r_int
+id|hsec
+suffix:semicolon
+DECL|member|sec
+r_volatile
+r_int
+r_int
+id|sec
+suffix:semicolon
+DECL|member|min
+r_volatile
+r_int
+r_int
+id|min
+suffix:semicolon
+DECL|member|malarm
+r_volatile
+r_int
+r_int
+id|malarm
+suffix:semicolon
+DECL|member|hr
+r_volatile
+r_int
+r_int
+id|hr
+suffix:semicolon
+DECL|member|halarm
+r_volatile
+r_int
+r_int
+id|halarm
+suffix:semicolon
+DECL|member|day
+r_volatile
+r_int
+r_int
+id|day
+suffix:semicolon
+DECL|member|dalarm
+r_volatile
+r_int
+r_int
+id|dalarm
+suffix:semicolon
+DECL|member|date
+r_volatile
+r_int
+r_int
+id|date
+suffix:semicolon
+DECL|member|month
+r_volatile
+r_int
+r_int
+id|month
+suffix:semicolon
+DECL|member|year
+r_volatile
+r_int
+r_int
+id|year
+suffix:semicolon
+DECL|member|cmd
+r_volatile
+r_int
+r_int
+id|cmd
+suffix:semicolon
+DECL|member|whsec
+r_volatile
+r_int
+r_int
+id|whsec
+suffix:semicolon
+DECL|member|wsec
+r_volatile
+r_int
+r_int
+id|wsec
+suffix:semicolon
+DECL|member|_unused0
+r_volatile
+r_int
+r_int
+id|_unused0
+(braket
+l_int|50
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|macro|INDY_CLOCK_REGS
+mdefine_line|#define INDY_CLOCK_REGS (KSEG1ADDR(0x1fbe0000))
 r_extern
 r_void
 id|sgihpc_init

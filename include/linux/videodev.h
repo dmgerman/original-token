@@ -836,6 +836,8 @@ DECL|macro|VID_HARDWARE_PERMEDIA2
 mdefine_line|#define VID_HARDWARE_PERMEDIA2&t;14&t;/* Reserved for Permedia2 */
 DECL|macro|VID_HARDWARE_RIVA128
 mdefine_line|#define VID_HARDWARE_RIVA128&t;15&t;/* Reserved for RIVA 128 */
+DECL|macro|VID_HARDWARE_PLANB
+mdefine_line|#define VID_HARDWARE_PLANB&t;16&t;/* PowerMac motherboard video-in */
 multiline_comment|/*&n; *&t;Initialiser list&n; */
 DECL|struct|video_init
 r_struct

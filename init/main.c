@@ -5101,6 +5101,15 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
+DECL|variable|child_reaper
+r_struct
+id|task_struct
+op_star
+id|child_reaper
+op_assign
+op_amp
+id|init_task
+suffix:semicolon
 multiline_comment|/*&n; * Ok, the machine is now initialized. None of the devices&n; * have been touched yet, but the CPU subsystem is up and&n; * running, and memory and process management works.&n; *&n; * Now we can finally start doing some real work..&n; */
 DECL|function|do_basic_setup
 r_static
@@ -5117,6 +5126,11 @@ r_int
 id|real_root_mountflags
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/*&n;&t; * Tell the world that we&squot;re going to be the grim&n;&t; * reaper of innocent orphaned children.&n;&t; *&n;&t; * We don&squot;t want people to have to make incorrect&n;&t; * assumptions about where in the task array this&n;&t; * can be found.&n;&t; */
+id|child_reaper
+op_assign
+id|current
+suffix:semicolon
 macro_line|#if defined(CONFIG_MTRR)&t;/* Do this after SMP initialization */
 multiline_comment|/*&n; * We should probably create some architecture-dependent &quot;fixup after&n; * everything is up&quot; style function where this would belong better&n; * than in init/main.c..&n; */
 id|mtrr_init

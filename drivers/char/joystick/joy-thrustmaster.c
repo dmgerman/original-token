@@ -194,11 +194,7 @@ suffix:semicolon
 id|outb
 c_func
 (paren
-id|inb
-c_func
-(paren
-id|io
-)paren
+l_int|0xff
 comma
 id|io
 )paren
@@ -1262,7 +1258,7 @@ suffix:semicolon
 id|outb
 c_func
 (paren
-id|u
+l_int|0xff
 comma
 id|io
 )paren

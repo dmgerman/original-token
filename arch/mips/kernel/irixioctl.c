@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: irixioctl.c,v 1.6 1998/05/01 01:33:59 ralf Exp $&n; * irixioctl.c: A fucking mess...&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/* $Id: irixioctl.c,v 1.4 1998/03/04 12:17:41 ralf Exp $&n; * irixioctl.c: A fucking mess...&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;

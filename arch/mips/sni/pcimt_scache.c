@@ -1,5 +1,6 @@
-multiline_comment|/*&n; * arch/mips/sni/pcimt_scache.c&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (c) 1997 by Ralf Baechle&n; *&n; * $Id: pcimt_scache.c,v 1.1 1998/03/04 08:47:29 ralf Exp $&n; */
+multiline_comment|/*&n; * arch/mips/sni/pcimt_scache.c&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (c) 1997 by Ralf Baechle&n; *&n; * $Id: pcimt_scache.c,v 1.2 1998/05/28 03:18:02 ralf Exp $&n; */
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/bcache.h&gt;
 macro_line|#include &lt;asm/sni.h&gt;
 DECL|function|__initfunc

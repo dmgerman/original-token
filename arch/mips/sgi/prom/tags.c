@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * tags.c: Initialize the arch tags the way the MIPS kernel setup&n; *         expects.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: tags.c,v 1.2 1998/05/01 01:35:28 ralf Exp $&n; */
+multiline_comment|/*&n; * tags.c: Initialize the arch tags the way the MIPS kernel setup&n; *         expects.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: tags.c,v 1.2 1998/03/27 08:53:48 ralf Exp $&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;

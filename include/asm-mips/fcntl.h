@@ -1,3 +1,4 @@
+multiline_comment|/* $Id: fcntl.h,v 1.3 1998/08/29 20:41:02 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997, 1998 by Ralf Baechle&n; */
 macro_line|#ifndef __ASM_MIPS_FCNTL_H
 DECL|macro|__ASM_MIPS_FCNTL_H
 mdefine_line|#define __ASM_MIPS_FCNTL_H
@@ -26,8 +27,14 @@ DECL|macro|O_NOCTTY
 mdefine_line|#define O_NOCTTY&t;0x0800&t;/* not fcntl */
 DECL|macro|FASYNC
 mdefine_line|#define FASYNC&t;&t;0x1000&t;/* fcntl, for BSD compatibility */
+DECL|macro|O_LARGEFILE
+mdefine_line|#define O_LARGEFILE&t;0x2000&t;/* allow large file opens - currently ignored */
+DECL|macro|O_NOFOLLOW
+mdefine_line|#define O_NOFOLLOW&t;0x4000&t;/* Don&squot;t follow symbolic links */
+DECL|macro|O_DIRECT
+mdefine_line|#define O_DIRECT&t;0x8000&t;/* direct disk access hint - currently ignored */
 DECL|macro|O_DIRECTORY
-mdefine_line|#define O_DIRECTORY&t;0x2000&t;/* must be a directory */
+mdefine_line|#define O_DIRECTORY&t;0x10000&t;/* must be a directory */
 DECL|macro|O_NDELAY
 mdefine_line|#define O_NDELAY&t;O_NONBLOCK
 DECL|macro|F_DUPFD

@@ -84,6 +84,18 @@ op_star
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_VIDEO_PLANB
+r_extern
+r_int
+id|init_planbs
+c_func
+(paren
+r_struct
+id|video_init
+op_star
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_RADIO_AZTECH
 r_extern
 r_int

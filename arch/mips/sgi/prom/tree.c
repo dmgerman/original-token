@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * tree.c: PROM component device tree code.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: tree.c,v 1.2 1998/05/01 01:35:30 ralf Exp $&n; */
+multiline_comment|/*&n; * tree.c: PROM component device tree code.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: tree.c,v 1.2 1998/03/27 08:53:49 ralf Exp $&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;
 DECL|macro|DEBUG_PROM_TREE

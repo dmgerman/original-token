@@ -1,13 +1,19 @@
-multiline_comment|/* $Id: serial.h,v 1.2 1998/05/08 01:44:31 ralf Exp $&n; *&n; * include/asm-mips/serial.h&n; */
+multiline_comment|/* $Id: serial.h,v 1.3 1998/08/28 15:55:38 ralf Exp $&n; *&n; * include/asm-mips/serial.h&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/jazz.h&gt;
 multiline_comment|/*&n; * This assumes you have a 1.8432 MHz clock for your UART.&n; *&n; * It&squot;d be nice if someone built a serial card with a 24.576 MHz&n; * clock, since the 16550A is capable of handling a top speed of 1.5&n; * megabits/second; but this requires the faster clock.&n; */
 DECL|macro|BASE_BAUD
 mdefine_line|#define BASE_BAUD ( 1843200 / 16 )
+macro_line|#ifndef CONFIG_OLIVETTI_M700
 multiline_comment|/* Some Jazz machines seem to have an 8MHz crystal clock but I don&squot;t know&n;   exactly which ones ... XXX */
 DECL|macro|JAZZ_BASE_BAUD
 mdefine_line|#define JAZZ_BASE_BAUD ( 8000000 / 16 ) /* ( 3072000 / 16) */
+macro_line|#else
+multiline_comment|/* but the M700 isn&squot;t such a strange beast */
+DECL|macro|JAZZ_BASE_BAUD
+mdefine_line|#define JAZZ_BASE_BAUD BASE_BAUD
+macro_line|#endif
 multiline_comment|/* Standard COM flags (except for COM4, because of the 8514 problem) */
 macro_line|#ifdef CONFIG_SERIAL_DETECT_IRQ
 DECL|macro|STD_COM_FLAGS

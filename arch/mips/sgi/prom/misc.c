@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * misc.c: Miscellaneous ARCS PROM routines.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: misc.c,v 1.2 1998/05/01 01:35:26 ralf Exp $&n; */
+multiline_comment|/* $Id: misc.c,v 1.6 1998/07/08 15:59:13 ralf Exp $&n; *&n; * misc.c: Miscellaneous ARCS PROM routines.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -10,14 +10,6 @@ r_extern
 r_int
 r_int
 id|mips_cputype
-suffix:semicolon
-r_extern
-r_int
-id|initialize_kbd
-c_func
-(paren
-r_void
-)paren
 suffix:semicolon
 r_extern
 r_void
@@ -45,11 +37,6 @@ r_void
 id|bcops
 op_member_access_from_pointer
 id|bc_disable
-c_func
-(paren
-)paren
-suffix:semicolon
-id|initialize_kbd
 c_func
 (paren
 )paren
@@ -86,11 +73,6 @@ r_void
 id|bcops
 op_member_access_from_pointer
 id|bc_disable
-c_func
-(paren
-)paren
-suffix:semicolon
-id|initialize_kbd
 c_func
 (paren
 )paren
@@ -132,11 +114,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|initialize_kbd
-c_func
-(paren
-)paren
-suffix:semicolon
 id|cli
 c_func
 (paren
@@ -173,11 +150,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|initialize_kbd
-c_func
-(paren
-)paren
-suffix:semicolon
 id|cli
 c_func
 (paren
@@ -210,11 +182,6 @@ r_void
 id|bcops
 op_member_access_from_pointer
 id|bc_disable
-c_func
-(paren
-)paren
-suffix:semicolon
-id|initialize_kbd
 c_func
 (paren
 )paren

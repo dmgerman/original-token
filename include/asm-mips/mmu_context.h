@@ -1,24 +1,30 @@
-multiline_comment|/* $Id: mmu_context.h,v 1.4 1998/05/07 00:40:04 ralf Exp $&n; *&n; * Switch a MMU context.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997, 1998 by Ralf Baechle&n; */
+multiline_comment|/* $Id: mmu_context.h,v 1.3 1998/10/16 19:22:54 ralf Exp $&n; *&n; * Switch a MMU context.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997, 1998 by Ralf Baechle&n; */
 macro_line|#ifndef __ASM_MIPS_MMU_CONTEXT_H
 DECL|macro|__ASM_MIPS_MMU_CONTEXT_H
 mdefine_line|#define __ASM_MIPS_MMU_CONTEXT_H
-DECL|macro|MAX_ASID
-mdefine_line|#define MAX_ASID 255
+multiline_comment|/* Fuck.  The f-word is here so you can grep for it :-)  */
 r_extern
 r_int
 r_int
 id|asid_cache
 suffix:semicolon
-DECL|macro|ASID_VERSION_SHIFT
-mdefine_line|#define ASID_VERSION_SHIFT 16
+multiline_comment|/* I patch, therefore I am ...  */
+DECL|macro|ASID_INC
+mdefine_line|#define ASID_INC(asid)&t;&t;&t;&t;&t;&t;&bslash;&n; ({ unsigned long __asid = asid;&t;&t;&t;&t;&bslash;&n;   __asm__(&quot;1:&bslash;taddiu&bslash;t%0,0&bslash;t&bslash;t&bslash;t&bslash;t# patched&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;           &quot;.section&bslash;t__asid_inc,&bslash;&quot;a&bslash;&quot;&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;           &quot;.word&bslash;t1b&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;           &quot;.previous&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;           :&quot;=r&quot; (__asid)&t;&t;&t;&t;&t;&bslash;&n;           :&quot;0&quot; (__asid));&t;&t;&t;&t;&t;&bslash;&n;   __asid; })
+DECL|macro|ASID_MASK
+mdefine_line|#define ASID_MASK(asid)&t;&t;&t;&t;&t;&t;&bslash;&n; ({ unsigned long __asid = asid;&t;&t;&t;&t;&bslash;&n;   __asm__(&quot;1:&bslash;tandi&bslash;t%0,%1,0&bslash;t&bslash;t&bslash;t# patched&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;           &quot;.section&bslash;t__asid_mask,&bslash;&quot;a&bslash;&quot;&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;           &quot;.word&bslash;t1b&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;           &quot;.previous&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;           :&quot;=r&quot; (__asid)&t;&t;&t;&t;&t;&bslash;&n;           :&quot;r&quot; (__asid));&t;&t;&t;&t;&t;&bslash;&n;   __asid; })
 DECL|macro|ASID_VERSION_MASK
-mdefine_line|#define ASID_VERSION_MASK  ((~0UL) &lt;&lt; ASID_VERSION_SHIFT)
+mdefine_line|#define ASID_VERSION_MASK&t;&t;&t;&t;&t;&bslash;&n; ({ unsigned long __asid;&t;&t;&t;&t;&t;&bslash;&n;   __asm__(&quot;1:&bslash;tli&bslash;t%0,0&bslash;t&bslash;t&bslash;t&bslash;t# patched&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;           &quot;.section&bslash;t__asid_version_mask,&bslash;&quot;a&bslash;&quot;&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;           &quot;.word&bslash;t1b&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;           &quot;.previous&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;           :&quot;=r&quot; (__asid));&t;&t;&t;&t;&t;&bslash;&n;   __asid; })
 DECL|macro|ASID_FIRST_VERSION
-mdefine_line|#define ASID_FIRST_VERSION (1UL &lt;&lt; ASID_VERSION_SHIFT)
-DECL|function|get_new_mmu_context
+mdefine_line|#define ASID_FIRST_VERSION&t;&t;&t;&t;&t;&bslash;&n; ({ unsigned long __asid = asid;&t;&t;&t;&t;&bslash;&n;   __asm__(&quot;1:&bslash;tli&bslash;t%0,0&bslash;t&bslash;t&bslash;t&bslash;t# patched&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;           &quot;.section&bslash;t__asid_first_version,&bslash;&quot;a&bslash;&quot;&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;           &quot;.word&bslash;t1b&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;           &quot;.previous&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;           :&quot;=r&quot; (__asid));&t;&t;&t;&t;&t;&bslash;&n;   __asid; })
+DECL|macro|ASID_FIRST_VERSION_R3000
+mdefine_line|#define ASID_FIRST_VERSION_R3000 0x1000
+DECL|macro|ASID_FIRST_VERSION_R4000
+mdefine_line|#define ASID_FIRST_VERSION_R4000 0x100
 r_extern
 r_inline
 r_void
+DECL|function|get_new_mmu_context
 id|get_new_mmu_context
 c_func
 (paren
@@ -32,63 +38,54 @@ r_int
 id|asid
 )paren
 (brace
-multiline_comment|/* check if it&squot;s legal.. */
 r_if
 c_cond
 (paren
+op_logical_neg
+id|ASID_MASK
+c_func
+(paren
 (paren
 id|asid
-op_amp
-op_complement
-id|ASID_VERSION_MASK
+op_assign
+id|ASID_INC
+c_func
+(paren
+id|asid
 )paren
-OG
-id|MAX_ASID
+)paren
+)paren
 )paren
 (brace
-multiline_comment|/* start a new version, invalidate all old asid&squot;s */
 id|flush_tlb_all
 c_func
 (paren
 )paren
 suffix:semicolon
-id|asid
-op_assign
-(paren
-id|asid
-op_amp
-id|ASID_VERSION_MASK
-)paren
-op_plus
-id|ASID_FIRST_VERSION
-suffix:semicolon
+multiline_comment|/* start new asid cycle */
 r_if
 c_cond
 (paren
 op_logical_neg
 id|asid
 )paren
+multiline_comment|/* fix version if needed */
 id|asid
 op_assign
 id|ASID_FIRST_VERSION
 suffix:semicolon
 )brace
+id|mm-&gt;context
+op_assign
 id|asid_cache
 op_assign
 id|asid
-op_plus
-l_int|1
 suffix:semicolon
-id|mm-&gt;context
-op_assign
-id|asid
-suffix:semicolon
-multiline_comment|/* full version + asid */
 )brace
-DECL|function|get_mmu_context
 r_extern
 r_inline
 r_void
+DECL|function|get_mmu_context
 id|get_mmu_context
 c_func
 (paren
@@ -204,5 +201,112 @@ id|tsk-&gt;mm-&gt;context
 )paren
 suffix:semicolon
 )brace
+r_extern
+r_void
+id|__asid_setup
+c_func
+(paren
+r_int
+r_int
+id|inc
+comma
+r_int
+r_int
+id|mask
+comma
+r_int
+r_int
+id|version_mask
+comma
+r_int
+r_int
+id|first_version
+)paren
+suffix:semicolon
+DECL|function|r3000_asid_setup
+r_extern
+r_inline
+r_void
+id|r3000_asid_setup
+c_func
+(paren
+r_void
+)paren
+(brace
+id|__asid_setup
+c_func
+(paren
+l_int|0x40
+comma
+l_int|0xfc0
+comma
+l_int|0xf000
+comma
+id|ASID_FIRST_VERSION_R3000
+)paren
+suffix:semicolon
+)brace
+DECL|function|r6000_asid_setup
+r_extern
+r_inline
+r_void
+id|r6000_asid_setup
+c_func
+(paren
+r_void
+)paren
+(brace
+id|panic
+c_func
+(paren
+l_string|&quot;r6000_asid_setup: implement me&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* No idea ...  */
+)brace
+DECL|function|tfp_asid_setup
+r_extern
+r_inline
+r_void
+id|tfp_asid_setup
+c_func
+(paren
+r_void
+)paren
+(brace
+id|panic
+c_func
+(paren
+l_string|&quot;tfp_asid_setup: implement me&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* No idea ...  */
+)brace
+DECL|function|r4xx0_asid_setup
+r_extern
+r_inline
+r_void
+id|r4xx0_asid_setup
+c_func
+(paren
+r_void
+)paren
+(brace
+id|__asid_setup
+c_func
+(paren
+l_int|1
+comma
+l_int|0xff
+comma
+l_int|0xff00
+comma
+id|ASID_FIRST_VERSION_R4000
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* R10000 has the same ASID mechanism as the R4000.  */
+DECL|macro|andes_asid_setup
+mdefine_line|#define andes_asid_setup r4xx0_asid_setup
 macro_line|#endif /* __ASM_MIPS_MMU_CONTEXT_H */
 eof

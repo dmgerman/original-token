@@ -1,9 +1,11 @@
-multiline_comment|/* $Id: dma.h,v 1.1.1.1 1997/06/01 03:17:12 ralf Exp $&n; * linux/include/asm/dma.h: Defines for using and allocating dma channels.&n; * Written by Hennus Bergman, 1992.&n; * High DMA channel support &amp; info by Hannu Savolainen&n; * and John Boyd, Nov. 1992.&n; *&n; * NOTE: all this is true *only* for ISA/EISA expansions on Mips boards&n; * and can only be used for expansion cards. Onboard DMA controllers, such&n; * as the R4030 on Jazz boards behave totally different!&n; */
+multiline_comment|/* $Id: dma.h,v 1.2 1998/10/19 21:29:10 ralf Exp $&n; * linux/include/asm/dma.h: Defines for using and allocating dma channels.&n; * Written by Hennus Bergman, 1992.&n; * High DMA channel support &amp; info by Hannu Savolainen&n; * and John Boyd, Nov. 1992.&n; *&n; * NOTE: all this is true *only* for ISA/EISA expansions on Mips boards&n; * and can only be used for expansion cards. Onboard DMA controllers, such&n; * as the R4030 on Jazz boards behave totally different!&n; */
 macro_line|#ifndef __ASM_MIPS_DMA_H
 DECL|macro|__ASM_MIPS_DMA_H
 mdefine_line|#define __ASM_MIPS_DMA_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/io.h&gt;&t;&t;&t;/* need byte IO */
+macro_line|#include &lt;asm/spinlock.h&gt;&t;&t;/* And spinlocks */
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#ifdef HAVE_REALLY_SLOW_DMA_CONTROLLER
 DECL|macro|dma_outb
 mdefine_line|#define dma_outb&t;outb_p
@@ -122,6 +124,60 @@ DECL|macro|DMA_MODE_WRITE
 mdefine_line|#define DMA_MODE_WRITE&t;0x48&t;/* memory to I/O, no autoinit, increment, single mode */
 DECL|macro|DMA_MODE_CASCADE
 mdefine_line|#define DMA_MODE_CASCADE 0xC0   /* pass thru DREQ-&gt;HRQ, DACK&lt;-HLDA only */
+r_extern
+id|spinlock_t
+id|dma_spin_lock
+suffix:semicolon
+DECL|function|claim_dma_lock
+r_static
+id|__inline__
+r_int
+r_int
+id|claim_dma_lock
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|dma_spin_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+r_return
+id|flags
+suffix:semicolon
+)brace
+DECL|function|release_dma_lock
+r_static
+id|__inline__
+r_void
+id|release_dma_lock
+c_func
+(paren
+r_int
+r_int
+id|flags
+)paren
+(brace
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|dma_spin_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* enable/disable a specific DMA channel */
 DECL|function|enable_dma
 r_static
@@ -206,8 +262,15 @@ comma
 id|DMA2_MASK_REG
 )paren
 suffix:semicolon
+multiline_comment|/* I hate voodoo programming but .. */
+id|udelay
+c_func
+(paren
+l_int|20
+)paren
+suffix:semicolon
 )brace
-multiline_comment|/* Clear the &squot;DMA Pointer Flip Flop&squot;.&n; * Write 0 for LSB/MSB, 1 for MSB/LSB access.&n; * Use this once to initialize the FF to a known state.&n; * After that, keep track of it. :-)&n; * --- In order to do that, the DMA routines below should ---&n; * --- only be used while interrupts are disabled! ---&n; */
+multiline_comment|/* Clear the &squot;DMA Pointer Flip Flop&squot;.&n; * Write 0 for LSB/MSB, 1 for MSB/LSB access.&n; * Use this once to initialize the FF to a known state.&n; * After that, keep track of it. :-)&n; * --- In order to do that, the DMA routines below should ---&n; * --- only be used while holding the DMA lock ! ---&n; */
 DECL|function|clear_dma_ff
 r_static
 id|__inline__

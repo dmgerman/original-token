@@ -327,6 +327,7 @@ id|loop_info
 op_star
 )paren
 suffix:semicolon
+multiline_comment|/* release is called from loop_unregister_transfer or clr_fd */
 DECL|member|release
 r_int
 (paren
@@ -356,6 +357,31 @@ comma
 r_int
 r_int
 id|arg
+)paren
+suffix:semicolon
+multiline_comment|/* lock and unlock manage the module use counts */
+DECL|member|lock
+r_void
+(paren
+op_star
+id|lock
+)paren
+(paren
+r_struct
+id|loop_device
+op_star
+)paren
+suffix:semicolon
+DECL|member|unlock
+r_void
+(paren
+op_star
+id|unlock
+)paren
+(paren
+r_struct
+id|loop_device
+op_star
 )paren
 suffix:semicolon
 )brace

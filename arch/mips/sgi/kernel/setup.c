@@ -1,12 +1,17 @@
-multiline_comment|/* $Id: setup.c,v 1.6 1998/05/07 00:39:53 ralf Exp $&n; *&n; * setup.c: SGI specific setup, including init of the feature struct.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/* $Id: setup.c,v 1.13 1998/09/16 22:50:46 ralf Exp $&n; *&n; * setup.c: SGI specific setup, including init of the feature struct.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; * Copyright (C) 1997, 1998 Ralf Baechle (ralf@gnu.org)&n; */
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/kbd_ll.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/kdev_t.h&gt;
+macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/mc146818rtc.h&gt;
 macro_line|#include &lt;asm/addrspace.h&gt;
 macro_line|#include &lt;asm/bcache.h&gt;
 macro_line|#include &lt;asm/keyboard.h&gt;
+macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/reboot.h&gt;
-macro_line|#include &lt;asm/vector.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;
 macro_line|#include &lt;asm/sgi.h&gt;
 macro_line|#include &lt;asm/sgimc.h&gt;
@@ -16,40 +21,18 @@ r_extern
 r_int
 id|serial_console
 suffix:semicolon
-multiline_comment|/* in console.c, of course */
+multiline_comment|/* in sgiserial.c  */
 r_extern
-r_void
-id|sgi_machine_restart
-c_func
-(paren
-r_char
-op_star
-id|command
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|sgi_machine_halt
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|sgi_machine_power_off
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-DECL|variable|sgi_feature
 r_struct
-id|feature
-id|sgi_feature
-op_assign
-(brace
-)brace
+id|rtc_ops
+id|indy_rtc_ops
+suffix:semicolon
+r_void
+id|indy_reboot_setup
+c_func
+(paren
+r_void
+)paren
 suffix:semicolon
 DECL|variable|sgi_kh
 r_static
@@ -199,6 +182,26 @@ id|kbd_read_status
 op_assign
 id|sgi_read_status
 suffix:semicolon
+id|request_irq
+c_func
+(paren
+id|SGI_KEYBOARD_IRQ
+comma
+id|keyboard_interrupt
+comma
+l_int|0
+comma
+l_string|&quot;keyboard&quot;
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+multiline_comment|/* Dirty hack, this get&squot;s called as a callback from the keyboard&n;&t;   driver.  We piggyback the initialization of the front panel&n;&t;   button handling on it even though they&squot;re technically not&n;&t;   related with the keyboard driver in any way.  Doing it from&n;&t;   indy_setup wouldn&squot;t work since kmalloc isn&squot;t initialized yet.  */
+id|indy_reboot_setup
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 DECL|function|__initfunc
 id|__initfunc
@@ -231,34 +234,19 @@ r_void
 )paren
 )paren
 (brace
+macro_line|#ifdef CONFIG_SERIAL_CONSOLE
 r_char
 op_star
 id|ctype
 suffix:semicolon
+macro_line|#endif
 id|irq_setup
 op_assign
 id|sgi_irq_setup
 suffix:semicolon
-id|feature
-op_assign
-op_amp
-id|sgi_feature
-suffix:semicolon
 id|keyboard_setup
 op_assign
 id|sgi_keyboard_setup
-suffix:semicolon
-id|_machine_restart
-op_assign
-id|sgi_machine_restart
-suffix:semicolon
-id|_machine_halt
-op_assign
-id|sgi_machine_halt
-suffix:semicolon
-id|_machine_power_off
-op_assign
-id|sgi_machine_power_off
 suffix:semicolon
 multiline_comment|/* Init the INDY HPC I/O controller.  Need to call this before&n;&t; * fucking with the memory controller because it needs to know the&n;&t; * boardID and whether this is a Guiness or a FullHouse machine.&n;&t; */
 id|sgihpc_init
@@ -278,6 +266,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SERIAL_CONSOLE
 multiline_comment|/* ARCS console environment variable is set to &quot;g?&quot; for&n;&t; * graphics console, it is set to &quot;d&quot; for the first serial&n;&t; * line and &quot;d2&quot; for the second serial line.&n;&t; */
 id|ctype
 op_assign
@@ -356,5 +345,18 @@ c_func
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
+macro_line|#ifdef CONFIG_VT
+id|conswitchp
+op_assign
+op_amp
+id|newport_con
+suffix:semicolon
+macro_line|#endif
+id|rtc_ops
+op_assign
+op_amp
+id|indy_rtc_ops
+suffix:semicolon
 )brace
 eof

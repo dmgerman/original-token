@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * ioctls for Linux/MIPS.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996 by Ralf Baechle&n; */
+multiline_comment|/* $Id: ioctls.h,v 1.5 1998/08/19 21:58:11 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996 by Ralf Baechle&n; */
 macro_line|#ifndef __ASM_MIPS_IOCTLS_H
 DECL|macro|__ASM_MIPS_IOCTLS_H
 mdefine_line|#define __ASM_MIPS_IOCTLS_H
@@ -163,5 +163,9 @@ DECL|macro|TIOCMIWAIT
 mdefine_line|#define TIOCMIWAIT      0x5491 /* wait for a change on serial input line(s) */
 DECL|macro|TIOCGICOUNT
 mdefine_line|#define TIOCGICOUNT     0x5492 /* read serial port inline interrupt counts */
+DECL|macro|TIOCGHAYESESP
+mdefine_line|#define TIOCGHAYESESP&t;0x5493 /* Get Hayes ESP configuration */
+DECL|macro|TIOCSHAYESESP
+mdefine_line|#define TIOCSHAYESESP&t;0x5494 /* Set Hayes ESP configuration */
 macro_line|#endif /* __ASM_MIPS_IOCTLS_H */
 eof

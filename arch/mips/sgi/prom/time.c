@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * time.c: Extracting time information from ARCS prom.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: time.c,v 1.2 1998/05/01 01:35:29 ralf Exp $&n; */
+multiline_comment|/*&n; * time.c: Extracting time information from ARCS prom.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: time.c,v 1.2 1998/03/27 08:53:49 ralf Exp $&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;
 DECL|function|__initfunc

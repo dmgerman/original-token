@@ -34,6 +34,8 @@ DECL|macro|O_LARGEFILE
 mdefine_line|#define O_LARGEFILE&t;0100000
 DECL|macro|O_DIRECTORY
 mdefine_line|#define O_DIRECTORY&t;0200000&t;/* must be a directory */
+DECL|macro|O_NOFOLLOW
+mdefine_line|#define O_NOFOLLOW&t;0400000 /* don&squot;t follow links */
 DECL|macro|F_DUPFD
 mdefine_line|#define F_DUPFD&t;&t;0&t;/* dup */
 DECL|macro|F_GETFD

@@ -7,7 +7,7 @@ macro_line|#include &lt;asm/types.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 multiline_comment|/*&n; * Version&n; */
 DECL|macro|JS_VERSION
-mdefine_line|#define JS_VERSION&t;&t;0x01020b
+mdefine_line|#define JS_VERSION&t;&t;0x01020c
 multiline_comment|/*&n; * Types and constants for reading from /dev/js&n; */
 DECL|macro|JS_EVENT_BUTTON
 mdefine_line|#define JS_EVENT_BUTTON&t;&t;0x01&t;/* button pressed/released */
@@ -212,7 +212,7 @@ mdefine_line|#define __save_flags(flags) save_flags(flags)
 DECL|macro|__restore_flags
 mdefine_line|#define __restore_flags(flags)&t;restore_flags(flags)
 DECL|macro|spin_lock_irqsave
-mdefine_line|#define spin_lock_irqsave(x, flags) do { cli(); save_flags(flags); } while (0)
+mdefine_line|#define spin_lock_irqsave(x, flags) do { save_flags(flags); cli(); } while (0)
 DECL|macro|spin_unlock_irqrestore
 mdefine_line|#define spin_unlock_irqrestore(x, flags) restore_flags(flags)
 DECL|macro|spin_lock_init

@@ -30,6 +30,8 @@ DECL|macro|FASYNC
 mdefine_line|#define FASYNC&t;&t;020000&t;/* fcntl, for BSD compatibility */
 DECL|macro|O_DIRECTORY
 mdefine_line|#define O_DIRECTORY&t;040000&t;/* must be a directory */
+DECL|macro|O_NOFOLLOW
+mdefine_line|#define O_NOFOLLOW&t;0100000&t;/* don&squot;t follow links */
 DECL|macro|F_DUPFD
 mdefine_line|#define F_DUPFD&t;&t;0&t;/* dup */
 DECL|macro|F_GETFD

@@ -12,7 +12,7 @@ DECL|macro|MCA_MAX_SLOT_NR
 mdefine_line|#define MCA_MAX_SLOT_NR  8
 multiline_comment|/* MCA_NOTFOUND is an error condition.  The other two indicate&n;&t;motherboard POS registers contain the adapter.  They might be&n;&t;returned by the mca_find_adapter() function, and can be used as&n;&t;arguments to mca_read_stored_pos().  I&squot;m not going to allow direct&n;&t;access to the motherboard registers until we run across an adapter&n;&t;that requires it.  We don&squot;t know enough about them to know if it&squot;s&n;&t;safe.&n;&n;&t;See Documentation/mca.txt or one of the existing drivers for&n;&t;more information.&n;*/
 DECL|macro|MCA_NOTFOUND
-mdefine_line|#define MCA_NOTFOUND&t;-1
+mdefine_line|#define MCA_NOTFOUND&t;(-1)
 DECL|macro|MCA_INTEGSCSI
 mdefine_line|#define MCA_INTEGSCSI&t;(MCA_MAX_SLOT_NR)
 DECL|macro|MCA_INTEGVIDEO
@@ -24,6 +24,18 @@ multiline_comment|/* returns the slot of the first enabled adapter matching id. 
 r_extern
 r_int
 id|mca_find_adapter
+c_func
+(paren
+r_int
+id|id
+comma
+r_int
+id|start
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|mca_find_unused_adapter
 c_func
 (paren
 r_int
@@ -46,6 +58,33 @@ suffix:semicolon
 r_extern
 r_int
 id|mca_isenabled
+c_func
+(paren
+r_int
+id|slot
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|mca_is_adapter_used
+c_func
+(paren
+r_int
+id|slot
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|mca_mark_as_used
+c_func
+(paren
+r_int
+id|slot
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|mca_mark_as_unused
 c_func
 (paren
 r_int
@@ -156,6 +195,15 @@ comma
 r_int
 r_char
 id|byte
+)paren
+suffix:semicolon
+multiline_comment|/* Should only be called by the NMI interrupt handler, this will do some&n;fancy stuff to figure out what might have generated a NMI. */
+r_extern
+r_void
+id|mca_handle_nmi
+c_func
+(paren
+r_void
 )paren
 suffix:semicolon
 macro_line|#endif /* _LINUX_MCA_H */

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * joy-db9.c  Version 0.3V&n; *&n; * Copyright (c) 1998 Andree Borrmann&n; */
+multiline_comment|/*&n; * joy-db9.c  Version 0.5V&n; *&n; * Copyright (c) 1998 Andree Borrmann&n; */
 multiline_comment|/*&n; * This is a module for the Linux joystick driver, supporting&n; * console (Atari, Amstrad, Commodore, Amiga, Sega) joysticks&n; * and gamepads connected to the parallel port.&n; */
 multiline_comment|/*&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or &n; * (at your option) any later version.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA&n; */
 macro_line|#include &lt;asm/io.h&gt;
@@ -52,8 +52,10 @@ DECL|macro|JS_GENESIS6_PAD
 mdefine_line|#define JS_GENESIS6_PAD&t;0x06
 DECL|macro|JS_SATURN_PAD
 mdefine_line|#define JS_SATURN_PAD&t;0x07
+DECL|macro|JS_MULTI_0802
+mdefine_line|#define JS_MULTI_0802&t;0x08
 DECL|macro|JS_MAX_PAD
-mdefine_line|#define JS_MAX_PAD&t;(JS_SATURN_PAD + 1)
+mdefine_line|#define JS_MAX_PAD&t;0x09
 DECL|macro|JS_DB9_UP
 mdefine_line|#define JS_DB9_UP&t;0x01
 DECL|macro|JS_DB9_DOWN
@@ -150,22 +152,12 @@ op_star
 id|port
 suffix:semicolon
 multiline_comment|/* parport device */
-DECL|member|wanted
-r_int
-id|wanted
-suffix:semicolon
-multiline_comment|/* parport wanted */
 macro_line|#else
 r_int
 id|port
 suffix:semicolon
 multiline_comment|/* hw port */
 macro_line|#endif
-DECL|member|use
-r_int
-id|use
-suffix:semicolon
-multiline_comment|/* use count */
 DECL|member|mode
 r_int
 id|mode
@@ -211,6 +203,100 @@ c_cond
 id|info-&gt;mode
 )paren
 (brace
+r_case
+id|JS_MULTI_0802
+suffix:colon
+id|data
+op_assign
+id|JS_PAR_STATUS
+c_func
+(paren
+id|info-&gt;port
+)paren
+op_rshift
+l_int|3
+suffix:semicolon
+id|axes
+(braket
+l_int|0
+)braket
+(braket
+l_int|1
+)braket
+op_assign
+(paren
+id|data
+op_amp
+id|JS_DB9_DOWN
+ques
+c_cond
+l_int|0
+suffix:colon
+l_int|1
+)paren
+op_minus
+(paren
+id|data
+op_amp
+id|JS_DB9_UP
+ques
+c_cond
+l_int|0
+suffix:colon
+l_int|1
+)paren
+suffix:semicolon
+id|axes
+(braket
+l_int|0
+)braket
+(braket
+l_int|0
+)braket
+op_assign
+(paren
+id|data
+op_amp
+id|JS_DB9_RIGHT
+ques
+c_cond
+l_int|0
+suffix:colon
+l_int|1
+)paren
+op_minus
+(paren
+id|data
+op_amp
+id|JS_DB9_LEFT
+ques
+c_cond
+l_int|0
+suffix:colon
+l_int|1
+)paren
+suffix:semicolon
+id|buttons
+(braket
+l_int|0
+)braket
+(braket
+l_int|0
+)braket
+op_assign
+(paren
+id|data
+op_amp
+id|JS_DB9_FIRE1
+ques
+c_cond
+l_int|1
+suffix:colon
+l_int|0
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
 r_case
 id|JS_MULTI_STICK
 suffix:colon
@@ -1389,13 +1475,11 @@ id|info
 op_assign
 id|dev-&gt;port-&gt;info
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-id|info-&gt;use
+id|MOD_IN_USE
 )paren
 (brace
 macro_line|#ifdef USE_PARPORT
@@ -1408,23 +1492,10 @@ c_func
 id|info-&gt;port
 )paren
 )paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;joy-db9: parport busy&bslash;n&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* port currently not available ... */
-id|info-&gt;wanted
-op_increment
-suffix:semicolon
-multiline_comment|/* we&squot;ll claim it on wakeup */
 r_return
-l_int|0
+op_minus
+id|EBUSY
 suffix:semicolon
-)brace
 macro_line|#endif
 id|js_db9_enable_ps2
 c_func
@@ -1433,8 +1504,7 @@ id|info
 )paren
 suffix:semicolon
 )brace
-id|info-&gt;use
-op_increment
+id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -1461,14 +1531,11 @@ id|dev-&gt;port-&gt;info
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-id|info-&gt;use
-op_decrement
-suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-id|info-&gt;use
+id|MOD_IN_USE
 )paren
 (brace
 id|js_db9_disable_ps2
@@ -1490,57 +1557,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * parport wakeup callback: claim the port!&n; */
-macro_line|#ifdef USE_PARPORT
-DECL|function|js_db9_wakeup
-r_static
-r_void
-id|js_db9_wakeup
-c_func
-(paren
-r_void
-op_star
-id|v
-)paren
-(brace
-r_struct
-id|js_db9_info
-op_star
-id|info
-op_assign
-id|js_db9_port-&gt;info
-suffix:semicolon
-multiline_comment|/* FIXME! We can have more than 1 port! */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|info-&gt;use
-op_logical_and
-id|info-&gt;wanted
-)paren
-(brace
-id|parport_claim
-c_func
-(paren
-id|info-&gt;port
-)paren
-suffix:semicolon
-id|js_db9_enable_ps2
-c_func
-(paren
-id|info
-)paren
-suffix:semicolon
-id|info-&gt;use
-op_increment
-suffix:semicolon
-id|info-&gt;wanted
-op_decrement
-suffix:semicolon
-)brace
-)brace
-macro_line|#endif
 macro_line|#ifdef MODULE
 DECL|function|cleanup_module
 r_void
@@ -1785,6 +1801,8 @@ comma
 l_int|7
 comma
 l_int|8
+comma
+l_int|1
 )brace
 suffix:semicolon
 r_char
@@ -1810,6 +1828,8 @@ comma
 l_string|&quot;Genesis 6 pad&quot;
 comma
 l_string|&quot;Saturn pad&quot;
+comma
+l_string|&quot;Multisystem (0.8.0.2) joystick&quot;
 )brace
 suffix:semicolon
 r_if
@@ -1984,7 +2004,7 @@ l_string|&quot;joystick (db9)&quot;
 comma
 l_int|NULL
 comma
-id|js_db9_wakeup
+l_int|NULL
 comma
 l_int|NULL
 comma
@@ -2001,10 +2021,6 @@ id|info.port
 )paren
 r_return
 id|port
-suffix:semicolon
-id|info.wanted
-op_assign
-l_int|0
 suffix:semicolon
 )brace
 macro_line|#else
@@ -2068,10 +2084,6 @@ id|config
 (braket
 l_int|1
 )braket
-suffix:semicolon
-id|info.use
-op_assign
-l_int|0
 suffix:semicolon
 id|port
 op_assign

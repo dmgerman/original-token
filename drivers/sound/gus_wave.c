@@ -4137,6 +4137,11 @@ op_assign
 op_minus
 l_int|1
 comma
+id|testbits
+op_assign
+op_minus
+l_int|1
+comma
 id|nbanks
 op_assign
 l_int|0
@@ -4694,7 +4699,7 @@ suffix:semicolon
 multiline_comment|/* The last bank is too small */
 )brace
 )brace
-multiline_comment|/*&n;&t; * The last resort is to search for a combination where the last bank is&n;&t; * smaller than the actual SIMM. This leaves some memory in the last bank&n;&t; * unused but doesn&squot;t leave holes in the DRAM address space.&n;&t; */
+multiline_comment|/*&n; &t; * The last resort is to search for a combination where the banks are&n; &t; * smaller than the actual SIMMs. This leaves some memory in the banks&n; &t; * unused but doesn&squot;t leave holes in the DRAM address space.&n; &t; */
 r_if
 c_cond
 (paren
@@ -4712,11 +4717,6 @@ id|i
 op_assign
 l_int|0
 suffix:semicolon
-id|bits
-op_eq
-op_minus
-l_int|1
-op_logical_and
 id|i
 OL
 l_int|13
@@ -4725,7 +4725,7 @@ id|i
 op_increment
 )paren
 (brace
-id|bits
+id|testbits
 op_assign
 id|i
 suffix:semicolon
@@ -4736,7 +4736,7 @@ id|j
 op_assign
 l_int|0
 suffix:semicolon
-id|bits
+id|testbits
 op_ne
 op_minus
 l_int|1
@@ -4760,18 +4760,32 @@ id|i
 (braket
 id|j
 )braket
-op_ne
+OG
 id|bank_sizes
 (braket
 id|j
 )braket
 )paren
-id|bits
+(brace
+id|testbits
 op_assign
 op_minus
 l_int|1
 suffix:semicolon
-multiline_comment|/* No hit */
+)brace
+r_if
+c_cond
+(paren
+id|testbits
+OG
+id|bits
+)paren
+(brace
+id|bits
+op_assign
+id|testbits
+suffix:semicolon
+)brace
 )brace
 r_if
 c_cond
@@ -4797,16 +4811,6 @@ l_string|&quot;Interwave: Try reordering SIMMS.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-)brace
-r_if
-c_cond
-(paren
-id|bits
-op_eq
-op_minus
-l_int|1
-)paren
-(brace
 id|printk
 c_func
 (paren

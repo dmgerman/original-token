@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sgiarcs.h,v 1.2 1998/05/01 01:36:07 ralf Exp $&n; * SGI ARCS firmware interface defines.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/* $Id: sgiarcs.h,v 1.2 1998/07/08 16:01:57 ralf Exp $&n; *&n; * SGI ARCS firmware interface defines.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
 macro_line|#ifndef _MIPS_SGIARCS_H
 DECL|macro|_MIPS_SGIARCS_H
 mdefine_line|#define _MIPS_SGIARCS_H
@@ -674,6 +674,13 @@ id|halt
 (paren
 r_void
 )paren
+id|__attribute__
+c_func
+(paren
+(paren
+id|noreturn
+)paren
+)paren
 suffix:semicolon
 multiline_comment|/* Halt the machine. */
 DECL|member|pdown
@@ -684,6 +691,13 @@ id|pdown
 )paren
 (paren
 r_void
+)paren
+id|__attribute__
+c_func
+(paren
+(paren
+id|noreturn
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* Power down the machine. */
@@ -696,6 +710,13 @@ id|restart
 (paren
 r_void
 )paren
+id|__attribute__
+c_func
+(paren
+(paren
+id|noreturn
+)paren
+)paren
 suffix:semicolon
 multiline_comment|/* XXX soft reset??? */
 DECL|member|reboot
@@ -707,6 +728,13 @@ id|reboot
 (paren
 r_void
 )paren
+id|__attribute__
+c_func
+(paren
+(paren
+id|noreturn
+)paren
+)paren
 suffix:semicolon
 multiline_comment|/* Reboot the machine. */
 DECL|member|imode
@@ -717,6 +745,13 @@ id|imode
 )paren
 (paren
 r_void
+)paren
+id|__attribute__
+c_func
+(paren
+(paren
+id|noreturn
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* Enter PROM interactive mode. */

@@ -1,6 +1,6 @@
 multiline_comment|/*&n; * sound/audio.c&n; *&n; * Device file manager for /dev/audio&n; */
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
-multiline_comment|/*&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; * Thomas Sailer   : moved several static variables into struct audio_operations&n; *                   (which is grossly misnamed btw.) because they have the same&n; *                   lifetime as the rest in there and dynamic allocation saves&n; *                   12k or so&n; * Thomas Sailer   : use more logical O_NONBLOCK semantics&n; */
+multiline_comment|/*&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; * Thomas Sailer   : moved several static variables into struct audio_operations&n; *                   (which is grossly misnamed btw.) because they have the same&n; *                   lifetime as the rest in there and dynamic allocation saves&n; *                   12k or so&n; * Thomas Sailer   : use more logical O_NONBLOCK semantics&n; * Daniel Rodriksson: reworked the use of the device specific copy_user&n; *                    still generic&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/kmod.h&gt;
@@ -562,6 +562,7 @@ id|dev
 op_rshift
 l_int|4
 suffix:semicolon
+multiline_comment|/*&n;&t; * We do this in DMAbuf_release(). Why are we doing it&n;&t; * here? Why don&squot;t we test the file mode before setting&n;&t; * both flags? DMAbuf_release() does.&n;&t; * ...pester...pester...pester...&n;&t; */
 id|audio_devs
 (braket
 id|dev
@@ -580,6 +581,14 @@ id|dmap_in-&gt;closing
 op_assign
 l_int|1
 suffix:semicolon
+multiline_comment|/*&n;&t; * We need to make sure we allocated the dmap_out buffer&n;&t; * before we go mucking around with it in sync_output().&n;&t; */
+r_if
+c_cond
+(paren
+id|mode
+op_amp
+id|OPEN_WRITE
+)paren
 id|sync_output
 c_func
 (paren
@@ -717,6 +726,10 @@ comma
 id|l
 comma
 id|buf_size
+comma
+id|used
+comma
+id|returned
 suffix:semicolon
 r_int
 id|err
@@ -881,6 +894,14 @@ id|l
 op_assign
 id|buf_size
 suffix:semicolon
+id|returned
+op_assign
+id|l
+suffix:semicolon
+id|used
+op_assign
+id|l
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1030,10 +1051,7 @@ id|audio_devs
 id|dev
 )braket
 op_member_access_from_pointer
-id|d
-op_member_access_from_pointer
-id|copy_user
-c_func
+id|d-&gt;copy_user
 (paren
 id|dev
 comma
@@ -1045,8 +1063,22 @@ id|buf
 comma
 id|p
 comma
+id|c
+comma
+id|buf_size
+comma
+op_amp
+id|used
+comma
+op_amp
+id|returned
+comma
 id|l
 )paren
+suffix:semicolon
+id|l
+op_assign
+id|returned
 suffix:semicolon
 r_if
 c_cond
@@ -1085,11 +1117,11 @@ suffix:semicolon
 )brace
 id|c
 op_sub_assign
-id|l
+id|used
 suffix:semicolon
 id|p
 op_add_assign
-id|l
+id|used
 suffix:semicolon
 id|DMAbuf_move_wrpointer
 c_func

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/mips/kernel/signal.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1994, 1995, 1996  Ralf Baechle&n; *&n; * $Id: signal.c,v 1.13 1998/06/10 07:21:12 davem Exp $&n; *&n; * XXX Handle lazy fp context switches correctly.&n; */
+multiline_comment|/* $Id: signal.c,v 1.24 1998/09/16 22:50:42 ralf Exp $&n; *&n; *  linux/arch/mips/kernel/signal.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1994, 1995, 1996, 1997, 1998  Ralf Baechle&n; *&n; * XXX Handle lazy fp context switches correctly.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;asm/asm.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/stackframe.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|DEBUG_SIG
 mdefine_line|#define DEBUG_SIG 0
@@ -104,6 +105,13 @@ id|saveset
 comma
 id|newset
 suffix:semicolon
+id|save_static
+c_func
+(paren
+op_amp
+id|regs
+)paren
+suffix:semicolon
 id|uset
 op_assign
 (paren
@@ -173,8 +181,14 @@ id|regs.regs
 l_int|2
 )braket
 op_assign
-op_minus
 id|EINTR
+suffix:semicolon
+id|regs.regs
+(braket
+l_int|7
+)braket
+op_assign
+l_int|1
 suffix:semicolon
 r_while
 c_loop
@@ -229,6 +243,13 @@ id|saveset
 comma
 id|newset
 suffix:semicolon
+id|save_static
+c_func
+(paren
+op_amp
+id|regs
+)paren
+suffix:semicolon
 id|uset
 op_assign
 (paren
@@ -298,8 +319,14 @@ id|regs.regs
 l_int|2
 )braket
 op_assign
-op_minus
 id|EINTR
+suffix:semicolon
+id|regs.regs
+(braket
+l_int|7
+)braket
+op_assign
+l_int|1
 suffix:semicolon
 r_while
 c_loop
@@ -523,6 +550,50 @@ suffix:semicolon
 )brace
 r_return
 id|ret
+suffix:semicolon
+)brace
+id|asmlinkage
+r_int
+DECL|function|sys_sigaltstack
+id|sys_sigaltstack
+c_func
+(paren
+r_const
+id|stack_t
+op_star
+id|uss
+comma
+id|stack_t
+op_star
+id|uoss
+)paren
+(brace
+r_struct
+id|pt_regs
+op_star
+id|regs
+op_assign
+(paren
+r_struct
+id|pt_regs
+op_star
+)paren
+op_amp
+id|uss
+suffix:semicolon
+r_return
+id|do_sigaltstack
+c_func
+(paren
+id|uss
+comma
+id|uoss
+comma
+id|regs-&gt;regs
+(braket
+l_int|29
+)braket
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * To do: this entire function should be accessed over a function pointer&n; * such that we can handle stack frames for different ABIs.&n; */

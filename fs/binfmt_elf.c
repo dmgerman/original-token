@@ -1203,6 +1203,10 @@ id|elf_prot
 op_or_assign
 id|PROT_EXEC
 suffix:semicolon
+id|vaddr
+op_assign
+id|eppnt-&gt;p_vaddr
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1216,10 +1220,6 @@ id|load_addr_set
 id|elf_type
 op_or_assign
 id|MAP_FIXED
-suffix:semicolon
-id|vaddr
-op_assign
-id|eppnt-&gt;p_vaddr
 suffix:semicolon
 macro_line|#ifdef __sparc__
 )brace
@@ -1237,7 +1237,7 @@ op_plus
 id|ELF_PAGEOFFSET
 c_func
 (paren
-id|eppnt-&gt;p_vaddr
+id|vaddr
 )paren
 )paren
 suffix:semicolon
@@ -1305,6 +1305,12 @@ id|ET_DYN
 id|load_addr
 op_assign
 id|map_addr
+op_minus
+id|ELF_PAGESTART
+c_func
+(paren
+id|vaddr
+)paren
 suffix:semicolon
 id|load_addr_set
 op_assign
@@ -1888,6 +1894,26 @@ id|elf_ex.e_machine
 r_goto
 id|out
 suffix:semicolon
+macro_line|#ifdef __mips__
+multiline_comment|/* IRIX binaries handled elsewhere. */
+r_if
+c_cond
+(paren
+id|elf_ex.e_flags
+op_amp
+id|EF_MIPS_ARCH
+)paren
+(brace
+id|retval
+op_assign
+op_minus
+id|ENOEXEC
+suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
+)brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2665,8 +2691,6 @@ suffix:semicolon
 r_int
 r_int
 id|vaddr
-op_assign
-l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -2709,6 +2733,10 @@ id|MAP_DENYWRITE
 op_or
 id|MAP_EXECUTABLE
 suffix:semicolon
+id|vaddr
+op_assign
+id|elf_ppnt-&gt;p_vaddr
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2719,10 +2747,6 @@ op_logical_or
 id|load_addr_set
 )paren
 (brace
-id|vaddr
-op_assign
-id|elf_ppnt-&gt;p_vaddr
-suffix:semicolon
 id|elf_flags
 op_or_assign
 id|MAP_FIXED
@@ -2798,6 +2822,14 @@ id|ET_DYN
 id|load_bias
 op_assign
 id|error
+op_minus
+id|ELF_PAGESTART
+c_func
+(paren
+id|load_bias
+op_plus
+id|vaddr
+)paren
 suffix:semicolon
 id|load_addr
 op_add_assign
@@ -4850,6 +4882,8 @@ op_or
 l_int|2
 op_or
 id|O_TRUNC
+op_or
+id|O_NOFOLLOW
 comma
 l_int|0600
 )paren
@@ -4876,6 +4910,19 @@ id|inode
 op_assign
 id|dentry-&gt;d_inode
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|inode-&gt;i_nlink
+OG
+l_int|1
+)paren
+(brace
+r_goto
+id|end_coredump
+suffix:semicolon
+)brace
+multiline_comment|/* multiple links - don&squot;t dump */
 r_if
 c_cond
 (paren

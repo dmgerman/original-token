@@ -1972,7 +1972,7 @@ r_return
 id|inode
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This is called with the inode lock held.. Be careful.&n; */
+multiline_comment|/*&n; * This is called with the inode lock held.. Be careful.&n; *&n; * We no longer cache the sb_flags in i_flags - see fs.h&n; *&t;-- rmk@arm.uk.linux.org&n; */
 DECL|function|get_new_inode
 r_static
 r_struct
@@ -2074,7 +2074,7 @@ id|ino
 suffix:semicolon
 id|inode-&gt;i_flags
 op_assign
-id|sb-&gt;s_flags
+l_int|0
 suffix:semicolon
 id|inode-&gt;i_count
 op_assign

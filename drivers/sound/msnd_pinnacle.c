@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *&n; * Turtle Beach MultiSound Sound Card Driver for Linux&n; * Linux 2.0/2.2 Version&n; *&n; * msnd_pinnacle.c / msnd_classic.c&n; *&n; * -- If MSND_CLASSIC is defined:&n; *&n; *     -&gt; driver for Turtle Beach Classic/Monterey/Tahiti&n; *&n; * -- Else&n; *&n; *     -&gt; driver for Turtle Beach Pinnacle/Fiji&n; *&n; * Copyright (C) 1998 Andrew Veliath&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Id: msnd_pinnacle.c,v 1.65 1998/09/18 19:13:03 andrewtv Exp $&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *&n; * Turtle Beach MultiSound Sound Card Driver for Linux&n; * Linux 2.0/2.2 Version&n; *&n; * msnd_pinnacle.c / msnd_classic.c&n; *&n; * -- If MSND_CLASSIC is defined:&n; *&n; *     -&gt; driver for Turtle Beach Classic/Monterey/Tahiti&n; *&n; * -- Else&n; *&n; *     -&gt; driver for Turtle Beach Pinnacle/Fiji&n; *&n; * Copyright (C) 1998 Andrew Veliath&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Id: msnd_pinnacle.c,v 1.66 1998/10/09 19:54:39 andrewtv Exp $&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#if LINUX_VERSION_CODE &lt; 0x020101
@@ -36,6 +36,10 @@ macro_line|#  endif
 macro_line|#  include &quot;msnd_pinnacle.h&quot;
 DECL|macro|LOGNAME
 macro_line|#  define LOGNAME&t;&t;&t;&quot;msnd_pinnacle&quot;
+macro_line|#endif
+macro_line|#ifndef CONFIG_MSND_WRITE_NDELAY
+DECL|macro|CONFIG_MSND_WRITE_NDELAY
+macro_line|#  define CONFIG_MSND_WRITE_NDELAY&t;0
 macro_line|#endif
 DECL|macro|get_play_delay_jiffies
 mdefine_line|#define get_play_delay_jiffies(size)&t;((size) * HZ *&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t; dev.play_sample_size / 8 /&t;&bslash;&n;&t;&t;&t;&t;&t; dev.play_sample_rate /&t;&t;&bslash;&n;&t;&t;&t;&t;&t; dev.play_channels)
@@ -1211,6 +1215,16 @@ suffix:colon
 r_if
 c_cond
 (paren
+op_logical_neg
+id|test_bit
+c_func
+(paren
+id|F_DISABLE_WRITE_NDELAY
+comma
+op_amp
+id|dev.flags
+)paren
+op_logical_and
 id|file-&gt;f_mode
 op_amp
 id|FMODE_WRITE
@@ -3483,10 +3497,23 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|test_bit
+c_func
+(paren
+id|F_DISABLE_WRITE_NDELAY
+comma
+op_amp
+id|dev.flags
+)paren
+)paren
 id|dev.play_ndelay
 op_assign
 (paren
-id|file-&gt;f_mode
+id|file-&gt;f_flags
 op_amp
 id|O_NDELAY
 )paren
@@ -3494,6 +3521,11 @@ ques
 c_cond
 l_int|1
 suffix:colon
+l_int|0
+suffix:semicolon
+r_else
+id|dev.play_ndelay
+op_assign
 l_int|0
 suffix:semicolon
 )brace
@@ -3513,7 +3545,7 @@ suffix:semicolon
 id|dev.rec_ndelay
 op_assign
 (paren
-id|file-&gt;f_mode
+id|file-&gt;f_flags
 op_amp
 id|O_NDELAY
 )paren
@@ -3817,7 +3849,7 @@ comma
 l_int|0
 )paren
 )paren
-OL
+op_le
 l_int|0
 )paren
 (brace
@@ -8195,6 +8227,13 @@ l_string|&quot;i&quot;
 suffix:semicolon
 id|MODULE_PARM
 (paren
+id|write_ndelay
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+(paren
 id|major
 comma
 l_string|&quot;i&quot;
@@ -8306,6 +8345,15 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
+DECL|variable|__initdata
+r_static
+r_int
+id|write_ndelay
+id|__initdata
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
 macro_line|#ifndef MSND_CLASSIC
 multiline_comment|/* Pinnacle/Fiji non-PnP Config Port */
 DECL|variable|__initdata
@@ -8391,6 +8439,14 @@ c_func
 r_void
 )paren
 macro_line|#else /* not a module */
+r_static
+r_int
+id|write_ndelay
+id|__initdata
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
 macro_line|#ifdef MSND_CLASSIC
 r_static
 r_int
@@ -9215,6 +9271,42 @@ suffix:semicolon
 id|dev.dec_ref
 op_assign
 id|mod_dec_ref
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|write_ndelay
+op_eq
+op_minus
+l_int|1
+)paren
+id|write_ndelay
+op_assign
+id|CONFIG_MSND_WRITE_NDELAY
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|write_ndelay
+)paren
+id|clear_bit
+c_func
+(paren
+id|F_DISABLE_WRITE_NDELAY
+comma
+op_amp
+id|dev.flags
+)paren
+suffix:semicolon
+r_else
+id|set_bit
+c_func
+(paren
+id|F_DISABLE_WRITE_NDELAY
+comma
+op_amp
+id|dev.flags
+)paren
 suffix:semicolon
 macro_line|#ifndef MSND_CLASSIC
 r_if

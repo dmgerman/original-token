@@ -16,6 +16,8 @@ DECL|macro|SGNXPRO_MIXER_DEVICES
 mdefine_line|#define SGNXPRO_MIXER_DEVICES&t;(SBPRO_MIXER_DEVICES|SOUND_MASK_BASS| &bslash;&n;&t;&t;&t;&t; SOUND_MASK_TREBLE|SOUND_MASK_SPEAKER )
 DECL|macro|SB16_RECORDING_DEVICES
 mdefine_line|#define SB16_RECORDING_DEVICES&t;&t;(SOUND_MASK_SYNTH | SOUND_MASK_LINE | SOUND_MASK_MIC | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_CD)
+DECL|macro|SB16_OUTFILTER_DEVICES
+mdefine_line|#define SB16_OUTFILTER_DEVICES&t;&t;(SOUND_MASK_LINE | SOUND_MASK_MIC | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_CD)
 DECL|macro|ES688_RECORDING_DEVICES
 mdefine_line|#define ES688_RECORDING_DEVICES SBPRO_RECORDING_DEVICES
 DECL|macro|ES688_MIXER_DEVICES
@@ -75,6 +77,8 @@ mdefine_line|#define MONO_DAC&t;0x00
 DECL|macro|STEREO_DAC
 mdefine_line|#define STEREO_DAC&t;0x02
 multiline_comment|/*&n; * Mixer registers of SB16&n; */
+DECL|macro|SB16_OMASK
+mdefine_line|#define SB16_OMASK&t;0x3c
 DECL|macro|SB16_IMASK_L
 mdefine_line|#define SB16_IMASK_L&t;0x3d
 DECL|macro|SB16_IMASK_R

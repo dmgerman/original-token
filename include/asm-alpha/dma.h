@@ -5,6 +5,7 @@ DECL|macro|_ASM_DMA_H
 mdefine_line|#define _ASM_DMA_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
 DECL|macro|dma_outb
 mdefine_line|#define dma_outb&t;outb
 DECL|macro|dma_inb
@@ -154,6 +155,60 @@ DECL|macro|DMA_MODE_WRITE
 mdefine_line|#define DMA_MODE_WRITE&t;0x48&t;/* memory to I/O, no autoinit, increment, single mode */
 DECL|macro|DMA_MODE_CASCADE
 mdefine_line|#define DMA_MODE_CASCADE 0xC0   /* pass thru DREQ-&gt;HRQ, DACK&lt;-HLDA only */
+r_extern
+id|spinlock_t
+id|dma_spin_lock
+suffix:semicolon
+DECL|function|claim_dma_lock
+r_static
+id|__inline__
+r_int
+r_int
+id|claim_dma_lock
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|dma_spin_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+r_return
+id|flags
+suffix:semicolon
+)brace
+DECL|function|release_dma_lock
+r_static
+id|__inline__
+r_void
+id|release_dma_lock
+c_func
+(paren
+r_int
+r_int
+id|flags
+)paren
+(brace
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|dma_spin_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* enable/disable a specific DMA channel */
 DECL|function|enable_dma
 r_static

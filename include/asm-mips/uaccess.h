@@ -1,10 +1,9 @@
-multiline_comment|/*&n; * include/asm-mips/uaccess.h&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997 by Ralf Baechle&n; *&n; * $Id: uaccess.h,v 1.9 1998/05/04 09:19:05 ralf Exp $&n; */
+multiline_comment|/*&n; * include/asm-mips/uaccess.h&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997, 1998 by Ralf Baechle&n; *&n; * $Id: uaccess.h,v 1.15 1998/05/03 11:13:54 ralf Exp $&n; */
 macro_line|#ifndef __ASM_MIPS_UACCESS_H
 DECL|macro|__ASM_MIPS_UACCESS_H
 mdefine_line|#define __ASM_MIPS_UACCESS_H
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;asm/asm.h&gt;
 DECL|macro|STR
 mdefine_line|#define STR(x)  __STR(x)
 DECL|macro|__STR

@@ -1,8 +1,10 @@
+multiline_comment|/* $Id: spinlock.h,v 1.3 1998/08/28 15:55:39 ralf Exp $&n; */
 macro_line|#ifndef __ASM_MIPS_SPINLOCK_H
 DECL|macro|__ASM_MIPS_SPINLOCK_H
 mdefine_line|#define __ASM_MIPS_SPINLOCK_H
 macro_line|#ifndef __SMP__
-multiline_comment|/* gcc 2.7.2 can crash initializing an empty structure.  For now we&n;   try to do though ...  */
+multiline_comment|/*&n; * Gcc-2.7.x has a nasty bug with empty initializers.&n; */
+macro_line|#if (__GNUC__ &gt; 2) || (__GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &gt;= 8)
 DECL|typedef|spinlock_t
 r_typedef
 r_struct
@@ -12,12 +14,27 @@ id|spinlock_t
 suffix:semicolon
 DECL|macro|SPIN_LOCK_UNLOCKED
 mdefine_line|#define SPIN_LOCK_UNLOCKED { }
+macro_line|#else
+DECL|member|gcc_is_buggy
+DECL|typedef|spinlock_t
+r_typedef
+r_struct
+(brace
+r_int
+id|gcc_is_buggy
+suffix:semicolon
+)brace
+id|spinlock_t
+suffix:semicolon
+DECL|macro|SPIN_LOCK_UNLOCKED
+mdefine_line|#define SPIN_LOCK_UNLOCKED { 0 }
+macro_line|#endif
 DECL|macro|spin_lock_init
 mdefine_line|#define spin_lock_init(lock)&t;do { } while(0)
 DECL|macro|spin_lock
 mdefine_line|#define spin_lock(lock)&t;&t;do { } while(0)
 DECL|macro|spin_trylock
-mdefine_line|#define spin_trylock(lock)&t;do { } while(0)
+mdefine_line|#define spin_trylock(lock)&t;(1)
 DECL|macro|spin_unlock_wait
 mdefine_line|#define spin_unlock_wait(lock)&t;do { } while(0)
 DECL|macro|spin_unlock

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * arch/mips/kernel/traps.c&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright 1994, 1995, 1996, 1997 by Ralf Baechle&n; * Modified for R3000 by Paul M. Antoine, 1995, 1996&n; *&n; * $Id: traps.c,v 1.10 1998/05/04 09:17:57 ralf Exp $&n; */
+multiline_comment|/* $Id: traps.c,v 1.20 1998/10/14 20:26:26 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright 1994, 1995, 1996, 1997, 1998 by Ralf Baechle&n; * Modified for R3000 by Paul M. Antoine, 1995, 1996&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -8,15 +8,12 @@ macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/branch.h&gt;
 macro_line|#include &lt;asm/cachectl.h&gt;
 macro_line|#include &lt;asm/jazz.h&gt;
-macro_line|#include &lt;asm/vector.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/watch.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-DECL|macro|CONF_DEBUG_EXCEPTIONS
-macro_line|#undef CONF_DEBUG_EXCEPTIONS
 DECL|function|console_verbose
 r_static
 r_inline
@@ -229,25 +226,7 @@ suffix:semicolon
 r_extern
 id|asmlinkage
 r_void
-id|handle_vcei
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-id|asmlinkage
-r_void
 id|handle_fpe
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-id|asmlinkage
-r_void
-id|handle_vced
 c_func
 (paren
 r_void
@@ -290,6 +269,12 @@ suffix:semicolon
 DECL|variable|dedicated_iv_available
 r_char
 id|dedicated_iv_available
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|vce_available
+r_char
+id|vce_available
 op_assign
 l_int|0
 suffix:semicolon
@@ -771,16 +756,10 @@ c_func
 l_string|&quot;(Bad address in epc)&bslash;n&quot;
 )paren
 suffix:semicolon
-id|do_exit
-c_func
-(paren
-id|SIGSEGV
-)paren
-suffix:semicolon
 )brace
-DECL|function|die_if_kernel
+DECL|function|die
 r_void
-id|die_if_kernel
+id|die
 c_func
 (paren
 r_const
@@ -793,6 +772,7 @@ id|pt_regs
 op_star
 id|regs
 comma
+r_int
 r_int
 id|err
 )paren
@@ -839,6 +819,47 @@ id|SIGSEGV
 )paren
 suffix:semicolon
 )brace
+DECL|function|die_if_kernel
+r_void
+id|die_if_kernel
+c_func
+(paren
+r_const
+r_char
+op_star
+id|str
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+comma
+r_int
+r_int
+id|err
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|user_mode
+c_func
+(paren
+id|regs
+)paren
+)paren
+id|die
+c_func
+(paren
+id|str
+comma
+id|regs
+comma
+id|err
+)paren
+suffix:semicolon
+)brace
 DECL|function|default_be_board_handler
 r_static
 r_void
@@ -872,11 +893,6 @@ op_star
 id|regs
 )paren
 (brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|show_regs
 c_func
 (paren
@@ -897,11 +913,6 @@ c_func
 id|regs
 )paren
 suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 DECL|function|do_dbe
 r_void
@@ -914,11 +925,6 @@ op_star
 id|regs
 )paren
 (brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|show_regs
 c_func
 (paren
@@ -939,11 +945,6 @@ c_func
 id|regs
 )paren
 suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 DECL|function|do_ov
 r_void
@@ -956,19 +957,6 @@ op_star
 id|regs
 )paren
 (brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#ifdef CONF_DEBUG_EXCEPTIONS
-id|show_regs
-c_func
-(paren
-id|regs
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -978,8 +966,7 @@ c_func
 id|regs
 )paren
 )paren
-r_goto
-id|out
+r_return
 suffix:semicolon
 id|force_sig
 c_func
@@ -987,13 +974,6 @@ c_func
 id|SIGFPE
 comma
 id|current
-)paren
-suffix:semicolon
-id|out
-suffix:colon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace
@@ -1094,6 +1074,14 @@ r_int
 id|fcr31
 )paren
 (brace
+r_int
+r_int
+id|pc
+suffix:semicolon
+r_int
+r_int
+id|insn
+suffix:semicolon
 macro_line|#ifdef CONFIG_MIPS_FPE_MODULE
 r_if
 c_cond
@@ -1120,14 +1108,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONF_DEBUG_EXCEPTIONS
-id|show_regs
-c_func
-(paren
-id|regs
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1191,14 +1171,67 @@ r_goto
 id|out
 suffix:semicolon
 )brace
+id|pc
+op_assign
+id|regs-&gt;cp0_epc
+op_plus
+(paren
+(paren
+id|regs-&gt;cp0_cause
+op_amp
+id|CAUSEF_BD
+)paren
+ques
+c_cond
+l_int|4
+suffix:colon
+l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|get_user
+c_func
+(paren
+id|insn
+comma
+(paren
+r_int
+r_int
+op_star
+)paren
+id|pc
+)paren
+)paren
+(brace
+multiline_comment|/* XXX Can this happen?  */
+id|force_sig
+c_func
+(paren
+id|SIGSEGV
+comma
+id|current
+)paren
+suffix:semicolon
+)brace
 id|printk
 c_func
 (paren
-l_string|&quot;Unimplemented exception at 0x%08lx in %s.&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;Unimplemented exception for insn %08x at 0x%08lx in %s.&bslash;n&quot;
+comma
+id|insn
 comma
 id|regs-&gt;cp0_epc
 comma
 id|current-&gt;comm
+)paren
+suffix:semicolon
+id|simfp
+c_func
+(paren
+id|insn
 )paren
 suffix:semicolon
 )brace
@@ -1214,12 +1247,14 @@ id|regs
 r_goto
 id|out
 suffix:semicolon
-id|force_sig
+singleline_comment|//force_sig(SIGFPE, current);
+id|printk
 c_func
 (paren
-id|SIGFPE
+id|KERN_DEBUG
+l_string|&quot;Should send SIGFPE to %s&bslash;n&quot;
 comma
-id|current
+id|current-&gt;comm
 )paren
 suffix:semicolon
 id|out
@@ -1313,45 +1348,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_static
-r_inline
-r_void
-DECL|function|do_bp_and_tr
-id|do_bp_and_tr
-c_func
-(paren
-r_struct
-id|pt_regs
-op_star
-id|regs
-comma
-r_char
-op_star
-id|exc
-comma
-r_int
-r_int
-id|trapcode
-)paren
-(brace
-multiline_comment|/*&n;&t; * (A short test says that IRIX 5.3 sends SIGTRAP for all break&n;&t; * insns, even for break codes that indicate arithmetic failures.&n;&t; * Wiered ...)&n;&t; */
-id|force_sig
-c_func
-(paren
-id|SIGTRAP
-comma
-id|current
-)paren
-suffix:semicolon
-macro_line|#ifdef CONF_DEBUG_EXCEPTIONS
-id|show_regs
-c_func
-(paren
-id|regs
-)paren
-suffix:semicolon
-macro_line|#endif
-)brace
 DECL|function|do_bp
 r_void
 id|do_bp
@@ -1369,22 +1365,7 @@ id|opcode
 comma
 id|bcode
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; * There is the ancient bug in the MIPS assemblers that the break&n;&t; * code starts left to bit 16 instead to bit 6 in the opcode.&n;&t; * Gas is bug-compatible ...&n;&t; */
-macro_line|#ifdef CONF_DEBUG_EXCEPTIONS
-id|printk
-c_func
-(paren
-l_string|&quot;BREAKPOINT at %08lx&bslash;n&quot;
-comma
-id|regs-&gt;cp0_epc
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1397,8 +1378,7 @@ op_amp
 id|opcode
 )paren
 )paren
-r_goto
-id|out
+r_return
 suffix:semicolon
 id|bcode
 op_assign
@@ -1420,33 +1400,13 @@ l_int|1
 )paren
 )paren
 suffix:semicolon
-id|do_bp_and_tr
+multiline_comment|/*&n;&t; * (A short test says that IRIX 5.3 sends SIGTRAP for all break&n;&t; * insns, even for break codes that indicate arithmetic failures.&n;&t; * Wiered ...)&n;&t; */
+id|force_sig
 c_func
 (paren
-id|regs
+id|SIGTRAP
 comma
-l_string|&quot;bp&quot;
-comma
-id|bcode
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|compute_return_epc
-c_func
-(paren
-id|regs
-)paren
-)paren
-r_goto
-id|out
-suffix:semicolon
-id|out
-suffix:colon
-id|unlock_kernel
-c_func
-(paren
+id|current
 )paren
 suffix:semicolon
 )brace
@@ -1467,11 +1427,6 @@ id|opcode
 comma
 id|bcode
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1484,8 +1439,7 @@ op_amp
 id|opcode
 )paren
 )paren
-r_goto
-id|out
+r_return
 suffix:semicolon
 id|bcode
 op_assign
@@ -1507,21 +1461,13 @@ l_int|1
 )paren
 )paren
 suffix:semicolon
-id|do_bp_and_tr
+multiline_comment|/*&n;&t; * (A short test says that IRIX 5.3 sends SIGTRAP for all break&n;&t; * insns, even for break codes that indicate arithmetic failures.&n;&t; * Wiered ...)&n;&t; */
+id|force_sig
 c_func
 (paren
-id|regs
+id|SIGTRAP
 comma
-l_string|&quot;tr&quot;
-comma
-id|bcode
-)paren
-suffix:semicolon
-id|out
-suffix:colon
-id|unlock_kernel
-c_func
-(paren
+id|current
 )paren
 suffix:semicolon
 )brace
@@ -1541,14 +1487,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONF_DEBUG_EXCEPTIONS
-id|show_regs
-c_func
-(paren
-id|regs
-)paren
-suffix:semicolon
-macro_line|#endif
 id|printk
 c_func
 (paren
@@ -1566,6 +1504,11 @@ l_int|31
 )braket
 )paren
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1575,8 +1518,7 @@ c_func
 id|regs
 )paren
 )paren
-r_goto
-id|out
+r_return
 suffix:semicolon
 id|force_sig
 c_func
@@ -1584,13 +1526,6 @@ c_func
 id|SIGILL
 comma
 id|current
-)paren
-suffix:semicolon
-id|out
-suffix:colon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace
@@ -1640,8 +1575,7 @@ id|last_task_used_math
 op_eq
 id|current
 )paren
-r_goto
-id|out
+r_return
 suffix:semicolon
 r_if
 c_cond
@@ -1678,82 +1612,12 @@ r_return
 suffix:semicolon
 id|bad_cid
 suffix:colon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|force_sig
 c_func
 (paren
 id|SIGILL
 comma
 id|current
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-id|out
-suffix:colon
-)brace
-DECL|function|do_vcei
-r_void
-id|do_vcei
-c_func
-(paren
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-(brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * Only possible on R4[04]00[SM]C. No handler because I don&squot;t have&n;&t; * such a cpu.  Theory says this exception doesn&squot;t happen.&n;&t; */
-id|panic
-c_func
-(paren
-l_string|&quot;Caught VCEI exception - should not happen&quot;
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|do_vced
-r_void
-id|do_vced
-c_func
-(paren
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-(brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * Only possible on R4[04]00[SM]C. No handler because I don&squot;t have&n;&t; * such a cpu.  Theory says this exception doesn&squot;t happen.&n;&t; */
-id|panic
-c_func
-(paren
-l_string|&quot;Caught VCE exception - should not happen&quot;
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace
@@ -1768,11 +1632,6 @@ op_star
 id|regs
 )paren
 (brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; * We use the watch exception where available to detect stack&n;&t; * overflows.&n;&t; */
 id|show_regs
 c_func
@@ -1784,11 +1643,6 @@ id|panic
 c_func
 (paren
 l_string|&quot;Caught WATCH exception - probably caused by stack overflow.&quot;
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace
@@ -1803,21 +1657,11 @@ op_star
 id|regs
 )paren
 (brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; * Game over - no way to handle this if it ever occurs.&n;&t; * Most probably caused by a new unknown cpu type or&n;&t; * after another deadly hard/software error.&n;&t; */
 id|panic
 c_func
 (paren
 l_string|&quot;Caught reserved exception - should not happen.&quot;
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace
@@ -2350,23 +2194,11 @@ suffix:colon
 r_case
 id|CPU_R4400SC
 suffix:colon
-multiline_comment|/* XXX The following won&squot;t work because we _cannot_&n;&t;&t; * XXX perform any load/store before the VCE handler.&n;&t;&t; */
-id|set_except_vector
-c_func
-(paren
-l_int|14
-comma
-id|handle_vcei
-)paren
+id|vce_available
+op_assign
+l_int|1
 suffix:semicolon
-id|set_except_vector
-c_func
-(paren
-l_int|31
-comma
-id|handle_vced
-)paren
-suffix:semicolon
+multiline_comment|/* Fall through ...  */
 r_case
 id|CPU_R4000PC
 suffix:colon
@@ -2452,7 +2284,7 @@ comma
 l_int|0x80
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * The idea is that this special r4000 general exception&n;&t;&t; * vector will check for VCE exceptions before calling&n;&t;&t; * out of the exception array.  XXX TODO&n;&t;&t; */
+multiline_comment|/* Cache error vector  */
 id|memcpy
 c_func
 (paren
@@ -2475,6 +2307,12 @@ comma
 l_int|0x80
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|vce_available
+)paren
+(brace
 id|memcpy
 c_func
 (paren
@@ -2491,9 +2329,32 @@ comma
 op_amp
 id|except_vec3_r4000
 comma
-l_int|0x80
+l_int|0x180
 )paren
 suffix:semicolon
+)brace
+r_else
+(brace
+id|memcpy
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
+(paren
+id|KSEG0
+op_plus
+l_int|0x180
+)paren
+comma
+op_amp
+id|except_vec3_generic
+comma
+l_int|0x100
+)paren
+suffix:semicolon
+)brace
 id|save_fp_context
 op_assign
 id|r4k_save_fp_context

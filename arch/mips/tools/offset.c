@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * offset.c: Calculate pt_regs and task_struct offsets.&n; *&n; * Copyright (C) 1996 David S. Miller&n; * Made portable by Ralf Baechle&n; *&n; * $Id: offset.c,v 1.6 1998/05/04 09:18:45 ralf Exp $&n; */
+multiline_comment|/* $Id: offset.c,v 1.10 1998/08/19 21:53:53 ralf Exp $&n; *&n; * offset.c: Calculate pt_regs and task_struct offsets.&n; *&n; * Copyright (C) 1996 David S. Miller&n; * Made portable by Ralf Baechle&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
@@ -603,28 +603,6 @@ suffix:semicolon
 id|offset
 c_func
 (paren
-l_string|&quot;#define TASK_COUNTER       &quot;
-comma
-r_struct
-id|task_struct
-comma
-id|counter
-)paren
-suffix:semicolon
-id|offset
-c_func
-(paren
-l_string|&quot;#define TASK_PRIORITY      &quot;
-comma
-r_struct
-id|task_struct
-comma
-id|priority
-)paren
-suffix:semicolon
-id|offset
-c_func
-(paren
 l_string|&quot;#define TASK_FLAGS         &quot;
 comma
 r_struct
@@ -642,6 +620,39 @@ r_struct
 id|task_struct
 comma
 id|sigpending
+)paren
+suffix:semicolon
+id|offset
+c_func
+(paren
+l_string|&quot;#define TASK_NEED_RESCHED  &quot;
+comma
+r_struct
+id|task_struct
+comma
+id|need_resched
+)paren
+suffix:semicolon
+id|offset
+c_func
+(paren
+l_string|&quot;#define TASK_COUNTER       &quot;
+comma
+r_struct
+id|task_struct
+comma
+id|counter
+)paren
+suffix:semicolon
+id|offset
+c_func
+(paren
+l_string|&quot;#define TASK_PRIORITY      &quot;
+comma
+r_struct
+id|task_struct
+comma
+id|priority
 )paren
 suffix:semicolon
 id|offset

@@ -2087,7 +2087,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|put_user
+id|__put_user
 c_func
 (paren
 id|Byte

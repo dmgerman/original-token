@@ -1739,7 +1739,7 @@ r_return
 l_int|0xffffffff
 suffix:semicolon
 )brace
-multiline_comment|/* Now fill out the bss section.  First pad the last page up&n;&t; * to the page boundary, and then perform a mmap to make sure&n;&t; * that there are zeromapped pages up to and including the last&n;&t; * bss page.&n;&t; */
+multiline_comment|/* Now fill out the bss section.  First pad the last page up&n;&t; * to the page boundary, and then perform a mmap to make sure&n;&t; * that there are zero-mapped pages up to and including the&n;&t; * last bss page.&n;&t; */
 macro_line|#ifdef DEBUG_ELF
 id|printk
 c_func
@@ -5856,31 +5856,41 @@ op_assign
 op_amp
 id|psinfo
 suffix:semicolon
-id|psinfo.pr_state
+id|i
 op_assign
 id|current-&gt;state
+ques
+c_cond
+id|ffz
+c_func
+(paren
+op_complement
+id|current-&gt;state
+)paren
+op_plus
+l_int|1
+suffix:colon
+l_int|0
+suffix:semicolon
+id|psinfo.pr_state
+op_assign
+id|i
 suffix:semicolon
 id|psinfo.pr_sname
 op_assign
 (paren
-(paren
-id|current-&gt;state
+id|i
 template_param
 l_int|5
 )paren
 ques
 c_cond
-(paren
 l_char|&squot;.&squot;
-)paren
 suffix:colon
-(paren
 l_string|&quot;RSDZTD&quot;
 (braket
-id|current-&gt;state
+id|i
 )braket
-)paren
-)paren
 suffix:semicolon
 id|psinfo.pr_zomb
 op_assign
@@ -6049,7 +6059,7 @@ id|data
 op_assign
 id|current
 suffix:semicolon
-multiline_comment|/* Try to dump the fpu. */
+multiline_comment|/* Try to dump the FPU. */
 id|prstatus.pr_fpvalid
 op_assign
 id|dump_fpu
@@ -6531,16 +6541,13 @@ r_return
 id|has_dumped
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|init_irix_binfmt
 r_int
+id|__init
 id|init_irix_binfmt
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_return

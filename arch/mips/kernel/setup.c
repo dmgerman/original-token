@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/mips/kernel/setup.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *  Copyright (C) 1995, 1996  Ralf Baechle&n; *  Copyright (C) 1996  Stoned Elipot&n; *&n; * $Id: setup.c,v 1.10 1998/06/10 07:21:10 davem Exp $&n; */
+multiline_comment|/* $Id: setup.c,v 1.12 1998/08/18 20:45:06 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995  Linus Torvalds&n; * Copyright (C) 1995, 1996, 1997, 1998  Ralf Baechle&n; * Copyright (C) 1996  Stoned Elipot&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
@@ -28,35 +28,23 @@ macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/cachectl.h&gt;
 macro_line|#include &lt;asm/ide.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/vector.h&gt;
 macro_line|#include &lt;asm/stackframe.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#ifdef CONFIG_SGI
 macro_line|#include &lt;asm/sgialib.h&gt;
 macro_line|#endif
-multiline_comment|/*&n; * How to handle the machine&squot;s features&n; */
-DECL|variable|feature
+DECL|variable|boot_cpu_data
 r_struct
-id|feature
-op_star
-id|feature
-suffix:semicolon
-multiline_comment|/*&n; * What to do to keep the caches consistent with memory&n; * We don&squot;t use the normal cacheflush routine to keep Tyne caches happier.&n; */
-DECL|variable|fd_cacheflush
-r_void
-(paren
-op_star
-id|fd_cacheflush
-)paren
-(paren
-r_const
-r_void
-op_star
-id|addr
+id|mips_cpuinfo
+id|boot_cpu_data
+op_assign
+(brace
+l_int|NULL
 comma
-r_int
-id|size
-)paren
+l_int|NULL
+comma
+l_int|0
+)brace
 suffix:semicolon
 multiline_comment|/*&n; * Not all of the MIPS CPUs have the &quot;wait&quot; instruction available.  This&n; * is set to true if it is available.  The wait instruction stops the&n; * pipeline and reduces the power consumption of the CPU very much.&n; */
 DECL|variable|wait_available
@@ -90,6 +78,19 @@ id|screen_info
 op_assign
 id|DEFAULT_SCREEN_INFO
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_FD
+r_extern
+r_struct
+id|fd_ops
+id|no_fd_ops
+suffix:semicolon
+DECL|variable|fd_ops
+r_struct
+id|fd_ops
+op_star
+id|fd_ops
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_IDE
 r_extern
 r_struct
@@ -103,7 +104,18 @@ op_star
 id|ide_ops
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n; * setup informations&n; *&n; * These are intialized so they are in the .data section&n; */
+r_extern
+r_struct
+id|rtc_ops
+id|no_rtc_ops
+suffix:semicolon
+DECL|variable|rtc_ops
+r_struct
+id|rtc_ops
+op_star
+id|rtc_ops
+suffix:semicolon
+multiline_comment|/*&n; * Setup information&n; *&n; * These are intialized so they are in the .data section&n; */
 DECL|variable|mips_memory_upper
 r_int
 r_int
@@ -250,26 +262,6 @@ DECL|function|__initfunc
 id|__initfunc
 c_func
 (paren
-r_static
-r_void
-id|default_fd_cacheflush
-c_func
-(paren
-r_const
-r_void
-op_star
-id|addr
-comma
-r_int
-id|size
-)paren
-)paren
-(brace
-)brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_void
 id|setup_arch
 c_func
@@ -298,6 +290,13 @@ suffix:semicolon
 id|tag
 op_star
 id|atag
+suffix:semicolon
+r_void
+id|cobalt_setup
+c_func
+(paren
+r_void
+)paren
 suffix:semicolon
 r_void
 id|decstation_setup
@@ -410,10 +409,13 @@ id|irq_setup
 op_assign
 id|default_irq_setup
 suffix:semicolon
-id|fd_cacheflush
+macro_line|#ifdef CONFIG_BLK_DEV_FD
+id|fd_ops
 op_assign
-id|default_fd_cacheflush
+op_amp
+id|no_fd_ops
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_IDE
 id|ide_ops
 op_assign
@@ -421,12 +423,29 @@ op_amp
 id|no_ide_ops
 suffix:semicolon
 macro_line|#endif
+id|rtc_ops
+op_assign
+op_amp
+id|no_rtc_ops
+suffix:semicolon
 r_switch
 c_cond
 (paren
 id|mips_machgroup
 )paren
 (brace
+macro_line|#ifdef CONFIG_COBALT_MICRO_SERVER
+r_case
+id|MACH_GROUP_COBALT
+suffix:colon
+id|cobalt_setup
+c_func
+(paren
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_MIPS_JAZZ
 r_case
 id|MACH_GROUP_JAZZ

@@ -80,7 +80,7 @@ r_volatile
 (paren
 l_string|&quot;rpcc %0&quot;
 suffix:colon
-l_string|&quot;r=&quot;
+l_string|&quot;=r&quot;
 (paren
 id|result
 )paren

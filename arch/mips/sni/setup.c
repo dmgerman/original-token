@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: setup.c,v 1.7 1998/06/10 07:21:19 davem Exp $&n; *&n; * Setup pointers to hardware-dependent routines.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997 by Ralf Baechle&n; */
+multiline_comment|/* $Id: setup.c,v 1.13 1998/08/17 13:57:45 ralf Exp $&n; *&n; * Setup pointers to hardware-dependent routines.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997, 1998 by Ralf Baechle&n; */
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
@@ -17,7 +17,6 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/reboot.h&gt;
 macro_line|#include &lt;asm/sni.h&gt;
-macro_line|#include &lt;asm/vector.h&gt;
 macro_line|#include &lt;asm/pci.h&gt;
 multiline_comment|/*&n; * Initial irq handlers.&n; */
 DECL|function|no_action
@@ -71,26 +70,6 @@ r_void
 )paren
 suffix:semicolon
 r_extern
-id|asmlinkage
-r_void
-id|sni_fd_cacheflush
-c_func
-(paren
-r_const
-r_void
-op_star
-id|addr
-comma
-r_int
-id|size
-)paren
-suffix:semicolon
-r_extern
-r_struct
-id|feature
-id|sni_rm200_pci_feature
-suffix:semicolon
-r_extern
 r_void
 id|sni_rm200_keyboard_setup
 c_func
@@ -128,6 +107,11 @@ r_extern
 r_struct
 id|ide_ops
 id|std_ide_ops
+suffix:semicolon
+r_extern
+r_struct
+id|rtc_ops
+id|std_rtc_ops
 suffix:semicolon
 DECL|function|__initfunc
 id|__initfunc
@@ -544,16 +528,6 @@ id|irq_setup
 op_assign
 id|sni_irq_setup
 suffix:semicolon
-id|fd_cacheflush
-op_assign
-id|sni_fd_cacheflush
-suffix:semicolon
-singleline_comment|// Will go away
-id|feature
-op_assign
-op_amp
-id|sni_rm200_pci_feature
-suffix:semicolon
 id|mips_io_port_base
 op_assign
 id|SNI_PORT_BASE
@@ -666,5 +640,10 @@ op_amp
 id|std_ide_ops
 suffix:semicolon
 macro_line|#endif
+id|rtc_ops
+op_assign
+op_amp
+id|std_rtc_ops
+suffix:semicolon
 )brace
 eof

@@ -457,7 +457,7 @@ DECL|member|regs
 id|u8
 id|regs
 (braket
-l_int|16
+l_int|32
 )braket
 suffix:semicolon
 multiline_comment|/* Register map for the chip */
@@ -465,7 +465,7 @@ DECL|member|pendregs
 id|u8
 id|pendregs
 (braket
-l_int|16
+l_int|32
 )braket
 suffix:semicolon
 multiline_comment|/* Pending register values */

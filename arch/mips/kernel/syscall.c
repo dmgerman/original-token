@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * MIPS specific syscall handling functions and syscalls&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996 by Ralf Baechle&n; *&n; * TODO:  Implement the compatibility syscalls.&n; *        Don&squot;t waste that much memory for empty entries in the syscall&n; *        table.&n; *&n; * $Id: syscall.c,v 1.12 1998/07/26 03:02:09 davem Exp $&n; */
+multiline_comment|/* $Id: syscall.c,v 1.10 1998/08/20 14:38:40 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995 - 1998 by Ralf Baechle&n; *&n; * TODO:  Implement the compatibility syscalls.&n; *        Don&squot;t waste that much memory for empty entries in the syscall&n; *        table.&n; */
 DECL|macro|CONF_PRINT_SYSCALLS
 macro_line|#undef CONF_PRINT_SYSCALLS
 DECL|macro|CONF_DEBUG_IRIX
@@ -295,6 +295,12 @@ r_void
 )paren
 (brace
 r_int
+r_int
+id|start_idle
+op_assign
+l_int|0
+suffix:semicolon
+r_int
 id|ret
 op_assign
 op_minus
@@ -318,13 +324,11 @@ suffix:semicolon
 multiline_comment|/* endless idle loop with no priority at all */
 id|current-&gt;priority
 op_assign
-op_minus
-l_int|100
+l_int|0
 suffix:semicolon
 id|current-&gt;counter
 op_assign
-op_minus
-l_int|100
+l_int|0
 suffix:semicolon
 r_for
 c_loop
@@ -334,6 +338,23 @@ suffix:semicolon
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; * R4[36]00 have wait, R4[04]00 don&squot;t.&n;&t;&t; * FIXME: We should save power by reducing the clock where&n;&t;&t; *        possible.  Thiss will cut down the power consuption&n;&t;&t; *        of R4200 systems to about 1/16th of normal, the&n;&t;&t; *        same for logic clocked with the processor generated&n;&t;&t; *        clocks.&n;&t;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|start_idle
+)paren
+(brace
+id|check_pgt_cache
+c_func
+(paren
+)paren
+suffix:semicolon
+id|start_idle
+op_assign
+id|jiffies
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -357,12 +378,25 @@ op_amp
 id|tq_scheduler
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|current-&gt;need_resched
+)paren
+id|start_idle
+op_assign
+l_int|0
+suffix:semicolon
 id|schedule
 c_func
 (paren
 )paren
 suffix:semicolon
 )brace
+id|ret
+op_assign
+l_int|0
+suffix:semicolon
 id|out
 suffix:colon
 id|unlock_kernel

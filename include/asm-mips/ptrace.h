@@ -1,8 +1,23 @@
-multiline_comment|/*&n; * linux/include/asm-mips/ptrace.h&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994, 1995, 1996 by Ralf Baechle&n; *&n; * Machine dependent structs and defines to help the user use&n; * the ptrace system call.&n; */
+multiline_comment|/* $Id: ptrace.h,v 1.3 1998/07/09 21:45:21 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994, 1995, 1996, 1997, 1998 by Ralf Baechle&n; *&n; * Machine dependent structs and defines to help the user use&n; * the ptrace system call.&n; */
 macro_line|#ifndef __ASM_MIPS_PTRACE_H
 DECL|macro|__ASM_MIPS_PTRACE_H
 mdefine_line|#define __ASM_MIPS_PTRACE_H
 macro_line|#include &lt;linux/types.h&gt;
+multiline_comment|/* 0 - 31 are integer registers, 32 - 63 are fp registers.  */
+DECL|macro|PC
+mdefine_line|#define PC&t;&t;64
+DECL|macro|CAUSE
+mdefine_line|#define CAUSE&t;&t;65
+DECL|macro|MMLO
+mdefine_line|#define MMLO&t;&t;66
+DECL|macro|MMHI
+mdefine_line|#define MMHI&t;&t;67
+DECL|macro|FPC_CSR
+mdefine_line|#define FPC_CSR&t;&t;68&t;/* XXX */
+DECL|macro|FPC_EIR
+mdefine_line|#define FPC_EIR&t;&t;69&t;/* XXX */
+DECL|macro|FPR_BASE
+mdefine_line|#define FPR_BASE&t;70&t;/* XXX */
 macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/*&n; * This struct defines the way the registers are stored on the stack during a&n; * system call/exception. As usual the registers k0/k1 aren&squot;t being saved.&n; */
 DECL|struct|pt_regs

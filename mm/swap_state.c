@@ -763,6 +763,7 @@ id|page
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * This must be called only on pages that have&n; * been verified to be in the swap cache.&n; */
 DECL|function|delete_from_swap_cache
 r_void
 id|delete_from_swap_cache
@@ -774,26 +775,15 @@ op_star
 id|page
 )paren
 (brace
-macro_line|#ifdef SWAP_CACHE_INFO
-id|swap_cache_del_total
-op_increment
-suffix:semicolon
-macro_line|#endif&t;
-r_if
-c_cond
-(paren
-id|PageSwapCache
-(paren
-id|page
-)paren
-)paren
-(brace
 r_int
 id|entry
 op_assign
 id|page-&gt;offset
 suffix:semicolon
 macro_line|#ifdef SWAP_CACHE_INFO
+id|swap_cache_del_total
+op_increment
+suffix:semicolon
 id|swap_cache_del_success
 op_increment
 suffix:semicolon
@@ -832,7 +822,6 @@ id|swap_free
 id|entry
 )paren
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/* &n; * Perform a free_page(), also freeing any swap cache associated with&n; * this page if it is the last user of the page. &n; */
 DECL|function|free_page_and_swap_cache

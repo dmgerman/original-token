@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/arch/mips/kernel/process.c&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 - 1998 by Ralf Baechle and others.&n; *&n; * $Id: process.c,v 1.11 1998/05/15 13:04:01 davem Exp $&n; */
+multiline_comment|/* $Id: process.c,v 1.11 1998/08/17 12:14:53 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 - 1998 by Ralf Baechle and others.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -20,6 +20,14 @@ macro_line|#include &lt;asm/stackframe.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/elf.h&gt;
+DECL|variable|last_task_used_math
+r_struct
+id|task_struct
+op_star
+id|last_task_used_math
+op_assign
+l_int|NULL
+suffix:semicolon
 id|asmlinkage
 r_void
 id|ret_from_sys_call

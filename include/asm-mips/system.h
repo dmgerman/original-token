@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: system.h,v 1.8 1998/05/07 00:40:09 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994, 1995 by Ralf Baechle&n; * Modified further for R[236]000 by Paul M. Antoine, 1996&n; */
+multiline_comment|/* $Id: system.h,v 1.8 1998/07/20 17:52:21 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994, 1995, 1996, 1997, 1998 by Ralf Baechle&n; * Modified further for R[236]000 by Paul M. Antoine, 1996&n; */
 macro_line|#ifndef __ASM_MIPS_SYSTEM_H
 DECL|macro|__ASM_MIPS_SYSTEM_H
 mdefine_line|#define __ASM_MIPS_SYSTEM_H
@@ -124,7 +124,7 @@ DECL|macro|restore_flags
 mdefine_line|#define restore_flags(x) __restore_flags(x)
 DECL|macro|mb
 mdefine_line|#define mb()&t;&t;&t;&t;&t;&t;&bslash;&n;__asm__ __volatile__(&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;# prevent instructions being moved around&bslash;n&bslash;t&quot;&t;&bslash;&n;&t;&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;# 8 nops to fool the R4400 pipeline&bslash;n&bslash;t&quot;&t;&bslash;&n;&t;&quot;nop;nop;nop;nop;nop;nop;nop;nop&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&quot;.set&bslash;treorder&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;: /* no output */&t;&t;&t;&t;&bslash;&n;&t;: /* no input */&t;&t;&t;&t;&bslash;&n;&t;: &quot;memory&quot;)
-macro_line|#if !defined (__LANGUAGE_ASSEMBLY__)
+macro_line|#if !defined (_LANGUAGE_ASSEMBLY)
 multiline_comment|/*&n; * switch_to(n) should switch tasks to task nr n, first&n; * checking that n isn&squot;t the current task, in which case it does nothing.&n; */
 r_extern
 id|asmlinkage
@@ -139,7 +139,7 @@ op_star
 id|tsk
 )paren
 suffix:semicolon
-macro_line|#endif /* !defined (__LANGUAGE_ASSEMBLY__) */
+macro_line|#endif /* !defined (_LANGUAGE_ASSEMBLY) */
 DECL|macro|switch_to
 mdefine_line|#define switch_to(prev,next) &bslash;&n;do { &bslash;&n;&t;resume(next); &bslash;&n;} while(0)
 multiline_comment|/*&n; * For 32 and 64 bit operands we can take advantage of ll and sc.&n; * FIXME: This doesn&squot;t work for R3000 machines.&n; */

@@ -1,3 +1,4 @@
+multiline_comment|/* $Id: siginfo.h,v 1.4 1998/08/28 16:23:06 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1998 by Ralf Baechle&n; */
 macro_line|#ifndef __ASM_MIPS_SIGINFO_H
 DECL|macro|__ASM_MIPS_SIGINFO_H
 mdefine_line|#define __ASM_MIPS_SIGINFO_H
@@ -203,12 +204,12 @@ DECL|macro|SI_KERNEL
 mdefine_line|#define SI_KERNEL&t;0x80&t;/* sent by the kernel from somewhere */
 DECL|macro|SI_QUEUE
 mdefine_line|#define SI_QUEUE&t;-1&t;/* sent by sigqueue */
-DECL|macro|SI_TIMER
-mdefine_line|#define SI_TIMER&t;-2&t;/* sent by timer expiration */
-DECL|macro|SI_MESGQ
-mdefine_line|#define SI_MESGQ&t;-3&t;/* sent by real time mesq state change */
 DECL|macro|SI_ASYNCIO
-mdefine_line|#define SI_ASYNCIO&t;-4&t;/* sent by AIO completion */
+mdefine_line|#define SI_ASYNCIO&t;-2&t;/* sent by AIO completion */
+DECL|macro|SI_TIMER
+mdefine_line|#define SI_TIMER&t;-3&t;/* sent by timer expiration */
+DECL|macro|SI_MESGQ
+mdefine_line|#define SI_MESGQ&t;-4&t;/* sent by real time mesq state change */
 DECL|macro|SI_SIGIO
 mdefine_line|#define SI_SIGIO&t;-5&t;/* sent by queued SIGIO */
 DECL|macro|SI_FROMUSER

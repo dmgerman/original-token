@@ -1,4 +1,4 @@
-multiline_comment|/* &n;    bttv - Bt848 frame grabber driver&n;&n;    Copyright (C) 1996,97,98 Ralph  Metzler (rjkm@thp.uni-koeln.de)&n;                           &amp; Marcus Metzler (mocm@thp.uni-koeln.de)&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2 of the License, or&n;    (at your option) any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;    &n;    Modified to put the RISC code writer in the kernel and to fit a&n;    common (and I hope safe) kernel interface. When we have an X extension&n;    all will now be really sweet.&n; &n;    TODO:  &n;   &n;    * move norm from tuner to channel struct!?&n;      composite source from a satellite tuner can deliver different norms&n;      depending on tuned channel&n;    * mmap VBI data?&n;    * use new PCI routines&n;    * fix RAW Composite grabbing for NTSC &n;    * allow for different VDELAY in RAW grabbing?&n;    * extra modules for tda9850, tda8425, any volunteers???&n;    * support 15bpp&n;*/
+multiline_comment|/* &n;    bttv - Bt848 frame grabber driver&n;&n;    Copyright (C) 1996,97,98 Ralph  Metzler (rjkm@thp.uni-koeln.de)&n;                           &amp; Marcus Metzler (mocm@thp.uni-koeln.de)&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2 of the License, or&n;    (at your option) any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;    &n;    Modified to put the RISC code writer in the kernel and to fit a&n;    common (and I hope safe) kernel interface. When we have an X extension&n;    all will now be really sweet.&n; &n;    TODO:  &n;   &n;    * move norm from tuner to channel struct!?&n;      composite source from a satellite tuner can deliver different norms&n;      depending on tuned channel&n;    * mmap VBI data?&n;    * fix RAW Composite grabbing for NTSC &n;    * fix VBI reading double frames when grabbing is active&n;    * allow for different VDELAYs&n;    * extra modules for tda9850, tda8425, any volunteers???&n;*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -113,6 +113,16 @@ id|triton1
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifndef USE_PLL
+multiline_comment|/* 0=no pll, 1=28MHz, 2=34MHz */
+DECL|macro|USE_PLL
+mdefine_line|#define USE_PLL 0
+macro_line|#endif
+macro_line|#ifndef CARD_DEFAULT
+multiline_comment|/* card type (see bttv.h) 0=autodetect */
+DECL|macro|CARD_DEFAULT
+mdefine_line|#define CARD_DEFAULT 0
+macro_line|#endif
 DECL|variable|remap
 r_static
 r_int
@@ -142,13 +152,13 @@ id|BTTV_MAX
 )braket
 op_assign
 (brace
-l_int|0
+id|CARD_DEFAULT
 comma
-l_int|0
+id|CARD_DEFAULT
 comma
-l_int|0
+id|CARD_DEFAULT
 comma
-l_int|0
+id|CARD_DEFAULT
 )brace
 suffix:semicolon
 DECL|variable|pll
@@ -161,13 +171,13 @@ id|BTTV_MAX
 )braket
 op_assign
 (brace
-l_int|0
+id|USE_PLL
 comma
-l_int|0
+id|USE_PLL
 comma
-l_int|0
+id|USE_PLL
 comma
-l_int|0
+id|USE_PLL
 )brace
 suffix:semicolon
 DECL|variable|bttv_num
@@ -195,6 +205,8 @@ DECL|macro|I2C_GET
 mdefine_line|#define I2C_GET()   (btread(BT848_I2C)&amp;1)
 DECL|macro|EEPROM_WRITE_DELAY
 mdefine_line|#define EEPROM_WRITE_DELAY 20000
+DECL|macro|BURSTOFFSET
+mdefine_line|#define BURSTOFFSET 76
 multiline_comment|/*******************************/
 multiline_comment|/* Memory management functions */
 multiline_comment|/*******************************/
@@ -1297,9 +1309,6 @@ op_star
 )paren
 id|bus-&gt;data
 suffix:semicolon
-r_int
-id|tunertype
-suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -1330,11 +1339,6 @@ op_ne
 op_minus
 l_int|1
 )paren
-(brace
-id|tunertype
-op_assign
-id|btv-&gt;tuner_type
-suffix:semicolon
 id|i2c_control_device
 c_func
 (paren
@@ -1348,10 +1352,9 @@ comma
 id|TUNER_SET_TYPE
 comma
 op_amp
-id|tunertype
+id|btv-&gt;tuner_type
 )paren
 suffix:semicolon
-)brace
 r_break
 suffix:semicolon
 )brace
@@ -1812,24 +1815,24 @@ l_int|0
 )brace
 )brace
 comma
-multiline_comment|/* Newer Hauppauge */
+multiline_comment|/* Newer Hauppauge (bt878) */
 (brace
-l_int|2
+l_int|3
 comma
 l_int|0
 comma
 l_int|2
+comma
+l_int|7
+comma
+(brace
+l_int|2
+comma
+l_int|0
 comma
 l_int|1
 comma
-(brace
-l_int|2
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
+l_int|1
 )brace
 comma
 (brace
@@ -1842,6 +1845,39 @@ comma
 l_int|3
 comma
 l_int|4
+)brace
+)brace
+comma
+multiline_comment|/* MIRO PCTV pro */
+(brace
+l_int|3
+comma
+l_int|0
+comma
+l_int|2
+comma
+l_int|65551
+comma
+(brace
+l_int|2
+comma
+l_int|3
+comma
+l_int|1
+comma
+l_int|1
+)brace
+comma
+(brace
+l_int|1
+comma
+l_int|65537
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|10
 )brace
 )brace
 comma
@@ -2251,18 +2287,32 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
-id|btread
-c_func
-(paren
-id|BT848_IFORM
-)paren
-op_amp
-id|btv-&gt;pll.pll_crystal
-)paren
+id|btv-&gt;pll.pll_ifreq
+op_eq
+id|btv-&gt;pll.pll_ofreq
 )paren
 (brace
-multiline_comment|/* printk (&quot;switching PLL off&bslash;n&quot;);*/
+multiline_comment|/* no PLL needed */
+r_if
+c_cond
+(paren
+id|btv-&gt;pll.pll_current
+op_eq
+l_int|0
+)paren
+(brace
+multiline_comment|/* printk (&quot;bttv%d: PLL: is off&bslash;n&quot;,btv-&gt;nr); */
+r_return
+l_int|0
+suffix:semicolon
+)brace
+id|printk
+(paren
+l_string|&quot;bttv%d: PLL: switching off&bslash;n&quot;
+comma
+id|btv-&gt;nr
+)paren
+suffix:semicolon
 id|btwrite
 c_func
 (paren
@@ -2279,27 +2329,39 @@ comma
 id|BT848_PLL_XCI
 )paren
 suffix:semicolon
-id|btv-&gt;pll.pll_crystal
-op_and_assign
-op_complement
-l_int|2
+id|btv-&gt;pll.pll_current
+op_assign
+l_int|0
 suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* do not set pll again if already active */
 r_if
 c_cond
 (paren
-id|btv-&gt;pll.pll_crystal
-op_amp
-l_int|2
+id|btv-&gt;pll.pll_ofreq
+op_eq
+id|btv-&gt;pll.pll_current
 )paren
+(brace
+multiline_comment|/* printk(&quot;bttv%d: PLL: no change required&bslash;n&quot;,btv-&gt;nr); */
 r_return
 l_int|1
 suffix:semicolon
-multiline_comment|/* printk (&quot;setting PLL for PAL/SECAM&bslash;n&quot;);*/
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;bttv%d: PLL: %d =&gt; %d ... &quot;
+comma
+id|btv-&gt;nr
+comma
+id|btv-&gt;pll.pll_ifreq
+comma
+id|btv-&gt;pll.pll_ofreq
+)paren
+suffix:semicolon
 id|set_pll_freq
 c_func
 (paren
@@ -2310,7 +2372,7 @@ comma
 id|btv-&gt;pll.pll_ofreq
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Let other people run while the PLL stabilizes&n;&t; */
+multiline_comment|/*  Let other people run while the PLL stabilizes */
 id|tv
 op_assign
 id|jiffies
@@ -2388,21 +2450,37 @@ comma
 id|BT848_TGCTRL
 )paren
 suffix:semicolon
-id|btv-&gt;pll.pll_crystal
-op_or_assign
-l_int|2
+id|btv-&gt;pll.pll_current
+op_assign
+id|btv-&gt;pll.pll_ofreq
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;ok&bslash;n&quot;
+)paren
 suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
 )brace
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|10000
+l_int|10
 )paren
 suffix:semicolon
 )brace
+id|btv-&gt;pll.pll_current
+op_assign
+l_int|0
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;oops&bslash;n&quot;
+)paren
+suffix:semicolon
 r_return
 op_minus
 l_int|1
@@ -3006,7 +3084,7 @@ comma
 )brace
 suffix:semicolon
 DECL|macro|PALETTEFMT_MAX
-mdefine_line|#define PALETTEFMT_MAX 15
+mdefine_line|#define PALETTEFMT_MAX (sizeof(palette2fmt)/sizeof(int))
 DECL|function|make_rawrisctab
 r_static
 r_int
@@ -4602,11 +4680,12 @@ comma
 id|hactivex1
 suffix:semicolon
 DECL|member|vdelay
-DECL|member|fporch
 id|u16
 id|vdelay
-comma
-id|fporch
+suffix:semicolon
+DECL|member|vbipack
+id|u8
+id|vbipack
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -4620,7 +4699,7 @@ id|tvnorms
 op_assign
 (brace
 multiline_comment|/* PAL-BDGHI */
-multiline_comment|/* max. active video is actually 922, but 924 is divisible by 4 and 3! */
+multiline_comment|/* max pal/secam is actually 922, but 924 is divisible by 4 and 3! */
 multiline_comment|/* actually, max active PAL with HSCALE=0 is 948, NTSC is 768 - nil */
 (brace
 l_int|35468950
@@ -4648,14 +4727,16 @@ comma
 l_int|924
 comma
 l_int|0x20
+comma
+l_int|255
 )brace
 comma
-multiline_comment|/*&n;        { 35468950, &n;          768, 576, 1135, 0x7f, 0x72, (BT848_IFORM_PAL_BDGHI|BT848_IFORM_XT1),&n;&t;  944, 178, 922, 0x20},&n;*/
+multiline_comment|/*&n;        { 35468950, &n;          768, 576, 1135, 0x7f, 0x72, (BT848_IFORM_PAL_BDGHI|BT848_IFORM_XT1),&n;&t;  944, 178, 922, 0x20, 255},&n;*/
 multiline_comment|/* NTSC */
 (brace
 l_int|28636363
 comma
-l_int|640
+l_int|768
 comma
 l_int|480
 comma
@@ -4671,15 +4752,18 @@ op_or
 id|BT848_IFORM_XT0
 )paren
 comma
-l_int|780
+l_int|910
 comma
-l_int|122
+l_int|128
 comma
 l_int|754
 comma
 l_int|0x1a
+comma
+l_int|144
 )brace
 comma
+multiline_comment|/*&n;&t;{ 28636363,&n;          640, 480,  910, 0x68, 0x5d, (BT848_IFORM_NTSC|BT848_IFORM_XT0),&n;          780, 122, 754, 0x1a, 144},&n;*/
 multiline_comment|/* SECAM - phase means nothing in SECAM, bdelay is useless */
 (brace
 l_int|35468950
@@ -4692,7 +4776,7 @@ l_int|1135
 comma
 l_int|0x7f
 comma
-l_int|0x72
+l_int|0xb0
 comma
 (paren
 id|BT848_IFORM_SECAM
@@ -4707,6 +4791,8 @@ comma
 l_int|924
 comma
 l_int|0x20
+comma
+l_int|255
 )brace
 comma
 multiline_comment|/* PAL-M */
@@ -4736,6 +4822,8 @@ comma
 l_int|754
 comma
 l_int|0x1a
+comma
+l_int|144
 )brace
 comma
 multiline_comment|/* PAL-N */
@@ -4765,6 +4853,8 @@ comma
 l_int|922
 comma
 l_int|0x20
+comma
+l_int|255
 )brace
 comma
 multiline_comment|/* PAL-NC */
@@ -4794,6 +4884,8 @@ comma
 l_int|922
 comma
 l_int|0x20
+comma
+l_int|255
 )brace
 comma
 multiline_comment|/* NTSC-Japan */
@@ -4823,6 +4915,8 @@ comma
 l_int|754
 comma
 l_int|0x1a
+comma
+l_int|144
 )brace
 comma
 )brace
@@ -5114,6 +5208,22 @@ comma
 id|BT848_IFORM
 )paren
 suffix:semicolon
+id|btwrite
+c_func
+(paren
+l_int|1
+comma
+id|BT848_VBI_PACK_DEL
+)paren
+suffix:semicolon
+id|btwrite
+c_func
+(paren
+id|tvn-&gt;vbipack
+comma
+id|BT848_VBI_PACK_SIZE
+)paren
+suffix:semicolon
 id|set_pll
 c_func
 (paren
@@ -5380,42 +5490,6 @@ r_int
 r_int
 id|format
 suffix:semicolon
-multiline_comment|/* setup proper VBI capture length for given video mode */
-r_if
-c_cond
-(paren
-id|btv-&gt;win.norm
-op_eq
-id|VIDEO_MODE_NTSC
-)paren
-id|btwrite
-c_func
-(paren
-l_int|144
-comma
-id|BT848_VBI_PACK_SIZE
-)paren
-suffix:semicolon
-multiline_comment|/* 1600 samples */
-r_else
-id|btwrite
-c_func
-(paren
-l_int|255
-comma
-id|BT848_VBI_PACK_SIZE
-)paren
-suffix:semicolon
-multiline_comment|/* 2044 samples */
-id|btwrite
-c_func
-(paren
-l_int|1
-comma
-id|BT848_VBI_PACK_DEL
-)paren
-suffix:semicolon
-multiline_comment|/* bit 9 for above */
 id|btv-&gt;win.color_fmt
 op_assign
 id|format
@@ -5736,7 +5810,18 @@ id|EINVAL
 suffix:semicolon
 )brace
 multiline_comment|/*      This doesn&#xfffd;t work like this for NTSC anyway.&n;        So, better check the total image size ...&n;*/
-multiline_comment|/*&n;&t;if(mp-&gt;height&gt;576 || mp-&gt;width&gt;768)&n;&t;&t;return -EINVAL;&n;*/
+multiline_comment|/*&n;&t;if(mp-&gt;height&gt;576 || mp-&gt;width&gt;768+BURSTOFFSET)&n;&t;&t;return -EINVAL;&n;*/
+r_if
+c_cond
+(paren
+id|mp-&gt;format
+op_ge
+id|PALETTEFMT_MAX
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5746,7 +5831,10 @@ id|mp-&gt;width
 op_star
 id|fmtbppx2
 (braket
+id|palette2fmt
+(braket
 id|mp-&gt;format
+)braket
 op_amp
 l_int|0x0f
 )braket
@@ -5754,6 +5842,19 @@ op_div
 l_int|2
 OG
 id|BTTV_MAX_FBUF
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|palette2fmt
+(braket
+id|mp-&gt;format
+)braket
 )paren
 r_return
 op_minus
@@ -5803,45 +5904,6 @@ id|ro
 op_plus
 l_int|2048
 suffix:semicolon
-id|btv-&gt;gwidth
-op_assign
-id|mp-&gt;width
-suffix:semicolon
-id|btv-&gt;gheight
-op_assign
-id|mp-&gt;height
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|mp-&gt;format
-OG
-id|PALETTEFMT_MAX
-)paren
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-id|btv-&gt;gfmt
-op_assign
-id|palette2fmt
-(braket
-id|mp-&gt;format
-)braket
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|btv-&gt;gfmt
-op_eq
-l_int|0
-)paren
-(brace
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-)brace
 id|make_vrisctab
 c_func
 (paren
@@ -5853,30 +5915,17 @@ id|re
 comma
 id|vbuf
 comma
-id|btv-&gt;gwidth
+id|mp-&gt;width
 comma
-id|btv-&gt;gheight
+id|mp-&gt;height
 comma
-id|btv-&gt;gfmt
+id|palette2fmt
+(braket
+id|mp-&gt;format
+)braket
 )paren
 suffix:semicolon
 multiline_comment|/* bt848_set_risc_jmps(btv); */
-id|btor
-c_func
-(paren
-l_int|3
-comma
-id|BT848_CAP_CTL
-)paren
-suffix:semicolon
-id|btor
-c_func
-(paren
-l_int|3
-comma
-id|BT848_GPIO_DMA_CTL
-)paren
-suffix:semicolon
 id|btv-&gt;frame_stat
 (braket
 id|mp-&gt;frame
@@ -5890,6 +5939,21 @@ c_cond
 id|btv-&gt;grabbing
 )paren
 (brace
+id|btv-&gt;gfmt_next
+op_assign
+id|palette2fmt
+(braket
+id|mp-&gt;format
+)braket
+suffix:semicolon
+id|btv-&gt;gwidth_next
+op_assign
+id|mp-&gt;width
+suffix:semicolon
+id|btv-&gt;gheight_next
+op_assign
+id|mp-&gt;height
+suffix:semicolon
 id|btv-&gt;gro_next
 op_assign
 id|virt_to_bus
@@ -5913,6 +5977,21 @@ suffix:semicolon
 )brace
 r_else
 (brace
+id|btv-&gt;gfmt
+op_assign
+id|palette2fmt
+(braket
+id|mp-&gt;format
+)braket
+suffix:semicolon
+id|btv-&gt;gwidth
+op_assign
+id|mp-&gt;width
+suffix:semicolon
+id|btv-&gt;gheight
+op_assign
+id|mp-&gt;height
+suffix:semicolon
 id|btv-&gt;gro
 op_assign
 id|virt_to_bus
@@ -5957,6 +6036,22 @@ l_int|16
 )paren
 op_or
 id|BT848_RISC_IRQ
+suffix:semicolon
+id|btor
+c_func
+(paren
+l_int|3
+comma
+id|BT848_CAP_CTL
+)paren
+suffix:semicolon
+id|btor
+c_func
+(paren
+l_int|3
+comma
+id|BT848_GPIO_DMA_CTL
+)paren
 suffix:semicolon
 multiline_comment|/* interruptible_sleep_on(&amp;btv-&gt;capq); */
 r_return
@@ -7110,6 +7205,12 @@ suffix:semicolon
 id|btv-&gt;win.norm
 op_assign
 id|v.norm
+suffix:semicolon
+id|make_vbitab
+c_func
+(paren
+id|btv
+)paren
 suffix:semicolon
 id|bt848_set_winsize
 c_func
@@ -8736,6 +8837,21 @@ op_minus
 id|EFAULT
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|i
+OG
+l_int|1
+op_logical_or
+id|i
+OL
+l_int|0
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -9242,6 +9358,73 @@ op_minus
 id|EFAULT
 suffix:semicolon
 )brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_case
+id|BTTV_BURST_ON
+suffix:colon
+(brace
+id|tvnorms
+(braket
+l_int|0
+)braket
+dot
+id|scaledtwidth
+op_assign
+l_int|1135
+op_minus
+id|BURSTOFFSET
+op_minus
+l_int|2
+suffix:semicolon
+id|tvnorms
+(braket
+l_int|0
+)braket
+dot
+id|hdelayx1
+op_assign
+l_int|186
+op_minus
+id|BURSTOFFSET
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_case
+id|BTTV_BURST_OFF
+suffix:colon
+(brace
+id|tvnorms
+(braket
+l_int|0
+)braket
+dot
+id|scaledtwidth
+op_assign
+l_int|1135
+suffix:semicolon
+id|tvnorms
+(braket
+l_int|0
+)braket
+dot
+id|hdelayx1
+op_assign
+l_int|186
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_case
+id|BTTV_PICNR
+suffix:colon
+(brace
+multiline_comment|/* return picture */
 r_return
 l_int|0
 suffix:semicolon
@@ -10478,6 +10661,16 @@ id|vbs
 )braket
 op_assign
 (brace
+(brace
+id|PCI_VENDOR_ID_ALLIANCE
+comma
+id|PCI_DEVICE_ID_ALLIANCE_AT3D
+comma
+l_string|&quot;Alliance AT3D&quot;
+comma
+id|PCI_BASE_ADDRESS_0
+)brace
+comma
 (brace
 id|PCI_VENDOR_ID_ATI
 comma
@@ -11817,6 +12010,9 @@ id|btv-&gt;type
 r_case
 id|BTTV_MIRO
 suffix:colon
+r_case
+id|BTTV_MIROPRO
+suffix:colon
 id|printk
 c_func
 (paren
@@ -11876,6 +12072,9 @@ r_break
 suffix:semicolon
 r_case
 id|BTTV_HAUPPAUGE
+suffix:colon
+r_case
+id|BTTV_HAUPPAUGE878
 suffix:colon
 id|printk
 c_func
@@ -13292,6 +13491,9 @@ id|btv-&gt;nr
 )paren
 )paren
 suffix:semicolon
+id|btv-&gt;field
+op_increment
+suffix:semicolon
 )brace
 r_if
 c_cond
@@ -13419,13 +13621,6 @@ l_int|28
 )paren
 )paren
 (brace
-id|wake_up_interruptible
-c_func
-(paren
-op_amp
-id|btv-&gt;capq
-)paren
-suffix:semicolon
 id|btv-&gt;last_field
 op_assign
 id|btv-&gt;field
@@ -13449,6 +13644,18 @@ id|btv-&gt;grabbing
 )paren
 )paren
 (brace
+id|btv-&gt;gfmt
+op_assign
+id|btv-&gt;gfmt_next
+suffix:semicolon
+id|btv-&gt;gwidth
+op_assign
+id|btv-&gt;gwidth_next
+suffix:semicolon
+id|btv-&gt;gheight
+op_assign
+id|btv-&gt;gheight_next
+suffix:semicolon
 id|btv-&gt;gro
 op_assign
 id|btv-&gt;gro_next
@@ -14097,14 +14304,10 @@ id|btv-&gt;pll.pll_crystal
 op_assign
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|pll
-(braket
-id|btv-&gt;nr
-)braket
-)paren
+id|btv-&gt;pll.pll_current
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -14120,19 +14323,39 @@ l_int|0x11
 )paren
 )paren
 (brace
-id|printk
-c_func
+r_switch
+c_cond
 (paren
-id|KERN_INFO
-l_string|&quot;bttv%d: internal PLL, single crystal operation enabled&bslash;n&quot;
-comma
-id|bttv_num
+id|pll
+(braket
+id|btv-&gt;nr
+)braket
 )paren
+(brace
+r_case
+l_int|0
+suffix:colon
+multiline_comment|/* off */
+r_break
 suffix:semicolon
-id|btv-&gt;pll.pll_ofreq
+r_case
+l_int|1
+suffix:colon
+multiline_comment|/* 28 MHz crystal installed */
+id|btv-&gt;pll.pll_ifreq
 op_assign
 l_int|28636363
 suffix:semicolon
+id|btv-&gt;pll.pll_crystal
+op_assign
+id|BT848_IFORM_XT0
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|2
+suffix:colon
+multiline_comment|/* 35 MHz crystal installed */
 id|btv-&gt;pll.pll_ifreq
 op_assign
 l_int|35468950
@@ -14141,6 +14364,9 @@ id|btv-&gt;pll.pll_crystal
 op_assign
 id|BT848_IFORM_XT1
 suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 )brace
 id|btv-&gt;bt848_mem
 op_assign

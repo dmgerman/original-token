@@ -2,6 +2,7 @@ multiline_comment|/*&n; * Defines for synchronous PPP/Cisco link level subroutin
 macro_line|#ifndef _SYNCPPP_H_
 DECL|macro|_SYNCPPP_H_
 mdefine_line|#define _SYNCPPP_H_ 1
+macro_line|#ifdef __KERNEL__
 DECL|struct|slcp
 r_struct
 id|slcp
@@ -165,7 +166,6 @@ DECL|macro|IPCP_STATE_ACK_SENT
 mdefine_line|#define IPCP_STATE_ACK_SENT     2       /* IPCP state: conf-ack sent */
 DECL|macro|IPCP_STATE_OPENED
 mdefine_line|#define IPCP_STATE_OPENED       3       /* IPCP state: opened */
-macro_line|#ifdef __KERNEL__
 r_void
 id|sppp_attach
 (paren
@@ -267,5 +267,7 @@ DECL|macro|SPPPIOCCISCO
 mdefine_line|#define SPPPIOCCISCO&t;(SIOCDEVPRIVATE)
 DECL|macro|SPPPIOCPPP
 mdefine_line|#define SPPPIOCPPP&t;(SIOCDEVPRIVATE+1)
+DECL|macro|SPPPIOCDEBUG
+mdefine_line|#define SPPPIOCDEBUG&t;(SIOCDEVPRIVATE+2)
 macro_line|#endif /* _SYNCPPP_H_ */
 eof

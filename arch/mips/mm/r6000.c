@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: r6000.c,v 1.4 1998/05/01 01:35:06 ralf Exp $&n; * r6000.c: MMU and cache routines for the R6000 processors.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/* $Id: r6000.c,v 1.6 1998/10/16 19:22:44 ralf Exp $&n; *&n; * r6000.c: MMU and cache routines for the R6000 processors.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -8,6 +8,7 @@ macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;
+macro_line|#include &lt;asm/mmu_context.h&gt;
 id|__asm__
 c_func
 (paren
@@ -252,16 +253,9 @@ id|page
 comma
 l_string|&quot;1&quot;
 (paren
-id|PAGE_SIZE
+id|USER_PTRS_PER_PGD
 op_div
-(paren
-r_sizeof
-(paren
-id|pmd_t
-)paren
-op_star
 l_int|8
-)paren
 )paren
 comma
 l_string|&quot;i&quot;
@@ -723,6 +717,11 @@ suffix:semicolon
 id|flush_tlb_page
 op_assign
 id|r6000_flush_tlb_page
+suffix:semicolon
+id|r6000_asid_setup
+c_func
+(paren
+)paren
 suffix:semicolon
 id|load_pgd
 op_assign

@@ -1,8 +1,10 @@
-multiline_comment|/*&n; * indy_sc.c: Indy cache managment functions.&n; *&n; * Copyright (C) 1997 Ralf Baechle (ralf@gnu.org),&n; * derived from r4xx0.c by David S. Miller (dm@engr.sgi.com).&n; *&n; * $Id: indy_sc.c,v 1.4 1998/05/04 09:12:57 ralf Exp $&n; */
+multiline_comment|/* $Id: indy_sc.c,v 1.9 1998/08/17 12:14:55 ralf Exp $&n; *&n; * indy_sc.c: Indy cache managment functions.&n; *&n; * Copyright (C) 1997 Ralf Baechle (ralf@gnu.org),&n; * derived from r4xx0.c by David S. Miller (dm@engr.sgi.com).&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/autoconf.h&gt;
 macro_line|#include &lt;asm/bcache.h&gt;
 macro_line|#include &lt;asm/sgi.h&gt;
 macro_line|#include &lt;asm/sgimc.h&gt;

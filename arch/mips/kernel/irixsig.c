@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * irixsig.c: WHEEE, IRIX signals!  YOW, am I compatable or what?!?!&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: irixsig.c,v 1.8 1998/05/01 01:34:00 ralf Exp $&n; */
+multiline_comment|/*&n; * irixsig.c: WHEEE, IRIX signals!  YOW, am I compatable or what?!?!&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: irixsig.c,v 1.11 1998/03/26 07:39:09 ralf Exp $&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;

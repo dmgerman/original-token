@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * loadmmu.c: Setup cpu/cache specific function ptrs at boot time.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: loadmmu.c,v 1.6 1998/05/01 01:34:54 ralf Exp $&n; */
+multiline_comment|/*&n; * loadmmu.c: Setup cpu/cache specific function ptrs at boot time.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: loadmmu.c,v 1.7 1998/03/27 08:53:41 ralf Exp $&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

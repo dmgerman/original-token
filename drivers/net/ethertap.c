@@ -1337,6 +1337,7 @@ suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
 DECL|variable|unit
+r_static
 r_int
 id|unit
 suffix:semicolon

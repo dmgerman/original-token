@@ -16,7 +16,7 @@ DECL|macro|RISCMEM_LEN
 mdefine_line|#define RISCMEM_LEN&t;(32744*2)
 multiline_comment|/* maximum needed buffer size for extended VBI frame mode capturing */
 DECL|macro|BTTV_MAX_FBUF
-mdefine_line|#define BTTV_MAX_FBUF&t;0x151000
+mdefine_line|#define BTTV_MAX_FBUF&t;0x190000
 macro_line|#ifdef __KERNEL__
 DECL|struct|bttv_window
 r_struct
@@ -113,6 +113,12 @@ r_int
 id|pll_crystal
 suffix:semicolon
 multiline_comment|/* Crystal used for input */
+DECL|member|pll_current
+r_int
+r_int
+id|pll_current
+suffix:semicolon
+multiline_comment|/* Current programmed ofrq*/
 )brace
 suffix:semicolon
 DECL|struct|bttv
@@ -354,6 +360,16 @@ id|gheight
 comma
 id|gfmt
 suffix:semicolon
+DECL|member|gwidth_next
+DECL|member|gheight_next
+DECL|member|gfmt_next
+id|u16
+id|gwidth_next
+comma
+id|gheight_next
+comma
+id|gfmt_next
+suffix:semicolon
 DECL|member|grisc
 id|u32
 op_star
@@ -486,6 +502,14 @@ DECL|macro|BTTV_FIELDNR
 mdefine_line|#define BTTV_FIELDNR&t;&t;_IOR(&squot;v&squot; , BASE_VIDIOCPRIVATE+2, unsigned int)
 DECL|macro|BTTV_PLLSET
 mdefine_line|#define BTTV_PLLSET&t;&t;_IOW(&squot;v&squot; , BASE_VIDIOCPRIVATE+3, struct bttv_pll_info)
+DECL|macro|BTTV_BURST_ON
+mdefine_line|#define BTTV_BURST_ON&t;&t;_IOR(&squot;v&squot; , BASE_VIDIOCPRIVATE+4, int)
+DECL|macro|BTTV_BURST_OFF
+mdefine_line|#define BTTV_BURST_OFF&t;&t;_IOR(&squot;v&squot; , BASE_VIDIOCPRIVATE+5, int)
+DECL|macro|BTTV_NAGRAVERSION
+mdefine_line|#define BTTV_NAGRAVERSION&t;_IOR(&squot;v&squot; , BASE_VIDIOCPRIVATE+6, int)
+DECL|macro|BTTV_PICNR
+mdefine_line|#define BTTV_PICNR&t;&t;_IOR(&squot;v&squot; , BASE_VIDIOCPRIVATE+7, int)
 DECL|macro|BTTV_UNKNOWN
 mdefine_line|#define BTTV_UNKNOWN       0x00
 DECL|macro|BTTV_MIRO
@@ -504,8 +528,12 @@ DECL|macro|BTTV_MATRIX_VISION
 mdefine_line|#define BTTV_MATRIX_VISION 0x07 
 DECL|macro|BTTV_FLYVIDEO
 mdefine_line|#define BTTV_FLYVIDEO      0x08
+DECL|macro|BTTV_TURBOTV
+mdefine_line|#define BTTV_TURBOTV       0x09
 DECL|macro|BTTV_HAUPPAUGE878
-mdefine_line|#define BTTV_HAUPPAUGE878  0x09
+mdefine_line|#define BTTV_HAUPPAUGE878  0x0a
+DECL|macro|BTTV_MIROPRO
+mdefine_line|#define BTTV_MIROPRO       0x0b
 DECL|macro|AUDIO_TUNER
 mdefine_line|#define AUDIO_TUNER        0x00
 DECL|macro|AUDIO_RADIO

@@ -11167,6 +11167,9 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
 id|copy_from_user
 c_func
 (paren
@@ -11184,7 +11187,13 @@ r_sizeof
 id|ra
 )paren
 )paren
+)paren
+(brace
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
