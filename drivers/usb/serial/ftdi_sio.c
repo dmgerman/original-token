@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * USB FTDI SIO driver&n; *&n; * &t;Copyright (C) 1999, 2000&n; * &t;    Greg Kroah-Hartman (greg@kroah.com)&n; *          Bill Ryder (bryder@sgi.com)&n; *&n; * &t;This program is free software; you can redistribute it and/or modify&n; * &t;it under the terms of the GNU General Public License as published by&n; * &t;the Free Software Foundation; either version 2 of the License, or&n; * &t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; *&n; * (09/11/2000) gkh&n; *&t;Removed DEBUG #ifdefs with call to usb_serial_debug_data&n; *&n; * (07/19/2000) gkh&n; *&t;Added module_init and module_exit functions to handle the fact that this&n; *&t;driver is a loadable module now.&n; *&n; * (04/04/2000) Bill Ryder &n; *         Fixed bugs in TCGET/TCSET ioctls (by removing them - they are &n; *             handled elsewhere in the serial driver chain).&n; *&n; * (03/30/2000) Bill Ryder &n; *         Implemented lots of ioctls&n; * &t;Fixed a race condition in write&n; * &t;Changed some dbg&squot;s to errs&n; *&n; * (03/26/2000) gkh&n; * &t;Split driver up into device specific pieces.&n; *&n; */
+multiline_comment|/*&n; * USB FTDI SIO driver&n; *&n; * &t;Copyright (C) 1999, 2000&n; * &t;    Greg Kroah-Hartman (greg@kroah.com)&n; *          Bill Ryder (bryder@sgi.com)&n; *&n; * &t;This program is free software; you can redistribute it and/or modify&n; * &t;it under the terms of the GNU General Public License as published by&n; * &t;the Free Software Foundation; either version 2 of the License, or&n; * &t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; *&n; * (10/05/2000) gkh&n; *&t;Fixed bug with urb-&gt;dev not being set properly, now that the usb&n; *&t;core needs it.&n; * &n; * (09/11/2000) gkh&n; *&t;Removed DEBUG #ifdefs with call to usb_serial_debug_data&n; *&n; * (07/19/2000) gkh&n; *&t;Added module_init and module_exit functions to handle the fact that this&n; *&t;driver is a loadable module now.&n; *&n; * (04/04/2000) Bill Ryder &n; *         Fixed bugs in TCGET/TCSET ioctls (by removing them - they are &n; *             handled elsewhere in the serial driver chain).&n; *&n; * (03/30/2000) Bill Ryder &n; *         Implemented lots of ioctls&n; * &t;Fixed a race condition in write&n; * &t;Changed some dbg&squot;s to errs&n; *&n; * (03/26/2000) gkh&n; * &t;Split driver up into device specific pieces.&n; *&n; */
 multiline_comment|/* Bill Ryder - bryder@sgi.com - wrote the FTDI_SIO implementation */
 multiline_comment|/* Thanx to FTDI for so kindly providing details of the protocol required */
 multiline_comment|/*   to talk to the device */
@@ -314,6 +314,9 @@ id|serial
 op_assign
 id|port-&gt;serial
 suffix:semicolon
+r_int
+id|result
+suffix:semicolon
 r_char
 id|buf
 (braket
@@ -537,20 +540,51 @@ l_string|&quot;Error from RTS HIGH urb&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*Start reading from the device*/
-r_if
-c_cond
+multiline_comment|/* Start reading from the device */
+id|FILL_BULK_URB
+c_func
 (paren
+id|port-&gt;read_urb
+comma
+id|serial-&gt;dev
+comma
+id|usb_rcvbulkpipe
+c_func
+(paren
+id|serial-&gt;dev
+comma
+id|port-&gt;bulk_in_endpointAddress
+)paren
+comma
+id|port-&gt;read_urb-&gt;transfer_buffer
+comma
+id|port-&gt;read_urb-&gt;transfer_buffer_length
+comma
+id|ftdi_sio_read_bulk_callback
+comma
+id|port
+)paren
+suffix:semicolon
+id|result
+op_assign
 id|usb_submit_urb
 c_func
 (paren
 id|port-&gt;read_urb
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|result
 )paren
 id|err
 c_func
 (paren
-l_string|&quot;usb_submit_urb(read bulk) failed&quot;
+id|__FUNCTION__
+l_string|&quot; - failed submitting read urb, error %d&quot;
+comma
+id|result
 )paren
 suffix:semicolon
 r_return
@@ -802,6 +836,9 @@ l_int|1
 suffix:semicolon
 r_int
 id|rc
+suffix:semicolon
+r_int
+id|result
 suffix:semicolon
 id|DECLARE_WAITQUEUE
 c_func
@@ -1068,25 +1105,57 @@ id|first_byte
 )paren
 suffix:semicolon
 multiline_comment|/* send the data out the bulk port */
-id|port-&gt;write_urb-&gt;transfer_buffer_length
-op_assign
-id|count
-suffix:semicolon
-r_if
-c_cond
+id|FILL_BULK_URB
+c_func
 (paren
+id|port-&gt;write_urb
+comma
+id|serial-&gt;dev
+comma
+id|usb_sndbulkpipe
+c_func
+(paren
+id|serial-&gt;dev
+comma
+id|port-&gt;bulk_out_endpointAddress
+)paren
+comma
+id|port-&gt;write_urb-&gt;transfer_buffer
+comma
+id|count
+comma
+id|ftdi_sio_write_bulk_callback
+comma
+id|port
+)paren
+suffix:semicolon
+id|result
+op_assign
 id|usb_submit_urb
 c_func
 (paren
 id|port-&gt;write_urb
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|result
 )paren
+(brace
 id|err
 c_func
 (paren
-l_string|&quot;usb_submit_urb(write bulk) failed&quot;
+id|__FUNCTION__
+l_string|&quot; - failed submitting write urb, error %d&quot;
+comma
+id|result
 )paren
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 id|dbg
 c_func
 (paren
@@ -1299,6 +1368,9 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+r_int
+id|result
+suffix:semicolon
 id|dbg
 c_func
 (paren
@@ -1431,19 +1503,50 @@ id|tty
 suffix:semicolon
 )brace
 multiline_comment|/* Continue trying to always read  */
-r_if
-c_cond
+id|FILL_BULK_URB
+c_func
 (paren
+id|urb
+comma
+id|serial-&gt;dev
+comma
+id|usb_rcvbulkpipe
+c_func
+(paren
+id|serial-&gt;dev
+comma
+id|port-&gt;bulk_in_endpointAddress
+)paren
+comma
+id|urb-&gt;transfer_buffer
+comma
+id|urb-&gt;transfer_buffer_length
+comma
+id|ftdi_sio_read_bulk_callback
+comma
+id|port
+)paren
+suffix:semicolon
+id|result
+op_assign
 id|usb_submit_urb
 c_func
 (paren
 id|urb
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|result
 )paren
 id|err
 c_func
 (paren
-l_string|&quot;failed resubmitting read urb&quot;
+id|__FUNCTION__
+l_string|&quot; - failed resubmitting read urb, error %d&quot;
+comma
+id|result
 )paren
 suffix:semicolon
 r_return

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * USB HandSpring Visor driver&n; *&n; *&t;Copyright (C) 1999, 2000&n; *&t;    Greg Kroah-Hartman (greg@kroah.com)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; * &n; * (09/11/2000) gkh&n; *&t;Got rid of always calling kmalloc for every urb we wrote out to the&n; *&t;device.&n; *&t;Added visor_read_callback so we can keep track of bytes in and out for&n; *&t;those people who like to know the speed of their device.&n; *&t;Removed DEBUG #ifdefs with call to usb_serial_debug_data&n; *&n; * (09/06/2000) gkh&n; *&t;Fixed oops in visor_exit.  Need to uncomment usb_unlink_urb call _after_&n; *&t;the host controller drivers set urb-&gt;dev = NULL when the urb is finished.&n; *&n; * (08/28/2000) gkh&n; *&t;Added locks for SMP safeness.&n; *&n; * (08/08/2000) gkh&n; *&t;Fixed endian problem in visor_startup.&n; *&t;Fixed MOD_INC and MOD_DEC logic and the ability to open a port more &n; *&t;than once.&n; * &n; * (07/23/2000) gkh&n; *&t;Added pool of write urbs to speed up transfers to the visor.&n; * &n; * (07/19/2000) gkh&n; *&t;Added module_init and module_exit functions to handle the fact that this&n; *&t;driver is a loadable module now.&n; *&n; * (07/03/2000) gkh&n; *&t;Added visor_set_ioctl and visor_set_termios functions (they don&squot;t do much&n; *&t;of anything, but are good for debugging.)&n; * &n; * (06/25/2000) gkh&n; *&t;Fixed bug in visor_unthrottle that should help with the disconnect in PPP&n; *&t;bug that people have been reporting.&n; *&n; * (06/23/2000) gkh&n; *&t;Cleaned up debugging statements in a quest to find UHCI timeout bug.&n; *&n; * (04/27/2000) Ryan VanderBijl&n; * &t;Fixed memory leak in visor_close&n; *&n; * (03/26/2000) gkh&n; *&t;Split driver up into device specific pieces.&n; * &n; */
+multiline_comment|/*&n; * USB HandSpring Visor driver&n; *&n; *&t;Copyright (C) 1999, 2000&n; *&t;    Greg Kroah-Hartman (greg@kroah.com)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; * &n; * (10/05/2000) gkh&n; *&t;Fixed bug with urb-&gt;dev not being set properly, now that the usb&n; *&t;core needs it.&n; * &n; * (09/11/2000) gkh&n; *&t;Got rid of always calling kmalloc for every urb we wrote out to the&n; *&t;device.&n; *&t;Added visor_read_callback so we can keep track of bytes in and out for&n; *&t;those people who like to know the speed of their device.&n; *&t;Removed DEBUG #ifdefs with call to usb_serial_debug_data&n; *&n; * (09/06/2000) gkh&n; *&t;Fixed oops in visor_exit.  Need to uncomment usb_unlink_urb call _after_&n; *&t;the host controller drivers set urb-&gt;dev = NULL when the urb is finished.&n; *&n; * (08/28/2000) gkh&n; *&t;Added locks for SMP safeness.&n; *&n; * (08/08/2000) gkh&n; *&t;Fixed endian problem in visor_startup.&n; *&t;Fixed MOD_INC and MOD_DEC logic and the ability to open a port more &n; *&t;than once.&n; * &n; * (07/23/2000) gkh&n; *&t;Added pool of write urbs to speed up transfers to the visor.&n; * &n; * (07/19/2000) gkh&n; *&t;Added module_init and module_exit functions to handle the fact that this&n; *&t;driver is a loadable module now.&n; *&n; * (07/03/2000) gkh&n; *&t;Added visor_set_ioctl and visor_set_termios functions (they don&squot;t do much&n; *&t;of anything, but are good for debugging.)&n; * &n; * (06/25/2000) gkh&n; *&t;Fixed bug in visor_unthrottle that should help with the disconnect in PPP&n; *&t;bug that people have been reporting.&n; *&n; * (06/23/2000) gkh&n; *&t;Cleaned up debugging statements in a quest to find UHCI timeout bug.&n; *&n; * (04/27/2000) Ryan VanderBijl&n; * &t;Fixed memory leak in visor_close&n; *&n; * (03/26/2000) gkh&n; *&t;Split driver up into device specific pieces.&n; * &n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -336,9 +336,19 @@ op_star
 id|filp
 )paren
 (brace
+r_struct
+id|usb_serial
+op_star
+id|serial
+op_assign
+id|port-&gt;serial
+suffix:semicolon
 r_int
 r_int
 id|flags
+suffix:semicolon
+r_int
+id|result
 suffix:semicolon
 r_if
 c_cond
@@ -395,21 +405,51 @@ id|bytes_out
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*Start reading from the device*/
-r_if
-c_cond
+multiline_comment|/* Start reading from the device */
+id|FILL_BULK_URB
+c_func
 (paren
+id|port-&gt;read_urb
+comma
+id|serial-&gt;dev
+comma
+id|usb_rcvbulkpipe
+c_func
+(paren
+id|serial-&gt;dev
+comma
+id|port-&gt;bulk_in_endpointAddress
+)paren
+comma
+id|port-&gt;read_urb-&gt;transfer_buffer
+comma
+id|port-&gt;read_urb-&gt;transfer_buffer_length
+comma
+id|visor_read_bulk_callback
+comma
+id|port
+)paren
+suffix:semicolon
+id|result
+op_assign
 id|usb_submit_urb
 c_func
 (paren
 id|port-&gt;read_urb
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|result
 )paren
-id|dbg
+id|err
 c_func
 (paren
 id|__FUNCTION__
-l_string|&quot; - usb_submit_urb(read bulk) failed&quot;
+l_string|&quot; - failed submitting read urb, error %d&quot;
+comma
+id|result
 )paren
 suffix:semicolon
 )brace
@@ -1032,6 +1072,18 @@ op_star
 id|urb-&gt;context
 suffix:semicolon
 r_struct
+id|usb_serial
+op_star
+id|serial
+op_assign
+id|get_usb_serial
+(paren
+id|port
+comma
+id|__FUNCTION__
+)paren
+suffix:semicolon
+r_struct
 id|tty_struct
 op_star
 id|tty
@@ -1045,6 +1097,9 @@ id|urb-&gt;transfer_buffer
 suffix:semicolon
 r_int
 id|i
+suffix:semicolon
+r_int
+id|result
 suffix:semicolon
 r_if
 c_cond
@@ -1067,6 +1122,23 @@ comma
 id|port-&gt;number
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|serial
+)paren
+(brace
+id|dbg
+c_func
+(paren
+id|__FUNCTION__
+l_string|&quot; - bad serial pointer, exiting&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1147,20 +1219,50 @@ id|urb-&gt;actual_length
 suffix:semicolon
 )brace
 multiline_comment|/* Continue trying to always read  */
-r_if
-c_cond
+id|FILL_BULK_URB
+c_func
 (paren
+id|port-&gt;read_urb
+comma
+id|serial-&gt;dev
+comma
+id|usb_rcvbulkpipe
+c_func
+(paren
+id|serial-&gt;dev
+comma
+id|port-&gt;bulk_in_endpointAddress
+)paren
+comma
+id|port-&gt;read_urb-&gt;transfer_buffer
+comma
+id|port-&gt;read_urb-&gt;transfer_buffer_length
+comma
+id|visor_read_bulk_callback
+comma
+id|port
+)paren
+suffix:semicolon
+id|result
+op_assign
 id|usb_submit_urb
 c_func
 (paren
-id|urb
+id|port-&gt;read_urb
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|result
 )paren
-id|dbg
+id|err
 c_func
 (paren
 id|__FUNCTION__
-l_string|&quot; - failed resubmitting read urb&quot;
+l_string|&quot; - failed resubmitting read urb, error %d&quot;
+comma
+id|result
 )paren
 suffix:semicolon
 r_return
@@ -1229,6 +1331,9 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+r_int
+id|result
+suffix:semicolon
 id|dbg
 c_func
 (paren
@@ -1246,19 +1351,30 @@ comma
 id|flags
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
+id|port-&gt;read_urb-&gt;dev
+op_assign
+id|port-&gt;serial-&gt;dev
+suffix:semicolon
+id|result
+op_assign
 id|usb_submit_urb
+c_func
 (paren
 id|port-&gt;read_urb
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|result
 )paren
-id|dbg
+id|err
 c_func
 (paren
 id|__FUNCTION__
-l_string|&quot; - usb_submit_urb(read bulk) failed&quot;
+l_string|&quot; - failed submitting read urb, error %d&quot;
+comma
+id|result
 )paren
 suffix:semicolon
 id|spin_unlock_irqrestore

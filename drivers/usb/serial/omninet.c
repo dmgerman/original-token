@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * USB ZyXEL omni.net LCD PLUS driver&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; *&n; * Please report both successes and troubles to the author at omninet@kroah.com&n; *&n; * (08/28/2000) gkh&n; *&t;Added locks for SMP safeness.&n; *&t;Fixed MOD_INC and MOD_DEC logic and the ability to open a port more &n; *&t;than once.&n; *&t;Fixed potential race in omninet_write_bulk_callback&n; *&n; * (07/19/2000) gkh&n; *&t;Added module_init and module_exit functions to handle the fact that this&n; *&t;driver is a loadable module now.&n; *&n; */
+multiline_comment|/*&n; * USB ZyXEL omni.net LCD PLUS driver&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; *&n; * Please report both successes and troubles to the author at omninet@kroah.com&n; *&n; * (10/05/2000) gkh&n; *&t;Fixed bug with urb-&gt;dev not being set properly, now that the usb&n; *&t;core needs it.&n; * &n; * (08/28/2000) gkh&n; *&t;Added locks for SMP safeness.&n; *&t;Fixed MOD_INC and MOD_DEC logic and the ability to open a port more &n; *&t;than once.&n; *&t;Fixed potential race in omninet_write_bulk_callback&n; *&n; * (07/19/2000) gkh&n; *&t;Added module_init and module_exit functions to handle the fact that this&n; *&t;driver is a loadable module now.&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -283,6 +283,9 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+r_int
+id|result
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -424,22 +427,50 @@ op_assign
 id|port-&gt;tty
 suffix:semicolon
 multiline_comment|/* Start reading from the device */
-r_if
-c_cond
+id|FILL_BULK_URB
+c_func
 (paren
+id|port-&gt;read_urb
+comma
+id|serial-&gt;dev
+comma
+id|usb_rcvbulkpipe
+c_func
+(paren
+id|serial-&gt;dev
+comma
+id|port-&gt;bulk_in_endpointAddress
+)paren
+comma
+id|port-&gt;read_urb-&gt;transfer_buffer
+comma
+id|port-&gt;read_urb-&gt;transfer_buffer_length
+comma
+id|omninet_read_bulk_callback
+comma
+id|port
+)paren
+suffix:semicolon
+id|result
+op_assign
 id|usb_submit_urb
 c_func
 (paren
 id|port-&gt;read_urb
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|result
 )paren
-id|dbg
+id|err
 c_func
 (paren
 id|__FUNCTION__
-l_string|&quot; - read bulk (%p) failed&quot;
+l_string|&quot; - failed submitting read urb, error %d&quot;
 comma
-id|port-&gt;read_urb
+id|result
 )paren
 suffix:semicolon
 )brace
@@ -676,6 +707,9 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+r_int
+id|result
+suffix:semicolon
 singleline_comment|//&t;dbg(&quot;omninet_read_bulk_callback&quot;);
 r_if
 c_cond
@@ -821,20 +855,50 @@ id|port-&gt;tty
 suffix:semicolon
 )brace
 multiline_comment|/* Continue trying to always read  */
-r_if
-c_cond
+id|FILL_BULK_URB
+c_func
 (paren
+id|urb
+comma
+id|serial-&gt;dev
+comma
+id|usb_rcvbulkpipe
+c_func
+(paren
+id|serial-&gt;dev
+comma
+id|port-&gt;bulk_in_endpointAddress
+)paren
+comma
+id|urb-&gt;transfer_buffer
+comma
+id|urb-&gt;transfer_buffer_length
+comma
+id|omninet_read_bulk_callback
+comma
+id|port
+)paren
+suffix:semicolon
+id|result
+op_assign
 id|usb_submit_urb
 c_func
 (paren
 id|urb
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|result
 )paren
-id|dbg
+id|err
 c_func
 (paren
 id|__FUNCTION__
-l_string|&quot; - failed resubmitting read urb&quot;
+l_string|&quot; - failed resubmitting read urb, error %d&quot;
+comma
+id|result
 )paren
 suffix:semicolon
 r_return
@@ -911,7 +975,9 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-multiline_comment|/*&n;#ifdef DEBUG&n;&t;int i;&n;#endif&n;*/
+r_int
+id|result
+suffix:semicolon
 singleline_comment|//&t;dbg(&quot;omninet_write port %d&quot;, port-&gt;number);
 r_if
 c_cond
@@ -934,7 +1000,6 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;#ifdef DEBUG&n;&t;printk (KERN_DEBUG __FILE__ &quot;: omninet_write %d: &quot;, count);&n;&t;&t;for (i = 0; i &lt; count; i++) {&n;&t;&t;&t;if( isalpha(buf[i]) )&n;&t;&t;&t;&t;printk (&quot;%c &quot;, buf[i]);&n;&t;&t;&t;else&n;&t;&t;&t;&t;printk (&quot;%.2x &quot;, buf[i]);&n;&t;&t;}&n;&t;&t;printk (&quot;&bslash;n&quot;);&n;#endif&n;*/
 r_if
 c_cond
 (paren
@@ -956,6 +1021,17 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+id|usb_serial_debug_data
+(paren
+id|__FILE__
+comma
+id|__FUNCTION__
+comma
+id|count
+comma
+id|buf
+)paren
+suffix:semicolon
 id|spin_lock_irqsave
 (paren
 op_amp
@@ -1032,21 +1108,31 @@ id|wport-&gt;write_urb-&gt;transfer_buffer_length
 op_assign
 l_int|64
 suffix:semicolon
-r_if
-c_cond
-(paren
+id|wport-&gt;write_urb-&gt;dev
+op_assign
+id|serial-&gt;dev
+suffix:semicolon
+id|result
+op_assign
 id|usb_submit_urb
 c_func
 (paren
 id|wport-&gt;write_urb
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|result
 )paren
 (brace
-id|dbg
+id|err
 c_func
 (paren
 id|__FUNCTION__
-l_string|&quot; - usb_submit_urb(write bulk) failed&quot;
+l_string|&quot; - failed submitting write urb, error %d&quot;
+comma
+id|result
 )paren
 suffix:semicolon
 id|spin_unlock_irqrestore

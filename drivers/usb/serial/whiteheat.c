@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * USB ConnectTech WhiteHEAT driver&n; *&n; *&t;Copyright (C) 1999, 2000&n; *&t;    Greg Kroah-Hartman (greg@kroah.com)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; * &n; * (09/11/2000) gkh&n; *&t;Removed DEBUG #ifdefs with call to usb_serial_debug_data&n; *&n; * (07/19/2000) gkh&n; *&t;Added module_init and module_exit functions to handle the fact that this&n; *&t;driver is a loadable module now.&n; *&t;Fixed bug with port-&gt;minor that was found by Al Borchers&n; *&n; * (07/04/2000) gkh&n; *&t;Added support for port settings. Baud rate can now be changed. Line signals&n; *&t;are not transferred to and from the tty layer yet, but things seem to be &n; *&t;working well now.&n; *&n; * (05/04/2000) gkh&n; *&t;First cut at open and close commands. Data can flow through the ports at&n; *&t;default speeds now.&n; *&n; * (03/26/2000) gkh&n; *&t;Split driver up into device specific pieces.&n; * &n; */
+multiline_comment|/*&n; * USB ConnectTech WhiteHEAT driver&n; *&n; *&t;Copyright (C) 1999, 2000&n; *&t;    Greg Kroah-Hartman (greg@kroah.com)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; * &n; * (10/05/2000) gkh&n; *&t;Fixed bug with urb-&gt;dev not being set properly, now that the usb&n; *&t;core needs it.&n; * &n; * (10/03/2000) smd&n; *&t;firmware is improved to guard against crap sent to device&n; *&t;firmware now replies CMD_FAILURE on bad things&n; *&t;read_callback fix you provided for private info struct&n; *&t;command_finished now indicates success or fail&n; *&t;setup_port struct now packed to avoid gcc padding&n; *&t;firmware uses 1 based port numbering, driver now handles that&n; *&n; * (09/11/2000) gkh&n; *&t;Removed DEBUG #ifdefs with call to usb_serial_debug_data&n; *&n; * (07/19/2000) gkh&n; *&t;Added module_init and module_exit functions to handle the fact that this&n; *&t;driver is a loadable module now.&n; *&t;Fixed bug with port-&gt;minor that was found by Al Borchers&n; *&n; * (07/04/2000) gkh&n; *&t;Added support for port settings. Baud rate can now be changed. Line signals&n; *&t;are not transferred to and from the tty layer yet, but things seem to be &n; *&t;working well now.&n; *&n; * (05/04/2000) gkh&n; *&t;First cut at open and close commands. Data can flow through the ports at&n; *&t;default speeds now.&n; *&n; * (03/26/2000) gkh&n; *&t;Split driver up into device specific pieces.&n; * &n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -426,16 +426,33 @@ id|urb
 )paren
 (brace
 r_struct
-id|whiteheat_private
+id|usb_serial_port
 op_star
-id|info
+id|port
 op_assign
 (paren
 r_struct
-id|whiteheat_private
+id|usb_serial_port
 op_star
 )paren
 id|urb-&gt;context
+suffix:semicolon
+r_struct
+id|usb_serial
+op_star
+id|serial
+op_assign
+id|get_usb_serial
+(paren
+id|port
+comma
+id|__FUNCTION__
+)paren
+suffix:semicolon
+r_struct
+id|whiteheat_private
+op_star
+id|info
 suffix:semicolon
 r_int
 r_char
@@ -443,6 +460,9 @@ op_star
 id|data
 op_assign
 id|urb-&gt;transfer_buffer
+suffix:semicolon
+r_int
+id|result
 suffix:semicolon
 id|dbg
 (paren
@@ -466,6 +486,23 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|serial
+)paren
+(brace
+id|dbg
+c_func
+(paren
+id|__FUNCTION__
+l_string|&quot; - bad serial pointer, exiting&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|usb_serial_debug_data
 (paren
 id|__FILE__
@@ -477,6 +514,33 @@ comma
 id|data
 )paren
 suffix:semicolon
+id|info
+op_assign
+(paren
+r_struct
+id|whiteheat_private
+op_star
+)paren
+id|port
+op_member_access_from_pointer
+r_private
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|info
+)paren
+(brace
+id|dbg
+(paren
+id|__FUNCTION__
+l_string|&quot; - info is NULL, exiting.&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 multiline_comment|/* right now, if the command is COMMAND_COMPLETE, just flip the bit saying the command finished */
 multiline_comment|/* in the future we&squot;re going to have to pay attention to the actual command that completed */
 r_if
@@ -492,10 +556,85 @@ id|WHITEHEAT_CMD_COMPLETE
 (brace
 id|info-&gt;command_finished
 op_assign
-id|TRUE
+id|WHITEHEAT_CMD_COMPLETE
+suffix:semicolon
+id|wake_up_interruptible
+c_func
+(paren
+op_amp
+id|info-&gt;wait_command
+)paren
 suffix:semicolon
 )brace
-r_return
+r_if
+c_cond
+(paren
+id|data
+(braket
+l_int|0
+)braket
+op_eq
+id|WHITEHEAT_CMD_FAILURE
+)paren
+(brace
+id|info-&gt;command_finished
+op_assign
+id|WHITEHEAT_CMD_FAILURE
+suffix:semicolon
+id|wake_up_interruptible
+c_func
+(paren
+op_amp
+id|info-&gt;wait_command
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* Continue trying to always read */
+id|FILL_BULK_URB
+c_func
+(paren
+id|port-&gt;read_urb
+comma
+id|serial-&gt;dev
+comma
+id|usb_rcvbulkpipe
+c_func
+(paren
+id|serial-&gt;dev
+comma
+id|port-&gt;bulk_in_endpointAddress
+)paren
+comma
+id|port-&gt;read_urb-&gt;transfer_buffer
+comma
+id|port-&gt;read_urb-&gt;transfer_buffer_length
+comma
+id|command_port_read_callback
+comma
+id|port
+)paren
+suffix:semicolon
+id|result
+op_assign
+id|usb_submit_urb
+c_func
+(paren
+id|port-&gt;read_urb
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|result
+)paren
+id|dbg
+c_func
+(paren
+id|__FUNCTION__
+l_string|&quot; - failed resubmitting read urb, error %d&quot;
+comma
+id|result
+)paren
 suffix:semicolon
 )brace
 DECL|function|whiteheat_send_cmd
@@ -602,6 +741,10 @@ id|datasize
 op_plus
 l_int|1
 suffix:semicolon
+id|port-&gt;write_urb-&gt;dev
+op_assign
+id|serial-&gt;dev
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -669,6 +812,43 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|info-&gt;command_finished
+op_eq
+id|WHITEHEAT_CMD_FAILURE
+)paren
+(brace
+id|dbg
+(paren
+id|__FUNCTION__
+l_string|&quot; - command failed.&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|info-&gt;command_finished
+op_eq
+id|WHITEHEAT_CMD_COMPLETE
+)paren
+(brace
+id|dbg
+(paren
+id|__FUNCTION__
+l_string|&quot; - command completed.&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -702,6 +882,9 @@ r_struct
 id|whiteheat_private
 op_star
 id|info
+suffix:semicolon
+r_int
+id|result
 suffix:semicolon
 id|dbg
 c_func
@@ -811,6 +994,15 @@ id|command_port-&gt;read_urb-&gt;complete
 op_assign
 id|command_port_read_callback
 suffix:semicolon
+id|command_port-&gt;read_urb-&gt;dev
+op_assign
+id|port-&gt;serial-&gt;dev
+suffix:semicolon
+id|command_port-&gt;tty
+op_assign
+id|port-&gt;tty
+suffix:semicolon
+multiline_comment|/* need this to &quot;fake&quot; our our sanity check macros */
 id|usb_submit_urb
 (paren
 id|command_port-&gt;read_urb
@@ -818,28 +1010,41 @@ id|command_port-&gt;read_urb
 suffix:semicolon
 )brace
 multiline_comment|/* Start reading from the device */
-r_if
-c_cond
-(paren
+id|port-&gt;read_urb-&gt;dev
+op_assign
+id|port-&gt;serial-&gt;dev
+suffix:semicolon
+id|result
+op_assign
 id|usb_submit_urb
 c_func
 (paren
 id|port-&gt;read_urb
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|result
 )paren
-id|dbg
+id|err
 c_func
 (paren
 id|__FUNCTION__
-l_string|&quot; - usb_submit_urb(read bulk) failed&quot;
+l_string|&quot; - failed submitting read urb, error %d&quot;
+comma
+id|result
 )paren
 suffix:semicolon
 multiline_comment|/* send an open port command */
+multiline_comment|/* firmware uses 1 based port numbering */
 id|open_command.port
 op_assign
 id|port-&gt;number
 op_minus
 id|port-&gt;serial-&gt;minor
+op_plus
+l_int|1
 suffix:semicolon
 id|whiteheat_send_cmd
 (paren
@@ -904,11 +1109,14 @@ id|port-&gt;number
 )paren
 suffix:semicolon
 multiline_comment|/* send a close command to the port */
+multiline_comment|/* firmware uses 1 based port numbering */
 id|close_command.port
 op_assign
 id|port-&gt;number
 op_minus
 id|port-&gt;serial-&gt;minor
+op_plus
+l_int|1
 suffix:semicolon
 id|whiteheat_send_cmd
 (paren
@@ -1088,6 +1296,14 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/* set the port number */
+multiline_comment|/* firmware uses 1 based port numbering */
+id|port_settings.port
+op_assign
+id|port-&gt;number
+op_plus
+l_int|1
+suffix:semicolon
 multiline_comment|/* get the byte size */
 r_switch
 c_cond
@@ -1238,7 +1454,7 @@ l_string|&quot; - hardware flow control = %s %s %s %s&quot;
 comma
 (paren
 id|port_settings.hflow
-op_or
+op_amp
 id|WHITEHEAT_CTS_FLOW
 )paren
 ques
@@ -1249,7 +1465,7 @@ l_string|&quot;&quot;
 comma
 (paren
 id|port_settings.hflow
-op_or
+op_amp
 id|WHITEHEAT_RTS_FLOW
 )paren
 ques
@@ -1260,7 +1476,7 @@ l_string|&quot;&quot;
 comma
 (paren
 id|port_settings.hflow
-op_or
+op_amp
 id|WHITEHEAT_DSR_FLOW
 )paren
 ques
@@ -1271,7 +1487,7 @@ l_string|&quot;&quot;
 comma
 (paren
 id|port_settings.hflow
-op_or
+op_amp
 id|WHITEHEAT_DTR_FLOW
 )paren
 ques
@@ -1792,11 +2008,14 @@ id|whiteheat_rdb_set
 id|rdb_command
 suffix:semicolon
 multiline_comment|/* send a set rts command to the port */
+multiline_comment|/* firmware uses 1 based port numbering */
 id|rdb_command.port
 op_assign
 id|port-&gt;number
 op_minus
 id|port-&gt;serial-&gt;minor
+op_plus
+l_int|1
 suffix:semicolon
 id|rdb_command.state
 op_assign

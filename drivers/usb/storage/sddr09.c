@@ -1,4 +1,4 @@
-multiline_comment|/* Driver for SanDisk SDDR-09 SmartMedia reader&n; *&n; * $Id: sddr09.c,v 1.10 2000/08/25 00:13:51 mdharm Exp $&n; *&n; * SDDR09 driver v0.1:&n; *&n; * First release&n; *&n; * Current development and maintenance by:&n; *   (c) 2000 Robert Baruch (autophile@dol.net)&n; *&n; * The SanDisk SDDR-09 SmartMedia reader uses the Shuttle EUSB-01 chip.&n; * This chip is a programmable USB controller. In the SDDR-09, it has&n; * been programmed to obey a certain limited set of SCSI commands. This&n; * driver translates the &quot;real&quot; SCSI commands to the SDDR-09 SCSI&n; * commands.&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License along&n; * with this program; if not, write to the Free Software Foundation, Inc.,&n; * 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
+multiline_comment|/* Driver for SanDisk SDDR-09 SmartMedia reader&n; *&n; * $Id: sddr09.c,v 1.12 2000/10/03 01:06:07 mdharm Exp $&n; *&n; * SDDR09 driver v0.1:&n; *&n; * First release&n; *&n; * Current development and maintenance by:&n; *   (c) 2000 Robert Baruch (autophile@dol.net)&n; *&n; * The SanDisk SDDR-09 SmartMedia reader uses the Shuttle EUSB-01 chip.&n; * This chip is a programmable USB controller. In the SDDR-09, it has&n; * been programmed to obey a certain limited set of SCSI commands. This&n; * driver translates the &quot;real&quot; SCSI commands to the SDDR-09 SCSI&n; * commands.&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License along&n; * with this program; if not, write to the Free Software Foundation, Inc.,&n; * 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
 macro_line|#include &quot;transport.h&quot;
 macro_line|#include &quot;protocol.h&quot;
 macro_line|#include &quot;usb.h&quot;
@@ -7,67 +7,6 @@ macro_line|#include &quot;sddr09.h&quot;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
-r_extern
-r_int
-id|usb_stor_control_msg
-c_func
-(paren
-r_struct
-id|us_data
-op_star
-id|us
-comma
-r_int
-r_int
-id|pipe
-comma
-id|u8
-id|request
-comma
-id|u8
-id|requesttype
-comma
-id|u16
-id|value
-comma
-id|u16
-id|index
-comma
-r_void
-op_star
-id|data
-comma
-id|u16
-id|size
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|usb_stor_bulk_msg
-c_func
-(paren
-r_struct
-id|us_data
-op_star
-id|us
-comma
-r_void
-op_star
-id|data
-comma
-r_int
-id|pipe
-comma
-r_int
-r_int
-id|len
-comma
-r_int
-r_int
-op_star
-id|act_len
-)paren
-suffix:semicolon
 DECL|macro|short_pack
 mdefine_line|#define short_pack(lsb,msb) ( ((u16)(lsb)) | ( ((u16)(msb))&lt;&lt;8 ) )
 DECL|macro|LSB_of
@@ -1523,7 +1462,7 @@ suffix:semicolon
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;Read control address %08X blocks %04X&bslash;n&quot;
+l_string|&quot;Read control address %08lX blocks %04X&bslash;n&quot;
 comma
 id|address
 comma
@@ -3118,33 +3057,18 @@ r_int
 r_char
 id|mode_page_01
 (braket
-l_int|12
+l_int|4
 )braket
 op_assign
 (brace
-l_int|0x01
+singleline_comment|// write-protected for now
+l_int|0x03
 comma
-l_int|0x0a
+l_int|0x00
 comma
-l_int|0
+l_int|0x80
 comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
+l_int|0x00
 )brace
 suffix:semicolon
 r_int
@@ -3530,7 +3454,7 @@ l_int|NULL
 op_logical_or
 id|srb-&gt;request_bufflen
 OL
-l_int|12
+l_int|4
 )paren
 r_return
 id|USB_STOR_TRANSPORT_ERROR
@@ -3542,7 +3466,10 @@ id|ptr
 comma
 id|mode_page_01
 comma
-l_int|12
+r_sizeof
+(paren
+id|mode_page_01
+)paren
 )paren
 suffix:semicolon
 r_return

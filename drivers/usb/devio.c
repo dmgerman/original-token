@@ -5690,15 +5690,18 @@ c_cond
 (paren
 (paren
 id|_IOC_DIR
+c_func
 (paren
 id|ctrl.ioctl_code
 )paren
 op_amp
 id|_IOC_WRITE
 )paren
-op_ne
-l_int|0
-op_logical_and
+)paren
+(brace
+r_if
+c_cond
+(paren
 id|copy_from_user
 (paren
 id|buf
@@ -5707,8 +5710,6 @@ id|ctrl.data
 comma
 id|size
 )paren
-op_ne
-l_int|0
 )paren
 (brace
 id|kfree
@@ -5721,7 +5722,9 @@ op_minus
 id|EFAULT
 suffix:semicolon
 )brace
+)brace
 r_else
+(brace
 id|memset
 (paren
 id|buf
@@ -5731,6 +5734,7 @@ comma
 id|size
 )paren
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/* ioctl to device */
 r_if

@@ -391,6 +391,8 @@ r_static
 r_int
 id|probed
 id|__initdata
+op_assign
+l_int|0
 suffix:semicolon
 macro_line|#ifdef NEW_NETINIT
 DECL|function|acenic_probe

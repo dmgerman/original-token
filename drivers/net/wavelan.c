@@ -442,7 +442,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* wv_16_on */
 multiline_comment|/*------------------------------------------------------------------*/
-multiline_comment|/*&n; * Disable interrupts on the WaveLAN hardware.&n; */
+multiline_comment|/*&n; * Disable interrupts on the WaveLAN hardware.&n; * (called by wv_82586_stop())&n; */
 DECL|function|wv_ints_off
 r_static
 r_inline
@@ -471,19 +471,6 @@ id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|wv_splhi
-c_func
-(paren
-id|lp
-comma
-op_amp
-id|flags
-)paren
-suffix:semicolon
 id|lp-&gt;hacr
 op_and_assign
 op_complement
@@ -497,19 +484,10 @@ comma
 id|lp-&gt;hacr
 )paren
 suffix:semicolon
-id|wv_splx
-c_func
-(paren
-id|lp
-comma
-op_amp
-id|flags
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/* wv_ints_off */
 multiline_comment|/*------------------------------------------------------------------*/
-multiline_comment|/*&n; * Enable interrupts on the WaveLAN hardware.&n; */
+multiline_comment|/*&n; * Enable interrupts on the WaveLAN hardware.&n; * (called by wv_hw_reset())&n; */
 DECL|function|wv_ints_on
 r_static
 r_inline
@@ -538,19 +516,6 @@ id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|wv_splhi
-c_func
-(paren
-id|lp
-comma
-op_amp
-id|flags
-)paren
-suffix:semicolon
 id|lp-&gt;hacr
 op_or_assign
 id|HACR_INTRON
@@ -561,15 +526,6 @@ c_func
 id|ioaddr
 comma
 id|lp-&gt;hacr
-)paren
-suffix:semicolon
-id|wv_splx
-c_func
-(paren
-id|lp
-comma
-op_amp
-id|flags
 )paren
 suffix:semicolon
 )brace
@@ -3307,6 +3263,10 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 multiline_comment|/* Arm the flag, will be cleard in wv_82586_config() */
 id|lp-&gt;reconfig_82586
 op_assign
@@ -3334,11 +3294,29 @@ id|dev
 )paren
 )paren
 (brace
+id|wv_splhi
+c_func
+(paren
+id|lp
+comma
+op_amp
+id|flags
+)paren
+suffix:semicolon
 multiline_comment|/* May fail */
 id|wv_82586_config
 c_func
 (paren
 id|dev
+)paren
+suffix:semicolon
+id|wv_splx
+c_func
+(paren
+id|lp
+comma
+op_amp
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -11350,6 +11328,10 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 macro_line|#ifdef DEBUG_TX_TRACE
 id|printk
 c_func
@@ -11380,10 +11362,28 @@ c_cond
 id|lp-&gt;reconfig_82586
 )paren
 (brace
+id|wv_splhi
+c_func
+(paren
+id|lp
+comma
+op_amp
+id|flags
+)paren
+suffix:semicolon
 id|wv_82586_config
 c_func
 (paren
 id|dev
+)paren
+suffix:semicolon
+id|wv_splx
+c_func
+(paren
+id|lp
+comma
+op_amp
+id|flags
 )paren
 suffix:semicolon
 multiline_comment|/* Check that we can continue */
@@ -13624,10 +13624,6 @@ id|dev_mc_list
 op_star
 id|dmi
 suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
 macro_line|#ifdef DEBUG_CONFIG_TRACE
 id|printk
 c_func
@@ -13639,15 +13635,6 @@ id|dev-&gt;name
 )paren
 suffix:semicolon
 macro_line|#endif
-id|wv_splhi
-c_func
-(paren
-id|lp
-comma
-op_amp
-id|flags
-)paren
-suffix:semicolon
 multiline_comment|/* Check nothing bad has happened */
 r_if
 c_cond
@@ -13672,15 +13659,6 @@ id|dev-&gt;name
 )paren
 suffix:semicolon
 macro_line|#endif
-id|wv_splx
-c_func
-(paren
-id|lp
-comma
-op_amp
-id|flags
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -14474,15 +14452,6 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|wv_splx
-c_func
-(paren
-id|lp
-comma
-op_amp
-id|flags
-)paren
-suffix:semicolon
 macro_line|#ifdef DEBUG_CONFIG_TRACE
 id|printk
 c_func
@@ -14496,7 +14465,7 @@ suffix:semicolon
 macro_line|#endif
 )brace
 multiline_comment|/*------------------------------------------------------------------*/
-multiline_comment|/*&n; * This routine, called by wavelan_close(), gracefully stops the &n; * WaveLAN controller (i82586).&n; */
+multiline_comment|/*&n; * This routine, called by wavelan_close(), gracefully stops the &n; * WaveLAN controller (i82586).&n; * (called by wavelan_close())&n; */
 DECL|function|wv_82586_stop
 r_static
 r_inline
@@ -14609,7 +14578,7 @@ suffix:semicolon
 macro_line|#endif
 )brace
 multiline_comment|/*------------------------------------------------------------------*/
-multiline_comment|/*&n; * Totally reset the WaveLAN and restart it.&n; * Performs the following actions:&n; *&t;1. A power reset (reset DMA)&n; *&t;2. Initialize the radio modem (using wv_mmc_init)&n; *&t;3. Reset &amp; Configure LAN controller (using wv_82586_start)&n; *&t;4. Start the LAN controller&squot;s command unit&n; *&t;5. Start the LAN controller&squot;s receive unit&n; */
+multiline_comment|/*&n; * Totally reset the WaveLAN and restart it.&n; * Performs the following actions:&n; *&t;1. A power reset (reset DMA)&n; *&t;2. Initialize the radio modem (using wv_mmc_init)&n; *&t;3. Reset &amp; Configure LAN controller (using wv_82586_start)&n; *&t;4. Start the LAN controller&squot;s command unit&n; *&t;5. Start the LAN controller&squot;s receive unit&n; * (called by wavelan_interrupt(), wavelan_watchdog() &amp; wavelan_open())&n; */
 DECL|function|wv_hw_reset
 r_static
 r_int
@@ -15003,8 +14972,8 @@ id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
-macro_line|#ifdef DEBUG_INTERRUPT_ERROR
-multiline_comment|/* Check state of our spinlock (it should be cleared) */
+macro_line|#ifdef DEBUG_INTERRUPT_INFO
+multiline_comment|/* Check state of our spinlock */
 r_if
 c_cond
 (paren
@@ -15019,7 +14988,7 @@ id|lp-&gt;spinlock
 id|printk
 c_func
 (paren
-id|KERN_INFO
+id|KERN_DEBUG
 l_string|&quot;%s: wavelan_interrupt(): spinlock is already locked !!!&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -15027,7 +14996,7 @@ id|dev-&gt;name
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/* Prevent reentrancy. It is safe because wv_splhi disable interrupts&n;&t; * before aquiring the spinlock */
+multiline_comment|/* Prevent reentrancy. We need to do that because we may have&n;&t; * multiple interrupt handler running concurently.&n;&t; * It is safe because wv_splhi() disable interrupts before aquiring&n;&t; * the spinlock. */
 id|spin_lock
 c_func
 (paren
@@ -15116,6 +15085,12 @@ id|dev-&gt;name
 )paren
 suffix:semicolon
 macro_line|#endif
+id|spin_unlock
+(paren
+op_amp
+id|lp-&gt;spinlock
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -15268,13 +15243,6 @@ id|dev
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Release spinlock here so that wv_hw_reset() can grab it */
-id|spin_unlock
-(paren
-op_amp
-id|lp-&gt;spinlock
-)paren
-suffix:semicolon
 multiline_comment|/* Check the state of the command unit. */
 r_if
 c_cond
@@ -15381,6 +15349,13 @@ id|dev
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Release spinlock */
+id|spin_unlock
+(paren
+op_amp
+id|lp-&gt;spinlock
+)paren
+suffix:semicolon
 macro_line|#ifdef DEBUG_INTERRUPT_TRACE
 id|printk
 c_func
@@ -15451,15 +15426,6 @@ id|dev-&gt;name
 )paren
 suffix:semicolon
 macro_line|#endif
-id|wv_splhi
-c_func
-(paren
-id|lp
-comma
-op_amp
-id|flags
-)paren
-suffix:semicolon
 multiline_comment|/* Check that we came here for something */
 r_if
 c_cond
@@ -15469,7 +15435,10 @@ op_le
 l_int|0
 )paren
 (brace
-id|wv_splx
+r_return
+suffix:semicolon
+)brace
+id|wv_splhi
 c_func
 (paren
 id|lp
@@ -15478,9 +15447,6 @@ op_amp
 id|flags
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 multiline_comment|/* Try to see if some buffers are not free (in case we missed&n;&t; * an interrupt */
 id|nreaped
 op_assign
@@ -15782,6 +15748,15 @@ id|dev-&gt;name
 )paren
 suffix:semicolon
 macro_line|#endif
+id|wv_splx
+c_func
+(paren
+id|lp
+comma
+op_amp
+id|flags
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EAGAIN
@@ -15826,6 +15801,20 @@ op_star
 id|dev
 )paren
 (brace
+id|net_local
+op_star
+id|lp
+op_assign
+(paren
+id|net_local
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 macro_line|#ifdef DEBUG_CALLBACK_TRACE
 id|printk
 c_func
@@ -15850,10 +15839,28 @@ id|dev
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Flush the Tx and disable Rx.&n;&t; */
+id|wv_splhi
+c_func
+(paren
+id|lp
+comma
+op_amp
+id|flags
+)paren
+suffix:semicolon
 id|wv_82586_stop
 c_func
 (paren
 id|dev
+)paren
+suffix:semicolon
+id|wv_splx
+c_func
+(paren
+id|lp
+comma
+op_amp
+id|flags
 )paren
 suffix:semicolon
 id|free_irq
@@ -15916,7 +15923,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;%s: -&gt;wavelan_config(dev=0x%x, ioaddr=0x%x)&bslash;n&quot;
+l_string|&quot;%s: -&gt;wavelan_config(dev=0x%x, ioaddr=0x%lx)&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma

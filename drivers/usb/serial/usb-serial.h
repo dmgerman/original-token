@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * USB Serial Converter driver&n; *&n; *&t;Copyright (C) 1999, 2000&n; *&t;    Greg Kroah-Hartman (greg@kroah.com)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; *&n; * (09/11/2000) gkh&n; *&t;Added usb_serial_debug_data function to help get rid of #DEBUG in the&n; *&t;drivers.&n; *&n; * (08/28/2000) gkh&n; *&t;Added port_lock to port structure.&n; *&n; * (08/08/2000) gkh&n; *&t;Added open_count to port structure.&n; *&n; * (07/23/2000) gkh&n; *&t;Added bulk_out_endpointAddress to port structure.&n; *&n; * (07/19/2000) gkh, pberger, and borchers&n; *&t;Modifications to allow usb-serial drivers to be modules.&n; *&n; * &n; */
+multiline_comment|/*&n; * USB Serial Converter driver&n; *&n; *&t;Copyright (C) 1999, 2000&n; *&t;    Greg Kroah-Hartman (greg@kroah.com)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; *&n; * (10/05/2000) gkh&n; *&t;Added interrupt_in_endpointAddress and bulk_in_endpointAddress to help&n; *&t;fix bug with urb-&gt;dev not being set properly, now that the usb core&n; *&t;needs it.&n; * &n; * (09/11/2000) gkh&n; *&t;Added usb_serial_debug_data function to help get rid of #DEBUG in the&n; *&t;drivers.&n; *&n; * (08/28/2000) gkh&n; *&t;Added port_lock to port structure.&n; *&n; * (08/08/2000) gkh&n; *&t;Added open_count to port structure.&n; *&n; * (07/23/2000) gkh&n; *&t;Added bulk_out_endpointAddress to port structure.&n; *&n; * (07/19/2000) gkh, pberger, and borchers&n; *&t;Modifications to allow usb-serial drivers to be modules.&n; *&n; * &n; */
 macro_line|#ifndef __LINUX_USB_SERIAL_H
 DECL|macro|__LINUX_USB_SERIAL_H
 mdefine_line|#define __LINUX_USB_SERIAL_H
@@ -60,6 +60,10 @@ id|urb
 op_star
 id|interrupt_in_urb
 suffix:semicolon
+DECL|member|interrupt_in_endpointAddress
+id|__u8
+id|interrupt_in_endpointAddress
+suffix:semicolon
 DECL|member|bulk_in_buffer
 r_int
 r_char
@@ -71,6 +75,10 @@ r_struct
 id|urb
 op_star
 id|read_urb
+suffix:semicolon
+DECL|member|bulk_in_endpointAddress
+id|__u8
+id|bulk_in_endpointAddress
 suffix:semicolon
 DECL|member|bulk_out_buffer
 r_int

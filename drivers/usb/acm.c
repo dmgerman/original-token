@@ -720,6 +720,10 @@ id|urb-&gt;actual_length
 op_assign
 l_int|0
 suffix:semicolon
+id|urb-&gt;dev
+op_assign
+id|acm-&gt;dev
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -933,6 +937,10 @@ op_increment
 r_return
 l_int|0
 suffix:semicolon
+id|acm-&gt;ctrlurb.dev
+op_assign
+id|acm-&gt;dev
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -948,6 +956,10 @@ c_func
 (paren
 l_string|&quot;usb_submit_urb(ctrl irq) failed&quot;
 )paren
+suffix:semicolon
+id|acm-&gt;readurb.dev
+op_assign
+id|acm-&gt;dev
 suffix:semicolon
 r_if
 c_cond
@@ -1198,6 +1210,10 @@ suffix:semicolon
 id|acm-&gt;writeurb.transfer_buffer_length
 op_assign
 id|count
+suffix:semicolon
+id|acm-&gt;writeurb.dev
+op_assign
+id|acm-&gt;dev
 suffix:semicolon
 r_if
 c_cond

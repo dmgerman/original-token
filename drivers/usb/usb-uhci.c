@@ -1,4 +1,4 @@
-multiline_comment|/* &n; * Universal Host Controller Interface driver for USB (take II).&n; *&n; * (c) 1999-2000 Georg Acher, acher@in.tum.de (executive slave) (base guitar)&n; *               Deti Fliegl, deti@fliegl.de (executive slave) (lead voice)&n; *               Thomas Sailer, sailer@ife.ee.ethz.ch (chief consultant) (cheer leader)&n; *               Roman Weissgaerber, weissg@vienna.at (virt root hub) (studio porter)&n; *          &n; * HW-initalization based on material of&n; *&n; * (C) Copyright 1999 Linus Torvalds&n; * (C) Copyright 1999 Johannes Erdfelt&n; * (C) Copyright 1999 Randy Dunlap&n; *&n; * $Id: usb-uhci.c,v 1.239 2000/09/19 20:15:12 acher Exp $&n; */
+multiline_comment|/* &n; * Universal Host Controller Interface driver for USB (take II).&n; *&n; * (c) 1999-2000 Georg Acher, acher@in.tum.de (executive slave) (base guitar)&n; *               Deti Fliegl, deti@fliegl.de (executive slave) (lead voice)&n; *               Thomas Sailer, sailer@ife.ee.ethz.ch (chief consultant) (cheer leader)&n; *               Roman Weissgaerber, weissg@vienna.at (virt root hub) (studio porter)&n; *          &n; * HW-initalization based on material of&n; *&n; * (C) Copyright 1999 Linus Torvalds&n; * (C) Copyright 1999 Johannes Erdfelt&n; * (C) Copyright 1999 Randy Dunlap&n; *&n; * $Id: usb-uhci.c,v 1.242 2000/10/05 21:19:49 acher Exp $&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
@@ -29,7 +29,7 @@ multiline_comment|/* This enables an extra UHCI slab for memory debugging */
 DECL|macro|DEBUG_SLAB
 mdefine_line|#define DEBUG_SLAB
 DECL|macro|VERSTR
-mdefine_line|#define VERSTR &quot;$Revision: 1.239 $ time &quot; __TIME__ &quot; &quot; __DATE__
+mdefine_line|#define VERSTR &quot;$Revision: 1.242 $ time &quot; __TIME__ &quot; &quot; __DATE__
 macro_line|#include &lt;linux/usb.h&gt;
 macro_line|#include &quot;usb-uhci.h&quot;
 macro_line|#include &quot;usb-uhci-debug.h&quot;
@@ -11588,6 +11588,17 @@ id|urb
 suffix:semicolon
 )brace
 )brace
+r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|urb-&gt;complete
+)paren
+id|urb-&gt;dev
+op_assign
+l_int|NULL
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -11675,12 +11686,12 @@ id|urb
 )paren
 suffix:semicolon
 )brace
-)brace
+r_else
 id|urb-&gt;dev
 op_assign
 l_int|NULL
 suffix:semicolon
-singleline_comment|// Just in case no completion was called
+)brace
 id|usb_dec_dev_use
 (paren
 id|usb_dev

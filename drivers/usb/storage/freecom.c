@@ -1,10 +1,12 @@
-multiline_comment|/* Driver for Freecom USB/IDE adaptor&n; *&n; * $Id: freecom.c,v 1.12 2000/09/22 01:16:17 mdharm Exp $&n; *&n; * Freecom v0.1:&n; *&n; * First release&n; *&n; * Current development and maintenance by:&n; *   (C) 2000 David Brown &lt;usb-storage@davidb.org&gt;&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License along&n; * with this program; if not, write to the Free Software Foundation, Inc.,&n; * 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * This driver was developed with information provided in FREECOM&squot;s USB&n; * Programmers Reference Guide.  For further information contact Freecom&n; * (http://www.freecom.de/)&n; */
+multiline_comment|/* Driver for Freecom USB/IDE adaptor&n; *&n; * $Id: freecom.c,v 1.13 2000/10/03 01:06:07 mdharm Exp $&n; *&n; * Freecom v0.1:&n; *&n; * First release&n; *&n; * Current development and maintenance by:&n; *   (C) 2000 David Brown &lt;usb-storage@davidb.org&gt;&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License along&n; * with this program; if not, write to the Free Software Foundation, Inc.,&n; * 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * This driver was developed with information provided in FREECOM&squot;s USB&n; * Programmers Reference Guide.  For further information contact Freecom&n; * (http://www.freecom.de/)&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;transport.h&quot;
 macro_line|#include &quot;protocol.h&quot;
 macro_line|#include &quot;usb.h&quot;
 macro_line|#include &quot;debug.h&quot;
 macro_line|#include &quot;freecom.h&quot;
 macro_line|#include &quot;linux/hdreg.h&quot;
+macro_line|#ifdef CONFIG_USB_STORAGE_DEBUG
 r_static
 r_void
 id|pdump
@@ -15,6 +17,7 @@ comma
 r_int
 )paren
 suffix:semicolon
+macro_line|#endif
 DECL|struct|freecom_udata
 r_struct
 id|freecom_udata
@@ -195,7 +198,7 @@ mdefine_line|#define FCM_PACKET_IDE_READ     0xC0
 multiline_comment|/* All packets (except for status) are 64 bytes long. */
 DECL|macro|FCM_PACKET_LENGTH
 mdefine_line|#define FCM_PACKET_LENGTH 64
-multiline_comment|/*&n; * Transfer an entire SCSI command&squot;s worth of data payload over the bulk&n; * pipe.&n; *&n; * Note that this uses us_transfer_partial to achieve it&squot;s goals -- this&n; * function simply determines if we&squot;re going to use scatter-gather or not,&n; * and acts appropriately.  For now, it also re-interprets the error codes.&n; */
+multiline_comment|/*&n; * Transfer an entire SCSI command&squot;s worth of data payload over the bulk&n; * pipe.&n; *&n; * Note that this uses usb_stor_transfer_partial to achieve it&squot;s goals -- this&n; * function simply determines if we&squot;re going to use scatter-gather or not,&n; * and acts appropriately.  For now, it also re-interprets the error codes.&n; */
 DECL|function|us_transfer_freecom
 r_static
 r_void
@@ -297,7 +300,7 @@ id|length
 (brace
 id|result
 op_assign
-id|us_transfer_partial
+id|usb_stor_transfer_partial
 c_func
 (paren
 id|us
@@ -330,7 +333,7 @@ suffix:semicolon
 r_else
 id|result
 op_assign
-id|us_transfer_partial
+id|usb_stor_transfer_partial
 c_func
 (paren
 id|us
@@ -361,7 +364,7 @@ r_else
 multiline_comment|/* no scatter-gather, just make the request */
 id|result
 op_assign
-id|us_transfer_partial
+id|usb_stor_transfer_partial
 c_func
 (paren
 id|us
@@ -423,9 +426,9 @@ id|result
 comma
 id|partial
 suffix:semicolon
-id|printk
+id|US_DEBUGP
+c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;IDE out 0x%02x &lt;- 0x%02x&bslash;n&quot;
 comma
 id|reg
@@ -787,9 +790,9 @@ op_star
 id|buffer
 )paren
 suffix:semicolon
-id|printk
+id|US_DEBUGP
+c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;IDE in  0x%02x -&gt; 0x%02x&bslash;n&quot;
 comma
 id|reg
@@ -851,18 +854,6 @@ id|result
 comma
 id|partial
 suffix:semicolon
-r_int
-id|offset
-suffix:semicolon
-r_int
-id|this_read
-suffix:semicolon
-id|__u8
-op_star
-id|buffer
-op_assign
-id|extra-&gt;buffer
-suffix:semicolon
 id|fxfr-&gt;Type
 op_assign
 id|FCM_PACKET_INPUT
@@ -893,9 +884,9 @@ id|fxfr-&gt;Pad
 )paren
 )paren
 suffix:semicolon
-id|printk
+id|US_DEBUGP
+c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;Read data Freecom! (c=%d)&bslash;n&quot;
 comma
 id|count
@@ -948,7 +939,7 @@ id|ENOENT
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;us_transfer_partial(): transfer aborted&bslash;n&quot;
+l_string|&quot;freecom_readdata(): transfer aborted&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -959,9 +950,9 @@ r_return
 id|USB_STOR_TRANSPORT_ERROR
 suffix:semicolon
 )brace
-id|printk
+id|US_DEBUGP
+c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;Done issuing read request: %d %d&bslash;n&quot;
 comma
 id|result
@@ -970,9 +961,9 @@ id|partial
 )paren
 suffix:semicolon
 multiline_comment|/* Now transfer all of our blocks. */
-id|printk
+id|US_DEBUGP
+c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;Start of read&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -986,219 +977,9 @@ comma
 id|count
 )paren
 suffix:semicolon
-macro_line|#if 0
-r_if
-c_cond
-(paren
-id|srb-&gt;use_sg
-)paren
-(brace
-id|US_DEBUGP
-(paren
-l_string|&quot;Need to implement scatter-gather&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-id|USB_STOR_TRANSPORT_ERROR
-suffix:semicolon
-)brace
-r_else
-(brace
-id|offset
-op_assign
-l_int|0
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|offset
-OL
-id|count
-)paren
-(brace
-macro_line|#if 0
-id|this_read
-op_assign
-id|count
-op_minus
-id|offset
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|this_read
-OG
-l_int|64
-)paren
-id|this_read
-op_assign
-l_int|64
-suffix:semicolon
-macro_line|#else
-id|this_read
-op_assign
-l_int|64
-suffix:semicolon
-macro_line|#endif
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;Start of read&bslash;n&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* Use the given buffer directly, but only if there&n;                         * is space for an entire packet. */
-r_if
-c_cond
-(paren
-id|offset
-op_plus
-l_int|64
-op_le
-id|srb-&gt;request_bufflen
-)paren
-(brace
-id|result
-op_assign
-id|usb_stor_bulk_msg
-(paren
-id|us
-comma
-id|srb-&gt;request_buffer
-op_plus
-id|offset
-comma
-id|ipipe
-comma
-id|this_read
-comma
-op_amp
-id|partial
-)paren
-suffix:semicolon
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;Read111 = %d, %d&bslash;n&quot;
-comma
-id|result
-comma
-id|partial
-)paren
-suffix:semicolon
-id|pdump
-(paren
-id|srb-&gt;request_buffer
-op_plus
-id|offset
-comma
-id|partial
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|result
-op_assign
-id|usb_stor_bulk_msg
-(paren
-id|us
-comma
-id|buffer
-comma
-id|ipipe
-comma
-id|this_read
-comma
-op_amp
-id|partial
-)paren
-suffix:semicolon
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;Read112 = %d, %d&bslash;n&quot;
-comma
-id|result
-comma
-id|partial
-)paren
-suffix:semicolon
-id|memcpy
-(paren
-id|srb-&gt;request_buffer
-op_plus
-id|offset
-comma
-id|buffer
-comma
-id|srb-&gt;request_bufflen
-op_minus
-id|offset
-)paren
-suffix:semicolon
-id|pdump
-(paren
-id|srb-&gt;request_buffer
-op_plus
-id|offset
-comma
-id|srb-&gt;request_bufflen
-op_minus
-id|offset
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|result
-op_ne
-l_int|0
-)paren
-(brace
-id|US_DEBUGP
-(paren
-l_string|&quot;Freecom readblock r=%d, p=%d&bslash;n&quot;
-comma
-id|result
-comma
-id|partial
-)paren
-suffix:semicolon
-multiline_comment|/* -ENOENT -- we canceled this transfer */
-r_if
-c_cond
-(paren
-id|result
-op_eq
-op_minus
-id|ENOENT
-)paren
-(brace
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;us_transfer_partial(): transfer aborted&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-id|US_BULK_TRANSFER_ABORTED
-suffix:semicolon
-)brace
-r_return
-id|USB_STOR_TRANSPORT_ERROR
-suffix:semicolon
-)brace
-id|offset
-op_add_assign
-id|this_read
-suffix:semicolon
-)brace
-)brace
-macro_line|#endif
-id|printk
-(paren
-id|KERN_DEBUG
 l_string|&quot;freecom_readdata done!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1255,18 +1036,6 @@ id|result
 comma
 id|partial
 suffix:semicolon
-r_int
-id|offset
-suffix:semicolon
-r_int
-id|this_write
-suffix:semicolon
-id|__u8
-op_star
-id|buffer
-op_assign
-id|extra-&gt;buffer
-suffix:semicolon
 id|fxfr-&gt;Type
 op_assign
 id|FCM_PACKET_OUTPUT
@@ -1297,9 +1066,9 @@ id|fxfr-&gt;Pad
 )paren
 )paren
 suffix:semicolon
-id|printk
+id|US_DEBUGP
+c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;Write data Freecom! (c=%d)&bslash;n&quot;
 comma
 id|count
@@ -1352,7 +1121,7 @@ id|ENOENT
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;us_transfer_partial(): transfer aborted&bslash;n&quot;
+l_string|&quot;freecom_writedata(): transfer aborted&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1363,9 +1132,9 @@ r_return
 id|USB_STOR_TRANSPORT_ERROR
 suffix:semicolon
 )brace
-id|printk
+id|US_DEBUGP
+c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;Done issuing write request: %d %d&bslash;n&quot;
 comma
 id|result
@@ -1374,9 +1143,9 @@ id|partial
 )paren
 suffix:semicolon
 multiline_comment|/* Now transfer all of our blocks. */
-id|printk
+id|US_DEBUGP
+c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;Start of write&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1390,219 +1159,9 @@ comma
 id|count
 )paren
 suffix:semicolon
-macro_line|#if 0
-r_if
-c_cond
-(paren
-id|srb-&gt;use_sg
-)paren
-(brace
-id|US_DEBUGP
-(paren
-l_string|&quot;Need to implement scatter-gather&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-id|USB_STOR_TRANSPORT_ERROR
-suffix:semicolon
-)brace
-r_else
-(brace
-id|offset
-op_assign
-l_int|0
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|offset
-OL
-id|count
-)paren
-(brace
-macro_line|#if 1
-id|this_write
-op_assign
-id|count
-op_minus
-id|offset
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|this_write
-OG
-l_int|64
-)paren
-id|this_write
-op_assign
-l_int|64
-suffix:semicolon
-macro_line|#else
-id|this_write
-op_assign
-l_int|64
-suffix:semicolon
-macro_line|#endif
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;Start of write&bslash;n&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* Use the given buffer directly, but only if there&n;                         * is space for an entire packet. */
-r_if
-c_cond
-(paren
-id|offset
-op_plus
-l_int|64
-op_le
-id|srb-&gt;request_bufflen
-)paren
-(brace
-id|result
-op_assign
-id|usb_stor_bulk_msg
-(paren
-id|us
-comma
-id|srb-&gt;request_buffer
-op_plus
-id|offset
-comma
-id|opipe
-comma
-id|this_write
-comma
-op_amp
-id|partial
-)paren
-suffix:semicolon
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;Write111 = %d, %d&bslash;n&quot;
-comma
-id|result
-comma
-id|partial
-)paren
-suffix:semicolon
-id|pdump
-(paren
-id|srb-&gt;request_buffer
-op_plus
-id|offset
-comma
-id|partial
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|result
-op_assign
-id|usb_stor_bulk_msg
-(paren
-id|us
-comma
-id|buffer
-comma
-id|opipe
-comma
-id|this_write
-comma
-op_amp
-id|partial
-)paren
-suffix:semicolon
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;Write112 = %d, %d&bslash;n&quot;
-comma
-id|result
-comma
-id|partial
-)paren
-suffix:semicolon
-id|memcpy
-(paren
-id|buffer
-comma
-id|srb-&gt;request_buffer
-op_plus
-id|offset
-comma
-id|srb-&gt;request_bufflen
-op_minus
-id|offset
-)paren
-suffix:semicolon
-id|pdump
-(paren
-id|srb-&gt;request_buffer
-op_plus
-id|offset
-comma
-id|srb-&gt;request_bufflen
-op_minus
-id|offset
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|result
-op_ne
-l_int|0
-)paren
-(brace
-id|US_DEBUGP
-(paren
-l_string|&quot;Freecom writeblock r=%d, p=%d&bslash;n&quot;
-comma
-id|result
-comma
-id|partial
-)paren
-suffix:semicolon
-multiline_comment|/* -ENOENT -- we canceled this transfer */
-r_if
-c_cond
-(paren
-id|result
-op_eq
-op_minus
-id|ENOENT
-)paren
-(brace
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;us_transfer_partial(): transfer aborted&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-id|US_BULK_TRANSFER_ABORTED
-suffix:semicolon
-)brace
-r_return
-id|USB_STOR_TRANSPORT_ERROR
-suffix:semicolon
-)brace
-id|offset
-op_add_assign
-id|this_write
-suffix:semicolon
-)brace
-)brace
-macro_line|#endif
-id|printk
-(paren
-id|KERN_DEBUG
 l_string|&quot;freecom_writedata done!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1679,9 +1238,9 @@ op_star
 )paren
 id|extra-&gt;buffer
 suffix:semicolon
-id|printk
+id|US_DEBUGP
+c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;Freecom TRANSPORT STARTED&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1763,11 +1322,15 @@ id|fcb-&gt;Filler
 )paren
 )paren
 suffix:semicolon
+id|US_DEBUG
+c_func
+(paren
 id|pdump
 (paren
 id|srb-&gt;cmnd
 comma
 l_int|12
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* Send it out. */
@@ -1818,7 +1381,7 @@ id|ENOENT
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;us_transfer_partial(): transfer aborted&bslash;n&quot;
+l_string|&quot;freecom_transport(): transfer aborted&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1846,9 +1409,9 @@ op_amp
 id|partial
 )paren
 suffix:semicolon
-id|printk
+id|US_DEBUGP
+c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;foo Status result %d %d&bslash;n&quot;
 comma
 id|result
@@ -1869,13 +1432,16 @@ id|ENOENT
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;us_transfer_partial(): transfer aborted&bslash;n&quot;
+l_string|&quot;freecom_transport(): transfer aborted&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
 id|US_BULK_TRANSFER_ABORTED
 suffix:semicolon
 )brace
+id|US_DEBUG
+c_func
+(paren
 id|pdump
 (paren
 (paren
@@ -1885,6 +1451,7 @@ op_star
 id|fst
 comma
 id|partial
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* while we haven&squot;t recieved the IRQ */
@@ -1952,7 +1519,7 @@ op_amp
 id|partial
 )paren
 suffix:semicolon
-multiline_comment|/* The Freecom device will only fail if there is something wrong in&n;&t;&t; * USB land.  It returns the status in its own registers, which&n;&t;&t; * come back in the bulk pipe. */
+multiline_comment|/* The Freecom device will only fail if there is something&n;&t;&t; * wrong in USB land.  It returns the status in its own&n;&t;&t; * registers, which come back in the bulk pipe.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1983,7 +1550,7 @@ id|ENOENT
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;us_transfer_partial(): transfer aborted&bslash;n&quot;
+l_string|&quot;freecom_transport(): transfer aborted&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2011,9 +1578,9 @@ op_amp
 id|partial
 )paren
 suffix:semicolon
-id|printk
+id|US_DEBUGP
+c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;bar Status result %d %d&bslash;n&quot;
 comma
 id|result
@@ -2034,13 +1601,16 @@ id|ENOENT
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;us_transfer_partial(): transfer aborted&bslash;n&quot;
+l_string|&quot;freecom_transport(): transfer aborted&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
 id|US_BULK_TRANSFER_ABORTED
 suffix:semicolon
 )brace
+id|US_DEBUG
+c_func
+(paren
 id|pdump
 (paren
 (paren
@@ -2050,6 +1620,7 @@ op_star
 id|fst
 comma
 id|partial
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -2081,9 +1652,9 @@ op_ne
 l_int|0
 )paren
 (brace
-id|printk
+id|US_DEBUGP
+c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;operation failed&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2092,9 +1663,9 @@ id|USB_STOR_TRANSPORT_FAILED
 suffix:semicolon
 )brace
 multiline_comment|/* The device might not have as much data available as we&n;         * requested.  If you ask for more than the device has, this reads&n;         * and such will hang. */
-id|printk
+id|US_DEBUGP
+c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;Device indicates that it has %d bytes available&bslash;n&quot;
 comma
 id|le16_to_cpu
@@ -2106,14 +1677,14 @@ suffix:semicolon
 multiline_comment|/* Find the length we desire to read.  It is the lesser of the SCSI&n;         * layer&squot;s requested length, and the length the device claims to&n;         * have available. */
 id|length
 op_assign
-id|us_transfer_length
+id|usb_stor_transfer_length
 (paren
 id|srb
 )paren
 suffix:semicolon
-id|printk
+id|US_DEBUGP
+c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;SCSI requested %d&bslash;n&quot;
 comma
 id|length
@@ -2167,9 +1738,9 @@ op_ne
 l_int|2
 )paren
 (brace
-id|printk
+id|US_DEBUGP
+c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;SCSI wants data, drive doesn&squot;t have any&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2202,9 +1773,9 @@ id|USB_STOR_TRANSPORT_GOOD
 r_return
 id|result
 suffix:semicolon
-id|printk
+id|US_DEBUGP
+c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;FCM: Waiting for status&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2224,6 +1795,9 @@ op_amp
 id|partial
 )paren
 suffix:semicolon
+id|US_DEBUG
+c_func
+(paren
 id|pdump
 (paren
 (paren
@@ -2233,6 +1807,7 @@ op_star
 id|fst
 comma
 id|partial
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -2279,9 +1854,9 @@ op_ne
 l_int|0
 )paren
 (brace
-id|printk
+id|US_DEBUGP
+c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;operation failed&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2301,9 +1876,9 @@ op_ne
 l_int|3
 )paren
 (brace
-id|printk
+id|US_DEBUGP
+c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;Drive seems still hungry&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2311,9 +1886,9 @@ r_return
 id|USB_STOR_TRANSPORT_FAILED
 suffix:semicolon
 )brace
-id|printk
+id|US_DEBUGP
+c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;Transfer happy&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2350,9 +1925,9 @@ r_return
 id|result
 suffix:semicolon
 macro_line|#if 1
-id|printk
+id|US_DEBUGP
+c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;FCM: Waiting for status&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2416,9 +1991,9 @@ op_ne
 l_int|0
 )paren
 (brace
-id|printk
+id|US_DEBUGP
+c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;operation failed&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2438,9 +2013,9 @@ op_ne
 l_int|3
 )paren
 (brace
-id|printk
+id|US_DEBUGP
+c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;Drive seems still hungry&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2449,9 +2024,9 @@ id|USB_STOR_TRANSPORT_FAILED
 suffix:semicolon
 )brace
 macro_line|#endif
-id|printk
+id|US_DEBUGP
+c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;Transfer happy&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2479,87 +2054,23 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-macro_line|#if 0
-multiline_comment|/* After the transfer, we can read our status register. */
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;Going to read status register&bslash;n&quot;
-)paren
-suffix:semicolon
-id|result
-op_assign
-id|usb_stor_bulk_msg
-(paren
-id|us
-comma
-op_amp
-id|fst
-comma
-id|ipipe
-comma
-id|FCM_PACKET_LENGTH
-comma
-op_amp
-id|partial
-)paren
-suffix:semicolon
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;Result from read %d %d&bslash;n&quot;
-comma
-id|result
-comma
-id|partial
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|result
-op_ne
-l_int|0
-)paren
-(brace
-r_return
-id|USB_STOR_TRANSPORT_ERROR
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-(paren
-id|fst.Reason
-op_amp
-l_int|1
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-r_return
-id|USB_STOR_TRANSPORT_FAILED
-suffix:semicolon
-)brace
-macro_line|#endif
 r_return
 id|USB_STOR_TRANSPORT_GOOD
 suffix:semicolon
-id|printk
+id|US_DEBUGP
+c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;Freecom: transfer_length = %d&bslash;n&quot;
 comma
-id|us_transfer_length
+id|usb_stor_transfer_length
 (paren
 id|srb
 )paren
 )paren
 suffix:semicolon
-id|printk
+id|US_DEBUGP
+c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;Freecom: direction = %d&bslash;n&quot;
 comma
 id|srb-&gt;sc_data_direction
@@ -2623,10 +2134,9 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|printk
+id|US_DEBUGP
+c_func
 (paren
-id|KERN_WARNING
-id|USB_STORAGE
 l_string|&quot;Out of memory&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2637,10 +2147,10 @@ suffix:semicolon
 )brace
 id|result
 op_assign
-id|usb_stor_control_msg
+id|usb_control_msg
 c_func
 (paren
-id|us
+id|us-&gt;pusb_dev
 comma
 id|usb_rcvctrlpipe
 c_func
@@ -2661,6 +2171,10 @@ comma
 id|buffer
 comma
 l_int|0x20
+comma
+l_int|3
+op_star
+id|HZ
 )paren
 suffix:semicolon
 id|buffer
@@ -2757,10 +2271,9 @@ OL
 l_int|0
 )paren
 (brace
-id|printk
+id|US_DEBUGP
+c_func
 (paren
-id|KERN_WARNING
-id|USB_STORAGE
 l_string|&quot;Timeout in freecom&quot;
 )paren
 suffix:semicolon
@@ -2839,10 +2352,9 @@ OL
 l_int|0
 )paren
 (brace
-id|printk
+id|US_DEBUGP
+c_func
 (paren
-id|KERN_WARNING
-id|USB_STORAGE
 l_string|&quot;Timeout in freecom&quot;
 )paren
 suffix:semicolon
@@ -2901,15 +2413,16 @@ id|us
 (brace
 id|printk
 (paren
-id|KERN_DEBUG
+id|KERN_CRIT
 l_string|&quot;freecom reset called&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* We don&squot;t really have this feature. */
 r_return
-id|USB_STOR_TRANSPORT_ERROR
+id|FAILED
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_USB_STORAGE_DEBUG
 DECL|function|pdump
 r_static
 r_void
@@ -3069,9 +2582,9 @@ id|offset
 op_assign
 l_int|0
 suffix:semicolon
-id|printk
+id|US_DEBUGP
+c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;%s&bslash;n&quot;
 comma
 id|line
@@ -3287,9 +2800,9 @@ id|offset
 op_assign
 l_int|0
 suffix:semicolon
-id|printk
+id|US_DEBUGP
+c_func
 (paren
-id|KERN_DEBUG
 l_string|&quot;%s&bslash;n&quot;
 comma
 id|line
@@ -3300,4 +2813,5 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif
 eof

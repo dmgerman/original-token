@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: via82cxxx.c,v 2.1d 2000/10/01 10:01:00 vojtech Exp $&n; *&n; *  Copyright (c) 2000 Vojtech Pavlik&n; *&n; *  Based on the work of:&n; *&t;Michel Aubry&n; *&t;Jeff Garzik&n; *&t;Andre Hedrick&n; *&n; *  Sponsored by SuSE&n; */
+multiline_comment|/*&n; * $Id: via82cxxx.c,v 2.1e 2000/10/03 10:01:00 vojtech Exp $&n; *&n; *  Copyright (c) 2000 Vojtech Pavlik&n; *&n; *  Based on the work of:&n; *&t;Michel Aubry&n; *&t;Jeff Garzik&n; *&t;Andre Hedrick&n; *&n; *  Sponsored by SuSE&n; */
 multiline_comment|/*&n; * VIA vt82c586 IDE driver for Linux. Supports&n; *&n; *   vt82c586, vt82c586a, vt82c586b, vt82c596a, vt82c596b, vt82c686a, vt8231&n; *&n; * southbridges, which can be found in&n; *&n; *  VIA Apollo VP, VPX, VPX/97, VP2, VP2/97, VP3, MVP3, MVP4&n; *  VIA Apollo Pro, Pro Plus, Pro 133, Pro 133A, ProMedia 601, ProSavage 605&n; *  VIA Apollo KX133, KT133&n; *  AMD-640, AMD-750 IronGate&n; *&n; * chipsets. Supports PIO 0-5, MWDMA 0-2, SWDMA 0-2 and&n; * UDMA 0-5 (includes UDMA33, 66 and 100) modes. UDMA100 isn&squot;t possible&n; * on any of the supported chipsets yet.&n; *&n; * UDMA66 and higher modes are autodetected only in case the BIOS has enabled them.&n; * To force UDMA66, use &squot;ide0=ata66&squot; or &squot;ide1=ata66&squot; on the kernel command line.&n; */
 multiline_comment|/*&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA&n; *&n; * Should you need to contact me, the author, you can do so either by&n; * e-mail - mail your message to &lt;vojtech@suse.cz&gt;, or by paper mail:&n; * Vojtech Pavlik, Ucitelska 1576, Prague 8, 182 00 Czech Republic&n; */
 macro_line|#include &lt;linux/config.h&gt;
@@ -755,7 +755,7 @@ suffix:semicolon
 id|via_print
 c_func
 (paren
-l_string|&quot;Driver Version:                     2.1d&quot;
+l_string|&quot;Driver Version:                     2.1e&quot;
 )paren
 suffix:semicolon
 id|pci_read_config_byte
@@ -2127,12 +2127,18 @@ op_or
 id|FIT
 c_func
 (paren
+id|ENOUGH
+c_func
+(paren
 id|via_timing
 (braket
 id|i
 )braket
 dot
 id|udma
+comma
+id|T
+)paren
 comma
 l_int|2
 comma
@@ -2167,12 +2173,20 @@ op_or
 id|FIT
 c_func
 (paren
+id|ENOUGH
+c_func
+(paren
 id|via_timing
 (braket
 id|i
 )braket
 dot
 id|udma
+comma
+id|T
+op_div
+l_int|2
+)paren
 comma
 l_int|2
 comma

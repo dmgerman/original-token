@@ -67,12 +67,17 @@ comma
 id|__init_end
 suffix:semicolon
 multiline_comment|/*&n; * The sole use of this is to pass memory configuration&n; * data from paging_init to mem_init.&n; */
-DECL|variable|meminfo
+DECL|variable|__initdata
 r_static
 r_struct
 id|meminfo
-id|__initdata
 id|meminfo
+id|__initdata
+op_assign
+(brace
+l_int|0
+comma
+)brace
 suffix:semicolon
 multiline_comment|/*&n; * empty_bad_page is the page that is used for page faults when&n; * linux is out-of-memory. Older versions of linux just did a&n; * do_exit(), but using this instead means there is less risk&n; * for a process dying in kernel mode, possibly leaving a inode&n; * unused etc..&n; *&n; * empty_bad_pte_table is the accompanying page-table: it is&n; * initialized to point to BAD_PAGE entries.&n; *&n; * empty_zero_page is a special page that is used for&n; * zero-initialized data and COW.&n; */
 DECL|variable|empty_zero_page

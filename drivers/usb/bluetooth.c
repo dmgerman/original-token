@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * bluetooth.c   Version 0.4&n; *&n; * Copyright (c) 2000 Greg Kroah-Hartman&t;&lt;greg@kroah.com&gt;&n; * Copyright (c) 2000 Mark Douglas Corner&t;&lt;mcorner@umich.edu&gt;&n; *&n; * USB Bluetooth driver, based on the Bluetooth Spec version 1.0B&n; *&n; * (08/06/2000) Version 0.5 gkh&n; *&t;Fixed problem of not resubmitting the bulk read urb if there is&n; *&t;an error in the callback.  Ericsson devices seem to need this.&n; *&n; * (07/11/2000) Version 0.4 gkh&n; *&t;Fixed bug in disconnect for when we call tty_hangup&n; *&t;Fixed bug in bluetooth_ctrl_msg where the bluetooth struct was not&n; *&t;getting attached to the control urb properly.&n; *&t;Fixed bug in bluetooth_write where we pay attention to the result&n; *&t;of bluetooth_ctrl_msg.&n; *&n; * (08/03/2000) Version 0.3 gkh mdc&n; *&t;Merged in Mark&squot;s changes to make the driver play nice with the Axis&n; *&t;stack.&n; *&t;Made the write bulk use an urb pool to enable larger transfers with&n; *&t;fewer calls to the driver.&n; *&t;Fixed off by one bug in acl pkt receive&n; *&t;Made packet counters specific to each bluetooth device &n; *&t;Added checks for zero length callbacks&n; *&t;Added buffers for int and bulk packets.  Had to do this otherwise &n; *&t;packet types could intermingle.&n; *&t;Made a control urb pool for the control messages.&n; *&n; * (07/11/2000) Version 0.2 gkh&n; *&t;Fixed a small bug found by Nils Faerber in the usb_bluetooth_probe &n; *&t;function.&n; *&n; * (07/09/2000) Version 0.1 gkh&n; *&t;Initial release. Has support for sending ACL data (which is really just&n; *&t;a HCI frame.) Raw HCI commands and HCI events are not supported.&n; *&t;A ioctl will probably be needed for the HCI commands and events in the&n; *&t;future. All isoch endpoints are ignored at this time also.&n; *&t;This driver should work for all currently shipping USB Bluetooth &n; *&t;devices at this time :)&n; * &n; */
+multiline_comment|/*&n; * bluetooth.c   Version 0.6&n; *&n; * Copyright (c) 2000 Greg Kroah-Hartman&t;&lt;greg@kroah.com&gt;&n; * Copyright (c) 2000 Mark Douglas Corner&t;&lt;mcorner@umich.edu&gt;&n; *&n; * USB Bluetooth driver, based on the Bluetooth Spec version 1.0B&n; *&n; * (10/05/2000) Version 0.6 gkh&n; *&t;Fixed bug with urb-&gt;dev not being set properly, now that the usb&n; *&t;core needs it.&n; *&t;Got a real major id number and name.&n; *&n; * (08/06/2000) Version 0.5 gkh&n; *&t;Fixed problem of not resubmitting the bulk read urb if there is&n; *&t;an error in the callback.  Ericsson devices seem to need this.&n; *&n; * (07/11/2000) Version 0.4 gkh&n; *&t;Fixed bug in disconnect for when we call tty_hangup&n; *&t;Fixed bug in bluetooth_ctrl_msg where the bluetooth struct was not&n; *&t;getting attached to the control urb properly.&n; *&t;Fixed bug in bluetooth_write where we pay attention to the result&n; *&t;of bluetooth_ctrl_msg.&n; *&n; * (08/03/2000) Version 0.3 gkh mdc&n; *&t;Merged in Mark&squot;s changes to make the driver play nice with the Axis&n; *&t;stack.&n; *&t;Made the write bulk use an urb pool to enable larger transfers with&n; *&t;fewer calls to the driver.&n; *&t;Fixed off by one bug in acl pkt receive&n; *&t;Made packet counters specific to each bluetooth device &n; *&t;Added checks for zero length callbacks&n; *&t;Added buffers for int and bulk packets.  Had to do this otherwise &n; *&t;packet types could intermingle.&n; *&t;Made a control urb pool for the control messages.&n; *&n; * (07/11/2000) Version 0.2 gkh&n; *&t;Fixed a small bug found by Nils Faerber in the usb_bluetooth_probe &n; *&t;function.&n; *&n; * (07/09/2000) Version 0.1 gkh&n; *&t;Initial release. Has support for sending ACL data (which is really just&n; *&t;a HCI frame.) Raw HCI commands and HCI events are not supported.&n; *&t;A ioctl will probably be needed for the HCI commands and events in the&n; *&t;future. All isoch endpoints are ignored at this time also.&n; *&t;This driver should work for all currently shipping USB Bluetooth &n; *&t;devices at this time :)&n; * &n; */
 multiline_comment|/*&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -38,9 +38,9 @@ mdefine_line|#define RF_SUBCLASS_CODE&t;&t;&t;0x01
 DECL|macro|BLUETOOTH_PROGRAMMING_PROTOCOL_CODE
 mdefine_line|#define BLUETOOTH_PROGRAMMING_PROTOCOL_CODE&t;0x01
 DECL|macro|BLUETOOTH_TTY_MAJOR
-mdefine_line|#define BLUETOOTH_TTY_MAJOR&t;240&t;/* Prototype number for now */
+mdefine_line|#define BLUETOOTH_TTY_MAJOR&t;216&t;/* real device node major id */
 DECL|macro|BLUETOOTH_TTY_MINORS
-mdefine_line|#define BLUETOOTH_TTY_MINORS&t;8
+mdefine_line|#define BLUETOOTH_TTY_MINORS&t;256&t;/* whole lotta bluetooth devices */
 DECL|macro|USB_BLUETOOTH_MAGIC
 mdefine_line|#define USB_BLUETOOTH_MAGIC&t;0x6d02&t;/* magic number for bluetooth struct */
 DECL|macro|BLUETOOTH_CONTROL_REQUEST_TYPE
@@ -158,6 +158,18 @@ id|urb
 op_star
 id|interrupt_in_urb
 suffix:semicolon
+DECL|member|interrupt_in_endpointAddress
+id|__u8
+id|interrupt_in_endpointAddress
+suffix:semicolon
+DECL|member|interrupt_in_interval
+id|__u8
+id|interrupt_in_interval
+suffix:semicolon
+DECL|member|interrupt_in_buffer_size
+r_int
+id|interrupt_in_buffer_size
+suffix:semicolon
 DECL|member|bulk_in_buffer
 r_int
 r_char
@@ -170,9 +182,17 @@ id|urb
 op_star
 id|read_urb
 suffix:semicolon
-DECL|member|bulk_out_size
+DECL|member|bulk_in_endpointAddress
+id|__u8
+id|bulk_in_endpointAddress
+suffix:semicolon
+DECL|member|bulk_in_buffer_size
 r_int
-id|bulk_out_size
+id|bulk_in_buffer_size
+suffix:semicolon
+DECL|member|bulk_out_buffer_size
+r_int
+id|bulk_out_buffer_size
 suffix:semicolon
 DECL|member|write_urb_pool
 r_struct
@@ -959,6 +979,30 @@ l_int|0
 suffix:semicolon
 macro_line|#ifndef BTBUGGYHARDWARE
 multiline_comment|/* Start reading from the device */
+id|FILL_BULK_URB
+c_func
+(paren
+id|bluetooth-&gt;read_urb
+comma
+id|bluetooth-&gt;dev
+comma
+id|usb_rcvbulkpipe
+c_func
+(paren
+id|bluetooth-&gt;dev
+comma
+id|bluetooth-&gt;bulk_in_endpointAddress
+)paren
+comma
+id|bluetooth-&gt;bulk_in_buffer
+comma
+id|bluetooth-&gt;bulk_in_buffer_size
+comma
+id|bluetooth_read_bulk_callback
+comma
+id|bluetooth
+)paren
+suffix:semicolon
 id|result
 op_assign
 id|usb_submit_urb
@@ -982,6 +1026,32 @@ id|result
 )paren
 suffix:semicolon
 macro_line|#endif
+id|FILL_INT_URB
+c_func
+(paren
+id|bluetooth-&gt;interrupt_in_urb
+comma
+id|bluetooth-&gt;dev
+comma
+id|usb_rcvintpipe
+c_func
+(paren
+id|bluetooth-&gt;dev
+comma
+id|bluetooth-&gt;interrupt_in_endpointAddress
+)paren
+comma
+id|bluetooth-&gt;interrupt_in_buffer
+comma
+id|bluetooth-&gt;interrupt_in_buffer_size
+comma
+id|bluetooth_int_callback
+comma
+id|bluetooth
+comma
+id|bluetooth-&gt;interrupt_in_interval
+)paren
+suffix:semicolon
 id|result
 op_assign
 id|usb_submit_urb
@@ -1545,7 +1615,7 @@ id|MIN
 (paren
 id|count
 comma
-id|bluetooth-&gt;bulk_out_size
+id|bluetooth-&gt;bulk_out_buffer_size
 )paren
 suffix:semicolon
 id|new_buffer
@@ -1806,7 +1876,7 @@ id|EINPROGRESS
 (brace
 id|room
 op_add_assign
-id|bluetooth-&gt;bulk_out_size
+id|bluetooth-&gt;bulk_out_buffer_size
 suffix:semicolon
 )brace
 )brace
@@ -2264,6 +2334,9 @@ comma
 id|__FUNCTION__
 )paren
 suffix:semicolon
+r_int
+id|result
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2301,21 +2374,53 @@ c_cond
 (paren
 id|bluetooth-&gt;read_urb
 )paren
-r_if
-c_cond
+(brace
+id|FILL_BULK_URB
+c_func
 (paren
+id|bluetooth-&gt;read_urb
+comma
+id|bluetooth-&gt;dev
+comma
+id|usb_rcvbulkpipe
+c_func
+(paren
+id|bluetooth-&gt;dev
+comma
+id|bluetooth-&gt;bulk_in_endpointAddress
+)paren
+comma
+id|bluetooth-&gt;bulk_in_buffer
+comma
+id|bluetooth-&gt;bulk_in_buffer_size
+comma
+id|bluetooth_read_bulk_callback
+comma
+id|bluetooth
+)paren
+suffix:semicolon
+id|result
+op_assign
 id|usb_submit_urb
 c_func
 (paren
 id|bluetooth-&gt;read_urb
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|result
 )paren
-id|dbg
+id|err
 (paren
 id|__FUNCTION__
-l_string|&quot; - usb_submit_urb(read bulk) failed&quot;
+l_string|&quot; - failed submitting read urb, error %d&quot;
+comma
+id|result
 )paren
 suffix:semicolon
+)brace
 )brace
 )def_block
 DECL|function|btusb_disable_bulk_read
@@ -2881,8 +2986,12 @@ r_int
 r_int
 id|i
 suffix:semicolon
-id|uint
+r_int
+r_int
 id|packet_size
+suffix:semicolon
+r_int
+id|result
 suffix:semicolon
 macro_line|#ifdef BTBUGGYHARDWARE
 r_if
@@ -2935,20 +3044,49 @@ id|urb-&gt;actual_length
 op_assign
 l_int|0
 suffix:semicolon
-r_if
-c_cond
+id|FILL_BULK_URB
+c_func
 (paren
+id|bluetooth-&gt;read_urb
+comma
+id|bluetooth-&gt;dev
+comma
+id|usb_rcvbulkpipe
+c_func
+(paren
+id|bluetooth-&gt;dev
+comma
+id|bluetooth-&gt;bulk_in_endpointAddress
+)paren
+comma
+id|bluetooth-&gt;bulk_in_buffer
+comma
+id|bluetooth-&gt;bulk_in_buffer_size
+comma
+id|bluetooth_read_bulk_callback
+comma
+id|bluetooth
+)paren
+suffix:semicolon
+id|result
+op_assign
 id|usb_submit_urb
 c_func
 (paren
-id|urb
+id|bluetooth-&gt;read_urb
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|result
 )paren
-id|dbg
-c_func
+id|err
 (paren
 id|__FUNCTION__
-l_string|&quot; - failed resubmitting read urb&quot;
+l_string|&quot; - failed resubmitting read urb, error %d&quot;
+comma
+id|result
 )paren
 suffix:semicolon
 r_return
@@ -3238,20 +3376,49 @@ suffix:semicolon
 )brace
 m_exit
 suffix:colon
-r_if
-c_cond
+id|FILL_BULK_URB
+c_func
 (paren
+id|bluetooth-&gt;read_urb
+comma
+id|bluetooth-&gt;dev
+comma
+id|usb_rcvbulkpipe
+c_func
+(paren
+id|bluetooth-&gt;dev
+comma
+id|bluetooth-&gt;bulk_in_endpointAddress
+)paren
+comma
+id|bluetooth-&gt;bulk_in_buffer
+comma
+id|bluetooth-&gt;bulk_in_buffer_size
+comma
+id|bluetooth_read_bulk_callback
+comma
+id|bluetooth
+)paren
+suffix:semicolon
+id|result
+op_assign
 id|usb_submit_urb
 c_func
 (paren
-id|urb
+id|bluetooth-&gt;read_urb
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|result
 )paren
-id|dbg
-c_func
+id|err
 (paren
 id|__FUNCTION__
-l_string|&quot; - failed resubmitting read urb&quot;
+l_string|&quot; - failed resubmitting read urb, error %d&quot;
+comma
+id|result
 )paren
 suffix:semicolon
 r_return
@@ -3965,9 +4132,15 @@ r_goto
 id|probe_error
 suffix:semicolon
 )brace
+id|bluetooth-&gt;bulk_in_buffer_size
+op_assign
 id|buffer_size
 op_assign
 id|endpoint-&gt;wMaxPacketSize
+suffix:semicolon
+id|bluetooth-&gt;bulk_in_endpointAddress
+op_assign
+id|endpoint-&gt;bEndpointAddress
 suffix:semicolon
 id|bluetooth-&gt;bulk_in_buffer
 op_assign
@@ -4087,7 +4260,7 @@ op_assign
 id|urb
 suffix:semicolon
 )brace
-id|bluetooth-&gt;bulk_out_size
+id|bluetooth-&gt;bulk_out_buffer_size
 op_assign
 id|endpoint-&gt;wMaxPacketSize
 op_star
@@ -4125,9 +4298,19 @@ r_goto
 id|probe_error
 suffix:semicolon
 )brace
+id|bluetooth-&gt;interrupt_in_buffer_size
+op_assign
 id|buffer_size
 op_assign
 id|endpoint-&gt;wMaxPacketSize
+suffix:semicolon
+id|bluetooth-&gt;interrupt_in_endpointAddress
+op_assign
+id|endpoint-&gt;bEndpointAddress
+suffix:semicolon
+id|bluetooth-&gt;interrupt_in_interval
+op_assign
+id|endpoint-&gt;bInterval
 suffix:semicolon
 id|bluetooth-&gt;interrupt_in_buffer
 op_assign
@@ -4195,7 +4378,7 @@ suffix:semicolon
 id|info
 c_func
 (paren
-l_string|&quot;Bluetooth converter now attached to ttyBLUE%d (or usb/ttblue/%d for devfs)&quot;
+l_string|&quot;Bluetooth converter now attached to ttyUB%d (or usb/ttub/%d for devfs)&quot;
 comma
 id|minor
 comma
@@ -4581,7 +4764,7 @@ suffix:semicolon
 id|info
 c_func
 (paren
-l_string|&quot;Bluetooth converter now disconnected from ttyBLUE%d&quot;
+l_string|&quot;Bluetooth converter now disconnected from ttyUB%d&quot;
 comma
 id|bluetooth-&gt;minor
 )paren
@@ -4629,7 +4812,7 @@ l_string|&quot;usb-bluetooth&quot;
 comma
 id|name
 suffix:colon
-l_string|&quot;usb/ttblue/%d&quot;
+l_string|&quot;usb/ttub/%d&quot;
 comma
 id|major
 suffix:colon

@@ -76,7 +76,7 @@ mdefine_line|#define F_EXLCK&t;&t;16&t;/* or 3 */
 DECL|macro|F_SHLCK
 mdefine_line|#define F_SHLCK&t;&t;32&t;/* or 4 */
 DECL|macro|F_INPROGRESS
-mdefine_line|#define F_INPROGRESS   16
+mdefine_line|#define F_INPROGRESS&t;64
 multiline_comment|/* operations for bsd flock(), also used by the kernel implementation */
 DECL|macro|LOCK_SH
 mdefine_line|#define LOCK_SH&t;&t;1&t;/* shared lock */

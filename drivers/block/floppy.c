@@ -14609,6 +14609,8 @@ r_int
 id|param
 )paren
 (brace
+DECL|macro|FD_IOCTL_ALLOWED
+mdefine_line|#define FD_IOCTL_ALLOWED ((filp) &amp;&amp; (filp)-&gt;private_data)
 DECL|macro|OUT
 mdefine_line|#define OUT(c,x) case c: outparam = (const char *) (x); break
 DECL|macro|IN
@@ -14882,11 +14884,7 @@ l_int|0x40
 )paren
 op_logical_and
 op_logical_neg
-(paren
-id|filp-&gt;f_mode
-op_amp
-l_int|2
-)paren
+id|FD_IOCTL_ALLOWED
 )paren
 op_logical_or
 (paren
@@ -15849,6 +15847,14 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
+id|filp-&gt;private_data
+op_assign
+(paren
+r_void
+op_star
+)paren
+l_int|0
+suffix:semicolon
 id|drive
 op_assign
 id|DRIVE
@@ -16234,6 +16240,40 @@ id|old_dev
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Allow ioctls if we have write-permissions even if read-only open.&n;&t; * Needed so that programs such as fdrawcmd still can work on write&n;&t; * protected disks */
+r_if
+c_cond
+(paren
+(paren
+id|filp-&gt;f_mode
+op_amp
+l_int|2
+)paren
+op_logical_or
+(paren
+id|inode-&gt;i_sb
+op_logical_and
+(paren
+id|permission
+c_func
+(paren
+id|inode
+comma
+l_int|2
+)paren
+op_eq
+l_int|0
+)paren
+)paren
+)paren
+id|filp-&gt;private_data
+op_assign
+(paren
+r_void
+op_star
+)paren
+l_int|8
+suffix:semicolon
 r_if
 c_cond
 (paren

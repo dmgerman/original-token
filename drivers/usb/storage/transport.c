@@ -1,4 +1,4 @@
-multiline_comment|/* Driver for USB Mass Storage compliant devices&n; *&n; * $Id: transport.c,v 1.27 2000/09/28 21:54:30 mdharm Exp $&n; *&n; * Current development and maintenance by:&n; *   (c) 1999, 2000 Matthew Dharm (mdharm-usb@one-eyed-alien.net)&n; *&n; * Developed with the assistance of:&n; *   (c) 2000 David L. Brown, Jr. (usb-storage@davidb.org)&n; *   (c) 2000 Stephen J. Gowdy (SGowdy@lbl.gov)&n; *&n; * Initial work by:&n; *   (c) 1999 Michael Gee (michael@linuxspecific.com)&n; *&n; * This driver is based on the &squot;USB Mass Storage Class&squot; document. This&n; * describes in detail the protocol used to communicate with such&n; * devices.  Clearly, the designers had SCSI and ATAPI commands in&n; * mind when they created this document.  The commands are all very&n; * similar to commands in the SCSI-II and ATAPI specifications.&n; *&n; * It is important to note that in a number of cases this class&n; * exhibits class-specific exemptions from the USB specification.&n; * Notably the usage of NAK, STALL and ACK differs from the norm, in&n; * that they are used to communicate wait, failed and OK on commands.&n; *&n; * Also, for certain devices, the interrupt endpoint is used to convey&n; * status of a command.&n; *&n; * Please see http://www.one-eyed-alien.net/~mdharm/linux-usb for more&n; * information about this driver.&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License along&n; * with this program; if not, write to the Free Software Foundation, Inc.,&n; * 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
+multiline_comment|/* Driver for USB Mass Storage compliant devices&n; *&n; * $Id: transport.c,v 1.28 2000/10/03 01:06:07 mdharm Exp $&n; *&n; * Current development and maintenance by:&n; *   (c) 1999, 2000 Matthew Dharm (mdharm-usb@one-eyed-alien.net)&n; *&n; * Developed with the assistance of:&n; *   (c) 2000 David L. Brown, Jr. (usb-storage@davidb.org)&n; *   (c) 2000 Stephen J. Gowdy (SGowdy@lbl.gov)&n; *&n; * Initial work by:&n; *   (c) 1999 Michael Gee (michael@linuxspecific.com)&n; *&n; * This driver is based on the &squot;USB Mass Storage Class&squot; document. This&n; * describes in detail the protocol used to communicate with such&n; * devices.  Clearly, the designers had SCSI and ATAPI commands in&n; * mind when they created this document.  The commands are all very&n; * similar to commands in the SCSI-II and ATAPI specifications.&n; *&n; * It is important to note that in a number of cases this class&n; * exhibits class-specific exemptions from the USB specification.&n; * Notably the usage of NAK, STALL and ACK differs from the norm, in&n; * that they are used to communicate wait, failed and OK on commands.&n; *&n; * Also, for certain devices, the interrupt endpoint is used to convey&n; * status of a command.&n; *&n; * Please see http://www.one-eyed-alien.net/~mdharm/linux-usb for more&n; * information about this driver.&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License along&n; * with this program; if not, write to the Free Software Foundation, Inc.,&n; * 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;transport.h&quot;
 macro_line|#include &quot;protocol.h&quot;
@@ -9,11 +9,10 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 multiline_comment|/***********************************************************************&n; * Helper routines&n; ***********************************************************************/
 multiline_comment|/* Calculate the length of the data transfer (not the command) for any&n; * given SCSI command&n; */
-DECL|function|us_transfer_length
-r_static
+DECL|function|usb_stor_transfer_length
 r_int
 r_int
-id|us_transfer_length
+id|usb_stor_transfer_length
 c_func
 (paren
 id|Scsi_Cmnd
@@ -1361,10 +1360,9 @@ id|us-&gt;current_urb-&gt;status
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Transfer one SCSI scatter-gather buffer via bulk transfer&n; *&n; * Note that this function is necessary because we want the ability to&n; * use scatter-gather memory.  Good performance is achieved by a combination&n; * of scatter-gather and clustering (which makes each chunk bigger).&n; *&n; * Note that the lower layer will always retry when a NAK occurs, up to the&n; * timeout limit.  Thus we don&squot;t have to worry about it for individual&n; * packets.&n; */
-DECL|function|us_transfer_partial
-r_static
+DECL|function|usb_stor_transfer_partial
 r_int
-id|us_transfer_partial
+id|usb_stor_transfer_partial
 c_func
 (paren
 r_struct
@@ -1422,7 +1420,7 @@ multiline_comment|/* transfer the data */
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;us_transfer_partial(): xfer %d bytes&bslash;n&quot;
+l_string|&quot;usb_stor_transfer_partial(): xfer %d bytes&bslash;n&quot;
 comma
 id|length
 )paren
@@ -1495,7 +1493,7 @@ id|length
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;us_transfer_partial(): transfer complete&bslash;n&quot;
+l_string|&quot;usb_stor_transfer_partial(): transfer complete&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1522,7 +1520,7 @@ id|ETIMEDOUT
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;us_transfer_partial(): device NAKed&bslash;n&quot;
+l_string|&quot;usb_stor_transfer_partial(): device NAKed&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1542,7 +1540,7 @@ id|ENOENT
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;us_transfer_partial(): transfer aborted&bslash;n&quot;
+l_string|&quot;usb_stor_transfer_partial(): transfer aborted&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1553,7 +1551,7 @@ multiline_comment|/* the catch-all case */
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;us_transfer_partial(): unknown error&bslash;n&quot;
+l_string|&quot;usb_stor_transfer_partial(): unknown error&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1565,7 +1563,7 @@ r_return
 id|US_BULK_TRANSFER_SHORT
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Transfer an entire SCSI command&squot;s worth of data payload over the bulk&n; * pipe.&n; *&n; * Note that this uses us_transfer_partial to achieve it&squot;s goals -- this&n; * function simply determines if we&squot;re going to use scatter-gather or not,&n; * and acts appropriately.  For now, it also re-interprets the error codes.&n; */
+multiline_comment|/*&n; * Transfer an entire SCSI command&squot;s worth of data payload over the bulk&n; * pipe.&n; *&n; * Note that this uses usb_stor_transfer_partial to achieve it&squot;s goals -- this&n; * function simply determines if we&squot;re going to use scatter-gather or not,&n; * and acts appropriately.  For now, it also re-interprets the error codes.&n; */
 DECL|function|us_transfer
 r_static
 r_void
@@ -1609,7 +1607,7 @@ suffix:semicolon
 multiline_comment|/* calculate how much we want to transfer */
 id|transfer_amount
 op_assign
-id|us_transfer_length
+id|usb_stor_transfer_length
 c_func
 (paren
 id|srb
@@ -1677,7 +1675,7 @@ id|length
 (brace
 id|result
 op_assign
-id|us_transfer_partial
+id|usb_stor_transfer_partial
 c_func
 (paren
 id|us
@@ -1710,7 +1708,7 @@ suffix:semicolon
 r_else
 id|result
 op_assign
-id|us_transfer_partial
+id|usb_stor_transfer_partial
 c_func
 (paren
 id|us
@@ -1741,7 +1739,7 @@ r_else
 multiline_comment|/* no scatter-gather, just make the request */
 id|result
 op_assign
-id|us_transfer_partial
+id|usb_stor_transfer_partial
 c_func
 (paren
 id|us
@@ -2649,7 +2647,7 @@ multiline_comment|/* transfer the data payload for this command, if one exists*/
 r_if
 c_cond
 (paren
-id|us_transfer_length
+id|usb_stor_transfer_length
 c_func
 (paren
 id|srb
@@ -3013,7 +3011,7 @@ multiline_comment|/* transfer the data payload for this command, if one exists*/
 r_if
 c_cond
 (paren
-id|us_transfer_length
+id|usb_stor_transfer_length
 c_func
 (paren
 id|srb
@@ -3229,7 +3227,7 @@ op_assign
 id|cpu_to_le32
 c_func
 (paren
-id|us_transfer_length
+id|usb_stor_transfer_length
 c_func
 (paren
 id|srb

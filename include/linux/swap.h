@@ -570,6 +570,23 @@ r_int
 suffix:semicolon
 DECL|macro|read_swap_cache
 mdefine_line|#define read_swap_cache(entry) read_swap_cache_async(entry, 1);
+multiline_comment|/* linux/mm/oom_kill.c */
+r_extern
+r_int
+id|out_of_memory
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|oom_kill
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Make these inline later once they are working properly.&n; */
 r_extern
 r_void

@@ -561,6 +561,10 @@ id|usblp-&gt;readcount
 op_assign
 l_int|0
 suffix:semicolon
+id|usblp-&gt;readurb.dev
+op_assign
+id|usblp-&gt;dev
+suffix:semicolon
 id|usb_submit_urb
 c_func
 (paren
@@ -1102,6 +1106,10 @@ r_return
 op_minus
 id|EFAULT
 suffix:semicolon
+id|usblp-&gt;writeurb.dev
+op_assign
+id|usblp-&gt;dev
+suffix:semicolon
 id|usb_submit_urb
 c_func
 (paren
@@ -1231,6 +1239,10 @@ comma
 id|usblp-&gt;readurb.status
 )paren
 suffix:semicolon
+id|usblp-&gt;readurb.dev
+op_assign
+id|usblp-&gt;dev
+suffix:semicolon
 id|usb_submit_urb
 c_func
 (paren
@@ -1288,6 +1300,11 @@ id|count
 op_eq
 id|usblp-&gt;readurb.actual_length
 )paren
+(brace
+id|usblp-&gt;readurb.dev
+op_assign
+id|usblp-&gt;dev
+suffix:semicolon
 id|usb_submit_urb
 c_func
 (paren
@@ -1295,6 +1312,7 @@ op_amp
 id|usblp-&gt;readurb
 )paren
 suffix:semicolon
+)brace
 r_return
 id|count
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/*&n;** hp100.c &n;** HP CASCADE Architecture Driver for 100VG-AnyLan Network Adapters&n;**&n;** $Id: hp100.c,v 1.57 1998/04/10 16:27:23 perex Exp perex $&n;**&n;** Based on the HP100 driver written by Jaroslav Kysela &lt;perex@jcu.cz&gt;&n;** Extended for new busmaster capable chipsets by &n;** Siegfried &quot;Frieder&quot; Loeffler (dg1sek) &lt;floeff@mathematik.uni-stuttgart.de&gt;&n;**&n;** Maintained by: Jaroslav Kysela &lt;perex@suse.cz&gt;&n;** &n;** This driver has only been tested with&n;** -- HP J2585B 10/100 Mbit/s PCI Busmaster&n;** -- HP J2585A 10/100 Mbit/s PCI &n;** -- HP J2970  10 Mbit/s PCI Combo 10base-T/BNC&n;** -- HP J2973  10 Mbit/s PCI 10base-T&n;** -- HP J2573  10/100 ISA&n;** -- Compex ReadyLink ENET100-VG4  10/100 Mbit/s PCI / EISA&n;** -- Compex FreedomLine 100/VG  10/100 Mbit/s ISA / EISA / PCI&n;** &n;** but it should also work with the other CASCADE based adapters.&n;**&n;** TODO:&n;**       -  J2573 seems to hang sometimes when in shared memory mode.&n;**       -  Mode for Priority TX&n;**       -  Check PCI registers, performance might be improved?&n;**       -  To reduce interrupt load in busmaster, one could switch off&n;**          the interrupts that are used to refill the queues whenever the&n;**          queues are filled up to more than a certain threshold.&n;**       -  some updates for EISA version of card&n;**&n;**&n;**   This code is free software; you can redistribute it and/or modify&n;**   it under the terms of the GNU General Public License as published by&n;**   the Free Software Foundation; either version 2 of the License, or&n;**   (at your option) any later version.&n;**&n;**   This code is distributed in the hope that it will be useful,&n;**   but WITHOUT ANY WARRANTY; without even the implied warranty of&n;**   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;**   GNU General Public License for more details.&n;**&n;**   You should have received a copy of the GNU General Public License&n;**   along with this program; if not, write to the Free Software&n;**   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;**&n;**&n;** 1.56 -&gt; 1.57&n;**   - updates for new PCI interface for 2.1 kernels&n;**&n;** 1.55 -&gt; 1.56&n;**   - removed printk in misc. interrupt and update statistics to allow&n;**     monitoring of card status&n;**   - timing changes in xmit routines, relogin to 100VG hub added when&n;**     driver does reset&n;**   - included fix for Compex FreedomLine PCI adapter&n;** &n;** 1.54 -&gt; 1.55&n;**   - fixed bad initialization in init_module&n;**   - added Compex FreedomLine adapter&n;**   - some fixes in card initialization&n;**&n;** 1.53 -&gt; 1.54&n;**   - added hardware multicast filter support (doesn&squot;t work)&n;**   - little changes in hp100_sense_lan routine &n;**     - added support for Coax and AUI (J2970)&n;**   - fix for multiple cards and hp100_mode parameter (insmod)&n;**   - fix for shared IRQ &n;**&n;** 1.52 -&gt; 1.53&n;**   - fixed bug in multicast support&n;**&n;*/
+multiline_comment|/*&n;** hp100.c &n;** HP CASCADE Architecture Driver for 100VG-AnyLan Network Adapters&n;**&n;** $Id: hp100.c,v 1.57 1998/04/10 16:27:23 perex Exp perex $&n;**&n;** Based on the HP100 driver written by Jaroslav Kysela &lt;perex@jcu.cz&gt;&n;** Extended for new busmaster capable chipsets by &n;** Siegfried &quot;Frieder&quot; Loeffler (dg1sek) &lt;floeff@mathematik.uni-stuttgart.de&gt;&n;**&n;** Maintained by: Jaroslav Kysela &lt;perex@suse.cz&gt;&n;** &n;** This driver has only been tested with&n;** -- HP J2585B 10/100 Mbit/s PCI Busmaster&n;** -- HP J2585A 10/100 Mbit/s PCI &n;** -- HP J2970  10 Mbit/s PCI Combo 10base-T/BNC&n;** -- HP J2973  10 Mbit/s PCI 10base-T&n;** -- HP J2573  10/100 ISA&n;** -- Compex ReadyLink ENET100-VG4  10/100 Mbit/s PCI / EISA&n;** -- Compex FreedomLine 100/VG  10/100 Mbit/s ISA / EISA / PCI&n;** &n;** but it should also work with the other CASCADE based adapters.&n;**&n;** TODO:&n;**       -  J2573 seems to hang sometimes when in shared memory mode.&n;**       -  Mode for Priority TX&n;**       -  Check PCI registers, performance might be improved?&n;**       -  To reduce interrupt load in busmaster, one could switch off&n;**          the interrupts that are used to refill the queues whenever the&n;**          queues are filled up to more than a certain threshold.&n;**       -  some updates for EISA version of card&n;**&n;**&n;**   This code is free software; you can redistribute it and/or modify&n;**   it under the terms of the GNU General Public License as published by&n;**   the Free Software Foundation; either version 2 of the License, or&n;**   (at your option) any later version.&n;**&n;**   This code is distributed in the hope that it will be useful,&n;**   but WITHOUT ANY WARRANTY; without even the implied warranty of&n;**   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;**   GNU General Public License for more details.&n;**&n;**   You should have received a copy of the GNU General Public License&n;**   along with this program; if not, write to the Free Software&n;**   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;**&n;**&n;** 1.57 -&gt; 1.57b - Jean II&n;**   - fix spinlocks, SMP is now working !&n;**&n;** 1.56 -&gt; 1.57&n;**   - updates for new PCI interface for 2.1 kernels&n;**&n;** 1.55 -&gt; 1.56&n;**   - removed printk in misc. interrupt and update statistics to allow&n;**     monitoring of card status&n;**   - timing changes in xmit routines, relogin to 100VG hub added when&n;**     driver does reset&n;**   - included fix for Compex FreedomLine PCI adapter&n;** &n;** 1.54 -&gt; 1.55&n;**   - fixed bad initialization in init_module&n;**   - added Compex FreedomLine adapter&n;**   - some fixes in card initialization&n;**&n;** 1.53 -&gt; 1.54&n;**   - added hardware multicast filter support (doesn&squot;t work)&n;**   - little changes in hp100_sense_lan routine &n;**     - added support for Coax and AUI (J2970)&n;**   - fix for multiple cards and hp100_mode parameter (insmod)&n;**   - fix for shared IRQ &n;**&n;** 1.52 -&gt; 1.53&n;**   - fixed bug in multicast support&n;**&n;*/
 DECL|macro|HP100_DEFAULT_PRIORITY_TX
 mdefine_line|#define HP100_DEFAULT_PRIORITY_TX 0 
 DECL|macro|HP100_DEBUG
@@ -2671,9 +2671,12 @@ id|hp100_private
 )paren
 )paren
 suffix:semicolon
+id|spin_lock_init
+c_func
+(paren
+op_amp
 id|lp-&gt;lock
-op_assign
-id|SPIN_LOCK_UNLOCKED
+)paren
 suffix:semicolon
 id|lp-&gt;id
 op_assign
@@ -6155,11 +6158,20 @@ suffix:semicolon
 )brace
 r_else
 (brace
+id|spin_lock_irqsave
+(paren
+op_amp
+id|lp-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|hp100_ints_off
 c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* Useful ? Jean II */
 id|i
 op_assign
 id|hp100_sense_lan
@@ -6171,6 +6183,14 @@ suffix:semicolon
 id|hp100_ints_on
 c_func
 (paren
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+(paren
+op_amp
+id|lp-&gt;lock
+comma
+id|flags
 )paren
 suffix:semicolon
 r_if
@@ -6590,6 +6610,10 @@ id|dev
 )paren
 (brace
 r_int
+r_int
+id|flags
+suffix:semicolon
+r_int
 id|i
 comma
 id|ok_flag
@@ -6858,11 +6882,20 @@ suffix:semicolon
 )brace
 r_else
 (brace
+id|spin_lock_irqsave
+(paren
+op_amp
+id|lp-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|hp100_ints_off
 c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* Useful ? Jean II */
 id|i
 op_assign
 id|hp100_sense_lan
@@ -6874,6 +6907,14 @@ suffix:semicolon
 id|hp100_ints_on
 c_func
 (paren
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+(paren
+op_amp
+id|lp-&gt;lock
+comma
+id|flags
 )paren
 suffix:semicolon
 r_if
@@ -7036,6 +7077,14 @@ id|dev-&gt;name
 suffix:semicolon
 macro_line|#endif
 )brace
+id|spin_lock_irqsave
+(paren
+op_amp
+id|lp-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|hp100_ints_off
 c_func
 (paren
@@ -7290,6 +7339,14 @@ suffix:semicolon
 id|hp100_ints_on
 c_func
 (paren
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+(paren
+op_amp
+id|lp-&gt;lock
+comma
+id|flags
 )paren
 suffix:semicolon
 id|dev_kfree_skb_any
@@ -8260,9 +8317,25 @@ id|dev
 )paren
 (brace
 r_int
+r_int
+id|flags
+suffix:semicolon
+r_int
 id|ioaddr
 op_assign
 id|dev-&gt;base_addr
+suffix:semicolon
+r_struct
+id|hp100_private
+op_star
+id|lp
+op_assign
+(paren
+r_struct
+id|hp100_private
+op_star
+)paren
+id|dev-&gt;priv
 suffix:semicolon
 macro_line|#ifdef HP100_DEBUG_B
 id|hp100_outw
@@ -8274,11 +8347,20 @@ id|TRACE
 )paren
 suffix:semicolon
 macro_line|#endif
+id|spin_lock_irqsave
+(paren
+op_amp
+id|lp-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|hp100_ints_off
 c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* Useful ? Jean II */
 id|hp100_update_stats
 c_func
 (paren
@@ -8290,18 +8372,19 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|spin_unlock_irqrestore
+(paren
+op_amp
+id|lp-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
 r_return
 op_amp
 (paren
-(paren
-r_struct
-id|hp100_private
-op_star
+id|lp-&gt;stats
 )paren
-id|dev-&gt;priv
-)paren
-op_member_access_from_pointer
-id|stats
 suffix:semicolon
 )brace
 DECL|function|hp100_update_stats
@@ -9990,19 +10073,20 @@ id|IRQ_MASK
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Enable MAC Tx and RX, set MAC modes, ... */
-id|hp100_set_multicast_list
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
+multiline_comment|/* Note : before hp100_set_multicast_list(), because it will play with&n;   * spinlock itself... Jean II */
 id|spin_unlock_irqrestore
 (paren
 op_amp
 id|lp-&gt;lock
 comma
 id|flags
+)paren
+suffix:semicolon
+multiline_comment|/* Enable MAC Tx and RX, set MAC modes, ... */
+id|hp100_set_multicast_list
+c_func
+(paren
+id|dev
 )paren
 suffix:semicolon
 )brace

@@ -35,6 +35,7 @@ mdefine_line|#define ZERO_PGE&t;(PAGE_OFFSET+KERNEL_START_PHYS+0x0A000)
 DECL|macro|START_ADDR
 mdefine_line|#define START_ADDR&t;(PAGE_OFFSET+KERNEL_START_PHYS+0x10000)
 macro_line|#ifndef __ASSEMBLY__
+macro_line|#include &lt;linux/kernel.h&gt;
 multiline_comment|/*&n; * This is the logout header that should be common to all platforms&n; * (assuming they are running OSF/1 PALcode, I guess).&n; */
 DECL|struct|el_common
 r_struct

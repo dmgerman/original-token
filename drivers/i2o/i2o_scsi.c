@@ -3551,8 +3551,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Loadable module support */
-macro_line|#ifdef MODULE
 id|MODULE_AUTHOR
 c_func
 (paren
@@ -3560,11 +3558,11 @@ l_string|&quot;Red Hat Software&quot;
 )paren
 suffix:semicolon
 DECL|variable|driver_template
+r_static
 id|Scsi_Host_Template
 id|driver_template
 op_assign
 id|I2OSCSI
 suffix:semicolon
 macro_line|#include &quot;../scsi/scsi_module.c&quot;
-macro_line|#endif
 eof

@@ -398,9 +398,13 @@ r_static
 id|u_char
 id|xd_override
 id|__initdata
+op_assign
+l_int|0
 comma
 id|xd_type
 id|__initdata
+op_assign
+l_int|0
 suffix:semicolon
 DECL|variable|xd_iobase
 r_static
@@ -419,6 +423,11 @@ op_star
 l_int|3
 )braket
 id|__initdata
+op_assign
+(brace
+l_int|0
+comma
+)brace
 suffix:semicolon
 DECL|variable|xdc_busy
 r_static

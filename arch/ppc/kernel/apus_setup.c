@@ -202,6 +202,8 @@ op_star
 )paren
 )paren
 id|__initdata
+op_assign
+l_int|NULL
 suffix:semicolon
 multiline_comment|/* machine dependent keyboard functions */
 r_int
@@ -213,6 +215,8 @@ id|mach_keyb_init
 r_void
 )paren
 id|__initdata
+op_assign
+l_int|NULL
 suffix:semicolon
 r_int
 (paren
@@ -251,6 +255,8 @@ id|mach_init_IRQ
 r_void
 )paren
 id|__initdata
+op_assign
+l_int|NULL
 suffix:semicolon
 r_void
 (paren

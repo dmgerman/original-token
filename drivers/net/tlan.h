@@ -32,6 +32,10 @@ DECL|macro|TLAN_DEBUG_RX
 mdefine_line|#define TLAN_DEBUG_RX&t;&t;0x0004 
 DECL|macro|TLAN_DEBUG_LIST
 mdefine_line|#define TLAN_DEBUG_LIST&t;&t;0x0008
+DECL|macro|TLAN_DEBUG_PROBE
+mdefine_line|#define TLAN_DEBUG_PROBE&t;0x0010
+DECL|macro|TX_TIMEOUT
+mdefine_line|#define TX_TIMEOUT&t;&t;(10*HZ)&t; /* We need time for auto-neg */
 multiline_comment|/*****************************************************************&n;&t; * Device Identification Definitions&n;&t; *&n;&t; ****************************************************************/
 DECL|macro|PCI_DEVICE_ID_NETELLIGENT_10
 mdefine_line|#define PCI_DEVICE_ID_NETELLIGENT_10&t;&t;&t;0xAE34
@@ -117,6 +121,29 @@ DECL|macro|TLAN_DUPLEX_HALF
 mdefine_line|#define TLAN_DUPLEX_HALF&t;1
 DECL|macro|TLAN_DUPLEX_FULL
 mdefine_line|#define TLAN_DUPLEX_FULL&t;2
+multiline_comment|/*****************************************************************&n;&t; * EISA Definitions&n;&t; *&n;&t; ****************************************************************/
+DECL|macro|EISA_ID
+mdefine_line|#define EISA_ID      0xc80   /* EISA ID Registers */ 
+DECL|macro|EISA_ID0
+mdefine_line|#define EISA_ID0     0xc80   /* EISA ID Register 0 */ 
+DECL|macro|EISA_ID1
+mdefine_line|#define EISA_ID1     0xc81   /* EISA ID Register 1 */ 
+DECL|macro|EISA_ID2
+mdefine_line|#define EISA_ID2     0xc82   /* EISA ID Register 2 */ 
+DECL|macro|EISA_ID3
+mdefine_line|#define EISA_ID3     0xc83   /* EISA ID Register 3 */ 
+DECL|macro|EISA_CR
+mdefine_line|#define EISA_CR      0xc84   /* EISA Control Register */
+DECL|macro|EISA_REG0
+mdefine_line|#define EISA_REG0    0xc88   /* EISA Configuration Register 0 */
+DECL|macro|EISA_REG1
+mdefine_line|#define EISA_REG1    0xc89   /* EISA Configuration Register 1 */
+DECL|macro|EISA_REG2
+mdefine_line|#define EISA_REG2    0xc8a   /* EISA Configuration Register 2 */
+DECL|macro|EISA_REG3
+mdefine_line|#define EISA_REG3    0xc8f   /* EISA Configuration Register 3 */
+DECL|macro|EISA_APROM
+mdefine_line|#define EISA_APROM   0xc90   /* Ethernet Address PROM */
 multiline_comment|/*****************************************************************&n;&t; * Rx/Tx List Definitions&n;&t; *&n;&t; ****************************************************************/
 DECL|macro|TLAN_BUFFERS_PER_LIST
 mdefine_line|#define TLAN_BUFFERS_PER_LIST&t;10
@@ -287,7 +314,8 @@ id|net_device_stats
 id|stats
 suffix:semicolon
 DECL|member|adapter
-id|TLanAdapterEntry
+r_struct
+id|board
 op_star
 id|adapter
 suffix:semicolon
@@ -344,6 +372,10 @@ suffix:semicolon
 DECL|member|link
 id|u8
 id|link
+suffix:semicolon
+DECL|member|is_eisa
+id|u8
+id|is_eisa
 suffix:semicolon
 DECL|typedef|TLanPrivateInfo
 )brace
@@ -653,11 +685,11 @@ mdefine_line|#define &t;MII_GIL_MODEL&t;&t;0x03F0
 DECL|macro|MII_GIL_REVISION
 mdefine_line|#define &t;MII_GIL_REVISION&t;0x000F
 DECL|macro|MII_AN_ADV
-mdefine_line|#define MII_AN_ADV&t;&t;&t;0x0004
+mdefine_line|#define MII_AN_ADV&t;&t;&t;0x04
 DECL|macro|MII_AN_LPA
-mdefine_line|#define MII_AN_LPA&t;&t;&t;0x0005
+mdefine_line|#define MII_AN_LPA&t;&t;&t;0x05
 DECL|macro|MII_AN_EXP
-mdefine_line|#define MII_AN_EXP&t;&t;&t;0x0006
+mdefine_line|#define MII_AN_EXP&t;&t;&t;0x06
 multiline_comment|/* ThunderLAN Specific MII/PHY Registers */
 DECL|macro|TLAN_TLPHY_ID
 mdefine_line|#define TLAN_TLPHY_ID&t;&t;&t;0x10
@@ -703,6 +735,15 @@ DECL|macro|TLAN_PHY_DUPLEX_FULL
 mdefine_line|#define&t;&t;TLAN_PHY_DUPLEX_FULL&t;0x0080
 DECL|macro|TLAN_PHY_AN_EN_STAT
 mdefine_line|#define&t;&t;TLAN_PHY_AN_EN_STAT     0x0400
+multiline_comment|/* National Sem. &amp; Level1 PHY id&squot;s */
+DECL|macro|NAT_SEM_ID1
+mdefine_line|#define NAT_SEM_ID1&t;&t;&t;0x2000
+DECL|macro|NAT_SEM_ID2
+mdefine_line|#define NAT_SEM_ID2&t;&t;&t;0x5C01
+DECL|macro|LEVEL1_ID1
+mdefine_line|#define LEVEL1_ID1&t;&t;&t;0x7810
+DECL|macro|LEVEL1_ID2
+mdefine_line|#define LEVEL1_ID2&t;&t;&t;0x0000
 DECL|macro|CIRC_INC
 mdefine_line|#define CIRC_INC( a, b ) if ( ++a &gt;= b ) a = 0
 multiline_comment|/* Routines to access internal registers. */

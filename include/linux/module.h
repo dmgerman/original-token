@@ -394,9 +394,11 @@ DECL|macro|MODULE_PARM
 mdefine_line|#define MODULE_PARM(var,type)&t;&t;&t;&bslash;&n;const char __module_parm_##var[]&t;&t;&bslash;&n;__attribute__((section(&quot;.modinfo&quot;))) =&t;&t;&bslash;&n;&quot;parm_&quot; __MODULE_STRING(var) &quot;=&quot; type
 DECL|macro|MODULE_PARM_DESC
 mdefine_line|#define MODULE_PARM_DESC(var,desc)&t;&t;&bslash;&n;const char __module_parm_desc_##var[]&t;&t;&bslash;&n;__attribute__((section(&quot;.modinfo&quot;))) =&t;&t;&bslash;&n;&quot;parm_desc_&quot; __MODULE_STRING(var) &quot;=&quot; desc
-multiline_comment|/*&n; * MODULE_DEVICE_TABLE exports information about devices&n; * currently supported by this module.  A device type, such as PCI,&n; * is a C-like identifier passed as the first arg to this macro.&n; * The second macro arg is the variable containing the device&n; * information being made public.&n; *&n; * The following is a list of known device types (arg 1),&n; * and the C types which are to be passed as arg 2.&n; * pci - struct pci_device_id - List of PCI ids supported by this module&n; */
+multiline_comment|/*&n; * MODULE_DEVICE_TABLE exports information about devices&n; * currently supported by this module.  A device type, such as PCI,&n; * is a C-like identifier passed as the first arg to this macro.&n; * The second macro arg is the variable containing the device&n; * information being made public.&n; *&n; * The following is a list of known device types (arg 1),&n; * and the C types which are to be passed as arg 2.&n; * pci - struct pci_device_id - List of PCI ids supported by this module&n; * isapnp - struct isapnp_device_id - List of ISA PnP ids supported by this module&n; */
+DECL|macro|MODULE_GENERIC_TABLE
+mdefine_line|#define MODULE_GENERIC_TABLE(gtype,name)&t;&bslash;&n;static const unsigned long __module_##gtype##_size &bslash;&n;  __attribute__ ((unused)) = sizeof(struct gtype##_id); &bslash;&n;static const struct gtype##_id * __module_##gtype##_table &bslash;&n;  __attribute__ ((unused)) = name
 DECL|macro|MODULE_DEVICE_TABLE
-mdefine_line|#define MODULE_DEVICE_TABLE(type,name)&t;&bslash;&n;const struct type##_device_id * __module_##type##_device_table = name
+mdefine_line|#define MODULE_DEVICE_TABLE(type,name)&t;&t;&bslash;&n;  MODULE_GENERIC_TABLE(type##_device,name)
 multiline_comment|/* not put to .modinfo section to avoid section type conflicts */
 multiline_comment|/* The attributes of a section are set the first time the section is&n;   seen; we want .modinfo to not be allocated.  */
 id|__asm__
@@ -476,6 +478,8 @@ DECL|macro|MODULE_PARM
 mdefine_line|#define MODULE_PARM(var,type)
 DECL|macro|MODULE_PARM_DESC
 mdefine_line|#define MODULE_PARM_DESC(var,desc)
+DECL|macro|MODULE_GENERIC_TABLE
+mdefine_line|#define MODULE_GENERIC_TABLE(gtype,name)
 DECL|macro|MODULE_DEVICE_TABLE
 mdefine_line|#define MODULE_DEVICE_TABLE(type,name)
 macro_line|#ifndef __GENKSYMS__

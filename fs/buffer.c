@@ -2971,6 +2971,7 @@ c_func
 l_int|1
 )paren
 suffix:semicolon
+multiline_comment|/* Sets task-&gt;state to TASK_RUNNING */
 id|current-&gt;policy
 op_or_assign
 id|SCHED_YIELD
@@ -8641,7 +8642,7 @@ c_func
 (paren
 id|bh
 (braket
-id|bhind
+id|i
 )braket
 )paren
 suffix:semicolon

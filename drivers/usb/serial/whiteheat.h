@@ -39,6 +39,8 @@ DECL|macro|WHITEHEAT_DO_TEST
 mdefine_line|#define WHITEHEAT_DO_TEST&t;&t;15&t;/* perform the specified test */
 DECL|macro|WHITEHEAT_CMD_COMPLETE
 mdefine_line|#define WHITEHEAT_CMD_COMPLETE&t;&t;16&t;/* reply for certain commands */
+DECL|macro|WHITEHEAT_CMD_FAILURE
+mdefine_line|#define WHITEHEAT_CMD_FAILURE&t;&t;17&t;/* reply for failed commands */
 multiline_comment|/* Data for the WHITEHEAT_SETUP_PORT command */
 DECL|macro|WHITEHEAT_CTS_FLOW
 mdefine_line|#define WHITEHEAT_CTS_FLOW&t;&t;0x08
@@ -103,6 +105,12 @@ id|lloop
 suffix:semicolon
 multiline_comment|/* local loopback 0 or 1, default 0 */
 )brace
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
 suffix:semicolon
 multiline_comment|/* data for WHITEHEAT_SET_RTS, WHITEHEAT_SET_DTR, and WHITEHEAT_SET_BREAK commands */
 DECL|struct|whiteheat_rdb_set

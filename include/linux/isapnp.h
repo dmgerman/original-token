@@ -359,22 +359,31 @@ mdefine_line|#define ISAPNP_ANY_ID&t;&t;0xffff
 DECL|macro|ISAPNP_CARD_DEVS
 mdefine_line|#define ISAPNP_CARD_DEVS&t;8
 DECL|macro|ISAPNP_CARD_ID
-mdefine_line|#define ISAPNP_CARD_ID(_va, _vb, _vc, _device) &bslash;&n;&t;&t;vendor: ISAPNP_VENDOR(_va, _vb, _vc), device: ISAPNP_DEVICE(_device)
+mdefine_line|#define ISAPNP_CARD_ID(_va, _vb, _vc, _device) &bslash;&n;&t;&t;card_vendor: ISAPNP_VENDOR(_va, _vb, _vc), card_device: ISAPNP_DEVICE(_device)
 DECL|macro|ISAPNP_CARD_END
-mdefine_line|#define ISAPNP_CARD_END &bslash;&n;&t;&t;vendor: 0, device: 0
+mdefine_line|#define ISAPNP_CARD_END &bslash;&n;&t;&t;card_vendor: 0, card_device: 0
 DECL|macro|ISAPNP_DEVICE_ID
 mdefine_line|#define ISAPNP_DEVICE_ID(_va, _vb, _vc, _function) &bslash;&n;&t;&t;{ vendor: ISAPNP_VENDOR(_va, _vb, _vc), function: ISAPNP_FUNCTION(_function) }
+multiline_comment|/* export used IDs outside module */
+DECL|macro|ISAPNP_CARD_TABLE
+mdefine_line|#define ISAPNP_CARD_TABLE(name) &bslash;&n;&t;&t;MODULE_GENERIC_TABLE(isapnp_card, name)
 DECL|struct|isapnp_card_id
 r_struct
 id|isapnp_card_id
 (brace
-DECL|member|vendor
-DECL|member|device
+DECL|member|driver_data
 r_int
 r_int
-id|vendor
+id|driver_data
+suffix:semicolon
+multiline_comment|/* data private to the driver */
+DECL|member|card_vendor
+DECL|member|card_device
+r_int
+r_int
+id|card_vendor
 comma
-id|device
+id|card_device
 suffix:semicolon
 r_struct
 (brace
@@ -394,6 +403,32 @@ id|ISAPNP_CARD_DEVS
 )braket
 suffix:semicolon
 multiline_comment|/* logical devices */
+)brace
+suffix:semicolon
+DECL|macro|ISAPNP_DEVICE_SINGLE
+mdefine_line|#define ISAPNP_DEVICE_SINGLE(_cva, _cvb, _cvc, _cdevice, _dva, _dvb, _dvc, _dfunction) &bslash;&n;&t;&t;card_vendor: ISAPNP_VENDOR(_cva, _cvb, _cvc), card_device: ISAPNP_DEVICE(_cdevice), &bslash;&n;&t;&t;vendor: ISAPNP_VENDOR(_dva, _dvb, _dvc), function: ISAPNP_FUNCTION(_dfunction)
+DECL|macro|ISAPNP_DEVICE_SINGLE_END
+mdefine_line|#define ISAPNP_DEVICE_SINGLE_END &bslash;&n;&t;&t;card_vendor: 0, card_device: 0
+DECL|struct|isapnp_device_id
+r_struct
+id|isapnp_device_id
+(brace
+DECL|member|card_vendor
+DECL|member|card_device
+r_int
+r_int
+id|card_vendor
+comma
+id|card_device
+suffix:semicolon
+DECL|member|vendor
+DECL|member|function
+r_int
+r_int
+id|vendor
+comma
+id|function
+suffix:semicolon
 DECL|member|driver_data
 r_int
 r_int
@@ -644,6 +679,35 @@ id|id
 )paren
 )paren
 suffix:semicolon
+r_int
+id|isapnp_probe_devs
+c_func
+(paren
+r_const
+r_struct
+id|isapnp_device_id
+op_star
+id|ids
+comma
+r_int
+(paren
+op_star
+id|probe
+)paren
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+comma
+r_const
+r_struct
+id|isapnp_device_id
+op_star
+id|id
+)paren
+)paren
+suffix:semicolon
 multiline_comment|/* misc */
 r_void
 id|isapnp_resource_change
@@ -661,6 +725,21 @@ comma
 r_int
 r_int
 id|size
+)paren
+suffix:semicolon
+r_int
+id|isapnp_activate_dev
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+comma
+r_const
+r_char
+op_star
+id|name
 )paren
 suffix:semicolon
 multiline_comment|/* init/main.c */
@@ -993,6 +1072,43 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
+DECL|function|isapnp_probe_devs
+r_extern
+r_inline
+r_int
+id|isapnp_probe_devs
+c_func
+(paren
+r_const
+r_struct
+id|isapnp_device_id
+op_star
+id|ids
+comma
+r_int
+(paren
+op_star
+id|probe
+)paren
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+comma
+r_const
+r_struct
+id|isapnp_device_id
+op_star
+id|id
+)paren
+)paren
+(brace
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+)brace
 DECL|function|isapnp_resource_change
 r_extern
 r_inline
@@ -1014,6 +1130,29 @@ r_int
 id|size
 )paren
 (brace
+suffix:semicolon
+)brace
+DECL|function|isapnp_activate_dev
+r_extern
+r_inline
+r_int
+id|isapnp_activate_dev
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+comma
+r_const
+r_char
+op_star
+id|name
+)paren
+(brace
+r_return
+op_minus
+id|ENODEV
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_ISAPNP */

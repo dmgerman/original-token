@@ -1487,20 +1487,22 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Uses the on-board timer to calibrate the on-chip decrementer register&n; * for prep systems.  On the pmac the OF tells us what the frequency is&n; * but on prep we have to figure it out.&n; * -- Cort&n; */
 multiline_comment|/* Done with 3 interrupts: the first one primes the cache and the&n; * 2 following ones measure the interval. The precision of the method&n; * is still doubtful due to the short interval sampled.&n; */
-DECL|variable|calibrate_steps
+DECL|variable|__initdata
 r_static
-id|__initdata
 r_volatile
 r_int
 id|calibrate_steps
+id|__initdata
 op_assign
 l_int|3
 suffix:semicolon
-DECL|variable|tbstamp
+DECL|variable|__initdata
 r_static
-id|__initdata
 r_int
 id|tbstamp
+id|__initdata
+op_assign
+l_int|0
 suffix:semicolon
 r_void
 id|__init

@@ -517,8 +517,7 @@ op_star
 id|pprev
 suffix:semicolon
 DECL|member|uid
-r_int
-r_int
+id|uid_t
 id|uid
 suffix:semicolon
 )brace

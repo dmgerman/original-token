@@ -2763,12 +2763,17 @@ op_plus
 id|zone-&gt;free_pages
 OL
 id|zone-&gt;pages_min
+op_plus
+l_int|1
 )paren
 )paren
 (brace
+multiline_comment|/* + 1 to have overlap with alloc_pages() !! */
 id|sum
 op_add_assign
 id|zone-&gt;pages_min
+op_plus
+l_int|1
 suffix:semicolon
 id|sum
 op_sub_assign
@@ -3459,6 +3464,7 @@ c_func
 (paren
 )paren
 )paren
+(brace
 id|interruptible_sleep_on_timeout
 c_func
 (paren
@@ -3468,7 +3474,24 @@ comma
 id|HZ
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * TODO: insert out of memory check &amp; oom killer&n;&t;&t; * invocation in an else branch here.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * If we couldn&squot;t free enough memory, we see if it was&n;&t;&t; * due to the system just not having enough memory.&n;&t;&t; * If that is the case, the only solution is to kill&n;&t;&t; * a process (the alternative is enternal deadlock).&n;&t;&t; *&n;&t;&t; * If there still is enough memory around, we just loop&n;&t;&t; * and try free some more memory...&n;&t;&t; */
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|out_of_memory
+c_func
+(paren
+)paren
+)paren
+(brace
+id|oom_kill
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 )brace
 )brace
 DECL|function|wakeup_kswapd
