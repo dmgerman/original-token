@@ -4461,7 +4461,8 @@ suffix:semicolon
 r_while
 c_loop
 (paren
-id|CURRENT
+op_logical_neg
+id|QUEUE_EMPTY
 )paren
 (brace
 r_if

@@ -4063,7 +4063,7 @@ suffix:semicolon
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;Bulk command transfer result 0x%x&bslash;n&quot;
+l_string|&quot;Bulk command transfer result=%d&bslash;n&quot;
 comma
 id|result
 )paren
@@ -7041,7 +7041,6 @@ singleline_comment|//  MOD_DEC_USE_COUNT;
 )brace
 multiline_comment|/***********************************************************************&n; * Initialization and registration&n; ***********************************************************************/
 DECL|function|usb_stor_init
-r_static
 r_int
 id|__init
 id|usb_stor_init
@@ -7117,7 +7116,6 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|usb_stor_exit
-r_static
 r_void
 id|__exit
 id|usb_stor_exit

@@ -144,19 +144,12 @@ r_int
 id|magic
 suffix:semicolon
 multiline_comment|/* FIXME: not if debugging is off&t;*/
-DECL|member|head
+DECL|member|queue_head
 r_struct
-id|request
-op_star
-id|head
+id|list_head
+id|queue_head
 suffix:semicolon
 multiline_comment|/* Requests are added here...&t;&t;&t;*/
-DECL|member|tail
-r_struct
-id|request
-op_star
-id|tail
-suffix:semicolon
 DECL|member|queue_lock
 r_struct
 id|semaphore

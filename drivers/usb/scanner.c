@@ -1,5 +1,5 @@
 multiline_comment|/* -*- linux-c -*- */
-multiline_comment|/* &n; * Driver for USB Scanners (linux-2.3.42)&n; *&n; * Copyright (C) 1999, 2000 David E. Nelson&n; *&n; * Portions may be copyright Brad Keryan and Michael Gee.&n; *&n; * David E. Nelson (dnelson@jump.net)&n; * &n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License as&n; * published by the Free Software Foundation; either version 2 of the&n; * License, or (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Originally based upon mouse.c (Brad Keryan) and printer.c (Michael Gee).&n; *&n; * History&n; *&n; *  0.1  8/31/1999&n; *&n; *    Developed/tested using linux-2.3.15 with minor ohci.c changes to&n; *    support short packes during bulk xfer mode.  Some testing was&n; *    done with ohci-hcd but the performace was low.  Very limited&n; *    testing was performed with uhci but I was unable to get it to&n; *    work.  Initial relase to the linux-usb development effort.&n; *&n; *&n; *  0.2  10/16/1999&n; *&n; *    - Device can&squot;t be opened unless a scanner is plugged into the USB.&n; *    - Finally settled on a reasonable value for the I/O buffer&squot;s.&n; *    - Cleaned up write_scanner()&n; *    - Disabled read/write stats&n; *    - A little more code cleanup&n; *&n; *&n; *  0.3  10/18/1999&n; *&n; *    - Device registration changed to reflect new device&n; *      allocation/registration for linux-2.3.22+.&n; *    - Adopted David Brownell&squot;s &lt;david-b@pacbell.net&gt; technique for &n; *      assigning bulk endpoints.&n; *    - Removed unnessesary #include&squot;s&n; *    - Scanner model now reported via syslog INFO after being detected &n; *      *and* configured.&n; *    - Added user specified verdor:product USB ID&squot;s which can be passed &n; *      as module parameters.&n; *&n; *&n; *  0.3.1&n; *&n; *    - Applied patches for linux-2.3.25.&n; *    - Error number reporting changed to reflect negative return codes.&n; *&n; *&n; *  0.3.2&n; *&n; *    - Applied patches for linux-2.3.26 to scanner_init().&n; *    - Debug read/write stats now report values as signed decimal.&n; *&n; *&n; *  0.3.3&n; *&n; *    - Updated the bulk_msg() calls to usb usb_bulk_msg().&n; *    - Added a small delay in the write_scanner() method to aid in&n; *      avoiding NULL data reads on HP scanners.  We&squot;ll see how this works.&n; *    - Return values from usb_bulk_msg() now ignore positive values for&n; *      use with the ohci driver.&n; *    - Added conditional debugging instead of commenting/uncommenting&n; *      all over the place.&n; *    - kfree()&squot;d the pointer after using usb_string() as documented in&n; *      linux-usb-api.txt.&n; *    - Added usb_set_configuration().  It got lost in version 0.3 -- ack!&n; *    - Added the HP 5200C USB Vendor/Product ID&squot;s.&n; *&n; *&n; *  0.3.4  1/23/2000&n; *&n; *    - Added Greg K-H&squot;s &lt;greg@kroah.com&gt; patch for better handling of &n; *      Product/Vendor detection.&n; *    - The driver now autoconfigures its endpoints including interrupt&n; *      endpoints if one is detected.  The concept was originally based&n; *      upon David Brownell&squot;s method.&n; *    - Added some Seiko/Epson ID&squot;s. Thanks to Karl Heinz &n; *      Kremer &lt;khk@khk.net&gt;.&n; *    - Added some preliminary ioctl() calls for the PV8630 which is used&n; *      by the HP4200. The ioctl()&squot;s still have to be registered. Thanks &n; *      to Adrian Perez Jorge &lt;adrianpj@easynews.com&gt;.&n; *    - Moved/migrated stuff to scanner.h&n; *    - Removed the usb_set_configuration() since this is handled by&n; *      the usb_new_device() routine in usb.c.&n; *    - Added the HP 3300C.  Thanks to Bruce Tenison.&n; *    - Changed user specified vendor/product id so that root hub doesn&squot;t&n; *      get falsely attached to. Thanks to Greg K-H.&n; *    - Added some Mustek ID&squot;s. Thanks to Gernot Hoyler &n; *      &lt;Dr.Hoyler@t-online.de&gt;.&n; *    - Modified the usb_string() reporting.  See kfree() comment above.&n; *    - Added Umax Astra 2000U. Thanks to Doug Alcorn &lt;doug@lathi.net&gt;.&n; *    - Updated the printk()&squot;s to use the info/warn/dbg macros.&n; *    - Updated usb_bulk_msg() argument types to fix gcc warnings.&n; *&n; *&n; *  0.4  2/4/2000&n; *&n; *    - Removed usb_string() from probe_scanner since the core now does a&n; *      good job of reporting what was connnected.  &n; *    - Finally, simultaneous multiple device attachment!&n; *    - Fixed some potential memory freeing issues should memory allocation&n; *      fail in probe_scanner();&n; *    - Some fixes to disconnect_scanner().&n; *    - Added interrupt endpoint support.&n; *    - Added Agfa SnapScan Touch. Thanks to Jan Van den Bergh&n; *      &lt;jan.vandenbergh@cs.kuleuven.ac.be&gt;.&n; *    - Added Umax 1220U ID&squot;s. Thanks to Maciek Klimkowski&n; *      &lt;mac@nexus.carleton.ca&gt;.&n; *    - Fixed bug in write_scanner(). The buffer was not being properly&n; *      updated for writes larger than OBUF_SIZE. Thanks to Henrik &n; *      Johansson &lt;henrikjo@post.utfors.se&gt; for identifying it.&n; *    - Added Microtek X6 ID&squot;s. Thanks to Oliver Neukum&n; *      &lt;Oliver.Neukum@lrz.uni-muenchen.de&gt;.&n; *&n; *&n; *  TODO&n; *&n; *    - Select/poll methods&n; *&n; *&n; *  Thanks to:&n; *&n; *    - All the folks on the linux-usb list who put up with me. :)  This &n; *      has been a great learning experience for me.&n; *    - To Linus Torvalds for this great OS.&n; *    - The GNU folks.&n; *    - The folks that forwarded Vendor:Product ID&squot;s to me.&n; *    - And anybody else who chimed in with reports and suggestions.&n; *&n; *  Performance:&n; *&n; *    System: Pentium 120, 80 MB RAM, OHCI, Linux 2.3.23, HP 4100C USB Scanner&n; *            300 dpi scan of the entire bed&n; *      24 Bit Color ~ 70 secs - 3.6 Mbit/sec&n; *       8 Bit Gray  ~ 17 secs - 4.2 Mbit/sec&n; */
+multiline_comment|/* &n; * Driver for USB Scanners (linux-2.3.42)&n; *&n; * Copyright (C) 1999, 2000 David E. Nelson&n; *&n; * Portions may be copyright Brad Keryan and Michael Gee.&n; *&n; * David E. Nelson (dnelson@jump.net)&n; * &n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License as&n; * published by the Free Software Foundation; either version 2 of the&n; * License, or (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Originally based upon mouse.c (Brad Keryan) and printer.c (Michael Gee).&n; *&n; * History&n; *&n; *  0.1  8/31/1999&n; *&n; *    Developed/tested using linux-2.3.15 with minor ohci.c changes to&n; *    support short packes during bulk xfer mode.  Some testing was&n; *    done with ohci-hcd but the performace was low.  Very limited&n; *    testing was performed with uhci but I was unable to get it to&n; *    work.  Initial relase to the linux-usb development effort.&n; *&n; *&n; *  0.2  10/16/1999&n; *&n; *    - Device can&squot;t be opened unless a scanner is plugged into the USB.&n; *    - Finally settled on a reasonable value for the I/O buffer&squot;s.&n; *    - Cleaned up write_scanner()&n; *    - Disabled read/write stats&n; *    - A little more code cleanup&n; *&n; *&n; *  0.3  10/18/1999&n; *&n; *    - Device registration changed to reflect new device&n; *      allocation/registration for linux-2.3.22+.&n; *    - Adopted David Brownell&squot;s &lt;david-b@pacbell.net&gt; technique for &n; *      assigning bulk endpoints.&n; *    - Removed unnessesary #include&squot;s&n; *    - Scanner model now reported via syslog INFO after being detected &n; *      *and* configured.&n; *    - Added user specified verdor:product USB ID&squot;s which can be passed &n; *      as module parameters.&n; *&n; *&n; *  0.3.1&n; *&n; *    - Applied patches for linux-2.3.25.&n; *    - Error number reporting changed to reflect negative return codes.&n; *&n; *&n; *  0.3.2&n; *&n; *    - Applied patches for linux-2.3.26 to scanner_init().&n; *    - Debug read/write stats now report values as signed decimal.&n; *&n; *&n; *  0.3.3&n; *&n; *    - Updated the bulk_msg() calls to usb usb_bulk_msg().&n; *    - Added a small delay in the write_scanner() method to aid in&n; *      avoiding NULL data reads on HP scanners.  We&squot;ll see how this works.&n; *    - Return values from usb_bulk_msg() now ignore positive values for&n; *      use with the ohci driver.&n; *    - Added conditional debugging instead of commenting/uncommenting&n; *      all over the place.&n; *    - kfree()&squot;d the pointer after using usb_string() as documented in&n; *      linux-usb-api.txt.&n; *    - Added usb_set_configuration().  It got lost in version 0.3 -- ack!&n; *    - Added the HP 5200C USB Vendor/Product ID&squot;s.&n; *&n; *&n; *  0.3.4  1/23/2000&n; *&n; *    - Added Greg K-H&squot;s &lt;greg@kroah.com&gt; patch for better handling of &n; *      Product/Vendor detection.&n; *    - The driver now autoconfigures its endpoints including interrupt&n; *      endpoints if one is detected.  The concept was originally based&n; *      upon David Brownell&squot;s method.&n; *    - Added some Seiko/Epson ID&squot;s. Thanks to Karl Heinz &n; *      Kremer &lt;khk@khk.net&gt;.&n; *    - Added some preliminary ioctl() calls for the PV8630 which is used&n; *      by the HP4200. The ioctl()&squot;s still have to be registered. Thanks &n; *      to Adrian Perez Jorge &lt;adrianpj@easynews.com&gt;.&n; *    - Moved/migrated stuff to scanner.h&n; *    - Removed the usb_set_configuration() since this is handled by&n; *      the usb_new_device() routine in usb.c.&n; *    - Added the HP 3300C.  Thanks to Bruce Tenison.&n; *    - Changed user specified vendor/product id so that root hub doesn&squot;t&n; *      get falsely attached to. Thanks to Greg K-H.&n; *    - Added some Mustek ID&squot;s. Thanks to Gernot Hoyler &n; *      &lt;Dr.Hoyler@t-online.de&gt;.&n; *    - Modified the usb_string() reporting.  See kfree() comment above.&n; *    - Added Umax Astra 2000U. Thanks to Doug Alcorn &lt;doug@lathi.net&gt;.&n; *    - Updated the printk()&squot;s to use the info/warn/dbg macros.&n; *    - Updated usb_bulk_msg() argument types to fix gcc warnings.&n; *&n; *&n; *  0.4  2/4/2000&n; *&n; *    - Removed usb_string() from probe_scanner since the core now does a&n; *      good job of reporting what was connnected.  &n; *    - Finally, simultaneous multiple device attachment!&n; *    - Fixed some potential memory freeing issues should memory allocation&n; *      fail in probe_scanner();&n; *    - Some fixes to disconnect_scanner().&n; *    - Added interrupt endpoint support.&n; *    - Added Agfa SnapScan Touch. Thanks to Jan Van den Bergh&n; *      &lt;jan.vandenbergh@cs.kuleuven.ac.be&gt;.&n; *    - Added Umax 1220U ID&squot;s. Thanks to Maciek Klimkowski&n; *      &lt;mac@nexus.carleton.ca&gt;.&n; *    - Fixed bug in write_scanner(). The buffer was not being properly&n; *      updated for writes larger than OBUF_SIZE. Thanks to Henrik &n; *      Johansson &lt;henrikjo@post.utfors.se&gt; for identifying it.&n; *    - Added Microtek X6 ID&squot;s. Thanks to Oliver Neukum&n; *      &lt;Oliver.Neukum@lrz.uni-muenchen.de&gt;.&n; *&n; * &n; *  0.4.1  2/15/2000&n; *  &n; *    - Fixed &squot;count&squot; bug in read_scanner(). Thanks to Henrik&n; *      Johansson &lt;henrikjo@post.utfors.se&gt; for identifying it.  Amazing&n; *      it has worked this long.&n; *    - Fixed &squot;&gt;=&squot; bug in both read/write_scanner methods.&n; *    - Cleaned up both read/write_scanner() methods so that they are &n; *      a little more readable.&n; *    - Added a lot of Microtek ID&squot;s.  Thanks to Adrian Perez Jorge.&n; *    - Adopted the __initcall().&n; *    - Added #include &lt;linux/init.h&gt; to scanner.h for __initcall().&n; *    - Added one liner in irq_scanner() to keep gcc from complaining &n; *      about an unused variable (data) if debugging was disabled&n; *      in scanner.c.&n; *    - Increased the timeout parameter in read_scanner() to 120 Secs.&n; *&n; *&n; *  TODO&n; *&n; *    - Select/poll methods&n; *    - More testing&n; *    - Proper registry/assignment for LM9830 ioctl&squot;s&n; *&n; *&n; *  Thanks to:&n; *&n; *    - All the folks on the linux-usb list who put up with me. :)  This &n; *      has been a great learning experience for me.&n; *    - To Linus Torvalds for this great OS.&n; *    - The GNU folks.&n; *    - The folks that forwarded Vendor:Product ID&squot;s to me.&n; *    - Johannes Erdfelt for the loaning of a USB analyzer for tracking an&n; *      issue with HP-4100 and uhci.&n; *    - Adolfo Montero for his assistance.&n; *    - And anybody else who chimed in with reports and suggestions.&n; *&n; *  Performance:&n; *&n; *    System: Pentium 120, 80 MB RAM, OHCI, Linux 2.3.23, HP 4100C USB Scanner&n; *            300 dpi scan of the entire bed&n; *      24 Bit Color ~ 70 secs - 3.6 Mbit/sec&n; *       8 Bit Gray  ~ 17 secs - 4.2 Mbit/sec&n; */
 macro_line|#include &quot;scanner.h&quot;
 r_static
 r_void
@@ -29,6 +29,11 @@ op_assign
 op_amp
 id|scn-&gt;button
 suffix:semicolon
+id|data
+op_add_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Keep gcc from complaining about unused var */
 r_if
 c_cond
 (paren
@@ -305,17 +310,20 @@ id|bytes_written
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* Overall count of bytes written */
 id|ssize_t
 id|ret
 op_assign
 l_int|0
 suffix:semicolon
 r_int
-id|copy_size
+id|this_write
 suffix:semicolon
+multiline_comment|/* Number of bytes to write */
 r_int
 id|partial
 suffix:semicolon
+multiline_comment|/* Number of bytes successfully written */
 r_int
 id|result
 op_assign
@@ -363,11 +371,11 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|copy_size
+id|this_write
 op_assign
 (paren
 id|count
-OG
+op_ge
 id|OBUF_SIZE
 )paren
 ques
@@ -386,7 +394,7 @@ id|scn-&gt;obuf
 comma
 id|buffer
 comma
-id|copy_size
+id|this_write
 )paren
 )paren
 (brace
@@ -415,7 +423,7 @@ id|scn-&gt;bulk_out_ep
 comma
 id|obuf
 comma
-id|copy_size
+id|this_write
 comma
 op_amp
 id|partial
@@ -428,13 +436,13 @@ suffix:semicolon
 id|dbg
 c_func
 (paren
-l_string|&quot;write stats(%d): result:%d copy_size:%d partial:%d&quot;
+l_string|&quot;write stats(%d): result:%d this_write:%d partial:%d&quot;
 comma
 id|scn-&gt;scn_minor
 comma
 id|result
 comma
-id|copy_size
+id|this_write
 comma
 id|partial
 )paren
@@ -565,10 +573,10 @@ c_cond
 (paren
 id|partial
 op_ne
-id|copy_size
+id|this_write
 )paren
 (brace
-multiline_comment|/* Unable to write complete amount */
+multiline_comment|/* Unable to write all contents of obuf */
 id|ret
 op_assign
 op_minus
@@ -662,8 +670,12 @@ op_star
 id|dev
 suffix:semicolon
 id|ssize_t
-id|read_count
-comma
+id|bytes_read
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Overall count of bytes_read */
+id|ssize_t
 id|ret
 op_assign
 l_int|0
@@ -671,9 +683,11 @@ suffix:semicolon
 r_int
 id|partial
 suffix:semicolon
+multiline_comment|/* Number of bytes successfully read */
 r_int
 id|this_read
 suffix:semicolon
+multiline_comment|/* Max number of bytes to read */
 r_int
 id|result
 suffix:semicolon
@@ -693,7 +707,7 @@ id|dev
 op_assign
 id|scn-&gt;scn_dev
 suffix:semicolon
-id|read_count
+id|bytes_read
 op_assign
 l_int|0
 suffix:semicolon
@@ -725,7 +739,7 @@ id|this_read
 op_assign
 (paren
 id|count
-OG
+op_ge
 id|IBUF_SIZE
 )paren
 ques
@@ -756,7 +770,7 @@ comma
 op_amp
 id|partial
 comma
-l_int|60
+l_int|120
 op_star
 id|HZ
 )paren
@@ -915,32 +929,6 @@ id|partial
 )paren
 (brace
 multiline_comment|/* Data returned */
-id|count
-op_assign
-id|this_read
-op_assign
-id|partial
-suffix:semicolon
-)brace
-r_else
-(brace
-id|ret
-op_assign
-l_int|0
-suffix:semicolon
-id|read_count
-op_assign
-l_int|0
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|this_read
-)paren
-(brace
 r_if
 c_cond
 (paren
@@ -965,15 +953,24 @@ suffix:semicolon
 )brace
 id|count
 op_sub_assign
-id|this_read
+id|partial
 suffix:semicolon
-id|read_count
+id|bytes_read
 op_add_assign
-id|this_read
+id|partial
 suffix:semicolon
 id|buffer
 op_add_assign
-id|this_read
+id|partial
+suffix:semicolon
+)brace
+r_else
+(brace
+id|ret
+op_assign
+l_int|0
+suffix:semicolon
+r_break
 suffix:semicolon
 )brace
 )brace
@@ -983,7 +980,7 @@ ques
 c_cond
 id|ret
 suffix:colon
-id|read_count
+id|bytes_read
 suffix:semicolon
 )brace
 r_static
@@ -1078,7 +1075,7 @@ id|ifnum
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * 1. Check Vendor/Product&n; * 2. Determine/Assign Bulk Endpoints&n; * 3. Determine/Assign Intr Endpoint&n; */
-multiline_comment|/* &n; * There doesn&squot;t seem to be an imaging class defined in the USB&n; * Spec. (yet).  If there is, HP isn&squot;t following it and it doesn&squot;t&n; * look like anybody else is either.  Therefore, we have to test the&n; * Vendor and Product ID&squot;s to see what we have.  Also, other scanners&n; * may be able to use this driver by specifying both vendor and&n; * product ID&squot;s as options to the scanner module in conf.modules.&n; *&n; * NOTE: Just because a product is supported here does not mean that&n; * applications exist that support the product.  It&squot;s in the hopes&n; * that this will allow developers a means to produce applications&n; * that will support USB products.&n; *&n; * Until we detect a device which is pleasing, we silently punt.  */
+multiline_comment|/* &n; * There doesn&squot;t seem to be an imaging class defined in the USB&n; * Spec. (yet).  If there is, HP isn&squot;t following it and it doesn&squot;t&n; * look like anybody else is either.  Therefore, we have to test the&n; * Vendor and Product ID&squot;s to see what we have.  Also, other scanners&n; * may be able to use this driver by specifying both vendor and&n; * product ID&squot;s as options to the scanner module in conf.modules.&n; *&n; * NOTE: Just because a product is supported here does not mean that&n; * applications exist that support the product.  It&squot;s in the hopes&n; * that this will allow developers a means to produce applications&n; * that will support USB products.&n; *&n; * Until we detect a device which is pleasing, we silently punt.&n; */
 r_do
 (brace
 r_if
@@ -1154,6 +1151,11 @@ op_eq
 l_int|0x0001
 op_logical_or
 multiline_comment|/* SnapScan 1212U */
+id|dev-&gt;descriptor.idProduct
+op_eq
+l_int|0x2061
+op_logical_or
+multiline_comment|/* Another SnapScan 1212U (?) */
 id|dev-&gt;descriptor.idProduct
 op_eq
 l_int|0x0100
@@ -1271,9 +1273,39 @@ c_cond
 id|dev-&gt;descriptor.idProduct
 op_eq
 l_int|0x0099
+op_logical_or
+multiline_comment|/* ScanMaker X6 - X6U */
+id|dev-&gt;descriptor.idProduct
+op_eq
+l_int|0x0094
+op_logical_or
+multiline_comment|/* Phantom 336CX - C3 */
+id|dev-&gt;descriptor.idProduct
+op_eq
+l_int|0x00a0
+op_logical_or
+multiline_comment|/* Phantom 336CX - C3 #2 */
+id|dev-&gt;descriptor.idProduct
+op_eq
+l_int|0x009a
+op_logical_or
+multiline_comment|/* Phantom C6 */
+id|dev-&gt;descriptor.idProduct
+op_eq
+l_int|0x00a3
+op_logical_or
+multiline_comment|/* ScanMaker V6USL */
+id|dev-&gt;descriptor.idProduct
+op_eq
+l_int|0x80a3
+op_logical_or
+multiline_comment|/* ScanMaker V6USL #2 */
+id|dev-&gt;descriptor.idProduct
+op_eq
+l_int|0x80ac
 )paren
 (brace
-multiline_comment|/* X6 */
+multiline_comment|/* ScanMaker V6UL - SpicyU */
 id|valid_device
 op_assign
 l_int|1
@@ -2393,26 +2425,36 @@ id|file_operations
 id|usb_scanner_fops
 op_assign
 (brace
-id|read
-suffix:colon
+l_int|NULL
+comma
+multiline_comment|/* seek */
 id|read_scanner
 comma
-id|write
-suffix:colon
 id|write_scanner
 comma
-id|ioctl
-suffix:colon
+l_int|NULL
+comma
+multiline_comment|/* readdir */
+l_int|NULL
+comma
+multiline_comment|/* poll */
 id|ioctl_scanner
 comma
-id|open
-suffix:colon
+l_int|NULL
+comma
+multiline_comment|/* mmap */
 id|open_scanner
 comma
-id|release
-suffix:colon
+l_int|NULL
+comma
+multiline_comment|/* flush */
 id|close_scanner
 comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+multiline_comment|/* fasync */
 )brace
 suffix:semicolon
 r_static
@@ -2440,13 +2482,38 @@ comma
 id|SCN_BASE_MNR
 )brace
 suffix:semicolon
+macro_line|#ifdef MODULE
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+id|usb_deregister
+c_func
+(paren
+op_amp
+id|scanner_driver
+)paren
+suffix:semicolon
+)brace
+DECL|function|init_module
 r_int
-DECL|function|usb_scanner_init
+id|init_module
+c_func
+(paren
+r_void
+)paren
+macro_line|#else
+r_int
 id|usb_scanner_init
 c_func
 (paren
 r_void
 )paren
+macro_line|#endif
 (brace
 r_if
 c_cond
@@ -2474,37 +2541,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-r_int
-DECL|function|init_module
-id|init_module
+DECL|variable|usb_scanner_init
+id|__initcall
 c_func
 (paren
-r_void
-)paren
-(brace
-r_return
 id|usb_scanner_init
-c_func
-(paren
 )paren
 suffix:semicolon
-)brace
-r_void
-DECL|function|cleanup_module
-id|cleanup_module
-c_func
-(paren
-r_void
-)paren
-(brace
-id|usb_deregister
-c_func
-(paren
-op_amp
-id|scanner_driver
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 eof

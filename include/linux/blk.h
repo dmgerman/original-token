@@ -345,6 +345,52 @@ r_void
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n; * end_request() and friends. Must be called with the request queue spinlock&n; * acquired. All functions called within end_request() _must_be_ atomic.&n; *&n; * Several drivers define their own end_request and call&n; * end_that_request_first() and end_that_request_last()&n; * for parts of the original function. This prevents&n; * code duplication in drivers.&n; */
+DECL|function|blkdev_dequeue_request
+r_extern
+r_inline
+r_void
+id|blkdev_dequeue_request
+c_func
+(paren
+r_struct
+id|request
+op_star
+id|req
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|req-&gt;q
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|req-&gt;cmd
+op_eq
+id|READ
+)paren
+id|req-&gt;q-&gt;elevator.read_pendings
+op_decrement
+suffix:semicolon
+id|req-&gt;q-&gt;nr_segments
+op_sub_assign
+id|req-&gt;nr_segments
+suffix:semicolon
+id|req-&gt;q
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
+id|list_del
+c_func
+(paren
+op_amp
+id|req-&gt;queue
+)paren
+suffix:semicolon
+)brace
 r_int
 id|end_that_request_first
 c_func
@@ -750,7 +796,11 @@ macro_line|#if (MAJOR_NR != SCSI_TAPE_MAJOR)
 macro_line|#if !defined(IDE_DRIVER)
 macro_line|#ifndef CURRENT
 DECL|macro|CURRENT
-mdefine_line|#define CURRENT (blk_dev[MAJOR_NR].request_queue.current_request)
+mdefine_line|#define CURRENT blkdev_entry_next_request(&amp;blk_dev[MAJOR_NR].request_queue.queue_head)
+macro_line|#endif
+macro_line|#ifndef QUEUE_EMPTY
+DECL|macro|QUEUE_EMPTY
+mdefine_line|#define QUEUE_EMPTY list_empty(&amp;blk_dev[MAJOR_NR].request_queue.queue_head)
 macro_line|#endif
 macro_line|#ifndef DEVICE_NAME
 DECL|macro|DEVICE_NAME
@@ -804,7 +854,7 @@ DECL|macro|CLEAR_INTR
 mdefine_line|#define CLEAR_INTR
 macro_line|#endif
 DECL|macro|INIT_REQUEST
-mdefine_line|#define INIT_REQUEST &bslash;&n;&t;if (!CURRENT) {&bslash;&n;&t;&t;CLEAR_INTR; &bslash;&n;&t;&t;return; &bslash;&n;&t;} &bslash;&n;&t;if (MAJOR(CURRENT-&gt;rq_dev) != MAJOR_NR) &bslash;&n;&t;&t;panic(DEVICE_NAME &quot;: request list destroyed&quot;); &bslash;&n;&t;if (CURRENT-&gt;bh) { &bslash;&n;&t;&t;if (!buffer_locked(CURRENT-&gt;bh)) &bslash;&n;&t;&t;&t;panic(DEVICE_NAME &quot;: block not locked&quot;); &bslash;&n;&t;}
+mdefine_line|#define INIT_REQUEST &bslash;&n;&t;if (QUEUE_EMPTY) {&bslash;&n;&t;&t;CLEAR_INTR; &bslash;&n;&t;&t;return; &bslash;&n;&t;} &bslash;&n;&t;if (MAJOR(CURRENT-&gt;rq_dev) != MAJOR_NR) &bslash;&n;&t;&t;panic(DEVICE_NAME &quot;: request list destroyed&quot;); &bslash;&n;&t;if (CURRENT-&gt;bh) { &bslash;&n;&t;&t;if (!buffer_locked(CURRENT-&gt;bh)) &bslash;&n;&t;&t;&t;panic(DEVICE_NAME &quot;: block not locked&quot;); &bslash;&n;&t;}
 macro_line|#endif /* !defined(IDE_DRIVER) */
 macro_line|#ifndef LOCAL_END_REQUEST&t;/* If we have our own end_request, we do not want to include this mess */
 macro_line|#if ! SCSI_BLK_MAJOR(MAJOR_NR) &amp;&amp; (MAJOR_NR != COMPAQ_SMART2_MAJOR)
@@ -858,9 +908,11 @@ c_func
 id|req-&gt;rq_dev
 )paren
 suffix:semicolon
-id|CURRENT
-op_assign
-id|req-&gt;next
+id|blkdev_dequeue_request
+c_func
+(paren
+id|req
+)paren
 suffix:semicolon
 id|end_that_request_last
 c_func

@@ -4004,10 +4004,7 @@ suffix:colon
 r_if
 c_cond
 (paren
-(paren
-op_logical_neg
-id|CURRENT
-)paren
+id|QUEUE_EMPTY
 op_logical_or
 (paren
 id|CURRENT-&gt;rq_status
@@ -4121,7 +4118,11 @@ op_logical_and
 (paren
 id|req
 op_assign
-id|req-&gt;next
+id|blkdev_next_request
+c_func
+(paren
+id|req
+)paren
 )paren
 op_logical_and
 (paren
@@ -4276,10 +4277,7 @@ multiline_comment|/* paranoia */
 r_if
 c_cond
 (paren
-(paren
-op_logical_neg
-id|CURRENT
-)paren
+id|QUEUE_EMPTY
 op_logical_or
 (paren
 id|CURRENT-&gt;cmd

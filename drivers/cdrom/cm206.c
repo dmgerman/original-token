@@ -2993,9 +2993,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|CURRENT
-op_eq
-l_int|NULL
+id|QUEUE_EMPTY
 op_logical_or
 id|CURRENT-&gt;rq_status
 op_eq

@@ -480,7 +480,8 @@ id|devc
 suffix:semicolon
 id|devc
 op_assign
-id|CURRENT
+op_logical_neg
+id|QUEUE_EMPTY
 ques
 c_cond
 l_char|&squot;a&squot;
@@ -808,7 +809,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|CURRENT
+op_logical_neg
+id|QUEUE_EMPTY
 )paren
 id|printk
 c_func
@@ -1702,8 +1704,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|CURRENT
+id|QUEUE_EMPTY
 )paren
 r_return
 suffix:semicolon
@@ -2047,7 +2048,8 @@ macro_line|#endif
 r_if
 c_cond
 (paren
-id|CURRENT
+op_logical_neg
+id|QUEUE_EMPTY
 )paren
 id|hd_request
 c_func
@@ -2297,8 +2299,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|CURRENT
+id|QUEUE_EMPTY
 )paren
 r_return
 suffix:semicolon
@@ -2502,7 +2503,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|CURRENT
+op_logical_neg
+id|QUEUE_EMPTY
 op_logical_and
 id|CURRENT-&gt;rq_status
 op_eq

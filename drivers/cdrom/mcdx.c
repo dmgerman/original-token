@@ -2212,9 +2212,7 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|CURRENT
-op_eq
-l_int|NULL
+id|QUEUE_EMPTY
 )paren
 (brace
 id|xtrace

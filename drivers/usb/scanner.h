@@ -2,11 +2,13 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/ioctl.h&gt;
 singleline_comment|// #define DEBUG
 macro_line|#include &quot;usb.h&quot;
+multiline_comment|/* WARNING: These DATA_DUMP&squot;s can produce a lot of data. Caveat Emptor. */
 singleline_comment|// #define RD_DATA_DUMP /* Enable to dump data - limited to 24 bytes */
 singleline_comment|// #define WR_DATA_DUMP /* DEBUG does not have to be defined. */
 DECL|macro|IS_EP_BULK

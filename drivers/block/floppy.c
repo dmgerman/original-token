@@ -9464,8 +9464,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|CURRENT
+id|QUEUE_EMPTY
 )paren
 (brace
 id|DPRINT
@@ -9515,7 +9514,8 @@ c_loop
 (paren
 id|current_count_sectors
 op_logical_and
-id|CURRENT
+op_logical_neg
+id|QUEUE_EMPTY
 op_logical_and
 id|current_count_sectors
 op_ge
@@ -9546,7 +9546,8 @@ c_cond
 (paren
 id|current_count_sectors
 op_logical_and
-id|CURRENT
+op_logical_neg
+id|QUEUE_EMPTY
 )paren
 (brace
 multiline_comment|/* &quot;unlock&quot; last subsector */
@@ -9576,8 +9577,7 @@ c_cond
 (paren
 id|current_count_sectors
 op_logical_and
-op_logical_neg
-id|CURRENT
+id|QUEUE_EMPTY
 )paren
 id|DPRINT
 c_func
@@ -12238,7 +12238,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|CURRENT
+op_logical_neg
+id|QUEUE_EMPTY
 op_logical_and
 id|CURRENT-&gt;rq_status
 op_eq
@@ -12264,8 +12265,7 @@ l_int|1
 r_if
 c_cond
 (paren
-op_logical_neg
-id|CURRENT
+id|QUEUE_EMPTY
 )paren
 (brace
 id|CLEAR_INTR

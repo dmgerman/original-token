@@ -2328,10 +2328,7 @@ multiline_comment|/*&n;&t;&t; * The beginning here is stolen from the hard disk 
 r_if
 c_cond
 (paren
-op_logical_neg
-(paren
-id|CURRENT
-)paren
+id|QUEUE_EMPTY
 op_logical_or
 id|CURRENT-&gt;rq_status
 op_eq

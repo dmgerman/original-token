@@ -5,11 +5,30 @@ macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/tqueue.h&gt;
+macro_line|#include &lt;linux/list.h&gt;
+r_struct
+id|request_queue
+suffix:semicolon
+DECL|typedef|request_queue_t
+r_typedef
+r_struct
+id|request_queue
+id|request_queue_t
+suffix:semicolon
 multiline_comment|/*&n; * Ok, this is an expanded form so that we can use the same&n; * request for paging requests when that is implemented. In&n; * paging, &squot;bh&squot; is NULL, and the semaphore is used to wait&n; * for read/write completion.&n; */
 DECL|struct|request
 r_struct
 id|request
 (brace
+DECL|member|queue
+r_struct
+id|list_head
+id|queue
+suffix:semicolon
+DECL|member|elevator_sequence
+r_int
+id|elevator_sequence
+suffix:semicolon
 DECL|member|rq_status
 r_volatile
 r_int
@@ -92,19 +111,12 @@ id|buffer_head
 op_star
 id|bhtail
 suffix:semicolon
-DECL|member|next
-r_struct
-id|request
+DECL|member|q
+id|request_queue_t
 op_star
-id|next
+id|q
 suffix:semicolon
 )brace
-suffix:semicolon
-DECL|typedef|request_queue_t
-r_typedef
-r_struct
-id|request_queue
-id|request_queue_t
 suffix:semicolon
 DECL|typedef|merge_request_fn
 r_typedef
@@ -126,6 +138,8 @@ r_struct
 id|buffer_head
 op_star
 id|bh
+comma
+r_int
 )paren
 suffix:semicolon
 DECL|typedef|merge_requests_fn
@@ -148,6 +162,8 @@ r_struct
 id|request
 op_star
 id|req2
+comma
+r_int
 )paren
 suffix:semicolon
 DECL|typedef|request_fn_proc
@@ -217,25 +233,68 @@ op_star
 id|q
 )paren
 suffix:semicolon
+DECL|struct|elevator_s
+r_typedef
+r_struct
+id|elevator_s
+(brace
+DECL|member|sequence
+r_int
+id|sequence
+suffix:semicolon
+DECL|member|read_latency
+r_int
+id|read_latency
+suffix:semicolon
+DECL|member|write_latency
+r_int
+id|write_latency
+suffix:semicolon
+DECL|member|max_bomb_segments
+r_int
+id|max_bomb_segments
+suffix:semicolon
+DECL|member|read_pendings
+r_int
+id|read_pendings
+suffix:semicolon
+DECL|typedef|elevator_t
+)brace
+id|elevator_t
+suffix:semicolon
 DECL|struct|request_queue
 r_struct
 id|request_queue
 (brace
-DECL|member|current_request
+DECL|member|queue_head
 r_struct
-id|request
-op_star
-id|current_request
+id|list_head
+id|queue_head
+suffix:semicolon
+multiline_comment|/* together with queue_head for cacheline sharing */
+DECL|member|elevator
+id|elevator_t
+id|elevator
+suffix:semicolon
+DECL|member|nr_segments
+r_int
+r_int
+id|nr_segments
 suffix:semicolon
 DECL|member|request_fn
 id|request_fn_proc
 op_star
 id|request_fn
 suffix:semicolon
-DECL|member|merge_fn
+DECL|member|back_merge_fn
 id|merge_request_fn
 op_star
-id|merge_fn
+id|back_merge_fn
+suffix:semicolon
+DECL|member|front_merge_fn
+id|merge_request_fn
+op_star
+id|front_merge_fn
 suffix:semicolon
 DECL|member|merge_requests_fn
 id|merge_requests_fn
@@ -542,5 +601,17 @@ DECL|macro|MAX_READAHEAD
 mdefine_line|#define MAX_READAHEAD&t;31
 DECL|macro|MIN_READAHEAD
 mdefine_line|#define MIN_READAHEAD&t;3
+DECL|macro|ELEVATOR_DEFAULTS
+mdefine_line|#define ELEVATOR_DEFAULTS ((elevator_t) { 0, NR_REQUEST&gt;&gt;1, NR_REQUEST&lt;&lt;5, 4, 0, })
+DECL|macro|blkdev_entry_to_request
+mdefine_line|#define blkdev_entry_to_request(entry) list_entry((entry), struct request, queue)
+DECL|macro|blkdev_entry_next_request
+mdefine_line|#define blkdev_entry_next_request(entry) blkdev_entry_to_request((entry)-&gt;next)
+DECL|macro|blkdev_entry_prev_request
+mdefine_line|#define blkdev_entry_prev_request(entry) blkdev_entry_to_request((entry)-&gt;prev)
+DECL|macro|blkdev_next_request
+mdefine_line|#define blkdev_next_request(req) blkdev_entry_to_request((req)-&gt;queue.next)
+DECL|macro|blkdev_prev_request
+mdefine_line|#define blkdev_prev_request(req) blkdev_entry_to_request((req)-&gt;queue.prev)
 macro_line|#endif
 eof

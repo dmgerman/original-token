@@ -3486,7 +3486,7 @@ suffix:semicolon
 "&f;"
 multiline_comment|/* Request handling */
 DECL|macro|CURRENT_VALID
-mdefine_line|#define CURRENT_VALID &bslash;&n;&t;(CURRENT &amp;&amp; MAJOR(CURRENT -&gt; rq_dev) == MAJOR_NR &bslash;&n;&t; &amp;&amp; CURRENT -&gt; cmd == READ &amp;&amp; CURRENT -&gt; sector != -1)
+mdefine_line|#define CURRENT_VALID &bslash;&n;&t;(!QUEUE_EMPTY &amp;&amp; MAJOR(CURRENT -&gt; rq_dev) == MAJOR_NR &bslash;&n;&t; &amp;&amp; CURRENT -&gt; cmd == READ &amp;&amp; CURRENT -&gt; sector != -1)
 multiline_comment|/* Buffers for block size conversion. */
 DECL|macro|NOBUF
 mdefine_line|#define NOBUF&t;&t;-1

@@ -3763,10 +3763,7 @@ l_int|1
 r_if
 c_cond
 (paren
-(paren
-op_logical_neg
-id|CURRENT
-)paren
+id|QUEUE_EMPTY
 op_logical_or
 (paren
 id|CURRENT-&gt;rq_status

@@ -1498,7 +1498,8 @@ suffix:semicolon
 r_while
 c_loop
 (paren
-id|CURRENT
+op_logical_neg
+id|QUEUE_EMPTY
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; *&t;On an IRQ completion if there is an inactive&n;&t;&t; *&t;request on the queue head it means it isnt yet&n;&t;&t; *&t;ready to dispatch.&n;&t;&t; */
@@ -1616,13 +1617,11 @@ id|req-&gt;errors
 op_assign
 l_int|0
 suffix:semicolon
-id|CURRENT
-op_assign
-id|CURRENT-&gt;next
-suffix:semicolon
-id|req-&gt;next
-op_assign
-l_int|NULL
+id|blkdev_dequeue_request
+c_func
+(paren
+id|req
+)paren
 suffix:semicolon
 id|req-&gt;sem
 op_assign

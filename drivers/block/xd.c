@@ -1223,7 +1223,8 @@ id|code
 op_assign
 l_int|0
 comma
-id|CURRENT
+op_logical_neg
+id|QUEUE_EMPTY
 )paren
 (brace
 id|INIT_REQUEST

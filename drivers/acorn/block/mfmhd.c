@@ -2764,8 +2764,7 @@ multiline_comment|/* Turns Drive LEDs off - may slow it down? */
 r_if
 c_cond
 (paren
-op_logical_neg
-id|CURRENT
+id|QUEUE_EMPTY
 )paren
 id|issue_command
 c_func
@@ -3366,8 +3365,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|CURRENT
+id|QUEUE_EMPTY
 )paren
 (brace
 id|DBG
@@ -3448,8 +3446,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|CURRENT
+id|QUEUE_EMPTY
 )paren
 (brace
 id|printk

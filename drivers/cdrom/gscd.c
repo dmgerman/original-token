@@ -837,10 +837,7 @@ suffix:colon
 r_if
 c_cond
 (paren
-op_logical_neg
-(paren
-id|CURRENT
-)paren
+id|QUEUE_EMPTY
 op_logical_or
 id|CURRENT-&gt;rq_status
 op_eq
@@ -869,9 +866,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|CURRENT
-op_eq
-l_int|NULL
+id|QUEUE_EMPTY
 op_logical_or
 id|CURRENT
 op_member_access_from_pointer

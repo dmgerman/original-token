@@ -29,10 +29,6 @@ DECL|macro|LP_NO_REVERSE
 mdefine_line|#define LP_NO_REVERSE  0x0400 /* No reverse mode available. */
 DECL|macro|LP_DATA_AVAIL
 mdefine_line|#define LP_DATA_AVAIL  0x0800 /* Data is available. */
-DECL|macro|LP_HAVE_PORT_BIT
-mdefine_line|#define LP_HAVE_PORT_BIT   12 /* (0x1000) Port is claimed. */
-DECL|macro|LP_PORT_BUSY
-mdefine_line|#define LP_PORT_BUSY   (1&lt;&lt;13) /* Reading or writing. */
 multiline_comment|/* &n; * bit defines for 8255 status port&n; * base + 1&n; * accessed with LP_S(minor), which gets the byte...&n; */
 DECL|macro|LP_PBUSY
 mdefine_line|#define LP_PBUSY&t;0x80  /* inverted input, active high */

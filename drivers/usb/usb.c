@@ -2029,7 +2029,7 @@ id|status
 suffix:semicolon
 )brace
 multiline_comment|/*-------------------------------------------------------------------*/
-singleline_comment|// returns status (negative) are length (positive)
+singleline_comment|// returns status (negative) or length (positive)
 DECL|function|usb_internal_control_msg
 r_int
 id|usb_internal_control_msg

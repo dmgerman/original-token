@@ -2045,7 +2045,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|CURRENT
+op_logical_neg
+id|QUEUE_EMPTY
 )paren
 id|do_ps2esdi_request
 c_func
@@ -2202,7 +2203,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|CURRENT
+op_logical_neg
+id|QUEUE_EMPTY
 )paren
 id|do_ps2esdi_request
 c_func
@@ -2248,7 +2250,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|CURRENT
+op_logical_neg
+id|QUEUE_EMPTY
 )paren
 id|do_ps2esdi_request
 c_func
@@ -2588,7 +2591,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|CURRENT
+op_logical_neg
+id|QUEUE_EMPTY
 )paren
 id|do_ps2esdi_request
 c_func
@@ -4368,7 +4372,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|CURRENT
+op_logical_neg
+id|QUEUE_EMPTY
 )paren
 id|do_ps2esdi_request
 c_func
@@ -4607,7 +4612,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|CURRENT
+op_logical_neg
+id|QUEUE_EMPTY
 )paren
 id|do_ps2esdi_request
 c_func
@@ -4658,7 +4664,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|CURRENT
+op_logical_neg
+id|QUEUE_EMPTY
 )paren
 id|do_ps2esdi_request
 c_func
@@ -4818,7 +4825,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|CURRENT
+op_logical_neg
+id|QUEUE_EMPTY
 )paren
 id|do_ps2esdi_request
 c_func
