@@ -1850,9 +1850,6 @@ id|regs
 )paren
 (brace
 r_int
-id|i
-suffix:semicolon
-r_int
 id|nr
 suffix:semicolon
 r_int
@@ -2074,6 +2071,10 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#ifdef __SMP__
+(brace
+r_int
+id|i
+suffix:semicolon
 id|p-&gt;has_cpu
 op_assign
 l_int|0
@@ -2110,6 +2111,7 @@ id|i
 op_assign
 l_int|0
 suffix:semicolon
+)brace
 )brace
 macro_line|#endif
 id|p-&gt;lock_depth

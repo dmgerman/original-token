@@ -104,6 +104,8 @@ DECL|macro|SMB_FIX_WIN95
 mdefine_line|#define SMB_FIX_WIN95&t;0x0001&t;/* Win 95 server */
 DECL|macro|SMB_FIX_OLDATTR
 mdefine_line|#define SMB_FIX_OLDATTR&t;0x0002&t;/* Use core getattr (Win 95 speedup) */
+DECL|macro|SMB_FIX_DIRATTR
+mdefine_line|#define SMB_FIX_DIRATTR&t;0x0004&t;/* Use find_first for getattr */
 multiline_comment|/* linux/fs/smbfs/mmap.c */
 r_int
 id|smb_mmap
@@ -203,15 +205,6 @@ c_func
 (paren
 r_struct
 id|dentry
-op_star
-)paren
-suffix:semicolon
-r_int
-id|smb_refresh_inode
-c_func
-(paren
-r_struct
-id|inode
 op_star
 )paren
 suffix:semicolon
@@ -374,7 +367,7 @@ id|smb_proc_read
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
 comma
 id|off_t
@@ -390,7 +383,7 @@ id|smb_proc_write
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
 comma
 id|off_t

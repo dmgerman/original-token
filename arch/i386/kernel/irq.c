@@ -135,33 +135,13 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#else
-multiline_comment|/*&n;&t; * the timer interrupt is not connected to the IO-APIC on all boards&n;&t; * (mine is such ;), and since it is not performance critical anyway,&n;&t; * we route it through the INTA pin and win lots of design simplicity.&n;&t; * Ditto the obsolete EISA dma chaining irq. All other interrupts are&n;&t; * routed through the IO-APIC, distributed amongst all CPUs, dependent&n;&t; * on irq traffic and CPU load.&n;&t; */
+multiline_comment|/*&n;   * Default to all normal IRQ&squot;s _not_ using the IO APIC.&n;   *&n;   * To get IO-APIC interrupts you should either:&n;   *  - turn some of them into IO-APIC interrupts at runtime&n;   *    with some magic system call interface.&n;   *  - explicitly use irq 16-19 depending on which PCI irq&n;   *    line your PCI controller uses.&n;   */
 DECL|variable|io_apic_irqs
-r_const
 r_int
 r_int
 id|io_apic_irqs
 op_assign
-op_complement
-(paren
-(paren
-l_int|1
-op_lshift
-l_int|0
-)paren
-op_or
-(paren
-l_int|1
-op_lshift
-l_int|2
-)paren
-op_or
-(paren
-l_int|1
-op_lshift
-l_int|13
-)paren
-)paren
+l_int|0xFF0000
 suffix:semicolon
 macro_line|#endif
 DECL|function|ack_irq
@@ -335,24 +315,15 @@ r_int
 id|irq
 )paren
 (brace
+multiline_comment|/*&n;&t; * (it might happen that we see IRQ&gt;15 on a UP box, with SMP&n;&t; * emulation)&n;&t; */
 r_if
 c_cond
 (paren
 id|irq
-op_ge
+OL
 l_int|16
 )paren
 (brace
-id|printk
-(paren
-l_string|&quot;HUH #3 (%d)?&bslash;n&quot;
-comma
-id|irq
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -380,6 +351,7 @@ comma
 l_int|0x21
 )paren
 suffix:semicolon
+)brace
 )brace
 )brace
 multiline_comment|/*&n; * These have to be protected by the spinlock&n; * before being called.&n; */
@@ -977,13 +949,11 @@ id|p
 comma
 l_string|&quot;%10u &quot;
 comma
-id|kstat.interrupts
-(braket
-l_int|0
-)braket
-(braket
+id|kstat_irqs
+c_func
+(paren
 id|i
-)braket
+)paren
 )paren
 suffix:semicolon
 macro_line|#else
@@ -1010,12 +980,13 @@ id|p
 comma
 l_string|&quot;%10u &quot;
 comma
-id|kstat.interrupts
+id|kstat.irqs
 (braket
 id|cpu_logical_map
-(braket
+c_func
+(paren
 id|j
-)braket
+)paren
 )braket
 (braket
 id|i
@@ -1921,7 +1892,7 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-id|kstat.interrupts
+id|kstat.irqs
 (braket
 id|cpu
 )braket
@@ -1949,7 +1920,6 @@ c_cond
 id|action
 )paren
 (brace
-macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -1965,7 +1935,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif
 r_do
 (brace
 id|status
@@ -3015,7 +2984,7 @@ c_func
 (paren
 id|probe_irqs
 comma
-id|kstat.interrupts
+id|kstat.irqs
 comma
 id|NR_CPUS
 op_star
@@ -3140,7 +3109,7 @@ op_increment
 r_if
 c_cond
 (paren
-id|kstat.interrupts
+id|kstat.irqs
 (braket
 id|j
 )braket
@@ -3225,7 +3194,7 @@ op_increment
 (brace
 id|sum
 op_add_assign
-id|kstat.interrupts
+id|kstat.irqs
 (braket
 id|j
 )braket

@@ -1087,6 +1087,7 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* END OF OBSOLETE FUNCTIONS */
+multiline_comment|/*&n; * Note: requires bh_atomic locking.&n; */
 DECL|function|arp_bind_neighbour
 r_int
 id|arp_bind_neighbour
@@ -2587,7 +2588,7 @@ id|neigh
 r_int
 id|state
 op_assign
-l_int|0
+id|NUD_STALE
 suffix:semicolon
 r_if
 c_cond
@@ -2599,11 +2600,6 @@ id|ATF_PERM
 id|state
 op_assign
 id|NUD_PERMANENT
-suffix:semicolon
-r_else
-id|state
-op_assign
-id|NUD_STALE
 suffix:semicolon
 id|err
 op_assign
@@ -2727,8 +2723,21 @@ r_struct
 id|neighbour
 op_star
 id|neigh
+suffix:semicolon
+r_int
+id|err
 op_assign
-id|neigh_lookup
+op_minus
+id|ENXIO
+suffix:semicolon
+id|start_bh_atomic
+c_func
+(paren
+)paren
+suffix:semicolon
+id|neigh
+op_assign
+id|__neigh_lookup
 c_func
 (paren
 op_amp
@@ -2738,6 +2747,8 @@ op_amp
 id|ip
 comma
 id|dev
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_if
@@ -2787,13 +2798,18 @@ c_func
 id|neigh
 )paren
 suffix:semicolon
-r_return
+id|err
+op_assign
 l_int|0
 suffix:semicolon
 )brace
+id|end_bh_atomic
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
-op_minus
-id|ENXIO
+id|err
 suffix:semicolon
 )brace
 DECL|function|arp_req_delete
@@ -2948,7 +2964,7 @@ c_func
 suffix:semicolon
 id|neigh
 op_assign
-id|neigh_lookup
+id|__neigh_lookup
 c_func
 (paren
 op_amp
@@ -2958,6 +2974,8 @@ op_amp
 id|ip
 comma
 id|dev
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_if
@@ -3223,6 +3241,32 @@ r_goto
 id|out
 suffix:semicolon
 )brace
+r_else
+r_if
+c_cond
+(paren
+id|cmd
+op_ne
+id|SIOCSARP
+)paren
+(brace
+multiline_comment|/* dev has not been set ... */
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;arp_ioctl: invalid, null device&bslash;n&quot;
+)paren
+suffix:semicolon
+id|err
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
+)brace
 r_switch
 c_cond
 (paren
@@ -3248,6 +3292,7 @@ suffix:semicolon
 r_case
 id|SIOCSARP
 suffix:colon
+multiline_comment|/* This checks for dev == NULL */
 id|err
 op_assign
 id|arp_req_set

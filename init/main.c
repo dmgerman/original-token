@@ -4101,14 +4101,6 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#else
-r_extern
-r_void
-id|setup_IO_APIC
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 multiline_comment|/*&n; *&t;Multiprocessor idle thread is in arch/...&n; */
 r_extern
 r_int
@@ -4568,11 +4560,6 @@ l_string|&quot;POSIX conformance testing by UNIFIX&bslash;n&quot;
 suffix:semicolon
 macro_line|#ifdef __SMP__
 id|smp_init
-c_func
-(paren
-)paren
-suffix:semicolon
-id|setup_IO_APIC
 c_func
 (paren
 )paren

@@ -688,7 +688,14 @@ suffix:semicolon
 macro_line|#if 1 /* This needs benchmarking and real world tests */
 id|space
 op_assign
+(paren
+id|sk-&gt;dst_cache
+ques
+c_cond
 id|sk-&gt;dst_cache-&gt;pmtu
+suffix:colon
+id|sk-&gt;mss
+)paren
 op_plus
 l_int|128
 suffix:semicolon
@@ -904,7 +911,7 @@ r_default
 suffix:colon
 r_return
 op_minus
-id|EINVAL
+id|ENOIOCTLCMD
 suffix:semicolon
 )brace
 suffix:semicolon

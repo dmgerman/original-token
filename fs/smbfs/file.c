@@ -121,13 +121,6 @@ op_star
 id|page
 )paren
 (brace
-r_struct
-id|inode
-op_star
-id|inode
-op_assign
-id|dentry-&gt;d_inode
-suffix:semicolon
 r_char
 op_star
 id|buffer
@@ -154,10 +147,10 @@ op_assign
 id|smb_get_rsize
 c_func
 (paren
-id|SMB_SERVER
+id|server_from_dentry
 c_func
 (paren
-id|inode
+id|dentry
 )paren
 )paren
 suffix:semicolon
@@ -250,7 +243,7 @@ op_assign
 id|smb_proc_read
 c_func
 (paren
-id|inode
+id|dentry
 comma
 id|offset
 comma
@@ -281,7 +274,7 @@ id|buffer
 op_add_assign
 id|result
 suffix:semicolon
-id|inode-&gt;i_atime
+id|dentry-&gt;d_inode-&gt;i_atime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
@@ -482,10 +475,10 @@ op_assign
 id|smb_get_wsize
 c_func
 (paren
-id|SMB_SERVER
+id|server_from_dentry
 c_func
 (paren
-id|inode
+id|dentry
 )paren
 )paren
 suffix:semicolon
@@ -536,7 +529,7 @@ op_assign
 id|smb_proc_write
 c_func
 (paren
-id|inode
+id|dentry
 comma
 id|offset
 comma

@@ -141,10 +141,10 @@ id|NR_CPUS
 )braket
 suffix:semicolon
 multiline_comment|/* which CPU maps to which logical number&t;&t;*/
-DECL|variable|cpu_logical_map
+DECL|variable|__cpu_logical_map
 r_volatile
 r_int
-id|cpu_logical_map
+id|__cpu_logical_map
 (braket
 id|NR_CPUS
 )braket
@@ -1814,7 +1814,7 @@ op_lshift
 l_int|24
 suffix:semicolon
 multiline_comment|/* Dummy &squot;self&squot; for bootup */
-id|cpu_logical_map
+id|__cpu_logical_map
 (braket
 l_int|0
 )braket
@@ -2413,7 +2413,7 @@ id|idle-&gt;processor
 op_assign
 id|i
 suffix:semicolon
-id|cpu_logical_map
+id|__cpu_logical_map
 (braket
 id|cpucount
 )braket
@@ -3092,7 +3092,7 @@ id|i
 op_assign
 id|cpucount
 suffix:semicolon
-id|cpu_logical_map
+id|__cpu_logical_map
 (braket
 id|cpucount
 )braket
@@ -3340,6 +3340,10 @@ c_func
 id|KERN_NOTICE
 l_string|&quot;SMP motherboard not detected. Using dummy APIC emulation.&bslash;n&quot;
 )paren
+suffix:semicolon
+id|io_apic_irqs
+op_assign
+l_int|0
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -3815,6 +3819,12 @@ c_func
 (paren
 l_string|&quot;Boot done.&bslash;n&quot;
 )paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Here we can be sure that there is an IO-APIC in the system, lets&n;&t; * go and set it up:&n;&t; */
+id|setup_IO_APIC
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace

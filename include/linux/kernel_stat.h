@@ -2,6 +2,7 @@ macro_line|#ifndef _LINUX_KERNEL_STAT_H
 DECL|macro|_LINUX_KERNEL_STAT_H
 mdefine_line|#define _LINUX_KERNEL_STAT_H
 macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/tasks.h&gt;
 multiline_comment|/*&n; * &squot;kernel_stat.h&squot; contains the definitions needed for doing&n; * some kernel statistics (cpu usage, context switches ...),&n; * used by rstatd/perfmeter&n; */
@@ -98,10 +99,10 @@ id|pswpin
 comma
 id|pswpout
 suffix:semicolon
-DECL|member|interrupts
+DECL|member|irqs
 r_int
 r_int
-id|interrupts
+id|irqs
 (braket
 id|NR_CPUS
 )braket
@@ -142,5 +143,55 @@ r_struct
 id|kernel_stat
 id|kstat
 suffix:semicolon
+multiline_comment|/*&n; * Number of interrupts per specific IRQ source, since bootup&n; */
+DECL|function|kstat_irqs
+r_extern
+r_inline
+r_int
+id|kstat_irqs
+(paren
+r_int
+id|irq
+)paren
+(brace
+r_int
+id|i
+comma
+id|sum
+op_assign
+l_int|0
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|smp_num_cpus
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|sum
+op_add_assign
+id|kstat.irqs
+(braket
+id|cpu_logical_map
+c_func
+(paren
+id|i
+)paren
+)braket
+(braket
+id|irq
+)braket
+suffix:semicolon
+r_return
+id|sum
+suffix:semicolon
+)brace
 macro_line|#endif /* _LINUX_KERNEL_STAT_H */
 eof

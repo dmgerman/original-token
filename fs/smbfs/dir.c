@@ -1298,11 +1298,6 @@ c_cond
 id|inode
 )paren
 (brace
-multiline_comment|/* cache the dentry pointer */
-id|inode-&gt;u.smbfs_i.dentry
-op_assign
-id|dentry
-suffix:semicolon
 id|add_entry
 suffix:colon
 id|dentry-&gt;d_op
@@ -1371,12 +1366,12 @@ id|inode
 op_star
 id|inode
 suffix:semicolon
+r_int
+id|error
+suffix:semicolon
 r_struct
 id|smb_fattr
 id|fattr
-suffix:semicolon
-r_int
-id|error
 suffix:semicolon
 macro_line|#ifdef SMBFS_DEBUG_VERBOSE
 id|printk
@@ -1464,11 +1459,6 @@ op_assign
 id|server-&gt;generation
 suffix:semicolon
 )brace
-multiline_comment|/* cache the dentry pointer */
-id|inode-&gt;u.smbfs_i.dentry
-op_assign
-id|dentry
-suffix:semicolon
 id|d_instantiate
 c_func
 (paren

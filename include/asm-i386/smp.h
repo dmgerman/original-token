@@ -451,14 +451,6 @@ suffix:semicolon
 r_extern
 r_volatile
 r_int
-id|cpu_logical_map
-(braket
-id|NR_CPUS
-)braket
-suffix:semicolon
-r_extern
-r_volatile
-r_int
 r_int
 id|smp_invalidate_needed
 suffix:semicolon
@@ -557,6 +549,32 @@ id|setup_APIC_clock
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_volatile
+r_int
+id|__cpu_logical_map
+(braket
+id|NR_CPUS
+)braket
+suffix:semicolon
+DECL|function|cpu_logical_map
+r_extern
+r_inline
+r_int
+id|cpu_logical_map
+c_func
+(paren
+r_int
+id|cpu
+)paren
+(brace
+r_return
+id|__cpu_logical_map
+(braket
+id|cpu
+)braket
+suffix:semicolon
+)brace
 multiline_comment|/*&n; *&t;General functions that each host system must provide.&n; */
 r_extern
 r_void
@@ -706,6 +724,24 @@ DECL|macro|SMP_FROM_INT
 mdefine_line|#define SMP_FROM_INT&t;&t;1
 DECL|macro|SMP_FROM_SYSCALL
 mdefine_line|#define SMP_FROM_SYSCALL&t;2
+macro_line|#else
+macro_line|#ifndef ASSEMBLY
+DECL|function|cpu_logical_map
+r_extern
+r_inline
+r_int
+id|cpu_logical_map
+c_func
+(paren
+r_int
+id|cpu
+)paren
+(brace
+r_return
+id|cpu
+suffix:semicolon
+)brace
+macro_line|#endif
 macro_line|#endif
 macro_line|#endif
 eof

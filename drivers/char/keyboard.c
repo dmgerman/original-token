@@ -2355,7 +2355,7 @@ r_char
 op_star
 id|app_map
 op_assign
-l_string|&quot;pqrstuvwxylSRQMnn?PQ&quot;
+l_string|&quot;pqrstuvwxylSRQMnnmPQ&quot;
 suffix:semicolon
 r_if
 c_cond

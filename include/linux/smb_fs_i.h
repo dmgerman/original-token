@@ -15,6 +15,7 @@ r_int
 r_int
 id|open
 suffix:semicolon
+multiline_comment|/* open generation */
 DECL|member|fileid
 id|__u16
 id|fileid
@@ -29,7 +30,7 @@ DECL|member|access
 id|__u16
 id|access
 suffix:semicolon
-multiline_comment|/* Access bits. */
+multiline_comment|/* Access mode */
 DECL|member|cache_valid
 id|__u16
 id|cache_valid
@@ -47,12 +48,6 @@ r_int
 id|closed
 suffix:semicolon
 multiline_comment|/* timestamp when closed */
-DECL|member|dentry
-r_void
-op_star
-id|dentry
-suffix:semicolon
-multiline_comment|/* The dentry we were opened with */
 )brace
 suffix:semicolon
 macro_line|#endif
