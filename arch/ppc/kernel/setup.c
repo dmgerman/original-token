@@ -676,7 +676,7 @@ id|len
 op_plus
 id|buffer
 comma
-l_string|&quot;cpu&bslash;t&bslash;t:  &quot;
+l_string|&quot;cpu&bslash;t&bslash;t: &quot;
 )paren
 suffix:semicolon
 id|pvr
@@ -2822,12 +2822,6 @@ macro_line|#ifdef CONFIG_BOOTX_TEXT
 id|map_bootx_text
 c_func
 (paren
-)paren
-suffix:semicolon
-id|prom_print
-c_func
-(paren
-l_string|&quot;identify machine&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif

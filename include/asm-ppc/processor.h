@@ -7,6 +7,7 @@ mdefine_line|#define current_text_addr() ({ __label__ _l; _l: &amp;&amp;_l;})
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/residual.h&gt;
+macro_line|#include &lt;asm/types.h&gt;
 multiline_comment|/* Machine State Register (MSR) Fields */
 macro_line|#ifdef CONFIG_PPC64
 DECL|macro|MSR_SF
@@ -1171,24 +1172,26 @@ r_int
 id|fpscr
 suffix:semicolon
 multiline_comment|/* Floating point status */
-DECL|member|vrf
-r_int
-r_int
-id|vrf
+macro_line|#ifdef CONFIG_ALTIVEC
+DECL|member|vr
+id|vector128
+id|vr
 (braket
-l_int|128
+l_int|32
 )braket
 suffix:semicolon
+multiline_comment|/* Complete AltiVec set */
 DECL|member|vscr
-r_int
-r_int
+id|vector128
 id|vscr
 suffix:semicolon
+multiline_comment|/* AltiVec status */
 DECL|member|vrsave
 r_int
 r_int
 id|vrsave
 suffix:semicolon
+macro_line|#endif /* CONFIG_ALTIVEC */
 )brace
 suffix:semicolon
 DECL|macro|INIT_SP

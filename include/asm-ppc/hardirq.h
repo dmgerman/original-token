@@ -5,23 +5,25 @@ macro_line|#include &lt;asm/smp.h&gt;
 r_extern
 r_int
 r_int
-id|ppc_local_irq_count
+id|local_irq_count
 (braket
 id|NR_CPUS
 )braket
 suffix:semicolon
 multiline_comment|/*&n; * Are we in an interrupt context? Either doing bottom half&n; * or hardware interrupt processing?&n; */
 DECL|macro|in_interrupt
-mdefine_line|#define in_interrupt() ({ int __cpu = smp_processor_id(); &bslash;&n;&t;(ppc_local_irq_count[__cpu] + ppc_local_bh_count[__cpu] != 0); })
+mdefine_line|#define in_interrupt() ({ int __cpu = smp_processor_id(); &bslash;&n;&t;(local_irq_count[__cpu] + local_bh_count[__cpu] != 0); })
+DECL|macro|in_irq
+mdefine_line|#define in_irq() (local_irq_count[smp_processor_id()] != 0)
 macro_line|#ifndef __SMP__
 DECL|macro|hardirq_trylock
-mdefine_line|#define hardirq_trylock(cpu)&t;(ppc_local_irq_count[cpu] == 0)
+mdefine_line|#define hardirq_trylock(cpu)&t;(local_irq_count[cpu] == 0)
 DECL|macro|hardirq_endlock
 mdefine_line|#define hardirq_endlock(cpu)&t;do { } while (0)
 DECL|macro|hardirq_enter
-mdefine_line|#define hardirq_enter(cpu)&t;(ppc_local_irq_count[cpu]++)
+mdefine_line|#define hardirq_enter(cpu)&t;(local_irq_count[cpu]++)
 DECL|macro|hardirq_exit
-mdefine_line|#define hardirq_exit(cpu)&t;(ppc_local_irq_count[cpu]--)
+mdefine_line|#define hardirq_exit(cpu)&t;(local_irq_count[cpu]--)
 DECL|macro|synchronize_irq
 mdefine_line|#define synchronize_irq()&t;do { } while (0)
 macro_line|#else /* __SMP__ */
@@ -91,8 +93,14 @@ r_int
 id|cpu
 )paren
 (brace
+r_int
+r_int
+id|loops
+op_assign
+l_int|10000000
+suffix:semicolon
 op_increment
-id|ppc_local_irq_count
+id|local_irq_count
 (braket
 id|cpu
 )braket
@@ -104,6 +112,74 @@ op_amp
 id|global_irq_count
 )paren
 suffix:semicolon
+r_while
+c_loop
+(paren
+id|test_bit
+c_func
+(paren
+l_int|0
+comma
+op_amp
+id|global_irq_lock
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|smp_processor_id
+c_func
+(paren
+)paren
+op_eq
+id|global_irq_holder
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;uh oh, interrupt while we hold global irq lock!&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_XMON
+id|xmon
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif
+r_break
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|loops
+op_decrement
+op_eq
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;do_IRQ waiting for irq lock (holder=%d)&bslash;n&quot;
+comma
+id|global_irq_holder
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_XMON
+id|xmon
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+)brace
 )brace
 DECL|function|hardirq_exit
 r_static
@@ -124,7 +200,7 @@ id|global_irq_count
 )paren
 suffix:semicolon
 op_decrement
-id|ppc_local_irq_count
+id|local_irq_count
 (braket
 id|cpu
 )braket

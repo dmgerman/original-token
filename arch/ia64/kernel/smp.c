@@ -105,10 +105,10 @@ op_assign
 l_int|1
 suffix:semicolon
 macro_line|#endif
-DECL|variable|cpu_number_map
+DECL|variable|__cpu_number_map
 r_volatile
 r_int
-id|cpu_number_map
+id|__cpu_number_map
 (braket
 id|NR_CPUS
 )braket
@@ -1968,7 +1968,7 @@ suffix:semicolon
 id|alive
 suffix:colon
 multiline_comment|/* Remember the AP data */
-id|cpu_number_map
+id|__cpu_number_map
 (braket
 id|cpuid
 )braket
@@ -2043,14 +2043,14 @@ id|memset
 c_func
 (paren
 op_amp
-id|cpu_number_map
+id|__cpu_number_map
 comma
 op_minus
 l_int|1
 comma
 r_sizeof
 (paren
-id|cpu_number_map
+id|__cpu_number_map
 )paren
 )paren
 suffix:semicolon
@@ -2084,7 +2084,7 @@ id|ipi_op
 )paren
 suffix:semicolon
 multiline_comment|/* Setup BSP mappings */
-id|cpu_number_map
+id|__cpu_number_map
 (braket
 id|bootstrap_processor
 )braket

@@ -20,6 +20,11 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/iomd.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 r_extern
+r_struct
+id|tasklet_struct
+id|keyboard_tasklet
+suffix:semicolon
+r_extern
 r_void
 id|kbd_reset_kdown
 c_func
@@ -1633,10 +1638,11 @@ id|IOMD_KARTRX
 )paren
 )paren
 suffix:semicolon
-id|mark_bh
+id|tasklet_schedule
 c_func
 (paren
-id|KEYBOARD_BH
+op_amp
+id|keyboard_tasklet
 )paren
 suffix:semicolon
 )brace

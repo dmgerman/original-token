@@ -344,6 +344,7 @@ comma
 id|rtl8129_probe1
 )brace
 comma
+macro_line|#ifdef USE_8139_SUPPORT_ALSO
 (brace
 l_string|&quot;RealTek RTL8139 Fast Ethernet&quot;
 comma
@@ -398,6 +399,7 @@ comma
 id|rtl8129_probe1
 )brace
 comma
+macro_line|#endif
 (brace
 l_int|0
 comma
@@ -5168,6 +5170,12 @@ r_else
 id|tp-&gt;tx_full
 op_assign
 l_int|1
+suffix:semicolon
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 )brace
 )brace

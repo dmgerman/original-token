@@ -1506,8 +1506,8 @@ id|softnet_data
 id|NR_CPUS
 )braket
 suffix:semicolon
-DECL|macro|HAS_NETIF_QUEUE
-mdefine_line|#define HAS_NETIF_QUEUE
+DECL|macro|HAVE_NETIF_QUEUE
+mdefine_line|#define HAVE_NETIF_QUEUE
 DECL|function|__netif_schedule
 r_extern
 id|__inline__

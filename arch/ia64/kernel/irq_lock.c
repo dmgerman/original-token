@@ -29,7 +29,7 @@ id|atomic_t
 id|global_bh_count
 suffix:semicolon
 DECL|variable|global_bh_lock
-id|atomic_t
+id|spinlock_t
 id|global_bh_lock
 suffix:semicolon
 DECL|macro|INIT_STUCK

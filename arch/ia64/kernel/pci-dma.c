@@ -25,7 +25,11 @@ id|ia64_fls
 c_func
 (paren
 id|size
+op_minus
+l_int|1
 )paren
+op_plus
+l_int|1
 suffix:semicolon
 id|printk
 (paren

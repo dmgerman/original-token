@@ -7294,6 +7294,7 @@ op_assign
 id|default_var
 suffix:semicolon
 macro_line|#endif /* CONFIG_PPC */
+)brace
 macro_line|#endif /* MODULE */
 r_if
 c_cond

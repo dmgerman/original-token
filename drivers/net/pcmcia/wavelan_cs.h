@@ -398,6 +398,10 @@ DECL|struct|net_local
 r_struct
 id|net_local
 (brace
+DECL|member|lock
+id|spinlock_t
+id|lock
+suffix:semicolon
 DECL|member|node
 id|dev_node_t
 id|node
@@ -700,29 +704,6 @@ id|dev
 suffix:semicolon
 macro_line|#endif&t;/* WAVELAN_ROAMING */
 multiline_comment|/* ----------------------- MISC SUBROUTINES ------------------------ */
-r_static
-r_inline
-r_int
-r_int
-multiline_comment|/* flags */
-id|wv_splhi
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-multiline_comment|/* Disable interrupts */
-r_static
-r_inline
-r_void
-id|wv_splx
-c_func
-(paren
-r_int
-r_int
-)paren
-suffix:semicolon
-multiline_comment|/* ReEnable interrupts : flags */
 r_static
 r_void
 id|cs_error

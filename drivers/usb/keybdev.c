@@ -7,7 +7,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kbd_kern.h&gt;
-macro_line|#ifdef CONFIG_X86
+macro_line|#if defined(CONFIG_X86) || defined(CONFIG_IA64)
 DECL|variable|keybdev_x86_e0s
 r_static
 r_int
@@ -470,7 +470,7 @@ l_int|255
 )paren
 r_return
 suffix:semicolon
-macro_line|#ifdef CONFIG_X86
+macro_line|#if defined(CONFIG_X86) || defined(CONFIG_IA64)
 r_if
 c_cond
 (paren

@@ -474,8 +474,10 @@ id|_PAGE_MODIFIED
 suffix:semicolon
 )brace
 multiline_comment|/* to find an entry in a page-table-directory. */
+DECL|macro|pgd_index
+mdefine_line|#define pgd_index(address)&t;(((address) &gt;&gt; PGDIR_SHIFT) &amp; (PTRS_PER_PGD))
 DECL|macro|pgd_offset
-mdefine_line|#define pgd_offset(mm, address) ((mm)-&gt;pgd + ((address &gt;&gt; PGDIR_SHIFT) &amp; (PTRS_PER_PGD)))
+mdefine_line|#define pgd_offset(mm, address)&t;((mm)-&gt;pgd + pgd_index(address))
 multiline_comment|/* to find an entry in a kernel page-table-directory */
 DECL|macro|pgd_offset_k
 mdefine_line|#define pgd_offset_k(address) pgd_offset(&amp;init_mm, address)

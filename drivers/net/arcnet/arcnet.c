@@ -1,6 +1,6 @@
-multiline_comment|/*&n; * Linux ARCnet driver - device-independent routines&n; * &n; * Written 1997 by David Woodhouse.&n; * Written 1994-1999 by Avery Pennarun.&n; * Written 1999 by Martin Mares &lt;mj@suse.cz&gt;.&n; * Derived from skeleton.c by Donald Becker.&n; *&n; * Special thanks to Contemporary Controls, Inc. (www.ccontrols.com)&n; *  for sponsoring the further development of this driver.&n; *&n; * **********************&n; *&n; * The original copyright was as follows:&n; *&n; * skeleton.c Written 1993 by Donald Becker.&n; * Copyright 1993 United States Government as represented by the&n; * Director, National Security Agency.  This software may only be used&n; * and distributed according to the terms of the GNU Public License as&n; * modified by SRC, incorporated herein by reference.&n; *&n; * **********************&n; * &n; * The change log is now in a file called ChangeLog in this directory.&n; *&n; * Sources:&n; *  - Crynwr arcnet.com/arcether.com packet drivers.&n; *  - arcnet.c v0.00 dated 1/1/94 and apparently by &n; *     Donald Becker - it didn&squot;t work :)&n; *  - skeleton.c v0.05 dated 11/16/93 by Donald Becker&n; *     (from Linux Kernel 1.1.45)&n; *  - RFC&squot;s 1201 and 1051 - re: TCP/IP over ARCnet&n; *  - The official ARCnet COM9026 data sheets (!) thanks to&n; *     Ken Cornetet &lt;kcornete@nyx10.cs.du.edu&gt;&n; *  - The official ARCnet COM20020 data sheets.&n; *  - Information on some more obscure ARCnet controller chips, thanks&n; *     to the nice people at SMSC.&n; *  - net/inet/eth.c (from kernel 1.1.50) for header-building info.&n; *  - Alternate Linux ARCnet source by V.Shergin &lt;vsher@sao.stavropol.su&gt;&n; *  - Textual information and more alternate source from Joachim Koenig&n; *     &lt;jojo@repas.de&gt;&n; */
+multiline_comment|/*&n; * Linux ARCnet driver - device-independent routines&n; * &n; * Written 1997 by David Woodhouse.&n; * Written 1994-1999 by Avery Pennarun.&n; * Written 1999-2000 by Martin Mares &lt;mj@suse.cz&gt;.&n; * Derived from skeleton.c by Donald Becker.&n; *&n; * Special thanks to Contemporary Controls, Inc. (www.ccontrols.com)&n; *  for sponsoring the further development of this driver.&n; *&n; * **********************&n; *&n; * The original copyright was as follows:&n; *&n; * skeleton.c Written 1993 by Donald Becker.&n; * Copyright 1993 United States Government as represented by the&n; * Director, National Security Agency.  This software may only be used&n; * and distributed according to the terms of the GNU Public License as&n; * modified by SRC, incorporated herein by reference.&n; *&n; * **********************&n; * &n; * The change log is now in a file called ChangeLog in this directory.&n; *&n; * Sources:&n; *  - Crynwr arcnet.com/arcether.com packet drivers.&n; *  - arcnet.c v0.00 dated 1/1/94 and apparently by &n; *     Donald Becker - it didn&squot;t work :)&n; *  - skeleton.c v0.05 dated 11/16/93 by Donald Becker&n; *     (from Linux Kernel 1.1.45)&n; *  - RFC&squot;s 1201 and 1051 - re: TCP/IP over ARCnet&n; *  - The official ARCnet COM9026 data sheets (!) thanks to&n; *     Ken Cornetet &lt;kcornete@nyx10.cs.du.edu&gt;&n; *  - The official ARCnet COM20020 data sheets.&n; *  - Information on some more obscure ARCnet controller chips, thanks&n; *     to the nice people at SMSC.&n; *  - net/inet/eth.c (from kernel 1.1.50) for header-building info.&n; *  - Alternate Linux ARCnet source by V.Shergin &lt;vsher@sao.stavropol.su&gt;&n; *  - Textual information and more alternate source from Joachim Koenig&n; *     &lt;jojo@repas.de&gt;&n; */
 DECL|macro|VERSION
-mdefine_line|#define VERSION &quot;arcnet: v3.91 BETA 99/12/18 - by Avery Pennarun et al.&bslash;n&quot;
+mdefine_line|#define VERSION &quot;arcnet: v3.92 BETA 2000/02/13 - by Avery Pennarun et al.&bslash;n&quot;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -204,6 +204,17 @@ id|sk_buff
 op_star
 id|skb
 comma
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_static
+r_void
+id|arcnet_timeout
+c_func
+(paren
 r_struct
 id|net_device
 op_star
@@ -1267,6 +1278,10 @@ op_assign
 l_int|0x00
 suffix:semicolon
 multiline_comment|/* for us, broadcasts are address 0 */
+id|dev-&gt;watchdog_timeo
+op_assign
+id|TX_TIMEOUT
+suffix:semicolon
 multiline_comment|/* New-style flags. */
 id|dev-&gt;flags
 op_assign
@@ -1284,6 +1299,10 @@ suffix:semicolon
 id|dev-&gt;hard_start_xmit
 op_assign
 id|arcnet_send_packet
+suffix:semicolon
+id|dev-&gt;tx_timeout
+op_assign
+id|arcnet_timeout
 suffix:semicolon
 id|dev-&gt;get_stats
 op_assign
@@ -1418,18 +1437,6 @@ l_int|1
 r_return
 op_minus
 id|ENODEV
-suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
 suffix:semicolon
 id|newmtu
 op_assign
@@ -1629,11 +1636,6 @@ op_or
 id|RESETclear
 )paren
 suffix:semicolon
-multiline_comment|/* we&squot;re started */
-id|dev-&gt;start
-op_assign
-l_int|1
-suffix:semicolon
 multiline_comment|/* make sure we&squot;re ready to receive IRQ&squot;s. */
 id|AINTMASK
 c_func
@@ -1658,6 +1660,12 @@ id|AINTMASK
 c_func
 (paren
 id|lp-&gt;intmask
+)paren
+suffix:semicolon
+id|netif_start_queue
+c_func
+(paren
+id|dev
 )paren
 suffix:semicolon
 r_return
@@ -1689,6 +1697,12 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 multiline_comment|/* flush TX and disable RX */
 id|AINTMASK
 c_func
@@ -1715,18 +1729,6 @@ c_func
 (paren
 l_int|1
 )paren
-suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* shut down the card */
 id|ARCOPEN
@@ -2235,161 +2237,6 @@ comma
 id|skb-&gt;len
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev-&gt;tbusy
-)paren
-(brace
-multiline_comment|/*&n;&t;&t; * If we get here, some higher level has decided we are broken.&n;&t;&t; * There should really be a &quot;kick me&quot; function call instead. &n;&t;&t; */
-r_int
-r_int
-id|flags
-suffix:semicolon
-r_int
-id|tickssofar
-op_assign
-id|jiffies
-op_minus
-id|dev-&gt;trans_start
-comma
-id|status
-op_assign
-id|ASTATUS
-c_func
-(paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|tickssofar
-OL
-id|TX_TIMEOUT
-)paren
-(brace
-id|BUGMSG
-c_func
-(paren
-id|D_DURING
-comma
-l_string|&quot;premature kickme! (status=%Xh ticks=%d)&bslash;n&quot;
-comma
-id|status
-comma
-id|tickssofar
-)paren
-suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-multiline_comment|/* means &quot;try again&quot; */
-)brace
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|status
-op_amp
-id|TXFREEflag
-)paren
-(brace
-multiline_comment|/* transmit _DID_ finish */
-id|BUGMSG
-c_func
-(paren
-id|D_NORMAL
-comma
-l_string|&quot;tx timeout - missed IRQ? (status=%Xh, ticks=%d, mask=%Xh, dest=%02Xh)&bslash;n&quot;
-comma
-id|status
-comma
-id|tickssofar
-comma
-id|lp-&gt;intmask
-comma
-id|lp-&gt;lasttrans_dest
-)paren
-suffix:semicolon
-id|lp-&gt;stats.tx_errors
-op_increment
-suffix:semicolon
-)brace
-r_else
-(brace
-id|BUGMSG
-c_func
-(paren
-id|D_EXTRA
-comma
-l_string|&quot;tx timed out (status=%Xh, tickssofar=%d, intmask=%Xh, dest=%02Xh)&bslash;n&quot;
-comma
-id|status
-comma
-id|tickssofar
-comma
-id|lp-&gt;intmask
-comma
-id|lp-&gt;lasttrans_dest
-)paren
-suffix:semicolon
-id|lp-&gt;stats.tx_errors
-op_increment
-suffix:semicolon
-id|lp-&gt;stats.tx_aborted_errors
-op_increment
-suffix:semicolon
-id|ACOMMAND
-c_func
-(paren
-id|NOTXcmd
-op_or
-(paren
-id|lp-&gt;cur_tx
-op_lshift
-l_int|3
-)paren
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n;&t;&t; * interrupt handler will set dev-&gt;tbusy = 0 when it notices the&n;&t;&t; * transmit has been canceled.&n;&t;&t; */
-multiline_comment|/* make sure we didn&squot;t miss a TX IRQ */
-id|AINTMASK
-c_func
-(paren
-l_int|0
-)paren
-suffix:semicolon
-id|lp-&gt;intmask
-op_or_assign
-id|TXFREEflag
-suffix:semicolon
-id|AINTMASK
-c_func
-(paren
-id|lp-&gt;intmask
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
 id|pkt
 op_assign
 (paren
@@ -2459,53 +2306,13 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* don&squot;t try again */
 )brace
-multiline_comment|/*&n;&t; * Block a timer-based transmit from overlapping.  This could better be&n;&t; * done with atomic_swap(1, dev-&gt;tbusy), but set_bit() works as well. &n;&t; */
-r_if
-c_cond
-(paren
-id|test_and_set_bit
+multiline_comment|/* We&squot;re busy transmitting a packet... */
+id|netif_stop_queue
 c_func
 (paren
-l_int|0
-comma
-(paren
-r_int
-op_star
-)paren
-op_amp
-id|dev-&gt;tbusy
-)paren
-)paren
-(brace
-id|BUGMSG
-c_func
-(paren
-id|D_NORMAL
-comma
-l_string|&quot;transmitter called with busy bit set! &quot;
-l_string|&quot;(status=%Xh, tickssofar=%ld)&bslash;n&quot;
-comma
-id|ASTATUS
-c_func
-(paren
-)paren
-comma
-id|jiffies
-op_minus
-id|dev-&gt;trans_start
+id|dev
 )paren
 suffix:semicolon
-id|lp-&gt;stats.tx_errors
-op_increment
-suffix:semicolon
-id|lp-&gt;stats.tx_fifo_errors
-op_increment
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-multiline_comment|/* don&squot;t try again */
-)brace
 id|AINTMASK
 c_func
 (paren
@@ -2770,6 +2577,140 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+multiline_comment|/* Called by the kernel when transmit times out */
+DECL|function|arcnet_timeout
+r_static
+r_void
+id|arcnet_timeout
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+r_struct
+id|arcnet_local
+op_star
+id|lp
+op_assign
+(paren
+r_struct
+id|arcnet_local
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
+r_int
+id|status
+op_assign
+id|ASTATUS
+c_func
+(paren
+)paren
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|status
+op_amp
+id|TXFREEflag
+)paren
+(brace
+multiline_comment|/* transmit _DID_ finish */
+id|BUGMSG
+c_func
+(paren
+id|D_NORMAL
+comma
+l_string|&quot;tx timeout - missed IRQ? (status=%Xh, mask=%Xh, dest=%02Xh)&bslash;n&quot;
+comma
+id|status
+comma
+id|lp-&gt;intmask
+comma
+id|lp-&gt;lasttrans_dest
+)paren
+suffix:semicolon
+id|lp-&gt;stats.tx_errors
+op_increment
+suffix:semicolon
+)brace
+r_else
+(brace
+id|BUGMSG
+c_func
+(paren
+id|D_EXTRA
+comma
+l_string|&quot;tx timed out (status=%Xh, intmask=%Xh, dest=%02Xh)&bslash;n&quot;
+comma
+id|status
+comma
+id|lp-&gt;intmask
+comma
+id|lp-&gt;lasttrans_dest
+)paren
+suffix:semicolon
+id|lp-&gt;stats.tx_errors
+op_increment
+suffix:semicolon
+id|lp-&gt;stats.tx_aborted_errors
+op_increment
+suffix:semicolon
+id|ACOMMAND
+c_func
+(paren
+id|NOTXcmd
+op_or
+(paren
+id|lp-&gt;cur_tx
+op_lshift
+l_int|3
+)paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* make sure we didn&squot;t miss a TX IRQ */
+id|AINTMASK
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+id|lp-&gt;intmask
+op_or_assign
+id|TXFREEflag
+suffix:semicolon
+id|AINTMASK
+c_func
+(paren
+id|lp-&gt;intmask
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * The typical workload of the driver: Handle the network interface&n; * interrupts. Establish which device needs attention, and call the correct&n; * chipset interrupt handler.&n; */
 DECL|function|arcnet_interrupt
 r_void
@@ -2874,12 +2815,19 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * RESET flag was enabled - if !dev-&gt;start, we must clear it right&n;&t; * away (but nothing else).&n;&t; */
+multiline_comment|/*&n;&t; * RESET flag was enabled - if device is not running, we must clear it right&n;&t; * away (but nothing else).&n;&t; */
 r_if
 c_cond
 (paren
 op_logical_neg
-id|dev-&gt;start
+id|test_bit
+c_func
+(paren
+id|LINK_STATE_START
+comma
+op_amp
+id|dev-&gt;state
+)paren
 )paren
 (brace
 r_if
@@ -2909,28 +2857,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|dev-&gt;interrupt
-)paren
-(brace
-id|BUGMSG
-c_func
-(paren
-id|D_NORMAL
-comma
-l_string|&quot;DRIVER PROBLEM!  Nested arcnet interrupts!&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-multiline_comment|/* don&squot;t even try. */
-)brace
-id|dev-&gt;interrupt
-op_assign
-l_int|1
-suffix:semicolon
 id|BUGMSG
 c_func
 (paren
@@ -2948,7 +2874,7 @@ id|lp-&gt;intmask
 suffix:semicolon
 id|boguscount
 op_assign
-l_int|3
+l_int|5
 suffix:semicolon
 r_do
 (brace
@@ -3240,7 +3166,7 @@ id|lp-&gt;stats.tx_bytes
 op_add_assign
 id|lp-&gt;outgoing.skb-&gt;len
 suffix:semicolon
-id|dev_kfree_skb
+id|dev_kfree_skb_irq
 c_func
 (paren
 id|lp-&gt;outgoing.skb
@@ -3266,18 +3192,12 @@ op_eq
 op_minus
 l_int|1
 )paren
-(brace
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|mark_bh
+id|netif_wake_queue
 c_func
 (paren
-id|NET_BH
+id|dev
 )paren
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/* now process the received packet, if any */
 r_if
@@ -3601,10 +3521,6 @@ c_func
 id|lp-&gt;intmask
 )paren
 suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
 )brace
 multiline_comment|/*&n; * This is a generic packet receiver that calls arcnet??_rx depending on the&n; * protocol ID found.&n; */
 DECL|function|arcnet_rx
@@ -3903,7 +3819,6 @@ comma
 id|length
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * If any worthwhile packets have been received, a mark_bh(NET_BH) has&n;&t; * been done by netif_rx and Linux will handle them after we return.&n;&t; */
 )brace
 multiline_comment|/* &n; * Get the current statistics.  This may be called with the card open or&n; * closed.&n; */
 DECL|function|arcnet_get_stats

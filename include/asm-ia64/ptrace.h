@@ -293,25 +293,25 @@ r_struct
 id|ia64_fpreg
 id|f6
 suffix:semicolon
-multiline_comment|/* scratch*/
+multiline_comment|/* scratch */
 DECL|member|f7
 r_struct
 id|ia64_fpreg
 id|f7
 suffix:semicolon
-multiline_comment|/* scratch*/
+multiline_comment|/* scratch */
 DECL|member|f8
 r_struct
 id|ia64_fpreg
 id|f8
 suffix:semicolon
-multiline_comment|/* scratch*/
+multiline_comment|/* scratch */
 DECL|member|f9
 r_struct
 id|ia64_fpreg
 id|f9
 suffix:semicolon
-multiline_comment|/* scratch*/
+multiline_comment|/* scratch */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * This structure contains the addition registers that need to&n; * preserved across a context switch.  This generally consists of&n; * &quot;preserved&quot; registers.&n; */

@@ -33,6 +33,8 @@ DECL|macro|spin_lock_init
 mdefine_line|#define spin_lock_init(lp) &t;do { (lp)-&gt;lock = 0; } while(0)
 DECL|macro|spin_unlock_wait
 mdefine_line|#define spin_unlock_wait(lp)&t;do { barrier(); } while((lp)-&gt;lock)
+DECL|macro|spin_is_locked
+mdefine_line|#define spin_is_locked(x)&t;((x)-&gt;lock != 0)
 r_extern
 r_void
 id|_spin_lock

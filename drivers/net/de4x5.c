@@ -6340,7 +6340,7 @@ id|entry
 OG
 l_int|1
 )paren
-id|dev_kfree_skb
+id|dev_kfree_skb_irq
 c_func
 (paren
 id|lp-&gt;tx_skb

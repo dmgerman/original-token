@@ -275,7 +275,13 @@ op_assign
 l_int|0x01
 suffix:semicolon
 multiline_comment|/* Loopback mode */
-multiline_comment|/*static int netwave_debug = 0;*/
+DECL|variable|netwave_debug
+r_static
+r_int
+id|netwave_debug
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/*&n;   All the PCMCIA modules use PCMCIA_DEBUG to control debugging.  If&n;   you do not define PCMCIA_DEBUG at all, all the debug code will be&n;   left out.  If you compile with PCMCIA_DEBUG=0, the debug code will&n;   be present but disabled -- but it can then be enabled for specific&n;   modules at load time with a &squot;pc_debug=#&squot; option to insmod.&n;*/
 macro_line|#ifdef PCMCIA_DEBUG
 DECL|variable|pc_debug
@@ -536,6 +542,16 @@ op_star
 id|map
 )paren
 suffix:semicolon
+r_static
+r_void
+id|netwave_tx_timeout
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+suffix:semicolon
 multiline_comment|/* Packet transmission and Packet reception */
 r_static
 r_int
@@ -790,6 +806,10 @@ suffix:semicolon
 DECL|member|lastExec
 r_int
 id|lastExec
+suffix:semicolon
+DECL|member|lock
+id|spinlock_t
+id|lock
 suffix:semicolon
 DECL|member|watchdog
 r_struct
@@ -1283,6 +1303,10 @@ id|priv
 )paren
 )paren
 suffix:semicolon
+id|priv-&gt;lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
+suffix:semicolon
 id|link
 op_assign
 op_amp
@@ -1476,9 +1500,18 @@ op_assign
 op_amp
 id|netwave_close
 suffix:semicolon
-id|dev-&gt;tbusy
+id|dev-&gt;tx_timeout
 op_assign
-l_int|1
+id|netwave_tx_timeout
+suffix:semicolon
+id|dev-&gt;watchdog_timeo
+op_assign
+id|TX_TIMEOUT
+suffix:semicolon
+id|netif_start_queue
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|link-&gt;irq.Instance
 op_assign
@@ -2764,6 +2797,8 @@ id|parse
 suffix:semicolon
 r_int
 id|i
+op_assign
+l_int|0
 comma
 id|j
 comma
@@ -3068,9 +3103,10 @@ id|dev-&gt;base_addr
 op_assign
 id|link-&gt;io.BasePort1
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
+id|netif_start_queue
+(paren
+id|dev
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -3496,13 +3532,10 @@ op_amp
 id|DEV_CONFIG
 )paren
 (brace
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
+id|netif_stop_queue
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|link-&gt;release.expires
 op_assign
@@ -3562,13 +3595,10 @@ c_cond
 id|link-&gt;open
 )paren
 (brace
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
+id|netif_stop_queue
+(paren
+id|dev
+)paren
 suffix:semicolon
 )brace
 id|CardServices
@@ -3625,13 +3655,10 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
+id|netif_start_queue
+(paren
+id|dev
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -4511,6 +4538,47 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|netwave_tx_timeout
+r_static
+r_void
+id|netwave_tx_timeout
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|netwave_debug
+OG
+l_int|0
+)paren
+id|printk
+(paren
+id|KERN_DEBUG
+l_string|&quot;%s timed out.&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+id|netwave_reset
+(paren
+id|dev
+)paren
+suffix:semicolon
+id|dev-&gt;trans_start
+op_assign
+id|jiffies
+suffix:semicolon
+id|netif_start_queue
+(paren
+id|dev
+)paren
+suffix:semicolon
+)brace
 DECL|function|netwave_start_xmit
 r_static
 r_int
@@ -4529,52 +4597,18 @@ id|dev
 )paren
 (brace
 multiline_comment|/* This flag indicate that the hardware can&squot;t perform a transmission.&n;&t; * Theoritically, NET3 check it before sending a packet to the driver,&n;&t; * but in fact it never do that and pool continuously.&n;&t; * As the watchdog will abort too long transmissions, we are quite safe...&n;&t; */
-r_if
-c_cond
-(paren
-id|dev-&gt;tbusy
-)paren
-(brace
-multiline_comment|/* Handled by watchdog */
-r_return
-l_int|1
-suffix:semicolon
-multiline_comment|/* If we get here, some higher level has decided we are broken.&n;&t;   There should really be a &squot;kick me&squot; function call instead.&n;&t;   */
-multiline_comment|/*int tickssofar = jiffies - dev-&gt;trans_start;*/
-multiline_comment|/* printk(&quot;xmit called with busy. tickssofar %d&bslash;n&quot;, tickssofar); */
-multiline_comment|/*if (tickssofar &lt; TX_TIMEOUT) &n;&t;  return 1;&n;&t;  */
-multiline_comment|/* Should also detect if the kernel tries to xmit&n;&t; * on a stopped card. &n;&t; */
-multiline_comment|/*if (netwave_debug &gt; 0)&n;&t;  printk(KERN_DEBUG &quot;%s timed out.&bslash;n&quot;, dev-&gt;name);&n;&t;  netwave_reset(dev); &n;&t;  dev-&gt;trans_start = jiffies;&n;&t;  dev-&gt;tbusy = 0;*/
-)brace
 multiline_comment|/* Sending a NULL skb means some higher layer thinks we&squot;ve missed an&n;     * tx-done interrupt. Caution: dev_tint() handles the cli()/sti()&n;     * itself. &n;     */
 multiline_comment|/* Block a timer-based transmit from overlapping. This could &n;     * better be done with atomic_swap(1, dev-&gt;tbusy, but set_bit()&n;     * works as well &n;     */
+id|netif_stop_queue
+(paren
+id|dev
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|test_and_set_bit
-c_func
-(paren
-l_int|0
-comma
-(paren
-r_void
-op_star
+l_int|1
 )paren
-op_amp
-id|dev-&gt;tbusy
-)paren
-op_ne
-l_int|0
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;%s: Transmitter access conflict.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-r_else
 (brace
 r_int
 id|length
@@ -4612,9 +4646,10 @@ l_int|1
 )paren
 (brace
 multiline_comment|/* Some error, let&squot;s make them call us another time? */
-id|dev-&gt;tbusy
-op_assign
-l_int|0
+id|netif_start_queue
+(paren
+id|dev
+)paren
 suffix:semicolon
 )brace
 id|dev-&gt;trans_start
@@ -4692,39 +4727,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
 id|dev
 op_eq
 l_int|NULL
 )paren
-op_or
-(paren
-op_logical_neg
-id|dev-&gt;start
-)paren
-)paren
 r_return
 suffix:semicolon
-r_if
-c_cond
+id|spin_lock
 (paren
-id|dev-&gt;interrupt
+op_amp
+id|priv-&gt;lock
 )paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;%s: re-entering the interrupt handler.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-id|dev-&gt;interrupt
-op_assign
-l_int|1
 suffix:semicolon
 id|iobase
 op_assign
@@ -5103,14 +5116,9 @@ op_amp
 id|priv-&gt;watchdog
 )paren
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|mark_bh
-c_func
+id|netif_wake_queue
 (paren
-id|NET_BH
+id|dev
 )paren
 suffix:semicolon
 )brace
@@ -5118,11 +5126,11 @@ multiline_comment|/* TxBA, this would trigger on all error packets received */
 multiline_comment|/* if (status &amp; 0x01) {&n;&t;   if (netwave_debug &gt; 3) &n;&t;   printk(KERN_DEBUG &quot;Transmit buffers available, %x&bslash;n&quot;, status); &n;&t;   } &n;&t;   */
 )brace
 multiline_comment|/* done.. */
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-r_return
+id|spin_unlock
+(paren
+op_amp
+id|priv-&gt;lock
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* netwave_interrupt */
@@ -5175,9 +5183,10 @@ id|dev
 )paren
 suffix:semicolon
 multiline_comment|/* We are not waiting anymore... */
-id|dev-&gt;tbusy
-op_assign
-l_int|0
+id|netif_start_queue
+(paren
+id|dev
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* netwave_watchdog */
@@ -5827,17 +5836,10 @@ op_increment
 suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
+id|netif_start_queue
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|netwave_reset
 c_func
@@ -5886,6 +5888,11 @@ comma
 l_string|&quot;netwave_close: finishing.&bslash;n&quot;
 )paren
 suffix:semicolon
+id|netif_stop_queue
+(paren
+id|dev
+)paren
+suffix:semicolon
 multiline_comment|/* If watchdog was activated, kill it ! */
 id|del_timer
 c_func
@@ -5896,10 +5903,6 @@ id|priv-&gt;watchdog
 suffix:semicolon
 id|link-&gt;open
 op_decrement
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
 suffix:semicolon
 r_if
 c_cond

@@ -784,6 +784,8 @@ suffix:semicolon
 )brace
 DECL|macro|PAGE_DIR_OFFSET
 mdefine_line|#define PAGE_DIR_OFFSET(tsk,address) pgd_offset((tsk),(address))
+DECL|macro|pgd_index
+mdefine_line|#define pgd_index(address)&t;((address) &gt;&gt; PGDIR_SHIFT)
 multiline_comment|/* to find an entry in a page-table-directory */
 DECL|function|pgd_offset
 r_extern
@@ -806,10 +808,10 @@ id|address
 r_return
 id|mm-&gt;pgd
 op_plus
+id|pgd_index
+c_func
 (paren
 id|address
-op_rshift
-id|PGDIR_SHIFT
 )paren
 suffix:semicolon
 )brace

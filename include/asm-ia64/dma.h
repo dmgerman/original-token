@@ -2,10 +2,10 @@ macro_line|#ifndef _ASM_IA64_DMA_H
 DECL|macro|_ASM_IA64_DMA_H
 mdefine_line|#define _ASM_IA64_DMA_H
 multiline_comment|/*&n; * Copyright (C) 1998, 1999 Hewlett-Packard Co&n; * Copyright (C) 1998, 1999 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; */
-macro_line|#include &lt;asm/io.h&gt;&t;&t;/* need byte IO */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;&t;/* And spinlocks */
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;asm/io.h&gt;&t;&t;/* need byte IO */
 macro_line|#ifdef HAVE_REALLY_SLOW_DMA_CONTROLLER
 DECL|macro|dma_outb
 mdefine_line|#define dma_outb&t;outb_p

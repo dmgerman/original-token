@@ -159,11 +159,6 @@ id|sock-&gt;sk-&gt;reuse
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* Wow!!! */
-id|sock-&gt;sk-&gt;linger
-op_assign
-l_int|1
-suffix:semicolon
 multiline_comment|/* Now, start listening on the socket */
 multiline_comment|/* I have no idea what a sane backlog-value is. 48 works so far. */
 id|error

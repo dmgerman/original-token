@@ -2984,10 +2984,11 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-id|mark_bh
+id|tasklet_schedule
 c_func
 (paren
-id|KEYBOARD_BH
+op_amp
+id|keyboard_tasklet
 )paren
 suffix:semicolon
 r_return
@@ -2996,10 +2997,11 @@ r_case
 l_int|0x47
 suffix:colon
 multiline_comment|/*case 0xc7:*/
-id|mark_bh
+id|tasklet_schedule
 c_func
 (paren
-id|KEYBOARD_BH
+op_amp
+id|keyboard_tasklet
 )paren
 suffix:semicolon
 r_break
@@ -3013,6 +3015,13 @@ id|keycode
 comma
 op_logical_neg
 id|up_flag
+)paren
+suffix:semicolon
+id|tasklet_schedule
+c_func
+(paren
+op_amp
+id|keyboard_tasklet
 )paren
 suffix:semicolon
 )brace

@@ -151,8 +151,20 @@ op_star
 id|page
 )paren
 suffix:semicolon
-DECL|macro|copy_page
-mdefine_line|#define copy_page(to,from)&t;memcpy((void *)(to), (void *)(from), PAGE_SIZE)
+r_extern
+r_void
+id|copy_page
+c_func
+(paren
+r_void
+op_star
+id|to
+comma
+r_void
+op_star
+id|from
+)paren
+suffix:semicolon
 multiline_comment|/* map phys-&gt;virtual and virtual-&gt;phys for RAM pages */
 DECL|function|___pa
 r_static

@@ -314,6 +314,10 @@ DECL|member|carrier
 r_int
 id|carrier
 suffix:semicolon
+DECL|member|lock
+id|spinlock_t
+id|lock
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|sbni_hard_header

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;PF_INET6 socket protocol family&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Adapted from linux/net/ipv4/af_inet.c&n; *&n; *&t;$Id: af_inet6.c,v 1.53 2000/02/04 21:04:08 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;PF_INET6 socket protocol family&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Adapted from linux/net/ipv4/af_inet.c&n; *&n; *&t;$Id: af_inet6.c,v 1.54 2000/02/12 23:34:45 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -1752,9 +1752,9 @@ multiline_comment|/* ok&t;&t;*/
 id|sock_no_socketpair
 comma
 multiline_comment|/* a do nothing&t;*/
-id|inet_accept
+id|sock_no_accept
 comma
-multiline_comment|/* ok&t;&t;*/
+multiline_comment|/* a do nothing&t;*/
 id|inet6_getname
 comma
 id|datagram_poll

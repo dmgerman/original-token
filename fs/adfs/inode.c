@@ -192,8 +192,10 @@ op_star
 id|page
 comma
 r_int
+r_int
 id|from
 comma
+r_int
 r_int
 id|to
 )paren
@@ -252,6 +254,7 @@ id|adfs_get_block
 suffix:semicolon
 )brace
 DECL|variable|adfs_aops
+r_static
 r_struct
 id|address_space_operations
 id|adfs_aops

@@ -47,6 +47,39 @@ DECL|macro|REST_16FPRS
 mdefine_line|#define REST_16FPRS(n, base)&t;REST_8FPRS(n, base); REST_8FPRS(n+8, base)
 DECL|macro|REST_32FPRS
 mdefine_line|#define REST_32FPRS(n, base)&t;REST_16FPRS(n, base); REST_16FPRS(n+16, base)
+multiline_comment|/*&n; * Once a version of gas that understands the AltiVec instructions&n; * is freely available, we can do this the normal way...  - paulus&n; */
+DECL|macro|LVX
+mdefine_line|#define LVX(r,a,b)&t;.long&t;(31&lt;&lt;26)+((r)&lt;&lt;21)+((a)&lt;&lt;16)+((b)&lt;&lt;11)+(103&lt;&lt;1)
+DECL|macro|STVX
+mdefine_line|#define STVX(r,a,b)&t;.long&t;(31&lt;&lt;26)+((r)&lt;&lt;21)+((a)&lt;&lt;16)+((b)&lt;&lt;11)+(231&lt;&lt;1)
+DECL|macro|MFVSCR
+mdefine_line|#define MFVSCR(r)&t;.long&t;(4&lt;&lt;26)+((r)&lt;&lt;21)+(1540&lt;&lt;1)
+DECL|macro|MTVSCR
+mdefine_line|#define MTVSCR(r)&t;.long&t;(4&lt;&lt;26)+((r)&lt;&lt;11)+(802&lt;&lt;1)
+DECL|macro|SAVE_VR
+mdefine_line|#define SAVE_VR(n,b,base)&t;li b,THREAD_VR0+(16*(n)); STVX(n,b,base)
+DECL|macro|SAVE_2VR
+mdefine_line|#define SAVE_2VR(n,b,base)&t;SAVE_VR(n,b,base); SAVE_VR(n+1,b,base) 
+DECL|macro|SAVE_4VR
+mdefine_line|#define SAVE_4VR(n,b,base)&t;SAVE_2VR(n,b,base); SAVE_2VR(n+2,b,base) 
+DECL|macro|SAVE_8VR
+mdefine_line|#define SAVE_8VR(n,b,base)&t;SAVE_4VR(n,b,base); SAVE_4VR(n+4,b,base) 
+DECL|macro|SAVE_16VR
+mdefine_line|#define SAVE_16VR(n,b,base)&t;SAVE_8VR(n,b,base); SAVE_8VR(n+8,b,base)
+DECL|macro|SAVE_32VR
+mdefine_line|#define SAVE_32VR(n,b,base)&t;SAVE_16VR(n,b,base); SAVE_16VR(n+16,b,base)
+DECL|macro|REST_VR
+mdefine_line|#define REST_VR(n,b,base)&t;li b,THREAD_VR0+(16*(n)); LVX(n,b,base)
+DECL|macro|REST_2VR
+mdefine_line|#define REST_2VR(n,b,base)&t;REST_VR(n,b,base); REST_VR(n+1,b,base) 
+DECL|macro|REST_4VR
+mdefine_line|#define REST_4VR(n,b,base)&t;REST_2VR(n,b,base); REST_2VR(n+2,b,base) 
+DECL|macro|REST_8VR
+mdefine_line|#define REST_8VR(n,b,base)&t;REST_4VR(n,b,base); REST_4VR(n+4,b,base) 
+DECL|macro|REST_16VR
+mdefine_line|#define REST_16VR(n,b,base)&t;REST_8VR(n,b,base); REST_8VR(n+8,b,base) 
+DECL|macro|REST_32VR
+mdefine_line|#define REST_32VR(n,b,base)&t;REST_16VR(n,b,base); REST_16VR(n+16,b,base)
 DECL|macro|SYNC
 mdefine_line|#define SYNC &bslash;&n;&t;sync; &bslash;&n;&t;isync
 multiline_comment|/*&n; * This instruction is not implemented on the PPC 603 or 601; however, on&n; * the 403GCX and 405GP tlbia IS defined and tlbie is not.&n; */

@@ -458,7 +458,7 @@ comma
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-id|BUGMSG
+id|BUGMSG2
 c_func
 (paren
 id|D_INIT
@@ -504,7 +504,7 @@ comma
 l_string|&quot;(check_region)&bslash;n&quot;
 )paren
 suffix:semicolon
-id|BUGMSG
+id|BUGMSG2
 c_func
 (paren
 id|D_INIT_REASONS
@@ -559,7 +559,7 @@ comma
 l_string|&quot;(empty)&bslash;n&quot;
 )paren
 suffix:semicolon
-id|BUGMSG
+id|BUGMSG2
 c_func
 (paren
 id|D_INIT_REASONS
@@ -610,7 +610,7 @@ comma
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-id|BUGMSG
+id|BUGMSG2
 c_func
 (paren
 id|D_INIT_REASONS
@@ -643,7 +643,7 @@ op_logical_neg
 id|numports
 )paren
 (brace
-id|BUGMSG
+id|BUGMSG2
 c_func
 (paren
 id|D_NORMAL
@@ -705,7 +705,7 @@ comma
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-id|BUGMSG
+id|BUGMSG2
 c_func
 (paren
 id|D_INIT
@@ -795,7 +795,7 @@ comma
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-id|BUGMSG
+id|BUGMSG2
 c_func
 (paren
 id|D_INIT
@@ -836,7 +836,7 @@ comma
 l_string|&quot;(check_mem_region)&bslash;n&quot;
 )paren
 suffix:semicolon
-id|BUGMSG
+id|BUGMSG2
 c_func
 (paren
 id|D_INIT_REASONS
@@ -900,7 +900,7 @@ comma
 id|TESTvalue
 )paren
 suffix:semicolon
-id|BUGMSG
+id|BUGMSG2
 c_func
 (paren
 id|D_INIT_REASONS
@@ -965,7 +965,7 @@ comma
 l_string|&quot;(read only)&bslash;n&quot;
 )paren
 suffix:semicolon
-id|BUGMSG
+id|BUGMSG2
 c_func
 (paren
 id|D_INIT_REASONS
@@ -1000,7 +1000,7 @@ comma
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-id|BUGMSG
+id|BUGMSG2
 c_func
 (paren
 id|D_INIT_REASONS
@@ -1033,7 +1033,7 @@ op_logical_neg
 id|numshmems
 )paren
 (brace
-id|BUGMSG
+id|BUGMSG2
 c_func
 (paren
 id|D_NORMAL
@@ -1095,7 +1095,7 @@ comma
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-id|BUGMSG
+id|BUGMSG2
 c_func
 (paren
 id|D_INIT
@@ -1173,7 +1173,7 @@ comma
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-id|BUGMSG
+id|BUGMSG2
 c_func
 (paren
 id|D_INIT
@@ -1235,7 +1235,7 @@ comma
 id|status
 )paren
 suffix:semicolon
-id|BUGMSG
+id|BUGMSG2
 c_func
 (paren
 id|D_INIT_REASONS
@@ -1306,7 +1306,7 @@ comma
 id|status
 )paren
 suffix:semicolon
-id|BUGMSG
+id|BUGMSG2
 c_func
 (paren
 id|D_INIT_REASONS
@@ -1405,7 +1405,7 @@ comma
 id|airq
 )paren
 suffix:semicolon
-id|BUGMSG
+id|BUGMSG2
 c_func
 (paren
 id|D_INIT_REASONS
@@ -1738,7 +1738,7 @@ op_logical_and
 op_logical_neg
 id|numcards
 )paren
-id|BUGMSG
+id|BUGMSG2
 c_func
 (paren
 id|D_NORMAL
@@ -1817,12 +1817,12 @@ id|err
 )paren
 )paren
 (brace
-id|BUGMSG
+id|BUGMSG2
 c_func
 (paren
 id|D_NORMAL
 comma
-l_string|&quot;Can&squot;t allocate device!&bslash;n&quot;
+l_string|&quot;com90xx: Can&squot;t allocate device!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2383,9 +2383,7 @@ c_func
 (paren
 id|D_INIT
 comma
-l_string|&quot;Resetting %s (status=%02Xh)&bslash;n&quot;
-comma
-id|dev-&gt;name
+l_string|&quot;Resetting (status=%02Xh)&bslash;n&quot;
 comma
 id|ASTATUS
 c_func
@@ -2867,14 +2865,7 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev-&gt;start
-)paren
-id|dev
-op_member_access_from_pointer
-id|stop
+id|unregister_netdev
 c_func
 (paren
 id|dev
@@ -2912,12 +2903,6 @@ op_minus
 id|dev-&gt;mem_start
 op_plus
 l_int|1
-)paren
-suffix:semicolon
-id|unregister_netdev
-c_func
-(paren
-id|dev
 )paren
 suffix:semicolon
 id|kfree

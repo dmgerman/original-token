@@ -9948,6 +9948,9 @@ id|debug_buff
 )paren
 )paren
 suffix:semicolon
+id|DEBUG
+c_func
+(paren
 id|printk
 c_func
 (paren
@@ -9960,6 +9963,7 @@ comma
 id|num
 comma
 id|risc_address
+)paren
 )paren
 suffix:semicolon
 id|BCOPY
@@ -10070,6 +10074,9 @@ l_int|16
 op_amp
 l_int|0xffff
 suffix:semicolon
+id|DEBUG
+c_func
+(paren
 id|printk
 c_func
 (paren
@@ -10101,6 +10108,7 @@ id|mb
 (braket
 l_int|3
 )braket
+)paren
 )paren
 suffix:semicolon
 r_if

@@ -1580,13 +1580,11 @@ op_minus
 id|ULTRA_NIC_OFFSET
 suffix:semicolon
 multiline_comment|/* ASIC addr */
-id|dev-&gt;start
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|1
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 r_if
 c_cond

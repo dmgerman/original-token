@@ -59,6 +59,8 @@ DECL|macro|I2C_DRIVERID_MGATVO
 mdefine_line|#define I2C_DRIVERID_MGATVO&t;23&t;/* Matrox TVOut&t;&t;&t;*/
 DECL|macro|I2C_DRIVERID_SAA5249
 mdefine_line|#define I2C_DRIVERID_SAA5249&t;24&t;/* SAA5249 and compatibles&t;*/
+DECL|macro|I2C_DRIVERID_PCF8583
+mdefine_line|#define I2C_DRIVERID_PCF8583&t;25&t;/* real time clock&t;&t;*/
 DECL|macro|I2C_DRIVERID_EXP0
 mdefine_line|#define I2C_DRIVERID_EXP0&t;0xF0&t;/* experimental use id&squot;s&t;*/
 DECL|macro|I2C_DRIVERID_EXP1
@@ -124,6 +126,8 @@ DECL|macro|I2C_HW_B_I810
 mdefine_line|#define I2C_HW_B_I810&t;0x0a&t;/* Intel I810 &t;&t;&t;&t;*/
 DECL|macro|I2C_HW_B_RIVA
 mdefine_line|#define I2C_HW_B_RIVA&t;0x10&t;/* Riva based graphics cards&t;&t;*/
+DECL|macro|I2C_HW_B_IOC
+mdefine_line|#define I2C_HW_B_IOC&t;0x11&t;/* IOC bit-wiggling&t;&t;&t;*/
 multiline_comment|/* --- PCF 8584 based algorithms&t;&t;&t;&t;&t;*/
 DECL|macro|I2C_HW_P_LP
 mdefine_line|#define I2C_HW_P_LP&t;0x00&t;/* Parallel port interface&t;&t;*/

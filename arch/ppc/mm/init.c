@@ -5076,7 +5076,7 @@ id|total
 suffix:semicolon
 multiline_comment|/* max amount of RAM we allow -- Cort */
 DECL|macro|RAM_LIMIT
-mdefine_line|#define RAM_LIMIT (64&lt;&lt;20)
+mdefine_line|#define RAM_LIMIT (768&lt;&lt;20)
 id|memory_node
 op_assign
 id|find_devices

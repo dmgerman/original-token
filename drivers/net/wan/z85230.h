@@ -588,10 +588,12 @@ suffix:semicolon
 multiline_comment|/* Z85230 chip instance we are from */
 DECL|member|ctrlio
 r_int
+r_int
 id|ctrlio
 suffix:semicolon
 multiline_comment|/* I/O ports */
 DECL|member|dataio
+r_int
 r_int
 id|dataio
 suffix:semicolon
@@ -867,6 +869,7 @@ r_char
 op_star
 id|mapping
 comma
+r_int
 r_int
 id|io
 )paren

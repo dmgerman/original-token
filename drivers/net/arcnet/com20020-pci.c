@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Linux ARCnet driver - COM20020 PCI support (Contemporary Controls PCI20)&n; * &n; * Written 1994-1999 by Avery Pennarun,&n; *    based on an ISA version by David Woodhouse.&n; * Written 1999 by Martin Mares &lt;mj@suse.cz&gt;.&n; * Derived from skeleton.c by Donald Becker.&n; *&n; * Special thanks to Contemporary Controls, Inc. (www.ccontrols.com)&n; *  for sponsoring the further development of this driver.&n; *&n; * **********************&n; *&n; * The original copyright of skeleton.c was as follows:&n; *&n; * skeleton.c Written 1993 by Donald Becker.&n; * Copyright 1993 United States Government as represented by the&n; * Director, National Security Agency.  This software may only be used&n; * and distributed according to the terms of the GNU Public License as&n; * modified by SRC, incorporated herein by reference.&n; *&n; * **********************&n; *&n; * For more details, see drivers/net/arcnet.c&n; *&n; * **********************&n; */
+multiline_comment|/*&n; * Linux ARCnet driver - COM20020 PCI support (Contemporary Controls PCI20)&n; * &n; * Written 1994-1999 by Avery Pennarun,&n; *    based on an ISA version by David Woodhouse.&n; * Written 1999-2000 by Martin Mares &lt;mj@suse.cz&gt;.&n; * Derived from skeleton.c by Donald Becker.&n; *&n; * Special thanks to Contemporary Controls, Inc. (www.ccontrols.com)&n; *  for sponsoring the further development of this driver.&n; *&n; * **********************&n; *&n; * The original copyright of skeleton.c was as follows:&n; *&n; * skeleton.c Written 1993 by Donald Becker.&n; * Copyright 1993 United States Government as represented by the&n; * Director, National Security Agency.  This software may only be used&n; * and distributed according to the terms of the GNU Public License as&n; * modified by SRC, incorporated herein by reference.&n; *&n; * **********************&n; *&n; * For more details, see drivers/net/arcnet.c&n; *&n; * **********************&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -530,14 +530,7 @@ id|cards
 id|count
 )braket
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev-&gt;start
-)paren
-id|dev
-op_member_access_from_pointer
-id|stop
+id|unregister_netdev
 c_func
 (paren
 id|dev
@@ -557,12 +550,6 @@ c_func
 id|dev-&gt;base_addr
 comma
 id|ARCNET_TOTAL_SIZE
-)paren
-suffix:semicolon
-id|unregister_netdev
-c_func
-(paren
-id|dev
 )paren
 suffix:semicolon
 id|kfree

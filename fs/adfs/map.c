@@ -97,7 +97,6 @@ r_int
 id|frag
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * get fragment id&n;&t;&t; */
-singleline_comment|//asm(&quot;@ get fragment id start&quot;);
 (brace
 r_int
 r_int
@@ -166,7 +165,6 @@ op_and_assign
 id|idmask
 suffix:semicolon
 )brace
-singleline_comment|//asm(&quot;@ get fragment id end&quot;);
 id|mapptr
 op_assign
 id|start
@@ -174,7 +172,6 @@ op_plus
 id|idlen
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * find end of fragment&n;&t;&t; */
-singleline_comment|//asm(&quot;@ find end of fragment start&quot;);
 (brace
 r_int
 r_int
@@ -237,7 +234,6 @@ id|v2
 )paren
 suffix:semicolon
 )brace
-singleline_comment|//asm(&quot;@ find end of fragment end&quot;);
 r_if
 c_cond
 (paren
@@ -398,7 +394,6 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t; * get fragment id&n;&t; */
-singleline_comment|//asm(&quot;@ get fragment id start&quot;);
 (brace
 r_int
 r_int
@@ -467,7 +462,6 @@ op_and_assign
 id|idmask
 suffix:semicolon
 )brace
-singleline_comment|//asm(&quot;@ get fragment id end&quot;);
 multiline_comment|/*&n;&t; * If the freelink is null, then no free fragments&n;&t; * exist in this zone.&n;&t; */
 r_if
 c_cond
@@ -486,7 +480,6 @@ op_add_assign
 id|frag
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * get fragment id&n;&t;&t; */
-singleline_comment|//asm(&quot;@ get fragment id start&quot;);
 (brace
 r_int
 r_int
@@ -555,7 +548,6 @@ op_and_assign
 id|idmask
 suffix:semicolon
 )brace
-singleline_comment|//asm(&quot;@ get fragment id end&quot;);
 id|mapptr
 op_assign
 id|start
@@ -563,7 +555,6 @@ op_plus
 id|idlen
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * find end of fragment&n;&t;&t; */
-singleline_comment|//asm(&quot;@ find end of fragment start&quot;);
 (brace
 r_int
 r_int
@@ -626,7 +617,6 @@ id|v2
 )paren
 suffix:semicolon
 )brace
-singleline_comment|//asm(&quot;@ find end of fragment end&quot;);
 id|total
 op_add_assign
 id|mapptr

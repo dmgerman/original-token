@@ -172,9 +172,6 @@ macro_line|#error You must compile this driver with &quot;-O&quot;.
 macro_line|#endif
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#ifdef MODVERSIONS
-macro_line|#include &lt;linux/modversions.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -182,14 +179,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
-macro_line|#ifdef HAS_PCI_NETIF
-macro_line|#include &quot;pci-netif.h&quot;
-macro_line|#else
 macro_line|#include &lt;linux/pci.h&gt;
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20155
-macro_line|#include &lt;linux/bios32.h&gt;&t;&t;/* Ignore the bogus warning in 2.1.100+ */
-macro_line|#endif
-macro_line|#endif
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -312,37 +302,6 @@ l_string|&quot;i&quot;
 suffix:semicolon
 DECL|macro|RUN_AT
 mdefine_line|#define RUN_AT(x) (jiffies + (x))
-macro_line|#if (LINUX_VERSION_CODE &lt; 0x20123)
-DECL|macro|test_and_set_bit
-mdefine_line|#define test_and_set_bit(val, addr) set_bit(val, addr)
-DECL|macro|le16_to_cpu
-mdefine_line|#define le16_to_cpu(val) (val)
-DECL|macro|cpu_to_le16
-mdefine_line|#define cpu_to_le16(val) (val)
-DECL|macro|le32_to_cpu
-mdefine_line|#define le32_to_cpu(val) (val)
-DECL|macro|cpu_to_le32
-mdefine_line|#define cpu_to_le32(val) (val)
-DECL|macro|spin_lock_irqsave
-mdefine_line|#define spin_lock_irqsave(&amp;sp-&gt;lock, flags)&t;save_flags(flags); cli();
-DECL|macro|spin_unlock_irqrestore
-mdefine_line|#define spin_unlock_irqrestore(&amp;sp-&gt;lock, flags); restore_flags(flags);
-macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20159
-DECL|macro|dev_free_skb
-mdefine_line|#define dev_free_skb(skb) dev_kfree_skb(skb, FREE_WRITE);
-macro_line|#else
-DECL|macro|dev_free_skb
-mdefine_line|#define dev_free_skb(skb) dev_kfree_skb(skb);
-macro_line|#endif
-macro_line|#if ! defined(CAP_NET_ADMIN)
-DECL|macro|capable
-mdefine_line|#define capable(CAP_XXX) (suser())
-macro_line|#endif
-macro_line|#if ! defined(HAS_NETIF_QUEUE)
-DECL|macro|netif_wake_queue
-mdefine_line|#define netif_wake_queue(dev)  mark_bh(NET_BH);
-macro_line|#endif
 multiline_comment|/* The total I/O port extent of the board.&n;   The registers beyond 0x18 only exist on the i82558. */
 DECL|macro|SPEEDO3_TOTAL_SIZE
 mdefine_line|#define SPEEDO3_TOTAL_SIZE 0x20
@@ -361,11 +320,10 @@ op_star
 id|speedo_found1
 c_func
 (paren
-r_int
-id|pci_bus
-comma
-r_int
-id|pci_devfn
+r_struct
+id|pci_dev
+op_star
+id|pdev
 comma
 r_int
 id|ioaddr
@@ -391,44 +349,6 @@ mdefine_line|#define SPEEDO_IOTYPE   PCI_USES_MASTER|PCI_USES_MEM|PCI_ADDR0
 DECL|macro|SPEEDO_SIZE
 mdefine_line|#define SPEEDO_SIZE&t;&t;0x1000
 macro_line|#endif
-macro_line|#if defined(HAS_PCI_NETIF)
-DECL|variable|pci_tbl
-r_struct
-id|pci_id_info
-r_static
-id|pci_tbl
-(braket
-)braket
-op_assign
-(brace
-(brace
-l_string|&quot;Intel PCI EtherExpress Pro100&quot;
-comma
-(brace
-l_int|0x12298086
-comma
-l_int|0xffffffff
-comma
-)brace
-comma
-id|SPEEDO_IOTYPE
-comma
-id|SPEEDO_SIZE
-comma
-l_int|0
-comma
-id|speedo_found1
-)brace
-comma
-(brace
-l_int|0
-comma
-)brace
-comma
-multiline_comment|/* 0 terminated list. */
-)brace
-suffix:semicolon
-macro_line|#else
 DECL|enum|pci_flags_bit
 r_enum
 id|pci_flags_bit
@@ -514,11 +434,10 @@ op_star
 id|probe1
 )paren
 (paren
-r_int
-id|pci_bus
-comma
-r_int
-id|pci_devfn
+r_struct
+id|pci_dev
+op_star
+id|pdev
 comma
 r_int
 id|ioaddr
@@ -567,7 +486,6 @@ comma
 multiline_comment|/* 0 terminated list. */
 )brace
 suffix:semicolon
-macro_line|#endif
 macro_line|#ifndef USE_IO
 DECL|macro|inb
 mdefine_line|#define inb readb
@@ -1249,15 +1167,9 @@ DECL|member|chip_id
 r_int
 id|chip_id
 suffix:semicolon
-DECL|member|pci_bus
-DECL|member|pci_devfn
 DECL|member|acpi_pwr
 r_int
 r_char
-id|pci_bus
-comma
-id|pci_devfn
-comma
 id|acpi_pwr
 suffix:semicolon
 DECL|member|pdev
@@ -1843,11 +1755,11 @@ id|root_speedo_dev
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#if ! defined(HAS_PCI_NETIF)
 DECL|function|eepro100_init
+r_static
 r_int
+id|__init
 id|eepro100_init
-c_func
 (paren
 r_void
 )paren
@@ -1857,43 +1769,12 @@ id|cards_found
 op_assign
 l_int|0
 suffix:semicolon
-r_static
-r_int
-id|pci_index
+r_struct
+id|pci_dev
+op_star
+id|pdev
 op_assign
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|pcibios_present
-c_func
-(paren
-)paren
-)paren
-r_return
-id|cards_found
-suffix:semicolon
-r_for
-c_loop
-(paren
-suffix:semicolon
-id|pci_index
-OL
-l_int|8
-suffix:semicolon
-id|pci_index
-op_increment
-)paren
-(brace
-r_int
-r_char
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|pci_latency
+l_int|NULL
 suffix:semicolon
 r_int
 id|ioaddr
@@ -1901,47 +1782,23 @@ suffix:semicolon
 r_int
 id|irq
 suffix:semicolon
-id|u16
-id|pci_command
-comma
-id|new_command
-suffix:semicolon
-r_if
-c_cond
+r_while
+c_loop
 (paren
-id|pcibios_find_device
-c_func
+(paren
+id|pdev
+op_assign
+id|pci_find_device
 (paren
 id|PCI_VENDOR_ID_INTEL
 comma
 id|PCI_DEVICE_ID_INTEL_82557
 comma
-id|pci_index
-comma
-op_amp
-id|pci_bus
-comma
-op_amp
-id|pci_device_fn
-)paren
-)paren
-r_break
-suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x20155  ||  PCI_SUPPORT_1
-(brace
-r_struct
-id|pci_dev
-op_star
 id|pdev
-op_assign
-id|pci_find_slot
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
 )paren
-suffix:semicolon
+)paren
+)paren
+(brace
 macro_line|#ifdef USE_IO
 id|ioaddr
 op_assign
@@ -1967,73 +1824,6 @@ id|irq
 op_assign
 id|pdev-&gt;irq
 suffix:semicolon
-)brace
-macro_line|#else
-(brace
-id|u32
-id|pciaddr
-suffix:semicolon
-id|u8
-id|pci_irq_line
-suffix:semicolon
-id|pcibios_read_config_byte
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_INTERRUPT_LINE
-comma
-op_amp
-id|pci_irq_line
-)paren
-suffix:semicolon
-multiline_comment|/* Note: BASE_ADDRESS_0 is for memory-mapping the registers. */
-macro_line|#ifdef USE_IO
-id|pcibios_read_config_dword
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_BASE_ADDRESS_1
-comma
-op_amp
-id|pciaddr
-)paren
-suffix:semicolon
-id|pciaddr
-op_and_assign
-op_complement
-l_int|3UL
-suffix:semicolon
-macro_line|#else
-id|pcibios_read_config_dword
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_BASE_ADDRESS_0
-comma
-op_amp
-id|pciaddr
-)paren
-suffix:semicolon
-macro_line|#endif
-id|ioaddr
-op_assign
-id|pciaddr
-suffix:semicolon
-id|irq
-op_assign
-id|pci_irq_line
-suffix:semicolon
-)brace
-macro_line|#endif
 multiline_comment|/* Remove I/O space marker in bit 0. */
 macro_line|#ifdef USE_IO
 r_if
@@ -2047,8 +1837,19 @@ comma
 l_int|32
 )paren
 )paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;eepro100: %ld mem region busy&bslash;n&quot;
+comma
+id|ioaddr
+)paren
+suffix:semicolon
 r_continue
 suffix:semicolon
+)brace
 macro_line|#else
 (brace
 r_int
@@ -2057,6 +1858,30 @@ id|orig_ioaddr
 op_assign
 id|ioaddr
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|check_mem_region
+c_func
+(paren
+id|ioaddr
+comma
+l_int|32
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;eepro100: %ld mem region busy&bslash;n&quot;
+comma
+id|ioaddr
+)paren
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -2069,10 +1894,7 @@ r_int
 id|ioremap
 c_func
 (paren
-id|ioaddr
-op_amp
-op_complement
-l_int|0xfUL
+id|orig_ioaddr
 comma
 l_int|0x1000
 )paren
@@ -2112,129 +1934,13 @@ comma
 id|irq
 )paren
 suffix:semicolon
-multiline_comment|/* Get and check the bus-master and latency values. */
-id|pcibios_read_config_word
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_COMMAND
-comma
-op_amp
-id|pci_command
-)paren
-suffix:semicolon
-id|new_command
-op_assign
-id|pci_command
-op_or
-id|PCI_COMMAND_MASTER
-op_or
-id|PCI_COMMAND_IO
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|pci_command
-op_ne
-id|new_command
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;  The PCI BIOS has not enabled this&quot;
-l_string|&quot; device!  Updating PCI command %4.4x-&gt;%4.4x.&bslash;n&quot;
-comma
-id|pci_command
-comma
-id|new_command
-)paren
-suffix:semicolon
-id|pcibios_write_config_word
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_COMMAND
-comma
-id|new_command
-)paren
-suffix:semicolon
-)brace
-id|pcibios_read_config_byte
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_LATENCY_TIMER
-comma
-op_amp
-id|pci_latency
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|pci_latency
-OL
-l_int|32
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;  PCI latency timer (CFLT) is unreasonably low at %d.&quot;
-l_string|&quot;  Setting to 32 clocks.&bslash;n&quot;
-comma
-id|pci_latency
-)paren
-suffix:semicolon
-id|pcibios_write_config_byte
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_LATENCY_TIMER
-comma
-l_int|32
-)paren
-suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|speedo_debug
-OG
-l_int|1
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;  PCI latency timer (CFLT) is %#x.&bslash;n&quot;
-comma
-id|pci_latency
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
 id|speedo_found1
 c_func
 (paren
-id|pci_bus
-comma
-id|pci_device_fn
+id|pdev
 comma
 id|ioaddr
 comma
@@ -2255,7 +1961,6 @@ r_return
 id|cards_found
 suffix:semicolon
 )brace
-macro_line|#endif
 DECL|function|speedo_found1
 r_static
 r_struct
@@ -2264,11 +1969,10 @@ op_star
 id|speedo_found1
 c_func
 (paren
-r_int
-id|pci_bus
-comma
-r_int
-id|pci_devfn
+r_struct
+id|pci_dev
+op_star
+id|pdev
 comma
 r_int
 id|ioaddr
@@ -2292,11 +1996,6 @@ r_struct
 id|speedo_private
 op_star
 id|sp
-suffix:semicolon
-r_struct
-id|pci_dev
-op_star
-id|pdev
 suffix:semicolon
 r_int
 r_char
@@ -2326,6 +2025,8 @@ r_int
 id|acpi_idle_state
 op_assign
 l_int|0
+comma
+id|pm
 suffix:semicolon
 r_static
 r_int
@@ -2350,16 +2051,6 @@ id|printk
 c_func
 (paren
 id|version
-)paren
-suffix:semicolon
-id|pdev
-op_assign
-id|pci_find_slot
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_devfn
 )paren
 suffix:semicolon
 id|tx_ring
@@ -2493,20 +2184,56 @@ id|option
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if defined(HAS_PCI_NETIF)
-id|acpi_idle_state
+multiline_comment|/* save power state b4 pci_enable_device overwrites it */
+id|pm
 op_assign
-id|acpi_set_pwr_state
+id|pci_find_capability
 c_func
 (paren
-id|pci_bus
+id|pdev
 comma
-id|pci_devfn
-comma
-id|ACPI_D0
+id|PCI_CAP_ID_PM
 )paren
 suffix:semicolon
-macro_line|#endif
+r_if
+c_cond
+(paren
+id|pm
+)paren
+(brace
+id|u16
+id|pwr_command
+suffix:semicolon
+id|pci_read_config_word
+c_func
+(paren
+id|pdev
+comma
+id|pm
+op_plus
+id|PCI_PM_CTRL
+comma
+op_amp
+id|pwr_command
+)paren
+suffix:semicolon
+id|acpi_idle_state
+op_assign
+id|pwr_command
+op_amp
+id|PCI_PM_CTRL_STATE_MASK
+suffix:semicolon
+)brace
+id|pci_enable_device
+(paren
+id|pdev
+)paren
+suffix:semicolon
+id|pci_set_master
+(paren
+id|pdev
+)paren
+suffix:semicolon
 multiline_comment|/* Read the station address EEPROM before doing the reset.&n;&t;   Nominally his should even be done before accepting the device, but&n;&t;   then we wouldn&squot;t have a device name with which to report the error.&n;&t;   The size test is for 6 bit vs. 8 bit address serial EEPROMs.&n;&t;*/
 (brace
 id|u16
@@ -2752,7 +2479,7 @@ comma
 id|irq
 )paren
 suffix:semicolon
-macro_line|#ifndef kernel_bloat
+macro_line|#if 1
 multiline_comment|/* OK, this is pure kernel bloat.  I don&squot;t like it when other drivers&n;&t;   waste non-pageable kernel space to emit similar messages, but I need&n;&t;   them for bug reports. */
 (brace
 r_const
@@ -3272,20 +2999,15 @@ op_plus
 id|SCBPort
 )paren
 suffix:semicolon
-macro_line|#if defined(HAS_PCI_NETIF)
 multiline_comment|/* Return the chip to its original power state. */
-id|acpi_set_pwr_state
-c_func
+id|pci_set_power_state
 (paren
-id|pci_bus
-comma
-id|pci_devfn
+id|pdev
 comma
 id|acpi_idle_state
 )paren
 suffix:semicolon
-macro_line|#endif
-multiline_comment|/* We do a request_region() only to register /proc/ioports info. */
+macro_line|#ifdef USE_IO
 id|request_region
 c_func
 (paren
@@ -3296,6 +3018,18 @@ comma
 l_string|&quot;Intel Speedo3 Ethernet&quot;
 )paren
 suffix:semicolon
+macro_line|#else
+id|request_mem_region
+c_func
+(paren
+id|ioaddr
+comma
+l_int|0x1000
+comma
+l_string|&quot;Intel Speedo3 Ethernet&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 id|dev-&gt;base_addr
 op_assign
 id|ioaddr
@@ -3365,14 +3099,6 @@ suffix:semicolon
 id|root_speedo_dev
 op_assign
 id|dev
-suffix:semicolon
-id|sp-&gt;pci_bus
-op_assign
-id|pci_bus
-suffix:semicolon
-id|sp-&gt;pci_devfn
-op_assign
-id|pci_devfn
 suffix:semicolon
 id|sp-&gt;pdev
 op_assign
@@ -3965,18 +3691,6 @@ id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
-macro_line|#if defined(HAS_PCI_NETIF)
-id|acpi_set_pwr_state
-c_func
-(paren
-id|sp-&gt;pci_bus
-comma
-id|sp-&gt;pci_devfn
-comma
-id|ACPI_D0
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -3993,6 +3707,14 @@ comma
 id|dev-&gt;name
 comma
 id|dev-&gt;irq
+)paren
+suffix:semicolon
+id|pci_set_power_state
+c_func
+(paren
+id|sp-&gt;pdev
+comma
+l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* Set up the Tx queue early.. */
@@ -4038,12 +3760,10 @@ comma
 id|dev
 )paren
 )paren
-(brace
 r_return
 op_minus
-id|EAGAIN
+id|EBUSY
 suffix:semicolon
-)brace
 id|MOD_INC_USE_COUNT
 suffix:semicolon
 id|dev-&gt;if_port
@@ -4616,6 +4336,11 @@ comma
 id|ioaddr
 op_plus
 id|SCBCmd
+)paren
+suffix:semicolon
+id|netif_start_queue
+(paren
+id|dev
 )paren
 suffix:semicolon
 )brace
@@ -5585,6 +5310,11 @@ id|dev-&gt;trans_start
 op_assign
 id|jiffies
 suffix:semicolon
+id|netif_start_queue
+(paren
+id|dev
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -5624,6 +5354,11 @@ id|dev-&gt;base_addr
 suffix:semicolon
 r_int
 id|entry
+suffix:semicolon
+id|netif_stop_queue
+(paren
+id|dev
+)paren
 suffix:semicolon
 multiline_comment|/* Caution: the write order is important here, set the base address&n;&t;   with the &quot;ownership&quot; bits last. */
 (brace
@@ -5829,12 +5564,6 @@ id|sp-&gt;tx_full
 op_assign
 l_int|1
 suffix:semicolon
-id|netif_stop_queue
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
 )brace
 id|spin_unlock_irqrestore
 c_func
@@ -5867,6 +5596,17 @@ suffix:semicolon
 id|dev-&gt;trans_start
 op_assign
 id|jiffies
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|sp-&gt;tx_full
+)paren
+id|netif_start_queue
+(paren
+id|dev
+)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -5954,6 +5694,12 @@ id|speedo_private
 op_star
 )paren
 id|dev-&gt;priv
+suffix:semicolon
+id|spin_lock
+(paren
+op_amp
+id|sp-&gt;lock
+)paren
 suffix:semicolon
 r_do
 (brace
@@ -6112,13 +5858,6 @@ l_int|0xA400
 r_int
 r_int
 id|dirty_tx
-suffix:semicolon
-id|spin_lock
-c_func
-(paren
-op_amp
-id|sp-&gt;lock
-)paren
 suffix:semicolon
 id|dirty_tx
 op_assign
@@ -6362,26 +6101,21 @@ id|sp-&gt;tx_full
 op_assign
 l_int|0
 suffix:semicolon
-id|spin_unlock
-c_func
+)brace
+r_if
+c_cond
 (paren
-op_amp
-id|sp-&gt;lock
+id|sp-&gt;tx_full
 )paren
-suffix:semicolon
-id|netif_wake_queue
-c_func
+id|netif_stop_queue
 (paren
 id|dev
 )paren
 suffix:semicolon
-)brace
 r_else
-id|spin_unlock
-c_func
+id|netif_wake_queue
 (paren
-op_amp
-id|sp-&gt;lock
+id|dev
 )paren
 suffix:semicolon
 )brace
@@ -6450,7 +6184,11 @@ id|SCBStatus
 )paren
 )paren
 suffix:semicolon
-r_return
+id|spin_unlock
+(paren
+op_amp
+id|sp-&gt;lock
+)paren
 suffix:semicolon
 )brace
 r_static
@@ -7250,7 +6988,7 @@ op_assign
 l_int|1
 suffix:semicolon
 macro_line|#endif
-id|dev_free_skb
+id|dev_kfree_skb
 c_func
 (paren
 id|skb
@@ -7316,7 +7054,7 @@ comma
 id|skb-&gt;len
 )paren
 suffix:semicolon
-id|dev_free_skb
+id|dev_kfree_skb
 c_func
 (paren
 id|skb
@@ -7355,19 +7093,14 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-macro_line|#if defined(HAS_PCI_NETIF)
 multiline_comment|/* Alt: acpi_set_pwr_state(pci_bus, pci_devfn, sp-&gt;acpi_pwr); */
-id|acpi_set_pwr_state
-c_func
+id|pci_set_power_state
 (paren
-id|sp-&gt;pci_bus
+id|sp-&gt;pdev
 comma
-id|sp-&gt;pci_devfn
-comma
-id|ACPI_D2
+l_int|2
 )paren
 suffix:semicolon
-macro_line|#endif
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
@@ -7600,11 +7333,9 @@ l_int|0
 op_amp
 l_int|0x1f
 suffix:semicolon
-macro_line|#if defined(HAS_PCI_NETIF)
 r_int
 id|saved_acpi
 suffix:semicolon
-macro_line|#endif
 r_switch
 c_cond
 (paren
@@ -7628,17 +7359,13 @@ op_plus
 l_int|1
 suffix:colon
 multiline_comment|/* Read the specified MII register. */
-macro_line|#if defined(HAS_PCI_NETIF)
 id|saved_acpi
 op_assign
-id|acpi_set_pwr_state
-c_func
+id|pci_set_power_state
 (paren
-id|sp-&gt;pci_bus
+id|sp-&gt;pdev
 comma
-id|sp-&gt;pci_devfn
-comma
-id|ACPI_D0
+l_int|0
 )paren
 suffix:semicolon
 id|data
@@ -7647,7 +7374,6 @@ l_int|3
 )braket
 op_assign
 id|mdio_read
-c_func
 (paren
 id|ioaddr
 comma
@@ -7662,39 +7388,13 @@ l_int|1
 )braket
 )paren
 suffix:semicolon
-id|acpi_set_pwr_state
-c_func
+id|pci_set_power_state
 (paren
-id|sp-&gt;pci_bus
-comma
-id|sp-&gt;pci_devfn
+id|sp-&gt;pdev
 comma
 id|saved_acpi
 )paren
 suffix:semicolon
-macro_line|#else
-id|data
-(braket
-l_int|3
-)braket
-op_assign
-id|mdio_read
-c_func
-(paren
-id|ioaddr
-comma
-id|data
-(braket
-l_int|0
-)braket
-comma
-id|data
-(braket
-l_int|1
-)braket
-)paren
-suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -7718,17 +7418,14 @@ r_return
 op_minus
 id|EPERM
 suffix:semicolon
-macro_line|#if defined(HAS_PCI_NETIF)
 id|saved_acpi
 op_assign
-id|acpi_set_pwr_state
+id|pci_set_power_state
 c_func
 (paren
-id|sp-&gt;pci_bus
+id|sp-&gt;pdev
 comma
-id|sp-&gt;pci_devfn
-comma
-id|ACPI_D0
+l_int|0
 )paren
 suffix:semicolon
 id|mdio_write
@@ -7752,39 +7449,14 @@ l_int|2
 )braket
 )paren
 suffix:semicolon
-id|acpi_set_pwr_state
+id|pci_set_power_state
 c_func
 (paren
-id|sp-&gt;pci_bus
-comma
-id|sp-&gt;pci_devfn
+id|sp-&gt;pdev
 comma
 id|saved_acpi
 )paren
 suffix:semicolon
-macro_line|#else
-id|mdio_write
-c_func
-(paren
-id|ioaddr
-comma
-id|data
-(braket
-l_int|0
-)braket
-comma
-id|data
-(braket
-l_int|1
-)braket
-comma
-id|data
-(braket
-l_int|2
-)braket
-)paren
-suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -8844,33 +8516,6 @@ comma
 id|version
 )paren
 suffix:semicolon
-macro_line|#if defined(HAS_PCI_NETIF)
-id|cards_found
-op_assign
-id|netif_pci_probe
-c_func
-(paren
-id|pci_tbl
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|cards_found
-OL
-l_int|0
-)paren
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;eepro100: No cards found, driver not installed.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-id|cards_found
-suffix:semicolon
-macro_line|#else
 id|cards_found
 op_assign
 id|eepro100_init
@@ -8898,7 +8543,6 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -8952,6 +8596,14 @@ id|SPEEDO3_TOTAL_SIZE
 )paren
 suffix:semicolon
 macro_line|#else
+id|release_mem_region
+c_func
+(paren
+id|root_speedo_dev-&gt;base_addr
+comma
+l_int|0x1000
+)paren
+suffix:semicolon
 id|iounmap
 c_func
 (paren
@@ -8963,18 +8615,14 @@ id|root_speedo_dev-&gt;base_addr
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if defined(HAS_PCI_NETIF)
-id|acpi_set_pwr_state
+id|pci_set_power_state
 c_func
 (paren
-id|sp-&gt;pci_bus
-comma
-id|sp-&gt;pci_devfn
+id|sp-&gt;pdev
 comma
 id|sp-&gt;acpi_pwr
 )paren
 suffix:semicolon
-macro_line|#endif
 id|next_dev
 op_assign
 id|sp-&gt;next_module

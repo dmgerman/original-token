@@ -47,15 +47,15 @@ mdefine_line|#define MASK_SYSTEM_CONTROL&t;0x0000ff00
 DECL|macro|MASK_TRAP_STRICT
 mdefine_line|#define MASK_TRAP_STRICT&t;0x00001f00
 DECL|macro|BIT_AC
-mdefine_line|#define BIT_AC&t;0x00100000&t;/* use alternative C-flag definition&n;&t;&t;&t;&t;   for compares */
+mdefine_line|#define BIT_AC&t;0x00001000&t;/* use alternative C-flag definition&n;&t;&t;&t;&t;   for compares */
 DECL|macro|BIT_EP
-mdefine_line|#define BIT_EP&t;0x00080000&t;/* use expanded packed decimal format */
+mdefine_line|#define BIT_EP&t;0x00000800&t;/* use expanded packed decimal format */
 DECL|macro|BIT_SO
-mdefine_line|#define BIT_SO&t;0x00040000&t;/* select synchronous operation of FPA */
+mdefine_line|#define BIT_SO&t;0x00000400&t;/* select synchronous operation of FPA */
 DECL|macro|BIT_NE
-mdefine_line|#define BIT_NE&t;0x00020000&t;/* NaN exception bit */
+mdefine_line|#define BIT_NE&t;0x00000200&t;/* NaN exception bit */
 DECL|macro|BIT_ND
-mdefine_line|#define BIT_ND&t;0x00010000&t;/* no denormalized numbers bit */
+mdefine_line|#define BIT_ND&t;0x00000100&t;/* no denormalized numbers bit */
 multiline_comment|/* CUMULATIVE EXCEPTION FLAGS BYTE&n;---------------------------------- */
 DECL|macro|MASK_EXCEPTION_FLAGS
 mdefine_line|#define MASK_EXCEPTION_FLAGS&t;&t;0x000000ff

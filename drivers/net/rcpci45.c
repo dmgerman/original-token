@@ -1042,10 +1042,6 @@ id|dev-&gt;irq
 op_assign
 id|irq
 suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
 multiline_comment|/*&n;     * Request a shared interrupt line.&n;     */
 r_if
 c_cond
@@ -1495,6 +1491,12 @@ suffix:semicolon
 macro_line|#endif
 id|MOD_INC_USE_COUNT
 suffix:semicolon
+id|netif_start_queue
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1538,11 +1540,15 @@ id|status
 op_assign
 l_int|0
 suffix:semicolon
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|dev-&gt;tbusy
-op_logical_or
 id|pDpa-&gt;shutdown
 op_logical_or
 id|pDpa-&gt;reboot
@@ -1556,30 +1562,8 @@ l_string|&quot;rc: RC_xmit_packet: tbusy!&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
 r_return
 l_int|1
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|skb-&gt;len
-op_le
-l_int|0
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;RC_xmit_packet: skb-&gt;len less than 0!&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n;     * The user is free to reuse the TCB after RCI2OSendPacket() returns, since&n;     * the function copies the necessary info into its own private space.  Thus,&n;     * our TCB can be a local structure.  The skb, on the other hand, will be&n;     * freed up in our interrupt handler.&n;     */
@@ -1682,10 +1666,6 @@ id|status
 )paren
 suffix:semicolon
 macro_line|#endif
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
@@ -1696,7 +1676,12 @@ id|dev-&gt;trans_start
 op_assign
 id|jiffies
 suffix:semicolon
-singleline_comment|//       dev-&gt;tbusy = 0;
+id|netif_wake_queue
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n;     * That&squot;s it!&n;     */
 r_return
@@ -1854,15 +1839,18 @@ macro_line|#endif
 id|BufferContext
 op_increment
 suffix:semicolon
-id|dev_kfree_skb
+id|dev_kfree_skb_irq
+c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
 )brace
-id|dev-&gt;tbusy
-op_assign
-l_int|0
+id|netif_wake_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 )brace
 r_static
@@ -2742,34 +2730,11 @@ id|dev
 )paren
 suffix:semicolon
 macro_line|#endif
-r_if
-c_cond
-(paren
-id|dev-&gt;interrupt
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;%s: Re-entering the interrupt handler.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|1
-suffix:semicolon
 id|RCProcI2OMsgQ
 c_func
 (paren
 id|pDpa-&gt;id
 )paren
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 DECL|macro|REBOOT_REINIT_RETRY_LIMIT
@@ -2987,9 +2952,11 @@ c_func
 l_string|&quot;rc: Initialization done.&bslash;n&quot;
 )paren
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
+id|netif_wake_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|retry
 op_assign
@@ -3143,6 +3110,12 @@ op_assign
 id|PDPA
 )paren
 id|dev-&gt;priv
+suffix:semicolon
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 macro_line|#ifdef RCDEBUG
 id|printk

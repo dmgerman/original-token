@@ -3,59 +3,6 @@ macro_line|#include &quot;wavelan_cs.h&quot;&t;&t;/* Private header */
 multiline_comment|/************************* MISC SUBROUTINES **************************/
 multiline_comment|/*&n; * Subroutines which won&squot;t fit in one of the following category&n; * (wavelan modem or i82593)&n; */
 multiline_comment|/*------------------------------------------------------------------*/
-multiline_comment|/*&n; * Wrapper for disabling interrupts.&n; */
-r_static
-r_inline
-r_int
-r_int
-DECL|function|wv_splhi
-id|wv_splhi
-c_func
-(paren
-r_void
-)paren
-(brace
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-id|flags
-suffix:semicolon
-)brace
-multiline_comment|/*------------------------------------------------------------------*/
-multiline_comment|/*&n; * Wrapper for re-enabling interrupts.&n; */
-r_static
-r_inline
-r_void
-DECL|function|wv_splx
-id|wv_splx
-c_func
-(paren
-r_int
-r_int
-id|flags
-)paren
-(brace
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*------------------------------------------------------------------*/
 multiline_comment|/*&n; * Wrapper for reporting error to cardservices&n; */
 DECL|function|cs_error
 r_static
@@ -2011,7 +1958,7 @@ id|m
 suffix:semicolon
 r_int
 r_int
-id|x
+id|flags
 suffix:semicolon
 macro_line|#ifdef WAVELAN_ROAMING_DEBUG
 id|printk
@@ -2036,11 +1983,12 @@ id|lp-&gt;dev-&gt;name
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Disable interrupts &amp; save flags */
-id|x
-op_assign
-id|wv_splhi
-c_func
+id|spin_lock_irqsave
 (paren
+op_amp
+id|lp-&gt;lock
+comma
+id|flags
 )paren
 suffix:semicolon
 id|m.w.mmw_loopt_sel
@@ -2087,10 +2035,12 @@ l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* ReEnable interrupts &amp; restore flags */
-id|wv_splx
-c_func
+id|spin_unlock_irqrestore
 (paren
-id|x
+op_amp
+id|lp-&gt;lock
+comma
+id|flags
 )paren
 suffix:semicolon
 r_if
@@ -2757,7 +2707,7 @@ id|m
 suffix:semicolon
 r_int
 r_int
-id|x
+id|flags
 suffix:semicolon
 r_if
 c_cond
@@ -2794,11 +2744,13 @@ id|lp-&gt;dev-&gt;name
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Disable interrupts &amp; save flags */
-id|x
-op_assign
-id|wv_splhi
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|lp-&gt;lock
+comma
+id|flags
 )paren
 suffix:semicolon
 id|m.w.mmw_netw_id_l
@@ -2848,10 +2800,12 @@ l_int|2
 )paren
 suffix:semicolon
 multiline_comment|/* ReEnable interrupts &amp; restore flags */
-id|wv_splx
-c_func
+id|spin_unlock_irqrestore
 (paren
-id|x
+op_amp
+id|lp-&gt;lock
+comma
+id|flags
 )paren
 suffix:semicolon
 id|wv_nwid_filter
@@ -3233,16 +3187,17 @@ r_int
 id|spin
 suffix:semicolon
 id|u_long
-id|opri
+id|flags
 suffix:semicolon
 multiline_comment|/* Spin until the chip finishes executing its current command (if any) */
 r_do
 (brace
-id|opri
-op_assign
-id|wv_splhi
-c_func
+id|spin_lock_irqsave
 (paren
+op_amp
+id|lp-&gt;lock
+comma
+id|flags
 )paren
 suffix:semicolon
 id|outb
@@ -3271,10 +3226,12 @@ id|base
 )paren
 )paren
 suffix:semicolon
-id|wv_splx
-c_func
+id|spin_unlock_irqrestore
 (paren
-id|opri
+op_amp
+id|lp-&gt;lock
+comma
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -3717,12 +3674,11 @@ suffix:semicolon
 multiline_comment|/* read_ringbuf */
 multiline_comment|/*------------------------------------------------------------------*/
 multiline_comment|/*&n; * Reconfigure the i82593, or at least ask for it...&n; * Because wv_82593_config use the transmission buffer, we must do it&n; * when we are sure that there is no transmission, so we do it now&n; * or in wavelan_packet_xmit() (I can&squot;t find any better place,&n; * wavelan_interrupt is not an option...), so you may experience&n; * some delay sometime...&n; */
+DECL|function|wv_82593_reconfig
 r_static
 r_inline
 r_void
-DECL|function|wv_82593_reconfig
 id|wv_82593_reconfig
-c_func
 (paren
 id|device
 op_star
@@ -3761,23 +3717,6 @@ op_logical_neg
 (paren
 id|link-&gt;open
 )paren
-op_logical_or
-(paren
-id|test_and_set_bit
-c_func
-(paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|dev-&gt;tbusy
-)paren
-op_ne
-l_int|0
-)paren
 )paren
 (brace
 id|lp-&gt;reconfig_82593
@@ -3786,14 +3725,11 @@ id|TRUE
 suffix:semicolon
 macro_line|#ifdef DEBUG_IOCTL_INFO
 id|printk
-c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;%s: wv_82593_reconfig(): delayed (busy = %ld, link = %d)&bslash;n&quot;
+l_string|&quot;%s: wv_82593_reconfig(): delayed (link = %d)&bslash;n&quot;
 comma
 id|dev-&gt;name
-comma
-id|dev-&gt;tbusy
 comma
 id|link-&gt;open
 )paren
@@ -3802,19 +3738,24 @@ macro_line|#endif
 )brace
 r_else
 (brace
+id|netif_stop_queue
+(paren
+id|dev
+)paren
+suffix:semicolon
 id|lp-&gt;reconfig_82593
 op_assign
 id|FALSE
 suffix:semicolon
 id|wv_82593_config
-c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
+id|netif_start_queue
+(paren
+id|dev
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -4972,30 +4913,6 @@ c_func
 (paren
 id|KERN_DEBUG
 l_string|&quot;dev:&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot; start=%d,&quot;
-comma
-id|dev-&gt;start
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot; tbusy=%ld,&quot;
-comma
-id|dev-&gt;tbusy
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot; interrupt=%d,&quot;
-comma
-id|dev-&gt;interrupt
 )paren
 suffix:semicolon
 id|printk
@@ -7320,7 +7237,7 @@ id|m
 suffix:semicolon
 r_int
 r_int
-id|x
+id|flags
 suffix:semicolon
 r_int
 id|ret
@@ -7341,11 +7258,12 @@ id|cmd
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Disable interrupts &amp; save flags */
-id|x
-op_assign
-id|wv_splhi
-c_func
+id|spin_lock_irqsave
 (paren
+op_amp
+id|lp-&gt;lock
+comma
+id|flags
 )paren
 suffix:semicolon
 multiline_comment|/* Look what is the request */
@@ -9856,10 +9774,12 @@ id|EOPNOTSUPP
 suffix:semicolon
 )brace
 multiline_comment|/* ReEnable interrupts &amp; restore flags */
-id|wv_splx
-c_func
+id|spin_unlock_irqrestore
 (paren
-id|x
+op_amp
+id|lp-&gt;lock
+comma
+id|flags
 )paren
 suffix:semicolon
 macro_line|#ifdef DEBUG_IOCTL_TRACE
@@ -9915,7 +9835,7 @@ id|wstats
 suffix:semicolon
 r_int
 r_int
-id|x
+id|flags
 suffix:semicolon
 macro_line|#ifdef DEBUG_IOCTL_TRACE
 id|printk
@@ -9929,11 +9849,12 @@ id|dev-&gt;name
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Disable interrupts &amp; save flags */
-id|x
-op_assign
-id|wv_splhi
-c_func
+id|spin_lock_irqsave
 (paren
+op_amp
+id|lp-&gt;lock
+comma
+id|flags
 )paren
 suffix:semicolon
 r_if
@@ -10129,10 +10050,12 @@ op_assign
 l_int|0L
 suffix:semicolon
 multiline_comment|/* ReEnable interrupts &amp; restore flags */
-id|wv_splx
-c_func
+id|spin_unlock_irqrestore
 (paren
-id|x
+op_amp
+id|lp-&gt;lock
+comma
+id|flags
 )paren
 suffix:semicolon
 macro_line|#ifdef DEBUG_IOCTL_TRACE
@@ -11256,7 +11179,7 @@ id|dev-&gt;base_addr
 suffix:semicolon
 r_int
 r_int
-id|x
+id|flags
 suffix:semicolon
 r_int
 id|clen
@@ -11282,11 +11205,12 @@ id|length
 )paren
 suffix:semicolon
 macro_line|#endif
-id|x
-op_assign
-id|wv_splhi
-c_func
+id|spin_lock_irqsave
 (paren
+op_amp
+id|lp-&gt;lock
+comma
+id|flags
 )paren
 suffix:semicolon
 multiline_comment|/* Check if we need some padding */
@@ -11476,10 +11400,12 @@ id|lp-&gt;watchdog
 )paren
 suffix:semicolon
 )brace
-id|wv_splx
-c_func
+id|spin_unlock_irqrestore
 (paren
-id|x
+op_amp
+id|lp-&gt;lock
+comma
+id|flags
 )paren
 suffix:semicolon
 macro_line|#ifdef DEBUG_TX_INFO
@@ -11511,14 +11437,18 @@ id|dev-&gt;name
 )paren
 suffix:semicolon
 macro_line|#endif
+id|netif_start_queue
+(paren
+id|dev
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*------------------------------------------------------------------*/
 multiline_comment|/*&n; * This routine is called when we want to send a packet (NET3 callback)&n; * In this routine, we check if the the harware is ready to accept&n; * the packet. We also prevent reentrance. Then, we call the function&n; * to send the packet...&n; */
+DECL|function|wavelan_packet_xmit
 r_static
 r_int
-DECL|function|wavelan_packet_xmit
 id|wavelan_packet_xmit
-c_func
 (paren
 r_struct
 id|sk_buff
@@ -11542,7 +11472,6 @@ id|dev-&gt;priv
 suffix:semicolon
 macro_line|#ifdef DEBUG_TX_TRACE
 id|printk
-c_func
 (paren
 id|KERN_DEBUG
 l_string|&quot;%s: -&gt;wavelan_packet_xmit(0x%X)&bslash;n&quot;
@@ -11556,51 +11485,18 @@ id|skb
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* This flag indicate that the hardware can&squot;t perform a transmission.&n;   * Theoritically, NET3 check it before sending a packet to the driver,&n;   * but in fact it never do that and pool continuously.&n;   * As the watchdog will abort too long transmissions, we are quite safe...&n;   */
+multiline_comment|/*&n;&t; * For ethernet, fill in the header.&n;&t; */
+id|netif_stop_queue
+(paren
+id|dev
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Block a timer-based transmit from overlapping a previous transmit.&n;&t; * In other words, prevent reentering this routine.&n;&t; */
 r_if
 c_cond
 (paren
-id|dev-&gt;tbusy
-)paren
-(brace
-r_return
 l_int|1
-suffix:semicolon
-)brace
-multiline_comment|/*&n;   * For ethernet, fill in the header.&n;   */
-multiline_comment|/*&n;   * Block a timer-based transmit from overlapping a previous transmit.&n;   * In other words, prevent reentering this routine.&n;   */
-r_if
-c_cond
-(paren
-id|test_and_set_bit
-c_func
-(paren
-l_int|0
-comma
-(paren
-r_void
-op_star
 )paren
-op_amp
-id|dev-&gt;tbusy
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-macro_line|#ifdef DEBUG_TX_ERROR
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;%s: Transmitter access conflict.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
-r_else
 (brace
 multiline_comment|/* If somebody has asked to reconfigure the controler, we can do it now */
 r_if
@@ -11614,7 +11510,6 @@ op_assign
 id|FALSE
 suffix:semicolon
 id|wv_82593_config
-c_func
 (paren
 id|dev
 )paren
@@ -11626,18 +11521,14 @@ c_cond
 (paren
 id|skb-&gt;next
 )paren
-(brace
 id|printk
-c_func
 (paren
 id|KERN_INFO
 l_string|&quot;skb has next&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 id|wv_packet_write
-c_func
 (paren
 id|dev
 comma
@@ -11648,14 +11539,12 @@ id|skb-&gt;len
 suffix:semicolon
 )brace
 id|dev_kfree_skb
-c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
 macro_line|#ifdef DEBUG_TX_TRACE
 id|printk
-c_func
 (paren
 id|KERN_DEBUG
 l_string|&quot;%s: &lt;-wavelan_packet_xmit()&bslash;n&quot;
@@ -11665,7 +11554,9 @@ id|dev-&gt;name
 suffix:semicolon
 macro_line|#endif
 r_return
+(paren
 l_int|0
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/********************** HARDWARE CONFIGURATION **********************/
@@ -12458,9 +12349,19 @@ id|base
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
+id|net_local
+op_star
+id|lp
+op_assign
+(paren
+id|net_local
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
 r_int
 r_int
-id|opri
+id|flags
 suffix:semicolon
 r_int
 id|status
@@ -12505,11 +12406,12 @@ c_func
 l_int|10
 )paren
 suffix:semicolon
-id|opri
-op_assign
-id|wv_splhi
-c_func
+id|spin_lock_irqsave
 (paren
+op_amp
+id|lp-&gt;lock
+comma
+id|flags
 )paren
 suffix:semicolon
 id|outb
@@ -12538,10 +12440,12 @@ id|base
 )paren
 )paren
 suffix:semicolon
-id|wv_splx
-c_func
+id|spin_unlock_irqrestore
 (paren
-id|opri
+op_amp
+id|lp-&gt;lock
+comma
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -12577,11 +12481,12 @@ c_func
 l_int|10
 )paren
 suffix:semicolon
-id|opri
-op_assign
-id|wv_splhi
-c_func
+id|spin_lock_irqsave
 (paren
+op_amp
+id|lp-&gt;lock
+comma
+id|flags
 )paren
 suffix:semicolon
 id|outb
@@ -12610,10 +12515,12 @@ id|base
 )paren
 )paren
 suffix:semicolon
-id|wv_splx
-c_func
+id|spin_unlock_irqrestore
 (paren
-id|opri
+op_amp
+id|lp-&gt;lock
+comma
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -12871,7 +12778,8 @@ r_int
 id|status
 suffix:semicolon
 r_int
-id|opri
+r_int
+id|flags
 suffix:semicolon
 r_int
 id|i
@@ -12881,11 +12789,12 @@ suffix:semicolon
 multiline_comment|/* spin until the chip starts receiving */
 r_do
 (brace
-id|opri
-op_assign
-id|wv_splhi
-c_func
+id|spin_lock_irqsave
 (paren
+op_amp
+id|lp-&gt;lock
+comma
+id|flags
 )paren
 suffix:semicolon
 id|outb
@@ -12914,10 +12823,12 @@ id|base
 )paren
 )paren
 suffix:semicolon
-id|wv_splx
-c_func
+id|spin_unlock_irqrestore
 (paren
-id|opri
+op_amp
+id|lp-&gt;lock
+comma
+id|flags
 )paren
 suffix:semicolon
 r_if
@@ -14955,9 +14866,10 @@ id|dev-&gt;base_addr
 op_assign
 id|link-&gt;io.BasePort1
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
+id|netif_start_queue
+(paren
+id|dev
+)paren
 suffix:semicolon
 macro_line|#ifdef DEBUG_CONFIG_INFO
 id|printk
@@ -15400,28 +15312,11 @@ id|base
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
-multiline_comment|/* Prevent reentrance. What should we do here ? */
-macro_line|#ifdef DEBUG_INTERRUPT_ERROR
-r_if
-c_cond
+id|spin_lock
 (paren
-id|dev-&gt;interrupt
+op_amp
+id|lp-&gt;lock
 )paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;%s: wavelan_interrupt(): Re-entering the interrupt handler.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
-id|dev-&gt;interrupt
-op_assign
-l_int|1
 suffix:semicolon
 multiline_comment|/* Treat all pending interrupts */
 r_while
@@ -16131,14 +16026,9 @@ suffix:semicolon
 id|lp-&gt;stats.tx_packets
 op_increment
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-id|FALSE
-suffix:semicolon
-id|mark_bh
-c_func
+id|netif_wake_queue
 (paren
-id|NET_BH
+id|dev
 )paren
 suffix:semicolon
 id|outb
@@ -16188,9 +16078,11 @@ suffix:semicolon
 multiline_comment|/* Acknowledge the interrupt */
 )brace
 )brace
-id|dev-&gt;interrupt
-op_assign
-id|FALSE
+id|spin_unlock_irq
+(paren
+op_amp
+id|lp-&gt;lock
+)paren
 suffix:semicolon
 macro_line|#ifdef DEBUG_INTERRUPT_TRACE
 id|printk
@@ -16406,9 +16298,10 @@ id|dev
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* We are no more waiting for something... */
-id|dev-&gt;tbusy
-op_assign
-l_int|0
+id|netif_start_queue
+(paren
+id|dev
+)paren
 suffix:semicolon
 macro_line|#ifdef DEBUG_INTERRUPT_TRACE
 id|printk
@@ -16565,17 +16458,10 @@ id|dev
 suffix:semicolon
 )brace
 multiline_comment|/* If problem : reset */
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
-suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
+id|netif_start_queue
+(paren
+id|dev
+)paren
 suffix:semicolon
 multiline_comment|/* Mark the device as used */
 id|link-&gt;open
@@ -16672,6 +16558,11 @@ id|dev
 )paren
 suffix:semicolon
 macro_line|#endif
+id|netif_stop_queue
+(paren
+id|dev
+)paren
+suffix:semicolon
 multiline_comment|/* If the device isn&squot;t open, then nothing to do */
 r_if
 c_cond
@@ -16741,16 +16632,20 @@ multiline_comment|/* If the card is still present */
 r_if
 c_cond
 (paren
-id|dev-&gt;start
+id|test_bit
+c_func
+(paren
+id|LINK_STATE_START
+comma
+op_amp
+id|dev-&gt;state
+)paren
 )paren
 (brace
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
+id|netif_stop_queue
+(paren
+id|dev
+)paren
 suffix:semicolon
 multiline_comment|/* Stop receiving new messages and wait end of transmission */
 id|wv_ru_stop
@@ -17200,9 +17095,10 @@ id|dev-&gt;priv
 op_member_access_from_pointer
 id|node.dev_name
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|1
+id|netif_start_queue
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|dev-&gt;mtu
 op_assign
@@ -17749,13 +17645,10 @@ id|DEV_CONFIG
 )paren
 (brace
 multiline_comment|/* Accept no more transmissions */
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
+id|netif_stop_queue
+(paren
+id|dev
+)paren
 suffix:semicolon
 multiline_comment|/* Release the card */
 id|wv_pcmcia_release
@@ -17858,13 +17751,10 @@ c_cond
 id|link-&gt;open
 )paren
 (brace
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
+id|netif_stop_queue
+(paren
+id|dev
+)paren
 suffix:semicolon
 )brace
 id|CardServices
@@ -17922,13 +17812,10 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
+id|netif_start_queue
+(paren
+id|dev
+)paren
 suffix:semicolon
 )brace
 )brace

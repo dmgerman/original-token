@@ -12670,9 +12670,6 @@ op_amp
 id|sercons
 )paren
 suffix:semicolon
-r_return
-id|kmem_start
-suffix:semicolon
 )brace
 macro_line|#endif /* ifdef CONFIG_SERIAL_CONSOLE */
 macro_line|#ifdef CONFIG_KGDB

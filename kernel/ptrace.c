@@ -260,6 +260,14 @@ c_func
 id|page
 )paren
 suffix:semicolon
+id|flush_icache_page
+c_func
+(paren
+id|vma
+comma
+id|page
+)paren
+suffix:semicolon
 id|kunmap
 c_func
 (paren

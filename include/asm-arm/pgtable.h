@@ -218,10 +218,12 @@ mdefine_line|#define page_pte_prot(page,prot)&t;mk_pte(page, prot)
 DECL|macro|page_pte
 mdefine_line|#define page_pte(page)&t;&t;mk_pte(page, __pgprot(0))
 multiline_comment|/* to find an entry in a page-table-directory */
+DECL|macro|pgd_index
+mdefine_line|#define pgd_index(addr)&t;&t;((addr) &gt;&gt; PGDIR_SHIFT)
 DECL|macro|__pgd_offset
-mdefine_line|#define __pgd_offset(addr)&t;((addr) &gt;&gt; PGDIR_SHIFT)
+mdefine_line|#define __pgd_offset(addr)&t;pgd_index(addr)
 DECL|macro|pgd_offset
-mdefine_line|#define pgd_offset(mm, addr)&t;((mm)-&gt;pgd+__pgd_offset(addr))
+mdefine_line|#define pgd_offset(mm, addr)&t;((mm)-&gt;pgd+pgd_index(addr))
 multiline_comment|/* to find an entry in a kernel page-table-directory */
 DECL|macro|pgd_offset_k
 mdefine_line|#define pgd_offset_k(addr)&t;pgd_offset(&amp;init_mm, addr)

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pcic.c,v 1.12 2000/01/22 07:35:25 zaitcev Exp $&n; * pcic.c: Sparc/PCI controller support&n; *&n; * Copyright (C) 1998 V. Roganov and G. Raiko&n; *&n; * Code is derived from Ultra/PCI PSYCHO controller support, see that&n; * for author info.&n; *&n; * Support for diverse IIep based platforms by Pete Zaitcev.&n; * CP-1200 by Eric Brower.&n; */
+multiline_comment|/* $Id: pcic.c,v 1.13 2000/02/12 03:05:37 zaitcev Exp $&n; * pcic.c: Sparc/PCI controller support&n; *&n; * Copyright (C) 1998 V. Roganov and G. Raiko&n; *&n; * Code is derived from Ultra/PCI PSYCHO controller support, see that&n; * for author info.&n; *&n; * Support for diverse IIep based platforms by Pete Zaitcev.&n; * CP-1200 by Eric Brower.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -3490,6 +3490,11 @@ c_func
 r_void
 )paren
 (brace
+r_struct
+id|tasklet_struct
+op_star
+id|t
+suffix:semicolon
 r_int
 r_int
 id|offset
@@ -3530,24 +3535,30 @@ op_div
 l_int|100
 )paren
 suffix:semicolon
+id|t
+op_assign
+op_amp
+id|bh_task_vec
+(braket
+id|TIMER_BH
+)braket
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|test_bit
 c_func
 (paren
-id|TIMER_BH
+id|TASKLET_STATE_SCHED
 comma
 op_amp
-id|bh_active
+id|t-&gt;state
 )paren
 )paren
-(brace
 id|offset
 op_assign
 l_int|1000000
 suffix:semicolon
-)brace
 r_return
 id|offset
 op_plus

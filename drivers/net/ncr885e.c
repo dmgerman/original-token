@@ -6,7 +6,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;ncr885e.c:v0.8 11/30/98 dan@synergymicro.com&bslash;n&quot;
+l_string|&quot;ncr885e.c:v1.0 02/10/00 dan@synergymicro.com, cort@fsmlabs.com&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -97,14 +97,6 @@ id|print_version
 op_assign
 l_int|0
 suffix:semicolon
-DECL|variable|debug
-r_static
-r_int
-id|debug
-op_assign
-id|NCR885E_DEBUG
-suffix:semicolon
-multiline_comment|/* module parm */
 DECL|struct|ncr885e_private
 r_struct
 id|ncr885e_private
@@ -1676,12 +1668,6 @@ id|i
 )braket
 )paren
 suffix:semicolon
-id|mark_bh
-c_func
-(paren
-id|NET_BH
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1730,9 +1716,11 @@ l_int|0x04
 )paren
 suffix:semicolon
 )brace
-id|dev-&gt;tbusy
-op_assign
-l_int|0
+id|netif_start_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -2612,26 +2600,6 @@ op_amp
 id|sp-&gt;lock
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev-&gt;interrupt
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;%s: Re-entering interrupt handler...&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-)brace
-id|dev-&gt;interrupt
-op_assign
-l_int|1
-suffix:semicolon
 id|status
 op_assign
 id|inw
@@ -2805,10 +2773,6 @@ id|dev
 )paren
 suffix:semicolon
 )brace
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
 id|spin_unlock
 c_func
 (paren
@@ -3360,14 +3324,10 @@ id|sp-&gt;tx_current
 op_assign
 l_int|0
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|mark_bh
+id|netif_wake_queue
 c_func
 (paren
-id|NET_BH
+id|dev
 )paren
 suffix:semicolon
 multiline_comment|/* restart rx dma */
@@ -4120,17 +4080,11 @@ op_plus
 id|RX_CHANNEL_CONTROL
 )paren
 suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
-suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
+id|netif_start_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
@@ -4249,9 +4203,11 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* mark ourselves as busy, even if we have too many packets waiting */
-id|dev-&gt;tbusy
-op_assign
-l_int|1
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 multiline_comment|/* see if it&squot;s necessary to defer this packet */
 r_if
@@ -4558,13 +4514,11 @@ id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|1
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|spin_lock
 c_func
@@ -4898,9 +4852,10 @@ id|np-&gt;stats
 suffix:semicolon
 )brace
 multiline_comment|/*  By this function, we&squot;re certain that we have a 885 Ethernet controller&n; *  so we finish setting it up and wrap up all the required Linux ethernet&n; *  configuration.&n; */
+DECL|function|ncr885e_probe1
 r_static
 r_int
-DECL|function|ncr885e_probe1
+id|__init
 id|ncr885e_probe1
 c_func
 (paren
@@ -4939,24 +4894,6 @@ id|p
 suffix:semicolon
 r_int
 id|i
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|request_region
-c_func
-(paren
-id|ioaddr
-comma
-id|NCR885E_TOTAL_SIZE
-comma
-id|dev-&gt;name
-)paren
-)paren
-r_return
-op_minus
-id|EBUSY
 suffix:semicolon
 id|dev
 op_assign
@@ -6127,31 +6064,38 @@ r_return
 suffix:semicolon
 )brace
 macro_line|#endif /* NCR885E_DEBUG_MII */
-id|MODULE_AUTHOR
+r_int
+DECL|function|init_module
+id|init_module
 c_func
 (paren
-l_string|&quot;dan@synergymicro.com&quot;
+r_void
 )paren
-suffix:semicolon
-id|MODULE_DESCRIPTION
-c_func
-(paren
-l_string|&quot;Symbios 53C885 Ethernet driver&quot;
-)paren
-suffix:semicolon
-id|MODULE_PARM
-c_func
+(brace
+r_if
+c_cond
 (paren
 id|debug
-comma
-l_string|&quot;i&quot;
+op_ge
+l_int|0
+)paren
+id|ncr885e_debug
+op_assign
+id|debug
+suffix:semicolon
+r_return
+id|ncr885e_probe
+c_func
+(paren
 )paren
 suffix:semicolon
-DECL|function|ncr885e_cleanup
+)brace
+DECL|function|cleanup_module
 r_static
 r_void
 id|__exit
-id|ncr885e_cleanup
+id|cleanup_module
+c_func
 (paren
 r_void
 )paren

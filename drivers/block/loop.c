@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/drivers/block/loop.c&n; *&n; *  Written by Theodore Ts&squot;o, 3/29/93&n; * &n; * Copyright 1993 by Theodore Ts&squot;o.  Redistribution of this file is&n; * permitted under the GNU Public License.&n; *&n; * DES encryption plus some minor changes by Werner Almesberger, 30-MAY-1993&n; * more DES encryption plus IDEA encryption by Nicholas J. Leon, June 20, 1996&n; *&n; * Modularized and updated for 1.1.16 kernel - Mitch Dsouza 28th May 1994&n; * Adapted for 1.3.59 kernel - Andries Brouwer, 1 Feb 1996&n; *&n; * Fixed do_loop_request() re-entrancy - Vincent.Renardias@waw.com Mar 20, 1997&n; *&n; * Handle sparse backing files correctly - Kenn Humborg, Jun 28, 1998&n; *&n; * Loadable modules and other fixes by AK, 1998&n; *&n; * Make real block number available to downstream transfer functions, enables&n; * CBC (and relatives) mode encryption requiring unique IVs per data block. &n; * Reed H. Petty, rhp@draper.net&n; *&n; * Maximum number of loop devices now dynamic via max_loop module parameter.&n; * Russell Kroll &lt;rkroll@exploits.org&gt; 19990701&n; * &n; * Maximum number of loop devices when compiled-in now selectable by passing&n; * max_loop=&lt;1-255&gt; to the kernel on boot.&n; * Erik I. Bols&#xfffd;, &lt;eriki@himolde.no&gt;, Oct 31, 1999&n; *&n; * Still To Fix:&n; * - Advisory locking is ignored here. &n; * - Should use an own CAP_* category instead of CAP_SYS_ADMIN &n; * - Should use the underlying filesystems/devices read function if possible&n; *   to support read ahead (and for write)&n; *&n; * WARNING/FIXME:&n; * - The block number as IV passing to low level transfer functions is broken:&n; *   it passes the underlying device&squot;s block number instead of the&n; *   offset. This makes it change for a given block when the file is &n; *   moved/restored/copied and also doesn&squot;t work over NFS. &n; * AV, Feb 11, 2000: for files we pass the page index now. It should fix the&n; *   problem above. Since the granularity is PAGE_CACHE_SIZE now it seems to&n; *   be correct way. OTOH, taking the thing from x86 to Alpha may become&n; *   interesting, so we might want to rethink it.&n; */
+multiline_comment|/*&n; *  linux/drivers/block/loop.c&n; *&n; *  Written by Theodore Ts&squot;o, 3/29/93&n; * &n; * Copyright 1993 by Theodore Ts&squot;o.  Redistribution of this file is&n; * permitted under the GNU Public License.&n; *&n; * DES encryption plus some minor changes by Werner Almesberger, 30-MAY-1993&n; * more DES encryption plus IDEA encryption by Nicholas J. Leon, June 20, 1996&n; *&n; * Modularized and updated for 1.1.16 kernel - Mitch Dsouza 28th May 1994&n; * Adapted for 1.3.59 kernel - Andries Brouwer, 1 Feb 1996&n; *&n; * Fixed do_loop_request() re-entrancy - Vincent.Renardias@waw.com Mar 20, 1997&n; *&n; * Handle sparse backing files correctly - Kenn Humborg, Jun 28, 1998&n; *&n; * Loadable modules and other fixes by AK, 1998&n; *&n; * Make real block number available to downstream transfer functions, enables&n; * CBC (and relatives) mode encryption requiring unique IVs per data block. &n; * Reed H. Petty, rhp@draper.net&n; *&n; * Maximum number of loop devices now dynamic via max_loop module parameter.&n; * Russell Kroll &lt;rkroll@exploits.org&gt; 19990701&n; * &n; * Maximum number of loop devices when compiled-in now selectable by passing&n; * max_loop=&lt;1-255&gt; to the kernel on boot.&n; * Erik I. Bols&#xfffd;, &lt;eriki@himolde.no&gt;, Oct 31, 1999&n; *&n; * Still To Fix:&n; * - Advisory locking is ignored here. &n; * - Should use an own CAP_* category instead of CAP_SYS_ADMIN &n; * - Should use the underlying filesystems/devices read function if possible&n; *   to support read ahead (and for write)&n; *&n; * WARNING/FIXME:&n; * - The block number as IV passing to low level transfer functions is broken:&n; *   it passes the underlying device&squot;s block number instead of the&n; *   offset. This makes it change for a given block when the file is &n; *   moved/restored/copied and also doesn&squot;t work over NFS. &n; * AV, Feb 12, 2000: we pass the logical block number now. It fixes the&n; *   problem above. Encryption modules that used to rely on the old scheme&n; *   should just call -&gt;i_mapping-&gt;bmap() to calculate the physical block&n; *   number.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -458,6 +458,9 @@ id|len
 comma
 id|loff_t
 id|pos
+comma
+r_int
+id|blksize
 )paren
 (brace
 r_struct
@@ -524,6 +527,21 @@ OG
 l_int|0
 )paren
 (brace
+r_int
+id|IV
+op_assign
+id|index
+op_star
+(paren
+id|PAGE_CACHE_SIZE
+op_div
+id|blksize
+)paren
+op_plus
+id|offset
+op_div
+id|blksize
+suffix:semicolon
 id|size
 op_assign
 id|PAGE_CACHE_SIZE
@@ -611,7 +629,7 @@ id|data
 comma
 id|size
 comma
-id|index
+id|IV
 )paren
 )paren
 r_goto
@@ -744,6 +762,10 @@ r_char
 op_star
 id|data
 suffix:semicolon
+DECL|member|blksize
+r_int
+id|blksize
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|function|lo_read_actor
@@ -799,6 +821,21 @@ id|lo
 op_assign
 id|p-&gt;lo
 suffix:semicolon
+r_int
+id|IV
+op_assign
+id|page-&gt;index
+op_star
+(paren
+id|PAGE_CACHE_SIZE
+op_div
+id|p-&gt;blksize
+)paren
+op_plus
+id|offset
+op_div
+id|p-&gt;blksize
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -841,7 +878,7 @@ id|p-&gt;data
 comma
 id|size
 comma
-id|page-&gt;index
+id|IV
 )paren
 )paren
 (brace
@@ -908,6 +945,9 @@ id|len
 comma
 id|loff_t
 id|pos
+comma
+r_int
+id|blksize
 )paren
 (brace
 r_struct
@@ -931,6 +971,10 @@ suffix:semicolon
 id|cookie.data
 op_assign
 id|data
+suffix:semicolon
+id|cookie.blksize
+op_assign
+id|blksize
 suffix:semicolon
 id|desc.written
 op_assign
@@ -1116,16 +1160,6 @@ id|current_request-&gt;current_nr_sectors
 op_lshift
 l_int|9
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|lo-&gt;lo_flags
-op_amp
-id|LO_FLAGS_DO_BMAP
-)paren
-r_goto
-id|file_backed
-suffix:semicolon
 id|blksize
 op_assign
 id|BLOCK_SIZE
@@ -1172,6 +1206,16 @@ op_assign
 id|BLOCK_SIZE
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|lo-&gt;lo_flags
+op_amp
+id|LO_FLAGS_DO_BMAP
+)paren
+r_goto
+id|file_backed
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1525,6 +1569,8 @@ comma
 id|len
 comma
 id|pos
+comma
+id|blksize
 )paren
 )paren
 r_goto
@@ -1546,6 +1592,8 @@ comma
 id|len
 comma
 id|pos
+comma
+id|blksize
 )paren
 )paren
 r_goto
@@ -1761,6 +1809,11 @@ id|inode-&gt;i_mode
 )paren
 )paren
 (brace
+r_struct
+id|address_space_operations
+op_star
+id|aops
+suffix:semicolon
 multiline_comment|/* Backed by a regular file - we need to hold onto a file&n;&t;&t;   structure for this file.  Friggin&squot; NFS can&squot;t live without&n;&t;&t;   it on write and for reading we use do_generic_file_read(),&n;&t;&t;   so...  We create a new file structure based on the one&n;&t;&t;   passed to us via &squot;arg&squot;.  This is to avoid changing the file&n;&t;&t;   structure that the caller is using */
 id|lo-&gt;lo_device
 op_assign
@@ -1850,6 +1903,36 @@ l_int|NULL
 suffix:semicolon
 )brace
 )brace
+id|aops
+op_assign
+id|lo-&gt;lo_dentry-&gt;d_inode-&gt;i_mapping-&gt;a_ops
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * If we can&squot;t read - sorry. If we only can&squot;t write - well,&n;&t;&t; * it&squot;s going to be read-only.&n;&t;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|aops-&gt;readpage
+)paren
+id|error
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|aops-&gt;prepare_write
+op_logical_or
+op_logical_neg
+id|aops-&gt;commit_write
+)paren
+id|lo-&gt;lo_flags
+op_or_assign
+id|LO_FLAGS_READ_ONLY
+suffix:semicolon
 )brace
 r_if
 c_cond
@@ -1873,7 +1956,6 @@ c_func
 id|lo-&gt;lo_device
 )paren
 )paren
-(brace
 id|lo-&gt;lo_flags
 op_or_assign
 id|LO_FLAGS_READ_ONLY
@@ -1883,21 +1965,15 @@ c_func
 (paren
 id|dev
 comma
-l_int|1
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|set_device_ro
-c_func
 (paren
-id|dev
-comma
+id|lo-&gt;lo_flags
+op_amp
+id|LO_FLAGS_READ_ONLY
+)paren
+op_ne
 l_int|0
 )paren
 suffix:semicolon
-)brace
 id|lo-&gt;lo_dentry
 op_assign
 id|dget

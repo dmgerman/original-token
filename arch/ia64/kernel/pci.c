@@ -723,12 +723,4 @@ id|size
 )paren
 (brace
 )brace
-macro_line|#if 0 /*def CONFIG_PROC_FS*/
-multiline_comment|/*&n; * This is an ugly hack to get a (weak) unresolved reference to something that is&n; * in drivers/pci/proc.c.  Without this, the file does not get linked in at all&n; * (I suspect the reason this isn&squot;t needed on Linux/x86 is that most people compile&n; * with module support, in which case the EXPORT_SYMBOL() stuff will ensure the&n; * code gets linked in.  Sigh...  --davidm 99/12/20.&n; */
-id|asm
-(paren
-l_string|&quot;data8 proc_bus_pci_add&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 eof

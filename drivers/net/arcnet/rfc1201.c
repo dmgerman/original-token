@@ -609,7 +609,7 @@ id|lp-&gt;rfc1201.aborted_seq
 op_assign
 id|soft-&gt;sequence
 suffix:semicolon
-id|kfree_skb
+id|dev_kfree_skb_irq
 c_func
 (paren
 id|in-&gt;skb
@@ -937,7 +937,7 @@ comma
 id|soft-&gt;split_flag
 )paren
 suffix:semicolon
-id|kfree_skb
+id|dev_kfree_skb_irq
 c_func
 (paren
 id|in-&gt;skb
@@ -1007,7 +1007,7 @@ suffix:semicolon
 id|lp-&gt;stats.rx_missed_errors
 op_increment
 suffix:semicolon
-id|kfree_skb
+id|dev_kfree_skb_irq
 c_func
 (paren
 id|in-&gt;skb
@@ -1266,7 +1266,7 @@ id|lp-&gt;rfc1201.aborted_seq
 op_assign
 id|soft-&gt;sequence
 suffix:semicolon
-id|kfree_skb
+id|dev_kfree_skb_irq
 c_func
 (paren
 id|in-&gt;skb

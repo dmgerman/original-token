@@ -497,6 +497,150 @@ id|ret
 suffix:semicolon
 )brace
 macro_line|#endif /* defined(CHECK_STACK) */
+macro_line|#ifdef CONFIG_ALTIVEC
+r_int
+DECL|function|dump_altivec
+id|dump_altivec
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+id|regs
+comma
+id|elf_vrregset_t
+op_star
+id|vrregs
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|regs-&gt;msr
+op_amp
+id|MSR_VEC
+)paren
+id|giveup_altivec
+c_func
+(paren
+id|current
+)paren
+suffix:semicolon
+id|memcpy
+c_func
+(paren
+id|vrregs
+comma
+op_amp
+id|current-&gt;thread.vr
+(braket
+l_int|0
+)braket
+comma
+r_sizeof
+(paren
+op_star
+id|vrregs
+)paren
+)paren
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+r_void
+DECL|function|enable_kernel_altivec
+id|enable_kernel_altivec
+c_func
+(paren
+r_void
+)paren
+(brace
+macro_line|#ifdef __SMP__
+r_if
+c_cond
+(paren
+id|current-&gt;thread.regs
+op_logical_and
+(paren
+id|current-&gt;thread.regs-&gt;msr
+op_amp
+id|MSR_VEC
+)paren
+)paren
+id|giveup_altivec
+c_func
+(paren
+id|current
+)paren
+suffix:semicolon
+r_else
+id|giveup_altivec
+c_func
+(paren
+l_int|NULL
+)paren
+suffix:colon
+multiline_comment|/* just enable AltiVec for kernel - force */
+macro_line|#else
+id|giveup_altivec
+c_func
+(paren
+id|last_task_used_altivec
+)paren
+suffix:semicolon
+macro_line|#endif /* __SMP __ */
+id|printk
+c_func
+(paren
+l_string|&quot;MSR_VEC in enable_altivec_kernel&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_ALTIVEC */
+r_void
+DECL|function|enable_kernel_fp
+id|enable_kernel_fp
+c_func
+(paren
+r_void
+)paren
+(brace
+macro_line|#ifdef __SMP__
+r_if
+c_cond
+(paren
+id|current-&gt;thread.regs
+op_logical_and
+(paren
+id|current-&gt;thread.regs-&gt;msr
+op_amp
+id|MSR_FP
+)paren
+)paren
+id|giveup_fpu
+c_func
+(paren
+id|current
+)paren
+suffix:semicolon
+r_else
+id|giveup_fpu
+c_func
+(paren
+l_int|NULL
+)paren
+suffix:semicolon
+multiline_comment|/* just enables FP for kernel */
+macro_line|#else
+id|giveup_fpu
+c_func
+(paren
+id|last_task_used_math
+)paren
+suffix:semicolon
+macro_line|#endif /* __SMP__ */
+)brace
 r_int
 DECL|function|dump_fpu
 id|dump_fpu
@@ -546,49 +690,6 @@ suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
-)brace
-r_void
-DECL|function|enable_kernel_fp
-id|enable_kernel_fp
-c_func
-(paren
-r_void
-)paren
-(brace
-macro_line|#ifdef __SMP__
-r_if
-c_cond
-(paren
-id|current-&gt;thread.regs
-op_logical_and
-(paren
-id|current-&gt;thread.regs-&gt;msr
-op_amp
-id|MSR_FP
-)paren
-)paren
-id|giveup_fpu
-c_func
-(paren
-id|current
-)paren
-suffix:semicolon
-r_else
-id|giveup_fpu
-c_func
-(paren
-l_int|NULL
-)paren
-suffix:semicolon
-multiline_comment|/* just enables FP for kernel */
-macro_line|#else
-id|giveup_fpu
-c_func
-(paren
-id|last_task_used_math
-)paren
-suffix:semicolon
-macro_line|#endif /* __SMP__ */
 )brace
 r_void
 DECL|function|_switch_to
@@ -702,6 +803,7 @@ c_func
 id|prev
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_ALTIVEC&t;
 multiline_comment|/*&n;&t; * If the previous thread 1) has some altivec regs it wants saved&n;&t; * (has bits in vrsave set) and 2) used altivec in the last quantum&n;&t; * (thus changing altivec regs) then save them.&n;&t; *&n;&t; * On SMP we always save/restore altivec regs just to avoid the&n;&t; * complexity of changing processors.&n;&t; *  -- Cort&n;&t; */
 r_if
 c_cond
@@ -724,6 +826,7 @@ c_func
 id|prev
 )paren
 suffix:semicolon
+macro_line|#endif /* CONFIG_ALTIVEC */&t;
 id|prev-&gt;last_processor
 op_assign
 id|prev-&gt;processor
@@ -1390,6 +1493,8 @@ op_and_assign
 op_complement
 id|MSR_FP
 suffix:semicolon
+macro_line|#ifdef CONFIG_ALTIVEC
+multiline_comment|/*&n;&t; * copy altiVec info - assume lazy altiVec switch&n;&t; * - kumar&n;&t; */
 r_if
 c_cond
 (paren
@@ -1403,23 +1508,18 @@ c_func
 id|current
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|p-&gt;thread.vrsave
-)paren
 id|memcpy
 c_func
 (paren
 op_amp
-id|p-&gt;thread.vrf
+id|p-&gt;thread.vr
 comma
 op_amp
-id|current-&gt;thread.vrf
+id|current-&gt;thread.vr
 comma
 r_sizeof
 (paren
-id|p-&gt;thread.vrf
+id|p-&gt;thread.vr
 )paren
 )paren
 suffix:semicolon
@@ -1427,15 +1527,12 @@ id|p-&gt;thread.vscr
 op_assign
 id|current-&gt;thread.vscr
 suffix:semicolon
-id|p-&gt;thread.vrsave
-op_assign
-id|current-&gt;thread.vrsave
-suffix:semicolon
 id|childregs-&gt;msr
 op_and_assign
 op_complement
 id|MSR_VEC
 suffix:semicolon
+macro_line|#endif /* CONFIG_ALTIVEC */
 macro_line|#ifdef __SMP__
 id|p-&gt;last_processor
 op_assign
@@ -2055,6 +2152,21 @@ c_func
 id|current
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_ALTIVEC
+r_if
+c_cond
+(paren
+id|regs-&gt;msr
+op_amp
+id|MSR_VEC
+)paren
+id|giveup_altivec
+c_func
+(paren
+id|current
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_ALTIVEC */ 
 id|error
 op_assign
 id|do_execve

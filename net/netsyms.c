@@ -2467,6 +2467,13 @@ c_func
 id|sysctl_rmem_max
 )paren
 suffix:semicolon
+DECL|variable|sysctl_ip_default_ttl
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sysctl_ip_default_ttl
+)paren
+suffix:semicolon
 macro_line|#endif
 macro_line|#if defined(CONFIG_ATALK) || defined(CONFIG_ATALK_MODULE) 
 macro_line|#include&lt;linux/if_ltalk.h&gt;

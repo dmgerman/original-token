@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * This file contains various system calls that have different calling&n; * conventions on different platforms.&n; *&n; * Copyright (C) 1999 Hewlett-Packard Co&n; * Copyright (C) 1999 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; */
+multiline_comment|/*&n; * This file contains various system calls that have different calling&n; * conventions on different platforms.&n; *&n; * Copyright (C) 1999-2000 Hewlett-Packard Co&n; * Copyright (C) 1999-2000 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;

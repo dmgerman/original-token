@@ -1,5 +1,6 @@
 multiline_comment|/*&n;&t;kmod header&n;*/
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#ifdef CONFIG_KMOD
 r_extern
 r_int

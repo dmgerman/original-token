@@ -104,13 +104,8 @@ mdefine_line|#define PROC_CHANGE_PENALTY&t;20
 multiline_comment|/* 1 to 1 mapping on PPC -- Cort */
 DECL|macro|cpu_logical_map
 mdefine_line|#define cpu_logical_map(cpu) (cpu)
-r_extern
-r_int
-id|cpu_number_map
-(braket
-id|NR_CPUS
-)braket
-suffix:semicolon
+DECL|macro|cpu_number_map
+mdefine_line|#define cpu_number_map(x) (x)
 r_extern
 r_volatile
 r_int

@@ -97,8 +97,6 @@ id|has_openpic
 op_assign
 l_int|0
 suffix:semicolon
-DECL|macro|MAXCOUNT
-mdefine_line|#define MAXCOUNT 10000000
 DECL|macro|GATWICK_IRQ_POOL_SIZE
 mdefine_line|#define GATWICK_IRQ_POOL_SIZE        10
 DECL|variable|gatwick_int_pool
@@ -804,82 +802,6 @@ op_minus
 l_int|2
 suffix:semicolon
 multiline_comment|/* ignore, already handled */
-)brace
-(brace
-r_int
-r_int
-id|loops
-op_assign
-id|MAXCOUNT
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|test_bit
-c_func
-(paren
-l_int|0
-comma
-op_amp
-id|global_irq_lock
-)paren
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|smp_processor_id
-c_func
-(paren
-)paren
-op_eq
-id|global_irq_holder
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;uh oh, interrupt while we hold global irq lock!&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#ifdef CONFIG_XMON
-id|xmon
-c_func
-(paren
-l_int|0
-)paren
-suffix:semicolon
-macro_line|#endif
-r_break
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|loops
-op_decrement
-op_eq
-l_int|0
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;do_IRQ waiting for irq lock (holder=%d)&bslash;n&quot;
-comma
-id|global_irq_holder
-)paren
-suffix:semicolon
-macro_line|#ifdef CONFIG_XMON
-id|xmon
-c_func
-(paren
-l_int|0
-)paren
-suffix:semicolon
-macro_line|#endif
-)brace
-)brace
 )brace
 macro_line|#endif /* __SMP__ */
 multiline_comment|/* Yeah, I know, this could be a separate do_IRQ function */

@@ -2078,6 +2078,9 @@ r_case
 id|token_define_tristate
 suffix:colon
 r_case
+id|token_endmenu
+suffix:colon
+r_case
 id|token_hex
 suffix:colon
 r_case

@@ -38,6 +38,7 @@ macro_line|#include &lt;asm/feature.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#include &lt;asm/keyboard.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
+macro_line|#include &lt;asm/bootx.h&gt;
 macro_line|#include &quot;time.h&quot;
 macro_line|#include &quot;local_irq.h&quot;
 macro_line|#include &quot;pmac_pic.h&quot;
@@ -1862,6 +1863,19 @@ suffix:semicolon
 r_int
 id|n
 suffix:semicolon
+id|kdev_t
+id|__init
+id|pmac_find_ide_boot
+c_func
+(paren
+r_char
+op_star
+id|bootdevice
+comma
+r_int
+id|n
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2717,6 +2731,11 @@ op_star
 id|c
 )paren
 suffix:semicolon
+r_extern
+id|boot_infos_t
+op_star
+id|disp_bi
+suffix:semicolon
 r_void
 DECL|function|pmac_progress
 id|pmac_progress
@@ -2731,6 +2750,15 @@ r_int
 id|hex
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|disp_bi
+op_eq
+l_int|0
+)paren
+r_return
+suffix:semicolon
 id|drawstring
 c_func
 (paren

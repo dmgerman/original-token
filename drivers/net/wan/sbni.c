@@ -6,10 +6,6 @@ mdefine_line|#define CRCASM
 DECL|macro|KATYUSHA
 mdefine_line|#define KATYUSHA
 macro_line|#include &lt;linux/version.h&gt;
-macro_line|#if LINUX_VERSION_CODE &gt;=0x020200
-DECL|macro|v22
-mdefine_line|#define v22
-macro_line|#endif
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -20,6 +16,7 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/types.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
@@ -29,10 +26,8 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/config.h&gt;&t;/* for CONFIG_INET. do we need this?*/
 macro_line|#include &lt;net/arp.h&gt;
-macro_line|#ifdef v22
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#endif
 macro_line|#include &quot;sbni.h&quot;
 DECL|variable|version
 r_static
@@ -2355,6 +2350,13 @@ id|dev-&gt;header_cache_update
 op_assign
 id|sbni_header_cache_update
 suffix:semicolon
+id|spin_lock_init
+c_func
+(paren
+op_amp
+id|lp-&gt;lock
+)paren
+suffix:semicolon
 id|lp-&gt;m
 op_assign
 id|dev
@@ -2404,6 +2406,10 @@ op_assign
 op_amp
 id|lp-&gt;watchdog
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|DP
 c_func
 (paren
@@ -2416,6 +2422,12 @@ id|dev-&gt;name
 )paren
 suffix:semicolon
 )paren
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -2430,10 +2442,6 @@ c_func
 (paren
 id|dev
 )paren
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
 suffix:semicolon
 multiline_comment|/* set timer  watchdog */
 id|init_timer
@@ -2479,9 +2487,16 @@ id|dev-&gt;name
 suffix:semicolon
 )paren
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
+)paren
+suffix:semicolon
+id|netif_start_queue
+c_func
+(paren
+id|dev
 )paren
 suffix:semicolon
 id|MOD_INC_USE_COUNT
@@ -2527,6 +2542,10 @@ op_assign
 op_amp
 id|lp-&gt;watchdog
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|DP
 c_func
 (paren
@@ -2539,6 +2558,18 @@ id|dev-&gt;name
 )paren
 suffix:semicolon
 )paren
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -2549,14 +2580,6 @@ c_func
 (paren
 id|dev
 )paren
-suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
 suffix:semicolon
 id|del_timer
 c_func
@@ -2574,9 +2597,10 @@ op_plus
 id|CSR0
 )paren
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
@@ -2626,6 +2650,10 @@ op_star
 )paren
 id|skb-&gt;data
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 macro_line|#ifdef KATYUSHA   
 r_struct
 id|net_local
@@ -2663,28 +2691,6 @@ c_func
 l_string|&quot;sbni: lp-&gt;me != dev !!!&bslash;nMail to developer (xenon@granch.ru) if you noticed this error&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|dev-&gt;interrupt
-)paren
-(brace
-id|DP
-c_func
-(paren
-id|printk
-c_func
-(paren
-l_string|&quot;sbni_xmit_start: interrupt&bslash;n&quot;
-)paren
-suffix:semicolon
-)paren
-multiline_comment|/* May be unloading, don&squot;t stamp on */
-r_return
-l_int|1
-suffix:semicolon
-multiline_comment|/* the packet buffer this time      */
 )brace
 id|hh-&gt;number
 op_assign
@@ -2765,6 +2771,15 @@ id|sbni_hard_header
 )paren
 comma
 id|hh-&gt;crc
+)paren
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|lp-&gt;lock
+comma
+id|flags
 )paren
 suffix:semicolon
 macro_line|#ifdef KATYUSHA
@@ -2919,6 +2934,15 @@ id|CSR0
 )paren
 suffix:semicolon
 macro_line|#endif
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|lp-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -3008,14 +3032,6 @@ c_func
 (paren
 id|dev
 )paren
-suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* Reset the card and set start parameters */
 id|outb
@@ -3530,14 +3546,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;      &t;&t;&t;&t; * reset output active flags&n;&t;&t;&t;&t;&t; */
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|mark_bh
+id|netif_wake_queue
 c_func
 (paren
-id|NET_BH
+id|dev
 )paren
 suffix:semicolon
 multiline_comment|/*} if */
@@ -4137,27 +4149,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|dev-&gt;interrupt
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;%s: Reentering the interrupt driver!&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-id|dev-&gt;interrupt
-op_assign
-l_int|1
-suffix:semicolon
 id|csr0
 op_assign
 id|inb
@@ -4185,6 +4176,13 @@ suffix:semicolon
 id|lp
 op_assign
 id|dev-&gt;priv
+suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|lp-&gt;lock
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -4409,9 +4407,12 @@ op_plus
 id|CSR0
 )paren
 suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|lp-&gt;lock
+)paren
 suffix:semicolon
 )brace
 DECL|function|sbni_get_stats
@@ -5013,7 +5014,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dev-&gt;start
+id|test_bit
+c_func
+(paren
+id|LINK_STATE_START
+comma
+op_amp
+id|dev-&gt;state
+)paren
 )paren
 (brace
 r_struct
@@ -5269,14 +5277,10 @@ id|lp-&gt;waitack
 op_assign
 l_int|0
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|mark_bh
+id|netif_wake_queue
 c_func
 (paren
-id|NET_BH
+id|dev
 )paren
 suffix:semicolon
 id|DP
@@ -5337,7 +5341,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dev-&gt;start
+id|test_bit
+c_func
+(paren
+id|LINK_STATE_START
+comma
+op_amp
+id|dev-&gt;state
+)paren
 )paren
 (brace
 multiline_comment|/* Only possible while card isn&squot;t started */
@@ -6322,7 +6333,6 @@ op_assign
 l_int|0
 )brace
 suffix:semicolon
-macro_line|#ifdef v22
 id|MODULE_PARM
 c_func
 (paren
@@ -6393,7 +6403,6 @@ id|SBNI_MAX_NUM_CARDS
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 DECL|variable|sbniautodetect
 r_static
 r_int

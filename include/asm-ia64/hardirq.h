@@ -21,6 +21,8 @@ id|NR_CPUS
 )braket
 suffix:semicolon
 multiline_comment|/*&n; * Are we in an interrupt context? Either doing bottom half&n; * or hardware interrupt processing?&n; */
+DECL|macro|in_irq
+mdefine_line|#define in_irq() (local_irq_count[smp_processor_id()] != 0)
 DECL|macro|in_interrupt
 mdefine_line|#define in_interrupt()&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;int __cpu = smp_processor_id();&t;&t;&t;&t;&bslash;&n;&t;(local_irq_count[__cpu] + local_bh_count[__cpu]) != 0;&t;&bslash;&n;})
 macro_line|#ifndef CONFIG_SMP

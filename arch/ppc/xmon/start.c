@@ -537,6 +537,10 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|ct
+op_assign
+l_int|0
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -552,10 +556,6 @@ op_increment
 id|i
 )paren
 (brace
-id|ct
-op_assign
-l_int|0
-suffix:semicolon
 r_while
 c_loop
 (paren
@@ -568,6 +568,7 @@ id|TXRDY
 op_eq
 l_int|0
 )paren
+(brace
 macro_line|#ifdef CONFIG_ADB&t;    
 r_if
 c_cond
@@ -581,9 +582,8 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#else
-suffix:semicolon
 macro_line|#endif /* CONFIG_ADB */
+)brace
 id|c
 op_assign
 id|p
@@ -1232,6 +1232,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|via_modem
+op_logical_and
 id|macio_node
 op_ne
 l_int|0

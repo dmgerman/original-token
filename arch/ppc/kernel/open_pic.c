@@ -1047,7 +1047,7 @@ c_cond
 op_logical_neg
 (paren
 id|_machine
-op_logical_and
+op_amp
 (paren
 id|_MACH_gemini
 op_or
@@ -1787,9 +1787,11 @@ id|openpic_readfield
 c_func
 (paren
 op_amp
-id|OpenPIC-&gt;Source
+id|ISU
 (braket
 id|irq
+op_minus
+id|open_pic_irq_offset
 )braket
 dot
 id|Vector_Priority
@@ -1850,9 +1852,11 @@ id|openpic_readfield
 c_func
 (paren
 op_amp
-id|OpenPIC-&gt;Source
+id|ISU
 (braket
 id|irq
+op_minus
+id|open_pic_irq_offset
 )braket
 dot
 id|Vector_Priority

@@ -37,7 +37,7 @@ suffix:semicolon
 r_extern
 r_volatile
 r_int
-id|cpu_number_map
+id|__cpu_number_map
 (braket
 id|NR_CPUS
 )braket
@@ -50,6 +50,8 @@ id|__cpu_logical_map
 id|NR_CPUS
 )braket
 suffix:semicolon
+DECL|macro|cpu_number_map
+mdefine_line|#define cpu_number_map(i)&t;__cpu_number_map[i]
 DECL|macro|cpu_logical_map
 mdefine_line|#define cpu_logical_map(i)&t;__cpu_logical_map[i]
 macro_line|#if defined(CONFIG_KDB)

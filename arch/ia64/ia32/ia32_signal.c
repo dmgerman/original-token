@@ -1651,6 +1651,9 @@ id|sys32_sigreturn
 c_func
 (paren
 r_int
+id|arg0
+comma
+r_int
 id|arg1
 comma
 r_int
@@ -1664,6 +1667,12 @@ id|arg4
 comma
 r_int
 id|arg5
+comma
+r_int
+id|arg6
+comma
+r_int
+id|arg7
 comma
 r_int
 r_int
@@ -1853,6 +1862,9 @@ id|sys32_rt_sigreturn
 c_func
 (paren
 r_int
+id|arg0
+comma
+r_int
 id|arg1
 comma
 r_int
@@ -1866,6 +1878,12 @@ id|arg4
 comma
 r_int
 id|arg5
+comma
+r_int
+id|arg6
+comma
+r_int
+id|arg7
 comma
 r_int
 r_int

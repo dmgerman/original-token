@@ -254,6 +254,8 @@ DECL|macro|MACE_IMR_DEFAULT
 macro_line|#undef MACE_IMR_DEFAULT
 DECL|macro|MACE_IMR_DEFAULT
 mdefine_line|#define MACE_IMR_DEFAULT 0x00 /* New statistics handling: grab everything */
+DECL|macro|TX_TIMEOUT
+mdefine_line|#define TX_TIMEOUT (5*HZ)
 multiline_comment|/* ----------------------------------------------------------------------------&n;Type Definitions&n;---------------------------------------------------------------------------- */
 DECL|struct|_mace_statistics
 r_typedef
@@ -390,6 +392,10 @@ suffix:semicolon
 DECL|member|node
 id|dev_node_t
 id|node
+suffix:semicolon
+DECL|member|lock
+id|spinlock_t
+id|lock
 suffix:semicolon
 DECL|member|linux_stats
 r_struct
@@ -710,6 +716,16 @@ id|dev
 suffix:semicolon
 r_static
 r_void
+id|mace_tx_timeout
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_static
+r_void
 id|set_multicast_list
 c_func
 (paren
@@ -935,6 +951,10 @@ id|lp
 )paren
 )paren
 suffix:semicolon
+id|lp-&gt;lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
+suffix:semicolon
 id|link
 op_assign
 op_amp
@@ -1102,9 +1122,18 @@ op_assign
 op_amp
 id|mace_close
 suffix:semicolon
-id|dev-&gt;tbusy
+id|dev-&gt;tx_timeout
 op_assign
-l_int|0xFF
+id|mace_tx_timeout
+suffix:semicolon
+id|dev-&gt;watchdog_timeo
+op_assign
+id|TX_TIMEOUT
+suffix:semicolon
+id|netif_start_queue
+(paren
+id|dev
+)paren
 suffix:semicolon
 multiline_comment|/* Register with Card Services */
 id|link-&gt;next
@@ -1946,9 +1975,10 @@ id|dev-&gt;base_addr
 op_assign
 id|link-&gt;io.BasePort1
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
+id|netif_start_queue
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|i
 op_assign
@@ -2428,13 +2458,10 @@ op_amp
 id|DEV_CONFIG
 )paren
 (brace
-id|dev-&gt;tbusy
-op_assign
-l_int|0xFF
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
+id|netif_stop_queue
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|link-&gt;release.expires
 op_assign
@@ -2496,13 +2523,10 @@ c_cond
 id|link-&gt;open
 )paren
 (brace
-id|dev-&gt;tbusy
-op_assign
-l_int|0xFF
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
+id|netif_stop_queue
+(paren
+id|dev
+)paren
 suffix:semicolon
 )brace
 id|CardServices
@@ -2553,16 +2577,13 @@ c_cond
 id|link-&gt;open
 )paren
 (brace
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
-suffix:semicolon
 id|nmclan_reset
 c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+id|netif_start_queue
 (paren
 id|dev
 )paren
@@ -2881,17 +2902,10 @@ c_func
 l_int|0
 )paren
 suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
+id|netif_start_queue
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|nmclan_reset
 c_func
@@ -2946,6 +2960,11 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
+id|netif_stop_queue
+(paren
+id|dev
+)paren
+suffix:semicolon
 multiline_comment|/* Mask off all interrupts from the MACE chip. */
 id|outb
 c_func
@@ -2961,10 +2980,6 @@ id|MACE_IMR
 suffix:semicolon
 id|link-&gt;open
 op_decrement
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -3001,6 +3016,72 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* mace_close */
+DECL|function|mace_tx_timeout
+r_static
+r_void
+id|mace_tx_timeout
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+(brace
+id|mace_private
+op_star
+id|lp
+op_assign
+(paren
+id|mace_private
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
+id|dev_link_t
+op_star
+id|link
+op_assign
+op_amp
+id|lp-&gt;link
+suffix:semicolon
+id|printk
+(paren
+id|KERN_NOTICE
+l_string|&quot;%s: transmit timed out -- &quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+macro_line|#if RESET_ON_TIMEOUT
+id|printk
+(paren
+l_string|&quot;resetting card&bslash;n&quot;
+)paren
+suffix:semicolon
+id|CardServices
+(paren
+id|ResetCard
+comma
+id|link-&gt;handle
+)paren
+suffix:semicolon
+macro_line|#else&t;&t;&t;&t;/* #if RESET_ON_TIMEOUT */
+id|printk
+(paren
+l_string|&quot;NOT resetting card&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif&t;&t;&t;&t;/* #if RESET_ON_TIMEOUT */
+id|dev-&gt;trans_start
+op_assign
+id|jiffies
+suffix:semicolon
+id|netif_start_queue
+(paren
+id|dev
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* ----------------------------------------------------------------------------&n;mace_start_xmit&n;&t;This routine begins the packet transmit function.  When completed,&n;&t;it will generate a transmit interrupt.&n;&n;&t;According to /usr/src/linux/net/inet/dev.c, if _start_xmit&n;&t;returns 0, the &quot;packet is now solely the responsibility of the&n;&t;driver.&quot;  If _start_xmit returns non-zero, the &quot;transmission&n;&t;failed, put skb back into a list.&quot;&n;---------------------------------------------------------------------------- */
 DECL|function|mace_start_xmit
 r_static
@@ -3034,92 +3115,6 @@ id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
-id|dev_link_t
-op_star
-id|link
-op_assign
-op_amp
-id|lp-&gt;link
-suffix:semicolon
-macro_line|#if TIMEOUT_TX
-multiline_comment|/* Transmitter timeout. */
-r_if
-c_cond
-(paren
-id|dev-&gt;tbusy
-)paren
-(brace
-r_int
-id|tickssofar
-op_assign
-id|jiffies
-op_minus
-id|dev-&gt;trans_start
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|tickssofar
-OL
-(paren
-id|HZ
-op_div
-l_int|5
-)paren
-)paren
-r_return
-l_int|1
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_NOTICE
-l_string|&quot;%s: transmit timed out -- &quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-macro_line|#if RESET_ON_TIMEOUT
-id|printk
-c_func
-(paren
-l_string|&quot;resetting card&bslash;n&quot;
-)paren
-suffix:semicolon
-id|CardServices
-c_func
-(paren
-id|ResetCard
-comma
-id|link-&gt;handle
-)paren
-suffix:semicolon
-macro_line|#else /* #if RESET_ON_TIMEOUT */
-id|printk
-c_func
-(paren
-l_string|&quot;NOT resetting card&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif /* #if RESET_ON_TIMEOUT */
-id|dev-&gt;trans_start
-op_assign
-id|jiffies
-suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
-macro_line|#else /* #if TIMEOUT_TX */
-r_if
-c_cond
-(paren
-id|dev-&gt;tbusy
-)paren
-r_return
-l_int|1
-suffix:semicolon
-macro_line|#endif /* #if TIMEOUT_TX */
 id|DEBUG
 c_func
 (paren
@@ -3135,39 +3130,11 @@ r_int
 id|skb-&gt;len
 )paren
 suffix:semicolon
-multiline_comment|/* Avoid timer-based retransmission conflicts. */
-r_if
-c_cond
+id|netif_stop_queue
 (paren
-id|test_and_set_bit
-c_func
-(paren
-id|TBUSY_UNSPECIFIED
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|dev-&gt;tbusy
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_NOTICE
-l_string|&quot;%s: transmitter access conflict.&bslash;n&quot;
-comma
-id|dev-&gt;name
+id|dev
 )paren
 suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
 macro_line|#if (!TX_INTERRUPTABLE)
 multiline_comment|/* Disable MACE TX interrupts. */
 id|outb
@@ -3191,38 +3158,12 @@ suffix:semicolon
 macro_line|#endif /* #if (!TX_INTERRUPTABLE) */
 (brace
 multiline_comment|/* This block must not be interrupted by another transmit request!&n;       dev-&gt;tbusy will take care of timer-based retransmissions from&n;       the upper layers.  The interrupt handler is guaranteed never to&n;       service a transmit interrupt while we are in here.&n;    */
-id|set_bit
-c_func
-(paren
-id|TBUSY_PARTIAL_TX_FRAME
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|dev-&gt;tbusy
-)paren
-suffix:semicolon
 id|lp-&gt;linux_stats.tx_bytes
 op_add_assign
 id|skb-&gt;len
 suffix:semicolon
 id|lp-&gt;tx_free_frames
 op_decrement
-suffix:semicolon
-id|set_bit
-c_func
-(paren
-id|TBUSY_NO_FREE_TX_FRAMES
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|dev-&gt;tbusy
-)paren
 suffix:semicolon
 multiline_comment|/* WARNING: Write the _exact_ number of bytes written in the header! */
 multiline_comment|/* Put out the word header [must be an outw()] . . . */
@@ -3289,34 +3230,13 @@ l_int|0
 )paren
 (brace
 macro_line|#if MULTI_TX
-id|clear_bit
-c_func
+id|netif_start_queue
 (paren
-id|TBUSY_NO_FREE_TX_FRAMES
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|dev-&gt;tbusy
+id|dev
 )paren
 suffix:semicolon
 macro_line|#endif /* #if MULTI_TX */
 )brace
-id|clear_bit
-c_func
-(paren
-id|TBUSY_PARTIAL_TX_FRAME
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|dev-&gt;tbusy
-)paren
-suffix:semicolon
 )brace
 macro_line|#if (!TX_INTERRUPTABLE)
 multiline_comment|/* Re-enable MACE TX interrupts. */
@@ -3420,11 +3340,15 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|spin_lock
+(paren
+op_amp
+id|lp-&gt;lock
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|dev-&gt;interrupt
-op_logical_or
 id|lp-&gt;tx_irq_disabled
 )paren
 (brace
@@ -3469,32 +3393,6 @@ id|MACE_IMR
 suffix:semicolon
 multiline_comment|/* WARNING: MACE_IR has been read! */
 r_return
-suffix:semicolon
-)brace
-id|dev-&gt;interrupt
-op_assign
-l_int|1
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev-&gt;start
-op_eq
-l_int|0
-)paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|2
-comma
-l_string|&quot;%s: interrupt from dead card&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-r_goto
-id|exception
 suffix:semicolon
 )brace
 r_do
@@ -3764,23 +3662,9 @@ suffix:semicolon
 id|lp-&gt;tx_free_frames
 op_increment
 suffix:semicolon
-id|clear_bit
-c_func
+id|netif_wake_queue
 (paren
-id|TBUSY_NO_FREE_TX_FRAMES
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|dev-&gt;tbusy
-)paren
-suffix:semicolon
-id|mark_bh
-c_func
-(paren
-id|NET_BH
+id|dev
 )paren
 suffix:semicolon
 )brace
@@ -3899,11 +3783,11 @@ id|IntrCnt
 suffix:semicolon
 id|exception
 suffix:colon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-r_return
+id|spin_unlock
+(paren
+op_amp
+id|lp-&gt;lock
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* mace_interrupt */

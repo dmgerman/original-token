@@ -2786,6 +2786,10 @@ comma
 id|Cmnd-&gt;use_sg
 )paren
 suffix:semicolon
+id|Cmnd-&gt;use_sg
+op_assign
+id|sg_count
+suffix:semicolon
 id|cmd-&gt;segment_cnt
 op_assign
 id|cpu_to_le16

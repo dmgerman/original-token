@@ -423,6 +423,43 @@ op_minus
 id|buf
 suffix:semicolon
 )brace
+DECL|variable|usbfix
+r_int
+id|usbfix
+suffix:semicolon
+r_static
+r_int
+id|__init
+DECL|function|usbfix_option
+id|usbfix_option
+(paren
+r_char
+op_star
+id|str
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;irq: enabling USB workaround&bslash;n&quot;
+)paren
+suffix:semicolon
+id|usbfix
+op_assign
+l_int|1
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+id|__setup
+c_func
+(paren
+l_string|&quot;usbfix&quot;
+comma
+id|usbfix_option
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * That&squot;s where the IVT branches when we get an external&n; * interrupt. This branches to the correct hardware IRQ handler via&n; * function ptr.&n; */
 r_void
 DECL|function|ia64_handle_irq
@@ -465,6 +502,11 @@ r_int
 id|eoi_ptr
 suffix:semicolon
 macro_line|# ifdef CONFIG_USB
+r_if
+c_cond
+(paren
+id|usbfix
+)paren
 id|disable_usb
 c_func
 (paren
@@ -528,6 +570,11 @@ id|ivr_read_lock
 )paren
 suffix:semicolon
 macro_line|# ifdef CONFIG_USB
+r_if
+c_cond
+(paren
+id|usbfix
+)paren
 id|reenable_usb
 c_func
 (paren

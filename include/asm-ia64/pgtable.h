@@ -216,7 +216,7 @@ id|addr
 )paren
 suffix:semicolon
 DECL|macro|flush_icache_page
-mdefine_line|#define flush_icache_page(pg)&t;ia64_flush_icache_page(page_address(pg))
+mdefine_line|#define flush_icache_page(vma,pg)&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if ((vma)-&gt;vm_flags &amp; PROT_EXEC)&t;&t;&t;&bslash;&n;&t;&t;ia64_flush_icache_page(page_address(pg));&t;&bslash;&n;} while (0)
 multiline_comment|/*&n; * Now come the defines and routines to manage and access the three-level&n; * page table.&n; */
 multiline_comment|/*&n; * On some architectures, special things need to be done when setting&n; * the PTE in a page table.  Nothing special needs to be on ia-64.&n; */
 DECL|macro|set_pte
@@ -317,19 +317,13 @@ mdefine_line|#define pte_mkdirty(pte)&t;(__pte(pte_val(pte) | _PAGE_D))
 multiline_comment|/*&n; * Macro to make mark a page protection value as &quot;uncacheable&quot;.  Note&n; * that &quot;protection&quot; is really a misnomer here as the protection value&n; * contains the memory attribute bits, dirty bits, and various other&n; * bits as well.&n; */
 DECL|macro|pgprot_noncached
 mdefine_line|#define pgprot_noncached(prot)&t;__pgprot((pgprot_val(prot) &amp; ~_PAGE_MA_MASK) | _PAGE_MA_UC)
-multiline_comment|/* The offset in the 1-level directory is given by the 3 region bits&n;   (61..63) and the seven level-1 bits (33-39).  */
 r_extern
 id|__inline__
-id|pgd_t
-op_star
-DECL|function|pgd_offset
-id|pgd_offset
+r_int
+r_int
+DECL|function|pgd_index
+id|pgd_index
 (paren
-r_struct
-id|mm_struct
-op_star
-id|mm
-comma
 r_int
 r_int
 id|address
@@ -364,9 +358,6 @@ l_int|1
 )paren
 suffix:semicolon
 r_return
-id|mm-&gt;pgd
-op_plus
-(paren
 (paren
 id|region
 op_lshift
@@ -378,6 +369,33 @@ l_int|6
 )paren
 op_or
 id|l1index
+suffix:semicolon
+)brace
+multiline_comment|/* The offset in the 1-level directory is given by the 3 region bits&n;   (61..63) and the seven level-1 bits (33-39).  */
+r_extern
+id|__inline__
+id|pgd_t
+op_star
+DECL|function|pgd_offset
+id|pgd_offset
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+comma
+r_int
+r_int
+id|address
+)paren
+(brace
+r_return
+id|mm-&gt;pgd
+op_plus
+id|pgd_index
+c_func
+(paren
+id|address
 )paren
 suffix:semicolon
 )brace

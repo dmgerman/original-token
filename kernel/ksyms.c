@@ -420,6 +420,13 @@ id|highmem_start_page
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* filesystem internal functions */
+DECL|variable|def_blk_fops
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|def_blk_fops
+)paren
+suffix:semicolon
 DECL|variable|in_group_p
 id|EXPORT_SYMBOL
 c_func

@@ -8,10 +8,8 @@ id|version
 op_assign
 l_string|&quot;smc9194.c:v0.12 03/06/96 by Erik Stahlman (erik@vt.edu)&bslash;n&quot;
 suffix:semicolon
-macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -31,16 +29,6 @@ macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &quot;smc9194.h&quot;
 multiline_comment|/*------------------------------------------------------------------------&n; .&n; . Configuration options, for the experienced user to change.&n; .&n; -------------------------------------------------------------------------*/
-multiline_comment|/*&n; . this is for kernels &gt; 1.2.70&n;*/
-DECL|macro|REALLY_NEW_KERNEL
-mdefine_line|#define REALLY_NEW_KERNEL
-macro_line|#ifndef REALLY_NEW_KERNEL
-DECL|macro|free_irq
-mdefine_line|#define free_irq( x, y ) free_irq( x )
-DECL|macro|request_irq
-mdefine_line|#define request_irq( x, y, z, u, v ) request_irq( x, y, z, u )
-macro_line|#endif
-multiline_comment|/*&n; . Do you want to use this with old kernels.&n; . WARNING: this is not well tested.&n;#define SUPPORT_OLD_KERNEL&n;*/
 multiline_comment|/*&n; . Do you want to use 32 bit xfers?  This should work on all chips, as&n; . the chipset is designed to accommodate them.&n;*/
 DECL|macro|USE_32_BIT
 mdefine_line|#define USE_32_BIT 1
@@ -117,24 +105,9 @@ macro_line|#else
 DECL|macro|PRINTK
 mdefine_line|#define PRINTK(x)
 macro_line|#endif
-multiline_comment|/* the older versions of the kernel cannot support autoprobing */
-macro_line|#ifdef SUPPORT_OLD_KERNEL
-DECL|macro|NO_AUTOPROBE
-mdefine_line|#define NO_AUTOPROBE
-macro_line|#endif
 multiline_comment|/*------------------------------------------------------------------------&n; .&n; . The internal workings of the driver.  If you are changing anything&n; . here with the SMC stuff, you should have the datasheet and known&n; . what you are doing.&n; .&n; -------------------------------------------------------------------------*/
 DECL|macro|CARDNAME
 mdefine_line|#define CARDNAME &quot;SMC9194&quot;
-macro_line|#ifdef SUPPORT_OLD_KERNEL
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* store this information for the driver.. */
 DECL|struct|smc_local
 r_struct
@@ -176,6 +149,18 @@ multiline_comment|/*&n; . The kernel calls this function when someone wants to u
 r_static
 r_int
 id|smc_open
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+suffix:semicolon
+multiline_comment|/*&n; . Our watchdog timed out. Called by the networking layer&n;*/
+r_static
+r_void
+id|smc_timeout
 c_func
 (paren
 r_struct
@@ -228,7 +213,6 @@ id|dev
 )paren
 suffix:semicolon
 multiline_comment|/*&n; . Finally, a call to set promiscuous mode ( for TCPDUMP and related&n; . programs ) and multicast modes.&n;*/
-macro_line|#ifdef SUPPORT_OLD_KERNEL
 r_static
 r_void
 id|smc_set_multicast_list
@@ -238,31 +222,24 @@ r_struct
 id|net_device
 op_star
 id|dev
+)paren
+suffix:semicolon
+multiline_comment|/*&n; . CRC compute&n; */
+r_static
+r_int
+id|crc32
+c_func
+(paren
+r_char
+op_star
+id|s
 comma
 r_int
-id|num_addrs
-comma
-r_void
-op_star
-id|addrs
+id|length
 )paren
 suffix:semicolon
-macro_line|#else
-r_static
-r_void
-id|smc_set_multicast_list
-c_func
-(paren
-r_struct
-id|net_device
-op_star
-id|dev
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/*---------------------------------------------------------------&n; .&n; . Interrupt level calls..&n; .&n; ----------------------------------------------------------------*/
 multiline_comment|/*&n; . Handles the actual interrupt&n;*/
-macro_line|#ifdef REALLY_NEW_KERNEL
 r_static
 r_void
 id|smc_interrupt
@@ -280,22 +257,6 @@ op_star
 id|regs
 )paren
 suffix:semicolon
-macro_line|#else
-r_static
-r_void
-id|smc_interrupt
-c_func
-(paren
-r_int
-id|irq
-comma
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n; . This is a separate procedure to handle the receipt of a packet, to&n; . leave the interrupt code looking slightly cleaner&n;*/
 r_inline
 r_static
@@ -422,7 +383,6 @@ r_int
 id|ioaddr
 )paren
 suffix:semicolon
-macro_line|#ifndef NO_AUTOPROBE
 multiline_comment|/* This routine will find the IRQ of the driver if one is not&n; . specified in the input to the device.  */
 r_static
 r_int
@@ -433,60 +393,6 @@ r_int
 id|ioaddr
 )paren
 suffix:semicolon
-macro_line|#endif
-multiline_comment|/*&n;  this routine will set the hardware multicast table to the specified&n;  values given it by the higher level routines&n;*/
-macro_line|#ifndef SUPPORT_OLD_KERNEL
-r_static
-r_void
-id|smc_setmulticast
-c_func
-(paren
-r_int
-id|ioaddr
-comma
-r_int
-id|count
-comma
-r_struct
-id|dev_mc_list
-op_star
-)paren
-suffix:semicolon
-r_static
-r_int
-id|crc32
-c_func
-(paren
-r_char
-op_star
-comma
-r_int
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef SUPPORT_OLD_KERNEL
-r_extern
-r_struct
-id|net_device
-op_star
-id|init_etherdev
-c_func
-(paren
-r_struct
-id|net_device
-op_star
-id|dev
-comma
-r_int
-id|sizeof_private
-comma
-r_int
-r_int
-op_star
-id|mem_startp
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n; . Function: smc_reset( int ioaddr )&n; . Purpose:&n; .  &t;This sets the SMC91xx chip to its normal state, hopefully from whatever&n; . &t;mess that any other DOS driver has put it in.&n; .&n; . Maybe I should reset more registers to defaults in here?  SOFTRESET  should&n; . do that for me.&n; .&n; . Method:&n; .&t;1.  send a SOFT RESET&n; .&t;2.  wait for it to finish&n; .&t;3.  enable autorelease mode&n; .&t;4.  reset the memory management unit&n; .&t;5.  clear all interrupts&n; .&n;*/
 DECL|function|smc_reset
 r_static
@@ -735,7 +641,6 @@ id|CONTROL
 suffix:semicolon
 macro_line|#endif
 )brace
-macro_line|#ifndef SUPPORT_OLD_KERNEL
 multiline_comment|/*&n; . Function: smc_setmulticast( int ioaddr, int count, dev_mc_list * adds )&n; . Purpose:&n; .    This sets the internal hardware table to filter out unwanted multicast&n; .    packets before they take up memory.&n; .&n; .    The SMC chip uses a hash table where the high 6 bits of the CRC of&n; .    address are the offset into the table.  If that bit is 1, then the&n; .    multicast packet is accepted.  Otherwise, it&squot;s dropped silently.&n; .&n; .    To use the 6 bits as an offset into the table, the high 3 bits are the&n; .    number of the 8 bit register, while the low 3 bits are the bit within&n; .    that register.&n; .&n; . This routine is based very heavily on the one provided by Peter Cammaert.&n;*/
 DECL|function|smc_setmulticast
 r_static
@@ -1051,7 +956,6 @@ r_return
 id|crc_value
 suffix:semicolon
 )brace
-macro_line|#endif
 multiline_comment|/*&n; . Function: smc_wait_to_send_packet( struct sk_buff * skb, struct net_device * )&n; . Purpose:&n; .    Attempt to allocate memory for a packet, if chip-memory is not&n; .    available, then tell the card to generate an interrupt when it&n; .    is available.&n; .&n; . Algorithm:&n; .&n; . o&t;if the saved_skb is not currently null, then drop this packet&n; .&t;on the floor.  This should never happen, because of TBUSY.&n; . o&t;if the saved_skb is null, then replace it with the current packet,&n; . o&t;See if I can sending it now.&n; . o &t;(NO): Enable interrupts and let the interrupt handler deal with it.&n; . o&t;(YES):Send it now.&n;*/
 DECL|function|smc_wait_to_send_packet
 r_static
@@ -1167,6 +1071,12 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* this IS an error, but, i don&squot;t want the skb saved */
+id|netif_wake_queue
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1274,6 +1184,12 @@ suffix:semicolon
 )brace
 multiline_comment|/* or YES! I can send the packet now.. */
 id|smc_hardware_send_packet
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+id|netif_wake_queue
 c_func
 (paren
 id|dev
@@ -1407,9 +1323,11 @@ id|lp-&gt;saved_skb
 op_assign
 l_int|NULL
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
+id|netif_wake_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -1702,9 +1620,11 @@ op_assign
 id|jiffies
 suffix:semicolon
 multiline_comment|/* we can send another packet */
-id|dev-&gt;tbusy
-op_assign
-l_int|0
+id|netif_wake_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -1862,7 +1782,6 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-macro_line|#ifndef NO_AUTOPROBE
 multiline_comment|/*----------------------------------------------------------------------&n; . smc_findirq&n; .&n; . This routine has a simple purpose -- make the SMC chip generate an&n; . interrupt, so an auto-detect routine can detect it, and find the IRQ,&n; ------------------------------------------------------------------------&n;*/
 DECL|function|smc_findirq
 r_int
@@ -1994,7 +1913,6 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 multiline_comment|/*----------------------------------------------------------------------&n; . Function: smc_probe( int ioaddr )&n; .&n; . Purpose:&n; .&t;Tests to see if a given ioaddr points to an SMC9xxx chip.&n; .&t;Returns a 0 on success&n; .&n; . Algorithm:&n; .&t;(1) see if the high byte of BANK_SELECT is 0x33&n; . &t;(2) compare the ioaddr with the base register&squot;s address&n; .&t;(3) see if I recognize the chip ID in the appropriate register&n; .&n; .---------------------------------------------------------------------&n; */
 DECL|function|smc_probe
 r_static
@@ -2256,27 +2174,6 @@ op_eq
 l_int|NULL
 )paren
 (brace
-macro_line|#ifdef SUPPORT_OLD_KERNEL
-macro_line|#ifndef MODULE
-multiline_comment|/* note: the old module interface does not support this call */
-id|dev
-op_assign
-id|init_etherdev
-c_func
-(paren
-l_int|0
-comma
-r_sizeof
-(paren
-r_struct
-id|smc_local
-)paren
-comma
-l_int|0
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#else
 id|dev
 op_assign
 id|init_etherdev
@@ -2287,7 +2184,6 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2530,7 +2426,6 @@ id|ioaddr
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; . If dev-&gt;irq is 0, then the device has to be banged on to see&n;&t; . what the IRQ is.&n; &t; .&n;&t; . This banging doesn&squot;t always detect the IRQ, for unknown reasons.&n;&t; . a workaround is to reset the chip and try again.&n;&t; .&n;&t; . Interestingly, the DOS packet driver *SETS* the IRQ on the card to&n;&t; . be what is requested on the command line.   I don&squot;t do that, mostly&n;&t; . because the card that I have uses a non-standard method of accessing&n;&t; . the IRQs, and because this _should_ work in most configurations.&n;&t; .&n;&t; . Specifying an IRQ is done with the assumption that the user knows&n;&t; . what (s)he is doing.  No checking is done!!!!&n; &t; .&n;&t;*/
-macro_line|#ifndef NO_AUTOPROBE
 r_if
 c_cond
 (paren
@@ -2597,28 +2492,6 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-macro_line|#else
-r_if
-c_cond
-(paren
-id|dev-&gt;irq
-op_eq
-l_int|0
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|CARDNAME
-l_string|&quot;: Autoprobing IRQs is not supported for old kernels.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|ENODEV
-suffix:semicolon
-)brace
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2818,17 +2691,24 @@ id|dev-&gt;hard_start_xmit
 op_assign
 id|smc_send_packet
 suffix:semicolon
+id|dev-&gt;tx_timeout
+op_assign
+id|smc_timeout
+suffix:semicolon
+id|dev-&gt;watchdog_timeo
+op_assign
+id|HZ
+op_div
+l_int|20
+suffix:semicolon
 id|dev-&gt;get_stats
 op_assign
 id|smc_query_statistics
 suffix:semicolon
-macro_line|#ifdef&t;HAVE_MULTICAST
 id|dev-&gt;set_multicast_list
 op_assign
-op_amp
 id|smc_set_multicast_list
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -3045,22 +2925,8 @@ id|smc_local
 )paren
 )paren
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#ifdef MODULE
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* reset the hardware */
 id|smc_reset
 c_func
@@ -3194,52 +3060,30 @@ id|i
 )paren
 suffix:semicolon
 )brace
+id|netif_start_queue
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*--------------------------------------------------------&n; . Called by the kernel to send a packet out into the void&n; . of the net.  This routine is largely based on&n; . skeleton.c, from Becker.&n; .--------------------------------------------------------&n;*/
-DECL|function|smc_send_packet
+DECL|function|smc_timeout
 r_static
-r_int
-id|smc_send_packet
+r_void
+id|smc_timeout
 c_func
 (paren
-r_struct
-id|sk_buff
-op_star
-id|skb
-comma
 r_struct
 id|net_device
 op_star
 id|dev
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|dev-&gt;tbusy
-)paren
-(brace
-multiline_comment|/* If we get here, some higher level has decided we are broken.&n;&t;&t;   There should really be a &quot;kick me&quot; function call instead. */
-r_int
-id|tickssofar
-op_assign
-id|jiffies
-op_minus
-id|dev-&gt;trans_start
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|tickssofar
-OL
-l_int|5
-)paren
-r_return
-l_int|1
-suffix:semicolon
+multiline_comment|/* If we get here, some higher level has decided we are broken.&n;&t;   There should really be a &quot;kick me&quot; function call instead. */
 id|printk
 c_func
 (paren
@@ -3272,10 +3116,6 @@ c_func
 id|dev-&gt;base_addr
 )paren
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
 id|dev-&gt;trans_start
 op_assign
 id|jiffies
@@ -3294,44 +3134,37 @@ id|saved_skb
 op_assign
 l_int|NULL
 suffix:semicolon
-)brace
-multiline_comment|/* Block a timer-based transmit from overlapping.  This could better be&n;&t;   done with atomic_swap(1, dev-&gt;tbusy), but set_bit() works as well. */
-r_if
-c_cond
-(paren
-id|test_and_set_bit
+id|netif_wake_queue
 c_func
 (paren
-l_int|0
-comma
+id|dev
+)paren
+suffix:semicolon
+)brace
+DECL|function|smc_send_packet
+r_static
+r_int
+id|smc_send_packet
+c_func
 (paren
-r_void
+r_struct
+id|sk_buff
 op_star
-)paren
-op_amp
-id|dev-&gt;tbusy
-)paren
-op_ne
-l_int|0
+id|skb
+comma
+r_struct
+id|net_device
+op_star
+id|dev
 )paren
 (brace
-id|printk
+id|netif_stop_queue
 c_func
 (paren
-id|KERN_WARNING
-id|CARDNAME
-l_string|&quot;: Transmitter access conflict.&bslash;n&quot;
+id|dev
 )paren
 suffix:semicolon
-id|dev_kfree_skb
-(paren
-id|skb
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-multiline_comment|/* Well, I want to send the packet.. but I don&squot;t know&n;&t;&t;   if I can send it right now...  */
+multiline_comment|/* Well, I want to send the packet.. but I don&squot;t know&n;&t;   if I can send it right now...  */
 r_return
 id|smc_wait_to_send_packet
 c_func
@@ -3342,12 +3175,7 @@ id|dev
 )paren
 suffix:semicolon
 )brace
-r_return
-l_int|0
-suffix:semicolon
-)brace
 multiline_comment|/*--------------------------------------------------------------------&n; .&n; . This is the main routine of the driver, to handle the device when&n; . it needs some attention.&n; .&n; . So:&n; .   first, save state of the chipset&n; .   branch off into routines to handle each case, and acknowledge&n; .&t;    each to the interrupt register&n; .   and finally restore state.&n; .&n; ---------------------------------------------------------------------*/
-macro_line|#ifdef REALLY_NEW_KERNEL
 DECL|function|smc_interrupt
 r_static
 r_void
@@ -3366,21 +3194,6 @@ id|pt_regs
 op_star
 id|regs
 )paren
-macro_line|#else
-r_static
-r_void
-id|smc_interrupt
-c_func
-(paren
-r_int
-id|irq
-comma
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-macro_line|#endif
 (brace
 r_struct
 id|net_device
@@ -3433,49 +3246,6 @@ id|CARDNAME
 l_string|&quot;: SMC interrupt started &bslash;n&quot;
 )paren
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev
-op_eq
-l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-id|CARDNAME
-l_string|&quot;: irq %d for unknown device.&bslash;n&quot;
-comma
-id|irq
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-multiline_comment|/* will Linux let this happen ??  If not, this costs some speed */
-r_if
-c_cond
-(paren
-id|dev-&gt;interrupt
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-id|CARDNAME
-l_string|&quot;: interrupt inside interrupt.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-id|dev-&gt;interrupt
-op_assign
-l_int|1
 suffix:semicolon
 id|saved_bank
 op_assign
@@ -3683,18 +3453,6 @@ op_amp
 l_int|0xF
 suffix:semicolon
 multiline_comment|/* these are for when linux supports these statistics */
-macro_line|#if 0
-id|card_stats
-op_rshift_assign
-l_int|4
-suffix:semicolon
-multiline_comment|/* deferred */
-id|card_stats
-op_rshift_assign
-l_int|4
-suffix:semicolon
-multiline_comment|/* excess deferred */
-macro_line|#endif
 id|SMC_SELECT_BANK
 c_func
 (paren
@@ -3776,10 +3534,10 @@ id|IM_TX_INT
 )paren
 suffix:semicolon
 multiline_comment|/* and let the card send more packets to me */
-id|mark_bh
+id|netif_wake_queue
 c_func
 (paren
-id|NET_BH
+id|dev
 )paren
 suffix:semicolon
 id|PRINTK2
@@ -3918,10 +3676,6 @@ c_func
 (paren
 id|saved_bank
 )paren
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
 suffix:semicolon
 id|PRINTK3
 c_func
@@ -4108,20 +3862,6 @@ id|RS_MULTICAST
 id|lp-&gt;stats.multicast
 op_increment
 suffix:semicolon
-macro_line|#ifdef SUPPORT_OLD_KERNEL
-id|skb
-op_assign
-id|alloc_skb
-c_func
-(paren
-id|packet_length
-op_plus
-l_int|5
-comma
-id|GFP_ATOMIC
-)paren
-suffix:semicolon
-macro_line|#else
 id|skb
 op_assign
 id|dev_alloc_skb
@@ -4132,7 +3872,6 @@ op_plus
 l_int|5
 )paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -4154,8 +3893,6 @@ op_increment
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;&t; ! This should work without alignment, but it could be&n;&t;&t; ! in the worse case&n;&t;&t;*/
-macro_line|#ifndef SUPPORT_OLD_KERNEL
-multiline_comment|/* TODO: Should I use 32bit alignment here ? */
 id|skb_reserve
 c_func
 (paren
@@ -4165,21 +3902,10 @@ l_int|2
 )paren
 suffix:semicolon
 multiline_comment|/* 16 bit alignment */
-macro_line|#endif
 id|skb-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
-macro_line|#ifdef SUPPORT_OLD_KERNEL
-id|skb-&gt;len
-op_assign
-id|packet_length
-suffix:semicolon
-id|data
-op_assign
-id|skb-&gt;data
-suffix:semicolon
-macro_line|#else
 id|data
 op_assign
 id|skb_put
@@ -4190,7 +3916,6 @@ comma
 id|packet_length
 )paren
 suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef USE_32_BIT
 multiline_comment|/* QUESTION:  Like in the TX routine, do I want&n;&t;&t;   to send the DWORDs or the bytes first, or some&n;&t;&t;   mixture.  A mixture might improve already slow PIO&n;&t;&t;   performance  */
 id|PRINTK3
@@ -4342,7 +4067,6 @@ id|packet_length
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifndef SUPPORT_OLD_KERNEL
 id|skb-&gt;protocol
 op_assign
 id|eth_type_trans
@@ -4353,7 +4077,6 @@ comma
 id|dev
 )paren
 suffix:semicolon
-macro_line|#endif
 id|netif_rx
 c_func
 (paren
@@ -4663,13 +4386,11 @@ op_star
 id|dev
 )paren
 (brace
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 multiline_comment|/* clear everything */
 id|smc_shutdown
@@ -4679,10 +4400,8 @@ id|dev-&gt;base_addr
 )paren
 suffix:semicolon
 multiline_comment|/* Update the statistics here. */
-macro_line|#ifdef MODULE
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -4720,7 +4439,6 @@ id|lp-&gt;stats
 suffix:semicolon
 )brace
 multiline_comment|/*-----------------------------------------------------------&n; . smc_set_multicast_list&n; .&n; . This routine will, depending on the values passed to it,&n; . either make it accept multicast packets, go into&n; . promiscuous mode ( for TCPDUMP and cousins ) or accept&n; . a select set of multicast packets&n;*/
-macro_line|#ifdef SUPPORT_OLD_KERNEL
 DECL|function|smc_set_multicast_list
 r_static
 r_void
@@ -4731,26 +4449,7 @@ r_struct
 id|net_device
 op_star
 id|dev
-comma
-r_int
-id|num_addrs
-comma
-r_void
-op_star
-id|addrs
 )paren
-macro_line|#else
-r_static
-r_void
-id|smc_set_multicast_list
-c_func
-(paren
-r_struct
-id|net_device
-op_star
-id|dev
-)paren
-macro_line|#endif
 (brace
 r_int
 id|ioaddr
@@ -4763,15 +4462,6 @@ c_func
 l_int|0
 )paren
 suffix:semicolon
-macro_line|#ifdef  SUPPORT_OLD_KERNEL
-r_if
-c_cond
-(paren
-id|num_addrs
-OL
-l_int|0
-)paren
-macro_line|#else
 r_if
 c_cond
 (paren
@@ -4779,7 +4469,6 @@ id|dev-&gt;flags
 op_amp
 id|IFF_PROMISC
 )paren
-macro_line|#endif
 id|outw
 c_func
 (paren
@@ -4800,17 +4489,6 @@ id|RCR
 suffix:semicolon
 multiline_comment|/* BUG?  I never disable promiscuous mode if multicasting was turned on.&n;   Now, I turn off promiscuous mode, but I don&squot;t do anything to multicasting&n;   when promiscuous mode is turned on.&n;*/
 multiline_comment|/* Here, I am setting this to accept all multicast packets.&n;&t;   I don&squot;t need to zero the multicast table, because the flag is&n;&t;   checked before the table is&n;&t;*/
-macro_line|#ifdef  SUPPORT_OLD_KERNEL
-r_else
-r_if
-c_cond
-(paren
-id|num_addrs
-OG
-l_int|20
-)paren
-multiline_comment|/* arbitrary constant */
-macro_line|#else
 r_else
 r_if
 c_cond
@@ -4819,7 +4497,6 @@ id|dev-&gt;flags
 op_amp
 id|IFF_ALLMULTI
 )paren
-macro_line|#endif
 id|outw
 c_func
 (paren
@@ -4839,56 +4516,6 @@ id|RCR
 )paren
 suffix:semicolon
 multiline_comment|/* We just get all multicast packets even if we only want them&n;&t; . from one source.  This will be changed at some future&n;&t; . point. */
-macro_line|#ifdef  SUPPORT_OLD_KERNEL
-r_else
-r_if
-c_cond
-(paren
-id|num_addrs
-OG
-l_int|0
-)paren
-(brace
-multiline_comment|/* the old kernel support will not have hardware multicast support. It would&n;   involve more kludges, and make the multicast setting code even worse.&n;   Instead, just use the ALMUL method.   This is reasonable, considering that&n;   it is seldom used&n;*/
-id|outw
-c_func
-(paren
-id|inw
-c_func
-(paren
-id|ioaddr
-op_plus
-id|RCR
-)paren
-op_amp
-op_complement
-id|RCR_PROMISC
-comma
-id|ioaddr
-op_plus
-id|RCR
-)paren
-suffix:semicolon
-id|outw
-c_func
-(paren
-id|inw
-c_func
-(paren
-id|ioadddr
-op_plus
-id|RCR
-)paren
-op_or
-id|RCR_ALMUL
-comma
-id|ioadddr
-op_plus
-id|RCR
-)paren
-suffix:semicolon
-)brace
-macro_line|#else
 r_else
 r_if
 c_cond
@@ -4933,7 +4560,6 @@ id|dev-&gt;mc_list
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 r_else
 (brace
 id|outw

@@ -128,8 +128,6 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-DECL|macro|DEV_FREE_SKB
-mdefine_line|#define DEV_FREE_SKB(skb) dev_kfree_skb(skb);
 multiline_comment|/* The I/O extent. */
 DECL|macro|EPIC_TOTAL_SIZE
 mdefine_line|#define EPIC_TOTAL_SIZE 0x100
@@ -4681,7 +4679,7 @@ op_increment
 suffix:semicolon
 )brace
 multiline_comment|/* Free the original skb. */
-id|DEV_FREE_SKB
+id|dev_kfree_skb_irq
 c_func
 (paren
 id|ep-&gt;tx_skbuff
@@ -5630,7 +5628,7 @@ c_cond
 id|skb
 )paren
 (brace
-id|DEV_FREE_SKB
+id|dev_kfree_skb
 c_func
 (paren
 id|skb
@@ -5661,7 +5659,7 @@ id|ep-&gt;tx_skbuff
 id|i
 )braket
 )paren
-id|DEV_FREE_SKB
+id|dev_kfree_skb
 c_func
 (paren
 id|ep-&gt;tx_skbuff
@@ -6540,10 +6538,6 @@ id|u32
 id|io
 suffix:semicolon
 id|u8
-id|bus
-comma
-id|devfn
-comma
 id|irq
 suffix:semicolon
 r_struct
@@ -6585,9 +6579,9 @@ c_func
 id|KERN_DEBUG
 l_string|&quot;epic_attach(bus %d, function %d)&bslash;n&quot;
 comma
-id|bus
+id|pdev-&gt;bus-&gt;number
 comma
-id|devfn
+id|pdev-&gt;devfn
 )paren
 suffix:semicolon
 id|io
@@ -6652,9 +6646,7 @@ op_assign
 id|epic_probe1
 c_func
 (paren
-id|bus
-comma
-id|devfn
+id|pdev
 comma
 id|io
 comma

@@ -287,18 +287,18 @@ c_func
 id|disable_irq_nosync
 )paren
 suffix:semicolon
-DECL|variable|ppc_local_irq_count
+DECL|variable|local_irq_count
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|ppc_local_irq_count
+id|local_irq_count
 )paren
 suffix:semicolon
-DECL|variable|ppc_local_bh_count
+DECL|variable|local_bh_count
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|ppc_local_bh_count
+id|local_bh_count
 )paren
 suffix:semicolon
 macro_line|#ifdef __SMP__
@@ -1278,13 +1278,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|console_drivers
-)paren
-suffix:semicolon
-DECL|variable|do_bottom_half
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|do_bottom_half
 )paren
 suffix:semicolon
 eof

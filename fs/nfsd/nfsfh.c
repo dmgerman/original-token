@@ -1198,7 +1198,7 @@ id|found
 op_assign
 l_int|0
 suffix:semicolon
-id|u32
+r_int
 id|err
 suffix:semicolon
 multiline_comment|/* This semaphore is needed to make sure that only one unconnected (free)&n;&t; * dcache path ever exists, as otherwise two partial paths might get&n;&t; * joined together, which would be very confusing.&n;&t; * If there is ever an unconnected non-root directory, then this lock&n;&t; * must be held.  This could sensibly be per-filesystem.&n;&t; */

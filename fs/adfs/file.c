@@ -45,6 +45,16 @@ op_amp
 id|adfs_file_operations
 comma
 multiline_comment|/* default file operations */
+macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,3,0)
+id|readpage
+suffix:colon
+id|generic_readpage
+comma
+id|bmap
+suffix:colon
+id|adfs_bmap
+comma
+macro_line|#endif
 )brace
 suffix:semicolon
 eof
