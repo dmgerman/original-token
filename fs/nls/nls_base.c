@@ -195,12 +195,6 @@ id|utf8_table
 op_star
 id|t
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;utf8_mbtowc&bslash;n&quot;
-)paren
-suffix:semicolon
 id|nc
 op_assign
 l_int|0
@@ -348,14 +342,6 @@ suffix:semicolon
 r_int
 id|size
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;&bslash;nutf8_mbstowcs: n=%d&bslash;n&quot;
-comma
-id|n
-)paren
-suffix:semicolon
 id|op
 op_assign
 id|pwcs
@@ -375,15 +361,6 @@ OG
 l_int|0
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot; %02x&quot;
-comma
-op_star
-id|ip
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren

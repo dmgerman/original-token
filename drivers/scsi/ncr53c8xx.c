@@ -1,5 +1,5 @@
 multiline_comment|/******************************************************************************&n;**  Device driver for the PCI-SCSI NCR538XX controller family.&n;**&n;**  Copyright (C) 1994  Wolfgang Stanglmeier&n;**&n;**  This program is free software; you can redistribute it and/or modify&n;**  it under the terms of the GNU General Public License as published by&n;**  the Free Software Foundation; either version 2 of the License, or&n;**  (at your option) any later version.&n;**&n;**  This program is distributed in the hope that it will be useful,&n;**  but WITHOUT ANY WARRANTY; without even the implied warranty of&n;**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;**  GNU General Public License for more details.&n;**&n;**  You should have received a copy of the GNU General Public License&n;**  along with this program; if not, write to the Free Software&n;**  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;**&n;**-----------------------------------------------------------------------------&n;**&n;**  This driver has been ported to Linux from the FreeBSD NCR53C8XX driver&n;**  and is currently maintained by&n;**&n;**          Gerard Roudier              &lt;groudier@club-internet.fr&gt;&n;**&n;**  Being given that this driver originates from the FreeBSD version, and&n;**  in order to keep synergy on both, any suggested enhancements and corrections&n;**  received on Linux are automatically a potential candidate for the FreeBSD &n;**  version.&n;**&n;**  The original driver has been written for 386bsd and FreeBSD by&n;**          Wolfgang Stanglmeier        &lt;wolf@cologne.de&gt;&n;**          Stefan Esser                &lt;se@mi.Uni-Koeln.de&gt;&n;**&n;**  And has been ported to NetBSD by&n;**          Charles M. Hannum           &lt;mycroft@gnu.ai.mit.edu&gt;&n;**&n;**-----------------------------------------------------------------------------&n;**&n;**                     Brief history&n;**&n;**  December 10 1995 by Gerard Roudier:&n;**     Initial port to Linux.&n;**&n;**  June 23 1996 by Gerard Roudier:&n;**     Support for 64 bits architectures (Alpha).&n;**&n;**  November 30 1996 by Gerard Roudier:&n;**     Support for Fast-20 scsi.&n;**     Support for large DMA fifo and 128 dwords bursting.&n;**&n;**  February 27 1997 by Gerard Roudier:&n;**     Support for Fast-40 scsi.&n;**     Support for on-Board RAM.&n;**&n;**  May 3 1997 by Gerard Roudier:&n;**     Full support for scsi scripts instructions pre-fetching.&n;**&n;**  May 19 1997 by Richard Waltham &lt;dormouse@farsrobt.demon.co.uk&gt;:&n;**     Support for NvRAM detection and reading.&n;**&n;**  August 18 1997 by Cort &lt;cort@cs.nmt.edu&gt;:&n;**     Support for Power/PC (Big Endian).&n;**&n;**  June 20 1998 by Gerard Roudier &lt;groudier@club-internet.fr&gt;:&n;**     Support for up to 64 tags per lun.&n;**     O(1) everywhere (C and SCRIPTS) for normal cases.&n;**     Low PCI traffic for command handling when on-chip RAM is present.&n;**     Aggressive SCSI SCRIPTS optimizations.&n;**&n;*******************************************************************************&n;*/
-multiline_comment|/*&n;**&t;October 4 1998, version 3.0i&n;**&n;**&t;Supported SCSI-II features:&n;**&t;    Synchronous negotiation&n;**&t;    Wide negotiation        (depends on the NCR Chip)&n;**&t;    Enable disconnection&n;**&t;    Tagged command queuing&n;**&t;    Parity checking&n;**&t;    Etc...&n;**&n;**&t;Supported NCR chips:&n;**&t;&t;53C810&t;&t;(8 bits, Fast SCSI-2, no rom BIOS) &n;**&t;&t;53C815&t;&t;(8 bits, Fast SCSI-2, on board rom BIOS)&n;**&t;&t;53C820&t;&t;(Wide,   Fast SCSI-2, no rom BIOS)&n;**&t;&t;53C825&t;&t;(Wide,   Fast SCSI-2, on board rom BIOS)&n;**&t;&t;53C860&t;&t;(8 bits, Fast 20,     no rom BIOS)&n;**&t;&t;53C875&t;&t;(Wide,   Fast 20,     on board rom BIOS)&n;**&t;&t;53C895&t;&t;(Wide,   Fast 40,     on board rom BIOS)&n;**&n;**&t;Other features:&n;**&t;&t;Memory mapped IO (linux-1.3.X and above only)&n;**&t;&t;Module&n;**&t;&t;Shared IRQ (since linux-1.3.72)&n;*/
+multiline_comment|/*&n;**&t;October 21 1998, version 3.1a&n;**&n;**&t;Supported SCSI-II features:&n;**&t;    Synchronous negotiation&n;**&t;    Wide negotiation        (depends on the NCR Chip)&n;**&t;    Enable disconnection&n;**&t;    Tagged command queuing&n;**&t;    Parity checking&n;**&t;    Etc...&n;**&n;**&t;Supported NCR chips:&n;**&t;&t;53C810&t;&t;(8 bits, Fast SCSI-2, no rom BIOS) &n;**&t;&t;53C815&t;&t;(8 bits, Fast SCSI-2, on board rom BIOS)&n;**&t;&t;53C820&t;&t;(Wide,   Fast SCSI-2, no rom BIOS)&n;**&t;&t;53C825&t;&t;(Wide,   Fast SCSI-2, on board rom BIOS)&n;**&t;&t;53C860&t;&t;(8 bits, Fast 20,     no rom BIOS)&n;**&t;&t;53C875&t;&t;(Wide,   Fast 20,     on board rom BIOS)&n;**&t;&t;53C895&t;&t;(Wide,   Fast 40,     on board rom BIOS)&n;**&n;**&t;Other features:&n;**&t;&t;Memory mapped IO (linux-1.3.X and above only)&n;**&t;&t;Module&n;**&t;&t;Shared IRQ (since linux-1.3.72)&n;*/
 DECL|macro|SCSI_NCR_DEBUG_FLAGS
 mdefine_line|#define SCSI_NCR_DEBUG_FLAGS&t;(0)
 multiline_comment|/*==========================================================&n;**&n;**      Include files&n;**&n;**==========================================================&n;*/
@@ -58,11 +58,16 @@ DECL|macro|BITS_PER_LONG
 mdefine_line|#define&t;BITS_PER_LONG&t;64
 macro_line|#endif
 macro_line|#endif
-multiline_comment|/*&n;**&t;Define the BSD style u_int32 type&n;*/
+multiline_comment|/*&n;**&t;Define the BSD style u_int32 and u_int64 type.&n;**&t;Are in fact u_int32_t and u_int64_t :-)&n;*/
 DECL|typedef|u_int32
 r_typedef
 id|u32
 id|u_int32
+suffix:semicolon
+DECL|typedef|u_int64
+r_typedef
+id|u64
+id|u_int64
 suffix:semicolon
 macro_line|#include &quot;ncr53c8xx.h&quot;
 multiline_comment|/*==========================================================&n;**&n;**&t;A la VMS/CAM-3 queue management.&n;**&t;Implemented from linux list management.&n;**&n;**==========================================================&n;*/
@@ -402,37 +407,18 @@ mdefine_line|#define&t;SCSI_NCR_MAX_TAGS (64)
 macro_line|#endif
 DECL|macro|NO_TAG
 mdefine_line|#define NO_TAG&t;(255)
-multiline_comment|/*&n;**    For more than 32 TAGS support, we do some address calculation &n;**    from the SCRIPTS using 2 additionnal SCR_COPY&squot;s and a fiew &n;**    bit handling on 64 bit integers. For these reasons, support for &n;**    32 up to 64 TAGS is compiled conditionnaly.&n;*/
-macro_line|#if&t;SCSI_NCR_MAX_TAGS &lt;= 32
-DECL|struct|nlink
-r_struct
-id|nlink
-(brace
-DECL|member|l_cmd
-id|ncrcmd
-id|l_cmd
-suffix:semicolon
-DECL|member|l_paddr
-id|ncrcmd
-id|l_paddr
-suffix:semicolon
-)brace
+multiline_comment|/*&n;**&t;Choose appropriate type for tag bitmap.&n;*/
+macro_line|#if&t;SCSI_NCR_MAX_TAGS &gt; 32
+DECL|typedef|tagmap_t
+r_typedef
+id|u_int64
+id|tagmap_t
 suffix:semicolon
 macro_line|#else
-DECL|struct|nlink
-r_struct
-id|nlink
-(brace
-DECL|member|l_paddr
-id|ncrcmd
-id|l_paddr
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|typedef|u_int64
+DECL|typedef|tagmap_t
 r_typedef
-id|u64
-id|u_int64
+id|u_int32
+id|tagmap_t
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n;**    Number of targets supported by the driver.&n;**    n permits target numbers 0..n-1.&n;**    Default is 16, meaning targets #0..#15.&n;**    #7 .. is myself.&n;*/
@@ -571,21 +557,14 @@ mdefine_line|#define ioremap vremap
 DECL|macro|iounmap
 mdefine_line|#define iounmap vfree
 macro_line|#endif
-macro_line|#ifdef __sparc__
+macro_line|#if defined (__sparc__)
 macro_line|#include &lt;asm/irq.h&gt;
-DECL|macro|remap_pci_mem
-mdefine_line|#define remap_pci_mem(base, size)&t;((vm_offset_t) __va(base))
-DECL|macro|unmap_pci_mem
-mdefine_line|#define unmap_pci_mem(vaddr, size)
-DECL|macro|pcivtophys
-mdefine_line|#define pcivtophys(p)&t;&t;&t;((p) &amp; pci_dvma_mask)
+macro_line|#elif defined (__alpha__)
+DECL|macro|bus_dvma_to_mem
+mdefine_line|#define bus_dvma_to_mem(p)&t;&t;((p) &amp; 0xfffffffful)
 macro_line|#else
-macro_line|#if defined(__alpha__)
-DECL|macro|pcivtophys
-mdefine_line|#define pcivtophys(p)&t;&t;&t;((p) &amp; 0xfffffffful)
-macro_line|#else
-DECL|macro|pcivtophys
-mdefine_line|#define pcivtophys(p)&t;&t;&t;(p)
+DECL|macro|bus_dvma_to_mem
+mdefine_line|#define bus_dvma_to_mem(p)&t;&t;(p)
 macro_line|#endif
 macro_line|#ifndef NCR_IOMAPPED
 DECL|function|__initfunc
@@ -701,7 +680,6 @@ id|PAGE_MASK
 suffix:semicolon
 )brace
 macro_line|#endif&t;/* !NCR_IOMAPPED */
-macro_line|#endif&t;/* __sparc__ */
 multiline_comment|/*&n;**&t;Insert a delay in micro-seconds and milli-seconds.&n;**&t;-------------------------------------------------&n;**&t;Under Linux, udelay() is restricted to delay &lt; 1 milli-second.&n;**&t;In fact, it generally works for up to 1 second delay.&n;**&t;Since 2.1.105, the mdelay() function is provided for delays &n;**&t;in milli-seconds.&n;**&t;Under 2.0 kernels, udelay() is an inline function that is very &n;**&t;inaccurate on Pentium processors.&n;*/
 macro_line|#if LINUX_VERSION_CODE &gt;= LinuxVersionCode(2,1,105)
 DECL|macro|UDELAY
@@ -2271,14 +2249,12 @@ suffix:semicolon
 multiline_comment|/* Jump table bus address&t;*/
 multiline_comment|/*----------------------------------------------------------------&n;&t;**&t;Jump table used by the script processor to directly jump &n;&t;**&t;to the CCB corresponding to the reselected nexus.&n;&t;**&t;Address is allocated on 256 bytes boundary in order to &n;&t;**&t;allow 8 bit calculation of the tag jump entry for up to &n;&t;**&t;64 possible tags.&n;&t;**----------------------------------------------------------------&n;&t;*/
 DECL|member|jump_ccb_0
-r_struct
-id|nlink
+id|u_int32
 id|jump_ccb_0
 suffix:semicolon
 multiline_comment|/* Default table if no tags&t;*/
 DECL|member|jump_ccb
-r_struct
-id|nlink
+id|u_int32
 op_star
 id|jump_ccb
 suffix:semicolon
@@ -2345,25 +2321,14 @@ id|u_char
 id|if_tag
 suffix:semicolon
 multiline_comment|/* Freeing index&t;&t;*/
-macro_line|#if SCSI_NCR_MAX_TAGS &lt;= 32
 DECL|member|cb_tags
 id|u_char
 id|cb_tags
 (braket
-l_int|32
+id|SCSI_NCR_MAX_TAGS
 )braket
 suffix:semicolon
-multiline_comment|/* Circular tags buffer&t;&t;*/
-macro_line|#else
-DECL|member|cb_tags
-id|u_char
-id|cb_tags
-(braket
-l_int|64
-)braket
-suffix:semicolon
-multiline_comment|/* Circular tags buffer&t;&t;*/
-macro_line|#endif
+multiline_comment|/* Circular tags buffer&t;*/
 DECL|member|usetags
 id|u_char
 id|usetags
@@ -2385,34 +2350,22 @@ id|inq_byte7
 suffix:semicolon
 multiline_comment|/* Store unit CmdQ capabitility&t;*/
 multiline_comment|/*----------------------------------------------------------------&n;&t;**&t;QUEUE FULL control and ORDERED tag control.&n;&t;**----------------------------------------------------------------&n;&t;*/
+multiline_comment|/*----------------------------------------------------------------&n;&t;**&t;QUEUE FULL and ORDERED tag control.&n;&t;**----------------------------------------------------------------&n;&t;*/
 DECL|member|num_good
 id|u_short
 id|num_good
 suffix:semicolon
 multiline_comment|/* Nr of GOOD since QUEUE FULL&t;*/
-macro_line|#if SCSI_NCR_MAX_TAGS &lt;= 32
 DECL|member|tags_umap
-id|u_int
+id|tagmap_t
 id|tags_umap
 suffix:semicolon
 multiline_comment|/* Used tags bitmap&t;&t;*/
 DECL|member|tags_smap
-id|u_int
+id|tagmap_t
 id|tags_smap
 suffix:semicolon
 multiline_comment|/* Tags in use at &squot;tag_stime&squot;&t;*/
-macro_line|#else
-DECL|member|tags_umap
-id|u_int64
-id|tags_umap
-suffix:semicolon
-multiline_comment|/* Used tags bitmap&t;&t;*/
-DECL|member|tags_smap
-id|u_int64
-id|tags_smap
-suffix:semicolon
-multiline_comment|/* Tags in use at &squot;tag_stime&squot;&t;*/
-macro_line|#endif
 DECL|member|tags_stime
 id|u_long
 id|tags_stime
@@ -3448,15 +3401,6 @@ id|resel_lun
 l_int|6
 )braket
 suffix:semicolon
-macro_line|#if SCSI_NCR_MAX_TAGS &lt;= 32
-DECL|member|resel_tag
-id|ncrcmd
-id|resel_tag
-(braket
-l_int|8
-)braket
-suffix:semicolon
-macro_line|#else
 DECL|member|resel_tag
 id|ncrcmd
 id|resel_tag
@@ -3478,8 +3422,6 @@ id|nexus_indirect
 l_int|4
 )braket
 suffix:semicolon
-macro_line|#endif
-macro_line|#if SCSI_NCR_MAX_TAGS &lt;= 32
 DECL|member|resel_notag
 id|ncrcmd
 id|resel_notag
@@ -3487,15 +3429,6 @@ id|resel_notag
 l_int|4
 )braket
 suffix:semicolon
-macro_line|#else
-DECL|member|resel_notag
-id|ncrcmd
-id|resel_notag
-(braket
-l_int|4
-)braket
-suffix:semicolon
-macro_line|#endif
 DECL|member|data_in
 id|ncrcmd
 id|data_in
@@ -6195,32 +6128,18 @@ id|NADDR
 id|msgin
 )paren
 comma
-multiline_comment|/*&n;&t;**&t;Read the TAG from the SIDL.&n;&t;**&t;Still an aggressive optimization. ;-)&n;&t;*/
-id|SCR_FROM_REG
+multiline_comment|/*&n;&t;**&t;Read the TAG from the SIDL.&n;&t;**&t;Still an aggressive optimization. ;-)&n;&t;**&t;Compute the CCB indirect jump address which &n;&t;**&t;is (#TAG*2 &amp; 0xfc) due to tag numbering using &n;&t;**&t;1,3,5..MAXTAGS*2+1 actual values.&n;&t;*/
+id|SCR_REG_SFBR
 (paren
 id|sidl
+comma
+id|SCR_SHL
+comma
+l_int|0
 )paren
 comma
 l_int|0
 comma
-multiline_comment|/*&n;&t;**&t;JUMP indirectly to the restart point of the CCB.&n;&t;*/
-macro_line|#if SCSI_NCR_MAX_TAGS &lt;= 32
-id|SCR_SFBR_REG
-(paren
-id|temp
-comma
-id|SCR_AND
-comma
-l_int|0xf8
-)paren
-comma
-l_int|0
-comma
-id|SCR_RETURN
-comma
-l_int|0
-comma
-macro_line|#else
 id|SCR_SFBR_REG
 (paren
 id|temp
@@ -6271,7 +6190,6 @@ id|SCR_RETURN
 comma
 l_int|0
 comma
-macro_line|#endif
 )brace
 multiline_comment|/*-------------------------&lt; RESEL_NOTAG &gt;-------------------*/
 comma
@@ -6289,12 +6207,6 @@ id|NADDR
 id|msgin
 )paren
 comma
-macro_line|#if SCSI_NCR_MAX_TAGS &lt;= 32
-id|SCR_RETURN
-comma
-l_int|0
-comma
-macro_line|#else
 id|SCR_JUMP
 comma
 id|PADDR
@@ -6302,7 +6214,6 @@ id|PADDR
 id|jump_to_nexus
 )paren
 comma
-macro_line|#endif
 )brace
 multiline_comment|/*-------------------------&lt; DATA_IN &gt;--------------------*/
 comma
@@ -8893,7 +8804,7 @@ op_complement
 id|RELOC_MASK
 )paren
 op_plus
-id|pcivtophys
+id|bus_dvma_to_mem
 c_func
 (paren
 id|np-&gt;paddr
@@ -11860,7 +11771,7 @@ id|np-&gt;paddr2
 )paren
 ques
 c_cond
-id|pcivtophys
+id|bus_dvma_to_mem
 c_func
 (paren
 id|np-&gt;paddr2
@@ -13150,7 +13061,7 @@ op_increment
 op_assign
 id|order
 suffix:semicolon
-macro_line|#if SCSI_NCR_MAX_TAGS &lt;= 32
+multiline_comment|/*&n;&t;&t;**&t;Actual tags are numbered 1,3,5,..2*MAXTAGS+1,&n;&t;&t;**&t;since we may have to deal with devices that have &n;&t;&t;**&t;problems with #TAG 0 or too great #TAG numbers.&n;&t;&t;*/
 id|msgptr
 (braket
 id|msglen
@@ -13160,27 +13071,11 @@ op_assign
 (paren
 id|cp-&gt;tag
 op_lshift
-l_int|3
+l_int|1
 )paren
 op_plus
 l_int|1
 suffix:semicolon
-macro_line|#else
-id|msgptr
-(braket
-id|msglen
-op_increment
-)braket
-op_assign
-(paren
-id|cp-&gt;tag
-op_lshift
-l_int|2
-)paren
-op_plus
-l_int|1
-suffix:semicolon
-macro_line|#endif
 )brace
 r_switch
 c_cond
@@ -13970,8 +13865,6 @@ l_int|0
 suffix:colon
 id|cp-&gt;tag
 )braket
-dot
-id|l_paddr
 op_assign
 id|cpu_to_scr
 c_func
@@ -15320,9 +15213,10 @@ macro_line|#endif
 r_if
 c_cond
 (paren
-id|lp-&gt;maxnxs
-OG
-l_int|1
+id|lp-&gt;jump_ccb
+op_ne
+op_amp
+id|lp-&gt;jump_ccb_0
 )paren
 id|m_free
 c_func
@@ -15709,7 +15603,7 @@ comma
 id|cmd-&gt;lun
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;**&t;On standard INQUIRY response (EVPD and CmDt &n;&t;&t;**&t;not set), setup logical unit according to &n;&t;&t;**&t;announced capabilities.&n;&t;&t;*/
+multiline_comment|/*&n;&t;&t;**&t;On standard INQUIRY response (EVPD and CmDt &n;&t;&t;**&t;not set), setup logical unit according to &n;&t;&t;**&t;announced capabilities (we need the 1rst 7 bytes).&n;&t;&t;*/
 r_if
 c_cond
 (paren
@@ -15729,6 +15623,13 @@ l_int|1
 op_amp
 l_int|0x3
 )paren
+op_logical_and
+id|cmd-&gt;cmnd
+(braket
+l_int|4
+)braket
+op_ge
+l_int|7
 )paren
 (brace
 id|ncr_setup_lcb
@@ -17060,6 +16961,33 @@ op_amp
 id|SMODE
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t;**&t;DEL 441 - 53C876 Rev 5 - Part Number 609-0392787/2788 - ITEM 2.&n;&t;**&t;Disable overlapped arbitration.&n;&t;*/
+r_if
+c_cond
+(paren
+id|np-&gt;device_id
+op_eq
+id|PCI_DEVICE_ID_NCR_53C875
+op_logical_and
+id|np-&gt;revision_id
+op_ge
+l_int|0x10
+op_logical_and
+id|np-&gt;revision_id
+op_le
+l_int|0x15
+)paren
+id|OUTB
+(paren
+id|nc_ctest0
+comma
+(paren
+l_int|1
+op_lshift
+l_int|5
+)paren
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t;**&t;Fill in target structure.&n;&t;**&t;Reinitialize usrsync.&n;&t;**&t;Reinitialize usrwide.&n;&t;**&t;Prepare sync negotiation according to actual SCSI bus mode.&n;&t;*/
 r_for
 c_loop
@@ -22490,8 +22418,6 @@ id|jump_ccb
 (braket
 l_int|0
 )braket
-dot
-id|l_paddr
 )paren
 )paren
 suffix:semicolon
@@ -23964,43 +23890,23 @@ id|NO_TAG
 op_increment
 id|lp-&gt;ia_tag
 suffix:semicolon
-macro_line|#if SCSI_NCR_MAX_TAGS &lt;= 32
 r_if
 c_cond
 (paren
 id|lp-&gt;ia_tag
 op_eq
-l_int|32
+id|SCSI_NCR_MAX_TAGS
 )paren
-macro_line|#else
-r_if
-c_cond
-(paren
-id|lp-&gt;ia_tag
-op_eq
-l_int|64
-)paren
-macro_line|#endif
 id|lp-&gt;ia_tag
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if SCSI_NCR_MAX_TAGS &lt;= 32
-id|lp-&gt;tags_umap
-op_or_assign
-(paren
-l_int|1u
-op_lshift
-id|tag
-)paren
-suffix:semicolon
-macro_line|#else
 id|lp-&gt;tags_umap
 op_or_assign
 (paren
 (paren
 (paren
-id|u_int64
+id|tagmap_t
 )paren
 l_int|1
 )paren
@@ -24008,7 +23914,6 @@ op_lshift
 id|tag
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 )brace
 multiline_comment|/*&n;&t;**&t;Remember all informations needed to free this CCB.&n;&t;*/
@@ -24137,45 +24042,24 @@ op_increment
 op_assign
 id|cp-&gt;tag
 suffix:semicolon
-macro_line|#if SCSI_NCR_MAX_TAGS &lt;= 32
 r_if
 c_cond
 (paren
 id|lp-&gt;if_tag
 op_eq
-l_int|32
+id|SCSI_NCR_MAX_TAGS
 )paren
-macro_line|#else
-r_if
-c_cond
-(paren
-id|lp-&gt;if_tag
-op_eq
-l_int|64
-)paren
-macro_line|#endif
 id|lp-&gt;if_tag
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if SCSI_NCR_MAX_TAGS &lt;= 32
-id|lp-&gt;tags_umap
-op_and_assign
-op_complement
-(paren
-l_int|1u
-op_lshift
-id|cp-&gt;tag
-)paren
-suffix:semicolon
-macro_line|#else
 id|lp-&gt;tags_umap
 op_and_assign
 op_complement
 (paren
 (paren
 (paren
-id|u_int64
+id|tagmap_t
 )paren
 l_int|1
 )paren
@@ -24183,7 +24067,6 @@ op_lshift
 id|cp-&gt;tag
 )paren
 suffix:semicolon
-macro_line|#endif
 id|lp-&gt;tags_smap
 op_and_assign
 id|lp-&gt;tags_umap
@@ -24192,8 +24075,6 @@ id|lp-&gt;jump_ccb
 (braket
 id|cp-&gt;tag
 )braket
-dot
-id|l_paddr
 op_assign
 id|cpu_to_scr
 c_func
@@ -24214,8 +24095,6 @@ id|lp-&gt;jump_ccb
 (braket
 l_int|0
 )braket
-dot
-id|l_paddr
 op_assign
 id|cpu_to_scr
 c_func
@@ -24323,7 +24202,7 @@ suffix:semicolon
 macro_line|#endif
 )brace
 DECL|macro|ncr_reg_bus_addr
-mdefine_line|#define ncr_reg_bus_addr(r) &bslash;&n;&t;(pcivtophys(np-&gt;paddr) + offsetof (struct ncr_reg, r))
+mdefine_line|#define ncr_reg_bus_addr(r) &bslash;&n;&t;(bus_dvma_to_mem(np-&gt;paddr) + offsetof (struct ncr_reg, r))
 multiline_comment|/*------------------------------------------------------------------------&n;**&t;Initialize the fixed part of a CCB structure.&n;**------------------------------------------------------------------------&n;**------------------------------------------------------------------------&n;*/
 DECL|function|ncr_init_ccb
 r_static
@@ -24951,92 +24830,6 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*------------------------------------------------------------------------&n;**&t;Reselection JUMP table initialisation.&n;**------------------------------------------------------------------------&n;**&t;The SCRIPTS processor jumps on reselection to the entry &n;**&t;corresponding to the CCB using the tag as offset.&n;**------------------------------------------------------------------------&n;*/
-DECL|function|ncr_setup_jump_ccb
-r_static
-r_void
-id|ncr_setup_jump_ccb
-c_func
-(paren
-id|ncb_p
-id|np
-comma
-id|lcb_p
-id|lp
-)paren
-(brace
-r_int
-id|i
-suffix:semicolon
-id|lp-&gt;p_jump_ccb
-op_assign
-id|cpu_to_scr
-c_func
-(paren
-id|vtophys
-c_func
-(paren
-id|lp-&gt;jump_ccb
-)paren
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|lp-&gt;maxnxs
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-macro_line|#if SCSI_NCR_MAX_TAGS &lt;= 32
-id|lp-&gt;jump_ccb
-(braket
-id|i
-)braket
-dot
-id|l_cmd
-op_assign
-id|cpu_to_scr
-c_func
-(paren
-id|SCR_JUMP
-)paren
-suffix:semicolon
-macro_line|#endif
-id|lp-&gt;jump_ccb
-(braket
-id|i
-)braket
-dot
-id|l_paddr
-op_assign
-id|cpu_to_scr
-c_func
-(paren
-id|NCB_SCRIPTH_PHYS
-(paren
-id|np
-comma
-id|bad_i_t_l_q
-)paren
-)paren
-suffix:semicolon
-id|lp-&gt;cb_tags
-(braket
-id|i
-)braket
-op_assign
-id|i
-suffix:semicolon
-)brace
-)brace
 multiline_comment|/*------------------------------------------------------------------------&n;**&t;Lun control block allocation and initialization.&n;**------------------------------------------------------------------------&n;**&t;This data structure is allocated and initialized after a SCSI &n;**&t;command has been successfully completed for this target/lun.&n;**------------------------------------------------------------------------&n;*/
 DECL|function|ncr_alloc_lcb
 r_static
@@ -25219,7 +25012,7 @@ op_amp
 id|lp-&gt;skip_ccbq
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;**&t;Set max CCBs to 1 and use the default jump table &n;&t;**&t;by default.&n;&t;*/
+multiline_comment|/*&n;&t;**&t;Set max CCBs to 1 and use the default 1 entry &n;&t;**&t;jump table by default.&n;&t;*/
 id|lp-&gt;maxnxs
 op_assign
 l_int|1
@@ -25229,12 +25022,16 @@ op_assign
 op_amp
 id|lp-&gt;jump_ccb_0
 suffix:semicolon
-id|ncr_setup_jump_ccb
+id|lp-&gt;p_jump_ccb
+op_assign
+id|cpu_to_scr
 c_func
 (paren
-id|np
-comma
-id|lp
+id|vtophys
+c_func
+(paren
+id|lp-&gt;jump_ccb
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;**&t;Initilialyze the reselect script:&n;&t;**&n;&t;**&t;Jump to next lcb if SFBR does not match this lun.&n;&t;**&t;Load TEMP with the CCB direct jump table bus address.&n;&t;**&t;Get the SIMPLE TAG message and the tag.&n;&t;**&n;&t;**&t;JUMP  IF (SFBR != #lun#), @(next lcb)&n;&t;**&t;COPY @(lp-&gt;p_jump_ccb),&t;  @(temp)&n;&t;**&t;JUMP @script(resel_notag)&n;&t;*/
@@ -25504,6 +25301,40 @@ id|inq_data
 l_int|7
 )braket
 suffix:semicolon
+multiline_comment|/*&n;&t;**&t;Throw away announced LUN capabilities if we are told &n;&t;**&t;that there is no real device supported by the logical unit.&n;&t;*/
+r_if
+c_cond
+(paren
+(paren
+id|inq_data
+(braket
+l_int|0
+)braket
+op_amp
+l_int|0xe0
+)paren
+OG
+l_int|0x20
+op_logical_or
+(paren
+id|inq_data
+(braket
+l_int|0
+)braket
+op_amp
+l_int|0x1f
+)paren
+op_eq
+l_int|0x1f
+)paren
+id|inq_byte7
+op_and_assign
+(paren
+id|INQ7_SYNC
+op_or
+id|INQ7_WIDE16
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t;**&t;If user is wanting SYNC, force this feature.&n;&t;*/
 r_if
 c_cond
@@ -25558,17 +25389,16 @@ op_amp
 id|INQ7_QUEUE
 )paren
 op_logical_and
-id|lp-&gt;maxnxs
-OL
-l_int|2
+id|lp-&gt;jump_ccb
+op_eq
+op_amp
+id|lp-&gt;jump_ccb_0
 )paren
 (brace
-r_struct
-id|nlink
-op_star
-id|jumps
+r_int
+id|i
 suffix:semicolon
-id|jumps
+id|lp-&gt;jump_ccb
 op_assign
 id|m_alloc
 c_func
@@ -25582,33 +25412,84 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|jumps
+id|lp-&gt;jump_ccb
 )paren
+(brace
+id|lp-&gt;jump_ccb
+op_assign
+op_amp
+id|lp-&gt;jump_ccb_0
+suffix:semicolon
 r_goto
 id|fail
 suffix:semicolon
-macro_line|#if SCSI_NCR_MAX_TAGS &lt;= 32
-id|lp-&gt;maxnxs
+)brace
+id|lp-&gt;p_jump_ccb
 op_assign
-l_int|32
+id|cpu_to_scr
+c_func
+(paren
+id|vtophys
+c_func
+(paren
+id|lp-&gt;jump_ccb
+)paren
+)paren
 suffix:semicolon
-macro_line|#else
-id|lp-&gt;maxnxs
+r_for
+c_loop
+(paren
+id|i
 op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
 l_int|64
 suffix:semicolon
-macro_line|#endif
+id|i
+op_increment
+)paren
 id|lp-&gt;jump_ccb
+(braket
+id|i
+)braket
 op_assign
-id|jumps
-suffix:semicolon
-id|ncr_setup_jump_ccb
+id|cpu_to_scr
 c_func
+(paren
+id|NCB_SCRIPTH_PHYS
 (paren
 id|np
 comma
-id|lp
+id|bad_i_t_l_q
 )paren
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|SCSI_NCR_MAX_TAGS
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|lp-&gt;cb_tags
+(braket
+id|i
+)braket
+op_assign
+id|i
+suffix:semicolon
+id|lp-&gt;maxnxs
+op_assign
+id|SCSI_NCR_MAX_TAGS
 suffix:semicolon
 id|lp-&gt;tags_stime
 op_assign

@@ -292,15 +292,6 @@ id|p
 id|page_cache_size
 op_increment
 suffix:semicolon
-id|set_bit
-c_func
-(paren
-id|PG_referenced
-comma
-op_amp
-id|page-&gt;flags
-)paren
-suffix:semicolon
 id|page-&gt;age
 op_assign
 id|PAGE_AGE_VALUE

@@ -1005,7 +1005,7 @@ id|spinlock_t
 id|waitlist_lock
 suffix:semicolon
 DECL|member|cad_lock
-id|spinlock_t
+id|rwlock_t
 id|cad_lock
 suffix:semicolon
 )brace

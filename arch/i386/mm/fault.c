@@ -524,6 +524,11 @@ r_goto
 id|bad_area
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; * If for any reason at all we couldn&squot;t handle the fault,&n;&t; * make sure we exit gracefully rather than endlessly redo&n;&t; * the fault.&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
 id|handle_mm_fault
 c_func
 (paren
@@ -535,6 +540,9 @@ id|address
 comma
 id|write
 )paren
+)paren
+r_goto
+id|bad_area
 suffix:semicolon
 multiline_comment|/*&n;&t; * Did it hit the DOS screen memory VA from vm86 mode?&n;&t; */
 r_if

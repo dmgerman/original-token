@@ -40,8 +40,10 @@ DECL|macro|MKDEV_SD_PARTITION
 mdefine_line|#define MKDEV_SD_PARTITION(i)&t;MKDEV(SD_MAJOR_NUMBER(i), (i) &amp; 255)
 DECL|macro|MKDEV_SD
 mdefine_line|#define MKDEV_SD(index)&t;&t;MKDEV_SD_PARTITION((index) &lt;&lt; 4)
+DECL|macro|N_USED_SCSI_DISKS
+mdefine_line|#define N_USED_SCSI_DISKS  (sd_template.dev_max + SCSI_DISKS_PER_MAJOR - 1)
 DECL|macro|N_USED_SD_MAJORS
-mdefine_line|#define N_USED_SD_MAJORS&t;((sd_template.dev_max + SCSI_DISKS_PER_MAJOR - 1) / SCSI_DISKS_PER_MAJOR)
+mdefine_line|#define N_USED_SD_MAJORS   (N_USED_SCSI_DISKS / SCSI_DISKS_PER_MAJOR)
 DECL|macro|MAX_RETRIES
 mdefine_line|#define MAX_RETRIES 5
 multiline_comment|/*&n; *  Time out in seconds for disks and Magneto-opticals (which are slower).&n; */
@@ -8045,7 +8047,7 @@ id|sd_gendisks
 op_logical_and
 id|sdgd-&gt;next
 op_le
-id|LAST_SD_GENDISK
+id|LAST_SD_GENDISK.max_nr
 )paren
 id|removed
 op_increment
@@ -8065,7 +8067,7 @@ c_cond
 (paren
 id|removed
 op_ne
-id|N_USED_SCSI_DISKS
+id|N_USED_SD_MAJORS
 )paren
 id|printk
 c_func
@@ -8074,7 +8076,7 @@ l_string|&quot;%s %d sd_gendisks in disk chain&quot;
 comma
 id|removed
 OG
-id|N_USED_SCSI_DISKS
+id|N_USED_SD_MAJORS
 ques
 c_cond
 l_string|&quot;total&quot;

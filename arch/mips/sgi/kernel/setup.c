@@ -1,4 +1,5 @@
 multiline_comment|/* $Id: setup.c,v 1.13 1998/09/16 22:50:46 ralf Exp $&n; *&n; * setup.c: SGI specific setup, including init of the feature struct.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; * Copyright (C) 1997, 1998 Ralf Baechle (ralf@gnu.org)&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kbd_ll.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

@@ -309,12 +309,9 @@ id|parport_device_info
 )paren
 )paren
 suffix:semicolon
-id|spin_lock_init
-c_func
-(paren
-op_amp
 id|tmp-&gt;cad_lock
-)paren
+op_assign
+id|RW_LOCK_UNLOCKED
 suffix:semicolon
 id|spin_lock_init
 c_func

@@ -769,12 +769,12 @@ c_func
 (paren
 id|buf
 comma
+l_int|0
+comma
 r_sizeof
 (paren
 id|buf
 )paren
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_while

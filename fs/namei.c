@@ -2165,7 +2165,7 @@ suffix:semicolon
 id|error
 op_assign
 op_minus
-id|EACCES
+id|ELOOP
 suffix:semicolon
 r_if
 c_cond
