@@ -1448,7 +1448,7 @@ c_cond
 id|EXT_MEM_K
 OL
 (paren
-l_int|4
+l_int|3
 op_star
 l_int|1024
 )paren

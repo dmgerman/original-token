@@ -113,7 +113,7 @@ macro_line|#endif
 multiline_comment|/*&n;**&t;other&n;*/
 DECL|macro|NCR_SNOOP_TIMEOUT
 mdefine_line|#define NCR_SNOOP_TIMEOUT (1000000)
-macro_line|#ifdef SCSI_NCR_IOMAPPED
+macro_line|#if defined(SCSI_NCR_IOMAPPED) || defined(__alpha__)
 DECL|macro|NCR_IOMAPPED
 mdefine_line|#define NCR_IOMAPPED
 macro_line|#endif
@@ -17687,6 +17687,8 @@ l_int|0
 op_assign
 id|SCR_INT
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;**&t;For the moment tagged transfers cannot be disabled.&n;&t;&t;*/
+macro_line|#if 0
 multiline_comment|/*&n;&t;&t;**&t;Try to disable tagged transfers.&n;&t;&t;*/
 id|ncr_setmaxtags
 (paren
@@ -17701,6 +17703,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t;&t;** @QUEUE@&n;&t;&t;**&n;&t;&t;**&t;Should update the launch field of the&n;&t;&t;**&t;current job to be able to restart it.&n;&t;&t;**&t;Then prepend it to the start queue.&n;&t;&t;*/
 multiline_comment|/* fall through */
 r_case

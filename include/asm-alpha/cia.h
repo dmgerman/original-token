@@ -1,6 +1,7 @@
 macro_line|#ifndef __ALPHA_CIA__H__
 DECL|macro|__ALPHA_CIA__H__
 mdefine_line|#define __ALPHA_CIA__H__
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 multiline_comment|/*&n; * CIA is the internal name for the 2117x chipset which provides&n; * memory controller and PCI access for the 21164 chip based systems.&n; *&n; * This file is based on:&n; *&n; * DECchip 21171 Core Logic Chipset &n; * Technical Reference Manual&n; *&n; * EC-QE18B-TE&n; *&n; * david.rusling@reo.mts.dec.com Initial Version.&n; *&n; */
 multiline_comment|/*------------------------------------------------------------------------**&n;**                                                                        **&n;**  EB164 I/O procedures                                                   **&n;**                                                                        **&n;**      inport[b|w|t|l], outport[b|w|t|l] 8:16:24:32 IO xfers             **&n;**&t;inportbxt: 8 bits only                                            **&n;**      inport:    alias of inportw                                       **&n;**      outport:   alias of outportw                                      **&n;**                                                                        **&n;**      inmem[b|w|t|l], outmem[b|w|t|l] 8:16:24:32 ISA memory xfers       **&n;**&t;inmembxt: 8 bits only                                             **&n;**      inmem:    alias of inmemw                                         **&n;**      outmem:   alias of outmemw                                        **&n;**                                                                        **&n;**------------------------------------------------------------------------*/
@@ -133,6 +134,16 @@ DECL|macro|GRU_LED
 mdefine_line|#define GRU_LED&t;&t;&t;&t;(IDENT_ADDR + 0x8780000800UL)
 DECL|macro|GRU_RESET
 mdefine_line|#define GRU_RESET&t;&t;&t;(IDENT_ADDR + 0x8780000900UL)
+macro_line|#if defined(CONFIG_ALPHA_ALCOR)
+DECL|macro|GRU_INT_REQ_BITS
+mdefine_line|#define GRU_INT_REQ_BITS&t;&t;0x800fffffUL
+macro_line|#elif defined(CONFIG_ALPHA_XLT)
+DECL|macro|GRU_INT_REQ_BITS
+mdefine_line|#define GRU_INT_REQ_BITS&t;&t;0x80003fffUL
+macro_line|#else
+DECL|macro|GRU_INT_REQ_BITS
+mdefine_line|#define GRU_INT_REQ_BITS&t;&t;0xffffffffUL
+macro_line|#endif
 multiline_comment|/*&n; * Bit definitions for I/O Controller status register 0:&n; */
 DECL|macro|CIA_IOC_STAT0_CMD
 mdefine_line|#define CIA_IOC_STAT0_CMD&t;&t;0xf

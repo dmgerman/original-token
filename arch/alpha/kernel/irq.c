@@ -27,7 +27,7 @@ suffix:semicolon
 macro_line|#if NR_IRQS &gt; 64
 macro_line|#  error Unable to handle more than 64 irq levels.
 macro_line|#endif
-multiline_comment|/*&n; * Shadow-copy of masked interrupts.&n; *  The bits are used as follows:&n; *&t; 0.. 7&t;first ISA PIC (irq level 0..7)&n; *&t; 8..15&t;second ISA PIC (irq level 8..15)&n; *   Systems with 32 PCI interrupt lines (e.g., Alcor):&n; *&t;16..47&t;PCI interrupts 0..31 (int at GRU_INT_MASK)&n; *   Mikasa:&n; *&t;16..31&t;PCI interrupts 0..15 (short at I/O port 536)&n; *   Other systems (not Mikasa) with 16 PCI interrupt lines:&n; *&t;16..23&t;PCI interrupts 0.. 7 (char at I/O port 26)&n; *&t;24..31&t;PCI interrupts 8..15 (char at I/O port 27)&n; *   Systems with 17 PCI interrupt lines (e.g., Cabriolet and eb164):&n; *&t;16..32&t;PCI interrupts 0..31 (int at I/O port 804)&n; */
+multiline_comment|/*&n; * Shadow-copy of masked interrupts.&n; *  The bits are used as follows:&n; *&t; 0.. 7&t;first (E)ISA PIC (irq level 0..7)&n; *&t; 8..15&t;second (E)ISA PIC (irq level 8..15)&n; *   Systems with PCI interrupt lines managed by GRU (e.g., Alcor, XLT):&n; *&t;16..47&t;PCI interrupts 0..31 (int at GRU_INT_MASK)&n; *   Mikasa:&n; *&t;16..31&t;PCI interrupts 0..15 (short at I/O port 536)&n; *   Other systems (not Mikasa) with 16 PCI interrupt lines:&n; *&t;16..23&t;PCI interrupts 0.. 7 (char at I/O port 26)&n; *&t;24..31&t;PCI interrupts 8..15 (char at I/O port 27)&n; *   Systems with 17 PCI interrupt lines (e.g., Cabriolet and eb164):&n; *&t;16..32&t;PCI interrupts 0..31 (int at I/O port 804)&n; */
 DECL|variable|irq_mask
 r_static
 r_int
@@ -541,11 +541,8 @@ comma
 l_int|0x20
 )paren
 suffix:semicolon
-)brace
-macro_line|#if 0
-multiline_comment|/* This is not needed since all interrupt are level-sensitive */
-macro_line|#if defined(CONFIG_ALPHA_ALCOR)
-multiline_comment|/* on ALCOR, need to dismiss interrupt via GRU */
+macro_line|#if defined(CONFIG_ALPHA_ALCOR) || defined(CONFIG_ALPHA_XLT)
+multiline_comment|/* on ALCOR/XLT, need to dismiss interrupt via GRU */
 op_star
 (paren
 r_int
@@ -574,8 +571,8 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_ALPHA_ALCOR */
-macro_line|#endif
+macro_line|#endif /* ALCOR || XLT */
+)brace
 )brace
 DECL|function|request_irq
 r_int
@@ -1531,6 +1528,155 @@ suffix:semicolon
 )brace
 macro_line|#endif
 )brace
+macro_line|#if defined(CONFIG_ALPHA_ALCOR) || defined(CONFIG_ALPHA_XLT)
+multiline_comment|/* we have to conditionally compile this because of GRU_xxx symbols */
+DECL|function|alcor_and_xlt_device_interrupt
+r_static
+r_inline
+r_void
+id|alcor_and_xlt_device_interrupt
+c_func
+(paren
+r_int
+r_int
+id|vector
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+r_int
+r_int
+id|pld
+suffix:semicolon
+r_int
+r_int
+id|i
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* read the interrupt summary register of the GRU */
+id|pld
+op_assign
+(paren
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+id|GRU_INT_REQ
+)paren
+op_amp
+id|GRU_INT_REQ_BITS
+suffix:semicolon
+macro_line|#if 0
+id|printk
+c_func
+(paren
+l_string|&quot;[0x%08lx/0x%04x]&quot;
+comma
+id|pld
+comma
+id|inb
+c_func
+(paren
+l_int|0x20
+)paren
+op_or
+(paren
+id|inb
+c_func
+(paren
+l_int|0xA0
+)paren
+op_lshift
+l_int|8
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/*&n;         * Now for every possible bit set, work through them and call&n;         * the appropriate interrupt handler.&n;         */
+r_while
+c_loop
+(paren
+id|pld
+)paren
+(brace
+id|i
+op_assign
+id|ffz
+c_func
+(paren
+op_complement
+id|pld
+)paren
+suffix:semicolon
+id|pld
+op_and_assign
+id|pld
+op_minus
+l_int|1
+suffix:semicolon
+multiline_comment|/* clear least bit set */
+r_if
+c_cond
+(paren
+id|i
+op_eq
+l_int|31
+)paren
+(brace
+id|isa_device_interrupt
+c_func
+(paren
+id|vector
+comma
+id|regs
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|device_interrupt
+c_func
+(paren
+l_int|16
+op_plus
+id|i
+comma
+l_int|16
+op_plus
+id|i
+comma
+id|regs
+)paren
+suffix:semicolon
+)brace
+)brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif /* ALCOR || XLT */
 DECL|function|cabriolet_and_eb66p_device_interrupt
 r_static
 r_inline
@@ -2545,6 +2691,16 @@ op_amp
 id|regs
 )paren
 suffix:semicolon
+macro_line|#elif NR_IRQS == 48
+id|alcor_and_xlt_device_interrupt
+c_func
+(paren
+id|vector
+comma
+op_amp
+id|regs
+)paren
+suffix:semicolon
 macro_line|#elif NR_IRQS == 33
 id|cabriolet_and_eb66p_device_interrupt
 c_func
@@ -2697,12 +2853,12 @@ op_rshift
 l_int|16
 )paren
 suffix:semicolon
-multiline_comment|/* invert */
 id|mb
 c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* invert */
 id|enable_irq
 c_func
 (paren
@@ -2711,7 +2867,7 @@ op_plus
 l_int|31
 )paren
 suffix:semicolon
-multiline_comment|/* enable EISA PIC cascade */
+multiline_comment|/* enable (E)ISA PIC cascade */
 macro_line|#elif NR_IRQS == 33
 id|outl
 c_func

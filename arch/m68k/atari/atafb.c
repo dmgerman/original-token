@@ -236,7 +236,7 @@ id|vde
 comma
 id|vss
 suffix:semicolon
-multiline_comment|/* auxiliary informations */
+multiline_comment|/* auxiliary information */
 DECL|member|mono
 r_int
 id|mono

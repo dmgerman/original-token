@@ -10,7 +10,7 @@ macro_line|# define NR_IRQS&t;33
 macro_line|#elif defined(CONFIG_ALPHA_EB66) || defined(CONFIG_ALPHA_EB64P) || defined(CONFIG_ALPHA_MIKASA)
 DECL|macro|NR_IRQS
 macro_line|# define NR_IRQS&t;32
-macro_line|#elif defined(CONFIG_ALPHA_ALCOR)
+macro_line|#elif defined(CONFIG_ALPHA_ALCOR) || defined(CONFIG_ALPHA_XLT)
 DECL|macro|NR_IRQS
 macro_line|# define NR_IRQS&t;48
 macro_line|#else

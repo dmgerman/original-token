@@ -1236,9 +1236,9 @@ id|ESR_SOR
 )paren
 ques
 c_cond
-l_string|&quot;b-cache&quot;
-suffix:colon
 l_string|&quot;memory&quot;
+suffix:colon
+l_string|&quot;b-cache&quot;
 comma
 (paren
 r_int

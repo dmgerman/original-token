@@ -266,7 +266,7 @@ l_int|0x00
 )brace
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Buffers to store audio card informations&n; */
+multiline_comment|/*&n; * Buffers to store audio card information&n; */
 DECL|variable|AudioExcelName
 r_static
 r_char
