@@ -537,13 +537,6 @@ comma
 id|FULL_PRECISION
 )paren
 suffix:semicolon
-id|accum.exp
-op_add_assign
-op_minus
-id|EXP_BIAS
-op_plus
-l_int|1
-suffix:semicolon
 id|reg_u_add
 c_func
 (paren
@@ -1148,12 +1141,6 @@ id|accum
 comma
 id|FULL_PRECISION
 )paren
-suffix:semicolon
-id|accum.exp
-op_sub_assign
-id|EXP_BIAS
-op_minus
-l_int|1
 suffix:semicolon
 id|reg_u_add
 c_func

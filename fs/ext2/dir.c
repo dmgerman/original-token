@@ -105,7 +105,7 @@ multiline_comment|/* no special open code */
 l_int|NULL
 comma
 multiline_comment|/* no special release code */
-l_int|NULL
+id|file_fsync
 multiline_comment|/* fsync */
 )brace
 suffix:semicolon
@@ -246,6 +246,8 @@ r_else
 r_if
 c_cond
 (paren
+id|dir
+op_logical_and
 (paren
 (paren
 r_char
@@ -262,7 +264,7 @@ id|dir-&gt;i_sb-&gt;s_blocksize
 )paren
 id|error_msg
 op_assign
-l_string|&quot;directory entry accross blocks&quot;
+l_string|&quot;directory entry across blocks&quot;
 suffix:semicolon
 r_if
 c_cond
@@ -278,7 +280,12 @@ l_string|&quot;%s: bad directory entry (dev %04x, dir %d): %s&bslash;n&quot;
 comma
 id|function
 comma
+id|dir
+ques
+c_cond
 id|dir-&gt;i_dev
+suffix:colon
+l_int|0
 comma
 id|dir-&gt;i_ino
 comma

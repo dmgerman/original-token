@@ -333,33 +333,18 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|outb_p
-c_func
-(paren
-l_int|0xc2
-comma
-l_int|0x43
-)paren
-suffix:semicolon
 id|t
 op_assign
 id|jiffies
 op_star
-l_int|11931
-op_plus
-(paren
-id|inb_p
+l_int|11932
+suffix:semicolon
+id|outb_p
 c_func
 (paren
-l_int|0x40
-)paren
-op_amp
-l_int|0x80
-ques
-c_cond
-l_int|5966
-suffix:colon
-l_int|11932
+l_int|0
+comma
+l_int|0x43
 )paren
 suffix:semicolon
 id|i
@@ -389,8 +374,6 @@ r_return
 id|t
 op_minus
 id|i
-op_div
-l_int|2
 suffix:semicolon
 )brace
 macro_line|#endif
@@ -3306,7 +3289,10 @@ id|hd_open
 comma
 multiline_comment|/* open */
 id|hd_release
+comma
 multiline_comment|/* release */
+id|block_fsync
+multiline_comment|/* fsync */
 )brace
 suffix:semicolon
 DECL|function|hd_init

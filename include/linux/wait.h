@@ -2,9 +2,11 @@ macro_line|#ifndef _LINUX_WAIT_H
 DECL|macro|_LINUX_WAIT_H
 mdefine_line|#define _LINUX_WAIT_H
 DECL|macro|WNOHANG
-mdefine_line|#define WNOHANG&t;&t;1
+mdefine_line|#define WNOHANG&t;&t;0x00000001
 DECL|macro|WUNTRACED
-mdefine_line|#define WUNTRACED&t;2
+mdefine_line|#define WUNTRACED&t;0x00000002
+DECL|macro|__WCLONE
+mdefine_line|#define __WCLONE&t;0x80000000
 DECL|struct|wait_queue
 r_struct
 id|wait_queue

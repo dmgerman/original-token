@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: aha1542.c,v 1.1 1992/07/24 06:27:38 root Exp root $&n; *  linux/kernel/aha1542.c&n; *&n; *  Copyright (C) 1992  Tommy Thorn&n; *&n; *  Modified by Eric Youngdale&n; *        Use request_irq and request_dma to help prevent unexpected conflicts&n; *        Set up on-board DMA controller, such that we do not have to&n; *        have the bios enabled to use the aha1542.&n; */
+multiline_comment|/* $Id: aha1542.c,v 1.1 1992/07/24 06:27:38 root Exp root $&n; *  linux/kernel/aha1542.c&n; *&n; *  Copyright (C) 1992  Tommy Thorn&n; *&n; *  Modified by Eric Youngdale&n; *        Use request_irq and request_dma to help prevent unexpected conflicts&n; *        Set up on-board DMA controller, such that we do not have to&n; *        have the bios enabled to use the aha1542.&n; *  Modified by David Gentzel&n; *&t;  Don&squot;t call request_dma if dma mask is 0 (for BusLogic BT-445S VL-Bus controller).&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -2821,7 +2821,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-l_int|1
+l_int|0x01
 suffix:colon
 id|printk
 c_func
@@ -2832,6 +2832,16 @@ suffix:semicolon
 r_return
 op_minus
 l_int|1
+suffix:semicolon
+r_case
+l_int|0
+suffix:colon
+multiline_comment|/* This means that the adapter, although Adaptec 1542 compatible, doesn&squot;t use a DMA channel.&n;       Currently only aware of the BusLogic BT-445S VL-Bus adapter which needs this. */
+id|dma_chan
+op_assign
+l_int|0xFF
+suffix:semicolon
+r_break
 suffix:semicolon
 r_default
 suffix:colon
@@ -3279,13 +3289,32 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Configuring Adaptec at IO:%x, IRQ %d, DMA priority %d&bslash;n&quot;
+l_string|&quot;Configuring Adaptec at IO:%x, IRQ %d&quot;
 comma
 id|base
 comma
 id|irq_level
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dma_chan
+op_ne
+l_int|0xFF
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;, DMA priority %d&quot;
 comma
 id|dma_chan
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 id|DEB
@@ -3345,7 +3374,14 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-suffix:semicolon
+r_if
+c_cond
+(paren
+id|dma_chan
+op_ne
+l_int|0xFF
+)paren
+(brace
 r_if
 c_cond
 (paren
@@ -3372,7 +3408,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3385,14 +3420,12 @@ id|outb
 c_func
 (paren
 (paren
-(paren
 id|dma_chan
 op_minus
 l_int|4
 )paren
 op_or
 id|CASCADE
-)paren
 comma
 id|DMA_MODE_REG
 )paren
@@ -3400,17 +3433,15 @@ suffix:semicolon
 id|outb
 c_func
 (paren
-(paren
 id|dma_chan
 op_minus
 l_int|4
-)paren
 comma
 id|DMA_MASK_REG
 )paren
 suffix:semicolon
 )brace
-suffix:semicolon
+)brace
 macro_line|#if 0
 id|DEB
 c_func

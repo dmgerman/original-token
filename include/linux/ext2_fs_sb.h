@@ -2,7 +2,7 @@ macro_line|#ifndef _EXT2_FS_SB
 DECL|macro|_EXT2_FS_SB
 mdefine_line|#define _EXT2_FS_SB
 DECL|macro|EXT2_MAX_GROUP_DESC
-mdefine_line|#define EXT2_MAX_GROUP_DESC&t;4
+mdefine_line|#define EXT2_MAX_GROUP_DESC&t;8
 DECL|macro|EXT2_MAX_GROUP_LOADED
 mdefine_line|#define EXT2_MAX_GROUP_LOADED&t;8
 multiline_comment|/*&n; * second extended-fs super-block data in memory&n; */

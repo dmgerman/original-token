@@ -286,6 +286,8 @@ l_int|0x104
 )paren
 suffix:semicolon
 multiline_comment|/* There must be a logic error */
+r_return
+suffix:semicolon
 macro_line|#endif PARANOID
 )brace
 multiline_comment|/* The argument is in the range  [0.5 .. 1.0) */
@@ -354,6 +356,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/* Need a positive number */
 macro_line|#endif PARANOID
 op_star
 (paren

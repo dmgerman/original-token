@@ -498,21 +498,6 @@ r_void
 suffix:semicolon
 r_extern
 r_void
-id|do_page_fault
-c_func
-(paren
-r_int
-r_int
-op_star
-id|esp
-comma
-r_int
-r_int
-id|error_code
-)paren
-suffix:semicolon
-r_extern
-r_void
 id|oom
 c_func
 (paren
@@ -649,5 +634,16 @@ DECL|macro|GFP_USER
 mdefine_line|#define GFP_USER&t;0x02
 DECL|macro|GFP_KERNEL
 mdefine_line|#define GFP_KERNEL&t;0x03
+multiline_comment|/* vm_ops not present page codes */
+DECL|macro|SHM_SWP_TYPE
+mdefine_line|#define SHM_SWP_TYPE 0x41        
+r_extern
+r_void
+id|shm_no_page
+(paren
+id|ulong
+op_star
+)paren
+suffix:semicolon
 macro_line|#endif
 eof

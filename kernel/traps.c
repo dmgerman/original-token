@@ -5,6 +5,8 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/segment.h&gt;
+macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -157,23 +159,15 @@ r_char
 op_star
 id|str
 comma
-r_int
-id|esp_ptr
+r_struct
+id|pt_regs
+op_star
+id|regs
 comma
 r_int
-id|nr
+id|err
 )paren
 (brace
-r_int
-op_star
-id|esp
-op_assign
-(paren
-r_int
-op_star
-)paren
-id|esp_ptr
-suffix:semicolon
 r_int
 id|i
 suffix:semicolon
@@ -181,10 +175,7 @@ r_if
 c_cond
 (paren
 (paren
-id|esp
-(braket
-l_int|2
-)braket
+id|regs-&gt;eflags
 op_amp
 id|VM_MASK
 )paren
@@ -193,13 +184,10 @@ op_logical_or
 (paren
 l_int|0xffff
 op_amp
-id|esp
-(braket
-l_int|1
-)braket
+id|regs-&gt;cs
 )paren
 op_eq
-l_int|0xf
+id|USER_CS
 )paren
 )paren
 r_return
@@ -211,7 +199,7 @@ l_string|&quot;%s: %04x&bslash;n&quot;
 comma
 id|str
 comma
-id|nr
+id|err
 op_amp
 l_int|0xffff
 )paren
@@ -223,52 +211,51 @@ l_string|&quot;EIP:    %04x:%p&bslash;nEFLAGS: %p&bslash;n&quot;
 comma
 l_int|0xffff
 op_amp
-id|esp
-(braket
-l_int|1
-)braket
+id|regs-&gt;cs
 comma
-id|esp
-(braket
-l_int|0
-)braket
+id|regs-&gt;eip
 comma
-id|esp
-(braket
-l_int|2
-)braket
+id|regs-&gt;eflags
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;fs: %04x&bslash;n&quot;
+l_string|&quot;eax: %08x   ebx: %08x   ecx: %08x   edx: %08x&bslash;n&quot;
 comma
-id|_fs
-c_func
-(paren
-)paren
+id|regs-&gt;eax
+comma
+id|regs-&gt;ebx
+comma
+id|regs-&gt;ecx
+comma
+id|regs-&gt;edx
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;base: %p, limit: %p&bslash;n&quot;
+l_string|&quot;esi: %08x   edi: %08x   ebp: %08x&bslash;n&quot;
 comma
-id|get_base
+id|regs-&gt;esi
+comma
+id|regs-&gt;edi
+comma
+id|regs-&gt;ebp
+)paren
+suffix:semicolon
+id|printk
 c_func
 (paren
-id|current-&gt;ldt
-(braket
-l_int|1
-)braket
-)paren
+l_string|&quot;ds: %04x   es: %04x   fs: %04x   gs: %04x&bslash;n&quot;
 comma
-id|get_limit
-c_func
-(paren
-l_int|0x17
-)paren
+id|regs-&gt;ds
+comma
+id|regs-&gt;es
+comma
+id|regs-&gt;fs
+comma
+id|regs-&gt;gs
 )paren
 suffix:semicolon
 id|store_TR
@@ -314,10 +301,7 @@ op_amp
 id|get_seg_byte
 c_func
 (paren
-id|esp
-(braket
-l_int|1
-)braket
+id|regs-&gt;cs
 comma
 (paren
 id|i
@@ -326,10 +310,7 @@ op_plus
 r_char
 op_star
 )paren
-id|esp
-(braket
-l_int|0
-)braket
+id|regs-&gt;eip
 )paren
 )paren
 )paren
@@ -353,8 +334,10 @@ r_void
 id|do_double_fault
 c_func
 (paren
-r_int
-id|esp
+r_struct
+id|pt_regs
+op_star
+id|regs
 comma
 r_int
 id|error_code
@@ -375,7 +358,7 @@ c_func
 (paren
 l_string|&quot;double fault&quot;
 comma
-id|esp
+id|regs
 comma
 id|error_code
 )paren
@@ -386,8 +369,10 @@ r_void
 id|do_general_protection
 c_func
 (paren
-r_int
-id|esp
+r_struct
+id|pt_regs
+op_star
+id|regs
 comma
 r_int
 id|error_code
@@ -408,7 +393,7 @@ c_func
 (paren
 l_string|&quot;general protection&quot;
 comma
-id|esp
+id|regs
 comma
 id|error_code
 )paren
@@ -419,8 +404,10 @@ r_void
 id|do_alignment_check
 c_func
 (paren
-r_int
-id|esp
+r_struct
+id|pt_regs
+op_star
+id|regs
 comma
 r_int
 id|error_code
@@ -441,7 +428,7 @@ c_func
 (paren
 l_string|&quot;alignment check&quot;
 comma
-id|esp
+id|regs
 comma
 id|error_code
 )paren
@@ -452,8 +439,10 @@ r_void
 id|do_divide_error
 c_func
 (paren
-r_int
-id|esp
+r_struct
+id|pt_regs
+op_star
+id|regs
 comma
 r_int
 id|error_code
@@ -474,7 +463,7 @@ c_func
 (paren
 l_string|&quot;divide error&quot;
 comma
-id|esp
+id|regs
 comma
 id|error_code
 )paren
@@ -485,13 +474,35 @@ r_void
 id|do_int3
 c_func
 (paren
-r_int
-id|esp
+r_struct
+id|pt_regs
+op_star
+id|regs
 comma
 r_int
 id|error_code
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|current-&gt;flags
+op_amp
+id|PF_PTRACED
+)paren
+id|current-&gt;blocked
+op_and_assign
+op_complement
+(paren
+l_int|1
+op_lshift
+(paren
+id|SIGTRAP
+op_minus
+l_int|1
+)paren
+)paren
+suffix:semicolon
 id|send_sig
 c_func
 (paren
@@ -507,7 +518,7 @@ c_func
 (paren
 l_string|&quot;int3&quot;
 comma
-id|esp
+id|regs
 comma
 id|error_code
 )paren
@@ -518,8 +529,10 @@ r_void
 id|do_nmi
 c_func
 (paren
-r_int
-id|esp
+r_struct
+id|pt_regs
+op_star
+id|regs
 comma
 r_int
 id|error_code
@@ -537,13 +550,35 @@ r_void
 id|do_debug
 c_func
 (paren
-r_int
-id|esp
+r_struct
+id|pt_regs
+op_star
+id|regs
 comma
 r_int
 id|error_code
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|current-&gt;flags
+op_amp
+id|PF_PTRACED
+)paren
+id|current-&gt;blocked
+op_and_assign
+op_complement
+(paren
+l_int|1
+op_lshift
+(paren
+id|SIGTRAP
+op_minus
+l_int|1
+)paren
+)paren
+suffix:semicolon
 id|send_sig
 c_func
 (paren
@@ -559,7 +594,7 @@ c_func
 (paren
 l_string|&quot;debug&quot;
 comma
-id|esp
+id|regs
 comma
 id|error_code
 )paren
@@ -570,8 +605,10 @@ r_void
 id|do_overflow
 c_func
 (paren
-r_int
-id|esp
+r_struct
+id|pt_regs
+op_star
+id|regs
 comma
 r_int
 id|error_code
@@ -592,7 +629,7 @@ c_func
 (paren
 l_string|&quot;overflow&quot;
 comma
-id|esp
+id|regs
 comma
 id|error_code
 )paren
@@ -603,8 +640,10 @@ r_void
 id|do_bounds
 c_func
 (paren
-r_int
-id|esp
+r_struct
+id|pt_regs
+op_star
+id|regs
 comma
 r_int
 id|error_code
@@ -625,7 +664,7 @@ c_func
 (paren
 l_string|&quot;bounds&quot;
 comma
-id|esp
+id|regs
 comma
 id|error_code
 )paren
@@ -636,8 +675,10 @@ r_void
 id|do_invalid_op
 c_func
 (paren
-r_int
-id|esp
+r_struct
+id|pt_regs
+op_star
+id|regs
 comma
 r_int
 id|error_code
@@ -658,7 +699,7 @@ c_func
 (paren
 l_string|&quot;invalid operand&quot;
 comma
-id|esp
+id|regs
 comma
 id|error_code
 )paren
@@ -669,8 +710,10 @@ r_void
 id|do_device_not_available
 c_func
 (paren
-r_int
-id|esp
+r_struct
+id|pt_regs
+op_star
+id|regs
 comma
 r_int
 id|error_code
@@ -691,7 +734,7 @@ c_func
 (paren
 l_string|&quot;device not available&quot;
 comma
-id|esp
+id|regs
 comma
 id|error_code
 )paren
@@ -702,8 +745,10 @@ r_void
 id|do_coprocessor_segment_overrun
 c_func
 (paren
-r_int
-id|esp
+r_struct
+id|pt_regs
+op_star
+id|regs
 comma
 r_int
 id|error_code
@@ -724,7 +769,7 @@ c_func
 (paren
 l_string|&quot;coprocessor segment overrun&quot;
 comma
-id|esp
+id|regs
 comma
 id|error_code
 )paren
@@ -735,8 +780,10 @@ r_void
 id|do_invalid_TSS
 c_func
 (paren
-r_int
-id|esp
+r_struct
+id|pt_regs
+op_star
+id|regs
 comma
 r_int
 id|error_code
@@ -757,7 +804,7 @@ c_func
 (paren
 l_string|&quot;invalid TSS&quot;
 comma
-id|esp
+id|regs
 comma
 id|error_code
 )paren
@@ -768,8 +815,10 @@ r_void
 id|do_segment_not_present
 c_func
 (paren
-r_int
-id|esp
+r_struct
+id|pt_regs
+op_star
+id|regs
 comma
 r_int
 id|error_code
@@ -790,7 +839,7 @@ c_func
 (paren
 l_string|&quot;segment not present&quot;
 comma
-id|esp
+id|regs
 comma
 id|error_code
 )paren
@@ -801,8 +850,10 @@ r_void
 id|do_stack_segment
 c_func
 (paren
-r_int
-id|esp
+r_struct
+id|pt_regs
+op_star
+id|regs
 comma
 r_int
 id|error_code
@@ -823,7 +874,7 @@ c_func
 (paren
 l_string|&quot;stack segment&quot;
 comma
-id|esp
+id|regs
 comma
 id|error_code
 )paren
@@ -834,13 +885,24 @@ r_void
 id|do_coprocessor_error
 c_func
 (paren
-r_int
-id|esp
+r_struct
+id|pt_regs
+op_star
+id|regs
 comma
 r_int
 id|error_code
 )paren
 (brace
+multiline_comment|/*&n;    Allow the process which triggered the interrupt to recover the error&n;    condition.&n;    The status word is saved in the cs selector.&n;    The tag word is saved in the operand selector.&n;    The status word is then cleared and the tags all set to Empty.&n;    This will give sufficient information for complete recovery provided that&n;    the affected process knows or can deduce the code and data segments&n;    which were in force when the exception condition arose.&n;    */
+DECL|macro|FPU_ENV
+mdefine_line|#define FPU_ENV (*(struct i387_hard_struct *)env)
+r_char
+id|env
+(braket
+l_int|28
+)braket
+suffix:semicolon
 id|ignore_irq13
 op_assign
 l_int|1
@@ -856,9 +918,53 @@ l_int|1
 )paren
 suffix:semicolon
 id|__asm__
+id|__volatile__
 c_func
 (paren
-l_string|&quot;fninit&quot;
+l_string|&quot;fnstenv %0; fnclex&quot;
+suffix:colon
+l_string|&quot;=m&quot;
+(paren
+id|FPU_ENV
+)paren
+)paren
+suffix:semicolon
+id|FPU_ENV.fcs
+op_assign
+(paren
+id|FPU_ENV.swd
+op_amp
+l_int|0x0000ffff
+)paren
+op_or
+(paren
+id|FPU_ENV.fcs
+op_amp
+l_int|0xffff0000
+)paren
+suffix:semicolon
+id|FPU_ENV.fos
+op_assign
+id|FPU_ENV.twd
+suffix:semicolon
+id|FPU_ENV.swd
+op_and_assign
+l_int|0xffff0000
+suffix:semicolon
+id|FPU_ENV.twd
+op_assign
+l_int|0xffffffff
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;fldenv %0&quot;
+op_scope_resolution
+l_string|&quot;m&quot;
+(paren
+id|FPU_ENV
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -867,8 +973,10 @@ r_void
 id|do_reserved
 c_func
 (paren
-r_int
-id|esp
+r_struct
+id|pt_regs
+op_star
+id|regs
 comma
 r_int
 id|error_code
@@ -889,7 +997,7 @@ c_func
 (paren
 l_string|&quot;reserved (15,17-47) error&quot;
 comma
-id|esp
+id|regs
 comma
 id|error_code
 )paren

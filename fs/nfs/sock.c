@@ -1,12 +1,13 @@
 multiline_comment|/*&n; *  linux/fs/nfs/sock.c&n; *&n; *  Copyright (C) 1992  Rick Sladkey&n; *&n; *  low-level nfs remote procedure call interface&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/nfs_fs.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
-macro_line|#include &lt;netinet/in.h&gt;
-macro_line|#include &quot;../../net/kern_sock.h&quot;
+macro_line|#include &lt;linux/in.h&gt;
+macro_line|#include &lt;linux/net.h&gt;
 r_extern
 r_struct
 id|socket

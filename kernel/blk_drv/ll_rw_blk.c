@@ -1551,6 +1551,16 @@ id|bh
 id|i
 )braket
 )paren
+(brace
+id|bh
+(braket
+id|i
+)braket
+op_member_access_from_pointer
+id|b_req
+op_assign
+l_int|1
+suffix:semicolon
 id|make_request
 c_func
 (paren
@@ -1564,6 +1574,7 @@ id|i
 )braket
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

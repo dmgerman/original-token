@@ -1,6 +1,7 @@
-multiline_comment|/*&n; * misc.c&n; * &n; * This is a collection of several routines from gzip-1.0.3 &n; * adapted for Linux.&n; *&n; * malloc and printk by Hannu Savolainen 1993&n; */
+multiline_comment|/*&n; * misc.c&n; * &n; * This is a collection of several routines from gzip-1.0.3 &n; * adapted for Linux.&n; *&n; * malloc and puts by Hannu Savolainen 1993&n; */
 macro_line|#include &quot;gzip.h&quot;
 macro_line|#include &quot;lzw.h&quot;
+macro_line|#include &lt;linux/segment.h&gt;
 multiline_comment|/*&n; * These are set up by the setup-routine at boot-time:&n; */
 DECL|struct|screen_info
 r_struct
@@ -229,6 +230,14 @@ c_func
 r_void
 )paren
 suffix:semicolon
+id|local
+r_int
+id|get_method
+c_func
+(paren
+r_int
+)paren
+suffix:semicolon
 DECL|variable|vidmem
 r_char
 op_star
@@ -321,12 +330,8 @@ r_if
 c_cond
 (paren
 id|free_mem_ptr
-op_ge
-(paren
-l_int|640
-op_star
-l_int|1024
-)paren
+OG
+l_int|0x90000
 )paren
 id|error
 c_func
@@ -363,9 +368,10 @@ id|where
 (brace
 multiline_comment|/* Don&squot;t care */
 )brace
-DECL|function|printk
-r_int
-id|printk
+DECL|function|puts
+r_static
+r_void
+id|puts
 c_func
 (paren
 r_char
@@ -378,12 +384,22 @@ id|i
 comma
 id|n
 suffix:semicolon
+r_for
+c_loop
+(paren
 id|n
 op_assign
-id|strlen
-c_func
-(paren
+l_int|0
+suffix:semicolon
 id|s
+(braket
+id|n
+)braket
+op_ne
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
+id|n
+op_increment
 )paren
 suffix:semicolon
 r_if
@@ -461,9 +477,6 @@ op_plus
 l_int|2
 suffix:semicolon
 )brace
-r_return
-l_int|1
-suffix:semicolon
 )brace
 DECL|function|memset
 id|__ptr_t
@@ -1116,19 +1129,19 @@ op_star
 id|x
 )paren
 (brace
-id|printk
+id|puts
 c_func
 (paren
 l_string|&quot;&bslash;n&bslash;n&quot;
 )paren
 suffix:semicolon
-id|printk
+id|puts
 c_func
 (paren
 id|x
 )paren
 suffix:semicolon
-id|printk
+id|puts
 c_func
 (paren
 l_string|&quot;&bslash;n&bslash;n -- System halted&quot;
@@ -1175,7 +1188,7 @@ id|user_stack
 id|STACK_SIZE
 )braket
 comma
-l_int|0x10
+id|KERNEL_DS
 )brace
 suffix:semicolon
 DECL|function|decompress_kernel
@@ -1280,7 +1293,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|printk
+id|puts
 c_func
 (paren
 l_string|&quot;Uncompressing Linux...&quot;
@@ -1302,13 +1315,13 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-id|printk
+id|puts
 c_func
 (paren
 l_string|&quot;done.&bslash;n&bslash;n&quot;
 )paren
 suffix:semicolon
-id|printk
+id|puts
 c_func
 (paren
 l_string|&quot;Now booting the kernel&bslash;n&quot;

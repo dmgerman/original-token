@@ -49,6 +49,8 @@ comma
 l_string|&quot;di&quot;
 comma
 l_string|&quot;ax&quot;
+comma
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 r_return
@@ -112,6 +114,8 @@ comma
 l_string|&quot;ax&quot;
 comma
 l_string|&quot;cx&quot;
+comma
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 r_return
@@ -251,6 +255,8 @@ comma
 l_string|&quot;ax&quot;
 comma
 l_string|&quot;cx&quot;
+comma
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1067,6 +1073,8 @@ comma
 l_string|&quot;dx&quot;
 comma
 l_string|&quot;di&quot;
+comma
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1135,6 +1143,8 @@ comma
 l_string|&quot;di&quot;
 comma
 l_string|&quot;si&quot;
+comma
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1237,6 +1247,8 @@ comma
 l_string|&quot;si&quot;
 comma
 l_string|&quot;di&quot;
+comma
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1441,6 +1453,8 @@ suffix:colon
 l_string|&quot;cx&quot;
 comma
 l_string|&quot;di&quot;
+comma
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 r_return

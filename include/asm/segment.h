@@ -135,7 +135,7 @@ id|__asm__
 (paren
 l_string|&quot;movb %0,%%fs:%1&quot;
 op_scope_resolution
-l_string|&quot;q&quot;
+l_string|&quot;iq&quot;
 (paren
 id|val
 )paren
@@ -167,7 +167,7 @@ id|__asm__
 (paren
 l_string|&quot;movw %0,%%fs:%1&quot;
 op_scope_resolution
-l_string|&quot;r&quot;
+l_string|&quot;ir&quot;
 (paren
 id|val
 )paren
@@ -201,7 +201,7 @@ id|__asm__
 (paren
 l_string|&quot;movl %0,%%fs:%1&quot;
 op_scope_resolution
-l_string|&quot;r&quot;
+l_string|&quot;ir&quot;
 (paren
 id|val
 )paren

@@ -7081,7 +7081,10 @@ id|scsi_tape_open
 comma
 multiline_comment|/* open */
 id|scsi_tape_close
+comma
 multiline_comment|/* release */
+l_int|NULL
+multiline_comment|/* fsync */
 )brace
 suffix:semicolon
 DECL|function|st_attach

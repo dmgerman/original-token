@@ -1,4 +1,4 @@
-multiline_comment|/* fdomain.c -- Future Domain TMC-1660/TMC-1680 driver&n; * Created: Sun May  3 18:53:19 1992 by faith&n; * Revised: Thu Feb 18 21:02:12 1993 by faith@cs.unc.edu&n; * Author: Rickard E. Faith, faith@cs.unc.edu&n; * Copyright 1992, 1993 Rickard E. Faith&n; *&n; * $Log$&n;&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n;&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n;&n; **************************************************************************&n;&n;&n; DESCRIPTION:&n;&n; This is the Linux low-level SCSI driver for Future Domain TMC-1660/1680&n; and TMC-1670 SCSI host adapters.&n;&n;&n; REFERENCES USED:&n;&n; &quot;TMC-1800 SCSI Chip Specification (FDC-1800T)&quot;, Future Domain Corporation,&n; 1990.&n;&n; &quot;LXT SCSI Products: Specifications and OEM Technical Manual (Revision&n; B/September 1991)&quot;, Maxtor Corporation, 1991.&n;&n; &quot;7213S product Manual (Revision P3)&quot;, Maxtor Corporation, 1992.&n;&n; Private communications, Drew Eckhardt (drew@cs.colorado.edu) and Eric&n; Youngdale (eric@tantalus.nrl.navy.mil), 1992.&n;&n;&n; NOTES ON REFERENCES:&n;&n; The Maxtor manuals were free.  Maxtor telephone technical support is&n; great!&n;&n; The Future Domain manual is $25.  It documents the chip, not the TMC-16x0&n; boards, so some information I had to guess at.  Future Domain sells DOS&n; BIOS source for $250 and the UN*X driver source was $750, but these&n; require a non-disclosure agreement, so even if I could afford them, they&n; would *not* have been useful for writing this publically distributable&n; driver.  Future Domain technical support has provided some information on&n; the phone, and this has been somewhat helpful.&n;&n;&n; ALPHA TESTERS:&n;&n; Todd Carrico (todd@wutc.wustl.edu), Dan Poirier (poirier@cs.unc.edu ), Ken&n; Corey (kenc@sol.acs.unt.edu), C. de Bruin (bruin@dutiba.tudelft.nl),&n; Sakari Aaltonen (sakaria@vipunen.hit.fi), John Rice&n; (rice@xanth.cs.odu.edu), and Brad Yearwood (brad@optilink.com).&n;&n;&n; NOTES ON USER DEFINABLE OPTIONS:&n;&n; DEBUG: This turns on the printing of various debug informaiton.&n;&n; ENABLE_PARITY: This turns on SCSI parity checking.  With the current&n; driver, all attached devices must support SCSI parity.  If none of your&n; devices support parity, then you can probably get the driver to work by&n; turning this option off.  I have no way of testing this, however.&n;&n; QUEUE: Enable &quot;command queueing.&quot;  This is supported by the higher level&n; SCSI code, and allows the kernel to continue to schedule tasks while the&n; SCSI request is pending.  If this option is turned off, then everything&n; will &quot;freeze&quot; during SCSI requests, and system performance will become&n; unbearable.  Later, this will allow multiple outstanding SCSI requests.  I&n; have received reports that if this option is turned off, the driver will&n; no longer function correctly.  I have not had time to track down this bug,&n; since I hope to make the driver work for everyone with QUEUE on.&n;&n; FIFO_COUNT: The host adapter has an 8K cache.  When this many 512 byte&n; blocks are filled by the SCSI device, an interrupt will be raised.&n; Therefore, this could be as low as 0, or as high as 16.  Note, however,&n; that values which are too high or too low seem to prevent any interrupts&n; from occuring, and thereby lock up the machine.  I have found that 2 is a&n; good number, but throughput may be increased by changing this value to&n; values which are close to 2.  Please let me know if you try any different&n; values.&n;&n; DO_DETECT: This activates some old scan code which was needed before the&n; high level drivers got fixed.  If you are having toruble with the driver,&n; turning this on should not hurt, and might help.  Please let me know if&n; this is the case, since this code will be removed from future drivers.&n;&n; RESELECTION: DO *NOT* USE THIS OPTION!  This turns on SCSI device&n; disconnect and reselection, which does not work at this time.  When I get&n; this working, it will support multiple outstanding SCSI commands.&n;&n; **************************************************************************/
+multiline_comment|/* fdomain.c -- Future Domain TMC-1660/TMC-1680 driver&n; * Created: Sun May  3 18:53:19 1992 by faith&n; * Revised: Sat May 15 15:29:19 1993 by faith@cs.unc.edu&n; * Author: Rickard E. Faith, faith@cs.unc.edu&n; * Copyright 1992, 1993 Rickard E. Faith&n; *&n; * $Log$&n;&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n;&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n;&n; **************************************************************************&n;&n;&n; DESCRIPTION:&n;&n; This is the Linux low-level SCSI driver for Future Domain TMC-1660/1680&n; and TMC-1650/1670 SCSI host adapters.  The older boards are based on the&n; TMC-1800 chip, and the driver was originally written for a TMC-1680 with&n; this chip.  More recently, boards are being produced with the TMC-18C50&n; chip.  This driver may not work with the more recent boards.&n;&n;&n; REFERENCES USED:&n;&n; &quot;TMC-1800 SCSI Chip Specification (FDC-1800T)&quot;, Future Domain Corporation,&n; 1990.&n;&n; &quot;Technical Reference Manual: 18C50 SCSI Host Adapter Chip&quot;, Future Domain&n; Corporation, January 1992.&n;&n; &quot;LXT SCSI Products: Specifications and OEM Technical Manual (Revision&n; B/September 1991)&quot;, Maxtor Corporation, 1991.&n;&n; &quot;7213S product Manual (Revision P3)&quot;, Maxtor Corporation, 1992.&n;&n; &quot;Draft Proposed American National Standard: Small Computer System&n; Interface - 2 (SCSI-2)&quot;, Global Engineering Documents. (X3T9.2/86-109,&n; revision 10h, October 17, 1991)&n;&n; Private communications, Drew Eckhardt (drew@cs.colorado.edu) and Eric&n; Youngdale (eric@tantalus.nrl.navy.mil), 1992.&n;&n;&n; NOTES ON REFERENCES:&n;&n; The Maxtor manuals were free.  Maxtor telephone technical support is&n; great!&n;&n; The Future Domain manuals were $25 and $35.  They document the chip, not&n; the TMC-16x0 boards, so some information I had to guess at.  In 1992,&n; Future Domain sells DOS BIOS source for $250 and the UN*X driver source&n; was $750, but these require a non-disclosure agreement, so even if I could&n; afford them, they would *not* have been useful for writing this publically&n; distributable driver.  Future Domain technical support has provided some&n; information on the phone and have sent a few useful FAXs.&n;&n;&n; ALPHA TESTERS:&n;&n; There are many other alpha testers that come and go as the driver&n; develops.  The people listed here were most helpful in times of greatest&n; need.  However, all of the alpha testers deserve much thanks.&n;&n; Todd Carrico (todd@wutc.wustl.edu), Dan Poirier (poirier@cs.unc.edu ), Ken&n; Corey (kenc@sol.acs.unt.edu), C. de Bruin (bruin@dutiba.tudelft.nl),&n; Sakari Aaltonen (sakaria@vipunen.hit.fi), John Rice&n; (rice@xanth.cs.odu.edu), and Brad Yearwood (brad@optilink.com).&n;&n;&n; NOTES ON USER DEFINABLE OPTIONS:&n;&n; DEBUG: This turns on the printing of various debug informaiton.&n;&n; ENABLE_PARITY: This turns on SCSI parity checking.  With the current&n; driver, all attached devices must support SCSI parity.  If none of your&n; devices support parity, then you can probably get the driver to work by&n; turning this option off.  I have no way of testing this, however.&n;&n; QUEUE: Enable &quot;command queueing.&quot;  This is supported by the higher level&n; SCSI code, and allows the kernel to continue to schedule tasks while the&n; SCSI request is pending.  If this option is turned off, then everything&n; will &quot;freeze&quot; during SCSI requests, and system performance will become&n; unbearable.  Later, this will allow multiple outstanding SCSI requests.  I&n; have received reports that if this option is turned off, the driver will&n; no longer function correctly.  I have not had time to track down this bug,&n; since I hope to make the driver work for everyone with QUEUE on.&n;&n; FIFO_COUNT: The host adapter has an 8K cache.  When this many 512 byte&n; blocks are filled by the SCSI device, an interrupt will be raised.&n; Therefore, this could be as low as 0, or as high as 16.  Note, however,&n; that values which are too high or too low seem to prevent any interrupts&n; from occuring, and thereby lock up the machine.  I have found that 2 is a&n; good number, but throughput may be increased by changing this value to&n; values which are close to 2.  Please let me know if you try any different&n; values.&n;&n; DO_DETECT: This activates some old scan code which was needed before the&n; high level drivers got fixed.  If you are having toruble with the driver,&n; turning this on should not hurt, and might help.  Please let me know if&n; this is the case, since this code will be removed from future drivers.&n;&n; RESELECTION: DO *NOT* USE THIS OPTION!  This turns on SCSI device&n; disconnect and reselection, which does not work at this time.  When I get&n; this working, it will support multiple outstanding SCSI commands.&n;&n; **************************************************************************/
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;../blk.h&quot;
@@ -8,7 +8,7 @@ macro_line|#include &quot;fdomain.h&quot;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 DECL|macro|VERSION
-mdefine_line|#define VERSION          &quot;3.5&quot;&t;/* Change with each revision */
+mdefine_line|#define VERSION          &quot;3.6&quot;&t;/* Change with each revision */
 multiline_comment|/* START OF USER DEFINABLE OPTIONS */
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG            1&t;/* Enable debugging output */
@@ -34,6 +34,8 @@ DECL|macro|DEBUG_MESSAGES
 mdefine_line|#define DEBUG_MESSAGES   0&t;/* Debug MESSAGE IN PHASE */
 DECL|macro|DEBUG_ABORT
 mdefine_line|#define DEBUG_ABORT      1&t;/* Debug abort() routine */
+DECL|macro|DEBUG_RACE
+mdefine_line|#define DEBUG_RACE       1      /* Debug interrupt-driven race condition */
 macro_line|#else
 DECL|macro|EVERY_ACCESS
 mdefine_line|#define EVERY_ACCESS     0&t;/* LEAVE THESE ALONE--CHANGE THE ONES ABOVE */
@@ -60,6 +62,190 @@ macro_line|#else
 DECL|macro|PARITY_MASK
 mdefine_line|#define PARITY_MASK      0x00
 macro_line|#endif
+DECL|enum|chip_type
+r_enum
+id|chip_type
+(brace
+DECL|enumerator|unknown
+id|unknown
+op_assign
+l_int|0x00
+comma
+DECL|enumerator|tmc1800
+id|tmc1800
+op_assign
+l_int|0x01
+comma
+DECL|enumerator|tmc18c50
+id|tmc18c50
+op_assign
+l_int|0x02
+comma
+)brace
+suffix:semicolon
+r_enum
+(brace
+DECL|enumerator|non_queueing
+id|non_queueing
+op_assign
+l_int|0x01
+comma
+DECL|enumerator|in_arbitration
+id|in_arbitration
+op_assign
+l_int|0x02
+comma
+DECL|enumerator|in_selection
+id|in_selection
+op_assign
+l_int|0x04
+comma
+DECL|enumerator|in_other
+id|in_other
+op_assign
+l_int|0x08
+comma
+DECL|enumerator|disconnect
+id|disconnect
+op_assign
+l_int|0x10
+comma
+DECL|enumerator|aborted
+id|aborted
+op_assign
+l_int|0x20
+comma
+DECL|enumerator|sent_ident
+id|sent_ident
+op_assign
+l_int|0x40
+comma
+)brace
+suffix:semicolon
+DECL|enum|in_port_type
+r_enum
+id|in_port_type
+(brace
+DECL|enumerator|Read_SCSI_Data
+id|Read_SCSI_Data
+op_assign
+l_int|0
+comma
+DECL|enumerator|SCSI_Status
+id|SCSI_Status
+op_assign
+l_int|1
+comma
+DECL|enumerator|TMC_Status
+id|TMC_Status
+op_assign
+l_int|2
+comma
+DECL|enumerator|FIFO_Status
+id|FIFO_Status
+op_assign
+l_int|3
+comma
+multiline_comment|/* tmc18c50 only */
+DECL|enumerator|Interrupt_Cond
+id|Interrupt_Cond
+op_assign
+l_int|4
+comma
+multiline_comment|/* tmc18c50 only */
+DECL|enumerator|LSB_ID_Code
+id|LSB_ID_Code
+op_assign
+l_int|5
+comma
+DECL|enumerator|MSB_ID_Code
+id|MSB_ID_Code
+op_assign
+l_int|6
+comma
+DECL|enumerator|Read_Loopback
+id|Read_Loopback
+op_assign
+l_int|7
+comma
+DECL|enumerator|SCSI_Data_NoACK
+id|SCSI_Data_NoACK
+op_assign
+l_int|8
+comma
+DECL|enumerator|Interrupt_Mask
+id|Interrupt_Mask
+op_assign
+l_int|9
+comma
+DECL|enumerator|Option_Select
+id|Option_Select
+op_assign
+l_int|10
+comma
+DECL|enumerator|Configuration
+id|Configuration
+op_assign
+l_int|11
+comma
+multiline_comment|/* tmc18c50 only */
+DECL|enumerator|Read_FIFO
+id|Read_FIFO
+op_assign
+l_int|12
+comma
+DECL|enumerator|FIFO_Data_Count
+id|FIFO_Data_Count
+op_assign
+l_int|14
+)brace
+suffix:semicolon
+DECL|enum|out_port_type
+r_enum
+id|out_port_type
+(brace
+DECL|enumerator|Write_SCSI_Data
+id|Write_SCSI_Data
+op_assign
+l_int|0
+comma
+DECL|enumerator|SCSI_Cntl
+id|SCSI_Cntl
+op_assign
+l_int|1
+comma
+DECL|enumerator|Interrupt_Cntl
+id|Interrupt_Cntl
+op_assign
+l_int|2
+comma
+DECL|enumerator|Data_Mode_Cntl
+id|Data_Mode_Cntl
+op_assign
+l_int|3
+comma
+DECL|enumerator|TMC_Cntl
+id|TMC_Cntl
+op_assign
+l_int|4
+comma
+DECL|enumerator|Memory_Cntl
+id|Memory_Cntl
+op_assign
+l_int|5
+comma
+multiline_comment|/* tmc18c50 only */
+DECL|enumerator|Write_Loopback
+id|Write_Loopback
+op_assign
+l_int|7
+comma
+DECL|enumerator|Write_FIFO
+id|Write_FIFO
+op_assign
+l_int|12
+)brace
+suffix:semicolon
 DECL|variable|port_base
 r_static
 r_int
@@ -75,6 +261,20 @@ id|bios_base
 op_assign
 l_int|NULL
 suffix:semicolon
+DECL|variable|bios_major
+r_static
+r_int
+id|bios_major
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|bios_minor
+r_static
+r_int
+id|bios_minor
+op_assign
+l_int|0
+suffix:semicolon
 DECL|variable|interrupt_level
 r_static
 r_int
@@ -82,6 +282,54 @@ id|interrupt_level
 op_assign
 l_int|0
 suffix:semicolon
+DECL|variable|this_host
+r_static
+r_int
+id|this_host
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|can_queue
+r_static
+r_int
+id|can_queue
+op_assign
+id|QUEUE
+suffix:semicolon
+DECL|variable|in_command
+r_static
+r_volatile
+r_int
+id|in_command
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|current_SC
+r_static
+id|Scsi_Cmnd
+op_star
+id|current_SC
+op_assign
+l_int|NULL
+suffix:semicolon
+DECL|variable|chip
+r_static
+r_enum
+id|chip_type
+id|chip
+op_assign
+id|unknown
+suffix:semicolon
+macro_line|#if DEBUG_RACE
+DECL|variable|in_interrupt_flag
+r_static
+r_volatile
+r_int
+id|in_interrupt_flag
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 DECL|variable|Data_Mode_Cntl_port
 r_static
 r_int
@@ -147,75 +395,6 @@ r_static
 r_int
 id|Write_SCSI_Data_port
 suffix:semicolon
-DECL|variable|this_host
-r_static
-r_int
-id|this_host
-op_assign
-l_int|0
-suffix:semicolon
-DECL|variable|can_queue
-r_static
-r_int
-id|can_queue
-op_assign
-id|QUEUE
-suffix:semicolon
-DECL|variable|in_command
-r_static
-r_volatile
-r_int
-id|in_command
-op_assign
-l_int|0
-suffix:semicolon
-DECL|variable|current_SC
-r_static
-id|Scsi_Cmnd
-op_star
-id|current_SC
-op_assign
-l_int|NULL
-suffix:semicolon
-DECL|enumerator|non_queueing
-r_enum
-(brace
-id|non_queueing
-op_assign
-l_int|0x01
-comma
-DECL|enumerator|in_arbitration
-id|in_arbitration
-op_assign
-l_int|0x02
-comma
-DECL|enumerator|in_selection
-id|in_selection
-op_assign
-l_int|0x04
-comma
-DECL|enumerator|in_other
-id|in_other
-op_assign
-l_int|0x08
-comma
-DECL|enumerator|disconnect
-id|disconnect
-op_assign
-l_int|0x10
-comma
-DECL|enumerator|aborted
-id|aborted
-op_assign
-l_int|0x20
-comma
-DECL|enumerator|sent_ident
-id|sent_ident
-op_assign
-l_int|0x40
-comma
-)brace
-suffix:semicolon
 r_extern
 r_void
 id|fdomain_16x0_intr
@@ -224,106 +403,6 @@ c_func
 r_int
 id|unused
 )paren
-suffix:semicolon
-DECL|enum|in_port_type
-DECL|enumerator|Read_SCSI_Data
-DECL|enumerator|SCSI_Status
-DECL|enumerator|TMC_Status
-r_enum
-id|in_port_type
-(brace
-id|Read_SCSI_Data
-op_assign
-l_int|0
-comma
-id|SCSI_Status
-op_assign
-l_int|1
-comma
-id|TMC_Status
-op_assign
-l_int|2
-comma
-DECL|enumerator|LSB_ID_Code
-DECL|enumerator|MSB_ID_Code
-DECL|enumerator|Read_Loopback
-id|LSB_ID_Code
-op_assign
-l_int|5
-comma
-id|MSB_ID_Code
-op_assign
-l_int|6
-comma
-id|Read_Loopback
-op_assign
-l_int|7
-comma
-DECL|enumerator|SCSI_Data_NoACK
-DECL|enumerator|Interrupt_Mask
-id|SCSI_Data_NoACK
-op_assign
-l_int|8
-comma
-id|Interrupt_Mask
-op_assign
-l_int|9
-comma
-DECL|enumerator|Option_Select
-DECL|enumerator|Read_FIFO
-id|Option_Select
-op_assign
-l_int|10
-comma
-id|Read_FIFO
-op_assign
-l_int|12
-comma
-DECL|enumerator|FIFO_Data_Count
-id|FIFO_Data_Count
-op_assign
-l_int|14
-)brace
-suffix:semicolon
-DECL|enum|out_port_type
-DECL|enumerator|Write_SCSI_Data
-DECL|enumerator|SCSI_Cntl
-DECL|enumerator|Interrupt_Cntl
-r_enum
-id|out_port_type
-(brace
-id|Write_SCSI_Data
-op_assign
-l_int|0
-comma
-id|SCSI_Cntl
-op_assign
-l_int|1
-comma
-id|Interrupt_Cntl
-op_assign
-l_int|2
-comma
-DECL|enumerator|Data_Mode_Cntl
-DECL|enumerator|TMC_Cntl
-DECL|enumerator|Write_Loopback
-id|Data_Mode_Cntl
-op_assign
-l_int|3
-comma
-id|TMC_Cntl
-op_assign
-l_int|4
-comma
-id|Write_Loopback
-op_assign
-l_int|7
-comma
-DECL|enumerator|Write_FIFO
-id|Write_FIFO
-op_assign
-l_int|12
-)brace
 suffix:semicolon
 DECL|variable|addresses
 r_static
@@ -425,6 +504,14 @@ DECL|member|sig_length
 r_int
 id|sig_length
 suffix:semicolon
+DECL|member|major_bios_version
+r_int
+id|major_bios_version
+suffix:semicolon
+DECL|member|minor_bios_version
+r_int
+id|minor_bios_version
+suffix:semicolon
 DECL|variable|signatures
 )brace
 id|signatures
@@ -440,6 +527,10 @@ comma
 l_int|5
 comma
 l_int|50
+comma
+l_int|2
+comma
+l_int|0
 )brace
 comma
 (brace
@@ -448,6 +539,22 @@ comma
 l_int|5
 comma
 l_int|44
+comma
+l_int|3
+comma
+l_int|0
+)brace
+comma
+(brace
+l_string|&quot;FUTURE DOMAIN TMC-18XX (C) 1993 V3.203/12/93&quot;
+comma
+l_int|5
+comma
+l_int|44
+comma
+l_int|3
+comma
+l_int|2
 )brace
 comma
 multiline_comment|/* READ NOTICE ABOVE *BEFORE* YOU WASTE YOUR TIME ADDING A SIGANTURE */
@@ -540,9 +647,96 @@ suffix:semicolon
 )brace
 multiline_comment|/* These defines are copied from kernel/blk_drv/hd.c */
 DECL|macro|insw
-mdefine_line|#define insw( buf, count, port ) &bslash;&n;      __asm__ volatile &bslash;&n;      ( &quot;cld;rep;insw&quot;::&quot;d&quot; (port),&quot;D&quot; (buf),&quot;c&quot; (count):&quot;cx&quot;,&quot;di&quot; )
+mdefine_line|#define insw( buf, count, port ) &bslash;&n;   __asm__ volatile &bslash;&n;      (&quot;cld;rep;insw&quot;::&quot;d&quot; (port),&quot;D&quot; (buf),&quot;c&quot; (count):&quot;cx&quot;,&quot;di&quot; )
 DECL|macro|outsw
-mdefine_line|#define outsw( buf, count, port ) &bslash;&n;      __asm__ volatile &bslash;&n;      (&quot;cld;rep;outsw&quot;::&quot;d&quot; (port),&quot;S&quot; (buf),&quot;c&quot; (count):&quot;cx&quot;,&quot;si&quot;)
+mdefine_line|#define outsw( buf, count, port ) &bslash;&n;    __asm__ volatile &bslash;&n;       (&quot;cld;rep;outsw&quot;::&quot;d&quot; (port),&quot;S&quot; (buf),&quot;c&quot; (count):&quot;cx&quot;,&quot;si&quot;)
+DECL|function|print_banner
+r_static
+r_void
+id|print_banner
+c_func
+(paren
+r_void
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s&quot;
+comma
+id|fdomain_16x0_info
+c_func
+(paren
+)paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Future Domain: BIOS version %d.%d, %s&bslash;n&quot;
+comma
+id|bios_major
+comma
+id|bios_minor
+comma
+id|chip
+op_eq
+id|tmc1800
+ques
+c_cond
+l_string|&quot;TMC-1800&quot;
+suffix:colon
+(paren
+id|chip
+op_eq
+id|tmc18c50
+ques
+c_cond
+l_string|&quot;TMC-18C50&quot;
+suffix:colon
+l_string|&quot;Unknown&quot;
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|interrupt_level
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Future Domain: BIOS at %x; port base at %x; using IRQ %d&bslash;n&quot;
+comma
+(paren
+r_int
+)paren
+id|bios_base
+comma
+id|port_base
+comma
+id|interrupt_level
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Future Domain: BIOS at %x; port base at %x; *NO* IRQ&bslash;n&quot;
+comma
+(paren
+r_int
+)paren
+id|bios_base
+comma
+id|port_base
+)paren
+suffix:semicolon
+)brace
+)brace
 DECL|function|do_pause
 r_static
 r_void
@@ -694,6 +888,10 @@ l_int|0x61
 r_return
 l_int|0
 suffix:semicolon
+id|chip
+op_assign
+id|tmc1800
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -713,6 +911,10 @@ l_int|0x60
 )paren
 r_return
 l_int|0
+suffix:semicolon
+id|chip
+op_assign
+id|tmc18c50
 suffix:semicolon
 )brace
 multiline_comment|/* We have a valid MCA ID for a TMC-1660/TMC-1680 Future Domain board.&n;      Now, check to be sure the bios_base matches these ports.&n;      If someone was unlucky enough to have purchased more than one&n;      Future Domain board, then they will have to modify this code, as&n;      we only detect one board here.  [The one with the lowest bios_base.]&n;    */
@@ -1053,6 +1255,24 @@ id|sig_length
 )paren
 )paren
 (brace
+id|bios_major
+op_assign
+id|signatures
+(braket
+id|j
+)braket
+dot
+id|major_bios_version
+suffix:semicolon
+id|bios_minor
+op_assign
+id|signatures
+(braket
+id|j
+)braket
+dot
+id|minor_bios_version
+suffix:semicolon
 id|bios_base
 op_assign
 id|addresses
@@ -1257,67 +1477,26 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* Cannot find valid set of ports */
 )brace
-macro_line|#if DEBUG_DETECT
-id|printk
+id|print_banner
 c_func
 (paren
-l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;SCSI: bios_base = %x, port_base = %x, interrupt_level = %d&bslash;n&quot;
-comma
-(paren
-r_int
-)paren
-id|bios_base
-comma
-id|port_base
-comma
-id|interrupt_level
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
-id|interrupt_level
+id|chip
+op_eq
+id|tmc18c50
 )paren
-(brace
 id|printk
 c_func
 (paren
-l_string|&quot;Future Domain: BIOS at %x; port base at %x; using IRQ %d&bslash;n&quot;
-comma
-(paren
-r_int
-)paren
-id|bios_base
-comma
-id|port_base
-comma
-id|interrupt_level
+l_string|&quot;Future Domain WARNING: This driver may not work with the&quot;
+l_string|&quot; TMC-18C50 chip!&bslash;n&quot;
+l_string|&quot;                       Send mail to faith@cs.unc.edu&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
-r_else
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Future Domain: BIOS at %x; port base at %x; *NO* IRQ&bslash;n&quot;
-comma
-(paren
-r_int
-)paren
-id|bios_base
-comma
-id|port_base
-)paren
-suffix:semicolon
-)brace
 id|Data_Mode_Cntl_port
 op_assign
 id|port_base
@@ -1909,7 +2088,13 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;               This shouldn&squot;t happen: REPORT TO RIK!&bslash;n&quot;
+l_string|&quot;               This shouldn&squot;t happen!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;               Send mail to faith@cs.unc.edu&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -1934,7 +2119,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;               Please use another IRQ for the FD card!&bslash;n&quot;
+l_string|&quot;               Please use another IRQ!&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -1951,7 +2136,13 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;               This shouldn&squot;t happen: REPORT TO RIK!&bslash;n&quot;
+l_string|&quot;               This shouldn&squot;t happen!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;               Send mail to faith@cs.unc.edu&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -2365,6 +2556,12 @@ l_string|&quot;SCSI (Future Domain): my_done() called outside of command&bslash;
 )paren
 suffix:semicolon
 )brace
+macro_line|#if DEBUG_RACE
+id|in_interrupt_flag
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|fdomain_16x0_intr
 r_void
@@ -2414,6 +2611,11 @@ multiline_comment|/* Spurious interrupt */
 r_return
 suffix:semicolon
 )brace
+macro_line|#if DEBUG_RACE
+op_increment
+id|in_interrupt_flag
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2688,6 +2890,12 @@ comma
 id|TMC_Cntl_port
 )paren
 suffix:semicolon
+macro_line|#if DEBUG_RACE
+id|in_interrupt_flag
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 r_return
 suffix:semicolon
 )brace
@@ -2803,6 +3011,12 @@ l_int|0x80
 comma
 id|SCSI_Cntl_port
 )paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#if DEBUG_RACE
+id|in_interrupt_flag
+op_assign
+l_int|0
 suffix:semicolon
 macro_line|#endif
 r_return
@@ -3309,7 +3523,8 @@ l_int|2
 id|printk
 c_func
 (paren
-l_string|&quot;SCSI (Future Domain): target = %d, command = %x, Status = %x&bslash;n&quot;
+l_string|&quot;SCSI (Future Domain): target = %d, command = %x, &quot;
+l_string|&quot;Status = %x&bslash;n&quot;
 comma
 id|current_SC-&gt;target
 comma
@@ -3731,7 +3946,7 @@ id|code
 id|printk
 c_func
 (paren
-l_string|&quot;SCSI REQUEST SENSE: Sense Key = %x, Sense Code = %x&bslash;n&quot;
+l_string|&quot;SCSI REQUEST SENSE: Key = %x, Code = %x&bslash;n&quot;
 comma
 id|key
 comma
@@ -3827,6 +4042,12 @@ id|Interrupt_Cntl_port
 suffix:semicolon
 )brace
 )brace
+macro_line|#if DEBUG_RACE
+id|in_interrupt_flag
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 r_return
 suffix:semicolon
 )brace
@@ -4624,7 +4845,8 @@ id|Status
 id|printk
 c_func
 (paren
-l_string|&quot;SCSI (Future Domain): target = %d, command = %x, Status = %x&bslash;n&quot;
+l_string|&quot;SCSI (Future Domain): target = %d, command = %x, &quot;
+l_string|&quot;Status = %x&bslash;n&quot;
 comma
 id|target
 comma
@@ -5026,10 +5248,76 @@ l_string|&quot;SCSI (Future Domain): Abort &quot;
 suffix:semicolon
 macro_line|#endif
 macro_line|#if DEBUG_ABORT
+id|print_banner
+c_func
+(paren
+)paren
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|current_SC-&gt;SCp.phase
+)paren
+(brace
+r_case
+id|non_queueing
+suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;Phase = %d, target = %d cmnd = 0x%02x pieces = %d size = %u&bslash;n&quot;
+l_string|&quot;nonqueueing &quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|in_arbitration
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;arbitration &quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|in_selection
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;selection &quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|in_other
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;other &quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;unknown &quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;phase = %d, target = %d cmnd = 0x%02x pieces = %d size = %u&bslash;n&quot;
 comma
 id|current_SC-&gt;SCp.phase
 comma
@@ -5048,6 +5336,16 @@ comma
 id|current_SC-&gt;request_bufflen
 )paren
 suffix:semicolon
+macro_line|#if DEBUG_RACE
+id|printk
+c_func
+(paren
+l_string|&quot;in_interrupt_flag = %d&bslash;n&quot;
+comma
+id|in_interrupt_flag
+)paren
+suffix:semicolon
+macro_line|#endif
 id|printk
 c_func
 (paren
@@ -5182,6 +5480,71 @@ id|Interrupt_Mask_port
 )paren
 )paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Option Select  = %x&bslash;n&quot;
+comma
+id|inb
+c_func
+(paren
+id|port_base
+op_plus
+id|Option_Select
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|chip
+op_eq
+id|tmc18c50
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;FIFO Status    = %x&bslash;n&quot;
+comma
+id|inb
+c_func
+(paren
+id|port_base
+op_plus
+id|FIFO_Status
+)paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Int. Condition = %x&bslash;n&quot;
+comma
+id|inb
+c_func
+(paren
+id|port_base
+op_plus
+id|Interrupt_Cond
+)paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Configuration  = %x&bslash;n&quot;
+comma
+id|inb
+c_func
+(paren
+id|port_base
+op_plus
+id|Configuration
+)paren
+)paren
+suffix:semicolon
+)brace
 macro_line|#else
 id|cli
 c_func

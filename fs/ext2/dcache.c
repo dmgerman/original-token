@@ -767,7 +767,7 @@ l_string|&quot;dcache_invalidate&quot;
 suffix:semicolon
 macro_line|#endif
 )brace
-multiline_comment|/*&n; * Lookup a directory entry in the cache&n; *&n; * Note: the name is in the caller&squot;s address space&n; */
+multiline_comment|/*&n; * Lookup a directory entry in the cache&n; */
 DECL|function|ext2_dcache_lookup
 r_int
 r_int
@@ -991,7 +991,7 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Add a directory entry to the cache&n; *&n; * This function is called by ext2_lookup(), ext2_readdir()&n; * and the functions which create directory entries&n; *&n; * Note: the name is in the kernel address space&n; */
+multiline_comment|/*&n; * Add a directory entry to the cache&n; *&n; * This function is called by ext2_lookup(), ext2_readdir()&n; * and the functions which create directory entries&n; */
 DECL|function|ext2_dcache_add
 r_void
 id|ext2_dcache_add
@@ -1263,7 +1263,7 @@ l_string|&quot;dcache_add&quot;
 suffix:semicolon
 macro_line|#endif
 )brace
-multiline_comment|/*&n; * Remove a directory from the cache&n; *&n; * This function is called by the functions which remove directory entries&n; *&n; * Note: the name is in the kernel address space&n; */
+multiline_comment|/*&n; * Remove a directory from the cache&n; *&n; * This function is called by the functions which remove directory entries&n; */
 DECL|function|ext2_dcache_remove
 r_void
 id|ext2_dcache_remove

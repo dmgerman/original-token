@@ -102,6 +102,8 @@ l_int|NULL
 comma
 multiline_comment|/* write_super */
 id|isofs_statfs
+comma
+l_int|NULL
 )brace
 suffix:semicolon
 DECL|function|parse_options
@@ -1691,9 +1693,15 @@ multiline_comment|/* There are defective discs out there - we do this to protect
 r_if
 c_cond
 (paren
+(paren
 id|inode-&gt;i_size
 template_param
 l_int|700000000
+)paren
+op_logical_and
+id|inode-&gt;i_sb-&gt;u.isofs_sb.s_cruft
+op_eq
+l_char|&squot;n&squot;
 )paren
 (brace
 id|printk

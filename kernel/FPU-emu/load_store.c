@@ -225,6 +225,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|setcc
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/* Clear the SW_C1 bit, &quot;other bits undefined&quot; */
 id|reg_move
 c_func
 (paren
@@ -245,6 +252,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|setcc
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/* Clear the SW_C1 bit, &quot;other bits undefined&quot; */
 id|reg_move
 c_func
 (paren
@@ -265,6 +279,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|setcc
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/* Clear the SW_C1 bit, &quot;other bits undefined&quot; */
 id|reg_move
 c_func
 (paren
@@ -285,6 +306,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|setcc
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/* Clear the SW_C1 bit, &quot;other bits undefined&quot; */
 id|reg_move
 c_func
 (paren
@@ -451,6 +479,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|setcc
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/* Clear the SW_C1 bit, &quot;other bits undefined&quot; */
 id|reg_move
 c_func
 (paren
@@ -524,6 +559,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|setcc
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/* Clear the SW_C1 bit, &quot;other bits undefined&quot; */
 id|reg_move
 c_func
 (paren
@@ -544,6 +586,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|setcc
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/* Clear the SW_C1 bit, &quot;other bits undefined&quot; */
 id|reg_move
 c_func
 (paren
@@ -696,7 +745,7 @@ multiline_comment|/* fstsw m2byte */
 id|status_word
 op_and_assign
 op_complement
-id|SW_TOP
+id|SW_Top
 suffix:semicolon
 id|status_word
 op_or_assign
@@ -706,7 +755,7 @@ op_amp
 l_int|7
 )paren
 op_lshift
-id|SW_TOPS
+id|SW_Top_Shift
 suffix:semicolon
 id|RE_ENTRANT_CHECK_OFF
 id|verify_area

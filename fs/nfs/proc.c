@@ -3,6 +3,7 @@ multiline_comment|/*&n; * Defining NFS_PROC_DEBUG causes a lookup of a file name
 macro_line|#if 0
 mdefine_line|#define NFS_PROC_DEBUG
 macro_line|#endif
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/param.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -10,7 +11,7 @@ macro_line|#include &lt;linux/nfs_fs.h&gt;
 macro_line|#include &lt;linux/utsname.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;netinet/in.h&gt;
+macro_line|#include &lt;linux/in.h&gt;
 macro_line|#ifdef NFS_PROC_DEBUG
 DECL|variable|proc_debug
 r_static

@@ -451,8 +451,11 @@ r_int
 id|kernel_stack_page
 suffix:semicolon
 DECL|member|exit_code
+DECL|member|exit_signal
 r_int
 id|exit_code
+comma
+id|exit_signal
 suffix:semicolon
 DECL|member|dumpable
 r_int
@@ -540,6 +543,13 @@ comma
 op_star
 id|p_osptr
 suffix:semicolon
+DECL|member|wait_chldexit
+r_struct
+id|wait_queue
+op_star
+id|wait_chldexit
+suffix:semicolon
+multiline_comment|/* for wait4() */
 multiline_comment|/*&n;&t; * For ease of programming... Normal sleeps don&squot;t need to&n;&t; * keep track of a wait-queue: every task has an entry of it&squot;s own&n;&t; */
 DECL|member|uid
 DECL|member|euid
@@ -698,6 +708,18 @@ id|vm_area_struct
 op_star
 id|mmap
 suffix:semicolon
+DECL|member|shm
+r_struct
+id|shm_desc
+op_star
+id|shm
+suffix:semicolon
+DECL|member|semun
+r_struct
+id|sem_undo
+op_star
+id|semun
+suffix:semicolon
 r_struct
 (brace
 DECL|member|library
@@ -745,7 +767,7 @@ DECL|member|close_on_exec
 id|fd_set
 id|close_on_exec
 suffix:semicolon
-multiline_comment|/* ldt for this task 0 - zero 1 - cs 2 - ds&amp;ss, rest unused */
+multiline_comment|/* ldt for this task - not currently used */
 DECL|member|ldt
 r_struct
 id|desc_struct
@@ -770,9 +792,16 @@ DECL|macro|PF_PTRACED
 mdefine_line|#define PF_PTRACED&t;0x00000010&t;/* set if ptrace (0) has been called. */
 DECL|macro|PF_TRACESYS
 mdefine_line|#define PF_TRACESYS&t;0x00000020&t;/* tracing system calls */
+multiline_comment|/*&n; * cloning flags:&n; */
+DECL|macro|CSIGNAL
+mdefine_line|#define CSIGNAL&t;&t;0x000000ff&t;/* signal mask to be sent at exit */
+DECL|macro|COPYVM
+mdefine_line|#define COPYVM&t;&t;0x00000100&t;/* set if VM copy desired (like normal fork()) */
+DECL|macro|COPYFD
+mdefine_line|#define COPYFD&t;&t;0x00000200&t;/* set if fd&squot;s should be copied, not shared (NI) */
 multiline_comment|/*&n; *  INIT_TASK is used to set up the first task table, touch at&n; * your own risk!. Base=0, limit=0x1fffff (=2MB)&n; */
 DECL|macro|INIT_TASK
-mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,15,15,0,0,0,0, &bslash;&n;/* signals */&t;{{ 0, },}, &bslash;&n;/* stack */&t;0,0, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0,0,0,0, &bslash;&n;/* argv.. */&t;0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0, &bslash;&n;/* suppl grps*/ {NOGROUP,}, &bslash;&n;/* proc links*/ &amp;init_task,&amp;init_task,NULL,NULL,NULL, &bslash;&n;/* uid etc */&t;0,0,0,0,0,0, &bslash;&n;/* timeout */&t;0,0,0,0,0,0,0,0,0,0,0,0, &bslash;&n;/* min_flt */&t;0,0,0,0, &bslash;&n;/* rlimits */   { {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff},  &bslash;&n;&t;&t;  {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff}, &bslash;&n;&t;&t;  {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff}}, &bslash;&n;/* math */&t;0, &bslash;&n;/* rss */&t;2, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* vm86_info */&t;NULL, 0, &bslash;&n;/* fs info */&t;0,-1,0022,NULL,NULL,NULL,NULL, &bslash;&n;/* libraries */&t;{ { NULL, 0, 0, 0}, }, 0, &bslash;&n;/* filp */&t;{NULL,}, &bslash;&n;/* cloe */&t;{{ 0, }}, &bslash;&n;&t;&t;{ &bslash;&n;&t;&t;&t;{0,0}, &bslash;&n;/* ldt */&t;&t;{0x1ff,0xc0c0fa00}, &bslash;&n;&t;&t;&t;{0x1ff,0xc0c0f200}, &bslash;&n;&t;&t;}, &bslash;&n;/*tss*/&t;{0,sizeof(init_kernel_stack) + (long) &amp;init_kernel_stack, &bslash;&n;&t; 0x10,0,0,0,0,(long) &amp;swapper_pg_dir,&bslash;&n;&t; 0,0,0,0,0,0,0,0, &bslash;&n;&t; 0,0,0x17,0x17,0x17,0x17,0x17,0x17, &bslash;&n;&t; _LDT(0),0x80000000,{0xffffffff}, &bslash;&n;&t;&t;{ { 0, }, } &bslash;&n;&t;} &bslash;&n;}
+mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,15,15,0,0,0,0, &bslash;&n;/* signals */&t;{{ 0, },}, &bslash;&n;/* stack */&t;0,0, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0,0,0,0,0, &bslash;&n;/* argv.. */&t;0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0, &bslash;&n;/* suppl grps*/ {NOGROUP,}, &bslash;&n;/* proc links*/ &amp;init_task,&amp;init_task,NULL,NULL,NULL,NULL, &bslash;&n;/* uid etc */&t;0,0,0,0,0,0, &bslash;&n;/* timeout */&t;0,0,0,0,0,0,0,0,0,0,0,0, &bslash;&n;/* min_flt */&t;0,0,0,0, &bslash;&n;/* rlimits */   { {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff},  &bslash;&n;&t;&t;  {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff}, &bslash;&n;&t;&t;  {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff}}, &bslash;&n;/* math */&t;0, &bslash;&n;/* rss */&t;2, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* vm86_info */&t;NULL, 0, &bslash;&n;/* fs info */&t;0,-1,0022,NULL,NULL,NULL,NULL, &bslash;&n;/* ipc */&t;NULL, NULL, &bslash;&n;/* libraries */&t;{ { NULL, 0, 0, 0}, }, 0, &bslash;&n;/* filp */&t;{NULL,}, &bslash;&n;/* cloe */&t;{{ 0, }}, &bslash;&n;&t;&t;{ &bslash;&n;/* ldt */&t;&t;{0,0}, &bslash;&n;&t;&t;}, &bslash;&n;/*tss*/&t;{0,sizeof(init_kernel_stack) + (long) &amp;init_kernel_stack, &bslash;&n;&t; KERNEL_DS,0,0,0,0,(long) &amp;swapper_pg_dir,&bslash;&n;&t; 0,0,0,0,0,0,0,0, &bslash;&n;&t; 0,0,USER_DS,USER_DS,USER_DS,USER_DS,USER_DS,USER_DS, &bslash;&n;&t; _LDT(0),0x80000000,{0xffffffff}, &bslash;&n;&t;&t;{ { 0, }, } &bslash;&n;&t;} &bslash;&n;}
 r_extern
 r_struct
 id|task_struct
@@ -825,24 +854,6 @@ DECL|macro|CURRENT_TIME
 mdefine_line|#define CURRENT_TIME (startup_time+(jiffies+jiffies_offset)/HZ)
 r_extern
 r_void
-id|add_timer
-c_func
-(paren
-r_int
-id|jiffies
-comma
-r_void
-(paren
-op_star
-id|fn
-)paren
-(paren
-r_void
-)paren
-)paren
-suffix:semicolon
-r_extern
-r_void
 id|sleep_on
 c_func
 (paren
@@ -887,6 +898,17 @@ id|wait_queue
 op_star
 op_star
 id|p
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|notify_parent
+c_func
+(paren
+r_struct
+id|task_struct
+op_star
+id|tsk
 )paren
 suffix:semicolon
 r_extern
@@ -960,9 +982,9 @@ op_star
 r_new
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Entry into gdt where to find first TSS. 0-nul, 1-cs, 2-ds, 3-syscall&n; * 4-TSS0, 5-LDT0, 6-TSS1 etc ...&n; */
+multiline_comment|/*&n; * Entry into gdt where to find first TSS. GDT layout:&n; *   0 - nul&n; *   1 - kernel code segment&n; *   2 - kernel data segment&n; *   3 - user code segment&n; *   4 - user data segment&n; * ...&n; *   8 - TSS #0&n; *   9 - LDT #0&n; *  10 - TSS #1&n; *  11 - LDT #1&n; */
 DECL|macro|FIRST_TSS_ENTRY
-mdefine_line|#define FIRST_TSS_ENTRY 4
+mdefine_line|#define FIRST_TSS_ENTRY 8
 DECL|macro|FIRST_LDT_ENTRY
 mdefine_line|#define FIRST_LDT_ENTRY (FIRST_TSS_ENTRY+1)
 DECL|macro|_TSS

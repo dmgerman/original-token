@@ -17,6 +17,8 @@ comma
 id|UTS_VERSION
 comma
 id|UTS_MACHINE
+comma
+id|UTS_DOMAINNAME
 )brace
 suffix:semicolon
 DECL|variable|linux_banner
@@ -30,10 +32,12 @@ l_string|&quot; (&quot;
 id|LINUX_COMPILE_BY
 l_string|&quot;@&quot;
 id|LINUX_COMPILE_HOST
+l_string|&quot;.&quot;
+id|LINUX_COMPILE_DOMAIN
 l_string|&quot;) &quot;
 id|UTS_VERSION
-l_string|&quot; &quot;
+l_string|&quot;: &quot;
 id|LINUX_COMPILE_TIME
-l_string|&quot; &bslash;n&quot;
+l_string|&quot;&bslash;n&quot;
 suffix:semicolon
 eof

@@ -84,6 +84,12 @@ DECL|macro|FIOCLEX
 mdefine_line|#define FIOCLEX&t;&t;0x5451
 DECL|macro|FIOASYNC
 mdefine_line|#define FIOASYNC&t;0x5452
+DECL|macro|TIOCSERCONFIG
+mdefine_line|#define TIOCSERCONFIG&t;0x5453
+DECL|macro|TIOCSERGWILD
+mdefine_line|#define TIOCSERGWILD&t;0x5454
+DECL|macro|TIOCSERSWILD
+mdefine_line|#define TIOCSERSWILD&t;0x5455
 multiline_comment|/* Used for packet mode */
 DECL|macro|TIOCPKT_FLUSHREAD
 mdefine_line|#define TIOCPKT_FLUSHREAD&t; 1

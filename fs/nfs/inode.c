@@ -92,7 +92,9 @@ l_int|NULL
 comma
 multiline_comment|/* write superblock */
 id|nfs_statfs
+comma
 multiline_comment|/* stat filesystem */
+l_int|NULL
 )brace
 suffix:semicolon
 DECL|function|nfs_put_inode

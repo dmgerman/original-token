@@ -421,6 +421,11 @@ op_amp
 id|O_NONBLOCK
 )paren
 r_return
+id|written
+ques
+c_cond
+id|written
+suffix:colon
 op_minus
 id|EAGAIN
 suffix:semicolon

@@ -76,6 +76,8 @@ mdefine_line|#define SIGPROF&t;&t;27
 DECL|macro|SIGWINCH
 mdefine_line|#define SIGWINCH&t;28
 multiline_comment|/*&n;#define SIGLOST&t;&t;29&n;*/
+DECL|macro|SIGPWR
+mdefine_line|#define SIGPWR&t;&t;30
 multiline_comment|/*&n; * sa_flags values: SA_STACK is not currently supported, but will allow the&n; * usage of signal stacks by using the (now obsolete) sa_restorer field in&n; * the sigaction structure as a stack pointer. This is now possible due to&n; * the changes in signal handling. LBT 010493.&n; * SA_RESTART is a no-op, as restarting is the default anyway. Use the&n; * SA_INTERRUPT flag to get interrupting signals..&n; */
 DECL|macro|SA_NOCLDSTOP
 mdefine_line|#define SA_NOCLDSTOP&t;1

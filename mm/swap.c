@@ -16,7 +16,7 @@ mdefine_line|#define SWP_USED&t;1
 DECL|macro|SWP_WRITEOK
 mdefine_line|#define SWP_WRITEOK&t;3
 DECL|macro|SWP_TYPE
-mdefine_line|#define SWP_TYPE(entry) (((entry) &amp; 0xffe) &gt;&gt; 1)
+mdefine_line|#define SWP_TYPE(entry) (((entry) &amp; 0xfe) &gt;&gt; 1)
 DECL|macro|SWP_OFFSET
 mdefine_line|#define SWP_OFFSET(entry) ((entry) &gt;&gt; PAGE_SHIFT)
 DECL|macro|SWP_ENTRY
@@ -88,6 +88,13 @@ r_extern
 r_int
 r_int
 id|free_page_list
+suffix:semicolon
+r_extern
+r_int
+id|shm_swap
+(paren
+r_int
+)paren
 suffix:semicolon
 multiline_comment|/*&n; * The following are used to make sure we don&squot;t thrash too much...&n; * NOTE!! NR_LAST_FREE_PAGES must be a power of 2...&n; */
 DECL|macro|NR_LAST_FREE_PAGES
@@ -368,7 +375,6 @@ id|lock_queue
 suffix:semicolon
 )brace
 DECL|function|get_swap_page
-r_static
 r_int
 r_int
 id|get_swap_page
@@ -535,6 +541,16 @@ r_if
 c_cond
 (paren
 id|type
+op_eq
+id|SHM_SWP_TYPE
+)paren
+r_return
+id|entry
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|type
 op_ge
 id|nr_swapfiles
 )paren
@@ -639,6 +655,15 @@ c_func
 (paren
 id|entry
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|type
+op_eq
+id|SHM_SWP_TYPE
+)paren
+r_return
 suffix:semicolon
 r_if
 c_cond
@@ -856,6 +881,28 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|SWP_TYPE
+c_func
+(paren
+id|entry
+)paren
+op_eq
+id|SHM_SWP_TYPE
+)paren
+r_return
+id|shm_no_page
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+id|table_ptr
+)paren
+suffix:semicolon
 id|page
 op_assign
 id|get_free_page
@@ -1491,6 +1538,18 @@ r_if
 c_cond
 (paren
 id|shrink_buffers
+c_func
+(paren
+id|i
+)paren
+)paren
+r_return
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|shm_swap
 c_func
 (paren
 id|i

@@ -1420,7 +1420,7 @@ id|inode
 op_star
 id|dir
 comma
-r_int
+id|off_t
 op_star
 id|pos
 comma

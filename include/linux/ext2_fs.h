@@ -15,15 +15,19 @@ multiline_comment|/*&n; * Define EXT2FS_DEBUG_CACHE to produce cache debug messa
 DECL|macro|EXT2FS_DEBUG_CACHE
 macro_line|#undef EXT2FS_DEBUG_CACHE
 multiline_comment|/*&n; * The second extended file system version&n; */
+DECL|macro|EXT2FS_DATE
+mdefine_line|#define EXT2FS_DATE&t;&quot;93/06/06&quot;
 DECL|macro|EXT2FS_VERSION
-mdefine_line|#define EXT2FS_VERSION&t;&quot;0.3, 93/04/22&quot;
+mdefine_line|#define EXT2FS_VERSION&t;&quot;0.3a&quot;
 multiline_comment|/*&n; * Special inodes numbers&n; */
 DECL|macro|EXT2_BAD_INO
 mdefine_line|#define&t;EXT2_BAD_INO&t;&t; 1&t;/* Bad blocks inode */
 DECL|macro|EXT2_ROOT_INO
 mdefine_line|#define EXT2_ROOT_INO&t;&t; 2&t;/* Root inode */
-DECL|macro|EXT2_ACL_INO
-mdefine_line|#define EXT2_ACL_INO&t;&t; 3&t;/* ACL inode */
+DECL|macro|EXT2_ACL_IDX_INO
+mdefine_line|#define EXT2_ACL_IDX_INO&t; 3&t;/* ACL inode */
+DECL|macro|EXT2_ACL_DATA_INO
+mdefine_line|#define EXT2_ACL_DATA_INO&t; 4&t;/* ACL inode */
 DECL|macro|EXT2_FIRST_INO
 mdefine_line|#define EXT2_FIRST_INO&t;&t;11&t;/* First non reserved inode */
 multiline_comment|/*&n; * The second extended file system magic number&n; */
@@ -41,7 +45,7 @@ DECL|macro|EXT2_MAX_BLOCK_SIZE
 mdefine_line|#define&t;EXT2_MAX_BLOCK_SIZE&t;&t;4096
 DECL|macro|EXT2_MIN_BLOCK_LOG_SIZE
 mdefine_line|#define EXT2_MIN_BLOCK_LOG_SIZE&t;&t;  10
-macro_line|#ifdef KERNEL
+macro_line|#ifdef __KERNEL__
 DECL|macro|EXT2_BLOCK_SIZE
 macro_line|# define EXT2_BLOCK_SIZE(s)&t;&t;((s)-&gt;s_blocksize)
 macro_line|#else
@@ -52,7 +56,7 @@ DECL|macro|EXT2_ACLE_PER_BLOCK
 mdefine_line|#define EXT2_ACLE_PER_BLOCK(s)&t;&t;(EXT2_BLOCK_SIZE(s) / sizeof (struct ext2_acl_entry))
 DECL|macro|EXT2_ADDR_PER_BLOCK
 mdefine_line|#define&t;EXT2_ADDR_PER_BLOCK(s)&t;&t;(EXT2_BLOCK_SIZE(s) / sizeof (unsigned long))
-macro_line|#ifdef KERNEL
+macro_line|#ifdef __KERNEL__
 DECL|macro|EXT2_BLOCK_SIZE_BITS
 macro_line|# define EXT2_BLOCK_SIZE_BITS(s)&t;((s)-&gt;u.ext2_sb.s_log_block_size + 10)
 macro_line|#else
@@ -68,7 +72,7 @@ DECL|macro|EXT2_MAX_FRAG_SIZE
 mdefine_line|#define&t;EXT2_MAX_FRAG_SIZE&t;&t;1024
 DECL|macro|EXT2_MIN_FRAG_LOG_SIZE
 mdefine_line|#define EXT2_MIN_FRAG_LOG_SIZE&t;&t;  10
-macro_line|#ifdef KERNEL
+macro_line|#ifdef __KERNEL__
 DECL|macro|EXT2_FRAG_SIZE
 macro_line|# define EXT2_FRAG_SIZE(s)&t;&t;((s)-&gt;u.ext2_sb.s_frag_size)
 DECL|macro|EXT2_FRAGS_PER_BLOCK
@@ -85,6 +89,11 @@ r_struct
 id|ext2_acl_header
 multiline_comment|/* Header of Access Control Lists */
 (brace
+DECL|member|aclh_size
+r_int
+r_int
+id|aclh_size
+suffix:semicolon
 DECL|member|aclh_file_count
 r_int
 r_int
@@ -100,11 +109,6 @@ r_int
 r_int
 id|aclh_first_acle
 suffix:semicolon
-DECL|member|aclh_reserved
-r_int
-r_int
-id|aclh_reserved
-suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|ext2_acl_entry
@@ -112,6 +116,11 @@ r_struct
 id|ext2_acl_entry
 multiline_comment|/* Access Control List Entry */
 (brace
+DECL|member|acle_size
+r_int
+r_int
+id|acle_size
+suffix:semicolon
 DECL|member|acle_perms
 r_int
 r_int
@@ -134,11 +143,6 @@ DECL|member|acle_pad1
 r_int
 r_int
 id|acle_pad1
-suffix:semicolon
-DECL|member|acle_reserved
-r_int
-r_int
-id|acle_reserved
 suffix:semicolon
 DECL|member|acle_next
 r_int
@@ -242,7 +246,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Macro-instructions used to manage group descriptors&n; */
-macro_line|#ifdef KERNEL
+macro_line|#ifdef __KERNEL__
 DECL|macro|EXT2_BLOCKS_PER_GROUP
 macro_line|# define EXT2_BLOCKS_PER_GROUP(s)&t;((s)-&gt;u.ext2_sb.s_blocks_per_group)
 DECL|macro|EXT2_DESC_PER_BLOCK
@@ -744,6 +748,21 @@ comma
 r_int
 )paren
 suffix:semicolon
+multiline_comment|/* fsync.c */
+r_extern
+r_int
+id|ext2_sync_file
+c_func
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_struct
+id|file
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/* ialloc.c */
 r_extern
 r_struct
@@ -845,6 +864,18 @@ op_star
 )paren
 suffix:semicolon
 r_extern
+r_int
+id|ext2_remount
+(paren
+r_struct
+id|super_block
+op_star
+comma
+r_int
+op_star
+)paren
+suffix:semicolon
+r_extern
 r_struct
 id|super_block
 op_star
@@ -897,6 +928,16 @@ op_star
 comma
 r_struct
 id|statfs
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|ext2_sync_inode
+c_func
+(paren
+r_struct
+id|inode
 op_star
 )paren
 suffix:semicolon

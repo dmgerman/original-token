@@ -1621,6 +1621,12 @@ c_func
 id|inode-&gt;i_sb
 )paren
 suffix:semicolon
+id|insert_inode_hash
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
 r_return
 id|inode
 suffix:semicolon

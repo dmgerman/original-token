@@ -3,7 +3,7 @@ DECL|macro|_LINUX_NFS_FS_H
 mdefine_line|#define _LINUX_NFS_FS_H
 multiline_comment|/*&n; *  linux/include/linux/nfs_fs.h&n; *&n; *  Copyright (C) 1992  Rick Sladkey&n; *&n; *  OS-specific nfs filesystem definitions and declarations&n; */
 macro_line|#include &lt;linux/nfs.h&gt;
-macro_line|#include &lt;netinet/in.h&gt;
+macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/nfs_mount.h&gt;
 multiline_comment|/*&n; * The readdir cache size controls how many directory entries are cached.&n; * Its size is limited by the number of nfs_entry structures that can fit&n; * in one 4096-byte page, currently 256.&n; */
 DECL|macro|NFS_READDIR_CACHE_SIZE

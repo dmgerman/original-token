@@ -218,6 +218,8 @@ l_int|NULL
 comma
 multiline_comment|/* added in 0.96c */
 id|msdos_statfs
+comma
+l_int|NULL
 )brace
 suffix:semicolon
 DECL|function|parse_options

@@ -13,8 +13,8 @@ r_static
 r_inline
 r_int
 id|find_first_zero_bit
-c_func
 (paren
+r_int
 r_int
 op_star
 id|addr
@@ -1559,6 +1559,8 @@ r_if
 c_cond
 (paren
 id|tmp-&gt;bg_free_inodes_count
+op_logical_and
+id|tmp-&gt;bg_free_inodes_count
 op_ge
 id|avefreei
 )paren
@@ -1751,6 +1753,12 @@ id|gdp
 id|unlock_super
 (paren
 id|sb
+)paren
+suffix:semicolon
+id|iput
+c_func
+(paren
+id|inode
 )paren
 suffix:semicolon
 r_return
@@ -2023,6 +2031,12 @@ suffix:semicolon
 id|inode-&gt;i_op
 op_assign
 l_int|NULL
+suffix:semicolon
+id|insert_inode_hash
+c_func
+(paren
+id|inode
+)paren
 suffix:semicolon
 id|inc_inode_version
 (paren

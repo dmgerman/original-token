@@ -11,15 +11,17 @@ multiline_comment|/*&n; * It&squot;s silly to have NR_OPEN bigger than NR_FILE, 
 DECL|macro|NR_OPEN
 macro_line|#undef NR_OPEN
 DECL|macro|NR_OPEN
-mdefine_line|#define NR_OPEN 256&t;/* don&squot;t change - fd_set etc depend on this */
+mdefine_line|#define NR_OPEN 256
 DECL|macro|NR_INODE
-mdefine_line|#define NR_INODE 256&t;/* this should be bigger than NR_FILE */
+mdefine_line|#define NR_INODE 2048&t;/* this should be bigger than NR_FILE */
 DECL|macro|NR_FILE
-mdefine_line|#define NR_FILE 128&t;/* this can well be larger on a larger system */
+mdefine_line|#define NR_FILE 1024&t;/* this can well be larger on a larger system */
 DECL|macro|NR_SUPER
-mdefine_line|#define NR_SUPER 16
+mdefine_line|#define NR_SUPER 32
 DECL|macro|NR_HASH
 mdefine_line|#define NR_HASH 997
+DECL|macro|NR_IHASH
+mdefine_line|#define NR_IHASH 131
 DECL|macro|NR_FILE_LOCKS
 mdefine_line|#define NR_FILE_LOCKS 32
 DECL|macro|BLOCK_SIZE
@@ -215,6 +217,12 @@ r_char
 id|b_lock
 suffix:semicolon
 multiline_comment|/* 0 - ok, 1 -locked */
+DECL|member|b_req
+r_int
+r_char
+id|b_req
+suffix:semicolon
+multiline_comment|/* 0 if the buffer has been invalidated */
 DECL|member|b_wait
 r_struct
 id|wait_queue
@@ -509,6 +517,16 @@ DECL|member|f_reada
 r_int
 r_int
 id|f_reada
+suffix:semicolon
+DECL|member|f_next
+DECL|member|f_prev
+r_struct
+id|file
+op_star
+id|f_next
+comma
+op_star
+id|f_prev
 suffix:semicolon
 DECL|member|f_inode
 r_struct
@@ -1277,6 +1295,21 @@ id|statfs
 op_star
 )paren
 suffix:semicolon
+DECL|member|remount_fs
+r_int
+(paren
+op_star
+id|remount_fs
+)paren
+(paren
+r_struct
+id|super_block
+op_star
+comma
+r_int
+op_star
+)paren
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|file_system_type
@@ -1472,12 +1505,23 @@ id|mount_root
 )paren
 suffix:semicolon
 r_extern
+r_int
+id|fs_may_remount_ro
+c_func
+(paren
+id|dev_t
+id|dev
+)paren
+suffix:semicolon
+r_extern
 r_struct
 id|file
-id|file_table
-(braket
-id|NR_FILE
-)braket
+op_star
+id|first_file
+suffix:semicolon
+r_extern
+r_int
+id|nr_files
 suffix:semicolon
 r_extern
 r_struct
@@ -1557,36 +1601,6 @@ id|first_block
 )paren
 suffix:semicolon
 r_extern
-r_int
-id|ticks_to_floppy_on
-c_func
-(paren
-r_int
-r_int
-id|dev
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|floppy_on
-c_func
-(paren
-r_int
-r_int
-id|dev
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|floppy_off
-c_func
-(paren
-r_int
-r_int
-id|dev
-)paren
-suffix:semicolon
-r_extern
 r_void
 id|sync_inodes
 c_func
@@ -1598,6 +1612,15 @@ suffix:semicolon
 r_extern
 r_void
 id|sync_dev
+c_func
+(paren
+id|dev_t
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|fsync_dev
 c_func
 (paren
 id|dev_t
@@ -1769,6 +1792,16 @@ id|get_empty_inode
 c_func
 (paren
 r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|insert_inode_hash
+c_func
+(paren
+r_struct
+id|inode
+op_star
 )paren
 suffix:semicolon
 r_extern
@@ -2069,6 +2102,34 @@ r_char
 op_star
 comma
 r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|block_fsync
+c_func
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_struct
+id|file
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|file_fsync
+c_func
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_struct
+id|file
+op_star
 )paren
 suffix:semicolon
 macro_line|#endif

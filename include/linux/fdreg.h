@@ -2,56 +2,6 @@ macro_line|#ifndef _LINUX_FDREG_H
 DECL|macro|_LINUX_FDREG_H
 mdefine_line|#define _LINUX_FDREG_H
 multiline_comment|/*&n; * This file contains some defines for the floppy disk controller.&n; * Various sources. Mostly &quot;IBM Microcomputers: A Programmers&n; * Handbook&quot;, Sanches and Canton.&n; */
-r_extern
-r_int
-id|ticks_to_floppy_on
-c_func
-(paren
-r_int
-r_int
-id|nr
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|floppy_on
-c_func
-(paren
-r_int
-r_int
-id|nr
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|floppy_off
-c_func
-(paren
-r_int
-r_int
-id|nr
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|floppy_select
-c_func
-(paren
-r_int
-r_int
-id|nr
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|floppy_deselect
-c_func
-(paren
-r_int
-r_int
-id|nr
-)paren
-suffix:semicolon
 multiline_comment|/* Fd controller regs. S&amp;C, about page 340 */
 DECL|macro|FD_STATUS
 mdefine_line|#define FD_STATUS&t;0x3f4

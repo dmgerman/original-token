@@ -358,7 +358,7 @@ id|u_char
 id|kb_index
 suffix:semicolon
 DECL|member|kb_value
-id|u_char
+id|u_short
 id|kb_value
 suffix:semicolon
 )brace

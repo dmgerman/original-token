@@ -33,7 +33,7 @@ DECL|macro|NFSMODE_SOCK
 mdefine_line|#define NFSMODE_SOCK 0140000
 DECL|macro|NFSMODE_FIFO
 mdefine_line|#define NFSMODE_FIFO 0010000
-macro_line|#ifdef KERNEL&t;/* user programs should get these from the rpc header files */
+macro_line|#ifdef __KERNEL__ /* user programs should get these from the rpc header files */
 DECL|macro|RPC_VERSION
 mdefine_line|#define RPC_VERSION 2
 DECL|enum|rpc_auth_flavor
@@ -167,7 +167,7 @@ l_int|5
 comma
 )brace
 suffix:semicolon
-macro_line|#endif /* KERNEL */
+macro_line|#endif /* __KERNEL__ */
 DECL|enum|nfs_stat
 r_enum
 id|nfs_stat

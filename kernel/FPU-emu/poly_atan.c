@@ -176,6 +176,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/* Need a positive number */
 macro_line|#endif PARANOID
 id|exponent
 op_assign
@@ -745,12 +746,6 @@ id|odd_poly
 comma
 id|FULL_PRECISION
 )paren
-suffix:semicolon
-id|odd_poly.exp
-op_sub_assign
-id|EXP_BIAS
-op_minus
-l_int|1
 suffix:semicolon
 multiline_comment|/* will be a valid positive nr with expon = 0 */
 op_star

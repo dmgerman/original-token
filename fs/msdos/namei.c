@@ -96,6 +96,7 @@ op_star
 op_star
 id|reserved
 suffix:semicolon
+r_int
 r_char
 id|c
 suffix:semicolon
@@ -2022,7 +2023,7 @@ op_star
 id|dir
 )paren
 (brace
-r_int
+id|off_t
 id|pos
 suffix:semicolon
 r_struct

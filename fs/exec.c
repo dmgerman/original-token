@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
+macro_line|#include &lt;linux/segment.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 r_extern
 r_int
@@ -30,6 +31,13 @@ c_func
 (paren
 r_int
 id|fd
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|shm_exit
+(paren
+r_void
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * MAX_ARG_PAGES defines the number of pages allocated for arguments&n; * and envelope for the new program. 32 should suffice, this gives&n; * a maximum env+arg of 128kB !&n; */
@@ -128,15 +136,11 @@ suffix:semicolon
 id|__asm__
 c_func
 (paren
-l_string|&quot;mov %0,%%fs&quot;
+l_string|&quot;mov %w0,%%fs&quot;
 op_scope_resolution
 l_string|&quot;r&quot;
 (paren
-(paren
-r_int
-r_int
-)paren
-l_int|0x10
+id|KERNEL_DS
 )paren
 )paren
 suffix:semicolon
@@ -150,7 +154,7 @@ l_string|&quot;core&quot;
 comma
 id|O_CREAT
 op_or
-id|O_WRONLY
+l_int|2
 op_or
 id|O_TRUNC
 comma
@@ -498,15 +502,11 @@ suffix:semicolon
 id|__asm__
 c_func
 (paren
-l_string|&quot;mov %0,%%fs&quot;
+l_string|&quot;mov %w0,%%fs&quot;
 op_scope_resolution
 l_string|&quot;r&quot;
 (paren
-(paren
-r_int
-r_int
-)paren
-l_int|0x10
+id|KERNEL_DS
 )paren
 )paren
 suffix:semicolon
@@ -543,15 +543,11 @@ multiline_comment|/* now we start writing out the user space info */
 id|__asm__
 c_func
 (paren
-l_string|&quot;mov %0,%%fs&quot;
+l_string|&quot;mov %w0,%%fs&quot;
 op_scope_resolution
 l_string|&quot;r&quot;
 (paren
-(paren
-r_int
-r_int
-)paren
-l_int|0x17
+id|USER_DS
 )paren
 )paren
 suffix:semicolon
@@ -619,15 +615,11 @@ multiline_comment|/* Finally dump the task struct.  Not be used by gdb, but coul
 id|__asm__
 c_func
 (paren
-l_string|&quot;mov %0,%%fs&quot;
+l_string|&quot;mov %w0,%%fs&quot;
 op_scope_resolution
 l_string|&quot;r&quot;
 (paren
-(paren
-r_int
-r_int
-)paren
-l_int|0x10
+id|KERNEL_DS
 )paren
 )paren
 suffix:semicolon
@@ -666,7 +658,7 @@ suffix:colon
 id|__asm__
 c_func
 (paren
-l_string|&quot;mov %0,%%fs&quot;
+l_string|&quot;mov %w0,%%fs&quot;
 op_scope_resolution
 l_string|&quot;r&quot;
 (paren
@@ -728,7 +720,7 @@ op_logical_or
 id|get_limit
 c_func
 (paren
-l_int|0x17
+id|USER_DS
 )paren
 op_ne
 id|TASK_SIZE
@@ -1708,58 +1700,6 @@ id|current-&gt;start_code
 op_assign
 id|code_base
 suffix:semicolon
-id|set_base
-c_func
-(paren
-id|current-&gt;ldt
-(braket
-l_int|1
-)braket
-comma
-id|code_base
-)paren
-suffix:semicolon
-id|set_limit
-c_func
-(paren
-id|current-&gt;ldt
-(braket
-l_int|1
-)braket
-comma
-id|code_limit
-)paren
-suffix:semicolon
-id|set_base
-c_func
-(paren
-id|current-&gt;ldt
-(braket
-l_int|2
-)braket
-comma
-id|data_base
-)paren
-suffix:semicolon
-id|set_limit
-c_func
-(paren
-id|current-&gt;ldt
-(braket
-l_int|2
-)braket
-comma
-id|data_limit
-)paren
-suffix:semicolon
-multiline_comment|/* make sure fs points to the NEW data segment */
-id|__asm__
-c_func
-(paren
-l_string|&quot;pushl $0x17&bslash;n&bslash;tpop %%fs&quot;
-op_scope_resolution
-)paren
-suffix:semicolon
 id|data_base
 op_add_assign
 id|data_limit
@@ -2096,7 +2036,7 @@ l_int|1
 )braket
 )paren
 op_ne
-l_int|0x000f
+id|USER_CS
 )paren
 id|panic
 c_func
@@ -3073,6 +3013,16 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|current-&gt;shm
+)paren
+id|shm_exit
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|current-&gt;executable
 )paren
 (brace
@@ -3146,10 +3096,6 @@ op_assign
 l_int|0
 suffix:semicolon
 id|current-&gt;numlibraries
-op_assign
-l_int|0
-suffix:semicolon
-id|current-&gt;signal
 op_assign
 l_int|0
 suffix:semicolon

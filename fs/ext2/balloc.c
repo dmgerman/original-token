@@ -17,6 +17,7 @@ r_int
 id|find_first_zero_bit
 (paren
 r_int
+r_int
 op_star
 id|addr
 comma
@@ -168,6 +169,7 @@ r_int
 id|find_next_zero_bit
 (paren
 r_int
+r_int
 op_star
 id|addr
 comma
@@ -179,11 +181,13 @@ id|offset
 )paren
 (brace
 r_int
+r_int
 op_star
 id|p
 op_assign
 (paren
 (paren
+r_int
 r_int
 op_star
 )paren

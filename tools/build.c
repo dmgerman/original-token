@@ -1215,6 +1215,36 @@ c_func
 l_string|&quot;Non-GCC header of &squot;system&squot;&quot;
 )paren
 suffix:semicolon
+id|fprintf
+c_func
+(paren
+id|stderr
+comma
+l_string|&quot;System is %d kB (%d kB code, %d kB data and %d kB bss)&bslash;n&quot;
+comma
+(paren
+id|ex-&gt;a_text
+op_plus
+id|ex-&gt;a_data
+op_plus
+id|ex-&gt;a_bss
+)paren
+op_div
+l_int|1024
+comma
+id|ex-&gt;a_text
+op_div
+l_int|1024
+comma
+id|ex-&gt;a_data
+op_div
+l_int|1024
+comma
+id|ex-&gt;a_bss
+op_div
+l_int|1024
+)paren
+suffix:semicolon
 id|sz
 op_assign
 id|N_SYMOFF
@@ -1227,16 +1257,6 @@ op_minus
 id|GCC_HEADER
 op_plus
 l_int|4
-suffix:semicolon
-id|fprintf
-c_func
-(paren
-id|stderr
-comma
-l_string|&quot;System is %d bytes.&bslash;n&quot;
-comma
-id|sz
-)paren
 suffix:semicolon
 id|sys_size
 op_assign

@@ -389,7 +389,10 @@ id|sd_open
 comma
 multiline_comment|/* open code */
 id|sd_release
+comma
 multiline_comment|/* release */
+id|block_fsync
+multiline_comment|/* fsync */
 )brace
 suffix:semicolon
 DECL|variable|sd_gendisk

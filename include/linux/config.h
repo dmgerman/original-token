@@ -18,6 +18,10 @@ macro_line|#else
 DECL|macro|UTS_MACHINE
 mdefine_line|#define UTS_MACHINE &quot;i386&quot;&t;/* hardware type */
 macro_line|#endif
+macro_line|#ifndef UTS_DOMAINNAME
+DECL|macro|UTS_DOMAINNAME
+mdefine_line|#define UTS_DOMAINNAME &quot;(none)&quot;&t;/* set by setdomainname() */
+macro_line|#endif
 multiline_comment|/*&n; * The definitions for UTS_RELEASE and UTS_VERSION are now defined&n; * in linux/version.h, and should only be used by linux/version.c&n; */
 multiline_comment|/* Don&squot;t touch these, unless you really know what your doing. */
 DECL|macro|DEF_INITSEG

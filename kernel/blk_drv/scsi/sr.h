@@ -33,6 +33,13 @@ r_char
 id|sector_bit_shift
 suffix:semicolon
 multiline_comment|/* sectors/FS block = 2^sector_bit_shift*/
+DECL|member|needs_sector_size
+r_int
+id|needs_sector_size
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* needs to get sector size */
 DECL|member|ten
 r_int
 id|ten

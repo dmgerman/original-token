@@ -841,6 +841,42 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|sys_setdomainname
+c_func
+(paren
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|sys_olduname
+c_func
+(paren
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|sys_old_syscall
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * These are system calls that will be removed at some time&n; * due to newer versions existing..&n; */
+macro_line|#ifdef notdef
+DECL|macro|sys_waitpid
+mdefine_line|#define sys_waitpid&t;sys_old_syscall&t;/* sys_wait4&t;*/
+DECL|macro|sys_olduname
+mdefine_line|#define sys_olduname&t;sys_old_syscall /* sys_newuname&t;*/
+DECL|macro|sys_stat
+mdefine_line|#define sys_stat&t;sys_old_syscall /* sys_newstat&t;*/
+DECL|macro|sys_fstat
+mdefine_line|#define sys_fstat&t;sys_old_syscall&t;/* sys_newfstat&t;*/
+DECL|macro|sys_lstat
+mdefine_line|#define sys_lstat&t;sys_old_syscall /* sys_newlstat&t;*/
+DECL|macro|sys_signal
+mdefine_line|#define sys_signal&t;sys_old_syscall&t;/* sys_sigaction */
+macro_line|#endif
 DECL|variable|sys_call_table
 id|fn_ptr
 id|sys_call_table
@@ -966,7 +1002,7 @@ id|sys_setpgid
 comma
 id|sys_ulimit
 comma
-id|sys_uname
+id|sys_olduname
 comma
 id|sys_umask
 comma
@@ -1066,7 +1102,7 @@ id|sys_newlstat
 comma
 id|sys_newfstat
 comma
-id|sys_newuname
+id|sys_uname
 comma
 id|sys_iopl
 comma
@@ -1089,6 +1125,10 @@ comma
 id|sys_sigreturn
 comma
 id|sys_clone
+comma
+id|sys_setdomainname
+comma
+id|sys_newuname
 )brace
 suffix:semicolon
 multiline_comment|/* So we don&squot;t have to do any more manual updating.... */

@@ -120,8 +120,8 @@ DECL|macro|__NR_setpgid
 mdefine_line|#define __NR_setpgid&t;&t; 57
 DECL|macro|__NR_ulimit
 mdefine_line|#define __NR_ulimit&t;&t; 58
-DECL|macro|__NR_olduname
-mdefine_line|#define __NR_olduname&t;&t; 59
+DECL|macro|__NR_oldolduname
+mdefine_line|#define __NR_oldolduname&t; 59
 DECL|macro|__NR_umask
 mdefine_line|#define __NR_umask&t;&t; 60
 DECL|macro|__NR_chroot
@@ -220,8 +220,8 @@ DECL|macro|__NR_lstat
 mdefine_line|#define __NR_lstat&t;&t;107
 DECL|macro|__NR_fstat
 mdefine_line|#define __NR_fstat&t;&t;108
-DECL|macro|__NR_uname
-mdefine_line|#define __NR_uname&t;&t;109
+DECL|macro|__NR_olduname
+mdefine_line|#define __NR_olduname&t;&t;109
 DECL|macro|__NR_iopl
 mdefine_line|#define __NR_iopl&t;&t;110
 DECL|macro|__NR_vhangup
@@ -239,11 +239,15 @@ mdefine_line|#define __NR_sysinfo&t;&t;116
 DECL|macro|__NR_ipc
 mdefine_line|#define __NR_ipc&t;&t;117&t;/* not implemented yet */
 DECL|macro|__NR_fsync
-mdefine_line|#define __NR_fsync&t;&t;118&t;/* not implemented yet */
+mdefine_line|#define __NR_fsync&t;&t;118
 DECL|macro|__NR_sigreturn
 mdefine_line|#define __NR_sigreturn&t;&t;119
 DECL|macro|__NR_clone
 mdefine_line|#define __NR_clone&t;&t;120
+DECL|macro|__NR_setdomainname
+mdefine_line|#define __NR_setdomainname&t;121
+DECL|macro|__NR_uname
+mdefine_line|#define __NR_uname&t;&t;122
 r_extern
 r_int
 id|errno
@@ -252,14 +256,14 @@ multiline_comment|/* XXX - _foo needs to be __foo, while __NR_bar could be _NR_b
 DECL|macro|_syscall0
 mdefine_line|#define _syscall0(type,name) &bslash;&n;type name(void) &bslash;&n;{ &bslash;&n;long __res; &bslash;&n;__asm__ volatile (&quot;int $0x80&quot; &bslash;&n;&t;: &quot;=a&quot; (__res) &bslash;&n;&t;: &quot;0&quot; (__NR_##name)); &bslash;&n;if (__res &gt;= 0) &bslash;&n;&t;return (type) __res; &bslash;&n;errno = -__res; &bslash;&n;return -1; &bslash;&n;}
 DECL|macro|_syscall1
-mdefine_line|#define _syscall1(type,name,atype,a) &bslash;&n;type name(atype a) &bslash;&n;{ &bslash;&n;long __res; &bslash;&n;__asm__ volatile (&quot;movl %2,%%ebx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;int $0x80&quot; &bslash;&n;&t;: &quot;=a&quot; (__res) &bslash;&n;&t;: &quot;0&quot; (__NR_##name),&quot;g&quot; ((long)(a)):&quot;bx&quot;); &bslash;&n;if (__res &gt;= 0) &bslash;&n;&t;return (type) __res; &bslash;&n;errno = -__res; &bslash;&n;return -1; &bslash;&n;}
+mdefine_line|#define _syscall1(type,name,atype,a) &bslash;&n;type name(atype a) &bslash;&n;{ &bslash;&n;long __res; &bslash;&n;__asm__ volatile (&quot;int $0x80&quot; &bslash;&n;&t;: &quot;=a&quot; (__res) &bslash;&n;&t;: &quot;0&quot; (__NR_##name),&quot;b&quot; ((long)(a))); &bslash;&n;if (__res &gt;= 0) &bslash;&n;&t;return (type) __res; &bslash;&n;errno = -__res; &bslash;&n;return -1; &bslash;&n;}
 DECL|macro|_syscall2
-mdefine_line|#define _syscall2(type,name,atype,a,btype,b) &bslash;&n;type name(atype a,btype b) &bslash;&n;{ &bslash;&n;long __res; &bslash;&n;__asm__ volatile (&quot;movl %2,%%ebx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;int $0x80&quot; &bslash;&n;&t;: &quot;=a&quot; (__res) &bslash;&n;&t;: &quot;0&quot; (__NR_##name),&quot;g&quot; ((long)(a)),&quot;c&quot; ((long)(b)):&quot;bx&quot;); &bslash;&n;if (__res &gt;= 0) &bslash;&n;&t;return (type) __res; &bslash;&n;errno = -__res; &bslash;&n;return -1; &bslash;&n;}
+mdefine_line|#define _syscall2(type,name,atype,a,btype,b) &bslash;&n;type name(atype a,btype b) &bslash;&n;{ &bslash;&n;long __res; &bslash;&n;__asm__ volatile (&quot;int $0x80&quot; &bslash;&n;&t;: &quot;=a&quot; (__res) &bslash;&n;&t;: &quot;0&quot; (__NR_##name),&quot;b&quot; ((long)(a)),&quot;c&quot; ((long)(b))); &bslash;&n;if (__res &gt;= 0) &bslash;&n;&t;return (type) __res; &bslash;&n;errno = -__res; &bslash;&n;return -1; &bslash;&n;}
 DECL|macro|_syscall3
-mdefine_line|#define _syscall3(type,name,atype,a,btype,b,ctype,c) &bslash;&n;type name(atype a,btype b,ctype c) &bslash;&n;{ &bslash;&n;long __res; &bslash;&n;__asm__ volatile (&quot;movl %2,%%ebx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;int $0x80&quot; &bslash;&n;&t;: &quot;=a&quot; (__res) &bslash;&n;&t;: &quot;0&quot; (__NR_##name),&quot;g&quot; ((long)(a)),&quot;c&quot; ((long)(b)),&quot;d&quot; ((long)(c)):&quot;bx&quot;); &bslash;&n;if (__res&gt;=0) &bslash;&n;&t;return (type) __res; &bslash;&n;errno=-__res; &bslash;&n;return -1; &bslash;&n;}
+mdefine_line|#define _syscall3(type,name,atype,a,btype,b,ctype,c) &bslash;&n;type name(atype a,btype b,ctype c) &bslash;&n;{ &bslash;&n;long __res; &bslash;&n;__asm__ volatile (&quot;int $0x80&quot; &bslash;&n;&t;: &quot;=a&quot; (__res) &bslash;&n;&t;: &quot;0&quot; (__NR_##name),&quot;b&quot; ((long)(a)),&quot;c&quot; ((long)(b)),&quot;d&quot; ((long)(c))); &bslash;&n;if (__res&gt;=0) &bslash;&n;&t;return (type) __res; &bslash;&n;errno=-__res; &bslash;&n;return -1; &bslash;&n;}
 DECL|macro|_syscall4
-mdefine_line|#define _syscall4(type,name,atype,a,btype,b,ctype,c,dtype,d) &bslash;&n;type name (atype a, btype b, ctype c, dtype d) &bslash;&n;{ &bslash;&n;long __res; &bslash;&n;__asm__ volatile (&quot;movl %2,%%ebx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;int $0x80&quot; &bslash;&n;&t;: &quot;=a&quot; (__res) &bslash;&n;&t;: &quot;0&quot; (__NR_##name),&quot;b&quot; ((long)(a)),&quot;c&quot; ((long)(b)), &bslash;&n;&t;  &quot;d&quot; ((long)(c)),&quot;S&quot; ((long)(d))); &bslash;&n;if (__res&gt;=0) &bslash;&n;&t;return (type) __res; &bslash;&n;errno=-__res; &bslash;&n;return -1; &bslash;&n;}
+mdefine_line|#define _syscall4(type,name,atype,a,btype,b,ctype,c,dtype,d) &bslash;&n;type name (atype a, btype b, ctype c, dtype d) &bslash;&n;{ &bslash;&n;long __res; &bslash;&n;__asm__ volatile (&quot;int $0x80&quot; &bslash;&n;&t;: &quot;=a&quot; (__res) &bslash;&n;&t;: &quot;0&quot; (__NR_##name),&quot;b&quot; ((long)(a)),&quot;c&quot; ((long)(b)), &bslash;&n;&t;  &quot;d&quot; ((long)(c)),&quot;S&quot; ((long)(d))); &bslash;&n;if (__res&gt;=0) &bslash;&n;&t;return (type) __res; &bslash;&n;errno=-__res; &bslash;&n;return -1; &bslash;&n;}
 DECL|macro|_syscall5
-mdefine_line|#define _syscall5(type,name,atype,a,btype,b,ctype,c,dtype,d,etype,e) &bslash;&n;type name (atype a,btype b,ctype c,dtype d,etype e) &bslash;&n;{ &bslash;&n;long __res; &bslash;&n;__asm__ volatile (&quot;movl %2,%%ebx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;int $0x80&quot; &bslash;&n;&t;: &quot;=a&quot; (__res) &bslash;&n;&t;: &quot;0&quot; (__NR_##name),&quot;b&quot; ((long)(a)),&quot;c&quot; ((long)(b)), &bslash;&n;&t;  &quot;d&quot; ((long)(c)),&quot;S&quot; ((long)(d)),&quot;D&quot; ((long)(e))); &bslash;&n;if (__res&gt;=0) &bslash;&n;&t;return (type) __res; &bslash;&n;errno=-__res; &bslash;&n;return -1; &bslash;&n;}
+mdefine_line|#define _syscall5(type,name,atype,a,btype,b,ctype,c,dtype,d,etype,e) &bslash;&n;type name (atype a,btype b,ctype c,dtype d,etype e) &bslash;&n;{ &bslash;&n;long __res; &bslash;&n;__asm__ volatile (&quot;int $0x80&quot; &bslash;&n;&t;: &quot;=a&quot; (__res) &bslash;&n;&t;: &quot;0&quot; (__NR_##name),&quot;b&quot; ((long)(a)),&quot;c&quot; ((long)(b)), &bslash;&n;&t;  &quot;d&quot; ((long)(c)),&quot;S&quot; ((long)(d)),&quot;D&quot; ((long)(e))); &bslash;&n;if (__res&gt;=0) &bslash;&n;&t;return (type) __res; &bslash;&n;errno=-__res; &bslash;&n;return -1; &bslash;&n;}
 macro_line|#endif /* _LINUX_UNISTD_H */
 eof

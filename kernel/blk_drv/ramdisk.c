@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/kernel/blk_drv/ramdisk.c&n; *&n; *  Written by Theodore Ts&squot;o, 12/2/91&n; */
+multiline_comment|/*&n; *  linux/kernel/blk_drv/ramdisk.c&n; *&n; *  Written by Theodore Ts&squot;o, 12/2/91&n; *&n; * Modifications by Fred N. van Kempen to allow for bootable root&n; * disks (which are used in LINUX/Pro).  Also some cleanups.  03/03/93&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/minix_fs.h&gt;
@@ -7,8 +7,14 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
+DECL|macro|MAJOR_RAMDISK
+mdefine_line|#define MAJOR_RAMDISK&t;1&t;&t;/* should be in &lt;linux/major.h&gt;&t;*/
+DECL|macro|MAJOR_FLOPPY
+mdefine_line|#define MAJOR_FLOPPY&t;2&t;&t;/* should be in &lt;linux/major.h&gt;&t;*/
+DECL|macro|MINOR_RAMDISK
+mdefine_line|#define MINOR_RAMDISK&t;1
 DECL|macro|MAJOR_NR
-mdefine_line|#define MAJOR_NR 1
+mdefine_line|#define MAJOR_NR&t;MAJOR_RAMDISK&t;/* weird hack- FvK */
 macro_line|#include &quot;blk.h&quot;
 DECL|variable|rd_start
 r_char
@@ -67,7 +73,7 @@ c_func
 id|CURRENT-&gt;dev
 )paren
 op_ne
-l_int|1
+id|MINOR_RAMDISK
 )paren
 op_logical_or
 (paren
@@ -142,7 +148,7 @@ r_else
 id|panic
 c_func
 (paren
-l_string|&quot;unknown ramdisk-command&quot;
+l_string|&quot;RAMDISK: unknown RAM disk command !&bslash;n&quot;
 )paren
 suffix:semicolon
 id|end_request
@@ -187,7 +193,10 @@ l_int|NULL
 comma
 multiline_comment|/* no special open code */
 l_int|NULL
+comma
 multiline_comment|/* no special release code */
+id|block_fsync
+multiline_comment|/* fsync */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Returns amount of memory which needs to be reserved.&n; */
@@ -216,7 +225,7 @@ c_cond
 id|register_blkdev
 c_func
 (paren
-id|MAJOR_NR
+id|MAJOR_RAMDISK
 comma
 l_string|&quot;rd&quot;
 comma
@@ -228,9 +237,9 @@ id|rd_fops
 id|printk
 c_func
 (paren
-l_string|&quot;Unable to get major %d for ramdisk&bslash;n&quot;
+l_string|&quot;RAMDISK: Unable to get major %d.&bslash;n&quot;
 comma
-id|MAJOR_NR
+id|MAJOR_RAMDISK
 )paren
 suffix:semicolon
 r_return
@@ -239,7 +248,7 @@ suffix:semicolon
 )brace
 id|blk_dev
 (braket
-id|MAJOR_NR
+id|MAJOR_RAMDISK
 )braket
 dot
 id|request_fn
@@ -286,7 +295,7 @@ r_return
 id|length
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * If the root device is the ram disk, try to load it.&n; * In order to do this, the root device is originally set to the&n; * floppy, and we later change it to be ram disk.&n; */
+multiline_comment|/*&n; * If the root device is the RAM disk, try to load it.&n; * In order to do this, the root device is originally set to the&n; * floppy, and we later change it to be RAM disk.&n; */
 DECL|function|rd_load
 r_void
 id|rd_load
@@ -306,10 +315,9 @@ id|s
 suffix:semicolon
 r_int
 id|block
-op_assign
-l_int|512
+comma
+r_try
 suffix:semicolon
-multiline_comment|/* Start at block 512 */
 r_int
 id|i
 op_assign
@@ -322,7 +330,7 @@ r_char
 op_star
 id|cp
 suffix:semicolon
-multiline_comment|/* Move pointer */
+multiline_comment|/* If no RAM disk specified, give up early. */
 r_if
 c_cond
 (paren
@@ -334,7 +342,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Ram disk: %d bytes, starting at 0x%x&bslash;n&quot;
+l_string|&quot;RAMDISK: %d bytes, starting at 0x%x&bslash;n&quot;
 comma
 id|rd_length
 comma
@@ -344,6 +352,7 @@ r_int
 id|rd_start
 )paren
 suffix:semicolon
+multiline_comment|/* If we are doing a diskette boot, we might have to pre-load it. */
 r_if
 c_cond
 (paren
@@ -353,9 +362,30 @@ c_func
 id|ROOT_DEV
 )paren
 op_ne
-l_int|2
+id|MAJOR_FLOPPY
 )paren
 r_return
+suffix:semicolon
+multiline_comment|/*&n;&t; * Check for a super block on the diskette.&n;&t; * The old-style boot/root diskettes had their RAM image&n;&t; * starting at block 512 of the boot diskette.  LINUX/Pro&n;&t; * uses the enire diskette as a file system, so in that&n;&t; * case, we have to look at block 0.  Be intelligent about&n;&t; * this, and check both... - FvK&n;&t; */
+r_for
+c_loop
+(paren
+r_try
+op_assign
+l_int|0
+suffix:semicolon
+r_try
+OL
+l_int|1000
+suffix:semicolon
+r_try
+op_add_assign
+l_int|512
+)paren
+(brace
+id|block
+op_assign
+r_try
 suffix:semicolon
 id|bh
 op_assign
@@ -388,12 +418,13 @@ id|bh
 id|printk
 c_func
 (paren
-l_string|&quot;Disk error while looking for ramdisk!&bslash;n&quot;
+l_string|&quot;RAMDISK: I/O error while looking for super block!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/* This is silly- why do we require it to be a MINIX FS? */
 op_star
 (paren
 (paren
@@ -421,6 +452,12 @@ c_func
 id|bh
 )paren
 suffix:semicolon
+id|nblocks
+op_assign
+id|s.s_nzones
+op_lshift
+id|s.s_log_zone_size
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -428,15 +465,16 @@ id|s.s_magic
 op_ne
 id|MINIX_SUPER_MAGIC
 )paren
-multiline_comment|/* No ram disk image present, assume normal floppy boot */
-r_return
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;RAMDISK: trying old-style RAM image.&bslash;n&quot;
+)paren
 suffix:semicolon
-id|nblocks
-op_assign
-id|s.s_nzones
-op_lshift
-id|s.s_log_zone_size
+r_continue
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -452,7 +490,7 @@ id|BLOCK_SIZE_BITS
 id|printk
 c_func
 (paren
-l_string|&quot;Ram disk image too big!  (%d blocks, %d avail)&bslash;n&quot;
+l_string|&quot;RAMDISK: image too big! (%d/%d blocks)&bslash;n&quot;
 comma
 id|nblocks
 comma
@@ -467,13 +505,12 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Loading %d bytes into ram disk&bslash;n&quot;
+l_string|&quot;RAMDISK: Loading %d blocks into RAM disk&quot;
 comma
 id|nblocks
-op_lshift
-id|BLOCK_SIZE_BITS
 )paren
 suffix:semicolon
+multiline_comment|/* We found an image file system.  Load it into core! */
 id|cp
 op_assign
 id|rd_start
@@ -535,7 +572,7 @@ id|bh
 id|printk
 c_func
 (paren
-l_string|&quot;I/O error on block %d, aborting load&bslash;n&quot;
+l_string|&quot;RAMDISK: I/O error on block %d, aborting!&bslash;n&quot;
 comma
 id|block
 )paren
@@ -596,9 +633,21 @@ c_func
 l_string|&quot;&bslash;ndone&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* We loaded the file system image.  Prepare for mounting it. */
 id|ROOT_DEV
 op_assign
-l_int|0x0101
+(paren
+(paren
+id|MAJOR_RAMDISK
+op_lshift
+l_int|8
+)paren
+op_or
+id|MINOR_RAMDISK
+)paren
 suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 )brace
 eof

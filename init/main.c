@@ -25,7 +25,9 @@ r_int
 id|prof_len
 suffix:semicolon
 r_extern
-r_int
+r_char
+id|edata
+comma
 id|end
 suffix:semicolon
 r_extern
@@ -248,6 +250,13 @@ l_int|1024
 )braket
 suffix:semicolon
 r_extern
+r_char
+id|empty_zero_page
+(braket
+l_int|4096
+)braket
+suffix:semicolon
+r_extern
 r_int
 id|vsprintf
 c_func
@@ -358,6 +367,16 @@ r_int
 id|base
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SYSVIPC
+r_extern
+r_void
+id|ipc_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI
 r_extern
 r_int
@@ -374,33 +393,29 @@ r_int
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n; * This is set up by the setup-routine at boot-time&n; */
+DECL|macro|PARAM
+mdefine_line|#define PARAM&t;empty_zero_page
 DECL|macro|EXT_MEM_K
-mdefine_line|#define EXT_MEM_K (*(unsigned short *)0x90002)
+mdefine_line|#define EXT_MEM_K (*(unsigned short *) (PARAM+2))
 DECL|macro|DRIVE_INFO
-mdefine_line|#define DRIVE_INFO (*(struct drive_info *)0x90080)
+mdefine_line|#define DRIVE_INFO (*(struct drive_info *) (PARAM+0x80))
 DECL|macro|SCREEN_INFO
-mdefine_line|#define SCREEN_INFO (*(struct screen_info *)0x90000)
+mdefine_line|#define SCREEN_INFO (*(struct screen_info *) (PARAM+0))
 DECL|macro|MOUNT_ROOT_RDONLY
-mdefine_line|#define MOUNT_ROOT_RDONLY (*(unsigned short *)0x901F2)
+mdefine_line|#define MOUNT_ROOT_RDONLY (*(unsigned short *) (PARAM+0x1F2))
 DECL|macro|RAMDISK_SIZE
-mdefine_line|#define RAMDISK_SIZE (*(unsigned short *)0x901F8)
+mdefine_line|#define RAMDISK_SIZE (*(unsigned short *) (PARAM+0x1F8))
 DECL|macro|ORIG_ROOT_DEV
-mdefine_line|#define ORIG_ROOT_DEV (*(unsigned short *)0x901FC)
+mdefine_line|#define ORIG_ROOT_DEV (*(unsigned short *) (PARAM+0x1FC))
 DECL|macro|AUX_DEVICE_INFO
-mdefine_line|#define AUX_DEVICE_INFO (*(unsigned char *)0x901FF)
+mdefine_line|#define AUX_DEVICE_INFO (*(unsigned char *) (PARAM+0x1FF))
 multiline_comment|/*&n; * Boot command-line arguments&n; */
 DECL|macro|MAX_INIT_ARGS
 mdefine_line|#define MAX_INIT_ARGS 8
 DECL|macro|MAX_INIT_ENVS
 mdefine_line|#define MAX_INIT_ENVS 8
-DECL|macro|CL_MAGIC_ADDR
-mdefine_line|#define CL_MAGIC_ADDR (*(unsigned short *) 0x90020)
-DECL|macro|CL_MAGIC
-mdefine_line|#define CL_MAGIC 0xa33f
-DECL|macro|CL_BASE_ADDR
-mdefine_line|#define CL_BASE_ADDR ((char *) 0x90000)
-DECL|macro|CL_OFFSET
-mdefine_line|#define CL_OFFSET (*(unsigned short *) 0x90022)
+DECL|macro|COMMAND_LINE
+mdefine_line|#define COMMAND_LINE ((char *) (PARAM+2048))
 multiline_comment|/*&n; * Yeah, yeah, it&squot;s ugly, but I cannot find how to do this correctly&n; * and this seems to work. I anybody has more info on the real-time&n; * clock I&squot;d be interested. Most of this was trial and error, and some&n; * bios-listing reading. Urghh.&n; */
 DECL|macro|CMOS_READ
 mdefine_line|#define CMOS_READ(addr) ({ &bslash;&n;outb_p(addr,0x70); &bslash;&n;inb_p(0x71); &bslash;&n;})
@@ -1108,6 +1123,14 @@ id|ramdisk_size
 op_assign
 id|RAMDISK_SIZE
 suffix:semicolon
+id|strcpy
+c_func
+(paren
+id|command_line
+comma
+id|COMMAND_LINE
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_MAX_16M
 r_if
 c_cond
@@ -1203,23 +1226,6 @@ c_func
 id|memory_start
 comma
 id|memory_end
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|CL_MAGIC_ADDR
-op_eq
-id|CL_MAGIC
-)paren
-id|strcpy
-c_func
-(paren
-id|command_line
-comma
-id|CL_BASE_ADDR
-op_plus
-id|CL_OFFSET
 )paren
 suffix:semicolon
 id|trap_init
@@ -1359,6 +1365,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SYSVIPC
+id|ipc_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 id|sti
 c_func
 (paren

@@ -242,60 +242,14 @@ id|EINVAL
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * obtain the address to map to. we verify (or select) it and ensure&n;&t; * that it represents a valid section of the address space. we assume&n;&t; * that if PROT_EXEC is specified this should be in the code segment.&n;&t; */
-r_if
-c_cond
-(paren
-id|prot
-op_amp
-id|PROT_EXEC
-)paren
-(brace
 id|base
 op_assign
-id|get_base
-c_func
-(paren
-id|current-&gt;ldt
-(braket
-l_int|1
-)braket
-)paren
+l_int|0
 suffix:semicolon
-multiline_comment|/* cs */
 id|limit
 op_assign
-id|get_limit
-c_func
-(paren
-l_int|0x0f
-)paren
+id|TASK_SIZE
 suffix:semicolon
-multiline_comment|/* cs limit */
-)brace
-r_else
-(brace
-id|base
-op_assign
-id|get_base
-c_func
-(paren
-id|current-&gt;ldt
-(braket
-l_int|2
-)braket
-)paren
-suffix:semicolon
-multiline_comment|/* ds */
-id|limit
-op_assign
-id|get_limit
-c_func
-(paren
-l_int|0x17
-)paren
-suffix:semicolon
-multiline_comment|/* ds limit */
-)brace
 r_if
 c_cond
 (paren
@@ -485,25 +439,12 @@ id|limit
 suffix:semicolon
 id|base
 op_assign
-id|get_base
-c_func
-(paren
-id|current-&gt;ldt
-(braket
-l_int|2
-)braket
-)paren
+l_int|0
 suffix:semicolon
-multiline_comment|/* map into ds */
 id|limit
 op_assign
-id|get_limit
-c_func
-(paren
-l_int|0x17
-)paren
+id|TASK_SIZE
 suffix:semicolon
-multiline_comment|/* ds limit */
 r_if
 c_cond
 (paren

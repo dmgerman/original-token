@@ -101,6 +101,26 @@ suffix:semicolon
 r_case
 id|TW_Valid
 suffix:colon
+macro_line|#ifdef DENORM_OPERAND
+r_if
+c_cond
+(paren
+(paren
+id|FPU_st0_ptr-&gt;exp
+op_le
+id|EXP_UNDER
+)paren
+op_logical_and
+(paren
+id|denormal_operand
+c_func
+(paren
+)paren
+)paren
+)paren
+r_return
+suffix:semicolon
+macro_line|#endif DENORM_OPERAND
 r_if
 c_cond
 (paren
@@ -129,7 +149,11 @@ suffix:colon
 id|setcc
 c_func
 (paren
+id|SW_C0
+op_or
 id|SW_C2
+op_or
+id|SW_C3
 )paren
 suffix:semicolon
 multiline_comment|/* Operand is not comparable */
@@ -161,10 +185,9 @@ r_else
 id|setcc
 c_func
 (paren
-id|SW_C3
+id|SW_C0
 )paren
 suffix:semicolon
-multiline_comment|/*      setcc(SW_C0|SW_C2|SW_C3); */
 id|EXCEPTION
 c_func
 (paren
@@ -199,7 +222,11 @@ suffix:colon
 id|setcc
 c_func
 (paren
+id|SW_C0
+op_or
 id|SW_C2
+op_or
+id|SW_C3
 )paren
 suffix:semicolon
 multiline_comment|/* Operand is not comparable */
@@ -258,23 +285,25 @@ suffix:semicolon
 r_case
 id|TW_Valid
 suffix:colon
+multiline_comment|/* This will need to be changed if TW_Denormal is ever used. */
 r_if
 c_cond
 (paren
-id|FPU_st0_ptr-&gt;sigh
-op_amp
-l_int|0x80000000
+id|FPU_st0_ptr-&gt;exp
+op_le
+id|EXP_UNDER
 )paren
 id|c
 op_assign
 id|SW_C2
+op_or
+id|SW_C3
 suffix:semicolon
+multiline_comment|/* Denormal */
 r_else
 id|c
 op_assign
 id|SW_C3
-op_or
-id|SW_C2
 suffix:semicolon
 r_break
 suffix:semicolon

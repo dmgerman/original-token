@@ -5,12 +5,20 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/mouse.h&gt;
-macro_line|#include &lt;linux/soundcard.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/a.out.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+r_extern
+r_int
+id|soundcard_init
+c_func
+(paren
+r_int
+id|mem_start
+)paren
+suffix:semicolon
 DECL|function|read_ram
 r_static
 r_int

@@ -1733,6 +1733,7 @@ r_if
 c_cond
 (paren
 (paren
+(paren
 id|i
 op_assign
 id|inb
@@ -1743,6 +1744,13 @@ id|INTR_STAT
 )paren
 op_ne
 l_int|1
+)paren
+op_logical_and
+(paren
+id|i
+op_ne
+l_int|7
+)paren
 )paren
 (brace
 id|panic

@@ -87,7 +87,7 @@ multiline_comment|/* no special open is needed */
 l_int|NULL
 comma
 multiline_comment|/* release */
-l_int|NULL
+id|ext2_sync_file
 multiline_comment|/* fsync */
 )brace
 suffix:semicolon

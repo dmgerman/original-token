@@ -1192,6 +1192,12 @@ id|inode-&gt;i_blksize
 op_assign
 l_int|0
 suffix:semicolon
+id|insert_inode_hash
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
 macro_line|#ifdef EXTFS_DEBUG
 id|printk
 c_func

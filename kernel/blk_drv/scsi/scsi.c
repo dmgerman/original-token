@@ -2497,6 +2497,9 @@ op_star
 id|SCpnt
 )paren
 (brace
+r_int
+id|old_use_sg
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -2570,10 +2573,22 @@ r_sizeof
 id|SCpnt-&gt;sense_buffer
 )paren
 suffix:semicolon
+id|old_use_sg
+op_assign
+id|SCpnt-&gt;use_sg
+suffix:semicolon
+id|SCpnt-&gt;use_sg
+op_assign
+l_int|0
+suffix:semicolon
 id|internal_cmnd
 (paren
 id|SCpnt
 )paren
+suffix:semicolon
+id|SCpnt-&gt;use_sg
+op_assign
+id|old_use_sg
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;scsi_do_cmd sends all the commands out to the low-level driver.  It &n;&t;handles the specifics required for each low level driver - ie queued &n;&t;or non queud.  It also prevents conflicts when different high level &n;&t;drivers go for the same host at the same time.&n;*/
@@ -3038,12 +3053,12 @@ suffix:semicolon
 r_case
 id|ABORTED_COMMAND
 suffix:colon
-r_case
-id|NOT_READY
-suffix:colon
 r_return
 id|SUGGEST_RETRY
 suffix:semicolon
+r_case
+id|NOT_READY
+suffix:colon
 r_case
 id|UNIT_ATTENTION
 suffix:colon
@@ -4400,7 +4415,7 @@ r_if
 c_cond
 (paren
 id|SCpnt-&gt;timeout
-op_ne
+OG
 l_int|0
 op_logical_and
 id|SCpnt-&gt;timeout

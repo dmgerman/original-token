@@ -217,6 +217,7 @@ c_func
 id|result
 )paren
 suffix:semicolon
+multiline_comment|/* Number too large */
 r_return
 l_int|1
 suffix:semicolon
@@ -236,6 +237,7 @@ c_func
 id|result
 )paren
 suffix:semicolon
+multiline_comment|/* Number negative */
 r_return
 l_int|1
 suffix:semicolon

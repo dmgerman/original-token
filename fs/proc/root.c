@@ -209,7 +209,15 @@ l_int|4
 comma
 l_string|&quot;self&quot;
 )brace
+comma
 multiline_comment|/* will change inode # */
+(brace
+l_int|8
+comma
+l_int|3
+comma
+l_string|&quot;net&quot;
+)brace
 )brace
 suffix:semicolon
 DECL|macro|NR_ROOT_DIRENTRY

@@ -2,6 +2,7 @@ macro_line|#ifndef _BLK_H
 DECL|macro|_BLK_H
 mdefine_line|#define _BLK_H
 macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/locks.h&gt;
 multiline_comment|/*&n; * NR_REQUEST is the number of entries in the request-queue.&n; * NOTE that writes may use only the low 2/3 of these: reads&n; * take precedence.&n; *&n; * 32 seems to be a reasonable number: enough to get some benefit&n; * from the elevator-mechanism, but not so much as to lock a lot of&n; * buffers when they are in the queue. 64 seems to be too many (easily&n; * long pauses in reading when heavy writing/syncing is going on)&n; */
 DECL|macro|NR_REQUEST
 mdefine_line|#define NR_REQUEST&t;32
@@ -246,6 +247,26 @@ DECL|macro|DEVICE_OFF
 mdefine_line|#define DEVICE_OFF(device)
 macro_line|#elif (MAJOR_NR == 2)
 multiline_comment|/* floppy */
+r_static
+r_void
+id|floppy_on
+c_func
+(paren
+r_int
+r_int
+id|nr
+)paren
+suffix:semicolon
+r_static
+r_void
+id|floppy_off
+c_func
+(paren
+r_int
+r_int
+id|nr
+)paren
+suffix:semicolon
 DECL|macro|DEVICE_NAME
 mdefine_line|#define DEVICE_NAME &quot;floppy&quot;
 DECL|macro|DEVICE_INTR
@@ -377,44 +398,6 @@ id|DEVICE_REQUEST
 r_void
 )paren
 suffix:semicolon
-DECL|function|unlock_buffer
-r_extern
-r_inline
-r_void
-id|unlock_buffer
-c_func
-(paren
-r_struct
-id|buffer_head
-op_star
-id|bh
-)paren
-(brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|bh-&gt;b_lock
-)paren
-id|printk
-c_func
-(paren
-id|DEVICE_NAME
-l_string|&quot;: free buffer being unlocked&bslash;n&quot;
-)paren
-suffix:semicolon
-id|bh-&gt;b_lock
-op_assign
-l_int|0
-suffix:semicolon
-id|wake_up
-c_func
-(paren
-op_amp
-id|bh-&gt;b_wait
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/* SCSI devices have their own version */
 macro_line|#if (MAJOR_NR != 8 &amp;&amp; MAJOR_NR != 9 &amp;&amp; MAJOR_NR != 11)
 DECL|function|end_request

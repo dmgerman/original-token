@@ -2,6 +2,12 @@ multiline_comment|/*------------------------------------------------------------
 macro_line|#ifndef _FPU_EMU_H_
 DECL|macro|_FPU_EMU_H_
 mdefine_line|#define _FPU_EMU_H_
+multiline_comment|/*&n; * Define DENORM_OPERAND to make the emulator detect denormals&n; * and use the denormal flag of the status word. Note: this only&n; * affects the flag and corresponding interrupt, the emulator&n; * will always generate denormals and operate upon them as required.&n; */
+DECL|macro|DENORM_OPERAND
+mdefine_line|#define DENORM_OPERAND
+multiline_comment|/*&n; * Define PECULIAR_486 to get a closer approximation to 80486 behaviour,&n; * rather than behaviour which appears to be cleaner.&n; * This is a matter of opinion: for all I know, the 80486 may simply&n; * be complying with the IEEE spec. Maybe one day I&squot;ll get to see the&n; * spec...&n; */
+DECL|macro|PECULIAR_486
+mdefine_line|#define PECULIAR_486
 macro_line|#ifdef __ASSEMBLER__
 macro_line|#include &quot;fpu_asm.h&quot;
 DECL|macro|Const
@@ -14,10 +20,8 @@ DECL|macro|EXP_BIAS
 mdefine_line|#define EXP_BIAS&t;Const(0)
 DECL|macro|EXP_OVER
 mdefine_line|#define EXP_OVER&t;Const(0x4000)    /* smallest invalid large exponent */
-multiline_comment|/* #define EXP_MAX&t;&t;Const(16384) */
 DECL|macro|EXP_UNDER
 mdefine_line|#define&t;EXP_UNDER&t;Const(-0x3fff)   /* largest invalid small exponent */
-multiline_comment|/* #define&t;EXP_MIN&t;&t;Const(-16384) */
 DECL|macro|SIGN_POS
 mdefine_line|#define SIGN_POS&t;Const(0)
 DECL|macro|SIGN_NEG
@@ -36,6 +40,8 @@ DECL|macro|TW_NaN
 mdefine_line|#define&t;TW_NaN&t;&t;Const(6)&t;/* Not a Number */
 DECL|macro|TW_Empty
 mdefine_line|#define TW_Empty&t;Const(7)&t;/* empty */
+multiline_comment|/* #define TW_FPU_Interrupt Const(0x80) */
+multiline_comment|/* Signals an interrupt */
 macro_line|#ifndef __ASSEMBLER__
 macro_line|#include &lt;linux/math_emu.h&gt;
 macro_line|#ifdef PARANOID
@@ -195,6 +201,16 @@ suffix:semicolon
 r_extern
 r_void
 id|normalize
+c_func
+(paren
+id|FPU_REG
+op_star
+id|x
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|normalize_nuo
 c_func
 (paren
 id|FPU_REG
@@ -367,6 +383,24 @@ comma
 r_int
 r_int
 id|y
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|round_reg
+c_func
+(paren
+id|FPU_REG
+op_star
+id|arg
+comma
+r_int
+r_int
+id|extent
+comma
+r_int
+r_int
+id|control_w
 )paren
 suffix:semicolon
 macro_line|#ifndef MAKING_PROTO

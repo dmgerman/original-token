@@ -37,7 +37,7 @@ mdefine_line|#define F_GETFL&t;&t;3&t;/* more flags (cloexec) */
 DECL|macro|F_SETFL
 mdefine_line|#define F_SETFL&t;&t;4
 DECL|macro|F_GETLK
-mdefine_line|#define F_GETLK&t;&t;5&t;/* not implemented */
+mdefine_line|#define F_GETLK&t;&t;5
 DECL|macro|F_SETLK
 mdefine_line|#define F_SETLK&t;&t;6
 DECL|macro|F_SETLKW

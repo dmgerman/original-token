@@ -247,6 +247,8 @@ comma
 id|xd_open
 comma
 id|xd_release
+comma
+id|block_fsync
 )brace
 suffix:semicolon
 DECL|variable|xd_wait_exclusive

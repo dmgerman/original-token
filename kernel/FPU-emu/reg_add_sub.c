@@ -299,6 +299,31 @@ suffix:semicolon
 )brace
 )brace
 r_else
+(brace
+macro_line|#ifdef DENORM_OPERAND
+r_if
+c_cond
+(paren
+(paren
+id|b-&gt;tag
+op_eq
+id|TW_Valid
+)paren
+op_logical_and
+(paren
+id|b-&gt;exp
+op_le
+id|EXP_UNDER
+)paren
+op_logical_and
+id|denormal_operand
+c_func
+(paren
+)paren
+)paren
+r_return
+suffix:semicolon
+macro_line|#endif DENORM_OPERAND
 id|reg_move
 c_func
 (paren
@@ -307,6 +332,7 @@ comma
 id|dest
 )paren
 suffix:semicolon
+)brace
 r_return
 suffix:semicolon
 )brace
@@ -319,6 +345,30 @@ op_eq
 id|TW_Zero
 )paren
 (brace
+macro_line|#ifdef DENORM_OPERAND
+r_if
+c_cond
+(paren
+(paren
+id|a-&gt;tag
+op_eq
+id|TW_Valid
+)paren
+op_logical_and
+(paren
+id|a-&gt;exp
+op_le
+id|EXP_UNDER
+)paren
+op_logical_and
+id|denormal_operand
+c_func
+(paren
+)paren
+)paren
+r_return
+suffix:semicolon
+macro_line|#endif DENORM_OPERAND
 id|reg_move
 c_func
 (paren
@@ -347,6 +397,30 @@ op_ne
 id|TW_Infinity
 )paren
 (brace
+macro_line|#ifdef DENORM_OPERAND
+r_if
+c_cond
+(paren
+(paren
+id|b-&gt;tag
+op_eq
+id|TW_Valid
+)paren
+op_logical_and
+(paren
+id|b-&gt;exp
+op_le
+id|EXP_UNDER
+)paren
+op_logical_and
+id|denormal_operand
+c_func
+(paren
+)paren
+)paren
+r_return
+suffix:semicolon
+macro_line|#endif DENORM_OPERAND
 id|reg_move
 c_func
 (paren
@@ -358,7 +432,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* They are both + or - infinity */
 r_if
 c_cond
 (paren
@@ -367,6 +440,7 @@ op_eq
 id|b-&gt;sign
 )paren
 (brace
+multiline_comment|/* They are both + or - infinity */
 id|reg_move
 c_func
 (paren
@@ -378,16 +452,13 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|reg_move
+id|arith_invalid
 c_func
 (paren
-op_amp
-id|CONST_QNaN
-comma
 id|dest
 )paren
 suffix:semicolon
-multiline_comment|/* inf - inf is undefined. */
+multiline_comment|/* Infinity-Infinity is undefined. */
 r_return
 suffix:semicolon
 )brace
@@ -400,6 +471,30 @@ op_eq
 id|TW_Infinity
 )paren
 (brace
+macro_line|#ifdef DENORM_OPERAND
+r_if
+c_cond
+(paren
+(paren
+id|a-&gt;tag
+op_eq
+id|TW_Valid
+)paren
+op_logical_and
+(paren
+id|a-&gt;exp
+op_le
+id|EXP_UNDER
+)paren
+op_logical_and
+id|denormal_operand
+c_func
+(paren
+)paren
+)paren
+r_return
+suffix:semicolon
+macro_line|#endif DENORM_OPERAND
 id|reg_move
 c_func
 (paren
@@ -562,6 +657,30 @@ op_eq
 l_int|0
 )paren
 (brace
+macro_line|#ifdef DENORM_OPERAND
+r_if
+c_cond
+(paren
+(paren
+id|b-&gt;tag
+op_eq
+id|TW_Valid
+)paren
+op_logical_and
+(paren
+id|b-&gt;exp
+op_le
+id|EXP_UNDER
+)paren
+op_logical_and
+id|denormal_operand
+c_func
+(paren
+)paren
+)paren
+r_return
+suffix:semicolon
+macro_line|#endif DENORM_OPERAND
 id|reg_move
 c_func
 (paren
@@ -756,6 +875,31 @@ suffix:semicolon
 )brace
 )brace
 r_else
+(brace
+macro_line|#ifdef DENORM_OPERAND
+r_if
+c_cond
+(paren
+(paren
+id|a-&gt;tag
+op_eq
+id|TW_Valid
+)paren
+op_logical_and
+(paren
+id|a-&gt;exp
+op_le
+id|EXP_UNDER
+)paren
+op_logical_and
+id|denormal_operand
+c_func
+(paren
+)paren
+)paren
+r_return
+suffix:semicolon
+macro_line|#endif DENORM_OPERAND
 id|reg_move
 c_func
 (paren
@@ -764,6 +908,7 @@ comma
 id|dest
 )paren
 suffix:semicolon
+)brace
 r_return
 suffix:semicolon
 )brace
@@ -776,6 +921,30 @@ op_eq
 id|TW_Zero
 )paren
 (brace
+macro_line|#ifdef DENORM_OPERAND
+r_if
+c_cond
+(paren
+(paren
+id|b-&gt;tag
+op_eq
+id|TW_Valid
+)paren
+op_logical_and
+(paren
+id|b-&gt;exp
+op_le
+id|EXP_UNDER
+)paren
+op_logical_and
+id|denormal_operand
+c_func
+(paren
+)paren
+)paren
+r_return
+suffix:semicolon
+macro_line|#endif DENORM_OPERAND
 id|reg_move
 c_func
 (paren
@@ -810,6 +979,30 @@ op_ne
 id|TW_Infinity
 )paren
 (brace
+macro_line|#ifdef DENORM_OPERAND
+r_if
+c_cond
+(paren
+(paren
+id|b-&gt;tag
+op_eq
+id|TW_Valid
+)paren
+op_logical_and
+(paren
+id|b-&gt;exp
+op_le
+id|EXP_UNDER
+)paren
+op_logical_and
+id|denormal_operand
+c_func
+(paren
+)paren
+)paren
+r_return
+suffix:semicolon
+macro_line|#endif DENORM_OPERAND
 id|reg_move
 c_func
 (paren
@@ -821,6 +1014,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/* Both args are Infinity */
 r_if
 c_cond
 (paren
@@ -829,15 +1023,13 @@ op_eq
 id|b-&gt;sign
 )paren
 (brace
-id|reg_move
+id|arith_invalid
 c_func
 (paren
-op_amp
-id|CONST_QNaN
-comma
 id|dest
 )paren
 suffix:semicolon
+multiline_comment|/* Infinity-Infinity is undefined. */
 r_return
 suffix:semicolon
 )brace
@@ -861,6 +1053,30 @@ op_eq
 id|TW_Infinity
 )paren
 (brace
+macro_line|#ifdef DENORM_OPERAND
+r_if
+c_cond
+(paren
+(paren
+id|a-&gt;tag
+op_eq
+id|TW_Valid
+)paren
+op_logical_and
+(paren
+id|a-&gt;exp
+op_le
+id|EXP_UNDER
+)paren
+op_logical_and
+id|denormal_operand
+c_func
+(paren
+)paren
+)paren
+r_return
+suffix:semicolon
+macro_line|#endif DENORM_OPERAND
 id|reg_move
 c_func
 (paren

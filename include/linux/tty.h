@@ -216,8 +216,6 @@ DECL|macro|ASYNC_FOURPORT
 mdefine_line|#define ASYNC_FOURPORT  0x0002&t;/* Set OU1, OUT2 per AST Fourport settings */
 DECL|macro|ASYNC_SAK
 mdefine_line|#define ASYNC_SAK&t;0x0004&t;/* Secure Attention Key (Orange book) */
-DECL|macro|ASYNC_SKIP_TEST
-mdefine_line|#define ASYNC_SKIP_TEST 0x0008&t;/* Skip UART test on bootup */
 DECL|macro|ASYNC_SPD_MASK
 mdefine_line|#define ASYNC_SPD_MASK&t;0x0030
 DECL|macro|ASYNC_SPD_HI
@@ -226,8 +224,12 @@ DECL|macro|ASYNC_SPD_VHI
 mdefine_line|#define ASYNC_SPD_VHI&t;0x0020  /* Use 115200 instead of 38400 bps */
 DECL|macro|ASYNC_SPD_CUST
 mdefine_line|#define ASYNC_SPD_CUST&t;0x0030  /* Use user-specified divisor */
+DECL|macro|ASYNC_SKIP_TEST
+mdefine_line|#define ASYNC_SKIP_TEST&t;0x0040 /* Skip UART test during autoconfiguration */
+DECL|macro|ASYNC_AUTO_IRQ
+mdefine_line|#define ASYNC_AUTO_IRQ  0x0080 /* Do automatic IRQ during autoconfiguration */
 DECL|macro|ASYNC_FLAGS
-mdefine_line|#define ASYNC_FLAGS&t;0x0037&t;/* Possible legal async flags */
+mdefine_line|#define ASYNC_FLAGS&t;0x00F7&t;/* Possible legal async flags */
 multiline_comment|/* Internal flags used only by kernel/chr_drv/serial.c */
 DECL|macro|ASYNC_INITIALIZED
 mdefine_line|#define ASYNC_INITIALIZED&t;0x80000000 /* Serial port was initialized */
@@ -235,6 +237,8 @@ DECL|macro|ASYNC_CALLOUT_ACTIVE
 mdefine_line|#define ASYNC_CALLOUT_ACTIVE&t;0x40000000 /* Call out device is active */
 DECL|macro|ASYNC_NORMAL_ACTIVE
 mdefine_line|#define ASYNC_NORMAL_ACTIVE&t;0x20000000 /* Normal device is active */
+DECL|macro|ASYNC_BOOT_AUTOCONF
+mdefine_line|#define ASYNC_BOOT_AUTOCONF&t;0x10000000 /* Autoconfigure port on bootup */
 DECL|macro|IS_A_CONSOLE
 mdefine_line|#define IS_A_CONSOLE(min)&t;(((min) &amp; 0xC0) == 0x00)
 DECL|macro|IS_A_SERIAL
@@ -362,14 +366,18 @@ DECL|macro|I_STRP
 mdefine_line|#define I_STRP(tty)&t;_I_FLAG((tty),ISTRIP)
 DECL|macro|O_POST
 mdefine_line|#define O_POST(tty)&t;_O_FLAG((tty),OPOST)
+DECL|macro|O_LCUC
+mdefine_line|#define O_LCUC(tty)&t;_O_FLAG((tty),OLCUC)
 DECL|macro|O_NLCR
 mdefine_line|#define O_NLCR(tty)&t;_O_FLAG((tty),ONLCR)
 DECL|macro|O_CRNL
 mdefine_line|#define O_CRNL(tty)&t;_O_FLAG((tty),OCRNL)
+DECL|macro|O_NOCR
+mdefine_line|#define O_NOCR(tty)&t;_O_FLAG((tty),ONOCR)
 DECL|macro|O_NLRET
 mdefine_line|#define O_NLRET(tty)&t;_O_FLAG((tty),ONLRET)
-DECL|macro|O_LCUC
-mdefine_line|#define O_LCUC(tty)&t;_O_FLAG((tty),OLCUC)
+DECL|macro|O_TABDLY
+mdefine_line|#define O_TABDLY(tty)&t;_O_FLAG((tty),TABDLY)
 DECL|macro|C_LOCAL
 mdefine_line|#define C_LOCAL(tty)&t;_C_FLAG((tty),CLOCAL)
 DECL|macro|C_RTSCTS
@@ -446,6 +454,10 @@ suffix:semicolon
 DECL|member|count
 r_int
 id|count
+suffix:semicolon
+DECL|member|column
+r_int
+id|column
 suffix:semicolon
 DECL|member|winsize
 r_struct
@@ -777,6 +789,8 @@ DECL|macro|TTY_RQ_THROTTLED
 mdefine_line|#define TTY_RQ_THROTTLED 4
 DECL|macro|TTY_IO_ERROR
 mdefine_line|#define TTY_IO_ERROR 5
+DECL|macro|TTY_SLAVE_OPENED
+mdefine_line|#define TTY_SLAVE_OPENED 6
 multiline_comment|/*&n; * When a break, frame error, or parity error happens, these codes are&n; * stuffed into the read queue, and the relevant bit in readq_flag bit&n; * array is set.&n; */
 DECL|macro|TTY_BREAK
 mdefine_line|#define TTY_BREAK&t;1
@@ -950,6 +964,58 @@ r_struct
 id|tty_ldisc
 op_star
 r_new
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|tty_read_raw_data
+c_func
+(paren
+r_struct
+id|tty_struct
+op_star
+id|tty
+comma
+r_int
+r_char
+op_star
+id|bufp
+comma
+r_int
+id|buflen
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|tty_write_data
+c_func
+(paren
+r_struct
+id|tty_struct
+op_star
+id|tty
+comma
+r_char
+op_star
+id|bufp
+comma
+r_int
+id|buflen
+comma
+r_void
+(paren
+op_star
+id|callback
+)paren
+(paren
+r_void
+op_star
+id|data
+)paren
+comma
+r_void
+op_star
+id|callarg
 )paren
 suffix:semicolon
 r_extern

@@ -1,12 +1,13 @@
 macro_line|#ifndef __ASM_SYSTEM_H
 DECL|macro|__ASM_SYSTEM_H
 mdefine_line|#define __ASM_SYSTEM_H
+macro_line|#include &lt;linux/segment.h&gt;
 DECL|macro|move_to_user_mode
-mdefine_line|#define move_to_user_mode() &bslash;&n;__asm__ __volatile__ (&quot;movl %%esp,%%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl $0x17&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl %%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushfl&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl $0x0f&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl $1f&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;iret&bslash;n&quot; &bslash;&n;&t;&quot;1:&bslash;tmovl $0x17,%%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov %%ax,%%ds&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov %%ax,%%es&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov %%ax,%%fs&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov %%ax,%%gs&quot; &bslash;&n;&t;:::&quot;ax&quot;)
+mdefine_line|#define move_to_user_mode() &bslash;&n;__asm__ __volatile__ (&quot;movl %%esp,%%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl %%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushfl&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl %1&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl $1f&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;iret&bslash;n&quot; &bslash;&n;&t;&quot;1:&bslash;tmovl %0,%%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov %%ax,%%ds&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov %%ax,%%es&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov %%ax,%%fs&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov %%ax,%%gs&quot; &bslash;&n;&t;::&quot;i&quot; (USER_DS), &quot;i&quot; (USER_CS):&quot;ax&quot;)
 DECL|macro|sti
-mdefine_line|#define sti() __asm__ __volatile__ (&quot;sti&quot;::)
+mdefine_line|#define sti() __asm__ __volatile__ (&quot;sti&quot;:::&quot;memory&quot;)
 DECL|macro|cli
-mdefine_line|#define cli() __asm__ __volatile__ (&quot;cli&quot;::)
+mdefine_line|#define cli() __asm__ __volatile__ (&quot;cli&quot;:::&quot;memory&quot;)
 DECL|macro|nop
 mdefine_line|#define nop() __asm__ __volatile__ (&quot;nop&quot;::)
 DECL|function|tas
@@ -51,19 +52,21 @@ id|res
 suffix:semicolon
 )brace
 DECL|macro|save_flags
-mdefine_line|#define save_flags(x) &bslash;&n;__asm__ __volatile__(&quot;pushfl ; popl %0&quot;:&quot;=r&quot; (x))
+mdefine_line|#define save_flags(x) &bslash;&n;__asm__ __volatile__(&quot;pushfl ; popl %0&quot;:&quot;=r&quot; (x)::&quot;memory&quot;)
 DECL|macro|restore_flags
-mdefine_line|#define restore_flags(x) &bslash;&n;__asm__ __volatile__(&quot;pushl %0 ; popfl&quot;::&quot;r&quot; (x))
+mdefine_line|#define restore_flags(x) &bslash;&n;__asm__ __volatile__(&quot;pushl %0 ; popfl&quot;::&quot;r&quot; (x):&quot;memory&quot;)
 DECL|macro|iret
-mdefine_line|#define iret() __asm__ __volatile__ (&quot;iret&quot;::)
+mdefine_line|#define iret() __asm__ __volatile__ (&quot;iret&quot;:::&quot;memory&quot;)
 DECL|macro|_set_gate
-mdefine_line|#define _set_gate(gate_addr,type,dpl,addr) &bslash;&n;__asm__ __volatile__ (&quot;movw %%dx,%%ax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movw %0,%%dx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movl %%eax,%1&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movl %%edx,%2&quot; &bslash;&n;&t;:: &quot;i&quot; ((short) (0x8000+(dpl&lt;&lt;13)+(type&lt;&lt;8))), &bslash;&n;&t;&quot;m&quot; (*((char *) (gate_addr))), &bslash;&n;&t;&quot;m&quot; (*(4+(char *) (gate_addr))), &bslash;&n;&t;&quot;d&quot; ((char *) (addr)),&quot;a&quot; (0x00080000) &bslash;&n;&t;:&quot;ax&quot;,&quot;dx&quot;)
+mdefine_line|#define _set_gate(gate_addr,type,dpl,addr) &bslash;&n;__asm__ __volatile__ (&quot;movw %%dx,%%ax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movw %2,%%dx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movl %%eax,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movl %%edx,%1&quot; &bslash;&n;&t;:&quot;=m&quot; (*((long *) (gate_addr))), &bslash;&n;&t; &quot;=m&quot; (*(1+(long *) (gate_addr))) &bslash;&n;&t;:&quot;i&quot; ((short) (0x8000+(dpl&lt;&lt;13)+(type&lt;&lt;8))), &bslash;&n;&t; &quot;d&quot; ((char *) (addr)),&quot;a&quot; (KERNEL_CS &lt;&lt; 16) &bslash;&n;&t;:&quot;ax&quot;,&quot;dx&quot;)
 DECL|macro|set_intr_gate
 mdefine_line|#define set_intr_gate(n,addr) &bslash;&n;&t;_set_gate(&amp;idt[n],14,0,addr)
 DECL|macro|set_trap_gate
 mdefine_line|#define set_trap_gate(n,addr) &bslash;&n;&t;_set_gate(&amp;idt[n],15,0,addr)
 DECL|macro|set_system_gate
 mdefine_line|#define set_system_gate(n,addr) &bslash;&n;&t;_set_gate(&amp;idt[n],15,3,addr)
+DECL|macro|set_call_gate
+mdefine_line|#define set_call_gate(a,addr) &bslash;&n;&t;_set_gate(a,12,3,addr)
 DECL|macro|_set_seg_desc
 mdefine_line|#define _set_seg_desc(gate_addr,type,dpl,base,limit) {&bslash;&n;&t;*(gate_addr) = ((base) &amp; 0xff000000) | &bslash;&n;&t;&t;(((base) &amp; 0x00ff0000)&gt;&gt;16) | &bslash;&n;&t;&t;((limit) &amp; 0xf0000) | &bslash;&n;&t;&t;((dpl)&lt;&lt;13) | &bslash;&n;&t;&t;(0x00408000) | &bslash;&n;&t;&t;((type)&lt;&lt;8); &bslash;&n;&t;*((gate_addr)+1) = (((base) &amp; 0x0000ffff)&lt;&lt;16) | &bslash;&n;&t;&t;((limit) &amp; 0x0ffff); }
 DECL|macro|_set_tssldt_desc

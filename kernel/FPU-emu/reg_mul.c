@@ -27,6 +27,15 @@ r_int
 id|control_w
 )paren
 (brace
+r_char
+id|sign
+op_assign
+(paren
+id|a-&gt;sign
+op_xor
+id|b-&gt;sign
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -39,14 +48,6 @@ id|b-&gt;tag
 )paren
 (brace
 multiline_comment|/* This should be the most common case */
-id|dest-&gt;sign
-op_assign
-(paren
-id|a-&gt;sign
-op_xor
-id|b-&gt;sign
-)paren
-suffix:semicolon
 id|reg_u_mul
 c_func
 (paren
@@ -59,45 +60,10 @@ comma
 id|control_w
 )paren
 suffix:semicolon
-id|dest-&gt;exp
-op_add_assign
-op_minus
-id|EXP_BIAS
-op_plus
-l_int|1
+id|dest-&gt;sign
+op_assign
+id|sign
 suffix:semicolon
-multiline_comment|/*      dest-&gt;tag = TW_Valid; ****** */
-r_if
-c_cond
-(paren
-id|dest-&gt;exp
-op_le
-id|EXP_UNDER
-)paren
-(brace
-id|arith_underflow
-c_func
-(paren
-id|FPU_st0_ptr
-)paren
-suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|dest-&gt;exp
-op_ge
-id|EXP_OVER
-)paren
-(brace
-id|arith_overflow
-c_func
-(paren
-id|FPU_st0_ptr
-)paren
-suffix:semicolon
-)brace
 r_return
 suffix:semicolon
 )brace
@@ -118,6 +84,51 @@ id|TW_Zero
 )paren
 )paren
 (brace
+macro_line|#ifdef DENORM_OPERAND
+r_if
+c_cond
+(paren
+(paren
+(paren
+id|b-&gt;tag
+op_eq
+id|TW_Valid
+)paren
+op_logical_and
+(paren
+id|b-&gt;exp
+op_le
+id|EXP_UNDER
+)paren
+)paren
+op_logical_or
+(paren
+(paren
+id|a-&gt;tag
+op_eq
+id|TW_Valid
+)paren
+op_logical_and
+(paren
+id|a-&gt;exp
+op_le
+id|EXP_UNDER
+)paren
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|denormal_operand
+c_func
+(paren
+)paren
+)paren
+r_return
+suffix:semicolon
+)brace
+macro_line|#endif DENORM_OPERAND
 multiline_comment|/* Must have either both arguments == zero, or&n;&t; one valid and the other zero.&n;&t; The result is therefore zero. */
 id|reg_move
 c_func
@@ -128,7 +139,17 @@ comma
 id|dest
 )paren
 suffix:semicolon
+macro_line|#ifdef PECULIAR_486
+multiline_comment|/* The 80486 book says that the answer is +0, but a real&n;&t; 80486 appears to behave this way... */
+id|dest-&gt;sign
+op_assign
+id|sign
+suffix:semicolon
+macro_line|#endif PECULIAR_486
+r_return
+suffix:semicolon
 )brace
+macro_line|#if 0  /* TW_Denormal is not used yet... perhaps never will be. */
 r_else
 r_if
 c_cond
@@ -166,6 +187,7 @@ id|dest
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 r_else
 (brace
 multiline_comment|/* Must have infinities, NaNs, etc */
@@ -224,8 +246,33 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/* Zero*Infinity is invalid */
 r_else
 (brace
+macro_line|#ifdef DENORM_OPERAND
+r_if
+c_cond
+(paren
+(paren
+id|b-&gt;tag
+op_eq
+id|TW_Valid
+)paren
+op_logical_and
+(paren
+id|b-&gt;exp
+op_le
+id|EXP_UNDER
+)paren
+op_logical_and
+id|denormal_operand
+c_func
+(paren
+)paren
+)paren
+r_return
+suffix:semicolon
+macro_line|#endif DENORM_OPERAND
 id|reg_move
 c_func
 (paren
@@ -236,16 +283,11 @@ id|dest
 suffix:semicolon
 id|dest-&gt;sign
 op_assign
-id|a-&gt;sign
-op_eq
-id|b-&gt;sign
-ques
-c_cond
-id|SIGN_POS
-suffix:colon
-id|SIGN_NEG
+id|sign
 suffix:semicolon
 )brace
+r_return
+suffix:semicolon
 )brace
 r_else
 r_if
@@ -273,8 +315,33 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/* Zero*Infinity is invalid */
 r_else
 (brace
+macro_line|#ifdef DENORM_OPERAND
+r_if
+c_cond
+(paren
+(paren
+id|a-&gt;tag
+op_eq
+id|TW_Valid
+)paren
+op_logical_and
+(paren
+id|a-&gt;exp
+op_le
+id|EXP_UNDER
+)paren
+op_logical_and
+id|denormal_operand
+c_func
+(paren
+)paren
+)paren
+r_return
+suffix:semicolon
+macro_line|#endif DENORM_OPERAND
 id|reg_move
 c_func
 (paren
@@ -285,16 +352,11 @@ id|dest
 suffix:semicolon
 id|dest-&gt;sign
 op_assign
-id|a-&gt;sign
-op_eq
-id|b-&gt;sign
-ques
-c_cond
-id|SIGN_POS
-suffix:colon
-id|SIGN_NEG
+id|sign
 suffix:semicolon
 )brace
+r_return
+suffix:semicolon
 )brace
 macro_line|#ifdef PARANOID
 r_else
@@ -309,14 +371,6 @@ l_int|0x102
 suffix:semicolon
 )brace
 macro_line|#endif PARANOID
-id|dest-&gt;sign
-op_assign
-(paren
-id|a-&gt;sign
-op_xor
-id|b-&gt;sign
-)paren
-suffix:semicolon
 )brace
 )brace
 eof
