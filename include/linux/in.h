@@ -267,11 +267,11 @@ id|x
 id|__asm__
 c_func
 (paren
-l_string|&quot;xchgb %l0,%h0&bslash;n&bslash;t&quot;
+l_string|&quot;xchgb %b0,%h0&bslash;n&bslash;t&quot;
 multiline_comment|/* swap lower bytes&t;*/
 l_string|&quot;rorl $16,%0&bslash;n&bslash;t&quot;
 multiline_comment|/* swap words&t;&t;*/
-l_string|&quot;xchgb %l0,%h0&quot;
+l_string|&quot;xchgb %b0,%h0&quot;
 multiline_comment|/* swap higher bytes&t;*/
 suffix:colon
 l_string|&quot;=q&quot;
@@ -343,11 +343,11 @@ id|x
 id|__asm__
 c_func
 (paren
-l_string|&quot;xchgb %l0,%h0&bslash;n&bslash;t&quot;
+l_string|&quot;xchgb %b0,%h0&bslash;n&bslash;t&quot;
 multiline_comment|/* swap lower bytes&t;*/
 l_string|&quot;rorl $16,%0&bslash;n&bslash;t&quot;
 multiline_comment|/* swap words&t;&t;*/
-l_string|&quot;xchgb %l0,%h0&quot;
+l_string|&quot;xchgb %b0,%h0&quot;
 multiline_comment|/* swap higher bytes&t;*/
 suffix:colon
 l_string|&quot;=q&quot;

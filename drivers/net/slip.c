@@ -1,6 +1,7 @@
 multiline_comment|/*&n; * slip.c&t;This module implements the SLIP protocol for kernel-based&n; *&t;&t;devices like TTY.  It interfaces between a raw TTY, and the&n; *&t;&t;kernel&squot;s INET protocol layers (via DDI).&n; *&n; * Version:&t;@(#)slip.c&t;0.7.6&t;05/25/93&n; *&n; * Authors:&t;Laurence Culhane, &lt;loz@holmes.demon.co.uk&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;: &t;Sanity checks and avoid tx overruns.&n; *&t;&t;&t;&t;&t;Has a new sl-&gt;mtu field.&n; *&t;&t;Alan Cox&t;: &t;Found cause of overrun. ifconfig sl0 mtu upwards.&n; *&t;&t;&t;&t;&t;Driver now spots this and grows/shrinks its buffers(hack!).&n; *&t;&t;&t;&t;&t;Memory leak if you run out of memory setting up a slip driver fixed.&n; *&t;&t;Matt Dillon&t;:&t;Printable slip (borrowed from NET2E)&n; *&t;Pauline Middelink&t;:&t;Slip driver fixes.&n; *&t;&t;Alan Cox&t;:&t;Honours the old SL_COMPRESSED flag&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
