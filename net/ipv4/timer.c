@@ -211,12 +211,30 @@ id|why
 r_case
 id|TIME_DONE
 suffix:colon
+multiline_comment|/* If the socket hasn&squot;t been closed off, re-try a bit later */
 r_if
 c_cond
 (paren
 op_logical_neg
 id|sk-&gt;dead
-op_logical_or
+)paren
+(brace
+id|reset_timer
+c_func
+(paren
+id|sk
+comma
+id|TIME_DONE
+comma
+id|TCP_DONE_TIME
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 id|sk-&gt;state
 op_ne
 id|TCP_CLOSE
@@ -224,7 +242,7 @@ id|TCP_CLOSE
 (brace
 id|printk
 (paren
-l_string|&quot;non dead socket in time_done&bslash;n&quot;
+l_string|&quot;non CLOSE socket in time_done&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break

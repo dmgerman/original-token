@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/utsname.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
+macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#ifdef NFS_PROC_DEBUG
 DECL|variable|proc_debug
@@ -529,9 +530,6 @@ id|lenp
 comma
 r_int
 id|maxlen
-comma
-r_int
-id|fs
 )paren
 (brace
 r_int
@@ -558,22 +556,6 @@ id|maxlen
 r_return
 l_int|NULL
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|fs
-)paren
-id|memcpy_tofs
-c_func
-(paren
-id|data
-comma
-id|p
-comma
-id|len
-)paren
-suffix:semicolon
-r_else
 id|memcpy
 c_func
 (paren
@@ -2048,9 +2030,6 @@ r_struct
 id|nfs_fattr
 op_star
 id|fattr
-comma
-r_int
-id|fs
 )paren
 (brace
 r_int
@@ -2252,8 +2231,6 @@ op_amp
 id|len
 comma
 id|count
-comma
-id|fs
 )paren
 )paren
 )paren
@@ -2345,14 +2322,9 @@ id|nfs_proc_write
 c_func
 (paren
 r_struct
-id|nfs_server
+id|inode
 op_star
-id|server
-comma
-r_struct
-id|nfs_fh
-op_star
-id|fhandle
+id|inode
 comma
 r_int
 id|offset
@@ -2385,6 +2357,33 @@ r_int
 id|ruid
 op_assign
 l_int|0
+suffix:semicolon
+r_void
+op_star
+id|kdata
+suffix:semicolon
+multiline_comment|/* address of kernel copy */
+r_struct
+id|nfs_server
+op_star
+id|server
+op_assign
+id|NFS_SERVER
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
+r_struct
+id|nfs_fh
+op_star
+id|fhandle
+op_assign
+id|NFS_FH
+c_func
+(paren
+id|inode
+)paren
 suffix:semicolon
 id|PRINTK
 c_func
@@ -2470,6 +2469,19 @@ id|count
 )paren
 suffix:semicolon
 multiline_comment|/* traditional, could be any value */
+id|kdata
+op_assign
+(paren
+r_void
+op_star
+)paren
+(paren
+id|p
+op_plus
+l_int|1
+)paren
+suffix:semicolon
+multiline_comment|/* start of data in RPC buffer */
 id|p
 op_assign
 id|xdr_encode_data
@@ -2552,6 +2564,18 @@ op_eq
 id|NFS_OK
 )paren
 (brace
+id|update_vm_cache
+c_func
+(paren
+id|inode
+comma
+id|offset
+comma
+id|kdata
+comma
+id|count
+)paren
+suffix:semicolon
 id|p
 op_assign
 id|xdr_decode_fattr

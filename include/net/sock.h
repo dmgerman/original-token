@@ -758,6 +758,7 @@ op_star
 id|sk
 comma
 r_int
+r_int
 id|timeout
 )paren
 suffix:semicolon

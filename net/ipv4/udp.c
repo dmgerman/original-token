@@ -1899,6 +1899,7 @@ op_star
 id|sk
 comma
 r_int
+r_int
 id|timeout
 )paren
 (brace
@@ -1932,11 +1933,6 @@ c_func
 id|sk
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk-&gt;dead
-)paren
 id|destroy_sock
 c_func
 (paren

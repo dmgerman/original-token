@@ -3149,7 +3149,7 @@ r_int
 suffix:semicolon
 r_extern
 r_int
-id|generic_mmap
+id|generic_file_mmap
 c_func
 (paren
 r_struct

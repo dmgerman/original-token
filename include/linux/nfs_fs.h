@@ -24,6 +24,10 @@ DECL|macro|NFS_SERVER
 mdefine_line|#define NFS_SERVER(inode)&t;&t;(&amp;(inode)-&gt;i_sb-&gt;u.nfs_sb.s_server)
 DECL|macro|NFS_FH
 mdefine_line|#define NFS_FH(inode)&t;&t;&t;(&amp;(inode)-&gt;u.nfs_i.fhandle)
+DECL|macro|NFS_READTIME
+mdefine_line|#define NFS_READTIME(inode)&t;&t;((inode)-&gt;u.nfs_i.read_cache_jiffies)
+DECL|macro|NFS_OLDMTIME
+mdefine_line|#define NFS_OLDMTIME(inode)&t;&t;((inode)-&gt;u.nfs_i.read_cache_mtime)
 macro_line|#ifdef __KERNEL__
 multiline_comment|/* linux/fs/nfs/proc.c */
 r_extern
@@ -168,9 +172,6 @@ r_struct
 id|nfs_fattr
 op_star
 id|fattr
-comma
-r_int
-id|fs
 )paren
 suffix:semicolon
 r_extern
@@ -179,14 +180,9 @@ id|nfs_proc_write
 c_func
 (paren
 r_struct
-id|nfs_server
+id|inode
 op_star
-id|server
-comma
-r_struct
-id|nfs_fh
-op_star
-id|fhandle
+id|inode
 comma
 r_int
 id|offset

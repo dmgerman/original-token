@@ -76,7 +76,7 @@ multiline_comment|/* select - default */
 id|ext2_ioctl
 comma
 multiline_comment|/* ioctl */
-id|generic_mmap
+id|generic_file_mmap
 comma
 multiline_comment|/* mmap */
 l_int|NULL

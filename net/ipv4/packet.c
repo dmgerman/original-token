@@ -370,6 +370,7 @@ op_star
 id|sk
 comma
 r_int
+r_int
 id|timeout
 )paren
 (brace
@@ -433,6 +434,12 @@ l_int|NULL
 suffix:semicolon
 )brace
 id|release_sock
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
+id|destroy_sock
 c_func
 (paren
 id|sk

@@ -504,12 +504,6 @@ comma
 id|X
 c_func
 (paren
-id|generic_mmap
-)paren
-comma
-id|X
-c_func
-(paren
 id|set_blocksize
 )paren
 comma
@@ -589,6 +583,12 @@ id|X
 c_func
 (paren
 id|generic_file_read
+)paren
+comma
+id|X
+c_func
+(paren
+id|generic_file_mmap
 )paren
 comma
 id|X

@@ -2344,6 +2344,10 @@ l_int|0xf
 )paren
 op_ne
 id|ILLEGAL_REQUEST
+op_logical_or
+id|lun
+OG
+l_int|0
 )paren
 )paren
 r_return

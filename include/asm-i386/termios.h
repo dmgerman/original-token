@@ -532,6 +532,7 @@ mdefine_line|#define N_MOUSE&t;&t;2
 DECL|macro|N_PPP
 mdefine_line|#define N_PPP&t;&t;3
 macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;linux/string.h&gt;
 multiline_comment|/*&n; * Translate a &quot;termio&quot; structure into a &quot;termios&quot;. Ugh.&n; */
 DECL|function|trans_from_termio
 r_extern

@@ -43,7 +43,7 @@ multiline_comment|/* select - default */
 l_int|NULL
 comma
 multiline_comment|/* ioctl - default */
-id|generic_mmap
+id|generic_file_mmap
 comma
 multiline_comment|/* mmap */
 l_int|NULL
@@ -118,7 +118,7 @@ l_int|NULL
 multiline_comment|/* smap */
 )brace
 suffix:semicolon
-multiline_comment|/* #Specification: msdos / special devices / mmap&t;&n;&t;Mmapping does work because a special mmap is provide in that case.&n;&t;Note that it is much less efficient than the generic_mmap normally&n;&t;used since it allocate extra buffer. generic_mmap is used for&n;&t;normal device (512 bytes hardware sectors).&n;*/
+multiline_comment|/* #Specification: msdos / special devices / mmap&t;&n;&t;Mmapping does work because a special mmap is provide in that case.&n;&t;Note that it is much less efficient than the generic_file_mmap normally&n;&t;used since it allocate extra buffer. generic_file_mmap is used for&n;&t;normal device (512 bytes hardware sectors).&n;*/
 DECL|variable|fat_file_operations_1024
 r_static
 r_struct

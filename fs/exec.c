@@ -511,7 +511,7 @@ c_cond
 op_logical_neg
 id|fn
 )paren
-r_break
+r_continue
 suffix:semicolon
 id|retval
 op_assign
@@ -3163,7 +3163,7 @@ c_cond
 op_logical_neg
 id|fn
 )paren
-r_break
+r_continue
 suffix:semicolon
 id|retval
 op_assign

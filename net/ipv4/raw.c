@@ -968,6 +968,7 @@ op_star
 id|sk
 comma
 r_int
+r_int
 id|timeout
 )paren
 (brace
@@ -996,6 +997,12 @@ l_int|NULL
 suffix:semicolon
 )brace
 macro_line|#endif&t;
+id|destroy_sock
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
 )brace
 DECL|function|raw_init
 r_static

@@ -1,5 +1,6 @@
 multiline_comment|/*&n; * kernel/traps.c&n; *&n; * (C) Copyright 1994 Linus Torvalds&n; */
 multiline_comment|/*&n; * This file initializes the trap entry points&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;

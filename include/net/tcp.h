@@ -42,15 +42,15 @@ mdefine_line|#define TCP_FIN_TIMEOUT (3*60*HZ) /* BSD style FIN_WAIT2 deadlock b
 DECL|macro|TCP_ACK_TIME
 mdefine_line|#define TCP_ACK_TIME&t;(3*HZ)&t;/* time to delay before sending an ACK&t;*/
 DECL|macro|TCP_DONE_TIME
-mdefine_line|#define TCP_DONE_TIME&t;250&t;/* maximum time to wait before actually&n;&t;&t;&t;&t; * destroying a socket&t;&t;&t;*/
+mdefine_line|#define TCP_DONE_TIME&t;(5*HZ/2)/* maximum time to wait before actually&n;&t;&t;&t;&t; * destroying a socket&t;&t;&t;*/
 DECL|macro|TCP_WRITE_TIME
-mdefine_line|#define TCP_WRITE_TIME&t;3000&t;/* initial time to wait for an ACK,&n;&t;&t;&t;         * after last transmit&t;&t;&t;*/
+mdefine_line|#define TCP_WRITE_TIME&t;(30*HZ)&t;/* initial time to wait for an ACK,&n;&t;&t;&t;         * after last transmit&t;&t;&t;*/
 DECL|macro|TCP_TIMEOUT_INIT
 mdefine_line|#define TCP_TIMEOUT_INIT (3*HZ)&t;/* RFC 1122 initial timeout value&t;*/
 DECL|macro|TCP_SYN_RETRIES
 mdefine_line|#define TCP_SYN_RETRIES&t; 10&t;/* number of times to retry opening a&n;&t;&t;&t;&t; * connection &t;(TCP_RETR2-....)&t;*/
 DECL|macro|TCP_PROBEWAIT_LEN
-mdefine_line|#define TCP_PROBEWAIT_LEN 100&t;/* time to wait between probes when&n;&t;&t;&t;&t; * I&squot;ve got something to write and&n;&t;&t;&t;&t; * there is no window&t;&t;&t;*/
+mdefine_line|#define TCP_PROBEWAIT_LEN (1*HZ)/* time to wait between probes when&n;&t;&t;&t;&t; * I&squot;ve got something to write and&n;&t;&t;&t;&t; * there is no window&t;&t;&t;*/
 DECL|macro|TCP_NO_CHECK
 mdefine_line|#define TCP_NO_CHECK&t;0&t;/* turn to one if you want the default&n;&t;&t;&t;&t; * to be no checksum&t;&t;&t;*/
 multiline_comment|/*&n; *&t;TCP option&n; */
@@ -1094,6 +1094,25 @@ suffix:colon
 id|tcp_cache_zap
 c_func
 (paren
+)paren
+suffix:semicolon
+multiline_comment|/* Should be about 2 rtt&squot;s */
+id|reset_timer
+c_func
+(paren
+id|sk
+comma
+id|TIME_DONE
+comma
+id|min
+c_func
+(paren
+id|sk-&gt;rtt
+op_star
+l_int|2
+comma
+id|TCP_DONE_TIME
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* fall through */
