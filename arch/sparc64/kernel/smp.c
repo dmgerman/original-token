@@ -60,10 +60,10 @@ l_int|64
 )paren
 )paren
 suffix:semicolon
-DECL|variable|cpu_number_map
+DECL|variable|__cpu_number_map
 r_volatile
 r_int
-id|cpu_number_map
+id|__cpu_number_map
 (braket
 id|NR_CPUS
 )braket
@@ -1062,7 +1062,7 @@ c_cond
 id|callin_flag
 )paren
 (brace
-id|cpu_number_map
+id|__cpu_number_map
 (braket
 id|i
 )braket
@@ -1132,7 +1132,7 @@ op_lshift
 id|i
 )paren
 suffix:semicolon
-id|cpu_number_map
+id|__cpu_number_map
 (braket
 id|i
 )braket
@@ -3203,7 +3203,7 @@ id|i
 op_increment
 )paren
 (brace
-id|cpu_number_map
+id|__cpu_number_map
 (braket
 id|i
 )braket
@@ -3220,7 +3220,7 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-id|cpu_number_map
+id|__cpu_number_map
 (braket
 id|boot_cpu_id
 )braket

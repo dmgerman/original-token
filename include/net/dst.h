@@ -45,6 +45,12 @@ DECL|member|obsolete
 r_int
 id|obsolete
 suffix:semicolon
+DECL|member|flags
+r_int
+id|flags
+suffix:semicolon
+DECL|macro|DST_HOST
+mdefine_line|#define DST_HOST&t;&t;1
 DECL|member|lastuse
 r_int
 r_int

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: srmmu.c,v 1.203 2000/01/15 00:51:28 anton Exp $&n; * srmmu.c:  SRMMU specific routines for memory management.&n; *&n; * Copyright (C) 1995 David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Pete Zaitcev&n; * Copyright (C) 1996 Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1999 Anton Blanchard (anton@progsoc.uts.edu.au)&n; */
+multiline_comment|/* $Id: srmmu.c,v 1.205 2000/01/21 17:59:46 anton Exp $&n; * srmmu.c:  SRMMU specific routines for memory management.&n; *&n; * Copyright (C) 1995 David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Pete Zaitcev&n; * Copyright (C) 1996 Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1999 Anton Blanchard (anton@progsoc.uts.edu.au)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -7197,6 +7197,23 @@ r_void
 r_int
 id|i
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|phys_base
+OG
+l_int|0
+)paren
+(brace
+id|do_large_mapping
+c_func
+(paren
+id|PAGE_OFFSET
+comma
+id|phys_base
+)paren
+suffix:semicolon
+)brace
 r_for
 c_loop
 (paren
@@ -7220,6 +7237,10 @@ op_increment
 id|map_spbank
 c_func
 (paren
+(paren
+r_int
+r_int
+)paren
 id|__va
 c_func
 (paren
@@ -7452,6 +7473,10 @@ c_func
 (paren
 id|KERNBASE
 comma
+(paren
+r_int
+r_int
+)paren
 id|__va
 c_func
 (paren

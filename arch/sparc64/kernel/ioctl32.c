@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ioctl32.c,v 1.73 2000/01/11 01:06:47 davem Exp $&n; * ioctl32.c: Conversion between 32bit and 64bit native ioctls.&n; *&n; * Copyright (C) 1997  Jakub Jelinek  (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * ioctls.&n; */
+multiline_comment|/* $Id: ioctl32.c,v 1.74 2000/01/15 04:47:48 davem Exp $&n; * ioctl32.c: Conversion between 32bit and 64bit native ioctls.&n; *&n; * Copyright (C) 1997  Jakub Jelinek  (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * ioctls.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -30,6 +30,7 @@ macro_line|#include &lt;linux/ext2_fs.h&gt;
 macro_line|#include &lt;linux/videodev.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/raw.h&gt;
+macro_line|#include &lt;linux/smb_fs.h&gt;
 macro_line|#include &lt;scsi/scsi.h&gt;
 multiline_comment|/* Ugly hack. */
 DECL|macro|__KERNEL__
@@ -12054,6 +12055,97 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|do_smb_getmountuid
+r_static
+r_int
+id|do_smb_getmountuid
+c_func
+(paren
+r_int
+r_int
+id|fd
+comma
+r_int
+r_int
+id|cmd
+comma
+r_int
+r_int
+id|arg
+)paren
+(brace
+id|mm_segment_t
+id|old_fs
+op_assign
+id|get_fs
+c_func
+(paren
+)paren
+suffix:semicolon
+id|__kernel_uid_t
+id|kuid
+suffix:semicolon
+r_int
+id|err
+suffix:semicolon
+id|cmd
+op_assign
+id|SMB_IOC_GETMOUNTUID
+suffix:semicolon
+id|set_fs
+c_func
+(paren
+id|KERNEL_DS
+)paren
+suffix:semicolon
+id|err
+op_assign
+id|sys_ioctl
+c_func
+(paren
+id|fd
+comma
+id|cmd
+comma
+(paren
+r_int
+r_int
+)paren
+op_amp
+id|kuid
+)paren
+suffix:semicolon
+id|set_fs
+c_func
+(paren
+id|old_fs
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+op_ge
+l_int|0
+)paren
+id|err
+op_assign
+id|put_user
+c_func
+(paren
+id|kuid
+comma
+(paren
+id|__kernel_uid_t32
+op_star
+)paren
+id|arg
+)paren
+suffix:semicolon
+r_return
+id|err
+suffix:semicolon
+)brace
 DECL|function|sys32_ioctl
 id|asmlinkage
 r_int
@@ -12778,6 +12870,34 @@ suffix:colon
 id|error
 op_assign
 id|do_video_ioctl
+c_func
+(paren
+id|fd
+comma
+id|cmd
+comma
+id|arg
+)paren
+suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
+multiline_comment|/* One SMB ioctl needs translations. */
+r_case
+id|_IOR
+c_func
+(paren
+l_char|&squot;u&squot;
+comma
+l_int|1
+comma
+id|__kernel_uid_t32
+)paren
+suffix:colon
+multiline_comment|/* SMB_IOC_GETMOUNTUID */
+id|error
+op_assign
+id|do_smb_getmountuid
 c_func
 (paren
 id|fd
@@ -14181,6 +14301,10 @@ id|RAW_SETBIND
 suffix:colon
 r_case
 id|RAW_GETBIND
+suffix:colon
+multiline_comment|/* SMB ioctls which do not need any translations */
+r_case
+id|SMB_IOC_NEWCONN
 suffix:colon
 id|error
 op_assign

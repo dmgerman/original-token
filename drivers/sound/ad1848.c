@@ -105,7 +105,9 @@ mdefine_line|#define MD_C930&t;&t;6
 DECL|macro|MD_IWAVE
 mdefine_line|#define MD_IWAVE&t;7
 DECL|macro|MD_4235
-mdefine_line|#define MD_4235         8 /* Crystal Audio CS4235 */
+mdefine_line|#define MD_4235         8 /* Crystal Audio CS4235  */
+DECL|macro|MD_1845_SSCAPE
+mdefine_line|#define MD_1845_SSCAPE  9 /* Ensoniq Soundscape PNP*/
 multiline_comment|/* Mixer parameters */
 DECL|member|recmask
 r_int
@@ -216,6 +218,12 @@ id|deskpro_xl
 op_assign
 l_int|0
 suffix:semicolon
+DECL|variable|deskpro_m
+r_int
+id|deskpro_m
+op_assign
+l_int|0
+suffix:semicolon
 macro_line|#ifdef CONFIG_SOUND_SPRO
 DECL|variable|soundpro
 r_int
@@ -309,7 +317,7 @@ r_static
 r_int
 id|ad_format_mask
 (braket
-l_int|9
+l_int|10
 multiline_comment|/*devc-&gt;model */
 )braket
 op_assign
@@ -397,6 +405,15 @@ id|AFMT_U8
 op_or
 id|AFMT_S16_LE
 multiline_comment|/* CS4235 */
+comma
+id|AFMT_U8
+op_or
+id|AFMT_S16_LE
+op_or
+id|AFMT_MU_LAW
+op_or
+id|AFMT_A_LAW
+multiline_comment|/* Ensoniq Soundscape*/
 )brace
 suffix:semicolon
 DECL|variable|adev_info
@@ -429,7 +446,7 @@ DECL|variable|capabilities
 )brace
 id|capabilities
 (braket
-l_int|9
+l_int|10
 multiline_comment|/*devc-&gt;model */
 )braket
 op_assign
@@ -476,7 +493,12 @@ comma
 (brace
 l_int|0
 )brace
-multiline_comment|/* MD_4235 */
+multiline_comment|/* MD_4235  */
+comma
+(brace
+id|CAP_F_TIMER
+)brace
+multiline_comment|/* MD_1845_SSCAPE */
 )brace
 suffix:semicolon
 r_static
@@ -984,9 +1006,17 @@ l_int|0x20
 r_if
 c_cond
 (paren
+(paren
 id|devc-&gt;model
 op_ne
 id|MD_1845
+)paren
+op_logical_or
+(paren
+id|devc-&gt;model
+op_ne
+id|MD_1845_SSCAPE
+)paren
 )paren
 id|printk
 c_func
@@ -2626,6 +2656,9 @@ suffix:colon
 r_case
 id|MD_1845
 suffix:colon
+r_case
+id|MD_1845_SSCAPE
+suffix:colon
 id|devc-&gt;supported_devices
 op_assign
 id|MODE2_MIXER_DEVICES
@@ -3577,6 +3610,10 @@ c_cond
 id|devc-&gt;model
 op_eq
 id|MD_1845
+op_logical_or
+id|devc-&gt;model
+op_eq
+id|MD_1845_SSCAPE
 )paren
 multiline_comment|/* AD1845 has different timer than others */
 (brace
@@ -5026,6 +5063,10 @@ c_cond
 id|devc-&gt;model
 op_eq
 id|MD_1845
+op_logical_or
+id|devc-&gt;model
+op_eq
+id|MD_1845_SSCAPE
 )paren
 multiline_comment|/* Use alternate speed select registers */
 (brace
@@ -5373,9 +5414,17 @@ multiline_comment|/* Enables changes to the format select reg */
 r_if
 c_cond
 (paren
+(paren
 id|devc-&gt;model
 op_eq
 id|MD_1845
+)paren
+op_logical_or
+(paren
+id|devc-&gt;model
+op_eq
+id|MD_1845_SSCAPE
+)paren
 )paren
 multiline_comment|/* Use alternate speed select registers */
 (brace
@@ -5548,6 +5597,10 @@ op_logical_and
 id|devc-&gt;model
 op_ne
 id|MD_1845
+op_logical_and
+id|devc-&gt;model
+op_ne
+id|MD_1845_SSCAPE
 )paren
 (brace
 multiline_comment|/*&n;&t;&t;&t; * CS4231 compatible devices don&squot;t have separate sampling rate selection&n;&t;&t;&t; * register for recording an playback. The I8 register is shared so we have to&n;&t;&t;&t; * set the speed encoding bits of it too.&n;&t;&t;&t; */
@@ -6579,6 +6632,32 @@ OG
 id|MD_1848
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|devc-&gt;model
+op_eq
+id|MD_1845_SSCAPE
+)paren
+id|ad_write
+c_func
+(paren
+id|devc
+comma
+l_int|12
+comma
+id|ad_read
+c_func
+(paren
+id|devc
+comma
+l_int|12
+)paren
+op_or
+l_int|0x50
+)paren
+suffix:semicolon
+r_else
 id|ad_write
 c_func
 (paren
@@ -6616,6 +6695,15 @@ l_int|0x6c
 )paren
 suffix:semicolon
 multiline_comment|/* Select codec mode 3 */
+r_if
+c_cond
+(paren
+id|devc
+op_member_access_from_pointer
+id|model
+op_ne
+id|MD_1845_SSCAPE
+)paren
 r_for
 c_loop
 (paren
@@ -6723,6 +6811,10 @@ c_cond
 id|devc-&gt;model
 op_eq
 id|MD_1845
+op_logical_or
+id|devc-&gt;model
+op_eq
+id|MD_1845_SSCAPE
 )paren
 id|ad_write
 c_func
@@ -6937,6 +7029,11 @@ op_assign
 l_int|0
 suffix:semicolon
 r_int
+id|sscape_flag
+op_assign
+l_int|0
+suffix:semicolon
+r_int
 id|i
 suffix:semicolon
 id|DDB
@@ -6967,6 +7064,25 @@ l_int|0x12345678
 )paren
 (brace
 id|interwave
+op_assign
+l_int|1
+suffix:semicolon
+op_star
+id|ad_flags
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_star
+id|ad_flags
+op_eq
+l_int|0x87654321
+)paren
+(brace
+id|sscape_flag
 op_assign
 l_int|1
 suffix:semicolon
@@ -8456,6 +8572,17 @@ id|devc-&gt;chip_name
 op_assign
 l_string|&quot;AD1847&quot;
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|sscape_flag
+op_eq
+l_int|1
+)paren
+id|devc-&gt;model
+op_assign
+id|MD_1845_SSCAPE
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
@@ -9203,6 +9330,10 @@ c_cond
 id|devc-&gt;model
 op_ne
 id|MD_1845
+op_logical_or
+id|devc-&gt;model
+op_ne
+id|MD_1845_SSCAPE
 )paren
 r_return
 op_minus
@@ -10030,6 +10161,129 @@ r_goto
 id|interrupt_again
 suffix:semicolon
 )brace
+)brace
+multiline_comment|/*&n; *&t;Experimental initialization sequence for the integrated sound system&n; *&t;of the Compaq Deskpro M.&n; */
+DECL|function|init_deskpro_m
+r_static
+r_int
+id|init_deskpro_m
+c_func
+(paren
+r_struct
+id|address_info
+op_star
+id|hw_config
+)paren
+(brace
+r_int
+r_char
+id|tmp
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|tmp
+op_assign
+id|inb
+c_func
+(paren
+l_int|0xc44
+)paren
+)paren
+op_eq
+l_int|0xff
+)paren
+(brace
+id|DDB
+c_func
+(paren
+id|printk
+c_func
+(paren
+l_string|&quot;init_deskpro_m: Dead port 0xc44&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+id|outb
+c_func
+(paren
+l_int|0x10
+comma
+l_int|0xc44
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x40
+comma
+l_int|0xc45
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x00
+comma
+l_int|0xc46
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0xe8
+comma
+l_int|0xc47
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x14
+comma
+l_int|0xc44
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x40
+comma
+l_int|0xc45
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x00
+comma
+l_int|0xc46
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0xe8
+comma
+l_int|0xc47
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x10
+comma
+l_int|0xc44
+)paren
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Experimental initialization sequence for the integrated sound system&n; *&t;of Compaq Deskpro XL.&n; */
 DECL|function|init_deskpro
@@ -10971,6 +11225,27 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|deskpro_m
+)paren
+multiline_comment|/* Compaq Deskpro M */
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|init_deskpro_m
+c_func
+(paren
+id|hw_config
+)paren
+)paren
+r_return
+l_int|0
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t;   * Check if the IO port returns valid signature. The original MS Sound&n;&t;   * system returns 0x04 while some cards (AudioTrix Pro for example)&n;&t;   * return 0x00 or 0x0f.&n;&t; */
 r_if
 c_cond
@@ -11822,6 +12097,10 @@ c_cond
 id|devc-&gt;model
 op_eq
 id|MD_1845
+op_logical_or
+id|devc-&gt;model
+op_eq
+id|MD_1845_SSCAPE
 )paren
 id|xtal_nsecs
 op_assign
@@ -12311,6 +12590,15 @@ l_string|&quot;i&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Special magic for Deskpro XL boxen */
+id|MODULE_PARM
+c_func
+(paren
+id|deskpro_m
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* Special magic for Deskpro M box */
 id|MODULE_PARM
 c_func
 (paren

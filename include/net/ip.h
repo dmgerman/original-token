@@ -156,7 +156,7 @@ r_int
 suffix:semicolon
 multiline_comment|/*&n; *&t;Functions provided by ip.c&n; */
 r_extern
-r_void
+r_int
 id|ip_build_and_send_pkt
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IPv6 BSD socket options interface&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Based on linux/net/ipv4/ip_sockglue.c&n; *&n; *&t;$Id: ipv6_sockglue.c,v 1.30 2000/01/09 02:19:49 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; *&n; *&t;FIXME: Make the setsockopt code POSIX compliant: That is&n; *&n; *&t;o&t;Return -EINVAL for setsockopt of short lengths&n; *&t;o&t;Truncate getsockopt returns&n; *&t;o&t;Return an optlen of the truncated length if need be&n; */
+multiline_comment|/*&n; *&t;IPv6 BSD socket options interface&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Based on linux/net/ipv4/ip_sockglue.c&n; *&n; *&t;$Id: ipv6_sockglue.c,v 1.31 2000/01/16 05:11:38 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; *&n; *&t;FIXME: Make the setsockopt code POSIX compliant: That is&n; *&n; *&t;o&t;Return -EINVAL for setsockopt of short lengths&n; *&t;o&t;Truncate getsockopt returns&n; *&t;o&t;Return an optlen of the truncated length if need be&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
@@ -713,6 +713,7 @@ id|sk-&gt;destruct
 op_assign
 id|inet_sock_destruct
 suffix:semicolon
+macro_line|#ifdef INET_REFCNT_DEBUG
 id|atomic_dec
 c_func
 (paren
@@ -720,6 +721,7 @@ op_amp
 id|inet6_sock_nr
 )paren
 suffix:semicolon
+macro_line|#endif
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 id|retv
@@ -1024,16 +1026,19 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 (paren
-id|tcp_connected
-c_func
 (paren
+l_int|1
+op_lshift
 id|sk-&gt;state
 )paren
-op_logical_or
-id|sk-&gt;state
-op_eq
-id|TCP_SYN_SENT
+op_amp
+(paren
+id|TCPF_LISTEN
+op_or
+id|TCPF_CLOSE
+)paren
 )paren
 op_logical_and
 id|sk-&gt;daddr

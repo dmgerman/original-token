@@ -310,6 +310,14 @@ r_void
 suffix:semicolon
 r_extern
 r_int
+id|sdla_c_setup
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|sis900_probe
 c_func
 (paren
@@ -449,7 +457,7 @@ comma
 macro_line|#endif
 macro_line|#if defined(CONFIG_SDLA)
 (brace
-id|sdla_setup
+id|sdla_c_setup
 comma
 l_int|0
 )brace

@@ -81,7 +81,7 @@ multiline_comment|/* &n;&t;   Quick test to see if there are connections on the 
 r_if
 c_cond
 (paren
-id|Socket-&gt;sk-&gt;tp_pinfo.af_tcp.syn_wait_queue
+id|Socket-&gt;sk-&gt;tp_pinfo.af_tcp.accept_queue
 op_eq
 l_int|NULL
 )paren

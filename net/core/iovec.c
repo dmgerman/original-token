@@ -270,7 +270,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
-multiline_comment|/* Copy and checkum skb to user iovec. Caller _must_ check that&n;   skb will fit to this iovec.&n; */
+multiline_comment|/* Copy and checkum skb to user iovec. Caller _must_ check that&n;   skb will fit to this iovec.&n;&n;   Returns: 0       - success.&n;            -EINVAL - checksum failure.&n;&t;    -EFAULT - fault during copy. Beware, in this case iovec can be&n;&t;              modified!&n; */
 DECL|function|copy_and_csum_toiovec
 r_int
 id|copy_and_csum_toiovec
@@ -301,7 +301,7 @@ id|skb-&gt;len
 op_minus
 id|hlen
 suffix:semicolon
-multiline_comment|/* Skip filled elements. Pretty silly, look at mecpy_toiove, though 8) */
+multiline_comment|/* Skip filled elements. Pretty silly, look at memcpy_toiovec, though 8) */
 r_while
 c_loop
 (paren
@@ -362,7 +362,7 @@ id|chunk
 )paren
 )paren
 r_goto
-id|csum_error
+id|fault
 suffix:semicolon
 )brace
 r_else
@@ -436,6 +436,12 @@ r_return
 l_int|0
 suffix:semicolon
 id|csum_error
+suffix:colon
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+id|fault
 suffix:colon
 r_return
 op_minus

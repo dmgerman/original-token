@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
@@ -155,10 +156,10 @@ id|smp_activated
 op_assign
 l_int|0
 suffix:semicolon
-DECL|variable|cpu_number_map
+DECL|variable|__cpu_number_map
 r_volatile
 r_int
-id|cpu_number_map
+id|__cpu_number_map
 (braket
 id|NR_CPUS
 )braket

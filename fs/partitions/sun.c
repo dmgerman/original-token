@@ -183,6 +183,7 @@ id|dev
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;Dev %s: unable to read partition table&bslash;n&quot;
 comma
 id|kdevname
@@ -222,24 +223,7 @@ op_ne
 id|SUN_LABEL_MAGIC
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;Dev %s Sun disklabel: bad magic %04x&bslash;n&quot;
-comma
-id|kdevname
-c_func
-(paren
-id|dev
-)paren
-comma
-id|be16_to_cpu
-c_func
-(paren
-id|label-&gt;magic
-)paren
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;printk(KERN_INFO &quot;Dev %s Sun disklabel: bad magic %04x&bslash;n&quot;,&n;&t;&t;       kdevname(dev), be16_to_cpu(label-&gt;magic)); */
 id|brelse
 c_func
 (paren

@@ -154,14 +154,12 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* Grrr... setsockopt() does this. */
 id|sock-&gt;sk-&gt;reuse
 op_assign
 l_int|1
 suffix:semicolon
-id|sock-&gt;sk-&gt;nonagle
-op_assign
-l_int|0
-suffix:semicolon
+multiline_comment|/* Wow!!! */
 id|sock-&gt;sk-&gt;linger
 op_assign
 l_int|1

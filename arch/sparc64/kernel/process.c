@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: process.c,v 1.102 1999/12/15 22:24:49 davem Exp $&n; *  arch/sparc64/kernel/process.c&n; *&n; *  Copyright (C) 1995, 1996 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996       Eddie C. Dost   (ecd@skynet.be)&n; *  Copyright (C) 1997, 1998 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: process.c,v 1.103 2000/01/21 11:38:53 jj Exp $&n; *  arch/sparc64/kernel/process.c&n; *&n; *  Copyright (C) 1995, 1996 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996       Eddie C. Dost   (ecd@skynet.be)&n; *  Copyright (C) 1997, 1998 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
@@ -1835,22 +1835,6 @@ macro_line|#endif&t;
 id|printk
 c_func
 (paren
-l_string|&quot;sig_address:       0x%016lx&bslash;n&quot;
-comma
-id|thread-&gt;sig_address
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;sig_desc:          0x%016lx&bslash;n&quot;
-comma
-id|thread-&gt;sig_desc
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
 l_string|&quot;ksp:               0x%016lx&bslash;n&quot;
 comma
 id|thread-&gt;ksp
@@ -3573,10 +3557,6 @@ op_assign
 id|dump-&gt;fpu.fpstatus.extra
 op_assign
 l_int|0
-suffix:semicolon
-id|dump-&gt;sigcode
-op_assign
-id|current-&gt;thread.sig_desc
 suffix:semicolon
 macro_line|#endif&t;
 )brace

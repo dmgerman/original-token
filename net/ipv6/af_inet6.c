@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;PF_INET6 socket protocol family&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Adapted from linux/net/ipv4/af_inet.c&n; *&n; *&t;$Id: af_inet6.c,v 1.49 1999/12/15 22:39:43 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;PF_INET6 socket protocol family&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Adapted from linux/net/ipv4/af_inet.c&n; *&n; *&t;$Id: af_inet6.c,v 1.52 2000/01/18 08:24:21 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -183,10 +183,12 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef INET_REFCNT_DEBUG
 DECL|variable|inet6_sock_nr
 id|atomic_t
 id|inet6_sock_nr
 suffix:semicolon
+macro_line|#endif
 DECL|function|inet6_sock_destruct
 r_static
 r_void
@@ -205,6 +207,7 @@ c_func
 id|sk
 )paren
 suffix:semicolon
+macro_line|#ifdef INET_REFCNT_DEBUG
 id|atomic_dec
 c_func
 (paren
@@ -212,6 +215,7 @@ op_amp
 id|inet6_sock_nr
 )paren
 suffix:semicolon
+macro_line|#endif
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
@@ -429,19 +433,6 @@ id|sk-&gt;backlog_rcv
 op_assign
 id|prot-&gt;backlog_rcv
 suffix:semicolon
-id|sk-&gt;timer.data
-op_assign
-(paren
-r_int
-r_int
-)paren
-id|sk
-suffix:semicolon
-id|sk-&gt;timer.function
-op_assign
-op_amp
-id|tcp_keepalive_timer
-suffix:semicolon
 id|sk-&gt;net_pinfo.af_inet6.hop_limit
 op_assign
 op_minus
@@ -481,6 +472,21 @@ id|sk-&gt;protinfo.af_inet.mc_list
 op_assign
 l_int|NULL
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ipv4_config.no_pmtu_disc
+)paren
+id|sk-&gt;protinfo.af_inet.pmtudisc
+op_assign
+id|IP_PMTUDISC_DONT
+suffix:semicolon
+r_else
+id|sk-&gt;protinfo.af_inet.pmtudisc
+op_assign
+id|IP_PMTUDISC_WANT
+suffix:semicolon
+macro_line|#ifdef INET_REFCNT_DEBUG
 id|atomic_inc
 c_func
 (paren
@@ -495,6 +501,7 @@ op_amp
 id|inet_sock_nr
 )paren
 suffix:semicolon
+macro_line|#endif
 id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_if
@@ -1672,7 +1679,7 @@ comma
 multiline_comment|/* ok&t;&t;*/
 id|inet6_getname
 comma
-id|inet_poll
+id|tcp_poll
 comma
 multiline_comment|/* ok&t;&t;*/
 id|inet6_ioctl

@@ -1,4 +1,5 @@
-multiline_comment|/*****************************************************************************&n;* wanproc.c&t;WAN Router Module. /proc filesystem interface.&n;*&n;*&t;&t;This module is completely hardware-independent and provides&n;*&t;&t;access to the router using Linux /proc filesystem.&n;*&n;* Author:&t;Gene Kozin&t;&lt;genek@compuserve.com&gt;&n;*&n;* Copyright:&t;(c) 1995-1997 Sangoma Technologies Inc.&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* Jun 29, 1997&t;Alan Cox&t;Merged with 1.0.3 vendor code&n;* Jan 29, 1997&t;Gene Kozin&t;v1.0.1. Implemented /proc read routines&n;* Jan 30, 1997&t;Alan Cox&t;Hacked around for 2.1&n;* Dec 13, 1996&t;Gene Kozin&t;Initial version (based on Sangoma&squot;s WANPIPE)&n;*****************************************************************************/
+multiline_comment|/*****************************************************************************&n;* wanproc.c&t;WAN Router Module. /proc filesystem interface.&n;*&n;*&t;&t;This module is completely hardware-independent and provides&n;*&t;&t;access to the router using Linux /proc filesystem.&n;*&n;* Author: &t;Gideon Hack&t;&n;*&n;* Copyright:&t;(c) 1995-1999 Sangoma Technologies Inc.&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* Jun 02, 1999  Gideon Hack&t;Updates for Linux 2.2.X kernels.&n;* Jun 29, 1997&t;Alan Cox&t;Merged with 1.0.3 vendor code&n;* Jan 29, 1997&t;Gene Kozin&t;v1.0.1. Implemented /proc read routines&n;* Jan 30, 1997&t;Alan Cox&t;Hacked around for 2.1&n;* Dec 13, 1996&t;Gene Kozin&t;Initial version (based on Sangoma&squot;s WANPIPE)&n;*****************************************************************************/
+macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;&t;/* offsetof(), etc. */
 macro_line|#include &lt;linux/errno.h&gt;&t;/* return codes */
@@ -13,6 +14,8 @@ macro_line|#include &lt;asm/uaccess.h&gt;&t;/* copy_to_user */
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/wanrouter.h&gt;&t;/* WAN router API definitions */
 multiline_comment|/****** Defines and Macros **************************************************/
+DECL|macro|PROC_STATS_FORMAT
+mdefine_line|#define PROC_STATS_FORMAT &quot;%30s: %12lu&bslash;n&quot;
 macro_line|#ifndef&t;min
 DECL|macro|min
 mdefine_line|#define min(a,b) (((a)&lt;(b))?(a):(b))
@@ -667,7 +670,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Read router proc directory entry.&n; *&t;This is universal routine for reading all entries in /proc/net/router&n; *&t;directory.  Each directory entry contains a pointer to the &squot;method&squot; for&n; *&t;preparing data for that entry.&n; *&t;o verify arguments&n; *&t;o allocate kernel buffer&n; *&t;o call get_info() to prepare data&n; *&t;o copy data to user space&n; *&t;o release kernel buffer&n; *&n; *&t;Return:&t;number of bytes copied to user space (0, if no data)&n; *&t;&t;&lt;0&t;error&n; */
+multiline_comment|/*&n; *&t;Read router proc directory entry.&n; *&t;This is universal routine for reading all entries in /proc/net/wanrouter&n; *&t;directory.  Each directory entry contains a pointer to the &squot;method&squot; for&n; *&t;preparing data for that entry.&n; *&t;o verify arguments&n; *&t;o allocate kernel buffer&n; *&t;o call get_info() to prepare data&n; *&t;o copy data to user space&n; *&t;o release kernel buffer&n; *&n; *&t;Return:&t;number of bytes copied to user space (0, if no data)&n; *&t;&t;&lt;0&t;error&n; */
 DECL|function|router_proc_read
 r_static
 id|ssize_t
@@ -945,11 +948,7 @@ id|wandev-&gt;irq
 comma
 id|wandev-&gt;dma
 comma
-id|virt_to_phys
-c_func
-(paren
 id|wandev-&gt;maddr
-)paren
 comma
 id|wandev-&gt;msize
 comma
@@ -1005,24 +1004,46 @@ id|len
 r_int
 id|cnt
 op_assign
+l_int|0
+suffix:semicolon
+id|wan_device_t
+op_star
+id|wandev
+suffix:semicolon
+id|cnt
+op_add_assign
+id|sprintf
+c_func
+(paren
+op_amp
+id|buf
+(braket
+id|cnt
+)braket
+comma
+l_string|&quot;&bslash;nSTATUS FOR PORT 0&bslash;n&bslash;n&quot;
+)paren
+suffix:semicolon
+id|strcpy
+c_func
+(paren
+op_amp
+id|buf
+(braket
+id|cnt
+)braket
+comma
+id|stat_hdr
+)paren
+suffix:semicolon
+id|cnt
+op_add_assign
 r_sizeof
 (paren
 id|stat_hdr
 )paren
 op_minus
 l_int|1
-suffix:semicolon
-id|wan_device_t
-op_star
-id|wandev
-suffix:semicolon
-id|strcpy
-c_func
-(paren
-id|buf
-comma
-id|stat_hdr
-)paren
 suffix:semicolon
 r_for
 c_loop
@@ -1253,6 +1274,11 @@ id|cnt
 op_assign
 l_int|0
 suffix:semicolon
+r_int
+id|rslt
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1296,6 +1322,9 @@ c_cond
 (paren
 id|wandev-&gt;update
 )paren
+(brace
+id|rslt
+op_assign
 id|wandev
 op_member_access_from_pointer
 id|update
@@ -1304,6 +1333,53 @@ c_func
 id|wandev
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|rslt
+)paren
+(brace
+r_switch
+c_cond
+(paren
+id|rslt
+)paren
+(brace
+r_case
+op_minus
+id|EAGAIN
+suffix:colon
+r_return
+id|sprintf
+c_func
+(paren
+op_amp
+id|buf
+(braket
+id|cnt
+)braket
+comma
+l_string|&quot;Device is busy!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_default
+suffix:colon
+r_return
+id|sprintf
+c_func
+(paren
+op_amp
+id|buf
+(braket
+id|cnt
+)braket
+comma
+l_string|&quot;Device is not configured!&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+)brace
+)brace
 id|cnt
 op_add_assign
 id|sprintf
@@ -1315,9 +1391,9 @@ id|buf
 id|cnt
 )braket
 comma
-l_string|&quot;%30s: %12lu&bslash;n&quot;
+id|PROC_STATS_FORMAT
 comma
-l_string|&quot;total frames received&quot;
+l_string|&quot;total packets received&quot;
 comma
 id|wandev-&gt;stats.rx_packets
 )paren
@@ -1333,135 +1409,9 @@ id|buf
 id|cnt
 )braket
 comma
-l_string|&quot;%30s: %12lu&bslash;n&quot;
+id|PROC_STATS_FORMAT
 comma
-l_string|&quot;receiver overrun errors&quot;
-comma
-id|wandev-&gt;stats.rx_over_errors
-)paren
-suffix:semicolon
-id|cnt
-op_add_assign
-id|sprintf
-c_func
-(paren
-op_amp
-id|buf
-(braket
-id|cnt
-)braket
-comma
-l_string|&quot;%30s: %12lu&bslash;n&quot;
-comma
-l_string|&quot;CRC errors&quot;
-comma
-id|wandev-&gt;stats.rx_crc_errors
-)paren
-suffix:semicolon
-id|cnt
-op_add_assign
-id|sprintf
-c_func
-(paren
-op_amp
-id|buf
-(braket
-id|cnt
-)braket
-comma
-l_string|&quot;%30s: %12lu&bslash;n&quot;
-comma
-l_string|&quot;frame length errors&quot;
-comma
-id|wandev-&gt;stats.rx_length_errors
-)paren
-suffix:semicolon
-id|cnt
-op_add_assign
-id|sprintf
-c_func
-(paren
-op_amp
-id|buf
-(braket
-id|cnt
-)braket
-comma
-l_string|&quot;%30s: %12lu&bslash;n&quot;
-comma
-l_string|&quot;frame format errors&quot;
-comma
-id|wandev-&gt;stats.rx_frame_errors
-)paren
-suffix:semicolon
-id|cnt
-op_add_assign
-id|sprintf
-c_func
-(paren
-op_amp
-id|buf
-(braket
-id|cnt
-)braket
-comma
-l_string|&quot;%30s: %12lu&bslash;n&quot;
-comma
-l_string|&quot;aborted frames received&quot;
-comma
-id|wandev-&gt;stats.rx_missed_errors
-)paren
-suffix:semicolon
-id|cnt
-op_add_assign
-id|sprintf
-c_func
-(paren
-op_amp
-id|buf
-(braket
-id|cnt
-)braket
-comma
-l_string|&quot;%30s: %12lu&bslash;n&quot;
-comma
-l_string|&quot;reveived frames dropped&quot;
-comma
-id|wandev-&gt;stats.rx_dropped
-)paren
-suffix:semicolon
-id|cnt
-op_add_assign
-id|sprintf
-c_func
-(paren
-op_amp
-id|buf
-(braket
-id|cnt
-)braket
-comma
-l_string|&quot;%30s: %12lu&bslash;n&quot;
-comma
-l_string|&quot;other receive errors&quot;
-comma
-id|wandev-&gt;stats.rx_errors
-)paren
-suffix:semicolon
-id|cnt
-op_add_assign
-id|sprintf
-c_func
-(paren
-op_amp
-id|buf
-(braket
-id|cnt
-)braket
-comma
-l_string|&quot;&bslash;n%30s: %12lu&bslash;n&quot;
-comma
-l_string|&quot;total frames transmitted&quot;
+l_string|&quot;total packets transmitted&quot;
 comma
 id|wandev-&gt;stats.tx_packets
 )paren
@@ -1477,11 +1427,11 @@ id|buf
 id|cnt
 )braket
 comma
-l_string|&quot;%30s: %12lu&bslash;n&quot;
+id|PROC_STATS_FORMAT
 comma
-l_string|&quot;aborted frames transmitted&quot;
+l_string|&quot;total bytes received&quot;
 comma
-id|wandev-&gt;stats.tx_aborted_errors
+id|wandev-&gt;stats.rx_bytes
 )paren
 suffix:semicolon
 id|cnt
@@ -1495,7 +1445,79 @@ id|buf
 id|cnt
 )braket
 comma
-l_string|&quot;%30s: %12lu&bslash;n&quot;
+id|PROC_STATS_FORMAT
+comma
+l_string|&quot;total bytes transmitted&quot;
+comma
+id|wandev-&gt;stats.tx_bytes
+)paren
+suffix:semicolon
+id|cnt
+op_add_assign
+id|sprintf
+c_func
+(paren
+op_amp
+id|buf
+(braket
+id|cnt
+)braket
+comma
+id|PROC_STATS_FORMAT
+comma
+l_string|&quot;bad packets received&quot;
+comma
+id|wandev-&gt;stats.rx_errors
+)paren
+suffix:semicolon
+id|cnt
+op_add_assign
+id|sprintf
+c_func
+(paren
+op_amp
+id|buf
+(braket
+id|cnt
+)braket
+comma
+id|PROC_STATS_FORMAT
+comma
+l_string|&quot;packet transmit problems&quot;
+comma
+id|wandev-&gt;stats.tx_errors
+)paren
+suffix:semicolon
+id|cnt
+op_add_assign
+id|sprintf
+c_func
+(paren
+op_amp
+id|buf
+(braket
+id|cnt
+)braket
+comma
+id|PROC_STATS_FORMAT
+comma
+l_string|&quot;received frames dropped&quot;
+comma
+id|wandev-&gt;stats.rx_dropped
+)paren
+suffix:semicolon
+id|cnt
+op_add_assign
+id|sprintf
+c_func
+(paren
+op_amp
+id|buf
+(braket
+id|cnt
+)braket
+comma
+id|PROC_STATS_FORMAT
 comma
 l_string|&quot;transmit frames dropped&quot;
 comma
@@ -1513,7 +1535,25 @@ id|buf
 id|cnt
 )braket
 comma
-l_string|&quot;%30s: %12lu&bslash;n&quot;
+id|PROC_STATS_FORMAT
+comma
+l_string|&quot;multicast packets received&quot;
+comma
+id|wandev-&gt;stats.multicast
+)paren
+suffix:semicolon
+id|cnt
+op_add_assign
+id|sprintf
+c_func
+(paren
+op_amp
+id|buf
+(braket
+id|cnt
+)braket
+comma
+id|PROC_STATS_FORMAT
 comma
 l_string|&quot;transmit collisions&quot;
 comma
@@ -1531,11 +1571,119 @@ id|buf
 id|cnt
 )braket
 comma
-l_string|&quot;%30s: %12lu&bslash;n&quot;
+id|PROC_STATS_FORMAT
 comma
-l_string|&quot;other transmit errors&quot;
+l_string|&quot;receive length errors&quot;
 comma
-id|wandev-&gt;stats.tx_errors
+id|wandev-&gt;stats.rx_length_errors
+)paren
+suffix:semicolon
+id|cnt
+op_add_assign
+id|sprintf
+c_func
+(paren
+op_amp
+id|buf
+(braket
+id|cnt
+)braket
+comma
+id|PROC_STATS_FORMAT
+comma
+l_string|&quot;receiver overrun errors&quot;
+comma
+id|wandev-&gt;stats.rx_over_errors
+)paren
+suffix:semicolon
+id|cnt
+op_add_assign
+id|sprintf
+c_func
+(paren
+op_amp
+id|buf
+(braket
+id|cnt
+)braket
+comma
+id|PROC_STATS_FORMAT
+comma
+l_string|&quot;CRC errors&quot;
+comma
+id|wandev-&gt;stats.rx_crc_errors
+)paren
+suffix:semicolon
+id|cnt
+op_add_assign
+id|sprintf
+c_func
+(paren
+op_amp
+id|buf
+(braket
+id|cnt
+)braket
+comma
+id|PROC_STATS_FORMAT
+comma
+l_string|&quot;frame format errors (aborts)&quot;
+comma
+id|wandev-&gt;stats.rx_frame_errors
+)paren
+suffix:semicolon
+id|cnt
+op_add_assign
+id|sprintf
+c_func
+(paren
+op_amp
+id|buf
+(braket
+id|cnt
+)braket
+comma
+id|PROC_STATS_FORMAT
+comma
+l_string|&quot;receiver fifo overrun&quot;
+comma
+id|wandev-&gt;stats.rx_fifo_errors
+)paren
+suffix:semicolon
+id|cnt
+op_add_assign
+id|sprintf
+c_func
+(paren
+op_amp
+id|buf
+(braket
+id|cnt
+)braket
+comma
+id|PROC_STATS_FORMAT
+comma
+l_string|&quot;receiver missed packet&quot;
+comma
+id|wandev-&gt;stats.rx_missed_errors
+)paren
+suffix:semicolon
+id|cnt
+op_add_assign
+id|sprintf
+c_func
+(paren
+op_amp
+id|buf
+(braket
+id|cnt
+)braket
+comma
+id|PROC_STATS_FORMAT
+comma
+l_string|&quot;aborted frames transmitted&quot;
+comma
+id|wandev-&gt;stats.tx_aborted_errors
 )paren
 suffix:semicolon
 r_return
@@ -1598,4 +1746,5 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
+multiline_comment|/*&n; *&t;End&n; */
 eof

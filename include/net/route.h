@@ -160,14 +160,8 @@ suffix:semicolon
 r_extern
 r_struct
 id|ip_rt_acct
+op_star
 id|ip_rt_acct
-(braket
-l_int|256
-)braket
-suffix:semicolon
-r_extern
-id|rwlock_t
-id|ip_rt_acct_lock
 suffix:semicolon
 r_extern
 r_void

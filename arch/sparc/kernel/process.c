@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: process.c,v 1.143 2000/01/09 09:13:28 anton Exp $&n; *  linux/arch/sparc/kernel/process.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
+multiline_comment|/*  $Id: process.c,v 1.144 2000/01/21 11:38:39 jj Exp $&n; *  linux/arch/sparc/kernel/process.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
@@ -1316,16 +1316,6 @@ id|show_regs
 c_func
 (paren
 id|thread-&gt;kregs
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;sig_address:       0x%08lx  sig_desc:          0x%08lx&bslash;n&quot;
-comma
-id|thread-&gt;sig_address
-comma
-id|thread-&gt;sig_desc
 )paren
 suffix:semicolon
 id|printk
@@ -2675,7 +2665,7 @@ l_int|16
 suffix:semicolon
 id|dump-&gt;sigcode
 op_assign
-id|current-&gt;thread.sig_desc
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * fill in the fpu structure for a core dump.&n; */

@@ -1,4 +1,5 @@
-multiline_comment|/*****************************************************************************&n;* wanmain.c&t;WAN Multiprotocol Router Module. Main code.&n;*&n;*&t;&t;This module is completely hardware-independent and provides&n;*&t;&t;the following common services for the WAN Link Drivers:&n;*&t;&t; o WAN device managenment (registering, unregistering)&n;*&t;&t; o Network interface management&n;*&t;&t; o Physical connection management (dial-up, incomming calls)&n;*&t;&t; o Logical connection management (switched virtual circuits)&n;*&t;&t; o Protocol encapsulation/decapsulation&n;*&n;* Author:&t;Gene Kozin&t;&lt;genek@compuserve.com&gt;&n;*&n;* Copyright:&t;(c) 1995-1997 Sangoma Technologies Inc.&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* Dec 27, 1996&t;Gene Kozin&t;Initial version (based on Sangoma&squot;s WANPIPE)&n;* Jan 16, 1997&t;Gene Kozin&t;router_devlist made public&n;* Jan 31, 1997  Alan Cox&t;Hacked it about a bit for 2.1&n;* Jun 27, 1997  Alan Cox&t;realigned with vendor code&n;* Oct 15, 1997  Farhan Thawar   changed wan_encapsulate to add a pad byte of 0&n;* Apr 20, 1998&t;Alan Cox&t;Fixed 2.1 symbols&n;* May 17, 1998  K. Baranowski&t;Fixed SNAP encapsulation in wan_encapsulate&n;* Dec 15, 1998  Arnaldo Melo    support for firmwares of up to 128000 bytes&n;*                               check wandev-&gt;setup return value&n;* Dec 22, 1998  Arnaldo Melo    vmalloc/vfree used in device_setup to allocate&n;*                               kernel memory and copy configuration data to&n;*                               kernel space (for big firmwares)&n;* May 19, 1999  Arnaldo Melo    __init in wanrouter_init&n;*****************************************************************************/
+multiline_comment|/*****************************************************************************&n;* wanmain.c&t;WAN Multiprotocol Router Module. Main code.&n;*&n;*&t;&t;This module is completely hardware-independent and provides&n;*&t;&t;the following common services for the WAN Link Drivers:&n;*&t;&t; o WAN device managenment (registering, unregistering)&n;*&t;&t; o Network interface management&n;*&t;&t; o Physical connection management (dial-up, incomming calls)&n;*&t;&t; o Logical connection management (switched virtual circuits)&n;*&t;&t; o Protocol encapsulation/decapsulation&n;*&n;* Author:&t;Gideon Hack&t;&n;*&n;* Copyright:&t;(c) 1995-1999 Sangoma Technologies Inc.&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* Oct 01, 1999  Gideon Hack     Update for s514 PCI card&n;* Dec 27, 1996&t;Gene Kozin&t;Initial version (based on Sangoma&squot;s WANPIPE)&n;* Jan 16, 1997&t;Gene Kozin&t;router_devlist made public&n;* Jan 31, 1997  Alan Cox&t;Hacked it about a bit for 2.1&n;* Jun 27, 1997  Alan Cox&t;realigned with vendor code&n;* Oct 15, 1997  Farhan Thawar   changed wan_encapsulate to add a pad byte of 0&n;* Apr 20, 1998&t;Alan Cox&t;Fixed 2.1 symbols&n;* May 17, 1998  K. Baranowski&t;Fixed SNAP encapsulation in wan_encapsulate&n;* Dec 15, 1998  Arnaldo Melo    support for firmwares of up to 128000 bytes&n;*                               check wandev-&gt;setup return value&n;* Dec 22, 1998  Arnaldo Melo    vmalloc/vfree used in device_setup to allocate&n;*                               kernel memory and copy configuration data to&n;*                               kernel space (for big firmwares)&n;* May 19, 1999  Arnaldo Melo    __init in wanrouter_init&n;* Jun 02, 1999  Gideon Hack&t;Updates for Linux 2.0.X and 2.2.X kernels.&t;&n;*****************************************************************************/
+macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;&t;/* offsetof(), etc. */
 macro_line|#include &lt;linux/errno.h&gt;&t;/* return codes */
@@ -13,7 +14,7 @@ macro_line|#include &lt;asm/byteorder.h&gt;&t;/* htons(), etc. */
 macro_line|#include &lt;asm/uaccess.h&gt;&t;/* copy_to/from_user */
 macro_line|#include &lt;linux/wanrouter.h&gt;&t;/* WAN router API definitions */
 macro_line|#include &lt;linux/init.h&gt;&t;&t;/* __init et al. */
-multiline_comment|/****** Defines and Macros **************************************************/
+multiline_comment|/*&n; * &t;Defines and Macros &n; */
 macro_line|#ifndef&t;min
 DECL|macro|min
 mdefine_line|#define min(a,b) (((a)&lt;(b))?(a):(b))
@@ -22,8 +23,8 @@ macro_line|#ifndef&t;max
 DECL|macro|max
 mdefine_line|#define max(a,b) (((a)&gt;(b))?(a):(b))
 macro_line|#endif
-multiline_comment|/****** Function Prototypes *************************************************/
-multiline_comment|/*&n; *&t;Kernel loadable module interface.&n; */
+multiline_comment|/*&n; * &t;Function Prototypes &n; */
+multiline_comment|/* &n; * &t;Kernel loadable module interface.&n; */
 macro_line|#ifdef MODULE
 r_int
 id|init_module
@@ -38,10 +39,11 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n; *&t;WAN device IOCTL handlers &n; */
+multiline_comment|/* &n; *&t;WAN device IOCTL handlers &n; */
 r_static
 r_int
 id|device_setup
+c_func
 (paren
 id|wan_device_t
 op_star
@@ -55,6 +57,7 @@ suffix:semicolon
 r_static
 r_int
 id|device_stat
+c_func
 (paren
 id|wan_device_t
 op_star
@@ -68,6 +71,7 @@ suffix:semicolon
 r_static
 r_int
 id|device_shutdown
+c_func
 (paren
 id|wan_device_t
 op_star
@@ -77,6 +81,7 @@ suffix:semicolon
 r_static
 r_int
 id|device_new_if
+c_func
 (paren
 id|wan_device_t
 op_star
@@ -90,6 +95,7 @@ suffix:semicolon
 r_static
 r_int
 id|device_del_if
+c_func
 (paren
 id|wan_device_t
 op_star
@@ -100,7 +106,7 @@ op_star
 id|u_name
 )paren
 suffix:semicolon
-multiline_comment|/*&n; *&t;Miscellaneous &n; */
+multiline_comment|/* &n; *&t;Miscellaneous &n; */
 r_static
 id|wan_device_t
 op_star
@@ -124,7 +130,7 @@ op_star
 id|name
 comma
 r_int
-id|forse
+id|force
 )paren
 suffix:semicolon
 multiline_comment|/*&n; *&t;Global Data&n; */
@@ -144,7 +150,7 @@ id|copyright
 (braket
 )braket
 op_assign
-l_string|&quot;(c) 1995-1997 Sangoma Technologies Inc.&quot;
+l_string|&quot;(c) 1995-1999 Sangoma Technologies Inc.&quot;
 suffix:semicolon
 DECL|variable|modname
 r_static
@@ -171,7 +177,7 @@ id|devcnt
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n; *&t;Organizationally Unique Identifiers for encapsulation/decapsulation&n; */
+multiline_comment|/* &n; *&t;Organize Unique Identifiers for encapsulation/decapsulation &n; */
 DECL|variable|oui_ether
 r_static
 r_int
@@ -289,7 +295,7 @@ suffix:semicolon
 )brace
 macro_line|#else
 multiline_comment|/*&n; *&t;Kernel Loadable Module Entry Points&n; */
-multiline_comment|/*&n; *&t;Module &squot;insert&squot; entry point.&n; *&t;o print announcement&n; *&t;o initialize static data&n; *&t;o create /proc/net/router directory and static entries&n; *&n; *&t;Return:&t;0&t;Ok&n; *&t;&t;&lt; 0&t;error.&n; *&t;Context:&t;process&n; */
+multiline_comment|/*&n; * &t;Module &squot;insert&squot; entry point.&n; * &t;o print announcement&n; * &t;o initialize static data&n; * &t;o create /proc/net/router directory and static entries&n; *&n; * &t;Return:&t;0&t;Ok&n; *&t;&t;&lt; 0&t;error.&n; * &t;Context:&t;process&n; */
 DECL|function|init_module
 r_int
 id|init_module
@@ -340,7 +346,7 @@ r_return
 id|err
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Module &squot;remove&squot; entry point.&n; *&t;o delete /proc/net/router directory and static entries.&n; */
+multiline_comment|/*&n; * &t;Module &squot;remove&squot; entry point.&n; * &t;o delete /proc/net/router directory and static entries.&n; */
 DECL|function|cleanup_module
 r_void
 id|cleanup_module
@@ -355,8 +361,8 @@ c_func
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/*&n; *&t;Kernel APIs&n; */
-multiline_comment|/*&n; *&t;Register WAN device.&n; *&t;o verify device credentials&n; *&t;o create an entry for the device in the /proc/net/router directory&n; *&t;o initialize internally maintained fields of the wan_device structure&n; *&t;o link device data space to a singly-linked list&n; *&t;o if it&squot;s the first device, then start kernel &squot;thread&squot;&n; *&t;o increment module use count&n; *&n; *&t; Return:&n; *&t;&t;0&t;Ok&n; *&t;&t;&lt; 0&t;error.&n; *&n; *&t;Context:&t;process&n; */
+multiline_comment|/*&n; * &t;Kernel APIs&n; */
+multiline_comment|/*&n; * &t;Register WAN device.&n; * &t;o verify device credentials&n; * &t;o create an entry for the device in the /proc/net/router directory&n; * &t;o initialize internally maintained fields of the wan_device structure&n; * &t;o link device data space to a singly-linked list&n; * &t;o if it&squot;s the first device, then start kernel &squot;thread&squot;&n; * &t;o increment module use count&n; *&n; * &t;Return:&n; *&t;0&t;Ok&n; *&t;&lt; 0&t;error.&n; *&n; * &t;Context:&t;process&n; */
 DECL|function|register_wan_device
 r_int
 id|register_wan_device
@@ -929,7 +935,6 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1279,6 +1284,8 @@ id|u_conf
 r_void
 op_star
 id|data
+op_assign
+l_int|NULL
 suffix:semicolon
 id|wandev_conf_t
 op_star
@@ -1360,9 +1367,18 @@ id|conf-&gt;magic
 op_ne
 id|ROUTER_MAGIC
 )paren
-r_goto
-id|bail
+(brace
+id|kfree
+c_func
+(paren
+id|conf
+)paren
 suffix:semicolon
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1383,8 +1399,16 @@ OL
 l_int|0
 )paren
 (brace
-r_goto
-id|bail
+id|kfree
+c_func
+(paren
+id|conf
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
 suffix:semicolon
 )brace
 id|data
@@ -1458,8 +1482,6 @@ id|data
 )paren
 suffix:semicolon
 )brace
-id|bail
-suffix:colon
 id|kfree
 c_func
 (paren
@@ -1980,6 +2002,7 @@ r_static
 id|wan_device_t
 op_star
 id|find_device
+c_func
 (paren
 r_char
 op_star

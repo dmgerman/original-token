@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: init.c,v 1.73 2000/01/15 00:51:26 anton Exp $&n; *  linux/arch/sparc/mm/init.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Eddie C. Dost (ecd@skynet.be)&n; *  Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *  Copyright (C) 2000 Anton Blanchard (anton@progsoc.uts.edu.au)&n; */
+multiline_comment|/*  $Id: init.c,v 1.76 2000/01/21 18:16:55 anton Exp $&n; *  linux/arch/sparc/mm/init.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Eddie C. Dost (ecd@skynet.be)&n; *  Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *  Copyright (C) 2000 Anton Blanchard (anton@progsoc.uts.edu.au)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -69,14 +69,13 @@ id|__init_end
 comma
 id|_start
 comma
-id|_end
+id|end
 comma
 id|etext
 comma
 id|edata
 suffix:semicolon
 DECL|variable|totalram_pages
-r_static
 r_int
 r_int
 id|totalram_pages
@@ -592,7 +591,7 @@ r_int
 r_int
 )paren
 op_amp
-id|_end
+id|end
 )paren
 )paren
 suffix:semicolon
@@ -707,18 +706,18 @@ comma
 id|phys_base
 comma
 (paren
-(paren
-(paren
 id|start_pfn
 op_lshift
 id|PAGE_SHIFT
 )paren
 op_plus
 id|bootmap_size
-)paren
+op_plus
+id|PAGE_SIZE
+op_minus
+l_int|1
 op_minus
 id|phys_base
-)paren
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -728,18 +727,18 @@ c_func
 id|phys_base
 comma
 (paren
-(paren
-(paren
 id|start_pfn
 op_lshift
 id|PAGE_SHIFT
 )paren
 op_plus
 id|bootmap_size
-)paren
+op_plus
+id|PAGE_SIZE
+op_minus
+l_int|1
 op_minus
 id|phys_base
-)paren
 )paren
 suffix:semicolon
 macro_line|#ifdef DEBUG_BOOTMEM
@@ -1503,12 +1502,14 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
 r_int
 r_int
 id|addr
 comma
 id|last
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Saves us work later. */
 id|memset
 c_func
@@ -1517,11 +1518,8 @@ c_func
 r_void
 op_star
 )paren
-id|ZERO_PAGE
-c_func
-(paren
-l_int|0
-)paren
+op_amp
+id|empty_zero_page
 comma
 l_int|0
 comma
@@ -1613,7 +1611,7 @@ r_int
 r_int
 )paren
 op_amp
-id|_end
+id|end
 )paren
 op_plus
 id|phys_base
@@ -1999,6 +1997,21 @@ id|num_physpages
 op_increment
 suffix:semicolon
 )brace
+id|printk
+(paren
+l_string|&quot;Freeing unused kernel memory: %dk freed&bslash;n&quot;
+comma
+(paren
+op_amp
+id|__init_end
+op_minus
+op_amp
+id|__init_begin
+)paren
+op_rshift
+l_int|10
+)paren
+suffix:semicolon
 )brace
 DECL|function|si_meminfo
 r_void

@@ -699,7 +699,7 @@ suffix:semicolon
 r_else
 multiline_comment|/* Normal Case */
 (brace
-id|Request-&gt;sock-&gt;sk-&gt;nonagle
+id|Request-&gt;sock-&gt;sk-&gt;tp_pinfo.af_tcp.nonagle
 op_assign
 l_int|2
 suffix:semicolon

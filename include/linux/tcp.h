@@ -427,5 +427,7 @@ DECL|macro|TCP_LINGER2
 mdefine_line|#define TCP_LINGER2&t;&t;8&t;/* Life time of orphaned FIN-WAIT-2 state */
 DECL|macro|TCP_DEFER_ACCEPT
 mdefine_line|#define TCP_DEFER_ACCEPT&t;9&t;/* Wake up listener only when data arrive */
+DECL|macro|TCP_WINDOW_CLAMP
+mdefine_line|#define TCP_WINDOW_CLAMP&t;10&t;/* Bound advertised window */
 macro_line|#endif&t;/* _LINUX_TCP_H */
 eof

@@ -533,10 +533,14 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;udf: Kernel has room for %u bytes, udf needs %u&bslash;n&quot;
+l_string|&quot;udf: Kernel has room for %u bytes, udf needs %lu&bslash;n&quot;
 comma
 id|size
 comma
+(paren
+r_int
+r_int
+)paren
 r_sizeof
 (paren
 r_struct

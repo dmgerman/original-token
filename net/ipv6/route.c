@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Linux INET6 implementation&n; *&t;FIB front-end.&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: route.c,v 1.44 2000/01/09 02:19:51 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Linux INET6 implementation&n; *&t;FIB front-end.&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: route.c,v 1.45 2000/01/16 05:11:38 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -246,6 +246,8 @@ id|loopback_dev
 comma
 op_minus
 l_int|1
+comma
+l_int|0
 comma
 l_int|0
 comma
@@ -1061,6 +1063,10 @@ suffix:semicolon
 id|rt-&gt;rt6i_flags
 op_or_assign
 id|RTF_CACHE
+suffix:semicolon
+id|rt-&gt;u.dst.flags
+op_or_assign
+id|DST_HOST
 suffix:semicolon
 macro_line|#ifdef CONFIG_IPV6_SUBTREES
 r_if
@@ -2625,6 +2631,17 @@ id|rt-&gt;rt6i_dst.plen
 op_assign
 id|rtmsg-&gt;rtmsg_dst_len
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|rt-&gt;rt6i_dst.plen
+op_eq
+l_int|128
+)paren
+id|rt-&gt;u.dst.flags
+op_assign
+id|DST_HOST
+suffix:semicolon
 id|ipv6_wash_prefix
 c_func
 (paren
@@ -3583,6 +3600,10 @@ id|nrt-&gt;rt6i_dst.plen
 op_assign
 l_int|128
 suffix:semicolon
+id|nrt-&gt;u.dst.flags
+op_or_assign
+id|DST_HOST
+suffix:semicolon
 id|ipv6_addr_copy
 c_func
 (paren
@@ -3916,6 +3937,10 @@ suffix:semicolon
 id|nrt-&gt;rt6i_dst.plen
 op_assign
 l_int|128
+suffix:semicolon
+id|nrt-&gt;u.dst.flags
+op_or_assign
+id|DST_HOST
 suffix:semicolon
 id|nrt-&gt;rt6i_nexthop
 op_assign
@@ -4628,6 +4653,10 @@ l_int|NULL
 r_return
 op_minus
 id|ENOMEM
+suffix:semicolon
+id|rt-&gt;u.dst.flags
+op_assign
+id|DST_HOST
 suffix:semicolon
 id|rt-&gt;u.dst.input
 op_assign

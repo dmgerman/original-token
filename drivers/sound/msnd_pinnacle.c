@@ -13,6 +13,7 @@ macro_line|#ifndef LINUX20
 macro_line|#  include &lt;linux/init.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;sound_firmware.h&quot;
 macro_line|#ifdef MSND_CLASSIC

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: bwtwofb.c,v 1.11 1999/11/19 09:56:54 davem Exp $&n; * bwtwofb.c: BWtwo frame buffer driver&n; *&n; * Copyright (C) 1998 Jakub Jelinek   (jj@ultra.linux.cz)&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1998 Pavel Machek    (pavel@ucw.cz)&n; */
+multiline_comment|/* $Id: bwtwofb.c,v 1.12 2000/01/21 03:57:05 anton Exp $&n; * bwtwofb.c: BWtwo frame buffer driver&n; *&n; * Copyright (C) 1998 Jakub Jelinek   (jj@ultra.linux.cz)&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1998 Pavel Machek    (pavel@ucw.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -774,7 +774,7 @@ l_int|1
 suffix:semicolon
 id|res.flags
 op_assign
-id|IORESOURE_IO
+id|IORESOURCE_IO
 op_or
 (paren
 id|fb-&gt;iospace

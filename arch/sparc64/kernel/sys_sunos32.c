@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sunos32.c,v 1.35 2000/01/06 23:51:50 davem Exp $&n; * sys_sunos32.c: SunOS binary compatability layer on sparc64.&n; *&n; * Copyright (C) 1995, 1996, 1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * Based upon preliminary work which is:&n; *&n; * Copyright (C) 1995 Adrian M. Rodriguez (adrian@remus.rutgers.edu)&n; */
+multiline_comment|/* $Id: sys_sunos32.c,v 1.37 2000/01/21 11:39:03 jj Exp $&n; * sys_sunos32.c: SunOS binary compatability layer on sparc64.&n; *&n; * Copyright (C) 1995, 1996, 1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * Based upon preliminary work which is:&n; *&n; * Copyright (C) 1995 Adrian M. Rodriguez (adrian@remus.rutgers.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -1298,6 +1298,12 @@ op_amp
 id|_BLOCKABLE
 )paren
 suffix:semicolon
+id|recalc_sigpending
+c_func
+(paren
+id|current
+)paren
+suffix:semicolon
 id|spin_unlock_irq
 c_func
 (paren
@@ -1348,6 +1354,12 @@ op_assign
 id|newmask
 op_amp
 id|_BLOCKABLE
+)paren
+suffix:semicolon
+id|recalc_sigpending
+c_func
+(paren
+id|current
 )paren
 suffix:semicolon
 id|spin_unlock_irq
@@ -2549,6 +2561,13 @@ id|pt_regs
 op_star
 id|regs
 suffix:semicolon
+id|siginfo_t
+id|info
+suffix:semicolon
+r_static
+r_int
+id|cnt
+suffix:semicolon
 id|lock_kernel
 c_func
 (paren
@@ -2558,27 +2577,55 @@ id|regs
 op_assign
 id|current-&gt;thread.kregs
 suffix:semicolon
-id|current-&gt;thread.sig_address
+id|info.si_signo
 op_assign
+id|SIGSYS
+suffix:semicolon
+id|info.si_errno
+op_assign
+l_int|0
+suffix:semicolon
+id|info.si_code
+op_assign
+id|__SI_FAULT
+op_or
+l_int|0x100
+suffix:semicolon
+id|info.si_addr
+op_assign
+(paren
+r_void
+op_star
+)paren
 id|regs-&gt;tpc
 suffix:semicolon
-id|current-&gt;thread.sig_desc
+id|info.si_trapno
 op_assign
 id|regs-&gt;u_regs
 (braket
 id|UREG_G1
 )braket
 suffix:semicolon
-id|send_sig
+id|send_sig_info
 c_func
 (paren
 id|SIGSYS
 comma
-id|current
+op_amp
+id|info
 comma
-l_int|1
+id|current
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|cnt
+op_increment
+OL
+l_int|4
+)paren
+(brace
 id|printk
 c_func
 (paren
@@ -2599,6 +2646,7 @@ c_func
 id|regs
 )paren
 suffix:semicolon
+)brace
 id|unlock_kernel
 c_func
 (paren

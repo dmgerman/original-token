@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Routines having to do with the &squot;struct sk_buff&squot; memory handlers.&n; *&n; *&t;Authors:&t;Alan Cox &lt;iiitac@pyr.swan.ac.uk&gt;&n; *&t;&t;&t;Florian La Roche &lt;rzsfl@rz.uni-sb.de&gt;&n; *&n; *&t;Version:&t;$Id: skbuff.c,v 1.63 2000/01/02 09:15:17 davem Exp $&n; *&n; *&t;Fixes:&t;&n; *&t;&t;Alan Cox&t;:&t;Fixed the worst of the load balancer bugs.&n; *&t;&t;Dave Platt&t;:&t;Interrupt stacking fix.&n; *&t;Richard Kooijman&t;:&t;Timestamp fixes.&n; *&t;&t;Alan Cox&t;:&t;Changed buffer format.&n; *&t;&t;Alan Cox&t;:&t;destructor hook for AF_UNIX etc.&n; *&t;&t;Linus Torvalds&t;:&t;Better skb_clone.&n; *&t;&t;Alan Cox&t;:&t;Added skb_copy.&n; *&t;&t;Alan Cox&t;:&t;Added all the changed routines Linus&n; *&t;&t;&t;&t;&t;only put in the headers&n; *&t;&t;Ray VanTassle&t;:&t;Fixed --skb-&gt;lock in free&n; *&t;&t;Alan Cox&t;:&t;skb_copy copy arp field&n; *&t;&t;Andi Kleen&t;:&t;slabified it.&n; *&n; *&t;NOTE:&n; *&t;&t;The __skb_ routines should be called with interrupts &n; *&t;disabled, or you better be *real* sure that the operation is atomic &n; *&t;with respect to whatever list is being frobbed (e.g. via lock_sock()&n; *&t;or via disabling bottom half handlers, etc).&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Routines having to do with the &squot;struct sk_buff&squot; memory handlers.&n; *&n; *&t;Authors:&t;Alan Cox &lt;iiitac@pyr.swan.ac.uk&gt;&n; *&t;&t;&t;Florian La Roche &lt;rzsfl@rz.uni-sb.de&gt;&n; *&n; *&t;Version:&t;$Id: skbuff.c,v 1.64 2000/01/16 05:11:03 davem Exp $&n; *&n; *&t;Fixes:&t;&n; *&t;&t;Alan Cox&t;:&t;Fixed the worst of the load balancer bugs.&n; *&t;&t;Dave Platt&t;:&t;Interrupt stacking fix.&n; *&t;Richard Kooijman&t;:&t;Timestamp fixes.&n; *&t;&t;Alan Cox&t;:&t;Changed buffer format.&n; *&t;&t;Alan Cox&t;:&t;destructor hook for AF_UNIX etc.&n; *&t;&t;Linus Torvalds&t;:&t;Better skb_clone.&n; *&t;&t;Alan Cox&t;:&t;Added skb_copy.&n; *&t;&t;Alan Cox&t;:&t;Added all the changed routines Linus&n; *&t;&t;&t;&t;&t;only put in the headers&n; *&t;&t;Ray VanTassle&t;:&t;Fixed --skb-&gt;lock in free&n; *&t;&t;Alan Cox&t;:&t;skb_copy copy arp field&n; *&t;&t;Andi Kleen&t;:&t;slabified it.&n; *&n; *&t;NOTE:&n; *&t;&t;The __skb_ routines should be called with interrupts &n; *&t;disabled, or you better be *real* sure that the operation is atomic &n; *&t;with respect to whatever list is being frobbed (e.g. via lock_sock()&n; *&t;or via disabling bottom half handlers, etc).&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; */
 multiline_comment|/*&n; *&t;The functions in this file will not compile correctly with gcc 2.4.x&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -22,9 +22,6 @@ macro_line|#include &lt;net/udp.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#ifdef CONFIG_ATM
-macro_line|#include &lt;linux/atmdev.h&gt;
-macro_line|#endif
 multiline_comment|/*&n; *&t;Resource tracking variables&n; */
 DECL|variable|net_skbcount
 r_static
@@ -430,18 +427,6 @@ id|skb-&gt;cloned
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef CONFIG_ATM
-id|ATM_SKB
-c_func
-(paren
-id|skb
-)paren
-op_member_access_from_pointer
-id|iovcnt
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
 id|atomic_set
 c_func
 (paren
@@ -582,6 +567,12 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#endif
+macro_line|#endif
+macro_line|#ifdef CONFIG_NET_SCHED
+id|skb-&gt;tc_index
+op_assign
+l_int|0
+suffix:semicolon
 macro_line|#endif
 id|memset
 c_func
@@ -1067,6 +1058,14 @@ op_assign
 id|old-&gt;nf_debug
 suffix:semicolon
 macro_line|#endif
+macro_line|#endif
+macro_line|#ifdef CONFIG_NET_SCHED
+r_new
+op_member_access_from_pointer
+id|tc_index
+op_assign
+id|old-&gt;tc_index
+suffix:semicolon
 macro_line|#endif
 )brace
 multiline_comment|/*&n; *&t;This is slower, and copies the whole data area &n; */

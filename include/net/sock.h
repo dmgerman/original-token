@@ -56,8 +56,6 @@ macro_line|#include &lt;linux/filter.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;net/dst.h&gt;
-DECL|macro|MIN_WRITE_SPACE
-mdefine_line|#define MIN_WRITE_SPACE&t;2048
 multiline_comment|/* The AF_UNIX specific socket options */
 DECL|struct|unix_opt
 r_struct
@@ -456,26 +454,100 @@ id|__u32
 id|snd_una
 suffix:semicolon
 multiline_comment|/* First byte we want an ack for&t;*/
+DECL|member|snd_sml
+id|__u32
+id|snd_sml
+suffix:semicolon
+multiline_comment|/* Last byte of the most recently transmitted small packet */
 DECL|member|rcv_tstamp
 id|__u32
 id|rcv_tstamp
 suffix:semicolon
-multiline_comment|/* timestamp of last received packet&t;*/
+multiline_comment|/* timestamp of last received ACK (for keepalives) */
+DECL|member|lsndtime
+id|__u32
+id|lsndtime
+suffix:semicolon
+multiline_comment|/* timestamp of last sent data packet (for restart window) */
+multiline_comment|/* Delayed ACK control data */
+r_struct
+(brace
+DECL|member|pending
+id|__u8
+id|pending
+suffix:semicolon
+multiline_comment|/* ACK is pending */
+DECL|member|quick
+id|__u8
+id|quick
+suffix:semicolon
+multiline_comment|/* Scheduled number of quick acks&t;*/
+DECL|member|pingpong
+id|__u8
+id|pingpong
+suffix:semicolon
+multiline_comment|/* The session is interactive&t;&t;*/
+DECL|member|blocked
+id|__u8
+id|blocked
+suffix:semicolon
+multiline_comment|/* Delayed ACK was blocked by socket lock*/
+DECL|member|ato
+id|__u32
+id|ato
+suffix:semicolon
+multiline_comment|/* Predicted tick of soft clock&t;&t;*/
 DECL|member|lrcvtime
 id|__u32
 id|lrcvtime
 suffix:semicolon
 multiline_comment|/* timestamp of last received data packet*/
-DECL|member|srtt
-id|__u32
-id|srtt
+DECL|member|last_seg_size
+id|__u16
+id|last_seg_size
 suffix:semicolon
-multiline_comment|/* smothed round trip time &lt;&lt; 3&t;&t;*/
-DECL|member|ato
-id|__u32
-id|ato
+multiline_comment|/* Size of last incoming segment */
+DECL|member|rcv_mss
+id|__u16
+id|rcv_mss
 suffix:semicolon
-multiline_comment|/* delayed ack timeout&t;&t;&t;*/
+multiline_comment|/* MSS used for delayed ACK decisions */
+DECL|member|ack
+)brace
+id|ack
+suffix:semicolon
+multiline_comment|/* Data for direct copy to user */
+r_struct
+(brace
+DECL|member|prequeue
+r_struct
+id|sk_buff_head
+id|prequeue
+suffix:semicolon
+DECL|member|memory
+r_int
+id|memory
+suffix:semicolon
+DECL|member|task
+r_struct
+id|task_struct
+op_star
+id|task
+suffix:semicolon
+DECL|member|iov
+r_struct
+id|iovec
+op_star
+id|iov
+suffix:semicolon
+DECL|member|len
+r_int
+id|len
+suffix:semicolon
+DECL|member|ucopy
+)brace
+id|ucopy
+suffix:semicolon
 DECL|member|snd_wl1
 id|__u32
 id|snd_wl1
@@ -495,6 +567,7 @@ DECL|member|max_window
 id|__u32
 id|max_window
 suffix:semicolon
+multiline_comment|/* Maximal window ever seen from peer&t;*/
 DECL|member|pmtu_cookie
 id|__u32
 id|pmtu_cookie
@@ -514,36 +587,40 @@ DECL|member|ext_header_len
 id|__u16
 id|ext_header_len
 suffix:semicolon
-multiline_comment|/* Dave, do you allow mw to use this hole? 8) --ANK */
-DECL|member|pending
+multiline_comment|/* Network protocol overhead (IP/IPv6 options) */
+DECL|member|dup_acks
 id|__u8
-id|pending
+id|dup_acks
 suffix:semicolon
-multiline_comment|/* pending events&t;&t;&t;*/
+multiline_comment|/* Consequetive duplicate acks seen from other end */
 DECL|member|retransmits
 id|__u8
 id|retransmits
 suffix:semicolon
-DECL|member|last_ack_sent
-id|__u32
-id|last_ack_sent
+DECL|member|__empty1
+id|__u16
+id|__empty1
 suffix:semicolon
-multiline_comment|/* last ack we sent&t;&t;&t;*/
+DECL|member|defer_accept
+id|__u8
+id|defer_accept
+suffix:semicolon
+multiline_comment|/* RTT measurement */
 DECL|member|backoff
-id|__u32
+id|__u8
 id|backoff
 suffix:semicolon
 multiline_comment|/* backoff&t;&t;&t;&t;*/
+DECL|member|srtt
+id|__u32
+id|srtt
+suffix:semicolon
+multiline_comment|/* smothed round trip time &lt;&lt; 3&t;&t;*/
 DECL|member|mdev
 id|__u32
 id|mdev
 suffix:semicolon
 multiline_comment|/* medium deviation&t;&t;&t;*/
-DECL|member|snd_cwnd
-id|__u32
-id|snd_cwnd
-suffix:semicolon
-multiline_comment|/* Sending congestion window&t;&t;*/
 DECL|member|rto
 id|__u32
 id|rto
@@ -575,6 +652,11 @@ id|__u32
 id|snd_ssthresh
 suffix:semicolon
 multiline_comment|/* Slow start size threshold&t;&t;*/
+DECL|member|snd_cwnd
+id|__u32
+id|snd_cwnd
+suffix:semicolon
+multiline_comment|/* Sending congestion window&t;&t;*/
 DECL|member|snd_cwnd_cnt
 id|__u16
 id|snd_cwnd_cnt
@@ -585,15 +667,16 @@ id|__u16
 id|snd_cwnd_clamp
 suffix:semicolon
 multiline_comment|/* Do not allow snd_cwnd to grow above this */
-DECL|member|dup_acks
+DECL|member|nonagle
 id|__u8
-id|dup_acks
+id|nonagle
 suffix:semicolon
-multiline_comment|/* Consequetive duplicate acks seen from other end */
-DECL|member|delayed_acks
+multiline_comment|/* Disable Nagle algorithm?             */
+DECL|member|syn_retries
 id|__u8
-id|delayed_acks
+id|syn_retries
 suffix:semicolon
+multiline_comment|/* num of allowed syn retries */
 DECL|member|user_mss
 id|__u16
 id|user_mss
@@ -691,6 +774,12 @@ id|__u8
 id|rexmt_done
 suffix:semicolon
 multiline_comment|/* Retransmitted up to send head?&t;*/
+DECL|member|keepalive_probes
+id|__u8
+id|keepalive_probes
+suffix:semicolon
+multiline_comment|/* num of allowed keep alive probes&t;*/
+multiline_comment|/*&t;PAWS/RTTM data&t;*/
 DECL|member|rcv_tsval
 id|__u32
 id|rcv_tsval
@@ -711,11 +800,12 @@ r_int
 id|ts_recent_stamp
 suffix:semicolon
 multiline_comment|/* Time we stored ts_recent (for aging) */
-DECL|member|num_sacks
-r_int
-id|num_sacks
+DECL|member|last_ack_sent
+id|__u32
+id|last_ack_sent
 suffix:semicolon
-multiline_comment|/* Number of SACK blocks&t;&t;*/
+multiline_comment|/* last ack we sent (RTTM/PAWS)&t;&t;*/
+multiline_comment|/*&t;SACKs data&t;*/
 DECL|member|selective_acks
 r_struct
 id|tcp_sack_block
@@ -735,12 +825,26 @@ DECL|member|window_clamp
 id|__u32
 id|window_clamp
 suffix:semicolon
-multiline_comment|/* XXX Document this... -DaveM&t;&t;*/
+multiline_comment|/* Maximal window to advertise&t;&t;*/
 DECL|member|probes_out
-id|__u32
+id|__u8
 id|probes_out
 suffix:semicolon
 multiline_comment|/* unanswered 0 window probes&t;&t;*/
+DECL|member|num_sacks
+id|__u8
+id|num_sacks
+suffix:semicolon
+multiline_comment|/* Number of SACK blocks&t;&t;*/
+DECL|member|advmss
+id|__u16
+id|advmss
+suffix:semicolon
+multiline_comment|/* Advertised MSS&t;&t;&t;*/
+DECL|member|syn_stamp
+id|__u32
+id|syn_stamp
+suffix:semicolon
 DECL|member|syn_seq
 id|__u32
 id|syn_seq
@@ -757,38 +861,29 @@ DECL|member|urg_data
 id|__u32
 id|urg_data
 suffix:semicolon
-DECL|member|last_seg_size
-id|__u32
-id|last_seg_size
+multiline_comment|/* The syn_wait_lock is necessary only to avoid tcp_get_info having&n;&t; * to grab the main lock sock while browsing the listening hash&n;&t; * (otherwise it&squot;s deadlock prone).&n;&t; * This lock is acquired in read mode only from tcp_get_info() and&n;&t; * it&squot;s acquired in write mode _only_ from code that is actively&n;&t; * changing the syn_wait_queue. All readers that are holding&n;&t; * the master sock lock don&squot;t need to grab this lock in read mode&n;&t; * too as the syn_wait_queue writes are always protected from&n;&t; * the main sock lock.&n;&t; */
+DECL|member|syn_wait_lock
+id|rwlock_t
+id|syn_wait_lock
 suffix:semicolon
-multiline_comment|/* Size of last incoming segment */
-DECL|member|rcv_mss
-id|__u32
-id|rcv_mss
+DECL|member|listen_opt
+r_struct
+id|tcp_listen_opt
+op_star
+id|listen_opt
 suffix:semicolon
-multiline_comment|/* MSS used for delayed ACK decisions */
-DECL|member|syn_wait_queue
+DECL|member|accept_queue
 r_struct
 id|open_request
 op_star
-id|syn_wait_queue
+id|accept_queue
 suffix:semicolon
-DECL|member|syn_wait_last
-r_struct
-id|open_request
-op_star
-op_star
-id|syn_wait_last
-suffix:semicolon
-DECL|member|syn_backlog
-r_int
-id|syn_backlog
-suffix:semicolon
-multiline_comment|/* Backlog of received SYNs */
+multiline_comment|/* Established children */
 DECL|member|write_pending
 r_int
 id|write_pending
 suffix:semicolon
+multiline_comment|/* A write to socket waits to start. */
 DECL|member|keepalive_time
 r_int
 r_int
@@ -801,18 +896,10 @@ r_int
 id|keepalive_intvl
 suffix:semicolon
 multiline_comment|/* time interval between keep alive probes */
-DECL|member|keepalive_probes
+DECL|member|linger2
 r_int
-r_char
-id|keepalive_probes
+id|linger2
 suffix:semicolon
-multiline_comment|/* num of allowed keep alive probes */
-DECL|member|syn_retries
-r_int
-r_char
-id|syn_retries
-suffix:semicolon
-multiline_comment|/* num of allowed syn retries */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * This structure really needs to be cleaned up.&n; * Most of it is for TCP, and not used by any of&n; * the other protocols.&n; */
@@ -936,10 +1023,9 @@ r_char
 id|reuse
 comma
 multiline_comment|/* SO_REUSEADDR setting&t;&t;&t;*/
-DECL|member|nonagle
-id|nonagle
+DECL|member|__unused
+id|__unused
 suffix:semicolon
-multiline_comment|/* Disable Nagle algorithm?&t;&t;*/
 DECL|member|refcnt
 id|atomic_t
 id|refcnt
@@ -1203,6 +1289,18 @@ r_struct
 id|ucred
 id|peercred
 suffix:semicolon
+DECL|member|rcvlowat
+r_int
+id|rcvlowat
+suffix:semicolon
+DECL|member|rcvtimeo
+r_int
+id|rcvtimeo
+suffix:semicolon
+DECL|member|sndtimeo
+r_int
+id|sndtimeo
+suffix:semicolon
 macro_line|#ifdef CONFIG_FILTER
 multiline_comment|/* Socket Filtering Instructions */
 DECL|member|filter
@@ -1342,7 +1440,7 @@ r_struct
 id|timeval
 id|stamp
 suffix:semicolon
-multiline_comment|/* Identd */
+multiline_comment|/* Identd and reporting IO signals */
 DECL|member|socket
 r_struct
 id|socket
@@ -1525,72 +1623,6 @@ comma
 r_int
 op_star
 id|err
-)paren
-suffix:semicolon
-DECL|member|retransmit
-r_void
-(paren
-op_star
-id|retransmit
-)paren
-(paren
-r_struct
-id|sock
-op_star
-id|sk
-comma
-r_int
-id|all
-)paren
-suffix:semicolon
-DECL|member|write_wakeup
-r_void
-(paren
-op_star
-id|write_wakeup
-)paren
-(paren
-r_struct
-id|sock
-op_star
-id|sk
-)paren
-suffix:semicolon
-DECL|member|read_wakeup
-r_void
-(paren
-op_star
-id|read_wakeup
-)paren
-(paren
-r_struct
-id|sock
-op_star
-id|sk
-)paren
-suffix:semicolon
-DECL|member|poll
-r_int
-r_int
-(paren
-op_star
-id|poll
-)paren
-(paren
-r_struct
-id|file
-op_star
-id|file
-comma
-r_struct
-id|socket
-op_star
-id|sock
-comma
-r_struct
-id|poll_table_struct
-op_star
-id|wait
 )paren
 suffix:semicolon
 DECL|member|ioctl
@@ -1843,16 +1875,6 @@ r_int
 id|snum
 )paren
 suffix:semicolon
-DECL|member|max_header
-r_int
-r_int
-id|max_header
-suffix:semicolon
-DECL|member|retransmits
-r_int
-r_int
-id|retransmits
-suffix:semicolon
 DECL|member|name
 r_char
 id|name
@@ -1950,7 +1972,7 @@ DECL|macro|RCV_SHUTDOWN
 mdefine_line|#define RCV_SHUTDOWN&t;1
 DECL|macro|SEND_SHUTDOWN
 mdefine_line|#define SEND_SHUTDOWN&t;2
-multiline_comment|/* Used by processes to &quot;lock&quot; a socket state, so that&n; * interrupts and bottom half handlers won&squot;t change it&n; * from under us. It essentially blocks any incoming&n; * packets, so that we won&squot;t get any new data or any&n; * packets that change the state of the socket.&n; *&n; * While locked, BH processing will add new packets to&n; * the backlog queue.  This queue is processed by the&n; * owner of the socket lock right before it is released.&n; */
+multiline_comment|/* Used by processes to &quot;lock&quot; a socket state, so that&n; * interrupts and bottom half handlers won&squot;t change it&n; * from under us. It essentially blocks any incoming&n; * packets, so that we won&squot;t get any new data or any&n; * packets that change the state of the socket.&n; *&n; * While locked, BH processing will add new packets to&n; * the backlog queue.  This queue is processed by the&n; * owner of the socket lock right before it is released.&n; *&n; * Since ~2.3.5 it is also exclusive sleep lock serializing&n; * accesses from user process context.&n; */
 r_extern
 r_void
 id|__lock_sock
@@ -1976,7 +1998,7 @@ suffix:semicolon
 DECL|macro|lock_sock
 mdefine_line|#define lock_sock(__sk) &bslash;&n;do {&t;spin_lock_bh(&amp;((__sk)-&gt;lock.slock)); &bslash;&n;&t;if ((__sk)-&gt;lock.users != 0) &bslash;&n;&t;&t;__lock_sock(__sk); &bslash;&n;&t;(__sk)-&gt;lock.users = 1; &bslash;&n;&t;spin_unlock_bh(&amp;((__sk)-&gt;lock.slock)); &bslash;&n;} while(0)
 DECL|macro|release_sock
-mdefine_line|#define release_sock(__sk) &bslash;&n;do {&t;spin_lock_bh(&amp;((__sk)-&gt;lock.slock)); &bslash;&n;&t;(__sk)-&gt;lock.users = 0; &bslash;&n;&t;if ((__sk)-&gt;backlog.tail != NULL) &bslash;&n;&t;&t;__release_sock(__sk); &bslash;&n;&t;wake_up(&amp;((__sk)-&gt;lock.wq)); &bslash;&n;&t;spin_unlock_bh(&amp;((__sk)-&gt;lock.slock)); &bslash;&n;} while(0)
+mdefine_line|#define release_sock(__sk) &bslash;&n;do {&t;spin_lock_bh(&amp;((__sk)-&gt;lock.slock)); &bslash;&n;&t;if ((__sk)-&gt;backlog.tail != NULL) &bslash;&n;&t;&t;__release_sock(__sk); &bslash;&n;&t;(__sk)-&gt;lock.users = 0; &bslash;&n;&t;wake_up(&amp;((__sk)-&gt;lock.wq)); &bslash;&n;&t;spin_unlock_bh(&amp;((__sk)-&gt;lock.slock)); &bslash;&n;} while(0)
 multiline_comment|/* BH context may only use the following locking interface. */
 DECL|macro|bh_lock_sock
 mdefine_line|#define bh_lock_sock(__sk)&t;spin_lock(&amp;((__sk)-&gt;lock.slock))
@@ -2580,38 +2602,6 @@ suffix:semicolon
 multiline_comment|/*&n; *&t;Default socket callbacks and setup code&n; */
 r_extern
 r_void
-id|sock_def_callback1
-c_func
-(paren
-r_struct
-id|sock
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|sock_def_callback2
-c_func
-(paren
-r_struct
-id|sock
-op_star
-comma
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|sock_def_callback3
-c_func
-(paren
-r_struct
-id|sock
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_void
 id|sock_def_destruct
 c_func
 (paren
@@ -2917,6 +2907,93 @@ id|sk_free
 c_func
 (paren
 id|sk
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* Detach socket from process context.&n; * Announce socket dead, detach it from wait queue and inode.&n; * Note that parent inode held reference count on this struct sock,&n; * we do not release it in this function, because protocol&n; * probably wants some additional cleanups or even continuing&n; * to work with this socket (TCP).&n; *&n; * NOTE: When softnet goes in replace _irq with _bh!&n; */
+DECL|function|sock_orphan
+r_extern
+id|__inline__
+r_void
+id|sock_orphan
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+)paren
+(brace
+id|write_lock_irq
+c_func
+(paren
+op_amp
+id|sk-&gt;callback_lock
+)paren
+suffix:semicolon
+id|sk-&gt;dead
+op_assign
+l_int|1
+suffix:semicolon
+id|sk-&gt;socket
+op_assign
+l_int|NULL
+suffix:semicolon
+id|sk-&gt;sleep
+op_assign
+l_int|NULL
+suffix:semicolon
+id|write_unlock_irq
+c_func
+(paren
+op_amp
+id|sk-&gt;callback_lock
+)paren
+suffix:semicolon
+)brace
+DECL|function|sock_graft
+r_extern
+id|__inline__
+r_void
+id|sock_graft
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+comma
+r_struct
+id|socket
+op_star
+id|parent
+)paren
+(brace
+id|write_lock_irq
+c_func
+(paren
+op_amp
+id|sk-&gt;callback_lock
+)paren
+suffix:semicolon
+id|sk-&gt;sleep
+op_assign
+op_amp
+id|parent-&gt;wait
+suffix:semicolon
+id|parent-&gt;sk
+op_assign
+id|sk
+suffix:semicolon
+id|sk-&gt;socket
+op_assign
+id|parent
+suffix:semicolon
+id|write_unlock_irq
+c_func
+(paren
+op_amp
+id|sk-&gt;callback_lock
 )paren
 suffix:semicolon
 )brace
@@ -3677,6 +3754,13 @@ r_return
 id|amt
 suffix:semicolon
 )brace
+DECL|macro|SOCK_MIN_SNDBUF
+mdefine_line|#define SOCK_MIN_SNDBUF 2048
+DECL|macro|SOCK_MIN_RCVBUF
+mdefine_line|#define SOCK_MIN_RCVBUF 128
+multiline_comment|/* Must be less or equal SOCK_MIN_SNDBUF */
+DECL|macro|SOCK_MIN_WRITE_SPACE
+mdefine_line|#define SOCK_MIN_WRITE_SPACE&t;SOCK_MIN_SNDBUF
 multiline_comment|/*&n; *&t;Default write policy as shown to user space via poll/select/SIGIO&n; *&t;Kernel internally doesn&squot;t use the MIN_WRITE_SPACE threshold.&n; */
 DECL|function|sock_writeable
 r_extern
@@ -3698,7 +3782,7 @@ c_func
 id|sk
 )paren
 op_ge
-id|MIN_WRITE_SPACE
+id|SOCK_MIN_WRITE_SPACE
 suffix:semicolon
 )brace
 DECL|function|gfp_any
@@ -3723,6 +3807,90 @@ suffix:colon
 id|GFP_KERNEL
 suffix:semicolon
 )brace
+DECL|function|sock_rcvtimeo
+r_extern
+id|__inline__
+r_int
+id|sock_rcvtimeo
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+comma
+r_int
+id|noblock
+)paren
+(brace
+r_return
+id|noblock
+ques
+c_cond
+l_int|0
+suffix:colon
+id|sk-&gt;rcvtimeo
+suffix:semicolon
+)brace
+DECL|function|sock_sndtimeo
+r_extern
+id|__inline__
+r_int
+id|sock_sndtimeo
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+comma
+r_int
+id|noblock
+)paren
+(brace
+r_return
+id|noblock
+ques
+c_cond
+l_int|0
+suffix:colon
+id|sk-&gt;sndtimeo
+suffix:semicolon
+)brace
+DECL|function|sock_rcvlowat
+r_extern
+id|__inline__
+r_int
+id|sock_rcvlowat
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+comma
+r_int
+id|waitall
+comma
+r_int
+id|len
+)paren
+(brace
+r_return
+id|waitall
+ques
+c_cond
+id|len
+suffix:colon
+id|min
+c_func
+(paren
+id|sk-&gt;rcvlowat
+comma
+id|len
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* &n; *&t;Enable debug/info messages &n; */
 macro_line|#if 0
 mdefine_line|#define NETDEBUG(x)&t;do { } while (0)
@@ -3735,5 +3903,13 @@ DECL|macro|SOCK_SLEEP_PRE
 mdefine_line|#define SOCK_SLEEP_PRE(sk) &t;{ struct task_struct *tsk = current; &bslash;&n;&t;&t;&t;&t;DECLARE_WAITQUEUE(wait, tsk); &bslash;&n;&t;&t;&t;&t;tsk-&gt;state = TASK_INTERRUPTIBLE; &bslash;&n;&t;&t;&t;&t;add_wait_queue((sk)-&gt;sleep, &amp;wait); &bslash;&n;&t;&t;&t;&t;release_sock(sk);
 DECL|macro|SOCK_SLEEP_POST
 mdefine_line|#define SOCK_SLEEP_POST(sk)&t;tsk-&gt;state = TASK_RUNNING; &bslash;&n;&t;&t;&t;&t;remove_wait_queue((sk)-&gt;sleep, &amp;wait); &bslash;&n;&t;&t;&t;&t;lock_sock(sk); &bslash;&n;&t;&t;&t;&t;}
+r_extern
+id|__u32
+id|sysctl_wmem_max
+suffix:semicolon
+r_extern
+id|__u32
+id|sysctl_rmem_max
+suffix:semicolon
 macro_line|#endif&t;/* _SOCK_H */
 eof

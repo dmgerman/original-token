@@ -272,60 +272,24 @@ op_star
 id|productInfo
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt; 0x020100
-macro_line|#  include &lt;asm/spinlock.h&gt;
-macro_line|#  include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
 DECL|macro|cpuid
-macro_line|#  define cpuid smp_processor_id()
-macro_line|#  if LINUX_VERSION_CODE &lt; 0x020195
+mdefine_line|#define cpuid smp_processor_id()
 DECL|macro|DRIVER_LOCK_T
-macro_line|#    define DRIVER_LOCK_T unsigned long cpu_flags = 0;
+mdefine_line|#define DRIVER_LOCK_T
 DECL|macro|DRIVER_LOCK_INIT
-macro_line|#    define DRIVER_LOCK_INIT(p) &bslash;&n;       spin_lock_init(&amp;p-&gt;mega_lock);
+mdefine_line|#define DRIVER_LOCK_INIT(p)
 DECL|macro|DRIVER_LOCK
-macro_line|#    define DRIVER_LOCK(p) &bslash;&n;       if(!p-&gt;cpu_lock_count[cpuid]) { &bslash;&n;         spin_lock_irqsave(&amp;p-&gt;mega_lock, cpu_flags); &bslash;&n;         p-&gt;cpu_lock_count[cpuid]++; &bslash;&n;       } else { &bslash;&n;         p-&gt;cpu_lock_count[cpuid]++; &bslash;&n;       }
+mdefine_line|#define DRIVER_LOCK(p)
 DECL|macro|DRIVER_UNLOCK
-macro_line|#    define DRIVER_UNLOCK(p) &bslash;&n;       if(--p-&gt;cpu_lock_count[cpuid] == 0) &bslash;&n;         spin_unlock_irqrestore(&amp;p-&gt;mega_lock, cpu_flags);
-DECL|macro|IO_LOCK
-macro_line|#    define IO_LOCK(p)   spin_lock_irqsave(&amp;io_request_lock,cpu_flags);
-DECL|macro|IO_UNLOCK
-macro_line|#    define IO_UNLOCK(p) spin_unlock_irqrestore(&amp;io_request_lock,cpu_flags);
-macro_line|#  else
-DECL|macro|DRIVER_LOCK_T
-macro_line|#    define DRIVER_LOCK_T
-DECL|macro|DRIVER_LOCK_INIT
-macro_line|#    define DRIVER_LOCK_INIT(p)
-DECL|macro|DRIVER_LOCK
-macro_line|#    define DRIVER_LOCK(p)
-DECL|macro|DRIVER_UNLOCK
-macro_line|#    define DRIVER_UNLOCK(p)
+mdefine_line|#define DRIVER_UNLOCK(p)
 DECL|macro|IO_LOCK_T
-macro_line|#    define IO_LOCK_T unsigned long io_flags = 0;
+mdefine_line|#define IO_LOCK_T unsigned long io_flags = 0;
 DECL|macro|IO_LOCK
-macro_line|#    define IO_LOCK spin_lock_irqsave(&amp;io_request_lock,io_flags);
+mdefine_line|#define IO_LOCK spin_lock_irqsave(&amp;io_request_lock,io_flags);
 DECL|macro|IO_UNLOCK
-macro_line|#    define IO_UNLOCK spin_unlock_irqrestore(&amp;io_request_lock,io_flags);
-macro_line|#  endif
-macro_line|#else
-DECL|macro|cpuid
-macro_line|#  define cpuid 0
-DECL|macro|DRIVER_LOCK_T
-macro_line|#  define DRIVER_LOCK_T long cpu_flags;
-DECL|macro|DRIVER_LOCK_INIT
-macro_line|#  define DRIVER_LOCK_INIT(p)
-DECL|macro|DRIVER_LOCK
-macro_line|#  define DRIVER_LOCK(p) &bslash;&n;       save_flags(cpu_flags); &bslash;&n;       cli();
-DECL|macro|DRIVER_UNLOCK
-macro_line|#  define DRIVER_UNLOCK(p) &bslash;&n;       restore_flags(cpu_flags);
-DECL|macro|IO_LOCK
-macro_line|#  define IO_LOCK(p)   DRIVER_LOCK(p)
-DECL|macro|IO_UNLOCK
-macro_line|#  define IO_UNLOCK(p) DRIVER_UNLOCK(p)
-DECL|macro|le32_to_cpu
-macro_line|#  define le32_to_cpu(x) (x)
-DECL|macro|cpu_to_le32
-macro_line|#  define cpu_to_le32(x) (x)
-macro_line|#endif
+mdefine_line|#define IO_UNLOCK spin_unlock_irqrestore(&amp;io_request_lock,io_flags);
 multiline_comment|/* set SERDEBUG to 1 to enable serial debugging */
 DECL|macro|SERDEBUG
 mdefine_line|#define SERDEBUG 0

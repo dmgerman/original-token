@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fault.c,v 1.40 1999/12/01 10:44:53 davem Exp $&n; * arch/sparc64/mm/fault.c: Page fault handlers for the 64-bit Sparc.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997, 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: fault.c,v 1.42 2000/01/21 11:39:13 jj Exp $&n; * arch/sparc64/mm/fault.c: Page fault handlers for the 64-bit Sparc.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997, 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
 macro_line|#include &lt;asm/head.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -695,6 +695,9 @@ id|insn
 op_assign
 l_int|0
 suffix:semicolon
+id|siginfo_t
+id|info
+suffix:semicolon
 macro_line|#ifdef DEBUG_LOCKUPS
 r_static
 r_int
@@ -710,6 +713,10 @@ comma
 id|lockcnt
 suffix:semicolon
 macro_line|#endif
+id|info.si_code
+op_assign
+id|SEGV_MAPERR
+suffix:semicolon
 multiline_comment|/*&n;&t; * If we&squot;re in an interrupt or have no user&n;&t; * context, we must not take the fault..&n;&t; */
 r_if
 c_cond
@@ -1094,6 +1101,10 @@ suffix:semicolon
 multiline_comment|/*&n;&t; * Ok, we have a good vm_area for this memory access, so&n;&t; * we can handle it..&n;&t; */
 id|good_area
 suffix:colon
+id|info.si_code
+op_assign
+id|SEGV_ACCERR
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1151,10 +1162,10 @@ op_amp
 id|PAGE_SIZE
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
+(brace
+r_int
+id|fault
+op_assign
 id|handle_mm_fault
 c_func
 (paren
@@ -1166,10 +1177,27 @@ id|address
 comma
 id|write
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|fault
+OL
+l_int|0
+)paren
+r_goto
+id|out_of_memory
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|fault
 )paren
 r_goto
 id|do_sigbus
 suffix:semicolon
+)brace
 id|up
 c_func
 (paren
@@ -1531,18 +1559,33 @@ c_func
 suffix:semicolon
 )brace
 macro_line|#endif
-id|current-&gt;thread.sig_address
+id|info.si_signo
 op_assign
+id|SIGSEGV
+suffix:semicolon
+id|info.si_errno
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* info.si_code set above to make clear whether&n;&t;&t;&t;   this was a SEGV_MAPERR or SEGV_ACCERR fault.  */
+id|info.si_addr
+op_assign
+(paren
+r_void
+op_star
+)paren
 id|address
 suffix:semicolon
-id|current-&gt;thread.sig_desc
+id|info.si_trapno
 op_assign
-id|SUBSIG_NOMAPPING
+l_int|0
 suffix:semicolon
-id|force_sig
-c_func
+id|force_sig_info
 (paren
 id|SIGSEGV
+comma
+op_amp
+id|info
 comma
 id|current
 )paren
@@ -1562,6 +1605,43 @@ suffix:semicolon
 )brace
 r_return
 suffix:semicolon
+multiline_comment|/*&n; * We ran out of memory, or some other thing happened to us that made&n; * us unable to handle the page fault gracefully.&n; */
+id|out_of_memory
+suffix:colon
+id|up
+c_func
+(paren
+op_amp
+id|mm-&gt;mmap_sem
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;VM: killing process %s&bslash;n&quot;
+comma
+id|current-&gt;comm
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|regs-&gt;tstate
+op_amp
+id|TSTATE_PRIV
+)paren
+)paren
+id|do_exit
+c_func
+(paren
+id|SIGKILL
+)paren
+suffix:semicolon
+r_goto
+id|do_kernel_fault
+suffix:semicolon
 id|do_sigbus
 suffix:colon
 id|up
@@ -1571,22 +1651,42 @@ op_amp
 id|mm-&gt;mmap_sem
 )paren
 suffix:semicolon
-id|current-&gt;thread.sig_address
+multiline_comment|/*&n;&t; * Send a sigbus, regardless of whether we were in kernel&n;&t; * or user mode.&n;&t; */
+id|info.si_signo
 op_assign
+id|SIGBUS
+suffix:semicolon
+id|info.si_errno
+op_assign
+l_int|0
+suffix:semicolon
+id|info.si_code
+op_assign
+id|BUS_ADRERR
+suffix:semicolon
+id|info.si_addr
+op_assign
+(paren
+r_void
+op_star
+)paren
 id|address
 suffix:semicolon
-id|current-&gt;thread.sig_desc
+id|info.si_trapno
 op_assign
-id|SUBSIG_MISCERROR
+l_int|0
 suffix:semicolon
-id|force_sig
-c_func
+id|force_sig_info
 (paren
 id|SIGBUS
+comma
+op_amp
+id|info
 comma
 id|current
 )paren
 suffix:semicolon
+multiline_comment|/* Kernel mode? Handle exceptions or die */
 r_if
 c_cond
 (paren

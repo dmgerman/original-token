@@ -513,7 +513,7 @@ op_eq
 id|TCP_CLOSE_WAIT
 )paren
 (brace
-id|CurrentRequest-&gt;sock-&gt;sk-&gt;nonagle
+id|CurrentRequest-&gt;sock-&gt;sk-&gt;tp_pinfo.af_tcp.nonagle
 op_assign
 l_int|0
 suffix:semicolon

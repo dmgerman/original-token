@@ -631,7 +631,7 @@ DECL|macro|dprintk
 mdefine_line|#define dprintk(format, a...)
 macro_line|#endif
 multiline_comment|/* Public Functions */
-multiline_comment|/* X.25 Protocol Initialization routine.&n; *&n; * This routine is called by the main Cyclom 2X module during setup.  At this&n; * point adapter is completely initialized and X.25 firmware is running.&n; *  o read firmware version (to make sure it&squot;s alive)&n; *  o configure adapter&n; *  o initialize protocol-specific fields of the adapter data space.&n; *&n; * Return:&t;0&t;o.k.&n; *&t;&t;&lt; 0&t;failure.  */
+multiline_comment|/* X.25 Protocol Initialization routine.&n; *&n; * This routine is called by the main Cyclom 2X module during setup.  At this&n; * point adapter is completely initialized and X.25 firmware is running.&n; *  o configure adapter&n; *  o initialize protocol-specific fields of the adapter data space.&n; *&n; * Return:&t;0&t;o.k.&n; *&t;&t;&lt; 0&t;failure.  */
 DECL|function|cyx_init
 r_int
 id|cyx_init
@@ -1865,7 +1865,7 @@ id|dev-&gt;start
 op_assign
 l_int|1
 suffix:semicolon
-id|cyclomx_open
+id|cyclomx_mod_inc_use_count
 c_func
 (paren
 id|card
@@ -1920,7 +1920,7 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|cyclomx_close
+id|cyclomx_mod_dec_use_count
 c_func
 (paren
 id|card

@@ -516,12 +516,8 @@ r_else
 r_if
 c_cond
 (paren
-id|dev-&gt;flags
-op_amp
-(paren
-id|IFF_PROMISC
-multiline_comment|/*|IFF_ALLMULTI*/
-)paren
+l_int|1
+multiline_comment|/*dev-&gt;flags&amp;IFF_PROMISC*/
 )paren
 (brace
 r_if
@@ -768,9 +764,9 @@ id|dev-&gt;addr_len
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifndef CONFIG_IP_ROUTER
+macro_line|#if 0 /*ndef CONFIG_IP_ROUTER*/
+multiline_comment|/* This one is only slowdown with checksumming in user process context. --ANK */
 multiline_comment|/*&n; *&t;Copy from an ethernet device memory space to an sk_buff while checksumming if IP&n; */
-DECL|function|eth_copy_and_sum
 r_void
 id|eth_copy_and_sum
 c_func
@@ -916,7 +912,7 @@ id|ip_length
 suffix:semicolon
 id|dest-&gt;csum
 op_assign
-id|csum_partial_copy
+id|csum_partial_copy_nocheck
 c_func
 (paren
 id|src

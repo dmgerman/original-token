@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: asyncd.c,v 1.19 2000/01/08 20:22:16 davem Exp $&n; *  The asyncd kernel daemon. This handles paging on behalf of &n; *  processes that receive page faults due to remote (async) memory&n; *  accesses. &n; *&n; *  Idea and skeleton code courtesy of David Miller (bless his cotton socks)&n; *&n; *  Implemented by tridge&n; */
+multiline_comment|/*  $Id: asyncd.c,v 1.20 2000/01/21 11:38:47 jj Exp $&n; *  The asyncd kernel daemon. This handles paging on behalf of &n; *  processes that receive page faults due to remote (async) memory&n; *  accesses. &n; *&n; *  Idea and skeleton code courtesy of David Miller (bless his cotton socks)&n; *&n; *  Implemented by tridge&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -416,6 +416,9 @@ id|pte_t
 op_star
 id|pte
 suffix:semicolon
+id|siginfo_t
+id|info
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -723,22 +726,39 @@ suffix:colon
 id|stats.failure
 op_increment
 suffix:semicolon
-id|tsk-&gt;thread.sig_address
+id|info.si_signo
 op_assign
+id|SIGSEGV
+suffix:semicolon
+id|info.si_errno
+op_assign
+l_int|0
+suffix:semicolon
+id|info.si_code
+op_assign
+id|SEGV_MAPERR
+suffix:semicolon
+id|info.si_addr
+op_assign
+(paren
+r_void
+op_star
+)paren
 id|address
 suffix:semicolon
-id|tsk-&gt;thread.sig_desc
+id|info.si_trapno
 op_assign
-id|SUBSIG_NOMAPPING
+l_int|0
 suffix:semicolon
-id|send_sig
+id|send_sig_info
 c_func
 (paren
 id|SIGSEGV
 comma
-id|tsk
+op_amp
+id|info
 comma
-l_int|1
+id|tsk
 )paren
 suffix:semicolon
 r_return

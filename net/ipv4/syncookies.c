@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  Syncookies implementation for the Linux kernel&n; *&n; *  Copyright (C) 1997 Andi Kleen&n; *  Based on ideas by D.J.Bernstein and Eric Schenk. &n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; * &n; *  $Id: syncookies.c,v 1.10 2000/01/09 02:19:35 davem Exp $&n; *&n; *  Missing: IPv6 support. &n; */
+multiline_comment|/*&n; *  Syncookies implementation for the Linux kernel&n; *&n; *  Copyright (C) 1997 Andi Kleen&n; *  Based on ideas by D.J.Bernstein and Eric Schenk. &n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; * &n; *  $Id: syncookies.c,v 1.11 2000/01/16 05:11:27 davem Exp $&n; *&n; *  Missing: IPv6 support. &n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_SYN_COOKIES) 
 macro_line|#include &lt;linux/tcp.h&gt;
@@ -304,13 +304,16 @@ op_star
 id|tp
 op_assign
 op_amp
+(paren
 id|sk-&gt;tp_pinfo.af_tcp
+)paren
 suffix:semicolon
-multiline_comment|/* Oops! It was missing, syn_recv_sock decreases it. */
-id|tp-&gt;syn_backlog
-op_increment
+r_struct
+id|sock
+op_star
+id|child
 suffix:semicolon
-id|sk
+id|child
 op_assign
 id|tp-&gt;af_specific
 op_member_access_from_pointer
@@ -329,47 +332,27 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sk
+id|child
 )paren
-(brace
-id|req-&gt;sk
-op_assign
-id|sk
-suffix:semicolon
-multiline_comment|/* Queue up for accept() */
-id|tcp_synq_queue
+id|tcp_acceptq_queue
 c_func
 (paren
-id|tp
+id|sk
 comma
 id|req
+comma
+id|child
 )paren
 suffix:semicolon
-)brace
 r_else
-(brace
-id|tp-&gt;syn_backlog
-op_decrement
-suffix:semicolon
-id|req
-op_member_access_from_pointer
-r_class
-op_member_access_from_pointer
-id|destructor
-c_func
-(paren
-id|req
-)paren
-suffix:semicolon
 id|tcp_openreq_free
 c_func
 (paren
 id|req
 )paren
 suffix:semicolon
-)brace
 r_return
-id|sk
+id|child
 suffix:semicolon
 )brace
 r_struct
@@ -606,6 +589,8 @@ l_int|0
 suffix:semicolon
 id|req-&gt;wscale_ok
 op_assign
+id|req-&gt;sack_ok
+op_assign
 l_int|0
 suffix:semicolon
 id|req-&gt;expires
@@ -683,6 +668,7 @@ op_amp
 id|rcv_wscale
 )paren
 suffix:semicolon
+multiline_comment|/* BTW win scale with syncookies is 0 by definition */
 id|req-&gt;rcv_wscale
 op_assign
 id|rcv_wscale

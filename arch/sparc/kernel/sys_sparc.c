@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sparc.c,v 1.56 2000/01/04 11:01:26 jj Exp $&n; * linux/arch/sparc/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
+multiline_comment|/* $Id: sys_sparc.c,v 1.57 2000/01/21 11:38:42 jj Exp $&n; * linux/arch/sparc/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1200,6 +1200,9 @@ op_star
 id|regs
 )paren
 (brace
+id|siginfo_t
+id|info
+suffix:semicolon
 id|lock_kernel
 c_func
 (paren
@@ -1216,10 +1219,37 @@ id|regs-&gt;npc
 )paren
 suffix:semicolon
 macro_line|#endif
-id|force_sig
+id|info.si_signo
+op_assign
+id|SIGTRAP
+suffix:semicolon
+id|info.si_errno
+op_assign
+l_int|0
+suffix:semicolon
+id|info.si_code
+op_assign
+id|TRAP_BRKPT
+suffix:semicolon
+id|info.si_addr
+op_assign
+(paren
+r_void
+op_star
+)paren
+id|regs-&gt;pc
+suffix:semicolon
+id|info.si_trapno
+op_assign
+l_int|0
+suffix:semicolon
+id|force_sig_info
 c_func
 (paren
 id|SIGTRAP
+comma
+op_amp
+id|info
 comma
 id|current
 )paren

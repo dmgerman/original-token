@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: unistd.h,v 1.63 2000/01/12 11:47:40 anton Exp $ */
+multiline_comment|/* $Id: unistd.h,v 1.64 2000/01/16 06:20:32 davem Exp $ */
 macro_line|#ifndef _SPARC_UNISTD_H
 DECL|macro|_SPARC_UNISTD_H
 mdefine_line|#define _SPARC_UNISTD_H

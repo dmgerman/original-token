@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: stat.h,v 1.10 1999/12/21 14:09:41 jj Exp $ */
+multiline_comment|/* $Id: stat.h,v 1.11 2000/01/16 15:22:53 jj Exp $ */
 macro_line|#ifndef _SPARC_STAT_H
 DECL|macro|_SPARC_STAT_H
 mdefine_line|#define _SPARC_STAT_H
@@ -69,15 +69,18 @@ r_struct
 id|stat
 (brace
 DECL|member|st_dev
-id|dev_t
+r_int
+r_int
 id|st_dev
 suffix:semicolon
 DECL|member|st_ino
-id|ino_t
+r_int
+r_int
 id|st_ino
 suffix:semicolon
 DECL|member|st_mode
-id|mode_t
+r_int
+r_int
 id|st_mode
 suffix:semicolon
 DECL|member|st_nlink
@@ -85,23 +88,26 @@ r_int
 id|st_nlink
 suffix:semicolon
 DECL|member|st_uid
-id|uid_t
+r_int
+r_int
 id|st_uid
 suffix:semicolon
 DECL|member|st_gid
-id|gid_t
+r_int
+r_int
 id|st_gid
 suffix:semicolon
 DECL|member|st_rdev
-id|dev_t
+r_int
+r_int
 id|st_rdev
 suffix:semicolon
 DECL|member|st_size
-id|off_t
+r_int
 id|st_size
 suffix:semicolon
 DECL|member|st_atime
-id|time_t
+r_int
 id|st_atime
 suffix:semicolon
 DECL|member|__unused1
@@ -110,7 +116,7 @@ r_int
 id|__unused1
 suffix:semicolon
 DECL|member|st_mtime
-id|time_t
+r_int
 id|st_mtime
 suffix:semicolon
 DECL|member|__unused2
@@ -119,7 +125,7 @@ r_int
 id|__unused2
 suffix:semicolon
 DECL|member|st_ctime
-id|time_t
+r_int
 id|st_ctime
 suffix:semicolon
 DECL|member|__unused3
@@ -128,11 +134,11 @@ r_int
 id|__unused3
 suffix:semicolon
 DECL|member|st_blksize
-id|off_t
+r_int
 id|st_blksize
 suffix:semicolon
 DECL|member|st_blocks
-id|off_t
+r_int
 id|st_blocks
 suffix:semicolon
 DECL|member|__unused4

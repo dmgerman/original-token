@@ -131,7 +131,7 @@ comma
 r_int
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_IP_ROUTER
+macro_line|#if 1 /*def CONFIG_IP_ROUTER*/
 DECL|function|eth_copy_and_sum
 r_static
 id|__inline__

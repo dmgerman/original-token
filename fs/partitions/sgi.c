@@ -175,6 +175,7 @@ id|dev
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;Dev %s: unable to read partition table&bslash;n&quot;
 comma
 id|kdevname
@@ -222,20 +223,7 @@ op_ne
 id|SGI_LABEL_MAGIC
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;Dev %s SGI disklabel: bad magic %08x&bslash;n&quot;
-comma
-id|kdevname
-c_func
-(paren
-id|dev
-)paren
-comma
-id|magic
-)paren
-suffix:semicolon
+multiline_comment|/*printk(&quot;Dev %s SGI disklabel: bad magic %08x&bslash;n&quot;,&n;&t;&t;       kdevname(dev), magic);*/
 id|brelse
 c_func
 (paren
@@ -307,6 +295,7 @@ id|csum
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;Dev %s SGI disklabel: csum bad, label corrupted&bslash;n&quot;
 comma
 id|kdevname

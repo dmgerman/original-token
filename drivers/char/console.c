@@ -14025,6 +14025,13 @@ c_func
 id|vc_resize
 )paren
 suffix:semicolon
+DECL|variable|fg_console
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|fg_console
+)paren
+suffix:semicolon
 macro_line|#ifndef VT_SINGLE_DRIVER
 DECL|variable|take_over_console
 id|EXPORT_SYMBOL

@@ -8956,10 +8956,13 @@ r_int
 id|rebase
 suffix:semicolon
 r_int
+r_int
 id|t
 suffix:semicolon
 DECL|macro|CNTRL_REG_OFFSET
-mdefine_line|#define CNTRL_REG_OFFSET        0x14
+mdefine_line|#define CNTRL_REG_OFFSET        0x50
+DECL|macro|CNTRL_REG_GOODVALUE
+mdefine_line|#define CNTRL_REG_GOODVALUE     0x00260000
 id|pci_read_config_dword
 c_func
 (paren
@@ -8990,15 +8993,11 @@ l_int|0x80
 suffix:semicolon
 id|t
 op_assign
-id|readb
+id|readl
 (paren
 id|rebase
 op_plus
 id|CNTRL_REG_OFFSET
-op_star
-l_int|4
-op_plus
-l_int|2
 )paren
 suffix:semicolon
 r_if
@@ -9006,28 +9005,26 @@ c_cond
 (paren
 id|t
 op_ne
-l_int|0x06
+id|CNTRL_REG_GOODVALUE
 )paren
 (brace
 id|printk
 (paren
 id|KERN_DEBUG
-l_string|&quot;sx: performing cntrl reg fix: %02x -&gt; 06&bslash;n&quot;
+l_string|&quot;sx: performing cntrl reg fix: %08x -&gt; %08x&bslash;n&quot;
 comma
 id|t
+comma
+id|CNTRL_REG_GOODVALUE
 )paren
 suffix:semicolon
-id|writeb
+id|writel
 (paren
-l_int|0x06
+id|CNTRL_REG_GOODVALUE
 comma
 id|rebase
 op_plus
 id|CNTRL_REG_OFFSET
-op_star
-l_int|4
-op_plus
-l_int|2
 )paren
 suffix:semicolon
 )brace

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: checksum.h,v 1.14 2000/01/05 21:27:42 davem Exp $ */
+multiline_comment|/* $Id: checksum.h,v 1.15 2000/01/19 04:06:09 davem Exp $ */
 macro_line|#ifndef __SPARC64_CHECKSUM_H
 DECL|macro|__SPARC64_CHECKSUM_H
 mdefine_line|#define __SPARC64_CHECKSUM_H
@@ -26,11 +26,6 @@ id|sum
 )paren
 suffix:semicolon
 multiline_comment|/* the same as csum_partial, but copies from user space while it&n; * checksums&n; *&n; * here even more important to align src and dst on a 32-bit (or even&n; * better 64-bit) boundary&n; */
-multiline_comment|/* FIXME: Remove these macros ASAP */
-DECL|macro|csum_partial_copy
-mdefine_line|#define csum_partial_copy(src, dst, len, sum) &bslash;&n;&t;&t;&t;csum_partial_copy_nocheck(src,dst,len,sum)
-DECL|macro|csum_partial_copy_fromuser
-mdefine_line|#define csum_partial_copy_fromuser(s, d, l, w)  &bslash;&n;&t;&t;&t;csum_partial_copy_from_user((char *) (s), (d), (l), (w), NULL)
 r_extern
 r_int
 r_int
@@ -184,13 +179,38 @@ id|sum
 )paren
 suffix:semicolon
 )brace
-macro_line|#if 0
-multiline_comment|/* XXX should implement this now... -DaveM */
+multiline_comment|/* &n; *&t;Copy and checksum to user&n; */
+DECL|macro|HAVE_CSUM_COPY_USER
+mdefine_line|#define HAVE_CSUM_COPY_USER
+r_extern
+r_int
+r_int
+id|csum_partial_copy_user_sparc64
+c_func
+(paren
+r_const
+r_char
+op_star
+id|src
+comma
+r_char
+op_star
+id|dst
+comma
+r_int
+id|len
+comma
+r_int
+r_int
+id|sum
+)paren
+suffix:semicolon
 r_extern
 id|__inline__
 r_int
 r_int
-id|csum_partial_copy_to_user
+DECL|function|csum_and_copy_to_user
+id|csum_and_copy_to_user
 c_func
 (paren
 r_const
@@ -214,11 +234,32 @@ op_star
 id|err
 )paren
 (brace
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;stx&t;%0, [%%sp + 0x7ff + 128]&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|err
+)paren
+)paren
+suffix:semicolon
 r_return
-l_int|0
+id|csum_partial_copy_user_sparc64
+c_func
+(paren
+id|src
+comma
+id|dst
+comma
+id|len
+comma
+id|sum
+)paren
 suffix:semicolon
 )brace
-macro_line|#endif
 multiline_comment|/* ihl is always 5 or greater, almost always is 5, and iph is word aligned&n; * the majority of the time.&n; */
 DECL|function|ip_fast_csum
 r_extern

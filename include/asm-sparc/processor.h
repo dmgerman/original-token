@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: processor.h,v 1.76 2000/01/09 09:13:38 anton Exp $&n; * include/asm-sparc/processor.h&n; *&n; * Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: processor.h,v 1.77 2000/01/21 11:39:17 jj Exp $&n; * include/asm-sparc/processor.h&n; *&n; * Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __ASM_SPARC_PROCESSOR_H
 DECL|macro|__ASM_SPARC_PROCESSOR_H
 mdefine_line|#define __ASM_SPARC_PROCESSOR_H
@@ -83,26 +83,6 @@ r_struct
 id|pt_regs
 op_star
 id|kregs
-suffix:semicolon
-multiline_comment|/* For signal handling */
-DECL|member|sig_address
-r_int
-r_int
-id|sig_address
-id|__attribute__
-(paren
-(paren
-id|aligned
-(paren
-l_int|8
-)paren
-)paren
-)paren
-suffix:semicolon
-DECL|member|sig_desc
-r_int
-r_int
-id|sig_desc
 suffix:semicolon
 multiline_comment|/* Context switch saved kernel state. */
 DECL|member|ksp
@@ -265,7 +245,7 @@ mdefine_line|#define SPARC_FLAG_UNALIGNED    0x2    /* is allowed to do unaligne
 DECL|macro|INIT_MMAP
 mdefine_line|#define INIT_MMAP { &amp;init_mm, (0), (0), &bslash;&n;&t;&t;    NULL, __pgprot(0x0) , VM_READ | VM_WRITE | VM_EXEC, 1, NULL, NULL }
 DECL|macro|INIT_THREAD
-mdefine_line|#define INIT_THREAD  { &bslash;&n;/* uwinmask, kregs, sig_address, sig_desc, ksp, kpc, kpsr, kwim */ &bslash;&n;   0,        0,     0,           0,        0,   0,   0,    0, &bslash;&n;/* fork_kpsr, fork_kwim */ &bslash;&n;   0,         0, &bslash;&n;/* reg_window */  &bslash;&n;{ { { 0, }, { 0, } }, }, &bslash;&n;/* rwbuf_stkptrs */  &bslash;&n;{ 0, 0, 0, 0, 0, 0, 0, 0, }, &bslash;&n;/* w_saved */ &bslash;&n;   0, &bslash;&n;/* FPU regs */   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, }, &bslash;&n;/* FPU status, FPU qdepth, FPU queue */ &bslash;&n;   0,          0,  { { 0, 0, }, }, &bslash;&n;/* flags,              current_ds, */ &bslash;&n;   SPARC_FLAG_KTHREAD, KERNEL_DS, &bslash;&n;/* core_exec */ &bslash;&n;{ 0, }, &bslash;&n;/* new_signal */ &bslash;&n;  0, &bslash;&n;}
+mdefine_line|#define INIT_THREAD  { &bslash;&n;/* uwinmask, kregs, ksp, kpc, kpsr, kwim */ &bslash;&n;   0,        0,     0,   0,   0,    0, &bslash;&n;/* fork_kpsr, fork_kwim */ &bslash;&n;   0,         0, &bslash;&n;/* reg_window */  &bslash;&n;{ { { 0, }, { 0, } }, }, &bslash;&n;/* rwbuf_stkptrs */  &bslash;&n;{ 0, 0, 0, 0, 0, 0, 0, 0, }, &bslash;&n;/* w_saved */ &bslash;&n;   0, &bslash;&n;/* FPU regs */   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, }, &bslash;&n;/* FPU status, FPU qdepth, FPU queue */ &bslash;&n;   0,          0,  { { 0, 0, }, }, &bslash;&n;/* flags,              current_ds, */ &bslash;&n;   SPARC_FLAG_KTHREAD, KERNEL_DS, &bslash;&n;/* core_exec */ &bslash;&n;{ 0, }, &bslash;&n;/* new_signal */ &bslash;&n;  0, &bslash;&n;}
 multiline_comment|/* Return saved PC of a blocked thread. */
 DECL|function|thread_saved_pc
 r_extern

@@ -960,11 +960,15 @@ suffix:semicolon
 id|udf_debug
 c_func
 (paren
-l_string|&quot;offset: %u sizeof: %u bufsize: %u&bslash;n&quot;
+l_string|&quot;offset: %u sizeof: %lu bufsize: %u&bslash;n&quot;
 comma
 op_star
 id|offset
 comma
+(paren
+r_int
+r_int
+)paren
 r_sizeof
 (paren
 r_struct

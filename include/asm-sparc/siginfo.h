@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: siginfo.h,v 1.5 1999/07/29 12:56:57 jj Exp $&n; * siginfo.c:&n; */
+multiline_comment|/* $Id: siginfo.h,v 1.6 2000/01/21 11:39:17 jj Exp $&n; * siginfo.c:&n; */
 macro_line|#ifndef _SPARC_SIGINFO_H
 DECL|macro|_SPARC_SIGINFO_H
 mdefine_line|#define _SPARC_SIGINFO_H
@@ -206,6 +206,12 @@ DECL|macro|si_band
 mdefine_line|#define si_band&t;&t;_sifields._sigpoll._band
 DECL|macro|si_fd
 mdefine_line|#define si_fd&t;&t;_sifields._sigpoll._fd
+macro_line|#ifdef __KERNEL__
+DECL|macro|__SI_MASK
+mdefine_line|#define __SI_MASK&t;0
+DECL|macro|__SI_FAULT
+mdefine_line|#define __SI_FAULT&t;0
+macro_line|#endif
 multiline_comment|/*&n; * si_code values&n; * Digital reserves positive values for kernel-generated signals.&n; */
 DECL|macro|SI_NOINFO
 mdefine_line|#define SI_NOINFO&t;32767&t;/* no information in siginfo_t */
@@ -268,8 +274,8 @@ mdefine_line|#define NSIGFPE&t;&t;8
 multiline_comment|/*&n; * SIGSEGV si_codes&n; */
 DECL|macro|SEGV_MAPERR
 mdefine_line|#define SEGV_MAPERR&t;1&t;/* address not mapped to object */
-DECL|macro|SRGV_ACCERR
-mdefine_line|#define SRGV_ACCERR&t;2&t;/* invalid permissions for mapped object */
+DECL|macro|SEGV_ACCERR
+mdefine_line|#define SEGV_ACCERR&t;2&t;/* invalid permissions for mapped object */
 DECL|macro|NSIGSEGV
 mdefine_line|#define NSIGSEGV&t;2
 multiline_comment|/*&n; * SIGBUS si_codes&n; */

@@ -7531,10 +7531,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|sdla_setup
+DECL|function|sdla_c_setup
 r_int
 id|__init
-id|sdla_setup
+id|sdla_c_setup
 c_func
 (paren
 r_void
@@ -7602,7 +7602,7 @@ r_void
 r_int
 id|result
 suffix:semicolon
-id|sdla_setup
+id|sdla_c_setup
 c_func
 (paren
 )paren
