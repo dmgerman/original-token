@@ -199,7 +199,7 @@ op_eq
 l_int|0
 ques
 c_cond
-id|sp-&gt;send_seq
+id|sp-&gt;write_seq
 op_minus
 id|sp-&gt;rcv_ack_seq
 suffix:colon

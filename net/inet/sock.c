@@ -148,9 +148,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;  send_seq = %ld, acked_seq = %ld, copied_seq = %ld&bslash;n&quot;
+l_string|&quot;  write_seq = %ld, acked_seq = %ld, copied_seq = %ld&bslash;n&quot;
 comma
-id|sk-&gt;send_seq
+id|sk-&gt;write_seq
 comma
 id|sk-&gt;acked_seq
 comma
@@ -3180,7 +3180,7 @@ id|sk-&gt;opt
 op_assign
 l_int|NULL
 suffix:semicolon
-id|sk-&gt;send_seq
+id|sk-&gt;write_seq
 op_assign
 l_int|0
 suffix:semicolon

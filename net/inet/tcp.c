@@ -1334,7 +1334,7 @@ comma
 l_string|&quot;tcp_select: sleeping on write sk-&gt;wmem_alloc = %d, &quot;
 l_string|&quot;sk-&gt;packets_out = %d&bslash;n&quot;
 l_string|&quot;sk-&gt;wback = %X, sk-&gt;wfront = %X&bslash;n&quot;
-l_string|&quot;sk-&gt;send_seq = %u, sk-&gt;window_seq=%u&bslash;n&quot;
+l_string|&quot;sk-&gt;write_seq = %u, sk-&gt;window_seq=%u&bslash;n&quot;
 comma
 id|sk-&gt;wmem_alloc
 comma
@@ -1344,7 +1344,7 @@ id|sk-&gt;wback
 comma
 id|sk-&gt;wfront
 comma
-id|sk-&gt;send_seq
+id|sk-&gt;write_seq
 comma
 id|sk-&gt;window_seq
 )paren
@@ -2161,35 +2161,9 @@ comma
 id|sk
 )paren
 suffix:semicolon
-id|size
-op_sub_assign
-l_int|4
-op_star
-id|skb-&gt;h.th-&gt;doff
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|skb-&gt;h.th-&gt;syn
-)paren
-id|size
-op_increment
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|skb-&gt;h.th-&gt;fin
-)paren
-id|size
-op_increment
-suffix:semicolon
-id|sk-&gt;send_seq
-op_add_assign
-id|size
-suffix:semicolon
 id|skb-&gt;h.seq
 op_assign
-id|sk-&gt;send_seq
+id|sk-&gt;write_seq
 suffix:semicolon
 r_if
 c_cond
@@ -2197,7 +2171,7 @@ c_cond
 id|after
 c_func
 (paren
-id|sk-&gt;send_seq
+id|sk-&gt;write_seq
 comma
 id|sk-&gt;window_seq
 )paren
@@ -2235,9 +2209,9 @@ c_func
 (paren
 id|DBG_TCP
 comma
-l_string|&quot;sk-&gt;send_seq = %d, sk-&gt;window_seq = %d&bslash;n&quot;
+l_string|&quot;sk-&gt;write_seq = %d, sk-&gt;window_seq = %d&bslash;n&quot;
 comma
-id|sk-&gt;send_seq
+id|sk-&gt;write_seq
 comma
 id|sk-&gt;window_seq
 )paren
@@ -2307,6 +2281,10 @@ suffix:semicolon
 )brace
 r_else
 (brace
+id|sk-&gt;sent_seq
+op_assign
+id|sk-&gt;write_seq
+suffix:semicolon
 id|sk-&gt;prot
 op_member_access_from_pointer
 id|queue_xmit
@@ -2811,22 +2789,6 @@ id|t1
 )paren
 suffix:semicolon
 multiline_comment|/* this should probably be removed */
-multiline_comment|/* hack-around */
-r_if
-c_cond
-(paren
-id|after
-c_func
-(paren
-id|sequence
-comma
-id|sk-&gt;window_seq
-)paren
-)paren
-id|sequence
-op_assign
-id|sk-&gt;window_seq
-suffix:semicolon
 multiline_comment|/* swap the send and the receive. */
 id|t1-&gt;dest
 op_assign
@@ -3069,7 +3031,7 @@ op_assign
 id|htonl
 c_func
 (paren
-id|sk-&gt;send_seq
+id|sk-&gt;write_seq
 )paren
 suffix:semicolon
 id|th-&gt;psh
@@ -3680,6 +3642,10 @@ id|len
 op_sub_assign
 id|copy
 suffix:semicolon
+id|sk-&gt;write_seq
+op_add_assign
+id|copy
+suffix:semicolon
 )brace
 r_if
 c_cond
@@ -3726,7 +3692,7 @@ id|copy
 op_assign
 id|sk-&gt;window_seq
 op_minus
-id|sk-&gt;send_seq
+id|sk-&gt;write_seq
 suffix:semicolon
 r_if
 c_cond
@@ -4250,6 +4216,10 @@ id|skb-&gt;free
 op_assign
 l_int|0
 suffix:semicolon
+id|sk-&gt;write_seq
+op_add_assign
+id|copy
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4304,7 +4274,7 @@ op_logical_and
 id|before
 c_func
 (paren
-id|sk-&gt;send_seq
+id|sk-&gt;write_seq
 comma
 id|sk-&gt;window_seq
 )paren
@@ -4658,32 +4628,12 @@ id|t1
 )paren
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|after
-c_func
-(paren
-id|sk-&gt;send_seq
-comma
-id|sk-&gt;window_seq
-)paren
-)paren
 id|t1-&gt;seq
 op_assign
-id|ntohl
+id|htonl
 c_func
 (paren
-id|sk-&gt;window_seq
-)paren
-suffix:semicolon
-r_else
-id|t1-&gt;seq
-op_assign
-id|ntohl
-c_func
-(paren
-id|sk-&gt;send_seq
+id|sk-&gt;sent_seq
 )paren
 suffix:semicolon
 id|t1-&gt;ack
@@ -6210,15 +6160,15 @@ op_assign
 id|ntohl
 c_func
 (paren
-id|sk-&gt;send_seq
+id|sk-&gt;write_seq
 )paren
 suffix:semicolon
-id|sk-&gt;send_seq
+id|sk-&gt;write_seq
 op_increment
 suffix:semicolon
 id|buff-&gt;h.seq
 op_assign
-id|sk-&gt;send_seq
+id|sk-&gt;write_seq
 suffix:semicolon
 id|t1-&gt;ack
 op_assign
@@ -6315,6 +6265,10 @@ suffix:semicolon
 )brace
 r_else
 (brace
+id|sk-&gt;sent_seq
+op_assign
+id|sk-&gt;write_seq
+suffix:semicolon
 id|sk-&gt;prot
 op_member_access_from_pointer
 id|queue_xmit
@@ -7537,7 +7491,7 @@ id|newsk-&gt;timeout
 op_assign
 l_int|0
 suffix:semicolon
-id|newsk-&gt;send_seq
+id|newsk-&gt;write_seq
 op_assign
 id|jiffies
 op_star
@@ -7547,11 +7501,11 @@ id|seq_offset
 suffix:semicolon
 id|newsk-&gt;window_seq
 op_assign
-id|newsk-&gt;send_seq
+id|newsk-&gt;write_seq
 suffix:semicolon
 id|newsk-&gt;rcv_ack_seq
 op_assign
-id|newsk-&gt;send_seq
+id|newsk-&gt;write_seq
 suffix:semicolon
 id|newsk-&gt;urg_data
 op_assign
@@ -7930,7 +7884,7 @@ id|t1
 suffix:semicolon
 id|buff-&gt;h.seq
 op_assign
-id|newsk-&gt;send_seq
+id|newsk-&gt;write_seq
 suffix:semicolon
 multiline_comment|/* Swap the send and the receive. */
 id|t1-&gt;dest
@@ -7946,7 +7900,7 @@ op_assign
 id|ntohl
 c_func
 (paren
-id|newsk-&gt;send_seq
+id|newsk-&gt;write_seq
 op_increment
 )paren
 suffix:semicolon
@@ -7963,6 +7917,10 @@ id|newsk
 )paren
 suffix:semicolon
 multiline_comment|/*newsk-&gt;prot-&gt;rspace(newsk);*/
+id|newsk-&gt;sent_seq
+op_assign
+id|newsk-&gt;write_seq
+suffix:semicolon
 id|t1-&gt;window
 op_assign
 id|ntohs
@@ -8679,15 +8637,15 @@ op_assign
 id|ntohl
 c_func
 (paren
-id|sk-&gt;send_seq
+id|sk-&gt;write_seq
 )paren
 suffix:semicolon
-id|sk-&gt;send_seq
+id|sk-&gt;write_seq
 op_increment
 suffix:semicolon
 id|buff-&gt;h.seq
 op_assign
-id|sk-&gt;send_seq
+id|sk-&gt;write_seq
 suffix:semicolon
 id|t1-&gt;ack
 op_assign
@@ -8765,6 +8723,10 @@ op_eq
 l_int|NULL
 )paren
 (brace
+id|sk-&gt;sent_seq
+op_assign
+id|sk-&gt;write_seq
+suffix:semicolon
 id|prot
 op_member_access_from_pointer
 id|queue_xmit
@@ -9050,6 +9012,10 @@ suffix:semicolon
 )brace
 r_else
 (brace
+id|sk-&gt;sent_seq
+op_assign
+id|skb-&gt;h.seq
+suffix:semicolon
 id|sk-&gt;prot
 op_member_access_from_pointer
 id|queue_xmit
@@ -9337,6 +9303,7 @@ id|sk-&gt;retransmits
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* not quite clear why the +1 and -1 here, and why not +1 in next line */
 r_if
 c_cond
 (paren
@@ -9345,7 +9312,7 @@ c_func
 (paren
 id|ack
 comma
-id|sk-&gt;send_seq
+id|sk-&gt;sent_seq
 op_plus
 l_int|1
 )paren
@@ -9369,7 +9336,7 @@ c_func
 (paren
 id|ack
 comma
-id|sk-&gt;send_seq
+id|sk-&gt;sent_seq
 )paren
 op_logical_or
 (paren
@@ -10433,7 +10400,7 @@ c_cond
 (paren
 id|sk-&gt;rcv_ack_seq
 op_eq
-id|sk-&gt;send_seq
+id|sk-&gt;write_seq
 op_logical_and
 id|sk-&gt;acked_seq
 op_eq
@@ -10485,7 +10452,7 @@ c_cond
 (paren
 id|sk-&gt;rcv_ack_seq
 op_eq
-id|sk-&gt;send_seq
+id|sk-&gt;write_seq
 )paren
 (brace
 id|flag
@@ -10524,7 +10491,7 @@ suffix:semicolon
 id|tcp_send_ack
 c_func
 (paren
-id|sk-&gt;send_seq
+id|sk-&gt;sent_seq
 comma
 id|sk-&gt;acked_seq
 comma
@@ -10730,7 +10697,7 @@ id|th-&gt;ack
 id|tcp_send_ack
 c_func
 (paren
-id|sk-&gt;send_seq
+id|sk-&gt;sent_seq
 comma
 id|sk-&gt;acked_seq
 comma
@@ -11462,7 +11429,7 @@ op_logical_or
 id|th-&gt;fin
 )paren
 (brace
-multiline_comment|/*&t;&t;&t;tcp_send_ack(sk-&gt;send_seq, sk-&gt;acked_seq,sk,th, saddr); */
+multiline_comment|/*&t;&t;&t;tcp_send_ack(sk-&gt;sent_seq, sk-&gt;acked_seq,sk,th, saddr); */
 )brace
 r_else
 (brace
@@ -11607,7 +11574,7 @@ suffix:semicolon
 id|tcp_send_ack
 c_func
 (paren
-id|sk-&gt;send_seq
+id|sk-&gt;sent_seq
 comma
 id|sk-&gt;acked_seq
 comma
@@ -11638,7 +11605,7 @@ multiline_comment|/* We missed a packet.  Send an ack to try to resync things. *
 id|tcp_send_ack
 c_func
 (paren
-id|sk-&gt;send_seq
+id|sk-&gt;sent_seq
 comma
 id|sk-&gt;acked_seq
 comma
@@ -11708,7 +11675,7 @@ id|sk-&gt;fin_seq
 op_logical_and
 id|sk-&gt;rcv_ack_seq
 op_eq
-id|sk-&gt;send_seq
+id|sk-&gt;write_seq
 )paren
 (brace
 id|DPRINTF
@@ -11723,7 +11690,7 @@ id|sk
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&t;tcp_send_ack(sk-&gt;send_seq, sk-&gt;acked_seq, sk, th, saddr); */
+multiline_comment|/*&t;tcp_send_ack(sk-&gt;sent_seq, sk-&gt;acked_seq, sk, th, saddr); */
 id|sk-&gt;shutdown
 op_assign
 id|SHUTDOWN_MASK
@@ -12530,7 +12497,7 @@ id|sk-&gt;daddr
 op_assign
 id|sin.sin_addr.s_addr
 suffix:semicolon
-id|sk-&gt;send_seq
+id|sk-&gt;write_seq
 op_assign
 id|jiffies
 op_star
@@ -12540,11 +12507,11 @@ id|seq_offset
 suffix:semicolon
 id|sk-&gt;window_seq
 op_assign
-id|sk-&gt;send_seq
+id|sk-&gt;write_seq
 suffix:semicolon
 id|sk-&gt;rcv_ack_seq
 op_assign
-id|sk-&gt;send_seq
+id|sk-&gt;write_seq
 op_minus
 l_int|1
 suffix:semicolon
@@ -12731,13 +12698,17 @@ op_assign
 id|ntohl
 c_func
 (paren
-id|sk-&gt;send_seq
+id|sk-&gt;write_seq
 op_increment
 )paren
 suffix:semicolon
+id|sk-&gt;sent_seq
+op_assign
+id|sk-&gt;write_seq
+suffix:semicolon
 id|buff-&gt;h.seq
 op_assign
-id|sk-&gt;send_seq
+id|sk-&gt;write_seq
 suffix:semicolon
 id|t1-&gt;ack
 op_assign
@@ -13012,6 +12983,14 @@ l_int|4
 op_star
 id|th-&gt;doff
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|th-&gt;fin
+)paren
+id|next_seq
+op_increment
+suffix:semicolon
 multiline_comment|/* if we have a zero window, we can&squot;t have any data in the packet.. */
 r_if
 c_cond
@@ -13027,14 +13006,6 @@ suffix:semicolon
 id|next_seq
 op_add_assign
 id|th-&gt;seq
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|th-&gt;syn
-)paren
-id|next_seq
-op_increment
 suffix:semicolon
 multiline_comment|/*&n;&t; * This isn&squot;t quite right.  sk-&gt;acked_seq could be more recent&n;&t; * than sk-&gt;window.  This is however close enough.  We will accept&n;&t; * slightly more packets than we should, but it should not cause&n;&t; * problems unless someone is trying to forge packets.&n;&t; */
 multiline_comment|/* have we already seen all of this packet? */
@@ -13140,7 +13111,7 @@ multiline_comment|/* Try to resync things. */
 id|tcp_send_ack
 c_func
 (paren
-id|sk-&gt;send_seq
+id|sk-&gt;sent_seq
 comma
 id|sk-&gt;acked_seq
 comma
@@ -13823,7 +13794,7 @@ id|th-&gt;rst
 id|tcp_send_ack
 c_func
 (paren
-id|sk-&gt;send_seq
+id|sk-&gt;sent_seq
 comma
 id|sk-&gt;acked_seq
 comma
@@ -14738,7 +14709,7 @@ suffix:semicolon
 id|tcp_send_ack
 c_func
 (paren
-id|sk-&gt;send_seq
+id|sk-&gt;sent_seq
 comma
 id|th-&gt;seq
 op_plus
@@ -15298,10 +15269,10 @@ suffix:semicolon
 multiline_comment|/*&n;   * Use a previous sequence.&n;   * This should cause the other end to send an ack.&n;   */
 id|t1-&gt;seq
 op_assign
-id|ntohl
+id|htonl
 c_func
 (paren
-id|sk-&gt;send_seq
+id|sk-&gt;sent_seq
 op_minus
 l_int|1
 )paren

@@ -38,10 +38,15 @@ r_int
 r_int
 id|rmem_alloc
 suffix:semicolon
-DECL|member|send_seq
+DECL|member|write_seq
 r_int
 r_int
-id|send_seq
+id|write_seq
+suffix:semicolon
+DECL|member|sent_seq
+r_int
+r_int
+id|sent_seq
 suffix:semicolon
 DECL|member|acked_seq
 r_int
