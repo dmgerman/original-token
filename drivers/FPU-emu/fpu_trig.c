@@ -640,13 +640,15 @@ r_void
 id|single_arg_error
 c_func
 (paren
-r_void
+id|FPU_REG
+op_star
+id|st0_ptr
 )paren
 (brace
 r_switch
 c_cond
 (paren
-id|FPU_st0_tag
+id|st0_ptr-&gt;tag
 )paren
 (brace
 r_case
@@ -657,7 +659,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|FPU_st0_ptr-&gt;sigh
+id|st0_ptr-&gt;sigh
 op_amp
 l_int|0x40000000
 )paren
@@ -677,7 +679,7 @@ id|control_word
 op_amp
 id|CW_Invalid
 )paren
-id|FPU_st0_ptr-&gt;sigh
+id|st0_ptr-&gt;sigh
 op_or_assign
 l_int|0x40000000
 suffix:semicolon
@@ -717,7 +719,9 @@ r_void
 id|single_arg_2_error
 c_func
 (paren
-r_void
+id|FPU_REG
+op_star
+id|st0_ptr
 )paren
 (brace
 id|FPU_REG
@@ -727,7 +731,7 @@ suffix:semicolon
 r_switch
 c_cond
 (paren
-id|FPU_st0_tag
+id|st0_ptr-&gt;tag
 )paren
 (brace
 r_case
@@ -738,7 +742,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|FPU_st0_ptr-&gt;sigh
+id|st0_ptr-&gt;sigh
 op_amp
 l_int|0x40000000
 )paren
@@ -761,7 +765,7 @@ id|CW_Invalid
 (brace
 multiline_comment|/* The masked response */
 multiline_comment|/* Convert to a QNaN */
-id|FPU_st0_ptr-&gt;sigh
+id|st0_ptr-&gt;sigh
 op_or_assign
 l_int|0x40000000
 suffix:semicolon
@@ -790,7 +794,7 @@ c_func
 l_int|1
 )paren
 comma
-id|FPU_st0_ptr
+id|st_new_ptr
 )paren
 suffix:semicolon
 )brace
@@ -823,7 +827,7 @@ c_func
 l_int|1
 )paren
 comma
-id|FPU_st0_ptr
+id|st_new_ptr
 )paren
 suffix:semicolon
 )brace
@@ -851,7 +855,9 @@ r_void
 id|f2xm1
 c_func
 (paren
-r_void
+id|FPU_REG
+op_star
+id|st0_ptr
 )paren
 (brace
 id|clear_C1
@@ -862,7 +868,7 @@ suffix:semicolon
 r_switch
 c_cond
 (paren
-id|FPU_st0_tag
+id|st0_ptr-&gt;tag
 )paren
 (brace
 r_case
@@ -877,7 +883,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|FPU_st0_ptr-&gt;exp
+id|st0_ptr-&gt;exp
 op_ge
 l_int|0
 )paren
@@ -888,7 +894,7 @@ r_else
 r_if
 c_cond
 (paren
-id|FPU_st0_ptr-&gt;exp
+id|st0_ptr-&gt;exp
 op_ge
 op_minus
 l_int|64
@@ -897,7 +903,7 @@ l_int|64
 r_if
 c_cond
 (paren
-id|FPU_st0_ptr-&gt;sign
+id|st0_ptr-&gt;sign
 op_eq
 id|SIGN_POS
 )paren
@@ -906,7 +912,7 @@ multiline_comment|/* poly_2xm1(x) requires 0 &lt; x &lt; 1. */
 id|poly_2xm1
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 comma
 op_amp
 id|rv
@@ -918,9 +924,9 @@ c_func
 op_amp
 id|rv
 comma
-id|FPU_st0_ptr
+id|st0_ptr
 comma
-id|FPU_st0_ptr
+id|st0_ptr
 comma
 id|FULL_PRECISION
 )paren
@@ -930,14 +936,14 @@ r_else
 (brace
 multiline_comment|/* poly_2xm1(x) doesn&squot;t handle negative numbers yet. */
 multiline_comment|/* So we compute z=poly_2xm1(-x), and the answer is&n;&t;&t;   then -z/(1+z) */
-id|FPU_st0_ptr-&gt;sign
+id|st0_ptr-&gt;sign
 op_assign
 id|SIGN_POS
 suffix:semicolon
 id|poly_2xm1
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 comma
 op_amp
 id|rv
@@ -949,7 +955,7 @@ c_func
 op_amp
 id|rv
 comma
-id|FPU_st0_ptr
+id|st0_ptr
 comma
 op_amp
 id|rv
@@ -981,12 +987,12 @@ comma
 op_amp
 id|tmp
 comma
-id|FPU_st0_ptr
+id|st0_ptr
 comma
 id|FULL_PRECISION
 )paren
 suffix:semicolon
-id|FPU_st0_ptr-&gt;sign
+id|st0_ptr-&gt;sign
 op_assign
 id|SIGN_NEG
 suffix:semicolon
@@ -999,7 +1005,7 @@ r_if
 c_cond
 (paren
 (paren
-id|FPU_st0_ptr-&gt;exp
+id|st0_ptr-&gt;exp
 op_le
 id|EXP_UNDER
 )paren
@@ -1021,9 +1027,9 @@ c_func
 op_amp
 id|CONST_LN2
 comma
-id|FPU_st0_ptr
+id|st0_ptr
 comma
-id|FPU_st0_ptr
+id|st0_ptr
 comma
 id|FULL_PRECISION
 )paren
@@ -1048,7 +1054,7 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|FPU_st0_ptr-&gt;sign
+id|st0_ptr-&gt;sign
 op_eq
 id|SIGN_NEG
 )paren
@@ -1060,10 +1066,10 @@ c_func
 op_amp
 id|CONST_1
 comma
-id|FPU_st0_ptr
+id|st0_ptr
 )paren
 suffix:semicolon
-id|FPU_st0_ptr-&gt;sign
+id|st0_ptr-&gt;sign
 op_assign
 id|SIGN_NEG
 suffix:semicolon
@@ -1075,6 +1081,7 @@ suffix:colon
 id|single_arg_error
 c_func
 (paren
+id|st0_ptr
 )paren
 suffix:semicolon
 )brace
@@ -1085,9 +1092,16 @@ r_void
 id|fptan
 c_func
 (paren
-r_void
+id|FPU_REG
+op_star
+id|st0_ptr
 )paren
 (brace
+r_char
+id|st0_tag
+op_assign
+id|st0_ptr-&gt;tag
+suffix:semicolon
 id|FPU_REG
 op_star
 id|st_new_ptr
@@ -1098,13 +1112,13 @@ suffix:semicolon
 r_char
 id|arg_sign
 op_assign
-id|FPU_st0_ptr-&gt;sign
+id|st0_ptr-&gt;sign
 suffix:semicolon
 multiline_comment|/* Stack underflow has higher priority */
 r_if
 c_cond
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_eq
 id|TW_Empty
 )paren
@@ -1165,7 +1179,7 @@ suffix:semicolon
 r_switch
 c_cond
 (paren
-id|FPU_st0_tag
+id|st0_tag
 )paren
 (brace
 r_case
@@ -1174,14 +1188,14 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|FPU_st0_ptr-&gt;exp
+id|st0_ptr-&gt;exp
 OG
 id|EXP_BIAS
 op_minus
 l_int|40
 )paren
 (brace
-id|FPU_st0_ptr-&gt;sign
+id|st0_ptr-&gt;sign
 op_assign
 id|SIGN_POS
 suffix:semicolon
@@ -1194,7 +1208,7 @@ op_assign
 id|trig_arg
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 comma
 id|FPTAN
 )paren
@@ -1207,12 +1221,12 @@ l_int|1
 id|reg_div
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 comma
 op_amp
 id|CONST_PI2
 comma
-id|FPU_st0_ptr
+id|st0_ptr
 comma
 id|FULL_PRECISION
 )paren
@@ -1220,16 +1234,16 @@ suffix:semicolon
 id|poly_tan
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 comma
-id|FPU_st0_ptr
+id|st0_ptr
 comma
 id|q
 op_amp
 id|FCOS
 )paren
 suffix:semicolon
-id|FPU_st0_ptr-&gt;sign
+id|st0_ptr-&gt;sign
 op_assign
 (paren
 id|q
@@ -1243,7 +1257,7 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* Operand is out of range */
-id|FPU_st0_ptr-&gt;sign
+id|st0_ptr-&gt;sign
 op_assign
 id|arg_sign
 suffix:semicolon
@@ -1259,7 +1273,7 @@ multiline_comment|/* Underflow may happen */
 r_if
 c_cond
 (paren
-id|FPU_st0_ptr-&gt;exp
+id|st0_ptr-&gt;exp
 op_le
 id|EXP_UNDER
 )paren
@@ -1283,7 +1297,7 @@ c_cond
 id|arith_underflow
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 )paren
 )paren
 r_return
@@ -1308,7 +1322,7 @@ c_func
 op_amp
 id|CONST_1
 comma
-id|FPU_st0_ptr
+id|st_new_ptr
 )paren
 suffix:semicolon
 r_return
@@ -1322,7 +1336,7 @@ multiline_comment|/* The 80486 treats infinity as an invalid operand */
 id|arith_invalid
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 )paren
 suffix:semicolon
 r_if
@@ -1351,7 +1365,7 @@ suffix:semicolon
 id|arith_invalid
 c_func
 (paren
-id|FPU_st0_ptr
+id|st_new_ptr
 )paren
 suffix:semicolon
 )brace
@@ -1371,7 +1385,7 @@ c_func
 op_amp
 id|CONST_1
 comma
-id|FPU_st0_ptr
+id|st_new_ptr
 )paren
 suffix:semicolon
 id|setcc
@@ -1387,6 +1401,7 @@ suffix:colon
 id|single_arg_2_error
 c_func
 (paren
+id|st0_ptr
 )paren
 suffix:semicolon
 r_break
@@ -1399,9 +1414,16 @@ r_void
 id|fxtract
 c_func
 (paren
-r_void
+id|FPU_REG
+op_star
+id|st0_ptr
 )paren
 (brace
+r_char
+id|st0_tag
+op_assign
+id|st0_ptr-&gt;tag
+suffix:semicolon
 id|FPU_REG
 op_star
 id|st_new_ptr
@@ -1411,7 +1433,7 @@ id|FPU_REG
 op_star
 id|st1_ptr
 op_assign
-id|FPU_st0_ptr
+id|st0_ptr
 suffix:semicolon
 multiline_comment|/* anticipate */
 r_if
@@ -1438,7 +1460,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_xor
 id|TW_Valid
 )paren
@@ -1452,7 +1474,7 @@ r_if
 c_cond
 (paren
 (paren
-id|FPU_st0_ptr-&gt;exp
+id|st0_ptr-&gt;exp
 op_le
 id|EXP_UNDER
 )paren
@@ -1477,10 +1499,10 @@ c_func
 (paren
 id|st1_ptr
 comma
-id|FPU_st0_ptr
+id|st_new_ptr
 )paren
 suffix:semicolon
-id|FPU_st0_ptr-&gt;exp
+id|st_new_ptr-&gt;exp
 op_assign
 id|EXP_BIAS
 suffix:semicolon
@@ -1506,7 +1528,7 @@ r_else
 r_if
 c_cond
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_eq
 id|TW_Zero
 )paren
@@ -1514,7 +1536,7 @@ id|TW_Zero
 r_char
 id|sign
 op_assign
-id|FPU_st0_ptr-&gt;sign
+id|st0_ptr-&gt;sign
 suffix:semicolon
 r_if
 c_cond
@@ -1524,7 +1546,7 @@ c_func
 (paren
 id|SIGN_NEG
 comma
-id|FPU_st0_ptr
+id|st0_ptr
 )paren
 )paren
 r_return
@@ -1540,10 +1562,10 @@ c_func
 op_amp
 id|CONST_Z
 comma
-id|FPU_st0_ptr
+id|st_new_ptr
 )paren
 suffix:semicolon
-id|FPU_st0_ptr-&gt;sign
+id|st_new_ptr-&gt;sign
 op_assign
 id|sign
 suffix:semicolon
@@ -1554,7 +1576,7 @@ r_else
 r_if
 c_cond
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_eq
 id|TW_Infinity
 )paren
@@ -1562,9 +1584,9 @@ id|TW_Infinity
 r_char
 id|sign
 op_assign
-id|FPU_st0_ptr-&gt;sign
+id|st0_ptr-&gt;sign
 suffix:semicolon
-id|FPU_st0_ptr-&gt;sign
+id|st0_ptr-&gt;sign
 op_assign
 id|SIGN_POS
 suffix:semicolon
@@ -1579,10 +1601,10 @@ c_func
 op_amp
 id|CONST_INF
 comma
-id|FPU_st0_ptr
+id|st_new_ptr
 )paren
 suffix:semicolon
-id|FPU_st0_ptr-&gt;sign
+id|st_new_ptr-&gt;sign
 op_assign
 id|sign
 suffix:semicolon
@@ -1593,7 +1615,7 @@ r_else
 r_if
 c_cond
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_eq
 id|TW_NaN
 )paren
@@ -1604,11 +1626,11 @@ c_cond
 id|real_2op_NaN
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 comma
-id|FPU_st0_ptr
+id|st0_ptr
 comma
-id|FPU_st0_ptr
+id|st0_ptr
 )paren
 )paren
 r_return
@@ -1623,7 +1645,7 @@ c_func
 (paren
 id|st1_ptr
 comma
-id|FPU_st0_ptr
+id|st_new_ptr
 )paren
 suffix:semicolon
 r_return
@@ -1633,7 +1655,7 @@ r_else
 r_if
 c_cond
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_eq
 id|TW_Empty
 )paren
@@ -1689,7 +1711,9 @@ r_void
 id|fdecstp
 c_func
 (paren
-r_void
+id|FPU_REG
+op_star
+id|st0_ptr
 )paren
 (brace
 id|clear_C1
@@ -1700,7 +1724,7 @@ suffix:semicolon
 id|top
 op_decrement
 suffix:semicolon
-multiline_comment|/* FPU_st0_ptr will be fixed in math_emulate() before the next instr */
+multiline_comment|/* st0_ptr will be fixed in math_emulate() before the next instr */
 )brace
 DECL|function|fincstp
 r_static
@@ -1708,7 +1732,9 @@ r_void
 id|fincstp
 c_func
 (paren
-r_void
+id|FPU_REG
+op_star
+id|st0_ptr
 )paren
 (brace
 id|clear_C1
@@ -1719,7 +1745,7 @@ suffix:semicolon
 id|top
 op_increment
 suffix:semicolon
-multiline_comment|/* FPU_st0_ptr will be fixed in math_emulate() before the next instr */
+multiline_comment|/* st0_ptr will be fixed in math_emulate() before the next instr */
 )brace
 DECL|function|fsqrt_
 r_static
@@ -1727,9 +1753,16 @@ r_void
 id|fsqrt_
 c_func
 (paren
-r_void
+id|FPU_REG
+op_star
+id|st0_ptr
 )paren
 (brace
+r_char
+id|st0_tag
+op_assign
+id|st0_ptr-&gt;tag
+suffix:semicolon
 id|clear_C1
 c_func
 (paren
@@ -1740,7 +1773,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_xor
 id|TW_Valid
 )paren
@@ -1752,7 +1785,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|FPU_st0_ptr-&gt;sign
+id|st0_ptr-&gt;sign
 op_eq
 id|SIGN_NEG
 )paren
@@ -1760,7 +1793,7 @@ id|SIGN_NEG
 id|arith_invalid
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 )paren
 suffix:semicolon
 multiline_comment|/* sqrt(negative) is invalid */
@@ -1772,7 +1805,7 @@ r_if
 c_cond
 (paren
 (paren
-id|FPU_st0_ptr-&gt;exp
+id|st0_ptr-&gt;exp
 op_le
 id|EXP_UNDER
 )paren
@@ -1789,11 +1822,11 @@ suffix:semicolon
 macro_line|#endif DENORM_OPERAND
 id|expon
 op_assign
-id|FPU_st0_ptr-&gt;exp
+id|st0_ptr-&gt;exp
 op_minus
 id|EXP_BIAS
 suffix:semicolon
-id|FPU_st0_ptr-&gt;exp
+id|st0_ptr-&gt;exp
 op_assign
 id|EXP_BIAS
 op_plus
@@ -1807,19 +1840,19 @@ multiline_comment|/* make st(0) in  [1.0 .. 4.0) */
 id|wm_sqrt
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 comma
 id|control_word
 )paren
 suffix:semicolon
 multiline_comment|/* Do the computation */
-id|FPU_st0_ptr-&gt;exp
+id|st0_ptr-&gt;exp
 op_add_assign
 id|expon
 op_rshift
 l_int|1
 suffix:semicolon
-id|FPU_st0_ptr-&gt;sign
+id|st0_ptr-&gt;sign
 op_assign
 id|SIGN_POS
 suffix:semicolon
@@ -1828,7 +1861,7 @@ r_else
 r_if
 c_cond
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_eq
 id|TW_Zero
 )paren
@@ -1838,7 +1871,7 @@ r_else
 r_if
 c_cond
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_eq
 id|TW_Infinity
 )paren
@@ -1846,14 +1879,14 @@ id|TW_Infinity
 r_if
 c_cond
 (paren
-id|FPU_st0_ptr-&gt;sign
+id|st0_ptr-&gt;sign
 op_eq
 id|SIGN_NEG
 )paren
 id|arith_invalid
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 )paren
 suffix:semicolon
 multiline_comment|/* sqrt(-Infinity) is invalid */
@@ -1865,6 +1898,7 @@ r_else
 id|single_arg_error
 c_func
 (paren
+id|st0_ptr
 )paren
 suffix:semicolon
 r_return
@@ -1877,9 +1911,16 @@ r_void
 id|frndint_
 c_func
 (paren
-r_void
+id|FPU_REG
+op_star
+id|st0_ptr
 )paren
 (brace
+r_char
+id|st0_tag
+op_assign
+id|st0_ptr-&gt;tag
+suffix:semicolon
 r_int
 id|flags
 suffix:semicolon
@@ -1888,7 +1929,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_xor
 id|TW_Valid
 )paren
@@ -1897,7 +1938,7 @@ id|TW_Valid
 r_if
 c_cond
 (paren
-id|FPU_st0_ptr-&gt;exp
+id|st0_ptr-&gt;exp
 OG
 id|EXP_BIAS
 op_plus
@@ -1910,7 +1951,7 @@ r_if
 c_cond
 (paren
 (paren
-id|FPU_st0_ptr-&gt;exp
+id|st0_ptr-&gt;exp
 op_le
 id|EXP_UNDER
 )paren
@@ -1935,7 +1976,7 @@ op_assign
 id|round_to_int
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 )paren
 )paren
 )paren
@@ -1945,7 +1986,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-id|FPU_st0_ptr-&gt;exp
+id|st0_ptr-&gt;exp
 op_assign
 id|EXP_BIAS
 op_plus
@@ -1954,7 +1995,7 @@ suffix:semicolon
 id|normalize
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 )paren
 suffix:semicolon
 r_return
@@ -1965,13 +2006,13 @@ r_if
 c_cond
 (paren
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_eq
 id|TW_Zero
 )paren
 op_logical_or
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_eq
 id|TW_Infinity
 )paren
@@ -1982,6 +2023,7 @@ r_else
 id|single_arg_error
 c_func
 (paren
+id|st0_ptr
 )paren
 suffix:semicolon
 )brace
@@ -1991,18 +2033,25 @@ r_void
 id|fsin
 c_func
 (paren
-r_void
+id|FPU_REG
+op_star
+id|st0_ptr
 )paren
 (brace
 r_char
+id|st0_tag
+op_assign
+id|st0_ptr-&gt;tag
+suffix:semicolon
+r_char
 id|arg_sign
 op_assign
-id|FPU_st0_ptr-&gt;sign
+id|st0_ptr-&gt;sign
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_eq
 id|TW_Valid
 )paren
@@ -2016,14 +2065,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|FPU_st0_ptr-&gt;exp
+id|st0_ptr-&gt;exp
 OG
 id|EXP_BIAS
 op_minus
 l_int|40
 )paren
 (brace
-id|FPU_st0_ptr-&gt;sign
+id|st0_ptr-&gt;sign
 op_assign
 id|SIGN_POS
 suffix:semicolon
@@ -2036,7 +2085,7 @@ op_assign
 id|trig_arg
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 comma
 l_int|0
 )paren
@@ -2049,12 +2098,12 @@ l_int|1
 id|reg_div
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 comma
 op_amp
 id|CONST_PI2
 comma
-id|FPU_st0_ptr
+id|st0_ptr
 comma
 id|FULL_PRECISION
 )paren
@@ -2062,7 +2111,7 @@ suffix:semicolon
 id|poly_sine
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 comma
 op_amp
 id|rv
@@ -2091,7 +2140,7 @@ c_func
 op_amp
 id|rv
 comma
-id|FPU_st0_ptr
+id|st0_ptr
 )paren
 suffix:semicolon
 multiline_comment|/* We do not really know if up or down */
@@ -2106,7 +2155,7 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* Operand is out of range */
-id|FPU_st0_ptr-&gt;sign
+id|st0_ptr-&gt;sign
 op_assign
 id|arg_sign
 suffix:semicolon
@@ -2122,7 +2171,7 @@ multiline_comment|/* Underflow may happen */
 r_if
 c_cond
 (paren
-id|FPU_st0_ptr-&gt;exp
+id|st0_ptr-&gt;exp
 op_le
 id|EXP_UNDER
 )paren
@@ -2143,7 +2192,7 @@ multiline_comment|/* A denormal result has been produced.&n;&t;&t; Precision mus
 id|arith_underflow
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 )paren
 suffix:semicolon
 r_return
@@ -2161,7 +2210,7 @@ r_else
 r_if
 c_cond
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_eq
 id|TW_Zero
 )paren
@@ -2179,7 +2228,7 @@ r_else
 r_if
 c_cond
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_eq
 id|TW_Infinity
 )paren
@@ -2188,7 +2237,7 @@ multiline_comment|/* The 80486 treats infinity as an invalid operand */
 id|arith_invalid
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 )paren
 suffix:semicolon
 r_return
@@ -2198,6 +2247,7 @@ r_else
 id|single_arg_error
 c_func
 (paren
+id|st0_ptr
 )paren
 suffix:semicolon
 )brace
@@ -2425,7 +2475,7 @@ r_else
 r_if
 c_cond
 (paren
-id|FPU_st0_tag
+id|arg-&gt;tag
 op_eq
 id|TW_Infinity
 )paren
@@ -2434,7 +2484,7 @@ multiline_comment|/* The 80486 treats infinity as an invalid operand */
 id|arith_invalid
 c_func
 (paren
-id|FPU_st0_ptr
+id|arg
 )paren
 suffix:semicolon
 r_return
@@ -2446,6 +2496,7 @@ r_else
 id|single_arg_error
 c_func
 (paren
+id|arg
 )paren
 suffix:semicolon
 multiline_comment|/* requires arg == &amp;st(0) */
@@ -2460,13 +2511,15 @@ r_void
 id|fcos
 c_func
 (paren
-r_void
+id|FPU_REG
+op_star
+id|st0_ptr
 )paren
 (brace
 id|f_cos
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 )paren
 suffix:semicolon
 )brace
@@ -2476,9 +2529,16 @@ r_void
 id|fsincos
 c_func
 (paren
-r_void
+id|FPU_REG
+op_star
+id|st0_ptr
 )paren
 (brace
+r_char
+id|st0_tag
+op_assign
+id|st0_ptr-&gt;tag
+suffix:semicolon
 id|FPU_REG
 op_star
 id|st_new_ptr
@@ -2490,7 +2550,7 @@ multiline_comment|/* Stack underflow has higher priority */
 r_if
 c_cond
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_eq
 id|TW_Empty
 )paren
@@ -2551,7 +2611,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_eq
 id|TW_NaN
 )paren
@@ -2559,6 +2619,7 @@ id|TW_NaN
 id|single_arg_2_error
 c_func
 (paren
+id|st0_ptr
 )paren
 suffix:semicolon
 r_return
@@ -2568,7 +2629,7 @@ r_else
 r_if
 c_cond
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_eq
 id|TW_Infinity
 )paren
@@ -2581,7 +2642,7 @@ op_logical_neg
 id|arith_invalid
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 )paren
 )paren
 (brace
@@ -2594,7 +2655,7 @@ suffix:semicolon
 id|arith_invalid
 c_func
 (paren
-id|FPU_st0_ptr
+id|st_new_ptr
 )paren
 suffix:semicolon
 )brace
@@ -2604,7 +2665,7 @@ suffix:semicolon
 id|reg_move
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 comma
 op_amp
 id|arg
@@ -2625,6 +2686,7 @@ id|arg
 id|fsin
 c_func
 (paren
+id|st0_ptr
 )paren
 suffix:semicolon
 id|push
@@ -2638,7 +2700,7 @@ c_func
 op_amp
 id|arg
 comma
-id|FPU_st0_ptr
+id|st_new_ptr
 )paren
 suffix:semicolon
 )brace
@@ -2842,6 +2904,10 @@ r_void
 id|do_fprem
 c_func
 (paren
+id|FPU_REG
+op_star
+id|st0_ptr
+comma
 r_int
 id|round
 )paren
@@ -2863,9 +2929,14 @@ op_assign
 id|st1_ptr-&gt;tag
 suffix:semicolon
 r_char
+id|st0_tag
+op_assign
+id|st0_ptr-&gt;tag
+suffix:semicolon
+r_char
 id|sign
 op_assign
-id|FPU_st0_ptr-&gt;sign
+id|st0_ptr-&gt;sign
 suffix:semicolon
 r_if
 c_cond
@@ -2873,7 +2944,7 @@ c_cond
 op_logical_neg
 (paren
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_xor
 id|TW_Valid
 )paren
@@ -2897,7 +2968,7 @@ suffix:semicolon
 r_int
 id|expdif
 op_assign
-id|FPU_st0_ptr-&gt;exp
+id|st0_ptr-&gt;exp
 op_minus
 id|st1_ptr-&gt;exp
 suffix:semicolon
@@ -2920,7 +2991,7 @@ c_cond
 (paren
 (paren
 (paren
-id|FPU_st0_ptr-&gt;exp
+id|st0_ptr-&gt;exp
 op_le
 id|EXP_UNDER
 )paren
@@ -2977,7 +3048,7 @@ l_int|2
 id|reg_div
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 comma
 id|st1_ptr
 comma
@@ -3022,7 +3093,7 @@ c_func
 id|significand
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 )paren
 comma
 op_amp
@@ -3054,7 +3125,7 @@ r_else
 id|reg_move
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 comma
 op_amp
 id|tmp
@@ -3268,7 +3339,7 @@ multiline_comment|/* N is &squot;a number between 32 and 63&squot; (p26-113) */
 id|reg_move
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 comma
 op_amp
 id|tmp
@@ -3328,7 +3399,7 @@ c_func
 id|significand
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 )paren
 comma
 op_amp
@@ -3394,10 +3465,10 @@ c_func
 op_amp
 id|CONST_Z
 comma
-id|FPU_st0_ptr
+id|st0_ptr
 )paren
 suffix:semicolon
-id|FPU_st0_ptr-&gt;sign
+id|st0_ptr-&gt;sign
 op_assign
 id|sign
 suffix:semicolon
@@ -3445,7 +3516,7 @@ c_func
 op_amp
 id|tmp
 comma
-id|FPU_st0_ptr
+id|st0_ptr
 )paren
 suffix:semicolon
 id|setcc
@@ -3459,13 +3530,13 @@ r_if
 c_cond
 (paren
 (paren
-id|FPU_st0_ptr-&gt;exp
+id|st0_ptr-&gt;exp
 op_le
 id|EXP_UNDER
 )paren
 op_logical_and
 (paren
-id|FPU_st0_ptr-&gt;tag
+id|st0_ptr-&gt;tag
 op_ne
 id|TW_Zero
 )paren
@@ -3480,7 +3551,7 @@ id|CW_Underflow
 id|arith_underflow
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 )paren
 suffix:semicolon
 r_return
@@ -3491,7 +3562,7 @@ r_if
 c_cond
 (paren
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_eq
 id|TW_Empty
 )paren
@@ -3515,7 +3586,7 @@ r_else
 r_if
 c_cond
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_eq
 id|TW_Zero
 )paren
@@ -3569,7 +3640,7 @@ id|TW_Zero
 id|arith_invalid
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 )paren
 suffix:semicolon
 r_return
@@ -3599,7 +3670,7 @@ r_else
 r_if
 c_cond
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_eq
 id|TW_Valid
 )paren
@@ -3615,7 +3686,7 @@ id|TW_Zero
 id|arith_invalid
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 )paren
 suffix:semicolon
 multiline_comment|/* fprem(Valid,Zero) is invalid */
@@ -3636,7 +3707,7 @@ r_if
 c_cond
 (paren
 (paren
-id|FPU_st0_ptr-&gt;exp
+id|st0_ptr-&gt;exp
 op_le
 id|EXP_UNDER
 )paren
@@ -3675,7 +3746,7 @@ r_else
 r_if
 c_cond
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_eq
 id|TW_Infinity
 )paren
@@ -3691,7 +3762,7 @@ id|TW_NaN
 id|arith_invalid
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 )paren
 suffix:semicolon
 multiline_comment|/* fprem(Infinity,?) is invalid */
@@ -3705,7 +3776,7 @@ r_if
 c_cond
 (paren
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_ne
 id|TW_NaN
 )paren
@@ -3730,9 +3801,9 @@ c_func
 (paren
 id|st1_ptr
 comma
-id|FPU_st0_ptr
+id|st0_ptr
 comma
-id|FPU_st0_ptr
+id|st0_ptr
 )paren
 suffix:semicolon
 )brace
@@ -3743,9 +3814,16 @@ r_void
 id|fyl2x
 c_func
 (paren
-r_void
+id|FPU_REG
+op_star
+id|st0_ptr
 )paren
 (brace
+r_char
+id|st0_tag
+op_assign
+id|st0_ptr-&gt;tag
+suffix:semicolon
 id|FPU_REG
 op_star
 id|st1_ptr
@@ -3773,7 +3851,7 @@ c_cond
 op_logical_neg
 (paren
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_xor
 id|TW_Valid
 )paren
@@ -3789,7 +3867,7 @@ id|TW_Valid
 r_if
 c_cond
 (paren
-id|FPU_st0_ptr-&gt;sign
+id|st0_ptr-&gt;sign
 op_eq
 id|SIGN_POS
 )paren
@@ -3805,7 +3883,7 @@ c_cond
 (paren
 (paren
 (paren
-id|FPU_st0_ptr-&gt;exp
+id|st0_ptr-&gt;exp
 op_le
 id|EXP_UNDER
 )paren
@@ -3843,9 +3921,9 @@ suffix:semicolon
 id|poly_l2
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 comma
-id|FPU_st0_ptr
+id|st0_ptr
 )paren
 suffix:semicolon
 multiline_comment|/* Enough of the basic arithmetic is done now */
@@ -3861,7 +3939,7 @@ multiline_comment|/* Let the multiply set the flags */
 id|reg_mul
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 comma
 id|st1_ptr
 comma
@@ -3873,15 +3951,6 @@ suffix:semicolon
 id|pop
 c_func
 (paren
-)paren
-suffix:semicolon
-id|FPU_st0_ptr
-op_assign
-op_amp
-id|st
-c_func
-(paren
-l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -3912,7 +3981,7 @@ r_if
 c_cond
 (paren
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_eq
 id|TW_Empty
 )paren
@@ -3938,7 +4007,7 @@ r_if
 c_cond
 (paren
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_eq
 id|TW_NaN
 )paren
@@ -3957,7 +4026,7 @@ op_logical_neg
 id|real_2op_NaN
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 comma
 id|st1_ptr
 comma
@@ -3977,7 +4046,7 @@ r_if
 c_cond
 (paren
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_le
 id|TW_Zero
 )paren
@@ -3993,7 +4062,7 @@ multiline_comment|/* one of the args is zero, the other valid, or both zero */
 r_if
 c_cond
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_eq
 id|TW_Zero
 )paren
@@ -4029,7 +4098,7 @@ r_else
 r_if
 c_cond
 (paren
-id|FPU_st0_ptr-&gt;tag
+id|st0_ptr-&gt;tag
 op_eq
 id|TW_Infinity
 )paren
@@ -4089,7 +4158,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|FPU_st0_ptr-&gt;sign
+id|st0_ptr-&gt;sign
 op_eq
 id|SIGN_NEG
 )paren
@@ -4118,7 +4187,7 @@ r_if
 c_cond
 (paren
 (paren
-id|FPU_st0_ptr-&gt;exp
+id|st0_ptr-&gt;exp
 op_le
 id|EXP_UNDER
 )paren
@@ -4136,7 +4205,7 @@ macro_line|#endif DENORM_OPERAND
 r_if
 c_cond
 (paren
-id|FPU_st0_ptr-&gt;exp
+id|st0_ptr-&gt;exp
 OL
 id|EXP_BIAS
 )paren
@@ -4151,7 +4220,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|FPU_st0_ptr
+id|st0_ptr
 op_assign
 op_amp
 id|st
@@ -4166,10 +4235,10 @@ c_func
 op_amp
 id|CONST_Z
 comma
-id|FPU_st0_ptr
+id|st0_ptr
 )paren
 suffix:semicolon
-id|FPU_st0_ptr-&gt;sign
+id|st0_ptr-&gt;sign
 op_assign
 id|sign
 suffix:semicolon
@@ -4182,7 +4251,7 @@ r_else
 r_if
 c_cond
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_eq
 id|TW_Infinity
 )paren
@@ -4191,7 +4260,7 @@ r_if
 c_cond
 (paren
 (paren
-id|FPU_st0_ptr-&gt;sign
+id|st0_ptr-&gt;sign
 op_eq
 id|SIGN_NEG
 )paren
@@ -4254,7 +4323,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|FPU_st0_ptr
+id|st0_ptr
 op_assign
 op_amp
 id|st
@@ -4269,10 +4338,10 @@ c_func
 op_amp
 id|CONST_INF
 comma
-id|FPU_st0_ptr
+id|st0_ptr
 )paren
 suffix:semicolon
-id|FPU_st0_ptr-&gt;sign
+id|st0_ptr-&gt;sign
 op_assign
 id|sign
 suffix:semicolon
@@ -4286,13 +4355,13 @@ r_if
 c_cond
 (paren
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_eq
 id|TW_Valid
 )paren
 op_logical_and
 (paren
-id|FPU_st0_ptr-&gt;sign
+id|st0_ptr-&gt;sign
 op_eq
 id|SIGN_POS
 )paren
@@ -4301,7 +4370,7 @@ id|SIGN_POS
 r_if
 c_cond
 (paren
-id|FPU_st0_ptr-&gt;exp
+id|st0_ptr-&gt;exp
 op_ge
 id|EXP_BIAS
 )paren
@@ -4310,19 +4379,19 @@ r_if
 c_cond
 (paren
 (paren
-id|FPU_st0_ptr-&gt;exp
+id|st0_ptr-&gt;exp
 op_eq
 id|EXP_BIAS
 )paren
 op_logical_and
 (paren
-id|FPU_st0_ptr-&gt;sigh
+id|st0_ptr-&gt;sigh
 op_eq
 l_int|0x80000000
 )paren
 op_logical_and
 (paren
-id|FPU_st0_ptr-&gt;sigl
+id|st0_ptr-&gt;sigl
 op_eq
 l_int|0
 )paren
@@ -4363,7 +4432,7 @@ r_if
 c_cond
 (paren
 (paren
-id|FPU_st0_ptr-&gt;exp
+id|st0_ptr-&gt;exp
 op_le
 id|EXP_UNDER
 )paren
@@ -4397,7 +4466,7 @@ multiline_comment|/* st(0) must be zero or negative */
 r_if
 c_cond
 (paren
-id|FPU_st0_ptr-&gt;tag
+id|st0_ptr-&gt;tag
 op_eq
 id|TW_Zero
 )paren
@@ -4460,9 +4529,16 @@ r_void
 id|fpatan
 c_func
 (paren
-r_void
+id|FPU_REG
+op_star
+id|st0_ptr
 )paren
 (brace
+r_char
+id|st0_tag
+op_assign
+id|st0_ptr-&gt;tag
+suffix:semicolon
 id|FPU_REG
 op_star
 id|st1_ptr
@@ -4486,7 +4562,7 @@ id|st1_ptr-&gt;sign
 comma
 id|st0_sign
 op_assign
-id|FPU_st0_ptr-&gt;sign
+id|st0_ptr-&gt;sign
 suffix:semicolon
 id|clear_C1
 c_func
@@ -4499,7 +4575,7 @@ c_cond
 op_logical_neg
 (paren
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_xor
 id|TW_Valid
 )paren
@@ -4529,7 +4605,7 @@ c_cond
 (paren
 (paren
 (paren
-id|FPU_st0_ptr-&gt;exp
+id|st0_ptr-&gt;exp
 op_le
 id|EXP_UNDER
 )paren
@@ -4566,7 +4642,7 @@ id|FULL_PRECISION
 suffix:semicolon
 id|st1_ptr-&gt;sign
 op_assign
-id|FPU_st0_ptr-&gt;sign
+id|st0_ptr-&gt;sign
 op_assign
 id|SIGN_POS
 suffix:semicolon
@@ -4594,7 +4670,7 @@ suffix:semicolon
 id|reg_div
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 comma
 id|st1_ptr
 comma
@@ -4623,7 +4699,7 @@ op_logical_and
 (paren
 id|st1_ptr-&gt;exp
 op_minus
-id|FPU_st0_ptr-&gt;exp
+id|st0_ptr-&gt;exp
 OL
 op_minus
 l_int|64
@@ -4643,7 +4719,7 @@ c_func
 (paren
 id|st1_ptr
 comma
-id|FPU_st0_ptr
+id|st0_ptr
 comma
 id|st1_ptr
 comma
@@ -4674,7 +4750,7 @@ c_func
 (paren
 id|st1_ptr
 comma
-id|FPU_st0_ptr
+id|st0_ptr
 comma
 op_amp
 id|sum
@@ -4762,7 +4838,7 @@ r_if
 c_cond
 (paren
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_eq
 id|TW_Empty
 )paren
@@ -4788,7 +4864,7 @@ r_if
 c_cond
 (paren
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_eq
 id|TW_NaN
 )paren
@@ -4807,7 +4883,7 @@ op_logical_neg
 id|real_2op_NaN
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 comma
 id|st1_ptr
 comma
@@ -4827,7 +4903,7 @@ r_if
 c_cond
 (paren
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_eq
 id|TW_Infinity
 )paren
@@ -4847,7 +4923,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_eq
 id|TW_Infinity
 )paren
@@ -4863,7 +4939,7 @@ id|TW_Infinity
 r_if
 c_cond
 (paren
-id|FPU_st0_ptr-&gt;sign
+id|st0_ptr-&gt;sign
 op_eq
 id|SIGN_POS
 )paren
@@ -4928,7 +5004,7 @@ macro_line|#endif DENORM_OPERAND
 r_if
 c_cond
 (paren
-id|FPU_st0_ptr-&gt;sign
+id|st0_ptr-&gt;sign
 op_eq
 id|SIGN_POS
 )paren
@@ -4974,7 +5050,7 @@ macro_line|#ifdef DENORM_OPERAND
 r_if
 c_cond
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_ne
 id|TW_Zero
 )paren
@@ -4983,7 +5059,7 @@ r_if
 c_cond
 (paren
 (paren
-id|FPU_st0_ptr-&gt;exp
+id|st0_ptr-&gt;exp
 op_le
 id|EXP_UNDER
 )paren
@@ -5033,7 +5109,7 @@ macro_line|#ifdef DENORM_OPERAND
 r_if
 c_cond
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_ne
 id|TW_Zero
 )paren
@@ -5042,7 +5118,7 @@ r_if
 c_cond
 (paren
 (paren
-id|FPU_st0_ptr-&gt;exp
+id|st0_ptr-&gt;exp
 op_le
 id|EXP_UNDER
 )paren
@@ -5061,7 +5137,7 @@ macro_line|#endif DENORM_OPERAND
 r_if
 c_cond
 (paren
-id|FPU_st0_ptr-&gt;sign
+id|st0_ptr-&gt;sign
 op_eq
 id|SIGN_POS
 )paren
@@ -5094,7 +5170,7 @@ r_else
 r_if
 c_cond
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_eq
 id|TW_Zero
 )paren
@@ -5168,12 +5244,16 @@ r_void
 id|fprem
 c_func
 (paren
-r_void
+id|FPU_REG
+op_star
+id|st0_ptr
 )paren
 (brace
 id|do_fprem
 c_func
 (paren
+id|st0_ptr
+comma
 id|RC_CHOP
 )paren
 suffix:semicolon
@@ -5184,12 +5264,16 @@ r_void
 id|fprem1
 c_func
 (paren
-r_void
+id|FPU_REG
+op_star
+id|st0_ptr
 )paren
 (brace
 id|do_fprem
 c_func
 (paren
+id|st0_ptr
+comma
 id|RC_RND
 )paren
 suffix:semicolon
@@ -5200,9 +5284,16 @@ r_void
 id|fyl2xp1
 c_func
 (paren
-r_void
+id|FPU_REG
+op_star
+id|st0_ptr
 )paren
 (brace
+r_char
+id|st0_tag
+op_assign
+id|st0_ptr-&gt;tag
+suffix:semicolon
 id|FPU_REG
 op_star
 id|st1_ptr
@@ -5230,7 +5321,7 @@ c_cond
 op_logical_neg
 (paren
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_xor
 id|TW_Valid
 )paren
@@ -5254,7 +5345,7 @@ c_cond
 (paren
 (paren
 (paren
-id|FPU_st0_ptr-&gt;exp
+id|st0_ptr-&gt;exp
 op_le
 id|EXP_UNDER
 )paren
@@ -5293,9 +5384,9 @@ c_cond
 id|poly_l2p1
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 comma
-id|FPU_st0_ptr
+id|st0_ptr
 )paren
 )paren
 (brace
@@ -5354,7 +5445,7 @@ multiline_comment|/* Let the multiply set the flags */
 id|reg_mul
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 comma
 id|st1_ptr
 comma
@@ -5374,7 +5465,7 @@ r_if
 c_cond
 (paren
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_eq
 id|TW_Empty
 )paren
@@ -5399,7 +5490,7 @@ r_else
 r_if
 c_cond
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_eq
 id|TW_Zero
 )paren
@@ -5438,14 +5529,14 @@ c_func
 r_return
 suffix:semicolon
 macro_line|#endif DENORM_OPERAND
-id|FPU_st0_ptr-&gt;sign
+id|st0_ptr-&gt;sign
 op_xor_assign
 id|st1_ptr-&gt;sign
 suffix:semicolon
 id|reg_move
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 comma
 id|st1_ptr
 )paren
@@ -5495,7 +5586,7 @@ op_logical_neg
 id|real_2op_NaN
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 comma
 id|st1_ptr
 comma
@@ -5537,7 +5628,7 @@ r_else
 r_if
 c_cond
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_eq
 id|TW_Valid
 )paren
@@ -5553,7 +5644,7 @@ id|TW_Zero
 r_if
 c_cond
 (paren
-id|FPU_st0_ptr-&gt;sign
+id|st0_ptr-&gt;sign
 op_eq
 id|SIGN_NEG
 )paren
@@ -5561,7 +5652,7 @@ id|SIGN_NEG
 r_if
 c_cond
 (paren
-id|FPU_st0_ptr-&gt;exp
+id|st0_ptr-&gt;exp
 op_ge
 id|EXP_BIAS
 )paren
@@ -5600,7 +5691,7 @@ r_if
 c_cond
 (paren
 (paren
-id|FPU_st0_ptr-&gt;exp
+id|st0_ptr-&gt;exp
 op_le
 id|EXP_UNDER
 )paren
@@ -5634,7 +5725,7 @@ r_if
 c_cond
 (paren
 (paren
-id|FPU_st0_ptr-&gt;exp
+id|st0_ptr-&gt;exp
 op_le
 id|EXP_UNDER
 )paren
@@ -5668,7 +5759,7 @@ id|TW_Infinity
 r_if
 c_cond
 (paren
-id|FPU_st0_ptr-&gt;sign
+id|st0_ptr-&gt;sign
 op_eq
 id|SIGN_NEG
 )paren
@@ -5677,7 +5768,7 @@ r_if
 c_cond
 (paren
 (paren
-id|FPU_st0_ptr-&gt;exp
+id|st0_ptr-&gt;exp
 op_ge
 id|EXP_BIAS
 )paren
@@ -5685,13 +5776,13 @@ op_logical_and
 op_logical_neg
 (paren
 (paren
-id|FPU_st0_ptr-&gt;sigh
+id|st0_ptr-&gt;sigh
 op_eq
 l_int|0x80000000
 )paren
 op_logical_and
 (paren
-id|FPU_st0_ptr-&gt;sigl
+id|st0_ptr-&gt;sigl
 op_eq
 l_int|0
 )paren
@@ -5732,7 +5823,7 @@ r_if
 c_cond
 (paren
 (paren
-id|FPU_st0_ptr-&gt;exp
+id|st0_ptr-&gt;exp
 op_le
 id|EXP_UNDER
 )paren
@@ -5766,7 +5857,7 @@ r_if
 c_cond
 (paren
 (paren
-id|FPU_st0_ptr-&gt;exp
+id|st0_ptr-&gt;exp
 op_le
 id|EXP_UNDER
 )paren
@@ -5804,7 +5895,7 @@ op_logical_neg
 id|real_2op_NaN
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 comma
 id|st1_ptr
 comma
@@ -5824,7 +5915,7 @@ r_else
 r_if
 c_cond
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_eq
 id|TW_NaN
 )paren
@@ -5836,7 +5927,7 @@ op_logical_neg
 id|real_2op_NaN
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 comma
 id|st1_ptr
 comma
@@ -5855,7 +5946,7 @@ r_else
 r_if
 c_cond
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_eq
 id|TW_Infinity
 )paren
@@ -5875,7 +5966,7 @@ op_logical_neg
 id|real_2op_NaN
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 comma
 id|st1_ptr
 comma
@@ -5894,7 +5985,7 @@ r_else
 r_if
 c_cond
 (paren
-id|FPU_st0_ptr-&gt;sign
+id|st0_ptr-&gt;sign
 op_eq
 id|SIGN_NEG
 )paren
@@ -6069,9 +6160,16 @@ r_void
 id|fscale
 c_func
 (paren
-r_void
+id|FPU_REG
+op_star
+id|st0_ptr
 )paren
 (brace
+r_char
+id|st0_tag
+op_assign
+id|st0_ptr-&gt;tag
+suffix:semicolon
 id|FPU_REG
 op_star
 id|st1_ptr
@@ -6096,7 +6194,7 @@ suffix:semicolon
 r_char
 id|sign
 op_assign
-id|FPU_st0_ptr-&gt;sign
+id|st0_ptr-&gt;sign
 suffix:semicolon
 id|clear_C1
 c_func
@@ -6109,7 +6207,7 @@ c_cond
 op_logical_neg
 (paren
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_xor
 id|TW_Valid
 )paren
@@ -6134,7 +6232,7 @@ c_cond
 (paren
 (paren
 (paren
-id|FPU_st0_ptr-&gt;exp
+id|st0_ptr-&gt;exp
 op_le
 id|EXP_UNDER
 )paren
@@ -6186,7 +6284,7 @@ id|EX_Overflow
 suffix:semicolon
 id|sign
 op_assign
-id|FPU_st0_ptr-&gt;sign
+id|st0_ptr-&gt;sign
 suffix:semicolon
 id|reg_move
 c_func
@@ -6194,10 +6292,10 @@ c_func
 op_amp
 id|CONST_INF
 comma
-id|FPU_st0_ptr
+id|st0_ptr
 )paren
 suffix:semicolon
-id|FPU_st0_ptr-&gt;sign
+id|st0_ptr-&gt;sign
 op_assign
 id|sign
 suffix:semicolon
@@ -6212,7 +6310,7 @@ id|EX_Underflow
 suffix:semicolon
 id|sign
 op_assign
-id|FPU_st0_ptr-&gt;sign
+id|st0_ptr-&gt;sign
 suffix:semicolon
 id|reg_move
 c_func
@@ -6220,10 +6318,10 @@ c_func
 op_amp
 id|CONST_Z
 comma
-id|FPU_st0_ptr
+id|st0_ptr
 )paren
 suffix:semicolon
-id|FPU_st0_ptr-&gt;sign
+id|st0_ptr-&gt;sign
 op_assign
 id|sign
 suffix:semicolon
@@ -6273,9 +6371,9 @@ id|tmp.sigl
 suffix:semicolon
 id|scale
 op_add_assign
-id|FPU_st0_ptr-&gt;exp
+id|st0_ptr-&gt;exp
 suffix:semicolon
-id|FPU_st0_ptr-&gt;exp
+id|st0_ptr-&gt;exp
 op_assign
 id|scale
 suffix:semicolon
@@ -6283,7 +6381,7 @@ multiline_comment|/* Use round_reg() to properly detect under/overflow etc */
 id|round_reg
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 comma
 l_int|0
 comma
@@ -6297,7 +6395,7 @@ r_else
 r_if
 c_cond
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_eq
 id|TW_Valid
 )paren
@@ -6315,7 +6413,7 @@ r_if
 c_cond
 (paren
 (paren
-id|FPU_st0_ptr-&gt;exp
+id|st0_ptr-&gt;exp
 op_le
 id|EXP_UNDER
 )paren
@@ -6346,7 +6444,7 @@ r_if
 c_cond
 (paren
 (paren
-id|FPU_st0_ptr-&gt;exp
+id|st0_ptr-&gt;exp
 op_le
 id|EXP_UNDER
 )paren
@@ -6375,7 +6473,7 @@ c_func
 op_amp
 id|CONST_INF
 comma
-id|FPU_st0_ptr
+id|st0_ptr
 )paren
 suffix:semicolon
 )brace
@@ -6386,10 +6484,10 @@ c_func
 op_amp
 id|CONST_Z
 comma
-id|FPU_st0_ptr
+id|st0_ptr
 )paren
 suffix:semicolon
-id|FPU_st0_ptr-&gt;sign
+id|st0_ptr-&gt;sign
 op_assign
 id|sign
 suffix:semicolon
@@ -6407,11 +6505,11 @@ id|TW_NaN
 id|real_2op_NaN
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 comma
 id|st1_ptr
 comma
-id|FPU_st0_ptr
+id|st0_ptr
 )paren
 suffix:semicolon
 r_return
@@ -6422,7 +6520,7 @@ r_else
 r_if
 c_cond
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_eq
 id|TW_Zero
 )paren
@@ -6493,7 +6591,7 @@ r_else
 id|arith_invalid
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 )paren
 suffix:semicolon
 multiline_comment|/* Zero scaled by +Infinity */
@@ -6513,11 +6611,11 @@ id|TW_NaN
 id|real_2op_NaN
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 comma
 id|st1_ptr
 comma
-id|FPU_st0_ptr
+id|st0_ptr
 )paren
 suffix:semicolon
 r_return
@@ -6528,7 +6626,7 @@ r_else
 r_if
 c_cond
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_eq
 id|TW_Infinity
 )paren
@@ -6601,7 +6699,7 @@ id|TW_Infinity
 id|arith_invalid
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 )paren
 suffix:semicolon
 multiline_comment|/* Infinity scaled by -Infinity */
@@ -6620,11 +6718,11 @@ id|TW_NaN
 id|real_2op_NaN
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 comma
 id|st1_ptr
 comma
-id|FPU_st0_ptr
+id|st0_ptr
 )paren
 suffix:semicolon
 r_return
@@ -6635,7 +6733,7 @@ r_else
 r_if
 c_cond
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_eq
 id|TW_NaN
 )paren
@@ -6651,11 +6749,11 @@ id|TW_Empty
 id|real_2op_NaN
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 comma
 id|st1_ptr
 comma
-id|FPU_st0_ptr
+id|st0_ptr
 )paren
 suffix:semicolon
 r_return
@@ -6669,7 +6767,7 @@ c_cond
 op_logical_neg
 (paren
 (paren
-id|FPU_st0_tag
+id|st0_tag
 op_eq
 id|TW_Empty
 )paren
@@ -6704,7 +6802,7 @@ suffix:semicolon
 multiline_comment|/*---------------------------------------------------------------------------*/
 DECL|variable|trig_table_a
 r_static
-id|FUNC
+id|FUNC_ST0
 r_const
 id|trig_table_a
 (braket
@@ -6743,12 +6841,18 @@ id|FPU_rm
 )braket
 )paren
 (paren
+op_amp
+id|st
+c_func
+(paren
+l_int|0
+)paren
 )paren
 suffix:semicolon
 )brace
 DECL|variable|trig_table_b
 r_static
-id|FUNC
+id|FUNC_ST0
 r_const
 id|trig_table_b
 (braket
@@ -6787,6 +6891,12 @@ id|FPU_rm
 )braket
 )paren
 (paren
+op_amp
+id|st
+c_func
+(paren
+l_int|0
+)paren
 )paren
 suffix:semicolon
 )brace

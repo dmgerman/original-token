@@ -1913,12 +1913,6 @@ comma
 id|bufflen
 )paren
 suffix:semicolon
-id|panic
-c_func
-(paren
-l_string|&quot;buslogic.c: wrong buffer length for request sense&quot;
-)paren
-suffix:semicolon
 )brace
 macro_line|#endif
 id|SCpnt-&gt;result
@@ -3092,6 +3086,9 @@ id|ok
 op_assign
 id|TRUE
 suffix:semicolon
+r_return
+id|ok
+suffix:semicolon
 id|must_be_adaptec
 suffix:colon
 id|INTR_RESET
@@ -3588,7 +3585,6 @@ op_star
 id|trans
 )paren
 (brace
-macro_line|#if 0
 r_int
 r_const
 r_char
@@ -3674,6 +3670,38 @@ comma
 id|CMDC
 )paren
 suffix:semicolon
+id|INTR_RESET
+c_func
+(paren
+id|base
+)paren
+suffix:semicolon
+id|buslogic_printk
+c_func
+(paren
+l_string|&quot;Inquiry Bytes: %X %X %X %X&bslash;n&quot;
+comma
+id|inquiry_result
+(braket
+l_int|0
+)braket
+comma
+id|inquiry_result
+(braket
+l_int|1
+)braket
+comma
+id|inquiry_result
+(braket
+l_int|2
+)braket
+comma
+id|inquiry_result
+(braket
+l_int|3
+)braket
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -3685,17 +3713,13 @@ suffix:colon
 id|buslogic_printk
 c_func
 (paren
-l_string|&quot;buslogic_detect: query card type&bslash;n&quot;
+l_string|&quot;buslogic_query: query board settings&bslash;n&quot;
 )paren
+suffix:semicolon
+r_return
+id|TRUE
 suffix:semicolon
 )brace
-id|INTR_RESET
-c_func
-(paren
-id|base
-)paren
-suffix:semicolon
-macro_line|#endif
 op_star
 id|trans
 op_assign
@@ -4211,6 +4235,7 @@ id|SHpnt-&gt;this_id
 op_assign
 id|id
 suffix:semicolon
+macro_line|#ifdef CONFIG_NO_BUGGY_BUSLOGIC
 multiline_comment|/* Only type &squot;A&squot; (AT/ISA) bus adapters use unchecked DMA. */
 id|SHpnt-&gt;unchecked_isa_dma
 op_assign
@@ -4220,6 +4245,13 @@ op_eq
 l_char|&squot;A&squot;
 )paren
 suffix:semicolon
+macro_line|#else
+multiline_comment|/* bugs in the firmware with 16M+. Gaah */
+id|SHpnt-&gt;unchecked_isa_dma
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#endif
 id|SHpnt-&gt;sg_tablesize
 op_assign
 id|max_sg

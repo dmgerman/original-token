@@ -48,6 +48,14 @@ op_star
 id|address
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|FPU_CS
+op_eq
+id|USER_CS
+)paren
+(brace
 r_while
 c_loop
 (paren
@@ -153,6 +161,18 @@ op_amp
 l_int|7
 )paren
 suffix:semicolon
+)brace
+r_else
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;cs selector = %04x&bslash;n&quot;
+comma
+id|FPU_CS
+)paren
+suffix:semicolon
+)brace
 id|RE_ENTRANT_CHECK_ON
 suffix:semicolon
 id|EXCEPTION
@@ -242,6 +262,14 @@ op_star
 id|address
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|FPU_CS
+op_eq
+id|USER_CS
+)paren
+(brace
 DECL|macro|MAX_PRINTED_BYTES
 mdefine_line|#define MAX_PRINTED_BYTES 20
 r_for
@@ -385,6 +413,18 @@ comma
 id|FPU_modrm
 op_amp
 l_int|7
+)paren
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%04x&bslash;n&quot;
+comma
+id|FPU_CS
 )paren
 suffix:semicolon
 )brace
@@ -972,6 +1012,7 @@ id|r-&gt;tag
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef OBSOLETE
 id|printk
 c_func
 (paren
@@ -1044,6 +1085,7 @@ id|FPU_loaded_data.tag
 )braket
 )paren
 suffix:semicolon
+macro_line|#endif OBSOLETE
 id|RE_ENTRANT_CHECK_ON
 suffix:semicolon
 )brace
@@ -1128,7 +1170,7 @@ l_int|NULL
 )brace
 )brace
 suffix:semicolon
-multiline_comment|/*&n; EX_INTERNAL is always given with a code which indicates where the&n; error was detected.&n;&n; Internal error types:&n;       0      in load_store.c&n;       0x14   in fpu_etc.c&n;       0x1nn  in a *.c file:&n;              0x101  in reg_add_sub.c&n;              0x102  in reg_mul.c&n;              0x103  in poly_sin.c&n;              0x104  in poly_atan.c&n;              0x105  in reg_mul.c&n;&t;      0x106  in reg_ld_str.c&n;              0x107  in fpu_trig.c&n;&t;      0x108  in reg_compare.c&n;&t;      0x109  in reg_compare.c&n;&t;      0x110  in reg_add_sub.c&n;&t;      0x111  in fpe_entry.c&n;&t;      0x112  in fpu_trig.c&n;&t;      0x113  in errors.c&n;&t;      0x114  in reg_ld_str.c&n;&t;      0x115  in fpu_trig.c&n;&t;      0x116  in fpu_trig.c&n;&t;      0x117  in fpu_trig.c&n;&t;      0x118  in fpu_trig.c&n;&t;      0x119  in fpu_trig.c&n;&t;      0x120  in poly_atan.c&n;&t;      0x121  in reg_compare.c&n;&t;      0x122  in reg_compare.c&n;&t;      0x123  in reg_compare.c&n;&t;      0x125  in fpu_trig.c&n;&t;      0x126  in fpu_entry.c&n;&t;      0x127  in poly_2xm1.c&n;&t;      0x128  in fpu_entry.c&n;&t;      0x130  in get_address.c&n;       0x2nn  in an *.S file:&n;              0x201  in reg_u_add.S&n;              0x202  in reg_u_div.S&n;              0x203  in reg_u_div.S&n;              0x204  in reg_u_div.S&n;              0x205  in reg_u_mul.S&n;              0x206  in reg_u_sub.S&n;              0x207  in wm_sqrt.S&n;&t;      0x208  in reg_div.S&n;              0x209  in reg_u_sub.S&n;              0x210  in reg_u_sub.S&n;              0x211  in reg_u_sub.S&n;              0x212  in reg_u_sub.S&n;&t;      0x213  in wm_sqrt.S&n;&t;      0x214  in wm_sqrt.S&n;&t;      0x215  in wm_sqrt.S&n;&t;      0x220  in reg_norm.S&n;&t;      0x221  in reg_norm.S&n;&t;      0x230  in reg_round.S&n;&t;      0x231  in reg_round.S&n;&t;      0x232  in reg_round.S&n;&t;      0x233  in reg_round.S&n;&t;      0x234  in reg_round.S&n;&t;      0x235  in reg_round.S&n;&t;      0x236  in reg_round.S&n; */
+multiline_comment|/*&n; EX_INTERNAL is always given with a code which indicates where the&n; error was detected.&n;&n; Internal error types:&n;       0x14   in fpu_etc.c&n;       0x1nn  in a *.c file:&n;              0x101  in reg_add_sub.c&n;              0x102  in reg_mul.c&n;              0x103  in poly_sin.c&n;              0x104  in poly_atan.c&n;              0x105  in reg_mul.c&n;&t;      0x106  in reg_ld_str.c&n;              0x107  in fpu_trig.c&n;&t;      0x108  in reg_compare.c&n;&t;      0x109  in reg_compare.c&n;&t;      0x110  in reg_add_sub.c&n;&t;      0x111  in fpe_entry.c&n;&t;      0x112  in fpu_trig.c&n;&t;      0x113  in errors.c&n;&t;      0x114  in reg_ld_str.c&n;&t;      0x115  in fpu_trig.c&n;&t;      0x116  in fpu_trig.c&n;&t;      0x117  in fpu_trig.c&n;&t;      0x118  in fpu_trig.c&n;&t;      0x119  in fpu_trig.c&n;&t;      0x120  in poly_atan.c&n;&t;      0x121  in reg_compare.c&n;&t;      0x122  in reg_compare.c&n;&t;      0x123  in reg_compare.c&n;&t;      0x125  in fpu_trig.c&n;&t;      0x126  in fpu_entry.c&n;&t;      0x127  in poly_2xm1.c&n;&t;      0x128  in fpu_entry.c&n;&t;      0x129  in fpu_entry.c&n;&t;      0x130  in get_address.c&n;&t;      0x131  in get_address.c&n;&t;      0x132  in get_address.c&n;&t;      0x133  in get_address.c&n;&t;      0x140  in load_store.c&n;&t;      0x141  in load_store.c&n;       0x2nn  in an *.S file:&n;              0x201  in reg_u_add.S&n;              0x202  in reg_u_div.S&n;              0x203  in reg_u_div.S&n;              0x204  in reg_u_div.S&n;              0x205  in reg_u_mul.S&n;              0x206  in reg_u_sub.S&n;              0x207  in wm_sqrt.S&n;&t;      0x208  in reg_div.S&n;              0x209  in reg_u_sub.S&n;              0x210  in reg_u_sub.S&n;              0x211  in reg_u_sub.S&n;              0x212  in reg_u_sub.S&n;&t;      0x213  in wm_sqrt.S&n;&t;      0x214  in wm_sqrt.S&n;&t;      0x215  in wm_sqrt.S&n;&t;      0x220  in reg_norm.S&n;&t;      0x221  in reg_norm.S&n;&t;      0x230  in reg_round.S&n;&t;      0x231  in reg_round.S&n;&t;      0x232  in reg_round.S&n;&t;      0x233  in reg_round.S&n;&t;      0x234  in reg_round.S&n;&t;      0x235  in reg_round.S&n;&t;      0x236  in reg_round.S&n; */
 DECL|function|exception
 r_void
 id|exception
@@ -2124,8 +2166,6 @@ c_func
 op_amp
 id|CONST_QNaN
 comma
-id|FPU_st0_ptr
-op_assign
 op_amp
 id|st
 c_func
@@ -2167,7 +2207,12 @@ c_func
 op_amp
 id|CONST_QNaN
 comma
-id|FPU_st0_ptr
+op_amp
+id|st
+c_func
+(paren
+l_int|0
+)paren
 )paren
 suffix:semicolon
 )brace

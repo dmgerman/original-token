@@ -783,19 +783,6 @@ id|src
 )paren
 (brace
 multiline_comment|/* Rounding in a consistent direction produces better results&n;   for the use of this function in poly_atan. Simple truncation&n;   is used here instead of round-to-nearest. */
-macro_line|#ifdef OBSOLETE
-r_char
-id|round
-op_assign
-(paren
-id|src-&gt;sigl
-op_amp
-l_int|3
-)paren
-op_eq
-l_int|3
-suffix:semicolon
-macro_line|#endif OBSOLETE
 id|shrx
 c_func
 (paren
@@ -805,21 +792,6 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-macro_line|#ifdef OBSOLETE
-r_if
-c_cond
-(paren
-id|round
-)paren
-id|significand
-c_func
-(paren
-id|src
-)paren
-op_increment
-suffix:semicolon
-multiline_comment|/* Round to even */
-macro_line|#endif OBSOLETE
 id|src-&gt;sigh
 op_or_assign
 l_int|0x80000000

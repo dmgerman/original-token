@@ -215,6 +215,21 @@ r_int
 id|mem_end
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SBPCD
+r_extern
+r_int
+r_int
+id|sbpcd_init
+c_func
+(paren
+r_int
+r_int
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+macro_line|#endif CONFIG_SBPCD
 r_extern
 r_int
 id|is_read_only

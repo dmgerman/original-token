@@ -8,6 +8,26 @@ macro_line|#include &lt;linux/kernel.h&gt;
 multiline_comment|/* This sets the pointer FPU_info to point to the argument part&n;   of the stack frame of math_emulate() */
 DECL|macro|SETUP_DATA_AREA
 mdefine_line|#define SETUP_DATA_AREA(arg)    FPU_info = (struct info *) &amp;arg
+DECL|macro|LDT_DESCRIPTOR
+mdefine_line|#define LDT_DESCRIPTOR(s)       (current-&gt;ldt[(s) &gt;&gt; 3])
+DECL|macro|SEG_D_SIZE
+mdefine_line|#define SEG_D_SIZE(x)           ((x).b &amp; (3 &lt;&lt; 21))
+DECL|macro|SEG_G_BIT
+mdefine_line|#define SEG_G_BIT(x)            ((x).b &amp; (1 &lt;&lt; 23))
+DECL|macro|SEG_GRANULARITY
+mdefine_line|#define SEG_GRANULARITY(x)      (((x).b &amp; (1 &lt;&lt; 23)) ? 4096 : 1)
+DECL|macro|SEG_286_MODE
+mdefine_line|#define SEG_286_MODE(x)         ((x).b &amp; ( 0xff000000 | 0xf0000 | (1 &lt;&lt; 23)))
+DECL|macro|SEG_BASE_ADDR
+mdefine_line|#define SEG_BASE_ADDR(s)        (((s).b &amp; 0xff000000) &bslash;&n;&t;&t;&t;&t; | (((s).b &amp; 0xff) &lt;&lt; 16) | ((s).a &gt;&gt; 16))
+DECL|macro|SEG_LIMIT
+mdefine_line|#define SEG_LIMIT(s)            (((s).b &amp; 0xff0000) | ((s).a &amp; 0xffff))
+DECL|macro|SEG_EXECUTE_ONLY
+mdefine_line|#define SEG_EXECUTE_ONLY(s)     (((s).b &amp; ((1 &lt;&lt; 11) | (1 &lt;&lt; 9))) == (1 &lt;&lt; 11))
+DECL|macro|SEG_WRITE_PERM
+mdefine_line|#define SEG_WRITE_PERM(s)       (((s).b &amp; ((1 &lt;&lt; 11) | (1 &lt;&lt; 9))) == (1 &lt;&lt; 9))
+DECL|macro|SEG_EXPAND_DOWN
+mdefine_line|#define SEG_EXPAND_DOWN(s)      (((s).b &amp; ((1 &lt;&lt; 11) | (1 &lt;&lt; 10))) &bslash;&n;&t;&t;&t;&t; == (1 &lt;&lt; 10))
 DECL|macro|I387
 mdefine_line|#define I387&t;&t;&t;(current-&gt;tss.i387)
 DECL|macro|FPU_info
@@ -26,12 +46,16 @@ DECL|macro|FPU_EIP
 mdefine_line|#define FPU_EIP&t;&t;&t;(FPU_info-&gt;___eip)
 DECL|macro|FPU_ORIG_EIP
 mdefine_line|#define FPU_ORIG_EIP&t;&t;(FPU_info-&gt;___orig_eip)
-DECL|macro|LDT_BASE_ADDR
-mdefine_line|#define LDT_BASE_ADDR(s)&t;((current-&gt;ldt[(s) &gt;&gt; 3].b &amp; 0xff000000)     &bslash;&n;&t;&t;&t;&t; | ((current-&gt;ldt[(s) &gt;&gt; 3].b &amp; 0xff) &lt;&lt; 16) &bslash;&n;&t;&t;&t;&t; | (current-&gt;ldt[(s) &gt;&gt; 3].a &gt;&gt; 16))
 DECL|macro|FPU_lookahead
 mdefine_line|#define FPU_lookahead           (I387.soft.lookahead)
-DECL|macro|FPU_entry_eip
-mdefine_line|#define FPU_entry_eip           (I387.soft.entry_eip)
+multiline_comment|/* nz if ip_offset and cs_selector are not to be set for the current&n;   instruction. */
+DECL|macro|no_ip_update
+mdefine_line|#define no_ip_update            (((char *)&amp;(I387.soft.twd))[0])
+DECL|macro|FPU_rm
+mdefine_line|#define FPU_rm                  (((unsigned char *)&amp;(I387.soft.twd))[1])
+multiline_comment|/* Number of bytes of data which can be legally accessed by the current&n;   instruction. This only needs to hold a number &lt;= 108, so a byte will do. */
+DECL|macro|access_limit
+mdefine_line|#define access_limit            (((unsigned char *)&amp;(I387.soft.twd))[2])
 DECL|macro|partial_status
 mdefine_line|#define partial_status       &t;(I387.soft.swd)
 DECL|macro|control_word
@@ -40,14 +64,10 @@ DECL|macro|regs
 mdefine_line|#define regs&t;&t;&t;(I387.soft.regs)
 DECL|macro|top
 mdefine_line|#define top&t;&t;&t;(I387.soft.top)
-DECL|macro|ip_offset
-mdefine_line|#define ip_offset&t;&t;(I387.soft.fip)
-DECL|macro|cs_selector
-mdefine_line|#define cs_selector&t;&t;(I387.soft.fcs)
-DECL|macro|data_operand_offset
-mdefine_line|#define data_operand_offset&t;(I387.soft.foo)
-DECL|macro|operand_selector
-mdefine_line|#define operand_selector&t;(I387.soft.fos)
+DECL|macro|instruction_address
+mdefine_line|#define instruction_address     (*(struct address *)&amp;I387.soft.fip)
+DECL|macro|operand_address
+mdefine_line|#define operand_address         (*(struct address *)&amp;I387.soft.foo)
 DECL|macro|FPU_verify_area
 mdefine_line|#define FPU_verify_area(x,y,z)  if ( verify_area(x,y,z) ) &bslash;&n;                                math_abort(FPU_info,SIGSEGV)
 DECL|macro|FPU_IGNORE_CODE_SEGV
@@ -61,8 +81,5 @@ multiline_comment|/* A simpler test than verify_area() can probably be done for&
 DECL|macro|FPU_code_verify_area
 mdefine_line|#define&t;FPU_code_verify_area(z) FPU_verify_area(VERIFY_READ,(void *)FPU_EIP,z)
 macro_line|#endif
-multiline_comment|/* ######## temporary and ugly ;-) */
-DECL|macro|FPU_data_address
-mdefine_line|#define FPU_data_address        ((void *)(I387.soft.twd))
 macro_line|#endif
 eof

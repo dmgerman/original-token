@@ -72,6 +72,18 @@ r_int
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_SBPCD
+r_extern
+r_int
+id|check_sbpcd_media_change
+c_func
+(paren
+r_int
+comma
+r_int
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|macro|NR_SIZES
 mdefine_line|#define NR_SIZES 4
 DECL|variable|buffersize_index
@@ -1320,6 +1332,23 @@ suffix:colon
 id|i
 op_assign
 id|check_mcd_media_change
+c_func
+(paren
+id|dev
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
+macro_line|#if defined(CONFIG_SBPCD)
+r_case
+id|MATSUSHITA_CDROM_MAJOR
+suffix:colon
+id|i
+op_assign
+id|check_sbpcd_media_change
 c_func
 (paren
 id|dev

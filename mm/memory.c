@@ -14,6 +14,9 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
+multiline_comment|/*&n; * Define this if things work differently on a i386 and a i486:&n; * it will (on a i486) warn about kernel memory accesses that are&n; * done without a &squot;verify_area(VERIFY_WRITE,..)&squot;&n; */
+DECL|macro|CONFIG_TEST_VERIFY_AREA
+macro_line|#undef CONFIG_TEST_VERIFY_AREA
 DECL|variable|high_memory
 r_int
 r_int
@@ -4538,6 +4541,24 @@ id|error_code
 op_amp
 id|PAGE_PRESENT
 )paren
+(brace
+macro_line|#ifdef CONFIG_TEST_VERIFY_AREA
+r_if
+c_cond
+(paren
+id|regs-&gt;cs
+op_eq
+id|KERNEL_CS
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;WP fault at %08x&bslash;n&quot;
+comma
+id|regs-&gt;eip
+)paren
+suffix:semicolon
+macro_line|#endif
 id|do_wp_page
 c_func
 (paren
@@ -4550,7 +4571,9 @@ comma
 id|user_esp
 )paren
 suffix:semicolon
+)brace
 r_else
+(brace
 id|do_no_page
 c_func
 (paren
@@ -4563,6 +4586,7 @@ comma
 id|user_esp
 )paren
 suffix:semicolon
+)brace
 r_return
 suffix:semicolon
 )brace
@@ -5583,6 +5607,12 @@ id|wp_works_ok
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef CONFIG_TEST_VERIFY_AREA
+id|wp_works_ok
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 r_return
 suffix:semicolon
 )brace

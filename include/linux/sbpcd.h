@@ -1,9 +1,9 @@
 multiline_comment|/*&n; * sbpcd.h   Specify interface address and interface type here.&n; */
-multiline_comment|/*&n; * these definitions can get overridden by the kernel command line&n; * (&quot;lilo boot option&quot;). Examples:&n; *                                 sbpcd=0x230,SoundBlaster&n; *                             or&n; *                                 sbpcd=0x300,LaserMate&n; * these strings are case sensitive !!!&n; */
-multiline_comment|/* &n; * change this to select the type of your interface board:&n; *&n; * set SBPRO to 1 for &quot;true&quot; SoundBlaster card&n; * set SBPRO to 0 for &quot;poor&quot; (no sound) interface cards&n; *                and for &quot;compatible&quot; soundcards.&n; *&n; * most &quot;compatible&quot; sound boards like Galaxy need to set SBPRO to 0 !!!&n; * if SBPRO gets set wrong, the drive will get found - but any&n; * data access will give errors (audio access will work).&n; * The OmniCD interface card from CreativeLabs needs SBPRO 1.&n; *&n; * mail to emoenke@gwdg.de if your &quot;compatible&quot; card needs SBPRO 1&n; * (currently I do not know any &quot;compatible&quot; with SBPRO 1)&n; * then I can include better information with the next release.&n; */
+multiline_comment|/*&n; * these definitions can get overridden by the kernel command line&n; * (&quot;lilo boot option&quot;). Examples:&n; *                                 sbpcd=0x230,SoundBlaster&n; *                             or&n; *                                 sbpcd=0x300,LaserMate&n; *                             or&n; *                                 sbpcd=0x330,SPEA&n; * these strings are case sensitive !!!&n; */
+multiline_comment|/* &n; * change this to select the type of your interface board:&n; *&n; * set SBPRO to 1 for &quot;true&quot; SoundBlaster card&n; * set SBPRO to 0 for &quot;poor&quot; (no sound) interface cards&n; *                and for &quot;compatible&quot; soundcards.&n; * set SBPRO to 2 for the SPEA Media FX card&n; *&n; * most &quot;compatible&quot; sound boards like Galaxy need to set SBPRO to 0 !!!&n; * if SBPRO gets set wrong, the drive will get found - but any&n; * data access will give errors (audio access will work).&n; * The OmniCD interface card from CreativeLabs needs SBPRO 1.&n; *&n; * mail to emoenke@gwdg.de if your &quot;compatible&quot; card needs SBPRO 1&n; * (currently I do not know any &quot;compatible&quot; with SBPRO 1)&n; * then I can include better information with the next release.&n; */
 DECL|macro|SBPRO
 mdefine_line|#define SBPRO     1
-multiline_comment|/*&n; * put your CDROM port base address here:&n; * SBPRO addresses typically are 0x0230 (=0x220+0x10), 0x0250, ...&n; * LASERMATE (CI-101P) adresses typically are 0x0300, 0x0310, ...&n; * there are some soundcards on the market with 0x0630, 0x0650, ...&n; *&n; * example: if your SBPRO audio address is 0x220, specify 0x230.&n; *&n; */
+multiline_comment|/*&n; * put your CDROM port base address here:&n; * SBPRO addresses typically are 0x0230 (=0x220+0x10), 0x0250, ...&n; * LASERMATE (CI-101P) adresses typically are 0x0300, 0x0310, ...&n; * SPEA addresses are 0x320, 0x330, 0x340, 0x350&n; * there are some soundcards on the market with 0x0630, 0x0650, ...&n; *&n; * example: if your SBPRO audio address is 0x220, specify 0x230.&n; *&n; */
 DECL|macro|CDROM_PORT
 mdefine_line|#define CDROM_PORT 0x0230
 multiline_comment|/*==========================================================================*/
@@ -14,8 +14,8 @@ multiline_comment|/*============================================================
 multiline_comment|/*&n; * Debug output levels&n; */
 DECL|macro|DBG_INF
 mdefine_line|#define DBG_INF&t;&t;1&t;/* necessary information */
-DECL|macro|DBG_IRQ
-mdefine_line|#define DBG_IRQ&t;&t;2&t;/* interrupt trace */
+DECL|macro|DBG_BSZ
+mdefine_line|#define DBG_BSZ&t;&t;2&t;/* BLOCK_SIZE trace */
 DECL|macro|DBG_REA
 mdefine_line|#define DBG_REA&t;&t;3&t;/* &quot;read&quot; status trace */
 DECL|macro|DBG_CHK
@@ -60,8 +60,10 @@ DECL|macro|DBG_LCK
 mdefine_line|#define DBG_LCK&t;&t;23&t;/* door (un)lock info */
 DECL|macro|DBG_SQ
 mdefine_line|#define DBG_SQ &t;&t;24&t;/* dump SubQ frame */
+DECL|macro|DBG_AUD
+mdefine_line|#define DBG_AUD&t;&t;25      /* &quot;read audio&quot; debugging */
 DECL|macro|DBG_000
-mdefine_line|#define DBG_000&t;&t;25&t;/* unnecessary information */
+mdefine_line|#define DBG_000&t;&t;26      /* unnecessary information */
 multiline_comment|/*==========================================================================*/
 multiline_comment|/*==========================================================================*/
 multiline_comment|/*&n; * bits of flags_cmd_out:&n; */
@@ -215,6 +217,28 @@ DECL|macro|READ_M2
 mdefine_line|#define READ_M2  0x02 /* &quot;data mode 2&quot;: 12+2048+280 bytes per frame */
 DECL|macro|READ_SC
 mdefine_line|#define READ_SC  0x04 /* &quot;subchannel info&quot;: 96 bytes per frame */
+DECL|macro|READ_AU
+mdefine_line|#define READ_AU  0x08 /* &quot;audio frame&quot;: 2352 bytes per frame */
+multiline_comment|/*&n; * preliminary extensions to cdrom.h for transfering audio frames:&n; */
+DECL|macro|CDROMREADAUDIO
+mdefine_line|#define CDROMREADAUDIO 0xE0 /* IOCTL function (arg = &amp;cdrom_aud) */
+DECL|struct|cdrom_aud
+DECL|member|lba
+r_struct
+id|cdrom_aud
+(brace
+id|u_int
+id|lba
+suffix:semicolon
+multiline_comment|/* frame address */
+DECL|member|buf
+id|u_char
+op_star
+id|buf
+suffix:semicolon
+multiline_comment|/* frame buffer (2352 bytes) */
+)brace
+suffix:semicolon
 multiline_comment|/*&n; * sense byte: used only if new_drive&n; *                  only during cmd 09 00 xx ah al 00 00&n; *&n; *          values: 00&n; *                  82&n; *                  xx from infobuf[0] after 85 00 00 00 00 00 00&n; */
 DECL|macro|CD_MINS
 mdefine_line|#define CD_MINS                   75  /* minutes per CD                  */
@@ -269,12 +293,6 @@ mdefine_line|#define NR_SBPCD 4
 multiline_comment|/*&n; * we try to never disable interrupts - seems to work&n; */
 DECL|macro|SBPCD_DIS_IRQ
 mdefine_line|#define SBPCD_DIS_IRQ 0
-multiline_comment|/*&n; * we don&squot;t use the IRQ line - leave it free for the sound driver&n; */
-DECL|macro|SBPCD_USE_IRQ
-mdefine_line|#define SBPCD_USE_IRQ&t;0
-multiline_comment|/*&n; * you can set the interrupt number of your interface board here:&n; * It is not used at this time. No need to set it correctly.&n; */
-DECL|macro|SBPCD_INTR_NR
-mdefine_line|#define SBPCD_INTR_NR&t;7            
 multiline_comment|/*&n; * &quot;write byte to port&quot;&n; */
 DECL|macro|OUT
 mdefine_line|#define OUT(x,y) outb(y,x)

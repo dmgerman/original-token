@@ -3605,12 +3605,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|slave-&gt;flags
 op_amp
 (paren
 id|IFF_UP
 op_or
 id|IFF_RUNNING
+)paren
 )paren
 op_ne
 (paren
@@ -3647,7 +3649,7 @@ id|flags
 suffix:semicolon
 r_return
 op_minus
-id|EINVAL
+id|EBUSY
 suffix:semicolon
 )brace
 r_if

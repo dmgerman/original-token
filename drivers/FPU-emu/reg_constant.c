@@ -303,7 +303,7 @@ c_func
 (paren
 id|c
 comma
-id|FPU_st0_ptr
+id|st_new_ptr
 )paren
 suffix:semicolon
 id|clear_C1

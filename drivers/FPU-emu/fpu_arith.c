@@ -19,7 +19,12 @@ suffix:semicolon
 id|reg_add
 c_func
 (paren
-id|FPU_st0_ptr
+op_amp
+id|st
+c_func
+(paren
+l_int|0
+)paren
 comma
 op_amp
 id|st
@@ -28,7 +33,12 @@ c_func
 id|FPU_rm
 )paren
 comma
-id|FPU_st0_ptr
+op_amp
+id|st
+c_func
+(paren
+l_int|0
+)paren
 comma
 id|control_word
 )paren
@@ -50,7 +60,12 @@ suffix:semicolon
 id|reg_mul
 c_func
 (paren
-id|FPU_st0_ptr
+op_amp
+id|st
+c_func
+(paren
+l_int|0
+)paren
 comma
 op_amp
 id|st
@@ -59,7 +74,12 @@ c_func
 id|FPU_rm
 )paren
 comma
-id|FPU_st0_ptr
+op_amp
+id|st
+c_func
+(paren
+l_int|0
+)paren
 comma
 id|control_word
 )paren
@@ -81,7 +101,12 @@ suffix:semicolon
 id|reg_sub
 c_func
 (paren
-id|FPU_st0_ptr
+op_amp
+id|st
+c_func
+(paren
+l_int|0
+)paren
 comma
 op_amp
 id|st
@@ -90,7 +115,12 @@ c_func
 id|FPU_rm
 )paren
 comma
-id|FPU_st0_ptr
+op_amp
+id|st
+c_func
+(paren
+l_int|0
+)paren
 comma
 id|control_word
 )paren
@@ -119,9 +149,19 @@ c_func
 id|FPU_rm
 )paren
 comma
-id|FPU_st0_ptr
+op_amp
+id|st
+c_func
+(paren
+l_int|0
+)paren
 comma
-id|FPU_st0_ptr
+op_amp
+id|st
+c_func
+(paren
+l_int|0
+)paren
 comma
 id|control_word
 )paren
@@ -143,7 +183,12 @@ suffix:semicolon
 id|reg_div
 c_func
 (paren
-id|FPU_st0_ptr
+op_amp
+id|st
+c_func
+(paren
+l_int|0
+)paren
 comma
 op_amp
 id|st
@@ -152,7 +197,12 @@ c_func
 id|FPU_rm
 )paren
 comma
-id|FPU_st0_ptr
+op_amp
+id|st
+c_func
+(paren
+l_int|0
+)paren
 comma
 id|control_word
 )paren
@@ -181,9 +231,19 @@ c_func
 id|FPU_rm
 )paren
 comma
-id|FPU_st0_ptr
+op_amp
+id|st
+c_func
+(paren
+l_int|0
+)paren
 comma
-id|FPU_st0_ptr
+op_amp
+id|st
+c_func
+(paren
+l_int|0
+)paren
 comma
 id|control_word
 )paren
@@ -205,7 +265,12 @@ suffix:semicolon
 id|reg_add
 c_func
 (paren
-id|FPU_st0_ptr
+op_amp
+id|st
+c_func
+(paren
+l_int|0
+)paren
 comma
 op_amp
 id|st
@@ -241,7 +306,12 @@ suffix:semicolon
 id|reg_mul
 c_func
 (paren
-id|FPU_st0_ptr
+op_amp
+id|st
+c_func
+(paren
+l_int|0
+)paren
 comma
 op_amp
 id|st
@@ -269,7 +339,7 @@ c_func
 )paren
 (brace
 multiline_comment|/* fsubr st(i),st */
-multiline_comment|/* This is the sense of the 80486 manual&n;     reg_sub(&amp;st(FPU_rm), FPU_st0_ptr, &amp;st(FPU_rm), control_word); */
+multiline_comment|/* This is the sense of the 80486 manual&n;     reg_sub(&amp;st(FPU_rm), &amp;st(0), &amp;st(FPU_rm), control_word); */
 id|clear_C1
 c_func
 (paren
@@ -278,7 +348,12 @@ suffix:semicolon
 id|reg_sub
 c_func
 (paren
-id|FPU_st0_ptr
+op_amp
+id|st
+c_func
+(paren
+l_int|0
+)paren
 comma
 op_amp
 id|st
@@ -306,7 +381,7 @@ c_func
 )paren
 (brace
 multiline_comment|/* fsub st(i),st */
-multiline_comment|/* This is the sense of the 80486 manual&n;     reg_sub(FPU_st0_ptr, &amp;st(FPU_rm), &amp;st(FPU_rm), control_word); */
+multiline_comment|/* This is the sense of the 80486 manual&n;     reg_sub(&amp;st(0), &amp;st(FPU_rm), &amp;st(FPU_rm), control_word); */
 id|clear_C1
 c_func
 (paren
@@ -322,7 +397,12 @@ c_func
 id|FPU_rm
 )paren
 comma
-id|FPU_st0_ptr
+op_amp
+id|st
+c_func
+(paren
+l_int|0
+)paren
 comma
 op_amp
 id|st
@@ -351,7 +431,12 @@ suffix:semicolon
 id|reg_div
 c_func
 (paren
-id|FPU_st0_ptr
+op_amp
+id|st
+c_func
+(paren
+l_int|0
+)paren
 comma
 op_amp
 id|st
@@ -394,7 +479,12 @@ c_func
 id|FPU_rm
 )paren
 comma
-id|FPU_st0_ptr
+op_amp
+id|st
+c_func
+(paren
+l_int|0
+)paren
 comma
 op_amp
 id|st
@@ -427,7 +517,12 @@ op_logical_neg
 id|reg_add
 c_func
 (paren
-id|FPU_st0_ptr
+op_amp
+id|st
+c_func
+(paren
+l_int|0
+)paren
 comma
 op_amp
 id|st
@@ -472,7 +567,12 @@ op_logical_neg
 id|reg_mul
 c_func
 (paren
-id|FPU_st0_ptr
+op_amp
+id|st
+c_func
+(paren
+l_int|0
+)paren
 comma
 op_amp
 id|st
@@ -505,7 +605,7 @@ c_func
 )paren
 (brace
 multiline_comment|/* fsubrp st(i),st */
-multiline_comment|/* This is the sense of the 80486 manual&n;     reg_sub(&amp;st(FPU_rm), FPU_st0_ptr, &amp;st(FPU_rm), control_word); */
+multiline_comment|/* This is the sense of the 80486 manual&n;     reg_sub(&amp;st(FPU_rm), &amp;st(0), &amp;st(FPU_rm), control_word); */
 id|clear_C1
 c_func
 (paren
@@ -518,7 +618,12 @@ op_logical_neg
 id|reg_sub
 c_func
 (paren
-id|FPU_st0_ptr
+op_amp
+id|st
+c_func
+(paren
+l_int|0
+)paren
 comma
 op_amp
 id|st
@@ -551,7 +656,7 @@ c_func
 )paren
 (brace
 multiline_comment|/* fsubp st(i),st */
-multiline_comment|/* This is the sense of the 80486 manual&n;     reg_sub(FPU_st0_ptr, &amp;st(FPU_rm), &amp;st(FPU_rm), control_word); */
+multiline_comment|/* This is the sense of the 80486 manual&n;     reg_sub(&amp;st(0), &amp;st(FPU_rm), &amp;st(FPU_rm), control_word); */
 id|clear_C1
 c_func
 (paren
@@ -571,7 +676,12 @@ c_func
 id|FPU_rm
 )paren
 comma
-id|FPU_st0_ptr
+op_amp
+id|st
+c_func
+(paren
+l_int|0
+)paren
 comma
 op_amp
 id|st
@@ -609,7 +719,12 @@ op_logical_neg
 id|reg_div
 c_func
 (paren
-id|FPU_st0_ptr
+op_amp
+id|st
+c_func
+(paren
+l_int|0
+)paren
 comma
 op_amp
 id|st
@@ -661,7 +776,12 @@ c_func
 id|FPU_rm
 )paren
 comma
-id|FPU_st0_ptr
+op_amp
+id|st
+c_func
+(paren
+l_int|0
+)paren
 comma
 op_amp
 id|st

@@ -2188,6 +2188,14 @@ id|last_rtc_update
 op_assign
 id|xtime.tv_sec
 suffix:semicolon
+r_else
+id|last_rtc_update
+op_assign
+id|xtime.tv_sec
+op_minus
+l_int|600
+suffix:semicolon
+multiline_comment|/* do it again in one min */
 )brace
 multiline_comment|/*&n; * disregard lost ticks for now.. We don&squot;t care enough.&n; */
 DECL|function|timer_bh

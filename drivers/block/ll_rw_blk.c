@@ -9,18 +9,6 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &quot;blk.h&quot;
-macro_line|#ifdef CONFIG_SBPCD
-r_extern
-id|u_long
-id|sbpcd_init
-c_func
-(paren
-id|u_long
-comma
-id|u_long
-)paren
-suffix:semicolon
-macro_line|#endif CONFIG_SBPCD
 multiline_comment|/*&n; * The request-struct contains all necessary data&n; * to load a nr of sectors into memory&n; */
 DECL|variable|all_requests
 r_static

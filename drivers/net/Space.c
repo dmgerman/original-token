@@ -1223,6 +1223,56 @@ macro_line|#undef NEXT_DEV
 DECL|macro|NEXT_DEV
 mdefine_line|#define NEXT_DEV (&amp;ppp0_dev)
 macro_line|#endif   /* PPP */
+macro_line|#ifdef CONFIG_DUMMY
+r_extern
+r_int
+id|dummy_init
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+DECL|variable|dummy_dev
+r_static
+r_struct
+id|device
+id|dummy_dev
+op_assign
+(brace
+l_string|&quot;dummy&quot;
+comma
+l_int|0x0
+comma
+l_int|0x0
+comma
+l_int|0x0
+comma
+l_int|0x0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|NEXT_DEV
+comma
+id|dummy_init
+comma
+)brace
+suffix:semicolon
+DECL|macro|NEXT_DEV
+macro_line|#   undef&t;NEXT_DEV
+DECL|macro|NEXT_DEV
+macro_line|#   define&t;NEXT_DEV&t;(&amp;dummy_dev)
+macro_line|#endif
 macro_line|#ifdef LOOPBACK
 r_extern
 r_int

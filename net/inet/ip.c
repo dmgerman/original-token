@@ -40,6 +40,8 @@ id|sk
 suffix:semicolon
 DECL|macro|min
 mdefine_line|#define min(a,b)&t;((a)&lt;(b)?(a):(b))
+DECL|macro|LOOPBACK
+mdefine_line|#define LOOPBACK(x)&t;(((x) &amp; htonl(0xff000000)) == htonl(0x7f000000))
 multiline_comment|/*&n; *&t;SNMP management statistics&n; */
 DECL|variable|ip_statistics
 r_struct
@@ -449,20 +451,17 @@ multiline_comment|/*&n;&t;&t; *&t;If the frame is from us and going off machine 
 r_if
 c_cond
 (paren
-id|saddr
-op_eq
-id|htonl
+id|LOOPBACK
 c_func
 (paren
-l_int|0x7F000001L
+id|saddr
 )paren
 op_logical_and
-id|daddr
-op_ne
-id|htonl
+op_logical_neg
+id|LOOPBACK
 c_func
 (paren
-l_int|0x7F000001L
+id|daddr
 )paren
 )paren
 id|saddr
@@ -523,13 +522,18 @@ multiline_comment|/*&n;&t;&t; *&t;If the frame is from us and going off machine 
 r_if
 c_cond
 (paren
+id|LOOPBACK
+c_func
+(paren
 id|saddr
-op_eq
-l_int|0x0100007FL
+)paren
 op_logical_and
+op_logical_neg
+id|LOOPBACK
+c_func
+(paren
 id|daddr
-op_ne
-l_int|0x0100007FL
+)paren
 )paren
 id|saddr
 op_assign

@@ -1,4 +1,4 @@
-multiline_comment|/* linux/net/inet/arp.c&n; *&n; * Copyright (C) 1994 by Florian  La Roche&n; *&n; * This module implements the Address Resolution Protocol ARP (RFC 826),&n; * which is used to convert IP addresses (or in the future maybe other&n; * high-level addresses into a low-level hardware address (like an Ethernet&n; * address).&n; *&n; * FIXME:&n; *&t;Experiment with better retransmit timers&n; *&t;Clean up the timer deletions&n; *&t;If you create a proxy entry set your interface address to the address&n; *&t;and then delete it, proxies may get out of sync with reality - check this&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; *&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Removed the ethernet assumptions in Florians code&n; *&t;&t;Alan Cox&t;:&t;Fixed some small errors in the ARP logic&n; *&t;&t;Alan Cox&t;:&t;Allow &gt;4K in /proc&n; *&t;&t;Alan Cox&t;:&t;Make ARP add its own protocol entry&n; *&n; *              Ross Martin     :       Rewrote arp_rcv() and arp_get_info()&n; */
+multiline_comment|/* linux/net/inet/arp.c&n; *&n; * Copyright (C) 1994 by Florian  La Roche&n; *&n; * This module implements the Address Resolution Protocol ARP (RFC 826),&n; * which is used to convert IP addresses (or in the future maybe other&n; * high-level addresses into a low-level hardware address (like an Ethernet&n; * address).&n; *&n; * FIXME:&n; *&t;Experiment with better retransmit timers&n; *&t;Clean up the timer deletions&n; *&t;If you create a proxy entry set your interface address to the address&n; *&t;and then delete it, proxies may get out of sync with reality - check this&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; *&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Removed the ethernet assumptions in Florians code&n; *&t;&t;Alan Cox&t;:&t;Fixed some small errors in the ARP logic&n; *&t;&t;Alan Cox&t;:&t;Allow &gt;4K in /proc&n; *&t;&t;Alan Cox&t;:&t;Make ARP add its own protocol entry&n; *&n; *              Ross Martin     :       Rewrote arp_rcv() and arp_get_info()&n; *&t;&t;Stephen Henson&t;:&t;Add AX25 support to arp_get_info()&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -2610,6 +2610,35 @@ id|entry-&gt;next
 )paren
 (brace
 multiline_comment|/*&n; *&t;Convert hardware address to XX:XX:XX:XX ... form.&n; */
+macro_line|#ifdef CONFIG_AX25
+r_if
+c_cond
+(paren
+id|entry-&gt;htype
+op_eq
+id|ARPHRD_AX25
+)paren
+(brace
+id|strcpy
+c_func
+(paren
+id|hbuffer
+comma
+id|ax2asc
+c_func
+(paren
+(paren
+id|ax25_address
+op_star
+)paren
+id|entry-&gt;ha
+)paren
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+macro_line|#endif
 r_for
 c_loop
 (paren
@@ -2688,6 +2717,9 @@ id|k
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef CONFIG_AX25
+)brace
+macro_line|#endif
 id|size
 op_assign
 id|sprintf
@@ -2943,16 +2975,6 @@ c_cond
 id|r.arp_ha.sa_family
 )paren
 (brace
-r_case
-l_int|0
-suffix:colon
-multiline_comment|/* Moan about this. ARP family 0 is NetROM and _will_ be needed */
-id|printk
-c_func
-(paren
-l_string|&quot;Application using old BSD convention for arp set. Please recompile it.&bslash;n&quot;
-)paren
-suffix:semicolon
 r_case
 id|ARPHRD_ETHER
 suffix:colon

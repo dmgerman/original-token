@@ -4420,7 +4420,7 @@ op_assign
 id|verify_area
 c_func
 (paren
-id|VERIFY_READ
+id|VERIFY_WRITE
 comma
 id|ubuf
 comma
@@ -4999,6 +4999,12 @@ id|SIOCGIFMAP
 suffix:colon
 r_case
 id|SIOCDEVPRIVATE
+suffix:colon
+r_case
+id|SIOCSIFSLAVE
+suffix:colon
+r_case
+id|SIOCGIFSLAVE
 suffix:colon
 r_return
 id|dev_ioctl

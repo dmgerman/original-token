@@ -47,7 +47,8 @@ mdefine_line|#define TW_Empty&t;Const(7)&t;/* empty */
 macro_line|#ifndef __ASSEMBLER__
 macro_line|#include &lt;linux/math_emu.h&gt;
 macro_line|#include &lt;linux/linkage.h&gt;
-macro_line|#ifdef PARANOID
+multiline_comment|/*&n;#define RE_ENTRANT_CHECKING&n; */
+macro_line|#ifdef RE_ENTRANT_CHECKING
 r_extern
 r_char
 id|emulating
@@ -61,7 +62,7 @@ DECL|macro|RE_ENTRANT_CHECK_OFF
 macro_line|#  define RE_ENTRANT_CHECK_OFF
 DECL|macro|RE_ENTRANT_CHECK_ON
 macro_line|#  define RE_ENTRANT_CHECK_ON
-macro_line|#endif PARANOID
+macro_line|#endif RE_ENTRANT_CHECKING
 DECL|macro|FWAIT_OPCODE
 mdefine_line|#define FWAIT_OPCODE 0x9b
 DECL|macro|OP_SIZE_PREFIX
@@ -100,11 +101,38 @@ DECL|macro|PREFIX_SS_
 mdefine_line|#define PREFIX_SS_ 6
 DECL|macro|PREFIX_DEFAULT
 mdefine_line|#define PREFIX_DEFAULT 7
-multiline_comment|/* These are to defeat the default action, giving the instruction&n;   no net effect: */
-DECL|macro|NO_NET_DATA_EFFECT
-mdefine_line|#define NO_NET_DATA_EFFECT &bslash;&n;      { FPU_data_address = (void *)data_operand_offset; &bslash;&n;&t;FPU_data_selector = operand_selector; }
-DECL|macro|NO_NET_INSTR_EFFECT
-mdefine_line|#define NO_NET_INSTR_EFFECT &bslash;&n;      { FPU_entry_eip = ip_offset; &bslash;&n;&t;FPU_entry_op_cs = cs_selector; }
+DECL|struct|address
+r_struct
+id|address
+(brace
+DECL|member|offset
+r_int
+r_int
+id|offset
+suffix:semicolon
+DECL|member|selector
+r_int
+r_int
+id|selector
+suffix:colon
+l_int|16
+suffix:semicolon
+DECL|member|opcode
+r_int
+r_int
+id|opcode
+suffix:colon
+l_int|11
+suffix:semicolon
+DECL|member|empty
+r_int
+r_int
+id|empty
+suffix:colon
+l_int|5
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|typedef|FUNC
 r_typedef
 r_void
@@ -121,6 +149,19 @@ r_typedef
 r_struct
 id|fpu_reg
 id|FPU_REG
+suffix:semicolon
+DECL|typedef|FUNC_ST0
+r_typedef
+r_void
+(paren
+op_star
+id|FUNC_ST0
+)paren
+(paren
+id|FPU_REG
+op_star
+id|st0_ptr
+)paren
 suffix:semicolon
 DECL|member|address_size
 DECL|member|operand_size
@@ -140,7 +181,7 @@ suffix:semicolon
 DECL|typedef|overrides
 id|overrides
 suffix:semicolon
-multiline_comment|/* This structure is 48 bits: */
+multiline_comment|/* This structure is 32 bits: */
 DECL|member|override
 r_typedef
 r_struct
@@ -148,20 +189,34 @@ r_struct
 id|overrides
 id|override
 suffix:semicolon
-DECL|member|mode16
-DECL|member|vm86
-DECL|member|p286
+DECL|member|default_mode
 DECL|typedef|fpu_addr_modes
 r_int
 r_char
-id|mode16
-comma
-id|vm86
-comma
-id|p286
+id|default_mode
 suffix:semicolon
 )brace
 id|fpu_addr_modes
+suffix:semicolon
+multiline_comment|/* PROTECTED has a restricted meaning in the emulator; it is used&n;   to signal that the emulator needs to do special things to ensure&n;   that protection is respected in a segmented model. */
+DECL|macro|PROTECTED
+mdefine_line|#define PROTECTED 4
+DECL|macro|SIXTEEN
+mdefine_line|#define SIXTEEN   1         /* We rely upon this being 1 (true) */
+DECL|macro|VM86
+mdefine_line|#define VM86      SIXTEEN
+DECL|macro|PM16
+mdefine_line|#define PM16      (SIXTEEN | PROTECTED)
+DECL|macro|SEG32
+mdefine_line|#define SEG32     PROTECTED
+r_extern
+r_int
+r_char
+r_const
+id|data_sizes_16
+(braket
+l_int|32
+)braket
 suffix:semicolon
 DECL|macro|st
 mdefine_line|#define&t;st(x)&t;( regs[((top+x) &amp;7 )] )
@@ -169,43 +224,15 @@ DECL|macro|STACK_OVERFLOW
 mdefine_line|#define&t;STACK_OVERFLOW&t;(st_new_ptr = &amp;st(-1), st_new_ptr-&gt;tag != TW_Empty)
 DECL|macro|NOT_EMPTY
 mdefine_line|#define&t;NOT_EMPTY(i)&t;(st(i).tag != TW_Empty)
-DECL|macro|NOT_EMPTY_0
-mdefine_line|#define&t;NOT_EMPTY_0&t;(FPU_st0_tag ^ TW_Empty)
-r_extern
-r_int
-r_char
-id|FPU_rm
-suffix:semicolon
-r_extern
-r_char
-id|FPU_st0_tag
-suffix:semicolon
-r_extern
-id|FPU_REG
-op_star
-id|FPU_st0_ptr
-suffix:semicolon
-multiline_comment|/* ###### These need to be shifted to somewhere safe. */
-multiline_comment|/* extern void  *FPU_data_address; has been shifted */
-r_extern
-r_int
-r_int
-id|FPU_data_selector
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|FPU_entry_op_cs
-suffix:semicolon
-r_extern
-id|FPU_REG
-id|FPU_loaded_data
-suffix:semicolon
+DECL|macro|NOT_EMPTY_ST0
+mdefine_line|#define&t;NOT_EMPTY_ST0&t;(st0_tag ^ TW_Empty)
 DECL|macro|pop
-mdefine_line|#define pop()&t;{ FPU_st0_ptr-&gt;tag = TW_Empty; top++; }
+mdefine_line|#define pop()&t;{ regs[(top++ &amp; 7 )].tag = TW_Empty; }
+DECL|macro|poppop
+mdefine_line|#define poppop() { regs[((top + 1) &amp; 7 )].tag &bslash;&n;&t;&t;     = regs[(top &amp; 7 )].tag = TW_Empty; &bslash;&n;&t;&t;   top += 2; }
 multiline_comment|/* push() does not affect the tags */
 DECL|macro|push
-mdefine_line|#define push()&t;{ top--; FPU_st0_ptr = st_new_ptr; }
+mdefine_line|#define push()&t;{ top--; }
 DECL|macro|reg_move
 mdefine_line|#define reg_move(x, y) { &bslash;&n;&t;&t; *(short *)&amp;((y)-&gt;sign) = *(short *)&amp;((x)-&gt;sign); &bslash;&n;&t;&t; *(long *)&amp;((y)-&gt;exp) = *(long *)&amp;((x)-&gt;exp); &bslash;&n;&t;&t; *(long long *)&amp;((y)-&gt;sigl) = *(long long *)&amp;((x)-&gt;sigl); }
 DECL|macro|significand

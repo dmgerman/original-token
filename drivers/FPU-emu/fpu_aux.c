@@ -45,13 +45,10 @@ op_or
 id|SW_Invalid
 )paren
 suffix:semicolon
-id|NO_NET_DATA_EFFECT
-suffix:semicolon
-id|FPU_entry_eip
+id|no_ip_update
 op_assign
-id|ip_offset
+l_int|1
 suffix:semicolon
-multiline_comment|/* We want no net effect */
 )brace
 multiline_comment|/* Needs to be externally visible */
 DECL|function|finit
@@ -103,25 +100,29 @@ id|TW_Empty
 suffix:semicolon
 )brace
 multiline_comment|/* The behaviour is different to that detailed in&n;     Section 15.1.6 of the Intel manual */
-id|data_operand_offset
+id|operand_address.offset
 op_assign
 l_int|0
 suffix:semicolon
-id|operand_selector
+id|operand_address.selector
 op_assign
 l_int|0
 suffix:semicolon
-id|NO_NET_DATA_EFFECT
-suffix:semicolon
-id|FPU_entry_op_cs
+id|instruction_address.offset
 op_assign
 l_int|0
 suffix:semicolon
-id|FPU_entry_eip
-op_assign
-id|ip_offset
+id|instruction_address.selector
 op_assign
 l_int|0
+suffix:semicolon
+id|instruction_address.opcode
+op_assign
+l_int|0
+suffix:semicolon
+id|no_ip_update
+op_assign
+l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * These are nops on the i387..&n; */
@@ -196,7 +197,9 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|NO_NET_INSTR_EFFECT
+id|no_ip_update
+op_assign
+l_int|1
 suffix:semicolon
 )brace
 DECL|variable|fstsw_table
@@ -347,15 +350,10 @@ c_cond
 (paren
 id|control_word
 op_amp
-id|EX_Invalid
+id|CW_Invalid
 )paren
 (brace
 multiline_comment|/* The masked response */
-id|push
-c_func
-(paren
-)paren
-suffix:semicolon
 id|stack_underflow
 c_func
 (paren
@@ -393,11 +391,21 @@ c_func
 (paren
 id|FPU_rm
 )paren
+comma
+op_star
+id|st0_ptr
+op_assign
+op_amp
+id|st
+c_func
+(paren
+l_int|0
+)paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|FPU_st0_tag
+id|st0_ptr-&gt;tag
 op_eq
 id|TW_Empty
 )paren
@@ -436,7 +444,7 @@ c_func
 (paren
 id|sti_ptr
 comma
-id|FPU_st0_ptr
+id|st0_ptr
 )paren
 suffix:semicolon
 multiline_comment|/* Masked response */
@@ -467,7 +475,7 @@ id|CW_Invalid
 id|reg_move
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 comma
 id|sti_ptr
 )paren
@@ -489,7 +497,7 @@ suffix:semicolon
 id|reg_move
 c_func
 (paren
-id|FPU_st0_ptr
+id|st0_ptr
 comma
 op_amp
 id|t
@@ -500,7 +508,7 @@ c_func
 (paren
 id|sti_ptr
 comma
-id|FPU_st0_ptr
+id|st0_ptr
 )paren
 suffix:semicolon
 id|reg_move
@@ -567,7 +575,12 @@ multiline_comment|/* fst st(i) */
 id|reg_move
 c_func
 (paren
-id|FPU_st0_ptr
+op_amp
+id|st
+c_func
+(paren
+l_int|0
+)paren
 comma
 op_amp
 id|st
@@ -589,7 +602,12 @@ multiline_comment|/* fstp st(i) */
 id|reg_move
 c_func
 (paren
-id|FPU_st0_ptr
+op_amp
+id|st
+c_func
+(paren
+l_int|0
+)paren
 comma
 op_amp
 id|st
