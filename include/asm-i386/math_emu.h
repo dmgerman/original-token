@@ -1,6 +1,7 @@
-macro_line|#ifndef _LINUX_MATH_EMU_H
-DECL|macro|_LINUX_MATH_EMU_H
-mdefine_line|#define _LINUX_MATH_EMU_H
+macro_line|#ifndef _I386_MATH_EMU_H
+DECL|macro|_I386_MATH_EMU_H
+mdefine_line|#define _I386_MATH_EMU_H
+macro_line|#include &lt;asm/sigcontext.h&gt;
 r_void
 id|restore_i387_soft
 c_func

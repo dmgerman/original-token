@@ -1863,6 +1863,10 @@ id|skb-&gt;free
 op_assign
 l_int|1
 suffix:semicolon
+id|skb-&gt;h.filp
+op_assign
+l_int|NULL
+suffix:semicolon
 id|sk-&gt;state
 op_assign
 id|TCP_CLOSE

@@ -1064,6 +1064,7 @@ DECL|macro|FLOCK_VERIFY_READ
 mdefine_line|#define FLOCK_VERIFY_READ  1
 DECL|macro|FLOCK_VERIFY_WRITE
 mdefine_line|#define FLOCK_VERIFY_WRITE 2
+macro_line|#ifdef CONFIG_LOCK_MANDATORY&t; 
 r_extern
 r_int
 id|locks_mandatory_locked
@@ -1075,50 +1076,6 @@ op_star
 id|inode
 )paren
 suffix:semicolon
-DECL|function|locks_verify_locked
-r_extern
-r_inline
-r_int
-id|locks_verify_locked
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-)paren
-(brace
-multiline_comment|/* Candidates for mandatory locking have the setgid bit set&n;&t; * but no group execute bit -  an otherwise meaningless combination.&n;&t; */
-r_if
-c_cond
-(paren
-(paren
-id|inode-&gt;i_mode
-op_amp
-(paren
-id|S_ISGID
-op_or
-id|S_IXGRP
-)paren
-)paren
-op_eq
-id|S_ISGID
-)paren
-r_return
-(paren
-id|locks_mandatory_locked
-c_func
-(paren
-id|inode
-)paren
-)paren
-suffix:semicolon
-r_return
-(paren
-l_int|0
-)paren
-suffix:semicolon
-)brace
 r_extern
 r_int
 id|locks_mandatory_area
@@ -1146,6 +1103,53 @@ r_int
 id|count
 )paren
 suffix:semicolon
+macro_line|#endif
+DECL|function|locks_verify_locked
+r_extern
+r_inline
+r_int
+id|locks_verify_locked
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+)paren
+(brace
+macro_line|#ifdef CONFIG_LOCK_MANDATORY&t; 
+multiline_comment|/* Candidates for mandatory locking have the setgid bit set&n;&t; * but no group execute bit -  an otherwise meaningless combination.&n;&t; */
+r_if
+c_cond
+(paren
+(paren
+id|inode-&gt;i_mode
+op_amp
+(paren
+id|S_ISGID
+op_or
+id|S_IXGRP
+)paren
+)paren
+op_eq
+id|S_ISGID
+)paren
+r_return
+(paren
+id|locks_mandatory_locked
+c_func
+(paren
+id|inode
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
+r_return
+(paren
+l_int|0
+)paren
+suffix:semicolon
+)brace
 DECL|function|locks_verify_area
 r_extern
 r_inline
@@ -1175,6 +1179,7 @@ r_int
 id|count
 )paren
 (brace
+macro_line|#ifdef CONFIG_LOCK_MANDATORY&t; 
 multiline_comment|/* Candidates for mandatory locking have the setgid bit set&n;&t; * but no group execute bit -  an otherwise meaningless combination.&n;&t; */
 r_if
 c_cond
@@ -1208,6 +1213,7 @@ id|count
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif
 r_return
 (paren
 l_int|0

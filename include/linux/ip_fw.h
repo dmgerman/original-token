@@ -4,6 +4,11 @@ multiline_comment|/*&n; * &t;Format of an IP firewall descriptor&n; *&n; * &t;sr
 macro_line|#ifndef _IP_FW_H
 DECL|macro|_IP_FW_H
 mdefine_line|#define _IP_FW_H
+macro_line|#include &lt;linux/icmp.h&gt;
+macro_line|#include &lt;linux/in.h&gt;
+macro_line|#include &lt;linux/ip.h&gt;
+macro_line|#include &lt;linux/tcp.h&gt;
+macro_line|#include &lt;linux/udp.h&gt;
 DECL|struct|ip_fw
 r_struct
 id|ip_fw

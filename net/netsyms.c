@@ -82,6 +82,22 @@ op_star
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_DLCI_MODULE
+r_extern
+r_int
+(paren
+op_star
+id|dlci_ioctl_hook
+)paren
+(paren
+r_int
+r_int
+comma
+r_void
+op_star
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|variable|net_syms
 r_static
 r_struct
@@ -222,6 +238,14 @@ c_func
 id|rarp_ioctl_hook
 )paren
 comma
+macro_line|#ifdef CONFIG_DLCI_MODULE
+id|X
+c_func
+(paren
+id|dlci_ioctl_hook
+)paren
+comma
+macro_line|#endif
 id|X
 c_func
 (paren

@@ -2,11 +2,8 @@ multiline_comment|/*&n; * DLCI/FRAD&t;Definitions for Frame Relay Access Devices
 macro_line|#ifndef _FRAD_H_
 DECL|macro|_FRAD_H_
 mdefine_line|#define _FRAD_H_
+macro_line|#include &lt;linux/if.h&gt;
 multiline_comment|/* Structures and constants associated with the DLCI device driver */
-DECL|macro|DLCI_DEVADD
-mdefine_line|#define DLCI_DEVADD&t;(SIOCDEVPRIVATE)
-DECL|macro|DLCI_DEVDEL
-mdefine_line|#define DLCI_DEVDEL&t;(SIOCDEVPRIVATE + 1)
 DECL|struct|dlci_add
 r_struct
 id|dlci_add

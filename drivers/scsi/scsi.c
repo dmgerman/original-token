@@ -467,15 +467,15 @@ DECL|macro|RESET_TIMEOUT
 mdefine_line|#define RESET_TIMEOUT SCSI_TIMEOUT
 macro_line|#else
 DECL|macro|SENSE_TIMEOUT
-mdefine_line|#define SENSE_TIMEOUT (1*HZ)
+mdefine_line|#define SENSE_TIMEOUT (5*HZ/10)
 DECL|macro|RESET_TIMEOUT
-mdefine_line|#define RESET_TIMEOUT (5*HZ)
+mdefine_line|#define RESET_TIMEOUT (5*HZ/10)
 DECL|macro|ABORT_TIMEOUT
-mdefine_line|#define ABORT_TIMEOUT (5*HZ)
+mdefine_line|#define ABORT_TIMEOUT (5*HZ/10)
 macro_line|#endif
 DECL|macro|MIN_RESET_DELAY
-mdefine_line|#define MIN_RESET_DELAY (3*HZ)
-multiline_comment|/* Do not call reset on error if we just did a reset within 10 sec. */
+mdefine_line|#define MIN_RESET_DELAY (2*HZ)
+multiline_comment|/* Do not call reset on error if we just did a reset within 15 sec. */
 DECL|macro|MIN_RESET_PERIOD
 mdefine_line|#define MIN_RESET_PERIOD (15*HZ)
 multiline_comment|/* The following devices are known not to tolerate a lun != 0 scan for&n; * one reason or another.  Some will respond to all luns, others will&n; * lock up. &n; */
@@ -8170,7 +8170,7 @@ id|oldto
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;     * This routine can be a performance bottleneck under high loads, since&n;     * it is called twice per SCSI operation: once when internal_cmnd is&n;     * called, and again when scsi_done completes the command.  To limit&n;     * the load this routine can cause, we shortcut processing if no clock&n;     * ticks have occurred since the last time it was called.  This may&n;     * cause the computation of least below to be inaccurate, but it will&n;     * be corrected after the next clock tick.&n;     */
+multiline_comment|/*&n;     * This routine can be a performance bottleneck under high loads, since&n;     * it is called twice per SCSI operation: once when internal_cmnd is&n;     * called, and again when scsi_done completes the command.  To limit&n;     * the load this routine can cause, we shortcut processing if no clock&n;     * ticks have occurred since the last time it was called.&n;     */
 r_if
 c_cond
 (paren
@@ -8200,6 +8200,35 @@ id|SCset-&gt;timeout
 suffix:semicolon
 id|SCset-&gt;timeout
 op_assign
+id|timeout
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|timeout
+OG
+l_int|0
+op_logical_and
+id|jiffies
+op_plus
+id|timeout
+OL
+id|timer_table
+(braket
+id|SCSI_TIMER
+)braket
+dot
+id|expires
+)paren
+id|timer_table
+(braket
+id|SCSI_TIMER
+)braket
+dot
+id|expires
+op_assign
+id|jiffies
+op_plus
 id|timeout
 suffix:semicolon
 )brace

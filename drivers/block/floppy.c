@@ -2299,6 +2299,9 @@ c_func
 l_int|500
 )paren
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
 )brace
 macro_line|#else
 DECL|macro|fd_eject

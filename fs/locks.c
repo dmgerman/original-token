@@ -865,6 +865,7 @@ op_minus
 id|EINVAL
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_LOCK_MANDATORY
 multiline_comment|/* Don&squot;t allow mandatory locks on files that may be memory mapped&n;&t; * and shared.&n;&t; */
 r_if
 c_cond
@@ -920,6 +921,7 @@ id|inode-&gt;i_mmap
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 id|memcpy_fromfs
 c_func
 (paren
@@ -1034,9 +1036,11 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;fcntl_setlk() called by process %d with broken flock() emulation&bslash;n&quot;
+l_string|&quot;fcntl_setlk() called by process %d (%s) with broken flock() emulation&bslash;n&quot;
 comma
 id|current-&gt;pid
+comma
+id|current-&gt;comm
 )paren
 suffix:semicolon
 )brace
@@ -1196,6 +1200,7 @@ op_star
 id|inode
 )paren
 (brace
+macro_line|#ifdef CONFIG_LOCK_MANDATORY
 multiline_comment|/* Candidates for mandatory locking have the setgid bit set&n;&t; * but no group execute bit -  an otherwise meaningless combination.&n;&t; */
 r_if
 c_cond
@@ -1221,12 +1226,82 @@ id|inode
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif
 r_return
 (paren
 l_int|0
 )paren
 suffix:semicolon
 )brace
+DECL|function|locks_verify_area
+r_int
+id|locks_verify_area
+c_func
+(paren
+r_int
+id|read_write
+comma
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|filp
+comma
+r_int
+r_int
+id|offset
+comma
+r_int
+r_int
+id|count
+)paren
+(brace
+macro_line|#ifdef CONFIG_LOCK_MANDATORY&t; 
+multiline_comment|/* Candidates for mandatory locking have the setgid bit set&n;&t; * but no group execute bit -  an otherwise meaningless combination.&n;&t; */
+r_if
+c_cond
+(paren
+(paren
+id|inode-&gt;i_mode
+op_amp
+(paren
+id|S_ISGID
+op_or
+id|S_IXGRP
+)paren
+)paren
+op_eq
+id|S_ISGID
+)paren
+r_return
+(paren
+id|locks_mandatory_area
+c_func
+(paren
+id|read_write
+comma
+id|inode
+comma
+id|filp
+comma
+id|offset
+comma
+id|count
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif&t;&t;&t;&t;&t;     
+r_return
+(paren
+l_int|0
+)paren
+suffix:semicolon
+)brace
+macro_line|#ifdef CONFIG_LOCK_MANDATORY&t;
 DECL|function|locks_mandatory_locked
 r_int
 id|locks_mandatory_locked
@@ -1238,7 +1313,6 @@ op_star
 id|inode
 )paren
 (brace
-macro_line|#ifdef CONFIG_LOCK_MANDATORY
 r_struct
 id|file_lock
 op_star
@@ -1283,75 +1357,6 @@ id|EAGAIN
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif&t;
-r_return
-(paren
-l_int|0
-)paren
-suffix:semicolon
-)brace
-DECL|function|locks_verify_area
-r_int
-id|locks_verify_area
-c_func
-(paren
-r_int
-id|read_write
-comma
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|filp
-comma
-r_int
-r_int
-id|offset
-comma
-r_int
-r_int
-id|count
-)paren
-(brace
-multiline_comment|/* Candidates for mandatory locking have the setgid bit set&n;&t; * but no group execute bit -  an otherwise meaningless combination.&n;&t; */
-macro_line|#ifdef CONFIG_LOCK_MANDATORY&t; 
-r_if
-c_cond
-(paren
-(paren
-id|inode-&gt;i_mode
-op_amp
-(paren
-id|S_ISGID
-op_or
-id|S_IXGRP
-)paren
-)paren
-op_eq
-id|S_ISGID
-)paren
-r_return
-(paren
-id|locks_mandatory_area
-c_func
-(paren
-id|read_write
-comma
-id|inode
-comma
-id|filp
-comma
-id|offset
-comma
-id|count
-)paren
-)paren
-suffix:semicolon
-macro_line|#endif&t;&t;&t;&t;&t;     
 r_return
 (paren
 l_int|0
@@ -1385,7 +1390,6 @@ r_int
 id|count
 )paren
 (brace
-macro_line|#ifdef CONFIG_LOCK_MANDATORY&t;
 r_struct
 id|file_lock
 op_star
@@ -1555,13 +1559,13 @@ id|repeat
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
 r_return
 (paren
 l_int|0
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/* Verify a &quot;struct flock&quot; and copy it to a &quot;struct file_lock&quot; as a POSIX&n; * style lock.&n; */
 DECL|function|posix_make_lock
 r_static
@@ -3454,6 +3458,7 @@ op_amp
 id|F_POSIX
 )paren
 (brace
+macro_line|#ifdef CONFIG_LOCK_MANDATORY&t; 
 id|p
 op_add_assign
 id|sprintf
@@ -3494,6 +3499,29 @@ suffix:colon
 l_string|&quot;ADVISORY &quot;
 )paren
 suffix:semicolon
+macro_line|#else
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;%s ADVISORY &quot;
+comma
+(paren
+id|fl-&gt;fl_flags
+op_amp
+id|F_BROKEN
+)paren
+ques
+c_cond
+l_string|&quot;BROKEN&quot;
+suffix:colon
+l_string|&quot;POSIX &quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 r_else
 (brace

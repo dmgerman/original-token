@@ -2875,7 +2875,7 @@ l_int|256
 id|printk
 c_func
 (paren
-id|KERN_WARING
+id|KERN_WARNING
 l_string|&quot;Too many routes/iface.&bslash;n&quot;
 )paren
 suffix:semicolon
