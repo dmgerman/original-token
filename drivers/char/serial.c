@@ -15148,13 +15148,13 @@ id|c-&gt;index
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Setup initial baud/bits/parity. We do two things here:&n; *&t;- construct a cflag setting for the first rs_open()&n; *&t;- initialize the serial port&n; */
+multiline_comment|/*&n; *&t;Setup initial baud/bits/parity. We do two things here:&n; *&t;- construct a cflag setting for the first rs_open()&n; *&t;- initialize the serial port&n; *&t;Return non-zero if we didn&squot;t find a serial port.&n; */
 DECL|function|__initfunc
 id|__initfunc
 c_func
 (paren
 r_static
-r_void
+r_int
 id|serial_console_setup
 c_func
 (paren
@@ -15552,6 +15552,27 @@ id|UART_LCR
 )paren
 suffix:semicolon
 multiline_comment|/* reset DLAB */
+multiline_comment|/*&n;&t; *&t;If we read 0xff from the LSR, there is no UART here.&n;&t; */
+r_if
+c_cond
+(paren
+id|inb
+c_func
+(paren
+id|ser-&gt;port
+op_plus
+id|UART_LSR
+)paren
+op_eq
+l_int|0xff
+)paren
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
 )brace
 DECL|variable|sercons
 r_static

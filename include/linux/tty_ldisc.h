@@ -189,7 +189,8 @@ r_struct
 id|file
 op_star
 comma
-id|poll_table
+r_struct
+id|poll_table_struct
 op_star
 )paren
 suffix:semicolon

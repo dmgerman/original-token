@@ -1,3 +1,4 @@
+multiline_comment|/*&n; * Cnode definitions for Coda.&n; * Original version: (C) 1996 Peter Braam &n; * Rewritten for Linux 2.1: (C) 1997 Carnegie Mellon University&n; *&n; * Carnegie Mellon encourages users of this code to contribute improvements&n; * to the Coda project. Contact Peter Braam &lt;coda@cs.cmu.edu&gt;.&n; */
 multiline_comment|/* revamped cnode.h file: platform dependent, kernel only! */
 macro_line|#ifndef&t;_CNODE_H_
 DECL|macro|_CNODE_H_

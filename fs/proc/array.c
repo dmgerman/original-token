@@ -2969,6 +2969,12 @@ comma
 id|buffer
 )paren
 suffix:semicolon
+op_star
+id|buffer
+op_increment
+op_assign
+l_char|&squot;&bslash;n&squot;
+suffix:semicolon
 id|buffer
 op_add_assign
 id|sprintf
@@ -3028,6 +3034,12 @@ id|ign
 comma
 id|buffer
 )paren
+suffix:semicolon
+op_star
+id|buffer
+op_increment
+op_assign
+l_char|&squot;&bslash;n&squot;
 suffix:semicolon
 id|buffer
 op_add_assign

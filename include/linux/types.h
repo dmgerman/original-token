@@ -59,6 +59,11 @@ r_typedef
 id|__kernel_key_t
 id|key_t
 suffix:semicolon
+DECL|typedef|suseconds_t
+r_typedef
+id|__kernel_suseconds_t
+id|suseconds_t
+suffix:semicolon
 macro_line|#if defined(__GNUC__) &amp;&amp; !defined(__STRICT_ANSI__)
 DECL|typedef|loff_t
 r_typedef

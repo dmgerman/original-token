@@ -1784,10 +1784,10 @@ c_func
 id|devc-&gt;irq
 )paren
 suffix:semicolon
-multiline_comment|/* Free device too !! - AC FIXME: CHECK THIS IS RIGHT */
 r_if
 c_cond
 (paren
+op_logical_neg
 id|devc
 )paren
 id|vfree

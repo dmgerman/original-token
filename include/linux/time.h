@@ -2,6 +2,7 @@ macro_line|#ifndef _LINUX_TIME_H
 DECL|macro|_LINUX_TIME_H
 mdefine_line|#define _LINUX_TIME_H
 macro_line|#include &lt;asm/param.h&gt;
+macro_line|#include &lt;linux/types.h&gt;
 macro_line|#ifndef _STRUCT_TIMESPEC
 DECL|macro|_STRUCT_TIMESPEC
 mdefine_line|#define _STRUCT_TIMESPEC
@@ -10,7 +11,7 @@ r_struct
 id|timespec
 (brace
 DECL|member|tv_sec
-r_int
+id|time_t
 id|tv_sec
 suffix:semicolon
 multiline_comment|/* seconds */
@@ -138,12 +139,12 @@ r_struct
 id|timeval
 (brace
 DECL|member|tv_sec
-r_int
+id|time_t
 id|tv_sec
 suffix:semicolon
 multiline_comment|/* seconds */
 DECL|member|tv_usec
-r_int
+id|suseconds_t
 id|tv_usec
 suffix:semicolon
 multiline_comment|/* microseconds */

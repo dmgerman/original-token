@@ -44,6 +44,6 @@ macro_line|#  define __BYTEORDER_HAS_U64__
 DECL|macro|__SWAB_64_THRU_32__
 macro_line|#  define __SWAB_64_THRU_32__
 macro_line|#endif
-macro_line|#include &lt;linux/byteorder_big_endian.h&gt;
+macro_line|#include &lt;linux/byteorder/big_endian.h&gt;
 macro_line|#endif /* _M68K_BYTEORDER_H */
 eof

@@ -47,6 +47,7 @@ op_div
 id|HZ
 suffix:semicolon
 multiline_comment|/* timer interrupt period */
+multiline_comment|/* The current time */
 DECL|variable|xtime
 r_volatile
 r_struct
@@ -57,12 +58,12 @@ id|__attribute__
 (paren
 id|aligned
 (paren
-l_int|8
+l_int|16
 )paren
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* The current time */
+multiline_comment|/* Don&squot;t completely fail for HZ &gt; 500.  */
 DECL|variable|tickadj
 r_int
 id|tickadj
@@ -70,6 +71,10 @@ op_assign
 l_int|500
 op_div
 id|HZ
+ques
+c_cond
+suffix:colon
+l_int|1
 suffix:semicolon
 multiline_comment|/* microsecs */
 DECL|variable|tq_timer
@@ -222,7 +227,7 @@ l_int|0
 suffix:semicolon
 r_extern
 r_int
-id|_setitimer
+id|do_setitimer
 c_func
 (paren
 r_int
@@ -4005,7 +4010,7 @@ id|it_new.it_value.tv_usec
 op_assign
 l_int|0
 suffix:semicolon
-id|_setitimer
+id|do_setitimer
 c_func
 (paren
 id|ITIMER_REAL
@@ -5526,7 +5531,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;tsig: %d %s %s :&quot;
+l_string|&quot;   sig: %d %s %s :&quot;
 comma
 id|signal_pending
 c_func

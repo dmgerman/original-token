@@ -98,6 +98,12 @@ r_char
 op_star
 id|__kernel_caddr_t
 suffix:semicolon
+multiline_comment|/* Note this piece of asymmetry from the v9 ABI.  */
+DECL|typedef|__kernel_suseconds_t
+r_typedef
+r_int
+id|__kernel_suseconds_t
+suffix:semicolon
 macro_line|#ifdef __GNUC__
 DECL|typedef|__kernel_loff_t
 r_typedef

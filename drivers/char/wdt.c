@@ -38,7 +38,7 @@ r_static
 r_int
 id|irq
 op_assign
-l_int|14
+l_int|11
 suffix:semicolon
 DECL|macro|WD_TIMO
 mdefine_line|#define WD_TIMO (100*60)&t;&t;/* 1 minute */
@@ -572,6 +572,19 @@ op_star
 id|ppos
 )paren
 (brace
+multiline_comment|/*  Can&squot;t seek (pwrite) on this device  */
+r_if
+c_cond
+(paren
+id|ppos
+op_ne
+op_amp
+id|file-&gt;f_pos
+)paren
+r_return
+op_minus
+id|ESPIPE
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -631,6 +644,19 @@ id|cp
 suffix:semicolon
 r_int
 id|err
+suffix:semicolon
+multiline_comment|/*  Can&squot;t seek (pread) on this device  */
+r_if
+c_cond
+(paren
+id|ptr
+op_ne
+op_amp
+id|file-&gt;f_pos
+)paren
+r_return
+op_minus
+id|ESPIPE
 suffix:semicolon
 r_switch
 c_cond

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/ipc/util.c&n; * Copyright (C) 1992 Krishna Balasubramanian&n; */
+multiline_comment|/*&n; * linux/ipc/util.c&n; * Copyright (C) 1992 Krishna Balasubramanian&n; *&n; * Sep 1997 - Call suser() last after &quot;normal&quot; permission checks so we&n; *            get BSD style process accounting right.&n; *            Occurs in several places in the IPC code.&n; *            Chris Evans, &lt;chris@ferret.lmh.ox.ac.uk&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -76,17 +76,6 @@ id|requested_mode
 comma
 id|granted_mode
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|suser
-c_func
-(paren
-)paren
-)paren
-r_return
-l_int|0
-suffix:semicolon
 id|requested_mode
 op_assign
 (paren
@@ -146,12 +135,20 @@ multiline_comment|/* is there some bit set in requested_mode but not in granted_
 r_if
 c_cond
 (paren
+(paren
 id|requested_mode
 op_amp
 op_complement
 id|granted_mode
 op_amp
 l_int|0007
+)paren
+op_logical_and
+op_logical_neg
+id|suser
+c_func
+(paren
+)paren
 )paren
 r_return
 op_minus

@@ -15,10 +15,10 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/poll.h&gt;
 multiline_comment|/* Adjust starting epoch if ARC console time is being used */
 macro_line|#ifdef CONFIG_RTC_ARC
 DECL|macro|ARCFUDGE

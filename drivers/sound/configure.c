@@ -4364,9 +4364,9 @@ l_string|&quot;CS4232 audio I/O base&quot;
 comma
 id|FMT_HEX
 comma
-l_int|0x530
+l_int|0x534
 comma
-l_string|&quot;530, 604, E80 or F40&quot;
+l_string|&quot;534, 608, E84 or F44&quot;
 )paren
 suffix:semicolon
 id|ask_int_choice

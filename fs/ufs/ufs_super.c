@@ -1,10 +1,12 @@
 multiline_comment|/*&n; *  linux/fs/ufs/ufs_super.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * Copyright (C) 1996  Eddie C. Dost  (ecd@skynet.be)&n; *&n; */
 multiline_comment|/*&n; * Kernel module support added on 96/04/26 by&n; * Stefan Reinauer &lt;stepan@home.culture.mipt.ru&gt;&n; *&n; * Module usage counts added on 96/04/29 by&n; * Gertjan van Wingerde &lt;gertjan@cs.vu.nl&gt;&n; *&n; * Clean swab support on 19970406 by&n; * Francois-Rene Rideau &lt;rideau@ens.fr&gt;&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/ufs_fs.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &quot;ufs_swab.h&quot;
 r_struct
@@ -101,12 +103,16 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
-DECL|function|init_ufs_fs
 id|init_ufs_fs
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_return

@@ -10,7 +10,7 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/isdn.h&gt;
 macro_line|#if (LINUX_VERSION_CODE &gt;= 0x020117)
-macro_line|#include &lt;asm/poll.h&gt;
+macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#endif
 macro_line|#include &quot;isdn_common.h&quot;
 macro_line|#include &quot;isdn_ppp.h&quot;

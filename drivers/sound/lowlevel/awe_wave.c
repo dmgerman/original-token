@@ -2485,7 +2485,7 @@ c_func
 (paren
 )paren
 )paren
-op_ne
+op_eq
 op_minus
 l_int|1
 )paren

@@ -4853,14 +4853,6 @@ r_void
 suffix:semicolon
 r_extern
 r_int
-id|pi_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
 id|bpq_init
 c_func
 (paren
@@ -4893,7 +4885,7 @@ r_void
 suffix:semicolon
 r_extern
 r_int
-id|pt_init
+id|dmascc_init
 c_func
 (paren
 r_void
@@ -5065,13 +5057,6 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if defined(CONFIG_PI)
-id|pi_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif&t;
 macro_line|#if defined(CONFIG_SCC)
 id|scc_init
 c_func
@@ -5079,13 +5064,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if defined(CONFIG_PT)
-id|pt_init
+macro_line|#if defined(CONFIG_DMASCC)
+id|dmascc_init
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif
+macro_line|#endif&t;
 macro_line|#if defined(CONFIG_BPQETHER)
 id|bpq_init
 c_func

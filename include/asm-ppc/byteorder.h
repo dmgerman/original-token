@@ -245,16 +245,16 @@ DECL|macro|__arch__swab16
 mdefine_line|#define __arch__swab16(x) ___arch__swab16(x)
 macro_line|#endif /* 0 */
 multiline_comment|/* The same, but returns converted value from the location pointer by addr. */
-DECL|macro|__arch_swab16p
-mdefine_line|#define __arch_swab16p(addr) ld_le16(addr)
-DECL|macro|__arch_swab32p
-mdefine_line|#define __arch_swab32p(addr) ld_le32(addr)
+DECL|macro|__arch__swab16p
+mdefine_line|#define __arch__swab16p(addr) ld_le16(addr)
+DECL|macro|__arch__swab32p
+mdefine_line|#define __arch__swab32p(addr) ld_le32(addr)
 multiline_comment|/* The same, but do the conversion in situ, ie. put the value back to addr. */
-DECL|macro|__arch_swab16s
-mdefine_line|#define __arch_swab16s(addr) st_le16(addr,*addr)
-DECL|macro|__arch_swab32s
-mdefine_line|#define __arch_swab32s(addr) st_le32(addr,*addr)
+DECL|macro|__arch__swab16s
+mdefine_line|#define __arch__swab16s(addr) st_le16(addr,*addr)
+DECL|macro|__arch__swab32s
+mdefine_line|#define __arch__swab32s(addr) st_le32(addr,*addr)
 macro_line|#endif /* __GNUC__ */
-macro_line|#include &lt;linux/byteorder_big_endian.h&gt;
+macro_line|#include &lt;linux/byteorder/big_endian.h&gt;
 macro_line|#endif /* _PPC_BYTEORDER_H */
 eof

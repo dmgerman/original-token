@@ -6,6 +6,7 @@ multiline_comment|/* Avoid too many header ordering problems.  */
 r_struct
 id|siginfo
 suffix:semicolon
+macro_line|#ifdef __KERNEL__
 multiline_comment|/* Most things should be clean enough to redefine this at will, if care&n;   is taken to make libc match.  */
 DECL|macro|_NSIG
 mdefine_line|#define _NSIG&t;&t;64
@@ -35,6 +36,17 @@ DECL|typedef|sigset_t
 )brace
 id|sigset_t
 suffix:semicolon
+macro_line|#else
+multiline_comment|/* Here we must cater to libcs that poke about in kernel headers.  */
+DECL|macro|NSIG
+mdefine_line|#define NSIG&t;&t;32
+DECL|typedef|sigset_t
+r_typedef
+r_int
+r_int
+id|sigset_t
+suffix:semicolon
+macro_line|#endif /* __KERNEL__ */
 DECL|macro|SIGHUP
 mdefine_line|#define SIGHUP&t;&t; 1
 DECL|macro|SIGINT
@@ -163,6 +175,7 @@ DECL|macro|SIG_IGN
 mdefine_line|#define SIG_IGN&t;((__sighandler_t)1)&t;/* ignore signal */
 DECL|macro|SIG_ERR
 mdefine_line|#define SIG_ERR&t;((__sighandler_t)-1)&t;/* error return from signal */
+macro_line|#ifdef __KERNEL__
 DECL|struct|old_sigaction
 r_struct
 id|old_sigaction
@@ -233,6 +246,38 @@ id|sa
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#else
+multiline_comment|/* Here we must cater to libcs that poke about in kernel headers.  */
+DECL|struct|sigaction
+r_struct
+id|sigaction
+(brace
+DECL|member|sa_handler
+id|__sighandler_t
+id|sa_handler
+suffix:semicolon
+DECL|member|sa_mask
+id|sigset_t
+id|sa_mask
+suffix:semicolon
+DECL|member|sa_flags
+r_int
+r_int
+id|sa_flags
+suffix:semicolon
+DECL|member|sa_restorer
+r_void
+(paren
+op_star
+id|sa_restorer
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
+)brace
+suffix:semicolon
+macro_line|#endif /* __KERNEL__ */
 DECL|struct|sigaltstack
 r_typedef
 r_struct
@@ -461,6 +506,6 @@ r_return
 id|word
 suffix:semicolon
 )brace
-macro_line|#endif
+macro_line|#endif /* __KERNEL__ */
 macro_line|#endif
 eof

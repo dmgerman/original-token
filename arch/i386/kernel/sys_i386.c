@@ -1049,7 +1049,7 @@ id|__OLD_UTS_LEN
 )paren
 suffix:semicolon
 id|error
-op_sub_assign
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -1061,7 +1061,7 @@ id|__OLD_UTS_LEN
 )paren
 suffix:semicolon
 id|error
-op_sub_assign
+op_or_assign
 id|__copy_to_user
 c_func
 (paren
@@ -1075,7 +1075,7 @@ id|__OLD_UTS_LEN
 )paren
 suffix:semicolon
 id|error
-op_sub_assign
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -1087,7 +1087,7 @@ id|__OLD_UTS_LEN
 )paren
 suffix:semicolon
 id|error
-op_sub_assign
+op_or_assign
 id|__copy_to_user
 c_func
 (paren
@@ -1101,7 +1101,7 @@ id|__OLD_UTS_LEN
 )paren
 suffix:semicolon
 id|error
-op_sub_assign
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -1113,7 +1113,7 @@ id|__OLD_UTS_LEN
 )paren
 suffix:semicolon
 id|error
-op_sub_assign
+op_or_assign
 id|__copy_to_user
 c_func
 (paren
@@ -1127,7 +1127,7 @@ id|__OLD_UTS_LEN
 )paren
 suffix:semicolon
 id|error
-op_sub_assign
+op_or_assign
 id|__put_user
 c_func
 (paren
@@ -1139,7 +1139,7 @@ id|__OLD_UTS_LEN
 )paren
 suffix:semicolon
 id|error
-op_sub_assign
+op_or_assign
 id|__copy_to_user
 c_func
 (paren
@@ -1153,7 +1153,7 @@ id|__OLD_UTS_LEN
 )paren
 suffix:semicolon
 id|error
-op_assign
+op_or_assign
 id|__put_user
 c_func
 (paren

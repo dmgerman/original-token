@@ -7,7 +7,7 @@ macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/termios.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
-macro_line|#include &lt;asm/poll.h&gt;
+macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/*&n; * Define this if you want SunOS compatibility wrt braindead&n; * select behaviour on FIFO&squot;s.&n; */
 macro_line|#ifdef __sparc__

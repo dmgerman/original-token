@@ -29,9 +29,16 @@ r_extern
 r_int
 id|sysctl_tcp_syncookies
 suffix:semicolon
-multiline_comment|/* Define this to check TCP sequence numbers in ICMP packets. */
+multiline_comment|/* Check TCP sequence numbers in ICMP packets. */
 DECL|macro|ICMP_PARANOIA
-mdefine_line|#define ICMP_PARANOIA 1
+mdefine_line|#define ICMP_PARANOIA 1 
+macro_line|#ifndef ICMP_PARANOIA
+DECL|macro|ICMP_MIN_LENGTH
+mdefine_line|#define ICMP_MIN_LENGTH 4
+macro_line|#else
+DECL|macro|ICMP_MIN_LENGTH
+mdefine_line|#define ICMP_MIN_LENGTH 8
+macro_line|#endif
 r_static
 r_void
 id|tcp_v4_send_reset
@@ -3120,11 +3127,6 @@ r_struct
 id|iphdr
 op_star
 id|ip
-comma
-r_struct
-id|tcphdr
-op_star
-id|th
 )paren
 (brace
 r_int
@@ -3256,12 +3258,14 @@ id|sock
 op_star
 id|sk
 suffix:semicolon
-id|__u32
-id|seq
-suffix:semicolon
 r_int
 id|opening
 suffix:semicolon
+macro_line|#ifdef ICMP_PARANOIA
+id|__u32
+id|seq
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -3273,11 +3277,7 @@ op_lshift
 l_int|2
 )paren
 op_plus
-r_sizeof
-(paren
-r_struct
-id|tcphdr
-)paren
+id|ICMP_MIN_LENGTH
 )paren
 (brace
 id|icmp_statistics.IcmpInErrors
@@ -3472,8 +3472,6 @@ c_func
 id|sk
 comma
 id|iph
-comma
-id|th
 )paren
 suffix:semicolon
 r_return

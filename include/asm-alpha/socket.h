@@ -48,6 +48,10 @@ DECL|macro|SO_PASSCRED
 mdefine_line|#define SO_PASSCRED&t;17
 DECL|macro|SO_PEERCRED
 mdefine_line|#define SO_PEERCRED&t;18
+DECL|macro|SO_BINDTODEVICE
+mdefine_line|#define SO_BINDTODEVICE 25
+DECL|macro|SO_BINDTODEVICE
+mdefine_line|#define SO_BINDTODEVICE&t;25
 multiline_comment|/* Security levels - as per NRL IPv6 - don&squot;t actually do anything */
 DECL|macro|SO_SECURITY_AUTHENTICATION
 mdefine_line|#define SO_SECURITY_AUTHENTICATION&t;&t;19
@@ -55,5 +59,7 @@ DECL|macro|SO_SECURITY_ENCRYPTION_TRANSPORT
 mdefine_line|#define SO_SECURITY_ENCRYPTION_TRANSPORT&t;20
 DECL|macro|SO_SECURITY_ENCRYPTION_NETWORK
 mdefine_line|#define SO_SECURITY_ENCRYPTION_NETWORK&t;&t;21
+DECL|macro|SO_BINDTODEVICE
+mdefine_line|#define SO_BINDTODEVICE&t;&t;22
 macro_line|#endif /* _ASM_SOCKET_H */
 eof

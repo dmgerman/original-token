@@ -9,6 +9,7 @@ macro_line|#ifndef __BIG_ENDIAN_BITFIELD
 DECL|macro|__BIG_ENDIAN_BITFIELD
 mdefine_line|#define __BIG_ENDIAN_BITFIELD
 macro_line|#endif
+macro_line|#include &lt;linux/byteorder/swab.h&gt;
 DECL|macro|__constant_htonl
 mdefine_line|#define __constant_htonl(x) ((__u32)(x))
 DECL|macro|__constant_ntohl
@@ -89,6 +90,6 @@ DECL|macro|__cpu_to_be16s
 mdefine_line|#define __cpu_to_be16s(x) do {} while (0)
 DECL|macro|__be16_to_cpus
 mdefine_line|#define __be16_to_cpus(x) do {} while (0)
-macro_line|#include &lt;linux/byteorder_generic.h&gt;
+macro_line|#include &lt;linux/byteorder/generic.h&gt;
 macro_line|#endif /* _LINUX_BYTEORDER_BIG_ENDIAN_H */
 eof

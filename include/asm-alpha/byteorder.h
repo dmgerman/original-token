@@ -115,6 +115,6 @@ mdefine_line|#define __arch__swab16(x) ___arch__swab16(x)
 macro_line|#endif /* __GNUC__ */
 DECL|macro|__BYTEORDER_HAS_U64__
 mdefine_line|#define __BYTEORDER_HAS_U64__
-macro_line|#include &lt;linux/byteorder_little_endian.h&gt;
+macro_line|#include &lt;linux/byteorder/little_endian.h&gt;
 macro_line|#endif /* _ALPHA_BYTEORDER_H */
 eof

@@ -929,12 +929,6 @@ id|cmd
 r_if
 c_cond
 (paren
-op_logical_neg
-id|suser
-c_func
-(paren
-)paren
-op_logical_and
 id|cmd
 op_ne
 id|EQL_GETMASTRCFG
@@ -942,6 +936,12 @@ op_logical_and
 id|cmd
 op_ne
 id|EQL_GETSLAVECFG
+op_logical_and
+op_logical_neg
+id|suser
+c_func
+(paren
+)paren
 )paren
 (brace
 r_return

@@ -1,3 +1,4 @@
+multiline_comment|/*&n; * Venus interface for Coda.&n; * Original version: (C) 1996 Peter Braam &n; * Rewritten for Linux 2.1: (C) 1997 Carnegie Mellon University&n; *&n; * Carnegie Mellon encourages users of this code to contribute improvements&n; * to the Coda project. Contact Peter Braam &lt;coda@cs.cmu.edu&gt;.&n; */
 multiline_comment|/*&n; *&n; * Based on cfs.h from Mach, but revamped for increased simplicity.&n; * Linux modifications by Peter Braam, Aug 1996&n; */
 macro_line|#ifndef _CFS_HEADER_
 DECL|macro|_CFS_HEADER_

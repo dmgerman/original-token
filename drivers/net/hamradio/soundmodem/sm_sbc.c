@@ -7,6 +7,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/soundmodem.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &quot;sm.h&quot;
 macro_line|#include &quot;smdma.h&quot;
 multiline_comment|/* --------------------------------------------------------------------- */
@@ -280,21 +281,11 @@ id|dev-&gt;base_addr
 )paren
 )paren
 suffix:semicolon
-r_for
-c_loop
+id|udelay
+c_func
 (paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|0x100
-suffix:semicolon
-id|i
-op_increment
+l_int|300
 )paren
-id|SLOW_DOWN_IO
 suffix:semicolon
 id|outb
 c_func

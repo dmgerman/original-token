@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/ufs/ufs_namei.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * Clean swab support by Francois-Rene Rideau &lt;rideau@ens.fr&gt; 19970406&n; * Ported to 2.1.62 by Francois-Rene Rideau &lt;rideau@issy.cnet.fr&gt; 19971109&n; *&n; */
+multiline_comment|/*&n; *  linux/fs/ufs/ufs_namei.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * Clean swab support by Francois-Rene Rideau &lt;rideau@ens.fr&gt; 19970406&n; * Ported to 2.1.62 by Francois-Rene Rideau &lt;rideau@ens.fr&gt; 19971109&n; *&n; */
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/ufs_fs.h&gt;
 macro_line|#include &lt;linux/string.h&gt;

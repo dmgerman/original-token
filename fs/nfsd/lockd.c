@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/nfsd/nfsd.h&gt;
 macro_line|#include &lt;linux/lockd/bind.h&gt;
 DECL|macro|NFSDDBG_FACILITY
 mdefine_line|#define NFSDDBG_FACILITY&t;&t;NFSDDBG_LOCKD
+multiline_comment|/*&n; * Note: we hold the dentry use count while the file is open.&n; */
 r_static
 id|u32
 DECL|function|nlm_fopen
@@ -65,6 +66,18 @@ comma
 id|filp
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|nfserr
+)paren
+id|dget
+c_func
+(paren
+id|filp-&gt;f_dentry
+)paren
+suffix:semicolon
 id|fh_put
 c_func
 (paren
@@ -92,6 +105,12 @@ id|nfsd_close
 c_func
 (paren
 id|filp
+)paren
+suffix:semicolon
+id|dput
+c_func
+(paren
+id|filp-&gt;f_dentry
 )paren
 suffix:semicolon
 )brace

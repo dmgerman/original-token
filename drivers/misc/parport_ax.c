@@ -640,7 +640,7 @@ c_func
 (paren
 id|p-&gt;irq
 comma
-id|p
+l_int|NULL
 )paren
 suffix:semicolon
 )brace
@@ -718,7 +718,7 @@ l_int|0
 comma
 id|p-&gt;name
 comma
-id|p
+l_int|NULL
 )paren
 suffix:semicolon
 id|ax_enable_irq

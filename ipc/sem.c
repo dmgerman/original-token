@@ -2261,11 +2261,6 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|suser
-c_func
-(paren
-)paren
-op_logical_or
 id|current-&gt;euid
 op_eq
 id|ipcp-&gt;cuid
@@ -2273,6 +2268,11 @@ op_logical_or
 id|current-&gt;euid
 op_eq
 id|ipcp-&gt;uid
+op_logical_or
+id|suser
+c_func
+(paren
+)paren
 )paren
 (brace
 id|freeary
@@ -2631,11 +2631,6 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|suser
-c_func
-(paren
-)paren
-op_logical_or
 id|current-&gt;euid
 op_eq
 id|ipcp-&gt;cuid
@@ -2643,6 +2638,11 @@ op_logical_or
 id|current-&gt;euid
 op_eq
 id|ipcp-&gt;uid
+op_logical_or
+id|suser
+c_func
+(paren
+)paren
 )paren
 (brace
 id|ipcp-&gt;uid

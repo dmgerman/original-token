@@ -12,14 +12,14 @@ mdefine_line|#define _TSS(n) ((((unsigned long) n)&lt;&lt;4)+(FIRST_TSS_ENTRY&lt
 DECL|macro|_LDT
 mdefine_line|#define _LDT(n) ((((unsigned long) n)&lt;&lt;4)+(FIRST_LDT_ENTRY&lt;&lt;3))
 DECL|macro|load_TR
-mdefine_line|#define load_TR(n) __asm__(&quot;ltr %%ax&quot;: /* no output */ :&quot;a&quot; (_TSS(n)))
+mdefine_line|#define load_TR(n) __asm__ __volatile__(&quot;ltr %%ax&quot;: /* no output */ :&quot;a&quot; (_TSS(n)))
 DECL|macro|load_ldt
-mdefine_line|#define load_ldt(n) __asm__(&quot;lldt %%ax&quot;: /* no output */ :&quot;a&quot; (_LDT(n)))
+mdefine_line|#define load_ldt(n) __asm__ __volatile__(&quot;lldt %%ax&quot;: /* no output */ :&quot;a&quot; (_LDT(n)))
 DECL|macro|store_TR
 mdefine_line|#define store_TR(n) &bslash;&n;__asm__(&quot;str %%ax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;subl %2,%%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;shrl $4,%%eax&quot; &bslash;&n;&t;:&quot;=a&quot; (n) &bslash;&n;&t;:&quot;0&quot; (0),&quot;i&quot; (FIRST_TSS_ENTRY&lt;&lt;3))
 multiline_comment|/* This special macro can be used to load a debugging register */
 DECL|macro|loaddebug
-mdefine_line|#define loaddebug(tsk,register) &bslash;&n;&t;&t;__asm__(&quot;movl %0,%%edx&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;&quot;movl %%edx,%%db&quot; #register &quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;&t;: /* no output */ &bslash;&n;&t;&t;&t;:&quot;m&quot; (tsk-&gt;debugreg[register]) &bslash;&n;&t;&t;&t;:&quot;dx&quot;);
+mdefine_line|#define loaddebug(tsk,register) &bslash;&n;&t;&t;__asm__(&quot;movl %0,%%db&quot; #register  &bslash;&n;&t;&t;&t;: /* no output */ &bslash;&n;&t;&t;&t;:&quot;r&quot; (tsk-&gt;debugreg[register]))
 multiline_comment|/*&n; *&t;switch_to(n) should switch tasks to task nr n, first&n; * checking that n isn&squot;t the current task, in which case it does nothing.&n; * This also clears the TS-flag if the task we switched to has used&n; * the math co-processor latest.&n; *&n; * It also reloads the debug regs if necessary..&n; */
 macro_line|#ifdef __SMP__
 multiline_comment|/*&n;&t; *&t;Keep the lock depth straight. If we switch on an interrupt from&n;&t; *&t;kernel-&gt;user task we need to lose a depth, and if we switch the&n;&t; *&t;other way we need to gain a depth. Same layer switches come out&n;&t; *&t;the same.&n;&t; *&n;&t; *&t;We spot a switch in user mode because the kernel counter is the&n;&t; *&t;same as the interrupt counter depth. (We never switch during the&n;&t; *&t;message/invalidate IPI).&n;&t; *&n;&t; *&t;We fsave/fwait so that an exception goes off at the right time&n;&t; *&t;(as a call from the fsave or fwait in effect) rather than to&n;&t; *&t;the wrong process.&n;&t; */

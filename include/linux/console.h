@@ -423,7 +423,7 @@ r_void
 )paren
 suffix:semicolon
 DECL|member|setup
-r_void
+r_int
 (paren
 op_star
 id|setup

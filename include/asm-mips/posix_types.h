@@ -77,6 +77,11 @@ r_typedef
 r_int
 id|__kernel_time_t
 suffix:semicolon
+DECL|typedef|__kernel_suseconds_t
+r_typedef
+r_int
+id|__kernel_suseconds_t
+suffix:semicolon
 DECL|typedef|__kernel_clock_t
 r_typedef
 r_int

@@ -14,7 +14,7 @@ macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/capi.h&gt;
 macro_line|#include &lt;linux/kernelcapi.h&gt;
-macro_line|#include &lt;asm/poll.h&gt;
+macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &quot;compat.h&quot;
 macro_line|#include &quot;capiutil.h&quot;
 macro_line|#include &quot;capicmd.h&quot;

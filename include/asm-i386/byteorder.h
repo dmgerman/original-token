@@ -110,6 +110,6 @@ DECL|macro|__SWAB_64_THRU_32__
 macro_line|#  define __SWAB_64_THRU_32__
 macro_line|#endif
 macro_line|#endif /* __GNUC__ */
-macro_line|#include &lt;linux/byteorder_little_endian.h&gt;
+macro_line|#include &lt;linux/byteorder/little_endian.h&gt;
 macro_line|#endif /* _I386_BYTEORDER_H */
 eof

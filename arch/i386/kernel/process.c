@@ -826,13 +826,6 @@ op_logical_neg
 id|reboot_thru_bios
 )paren
 (brace
-macro_line|#if 0
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* rebooting needs to touch the page at absolute addr 0 */
 op_star
 (paren
@@ -875,32 +868,17 @@ id|i
 op_increment
 )paren
 (brace
-r_int
-id|j
-suffix:semicolon
 id|kb_wait
 c_func
 (paren
 )paren
 suffix:semicolon
-r_for
-c_loop
+id|udelay
+c_func
 (paren
-id|j
-op_assign
-l_int|0
-suffix:semicolon
-id|j
-OL
-l_int|100000
-suffix:semicolon
-id|j
-op_increment
+l_int|10
 )paren
-(brace
-multiline_comment|/* nothing */
 suffix:semicolon
-)brace
 id|outb
 c_func
 (paren
@@ -917,16 +895,25 @@ l_int|10
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* That didn&squot;t work - force a triple fault.. */
 id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;&bslash;tlidt %0&quot;
+l_string|&quot;lidt %0&quot;
 suffix:colon
-l_string|&quot;=m&quot;
+suffix:colon
+l_string|&quot;m&quot;
 (paren
 id|no_idt
 )paren
+)paren
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;int3&quot;
 )paren
 suffix:semicolon
 )brace

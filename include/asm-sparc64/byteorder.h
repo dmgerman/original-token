@@ -132,6 +132,6 @@ DECL|macro|__arch__swab64p
 mdefine_line|#define __arch__swab64p(x) ___arch__swab64p(x)
 DECL|macro|__BYTEORDER_HAS_U64__
 mdefine_line|#define __BYTEORDER_HAS_U64__
-macro_line|#include &lt;linux/byteorder_big_endian.h&gt;
+macro_line|#include &lt;linux/byteorder/big_endian.h&gt;
 macro_line|#endif /* _SPARC64_BYTEORDER_H */
 eof

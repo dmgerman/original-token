@@ -3006,11 +3006,11 @@ id|NE_CMD
 )paren
 suffix:semicolon
 multiline_comment|/* Make certain that the dummy read has occurred. */
-id|SLOW_DOWN_IO
-suffix:semicolon
-id|SLOW_DOWN_IO
-suffix:semicolon
-id|SLOW_DOWN_IO
+id|udelay
+c_func
+(paren
+l_int|6
+)paren
 suffix:semicolon
 macro_line|#endif
 id|outb_p

@@ -2940,7 +2940,7 @@ id|dir
 )paren
 )paren
 r_goto
-m_exit
+id|exit_dput
 suffix:semicolon
 id|error
 op_assign
@@ -3056,6 +3056,8 @@ c_func
 id|dir
 )paren
 suffix:semicolon
+id|exit_dput
+suffix:colon
 id|dput
 c_func
 (paren
@@ -3232,7 +3234,7 @@ id|dir
 )paren
 )paren
 r_goto
-m_exit
+id|exit_dput
 suffix:semicolon
 id|error
 op_assign
@@ -3374,6 +3376,8 @@ c_func
 id|dir
 )paren
 suffix:semicolon
+id|exit_dput
+suffix:colon
 id|dput
 c_func
 (paren
@@ -3545,7 +3549,7 @@ id|dir
 )paren
 )paren
 r_goto
-m_exit
+id|exit_dput
 suffix:semicolon
 id|error
 op_assign
@@ -3687,6 +3691,8 @@ c_func
 id|dir
 )paren
 suffix:semicolon
+id|exit_dput
+suffix:colon
 id|dput
 c_func
 (paren
@@ -3863,7 +3869,7 @@ id|dir
 )paren
 )paren
 r_goto
-m_exit
+id|exit_dput
 suffix:semicolon
 id|error
 op_assign
@@ -3972,6 +3978,8 @@ c_func
 id|dir
 )paren
 suffix:semicolon
+id|exit_dput
+suffix:colon
 id|dput
 c_func
 (paren
@@ -4231,7 +4239,7 @@ id|dir
 )paren
 )paren
 r_goto
-m_exit
+id|exit_new
 suffix:semicolon
 id|error
 op_assign
@@ -4397,6 +4405,8 @@ c_func
 id|dir
 )paren
 suffix:semicolon
+id|exit_new
+suffix:colon
 id|dput
 c_func
 (paren

@@ -3,6 +3,8 @@ multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * 
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|BE_CONSERVATIVE
 mdefine_line|#define BE_CONSERVATIVE
+DECL|macro|SAMPLE_ROUNDUP
+mdefine_line|#define SAMPLE_ROUNDUP 0
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#if defined(CONFIG_AUDIO) || defined(CONFIG_GUSHW)
 DECL|variable|in_sleeper
@@ -4421,7 +4423,7 @@ id|dmap-&gt;bytes_in_use
 )paren
 op_amp
 op_complement
-l_int|3
+id|SAMPLE_ROUNDUP
 suffix:semicolon
 r_if
 c_cond
@@ -4543,7 +4545,7 @@ op_assign
 id|len
 op_amp
 op_complement
-l_int|3
+id|SAMPLE_ROUNDUP
 suffix:semicolon
 id|restore_flags
 c_func
@@ -4553,7 +4555,8 @@ id|flags
 suffix:semicolon
 r_return
 (paren
-id|len
+op_star
+id|size
 OG
 l_int|0
 )paren

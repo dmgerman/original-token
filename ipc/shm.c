@@ -1831,11 +1831,6 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|suser
-c_func
-(paren
-)paren
-op_logical_or
 id|current-&gt;euid
 op_eq
 id|shp-&gt;shm_perm.uid
@@ -1843,6 +1838,11 @@ op_logical_or
 id|current-&gt;euid
 op_eq
 id|shp-&gt;shm_perm.cuid
+op_logical_or
+id|suser
+c_func
+(paren
+)paren
 )paren
 (brace
 id|ipcp-&gt;uid
@@ -1889,11 +1889,6 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|suser
-c_func
-(paren
-)paren
-op_logical_or
 id|current-&gt;euid
 op_eq
 id|shp-&gt;shm_perm.uid
@@ -1901,6 +1896,11 @@ op_logical_or
 id|current-&gt;euid
 op_eq
 id|shp-&gt;shm_perm.cuid
+op_logical_or
+id|suser
+c_func
+(paren
+)paren
 )paren
 (brace
 id|shp-&gt;shm_perm.mode

@@ -2027,14 +2027,7 @@ op_ne
 id|SYSEX_PATCH
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;MIDI Error: Invalid patch format (key) 0x%x&bslash;n&quot;
-comma
-id|format
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;  printk(&quot;MIDI Error: Invalid patch format (key) 0x%x&bslash;n&quot;, format);*/
 r_return
 op_minus
 id|EINVAL
@@ -2048,12 +2041,7 @@ OL
 id|hdr_size
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;MIDI Error: Patch header too short&bslash;n&quot;
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;printk(&quot;MIDI Error: Patch header too short&bslash;n&quot;);*/
 r_return
 op_minus
 id|EINVAL
@@ -2064,6 +2052,9 @@ op_sub_assign
 id|hdr_size
 suffix:semicolon
 multiline_comment|/*&n;&t; * Copy the header from user space but ignore the first bytes which have&n;&t; * been transferred already.&n;&t; */
+r_if
+c_cond
+(paren
 id|copy_from_user
 c_func
 (paren
@@ -2092,7 +2083,13 @@ id|hdr_size
 op_minus
 id|offs
 )paren
+)paren
+(brace
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -2101,19 +2098,7 @@ OL
 id|sysex.len
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;MIDI Warning: Sysex record too short (%d&lt;%d)&bslash;n&quot;
-comma
-id|count
-comma
-(paren
-r_int
-)paren
-id|sysex.len
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;printk(KERN_WARNING &quot;MIDI Warning: Sysex record too short (%d&lt;%d)&bslash;n&quot;, count, (int) sysex.len);*/
 id|sysex.len
 op_assign
 id|count
@@ -2232,7 +2217,8 @@ l_int|0xf0
 id|printk
 c_func
 (paren
-l_string|&quot;Error: Sysex start missing&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;midi_synth: Sysex start missing&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2381,8 +2367,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_void
 DECL|function|midi_synth_panning
+r_void
 id|midi_synth_panning
 c_func
 (paren
@@ -2397,8 +2383,8 @@ id|pressure
 )paren
 (brace
 )brace
-r_void
 DECL|function|midi_synth_aftertouch
+r_void
 id|midi_synth_aftertouch
 c_func
 (paren
