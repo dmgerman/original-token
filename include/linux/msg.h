@@ -175,7 +175,7 @@ suffix:semicolon
 DECL|macro|MSGMNI
 mdefine_line|#define MSGMNI   128   /* &lt;= 1K */     /* max # of msg queue identifiers */
 DECL|macro|MSGMAX
-mdefine_line|#define MSGMAX  4080   /* &lt;= 4080 */   /* max size of message (bytes) */
+mdefine_line|#define MSGMAX  4056   /* &lt;= 4056 */   /* max size of message (bytes) */
 DECL|macro|MSGMNB
 mdefine_line|#define MSGMNB 16384   /* ? */        /* default max size of a message queue */
 multiline_comment|/* unused */

@@ -1106,7 +1106,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;, IRQ %d, %sternal xcvr, memory %#x-%#x.&bslash;n&quot;
+l_string|&quot;, IRQ %d, %sternal xcvr, memory %#lx-%#lx.&bslash;n&quot;
 comma
 id|dev-&gt;irq
 comma

@@ -7,7 +7,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;ne.c:v0.99-15b 2/8/94 Donald Becker (becker@super.org)&bslash;n&quot;
+l_string|&quot;ne.c:v0.99-15k 3/3/94 Donald Becker (becker@super.org)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -668,9 +668,6 @@ l_int|2
 )paren
 (brace
 multiline_comment|/* We must set the 8390 for word mode. */
-r_int
-id|tmp
-suffix:semicolon
 id|outb_p
 c_func
 (paren
@@ -1258,7 +1255,7 @@ l_int|1
 id|printk
 c_func
 (paren
-l_string|&quot;resetting the 8390 t=%d...&quot;
+l_string|&quot;resetting the 8390 t=%ld...&quot;
 comma
 id|jiffies
 )paren

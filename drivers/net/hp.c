@@ -6,7 +6,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;hp.c:v0.99.15c 2/11/94 Donald Becker (becker@super.org)&bslash;n&quot;
+l_string|&quot;hp.c:v0.99.15k 3/3/94 Donald Becker (becker@super.org)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -815,11 +815,6 @@ op_plus
 id|HP_CONFIGURE
 )paren
 suffix:semicolon
-r_int
-id|reset_start_time
-op_assign
-id|jiffies
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -830,7 +825,7 @@ l_int|1
 id|printk
 c_func
 (paren
-l_string|&quot;resetting the 8390 time=%d...&quot;
+l_string|&quot;resetting the 8390 time=%ld...&quot;
 comma
 id|jiffies
 )paren
@@ -849,48 +844,11 @@ id|ei_status.txing
 op_assign
 l_int|0
 suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
+multiline_comment|/* Pause just a few cycles for the hardware reset to take place. */
+id|SLOW_DOWN_IO
 suffix:semicolon
-multiline_comment|/* We shouldn&squot;t use the boguscount for timing, but this hasn&squot;t been&n;&t;   checked yet, and you could hang your machine if jiffies break... */
-(brace
-r_int
-id|boguscount
-op_assign
-l_int|150000
+id|SLOW_DOWN_IO
 suffix:semicolon
-r_while
-c_loop
-(paren
-id|jiffies
-op_minus
-id|reset_start_time
-OL
-l_int|2
-)paren
-r_if
-c_cond
-(paren
-id|boguscount
-op_decrement
-OL
-l_int|0
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;jiffy failure (t=%d)...&quot;
-comma
-id|jiffies
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-)brace
 id|outb_p
 c_func
 (paren
@@ -901,8 +859,12 @@ op_plus
 id|HP_CONFIGURE
 )paren
 suffix:semicolon
-r_while
-c_loop
+id|SLOW_DOWN_IO
+suffix:semicolon
+id|SLOW_DOWN_IO
+suffix:semicolon
+r_if
+c_cond
 (paren
 (paren
 id|inb_p
@@ -920,16 +882,6 @@ id|ENISR_RESET
 op_eq
 l_int|0
 )paren
-r_if
-c_cond
-(paren
-id|jiffies
-op_minus
-id|reset_start_time
-OG
-l_int|2
-)paren
-(brace
 id|printk
 c_func
 (paren
@@ -938,9 +890,6 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -951,10 +900,12 @@ l_int|1
 id|printk
 c_func
 (paren
-l_string|&quot;8390 reset done (%d).&quot;
+l_string|&quot;8390 reset done (%ld).&quot;
 comma
 id|jiffies
 )paren
+suffix:semicolon
+r_return
 suffix:semicolon
 )brace
 multiline_comment|/* Block input and output, similar to the Crynwr packet driver.&t; If you&n;   porting to a new ethercard look at the packet driver source for hints.&n;   The HP LAN doesn&squot;t use shared memory -- we put the packet&n;   out through the &quot;remote DMA&quot; dataport. */

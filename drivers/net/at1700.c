@@ -5,7 +5,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;at1700.c:v0.05 2/9/94  Donald Becker (becker@super.org)&bslash;n&quot;
+l_string|&quot;at1700.c:v0.06 3/3/94  Donald Becker (becker@super.org)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n;  Sources:&n;    The Fujitsu MB86695 datasheet.&n;&n;&t;After this driver was written, ATI provided their EEPROM configuration&n;&t;code header file.  Thanks to Gerry Sockins of ATI.&n;*/
@@ -1792,9 +1792,7 @@ op_member_access_from_pointer
 id|rebuild_header
 c_func
 (paren
-id|skb
-op_plus
-l_int|1
+id|skb-&gt;data
 comma
 id|dev
 )paren
@@ -1863,32 +1861,7 @@ r_char
 op_star
 id|buf
 op_assign
-(paren
-r_void
-op_star
-)paren
-(paren
-id|skb
-op_plus
-l_int|1
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|net_debug
-OG
-l_int|4
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;%s: Transmitting a packet of length %d.&bslash;n&quot;
-comma
-id|dev-&gt;name
-comma
-id|skb-&gt;len
-)paren
+id|skb-&gt;data
 suffix:semicolon
 multiline_comment|/* Turn off the possible Tx interrupts. */
 id|outb
@@ -2560,7 +2533,6 @@ id|skb-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
-multiline_comment|/* &squot;skb+1&squot; points to the start of sk_buff data area. */
 id|insw
 c_func
 (paren
@@ -2568,15 +2540,7 @@ id|ioaddr
 op_plus
 id|DATAPORT
 comma
-(paren
-r_void
-op_star
-)paren
-(paren
-id|skb
-op_plus
-l_int|1
-)paren
+id|skb-&gt;data
 comma
 (paren
 id|pkt_len
@@ -2627,18 +2591,7 @@ c_func
 (paren
 l_string|&quot; %02x&quot;
 comma
-(paren
-(paren
-r_int
-r_char
-op_star
-)paren
-(paren
-id|skb
-op_plus
-l_int|1
-)paren
-)paren
+id|skb-&gt;data
 (braket
 id|i
 )braket

@@ -3447,6 +3447,10 @@ c_func
 id|bprm.inode
 )paren
 suffix:semicolon
+id|current-&gt;did_exec
+op_assign
+l_int|1
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

@@ -386,7 +386,7 @@ id|DUMP_DATA
 op_plus
 l_int|8
 comma
-l_int|0x803ff
+l_int|0x83ff
 comma
 op_minus
 l_int|1
@@ -1617,9 +1617,7 @@ op_member_access_from_pointer
 id|rebuild_header
 c_func
 (paren
-id|skb
-op_plus
-l_int|1
+id|skb-&gt;data
 comma
 id|dev
 )paren
@@ -1688,15 +1686,7 @@ r_char
 op_star
 id|buf
 op_assign
-(paren
-r_void
-op_star
-)paren
-(paren
-id|skb
-op_plus
-l_int|1
-)paren
+id|skb-&gt;data
 suffix:semicolon
 multiline_comment|/* Disable the 82586&squot;s input to the interrupt line. */
 id|outb
@@ -4045,15 +4035,7 @@ c_func
 (paren
 id|ioaddr
 comma
-(paren
-r_void
-op_star
-)paren
-(paren
-id|skb
-op_plus
-l_int|1
-)paren
+id|skb-&gt;data
 comma
 (paren
 id|pkt_len

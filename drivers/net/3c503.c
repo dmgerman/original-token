@@ -6,7 +6,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;3c503.c:v0.99.13 8/30/93 Donald Becker (becker@super.org)&bslash;n&quot;
+l_string|&quot;3c503.c:v0.99.15k 3/3/93 Donald Becker (becker@super.org)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -919,27 +919,6 @@ op_plus
 id|dev-&gt;mem_start
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|ei_debug
-OG
-l_int|2
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;&bslash;n3c503: memory params start=%#5x rstart=%#5x end=%#5x rend=%#5x.&bslash;n&quot;
-comma
-id|dev-&gt;mem_start
-comma
-id|dev-&gt;rmem_start
-comma
-id|dev-&gt;mem_end
-comma
-id|dev-&gt;rmem_end
-)paren
-suffix:semicolon
 multiline_comment|/* Finish setting the board&squot;s parameters. */
 id|ei_status.name
 op_assign
@@ -1037,7 +1016,7 @@ id|dev-&gt;mem_start
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;n%s: %s with shared memory at %#6x-%#6x,&bslash;n&quot;
+l_string|&quot;&bslash;n%s: %s with shared memory at %#6lx-%#6lx,&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -1701,27 +1680,6 @@ r_int
 id|dest_addr
 )paren
 suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
-id|ei_debug
-OG
-l_int|4
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;%s: 3c503 send_packet() good memory copy @ %#5x.&bslash;n&quot;
-comma
-id|dev-&gt;name
-comma
-(paren
-r_int
-)paren
-id|dest_addr
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -1941,29 +1899,6 @@ op_plus
 id|ring_offset
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|ei_debug
-OG
-l_int|4
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;%s: 3c503 block_input() @ %#5x+%x=%5x.&bslash;n&quot;
-comma
-id|dev-&gt;name
-comma
-id|dev-&gt;mem_start
-comma
-id|ring_offset
-comma
-id|dev-&gt;mem_start
-op_plus
-id|ring_offset
-)paren
-suffix:semicolon
 id|memcpy
 c_func
 (paren
@@ -2006,29 +1941,6 @@ op_plus
 id|count
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|ei_debug
-OG
-l_int|4
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;%s: 3c503 block_input() @ %#5x+%x=%5x.&bslash;n&quot;
-comma
-id|dev-&gt;name
-comma
-id|dev-&gt;mem_start
-comma
-id|ring_offset
-comma
-id|dev-&gt;mem_start
-op_plus
-id|ring_offset
-)paren
-suffix:semicolon
 id|memcpy
 c_func
 (paren

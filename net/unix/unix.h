@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * UNIX&t;&t;An implementation of the AF_UNIX network domain for the&n; *&t;&t;LINUX operating system.  UNIX is implemented using the&n; *&t;&t;BSD Socket interface as the means of communication with&n; *&t;&t;the user level.&n; *&n; *&t;&t;This file descibes some things of the UNIX protocol family&n; *&t;&t;module.  It is mainly used for the &quot;proc&quot; sub-module now,&n; *&t;&t;but it may be useful for cleaning up the UNIX module as a&n; *&t;&t;whole later.&n; *&n; * Version:&t;@(#)unix.h&t;1.0.3&t;05/25/93&n; *&n; * Authors:&t;Orest Zborowski, &lt;obz@Kodak.COM&gt;&n; *&t;&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * UNIX&t;&t;An implementation of the AF_UNIX network domain for the&n; *&t;&t;LINUX operating system.  UNIX is implemented using the&n; *&t;&t;BSD Socket interface as the means of communication with&n; *&t;&t;the user level.&n; *&n; *&t;&t;This file descibes some things of the UNIX protocol family&n; *&t;&t;module.  It is mainly used for the &quot;proc&quot; sub-module now,&n; *&t;&t;but it may be useful for cleaning up the UNIX module as a&n; *&t;&t;whole later.&n; *&n; * Version:&t;@(#)unix.h&t;1.0.3&t;05/25/93&n; *&n; * Authors:&t;Orest Zborowski, &lt;obz@Kodak.COM&gt;&n; *&t;&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Dmitry Gorodchanin&t;-&t;proc locking&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#ifdef _LINUX_UN_H
 DECL|struct|unix_proto_data
 r_struct
@@ -9,6 +9,7 @@ r_int
 id|refcnt
 suffix:semicolon
 multiline_comment|/* cnt of reference 0=free&t;*/
+multiline_comment|/* -1=not initialised&t;-bgm&t;*/
 DECL|member|socket
 r_struct
 id|socket

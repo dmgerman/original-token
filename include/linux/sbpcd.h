@@ -3,7 +3,7 @@ multiline_comment|/*&n; * these definitions can get overridden by the kernel com
 multiline_comment|/* &n; * change this to select the type of your interface board:&n; *&n; * set SBPRO to 1 for &quot;true&quot; SoundBlaster card&n; * set SBPRO to 0 for &quot;poor&quot; (no sound) interface cards&n; *                and for &quot;compatible&quot; soundcards.&n; *&n; * most &quot;compatible&quot; sound boards like Galaxy need to set SBPRO to 0 !!!&n; * if SBPRO gets set wrong, the drive will get found - but any&n; * data access will give errors (audio access will work).&n; * The OmniCD interface card from CreativeLabs needs SBPRO 1.&n; *&n; * mail to emoenke@gwdg.de if your &quot;compatible&quot; card needs SBPRO 1&n; * (currently I do not know any &quot;compatible&quot; with SBPRO 1)&n; * then I can include better information with the next release.&n; */
 DECL|macro|SBPRO
 mdefine_line|#define SBPRO     1
-multiline_comment|/*&n; * put your CDROM port base address here:&n; * SBPRO addresses typically are 0x0230 (=0x220+0x10), 0x0250, ...&n; * LASERMATE (CI-101P) adresses typically are 0x0300, 0x0310, ...&n; * there are some soundcards on the market with 0x0630, 0x0650, ...&n; *&n; * obey! changed against v0.4 !!!&n; * for SBPRO cards, specify the CDROM address - no longer the audio address! &n; * example: if your SBPRO audio address is 0x220, specify 0x230.&n; *&n; * a fill-in is not always necessary - the driver does auto-probing now,&n; * with the here specified address first...&n; */
+multiline_comment|/*&n; * put your CDROM port base address here:&n; * SBPRO addresses typically are 0x0230 (=0x220+0x10), 0x0250, ...&n; * LASERMATE (CI-101P) adresses typically are 0x0300, 0x0310, ...&n; * there are some soundcards on the market with 0x0630, 0x0650, ...&n; *&n; * example: if your SBPRO audio address is 0x220, specify 0x230.&n; *&n; */
 DECL|macro|CDROM_PORT
 mdefine_line|#define CDROM_PORT 0x0230
 multiline_comment|/*==========================================================================*/
@@ -48,8 +48,12 @@ DECL|macro|DBG_RES
 mdefine_line|#define DBG_RES&t;&t;17&t;/* drive reset info */
 DECL|macro|DBG_SPI
 mdefine_line|#define DBG_SPI&t;&t;18&t;/* SpinUp test */
+DECL|macro|DBG_IOS
+mdefine_line|#define DBG_IOS&t;&t;19&t;/* ioctl trace: &quot;subchannel&quot; */
+DECL|macro|DBG_IO2
+mdefine_line|#define DBG_IO2&t;&t;20&t;/* ioctl trace: general */
 DECL|macro|DBG_000
-mdefine_line|#define DBG_000&t;&t;19&t;/* unnecessary information */
+mdefine_line|#define DBG_000&t;&t;21&t;/* unnecessary information */
 multiline_comment|/*==========================================================================*/
 multiline_comment|/*==========================================================================*/
 multiline_comment|/*&n; * bits of flags_cmd_out:&n; */
@@ -264,13 +268,8 @@ DECL|macro|MIXER_CD_Volume
 mdefine_line|#define MIXER_CD_Volume&t;0x28
 multiline_comment|/*==========================================================================*/
 multiline_comment|/*&n; * use &quot;REP INSB&quot; for strobing the data in:&n; */
-macro_line|#if PATCHLEVEL&lt;15
-DECL|macro|READ_DATA
-mdefine_line|#define READ_DATA(port, buf, nr) &bslash;&n;__asm__(&quot;cld;rep;insb&quot;: :&quot;d&quot; (port),&quot;D&quot; (buf),&quot;c&quot; (nr):&quot;cx&quot;,&quot;dx&quot;,&quot;di&quot;)
-macro_line|#else
 DECL|macro|READ_DATA
 mdefine_line|#define READ_DATA(port, buf, nr) insb(port, buf, nr)
-macro_line|#endif
 multiline_comment|/*==========================================================================*/
 multiline_comment|/*&n; * to fork and execute a function after some elapsed time:&n; * one &quot;jifs&quot; unit is 10 msec.&n; */
 DECL|macro|SET_TIMER

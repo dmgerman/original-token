@@ -9,6 +9,14 @@ DECL|macro|KG_ALT
 mdefine_line|#define KG_ALT&t;&t;3
 DECL|macro|KG_ALTGR
 mdefine_line|#define KG_ALTGR&t;1
+DECL|macro|KG_SHIFTL
+mdefine_line|#define KG_SHIFTL       4
+DECL|macro|KG_SHIFTR
+mdefine_line|#define KG_SHIFTR       5
+DECL|macro|KG_CTRLL
+mdefine_line|#define KG_CTRLL        6
+DECL|macro|KG_CTRLR
+mdefine_line|#define KG_CTRLR        7
 DECL|macro|NR_KEYS
 mdefine_line|#define NR_KEYS 128
 DECL|macro|NR_KEYMAPS
@@ -237,6 +245,14 @@ DECL|macro|K_ALT
 mdefine_line|#define K_ALT&t;&t;K(KT_SHIFT,KG_ALT)
 DECL|macro|K_ALTGR
 mdefine_line|#define K_ALTGR&t;&t;K(KT_SHIFT,KG_ALTGR)
+DECL|macro|K_SHIFTL
+mdefine_line|#define K_SHIFTL        K(KT_SHIFT,KG_SHIFTL)
+DECL|macro|K_SHIFTR
+mdefine_line|#define K_SHIFTR        K(KT_SHIFT,KG_SHIFTR)
+DECL|macro|K_CTRLL
+mdefine_line|#define K_CTRLL         K(KT_SHIFT,KG_CTRLL)
+DECL|macro|K_CTRLR
+mdefine_line|#define K_CTRLR         K(KT_SHIFT,KG_CTRLR)
 DECL|macro|NR_SHIFT
 mdefine_line|#define NR_SHIFT&t;4
 DECL|macro|K_CAPSSHIFT

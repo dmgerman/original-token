@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * slip.c&t;This module implements the SLIP protocol for kernel-based&n; *&t;&t;devices like TTY.  It interfaces between a raw TTY, and the&n; *&t;&t;kernel&squot;s INET protocol layers (via DDI).&n; *&n; * Version:&t;@(#)slip.c&t;0.7.6&t;05/25/93&n; *&n; * Authors:&t;Laurence Culhane, &lt;loz@holmes.demon.co.uk&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;: &t;Sanity checks and avoid tx overruns.&n; *&t;&t;&t;&t;&t;Has a new sl-&gt;mtu field.&n; *&t;&t;Alan Cox&t;: &t;Found cause of overrun. ifconfig sl0 mtu upwards.&n; *&t;&t;&t;&t;&t;Driver now spots this and grows/shrinks its buffers(hack!).&n; *&t;&t;&t;&t;&t;Memory leak if you run out of memory setting up a slip driver fixed.&n; *&t;&t;Matt Dillon&t;:&t;Printable slip (borrowed from NET2E)&n; *&t;Pauline Middelink&t;:&t;Slip driver fixes.&n; *&t;&t;Alan Cox&t;:&t;Honours the old SL_COMPRESSED flag&n; *&t;&t;Alan Cox&t;:&t;KISS AX.25 and AXUI IP support&n; *&t;&t;Michael Riepe&t;:&t;Automatic CSLIP recognition added&n; *&t;&t;Charles Hedrick :&t;CSLIP header length problem fix.&n; */
+multiline_comment|/*&n; * slip.c&t;This module implements the SLIP protocol for kernel-based&n; *&t;&t;devices like TTY.  It interfaces between a raw TTY, and the&n; *&t;&t;kernel&squot;s INET protocol layers (via DDI).&n; *&n; * Version:&t;@(#)slip.c&t;0.7.6&t;05/25/93&n; *&n; * Authors:&t;Laurence Culhane, &lt;loz@holmes.demon.co.uk&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;: &t;Sanity checks and avoid tx overruns.&n; *&t;&t;&t;&t;&t;Has a new sl-&gt;mtu field.&n; *&t;&t;Alan Cox&t;: &t;Found cause of overrun. ifconfig sl0 mtu upwards.&n; *&t;&t;&t;&t;&t;Driver now spots this and grows/shrinks its buffers(hack!).&n; *&t;&t;&t;&t;&t;Memory leak if you run out of memory setting up a slip driver fixed.&n; *&t;&t;Matt Dillon&t;:&t;Printable slip (borrowed from NET2E)&n; *&t;Pauline Middelink&t;:&t;Slip driver fixes.&n; *&t;&t;Alan Cox&t;:&t;Honours the old SL_COMPRESSED flag&n; *&t;&t;Alan Cox&t;:&t;KISS AX.25 and AXUI IP support&n; *&t;&t;Michael Riepe&t;:&t;Automatic CSLIP recognition added&n; *&t;&t;Charles Hedrick :&t;CSLIP header length problem fix.&n; *&t;&t;Alan Cox&t;:&t;Corrected non-IP cases of the above.&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -2211,6 +2211,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+(paren
+id|sl-&gt;mode
+op_amp
+id|SL_MODE_AX25
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
 id|size
 OL
 r_sizeof
@@ -2252,6 +2263,8 @@ c_func
 id|size
 )paren
 suffix:semicolon
+)brace
+)brace
 multiline_comment|/*&t;sl_hex_dump(skb-&gt;data,skb-&gt;len);*/
 id|sl_encaps
 c_func
@@ -2263,7 +2276,6 @@ comma
 id|size
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren

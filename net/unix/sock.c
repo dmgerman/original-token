@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * UNIX&t;&t;An implementation of the AF_UNIX network domain for the&n; *&t;&t;LINUX operating system.  UNIX is implemented using the&n; *&t;&t;BSD Socket interface as the means of communication with&n; *&t;&t;the user level.&n; *&n; * Version:&t;@(#)sock.c&t;1.0.5&t;05/25/93&n; *&n; * Authors:&t;Orest Zborowski, &lt;obz@Kodak.COM&gt;&n; *&t;&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Verify Area&n; *&t;&t;NET2E Team&t;:&t;Page fault locks&n; *&n; * To Do:&n; *&n; *&t;Change to the NET2E3 code for Unix domain sockets in general. The&n; *&t;read/write logic is much better and cleaner.&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or(at your option) any later version.&n; */
+multiline_comment|/*&n; * UNIX&t;&t;An implementation of the AF_UNIX network domain for the&n; *&t;&t;LINUX operating system.  UNIX is implemented using the&n; *&t;&t;BSD Socket interface as the means of communication with&n; *&t;&t;the user level.&n; *&n; * Version:&t;@(#)sock.c&t;1.0.5&t;05/25/93&n; *&n; * Authors:&t;Orest Zborowski, &lt;obz@Kodak.COM&gt;&n; *&t;&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Verify Area&n; *&t;&t;NET2E Team&t;:&t;Page fault locks&n; *&t;Dmitry Gorodchanin&t;:&t;/proc locking&n; *&n; * To Do:&n; *&t;Some nice person is looking into Unix sockets done properly. NET3&n; *&t;will replace all of this and include datagram sockets and socket&n; *&t;options - so please stop asking me for them 8-)&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or(at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
@@ -1085,6 +1085,8 @@ r_if
 c_cond
 (paren
 id|upd-&gt;refcnt
+OG
+l_int|0
 op_logical_and
 id|upd-&gt;socket
 op_logical_and
@@ -1153,8 +1155,10 @@ id|upd-&gt;refcnt
 (brace
 id|upd-&gt;refcnt
 op_assign
+op_minus
 l_int|1
 suffix:semicolon
+multiline_comment|/* unix domain socket not yet initialised - bgm */
 id|sti
 c_func
 (paren
@@ -1462,6 +1466,11 @@ id|sock
 op_assign
 id|upd
 suffix:semicolon
+id|upd-&gt;refcnt
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* Now its complete - bgm */
 id|dprintf
 c_func
 (paren

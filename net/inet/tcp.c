@@ -2054,6 +2054,13 @@ id|skb
 r_int
 id|size
 suffix:semicolon
+r_struct
+id|tcphdr
+op_star
+id|th
+op_assign
+id|skb-&gt;h.th
+suffix:semicolon
 multiline_comment|/* length of packet (not counting length of pre-tcp headers) */
 id|size
 op_assign
@@ -2065,7 +2072,7 @@ r_int
 r_char
 op_star
 )paren
-id|skb-&gt;h.th
+id|th
 op_minus
 id|skb-&gt;data
 )paren
@@ -2088,7 +2095,7 @@ id|skb
 comma
 id|skb-&gt;data
 comma
-id|skb-&gt;h.th
+id|th
 comma
 id|skb-&gt;len
 )paren
@@ -2122,10 +2129,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|skb-&gt;h.th-&gt;syn
+id|th-&gt;syn
 op_logical_and
 op_logical_neg
-id|skb-&gt;h.th-&gt;fin
+id|th-&gt;fin
 )paren
 (brace
 id|printk
@@ -2150,7 +2157,7 @@ multiline_comment|/* We need to complete and send the packet. */
 id|tcp_send_check
 c_func
 (paren
-id|skb-&gt;h.th
+id|th
 comma
 id|sk-&gt;saddr
 comma
@@ -2163,7 +2170,17 @@ id|sk
 suffix:semicolon
 id|skb-&gt;h.seq
 op_assign
-id|sk-&gt;write_seq
+id|ntohl
+c_func
+(paren
+id|th-&gt;seq
+)paren
+op_plus
+id|size
+op_minus
+l_int|4
+op_star
+id|th-&gt;doff
 suffix:semicolon
 r_if
 c_cond
@@ -2171,7 +2188,7 @@ c_cond
 id|after
 c_func
 (paren
-id|sk-&gt;write_seq
+id|skb-&gt;h.seq
 comma
 id|sk-&gt;window_seq
 )paren

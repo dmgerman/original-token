@@ -6,7 +6,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;3c501.c:v13.13 1993 Donald Becker (becker@super.org).&bslash;n&quot;
+l_string|&quot;3c501.c: 3/3/94 Donald Becker (becker@super.org).&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/*&n;  Braindamage remaining:&n;  The 3c501 board.&n;  */
 macro_line|#include &lt;linux/config.h&gt;
@@ -1026,23 +1026,6 @@ l_int|0
 )paren
 r_return
 l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|el_debug
-OG
-l_int|2
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;%s: el_start_xmit(%d)...&quot;
-comma
-id|dev-&gt;name
-comma
-id|skb-&gt;len
-)paren
 suffix:semicolon
 multiline_comment|/* Avoid timer-based retransmission conflicts. */
 r_if

@@ -536,6 +536,10 @@ op_assign
 op_star
 id|current
 suffix:semicolon
+id|p-&gt;did_exec
+op_assign
+l_int|0
+suffix:semicolon
 id|p-&gt;kernel_stack_page
 op_assign
 l_int|0

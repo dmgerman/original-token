@@ -14,6 +14,10 @@ macro_line|#include &quot;kbd_kern.h&quot;
 macro_line|#include &quot;diacr.h&quot;
 DECL|macro|SIZE
 mdefine_line|#define SIZE(x) (sizeof(x)/sizeof((x)[0]))
+DECL|macro|KBD_REPORT_ERR
+mdefine_line|#define KBD_REPORT_ERR
+DECL|macro|KBD_REPORT_UNKN
+mdefine_line|#define KBD_REPORT_UNKN
 macro_line|#ifndef KBD_DEFMODE
 DECL|macro|KBD_DEFMODE
 mdefine_line|#define KBD_DEFMODE ((1 &lt;&lt; VC_REPEAT) | (1 &lt;&lt; VC_META))
@@ -921,6 +925,52 @@ r_goto
 id|end_kbd_intr
 suffix:semicolon
 )brace
+r_else
+r_if
+c_cond
+(paren
+id|scancode
+op_eq
+l_int|0
+)paren
+(brace
+macro_line|#ifdef KBD_REPORT_ERR
+id|printk
+c_func
+(paren
+l_string|&quot;keyboard buffer overflow&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+r_goto
+id|end_kbd_intr
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|scancode
+op_eq
+l_int|0xff
+)paren
+(brace
+macro_line|#ifdef KBD_REPORT_ERR
+id|printk
+c_func
+(paren
+l_string|&quot;keyboard error&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+id|prev_scancode
+op_assign
+l_int|0
+suffix:semicolon
+r_goto
+id|end_kbd_intr
+suffix:semicolon
+)brace
 id|tty
 op_assign
 id|TTY_TABLE
@@ -1111,6 +1161,7 @@ op_logical_neg
 id|raw_mode
 )paren
 (brace
+macro_line|#ifdef KBD_REPORT_UNKN
 id|printk
 c_func
 (paren
@@ -1119,6 +1170,7 @@ comma
 id|scancode
 )paren
 suffix:semicolon
+macro_line|#endif
 r_goto
 id|end_kbd_intr
 suffix:semicolon
@@ -1137,6 +1189,7 @@ op_logical_neg
 id|raw_mode
 )paren
 (brace
+macro_line|#ifdef KBD_REPORT_UNKN
 id|printk
 c_func
 (paren
@@ -1149,6 +1202,7 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
+macro_line|#endif
 r_goto
 id|end_kbd_intr
 suffix:semicolon
