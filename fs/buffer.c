@@ -4872,15 +4872,6 @@ op_logical_neg
 id|block
 )paren
 (brace
-id|set_bit
-c_func
-(paren
-id|BH_Uptodate
-comma
-op_amp
-id|bh-&gt;b_state
-)paren
-suffix:semicolon
 id|memset
 c_func
 (paren
@@ -6763,7 +6754,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&n;&t;&t;&t;&t; * filesystem &squot;hole&squot; represents zero-contents:&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t; * filesystem &squot;hole&squot; represents zero-contents.&n;&t;&t;&t;&t; *&n;&t;&t;&t;&t; * Don&squot;t mark the buffer up-to-date (that also implies&n;&t;&t;&t;&t; * that it is ok on disk, which it isn&squot;t), but _do_&n;&t;&t;&t;&t; * zero out the contents so that readers see the zeroes.&n;&t;&t;&t;&t; */
 id|memset
 c_func
 (paren
@@ -6772,15 +6763,6 @@ comma
 l_int|0
 comma
 id|blocksize
-)paren
-suffix:semicolon
-id|set_bit
-c_func
-(paren
-id|BH_Uptodate
-comma
-op_amp
-id|bh-&gt;b_state
 )paren
 suffix:semicolon
 )brace

@@ -184,18 +184,6 @@ op_assign
 l_int|16
 comma
 multiline_comment|/* real root device to mount after initrd */
-DECL|enumerator|KERN_JAVA_INTERPRETER
-id|KERN_JAVA_INTERPRETER
-op_assign
-l_int|19
-comma
-multiline_comment|/* path to Java(tm) interpreter */
-DECL|enumerator|KERN_JAVA_APPLETVIEWER
-id|KERN_JAVA_APPLETVIEWER
-op_assign
-l_int|20
-comma
-multiline_comment|/* path to Java(tm) appletviewer */
 DECL|enumerator|KERN_SPARC_REBOOT
 id|KERN_SPARC_REBOOT
 op_assign

@@ -75,13 +75,6 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_BINFMT_JAVA
-id|init_java_binfmt
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_BINFMT_EM86
 id|init_em86_binfmt
 c_func
@@ -3190,10 +3183,6 @@ op_assign
 id|filename
 suffix:semicolon
 id|bprm.sh_bang
-op_assign
-l_int|0
-suffix:semicolon
-id|bprm.java
 op_assign
 l_int|0
 suffix:semicolon

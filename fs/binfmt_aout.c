@@ -1880,7 +1880,7 @@ id|fd
 suffix:semicolon
 id|file
 op_assign
-id|fcheck
+id|fget
 c_func
 (paren
 id|fd
@@ -1930,6 +1930,12 @@ l_int|0
 )paren
 )paren
 (brace
+id|fput
+c_func
+(paren
+id|file
+)paren
+suffix:semicolon
 id|sys_close
 c_func
 (paren
@@ -2044,6 +2050,12 @@ id|ex
 )paren
 )paren
 (brace
+id|fput
+c_func
+(paren
+id|file
+)paren
+suffix:semicolon
 id|sys_close
 c_func
 (paren
@@ -2096,6 +2108,12 @@ comma
 id|fd_offset
 op_plus
 id|ex.a_text
+)paren
+suffix:semicolon
+id|fput
+c_func
+(paren
+id|file
 )paren
 suffix:semicolon
 id|sys_close

@@ -478,6 +478,13 @@ suffix:semicolon
 )brace
 )brace
 )brace
+id|down
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
+)paren
+suffix:semicolon
 id|retval
 op_assign
 op_minus
@@ -629,6 +636,13 @@ suffix:semicolon
 )brace
 id|out_putf
 suffix:colon
+id|up
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

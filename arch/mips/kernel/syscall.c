@@ -197,6 +197,13 @@ op_assign
 op_minus
 id|EFAULT
 suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
+)paren
+suffix:semicolon
 id|lock_kernel
 c_func
 (paren
@@ -279,6 +286,13 @@ suffix:colon
 id|unlock_kernel
 c_func
 (paren
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
 )paren
 suffix:semicolon
 r_return

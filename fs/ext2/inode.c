@@ -2136,12 +2136,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|le32_to_cpu
-c_func
-(paren
 op_star
 id|p
-)paren
 )paren
 (brace
 id|ext2_free_blocks

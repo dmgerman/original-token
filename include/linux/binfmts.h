@@ -37,11 +37,6 @@ DECL|member|sh_bang
 r_int
 id|sh_bang
 suffix:semicolon
-DECL|member|java
-r_int
-id|java
-suffix:semicolon
-multiline_comment|/* Java binary, prevent recursive invocation */
 DECL|member|dentry
 r_struct
 id|dentry
@@ -244,14 +239,6 @@ suffix:semicolon
 r_extern
 r_int
 id|init_script_binfmt
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|init_java_binfmt
 c_func
 (paren
 r_void

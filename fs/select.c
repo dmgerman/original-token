@@ -652,10 +652,9 @@ id|off
 )paren
 r_continue
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * The poll_wait routine will increment f_count if&n;&t;&t;&t; * the file is added to the wait table, so we don&squot;t&n;&t;&t;&t; * need to increment it now.&n;&t;&t;&t; */
 id|file
 op_assign
-id|fcheck
+id|fget
 c_func
 (paren
 id|i
@@ -692,6 +691,12 @@ c_func
 id|file
 comma
 id|wait
+)paren
+suffix:semicolon
+id|fput
+c_func
+(paren
+id|file
 )paren
 suffix:semicolon
 )brace
@@ -1534,13 +1539,12 @@ op_ge
 l_int|0
 )paren
 (brace
-multiline_comment|/* poll_wait increments f_count if needed */
 r_struct
 id|file
 op_star
 id|file
 op_assign
-id|fcheck
+id|fget
 c_func
 (paren
 id|fd
@@ -1588,6 +1592,12 @@ op_or
 id|POLLERR
 op_or
 id|POLLHUP
+suffix:semicolon
+id|fput
+c_func
+(paren
+id|file
+)paren
 suffix:semicolon
 )brace
 r_if
