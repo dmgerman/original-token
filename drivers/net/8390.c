@@ -363,6 +363,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;%s: transmit timed out, TX status %#2x, ISR %#2x.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -381,6 +382,7 @@ id|isr
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;%s: Possible IRQ conflict on IRQ%d?&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -394,6 +396,7 @@ multiline_comment|/* The 8390 probably hasn&squot;t gotten on the cable yet. */
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;%s: Possible network cable problem?&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -1943,6 +1946,8 @@ r_if
 c_cond
 (paren
 id|ei_debug
+OG
+l_int|1
 )paren
 id|printk
 c_func
@@ -2177,6 +2182,8 @@ r_if
 c_cond
 (paren
 id|ei_debug
+OG
+l_int|1
 )paren
 id|printk
 c_func

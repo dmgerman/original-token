@@ -174,6 +174,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|do_select
+r_static
 r_int
 id|do_select
 c_func

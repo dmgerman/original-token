@@ -896,6 +896,11 @@ id|minor
 )paren
 )paren
 suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

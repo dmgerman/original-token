@@ -185,6 +185,13 @@ id|backlog
 op_assign
 l_int|NULL
 suffix:semicolon
+DECL|variable|backlog_size
+r_static
+r_int
+id|backlog_size
+op_assign
+l_int|0
+suffix:semicolon
 DECL|variable|ip_bcast
 r_static
 r_int
@@ -1594,6 +1601,12 @@ op_star
 id|skb
 )paren
 (brace
+r_static
+r_int
+id|dropping
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/* Set any necessary flags. */
 id|skb-&gt;sk
 op_assign
@@ -1603,6 +1616,46 @@ id|skb-&gt;free
 op_assign
 l_int|1
 suffix:semicolon
+multiline_comment|/* check that we aren&squot;t oevrdoing things.. */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|backlog_size
+)paren
+id|dropping
+op_assign
+l_int|0
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|backlog_size
+OG
+l_int|100
+)paren
+id|dropping
+op_assign
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dropping
+)paren
+(brace
+id|kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|FREE_READ
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 multiline_comment|/* and add it to the &quot;backlog&quot; queue. */
 id|IS_SKB
 c_func
@@ -1618,6 +1671,9 @@ id|backlog
 comma
 id|skb
 )paren
+suffix:semicolon
+id|backlog_size
+op_increment
 suffix:semicolon
 multiline_comment|/* If any packet arrived, mark it for processing. */
 r_if
@@ -2071,6 +2127,9 @@ op_ne
 l_int|NULL
 )paren
 (brace
+id|backlog_size
+op_decrement
+suffix:semicolon
 id|nitcount
 op_assign
 id|dev_nit

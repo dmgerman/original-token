@@ -1142,6 +1142,11 @@ id|TW_Empty
 suffix:semicolon
 )brace
 )brace
+id|FPU_EIP
+op_assign
+id|FPU_ORIG_EIP
+suffix:semicolon
+multiline_comment|/* Point to current FPU instruction. */
 id|RE_ENTRANT_CHECK_OFF
 suffix:semicolon
 id|current-&gt;tss.trap_no
