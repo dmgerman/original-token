@@ -18,12 +18,12 @@ macro_line|#ifdef CONFIG_HIPPI
 macro_line|#include &lt;linux/hippidevice.h&gt;
 macro_line|#endif
 macro_line|#include &lt;net/pkt_sched.h&gt;
+macro_line|#include &lt;net/scm.h&gt;
 macro_line|#ifdef CONFIG_BRIDGE
 macro_line|#include &lt;net/br.h&gt;
 macro_line|#endif
 macro_line|#ifdef CONFIG_INET
 macro_line|#include &lt;linux/ip.h&gt;
-macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;net/protocol.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
@@ -31,9 +31,7 @@ macro_line|#include &lt;net/udp.h&gt;
 macro_line|#include &lt;net/tcp.h&gt;
 macro_line|#include &lt;net/icmp.h&gt;
 macro_line|#include &lt;net/route.h&gt;
-macro_line|#include &lt;net/scm.h&gt;
 macro_line|#include &lt;net/inet_common.h&gt;
-macro_line|#include &lt;net/pkt_sched.h&gt;
 macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/mroute.h&gt;
 macro_line|#include &lt;linux/igmp.h&gt;
@@ -55,7 +53,6 @@ macro_line|#include &lt;linux/in6.h&gt;
 macro_line|#include &lt;linux/icmpv6.h&gt;
 macro_line|#include &lt;net/ipv6.h&gt;
 macro_line|#include &lt;net/ndisc.h&gt;
-macro_line|#include &lt;net/dst.h&gt;
 macro_line|#include &lt;net/transp_v6.h&gt;
 r_extern
 r_int
@@ -79,7 +76,6 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#endif
 macro_line|#include &lt;linux/rtnetlink.h&gt;
-macro_line|#include &lt;net/scm.h&gt;
 macro_line|#if&t;defined(CONFIG_ULTRA)&t;||&t;defined(CONFIG_WD80x3)&t;&t;|| &bslash;&n;&t;defined(CONFIG_EL2)&t;||&t;defined(CONFIG_NE2000)&t;&t;|| &bslash;&n;&t;defined(CONFIG_E2100)&t;||&t;defined(CONFIG_HPLAN_PLUS)&t;|| &bslash;&n;&t;defined(CONFIG_HPLAN)&t;||&t;defined(CONFIG_AC3200)&t;&t;|| &bslash;&n;&t;defined(CONFIG_ES3210)&t;||&t;defined(CONFIG_ULTRA32)&t;&t;|| &bslash;&n;&t;defined(CONFIG_LNE390)&t;||&t;defined(CONFIG_NE3210)&t;&t;|| &bslash;&n;&t;defined(CONFIG_NE2K_PCI) ||&t;defined(CONFIG_APNE)&t;&t;|| &bslash;&n;&t;defined(CONFIG_DAYNAPORT)
 macro_line|#include &quot;../drivers/net/8390.h&quot;
 macro_line|#endif
@@ -140,10 +136,6 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_ATALK_MODULE
 macro_line|#include &lt;net/sock.h&gt;
-macro_line|#include &lt;net/dst.h&gt;
-macro_line|#include &lt;net/checksum.h&gt;
-macro_line|#include &lt;linux/etherdevice.h&gt;
-macro_line|#include &lt;net/pkt_sched.h&gt;
 macro_line|#endif
 macro_line|#ifdef CONFIG_SYSCTL
 r_extern

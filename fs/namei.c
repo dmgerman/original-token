@@ -440,7 +440,7 @@ op_minus
 id|EACCES
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * get_write_access() gets write permission for a file.&n; * put_write_access() releases this write permission.&n; * This is used for regular files.&n; * We cannot support write (and maybe mmap read-write shared) accesses and&n; * MAP_DENYWRITE mmappings simultaneously. The i_writecount field of an inode&n; * can have the following values:&n; * 0: no writers, no VM_DENYWRITE mappings&n; * &lt; 0: (-i_writecount) vm_area_structs with VM_DENYWRITE set exist&n; * &gt; 0: (i_writecount) users are writing to the file.&n; */
+multiline_comment|/*&n; * get_write_access() gets write permission for a file.&n; * put_write_access() releases this write permission.&n; * This is used for regular files.&n; * We cannot support write (and maybe mmap read-write shared) accesses and&n; * MAP_DENYWRITE mmappings simultaneously. The i_writecount field of an inode&n; * can have the following values:&n; * 0: no writers, no VM_DENYWRITE mappings&n; * &lt; 0: (-i_writecount) vm_area_structs with VM_DENYWRITE set exist&n; * &gt; 0: (i_writecount) users are writing to the file.&n; *&n; * WARNING: as soon as we will move get_write_access(), do_mmap() or&n; * prepare_binfmt() out of the big lock we will need a spinlock protecting&n; * the checks in all 3. For the time being it is not needed.&n; */
 DECL|function|get_write_access
 r_int
 id|get_write_access
@@ -455,7 +455,12 @@ id|inode
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|inode-&gt;i_writecount
+)paren
 OL
 l_int|0
 )paren
@@ -463,8 +468,12 @@ r_return
 op_minus
 id|ETXTBSY
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|inode-&gt;i_writecount
-op_increment
+)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -481,8 +490,12 @@ op_star
 id|inode
 )paren
 (brace
+id|atomic_dec
+c_func
+(paren
+op_amp
 id|inode-&gt;i_writecount
-op_decrement
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * &quot;.&quot; and &quot;..&quot; are special - &quot;..&quot; especially so because it has to be able&n; * to know about the current root directory and parent relationships&n; */

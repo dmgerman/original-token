@@ -3120,7 +3120,7 @@ c_func
 id|nr-&gt;nr_firstnet
 )paren
 OG
-l_int|256
+l_int|4096
 )paren
 (brace
 id|printk
@@ -3400,6 +3400,19 @@ id|EINVAL
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|atif
+op_eq
+l_int|NULL
+)paren
+r_return
+(paren
+op_minus
+id|EADDRNOTAVAIL
+)paren
+suffix:semicolon
 multiline_comment|/*&n;                         * for now, we only support proxy AARP on ELAP;&n;                         * we should be able to do it for LocalTalk, too.&n;                         */
 r_if
 c_cond

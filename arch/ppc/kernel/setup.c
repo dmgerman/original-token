@@ -27,7 +27,6 @@ macro_line|#include &lt;asm/8xx_immap.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/bootx.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
-macro_line|#include &lt;asm/ide.h&gt;
 r_extern
 r_void
 id|pmac_init

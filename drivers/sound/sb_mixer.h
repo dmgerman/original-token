@@ -64,6 +64,9 @@ DECL|macro|LEFT_CHN
 mdefine_line|#define LEFT_CHN&t;0
 DECL|macro|RIGHT_CHN
 mdefine_line|#define RIGHT_CHN&t;1
+multiline_comment|/*&n; * 3DSE register of AWE32/64&n; */
+DECL|macro|AWE_3DSE
+mdefine_line|#define AWE_3DSE&t;0x90
 multiline_comment|/*&n; * Mixer registers of ALS007&n; */
 DECL|macro|ALS007_RECORD_SRC
 mdefine_line|#define ALS007_RECORD_SRC&t;0x6c

@@ -40,9 +40,7 @@ macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/tqueue.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
-macro_line|#include &lt;linux/malloc.h&gt;&t;/* for kmalloc() */
 macro_line|#if LINUX_VERSION_CODE &lt; 0x20100
 macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#else

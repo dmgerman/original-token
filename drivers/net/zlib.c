@@ -20687,9 +20687,6 @@ multiline_comment|/* --- inffast.c */
 multiline_comment|/* +++ zutil.c */
 multiline_comment|/* zutil.c -- target dependent utility functions for the compression library&n; * Copyright (C) 1995-1996 Jean-loup Gailly.&n; * For conditions of distribution and use, see copyright notice in zlib.h &n; */
 multiline_comment|/* From: zutil.c,v 1.17 1996/07/24 13:41:12 me Exp $ */
-macro_line|#ifdef DEBUG_ZLIB
-macro_line|#include &lt;stdio.h&gt;
-macro_line|#endif
 multiline_comment|/* #include &quot;zutil.h&quot; */
 macro_line|#ifndef NO_DUMMY_DECL
 DECL|struct|internal_state

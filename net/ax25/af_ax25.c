@@ -1376,6 +1376,17 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ax25_ctl.digi_count
+OG
+id|AX25_MAX_DIGIS
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
 id|digi.ndigi
 op_assign
 id|ax25_ctl.digi_count

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: atp870u.c,v 1.0 1997/05/07 15:22:00 root Exp root $&n; *  linux/kernel/atp870u.c&n; *&n; *  Copyright (C) 1997&t;Wu Ching Chen&n; *  2.1.x update (C) 1998  Krzysztof G. Baranowski&n; *&n; */
+multiline_comment|/* $Id: atp870u.c,v 1.0 1997/05/07 15:22:00 root Exp root $&n; *  linux/kernel/atp870u.c&n; *&n; *  Copyright (C) 1997&t;Wu Ching Chen&n; *  2.1.x update (C) 1998  Krzysztof G. Baranowski&n; *   &n; * Marcelo Tosatti &lt;marcelo@conectiva.com.br&gt; : SMP fixes &n; * &n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &quot;scsi.h&quot;
@@ -476,6 +477,10 @@ op_star
 id|regs
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_int
 r_int
 r_int
@@ -1932,12 +1937,30 @@ suffix:semicolon
 multiline_comment|/*&t;  if ( errstus == 0x02 )&n;&t;  {&n;&t;     tmport +=0x10;&n;&t;     if ((inb(tmport) &amp; 0x80) != 0)&n;&t;     {&n;&t;&t;printk(&quot; autosense &quot;);&n;&t;     }&n;&t;     tmport -=0x09;&n;&t;     outb(0,tmport);&n;&t;     tmport=workportu+0x3a;&n;&t;     outb((unsigned char)(inb(tmport) | 0x10),tmport);&n;&t;     tmport -= 0x39;&n;&n;&t;     outb(0x08,tmport++);&n;&t;     outb(0x7f,tmport++);&n;&t;     outb(0x03,tmport++);&n;&t;     outb(0x00,tmport++);&n;&t;     outb(0x00,tmport++);&n;&t;     outb(0x00,tmport++);&n;&t;     outb(0x0e,tmport++);&n;&t;     outb(0x00,tmport);&n;&t;     tmport+=0x07;&n;&t;     outb(0x00,tmport++);&n;&t;     tmport++;&n;&t;     outb(devspu[h][workrequ-&gt;target],tmport++);&n;&t;     outb(0x00,tmport++);&n;&t;     outb(0x00,tmport++);&n;&t;     outb(0x0e,tmport++);&n;&t;     tmport+=0x03;&n;&t;     outb(0x09,tmport);&n;&t;     tmport+=0x07;&n;&t;     i=0;&n;&t;     adrcntu=(unsigned long)(&amp;workrequ-&gt;sense_buffer[0]);&n;get_sens:&n;&t;     j=inb(tmport);&n;&t;     if ((j &amp; 0x01) != 0)&n;&t;     {&n;&t;&t;tmport-=0x06;&n;&t;&t;(unsigned char)(((caddr_t) adrcntu)[i++])=inb(tmport);&n;&t;&t;tmport+=0x06;&n;&t;&t;goto get_sens;&n;&t;     }&n;&t;     if ((j &amp; 0x80) == 0)&n;&t;     {&n;&t;&t;goto get_sens;&n;&t;     }&n;&t;     if ((j &amp; 0x40) == 0)&n;&t;     {&n;&t;&t;tmport-=0x08;&n;&t;&t;i=inb(tmport);&n;&t;     }&n;&t;     tmport=workportu+0x3a;&n;&t;     outb((unsigned char)(inb(tmport) &amp; 0xef),tmport);&n;&t;     tmport=workportu+0x01;&n;&t;     outb(0x2c,tmport);&n;&t;     tmport += 0x15;&n;&t;     outb(0x80,tmport);&n;&t;  }   */
 id|go_42
 suffix:colon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 (paren
 op_star
 id|workrequ-&gt;scsi_done
 )paren
 (paren
 id|workrequ
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 id|curr_req

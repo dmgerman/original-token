@@ -1259,7 +1259,6 @@ suffix:semicolon
 multiline_comment|/* --------------------------------------------------------------------- */
 multiline_comment|/*&n; * ===================== profiling =======================================&n; */
 macro_line|#ifdef __i386__
-macro_line|#include &lt;asm/processor.h&gt;
 DECL|macro|HAS_RDTSC
 mdefine_line|#define HAS_RDTSC (current_cpu_data.x86_capability &amp; X86_FEATURE_TSC)
 multiline_comment|/*&n; * only do 32bit cycle counter arithmetic; we hope we won&squot;t overflow.&n; * in fact, overflowing modems would require over 2THz CPU clock speeds :-)&n; */

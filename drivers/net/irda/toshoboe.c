@@ -1846,7 +1846,7 @@ id|OBOE_XMTT
 op_minus
 id|OBOE_XMTT_OFFSET
 suffix:semicolon
-macro_line|#ifdef 0
+macro_line|#if 0
 id|self-&gt;rxs
 op_assign
 l_int|0
@@ -1856,7 +1856,7 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef 0
+macro_line|#if 0
 id|self-&gt;rxs
 op_assign
 id|RX_SLOTS
@@ -2801,14 +2801,12 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-(paren
+DECL|function|toshoboe_init
 r_int
+id|__init
 id|toshoboe_init
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct

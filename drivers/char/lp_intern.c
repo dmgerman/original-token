@@ -13,7 +13,6 @@ macro_line|#include &lt;asm/amigaints.h&gt;
 macro_line|#endif
 macro_line|#ifdef CONFIG_ATARI
 macro_line|#include &lt;linux/delay.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/atarihw.h&gt;
 macro_line|#include &lt;asm/atariints.h&gt;
 macro_line|#endif

@@ -3546,6 +3546,7 @@ id|ADPT_BASE
 op_eq
 id|wBASE
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -3563,6 +3564,7 @@ r_return
 id|FAILURE
 )paren
 suffix:semicolon
+)brace
 r_else
 r_if
 c_cond

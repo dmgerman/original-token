@@ -3904,6 +3904,16 @@ l_int|0x2000
 )paren
 op_logical_and
 (paren
+id|HWIF
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|udma_four
+)paren
+op_logical_and
+(paren
 id|id-&gt;dma_ultra
 op_amp
 (paren

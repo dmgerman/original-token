@@ -632,8 +632,20 @@ l_string|&quot;HAGIWARA HPC&quot;
 comma
 l_int|12
 )paren
-)paren
 multiline_comment|/* Hagiwara */
+op_logical_or
+op_logical_neg
+id|strncmp
+c_func
+(paren
+id|id-&gt;model
+comma
+l_string|&quot;ATA_FLASH&quot;
+comma
+l_int|9
+)paren
+)paren
+multiline_comment|/* Simple Tech */
 (brace
 r_return
 l_int|1
@@ -5805,7 +5817,7 @@ comma
 id|drive-&gt;name
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *  need something here for HX PIIX3 UDMA and HPT343.......AMH&n;&t; *  irq timeout: status=0x58 { DriveReady SeekComplete DataRequest }&n;&t; */
+multiline_comment|/*&n;&t; *  need something here for HPT34X.......AMH&n;&t; *  irq timeout: status=0x58 { DriveReady SeekComplete DataRequest }&n;&t; */
 )brace
 id|spin_unlock_irqrestore
 c_func
@@ -8248,6 +8260,10 @@ suffix:semicolon
 id|hwif-&gt;proc
 op_assign
 id|old_hwif.proc
+suffix:semicolon
+id|hwif-&gt;udma_four
+op_assign
+id|old_hwif.udma_four
 suffix:semicolon
 id|hwif-&gt;chipset
 op_assign
@@ -11023,7 +11039,41 @@ l_int|2
 op_eq
 l_int|3
 )paren
-op_logical_and
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|HWIF
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|udma_four
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s: Speed warnings UDMA 3/4 is not functional.&bslash;n&quot;
+comma
+id|HWIF
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|name
+)paren
+suffix:semicolon
+r_goto
+m_abort
+suffix:semicolon
+)brace
+r_if
+c_cond
 (paren
 (paren
 id|drive-&gt;id-&gt;word93
@@ -11032,7 +11082,6 @@ l_int|0x2000
 )paren
 op_eq
 l_int|0
-)paren
 )paren
 (brace
 id|printk
@@ -11046,6 +11095,7 @@ suffix:semicolon
 r_goto
 m_abort
 suffix:semicolon
+)brace
 )brace
 id|err
 op_assign
@@ -12367,7 +12417,7 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* zero = nothing matched */
 )brace
-multiline_comment|/*&n; * ide_setup() gets called VERY EARLY during initialization,&n; * to handle kernel &quot;command line&quot; strings beginning with &quot;hdx=&quot;&n; * or &quot;ide&quot;.  Here is the complete set currently supported:&n; *&n; * &quot;hdx=&quot;  is recognized for all &quot;x&quot; from &quot;a&quot; to &quot;h&quot;, such as &quot;hdc&quot;.&n; * &quot;idex=&quot; is recognized for all &quot;x&quot; from &quot;0&quot; to &quot;3&quot;, such as &quot;ide1&quot;.&n; *&n; * &quot;hdx=noprobe&quot;&t;: drive may be present, but do not probe for it&n; * &quot;hdx=none&quot;&t;&t;: drive is NOT present, ignore cmos and do not probe&n; * &quot;hdx=nowerr&quot;&t;&t;: ignore the WRERR_STAT bit on this drive&n; * &quot;hdx=cdrom&quot;&t;&t;: drive is present, and is a cdrom drive&n; * &quot;hdx=cyl,head,sect&quot;&t;: disk drive is present, with specified geometry&n; * &quot;hdx=autotune&quot;&t;: driver will attempt to tune interface speed&n; *&t;&t;&t;&t;to the fastest PIO mode supported,&n; *&t;&t;&t;&t;if possible for this drive only.&n; *&t;&t;&t;&t;Not fully supported by all chipset types,&n; *&t;&t;&t;&t;and quite likely to cause trouble with&n; *&t;&t;&t;&t;older/odd IDE drives.&n; *&n; * &quot;hdx=slow&quot;&t;&t;: insert a huge pause after each access to the data&n; *&t;&t;&t;&t;port. Should be used only as a last resort.&n; *&n; * &quot;hdx=swapdata&quot;&t;: when the drive is a disk, byte swap all data&n; * &quot;hdx=bswap&quot;&t;&t;: same as above..........&n; *&n; * &quot;idebus=xx&quot;&t;&t;: inform IDE driver of VESA/PCI bus speed in MHz,&n; *&t;&t;&t;&t;where &quot;xx&quot; is between 20 and 66 inclusive,&n; *&t;&t;&t;&t;used when tuning chipset PIO modes.&n; *&t;&t;&t;&t;For PCI bus, 25 is correct for a P75 system,&n; *&t;&t;&t;&t;30 is correct for P90,P120,P180 systems,&n; *&t;&t;&t;&t;and 33 is used for P100,P133,P166 systems.&n; *&t;&t;&t;&t;If in doubt, use idebus=33 for PCI.&n; *&t;&t;&t;&t;As for VLB, it is safest to not specify it.&n; *&n; * &quot;idex=noprobe&quot;&t;: do not attempt to access/use this interface&n; * &quot;idex=base&quot;&t;&t;: probe for an interface at the addr specified,&n; *&t;&t;&t;&t;where &quot;base&quot; is usually 0x1f0 or 0x170&n; *&t;&t;&t;&t;and &quot;ctl&quot; is assumed to be &quot;base&quot;+0x206&n; * &quot;idex=base,ctl&quot;&t;: specify both base and ctl&n; * &quot;idex=base,ctl,irq&quot;&t;: specify base, ctl, and irq number&n; * &quot;idex=autotune&quot;&t;: driver will attempt to tune interface speed&n; *&t;&t;&t;&t;to the fastest PIO mode supported,&n; *&t;&t;&t;&t;for all drives on this interface.&n; *&t;&t;&t;&t;Not fully supported by all chipset types,&n; *&t;&t;&t;&t;and quite likely to cause trouble with&n; *&t;&t;&t;&t;older/odd IDE drives.&n; * &quot;idex=noautotune&quot;&t;: driver will NOT attempt to tune interface speed&n; *&t;&t;&t;&t;This is the default for most chipsets,&n; *&t;&t;&t;&t;except the cmd640.&n; * &quot;idex=serialize&quot;&t;: do not overlap operations on idex and ide(x^1)&n; * &quot;idex=four&quot;&t;&t;: four drives on idex and ide(x^1) share same ports&n; * &quot;idex=reset&quot;&t;&t;: reset interface before first use&n; * &quot;idex=dma&quot;&t;&t;: enable DMA by default on both drives if possible&n; *&n; * &quot;splitfifo=betweenChan&quot;&n; *&t;&t;&t;: FIFO Configuration of VIA 82c586(&lt;nothing&gt;,&quot;A&quot;or&quot;B&quot;).&n; *                                 --see what follows...&n; * &quot;splitfifo=betweenChan,thresholdprim,thresholdsec&quot;&n; *&t;&t;&t;: FIFO Configuration of VIA 82c586(&lt;nothing&gt;,&quot;A&quot; or &quot;B&quot;).&n; *&t;&t;&t;&t;betweenChan = 1(all FIFO&squot;s to primary channel)&n; *                                          , 2(all FIFO&squot;s to secondary channel)&n; *                                          , 3 or 4(evenly shared between them).&n; *&t;&t;&t;&t;note: without FIFO, a channel is (u)dma disabled!&n; *&t;&t;&t;&t;thresholdprim = 4, 3, 2 or 1&n; *&t;&t;&t;&t;&t;&t;(standing for 1, 3/4, 1/2, 1/4).&n; *                                    Sets the threshold of FIFO to begin dma&n; *                                    transfer on the primary channel.&n; *&t;&t;&t;&t;thresholdsec = cf upper, but for secondary channel.&n; *&n; * The following are valid ONLY on ide0, (except dc4030)&n; * and the defaults for the base,ctl ports must not be altered.&n; *&n; * &quot;ide0=dtc2278&quot;&t;: probe/support DTC2278 interface&n; * &quot;ide0=ht6560b&quot;&t;: probe/support HT6560B interface&n; * &quot;ide0=cmd640_vlb&quot;&t;: *REQUIRED* for VLB cards with the CMD640 chip&n; *&t;&t;&t;  (not for PCI -- automatically detected)&n; * &quot;ide0=qd6580&quot;&t;: probe/support qd6580 interface&n; * &quot;ide0=ali14xx&quot;&t;: probe/support ali14xx chipsets (ALI M1439, M1443, M1445)&n; * &quot;ide0=umc8672&quot;&t;: probe/support umc8672 chipsets&n; * &quot;idex=dc4030&quot;&t;: probe/support Promise DC4030VL interface&n; */
+multiline_comment|/*&n; * ide_setup() gets called VERY EARLY during initialization,&n; * to handle kernel &quot;command line&quot; strings beginning with &quot;hdx=&quot;&n; * or &quot;ide&quot;.  Here is the complete set currently supported:&n; *&n; * &quot;hdx=&quot;  is recognized for all &quot;x&quot; from &quot;a&quot; to &quot;h&quot;, such as &quot;hdc&quot;.&n; * &quot;idex=&quot; is recognized for all &quot;x&quot; from &quot;0&quot; to &quot;3&quot;, such as &quot;ide1&quot;.&n; *&n; * &quot;hdx=noprobe&quot;&t;: drive may be present, but do not probe for it&n; * &quot;hdx=none&quot;&t;&t;: drive is NOT present, ignore cmos and do not probe&n; * &quot;hdx=nowerr&quot;&t;&t;: ignore the WRERR_STAT bit on this drive&n; * &quot;hdx=cdrom&quot;&t;&t;: drive is present, and is a cdrom drive&n; * &quot;hdx=cyl,head,sect&quot;&t;: disk drive is present, with specified geometry&n; * &quot;hdx=autotune&quot;&t;: driver will attempt to tune interface speed&n; *&t;&t;&t;&t;to the fastest PIO mode supported,&n; *&t;&t;&t;&t;if possible for this drive only.&n; *&t;&t;&t;&t;Not fully supported by all chipset types,&n; *&t;&t;&t;&t;and quite likely to cause trouble with&n; *&t;&t;&t;&t;older/odd IDE drives.&n; *&n; * &quot;hdx=slow&quot;&t;&t;: insert a huge pause after each access to the data&n; *&t;&t;&t;&t;port. Should be used only as a last resort.&n; *&n; * &quot;hdx=swapdata&quot;&t;: when the drive is a disk, byte swap all data&n; * &quot;hdx=bswap&quot;&t;&t;: same as above..........&n; * &quot;hdx=flash&quot;&t;&t;: allows for more than one ata_flash disk to be&n; *&t;&t;&t;&t;registered. In most cases, only one device&n; *&t;&t;&t;&t;will be present.&n; *&n; * &quot;idebus=xx&quot;&t;&t;: inform IDE driver of VESA/PCI bus speed in MHz,&n; *&t;&t;&t;&t;where &quot;xx&quot; is between 20 and 66 inclusive,&n; *&t;&t;&t;&t;used when tuning chipset PIO modes.&n; *&t;&t;&t;&t;For PCI bus, 25 is correct for a P75 system,&n; *&t;&t;&t;&t;30 is correct for P90,P120,P180 systems,&n; *&t;&t;&t;&t;and 33 is used for P100,P133,P166 systems.&n; *&t;&t;&t;&t;If in doubt, use idebus=33 for PCI.&n; *&t;&t;&t;&t;As for VLB, it is safest to not specify it.&n; *&n; * &quot;idex=noprobe&quot;&t;: do not attempt to access/use this interface&n; * &quot;idex=base&quot;&t;&t;: probe for an interface at the addr specified,&n; *&t;&t;&t;&t;where &quot;base&quot; is usually 0x1f0 or 0x170&n; *&t;&t;&t;&t;and &quot;ctl&quot; is assumed to be &quot;base&quot;+0x206&n; * &quot;idex=base,ctl&quot;&t;: specify both base and ctl&n; * &quot;idex=base,ctl,irq&quot;&t;: specify base, ctl, and irq number&n; * &quot;idex=autotune&quot;&t;: driver will attempt to tune interface speed&n; *&t;&t;&t;&t;to the fastest PIO mode supported,&n; *&t;&t;&t;&t;for all drives on this interface.&n; *&t;&t;&t;&t;Not fully supported by all chipset types,&n; *&t;&t;&t;&t;and quite likely to cause trouble with&n; *&t;&t;&t;&t;older/odd IDE drives.&n; * &quot;idex=noautotune&quot;&t;: driver will NOT attempt to tune interface speed&n; *&t;&t;&t;&t;This is the default for most chipsets,&n; *&t;&t;&t;&t;except the cmd640.&n; * &quot;idex=serialize&quot;&t;: do not overlap operations on idex and ide(x^1)&n; * &quot;idex=four&quot;&t;&t;: four drives on idex and ide(x^1) share same ports&n; * &quot;idex=reset&quot;&t;&t;: reset interface before first use&n; * &quot;idex=dma&quot;&t;&t;: enable DMA by default on both drives if possible&n; *&n; * &quot;splitfifo=betweenChan&quot;&n; *&t;&t;&t;: FIFO Configuration of VIA 82c586(&lt;nothing&gt;,&quot;A&quot;or&quot;B&quot;).&n; *                                 --see what follows...&n; * &quot;splitfifo=betweenChan,thresholdprim,thresholdsec&quot;&n; *&t;&t;&t;: FIFO Configuration of VIA 82c586(&lt;nothing&gt;,&quot;A&quot; or &quot;B&quot;).&n; *&t;&t;&t;&t;betweenChan = 1(all FIFO&squot;s to primary channel)&n; *                                          , 2(all FIFO&squot;s to secondary channel)&n; *                                          , 3 or 4(evenly shared between them).&n; *&t;&t;&t;&t;note: without FIFO, a channel is (u)dma disabled!&n; *&t;&t;&t;&t;thresholdprim = 4, 3, 2 or 1&n; *&t;&t;&t;&t;&t;&t;(standing for 1, 3/4, 1/2, 1/4).&n; *                                    Sets the threshold of FIFO to begin dma&n; *                                    transfer on the primary channel.&n; *&t;&t;&t;&t;thresholdsec = cf upper, but for secondary channel.&n; *&n; * The following are valid ONLY on ide0, (except dc4030)&n; * and the defaults for the base,ctl ports must not be altered.&n; *&n; * &quot;ide0=dtc2278&quot;&t;: probe/support DTC2278 interface&n; * &quot;ide0=ht6560b&quot;&t;: probe/support HT6560B interface&n; * &quot;ide0=cmd640_vlb&quot;&t;: *REQUIRED* for VLB cards with the CMD640 chip&n; *&t;&t;&t;  (not for PCI -- automatically detected)&n; * &quot;ide0=qd6580&quot;&t;: probe/support qd6580 interface&n; * &quot;ide0=ali14xx&quot;&t;: probe/support ali14xx chipsets (ALI M1439, M1443, M1445)&n; * &quot;ide0=umc8672&quot;&t;: probe/support umc8672 chipsets&n; * &quot;idex=dc4030&quot;&t;: probe/support Promise DC4030VL interface&n; */
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -12535,6 +12585,8 @@ comma
 l_string|&quot;swapdata&quot;
 comma
 l_string|&quot;bswap&quot;
+comma
+l_string|&quot;flash&quot;
 comma
 l_int|NULL
 )brace
@@ -12750,6 +12802,17 @@ op_minus
 l_int|10
 suffix:colon
 id|drive-&gt;bswap
+op_assign
+l_int|1
+suffix:semicolon
+r_goto
+id|done
+suffix:semicolon
+r_case
+op_minus
+l_int|11
+suffix:colon
+id|drive-&gt;ata_flash
 op_assign
 l_int|1
 suffix:semicolon

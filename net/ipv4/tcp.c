@@ -3286,7 +3286,6 @@ l_int|0
 op_logical_and
 id|msg-&gt;msg_name
 )paren
-(brace
 id|tp-&gt;af_specific
 op_member_access_from_pointer
 id|addr2sockaddr
@@ -3302,7 +3301,6 @@ op_star
 id|msg-&gt;msg_name
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren

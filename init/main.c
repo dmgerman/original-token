@@ -1933,6 +1933,22 @@ id|ints
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_CPQ_DA
+r_extern
+r_void
+id|cpqarray_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#if defined(CONFIG_SYSVIPC)
 r_extern
 r_void
@@ -3783,6 +3799,14 @@ macro_line|#ifdef CONFIG_LTPC
 l_string|&quot;ltpc=&quot;
 comma
 id|ltpc_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_CPQ_DA
+(brace
+l_string|&quot;smart2=&quot;
+comma
+id|cpqarray_setup
 )brace
 comma
 macro_line|#endif

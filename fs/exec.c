@@ -2177,7 +2177,12 @@ multiline_comment|/* better not execute files which are being written to */
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|inode-&gt;i_writecount
+)paren
 OG
 l_int|0
 )paren

@@ -295,7 +295,6 @@ DECL|macro|signpositive
 mdefine_line|#define signpositive(a) ( (signbyte(a) &amp; 0x80) == 0 )
 DECL|macro|signnegative
 mdefine_line|#define signnegative(a) (signbyte(a) &amp; 0x80)
-macro_line|#include &quot;fpu_proto.h&quot;
 DECL|function|reg_copy
 r_static
 r_inline

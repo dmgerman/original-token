@@ -10,16 +10,16 @@ DECL|macro|SNDCARD_VIDC
 mdefine_line|#define SNDCARD_VIDC&t;&t;&t;28&t;/* ARMs VIDC */
 DECL|macro|SNDCARD_SBPNP
 mdefine_line|#define SNDCARD_SBPNP&t;&t;&t;29
-DECL|macro|SNDCARD_OPL3SA1
-mdefine_line|#define SNDCARD_OPL3SA1&t;&t;&t;38
-DECL|macro|SNDCARD_OPL3SA1_SB
-mdefine_line|#define SNDCARD_OPL3SA1_SB&t;&t;39
-DECL|macro|SNDCARD_OPL3SA1_MPU
-mdefine_line|#define SNDCARD_OPL3SA1_MPU&t;&t;40
 DECL|macro|SNDCARD_SOFTOSS
 mdefine_line|#define SNDCARD_SOFTOSS&t;&t;&t;36
 DECL|macro|SNDCARD_VMIDI
 mdefine_line|#define SNDCARD_VMIDI&t;&t;&t;37
+DECL|macro|SNDCARD_OPL3SA1
+mdefine_line|#define SNDCARD_OPL3SA1&t;&t;&t;38&t;/* Note: clash in msnd.h */
+DECL|macro|SNDCARD_OPL3SA1_SB
+mdefine_line|#define SNDCARD_OPL3SA1_SB&t;&t;39
+DECL|macro|SNDCARD_OPL3SA1_MPU
+mdefine_line|#define SNDCARD_OPL3SA1_MPU&t;&t;40
 DECL|macro|SNDCARD_WAVEFRONT
 mdefine_line|#define SNDCARD_WAVEFRONT               41
 DECL|macro|SNDCARD_OPL3SA2
@@ -28,119 +28,10 @@ DECL|macro|SNDCARD_OPL3SA2_MPU
 mdefine_line|#define SNDCARD_OPL3SA2_MPU             43
 DECL|macro|SNDCARD_WAVEARTIST
 mdefine_line|#define SNDCARD_WAVEARTIST&t;&t;44
+DECL|macro|SNDCARD_OPL3SA2_MSS
+mdefine_line|#define SNDCARD_OPL3SA2_MSS             45&t;/* Originally missed */
 DECL|macro|SNDCARD_AD1816
 mdefine_line|#define SNDCARD_AD1816                  88
-r_void
-id|attach_opl3sa_wss
-(paren
-r_struct
-id|address_info
-op_star
-id|hw_config
-)paren
-suffix:semicolon
-r_int
-id|probe_opl3sa_wss
-(paren
-r_struct
-id|address_info
-op_star
-id|hw_config
-)paren
-suffix:semicolon
-r_void
-id|attach_opl3sa_sb
-(paren
-r_struct
-id|address_info
-op_star
-id|hw_config
-)paren
-suffix:semicolon
-r_int
-id|probe_opl3sa_sb
-(paren
-r_struct
-id|address_info
-op_star
-id|hw_config
-)paren
-suffix:semicolon
-r_void
-id|attach_opl3sa_mpu
-(paren
-r_struct
-id|address_info
-op_star
-id|hw_config
-)paren
-suffix:semicolon
-r_int
-id|probe_opl3sa_mpu
-(paren
-r_struct
-id|address_info
-op_star
-id|hw_config
-)paren
-suffix:semicolon
-r_void
-id|unload_opl3sa_wss
-c_func
-(paren
-r_struct
-id|address_info
-op_star
-id|hw_info
-)paren
-suffix:semicolon
-r_void
-id|unload_opl3sa_sb
-c_func
-(paren
-r_struct
-id|address_info
-op_star
-id|hw_info
-)paren
-suffix:semicolon
-r_void
-id|unload_opl3sa_mpu
-c_func
-(paren
-r_struct
-id|address_info
-op_star
-id|hw_info
-)paren
-suffix:semicolon
-r_void
-id|attach_softsyn_card
-(paren
-r_struct
-id|address_info
-op_star
-id|hw_config
-)paren
-suffix:semicolon
-r_int
-id|probe_softsyn
-(paren
-r_struct
-id|address_info
-op_star
-id|hw_config
-)paren
-suffix:semicolon
-r_void
-id|unload_softsyn
-(paren
-r_struct
-id|address_info
-op_star
-id|hw_config
-)paren
-suffix:semicolon
 multiline_comment|/*&n; *&t;NOTE! &t;NOTE!&t;NOTE!&t;NOTE!&n; *&n; *&t;If you modify this file, please check the dev_table.c also.&n; *&n; *&t;NOTE! &t;NOTE!&t;NOTE!&t;NOTE!&n; */
 r_extern
 r_int
@@ -2157,6 +2048,22 @@ id|unload_opl3sa2
 )brace
 comma
 (brace
+l_string|&quot;OPL3SA2MSS&quot;
+comma
+l_int|1
+comma
+id|SNDCARD_OPL3SA2_MSS
+comma
+l_string|&quot;OPL3SA2 MSS&quot;
+comma
+id|attach_opl3sa2_mss
+comma
+id|probe_opl3sa2_mss
+comma
+id|unload_opl3sa2_mss
+)brace
+comma
+(brace
 l_string|&quot;OPL3SA2MPU&quot;
 comma
 l_int|0
@@ -2918,27 +2825,24 @@ macro_line|#ifndef CONFIG_OPL3SA2_DMA2
 DECL|macro|CONFIG_OPL3SA2_DMA2
 mdefine_line|#define CONFIG_OPL3SA2_DMA2 CONFIG_OPL3SA2_DMA
 macro_line|#endif
-macro_line|#ifdef CONFIG_OPL3SA2_MPU_BASE
 (brace
-id|SNDCARD_OPL3SA2_MPU
+id|SNDCARD_OPL3SA2
 comma
 (brace
-id|CONFIG_OPL3SA2_MPU_BASE
+id|CONFIG_OPL3SA2_CTRL_BASE
 comma
-id|CONFIG_OPL3SA2_MPU_IRQ
+id|CONFIG_OPL3SA2_IRQ
 comma
-l_int|0
+id|CONFIG_OPL3SA2_DMA
 comma
-op_minus
-l_int|1
+id|CONFIG_OPL3SA2_DMA2
 )brace
 comma
 id|SND_DEFAULT_ENABLE
 )brace
 comma
-macro_line|#endif
 (brace
-id|SNDCARD_OPL3SA2
+id|SNDCARD_OPL3SA2_MSS
 comma
 (brace
 id|CONFIG_OPL3SA2_BASE
@@ -2953,6 +2857,25 @@ comma
 id|SND_DEFAULT_ENABLE
 )brace
 comma
+macro_line|#ifdef CONFIG_OPL3SA2_MPU_BASE
+(brace
+id|SNDCARD_OPL3SA2_MPU
+comma
+(brace
+id|CONFIG_OPL3SA2_MPU_BASE
+comma
+id|CONFIG_OPL3SA2_MPU_IRQ
+comma
+id|CONFIG_OPL3SA2_DMA
+comma
+op_minus
+l_int|1
+)brace
+comma
+id|SND_DEFAULT_ENABLE
+)brace
+comma
+macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_SGALAXY
 macro_line|#ifndef CONFIG_SGALAXY_DMA2

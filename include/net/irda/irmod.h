@@ -158,7 +158,6 @@ id|dev
 suffix:semicolon
 DECL|member|wait_queue
 id|wait_queue_head_t
-op_star
 id|wait_queue
 suffix:semicolon
 DECL|member|in_use

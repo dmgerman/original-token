@@ -535,6 +535,8 @@ r_while
 c_loop
 (paren
 id|len
+OG
+l_int|0
 )paren
 (brace
 r_char
@@ -671,6 +673,8 @@ r_while
 c_loop
 (paren
 id|len
+OG
+l_int|0
 )paren
 (brace
 r_char

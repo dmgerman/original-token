@@ -2169,7 +2169,12 @@ id|exp
 )paren
 op_logical_and
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|inode-&gt;i_writecount
+)paren
 OG
 l_int|1
 op_logical_or

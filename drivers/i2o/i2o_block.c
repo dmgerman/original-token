@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;I2O block device driver. &n; *&n; *&t;(C) Copyright 1999   Red Hat Software&n; *&t;&n; *&t;Written by Alan Cox, Building Number Three Ltd&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; * &t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;This is an initial test release. Most of the good code was taken&n; *&t;from the nbd driver by Pavel Machek, who in turn took some of it&n; *&t;from loop.c. Isn&squot;t free software great for reusability 8)&n; *&n; *&t;Fixes:&n; *&t;&t;Steve Ralston:&t;Multiple device handling error fixes,&n; *&t;&t;&t;&t;Added a queue depth.&n; */
+multiline_comment|/*&n; *&t;I2O block device driver. &n; *&n; *&t;(C) Copyright 1999   Red Hat Software&n; *&t;&n; *&t;Written by Alan Cox, Building Number Three Ltd&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; * &t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;This is a beta test release. Most of the good code was taken&n; *&t;from the nbd driver by Pavel Machek, who in turn took some of it&n; *&t;from loop.c. Isn&squot;t free software great for reusability 8)&n; *&n; *&t;Fixes:&n; *&t;&t;Steve Ralston:&t;Multiple device handling error fixes,&n; *&t;&t;&t;&t;Added a queue depth.&n; *&n; *&t;Todo:&n; *&t;&t;64bit cleanness.&n; *&t;&t;Remove the queue walk. We can do that better.&n; */
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/ioctl.h&gt;
 macro_line|#include &lt;linux/i2o.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
+macro_line|#include &lt;linux/blkpg.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;linux/notifier.h&gt;
@@ -22,7 +23,7 @@ macro_line|#include &lt;linux/blk.h&gt;
 DECL|macro|MAX_I2OB
 mdefine_line|#define MAX_I2OB&t;16
 DECL|macro|MAX_I2OB_DEPTH
-mdefine_line|#define MAX_I2OB_DEPTH&t;4
+mdefine_line|#define MAX_I2OB_DEPTH&t;8
 multiline_comment|/*&n; *&t;Some of these can be made smaller later&n; */
 DECL|variable|i2ob_blksizes
 r_static
@@ -77,7 +78,6 @@ r_static
 r_int
 id|i2ob_context
 suffix:semicolon
-macro_line|#ifdef __SMP__
 DECL|variable|i2ob_lock
 r_static
 id|spinlock_t
@@ -85,7 +85,6 @@ id|i2ob_lock
 op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
-macro_line|#endif
 DECL|struct|i2ob_device
 r_struct
 id|i2ob_device
@@ -600,7 +599,6 @@ op_sub_assign
 id|count
 suffix:semicolon
 )brace
-singleline_comment|//&t;printk(&quot;Send for %p&bslash;n&quot;, req);
 id|i2o_post_message
 c_func
 (paren
@@ -636,14 +634,6 @@ c_func
 (paren
 op_amp
 id|queue_depth
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;Depth now %d.&bslash;n&quot;
-comma
-id|old_qd
 )paren
 suffix:semicolon
 )brace
@@ -3576,7 +3566,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Claimed Dev %x Tid %d Unit %d&bslash;n&quot;
+l_string|&quot;Claimed Dev %p Tid %d Unit %d&bslash;n&quot;
 comma
 id|dev
 comma
@@ -3617,7 +3607,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Could not unclaim Dev %x Tid %d&bslash;n&quot;
+l_string|&quot;Could not unclaim Dev %p Tid %d&bslash;n&quot;
 comma
 id|dev
 comma
@@ -4084,12 +4074,12 @@ l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n; * And here should be modules and kernel interface &n; *  (Just smiley confuses emacs :-)&n; */
 macro_line|#ifdef MODULE
-DECL|macro|i2ob_init
-mdefine_line|#define i2ob_init init_module
+DECL|macro|i2o_block_init
+mdefine_line|#define i2o_block_init init_module
 macro_line|#endif
-DECL|function|i2ob_init
+DECL|function|i2o_block_init
 r_int
-id|i2ob_init
+id|i2o_block_init
 c_func
 (paren
 r_void
@@ -4101,6 +4091,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;I2O block device OSM v0.06. (C) 1999 Red Hat Software.&bslash;n&quot;
 )paren
 suffix:semicolon

@@ -719,6 +719,32 @@ DECL|macro|DEVICE_ON
 mdefine_line|#define DEVICE_ON(device) 
 DECL|macro|DEVICE_OFF
 mdefine_line|#define DEVICE_OFF(device)
+macro_line|#elif (MAJOR_NR == I2O_MAJOR)
+DECL|macro|DEVICE_NAME
+mdefine_line|#define DEVICE_NAME &quot;I2O block&quot;
+DECL|macro|DEVICE_REQUEST
+mdefine_line|#define DEVICE_REQUEST do_i2ob_request
+DECL|macro|DEVICE_NR
+mdefine_line|#define DEVICE_NR(device) (MINOR(device)&gt;&gt;4)
+DECL|macro|DEVICE_ON
+mdefine_line|#define DEVICE_ON(device) 
+DECL|macro|DEVICE_OFF
+mdefine_line|#define DEVICE_OFF(device)
+macro_line|#elif (MAJOR_NR == COMPAQ_SMART2_MAJOR)
+DECL|macro|DEVICE_NAME
+mdefine_line|#define DEVICE_NAME &quot;ida&quot;
+DECL|macro|DEVICE_INTR
+mdefine_line|#define DEVICE_INTR do_ida
+DECL|macro|TIMEOUT_VALUE
+mdefine_line|#define TIMEOUT_VALUE (25*HZ)
+DECL|macro|DEVICE_REQUEST
+mdefine_line|#define DEVICE_REQUEST do_ida_request0
+DECL|macro|DEVICE_NR
+mdefine_line|#define DEVICE_NR(device) (MINOR(device) &gt;&gt; 4)
+DECL|macro|DEVICE_ON
+mdefine_line|#define DEVICE_ON(device)
+DECL|macro|DEVICE_OFF
+mdefine_line|#define DEVICE_OFF(device)
 macro_line|#endif /* MAJOR_NR == whatever */
 macro_line|#if (MAJOR_NR != SCSI_TAPE_MAJOR)
 macro_line|#if !defined(IDE_DRIVER)
@@ -806,7 +832,7 @@ id|req
 )paren
 suffix:semicolon
 macro_line|#ifndef LOCAL_END_REQUEST&t;/* If we have our own end_request, we do not want to include this mess */
-macro_line|#if ! SCSI_BLK_MAJOR(MAJOR_NR)
+macro_line|#if ! SCSI_BLK_MAJOR(MAJOR_NR) &amp;&amp; (MAJOR_NR != COMPAQ_SMART2_MAJOR)
 DECL|function|end_request
 r_static
 r_void

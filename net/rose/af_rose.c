@@ -31,7 +31,6 @@ macro_line|#include &lt;net/rose.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
-macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 DECL|variable|rose_ndevs
 r_int
@@ -6619,6 +6618,29 @@ comma
 id|GFP_KERNEL
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev_rose
+(braket
+id|i
+)braket
+dot
+id|name
+op_eq
+l_int|NULL
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;Rose: unable to register ROSE devices.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 id|sprintf
 c_func
 (paren

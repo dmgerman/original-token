@@ -327,7 +327,6 @@ DECL|macro|AUDIO_DIAG_LOOPBACK
 mdefine_line|#define&t;AUDIO_DIAG_LOOPBACK&t;_IOW(&squot;A&squot;, 101, int)
 multiline_comment|/*&n; *&t;Linux kernel internal implementation.&n; */
 macro_line|#ifdef __KERNEL__
-macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/tqueue.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;

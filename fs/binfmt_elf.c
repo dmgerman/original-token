@@ -1885,6 +1885,16 @@ id|elf_ex.e_phentsize
 op_star
 id|elf_ex.e_phnum
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|size
+OG
+l_int|65536
+)paren
+r_goto
+id|out
+suffix:semicolon
 id|elf_phdata
 op_assign
 (paren

@@ -19,7 +19,6 @@ macro_line|#include &lt;net/ip6_route.h&gt;
 macro_line|#include &lt;net/addrconf.h&gt;
 macro_line|#include &lt;net/transp_v6.h&gt;
 macro_line|#include &lt;net/rawv6.h&gt;
-macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|variable|raw_v6_htable
 r_struct
 id|sock

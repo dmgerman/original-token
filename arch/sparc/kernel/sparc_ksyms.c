@@ -34,7 +34,6 @@ macro_line|#include &lt;asm/sbus.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/a.out.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;asm/io-unit.h&gt;
 DECL|struct|poll
 r_struct

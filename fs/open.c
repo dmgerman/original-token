@@ -146,16 +146,6 @@ op_star
 id|file
 suffix:semicolon
 r_struct
-id|inode
-op_star
-id|inode
-suffix:semicolon
-r_struct
-id|dentry
-op_star
-id|dentry
-suffix:semicolon
-r_struct
 id|super_block
 op_star
 id|sb

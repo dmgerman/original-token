@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/drivers/block/loop.c&n; *&n; *  Written by Theodore Ts&squot;o, 3/29/93&n; * &n; * Copyright 1993 by Theodore Ts&squot;o.  Redistribution of this file is&n; * permitted under the GNU Public License.&n; *&n; * DES encryption plus some minor changes by Werner Almesberger, 30-MAY-1993&n; * more DES encryption plus IDEA encryption by Nicholas J. Leon, June 20, 1996&n; *&n; * Modularized and updated for 1.1.16 kernel - Mitch Dsouza 28th May 1994&n; * Adapted for 1.3.59 kernel - Andries Brouwer, 1 Feb 1996&n; *&n; * Fixed do_loop_request() re-entrancy - Vincent.Renardias@waw.com Mar 20, 1997&n; *&n; * Handle sparse backing files correctly - Kenn Humborg, Jun 28, 1998&n; *&n; * Loadable modules and other fixes by AK, 1998&n; *&n; * Make real block number available to downstream transfer functions, enables&n; * CBC (and relatives) mode encryption requiring unique IVs per data block. &n; * Reed H. Petty, rhp@draper.net&n; * &n; * Still To Fix:&n; * - Advisory locking is ignored here. &n; * - Should use an own CAP_* category instead of CAP_SYS_ADMIN &n; * - Should use the underlying filesystems/devices read function if possible&n; *   to support read ahead (and for write)&n; */
+multiline_comment|/*&n; *  linux/drivers/block/loop.c&n; *&n; *  Written by Theodore Ts&squot;o, 3/29/93&n; * &n; * Copyright 1993 by Theodore Ts&squot;o.  Redistribution of this file is&n; * permitted under the GNU Public License.&n; *&n; * DES encryption plus some minor changes by Werner Almesberger, 30-MAY-1993&n; * more DES encryption plus IDEA encryption by Nicholas J. Leon, June 20, 1996&n; *&n; * Modularized and updated for 1.1.16 kernel - Mitch Dsouza 28th May 1994&n; * Adapted for 1.3.59 kernel - Andries Brouwer, 1 Feb 1996&n; *&n; * Fixed do_loop_request() re-entrancy - Vincent.Renardias@waw.com Mar 20, 1997&n; *&n; * Handle sparse backing files correctly - Kenn Humborg, Jun 28, 1998&n; *&n; * Loadable modules and other fixes by AK, 1998&n; *&n; * Make real block number available to downstream transfer functions, enables&n; * CBC (and relatives) mode encryption requiring unique IVs per data block. &n; * Reed H. Petty, rhp@draper.net&n; * &n; * Still To Fix:&n; * - Advisory locking is ignored here. &n; * - Should use an own CAP_* category instead of CAP_SYS_ADMIN &n; * - Should use the underlying filesystems/devices read function if possible&n; *   to support read ahead (and for write)&n; *&n; * WARNING/FIXME:&n; * - The block number as IV passing to low level transfer functions is broken:&n; *   it passes the underlying device&squot;s block number instead of the&n; *   offset. This makes it change for a given block when the file is &n; *   moved/restored/copied and also doesn&squot;t work over NFS. &n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -296,7 +296,7 @@ r_if
 c_cond
 (paren
 id|info-&gt;lo_encrypt_key_size
-OL
+op_le
 l_int|0
 )paren
 r_return
@@ -1481,6 +1481,24 @@ id|inode-&gt;i_mode
 )paren
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|inode-&gt;i_op-&gt;bmap
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;loop: device has no block access/not implemented&bslash;n&quot;
+)paren
+suffix:semicolon
+r_goto
+id|out_putf
+suffix:semicolon
+)brace
 multiline_comment|/* Backed by a regular file - we need to hold onto&n;&t;&t;   a file structure for this file.  We&squot;ll use it to&n;&t;&t;   write to blocks that are not already present in &n;&t;&t;   a sparse file.  We create a new file structure&n;&t;&t;   based on the one passed to us via &squot;arg&squot;.  This is&n;&t;&t;   to avoid changing the file structure that the&n;&t;&t;   caller is using */
 id|lo-&gt;lo_device
 op_assign
@@ -2085,21 +2103,6 @@ suffix:semicolon
 id|type
 op_assign
 id|info.lo_encrypt_type
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|info.lo_encrypt_key_size
-op_eq
-l_int|0
-op_logical_and
-id|type
-op_eq
-id|LO_CRYPT_XOR
-)paren
-r_return
-op_minus
-id|EINVAL
 suffix:semicolon
 r_if
 c_cond

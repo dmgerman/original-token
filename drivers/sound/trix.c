@@ -64,6 +64,23 @@ id|mpu
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef TRIX_JOYSTICK
+DECL|variable|joystick
+r_static
+r_int
+id|joystick
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#else
+DECL|variable|joystick
+r_static
+r_int
+id|joystick
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 DECL|function|trix_read
 r_static
 r_int
@@ -745,7 +762,14 @@ c_cond
 id|ret
 )paren
 (brace
-macro_line|#ifdef TRIX_ENABLE_JOYSTICK
+r_if
+c_cond
+(paren
+id|joystick
+op_eq
+l_int|1
+)paren
+(brace
 id|trix_write
 c_func
 (paren
@@ -754,7 +778,7 @@ comma
 l_int|0x80
 )paren
 suffix:semicolon
-macro_line|#endif
+)brace
 id|request_region
 c_func
 (paren
@@ -1923,6 +1947,14 @@ id|MODULE_PARM
 c_func
 (paren
 id|mpu_irq
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|joystick
 comma
 l_string|&quot;i&quot;
 )paren

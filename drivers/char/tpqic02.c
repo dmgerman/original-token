@@ -89,7 +89,7 @@ suffix:semicolon
 multiline_comment|/* control reg bits for tape interface */
 DECL|variable|qic02_tape_transfer
 r_static
-id|wait_queue_t
+id|wait_queue_head_t
 id|qic02_tape_transfer
 suffix:semicolon
 multiline_comment|/* sync rw with interrupts */
@@ -9770,16 +9770,13 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* qic02_get_resources */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|qic02_tape_init
 r_int
+id|__init
 id|qic02_tape_init
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_if

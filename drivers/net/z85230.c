@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;(c) Copyright 1998 Building Number Three Ltd&n; *&n; *&t;Development of this driver was funded by Equiinet Ltd&n; *&t;&t;&t;http://www.equiinet.com&n; *&n; *&t;ChangeLog:&n; *&n; *&t;Asynchronous mode dropped for 2.2. For 2.3 we will attempt the&n; *&t;unification of all the Z85x30 asynchronous drivers for real.&n; *&n; *&t;To Do:&n; *&t;&n; *&t;Finish DMA mode support.&n; *&n; *&t;Performance&n; *&n; *&t;Z85230:&n; *&t;Non DMA you want a 486DX50 or better to do 64Kbits. 9600 baud&n; *&t;X.25 is not unrealistic on all machines. DMA mode can in theory&n; *&t;handle T1/E1 quite nicely.&n; *&n; *&t;Z85C30:&n; *&t;64K will take DMA, 9600 baud X.25 should be ok.&n; *&n; *&t;Z8530:&n; *&t;Synchronous mode without DMA is unlikely to pass about 2400 baud.&n; */
+multiline_comment|/*&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;(c) Copyright 1998 Building Number Three Ltd&n; *&n; *&t;Development of this driver was funded by Equiinet Ltd&n; *&t;&t;&t;http://www.equiinet.com&n; *&n; *&t;ChangeLog:&n; *&n; *&t;Asynchronous mode dropped for 2.2. For 2.3 we will attempt the&n; *&t;unification of all the Z85x30 asynchronous drivers for real.&n; *&n; *&t;To Do:&n; *&t;&n; *&t;Finish DMA mode support.&n; *&n; *&t;Performance&n; *&n; *&t;Z85230:&n; *&t;Non DMA you want a 486DX50 or better to do 64Kbits. 9600 baud&n; *&t;X.25 is not unrealistic on all machines. DMA mode can in theory&n; *&t;handle T1/E1 quite nicely. In practice the limit seems to be about&n; *&t;512Kbit-&gt;1Mbit depending on motherboard.&n; *&n; *&t;Z85C30:&n; *&t;64K will take DMA, 9600 baud X.25 should be ok.&n; *&n; *&t;Z8530:&n; *&t;Synchronous mode without DMA is unlikely to pass about 2400 baud.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -579,11 +579,6 @@ op_or
 id|NORESET
 comma
 l_int|23
-comma
-l_int|3
-comma
-multiline_comment|/* Extended mode AUTO TX and EOM*/
-l_int|31
 comma
 l_int|3
 comma
@@ -3181,6 +3176,10 @@ op_star
 id|c
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -3404,7 +3403,35 @@ id|R14
 )braket
 )paren
 suffix:semicolon
+id|c-&gt;regs
+(braket
+id|R1
+)braket
+op_and_assign
+op_complement
+id|TxINT_ENAB
+suffix:semicolon
+id|write_zsreg
+c_func
+(paren
+id|c
+comma
+id|R1
+comma
+id|c-&gt;regs
+(braket
+id|R1
+)braket
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Set up the DMA configuration&n;&t; */
+id|flags
+op_assign
+id|claim_dma_lock
+c_func
+(paren
+)paren
+suffix:semicolon
 id|disable_dma
 c_func
 (paren
@@ -3429,6 +3456,12 @@ id|disable_dma
 c_func
 (paren
 id|c-&gt;txdma
+)paren
+suffix:semicolon
+id|release_dma_lock
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Select the DMA interrupt handlers&n;&t; */
@@ -3511,6 +3544,10 @@ op_star
 id|c
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|u8
 id|chk
 suffix:semicolon
@@ -3528,6 +3565,13 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Disable the PC DMA channels&n;&t; */
+id|flags
+op_assign
+id|claim_dma_lock
+c_func
+(paren
+)paren
+suffix:semicolon
 id|disable_dma
 c_func
 (paren
@@ -3547,6 +3591,12 @@ suffix:semicolon
 id|c-&gt;tx_dma_used
 op_assign
 l_int|0
+suffix:semicolon
+id|release_dma_lock
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Disable DMA control mode&n;&t; */
 id|c-&gt;regs

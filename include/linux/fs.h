@@ -673,6 +673,10 @@ id|page
 op_star
 id|i_pages
 suffix:semicolon
+DECL|member|i_shared_lock
+id|spinlock_t
+id|i_shared_lock
+suffix:semicolon
 DECL|member|i_dquot
 r_struct
 id|dquot
@@ -704,7 +708,7 @@ r_char
 id|i_sock
 suffix:semicolon
 DECL|member|i_writecount
-r_int
+id|atomic_t
 id|i_writecount
 suffix:semicolon
 DECL|member|i_attr_flags
@@ -2530,6 +2534,9 @@ id|file_system_type
 op_star
 )paren
 suffix:semicolon
+multiline_comment|/* Return value for VFS lock functions - tells locks.c to lock conventionally&n; * REALLY kosha for root NFS and nfs_lock&n; */
+DECL|macro|LOCK_USE_CLNT
+mdefine_line|#define LOCK_USE_CLNT 1
 DECL|macro|FLOCK_VERIFY_READ
 mdefine_line|#define FLOCK_VERIFY_READ  1
 DECL|macro|FLOCK_VERIFY_WRITE
@@ -4195,9 +4202,6 @@ id|iattr
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/* kludge to get SCSI modules working */
-macro_line|#include &lt;linux/minix_fs.h&gt;
-macro_line|#include &lt;linux/minix_fs_sb.h&gt;
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _LINUX_FS_H */
 eof

@@ -21,7 +21,6 @@ macro_line|#include &lt;net/ip6_route.h&gt;
 macro_line|#include &lt;net/ndisc.h&gt;
 macro_line|#include &lt;net/addrconf.h&gt;
 macro_line|#include &lt;net/tcp.h&gt;
-macro_line|#include &lt;linux/netlink.h&gt;
 macro_line|#include &lt;linux/rtnetlink.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#ifdef CONFIG_SYSCTL

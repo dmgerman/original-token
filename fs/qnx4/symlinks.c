@@ -344,16 +344,6 @@ comma
 id|QNX4_BLOCK_SIZE
 )paren
 suffix:semicolon
-id|QNX4DEBUG
-c_func
-(paren
-(paren
-l_string|&quot;qnx4: qnx4_bread sym called -&gt; [%s]&bslash;n&quot;
-comma
-id|bh-&gt;b_data
-)paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -374,6 +364,16 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+id|QNX4DEBUG
+c_func
+(paren
+(paren
+l_string|&quot;qnx4: qnx4_bread sym called -&gt; [%s]&bslash;n&quot;
+comma
+id|bh-&gt;b_data
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

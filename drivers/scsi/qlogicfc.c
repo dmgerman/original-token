@@ -117,16 +117,7 @@ mdefine_line|#define LEAVE_INTR(x)
 DECL|macro|DEBUG_INTR
 mdefine_line|#define DEBUG_INTR(x)
 macro_line|#endif&t;&t;&t;&t;/* DEBUG ISP2100_INTR */
-macro_line|#if defined(__i386__)
-DECL|macro|virt_to_bus_low32
-mdefine_line|#define virt_to_bus_low32(x)   virt_to_bus(x)
-DECL|macro|virt_to_bus_high32
-mdefine_line|#define virt_to_bus_high32(x)  0x0
-DECL|macro|bus_to_virt_low32
-mdefine_line|#define bus_to_virt_low32(x)   bus_to_virt(x)
-DECL|macro|bus_to_virt_high32
-mdefine_line|#define bus_to_virt_high32(x)  0x0
-macro_line|#elif defined(__alpha__)
+macro_line|#if BITS_PER_LONG &gt; 32
 DECL|macro|virt_to_bus_low32
 mdefine_line|#define virt_to_bus_low32(x)   ((u32) (0xffffffff &amp; virt_to_bus(x)))
 DECL|macro|virt_to_bus_high32
@@ -135,6 +126,15 @@ DECL|macro|bus_to_virt_low32
 mdefine_line|#define bus_to_virt_low32(x)   ((u32) (0xffffffff &amp; bus_to_virt(x)))
 DECL|macro|bus_to_virt_high32
 mdefine_line|#define bus_to_virt_high32(x)  ((u32) (0xffffffff &amp; (bus_to_virt(x)&gt;&gt;32)))
+macro_line|#else
+DECL|macro|virt_to_bus_low32
+mdefine_line|#define virt_to_bus_low32(x)   virt_to_bus(x)
+DECL|macro|virt_to_bus_high32
+mdefine_line|#define virt_to_bus_high32(x)  0x0
+DECL|macro|bus_to_virt_low32
+mdefine_line|#define bus_to_virt_low32(x)   bus_to_virt(x)
+DECL|macro|bus_to_virt_high32
+mdefine_line|#define bus_to_virt_high32(x)  0x0
 macro_line|#endif
 DECL|macro|ISP2100_REV_ID
 mdefine_line|#define ISP2100_REV_ID&t;1
@@ -246,10 +246,17 @@ suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* entry header type commands */
+macro_line|#if BITS_PER_LONG &gt; 32
 DECL|macro|ENTRY_COMMAND
 mdefine_line|#define ENTRY_COMMAND&t;&t;0x19
 DECL|macro|ENTRY_CONTINUATION
 mdefine_line|#define ENTRY_CONTINUATION&t;0x0a
+macro_line|#else
+DECL|macro|ENTRY_COMMAND
+mdefine_line|#define ENTRY_COMMAND&t;&t;0x11
+DECL|macro|ENTRY_CONTINUATION
+mdefine_line|#define ENTRY_CONTINUATION&t;0x02
+macro_line|#endif
 DECL|macro|ENTRY_STATUS
 mdefine_line|#define ENTRY_STATUS&t;&t;0x03
 DECL|macro|ENTRY_MARKER
@@ -261,17 +268,18 @@ DECL|macro|EFLAG_BAD_HEADER
 mdefine_line|#define EFLAG_BAD_HEADER&t;4
 DECL|macro|EFLAG_BAD_PAYLOAD
 mdefine_line|#define EFLAG_BAD_PAYLOAD&t;8
+macro_line|#if BITS_PER_LONG &gt; 32
 DECL|struct|dataseg
 r_struct
 id|dataseg
 (brace
-DECL|member|d_base_lo
+DECL|member|d_base
 id|u_int
-id|d_base_lo
+id|d_base
 suffix:semicolon
-DECL|member|d_base_high
+DECL|member|d_base_hi
 id|u_int
-id|d_base_high
+id|d_base_hi
 suffix:semicolon
 DECL|member|d_count
 id|u_int
@@ -336,11 +344,89 @@ r_struct
 id|dataseg
 id|dataseg
 (braket
-l_int|2
+id|DATASEGS_PER_COMMAND
 )braket
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#else
+DECL|struct|dataseg
+r_struct
+id|dataseg
+(brace
+DECL|member|d_base
+id|u_int
+id|d_base
+suffix:semicolon
+DECL|member|d_count
+id|u_int
+id|d_count
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|Command_Entry
+r_struct
+id|Command_Entry
+(brace
+DECL|member|hdr
+r_struct
+id|Entry_header
+id|hdr
+suffix:semicolon
+DECL|member|handle
+id|u_int
+id|handle
+suffix:semicolon
+DECL|member|target_lun
+id|u_char
+id|target_lun
+suffix:semicolon
+DECL|member|target_id
+id|u_char
+id|target_id
+suffix:semicolon
+DECL|member|rsvd1
+id|u_short
+id|rsvd1
+suffix:semicolon
+DECL|member|control_flags
+id|u_short
+id|control_flags
+suffix:semicolon
+DECL|member|rsvd2
+id|u_short
+id|rsvd2
+suffix:semicolon
+DECL|member|time_out
+id|u_short
+id|time_out
+suffix:semicolon
+DECL|member|segment_cnt
+id|u_short
+id|segment_cnt
+suffix:semicolon
+DECL|member|cdb
+id|u_char
+id|cdb
+(braket
+l_int|16
+)braket
+suffix:semicolon
+DECL|member|total_byte_cnt
+id|u_int
+id|total_byte_cnt
+suffix:semicolon
+DECL|member|dataseg
+r_struct
+id|dataseg
+id|dataseg
+(braket
+id|DATASEGS_PER_COMMAND
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* command entry control flag definitions */
 DECL|macro|CFLAG_NODISC
 mdefine_line|#define CFLAG_NODISC&t;&t;0x01
@@ -406,6 +492,7 @@ l_int|44
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#if BITS_PER_LONG &gt; 32
 DECL|struct|Continuation_Entry
 r_struct
 id|Continuation_Entry
@@ -420,11 +507,36 @@ r_struct
 id|dataseg
 id|dataseg
 (braket
-l_int|5
+id|DATASEGS_PER_CONT
 )braket
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#else
+DECL|struct|Continuation_Entry
+r_struct
+id|Continuation_Entry
+(brace
+DECL|member|hdr
+r_struct
+id|Entry_header
+id|hdr
+suffix:semicolon
+DECL|member|rsvd
+id|u32
+id|rsvd
+suffix:semicolon
+DECL|member|dataseg
+r_struct
+id|dataseg
+id|dataseg
+(braket
+id|DATASEGS_PER_CONT
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
+macro_line|#endif
 DECL|struct|Marker_Entry
 r_struct
 id|Marker_Entry
@@ -1096,10 +1208,10 @@ id|u_short
 id|res2
 suffix:semicolon
 DECL|member|data
-id|u_short
+id|u_char
 id|data
 (braket
-l_int|22
+l_int|44
 )braket
 suffix:semicolon
 )brace
@@ -1206,8 +1318,19 @@ DECL|macro|QLOGICFC_MAX_ID
 mdefine_line|#define QLOGICFC_MAX_ID    0xff
 macro_line|#else
 DECL|macro|QLOGICFC_MAX_ID
-mdefine_line|#define QLOGICFC_MAX_ID    0x80
+mdefine_line|#define QLOGICFC_MAX_ID    0x7d
 macro_line|#endif
+DECL|macro|QLOGICFC_MAX_LOOP_ID
+mdefine_line|#define QLOGICFC_MAX_LOOP_ID 0x7d
+multiline_comment|/* adapter_state values */
+DECL|macro|AS_FIRMWARE_DEAD
+mdefine_line|#define AS_FIRMWARE_DEAD      -1
+DECL|macro|AS_LOOP_DOWN
+mdefine_line|#define AS_LOOP_DOWN           0
+DECL|macro|AS_LOOP_GOOD
+mdefine_line|#define AS_LOOP_GOOD           1
+DECL|macro|AS_REDO_PORTDB
+mdefine_line|#define AS_REDO_PORTDB         2
 DECL|struct|isp2100_hostdata
 r_struct
 id|isp2100_hostdata
@@ -1268,9 +1391,9 @@ r_struct
 id|init_cb
 id|control_block
 suffix:semicolon
-DECL|member|loop_up
+DECL|member|adapter_state
 r_int
-id|loop_up
+id|adapter_state
 suffix:semicolon
 DECL|member|tag_ages
 r_int
@@ -1326,6 +1449,10 @@ suffix:semicolon
 DECL|member|queued
 id|u_char
 id|queued
+suffix:semicolon
+DECL|member|host_id
+id|u_char
+id|host_id
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -1497,6 +1624,7 @@ op_star
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#if DEBUG_ISP2100_INTR
 r_static
 r_void
 id|isp2100_print_status_entry
@@ -1507,6 +1635,7 @@ id|Status_Entry
 op_star
 )paren
 suffix:semicolon
+macro_line|#endif
 DECL|variable|proc_scsi_isp2100
 r_static
 r_struct
@@ -1728,7 +1857,7 @@ l_int|0x0f
 suffix:semicolon
 id|hostdata-&gt;control_block.firm_opts
 op_assign
-l_int|0x010c
+l_int|0x0108
 suffix:semicolon
 id|hostdata-&gt;control_block.max_frame_len
 op_assign
@@ -1830,9 +1959,13 @@ op_amp
 id|hostdata-&gt;req
 )paren
 suffix:semicolon
-id|hostdata-&gt;loop_up
+id|hostdata-&gt;adapter_state
 op_assign
-l_int|0
+id|AS_LOOP_DOWN
+suffix:semicolon
+id|hostdata-&gt;host_id
+op_assign
+id|hosts
 suffix:semicolon
 r_if
 c_cond
@@ -1886,7 +2019,9 @@ id|host
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc : interrupt %d already in use&bslash;n&quot;
+l_string|&quot;qlogicfc%d : interrupt %d already in use&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 comma
 id|host-&gt;irq
 )paren
@@ -1915,8 +2050,10 @@ l_int|0xff
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc : i/o region 0x%lx-0x%lx already &quot;
+l_string|&quot;qlogicfc%d : i/o region 0x%lx-0x%lx already &quot;
 l_string|&quot;in use&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 comma
 id|host-&gt;io_port
 comma
@@ -1994,9 +2131,9 @@ id|wait_time
 OG
 id|jiffies
 op_logical_and
-id|hostdata-&gt;loop_up
+id|hostdata-&gt;adapter_state
 op_eq
-l_int|0
+id|AS_LOOP_DOWN
 suffix:semicolon
 )paren
 id|barrier
@@ -2007,40 +2144,18 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|hostdata-&gt;loop_up
+id|hostdata-&gt;adapter_state
 op_eq
-l_int|0
+id|AS_LOOP_DOWN
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc: loop is not up&bslash;n&quot;
-)paren
-suffix:semicolon
-id|release_region
-c_func
-(paren
-id|host-&gt;io_port
+l_string|&quot;qlogicfc%d : loop is not up&bslash;n&quot;
 comma
-l_int|0xff
+id|hostdata-&gt;host_id
 )paren
-suffix:semicolon
-id|free_irq
-c_func
-(paren
-id|host-&gt;irq
-comma
-id|host
-)paren
-suffix:semicolon
-id|scsi_unregister
-c_func
-(paren
-id|host
-)paren
-suffix:semicolon
-r_continue
 suffix:semicolon
 )brace
 id|hosts
@@ -2214,7 +2329,9 @@ id|MBOX_COMMAND_COMPLETE
 id|printk
 c_func
 (paren
-l_string|&quot;logout failed %x  %x&bslash;n&quot;
+l_string|&quot;qlogicfc%d : logout failed %x  %x&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 comma
 id|i
 comma
@@ -2301,7 +2418,9 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc: error getting scsi id.&bslash;n&quot;
+l_string|&quot;qlogicfc%d : error getting scsi id.&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 )paren
 suffix:semicolon
 )brace
@@ -2310,11 +2429,7 @@ c_loop
 (paren
 id|i
 op_assign
-l_int|1
-comma
-id|j
-op_assign
-l_int|1
+l_int|0
 suffix:semicolon
 id|i
 op_le
@@ -2323,7 +2438,6 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-(brace
 id|temp
 (braket
 id|i
@@ -2338,6 +2452,25 @@ l_int|0
 dot
 id|loop_id
 suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+comma
+id|j
+op_assign
+l_int|1
+suffix:semicolon
+id|i
+op_le
+id|QLOGICFC_MAX_LOOP_ID
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
 id|param
 (braket
 l_int|0
@@ -2765,7 +2898,9 @@ l_int|1
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc.c: Too many scsi devices, no more room in port map.&bslash;n&quot;
+l_string|&quot;qlogicfc%d : Too many scsi devices, no more room in port map.&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 )paren
 suffix:semicolon
 r_if
@@ -2837,6 +2972,12 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#if ISP2100_FABRIC
+DECL|macro|FABRIC_PORT
+mdefine_line|#define FABRIC_PORT          0x7e
+DECL|macro|FABRIC_CONTROLLER
+mdefine_line|#define FABRIC_CONTROLLER    0x7f
+DECL|macro|FABRIC_SNS
+mdefine_line|#define FABRIC_SNS           0x80
 DECL|function|isp2100_init_fabric
 r_int
 id|isp2100_init_fabric
@@ -2853,7 +2994,7 @@ op_star
 id|port_db
 comma
 r_int
-id|j
+id|cur_scsi_id
 )paren
 (brace
 id|u_short
@@ -2878,7 +3019,7 @@ suffix:semicolon
 id|u_short
 id|scsi_id
 op_assign
-id|j
+id|cur_scsi_id
 suffix:semicolon
 id|u_int
 id|port_id
@@ -2913,7 +3054,9 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc.c: Checking for a fabric.&bslash;n&quot;
+l_string|&quot;qlogicfc%d : Checking for a fabric.&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 )paren
 )paren
 suffix:semicolon
@@ -2929,7 +3072,12 @@ id|param
 l_int|1
 )braket
 op_assign
-l_int|0x7E00
+(paren
+id|u16
+)paren
+id|FABRIC_PORT
+op_lshift
+l_int|8
 suffix:semicolon
 id|isp2100_mbox_command
 c_func
@@ -2956,7 +3104,9 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;fabric check result %x&bslash;n&quot;
+l_string|&quot;qlogicfc%d : fabric check result %x&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 comma
 id|param
 (braket
@@ -2972,7 +3122,206 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc.c: Fabric found.&bslash;n&quot;
+l_string|&quot;qlogicfc%d : Fabric found.&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
+)paren
+suffix:semicolon
+id|memset
+c_func
+(paren
+op_amp
+id|req
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|req
+)paren
+)paren
+suffix:semicolon
+id|req.len
+op_assign
+l_int|8
+suffix:semicolon
+id|req.response_low
+op_assign
+id|virt_to_bus_low32
+c_func
+(paren
+id|sns_response
+)paren
+suffix:semicolon
+id|req.response_high
+op_assign
+id|virt_to_bus_high32
+c_func
+(paren
+id|sns_response
+)paren
+suffix:semicolon
+id|req.sub_len
+op_assign
+l_int|22
+suffix:semicolon
+id|req.data
+(braket
+l_int|0
+)braket
+op_assign
+l_int|0x17
+suffix:semicolon
+id|req.data
+(braket
+l_int|1
+)braket
+op_assign
+l_int|0x02
+suffix:semicolon
+id|req.data
+(braket
+l_int|8
+)braket
+op_assign
+(paren
+id|u_char
+)paren
+(paren
+id|hostdata-&gt;port_id
+op_amp
+l_int|0xff
+)paren
+suffix:semicolon
+id|req.data
+(braket
+l_int|9
+)braket
+op_assign
+(paren
+id|u_char
+)paren
+(paren
+id|hostdata-&gt;port_id
+op_rshift
+l_int|8
+op_amp
+l_int|0xff
+)paren
+suffix:semicolon
+id|req.data
+(braket
+l_int|10
+)braket
+op_assign
+(paren
+id|u_char
+)paren
+(paren
+id|hostdata-&gt;port_id
+op_rshift
+l_int|16
+op_amp
+l_int|0xff
+)paren
+suffix:semicolon
+id|req.data
+(braket
+l_int|13
+)braket
+op_assign
+l_int|0x01
+suffix:semicolon
+id|param
+(braket
+l_int|0
+)braket
+op_assign
+id|MBOX_SEND_SNS
+suffix:semicolon
+id|param
+(braket
+l_int|1
+)braket
+op_assign
+l_int|30
+suffix:semicolon
+id|param
+(braket
+l_int|2
+)braket
+op_assign
+id|virt_to_bus_low32
+c_func
+(paren
+op_amp
+id|req
+)paren
+op_rshift
+l_int|16
+suffix:semicolon
+id|param
+(braket
+l_int|3
+)braket
+op_assign
+id|virt_to_bus_low32
+c_func
+(paren
+op_amp
+id|req
+)paren
+suffix:semicolon
+id|param
+(braket
+l_int|6
+)braket
+op_assign
+id|virt_to_bus_high32
+c_func
+(paren
+op_amp
+id|req
+)paren
+op_rshift
+l_int|16
+suffix:semicolon
+id|param
+(braket
+l_int|7
+)braket
+op_assign
+id|virt_to_bus_high32
+c_func
+(paren
+op_amp
+id|req
+)paren
+suffix:semicolon
+id|isp2100_mbox_command
+c_func
+(paren
+id|host
+comma
+id|param
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|param
+(braket
+l_int|0
+)braket
+op_ne
+id|MBOX_COMMAND_COMPLETE
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;qlogicfc%d : error sending RFC-4&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 )paren
 suffix:semicolon
 id|port_id
@@ -3029,36 +3378,59 @@ id|req.data
 l_int|0
 )braket
 op_assign
-l_int|0x0100
+l_int|0x00
 suffix:semicolon
 id|req.data
 (braket
-l_int|4
+l_int|1
+)braket
+op_assign
+l_int|0x01
+suffix:semicolon
+id|req.data
+(braket
+l_int|8
 )braket
 op_assign
 (paren
-id|u_short
+id|u_char
 )paren
 (paren
 id|port_id
 op_amp
-l_int|0xffff
+l_int|0xff
 )paren
 suffix:semicolon
 id|req.data
 (braket
-l_int|5
+l_int|9
 )braket
 op_assign
 (paren
-id|u_short
+id|u_char
+)paren
+(paren
+id|port_id
+op_rshift
+l_int|8
+op_amp
+l_int|0xff
+)paren
+suffix:semicolon
+id|req.data
+(braket
+l_int|10
+)braket
+op_assign
+(paren
+id|u_char
 )paren
 (paren
 id|port_id
 op_rshift
 l_int|16
 op_amp
-l_int|0xffff
+l_int|0xff
 )paren
 suffix:semicolon
 id|param
@@ -3152,7 +3524,9 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;found node %02x%02x%02x%02x%02x%02x%02x%02x &quot;
+l_string|&quot;qlogicfc%d : found node %02x%02x%02x%02x%02x%02x%02x%02x &quot;
+comma
+id|hostdata-&gt;host_id
 comma
 id|sns_response
 (braket
@@ -3389,7 +3763,9 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;adding a fabric port: %x&bslash;n&quot;
+l_string|&quot;qlogicfc%d : adding a fabric port: %x&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 comma
 id|port_id
 )paren
@@ -3486,7 +3862,9 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc.c: Error performing port login %x&bslash;n&quot;
+l_string|&quot;qlogicfc%d : Error performing port login %x&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 comma
 id|param
 (braket
@@ -3500,7 +3878,9 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;loop_id: %x&bslash;n&quot;
+l_string|&quot;qlogicfc%d : loop_id: %x&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 comma
 id|loop_id
 )paren
@@ -3525,7 +3905,9 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc.c: Get All Next failed %x.&bslash;n&quot;
+l_string|&quot;qlogicfc%d : Get All Next failed %x.&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 comma
 id|param
 (braket
@@ -3777,19 +4159,27 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|hostdata-&gt;loop_up
+id|hostdata-&gt;adapter_state
 op_eq
-l_int|2
+id|AS_REDO_PORTDB
 )paren
 (brace
-id|hostdata-&gt;loop_up
+id|hostdata-&gt;adapter_state
 op_assign
-l_int|1
+id|AS_LOOP_GOOD
 suffix:semicolon
 id|isp2100_make_portdb
 c_func
 (paren
 id|host
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;qlogicfc%d : Port Database&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 )paren
 suffix:semicolon
 r_for
@@ -3812,9 +4202,6 @@ id|i
 op_increment
 )paren
 (brace
-id|DEBUG
-c_func
-(paren
 id|printk
 c_func
 (paren
@@ -3853,23 +4240,23 @@ id|i
 dot
 id|loop_id
 )paren
-)paren
 suffix:semicolon
 )brace
 )brace
 r_if
 c_cond
 (paren
-id|hostdata-&gt;loop_up
+id|hostdata-&gt;adapter_state
 op_eq
-op_minus
-l_int|1
+id|AS_FIRMWARE_DEAD
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc.c: The firmware is dead, just return.&bslash;n&quot;
+l_string|&quot;qlogicfc%d : The firmware is dead, just return.&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 )paren
 suffix:semicolon
 id|host-&gt;max_id
@@ -3900,7 +4287,9 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc : request queue depth %d&bslash;n&quot;
+l_string|&quot;qlogicfc%d : request queue depth %d&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 comma
 id|REQ_QUEUE_DEPTH
 c_func
@@ -3952,7 +4341,9 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc : request queue overflow&bslash;n&quot;
+l_string|&quot;qlogicfc%d : request queue overflow&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 )paren
 )paren
 suffix:semicolon
@@ -3987,7 +4378,9 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc : adding marker entry&bslash;n&quot;
+l_string|&quot;qlogicfc%d : adding marker entry&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 )paren
 )paren
 suffix:semicolon
@@ -4066,7 +4459,9 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc : request queue overflow&bslash;n&quot;
+l_string|&quot;qlogicfc%d : request queue overflow&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 )paren
 )paren
 suffix:semicolon
@@ -4193,12 +4588,66 @@ id|Cmnd-&gt;serial_number
 suffix:semicolon
 )brace
 r_else
+(brace
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc: no handle slots, this should not happen.&bslash;n&quot;
+l_string|&quot;qlogicfc%d : no handle slots, this should not happen.&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 )paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;hostdata-&gt;queued is %x, in_ptr: %x&bslash;n&quot;
+comma
+id|hostdata-&gt;queued
+comma
+id|in_ptr
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+op_le
+id|QLOGICFC_REQ_QUEUE_LEN
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|hostdata-&gt;handle_ptrs
+(braket
+id|i
+)braket
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;slot %d has %p&bslash;n&quot;
+comma
+id|i
+comma
+id|hostdata-&gt;handle_ptrs
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+)brace
+)brace
+)brace
 id|cmd-&gt;hdr.entry_type
 op_assign
 id|ENTRY_COMMAND
@@ -4236,13 +4685,7 @@ id|Cmnd-&gt;request_bufflen
 suffix:semicolon
 id|cmd-&gt;time_out
 op_assign
-(paren
-id|SCSI_TIMEOUT
-op_div
-id|HZ
-)paren
-op_star
-l_int|5
+l_int|0
 suffix:semicolon
 id|memcpy
 c_func
@@ -4289,11 +4732,11 @@ c_cond
 (paren
 id|n
 OG
-l_int|2
+id|DATASEGS_PER_COMMAND
 )paren
 id|n
 op_assign
-l_int|2
+id|DATASEGS_PER_COMMAND
 suffix:semicolon
 r_for
 c_loop
@@ -4315,7 +4758,7 @@ id|ds
 id|i
 )braket
 dot
-id|d_base_lo
+id|d_base
 op_assign
 id|virt_to_bus_low32
 c_func
@@ -4323,12 +4766,13 @@ c_func
 id|sg-&gt;address
 )paren
 suffix:semicolon
+macro_line|#if BITS_PER_LONG &gt; 32
 id|ds
 (braket
 id|i
 )braket
 dot
-id|d_base_high
+id|d_base_hi
 op_assign
 id|virt_to_bus_high32
 c_func
@@ -4336,6 +4780,7 @@ c_func
 id|sg-&gt;address
 )paren
 suffix:semicolon
+macro_line|#endif
 id|ds
 (braket
 id|i
@@ -4351,7 +4796,7 @@ suffix:semicolon
 )brace
 id|sg_count
 op_sub_assign
-l_int|2
+id|DATASEGS_PER_COMMAND
 suffix:semicolon
 r_while
 c_loop
@@ -4418,7 +4863,9 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;isp2100: unexpected request queue overflow&bslash;n&quot;
+l_string|&quot;qlogicfc%d : unexpected request queue overflow&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 )paren
 )paren
 suffix:semicolon
@@ -4453,11 +4900,11 @@ c_cond
 (paren
 id|n
 OG
-l_int|5
+id|DATASEGS_PER_CONT
 )paren
 id|n
 op_assign
-l_int|5
+id|DATASEGS_PER_CONT
 suffix:semicolon
 r_for
 c_loop
@@ -4479,7 +4926,7 @@ id|ds
 id|i
 )braket
 dot
-id|d_base_lo
+id|d_base
 op_assign
 id|virt_to_bus_low32
 c_func
@@ -4487,12 +4934,13 @@ c_func
 id|sg-&gt;address
 )paren
 suffix:semicolon
+macro_line|#if BITS_PER_LONG &gt; 32
 id|ds
 (braket
 id|i
 )braket
 dot
-id|d_base_high
+id|d_base_hi
 op_assign
 id|virt_to_bus_high32
 c_func
@@ -4500,6 +4948,7 @@ c_func
 id|sg-&gt;address
 )paren
 suffix:semicolon
+macro_line|#endif
 id|ds
 (braket
 id|i
@@ -4526,7 +4975,7 @@ id|cmd-&gt;dataseg
 l_int|0
 )braket
 dot
-id|d_base_lo
+id|d_base
 op_assign
 id|virt_to_bus_low32
 c_func
@@ -4534,12 +4983,13 @@ c_func
 id|Cmnd-&gt;request_buffer
 )paren
 suffix:semicolon
+macro_line|#if BITS_PER_LONG &gt; 32
 id|cmd-&gt;dataseg
 (braket
 l_int|0
 )braket
 dot
-id|d_base_high
+id|d_base_hi
 op_assign
 id|virt_to_bus_high32
 c_func
@@ -4547,6 +4997,7 @@ c_func
 id|Cmnd-&gt;request_buffer
 )paren
 suffix:semicolon
+macro_line|#endif
 id|cmd-&gt;dataseg
 (braket
 l_int|0
@@ -4582,6 +5033,9 @@ suffix:colon
 r_case
 id|WRITE_BUFFER
 suffix:colon
+r_case
+id|MODE_SELECT
+suffix:colon
 id|cmd-&gt;control_flags
 op_assign
 id|CFLAG_WRITE
@@ -4597,7 +5051,7 @@ id|cmd-&gt;dataseg
 l_int|0
 )braket
 dot
-id|d_base_lo
+id|d_base
 op_assign
 id|virt_to_bus_low32
 c_func
@@ -4605,19 +5059,21 @@ c_func
 id|Cmnd-&gt;sense_buffer
 )paren
 suffix:semicolon
+macro_line|#if BITS_PER_LONG &gt; 32
 id|cmd-&gt;dataseg
 (braket
 l_int|0
 )braket
 dot
-id|d_base_high
+id|d_base_hi
 op_assign
 id|virt_to_bus_high32
 c_func
 (paren
-id|Cmnd-&gt;sense_buffer
+id|Cmnd-&gt;request_buffer
 )paren
 suffix:semicolon
+macro_line|#endif
 id|cmd-&gt;segment_cnt
 op_assign
 l_int|1
@@ -4802,7 +5258,9 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc.c crosses its fingers.&bslash;n&quot;
+l_string|&quot;qlogicfc%d.c crosses its fingers.&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 )paren
 )paren
 suffix:semicolon
@@ -4948,7 +5406,9 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc : interrupt on line %d&bslash;n&quot;
+l_string|&quot;qlogicfc%d : interrupt on line %d&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 comma
 id|irq
 )paren
@@ -4978,7 +5438,9 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc: got spurious interrupt&bslash;n&quot;
+l_string|&quot;qlogicfc%d : got spurious interrupt&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 )paren
 )paren
 suffix:semicolon
@@ -5031,7 +5493,9 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc : mbox completion status: %x&bslash;n&quot;
+l_string|&quot;qlogicfc%d : mbox completion status: %x&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 comma
 id|status
 )paren
@@ -5046,18 +5510,34 @@ id|status
 r_case
 id|LOOP_UP
 suffix:colon
-id|hostdata-&gt;loop_up
+id|printk
+c_func
+(paren
+l_string|&quot;qlogicfc%d : loop is up&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
+)paren
+suffix:semicolon
+id|hostdata-&gt;adapter_state
 op_assign
-l_int|2
+id|AS_REDO_PORTDB
 suffix:semicolon
 r_break
 suffix:semicolon
 r_case
 id|LOOP_DOWN
 suffix:colon
-id|hostdata-&gt;loop_up
+id|printk
+c_func
+(paren
+l_string|&quot;qlogicfc%d : loop is down&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
+)paren
+suffix:semicolon
+id|hostdata-&gt;adapter_state
 op_assign
-l_int|0
+id|AS_LOOP_DOWN
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -5076,13 +5556,13 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|hostdata-&gt;loop_up
+id|hostdata-&gt;adapter_state
 op_eq
-l_int|1
+id|AS_LOOP_GOOD
 )paren
-id|hostdata-&gt;loop_up
+id|hostdata-&gt;adapter_state
 op_assign
-l_int|2
+id|AS_REDO_PORTDB
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -5092,13 +5572,14 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;The firmware just choked.&bslash;n&quot;
+l_string|&quot;qlogicfc%d : The firmware just choked.&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 )paren
 suffix:semicolon
-id|hostdata-&gt;loop_up
+id|hostdata-&gt;adapter_state
 op_assign
-op_minus
-l_int|1
+id|AS_FIRMWARE_DEAD
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -5176,7 +5657,9 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc.c: got a null value out of handle_ptrs, this sucks&bslash;n&quot;
+l_string|&quot;qlogicfc%d.c : got a null value out of handle_ptrs, this sucks&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 )paren
 suffix:semicolon
 r_break
@@ -5229,7 +5712,9 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc: got an unknown status? %x&bslash;n&quot;
+l_string|&quot;qlogicfc%d : got an unknown status? %x&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 comma
 id|status
 )paren
@@ -5254,7 +5739,9 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc : response queue update&bslash;n&quot;
+l_string|&quot;qlogicfc%d : response queue update&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 )paren
 )paren
 suffix:semicolon
@@ -5264,7 +5751,9 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc : response queue depth %d&bslash;n&quot;
+l_string|&quot;qlogicfc%d : response queue depth %d&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 comma
 id|RES_QUEUE_DEPTH
 c_func
@@ -5336,15 +5825,17 @@ c_cond
 id|sts-&gt;hdr.entry_type
 op_eq
 id|ENTRY_STATUS
-)paren
-(brace
+op_logical_and
+(paren
 id|Cmnd
 op_assign
 id|hostdata-&gt;handle_ptrs
 (braket
 id|sts-&gt;handle
 )braket
-suffix:semicolon
+)paren
+)paren
+(brace
 id|Cmnd-&gt;result
 op_assign
 id|isp2100_return_status
@@ -5363,6 +5854,7 @@ suffix:semicolon
 id|hostdata-&gt;queued
 op_decrement
 suffix:semicolon
+multiline_comment|/* &n;&t;&t;&t;&t; * if any of the following are true we do not&n;&t;&t;&t;&t; * call scsi_done.  if the status is CS_ABORTED&n;&t;&t;&t;&t; * we dont have to call done because the upper&n;&t;&t;&t;&t; * level should already know its aborted.&n;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -5372,6 +5864,10 @@ id|sts-&gt;handle
 )braket
 op_ne
 id|Cmnd-&gt;serial_number
+op_logical_or
+id|sts-&gt;completion_status
+op_eq
+id|CS_ABORTED
 )paren
 (brace
 id|hostdata-&gt;handle_serials
@@ -5394,13 +5890,49 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-id|hostdata-&gt;handle_serials
+multiline_comment|/*&n;&t;&t;&t;&t; * if we get back an error indicating the port&n;&t;&t;&t;&t; * is not there or if the loop is down and &n;&t;&t;&t;&t; * this is a device that used to be there &n;&t;&t;&t;&t; * allow the command to timeout.&n;&t;&t;&t;&t; * the device may well be back in a couple of&n;&t;&t;&t;&t; * seconds.&n;&t;&t;&t;&t; */
+r_if
+c_cond
+(paren
+(paren
+id|hostdata-&gt;adapter_state
+op_eq
+id|AS_LOOP_DOWN
+op_logical_or
+id|sts-&gt;completion_status
+op_eq
+id|CS_PORT_UNAVAILABLE
+op_logical_or
+id|sts-&gt;completion_status
+op_eq
+id|CS_PORT_LOGGED_OUT
+op_logical_or
+id|sts-&gt;completion_status
+op_eq
+id|CS_PORT_CONFIG_CHANGED
+)paren
+op_logical_and
+id|hostdata-&gt;port_db
 (braket
-id|sts-&gt;handle
+id|Cmnd-&gt;target
 )braket
-op_assign
-l_int|0
+dot
+id|wwn
+)paren
+(brace
+id|outw
+c_func
+(paren
+id|out_ptr
+comma
+id|host-&gt;io_port
+op_plus
+id|MBOX5
+)paren
 suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
 )brace
 r_else
 (brace
@@ -5423,10 +5955,6 @@ c_cond
 id|sts-&gt;completion_status
 op_eq
 id|CS_RESET_OCCURRED
-op_logical_or
-id|sts-&gt;completion_status
-op_eq
-id|CS_ABORTED
 op_logical_or
 (paren
 id|sts-&gt;status_flags
@@ -5502,7 +6030,9 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;Ouch, scsi done is NULL&bslash;n&quot;
+l_string|&quot;qlogicfc%d : Ouch, scsi done is NULL&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 )paren
 suffix:semicolon
 )brace
@@ -5600,7 +6130,9 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc crosses its fingers.&bslash;n&quot;
+l_string|&quot;qlogicfc%d : crosses its fingers.&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 )paren
 )paren
 suffix:semicolon
@@ -5873,7 +6405,7 @@ suffix:semicolon
 r_int
 id|return_status
 op_assign
-id|SCSI_ABORT_SUCCESS
+id|SUCCESS
 suffix:semicolon
 id|ENTER
 c_func
@@ -5927,9 +6459,11 @@ id|i
 op_eq
 id|QLOGICFC_REQ_QUEUE_LEN
 )paren
+(brace
 r_return
-id|SCSI_ABORT_ERROR
+id|SUCCESS
 suffix:semicolon
+)brace
 id|isp2100_disable_irqs
 c_func
 (paren
@@ -5943,6 +6477,31 @@ l_int|0
 op_assign
 id|MBOX_ABORT_IOCB
 suffix:semicolon
+macro_line|#if ISP2100_PORTDB
+id|param
+(braket
+l_int|1
+)braket
+op_assign
+(paren
+(paren
+(paren
+id|u_short
+)paren
+id|hostdata-&gt;port_db
+(braket
+id|Cmnd-&gt;target
+)braket
+dot
+id|loop_id
+)paren
+op_lshift
+l_int|8
+)paren
+op_or
+id|Cmnd-&gt;lun
+suffix:semicolon
+macro_line|#else
 id|param
 (braket
 l_int|1
@@ -5961,14 +6520,15 @@ l_int|8
 op_or
 id|Cmnd-&gt;lun
 suffix:semicolon
+macro_line|#endif
 id|param
 (braket
 l_int|2
 )braket
 op_assign
 id|i
-op_rshift
-l_int|16
+op_amp
+l_int|0xffff
 suffix:semicolon
 id|param
 (braket
@@ -5976,8 +6536,8 @@ l_int|3
 )braket
 op_assign
 id|i
-op_amp
-l_int|0xffff
+op_rshift
+l_int|16
 suffix:semicolon
 id|isp2100_mbox_command
 c_func
@@ -6001,7 +6561,9 @@ id|MBOX_COMMAND_COMPLETE
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc : scsi abort failure: %x&bslash;n&quot;
+l_string|&quot;qlogicfc%d : scsi abort failure: %x&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 comma
 id|param
 (braket
@@ -6041,17 +6603,59 @@ id|DID_BAD_TARGET
 op_lshift
 l_int|16
 suffix:semicolon
-(paren
-op_star
-id|Cmnd-&gt;scsi_done
-)paren
-(paren
-id|Cmnd
-)paren
-suffix:semicolon
 id|return_status
 op_assign
-id|SCSI_ABORT_ERROR
+id|FAILED
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|return_status
+op_ne
+id|SUCCESS
+)paren
+(brace
+id|param
+(braket
+l_int|0
+)braket
+op_assign
+id|MBOX_GET_FIRMWARE_STATE
+suffix:semicolon
+id|isp2100_mbox_command
+c_func
+(paren
+id|host
+comma
+id|param
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;qlogicfc%d : abort failed&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;qlogicfc%d : firmware status is %x %x&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
+comma
+id|param
+(braket
+l_int|0
+)braket
+comma
+id|param
+(braket
+l_int|1
+)braket
+)paren
 suffix:semicolon
 )brace
 id|isp2100_enable_irqs
@@ -6166,7 +6770,9 @@ id|MBOX_COMMAND_COMPLETE
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc : scsi bus reset failure: %x&bslash;n&quot;
+l_string|&quot;qlogicfc%d : scsi bus reset failure: %x&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 comma
 id|param
 (braket
@@ -6335,6 +6941,15 @@ c_func
 l_string|&quot;isp2100_reset_hardware&quot;
 )paren
 suffix:semicolon
+id|hostdata
+op_assign
+(paren
+r_struct
+id|isp2100_hostdata
+op_star
+)paren
+id|host-&gt;hostdata
+suffix:semicolon
 id|outw
 c_func
 (paren
@@ -6409,14 +7024,18 @@ id|loop_count
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc: reset_hardware loop timeout&bslash;n&quot;
+l_string|&quot;qlogicfc%d : reset_hardware loop timeout&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 )paren
 suffix:semicolon
 macro_line|#if DEBUG_ISP2100
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc : mbox 0 0x%04x &bslash;n&quot;
+l_string|&quot;qlogicfc%d : mbox 0 0x%04x &bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 comma
 id|inw
 c_func
@@ -6430,7 +7049,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc : mbox 1 0x%04x &bslash;n&quot;
+l_string|&quot;qlogicfc%d : mbox 1 0x%04x &bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 comma
 id|inw
 c_func
@@ -6444,7 +7065,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc : mbox 2 0x%04x &bslash;n&quot;
+l_string|&quot;qlogicfc%d : mbox 2 0x%04x &bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 comma
 id|inw
 c_func
@@ -6458,7 +7081,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc : mbox 3 0x%04x &bslash;n&quot;
+l_string|&quot;qlogicfc%d : mbox 3 0x%04x &bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 comma
 id|inw
 c_func
@@ -6472,7 +7097,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc : mbox 4 0x%04x &bslash;n&quot;
+l_string|&quot;qlogicfc%d : mbox 4 0x%04x &bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 comma
 id|inw
 c_func
@@ -6486,7 +7113,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc : mbox 5 0x%04x &bslash;n&quot;
+l_string|&quot;qlogicfc%d : mbox 5 0x%04x &bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 comma
 id|inw
 c_func
@@ -6500,7 +7129,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc : mbox 6 0x%04x &bslash;n&quot;
+l_string|&quot;qlogicfc%d : mbox 6 0x%04x &bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 comma
 id|inw
 c_func
@@ -6514,7 +7145,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc : mbox 7 0x%04x &bslash;n&quot;
+l_string|&quot;qlogicfc%d : mbox 7 0x%04x &bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 comma
 id|inw
 c_func
@@ -6532,7 +7165,9 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc : verifying checksum&bslash;n&quot;
+l_string|&quot;qlogicfc%d : verifying checksum&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 )paren
 )paren
 suffix:semicolon
@@ -6604,7 +7239,9 @@ id|MBOX_COMMAND_COMPLETE
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc : firmware load failure&bslash;n&quot;
+l_string|&quot;qlogicfc%d : firmware load failure&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 )paren
 suffix:semicolon
 r_return
@@ -6650,7 +7287,9 @@ id|MBOX_COMMAND_COMPLETE
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc : ram checksum failure&bslash;n&quot;
+l_string|&quot;qlogicfc%d : ram checksum failure&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 )paren
 suffix:semicolon
 r_return
@@ -6663,7 +7302,9 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc : executing firmware&bslash;n&quot;
+l_string|&quot;qlogicfc%d : executing firmware&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 )paren
 )paren
 suffix:semicolon
@@ -6718,7 +7359,9 @@ id|MBOX_COMMAND_COMPLETE
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc : about firmware failure&bslash;n&quot;
+l_string|&quot;qlogicfc%d : about firmware failure&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 )paren
 suffix:semicolon
 r_return
@@ -6731,7 +7374,9 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc : firmware major revision %d&bslash;n&quot;
+l_string|&quot;qlogicfc%d : firmware major revision %d&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 comma
 id|param
 (braket
@@ -6746,7 +7391,9 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc : firmware minor revision %d&bslash;n&quot;
+l_string|&quot;qlogicfc%d : firmware minor revision %d&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 comma
 id|param
 (braket
@@ -6754,15 +7401,6 @@ l_int|2
 )braket
 )paren
 )paren
-suffix:semicolon
-id|hostdata
-op_assign
-(paren
-r_struct
-id|isp2100_hostdata
-op_star
-)paren
-id|host-&gt;hostdata
 suffix:semicolon
 macro_line|#ifdef USE_NVRAM_DEFAULTS
 r_if
@@ -6783,7 +7421,9 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc: Could not read from NVRAM&bslash;n&quot;
+l_string|&quot;qlogicfc%d : Could not read from NVRAM&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 )paren
 suffix:semicolon
 )brace
@@ -7033,7 +7673,9 @@ id|MBOX_COMMAND_COMPLETE
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc.c: Ouch 0x%04x&bslash;n&quot;
+l_string|&quot;qlogicfc%d.c: Ouch 0x%04x&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 comma
 id|param
 (braket
@@ -7074,7 +7716,9 @@ id|MBOX_COMMAND_COMPLETE
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc.c: 0x%04x&bslash;n&quot;
+l_string|&quot;qlogicfc%d.c: 0x%04x&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 comma
 id|param
 (braket
@@ -7292,7 +7936,9 @@ id|revision
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc : error reading PCI configuration&bslash;n&quot;
+l_string|&quot;qlogicfc%d : error reading PCI configuration&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 )paren
 suffix:semicolon
 r_return
@@ -7321,7 +7967,9 @@ id|PCI_VENDOR_ID_QLOGIC
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc : 0x%04x is not QLogic vendor ID&bslash;n&quot;
+l_string|&quot;qlogicfc%d : 0x%04x is not QLogic vendor ID&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 comma
 id|pdev-&gt;vendor
 )paren
@@ -7341,7 +7989,9 @@ id|PCI_DEVICE_ID_QLOGIC_ISP2100
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc : 0x%04x does not match ISP2100 device id&bslash;n&quot;
+l_string|&quot;qlogicfc%d : 0x%04x does not match ISP2100 device id&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 comma
 id|pdev-&gt;device
 )paren
@@ -7374,7 +8024,9 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc : i/o mapping is disabled&bslash;n&quot;
+l_string|&quot;qlogicfc%d : i/o mapping is disabled&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 )paren
 suffix:semicolon
 r_return
@@ -7395,7 +8047,9 @@ id|PCI_COMMAND_MASTER
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc : bus mastering is disabled&bslash;n&quot;
+l_string|&quot;qlogicfc%d : bus mastering is disabled&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 )paren
 suffix:semicolon
 r_return
@@ -7416,7 +8070,9 @@ id|ISP2100_REV_ID3
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc : new isp2100 revision ID (%d)&bslash;n&quot;
+l_string|&quot;qlogicfc%d : new isp2100 revision ID (%d)&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 comma
 id|revision
 )paren
@@ -7737,6 +8393,10 @@ l_int|0
 )braket
 op_eq
 l_int|0
+op_logical_or
+id|hostdata-&gt;adapter_state
+op_eq
+id|AS_FIRMWARE_DEAD
 )paren
 r_return
 l_int|1
@@ -7776,7 +8436,9 @@ id|loop_count
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc: mbox_command loop timeout #1&bslash;n&quot;
+l_string|&quot;qlogicfc%d : mbox_command loop timeout #1&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 )paren
 suffix:semicolon
 id|param
@@ -7785,6 +8447,10 @@ l_int|0
 )braket
 op_assign
 l_int|0x4006
+suffix:semicolon
+id|hostdata-&gt;adapter_state
+op_assign
+id|AS_FIRMWARE_DEAD
 suffix:semicolon
 r_return
 l_int|1
@@ -7810,7 +8476,9 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc: invalid mbox command&bslash;n&quot;
+l_string|&quot;qlogicfc%d : invalid mbox command&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 )paren
 suffix:semicolon
 r_if
@@ -8074,10 +8742,16 @@ op_logical_neg
 id|loop_count
 )paren
 (brace
+id|hostdata-&gt;adapter_state
+op_assign
+id|AS_FIRMWARE_DEAD
+suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc: mbox_command loop timeout #2&bslash;n&quot;
+l_string|&quot;qlogicfc%d : mbox_command loop timeout #2&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 )paren
 suffix:semicolon
 r_break
@@ -8139,7 +8813,9 @@ id|loop_count
 id|printk
 c_func
 (paren
-l_string|&quot;qlogicfc: mbox_command loop timeout #3&bslash;n&quot;
+l_string|&quot;qlogicfc%d : mbox_command loop timeout #3&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 )paren
 suffix:semicolon
 id|param
@@ -8270,10 +8946,16 @@ op_amp
 l_int|0x0080
 )paren
 (brace
+id|hostdata-&gt;adapter_state
+op_assign
+id|AS_FIRMWARE_DEAD
+suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;mbox op is still pending&bslash;n&quot;
+l_string|&quot;qlogicfc%d : mbox op is still pending&bslash;n&quot;
+comma
+id|hostdata-&gt;host_id
 )paren
 suffix:semicolon
 )brace
@@ -8281,6 +8963,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#if DEBUG_ISP2100_INTR
 DECL|function|isp2100_print_status_entry
 r_void
 id|isp2100_print_status_entry
@@ -8348,6 +9031,7 @@ l_int|3
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif                         /* DEBUG_ISP2100_INTR */
 macro_line|#if DEBUG_ISP2100
 DECL|function|isp2100_print_scsi_cmd
 r_void

@@ -557,6 +557,13 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* flag: partitioned with ezdrive */
 macro_line|#endif /* FAKE_FDISK_FOR_EZDRIVE */
+DECL|member|ata_flash
+r_int
+id|ata_flash
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* 1=present, 0=default */
 DECL|member|media
 id|byte
 id|media
@@ -1080,6 +1087,13 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* automatically try to enable DMA at boot */
+DECL|member|udma_four
+r_int
+id|udma_four
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* 1=ATA-66 capable, 0=default */
 DECL|member|channel
 id|byte
 id|channel

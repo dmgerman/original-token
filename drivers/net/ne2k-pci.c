@@ -8,11 +8,8 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;ne2k-pci.c:v0.99L 2/7/98 D. Becker/P. Gortmaker http://cesdis.gsfc.nasa.gov/linux/drivers/ne2k-pci.html&bslash;n&quot;
+l_string|&quot;ne2k-pci.c:vpre-1.00e 5/27/99 D. Becker/P. Gortmaker http://cesdis.gsfc.nasa.gov/linux/drivers/ne2k-pci.html&bslash;n&quot;
 suffix:semicolon
-macro_line|#ifdef MODVERSIONS
-macro_line|#include &lt;linux/modversions.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -25,6 +22,16 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &quot;8390.h&quot;
+macro_line|#if defined(__powerpc__)
+DECL|macro|inl_le
+mdefine_line|#define inl_le(addr)  le32_to_cpu(inl(addr))
+DECL|macro|inw_le
+mdefine_line|#define inw_le(addr)  le16_to_cpu(inw(addr))
+DECL|macro|insl
+mdefine_line|#define insl insl_ns
+DECL|macro|outsl
+mdefine_line|#define outsl outsl_ns
+macro_line|#endif
 multiline_comment|/* Set statically or when loading the driver module. */
 DECL|variable|debug
 r_static
@@ -41,6 +48,36 @@ multiline_comment|/* Do we implement the read before write bugfix ? */
 multiline_comment|/* #define NE_RW_BUGFIX */
 multiline_comment|/* Do we have a non std. amount of memory? (in units of 256 byte pages) */
 multiline_comment|/* #define PACKETBUF_MEMSIZE&t;0x40 */
+DECL|macro|ne2k_flags
+mdefine_line|#define ne2k_flags reg0&t;&t;&t;/* Rename an existing field to store flags! */
+multiline_comment|/* Only the low 8 bits are usable for non-init-time flags! */
+r_enum
+(brace
+DECL|enumerator|HOLTEK_FDX
+id|HOLTEK_FDX
+op_assign
+l_int|1
+comma
+multiline_comment|/* Full duplex -&gt; set 0x80 at offset 0x20. */
+DECL|enumerator|ONLY_16BIT_IO
+DECL|enumerator|ONLY_32BIT_IO
+id|ONLY_16BIT_IO
+op_assign
+l_int|2
+comma
+id|ONLY_32BIT_IO
+op_assign
+l_int|4
+comma
+multiline_comment|/* Chip can do only 16/32-bit xfers. */
+DECL|enumerator|STOP_PG_0x60
+id|STOP_PG_0x60
+op_assign
+l_int|0x100
+comma
+)brace
+suffix:semicolon
+multiline_comment|/* This will eventually be converted to the standard PCI probe table. */
 r_static
 r_struct
 (brace
@@ -57,6 +94,10 @@ r_char
 op_star
 id|name
 suffix:semicolon
+DECL|member|flags
+r_int
+id|flags
+suffix:semicolon
 )brace
 DECL|variable|__initdata
 id|pci_clone_list
@@ -71,6 +112,8 @@ comma
 l_int|0x8029
 comma
 l_string|&quot;RealTek RTL-8029&quot;
+comma
+l_int|0
 )brace
 comma
 (brace
@@ -79,6 +122,8 @@ comma
 l_int|0x0940
 comma
 l_string|&quot;Winbond 89C940&quot;
+comma
+l_int|0
 )brace
 comma
 (brace
@@ -87,6 +132,8 @@ comma
 l_int|0x1401
 comma
 l_string|&quot;Compex RL2000&quot;
+comma
+l_int|0
 )brace
 comma
 (brace
@@ -95,6 +142,8 @@ comma
 l_int|0x3000
 comma
 l_string|&quot;KTI ET32P2&quot;
+comma
+l_int|0
 )brace
 comma
 (brace
@@ -103,6 +152,8 @@ comma
 l_int|0x5000
 comma
 l_string|&quot;NetVin NV5000SC&quot;
+comma
+l_int|0
 )brace
 comma
 (brace
@@ -110,7 +161,9 @@ l_int|0x1106
 comma
 l_int|0x0926
 comma
-l_string|&quot;Via 82C926&quot;
+l_string|&quot;Via 86C926&quot;
+comma
+id|ONLY_16BIT_IO
 )brace
 comma
 (brace
@@ -119,6 +172,8 @@ comma
 l_int|0x0e34
 comma
 l_string|&quot;SureCom NE34&quot;
+comma
+l_int|0
 )brace
 comma
 (brace
@@ -127,6 +182,34 @@ comma
 l_int|0x5a5a
 comma
 l_string|&quot;Winbond&quot;
+comma
+l_int|0
+)brace
+comma
+(brace
+l_int|0x12c3
+comma
+l_int|0x0058
+comma
+l_string|&quot;Holtek HT80232&quot;
+comma
+id|ONLY_16BIT_IO
+op_or
+id|HOLTEK_FDX
+)brace
+comma
+(brace
+l_int|0x12c3
+comma
+l_int|0x5598
+comma
+l_string|&quot;Holtek HT80229&quot;
+comma
+id|ONLY_32BIT_IO
+op_or
+id|HOLTEK_FDX
+op_or
+id|STOP_PG_0x60
 )brace
 comma
 (brace
@@ -177,6 +260,9 @@ id|ioaddr
 comma
 r_int
 id|irq
+comma
+r_int
+id|chip_idx
 )paren
 suffix:semicolon
 r_static
@@ -323,9 +409,6 @@ c_func
 r_void
 )paren
 (brace
-r_int
-id|retval
-suffix:semicolon
 multiline_comment|/* We must emit version information. */
 r_if
 c_cond
@@ -341,29 +424,26 @@ comma
 id|version
 )paren
 suffix:semicolon
-id|retval
-op_assign
+r_if
+c_cond
+(paren
 id|ne2k_pci_probe
 c_func
 (paren
 l_int|0
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|retval
 )paren
 (brace
 id|printk
 c_func
 (paren
 id|KERN_NOTICE
-l_string|&quot;ne2k-pci.c: no (useable) cards found, driver NOT installed.&bslash;n&quot;
+l_string|&quot;ne2k-pci.c: No useable cards found, driver NOT installed.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-id|retval
+op_minus
+id|ENODEV
 suffix:semicolon
 )brace
 id|lock_8390_module
@@ -464,10 +544,9 @@ l_int|0
 )brace
 suffix:semicolon
 macro_line|#endif
-DECL|function|__initfunc
-id|__initfunc
-(paren
+DECL|function|ne2k_pci_probe
 r_int
+id|__init
 id|ne2k_pci_probe
 c_func
 (paren
@@ -475,7 +554,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_struct
@@ -748,6 +826,8 @@ comma
 id|pci_ioaddr
 comma
 id|pci_irq_line
+comma
+id|i
 )paren
 suffix:semicolon
 r_if
@@ -825,12 +905,11 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-(paren
+DECL|function|ne2k_pci_probe1
 r_static
 r_struct
 id|device
+id|__init
 op_star
 id|ne2k_pci_probe1
 c_func
@@ -845,7 +924,9 @@ id|ioaddr
 comma
 r_int
 id|irq
-)paren
+comma
+r_int
+id|chip_idx
 )paren
 (brace
 r_int
@@ -857,13 +938,6 @@ id|SA_prom
 (braket
 l_int|32
 )braket
-suffix:semicolon
-r_const
-r_char
-op_star
-id|name
-op_assign
-l_int|NULL
 suffix:semicolon
 r_int
 id|start_page
@@ -987,6 +1061,16 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
+id|dev
+op_assign
+id|init_etherdev
+c_func
+(paren
+id|dev
+comma
+l_int|0
+)paren
+suffix:semicolon
 multiline_comment|/* Reset card. Who knows what dain-bramaged state it was left in. */
 (brace
 r_int
@@ -1231,78 +1315,20 @@ id|offset
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef notdef
-multiline_comment|/* Some broken PCI cards don&squot;t respect the byte-wide&n;&t;   request in program_seq above, and hence don&squot;t have doubled up values.&n;&t;*/
-r_for
-c_loop
+multiline_comment|/* Note: all PCI cards have at least 16 bit access, so we don&squot;t have&n;&t;   to check for 8 bit cards.  Most cards permit 32 bit access. */
+r_if
+c_cond
 (paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|32
-multiline_comment|/*sizeof(SA_prom)*/
-suffix:semicolon
-id|i
-op_add_assign
-l_int|2
+id|pci_clone_list
+(braket
+id|chip_idx
+)braket
+dot
+id|flags
+op_amp
+id|ONLY_32BIT_IO
 )paren
 (brace
-id|SA_prom
-(braket
-id|i
-)braket
-op_assign
-id|inb
-c_func
-(paren
-id|ioaddr
-op_plus
-id|NE_DATAPORT
-)paren
-suffix:semicolon
-id|SA_prom
-(braket
-id|i
-op_plus
-l_int|1
-)braket
-op_assign
-id|inb
-c_func
-(paren
-id|ioaddr
-op_plus
-id|NE_DATAPORT
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|SA_prom
-(braket
-id|i
-)braket
-op_ne
-id|SA_prom
-(braket
-id|i
-op_plus
-l_int|1
-)braket
-)paren
-id|sa_prom_doubled
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|sa_prom_doubled
-)paren
 r_for
 c_loop
 (paren
@@ -1312,24 +1338,36 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-l_int|16
+l_int|4
 suffix:semicolon
 id|i
 op_increment
 )paren
+(paren
+(paren
+id|u32
+op_star
+)paren
 id|SA_prom
+)paren
 (braket
 id|i
 )braket
 op_assign
-id|SA_prom
-(braket
-id|i
+id|le32_to_cpu
+c_func
+(paren
+id|inl
+c_func
+(paren
+id|ioaddr
 op_plus
-id|i
-)braket
+id|NE_DATAPORT
+)paren
+)paren
 suffix:semicolon
-macro_line|#else
+)brace
+r_else
 r_for
 c_loop
 (paren
@@ -1360,7 +1398,6 @@ id|NE_DATAPORT
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 multiline_comment|/* We always set the 8390 registers for word mode. */
 id|outb
 c_func
@@ -1378,23 +1415,21 @@ id|NESM_START_PG
 suffix:semicolon
 id|stop_page
 op_assign
+id|pci_clone_list
+(braket
+id|chip_idx
+)braket
+dot
+id|flags
+op_amp
+id|STOP_PG_0x60
+ques
+c_cond
+l_int|0x60
+suffix:colon
 id|NESM_STOP_PG
 suffix:semicolon
 multiline_comment|/* Set up the rest of the parameters. */
-id|name
-op_assign
-l_string|&quot;PCI NE2000&quot;
-suffix:semicolon
-id|dev
-op_assign
-id|init_etherdev
-c_func
-(paren
-id|dev
-comma
-l_int|0
-)paren
-suffix:semicolon
 id|dev-&gt;irq
 op_assign
 id|irq
@@ -1421,12 +1456,6 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-id|kfree
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1448,6 +1477,11 @@ l_string|&quot;%s: %s found at %#x, IRQ %d, &quot;
 comma
 id|dev-&gt;name
 comma
+id|pci_clone_list
+(braket
+id|chip_idx
+)braket
+dot
 id|name
 comma
 id|ioaddr
@@ -1503,6 +1537,11 @@ suffix:semicolon
 )brace
 id|ei_status.name
 op_assign
+id|pci_clone_list
+(braket
+id|chip_idx
+)braket
+dot
 id|name
 suffix:semicolon
 id|ei_status.tx_start_page
@@ -1516,6 +1555,15 @@ suffix:semicolon
 id|ei_status.word16
 op_assign
 l_int|1
+suffix:semicolon
+id|ei_status.ne2k_flags
+op_assign
+id|pci_clone_list
+(braket
+id|chip_idx
+)braket
+dot
+id|flags
 suffix:semicolon
 id|ei_status.rx_start_page
 op_assign
@@ -1799,7 +1847,7 @@ id|printk
 c_func
 (paren
 l_string|&quot;%s: DMAing conflict in ne2k_pci_get_8390_hdr &quot;
-l_string|&quot;[DMAstat:%d][irqlock:%d][intr:%ld].&bslash;n&quot;
+l_string|&quot;[DMAstat:%d][irqlock:%d][intr:%d].&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -1807,6 +1855,9 @@ id|ei_status.dmaing
 comma
 id|ei_status.irqlock
 comma
+(paren
+r_int
+)paren
 id|dev-&gt;interrupt
 )paren
 suffix:semicolon
@@ -1888,23 +1939,14 @@ op_plus
 id|NE_CMD
 )paren
 suffix:semicolon
-macro_line|#if defined(USE_LONGIO)
-op_star
+r_if
+c_cond
 (paren
-id|u32
-op_star
+id|ei_status.ne2k_flags
+op_amp
+id|ONLY_16BIT_IO
 )paren
-id|hdr
-op_assign
-id|inl
-c_func
-(paren
-id|NE_BASE
-op_plus
-id|NE_DATAPORT
-)paren
-suffix:semicolon
-macro_line|#else
+(brace
 id|insw
 c_func
 (paren
@@ -1923,7 +1965,36 @@ op_rshift
 l_int|1
 )paren
 suffix:semicolon
-macro_line|#endif
+)brace
+r_else
+(brace
+op_star
+(paren
+id|u32
+op_star
+)paren
+id|hdr
+op_assign
+id|le32_to_cpu
+c_func
+(paren
+id|inl
+c_func
+(paren
+id|NE_BASE
+op_plus
+id|NE_DATAPORT
+)paren
+)paren
+suffix:semicolon
+id|le16_to_cpus
+c_func
+(paren
+op_amp
+id|hdr-&gt;count
+)paren
+suffix:semicolon
+)brace
 id|outb
 c_func
 (paren
@@ -1987,7 +2058,7 @@ id|printk
 c_func
 (paren
 l_string|&quot;%s: DMAing conflict in ne2k_pci_block_input &quot;
-l_string|&quot;[DMAstat:%d][irqlock:%d][intr:%ld].&bslash;n&quot;
+l_string|&quot;[DMAstat:%d][irqlock:%d][intr:%d].&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -1995,6 +2066,9 @@ id|ei_status.dmaing
 comma
 id|ei_status.irqlock
 comma
+(paren
+r_int
+)paren
 id|dev-&gt;interrupt
 )paren
 suffix:semicolon
@@ -2004,6 +2078,23 @@ suffix:semicolon
 id|ei_status.dmaing
 op_or_assign
 l_int|0x01
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ei_status.ne2k_flags
+op_amp
+id|ONLY_32BIT_IO
+)paren
+id|count
+op_assign
+(paren
+id|count
+op_plus
+l_int|3
+)paren
+op_amp
+l_int|0xFFFC
 suffix:semicolon
 id|outb
 c_func
@@ -2079,7 +2170,55 @@ op_plus
 id|NE_CMD
 )paren
 suffix:semicolon
-macro_line|#if defined(USE_LONGIO)
+r_if
+c_cond
+(paren
+id|ei_status.ne2k_flags
+op_amp
+id|ONLY_16BIT_IO
+)paren
+(brace
+id|insw
+c_func
+(paren
+id|NE_BASE
+op_plus
+id|NE_DATAPORT
+comma
+id|buf
+comma
+id|count
+op_rshift
+l_int|1
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|count
+op_amp
+l_int|0x01
+)paren
+(brace
+id|buf
+(braket
+id|count
+op_minus
+l_int|1
+)braket
+op_assign
+id|inb
+c_func
+(paren
+id|NE_BASE
+op_plus
+id|NE_DATAPORT
+)paren
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
 id|insl
 c_func
 (paren
@@ -2126,12 +2265,16 @@ id|buf
 )paren
 op_increment
 op_assign
+id|le16_to_cpu
+c_func
+(paren
 id|inw
 c_func
 (paren
 id|NE_BASE
 op_plus
 id|NE_DATAPORT
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -2153,46 +2296,7 @@ id|NE_DATAPORT
 )paren
 suffix:semicolon
 )brace
-macro_line|#else
-id|insw
-c_func
-(paren
-id|NE_BASE
-op_plus
-id|NE_DATAPORT
-comma
-id|buf
-comma
-id|count
-op_rshift
-l_int|1
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|count
-op_amp
-l_int|0x01
-)paren
-(brace
-id|buf
-(braket
-id|count
-op_minus
-l_int|1
-)braket
-op_assign
-id|inb
-c_func
-(paren
-id|NE_BASE
-op_plus
-id|NE_DATAPORT
-)paren
-suffix:semicolon
 )brace
-macro_line|#endif
 id|outb
 c_func
 (paren
@@ -2248,6 +2352,24 @@ multiline_comment|/* On little-endian it&squot;s always safe to round the count 
 r_if
 c_cond
 (paren
+id|ei_status.ne2k_flags
+op_amp
+id|ONLY_32BIT_IO
+)paren
+id|count
+op_assign
+(paren
+id|count
+op_plus
+l_int|3
+)paren
+op_amp
+l_int|0xFFFC
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
 id|count
 op_amp
 l_int|0x01
@@ -2266,7 +2388,7 @@ id|printk
 c_func
 (paren
 l_string|&quot;%s: DMAing conflict in ne2k_pci_block_output.&quot;
-l_string|&quot;[DMAstat:%d][irqlock:%d][intr:%ld]&bslash;n&quot;
+l_string|&quot;[DMAstat:%d][irqlock:%d][intr:%d]&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -2274,6 +2396,9 @@ id|ei_status.dmaing
 comma
 id|ei_status.irqlock
 comma
+(paren
+r_int
+)paren
 id|dev-&gt;interrupt
 )paren
 suffix:semicolon
@@ -2421,7 +2546,31 @@ op_plus
 id|NE_CMD
 )paren
 suffix:semicolon
-macro_line|#if defined(USE_LONGIO)
+r_if
+c_cond
+(paren
+id|ei_status.ne2k_flags
+op_amp
+id|ONLY_16BIT_IO
+)paren
+(brace
+id|outsw
+c_func
+(paren
+id|NE_BASE
+op_plus
+id|NE_DATAPORT
+comma
+id|buf
+comma
+id|count
+op_rshift
+l_int|1
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
 id|outsl
 c_func
 (paren
@@ -2461,6 +2610,9 @@ l_int|2
 id|outw
 c_func
 (paren
+id|cpu_to_le16
+c_func
+(paren
 op_star
 (paren
 (paren
@@ -2470,6 +2622,7 @@ op_star
 id|buf
 )paren
 op_increment
+)paren
 comma
 id|NE_BASE
 op_plus
@@ -2477,22 +2630,7 @@ id|NE_DATAPORT
 )paren
 suffix:semicolon
 )brace
-macro_line|#else
-id|outsw
-c_func
-(paren
-id|NE_BASE
-op_plus
-id|NE_DATAPORT
-comma
-id|buf
-comma
-id|count
-op_rshift
-l_int|1
-)paren
-suffix:semicolon
-macro_line|#endif
+)brace
 id|dma_start
 op_assign
 id|jiffies

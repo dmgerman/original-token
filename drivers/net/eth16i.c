@@ -856,11 +856,9 @@ id|eth16i_probe_list
 )brace
 suffix:semicolon
 macro_line|#else  /* Not HAVE_DEVLIST */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|eth16i_probe
 r_int
+id|__init
 id|eth16i_probe
 c_func
 (paren
@@ -868,7 +866,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
 )paren
 (brace
 r_int
@@ -1053,12 +1050,10 @@ id|ENODEV
 suffix:semicolon
 )brace
 macro_line|#endif  /* Not HAVE_DEVLIST */
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|eth16i_probe1
 r_static
 r_int
+id|__init
 id|eth16i_probe1
 c_func
 (paren
@@ -1069,7 +1064,6 @@ id|dev
 comma
 r_int
 id|ioaddr
-)paren
 )paren
 (brace
 r_static
@@ -2924,7 +2918,7 @@ op_and_assign
 l_int|0x7F
 suffix:semicolon
 multiline_comment|/* Mask DCLEN bit */
-macro_line|#ifdef 0
+macro_line|#if 0
 multiline_comment|/* &n;&t;   This was removed because the card was sometimes left to state&n;&t;   from which it couldn&squot;t be find anymore. If there is need&n;&t;   to more strict check still this have to be fixed.&n;&t;   */
 r_if
 c_cond

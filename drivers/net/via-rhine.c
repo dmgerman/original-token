@@ -1,5 +1,5 @@
 multiline_comment|/* via-rhine.c: A Linux Ethernet device driver for VIA Rhine family chips. */
-multiline_comment|/*&n;&t;Written 1998 by Donald Becker.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License (GPL), incorporated herein by reference.&n;&t;Drivers derived from this code also fall under the GPL and must retain&n;&t;this authorship and copyright notice.&n;&n;&t;This driver is designed for the VIA VT86c100A Rhine-II PCI Fast Ethernet&n;&t;controller.  It also works with the older 3043 Rhine-I chip.&n;&n;&t;The author may be reached as becker@cesdis.edu, or&n;&t;Donald Becker&n;&t;312 Severn Ave. #W302&n;&t;Annapolis MD 21403&n;&n;&t;Support and updates available at&n;&t;http://cesdis.gsfc.nasa.gov/linux/drivers/via-rhine.html&n;*/
+multiline_comment|/*&n;&t;Written 1998-1999 by Donald Becker.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License (GPL), incorporated herein by reference.&n;&t;Drivers derived from this code also fall under the GPL and must retain&n;&t;this authorship and copyright notice.&n;&n;&t;This driver is designed for the VIA VT86c100A Rhine-II PCI Fast Ethernet&n;&t;controller.  It also works with the older 3043 Rhine-I chip.&n;&n;&t;The author may be reached as becker@cesdis.edu, or&n;&t;Donald Becker&n;&t;312 Severn Ave. #W302&n;&t;Annapolis MD 21403&n;&n;&t;Support and updates available at&n;&t;http://cesdis.gsfc.nasa.gov/linux/drivers/via-rhine.html&n;*/
 DECL|variable|versionA
 r_static
 r_const
@@ -7,7 +7,7 @@ r_char
 op_star
 id|versionA
 op_assign
-l_string|&quot;via-rhine.c:v1.00 9/5/98  Written by Donald Becker&bslash;n&quot;
+l_string|&quot;via-rhine.c:v1.01 2/27/99  Written by Donald Becker&bslash;n&quot;
 suffix:semicolon
 DECL|variable|versionB
 r_static
@@ -157,9 +157,11 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;&t;&t;/* Processor type for cache alignment. */
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-multiline_comment|/* This driver was written to use PCI memory space, however some boards&n;   only work with I/O space accesses. */
+multiline_comment|/* This driver was written to use PCI memory space, however some x86&n;   motherboards only configure I/O space accesses correctly. */
+macro_line|#if defined(__i386__)  &amp;&amp;  !defined(VIA_USE_MEMORY)
 DECL|macro|VIA_USE_IO
 mdefine_line|#define VIA_USE_IO
+macro_line|#endif
 macro_line|#ifdef VIA_USE_IO
 DECL|macro|readb
 macro_line|#undef readb
@@ -190,6 +192,14 @@ multiline_comment|/* Kernel compatibility defines, some common to David Hind&squ
 DECL|macro|RUN_AT
 mdefine_line|#define RUN_AT(x) (jiffies + (x))
 macro_line|#if (LINUX_VERSION_CODE &gt;= 0x20100)
+DECL|variable|kernel_version
+r_char
+id|kernel_version
+(braket
+)braket
+op_assign
+id|UTS_RELEASE
+suffix:semicolon
 macro_line|#else
 macro_line|#ifndef __alpha__
 DECL|macro|ioremap
@@ -1913,6 +1923,19 @@ op_star
 id|dev
 )paren
 (brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;%s&quot;
+id|KERN_INFO
+l_string|&quot;%s&quot;
+comma
+id|versionA
+comma
+id|versionB
+)paren
+suffix:semicolon
 r_return
 id|pci_etherdev_probe
 c_func
@@ -1956,13 +1979,6 @@ r_int
 id|card_idx
 )paren
 (brace
-r_static
-r_int
-id|did_version
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Already printed version info */
 r_struct
 id|netdev_private
 op_star
@@ -1984,31 +2000,6 @@ id|card_idx
 )braket
 suffix:colon
 l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|debug
-OG
-l_int|0
-op_logical_and
-id|did_version
-op_increment
-op_eq
-l_int|0
-)paren
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;%s&quot;
-id|KERN_INFO
-l_string|&quot;%s&quot;
-comma
-id|versionA
-comma
-id|versionB
-)paren
 suffix:semicolon
 id|dev
 op_assign
@@ -2928,6 +2919,15 @@ op_or
 id|CmdRxOn
 op_or
 id|CmdNoTxPoll
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|np-&gt;duplex_lock
+)paren
+id|np-&gt;chip_cmd
+op_or_assign
+id|CmdFDuplex
 suffix:semicolon
 id|writew
 c_func
@@ -4916,10 +4916,6 @@ id|dev-&gt;last_rx
 op_assign
 id|jiffies
 suffix:semicolon
-id|np-&gt;stats.rx_bytes
-op_add_assign
-id|pkt_len
-suffix:semicolon
 id|np-&gt;stats.rx_packets
 op_increment
 suffix:semicolon
@@ -5680,7 +5676,7 @@ id|MulticastFilter1
 suffix:semicolon
 id|rx_mode
 op_assign
-l_int|0x0C
+l_int|0x08
 suffix:semicolon
 )brace
 id|writeb

@@ -59,7 +59,7 @@ id|regs
 comma
 r_int
 r_int
-id|writeaccess
+id|write
 comma
 r_int
 r_int
@@ -118,7 +118,7 @@ id|current-&gt;pid
 comma
 id|address
 comma
-id|writeaccess
+id|write
 comma
 id|regs-&gt;cp0_epc
 )paren
@@ -193,7 +193,7 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|writeaccess
+id|write
 )paren
 (brace
 r_if
@@ -230,6 +230,11 @@ r_goto
 id|bad_area
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; * If for any reason at all we couldn&squot;t handle the fault,&n;&t; * make sure we exit gracefully rather than endlessly redo&n;&t; * the fault.&n;&t; */
+(brace
+r_int
+id|fault
+op_assign
 id|handle_mm_fault
 c_func
 (paren
@@ -239,9 +244,29 @@ id|vma
 comma
 id|address
 comma
-id|writeaccess
+id|write
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|fault
+OL
+l_int|0
+)paren
+r_goto
+id|out_of_memory
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|fault
+)paren
+r_goto
+id|do_sigbus
+suffix:semicolon
+)brace
 id|up
 c_func
 (paren
@@ -277,7 +302,7 @@ id|address
 suffix:semicolon
 id|tsk-&gt;tss.error_code
 op_assign
-id|writeaccess
+id|write
 suffix:semicolon
 macro_line|#if 0
 id|printk
@@ -288,12 +313,12 @@ l_string|&quot;%08lx (epc == %08lx, ra == %08lx)&bslash;n&quot;
 comma
 id|tsk-&gt;comm
 comma
-id|writeaccess
+id|write
 ques
 c_cond
-l_string|&quot;writeaccess to&quot;
+l_string|&quot;write access to&quot;
 suffix:colon
-l_string|&quot;readaccess from&quot;
+l_string|&quot;read access from&quot;
 comma
 id|address
 comma
@@ -411,7 +436,7 @@ l_string|&quot;Oops&quot;
 comma
 id|regs
 comma
-id|writeaccess
+id|write
 )paren
 suffix:semicolon
 id|do_exit
@@ -419,6 +444,74 @@ c_func
 (paren
 id|SIGKILL
 )paren
+suffix:semicolon
+multiline_comment|/*&n; * We ran out of memory, or some other thing happened to us that made&n; * us unable to handle the page fault gracefully.&n; */
+id|out_of_memory
+suffix:colon
+id|up
+c_func
+(paren
+op_amp
+id|mm-&gt;mmap_sem
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;VM: killing process %s&bslash;n&quot;
+comma
+id|tsk-&gt;comm
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|user_mode
+c_func
+(paren
+id|regs
+)paren
+)paren
+id|do_exit
+c_func
+(paren
+id|SIGKILL
+)paren
+suffix:semicolon
+r_goto
+id|no_context
+suffix:semicolon
+id|do_sigbus
+suffix:colon
+id|up
+c_func
+(paren
+op_amp
+id|mm-&gt;mmap_sem
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Send a sigbus, regardless of whether we were in kernel&n;&t; * or user mode.&n;&t; * XXX Store details about fault for siginfo handling into tss.&n;&t; */
+id|force_sig
+c_func
+(paren
+id|SIGBUS
+comma
+id|tsk
+)paren
+suffix:semicolon
+multiline_comment|/* Kernel mode? Handle exceptions or die */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|user_mode
+c_func
+(paren
+id|regs
+)paren
+)paren
+r_goto
+id|no_context
 suffix:semicolon
 )brace
 eof

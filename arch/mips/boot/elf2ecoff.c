@@ -2,7 +2,6 @@ multiline_comment|/*&n; * Copyright (c) 1995&n; *&t;Ted Lemon (hereinafter refer
 multiline_comment|/* elf2ecoff.c&n;&n;   This program converts an elf executable to an ECOFF executable.&n;   No symbol table is retained.   This is useful primarily in building&n;   net-bootable kernels for machines (e.g., DECstation and Alpha) which&n;   only support the ECOFF object file format. */
 macro_line|#include &lt;stdio.h&gt;
 macro_line|#include &lt;string.h&gt;
-macro_line|#include &lt;string.h&gt;
 macro_line|#include &lt;errno.h&gt;
 macro_line|#include &lt;sys/types.h&gt;
 macro_line|#include &lt;fcntl.h&gt;

@@ -71,7 +71,7 @@ r_static
 r_int
 id|multicast_filter_limit
 op_assign
-l_int|64
+l_int|3
 suffix:semicolon
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
@@ -688,8 +688,18 @@ id|tx_ring
 (braket
 id|TX_RING_SIZE
 )braket
-suffix:semicolon
 multiline_comment|/* Commands (usually CmdTxPacket). */
+id|__attribute__
+(paren
+(paren
+id|aligned
+(paren
+id|L1_CACHE_BYTES
+)paren
+)paren
+)paren
+suffix:semicolon
+suffix:semicolon
 multiline_comment|/* The saved address of a sent-in-place packet/buffer, for skfree(). */
 DECL|member|tx_skbuff
 r_struct

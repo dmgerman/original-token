@@ -12,9 +12,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
-macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -246,7 +244,7 @@ id|uhci_debug
 id|printk
 c_func
 (paren
-l_string|&quot;Set toggle from %x rval %d&bslash;n&quot;
+l_string|&quot;Set toggle from %x rval %ld&bslash;n&quot;
 comma
 (paren
 r_int

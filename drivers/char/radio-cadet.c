@@ -1,4 +1,4 @@
-multiline_comment|/* cadet.c - A video4linux driver for the ADS Cadet AM/FM Radio Card &n; *&n; * by Fred Gleason &lt;fredg@wava.com&gt;&n; * Version 0.3.2&n; *&n; * (Loosely) based on code for the Aztech radio card by&n; *&n; * Russell Kroll    (rkroll@exploits.org)&n; * Quay Ly&n; * Donald Song&n; * Jason Lewis      (jlewis@twilight.vtc.vsc.edu) &n; * Scott McGrath    (smcgrath@twilight.vtc.vsc.edu)&n; * William McGrath  (wmcgrath@twilight.vtc.vsc.edu)&n; *&n;*/
+multiline_comment|/* radio-cadet.c - A video4linux driver for the ADS Cadet AM/FM Radio Card &n; *&n; * by Fred Gleason &lt;fredg@wava.com&gt;&n; * Version 0.3.3&n; *&n; * (Loosely) based on code for the Aztech radio card by&n; *&n; * Russell Kroll    (rkroll@exploits.org)&n; * Quay Ly&n; * Donald Song&n; * Jason Lewis      (jlewis@twilight.vtc.vsc.edu) &n; * Scott McGrath    (smcgrath@twilight.vtc.vsc.edu)&n; * William McGrath  (wmcgrath@twilight.vtc.vsc.edu)&n; *&n;*/
 macro_line|#include &lt;linux/module.h&gt;&t;/* Modules &t;&t;&t;*/
 macro_line|#include &lt;linux/init.h&gt;&t;&t;/* Initdata&t;&t;&t;*/
 macro_line|#include &lt;linux/ioport.h&gt;&t;/* check_region, request_region&t;*/
@@ -1440,8 +1440,6 @@ r_int
 id|i
 op_assign
 l_int|0
-comma
-id|c
 suffix:semicolon
 r_int
 r_char
@@ -1474,45 +1472,6 @@ id|io
 )paren
 suffix:semicolon
 multiline_comment|/* Select RDS fifo */
-id|c
-op_assign
-l_int|3
-op_star
-(paren
-id|inb
-c_func
-(paren
-id|io
-)paren
-op_amp
-l_int|0x03
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|c
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-multiline_comment|/* Flush the fifo */
-id|inb
-c_func
-(paren
-id|io
-op_plus
-l_int|1
-)paren
-suffix:semicolon
-)brace
 id|cadet_lock
 op_decrement
 suffix:semicolon
@@ -2429,11 +2388,9 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|cadet_init
 r_int
+id|__init
 id|cadet_init
 c_func
 (paren
@@ -2441,7 +2398,6 @@ r_struct
 id|video_init
 op_star
 id|v
-)paren
 )paren
 (brace
 macro_line|#ifndef MODULE        

@@ -1,4 +1,6 @@
 multiline_comment|/*&n; * dz.c: Serial port driver for DECStations equiped &n; *       with the DZ chipset.&n; *&n; * Copyright (C) 1998 Olivier A. D. Lebaillif &n; *             &n; * Email: olivier.lebaillif@ifrsys.com&n; *&n; * [31-AUG-98] triemer&n; * Changed IRQ to use Harald&squot;s dec internals interrupts.h&n; * removed base_addr code - moving address assignment to setup.c&n; * Changed name of dz_init to rs_init to be consistent with tc code&n; * [13-NOV-98] triemer fixed code to receive characters&n; *    after patches by harald to irq code.  &n; * [09-JAN-99] triemer minor fix for schedule - due to removal of timeout&n; *            field from &quot;current&quot; - somewhere between 2.1.121 and 2.1.131&n; */
+DECL|macro|DEBUG_DZ
+mdefine_line|#define DEBUG_DZ 1
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
@@ -25,8 +27,10 @@ multiline_comment|/* for definition of struct console */
 macro_line|#ifdef CONFIG_SERIAL_CONSOLE
 DECL|macro|CONSOLE_LINE
 mdefine_line|#define CONSOLE_LINE (3)
-macro_line|#include &lt;linux/console.h&gt;
 macro_line|#endif /* ifdef CONFIG_SERIAL_CONSOLE */
+macro_line|#if defined(CONFIG_SERIAL_CONSOLE) || defined(DEBUG_DZ)
+macro_line|#include &lt;linux/console.h&gt;
+macro_line|#endif /* if defined(CONFIG_SERIAL_CONSOLE) || defined(DEBUG_DZ) */
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/tty_flip.h&gt;
 macro_line|#include &lt;linux/serial.h&gt;
@@ -35,14 +39,8 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/dec/machtype.h&gt;
 macro_line|#include &lt;asm/dec/kn01.h&gt;
 macro_line|#include &lt;asm/dec/kn02.h&gt;
-DECL|macro|DEBUG_DZ
-mdefine_line|#define DEBUG_DZ 1
 macro_line|#ifdef DEBUG_DZ
-macro_line|#include &lt;linux/tty.h&gt;
-macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
-macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
 r_extern

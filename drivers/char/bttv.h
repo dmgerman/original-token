@@ -250,7 +250,7 @@ suffix:semicolon
 macro_line|#endif
 DECL|member|irq
 r_int
-r_char
+r_int
 id|irq
 suffix:semicolon
 multiline_comment|/* IRQ used by Bt848 card */
@@ -692,7 +692,7 @@ multiline_comment|/* values for those registers: */
 DECL|macro|TEA6320_S_SA
 mdefine_line|#define TEA6320_S_SA       0x01  /* stereo A input */
 DECL|macro|TEA6320_S_SB
-mdefine_line|#define TEA6320_S_SB       0x02  /* stereo B */
+mdefine_line|#define TEA6320_S_SB       0x07  /* stereo B -- databook wrong? this works */
 DECL|macro|TEA6320_S_SC
 mdefine_line|#define TEA6320_S_SC       0x04  /* stereo C */
 DECL|macro|TEA6320_S_GMU

@@ -19,15 +19,21 @@ r_struct
 id|i2c_device
 suffix:semicolon
 DECL|macro|I2C_DRIVERID_MSP3400
-mdefine_line|#define I2C_DRIVERID_MSP3400     1
+mdefine_line|#define I2C_DRIVERID_MSP3400    &t; 1
 DECL|macro|I2C_DRIVERID_TUNER
-mdefine_line|#define I2C_DRIVERID_TUNER       2
+mdefine_line|#define I2C_DRIVERID_TUNER      &t; 2
 DECL|macro|I2C_DRIVERID_VIDEOTEXT
-mdefine_line|#define I2C_DRIVERID_VIDEOTEXT&t; 3
+mdefine_line|#define I2C_DRIVERID_VIDEOTEXT&t;&t; 3
+DECL|macro|I2C_DRIVERID_VIDEODECODER
+mdefine_line|#define I2C_DRIVERID_VIDEODECODER&t; 4
+DECL|macro|I2C_DRIVERID_VIDEOENCODER
+mdefine_line|#define I2C_DRIVERID_VIDEOENCODER&t; 5
 DECL|macro|I2C_BUSID_BT848
 mdefine_line|#define I2C_BUSID_BT848&t;&t;1&t;/* I2C bus on a BT848 */
 DECL|macro|I2C_BUSID_PARPORT
 mdefine_line|#define I2C_BUSID_PARPORT&t;2&t;/* Bit banging on a parallel port */
+DECL|macro|I2C_BUSID_BUZ
+mdefine_line|#define I2C_BUSID_BUZ&t;&t;3
 multiline_comment|/*&n; * struct for a driver for a i2c chip (tuner, soundprocessor,&n; * videotext, ... ).&n; *&n; * a driver will register within the i2c module.  The i2c module will&n; * callback the driver (i2c_attach) for every device it finds on a i2c&n; * bus at the specified address.  If the driver decides to &quot;accept&quot;&n; * the, device, it must return a struct i2c_device, and NULL&n; * otherwise.&n; *&n; * i2c_detach = i2c_attach ** -1&n; * &n; * i2c_command will be used to pass commands to the driver in a&n; * ioctl-line manner.&n; *&n; */
 DECL|struct|i2c_driver
 r_struct

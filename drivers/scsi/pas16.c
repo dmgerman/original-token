@@ -1672,7 +1672,6 @@ id|driver_template
 op_assign
 id|MV_PAS16
 suffix:semicolon
-macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;scsi_module.c&quot;
 macro_line|#endif
 eof

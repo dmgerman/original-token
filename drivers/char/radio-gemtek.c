@@ -1000,11 +1000,9 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|gemtek_init
 r_int
+id|__init
 id|gemtek_init
 c_func
 (paren
@@ -1012,7 +1010,6 @@ r_struct
 id|video_init
 op_star
 id|v
-)paren
 )paren
 (brace
 r_if
@@ -1142,7 +1139,7 @@ c_func
 (paren
 id|io
 comma
-l_string|&quot;I/O address of the GemTek card (0x20c, 0x30c, 0x24c or 0x34c)&quot;
+l_string|&quot;I/O address of the GemTek card (0x20c, 0x30c, 0x24c or 0x34c (or 0x248 for the combined sound/radiocard))&quot;
 )paren
 suffix:semicolon
 id|EXPORT_NO_SYMBOLS
@@ -1168,7 +1165,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;You must set an I/O address with io=0x20c, io=0x30c, io=0x24c or io=0x34c&bslash;n&quot;
+l_string|&quot;You must set an I/O address with io=0x20c, io=0x30c, io=0x24c or io=0x34c (or io=0x248 for the combined sound/radiocard)&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return

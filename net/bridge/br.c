@@ -7508,7 +7508,6 @@ id|nskb-&gt;data
 op_plus
 id|ETH_HLEN
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x20100
 id|nskb-&gt;priority
 op_assign
 l_int|1
@@ -7519,18 +7518,6 @@ c_func
 id|nskb
 )paren
 suffix:semicolon
-macro_line|#else
-id|dev_queue_xmit
-c_func
-(paren
-id|nskb
-comma
-id|nskb-&gt;dev
-comma
-l_int|1
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 )brace
 r_return

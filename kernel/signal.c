@@ -23,7 +23,7 @@ op_star
 id|signal_queue_cachep
 suffix:semicolon
 DECL|variable|nr_queued_signals
-r_int
+id|atomic_t
 id|nr_queued_signals
 suffix:semicolon
 DECL|variable|max_queued_signals
@@ -131,8 +131,12 @@ comma
 id|q
 )paren
 suffix:semicolon
+id|atomic_dec
+c_func
+(paren
+op_amp
 id|nr_queued_signals
-op_decrement
+)paren
 suffix:semicolon
 id|q
 op_assign
@@ -558,8 +562,12 @@ comma
 id|q
 )paren
 suffix:semicolon
+id|atomic_dec
+c_func
+(paren
+op_amp
 id|nr_queued_signals
-op_decrement
+)paren
 suffix:semicolon
 multiline_comment|/* then see if this signal is still pending. */
 id|q
@@ -1149,7 +1157,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|nr_queued_signals
+)paren
 OL
 id|max_queued_signals
 )paren
@@ -1176,8 +1189,12 @@ c_cond
 id|q
 )paren
 (brace
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|nr_queued_signals
-op_increment
+)paren
 suffix:semicolon
 id|q-&gt;next
 op_assign
@@ -3448,8 +3465,12 @@ comma
 id|q
 )paren
 suffix:semicolon
+id|atomic_dec
+c_func
+(paren
+op_amp
 id|nr_queued_signals
-op_decrement
+)paren
 suffix:semicolon
 )brace
 id|q
@@ -4266,6 +4287,8 @@ r_return
 id|old
 suffix:semicolon
 )brace
+macro_line|#endif /* !defined(__alpha__) */
+macro_line|#if !defined(__alpha__) &amp;&amp; !defined(__mips__)
 multiline_comment|/*&n; * For backwards compatibility.  Functionality superseded by sigaction.&n; */
 id|asmlinkage
 r_int
@@ -4327,5 +4350,5 @@ r_int
 id|old_sa.sa.sa_handler
 suffix:semicolon
 )brace
-macro_line|#endif /* !alpha &amp;&amp; !__ia64__ */
+macro_line|#endif /* !alpha &amp;&amp; !__ia64__ &amp;&amp; !defined(__mips__) */
 eof

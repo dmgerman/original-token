@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Find I2O capable controllers on the PCI bus, and register/install&n; *&t;them with the I2O layer&n; *&n; *&t;(C) Copyright 1999   Red Hat Software&n; *&t;&n; *&t;Written by Alan Cox, Building Number Three Ltd&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; * &t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Find I2O capable controllers on the PCI bus, and register/install&n; *&t;them with the I2O layer&n; *&n; *&t;(C) Copyright 1999   Red Hat Software&n; *&t;&n; *&t;Written by Alan Cox, Building Number Three Ltd&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; * &t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;TODO:&n; *&t;&t;Support polled I2O PCI controllers. &n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
@@ -739,6 +739,12 @@ l_int|NULL
 r_continue
 suffix:semicolon
 )brace
+id|i2o_unlock_controller
+c_func
+(paren
+id|c
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -754,12 +760,6 @@ id|c
 )paren
 suffix:semicolon
 )brace
-id|i2o_unlock_controller
-c_func
-(paren
-id|c
-)paren
-suffix:semicolon
 )brace
 )brace
 DECL|function|i2o_pci_activate
@@ -844,14 +844,6 @@ suffix:semicolon
 id|i2o_unlock_controller
 c_func
 (paren
-id|c
-)paren
-suffix:semicolon
-id|free_irq
-c_func
-(paren
-id|c-&gt;bus.pci.irq
-comma
 id|c
 )paren
 suffix:semicolon
@@ -942,6 +934,41 @@ c_func
 (paren
 )paren
 suffix:semicolon
+)brace
+macro_line|#else
+DECL|function|i2o_pci_init
+id|__init
+r_void
+id|i2o_pci_init
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|i2o_pci_scan
+c_func
+(paren
+)paren
+op_ge
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;Linux I2O PCI support (c) 1999 Red Hat Software.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|i2o_pci_activate
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 )brace
 macro_line|#endif
 eof

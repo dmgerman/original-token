@@ -1186,6 +1186,13 @@ c_func
 id|max_readahead
 )paren
 suffix:semicolon
+DECL|variable|file_moveto
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|file_moveto
+)paren
+suffix:semicolon
 multiline_comment|/* tty routines */
 DECL|variable|tty_hangup
 id|EXPORT_SYMBOL

@@ -1540,6 +1540,11 @@ l_int|128
 suffix:semicolon
 DECL|macro|SOUND_MIXER_ACCESS
 mdefine_line|#define SOUND_MIXER_ACCESS&t;&t;_SIOWR(&squot;M&squot;, 102, mixer_record)
+multiline_comment|/*&n; * Two ioctls for special souncard function&n; */
+DECL|macro|SOUND_MIXER_AGC
+mdefine_line|#define SOUND_MIXER_AGC  _SIOWR(&squot;M&squot;, 103, int)
+DECL|macro|SOUND_MIXER_3DSE
+mdefine_line|#define SOUND_MIXER_3DSE  _SIOWR(&squot;M&squot;, 104, int)
 multiline_comment|/*&n; * The SOUND_MIXER_PRIVATE# commands can be redefined by low level drivers.&n; * These features can be used when accessing device specific features.&n; */
 DECL|macro|SOUND_MIXER_PRIVATE1
 mdefine_line|#define SOUND_MIXER_PRIVATE1&t;&t;_SIOWR(&squot;M&squot;, 111, int)

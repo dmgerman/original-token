@@ -905,6 +905,13 @@ id|irda.in_use
 op_assign
 id|FALSE
 suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
+id|irda.wait_queue
+)paren
+suffix:semicolon
 multiline_comment|/* &n;&t; * Initialize modules that got compiled into the kernel &n;&t; */
 macro_line|#ifdef CONFIG_IRLAN
 id|irlan_init

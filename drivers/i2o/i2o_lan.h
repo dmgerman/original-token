@@ -1,12 +1,12 @@
-multiline_comment|/*&n; *   &t;i2o_lan.h&t;&t;LAN Class specific definitions&n; *&n; *      I2O LAN CLASS OSM       Prototyping, May 7th 1999&n; *&n; *      (C) Copyright 1999      University of Helsinki,&n; *                              Department of Computer Science&n; *&n; *      This code is still under development / test.&n; *&n; *      Author:         Auvo H&#xfffd;kkinen &lt;Auvo.Hakkinen@cs.Helsinki.FI&gt;&n; *    &n; */
-macro_line|#ifndef I2O_LAN_H
-DECL|macro|I2O_LAN_H
-mdefine_line|#define I2O_LAN_H
+multiline_comment|/*&n; *   &t;i2o_lan.h&t;&t;LAN Class specific definitions&n; *&n; *      I2O LAN CLASS OSM       Prototyping, May 17th 1999&n; *&n; *      (C) Copyright 1999      University of Helsinki,&n; *                              Department of Computer Science&n; *&n; *      This code is still under development / test.&n; *&n; *      Author:         Auvo H&#xfffd;kkinen &lt;Auvo.Hakkinen@cs.Helsinki.FI&gt;&n; *&t;&t;&t;Juha Siev&#xfffd;nen &lt;Juha.Sievanen@cs.Helsinki.FI&gt;    &n; */
+macro_line|#ifndef _I2O_LAN_H
+DECL|macro|_I2O_LAN_H
+mdefine_line|#define _I2O_LAN_H
 multiline_comment|/* Tunable parameters first */
 DECL|macro|I2O_BUCKET_COUNT
-mdefine_line|#define I2O_BUCKET_COUNT &t;64
+mdefine_line|#define I2O_BUCKET_COUNT &t;16
 DECL|macro|I2O_BUCKET_THRESH
-mdefine_line|#define I2O_BUCKET_THRESH&t;5
+mdefine_line|#define I2O_BUCKET_THRESH&t;0
 multiline_comment|/* LAN types */
 DECL|macro|I2O_LAN_ETHERNET
 mdefine_line|#define I2O_LAN_ETHERNET&t;0x0030
@@ -92,7 +92,7 @@ mdefine_line|#define LAN_RECEIVE_POST&t;0x3E
 DECL|macro|LAN_RESET
 mdefine_line|#define LAN_RESET&t;&t;0x35
 DECL|macro|LAN_SUSPEND
-mdefine_line|#define LAN_SUSPEND&t;0x37
+mdefine_line|#define LAN_SUSPEND&t;&t;0x37
 multiline_comment|/* LAN DetailedStatusCode defines */
 DECL|macro|I2O_LAN_DSC_SUCCESS
 mdefine_line|#define I2O_LAN_DSC_SUCCESS&t;&t;&t;0x00
@@ -179,5 +179,5 @@ l_int|1
 suffix:semicolon
 )brace
 suffix:semicolon
-macro_line|#endif /* I2O_LAN_H */
+macro_line|#endif /* _I2O_LAN_H */
 eof

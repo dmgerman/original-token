@@ -154,10 +154,30 @@ DECL|macro|SCSI_DISK6_MAJOR
 mdefine_line|#define SCSI_DISK6_MAJOR&t;70
 DECL|macro|SCSI_DISK7_MAJOR
 mdefine_line|#define SCSI_DISK7_MAJOR&t;71
+DECL|macro|LVM_BLK_MAJOR
+mdefine_line|#define LVM_BLK_MAJOR&t;58&t;/* Logical Volume Manager */
+DECL|macro|COMPAQ_SMART2_MAJOR
+mdefine_line|#define COMPAQ_SMART2_MAJOR&t;72
+DECL|macro|COMPAQ_SMART2_MAJOR1
+mdefine_line|#define COMPAQ_SMART2_MAJOR1&t;73
+DECL|macro|COMPAQ_SMART2_MAJOR2
+mdefine_line|#define COMPAQ_SMART2_MAJOR2&t;74
+DECL|macro|COMPAQ_SMART2_MAJOR3
+mdefine_line|#define COMPAQ_SMART2_MAJOR3&t;75
+DECL|macro|COMPAQ_SMART2_MAJOR4
+mdefine_line|#define COMPAQ_SMART2_MAJOR4&t;76
+DECL|macro|COMPAQ_SMART2_MAJOR5
+mdefine_line|#define COMPAQ_SMART2_MAJOR5&t;77
+DECL|macro|COMPAQ_SMART2_MAJOR6
+mdefine_line|#define COMPAQ_SMART2_MAJOR6&t;78
+DECL|macro|COMPAQ_SMART2_MAJOR7
+mdefine_line|#define COMPAQ_SMART2_MAJOR7&t;79
 DECL|macro|SPECIALIX_NORMAL_MAJOR
 mdefine_line|#define SPECIALIX_NORMAL_MAJOR 75
 DECL|macro|SPECIALIX_CALLOUT_MAJOR
 mdefine_line|#define SPECIALIX_CALLOUT_MAJOR 76
+DECL|macro|LVM_CHAR_MAJOR
+mdefine_line|#define LVM_CHAR_MAJOR&t;109&t;/* Logical Volume Manager */
 DECL|macro|I2O_MAJOR
 mdefine_line|#define I2O_MAJOR&t;&t;80&t;/* 80-&gt;87 */
 DECL|macro|IDE6_MAJOR

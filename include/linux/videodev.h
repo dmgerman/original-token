@@ -866,6 +866,8 @@ DECL|macro|VID_HARDWARE_CADET
 mdefine_line|#define VID_HARDWARE_CADET&t;21&t;/* Cadet radio */
 DECL|macro|VID_HARDWARE_CPIA
 mdefine_line|#define VID_HARDWARE_CPIA&t;22
+DECL|macro|VID_HARDWARE_TERRATEC
+mdefine_line|#define VID_HARDWARE_TERRATEC&t;23&t;/* TerraTec ActiveRadio */
 multiline_comment|/*&n; *&t;Initialiser list&n; */
 DECL|struct|video_init
 r_struct

@@ -38,7 +38,6 @@ macro_line|#ifdef CONFIG_PCI
 macro_line|#include &lt;asm/ebus.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/a.out.h&gt;
-macro_line|#include &lt;asm/svr4.h&gt;
 DECL|struct|poll
 r_struct
 id|poll

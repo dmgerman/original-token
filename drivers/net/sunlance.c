@@ -58,7 +58,6 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
-macro_line|#include &lt;asm/idprom.h&gt;
 macro_line|#include &lt;asm/machines.h&gt;
 multiline_comment|/* Define: 2^4 Tx buffers and 2^4 Rx buffers */
 macro_line|#ifndef LANCE_LOG_TX_BUFFERS

@@ -21,7 +21,6 @@ macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#endif
 macro_line|#include &lt;linux/ide.h&gt;
 macro_line|#ifdef CONFIG_RTC
-macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/timex.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/asm.h&gt;

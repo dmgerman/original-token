@@ -1,4 +1,4 @@
-multiline_comment|/* &n; * ASCII values for a number of symbolic constants, printing functions,&n; * etc.&n; */
+multiline_comment|/* &n; * ASCII values for a number of symbolic constants, printing functions,&n; * etc.&n; * Additions for SCSI 2 and Linux 2.2.x by D. Gilbert (990422)&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
@@ -95,7 +95,7 @@ comma
 l_string|&quot;Inquiry&quot;
 comma
 multiline_comment|/* 13-16 */
-id|unknown
+l_string|&quot;Verify&quot;
 comma
 l_string|&quot;Recover Buffered Data&quot;
 comma
@@ -146,7 +146,7 @@ comma
 multiline_comment|/* 23-28 */
 id|unknown
 comma
-id|unknown
+l_string|&quot;Define window parameters&quot;
 comma
 l_string|&quot;Read Capacity&quot;
 comma
@@ -157,15 +157,15 @@ comma
 l_string|&quot;Read (10)&quot;
 comma
 multiline_comment|/* 29-2d */
-id|unknown
+l_string|&quot;Read Generation&quot;
 comma
 l_string|&quot;Write (10)&quot;
 comma
 l_string|&quot;Seek (10)&quot;
 comma
-id|unknown
+l_string|&quot;Erase&quot;
 comma
-id|unknown
+l_string|&quot;Read updated block&quot;
 comma
 multiline_comment|/* 2e-31 */
 l_string|&quot;Write Verify&quot;
@@ -226,26 +226,26 @@ comma
 l_string|&quot;Write Same&quot;
 comma
 multiline_comment|/* 42-48 */
-id|unknown
+l_string|&quot;Read sub-channel&quot;
 comma
 l_string|&quot;Read TOC&quot;
 comma
-id|unknown
+l_string|&quot;Read header&quot;
+comma
+l_string|&quot;Play audio (10)&quot;
 comma
 id|unknown
 comma
-id|unknown
+l_string|&quot;Play audio msf&quot;
 comma
-id|unknown
-comma
-id|unknown
+l_string|&quot;Play audio track/index&quot;
 comma
 multiline_comment|/* 49-4f */
-id|unknown
+l_string|&quot;Play track relative (10)&quot;
 comma
 id|unknown
 comma
-id|unknown
+l_string|&quot;Pause/resume&quot;
 comma
 l_string|&quot;Log Select&quot;
 comma
@@ -290,14 +290,97 @@ id|unknown
 comma
 )brace
 suffix:semicolon
+multiline_comment|/* The following are 12 byte commands in group 5 */
+DECL|variable|group_5_commands
+r_static
+r_const
+r_char
+op_star
+id|group_5_commands
+(braket
+)braket
+op_assign
+(brace
+multiline_comment|/* a0-a5 */
+id|unknown
+comma
+id|unknown
+comma
+id|unknown
+comma
+id|unknown
+comma
+id|unknown
+comma
+l_string|&quot;Move medium/play audio(12)&quot;
+comma
+multiline_comment|/* a6-a9 */
+l_string|&quot;Exchange medium&quot;
+comma
+id|unknown
+comma
+l_string|&quot;Read(12)&quot;
+comma
+l_string|&quot;Play track relative(12)&quot;
+comma
+multiline_comment|/* aa-ae */
+l_string|&quot;Write(12)&quot;
+comma
+id|unknown
+comma
+l_string|&quot;Erase(12)&quot;
+comma
+id|unknown
+comma
+l_string|&quot;Write and verify(12)&quot;
+comma
+multiline_comment|/* af-b1 */
+l_string|&quot;Verify(12)&quot;
+comma
+l_string|&quot;Search data high(12)&quot;
+comma
+l_string|&quot;Search data equal(12)&quot;
+comma
+multiline_comment|/* b2-b4 */
+l_string|&quot;Search data low(12)&quot;
+comma
+l_string|&quot;Set limits(12)&quot;
+comma
+id|unknown
+comma
+multiline_comment|/* b5-b6 */
+l_string|&quot;Request volume element address&quot;
+comma
+l_string|&quot;Send volume tag&quot;
+comma
+multiline_comment|/* b7-b9 */
+l_string|&quot;Read defect data(12)&quot;
+comma
+l_string|&quot;Read element status&quot;
+comma
+id|unknown
+comma
+multiline_comment|/* ba-bf */
+id|unknown
+comma
+id|unknown
+comma
+id|unknown
+comma
+id|unknown
+comma
+id|unknown
+comma
+id|unknown
+comma
+)brace
+suffix:semicolon
 DECL|macro|group
 mdefine_line|#define group(opcode) (((opcode) &gt;&gt; 5) &amp; 7)
 DECL|macro|RESERVED_GROUP
 mdefine_line|#define RESERVED_GROUP  0
 DECL|macro|VENDOR_GROUP
 mdefine_line|#define VENDOR_GROUP    1
-DECL|macro|NOTEXT_GROUP
-mdefine_line|#define NOTEXT_GROUP    2
 DECL|variable|commands
 r_static
 r_const
@@ -331,13 +414,7 @@ op_star
 )paren
 id|RESERVED_GROUP
 comma
-(paren
-r_const
-r_char
-op_star
-op_star
-)paren
-id|NOTEXT_GROUP
+id|group_5_commands
 comma
 (paren
 r_const
@@ -420,21 +497,6 @@ c_func
 l_string|&quot;%s(0x%02x) &quot;
 comma
 id|reserved
-comma
-id|opcode
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|NOTEXT_GROUP
-suffix:colon
-id|printk
-c_func
-(paren
-l_string|&quot;%s(0x%02x) &quot;
-comma
-id|unknown
 comma
 id|opcode
 )paren
@@ -604,7 +666,7 @@ l_string|&quot;Good&quot;
 comma
 l_string|&quot;Check Condition&quot;
 comma
-l_string|&quot;Condition Good&quot;
+l_string|&quot;Condition Met&quot;
 comma
 id|unknown
 comma
@@ -617,20 +679,55 @@ id|unknown
 comma
 id|unknown
 comma
-l_string|&quot;Intermediate Good&quot;
+l_string|&quot;Intermediate&quot;
 comma
 id|unknown
 comma
-multiline_comment|/* a-d */
-l_string|&quot;Intermediate Good&quot;
+multiline_comment|/* a-c */
+l_string|&quot;Intermediate-Condition Met&quot;
 comma
 id|unknown
 comma
 l_string|&quot;Reservation Conflict&quot;
 comma
+multiline_comment|/* d-10 */
 id|unknown
 comma
-multiline_comment|/* e-f */
+id|unknown
+comma
+id|unknown
+comma
+id|unknown
+comma
+multiline_comment|/* 11-14 */
+l_string|&quot;Command Terminated&quot;
+comma
+id|unknown
+comma
+id|unknown
+comma
+l_string|&quot;Queue Full&quot;
+comma
+multiline_comment|/* 15-1a */
+id|unknown
+comma
+id|unknown
+comma
+id|unknown
+comma
+id|unknown
+comma
+id|unknown
+comma
+id|unknown
+comma
+multiline_comment|/* 1b-1f */
+id|unknown
+comma
+id|unknown
+comma
+id|unknown
+comma
 id|unknown
 comma
 id|unknown
@@ -654,7 +751,7 @@ op_rshift
 l_int|1
 )paren
 op_amp
-l_int|0xf
+l_int|0x1f
 suffix:semicolon
 macro_line|#if (CONSTANTS &amp; CONST_STATUS)
 id|printk
@@ -4223,7 +4320,50 @@ id|valid
 id|printk
 c_func
 (paren
-l_string|&quot;extra data not valid &quot;
+l_string|&quot;[valid=0] &quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Info fld=0x%x, &quot;
+comma
+(paren
+r_int
+)paren
+(paren
+(paren
+id|sense_buffer
+(braket
+l_int|3
+)braket
+op_lshift
+l_int|24
+)paren
+op_or
+(paren
+id|sense_buffer
+(braket
+l_int|4
+)braket
+op_lshift
+l_int|16
+)paren
+op_or
+(paren
+id|sense_buffer
+(braket
+l_int|5
+)braket
+op_lshift
+l_int|8
+)paren
+op_or
+id|sense_buffer
+(braket
+l_int|6
+)braket
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -4314,7 +4454,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s error &quot;
+l_string|&quot;%s &quot;
 comma
 id|error
 )paren

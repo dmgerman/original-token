@@ -13340,16 +13340,12 @@ op_increment
 suffix:semicolon
 r_continue
 suffix:semicolon
-id|err_dev4
-suffix:colon
 id|unregister_sound_midi
 c_func
 (paren
 id|s-&gt;dev_midi
 )paren
 suffix:semicolon
-id|err_dev3
-suffix:colon
 id|unregister_sound_mixer
 c_func
 (paren
@@ -13405,8 +13401,6 @@ id|CM_EXTENT_MIDI
 )paren
 suffix:semicolon
 macro_line|#endif
-id|err_region4
-suffix:colon
 id|release_region
 c_func
 (paren

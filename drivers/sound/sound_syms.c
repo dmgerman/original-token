@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;The sound core exports the following symbols to the rest of&n; *&t;modulespace.&n; *&n; *      (C) Copyright 1997      Alan Cox, Licensed under the GNU GPL&n; */
+multiline_comment|/*&n; *&t;The sound core exports the following symbols to the rest of&n; *&t;modulespace.&n; *&n; *      (C) Copyright 1997      Alan Cox, Licensed under the GNU GPL&n; *&n; *&t;Thu May 27 1999 Andrew J. Kroll &lt;ag784@freenet..buffalo..edu&gt;&n; *&t;left out exported symbol... fixed&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;sound_calls.h&quot;
@@ -195,6 +195,14 @@ c_func
 id|load_mixer_volumes
 )paren
 suffix:semicolon
+DECL|variable|trace_init
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|trace_init
+)paren
+suffix:semicolon
+multiline_comment|/* oops! this is needed for maui.c -- AJK */
 DECL|variable|conf_printf
 id|EXPORT_SYMBOL
 c_func

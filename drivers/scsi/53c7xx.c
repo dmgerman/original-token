@@ -29,8 +29,8 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
-macro_line|#ifdef CONFIG_AMIGA
 macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#ifdef CONFIG_AMIGA
 macro_line|#include &lt;asm/amigahw.h&gt;
 macro_line|#include &lt;asm/amigaints.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
@@ -40,7 +40,6 @@ DECL|macro|NO_IO_SPACE
 mdefine_line|#define NO_IO_SPACE
 macro_line|#endif
 macro_line|#ifdef CONFIG_MVME16x
-macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/mvme16xhw.h&gt;
 DECL|macro|BIG_ENDIAN
 mdefine_line|#define BIG_ENDIAN
@@ -50,7 +49,6 @@ DECL|macro|VALID_IDS
 mdefine_line|#define VALID_IDS
 macro_line|#endif
 macro_line|#ifdef CONFIG_BVME6000
-macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/bvme6000hw.h&gt;
 DECL|macro|BIG_ENDIAN
 mdefine_line|#define BIG_ENDIAN

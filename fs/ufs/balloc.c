@@ -1816,6 +1816,12 @@ comma
 id|sb-&gt;s_blocksize
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|bh
+)paren
+(brace
 id|mark_buffer_clean
 (paren
 id|bh
@@ -1865,6 +1871,20 @@ id|brelse
 id|bh
 )paren
 suffix:semicolon
+)brace
+r_else
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;ufs_new_fragments: bread fail&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 )brace
 op_star
 id|p

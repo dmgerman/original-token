@@ -12878,6 +12878,13 @@ id|PAGE_MASK
 op_minus
 id|vma-&gt;vm_start
 suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|inode-&gt;i_shared_lock
+)paren
+suffix:semicolon
 id|vmaring
 op_assign
 id|inode-&gt;i_mmap
@@ -13079,6 +13086,13 @@ id|vmaring-&gt;vm_next_share
 )paren
 op_ne
 l_int|NULL
+)paren
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|inode-&gt;i_shared_lock
 )paren
 suffix:semicolon
 r_if

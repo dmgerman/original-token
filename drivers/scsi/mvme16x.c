@@ -12,7 +12,6 @@ macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;53c7xx.h&quot;
 macro_line|#include &quot;mvme16x.h&quot;
-macro_line|#include &quot;asm/mvme16xhw.h&quot;
 macro_line|#include&lt;linux/stat.h&gt;
 DECL|variable|proc_scsi_mvme16x
 r_struct

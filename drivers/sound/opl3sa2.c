@@ -1774,7 +1774,6 @@ suffix:semicolon
 macro_line|#endif
 )brace
 DECL|function|probe_opl3sa2_mss
-r_static
 r_int
 id|probe_opl3sa2_mss
 c_func
@@ -1794,7 +1793,6 @@ id|hw_config
 suffix:semicolon
 )brace
 DECL|function|attach_opl3sa2_mss
-r_static
 r_void
 id|attach_opl3sa2_mss
 c_func
@@ -1979,7 +1977,6 @@ suffix:semicolon
 )brace
 )brace
 DECL|function|unload_opl3sa2_mss
-r_static
 r_void
 id|unload_opl3sa2_mss
 c_func
@@ -2194,6 +2191,18 @@ comma
 id|tag
 )paren
 suffix:semicolon
+macro_line|#if defined(CONFIG_OPL3SA2_MPU_BASE) &amp;&amp; !defined(MODULE)
+id|sound_getconf
+c_func
+(paren
+id|SNDCARD_OPL3SA2_MPU
+)paren
+op_member_access_from_pointer
+id|always_detect
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|1
 suffix:semicolon

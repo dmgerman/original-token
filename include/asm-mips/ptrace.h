@@ -83,8 +83,18 @@ macro_line|#include &lt;asm/offset.h&gt;
 macro_line|#ifdef __KERNEL__
 macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/*&n; * Does the process account for user or for system time?&n; */
-DECL|macro|user_mode
-mdefine_line|#define user_mode(regs) ((regs)-&gt;cp0_status &amp; 0x10)
+r_extern
+r_int
+(paren
+op_star
+id|user_mode
+)paren
+(paren
+r_struct
+id|pt_regs
+op_star
+)paren
+suffix:semicolon
 DECL|macro|instruction_pointer
 mdefine_line|#define instruction_pointer(regs) ((regs)-&gt;cp0_epc)
 r_extern

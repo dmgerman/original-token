@@ -1,4 +1,4 @@
-multiline_comment|/* &n; *  This program is free software; you can redistribute it and/or modify it&n; *  under the terms of the GNU General Public License as published by the&n; *  Free Software Foundation; either version 2, or (at your option) any&n; *  later version.&n; *&n; *  This program is distributed in the hope that it will be useful, but&n; *  WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; *  General Public License for more details.&n; *&n; *  Complications for I2O scsi&n; *&n; *&t;o&t;Each (bus,lun) is a logical device in I2O. We keep a map&n; *&t;&t;table. We spoof failed selection for unmapped units&n; *&t;o&t;Request sense buffers can come back for free. &n; *&t;o&t;Scatter gather is a bit dynamic. We have to investigate at&n; *&t;&t;setup time.&n; *&t;o&t;Some of our resources are dynamically shared. The i2o core&n; *&t;&t;needs a message reservation protocol to avoid swap v net&n; *&t;&t;deadlocking. We need to back off queue requests.&n; *&t;&n; *&t;In general the firmware wants to help. Where its help isn&squot;t performance&n; *&t;useful we just ignore the aid. Its not worth the code in truth.&n; *&n; *&t;Fixes:&n; *&t;&t;Steve Ralston&t;:&t;Scatter gather now works&n; *&n; */
+multiline_comment|/* &n; *  This program is free software; you can redistribute it and/or modify it&n; *  under the terms of the GNU General Public License as published by the&n; *  Free Software Foundation; either version 2, or (at your option) any&n; *  later version.&n; *&n; *  This program is distributed in the hope that it will be useful, but&n; *  WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; *  General Public License for more details.&n; *&n; *  Complications for I2O scsi&n; *&n; *&t;o&t;Each (bus,lun) is a logical device in I2O. We keep a map&n; *&t;&t;table. We spoof failed selection for unmapped units&n; *&t;o&t;Request sense buffers can come back for free. &n; *&t;o&t;Scatter gather is a bit dynamic. We have to investigate at&n; *&t;&t;setup time.&n; *&t;o&t;Some of our resources are dynamically shared. The i2o core&n; *&t;&t;needs a message reservation protocol to avoid swap v net&n; *&t;&t;deadlocking. We need to back off queue requests.&n; *&t;&n; *&t;In general the firmware wants to help. Where its help isn&squot;t performance&n; *&t;useful we just ignore the aid. Its not worth the code in truth.&n; *&n; *&t;Fixes:&n; *&t;&t;Steve Ralston&t;:&t;Scatter gather now works&n; *&n; *&t;To Do&n; *&t;&t;64bit cleanups&n; *&t;&t;Fix the resource management problems.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -8,7 +8,6 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -734,8 +733,8 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* Low byte is the adapter status, next is the device */
-id|as
+multiline_comment|/*&n;&t; *&t;Low byte is device status, next is adapter status,&n;&t; *&t;(then one byte reserved), then request status.&n;&t; */
+id|ds
 op_assign
 (paren
 id|u8
@@ -745,7 +744,7 @@ id|m
 l_int|4
 )braket
 suffix:semicolon
-id|ds
+id|as
 op_assign
 (paren
 id|u8
@@ -1033,7 +1032,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|ds
+id|as
 op_eq
 l_int|0x0E
 )paren
@@ -1048,7 +1047,7 @@ r_else
 r_if
 c_cond
 (paren
-id|ds
+id|as
 op_eq
 l_int|0x0F
 )paren
@@ -1795,7 +1794,6 @@ singleline_comment|// FC_PORT
 r_continue
 suffix:semicolon
 )brace
-singleline_comment|//&t;&t;&t;printk(&quot;Found a controller.&bslash;n&quot;);&t;
 id|shpnt
 op_assign
 id|scsi_register
@@ -1851,7 +1849,6 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-singleline_comment|//&t;&t;&t;printk(&quot;Scanning I2O port %d.&bslash;n&quot;, d-&gt;id);
 id|i2o_scsi_init
 c_func
 (paren
@@ -2209,43 +2206,18 @@ suffix:semicolon
 id|u32
 id|len
 suffix:semicolon
+id|u32
+id|reqlen
+suffix:semicolon
+id|u32
+id|tag
+suffix:semicolon
 r_static
 r_int
 id|max_qd
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;The scsi layer should be handling this stuff&n;&t; */
-r_if
-c_cond
-(paren
-id|is_dir_out
-c_func
-(paren
-id|SCpnt
-)paren
-)paren
-(brace
-id|direction
-op_assign
-l_int|0x04000000
-suffix:semicolon
-id|scsidir
-op_assign
-l_int|0x80000000
-suffix:semicolon
-)brace
-r_else
-(brace
-id|scsidir
-op_assign
-l_int|0x40000000
-suffix:semicolon
-id|direction
-op_assign
-l_int|0x00000000
-suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; *&t;Do the incoming paperwork&n;&t; */
 id|host
 op_assign
@@ -2392,6 +2364,57 @@ id|m
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Put together a scsi execscb message&n;&t; */
+id|len
+op_assign
+id|SCpnt-&gt;request_bufflen
+suffix:semicolon
+id|direction
+op_assign
+l_int|0x00000000
+suffix:semicolon
+singleline_comment|// SGL IN  (osm&lt;--iop)
+multiline_comment|/*&n;&t; *&t;The scsi layer should be handling this stuff&n;&t; */
+id|scsidir
+op_assign
+l_int|0x00000000
+suffix:semicolon
+singleline_comment|// DATA NO XFER
+r_if
+c_cond
+(paren
+id|len
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|is_dir_out
+c_func
+(paren
+id|SCpnt
+)paren
+)paren
+(brace
+id|direction
+op_assign
+l_int|0x04000000
+suffix:semicolon
+singleline_comment|// SGL OUT  (osm--&gt;iop)
+id|scsidir
+op_assign
+l_int|0x80000000
+suffix:semicolon
+singleline_comment|// DATA OUT (iop--&gt;dev)
+)brace
+r_else
+(brace
+id|scsidir
+op_assign
+l_int|0x40000000
+suffix:semicolon
+singleline_comment|// DATA IN  (iop&lt;--dev)
+)brace
+)brace
 id|msg
 (braket
 l_int|1
@@ -2427,21 +2450,10 @@ id|u32
 id|SCpnt
 suffix:semicolon
 multiline_comment|/* We want the SCSI control block back */
-multiline_comment|/* Direction, disconnect ok, no tagging (yet) */
-id|msg
-(braket
-l_int|4
-)braket
+multiline_comment|/* LSI_920_PCI_QUIRK&n;&t; *&n;&t; *&t;Intermittant observations of msg frame word data corruption&n;&t; *&t;observed on msg[4] after:&n;&t; *&t;  WRITE, READ-MODIFY-WRITE&n;&t; *&t;operations.  19990606 -sralston&n;&t; *&n;&t; *&t;(Hence we build this word via tag. Its good practice anyway&n;&t; *&t; we don&squot;t want fetches over PCI needlessly)&n;&t; */
+id|tag
 op_assign
-id|scsidir
-op_or
-(paren
-l_int|1
-op_lshift
-l_int|29
-)paren
-op_or
-id|SCpnt-&gt;cmd_len
+l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Attach tags to the devices&n;&t; */
 r_if
@@ -2473,23 +2485,11 @@ id|HZ
 )paren
 )paren
 (brace
-id|msg
-(braket
-l_int|4
-)braket
-op_or_assign
-(paren
-l_int|1
-op_lshift
-l_int|23
-)paren
-op_or
-(paren
-l_int|1
-op_lshift
-l_int|24
-)paren
+id|tag
+op_assign
+l_int|0x01800000
 suffix:semicolon
+multiline_comment|/* ORDERED! */
 id|hostdata-&gt;tagclock
 (braket
 id|SCpnt-&gt;target
@@ -2502,81 +2502,51 @@ id|jiffies
 suffix:semicolon
 )brace
 r_else
-r_switch
+(brace
+multiline_comment|/* Hmmm...  I always see value of 0 here,&n;&t;&t;&t; *  of which {HEAD_OF, ORDERED, SIMPLE} are NOT!  -sralston&n;&t;&t;&t; */
+r_if
 c_cond
 (paren
 id|SCpnt-&gt;tag
+op_eq
+id|HEAD_OF_QUEUE_TAG
 )paren
 (brace
-r_case
-id|SIMPLE_QUEUE_TAG
-suffix:colon
-id|msg
-(braket
-l_int|4
-)braket
-op_or_assign
+id|tag
+op_assign
+l_int|0x01000000
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
 (paren
-l_int|1
-op_lshift
-l_int|23
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|HEAD_OF_QUEUE_TAG
-suffix:colon
-id|msg
-(braket
-l_int|4
-)braket
-op_or_assign
-(paren
-l_int|1
-op_lshift
-l_int|24
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
+id|SCpnt-&gt;tag
+op_eq
 id|ORDERED_QUEUE_TAG
-suffix:colon
+)paren
+(brace
+id|tag
+op_assign
+l_int|0x01800000
+suffix:semicolon
+)brace
+)brace
+)brace
+multiline_comment|/* Direction, disconnect ok, tag, CDBLen */
 id|msg
 (braket
 l_int|4
 )braket
-op_or_assign
-(paren
-l_int|1
-op_lshift
-l_int|23
-)paren
+op_assign
+id|scsidir
 op_or
-(paren
-l_int|1
-op_lshift
-l_int|24
-)paren
+l_int|0x20000000
+op_or
+id|SCpnt-&gt;cmd_len
+op_or
+id|tag
 suffix:semicolon
-r_break
-suffix:semicolon
-r_default
-suffix:colon
-id|msg
-(braket
-l_int|4
-)braket
-op_or_assign
-(paren
-l_int|1
-op_lshift
-l_int|23
-)paren
-suffix:semicolon
-)brace
-)brace
 id|mptr
 op_assign
 id|msg
@@ -2604,6 +2574,11 @@ id|mptr
 op_increment
 suffix:semicolon
 multiline_comment|/* Remember me - fill in when we know */
+id|reqlen
+op_assign
+l_int|12
+suffix:semicolon
+singleline_comment|// SINGLE SGE
 multiline_comment|/*&n;&t; *&t;Now fill in the SGList and command &n;&t; *&n;&t; *&t;FIXME: we need to set the sglist limits according to the &n;&t; *&t;message size of the I2O controller. We might only have room&n;&t; *&t;for 6 or so worst case&n;&t; */
 r_if
 c_cond
@@ -2623,6 +2598,11 @@ op_star
 )paren
 id|SCpnt-&gt;request_buffer
 suffix:semicolon
+r_int
+id|chain
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2639,19 +2619,11 @@ l_int|11
 )paren
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t; *&t;Need to chain!&n;&t;&t;&t; */
-id|SCpnt-&gt;host_scribble
+id|chain
 op_assign
-(paren
-r_void
-op_star
-)paren
-(paren
-id|sg_chain_pool
-op_plus
-id|sg_chain_tag
-)paren
+l_int|1
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; *&t;Need to chain!&n;&t;&t;&t; */
 op_star
 id|mptr
 op_increment
@@ -2674,7 +2646,9 @@ op_assign
 id|virt_to_bus
 c_func
 (paren
-id|SCpnt-&gt;host_scribble
+id|sg_chain_pool
+op_plus
+id|sg_chain_tag
 )paren
 suffix:semicolon
 id|mptr
@@ -2683,7 +2657,11 @@ op_assign
 id|u32
 op_star
 )paren
-id|SCpnt-&gt;host_scribble
+(paren
+id|sg_chain_pool
+op_plus
+id|sg_chain_tag
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -2706,13 +2684,7 @@ id|SCpnt
 comma
 id|SCpnt-&gt;use_sg
 comma
-(paren
-id|chain_buf
-op_star
-)paren
-id|SCpnt-&gt;host_scribble
-op_minus
-id|sg_chain_pool
+id|sg_chain_tag
 )paren
 suffix:semicolon
 )brace
@@ -2776,15 +2748,39 @@ id|sg
 op_increment
 suffix:semicolon
 )brace
+multiline_comment|/* Make this an end of list. Again evade the 920 bug and&n;&t;&t;   unwanted PCI read traffic */
 id|mptr
 (braket
 op_minus
 l_int|2
 )braket
-op_or_assign
-l_int|0xC0000000
+op_assign
+id|direction
+op_or
+l_int|0xD0000000
+op_or
+(paren
+id|sg
+op_minus
+l_int|1
+)paren
+op_member_access_from_pointer
+id|length
 suffix:semicolon
-multiline_comment|/* End of List and block */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|chain
+)paren
+(brace
+id|reqlen
+op_assign
+id|mptr
+op_minus
+id|msg
+suffix:semicolon
+)brace
 op_star
 id|lenptr
 op_assign
@@ -2825,6 +2821,28 @@ id|SCpnt-&gt;request_bufflen
 )paren
 suffix:semicolon
 op_star
+id|lenptr
+op_assign
+id|len
+op_assign
+id|SCpnt-&gt;request_bufflen
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+op_eq
+l_int|0
+)paren
+(brace
+id|reqlen
+op_assign
+l_int|9
+suffix:semicolon
+)brace
+r_else
+(brace
+op_star
 id|mptr
 op_increment
 op_assign
@@ -2844,30 +2862,6 @@ c_func
 id|SCpnt-&gt;request_buffer
 )paren
 suffix:semicolon
-op_star
-id|lenptr
-op_assign
-id|len
-op_assign
-id|SCpnt-&gt;request_bufflen
-suffix:semicolon
-multiline_comment|/* No transfer ? - fix up the request */
-r_if
-c_cond
-(paren
-id|len
-op_eq
-l_int|0
-)paren
-(brace
-id|msg
-(braket
-l_int|4
-)braket
-op_and_assign
-op_complement
-l_int|0xC0000000
-suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n;&t; *&t;Stick the headers on &n;&t; */
@@ -2876,11 +2870,7 @@ id|msg
 l_int|0
 )braket
 op_assign
-(paren
-id|mptr
-op_minus
-id|msg
-)paren
+id|reqlen
 op_lshift
 l_int|16
 op_or
@@ -3042,7 +3032,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;i2o_scsi_abort&bslash;n&quot;
+l_string|&quot;i2o_scsi: Aborting command block.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|host
@@ -3194,8 +3184,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-singleline_comment|//&t;SCpnt-&gt;result = DID_RESET &lt;&lt; 16;
-singleline_comment|//&t;SCpnt-&gt;scsi_done(SCpnt);
 r_return
 id|SCSI_ABORT_PENDING
 suffix:semicolon
@@ -3239,13 +3227,13 @@ id|u32
 op_star
 id|msg
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Find the TID for the bus&n;&t; */
 id|printk
 c_func
 (paren
-l_string|&quot;i2o_scsi_reset&bslash;n&quot;
+l_string|&quot;i2o_scsi: Attempting to reset the bus.&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Find the TID for the bus&n;&t; */
 id|host
 op_assign
 id|SCpnt-&gt;host

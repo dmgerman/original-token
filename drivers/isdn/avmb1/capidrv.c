@@ -6295,12 +6295,6 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-id|kfree_skb
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -6344,6 +6338,12 @@ c_func
 (paren
 op_amp
 id|s_cmsg
+)paren
+suffix:semicolon
+id|kfree_skb
+c_func
+(paren
+id|skb
 )paren
 suffix:semicolon
 )brace

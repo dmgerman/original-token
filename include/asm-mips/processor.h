@@ -388,21 +388,6 @@ l_int|17
 )braket
 suffix:semicolon
 )brace
-r_struct
-id|pt_regs
-suffix:semicolon
-r_extern
-r_int
-(paren
-op_star
-id|user_mode
-)paren
-(paren
-r_struct
-id|pt_regs
-op_star
-)paren
-suffix:semicolon
 multiline_comment|/*&n; * Do necessary setup to start up a newly executed thread.&n; */
 r_extern
 r_void

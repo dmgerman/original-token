@@ -68,7 +68,7 @@ suffix:semicolon
 id|get_file
 c_func
 (paren
-id|usema
+id|usema-&gt;filp
 )paren
 suffix:semicolon
 id|fd_install

@@ -1677,7 +1677,12 @@ id|nbd_bytesizes
 id|dev
 )braket
 op_assign
+(paren
+(paren
+id|u64
+)paren
 id|arg
+)paren
 op_lshift
 id|nbd_blksize_bits
 (braket

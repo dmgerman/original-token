@@ -19,14 +19,13 @@ macro_line|#ifdef NEW_MODULES
 macro_line|#ifdef MODVERSIONS
 macro_line|#include &lt;linux/modversions.h&gt;
 macro_line|#endif
-macro_line|#include &lt;linux/module.h&gt;
 macro_line|#else /* !NEW_MODULES */
 macro_line|#ifdef MODVERSIONS
 DECL|macro|MODULE
 mdefine_line|#define MODULE
 macro_line|#endif
-macro_line|#include &lt;linux/module.h&gt;
 macro_line|#endif /* NEW_MODULES */
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -112,7 +111,6 @@ mdefine_line|#define COMTROL_TIMER 26
 macro_line|#endif
 macro_line|#ifndef NEW_MODULES
 multiline_comment|/*&n; * NB. we must include the kernel idenfication string in to install the module.&n; */
-macro_line|#include &lt;linux/version.h&gt;
 DECL|variable|kernel_version
 multiline_comment|/*static*/
 r_char

@@ -13,9 +13,7 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#ifdef __powerpc__
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#endif
-macro_line|#ifdef __mc68000__
 macro_line|#include &lt;asm/setup.h&gt;
-macro_line|#endif
 DECL|variable|mouse
 r_static
 r_struct
@@ -1061,7 +1059,6 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#ifdef MODULE
-macro_line|#include &lt;asm/setup.h&gt;
 DECL|function|init_module
 r_int
 id|init_module

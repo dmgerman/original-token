@@ -8,9 +8,9 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
-macro_line|#include  &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
 macro_line|#if defined(__i386__)
-macro_line|# include &lt;asm/io.h&gt;
 macro_line|# include &lt;asm/system.h&gt;
 macro_line|# include &lt;asm/segment.h&gt;
 macro_line|#endif
@@ -19,7 +19,6 @@ macro_line|# include &lt;linux/init.h&gt;
 macro_line|# include &lt;linux/delay.h&gt;         /* udelay() */
 macro_line|# include &lt;asm/oplib.h&gt;           /* OpenProm Library */
 macro_line|# include &lt;asm/sbus.h&gt;            /* struct linux_sbus *SBus_chain */
-macro_line|# include &lt;asm/io.h&gt;              /* sparc_alloc_io() */
 macro_line|#endif
 macro_line|#include &lt;asm/bpp.h&gt;
 DECL|macro|BPP_PROBE_CODE

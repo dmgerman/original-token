@@ -20,7 +20,6 @@ macro_line|#endif
 multiline_comment|/*================================================================&n; * INCLUDE OTHER HEADER FILES&n; *================================================================*/
 multiline_comment|/* reading configuration of sound driver */
 macro_line|#ifdef AWE_OBSOLETE_VOXWARE
-macro_line|#include &lt;i386/isa/sound/sound_config.h&gt;
 macro_line|#if defined(CONFIGURE_SOUNDCARD) &amp;&amp; !defined(EXCLUDE_AWE32)
 DECL|macro|CONFIG_AWE32_SYNTH
 mdefine_line|#define CONFIG_AWE32_SYNTH

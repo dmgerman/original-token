@@ -535,6 +535,19 @@ suffix:semicolon
 r_int
 id|len
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|tmp
+op_eq
+l_int|NULL
+)paren
+(brace
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
+)brace
 multiline_comment|/* Check for special dentries.. */
 id|pattern
 op_assign

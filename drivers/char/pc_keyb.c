@@ -20,7 +20,6 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/irq.h&gt;
 multiline_comment|/* Some configuration switches are present in the include file... */
 macro_line|#include &quot;pc_keyb.h&quot;
 multiline_comment|/* Simple translation table for the SysRq keys */

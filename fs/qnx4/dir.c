@@ -148,6 +148,26 @@ comma
 id|QNX4_BLOCK_SIZE
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|bh
+op_eq
+l_int|NULL
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;qnx4_readdir: bread failed (%ld)&bslash;n&quot;
+comma
+id|blknum
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 id|i
 op_assign
 (paren

@@ -4146,6 +4146,7 @@ l_int|1
 )braket
 )paren
 suffix:semicolon
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -4163,6 +4164,7 @@ l_int|2
 op_assign
 l_int|1023
 suffix:semicolon
+macro_line|#endif&t;&t;&t;
 )brace
 id|LEAVE
 c_func

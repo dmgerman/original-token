@@ -6,10 +6,21 @@ macro_line|#ifndef _QLOGICFC_H
 DECL|macro|_QLOGICFC_H
 mdefine_line|#define _QLOGICFC_H
 multiline_comment|/*&n; * With the qlogic interface, every queue slot can hold a SCSI&n; * command with up to 2 scatter/gather entries.  If we need more&n; * than 2 entries, continuation entries can be used that hold&n; * another 5 entries each.  Unlike for other drivers, this means&n; * that the maximum number of scatter/gather entries we can&n; * support at any given time is a function of the number of queue&n; * slots available.  That is, host-&gt;can_queue and host-&gt;sg_tablesize&n; * are dynamic and _not_ independent.  This all works fine because&n; * requests are queued serially and the scatter/gather limit is&n; * determined for each queue request anew.&n; */
+macro_line|#if BITS_PER_LONG &gt; 32
+DECL|macro|DATASEGS_PER_COMMAND
+mdefine_line|#define DATASEGS_PER_COMMAND 2
+DECL|macro|DATASEGS_PER_CONT
+mdefine_line|#define DATASEGS_PER_CONT 5
+macro_line|#else
+DECL|macro|DATASEGS_PER_COMMAND
+mdefine_line|#define DATASEGS_PER_COMMAND 3
+DECL|macro|DATASEGS_PER_CONT
+mdefine_line|#define DATASEGS_PER_CONT 7
+macro_line|#endif
 DECL|macro|QLOGICFC_REQ_QUEUE_LEN
-mdefine_line|#define QLOGICFC_REQ_QUEUE_LEN&t;63&t;/* must be power of two - 1 */
+mdefine_line|#define QLOGICFC_REQ_QUEUE_LEN&t;127&t;/* must be power of two - 1 */
 DECL|macro|QLOGICFC_MAX_SG
-mdefine_line|#define QLOGICFC_MAX_SG(ql)&t;(2 + (((ql) &gt; 0) ? 5*((ql) - 1) : 0))
+mdefine_line|#define QLOGICFC_MAX_SG(ql)&t;(DATASEGS_PER_COMMAND + (((ql) &gt; 0) ? DATASEGS_PER_CONT*((ql) - 1) : 0))
 DECL|macro|QLOGICFC_CMD_PER_LUN
 mdefine_line|#define QLOGICFC_CMD_PER_LUN    8
 r_int
@@ -101,6 +112,6 @@ id|proc_dir_entry
 id|proc_scsi_isp2100
 suffix:semicolon
 DECL|macro|QLOGICFC
-mdefine_line|#define QLOGICFC {&t;&t;&t;&t;&t;&t;&t;   &bslash;&n;        detect:                 isp2100_detect,                            &bslash;&n;        release:                isp2100_release,                           &bslash;&n;        info:                   isp2100_info,                              &bslash;&n;        queuecommand:           isp2100_queuecommand,                      &bslash;&n;        abort:                  isp2100_abort,                             &bslash;&n;        reset:                  isp2100_reset,                             &bslash;&n;        bios_param:             isp2100_biosparam,                         &bslash;&n;        can_queue:              QLOGICFC_REQ_QUEUE_LEN,                    &bslash;&n;        this_id:                -1,                                        &bslash;&n;        sg_tablesize:           QLOGICFC_MAX_SG(QLOGICFC_REQ_QUEUE_LEN),   &bslash;&n;        cmd_per_lun:            QLOGICFC_CMD_PER_LUN,                      &bslash;&n;        present:                0,                                         &bslash;&n;        unchecked_isa_dma:      0,                                         &bslash;&n;        use_clustering:         DISABLE_CLUSTERING                         &bslash;&n;}
+mdefine_line|#define QLOGICFC {&t;&t;&t;&t;&t;&t;&t;   &bslash;&n;        detect:                 isp2100_detect,                            &bslash;&n;        release:                isp2100_release,                           &bslash;&n;        info:                   isp2100_info,                              &bslash;&n;        queuecommand:           isp2100_queuecommand,                      &bslash;&n;        eh_abort_handler:       isp2100_abort,                             &bslash;&n;        reset:                  isp2100_reset,                             &bslash;&n;        bios_param:             isp2100_biosparam,                         &bslash;&n;        can_queue:              QLOGICFC_REQ_QUEUE_LEN,                    &bslash;&n;        this_id:                -1,                                        &bslash;&n;        sg_tablesize:           QLOGICFC_MAX_SG(QLOGICFC_REQ_QUEUE_LEN),   &bslash;&n;&t;cmd_per_lun:&t;&t;QLOGICFC_CMD_PER_LUN, &t;&t;&t;   &bslash;&n;        present:                0,                                         &bslash;&n;        unchecked_isa_dma:      0,                                         &bslash;&n;        use_clustering:         ENABLE_CLUSTERING &t;&t;&t;   &bslash;&n;}
 macro_line|#endif /* _QLOGICFC_H */
 eof

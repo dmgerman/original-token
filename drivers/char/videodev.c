@@ -121,6 +121,18 @@ op_star
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_RADIO_RTRACK2
+r_extern
+r_int
+id|rtrack2_init
+c_func
+(paren
+r_struct
+id|video_init
+op_star
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_RADIO_SF16FMI
 r_extern
 r_int
@@ -181,10 +193,34 @@ op_star
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_RADIO_TERRATEC
+r_extern
+r_int
+id|terratec_init
+c_func
+(paren
+r_struct
+id|video_init
+op_star
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_VIDEO_PMS
 r_extern
 r_int
 id|init_pms_cards
+c_func
+(paren
+r_struct
+id|video_init
+op_star
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_VIDEO_ZORAN
+r_extern
+r_int
+id|init_zoran_cards
 c_func
 (paren
 r_struct
