@@ -1,13 +1,15 @@
 macro_line|#ifndef __PPC_SYSTEM_H
 DECL|macro|__PPC_SYSTEM_H
 mdefine_line|#define __PPC_SYSTEM_H
-macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/kdev_t.h&gt;
+macro_line|#include &lt;asm/processor.h&gt;
 DECL|macro|mb
 mdefine_line|#define mb()  __asm__ __volatile__ (&quot;sync&quot; : : : &quot;memory&quot;)
 DECL|macro|__save_flags
 mdefine_line|#define __save_flags(flags)&t;({&bslash;&n;&t;__asm__ __volatile__ (&quot;mfmsr %0&quot; : &quot;=r&quot; ((flags)) : : &quot;memory&quot;); })
-multiline_comment|/* using Paul&squot;s in misc.S now -- Cort */
+DECL|function|__restore_flags
 r_extern
+id|__inline__
 r_void
 id|__restore_flags
 c_func
@@ -16,8 +18,112 @@ r_int
 r_int
 id|flags
 )paren
+(brace
+r_extern
+r_int
+id|lost_interrupts
 suffix:semicolon
-multiline_comment|/*&n;  #define __sti() _soft_sti(void)&n;  #define __cli() _soft_cli(void)&n; */
+r_extern
+r_void
+id|do_lost_interrupts
+c_func
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|flags
+op_amp
+id|MSR_EE
+)paren
+op_logical_and
+id|lost_interrupts
+op_ne
+l_int|0
+)paren
+(brace
+id|do_lost_interrupts
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;sync; mtmsr %0; isync&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|flags
+)paren
+suffix:colon
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+)brace
+)brace
+macro_line|#if 0
+multiline_comment|/*&n; * Gcc bug prevents us from using this inline func so for now&n; * it lives in misc.S&n; */
+r_void
+id|__inline__
+id|__restore_flags
+c_func
+(paren
+r_int
+r_int
+id|flags
+)paren
+(brace
+r_extern
+r_int
+id|lost_interrupts
+suffix:semicolon
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;andi.&t;0,%0,%2 &bslash;n&bslash;t&quot;
+l_string|&quot;beq&t;2f &bslash;n&bslash;t&quot;
+l_string|&quot;cmpi&t;0,%1,0 &bslash;n&bslash;t&quot;
+l_string|&quot;bne&t;do_lost_interrupts &bslash;n&bslash;t&quot;
+l_string|&quot;2:&t;sync &bslash;n&bslash;t&quot;
+l_string|&quot;mtmsr&t;%0 &bslash;n&bslash;t&quot;
+l_string|&quot;isync &bslash;n&bslash;t&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|flags
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|lost_interrupts
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+l_int|1
+op_lshift
+l_int|15
+)paren
+multiline_comment|/*MSR_EE*/
+suffix:colon
+l_string|&quot;0&quot;
+comma
+l_string|&quot;cc&quot;
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 r_extern
 r_void
 id|__sti
@@ -29,38 +135,6 @@ suffix:semicolon
 r_extern
 r_void
 id|__cli
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|_hard_sti
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|_hard_cli
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|_soft_sti
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|_soft_cli
 c_func
 (paren
 r_void
@@ -80,6 +154,27 @@ id|_enable_interrupts
 c_func
 (paren
 r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|print_backtrace
+c_func
+(paren
+r_int
+r_int
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|show_regs
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 suffix:semicolon
 r_extern
@@ -106,14 +201,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_extern
-r_void
-id|find_scsi_boot
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
+multiline_comment|/*extern void note_bootable_part(kdev_t, int);*/
 r_extern
 r_int
 id|sd_find_target
@@ -143,6 +231,14 @@ r_void
 suffix:semicolon
 r_extern
 r_void
+id|pmac_nvram_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|read_rtc_time
 c_func
 (paren
@@ -163,18 +259,6 @@ id|giveup_fpu
 c_func
 (paren
 r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|store_cache_range
-c_func
-(paren
-r_int
-r_int
-comma
-r_int
-r_int
 )paren
 suffix:semicolon
 r_extern

@@ -1926,7 +1926,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|need_resched
+id|resched_needed
+c_func
+(paren
+)paren
 )paren
 r_break
 suffix:semicolon

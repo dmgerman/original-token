@@ -4,9 +4,9 @@ mdefine_line|#define __PPC_ELF_H
 multiline_comment|/*&n; * ELF register definitions..&n; */
 macro_line|#include &lt;asm/ptrace.h&gt;
 DECL|macro|ELF_NGREG
-mdefine_line|#define ELF_NGREG&t;32
+mdefine_line|#define ELF_NGREG&t;48&t;/* includes nip, msr, lr, etc. */
 DECL|macro|ELF_NFPREG
-mdefine_line|#define ELF_NFPREG&t;32
+mdefine_line|#define ELF_NFPREG&t;33&t;/* includes fpscr */
 multiline_comment|/*&n; * This is used to ensure we don&squot;t load something for the wrong architecture.&n; */
 DECL|macro|elf_check_arch
 mdefine_line|#define elf_check_arch(x) ((x) == EM_PPC)
@@ -48,5 +48,7 @@ id|elf_fpregset_t
 id|ELF_NFPREG
 )braket
 suffix:semicolon
+DECL|macro|ELF_CORE_COPY_REGS
+mdefine_line|#define ELF_CORE_COPY_REGS(gregs, regs) &bslash;&n;&t;memcpy(gregs, regs, &bslash;&n;&t;       sizeof(struct pt_regs) &lt; sizeof(elf_gregset_t)? &bslash;&n;&t;       sizeof(struct pt_regs): sizeof(elf_gregset_t));
 macro_line|#endif
 eof

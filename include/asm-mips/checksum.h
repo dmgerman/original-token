@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * include/asm-mips/checksum.h&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995 by Ralf Baechle&n; */
+multiline_comment|/*&n; * include/asm-mips/checksum.h&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997 by Ralf Baechle&n; *&n; * $Id: checksum.h,v 1.5 1997/08/08 20:22:28 miguel Exp $&n; */
 macro_line|#ifndef __ASM_MIPS_CHECKSUM_H
 DECL|macro|__ASM_MIPS_CHECKSUM_H
 mdefine_line|#define __ASM_MIPS_CHECKSUM_H

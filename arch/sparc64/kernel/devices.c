@@ -28,6 +28,16 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_int
+r_int
+id|central_probe
+c_func
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -59,7 +69,7 @@ suffix:semicolon
 r_int
 id|cpu_nds
 (braket
-id|NCPUS
+id|NR_CPUS
 )braket
 suffix:semicolon
 multiline_comment|/* One node for each cpu */
@@ -220,7 +230,7 @@ c_func
 (paren
 id|scan
 comma
-l_string|&quot;mid&quot;
+l_string|&quot;upa-portid&quot;
 comma
 (paren
 r_char
@@ -245,6 +255,21 @@ op_assign
 id|thismid
 suffix:semicolon
 id|prom_printf
+c_func
+(paren
+l_string|&quot;Found CPU %d &lt;node=%08x,mid=%d&gt;&bslash;n&quot;
+comma
+id|cpu_ctr
+comma
+(paren
+r_int
+)paren
+id|scan
+comma
+id|thismid
+)paren
+suffix:semicolon
+id|printk
 c_func
 (paren
 l_string|&quot;Found CPU %d &lt;node=%08x,mid=%d&gt;&bslash;n&quot;
@@ -312,7 +337,11 @@ c_func
 )paren
 suffix:semicolon
 r_return
+id|central_probe
+c_func
+(paren
 id|mem_start
+)paren
 suffix:semicolon
 )brace
 eof

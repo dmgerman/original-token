@@ -1,7 +1,6 @@
-macro_line|#ifndef __i386_POLL_H
-DECL|macro|__i386_POLL_H
-mdefine_line|#define __i386_POLL_H
-multiline_comment|/* These are specified by iBCS2 */
+macro_line|#ifndef __PPC_POLL_H
+DECL|macro|__PPC_POLL_H
+mdefine_line|#define __PPC_POLL_H
 DECL|macro|POLLIN
 mdefine_line|#define POLLIN&t;&t;0x0001
 DECL|macro|POLLPRI
@@ -14,7 +13,6 @@ DECL|macro|POLLHUP
 mdefine_line|#define POLLHUP&t;&t;0x0010
 DECL|macro|POLLNVAL
 mdefine_line|#define POLLNVAL&t;0x0020
-multiline_comment|/* The rest seem to be more-or-less nonstandard. Check them! */
 DECL|macro|POLLRDNORM
 mdefine_line|#define POLLRDNORM&t;0x0040
 DECL|macro|POLLRDBAND

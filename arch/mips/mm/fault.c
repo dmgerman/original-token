@@ -375,11 +375,16 @@ c_func
 (paren
 id|KERN_ALERT
 l_string|&quot;Unable to handle kernel paging request at virtual &quot;
-l_string|&quot;address %08lx, epc == %08lx&bslash;n&quot;
+l_string|&quot;address %08lx, epc == %08lx, ra == %08lx&bslash;n&quot;
 comma
 id|address
 comma
 id|regs-&gt;cp0_epc
+comma
+id|regs-&gt;regs
+(braket
+l_int|31
+)braket
 )paren
 suffix:semicolon
 id|die_if_kernel

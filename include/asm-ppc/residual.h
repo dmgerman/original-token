@@ -1199,5 +1199,9 @@ DECL|typedef|RESIDUAL
 )brace
 id|RESIDUAL
 suffix:semicolon
+r_extern
+id|RESIDUAL
+id|res
+suffix:semicolon
 macro_line|#endif  /* ndef _RESIDUAL_ */
 eof

@@ -194,10 +194,14 @@ id|MACH_GROUP_JAZZ
 id|vdma_free
 c_func
 (paren
+id|vdma_phys2log
+c_func
+(paren
 id|PHYSADDR
 c_func
 (paren
 id|addr
+)paren
 )paren
 )paren
 suffix:semicolon

@@ -1,5 +1,6 @@
 multiline_comment|/*&n; *  linux/arch/ppc/kernel/setup.c&n; *&n; *  PowerPC version &n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *&n; *  Adapted for Power Macintosh by Paul Mackerras&n; *    Copyright (C) 1996 Paul Mackerras (paulus@cs.anu.edu.au)&n; *&n; *  Derived from &quot;arch/alpha/kernel/setup.c&quot;&n; *    Copyright (C) 1995 Linus Torvalds&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; */
 multiline_comment|/*&n; * bootup setup stuff..&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -14,11 +15,19 @@ macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/ide.h&gt;
+macro_line|#include &lt;asm/pci-bridge.h&gt;
+macro_line|#include &quot;time.h&quot;
+multiline_comment|/*&n; * A magic address and value to put into it on machines with the&n; * &quot;ohare&quot; I/O controller.  This makes the IDE CD work on Starmaxes.&n; * Contributed by Harry Eaton.&n; */
+DECL|macro|OMAGICPLACE
+mdefine_line|#define OMAGICPLACE&t;((volatile unsigned *) 0xf3000038)
+DECL|macro|OMAGICCONT
+mdefine_line|#define OMAGICCONT&t;0xbeff7a
 r_extern
 r_int
 id|root_mountflags
@@ -29,23 +38,12 @@ id|command_line
 (braket
 )braket
 suffix:semicolon
-DECL|variable|saved_command_line
+r_extern
 r_char
 id|saved_command_line
 (braket
 l_int|256
 )braket
-suffix:semicolon
-DECL|variable|aux_device_present
-r_int
-r_char
-id|aux_device_present
-suffix:semicolon
-multiline_comment|/* XXX */
-DECL|variable|kbd_read_mask
-r_int
-r_char
-id|kbd_read_mask
 suffix:semicolon
 DECL|variable|drive_info
 r_int
@@ -63,28 +61,9 @@ c_func
 r_void
 )paren
 suffix:semicolon
-DECL|function|bios32_init
-r_int
-r_int
-id|bios32_init
-c_func
-(paren
-r_int
-r_int
-id|memory_start
-comma
-r_int
-r_int
-id|memory_end
-)paren
-(brace
-r_return
-id|memory_start
-suffix:semicolon
-)brace
-DECL|function|setup_arch
+DECL|function|pmac_setup_arch
 r_void
-id|setup_arch
+id|pmac_setup_arch
 c_func
 (paren
 r_char
@@ -222,6 +201,14 @@ r_case
 l_int|4
 suffix:colon
 multiline_comment|/* 604 */
+r_case
+l_int|9
+suffix:colon
+multiline_comment|/* 604e */
+r_case
+l_int|20
+suffix:colon
+multiline_comment|/* 620 */
 id|loops_per_sec
 op_assign
 op_star
@@ -279,8 +266,8 @@ id|boot_dev
 suffix:semicolon
 r_int
 r_int
-DECL|function|pmac_find_devices
-id|pmac_find_devices
+DECL|function|powermac_init
+id|powermac_init
 c_func
 (paren
 r_int
@@ -296,8 +283,53 @@ r_struct
 id|device_node
 op_star
 id|chosen_np
+comma
+op_star
+id|ohare_np
 suffix:semicolon
-id|nvram_init
+id|mem_start
+op_assign
+id|pmac_find_bridges
+c_func
+(paren
+id|mem_start
+comma
+id|mem_end
+)paren
+suffix:semicolon
+id|ohare_np
+op_assign
+id|find_devices
+c_func
+(paren
+l_string|&quot;ohare&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ohare_np
+op_ne
+l_int|NULL
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;Twiddling the magic ohare bits&bslash;n&quot;
+)paren
+suffix:semicolon
+id|out_le32
+c_func
+(paren
+id|OMAGICPLACE
+comma
+id|OMAGICCONT
+)paren
+suffix:semicolon
+)brace
+id|pmac_nvram_init
 c_func
 (paren
 )paren
@@ -307,7 +339,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|read_rtc_time
+id|pmac_read_rtc_time
 c_func
 (paren
 )paren
@@ -519,11 +551,12 @@ suffix:semicolon
 )brace
 )brace
 )brace
-DECL|function|find_scsi_boot
+DECL|function|find_boot_device
 r_void
-id|find_scsi_boot
+id|find_boot_device
 c_func
 (paren
+r_void
 )paren
 (brace
 r_int
@@ -559,6 +592,7 @@ l_int|NULL
 )paren
 r_return
 suffix:semicolon
+macro_line|#ifdef CONFIG_SCSI
 id|dev
 op_assign
 id|sd_find_target
@@ -588,6 +622,83 @@ op_plus
 id|boot_part
 )paren
 suffix:semicolon
+macro_line|#endif
+multiline_comment|/* XXX should cope with booting from IDE also */
+)brace
+DECL|function|note_bootable_part
+r_void
+id|note_bootable_part
+c_func
+(paren
+id|kdev_t
+id|dev
+comma
+r_int
+id|part
+)paren
+(brace
+r_static
+r_int
+id|found_boot
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|found_boot
+)paren
+(brace
+id|find_boot_device
+c_func
+(paren
+)paren
+suffix:semicolon
+id|found_boot
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|dev
+op_eq
+id|boot_dev
+)paren
+(brace
+id|ROOT_DEV
+op_assign
+id|MKDEV
+c_func
+(paren
+id|MAJOR
+c_func
+(paren
+id|dev
+)paren
+comma
+id|MINOR
+c_func
+(paren
+id|dev
+)paren
+op_plus
+id|part
+)paren
+suffix:semicolon
+id|boot_dev
+op_assign
+id|NODEV
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot; (root)&quot;
+)paren
+suffix:semicolon
+)brace
 )brace
 DECL|function|ide_init_hwif_ports
 r_void
@@ -728,12 +839,21 @@ comma
 id|np-&gt;full_name
 )paren
 suffix:semicolon
+op_star
+id|irq
+op_assign
+l_int|13
+suffix:semicolon
+)brace
+r_else
+(brace
+op_star
+id|irq
+op_assign
 id|np-&gt;intrs
 (braket
 l_int|0
 )braket
-op_assign
-l_int|13
 suffix:semicolon
 )brace
 id|base
@@ -786,99 +906,10 @@ id|base
 op_plus
 l_int|0x160
 suffix:semicolon
-op_star
-id|irq
-op_assign
-id|np-&gt;intrs
-(braket
-l_int|0
-)braket
-suffix:semicolon
-)brace
-DECL|function|sys_ioperm
-r_int
-id|sys_ioperm
-c_func
-(paren
-r_int
-r_int
-id|from
-comma
-r_int
-r_int
-id|num
-comma
-r_int
-id|on
-)paren
-(brace
-r_return
-op_minus
-id|EIO
-suffix:semicolon
-)brace
-macro_line|#if 0
-r_extern
-r_char
-id|builtin_ramdisk_image
-suffix:semicolon
-r_extern
-r_int
-id|builtin_ramdisk_size
-suffix:semicolon
-macro_line|#endif
-r_void
-DECL|function|builtin_ramdisk_init
-id|builtin_ramdisk_init
-c_func
-(paren
-r_void
-)paren
-(brace
-macro_line|#if 0
-r_if
-c_cond
-(paren
-(paren
-id|ROOT_DEV
-op_eq
-id|to_kdev_t
-c_func
-(paren
-id|DEFAULT_ROOT_DEVICE
-)paren
-)paren
-op_logical_and
-(paren
-id|builtin_ramdisk_size
-op_ne
-l_int|0
-)paren
-)paren
-(brace
-id|rd_preloaded_init
-c_func
-(paren
-op_amp
-id|builtin_ramdisk_image
-comma
-id|builtin_ramdisk_size
-)paren
-suffix:semicolon
-)brace
-r_else
-macro_line|#endif
-(brace
-multiline_comment|/* Not ramdisk - assume root needs to be mounted read only */
-id|root_mountflags
-op_or_assign
-id|MS_RDONLY
-suffix:semicolon
-)brace
 )brace
 r_int
-DECL|function|get_cpuinfo
-id|get_cpuinfo
+DECL|function|pmac_get_cpuinfo
+id|pmac_get_cpuinfo
 c_func
 (paren
 r_char
@@ -1021,6 +1052,15 @@ l_string|&quot;603ev&quot;
 suffix:semicolon
 r_break
 suffix:semicolon
+r_case
+l_int|9
+suffix:colon
+id|model
+op_assign
+l_string|&quot;604e&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
 r_default
 suffix:colon
 id|model
@@ -1047,7 +1087,7 @@ comma
 (paren
 id|pvr
 op_amp
-l_int|0xff
+l_int|0xff00
 )paren
 op_rshift
 l_int|8

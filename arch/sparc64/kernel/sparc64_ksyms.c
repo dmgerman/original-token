@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sparc64_ksyms.c,v 1.11 1997/07/14 23:58:20 davem Exp $&n; * arch/sparc64/kernel/sparc64_ksyms.c: Sparc64 specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: sparc64_ksyms.c,v 1.17 1997/08/10 01:51:01 davem Exp $&n; * arch/sparc64/kernel/sparc64_ksyms.c: Sparc64 specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
 DECL|macro|PROMLIB_INTERNAL
 mdefine_line|#define PROMLIB_INTERNAL
 macro_line|#include &lt;linux/config.h&gt;
@@ -164,14 +164,24 @@ suffix:semicolon
 r_extern
 r_int
 r_int
-id|__csum_partial_copy_sparc_generic
+id|csum_partial_copy_sparc64
+c_func
 (paren
 r_const
 r_char
 op_star
+id|src
 comma
 r_char
 op_star
+id|dst
+comma
+r_int
+id|len
+comma
+r_int
+r_int
+id|sum
 )paren
 suffix:semicolon
 r_extern
@@ -218,16 +228,86 @@ id|user
 op_star
 )paren
 suffix:semicolon
+macro_line|#ifdef __SMP__
+r_extern
+id|spinlock_t
+id|scheduler_lock
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* One thing to note is that the way the symbols of the mul/div&n; * support routines are named is a mess, they all start with&n; * a &squot;.&squot; which makes it a bitch to export, here is the trick:&n; */
 DECL|macro|EXPORT_SYMBOL_PRIVATE
 mdefine_line|#define EXPORT_SYMBOL_PRIVATE(sym)&t;&t;&t;&t;&bslash;&n;extern int __sparc_priv_ ## sym (int) __asm__(&quot;__&quot; ## #sym);&t;&bslash;&n;const struct module_symbol __export_priv_##sym&t;&t;&t;&bslash;&n;__attribute__((section(&quot;__ksymtab&quot;))) =&t;&t;&t;&t;&bslash;&n;{ (unsigned long) &amp;__sparc_priv_ ## sym, &quot;__&quot; ## #sym }
 multiline_comment|/* used by various drivers */
 macro_line|#ifdef __SMP__
+DECL|variable|scheduler_lock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|scheduler_lock
+)paren
+suffix:semicolon
+DECL|variable|global_bh_lock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|global_bh_lock
+)paren
+suffix:semicolon
 DECL|variable|klock_info
 id|EXPORT_SYMBOL
 c_func
 (paren
 id|klock_info
+)paren
+suffix:semicolon
+DECL|variable|global_irq_holder
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|global_irq_holder
+)paren
+suffix:semicolon
+DECL|variable|synchronize_irq
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|synchronize_irq
+)paren
+suffix:semicolon
+DECL|variable|cpu_data
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|cpu_data
+)paren
+suffix:semicolon
+DECL|variable|global_cli
+id|EXPORT_SYMBOL_PRIVATE
+c_func
+(paren
+id|global_cli
+)paren
+suffix:semicolon
+DECL|variable|global_sti
+id|EXPORT_SYMBOL_PRIVATE
+c_func
+(paren
+id|global_sti
+)paren
+suffix:semicolon
+DECL|variable|global_restore_flags
+id|EXPORT_SYMBOL_PRIVATE
+c_func
+(paren
+id|global_restore_flags
+)paren
+suffix:semicolon
+macro_line|#else
+DECL|variable|local_irq_count
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|local_irq_count
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -280,13 +360,6 @@ c_func
 id|sparc_free_io
 )paren
 suffix:semicolon
-DECL|variable|local_irq_count
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|local_irq_count
-)paren
-suffix:semicolon
 DECL|variable|__sparc64_bh_counter
 id|EXPORT_SYMBOL
 c_func
@@ -320,6 +393,20 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|sparc_dvma_malloc
+)paren
+suffix:semicolon
+DECL|variable|mmu_release_scsi_one
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|mmu_release_scsi_one
+)paren
+suffix:semicolon
+DECL|variable|mmu_release_scsi_sgl
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|mmu_release_scsi_sgl
 )paren
 suffix:semicolon
 macro_line|#if CONFIG_SBUS
@@ -679,11 +766,11 @@ c_func
 id|__memmove
 )paren
 suffix:semicolon
-DECL|variable|__csum_partial_copy_sparc_generic
+DECL|variable|csum_partial_copy_sparc64
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|__csum_partial_copy_sparc_generic
+id|csum_partial_copy_sparc64
 )paren
 suffix:semicolon
 multiline_comment|/* Moving data to/from userspace. */

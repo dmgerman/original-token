@@ -3,25 +3,27 @@ macro_line|#ifndef __SPARC64_HARDIRQ_H
 DECL|macro|__SPARC64_HARDIRQ_H
 mdefine_line|#define __SPARC64_HARDIRQ_H
 macro_line|#include &lt;linux/tasks.h&gt;
+macro_line|#ifndef __SMP__
 r_extern
 r_int
 r_int
 id|local_irq_count
-(braket
-id|NR_CPUS
-)braket
 suffix:semicolon
+macro_line|#else
+DECL|macro|local_irq_count
+mdefine_line|#define local_irq_count&t;&t;(cpu_data[smp_processor_id()].irq_count)
+macro_line|#endif
 DECL|macro|in_interrupt
-mdefine_line|#define in_interrupt()&t;(local_irq_count[smp_processor_id()] != 0)
+mdefine_line|#define in_interrupt()&t;&t;(local_irq_count != 0)
 macro_line|#ifndef __SMP__
 DECL|macro|hardirq_trylock
-mdefine_line|#define hardirq_trylock(cpu)&t;(local_irq_count[cpu] == 0)
+mdefine_line|#define hardirq_trylock(cpu)&t;(local_irq_count == 0)
 DECL|macro|hardirq_endlock
 mdefine_line|#define hardirq_endlock(cpu)&t;do { } while(0)
 DECL|macro|hardirq_enter
-mdefine_line|#define hardirq_enter(cpu)&t;(local_irq_count[cpu]++)
+mdefine_line|#define hardirq_enter(cpu)&t;(local_irq_count++)
 DECL|macro|hardirq_exit
-mdefine_line|#define hardirq_exit(cpu)&t;(local_irq_count[cpu]--)
+mdefine_line|#define hardirq_exit(cpu)&t;(local_irq_count--)
 DECL|macro|synchronize_irq
 mdefine_line|#define synchronize_irq()&t;do { } while(0)
 macro_line|#else /* (__SMP__) */
@@ -91,16 +93,24 @@ id|cpu
 )paren
 (brace
 op_increment
-id|local_irq_count
+id|cpu_data
 (braket
 id|cpu
 )braket
+dot
+id|irq_count
 suffix:semicolon
 id|atomic_inc
 c_func
 (paren
 op_amp
 id|global_irq_count
+)paren
+suffix:semicolon
+id|membar
+c_func
+(paren
+l_string|&quot;#StoreLoad | #StoreStore&quot;
 )paren
 suffix:semicolon
 )brace
@@ -115,6 +125,12 @@ r_int
 id|cpu
 )paren
 (brace
+id|membar
+c_func
+(paren
+l_string|&quot;#StoreStore | #LoadStore&quot;
+)paren
+suffix:semicolon
 id|atomic_dec
 c_func
 (paren
@@ -123,10 +139,12 @@ id|global_irq_count
 )paren
 suffix:semicolon
 op_decrement
-id|local_irq_count
+id|cpu_data
 (braket
 id|cpu
 )braket
+dot
+id|irq_count
 suffix:semicolon
 )brace
 DECL|function|hardirq_trylock
@@ -150,20 +168,26 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
+id|global_irq_count
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|atomic_add_return
+id|atomic_read
 c_func
 (paren
-l_int|1
-comma
 op_amp
 id|global_irq_count
 )paren
 op_ne
 l_int|1
 op_logical_or
+(paren
 op_star
 (paren
 (paren
@@ -178,6 +202,9 @@ id|global_irq_lock
 )paren
 )paren
 )paren
+)paren
+op_ne
+l_int|0
 )paren
 (brace
 id|atomic_dec
@@ -198,10 +225,12 @@ l_int|0
 suffix:semicolon
 )brace
 op_increment
-id|local_irq_count
+id|cpu_data
 (braket
 id|cpu
 )braket
+dot
+id|irq_count
 suffix:semicolon
 r_return
 l_int|1

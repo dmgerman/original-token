@@ -61,7 +61,6 @@ macro_line|#endif
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#ifdef __SMP__
 macro_line|#include &lt;linux/smp.h&gt;
-macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#endif
 r_extern
 r_char
@@ -1306,13 +1305,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|waitqueue_lock
-)paren
-suffix:semicolon
-DECL|variable|lk_lockmsg
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|lk_lockmsg
 )paren
 suffix:semicolon
 macro_line|#endif

@@ -220,6 +220,16 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_MAC_FLOPPY
+r_extern
+r_int
+id|swim3_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 r_extern
 r_void
 id|set_device_ro

@@ -543,7 +543,7 @@ DECL|typedef|MMU_context
 )brace
 id|MMU_context
 suffix:semicolon
-multiline_comment|/* Used to set up SDR register */
+multiline_comment|/* Used to set up SDR1 register */
 DECL|macro|HASH_TABLE_SIZE_64K
 mdefine_line|#define HASH_TABLE_SIZE_64K&t;0x00010000
 DECL|macro|HASH_TABLE_SIZE_128K
@@ -572,5 +572,40 @@ DECL|macro|HASH_TABLE_MASK_2M
 mdefine_line|#define HASH_TABLE_MASK_2M&t;0x01F   
 DECL|macro|HASH_TABLE_MASK_4M
 mdefine_line|#define HASH_TABLE_MASK_4M&t;0x03F   
+multiline_comment|/* invalidate a TLB entry */
+DECL|function|_tlbie
+r_extern
+r_inline
+r_void
+id|_tlbie
+c_func
+(paren
+r_int
+r_int
+id|va
+)paren
+(brace
+id|asm
+r_volatile
+(paren
+l_string|&quot;tlbie %0&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|va
+)paren
+)paren
+suffix:semicolon
+)brace
+r_extern
+r_void
+id|_tlbia
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+multiline_comment|/* invalidate all TLB entries */
 macro_line|#endif
 eof

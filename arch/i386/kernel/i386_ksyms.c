@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/mca.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/in6.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -207,6 +208,13 @@ id|EXPORT_SYMBOL_NOVERS
 c_func
 (paren
 id|__lock_kernel
+)paren
+suffix:semicolon
+DECL|variable|lk_lockmsg
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|lk_lockmsg
 )paren
 suffix:semicolon
 multiline_comment|/* Global SMP irq stuff */

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sparc.c,v 1.2 1997/07/05 09:52:34 davem Exp $&n; * linux/arch/sparc64/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
+multiline_comment|/* $Id: sys_sparc.c,v 1.3 1997/07/29 09:35:10 davem Exp $&n; * linux/arch/sparc64/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -940,17 +940,6 @@ comma
 op_star
 id|p
 suffix:semicolon
-r_int
-id|err
-op_assign
-op_minus
-id|EINVAL
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -975,8 +964,9 @@ c_cond
 id|signum
 l_int|32
 )paren
-r_goto
-id|out
+r_return
+op_minus
+id|EINVAL
 suffix:semicolon
 id|p
 op_assign
@@ -992,11 +982,6 @@ c_cond
 id|action
 )paren
 (brace
-id|err
-op_assign
-op_minus
-id|EINVAL
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1008,13 +993,9 @@ id|signum
 op_eq
 id|SIGSTOP
 )paren
-r_goto
-id|out
-suffix:semicolon
-id|err
-op_assign
+r_return
 op_minus
-id|EFAULT
+id|EINVAL
 suffix:semicolon
 r_if
 c_cond
@@ -1035,8 +1016,9 @@ id|sigaction
 )paren
 )paren
 (brace
-r_goto
-id|out
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 )brace
 r_if
@@ -1051,6 +1033,7 @@ op_ne
 id|SIG_IGN
 )paren
 (brace
+r_int
 id|err
 op_assign
 id|verify_area
@@ -1068,8 +1051,8 @@ c_cond
 (paren
 id|err
 )paren
-r_goto
-id|out
+r_return
+id|err
 suffix:semicolon
 )brace
 )brace
@@ -1079,11 +1062,6 @@ c_cond
 id|oldaction
 )paren
 (brace
-id|err
-op_assign
-op_minus
-id|EFAULT
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1101,8 +1079,9 @@ id|sigaction
 )paren
 )paren
 )paren
-r_goto
-id|out
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 )brace
 r_if
@@ -1111,6 +1090,13 @@ c_cond
 id|action
 )paren
 (brace
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|current-&gt;sig-&gt;siglock
+)paren
+suffix:semicolon
 op_star
 id|p
 op_assign
@@ -1122,20 +1108,16 @@ c_func
 id|signum
 )paren
 suffix:semicolon
-)brace
-id|err
-op_assign
-l_int|0
-suffix:semicolon
-id|out
-suffix:colon
-id|unlock_kernel
+id|spin_unlock_irq
 c_func
 (paren
+op_amp
+id|current-&gt;sig-&gt;siglock
 )paren
 suffix:semicolon
+)brace
 r_return
-id|err
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* only AP+ systems have sys_aplib */

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sbus.h,v 1.3 1997/03/21 17:57:24 jj Exp $&n; * sbus.h:  Defines for the Sun SBus.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: sbus.h,v 1.5 1997/08/12 04:13:16 ecd Exp $&n; * sbus.h:  Defines for the Sun SBus.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 multiline_comment|/* XXX This needs to be mostly redone for sun5 SYSIO. */
 macro_line|#ifndef _SPARC64_SBUS_H
 DECL|macro|_SPARC64_SBUS_H
@@ -287,8 +287,7 @@ mdefine_line|#define for_each_sbus(bus) &bslash;&n;        for((bus) = SBus_chai
 DECL|macro|for_each_sbusdev
 mdefine_line|#define for_each_sbusdev(device, bus) &bslash;&n;        for((device) = (bus)-&gt;devices; (device); (device)=(device)-&gt;next)
 DECL|macro|for_all_sbusdev
-mdefine_line|#define for_all_sbusdev(device, bus) &bslash;&n;&t;for((bus) = SBus_chain, (device) = (bus)-&gt;devices; (bus); (device)=((device)-&gt;next ? (device)-&gt;next : ((bus) = (bus)-&gt;next, (bus) ? (bus)-&gt;devices : 0)))
-multiline_comment|/* XXX This is promlib stuff, what is it doing here? XXX */
+mdefine_line|#define for_all_sbusdev(device, bus) &bslash;&n;&t;for((bus) = SBus_chain, ((device) = (bus) ? (bus)-&gt;devices : 0); (bus); (device)=((device)-&gt;next ? (device)-&gt;next : ((bus) = (bus)-&gt;next, (bus) ? (bus)-&gt;devices : 0)))
 multiline_comment|/* Apply promlib probed SBUS ranges to registers. */
 r_extern
 r_void

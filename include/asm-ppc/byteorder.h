@@ -4,20 +4,20 @@ mdefine_line|#define _PPC_BYTEORDER_H
 macro_line|#include &lt;asm/types.h&gt;
 macro_line|#ifndef __BIG_ENDIAN
 DECL|macro|__BIG_ENDIAN
-mdefine_line|#define __BIG_ENDIAN
+mdefine_line|#define __BIG_ENDIAN&t;4321
 macro_line|#endif
 macro_line|#ifndef __BIG_ENDIAN_BITFIELD
 DECL|macro|__BIG_ENDIAN_BITFIELD
 mdefine_line|#define __BIG_ENDIAN_BITFIELD
 macro_line|#endif
 DECL|macro|ntohl
-mdefine_line|#define ntohl(x) (x)
+mdefine_line|#define ntohl(x) ((unsigned long)(x))
 DECL|macro|ntohs
-mdefine_line|#define ntohs(x) (x)
+mdefine_line|#define ntohs(x) ((unsigned short)(x))
 DECL|macro|htonl
-mdefine_line|#define htonl(x) (x)
+mdefine_line|#define htonl(x) ((unsigned long)(x))
 DECL|macro|htons
-mdefine_line|#define htons(x) (x)
+mdefine_line|#define htons(x) ((unsigned short)(x))
 DECL|macro|__htonl
 mdefine_line|#define __htonl(x) ntohl(x)
 DECL|macro|__htons
@@ -178,7 +178,7 @@ l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 )brace
-DECL|function|cpu_to_le16
+macro_line|#if 0
 r_extern
 id|__inline__
 id|__u16
@@ -198,7 +198,6 @@ id|value
 )paren
 suffix:semicolon
 )brace
-DECL|function|cpu_to_le32
 r_extern
 id|__inline__
 id|__u32
@@ -218,6 +217,92 @@ id|value
 )paren
 suffix:semicolon
 )brace
+macro_line|#else
+DECL|function|cpu_to_le16
+r_extern
+id|__inline__
+id|__u16
+id|cpu_to_le16
+c_func
+(paren
+id|__u16
+id|value
+)paren
+(brace
+id|__u16
+id|result
+suffix:semicolon
+id|asm
+c_func
+(paren
+l_string|&quot;rlwimi %0,%1,8,16,23&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|result
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|value
+)paren
+comma
+l_string|&quot;0&quot;
+(paren
+id|value
+op_rshift
+l_int|8
+)paren
+)paren
+suffix:semicolon
+r_return
+id|result
+suffix:semicolon
+)brace
+DECL|function|cpu_to_le32
+r_extern
+id|__inline__
+id|__u32
+id|cpu_to_le32
+c_func
+(paren
+id|__u32
+id|value
+)paren
+(brace
+id|__u32
+id|result
+suffix:semicolon
+id|asm
+c_func
+(paren
+l_string|&quot;rlwimi %0,%1,24,16,23&bslash;n&bslash;t&quot;
+l_string|&quot;rlwimi %0,%1,8,8,15&bslash;n&bslash;t&quot;
+l_string|&quot;rlwimi %0,%1,24,0,7&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|result
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|value
+)paren
+comma
+l_string|&quot;0&quot;
+(paren
+id|value
+op_rshift
+l_int|24
+)paren
+)paren
+suffix:semicolon
+r_return
+id|result
+suffix:semicolon
+)brace
+macro_line|#endif /* 0 */
 DECL|macro|cpu_to_be16
 mdefine_line|#define cpu_to_be16(x)  (x)
 DECL|macro|cpu_to_be32

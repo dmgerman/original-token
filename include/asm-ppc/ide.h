@@ -348,7 +348,6 @@ r_return
 id|index
 suffix:semicolon
 )brace
-r_extern
 r_void
 id|ide_init_hwif_ports
 c_func

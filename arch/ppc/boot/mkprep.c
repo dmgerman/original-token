@@ -466,6 +466,12 @@ id|argptr
 op_increment
 suffix:semicolon
 multiline_comment|/* skip elf header in input file */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|prep
+)paren
 id|lseek
 c_func
 (paren
@@ -624,7 +630,7 @@ r_sizeof
 id|block
 )paren
 suffix:semicolon
-multiline_comment|/* set entry point and boot image size */
+multiline_comment|/* set entry point and boot image size skipping over elf header */
 op_star
 id|entry
 op_assign
@@ -632,9 +638,10 @@ id|cpu_to_le32
 c_func
 (paren
 l_int|0x400
+op_plus
+l_int|65536
 )paren
 suffix:semicolon
-multiline_comment|/* need use size - elfheader? */
 op_star
 id|length
 op_assign
@@ -646,7 +653,6 @@ op_plus
 l_int|0x400
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * Writes the &quot;boot record&quot;, which contains the partition table, to the&n;   * diskette, followed by the dummy PC boot block and load image descriptor&n;   * block.  It returns the number of bytes it has written to the load&n;   * image.&n;   *&n;   * The boot record is the first block of the diskette and identifies the&n;   * &quot;PReP&quot; partition.  The &quot;PReP&quot; partition contains the &quot;load image&quot; starting&n;   * at offset zero within the partition.  The first block of the load image is&n;   * a dummy PC boot block.  The second block is the &quot;load image descriptor&quot;&n;   * which contains the size of the load image and the entry point into the&n;   * image.  The actual boot image starts at offset 1024 bytes (third sector)&n;   * in the partition.&n;   */
 multiline_comment|/* sets magic number for msdos partition (used by linux) */
 id|block
 (braket
@@ -723,7 +729,20 @@ l_int|0
 )paren
 suffix:semicolon
 macro_line|#endif    
-multiline_comment|/*pe-&gt;number_of_sectors = cpu_to_le32(2*18*80-1);*/
+id|pe-&gt;number_of_sectors
+op_assign
+id|cpu_to_le32
+c_func
+(paren
+l_int|2
+op_star
+l_int|18
+op_star
+l_int|80
+op_minus
+l_int|1
+)paren
+suffix:semicolon
 id|write
 c_func
 (paren

@@ -506,7 +506,7 @@ op_logical_or
 (paren
 id|inode
 op_assign
-id|file-&gt;f_inode
+id|file-&gt;f_dentry-&gt;d_inode
 )paren
 op_eq
 l_int|NULL
@@ -701,7 +701,7 @@ op_logical_or
 (paren
 id|inode
 op_assign
-id|file-&gt;f_inode
+id|file-&gt;f_dentry-&gt;d_inode
 )paren
 op_eq
 l_int|NULL
@@ -1268,7 +1268,7 @@ c_cond
 (paren
 id|inode
 op_assign
-id|file-&gt;f_inode
+id|file-&gt;f_dentry-&gt;d_inode
 )paren
 op_eq
 l_int|NULL

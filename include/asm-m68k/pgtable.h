@@ -332,6 +332,8 @@ id|FLUSH_I
 suffix:semicolon
 )brace
 )brace
+DECL|macro|flush_icache_range
+mdefine_line|#define flush_icache_range(start, end)&t;&t;do { } while (0)
 multiline_comment|/*&n; * flush all user-space atc entries.&n; */
 DECL|function|__flush_tlb
 r_static

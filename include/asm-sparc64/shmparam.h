@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: shmparam.h,v 1.1 1996/12/26 14:22:36 davem Exp $ */
+multiline_comment|/* $Id: shmparam.h,v 1.2 1997/08/04 16:16:55 davem Exp $ */
 macro_line|#ifndef _ASMSPARC64_SHMPARAM_H
 DECL|macro|_ASMSPARC64_SHMPARAM_H
 mdefine_line|#define _ASMSPARC64_SHMPARAM_H
@@ -30,7 +30,7 @@ mdefine_line|#define SHMMNI (1&lt;&lt;_SHM_ID_BITS)&t;/* max num of segs system 
 DECL|macro|SHMALL
 mdefine_line|#define SHMALL&t;&t;&t;&t;/* max shm system wide (pages) */ &bslash;&n;&t;(1&lt;&lt;(_SHM_IDX_BITS+_SHM_ID_BITS))
 DECL|macro|SHMLBA
-mdefine_line|#define&t;SHMLBA PAGE_SIZE&t;&t;/* attach addr a multiple of this */
+mdefine_line|#define&t;SHMLBA (PAGE_SIZE&lt;&lt;1)&t;&t;/* attach addr a multiple of this */
 DECL|macro|SHMSEG
 mdefine_line|#define SHMSEG SHMMNI&t;&t;&t;/* max shared segs per process */
 macro_line|#endif /* _ASMSPARC64_SHMPARAM_H */

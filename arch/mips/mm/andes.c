@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: andes.c,v 1.1 1997/06/06 09:34:31 ralf Exp $&n; * andes.c: MMU and cache operations for the R10000 (ANDES).&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/* $Id: andes.c,v 1.2 1997/08/08 18:13:01 miguel Exp $&n; * andes.c: MMU and cache operations for the R10000 (ANDES).&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -195,6 +195,31 @@ id|page
 )paren
 (brace
 )brace
+DECL|function|andes_add_wired_entry
+r_static
+r_void
+id|andes_add_wired_entry
+c_func
+(paren
+r_int
+r_int
+id|entrylo0
+comma
+r_int
+r_int
+id|entrylo1
+comma
+r_int
+r_int
+id|entryhi
+comma
+r_int
+r_int
+id|pagemask
+)paren
+(brace
+multiline_comment|/* XXX */
+)brace
 DECL|function|ld_mmu_andes
 r_void
 id|ld_mmu_andes
@@ -242,6 +267,10 @@ suffix:semicolon
 id|flush_tlb_page
 op_assign
 id|andes_flush_tlb_page
+suffix:semicolon
+id|add_wired_entry
+op_assign
+id|andes_add_wired_entry
 suffix:semicolon
 id|load_pgd
 op_assign

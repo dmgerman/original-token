@@ -1,7 +1,7 @@
 macro_line|#ifndef __ASM_PPC_PROCESSOR_H
 DECL|macro|__ASM_PPC_PROCESSOR_H
 mdefine_line|#define __ASM_PPC_PROCESSOR_H
-macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;asm/ptrace.h&gt;
 multiline_comment|/* Bit encodings for Machine State Register (MSR) */
 DECL|macro|MSR_POW
 mdefine_line|#define MSR_POW&t;&t;(1&lt;&lt;18)&t;&t;/* Enable Power Management */
@@ -36,12 +36,12 @@ mdefine_line|#define MSR_RI&t;&t;(1&lt;&lt;1)&t;&t;/* Recoverable Exception */
 DECL|macro|MSR_LE
 mdefine_line|#define MSR_LE&t;&t;(1&lt;&lt;0)&t;&t;/* Little-Endian enable */
 DECL|macro|MSR_
-mdefine_line|#define MSR_&t;&t;MSR_FE0|MSR_FE1|MSR_ME
+mdefine_line|#define MSR_&t;&t;MSR_ME|MSR_FE0|MSR_FE1|MSR_RI
 DECL|macro|MSR_KERNEL
 mdefine_line|#define MSR_KERNEL      MSR_|MSR_IR|MSR_DR
 DECL|macro|MSR_USER
-mdefine_line|#define MSR_USER&t;MSR_FE0|MSR_FE1|MSR_ME|MSR_PR|MSR_EE|MSR_IR|MSR_DR
-multiline_comment|/* Bit encodings for Hardware Implementation Register (HID0) */
+mdefine_line|#define MSR_USER&t;MSR_KERNEL|MSR_PR|MSR_EE
+multiline_comment|/* Bit encodings for Hardware Implementation Register (HID0)&n;   on PowerPC 603, 604, etc. processors (not 601). */
 DECL|macro|HID0_EMCP
 mdefine_line|#define HID0_EMCP&t;(1&lt;&lt;31)&t;&t;/* Enable Machine Check pin */
 DECL|macro|HID0_EBA
@@ -87,8 +87,9 @@ DECL|macro|FPSCR_FEX
 mdefine_line|#define FPSCR_FEX       (1&lt;&lt;30)
 macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/*&n; * PowerPC machine specifics&n; */
-r_extern
-r_inline
+r_struct
+id|task_struct
+suffix:semicolon
 r_void
 id|start_thread
 c_func
@@ -96,12 +97,24 @@ c_func
 r_struct
 id|pt_regs
 op_star
+id|regs
 comma
 r_int
 r_int
+id|nip
 comma
 r_int
 r_int
+id|sp
+)paren
+suffix:semicolon
+r_void
+id|release_thread
+c_func
+(paren
+r_struct
+id|task_struct
+op_star
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Bus types&n; */
@@ -118,11 +131,12 @@ DECL|macro|wp_works_ok
 mdefine_line|#define wp_works_ok 1
 DECL|macro|wp_works_ok__is_a_macro
 mdefine_line|#define wp_works_ok__is_a_macro /* for versions in ksyms.c */
+multiline_comment|/*&n; * User space process size: 2GB. This is hardcoded into a few places,&n; * so don&squot;t change it unless you know what you are doing.&n; */
 DECL|macro|TASK_SIZE
 mdefine_line|#define TASK_SIZE&t;(0x80000000UL)
 multiline_comment|/* This decides where the kernel will search for a free chunk of vm&n; * space during mmap&squot;s.&n; */
 DECL|macro|TASK_UNMAPPED_BASE
-mdefine_line|#define TASK_UNMAPPED_BASE&t;(TASK_SIZE / 3)
+mdefine_line|#define TASK_UNMAPPED_BASE     (TASK_SIZE / 8 * 3)
 DECL|struct|thread_struct
 r_struct
 id|thread_struct
@@ -133,52 +147,6 @@ r_int
 id|ksp
 suffix:semicolon
 multiline_comment|/* Kernel stack pointer */
-DECL|member|pg_tables
-r_int
-r_int
-op_star
-id|pg_tables
-suffix:semicolon
-multiline_comment|/* MMU information */
-macro_line|#ifdef CONFIG_PMAC
-DECL|member|last_pc
-r_int
-r_int
-id|last_pc
-suffix:semicolon
-multiline_comment|/* PC when last entered system */
-DECL|member|user_stack
-r_int
-r_int
-id|user_stack
-suffix:semicolon
-multiline_comment|/* [User] Stack when entered kernel */
-macro_line|#endif  
-DECL|member|fpscr_pad
-r_int
-r_int
-id|fpscr_pad
-suffix:semicolon
-multiline_comment|/* (so we can save fpscr with stfd) */
-DECL|member|fpscr
-r_int
-r_int
-id|fpscr
-suffix:semicolon
-multiline_comment|/* fp status reg */
-DECL|member|fpr
-r_float
-id|fpr
-(braket
-l_int|32
-)braket
-suffix:semicolon
-multiline_comment|/* Complete floating point set */
-DECL|member|fp_used
-r_int
-r_int
-id|fp_used
-suffix:semicolon
 DECL|member|wchan
 r_int
 r_int
@@ -203,30 +171,32 @@ r_int
 r_int
 id|last_syscall
 suffix:semicolon
-DECL|member|pad
-r_int
-r_int
-id|pad
+DECL|member|fpr
+r_float
+id|fpr
 (braket
-l_int|2
+l_int|32
 )braket
 suffix:semicolon
-multiline_comment|/* pad to 16-byte boundry */
+multiline_comment|/* Complete floating point set */
+DECL|member|fpscr_pad
+r_int
+r_int
+id|fpscr_pad
+suffix:semicolon
+multiline_comment|/* fpr ... fpscr must be contiguous */
+DECL|member|fpscr
+r_int
+r_int
+id|fpscr
+suffix:semicolon
+multiline_comment|/* Floating point status */
 )brace
 suffix:semicolon
-multiline_comment|/* Points to the thread_struct of the thread (if any) which&n;   currently owns the FPU. */
-DECL|macro|fpu_tss
-mdefine_line|#define fpu_tss (&amp;(last_task_used_math-&gt;tss))
-macro_line|#ifdef CONFIG_PMAC
-DECL|macro|LAZY_TSS_FPR_INIT
-mdefine_line|#define LAZY_TSS_FPR_INIT 0,0,0,0,{0},
-macro_line|#endif
-macro_line|#ifdef CONFIG_PREP
-DECL|macro|LAZY_TSS_FPR_INIT
-mdefine_line|#define LAZY_TSS_FPR_INIT 0,0,{0},
-macro_line|#endif
+DECL|macro|INIT_SP
+mdefine_line|#define INIT_SP&t;&t;(sizeof(init_stack) + (unsigned long) &amp;init_stack)
 DECL|macro|INIT_TSS
-mdefine_line|#define INIT_TSS  { &bslash;&n;&t;sizeof(init_stack) + (long) &amp;init_stack, /* ksp */ &bslash;&n;&t;(long *)swapper_pg_dir, /* pg_tables */ &bslash;&n;&t;LAZY_TSS_FPR_INIT &bslash;&n;&t;0, /*fp_used*/ 0, /*wchan*/ &bslash;&n;&t;sizeof(init_stack) + (long)&amp;init_stack - &bslash;&n;&t;&t;sizeof(struct pt_regs), /* regs */ &bslash;&n;&t;KERNEL_DS /*fs*/, 0 /*last_syscall*/ &bslash;&n;}
+mdefine_line|#define INIT_TSS  { &bslash;&n;&t;INIT_SP, /* ksp */ &bslash;&n;&t;0, /* wchan */ &bslash;&n;&t;(struct pt_regs *)INIT_SP - 1, /* regs */ &bslash;&n;&t;KERNEL_DS, /*fs*/ &bslash;&n;&t;0, /* last_syscall */ &bslash;&n;&t;{0}, 0, 0 &bslash;&n;}
 DECL|macro|INIT_MMAP
 mdefine_line|#define INIT_MMAP { &amp;init_mm, KERNELBASE/*0*/, 0xffffffff/*0x40000000*/, &bslash;&n;&t;&t;      PAGE_SHARED, VM_READ | VM_WRITE | VM_EXEC }
 multiline_comment|/*&n; * Return saved PC of a blocked thread. For now, this is the &quot;user&quot; PC&n; */
@@ -254,20 +224,7 @@ id|t-&gt;regs-&gt;nip
 suffix:colon
 l_int|0
 suffix:semicolon
-multiline_comment|/*return (t-&gt;last_pc);*/
 )brace
-r_extern
-r_int
-id|_machine
-suffix:semicolon
-DECL|macro|_MACH_Motorola
-mdefine_line|#define _MACH_Motorola 0
-DECL|macro|_MACH_IBM
-mdefine_line|#define _MACH_IBM      1
-DECL|macro|_MACH_Be
-mdefine_line|#define _MACH_Be       2
-DECL|macro|_MACH_Pmac
-mdefine_line|#define _MACH_Pmac     3
 multiline_comment|/*&n; * NOTE! The task struct and the stack go together&n; */
 DECL|macro|alloc_task_struct
 mdefine_line|#define alloc_task_struct() &bslash;&n;&t;((struct task_struct *) __get_free_pages(GFP_KERNEL,1,0))
@@ -296,7 +253,21 @@ r_char
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|_machine
+suffix:semicolon
 macro_line|#endif /* ndef ASSEMBLY*/
+DECL|macro|_MACH_Motorola
+mdefine_line|#define _MACH_Motorola 1 /* motorola prep */
+DECL|macro|_MACH_IBM
+mdefine_line|#define _MACH_IBM      2 /* ibm prep */
+DECL|macro|_MACH_Pmac
+mdefine_line|#define _MACH_Pmac     4 /* pmac or pmac clone */
+DECL|macro|_MACH_chrp
+mdefine_line|#define _MACH_chrp     8 /* chrp machine */
+DECL|macro|is_prep
+mdefine_line|#define is_prep ((_machine == _MACH_Motorola)||(_machine == _MACH_IBM))
 DECL|macro|init_task
 mdefine_line|#define init_task&t;(init_task_union.task)
 DECL|macro|init_stack

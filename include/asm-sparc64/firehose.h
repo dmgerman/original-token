@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: firehose.h,v 1.1 1997/04/11 02:38:47 davem Exp $&n; * firehose.h: Defines for the Fire Hose Controller (FHC) found&n; *             on Sunfire/Wildfire systems.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: firehose.h,v 1.2 1997/08/08 04:26:31 davem Exp $&n; * firehose.h: Defines for the Fire Hose Controller (FHC) found&n; *             on Sunfire/Starfire/Wildfire systems.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC64_FIREHOSE_H
 DECL|macro|_SPARC64_FIREHOSE_H
 mdefine_line|#define _SPARC64_FIREHOSE_H
@@ -105,95 +105,119 @@ multiline_comment|/*0x2000*/
 id|u64
 id|fhc_ign
 suffix:semicolon
-multiline_comment|/* FHC Interrupt Group Number&t;&t;*/
+multiline_comment|/* FHC Interrupt Group Number&t;*/
 )brace
 suffix:semicolon
 DECL|struct|fhc_fanfail_regs
 r_struct
 id|fhc_fanfail_regs
 (brace
+DECL|member|_pad0
 DECL|member|fhc_ff_imap
 multiline_comment|/*0x4000*/
-id|u64
+id|u32
+id|_pad0
+comma
 id|fhc_ff_imap
 suffix:semicolon
-multiline_comment|/* FHC FanFail Interrupt Map&t;&t;*/
-DECL|member|_unused1
+multiline_comment|/* FHC FanFail Interrupt Map&t;*/
+DECL|member|_pad1
 id|u64
-id|_unused1
+id|_pad1
 suffix:semicolon
-DECL|member|fhc_ff_istate
+DECL|member|_pad2
+DECL|member|fhc_ff_iclr
 multiline_comment|/*0x4010*/
-id|u64
-id|fhc_ff_istate
+id|u32
+id|_pad2
+comma
+id|fhc_ff_iclr
 suffix:semicolon
-multiline_comment|/* FHC FanFail Interrupt State&t;&t;*/
+multiline_comment|/* FHC FanFail Interrupt Clear&t;*/
 )brace
 suffix:semicolon
 DECL|struct|fhc_system_regs
 r_struct
 id|fhc_system_regs
 (brace
+DECL|member|_pad0
 DECL|member|fhc_sys_imap
 multiline_comment|/*0x6000*/
-id|u64
+id|u32
+id|_pad0
+comma
 id|fhc_sys_imap
 suffix:semicolon
-multiline_comment|/* FHC System Interrupt Map&t;&t;*/
-DECL|member|_unused1
+multiline_comment|/* FHC System Interrupt Map&t;*/
+DECL|member|_pad1
 id|u64
-id|_unused1
+id|_pad1
 suffix:semicolon
-DECL|member|fhc_sys_istate
+DECL|member|_pad2
+DECL|member|fhc_sys_iclr
 multiline_comment|/*0x6010*/
-id|u64
-id|fhc_sys_istate
+id|u32
+id|_pad2
+comma
+id|fhc_sys_iclr
 suffix:semicolon
-multiline_comment|/* FHC System Interrupt State&t;&t;*/
+multiline_comment|/* FHC System Interrupt Clear&t;*/
 )brace
 suffix:semicolon
 DECL|struct|fhc_uart_regs
 r_struct
 id|fhc_uart_regs
 (brace
+DECL|member|_pad0
 DECL|member|fhc_uart_imap
 multiline_comment|/*0x8000*/
-id|u64
+id|u32
+id|_pad0
+comma
 id|fhc_uart_imap
 suffix:semicolon
-multiline_comment|/* FHC UART Interrupt Map&t;&t;*/
-DECL|member|_unused1
+multiline_comment|/* FHC UART Interrupt Map&t;*/
+DECL|member|_pad1
 id|u64
-id|_unused1
+id|_pad1
 suffix:semicolon
-DECL|member|fhc_uart_istate
+DECL|member|_pad2
+DECL|member|fhc_uart_iclr
 multiline_comment|/*0x8010*/
-id|u64
-id|fhc_uart_istate
+id|u32
+id|_pad2
+comma
+id|fhc_uart_iclr
 suffix:semicolon
-multiline_comment|/* FHC UART Interrupt State&t;&t;*/
+multiline_comment|/* FHC UART Interrupt Clear&t;*/
 )brace
 suffix:semicolon
 DECL|struct|fhc_tod_regs
 r_struct
 id|fhc_tod_regs
 (brace
+DECL|member|_pad0
 DECL|member|fhc_tod_imap
 multiline_comment|/*0xa000*/
-id|u64
+id|u32
+id|_pad0
+comma
 id|fhc_tod_imap
 suffix:semicolon
-multiline_comment|/* FHC TOD Interrupt Map&t;&t;*/
-DECL|member|_unused1
+multiline_comment|/* FHC TOD Interrupt Map&t;*/
+DECL|member|_pad1
 id|u64
-id|_unused1
+id|_pad1
 suffix:semicolon
-DECL|member|fhc_tod_istate
+DECL|member|_pad2
+DECL|member|fhc_tod_iclr
 multiline_comment|/*0xa010*/
-id|u64
-id|fhc_tod_istate
+id|u32
+id|_pad2
+comma
+id|fhc_tod_iclr
 suffix:semicolon
-multiline_comment|/* FHC TOD Interrupt State&t;&t;*/
+multiline_comment|/* FHC TOD Interrupt Clear&t;*/
 )brace
 suffix:semicolon
 multiline_comment|/* All of the above. */
@@ -215,7 +239,7 @@ id|ireg
 suffix:semicolon
 DECL|member|ffregs
 r_struct
-id|fhc_fanfil_regs
+id|fhc_fanfail_regs
 op_star
 id|ffregs
 suffix:semicolon

@@ -4,6 +4,12 @@ multiline_comment|/*&n; * Note: Adapted for PowerPC by Gary Thomas&n; * Modified
 macro_line|#ifndef _ASM_DMA_H
 DECL|macro|_ASM_DMA_H
 mdefine_line|#define _ASM_DMA_H
+DECL|macro|MAX_DMA_CHANNELS
+mdefine_line|#define MAX_DMA_CHANNELS&t;8
+multiline_comment|/* The maximum address that we can perform a DMA transfer to on this platform */
+multiline_comment|/* Doesn&squot;t really apply... */
+DECL|macro|MAX_DMA_ADDRESS
+mdefine_line|#define MAX_DMA_ADDRESS      0xFFFFFFFF
 macro_line|#ifdef CONFIG_PREP
 macro_line|#include &lt;asm/io.h&gt;&t;&t;/* need byte IO */
 macro_line|#ifdef HAVE_REALLY_SLOW_DMA_CONTROLLER
@@ -16,12 +22,10 @@ macro_line|#endif
 DECL|macro|dma_inb
 mdefine_line|#define dma_inb&t;&t;inb
 multiline_comment|/*&n; * NOTES about DMA transfers:&n; *&n; *  controller 1: channels 0-3, byte operations, ports 00-1F&n; *  controller 2: channels 4-7, word operations, ports C0-DF&n; *&n; *  - ALL registers are 8 bits only, regardless of transfer size&n; *  - channel 4 is not used - cascades 1 into 2.&n; *  - channels 0-3 are byte - addresses/counts are for physical bytes&n; *  - channels 5-7 are word - addresses/counts are for physical words&n; *  - transfers must not cross physical 64K (0-3) or 128K (5-7) boundaries&n; *  - transfer count loaded to registers is 1 less than actual count&n; *  - controller 2 offsets are all even (2x offsets for controller 1)&n; *  - page registers for 5-7 don&squot;t use data bit 0, represent 128K pages&n; *  - page registers for 0-3 use bit 0, represent 64K pages&n; *&n; * DMA transfers are limited to the lower 16MB of _physical_ memory.  &n; * Note that addresses loaded into registers must be _physical_ addresses,&n; * not logical addresses (which may differ if paging is active).&n; *&n; *  Address mapping for channels 0-3:&n; *&n; *   A23 ... A16 A15 ... A8  A7 ... A0    (Physical addresses)&n; *    |  ...  |   |  ... |   |  ... |&n; *    |  ...  |   |  ... |   |  ... |&n; *    |  ...  |   |  ... |   |  ... |&n; *   P7  ...  P0  A7 ... A0  A7 ... A0   &n; * |    Page    | Addr MSB | Addr LSB |   (DMA registers)&n; *&n; *  Address mapping for channels 5-7:&n; *&n; *   A23 ... A17 A16 A15 ... A9 A8 A7 ... A1 A0    (Physical addresses)&n; *    |  ...  |   &bslash;   &bslash;   ... &bslash;  &bslash;  &bslash;  ... &bslash;  &bslash;&n; *    |  ...  |    &bslash;   &bslash;   ... &bslash;  &bslash;  &bslash;  ... &bslash;  (not used)&n; *    |  ...  |     &bslash;   &bslash;   ... &bslash;  &bslash;  &bslash;  ... &bslash;&n; *   P7  ...  P1 (0) A7 A6  ... A0 A7 A6 ... A0   &n; * |      Page      |  Addr MSB   |  Addr LSB  |   (DMA registers)&n; *&n; * Again, channels 5-7 transfer _physical_ words (16 bits), so addresses&n; * and counts _must_ be word-aligned (the lowest address bit is _ignored_ at&n; * the hardware level, so odd-byte transfers aren&squot;t possible).&n; *&n; * Transfer count (_not # bytes_) is limited to 64K, represented as actual&n; * count - 1 : 64K =&gt; 0xFFFF, 1 =&gt; 0x0000.  Thus, count is always 1 or more,&n; * and up to 128K bytes may be transferred on channels 5-7 in one operation. &n; *&n; */
-DECL|macro|MAX_DMA_CHANNELS
-mdefine_line|#define MAX_DMA_CHANNELS&t;8
-multiline_comment|/* The maximum address that we can perform a DMA transfer to on this platform */
-multiline_comment|/* Doesn&squot;t really apply... */
-DECL|macro|MAX_DMA_ADDRESS
-mdefine_line|#define MAX_DMA_ADDRESS      0xFFFFFFFF
+DECL|macro|POWERSTACK_SND_DMA
+mdefine_line|#define POWERSTACK_SND_DMA 6
+DECL|macro|POWERSTACK_SND_DMA2
+mdefine_line|#define POWERSTACK_SND_DMA2 7
 multiline_comment|/* 8237 DMA controllers */
 DECL|macro|IO_DMA1_BASE
 mdefine_line|#define IO_DMA1_BASE&t;0x00&t;/* 8 bit slave DMA, channels 0..3 */
@@ -128,6 +132,10 @@ DECL|macro|DMA_HI_PAGE_6
 mdefine_line|#define DMA_HI_PAGE_6              0x489
 DECL|macro|DMA_HI_PAGE_7
 mdefine_line|#define DMA_HI_PAGE_7              0x48A
+DECL|macro|DMA1_EXT_REG
+mdefine_line|#define DMA1_EXT_REG               0x40B
+DECL|macro|DMA2_EXT_REG
+mdefine_line|#define DMA2_EXT_REG               0x4D6
 DECL|macro|DMA_MODE_READ
 mdefine_line|#define DMA_MODE_READ&t;0x44&t;/* I/O to memory, no autoinit, increment, single mode */
 DECL|macro|DMA_MODE_WRITE
@@ -379,6 +387,16 @@ comma
 id|DMA_LO_PAGE_0
 )paren
 suffix:semicolon
+id|dma_outb
+c_func
+(paren
+id|pagenr
+op_rshift
+l_int|8
+comma
+id|DMA_HI_PAGE_0
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -390,6 +408,16 @@ c_func
 id|pagenr
 comma
 id|DMA_LO_PAGE_1
+)paren
+suffix:semicolon
+id|dma_outb
+c_func
+(paren
+id|pagenr
+op_rshift
+l_int|8
+comma
+id|DMA_HI_PAGE_1
 )paren
 suffix:semicolon
 r_break
@@ -443,11 +471,41 @@ comma
 id|DMA_LO_PAGE_5
 )paren
 suffix:semicolon
+id|dma_outb
+c_func
+(paren
+id|pagenr
+op_rshift
+l_int|8
+comma
+id|DMA_HI_PAGE_5
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
 l_int|6
 suffix:colon
+r_if
+c_cond
+(paren
+id|POWERSTACK_SND_DMA
+op_eq
+l_int|6
+op_logical_or
+id|POWERSTACK_SND_DMA2
+op_eq
+l_int|6
+)paren
+id|dma_outb
+c_func
+(paren
+id|pagenr
+comma
+id|DMA_LO_PAGE_6
+)paren
+suffix:semicolon
+r_else
 id|dma_outb
 c_func
 (paren
@@ -458,11 +516,41 @@ comma
 id|DMA_LO_PAGE_6
 )paren
 suffix:semicolon
+id|dma_outb
+c_func
+(paren
+id|pagenr
+op_rshift
+l_int|8
+comma
+id|DMA_HI_PAGE_6
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
 l_int|7
 suffix:colon
+r_if
+c_cond
+(paren
+id|POWERSTACK_SND_DMA
+op_eq
+l_int|7
+op_logical_or
+id|POWERSTACK_SND_DMA2
+op_eq
+l_int|7
+)paren
+id|dma_outb
+c_func
+(paren
+id|pagenr
+comma
+id|DMA_LO_PAGE_7
+)paren
+suffix:semicolon
+r_else
 id|dma_outb
 c_func
 (paren
@@ -471,6 +559,16 @@ op_amp
 l_int|0xfe
 comma
 id|DMA_LO_PAGE_7
+)paren
+suffix:semicolon
+id|dma_outb
+c_func
+(paren
+id|pagenr
+op_rshift
+l_int|8
+comma
+id|DMA_HI_PAGE_7
 )paren
 suffix:semicolon
 r_break
@@ -549,6 +647,77 @@ suffix:semicolon
 )brace
 r_else
 (brace
+r_if
+c_cond
+(paren
+id|dmanr
+op_eq
+id|POWERSTACK_SND_DMA
+op_logical_or
+id|dmanr
+op_eq
+id|POWERSTACK_SND_DMA2
+)paren
+(brace
+id|dma_outb
+c_func
+(paren
+id|phys
+op_amp
+l_int|0xff
+comma
+(paren
+(paren
+id|dmanr
+op_amp
+l_int|3
+)paren
+op_lshift
+l_int|2
+)paren
+op_plus
+id|IO_DMA2_BASE
+)paren
+suffix:semicolon
+id|dma_outb
+c_func
+(paren
+(paren
+id|phys
+op_rshift
+l_int|8
+)paren
+op_amp
+l_int|0xff
+comma
+(paren
+(paren
+id|dmanr
+op_amp
+l_int|3
+)paren
+op_lshift
+l_int|2
+)paren
+op_plus
+id|IO_DMA2_BASE
+)paren
+suffix:semicolon
+id|dma_outb
+c_func
+(paren
+(paren
+id|dmanr
+op_amp
+l_int|3
+)paren
+comma
+id|DMA2_EXT_REG
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
 id|dma_outb
 c_func
 (paren
@@ -597,6 +766,7 @@ op_plus
 id|IO_DMA2_BASE
 )paren
 suffix:semicolon
+)brace
 )brace
 id|set_dma_page
 c_func
@@ -688,6 +858,69 @@ suffix:semicolon
 )brace
 r_else
 (brace
+r_if
+c_cond
+(paren
+id|dmanr
+op_eq
+id|POWERSTACK_SND_DMA
+op_logical_or
+id|dmanr
+op_eq
+id|POWERSTACK_SND_DMA2
+)paren
+(brace
+id|dma_outb
+c_func
+(paren
+id|count
+op_amp
+l_int|0xff
+comma
+(paren
+(paren
+id|dmanr
+op_amp
+l_int|3
+)paren
+op_lshift
+l_int|2
+)paren
+op_plus
+l_int|2
+op_plus
+id|IO_DMA2_BASE
+)paren
+suffix:semicolon
+id|dma_outb
+c_func
+(paren
+(paren
+id|count
+op_rshift
+l_int|8
+)paren
+op_amp
+l_int|0xff
+comma
+(paren
+(paren
+id|dmanr
+op_amp
+l_int|3
+)paren
+op_lshift
+l_int|2
+)paren
+op_plus
+l_int|2
+op_plus
+id|IO_DMA2_BASE
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
 id|dma_outb
 c_func
 (paren
@@ -740,6 +973,7 @@ op_plus
 id|IO_DMA2_BASE
 )paren
 suffix:semicolon
+)brace
 )brace
 )brace
 multiline_comment|/* Get DMA residue count. After a DMA transfer, this&n; * should return zero. Reading this while a DMA transfer is&n; * still in progress will return unpredictable results.&n; * If called before the channel has been used, it may return 1.&n; * Otherwise, it returns the number of _bytes_ left to transfer.&n; *&n; * Assumes DMA flip-flop is clear.&n; */
@@ -836,6 +1070,12 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+macro_line|#else /* CONFIG_PREP */
+DECL|macro|DMA_MODE_READ
+mdefine_line|#define DMA_MODE_READ&t;1
+DECL|macro|DMA_MODE_WRITE
+mdefine_line|#define DMA_MODE_WRITE&t;2
+macro_line|#endif /* CONFIG_PREP */
 multiline_comment|/* These are in kernel/dma.c: */
 r_extern
 r_void
@@ -848,6 +1088,5 @@ id|dmanr
 )paren
 suffix:semicolon
 multiline_comment|/* release it again */
-macro_line|#endif /* CONFIG_PREP */
 macro_line|#endif /* _ASM_DMA_H */
 eof

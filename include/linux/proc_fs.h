@@ -123,7 +123,10 @@ id|PROC_PARPORT
 comma
 DECL|enumerator|PROC_OMIRR
 id|PROC_OMIRR
+comma
 multiline_comment|/* whether enabled or not */
+DECL|enumerator|PROC_PPC_HTAB
+id|PROC_PPC_HTAB
 )brace
 suffix:semicolon
 DECL|enum|pid_directory_inos
@@ -500,6 +503,12 @@ id|PROC_SCSI_ATARI
 comma
 DECL|enumerator|PROC_SCSI_IDESCSI
 id|PROC_SCSI_IDESCSI
+comma
+DECL|enumerator|PROC_SCSI_MESH
+id|PROC_SCSI_MESH
+comma
+DECL|enumerator|PROC_SCSI_53C94
+id|PROC_SCSI_53C94
 comma
 DECL|enumerator|PROC_SCSI_SCSI_DEBUG
 id|PROC_SCSI_SCSI_DEBUG
@@ -1440,6 +1449,11 @@ r_struct
 id|inode_operations
 id|proc_omirr_inode_operations
 suffix:semicolon
+r_extern
+r_struct
+id|inode_operations
+id|proc_ppc_htab_inode_operations
+suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n; * generic.c&n; */
 r_struct
@@ -1506,6 +1520,15 @@ r_struct
 id|tty_driver
 op_star
 id|driver
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * proc_devtree.c&n; */
+r_extern
+r_void
+id|proc_device_tree_init
+c_func
+(paren
+r_void
 )paren
 suffix:semicolon
 eof

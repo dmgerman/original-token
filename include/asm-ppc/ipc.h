@@ -1,7 +1,7 @@
-macro_line|#ifndef __i386_IPC_H__
-DECL|macro|__i386_IPC_H__
-mdefine_line|#define __i386_IPC_H__
-multiline_comment|/* &n; * These are used to wrap system calls on x86.&n; *&n; * See arch/i386/kernel/sys_i386.c for ugly details..&n; */
+macro_line|#ifndef __PPC_IPC_H__
+DECL|macro|__PPC_IPC_H__
+mdefine_line|#define __PPC_IPC_H__
+multiline_comment|/* &n; * These are used to wrap system calls on PowerPC.&n; *&n; * See arch/ppc/kernel/syscalls.c for ugly details..&n; */
 DECL|struct|ipc_kludge
 r_struct
 id|ipc_kludge
@@ -42,5 +42,5 @@ DECL|macro|SHMCTL
 mdefine_line|#define SHMCTL&t;&t;24
 DECL|macro|IPCCALL
 mdefine_line|#define IPCCALL(version,op)&t;((version)&lt;&lt;16 | (op))
-macro_line|#endif
+macro_line|#endif /* __PPC_IPC_H__ */
 eof

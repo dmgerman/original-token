@@ -317,16 +317,6 @@ op_star
 suffix:semicolon
 multiline_comment|/* allocate/de-allocate */
 r_extern
-r_void
-id|d_free
-c_func
-(paren
-r_struct
-id|dentry
-op_star
-)paren
-suffix:semicolon
-r_extern
 r_struct
 id|dentry
 op_star

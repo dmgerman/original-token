@@ -320,7 +320,10 @@ c_cond
 id|wait_available
 op_logical_and
 op_logical_neg
-id|need_resched
+id|resched_needed
+c_func
+(paren
+)paren
 )paren
 id|__asm__
 c_func

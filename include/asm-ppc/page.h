@@ -144,17 +144,16 @@ DECL|macro|clear_page
 mdefine_line|#define clear_page(page)        memset((void *)(page), 0, PAGE_SIZE)
 DECL|macro|copy_page
 mdefine_line|#define copy_page(to,from)&t;memcpy((void *)(to), (void *)(from), PAGE_SIZE)
-multiline_comment|/* map phys-&gt;virtual and virtual-&gt;phys */
+multiline_comment|/* map phys-&gt;virtual and virtual-&gt;phys for RAM pages */
 DECL|macro|__pa
 mdefine_line|#define __pa(x)&t;&t;&t;((unsigned long)(x)-PAGE_OFFSET)
 DECL|macro|__va
 mdefine_line|#define __va(x)&t;&t;&t;((void *)((unsigned long)(x)+PAGE_OFFSET))
 DECL|macro|MAP_NR
-mdefine_line|#define MAP_NR(addr)&t;(__pa(addr) &gt;&gt; PAGE_SHIFT)
+mdefine_line|#define MAP_NR(addr)&t;&t;(__pa(addr) &gt;&gt; PAGE_SHIFT)
 DECL|macro|MAP_PAGE_RESERVED
 mdefine_line|#define MAP_PAGE_RESERVED&t;(1&lt;&lt;15)
 r_extern
-id|__inline__
 r_int
 r_int
 id|get_prezerod_page

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: r6000.c,v 1.1 1997/06/06 09:35:31 ralf Exp $&n; * r6000.c: MMU and cache routines for the R6000 processors.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/* $Id: r6000.c,v 1.2 1997/08/08 18:13:11 miguel Exp $&n; * r6000.c: MMU and cache routines for the R6000 processors.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -625,6 +625,31 @@ id|regs-&gt;cp0_cause
 )paren
 suffix:semicolon
 )brace
+DECL|function|r6000_add_wired_entry
+r_static
+r_void
+id|r6000_add_wired_entry
+c_func
+(paren
+r_int
+r_int
+id|entrylo0
+comma
+r_int
+r_int
+id|entrylo1
+comma
+r_int
+r_int
+id|entryhi
+comma
+r_int
+r_int
+id|pagemask
+)paren
+(brace
+multiline_comment|/* XXX */
+)brace
 DECL|function|ld_mmu_r6000
 r_void
 id|ld_mmu_r6000
@@ -688,6 +713,10 @@ suffix:semicolon
 id|show_regs
 op_assign
 id|r6000_show_regs
+suffix:semicolon
+id|add_wired_entry
+op_assign
+id|r6000_add_wired_entry
 suffix:semicolon
 id|flush_cache_all
 c_func

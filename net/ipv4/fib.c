@@ -10000,7 +10000,7 @@ r_struct
 id|proc_dir_entry
 )paren
 (brace
-id|PROC_NET_RTRULES
+id|PROC_NET_RTLOCAL
 comma
 l_int|8
 comma

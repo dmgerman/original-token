@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;linux/arch/mips/kernel/irq.c&n; *&n; *&t;Copyright (C) 1992 Linus Torvalds&n; *&n; * This file contains the code used by various IRQ handling routines:&n; * asking for different IRQ&squot;s should be done through these routines&n; * instead of just grabbing them. Thus setups with different IRQ numbers&n; * shouldn&squot;t result in any weird surprises, and installing new handlers&n; * should be easier.&n; *&n; * Mips support by Ralf Baechle and Andreas Busse&n; *&n; * $Id: irq.c,v 1.6 1997/06/30 15:52:34 ralf Exp $&n; */
+multiline_comment|/*&n; *&t;linux/arch/mips/kernel/irq.c&n; *&n; *&t;Copyright (C) 1992 Linus Torvalds&n; *&n; * This file contains the code used by various IRQ handling routines:&n; * asking for different IRQ&squot;s should be done through these routines&n; * instead of just grabbing them. Thus setups with different IRQ numbers&n; * shouldn&squot;t result in any weird surprises, and installing new handlers&n; * should be easier.&n; *&n; * Mips support by Ralf Baechle and Andreas Busse&n; *&n; * $Id: irq.c,v 1.7 1997/08/08 18:12:24 miguel Exp $&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -68,6 +68,15 @@ r_int
 r_char
 id|mask
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|irq_nr
+op_ge
+l_int|16
+)paren
+r_return
+suffix:semicolon
 id|mask
 op_assign
 l_int|1
@@ -130,6 +139,15 @@ id|irq_nr
 r_int
 r_char
 id|mask
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|irq_nr
+op_ge
+l_int|16
+)paren
+r_return
 suffix:semicolon
 id|mask
 op_assign

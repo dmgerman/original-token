@@ -3,13 +3,16 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
+macro_line|#include &lt;asm/keyboard.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/jazz.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/reboot.h&gt;
 macro_line|#include &lt;asm/vector.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 multiline_comment|/*&n; * Initial irq handlers.&n; */
 DECL|function|no_action
 r_static
@@ -80,6 +83,14 @@ r_extern
 r_struct
 id|feature
 id|jazz_feature
+suffix:semicolon
+r_extern
+r_void
+id|jazz_keyboard_setup
+c_func
+(paren
+r_void
+)paren
 suffix:semicolon
 r_extern
 r_void
@@ -373,6 +384,39 @@ id|lines
 suffix:semicolon
 )brace
 )brace
+id|add_wired_entry
+(paren
+l_int|0x02000017
+comma
+l_int|0x03c00017
+comma
+l_int|0xe0000000
+comma
+id|PM_64K
+)paren
+suffix:semicolon
+id|add_wired_entry
+(paren
+l_int|0x02400017
+comma
+l_int|0x02440017
+comma
+l_int|0xe2000000
+comma
+id|PM_16M
+)paren
+suffix:semicolon
+id|add_wired_entry
+(paren
+l_int|0x01800017
+comma
+l_int|0x01000017
+comma
+l_int|0xe4000000
+comma
+id|PM_4M
+)paren
+suffix:semicolon
 id|irq_setup
 op_assign
 id|jazz_irq_setup
@@ -380,6 +424,10 @@ suffix:semicolon
 id|fd_cacheflush
 op_assign
 id|jazz_fd_cacheflush
+suffix:semicolon
+id|keyboard_setup
+op_assign
+id|jazz_keyboard_setup
 suffix:semicolon
 id|feature
 op_assign

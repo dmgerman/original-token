@@ -108,11 +108,11 @@ c_func
 (paren
 l_string|&quot;1:&t;lwarx %1,0,%2&bslash;n&quot;
 l_string|&quot;&t;cmpwi 0,%1,0&bslash;n&quot;
-l_string|&quot;&t;addi %1,%1,-1&bslash;n&quot;
+l_string|&quot;&t;addic %1,%1,-1&bslash;n&quot;
 l_string|&quot;&t;ble- 2f&bslash;n&quot;
 l_string|&quot;&t;stwcx. %1,0,%2&bslash;n&quot;
 l_string|&quot;&t;bne- 1b&bslash;n&quot;
-l_string|&quot;&t;mr %0,%1&bslash;n&quot;
+l_string|&quot;&t;li %0,1&bslash;n&quot;
 l_string|&quot;2:&quot;
 suffix:colon
 l_string|&quot;=r&quot;
@@ -120,7 +120,7 @@ l_string|&quot;=r&quot;
 id|ret
 )paren
 comma
-l_string|&quot;=r&quot;
+l_string|&quot;=&amp;r&quot;
 (paren
 id|tmp
 )paren

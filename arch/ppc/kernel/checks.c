@@ -30,6 +30,7 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -69,6 +70,7 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
+macro_line|#endif&t;
 r_if
 c_cond
 (paren

@@ -64,7 +64,7 @@ id|inode
 op_star
 id|inode
 op_assign
-id|area-&gt;vm_inode
+id|area-&gt;vm_dentry-&gt;d_inode
 suffix:semicolon
 r_int
 r_int
@@ -487,9 +487,11 @@ id|inode-&gt;i_atime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
-id|inode-&gt;i_dirt
-op_assign
-l_int|1
+id|mark_inode_dirty
+c_func
+(paren
+id|inode
+)paren
 suffix:semicolon
 )brace
 id|vma-&gt;vm_dentry

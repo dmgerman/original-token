@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: signal.c,v 1.74 1997/05/15 19:57:09 davem Exp $&n; *  linux/arch/sparc/kernel/signal.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; */
+multiline_comment|/*  $Id: signal.c,v 1.75 1997/08/05 19:19:26 davem Exp $&n; *  linux/arch/sparc/kernel/signal.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -3507,6 +3507,8 @@ id|notify_parent
 c_func
 (paren
 id|current
+comma
+id|SIGCHLD
 )paren
 suffix:semicolon
 id|schedule
@@ -3729,6 +3731,8 @@ id|notify_parent
 c_func
 (paren
 id|current
+comma
+id|SIGCHLD
 )paren
 suffix:semicolon
 )brace

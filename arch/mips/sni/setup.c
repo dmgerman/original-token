@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/timex.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
+macro_line|#include &lt;asm/keyboard.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
@@ -84,6 +85,14 @@ r_extern
 r_struct
 id|feature
 id|sni_rm200_pci_feature
+suffix:semicolon
+r_extern
+r_void
+id|sni_rm200_keyboard_setup
+c_func
+(paren
+r_void
+)paren
 suffix:semicolon
 r_extern
 r_void
@@ -540,6 +549,10 @@ suffix:semicolon
 id|port_base
 op_assign
 id|SNI_PORT_BASE
+suffix:semicolon
+id|keyboard_setup
+op_assign
+id|sni_rm200_keyboard_setup
 suffix:semicolon
 multiline_comment|/*&n;&t; * Setup (E)ISA I/O memory access stuff&n;&t; */
 id|isa_slot_offset

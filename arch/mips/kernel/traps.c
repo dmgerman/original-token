@@ -876,6 +876,16 @@ id|regs
 )paren
 (brace
 multiline_comment|/*&n;&t; * Assume it would be too dangerous to continue ...&n;&t; */
+id|printk
+(paren
+l_string|&quot;BE HANDLER&bslash;n&quot;
+)paren
+suffix:semicolon
+id|show_regs
+(paren
+id|regs
+)paren
+suffix:semicolon
 id|force_sig
 c_func
 (paren

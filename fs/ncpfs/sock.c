@@ -347,7 +347,7 @@ id|server-&gt;ncp_filp
 suffix:semicolon
 id|inode
 op_assign
-id|file-&gt;f_inode
+id|file-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
 id|sock
 op_assign

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: loadmmu.c,v 1.1 1997/06/06 09:34:51 ralf Exp $&n; * loadmmu.c: Setup cpu/cache specific function ptrs at boot time.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/* $Id: loadmmu.c,v 1.2 1997/08/08 18:13:05 miguel Exp $&n; * loadmmu.c: Setup cpu/cache specific function ptrs at boot time.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -239,6 +239,30 @@ id|show_regs
 r_struct
 id|pt_regs
 op_star
+)paren
+suffix:semicolon
+DECL|variable|add_wired_entry
+r_void
+(paren
+op_star
+id|add_wired_entry
+)paren
+(paren
+r_int
+r_int
+id|entrylo0
+comma
+r_int
+r_int
+id|entrylo1
+comma
+r_int
+r_int
+id|entryhi
+comma
+r_int
+r_int
+id|pagemask
 )paren
 suffix:semicolon
 DECL|variable|resume

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/mips/kernel/signal.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1994, 1995, 1996  Ralf Baechle&n; *&n; * $Id: signal.c,v 1.7 1997/06/25 19:25:08 ralf Exp $&n; */
+multiline_comment|/*&n; *  linux/arch/mips/kernel/signal.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1994, 1995, 1996  Ralf Baechle&n; *&n; * $Id: signal.c,v 1.8 1997/08/08 18:12:30 miguel Exp $&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -1226,6 +1226,8 @@ id|notify_parent
 c_func
 (paren
 id|current
+comma
+id|SIGCHLD
 )paren
 suffix:semicolon
 id|schedule
@@ -1440,6 +1442,8 @@ id|notify_parent
 c_func
 (paren
 id|current
+comma
+id|SIGCHLD
 )paren
 suffix:semicolon
 id|schedule

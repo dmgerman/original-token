@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: irixsig.c,v 1.2 1997/06/13 10:11:22 ralf Exp $&n; * irixsig.c: WHEEE, IRIX signals!  YOW, am I compatable or what?!?!&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/* $Id: irixsig.c,v 1.4 1997/08/08 18:12:21 miguel Exp $&n; * irixsig.c: WHEEE, IRIX signals!  YOW, am I compatable or what?!?!&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -896,6 +896,8 @@ id|notify_parent
 c_func
 (paren
 id|current
+comma
+id|SIGCHLD
 )paren
 suffix:semicolon
 id|schedule
@@ -1096,6 +1098,8 @@ id|notify_parent
 c_func
 (paren
 id|current
+comma
+id|SIGCHLD
 )paren
 suffix:semicolon
 id|schedule
@@ -3329,17 +3333,6 @@ id|rusage
 op_star
 )paren
 suffix:semicolon
-r_extern
-r_void
-id|release
-c_func
-(paren
-r_struct
-id|task_struct
-op_star
-id|p
-)paren
-suffix:semicolon
 DECL|macro|W_EXITED
 mdefine_line|#define W_EXITED     1
 DECL|macro|W_TRAPPED
@@ -3857,6 +3850,8 @@ id|notify_parent
 c_func
 (paren
 id|p
+comma
+id|SIGCHLD
 )paren
 suffix:semicolon
 )brace

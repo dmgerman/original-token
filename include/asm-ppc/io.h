@@ -4,7 +4,6 @@ mdefine_line|#define _PPC_IO_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
-macro_line|#ifdef CONFIG_PREP
 multiline_comment|/* from the Carolina Technical Spec -- Cort */
 DECL|macro|IBM_ACORN
 mdefine_line|#define IBM_ACORN 0x82A
@@ -22,184 +21,185 @@ DECL|macro|IBM_L2_INVALIDATE
 mdefine_line|#define IBM_L2_INVALIDATE 0x814
 DECL|macro|IBM_SYS_CTL
 mdefine_line|#define IBM_SYS_CTL       0x81c
+r_extern
+r_int
+r_int
+id|io_base
+suffix:semicolon
 DECL|macro|SLOW_DOWN_IO
 mdefine_line|#define SLOW_DOWN_IO
-macro_line|#ifndef PCI_DRAM_OFFSET
+DECL|macro|_IO_BASE
+mdefine_line|#define _IO_BASE io_base
 DECL|macro|PCI_DRAM_OFFSET
-mdefine_line|#define PCI_DRAM_OFFSET  0x80000000
-macro_line|#endif
+macro_line|#undef PCI_DRAM_OFFSET
+DECL|macro|PCI_DRAM_OFFSET
+mdefine_line|#define PCI_DRAM_OFFSET  _IO_BASE
 DECL|macro|readb
 mdefine_line|#define readb(addr) (*(volatile unsigned char *) (addr))
 DECL|macro|readw
-mdefine_line|#define readw(addr) (*(volatile unsigned short *) (addr))
+mdefine_line|#define readw(addr) ld_le16((volatile unsigned short *)(addr))
 DECL|macro|readl
-mdefine_line|#define readl(addr) (*(volatile unsigned int *) (addr))
+mdefine_line|#define readl(addr) ld_le32(addr)
 DECL|macro|writeb
 mdefine_line|#define writeb(b,addr) ((*(volatile unsigned char *) (addr)) = (b))
 DECL|macro|writew
-mdefine_line|#define writew(b,addr) ((*(volatile unsigned short *) (addr)) = (b))
+mdefine_line|#define writew(b,addr) st_le16((volatile unsigned short *)(addr),(b))
 DECL|macro|writel
-mdefine_line|#define writel(b,addr) ((*(volatile unsigned int *) (addr)) = (b))
+mdefine_line|#define writel(b,addr) st_le32((addr),(b))
+DECL|macro|insb
+mdefine_line|#define insb(port, buf, ns)&t;_insb((unsigned char *)((port)+_IO_BASE), (buf), (ns))
+DECL|macro|outsb
+mdefine_line|#define outsb(port, buf, ns)&t;_outsb((unsigned char *)((port)+_IO_BASE), (buf), (ns))
+DECL|macro|insw
+mdefine_line|#define insw(port, buf, ns)&t;_insw((unsigned short *)((port)+_IO_BASE), (buf), (ns))
+DECL|macro|outsw
+mdefine_line|#define outsw(port, buf, ns)&t;_outsw((unsigned short *)((port)+_IO_BASE), (buf), (ns))
+DECL|macro|insl
+mdefine_line|#define insl(port, buf, nl)&t;_insl((unsigned long *)((port)+_IO_BASE), (buf), (nl))
+DECL|macro|outsl
+mdefine_line|#define outsl(port, buf, nl)&t;_outsl((unsigned long *)((port)+_IO_BASE), (buf), (nl))
+DECL|macro|inb
+mdefine_line|#define inb(port)&t;&t;in_8((unsigned char *)((port)+_IO_BASE))
+DECL|macro|outb
+mdefine_line|#define outb(val, port)&t;&t;out_8((unsigned char *)((port)+_IO_BASE), (val))
+DECL|macro|inw
+mdefine_line|#define inw(port)&t;&t;in_le16((unsigned short *)((port)+_IO_BASE))
+DECL|macro|outw
+mdefine_line|#define outw(val, port)&t;&t;out_le16((unsigned short *)((port)+_IO_BASE), (val))
+DECL|macro|inl
+mdefine_line|#define inl(port)&t;&t;in_le32((unsigned *)((port)+_IO_BASE))
+DECL|macro|outl
+mdefine_line|#define outl(val, port)&t;&t;out_le32((unsigned *)((port)+_IO_BASE), (val))
+DECL|macro|inb_p
+mdefine_line|#define inb_p(port)&t;&t;in_8((unsigned char *)((port)+_IO_BASE))
+DECL|macro|outb_p
+mdefine_line|#define outb_p(val, port)&t;out_8((unsigned char *)((port)+_IO_BASE), (val))
+DECL|macro|inw_p
+mdefine_line|#define inw_p(port)&t;&t;in_le16((unsigned short *)((port)+_IO_BASE))
+DECL|macro|outw_p
+mdefine_line|#define outw_p(val, port)&t;out_le16((unsigned short *)((port)+_IO_BASE), (val))
+DECL|macro|inl_p
+mdefine_line|#define inl_p(port)&t;&t;in_le32(((unsigned *)port))
+DECL|macro|outl_p
+mdefine_line|#define outl_p(val, port)&t;out_le32((unsigned *)((port)+_IO_BASE), (val))
+r_extern
 r_void
-id|outsl
+id|_insb
 c_func
 (paren
+r_volatile
 r_int
+r_char
+op_star
 id|port
 comma
+r_void
+op_star
+id|buf
+comma
+r_int
+id|ns
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|_outsb
+c_func
+(paren
+r_volatile
+r_int
+r_char
+op_star
+id|port
+comma
+r_const
+r_void
+op_star
+id|buf
+comma
+r_int
+id|ns
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|_insw
+c_func
+(paren
+r_volatile
+r_int
 r_int
 op_star
-id|ptr
+id|port
+comma
+r_void
+op_star
+id|buf
 comma
 r_int
-id|len
-)paren
-suffix:semicolon
-id|__inline__
-r_int
-r_char
-id|outb
-c_func
-(paren
-r_int
-r_char
-id|val
-comma
-r_int
-id|port
-)paren
-suffix:semicolon
-id|__inline__
-r_int
-r_int
-id|outw
-c_func
-(paren
-r_int
-r_int
-id|val
-comma
-r_int
-id|port
-)paren
-suffix:semicolon
-id|__inline__
-r_int
-r_int
-id|outl
-c_func
-(paren
-r_int
-r_int
-id|val
-comma
-r_int
-id|port
-)paren
-suffix:semicolon
-id|__inline__
-r_int
-r_char
-id|inb
-c_func
-(paren
-r_int
-id|port
-)paren
-suffix:semicolon
-id|__inline__
-r_int
-r_int
-id|inw
-c_func
-(paren
-r_int
-id|port
-)paren
-suffix:semicolon
-id|__inline__
-r_int
-r_int
-id|inl
-c_func
-(paren
-r_int
-id|port
-)paren
-suffix:semicolon
-DECL|macro|inb_p
-mdefine_line|#define inb_p inb
-DECL|macro|inw_p
-mdefine_line|#define inw_p inw
-DECL|macro|inl_p
-mdefine_line|#define inl_p inl
-DECL|macro|outb_p
-mdefine_line|#define outb_p outb
-DECL|macro|outw_p
-mdefine_line|#define outw_p outw
-DECL|macro|outl_p
-mdefine_line|#define outl_p outl
-macro_line|#endif /* CONFIG_PREP */
-macro_line|#ifdef CONFIG_PMAC
-multiline_comment|/*&n; * Read and write the non-volatile RAM.&n; */
-r_extern
-r_int
-id|nvram_readb
-c_func
-(paren
-r_int
-id|addr
+id|ns
 )paren
 suffix:semicolon
 r_extern
 r_void
-id|nvram_writeb
+id|_outsw
 c_func
 (paren
+r_volatile
 r_int
-id|addr
+r_int
+op_star
+id|port
+comma
+r_const
+r_void
+op_star
+id|buf
 comma
 r_int
-id|val
+id|ns
 )paren
 suffix:semicolon
-macro_line|#ifndef PCI_DRAM_OFFSET
-DECL|macro|PCI_DRAM_OFFSET
-mdefine_line|#define PCI_DRAM_OFFSET  0
-macro_line|#endif
-DECL|macro|inb
-mdefine_line|#define inb(port)&t;&t;in_8((unsigned char *)(port))
-DECL|macro|outb
-mdefine_line|#define outb(val, port)&t;&t;out_8((unsigned char *)(port), (val))
-DECL|macro|inw
-mdefine_line|#define inw(port)&t;&t;in_le16((unsigned short *)(port))
-DECL|macro|outw
-mdefine_line|#define outw(val, port)&t;&t;out_le16((unsigned short *)(port), (val))
-DECL|macro|inl
-mdefine_line|#define inl(port)&t;&t;in_le32((unsigned long *)(port))
-DECL|macro|outl
-mdefine_line|#define outl(val, port)&t;&t;out_le32((unsigned long *)(port), (val))
-DECL|macro|inb_p
-mdefine_line|#define inb_p(port)&t;&t;in_8((unsigned char *)(port))
-DECL|macro|outb_p
-mdefine_line|#define outb_p(val, port)&t;out_8((unsigned char *)(port), (val))
-DECL|macro|inw_p
-mdefine_line|#define inw_p(port)&t;&t;in_le16((unsigned short *)(port))
-DECL|macro|outw_p
-mdefine_line|#define outw_p(val, port)&t;out_le16((unsigned short *)(port), (val))
-DECL|macro|inl_p
-mdefine_line|#define inl_p(port)&t;&t;in_le32(((unsigned long *)port))
-DECL|macro|outl_p
-mdefine_line|#define outl_p(val, port)&t;out_le32((unsigned long *)(port), (val))
-DECL|macro|insw
-mdefine_line|#define insw(port, buf, ns)&t;_insw((unsigned short *)(port), (buf), (ns))
-DECL|macro|outsw
-mdefine_line|#define outsw(port, buf, ns)&t;_outsw((unsigned short *)(port), (buf), (ns))
-DECL|macro|insl
-mdefine_line|#define insl(port, buf, nl)&t;_insl((unsigned long *)(port), (buf), (nl))
-DECL|macro|outsl
-mdefine_line|#define outsl(port, buf, nl)&t;_outsl((unsigned long *)(port), (buf), (nl))
-macro_line|#endif /* CONFIG_PMAC */
+r_extern
+r_void
+id|_insl
+c_func
+(paren
+r_volatile
+r_int
+r_int
+op_star
+id|port
+comma
+r_void
+op_star
+id|buf
+comma
+r_int
+id|nl
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|_outsl
+c_func
+(paren
+r_volatile
+r_int
+r_int
+op_star
+id|port
+comma
+r_const
+r_void
+op_star
+id|buf
+comma
+r_int
+id|nl
+)paren
+suffix:semicolon
+macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * The PCI bus is inherently Little-Endian.  The PowerPC is being&n; * run Big-Endian.  Thus all values which cross the [PCI] barrier&n; * must be endian-adjusted.  Also, the local DRAM has a different&n; * address from the PCI point of view, thus buffer addresses also&n; * have to be modified [mapped] appropriately.&n; */
 DECL|function|virt_to_bus
 r_extern
@@ -231,12 +231,7 @@ l_int|0
 suffix:semicolon
 r_return
 (paren
-(paren
 r_int
-r_int
-)paren
-(paren
-(paren
 r_int
 )paren
 id|address
@@ -244,8 +239,6 @@ op_minus
 id|KERNELBASE
 op_plus
 id|PCI_DRAM_OFFSET
-)paren
-)paren
 suffix:semicolon
 )brace
 DECL|function|bus_to_virt
@@ -273,7 +266,6 @@ l_int|0
 suffix:semicolon
 r_return
 (paren
-(paren
 r_void
 op_star
 )paren
@@ -283,7 +275,6 @@ op_minus
 id|PCI_DRAM_OFFSET
 op_plus
 id|KERNELBASE
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -303,7 +294,7 @@ r_int
 id|size
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Change virtual addresses to physical addresses and vv.&n; * These are trivial on the 1:1 Linux/i386 mapping (but if we ever&n; * make the kernel segment mapped at 0, we need to do translation&n; * on the i386 as well)&n; */
+multiline_comment|/*&n; * Change virtual addresses to physical addresses and vv, for&n; * addresses in the area where the kernel has the RAM mapped.&n; */
 DECL|function|virt_to_phys
 r_extern
 r_inline
@@ -324,6 +315,8 @@ r_int
 r_int
 )paren
 id|address
+op_minus
+id|KERNELBASE
 suffix:semicolon
 )brace
 DECL|function|phys_to_virt
@@ -344,12 +337,14 @@ r_return
 r_void
 op_star
 )paren
+(paren
 id|address
+op_plus
+id|KERNELBASE
+)paren
 suffix:semicolon
 )brace
-DECL|macro|_IO_BASE
-mdefine_line|#define _IO_BASE ((unsigned long)0x80000000)
-multiline_comment|/*&n; * These are much more useful le/be io functions from Paul&n; * than leXX_to_cpu() style functions since the ppc has&n; * load/store byte reverse instructions&n; *  -- Cort&n; */
+macro_line|#endif /* __KERNEL__ */
 multiline_comment|/*&n; * Enforce In-order Execution of I/O:&n; * Acts as a barrier to ensure all previous I/O accesses have&n; * completed before any further ones are issued.&n; */
 DECL|function|eieio
 r_extern

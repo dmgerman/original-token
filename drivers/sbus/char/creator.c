@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: creator.c,v 1.8 1997/07/22 06:14:12 davem Exp $&n; * creator.c: Creator/Creator3D frame buffer driver&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: creator.c,v 1.7 1997/07/17 02:21:47 davem Exp $&n; * creator.c: Creator/Creator3D frame buffer driver&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;

@@ -2876,14 +2876,6 @@ suffix:semicolon
 r_int
 id|res
 suffix:semicolon
-macro_line|#if 0
-multiline_comment|/* XXX Find out what is really going on. */
-id|flush_cache_all
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Non-word alignment _not_ allowed on Sparc. */
 r_if
 c_cond
@@ -5426,6 +5418,8 @@ id|notify_parent
 c_func
 (paren
 id|current
+comma
+id|SIGCHLD
 )paren
 suffix:semicolon
 id|schedule
@@ -5454,7 +5448,13 @@ c_cond
 id|current-&gt;exit_code
 )paren
 (brace
-multiline_comment|/* spin_lock_irq(&amp;current-&gt;sigmask_lock); */
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|current-&gt;sigmask_lock
+)paren
+suffix:semicolon
 id|current-&gt;signal
 op_or_assign
 (paren
@@ -5467,7 +5467,13 @@ l_int|1
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* spin_unlock_irq(&amp;current-&gt;sigmask_lock); */
+id|spin_unlock_irq
+c_func
+(paren
+op_amp
+id|current-&gt;sigmask_lock
+)paren
+suffix:semicolon
 )brace
 id|current-&gt;exit_code
 op_assign

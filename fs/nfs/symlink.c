@@ -214,13 +214,13 @@ id|error
 op_assign
 id|len
 suffix:semicolon
-)brace
 id|kfree
 c_func
 (paren
 id|mem
 )paren
 suffix:semicolon
+)brace
 r_return
 id|error
 suffix:semicolon
@@ -314,12 +314,6 @@ id|dput
 c_func
 (paren
 id|base
-)paren
-suffix:semicolon
-id|kfree
-c_func
-(paren
-id|mem
 )paren
 suffix:semicolon
 r_return

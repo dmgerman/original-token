@@ -1,13 +1,17 @@
 multiline_comment|/* auxio.c: Probing for the Sparc AUXIO register at boot time.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/auxio.h&gt;
 macro_line|#include &lt;asm/sbus.h&gt;
+macro_line|#include &lt;asm/ebus.h&gt;
+macro_line|#include &lt;asm/fhc.h&gt;
 multiline_comment|/* Probe and map in the Auxiliary I/O register */
 DECL|variable|auxio_register
 r_int
@@ -85,6 +89,108 @@ op_logical_neg
 id|sdev
 )paren
 (brace
+macro_line|#ifdef CONFIG_PCI
+r_struct
+id|linux_ebus
+op_star
+id|ebus
+suffix:semicolon
+r_struct
+id|linux_ebus_device
+op_star
+id|edev
+op_assign
+l_int|0
+suffix:semicolon
+id|for_all_ebusdev
+c_func
+(paren
+id|edev
+comma
+id|ebus
+)paren
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strcmp
+c_func
+(paren
+id|edev-&gt;prom_name
+comma
+l_string|&quot;auxio&quot;
+)paren
+)paren
+r_break
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|edev
+)paren
+(brace
+id|auxio_register
+op_assign
+(paren
+r_int
+r_char
+op_star
+)paren
+id|sparc_alloc_io
+c_func
+(paren
+id|edev-&gt;regs
+(braket
+l_int|0
+)braket
+dot
+id|phys_addr
+comma
+l_int|0
+comma
+id|edev-&gt;regs
+(braket
+l_int|0
+)braket
+dot
+id|reg_size
+comma
+l_string|&quot;auxiliaryIO&quot;
+comma
+id|edev-&gt;regs
+(braket
+l_int|0
+)braket
+dot
+id|which_io
+comma
+l_int|0x0
+)paren
+suffix:semicolon
+op_star
+(paren
+id|auxio_register
+)paren
+op_assign
+l_int|0x01
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+macro_line|#endif
+r_if
+c_cond
+(paren
+id|central_bus
+)paren
+(brace
+id|auxio_register
+op_assign
+l_int|NULL
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|prom_printf
 c_func
 (paren

@@ -1,9 +1,11 @@
-multiline_comment|/* $Id: setup.c,v 1.2 1997/06/30 15:26:24 ralf Exp $&n; * setup.c: SGI specific setup, including init of the feature struct.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/*&n; * setup.c: SGI specific setup, including init of the feature struct.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: setup.c,v 1.3 1997/08/08 18:13:22 miguel Exp $&n; */
 macro_line|#ifndef __GOGOGO__
 macro_line|#error &quot;... about to fuckup your Indy?&quot;
 macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;asm/addrspace.h&gt;
+macro_line|#include &lt;asm/keyboard.h&gt;
 macro_line|#include &lt;asm/reboot.h&gt;
 macro_line|#include &lt;asm/vector.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;
@@ -50,6 +52,113 @@ op_assign
 (brace
 )brace
 suffix:semicolon
+DECL|variable|sgi_kh
+r_static
+r_volatile
+r_struct
+id|hpc_keyb
+op_star
+id|sgi_kh
+op_assign
+(paren
+r_struct
+id|hpc_keyb
+op_star
+)paren
+(paren
+id|KSEG1
+op_plus
+l_int|0x1fbd9800
+op_plus
+l_int|64
+)paren
+suffix:semicolon
+DECL|function|sgi_read_input
+r_static
+r_int
+r_char
+id|sgi_read_input
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+id|sgi_kh-&gt;data
+suffix:semicolon
+)brace
+DECL|function|sgi_write_output
+r_static
+r_void
+id|sgi_write_output
+c_func
+(paren
+r_int
+r_char
+id|val
+)paren
+(brace
+id|sgi_kh-&gt;data
+op_assign
+id|val
+suffix:semicolon
+)brace
+DECL|function|sgi_write_command
+r_static
+r_void
+id|sgi_write_command
+c_func
+(paren
+r_int
+r_char
+id|val
+)paren
+(brace
+id|sgi_kh-&gt;command
+op_assign
+id|val
+suffix:semicolon
+)brace
+DECL|function|sgi_read_status
+r_static
+r_int
+r_char
+id|sgi_read_status
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+id|sgi_kh-&gt;command
+suffix:semicolon
+)brace
+DECL|function|sgi_keyboard_setup
+r_static
+r_void
+id|sgi_keyboard_setup
+c_func
+(paren
+r_void
+)paren
+(brace
+id|kbd_read_input
+op_assign
+id|sgi_read_input
+suffix:semicolon
+id|kbd_write_output
+op_assign
+id|sgi_write_output
+suffix:semicolon
+id|kbd_write_command
+op_assign
+id|sgi_write_command
+suffix:semicolon
+id|kbd_read_status
+op_assign
+id|sgi_read_status
+suffix:semicolon
+)brace
 DECL|function|sgi_irq_setup
 r_static
 r_void
@@ -155,6 +264,10 @@ id|feature
 op_assign
 op_amp
 id|sgi_feature
+suffix:semicolon
+id|keyboard_setup
+op_assign
+id|sgi_keyboard_setup
 suffix:semicolon
 id|_machine_restart
 op_assign

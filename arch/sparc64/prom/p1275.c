@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: p1275.c,v 1.11 1997/07/24 12:15:11 davem Exp $&n; * p1275.c: Sun IEEE 1275 PROM low level interface routines&n; *&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: p1275.c,v 1.12 1997/07/26 18:39:01 davem Exp $&n; * p1275.c: Sun IEEE 1275 PROM low level interface routines&n; *&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -351,7 +351,7 @@ id|p
 op_assign
 id|p1275buf.prom_buffer
 suffix:semicolon
-id|save_and_cli
+id|__save_and_cli
 c_func
 (paren
 id|flags
@@ -1078,7 +1078,7 @@ id|spitfire_set_primary_context
 id|ctx
 )paren
 suffix:semicolon
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags

@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: signal.c,v 1.20 1997/07/14 03:10:28 davem Exp $&n; *  arch/sparc64/kernel/signal.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; *  Copyright (C) 1997 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: signal.c,v 1.22 1997/08/05 19:19:36 davem Exp $&n; *  arch/sparc64/kernel/signal.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; *  Copyright (C) 1997 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -176,11 +176,8 @@ id|ucp
 )paren
 )paren
 (brace
-id|do_exit
-c_func
-(paren
-id|SIGSEGV
-)paren
+r_goto
+id|do_sigsegv
 suffix:semicolon
 )brace
 id|grp
@@ -234,11 +231,8 @@ op_amp
 l_int|3
 )paren
 (brace
-id|do_exit
-c_func
-(paren
-id|SIGSEGV
-)paren
+r_goto
+id|do_sigsegv
 suffix:semicolon
 )brace
 r_if
@@ -800,6 +794,21 @@ op_assign
 id|FPRS_FEF
 suffix:semicolon
 )brace
+r_return
+suffix:semicolon
+id|do_sigsegv
+suffix:colon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|do_exit
+c_func
+(paren
+id|SIGSEGV
+)paren
+suffix:semicolon
 )brace
 DECL|function|sparc64_get_context
 id|asmlinkage
@@ -883,11 +892,8 @@ id|ucp
 )paren
 )paren
 (brace
-id|do_exit
-c_func
-(paren
-id|SIGSEGV
-)paren
+r_goto
+id|do_sigsegv
 suffix:semicolon
 )brace
 id|mcp
@@ -1466,6 +1472,21 @@ id|mcp-&gt;mc_fpregs.mcfpu_fprs
 )paren
 suffix:semicolon
 )brace
+r_return
+suffix:semicolon
+id|do_sigsegv
+suffix:colon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|do_exit
+c_func
+(paren
+id|SIGSEGV
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/* &n; * The new signal frame, intended to be used for Linux applications only&n; * (we have enough in there to work with clone).&n; * All the interesting bits are in the info field.&n; */
 DECL|struct|new_signal_frame
@@ -2954,6 +2975,8 @@ id|notify_parent
 c_func
 (paren
 id|current
+comma
+id|SIGCHLD
 )paren
 suffix:semicolon
 id|schedule
@@ -3174,6 +3197,8 @@ id|notify_parent
 c_func
 (paren
 id|current
+comma
+id|SIGCHLD
 )paren
 suffix:semicolon
 )brace

@@ -32,7 +32,7 @@ DECL|macro|MUNGE_CONTEXT
 mdefine_line|#define MUNGE_CONTEXT(n)&t;(((n) * 897) &amp; LAST_CONTEXT)
 multiline_comment|/*&n; * Get a new mmu context for task tsk if necessary.&n; */
 DECL|macro|get_mmu_context
-mdefine_line|#define get_mmu_context(tsk)&t;&t;&t;&t;&t;&bslash;&n;do { &t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;struct mm_struct *mm = (tsk)-&gt;mm;&t;&t;&t;&bslash;&n;&t;if (mm-&gt;context == NO_CONTEXT) {&t;&t;&t;&bslash;&n;&t;        int i; &bslash;&n;&t;&t;if (next_mmu_context == LAST_CONTEXT)&t;&t;&bslash;&n;&t;&t;&t;mmu_context_overflow();&t;&t;&t;&bslash;&n;&t;&t;mm-&gt;context = MUNGE_CONTEXT(++next_mmu_context);&bslash;&n;&t; &t;if ( tsk == current )                           &bslash;&n;&t;&t;&t;set_context(mm-&gt;context);               &bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&bslash;&n;} while (0)
+mdefine_line|#define get_mmu_context(tsk)&t;&t;&t;&t;&t;&bslash;&n;do { &t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;struct mm_struct *mm = (tsk)-&gt;mm;&t;&t;&t;&bslash;&n;&t;if (mm-&gt;context == NO_CONTEXT) {&t;&t;&t;&bslash;&n;&t;&t;if (next_mmu_context == LAST_CONTEXT)&t;&t;&bslash;&n;&t;&t;&t;mmu_context_overflow();&t;&t;&t;&bslash;&n;&t;&t;mm-&gt;context = MUNGE_CONTEXT(++next_mmu_context);&bslash;&n;&t; &t;if ( tsk == current )                           &bslash;&n;&t;&t;&t;set_context(mm-&gt;context);               &bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&bslash;&n;} while (0)
 multiline_comment|/*&n; * Set up the context for a new address space.&n; */
 DECL|macro|init_new_context
 mdefine_line|#define init_new_context(mm)&t;((mm)-&gt;context = NO_CONTEXT)

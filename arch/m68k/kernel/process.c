@@ -151,7 +151,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|need_resched
+id|resched_needed
+c_func
+(paren
+)paren
 )paren
 macro_line|#if defined(CONFIG_ATARI) &amp;&amp; !defined(CONFIG_AMIGA) &amp;&amp; !defined(CONFIG_MAC)
 multiline_comment|/* block out HSYNC on the atari (falcon) */

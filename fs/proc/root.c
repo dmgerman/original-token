@@ -2316,6 +2316,37 @@ id|proc_omirr_inode_operations
 )brace
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef __powerpc__
+DECL|variable|proc_root_ppc_htab
+r_static
+r_struct
+id|proc_dir_entry
+id|proc_root_ppc_htab
+op_assign
+(brace
+id|PROC_PPC_HTAB
+comma
+l_int|8
+comma
+l_string|&quot;ppc_htab&quot;
+comma
+id|S_IFREG
+op_or
+id|S_IRUGO
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|proc_ppc_htab_inode_operations
+)brace
+suffix:semicolon
+macro_line|#endif
 DECL|function|proc_root_init
 r_void
 id|proc_root_init
@@ -2729,6 +2760,25 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef __powerpc__
+id|proc_register
+c_func
+(paren
+op_amp
+id|proc_root
+comma
+op_amp
+id|proc_root_ppc_htab
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_PROC_DEVICETREE
+id|proc_device_tree_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/*&n; * Don&squot;t create negative dentries here, return -ENOENT by hand&n; * instead.&n; */
 DECL|function|proc_lookup

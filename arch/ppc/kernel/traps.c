@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/ppc/kernel/traps.c&n; *&n; *  Copyright (C) 1995  Gary Thomas&n; *  Adapted for PowerPC by Gary Thomas&n; *  Modified by Cort Dougan (cort@cs.nmt.edu)&n; */
+multiline_comment|/*&n; *  linux/arch/ppc/kernel/traps.c&n; *&n; *  Copyright (C) 1995-1996  Gary Thomas (gdt@linuxppc.org)&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; *  Modified by Cort Dougan (cort@cs.nmt.edu)&n; *  and Paul Mackerras (paulus@cs.anu.edu.au)&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of hardware exceptions&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -13,9 +13,92 @@ macro_line|#include &lt;linux/a.out.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/processor.h&gt;
+r_extern
+r_int
+id|fix_alignment
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|bad_page_fault
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_XMON
+r_extern
+r_int
+id|xmon_bpt
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|xmon_sstep
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|xmon
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|xmon_iabr_match
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+suffix:semicolon
+r_extern
+r_void
+(paren
+op_star
+id|xmon_fault_handler
+)paren
+(paren
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; * Trap &amp; Exception support&n; */
 r_void
 DECL|function|trap_init
@@ -60,16 +143,29 @@ suffix:semicolon
 id|print_backtrace
 c_func
 (paren
+(paren
+r_int
+r_int
+op_star
+)paren
 id|regs-&gt;gpr
 (braket
 l_int|1
 )braket
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_XMON
+id|xmon
+c_func
+(paren
+id|regs
+)paren
+suffix:semicolon
+macro_line|#endif
 id|panic
 c_func
 (paren
-l_string|&quot;Exception in kernel pc %x signal %d&quot;
+l_string|&quot;Exception in kernel pc %lx signal %d&quot;
 comma
 id|regs-&gt;nip
 comma
@@ -86,6 +182,7 @@ id|current
 )paren
 suffix:semicolon
 )brace
+r_void
 DECL|function|MachineCheckException
 id|MachineCheckException
 c_func
@@ -107,6 +204,23 @@ id|regs
 )paren
 )paren
 (brace
+macro_line|#ifdef CONFIG_XMON
+r_if
+c_cond
+(paren
+id|xmon_fault_handler
+)paren
+(brace
+id|xmon_fault_handler
+c_func
+(paren
+id|regs
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+macro_line|#endif
 id|printk
 c_func
 (paren
@@ -122,7 +236,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;regs %08x &quot;
+l_string|&quot;regs %p &quot;
 comma
 id|regs
 )paren
@@ -214,16 +328,29 @@ suffix:semicolon
 id|print_backtrace
 c_func
 (paren
+(paren
+r_int
+r_int
+op_star
+)paren
 id|regs-&gt;gpr
 (braket
 l_int|1
 )braket
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_XMON
+id|xmon
+c_func
+(paren
+id|regs
+)paren
+suffix:semicolon
+macro_line|#endif
 id|panic
 c_func
 (paren
-l_string|&quot;&quot;
+l_string|&quot;machine check&quot;
 )paren
 suffix:semicolon
 )brace
@@ -321,6 +448,7 @@ id|regs
 )paren
 suffix:semicolon
 )brace
+r_void
 DECL|function|ProgramCheckException
 id|ProgramCheckException
 c_func
@@ -334,10 +462,44 @@ id|regs
 r_if
 c_cond
 (paren
-id|current-&gt;flags
+id|regs-&gt;msr
 op_amp
-id|PF_PTRACED
+l_int|0x100000
 )paren
+(brace
+multiline_comment|/* IEEE FP exception */
+id|_exception
+c_func
+(paren
+id|SIGFPE
+comma
+id|regs
+)paren
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|regs-&gt;msr
+op_amp
+l_int|0x20000
+)paren
+(brace
+multiline_comment|/* trap exception */
+macro_line|#ifdef CONFIG_XMON
+r_if
+c_cond
+(paren
+id|xmon_bpt
+c_func
+(paren
+id|regs
+)paren
+)paren
+r_return
+suffix:semicolon
+macro_line|#endif
 id|_exception
 c_func
 (paren
@@ -346,7 +508,9 @@ comma
 id|regs
 )paren
 suffix:semicolon
+)brace
 r_else
+(brace
 id|_exception
 c_func
 (paren
@@ -356,6 +520,8 @@ id|regs
 )paren
 suffix:semicolon
 )brace
+)brace
+r_void
 DECL|function|SingleStepException
 id|SingleStepException
 c_func
@@ -372,6 +538,19 @@ op_complement
 id|MSR_SE
 suffix:semicolon
 multiline_comment|/* Turn off &squot;trace&squot; bit */
+macro_line|#ifdef CONFIG_XMON
+r_if
+c_cond
+(paren
+id|xmon_sstep
+c_func
+(paren
+id|regs
+)paren
+)paren
+r_return
+suffix:semicolon
+macro_line|#endif
 id|_exception
 c_func
 (paren
@@ -381,6 +560,7 @@ id|regs
 )paren
 suffix:semicolon
 )brace
+r_void
 DECL|function|AlignmentException
 id|AlignmentException
 c_func
@@ -391,6 +571,66 @@ op_star
 id|regs
 )paren
 (brace
+r_int
+id|fixed
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|last_task_used_math
+op_eq
+id|current
+)paren
+id|giveup_fpu
+c_func
+(paren
+)paren
+suffix:semicolon
+id|fixed
+op_assign
+id|fix_alignment
+c_func
+(paren
+id|regs
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|fixed
+op_eq
+l_int|1
+)paren
+(brace
+id|regs-&gt;nip
+op_add_assign
+l_int|4
+suffix:semicolon
+multiline_comment|/* skip over emulated instruction */
+r_return
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|fixed
+op_eq
+op_minus
+id|EFAULT
+)paren
+(brace
+multiline_comment|/* fixed == -EFAULT means the operand address was bad */
+id|bad_page_fault
+c_func
+(paren
+id|regs
+comma
+id|regs-&gt;dar
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|_exception
 c_func
 (paren
@@ -400,6 +640,47 @@ id|regs
 )paren
 suffix:semicolon
 )brace
+r_void
+DECL|function|PromException
+id|PromException
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+id|regs
+comma
+r_int
+id|trap
+)paren
+(brace
+id|regs-&gt;trap
+op_assign
+id|trap
+suffix:semicolon
+macro_line|#ifdef CONFIG_XMON
+id|xmon
+c_func
+(paren
+id|regs
+)paren
+suffix:semicolon
+macro_line|#endif
+id|printk
+c_func
+(paren
+l_string|&quot;Exception %lx in prom at PC: %lx, SR: %lx&bslash;n&quot;
+comma
+id|regs-&gt;trap
+comma
+id|regs-&gt;nip
+comma
+id|regs-&gt;msr
+)paren
+suffix:semicolon
+multiline_comment|/* probably should turn up the toes here */
+)brace
+r_void
 DECL|function|trace_syscall
 id|trace_syscall
 c_func
@@ -410,14 +691,10 @@ op_star
 id|regs
 )paren
 (brace
-r_static
-r_int
-id|count
-suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Task: %08X(%d), PC: %08X/%08X, Syscall: %3d, Result: %s%d&bslash;n&quot;
+l_string|&quot;Task: %p(%d), PC: %08lX/%08lX, Syscall: %3ld, Result: %s%ld&bslash;n&quot;
 comma
 id|current
 comma
@@ -447,19 +724,5 @@ l_int|3
 )braket
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_increment
-id|count
-op_eq
-l_int|20
-)paren
-(brace
-id|count
-op_assign
-l_int|0
-suffix:semicolon
-)brace
 )brace
 eof

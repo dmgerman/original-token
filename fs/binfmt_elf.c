@@ -318,13 +318,14 @@ comma
 op_star
 id|csp
 suffix:semicolon
-multiline_comment|/*&n;&t; * Force 16 byte _final_ alignment here for generality.&n;&t; */
+multiline_comment|/*&n;&t; * Force 16 byte _final_ alignment here for generality.&n;&t; * Leave an extra 16 bytes free so that on the PowerPC we&n;&t; * can move the aux table up to start on a 16-byte boundary.&n;&t; */
 id|sp
 op_assign
 (paren
 id|elf_addr_t
 op_star
 )paren
+(paren
 (paren
 op_complement
 l_int|15UL
@@ -334,6 +335,9 @@ r_int
 r_int
 )paren
 id|p
+)paren
+op_minus
+l_int|16UL
 )paren
 suffix:semicolon
 id|csp
@@ -391,9 +395,6 @@ l_int|15UL
 id|sp
 op_sub_assign
 (paren
-l_int|16UL
-op_minus
-(paren
 (paren
 r_int
 r_int
@@ -401,7 +402,6 @@ r_int
 id|csp
 op_amp
 l_int|15UL
-)paren
 )paren
 op_div
 r_sizeof

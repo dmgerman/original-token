@@ -1,12 +1,7 @@
 macro_line|#ifndef _PPC_PTRACE_H
 DECL|macro|_PPC_PTRACE_H
 mdefine_line|#define _PPC_PTRACE_H
-multiline_comment|/*&n; * this should only contain volatile regs&n; * since we can keep non-volatile in the tss&n; * should set this up when only volatiles are saved&n; * by intr code.&n; *&n; * I can&squot;t find any reference to the above comment (from Gary Thomas)&n; * about _underhead/_overhead in the sys V abi for the ppc&n; * dated july 25, 1994.&n; *&n; * the stack must be kept to a size that is a multiple of 16&n; * so this includes the stack frame overhead &n; * -- Cort.&n; */
-multiline_comment|/*&n; * GCC sometimes accesses words at negative offsets from the stack&n; * pointer, although the SysV ABI says it shouldn&squot;t.  To cope with&n; * this, we leave this much untouched space on the stack on exception&n; * entry.&n; */
-DECL|macro|STACK_FRAME_OVERHEAD
-mdefine_line|#define STACK_FRAME_OVERHEAD 16
-DECL|macro|STACK_UNDERHEAD
-mdefine_line|#define STACK_UNDERHEAD&t;64
+multiline_comment|/*&n; * This struct defines the way the registers are stored on the&n; * kernel stack during a system call or other kernel entry.&n; *&n; * this should only contain volatile regs&n; * since we can keep non-volatile in the tss&n; * should set this up when only volatiles are saved&n; * by intr code.&n; *&n; * Since this is going on the stack, *CARE MUST BE TAKEN* to insure&n; * that the overall structure is a multiple of 16 bytes in length.&n; *&n; * Note that the offsets of the fields in this struct correspond with&n; * the PT_* values below.  This simplifies arch/ppc/kernel/ptrace.c.&n; */
 macro_line|#ifndef __ASSEMBLY__
 DECL|struct|pt_regs
 r_struct
@@ -30,6 +25,12 @@ r_int
 r_int
 id|msr
 suffix:semicolon
+DECL|member|orig_gpr3
+r_int
+r_int
+id|orig_gpr3
+suffix:semicolon
+multiline_comment|/* Used for restarting system calls */
 DECL|member|ctr
 r_int
 r_int
@@ -40,16 +41,28 @@ r_int
 r_int
 id|link
 suffix:semicolon
-DECL|member|ccr
-r_int
-r_int
-id|ccr
-suffix:semicolon
 DECL|member|xer
 r_int
 r_int
 id|xer
 suffix:semicolon
+DECL|member|ccr
+r_int
+r_int
+id|ccr
+suffix:semicolon
+DECL|member|mq
+r_int
+r_int
+id|mq
+suffix:semicolon
+multiline_comment|/* 601 only (not used at present) */
+DECL|member|trap
+r_int
+r_int
+id|trap
+suffix:semicolon
+multiline_comment|/* Reason for being here */
 DECL|member|dar
 r_int
 r_int
@@ -61,79 +74,25 @@ r_int
 r_int
 id|dsisr
 suffix:semicolon
-macro_line|#if 0  
-r_int
-r_int
-id|srr1
-suffix:semicolon
-r_int
-r_int
-id|srr0
-suffix:semicolon
-r_int
-r_int
-id|hash1
-comma
-id|hash2
-suffix:semicolon
-r_int
-r_int
-id|imiss
-comma
-id|dmiss
-suffix:semicolon
-r_int
-r_int
-id|icmp
-comma
-id|dcmp
-suffix:semicolon
-macro_line|#endif  
-DECL|member|orig_gpr3
-r_int
-r_int
-id|orig_gpr3
-suffix:semicolon
-multiline_comment|/* Used for restarting system calls */
 DECL|member|result
 r_int
 r_int
 id|result
 suffix:semicolon
 multiline_comment|/* Result of a system call */
-DECL|member|trap
-r_int
-r_int
-id|trap
-suffix:semicolon
-multiline_comment|/* Reason for being here */
-DECL|member|marker
-r_int
-r_int
-id|marker
-suffix:semicolon
-multiline_comment|/* Should have DEADDEAD */
 )brace
 suffix:semicolon
+macro_line|#endif
+DECL|macro|STACK_FRAME_OVERHEAD
+mdefine_line|#define STACK_FRAME_OVERHEAD&t;16&t;/* size of minimum stack frame */
+multiline_comment|/* Size of stack frame allocated when calling signal handler. */
+DECL|macro|__SIGNAL_FRAMESIZE
+mdefine_line|#define __SIGNAL_FRAMESIZE&t;64
 DECL|macro|instruction_pointer
 mdefine_line|#define instruction_pointer(regs) ((regs)-&gt;nip)
 DECL|macro|user_mode
 mdefine_line|#define user_mode(regs) ((regs)-&gt;msr &amp; 0x4000)
-macro_line|#ifdef KERNEL
-r_extern
-r_void
-id|show_regs
-c_func
-(paren
-r_struct
-id|pt_regs
-op_star
-)paren
-suffix:semicolon
-macro_line|#endif
-multiline_comment|/* should include and generate these in ppc_defs.h -- Cort */
-multiline_comment|/* Offsets used by &squot;ptrace&squot; system call interface */
-multiline_comment|/* Note: these should correspond to gpr[x]        */
+multiline_comment|/*&n; * Offsets used by &squot;ptrace&squot; system call interface.&n; * These can&squot;t be changed without breaking binary compatibility&n; * with MkLinux, etc.&n; */
 DECL|macro|PT_R0
 mdefine_line|#define PT_R0&t;0
 DECL|macro|PT_R1
@@ -202,8 +161,10 @@ DECL|macro|PT_NIP
 mdefine_line|#define PT_NIP&t;32
 DECL|macro|PT_MSR
 mdefine_line|#define PT_MSR&t;33
+macro_line|#ifdef __KERNEL__
 DECL|macro|PT_ORIG_R3
 mdefine_line|#define PT_ORIG_R3 34
+macro_line|#endif
 DECL|macro|PT_CTR
 mdefine_line|#define PT_CTR&t;35
 DECL|macro|PT_LNK
@@ -212,8 +173,13 @@ DECL|macro|PT_XER
 mdefine_line|#define PT_XER&t;37
 DECL|macro|PT_CCR
 mdefine_line|#define PT_CCR&t;38
+DECL|macro|PT_MQ
+mdefine_line|#define PT_MQ&t;39
 DECL|macro|PT_FPR0
-mdefine_line|#define PT_FPR0&t;48
-macro_line|#endif /* __ASSEMBLY__ */
-macro_line|#endif /* _PPC_PTRACE_H */
+mdefine_line|#define PT_FPR0&t;48&t;/* each FP reg occupies 2 slots in this space */
+DECL|macro|PT_FPR31
+mdefine_line|#define PT_FPR31 (PT_FPR0 + 2*31)
+DECL|macro|PT_FPSCR
+mdefine_line|#define PT_FPSCR (PT_FPR0 + 2*32 + 1)
+macro_line|#endif
 eof

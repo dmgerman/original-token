@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ioport.c,v 1.11 1997/07/22 06:14:04 davem Exp $&n; * ioport.c:  Simple io mapping allocator.&n; *&n; * Copyright (C) 1995,1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; */
+multiline_comment|/* $Id: ioport.c,v 1.12 1997/08/08 05:07:02 davem Exp $&n; * ioport.c:  Simple io mapping allocator.&n; *&n; * Copyright (C) 1995,1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -209,12 +209,50 @@ suffix:semicolon
 )brace
 r_else
 (brace
-r_return
+r_int
+r_int
+id|vaddr
+op_assign
+(paren
+r_int
+r_int
+)paren
 id|__va
 c_func
 (paren
 id|addr
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|check_region
+c_func
+(paren
+id|vaddr
+comma
+id|len
+)paren
+)paren
+(brace
+id|request_region
+c_func
+(paren
+id|vaddr
+comma
+id|len
+comma
+id|name
+)paren
+suffix:semicolon
+)brace
+r_return
+(paren
+r_void
+op_star
+)paren
+id|vaddr
 suffix:semicolon
 )brace
 id|base_address

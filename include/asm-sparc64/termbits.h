@@ -325,7 +325,6 @@ DECL|macro|CLOCAL
 mdefine_line|#define CLOCAL&t;  0x00000800
 DECL|macro|CBAUDEX
 mdefine_line|#define CBAUDEX   0x00001000
-multiline_comment|/* We&squot;ll never see these speeds with the Zilogs, but for completeness... */
 DECL|macro|B57600
 mdefine_line|#define  B57600   0x00001001
 DECL|macro|B115200
@@ -337,6 +336,17 @@ mdefine_line|#define  B460800  0x00001004
 multiline_comment|/* This is what we can do with the Zilogs. */
 DECL|macro|B76800
 mdefine_line|#define  B76800   0x00001005
+multiline_comment|/* This is what we can do with the SAB82532. */
+DECL|macro|B153600
+mdefine_line|#define  B153600  0x00001006
+DECL|macro|B307200
+mdefine_line|#define  B307200  0x00001007
+DECL|macro|B614400
+mdefine_line|#define  B614400  0x00001008
+DECL|macro|B921600
+mdefine_line|#define  B921600  0x00001009
+DECL|macro|B1843200
+mdefine_line|#define  B1843200 0x0000100a
 DECL|macro|CIBAUD
 mdefine_line|#define CIBAUD&t;  0x100f0000  /* input baud rate (not used) */
 DECL|macro|CMSPAR

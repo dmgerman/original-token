@@ -2,13 +2,8 @@ macro_line|#ifndef _ASM_IRQ_H
 DECL|macro|_ASM_IRQ_H
 mdefine_line|#define _ASM_IRQ_H
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifdef CONFIG_PMAC
 DECL|macro|NR_IRQS
-mdefine_line|#define NR_IRQS&t;32
-macro_line|#else
-DECL|macro|NR_IRQS
-mdefine_line|#define NR_IRQS&t;16
-macro_line|#endif
+mdefine_line|#define NR_IRQS 32
 r_extern
 r_void
 id|disable_irq

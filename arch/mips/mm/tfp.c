@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: tfp.c,v 1.1 1997/06/06 09:35:39 ralf Exp $&n; * tfp.c: MMU and cache routines specific to the r8000 (TFP).&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/* $Id: tfp.c,v 1.2 1997/08/08 18:13:13 miguel Exp $&n; * tfp.c: MMU and cache routines specific to the r8000 (TFP).&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -195,6 +195,31 @@ id|page
 )paren
 (brace
 )brace
+DECL|function|tfp_add_wired_entry
+r_static
+r_void
+id|tfp_add_wired_entry
+c_func
+(paren
+r_int
+r_int
+id|entrylo0
+comma
+r_int
+r_int
+id|entrylo1
+comma
+r_int
+r_int
+id|entryhi
+comma
+r_int
+r_int
+id|pagemask
+)paren
+(brace
+multiline_comment|/* XXX */
+)brace
 DECL|function|ld_mmu_tfp
 r_void
 id|ld_mmu_tfp
@@ -242,6 +267,10 @@ suffix:semicolon
 id|flush_tlb_page
 op_assign
 id|tfp_flush_tlb_page
+suffix:semicolon
+id|add_wired_entry
+op_assign
+id|tfp_add_wired_entry
 suffix:semicolon
 id|load_pgd
 op_assign

@@ -1,12 +1,10 @@
-multiline_comment|/* $Id: system.h,v 1.29 1997/07/24 16:48:32 davem Exp $ */
+multiline_comment|/* $Id: system.h,v 1.35 1997/08/07 03:53:00 davem Exp $ */
 macro_line|#ifndef __SPARC64_SYSTEM_H
 DECL|macro|__SPARC64_SYSTEM_H
 mdefine_line|#define __SPARC64_SYSTEM_H
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/asm_offsets.h&gt;
-DECL|macro|NCPUS
-mdefine_line|#define NCPUS&t;4&t;/* No SMP yet */
 macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/*&n; * Sparc (general) CPU types&n; */
 DECL|enum|sparc_cpu
@@ -163,7 +161,7 @@ mdefine_line|#define nop() &t;&t;__asm__ __volatile__ (&quot;nop&quot;)
 DECL|macro|membar
 mdefine_line|#define membar(type)&t;__asm__ __volatile__ (&quot;membar &quot; type : : : &quot;memory&quot;);
 DECL|macro|flushi
-mdefine_line|#define flushi(addr)&t;__asm__ __volatile__ (&quot;flush %0&quot; : : &quot;r&quot; (addr))
+mdefine_line|#define flushi(addr)&t;__asm__ __volatile__ (&quot;flush %0&quot; : : &quot;r&quot; (addr) : &quot;memory&quot;)
 DECL|macro|flushw_all
 mdefine_line|#define flushw_all()&t;__asm__ __volatile__(&quot;flushw&quot;)
 macro_line|#ifndef __ASSEMBLY__
@@ -234,16 +232,15 @@ suffix:semicolon
 )brace
 DECL|macro|flush_user_windows
 mdefine_line|#define flush_user_windows flushw_user
-multiline_comment|/* See what happens when you design the chip correctly?&n;&t; * NOTE NOTE NOTE this is extremely non-trivial what I&n;&t; * am doing here.  GCC needs only one register to stuff&n;&t; * things into (&squot;next&squot; in particular)  So I &quot;claim&quot; that&n;&t; * I do not clobber it, when in fact I do.  Please,&n;&t; * when modifying this code inspect output of sched.s very&n;&t; * carefully to make sure things still work.  -DaveM&n;&t; */
+multiline_comment|/* See what happens when you design the chip correctly?&n;&t; * NOTE NOTE NOTE this is extremely non-trivial what I&n;&t; * am doing here.  GCC needs only one register to stuff&n;&t; * things into (&squot;next&squot; in particular)  So I &quot;claim&quot; that&n;&t; * I do not clobber it, when in fact I do.  Please,&n;&t; * when modifying this code inspect output of sched.s very&n;&t; * carefully to make sure things still work.  -DaveM&n;&t; *&n;&t; * SMP NOTE: At first glance it looks like there is a tiny&n;&t; *           race window here at the end.  The possible problem&n;&t; *           would be if a tlbcachesync MONDO vector got delivered&n;&t; *           to us right before we set the final %g6 thread reg&n;&t; *           value.  But that is impossible since only the holder&n;&t; *           of scheduler_lock can send a tlbcachesync MONDO and&n;&t; *           by definition we hold it right now.  Normal tlb&n;&t; *           flush xcalls can come in, but those are safe and do&n;&t; *           not reference %g6.&n;&t; */
 DECL|macro|switch_to
-mdefine_line|#define switch_to(prev, next)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;do {&t;__label__ switch_continue;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;register unsigned long task_pc asm(&quot;o7&quot;);&t;&t;&t;&t;&bslash;&n;&t;(prev)-&gt;tss.kregs-&gt;fprs = 0;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;task_pc = ((unsigned long) &amp;&amp;switch_continue) - 0x8;&t;&t;&t;&bslash;&n;&t;(next)-&gt;mm-&gt;cpu_vm_mask |= (1UL &lt;&lt; smp_processor_id());&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;rdpr&t;%%pstate, %%g2&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wrpr&t;%%g2, 0x3, %%pstate&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;flushw&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;/*XXX*/&t;&quot;wr&t;%%g0, 0, %%fprs&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;stx&t;%%i6, [%%sp + 2047 + 0x70]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;stx&t;%%i7, [%%sp + 2047 + 0x78]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;rdpr&t;%%wstate, %%o5&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;stx&t;%%o6, [%%g6 + %3]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;stx&t;%%o5, [%%g6 + %2]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;rdpr&t;%%cwp, %%o5&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;stx&t;%%o7, [%%g6 + %4]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;st&t;%%o5, [%%g6 + %5]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;mov&t;%0, %%g6&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ld&t;[%0 + %5], %%g1&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wrpr&t;%%g1, %%cwp&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldx&t;[%%g6 + %2], %%o5&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldx&t;[%%g6 + %3], %%o6&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldx&t;[%%g6 + %4], %%o7&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;mov&t;%%g6, %0&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wrpr&t;%%o5, 0x0, %%wstate&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldx&t;[%%sp + 2047 + 0x70], %%i6&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldx&t;[%%sp + 2047 + 0x78], %%i7&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wrpr&t;%%g0, 0x96, %%pstate&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;jmpl&t;%%o7 + 0x8, %%g0&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot; mov&t;%0, %%g6&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;: /* No outputs */&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;: &quot;r&quot; (next), &quot;r&quot; (task_pc),&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  &quot;i&quot; ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;tss.wstate)),&t;&bslash;&n;&t;  &quot;i&quot; ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;tss.ksp)),&t;&bslash;&n;&t;  &quot;i&quot; ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;tss.kpc)),&t;&bslash;&n;&t;  &quot;i&quot; ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;tss.cwp))&t;&bslash;&n;&t;: &quot;cc&quot;, &quot;g1&quot;, &quot;g2&quot;, &quot;g3&quot;, &quot;g5&quot;, &quot;g7&quot;,&t;&t;&t;&t;&t;&bslash;&n;&t;  &quot;l1&quot;, &quot;l2&quot;, &quot;l3&quot;, &quot;l4&quot;, &quot;l5&quot;, &quot;l6&quot;, &quot;l7&quot;,&t;&t;&t;&t;&bslash;&n;&t;  &quot;i0&quot;, &quot;i1&quot;, &quot;i2&quot;, &quot;i3&quot;, &quot;i4&quot;, &quot;i5&quot;,&t;&t;&t;&t;&t;&bslash;&n;&t;  &quot;o0&quot;, &quot;o1&quot;, &quot;o2&quot;, &quot;o3&quot;, &quot;o4&quot;, &quot;o5&quot;);&t;&t;&t;&t;&t;&bslash;&n;switch_continue: } while(0)
-multiline_comment|/* Unlike the hybrid v7/v8 kernel, we can assume swap exists under V9. */
-DECL|function|xchg_u32
+mdefine_line|#define switch_to(prev, next)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;do {&t;__label__ switch_continue;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;register unsigned long task_pc asm(&quot;o7&quot;);&t;&t;&t;&t;&bslash;&n;&t;(prev)-&gt;tss.kregs-&gt;fprs = 0;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;task_pc = ((unsigned long) &amp;&amp;switch_continue) - 0x8;&t;&t;&t;&bslash;&n;&t;(next)-&gt;mm-&gt;cpu_vm_mask |= (1UL &lt;&lt; smp_processor_id());&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;rdpr&t;%%pstate, %%g2&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wrpr&t;%%g2, 0x3, %%pstate&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;flushw&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;stx&t;%%i6, [%%sp + 2047 + 0x70]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;stx&t;%%i7, [%%sp + 2047 + 0x78]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;rdpr&t;%%wstate, %%o5&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;stx&t;%%o6, [%%g6 + %3]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;stx&t;%%o5, [%%g6 + %2]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;rdpr&t;%%cwp, %%o5&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;stx&t;%%o7, [%%g6 + %4]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;st&t;%%o5, [%%g6 + %5]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;membar #Sync&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;mov&t;%0, %%g6&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ld&t;[%0 + %5], %%g1&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wrpr&t;%%g1, %%cwp&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldx&t;[%%g6 + %2], %%o5&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldx&t;[%%g6 + %3], %%o6&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldx&t;[%%g6 + %4], %%o7&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;mov&t;%%g6, %0&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wrpr&t;%%o5, 0x0, %%wstate&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldx&t;[%%sp + 2047 + 0x70], %%i6&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;ldx&t;[%%sp + 2047 + 0x78], %%i7&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;wrpr&t;%%g0, 0x96, %%pstate&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;jmpl&t;%%o7 + 0x8, %%g0&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot; mov&t;%0, %%g6&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;: /* No outputs */&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;: &quot;r&quot; (next), &quot;r&quot; (task_pc),&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  &quot;i&quot; ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;tss.wstate)),&t;&bslash;&n;&t;  &quot;i&quot; ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;tss.ksp)),&t;&bslash;&n;&t;  &quot;i&quot; ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;tss.kpc)),&t;&bslash;&n;&t;  &quot;i&quot; ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;tss.cwp))&t;&bslash;&n;&t;: &quot;cc&quot;, &quot;g1&quot;, &quot;g2&quot;, &quot;g3&quot;, &quot;g5&quot;, &quot;g7&quot;,&t;&t;&t;&t;&t;&bslash;&n;&t;  &quot;l1&quot;, &quot;l2&quot;, &quot;l3&quot;, &quot;l4&quot;, &quot;l5&quot;, &quot;l6&quot;, &quot;l7&quot;,&t;&t;&t;&t;&bslash;&n;&t;  &quot;i0&quot;, &quot;i1&quot;, &quot;i2&quot;, &quot;i3&quot;, &quot;i4&quot;, &quot;i5&quot;,&t;&t;&t;&t;&t;&bslash;&n;&t;  &quot;o0&quot;, &quot;o1&quot;, &quot;o2&quot;, &quot;o3&quot;, &quot;o4&quot;, &quot;o5&quot;);&t;&t;&t;&t;&t;&bslash;&n;switch_continue: } while(0)
+DECL|function|xchg32
 r_extern
 id|__inline__
 r_int
 r_int
-id|xchg_u32
+id|xchg32
 c_func
 (paren
 id|__volatile__
@@ -261,9 +258,69 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;swap&t;[%2], %0&quot;
+"&quot;"
+id|mov
+op_mod
+l_int|0
+comma
+op_mod
+op_mod
+id|g5
+l_int|1
 suffix:colon
-l_string|&quot;=&amp;r&quot;
+id|lduw
+(braket
+op_mod
+l_int|2
+)braket
+comma
+op_mod
+op_mod
+id|g7
+id|cas
+(braket
+op_mod
+l_int|2
+)braket
+comma
+op_mod
+op_mod
+id|g7
+comma
+op_mod
+l_int|0
+id|cmp
+op_mod
+op_mod
+id|g7
+comma
+op_mod
+l_int|0
+id|bne
+comma
+id|a
+comma
+id|pn
+op_mod
+op_mod
+id|icc
+comma
+l_int|1
+id|b
+id|mov
+op_mod
+op_mod
+id|g5
+comma
+op_mod
+l_int|0
+id|membar
+macro_line|#StoreLoad | #StoreStore
+l_string|&quot;&t;: &quot;
+op_assign
+op_amp
+id|r
+"&quot;"
 (paren
 id|val
 )paren
@@ -277,19 +334,26 @@ l_string|&quot;r&quot;
 (paren
 id|m
 )paren
+suffix:colon
+l_string|&quot;g5&quot;
+comma
+l_string|&quot;g7&quot;
+comma
+l_string|&quot;cc&quot;
+comma
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 r_return
 id|val
 suffix:semicolon
 )brace
-multiline_comment|/* Bolix, must use casx for 64-bit values. */
-DECL|function|xchg_u64
+DECL|function|xchg64
 r_extern
 id|__inline__
 r_int
 r_int
-id|xchg_u64
+id|xchg64
 c_func
 (paren
 id|__volatile__
@@ -303,10 +367,6 @@ r_int
 id|val
 )paren
 (brace
-r_int
-r_int
-id|temp
-suffix:semicolon
 id|__asm__
 id|__volatile__
 c_func
@@ -318,31 +378,34 @@ l_int|0
 comma
 op_mod
 op_mod
-id|g1
+id|g5
 l_int|1
 suffix:colon
 id|ldx
 (braket
 op_mod
-l_int|3
+l_int|2
 )braket
 comma
 op_mod
-l_int|1
+op_mod
+id|g7
 id|casx
 (braket
 op_mod
-l_int|3
+l_int|2
 )braket
 comma
 op_mod
-l_int|1
+op_mod
+id|g7
 comma
 op_mod
 l_int|0
 id|cmp
 op_mod
-l_int|1
+op_mod
+id|g7
 comma
 op_mod
 l_int|0
@@ -360,21 +423,19 @@ id|b
 id|mov
 op_mod
 op_mod
-id|g1
+id|g5
 comma
 op_mod
 l_int|0
+id|membar
+macro_line|#StoreLoad | #StoreStore
 l_string|&quot;&t;: &quot;
-op_assign
-op_amp
-id|r
-l_string|&quot; (val), &quot;
 op_assign
 op_amp
 id|r
 "&quot;"
 (paren
-id|temp
+id|val
 )paren
 suffix:colon
 l_string|&quot;0&quot;
@@ -387,9 +448,13 @@ l_string|&quot;r&quot;
 id|m
 )paren
 suffix:colon
-l_string|&quot;g1&quot;
+l_string|&quot;g5&quot;
+comma
+l_string|&quot;g7&quot;
 comma
 l_string|&quot;cc&quot;
+comma
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 r_return
@@ -439,7 +504,7 @@ r_case
 l_int|4
 suffix:colon
 r_return
-id|xchg_u32
+id|xchg32
 c_func
 (paren
 id|ptr
@@ -451,7 +516,7 @@ r_case
 l_int|8
 suffix:colon
 r_return
-id|xchg_u64
+id|xchg64
 c_func
 (paren
 id|ptr

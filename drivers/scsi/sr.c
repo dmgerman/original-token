@@ -4907,11 +4907,27 @@ comma
 id|i
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;     * Since the cdrom is read-only, no need to sync the device.&n;&t;     * We should be kind to our buffer cache, however.&n;&t;     */
-id|invalidate_inodes
+r_struct
+id|super_block
+op_star
+id|sb
+op_assign
+id|get_super
 c_func
 (paren
 id|devi
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;     * Since the cdrom is read-only, no need to sync the device.&n;&t;     * We should be kind to our buffer cache, however.&n;&t;     */
+r_if
+c_cond
+(paren
+id|sb
+)paren
+id|invalidate_inodes
+c_func
+(paren
+id|sb
 )paren
 suffix:semicolon
 id|invalidate_buffers

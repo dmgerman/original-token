@@ -2933,6 +2933,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_MAC_FLOPPY
+id|swim3_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_FD
 id|floppy_init
 c_func
@@ -2940,7 +2947,7 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#else
-macro_line|#if !defined (__mc68000__)
+macro_line|#if !defined (__mc68000__) &amp;&amp; !defined(CONFIG_PMAC) &amp;&amp; !defined(__sparc__)
 id|outb_p
 c_func
 (paren

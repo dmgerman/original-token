@@ -16,6 +16,8 @@ macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/reboot.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/blk.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/mmu.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/residual.h&gt;
@@ -58,7 +60,7 @@ id|empty_zero_page
 l_int|1024
 )braket
 suffix:semicolon
-DECL|variable|aux_device_present
+r_extern
 r_int
 r_char
 id|aux_device_present
@@ -80,57 +82,13 @@ id|rd_image_start
 suffix:semicolon
 multiline_comment|/* starting block # of image */
 macro_line|#endif
-multiline_comment|/* copy of the residual data */
-DECL|variable|res
-id|RESIDUAL
-id|res
-suffix:semicolon
-multiline_comment|/* ptr to residual data from hw, must be initialized so not in bss (gets cleared )*/
-DECL|variable|resptr
-r_int
-r_int
-id|resptr
-op_assign
-l_int|0
-suffix:semicolon
-DECL|variable|_machine
-r_int
-id|_machine
-suffix:semicolon
 r_extern
-r_int
-r_int
-id|_TotalMemory
-suffix:semicolon
-DECL|macro|COMMAND_LINE_SIZE
-mdefine_line|#define COMMAND_LINE_SIZE 256
-DECL|variable|command_line
-r_static
-r_char
-id|command_line
-(braket
-id|COMMAND_LINE_SIZE
-)braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
-suffix:semicolon
-DECL|variable|saved_command_line
 r_char
 id|saved_command_line
 (braket
-id|COMMAND_LINE_SIZE
+l_int|256
 )braket
 suffix:semicolon
-macro_line|#ifdef HASHSTATS
-DECL|variable|evicts
-r_int
-r_int
-id|evicts
-suffix:semicolon
-macro_line|#endif
 DECL|variable|screen_info
 r_struct
 id|screen_info
@@ -175,131 +133,50 @@ l_int|16
 multiline_comment|/* orig-video-points */
 )brace
 suffix:semicolon
-DECL|function|machine_halt
-r_void
-id|machine_halt
-c_func
-(paren
-r_void
-)paren
-(brace
-id|machine_restart
-c_func
-(paren
-l_int|NULL
-)paren
-suffix:semicolon
-)brace
-DECL|function|machine_power_off
-r_void
-id|machine_power_off
-c_func
-(paren
-r_void
-)paren
-(brace
-id|machine_restart
-c_func
-(paren
-l_int|NULL
-)paren
-suffix:semicolon
-)brace
-DECL|function|machine_restart
-r_void
-id|machine_restart
+multiline_comment|/*&n; * these are here to get by until the pmac/prep merge is done&n; */
+DECL|function|pmac_display_supported
+r_int
+id|pmac_display_supported
 c_func
 (paren
 r_char
 op_star
-id|cmd
+id|name
 )paren
 (brace
-r_int
-r_char
-id|ctl
-suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
-r_int
-r_int
-id|i
-op_assign
-l_int|10000
-suffix:semicolon
-id|_disable_interrupts
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* set exception prefix high - to the prom */
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-op_or
-id|MSR_IP
-)paren
-suffix:semicolon
-multiline_comment|/* make sure bit 0 (reset) is a 0 */
-id|outb
-c_func
-(paren
-id|inb
-c_func
-(paren
-l_int|0x92
-)paren
-op_amp
-op_complement
-l_int|1L
-comma
-l_int|0x92
-)paren
-suffix:semicolon
-multiline_comment|/* signal a reset to system control port A - soft reset */
-id|outb
-c_func
-(paren
-id|inb
-c_func
-(paren
-l_int|0x92
-)paren
-op_or
-l_int|1
-comma
-l_int|0x92
-)paren
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|i
-op_ne
+r_return
 l_int|0
-)paren
-id|i
-op_increment
-suffix:semicolon
-id|panic
-c_func
-(paren
-l_string|&quot;restart failed&bslash;n&quot;
-)paren
 suffix:semicolon
 )brace
+DECL|function|sd_find_target
 r_int
-DECL|function|get_cpuinfo
-id|get_cpuinfo
+id|sd_find_target
+c_func
+(paren
+r_void
+op_star
+id|a
+comma
+r_int
+id|b
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|pmac_find_display
+r_void
+id|pmac_find_display
+c_func
+(paren
+r_void
+)paren
+(brace
+)brace
+r_int
+DECL|function|prep_get_cpuinfo
+id|prep_get_cpuinfo
 c_func
 (paren
 r_char
@@ -311,6 +188,10 @@ r_extern
 r_char
 op_star
 id|Motherboard_map_name
+suffix:semicolon
+r_extern
+id|RESIDUAL
+id|res
 suffix:semicolon
 r_int
 id|i
@@ -329,28 +210,6 @@ suffix:semicolon
 r_char
 op_star
 id|model
-suffix:semicolon
-id|PTE
-op_star
-id|ptr
-suffix:semicolon
-r_int
-r_int
-id|kptes
-op_assign
-l_int|0
-comma
-id|uptes
-op_assign
-l_int|0
-comma
-id|overflow
-op_assign
-l_int|0
-suffix:semicolon
-r_int
-r_int
-id|ti
 suffix:semicolon
 r_switch
 c_cond
@@ -780,9 +639,6 @@ l_int|0
 )paren
 multiline_comment|/* l2 present */
 (brace
-r_int
-id|size
-suffix:semicolon
 id|len
 op_add_assign
 id|sprintf
@@ -891,6 +747,8 @@ comma
 id|zerototal
 comma
 id|zeropage_hits
+comma
+id|zeropage_calls
 suffix:semicolon
 id|len
 op_add_assign
@@ -902,7 +760,7 @@ op_plus
 id|len
 comma
 l_string|&quot;zero pages&bslash;t: total %u (%uKb) &quot;
-l_string|&quot;current: %u (%uKb) hits: %u&bslash;n&quot;
+l_string|&quot;current: %u (%uKb) hits: %u/%u (%lu%%)&bslash;n&quot;
 comma
 id|zerototal
 comma
@@ -925,127 +783,31 @@ op_rshift
 l_int|10
 comma
 id|zeropage_hits
+comma
+id|zeropage_calls
+comma
+multiline_comment|/* : 1 below is so we don&squot;t div by zero */
+(paren
+id|zeropage_hits
+op_star
+l_int|100
 )paren
-suffix:semicolon
-)brace
-multiline_comment|/* ram/hash table info */
-id|len
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|buffer
-op_plus
-id|len
-comma
-l_string|&quot;hash table&bslash;t: %dkB (%dk buckets)&bslash;n&quot;
-comma
-id|Hash_size
-op_rshift
-l_int|10
-comma
-(paren
-id|Hash_size
 op_div
 (paren
-r_sizeof
 (paren
-id|PTE
+id|zeropage_calls
 )paren
-op_star
-l_int|8
-)paren
-)paren
-op_rshift
-l_int|10
-)paren
-suffix:semicolon
-multiline_comment|/* if booted print info about hash table use (overflows, etc) */
-macro_line|#ifdef HASHSTATS
-r_for
-c_loop
-(paren
-id|ptr
-op_assign
-id|Hash
-suffix:semicolon
-id|ptr
-OL
-(paren
-id|PTE
-op_star
-)paren
-(paren
-id|Hash
-op_plus
-id|Hash_size
-)paren
-suffix:semicolon
-id|ptr
-op_increment
-)paren
-(brace
-r_if
+ques
 c_cond
-(paren
-id|ptr-&gt;v
-)paren
-(brace
-multiline_comment|/* user not allowed read or write */
-r_if
-c_cond
-(paren
-id|ptr-&gt;pp
-op_eq
-id|PP_RWXX
-)paren
-id|kptes
-op_increment
-suffix:semicolon
-r_else
-id|uptes
-op_increment
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ptr-&gt;h
-op_eq
+id|zeropage_calls
+suffix:colon
 l_int|1
 )paren
-id|overflow
-op_increment
+)paren
 suffix:semicolon
 )brace
-)brace
-multiline_comment|/*len+=sprintf(buffer+len,&quot;Hash %x Hash+Hash_size %x MemEnd %x&bslash;n&quot;,&n;&t;  Hash,Hash+Hash_size,KERNELBASE+_TotalMemory);*/
-multiline_comment|/*len += sprintf(buffer+len,&quot;PTEs: (user/kernel/max) %d (%d%%)/%d &quot;&n;&t;  &quot;(%d%%)/%d (%d%% full)&bslash;n&quot;,&n;&t;  uptes,(uptes*100)/(Hash_size/sizeof(PTE)),&n;&t;  kptes,(kptes*100)/(Hash_size/sizeof(PTE)),&n;&t;  Hash_size/sizeof(PTE),&n;&t;  ((uptes+kptes)*100)/(Hash_size/sizeof(PTE)));&n;&t;  len += sprintf(buffer+len,&quot;Current Ovflw PTE&squot;s: %d Total Evicts: %u&bslash;n&quot;,&n;&t;  overflow,evicts);*/
-macro_line|#endif /* HASHSTATS */
 r_return
 id|len
-suffix:semicolon
-)brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
-r_int
-r_int
-id|bios32_init
-c_func
-(paren
-r_int
-r_int
-id|memory_start
-comma
-r_int
-r_int
-id|memory_end
-)paren
-)paren
-(brace
-r_return
-id|memory_start
 suffix:semicolon
 )brace
 DECL|function|__initfunc
@@ -1053,7 +815,7 @@ id|__initfunc
 c_func
 (paren
 r_void
-id|setup_arch
+id|prep_setup_arch
 c_func
 (paren
 r_char
@@ -1092,10 +854,6 @@ comma
 id|_end
 (braket
 )braket
-suffix:semicolon
-r_int
-r_char
-id|reg
 suffix:semicolon
 r_extern
 r_int
@@ -1140,7 +898,7 @@ r_int
 op_star
 )paren
 (paren
-id|_TotalMemory
+id|res.TotalMemory
 op_plus
 id|KERNELBASE
 )paren
@@ -1151,7 +909,10 @@ op_assign
 l_int|50000000
 suffix:semicolon
 multiline_comment|/* reboot on panic */
-multiline_comment|/*panic_timeout = 180;*/
+id|panic_timeout
+op_assign
+l_int|180
+suffix:semicolon
 id|init_task.mm-&gt;start_code
 op_assign
 id|PAGE_OFFSET
@@ -1219,63 +980,6 @@ multiline_comment|/* sda1 */
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/*ROOT_DEV = to_kdev_t(0x0811);*/
-multiline_comment|/* sdb1 */
-macro_line|#if 0
-id|strcpy
-c_func
-(paren
-id|cmd_line
-op_plus
-id|strlen
-c_func
-(paren
-id|cmd_line
-)paren
-comma
-l_string|&quot;console=1,9600,n8&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#if 0  
-r_if
-c_cond
-(paren
-id|_machine
-op_eq
-id|_MACH_Motorola
-)paren
-(brace
-multiline_comment|/* get root via nfs from gordito -- only used for testing */
-id|ROOT_DEV
-op_assign
-id|MKDEV
-c_func
-(paren
-id|UNNAMED_MAJOR
-comma
-l_int|255
-)paren
-suffix:semicolon
-multiline_comment|/* nfs */
-multiline_comment|/*nfsaddrs=myip:serverip:gateip:netmaskip:clientname*/
-id|strcpy
-c_func
-(paren
-id|cmd_line
-op_plus
-id|strlen
-c_func
-(paren
-id|cmd_line
-)paren
-comma
-l_string|&quot;nfsaddrs=129.138.6.13:129.138.6.101:129.138.6.1:255.255.255.0:&quot;
-l_string|&quot;pandora nfsroot=/usr/src/root/&quot;
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_RAM
 macro_line|#if 0
 id|ROOT_DEV
@@ -1300,7 +1004,49 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* initrd_start and size are setup by boot/head.S and kernel/head.S */
+r_if
+c_cond
+(paren
+id|initrd_start
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|initrd_end
+OG
+op_star
+id|memory_end_p
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;initrd extends beyond end of memory &quot;
+l_string|&quot;(0x%08lx &gt; 0x%08lx)&bslash;ndisabling initrd&bslash;n&quot;
+comma
+id|initrd_end
+comma
+op_star
+id|memory_end_p
+)paren
+suffix:semicolon
+id|initrd_start
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+)brace
 macro_line|#endif
+id|printk
+c_func
+(paren
+l_string|&quot;Boot arguments: %s&bslash;n&quot;
+comma
+id|cmd_line
+)paren
+suffix:semicolon
 id|request_region
 c_func
 (paren

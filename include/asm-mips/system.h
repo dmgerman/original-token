@@ -527,7 +527,7 @@ r_int
 r_int
 id|IRQ_vectors
 (braket
-l_int|16
+l_int|32
 )braket
 suffix:semicolon
 r_extern

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: traps.c,v 1.29 1997/07/05 09:52:38 davem Exp $&n; * arch/sparc64/kernel/traps.c&n; *&n; * Copyright (C) 1995,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: traps.c,v 1.31 1997/08/11 14:35:33 davem Exp $&n; * arch/sparc64/kernel/traps.c&n; *&n; * Copyright (C) 1995,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 multiline_comment|/*&n; * I like traps on v9, :))))&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;  /* for jiffies */
@@ -15,6 +15,7 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/unistd.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/fpumacro.h&gt;
+macro_line|#include &lt;asm/lsu.h&gt;
 multiline_comment|/* #define SYSCALL_TRACING */
 multiline_comment|/* #define VERBOSE_SYSCALL_TRACING */
 macro_line|#ifdef SYSCALL_TRACING
@@ -1578,6 +1579,20 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_PCI
+multiline_comment|/* This is really pathetic... */
+multiline_comment|/* #define DEBUG_PCI_POKES */
+r_extern
+r_volatile
+r_int
+id|pci_poke_in_progress
+suffix:semicolon
+r_extern
+r_volatile
+r_int
+id|pci_poke_faulted
+suffix:semicolon
+macro_line|#endif
 DECL|function|do_dae
 r_void
 id|do_dae
@@ -1589,6 +1604,147 @@ op_star
 id|regs
 )paren
 (brace
+macro_line|#ifdef CONFIG_PCI
+macro_line|#ifdef DEBUG_PCI_POKES
+id|prom_printf
+c_func
+(paren
+l_string|&quot; (POKE &quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+r_if
+c_cond
+(paren
+id|pci_poke_in_progress
+)paren
+(brace
+r_int
+r_int
+id|va
+suffix:semicolon
+macro_line|#ifdef DEBUG_PCI_POKES
+id|prom_printf
+c_func
+(paren
+l_string|&quot;tpc[%016lx] tnpc[%016lx] &quot;
+comma
+id|regs-&gt;tpc
+comma
+id|regs-&gt;tnpc
+)paren
+suffix:semicolon
+macro_line|#endif
+id|pci_poke_faulted
+op_assign
+l_int|1
+suffix:semicolon
+id|regs-&gt;tnpc
+op_assign
+id|regs-&gt;tpc
+op_plus
+l_int|4
+suffix:semicolon
+macro_line|#ifdef DEBUG_PCI_POKES
+id|prom_printf
+c_func
+(paren
+l_string|&quot;PCI) &quot;
+)paren
+suffix:semicolon
+multiline_comment|/* prom_halt(); */
+macro_line|#endif
+multiline_comment|/* Re-enable I/D caches, Ultra turned them off. */
+r_for
+c_loop
+(paren
+id|va
+op_assign
+l_int|0
+suffix:semicolon
+id|va
+OL
+(paren
+id|PAGE_SIZE
+op_lshift
+l_int|1
+)paren
+suffix:semicolon
+id|va
+op_add_assign
+l_int|32
+)paren
+(brace
+id|spitfire_put_icache_tag
+c_func
+(paren
+id|va
+comma
+l_int|0x0
+)paren
+suffix:semicolon
+id|spitfire_put_dcache_tag
+c_func
+(paren
+id|va
+comma
+l_int|0x0
+)paren
+suffix:semicolon
+)brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;flush %%g6&bslash;n&bslash;t&quot;
+l_string|&quot;membar #Sync&bslash;n&bslash;t&quot;
+l_string|&quot;stxa %0, [%%g0] %1&bslash;n&bslash;t&quot;
+l_string|&quot;membar #Sync&quot;
+suffix:colon
+multiline_comment|/* no outputs */
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|LSU_CONTROL_IC
+op_or
+id|LSU_CONTROL_DC
+op_or
+id|LSU_CONTROL_IM
+op_or
+id|LSU_CONTROL_DM
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_LSU_CONTROL
+)paren
+suffix:colon
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+macro_line|#ifdef DEBUG_PCI_POKES
+id|prom_printf
+c_func
+(paren
+l_string|&quot;USER) &quot;
+)paren
+suffix:semicolon
+id|prom_printf
+c_func
+(paren
+l_string|&quot;tpc[%016lx] tnpc[%016lx]&bslash;n&quot;
+)paren
+suffix:semicolon
+id|prom_halt
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#endif
 id|send_sig
 c_func
 (paren
@@ -1673,11 +1829,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|current-&gt;tss.sig_address
 op_assign
 id|regs-&gt;tpc
@@ -1694,11 +1845,6 @@ comma
 id|current
 comma
 l_int|1
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace
@@ -2037,6 +2183,12 @@ op_star
 id|regs-&gt;tpc
 )paren
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Or else! */
 r_if
 c_cond
 (paren
@@ -2082,11 +2234,6 @@ id|tstate
 op_assign
 id|regs-&gt;tstate
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2120,11 +2267,6 @@ comma
 id|current
 comma
 l_int|1
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace
@@ -2261,11 +2403,6 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 DECL|function|do_priv_instruction
 r_void
@@ -2290,11 +2427,6 @@ r_int
 id|tstate
 )paren
 (brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2330,11 +2462,6 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/* XXX User may want to be allowed to do this. XXX */
 DECL|function|do_memaccess_unaligned
@@ -2360,11 +2487,6 @@ r_int
 id|tstate
 )paren
 (brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2416,11 +2538,6 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 DECL|function|handle_hw_divzero
 r_void
@@ -2445,11 +2562,6 @@ r_int
 id|psr
 )paren
 (brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|send_sig
 c_func
 (paren
@@ -2458,11 +2570,6 @@ comma
 id|current
 comma
 l_int|1
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace

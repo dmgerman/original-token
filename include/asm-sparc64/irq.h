@@ -1,9 +1,72 @@
-multiline_comment|/* $Id: irq.h,v 1.4 1997/04/04 00:50:20 davem Exp $&n; * irq.h: IRQ registers on the 64-bit Sparc.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: irq.h,v 1.6 1997/08/07 08:06:40 davem Exp $&n; * irq.h: IRQ registers on the 64-bit Sparc.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC64_IRQ_H
 DECL|macro|_SPARC64_IRQ_H
 mdefine_line|#define _SPARC64_IRQ_H
 macro_line|#include &lt;linux/linkage.h&gt;
-macro_line|#include &lt;asm/system.h&gt;     /* For NCPUS */
+multiline_comment|/* Sparc64 extensions to the interrupt registry flags.  Mostly this is&n; * for passing along what bus type the device is on and also the true&n; * format of the dev_id cookie, see below.&n; */
+DECL|macro|SA_BUSMASK
+mdefine_line|#define SA_BUSMASK&t;0x0f000
+DECL|macro|SA_SBUS
+mdefine_line|#define SA_SBUS&t;&t;0x01000
+DECL|macro|SA_PCI
+mdefine_line|#define SA_PCI&t;&t;0x02000
+DECL|macro|SA_FHC
+mdefine_line|#define SA_FHC&t;&t;0x03000
+DECL|macro|SA_EBUS
+mdefine_line|#define SA_EBUS&t;&t;0x04000
+DECL|macro|SA_BUS
+mdefine_line|#define SA_BUS(mask)&t;((mask) &amp; SA_BUSMASK)
+DECL|struct|devid_cookie
+r_struct
+id|devid_cookie
+(brace
+multiline_comment|/* Caller specifies these. */
+DECL|member|real_dev_id
+r_void
+op_star
+id|real_dev_id
+suffix:semicolon
+multiline_comment|/* What dev_id would usually contain. */
+DECL|member|imap
+r_int
+r_int
+op_star
+id|imap
+suffix:semicolon
+multiline_comment|/* Anonymous IMAP register */
+DECL|member|iclr
+r_int
+r_int
+op_star
+id|iclr
+suffix:semicolon
+multiline_comment|/* Anonymous ICLR register */
+DECL|member|pil
+r_int
+id|pil
+suffix:semicolon
+multiline_comment|/* Anonymous PIL */
+DECL|member|bus_cookie
+r_void
+op_star
+id|bus_cookie
+suffix:semicolon
+multiline_comment|/* SYSIO regs, PSYCHO regs, etc. */
+multiline_comment|/* Return values. */
+DECL|member|ret_ino
+r_int
+r_int
+id|ret_ino
+suffix:semicolon
+DECL|member|ret_pil
+r_int
+r_int
+id|ret_pil
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|macro|SA_DCOOKIE
+mdefine_line|#define SA_DCOOKIE&t;0x10000
 DECL|macro|NR_IRQS
 mdefine_line|#define NR_IRQS    15
 r_extern

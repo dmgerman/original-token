@@ -57,19 +57,19 @@ id|video_res_x
 suffix:semicolon
 multiline_comment|/* &n; * Various defines for the G364&n; */
 DECL|macro|G364_MEM_BASE
-mdefine_line|#define G364_MEM_BASE   0xe0800000
+mdefine_line|#define G364_MEM_BASE   0xe4400000
 DECL|macro|G364_PORT_BASE
-mdefine_line|#define G364_PORT_BASE  0xe0200000
+mdefine_line|#define G364_PORT_BASE  0xe4000000
 DECL|macro|ID_REG
-mdefine_line|#define ID_REG &t;&t;0xe0200000  &t;/* Read only */
+mdefine_line|#define ID_REG &t;&t;0xe4000000  &t;/* Read only */
 DECL|macro|BOOT_REG
-mdefine_line|#define BOOT_REG &t;0xe0280000
+mdefine_line|#define BOOT_REG &t;0xe4080000
 DECL|macro|TIMING_REG
-mdefine_line|#define TIMING_REG &t;0xe0280108 &t;/* to 0x080170 - DON&squot;T TOUCH! */
+mdefine_line|#define TIMING_REG &t;0xe4080108 &t;/* to 0x080170 - DON&squot;T TOUCH! */
 DECL|macro|MASK_REG
-mdefine_line|#define MASK_REG &t;0xe0280200
+mdefine_line|#define MASK_REG &t;0xe4080200
 DECL|macro|CTLA_REG
-mdefine_line|#define CTLA_REG &t;0xe0280300
+mdefine_line|#define CTLA_REG &t;0xe4080300
 DECL|macro|CURS_TOGGLE
 mdefine_line|#define CURS_TOGGLE &t;0x800000
 DECL|macro|BIT_PER_PIX
@@ -111,21 +111,21 @@ mdefine_line|#define SCRN_FORM&t;0x000002
 DECL|macro|ENABLE_VTG
 mdefine_line|#define ENABLE_VTG&t;0x000001&t;
 DECL|macro|TOP_REG
-mdefine_line|#define TOP_REG &t;0xe0280400
+mdefine_line|#define TOP_REG &t;0xe4080400
 DECL|macro|CURS_PAL_REG
-mdefine_line|#define CURS_PAL_REG &t;0xe0280508 &t;/* to 0x080518 */
+mdefine_line|#define CURS_PAL_REG &t;0xe4080508 &t;/* to 0x080518 */
 DECL|macro|CHKSUM_REG
-mdefine_line|#define CHKSUM_REG &t;0xe0280600 &t;/* to 0x080610 - unused */
+mdefine_line|#define CHKSUM_REG &t;0xe4080600 &t;/* to 0x080610 - unused */
 DECL|macro|CURS_POS_REG
-mdefine_line|#define CURS_POS_REG &t;0xe0280638
+mdefine_line|#define CURS_POS_REG &t;0xe4080638
 DECL|macro|CLR_PAL_REG
-mdefine_line|#define CLR_PAL_REG &t;0xe0280800&t;/* to 0x080ff8 */
+mdefine_line|#define CLR_PAL_REG &t;0xe4080800&t;/* to 0x080ff8 */
 DECL|macro|CURS_PAT_REG
-mdefine_line|#define CURS_PAT_REG &t;0xe0281000&t;/* to 0x081ff8 */
+mdefine_line|#define CURS_PAT_REG &t;0xe4081000&t;/* to 0x081ff8 */
 DECL|macro|MON_ID_REG
-mdefine_line|#define MON_ID_REG &t;0xe0300000 &t;/* unused */
+mdefine_line|#define MON_ID_REG &t;0xe4100000 &t;/* unused */
 DECL|macro|RESET_REG
-mdefine_line|#define RESET_REG &t;0xe0380000  &t;/* Write only */
+mdefine_line|#define RESET_REG &t;0xe4180000  &t;/* Write only */
 multiline_comment|/*&n; * built-in font management constants&n; *&n; * NOTE: the built-in font is 8x16, and the video resolution&n; * is either 1280x1024 @ 60Hz or 1024x768 @ 60 or 78Hz.&n; */
 DECL|macro|FONTSIZE_X
 mdefine_line|#define FONTSIZE_X &t;8 &t;/*  8 pixels wide */

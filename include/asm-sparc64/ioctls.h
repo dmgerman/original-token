@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ioctls.h,v 1.4 1997/06/23 07:26:03 davem Exp $ */
+multiline_comment|/* $Id: ioctls.h,v 1.5 1997/08/12 04:13:13 ecd Exp $ */
 macro_line|#ifndef _ASM_SPARC64_IOCTLS_H
 DECL|macro|_ASM_SPARC64_IOCTLS_H
 mdefine_line|#define _ASM_SPARC64_IOCTLS_H
@@ -179,6 +179,10 @@ DECL|macro|TIOCSERGETMULTI
 mdefine_line|#define TIOCSERGETMULTI 0x545A /* Get multiport config  */
 DECL|macro|TIOCSERSETMULTI
 mdefine_line|#define TIOCSERSETMULTI 0x545B /* Set multiport config */
+DECL|macro|TIOCMIWAIT
+mdefine_line|#define TIOCMIWAIT&t;0x545C /* Wait for change on serial input line(s) */
+DECL|macro|TIOCGICOUNT
+mdefine_line|#define TIOCGICOUNT&t;0x545D /* Read serial port inline interrupt counts */
 multiline_comment|/* Kernel definitions */
 macro_line|#ifdef __KERNEL__
 DECL|macro|TIOCGETC

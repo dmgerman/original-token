@@ -6,7 +6,7 @@ macro_line|#include &lt;asm/mipsconfig.h&gt;
 macro_line|#ifndef __LANGUAGE_ASSEMBLY__
 macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;asm/cachectl.h&gt;
-multiline_comment|/* Cache flushing:&n; *&n; *  - flush_cache_all() flushes entire cache&n; *  - flush_cache_mm(mm) flushes the specified mm context&squot;s cache lines&n; *  - flush_cache_page(mm, vmaddr) flushes a single page&n; *  - flush_cache_range(mm, start, end) flushes a range of pages&n; *  - flush_page_to_ram(page) write back kernel page to ram&n; */
+multiline_comment|/* Cache flushing:&n; *&n; *  - flush_cache_all() flushes entire cache&n; *  - flush_cache_mm(mm) flushes the specified mm context&squot;s cache lines&n; *  - flush_cache_page(mm, vmaddr) flushes a single page&n; *  - flush_cache_range(mm, start, end) flushes a range of pages&n; *  - flush_page_to_ram(page) write back kernel page to ram&n; *&n; */
 r_extern
 r_void
 (paren
@@ -92,6 +92,8 @@ r_int
 id|page
 )paren
 suffix:semicolon
+DECL|macro|flush_icache_range
+mdefine_line|#define flush_icache_range(start, end)&t;&t;do { } while (0)
 multiline_comment|/* TLB flushing:&n; *&n; *  - flush_tlb_all() flushes all processes TLB entries&n; *  - flush_tlb_mm(mm) flushes the specified mm context TLB entries&n; *  - flush_tlb_page(mm, vmaddr) flushes a single page&n; *  - flush_tlb_range(mm, start, end) flushes a range of pages&n; */
 r_extern
 r_void
@@ -152,6 +154,31 @@ comma
 r_int
 r_int
 id|page
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * - add_wired_entry() add a fixed TLB entry, and move wired register&n; */
+r_extern
+r_void
+(paren
+op_star
+id|add_wired_entry
+)paren
+(paren
+r_int
+r_int
+id|entrylo0
+comma
+r_int
+r_int
+id|entrylo1
+comma
+r_int
+r_int
+id|entryhi
+comma
+r_int
+r_int
+id|pagemask
 )paren
 suffix:semicolon
 multiline_comment|/* Basically we have the same two-level (which is the logical three level&n; * Linux page table layout folded) page tables as the i386.  Some day&n; * when we have proper page coloring support we can have a 1% quicker&n; * tlb refill handling mechanism, but for now it is a bit slower but&n; * works even with the cache aliasing problem the R4k and above have.&n; */
@@ -223,21 +250,25 @@ mdefine_line|#define _CACHE_CACHABLE_ACCELERATED (7&lt;&lt;9)  /* R10000 only   
 DECL|macro|_CACHE_MASK
 mdefine_line|#define _CACHE_MASK                 (7&lt;&lt;9)
 DECL|macro|__READABLE
-mdefine_line|#define __READABLE&t;(_PAGE_READ|_PAGE_SILENT_READ|_PAGE_ACCESSED)
+mdefine_line|#define __READABLE&t;(_PAGE_READ | _PAGE_SILENT_READ | _PAGE_ACCESSED)
 DECL|macro|__WRITEABLE
-mdefine_line|#define __WRITEABLE&t;(_PAGE_WRITE|_PAGE_SILENT_WRITE|_PAGE_MODIFIED)
+mdefine_line|#define __WRITEABLE&t;(_PAGE_WRITE | _PAGE_SILENT_WRITE | _PAGE_MODIFIED)
 DECL|macro|_PAGE_CHG_MASK
 mdefine_line|#define _PAGE_CHG_MASK  (PAGE_MASK | __READABLE | __WRITEABLE | _CACHE_MASK)
 DECL|macro|PAGE_NONE
 mdefine_line|#define PAGE_NONE&t;__pgprot(_PAGE_PRESENT | _PAGE_ACCESSED | &bslash;&n;                        _CACHE_CACHABLE_NONCOHERENT)
 DECL|macro|PAGE_SHARED
-mdefine_line|#define PAGE_SHARED     __pgprot(_PAGE_PRESENT | _PAGE_READ | _PAGE_WRITE | &bslash;&n;&t;&t;&t;_PAGE_ACCESSED | _CACHE_CACHABLE_NONCOHERENT)
+mdefine_line|#define PAGE_SHARED     __pgprot(_PAGE_PRESENT | _PAGE_READ | _PAGE_WRITE | &bslash;&n;&t;&t;&t;_CACHE_CACHABLE_NONCOHERENT)
 DECL|macro|PAGE_COPY
 mdefine_line|#define PAGE_COPY       __pgprot(_PAGE_PRESENT | _PAGE_READ | &bslash;&n;&t;&t;&t;_CACHE_CACHABLE_NONCOHERENT)
 DECL|macro|PAGE_READONLY
 mdefine_line|#define PAGE_READONLY   __pgprot(_PAGE_PRESENT | _PAGE_READ | &bslash;&n;&t;&t;&t;_CACHE_CACHABLE_NONCOHERENT)
 DECL|macro|PAGE_KERNEL
 mdefine_line|#define PAGE_KERNEL&t;__pgprot(_PAGE_PRESENT | __READABLE | __WRITEABLE | &bslash;&n;&t;&t;&t;_CACHE_CACHABLE_NONCOHERENT)
+DECL|macro|PAGE_USERIO
+mdefine_line|#define PAGE_USERIO     __pgprot(_PAGE_PRESENT | _PAGE_READ | _PAGE_WRITE | &bslash;&n;&t;&t;&t;_CACHE_UNCACHED)
+DECL|macro|PAGE_KERNEL_UNCACHED
+mdefine_line|#define PAGE_KERNEL_UNCACHED __pgprot(_PAGE_PRESENT | __READABLE | __WRITEABLE | &bslash;&n;&t;&t;&t;_CACHE_UNCACHED)
 multiline_comment|/*&n; * MIPS can&squot;t do page protection for execute, and considers that the same like&n; * read. Also, write permissions imply read permissions. This is the closest&n; * we can get by reasonable means..&n; */
 DECL|macro|__P000
 mdefine_line|#define __P000&t;PAGE_NONE
@@ -543,12 +574,10 @@ id|pmd
 )paren
 op_eq
 (paren
-(paren
 r_int
 r_int
 )paren
 id|invalid_pte_table
-)paren
 suffix:semicolon
 )brace
 DECL|function|pmd_bad
@@ -887,8 +916,6 @@ op_complement
 id|_PAGE_ACCESSED
 op_or
 id|_PAGE_SILENT_READ
-op_or
-id|_PAGE_SILENT_WRITE
 )paren
 suffix:semicolon
 r_return
@@ -1051,7 +1078,6 @@ id|pte
 op_amp
 id|_PAGE_READ
 )paren
-(brace
 id|pte_val
 c_func
 (paren
@@ -1060,38 +1086,6 @@ id|pte
 op_or_assign
 id|_PAGE_SILENT_READ
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|pte_val
-c_func
-(paren
-id|pte
-)paren
-op_amp
-(paren
-id|_PAGE_WRITE
-op_or
-id|_PAGE_MODIFIED
-)paren
-)paren
-op_eq
-(paren
-id|_PAGE_WRITE
-op_or
-id|_PAGE_MODIFIED
-)paren
-)paren
-id|pte_val
-c_func
-(paren
-id|pte
-)paren
-op_or_assign
-id|_PAGE_SILENT_WRITE
-suffix:semicolon
-)brace
 r_return
 id|pte
 suffix:semicolon
@@ -2035,7 +2029,7 @@ c_func
 l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
 l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
 l_string|&quot;mfc0 %0, $5&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips2&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips0&bslash;n&bslash;t&quot;
 l_string|&quot;.set reorder&quot;
 suffix:colon
 l_string|&quot;=r&quot;
@@ -2067,7 +2061,7 @@ c_func
 l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
 l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
 l_string|&quot;mtc0 %0, $5&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips2&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips0&bslash;n&bslash;t&quot;
 l_string|&quot;.set reorder&quot;
 suffix:colon
 suffix:colon
@@ -2101,7 +2095,7 @@ c_func
 l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
 l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
 l_string|&quot;mfc0 %0, $2&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips2&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips0&bslash;n&bslash;t&quot;
 l_string|&quot;.set reorder&quot;
 suffix:colon
 l_string|&quot;=r&quot;
@@ -2133,7 +2127,7 @@ c_func
 l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
 l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
 l_string|&quot;mtc0 %0, $2&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips2&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips0&bslash;n&bslash;t&quot;
 l_string|&quot;.set reorder&quot;
 suffix:colon
 suffix:colon
@@ -2166,7 +2160,7 @@ c_func
 l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
 l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
 l_string|&quot;mfc0 %0, $3&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips2&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips0&bslash;n&bslash;t&quot;
 l_string|&quot;.set reorder&quot;
 suffix:colon
 l_string|&quot;=r&quot;
@@ -2198,7 +2192,7 @@ c_func
 l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
 l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
 l_string|&quot;mtc0 %0, $3&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips2&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips0&bslash;n&bslash;t&quot;
 l_string|&quot;.set reorder&quot;
 suffix:colon
 suffix:colon
@@ -2232,7 +2226,7 @@ c_func
 l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
 l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
 l_string|&quot;mfc0 %0, $10&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips2&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips0&bslash;n&bslash;t&quot;
 l_string|&quot;.set reorder&quot;
 suffix:colon
 l_string|&quot;=r&quot;
@@ -2264,7 +2258,7 @@ c_func
 l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
 l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
 l_string|&quot;mtc0 %0, $10&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips2&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips0&bslash;n&bslash;t&quot;
 l_string|&quot;.set reorder&quot;
 suffix:colon
 suffix:colon
@@ -2298,7 +2292,7 @@ c_func
 l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
 l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
 l_string|&quot;mfc0 %0, $0&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips2&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips0&bslash;n&bslash;t&quot;
 l_string|&quot;.set reorder&quot;
 suffix:colon
 l_string|&quot;=r&quot;
@@ -2330,7 +2324,7 @@ c_func
 l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
 l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
 l_string|&quot;mtc0 %0, $0&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips2&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips0&bslash;n&bslash;t&quot;
 l_string|&quot;.set reorder&bslash;n&bslash;t&quot;
 suffix:colon
 suffix:colon
@@ -2364,7 +2358,7 @@ c_func
 l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
 l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
 l_string|&quot;mfc0 %0, $6&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips2&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips0&bslash;n&bslash;t&quot;
 l_string|&quot;.set reorder&bslash;n&bslash;t&quot;
 suffix:colon
 l_string|&quot;=r&quot;
@@ -2396,7 +2390,7 @@ c_func
 l_string|&quot;&bslash;n&bslash;t.set noreorder&bslash;n&bslash;t&quot;
 l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
 l_string|&quot;mtc0 %0, $6&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips2&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips0&bslash;n&bslash;t&quot;
 l_string|&quot;.set reorder&quot;
 suffix:colon
 suffix:colon
@@ -2430,7 +2424,7 @@ c_func
 l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
 l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
 l_string|&quot;mfc0 %0, $28&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips2&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips0&bslash;n&bslash;t&quot;
 l_string|&quot;.set reorder&quot;
 suffix:colon
 l_string|&quot;=r&quot;
@@ -2462,7 +2456,7 @@ c_func
 l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
 l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
 l_string|&quot;mtc0 %0, $28&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips2&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips0&bslash;n&bslash;t&quot;
 l_string|&quot;.set reorder&quot;
 suffix:colon
 suffix:colon
@@ -2495,7 +2489,7 @@ c_func
 l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
 l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
 l_string|&quot;mfc0 %0, $29&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips2&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips0&bslash;n&bslash;t&quot;
 l_string|&quot;.set reorder&quot;
 suffix:colon
 l_string|&quot;=r&quot;
@@ -2527,7 +2521,7 @@ c_func
 l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
 l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
 l_string|&quot;mtc0 %0, $29&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips2&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips0&bslash;n&bslash;t&quot;
 l_string|&quot;.set reorder&quot;
 suffix:colon
 suffix:colon
@@ -2561,7 +2555,7 @@ c_func
 l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
 l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
 l_string|&quot;mfc0 %0, $4&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips2&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips0&bslash;n&bslash;t&quot;
 l_string|&quot;.set reorder&quot;
 suffix:colon
 l_string|&quot;=r&quot;
@@ -2593,7 +2587,7 @@ c_func
 l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
 l_string|&quot;.set mips3&bslash;n&bslash;t&quot;
 l_string|&quot;mtc0 %0, $4&bslash;n&bslash;t&quot;
-l_string|&quot;.set mips2&bslash;n&bslash;t&quot;
+l_string|&quot;.set mips0&bslash;n&bslash;t&quot;
 l_string|&quot;.set reorder&quot;
 suffix:colon
 suffix:colon
@@ -2605,9 +2599,5 @@ id|val
 suffix:semicolon
 )brace
 macro_line|#endif /* !defined (__LANGUAGE_ASSEMBLY__) */
-DECL|macro|module_map
-mdefine_line|#define module_map      vmalloc
-DECL|macro|module_unmap
-mdefine_line|#define module_unmap    vfree
 macro_line|#endif /* __ASM_MIPS_PGTABLE_H */
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: tree.c,v 1.5 1997/03/24 17:44:01 jj Exp $&n; * tree.c: Basic device tree traversal/scanning for the Linux&n; *         prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: tree.c,v 1.6 1997/08/12 16:32:48 davem Exp $&n; * tree.c: Basic device tree traversal/scanning for the Linux&n; *         prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -226,9 +226,6 @@ l_int|0
 suffix:semicolon
 )brace
 r_return
-(paren
-r_int
-)paren
 id|sibnode
 suffix:semicolon
 )brace

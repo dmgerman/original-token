@@ -879,7 +879,7 @@ op_logical_neg
 id|S_ISSOCK
 c_func
 (paren
-id|filp-&gt;f_inode-&gt;i_mode
+id|filp-&gt;f_dentry-&gt;d_inode-&gt;i_mode
 )paren
 )paren
 (brace
@@ -1194,8 +1194,11 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|sb-&gt;s_mounted
+id|sb-&gt;s_root
 op_assign
+id|d_alloc_root
+c_func
+(paren
 id|iget
 c_func
 (paren
@@ -1209,6 +1212,9 @@ op_amp
 id|server-&gt;root
 )paren
 )paren
+)paren
+comma
+l_int|NULL
 )paren
 )paren
 )paren

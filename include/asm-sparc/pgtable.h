@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtable.h,v 1.62 1997/06/27 14:55:00 jj Exp $ */
+multiline_comment|/* $Id: pgtable.h,v 1.63 1997/08/13 04:44:15 paulus Exp $ */
 macro_line|#ifndef _SPARC_PGTABLE_H
 DECL|macro|_SPARC_PGTABLE_H
 mdefine_line|#define _SPARC_PGTABLE_H
@@ -1349,6 +1349,8 @@ r_int
 id|address
 )paren
 suffix:semicolon
+DECL|macro|flush_icache_range
+mdefine_line|#define flush_icache_range(start, end)&t;&t;do { } while (0)
 r_extern
 r_void
 (paren

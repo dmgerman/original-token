@@ -1,9 +1,7 @@
 macro_line|#ifndef _PPC_PGTABLE_H
 DECL|macro|_PPC_PGTABLE_H
 mdefine_line|#define _PPC_PGTABLE_H
-macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &lt;asm/page.h&gt;
-macro_line|#include &lt;asm/mmu.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 r_extern
 r_void
 id|flush_tlb_all
@@ -57,23 +55,27 @@ r_int
 id|end
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * No cache flushing is required when address mappings are&n; * changed, because the caches on PowerPCs are physically&n; * addressed.&n; */
+DECL|macro|flush_cache_all
+mdefine_line|#define flush_cache_all()&t;&t;do { } while (0)
+DECL|macro|flush_cache_mm
+mdefine_line|#define flush_cache_mm(mm)&t;&t;do { } while (0)
+DECL|macro|flush_cache_range
+mdefine_line|#define flush_cache_range(mm, a, b)&t;do { } while (0)
+DECL|macro|flush_cache_page
+mdefine_line|#define flush_cache_page(vma, p)&t;do { } while (0)
 r_extern
 r_void
-id|flush_tlb
+id|flush_icache_range
 c_func
 (paren
-r_void
+r_int
+r_int
+comma
+r_int
+r_int
 )paren
 suffix:semicolon
-multiline_comment|/* Caches aren&squot;t brain-dead on the ppc. */
-DECL|macro|flush_cache_all
-mdefine_line|#define flush_cache_all()&t;&t;&t;
-DECL|macro|flush_cache_mm
-mdefine_line|#define flush_cache_mm(mm)&t;&t;&t;
-DECL|macro|flush_cache_range
-mdefine_line|#define flush_cache_range(mm, start, end)&t;
-DECL|macro|flush_cache_page
-mdefine_line|#define flush_cache_page(vma, vmaddr)&t;&t;
 multiline_comment|/*&n; * For the page specified, write modified lines in the data cache&n; * out to memory, and invalidate lines in the instruction cache.&n; */
 r_extern
 r_void
@@ -95,6 +97,7 @@ r_int
 id|address
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * The PowerPC MMU uses a hash table containing PTEs, together with&n; * a set of 16 segment registers (on 32-bit implementations), to define&n; * the virtual to physical address mapping.&n; *&n; * We use the hash table as an extended TLB, i.e. a cache of currently&n; * active mappings.  We maintain a two-level page table tree, much like&n; * that used by the i386, for the sake of the Linux memory management code.&n; * Low-level assembler code in head.S (procedure hash_page) is responsible&n; * for extracting ptes from the tree and putting them into the hash table&n; * when necessary, and updating the accessed and modified bits in the&n; * page table tree.&n; */
 multiline_comment|/* PMD_SHIFT determines the size of the area mapped by the second-level page tables */
 DECL|macro|PMD_SHIFT
 mdefine_line|#define PMD_SHIFT&t;22
@@ -236,7 +239,7 @@ mdefine_line|#define SIZEOF_PTR_LOG2&t;2
 multiline_comment|/* to set the page-dir */
 multiline_comment|/* tsk is a task_struct and pgdir is a pte_t */
 DECL|macro|SET_PAGE_DIR
-mdefine_line|#define SET_PAGE_DIR(tsk,pgdir) ({ &bslash;&n;&t;((tsk)-&gt;tss.pg_tables = (unsigned long *)(pgdir)); &bslash;&n;})
+mdefine_line|#define SET_PAGE_DIR(tsk,pgdir) 
 DECL|function|pte_none
 r_extern
 r_inline
@@ -1786,12 +1789,75 @@ l_int|1024
 suffix:semicolon
 multiline_comment|/*&n; * Page tables may have changed.  We don&squot;t need to do anything here&n; * as entries are faulted into the hash table by the low-level&n; * data/instruction access exception handlers.&n; */
 DECL|macro|update_mmu_cache
-mdefine_line|#define update_mmu_cache(vma,address,pte) while(0){}
+mdefine_line|#define update_mmu_cache(vma, addr, pte)&t;do { } while (0)
+multiline_comment|/*&n; * When flushing the tlb entry for a page, we also need to flush the&n; * hash table entry.  flush_hash_page is assembler (for speed) in head.S.&n; */
+r_extern
+r_void
+id|flush_hash_segments
+c_func
+(paren
+r_int
+id|low_vsid
+comma
+r_int
+id|high_vsid
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|flush_hash_page
+c_func
+(paren
+r_int
+id|context
+comma
+r_int
+r_int
+id|va
+)paren
+suffix:semicolon
+r_extern
+r_inline
+r_void
+DECL|function|flush_tlb_page
+id|flush_tlb_page
+c_func
+(paren
+r_struct
+id|vm_area_struct
+op_star
+id|vma
+comma
+r_int
+r_int
+id|vmaddr
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|vmaddr
+OL
+id|TASK_SIZE
+)paren
+id|flush_hash_page
+c_func
+(paren
+id|vma-&gt;vm_mm-&gt;context
+comma
+id|vmaddr
+)paren
+suffix:semicolon
+)brace
 DECL|macro|SWP_TYPE
 mdefine_line|#define SWP_TYPE(entry) (((entry) &gt;&gt; 1) &amp; 0x7f)
 DECL|macro|SWP_OFFSET
 mdefine_line|#define SWP_OFFSET(entry) ((entry) &gt;&gt; 8)
 DECL|macro|SWP_ENTRY
 mdefine_line|#define SWP_ENTRY(type,offset) (((type) &lt;&lt; 1) | ((offset) &lt;&lt; 8))
-macro_line|#endif /* _PPC_PAGE_H */
+DECL|macro|module_map
+mdefine_line|#define module_map      vmalloc
+DECL|macro|module_unmap
+mdefine_line|#define module_unmap    vfree
+macro_line|#endif /* _PPC_PGTABLE_H */
 eof

@@ -2943,9 +2943,10 @@ c_func
 r_void
 )paren
 (brace
-id|need_resched
-op_assign
-l_int|1
+id|resched_force
+c_func
+(paren
+)paren
 suffix:semicolon
 id|mark_bh
 c_func

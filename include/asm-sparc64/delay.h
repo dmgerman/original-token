@@ -1,12 +1,10 @@
-multiline_comment|/* $Id: delay.h,v 1.5 1997/06/18 12:36:23 jj Exp $&n; * delay.h: Linux delay routines on the V9.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu).&n; */
+multiline_comment|/* $Id: delay.h,v 1.6 1997/07/29 21:11:22 davem Exp $&n; * delay.h: Linux delay routines on the V9.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu).&n; */
 macro_line|#ifndef __SPARC64_DELAY_H
 DECL|macro|__SPARC64_DELAY_H
 mdefine_line|#define __SPARC64_DELAY_H
-r_extern
-r_int
-r_int
-id|loops_per_sec
-suffix:semicolon
+macro_line|#ifdef __SMP__
+macro_line|#include &lt;asm/smp.h&gt;
+macro_line|#endif 
 DECL|function|__delay
 r_extern
 id|__inline__
@@ -77,16 +75,20 @@ l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 )brace
-DECL|function|udelay
+DECL|function|__udelay
 r_extern
 id|__inline__
 r_void
-id|udelay
+id|__udelay
 c_func
 (paren
 r_int
 r_int
 id|usecs
+comma
+r_int
+r_int
+id|lps
 )paren
 (brace
 id|usecs
@@ -131,7 +133,7 @@ id|usecs
 comma
 l_string|&quot;r&quot;
 (paren
-id|loops_per_sec
+id|lps
 )paren
 )paren
 suffix:semicolon
@@ -142,6 +144,15 @@ id|usecs
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef __SMP__
+DECL|macro|__udelay_val
+mdefine_line|#define __udelay_val cpu_data[smp_processor_id()].udelay_val
+macro_line|#else
+DECL|macro|__udelay_val
+mdefine_line|#define __udelay_val loops_per_sec
+macro_line|#endif
+DECL|macro|udelay
+mdefine_line|#define udelay(usecs) __udelay((usecs),__udelay_val)
 DECL|function|muldiv
 r_extern
 id|__inline__

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sysirix.c,v 1.3 1997/07/20 15:32:25 ralf Exp $&n; * sysirix.c: IRIX system call emulation.&n; *&n; * Copyright (C) 1996 David S. Miller&n; */
+multiline_comment|/* $Id: sysirix.c,v 1.4 1997/08/08 18:12:35 miguel Exp $&n; * sysirix.c: IRIX system call emulation.&n; *&n; * Copyright (C) 1996 David S. Miller&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
@@ -3214,6 +3214,14 @@ suffix:semicolon
 id|error
 op_assign
 l_int|0
+suffix:semicolon
+id|dput_and_out
+suffix:colon
+id|dput
+c_func
+(paren
+id|dentry
+)paren
 suffix:semicolon
 id|out
 suffix:colon
@@ -7314,6 +7322,14 @@ id|error
 op_assign
 l_int|0
 suffix:semicolon
+id|dput_and_out
+suffix:colon
+id|dput
+c_func
+(paren
+id|dentry
+)paren
+suffix:semicolon
 id|out
 suffix:colon
 id|unlock_kernel
@@ -9404,6 +9420,14 @@ suffix:semicolon
 id|error
 op_assign
 l_int|0
+suffix:semicolon
+id|dput_and_out
+suffix:colon
+id|dput
+c_func
+(paren
+id|dentry
+)paren
 suffix:semicolon
 id|out
 suffix:colon

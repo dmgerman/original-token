@@ -282,7 +282,6 @@ DECL|macro|SMP_PRINTK
 mdefine_line|#define SMP_PRINTK(x)
 macro_line|#endif
 DECL|variable|smp_commenced
-r_static
 r_volatile
 r_int
 id|smp_commenced
@@ -2695,9 +2694,10 @@ c_func
 r_void
 )paren
 (brace
-id|need_resched
-op_assign
-l_int|1
+id|resched_force
+c_func
+(paren
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Running cross calls. */
@@ -3010,9 +3010,10 @@ id|current-&gt;counter
 op_assign
 l_int|0
 suffix:semicolon
-id|need_resched
-op_assign
-l_int|1
+id|resched_force
+c_func
+(paren
+)paren
 suffix:semicolon
 )brace
 id|spin_lock

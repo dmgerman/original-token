@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  arch/ppc/mm/fault.c&n; *&n; *  Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds&n; *  Ported to PPC by Gary Thomas&n; *  Modified by Cort Dougan and Paul Mackerras.&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *  arch/ppc/mm/fault.c&n; *&n; *  PowerPC version &n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *&n; *  Derived from &quot;arch/i386/mm/fault.c&quot;&n; *    Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds&n; *&n; *  Modified by Cort Dougan and Paul Mackerras.&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -13,8 +13,21 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/mmu.h&gt;
 macro_line|#include &lt;asm/mmu_context.h&gt;
-macro_line|#ifdef CONFIG_PMAC
+macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#ifdef CONFIG_XMON
+r_extern
+r_void
+id|xmon
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+)paren
+suffix:semicolon
 r_extern
 r_void
 (paren
@@ -25,11 +38,20 @@ id|xmon_fault_handler
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif
-multiline_comment|/* the linux norm for the function name is show_regs() so&n;   make it call dump_regs() on the mac -- Cort */
-macro_line|#ifdef CONFIG_PMAC 
-DECL|macro|show_regs
-mdefine_line|#define show_regs dump_regs
+r_extern
+r_int
+id|xmon_dabr_match
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+)paren
+suffix:semicolon
+DECL|variable|xmon_kernel_faults
+r_int
+id|xmon_kernel_faults
+suffix:semicolon
 macro_line|#endif
 r_extern
 r_void
@@ -73,14 +95,7 @@ r_int
 r_int
 )paren
 suffix:semicolon
-r_void
-id|print_pte
-c_func
-(paren
-r_struct
-id|_PTE
-)paren
-suffix:semicolon
+multiline_comment|/*&n; * The error_code parameter is DSISR for a data fault, SRR1 for&n; * an instruction fault.&n; */
 DECL|function|do_page_fault
 r_void
 id|do_page_fault
@@ -101,19 +116,6 @@ id|error_code
 )paren
 (brace
 r_struct
-id|task_struct
-op_star
-id|tsk
-op_assign
-id|current
-suffix:semicolon
-r_extern
-r_int
-id|_end
-(braket
-)braket
-suffix:semicolon
-r_struct
 id|vm_area_struct
 op_star
 id|vma
@@ -125,20 +127,7 @@ id|mm
 op_assign
 id|current-&gt;mm
 suffix:semicolon
-id|pgd_t
-op_star
-id|dir
-suffix:semicolon
-id|pmd_t
-op_star
-id|pmd
-suffix:semicolon
-id|pte_t
-op_star
-id|pte
-suffix:semicolon
-multiline_comment|/*printk(&quot;do_page_fault() %s/%d addr %x nip %x regs %x error %x&bslash;n&quot;,&n;&t;       current-&gt;comm,current-&gt;pid,address,regs-&gt;nip,regs,error_code);*/
-macro_line|#ifdef CONFIG_PMAC
+macro_line|#ifdef CONFIG_XMON
 r_if
 c_cond
 (paren
@@ -154,6 +143,27 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|error_code
+op_amp
+l_int|0x00400000
+)paren
+(brace
+multiline_comment|/* DABR match */
+r_if
+c_cond
+(paren
+id|xmon_dabr_match
+c_func
+(paren
+id|regs
+)paren
+)paren
 r_return
 suffix:semicolon
 )brace
@@ -196,6 +206,19 @@ c_func
 id|regs
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_XMON
+r_if
+c_cond
+(paren
+id|xmon_kernel_faults
+)paren
+id|xmon
+c_func
+(paren
+id|regs
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 )brace
 r_if
@@ -205,11 +228,18 @@ id|current
 op_eq
 l_int|NULL
 )paren
-r_goto
-id|bad_area
+(brace
+id|bad_page_fault
+c_func
+(paren
+id|regs
+comma
+id|address
+)paren
 suffix:semicolon
-id|do_page
-suffix:colon
+r_return
+suffix:semicolon
+)brace
 id|down
 c_func
 (paren
@@ -222,7 +252,7 @@ op_assign
 id|find_vma
 c_func
 (paren
-id|tsk-&gt;mm
+id|mm
 comma
 id|address
 )paren
@@ -362,16 +392,6 @@ op_amp
 id|mm-&gt;mmap_sem
 )paren
 suffix:semicolon
-multiline_comment|/*printk(&quot;do_page_fault() return %s/%d addr %x msr %x&bslash;n&quot;,&n;&t;      current-&gt;comm,current-&gt;pid,address,regs-&gt;msr);*/
-multiline_comment|/* not needed since flush_page_to_ram() works */
-macro_line|#if 0
-id|flush_page
-c_func
-(paren
-id|address
-)paren
-suffix:semicolon
-macro_line|#endif
 r_return
 suffix:semicolon
 id|bad_area
@@ -380,7 +400,7 @@ id|up
 c_func
 (paren
 op_amp
-id|current-&gt;mm-&gt;mmap_sem
+id|mm-&gt;mmap_sem
 )paren
 suffix:semicolon
 id|bad_page_fault
@@ -407,22 +427,31 @@ r_int
 id|address
 )paren
 (brace
-r_extern
-r_int
-r_int
-id|probingmem
-suffix:semicolon
-r_struct
-id|task_struct
-op_star
-id|tsk
-op_assign
-id|current
-suffix:semicolon
 r_int
 r_int
 id|fixup
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|user_mode
+c_func
+(paren
+id|regs
+)paren
+)paren
+(brace
+id|force_sig
+c_func
+(paren
+id|SIGSEGV
+comma
+id|current
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 multiline_comment|/* Are we prepared to handle this fault?  */
 r_if
 c_cond
@@ -440,74 +469,9 @@ op_ne
 l_int|0
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|user_mode
-c_func
-(paren
-id|regs
-)paren
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;Exception from user mode&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#if 0    
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;Exception at %lx (%lx)&bslash;n&quot;
-comma
-id|regs-&gt;nip
-comma
-id|fixup
-)paren
-suffix:semicolon
-macro_line|#endif    
 id|regs-&gt;nip
 op_assign
 id|fixup
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|user_mode
-c_func
-(paren
-id|regs
-)paren
-)paren
-(brace
-id|force_sig
-c_func
-(paren
-id|SIGSEGV
-comma
-id|tsk
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-id|bad_kernel_access
-suffix:colon
-multiline_comment|/* make sure it&squot;s not a bootup probe test */
-r_if
-c_cond
-(paren
-id|probingmem
-)paren
-(brace
-id|probingmem
-op_assign
-l_int|0
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -522,13 +486,23 @@ suffix:semicolon
 id|print_backtrace
 c_func
 (paren
+(paren
+r_int
+r_int
+op_star
+)paren
 id|regs-&gt;gpr
 (braket
 l_int|1
 )braket
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PMAC
+macro_line|#ifdef CONFIG_XMON
+r_if
+c_cond
+(paren
+id|xmon_kernel_faults
+)paren
 id|xmon
 c_func
 (paren
@@ -539,15 +513,15 @@ macro_line|#endif
 id|panic
 c_func
 (paren
-l_string|&quot;kernel access of bad area&bslash;n pc %x address %X tsk %s/%d&quot;
+l_string|&quot;kernel access of bad area&bslash;n pc %lx address %lX tsk %s/%d&quot;
 comma
 id|regs-&gt;nip
 comma
 id|address
 comma
-id|tsk-&gt;comm
+id|current-&gt;comm
 comma
-id|tsk-&gt;pid
+id|current-&gt;pid
 )paren
 suffix:semicolon
 )brace
@@ -686,7 +660,8 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-DECL|function|print_pte
+macro_line|#if 0
+multiline_comment|/*&n; * Misc debugging functions.  Please leave them here. -- Cort&n; */
 r_void
 id|print_pte
 c_func
@@ -751,7 +726,6 @@ id|p.pp
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Search the hw hash table for a mapping to the given physical&n; * address. -- Cort&n; */
-DECL|function|htab_phys_to_va
 r_int
 r_int
 id|htab_phys_to_va
@@ -803,11 +777,12 @@ l_int|12
 id|printk
 c_func
 (paren
-l_string|&quot;phys %08X -&gt; va ???&bslash;n&quot;
+l_string|&quot;phys %08lX -&gt; va ???&bslash;n&quot;
 comma
 id|address
 )paren
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 eof

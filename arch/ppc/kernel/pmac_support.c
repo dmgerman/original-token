@@ -1,89 +1,13 @@
 multiline_comment|/*&n; * Miscellaneous procedures for dealing with the PowerMac hardware.&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
+macro_line|#include &lt;linux/reboot.h&gt;
+macro_line|#include &lt;linux/nvram.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/cuda.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
-DECL|function|hard_reset_now
-r_void
-id|hard_reset_now
-c_func
-(paren
-r_void
-)paren
-(brace
-r_struct
-id|cuda_request
-id|req
-suffix:semicolon
-id|cuda_request
-c_func
-(paren
-op_amp
-id|req
-comma
-l_int|NULL
-comma
-l_int|2
-comma
-id|CUDA_PACKET
-comma
-id|CUDA_RESET_SYSTEM
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-suffix:semicolon
-suffix:semicolon
-)paren
-id|cuda_poll
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|poweroff_now
-r_void
-id|poweroff_now
-c_func
-(paren
-r_void
-)paren
-(brace
-r_struct
-id|cuda_request
-id|req
-suffix:semicolon
-id|cuda_request
-c_func
-(paren
-op_amp
-id|req
-comma
-l_int|NULL
-comma
-l_int|2
-comma
-id|CUDA_PACKET
-comma
-id|CUDA_POWERDOWN
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-suffix:semicolon
-suffix:semicolon
-)paren
-id|cuda_poll
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * Read and write the non-volatile RAM on PowerMacs.&n; */
 DECL|variable|nvram_naddrs
 r_static
@@ -106,9 +30,9 @@ r_char
 op_star
 id|nvram_data
 suffix:semicolon
-DECL|function|nvram_init
+DECL|function|pmac_nvram_init
 r_void
-id|nvram_init
+id|pmac_nvram_init
 c_func
 (paren
 r_void
@@ -134,12 +58,21 @@ id|dp
 op_eq
 l_int|NULL
 )paren
-id|panic
+(brace
+id|printk
 c_func
 (paren
-l_string|&quot;Can&squot;t find NVRAM device&quot;
+id|KERN_ERR
+l_string|&quot;Can&squot;t find NVRAM device&bslash;n&quot;
 )paren
 suffix:semicolon
+id|nvram_naddrs
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|nvram_naddrs
 op_assign
 id|dp-&gt;n_addrs
@@ -151,6 +84,7 @@ id|nvram_naddrs
 op_eq
 l_int|1
 )paren
+(brace
 id|nvram_data
 op_assign
 id|ioremap
@@ -171,6 +105,7 @@ dot
 id|size
 )paren
 suffix:semicolon
+)brace
 r_else
 r_if
 c_cond
@@ -226,22 +161,18 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;Found %d addresses for NVRAM&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;Don&squot;t know how to access NVRAM with %d addresses&bslash;n&quot;
 comma
 id|nvram_naddrs
 )paren
 suffix:semicolon
-id|panic
-c_func
-(paren
-l_string|&quot;don&squot;t understand NVRAM&quot;
-)paren
-suffix:semicolon
 )brace
 )brace
-DECL|function|nvram_readb
+DECL|function|nvram_read_byte
 r_int
-id|nvram_readb
+r_char
+id|nvram_read_byte
 c_func
 (paren
 r_int
@@ -298,20 +229,20 @@ l_int|4
 suffix:semicolon
 )brace
 r_return
-op_minus
-l_int|1
+l_int|0
 suffix:semicolon
 )brace
-DECL|function|nvram_writeb
+DECL|function|nvram_write_byte
 r_void
-id|nvram_writeb
+id|nvram_write_byte
 c_func
 (paren
 r_int
-id|addr
+r_char
+id|val
 comma
 r_int
-id|val
+id|addr
 )paren
 (brace
 r_switch

@@ -129,6 +129,12 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_IDESCSI
 macro_line|#include &quot;ide-scsi.h&quot;
 macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_MESH
+macro_line|#include &quot;mesh.h&quot;
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_MAC53C94
+macro_line|#include &quot;mac53c94.h&quot;
+macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_DEBUG
 macro_line|#include &quot;scsi_debug.h&quot;
 macro_line|#endif
@@ -300,6 +306,14 @@ comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_IDESCSI
 id|IDESCSI
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_MESH
+id|SCSI_MESH
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_MAC53C94
+id|SCSI_MAC53C94
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_DEBUG

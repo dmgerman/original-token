@@ -1463,7 +1463,7 @@ multiline_comment|/* should future lockings be kept? */
 id|mm-&gt;cpu_vm_mask
 op_assign
 (paren
-l_int|1
+l_int|1UL
 op_lshift
 id|smp_processor_id
 c_func

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * r2300.c: R2000 and R3000 specific mmu/cache code.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: r2300.c,v 1.2 1997/06/30 15:52:51 ralf Exp $&n; */
+multiline_comment|/*&n; * r2300.c: R2000 and R3000 specific mmu/cache code.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: r2300.c,v 1.3 1997/08/08 18:13:06 miguel Exp $&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -953,6 +953,31 @@ id|regs-&gt;cp0_cause
 )paren
 suffix:semicolon
 )brace
+DECL|function|r2300_add_wired_entry
+r_static
+r_void
+id|r2300_add_wired_entry
+c_func
+(paren
+r_int
+r_int
+id|entrylo0
+comma
+r_int
+r_int
+id|entrylo1
+comma
+r_int
+r_int
+id|entryhi
+comma
+r_int
+r_int
+id|pagemask
+)paren
+(brace
+multiline_comment|/*&n;&t; * FIXME, to be done&n;&t; */
+)brace
 DECL|function|ld_mmu_r2300
 r_void
 id|ld_mmu_r2300
@@ -1024,6 +1049,10 @@ suffix:semicolon
 id|show_regs
 op_assign
 id|r2300_show_regs
+suffix:semicolon
+id|add_wired_entry
+op_assign
+id|r2300_add_wired_entry
 suffix:semicolon
 id|flush_tlb_all
 c_func

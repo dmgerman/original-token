@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Low-level hardware access stuff for Jazz family machines.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996 by Ralf Baechle&n; */
+multiline_comment|/*&n; * Low-level hardware access stuff for Jazz family machines.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997 by Ralf Baechle&n; */
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -7,6 +7,7 @@ macro_line|#include &lt;asm/addrspace.h&gt;
 macro_line|#include &lt;asm/vector.h&gt;
 macro_line|#include &lt;asm/jazz.h&gt;
 macro_line|#include &lt;asm/jazzdma.h&gt;
+macro_line|#include &lt;asm/keyboard.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/mc146818rtc.h&gt;
 r_static
@@ -373,4 +374,126 @@ comma
 id|rtc_write_data
 )brace
 suffix:semicolon
+DECL|variable|jazz_kh
+r_static
+r_volatile
+id|keyboard_hardware
+op_star
+id|jazz_kh
+op_assign
+(paren
+id|keyboard_hardware
+op_star
+)paren
+id|JAZZ_KEYBOARD_ADDRESS
+suffix:semicolon
+DECL|function|jazz_read_input
+r_static
+r_int
+r_char
+id|jazz_read_input
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+id|jazz_kh-&gt;data
+suffix:semicolon
+)brace
+DECL|function|jazz_write_output
+r_static
+r_void
+id|jazz_write_output
+c_func
+(paren
+r_int
+r_char
+id|val
+)paren
+(brace
+id|jazz_kh-&gt;data
+op_assign
+id|val
+suffix:semicolon
+)brace
+DECL|function|jazz_write_command
+r_static
+r_void
+id|jazz_write_command
+c_func
+(paren
+r_int
+r_char
+id|val
+)paren
+(brace
+id|jazz_kh-&gt;command
+op_assign
+id|val
+suffix:semicolon
+)brace
+DECL|function|jazz_read_status
+r_static
+r_int
+r_char
+id|jazz_read_status
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+id|jazz_kh-&gt;command
+suffix:semicolon
+)brace
+DECL|function|jazz_keyboard_setup
+r_void
+id|jazz_keyboard_setup
+c_func
+(paren
+r_void
+)paren
+(brace
+id|kbd_read_input
+op_assign
+id|jazz_read_input
+suffix:semicolon
+id|kbd_write_output
+op_assign
+id|jazz_write_output
+suffix:semicolon
+id|kbd_write_command
+op_assign
+id|jazz_write_command
+suffix:semicolon
+id|kbd_read_status
+op_assign
+id|jazz_read_status
+suffix:semicolon
+id|request_region
+c_func
+(paren
+l_int|0x60
+comma
+l_int|16
+comma
+l_string|&quot;keyboard&quot;
+)paren
+suffix:semicolon
+id|r4030_write_reg16
+c_func
+(paren
+id|JAZZ_IO_IRQ_ENABLE
+comma
+id|r4030_read_reg16
+c_func
+(paren
+id|JAZZ_IO_IRQ_ENABLE
+)paren
+op_or
+id|JAZZ_IE_KEYBOARD
+)paren
+suffix:semicolon
+)brace
 eof

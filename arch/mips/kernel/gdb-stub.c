@@ -1,11 +1,13 @@
-multiline_comment|/*&n; *  arch/mips/kernel/gdb-stub.c&n; *&n; *  Originally written by Glenn Engel, Lake Stevens Instrument Division&n; *&n; *  Contributed by HP Systems&n; *&n; *  Modified for SPARC by Stu Grossman, Cygnus Support.&n; *&n; *  Modified for Linux/MIPS (and MIPS in general) by Andreas Busse&n; *  Send complaints, suggestions etc. to &lt;andy@waldorf-gmbh.de&gt;&n; *&n; *  Copyright (C) 1995 Andreas Busse&n; *&n; * $Id: gdb-stub.c,v 1.4 1997/06/30 15:52:25 ralf Exp $&n; */
+multiline_comment|/*&n; *  arch/mips/kernel/gdb-stub.c&n; *&n; *  Originally written by Glenn Engel, Lake Stevens Instrument Division&n; *&n; *  Contributed by HP Systems&n; *&n; *  Modified for SPARC by Stu Grossman, Cygnus Support.&n; *&n; *  Modified for Linux/MIPS (and MIPS in general) by Andreas Busse&n; *  Send complaints, suggestions etc. to &lt;andy@waldorf-gmbh.de&gt;&n; *&n; *  Copyright (C) 1995 Andreas Busse&n; *&n; * $Id: gdb-stub.c,v 1.5 1997/08/08 18:12:15 miguel Exp $&n; */
 multiline_comment|/*&n; *  To enable debugger support, two things need to happen.  One, a&n; *  call to set_debug_traps() is necessary in order to allow any breakpoints&n; *  or error conditions to be properly intercepted and reported to gdb.&n; *  Two, a breakpoint needs to be generated to begin communication.  This&n; *  is most easily accomplished by a call to breakpoint().  Breakpoint()&n; *  simulates a breakpoint by executing a BREAK instruction.&n; *&n; *&n; *    The following gdb commands are supported:&n; *&n; * command          function                               Return value&n; *&n; *    g             return the value of the CPU registers  hex data or ENN&n; *    G             set the value of the CPU registers     OK or ENN&n; *&n; *    mAA..AA,LLLL  Read LLLL bytes at address AA..AA      hex data or ENN&n; *    MAA..AA,LLLL: Write LLLL bytes at address AA.AA      OK or ENN&n; *&n; *    c             Resume at current address              SNN   ( signal NN)&n; *    cAA..AA       Continue at address AA..AA             SNN&n; *&n; *    s             Step one instruction                   SNN&n; *    sAA..AA       Step one instruction from AA..AA       SNN&n; *&n; *    k             kill&n; *&n; *    ?             What was the last sigval ?             SNN   (signal NN)&n; *&n; *    bBB..BB&t;    Set baud rate to BB..BB&t;&t;   OK or BNN, then sets&n; *&t;&t;&t;&t;&t;&t;&t;   baud rate&n; *&n; * All commands and responses are sent with a packet which includes a&n; * checksum.  A packet consists of&n; *&n; * $&lt;packet info&gt;#&lt;checksum&gt;.&n; *&n; * where&n; * &lt;packet info&gt; :: &lt;characters representing the command or response&gt;&n; * &lt;checksum&gt;    :: &lt; two hex digits computed as modulo 256 sum of &lt;packetinfo&gt;&gt;&n; *&n; * When a packet is received, it is first acknowledged with either &squot;+&squot; or &squot;-&squot;.&n; * &squot;+&squot; indicates a successful transfer.  &squot;-&squot; indicates a failed transfer.&n; *&n; * Example:&n; *&n; * Host:                  Reply:&n; * $m0,10#2a               +$00010203040506070809101112131415#42&n; *&n; */
 macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/signal.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/asm.h&gt;
 macro_line|#include &lt;asm/mipsregs.h&gt;
-macro_line|#include &lt;asm/cachectl.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/gdb-stub.h&gt;
 multiline_comment|/*&n; * external low-level support routines&n; */
@@ -91,15 +93,6 @@ id|buffer
 )paren
 suffix:semicolon
 r_static
-r_void
-id|set_mem_fault_trap
-c_func
-(paren
-r_int
-id|enable
-)paren
-suffix:semicolon
-r_static
 r_int
 id|computeSignal
 c_func
@@ -157,17 +150,6 @@ id|may_fault
 suffix:semicolon
 r_void
 id|handle_exception
-c_func
-(paren
-r_struct
-id|gdb_regs
-op_star
-id|regs
-)paren
-suffix:semicolon
-r_static
-r_void
-id|show_gdbregs
 c_func
 (paren
 r_struct
@@ -679,6 +661,46 @@ id|mem_err
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#if 0
+r_static
+r_void
+id|set_mem_fault_trap
+c_func
+(paren
+r_int
+id|enable
+)paren
+(brace
+id|mem_err
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#if 0
+r_if
+c_cond
+(paren
+id|enable
+)paren
+id|exceptionHandler
+c_func
+(paren
+l_int|9
+comma
+id|fltr_set_mem_err
+)paren
+suffix:semicolon
+r_else
+id|exceptionHandler
+c_func
+(paren
+l_int|9
+comma
+id|trap_low
+)paren
+suffix:semicolon
+macro_line|#endif  
+)brace
+macro_line|#endif /* dead code */
 multiline_comment|/*&n; * Convert the memory pointed to by mem into hex, placing result in buf.&n; * Return a pointer to the last char put in buf (null), in case of mem fault,&n; * return 0.&n; * If MAY_FAULT is non-zero, then we will handle memory faults by returning&n; * a 0, else treat a fault like any other fault in the stub.&n; */
 DECL|function|mem2hex
 r_static
@@ -1111,45 +1133,6 @@ r_void
 (brace
 multiline_comment|/* FIXME: Needs to be written... */
 )brace
-DECL|function|set_mem_fault_trap
-r_static
-r_void
-id|set_mem_fault_trap
-c_func
-(paren
-r_int
-id|enable
-)paren
-(brace
-id|mem_err
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#if 0
-r_if
-c_cond
-(paren
-id|enable
-)paren
-id|exceptionHandler
-c_func
-(paren
-l_int|9
-comma
-id|fltr_set_mem_err
-)paren
-suffix:semicolon
-r_else
-id|exceptionHandler
-c_func
-(paren
-l_int|9
-comma
-id|trap_low
-)paren
-suffix:semicolon
-macro_line|#endif  
-)brace
 multiline_comment|/*&n; * Convert the MIPS hardware trap type code to a unix signal number.&n; */
 DECL|function|computeSignal
 r_static
@@ -1280,6 +1263,122 @@ id|numChars
 )paren
 suffix:semicolon
 )brace
+macro_line|#if 0
+multiline_comment|/*&n; * Print registers (on target console)&n; * Used only to debug the stub...&n; */
+r_void
+id|show_gdbregs
+c_func
+(paren
+r_struct
+id|gdb_regs
+op_star
+id|regs
+)paren
+(brace
+multiline_comment|/*&n;&t; * Saved main processor registers&n;&t; */
+id|printk
+c_func
+(paren
+l_string|&quot;$0 : %08lx %08lx %08lx %08lx %08lx %08lx %08lx %08lx&bslash;n&quot;
+comma
+id|regs-&gt;reg0
+comma
+id|regs-&gt;reg1
+comma
+id|regs-&gt;reg2
+comma
+id|regs-&gt;reg3
+comma
+id|regs-&gt;reg4
+comma
+id|regs-&gt;reg5
+comma
+id|regs-&gt;reg6
+comma
+id|regs-&gt;reg7
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;$8 : %08lx %08lx %08lx %08lx %08lx %08lx %08lx %08lx&bslash;n&quot;
+comma
+id|regs-&gt;reg8
+comma
+id|regs-&gt;reg9
+comma
+id|regs-&gt;reg10
+comma
+id|regs-&gt;reg11
+comma
+id|regs-&gt;reg12
+comma
+id|regs-&gt;reg13
+comma
+id|regs-&gt;reg14
+comma
+id|regs-&gt;reg15
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;$16: %08lx %08lx %08lx %08lx %08lx %08lx %08lx %08lx&bslash;n&quot;
+comma
+id|regs-&gt;reg16
+comma
+id|regs-&gt;reg17
+comma
+id|regs-&gt;reg18
+comma
+id|regs-&gt;reg19
+comma
+id|regs-&gt;reg20
+comma
+id|regs-&gt;reg21
+comma
+id|regs-&gt;reg22
+comma
+id|regs-&gt;reg23
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;$24: %08lx %08lx %08lx %08lx %08lx %08lx %08lx %08lx&bslash;n&quot;
+comma
+id|regs-&gt;reg24
+comma
+id|regs-&gt;reg25
+comma
+id|regs-&gt;reg26
+comma
+id|regs-&gt;reg27
+comma
+id|regs-&gt;reg28
+comma
+id|regs-&gt;reg29
+comma
+id|regs-&gt;reg30
+comma
+id|regs-&gt;reg31
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Saved cp0 registers&n;&t; */
+id|printk
+c_func
+(paren
+l_string|&quot;epc  : %08lx&bslash;nStatus: %08lx&bslash;nCause : %08lx&bslash;n&quot;
+comma
+id|regs-&gt;cp0_epc
+comma
+id|regs-&gt;cp0_status
+comma
+id|regs-&gt;cp0_cause
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif /* dead code */
 multiline_comment|/*&n; * This function does all command processing for interfacing to gdb.  It&n; * returns 1 if you should skip the instruction at the trap address, 0&n; * otherwise.&n; */
 DECL|function|handle_exception
 r_void
@@ -2378,121 +2477,6 @@ l_int|0
 l_int|8
 )paren
 "&quot;"
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * Print registers (on target console)&n; * Used only to debug the stub...&n; */
-DECL|function|show_gdbregs
-r_void
-id|show_gdbregs
-c_func
-(paren
-r_struct
-id|gdb_regs
-op_star
-id|regs
-)paren
-(brace
-multiline_comment|/*&n;&t; * Saved main processor registers&n;&t; */
-id|printk
-c_func
-(paren
-l_string|&quot;$0 : %08lx %08lx %08lx %08lx %08lx %08lx %08lx %08lx&bslash;n&quot;
-comma
-id|regs-&gt;reg0
-comma
-id|regs-&gt;reg1
-comma
-id|regs-&gt;reg2
-comma
-id|regs-&gt;reg3
-comma
-id|regs-&gt;reg4
-comma
-id|regs-&gt;reg5
-comma
-id|regs-&gt;reg6
-comma
-id|regs-&gt;reg7
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;$8 : %08lx %08lx %08lx %08lx %08lx %08lx %08lx %08lx&bslash;n&quot;
-comma
-id|regs-&gt;reg8
-comma
-id|regs-&gt;reg9
-comma
-id|regs-&gt;reg10
-comma
-id|regs-&gt;reg11
-comma
-id|regs-&gt;reg12
-comma
-id|regs-&gt;reg13
-comma
-id|regs-&gt;reg14
-comma
-id|regs-&gt;reg15
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;$16: %08lx %08lx %08lx %08lx %08lx %08lx %08lx %08lx&bslash;n&quot;
-comma
-id|regs-&gt;reg16
-comma
-id|regs-&gt;reg17
-comma
-id|regs-&gt;reg18
-comma
-id|regs-&gt;reg19
-comma
-id|regs-&gt;reg20
-comma
-id|regs-&gt;reg21
-comma
-id|regs-&gt;reg22
-comma
-id|regs-&gt;reg23
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;$24: %08lx %08lx %08lx %08lx %08lx %08lx %08lx %08lx&bslash;n&quot;
-comma
-id|regs-&gt;reg24
-comma
-id|regs-&gt;reg25
-comma
-id|regs-&gt;reg26
-comma
-id|regs-&gt;reg27
-comma
-id|regs-&gt;reg28
-comma
-id|regs-&gt;reg29
-comma
-id|regs-&gt;reg30
-comma
-id|regs-&gt;reg31
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * Saved cp0 registers&n;&t; */
-id|printk
-c_func
-(paren
-l_string|&quot;epc  : %08lx&bslash;nStatus: %08lx&bslash;nCause : %08lx&bslash;n&quot;
-comma
-id|regs-&gt;cp0_epc
-comma
-id|regs-&gt;cp0_status
-comma
-id|regs-&gt;cp0_cause
 )paren
 suffix:semicolon
 )brace
