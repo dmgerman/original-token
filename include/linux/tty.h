@@ -647,6 +647,24 @@ r_int
 suffix:semicolon
 r_extern
 r_int
+id|vcs_init
+c_func
+(paren
+r_int
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_CYCLADES
+r_extern
+r_int
+id|cy_init
+c_func
+(paren
+r_int
+)paren
+suffix:semicolon
+macro_line|#endif
+r_extern
+r_int
 id|tty_paranoia_check
 c_func
 (paren

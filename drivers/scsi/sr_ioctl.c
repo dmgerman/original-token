@@ -13,8 +13,9 @@ macro_line|#include &lt;linux/cdrom.h&gt;
 DECL|macro|IOCTL_RETRIES
 mdefine_line|#define IOCTL_RETRIES 3
 multiline_comment|/* The CDROM is fairly slow, so we need a little extra time */
+multiline_comment|/* In fact, it is very slow if it has to spin up first */
 DECL|macro|IOCTL_TIMEOUT
-mdefine_line|#define IOCTL_TIMEOUT 2000
+mdefine_line|#define IOCTL_TIMEOUT 3000
 r_extern
 r_int
 id|scsi_ioctl

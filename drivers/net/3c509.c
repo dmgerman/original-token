@@ -984,7 +984,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: 3c509 at %#3.3x tag %d, %s port, address &quot;
+l_string|&quot;%s: 3c509 at %#3.3lx tag %d, %s port, address &quot;
 comma
 id|dev-&gt;name
 comma

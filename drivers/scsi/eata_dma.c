@@ -1,5 +1,5 @@
-multiline_comment|/************************************************************&n; *                                                          *&n; *                  Linux EATA SCSI driver                  *&n; *                                                          *&n; *  based on the CAM document CAM/89-004 rev. 2.0c,         *&n; *  DPT&squot;s driver kit, some internal documents and source,   *&n; *  and several other Linux scsi drivers and kernel docs.   *&n; *                                                          *&n; *  The driver currently:                                   *&n; *      -supports all ISA based EATA-DMA boards             *&n; *      -supports all EISA based EATA-DMA boards            *&n; *      -supports all PCI based EATA-DMA boards             *&n; *      -supports multiple HBAs with &amp; without IRQ sharing  *&n; *      -supports all SCSI channels on multi channel boards *&n; *      -displays (more or less useful) infos in /proc/scsi *&n; *      -can be loaded as module                            *&n; *                                                          *&n; *  (c)1993,94,95 Michael Neuffer                           *&n; *                neuffer@goofy.zdv.uni-mainz.de            *&n; *                                                          *&n; *  This program is free software; you can redistribute it  *&n; *  and/or modify it under the terms of the GNU General     *&n; *  Public License as published by the Free Software        *&n; *  Foundation; either version 2 of the License, or         *&n; *  (at your option) any later version.                     *&n; *                                                          *&n; *  This program is distributed in the hope that it will be *&n; *  useful, but WITHOUT ANY WARRANTY; without even the      *&n; *  implied warranty of MERCHANTABILITY or FITNESS FOR A    *&n; *  PARTICULAR PURPOSE.  See the GNU General Public License *&n; *  for more details.                                       *&n; *                                                          *&n; *  You should have received a copy of the GNU General      *&n; *  Public License along with this kernel; if not, write to *&n; *  the Free Software Foundation, Inc., 675 Mass Ave,       *&n; *  Cambridge, MA 02139, USA.                               *&n; *                                                          *&n; * I have to thank DPT for their excellent support. I took  *&n; * me almost a year and a stopover at their HQ, on my first *&n; * trip to the USA, to get it, but since then they&squot;ve been  *&n; * very helpful and tried to give me all the infos and      *&n; * support I need.                                          *&n; *                                                          *&n; * Thanks also to Greg Hosler who did a lot of testing and  *&n; * found quite a number of bugs during the development.     *&n; ************************************************************&n; *  last change: 95/01/30                                   *&n; ************************************************************/
-multiline_comment|/* Look in eata_dma.h for configuration information */
+multiline_comment|/************************************************************&n; *                                                          *&n; *                  Linux EATA SCSI driver                  *&n; *                                                          *&n; *  based on the CAM document CAM/89-004 rev. 2.0c,         *&n; *  DPT&squot;s driver kit, some internal documents and source,   *&n; *  and several other Linux scsi drivers and kernel docs.   *&n; *                                                          *&n; *  The driver currently:                                   *&n; *      -supports all ISA based EATA-DMA boards             *&n; *      -supports all EISA based EATA-DMA boards            *&n; *      -supports all PCI based EATA-DMA boards             *&n; *      -supports multiple HBAs with &amp; without IRQ sharing  *&n; *      -supports all SCSI channels on multi channel boards *&n; *      -displays (more or less useful) infos in /proc/scsi *&n; *      -can be loaded as module                            *&n; *                                                          *&n; *  (c)1993,94,95 Michael Neuffer                           *&n; *                neuffer@goofy.zdv.uni-mainz.de            *&n; *                                                          *&n; *  This program is free software; you can redistribute it  *&n; *  and/or modify it under the terms of the GNU General     *&n; *  Public License as published by the Free Software        *&n; *  Foundation; either version 2 of the License, or         *&n; *  (at your option) any later version.                     *&n; *                                                          *&n; *  This program is distributed in the hope that it will be *&n; *  useful, but WITHOUT ANY WARRANTY; without even the      *&n; *  implied warranty of MERCHANTABILITY or FITNESS FOR A    *&n; *  PARTICULAR PURPOSE.  See the GNU General Public License *&n; *  for more details.                                       *&n; *                                                          *&n; *  You should have received a copy of the GNU General      *&n; *  Public License along with this kernel; if not, write to *&n; *  the Free Software Foundation, Inc., 675 Mass Ave,       *&n; *  Cambridge, MA 02139, USA.                               *&n; *                                                          *&n; * I have to thank DPT for their excellent support. I took  *&n; * me almost a year and a stopover at their HQ, on my first *&n; * trip to the USA, to get it, but since then they&squot;ve been  *&n; * very helpful and tried to give me all the infos and      *&n; * support I need.                                          *&n; *                                                          *&n; * Thanks also to Greg Hosler who did a lot of testing and  *&n; * found quite a number of bugs during the development.     *&n; ************************************************************&n; *  last change: 95/02/13       OS: Linux 1.1.91 or higher  *&n; ************************************************************/
+multiline_comment|/* Look in eata_dma.h for configuration and revision information */
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#endif
@@ -13,11 +13,30 @@ macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
-macro_line|#include &quot;eata_dma.h&quot;
+macro_line|#include &quot;../block/blk.h&quot;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;sd.h&quot;
-macro_line|#if 0
-macro_line|#include &quot;eata_dma_proc.c&quot;
+macro_line|#include &quot;hosts.h&quot;
+macro_line|#include &lt;linux/scsicam.h&gt;
+macro_line|#include &quot;eata_dma.h&quot;
+macro_line|#if EATA_DMA_PROC  
+macro_line|#include &quot;eata_dma_proc.h&quot;  /* If you&squot;re interested send me a mail */ 
+DECL|variable|reads
+id|ulong
+id|reads
+(braket
+l_int|13
+)braket
+suffix:semicolon
+multiline_comment|/* /proc/scsi probably won&squot;t get       */
+DECL|variable|writes
+id|ulong
+id|writes
+(braket
+l_int|13
+)braket
+suffix:semicolon
+multiline_comment|/* into the kernel before pl. 1.3      */
 macro_line|#endif
 DECL|variable|ISAbases
 r_static
@@ -201,6 +220,13 @@ id|internal_command_finished
 op_assign
 id|TRUE
 suffix:semicolon
+DECL|variable|HBA_interpret
+r_static
+id|unchar
+id|HBA_interpret
+op_assign
+id|FALSE
+suffix:semicolon
 DECL|variable|geometry
 r_static
 r_struct
@@ -234,6 +260,9 @@ id|SCpnt
 r_return
 suffix:semicolon
 )brace
+macro_line|#if EATA_DMA_PROC 
+macro_line|#include &quot;eata_dma_proc.c&quot;
+macro_line|#endif
 DECL|function|eata_release
 r_int
 id|eata_release
@@ -1032,10 +1061,16 @@ id|cmd
 suffix:semicolon
 )brace
 r_else
+(brace
 id|internal_command_finished
 op_assign
 id|TRUE
 suffix:semicolon
+id|HBA_interpret
+op_assign
+id|FALSE
+suffix:semicolon
+)brace
 id|save_flags
 c_func
 (paren
@@ -1590,6 +1625,10 @@ r_void
 op_star
 )paren
 id|eata_scsi_done
+op_logical_and
+id|HBA_interpret
+op_eq
+id|TRUE
 )paren
 id|cp-&gt;Interpret
 op_assign
@@ -4002,15 +4041,7 @@ c_func
 (paren
 id|gc-&gt;len
 )paren
-op_eq
-l_int|0x1c
-op_logical_or
-id|ntohl
-c_func
-(paren
-id|gc-&gt;len
-)paren
-op_eq
+op_le
 l_int|0x1e
 )paren
 (brace
@@ -4819,16 +4850,29 @@ id|hd-&gt;bustype
 op_ne
 l_char|&squot;I&squot;
 )paren
+(brace
 id|sh-&gt;unchecked_isa_dma
 op_assign
 id|FALSE
 suffix:semicolon
+id|sh-&gt;wish_block
+op_assign
+id|FALSE
+suffix:semicolon
+)brace
 r_else
+(brace
 id|sh-&gt;unchecked_isa_dma
 op_assign
 id|TRUE
 suffix:semicolon
 multiline_comment|/* We&squot;re doing ISA DMA */
+id|sh-&gt;wish_block
+op_assign
+id|TRUE
+suffix:semicolon
+multiline_comment|/* This will reduce performance */
+)brace
 r_if
 c_cond
 (paren

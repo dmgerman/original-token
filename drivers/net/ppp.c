@@ -6413,7 +6413,7 @@ l_int|3
 comma
 (paren
 id|KERN_INFO
-l_string|&quot;ppp_ioctl: get unit: %d&quot;
+l_string|&quot;ppp_ioctl: get unit: %ld&quot;
 comma
 id|ppp-&gt;dev-&gt;base_addr
 )paren

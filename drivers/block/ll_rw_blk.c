@@ -1645,11 +1645,6 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-macro_line|#if defined(CONFIG_CDU535) &amp;&amp; defined(CONFIG_CDU31A)
-r_int
-id|sonycd_save_mem_start
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Make sure that the first block contains something reasonable */
 r_while
 c_loop
@@ -2395,45 +2390,6 @@ id|mem_end
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if defined(CONFIG_CDU535) &amp;&amp; defined(CONFIG_CDU31A)
-(brace
-multiline_comment|/* since controllers for 535 and 31A can be at same location&n;&t;    * we have to be careful.&n;&t;    */
-id|sonycd_save_mem_start
-op_assign
-id|mem_start
-suffix:semicolon
-id|mem_start
-op_assign
-id|cdu31a_init
-c_func
-(paren
-id|mem_start
-comma
-id|mem_end
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|mem_start
-op_eq
-id|sonycd_save_mem_start
-)paren
-(brace
-multiline_comment|/* CDU31A not found */
-id|mem_start
-op_assign
-id|sony535_init
-c_func
-(paren
-id|mem_start
-comma
-id|mem_end
-)paren
-suffix:semicolon
-)brace
-)brace
-macro_line|#else
 macro_line|#ifdef CONFIG_CDU31A
 id|mem_start
 op_assign
@@ -2458,7 +2414,6 @@ id|mem_end
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#endif  /* CONFIG_CDU31A &amp;&amp; CONFIG_CDU535 */
 macro_line|#ifdef CONFIG_MCD
 id|mem_start
 op_assign

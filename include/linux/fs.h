@@ -732,12 +732,6 @@ op_star
 id|fl_owner
 suffix:semicolon
 multiline_comment|/* NULL if on free list, for sanity checks */
-DECL|member|fl_fd
-r_int
-r_int
-id|fl_fd
-suffix:semicolon
-multiline_comment|/* File descriptor for this lock */
 DECL|member|fl_wait
 r_struct
 id|wait_queue

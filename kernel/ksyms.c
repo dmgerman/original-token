@@ -118,10 +118,6 @@ r_struct
 id|file
 op_star
 id|filp
-comma
-r_int
-r_int
-id|fd
 )paren
 suffix:semicolon
 r_extern

@@ -1,8 +1,9 @@
-multiline_comment|/*&n; * Sony CDU-535 interface device driver&n; *&n; * This is a modified version of the CDU-31A device driver (see below).&n; * Changes were made using documentation for the CDU-531 (which Sony&n; * assures me is very similar to the 535) and partial disassembly of the&n; * DOS driver.  I used Minyard&squot;s driver and replaced the the CDU-31A &n; * commands with the CDU-531 commands.  This was complicated by a different&n; * interface protocol with the drive.  The driver is still polled.&n; *&n; * Data transfer rate is about 110 Kb/sec, theoretical maximum is 150 Kb/sec.&n; * I tried polling without the sony_sleep during the data transfers but&n; * it did not speed things up any.&n; *&n; *  5/23/93 (rgj) changed the major number to 21 to get rid of conflict&n; * with CDU-31A driver.  This is the also the number from the Linux&n; * Device Driver Registry for the Sony Drive.  Hope nobody else is using it.&n; *&n; *  8/29/93 (rgj) remove the configuring of the interface board address&n; * from the top level configuration, you have to modify it in this file.&n; *&n; * 1/26/95 Made module-capable (Joel Katz &lt;Stimpson@Panix.COM&gt;)&n; *&n; * Things to do:&n; *  - handle errors and status better, put everything into a single word&n; *  - use interrupts, DMA&n; *&n; *  Known Bugs:&n; *  -&n; *&n; *   Ron Jeppesen (ronj.an@site007.saic.com)&n; *&n; *&n; *------------------------------------------------------------------------&n; * Sony CDROM interface device driver.&n; *&n; * Corey Minyard (minyard@wf-rch.cirr.com) (CDU-535 complaints to ronj above)&n; *&n; * Colossians 3:17&n; *&n; * The Sony interface device driver handles Sony interface CDROM&n; * drives and provides a complete block-level interface as well as an&n; * ioctl() interface compatible with the Sun (as specified in&n; * include/linux/cdrom.h).  With this interface, CDROMs can be&n; * accessed and standard audio CDs can be played back normally.&n; *&n; * This interface is (unfortunatly) a polled interface.  This is&n; * because most Sony interfaces are set up with DMA and interrupts&n; * disables.  Some (like mine) do not even have the capability to&n; * handle interrupts or DMA.  For this reason you will see a lot of&n; * the following:&n; *&n; *   retry_count = jiffies+ SONY_JIFFIES_TIMEOUT;&n; *   while ((retry_count &gt; jiffies) &amp;&amp; (! &lt;some condition to wait for))&n; *   {&n; *      while (handle_sony_cd_attention())&n; *         ;&n; *&n; *      sony_sleep();&n; *   }&n; *   if (the condition not met)&n; *   {&n; *      return an error;&n; *   }&n; *&n; * This ugly hack waits for something to happen, sleeping a little&n; * between every try.  it also handles attentions, which are&n; * asyncronous events from the drive informing the driver that a disk&n; * has been inserted, removed, etc.&n; *&n; * One thing about these drives: They talk in MSF (Minute Second Frame) format.&n; * There are 75 frames a second, 60 seconds a minute, and up to 75 minutes on a&n; * disk.  The funny thing is that these are sent to the drive in BCD, but the&n; * interface wants to see them in decimal.  A lot of conversion goes on.&n; *&n; *  Copyright (C) 1993  Corey Minyard&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; */
+multiline_comment|/*&n; * Sony CDU-535 interface device driver&n; *&n; * This is a modified version of the CDU-31A device driver (see below).&n; * Changes were made using documentation for the CDU-531 (which Sony&n; * assures me is very similar to the 535) and partial disassembly of the&n; * DOS driver.  I used Minyard&squot;s driver and replaced the the CDU-31A &n; * commands with the CDU-531 commands.  This was complicated by a different&n; * interface protocol with the drive.  The driver is still polled.&n; *&n; * Data transfer rate is about 110 Kb/sec, theoretical maximum is 150 Kb/sec.&n; * I tried polling without the sony_sleep during the data transfers but&n; * it did not speed things up any.&n; *&n; *  5/23/93 (rgj) changed the major number to 21 to get rid of conflict&n; * with CDU-31A driver.  This is the also the number from the Linux&n; * Device Driver Registry for the Sony Drive.  Hope nobody else is using it.&n; *&n; *  8/29/93 (rgj) remove the configuring of the interface board address&n; * from the top level configuration, you have to modify it in this file.&n; *&n; * 1/26/95 Made module-capable (Joel Katz &lt;Stimpson@Panix.COM&gt;)&n; *&n; * Things to do:&n; *  - handle errors and status better, put everything into a single word&n; *  - use interrupts, DMA&n; *&n; *  Known Bugs:&n; *  -&n; *&n; *   Ron Jeppesen (ronj.an@site007.saic.com)&n; *&n; *&n; *------------------------------------------------------------------------&n; * Sony CDROM interface device driver.&n; *&n; * Corey Minyard (minyard@wf-rch.cirr.com) (CDU-535 complaints to ronj above)&n; *&n; * Colossians 3:17&n; *&n; * The Sony interface device driver handles Sony interface CDROM&n; * drives and provides a complete block-level interface as well as an&n; * ioctl() interface compatible with the Sun (as specified in&n; * include/linux/cdrom.h).  With this interface, CDROMs can be&n; * accessed and standard audio CDs can be played back normally.&n; *&n; * This interface is (unfortunately) a polled interface.  This is&n; * because most Sony interfaces are set up with DMA and interrupts&n; * disables.  Some (like mine) do not even have the capability to&n; * handle interrupts or DMA.  For this reason you will see a lot of&n; * the following:&n; *&n; *   retry_count = jiffies+ SONY_JIFFIES_TIMEOUT;&n; *   while ((retry_count &gt; jiffies) &amp;&amp; (! &lt;some condition to wait for))&n; *   {&n; *      while (handle_sony_cd_attention())&n; *         ;&n; *&n; *      sony_sleep();&n; *   }&n; *   if (the condition not met)&n; *   {&n; *      return an error;&n; *   }&n; *&n; * This ugly hack waits for something to happen, sleeping a little&n; * between every try.  it also handles attentions, which are&n; * asynchronous events from the drive informing the driver that a disk&n; * has been inserted, removed, etc.&n; *&n; * One thing about these drives: They talk in MSF (Minute Second Frame) format.&n; * There are 75 frames a second, 60 seconds a minute, and up to 75 minutes on a&n; * disk.  The funny thing is that these are sent to the drive in BCD, but the&n; * interface wants to see them in decimal.  A lot of conversion goes on.&n; *&n; *  Copyright (C) 1993  Corey Minyard&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifdef CONFIG_CDU535
+macro_line|#if defined(CONFIG_CDU535) || defined(MODULE)
 macro_line|#ifdef MODULE
 macro_line|# include &lt;linux/module.h&gt;
+macro_line|# include &lt;linux/malloc.h&gt;
 macro_line|# include &lt;linux/version.h&gt;
 macro_line|#endif
 macro_line|#include &lt;linux/errno.h&gt;
@@ -33,13 +34,23 @@ macro_line|# define MOD_INC_USE_COUNT
 DECL|macro|MOD_DEC_USE_COUNT
 macro_line|# define MOD_DEC_USE_COUNT
 macro_line|#endif
-multiline_comment|/*&n; * this is the base address of the interface card for the Sony CDU535&n; * CDROM drive.  If your jumpers are set for an address other than&n; * this one (the default), change the following line to the&n; * proper address.&n; */
+multiline_comment|/*&n; * this is the base address of the interface card for the Sony CDU-535&n; * CDROM drive.  If your jumpers are set for an address other than&n; * this one (the default), change the following line to the&n; * proper address.&n; */
 macro_line|#ifndef CDU535_ADDRESS
 DECL|macro|CDU535_ADDRESS
-mdefine_line|#define CDU535_ADDRESS&t;(0x340)
+macro_line|# define CDU535_ADDRESS&t;(0x340)
 macro_line|#endif
+macro_line|#ifndef CDU535_HANDLE
+DECL|macro|CDU535_HANDLE
+macro_line|# define CDU535_HANDLE&t;&t;&t;&quot;cdu535&quot;
+macro_line|#endif
+macro_line|#ifndef CDU535_MESSAGE_NAME
+DECL|macro|CDU535_MESSAGE_NAME
+macro_line|# define CDU535_MESSAGE_NAME&t;&quot;Sony CDU-535&quot;
+macro_line|#endif
+macro_line|#ifndef DEBUG
 DECL|macro|DEBUG
-mdefine_line|#define DEBUG&t;1
+macro_line|# define DEBUG&t;1
+macro_line|#endif
 multiline_comment|/*&n; *  SONY535_BUFFER_SIZE determines the size of internal buffer used&n; *  by the drive.  It must be at least 2K and the larger the buffer&n; *  the better the transfer rate.  It does however take system memory.&n; *  On my system I get the following transfer rates using dd to read&n; *  10 Mb off /dev/cdrom.&n; *&n; *    8K buffer      43 Kb/sec&n; *   16K buffer      66 Kb/sec&n; *   32K buffer      91 Kb/sec&n; *   64K buffer     111 Kb/sec&n; *  128K buffer     123 Kb/sec&n; *  512K buffer     123 Kb/sec&n; */
 DECL|macro|SONY535_BUFFER_SIZE
 mdefine_line|#define SONY535_BUFFER_SIZE&t;(64*1024)
@@ -1001,7 +1012,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* check_drive_status() */
-multiline_comment|/*****************************************************************************&n; * int do_sony_cmd( Byte *cmd, int n_cmd, Byte status[2], &n; *                Byte *response, int n_response, int ignore_status_bit7 )&n; *&n; *  Generic routine for executing commands.  The command and its parameters&n; *  should be placed in the cmd[] array, number of bytes in the command is&n; *  stored in nCmd.  The response from the command will be stored in the&n; *  response array.  The number of bytes you expect back (excluding status)&n; *  should be passed in nReponse.  Finally, some&n; *  commands set bit 7 of the return status even when there is no second&n; *  status byte, on these commands set ignoreStatusBit7 TRUE.&n; *    If the command was sent and data recieved back, then we return 0,&n; *  else we return TIME_OUT.  You still have to check the status yourself.&n; *    You should call check_drive_status() before calling this routine&n; *  so that you do not lose notifications of disk changes, etc.&n; ****************************************************************************/
+multiline_comment|/*****************************************************************************&n; * int do_sony_cmd( Byte *cmd, int n_cmd, Byte status[2], &n; *                Byte *response, int n_response, int ignore_status_bit7 )&n; *&n; *  Generic routine for executing commands.  The command and its parameters&n; *  should be placed in the cmd[] array, number of bytes in the command is&n; *  stored in nCmd.  The response from the command will be stored in the&n; *  response array.  The number of bytes you expect back (excluding status)&n; *  should be passed in nResponse.  Finally, some&n; *  commands set bit 7 of the return status even when there is no second&n; *  status byte, on these commands set ignoreStatusBit7 TRUE.&n; *    If the command was sent and data received back, then we return 0,&n; *  else we return TIME_OUT.  You still have to check the status yourself.&n; *    You should call check_drive_status() before calling this routine&n; *  so that you do not lose notifications of disk changes, etc.&n; ****************************************************************************/
 r_static
 r_int
 DECL|function|do_sony_cmd
@@ -2699,7 +2710,7 @@ suffix:colon
 id|panic
 c_func
 (paren
-l_string|&quot;Unkown SONY CD cmd&quot;
+l_string|&quot;Unknown SONY CD cmd&quot;
 )paren
 suffix:semicolon
 )brace
@@ -5687,6 +5698,7 @@ l_int|0
 (brace
 multiline_comment|/* was able to get the configuration, set drive mode as rest of init */
 macro_line|#if DEBUG &gt; 0
+multiline_comment|/* 0x50 == CADDY_NOT_INSERTED | NOT_SPINNING */
 r_if
 c_cond
 (paren
@@ -5700,6 +5712,17 @@ l_int|0x7f
 )paren
 op_ne
 l_int|0
+op_logical_and
+(paren
+id|status
+(braket
+l_int|0
+)braket
+op_amp
+l_int|0x7f
+)paren
+op_ne
+l_int|0x50
 )paren
 id|printk
 c_func
@@ -5789,7 +5812,7 @@ c_func
 (paren
 id|MAJOR_NR
 comma
-l_string|&quot;cdu-535&quot;
+id|CDU535_HANDLE
 comma
 op_amp
 id|cdu_fops
@@ -5799,9 +5822,11 @@ id|cdu_fops
 id|printk
 c_func
 (paren
-l_string|&quot;Unable to get major %d for sony CDU-535 cd&bslash;n&quot;
+l_string|&quot;Unable to get major %d for %s&bslash;n&quot;
 comma
 id|MAJOR_NR
+comma
+id|CDU535_MESSAGE_NAME
 )paren
 suffix:semicolon
 macro_line|#ifndef MODULE
@@ -5977,32 +6002,6 @@ suffix:semicolon
 )brace
 )brace
 )brace
-macro_line|#ifndef MODULE
-r_if
-c_cond
-(paren
-op_logical_neg
-id|initialized
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;Did not find a Sony CDU-535 drive&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
-id|snarf_region
-c_func
-(paren
-id|sony_cd_base_io
-comma
-l_int|4
-)paren
-suffix:semicolon
-r_return
-id|mem_start
-suffix:semicolon
-macro_line|#else
 r_if
 c_cond
 (paren
@@ -6013,25 +6012,36 @@ id|initialized
 id|printk
 c_func
 (paren
-l_string|&quot;Did not find a Sony CDU-535 drive&bslash;n&quot;
+l_string|&quot;Did not find a &quot;
+id|CDU535_MESSAGE_NAME
+l_string|&quot; drive&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef MODULE
 r_return
 op_minus
 id|EIO
 suffix:semicolon
+macro_line|#endif
 )brace
 r_else
 (brace
-id|snarf_region
+id|request_region
 c_func
 (paren
 id|sony_cd_base_io
 comma
 l_int|4
+comma
+id|CDU535_HANDLE
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifndef MODULE
+r_return
+id|mem_start
+suffix:semicolon
+macro_line|#else
 r_return
 l_int|0
 suffix:semicolon
@@ -6108,9 +6118,11 @@ l_char|&squot;&bslash;0&squot;
 id|printk
 c_func
 (paren
-l_string|&quot;Sony CDU-535: Warning: Unknown interface type: %s&bslash;n&quot;
+l_string|&quot;%s: Warning: Unknown interface type: %s&bslash;n&quot;
 comma
 id|strings
+comma
+id|CDU535_MESSAGE_NAME
 )paren
 suffix:semicolon
 )brace
@@ -6141,32 +6153,14 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|unregister_blkdev
+id|release_region
 c_func
 (paren
-id|MAJOR_NR
+id|sony_cd_base_io
 comma
-l_string|&quot;cdu-535&quot;
-)paren
-op_eq
-(paren
-op_minus
-id|EINVAL
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Uh oh, couldn&squot;t unregister cdu-535&bslash;n&quot;
+l_int|4
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 id|kfree_s
 c_func
 (paren
@@ -6226,10 +6220,34 @@ op_star
 id|sony_buffer_sectors
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|unregister_blkdev
+c_func
+(paren
+id|MAJOR_NR
+comma
+id|CDU535_HANDLE
+)paren
+op_eq
+op_minus
+id|EINVAL
+)paren
 id|printk
 c_func
 (paren
-l_string|&quot;cdu-535 module released&bslash;n&quot;
+l_string|&quot;Uh oh, couldn&squot;t unregister &quot;
+id|CDU535_HANDLE
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+r_else
+id|printk
+c_func
+(paren
+id|CDU535_HANDLE
+l_string|&quot; module released&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

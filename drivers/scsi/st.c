@@ -35,7 +35,7 @@ mdefine_line|#define ST_READ_AHEAD 1
 DECL|macro|ST_BLOCK_SIZE
 mdefine_line|#define ST_BLOCK_SIZE 1024
 DECL|macro|ST_MAX_BUFFERS
-mdefine_line|#define ST_MAX_BUFFERS 2
+mdefine_line|#define ST_MAX_BUFFERS (2 + ST_EXTRA_DEVS)
 DECL|macro|ST_BUFFER_BLOCKS
 mdefine_line|#define ST_BUFFER_BLOCKS 32
 DECL|macro|ST_WRITE_THRESHOLD_BLOCKS
@@ -10578,6 +10578,8 @@ multiline_comment|/* Allocate the buffers */
 id|st_nbr_buffers
 op_assign
 id|st_template.dev_noticed
+op_plus
+id|ST_EXTRA_DEVS
 suffix:semicolon
 r_if
 c_cond

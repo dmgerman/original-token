@@ -1,17 +1,13 @@
-multiline_comment|/********************************************************&n;* Header file for eata_dma.c Linux EATA-DMA SCSI driver *&n;* (c) 1993,94,95 Michael Neuffer                        *&n;*********************************************************&n;* last change: 95/01/30                                 *&n;********************************************************/
+multiline_comment|/********************************************************&n;* Header file for eata_dma.c Linux EATA-DMA SCSI driver *&n;* (c) 1993,94,95 Michael Neuffer                        *&n;*********************************************************&n;* last change: 95/02/13                                 *&n;********************************************************/
 macro_line|#ifndef _EATA_DMA_H
 DECL|macro|_EATA_DMA_H
 mdefine_line|#define _EATA_DMA_H
-macro_line|#include &quot;../block/blk.h&quot;
-macro_line|#include &quot;scsi.h&quot;
-macro_line|#include &quot;hosts.h&quot;
-macro_line|#include &lt;linux/scsicam.h&gt;
 DECL|macro|VER_MAJOR
 mdefine_line|#define VER_MAJOR 2
 DECL|macro|VER_MINOR
 mdefine_line|#define VER_MINOR 3
 DECL|macro|VER_SUB
-mdefine_line|#define VER_SUB   &quot;0a&quot;
+mdefine_line|#define VER_SUB   &quot;1a&quot;
 multiline_comment|/************************************************************************&n; * Here you can configure your drives that are using a non-standard     *&n; * geometry.                                                            *&n; * To enable this set HARDCODED to 1                                    *&n; * If you have only one drive that need reconfiguration, set ID1 to -1  *&n; ************************************************************************/
 DECL|macro|HARDCODED
 mdefine_line|#define HARDCODED     0          /* Here are drives running in emu. mode   */
@@ -34,6 +30,8 @@ mdefine_line|#define CYLINDER1  1024          /* Number of emulated cylinders   
 multiline_comment|/************************************************************************&n; * Here you can switch parts of the code on and of                      *&n; ************************************************************************/
 DECL|macro|CHECKPAL
 mdefine_line|#define CHECKPAL        0        /* EISA pal checking on/off            */
+DECL|macro|EATA_DMA_PROC
+mdefine_line|#define EATA_DMA_PROC   0        /* proc-fs support                     */
 multiline_comment|/************************************************************************&n; * Debug options.                                                       * &n; * Enable DEBUG and whichever options you require.                      *&n; ************************************************************************/
 DECL|macro|DEBUG_EATA
 mdefine_line|#define DEBUG_EATA&t;1&t;/* Enable debug code. &t;&t;&t;*/
@@ -176,9 +174,9 @@ mdefine_line|#define MAX_PCI_BUS       16             /* Maximum # Of Busses All
 DECL|macro|SG_SIZE
 mdefine_line|#define SG_SIZE           64 
 DECL|macro|C_P_L_CURRENT_MAX
-mdefine_line|#define C_P_L_CURRENT_MAX 10  /* Until this limit in the mm is removed    &n;&t;&t;&t;       * Kernels &lt; 1.1.86 died horrible deaths&n;&t;&t;&t;       * if you used values &gt;2. The memory management&n;&t;&t;&t;       * of pl.86 seems to cope with 10. &n;&t;&t;&t;       */
+mdefine_line|#define C_P_L_CURRENT_MAX 10  /* Until this limit in the mm is removed    &n;&t;&t;&t;       * Kernels &lt; 1.1.86 died horrible deaths&n;&t;&t;&t;       * if you used values &gt;2. The memory management&n;&t;&t;&t;       * since pl1.1.86 seems to cope with up to 10&n;&t;&t;&t;       * queued commands per device. &n;&t;&t;&t;       */
 DECL|macro|C_P_L_DIV
-mdefine_line|#define C_P_L_DIV          4  /* 1 &lt;= C_P_L_DIV &lt;= 8            &n;&t;&t;&t;       * You can use this parameter to fine-tune&n;&t;&t;&t;       * the driver. Depending on the number of &n;&t;&t;&t;       * devices and their ability to queue commands&n;&t;&t;&t;       * you will get the best results with a value&n;&t;&t;&t;       * ~= numdevices-(devices_unable_to_queue_commands/2)&n;&t;&t;&t;       * The reason for this is that the disk driver tents &n;&t;&t;&t;       * to flood the queue, so that other drivers have &n;&t;&t;&t;       * problems to queue commands themselves. This can &n;&t;&t;&t;       * for example result in the effect that the tape&n;&t;&t;&t;       * stops during disk accesses. &n;&t;&t;&t;       */
+mdefine_line|#define C_P_L_DIV          4  /* 1 &lt;= C_P_L_DIV &lt;= 8            &n;&t;&t;&t;       * You can use this parameter to fine-tune&n;&t;&t;&t;       * the driver. Depending on the number of &n;&t;&t;&t;       * devices and their speed and ability to queue &n;&t;&t;&t;       * commands, you will get the best results with a&n;&t;&t;&t;       * value&n;&t;&t;&t;       * ~= numdevices-(devices_unable_to_queue_commands/2)&n;&t;&t;&t;       * The reason for this is that the disk driver &n;&t;&t;&t;       * tends to flood the queue, so that other &n;&t;&t;&t;       * drivers have problems to queue commands &n;&t;&t;&t;       * themselves. This can for example result in &n;&t;&t;&t;       * the effect that the tape stops during disk &n;&t;&t;&t;       * accesses. &n;&t;&t;&t;       */
 DECL|macro|FREE
 mdefine_line|#define FREE       0
 DECL|macro|USED

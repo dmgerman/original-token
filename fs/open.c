@@ -25,10 +25,6 @@ comma
 r_struct
 id|file
 op_star
-comma
-r_int
-r_int
-id|fd
 )paren
 suffix:semicolon
 DECL|function|sys_ustat
@@ -2420,10 +2416,6 @@ r_struct
 id|file
 op_star
 id|filp
-comma
-r_int
-r_int
-id|fd
 )paren
 (brace
 r_struct
@@ -2464,8 +2456,6 @@ c_func
 id|current
 comma
 id|filp
-comma
-id|fd
 )paren
 suffix:semicolon
 r_if
@@ -2595,8 +2585,6 @@ r_return
 id|close_fp
 (paren
 id|filp
-comma
-id|fd
 )paren
 )paren
 suffix:semicolon

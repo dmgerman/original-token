@@ -34,6 +34,7 @@ op_star
 id|sysfun_p
 )paren
 (paren
+r_int
 )paren
 suffix:semicolon
 r_extern

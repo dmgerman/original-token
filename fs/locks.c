@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/locks.c&n; *&n; *  Provide support for fcntl()&squot;s F_GETLK, F_SETLK, and F_SETLKW calls.&n; *  Doug Evans, 92Aug07, dje@sspiff.uucp.&n; *&n; *  Deadlock Detection added by Kelly Carmichael, kelly@[142.24.8.65]&n; *  September 17, 1994.&n; *&n; * FIXME: one thing isn&squot;t handled yet:&n; *&t;- mandatory locks (requires lots of changes elsewhere)&n; *&n; *  Edited by Kai Petzke, wpp@marie.physik.tu-berlin.de&n; *&n; *  Converted file_lock_table to a linked list from an array, which eliminates&n; *  the limits on how many active file locks are open - Chad Page&n; *  (pageone@netcom.com), November 27, 1994 &n; */
+multiline_comment|/*&n; *  linux/fs/locks.c&n; *&n; *  Provide support for fcntl()&squot;s F_GETLK, F_SETLK, and F_SETLKW calls.&n; *  Doug Evans, 92Aug07, dje@sspiff.uucp.&n; *&n; *  Deadlock Detection added by Kelly Carmichael, kelly@[142.24.8.65]&n; *  September 17, 1994.&n; *&n; * FIXME: one thing isn&squot;t handled yet:&n; *&t;- mandatory locks (requires lots of changes elsewhere)&n; *&n; *  Edited by Kai Petzke, wpp@marie.physik.tu-berlin.de&n; *&n; *  Converted file_lock_table to a linked list from an array, which eliminates&n; *  the limits on how many active file locks are open - Chad Page&n; *  (pageone@netcom.com), November 27, 1994 &n; * &n; *  Removed dependency on file descriptors. dup()&squot;ed file descriptors now&n; *  get the same locks as the original file descriptors, and a close() on&n; *  any file descriptor removes ALL the locks on the file for the current&n; *  process. Since locks still depend on the process id, locks are inherited&n; *  after an exec() but not after a fork(). This agrees with POSIX, and both&n; *  BSD and SVR4 practice.&n; *  Andy Walker (andy@keo.kvaerner.no), February 14, 1994&n; *&n; */
 DECL|macro|DEADLOCK_DETECTION
 mdefine_line|#define DEADLOCK_DETECTION
 macro_line|#include &lt;asm/segment.h&gt;
@@ -29,10 +29,6 @@ r_struct
 id|flock
 op_star
 id|l
-comma
-r_int
-r_int
-id|fd
 )paren
 suffix:semicolon
 r_static
@@ -81,10 +77,6 @@ r_struct
 id|file_lock
 op_star
 id|caller
-comma
-r_int
-r_int
-id|fd
 )paren
 suffix:semicolon
 r_static
@@ -104,10 +96,6 @@ r_struct
 id|file_lock
 op_star
 id|fl
-comma
-r_int
-r_int
-id|fd
 )paren
 suffix:semicolon
 r_static
@@ -120,6 +108,14 @@ id|file_lock
 op_star
 op_star
 id|fl
+)paren
+suffix:semicolon
+r_static
+r_void
+id|free_list_garbage_collect
+c_func
+(paren
+r_void
 )paren
 suffix:semicolon
 macro_line|#ifdef DEADLOCK_DETECTION
@@ -135,6 +131,8 @@ id|blocked_pid
 )paren
 suffix:semicolon
 macro_line|#endif
+DECL|macro|FREE_LIST_GARBAGE_COLLECT
+mdefine_line|#define FREE_LIST_GARBAGE_COLLECT 20
 DECL|variable|file_lock_table
 r_static
 r_struct
@@ -152,6 +150,13 @@ op_star
 id|file_lock_free_list
 op_assign
 l_int|NULL
+suffix:semicolon
+DECL|variable|free_list_cnt
+r_static
+r_int
+id|free_list_cnt
+op_assign
+l_int|0
 suffix:semicolon
 DECL|function|fcntl_getlk
 r_int
@@ -271,8 +276,6 @@ id|file_lock
 comma
 op_amp
 id|flock
-comma
-id|fd
 )paren
 )paren
 r_return
@@ -494,8 +497,6 @@ id|file_lock
 comma
 op_amp
 id|flock
-comma
-id|fd
 )paren
 )paren
 r_return
@@ -716,8 +717,6 @@ id|filp
 comma
 op_amp
 id|file_lock
-comma
-id|fd
 )paren
 suffix:semicolon
 )brace
@@ -872,10 +871,6 @@ r_struct
 id|file
 op_star
 id|filp
-comma
-r_int
-r_int
-id|fd
 )paren
 (brace
 r_struct
@@ -905,15 +900,9 @@ op_star
 id|before
 )paren
 op_logical_and
-(paren
 id|task
 op_ne
 id|fl-&gt;fl_owner
-op_logical_or
-id|fd
-op_ne
-id|fl-&gt;fl_fd
-)paren
 )paren
 id|before
 op_assign
@@ -934,10 +923,6 @@ op_logical_and
 id|task
 op_eq
 id|fl-&gt;fl_owner
-op_logical_and
-id|fd
-op_eq
-id|fl-&gt;fl_fd
 )paren
 id|free_lock
 c_func
@@ -967,10 +952,6 @@ r_struct
 id|flock
 op_star
 id|l
-comma
-r_int
-r_int
-id|fd
 )paren
 (brace
 id|off_t
@@ -1113,10 +1094,6 @@ id|fl-&gt;fl_owner
 op_assign
 id|current
 suffix:semicolon
-id|fl-&gt;fl_fd
-op_assign
-id|fd
-suffix:semicolon
 id|fl-&gt;fl_wait
 op_assign
 l_int|NULL
@@ -1150,10 +1127,6 @@ c_cond
 id|caller_fl-&gt;fl_owner
 op_eq
 id|sys_fl-&gt;fl_owner
-op_logical_and
-id|caller_fl-&gt;fl_fd
-op_eq
-id|sys_fl-&gt;fl_fd
 )paren
 r_return
 l_int|0
@@ -1244,10 +1217,6 @@ r_struct
 id|file_lock
 op_star
 id|caller
-comma
-r_int
-r_int
-id|fd
 )paren
 (brace
 r_struct
@@ -1296,15 +1265,9 @@ op_star
 id|before
 )paren
 op_logical_and
-(paren
 id|caller-&gt;fl_owner
 op_ne
 id|fl-&gt;fl_owner
-op_logical_or
-id|caller-&gt;fl_fd
-op_ne
-id|fl-&gt;fl_fd
-)paren
 )paren
 id|before
 op_assign
@@ -1325,10 +1288,6 @@ op_logical_and
 id|caller-&gt;fl_owner
 op_eq
 id|fl-&gt;fl_owner
-op_logical_and
-id|caller-&gt;fl_fd
-op_eq
-id|fl-&gt;fl_fd
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; * Detect adjacent or overlapping regions (if same lock type)&n;&t;&t; */
@@ -1589,8 +1548,6 @@ c_func
 id|before
 comma
 id|caller
-comma
-id|fd
 )paren
 )paren
 )paren
@@ -1627,8 +1584,6 @@ c_func
 id|before
 comma
 id|right
-comma
-id|fd
 )paren
 )paren
 )paren
@@ -1692,10 +1647,6 @@ r_struct
 id|file_lock
 op_star
 id|fl
-comma
-r_int
-r_int
-id|fd
 )paren
 (brace
 r_struct
@@ -1765,6 +1716,9 @@ id|file_lock_free_list
 op_assign
 id|tmp-&gt;fl_next
 suffix:semicolon
+id|free_list_cnt
+op_decrement
+suffix:semicolon
 )brace
 r_if
 c_cond
@@ -1793,11 +1747,6 @@ suffix:semicolon
 id|tmp-&gt;fl_owner
 op_assign
 id|current
-suffix:semicolon
-multiline_comment|/* FIXME: needed? */
-id|tmp-&gt;fl_fd
-op_assign
-id|fd
 suffix:semicolon
 multiline_comment|/* FIXME: needed? */
 id|tmp-&gt;fl_wait
@@ -1886,12 +1835,40 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* for sanity checks */
+id|free_list_cnt
+op_increment
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|free_list_cnt
+op_eq
+id|FREE_LIST_GARBAGE_COLLECT
+)paren
+id|free_list_garbage_collect
+c_func
+(paren
+)paren
+suffix:semicolon
 id|wake_up
 c_func
 (paren
 op_amp
 id|fl-&gt;fl_wait
 )paren
+suffix:semicolon
+)brace
+DECL|function|free_list_garbage_collect
+r_static
+r_void
+id|free_list_garbage_collect
+c_func
+(paren
+r_void
+)paren
+(brace
+multiline_comment|/* Do nothing for now */
+r_return
 suffix:semicolon
 )brace
 eof

@@ -2181,11 +2181,6 @@ c_func
 id|linux_banner
 )paren
 suffix:semicolon
-id|move_to_user_mode
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren

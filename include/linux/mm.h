@@ -787,7 +787,7 @@ c_func
 r_struct
 id|task_struct
 op_star
-id|task
+id|tsk
 )paren
 suffix:semicolon
 r_extern

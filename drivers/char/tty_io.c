@@ -21,6 +21,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &quot;kbd_kern.h&quot;
 macro_line|#include &quot;vt_kern.h&quot;
+macro_line|#include &quot;selection.h&quot;
 DECL|macro|CONSOLE_DEV
 mdefine_line|#define CONSOLE_DEV MKDEV(TTY_MAJOR,0)
 DECL|macro|TTY_DEV
@@ -31,69 +32,6 @@ DECL|macro|TTY_PARANOIA_CHECK
 mdefine_line|#define TTY_PARANOIA_CHECK
 DECL|macro|CHECK_TTY_COUNT
 mdefine_line|#define CHECK_TTY_COUNT
-macro_line|#ifdef CONFIG_SELECTION
-r_extern
-r_int
-id|set_selection
-c_func
-(paren
-r_const
-r_int
-id|arg
-comma
-r_struct
-id|tty_struct
-op_star
-id|tty
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|paste_selection
-c_func
-(paren
-r_struct
-id|tty_struct
-op_star
-id|tty
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|sel_loadlut
-c_func
-(paren
-r_const
-r_int
-id|arg
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|mouse_reporting
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|shift_state
-suffix:semicolon
-macro_line|#endif /* CONFIG_SELECTION */
-r_extern
-r_int
-id|do_screendump
-c_func
-(paren
-r_int
-r_int
-id|arg
-comma
-r_int
-id|mode
-)paren
-suffix:semicolon
 r_extern
 r_void
 id|do_blank_screen
@@ -5374,8 +5312,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#if 0
 multiline_comment|/*&n; * XXX does anyone use this anymore?!?&n; */
-DECL|function|do_get_ps_info
 r_static
 r_int
 id|do_get_ps_info
@@ -5585,6 +5523,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|tty_ioctl
 r_static
 r_int
@@ -6525,15 +6464,23 @@ id|arg
 r_case
 l_int|0
 suffix:colon
-r_return
-id|do_screendump
+r_case
+l_int|8
+suffix:colon
+r_case
+l_int|9
+suffix:colon
+id|printk
 c_func
 (paren
-id|arg
-comma
-l_int|0
+l_string|&quot;TIOCLINUX (0/8/9) ioctl is gone - use /dev/vcs&bslash;n&quot;
 )paren
 suffix:semicolon
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+macro_line|#if 0
 r_case
 l_int|1
 suffix:colon
@@ -6550,7 +6497,7 @@ c_func
 id|arg
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_SELECTION
+macro_line|#endif
 r_case
 l_int|2
 suffix:colon
@@ -6573,7 +6520,6 @@ c_func
 id|tty
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_SELECTION */
 r_case
 l_int|4
 suffix:colon
@@ -6585,7 +6531,6 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-macro_line|#ifdef CONFIG_SELECTION
 r_case
 l_int|5
 suffix:colon
@@ -6627,26 +6572,6 @@ id|arg
 suffix:semicolon
 r_return
 l_int|0
-suffix:semicolon
-macro_line|#endif /* CONFIG_SELECTION */
-r_case
-l_int|8
-suffix:colon
-multiline_comment|/* second arg is 1 or 2 */
-r_case
-l_int|9
-suffix:colon
-multiline_comment|/* both are explained in console.c */
-r_return
-id|do_screendump
-c_func
-(paren
-id|arg
-comma
-id|retval
-op_minus
-l_int|7
-)paren
 suffix:semicolon
 r_case
 l_int|10
@@ -7685,6 +7610,14 @@ macro_line|#endif
 id|kmem_start
 op_assign
 id|pty_init
+c_func
+(paren
+id|kmem_start
+)paren
+suffix:semicolon
+id|kmem_start
+op_assign
+id|vcs_init
 c_func
 (paren
 id|kmem_start

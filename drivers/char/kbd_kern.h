@@ -4,6 +4,10 @@ mdefine_line|#define _KBD_KERN_H
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/keyboard.h&gt;
 r_extern
+r_int
+id|shift_state
+suffix:semicolon
+r_extern
 r_char
 op_star
 id|func_table

@@ -701,7 +701,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: %s EtherLink at %#x, using %sIRQ %d.&bslash;n&quot;
+l_string|&quot;%s: %s EtherLink at %#lx, using %sIRQ %d.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma

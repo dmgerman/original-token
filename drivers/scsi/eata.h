@@ -4,7 +4,7 @@ DECL|macro|_EATA_H
 mdefine_line|#define _EATA_H
 macro_line|#include &lt;linux/scsicam.h&gt;
 DECL|macro|EATA_VERSION
-mdefine_line|#define EATA_VERSION &quot;1.16.00&quot;
+mdefine_line|#define EATA_VERSION &quot;1.17.00&quot;
 r_int
 id|eata2x_detect
 c_func

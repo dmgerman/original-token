@@ -1533,33 +1533,6 @@ r_goto
 id|end_kbd_intr
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|scancode
-op_eq
-l_int|0xff
-)paren
-(brace
-multiline_comment|/* the calculator keys on a FOCUS 9000 generate 0xff */
-macro_line|#ifndef KBD_IS_FOCUS_9000
-macro_line|#ifdef KBD_REPORT_ERR
-id|printk
-c_func
-(paren
-l_string|&quot;keyboard error&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#endif
-id|prev_scancode
-op_assign
-l_int|0
-suffix:semicolon
-r_goto
-id|end_kbd_intr
-suffix:semicolon
-)brace
 id|tty
 op_assign
 id|ttytab
@@ -1594,6 +1567,40 @@ id|scancode
 )paren
 suffix:semicolon
 multiline_comment|/* we do not return yet, because we want to maintain&n;&t;&t;   the key_down array, so that we have the correct&n;&t;&t;   values when finishing RAW mode or when changing VT&squot;s */
+)brace
+r_if
+c_cond
+(paren
+id|scancode
+op_eq
+l_int|0xff
+)paren
+(brace
+multiline_comment|/* in scancode mode 1, my ESC key generates 0xff */
+multiline_comment|/* the calculator keys on a FOCUS 9000 generate 0xff */
+macro_line|#ifndef KBD_IS_FOCUS_9000
+macro_line|#ifdef KBD_REPORT_ERR
+r_if
+c_cond
+(paren
+op_logical_neg
+id|raw_mode
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;keyboard error&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#endif
+id|prev_scancode
+op_assign
+l_int|0
+suffix:semicolon
+r_goto
+id|end_kbd_intr
+suffix:semicolon
 )brace
 r_if
 c_cond
@@ -1688,6 +1695,12 @@ suffix:semicolon
 r_else
 (brace
 macro_line|#ifdef KBD_REPORT_UNKN
+r_if
+c_cond
+(paren
+op_logical_neg
+id|raw_mode
+)paren
 id|printk
 c_func
 (paren
@@ -2786,7 +2799,7 @@ c_func
 id|fg_console
 )paren
 suffix:semicolon
-id|unblank_screen
+id|do_unblank_screen
 c_func
 (paren
 )paren

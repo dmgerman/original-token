@@ -6278,64 +6278,6 @@ op_minus
 id|EOPNOTSUPP
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_IP_MULTICAST
-r_if
-c_cond
-(paren
-id|optname
-op_eq
-id|IP_MULTICAST_TTL
-)paren
-(brace
-r_int
-r_char
-id|ucval
-suffix:semicolon
-id|ucval
-op_assign
-id|get_fs_byte
-c_func
-(paren
-(paren
-r_int
-r_char
-op_star
-)paren
-id|optval
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;MC TTL %d&bslash;n&quot;
-comma
-id|ucval
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ucval
-l_int|255
-)paren
-(brace
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-)brace
-id|sk-&gt;ip_mc_ttl
-op_assign
-(paren
-r_int
-)paren
-id|ucval
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-macro_line|#endif
 r_switch
 c_cond
 (paren
@@ -6413,7 +6355,6 @@ r_return
 l_int|0
 suffix:semicolon
 macro_line|#ifdef CONFIG_IP_MULTICAST
-macro_line|#ifdef GCC_WORKS
 r_case
 id|IP_MULTICAST_TTL
 suffix:colon
@@ -6433,14 +6374,6 @@ r_char
 op_star
 )paren
 id|optval
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;MC TTL %d&bslash;n&quot;
-comma
-id|ucval
 )paren
 suffix:semicolon
 r_if
@@ -6466,7 +6399,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif
 r_case
 id|IP_MULTICAST_LOOP
 suffix:colon

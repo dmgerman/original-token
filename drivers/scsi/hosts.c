@@ -216,13 +216,6 @@ id|Scsi_Host
 op_star
 id|shpnt
 suffix:semicolon
-r_int
-id|j
-suffix:semicolon
-id|j
-op_assign
-id|sh-&gt;extra_bytes
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -261,6 +254,20 @@ id|shpnt-&gt;next-&gt;next
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* If we are removing the last host registered, it is safe to reuse&n;           its host number (this avoids &quot;holes&quot; at boot time) (DB) */
+r_if
+c_cond
+(paren
+id|max_scsi_hosts
+op_eq
+id|next_scsi_host
+op_logical_and
+op_logical_neg
+id|scsi_loadable_module_flag
+)paren
+id|max_scsi_hosts
+op_decrement
+suffix:semicolon
 id|next_scsi_host
 op_decrement
 suffix:semicolon
@@ -279,7 +286,7 @@ r_struct
 id|Scsi_Host
 )paren
 op_plus
-id|j
+id|sh-&gt;extra_bytes
 )paren
 suffix:semicolon
 )brace
