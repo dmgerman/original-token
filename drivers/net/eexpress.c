@@ -2447,6 +2447,8 @@ op_star
 id|addrs
 )paren
 (brace
+multiline_comment|/* This doesn&squot;t work yet */
+macro_line|#if 0
 r_int
 id|ioaddr
 op_assign
@@ -2522,6 +2524,7 @@ id|ioaddr
 suffix:semicolon
 multiline_comment|/* Disable promiscuous mode, use normal mode */
 )brace
+macro_line|#endif
 )brace
 multiline_comment|/* The horrible routine to read a word from the serial EEPROM. */
 multiline_comment|/* The delay between EEPROM clock transitions. */

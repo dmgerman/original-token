@@ -283,10 +283,14 @@ DECL|macro|TYPE_DISK
 mdefine_line|#define TYPE_DISK&t;0x00
 DECL|macro|TYPE_TAPE
 mdefine_line|#define TYPE_TAPE&t;0x01
+DECL|macro|TYPE_PROCESSOR
+mdefine_line|#define TYPE_PROCESSOR&t;0x03&t;/* HP scanners use this */
 DECL|macro|TYPE_WORM
 mdefine_line|#define TYPE_WORM&t;0x04&t;/* Treated as ROM by our system */
 DECL|macro|TYPE_ROM
 mdefine_line|#define TYPE_ROM&t;0x05
+DECL|macro|TYPE_SCANNER
+mdefine_line|#define TYPE_SCANNER&t;0x06
 DECL|macro|TYPE_MOD
 mdefine_line|#define TYPE_MOD&t;0x07  /* Magneto-optical disk - treated as TYPE_DISK */
 DECL|macro|TYPE_NO_LUN

@@ -67,6 +67,9 @@ id|IMMEDIATE_BH
 comma
 DECL|enumerator|KEYBOARD_BH
 id|KEYBOARD_BH
+comma
+DECL|enumerator|CYCLADES_BH
+id|CYCLADES_BH
 )brace
 suffix:semicolon
 DECL|function|mark_bh

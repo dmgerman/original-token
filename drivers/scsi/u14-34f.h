@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *   u14-34f.h - used by low-level scsi driver for UltraStor 14F/34F&n; */
+multiline_comment|/*&n; *   u14-34f.h - used by the low-level driver for UltraStor 14F/34F&n; */
 macro_line|#ifndef _U14_34F_H
 DECL|macro|_U14_34F_H
 mdefine_line|#define _U14_34F_H
@@ -58,7 +58,7 @@ op_star
 )paren
 suffix:semicolon
 DECL|macro|U14_34F_VERSION
-mdefine_line|#define U14_34F_VERSION &quot;1.11.01&quot;
+mdefine_line|#define U14_34F_VERSION &quot;1.12.04&quot;
 DECL|macro|ULTRASTOR_14_34F
 mdefine_line|#define ULTRASTOR_14_34F {                                            &bslash;&n;                NULL,                                                 &bslash;&n;                NULL,                                                 &bslash;&n;                &quot;UltraStor 14F/34F rev. &quot; U14_34F_VERSION &quot; by &quot;      &bslash;&n;                &quot;Dario_Ballabio@milano.europe.dg.com.&quot;,               &bslash;&n;                u14_34f_detect,                                       &bslash;&n;                NULL,                                                 &bslash;&n;                NULL,&t;&t;                                      &bslash;&n;                NULL,                                                 &bslash;&n;                u14_34f_queuecommand,                                 &bslash;&n;                u14_34f_abort,                                        &bslash;&n;                u14_34f_reset,                                        &bslash;&n;                NULL,                                                 &bslash;&n;                u14_34f_biosparam,                                    &bslash;&n;&t;&t;0,   /* can_queue, reset by detect */                 &bslash;&n;                7,   /* this_id, reset by detect */                   &bslash;&n;                0,   /* sg_tablesize, reset by detect */              &bslash;&n;                0,   /* cmd_per_lun, reset by detect */               &bslash;&n;&t;&t;0,   /* number of boards present */                   &bslash;&n;                0,   /* unchecked isa dma, reset by detect */         &bslash;&n;                0,   /* use_clustering, reset by detect */            &bslash;&n;                }
 macro_line|#endif

@@ -825,6 +825,12 @@ r_int
 r_char
 id|s_dirt
 suffix:semicolon
+DECL|member|s_type
+r_struct
+id|file_system_type
+op_star
+id|s_type
+suffix:semicolon
 DECL|member|s_op
 r_struct
 id|super_operations

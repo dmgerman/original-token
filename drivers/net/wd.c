@@ -1359,6 +1359,41 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+macro_line|#if 1
+multiline_comment|/* Enable interrupt generation on softconfig cards -- M.U */
+multiline_comment|/* .. but possibly potentially unsafe - Donald */
+r_if
+c_cond
+(paren
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+l_int|14
+)paren
+op_amp
+l_int|0x20
+)paren
+id|outb
+c_func
+(paren
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+l_int|4
+)paren
+op_or
+l_int|0x80
+comma
+id|ioaddr
+op_plus
+l_int|4
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon

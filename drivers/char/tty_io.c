@@ -129,10 +129,16 @@ id|NR_LDISCS
 )braket
 suffix:semicolon
 multiline_comment|/* line disc dispatch table&t;*/
-multiline_comment|/*&n; * fg_console is the current virtual console,&n; * redirect is the pseudo-tty that console output&n; * is redirected to if asked by TIOCCONS.&n; */
+multiline_comment|/*&n; * fg_console is the current virtual console,&n; * last_console is the last used one&n; * redirect is the pseudo-tty that console output&n; * is redirected to if asked by TIOCCONS.&n; */
 DECL|variable|fg_console
 r_int
 id|fg_console
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|last_console
+r_int
+id|last_console
 op_assign
 l_int|0
 suffix:semicolon
@@ -1470,6 +1476,10 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
+id|tty-&gt;ctrl_status
+op_assign
+l_int|0
+suffix:semicolon
 id|for_each_task
 c_func
 (paren
@@ -1860,6 +1870,10 @@ id|new_console
 )paren
 )paren
 r_return
+suffix:semicolon
+id|last_console
+op_assign
+id|fg_console
 suffix:semicolon
 multiline_comment|/*&n;&t; * If we&squot;re switching, we could be going from KD_GRAPHICS to&n;&t; * KD_TEXT mode or vice versa, which means we need to blank or&n;&t; * unblank the screen later.&n;&t; */
 id|old_vc_mode
@@ -7391,6 +7405,16 @@ c_func
 id|kmem_start
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_CYCLADES
+id|kmem_start
+op_assign
+id|cy_init
+c_func
+(paren
+id|kmem_start
+)paren
+suffix:semicolon
+macro_line|#endif
 id|kmem_start
 op_assign
 id|pty_init

@@ -9,6 +9,11 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+DECL|macro|MULTISESSION
+mdefine_line|#define MULTISESSION /* emoenke@gwdg.de */
+macro_line|#ifdef MULTISESSION
+macro_line|#include &lt;linux/cdrom.h&gt;
+macro_line|#endif MULTISESSION
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#ifdef MODULE
@@ -692,6 +697,42 @@ id|dev
 op_assign
 id|s-&gt;s_dev
 suffix:semicolon
+macro_line|#ifdef MULTISESSION
+r_int
+id|i
+suffix:semicolon
+r_int
+r_int
+id|vol_desc_start
+suffix:semicolon
+r_int
+r_int
+op_star
+id|p_vol_desc_start
+op_assign
+op_amp
+id|vol_desc_start
+suffix:semicolon
+r_struct
+id|inode
+id|inode_fake
+suffix:semicolon
+r_struct
+id|file
+id|file_fake
+suffix:semicolon
+r_extern
+r_struct
+id|file_operations
+op_star
+id|get_blkfops
+c_func
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
+macro_line|#endif MULTISESSION
 r_struct
 id|iso_volume_descriptor
 op_star
@@ -859,6 +900,95 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* default is iso9660 */
+macro_line|#ifdef MULTISESSION
+multiline_comment|/*&n;&t; * look if the driver can tell the multi session redirection&n;         * value; this allows to do the redirection if we are looking&n;         * for the volume descriptor, and to avoid it during &quot;raw&quot; access.&n;         */
+id|vol_desc_start
+op_assign
+l_int|0
+suffix:semicolon
+id|inode_fake.i_rdev
+op_assign
+id|dev
+suffix:semicolon
+id|i
+op_assign
+id|get_blkfops
+c_func
+(paren
+id|MAJOR
+c_func
+(paren
+id|dev
+)paren
+)paren
+op_member_access_from_pointer
+id|ioctl
+c_func
+(paren
+op_amp
+id|inode_fake
+comma
+op_amp
+id|file_fake
+comma
+id|CDROMMULTISESSION_SYS
+comma
+(paren
+r_int
+r_int
+)paren
+id|p_vol_desc_start
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
+op_ne
+l_int|0
+)paren
+id|vol_desc_start
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#if 0
+id|printk
+c_func
+(paren
+l_string|&quot;isofs.inode: CDROMMULTISESSION_SYS rc=%d&bslash;n&quot;
+comma
+id|i
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;isofs.inode: vol_desc_start = %d&bslash;n&quot;
+comma
+id|vol_desc_start
+)paren
+suffix:semicolon
+macro_line|#endif
+r_for
+c_loop
+(paren
+id|iso_blknum
+op_assign
+id|vol_desc_start
+op_plus
+l_int|16
+suffix:semicolon
+id|iso_blknum
+OL
+id|vol_desc_start
+op_plus
+l_int|100
+suffix:semicolon
+id|iso_blknum
+op_increment
+)paren
+(brace
+macro_line|#else
 r_for
 c_loop
 (paren
@@ -874,6 +1004,7 @@ id|iso_blknum
 op_increment
 )paren
 (brace
+macro_line|#endif MULTISESSION
 r_if
 c_cond
 (paren

@@ -811,6 +811,52 @@ suffix:semicolon
 multiline_comment|/* frame buffer (size: nframes*2352 bytes) */
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * preliminary extension for obtaining multi session info&n; * (still may change if other drivers will use it, too):&n; * this has to be the &quot;arg&quot; of the CDROMMULTISESSION ioctl.&n; * The returned &quot;addr&quot; is valid only if &quot;xa_flag&quot; is true.&n; */
+DECL|struct|cdrom_multisession
+r_struct
+id|cdrom_multisession
+(brace
+r_union
+(brace
+r_struct
+(brace
+DECL|member|minute
+id|u_char
+id|minute
+suffix:semicolon
+DECL|member|second
+id|u_char
+id|second
+suffix:semicolon
+DECL|member|frame
+id|u_char
+id|frame
+suffix:semicolon
+DECL|member|msf
+)brace
+id|msf
+suffix:semicolon
+DECL|member|lba
+r_int
+id|lba
+suffix:semicolon
+DECL|member|addr
+)brace
+id|addr
+suffix:semicolon
+multiline_comment|/* frame address: start-of-last-session (not the new &quot;frame 16&quot;!)*/
+DECL|member|xa_flag
+id|u_char
+id|xa_flag
+suffix:semicolon
+multiline_comment|/* 1: &quot;is XA disk&quot; */
+DECL|member|addr_format
+id|u_char
+id|addr_format
+suffix:semicolon
+multiline_comment|/* CDROM_LBA or CDROM_MSF */
+)brace
+suffix:semicolon
 macro_line|#ifdef FIVETWELVE
 DECL|macro|CDROM_MODE1_SIZE
 mdefine_line|#define&t;CDROM_MODE1_SIZE&t;512
@@ -861,5 +907,10 @@ mdefine_line|#define&t;CDROMREADAUDIO&t;&t;0x530e&t;&t;/* (struct cdrom_read_aud
 multiline_comment|/*&n; * preliminary extension for enable (1) / disable (0) auto-ejecting&n; * currently used by sbpcd.c&n; * (still may change if other drivers will use it, too):&n; */
 DECL|macro|CDROMEJECT_SW
 mdefine_line|#define&t;CDROMEJECT_SW&t;&t;0x530f&t;&t;/* arg: 0 or 1 */
+multiline_comment|/*&n; * preliminary extension for obtaining the start-of-last-session&n; * address of multi session disks&n; * currently used by sbpcd.c&n; * (still may change if more drivers will use it).&n; */
+DECL|macro|CDROMMULTISESSION_SYS
+mdefine_line|#define&t;CDROMMULTISESSION_SYS&t;0x5310 /* internal use only (linux/fs/isofs/inode.c) */
+DECL|macro|CDROMMULTISESSION
+mdefine_line|#define&t;CDROMMULTISESSION&t;0x5311 /* &quot;user&quot; interface (arg has to be a &quot;cdrom_multisession&quot; struct) */
 macro_line|#endif  _LINUX_CDROM_H
 eof

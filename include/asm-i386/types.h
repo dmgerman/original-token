@@ -32,7 +32,7 @@ macro_line|#endif
 multiline_comment|/*&n; * __xx is ok: it doesn&squot;t pollute the POSIX namespace. Use these in the&n; * header files exported to user space&n; */
 DECL|typedef|__s8
 r_typedef
-r_int
+id|__signed__
 r_char
 id|__s8
 suffix:semicolon
@@ -44,7 +44,7 @@ id|__u8
 suffix:semicolon
 DECL|typedef|__s16
 r_typedef
-r_int
+id|__signed__
 r_int
 id|__s16
 suffix:semicolon
@@ -56,7 +56,7 @@ id|__u16
 suffix:semicolon
 DECL|typedef|__s32
 r_typedef
-r_int
+id|__signed__
 r_int
 id|__s32
 suffix:semicolon
@@ -69,7 +69,7 @@ suffix:semicolon
 macro_line|#ifndef __STRICT_ANSI__
 DECL|typedef|__s64
 r_typedef
-r_int
+id|__signed__
 r_int
 r_int
 id|__s64

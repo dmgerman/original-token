@@ -1269,6 +1269,10 @@ id|s-&gt;s_dirt
 op_assign
 l_int|0
 suffix:semicolon
+id|s-&gt;s_type
+op_assign
+id|type
+suffix:semicolon
 r_return
 id|s
 suffix:semicolon

@@ -3,13 +3,13 @@ multiline_comment|/*&n; * the definitions for the first controller can get overr
 multiline_comment|/*&n; * put your CDROM port base address into CDROM_PORT&n; * and specify the type of your interface in SBPRO.&n; *&n; * SBPRO addresses typically are 0x0230 (=0x220+0x10), 0x0250, ...&n; * LASERMATE (CI-101P, WDH-7001C) addresses typically are 0x0300, 0x0310, ...&n; * SPEA addresses are 0x320, 0x330, 0x340, 0x350&n; * there are some soundcards on the market with 0x0630, 0x0650, ...&n; *&n; * example: if your SBPRO audio address is 0x220, specify 0x230.&n; *&n; *&n; * set SBPRO to 1 for &quot;true&quot; SoundBlaster card&n; * set SBPRO to 0 for &quot;poor&quot; (no sound) interface cards&n; *                and for &quot;compatible&quot; soundcards.&n; * set SBPRO to 2 for the SPEA Media FX card&n; *&n; * most &quot;compatible&quot; sound boards like Galaxy need to set SBPRO to 0 !!!&n; * if SBPRO gets set wrong, the drive will get found - but any&n; * data access will give errors (audio access will work).&n; * The OmniCD interface card from CreativeLabs needs SBPRO 1.&n; *&n; * mail to emoenke@gwdg.de if your &quot;compatible&quot; card needs SBPRO 1&n; * (currently I do not know any &quot;compatible&quot; with SBPRO 1)&n; * then I can include better information with the next release.&n; */
 macro_line|#if !(SBPCD_ISSUE-1) /* first (or if you have only one) interface board: */
 DECL|macro|CDROM_PORT
-mdefine_line|#define CDROM_PORT 0x0230
+mdefine_line|#define CDROM_PORT 0x0340
 DECL|macro|SBPRO
-mdefine_line|#define SBPRO     1
+mdefine_line|#define SBPRO     0
 macro_line|#endif
 multiline_comment|/*&n; * If you have a &quot;compatible&quot; soundcard of type &quot;SBPRO 0&quot; or &quot;SBPRO 2&quot;,&n; * enter your sound card&squot;s base address here if you want sbpcd to turn&n; * the CD sound channels on.&n; *&n; * Example: #define SOUND_BASE 0x220 enables the sound card&squot;s CD channels&n; *          #define SOUND_BASE 0     leaves the soundcard untouched&n; */
 DECL|macro|SOUND_BASE
-mdefine_line|#define SOUND_BASE 0
+mdefine_line|#define SOUND_BASE 0x220
 multiline_comment|/* ignore the rest if you have only one interface board &amp; driver */
 macro_line|#if !(SBPCD_ISSUE-2) /* second interface board: */
 DECL|macro|CDROM_PORT
@@ -25,9 +25,9 @@ mdefine_line|#define SBPRO     0
 macro_line|#endif
 macro_line|#if !(SBPCD_ISSUE-4) /* fourth interface board: */
 DECL|macro|CDROM_PORT
-mdefine_line|#define CDROM_PORT 0x0340
+mdefine_line|#define CDROM_PORT 0x0230
 DECL|macro|SBPRO
-mdefine_line|#define SBPRO     0
+mdefine_line|#define SBPRO     1
 macro_line|#endif
 multiline_comment|/*==========================================================================*/
 multiline_comment|/*==========================================================================*/
@@ -36,6 +36,12 @@ macro_line|#ifndef _LINUX_SBPCD_H
 DECL|macro|_LINUX_SBPCD_H
 mdefine_line|#define _LINUX_SBPCD_H
 multiline_comment|/*==========================================================================*/
+multiline_comment|/*==========================================================================*/
+multiline_comment|/*&n; * DDI interface definitions&n; * &quot;invented&quot; by Fred N. van Kempen..&n; */
+DECL|macro|DDIOCSDBG
+mdefine_line|#define DDIOCSDBG&t;0x9000
+DECL|macro|DPRINTF
+mdefine_line|#define DPRINTF(x)&t;sbpcd_dprintf x
 multiline_comment|/*==========================================================================*/
 multiline_comment|/*&n; * Debug output levels&n; */
 DECL|macro|DBG_INF
@@ -90,8 +96,12 @@ DECL|macro|DBG_AUD
 mdefine_line|#define DBG_AUD&t;&t;25      /* &quot;read audio&quot; debugging */
 DECL|macro|DBG_SEQ
 mdefine_line|#define DBG_SEQ&t;&t;26      /* Sequoia interface configuration trace */
+DECL|macro|DBG_LCS
+mdefine_line|#define DBG_LCS&t;&t;27      /* Longshine LCS-7260 debugging trace */
+DECL|macro|DBG_TEA
+mdefine_line|#define DBG_TEA&t;&t;28      /* TEAC CD-55A debugging trace */
 DECL|macro|DBG_000
-mdefine_line|#define DBG_000&t;&t;27      /* unnecessary information */
+mdefine_line|#define DBG_000&t;&t;29      /* unnecessary information */
 multiline_comment|/*==========================================================================*/
 multiline_comment|/*==========================================================================*/
 multiline_comment|/*&n; * bits of flags_cmd_out:&n; */
@@ -153,9 +163,13 @@ mdefine_line|#define p_busy_new 0x08
 DECL|macro|p_door_locked
 mdefine_line|#define p_door_locked 0x04
 DECL|macro|p_bit_1
-mdefine_line|#define p_bit_1 0x02
+mdefine_line|#define p_bit_1 0x02 /* hopefully unused now */
+DECL|macro|p_lcs_door_locked
+mdefine_line|#define p_lcs_door_locked 0x02 /* new use of old bit */
 DECL|macro|p_disk_ok
 mdefine_line|#define p_disk_ok 0x01
+DECL|macro|p_lcs_door_closed
+mdefine_line|#define p_lcs_door_closed 0x01 /* new use of old bit */
 multiline_comment|/*&n; * &quot;old&quot; drives status result bits:&n; */
 DECL|macro|p_caddin_old
 mdefine_line|#define p_caddin_old 0x40

@@ -112,7 +112,7 @@ op_assign
 l_int|0x01
 suffix:semicolon
 multiline_comment|/* modified by psaux.c */
-multiline_comment|/*&n; * global state includes the following, and various static variables&n; * in this module: prev_scancode, shift_state, diacr, npadch,&n; *   dead_key_next, last_console&n; */
+multiline_comment|/*&n; * global state includes the following, and various static variables&n; * in this module: prev_scancode, shift_state, diacr, npadch, dead_key_next.&n; * (last_console is now a global variable)&n; */
 multiline_comment|/* shift state counters.. */
 DECL|variable|k_down
 r_static
@@ -143,6 +143,10 @@ l_int|0
 comma
 )brace
 suffix:semicolon
+r_extern
+r_int
+id|last_console
+suffix:semicolon
 DECL|variable|want_console
 r_static
 r_int
@@ -151,14 +155,6 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
-DECL|variable|last_console
-r_static
-r_int
-id|last_console
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* last used VC */
 DECL|variable|dead_key_next
 r_static
 r_int
@@ -766,7 +762,7 @@ l_int|0x3f
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* utf-8 is defined for words of up to 36 bits,&n;       but we need only 16 bits here */
+multiline_comment|/* UTF-8 is defined for words of up to 31 bits,&n;       but we need only 16 bits here */
 )brace
 multiline_comment|/*&n; * Translation of escaped scancodes to keycodes.&n; * This is now user-settable.&n; * The keycodes 1-88,96-111,119 are fairly standard, and&n; * should probably not be changed - changing might confuse X.&n; * X also interprets scancode 0x5d (KEY_Begin).&n; *&n; * For 1-88 keycode equals scancode.&n; */
 DECL|macro|E0_KPENTER
@@ -4697,10 +4693,6 @@ op_ne
 id|fg_console
 )paren
 (brace
-id|last_console
-op_assign
-id|fg_console
-suffix:semicolon
 id|change_console
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n;  SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;  file README.st for more information.&n;&n;  History:&n;  Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;  Contribution and ideas from several people including (in alphabetical&n;  order) Klaus Ehrenfried, Wolfgang Denk, J&quot;org Weule, and&n;  Eric Youngdale.&n;&n;  Copyright 1992, 1993, 1994 Kai Makisara&n;&t;&t; email makisara@vtinsx.ins.vtt.fi or Kai.Makisara@vtt.fi&n;&n;  Last modified: Wed Nov 30 21:09:53 1994 by root@kai.home&n;*/
+multiline_comment|/*&n;  SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;  file README.st for more information.&n;&n;  History:&n;  Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;  Contribution and ideas from several people including (in alphabetical&n;  order) Klaus Ehrenfried, Wolfgang Denk, Andreas Koppenh&quot;ofer, J&quot;org Weule,&n;  and Eric Youngdale.&n;&n;  Copyright 1992, 1993, 1994 Kai Makisara&n;&t;&t; email makisara@vtinsx.ins.vtt.fi or Kai.Makisara@vtt.fi&n;&n;  Last modified: Sun Dec 18 10:15:33 1994 by root@kai.home&n;*/
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -61,7 +61,7 @@ mdefine_line|#define MAX_READY_RETRIES 5
 DECL|macro|NO_TAPE
 mdefine_line|#define NO_TAPE  NOT_READY
 DECL|macro|ST_TIMEOUT
-mdefine_line|#define ST_TIMEOUT 27000
+mdefine_line|#define ST_TIMEOUT 90000
 DECL|macro|ST_LONG_TIMEOUT
 mdefine_line|#define ST_LONG_TIMEOUT 200000
 DECL|variable|st_nbr_buffers
@@ -977,6 +977,17 @@ comma
 id|dev
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|STp-&gt;mt_status
+)paren
+op_member_access_from_pointer
+id|mt_fileno
+op_ge
+l_int|0
+)paren
 (paren
 id|STp-&gt;mt_status
 )paren
@@ -1579,6 +1590,10 @@ op_member_access_from_pointer
 id|read_pointer
 op_assign
 l_int|0
+suffix:semicolon
+id|STp-&gt;drv_block
+op_sub_assign
+id|backspace
 suffix:semicolon
 id|result
 op_assign
@@ -3245,6 +3260,17 @@ op_minus
 l_int|1
 suffix:semicolon
 multiline_comment|/* Mark as not busy */
+r_if
+c_cond
+(paren
+(paren
+id|STp-&gt;mt_status
+)paren
+op_member_access_from_pointer
+id|mt_fileno
+op_ge
+l_int|0
+)paren
 (paren
 id|STp-&gt;mt_status
 )paren
@@ -3411,6 +3437,11 @@ id|transfer
 suffix:semicolon
 r_int
 id|write_threshold
+suffix:semicolon
+r_int
+id|doing_write
+op_assign
+l_int|0
 suffix:semicolon
 r_static
 r_int
@@ -3809,6 +3840,10 @@ id|write_threshold
 )paren
 )paren
 (brace
+id|doing_write
+op_assign
+l_int|1
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4407,6 +4442,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|doing_write
+op_logical_and
 (paren
 id|STp-&gt;buffer
 )paren
@@ -5797,6 +5834,17 @@ id|STp-&gt;moves_after_eof
 op_assign
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|STp-&gt;mt_status
+)paren
+op_member_access_from_pointer
+id|mt_fileno
+op_ge
+l_int|0
+)paren
 (paren
 id|STp-&gt;mt_status
 )paren
@@ -6283,6 +6331,13 @@ l_int|4
 )paren
 suffix:semicolon
 macro_line|#endif
+r_if
+c_cond
+(paren
+id|fileno
+op_ge
+l_int|0
+)paren
 id|fileno
 op_add_assign
 id|arg
@@ -6421,6 +6476,13 @@ id|ltmp
 suffix:semicolon
 )brace
 macro_line|#endif
+r_if
+c_cond
+(paren
+id|fileno
+op_ge
+l_int|0
+)paren
 id|fileno
 op_sub_assign
 id|arg
@@ -7071,6 +7133,13 @@ l_int|4
 suffix:semicolon
 )brace
 macro_line|#endif
+r_if
+c_cond
+(paren
+id|fileno
+op_ge
+l_int|0
+)paren
 id|fileno
 op_add_assign
 id|arg
@@ -7293,6 +7362,20 @@ id|STp-&gt;mt_status
 op_member_access_from_pointer
 id|mt_fileno
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|STp-&gt;eof
+op_eq
+id|ST_EOD
+op_logical_or
+id|STp-&gt;eof
+op_eq
+id|ST_EOM_OK
+)paren
+r_return
+l_int|0
+suffix:semicolon
 multiline_comment|/* The next lines would hide the number of spaced FileMarks&n;          That&squot;s why I inserted the previous lines. I had no luck&n;&t;  with detecting EOM with FSF, so we go now to EOM.&n;          Joerg Weule */
 id|cmd
 (braket
@@ -7325,10 +7408,7 @@ suffix:semicolon
 macro_line|#endif
 id|blkno
 op_assign
-(paren
-op_minus
-l_int|1
-)paren
+l_int|0
 suffix:semicolon
 id|at_sm
 op_assign
@@ -7365,6 +7445,27 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* To the end of tape */
+macro_line|#ifdef ST_NOWAIT
+id|cmd
+(braket
+l_int|1
+)braket
+op_or_assign
+l_int|2
+suffix:semicolon
+multiline_comment|/* Don&squot;t wait for completion */
+id|timeout
+op_assign
+id|ST_TIMEOUT
+suffix:semicolon
+macro_line|#else
+id|timeout
+op_assign
+id|ST_LONG_TIMEOUT
+op_star
+l_int|8
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef DEBUG
 r_if
 c_cond
@@ -8003,6 +8104,22 @@ multiline_comment|/* Mark as not busy */
 r_if
 c_cond
 (paren
+id|cmd_in
+op_eq
+id|MTFSF
+)paren
+id|STp-&gt;moves_after_eof
+op_assign
+l_int|0
+suffix:semicolon
+r_else
+id|STp-&gt;moves_after_eof
+op_assign
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
 op_logical_neg
 id|ioctl_result
 )paren
@@ -8052,22 +8169,6 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|cmd_in
-op_eq
-id|MTFSF
-)paren
-id|STp-&gt;moves_after_eof
-op_assign
-l_int|0
-suffix:semicolon
-r_else
-id|STp-&gt;moves_after_eof
-op_assign
-l_int|1
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -8337,6 +8438,14 @@ op_eq
 id|MTFSFM
 )paren
 )paren
+(brace
+r_if
+c_cond
+(paren
+id|fileno
+op_ge
+l_int|0
+)paren
 (paren
 id|STp-&gt;mt_status
 )paren
@@ -8347,6 +8456,20 @@ id|fileno
 op_minus
 id|undone
 suffix:semicolon
+r_else
+(paren
+id|STp-&gt;mt_status
+)paren
+op_member_access_from_pointer
+id|mt_fileno
+op_assign
+id|fileno
+suffix:semicolon
+id|STp-&gt;drv_block
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 r_else
 r_if
 c_cond
@@ -8363,6 +8486,7 @@ op_eq
 id|MTBSFM
 )paren
 )paren
+(brace
 (paren
 id|STp-&gt;mt_status
 )paren
@@ -8373,6 +8497,11 @@ id|fileno
 op_plus
 id|undone
 suffix:semicolon
+id|STp-&gt;drv_block
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 r_else
 r_if
 c_cond
@@ -8411,10 +8540,6 @@ c_cond
 id|cmd_in
 op_eq
 id|MTBSR
-op_logical_and
-id|blkno
-op_ge
-l_int|0
 )paren
 (brace
 r_if
@@ -8677,10 +8802,6 @@ id|file
 comma
 id|mtc.mt_op
 op_eq
-id|MTNOP
-op_logical_or
-id|mtc.mt_op
-op_eq
 id|MTSEEK
 op_logical_or
 id|mtc.mt_op
@@ -8710,6 +8831,34 @@ l_int|0
 r_return
 id|i
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|mtc.mt_op
+op_ne
+id|MTNOP
+op_logical_and
+id|mtc.mt_op
+op_ne
+id|MTSETBLK
+op_logical_and
+id|mtc.mt_op
+op_ne
+id|MTSETDENSITY
+op_logical_and
+id|mtc.mt_op
+op_ne
+id|MTWSM
+op_logical_and
+id|mtc.mt_op
+op_ne
+id|MTSETDRVBUFFER
+)paren
+id|STp-&gt;rw
+op_assign
+id|ST_IDLE
+suffix:semicolon
+multiline_comment|/* Prevent automatic WEOF */
 r_if
 c_cond
 (paren
@@ -9011,6 +9160,10 @@ c_cond
 id|STp-&gt;eof
 op_eq
 id|ST_EOD
+op_logical_or
+id|STp-&gt;eof
+op_eq
+id|ST_EOM_OK
 )paren
 (paren
 id|STp-&gt;mt_status

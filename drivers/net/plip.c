@@ -1,3 +1,4 @@
+multiline_comment|/* $Id: plip.c,v 1.7 1994/12/16 06:20:02 gniibe Exp $ */
 multiline_comment|/* plip.c: A parallel port &quot;network&quot; driver for linux. */
 multiline_comment|/* This driver is for parallel port with 5-bit cable (LapLink (R) cable). */
 multiline_comment|/*&n; * Authors:&t;Donald Becker,  &lt;becker@super.org&gt;&n; *&t;&t;Tommy Thorn, &lt;thorn@daimi.aau.dk&gt;&n; *&t;&t;Tanabe Hiroyasu, &lt;hiro@sanpo.t.u-tokyo.ac.jp&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Peter Bauer, &lt;100136.3530@compuserve.com&gt;&n; *&t;&t;Niibe Yutaka, &lt;gniibe@mri.co.jp&gt;&n; *&n; *&t;&t;This is the all improved state based PLIP that Niibe Yutaka has contributed.&n; *&n; *&t;&t;Modularization by Alan Cox. I also added the plipconfig program to tune the timeouts&n; *&t;&t;and ifmap support for funny serial port settings or setting odd values using the &n; *&t;&t;modular plip. I also took the panic() calls out. I don&squot;t like panic - especially when&n; *&t;&t;it can be avoided.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
@@ -12,7 +13,7 @@ l_string|&quot;NET3 &quot;
 macro_line|#ifdef MODULE
 l_string|&quot;MODULAR &quot;
 macro_line|#endif    
-l_string|&quot;PLIP.014 gniibe@mri.co.jp&bslash;n&quot;
+l_string|&quot;PLIP $Revision: 1.7 $ gniibe@mri.co.jp&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n;  Sources:&n;&t;Ideas and protocols came from Russ Nelson&squot;s &lt;nelson@crynwr.com&gt;&n;&t;&quot;parallel.asm&quot; parallel port packet driver.&n;&n;  The &quot;Crynwr&quot; parallel port standard specifies the following protocol:&n;   send header nibble &squot;8&squot;&n;   count-low octet&n;   count-high octet&n;   ... data octets&n;   checksum octet&n;  Each octet is sent as &lt;wait for rx. &squot;0x1?&squot;&gt; &lt;send 0x10+(octet&amp;0x0F)&gt;&n;&t;&t;&t;&lt;wait for rx. &squot;0x0?&squot;&gt; &lt;send 0x00+((octet&gt;&gt;4)&amp;0x0F)&gt;&n;&n;The cable used is a de facto standard parallel null cable -- sold as&n;a &quot;LapLink&quot; cable by various places.  You&squot;ll need a 10-conductor cable to&n;make one yourself.  The wiring is:&n;    SLCTIN&t;17 - 17&n;    GROUND&t;25 - 25&n;    D0-&gt;ERROR&t;2 - 15&t;&t;15 - 2&n;    D1-&gt;SLCT&t;3 - 13&t;&t;13 - 3&n;    D2-&gt;PAPOUT&t;4 - 12&t;&t;12 - 4&n;    D3-&gt;ACK&t;5 - 10&t;&t;10 - 5&n;    D4-&gt;BUSY&t;6 - 11&t;&t;11 - 6&n;  Do not connect the other pins.  They are&n;    D5,D6,D7 are 7,8,9&n;    STROBE is 1, FEED is 14, INIT is 16&n;    extra grounds are 18,19,20,21,22,23,24&n;*/
@@ -65,11 +66,11 @@ multiline_comment|/* Nibble time out = PLIP_NIBBLE_WAIT * PLIP_DELAY_UNIT usec *
 DECL|macro|PLIP_NIBBLE_WAIT
 mdefine_line|#define PLIP_NIBBLE_WAIT        5000
 DECL|macro|PAR_DATA
-mdefine_line|#define PAR_DATA(dev)&t;&t;(dev-&gt;base_addr+0)
+mdefine_line|#define PAR_DATA(dev)&t;&t;((dev)-&gt;base_addr+0)
 DECL|macro|PAR_STATUS
-mdefine_line|#define PAR_STATUS(dev)&t;&t;(dev-&gt;base_addr+1)
+mdefine_line|#define PAR_STATUS(dev)&t;&t;((dev)-&gt;base_addr+1)
 DECL|macro|PAR_CONTROL
-mdefine_line|#define PAR_CONTROL(dev)&t;(dev-&gt;base_addr+2)
+mdefine_line|#define PAR_CONTROL(dev)&t;((dev)-&gt;base_addr+2)
 multiline_comment|/* Index to functions, as function prototypes. */
 r_static
 r_int
@@ -613,6 +614,18 @@ id|ENODEV
 suffix:semicolon
 )brace
 )brace
+id|snarf_region
+c_func
+(paren
+id|PAR_DATA
+c_func
+(paren
+id|dev
+)paren
+comma
+l_int|3
+)paren
+suffix:semicolon
 multiline_comment|/* Fill in the generic fields of the device structure. */
 id|ether_setup
 c_func
@@ -927,6 +940,33 @@ c_func
 id|dev-&gt;irq
 )paren
 suffix:semicolon
+id|outb
+c_func
+(paren
+id|LP_PINITP
+op_or
+id|LP_PSELECP
+comma
+id|PAR_CONTROL
+c_func
+(paren
+id|dev
+)paren
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x01
+comma
+id|PAR_DATA
+c_func
+(paren
+id|dev
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* send ACK */
 id|dev-&gt;interrupt
 op_assign
 l_int|0
@@ -988,6 +1028,22 @@ id|nl-&gt;connection
 op_assign
 id|PLIP_CN_SEND
 suffix:semicolon
+id|outb
+c_func
+(paren
+id|LP_PINITP
+op_or
+id|LP_PSELECP
+op_or
+id|LP_PINTEN
+comma
+id|PAR_CONTROL
+c_func
+(paren
+id|dev
+)paren
+)paren
+suffix:semicolon
 id|enable_irq
 c_func
 (paren
@@ -1000,6 +1056,22 @@ r_else
 id|nl-&gt;connection
 op_assign
 id|PLIP_CN_NONE
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|LP_PINITP
+op_or
+id|LP_PSELECP
+op_or
+id|LP_PINTEN
+comma
+id|PAR_CONTROL
+c_func
+(paren
+id|dev
+)paren
+)paren
 suffix:semicolon
 id|enable_irq
 c_func
@@ -1161,6 +1233,22 @@ op_amp
 id|tq_timer
 )paren
 suffix:semicolon
+id|outb
+c_func
+(paren
+id|LP_PINITP
+op_or
+id|LP_PSELECP
+op_or
+id|LP_PINTEN
+comma
+id|PAR_CONTROL
+c_func
+(paren
+id|dev
+)paren
+)paren
+suffix:semicolon
 id|enable_irq
 c_func
 (paren
@@ -1232,6 +1320,22 @@ suffix:semicolon
 id|dev-&gt;tbusy
 op_assign
 l_int|0
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|LP_PINITP
+op_or
+id|LP_PSELECP
+op_or
+id|LP_PINTEN
+comma
+id|PAR_CONTROL
+c_func
+(paren
+id|dev
+)paren
+)paren
 suffix:semicolon
 id|enable_irq
 c_func
@@ -1404,6 +1508,20 @@ id|disable_irq
 c_func
 (paren
 id|dev-&gt;irq
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|LP_PINITP
+op_or
+id|LP_PSELECP
+comma
+id|PAR_CONTROL
+c_func
+(paren
+id|dev
+)paren
 )paren
 suffix:semicolon
 id|dev-&gt;tbusy
@@ -2090,6 +2208,22 @@ suffix:semicolon
 id|sti
 c_func
 (paren
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|LP_PINITP
+op_or
+id|LP_PSELECP
+op_or
+id|LP_PINTEN
+comma
+id|PAR_CONTROL
+c_func
+(paren
+id|dev
+)paren
 )paren
 suffix:semicolon
 id|enable_irq
@@ -2899,19 +3033,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|outb
-c_func
-(paren
-l_int|0x01
-comma
-id|PAR_DATA
-c_func
-(paren
-id|dev
-)paren
-)paren
-suffix:semicolon
-multiline_comment|/* send ACK */
 id|dev-&gt;interrupt
 op_assign
 l_int|1
@@ -3440,6 +3561,20 @@ id|disable_irq
 c_func
 (paren
 id|dev-&gt;irq
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|LP_PINITP
+op_or
+id|LP_PSELECP
+comma
+id|PAR_CONTROL
+c_func
+(paren
+id|dev
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -4076,6 +4211,19 @@ op_amp
 id|dev_plip0
 )paren
 suffix:semicolon
+id|release_region
+c_func
+(paren
+id|PAR_DATA
+c_func
+(paren
+op_amp
+id|dev_plip0
+)paren
+comma
+l_int|3
+)paren
+suffix:semicolon
 id|kfree_s
 c_func
 (paren
@@ -4106,6 +4254,19 @@ op_amp
 id|dev_plip1
 )paren
 suffix:semicolon
+id|release_region
+c_func
+(paren
+id|PAR_DATA
+c_func
+(paren
+op_amp
+id|dev_plip1
+)paren
+comma
+l_int|3
+)paren
+suffix:semicolon
 id|kfree_s
 c_func
 (paren
@@ -4134,6 +4295,19 @@ c_func
 (paren
 op_amp
 id|dev_plip2
+)paren
+suffix:semicolon
+id|release_region
+c_func
+(paren
+id|PAR_DATA
+c_func
+(paren
+op_amp
+id|dev_plip2
+)paren
+comma
+l_int|3
 )paren
 suffix:semicolon
 id|kfree_s

@@ -356,7 +356,9 @@ id|bad_bh
 suffix:colon
 id|printk
 (paren
-l_string|&quot;irq.c:bad bottom half entry&bslash;n&quot;
+l_string|&quot;irq.c:bad bottom half entry %08lx&bslash;n&quot;
+comma
+id|mask
 )paren
 suffix:semicolon
 )brace

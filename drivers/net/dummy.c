@@ -111,6 +111,10 @@ c_func
 id|dev
 )paren
 suffix:semicolon
+id|dev-&gt;flags
+op_or_assign
+id|IFF_NOARP
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

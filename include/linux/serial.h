@@ -74,8 +74,10 @@ DECL|macro|PORT_16550
 mdefine_line|#define PORT_16550&t;3
 DECL|macro|PORT_16550A
 mdefine_line|#define PORT_16550A&t;4
+DECL|macro|PORT_CIRRUS
+mdefine_line|#define PORT_CIRRUS     5
 DECL|macro|PORT_MAX
-mdefine_line|#define PORT_MAX&t;4
+mdefine_line|#define PORT_MAX&t;5
 multiline_comment|/*&n; * Definitions for async_struct (and serial_struct) flags field&n; */
 DECL|macro|ASYNC_HUP_NOTIFY
 mdefine_line|#define ASYNC_HUP_NOTIFY 0x0001 /* Notify getty on hangups and closes &n;&t;&t;&t;&t;   on the callout port */

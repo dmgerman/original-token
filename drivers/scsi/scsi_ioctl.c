@@ -12,7 +12,7 @@ macro_line|#include &quot;scsi_ioctl.h&quot;
 DECL|macro|MAX_RETRIES
 mdefine_line|#define MAX_RETRIES 5&t;
 DECL|macro|MAX_TIMEOUT
-mdefine_line|#define MAX_TIMEOUT 200
+mdefine_line|#define MAX_TIMEOUT 900
 DECL|macro|MAX_BUF
 mdefine_line|#define MAX_BUF 4096
 DECL|macro|max

@@ -1,5 +1,5 @@
-multiline_comment|/*&n; *      eata.c - Low-level SCSI driver for EISA EATA SCSI controllers.&n; *&n; *      30 Nov 1994 rev. 1.09 for linux 1.1.68&n; *          Redo i/o on target status CONDITION_GOOD for TYPE_DISK only.&n; *          Added optional support for using a single board at a time.&n; *&n; *      18 Nov 1994 rev. 1.08 for linux 1.1.64&n; *          Forces sg_tablesize = 64 and can_queue = 64 if these&n; *          values are not correctly detected (DPT PM2012).&n; *&n; *      14 Nov 1994 rev. 1.07 for linux 1.1.63  Final BETA release.&n; *      04 Aug 1994 rev. 1.00 for linux 1.1.39  First BETA release.&n; *&n; *&n; *          This driver is based on the CAM (Common Access Method Committee)&n; *          EATA (Enhanced AT Bus Attachment) rev. 2.0A.&n; *&n; *      Released by Dario Ballabio (Dario_Ballabio@milano.europe.dg.com)&n; *&n; */
-multiline_comment|/*&n; *&n; *  This code has been tested with up to 3 Distributed Processing Technology &n; *  PM2122A/9X (DPT SCSI BIOS v002.D1, firmware v05E.0) eisa controllers,&n; *  no on board cache and no RAID option. &n; *  BIOS must be enabled on the first board and must be disabled for all other &n; *  boards. &n; *  Support is provided for any number of DPT PM2122 eisa boards.&n; *  All boards should be configured at the same IRQ level.&n; *  Multiple IRQ configurations are supported too.&n; *  Boards can be located in any eisa slot (1-15) and are named EATA0, &n; *  EATA1,... in increasing eisa slot number.&n; *  In order to detect the boards, the IRQ must be _level_ triggered &n; *  (not _edge_ triggered).&n; *&n; *  Other eisa configuration parameters are:&n; *&n; *  COMMAND QUEUING   : ENABLED&n; *  COMMAND TIMEOUT   : ENABLED&n; *  CACHE             : DISABLED&n; *&n; */
+multiline_comment|/*&n; *      eata.c - Low-level driver for EATA/DMA SCSI host adapters.&n; *&n; *      17 Dec 1994 rev. 1.11 for linux 1.1.74&n; *          Use the scsicam_bios_param routine. This allows an easy&n; *          migration path from disk partition tables created using &n; *          different SCSI drivers and non optimal disk geometry.&n; *&n; *      15 Dec 1994 rev. 1.10 for linux 1.1.74&n; *          Added support for ISA EATA boards (DPT PM2011, DPT PM2021).&n; *          The host-&gt;block flag is set for all the detected ISA boards.&n; *          The detect routine no longer enforces LEVEL triggering&n; *          for EISA boards, it just prints a warning message.&n; *&n; *      30 Nov 1994 rev. 1.09 for linux 1.1.68&n; *          Redo i/o on target status CONDITION_GOOD for TYPE_DISK only.&n; *          Added optional support for using a single board at a time.&n; *&n; *      18 Nov 1994 rev. 1.08 for linux 1.1.64&n; *          Forces sg_tablesize = 64 and can_queue = 64 if these&n; *          values are not correctly detected (DPT PM2012).&n; *&n; *      14 Nov 1994 rev. 1.07 for linux 1.1.63  Final BETA release.&n; *      04 Aug 1994 rev. 1.00 for linux 1.1.39  First BETA release.&n; *&n; *&n; *          This driver is based on the CAM (Common Access Method Committee)&n; *          EATA (Enhanced AT Bus Attachment) rev. 2.0A, using DMA protocol.&n; *&n; *      Released by Dario Ballabio (Dario_Ballabio@milano.europe.dg.com)&n; *&n; */
+multiline_comment|/*&n; *&n; *  Here is a brief description of the DPT SCSI host adapters.&n; *  All these boards provide an EATA/DMA compatible programming interface&n; *  and are fully supported by this driver:&n; *&n; *  PM2011B/9X -  Entry Level ISA&n; *  PM2021A/9X -  High Performance ISA&n; *  PM2012A       Old EISA&n; *  PM2012B       Old EISA&n; *  PM2022A/9X -  Entry Level EISA&n; *  PM2122A/9X -  High Performance EISA&n; *  PM2322A/9X -  Extra High Performance EISA&n; *&n; *  The DPT PM2001 provides only the EATA/PIO interface and hence is not&n; *  supported by this driver.&n; *&n; *  This code has been tested with up to 3 Distributed Processing Technology &n; *  PM2122A/9X (DPT SCSI BIOS v002.D1, firmware v05E.0) eisa controllers,&n; *  no on board cache and no RAID option. &n; *  BIOS must be enabled on the first board and must be disabled for all other &n; *  boards. &n; *  Support is provided for any number of DPT PM2122 eisa boards.&n; *  All boards should be configured at the same IRQ level.&n; *  Multiple IRQ configurations are supported too.&n; *  Boards can be located in any eisa slot (1-15) and are named EATA0, &n; *  EATA1,... in increasing eisa slot number. ISA boards are detected&n; *  after the eisa slot probes.&n; *&n; *  The IRQ for EISA boards should be _level_ triggered (not _edge_ triggered).&n; *  This is a requirement in order to support multiple boards on the same IRQ.&n; *&n; *  Other eisa configuration parameters are:&n; *&n; *  COMMAND QUEUING   : ENABLED&n; *  COMMAND TIMEOUT   : ENABLED&n; *  CACHE             : DISABLED&n; *&n; *  In order to support multiple ISA boards in a reliable way,&n; *  the driver sets host-&gt;block = TRUE for all ISA boards.&n; */
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -10,23 +10,27 @@ macro_line|#include &quot;../block/blk.h&quot;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;sd.h&quot;
+macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &quot;linux/in.h&quot;
 macro_line|#include &quot;eata.h&quot;
-DECL|macro|NO_DEBUG_DETECT
-mdefine_line|#define NO_DEBUG_DETECT
-DECL|macro|NO_DEBUG_INTERRUPT
-mdefine_line|#define NO_DEBUG_INTERRUPT
-DECL|macro|NO_DEBUG_STATISTICS
-mdefine_line|#define NO_DEBUG_STATISTICS
-DECL|macro|NO_SINGLE_HOST_OPERATIONS
-mdefine_line|#define NO_SINGLE_HOST_OPERATIONS
+multiline_comment|/* Subversion values */
+DECL|macro|ISA
+mdefine_line|#define ISA  0
+DECL|macro|ESA
+mdefine_line|#define ESA 1
+DECL|macro|DEBUG_DETECT
+macro_line|#undef  DEBUG_DETECT
+DECL|macro|DEBUG_INTERRUPT
+macro_line|#undef  DEBUG_INTERRUPT
+DECL|macro|DEBUG_STATISTICS
+macro_line|#undef  DEBUG_STATISTICS
 DECL|macro|MAX_TARGET
 mdefine_line|#define MAX_TARGET 8
 DECL|macro|MAX_IRQ
 mdefine_line|#define MAX_IRQ 16
 DECL|macro|MAX_BOARDS
-mdefine_line|#define MAX_BOARDS 15
+mdefine_line|#define MAX_BOARDS 18
 DECL|macro|MAX_MAILBOXES
 mdefine_line|#define MAX_MAILBOXES 64
 DECL|macro|MAX_SGLIST
@@ -69,6 +73,10 @@ DECL|macro|REG_MID
 mdefine_line|#define REG_MID         4
 DECL|macro|REG_MSB
 mdefine_line|#define REG_MSB         5
+DECL|macro|REG_REGION
+mdefine_line|#define REG_REGION      9
+DECL|macro|EISA_RANGE
+mdefine_line|#define EISA_RANGE      0xf000
 DECL|macro|BSY_ASSERTED
 mdefine_line|#define BSY_ASSERTED      0x80
 DECL|macro|DRQ_ASSERTED
@@ -227,7 +235,7 @@ id|drqx
 suffix:colon
 l_int|2
 suffix:semicolon
-multiline_comment|/* DRQ Index (0=DRQ0, 1=DRQ7, 2=DRQ6, 3=DRQ5) */
+multiline_comment|/* DRQ Index (0=DMA0, 1=DMA7, 2=DMA6, 3=DMA5) */
 DECL|member|sync
 id|unchar
 id|sync
@@ -339,7 +347,7 @@ l_int|12
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* Command packet structure */
+multiline_comment|/* MailBox SCSI Command Packet */
 DECL|struct|mscp
 r_struct
 id|mscp
@@ -594,6 +602,12 @@ id|MAX_TARGET
 )braket
 suffix:semicolon
 multiline_comment|/* If TRUE redo operation on target */
+DECL|member|subversion
+r_int
+r_char
+id|subversion
+suffix:semicolon
+multiline_comment|/* Bus type, either ISA or ESA */
 DECL|member|sp
 r_struct
 id|mssp
@@ -911,6 +925,7 @@ r_static
 r_inline
 r_int
 id|port_detect
+c_func
 (paren
 id|ushort
 op_star
@@ -925,6 +940,14 @@ op_star
 id|tpnt
 )paren
 (brace
+r_int
+r_char
+id|irq
+comma
+id|dma_channel
+comma
+id|subversion
+suffix:semicolon
 r_struct
 id|eata_info
 id|info
@@ -932,6 +955,28 @@ suffix:semicolon
 r_struct
 id|eata_config
 id|config
+suffix:semicolon
+r_char
+op_star
+id|board_status
+suffix:semicolon
+multiline_comment|/* Allowed DMA channels for ISA (0 indicates reserved) */
+r_int
+r_char
+id|dma_channel_table
+(braket
+l_int|4
+)braket
+op_assign
+(brace
+l_int|5
+comma
+l_int|6
+comma
+l_int|7
+comma
+l_int|0
+)brace
 suffix:semicolon
 r_char
 id|name
@@ -951,6 +996,23 @@ comma
 id|j
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|check_region
+c_func
+(paren
+op_star
+id|port_base
+comma
+id|REG_REGION
+)paren
+)paren
+(brace
+r_return
+id|FALSE
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1010,6 +1072,19 @@ id|EATA_SIGNATURE
 r_return
 id|FALSE
 suffix:semicolon
+id|irq
+op_assign
+id|info.irq
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_star
+id|port_base
+op_amp
+id|EISA_RANGE
+)paren
+(brace
 r_if
 c_cond
 (paren
@@ -1027,7 +1102,7 @@ id|info.dmasup
 id|printk
 c_func
 (paren
-l_string|&quot;%s: unusable board found, detaching.&bslash;n&quot;
+l_string|&quot;%s: unusable EISA board found, detaching.&bslash;n&quot;
 comma
 id|name
 )paren
@@ -1036,17 +1111,36 @@ r_return
 id|FALSE
 suffix:semicolon
 )brace
+id|subversion
+op_assign
+id|ESA
+suffix:semicolon
+id|dma_channel
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_else
+(brace
 r_if
 c_cond
 (paren
 op_logical_neg
-id|info.irq_tr
+id|info.haaval
+op_logical_or
+id|info.ata
+op_logical_or
+op_logical_neg
+id|info.drqvld
+op_logical_or
+op_logical_neg
+id|info.dmasup
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;%s: IRQ must be level triggered, detaching.&bslash;n&quot;
+l_string|&quot;%s: unusable ISA board found, detaching.&bslash;n&quot;
 comma
 id|name
 )paren
@@ -1055,12 +1149,60 @@ r_return
 id|FALSE
 suffix:semicolon
 )brace
-multiline_comment|/* EATA board detected, allocate its IRQ if not already done */
+id|subversion
+op_assign
+id|ISA
+suffix:semicolon
+id|dma_channel
+op_assign
+id|dma_channel_table
+(braket
+l_int|3
+op_minus
+id|info.drqx
+)braket
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|subversion
+op_eq
+id|ESA
+op_logical_and
+op_logical_neg
+id|info.irq_tr
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;%s: warning, LEVEL triggering is suggested for IRQ %u.&bslash;n&quot;
+comma
+id|name
+comma
+id|irq
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|info.second
+)paren
+id|board_status
+op_assign
+l_string|&quot;Sec.&quot;
+suffix:semicolon
+r_else
+id|board_status
+op_assign
+l_string|&quot;Prim.&quot;
+suffix:semicolon
+multiline_comment|/* Board detected, allocate its IRQ if not already done */
 r_if
 c_cond
 (paren
 (paren
-id|info.irq
+id|irq
 op_ge
 id|MAX_IRQ
 )paren
@@ -1069,7 +1211,7 @@ op_logical_or
 (paren
 id|irqlist
 (braket
-id|info.irq
+id|irq
 )braket
 op_eq
 id|NO_IRQ
@@ -1077,7 +1219,7 @@ id|NO_IRQ
 op_logical_and
 id|request_irq
 (paren
-id|info.irq
+id|irq
 comma
 id|eata_interrupt_handler
 comma
@@ -1095,7 +1237,43 @@ l_string|&quot;%s: unable to allocate IRQ %u, detaching.&bslash;n&quot;
 comma
 id|name
 comma
-id|info.irq
+id|irq
+)paren
+suffix:semicolon
+r_return
+id|FALSE
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|subversion
+op_eq
+id|ISA
+op_logical_and
+id|request_dma
+c_func
+(paren
+id|dma_channel
+comma
+id|driver_name
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s: unable to allocate DMA channel %u, detaching.&bslash;n&quot;
+comma
+id|name
+comma
+id|dma_channel
+)paren
+suffix:semicolon
+id|free_irq
+c_func
+(paren
+id|irq
 )paren
 suffix:semicolon
 r_return
@@ -1206,7 +1384,7 @@ id|j
 op_member_access_from_pointer
 id|dma_channel
 op_assign
-l_int|0
+id|dma_channel
 suffix:semicolon
 id|sh
 (braket
@@ -1215,7 +1393,7 @@ id|j
 op_member_access_from_pointer
 id|irq
 op_assign
-id|info.irq
+id|irq
 suffix:semicolon
 id|sh
 (braket
@@ -1274,14 +1452,19 @@ id|cmd_per_lun
 op_assign
 id|MAX_CMD_PER_LUN
 suffix:semicolon
+multiline_comment|/* Register the I/O space that we use */
+id|snarf_region
+c_func
+(paren
 id|sh
 (braket
 id|j
 )braket
 op_member_access_from_pointer
-id|unchecked_isa_dma
-op_assign
-id|FALSE
+id|io_port
+comma
+id|REG_REGION
+)paren
 suffix:semicolon
 id|memset
 c_func
@@ -1307,17 +1490,99 @@ c_func
 id|j
 )paren
 op_member_access_from_pointer
+id|subversion
+op_assign
+id|subversion
+suffix:semicolon
+id|HD
+c_func
+(paren
+id|j
+)paren
+op_member_access_from_pointer
 id|board_number
 op_assign
 id|j
 suffix:semicolon
 id|irqlist
 (braket
-id|info.irq
+id|irq
 )braket
 op_assign
 id|j
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|HD
+c_func
+(paren
+id|j
+)paren
+op_member_access_from_pointer
+id|subversion
+op_eq
+id|ESA
+)paren
+id|sh
+(braket
+id|j
+)braket
+op_member_access_from_pointer
+id|unchecked_isa_dma
+op_assign
+id|FALSE
+suffix:semicolon
+r_else
+(brace
+id|sh
+(braket
+id|j
+)braket
+op_member_access_from_pointer
+id|block
+op_assign
+id|sh
+(braket
+id|j
+)braket
+suffix:semicolon
+id|sh
+(braket
+id|j
+)braket
+op_member_access_from_pointer
+id|unchecked_isa_dma
+op_assign
+id|TRUE
+suffix:semicolon
+id|disable_dma
+c_func
+(paren
+id|dma_channel
+)paren
+suffix:semicolon
+id|clear_dma_ff
+c_func
+(paren
+id|dma_channel
+)paren
+suffix:semicolon
+id|set_dma_mode
+c_func
+(paren
+id|dma_channel
+comma
+id|DMA_MODE_CASCADE
+)paren
+suffix:semicolon
+id|enable_dma
+c_func
+(paren
+id|dma_channel
+)paren
+suffix:semicolon
+)brace
 id|strcpy
 c_func
 (paren
@@ -1333,7 +1598,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: SCSI ID %d, PORT 0x%03x, IRQ %u, SG %d, &quot;
+l_string|&quot;%s: %s, ID %d, PORT 0x%03x, IRQ %u, DMA %u, SG %d, &quot;
 "&bslash;"
 l_string|&quot;Mbox %d, CmdLun %d.&bslash;n&quot;
 comma
@@ -1342,6 +1607,8 @@ c_func
 (paren
 id|j
 )paren
+comma
+id|board_status
 comma
 id|sh
 (braket
@@ -1363,6 +1630,13 @@ id|j
 )braket
 op_member_access_from_pointer
 id|irq
+comma
+id|sh
+(braket
+id|j
+)braket
+op_member_access_from_pointer
+id|dma_channel
 comma
 id|sh
 (braket
@@ -1536,7 +1810,7 @@ comma
 id|flags
 suffix:semicolon
 id|ushort
-id|eisa_io_port
+id|io_port
 (braket
 )braket
 op_assign
@@ -1571,6 +1845,14 @@ l_int|0xec88
 comma
 l_int|0xfc88
 comma
+l_int|0x330
+comma
+l_int|0x230
+comma
+l_int|0x1f0
+comma
+l_int|0x170
+comma
 l_int|0x0
 )brace
 suffix:semicolon
@@ -1578,7 +1860,7 @@ id|ushort
 op_star
 id|port_base
 op_assign
-id|eisa_io_port
+id|io_port
 suffix:semicolon
 id|save_flags
 c_func
@@ -1668,73 +1950,13 @@ comma
 id|tpnt
 )paren
 )paren
-(brace
 id|j
 op_increment
 suffix:semicolon
-)brace
 id|port_base
 op_increment
 suffix:semicolon
 )brace
-macro_line|#if defined (SINGLE_HOST_OPERATIONS)
-multiline_comment|/* Create a circular linked list among the detected boards. */
-r_if
-c_cond
-(paren
-id|j
-OG
-l_int|1
-)paren
-(brace
-r_for
-c_loop
-(paren
-id|k
-op_assign
-l_int|0
-suffix:semicolon
-id|k
-OL
-(paren
-id|j
-op_minus
-l_int|1
-)paren
-suffix:semicolon
-id|k
-op_increment
-)paren
-id|sh
-(braket
-id|k
-)braket
-op_member_access_from_pointer
-id|block
-op_assign
-id|sh
-(braket
-id|k
-op_plus
-l_int|1
-)braket
-suffix:semicolon
-id|sh
-(braket
-id|j
-op_minus
-l_int|1
-)braket
-op_member_access_from_pointer
-id|block
-op_assign
-id|sh
-(braket
-l_int|0
-)braket
-suffix:semicolon
-)brace
-macro_line|#endif
 id|restore_flags
 c_func
 (paren
@@ -3567,142 +3789,6 @@ r_return
 id|SCSI_RESET_PUNT
 suffix:semicolon
 )brace
-)brace
-DECL|function|eata_bios_param
-r_int
-id|eata_bios_param
-(paren
-id|Disk
-op_star
-id|disk
-comma
-r_int
-id|dev
-comma
-r_int
-op_star
-id|ip
-)paren
-(brace
-r_int
-id|size
-op_assign
-id|disk-&gt;capacity
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|size
-OL
-l_int|0x200000
-)paren
-(brace
-multiline_comment|/* &lt; 1Gbyte */
-id|ip
-(braket
-l_int|0
-)braket
-op_assign
-l_int|64
-suffix:semicolon
-id|ip
-(braket
-l_int|1
-)braket
-op_assign
-l_int|32
-suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|size
-OL
-l_int|0x400000
-)paren
-(brace
-multiline_comment|/* &lt; 2Gbyte */
-id|ip
-(braket
-l_int|0
-)braket
-op_assign
-l_int|65
-suffix:semicolon
-id|ip
-(braket
-l_int|1
-)braket
-op_assign
-l_int|63
-suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|size
-OL
-l_int|0x800000
-)paren
-(brace
-multiline_comment|/* &lt; 4Gbyte */
-id|ip
-(braket
-l_int|0
-)braket
-op_assign
-l_int|128
-suffix:semicolon
-id|ip
-(braket
-l_int|1
-)braket
-op_assign
-l_int|63
-suffix:semicolon
-)brace
-r_else
-(brace
-multiline_comment|/* ok up to 8Gbyte */
-id|ip
-(braket
-l_int|0
-)braket
-op_assign
-l_int|255
-suffix:semicolon
-id|ip
-(braket
-l_int|1
-)braket
-op_assign
-l_int|63
-suffix:semicolon
-)brace
-id|ip
-(braket
-l_int|2
-)braket
-op_assign
-id|size
-op_div
-(paren
-id|ip
-(braket
-l_int|0
-)braket
-op_star
-id|ip
-(braket
-l_int|1
-)braket
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
 )brace
 DECL|function|eata_interrupt_handler
 r_static

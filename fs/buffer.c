@@ -3839,15 +3839,12 @@ id|buf
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/*&n; * Hmm.. Leaving this in for now, as I&squot;m a bit nervous about it..&n; */
-macro_line|#if 0
 id|wait_on_buffer
 c_func
 (paren
 id|buf
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* If dirty, mark the time this buffer should be written back */
 id|set_writetime
 c_func
