@@ -8,10 +8,11 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/irq.h&gt;
 macro_line|#include &lt;asm/acpi-ext.h&gt;
-macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/efi.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/iosapic.h&gt;
+macro_line|#include &lt;asm/machvec.h&gt;
+macro_line|#include &lt;asm/page.h&gt;
 DECL|macro|ACPI_DEBUG
 macro_line|#undef ACPI_DEBUG&t;&t;/* Guess what this does? */
 macro_line|#ifdef CONFIG_SMP
@@ -186,181 +187,6 @@ macro_line|#endif
 id|total_cpus
 op_increment
 suffix:semicolon
-)brace
-multiline_comment|/*&n; * Find all IOSAPICs and tag the iosapic_vector structure with the appropriate &n; * base addresses.&n; */
-r_static
-r_void
-id|__init
-DECL|function|acpi_iosapic
-id|acpi_iosapic
-c_func
-(paren
-r_char
-op_star
-id|p
-)paren
-(brace
-multiline_comment|/*&n;&t; * This is not good.  ACPI is not necessarily limited to CONFIG_IA64_SV, yet&n;&t; * ACPI does not necessarily imply IOSAPIC either.  Perhaps there should be&n;&t; * a means for platform_setup() to register ACPI handlers?&n;&t; */
-macro_line|#ifdef CONFIG_IA64_DIG
-id|acpi_entry_iosapic_t
-op_star
-id|iosapic
-op_assign
-(paren
-id|acpi_entry_iosapic_t
-op_star
-)paren
-id|p
-suffix:semicolon
-r_int
-r_int
-id|ver
-comma
-id|v
-suffix:semicolon
-r_int
-id|l
-comma
-id|max_pin
-suffix:semicolon
-id|ver
-op_assign
-id|iosapic_version
-c_func
-(paren
-id|iosapic-&gt;address
-)paren
-suffix:semicolon
-id|max_pin
-op_assign
-(paren
-id|ver
-op_rshift
-l_int|16
-)paren
-op_amp
-l_int|0xff
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;IOSAPIC Version %x.%x: address 0x%lx IRQs 0x%x - 0x%x&bslash;n&quot;
-comma
-(paren
-id|ver
-op_amp
-l_int|0xf0
-)paren
-op_rshift
-l_int|4
-comma
-(paren
-id|ver
-op_amp
-l_int|0x0f
-)paren
-comma
-id|iosapic-&gt;address
-comma
-id|iosapic-&gt;irq_base
-comma
-id|iosapic-&gt;irq_base
-op_plus
-id|max_pin
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|l
-op_assign
-l_int|0
-suffix:semicolon
-id|l
-op_le
-id|max_pin
-suffix:semicolon
-id|l
-op_increment
-)paren
-(brace
-id|v
-op_assign
-id|iosapic-&gt;irq_base
-op_plus
-id|l
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|v
-OL
-l_int|16
-)paren
-id|v
-op_assign
-id|isa_irq_to_vector
-c_func
-(paren
-id|v
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|v
-OG
-id|IA64_MAX_VECTORED_IRQ
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;    !!! bad IOSAPIC interrupt vector: %u&bslash;n&quot;
-comma
-id|v
-)paren
-suffix:semicolon
-r_continue
-suffix:semicolon
-)brace
-multiline_comment|/* XXX Check for IOSAPIC collisions */
-id|iosapic_addr
-c_func
-(paren
-id|v
-)paren
-op_assign
-(paren
-r_int
-r_int
-)paren
-id|ioremap
-c_func
-(paren
-id|iosapic-&gt;address
-comma
-l_int|0
-)paren
-suffix:semicolon
-id|iosapic_baseirq
-c_func
-(paren
-id|v
-)paren
-op_assign
-id|iosapic-&gt;irq_base
-suffix:semicolon
-)brace
-id|iosapic_init
-c_func
-(paren
-id|iosapic-&gt;address
-comma
-id|iosapic-&gt;irq_base
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/*&n; * Configure legacy IRQ information in iosapic_vector&n; */
 r_static
@@ -805,9 +631,13 @@ suffix:semicolon
 r_case
 id|ACPI_ENTRY_IO_SAPIC
 suffix:colon
-id|acpi_iosapic
+id|platform_register_iosapic
 c_func
 (paren
+(paren
+id|acpi_entry_iosapic_t
+op_star
+)paren
 id|p
 )paren
 suffix:semicolon

@@ -15,6 +15,18 @@ DECL|macro|SWAPPER_PGD_ADDR
 mdefine_line|#define SWAPPER_PGD_ADDR&t;(IVT_END_ADDR + 1*PAGE_SIZE)
 DECL|macro|GATE_ADDR
 mdefine_line|#define GATE_ADDR&t;&t;(0xa000000000000000 + PAGE_SIZE)
+macro_line|#if defined(CONFIG_ITANIUM_ASTEP_SPECIFIC) || defined(CONFIG_ITANIUM_BSTEP_SPECIFIC)
+multiline_comment|/* Workaround for Errata 97.  */
+DECL|macro|IA64_SEMFIX_INSN
+macro_line|# define IA64_SEMFIX_INSN&t;mf;
+DECL|macro|IA64_SEMFIX
+macro_line|# define IA64_SEMFIX&t;&quot;mf;&quot;
+macro_line|#else
+DECL|macro|IA64_SEMFIX_INSN
+macro_line|# define IA64_SEMFIX_INSN
+DECL|macro|IA64_SEMFIX
+macro_line|# define IA64_SEMFIX&t;&quot;&quot;
+macro_line|#endif
 macro_line|#ifndef __ASSEMBLY__
 macro_line|#include &lt;linux/types.h&gt;
 DECL|struct|pci_vector_struct
@@ -280,7 +292,7 @@ r_void
 )paren
 suffix:semicolon
 DECL|macro|IA64_FETCHADD
-mdefine_line|#define IA64_FETCHADD(tmp,v,n,sz)&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;switch (sz) {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;      case 4:&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__asm__ __volatile__ (&quot;fetchadd4.rel %0=%1,%3&quot;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;      : &quot;=r&quot;(tmp), &quot;=m&quot;(__atomic_fool_gcc(v))&t;&bslash;&n;&t;&t;&t;&t;      : &quot;m&quot; (__atomic_fool_gcc(v)), &quot;i&quot;(n));&t;&bslash;&n;&t;&t;break;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;      case 8:&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__asm__ __volatile__ (&quot;fetchadd8.rel %0=%1,%3&quot;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;      : &quot;=r&quot;(tmp), &quot;=m&quot;(__atomic_fool_gcc(v))&t;&bslash;&n;&t;&t;&t;&t;      : &quot;m&quot; (__atomic_fool_gcc(v)), &quot;i&quot;(n));&t;&bslash;&n;&t;&t;break;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;      default:&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__bad_size_for_ia64_fetch_and_add();&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
+mdefine_line|#define IA64_FETCHADD(tmp,v,n,sz)&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;switch (sz) {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;      case 4:&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__asm__ __volatile__ (IA64_SEMFIX&quot;fetchadd4.rel %0=%1,%3&quot;&t;&bslash;&n;&t;&t;&t;&t;      : &quot;=r&quot;(tmp), &quot;=m&quot;(__atomic_fool_gcc(v))&t;&bslash;&n;&t;&t;&t;&t;      : &quot;m&quot; (__atomic_fool_gcc(v)), &quot;i&quot;(n));&t;&bslash;&n;&t;&t;break;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;      case 8:&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__asm__ __volatile__ (IA64_SEMFIX&quot;fetchadd8.rel %0=%1,%3&quot;&t;&bslash;&n;&t;&t;&t;&t;      : &quot;=r&quot;(tmp), &quot;=m&quot;(__atomic_fool_gcc(v))&t;&bslash;&n;&t;&t;&t;&t;      : &quot;m&quot; (__atomic_fool_gcc(v)), &quot;i&quot;(n));&t;&bslash;&n;&t;&t;break;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;      default:&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__bad_size_for_ia64_fetch_and_add();&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
 DECL|macro|ia64_fetch_and_add
 mdefine_line|#define ia64_fetch_and_add(i,v)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__u64 _tmp;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;volatile __typeof__(*(v)) *_v = (v);&t;&t;&t;&t;&t;&bslash;&n;&t;switch (i) {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;      case -16:&t;IA64_FETCHADD(_tmp, _v, -16, sizeof(*(v))); break;&t;&bslash;&n;&t;      case  -8:&t;IA64_FETCHADD(_tmp, _v,  -8, sizeof(*(v))); break;&t;&bslash;&n;&t;      case  -4:&t;IA64_FETCHADD(_tmp, _v,  -4, sizeof(*(v))); break;&t;&bslash;&n;&t;      case  -1:&t;IA64_FETCHADD(_tmp, _v,  -1, sizeof(*(v))); break;&t;&bslash;&n;&t;      case   1:&t;IA64_FETCHADD(_tmp, _v,   1, sizeof(*(v))); break;&t;&bslash;&n;&t;      case   4:&t;IA64_FETCHADD(_tmp, _v,   4, sizeof(*(v))); break;&t;&bslash;&n;&t;      case   8:&t;IA64_FETCHADD(_tmp, _v,   8, sizeof(*(v))); break;&t;&bslash;&n;&t;      case  16:&t;IA64_FETCHADD(_tmp, _v,  16, sizeof(*(v))); break;&t;&bslash;&n;&t;      default:&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;_tmp = __bad_increment_for_ia64_fetch_and_add();&t;&t;&bslash;&n;&t;&t;break;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;(__typeof__(*v)) (_tmp + (i));&t;/* return new value */&t;&t;&t;&bslash;&n;})
 multiline_comment|/*&n; * This function doesn&squot;t exist, so you&squot;ll get a linker error if&n; * something tries to do an invalid xchg().&n; */
@@ -327,6 +339,7 @@ suffix:colon
 id|__asm__
 id|__volatile
 (paren
+id|IA64_SEMFIX
 l_string|&quot;xchg1 %0=%1,%2&quot;
 suffix:colon
 l_string|&quot;=r&quot;
@@ -361,6 +374,7 @@ suffix:colon
 id|__asm__
 id|__volatile
 (paren
+id|IA64_SEMFIX
 l_string|&quot;xchg2 %0=%1,%2&quot;
 suffix:colon
 l_string|&quot;=r&quot;
@@ -395,6 +409,7 @@ suffix:colon
 id|__asm__
 id|__volatile
 (paren
+id|IA64_SEMFIX
 l_string|&quot;xchg4 %0=%1,%2&quot;
 suffix:colon
 l_string|&quot;=r&quot;
@@ -429,6 +444,7 @@ suffix:colon
 id|__asm__
 id|__volatile
 (paren
+id|IA64_SEMFIX
 l_string|&quot;xchg8 %0=%1,%2&quot;
 suffix:colon
 l_string|&quot;=r&quot;
@@ -469,8 +485,6 @@ suffix:semicolon
 )brace
 DECL|macro|xchg
 mdefine_line|#define xchg(ptr,x)&t;&t;&t;&t;&t;&t;&t;     &bslash;&n;  ((__typeof__(*(ptr))) __xchg ((unsigned long) (x), (ptr), sizeof(*(ptr))))
-DECL|macro|tas
-mdefine_line|#define tas(ptr)&t;(xchg ((ptr), 1))
 multiline_comment|/* &n; * Atomic compare and exchange.  Compare OLD with MEM, if identical,&n; * store NEW in MEM.  Return the initial value in MEM.  Success is&n; * indicated by comparing RETURN with OLD.&n; */
 DECL|macro|__HAVE_ARCH_CMPXCHG
 mdefine_line|#define __HAVE_ARCH_CMPXCHG 1
@@ -500,7 +514,7 @@ suffix:semicolon
 DECL|macro|__xg
 mdefine_line|#define __xg(x) (*(struct __xchg_dummy *)(x))
 DECL|macro|ia64_cmpxchg
-mdefine_line|#define ia64_cmpxchg(sem,ptr,old,new,size)&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__typeof__(ptr) _p_ = (ptr);&t;&t;&t;&t;&t;&bslash;&n;&t;__typeof__(new) _n_ = (new);&t;&t;&t;&t;&t;&bslash;&n;&t;__u64 _o_, _r_;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;switch (size) {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;      case 1: _o_ = (__u8 ) (old); break;&t;&t;&t;&bslash;&n;&t;      case 2: _o_ = (__u16) (old); break;&t;&t;&t;&bslash;&n;&t;      case 4: _o_ = (__u32) (old); break;&t;&t;&t;&bslash;&n;&t;      case 8: _o_ = (__u64) (old); break;&t;&t;&t;&bslash;&n;&t;      default:&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t; __asm__ __volatile__ (&quot;mov ar.ccv=%0;;&quot; :: &quot;rO&quot;(_o_));&t;&t;&bslash;&n;&t;switch (size) {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;      case 1:&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__asm__ __volatile__ (&quot;cmpxchg1.&quot;sem&quot; %0=%2,%3,ar.ccv&quot;&t;&bslash;&n;&t;&t;&t;&t;      : &quot;=r&quot;(_r_), &quot;=m&quot;(__xg(_p_))&t;&bslash;&n;&t;&t;&t;&t;      : &quot;m&quot;(__xg(_p_)), &quot;r&quot;(_n_));&t;&bslash;&n;&t;&t;break;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;      case 2:&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__asm__ __volatile__ (&quot;cmpxchg2.&quot;sem&quot; %0=%2,%3,ar.ccv&quot;&t;&bslash;&n;&t;&t;&t;&t;      : &quot;=r&quot;(_r_), &quot;=m&quot;(__xg(_p_))&t;&bslash;&n;&t;&t;&t;&t;      : &quot;m&quot;(__xg(_p_)), &quot;r&quot;(_n_));&t;&bslash;&n;&t;&t;break;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;      case 4:&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__asm__ __volatile__ (&quot;cmpxchg4.&quot;sem&quot; %0=%2,%3,ar.ccv&quot;&t;&bslash;&n;&t;&t;&t;&t;      : &quot;=r&quot;(_r_), &quot;=m&quot;(__xg(_p_))&t;&bslash;&n;&t;&t;&t;&t;      : &quot;m&quot;(__xg(_p_)), &quot;r&quot;(_n_));&t;&bslash;&n;&t;&t;break;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;      case 8:&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__asm__ __volatile__ (&quot;cmpxchg8.&quot;sem&quot; %0=%2,%3,ar.ccv&quot;&t;&bslash;&n;&t;&t;&t;&t;      : &quot;=r&quot;(_r_), &quot;=m&quot;(__xg(_p_))&t;&bslash;&n;&t;&t;&t;&t;      : &quot;m&quot;(__xg(_p_)), &quot;r&quot;(_n_));&t;&bslash;&n;&t;&t;break;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;      default:&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;_r_ = __cmpxchg_called_with_bad_pointer();&t;&t;&bslash;&n;&t;&t;break;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;(__typeof__(old)) _r_;&t;&t;&t;&t;&t;&t;&bslash;&n;})
+mdefine_line|#define ia64_cmpxchg(sem,ptr,old,new,size)&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__typeof__(ptr) _p_ = (ptr);&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__typeof__(new) _n_ = (new);&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__u64 _o_, _r_;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;switch (size) {&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;      case 1: _o_ = (__u8 ) (long) (old); break;&t;&t;&t;&t;&bslash;&n;&t;      case 2: _o_ = (__u16) (long) (old); break;&t;&t;&t;&t;&bslash;&n;&t;      case 4: _o_ = (__u32) (long) (old); break;&t;&t;&t;&t;&bslash;&n;&t;      case 8: _o_ = (__u64) (long) (old); break;&t;&t;&t;&t;&bslash;&n;&t;      default:&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t; __asm__ __volatile__ (&quot;mov ar.ccv=%0;;&quot; :: &quot;rO&quot;(_o_));&t;&t;&t;&t;&bslash;&n;&t;switch (size) {&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;      case 1:&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__asm__ __volatile__ (IA64_SEMFIX&quot;cmpxchg1.&quot;sem&quot; %0=%2,%3,ar.ccv&quot;&t;&bslash;&n;&t;&t;&t;&t;      : &quot;=r&quot;(_r_), &quot;=m&quot;(__xg(_p_))&t;&t;&t;&bslash;&n;&t;&t;&t;&t;      : &quot;m&quot;(__xg(_p_)), &quot;r&quot;(_n_));&t;&t;&t;&bslash;&n;&t;&t;break;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;      case 2:&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__asm__ __volatile__ (IA64_SEMFIX&quot;cmpxchg2.&quot;sem&quot; %0=%2,%3,ar.ccv&quot;&t;&bslash;&n;&t;&t;&t;&t;      : &quot;=r&quot;(_r_), &quot;=m&quot;(__xg(_p_))&t;&t;&t;&bslash;&n;&t;&t;&t;&t;      : &quot;m&quot;(__xg(_p_)), &quot;r&quot;(_n_));&t;&t;&t;&bslash;&n;&t;&t;break;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;      case 4:&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__asm__ __volatile__ (IA64_SEMFIX&quot;cmpxchg4.&quot;sem&quot; %0=%2,%3,ar.ccv&quot;&t;&bslash;&n;&t;&t;&t;&t;      : &quot;=r&quot;(_r_), &quot;=m&quot;(__xg(_p_))&t;&t;&t;&bslash;&n;&t;&t;&t;&t;      : &quot;m&quot;(__xg(_p_)), &quot;r&quot;(_n_));&t;&t;&t;&bslash;&n;&t;&t;break;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;      case 8:&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__asm__ __volatile__ (IA64_SEMFIX&quot;cmpxchg8.&quot;sem&quot; %0=%2,%3,ar.ccv&quot;&t;&bslash;&n;&t;&t;&t;&t;      : &quot;=r&quot;(_r_), &quot;=m&quot;(__xg(_p_))&t;&t;&t;&bslash;&n;&t;&t;&t;&t;      : &quot;m&quot;(__xg(_p_)), &quot;r&quot;(_n_));&t;&t;&t;&bslash;&n;&t;&t;break;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;      default:&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;_r_ = __cmpxchg_called_with_bad_pointer();&t;&t;&t;&t;&bslash;&n;&t;&t;break;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;(__typeof__(old)) _r_;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
 DECL|macro|cmpxchg_acq
 mdefine_line|#define cmpxchg_acq(ptr,o,n)&t;ia64_cmpxchg(&quot;acq&quot;, (ptr), (o), (n), sizeof(*(ptr)))
 DECL|macro|cmpxchg_rel
@@ -562,11 +576,11 @@ id|task
 )paren
 suffix:semicolon
 DECL|macro|__switch_to
-mdefine_line|#define __switch_to(prev,next,last) do {&t;&t;&t;&t;&t;&bslash;&n;&t;if (((prev)-&gt;thread.flags &amp; IA64_THREAD_DBG_VALID)&t;&t;&t;&bslash;&n;&t;    || IS_IA32_PROCESS(ia64_task_regs(prev)))&t;&t;&t;&t;&bslash;&n;&t;&t;ia64_save_extra(prev);&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (((next)-&gt;thread.flags &amp; IA64_THREAD_DBG_VALID)&t;&t;&t;&bslash;&n;&t;    || IS_IA32_PROCESS(ia64_task_regs(next)))&t;&t;&t;&t;&bslash;&n;&t;&t;ia64_load_extra(next);&t;&t;&t;&t;&t;&t;&bslash;&n;&t;ia64_psr(ia64_task_regs(next))-&gt;dfh = (ia64_get_fpu_owner() != (next));&t;&bslash;&n;&t;(last) = ia64_switch_to((next));&t;&t;&t;&t;&t;&bslash;&n;} while (0)
+mdefine_line|#define __switch_to(prev,next,last) do {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (((prev)-&gt;thread.flags &amp; (IA64_THREAD_DBG_VALID|IA64_THREAD_PM_VALID))&t;&bslash;&n;&t;    || IS_IA32_PROCESS(ia64_task_regs(prev)))&t;&t;&t;&t;&t;&bslash;&n;&t;&t;ia64_save_extra(prev);&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (((next)-&gt;thread.flags &amp; (IA64_THREAD_DBG_VALID|IA64_THREAD_PM_VALID))&t;&bslash;&n;&t;    || IS_IA32_PROCESS(ia64_task_regs(next)))&t;&t;&t;&t;&t;&bslash;&n;&t;&t;ia64_load_extra(next);&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;ia64_psr(ia64_task_regs(next))-&gt;dfh = (ia64_get_fpu_owner() != (next));&t;&t;&bslash;&n;&t;(last) = ia64_switch_to((next));&t;&t;&t;&t;&t;&t;&bslash;&n;} while (0)
 macro_line|#ifdef CONFIG_SMP 
 multiline_comment|/*&n;   * In the SMP case, we save the fph state when context-switching&n;   * away from a thread that owned and modified fph.  This way, when&n;   * the thread gets scheduled on another CPU, the CPU can pick up the&n;   * state frm task-&gt;thread.fph, avoiding the complication of having&n;   * to fetch the latest fph state from another CPU.  If the thread&n;   * happens to be rescheduled on the same CPU later on and nobody&n;   * else has touched the FPU in the meantime, the thread will fault&n;   * upon the first access to fph but since the state in fph is still&n;   * valid, no other overheads are incurred.  In other words, CPU&n;   * affinity is a Good Thing.&n;   */
 DECL|macro|switch_to
-macro_line|# define switch_to(prev,next,last) do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (ia64_get_fpu_owner() == (prev) &amp;&amp; ia64_psr(ia64_task_regs(prev))-&gt;mfh) {&t;&bslash;&n;&t;&t;(prev)-&gt;thread.flags |= IA64_THREAD_FPH_VALID;&t;&t;&t;&t;&bslash;&n;&t;&t;__ia64_save_fpu((prev)-&gt;thread.fph);&t;&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__switch_to(prev,next,last);&t;&t;&t;&t;&t;&t;&t;&bslash;&n;  } while (0)
+macro_line|# define switch_to(prev,next,last) do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (ia64_get_fpu_owner() == (prev) &amp;&amp; ia64_psr(ia64_task_regs(prev))-&gt;mfh) {&t;&bslash;&n;&t;&t;ia64_psr(ia64_task_regs(prev))-&gt;mfh = 0;&t;&t;&t;&t;&bslash;&n;&t;&t;(prev)-&gt;thread.flags |= IA64_THREAD_FPH_VALID;&t;&t;&t;&t;&bslash;&n;&t;&t;__ia64_save_fpu((prev)-&gt;thread.fph);&t;&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__switch_to(prev,next,last);&t;&t;&t;&t;&t;&t;&t;&bslash;&n;  } while (0)
 macro_line|#else
 DECL|macro|switch_to
 macro_line|# define switch_to(prev,next,last) &t;__switch_to(prev,next,last)

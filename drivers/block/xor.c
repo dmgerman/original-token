@@ -4869,7 +4869,7 @@ op_star
 l_int|0
 )paren
 op_member_access_from_pointer
-id|b_data
+id|b_size
 )paren
 comma
 l_string|&quot;i&quot;

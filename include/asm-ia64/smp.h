@@ -290,6 +290,35 @@ op_star
 id|regs
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|smp_call_function_single
+(paren
+r_int
+id|cpuid
+comma
+r_void
+(paren
+op_star
+id|func
+)paren
+(paren
+r_void
+op_star
+id|info
+)paren
+comma
+r_void
+op_star
+id|info
+comma
+r_int
+id|retry
+comma
+r_int
+id|wait
+)paren
+suffix:semicolon
 macro_line|#endif /* CONFIG_SMP */
 macro_line|#endif /* _ASM_IA64_SMP_H */
 eof

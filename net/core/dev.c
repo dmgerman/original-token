@@ -374,6 +374,7 @@ suffix:semicolon
 multiline_comment|/******************************************************************************&n;&n;&t;&t;      Device Boot-time Settings Routines&n;&n;*******************************************************************************/
 multiline_comment|/* Boot time configuration table */
 DECL|variable|dev_boot_setup
+r_static
 r_struct
 id|netdev_boot_setup
 id|dev_boot_setup

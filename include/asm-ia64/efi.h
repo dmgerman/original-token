@@ -700,6 +700,13 @@ r_void
 suffix:semicolon
 r_extern
 r_void
+id|efi_map_pal_code
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|efi_memmap_walk
 (paren
 id|efi_freemem_callback_t

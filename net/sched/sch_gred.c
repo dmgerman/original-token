@@ -1530,10 +1530,6 @@ OG
 id|MAX_DPs
 op_minus
 l_int|1
-op_logical_or
-id|ctl-&gt;DP
-OL
-l_int|0
 )paren
 (brace
 multiline_comment|/* misbehaving is punished! Put in the default drop probability */
@@ -1580,6 +1576,20 @@ id|gred_sched_data
 comma
 id|GFP_KERNEL
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+l_int|NULL
+op_eq
+id|table-&gt;tab
+(braket
+id|ctl-&gt;DP
+)braket
+)paren
+r_return
+op_minus
+id|ENOMEM
 suffix:semicolon
 id|memset
 c_func
@@ -1636,8 +1646,8 @@ id|table-&gt;def
 id|DPRINTK
 c_func
 (paren
-l_string|&quot;&bslash;nGRED: DP %u does not have a prio setting &quot;
-l_string|&quot;default to %d&bslash;n&quot;
+l_string|&quot;&bslash;nGRED: DP %u does not have a prio&quot;
+l_string|&quot;setting default to %d&bslash;n&quot;
 comma
 id|ctl-&gt;DP
 comma
@@ -1664,8 +1674,8 @@ r_else
 id|DPRINTK
 c_func
 (paren
-l_string|&quot;&bslash;nGRED: DP %u does not have a prio setting &quot;
-l_string|&quot;default to 8&bslash;n&quot;
+l_string|&quot;&bslash;nGRED: DP %u does not have a prio&quot;
+l_string|&quot; setting default to 8&bslash;n&quot;
 comma
 id|ctl-&gt;DP
 )paren
@@ -1910,6 +1920,20 @@ id|gred_sched_data
 comma
 id|GFP_KERNEL
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+l_int|NULL
+op_eq
+id|table-&gt;tab
+(braket
+id|ctl-&gt;DP
+)braket
+)paren
+r_return
+op_minus
+id|ENOMEM
 suffix:semicolon
 id|memset
 c_func

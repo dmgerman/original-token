@@ -20,6 +20,7 @@ macro_line|#include &lt;asm/sal.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/unwind.h&gt;
 macro_line|#include &lt;asm/user.h&gt;
+macro_line|#ifdef CONFIG_IA64_NEW_UNWIND
 r_static
 r_void
 DECL|function|do_show_stack
@@ -113,6 +114,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 r_void
 DECL|function|show_stack
 id|show_stack
@@ -589,6 +591,12 @@ op_assign
 op_minus
 l_int|100
 suffix:semicolon
+r_while
+c_loop
+(paren
+l_int|1
+)paren
+(brace
 macro_line|#ifdef CONFIG_SMP
 r_if
 c_cond
@@ -605,19 +613,11 @@ macro_line|#endif
 r_while
 c_loop
 (paren
-l_int|1
-)paren
-(brace
-r_while
-c_loop
-(paren
 op_logical_neg
 id|current-&gt;need_resched
 )paren
-(brace
 r_continue
 suffix:semicolon
-)brace
 macro_line|#ifdef CONFIG_SMP
 id|normal_xtp
 c_func
@@ -737,26 +737,6 @@ op_star
 id|task
 )paren
 (brace
-r_extern
-r_void
-id|ia64_save_debug_regs
-(paren
-r_int
-r_int
-op_star
-id|save_area
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|ia32_save_state
-(paren
-r_struct
-id|thread_struct
-op_star
-id|thread
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -778,6 +758,26 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PERFMON
+r_if
+c_cond
+(paren
+(paren
+id|task-&gt;thread.flags
+op_amp
+id|IA64_THREAD_PM_VALID
+)paren
+op_ne
+l_int|0
+)paren
+id|ia64_save_pm_regs
+c_func
+(paren
+op_amp
+id|task-&gt;thread
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -809,26 +809,6 @@ op_star
 id|task
 )paren
 (brace
-r_extern
-r_void
-id|ia64_load_debug_regs
-(paren
-r_int
-r_int
-op_star
-id|save_area
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|ia32_load_state
-(paren
-r_struct
-id|thread_struct
-op_star
-id|thread
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -850,6 +830,26 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PERFMON
+r_if
+c_cond
+(paren
+(paren
+id|task-&gt;thread.flags
+op_amp
+id|IA64_THREAD_PM_VALID
+)paren
+op_ne
+l_int|0
+)paren
+id|ia64_load_pm_regs
+c_func
+(paren
+op_amp
+id|task-&gt;thread
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2722,19 +2722,6 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-)brace
-multiline_comment|/*&n; * Free remaining state associated with DEAD_TASK.  This is called&n; * after the parent of DEAD_TASK has collected the exist status of the&n; * task via wait().&n; */
-r_void
-DECL|function|release_thread
-id|release_thread
-(paren
-r_struct
-id|task_struct
-op_star
-id|dead_task
-)paren
-(brace
-multiline_comment|/* nothing to do */
 )brace
 r_int
 r_int

@@ -168,7 +168,7 @@ id|str
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/**&n; *&t;memparse - parse a string with mem suffixes into a number&n; *&t;@ptr: Where parse begins&n; *&t;@retptr: (output) Pointer to next char after parse completes&n; *&n; *&t;Parses a string into a number.  The number stored&n; *&t;at @ptr is potentially suffixed with %K (for&n; *&t;kilobytes, or 1024 bytes) or suffixed with %M (for&n; *&t;megabytes, or 1048576 bytes).  If the number is suffixed&n; *&t;with K or M, then the return value is the number&n; *&t;multiplied by one kilobyte, or one megabyte, respectively.&n; */
+multiline_comment|/**&n; *&t;memparse - parse a string with mem suffixes into a number&n; *&t;@ptr: Where parse begins&n; *&t;@retptr: (output) Pointer to next char after parse completes&n; *&n; *&t;Parses a string into a number.  The number stored at @ptr is&n; *&t;potentially suffixed with %K (for kilobytes, or 1024 bytes),&n; *&t;%M (for megabytes, or 1048576 bytes), or %G (for gigabytes, or&n; *&t;1073741824).  If the number is suffixed with K, M, or G, then&n; *&t;the return value is the number multiplied by one kilobyte, one&n; *&t;megabyte, or one gigabyte, respectively.&n; */
 DECL|function|memparse
 r_int
 r_int
@@ -205,6 +205,16 @@ op_star
 id|retptr
 )paren
 (brace
+r_case
+l_char|&squot;G&squot;
+suffix:colon
+r_case
+l_char|&squot;g&squot;
+suffix:colon
+id|ret
+op_lshift_assign
+l_int|10
+suffix:semicolon
 r_case
 l_char|&squot;M&squot;
 suffix:colon

@@ -600,6 +600,7 @@ id|DRM_LIST_FREE
 suffix:semicolon
 r_do
 (brace
+multiline_comment|/* XXX this is wrong due to the ABA problem! --davidm 00/08/07 */
 id|old
 op_assign
 id|bl-&gt;next
@@ -775,6 +776,7 @@ suffix:semicolon
 multiline_comment|/* Get buffer */
 r_do
 (brace
+multiline_comment|/* XXX this is wrong due to the ABA problem! --davidm 00/08/07 */
 id|old
 op_assign
 id|bl-&gt;next

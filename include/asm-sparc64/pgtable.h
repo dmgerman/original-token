@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtable.h,v 1.130 2000/08/09 00:00:17 davem Exp $&n; * pgtable.h: SpitFire page table operations.&n; *&n; * Copyright 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: pgtable.h,v 1.131 2000/08/11 03:00:14 davem Exp $&n; * pgtable.h: SpitFire page table operations.&n; *&n; * Copyright 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#ifndef _SPARC64_PGTABLE_H
 DECL|macro|_SPARC64_PGTABLE_H
 mdefine_line|#define _SPARC64_PGTABLE_H
@@ -244,8 +244,6 @@ DECL|macro|pmd_set
 mdefine_line|#define pmd_set(pmdp, ptep)&t;&bslash;&n;&t;(pmd_val(*(pmdp)) = (__pa((unsigned long) (ptep)) &gt;&gt; 11UL))
 DECL|macro|pgd_set
 mdefine_line|#define pgd_set(pgdp, pmdp)&t;&bslash;&n;&t;(pgd_val(*(pgdp)) = (__pa((unsigned long) (pmdp)) &gt;&gt; 11UL))
-DECL|macro|sparc64_pte_pagenr
-mdefine_line|#define sparc64_pte_pagenr(pte)   (((unsigned long) ((pte_val(pte)&amp;~PAGE_OFFSET)-phys_base)&gt;&gt;PAGE_SHIFT))
 DECL|macro|pmd_page
 mdefine_line|#define pmd_page(pmd)&t;&t;&t;((unsigned long) __va((pmd_val(pmd)&lt;&lt;11UL)))
 DECL|macro|pgd_page
@@ -297,7 +295,7 @@ mdefine_line|#define __page_address(page)&t;((page)-&gt;virtual)
 DECL|macro|page_address
 mdefine_line|#define page_address(page)&t;({ __page_address(page); })
 DECL|macro|pte_page
-mdefine_line|#define pte_page(x) (mem_map+sparc64_pte_pagenr(x))
+mdefine_line|#define pte_page(x) (mem_map+(((pte_val(x)&amp;_PAGE_PADDR)-phys_base)&gt;&gt;PAGE_SHIFT))
 multiline_comment|/* Be very careful when you change these three, they are delicate. */
 DECL|macro|pte_mkyoung
 mdefine_line|#define pte_mkyoung(pte)&t;(__pte(pte_val(pte) | _PAGE_ACCESSED | _PAGE_R))

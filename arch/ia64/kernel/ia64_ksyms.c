@@ -86,6 +86,13 @@ c_func
 id|strncpy
 )paren
 suffix:semicolon
+DECL|variable|strstr
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|strstr
+)paren
+suffix:semicolon
 DECL|variable|strtok
 id|EXPORT_SYMBOL
 c_func
@@ -148,6 +155,7 @@ id|kernel_thread
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_SMP
+macro_line|#include &lt;asm/hardirq.h&gt;
 DECL|variable|synchronize_irq
 id|EXPORT_SYMBOL
 c_func

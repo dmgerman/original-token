@@ -7704,6 +7704,7 @@ id|session
 )paren
 )paren
 )paren
+(brace
 id|send_sig
 c_func
 (paren
@@ -7714,7 +7715,15 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-r_else
+r_continue
+suffix:semicolon
+)brace
+id|task_lock
+c_func
+(paren
+id|p
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -7795,6 +7804,12 @@ id|p-&gt;files-&gt;file_lock
 )paren
 suffix:semicolon
 )brace
+id|task_unlock
+c_func
+(paren
+id|p
+)paren
+suffix:semicolon
 )brace
 id|read_unlock
 c_func

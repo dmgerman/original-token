@@ -7,12 +7,14 @@ macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/irq.h&gt;
+macro_line|#include &lt;asm/acpi-ext.h&gt;
+macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/iosapic.h&gt;
+macro_line|#include &lt;asm/machvec.h&gt;
+macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/delay.h&gt;
-macro_line|#include &lt;asm/processor.h&gt;
 DECL|macro|DEBUG_IRQ_ROUTING
 macro_line|#undef DEBUG_IRQ_ROUTING
 DECL|variable|iosapic_lock
@@ -1261,14 +1263,6 @@ comma
 l_int|0x21
 )paren
 suffix:semicolon
-macro_line|#ifndef CONFIG_IA64_DIG
-id|iosapic_init
-c_func
-(paren
-id|IO_SAPIC_DEFAULT_ADDR
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 r_void
 DECL|function|dig_pci_fixup
@@ -1350,6 +1344,9 @@ id|bridge
 op_assign
 id|dev-&gt;bus-&gt;self
 suffix:semicolon
+multiline_comment|/* allow for multiple bridges on an adapter */
+r_do
+(brace
 multiline_comment|/* do the bridge swizzle... */
 id|pin
 op_assign
@@ -1381,6 +1378,21 @@ comma
 id|pin
 )paren
 suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+id|irq
+OL
+l_int|0
+op_logical_and
+(paren
+id|bridge
+op_assign
+id|bridge-&gt;bus-&gt;self
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1405,6 +1417,24 @@ comma
 id|pin
 comma
 id|irq
+)paren
+suffix:semicolon
+r_else
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;PCI: Couldn&squot;t map irq for B%d,I%d,P%d&bslash;n&quot;
+comma
+id|bridge-&gt;bus-&gt;number
+comma
+id|PCI_SLOT
+c_func
+(paren
+id|bridge-&gt;devfn
+)paren
+comma
+id|pin
 )paren
 suffix:semicolon
 )brace
@@ -1454,5 +1484,165 @@ l_int|15
 suffix:semicolon
 multiline_comment|/* Spurious interrupts */
 )brace
+)brace
+multiline_comment|/*&n; * Register an IOSAPIC discovered via ACPI.&n; */
+r_void
+id|__init
+DECL|function|dig_register_iosapic
+id|dig_register_iosapic
+(paren
+id|acpi_entry_iosapic_t
+op_star
+id|iosapic
+)paren
+(brace
+r_int
+r_int
+id|ver
+comma
+id|v
+suffix:semicolon
+r_int
+id|l
+comma
+id|max_pin
+suffix:semicolon
+id|ver
+op_assign
+id|iosapic_version
+c_func
+(paren
+id|iosapic-&gt;address
+)paren
+suffix:semicolon
+id|max_pin
+op_assign
+(paren
+id|ver
+op_rshift
+l_int|16
+)paren
+op_amp
+l_int|0xff
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;IOSAPIC Version %x.%x: address 0x%lx IRQs 0x%x - 0x%x&bslash;n&quot;
+comma
+(paren
+id|ver
+op_amp
+l_int|0xf0
+)paren
+op_rshift
+l_int|4
+comma
+(paren
+id|ver
+op_amp
+l_int|0x0f
+)paren
+comma
+id|iosapic-&gt;address
+comma
+id|iosapic-&gt;irq_base
+comma
+id|iosapic-&gt;irq_base
+op_plus
+id|max_pin
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|l
+op_assign
+l_int|0
+suffix:semicolon
+id|l
+op_le
+id|max_pin
+suffix:semicolon
+id|l
+op_increment
+)paren
+(brace
+id|v
+op_assign
+id|iosapic-&gt;irq_base
+op_plus
+id|l
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|v
+OL
+l_int|16
+)paren
+id|v
+op_assign
+id|isa_irq_to_vector
+c_func
+(paren
+id|v
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|v
+OG
+id|IA64_MAX_VECTORED_IRQ
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;    !!! bad IOSAPIC interrupt vector: %u&bslash;n&quot;
+comma
+id|v
+)paren
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
+multiline_comment|/* XXX Check for IOSAPIC collisions */
+id|iosapic_addr
+c_func
+(paren
+id|v
+)paren
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|ioremap
+c_func
+(paren
+id|iosapic-&gt;address
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|iosapic_baseirq
+c_func
+(paren
+id|v
+)paren
+op_assign
+id|iosapic-&gt;irq_base
+suffix:semicolon
+)brace
+id|iosapic_init
+c_func
+(paren
+id|iosapic-&gt;address
+comma
+id|iosapic-&gt;irq_base
+)paren
+suffix:semicolon
 )brace
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_output.c,v 1.125 2000/08/09 11:59:04 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_output.c,v 1.126 2000/08/11 00:13:36 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
 multiline_comment|/*&n; * Changes:&t;Pedro Roque&t;:&t;Retransmit queue handled by TCP.&n; *&t;&t;&t;&t;:&t;Fragmentation on mtu decrease&n; *&t;&t;&t;&t;:&t;Segment collapse on retransmit&n; *&t;&t;&t;&t;:&t;AF independence&n; *&n; *&t;&t;Linus Torvalds&t;:&t;send_delayed_ack&n; *&t;&t;David S. Miller&t;:&t;Charge memory using the right skb&n; *&t;&t;&t;&t;&t;during syn/ack processing.&n; *&t;&t;David S. Miller :&t;Output engine completely rewritten.&n; *&t;&t;Andrea Arcangeli:&t;SYNACK carry ts_recent in tsecr.&n; *&t;&t;Cacophonix Gaul :&t;draft-minshall-nagle-01&n; *&t;&t;J Hadi Salim&t;:&t;ECN support&n; *&n; */
 macro_line|#include &lt;net/tcp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
@@ -386,26 +386,6 @@ id|sk
 comma
 id|TCP_TIME_DACK
 )paren
-suffix:semicolon
-multiline_comment|/* If we ever saw N&gt;1 small segments from peer, it has&n;&t; * enough of send buffer to send N packets and does not nagle.&n;&t; * Hence, we may delay acks more aggresively.&n;&t; */
-r_if
-c_cond
-(paren
-id|tp-&gt;ack.rcv_small
-OG
-id|tp-&gt;ack.rcv_thresh
-op_plus
-l_int|1
-)paren
-id|tp-&gt;ack.rcv_thresh
-op_assign
-id|tp-&gt;ack.rcv_small
-op_minus
-l_int|1
-suffix:semicolon
-id|tp-&gt;ack.rcv_small
-op_assign
-l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Chose a new window to advertise, update state in tcp_opt for the&n; * socket, and return result with RFC1323 scaling applied.  The return&n; * value can be stuffed directly into th-&gt;window for an outgoing&n; * frame.&n; */
@@ -4802,20 +4782,24 @@ id|TCP_DELACK_MIN
 r_int
 id|max_ato
 op_assign
-(paren
-id|tp-&gt;ack.pingpong
-op_logical_or
-id|tp-&gt;ack.rcv_small
-)paren
-ques
-c_cond
-id|TCP_DELACK_MAX
-suffix:colon
-(paren
 id|HZ
 op_div
 l_int|2
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tp-&gt;ack.pingpong
+op_logical_or
+(paren
+id|tp-&gt;ack.pending
+op_amp
+id|TCP_ACK_PUSHED
 )paren
+)paren
+id|max_ato
+op_assign
+id|TCP_DELACK_MAX
 suffix:semicolon
 multiline_comment|/* Slow path, intersegment interval is &quot;high&quot;. */
 multiline_comment|/* If some rtt estimate is known, use it to bound delayed ack.&n;&t;&t; * Do not use tp-&gt;rto here, use results of rtt measurements&n;&t;&t; * directly.&n;&t;&t; */
@@ -4874,7 +4858,7 @@ c_cond
 (paren
 id|tp-&gt;ack.pending
 op_amp
-l_int|2
+id|TCP_ACK_TIMER
 )paren
 (brace
 multiline_comment|/* If delack timer was blocked or is about to expire,&n;&t;&t; * send ACK now.&n;&t;&t; */
@@ -4925,8 +4909,10 @@ id|tp-&gt;ack.timeout
 suffix:semicolon
 )brace
 id|tp-&gt;ack.pending
-op_assign
-l_int|3
+op_or_assign
+id|TCP_ACK_SCHED
+op_or
+id|TCP_ACK_TIMER
 suffix:semicolon
 id|tp-&gt;ack.timeout
 op_assign

@@ -629,6 +629,17 @@ c_func
 l_string|&quot;SAL: Platform features &quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_IA64_HAVE_IRQREDIR
+multiline_comment|/*&n;&t;&t;&t;       * Early versions of SAL say we don&squot;t have&n;&t;&t;&t;       * IRQ redirection, even though we do...&n;&t;&t;&t;       */
+id|pf-&gt;feature_mask
+op_or_assign
+(paren
+l_int|1
+op_lshift
+l_int|1
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren

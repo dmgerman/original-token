@@ -3759,6 +3759,7 @@ c_func
 l_string|&quot;Cannot create dentry cache&quot;
 )paren
 suffix:semicolon
+macro_line|#if PAGE_SHIFT &lt; 13
 id|mempages
 op_rshift_assign
 (paren
@@ -3767,6 +3768,7 @@ op_minus
 id|PAGE_SHIFT
 )paren
 suffix:semicolon
+macro_line|#endif
 id|mempages
 op_mul_assign
 r_sizeof

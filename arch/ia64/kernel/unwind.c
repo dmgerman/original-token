@@ -30,7 +30,7 @@ mdefine_line|#define UNW_LOG_HASH_SIZE&t;(UNW_LOG_CACHE_SIZE + 1)
 DECL|macro|UNW_HASH_SIZE
 mdefine_line|#define UNW_HASH_SIZE&t;&t;(1 &lt;&lt; UNW_LOG_HASH_SIZE)
 DECL|macro|UNW_DEBUG
-mdefine_line|#define UNW_DEBUG&t;1
+mdefine_line|#define UNW_DEBUG&t;0
 DECL|macro|UNW_STATS
 mdefine_line|#define UNW_STATS&t;0&t;/* WARNING: this disabled interrupts for long time-spans!! */
 macro_line|#if UNW_DEBUG

@@ -812,6 +812,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* first, clear psr.dfh and psr.mfh: */
 id|regs-&gt;cr_ipsr
 op_and_assign
 op_complement
@@ -853,6 +854,20 @@ op_member_access_from_pointer
 id|mfh
 )paren
 (brace
+id|ia64_psr
+c_func
+(paren
+id|ia64_task_regs
+c_func
+(paren
+id|fpu_owner
+)paren
+)paren
+op_member_access_from_pointer
+id|mfh
+op_assign
+l_int|0
+suffix:semicolon
 id|fpu_owner-&gt;thread.flags
 op_or_assign
 id|IA64_THREAD_FPH_VALID
@@ -889,6 +904,17 @@ id|__ia64_init_fpu
 c_func
 (paren
 )paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; * Set mfh because the state in thread.fph does not match&n;&t;&t;&t; * the state in the fph partition.&n;&t;&t;&t; */
+id|ia64_psr
+c_func
+(paren
+id|regs
+)paren
+op_member_access_from_pointer
+id|mfh
+op_assign
+l_int|1
 suffix:semicolon
 )brace
 )brace

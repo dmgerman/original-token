@@ -1148,15 +1148,6 @@ id|tsk-&gt;active_mm
 op_assign
 id|mm
 suffix:semicolon
-multiline_comment|/*&n;&t; * child gets a private LDT (if there was an LDT in the parent)&n;&t; */
-id|copy_segments
-c_func
-(paren
-id|tsk
-comma
-id|mm
-)paren
-suffix:semicolon
 id|down
 c_func
 (paren
@@ -1186,6 +1177,15 @@ id|retval
 )paren
 r_goto
 id|free_pt
+suffix:semicolon
+multiline_comment|/*&n;&t; * child gets a private LDT (if there was an LDT in the parent)&n;&t; */
+id|copy_segments
+c_func
+(paren
+id|tsk
+comma
+id|mm
+)paren
 suffix:semicolon
 r_if
 c_cond

@@ -1,19 +1,12 @@
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/machvec.h&gt;
+macro_line|#ifdef CONFIG_IA64_GENERIC
 DECL|variable|ia64_mv
 r_struct
 id|ia64_machine_vector
 id|ia64_mv
 suffix:semicolon
-r_void
-DECL|function|machvec_noop
-id|machvec_noop
-(paren
-r_void
-)paren
-(brace
-)brace
 multiline_comment|/*&n; * Most platforms use this routine for mapping page frame addresses&n; * into a memory map index.&n; */
 r_int
 r_int
@@ -150,5 +143,14 @@ comma
 id|name
 )paren
 suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_IA64_GENERIC */
+r_void
+DECL|function|machvec_noop
+id|machvec_noop
+(paren
+r_void
+)paren
+(brace
 )brace
 eof

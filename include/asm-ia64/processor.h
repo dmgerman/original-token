@@ -7,6 +7,8 @@ macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/types.h&gt;
 DECL|macro|IA64_NUM_DBG_REGS
 mdefine_line|#define IA64_NUM_DBG_REGS&t;8
+DECL|macro|IA64_NUM_PM_REGS
+mdefine_line|#define IA64_NUM_PM_REGS&t;4
 multiline_comment|/*&n; * TASK_SIZE really is a mis-named.  It really is the maximum user&n; * space address (plus one).  On ia-64, there are five regions of 2TB&n; * each (assuming 8KB page size), for a total of 8TB of user virtual&n; * address space.&n; */
 DECL|macro|TASK_SIZE
 mdefine_line|#define TASK_SIZE&t;&t;0xa000000000000000
@@ -222,16 +224,18 @@ DECL|macro|IA64_THREAD_FPH_VALID
 mdefine_line|#define IA64_THREAD_FPH_VALID&t;(__IA64_UL(1) &lt;&lt; 0)&t;/* floating-point high state valid? */
 DECL|macro|IA64_THREAD_DBG_VALID
 mdefine_line|#define IA64_THREAD_DBG_VALID&t;(__IA64_UL(1) &lt;&lt; 1)&t;/* debug registers valid? */
+DECL|macro|IA64_THREAD_PM_VALID
+mdefine_line|#define IA64_THREAD_PM_VALID&t;(__IA64_UL(1) &lt;&lt; 2)&t;/* performance registers valid? */
 DECL|macro|IA64_THREAD_UAC_NOPRINT
-mdefine_line|#define IA64_THREAD_UAC_NOPRINT&t;(__IA64_UL(1) &lt;&lt; 2)&t;/* don&squot;t log unaligned accesses */
+mdefine_line|#define IA64_THREAD_UAC_NOPRINT&t;(__IA64_UL(1) &lt;&lt; 3)&t;/* don&squot;t log unaligned accesses */
 DECL|macro|IA64_THREAD_UAC_SIGBUS
-mdefine_line|#define IA64_THREAD_UAC_SIGBUS&t;(__IA64_UL(1) &lt;&lt; 3)&t;/* generate SIGBUS on unaligned acc. */
+mdefine_line|#define IA64_THREAD_UAC_SIGBUS&t;(__IA64_UL(1) &lt;&lt; 4)&t;/* generate SIGBUS on unaligned acc. */
 DECL|macro|IA64_THREAD_KRBS_SYNCED
-mdefine_line|#define IA64_THREAD_KRBS_SYNCED&t;(__IA64_UL(1) &lt;&lt; 4)&t;/* krbs synced with process vm? */
+mdefine_line|#define IA64_THREAD_KRBS_SYNCED&t;(__IA64_UL(1) &lt;&lt; 5)&t;/* krbs synced with process vm? */
 DECL|macro|IA64_KERNEL_DEATH
 mdefine_line|#define IA64_KERNEL_DEATH&t;(__IA64_UL(1) &lt;&lt; 63)&t;/* see die_if_kernel()... */
 DECL|macro|IA64_THREAD_UAC_SHIFT
-mdefine_line|#define IA64_THREAD_UAC_SHIFT&t;2&t;
+mdefine_line|#define IA64_THREAD_UAC_SHIFT&t;3
 DECL|macro|IA64_THREAD_UAC_MASK
 mdefine_line|#define IA64_THREAD_UAC_MASK&t;(IA64_THREAD_UAC_NOPRINT | IA64_THREAD_UAC_SIGBUS)
 macro_line|#ifndef __ASSEMBLY__
@@ -664,6 +668,34 @@ id|ibr
 id|IA64_NUM_DBG_REGS
 )braket
 suffix:semicolon
+macro_line|#ifdef CONFIG_PERFMON
+DECL|member|pmc
+id|__u64
+id|pmc
+(braket
+id|IA64_NUM_PM_REGS
+)braket
+suffix:semicolon
+DECL|member|pmd
+id|__u64
+id|pmd
+(braket
+id|IA64_NUM_PM_REGS
+)braket
+suffix:semicolon
+DECL|member|pmod
+id|__u64
+id|pmod
+(braket
+id|IA64_NUM_PM_REGS
+)braket
+suffix:semicolon
+DECL|macro|INIT_THREAD_PM
+macro_line|# define INIT_THREAD_PM&t;&t;{0, }, {0, }, {0, },
+macro_line|#else
+DECL|macro|INIT_THREAD_PM
+macro_line|# define INIT_THREAD_PM
+macro_line|#endif
 DECL|member|map_base
 id|__u64
 id|map_base
@@ -739,7 +771,7 @@ suffix:semicolon
 DECL|macro|INIT_MMAP
 mdefine_line|#define INIT_MMAP {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&amp;init_mm, PAGE_OFFSET, PAGE_OFFSET + 0x10000000, NULL, PAGE_SHARED,&t;&bslash;&n;        VM_READ | VM_WRITE | VM_EXEC, 1, NULL, NULL&t;&t;&t;&t;&bslash;&n;}
 DECL|macro|INIT_THREAD
-mdefine_line|#define INIT_THREAD {&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;/* ksp */&t;&bslash;&n;&t;0,&t;&t;&t;&t;/* flags */&t;&bslash;&n;&t;{{{{0}}}, },&t;&t;&t;/* fph */&t;&bslash;&n;&t;{0, },&t;&t;&t;&t;/* dbr */&t;&bslash;&n;&t;{0, },&t;&t;&t;&t;/* ibr */&t;&bslash;&n;&t;0x2000000000000000&t;&t;/* map_base */&t;&bslash;&n;&t;INIT_THREAD_IA32,&t;&t;&t;&t;&bslash;&n;&t;0&t;&t;&t;&t;/* siginfo */&t;&bslash;&n;}
+mdefine_line|#define INIT_THREAD {&t;&t;&t;&t;&t;&bslash;&n;&t;0,&t;&t;&t;&t;/* ksp */&t;&bslash;&n;&t;0,&t;&t;&t;&t;/* flags */&t;&bslash;&n;&t;{{{{0}}}, },&t;&t;&t;/* fph */&t;&bslash;&n;&t;{0, },&t;&t;&t;&t;/* dbr */&t;&bslash;&n;&t;{0, },&t;&t;&t;&t;/* ibr */&t;&bslash;&n;&t;INIT_THREAD_PM&t;&t;&t;&t;&t;&bslash;&n;&t;0x2000000000000000&t;&t;/* map_base */&t;&bslash;&n;&t;INIT_THREAD_IA32,&t;&t;&t;&t;&bslash;&n;&t;0&t;&t;&t;&t;/* siginfo */&t;&bslash;&n;}
 DECL|macro|start_thread
 mdefine_line|#define start_thread(regs,new_ip,new_sp) do {&t;&t;&t;&t;&t;&bslash;&n;&t;set_fs(USER_DS);&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;ia64_psr(regs)-&gt;cpl = 3;&t;/* set user mode */&t;&t;&t;&bslash;&n;&t;ia64_psr(regs)-&gt;ri = 0;&t;&t;/* clear return slot number */&t;&t;&bslash;&n;&t;ia64_psr(regs)-&gt;is = 0;&t;&t;/* IA-64 instruction set */&t;&t;&bslash;&n;&t;regs-&gt;cr_iip = new_ip;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;ar_rsc = 0xf;&t;&t;/* eager mode, privilege level 3 */&t;&bslash;&n;&t;regs-&gt;r12 = new_sp - 16;&t;/* allocate 16 byte scratch area */&t;&bslash;&n;&t;regs-&gt;ar_bspstore = IA64_RBS_BOT;&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;ar_rnat = 0;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;loadrs = 0;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;} while (0)
 multiline_comment|/* Forward declarations, a strange C thing... */
@@ -749,16 +781,9 @@ suffix:semicolon
 r_struct
 id|task_struct
 suffix:semicolon
-multiline_comment|/* Free all resources held by a thread. */
-r_extern
-r_void
-id|release_thread
-(paren
-r_struct
-id|task_struct
-op_star
-)paren
-suffix:semicolon
+multiline_comment|/*&n; * Free all resources held by a thread. This is called after the&n; * parent of DEAD_TASK has collected the exist status of the task via&n; * wait().  This is a no-op on IA-64.&n; */
+DECL|macro|release_thread
+mdefine_line|#define release_thread(dead_task)
 multiline_comment|/*&n; * This is the mechanism for creating a new kernel thread.&n; *&n; * NOTE 1: Only a kernel-only process (ie the swapper or direct&n; * descendants who haven&squot;t done an &quot;execve()&quot;) should use this: it&n; * will work within a system call from a &quot;real&quot; process, but the&n; * process memory space will not be free&squot;d until both the parent and&n; * the child have exited.&n; *&n; * NOTE 2: This MUST NOT be an inlined function.  Otherwise, we get&n; * into trouble in init/main.c when the child thread returns to&n; * do_basic_setup() and the timing is such that free_initmem() has&n; * been called already.&n; */
 r_extern
 r_int
@@ -889,6 +914,70 @@ op_star
 id|fph
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|ia64_save_debug_regs
+(paren
+r_int
+r_int
+op_star
+id|save_area
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|ia64_load_debug_regs
+(paren
+r_int
+r_int
+op_star
+id|save_area
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_IA32_SUPPORT
+r_extern
+r_void
+id|ia32_save_state
+(paren
+r_struct
+id|thread_struct
+op_star
+id|thread
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|ia32_load_state
+(paren
+r_struct
+id|thread_struct
+op_star
+id|thread
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_PERFMON
+r_extern
+r_void
+id|ia64_save_pm_regs
+(paren
+r_struct
+id|thread_struct
+op_star
+id|thread
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|ia64_load_pm_regs
+(paren
+r_struct
+id|thread_struct
+op_star
+id|thread
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|macro|ia64_fph_enable
 mdefine_line|#define ia64_fph_enable()&t;__asm__ __volatile__ (&quot;;; rsm psr.dfh;; srlz.d;;&quot; ::: &quot;memory&quot;);
 DECL|macro|ia64_fph_disable

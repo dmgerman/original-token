@@ -14,7 +14,7 @@ macro_line|# define UNW(args...)
 macro_line|#endif
 macro_line|#endif
 DECL|macro|ENTRY
-mdefine_line|#define ENTRY(name)&t;&t;&t;&t;&bslash;&n;&t;.align 16;&t;&t;&t;&t;&bslash;&n;&t;.proc name;&t;&t;&t;&t;&bslash;&n;name:
+mdefine_line|#define ENTRY(name)&t;&t;&t;&t;&bslash;&n;&t;.align 32;&t;&t;&t;&t;&bslash;&n;&t;.proc name;&t;&t;&t;&t;&bslash;&n;name:
 DECL|macro|GLOBAL_ENTRY
 mdefine_line|#define GLOBAL_ENTRY(name)&t;&t;&t;&bslash;&n;&t;.global name;&t;&t;&t;&t;&bslash;&n;&t;ENTRY(name)
 DECL|macro|END

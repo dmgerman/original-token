@@ -1,7 +1,7 @@
 macro_line|#ifndef _ASM_IA64_PAL_H
 DECL|macro|_ASM_IA64_PAL_H
 mdefine_line|#define _ASM_IA64_PAL_H
-multiline_comment|/*&n; * Processor Abstraction Layer definitions.&n; *&n; * This is based on Intel IA-64 Architecture Software Developer&squot;s Manual rev 1.0&n; * chapter 11 IA-64 Processor Abstraction Layer&n; *&n; * Copyright (C) 1998-2000 Hewlett-Packard Co&n; * Copyright (C) 1998-2000 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; * Copyright (C) 2000 Stephane Eranian &lt;eranian@hpl.hp.com&gt;&n; * Copyright (C) 1999 VA Linux Systems&n; * Copyright (C) 1999 Walt Drummond &lt;drummond@valinux.com&gt;&n; * Copyright (C) 1999 Srinivasa Prasad Thirumalachar &lt;sprasad@sprasad.engr.sgi.com&gt;&n; *&n; * 99/10/01&t;davidm&t;Make sure we pass zero for reserved parameters.&n; * 00/03/07&t;davidm&t;Updated pal_cache_flush() to be in sync with PAL v2.6.&n; * 00/03/23     cfleck  Modified processor min-state save area to match updated PAL &amp; SAL info&n; * 00/05/24     eranian Updated to latest PAL spec, fix structures bugs, added &n; * 00/05/25&t;eranian Support for stack calls, and statis physical calls&n; */
+multiline_comment|/*&n; * Processor Abstraction Layer definitions.&n; *&n; * This is based on Intel IA-64 Architecture Software Developer&squot;s Manual rev 1.0&n; * chapter 11 IA-64 Processor Abstraction Layer&n; *&n; * Copyright (C) 1998-2000 Hewlett-Packard Co&n; * Copyright (C) 1998-2000 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; * Copyright (C) 2000 Stephane Eranian &lt;eranian@hpl.hp.com&gt;&n; * Copyright (C) 1999 VA Linux Systems&n; * Copyright (C) 1999 Walt Drummond &lt;drummond@valinux.com&gt;&n; * Copyright (C) 1999 Srinivasa Prasad Thirumalachar &lt;sprasad@sprasad.engr.sgi.com&gt;&n; *&n; * 99/10/01&t;davidm&t;Make sure we pass zero for reserved parameters.&n; * 00/03/07&t;davidm&t;Updated pal_cache_flush() to be in sync with PAL v2.6.&n; * 00/03/23     cfleck  Modified processor min-state save area to match updated PAL &amp; SAL info&n; * 00/05/24     eranian Updated to latest PAL spec, fix structures bugs, added &n; * 00/05/25&t;eranian Support for stack calls, and static physical calls&n; * 00/06/18&t;eranian Support for stacked physical calls&n; */
 multiline_comment|/*&n; * Note that some of these calls use a static-register only calling&n; * convention which has nothing to do with the regular calling&n; * convention.&n; */
 DECL|macro|PAL_CACHE_FLUSH
 mdefine_line|#define PAL_CACHE_FLUSH&t;&t;1&t;/* flush i/d cache */
@@ -1455,12 +1455,28 @@ comma
 id|u64
 )paren
 suffix:semicolon
+r_extern
+r_struct
+id|ia64_pal_retval
+id|ia64_pal_call_phys_stacked
+(paren
+id|u64
+comma
+id|u64
+comma
+id|u64
+comma
+id|u64
+)paren
+suffix:semicolon
 DECL|macro|PAL_CALL
 mdefine_line|#define PAL_CALL(iprv,a0,a1,a2,a3)&t;iprv = ia64_pal_call_static(a0, a1, a2, a3)
 DECL|macro|PAL_CALL_STK
 mdefine_line|#define PAL_CALL_STK(iprv,a0,a1,a2,a3)&t;iprv = ia64_pal_call_stacked(a0, a1, a2, a3)
 DECL|macro|PAL_CALL_PHYS
 mdefine_line|#define PAL_CALL_PHYS(iprv,a0,a1,a2,a3) iprv = ia64_pal_call_phys_static(a0, a1, a2, a3)
+DECL|macro|PAL_CALL_PHYS_STK
+mdefine_line|#define PAL_CALL_PHYS_STK(iprv,a0,a1,a2,a3) iprv = ia64_pal_call_phys_stacked(a0, a1, a2, a3)
 DECL|typedef|ia64_pal_handler
 r_typedef
 r_int
@@ -4298,20 +4314,20 @@ id|reserved
 suffix:colon
 l_int|60
 suffix:semicolon
-DECL|member|pal_itr_valid_s
+DECL|member|pal_tr_valid_s
 )brace
-id|pal_itr_valid_s
+id|pal_tr_valid_s
 suffix:semicolon
-DECL|typedef|pal_itr_valid_u_t
+DECL|typedef|pal_tr_valid_u_t
 )brace
-id|pal_itr_valid_u_t
+id|pal_tr_valid_u_t
 suffix:semicolon
 multiline_comment|/* Read a translation register */
 r_extern
 r_inline
 id|s64
-DECL|function|ia64_pal_vm_tr_read
-id|ia64_pal_vm_tr_read
+DECL|function|ia64_pal_tr_read
+id|ia64_pal_tr_read
 (paren
 id|u64
 id|reg_num
@@ -4320,18 +4336,19 @@ id|u64
 id|tr_type
 comma
 id|u64
+op_star
 id|tr_buffer
 comma
-id|pal_itr_valid_u_t
+id|pal_tr_valid_u_t
 op_star
-id|itr_valid
+id|tr_valid
 )paren
 (brace
 r_struct
 id|ia64_pal_retval
 id|iprv
 suffix:semicolon
-id|PAL_CALL
+id|PAL_CALL_PHYS_STK
 c_func
 (paren
 id|iprv
@@ -4342,15 +4359,22 @@ id|reg_num
 comma
 id|tr_type
 comma
+(paren
+id|u64
+)paren
+id|__pa
+c_func
+(paren
 id|tr_buffer
+)paren
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|itr_valid
+id|tr_valid
 )paren
-id|itr_valid-&gt;piv_val
+id|tr_valid-&gt;piv_val
 op_assign
 id|iprv.v0
 suffix:semicolon

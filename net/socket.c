@@ -1291,6 +1291,10 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|inode-&gt;i_sb
+op_assign
+id|sock_mnt-&gt;mnt_sb
+suffix:semicolon
 r_if
 c_cond
 (paren

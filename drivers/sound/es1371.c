@@ -427,8 +427,6 @@ DECL|macro|FMODE_MIDI_READ
 mdefine_line|#define FMODE_MIDI_READ  (FMODE_READ &lt;&lt; FMODE_MIDI_SHIFT)
 DECL|macro|FMODE_MIDI_WRITE
 mdefine_line|#define FMODE_MIDI_WRITE (FMODE_WRITE &lt;&lt; FMODE_MIDI_SHIFT)
-DECL|macro|SND_DEV_DSP16
-mdefine_line|#define SND_DEV_DSP16   5 
 DECL|macro|ES1371_MODULE_NAME
 mdefine_line|#define ES1371_MODULE_NAME &quot;es1371&quot;
 DECL|macro|PFX

@@ -224,12 +224,6 @@ mdefine_line|#define NR_HW_CH&t;&t;3
 multiline_comment|/* maxinum number of AC97 codecs connected, AC97 2.0 defined 4 */
 DECL|macro|NR_AC97
 mdefine_line|#define NR_AC97&t;&t;2
-multiline_comment|/* minor number of /dev/dspW */
-DECL|macro|SND_DEV_DSP8
-mdefine_line|#define SND_DEV_DSP8&t;1
-multiline_comment|/* minor number of /dev/dspW */
-DECL|macro|SND_DEV_DSP16
-mdefine_line|#define SND_DEV_DSP16&t;1 
 DECL|variable|sample_size
 r_static
 r_const

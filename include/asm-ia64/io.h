@@ -63,6 +63,7 @@ id|PAGE_OFFSET
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * The following two macros are deprecated and scheduled for removal.&n; * Please use the PCI-DMA interface defined in &lt;asm/pci.h&gt; instead.&n; */
 DECL|macro|bus_to_virt
 mdefine_line|#define bus_to_virt&t;phys_to_virt
 DECL|macro|virt_to_bus
@@ -1037,6 +1038,8 @@ DECL|macro|__raw_writeb
 mdefine_line|#define __raw_writeb&t;writeb
 DECL|macro|__raw_writew
 mdefine_line|#define __raw_writew&t;writew
+DECL|macro|__raw_writel
+mdefine_line|#define __raw_writel&t;writel
 DECL|macro|__raw_writeq
 mdefine_line|#define __raw_writeq&t;writeq
 macro_line|#ifndef inb_p

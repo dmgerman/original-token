@@ -1410,7 +1410,7 @@ l_int|0
 suffix:semicolon
 )brace
 r_static
-r_int
+r_void
 id|__exit
 DECL|function|efi_rtc_exit
 id|efi_rtc_exit
@@ -1420,9 +1420,6 @@ r_void
 )paren
 (brace
 multiline_comment|/* not yet used */
-r_return
-l_int|0
-suffix:semicolon
 )brace
 DECL|variable|efi_rtc_init
 id|module_init

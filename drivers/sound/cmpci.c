@@ -217,8 +217,6 @@ DECL|macro|FMODE_MIDI_WRITE
 mdefine_line|#define FMODE_MIDI_WRITE (FMODE_WRITE &lt;&lt; FMODE_MIDI_SHIFT)
 DECL|macro|FMODE_DMFM
 mdefine_line|#define FMODE_DMFM 0x10
-DECL|macro|SND_DEV_DSP16
-mdefine_line|#define SND_DEV_DSP16   5 
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|struct|cm_state
 r_struct

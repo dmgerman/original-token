@@ -922,6 +922,9 @@ multiline_comment|/* Length must match exact page count */
 r_if
 c_cond
 (paren
+op_logical_neg
+id|dma
+op_logical_or
 (paren
 id|length
 op_rshift
@@ -1259,6 +1262,22 @@ op_complement
 id|_PAGE_PWT
 suffix:semicolon
 )brace
+macro_line|#elif defined(__ia64__)
+r_if
+c_cond
+(paren
+id|map-&gt;type
+op_ne
+id|_DRM_AGP
+)paren
+id|vma-&gt;vm_page_prot
+op_assign
+id|pgprot_writecombine
+c_func
+(paren
+id|vma-&gt;vm_page_prot
+)paren
+suffix:semicolon
 macro_line|#endif
 id|vma-&gt;vm_flags
 op_or_assign

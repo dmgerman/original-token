@@ -597,16 +597,6 @@ id|__u16
 id|rcv_mss
 suffix:semicolon
 multiline_comment|/* MSS used for delayed ACK decisions&t;*/
-DECL|member|rcv_small
-id|__u16
-id|rcv_small
-suffix:semicolon
-multiline_comment|/* Number of not ACKed small segments&t;*/
-DECL|member|rcv_thresh
-id|__u16
-id|rcv_thresh
-suffix:semicolon
-multiline_comment|/* Peer doing TCP_NODELAY&t;&t;*/
 DECL|member|ack
 )brace
 id|ack

@@ -7816,7 +7816,7 @@ op_logical_neg
 (paren
 id|file
 op_assign
-id|fcheck
+id|fget
 c_func
 (paren
 id|fd

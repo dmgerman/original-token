@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: bitops.h,v 1.59 2000/07/13 01:51:50 davem Exp $&n; * bitops.h: Bit string operations on the Sparc.&n; *&n; * Copyright 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: bitops.h,v 1.60 2000/08/10 23:49:16 davem Exp $&n; * bitops.h: Bit string operations on the Sparc.&n; *&n; * Copyright 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
 macro_line|#ifndef _SPARC_BITOPS_H
 DECL|macro|_SPARC_BITOPS_H
 mdefine_line|#define _SPARC_BITOPS_H
@@ -1117,6 +1117,21 @@ l_int|0UL
 op_lshift
 id|size
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|tmp
+op_eq
+op_complement
+l_int|0UL
+)paren
+multiline_comment|/* Are any bits zero? */
+r_return
+id|result
+op_plus
+id|size
+suffix:semicolon
+multiline_comment|/* Nope. */
 id|found_middle
 suffix:colon
 r_return
@@ -1878,12 +1893,8 @@ id|p
 suffix:semicolon
 id|found_first
 suffix:colon
-r_return
-id|result
-op_plus
-id|ffz
-c_func
-(paren
+id|tmp
+op_assign
 id|__swab32
 c_func
 (paren
@@ -1896,6 +1907,29 @@ l_int|0UL
 op_lshift
 id|size
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tmp
+op_eq
+op_complement
+l_int|0UL
+)paren
+multiline_comment|/* Are any bits zero? */
+r_return
+id|result
+op_plus
+id|size
+suffix:semicolon
+multiline_comment|/* Nope. */
+r_return
+id|result
+op_plus
+id|ffz
+c_func
+(paren
+id|tmp
 )paren
 suffix:semicolon
 id|found_middle

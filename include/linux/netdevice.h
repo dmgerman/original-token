@@ -1199,13 +1199,6 @@ id|dev_base_lock
 suffix:semicolon
 multiline_comment|/* Device list lock */
 r_extern
-r_struct
-id|netdev_boot_setup
-id|dev_boot_setup
-(braket
-)braket
-suffix:semicolon
-r_extern
 r_int
 id|netdev_boot_setup_add
 c_func

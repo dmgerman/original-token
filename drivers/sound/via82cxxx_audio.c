@@ -18,9 +18,6 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
-multiline_comment|/* much better to duplicate this value than include&n; * drivers/sound/sound_config.h just for this definition */
-DECL|macro|SND_DEV_DSP16
-mdefine_line|#define SND_DEV_DSP16 5 
 DECL|macro|VIA_DEBUG
 macro_line|#undef VIA_DEBUG&t;/* define to enable debugging output and checks */
 macro_line|#ifdef VIA_DEBUG

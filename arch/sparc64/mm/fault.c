@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fault.c,v 1.49 2000/08/09 00:00:15 davem Exp $&n; * arch/sparc64/mm/fault.c: Page fault handlers for the 64-bit Sparc.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997, 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: fault.c,v 1.50 2000/08/11 03:00:13 davem Exp $&n; * arch/sparc64/mm/fault.c: Page fault handlers for the 64-bit Sparc.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997, 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
 macro_line|#include &lt;asm/head.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -211,7 +211,6 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-(brace
 id|sp_banks
 (braket
 id|i
@@ -221,7 +220,6 @@ id|num_bytes
 op_and_assign
 id|PAGE_MASK
 suffix:semicolon
-)brace
 r_return
 id|tally
 suffix:semicolon
@@ -386,11 +384,9 @@ op_star
 id|pgdp
 )paren
 )paren
-(brace
 r_goto
 id|out
 suffix:semicolon
-)brace
 id|pmdp
 op_assign
 id|pmd_offset
@@ -411,11 +407,9 @@ op_star
 id|pmdp
 )paren
 )paren
-(brace
 r_goto
 id|out
 suffix:semicolon
-)brace
 id|ptep
 op_assign
 id|pte_offset
@@ -441,23 +435,19 @@ c_func
 id|pte
 )paren
 )paren
-(brace
 r_goto
 id|out
 suffix:semicolon
-)brace
 id|pa
 op_assign
-id|phys_base
-op_plus
 (paren
-id|sparc64_pte_pagenr
+id|pte_val
 c_func
 (paren
 id|pte
 )paren
-op_lshift
-id|PAGE_SHIFT
+op_amp
+id|_PAGE_PADDR
 )paren
 suffix:semicolon
 id|pa

@@ -24,7 +24,7 @@ suffix:semicolon
 DECL|macro|SI_MAX_SIZE
 mdefine_line|#define SI_MAX_SIZE&t;128
 DECL|macro|SI_PAD_SIZE
-mdefine_line|#define SI_PAD_SIZE&t;((SI_MAX_SIZE/sizeof(int)) - 3)
+mdefine_line|#define SI_PAD_SIZE&t;((SI_MAX_SIZE/sizeof(int)) - 4)
 DECL|struct|siginfo
 r_typedef
 r_struct
@@ -41,6 +41,10 @@ suffix:semicolon
 DECL|member|si_code
 r_int
 id|si_code
+suffix:semicolon
+DECL|member|__pad0
+r_int
+id|__pad0
 suffix:semicolon
 r_union
 (brace
@@ -388,7 +392,7 @@ mdefine_line|#define SIGEV_THREAD&t;2&t;/* deliver via thread creation */
 DECL|macro|SIGEV_MAX_SIZE
 mdefine_line|#define SIGEV_MAX_SIZE&t;64
 DECL|macro|SIGEV_PAD_SIZE
-mdefine_line|#define SIGEV_PAD_SIZE&t;((SIGEV_MAX_SIZE/sizeof(int)) - 3)
+mdefine_line|#define SIGEV_PAD_SIZE&t;((SIGEV_MAX_SIZE/sizeof(int)) - 4)
 DECL|struct|sigevent
 r_typedef
 r_struct

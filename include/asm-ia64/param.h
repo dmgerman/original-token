@@ -3,21 +3,11 @@ DECL|macro|_ASM_IA64_PARAM_H
 mdefine_line|#define _ASM_IA64_PARAM_H
 multiline_comment|/*&n; * Fundamental kernel parameters.&n; *&n; * Copyright (C) 1998, 1999 Hewlett-Packard Co&n; * Copyright (C) 1998, 1999 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifdef CONFIG_IA64_HP_SIM
+macro_line|#if defined(CONFIG_IA64_HP_SIM) || defined(CONFIG_IA64_SOFTSDV_HACKS)
 multiline_comment|/*&n; * Yeah, simulating stuff is slow, so let us catch some breath between&n; * timer interrupts...&n; */
 DECL|macro|HZ
 macro_line|# define HZ 20
-macro_line|#endif
-macro_line|#ifdef CONFIG_IA64_DIG
-macro_line|# ifdef CONFIG_IA64_SOFTSDV_HACKS
-DECL|macro|HZ
-macro_line|#  define HZ 20
-macro_line|# else
-DECL|macro|HZ
-macro_line|#  define HZ 100
-macro_line|# endif
-macro_line|#endif
-macro_line|#ifndef HZ
+macro_line|#else
 DECL|macro|HZ
 macro_line|# define HZ&t;1024
 macro_line|#endif

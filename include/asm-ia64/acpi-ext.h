@@ -195,8 +195,10 @@ DECL|typedef|acpi_entry_lsapic_t
 )brace
 id|acpi_entry_lsapic_t
 suffix:semicolon
+DECL|struct|acpi_entry_iosapic
 r_typedef
 r_struct
+id|acpi_entry_iosapic
 (brace
 DECL|member|type
 id|u8

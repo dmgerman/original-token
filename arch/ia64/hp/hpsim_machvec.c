@@ -1,8 +1,4 @@
+DECL|macro|MACHVEC_PLATFORM_NAME
+mdefine_line|#define MACHVEC_PLATFORM_NAME&t;hpsim
 macro_line|#include &lt;asm/machvec_init.h&gt;
-macro_line|#include &lt;asm/machvec_hpsim.h&gt;
-id|MACHVEC_DEFINE
-c_func
-(paren
-id|hpsim
-)paren
 eof

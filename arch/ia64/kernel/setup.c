@@ -311,6 +311,39 @@ id|ia64_boot_param
 )paren
 )paren
 suffix:semicolon
+op_star
+id|cmdline_p
+op_assign
+id|__va
+c_func
+(paren
+id|ia64_boot_param.command_line
+)paren
+suffix:semicolon
+id|strncpy
+c_func
+(paren
+id|saved_command_line
+comma
+op_star
+id|cmdline_p
+comma
+r_sizeof
+(paren
+id|saved_command_line
+)paren
+)paren
+suffix:semicolon
+id|saved_command_line
+(braket
+id|COMMAND_LINE_SIZE
+op_minus
+l_int|1
+)braket
+op_assign
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
+multiline_comment|/* for safety */
 id|efi_init
 c_func
 (paren
@@ -397,10 +430,57 @@ c_cond
 id|initrd_start
 )paren
 (brace
+id|u64
+id|start
+comma
+id|size
+suffix:semicolon
+DECL|macro|is_same_page
+macro_line|#&t;&t;define is_same_page(a,b) (((a)&amp;PAGE_MASK) == ((b)&amp;PAGE_MASK))
+macro_line|#if 1
+multiline_comment|/* XXX for now some backwards compatibility... */
+r_if
+c_cond
+(paren
+id|initrd_start
+op_ge
+id|PAGE_OFFSET
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;Warning: boot loader passed virtual address &quot;
+l_string|&quot;for initrd, please upgrade the loader&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+macro_line|#endif
+multiline_comment|/* &n;&t;&t;&t; * The loader ONLY passes physical addresses&n;&t;&t;&t; */
+id|initrd_start
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|__va
+c_func
+(paren
+id|initrd_start
+)paren
+suffix:semicolon
 id|initrd_end
 op_assign
 id|initrd_start
 op_plus
+id|ia64_boot_param.initrd_size
+suffix:semicolon
+id|start
+op_assign
+id|initrd_start
+suffix:semicolon
+id|size
+op_assign
 id|ia64_boot_param.initrd_size
 suffix:semicolon
 id|printk
@@ -417,16 +497,60 @@ comma
 id|ia64_boot_param.initrd_size
 )paren
 suffix:semicolon
-id|reserve_bootmem
-c_func
+multiline_comment|/*&n;&t;&t; * The kernel end and the beginning of initrd can be&n;&t;&t; * on the same page. This would cause the page to be&n;&t;&t; * reserved twice.  While not harmful, it does lead to&n;&t;&t; * a warning message which can cause confusion.  Thus,&n;&t;&t; * we make sure that in this case we only reserve new&n;&t;&t; * pages, i.e., initrd only pages. We need to:&n;&t;&t; *&n;&t;&t; *&t;- align up start&n;&t;&t; *&t;- adjust size of reserved section accordingly&n;&t;&t; *&n;&t;&t; * It should be noted that this operation is only&n;&t;&t; * valid for the reserve_bootmem() call and does not&n;&t;&t; * affect the integrety of the initrd itself.&n;&t;&t; *&n;&t;&t; * reserve_bootmem() considers partial pages as reserved.&n;&t;&t; */
+r_if
+c_cond
 (paren
-id|virt_to_phys
+id|is_same_page
 c_func
 (paren
 id|initrd_start
+comma
+(paren
+r_int
+r_int
+)paren
+op_amp
+id|_end
+)paren
+)paren
+(brace
+id|start
+op_assign
+id|PAGE_ALIGN
+c_func
+(paren
+id|start
+)paren
+suffix:semicolon
+id|size
+op_sub_assign
+id|start
+op_minus
+id|initrd_start
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Initial ramdisk &amp; kernel on the same page: &quot;
+l_string|&quot;reserving start=%lx size=%ld bytes&bslash;n&quot;
+comma
+id|start
+comma
+id|size
+)paren
+suffix:semicolon
+)brace
+id|reserve_bootmem
+c_func
+(paren
+id|__pa
+c_func
+(paren
+id|start
 )paren
 comma
-id|ia64_boot_param.initrd_size
+id|size
 )paren
 suffix:semicolon
 )brace
@@ -517,48 +641,6 @@ c_func
 id|efi.sal_systab
 )paren
 suffix:semicolon
-op_star
-id|cmdline_p
-op_assign
-id|__va
-c_func
-(paren
-id|ia64_boot_param.command_line
-)paren
-suffix:semicolon
-id|strncpy
-c_func
-(paren
-id|saved_command_line
-comma
-op_star
-id|cmdline_p
-comma
-r_sizeof
-(paren
-id|saved_command_line
-)paren
-)paren
-suffix:semicolon
-id|saved_command_line
-(braket
-id|COMMAND_LINE_SIZE
-op_minus
-l_int|1
-)braket
-op_assign
-l_char|&squot;&bslash;0&squot;
-suffix:semicolon
-multiline_comment|/* for safety */
-id|printk
-c_func
-(paren
-l_string|&quot;args to kernel: %s&bslash;n&quot;
-comma
-op_star
-id|cmdline_p
-)paren
-suffix:semicolon
 macro_line|#ifdef CONFIG_SMP
 id|bootstrap_processor
 op_assign
@@ -578,6 +660,17 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* initialize the bootstrap CPU */
+macro_line|#ifdef CONFIG_IA64_GENERIC
+id|machvec_init
+c_func
+(paren
+id|acpi_get_sysname
+c_func
+(paren
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -592,17 +685,6 @@ id|efi.acpi
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_IA64_GENERIC
-id|machvec_init
-c_func
-(paren
-id|acpi_get_sysname
-c_func
-(paren
-)paren
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_VT
 macro_line|# if defined(CONFIG_VGA_CONSOLE)
 id|conswitchp
@@ -637,6 +719,22 @@ c_func
 id|cmdline_p
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SWIOTLB
+(brace
+r_extern
+r_void
+id|setup_swiotlb
+(paren
+r_void
+)paren
+suffix:semicolon
+id|setup_swiotlb
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 )brace
 multiline_comment|/*&n; * Display cpu info for all cpu&squot;s.&n; */
 r_int

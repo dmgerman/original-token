@@ -174,17 +174,18 @@ multiline_comment|/*&n; * This variant works well for the SGI SN1 architecture (
 DECL|macro|MAP_NR_SN1
 mdefine_line|#define MAP_NR_SN1(addr)&t;(((unsigned long) (addr) - PAGE_OFFSET) &gt;&gt; PAGE_SHIFT)
 macro_line|#ifdef CONFIG_IA64_GENERIC
+macro_line|# include &lt;asm/machvec.h&gt;
 DECL|macro|virt_to_page
-macro_line|# define virt_to_page(kaddr)&t;(mem_map + platform_map_nr(kaddr))
+macro_line|# define virt_to_page(kaddr)   (mem_map + platform_map_nr(kaddr))
 macro_line|#elif defined (CONFIG_IA64_SN_SN1_SIM)
 DECL|macro|virt_to_page
-macro_line|# define virt_to_page(kaddr)&t;(mem_map + MAP_NR_SN1(kaddr))
+macro_line|# define virt_to_page(kaddr)   (mem_map + MAP_NR_SN1(kaddr))
 macro_line|#else
 DECL|macro|virt_to_page
-macro_line|# define virt_to_page(kaddr)&t;(mem_map + MAP_NR_DENSE(kaddr))
+macro_line|# define virt_to_page(kaddr)   (mem_map + MAP_NR_DENSE(kaddr))
 macro_line|#endif
 DECL|macro|VALID_PAGE
-mdefine_line|#define VALID_PAGE(page)&t;((page - mem_map) &lt; max_mapnr)
+mdefine_line|#define VALID_PAGE(page)       ((page - mem_map) &lt; max_mapnr)
 macro_line|# endif /* __KERNEL__ */
 DECL|union|ia64_va
 r_typedef

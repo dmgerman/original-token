@@ -1,11 +1,12 @@
 macro_line|#ifndef _ASM_IA64_MMU_CONTEXT_H
 DECL|macro|_ASM_IA64_MMU_CONTEXT_H
 mdefine_line|#define _ASM_IA64_MMU_CONTEXT_H
-multiline_comment|/*&n; * Copyright (C) 1998, 1999 Hewlett-Packard Co&n; * Copyright (C) 1998, 1999 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; */
+multiline_comment|/*&n; * Copyright (C) 1998-2000 Hewlett-Packard Co&n; * Copyright (C) 1998-2000 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
-multiline_comment|/*&n; * Routines to manage the allocation of task context numbers.  Task&n; * context numbers are used to reduce or eliminate the need to perform&n; * TLB flushes due to context switches.  Context numbers are&n; * implemented using ia-64 region ids.  Since ia-64 TLBs do not&n; * guarantee that the region number is checked when performing a TLB&n; * lookup, we need to assign a unique region id to each region in a&n; * process.  We use the least significant three bits in a region id&n; * for this purpose.  On processors where the region number is checked&n; * in TLB lookups, we can get back those two bits by defining&n; * CONFIG_IA64_TLB_CHECKS_REGION_NUMBER.  The macro&n; * IA64_REGION_ID_BITS gives the number of bits in a region id.  The&n; * architecture manual guarantees this number to be in the range&n; * 18-24.&n; *&n; * A context number has the following format:&n; *&n; *  +--------------------+---------------------+&n; *  |  generation number |    region id        |&n; *  +--------------------+---------------------+&n; *&n; * A context number of 0 is considered &quot;invalid&quot;.&n; *&n; * The generation number is incremented whenever we end up having used&n; * up all available region ids.  At that point with flush the entire&n; * TLB and reuse the first region id.  The new generation number&n; * ensures that when we context switch back to an old process, we do&n; * not inadvertently end up using its possibly reused region id.&n; * Instead, we simply allocate a new region id for that process.&n; *&n; * Copyright (C) 1998 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; */
+multiline_comment|/*&n; * Routines to manage the allocation of task context numbers.  Task&n; * context numbers are used to reduce or eliminate the need to perform&n; * TLB flushes due to context switches.  Context numbers are&n; * implemented using ia-64 region ids.  Since ia-64 TLBs do not&n; * guarantee that the region number is checked when performing a TLB&n; * lookup, we need to assign a unique region id to each region in a&n; * process.  We use the least significant three bits in a region id&n; * for this purpose.  On processors where the region number is checked&n; * in TLB lookups, we can get back those two bits by defining&n; * CONFIG_IA64_TLB_CHECKS_REGION_NUMBER.  The macro&n; * IA64_REGION_ID_BITS gives the number of bits in a region id.  The&n; * architecture manual guarantees this number to be in the range&n; * 18-24.&n; *&n; * Copyright (C) 1998 David Mosberger-Tang &lt;davidm@hpl.hp.com&gt;&n; */
 DECL|macro|IA64_REGION_ID_KERNEL
 mdefine_line|#define IA64_REGION_ID_KERNEL&t;0 /* the kernel&squot;s region id (tlb.c depends on this being 0) */
 DECL|macro|IA64_REGION_ID_BITS
@@ -19,14 +20,36 @@ macro_line|# define IA64_HW_CONTEXT_BITS&t;(IA64_REGION_ID_BITS - 3)
 macro_line|#endif
 DECL|macro|IA64_HW_CONTEXT_MASK
 mdefine_line|#define IA64_HW_CONTEXT_MASK&t;((1UL &lt;&lt; IA64_HW_CONTEXT_BITS) - 1)
+DECL|struct|ia64_ctx
+r_struct
+id|ia64_ctx
+(brace
+DECL|member|lock
+id|spinlock_t
+id|lock
+suffix:semicolon
+DECL|member|next
+r_int
+r_int
+id|next
+suffix:semicolon
+multiline_comment|/* next context number to use */
+DECL|member|limit
+r_int
+r_int
+id|limit
+suffix:semicolon
+multiline_comment|/* next &gt;= limit =&gt; must call wrap_mmu_context() */
+)brace
+suffix:semicolon
 r_extern
-r_int
-r_int
-id|ia64_next_context
+r_struct
+id|ia64_ctx
+id|ia64_ctx
 suffix:semicolon
 r_extern
 r_void
-id|get_new_mmu_context
+id|wrap_mmu_context
 (paren
 r_struct
 id|mm_struct
@@ -92,6 +115,53 @@ macro_line|# endif
 r_extern
 r_inline
 r_void
+DECL|function|get_new_mmu_context
+id|get_new_mmu_context
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+)paren
+(brace
+id|spin_lock
+c_func
+(paren
+op_amp
+id|ia64_ctx.lock
+)paren
+suffix:semicolon
+(brace
+r_if
+c_cond
+(paren
+id|ia64_ctx.next
+op_ge
+id|ia64_ctx.limit
+)paren
+id|wrap_mmu_context
+c_func
+(paren
+id|mm
+)paren
+suffix:semicolon
+id|mm-&gt;context
+op_assign
+id|ia64_ctx.next
+op_increment
+suffix:semicolon
+)brace
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|ia64_ctx.lock
+)paren
+suffix:semicolon
+)brace
+r_extern
+r_inline
+r_void
 DECL|function|get_mmu_context
 id|get_mmu_context
 (paren
@@ -105,27 +175,16 @@ multiline_comment|/* check if our ASN is of an older generation and thus invalid
 r_if
 c_cond
 (paren
-(paren
-(paren
 id|mm-&gt;context
-op_xor
-id|ia64_next_context
-)paren
-op_amp
-op_complement
-id|IA64_HW_CONTEXT_MASK
-)paren
-op_ne
+op_eq
 l_int|0
 )paren
-(brace
 id|get_new_mmu_context
 c_func
 (paren
 id|mm
 )paren
 suffix:semicolon
-)brace
 )brace
 r_extern
 r_inline
@@ -202,11 +261,7 @@ id|rr4
 suffix:semicolon
 id|rid
 op_assign
-(paren
 id|mm-&gt;context
-op_amp
-id|IA64_HW_CONTEXT_MASK
-)paren
 suffix:semicolon
 macro_line|#ifndef CONFIG_IA64_TLB_CHECKS_REGION_NUMBER
 id|rid

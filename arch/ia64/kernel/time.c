@@ -444,16 +444,6 @@ op_star
 id|regs
 )paren
 (brace
-r_static
-r_int
-r_int
-id|last_time
-suffix:semicolon
-r_static
-r_int
-r_char
-id|count
-suffix:semicolon
 r_int
 id|cpu
 op_assign
@@ -466,11 +456,23 @@ r_int
 r_int
 id|new_itm
 suffix:semicolon
+macro_line|#if 0
+r_static
+r_int
+r_int
+id|last_time
+suffix:semicolon
+r_static
+r_int
+r_char
+id|count
+suffix:semicolon
 r_int
 id|printed
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t; * Here we are in the timer irq handler. We have irqs locally&n;&t; * disabled, but we don&squot;t know if the timer_bh is running on&n;&t; * another CPU. We need to avoid to SMP race by acquiring the&n;&t; * xtime_lock.&n;&t; */
 id|write_lock
 c_func
@@ -609,7 +611,7 @@ c_func
 )paren
 r_break
 suffix:semicolon
-macro_line|#if !(defined(CONFIG_IA64_SOFTSDV_HACKS) &amp;&amp; defined(CONFIG_SMP))
+macro_line|#if 0
 multiline_comment|/*&n;&t;&t; * SoftSDV in SMP mode is _slow_, so we do &quot;lose&quot; ticks, &n;&t;&t; * but it&squot;s really OK...&n;&t;&t; */
 r_if
 c_cond

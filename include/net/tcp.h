@@ -5,13 +5,13 @@ mdefine_line|#define _TCP_H
 DECL|macro|TCP_DEBUG
 mdefine_line|#define TCP_DEBUG 1
 DECL|macro|FASTRETRANS_DEBUG
-mdefine_line|#define FASTRETRANS_DEBUG 2
+mdefine_line|#define FASTRETRANS_DEBUG 1
 multiline_comment|/* Be paranoid about data immediately beyond right edge of window. */
 DECL|macro|TCP_FORMAL_WINDOW
 macro_line|#undef  TCP_FORMAL_WINDOW
 multiline_comment|/* Cancel timers, when they are not required. */
-DECL|macro|TCP_CLEAR_TIMER
-macro_line|#undef TCP_CLEAR_TIMER
+DECL|macro|TCP_CLEAR_TIMERS
+macro_line|#undef TCP_CLEAR_TIMERS
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/tcp.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
@@ -1672,6 +1672,26 @@ r_int
 id|len
 )paren
 suffix:semicolon
+DECL|enum|tcp_ack_state_t
+r_enum
+id|tcp_ack_state_t
+(brace
+DECL|enumerator|TCP_ACK_SCHED
+id|TCP_ACK_SCHED
+op_assign
+l_int|1
+comma
+DECL|enumerator|TCP_ACK_TIMER
+id|TCP_ACK_TIMER
+op_assign
+l_int|2
+comma
+DECL|enumerator|TCP_ACK_PUSHED
+id|TCP_ACK_PUSHED
+op_assign
+l_int|4
+)brace
+suffix:semicolon
 DECL|function|tcp_schedule_ack
 r_static
 r_inline
@@ -1687,7 +1707,7 @@ id|tp
 (brace
 id|tp-&gt;ack.pending
 op_or_assign
-l_int|1
+id|TCP_ACK_SCHED
 suffix:semicolon
 )brace
 DECL|function|tcp_ack_scheduled
@@ -1706,7 +1726,7 @@ id|tp
 r_return
 id|tp-&gt;ack.pending
 op_amp
-l_int|1
+id|TCP_ACK_SCHED
 suffix:semicolon
 )brace
 DECL|function|tcp_dec_quickack_mode
@@ -2874,7 +2894,7 @@ id|TCP_TIME_DACK
 suffix:colon
 id|tp-&gt;ack.pending
 op_or_assign
-l_int|2
+id|TCP_ACK_TIMER
 suffix:semicolon
 id|tp-&gt;ack.timeout
 op_assign

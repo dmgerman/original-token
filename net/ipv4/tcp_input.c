@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_input.c,v 1.195 2000/08/10 01:21:14 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_input.c,v 1.197 2000/08/12 13:37:58 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
 multiline_comment|/*&n; * Changes:&n; *&t;&t;Pedro Roque&t;:&t;Fast Retransmit/Recovery.&n; *&t;&t;&t;&t;&t;Two receive queues.&n; *&t;&t;&t;&t;&t;Retransmit queue handled by TCP.&n; *&t;&t;&t;&t;&t;Better retransmit timer handling.&n; *&t;&t;&t;&t;&t;New congestion avoidance.&n; *&t;&t;&t;&t;&t;Header prediction.&n; *&t;&t;&t;&t;&t;Variable renaming.&n; *&n; *&t;&t;Eric&t;&t;:&t;Fast Retransmit.&n; *&t;&t;Randy Scott&t;:&t;MSS option defines.&n; *&t;&t;Eric Schenk&t;:&t;Fixes to slow start algorithm.&n; *&t;&t;Eric Schenk&t;:&t;Yet another double ACK bug.&n; *&t;&t;Eric Schenk&t;:&t;Delayed ACK bug fixes.&n; *&t;&t;Eric Schenk&t;:&t;Floyd style fast retrans war avoidance.&n; *&t;&t;David S. Miller&t;:&t;Don&squot;t allow zero congestion window.&n; *&t;&t;Eric Schenk&t;:&t;Fix retransmitter so that it sends&n; *&t;&t;&t;&t;&t;next packet on ack of previous packet.&n; *&t;&t;Andi Kleen&t;:&t;Moved open_request checking here&n; *&t;&t;&t;&t;&t;and process RSTs for open_requests.&n; *&t;&t;Andi Kleen&t;:&t;Better prune_queue, and other fixes.&n; *&t;&t;Andrey Savochkin:&t;Fix RTT measurements in the presnce of&n; *&t;&t;&t;&t;&t;timestamps.&n; *&t;&t;Andrey Savochkin:&t;Check sequence numbers correctly when&n; *&t;&t;&t;&t;&t;removing SACKs due to in sequence incoming&n; *&t;&t;&t;&t;&t;data segments.&n; *&t;&t;Andi Kleen:&t;&t;Make sure we never ack data there is not&n; *&t;&t;&t;&t;&t;enough room for. Also make this condition&n; *&t;&t;&t;&t;&t;a fatal error if it might still happen.&n; *&t;&t;Andi Kleen:&t;&t;Add tcp_measure_rcv_mss to make &n; *&t;&t;&t;&t;&t;connections with MSS&lt;min(MTU,ann. MSS)&n; *&t;&t;&t;&t;&t;work without delayed acks. &n; *&t;&t;Andi Kleen:&t;&t;Process packets with PSH set in the&n; *&t;&t;&t;&t;&t;fast path.&n; *&t;&t;J Hadi Salim:&t;&t;ECN support&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sysctl.h&gt;
@@ -108,6 +108,8 @@ DECL|macro|IsReno
 mdefine_line|#define IsReno(tp) ((tp)-&gt;sack_ok == 0)
 DECL|macro|IsFack
 mdefine_line|#define IsFack(tp) ((tp)-&gt;sack_ok &amp; 2)
+DECL|macro|TCP_REMNANT
+mdefine_line|#define TCP_REMNANT (TCP_FLAG_FIN|TCP_FLAG_URG|TCP_FLAG_SYN|TCP_FLAG_PSH)
 multiline_comment|/* Adapt the MSS value used to make delayed ack decision to the &n; * real world.&n; */
 DECL|function|tcp_measure_rcv_mss
 r_static
@@ -158,12 +160,25 @@ id|tp-&gt;ack.rcv_mss
 op_assign
 id|len
 suffix:semicolon
+multiline_comment|/* Dubious? Rather, it is final cut. 8) */
+r_if
+c_cond
+(paren
+id|tcp_flag_word
+c_func
+(paren
+id|skb-&gt;h.th
+)paren
+op_amp
+id|TCP_REMNANT
+)paren
+id|tp-&gt;ack.pending
+op_or_assign
+id|TCP_ACK_PUSHED
+suffix:semicolon
 )brace
 r_else
 (brace
-id|tp-&gt;ack.rcv_small
-op_increment
-suffix:semicolon
 multiline_comment|/* Otherwise, we make more careful check taking into account,&n;&t;&t; * that SACKs block is variable.&n;&t;&t; *&n;&t;&t; * &quot;len&quot; is invariant segment length, including TCP header.&n;&t;&t; */
 id|len
 op_assign
@@ -185,8 +200,6 @@ id|tcphdr
 )paren
 op_logical_or
 multiline_comment|/* If PSH is not set, packet should be&n;&t;&t;     * full sized, provided peer TCP is not badly broken.&n;&t;&t;     * This observation (if it is correct 8)) allows&n;&t;&t;     * to handle super-low mtu links fairly.&n;&t;&t;     */
-DECL|macro|TCP_REMNANT
-mdefine_line|#define TCP_REMNANT (TCP_FLAG_FIN|TCP_FLAG_URG|TCP_FLAG_SYN|TCP_FLAG_PSH)
 (paren
 id|len
 op_ge
@@ -216,6 +229,10 @@ id|len
 op_sub_assign
 id|tp-&gt;tcp_header_len
 suffix:semicolon
+id|tp-&gt;ack.last_seg_size
+op_assign
+id|len
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -228,20 +245,14 @@ id|tp-&gt;ack.rcv_mss
 op_assign
 id|len
 suffix:semicolon
-id|tp-&gt;ack.rcv_small
-op_assign
-l_int|0
-suffix:semicolon
-id|tp-&gt;ack.rcv_thresh
-op_assign
-l_int|0
+r_return
 suffix:semicolon
 )brace
-id|tp-&gt;ack.last_seg_size
-op_assign
-id|len
-suffix:semicolon
 )brace
+id|tp-&gt;ack.pending
+op_or_assign
+id|TCP_ACK_PUSHED
+suffix:semicolon
 )brace
 )brace
 DECL|function|tcp_incr_quickack
@@ -4881,15 +4892,12 @@ id|flag
 op_amp
 id|FLAG_ECE
 )paren
-(brace
 id|tcp_enter_cwr
 c_func
 (paren
 id|tp
 )paren
 suffix:semicolon
-)brace
-r_else
 r_if
 c_cond
 (paren
@@ -4933,13 +4941,22 @@ op_assign
 id|tp-&gt;snd_nxt
 suffix:semicolon
 )brace
-)brace
 id|tcp_moderate_cwnd
 c_func
 (paren
 id|tp
 )paren
 suffix:semicolon
+)brace
+r_else
+(brace
+id|tcp_cwnd_down
+c_func
+(paren
+id|tp
+)paren
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/* Process an event, which can update packets-in-flight not trivially.&n; * Main goal of this function is to calculate new estimate for left_out,&n; * taking into account both packets sitting in receiver&squot;s buffer and&n; * packets lost by network.&n; *&n; * Besides that it does CWND reduction, when packet loss is detected&n; * and changes state of machine.&n; *&n; * It does _not_ decide what to send, it is made in function&n; * tcp_xmit_retransmit_queue().&n; */
 r_static

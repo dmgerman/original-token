@@ -261,6 +261,7 @@ id|bsp
 comma
 id|sp
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Note: if the interrupt happened while executing in&n;&t;&t; * the context switch routine (ia64_switch_to), we may&n;&t;&t; * get a spurious stack overflow here.  This is&n;&t;&t; * because the register and the memory stack are not&n;&t;&t; * switched atomically.&n;&t;&t; */
 id|asm
 (paren
 l_string|&quot;mov %0=ar.bsp&quot;

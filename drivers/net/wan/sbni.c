@@ -2055,6 +2055,14 @@ id|dev-&gt;name
 )paren
 suffix:semicolon
 )paren
+id|free_irq
+c_func
+(paren
+id|dev-&gt;irq
+comma
+id|dev
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ENOMEM

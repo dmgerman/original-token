@@ -1,7 +1,9 @@
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/irq.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 r_static
+r_int
 r_int
 DECL|function|sn1_startup_irq
 id|sn1_startup_irq
@@ -52,26 +54,6 @@ id|irq
 )paren
 (brace
 )brace
-r_static
-r_int
-DECL|function|sn1_handle_irq
-id|sn1_handle_irq
-c_func
-(paren
-r_int
-r_int
-id|irq
-comma
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-(brace
-r_return
-l_int|0
-suffix:semicolon
-)brace
 DECL|variable|irq_type_sn1
 r_struct
 id|hw_interrupt_type
@@ -84,8 +66,6 @@ id|sn1_startup_irq
 comma
 id|sn1_shutdown_irq
 comma
-id|sn1_handle_irq
-comma
 id|sn1_enable_irq
 comma
 id|sn1_disable_irq
@@ -95,12 +75,7 @@ r_void
 DECL|function|sn1_irq_init
 id|sn1_irq_init
 (paren
-r_struct
-id|irq_desc
-id|desc
-(braket
-id|NR_IRQS
-)braket
+r_void
 )paren
 (brace
 r_int

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fcntl.h,v 1.8 2000/07/06 01:41:45 davem Exp $ */
+multiline_comment|/* $Id: fcntl.h,v 1.9 2000/08/12 13:25:53 davem Exp $ */
 macro_line|#ifndef _SPARC64_FCNTL_H
 DECL|macro|_SPARC64_FCNTL_H
 mdefine_line|#define _SPARC64_FCNTL_H
@@ -144,6 +144,10 @@ id|__unused
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef __KERNEL__
+DECL|macro|flock64
+mdefine_line|#define flock64&t;flock
 macro_line|#endif
 macro_line|#endif /* !(_SPARC64_FCNTL_H) */
 eof

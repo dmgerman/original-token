@@ -657,6 +657,15 @@ r_int
 id|end
 )paren
 (brace
+multiline_comment|/*&n;&t; * EFI uses 4KB pages while the kernel can use 4KB  or bigger.&n;&t; * Thus EFI and the kernel may have different page sizes. It is &n;&t; * therefore possible to have the initrd share the same page as &n;&t; * the end of the kernel (given current setup). &n;&t; *&n;&t; * To avoid freeing/using the wrong page (kernel sized) we:&n;&t; * &t;- align up the beginning of initrd&n;&t; *&t;- keep the end untouched&n;&t; *&n;&t; *  |             |&n;&t; *  |=============| a000&n;&t; *  |             |&n;&t; *  |             |&n;&t; *  |             | 9000&n;&t; *  |/////////////| &n;&t; *  |/////////////| &n;&t; *  |=============| 8000&n;&t; *  |///INITRD////|&n;&t; *  |/////////////|&n;&t; *  |/////////////| 7000&n;&t; *  |             |&n;&t; *  |KKKKKKKKKKKKK|&n;&t; *  |=============| 6000&n;&t; *  |KKKKKKKKKKKKK|&n;&t; *  |KKKKKKKKKKKKK| &n;&t; *  K=kernel using 8KB pages&n;&t; * &n;&t; * In this example, we must free page 8000 ONLY. So we must align up&n;&t; * initrd_start and keep initrd_end as is.&n;&t; */
+id|start
+op_assign
+id|PAGE_ALIGN
+c_func
+(paren
+id|start
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1777,7 +1786,5 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-r_return
-suffix:semicolon
 )brace
 eof

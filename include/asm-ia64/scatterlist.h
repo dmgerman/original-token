@@ -18,6 +18,12 @@ r_char
 op_star
 id|alt_address
 suffix:semicolon
+DECL|member|orig_address
+r_char
+op_star
+id|orig_address
+suffix:semicolon
+multiline_comment|/* Save away the original buffer address (used by pci-dma.c) */
 DECL|member|length
 r_int
 r_int

@@ -37,12 +37,6 @@ mdefine_line|#define NR_HW_CH&t;&t;32
 multiline_comment|/* maxinum nuber of AC97 codecs connected, AC97 2.0 defined 4, but 7018 and 4D-NX only&n;   have 2 SDATA_IN lines (currently) */
 DECL|macro|NR_AC97
 mdefine_line|#define NR_AC97&t;&t;2
-multiline_comment|/* minor number of /dev/dspW */
-DECL|macro|SND_DEV_DSP8
-mdefine_line|#define SND_DEV_DSP8&t;3
-multiline_comment|/* minor number of /dev/dspW */
-DECL|macro|SND_DEV_DSP16
-mdefine_line|#define SND_DEV_DSP16&t;5 
 multiline_comment|/* minor number of /dev/swmodem (temporary, experimental) */
 DECL|macro|SND_DEV_SWMODEM
 mdefine_line|#define SND_DEV_SWMODEM&t;7

@@ -470,7 +470,7 @@ op_assign
 id|plug
 suffix:semicolon
 )brace
-multiline_comment|/**&n; * blk_queue_make_request - define an alternate make_request function for a&n; * device&n; * @q:  the request queue for the device to be affected&n; * @mfn: the alternate make_request function&n; *&n; * Description:&n; *    The normal way for &amp;struct buffer_heads to be passed to a device driver&n; *    it to collect into requests on a request queue, and allow the device&n; *    driver to select requests off that queue when it is ready.  This works&n; *    well for many block devices. However some block devices (typically&n; *    virtual devices such as md or lvm) do not benefit from the processes on&n; *    the request queue, and are served best by having the requests passed&n; *    directly to them.  This can be achieved by providing a function to&n; *    blk_queue_make_request().&n; **/
+multiline_comment|/**&n; * blk_queue_make_request - define an alternate make_request function for a device&n; * @q:  the request queue for the device to be affected&n; * @mfn: the alternate make_request function&n; *&n; * Description:&n; *    The normal way for &amp;struct buffer_heads to be passed to a device driver&n; *    it to collect into requests on a request queue, and allow the device&n; *    driver to select requests off that queue when it is ready.  This works&n; *    well for many block devices. However some block devices (typically&n; *    virtual devices such as md or lvm) do not benefit from the processes on&n; *    the request queue, and are served best by having the requests passed&n; *    directly to them.  This can be achieved by providing a function to&n; *    blk_queue_make_request().&n; **/
 DECL|function|blk_queue_make_request
 r_void
 id|blk_queue_make_request

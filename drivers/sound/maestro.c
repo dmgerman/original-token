@@ -150,8 +150,6 @@ DECL|macro|NR_DSPS
 mdefine_line|#define NR_DSPS&t;&t;(1&lt;&lt;dsps_order)
 DECL|macro|NR_IDRS
 mdefine_line|#define NR_IDRS&t;&t;32
-DECL|macro|SND_DEV_DSP16
-mdefine_line|#define SND_DEV_DSP16   5 
 DECL|macro|NR_APUS
 mdefine_line|#define NR_APUS&t;&t;64
 DECL|macro|NR_APU_REGS

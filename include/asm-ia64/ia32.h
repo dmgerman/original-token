@@ -138,10 +138,6 @@ DECL|member|l_pid
 id|__kernel_pid_t32
 id|l_pid
 suffix:semicolon
-DECL|member|__unused
-r_int
-id|__unused
-suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* sigcontext.h */
@@ -373,7 +369,7 @@ r_int
 r_int
 id|sa_handler
 suffix:semicolon
-multiline_comment|/* Really a pointer, but need to deal &n;&t;&t;&t;&t;&t;  with 32 bits */
+multiline_comment|/* Really a pointer, but need to deal &n;&t;&t;&t;&t;&t;     with 32 bits */
 DECL|member|sa_flags
 r_int
 r_int
@@ -390,6 +386,41 @@ id|sigset32_t
 id|sa_mask
 suffix:semicolon
 multiline_comment|/* A 32 bit mask */
+)brace
+suffix:semicolon
+DECL|typedef|old_sigset32_t
+r_typedef
+r_int
+r_int
+id|old_sigset32_t
+suffix:semicolon
+multiline_comment|/* at least 32 bits */
+DECL|struct|old_sigaction32
+r_struct
+id|old_sigaction32
+(brace
+DECL|member|sa_handler
+r_int
+r_int
+id|sa_handler
+suffix:semicolon
+multiline_comment|/* Really a pointer, but need to deal &n;&t;&t;&t;&t;&t;     with 32 bits */
+DECL|member|sa_mask
+id|old_sigset32_t
+id|sa_mask
+suffix:semicolon
+multiline_comment|/* A 32 bit mask */
+DECL|member|sa_flags
+r_int
+r_int
+id|sa_flags
+suffix:semicolon
+DECL|member|sa_restorer
+r_int
+r_int
+id|sa_restorer
+suffix:semicolon
+multiline_comment|/* Another 32 bit pointer */
 )brace
 suffix:semicolon
 DECL|struct|sigaltstack_ia32
