@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: unistd.h,v 1.28 1997/01/26 07:12:06 davem Exp $ */
+multiline_comment|/* $Id: unistd.h,v 1.29 1997/02/04 07:14:17 miguel Exp $ */
 macro_line|#ifndef _SPARC_UNISTD_H
 DECL|macro|_SPARC_UNISTD_H
 mdefine_line|#define _SPARC_UNISTD_H
@@ -846,22 +846,5 @@ id|retval
 suffix:semicolon
 )brace
 macro_line|#endif /* __KERNEL_SYSCALLS__ */
-multiline_comment|/* sysconf options, for SunOS compatibility */
-DECL|macro|_SC_ARG_MAX
-mdefine_line|#define   _SC_ARG_MAX             1
-DECL|macro|_SC_CHILD_MAX
-mdefine_line|#define   _SC_CHILD_MAX           2
-DECL|macro|_SC_CLK_TCK
-mdefine_line|#define   _SC_CLK_TCK             3
-DECL|macro|_SC_NGROUPS_MAX
-mdefine_line|#define   _SC_NGROUPS_MAX         4
-DECL|macro|_SC_OPEN_MAX
-mdefine_line|#define   _SC_OPEN_MAX            5
-DECL|macro|_SC_JOB_CONTROL
-mdefine_line|#define   _SC_JOB_CONTROL         6
-DECL|macro|_SC_SAVED_IDS
-mdefine_line|#define   _SC_SAVED_IDS           7
-DECL|macro|_SC_VERSION
-mdefine_line|#define   _SC_VERSION             8
 macro_line|#endif /* _SPARC_UNISTD_H */
 eof

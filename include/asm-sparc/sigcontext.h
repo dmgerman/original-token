@@ -1,7 +1,7 @@
-multiline_comment|/* $Id: sigcontext.h,v 1.11 1997/01/19 22:32:07 ecd Exp $ */
-macro_line|#ifndef _ASMsparc_SIGCONTEXT_H
-DECL|macro|_ASMsparc_SIGCONTEXT_H
-mdefine_line|#define _ASMsparc_SIGCONTEXT_H
+multiline_comment|/* $Id: sigcontext.h,v 1.12 1997/03/03 16:51:52 jj Exp $ */
+macro_line|#ifndef __SPARC_SIGCONTEXT_H
+DECL|macro|__SPARC_SIGCONTEXT_H
+mdefine_line|#define __SPARC_SIGCONTEXT_H
 macro_line|#include &lt;asm/ptrace.h&gt;
 DECL|macro|SUNOS_MAXWIN
 mdefine_line|#define SUNOS_MAXWIN   31
@@ -117,7 +117,7 @@ r_int
 r_int
 id|si_float_regs
 (braket
-l_int|64
+l_int|32
 )braket
 suffix:semicolon
 DECL|member|si_fsr
@@ -155,5 +155,5 @@ DECL|typedef|__siginfo_fpu_t
 id|__siginfo_fpu_t
 suffix:semicolon
 macro_line|#endif /* !(__ASSEMBLY__) */
-macro_line|#endif /* !(_ASMsparc_SIGCONTEXT_H) */
+macro_line|#endif /* !(__SPARC_SIGCONTEXT_H) */
 eof

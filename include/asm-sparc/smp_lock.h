@@ -105,7 +105,7 @@ op_mod
 id|g2
 l_string|&quot;&t;: : &quot;
 id|i
-l_string|&quot; (TASK_LOCK_DEPTH), &quot;
+l_string|&quot; (AOFF_task_lock_depth), &quot;
 id|r
 l_string|&quot; (klip), &quot;
 id|r
@@ -183,7 +183,7 @@ op_mod
 id|g2
 l_string|&quot;&t;: : &quot;
 id|i
-l_string|&quot; (TASK_LOCK_DEPTH), &quot;
+l_string|&quot; (AOFF_task_lock_depth), &quot;
 id|r
 "&quot;"
 (paren

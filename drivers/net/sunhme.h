@@ -1029,8 +1029,8 @@ DECL|macro|CSCONFIG_LED1
 mdefine_line|#define CSCONFIG_LED1           0x0004  /* Pin for conn-status LED1    */
 DECL|macro|CSCONFIG_RESV2
 mdefine_line|#define CSCONFIG_RESV2          0x0008  /* Unused...                   */
-DECL|macro|CSCONFIG_TXDISAB
-mdefine_line|#define CSCONFIG_TXDISAB        0x0010  /* Turns off the transceiver   */
+DECL|macro|CSCONFIG_TCVDISAB
+mdefine_line|#define CSCONFIG_TCVDISAB       0x0010  /* Turns off the transceiver   */
 DECL|macro|CSCONFIG_DFBYPASS
 mdefine_line|#define CSCONFIG_DFBYPASS       0x0020  /* Bypass disconnect function  */
 DECL|macro|CSCONFIG_GLFORCE
@@ -1452,6 +1452,12 @@ r_int
 id|sw_expansion
 suffix:semicolon
 multiline_comment|/* SW copy of EXPANSION              */
+DECL|member|sw_csconfig
+r_int
+r_int
+id|sw_csconfig
+suffix:semicolon
+multiline_comment|/* SW copy of CSCONFIG               */
 DECL|member|auto_speed
 r_int
 r_int
@@ -1518,10 +1524,10 @@ r_int
 id|timer_ticks
 suffix:semicolon
 multiline_comment|/* Number of clicks at each state.   */
-DECL|member|enet_stats
+DECL|member|net_stats
 r_struct
 id|net_device_stats
-id|enet_stats
+id|net_stats
 suffix:semicolon
 multiline_comment|/* Statistical counters              */
 DECL|member|happy_sbus_dev

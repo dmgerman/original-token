@@ -688,7 +688,7 @@ r_void
 r_int
 id|err
 op_assign
-id|proc_register_dynamic
+id|proc_register
 c_func
 (paren
 op_amp
@@ -705,7 +705,7 @@ op_logical_neg
 id|err
 )paren
 (brace
-id|proc_register_dynamic
+id|proc_register
 c_func
 (paren
 op_amp
@@ -715,7 +715,7 @@ op_amp
 id|proc_router_info
 )paren
 suffix:semicolon
-id|proc_register_dynamic
+id|proc_register
 c_func
 (paren
 op_amp
@@ -725,7 +725,7 @@ op_amp
 id|proc_router_conf
 )paren
 suffix:semicolon
-id|proc_register_dynamic
+id|proc_register
 c_func
 (paren
 op_amp
@@ -857,7 +857,7 @@ op_assign
 id|wandev
 suffix:semicolon
 r_return
-id|proc_register_dynamic
+id|proc_register
 c_func
 (paren
 op_amp

@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: setup.c,v 1.80 1997/01/25 02:39:54 miguel Exp $&n; *  linux/arch/sparc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/*  $Id: setup.c,v 1.81 1997/01/29 10:32:55 davem Exp $&n; *  linux/arch/sparc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1682,6 +1682,14 @@ id|init_task.mm-&gt;mmap-&gt;vm_end
 op_assign
 op_star
 id|memory_end_p
+suffix:semicolon
+id|init_task.mm-&gt;context
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|NO_CONTEXT
 suffix:semicolon
 id|init_task.tss.kregs
 op_assign

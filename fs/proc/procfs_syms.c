@@ -44,13 +44,6 @@ c_func
 id|proc_register
 )paren
 suffix:semicolon
-DECL|variable|proc_register_dynamic
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|proc_register_dynamic
-)paren
-suffix:semicolon
 DECL|variable|proc_unregister
 id|EXPORT_SYMBOL
 c_func

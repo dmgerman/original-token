@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: oplib.h,v 1.12 1996/10/31 06:29:13 davem Exp $&n; * oplib.h:  Describes the interface and available routines in the&n; *           Linux Prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: oplib.h,v 1.13 1997/01/31 00:16:52 tdyas Exp $&n; * oplib.h:  Describes the interface and available routines in the&n; *           Linux Prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __SPARC_OPLIB_H
 DECL|macro|__SPARC_OPLIB_H
 mdefine_line|#define __SPARC_OPLIB_H
@@ -498,6 +498,28 @@ id|physical_segment
 )paren
 suffix:semicolon
 multiline_comment|/* PROM device tree traversal functions... */
+macro_line|#ifdef PROMLIB_INTERNAL
+multiline_comment|/* Internal version of prom_getchild. */
+r_extern
+r_int
+id|__prom_getchild
+c_func
+(paren
+r_int
+id|parent_node
+)paren
+suffix:semicolon
+multiline_comment|/* Internal version of prom_getsibling. */
+r_extern
+r_int
+id|__prom_getsibling
+c_func
+(paren
+r_int
+id|node
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Get the child node of the given node, or zero if no child exists. */
 r_extern
 r_int

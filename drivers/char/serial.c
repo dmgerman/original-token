@@ -35,7 +35,7 @@ r_char
 op_star
 id|serial_version
 op_assign
-l_string|&quot;4.23&quot;
+l_string|&quot;4.24&quot;
 suffix:semicolon
 r_static
 id|DECLARE_TASK_QUEUE
@@ -4170,6 +4170,8 @@ id|flags
 suffix:semicolon
 r_int
 id|retval
+op_assign
+l_int|0
 suffix:semicolon
 r_void
 (paren
@@ -4247,14 +4249,8 @@ c_func
 id|page
 )paren
 suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-r_return
-l_int|0
+r_goto
+id|errout
 suffix:semicolon
 )brace
 r_if
@@ -4287,14 +4283,8 @@ c_func
 id|page
 )paren
 suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-r_return
-l_int|0
+r_goto
+id|errout
 suffix:semicolon
 )brace
 r_if
@@ -4457,12 +4447,6 @@ op_eq
 l_int|0xff
 )paren
 (brace
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4486,14 +4470,15 @@ op_amp
 id|info-&gt;tty-&gt;flags
 )paren
 suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
 )brace
 r_else
-r_return
+id|retval
+op_assign
 op_minus
 id|ENODEV
+suffix:semicolon
+r_goto
+id|errout
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Allocate the IRQ if necessary&n;&t; */
@@ -4559,9 +4544,13 @@ op_assign
 id|rs_interrupt
 suffix:semicolon
 macro_line|#else
-r_return
+id|retval
+op_assign
 op_minus
 id|EBUSY
+suffix:semicolon
+r_goto
+id|errout
 suffix:semicolon
 macro_line|#endif /* CONFIG_SERIAL_SHARE_IRQ */
 )brace
@@ -4596,12 +4585,6 @@ c_cond
 id|retval
 )paren
 (brace
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4625,13 +4608,13 @@ op_amp
 id|info-&gt;tty-&gt;flags
 )paren
 suffix:semicolon
-r_return
+id|retval
+op_assign
 l_int|0
 suffix:semicolon
 )brace
-r_else
-r_return
-id|retval
+r_goto
+id|errout
 suffix:semicolon
 )brace
 )brace
@@ -4956,6 +4939,17 @@ id|flags
 suffix:semicolon
 r_return
 l_int|0
+suffix:semicolon
+id|errout
+suffix:colon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_return
+id|retval
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This routine will shutdown a serial port; interrupts are disabled, and&n; * DTR is dropped if the hangup on close termio flag is on.&n; */
@@ -12462,6 +12456,10 @@ comma
 r_int
 id|count
 comma
+r_int
+op_star
+id|eof
+comma
 r_void
 op_star
 id|data
@@ -12537,7 +12535,8 @@ id|off
 op_plus
 id|count
 )paren
-r_break
+r_goto
+id|done
 suffix:semicolon
 r_if
 c_cond
@@ -12559,6 +12558,13 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
+op_star
+id|eof
+op_assign
+l_int|1
+suffix:semicolon
+id|done
+suffix:colon
 r_if
 c_cond
 (paren
@@ -12632,6 +12638,36 @@ id|printk
 c_func
 (paren
 l_string|&quot; HUB-6&quot;
+)paren
+suffix:semicolon
+DECL|macro|SERIAL_OPT
+mdefine_line|#define SERIAL_OPT
+macro_line|#endif
+macro_line|#ifdef CONFIG_SERIAL_MANY_PORTS
+id|printk
+c_func
+(paren
+l_string|&quot; MANY_PORTS&quot;
+)paren
+suffix:semicolon
+DECL|macro|SERIAL_OPT
+mdefine_line|#define SERIAL_OPT
+macro_line|#endif
+macro_line|#ifdef CONFIG_SERIAL_MULTIPORT
+id|printk
+c_func
+(paren
+l_string|&quot; MULTIPORT&quot;
+)paren
+suffix:semicolon
+DECL|macro|SERIAL_OPT
+mdefine_line|#define SERIAL_OPT
+macro_line|#endif
+macro_line|#ifdef CONFIG_SERIAL_SHARE_IRQ
+id|printk
+c_func
+(paren
+l_string|&quot; SHARE_IRQ&quot;
 )paren
 suffix:semicolon
 DECL|macro|SERIAL_OPT

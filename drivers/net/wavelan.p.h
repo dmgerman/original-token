@@ -11,13 +11,13 @@ multiline_comment|/*&n; * This driver is the first one to support &quot;wireless
 multiline_comment|/* ---------------------------- FILES ---------------------------- */
 multiline_comment|/*&n; * wavelan.c :&t;&t;The actual code for the driver - C functions&n; *&n; * wavelan.p.h :&t;Private header : local types / vars for the driver&n; *&n; * wavelan.h :&t;&t;Description of the hardware interface &amp; structs&n; *&n; * i82586.h :&t;&t;Description if the Ethernet controler&n; */
 multiline_comment|/* --------------------------- HISTORY --------------------------- */
-multiline_comment|/*&n; * (Made with information in drivers headers. It may not be accurate,&n; * and I garantee nothing except my best effort...)&n; *&n; * The history of the Wavelan drivers is as complicated as history of&n; * the Wavelan itself (NCR -&gt; AT&amp;T -&gt; Lucent).&n; *&n; * All started with Anders Klemets &lt;klemets@paul.rutgers.edu&gt;,&n; * writting a Wavelan ISA driver for the MACH microkernel. Girish&n; * Welling &lt;welling@paul.rutgers.edu&gt; had also worked on it.&n; * Keith Moore modify this for the Pcmcia hardware.&n; * &n; * Robert Morris &lt;rtm@das.harvard.edu&gt; port these two drivers to BSDI&n; * and add specific Pcmcia support (there is currently no equivalent&n; * of the PCMCIA package under BSD...).&n; *&n; * Jim Binkley &lt;jrb@cs.pdx.edu&gt; port both BSDI drivers to freeBSD.&n; *&n; * Bruce Janson &lt;bruce@cs.usyd.edu.au&gt; port the BSDI ISA driver to Linux.&n; *&n; * Anthony D. Joseph &lt;adj@lcs.mit.edu&gt; started modify Bruce driver&n; * (with help of the BSDI PCMCIA driver) for PCMCIA.&n; * Yunzhou Li &lt;yunzhou@strat.iol.unh.edu&gt; finished is work.&n; * Joe Finney &lt;joe@comp.lancs.ac.uk&gt; patched the driver to start&n; * correctly 2.00 cards (2.4 GHz with frequency selection).&n; * David Hinds &lt;dhinds@hyper.stanford.edu&gt; integrated the whole in his&n; * Pcmcia package (+ bug corrections).&n; *&n; * I (Jean Tourrilhes - jt@hplb.hpl.hp.com) then started to make some&n; * patchs to the Pcmcia driver. After, I added code in the ISA driver&n; * for Wireless Extensions and full support of frequency selection&n; * cards. Then, I&squot;ve done the same to the Pcmcia driver + some&n; * reorganisation. Finally, I came back to the ISA driver to&n; * upgrade it at the same level as the Pcmcia one and reorganise&n; * the code&n; * Loeke Brederveld &lt;lbrederv@wavelan.com&gt; from Lucent has given me&n; * much needed informations on the Wavelan hardware.&n; *&n; * Yongguang Zhang &lt;ygz@isl.hrl.hac.com&gt; send me a patch for enabling&n; * multicast in the old pcmcia driver. I tried to do the same (with&n; * some minor changes) in this driver, but without any luck (I don&squot;t&n; * know how to enable multicast in the chip...).&n; */
+multiline_comment|/*&n; * (Made with information in drivers headers. It may not be accurate,&n; * and I garantee nothing except my best effort...)&n; *&n; * The history of the Wavelan drivers is as complicated as history of&n; * the Wavelan itself (NCR -&gt; AT&amp;T -&gt; Lucent).&n; *&n; * All started with Anders Klemets &lt;klemets@paul.rutgers.edu&gt;,&n; * writting a Wavelan ISA driver for the MACH microkernel. Girish&n; * Welling &lt;welling@paul.rutgers.edu&gt; had also worked on it.&n; * Keith Moore modify this for the Pcmcia hardware.&n; * &n; * Robert Morris &lt;rtm@das.harvard.edu&gt; port these two drivers to BSDI&n; * and add specific Pcmcia support (there is currently no equivalent&n; * of the PCMCIA package under BSD...).&n; *&n; * Jim Binkley &lt;jrb@cs.pdx.edu&gt; port both BSDI drivers to freeBSD.&n; *&n; * Bruce Janson &lt;bruce@cs.usyd.edu.au&gt; port the BSDI ISA driver to Linux.&n; *&n; * Anthony D. Joseph &lt;adj@lcs.mit.edu&gt; started modify Bruce driver&n; * (with help of the BSDI PCMCIA driver) for PCMCIA.&n; * Yunzhou Li &lt;yunzhou@strat.iol.unh.edu&gt; finished is work.&n; * Joe Finney &lt;joe@comp.lancs.ac.uk&gt; patched the driver to start&n; * correctly 2.00 cards (2.4 GHz with frequency selection).&n; * David Hinds &lt;dhinds@hyper.stanford.edu&gt; integrated the whole in his&n; * Pcmcia package (+ bug corrections).&n; *&n; * I (Jean Tourrilhes - jt@hplb.hpl.hp.com) then started to make some&n; * patchs to the Pcmcia driver. After, I added code in the ISA driver&n; * for Wireless Extensions and full support of frequency selection&n; * cards. Then, I&squot;ve done the same to the Pcmcia driver + some&n; * reorganisation. Finally, I came back to the ISA driver to&n; * upgrade it at the same level as the Pcmcia one and reorganise&n; * the code&n; * Loeke Brederveld &lt;lbrederv@wavelan.com&gt; from Lucent has given me&n; * much needed informations on the Wavelan hardware.&n; */
 multiline_comment|/* The original copyrights and litteratures mention others names and&n; * credits. I don&squot;t know what there part in this development was...&n; */
 multiline_comment|/* By the way : for the copyright &amp; legal stuff :&n; * Almost everybody wrote code under GNU or BSD license (or alike),&n; * and want that their original copyright remain somewhere in the&n; * code (for myself, I go with the GPL).&n; * Nobody want to take responsibility for anything, except the fame...&n; */
 multiline_comment|/* --------------------------- CREDITS --------------------------- */
-multiline_comment|/*&n; * This software was developed as a component of the&n; * Linux operating system.&n; * It is based on other device drivers and information&n; * either written or supplied by:&n; *&t;Ajay Bakre (bakre@paul.rutgers.edu),&n; *&t;Donald Becker (becker@cesdis.gsfc.nasa.gov),&n; *&t;Loeke Brederveld (Loeke.Brederveld@Utrecht.NCR.com),&n; *&t;Anders Klemets (klemets@it.kth.se),&n; *&t;Vladimir V. Kolpakov (w@stier.koenig.ru),&n; *&t;Marc Meertens (Marc.Meertens@Utrecht.NCR.com),&n; *&t;Pauline Middelink (middelin@polyware.iaf.nl),&n; *&t;Robert Morris (rtm@das.harvard.edu),&n; *&t;Jean Tourrilhes (jt@hplb.hpl.hp.com),&n; *&t;Girish Welling (welling@paul.rutgers.edu),&n; *&t;Yongguang Zhang &lt;ygz@isl.hrl.hac.com&gt;...&n; *&n; * Thanks go also to:&n; *&t;James Ashton (jaa101@syseng.anu.edu.au),&n; *&t;Alan Cox (iialan@iiit.swan.ac.uk),&n; *&t;Allan Creighton (allanc@cs.usyd.edu.au),&n; *&t;Matthew Geier (matthew@cs.usyd.edu.au),&n; *&t;Remo di Giovanni (remo@cs.usyd.edu.au),&n; *&t;Eckhard Grah (grah@wrcs1.urz.uni-wuppertal.de),&n; *&t;Vipul Gupta (vgupta@cs.binghamton.edu),&n; *&t;Mark Hagan (mhagan@wtcpost.daytonoh.NCR.COM),&n; *&t;Tim Nicholson (tim@cs.usyd.edu.au),&n; *&t;Ian Parkin (ian@cs.usyd.edu.au),&n; *&t;John Rosenberg (johnr@cs.usyd.edu.au),&n; *&t;George Rossi (george@phm.gov.au),&n; *&t;Arthur Scott (arthur@cs.usyd.edu.au),&n; *&t;Peter Storey,&n; * for their assistance and advice.&n; *&n; * Additional Credits:&n; *&n; * My developpement has been done under Linux 2.0.x (Debian 1.1) with&n; *&t;an HP Vectra XP/60.&n; *&n; */
+multiline_comment|/*&n; * This software was developed as a component of the&n; * Linux operating system.&n; * It is based on other device drivers and information&n; * either written or supplied by:&n; *&t;Ajay Bakre (bakre@paul.rutgers.edu),&n; *&t;Donald Becker (becker@cesdis.gsfc.nasa.gov),&n; *&t;Loeke Brederveld (Loeke.Brederveld@Utrecht.NCR.com),&n; *&t;Anders Klemets (klemets@it.kth.se),&n; *&t;Vladimir V. Kolpakov (w@stier.koenig.ru),&n; *&t;Marc Meertens (Marc.Meertens@Utrecht.NCR.com),&n; *&t;Pauline Middelink (middelin@polyware.iaf.nl),&n; *&t;Robert Morris (rtm@das.harvard.edu),&n; *&t;Jean Tourrilhes (jt@hplb.hpl.hp.com),&n; *&t;Girish Welling (welling@paul.rutgers.edu),&n; *&t;Clark Woodworth &lt;clark@hiway1.exit109.com&gt;&n; *&t;Yongguang Zhang &lt;ygz@isl.hrl.hac.com&gt;...&n; *&n; * Thanks go also to:&n; *&t;James Ashton (jaa101@syseng.anu.edu.au),&n; *&t;Alan Cox (iialan@iiit.swan.ac.uk),&n; *&t;Allan Creighton (allanc@cs.usyd.edu.au),&n; *&t;Matthew Geier (matthew@cs.usyd.edu.au),&n; *&t;Remo di Giovanni (remo@cs.usyd.edu.au),&n; *&t;Eckhard Grah (grah@wrcs1.urz.uni-wuppertal.de),&n; *&t;Vipul Gupta (vgupta@cs.binghamton.edu),&n; *&t;Mark Hagan (mhagan@wtcpost.daytonoh.NCR.COM),&n; *&t;Tim Nicholson (tim@cs.usyd.edu.au),&n; *&t;Ian Parkin (ian@cs.usyd.edu.au),&n; *&t;John Rosenberg (johnr@cs.usyd.edu.au),&n; *&t;George Rossi (george@phm.gov.au),&n; *&t;Arthur Scott (arthur@cs.usyd.edu.au),&n; *&t;Peter Storey,&n; * for their assistance and advice.&n; *&n; * Additional Credits:&n; *&n; * My developpement has been done under Linux 2.0.x (Debian 1.1) with&n; *&t;an HP Vectra XP/60.&n; *&n; */
 multiline_comment|/* ------------------------- IMPROVEMENTS ------------------------- */
-multiline_comment|/*&n; * I proudly present :&n; *&n; * Changes mades in first pre-release :&n; * ----------------------------------&n; *&t;- Reorganisation of the code, function name change&n; *&t;- Creation of private header (wavelan.p.h)&n; *&t;- Reorganised debug messages&n; *&t;- More comments, history, ...&n; *&t;- mmc_init : configure the PSA if not done&n; *&t;- mmc_init : correct default value of level threshold for pcmcia&n; *&t;- mmc_init : 2.00 detection better code for 2.00 init&n; *&t;- better info at startup&n; *&t;- irq setting (note : this setting is permanent...)&n; *&t;- Watchdog : change strategy (+ solve module removal problems)&n; *&t;- add wireless extensions (ioctl &amp; get_wireless_stats)&n; *&t;  get/set nwid/frequency on fly, info for /proc/net/wireless&n; *&t;- More wireless extension : SETSPY and GETSPY&n; *&t;- Make wireless extensions optional&n; *&t;- Private ioctl to set/get quality &amp; level threshold, histogram&n; *&t;- Remove /proc/net/wavelan&n; *&t;- Supress useless stuff from lp (net_local)&n; *&t;- kernel 2.1 support (copy_to/from_user instead of memcpy_to/fromfs)&n; *&t;- Add message level (debug stuff in /var/adm/debug &amp; errors not&n; *&t;  displayed at console and still in /var/adm/messages)&n; *&t;- multi device support&n; *&t;- Start fixing the probe (init code)&n; *&t;- More inlines&n; *&t;- man page&n; *&t;- Lot of others minor details &amp; cleanups&n; *&n; * Changes made in second pre-release :&n; * ----------------------------------&n; *&t;- Cleanup init code (probe &amp; module init)&n; *&t;- Better multi device support (module)&n; *&t;- name assignement (module)&n; *&n; * Changes made in third pre-release :&n; * ---------------------------------&n; *&t;- Be more conservative on timers&n; *&t;- Preliminary support for multicast (I still lack some details...)&n; *&n; * Changes made in fourth pre-release :&n; * ----------------------------------&n; *&t;- multicast (revisited and finished)&n; *&t;- Avoid reset in set_multicast_list (a really big hack)&n; *&t;  if somebody could apply this code for other i82586 based driver...&n; *&t;- Share on board memory 75% RU / 25% CU (instead of 50/50)&n; *&n; * Changes made for release in 2.1.15 :&n; * ----------------------------------&n; *&t;- Change the detection code for multi manufacturer code support&n; *&n; * Changes made for release in 2.1.17 :&n; * ----------------------------------&n; *&t;- Update to wireless extensions changes&n; *&t;- Silly bug in card initial configuration (psa_conf_status)&n; *&n; * Wishes &amp; dreams :&n; * ---------------&n; *&t;- Encryption stuff&n; *&t;- Roaming&n; */
+multiline_comment|/*&n; * I proudly present :&n; *&n; * Changes mades in first pre-release :&n; * ----------------------------------&n; *&t;- Reorganisation of the code, function name change&n; *&t;- Creation of private header (wavelan.p.h)&n; *&t;- Reorganised debug messages&n; *&t;- More comments, history, ...&n; *&t;- mmc_init : configure the PSA if not done&n; *&t;- mmc_init : correct default value of level threshold for pcmcia&n; *&t;- mmc_init : 2.00 detection better code for 2.00 init&n; *&t;- better info at startup&n; *&t;- irq setting (note : this setting is permanent...)&n; *&t;- Watchdog : change strategy (+ solve module removal problems)&n; *&t;- add wireless extensions (ioctl &amp; get_wireless_stats)&n; *&t;  get/set nwid/frequency on fly, info for /proc/net/wireless&n; *&t;- More wireless extension : SETSPY and GETSPY&n; *&t;- Make wireless extensions optional&n; *&t;- Private ioctl to set/get quality &amp; level threshold, histogram&n; *&t;- Remove /proc/net/wavelan&n; *&t;- Supress useless stuff from lp (net_local)&n; *&t;- kernel 2.1 support (copy_to/from_user instead of memcpy_to/fromfs)&n; *&t;- Add message level (debug stuff in /var/adm/debug &amp; errors not&n; *&t;  displayed at console and still in /var/adm/messages)&n; *&t;- multi device support&n; *&t;- Start fixing the probe (init code)&n; *&t;- More inlines&n; *&t;- man page&n; *&t;- Lot of others minor details &amp; cleanups&n; *&n; * Changes made in second pre-release :&n; * ----------------------------------&n; *&t;- Cleanup init code (probe &amp; module init)&n; *&t;- Better multi device support (module)&n; *&t;- name assignement (module)&n; *&n; * Changes made in third pre-release :&n; * ---------------------------------&n; *&t;- Be more conservative on timers&n; *&t;- Preliminary support for multicast (I still lack some details...)&n; *&n; * Changes made in fourth pre-release :&n; * ----------------------------------&n; *&t;- multicast (revisited and finished)&n; *&t;- Avoid reset in set_multicast_list (a really big hack)&n; *&t;  if somebody could apply this code for other i82586 based driver...&n; *&t;- Share on board memory 75% RU / 25% CU (instead of 50/50)&n; *&n; * Changes made for release in 2.1.15 :&n; * ----------------------------------&n; *&t;- Change the detection code for multi manufacturer code support&n; *&n; * Changes made for release in 2.1.17 :&n; * ----------------------------------&n; *&t;- Update to wireless extensions changes&n; *&t;- Silly bug in card initial configuration (psa_conf_status)&n; *&n; * Changes made for release in 2.1.27 :&n; * ----------------------------------&n; *&t;- Small bug in debug code (probably not the last one...)&n; *&t;- Remove extern kerword for wavelan_probe()&n; *&t;- Level threshold is now a standard wireless extension (version 4 !)&n; *&t;- modules parameters types (new module interface)&n; *&n; * Wishes &amp; dreams :&n; * ---------------&n; *&t;- Encryption stuff&n; *&t;- Roaming&n; */
 multiline_comment|/***************************** INCLUDES *****************************/
 macro_line|#include&t;&lt;linux/module.h&gt;
 macro_line|#include&t;&lt;linux/kernel.h&gt;
@@ -130,7 +130,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;wavelan.c : v12 (wireless extensions) 1/12/96&bslash;n&quot;
+l_string|&quot;wavelan.c : v15 (wireless extensions) 12/2/97&bslash;n&quot;
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Watchdog temporisation */
@@ -1029,28 +1029,6 @@ l_int|0x3E0
 )brace
 suffix:semicolon
 macro_line|#ifdef&t;MODULE
-multiline_comment|/* Name of the devices (memory allocation) */
-DECL|variable|devname
-r_static
-r_char
-id|devname
-(braket
-l_int|4
-)braket
-(braket
-id|IFNAMSIZ
-)braket
-op_assign
-(brace
-l_string|&quot;&quot;
-comma
-l_string|&quot;&quot;
-comma
-l_string|&quot;&quot;
-comma
-l_string|&quot;&quot;
-)brace
-suffix:semicolon
 multiline_comment|/* Parameters set by insmod */
 DECL|variable|io
 r_static
@@ -1091,33 +1069,52 @@ suffix:semicolon
 DECL|variable|name
 r_static
 r_char
-op_star
 id|name
 (braket
 l_int|4
 )braket
+(braket
+id|IFNAMSIZ
+)braket
 op_assign
 (brace
-id|devname
-(braket
-l_int|0
-)braket
+l_string|&quot;&quot;
 comma
-id|devname
-(braket
-l_int|1
-)braket
+l_string|&quot;&quot;
 comma
-id|devname
-(braket
-l_int|2
-)braket
+l_string|&quot;&quot;
 comma
-id|devname
-(braket
-l_int|3
-)braket
+l_string|&quot;&quot;
 )brace
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|io
+comma
+l_string|&quot;1-4i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|irq
+comma
+l_string|&quot;1-4i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|name
+comma
+l_string|&quot;1-4c&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|IFNAMSIZ
+)paren
+)paren
 suffix:semicolon
 macro_line|#endif&t;/* MODULE */
 macro_line|#endif&t;/* WAVELAN_P_H */

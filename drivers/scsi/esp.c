@@ -2959,6 +2959,8 @@ comma
 id|esp-&gt;edev-&gt;reg_addrs
 comma
 l_int|1
+comma
+id|esp-&gt;edev
 )paren
 suffix:semicolon
 id|esp-&gt;eregs

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: cgsix.c,v 1.21 1996/12/23 10:16:05 ecd Exp $&n; * cgsix.c: cgsix frame buffer driver&n; *&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: cgsix.c,v 1.22 1997/02/02 02:12:41 ecd Exp $&n; * cgsix.c: cgsix frame buffer driver&n; *&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -2293,9 +2293,11 @@ r_int
 r_char
 id|attrib
 op_assign
+id|CHARATTR_TO_SUNCOLOR
+c_func
+(paren
 id|charattr
-op_rshift
-l_int|8
+)paren
 suffix:semicolon
 r_int
 r_char
@@ -2366,9 +2368,11 @@ r_int
 r_char
 id|attrib
 op_assign
+id|CHARATTR_TO_SUNCOLOR
+c_func
+(paren
 id|c
-op_rshift
-l_int|8
+)paren
 suffix:semicolon
 r_int
 r_char
@@ -2509,10 +2513,12 @@ r_int
 r_char
 id|attrib
 op_assign
+id|CHARATTR_TO_SUNCOLOR
+c_func
+(paren
 op_star
 id|p
-op_rshift
-l_int|8
+)paren
 suffix:semicolon
 r_int
 r_char

@@ -526,11 +526,6 @@ r_int
 id|silent
 )paren
 (brace
-id|proc_root_init
-c_func
-(paren
-)paren
-suffix:semicolon
 id|lock_super
 c_func
 (paren

@@ -7,6 +7,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/sbus.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
+macro_line|#include &lt;asm/bpp.h&gt;
 multiline_comment|/* This file has been written to be more dynamic and a bit cleaner,&n; * but it still needs some spring cleaning.&n; */
 DECL|variable|SBus_chain
 r_struct
@@ -200,6 +201,10 @@ r_struct
 id|linux_prom_registers
 )paren
 )paren
+suffix:semicolon
+id|sbus_dev-&gt;ranges_applied
+op_assign
+l_int|0
 suffix:semicolon
 id|base
 op_assign
@@ -727,6 +732,16 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_SPARCAUDIO
+r_extern
+r_int
+id|sparcaudio_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -769,6 +784,10 @@ op_assign
 id|start_node
 suffix:semicolon
 multiline_comment|/* Child already filled in, just need to traverse siblings. */
+id|child-&gt;child
+op_assign
+l_int|0
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -1716,6 +1735,20 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_SUN_MOSTEK_RTC
 id|rtc_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_SPARCAUDIO
+id|sparcaudio_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_SUN_BPP
+id|bpp_init
 c_func
 (paren
 )paren

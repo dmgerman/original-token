@@ -1,7 +1,7 @@
-multiline_comment|/* $Id: sigcontext.h,v 1.2 1997/01/19 22:32:15 ecd Exp $ */
-macro_line|#ifndef _ASMsparc64_SIGCONTEXT_H
-DECL|macro|_ASMsparc64_SIGCONTEXT_H
-mdefine_line|#define _ASMsparc64_SIGCONTEXT_H
+multiline_comment|/* $Id: sigcontext.h,v 1.3 1997/03/03 16:51:55 jj Exp $ */
+macro_line|#ifndef __SPARC64_SIGCONTEXT_H
+DECL|macro|__SPARC64_SIGCONTEXT_H
+mdefine_line|#define __SPARC64_SIGCONTEXT_H
 macro_line|#include &lt;asm/ptrace.h&gt;
 DECL|macro|SUNOS_MAXWIN
 mdefine_line|#define SUNOS_MAXWIN   31
@@ -23,6 +23,77 @@ suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* This is what SunOS does, so shall I. */
+DECL|struct|sigcontext32
+r_struct
+id|sigcontext32
+(brace
+DECL|member|sigc_onstack
+r_int
+id|sigc_onstack
+suffix:semicolon
+multiline_comment|/* state to restore */
+DECL|member|sigc_mask
+r_int
+id|sigc_mask
+suffix:semicolon
+multiline_comment|/* sigmask to restore */
+DECL|member|sigc_sp
+r_int
+id|sigc_sp
+suffix:semicolon
+multiline_comment|/* stack pointer */
+DECL|member|sigc_pc
+r_int
+id|sigc_pc
+suffix:semicolon
+multiline_comment|/* program counter */
+DECL|member|sigc_npc
+r_int
+id|sigc_npc
+suffix:semicolon
+multiline_comment|/* next program counter */
+DECL|member|sigc_psr
+r_int
+id|sigc_psr
+suffix:semicolon
+multiline_comment|/* for condition codes etc */
+DECL|member|sigc_g1
+r_int
+id|sigc_g1
+suffix:semicolon
+multiline_comment|/* User uses these two registers */
+DECL|member|sigc_o0
+r_int
+id|sigc_o0
+suffix:semicolon
+multiline_comment|/* within the trampoline code. */
+multiline_comment|/* Now comes information regarding the users window set&n;&t; * at the time of the signal.&n;&t; */
+DECL|member|sigc_oswins
+r_int
+id|sigc_oswins
+suffix:semicolon
+multiline_comment|/* outstanding windows */
+multiline_comment|/* stack ptrs for each regwin buf */
+multiline_comment|/* XXX 32-bit ptrs pinhead... */
+DECL|member|sigc_spbuf
+r_int
+id|sigc_spbuf
+(braket
+id|SUNOS_MAXWIN
+)braket
+suffix:semicolon
+multiline_comment|/* Windows to restore after signal */
+DECL|member|sigc_wbuf
+r_struct
+id|reg_window32
+id|sigc_wbuf
+(braket
+id|SUNOS_MAXWIN
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
+multiline_comment|/* This is what SunOS doesn&squot;t, so we have to write this alone. */
 DECL|struct|sigcontext
 r_struct
 id|sigcontext
@@ -74,7 +145,6 @@ id|sigc_oswins
 suffix:semicolon
 multiline_comment|/* outstanding windows */
 multiline_comment|/* stack ptrs for each regwin buf */
-multiline_comment|/* XXX 32-bit ptrs pinhead... */
 DECL|member|sigc_spbuf
 r_char
 op_star
@@ -86,7 +156,7 @@ suffix:semicolon
 multiline_comment|/* Windows to restore after signal */
 DECL|member|sigc_wbuf
 r_struct
-id|reg_window32
+id|reg_window
 id|sigc_wbuf
 (braket
 id|SUNOS_MAXWIN
@@ -118,7 +188,7 @@ r_int
 r_int
 id|si_float_regs
 (braket
-l_int|64
+l_int|32
 )braket
 suffix:semicolon
 DECL|member|si_fsr
@@ -217,5 +287,5 @@ DECL|typedef|__siginfo_fpu_t
 id|__siginfo_fpu_t
 suffix:semicolon
 macro_line|#endif /* !(__ASSEMBLY__) */
-macro_line|#endif /* !(_ASMsparc64_SIGCONTEXT_H) */
+macro_line|#endif /* !(__SPARC64_SIGCONTEXT_H) */
 eof

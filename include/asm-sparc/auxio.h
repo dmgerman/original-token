@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: auxio.h,v 1.15 1996/12/06 00:37:11 davem Exp $&n; * auxio.h:  Definitions and code for the Auxiliary I/O register.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: auxio.h,v 1.16 1997/01/31 23:26:05 tdyas Exp $&n; * auxio.h:  Definitions and code for the Auxiliary I/O register.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_AUXIO_H
 DECL|macro|_SPARC_AUXIO_H
 mdefine_line|#define _SPARC_AUXIO_H
@@ -173,5 +173,19 @@ id|flags
 suffix:semicolon
 )brace
 macro_line|#endif /* !(__ASSEMBLY__) */
+multiline_comment|/* AUXIO2 (Power Off Control) */
+r_extern
+id|__volatile__
+r_int
+r_char
+op_star
+id|auxio_power_register
+suffix:semicolon
+DECL|macro|AUXIO_POWER_DETECT_FAILURE
+mdefine_line|#define&t;AUXIO_POWER_DETECT_FAILURE&t;32
+DECL|macro|AUXIO_POWER_CLEAR_FAILURE
+mdefine_line|#define&t;AUXIO_POWER_CLEAR_FAILURE&t;2
+DECL|macro|AUXIO_POWER_OFF
+mdefine_line|#define&t;AUXIO_POWER_OFF&t;&t;&t;1
 macro_line|#endif /* !(_SPARC_AUXIO_H) */
 eof

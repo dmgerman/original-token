@@ -4494,7 +4494,7 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|proc_register_dynamic
+id|proc_register
 c_func
 (paren
 op_amp

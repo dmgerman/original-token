@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunserial.c,v 1.25 1996/12/30 07:50:26 davem Exp $&n; * serial.c: Serial port driver for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; * Fixes by Pete A. Zaitcev &lt;zaitcev@ipmce.su&gt;.&n; */
+multiline_comment|/* $Id: sunserial.c,v 1.27 1997/03/04 19:33:55 davem Exp $&n; * serial.c: Serial port driver for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; * Fixes by Pete A. Zaitcev &lt;zaitcev@ipmce.su&gt;.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -7267,7 +7267,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.25 $&quot;
+l_string|&quot;$Revision: 1.27 $&quot;
 suffix:semicolon
 r_char
 op_star
@@ -9040,6 +9040,100 @@ c_func
 r_void
 )paren
 suffix:semicolon
+multiline_comment|/* This is for the auto baud rate detection in the mouse driver. */
+DECL|function|zs_change_mouse_baud
+r_void
+id|zs_change_mouse_baud
+c_func
+(paren
+r_int
+id|newbaud
+)paren
+(brace
+r_int
+id|channel
+op_assign
+id|MOUSE_LINE
+suffix:semicolon
+r_int
+id|brg
+suffix:semicolon
+id|zs_soft
+(braket
+id|channel
+)braket
+dot
+id|zs_baud
+op_assign
+id|newbaud
+suffix:semicolon
+id|brg
+op_assign
+id|BPS_TO_BRG
+c_func
+(paren
+id|zs_soft
+(braket
+id|channel
+)braket
+dot
+id|zs_baud
+comma
+(paren
+id|ZS_CLOCK
+op_div
+id|zs_soft
+(braket
+id|channel
+)braket
+dot
+id|clk_divisor
+)paren
+)paren
+suffix:semicolon
+id|write_zsreg
+c_func
+(paren
+id|zs_soft
+(braket
+id|channel
+)braket
+dot
+id|zs_channel
+comma
+id|R12
+comma
+(paren
+id|brg
+op_amp
+l_int|0xff
+)paren
+)paren
+suffix:semicolon
+id|write_zsreg
+c_func
+(paren
+id|zs_soft
+(braket
+id|channel
+)braket
+dot
+id|zs_channel
+comma
+id|R13
+comma
+(paren
+(paren
+id|brg
+op_rshift
+l_int|8
+)paren
+op_amp
+l_int|0xff
+)paren
+)paren
+suffix:semicolon
+)brace
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -9470,6 +9564,10 @@ id|serial_driver.magic
 op_assign
 id|TTY_DRIVER_MAGIC
 suffix:semicolon
+id|serial_driver.driver_name
+op_assign
+l_string|&quot;serial&quot;
+suffix:semicolon
 id|serial_driver.name
 op_assign
 l_string|&quot;ttyS&quot;
@@ -9586,6 +9684,15 @@ suffix:semicolon
 id|serial_driver.hangup
 op_assign
 id|rs_hangup
+suffix:semicolon
+multiline_comment|/* I&squot;m too lazy, someone write versions of this for us. -DaveM */
+id|serial_driver.read_proc
+op_assign
+l_int|0
+suffix:semicolon
+id|serial_driver.proc_entry
+op_assign
+l_int|0
 suffix:semicolon
 id|init_zscons_termios
 c_func
@@ -10545,7 +10652,7 @@ id|channel
 dot
 id|zs_baud
 op_assign
-l_int|1200
+l_int|4800
 suffix:semicolon
 id|brg
 op_assign

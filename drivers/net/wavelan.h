@@ -608,7 +608,7 @@ r_char
 id|mmw_thr_pre_set
 suffix:semicolon
 multiline_comment|/* level threshold preset */
-multiline_comment|/* Discard all packet with signal &lt; this value (0) */
+multiline_comment|/* Discard all packet with signal &lt; this value (4) */
 DECL|member|mmw_decay_prm
 r_int
 r_char

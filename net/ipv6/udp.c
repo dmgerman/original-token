@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;UDP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Based on linux/ipv4/udp.c&n; *&n; *&t;$Id: udp.c,v 1.8 1997/02/28 09:56:35 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;UDP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Based on linux/ipv4/udp.c&n; *&n; *&t;$Id: udp.c,v 1.9 1997/03/04 10:41:59 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -1244,9 +1244,20 @@ suffix:semicolon
 )brace
 id|truesize
 op_assign
-id|skb-&gt;tail
-op_minus
+id|ntohs
+c_func
+(paren
+(paren
+(paren
+r_struct
+id|udphdr
+op_star
+)paren
 id|skb-&gt;h.raw
+)paren
+op_member_access_from_pointer
+id|len
+)paren
 op_minus
 r_sizeof
 (paren
@@ -1363,7 +1374,7 @@ c_func
 l_int|0xffff
 )paren
 comma
-id|skb-&gt;nh.iph-&gt;daddr
+id|skb-&gt;nh.iph-&gt;saddr
 )paren
 suffix:semicolon
 )brace

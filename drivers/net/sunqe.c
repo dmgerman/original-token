@@ -3414,7 +3414,7 @@ id|qep-&gt;qcregs-&gt;ctrl
 op_assign
 id|CREG_CTRL_TWAKEUP
 suffix:semicolon
-id|qep-&gt;stats.tx_bytes
+id|qep-&gt;net_stats.tx_bytes
 op_add_assign
 id|skb-&gt;len
 suffix:semicolon
@@ -4740,6 +4740,11 @@ l_int|0
 )braket
 comma
 l_int|2
+comma
+id|qesdevs
+(braket
+id|i
+)braket
 )paren
 suffix:semicolon
 )brace
@@ -4756,6 +4761,8 @@ l_int|0
 )braket
 comma
 id|sdev-&gt;num_registers
+comma
+id|sdev
 )paren
 suffix:semicolon
 id|qecp-&gt;gregs

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: oplib.h,v 1.2 1996/12/27 08:49:07 jj Exp $&n; * oplib.h:  Describes the interface and available routines in the&n; *           Linux Prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: oplib.h,v 1.4 1997/02/25 20:00:34 jj Exp $&n; * oplib.h:  Describes the interface and available routines in the&n; *           Linux Prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#ifndef __SPARC64_OPLIB_H
 DECL|macro|__SPARC64_OPLIB_H
 mdefine_line|#define __SPARC64_OPLIB_H
@@ -47,6 +47,61 @@ multiline_comment|/* Root node of the prom device tree, this stays constant afte
 r_extern
 r_int
 id|prom_root_node
+suffix:semicolon
+multiline_comment|/* /chosen node of the prom device tree, this stays constant after&n; * initialization is complete.&n; */
+r_extern
+r_int
+id|prom_chosen_node
+suffix:semicolon
+DECL|struct|linux_mlist_p1275
+r_struct
+id|linux_mlist_p1275
+(brace
+DECL|member|theres_more
+r_struct
+id|linux_mlist_p1275
+op_star
+id|theres_more
+suffix:semicolon
+DECL|member|start_adr
+r_int
+r_int
+id|start_adr
+suffix:semicolon
+DECL|member|num_bytes
+r_int
+r_int
+id|num_bytes
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|linux_mem_p1275
+r_struct
+id|linux_mem_p1275
+(brace
+DECL|member|p1275_totphys
+r_struct
+id|linux_mlist_p1275
+op_star
+op_star
+id|p1275_totphys
+suffix:semicolon
+DECL|member|p1275_prommap
+r_struct
+id|linux_mlist_p1275
+op_star
+op_star
+id|p1275_prommap
+suffix:semicolon
+DECL|member|p1275_available
+r_struct
+id|linux_mlist_p1275
+op_star
+op_star
+id|p1275_available
+suffix:semicolon
+multiline_comment|/* What we can use */
+)brace
 suffix:semicolon
 multiline_comment|/* The functions... */
 multiline_comment|/* You must call prom_init() before using any of the library services,&n; * preferably as early as possible.  Pass it the romvec pointer.&n; */
@@ -119,7 +174,7 @@ multiline_comment|/* Machine memory configuration routine. */
 multiline_comment|/* This function returns a V0 format memory descriptor table, it has three&n; * entries.  One for the total amount of physical ram on the machine, one&n; * for the amount of physical ram available, and one describing the virtual&n; * areas which are allocated by the prom.  So, in a sense the physical&n; * available is a calculation of the total physical minus the physical mapped&n; * by the prom with virtual mappings.&n; *&n; * These lists are returned pre-sorted, this should make your life easier&n; * since the prom itself is way too lazy to do such nice things.&n; */
 r_extern
 r_struct
-id|linux_mem_v0
+id|linux_mem_p1275
 op_star
 id|prom_meminfo
 c_func
@@ -713,21 +768,6 @@ r_int
 id|npranges
 )paren
 suffix:semicolon
-multiline_comment|/* Apply promlib probed OBIO ranges to registers. */
-r_extern
-r_void
-id|prom_apply_obio_ranges
-c_func
-(paren
-r_struct
-id|linux_prom_registers
-op_star
-id|obioregs
-comma
-r_int
-id|nregs
-)paren
-suffix:semicolon
 multiline_comment|/* Apply ranges of any prom node (and optionally parent node as well) to registers. */
 r_extern
 r_void
@@ -751,10 +791,7 @@ id|nregs
 suffix:semicolon
 r_extern
 r_int
-(paren
-op_star
-id|prom_command
-)paren
+id|p1275_cmd
 (paren
 r_char
 op_star
@@ -766,8 +803,12 @@ dot
 dot
 )paren
 suffix:semicolon
-DECL|macro|P1275_SIZE
+macro_line|#if 0
 mdefine_line|#define P1275_SIZE(x) ((((long)((x) / 32)) &lt;&lt; 32) | (x))
+macro_line|#else
+DECL|macro|P1275_SIZE
+mdefine_line|#define P1275_SIZE(x) x
+macro_line|#endif
 multiline_comment|/* We support at most 16 input and 1 output argument */
 DECL|macro|P1275_ARG_NUMBER
 mdefine_line|#define P1275_ARG_NUMBER&t;&t;0
@@ -779,6 +820,8 @@ DECL|macro|P1275_ARG_OUT_32B
 mdefine_line|#define P1275_ARG_OUT_32B&t;&t;3
 DECL|macro|P1275_ARG_IN_FUNCTION
 mdefine_line|#define P1275_ARG_IN_FUNCTION&t;&t;4
+DECL|macro|P1275_ARG_IN_BUF
+mdefine_line|#define P1275_ARG_IN_BUF&t;&t;5
 DECL|macro|P1275_IN
 mdefine_line|#define P1275_IN(x) ((x) &amp; 0xf)
 DECL|macro|P1275_OUT
@@ -786,6 +829,6 @@ mdefine_line|#define P1275_OUT(x) (((x) &lt;&lt; 4) &amp; 0xf0)
 DECL|macro|P1275_INOUT
 mdefine_line|#define P1275_INOUT(i,o) (P1275_IN(i)|P1275_OUT(o))
 DECL|macro|P1275_ARG
-mdefine_line|#define P1275_ARG(n,x) ((x) &lt;&lt; ((n)*3 + 8)
+mdefine_line|#define P1275_ARG(n,x) ((x) &lt;&lt; ((n)*3 + 8))
 macro_line|#endif /* !(__SPARC64_OPLIB_H) */
 eof

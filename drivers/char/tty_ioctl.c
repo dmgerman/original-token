@@ -1067,9 +1067,6 @@ op_star
 id|sgttyb
 )paren
 (brace
-r_int
-id|retval
-suffix:semicolon
 r_struct
 id|sgttyb
 id|tmp
@@ -1394,9 +1391,6 @@ op_star
 id|tchars
 )paren
 (brace
-r_int
-id|retval
-suffix:semicolon
 r_struct
 id|tchars
 id|tmp
@@ -1486,9 +1480,6 @@ op_star
 id|tchars
 )paren
 (brace
-r_int
-id|retval
-suffix:semicolon
 r_struct
 id|tchars
 id|tmp
@@ -1580,9 +1571,6 @@ op_star
 id|ltchars
 )paren
 (brace
-r_int
-id|retval
-suffix:semicolon
 r_struct
 id|ltchars
 id|tmp
@@ -1673,9 +1661,6 @@ op_star
 id|ltchars
 )paren
 (brace
-r_int
-id|retval
-suffix:semicolon
 r_struct
 id|ltchars
 id|tmp
@@ -2429,6 +2414,10 @@ suffix:semicolon
 r_case
 id|TIOCPKT
 suffix:colon
+(brace
+r_int
+id|pktmode
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2449,7 +2438,7 @@ op_assign
 id|get_user
 c_func
 (paren
-id|retval
+id|pktmode
 comma
 (paren
 r_int
@@ -2469,7 +2458,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|retval
+id|pktmode
 )paren
 (brace
 r_if
@@ -2497,6 +2486,7 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+)brace
 multiline_comment|/* These two ioctl&squot;s always return success; even if */
 multiline_comment|/* the driver doesn&squot;t support them. */
 r_case

@@ -1,6 +1,5 @@
-multiline_comment|/* $Id: printf.c,v 1.1 1996/12/27 08:49:13 jj Exp $&n; * printf.c:  Internal prom library printf facility.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: printf.c,v 1.2 1997/03/04 16:27:13 jj Exp $&n; * printf.c:  Internal prom library printf facility.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 multiline_comment|/* This routine is internal to the prom library, no one else should know&n; * about or use it!  It&squot;s simple and smelly anyway....&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;

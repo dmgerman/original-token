@@ -312,7 +312,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#if CONFIG_SUN_AUXIO
+macro_line|#ifdef CONFIG_SUN_AUXIO
 (brace
 r_extern
 r_void
@@ -322,7 +322,20 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|auxio_power_probe
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 id|auxio_probe
+c_func
+(paren
+)paren
+suffix:semicolon
+id|auxio_power_probe
 c_func
 (paren
 )paren

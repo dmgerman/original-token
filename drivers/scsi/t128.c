@@ -436,7 +436,7 @@ macro_line|#if (TDEBUG &amp; TDEBUG_INIT)
 id|printk
 c_func
 (paren
-l_string|&quot;scsi : probing address %08x&bslash;n&quot;
+l_string|&quot;scsi-t128 : probing address %08x&bslash;n&quot;
 comma
 (paren
 r_int
@@ -476,8 +476,8 @@ id|current_base
 dot
 id|noauto
 op_logical_and
-op_logical_neg
-id|memcmp
+id|check_signature
+c_func
 (paren
 id|bases
 (braket

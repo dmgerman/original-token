@@ -1,7 +1,7 @@
-multiline_comment|/* $Id: init.c,v 1.1 1996/12/27 08:49:11 jj Exp $&n; * init.c:  Initialize internal variables used by the PROM&n; *          library functions.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
-macro_line|#include &lt;linux/config.h&gt;
+multiline_comment|/* $Id: init.c,v 1.4 1997/03/04 16:27:09 jj Exp $&n; * init.c:  Initialize internal variables used by the PROM&n; *          library functions.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 DECL|variable|prom_vers
@@ -29,24 +29,9 @@ id|prom_stdin
 comma
 id|prom_stdout
 suffix:semicolon
-DECL|variable|prom_command
-(paren
+DECL|variable|prom_chosen_node
 r_int
-)paren
-(paren
-op_star
-id|prom_command
-)paren
-(paren
-r_char
-op_star
-comma
-r_int
-comma
-dot
-dot
-dot
-)paren
+id|prom_chosen_node
 suffix:semicolon
 multiline_comment|/* You must call prom_init() before you attempt to use any of the&n; * routines in the prom library.  It returns 0 on success, 1 on&n; * failure.  It gets passed the pointer to the PROM vector.&n; */
 r_extern
@@ -147,7 +132,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-id|node
+id|prom_chosen_node
 op_assign
 id|prom_finddevice
 c_func
@@ -159,9 +144,9 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|node
+id|prom_chosen_node
 op_logical_or
-id|node
+id|prom_chosen_node
 op_eq
 op_minus
 l_int|1
@@ -175,7 +160,7 @@ id|prom_stdin
 op_assign
 id|prom_getint
 (paren
-id|node
+id|prom_chosen_node
 comma
 l_string|&quot;stdin&quot;
 )paren
@@ -184,7 +169,7 @@ id|prom_stdout
 op_assign
 id|prom_getint
 (paren
-id|node
+id|prom_chosen_node
 comma
 l_string|&quot;stdout&quot;
 )paren
@@ -215,7 +200,7 @@ c_func
 suffix:semicolon
 id|prom_getstring
 (paren
-id|openprom_node
+id|node
 comma
 l_string|&quot;version&quot;
 comma

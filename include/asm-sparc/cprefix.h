@@ -5,9 +5,13 @@ mdefine_line|#define __SPARC_CPREFIX_H
 macro_line|#if defined(__svr4__) || defined(__ELF__)
 DECL|macro|C_LABEL_PREFIX
 mdefine_line|#define C_LABEL_PREFIX
+DECL|macro|C_LABEL_STR
+mdefine_line|#define C_LABEL_STR(name) #name
 macro_line|#else
 DECL|macro|C_LABEL_PREFIX
 mdefine_line|#define C_LABEL_PREFIX _
+DECL|macro|C_LABEL_STR
+mdefine_line|#define C_LABEL_STR(name) &quot;_&quot; #name
 macro_line|#endif
 DECL|macro|CONCAT
 mdefine_line|#define CONCAT(a, b) CONCAT2(a, b)

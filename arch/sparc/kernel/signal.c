@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: signal.c,v 1.71 1997/01/19 22:32:21 ecd Exp $&n; *  linux/arch/sparc/kernel/signal.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; */
+multiline_comment|/*  $Id: signal.c,v 1.72 1997/03/03 16:51:43 jj Exp $&n; *  linux/arch/sparc/kernel/signal.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -418,7 +418,7 @@ r_int
 r_int
 )paren
 op_star
-l_int|64
+l_int|32
 )paren
 )paren
 suffix:semicolon
@@ -1610,7 +1610,7 @@ r_int
 r_int
 )paren
 op_star
-l_int|64
+l_int|32
 )paren
 )paren
 suffix:semicolon

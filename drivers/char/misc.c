@@ -142,10 +142,10 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
-DECL|function|proc_misc_read
+DECL|function|misc_read_proc
 r_static
 r_int
-id|proc_misc_read
+id|misc_read_proc
 c_func
 (paren
 r_char
@@ -164,7 +164,12 @@ r_int
 id|len
 comma
 r_int
-id|unused
+op_star
+id|eof
+comma
+r_void
+op_star
+r_private
 )paren
 (brace
 r_struct
@@ -673,35 +678,8 @@ DECL|variable|proc_misc
 r_static
 r_struct
 id|proc_dir_entry
+op_star
 id|proc_misc
-op_assign
-(brace
-l_int|0
-comma
-l_int|4
-comma
-l_string|&quot;misc&quot;
-comma
-id|S_IFREG
-op_or
-id|S_IRUGO
-comma
-l_int|1
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|NULL
-multiline_comment|/* ops -- default to array */
-comma
-op_amp
-id|proc_misc_read
-multiline_comment|/* get_info */
-comma
-)brace
 suffix:semicolon
 macro_line|#endif
 DECL|function|misc_init
@@ -714,15 +692,26 @@ r_void
 (brace
 macro_line|#ifndef MODULE
 macro_line|#ifdef CONFIG_PROC_FS
-id|proc_register_dynamic
+id|proc_misc
+op_assign
+id|create_proc_entry
 c_func
 (paren
-op_amp
-id|proc_root
+l_string|&quot;misc&quot;
 comma
-op_amp
+l_int|0
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|proc_misc
 )paren
+id|proc_misc-&gt;read_proc
+op_assign
+id|misc_read_proc
 suffix:semicolon
 macro_line|#endif /* PROC_FS */
 macro_line|#ifdef CONFIG_BUSMOUSE

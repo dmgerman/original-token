@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: process.c,v 1.89 1997/01/06 06:52:23 davem Exp $&n; *  linux/arch/sparc/kernel/process.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
+multiline_comment|/*  $Id: process.c,v 1.90 1997/01/31 23:26:16 tdyas Exp $&n; *  linux/arch/sparc/kernel/process.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/a.out.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#include &lt;linux/reboot.h&gt;
 macro_line|#include &lt;asm/auxio.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -464,9 +465,9 @@ r_int
 id|serial_console
 suffix:semicolon
 macro_line|#endif
-DECL|function|halt_now
+DECL|function|machine_halt
 r_void
-id|halt_now
+id|machine_halt
 c_func
 (paren
 r_void
@@ -512,12 +513,14 @@ l_string|&quot;Halt failed!&quot;
 )paren
 suffix:semicolon
 )brace
-DECL|function|hard_reset_now
+DECL|function|machine_restart
 r_void
-id|hard_reset_now
+id|machine_restart
 c_func
 (paren
-r_void
+r_char
+op_star
+id|cmd
 )paren
 (brace
 r_char
@@ -574,10 +577,22 @@ macro_line|#endif
 r_if
 c_cond
 (paren
+id|cmd
+)paren
+id|prom_reboot
+c_func
+(paren
+id|cmd
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
 op_star
 id|reboot_command
 )paren
 id|prom_reboot
+c_func
 (paren
 id|reboot_command
 )paren
@@ -591,6 +606,30 @@ id|panic
 c_func
 (paren
 l_string|&quot;Reboot failed!&quot;
+)paren
+suffix:semicolon
+)brace
+DECL|function|machine_power_off
+r_void
+id|machine_power_off
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|auxio_power_register
+)paren
+op_star
+id|auxio_power_register
+op_or_assign
+id|AUXIO_POWER_OFF
+suffix:semicolon
+id|machine_halt
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace

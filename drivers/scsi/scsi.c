@@ -998,6 +998,17 @@ op_or
 id|BLIST_SINGLELUN
 )brace
 comma
+(brace
+l_string|&quot;YAMAHA&quot;
+comma
+l_string|&quot;CDR102&quot;
+comma
+l_string|&quot;1.00&quot;
+comma
+id|BLIST_NOLUN
+)brace
+comma
+multiline_comment|/* Locks up if polled for lun != 0 */
 multiline_comment|/*&n; * Must be at end of list...&n; */
 (brace
 l_int|NULL

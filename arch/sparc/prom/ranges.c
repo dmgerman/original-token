@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ranges.c,v 1.7 1996/11/13 05:10:12 davem Exp $&n; * ranges.c: Handle ranges in newer proms for obio/sbus.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: ranges.c,v 1.8 1997/02/04 07:28:29 davem Exp $&n; * ranges.c: Handle ranges in newer proms for obio/sbus.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
@@ -300,8 +300,8 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* Apply probed sbus ranges to registers passed, if no ranges return. */
-r_void
 DECL|function|prom_apply_sbus_ranges
+r_void
 id|prom_apply_sbus_ranges
 c_func
 (paren
@@ -317,6 +317,11 @@ id|regs
 comma
 r_int
 id|nregs
+comma
+r_struct
+id|linux_sbus_device
+op_star
+id|sdev
 )paren
 (brace
 r_if
@@ -325,6 +330,22 @@ c_cond
 id|sbus-&gt;num_sbus_ranges
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|sdev
+op_logical_and
+(paren
+id|sdev-&gt;ranges_applied
+op_eq
+l_int|0
+)paren
+)paren
+(brace
+id|sdev-&gt;ranges_applied
+op_assign
+l_int|1
+suffix:semicolon
 id|prom_adjust_regs
 c_func
 (paren
@@ -337,6 +358,35 @@ comma
 id|sbus-&gt;num_sbus_ranges
 )paren
 suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|sdev
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;PROMLIB: Aieee, old SBUS driver, update it to use new &quot;
+l_string|&quot;prom_apply_sbus_ranges interface now!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|prom_adjust_regs
+c_func
+(paren
+id|regs
+comma
+id|nregs
+comma
+id|sbus-&gt;sbus_ranges
+comma
+id|sbus-&gt;num_sbus_ranges
+)paren
+suffix:semicolon
+)brace
 )brace
 )brace
 DECL|function|__initfunc

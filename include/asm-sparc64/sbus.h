@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sbus.h,v 1.1 1996/12/26 14:22:36 davem Exp $&n; * sbus.h:  Defines for the Sun SBus.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: sbus.h,v 1.2 1997/02/25 20:00:35 jj Exp $&n; * sbus.h:  Defines for the Sun SBus.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 multiline_comment|/* XXX This needs to be mostly redone for sun5 SYSIO. */
 macro_line|#ifndef _SPARC64_SBUS_H
 DECL|macro|_SPARC64_SBUS_H
@@ -169,8 +169,11 @@ id|PROMREG_MAX
 )braket
 suffix:semicolon
 DECL|member|num_registers
+DECL|member|ranges_applied
 r_int
 id|num_registers
+comma
+id|ranges_applied
 suffix:semicolon
 DECL|member|irqs
 r_struct
@@ -304,6 +307,11 @@ id|sbusregs
 comma
 r_int
 id|nregs
+comma
+r_struct
+id|linux_sbus_device
+op_star
+id|sdev
 )paren
 suffix:semicolon
 macro_line|#endif /* !(_SPARC64_SBUS_H) */

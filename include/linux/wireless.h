@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * This file define a set of standard wireless extensions&n; *&n; * Version :&t;3&t;18.12.96&n; *&n; * Authors :&t;Jean Tourrilhes - HPLB - &lt;jt@hplb.hpl.hp.com&gt;&n; */
+multiline_comment|/*&n; * This file define a set of standard wireless extensions&n; *&n; * Version :&t;4&t;12.2.97&n; *&n; * Authors :&t;Jean Tourrilhes - HPLB - &lt;jt@hplb.hpl.hp.com&gt;&n; */
 macro_line|#ifndef _LINUX_WIRELESS_H
 DECL|macro|_LINUX_WIRELESS_H
 mdefine_line|#define _LINUX_WIRELESS_H
@@ -12,8 +12,8 @@ multiline_comment|/**************************** CONSTANTS **********************
 multiline_comment|/* --------------------------- VERSION --------------------------- */
 multiline_comment|/*&n; * This constant is used to know the availability of the wireless&n; * extensions and to know which version of wireless extensions it is&n; * (there is some stuff that will be added in the future...)&n; * I just plan to increment with each new version.&n; */
 DECL|macro|WIRELESS_EXT
-mdefine_line|#define WIRELESS_EXT&t;3
-multiline_comment|/*&n; * Changes :&n; *&n; * V2 to V3&n; * --------&n; *&t;Alan Cox start some imcompatibles changes. I&squot;ve integrated a bit more.&n; *&t;- Encryption renamed to Encode to avoid US regulation problems&n; *&t;- Frequency changed from float to struct to avoid problems on old 386&n; */
+mdefine_line|#define WIRELESS_EXT&t;4
+multiline_comment|/*&n; * Changes :&n; *&n; * V2 to V3&n; * --------&n; *&t;Alan Cox start some imcompatibles changes. I&squot;ve integrated a bit more.&n; *&t;- Encryption renamed to Encode to avoid US regulation problems&n; *&t;- Frequency changed from float to struct to avoid problems on old 386&n; *&n; * V3 to V4&n; * --------&n; *&t;- Add sensitivity&n; */
 multiline_comment|/* -------------------------- IOCTL LIST -------------------------- */
 multiline_comment|/* Basic operations */
 DECL|macro|SIOCSIWNAME
@@ -32,6 +32,10 @@ DECL|macro|SIOCSIWENCODE
 mdefine_line|#define SIOCSIWENCODE&t;0x8B06&t;&t;/* set encoding info */
 DECL|macro|SIOCGIWENCODE
 mdefine_line|#define SIOCGIWENCODE&t;0x8B07&t;&t;/* get encoding info */
+DECL|macro|SIOCSIWSENS
+mdefine_line|#define SIOCSIWSENS&t;0x8B08&t;&t;/* set sensitivity */
+DECL|macro|SIOCGIWSENS
+mdefine_line|#define SIOCGIWSENS&t;0x8B09&t;&t;/* get sensitivity */
 multiline_comment|/* Informative stuff */
 DECL|macro|SIOCSIWRANGE
 mdefine_line|#define SIOCSIWRANGE&t;0x8B0A&t;&t;/* Unused ??? */
@@ -250,6 +254,11 @@ DECL|member|encoding
 )brace
 id|encoding
 suffix:semicolon
+DECL|member|sensitivity
+id|__u32
+id|sensitivity
+suffix:semicolon
+multiline_comment|/* signal level threshold */
 r_struct
 multiline_comment|/* For all data bigger than 16 octets */
 (brace
@@ -324,6 +333,11 @@ suffix:semicolon
 multiline_comment|/* list */
 multiline_comment|/* Note : this frequency list doesn&squot;t need to fit channel numbers */
 multiline_comment|/* Encoder stuff */
+multiline_comment|/* signal level threshold range */
+DECL|member|sensitivity
+id|__u32
+id|sensitivity
+suffix:semicolon
 multiline_comment|/* Quality of link &amp; SNR stuff */
 DECL|member|max_qual
 r_struct

@@ -1,5 +1,4 @@
-multiline_comment|/* $Id: misc.c,v 1.1 1996/12/27 08:49:12 jj Exp $&n; * misc.c:  Miscellaneous prom functions that don&squot;t belong&n; *          anywhere else.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
-macro_line|#include &lt;linux/config.h&gt;
+multiline_comment|/* $Id: misc.c,v 1.4 1997/03/04 16:27:11 jj Exp $&n; * misc.c:  Miscellaneous prom functions that don&squot;t belong&n; *          anywhere else.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -16,10 +15,7 @@ op_star
 id|bcommand
 )paren
 (brace
-(paren
-op_star
-id|prom_command
-)paren
+id|p1275_cmd
 (paren
 l_string|&quot;boot&quot;
 comma
@@ -71,10 +67,7 @@ l_int|0
 r_return
 suffix:semicolon
 )brace
-(paren
-op_star
-id|prom_command
-)paren
+id|p1275_cmd
 (paren
 l_string|&quot;interpret&quot;
 comma
@@ -193,10 +186,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-(paren
-op_star
-id|prom_command
-)paren
+id|p1275_cmd
 (paren
 l_string|&quot;enter&quot;
 comma
@@ -244,10 +234,7 @@ c_func
 r_void
 )paren
 (brace
-(paren
-op_star
-id|prom_command
-)paren
+id|p1275_cmd
 (paren
 l_string|&quot;exit&quot;
 comma
@@ -261,24 +248,13 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-DECL|typedef|sfunc_t
-r_typedef
-r_void
-(paren
-op_star
-id|sfunc_t
-)paren
-(paren
-r_void
-)paren
-suffix:semicolon
 multiline_comment|/* Set prom sync handler to call function &squot;funcp&squot;. */
 r_void
 DECL|function|prom_setsync
 id|prom_setsync
 c_func
 (paren
-id|sfunc_t
+id|sync_func_t
 id|funcp
 )paren
 (brace
@@ -292,10 +268,7 @@ id|funcp
 r_return
 suffix:semicolon
 )brace
-(paren
-op_star
-id|prom_command
-)paren
+id|p1275_cmd
 (paren
 l_string|&quot;set-callback&quot;
 comma
@@ -304,7 +277,7 @@ c_func
 (paren
 l_int|0
 comma
-id|P1275_IN_FUNCTION
+id|P1275_ARG_IN_FUNCTION
 )paren
 op_or
 id|P1275_INOUT

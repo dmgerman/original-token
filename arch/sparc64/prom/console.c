@@ -1,5 +1,4 @@
-multiline_comment|/* $Id: console.c,v 1.1 1996/12/27 08:49:11 jj Exp $&n; * console.c: Routines that deal with sending and receiving IO&n; *            to/from the current console device using the PROM.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
-macro_line|#include &lt;linux/config.h&gt;
+multiline_comment|/* $Id: console.c,v 1.4 1997/03/04 16:27:07 jj Exp $&n; * console.c: Routines that deal with sending and receiving IO&n; *            to/from the current console device using the PROM.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -29,10 +28,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
-op_star
-id|prom_command
-)paren
+id|p1275_cmd
+c_func
 (paren
 l_string|&quot;read&quot;
 comma
@@ -41,7 +38,7 @@ c_func
 (paren
 l_int|1
 comma
-id|P1275_ARG_IN_BUF
+id|P1275_ARG_OUT_BUF
 )paren
 op_or
 id|P1275_INOUT
@@ -96,10 +93,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
-op_star
-id|prom_command
-)paren
+id|p1275_cmd
+c_func
 (paren
 l_string|&quot;write&quot;
 comma
@@ -122,7 +117,7 @@ comma
 id|prom_stdin
 comma
 op_amp
-id|inc
+id|outc
 comma
 id|P1275_SIZE
 c_func
@@ -224,10 +219,6 @@ id|propb
 (braket
 l_int|64
 )braket
-suffix:semicolon
-r_char
-op_star
-id|p
 suffix:semicolon
 id|st_p
 op_assign
@@ -383,10 +374,6 @@ id|propb
 (braket
 l_int|64
 )braket
-suffix:semicolon
-r_char
-op_star
-id|p
 suffix:semicolon
 r_int
 id|propl

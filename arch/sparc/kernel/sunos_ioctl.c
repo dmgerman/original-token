@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunos_ioctl.c,v 1.27 1997/01/06 06:52:33 davem Exp $&n; * sunos_ioctl.c: The Linux Operating system: SunOS ioctl compatibility.&n; * &n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: sunos_ioctl.c,v 1.28 1997/02/15 01:17:05 davem Exp $&n; * sunos_ioctl.c: The Linux Operating system: SunOS ioctl compatibility.&n; * &n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -25,6 +25,9 @@ r_char
 id|sunkbd_layout
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* NR_OPEN is now larger and dynamic in recent kernels. */
+DECL|macro|SUNOS_NR_OPEN
+mdefine_line|#define SUNOS_NR_OPEN&t;256
 r_extern
 id|asmlinkage
 r_int
@@ -88,7 +91,7 @@ c_cond
 (paren
 id|fd
 op_ge
-id|NR_OPEN
+id|SUNOS_NR_OPEN
 op_logical_or
 op_logical_neg
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sun4c.c,v 1.137 1996/12/30 06:16:36 davem Exp $&n; * sun4c.c: Doing in software what should be done in hardware.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1996 Andrew Tridgell (Andrew.Tridgell@anu.edu.au)&n; */
+multiline_comment|/* $Id: sun4c.c,v 1.139 1997/01/31 08:05:59 davem Exp $&n; * sun4c.c: Doing in software what should be done in hardware.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1996 Andrew Tridgell (Andrew.Tridgell@anu.edu.au)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -9186,6 +9186,20 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+id|address
+op_assign
+(paren
+id|address
+op_rshift
+id|PAGE_SHIFT
+)paren
+op_amp
+(paren
+id|SUN4C_PTRS_PER_PTE
+op_minus
+l_int|1
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -9824,7 +9838,7 @@ macro_line|#if 1
 id|printk
 c_func
 (paren
-l_string|&quot;Fixing USER/USER alias [%d:%08lx]&bslash;n&quot;
+l_string|&quot;Fixing USER/USER alias [%ld:%08lx]&bslash;n&quot;
 comma
 id|vmaring-&gt;vm_mm-&gt;context
 comma

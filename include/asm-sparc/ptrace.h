@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ptrace.h,v 1.24 1997/01/06 06:53:23 davem Exp $ */
+multiline_comment|/* $Id: ptrace.h,v 1.25 1997/03/04 16:27:25 jj Exp $ */
 macro_line|#ifndef _SPARC_PTRACE_H
 DECL|macro|_SPARC_PTRACE_H
 mdefine_line|#define _SPARC_PTRACE_H
@@ -189,62 +189,7 @@ mdefine_line|#define STACKFRAME_SZ     0x60
 DECL|macro|REGWIN_SZ
 mdefine_line|#define REGWIN_SZ         0x40
 macro_line|#endif
-multiline_comment|/* First generic task_struct offsets. sizeof(task_struct)=1568 */
-DECL|macro|TASK_STATE
-mdefine_line|#define TASK_STATE        0x000
-DECL|macro|TASK_PRIORITY
-mdefine_line|#define TASK_PRIORITY     0x008
-DECL|macro|TASK_SIGNAL
-mdefine_line|#define TASK_SIGNAL       0x00c
-DECL|macro|TASK_BLOCKED
-mdefine_line|#define TASK_BLOCKED      0x010
-DECL|macro|TASK_FLAGS
-mdefine_line|#define TASK_FLAGS        0x014
-DECL|macro|TASK_SAVED_KSTACK
-mdefine_line|#define TASK_SAVED_KSTACK 0x054
-DECL|macro|TASK_KSTACK_PG
-mdefine_line|#define TASK_KSTACK_PG    0x058
-DECL|macro|TASK_LOCK_DEPTH
-mdefine_line|#define TASK_LOCK_DEPTH   0x618
-multiline_comment|/* Thread stuff. */
-DECL|macro|THREAD_UMASK
-mdefine_line|#define THREAD_UMASK      0x1e0
-DECL|macro|THREAD_SADDR
-mdefine_line|#define THREAD_SADDR      0x1e8
-DECL|macro|THREAD_SDESC
-mdefine_line|#define THREAD_SDESC      0x1ec
-DECL|macro|THREAD_KSP
-mdefine_line|#define THREAD_KSP        0x1f0
-DECL|macro|THREAD_KPC
-mdefine_line|#define THREAD_KPC        0x1f4
-DECL|macro|THREAD_KPSR
-mdefine_line|#define THREAD_KPSR       0x1f8
-DECL|macro|THREAD_KWIM
-mdefine_line|#define THREAD_KWIM       0x1fc
-DECL|macro|THREAD_FORK_KPSR
-mdefine_line|#define THREAD_FORK_KPSR  0x200
-DECL|macro|THREAD_FORK_KWIM
-mdefine_line|#define THREAD_FORK_KWIM  0x204
-DECL|macro|THREAD_REG_WINDOW
-mdefine_line|#define THREAD_REG_WINDOW 0x208
-DECL|macro|THREAD_STACK_PTRS
-mdefine_line|#define THREAD_STACK_PTRS 0x408
-DECL|macro|THREAD_W_SAVED
-mdefine_line|#define THREAD_W_SAVED    0x428
-DECL|macro|THREAD_FLOAT_REGS
-mdefine_line|#define THREAD_FLOAT_REGS 0x430
-DECL|macro|THREAD_FSR
-mdefine_line|#define THREAD_FSR        0x530
-DECL|macro|THREAD_SIGSTK
-mdefine_line|#define THREAD_SIGSTK     0x5b8
-DECL|macro|THREAD_FLAGS
-mdefine_line|#define THREAD_FLAGS      0x5c0
-DECL|macro|THREAD_DS
-mdefine_line|#define THREAD_DS         0x5d8
-DECL|macro|THREAD_MM
-mdefine_line|#define THREAD_MM         0x608
-DECL|macro|THREAD_MM_CTX
-mdefine_line|#define THREAD_MM_CTX     0x008
+macro_line|#include &lt;asm/asm_offsets.h&gt;
 multiline_comment|/* These are for pt_regs. */
 DECL|macro|PT_PSR
 mdefine_line|#define PT_PSR    0x0

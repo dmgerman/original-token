@@ -1,8 +1,11 @@
-multiline_comment|/* $Id: pgtable.h,v 1.8 1996/12/28 18:39:52 davem Exp $&n; * pgtable.h: SpitFire page table operations.&n; *&n; * Copyright 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: pgtable.h,v 1.10 1997/03/03 16:51:54 jj Exp $&n; * pgtable.h: SpitFire page table operations.&n; *&n; * Copyright 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC64_PGTABLE_H
 DECL|macro|_SPARC64_PGTABLE_H
 mdefine_line|#define _SPARC64_PGTABLE_H
 multiline_comment|/* This file contains the functions and defines necessary to modify and use&n; * the SpitFire page tables.&n; */
+macro_line|#ifndef __ASSEMBLY__
+macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#endif
 macro_line|#include &lt;asm/spitfire.h&gt;
 macro_line|#include &lt;asm/asi.h&gt;
 macro_line|#include &lt;asm/mmu_context.h&gt;
@@ -42,54 +45,54 @@ mdefine_line|#define VMALLOC_VMADDR(x)&t;((unsigned long)(x))
 macro_line|#endif /* !(__ASSEMBLY__) */
 multiline_comment|/* SpitFire TTE bits. */
 DECL|macro|_PAGE_VALID
-mdefine_line|#define _PAGE_VALID&t;0x8000000000000000UL&t;/* Valid TTE                          */
+mdefine_line|#define _PAGE_VALID&t;0x8000000000000000&t;/* Valid TTE                          */
 DECL|macro|_PAGE_R
-mdefine_line|#define _PAGE_R&t;&t;0x8000000000000000UL&t;/* Used to keep ref bit up to date    */
+mdefine_line|#define _PAGE_R&t;&t;0x8000000000000000&t;/* Used to keep ref bit up to date    */
 DECL|macro|_PAGE_SZ4MB
-mdefine_line|#define _PAGE_SZ4MB&t;0x6000000000000000UL&t;/* 4MB Page                           */
+mdefine_line|#define _PAGE_SZ4MB&t;0x6000000000000000&t;/* 4MB Page                           */
 DECL|macro|_PAGE_SZ512K
-mdefine_line|#define _PAGE_SZ512K&t;0x4000000000000000UL&t;/* 512K Page                          */
+mdefine_line|#define _PAGE_SZ512K&t;0x4000000000000000&t;/* 512K Page                          */
 DECL|macro|_PAGE_SZ64K
-mdefine_line|#define _PAGE_SZ64K&t;0x2000000000000000UL&t;/* 64K Page                           */
+mdefine_line|#define _PAGE_SZ64K&t;0x2000000000000000&t;/* 64K Page                           */
 DECL|macro|_PAGE_SZ8K
-mdefine_line|#define _PAGE_SZ8K&t;0x0000000000000000UL&t;/* 8K Page                            */
+mdefine_line|#define _PAGE_SZ8K&t;0x0000000000000000&t;/* 8K Page                            */
 DECL|macro|_PAGE_NFO
-mdefine_line|#define _PAGE_NFO&t;0x1000000000000000UL&t;/* No Fault Only                      */
+mdefine_line|#define _PAGE_NFO&t;0x1000000000000000&t;/* No Fault Only                      */
 DECL|macro|_PAGE_IE
-mdefine_line|#define _PAGE_IE&t;0x0800000000000000UL&t;/* Invert Endianness                  */
+mdefine_line|#define _PAGE_IE&t;0x0800000000000000&t;/* Invert Endianness                  */
 DECL|macro|_PAGE_SOFT2
-mdefine_line|#define _PAGE_SOFT2&t;0x07FC000000000000UL&t;/* Second set of software bits        */
+mdefine_line|#define _PAGE_SOFT2&t;0x07FC000000000000&t;/* Second set of software bits        */
 DECL|macro|_PAGE_DIAG
-mdefine_line|#define _PAGE_DIAG&t;0x0003FE0000000000UL&t;/* Diagnostic TTE bits                */
+mdefine_line|#define _PAGE_DIAG&t;0x0003FE0000000000&t;/* Diagnostic TTE bits                */
 DECL|macro|_PAGE_PADDR
-mdefine_line|#define _PAGE_PADDR&t;0x000001FFFFFFE000UL&t;/* Physical Address bits [40:13]      */
+mdefine_line|#define _PAGE_PADDR&t;0x000001FFFFFFE000&t;/* Physical Address bits [40:13]      */
 DECL|macro|_PAGE_SOFT
-mdefine_line|#define _PAGE_SOFT&t;0x0000000000001F80UL&t;/* First set of software bits         */
+mdefine_line|#define _PAGE_SOFT&t;0x0000000000001F80&t;/* First set of software bits         */
 DECL|macro|_PAGE_L
-mdefine_line|#define _PAGE_L&t;&t;0x0000000000000040UL&t;/* Locked TTE                         */
+mdefine_line|#define _PAGE_L&t;&t;0x0000000000000040&t;/* Locked TTE                         */
 DECL|macro|_PAGE_CP
-mdefine_line|#define _PAGE_CP&t;0x0000000000000020UL&t;/* Cacheable in Physical Cache        */
+mdefine_line|#define _PAGE_CP&t;0x0000000000000020&t;/* Cacheable in Physical Cache        */
 DECL|macro|_PAGE_CV
-mdefine_line|#define _PAGE_CV&t;0x0000000000000010UL&t;/* Cacheable in Virtual Cache         */
+mdefine_line|#define _PAGE_CV&t;0x0000000000000010&t;/* Cacheable in Virtual Cache         */
 DECL|macro|_PAGE_E
-mdefine_line|#define _PAGE_E&t;&t;0x0000000000000008UL    /* side-Effect                        */
+mdefine_line|#define _PAGE_E&t;&t;0x0000000000000008&t;/* side-Effect                        */
 DECL|macro|_PAGE_P
-mdefine_line|#define _PAGE_P&t;&t;0x0000000000000004UL&t;/* Privileged Page                    */
+mdefine_line|#define _PAGE_P&t;&t;0x0000000000000004&t;/* Privileged Page                    */
 DECL|macro|_PAGE_W
-mdefine_line|#define _PAGE_W&t;&t;0x0000000000000002UL&t;/* Writable                           */
+mdefine_line|#define _PAGE_W&t;&t;0x0000000000000002&t;/* Writable                           */
 DECL|macro|_PAGE_G
-mdefine_line|#define _PAGE_G&t;&t;0x0000000000000001UL&t;/* Global                             */
+mdefine_line|#define _PAGE_G&t;&t;0x0000000000000001&t;/* Global                             */
 multiline_comment|/* Here are the SpitFire software bits we use in the TTE&squot;s. */
 DECL|macro|_PAGE_PRESENT
-mdefine_line|#define _PAGE_PRESENT&t;0x0000000000001000UL&t;/* Present Page (ie. not swapped out) */
+mdefine_line|#define _PAGE_PRESENT&t;0x0000000000001000&t;/* Present Page (ie. not swapped out) */
 DECL|macro|_PAGE_MODIFIED
-mdefine_line|#define _PAGE_MODIFIED&t;0x0000000000000800UL&t;/* Modified Page (ie. dirty)          */
+mdefine_line|#define _PAGE_MODIFIED&t;0x0000000000000800&t;/* Modified Page (ie. dirty)          */
 DECL|macro|_PAGE_ACCESSED
-mdefine_line|#define _PAGE_ACCESSED&t;0x0000000000000400UL&t;/* Accessed Page (ie. referenced)     */
+mdefine_line|#define _PAGE_ACCESSED&t;0x0000000000000400&t;/* Accessed Page (ie. referenced)     */
 DECL|macro|_PAGE_READ
-mdefine_line|#define _PAGE_READ&t;0x0000000000000200UL&t;/* Readable SW Bit                    */
+mdefine_line|#define _PAGE_READ&t;0x0000000000000200&t;/* Readable SW Bit                    */
 DECL|macro|_PAGE_WRITE
-mdefine_line|#define _PAGE_WRITE&t;0x0000000000000100UL&t;/* Writable SW Bit                    */
+mdefine_line|#define _PAGE_WRITE&t;0x0000000000000100&t;/* Writable SW Bit                    */
 DECL|macro|_PAGE_CACHE
 mdefine_line|#define _PAGE_CACHE&t;(_PAGE_CP | _PAGE_CV)
 DECL|macro|__DIRTY_BITS
@@ -1761,7 +1764,7 @@ id|paddr
 id|asm
 c_func
 (paren
-l_string|&quot;%o5&quot;
+l_string|&quot;o5&quot;
 )paren
 suffix:semicolon
 id|paddr
@@ -1797,21 +1800,10 @@ comma
 op_mod
 op_mod
 id|g1
-op_logical_or
-op_mod
-op_mod
-id|g1
-comma
-op_mod
-l_int|1
-comma
-op_mod
-op_mod
-id|g2
 id|wrpr
 op_mod
 op_mod
-id|g2
+id|g1
 comma
 op_mod
 l_int|2
@@ -1840,10 +1832,10 @@ l_string|&quot; : : &quot;
 id|r
 l_string|&quot; (paddr), &quot;
 id|i
-l_string|&quot; (PSTATE_MG), &quot;
-id|i
 "&quot;"
 (paren
+id|PSTATE_MG
+op_or
 id|PSTATE_IE
 )paren
 suffix:colon

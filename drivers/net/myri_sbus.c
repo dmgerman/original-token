@@ -5062,6 +5062,8 @@ l_int|0
 )braket
 comma
 id|sdev-&gt;num_registers
+comma
+id|sdev
 )paren
 suffix:semicolon
 r_if

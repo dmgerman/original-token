@@ -1,14 +1,9 @@
-multiline_comment|/* $Id: string.h,v 1.28 1997/01/15 16:01:54 jj Exp $&n; * string.h: External definitions for optimized assembly string&n; *           routines for the Linux Kernel.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: string.h,v 1.30 1997/03/03 17:11:12 jj Exp $&n; * string.h: External definitions for optimized assembly string&n; *           routines for the Linux Kernel.&n; *&n; * Copyright (C) 1995,1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#ifndef __SPARC_STRING_H__
 DECL|macro|__SPARC_STRING_H__
 mdefine_line|#define __SPARC_STRING_H__
 multiline_comment|/* Really, userland/ksyms should not see any of this stuff. */
-macro_line|#if defined(__KERNEL__) &amp;&amp; !defined(EXPORT_SYMTAB)
-multiline_comment|/* First the mem*() things. */
-DECL|macro|__HAVE_ARCH_BCOPY
-mdefine_line|#define __HAVE_ARCH_BCOPY
-DECL|macro|__HAVE_ARCH_MEMMOVE
-mdefine_line|#define __HAVE_ARCH_MEMMOVE
+macro_line|#ifdef __KERNEL__
 r_extern
 r_void
 id|__memmove
@@ -24,14 +19,8 @@ comma
 id|__kernel_size_t
 )paren
 suffix:semicolon
-DECL|macro|memmove
-macro_line|#undef memmove
-DECL|macro|memmove
-mdefine_line|#define memmove(_to, _from, _n) &bslash;&n;({ &bslash;&n;&t;__memmove(_to, _from, _n); &bslash;&n;&t;_to; &bslash;&n;})
-DECL|macro|__HAVE_ARCH_MEMCPY
-mdefine_line|#define __HAVE_ARCH_MEMCPY
 r_extern
-r_void
+id|__kernel_size_t
 id|__memcpy
 c_func
 (paren
@@ -45,6 +34,31 @@ comma
 id|__kernel_size_t
 )paren
 suffix:semicolon
+r_extern
+id|__kernel_size_t
+id|__memset
+c_func
+(paren
+r_void
+op_star
+comma
+r_int
+comma
+id|__kernel_size_t
+)paren
+suffix:semicolon
+macro_line|#ifndef EXPORT_SYMTAB
+multiline_comment|/* First the mem*() things. */
+DECL|macro|__HAVE_ARCH_BCOPY
+mdefine_line|#define __HAVE_ARCH_BCOPY
+DECL|macro|__HAVE_ARCH_MEMMOVE
+mdefine_line|#define __HAVE_ARCH_MEMMOVE
+DECL|macro|memmove
+macro_line|#undef memmove
+DECL|macro|memmove
+mdefine_line|#define memmove(_to, _from, _n) &bslash;&n;({ &bslash;&n;&t;void *_t = (_to); &bslash;&n;&t;__memmove(_t, (_from), (_n)); &bslash;&n;&t;_t; &bslash;&n;})
+DECL|macro|__HAVE_ARCH_MEMCPY
+mdefine_line|#define __HAVE_ARCH_MEMCPY
 DECL|function|__constant_memcpy
 r_extern
 r_inline
@@ -180,20 +194,6 @@ DECL|macro|memcpy
 mdefine_line|#define memcpy(t, f, n) &bslash;&n;(__builtin_constant_p(n) ? &bslash;&n; __constant_memcpy((t),(f),(n)) : &bslash;&n; __nonconstant_memcpy((t),(f),(n)))
 DECL|macro|__HAVE_ARCH_MEMSET
 mdefine_line|#define __HAVE_ARCH_MEMSET
-r_extern
-r_void
-op_star
-id|__memset
-c_func
-(paren
-r_void
-op_star
-comma
-r_int
-comma
-id|__kernel_size_t
-)paren
-suffix:semicolon
 DECL|function|__constant_c_and_count_memset
 r_extern
 r_inline
@@ -209,7 +209,7 @@ comma
 r_char
 id|c
 comma
-r_int
+id|__kernel_size_t
 id|count
 )paren
 (brace
@@ -224,15 +224,14 @@ op_star
 )paren
 suffix:semicolon
 r_extern
-r_void
-op_star
+id|__kernel_size_t
 id|__bzero
 c_func
 (paren
 r_void
 op_star
 comma
-r_int
+id|__kernel_size_t
 )paren
 suffix:semicolon
 r_if
@@ -299,20 +298,19 @@ comma
 r_char
 id|c
 comma
-r_int
+id|__kernel_size_t
 id|count
 )paren
 (brace
 r_extern
-r_void
-op_star
+id|__kernel_size_t
 id|__bzero
 c_func
 (paren
 r_void
 op_star
 comma
-r_int
+id|__kernel_size_t
 )paren
 suffix:semicolon
 r_if
@@ -346,10 +344,43 @@ r_return
 id|s
 suffix:semicolon
 )brace
+DECL|function|__nonconstant_memset
+r_extern
+r_inline
+r_void
+op_star
+id|__nonconstant_memset
+c_func
+(paren
+r_void
+op_star
+id|s
+comma
+r_char
+id|c
+comma
+id|__kernel_size_t
+id|count
+)paren
+(brace
+id|__memset
+c_func
+(paren
+id|s
+comma
+id|c
+comma
+id|count
+)paren
+suffix:semicolon
+r_return
+id|s
+suffix:semicolon
+)brace
 DECL|macro|memset
 macro_line|#undef memset
 DECL|macro|memset
-mdefine_line|#define memset(s, c, count) &bslash;&n;(__builtin_constant_p(c) ? (__builtin_constant_p(count) ? &bslash;&n;                            __constant_c_and_count_memset((s), (c), (count)) : &bslash;&n;                            __constant_c_memset((s), (c), (count))) &bslash;&n;                         : __memset((s), (c), (count)))
+mdefine_line|#define memset(s, c, count) &bslash;&n;(__builtin_constant_p(c) ? (__builtin_constant_p(count) ? &bslash;&n;                            __constant_c_and_count_memset((s), (c), (count)) : &bslash;&n;                            __constant_c_memset((s), (c), (count))) &bslash;&n;                          : __nonconstant_memset((s), (c), (count)))
 DECL|macro|__HAVE_ARCH_MEMSCAN
 mdefine_line|#define __HAVE_ARCH_MEMSCAN
 DECL|macro|memscan
@@ -888,6 +919,7 @@ DECL|macro|strncmp
 macro_line|#undef strncmp
 DECL|macro|strncmp
 mdefine_line|#define strncmp(__arg0, __arg1, __arg2)&t;&bslash;&n;(__builtin_constant_p(__arg2) ?&t;&bslash;&n; __constant_strncmp(__arg0, __arg1, __arg2) : &bslash;&n; __strncmp(__arg0, __arg1, __arg2))
-macro_line|#endif /* (__KERNEL__) &amp;&amp; !(_KSYMS_INTERNEL) */
+macro_line|#endif /* EXPORT_SYMTAB */
+macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* !(__SPARC_STRING_H__) */
 eof

@@ -962,10 +962,10 @@ id|sunqec
 op_star
 id|parent
 suffix:semicolon
-DECL|member|enet_stats
+DECL|member|net_stats
 r_struct
 id|net_device_stats
-id|enet_stats
+id|net_stats
 suffix:semicolon
 multiline_comment|/* Statistical counters               */
 DECL|member|qe_sbusdev

@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: signal32.c,v 1.3 1997/01/19 22:32:30 ecd Exp $&n; *  arch/sparc64/kernel/signal32.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; */
+multiline_comment|/*  $Id: signal32.c,v 1.4 1997/03/03 16:51:46 jj Exp $&n; *  arch/sparc64/kernel/signal32.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -105,7 +105,7 @@ id|signal_sframe32
 (brace
 DECL|member|sig_window
 r_struct
-id|reg_window_32
+id|reg_window32
 id|sig_window
 suffix:semicolon
 DECL|member|sig_num
@@ -118,7 +118,7 @@ id|sig_code
 suffix:semicolon
 DECL|member|sig_scptr
 r_struct
-id|sigcontext_32
+id|sigcontext32
 op_star
 id|sig_scptr
 suffix:semicolon
@@ -128,7 +128,7 @@ id|sig_address
 suffix:semicolon
 DECL|member|sig_context
 r_struct
-id|sigcontext_32
+id|sigcontext32
 id|sig_context
 suffix:semicolon
 )brace
@@ -140,7 +140,7 @@ id|new_signal_frame32
 (brace
 DECL|member|ss
 r_struct
-id|sparc_stackf_32
+id|sparc_stackf32
 id|ss
 suffix:semicolon
 DECL|member|info
@@ -310,8 +310,8 @@ suffix:semicolon
 r_static
 r_inline
 r_void
-DECL|function|restore_fpu_state
-id|restore_fpu_state
+DECL|function|restore_fpu_state32
+id|restore_fpu_state32
 c_func
 (paren
 r_struct
@@ -332,7 +332,7 @@ id|current-&gt;flags
 op_amp
 id|PF_USEDFPU
 )paren
-id|regs-&gt;psr
+id|regs-&gt;tstate
 op_and_assign
 op_complement
 (paren
@@ -352,7 +352,7 @@ id|last_task_used_math
 op_assign
 l_int|0
 suffix:semicolon
-id|regs-&gt;psr
+id|regs-&gt;tstate
 op_and_assign
 op_complement
 (paren
@@ -380,7 +380,7 @@ l_int|0
 )braket
 comma
 op_amp
-id|sf-&gt;info.si_float_regs
+id|fpu-&gt;si_float_regs
 (braket
 l_int|0
 )braket
@@ -392,7 +392,7 @@ r_int
 r_int
 )paren
 op_star
-l_int|64
+l_int|32
 )paren
 )paren
 suffix:semicolon
@@ -522,7 +522,8 @@ c_cond
 (paren
 (paren
 (paren
-id|uint
+r_int
+r_int
 )paren
 id|sf
 )paren
@@ -604,7 +605,7 @@ c_cond
 (paren
 id|sf-&gt;fpu_save
 )paren
-id|restore_fpu_state
+id|restore_fpu_state32
 c_func
 (paren
 id|regs
@@ -632,7 +633,7 @@ id|regs
 )paren
 (brace
 r_struct
-id|sigcontext
+id|sigcontext32
 op_star
 id|scptr
 suffix:semicolon
@@ -665,7 +666,7 @@ id|scptr
 op_assign
 (paren
 r_struct
-id|sigcontext
+id|sigcontext32
 op_star
 )paren
 id|regs-&gt;u_regs
@@ -687,7 +688,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|sigcontext
+id|sigcontext32
 )paren
 )paren
 op_logical_or
@@ -949,7 +950,7 @@ op_star
 id|sframep
 suffix:semicolon
 r_struct
-id|sigcontext
+id|sigcontext32
 op_star
 id|sc
 suffix:semicolon
@@ -1341,8 +1342,8 @@ suffix:semicolon
 r_static
 r_inline
 r_void
-DECL|function|save_fpu_state
-id|save_fpu_state
+DECL|function|save_fpu_state32
+id|save_fpu_state32
 c_func
 (paren
 r_struct
@@ -1489,7 +1490,7 @@ r_int
 r_int
 )paren
 op_star
-l_int|64
+l_int|32
 )paren
 )paren
 suffix:semicolon
@@ -1699,7 +1700,7 @@ c_cond
 id|current-&gt;used_math
 )paren
 (brace
-id|save_fpu_state
+id|save_fpu_state32
 c_func
 (paren
 id|regs

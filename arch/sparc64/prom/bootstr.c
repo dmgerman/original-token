@@ -1,5 +1,4 @@
-multiline_comment|/* $Id: bootstr.c,v 1.1 1996/12/27 08:49:10 jj Exp $&n; * bootstr.c:  Boot string/argument acquisition from the PROM.&n; *&n; * Copyright(C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright(C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
-macro_line|#include &lt;linux/config.h&gt;
+multiline_comment|/* $Id: bootstr.c,v 1.3 1997/03/04 16:27:06 jj Exp $&n; * bootstr.c:  Boot string/argument acquisition from the PROM.&n; *&n; * Copyright(C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright(C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 DECL|macro|BARG_LEN
@@ -40,10 +39,7 @@ suffix:semicolon
 id|prom_getstring
 c_func
 (paren
-id|prom_finddevice
-(paren
-l_string|&quot;/chosen&quot;
-)paren
+id|prom_chosen_node
 comma
 l_string|&quot;bootargs&quot;
 comma

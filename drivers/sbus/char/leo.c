@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: leo.c,v 1.10 1996/12/23 10:16:09 ecd Exp $&n; * leo.c: SUNW,leo 24/8bit frame buffer driver&n; *&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: leo.c,v 1.11 1997/02/02 02:12:44 ecd Exp $&n; * leo.c: SUNW,leo 24/8bit frame buffer driver&n; *&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -3620,9 +3620,11 @@ r_int
 r_char
 id|attrib
 op_assign
+id|CHARATTR_TO_SUNCOLOR
+c_func
+(paren
 id|charattr
-op_rshift
-l_int|8
+)paren
 suffix:semicolon
 r_int
 r_char
@@ -3734,9 +3736,11 @@ r_int
 r_char
 id|attrib
 op_assign
+id|CHARATTR_TO_SUNCOLOR
+c_func
+(paren
 id|c
-op_rshift
-l_int|8
+)paren
 suffix:semicolon
 r_int
 r_char
@@ -3879,10 +3883,12 @@ r_int
 r_char
 id|attrib
 op_assign
+id|CHARATTR_TO_SUNCOLOR
+c_func
+(paren
 op_star
 id|p
-op_rshift
-l_int|8
+)paren
 suffix:semicolon
 r_register
 r_int

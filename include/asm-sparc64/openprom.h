@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: openprom.h,v 1.1 1996/12/26 14:22:32 davem Exp $ */
+multiline_comment|/* $Id: openprom.h,v 1.2 1997/02/25 12:40:41 jj Exp $ */
 macro_line|#ifndef __SPARC64_OPENPROM_H
 DECL|macro|__SPARC64_OPENPROM_H
 mdefine_line|#define __SPARC64_OPENPROM_H
@@ -376,8 +376,7 @@ op_star
 id|theres_more
 suffix:semicolon
 DECL|member|start_adr
-r_char
-op_star
+r_int
 id|start_adr
 suffix:semicolon
 DECL|member|num_bytes
@@ -966,8 +965,7 @@ id|which_io
 suffix:semicolon
 multiline_comment|/* is this in OBIO space? */
 DECL|member|phys_addr
-r_char
-op_star
+r_int
 id|phys_addr
 suffix:semicolon
 multiline_comment|/* The physical address of this register */
@@ -976,6 +974,20 @@ r_int
 id|reg_size
 suffix:semicolon
 multiline_comment|/* How many bytes does this register take up? */
+)brace
+suffix:semicolon
+DECL|struct|linux_prom64_registers
+r_struct
+id|linux_prom64_registers
+(brace
+DECL|member|phys_addr
+r_int
+id|phys_addr
+suffix:semicolon
+DECL|member|reg_size
+r_int
+id|reg_size
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|linux_prom_irqs

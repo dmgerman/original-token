@@ -6646,18 +6646,6 @@ id|ndisc_gc_timer
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
-macro_line|#ifdef CONFIG_IPV6_MODULE
-id|proc_register_dynamic
-c_func
-(paren
-op_amp
-id|proc_net
-comma
-op_amp
-id|ndisc_proc_entry
-)paren
-suffix:semicolon
-macro_line|#else
 id|proc_net_register
 c_func
 (paren
@@ -6665,7 +6653,6 @@ op_amp
 id|ndisc_proc_entry
 )paren
 suffix:semicolon
-macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_IPV6_MODULE
 id|ndisc_eth_hook

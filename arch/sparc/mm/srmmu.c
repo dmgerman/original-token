@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: srmmu.c,v 1.128 1997/01/12 12:07:00 davem Exp $&n; * srmmu.c:  SRMMU specific routines for memory management.&n; *&n; * Copyright (C) 1995 David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Peter A. Zaitcev (zaitcev@ithil.mcst.ru)&n; * Copyright (C) 1996 Eddie C. Dost    (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: srmmu.c,v 1.130 1997/02/10 23:33:49 davem Exp $&n; * srmmu.c:  SRMMU specific routines for memory management.&n; *&n; * Copyright (C) 1995 David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Peter A. Zaitcev (zaitcev@ithil.mcst.ru)&n; * Copyright (C) 1996 Eddie C. Dost    (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -16395,7 +16395,7 @@ r_if
 c_cond
 (paren
 id|tally
-op_ge
+OG
 (paren
 l_int|0xfd000000
 op_minus
@@ -16820,7 +16820,7 @@ id|vaddr
 op_plus
 id|bank_size
 )paren
-op_ge
+OG
 l_int|0xfd000000
 )paren
 op_logical_or
@@ -18278,7 +18278,7 @@ macro_line|#if 1
 id|printk
 c_func
 (paren
-l_string|&quot;Fixing USER/USER alias [%d:%08lx]&bslash;n&quot;
+l_string|&quot;Fixing USER/USER alias [%ld:%08lx]&bslash;n&quot;
 comma
 id|vmaring-&gt;vm_mm-&gt;context
 comma

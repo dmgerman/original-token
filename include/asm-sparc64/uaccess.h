@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: uaccess.h,v 1.3 1997/01/16 14:19:08 davem Exp $ */
+multiline_comment|/* $Id: uaccess.h,v 1.6 1997/03/03 16:51:54 jj Exp $ */
 macro_line|#ifndef _ASM_UACCESS_H
 DECL|macro|_ASM_UACCESS_H
 mdefine_line|#define _ASM_UACCESS_H
@@ -144,13 +144,13 @@ suffix:semicolon
 DECL|macro|__m
 mdefine_line|#define __m(x) ((struct __large_struct *)(x))
 DECL|macro|__put_user_check
-mdefine_line|#define __put_user_check(x,addr,size) ({ &bslash;&n;register int __pu_ret; &bslash;&n;if (__access_ok(addr,size)) { &bslash;&n;switch (size) { &bslash;&n;case 1: __put_user_asm(x,b,addr,__pu_ret); break; &bslash;&n;case 2: __put_user_asm(x,h,addr,__pu_ret); break; &bslash;&n;case 4: __put_user_asm(x,w,addr,__pu_ret); break; &bslash;&n;case 8: __put_user_asm(x,x,addr,__pu_ret); break; &bslash;&n;default: __pu_ret = __put_user_bad(); break; &bslash;&n;} } else { __pu_ret = -EFAULT; } __pu_ret; })
+mdefine_line|#define __put_user_check(data,addr,size) ({ &bslash;&n;register int __pu_ret; &bslash;&n;if (__access_ok(addr,size)) { &bslash;&n;switch (size) { &bslash;&n;case 1: __put_user_asm(data,b,addr,__pu_ret); break; &bslash;&n;case 2: __put_user_asm(data,h,addr,__pu_ret); break; &bslash;&n;case 4: __put_user_asm(data,w,addr,__pu_ret); break; &bslash;&n;case 8: __put_user_asm(data,x,addr,__pu_ret); break; &bslash;&n;default: __pu_ret = __put_user_bad(); break; &bslash;&n;} } else { __pu_ret = -EFAULT; } __pu_ret; })
 DECL|macro|__put_user_check_ret
-mdefine_line|#define __put_user_check_ret(x,addr,size,retval) ({ &bslash;&n;register int __foo __asm__ (&quot;l1&quot;); &bslash;&n;if (__access_ok(addr,size)) { &bslash;&n;switch (size) { &bslash;&n;case 1: __put_user_asm_ret(x,b,addr,retval,__foo); break; &bslash;&n;case 2: __put_user_asm_ret(x,h,addr,retval,__foo); break; &bslash;&n;case 4: __put_user_asm_ret(x,w,addr,retval,__foo); break; &bslash;&n;case 8: __put_user_asm_ret(x,x,addr,retval,__foo); break; &bslash;&n;default: if (__put_user_bad()) return retval; break; &bslash;&n;} } else return retval; })
+mdefine_line|#define __put_user_check_ret(data,addr,size,retval) ({ &bslash;&n;register int __foo __asm__ (&quot;l1&quot;); &bslash;&n;if (__access_ok(addr,size)) { &bslash;&n;switch (size) { &bslash;&n;case 1: __put_user_asm_ret(data,b,addr,retval,__foo); break; &bslash;&n;case 2: __put_user_asm_ret(data,h,addr,retval,__foo); break; &bslash;&n;case 4: __put_user_asm_ret(data,w,addr,retval,__foo); break; &bslash;&n;case 8: __put_user_asm_ret(data,x,addr,retval,__foo); break; &bslash;&n;default: if (__put_user_bad()) return retval; break; &bslash;&n;} } else return retval; })
 DECL|macro|__put_user_nocheck
-mdefine_line|#define __put_user_nocheck(x,addr,size) ({ &bslash;&n;register int __pu_ret; &bslash;&n;switch (size) { &bslash;&n;case 1: __put_user_asm(x,b,addr,__pu_ret); break; &bslash;&n;case 2: __put_user_asm(x,h,addr,__pu_ret); break; &bslash;&n;case 4: __put_user_asm(x,w,addr,__pu_ret); break; &bslash;&n;case 8: __put_user_asm(x,x,addr,__pu_ret); break; &bslash;&n;default: __pu_ret = __put_user_bad(); break; &bslash;&n;} __pu_ret; })
+mdefine_line|#define __put_user_nocheck(data,addr,size) ({ &bslash;&n;register int __pu_ret; &bslash;&n;switch (size) { &bslash;&n;case 1: __put_user_asm(data,b,addr,__pu_ret); break; &bslash;&n;case 2: __put_user_asm(data,h,addr,__pu_ret); break; &bslash;&n;case 4: __put_user_asm(data,w,addr,__pu_ret); break; &bslash;&n;case 8: __put_user_asm(data,x,addr,__pu_ret); break; &bslash;&n;default: __pu_ret = __put_user_bad(); break; &bslash;&n;} __pu_ret; })
 DECL|macro|__put_user_nocheck_ret
-mdefine_line|#define __put_user_nocheck_ret(x,addr,size,retval) ({ &bslash;&n;register int __foo __asm__ (&quot;l1&quot;); &bslash;&n;switch (size) { &bslash;&n;case 1: __put_user_asm_ret(x,b,addr,retval,__foo); break; &bslash;&n;case 2: __put_user_asm_ret(x,h,addr,retval,__foo); break; &bslash;&n;case 4: __put_user_asm_ret(x,w,addr,retval,__foo); break; &bslash;&n;case 8: __put_user_asm_ret(x,x,addr,retval,__foo); break; &bslash;&n;default: if (__put_user_bad()) return retval; break; &bslash;&n;} })
+mdefine_line|#define __put_user_nocheck_ret(data,addr,size,retval) ({ &bslash;&n;register int __foo __asm__ (&quot;l1&quot;); &bslash;&n;switch (size) { &bslash;&n;case 1: __put_user_asm_ret(data,b,addr,retval,__foo); break; &bslash;&n;case 2: __put_user_asm_ret(data,h,addr,retval,__foo); break; &bslash;&n;case 4: __put_user_asm_ret(data,w,addr,retval,__foo); break; &bslash;&n;case 8: __put_user_asm_ret(data,x,addr,retval,__foo); break; &bslash;&n;default: if (__put_user_bad()) return retval; break; &bslash;&n;} })
 DECL|macro|__put_user_asm
 mdefine_line|#define __put_user_asm(x,size,addr,ret)&t;&t;&t;&t;&t;&bslash;&n;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;/* Put user asm, inline. */&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&quot;1:&bslash;t&quot;&t;&quot;st&quot;#size &quot; %1, [%2]&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;clr&t;%0&bslash;n&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&quot;2:&bslash;n&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;.section .fixup,#alloc,#execinstr&bslash;n&bslash;t&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;.align&t;4&bslash;n&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&quot;3:&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;b&t;2b&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot; mov&t;%3, %0&bslash;n&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;.previous&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;.section __ex_table,#alloc&bslash;n&bslash;t&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;.align&t;4&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;.word&t;1b, 3b&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;.previous&bslash;n&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;       : &quot;=&amp;r&quot; (ret) : &quot;r&quot; (x), &quot;r&quot; (__m(addr)),&t;&t;&t;&bslash;&n;&t; &quot;i&quot; (-EFAULT))
 DECL|macro|__put_user_asm_ret
@@ -164,13 +164,13 @@ r_void
 )paren
 suffix:semicolon
 DECL|macro|__get_user_check
-mdefine_line|#define __get_user_check(x,addr,size,type) ({ &bslash;&n;register int __gu_ret; &bslash;&n;register unsigned long __gu_val; &bslash;&n;if (__access_ok(addr,size)) { &bslash;&n;switch (size) { &bslash;&n;case 1: __get_user_asm(__gu_val,ub,addr,__gu_ret); break; &bslash;&n;case 2: __get_user_asm(__gu_val,uh,addr,__gu_ret); break; &bslash;&n;case 4: __get_user_asm(__gu_val,uw,addr,__gu_ret); break; &bslash;&n;case 8: __get_user_asm(__gu_val,x,addr,__gu_ret); break; &bslash;&n;default: __gu_val = 0; __gu_ret = __get_user_bad(); break; &bslash;&n;} } else { __gu_val = 0; __gu_ret = -EFAULT; } x = (type) __gu_val; __gu_ret; })
+mdefine_line|#define __get_user_check(data,addr,size,type) ({ &bslash;&n;register int __gu_ret; &bslash;&n;register unsigned long __gu_val; &bslash;&n;if (__access_ok(addr,size)) { &bslash;&n;switch (size) { &bslash;&n;case 1: __get_user_asm(__gu_val,ub,addr,__gu_ret); break; &bslash;&n;case 2: __get_user_asm(__gu_val,uh,addr,__gu_ret); break; &bslash;&n;case 4: __get_user_asm(__gu_val,uw,addr,__gu_ret); break; &bslash;&n;case 8: __get_user_asm(__gu_val,x,addr,__gu_ret); break; &bslash;&n;default: __gu_val = 0; __gu_ret = __get_user_bad(); break; &bslash;&n;} } else { __gu_val = 0; __gu_ret = -EFAULT; } data = (type) __gu_val; __gu_ret; })
 DECL|macro|__get_user_check_ret
-mdefine_line|#define __get_user_check_ret(x,addr,size,type,retval) ({ &bslash;&n;register unsigned long __gu_val __asm__ (&quot;l1&quot;); &bslash;&n;if (__access_ok(addr,size)) { &bslash;&n;switch (size) { &bslash;&n;case 1: __get_user_asm_ret(__gu_val,ub,addr,retval); break; &bslash;&n;case 2: __get_user_asm_ret(__gu_val,uh,addr,retval); break; &bslash;&n;case 4: __get_user_asm_ret(__gu_val,uw,addr,retval); break; &bslash;&n;case 8: __get_user_asm_ret(__gu_val,x,addr,retval); break; &bslash;&n;default: if (__get_user_bad()) return retval; &bslash;&n;} x = (type) __gu_val; } else return retval; })
+mdefine_line|#define __get_user_check_ret(data,addr,size,type,retval) ({ &bslash;&n;register unsigned long __gu_val __asm__ (&quot;l1&quot;); &bslash;&n;if (__access_ok(addr,size)) { &bslash;&n;switch (size) { &bslash;&n;case 1: __get_user_asm_ret(__gu_val,ub,addr,retval); break; &bslash;&n;case 2: __get_user_asm_ret(__gu_val,uh,addr,retval); break; &bslash;&n;case 4: __get_user_asm_ret(__gu_val,uw,addr,retval); break; &bslash;&n;case 8: __get_user_asm_ret(__gu_val,x,addr,retval); break; &bslash;&n;default: if (__get_user_bad()) return retval; &bslash;&n;} data = (type) __gu_val; } else return retval; })
 DECL|macro|__get_user_nocheck
-mdefine_line|#define __get_user_nocheck(x,addr,size,type) ({ &bslash;&n;register int __gu_ret; &bslash;&n;register unsigned long __gu_val; &bslash;&n;switch (size) { &bslash;&n;case 1: __get_user_asm(__gu_val,ub,addr,__gu_ret); break; &bslash;&n;case 2: __get_user_asm(__gu_val,uh,addr,__gu_ret); break; &bslash;&n;case 4: __get_user_asm(__gu_val,uw,addr,__gu_ret); break; &bslash;&n;case 8: __get_user_asm(__gu_val,x,addr,__gu_ret); break; &bslash;&n;default: __gu_val = 0; __gu_ret = __get_user_bad(); break; &bslash;&n;} x = (type) __gu_val; __gu_ret; })
+mdefine_line|#define __get_user_nocheck(data,addr,size,type) ({ &bslash;&n;register int __gu_ret; &bslash;&n;register unsigned long __gu_val; &bslash;&n;switch (size) { &bslash;&n;case 1: __get_user_asm(__gu_val,ub,addr,__gu_ret); break; &bslash;&n;case 2: __get_user_asm(__gu_val,uh,addr,__gu_ret); break; &bslash;&n;case 4: __get_user_asm(__gu_val,uw,addr,__gu_ret); break; &bslash;&n;case 8: __get_user_asm(__gu_val,x,addr,__gu_ret); break; &bslash;&n;default: __gu_val = 0; __gu_ret = __get_user_bad(); break; &bslash;&n;} data = (type) __gu_val; __gu_ret; })
 DECL|macro|__get_user_nocheck_ret
-mdefine_line|#define __get_user_nocheck_ret(x,addr,size,type,retval) ({ &bslash;&n;register unsigned long __gu_val __asm__ (&quot;l1&quot;); &bslash;&n;switch (size) { &bslash;&n;case 1: __get_user_asm_ret(__gu_val,ub,addr,retval); break; &bslash;&n;case 2: __get_user_asm_ret(__gu_val,uh,addr,retval); break; &bslash;&n;case 4: __get_user_asm_ret(__gu_val,uw,addr,retval); break; &bslash;&n;case 8: __get_user_asm_ret(__gu_val,x,addr,retval); break; &bslash;&n;default: if (__get_user_bad()) return retval; &bslash;&n;} x = (type) __gu_val; })
+mdefine_line|#define __get_user_nocheck_ret(data,addr,size,type,retval) ({ &bslash;&n;register unsigned long __gu_val __asm__ (&quot;l1&quot;); &bslash;&n;switch (size) { &bslash;&n;case 1: __get_user_asm_ret(__gu_val,ub,addr,retval); break; &bslash;&n;case 2: __get_user_asm_ret(__gu_val,uh,addr,retval); break; &bslash;&n;case 4: __get_user_asm_ret(__gu_val,uw,addr,retval); break; &bslash;&n;case 8: __get_user_asm_ret(__gu_val,x,addr,retval); break; &bslash;&n;default: if (__get_user_bad()) return retval; &bslash;&n;} data = (type) __gu_val; })
 DECL|macro|__get_user_asm
 mdefine_line|#define __get_user_asm(x,size,addr,ret)&t;&t;&t;&t;&t;&bslash;&n;__asm__ __volatile__(&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;/* Get user asm, inline. */&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&quot;1:&bslash;t&quot;&t;&quot;ld&quot;#size &quot; [%2], %1&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;clr&t;%0&bslash;n&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&quot;2:&bslash;n&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;.section .fixup,#alloc,#execinstr&bslash;n&bslash;t&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;.align&t;4&bslash;n&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&quot;3:&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;clr&t;%1&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;b&t;2b&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot; mov&t;%3, %0&bslash;n&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;.previous&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;.section __ex_table,#alloc&bslash;n&bslash;t&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;.align&t;4&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;.word&t;1b, 3b&bslash;n&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;.previous&bslash;n&bslash;t&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;       : &quot;=&amp;r&quot; (ret), &quot;=&amp;r&quot; (x) : &quot;r&quot; (__m(addr)),&t;&t;&t;&bslash;&n;&t; &quot;i&quot; (-EFAULT))
 DECL|macro|__get_user_asm_ret
@@ -184,24 +184,24 @@ r_void
 )paren
 suffix:semicolon
 r_extern
-r_int
+id|__kernel_size_t
 id|__copy_user
 c_func
 (paren
-r_int
-r_int
+r_void
+op_star
 id|to
 comma
-r_int
-r_int
+r_void
+op_star
 id|from
 comma
-r_int
+id|__kernel_size_t
 id|size
 )paren
 suffix:semicolon
 DECL|macro|copy_to_user
-mdefine_line|#define copy_to_user(to,from,n) ({ &bslash;&n;unsigned long __copy_to = (unsigned long) (to); &bslash;&n;unsigned long __copy_size = (unsigned long) (n); &bslash;&n;unsigned long __copy_res; &bslash;&n;if(__copy_size &amp;&amp; __access_ok(__copy_to, __copy_size)) { &bslash;&n;__copy_res = __copy_user(__copy_to, (unsigned long) (from), __copy_size); &bslash;&n;} else __copy_res = __copy_size; &bslash;&n;__copy_res; })
+mdefine_line|#define copy_to_user(to,from,n) ({ &bslash;&n;void *__copy_to = (void *) (to); &bslash;&n;__kernel_size_t __copy_size = (__kernel_size_t) (n); &bslash;&n;__kernel_size_t __copy_res; &bslash;&n;if(__copy_size &amp;&amp; __access_ok(__copy_to, __copy_size)) { &bslash;&n;__copy_res = __copy_user(__copy_to, (void *) (from), __copy_size); &bslash;&n;} else __copy_res = __copy_size; &bslash;&n;__copy_res; })
 DECL|macro|copy_to_user_ret
 mdefine_line|#define copy_to_user_ret(to,from,n,retval) ({ &bslash;&n;if (copy_to_user(to,from,n)) &bslash;&n;&t;return retval; &bslash;&n;})
 DECL|macro|__copy_to_user
@@ -209,7 +209,7 @@ mdefine_line|#define __copy_to_user(to,from,n)&t;&t;&bslash;&n;&t;__copy_user((u
 DECL|macro|__copy_to_user_ret
 mdefine_line|#define __copy_to_user_ret(to,from,n,retval) ({ &bslash;&n;if (__copy_to_user(to,from,n)) &bslash;&n;&t;return retval; &bslash;&n;})
 DECL|macro|copy_from_user
-mdefine_line|#define copy_from_user(to,from,n) ({ &bslash;&n;unsigned long __copy_from = (unsigned long) (from); &bslash;&n;unsigned long __copy_size = (unsigned long) (n); &bslash;&n;unsigned long __copy_res; &bslash;&n;if(__copy_size &amp;&amp; __access_ok(__copy_from, __copy_size)) { &bslash;&n;__copy_res = __copy_user((unsigned long) (to), __copy_from, __copy_size); &bslash;&n;} else __copy_res = __copy_size; &bslash;&n;__copy_res; })
+mdefine_line|#define copy_from_user(to,from,n) ({ &bslash;&n;void *__copy_from = (void *) (from); &bslash;&n;__kernel_size_t __copy_size = (__kernel_size_t) (n); &bslash;&n;__kernel_size_t __copy_res; &bslash;&n;if(__copy_size &amp;&amp; __access_ok(__copy_from, __copy_size)) { &bslash;&n;__copy_res = __copy_user((void *) (to), __copy_from, __copy_size); &bslash;&n;} else __copy_res = __copy_size; &bslash;&n;__copy_res; })
 DECL|macro|copy_from_user_ret
 mdefine_line|#define copy_from_user_ret(to,from,n,retval) ({ &bslash;&n;if (copy_from_user(to,from,n)) &bslash;&n;&t;return retval; &bslash;&n;})
 DECL|macro|__copy_from_user

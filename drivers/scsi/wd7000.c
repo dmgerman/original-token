@@ -4487,13 +4487,8 @@ op_eq
 id|pass
 )paren
 op_logical_and
-op_logical_neg
-id|memcmp
-(paren
-(paren
-r_void
-op_star
-)paren
+id|check_signature
+c_func
 (paren
 id|wd7000_biosaddr
 (braket
@@ -4506,7 +4501,6 @@ id|sig_ptr
 )braket
 dot
 id|ofs
-)paren
 comma
 id|signatures
 (braket

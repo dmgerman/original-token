@@ -414,6 +414,10 @@ comma
 r_int
 id|count
 comma
+r_int
+op_star
+id|eof
+comma
 r_void
 op_star
 id|data

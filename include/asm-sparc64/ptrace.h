@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ptrace.h,v 1.4 1996/12/28 18:39:54 davem Exp $ */
+multiline_comment|/* $Id: ptrace.h,v 1.7 1997/03/04 16:27:32 jj Exp $ */
 macro_line|#ifndef _SPARC64_PTRACE_H
 DECL|macro|_SPARC64_PTRACE_H
 mdefine_line|#define _SPARC64_PTRACE_H
@@ -330,17 +330,276 @@ macro_line|#endif
 macro_line|#else /* __ASSEMBLY__ */
 multiline_comment|/* For assembly code. */
 DECL|macro|TRACEREG_SZ
-mdefine_line|#define TRACEREG_SZ&t;&t;XXX
+mdefine_line|#define TRACEREG_SZ&t;&t;0xa0
 DECL|macro|STACKFRAME_SZ
-mdefine_line|#define STACKFRAME_SZ&t;&t;YYY
+mdefine_line|#define STACKFRAME_SZ&t;&t;0xc0
 DECL|macro|REGWIN_SZ
-mdefine_line|#define REGWIN_SZ&t;&t;ZZZ
+mdefine_line|#define REGWIN_SZ&t;&t;0x80
 DECL|macro|TRACEREG32_SZ
 mdefine_line|#define TRACEREG32_SZ&t;&t;0x50
 DECL|macro|STACKFRAME32_SZ
 mdefine_line|#define STACKFRAME32_SZ&t;&t;0x60
 DECL|macro|REGWIN32_SZ
 mdefine_line|#define REGWIN32_SZ&t;&t;0x40
+macro_line|#include &lt;asm/asm_offsets.h&gt;
 macro_line|#endif
+DECL|macro|STACK_BIAS
+mdefine_line|#define STACK_BIAS&t;&t;2047
+multiline_comment|/* These are for pt_regs. */
+DECL|macro|PT_V9_G0
+mdefine_line|#define PT_V9_G0     0x00
+DECL|macro|PT_V9_G1
+mdefine_line|#define PT_V9_G1     0x08
+DECL|macro|PT_V9_G2
+mdefine_line|#define PT_V9_G2     0x10
+DECL|macro|PT_V9_G3
+mdefine_line|#define PT_V9_G3     0x18
+DECL|macro|PT_V9_G4
+mdefine_line|#define PT_V9_G4     0x20
+DECL|macro|PT_V9_G5
+mdefine_line|#define PT_V9_G5     0x28
+DECL|macro|PT_V9_G6
+mdefine_line|#define PT_V9_G6     0x30
+DECL|macro|PT_V9_G7
+mdefine_line|#define PT_V9_G7     0x38
+DECL|macro|PT_V9_I0
+mdefine_line|#define PT_V9_I0     0x40
+DECL|macro|PT_V9_I1
+mdefine_line|#define PT_V9_I1     0x48
+DECL|macro|PT_V9_I2
+mdefine_line|#define PT_V9_I2     0x50
+DECL|macro|PT_V9_I3
+mdefine_line|#define PT_V9_I3     0x58
+DECL|macro|PT_V9_I4
+mdefine_line|#define PT_V9_I4     0x60
+DECL|macro|PT_V9_I5
+mdefine_line|#define PT_V9_I5     0x68
+DECL|macro|PT_V9_I6
+mdefine_line|#define PT_V9_I6     0x70
+DECL|macro|PT_V9_FP
+mdefine_line|#define PT_V9_FP     PT_V9_I6
+DECL|macro|PT_V9_I7
+mdefine_line|#define PT_V9_I7     0x78
+DECL|macro|PT_V9_TSTATE
+mdefine_line|#define PT_V9_TSTATE 0x80
+DECL|macro|PT_V9_TPC
+mdefine_line|#define PT_V9_TPC    0x88
+DECL|macro|PT_V9_TNPC
+mdefine_line|#define PT_V9_TNPC   0x90
+DECL|macro|PT_V9_Y
+mdefine_line|#define PT_V9_Y      0x98
+DECL|macro|PT_TSTATE
+mdefine_line|#define PT_TSTATE&t;PT_V9_TSTATE
+DECL|macro|PT_TPC
+mdefine_line|#define PT_TPC&t;&t;PT_V9_TPC
+DECL|macro|PT_TNPC
+mdefine_line|#define PT_TNPC&t;&t;PT_V9_TNPC
+multiline_comment|/* These for pt_regs32. */
+DECL|macro|PT_PSR
+mdefine_line|#define PT_PSR    0x0
+DECL|macro|PT_PC
+mdefine_line|#define PT_PC     0x4
+DECL|macro|PT_NPC
+mdefine_line|#define PT_NPC    0x8
+DECL|macro|PT_Y
+mdefine_line|#define PT_Y      0xc
+DECL|macro|PT_G0
+mdefine_line|#define PT_G0     0x10
+DECL|macro|PT_WIM
+mdefine_line|#define PT_WIM    PT_G0
+DECL|macro|PT_G1
+mdefine_line|#define PT_G1     0x14
+DECL|macro|PT_G2
+mdefine_line|#define PT_G2     0x18
+DECL|macro|PT_G3
+mdefine_line|#define PT_G3     0x1c
+DECL|macro|PT_G4
+mdefine_line|#define PT_G4     0x20
+DECL|macro|PT_G5
+mdefine_line|#define PT_G5     0x24
+DECL|macro|PT_G6
+mdefine_line|#define PT_G6     0x28
+DECL|macro|PT_G7
+mdefine_line|#define PT_G7     0x2c
+DECL|macro|PT_I0
+mdefine_line|#define PT_I0     0x30
+DECL|macro|PT_I1
+mdefine_line|#define PT_I1     0x34
+DECL|macro|PT_I2
+mdefine_line|#define PT_I2     0x38
+DECL|macro|PT_I3
+mdefine_line|#define PT_I3     0x3c
+DECL|macro|PT_I4
+mdefine_line|#define PT_I4     0x40
+DECL|macro|PT_I5
+mdefine_line|#define PT_I5     0x44
+DECL|macro|PT_I6
+mdefine_line|#define PT_I6     0x48
+DECL|macro|PT_FP
+mdefine_line|#define PT_FP     PT_I6
+DECL|macro|PT_I7
+mdefine_line|#define PT_I7     0x4c
+multiline_comment|/* Reg_window offsets */
+DECL|macro|RW_V9_L0
+mdefine_line|#define RW_V9_L0     0x00
+DECL|macro|RW_V9_L1
+mdefine_line|#define RW_V9_L1     0x08
+DECL|macro|RW_V9_L2
+mdefine_line|#define RW_V9_L2     0x10
+DECL|macro|RW_V9_L3
+mdefine_line|#define RW_V9_L3     0x18
+DECL|macro|RW_V9_L4
+mdefine_line|#define RW_V9_L4     0x20
+DECL|macro|RW_V9_L5
+mdefine_line|#define RW_V9_L5     0x28
+DECL|macro|RW_V9_L6
+mdefine_line|#define RW_V9_L6     0x30
+DECL|macro|RW_V9_L7
+mdefine_line|#define RW_V9_L7     0x38
+DECL|macro|RW_V9_I0
+mdefine_line|#define RW_V9_I0     0x40
+DECL|macro|RW_V9_I1
+mdefine_line|#define RW_V9_I1     0x48
+DECL|macro|RW_V9_I2
+mdefine_line|#define RW_V9_I2     0x50
+DECL|macro|RW_V9_I3
+mdefine_line|#define RW_V9_I3     0x58
+DECL|macro|RW_V9_I4
+mdefine_line|#define RW_V9_I4     0x60
+DECL|macro|RW_V9_I5
+mdefine_line|#define RW_V9_I5     0x68
+DECL|macro|RW_V9_I6
+mdefine_line|#define RW_V9_I6     0x70
+DECL|macro|RW_V9_I7
+mdefine_line|#define RW_V9_I7     0x78
+DECL|macro|RW_L0
+mdefine_line|#define RW_L0     0x00
+DECL|macro|RW_L1
+mdefine_line|#define RW_L1     0x04
+DECL|macro|RW_L2
+mdefine_line|#define RW_L2     0x08
+DECL|macro|RW_L3
+mdefine_line|#define RW_L3     0x0c
+DECL|macro|RW_L4
+mdefine_line|#define RW_L4     0x10
+DECL|macro|RW_L5
+mdefine_line|#define RW_L5     0x14
+DECL|macro|RW_L6
+mdefine_line|#define RW_L6     0x18
+DECL|macro|RW_L7
+mdefine_line|#define RW_L7     0x1c
+DECL|macro|RW_I0
+mdefine_line|#define RW_I0     0x20
+DECL|macro|RW_I1
+mdefine_line|#define RW_I1     0x24
+DECL|macro|RW_I2
+mdefine_line|#define RW_I2     0x28
+DECL|macro|RW_I3
+mdefine_line|#define RW_I3     0x2c
+DECL|macro|RW_I4
+mdefine_line|#define RW_I4     0x30
+DECL|macro|RW_I5
+mdefine_line|#define RW_I5     0x34
+DECL|macro|RW_I6
+mdefine_line|#define RW_I6     0x38
+DECL|macro|RW_I7
+mdefine_line|#define RW_I7     0x3c
+multiline_comment|/* Stack_frame offsets */
+DECL|macro|SF_V9_L0
+mdefine_line|#define SF_V9_L0     0x00
+DECL|macro|SF_V9_L1
+mdefine_line|#define SF_V9_L1     0x08
+DECL|macro|SF_V9_L2
+mdefine_line|#define SF_V9_L2     0x10
+DECL|macro|SF_V9_L3
+mdefine_line|#define SF_V9_L3     0x18
+DECL|macro|SF_V9_L4
+mdefine_line|#define SF_V9_L4     0x20
+DECL|macro|SF_V9_L5
+mdefine_line|#define SF_V9_L5     0x28
+DECL|macro|SF_V9_L6
+mdefine_line|#define SF_V9_L6     0x30
+DECL|macro|SF_V9_L7
+mdefine_line|#define SF_V9_L7     0x38
+DECL|macro|SF_V9_I0
+mdefine_line|#define SF_V9_I0     0x40
+DECL|macro|SF_V9_I1
+mdefine_line|#define SF_V9_I1     0x48
+DECL|macro|SF_V9_I2
+mdefine_line|#define SF_V9_I2     0x50
+DECL|macro|SF_V9_I3
+mdefine_line|#define SF_V9_I3     0x58
+DECL|macro|SF_V9_I4
+mdefine_line|#define SF_V9_I4     0x60
+DECL|macro|SF_V9_I5
+mdefine_line|#define SF_V9_I5     0x68
+DECL|macro|SF_V9_FP
+mdefine_line|#define SF_V9_FP     0x70
+DECL|macro|SF_V9_PC
+mdefine_line|#define SF_V9_PC     0x78
+DECL|macro|SF_V9_RETP
+mdefine_line|#define SF_V9_RETP   0x80
+DECL|macro|SF_V9_XARG0
+mdefine_line|#define SF_V9_XARG0  0x88
+DECL|macro|SF_V9_XARG1
+mdefine_line|#define SF_V9_XARG1  0x90
+DECL|macro|SF_V9_XARG2
+mdefine_line|#define SF_V9_XARG2  0x98
+DECL|macro|SF_V9_XARG3
+mdefine_line|#define SF_V9_XARG3  0xa0
+DECL|macro|SF_V9_XARG4
+mdefine_line|#define SF_V9_XARG4  0xa8
+DECL|macro|SF_V9_XARG5
+mdefine_line|#define SF_V9_XARG5  0xb0
+DECL|macro|SF_V9_XXARG
+mdefine_line|#define SF_V9_XXARG  0xb8
+DECL|macro|SF_L0
+mdefine_line|#define SF_L0     0x00
+DECL|macro|SF_L1
+mdefine_line|#define SF_L1     0x04
+DECL|macro|SF_L2
+mdefine_line|#define SF_L2     0x08
+DECL|macro|SF_L3
+mdefine_line|#define SF_L3     0x0c
+DECL|macro|SF_L4
+mdefine_line|#define SF_L4     0x10
+DECL|macro|SF_L5
+mdefine_line|#define SF_L5     0x14
+DECL|macro|SF_L6
+mdefine_line|#define SF_L6     0x18
+DECL|macro|SF_L7
+mdefine_line|#define SF_L7     0x1c
+DECL|macro|SF_I0
+mdefine_line|#define SF_I0     0x20
+DECL|macro|SF_I1
+mdefine_line|#define SF_I1     0x24
+DECL|macro|SF_I2
+mdefine_line|#define SF_I2     0x28
+DECL|macro|SF_I3
+mdefine_line|#define SF_I3     0x2c
+DECL|macro|SF_I4
+mdefine_line|#define SF_I4     0x30
+DECL|macro|SF_I5
+mdefine_line|#define SF_I5     0x34
+DECL|macro|SF_FP
+mdefine_line|#define SF_FP     0x38
+DECL|macro|SF_PC
+mdefine_line|#define SF_PC     0x3c
+DECL|macro|SF_RETP
+mdefine_line|#define SF_RETP   0x40
+DECL|macro|SF_XARG0
+mdefine_line|#define SF_XARG0  0x44
+DECL|macro|SF_XARG1
+mdefine_line|#define SF_XARG1  0x48
+DECL|macro|SF_XARG2
+mdefine_line|#define SF_XARG2  0x4c
+DECL|macro|SF_XARG3
+mdefine_line|#define SF_XARG3  0x50
+DECL|macro|SF_XARG4
+mdefine_line|#define SF_XARG4  0x54
+DECL|macro|SF_XARG5
+mdefine_line|#define SF_XARG5  0x58
+DECL|macro|SF_XXARG
+mdefine_line|#define SF_XXARG  0x5c
 macro_line|#endif /* !(_SPARC64_PTRACE_H) */
 eof

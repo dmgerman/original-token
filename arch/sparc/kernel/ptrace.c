@@ -3765,7 +3765,11 @@ comma
 (paren
 l_int|32
 op_star
-l_int|4
+r_sizeof
+(paren
+r_int
+r_int
+)paren
 )paren
 )paren
 suffix:semicolon

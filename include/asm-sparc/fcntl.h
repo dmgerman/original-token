@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fcntl.h,v 1.8 1996/10/27 08:55:26 davem Exp $ */
+multiline_comment|/* $Id: fcntl.h,v 1.9 1997/02/04 07:29:20 davem Exp $ */
 macro_line|#ifndef _SPARC_FCNTL_H
 DECL|macro|_SPARC_FCNTL_H
 mdefine_line|#define _SPARC_FCNTL_H
@@ -11,8 +11,6 @@ DECL|macro|O_RDWR
 mdefine_line|#define O_RDWR&t;&t;0x0002
 DECL|macro|O_ACCMODE
 mdefine_line|#define O_ACCMODE&t;0x0003
-DECL|macro|O_NDELAY
-mdefine_line|#define O_NDELAY&t;0x0004
 DECL|macro|O_APPEND
 mdefine_line|#define O_APPEND&t;0x0008
 DECL|macro|FASYNC
@@ -27,6 +25,8 @@ DECL|macro|O_SYNC
 mdefine_line|#define O_SYNC&t;&t;0x2000
 DECL|macro|O_NONBLOCK
 mdefine_line|#define O_NONBLOCK&t;0x4000
+DECL|macro|O_NDELAY
+mdefine_line|#define O_NDELAY&t;(0x0004 | O_NONBLOCK)
 DECL|macro|O_NOCTTY
 mdefine_line|#define O_NOCTTY&t;0x8000&t;/* not fcntl */
 DECL|macro|F_DUPFD

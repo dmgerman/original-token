@@ -36,6 +36,55 @@ macro_line|#include &quot;constants.h&quot;
 macro_line|#include &quot;sd.h&quot;
 macro_line|#include&lt;linux/stat.h&gt;
 macro_line|#include&lt;linux/string.h&gt;
+DECL|macro|DTC_PUBLIC_RELEASE
+mdefine_line|#define DTC_PUBLIC_RELEASE 2
+multiline_comment|/*#define DTCDEBUG 0x1*/
+DECL|macro|DTCDEBUG_INIT
+mdefine_line|#define DTCDEBUG_INIT&t;0x1
+DECL|macro|DTCDEBUG_TRANSFER
+mdefine_line|#define DTCDEBUG_TRANSFER 0x2
+multiline_comment|/*&n; * The DTC3180 &amp; 3280 boards are memory mapped.&n; * &n; */
+multiline_comment|/*&n; */
+multiline_comment|/* Offset from DTC_5380_OFFSET */
+DECL|macro|DTC_CONTROL_REG
+mdefine_line|#define DTC_CONTROL_REG&t;&t;0x100&t;/* rw */
+DECL|macro|D_CR_ACCESS
+mdefine_line|#define D_CR_ACCESS&t;&t;0x80&t;/* ro set=can access 3280 registers */
+DECL|macro|CSR_DIR_READ
+mdefine_line|#define CSR_DIR_READ&t;&t;0x40&t;/* rw direction, 1 = read 0 = write */
+DECL|macro|CSR_RESET
+mdefine_line|#define CSR_RESET              0x80    /* wo  Resets 53c400 */
+DECL|macro|CSR_5380_REG
+mdefine_line|#define CSR_5380_REG           0x80    /* ro  5380 registers can be accessed */
+DECL|macro|CSR_TRANS_DIR
+mdefine_line|#define CSR_TRANS_DIR          0x40    /* rw  Data transfer direction */
+DECL|macro|CSR_SCSI_BUFF_INTR
+mdefine_line|#define CSR_SCSI_BUFF_INTR     0x20    /* rw  Enable int on transfer ready */
+DECL|macro|CSR_5380_INTR
+mdefine_line|#define CSR_5380_INTR          0x10    /* rw  Enable 5380 interrupts */
+DECL|macro|CSR_SHARED_INTR
+mdefine_line|#define CSR_SHARED_INTR        0x08    /* rw  Interrupt sharing */
+DECL|macro|CSR_HOST_BUF_NOT_RDY
+mdefine_line|#define CSR_HOST_BUF_NOT_RDY   0x04    /* ro  Host buffer not ready */
+DECL|macro|CSR_SCSI_BUF_RDY
+mdefine_line|#define CSR_SCSI_BUF_RDY       0x02    /* ro  SCSI buffer ready */
+DECL|macro|CSR_GATED_5380_IRQ
+mdefine_line|#define CSR_GATED_5380_IRQ     0x01    /* ro  Last block xferred */
+DECL|macro|CSR_INT_BASE
+mdefine_line|#define CSR_INT_BASE (CSR_SCSI_BUFF_INTR | CSR_5380_INTR)
+DECL|macro|DTC_BLK_CNT
+mdefine_line|#define DTC_BLK_CNT&t;&t;0x101   /* rw &n;&t;&t;&t;&t;&t; * # of 128-byte blocks to transfer */
+DECL|macro|D_CR_ACCESS
+mdefine_line|#define D_CR_ACCESS             0x80    /* ro set=can access 3280 registers */
+DECL|macro|DTC_SWITCH_REG
+mdefine_line|#define DTC_SWITCH_REG&t;&t;0x3982&t;/* ro - DIP switches */
+DECL|macro|DTC_RESUME_XFER
+mdefine_line|#define DTC_RESUME_XFER&t;&t;0x3982&t;/* wo - resume data xfer &n;&t;&t;&t;&t;&t;   * after disconnect/reconnect*/
+DECL|macro|DTC_5380_OFFSET
+mdefine_line|#define DTC_5380_OFFSET&t;&t;0x3880&t;/* 8 registers here, see NCR5380.h */
+multiline_comment|/*!!!! for dtc, it&squot;s a 128 byte buffer at 3900 !!! */
+DECL|macro|DTC_DATA_BUF
+mdefine_line|#define DTC_DATA_BUF&t;&t;0x3900  /* rw 128 bytes long */
 DECL|variable|proc_scsi_dtc
 r_struct
 id|proc_dir_entry
@@ -420,7 +469,7 @@ macro_line|#if (DTCDEBUG &amp; DTCDEBUG_INIT)
 id|printk
 c_func
 (paren
-l_string|&quot;scsi : probing address %08x&bslash;n&quot;
+l_string|&quot;scsi-dtc : probing address %08x&bslash;n&quot;
 comma
 id|bases
 (braket

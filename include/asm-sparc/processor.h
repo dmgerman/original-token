@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: processor.h,v 1.54 1996/12/24 09:19:49 davem Exp $&n; * include/asm-sparc/processor.h&n; *&n; * Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: processor.h,v 1.57 1997/03/04 16:27:22 jj Exp $&n; * include/asm-sparc/processor.h&n; *&n; * Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __ASM_SPARC_PROCESSOR_H
 DECL|macro|__ASM_SPARC_PROCESSOR_H
 mdefine_line|#define __ASM_SPARC_PROCESSOR_H
@@ -25,35 +25,21 @@ mdefine_line|#define wp_works_ok__is_a_macro /* for versions in ksyms.c */
 multiline_comment|/* Whee, this is STACK_TOP + PAGE_SIZE and the lowest kernel address too... &n; * That one page is used to protect kernel from intruders, so that&n; * we can make our access_ok test faster&n; */
 DECL|macro|TASK_SIZE
 mdefine_line|#define TASK_SIZE&t;(page_offset)
-multiline_comment|/* Ok this is hot.  Sparc exception save area. */
-DECL|struct|exception_struct
+DECL|struct|fpq
 r_struct
-id|exception_struct
+id|fpq
 (brace
-DECL|member|count
+DECL|member|insn_addr
 r_int
 r_int
-id|count
+op_star
+id|insn_addr
 suffix:semicolon
-multiline_comment|/* Exception count */
-DECL|member|pc
+DECL|member|insn
 r_int
 r_int
-id|pc
+id|insn
 suffix:semicolon
-multiline_comment|/* Callers PC for copy/clear user */
-DECL|member|expc
-r_int
-r_int
-id|expc
-suffix:semicolon
-multiline_comment|/* Where to jump when exception signaled */
-DECL|member|address
-r_int
-r_int
-id|address
-suffix:semicolon
-multiline_comment|/* Saved user base address for transfer */
 )brace
 suffix:semicolon
 multiline_comment|/* The Sparc processor specific thread struct. */
@@ -199,7 +185,7 @@ r_int
 r_int
 id|float_regs
 (braket
-l_int|64
+l_int|32
 )braket
 id|__attribute__
 (paren
@@ -221,23 +207,9 @@ r_int
 r_int
 id|fpqdepth
 suffix:semicolon
-DECL|struct|fpq
+DECL|member|fpqueue
 r_struct
 id|fpq
-(brace
-DECL|member|insn_addr
-r_int
-r_int
-op_star
-id|insn_addr
-suffix:semicolon
-DECL|member|insn
-r_int
-r_int
-id|insn
-suffix:semicolon
-DECL|member|fpqueue
-)brace
 id|fpqueue
 (braket
 l_int|16
@@ -252,20 +224,6 @@ DECL|member|flags
 r_int
 r_int
 id|flags
-suffix:semicolon
-DECL|member|ex
-r_struct
-id|exception_struct
-id|ex
-id|__attribute__
-(paren
-(paren
-id|aligned
-(paren
-l_int|8
-)paren
-)paren
-)paren
 suffix:semicolon
 DECL|member|current_ds
 r_int
@@ -290,7 +248,7 @@ mdefine_line|#define SPARC_FLAG_UNALIGNED    0x2    /* is allowed to do unaligne
 DECL|macro|INIT_MMAP
 mdefine_line|#define INIT_MMAP { &amp;init_mm, (0), (0), &bslash;&n;&t;&t;    __pgprot(0x0) , VM_READ | VM_WRITE | VM_EXEC }
 DECL|macro|INIT_TSS
-mdefine_line|#define INIT_TSS  { &bslash;&n;/* uwinmask, kregs, sig_address, sig_desc, ksp, kpc, kpsr, kwim */ &bslash;&n;   0,        0,     0,           0,        0,   0,   0,    0, &bslash;&n;/* fork_kpsr, fork_kwim */ &bslash;&n;   0,         0, &bslash;&n;/* reg_window */  &bslash;&n;{ { { 0, }, { 0, } }, }, &bslash;&n;/* rwbuf_stkptrs */  &bslash;&n;{ 0, 0, 0, 0, 0, 0, 0, 0, }, &bslash;&n;/* w_saved */ &bslash;&n;   0, &bslash;&n;/* FPU regs */   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, }, &bslash;&n;/* FPU status, FPU qdepth, FPU queue */ &bslash;&n;   0,          0,  { { 0, 0, }, }, &bslash;&n;/* sstk_info */ &bslash;&n;{ 0, 0, }, &bslash;&n;/* flags,              ex,       current_ds, */ &bslash;&n;   SPARC_FLAG_KTHREAD, { 0, }, USER_DS, &bslash;&n;/* core_exec */ &bslash;&n;{ 0, }, &bslash;&n;/* new_signal */ &bslash;&n;  0, &bslash;&n;}
+mdefine_line|#define INIT_TSS  { &bslash;&n;/* uwinmask, kregs, sig_address, sig_desc, ksp, kpc, kpsr, kwim */ &bslash;&n;   0,        0,     0,           0,        0,   0,   0,    0, &bslash;&n;/* fork_kpsr, fork_kwim */ &bslash;&n;   0,         0, &bslash;&n;/* reg_window */  &bslash;&n;{ { { 0, }, { 0, } }, }, &bslash;&n;/* rwbuf_stkptrs */  &bslash;&n;{ 0, 0, 0, 0, 0, 0, 0, 0, }, &bslash;&n;/* w_saved */ &bslash;&n;   0, &bslash;&n;/* FPU regs */   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, }, &bslash;&n;/* FPU status, FPU qdepth, FPU queue */ &bslash;&n;   0,          0,  { { 0, 0, }, }, &bslash;&n;/* sstk_info */ &bslash;&n;{ 0, 0, }, &bslash;&n;/* flags,              current_ds, */ &bslash;&n;   SPARC_FLAG_KTHREAD, USER_DS, &bslash;&n;/* core_exec */ &bslash;&n;{ 0, }, &bslash;&n;/* new_signal */ &bslash;&n;  0, &bslash;&n;}
 multiline_comment|/* Return saved PC of a blocked thread. */
 DECL|function|thread_saved_pc
 r_extern

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: signal.h,v 1.1 1996/12/26 14:22:37 davem Exp $ */
+multiline_comment|/* $Id: signal.h,v 1.2 1997/03/03 16:51:57 jj Exp $ */
 macro_line|#ifndef _ASMSPARC64_SIGNAL_H
 DECL|macro|_ASMSPARC64_SIGNAL_H
 mdefine_line|#define _ASMSPARC64_SIGNAL_H
@@ -269,9 +269,8 @@ DECL|struct|sigaction32
 r_struct
 id|sigaction32
 (brace
-multiline_comment|/* XXX 32-bit func ptr... */
 DECL|member|sa_handler
-id|__sighandler_t
+r_int
 id|sa_handler
 suffix:semicolon
 DECL|member|sa_mask
@@ -285,14 +284,8 @@ id|sa_flags
 suffix:semicolon
 multiline_comment|/* XXX 32-bit func ptr... */
 DECL|member|sa_restorer
-r_void
-(paren
-op_star
+r_int
 id|sa_restorer
-)paren
-(paren
-r_void
-)paren
 suffix:semicolon
 multiline_comment|/* not used by Linux/SPARC yet */
 )brace

@@ -3966,6 +3966,11 @@ comma
 id|memory_end
 )paren
 suffix:semicolon
+id|proc_root_init
+c_func
+(paren
+)paren
+suffix:semicolon
 id|kmem_cache_sizes_init
 c_func
 (paren

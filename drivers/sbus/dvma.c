@@ -252,6 +252,8 @@ comma
 id|dma-&gt;SBus_dev-&gt;reg_addrs
 comma
 l_int|0x2
+comma
+id|dma-&gt;SBus_dev
 )paren
 suffix:semicolon
 )brace
@@ -265,6 +267,8 @@ comma
 id|dma-&gt;SBus_dev-&gt;reg_addrs
 comma
 l_int|0x1
+comma
+id|dma-&gt;SBus_dev
 )paren
 suffix:semicolon
 id|dma-&gt;regs

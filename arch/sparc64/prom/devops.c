@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: devops.c,v 1.1 1996/12/27 08:49:11 jj Exp $&n; * devops.c:  Device operations using the PROM.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: devops.c,v 1.2 1997/02/25 12:40:20 jj Exp $&n; * devops.c:  Device operations using the PROM.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -16,10 +16,7 @@ id|dstr
 )paren
 (brace
 r_return
-(paren
-op_star
-id|prom_command
-)paren
+id|p1275_cmd
 (paren
 l_string|&quot;open&quot;
 comma
@@ -53,10 +50,7 @@ r_int
 id|dhandle
 )paren
 (brace
-(paren
-op_star
-id|prom_command
-)paren
+id|p1275_cmd
 (paren
 l_string|&quot;close&quot;
 comma
@@ -93,10 +87,7 @@ r_int
 id|seeklo
 )paren
 (brace
-(paren
-op_star
-id|prom_command
-)paren
+id|p1275_cmd
 (paren
 l_string|&quot;seek&quot;
 comma

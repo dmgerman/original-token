@@ -11,9 +11,9 @@ DECL|member|count
 id|atomic_t
 id|count
 suffix:semicolon
-DECL|member|waiting
+DECL|member|waking
 id|atomic_t
-id|waiting
+id|waking
 suffix:semicolon
 DECL|member|wait
 r_struct

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sunos.c,v 1.75 1997/01/26 07:12:31 davem Exp $&n; * sys_sunos.c: SunOS specific syscall compatibility support.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * Based upon preliminary work which is:&n; *&n; * Copyright (C) 1995 Adrian M. Rodriguez (adrian@remus.rutgers.edu)&n; *&n; */
+multiline_comment|/* $Id: sys_sunos.c,v 1.77 1997/02/15 01:17:04 davem Exp $&n; * sys_sunos.c: SunOS specific syscall compatibility support.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * Based upon preliminary work which is:&n; *&n; * Copyright (C) 1995 Adrian M. Rodriguez (adrian@remus.rutgers.edu)&n; *&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -39,6 +39,9 @@ macro_line|#include &lt;linux/nfs_mount.h&gt;
 multiline_comment|/* for sunos_select */
 macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;linux/personality.h&gt;
+multiline_comment|/* NR_OPEN is now larger and dynamic in recent kernels. */
+DECL|macro|SUNOS_NR_OPEN
+mdefine_line|#define SUNOS_NR_OPEN&t;256
 r_extern
 r_int
 r_int
@@ -151,7 +154,7 @@ c_cond
 (paren
 id|fd
 op_ge
-id|NR_OPEN
+id|SUNOS_NR_OPEN
 op_logical_or
 op_logical_neg
 (paren
@@ -1241,7 +1244,7 @@ r_void
 )paren
 (brace
 r_return
-id|NR_OPEN
+id|SUNOS_NR_OPEN
 suffix:semicolon
 )brace
 DECL|macro|_S
@@ -1646,7 +1649,7 @@ c_cond
 (paren
 id|fd
 op_ge
-id|NR_OPEN
+id|SUNOS_NR_OPEN
 op_logical_or
 op_logical_neg
 (paren
@@ -2061,7 +2064,7 @@ c_cond
 (paren
 id|fd
 op_ge
-id|NR_OPEN
+id|SUNOS_NR_OPEN
 op_logical_or
 op_logical_neg
 (paren
@@ -4147,6 +4150,23 @@ r_return
 id|ret
 suffix:semicolon
 )brace
+multiline_comment|/* sysconf options, for SunOS compatibility */
+DECL|macro|_SC_ARG_MAX
+mdefine_line|#define   _SC_ARG_MAX             1
+DECL|macro|_SC_CHILD_MAX
+mdefine_line|#define   _SC_CHILD_MAX           2
+DECL|macro|_SC_CLK_TCK
+mdefine_line|#define   _SC_CLK_TCK             3
+DECL|macro|_SC_NGROUPS_MAX
+mdefine_line|#define   _SC_NGROUPS_MAX         4
+DECL|macro|_SC_OPEN_MAX
+mdefine_line|#define   _SC_OPEN_MAX            5
+DECL|macro|_SC_JOB_CONTROL
+mdefine_line|#define   _SC_JOB_CONTROL         6
+DECL|macro|_SC_SAVED_IDS
+mdefine_line|#define   _SC_SAVED_IDS           7
+DECL|macro|_SC_VERSION
+mdefine_line|#define   _SC_VERSION             8
 DECL|function|sunos_sysconf
 r_extern
 id|asmlinkage

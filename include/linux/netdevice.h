@@ -47,8 +47,6 @@ DECL|macro|IFF_IP_MASK_OK
 mdefine_line|#define IFF_IP_MASK_OK&t;2
 DECL|macro|IFF_IP_BRD_OK
 mdefine_line|#define IFF_IP_BRD_OK&t;4
-macro_line|#ifdef __KERNEL__
-macro_line|#include &lt;linux/skbuff.h&gt;
 multiline_comment|/*&n; *&t;We tag multicasts with these structures.&n; */
 DECL|struct|dev_mc_list
 r_struct
@@ -251,6 +249,8 @@ id|tx_window_errors
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;linux/skbuff.h&gt;
 multiline_comment|/*&n; *&t;The DEVICE structure.&n; *&t;Actually, this whole structure is a big mistake.  It mixes I/O&n; *&t;data with strictly &quot;high-level&quot; data, and it has to know about&n; *&t;almost every data structure used in the INET module.&n; *&n; *&t;FIXME: cleanup struct device such that network protocol info&n; *&t;moves out.&n; */
 DECL|struct|device
 r_struct

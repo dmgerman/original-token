@@ -3307,6 +3307,8 @@ comma
 id|qpti-&gt;qdev-&gt;reg_addrs
 comma
 l_int|1
+comma
+id|qpti-&gt;qdev
 )paren
 suffix:semicolon
 multiline_comment|/* Map in Qlogic,ISP regs and the PTI status reg. */

@@ -19,6 +19,11 @@ id|mid
 suffix:semicolon
 )brace
 suffix:semicolon
+r_extern
+r_int
+id|linux_num_cpus
+suffix:semicolon
+multiline_comment|/* number of CPUs probed  */
 macro_line|#endif /* !(__ASSEMBLY__) */
 macro_line|#ifdef __SMP__
 macro_line|#ifndef __ASSEMBLY__

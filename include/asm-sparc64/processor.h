@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: processor.h,v 1.6 1996/12/28 20:05:14 davem Exp $&n; * include/asm-sparc64/processor.h&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: processor.h,v 1.8 1997/03/04 16:27:33 jj Exp $&n; * include/asm-sparc64/processor.h&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __ASM_SPARC64_PROCESSOR_H
 DECL|macro|__ASM_SPARC64_PROCESSOR_H
 mdefine_line|#define __ASM_SPARC64_PROCESSOR_H
@@ -26,35 +26,21 @@ multiline_comment|/* Whee, this is STACK_TOP + PAGE_SIZE and the lowest kernel a
 DECL|macro|TASK_SIZE
 mdefine_line|#define TASK_SIZE&t;(0xFFFFF80000000000UL)
 macro_line|#ifndef __ASSEMBLY__
-multiline_comment|/* Ok this is hot.  Sparc exception save area. */
-DECL|struct|exception_struct
+DECL|struct|fpq
 r_struct
-id|exception_struct
+id|fpq
 (brace
-DECL|member|count
+DECL|member|insn_addr
 r_int
 r_int
-id|count
+op_star
+id|insn_addr
 suffix:semicolon
-multiline_comment|/* Exception count */
-DECL|member|pc
+DECL|member|insn
 r_int
 r_int
-id|pc
+id|insn
 suffix:semicolon
-multiline_comment|/* Callers PC for copy/clear user */
-DECL|member|expc
-r_int
-r_int
-id|expc
-suffix:semicolon
-multiline_comment|/* Where to jump when exception signaled */
-DECL|member|address
-r_int
-r_int
-id|address
-suffix:semicolon
-multiline_comment|/* Saved user base address for transfer */
 )brace
 suffix:semicolon
 DECL|macro|NSWINS
@@ -64,25 +50,8 @@ DECL|struct|thread_struct
 r_struct
 id|thread_struct
 (brace
-multiline_comment|/* Context switch saved kernel state. */
-DECL|member|user_globals
-r_int
-r_int
-id|user_globals
-(braket
-l_int|8
-)braket
-suffix:semicolon
-multiline_comment|/* performance hack */
-DECL|member|ksp
-DECL|member|kpc
-r_int
-r_int
-id|ksp
-comma
-id|kpc
-suffix:semicolon
 multiline_comment|/* Floating point regs */
+multiline_comment|/* Please check asm_offsets, so that not to much precious space&n;&t;   is wasted by this alignment and move the float_regs wherever&n;&t;   is better in this structure. Remember every byte of alignment&n;&t;   is multiplied by 512 to get the amount of wasted kernel memory. */
 DECL|member|float_regs
 r_int
 r_int
@@ -110,27 +79,31 @@ r_int
 r_int
 id|fpqdepth
 suffix:semicolon
-DECL|struct|fpq
+DECL|member|fpqueue
 r_struct
 id|fpq
-(brace
-DECL|member|insn_addr
-r_int
-r_int
-op_star
-id|insn_addr
-suffix:semicolon
-DECL|member|insn
-r_int
-r_int
-id|insn
-suffix:semicolon
-DECL|member|fpqueue
-)brace
 id|fpqueue
 (braket
 l_int|16
 )braket
+suffix:semicolon
+multiline_comment|/* Context switch saved kernel state. */
+DECL|member|user_globals
+r_int
+r_int
+id|user_globals
+(braket
+l_int|8
+)braket
+suffix:semicolon
+multiline_comment|/* performance hack */
+DECL|member|ksp
+DECL|member|kpc
+r_int
+r_int
+id|ksp
+comma
+id|kpc
 suffix:semicolon
 multiline_comment|/* Storage for windows when user stack is bogus. */
 DECL|member|reg_window
@@ -198,9 +171,6 @@ r_int
 r_int
 id|sig_desc
 suffix:semicolon
-r_struct
-id|exception_struct
-suffix:semicolon
 DECL|member|sstk_info
 r_struct
 id|sigstack
@@ -233,7 +203,7 @@ mdefine_line|#define SPARC_FLAG_32BIT        0x8    /* task is older 32-bit bina
 DECL|macro|INIT_MMAP
 mdefine_line|#define INIT_MMAP { &amp;init_mm, 0xfffff80000000000, 0xfffffe00000, &bslash;&n;&t;&t;    PAGE_SHARED , VM_READ | VM_WRITE | VM_EXEC }
 DECL|macro|INIT_TSS
-mdefine_line|#define INIT_TSS  {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;/* user_globals */ &t;&t;&t;&t;&t;&t;&t;&bslash;&n;   { 0, 0, 0, 0, 0, 0, 0, 0, 0 }, &t;&t;&t;&t;&t;&bslash;&n;/* ksp, kpc */ &t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;   0,   0, &t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;/* FPU regs */   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,&t;&bslash;&n;                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,&t;&bslash;&n;                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,&t;&bslash;&n;                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },&t;&bslash;&n;/* FPU status, FPU qdepth, FPU queue */ &t;&t;&t;&t;&bslash;&n;   0,          0,          { { 0, 0, }, }, &t;&t;&t;&t;&bslash;&n;/* reg_window */&t;&t;&t;&t;&t;&t;&t;&bslash;&n;{ { { 0, }, { 0, } }, }, &t;&t;&t;&t;&t;&t;&bslash;&n;/* rwbuf_stkptrs */&t;&t;&t;&t;&t;&t;&t;&bslash;&n;{ 0, 0, 0, 0, 0, 0, 0, 0, },&t;&t;&t;&t;&t;&t;&bslash;&n;/* w_saved */&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;   0, &t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;/* flags */&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;   SPARC_FLAG_KTHREAD,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;/* sig_address, sig_desc */&t;&t;&t;&t;&t;&t;&bslash;&n;   0,           0,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;/* ex,     sstk_info, current_ds, */&t;&t;&t;&t;&t;&bslash;&n;   { 0, }, { 0, 0, }, USER_DS,&t;&t;&t;&t;&t;&t;&bslash;&n;/* new_signal */&t;&t;&t;&t;&t;&t;&t;&bslash;&n;  0,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;/* core_exec */&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;{ 0, },&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;}
+mdefine_line|#define INIT_TSS  {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;/* FPU regs */   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,&t;&bslash;&n;                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,&t;&bslash;&n;                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,&t;&bslash;&n;                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, },&t;&bslash;&n;/* FPU status, FPU qdepth, FPU queue */ &t;&t;&t;&t;&bslash;&n;   0,          0,          { { 0, 0, }, }, &t;&t;&t;&t;&bslash;&n;/* user_globals */ &t;&t;&t;&t;&t;&t;&t;&bslash;&n;   { 0, 0, 0, 0, 0, 0, 0, 0, 0 }, &t;&t;&t;&t;&t;&bslash;&n;/* ksp, kpc */ &t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;   0,   0, &t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;/* reg_window */&t;&t;&t;&t;&t;&t;&t;&bslash;&n;{ { { 0, }, { 0, } }, }, &t;&t;&t;&t;&t;&t;&bslash;&n;/* rwbuf_stkptrs */&t;&t;&t;&t;&t;&t;&t;&bslash;&n;{ 0, 0, 0, 0, 0, 0, 0, 0, },&t;&t;&t;&t;&t;&t;&bslash;&n;/* w_saved */&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;   0, &t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;/* flags */&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;   SPARC_FLAG_KTHREAD,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;/* sig_address, sig_desc */&t;&t;&t;&t;&t;&t;&bslash;&n;   0,           0,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;/* ex,     sstk_info, current_ds, */&t;&t;&t;&t;&t;&bslash;&n;   { 0, 0, }, USER_DS,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;/* new_signal */&t;&t;&t;&t;&t;&t;&t;&bslash;&n;  0,&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;/* core_exec */&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;{ 0, },&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;}
 macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/* Return saved PC of a blocked thread. */
 DECL|function|thread_saved_pc

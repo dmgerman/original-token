@@ -1,5 +1,7 @@
-multiline_comment|/*&n; * Linux/SPARC PROM Configuration Driver&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost  (ecd@skynet.be)&n; *&n; * This character device driver allows user programs to access the&n; * PROM device tree. It is compatible with the SunOS /dev/openprom&n; * driver and the NetBSD /dev/openprom driver. The SunOS eeprom&n; * utility works without any modifications.&n; *&n; * The driver uses a minor number under the misc device major. The&n; * file read/write mode determines the type of access to the PROM.&n; * Interrupts are disabled whenever the driver calls into the PROM for&n; * sanity&squot;s sake.&n; */
+multiline_comment|/*&n; * Linux/SPARC PROM Configuration Driver&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@noc.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost  (ecd@skynet.be)&n; *&n; * This character device driver allows user programs to access the&n; * PROM device tree. It is compatible with the SunOS /dev/openprom&n; * driver and the NetBSD /dev/openprom driver. The SunOS eeprom&n; * utility works without any modifications.&n; *&n; * The driver uses a minor number under the misc device major. The&n; * file read/write mode determines the type of access to the PROM.&n; * Interrupts are disabled whenever the driver calls into the PROM for&n; * sanity&squot;s sake.&n; */
 multiline_comment|/* This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License as&n; * published by the Free Software Foundation; either version 2 of the&n; * License, or (at your option) any later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; */
+DECL|macro|PROMLIB_INTERNAL
+mdefine_line|#define PROMLIB_INTERNAL
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -11,7 +13,7 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &lt;linux/openpromio.h&gt;
+macro_line|#include &lt;asm/openpromio.h&gt;
 multiline_comment|/* Private data kept by the driver for each descriptor. */
 DECL|struct|openprom_private_data
 r_typedef
@@ -923,9 +925,7 @@ id|OPROMNEXT
 )paren
 id|node
 op_assign
-id|prom_nodeops
-op_member_access_from_pointer
-id|no_nextnode
+id|__prom_getsibling
 c_func
 (paren
 id|node
@@ -934,9 +934,7 @@ suffix:semicolon
 r_else
 id|node
 op_assign
-id|prom_nodeops
-op_member_access_from_pointer
-id|no_child
+id|__prom_getchild
 c_func
 (paren
 id|node
@@ -2106,9 +2104,7 @@ id|OPIOCGETNEXT
 )paren
 id|node
 op_assign
-id|prom_nodeops
-op_member_access_from_pointer
-id|no_nextnode
+id|__prom_getsibling
 c_func
 (paren
 id|node
@@ -2117,9 +2113,7 @@ suffix:semicolon
 r_else
 id|node
 op_assign
-id|prom_nodeops
-op_member_access_from_pointer
-id|no_child
+id|__prom_getchild
 c_func
 (paren
 id|node
