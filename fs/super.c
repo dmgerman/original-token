@@ -5285,12 +5285,6 @@ suffix:semicolon
 id|dput
 c_func
 (paren
-id|old_root
-)paren
-suffix:semicolon
-id|dput
-c_func
-(paren
 id|old_pwd
 )paren
 suffix:semicolon

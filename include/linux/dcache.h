@@ -304,6 +304,16 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|d_invalidate
+c_func
+(paren
+r_struct
+id|dentry
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/* only used at mount-time */
 r_extern
 r_struct
