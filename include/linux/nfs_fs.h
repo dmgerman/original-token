@@ -24,6 +24,7 @@ DECL|macro|NFS_SERVER
 mdefine_line|#define NFS_SERVER(inode)&t;&t;(&amp;(inode)-&gt;i_sb-&gt;u.nfs_sb.s_server)
 DECL|macro|NFS_FH
 mdefine_line|#define NFS_FH(inode)&t;&t;&t;(&amp;(inode)-&gt;u.nfs_i.fhandle)
+macro_line|#ifdef __KERNEL__
 multiline_comment|/* linux/fs/nfs/proc.c */
 r_extern
 r_int
@@ -563,5 +564,6 @@ r_int
 id|off
 )paren
 suffix:semicolon
+macro_line|#endif /* __KERNEL__ */
 macro_line|#endif
 eof

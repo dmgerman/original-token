@@ -7,56 +7,11 @@ macro_line|#include &lt;linux/msdos_fs.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 DECL|macro|MIN
 mdefine_line|#define MIN(a,b) (((a) &lt; (b)) ? (a) : (b))
 DECL|macro|MAX
 mdefine_line|#define MAX(a,b) (((a) &gt; (b)) ? (a) : (b))
-r_static
-r_int
-id|msdos_file_read
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|filp
-comma
-r_char
-op_star
-id|buf
-comma
-r_int
-id|count
-)paren
-suffix:semicolon
-r_static
-r_int
-id|msdos_file_write
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|filp
-comma
-r_char
-op_star
-id|buf
-comma
-r_int
-id|count
-)paren
-suffix:semicolon
 DECL|variable|msdos_file_operations
 r_static
 r_struct
@@ -82,7 +37,7 @@ multiline_comment|/* select - default */
 l_int|NULL
 comma
 multiline_comment|/* ioctl - default */
-l_int|NULL
+id|msdos_mmap
 comma
 multiline_comment|/* mmap */
 l_int|NULL
@@ -145,7 +100,10 @@ id|msdos_truncate
 comma
 multiline_comment|/* truncate */
 l_int|NULL
+comma
 multiline_comment|/* permission */
+id|msdos_smap
+multiline_comment|/* smap */
 )brace
 suffix:semicolon
 multiline_comment|/* No bmap for MS-DOS FS&squot; that don&squot;t align data at kByte boundaries. */
@@ -199,11 +157,14 @@ id|msdos_truncate
 comma
 multiline_comment|/* truncate */
 l_int|NULL
+comma
 multiline_comment|/* permission */
+id|msdos_smap
+multiline_comment|/* smap */
 )brace
 suffix:semicolon
+multiline_comment|/*&n;&t;Read a file into user space&n;*/
 DECL|function|msdos_file_read
-r_static
 r_int
 id|msdos_file_read
 c_func
@@ -272,11 +233,19 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+multiline_comment|/* S_ISLNK allows for UMSDOS. Should never happen for normal MSDOS */
 r_if
 c_cond
 (paren
 op_logical_neg
 id|S_ISREG
+c_func
+(paren
+id|inode-&gt;i_mode
+)paren
+op_logical_and
+op_logical_neg
+id|S_ISLNK
 c_func
 (paren
 id|inode-&gt;i_mode
@@ -568,8 +537,8 @@ op_minus
 id|start
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t;Write to a file either from user space&n;*/
 DECL|function|msdos_file_write
-r_static
 r_int
 id|msdos_file_write
 c_func
@@ -644,11 +613,19 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+multiline_comment|/* S_ISLNK allows for UMSDOS. Should never happen for normal MSDOS */
 r_if
 c_cond
 (paren
 op_logical_neg
 id|S_ISREG
+c_func
+(paren
+id|inode-&gt;i_mode
+)paren
+op_logical_and
+op_logical_neg
+id|S_ISLNK
 c_func
 (paren
 id|inode-&gt;i_mode

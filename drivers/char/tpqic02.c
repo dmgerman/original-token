@@ -1,8 +1,8 @@
-multiline_comment|/* $Id: tpqic02.c,v 0.2.1.21 1993/06/18 19:04:33 root Exp root $&n; *&n; * Driver for tape drive support for Linux-i386 0.99.12.&n; *&n; * Copyright (c) 1993 by H. H. Bergman. All rights reserved.&n; * Current e-mail address: csg279@wing.rug.nl&n; * [If you are unable to reach me directly, try the TAPE mailing list&n; * channel on linux-activists@niksula.hut.fi using &quot;X-Mn-Key: TAPE&quot; as&n; * the first line in your message.]&n; *&n; * Distribution of this program in executable form is only allowed if&n; * all of the corresponding source files are made available through the same&n; * medium at no extra cost.&n; *&n; * I will not accept any responsibility for damage caused directly or&n; * indirectly by this program, or code derived from this program.&n; *&n; * Use this code at your own risk. Don&squot;t blame me if it destroys your data!&n; * Make sure you have a backup before you try this code.&n; *&n; * This driver was partially inspired by the &squot;wt&squot; driver in the 386BSD&n; * source distribution, which carries the following copyright notice:&n; *&n; *  Copyright (c) 1991 The Regents of the University of California.&n; *  All rights reserved.&n; *&n; * You are not allowed to change this line nor the text above.&n; *&n; * $Log: tpqic02.c,v $&n; * Revision 0.2.1.21  1993/06/18  19:04:33  root&n; * minor fixes for 0.99.10.&n; *&n; * Revision 0.2.1.20  1993/06/11  21:38:51  root&n; * Added exception code for status 0x8000 (Cypher weirdness).&n; *&n; * Revision 0.2.1.19  1993/04/19  23:13:59  root&n; * Cleanups. Changed to 0.99.8.&n; *&n; * Revision 0.2.1.18  1993/03/22  17:39:47  root&n; * Moved to 0.99.7. Added Archive MTSEEK and MTTELL support.&n; *&n; * Revision 0.2.1.17  1993/03/08  18:51:59  root&n; * Tried to `fix&squot; write-once bug in previous release.&n; *&n; * Revision 0.2.1.16  1993/03/01  00:06:16  root&n; * Use register_chrdev() for 0.99.6.&n; *&n; * Revision 0.2.1.15  1993/02/25  00:14:25  root&n; * minor cleanups.&n; *&n; * Revision 0.2.1.14  1993/01/25  00:06:14  root&n; * Kernel udelay. Eof fixups.&n; * Removed report_ read/write dummies; have strace(1) now.&n; *&n; * Revision 0.2.1.13  1993/01/10  02:24:43  root&n; * Rewrote wait_for_ready() to use newer schedule() features.&n; * This improves performance for rewinds etc.&n; *&n; * Revision 0.2.1.12  1993/01/05  18:44:09  root&n; * Changes for 0.99.1. Fixed `restartable reads&squot;.&n; *&n; * Revision 0.2.1.11  1992/11/28  01:19:10  root&n; * Changes to exception handling (significant).&n; * Changed returned error codes. Hopefully they&squot;re correct now.&n; * Changed declarations to please gcc-2.3.1.&n; * Patch to deal with bogus interrupts for Archive cards.&n; *&n; * Revision 0.2.1.10  1992/10/28  00:50:44  root&n; * underrun/error counter needed byte swapping.&n; *&n; * Revision 0.2.1.9  1992/10/15  17:06:01  root&n; * Removed online() stuff. Changed EOF handling.&n; *&n; * Revision 0.2.1.8  1992/10/02  22:25:48  root&n; * Removed `no_sleep&squot; parameters (got usleep() now),&n; * cleaned up some comments.&n; *&n; * Revision 0.2.1.7  1992/09/27  01:41:55  root&n; * Changed write() to do entire user buffer in one go, rather than just&n; * a kernel-buffer sized portion each time.&n; *&n; * Revision 0.2.1.6  1992/09/21  02:15:30  root&n; * Introduced udelay() function for microsecond-delays.&n; * Trying to use get_dma_residue rather than TC flags.&n; * Patch to fill entire user buffer on reads before&n; * returning.&n; *&n; * Revision 0.2.1.5  1992/09/19  02:31:28  root&n; * Some changes based on patches by Eddy Olk to&n; * support Archive SC402/SC499R controller cards.&n; *&n; * Revision 0.2.1.4  1992/09/07  01:37:37  root&n; * Minor changes&n; *&n; * Revision 0.2.1.3  1992/08/13  00:11:02  root&n; * Added some support for Archive SC402 and SC499 cards.&n; * (Untested.)&n; *&n; * Revision 0.2.1.2  1992/08/10  02:02:36  root&n; * Changed from linux/system.h macros to asm/dma.h inline functions.&n; *&n; * Revision 0.2.1.1  1992/08/08  01:12:39  root&n; * cleaned up a bit. added stuff for selftesting.&n; * preparing for asm/dma.h instead of linux/system.h&n; *&n; * Revision 0.2  1992/08/03  20:11:30  root&n; * Changed to use new IRQ allocation. Padding now done at runtime, pads to&n; * 512 bytes. Because of this the page regs must be re-programmed every&n; * block! Added hooks for selftest commands.&n; * Moved to linux-0.97.&n; *&n; * Revision 0.1.0.5  1992/06/22  22:20:30  root&n; * moved to Linux 0.96b&n; *&n; * Revision 0.1.0.4  1992/06/18  02:00:04  root&n; * Use minor bit-7 to enable/disable printing of extra debugging info&n; * when do tape access.&n; * Added semop stuff for DMA/IRQ allocation checking. Don&squot;t think this&n; * is the right way to do it though.&n; *&n; * Revision 0.1.0.3  1992/06/01  01:57:34  root&n; * changed DRQ to DMA. added TDEBUG ifdefs to reduce output.&n; *&n; * Revision 0.1.0.2  1992/05/31  14:02:38  root&n; * changed SET_DMA_PAGE handling slightly.&n; *&n; * Revision 0.1.0.1  1992/05/27  12:12:03  root&n; * Can now use multiple files on tape (sort of).&n; * First release.&n; *&n; * Revision 0.1  1992/05/26  01:16:31  root&n; * Initial version. Copyright H. H. Bergman 1992&n; *&n; */
+multiline_comment|/* $Id: tpqic02.c,v 0.4.1.4 1994/07/21 02:15:45 root Exp root $&n; *&n; * Driver for tape drive support for Linux-i386 1.1.30&n; *&n; * Copyright (c) 1992, 1993, 1994 by H. H. Bergman. All rights reserved.&n; * Current e-mail address: hennus@sky.nl.mugnet.org [This is a UUCP link.]&n; * Secondary e-mail address: csg279@wing.rug.nl [IP connected, but flaky]&n; * [If you are unable to reach me directly, try the TAPE mailing list&n; * channel on linux-activists@niksula.hut.fi using &quot;X-Mn-Key: TAPE&quot; as&n; * the first line in your message.]&n; *&n; * Distribution of this program in executable form is only allowed if&n; * all of the corresponding source files are made available through the same&n; * medium at no extra cost.&n; *&n; * I will not accept any responsibility for damage caused directly or&n; * indirectly by this program, or code derived from this program.&n; *&n; * Use this code at your own risk. Don&squot;t blame me if it destroys your data!&n; * Make sure you have a backup before you try this code.&n; *&n; * If you make changes to my code and redistribute it in source or binary&n; * form you must make it clear to even casual users of your code that you&n; * have modified my code, clearly point out what the changes exactly are&n; * (preferably in the form of a context diff file), how to undo your changes,&n; * where the original can be obtained, and that complaints/requests about the&n; * modified code should be directed to you instead of me.&n; *&n; * This driver was partially inspired by the &squot;wt&squot; driver in the 386BSD&n; * source distribution, which carries the following copyright notice:&n; *&n; *  Copyright (c) 1991 The Regents of the University of California.&n; *  All rights reserved.&n; *&n; * You are not allowed to change this line nor the text above.&n; *&n; * $Log: tpqic02.c,v $&n; * Revision 0.4.1.4  1994/07/21  02:15:45  root&n; * ifdef&squot;d DDI. Exception masks.&n; *&n; * Revision 0.4.1.3  1994/05/03  01:49:09  root&n; * Initial attempt at Mountain support for the Mountain 7150.&n; * Based on patches provided by Erik Jacobson.&n; *&n; * Revision 0.4.1.2  1994/03/18  21:16:50  root&n; * Many driver messages can now be turned off (runtime selectable).&n; *&n; * Revision 0.4.1.1  1994/02/16  19:47:22  root&n; * First stab at runtime debug-variable.&n; *&n; * Revision 0.4  1994/02/15  01:53:16  root&n; * DYNCONF mark II.&n; * Minor cleanups.&n; *&n; * Revision 0.3  1994/02/07  01:23:16  root&n; * More improved DYNCONF.&n; * Archive changes &amp; some cleanups by Eddy Olk.&n; * Removed status_open, more cleanups, misc other.&n; *&n; * Revision 0.2.1.25  1994/01/24  02:01:33  root&n; * Changed tape_qic02 to QIC02_TAPE.&n; * Changes to prepare for DYNCONF.&n; *&n; * Revision 0.2.1.24  1994/01/23  07:27:18  root&n; * Attempt to remove compilation warnings, G++ bug,&n; * Linus changed TAPE_QIC02 to QIC02_TAPE.&n; *&n; * Revision 0.2.1.23  1994/01/20  23:49:28  root&n; * Changed some exception decoding stuff.&n; * TP_HAVE_SEEK, TP_HAVE_DENS. byte_swap_w() on arg, not global.&n; * Attempt to fix cartridge-changed-problem for 2150L.&n; * Release irq and dma reservations if initial reset fails.&n; *&n; * Revision 0.2.1.22  1994/01/19  20:56:55  root&n; * Speed measuring stuff moved from aperf.h to delay.h.&n; * BogoMips (tm) introduced by Linus.&n; *&n; * Revision 0.2.1.21  1993/06/18  19:04:33  root&n; * minor fixes for 0.99.10.&n; *&n; * Revision 0.2.1.20  1993/06/11  21:38:51  root&n; * Added exception code for status 0x8000 (Cypher weirdness).&n; *&n; * Revision 0.2.1.19  1993/04/19  23:13:59  root&n; * Cleanups. Changed to 0.99.8.&n; *&n; * Revision 0.2.1.18  1993/03/22  17:39:47  root&n; * Moved to 0.99.7. Added Archive MTSEEK and MTTELL support.&n; *&n; * Revision 0.2.1.17  1993/03/08  18:51:59  root&n; * Tried to `fix&squot; write-once bug in previous release.&n; *&n; * Revision 0.2.1.16  1993/03/01  00:06:16  root&n; * Use register_chrdev() for 0.99.6.&n; *&n; * Revision 0.2.1.15  1993/02/25  00:14:25  root&n; * minor cleanups.&n; *&n; * Revision 0.2.1.14  1993/01/25  00:06:14  root&n; * Kernel udelay. Eof fixups.&n; * Removed report_ read/write dummies; have strace(1) now.&n; *&n; * Revision 0.2.1.13  1993/01/10  02:24:43  root&n; * Rewrote wait_for_ready() to use newer schedule() features.&n; * This improves performance for rewinds etc.&n; *&n; * Revision 0.2.1.12  1993/01/05  18:44:09  root&n; * Changes for 0.99.1. Fixed `restartable reads&squot;.&n; *&n; * Revision 0.2.1.11  1992/11/28  01:19:10  root&n; * Changes to exception handling (significant).&n; * Changed returned error codes. Hopefully they&squot;re correct now.&n; * Changed declarations to please gcc-2.3.1.&n; * Patch to deal with bogus interrupts for Archive cards.&n; *&n; * Revision 0.2.1.10  1992/10/28  00:50:44  root&n; * underrun/error counter needed byte swapping.&n; *&n; * Revision 0.2.1.9  1992/10/15  17:06:01  root&n; * Removed online() stuff. Changed EOF handling.&n; *&n; * Revision 0.2.1.8  1992/10/02  22:25:48  root&n; * Removed `no_sleep&squot; parameters (got usleep() now),&n; * cleaned up some comments.&n; *&n; * Revision 0.2.1.7  1992/09/27  01:41:55  root&n; * Changed write() to do entire user buffer in one go, rather than just&n; * a kernel-buffer sized portion each time.&n; *&n; * Revision 0.2.1.6  1992/09/21  02:15:30  root&n; * Introduced udelay() function for microsecond-delays.&n; * Trying to use get_dma_residue rather than TC flags.&n; * Patch to fill entire user buffer on reads before&n; * returning.&n; *&n; * Revision 0.2.1.5  1992/09/19  02:31:28  root&n; * Some changes based on patches by Eddy Olk to&n; * support Archive SC402/SC499R controller cards.&n; *&n; * Revision 0.2.1.4  1992/09/07  01:37:37  root&n; * Minor changes&n; *&n; * Revision 0.2.1.3  1992/08/13  00:11:02  root&n; * Added some support for Archive SC402 and SC499 cards.&n; * (Untested.)&n; *&n; * Revision 0.2.1.2  1992/08/10  02:02:36  root&n; * Changed from linux/system.h macros to asm/dma.h inline functions.&n; *&n; * Revision 0.2.1.1  1992/08/08  01:12:39  root&n; * cleaned up a bit. added stuff for selftesting.&n; * preparing for asm/dma.h instead of linux/system.h&n; *&n; * Revision 0.2  1992/08/03  20:11:30  root&n; * Changed to use new IRQ allocation. Padding now done at runtime, pads to&n; * 512 bytes. Because of this the page regs must be re-programmed every&n; * block! Added hooks for selftest commands.&n; * Moved to linux-0.97.&n; *&n; * Revision 0.1.0.5  1992/06/22  22:20:30  root&n; * moved to Linux 0.96b&n; *&n; * Revision 0.1.0.4  1992/06/18  02:00:04  root&n; * Use minor bit-7 to enable/disable printing of extra debugging info&n; * when do tape access.&n; * Added semop stuff for DMA/IRQ allocation checking. Don&squot;t think this&n; * is the right way to do it though.&n; *&n; * Revision 0.1.0.3  1992/06/01  01:57:34  root&n; * changed DRQ to DMA. added TDEBUG ifdefs to reduce output.&n; *&n; * Revision 0.1.0.2  1992/05/31  14:02:38  root&n; * changed SET_DMA_PAGE handling slightly.&n; *&n; * Revision 0.1.0.1  1992/05/27  12:12:03  root&n; * Can now use multiple files on tape (sort of).&n; * First release.&n; *&n; * Revision 0.1  1992/05/26  01:16:31  root&n; * Initial version. Copyright H. H. Bergman 1992&n; *&n; */
 multiline_comment|/* After the legalese, now the important bits:&n; * &n; * This is a driver for the Wangtek 5150 tape drive with &n; * a QIC-02 controller for ISA-PC type computers.&n; * Hopefully it will work with other QIC-02 tape drives as well.&n; *&n; * Make sure your setup matches the configuration parameters.&n; * Also, be careful to avoid IO conflicts with other devices!&n; */
 macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* skip this driver if not required for this configuration */
-macro_line|#if CONFIG_TAPE_QIC02
+macro_line|#if CONFIG_QIC02_TAPE
 multiline_comment|/*&n;#define TDEBUG&n;*/
 DECL|macro|REALLY_SLOW_IO
 mdefine_line|#define REALLY_SLOW_IO&t;&t;/* it sure is ... */
@@ -21,12 +21,46 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 multiline_comment|/* check existence of required configuration parameters */
-macro_line|#if !defined(TAPE_QIC02_PORT) || &bslash;&n;    !defined(TAPE_QIC02_IRQ) || &bslash;&n;    !defined(TAPE_QIC02_DMA)
-macro_line|#error tape_qic02 configuration error
+macro_line|#if !defined(QIC02_CMD_PORT) || &bslash;&n;    !defined(QIC02_TAPE_IRQ) || &bslash;&n;    !defined(QIC02_TAPE_DMA)
+macro_line|#error qic02_tape configuration error
 macro_line|#endif
-DECL|macro|TPQIC_NAME
-mdefine_line|#define TPQIC_NAME&t;&quot;tpqic02&quot;
+DECL|macro|TPQIC02_NAME
+mdefine_line|#define TPQIC02_NAME&t;&quot;tpqic02&quot;
 multiline_comment|/* Linux outb() commands have (value,port) as parameters.&n; * One might expect (port,value) instead, so beware!&n; */
+macro_line|#ifdef CONFIG_QIC02_DYNCONF
+multiline_comment|/* This may hold the dynamic configuration info for the interface&n; * card+drive info in future versions.&n; */
+DECL|variable|qic02_tape_dynconf
+r_struct
+id|mtconfiginfo
+id|qic02_tape_dynconf
+op_assign
+(brace
+l_int|0
+comma
+)brace
+suffix:semicolon
+multiline_comment|/* user settable */
+DECL|variable|qic02_tape_ccb
+r_struct
+id|qic02_ccb
+id|qic02_tape_ccb
+op_assign
+(brace
+l_int|0
+comma
+)brace
+suffix:semicolon
+multiline_comment|/* private stuff */
+macro_line|#else
+DECL|variable|qic02_tape_debug
+r_int
+r_int
+id|qic02_tape_debug
+suffix:semicolon
+macro_line|# if ((QIC02_TAPE_IFC!=WANGTEK) &amp;&amp; (QIC02_TAPE_IFC!=ARCHIVE) &amp;&amp; (QIC02_TAPE_IFC!=MOUNTAIN))
+macro_line|#  error No valid interface card specified
+macro_line|# endif
+macro_line|#endif
 DECL|variable|ctlbits
 r_static
 r_volatile
@@ -36,12 +70,12 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* control reg bits for tape interface */
-DECL|variable|tape_qic02_transfer
+DECL|variable|qic02_tape_transfer
 r_static
 r_struct
 id|wait_queue
 op_star
-id|tape_qic02_transfer
+id|qic02_tape_transfer
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -69,7 +103,7 @@ id|rcs_revision
 (braket
 )braket
 op_assign
-l_string|&quot;$Revision: 0.2.1.21 $&quot;
+l_string|&quot;$Revision: 0.4.1.4 $&quot;
 suffix:semicolon
 DECL|variable|rcs_date
 r_static
@@ -78,7 +112,7 @@ id|rcs_date
 (braket
 )braket
 op_assign
-l_string|&quot;$Date: 1993/06/18 19:04:33 $&quot;
+l_string|&quot;$Date: 1994/07/21 02:15:45 $&quot;
 suffix:semicolon
 multiline_comment|/* Flag bits for status and outstanding requests.&n; * (Could all be put in one bit-field-struct.)&n; * Some variables need `volatile&squot; because they may be modified&n; * by an interrupt.&n; */
 DECL|variable|status_dead
@@ -90,14 +124,14 @@ op_assign
 id|YES
 suffix:semicolon
 multiline_comment|/* device is legally dead until proven alive */
-DECL|variable|status_open
+DECL|variable|status_zombie
 r_static
 id|flag
-id|status_open
+id|status_zombie
 op_assign
-id|NO
+id|YES
 suffix:semicolon
-multiline_comment|/* in use or not */
+multiline_comment|/* it&squot;s `zombie&squot; until irq/dma allocated */
 DECL|variable|status_bytes_wr
 r_static
 r_volatile
@@ -273,17 +307,15 @@ id|reported_write_eof
 op_assign
 id|NO
 suffix:semicolon
-macro_line|#ifdef TP_HAVE_SEEK
 multiline_comment|/* This is for doing `mt seek &lt;blocknr&gt;&squot; */
 DECL|variable|seek_addr_buf
 r_static
 r_char
 id|seek_addr_buf
 (braket
-id|SEEK_BUF_SIZE
+id|AR_SEEK_BUF_SIZE
 )braket
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* In write mode, we have to write a File Mark after the last block written, &n; * when the tape device is closed. Tape repositioning and reading in write&n; * mode is allowed as long as no actual writing has been done. After writing&n; * the File Mark, repositioning and reading are allowed again.&n; */
 DECL|variable|mode_access
 r_static
@@ -291,12 +323,12 @@ r_int
 id|mode_access
 suffix:semicolon
 multiline_comment|/* access mode: READ or WRITE */
-multiline_comment|/* This is the actual kernel buffer where the interrupt routines read&n; * from/write to. It is needed because the DMA channels 1 and 3 cannot&n; * access the user buffers. [The kernel buffer must reside in the lower&n; * 1MBytes of system memory because of the DMA controller.]&n; * The user must ensure that a large enough buffer is passed to the&n; * kernel, in order to reduce tape repositioning.&n; *&n; * The buffer is 512 bytes larger than expected, because I want to align it&n; * at 512 bytes, to prevent problems with 64k boundaries.&n; */
-DECL|variable|tape_qic02_buf
+multiline_comment|/* This is the actual kernel buffer where the interrupt routines read&n; * from/write to. It is needed because the DMA channels 1 and 3 cannot&n; * always access the user buffers. [The kernel buffer must reside in the&n; * lower 16MBytes of system memory because of the DMA controller.]&n; * The user must ensure that a large enough buffer is passed to the&n; * kernel, in order to reduce tape repositioning.&n; *&n; * The buffer is 512 bytes larger than expected, because I want to align it&n; * at 512 bytes, to prevent problems with 64k boundaries.&n; */
+DECL|variable|qic02_tape_buf
 r_static
 r_volatile
 r_char
-id|tape_qic02_buf
+id|qic02_tape_buf
 (braket
 id|TPQBUF_SIZE
 op_plus
@@ -340,7 +372,7 @@ l_string|&quot;600&quot;
 multiline_comment|/* untested. */
 )brace
 suffix:semicolon
-multiline_comment|/* `exception_list&squot; is needed for exception status reporting.&n; * Exceptions 1..14 are defined by QIC-02 rev F.&n; * The drive status is matched sequentially to each entry,&n; * ignoring irrelevant bits, until a match is found. If no&n; * match is found, exception number 0 is used. (That should of&n; * course never happen...) The original table was based on the&n; * &quot;Exception Status Summary&quot; in QIC-02 rev F, but some changes&n; * were required to make it work with real-world drives.&n; *&n; * Exception 1 (CNI) is changed to also cover status 0x00e0 (mask USL),&n; * Exception 4 (EOM) is changed to also cover status 0x8288 (mask EOR),&n; * Exception 11 (FIL) is changed to also cover status 0x0089 (mask EOM).&n; * Exception 15 (EOR) is added for seek-to-end-of-data (catch EOR),&n; * Exception 16 (BOM) is added for beginning-of-media (catch BOM).&n; */
+multiline_comment|/* `exception_list&squot; is needed for exception status reporting.&n; * Exceptions 1..14 are defined by QIC-02 rev F.&n; * The drive status is matched sequentially to each entry,&n; * ignoring irrelevant bits, until a match is found. If no&n; * match is found, exception number 0 is used. (That should of&n; * course never happen...) The original table was based on the&n; * &quot;Exception Status Summary&quot; in QIC-02 rev F, but some changes&n; * were required to make it work with real-world drives.&n; *&n; * Exception 2 (CNI) is changed to also cover status 0x00e0 (mask USL),&n; * Exception 4 (EOM) is changed to also cover status 0x8288 (mask EOR),&n; * Exception 11 (FIL) is changed to also cover status 0x0089 (mask EOM).&n; * Exception 15 (EOR) is added for seek-to-end-of-data (catch EOR),&n; * Exception 16 (BOM) is added for beginning-of-media (catch BOM).&n; *&n; * Had to swap EXC_NDRV and EXC_NCART to ensure that extended EXC_NCART&n; * (because of the incorrect Wangtek status code) doesn&squot;t catch the&n; * EXC_NDRV first.&n; */
 DECL|struct|exception_list_type
 r_static
 r_struct
@@ -359,6 +391,7 @@ r_char
 op_star
 id|msg
 suffix:semicolon
+multiline_comment|/* EXC_nr attribute should match with tpqic02.h */
 DECL|variable|exception_list
 )brace
 id|exception_list
@@ -379,6 +412,25 @@ comma
 (brace
 op_complement
 (paren
+l_int|0
+)paren
+comma
+id|TP_ST0
+op_or
+id|TP_CNI
+op_or
+id|TP_USL
+op_or
+id|TP_WRP
+comma
+l_string|&quot;Drive not online&quot;
+multiline_comment|/* 1 */
+)brace
+comma
+multiline_comment|/* Drive presence goes before cartridge presence. */
+(brace
+op_complement
+(paren
 id|TP_WRP
 op_or
 id|TP_USL
@@ -390,26 +442,14 @@ id|TP_CNI
 comma
 multiline_comment|/* My Wangtek 5150EQ sometimes reports a status code&n;&t;&t; * of 0x00e0, which is not a valid exception code, but&n;&t;&t; * I think it should be recognized as &quot;NO CARTRIDGE&quot;.&n;&t;&t; */
 l_string|&quot;Cartridge not in place&quot;
-multiline_comment|/* 1 */
-)brace
-comma
-(brace
-op_minus
-l_int|1
-comma
-id|TP_ST0
-op_or
-id|TP_CNI
-op_or
-id|TP_USL
-op_or
-id|TP_WRP
-comma
-l_string|&quot;Drive not online&quot;
 multiline_comment|/* 2 */
 )brace
 comma
 (brace
+(paren
+r_int
+r_int
+)paren
 op_complement
 (paren
 id|TP_ST1
@@ -417,15 +457,21 @@ op_or
 id|TP_BOM
 )paren
 comma
+(paren
 id|TP_ST0
 op_or
 id|TP_WRP
+)paren
 comma
 l_string|&quot;Write protected cartridge&quot;
 multiline_comment|/* 3 */
 )brace
 comma
 (brace
+(paren
+r_int
+r_int
+)paren
 op_complement
 (paren
 id|TP_ST1
@@ -433,9 +479,11 @@ op_or
 id|TP_EOR
 )paren
 comma
+(paren
 id|TP_ST0
 op_or
 id|TP_EOM
+)paren
 comma
 l_string|&quot;End of media&quot;
 multiline_comment|/* 4 */
@@ -668,19 +716,6 @@ comma
 l_string|&quot;Beginning of media&quot;
 multiline_comment|/* extra: 16 */
 )brace
-macro_line|#ifdef CYPHER_BUG
-multiline_comment|/* Perhaps the Cypher driver clears the TP_BOM bit after the&n;&t; * status has been read? The QIC-02 specs explicitly state that&n;&t; * the BOM bit should remain set as long as the tape is logically&n;&t; * at the beginning of the tape.&n;&t; */
-comma
-(brace
-op_minus
-l_int|1
-comma
-id|TP_ST1
-comma
-l_string|&quot;Hmm, this must be Cypher drive... Aaargh&quot;
-multiline_comment|/* extra */
-)brace
-macro_line|#endif
 )brace
 suffix:semicolon
 DECL|macro|NR_OF_EXC
@@ -691,15 +726,34 @@ r_void
 id|tpqputs
 c_func
 (paren
+r_int
+r_int
+id|flags
+comma
 r_char
 op_star
 id|s
 )paren
 (brace
+r_if
+c_cond
+(paren
+(paren
+id|flags
+op_amp
+id|TPQD_ALWAYS
+)paren
+op_logical_or
+(paren
+id|flags
+op_amp
+id|QIC02_TAPE_DEBUG
+)paren
+)paren
 id|printk
 c_func
 (paren
-id|TPQIC_NAME
+id|TPQIC02_NAME
 l_string|&quot;: %s&bslash;n&quot;
 comma
 id|s
@@ -758,7 +812,15 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#if TAPE_QIC02_IFC == WANGTEK
+r_if
+c_cond
+(paren
+id|QIC02_TAPE_IFC
+op_eq
+id|WANGTEK
+)paren
+multiline_comment|/* || (QIC02_TAPE_IFC == EVEREX) */
+(brace
 id|ctlbits
 op_assign
 id|WT_CTL_ONLINE
@@ -769,10 +831,19 @@ c_func
 (paren
 id|ctlbits
 comma
-id|QIC_CTL_PORT
+id|QIC02_CTL_PORT
 )paren
 suffix:semicolon
-macro_line|#elif TAPE_QIC02_IFC == ARCHIVE
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|QIC02_TAPE_IFC
+op_eq
+id|ARCHIVE
+)paren
+(brace
 id|ctlbits
 op_assign
 l_int|0
@@ -783,7 +854,7 @@ c_func
 (paren
 id|ctlbits
 comma
-id|QIC_CTL_PORT
+id|QIC02_CTL_PORT
 )paren
 suffix:semicolon
 id|outb_p
@@ -795,9 +866,24 @@ id|AR_RESET_DMA_PORT
 )paren
 suffix:semicolon
 multiline_comment|/* dummy write to reset DMA */
-macro_line|#else
-macro_line|# error No valid interface card specified
-macro_line|#endif
+)brace
+r_else
+multiline_comment|/* MOUNTAIN */
+(brace
+id|ctlbits
+op_assign
+id|MTN_CTL_ONLINE
+suffix:semicolon
+multiline_comment|/* online, and logic enabled */
+id|outb_p
+c_func
+(paren
+id|ctlbits
+comma
+id|QIC02_CTL_PORT
+)paren
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/* ifc_init */
 DECL|function|report_exception
@@ -821,6 +907,8 @@ id|NR_OF_EXC
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;Oops -- report_exception&quot;
 )paren
 suffix:semicolon
@@ -829,10 +917,23 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|TPQDBG
+c_func
+(paren
+id|SENSE_TEXT
+)paren
+op_logical_or
+id|n
+op_eq
+l_int|0
+)paren
 id|printk
 c_func
 (paren
-id|TPQIC_NAME
+id|TPQIC02_NAME
 l_string|&quot;: sense: %s&bslash;n&quot;
 comma
 id|exception_list
@@ -855,7 +956,6 @@ c_func
 r_int
 id|s
 )paren
-multiline_comment|/* s must be short, because of sign-extension */
 (brace
 r_int
 id|i
@@ -900,10 +1000,13 @@ r_return
 id|i
 suffix:semicolon
 )brace
-id|tpqputs
+id|printk
 c_func
 (paren
-l_string|&quot;decode_exception_nr: exception not recognized&quot;
+id|TPQIC02_NAME
+l_string|&quot;: decode_exception_nr: exception(%x) not recognized&bslash;n&quot;
+comma
+id|s
 )paren
 suffix:semicolon
 r_return
@@ -1102,6 +1205,8 @@ multiline_comment|/* 7: Read error. Cannot recover block, filler substituted. CO
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;[Bad block -- filler data transferred.]&quot;
 )paren
 suffix:semicolon
@@ -1132,6 +1237,8 @@ multiline_comment|/* block is bad, but transfer may continue.&n;&t;&t;&t;&t;&t; 
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;[CRC failed!]&quot;
 )paren
 suffix:semicolon
@@ -1163,6 +1270,8 @@ multiline_comment|/* 14: Marginal block detected. CONTINUABLE */
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;[Marginal block]&quot;
 )paren
 suffix:semicolon
@@ -1255,6 +1364,8 @@ id|EXC_XFILLER
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;[Bad block -- filler data transferred.]&quot;
 )paren
 suffix:semicolon
@@ -1269,6 +1380,8 @@ id|EXC_XBAD
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;[CRC failed!]&quot;
 )paren
 suffix:semicolon
@@ -1285,6 +1398,8 @@ multiline_comment|/* A marginal block behaves much like a FM.&n;&t;&t; * User ma
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;[Marginal block]&quot;
 )paren
 suffix:semicolon
@@ -1322,10 +1437,10 @@ r_return
 id|inb
 c_func
 (paren
-id|QIC_STAT_PORT
+id|QIC02_STAT_PORT
 )paren
 op_amp
-id|QIC_STAT_EXCEPTION
+id|QIC02_STAT_EXCEPTION
 )paren
 op_eq
 l_int|0
@@ -1349,17 +1464,37 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* reset interface card */
+multiline_comment|/* assert reset */
+r_if
+c_cond
+(paren
+id|QIC02_TAPE_IFC
+op_eq
+id|MOUNTAIN
+)paren
+id|outb_p
+c_func
+(paren
+id|ctlbits
+op_amp
+op_complement
+id|MTN_QIC02_CTL_RESET_NOT
+comma
+id|QIC02_CTL_PORT
+)paren
+suffix:semicolon
+r_else
+multiline_comment|/* WANGTEK, ARCHIVE */
 id|outb_p
 c_func
 (paren
 id|ctlbits
 op_or
-id|QIC_CTL_RESET
+id|QIC02_CTL_RESET
 comma
-id|QIC_CTL_PORT
+id|QIC02_CTL_PORT
 )paren
 suffix:semicolon
-multiline_comment|/* assert reset */
 multiline_comment|/* Next, we need to wait &gt;=25 usec. */
 id|udelay
 c_func
@@ -1396,18 +1531,36 @@ id|ioctl_status.mt_blkno
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* de-assert reset */
+r_if
+c_cond
+(paren
+id|QIC02_TAPE_IFC
+op_eq
+id|MOUNTAIN
+)paren
+id|outb_p
+c_func
+(paren
+id|ctlbits
+op_or
+id|MTN_QIC02_CTL_RESET_NOT
+comma
+id|QIC02_CTL_PORT
+)paren
+suffix:semicolon
+r_else
 id|outb_p
 c_func
 (paren
 id|ctlbits
 op_amp
 op_complement
-id|QIC_CTL_RESET
+id|QIC02_CTL_RESET
 comma
-id|QIC_CTL_PORT
+id|QIC02_CTL_PORT
 )paren
 suffix:semicolon
-multiline_comment|/* de-assert reset */
 multiline_comment|/* KLUDGE FOR G++ BUG */
 (brace
 r_int
@@ -1416,7 +1569,7 @@ op_assign
 id|inb_p
 c_func
 (paren
-id|QIC_STAT_PORT
+id|QIC02_STAT_PORT
 )paren
 suffix:semicolon
 id|status_dead
@@ -1425,10 +1578,10 @@ op_assign
 (paren
 id|stat
 op_amp
-id|QIC_STAT_RESETMASK
+id|QIC02_STAT_RESETMASK
 )paren
 op_ne
-id|QIC_STAT_RESETVAL
+id|QIC02_STAT_RESETVAL
 )paren
 suffix:semicolon
 )brace
@@ -1437,11 +1590,13 @@ r_if
 c_cond
 (paren
 id|status_dead
+op_eq
+id|YES
 )paren
 id|printk
 c_func
 (paren
-id|TPQIC_NAME
+id|TPQIC02_NAME
 l_string|&quot;: reset failed!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1454,13 +1609,15 @@ id|verbose
 id|printk
 c_func
 (paren
-id|TPQIC_NAME
+id|TPQIC02_NAME
 l_string|&quot;: reset successful&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
 (paren
 id|status_dead
+op_eq
+id|YES
 )paren
 ques
 c_cond
@@ -1470,7 +1627,7 @@ id|TE_OK
 suffix:semicolon
 )brace
 multiline_comment|/* tape_reset */
-multiline_comment|/* Notify tape drive of a new command. It only waits for the&n; * command to be accepted, not for the actual command to complete.&n; *&n; * Before calling this routine, QIC_CMD_PORT must have been loaded&n; * with the command to be executed.&n; * After this routine, the exception bit must be checked.&n; * This routine is also used by rdstatus(), so in that case, any exception&n; * must be ignored (`ignore_ex&squot; flag).&n; */
+multiline_comment|/* Notify tape drive of a new command. It only waits for the&n; * command to be accepted, not for the actual command to complete.&n; *&n; * Before calling this routine, QIC02_CMD_PORT must have been loaded&n; * with the command to be executed.&n; * After this routine, the exception bit must be checked.&n; * This routine is also used by rdstatus(), so in that case, any exception&n; * must be ignored (`ignore_ex&squot; flag).&n; */
 DECL|function|notify_cmd
 r_static
 r_int
@@ -1492,7 +1649,7 @@ c_func
 (paren
 id|cmd
 comma
-id|QIC_CMD_PORT
+id|QIC02_CMD_PORT
 )paren
 suffix:semicolon
 multiline_comment|/* output the command */
@@ -1520,6 +1677,8 @@ c_func
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;*** exception detected in notify_cmd&quot;
 )paren
 suffix:semicolon
@@ -1550,12 +1709,16 @@ c_func
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;exception persists after reset.&quot;
 )paren
 suffix:semicolon
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot; ^ exception ignored.&quot;
 )paren
 suffix:semicolon
@@ -1566,9 +1729,9 @@ c_func
 (paren
 id|ctlbits
 op_or
-id|QIC_CTL_REQUEST
+id|QIC02_CTL_REQUEST
 comma
-id|QIC_CTL_PORT
+id|QIC02_CTL_PORT
 )paren
 suffix:semicolon
 multiline_comment|/* set request bit */
@@ -1584,10 +1747,10 @@ c_loop
 id|inb_p
 c_func
 (paren
-id|QIC_STAT_PORT
+id|QIC02_STAT_PORT
 )paren
 op_amp
-id|QIC_STAT_READY
+id|QIC02_STAT_READY
 )paren
 op_logical_and
 (paren
@@ -1611,6 +1774,8 @@ l_int|0
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;timed out waiting for ready in notify_cmd&quot;
 )paren
 suffix:semicolon
@@ -1628,9 +1793,9 @@ c_func
 id|ctlbits
 op_amp
 op_complement
-id|QIC_CTL_REQUEST
+id|QIC02_CTL_REQUEST
 comma
-id|QIC_CTL_PORT
+id|QIC02_CTL_PORT
 )paren
 suffix:semicolon
 multiline_comment|/* reset request bit */
@@ -1647,10 +1812,10 @@ c_loop
 id|inb_p
 c_func
 (paren
-id|QIC_STAT_PORT
+id|QIC02_STAT_PORT
 )paren
 op_amp
-id|QIC_STAT_READY
+id|QIC02_STAT_READY
 )paren
 op_eq
 l_int|0
@@ -1677,6 +1842,8 @@ l_int|0
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;timed out waiting for !ready in notify_cmd&quot;
 )paren
 suffix:semicolon
@@ -1726,13 +1893,13 @@ op_assign
 id|inb_p
 c_func
 (paren
-id|QIC_STAT_PORT
+id|QIC02_STAT_PORT
 )paren
 op_amp
-id|QIC_STAT_MASK
+id|QIC02_STAT_MASK
 )paren
 op_eq
-id|QIC_STAT_MASK
+id|QIC02_STAT_MASK
 )paren
 op_logical_and
 (paren
@@ -1750,7 +1917,7 @@ c_cond
 (paren
 id|stat
 op_amp
-id|QIC_STAT_READY
+id|QIC02_STAT_READY
 )paren
 op_eq
 l_int|0
@@ -1794,13 +1961,13 @@ op_assign
 id|inb_p
 c_func
 (paren
-id|QIC_STAT_PORT
+id|QIC02_STAT_PORT
 )paren
 op_amp
-id|QIC_STAT_MASK
+id|QIC02_STAT_MASK
 )paren
 op_eq
-id|QIC_STAT_MASK
+id|QIC02_STAT_MASK
 )paren
 op_logical_and
 (paren
@@ -1821,7 +1988,7 @@ c_cond
 (paren
 id|stat
 op_amp
-id|QIC_STAT_READY
+id|QIC02_STAT_READY
 )paren
 op_eq
 l_int|0
@@ -1859,13 +2026,13 @@ op_assign
 id|inb_p
 c_func
 (paren
-id|QIC_STAT_PORT
+id|QIC02_STAT_PORT
 )paren
 op_amp
-id|QIC_STAT_MASK
+id|QIC02_STAT_MASK
 )paren
 op_eq
-id|QIC_STAT_MASK
+id|QIC02_STAT_MASK
 )paren
 op_logical_and
 (paren
@@ -1901,15 +2068,17 @@ c_cond
 (paren
 id|stat
 op_amp
-id|QIC_STAT_MASK
+id|QIC02_STAT_MASK
 )paren
 op_eq
-id|QIC_STAT_MASK
+id|QIC02_STAT_MASK
 )paren
 (brace
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;wait_for_ready() timed out&quot;
 )paren
 suffix:semicolon
@@ -1923,7 +2092,7 @@ c_cond
 (paren
 id|stat
 op_amp
-id|QIC_STAT_EXCEPTION
+id|QIC02_STAT_EXCEPTION
 )paren
 op_eq
 l_int|0
@@ -1932,6 +2101,8 @@ l_int|0
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;exception detected after waiting_for_ready&quot;
 )paren
 suffix:semicolon
@@ -2058,7 +2229,7 @@ op_assign
 id|inb_p
 c_func
 (paren
-id|QIC_STAT_PORT
+id|QIC02_STAT_PORT
 )paren
 suffix:semicolon
 r_if
@@ -2067,7 +2238,7 @@ c_cond
 (paren
 id|stat
 op_amp
-id|QIC_STAT_EXCEPTION
+id|QIC02_STAT_EXCEPTION
 )paren
 op_eq
 l_int|0
@@ -2077,6 +2248,8 @@ multiline_comment|/* if exception */
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;send_qic02_cmd: Exception!&quot;
 )paren
 suffix:semicolon
@@ -2089,13 +2262,15 @@ c_cond
 (paren
 id|stat
 op_amp
-id|QIC_STAT_READY
+id|QIC02_STAT_READY
 )paren
 (brace
 multiline_comment|/* if not ready */
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;send_qic02_cmd: not Ready!&quot;
 )paren
 suffix:semicolon
@@ -2124,9 +2299,13 @@ multiline_comment|/* inherit exception check. */
 r_if
 c_cond
 (paren
+id|TP_HAVE_SEEK
+op_logical_and
+(paren
 id|cmd
 op_eq
-id|QCMDV_SEEK_BLK
+id|AR_QCMDV_SEEK_BLK
+)paren
 )paren
 (brace
 multiline_comment|/* This one needs to send 3 more bytes, MSB first */
@@ -2157,6 +2336,8 @@ id|TE_OK
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;send_qic02_cmd failed&quot;
 )paren
 suffix:semicolon
@@ -2215,13 +2396,13 @@ op_logical_and
 id|inb_p
 c_func
 (paren
-id|QIC_STAT_PORT
+id|QIC02_STAT_PORT
 )paren
 op_amp
-id|QIC_STAT_MASK
+id|QIC02_STAT_MASK
 )paren
 op_eq
-id|QIC_STAT_MASK
+id|QIC02_STAT_MASK
 )paren
 )paren
 id|n
@@ -2240,6 +2421,8 @@ multiline_comment|/* n (above) should be chosen such that on your machine&n;&t;&
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;waiting looong in rdstatus() -- drive dead?&quot;
 )paren
 suffix:semicolon
@@ -2250,13 +2433,13 @@ c_loop
 id|inb_p
 c_func
 (paren
-id|QIC_STAT_PORT
+id|QIC02_STAT_PORT
 )paren
 op_amp
-id|QIC_STAT_MASK
+id|QIC02_STAT_MASK
 )paren
 op_eq
-id|QIC_STAT_MASK
+id|QIC02_STAT_MASK
 )paren
 id|schedule
 c_func
@@ -2266,6 +2449,8 @@ suffix:semicolon
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;finished waiting in rdstatus()&quot;
 )paren
 suffix:semicolon
@@ -2295,7 +2480,7 @@ id|current_tape_dev
 id|printk
 c_func
 (paren
-id|TPQIC_NAME
+id|TPQIC02_NAME
 l_string|&quot;: reading status bytes: &quot;
 )paren
 suffix:semicolon
@@ -2322,7 +2507,7 @@ op_assign
 id|inb_p
 c_func
 (paren
-id|QIC_STAT_PORT
+id|QIC02_STAT_PORT
 )paren
 suffix:semicolon
 r_while
@@ -2331,10 +2516,10 @@ c_loop
 (paren
 id|s
 op_amp
-id|QIC_STAT_MASK
+id|QIC02_STAT_MASK
 )paren
 op_eq
-id|QIC_STAT_MASK
+id|QIC02_STAT_MASK
 )paren
 suffix:semicolon
 multiline_comment|/* wait for ready or exception */
@@ -2344,7 +2529,7 @@ c_cond
 (paren
 id|s
 op_amp
-id|QIC_STAT_EXCEPTION
+id|QIC02_STAT_EXCEPTION
 )paren
 op_eq
 l_int|0
@@ -2354,6 +2539,8 @@ multiline_comment|/* if exception */
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;rdstatus: exception error&quot;
 )paren
 suffix:semicolon
@@ -2373,7 +2560,7 @@ op_assign
 id|inb_p
 c_func
 (paren
-id|QIC_DATA_PORT
+id|QIC02_DATA_PORT
 )paren
 suffix:semicolon
 multiline_comment|/* read status byte */
@@ -2411,9 +2598,9 @@ c_func
 (paren
 id|ctlbits
 op_or
-id|QIC_CTL_REQUEST
+id|QIC02_CTL_REQUEST
 comma
-id|QIC_CTL_PORT
+id|QIC02_CTL_PORT
 )paren
 suffix:semicolon
 multiline_comment|/* set request */
@@ -2424,10 +2611,10 @@ c_loop
 id|inb_p
 c_func
 (paren
-id|QIC_STAT_PORT
+id|QIC02_STAT_PORT
 )paren
 op_amp
-id|QIC_STAT_READY
+id|QIC02_STAT_READY
 )paren
 op_eq
 l_int|0
@@ -2447,9 +2634,9 @@ c_func
 id|ctlbits
 op_amp
 op_complement
-id|QIC_CTL_REQUEST
+id|QIC02_CTL_REQUEST
 comma
-id|QIC_CTL_PORT
+id|QIC02_CTL_PORT
 )paren
 suffix:semicolon
 multiline_comment|/* un-set request */
@@ -2461,10 +2648,10 @@ c_loop
 id|inb_p
 c_func
 (paren
-id|QIC_STAT_PORT
+id|QIC02_STAT_PORT
 )paren
 op_amp
-id|QIC_STAT_READY
+id|QIC02_STAT_READY
 )paren
 multiline_comment|/*skip*/
 suffix:semicolon
@@ -2496,7 +2683,9 @@ r_int
 id|get_status
 c_func
 (paren
-r_char
+r_volatile
+r_struct
+id|tpstatus
 op_star
 id|stp
 )paren
@@ -2507,6 +2696,10 @@ op_assign
 id|rdstatus
 c_func
 (paren
+(paren
+r_char
+op_star
+)paren
 id|stp
 comma
 id|TPSTATSIZE
@@ -2519,14 +2712,18 @@ id|byte_swap_w
 c_func
 (paren
 op_amp
-id|tperror.dec
+(paren
+id|stp-&gt;dec
+)paren
 )paren
 suffix:semicolon
 id|byte_swap_w
 c_func
 (paren
 op_amp
-id|tperror.urc
+(paren
+id|stp-&gt;urc
+)paren
 )paren
 suffix:semicolon
 macro_line|#else
@@ -2563,6 +2760,8 @@ suffix:semicolon
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;Attempting to read Extended Status 3...&quot;
 )paren
 suffix:semicolon
@@ -2594,6 +2793,8 @@ suffix:semicolon
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;Returned status bytes:&quot;
 )paren
 suffix:semicolon
@@ -2628,7 +2829,7 @@ id|printk
 c_func
 (paren
 l_string|&quot;&bslash;n&quot;
-id|TPQIC_NAME
+id|TPQIC02_NAME
 l_string|&quot;: %2d:&quot;
 )paren
 suffix:semicolon
@@ -2691,10 +2892,19 @@ r_int
 id|cmd
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|TPQDBG
+c_func
+(paren
+id|SENSE_TEXT
+)paren
+)paren
 id|printk
 c_func
 (paren
-id|TPQIC_NAME
+id|TPQIC02_NAME
 l_string|&quot;: tp_sense(ignore=0x%x) enter&bslash;n&quot;
 comma
 id|ignore
@@ -2711,6 +2921,8 @@ id|YES
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;Warning: File Mark inserted because of sense() request&quot;
 )paren
 suffix:semicolon
@@ -2742,10 +2954,6 @@ c_cond
 id|get_status
 c_func
 (paren
-(paren
-r_char
-op_star
-)paren
 op_amp
 id|tperror
 )paren
@@ -2756,6 +2964,8 @@ id|TE_OK
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;tp_sense: could not read tape drive status&quot;
 )paren
 suffix:semicolon
@@ -2782,7 +2992,7 @@ id|TP_ST1
 id|printk
 c_func
 (paren
-id|TPQIC_NAME
+id|TPQIC02_NAME
 l_string|&quot;: tp_sense: status: %x, error count: %d, underruns: %d&bslash;n&quot;
 comma
 id|tperror.exs
@@ -2793,11 +3003,32 @@ id|tperror.urc
 )paren
 suffix:semicolon
 r_else
+r_if
+c_cond
+(paren
+(paren
+id|tperror.dec
+op_ne
+l_int|0
+)paren
+op_logical_or
+(paren
+id|tperror.urc
+op_ne
+l_int|0
+)paren
+op_logical_or
+id|TPQDBG
+c_func
+(paren
+id|SENSE_CNTS
+)paren
+)paren
 id|printk
 c_func
 (paren
-id|TPQIC_NAME
-l_string|&quot;: tp_sense: no errors at all, soft error count: %d, underruns: %d&bslash;n&quot;
+id|TPQIC02_NAME
+l_string|&quot;: tp_sense: no hard errors, soft error count: %d, underruns: %d&bslash;n&quot;
 comma
 id|tperror.dec
 comma
@@ -2982,10 +3213,15 @@ r_if
 c_cond
 (paren
 id|err
-op_ne
-l_int|0
+op_amp
+(paren
+id|TP_ST0
+op_or
+id|TP_ST1
+)paren
 )paren
 (brace
+multiline_comment|/* My Wangtek occasionally reports `status&squot; 1212 which should be ignored. */
 id|exnr
 op_assign
 id|decode_exception_nr
@@ -3074,15 +3310,24 @@ op_assign
 id|inb
 c_func
 (paren
-id|QIC_STAT_PORT
+id|QIC02_STAT_PORT
 )paren
 op_amp
-id|QIC_STAT_MASK
+id|QIC02_STAT_MASK
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|TPQDBG
+c_func
+(paren
+id|REWIND
+)paren
+)paren
 id|printk
 c_func
 (paren
-id|TPQIC_NAME
+id|TPQIC02_NAME
 l_string|&quot;: Waiting for (re-)wind to finish: stat=0x%x&bslash;n&quot;
 comma
 id|stat
@@ -3107,6 +3352,8 @@ id|TE_OK
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;(re-) winding failed&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3137,11 +3384,15 @@ r_if
 c_cond
 (paren
 id|status_dead
+op_eq
+id|YES
 )paren
 (brace
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;Drive is dead. Do a `mt reset`.&quot;
 )paren
 suffix:semicolon
@@ -3206,11 +3457,14 @@ id|TE_OK
 id|printk
 c_func
 (paren
-id|TPQIC_NAME
+id|TPQIC02_NAME
 l_string|&quot;: ll_do_qic_cmd(%x, %ld) failed&bslash;n&quot;
 comma
 id|cmd
 comma
+(paren
+r_int
+)paren
 id|timeout
 )paren
 suffix:semicolon
@@ -3228,10 +3482,10 @@ c_loop
 id|inb_p
 c_func
 (paren
-id|QIC_STAT_PORT
+id|QIC02_STAT_PORT
 )paren
 op_amp
-id|QIC_STAT_READY
+id|QIC02_STAT_READY
 )paren
 op_ne
 l_int|0
@@ -3381,11 +3635,14 @@ id|TE_OK
 id|printk
 c_func
 (paren
-id|TPQIC_NAME
+id|TPQIC02_NAME
 l_string|&quot;: Exception persist in ll_do_qic_cmd[1](%x, %ld)&quot;
 comma
 id|cmd
 comma
+(paren
+r_int
+)paren
 id|timeout
 )paren
 suffix:semicolon
@@ -3412,7 +3669,7 @@ id|TE_OK
 id|printk
 c_func
 (paren
-id|TPQIC_NAME
+id|TPQIC02_NAME
 l_string|&quot;: ll_do_qic_cmd: send_qic02_cmd failed, stat = 0x%x&bslash;n&quot;
 comma
 id|stat
@@ -3501,11 +3758,14 @@ id|TE_OK
 id|printk
 c_func
 (paren
-id|TPQIC_NAME
+id|TPQIC02_NAME
 l_string|&quot;: Exception persist in ll_do_qic_cmd[2](%x, %ld)&bslash;n&quot;
 comma
 id|cmd
 comma
+(paren
+r_int
+)paren
 id|timeout
 )paren
 suffix:semicolon
@@ -3539,7 +3799,7 @@ id|TE_OK
 id|printk
 c_func
 (paren
-id|TPQIC_NAME
+id|TPQIC02_NAME
 l_string|&quot;: ll_do_qic_cmd %x: wait failed, stat == 0x%x&bslash;n&quot;
 comma
 id|cmd
@@ -3592,9 +3852,27 @@ multiline_comment|/* if the command is a RFM, there is no need to do this&n;&t;&
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;terminating pending read-cycle&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* I&squot;m not too sure about this part  -- hhb */
+r_if
+c_cond
+(paren
+id|QIC02_TAPE_IFC
+op_eq
+id|MOUNTAIN
+)paren
+(brace
+multiline_comment|/* Mountain reference says can terminate by de-asserting online */
+id|ctlbits
+op_and_assign
+op_complement
+id|MTN_QIC02_CTL_ONLINE
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -3614,6 +3892,8 @@ id|TE_OK
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;finish_rw[read1]: ignore the 2 lines above&quot;
 )paren
 suffix:semicolon
@@ -3646,6 +3926,8 @@ id|TE_OK
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;finish_rw[read2]: read cycle error&quot;
 )paren
 suffix:semicolon
@@ -3710,6 +3992,8 @@ id|TE_OK
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;Couldn&squot;t finish write cycle properly&quot;
 )paren
 suffix:semicolon
@@ -3757,6 +4041,8 @@ id|TE_OK
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;error: drive not ready in finish_rw() !&quot;
 )paren
 suffix:semicolon
@@ -3809,6 +4095,8 @@ id|need_rewind
 id|tpqputs
 c_func
 (paren
+id|TPQD_REWIND
+comma
 l_string|&quot;Rewinding tape...&quot;
 )paren
 suffix:semicolon
@@ -3833,7 +4121,7 @@ l_int|0
 id|printk
 c_func
 (paren
-id|TPQIC_NAME
+id|TPQIC02_NAME
 l_string|&quot;: rewind failed in do_qic_cmd(). stat=0x%2x&quot;
 comma
 id|stat
@@ -3918,6 +4206,8 @@ suffix:colon
 id|tpqputs
 c_func
 (paren
+id|TPQD_IOCTLS
+comma
 l_string|&quot;MTFSF forward searching filemark&quot;
 )paren
 suffix:semicolon
@@ -3948,10 +4238,17 @@ suffix:semicolon
 r_case
 id|MTBSF
 suffix:colon
-macro_line|#ifdef TP_HAVE_BSF
+r_if
+c_cond
+(paren
+id|TP_HAVE_BSF
+)paren
+(brace
 id|tpqputs
 c_func
 (paren
+id|TPQD_IOCTLS
+comma
 l_string|&quot;MTBSF backward searching filemark -- optional command&quot;
 )paren
 suffix:semicolon
@@ -3980,19 +4277,15 @@ comma
 id|TIM_F
 )paren
 suffix:semicolon
-macro_line|#else
-id|tpqputs
-c_func
-(paren
-l_string|&quot;MTBSF not supported&quot;
-)paren
-suffix:semicolon
+)brace
+r_else
+(brace
 id|stat
 op_assign
 op_minus
 id|ENXIO
 suffix:semicolon
-macro_line|#endif
+)brace
 id|status_eom_detected
 op_assign
 id|status_eof_detected
@@ -4005,10 +4298,18 @@ suffix:semicolon
 r_case
 id|MTFSR
 suffix:colon
-macro_line|#ifdef TP_HAVE_FSR&t;/* This is an optional QIC-02 command */
+r_if
+c_cond
+(paren
+id|TP_HAVE_FSR
+)paren
+(brace
+multiline_comment|/* This is an optional QIC-02 command */
 id|tpqputs
 c_func
 (paren
+id|TPQD_IOCTLS
+comma
 l_string|&quot;MTFSR forward space record&quot;
 )paren
 suffix:semicolon
@@ -4037,11 +4338,15 @@ comma
 id|TIM_F
 )paren
 suffix:semicolon
-macro_line|#else
+)brace
+r_else
+(brace
 multiline_comment|/**** fake it by doing a read data block command? ******/
 id|tpqputs
 c_func
 (paren
+id|TPQD_IOCTLS
+comma
 l_string|&quot;MTFSR not supported&quot;
 )paren
 suffix:semicolon
@@ -4050,18 +4355,26 @@ op_assign
 op_minus
 id|ENXIO
 suffix:semicolon
-macro_line|#endif
+)brace
 r_return
 id|stat
 suffix:semicolon
 r_case
 id|MTBSR
 suffix:colon
-macro_line|#ifdef TP_HAVE_BSR&t;/* This is an optional QIC-02 command */
+r_if
+c_cond
+(paren
+id|TP_HAVE_BSR
+)paren
+(brace
+multiline_comment|/* This is an optional QIC-02 command */
 multiline_comment|/* we need this for appending files with GNU tar!! */
 id|tpqputs
 c_func
 (paren
+id|TPQD_IOCTLS
+comma
 l_string|&quot;MTFSR backward space record&quot;
 )paren
 suffix:semicolon
@@ -4090,10 +4403,14 @@ comma
 id|TIM_F
 )paren
 suffix:semicolon
-macro_line|#else
+)brace
+r_else
+(brace
 id|tpqputs
 c_func
 (paren
+id|TPQD_IOCTLS
+comma
 l_string|&quot;MTBSR not supported&quot;
 )paren
 suffix:semicolon
@@ -4102,7 +4419,7 @@ op_assign
 op_minus
 id|ENXIO
 suffix:semicolon
-macro_line|#endif
+)brace
 id|status_eom_detected
 op_assign
 id|status_eof_detected
@@ -4118,6 +4435,8 @@ suffix:colon
 id|tpqputs
 c_func
 (paren
+id|TPQD_IOCTLS
+comma
 l_string|&quot;MTWEOF write eof mark&quot;
 )paren
 suffix:semicolon
@@ -4159,6 +4478,8 @@ suffix:colon
 id|tpqputs
 c_func
 (paren
+id|TPQD_IOCTLS
+comma
 l_string|&quot;MTREW rewinding tape&quot;
 )paren
 suffix:semicolon
@@ -4198,6 +4519,8 @@ suffix:colon
 id|tpqputs
 c_func
 (paren
+id|TPQD_IOCTLS
+comma
 l_string|&quot;MTOFFL rewinding &amp; going offline&quot;
 )paren
 suffix:semicolon
@@ -4245,6 +4568,8 @@ suffix:colon
 id|tpqputs
 c_func
 (paren
+id|TPQD_IOCTLS
+comma
 l_string|&quot;MTNOP setting status only&quot;
 )paren
 suffix:semicolon
@@ -4274,6 +4599,8 @@ suffix:colon
 id|tpqputs
 c_func
 (paren
+id|TPQD_IOCTLS
+comma
 l_string|&quot;MTRETEN retension tape&quot;
 )paren
 suffix:semicolon
@@ -4314,6 +4641,8 @@ multiline_comment|/* Think think is like MTBSF, except that&n;&t;&t;&t; * we sho
 id|tpqputs
 c_func
 (paren
+id|TPQD_IOCTLS
+comma
 l_string|&quot;MTBSFM not supported&quot;
 )paren
 suffix:semicolon
@@ -4343,6 +4672,8 @@ multiline_comment|/* I think this is like MTFSF, except that&n;&t;&t;&t; * we sh
 id|tpqputs
 c_func
 (paren
+id|TPQD_IOCTLS
+comma
 l_string|&quot;MTFSFM not supported&quot;
 )paren
 suffix:semicolon
@@ -4372,6 +4703,8 @@ multiline_comment|/* This should leave the tape ready for appending&n;&t;&t;&t; 
 id|tpqputs
 c_func
 (paren
+id|TPQD_IOCTLS
+comma
 l_string|&quot;MTEOM search for End Of recorded Media&quot;
 )paren
 suffix:semicolon
@@ -4390,10 +4723,13 @@ r_return
 op_minus
 id|EACCES
 suffix:semicolon
-macro_line|#ifdef TP_HAVE_EOD
-multiline_comment|/* Use faster seeking when possible.&n;&t;&t;&t; * This requires the absence of data beyond the EOM.&n;&t;&t;&t; */
-macro_line|# if TAPE_QIC02_DRIVE == MT_ISWT5150
-multiline_comment|/* It seems that my drive does not always perform the&n;&t;&t;&t; * SEEK_EOD correctly, unless it is preceded by a&n;&t;&t;&t; * rewind command.&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|TP_HAVE_EOD
+)paren
+(brace
+multiline_comment|/* Use faster seeking when possible.&n;&t;&t;&t;&t; * This requires the absence of data beyond the EOM.&n;&t;&t;&t;&t; * It seems that my drive does not always perform the&n;&t;&t;&t;&t; * SEEK_EOD correctly, unless it is preceded by a&n;&t;&t;&t;&t; * rewind command.&n;&t;&t;&t;&t; */
 macro_line|# if 0
 id|status_eom_detected
 op_assign
@@ -4420,7 +4756,6 @@ id|stat
 r_return
 id|stat
 suffix:semicolon
-macro_line|# endif
 id|stat
 op_assign
 id|do_qic_cmd
@@ -4432,7 +4767,9 @@ id|TIM_F
 )paren
 suffix:semicolon
 multiline_comment|/* After a successful seek, TP_EOR should be returned */
-macro_line|#else
+)brace
+r_else
+(brace
 multiline_comment|/* else just seek until the drive returns exception &quot;No Data&quot; */
 id|stat
 op_assign
@@ -4475,7 +4812,7 @@ id|TP_NDT
 r_return
 l_int|0
 suffix:semicolon
-macro_line|#endif
+)brace
 r_return
 id|stat
 suffix:semicolon
@@ -4485,6 +4822,8 @@ suffix:colon
 id|tpqputs
 c_func
 (paren
+id|TPQD_IOCTLS
+comma
 l_string|&quot;MTERASE -- ERASE TAPE !&quot;
 )paren
 suffix:semicolon
@@ -4507,6 +4846,8 @@ id|TP_WRP
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;Cartridge is write-protected.&quot;
 )paren
 suffix:semicolon
@@ -4522,24 +4863,6 @@ id|t
 op_assign
 id|jiffies
 suffix:semicolon
-multiline_comment|/* give user a few seconds to pull out tape */
-r_while
-c_loop
-(paren
-id|jiffies
-op_minus
-id|t
-OL
-l_int|3
-op_star
-id|HZ
-)paren
-id|schedule
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/* Plain GNU mt(1) 2.2 erases a tape in O_RDONLY. :-( */
 r_if
 c_cond
@@ -4552,7 +4875,25 @@ r_return
 op_minus
 id|EACCES
 suffix:semicolon
-multiline_comment|/* don&squot;t bother writing filemark */
+multiline_comment|/* give user a few seconds to pull out tape */
+r_while
+c_loop
+(paren
+id|jiffies
+op_minus
+id|t
+OL
+l_int|4
+op_star
+id|HZ
+)paren
+id|schedule
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* don&squot;t bother writing filemark first */
 id|status_eom_detected
 op_assign
 id|status_eof_detected
@@ -4571,10 +4912,17 @@ suffix:semicolon
 r_case
 id|MTRAS1
 suffix:colon
-macro_line|#ifdef TP_HAVE_RAS1
+r_if
+c_cond
+(paren
+id|TP_HAVE_RAS1
+)paren
+(brace
 id|tpqputs
 c_func
 (paren
+id|TPQD_IOCTLS
+comma
 l_string|&quot;MTRAS1: non-destructive self test&quot;
 )paren
 suffix:semicolon
@@ -4599,6 +4947,8 @@ l_int|0
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;RAS1 failed&quot;
 )paren
 suffix:semicolon
@@ -4624,10 +4974,12 @@ op_minus
 id|EIO
 suffix:semicolon
 multiline_comment|/* get_ext_status3(); */
-macro_line|#else
+)brace
 id|tpqputs
 c_func
 (paren
+id|TPQD_IOCTLS
+comma
 l_string|&quot;RAS1 not supported&quot;
 )paren
 suffix:semicolon
@@ -4635,14 +4987,20 @@ r_return
 op_minus
 id|ENXIO
 suffix:semicolon
-macro_line|#endif
 r_case
 id|MTRAS2
 suffix:colon
-macro_line|#ifdef TP_HAVE_RAS2
+r_if
+c_cond
+(paren
+id|TP_HAVE_RAS2
+)paren
+(brace
 id|tpqputs
 c_func
 (paren
+id|TPQD_IOCTLS
+comma
 l_string|&quot;MTRAS2: destructive self test&quot;
 )paren
 suffix:semicolon
@@ -4667,6 +5025,8 @@ l_int|0
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;RAS2 failed&quot;
 )paren
 suffix:semicolon
@@ -4692,10 +5052,12 @@ op_minus
 id|EIO
 suffix:semicolon
 multiline_comment|/* get_ext_status3(); */
-macro_line|#else
+)brace
 id|tpqputs
 c_func
 (paren
+id|TPQD_IOCTLS
+comma
 l_string|&quot;RAS2 not supported&quot;
 )paren
 suffix:semicolon
@@ -4703,14 +5065,26 @@ r_return
 op_minus
 id|ENXIO
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef TP_HAVE_SEEK
 r_case
 id|MTSEEK
 suffix:colon
+r_if
+c_cond
+(paren
+id|TP_HAVE_SEEK
+op_logical_and
+(paren
+id|QIC02_TAPE_IFC
+op_eq
+id|ARCHIVE
+)paren
+)paren
+(brace
 id|tpqputs
 c_func
 (paren
+id|TPQD_IOCTLS
+comma
 l_string|&quot;MTSEEK seeking block&quot;
 )paren
 suffix:semicolon
@@ -4734,12 +5108,17 @@ r_return
 id|do_qic_cmd
 c_func
 (paren
-id|QCMDV_SEEK_BLK
+id|AR_QCMDV_SEEK_BLK
 comma
 id|TIM_F
 )paren
 suffix:semicolon
-macro_line|#endif
+)brace
+r_else
+r_return
+op_minus
+id|ENOTTY
+suffix:semicolon
 r_default
 suffix:colon
 r_return
@@ -4760,17 +5139,31 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#if TAPE_QIC02_IFC == WANGTEK
+r_if
+c_cond
+(paren
+id|QIC02_TAPE_IFC
+op_eq
+id|WANGTEK
+)paren
+multiline_comment|/* or EVEREX */
 id|outb_p
 c_func
 (paren
 id|WT_CTL_ONLINE
 comma
-id|QIC_CTL_PORT
+id|QIC02_CTL_PORT
 )paren
 suffix:semicolon
 multiline_comment|/* back to normal */
-macro_line|#elif TAPE_QIC02_IFC == ARCHIVE
+r_else
+r_if
+c_cond
+(paren
+id|QIC02_TAPE_IFC
+op_eq
+id|ARCHIVE
+)paren
 id|outb_p
 c_func
 (paren
@@ -4779,17 +5172,26 @@ comma
 id|AR_RESET_DMA_PORT
 )paren
 suffix:semicolon
-macro_line|#endif
+r_else
+multiline_comment|/* QIC02_TAPE_IFC == MOUNTAIN */
+id|outb_p
+c_func
+(paren
+id|ctlbits
+comma
+id|QIC02_CTL_PORT
+)paren
+suffix:semicolon
 id|clear_dma_ff
 c_func
 (paren
-id|TAPE_QIC02_DMA
+id|QIC02_TAPE_DMA
 )paren
 suffix:semicolon
 id|set_dma_mode
 c_func
 (paren
-id|TAPE_QIC02_DMA
+id|QIC02_TAPE_DMA
 comma
 id|dma_mode
 )paren
@@ -4797,7 +5199,7 @@ suffix:semicolon
 id|set_dma_addr
 c_func
 (paren
-id|TAPE_QIC02_DMA
+id|QIC02_TAPE_DMA
 comma
 id|buffaddr
 op_plus
@@ -4808,13 +5210,20 @@ multiline_comment|/* full address */
 id|set_dma_count
 c_func
 (paren
-id|TAPE_QIC02_DMA
+id|QIC02_TAPE_DMA
 comma
 id|TAPE_BLKSIZE
 )paren
 suffix:semicolon
 multiline_comment|/* start tape DMA controller */
-macro_line|#if TAPE_QIC02_IFC == WANGTEK
+r_if
+c_cond
+(paren
+id|QIC02_TAPE_IFC
+op_eq
+id|WANGTEK
+)paren
+multiline_comment|/* or EVEREX */
 id|outb_p
 c_func
 (paren
@@ -4822,11 +5231,19 @@ id|WT_CTL_DMA
 op_or
 id|WT_CTL_ONLINE
 comma
-id|QIC_CTL_PORT
+id|QIC02_CTL_PORT
 )paren
 suffix:semicolon
 multiline_comment|/* trigger DMA transfer */
-macro_line|#elif TAPE_QIC02_IFC == ARCHIVE
+r_else
+r_if
+c_cond
+(paren
+id|QIC02_TAPE_IFC
+op_eq
+id|ARCHIVE
+)paren
+(brace
 id|outb_p
 c_func
 (paren
@@ -4834,7 +5251,7 @@ id|AR_CTL_IEN
 op_or
 id|AR_CTL_DNIEN
 comma
-id|QIC_CTL_PORT
+id|QIC02_CTL_PORT
 )paren
 suffix:semicolon
 multiline_comment|/* enable interrupts again */
@@ -4848,18 +5265,67 @@ id|AR_START_DMA_PORT
 suffix:semicolon
 multiline_comment|/* start DMA transfer */
 multiline_comment|/* In dma_end() AR_RESET_DMA_PORT is written too. */
-macro_line|#endif
+)brace
+r_else
+multiline_comment|/* QIC02_TAPE_IFC == MOUNTAIN */
+(brace
+id|inb
+c_func
+(paren
+id|MTN_R_DESELECT_DMA_PORT
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+id|ctlbits
+op_or
+(paren
+id|MTN_CTL_EXC_IEN
+op_or
+id|MTN_CTL_DNIEN
+)paren
+comma
+id|QIC02_CTL_PORT
+)paren
+suffix:semicolon
+id|outb_p
+c_func
+(paren
+l_int|0
+comma
+id|MTN_W_SELECT_DMA_PORT
+)paren
+suffix:semicolon
+multiline_comment|/* start DMA transfer */
+r_if
+c_cond
+(paren
+id|dma_mode
+op_eq
+id|DMA_MODE_WRITE
+)paren
+id|outb_p
+c_func
+(paren
+l_int|0
+comma
+id|MTN_W_DMA_WRITE_PORT
+)paren
+suffix:semicolon
+multiline_comment|/* start DMA transfer */
+)brace
 multiline_comment|/* start computer DMA controller */
 id|enable_dma
 c_func
 (paren
-id|TAPE_QIC02_DMA
+id|QIC02_TAPE_DMA
 )paren
 suffix:semicolon
 multiline_comment|/* block transfer should start now, jumping to the &n;&t; * interrupt routine when done or an exception was detected.&n;&t; */
 )brace
 multiline_comment|/* dma_transfer */
-multiline_comment|/* start_dma() sets a DMA transfer up between the tape controller and&n; * the kernel tape_qic02_buf buffer.&n; * Normally bytes_todo==dma_bytes_done at the end of a DMA transfer. If not,&n; * a filemark was read, or an attempt to write beyond the End Of Tape &n; * was made. [Or some other bad thing happened.]&n; * Must do a sense() before returning error.&n; */
+multiline_comment|/* start_dma() sets a DMA transfer up between the tape controller and&n; * the kernel qic02_tape_buf buffer.&n; * Normally bytes_todo==dma_bytes_done at the end of a DMA transfer. If not,&n; * a filemark was read, or an attempt to write beyond the End Of Tape &n; * was made. [Or some other bad thing happened.]&n; * Must do a sense() before returning error.&n; */
 DECL|function|start_dma
 r_static
 r_int
@@ -4878,9 +5344,11 @@ multiline_comment|/* assume &squot;bytes_todo&squot;&gt;0 */
 r_int
 id|stat
 suffix:semicolon
-id|TPQPUTS
+id|tpqputs
 c_func
 (paren
+id|TPQD_DEBUG
+comma
 l_string|&quot;start_dma() enter&quot;
 )paren
 suffix:semicolon
@@ -4891,7 +5359,7 @@ c_func
 id|printk
 c_func
 (paren
-id|TPQIC_NAME
+id|TPQIC02_NAME
 l_string|&quot;: doing_read==%d, doing_write==%d&bslash;n&quot;
 comma
 id|doing_read
@@ -4950,10 +5418,6 @@ multiline_comment|/* Next dummy get status is to make sure CNI is valid,&n;     
 id|get_status
 c_func
 (paren
-(paren
-r_char
-op_star
-)paren
 op_amp
 id|tperror
 )paren
@@ -5012,6 +5476,8 @@ multiline_comment|/*** not sure this is needed ***/
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;wait_for_ready failed in start_dma&quot;
 )paren
 suffix:semicolon
@@ -5021,6 +5487,20 @@ id|EIO
 suffix:semicolon
 )brace
 macro_line|#endif
+r_if
+c_cond
+(paren
+id|QIC02_TAPE_IFC
+op_eq
+id|MOUNTAIN
+)paren
+(brace
+multiline_comment|/* Set control bits to select ONLINE during command */
+id|ctlbits
+op_or_assign
+id|MTN_QIC02_CTL_ONLINE
+suffix:semicolon
+)brace
 multiline_comment|/* Tell the controller the data direction */
 multiline_comment|/* r/w, timeout medium, check exceptions, sets status_cmd_pending. */
 id|stat
@@ -5055,7 +5535,7 @@ id|TE_OK
 id|printk
 c_func
 (paren
-id|TPQIC_NAME
+id|TPQIC02_NAME
 l_string|&quot;: start_dma: init %s failed&bslash;n&quot;
 comma
 (paren
@@ -5128,7 +5608,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-id|TPQIC_NAME
+id|TPQIC02_NAME
 l_string|&quot;: requested unknown mode %d&bslash;n&quot;
 comma
 id|mode
@@ -5137,7 +5617,7 @@ suffix:semicolon
 id|panic
 c_func
 (paren
-id|TPQIC_NAME
+id|TPQIC02_NAME
 l_string|&quot;: invalid mode in start_dma()&quot;
 )paren
 suffix:semicolon
@@ -5157,6 +5637,8 @@ multiline_comment|/* This is for Archive drives, to handle reads with 0 bytes&n;
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;detected exception in start_dma() while transfer in progress&quot;
 )paren
 suffix:semicolon
@@ -5237,26 +5719,40 @@ suffix:semicolon
 id|disable_dma
 c_func
 (paren
-id|TAPE_QIC02_DMA
+id|QIC02_TAPE_DMA
 )paren
 suffix:semicolon
 id|clear_dma_ff
 c_func
 (paren
-id|TAPE_QIC02_DMA
+id|QIC02_TAPE_DMA
 )paren
 suffix:semicolon
-macro_line|#if TAPE_QIC02_IFC == WANGTEK
+r_if
+c_cond
+(paren
+id|QIC02_TAPE_IFC
+op_eq
+id|WANGTEK
+)paren
+multiline_comment|/* or EVEREX */
 id|outb_p
 c_func
 (paren
 id|WT_CTL_ONLINE
 comma
-id|QIC_CTL_PORT
+id|QIC02_CTL_PORT
 )paren
 suffix:semicolon
 multiline_comment|/* back to normal */
-macro_line|#elif TAPE_QIC02_IFC == ARCHIVE
+r_else
+r_if
+c_cond
+(paren
+id|QIC02_TAPE_IFC
+op_eq
+id|ARCHIVE
+)paren
 id|outb_p
 c_func
 (paren
@@ -5265,7 +5761,16 @@ comma
 id|AR_RESET_DMA_PORT
 )paren
 suffix:semicolon
-macro_line|#endif
+r_else
+multiline_comment|/* QIC02_TAPE_IFC == MOUNTAIN */
+(brace
+multiline_comment|/* Clear control bits, de-select ONLINE during tp_sense */
+id|ctlbits
+op_and_assign
+op_complement
+id|MTN_QIC02_CTL_ONLINE
+suffix:semicolon
+)brace
 id|stat
 op_assign
 id|wait_for_ready
@@ -5289,6 +5794,8 @@ id|TE_OK
 id|tpqputs
 c_func
 (paren
+id|TPQD_DMAX
+comma
 l_string|&quot;DMA transfer exception&quot;
 )paren
 suffix:semicolon
@@ -5311,6 +5818,31 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* no return here -- got to clean up first! */
 )brace
+r_else
+multiline_comment|/* if (QIC02_TAPE_IFC == MOUNTAIN) */
+(brace
+id|outb_p
+c_func
+(paren
+id|ctlbits
+comma
+id|QIC02_CTL_PORT
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|QIC02_TAPE_IFC
+op_eq
+id|MOUNTAIN
+)paren
+id|inb
+c_func
+(paren
+id|MTN_R_DESELECT_DMA_PORT
+)paren
+suffix:semicolon
 multiline_comment|/* take the tape controller offline */
 multiline_comment|/* finish off DMA stuff */
 id|dma_mode
@@ -5345,11 +5877,11 @@ multiline_comment|/*** could return stat here ***/
 )brace
 multiline_comment|/* end_dma */
 multiline_comment|/*********** Below are the (public) OS-interface procedures ***********/
-multiline_comment|/* tape_qic02_times_out() is called when a DMA transfer doesn&squot;t complete&n; * quickly enough. Usually this means there is something seriously wrong&n; * with the hardware/software, but it could just be that the controller&n; * has decided to do a long rewind, just when I didn&squot;t expect it.&n; * Just try again.&n; */
-DECL|function|tape_qic02_times_out
+multiline_comment|/* qic02_tape_times_out() is called when a DMA transfer doesn&squot;t complete&n; * quickly enough. Usually this means there is something seriously wrong&n; * with the hardware/software, but it could just be that the controller&n; * has decided to do a long rewind, just when I didn&squot;t expect it.&n; * Just try again.&n; */
+DECL|function|qic02_tape_times_out
 r_static
 r_void
-id|tape_qic02_times_out
+id|qic02_tape_times_out
 c_func
 (paren
 r_void
@@ -5360,7 +5892,7 @@ c_func
 (paren
 l_string|&quot;time-out in %s driver&bslash;n&quot;
 comma
-id|TPQIC_NAME
+id|TPQIC02_NAME
 )paren
 suffix:semicolon
 r_if
@@ -5411,19 +5943,19 @@ id|wake_up
 c_func
 (paren
 op_amp
-id|tape_qic02_transfer
+id|qic02_tape_transfer
 )paren
 suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/* tape_qic02_times_out */
+multiline_comment|/* qic02_tape_times_out */
 multiline_comment|/*&n; * Interrupt handling:&n; *&n; * 1) Interrupt is generated iff at the end of &n; *    a 512-DMA-block transfer.&n; * 2) EXCEPTION is not raised unless something &n; *    is wrong or EOT/FM is detected.&n; * 3) FM EXCEPTION is set *after* the last byte has&n; *    been transferred by DMA. By the time the interrupt&n; *    is handled, the EXCEPTION may already be set.&n; *&n; * So,&n; * 1) On EXCEPTION, assume data has been transferred, so&n; *    continue as usual, but set a flag to indicate the&n; *    exception was detected.&n; *    Do a sense status when the flag is found set.&n; * 2) Do not attempt to continue a transfer after an exception.&n; *    [??? What about marginal blocks???????]&n; */
-multiline_comment|/* tape_qic02_interrupt() is called when the tape controller completes &n; * a DMA transfer.&n; * We are not allowed to sleep here! &n; *&n; * Check if the transfer was successful, check if we need to transfer&n; * more. If the buffer contains enough data/is empty enough, signal the&n; * read/write() thread to copy to/from user space.&n; * When we are finished, set flags to indicate end, disable timer.&n; * NOTE: This *must* be fast! &n; */
-DECL|function|tape_qic02_interrupt
+multiline_comment|/* qic02_tape_interrupt() is called when the tape controller completes &n; * a DMA transfer.&n; * We are not allowed to sleep here! &n; *&n; * Check if the transfer was successful, check if we need to transfer&n; * more. If the buffer contains enough data/is empty enough, signal the&n; * read/write() thread to copy to/from user space.&n; * When we are finished, set flags to indicate end, disable timer.&n; * NOTE: This *must* be fast! &n; */
+DECL|function|qic02_tape_interrupt
 r_static
 r_void
-id|tape_qic02_interrupt
+id|qic02_tape_interrupt
 c_func
 (paren
 r_int
@@ -5445,6 +5977,7 @@ c_cond
 id|status_expect_int
 )paren
 (brace
+macro_line|#ifdef WANT_EXTRA_FULL_DEBUGGING
 r_if
 c_cond
 (paren
@@ -5460,16 +5993,25 @@ c_func
 l_string|&quot;@&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 id|stat
 op_assign
 id|inb
 c_func
 (paren
-id|QIC_STAT_PORT
+id|QIC02_STAT_PORT
 )paren
 suffix:semicolon
 multiline_comment|/* Knock, knock */
-macro_line|#if TAPE_QIC02_IFC == ARCHIVE&t;&t;&t;/* &quot;Who&squot;s there?&quot; */
+r_if
+c_cond
+(paren
+id|QIC02_TAPE_IFC
+op_eq
+id|ARCHIVE
+)paren
+(brace
+multiline_comment|/* &quot;Who&squot;s there?&quot; */
 r_if
 c_cond
 (paren
@@ -5490,7 +6032,7 @@ op_logical_and
 id|stat
 op_amp
 (paren
-id|QIC_STAT_EXCEPTION
+id|QIC02_STAT_EXCEPTION
 )paren
 )paren
 op_ne
@@ -5504,14 +6046,14 @@ r_return
 suffix:semicolon
 multiline_comment|/* &quot;Linux with IRQ sharing&quot; */
 )brace
-macro_line|#endif
+)brace
 r_if
 c_cond
 (paren
 (paren
 id|stat
 op_amp
-id|QIC_STAT_EXCEPTION
+id|QIC02_STAT_EXCEPTION
 )paren
 op_eq
 l_int|0
@@ -5522,6 +6064,8 @@ multiline_comment|/* Possible causes for an exception during a transfer:&n;&t;&t
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;isr: exception on tape controller&quot;
 )paren
 suffix:semicolon
@@ -5554,7 +6098,7 @@ id|wake_up
 c_func
 (paren
 op_amp
-id|tape_qic02_transfer
+id|qic02_tape_transfer
 )paren
 suffix:semicolon
 r_return
@@ -5566,19 +6110,28 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Skip next ready check for Archive controller because&n; * it may be busy reading ahead. Weird. --hhb&n; */
-macro_line|#if TAPE_QIC02_IFC != ARCHIVE&t;&t;/* I think this is a drive-dependency, not IFC -- hhb */
+r_if
+c_cond
+(paren
+id|QIC02_TAPE_IFC
+op_eq
+id|WANGTEK
+)paren
+multiline_comment|/* I think this is a drive-dependency, not IFC -- hhb */
 r_if
 c_cond
 (paren
 id|stat
 op_amp
-id|QIC_STAT_READY
+id|QIC02_STAT_READY
 )paren
 (brace
 multiline_comment|/* not ready */
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;isr: ? Tape controller not ready&quot;
 )paren
 suffix:semicolon
@@ -5587,7 +6140,6 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -5597,7 +6149,7 @@ op_assign
 id|get_dma_residue
 c_func
 (paren
-id|TAPE_QIC02_DMA
+id|QIC02_TAPE_DMA
 )paren
 )paren
 op_ne
@@ -5607,7 +6159,7 @@ l_int|0
 id|printk
 c_func
 (paren
-id|TPQIC_NAME
+id|TPQIC02_NAME
 l_string|&quot;: dma_residue == %x !!!&bslash;n&quot;
 comma
 id|i
@@ -5659,7 +6211,7 @@ id|wake_up
 c_func
 (paren
 op_amp
-id|tape_qic02_transfer
+id|qic02_tape_transfer
 )paren
 suffix:semicolon
 )brace
@@ -5668,7 +6220,7 @@ r_else
 multiline_comment|/* start next transfer, account for track-switching time */
 id|timer_table
 (braket
-id|TAPE_QIC02_TIMER
+id|QIC02_TAPE_TIMER
 )braket
 dot
 id|expires
@@ -5691,23 +6243,23 @@ r_else
 id|printk
 c_func
 (paren
-id|TPQIC_NAME
+id|TPQIC02_NAME
 l_string|&quot;: Unexpected interrupt, stat == %x&bslash;n&quot;
 comma
 id|inb
 c_func
 (paren
-id|QIC_STAT_PORT
+id|QIC02_STAT_PORT
 )paren
 )paren
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* tape_qic02_interrupt */
-DECL|function|tape_qic02_lseek
+multiline_comment|/* qic02_tape_interrupt */
+DECL|function|qic02_tape_lseek
 r_static
 r_int
-id|tape_qic02_lseek
+id|qic02_tape_lseek
 c_func
 (paren
 r_struct
@@ -5733,13 +6285,13 @@ id|EINVAL
 suffix:semicolon
 multiline_comment|/* not supported */
 )brace
-multiline_comment|/* tape_qic02_lseek */
+multiline_comment|/* qic02_tape_lseek */
 multiline_comment|/* read/write routines:&n; * This code copies between a kernel buffer and a user buffer. The &n; * actual data transfer is done using DMA and interrupts. Time-outs&n; * are also used.&n; *&n; * When a filemark is read, we return &squot;0 bytes read&squot; and continue with the&n; * next file after that.&n; * When EOM is read, we return &squot;0 bytes read&squot; twice.&n; * When the EOT marker is detected on writes, &squot;0 bytes read&squot; should be&n; * returned twice. If user program does a MTNOP after that, 2 additional&n; * blocks may be written.&t;------- FIXME: Implement this correctly  *************************************************&n; *&n; * Only read/writes in multiples of 512 bytes are accepted.&n; * When no bytes are available, we sleep() until they are. The controller will&n; * generate an interrupt, and we (should) get a wake_up() call.&n; *&n; * Simple buffering is used. User program should ensure that a large enough&n; * buffer is used. Usually the drive does some buffering as well (something&n; * like 4k or so).&n; *&n; * Scott S. Bertilson suggested to continue filling the user buffer, rather&n; * than waste time on a context switch, when the kernel buffer fills up.&n; */
 multiline_comment|/*&n; * Problem: tar(1) doesn&squot;t always read the entire file. Sometimes the entire file&n; * has been read, but the EOF token is never returned to tar(1), simply because&n; * tar(1) knows it has already read all of the data it needs. So we must use&n; * open/release to reset the `reported_read_eof&squot; flag. If we don&squot;t, the next read&n; * request would return the EOF flag for the previous file.&n; */
-DECL|function|tape_qic02_read
+DECL|function|qic02_tape_read
 r_static
 r_int
-id|tape_qic02_read
+id|qic02_tape_read
 c_func
 (paren
 r_struct
@@ -5790,6 +6342,27 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|status_zombie
+op_eq
+id|YES
+)paren
+(brace
+id|tpqputs
+c_func
+(paren
+id|TPQD_ALWAYS
+comma
+l_string|&quot;configs not set&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENXIO
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 id|TP_DIAGS
 c_func
 (paren
@@ -5799,7 +6372,7 @@ id|current_tape_dev
 id|printk
 c_func
 (paren
-id|TPQIC_NAME
+id|TPQIC02_NAME
 l_string|&quot;: request READ, minor=%x, buf=%p, count=%x, pos=%lx, flags=%x&bslash;n&quot;
 comma
 id|MINOR
@@ -5829,6 +6402,8 @@ multiline_comment|/* Only allow mod 512 bytes at a time. */
 id|tpqputs
 c_func
 (paren
+id|TPQD_BLKSZ
+comma
 l_string|&quot;Wrong block size&quot;
 )paren
 suffix:semicolon
@@ -5866,22 +6441,9 @@ c_cond
 (paren
 id|error
 )paren
-(brace
-id|printk
-c_func
-(paren
-id|TPQIC_NAME
-l_string|&quot;: read: verify_area(WRITE, %p, %x) failed&bslash;n&quot;
-comma
-id|buf
-comma
-id|count
-)paren
-suffix:semicolon
 r_return
 id|error
 suffix:semicolon
-)brace
 multiline_comment|/* This is rather ugly because it has to implement a finite state&n;&t; * machine in order to handle the EOF situations properly.&n;&t; */
 r_while
 c_loop
@@ -5920,10 +6482,19 @@ op_eq
 id|YES
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|TPQDBG
+c_func
+(paren
+id|DEBUG
+)paren
+)paren
 id|printk
 c_func
 (paren
-l_string|&quot;read: return_read_eof==%d, reported_read_eof==%d, total_bytes_done==%ld&bslash;n&quot;
+l_string|&quot;read: return_read_eof==%d, reported_read_eof==%d, total_bytes_done==%lu&bslash;n&quot;
 comma
 id|return_read_eof
 comma
@@ -6032,6 +6603,8 @@ multiline_comment|/****************************************/
 id|tpqputs
 c_func
 (paren
+id|TPQD_DMAX
+comma
 l_string|&quot;is_exception() before start_dma()!&quot;
 )paren
 suffix:semicolon
@@ -6067,7 +6640,7 @@ id|sleep_on
 c_func
 (paren
 op_amp
-id|tape_qic02_transfer
+id|qic02_tape_transfer
 )paren
 suffix:semicolon
 )brace
@@ -6130,6 +6703,8 @@ id|bytes_todo
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;read: Oops, read more bytes than requested&quot;
 )paren
 suffix:semicolon
@@ -6185,7 +6760,7 @@ id|YES
 id|printk
 c_func
 (paren
-id|TPQIC_NAME
+id|TPQIC02_NAME
 l_string|&quot;: read(): return_read_eof=%d, status_eof_detected=YES. return_read_eof:=YES&bslash;n&quot;
 comma
 id|return_read_eof
@@ -6248,6 +6823,8 @@ suffix:semicolon
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;read request for &lt;0 bytes&quot;
 )paren
 suffix:semicolon
@@ -6256,12 +6833,12 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-multiline_comment|/* tape_qic02_read */
+multiline_comment|/* qic02_tape_read */
 multiline_comment|/* The drive detects near-EOT by means of the holes in the tape.&n; * When the holes are detected, there is some space left. The drive&n; * reports this as a TP_EOM exception. After clearing the exception,&n; * the drive should accept two extra blocks.&n; *&n; * It seems there are some archiver programs that would like to use the&n; * extra space for writing a continuation marker. The driver should return&n; * end-of-file to the user program on writes, when the holes are detected.&n; * If the user-program wants to use the extra space, it should use the&n; * MTNOP ioctl() to get the generic status register and may then continue&n; * writing (max 1kB).&t;----------- doesn&squot;t work yet...............&n; *&n; * EOF behaviour on writes:&n; * If there is enough room, write all of the data.&n; * If there is insufficient room, write as much as will fit and&n; * return the amount written. If the requested amount differs from the&n; * written amount, the application program should recognize that as the&n; * end of file. Subsequent writes will return -ENOSPC.&n; * Unless the minor bits specify a rewind-on-close, the tape will not&n; * be rewound when it is full. The user-program should do that, if desired.&n; * If the driver were to do that automatically, a user-program could be &n; * confused about the EOT/BOT condition after re-opening the tape device.&n; *&n; * Multiple volume support: Tar closes the tape device before prompting for&n; * the next tape. The user may then insert a new tape and tar will open the&n; * tape device again. The driver will detect an exception status in (No Cartridge)&n; * and force a rewind. After that tar may continue writing.&n; */
-DECL|function|tape_qic02_write
+DECL|function|qic02_tape_write
 r_static
 r_int
-id|tape_qic02_write
+id|qic02_tape_write
 c_func
 (paren
 r_struct
@@ -6309,6 +6886,27 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|status_zombie
+op_eq
+id|YES
+)paren
+(brace
+id|tpqputs
+c_func
+(paren
+id|TPQD_ALWAYS
+comma
+l_string|&quot;configs not set&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENXIO
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 id|TP_DIAGS
 c_func
 (paren
@@ -6318,7 +6916,7 @@ id|current_tape_dev
 id|printk
 c_func
 (paren
-id|TPQIC_NAME
+id|TPQIC02_NAME
 l_string|&quot;: request WRITE, minor=%x, buf=%p, count=%x, pos=%lx, flags=%x&bslash;n&quot;
 comma
 id|MINOR
@@ -6348,6 +6946,8 @@ multiline_comment|/* only allow mod 512 bytes at a time */
 id|tpqputs
 c_func
 (paren
+id|TPQD_BLKSZ
+comma
 l_string|&quot;Wrong block size&quot;
 )paren
 suffix:semicolon
@@ -6367,6 +6967,8 @@ id|READ
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;Not in write mode&quot;
 )paren
 suffix:semicolon
@@ -6395,6 +6997,8 @@ id|TP_WRP
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;Cartridge is write-protected.&quot;
 )paren
 suffix:semicolon
@@ -6422,22 +7026,9 @@ c_cond
 (paren
 id|error
 )paren
-(brace
-id|printk
-c_func
-(paren
-id|TPQIC_NAME
-l_string|&quot;: write: verify_area(READ, %p, %x) failed&bslash;n&quot;
-comma
-id|buf
-comma
-id|count
-)paren
-suffix:semicolon
 r_return
 id|error
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -6507,6 +7098,8 @@ l_int|0
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;partial write&quot;
 )paren
 suffix:semicolon
@@ -6586,6 +7179,8 @@ id|TE_OK
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;write: start_dma() failed&quot;
 )paren
 suffix:semicolon
@@ -6617,7 +7212,7 @@ id|sleep_on
 c_func
 (paren
 op_amp
-id|tape_qic02_transfer
+id|qic02_tape_transfer
 )paren
 suffix:semicolon
 )brace
@@ -6639,6 +7234,8 @@ id|bytes_todo
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;write: Oops, wrote more bytes than requested&quot;
 )paren
 suffix:semicolon
@@ -6665,6 +7262,8 @@ id|YES
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;write: EW detected&quot;
 )paren
 suffix:semicolon
@@ -6679,6 +7278,8 @@ multiline_comment|/* probably EXC_RWA */
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;write: dma: error in writing&quot;
 )paren
 suffix:semicolon
@@ -6735,13 +7336,24 @@ suffix:semicolon
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;write request for &lt;0 bytes&quot;
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|TPQDBG
+c_func
+(paren
+id|DEBUG
+)paren
+)paren
 id|printk
 c_func
 (paren
-id|TPQIC_NAME
+id|TPQIC02_NAME
 l_string|&quot;: status_bytes_wr %x, buf %p, total_bytes_done %lx, count %x&bslash;n&quot;
 comma
 id|status_bytes_wr
@@ -6758,12 +7370,12 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-multiline_comment|/* tape_qic02_write */
-multiline_comment|/* tape_qic02_open()&n; * We allow the device to be opened, even if it is marked &squot;dead&squot; because&n; * we want to be able to reset the tape device without rebooting.&n; * Only one open tape file at a time, except when minor=255.&n; * Minor 255 is only allowed for resetting and always returns &lt;0.&n; * &n; * The density command is only allowed when TP_BOM is set. Thus, remember&n; * the most recently used minor bits. When they are different from the&n; * remembered values, rewind the tape and set the required density.&n; * Don&squot;t rewind if the minor bits specify density 0.&n; */
-DECL|function|tape_qic02_open
+multiline_comment|/* qic02_tape_write */
+multiline_comment|/* qic02_tape_open()&n; * We allow the device to be opened, even if it is marked &squot;dead&squot; because&n; * we want to be able to reset the tape device without rebooting.&n; * Only one open tape file at a time, except when minor=255.&n; * Minor 255 is only allowed for resetting and always returns &lt;0.&n; * &n; * The density command is only allowed when TP_BOM is set. Thus, remember&n; * the most recently used minor bits. When they are different from the&n; * remembered values, rewind the tape and set the required density.&n; * Don&squot;t rewind if the minor bits specify density 0.&n; */
+DECL|function|qic02_tape_open
 r_static
 r_int
-id|tape_qic02_open
+id|qic02_tape_open
 c_func
 (paren
 r_struct
@@ -6791,13 +7403,11 @@ suffix:semicolon
 r_int
 r_int
 id|dens
+op_assign
+l_int|0
 suffix:semicolon
 r_int
 id|s
-suffix:semicolon
-id|status_open
-op_assign
-id|NO
 suffix:semicolon
 r_if
 c_cond
@@ -6812,7 +7422,7 @@ id|dev
 id|printk
 c_func
 (paren
-l_string|&quot;tape_qic02_open: dev=%x, flags=%x     &quot;
+l_string|&quot;qic02_tape_open: dev=%x, flags=%x     &quot;
 comma
 id|dev
 comma
@@ -6866,20 +7476,39 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|status_open
+id|status_dead
 op_eq
 id|YES
 )paren
+multiline_comment|/* Allow `mt reset&squot; ioctl() even when already open()ed. */
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/* Only one at a time from here on... */
+r_if
+c_cond
+(paren
+id|filp-&gt;f_count
+OG
+l_int|1
+)paren
 (brace
+multiline_comment|/* filp-&gt;f_count==1 for the first open() */
 r_return
 op_minus
 id|EBUSY
 suffix:semicolon
-multiline_comment|/* only one at a time... */
 )brace
-id|status_open
-op_assign
+r_if
+c_cond
+(paren
+id|status_zombie
+op_eq
 id|YES
+)paren
+multiline_comment|/* no irq/dma/port stuff allocated yet, no reset done&n;&t;&t; * yet, so return until MTSETCONFIG has been done.&n;&t;&t; */
+r_return
+l_int|0
 suffix:semicolon
 id|status_bytes_rd
 op_assign
@@ -6942,7 +7571,7 @@ multiline_comment|/* Fallthru... Strictly speaking this is not correct... */
 r_case
 id|O_RDWR
 suffix:colon
-multiline_comment|/* reads are allowed as long as nothing is written */
+multiline_comment|/* Reads are allowed as long as nothing is written */
 id|mode_access
 op_assign
 id|WRITE
@@ -6950,16 +7579,46 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/* This is to avoid tape-changed problems (TP_CNI exception). */
+multiline_comment|/* This is to avoid tape-changed problems (TP_CNI exception).&n;&t; *&n;&t; * Since removing the cartridge will not raise an exception,&n;&t; * we always do a tp_sense() to make sure we have the proper&n;&t; * CNI status, the 2150L may need an additional sense.... - Eddy&n;&t; */
+id|s
+op_assign
+id|tp_sense
+c_func
+(paren
+id|TP_WRP
+op_or
+id|TP_EOM
+op_or
+id|TP_BOM
+op_or
+id|TP_CNI
+op_or
+id|TP_EOR
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|is_exception
-c_func
+id|s
+op_eq
+id|TE_OK
+)paren
+multiline_comment|/* Try to clear cartridge-changed status for Archive-2150L */
+r_if
+c_cond
 (paren
+(paren
+id|tperror.exs
+op_amp
+id|TP_ST0
+)paren
+op_logical_and
+(paren
+id|tperror.exs
+op_amp
+id|TP_CNI
 )paren
 )paren
-(brace
 id|s
 op_assign
 id|tp_sense
@@ -6984,14 +7643,12 @@ op_ne
 id|TE_OK
 )paren
 (brace
-id|status_open
-op_assign
-id|NO
-suffix:semicolon
 id|tpqputs
 c_func
 (paren
-l_string|&quot;open: sense() failed after exception was detected&quot;
+id|TPQD_ALWAYS
+comma
+l_string|&quot;open: sense() failed&quot;
 )paren
 suffix:semicolon
 r_return
@@ -6999,7 +7656,37 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
+multiline_comment|/* exception bits should be up-to-date now, so check for&n;&t; * tape presence and exit if absent.&n;&t; * Even `mt stat&squot; will fail without a tape.&n;&t; */
+r_if
+c_cond
+(paren
+(paren
+id|tperror.exs
+op_amp
+id|TP_ST0
+)paren
+op_logical_and
+(paren
+id|tperror.exs
+op_amp
+id|TP_CNI
+)paren
+)paren
+(brace
+id|tpqputs
+c_func
+(paren
+id|TPQD_ALWAYS
+comma
+l_string|&quot;No tape present.&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EIO
+suffix:semicolon
 )brace
+multiline_comment|/* At this point we can assume that a tape is present and&n;&t; * that it will remain present until release() is called.&n;&t; */
 multiline_comment|/* not allowed to do QCMD_DENS_* unless tape is rewound */
 r_if
 c_cond
@@ -7030,9 +7717,17 @@ id|dev
 )paren
 (brace
 multiline_comment|/* force rewind if minor bits have changed,&n;&t;&t; * i.e. user wants to use tape in different format.&n;&t;&t; * [assuming single drive operation]&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|TP_HAVE_DENS
+)paren
+(brace
 id|tpqputs
 c_func
 (paren
+id|TPQD_REWIND
+comma
 l_string|&quot;Density minor bits have changed. Forcing rewind.&quot;
 )paren
 suffix:semicolon
@@ -7040,6 +7735,7 @@ id|need_rewind
 op_assign
 id|YES
 suffix:semicolon
+)brace
 )brace
 r_else
 (brace
@@ -7057,6 +7753,7 @@ op_eq
 id|YES
 )paren
 (brace
+multiline_comment|/***************** CHECK THIS!!!!!!!! **********/
 id|s
 op_assign
 id|do_qic_cmd
@@ -7078,12 +7775,10 @@ l_int|0
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;open: rewind failed&quot;
 )paren
-suffix:semicolon
-id|status_open
-op_assign
-id|NO
 suffix:semicolon
 r_return
 op_minus
@@ -7091,16 +7786,20 @@ id|EIO
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* Note: After a reset command, the controller will rewind the tape&n; *&t; just before performing any tape movement operation!&n; */
+multiline_comment|/* Note: After a reset command, the controller will rewind the tape&n; *&t; just before performing any tape movement operation! ************ SO SET need_rewind flag!!!!!&n; */
 r_if
 c_cond
 (paren
 id|status_dead
+op_eq
+id|YES
 )paren
 (brace
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;open: tape dead, attempting reset&quot;
 )paren
 suffix:semicolon
@@ -7116,10 +7815,6 @@ op_ne
 id|TE_OK
 )paren
 (brace
-id|status_open
-op_assign
-id|NO
-suffix:semicolon
 r_return
 op_minus
 id|ENXIO
@@ -7151,6 +7846,8 @@ id|TE_OK
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;open: tp_sense() failed&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -7159,10 +7856,6 @@ op_assign
 id|YES
 suffix:semicolon
 multiline_comment|/* try reset next time */
-id|status_open
-op_assign
-id|NO
-suffix:semicolon
 r_return
 op_minus
 id|EIO
@@ -7198,6 +7891,11 @@ id|need_rewind
 op_assign
 id|NO
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|TP_HAVE_DENS
+)paren
 id|dens
 op_assign
 id|TP_DENS
@@ -7225,7 +7923,7 @@ op_star
 id|printk
 c_func
 (paren
-id|TPQIC_NAME
+id|TPQIC02_NAME
 l_string|&quot;: format: %s%s&bslash;n&quot;
 comma
 (paren
@@ -7249,6 +7947,8 @@ r_else
 id|tpqputs
 c_func
 (paren
+id|TPQD_REWIND
+comma
 l_string|&quot;Wait for retensioning...&quot;
 )paren
 suffix:semicolon
@@ -7265,7 +7965,7 @@ id|dev
 r_case
 l_int|0
 suffix:colon
-multiline_comment|/* This one&squot;s for Eddy ;-) */
+multiline_comment|/* Minor 0 is for drives without set-density support */
 id|s
 op_assign
 l_int|0
@@ -7384,11 +8084,6 @@ op_ne
 l_int|0
 )paren
 (brace
-id|status_open
-op_assign
-id|NO
-suffix:semicolon
-multiline_comment|/* fail if fault occurred */
 id|status_dead
 op_assign
 id|YES
@@ -7407,11 +8102,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* tape_qic02_open */
-DECL|function|tape_qic02_readdir
+multiline_comment|/* qic02_tape_open */
+DECL|function|qic02_tape_readdir
 r_static
 r_int
-id|tape_qic02_readdir
+id|qic02_tape_readdir
 c_func
 (paren
 r_struct
@@ -7439,11 +8134,11 @@ id|ENOTDIR
 suffix:semicolon
 multiline_comment|/* not supported */
 )brace
-multiline_comment|/* tape_qic02_readdir */
-DECL|function|tape_qic02_release
+multiline_comment|/* qic02_tape_readdir */
+DECL|function|qic02_tape_release
 r_static
 r_void
-id|tape_qic02_release
+id|qic02_tape_release
 c_func
 (paren
 r_struct
@@ -7474,10 +8169,20 @@ id|dev
 id|printk
 c_func
 (paren
-l_string|&quot;tape_qic02_release: dev=%x&bslash;n&quot;
+l_string|&quot;qic02_tape_release: dev=%x&bslash;n&quot;
 comma
 id|dev
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|status_zombie
+op_eq
+id|YES
+)paren
+multiline_comment|/* don&squot;t rewind in zombie mode */
+r_return
 suffix:semicolon
 multiline_comment|/* Terminate any pending write cycle. Terminating the read-cycle&n;&t; * is delayed until it is required to do so for a new command.&n;&t; */
 id|terminate_write
@@ -7497,27 +8202,12 @@ id|YES
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;release: device dead!?&quot;
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|status_open
-op_eq
-id|NO
-)paren
-(brace
-id|tpqputs
-c_func
-(paren
-l_string|&quot;release: device not open&quot;
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-multiline_comment|/* Rewind only if minor number requires it AND &n;&t; * read/writes have been done.&n;&t; */
+multiline_comment|/* Rewind only if minor number requires it AND &n;&t; * read/writes have been done. ************* IS THIS CORRECT??????????&n;&t; */
 r_if
 c_cond
 (paren
@@ -7539,6 +8229,8 @@ id|status_bytes_wr
 id|tpqputs
 c_func
 (paren
+id|TPQD_REWIND
+comma
 l_string|&quot;release: Doing rewind...&quot;
 )paren
 suffix:semicolon
@@ -7554,19 +8246,338 @@ id|TIM_R
 )paren
 suffix:semicolon
 )brace
-id|status_open
-op_assign
-id|NO
-suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* tape_qic02_release */
+multiline_comment|/* qic02_tape_release */
+macro_line|#ifdef CONFIG_QIC02_DYNCONF
+multiline_comment|/* Set masks etc. based on the interface card type. */
+DECL|function|update_ifc_masks
+r_int
+id|update_ifc_masks
+c_func
+(paren
+r_int
+id|ifc
+)paren
+(brace
+id|QIC02_TAPE_IFC
+op_assign
+id|ifc
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|QIC02_TAPE_IFC
+op_eq
+id|WANGTEK
+)paren
+op_logical_or
+(paren
+id|QIC02_TAPE_IFC
+op_eq
+id|EVEREX
+)paren
+)paren
+(brace
+id|QIC02_STAT_PORT
+op_assign
+id|QIC02_TAPE_PORT
+suffix:semicolon
+id|QIC02_CTL_PORT
+op_assign
+id|QIC02_TAPE_PORT
+suffix:semicolon
+id|QIC02_CMD_PORT
+op_assign
+id|QIC02_TAPE_PORT
+op_plus
+l_int|1
+suffix:semicolon
+id|QIC02_DATA_PORT
+op_assign
+id|QIC02_TAPE_PORT
+op_plus
+l_int|1
+suffix:semicolon
+id|QIC02_STAT_READY
+op_assign
+id|WT_QIC02_STAT_READY
+suffix:semicolon
+id|QIC02_STAT_EXCEPTION
+op_assign
+id|WT_QIC02_STAT_EXCEPTION
+suffix:semicolon
+id|QIC02_STAT_MASK
+op_assign
+id|WT_QIC02_STAT_MASK
+suffix:semicolon
+id|QIC02_STAT_RESETMASK
+op_assign
+id|WT_QIC02_STAT_RESETMASK
+suffix:semicolon
+id|QIC02_STAT_RESETVAL
+op_assign
+id|WT_QIC02_STAT_RESETVAL
+suffix:semicolon
+id|QIC02_CTL_RESET
+op_assign
+id|WT_QIC02_CTL_RESET
+suffix:semicolon
+id|QIC02_CTL_REQUEST
+op_assign
+id|WT_QIC02_CTL_REQUEST
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|QIC02_TAPE_DMA
+op_eq
+l_int|3
+)paren
+id|WT_CTL_DMA
+op_assign
+id|WT_CTL_DMA3
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|QIC02_TAPE_DMA
+op_eq
+l_int|1
+)paren
+id|WT_CTL_DMA
+op_assign
+id|WT_CTL_DMA1
+suffix:semicolon
+r_else
+(brace
+id|tpqputs
+c_func
+(paren
+id|TPQD_ALWAYS
+comma
+l_string|&quot;Unsupported or incorrect DMA channel&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|QIC02_TAPE_IFC
+op_eq
+id|EVEREX
+)paren
+(brace
+multiline_comment|/* Everex is a special case for Wangtek (actually&n;&t;&t;&t; * it&squot;s the other way &squot;round, but I saw Wangtek first)&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|QIC02_TAPE_DMA
+op_eq
+l_int|3
+)paren
+id|WT_CTL_DMA
+op_assign
+id|WT_CTL_DMA1
+suffix:semicolon
+multiline_comment|/* Fixup the kernel copy of the IFC type to that&n;&t;&t;&t; * we don&squot;t have to distinguish between Wangtek and&n;&t;&t;&t; * and Everex at runtime.&n;&t;&t;&t; */
+id|QIC02_TAPE_IFC
+op_assign
+id|WANGTEK
+suffix:semicolon
+)brace
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|QIC02_TAPE_IFC
+op_eq
+id|ARCHIVE
+)paren
+(brace
+id|QIC02_STAT_PORT
+op_assign
+id|QIC02_TAPE_PORT
+op_plus
+l_int|1
+suffix:semicolon
+id|QIC02_CTL_PORT
+op_assign
+id|QIC02_TAPE_PORT
+op_plus
+l_int|1
+suffix:semicolon
+id|QIC02_CMD_PORT
+op_assign
+id|QIC02_TAPE_PORT
+suffix:semicolon
+id|QIC02_DATA_PORT
+op_assign
+id|QIC02_TAPE_PORT
+suffix:semicolon
+id|QIC02_STAT_READY
+op_assign
+id|AR_QIC02_STAT_READY
+suffix:semicolon
+id|QIC02_STAT_EXCEPTION
+op_assign
+id|AR_QIC02_STAT_EXCEPTION
+suffix:semicolon
+id|QIC02_STAT_MASK
+op_assign
+id|AR_QIC02_STAT_MASK
+suffix:semicolon
+id|QIC02_STAT_RESETMASK
+op_assign
+id|AR_QIC02_STAT_RESETMASK
+suffix:semicolon
+id|QIC02_STAT_RESETVAL
+op_assign
+id|AR_QIC02_STAT_RESETVAL
+suffix:semicolon
+id|QIC02_CTL_RESET
+op_assign
+id|AR_QIC02_CTL_RESET
+suffix:semicolon
+id|QIC02_CTL_REQUEST
+op_assign
+id|AR_QIC02_CTL_REQUEST
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|QIC02_TAPE_DMA
+OG
+l_int|3
+)paren
+(brace
+id|tpqputs
+c_func
+(paren
+id|TPQD_ALWAYS
+comma
+l_string|&quot;Unsupported or incorrect DMA channel&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+)brace
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|QIC02_TAPE_IFC
+op_eq
+id|MOUNTAIN
+)paren
+(brace
+id|QIC02_STAT_PORT
+op_assign
+id|QIC02_TAPE_PORT
+op_plus
+l_int|1
+suffix:semicolon
+id|QIC02_CTL_PORT
+op_assign
+id|QIC02_TAPE_PORT
+op_plus
+l_int|1
+suffix:semicolon
+id|QIC02_CMD_PORT
+op_assign
+id|QIC02_TAPE_PORT
+suffix:semicolon
+id|QIC02_DATA_PORT
+op_assign
+id|QIC02_TAPE_PORT
+suffix:semicolon
+id|QIC02_STAT_READY
+op_assign
+id|MTN_QIC02_STAT_READY
+suffix:semicolon
+id|QIC02_STAT_EXCEPTION
+op_assign
+id|MTN_QIC02_STAT_EXCEPTION
+suffix:semicolon
+id|QIC02_STAT_MASK
+op_assign
+id|MTN_QIC02_STAT_MASK
+suffix:semicolon
+id|QIC02_STAT_RESETMASK
+op_assign
+id|MTN_QIC02_STAT_RESETMASK
+suffix:semicolon
+id|QIC02_STAT_RESETVAL
+op_assign
+id|MTN_QIC02_STAT_RESETVAL
+suffix:semicolon
+id|QIC02_CTL_RESET
+op_assign
+id|MTN_QIC02_CTL_RESET
+suffix:semicolon
+id|QIC02_CTL_REQUEST
+op_assign
+id|MTN_QIC02_CTL_REQUEST
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|QIC02_TAPE_DMA
+OG
+l_int|3
+)paren
+(brace
+id|tpqputs
+c_func
+(paren
+id|TPQD_ALWAYS
+comma
+l_string|&quot;Unsupported or incorrect DMA channel&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
+id|tpqputs
+c_func
+(paren
+id|TPQD_ALWAYS
+comma
+l_string|&quot;Invalid interface type&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENXIO
+suffix:semicolon
+)brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/* update_ifc-masks */
+macro_line|#endif
 multiline_comment|/* ioctl allows user programs to rewind the tape and stuff like that */
-DECL|function|tape_qic02_ioctl
+DECL|function|qic02_tape_ioctl
 r_static
 r_int
-id|tape_qic02_ioctl
+id|qic02_tape_ioctl
 c_func
 (paren
 r_struct
@@ -7617,7 +8628,6 @@ comma
 op_star
 id|argp
 suffix:semicolon
-macro_line|#ifdef TP_HAVE_TELL
 r_int
 r_char
 id|blk_addr
@@ -7629,7 +8639,6 @@ r_struct
 id|mtpos
 id|ioctl_tell
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -7642,7 +8651,7 @@ id|current_tape_dev
 id|printk
 c_func
 (paren
-id|TPQIC_NAME
+id|TPQIC02_NAME
 l_string|&quot;: ioctl(%4x, %4x, %4lx)&bslash;n&quot;
 comma
 id|dev_maj
@@ -7677,7 +8686,7 @@ id|QIC02_TAPE_MAJOR
 id|printk
 c_func
 (paren
-id|TPQIC_NAME
+id|TPQIC02_NAME
 l_string|&quot;: Oops! Wrong device?&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -7693,6 +8702,491 @@ id|iocmd
 op_amp
 id|IOCCMD_MASK
 suffix:semicolon
+macro_line|#ifdef DDIOCSDBG
+multiline_comment|/* Check for DDI Debug Control, contributed by FvK, edited by HHB. */
+r_if
+c_cond
+(paren
+id|c
+op_eq
+id|DDIOCSDBG
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|suser
+c_func
+(paren
+)paren
+)paren
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
+id|verify_area
+c_func
+(paren
+id|VERIFY_READ
+comma
+(paren
+r_int
+op_star
+)paren
+id|ioarg
+comma
+r_sizeof
+(paren
+r_int
+)paren
+)paren
+suffix:semicolon
+id|c
+op_assign
+id|get_fs_long
+c_func
+(paren
+(paren
+r_int
+op_star
+)paren
+id|ioarg
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|c
+op_eq
+l_int|0
+)paren
+(brace
+id|QIC02_TAPE_DEBUG
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+(paren
+id|c
+op_ge
+l_int|1
+)paren
+op_logical_and
+(paren
+id|c
+op_le
+l_int|32
+)paren
+)paren
+(brace
+id|QIC02_TAPE_DEBUG
+op_or_assign
+(paren
+l_int|1
+op_lshift
+(paren
+id|c
+op_minus
+l_int|1
+)paren
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|c
+op_ge
+l_int|128
+)paren
+(brace
+id|QIC02_TAPE_DEBUG
+op_and_assign
+op_complement
+(paren
+l_int|1
+op_lshift
+(paren
+id|c
+op_minus
+l_int|128
+)paren
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+macro_line|#endif
+macro_line|#ifdef CONFIG_QIC02_DYNCONF
+r_if
+c_cond
+(paren
+id|c
+op_eq
+(paren
+id|MTIOCGETCONFIG
+op_amp
+id|IOCCMD_MASK
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+(paren
+id|iocmd
+op_amp
+id|IOCSIZE_MASK
+)paren
+op_rshift
+id|IOCSIZE_SHIFT
+)paren
+op_ne
+r_sizeof
+(paren
+r_struct
+id|mtconfiginfo
+)paren
+)paren
+(brace
+id|tpqputs
+c_func
+(paren
+id|TPQD_ALWAYS
+comma
+l_string|&quot;sizeof(struct mtconfiginfo) does not match!&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EFAULT
+suffix:semicolon
+)brace
+multiline_comment|/* check for valid user address */
+id|error
+op_assign
+id|verify_area
+c_func
+(paren
+id|VERIFY_WRITE
+comma
+(paren
+r_void
+op_star
+)paren
+id|ioarg
+comma
+r_sizeof
+(paren
+id|qic02_tape_dynconf
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+r_return
+id|error
+suffix:semicolon
+multiline_comment|/* copy current settings to user space */
+id|stp
+op_assign
+(paren
+r_char
+op_star
+)paren
+op_amp
+id|qic02_tape_dynconf
+suffix:semicolon
+id|argp
+op_assign
+(paren
+r_char
+op_star
+)paren
+id|ioarg
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+r_sizeof
+(paren
+id|qic02_tape_dynconf
+)paren
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|put_fs_byte
+c_func
+(paren
+op_star
+id|stp
+op_increment
+comma
+id|argp
+op_increment
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|c
+op_eq
+(paren
+id|MTIOCSETCONFIG
+op_amp
+id|IOCCMD_MASK
+)paren
+)paren
+(brace
+r_static
+r_int
+id|qic02_get_resources
+c_func
+(paren
+r_void
+)paren
+comma
+id|qic02_release_resources
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+multiline_comment|/* One should always do a MTIOCGETCONFIG first, then update&n;&t;&t; * user-settings, then write back with MTIOCSETCONFIG.&n;&t;&t; * Re-open() the device before actual use to make sure&n;&t;&t; * everything is initialized.&n;&t;&t; */
+r_if
+c_cond
+(paren
+(paren
+(paren
+id|iocmd
+op_amp
+id|IOCSIZE_MASK
+)paren
+op_rshift
+id|IOCSIZE_SHIFT
+)paren
+op_ne
+r_sizeof
+(paren
+r_struct
+id|mtconfiginfo
+)paren
+)paren
+(brace
+id|tpqputs
+c_func
+(paren
+id|TPQD_ALWAYS
+comma
+l_string|&quot;sizeof(struct mtconfiginfo) does not match!&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EFAULT
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|suser
+c_func
+(paren
+)paren
+)paren
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|doing_read
+op_ne
+id|NO
+)paren
+op_logical_or
+(paren
+id|doing_write
+op_ne
+id|NO
+)paren
+)paren
+r_return
+op_minus
+id|EBUSY
+suffix:semicolon
+id|error
+op_assign
+id|verify_area
+c_func
+(paren
+id|VERIFY_READ
+comma
+(paren
+r_char
+op_star
+)paren
+id|ioarg
+comma
+r_sizeof
+(paren
+id|qic02_tape_dynconf
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+r_return
+id|error
+suffix:semicolon
+multiline_comment|/* copy struct from user space to kernel space */
+id|stp
+op_assign
+(paren
+r_char
+op_star
+)paren
+op_amp
+id|qic02_tape_dynconf
+suffix:semicolon
+id|argp
+op_assign
+(paren
+r_char
+op_star
+)paren
+id|ioarg
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+r_sizeof
+(paren
+id|qic02_tape_dynconf
+)paren
+suffix:semicolon
+id|i
+op_increment
+)paren
+op_star
+id|stp
+op_increment
+op_assign
+id|get_fs_byte
+c_func
+(paren
+id|argp
+op_increment
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|status_zombie
+op_eq
+id|NO
+)paren
+id|qic02_release_resources
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* and go zombie */
+r_if
+c_cond
+(paren
+id|update_ifc_masks
+c_func
+(paren
+id|qic02_tape_dynconf.ifc_type
+)paren
+)paren
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|qic02_get_resources
+c_func
+(paren
+)paren
+)paren
+r_return
+op_minus
+id|ENXIO
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|status_zombie
+op_eq
+id|YES
+)paren
+(brace
+id|tpqputs
+c_func
+(paren
+id|TPQD_ALWAYS
+comma
+l_string|&quot;Configs not set&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENXIO
+suffix:semicolon
+)brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -7729,6 +9223,8 @@ id|mtop
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;sizeof(struct mtop) does not match!&quot;
 )paren
 suffix:semicolon
@@ -7841,6 +9337,8 @@ l_int|0
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;Warning: negative mt_count ignored&quot;
 )paren
 suffix:semicolon
@@ -7856,6 +9354,16 @@ op_eq
 id|MTSEEK
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|TP_HAVE_SEEK
+)paren
+r_return
+op_minus
+id|ENOTTY
+suffix:semicolon
 id|seek_addr_buf
 (braket
 l_int|0
@@ -8020,6 +9528,8 @@ id|mtget
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;sizeof(struct mtget) does not match!&quot;
 )paren
 suffix:semicolon
@@ -8106,11 +9616,13 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-macro_line|#ifdef TP_HAVE_TELL
 )brace
 r_else
 r_if
 c_cond
+(paren
+id|TP_HAVE_TELL
+op_logical_and
 (paren
 id|c
 op_eq
@@ -8118,6 +9630,7 @@ op_eq
 id|MTIOCPOS
 op_amp
 id|IOCCMD_MASK
+)paren
 )paren
 )paren
 (brace
@@ -8160,6 +9673,8 @@ id|mtpos
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;sizeof(struct mtpos) does not match!&quot;
 )paren
 suffix:semicolon
@@ -8199,6 +9714,8 @@ suffix:semicolon
 id|tpqputs
 c_func
 (paren
+id|TPQD_IOCTLS
+comma
 l_string|&quot;MTTELL reading block address&quot;
 )paren
 suffix:semicolon
@@ -8220,7 +9737,7 @@ id|YES
 id|finish_rw
 c_func
 (paren
-id|QCMDV_TELL_BLK
+id|AR_QCMDV_TELL_BLK
 )paren
 suffix:semicolon
 id|c
@@ -8239,7 +9756,7 @@ r_sizeof
 id|blk_addr
 )paren
 comma
-id|QCMDV_TELL_BLK
+id|AR_QCMDV_TELL_BLK
 )paren
 suffix:semicolon
 r_if
@@ -8327,7 +9844,6 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-macro_line|#endif
 )brace
 r_else
 r_return
@@ -8336,40 +9852,40 @@ id|ENOTTY
 suffix:semicolon
 multiline_comment|/* Other cmds not supported. */
 )brace
-multiline_comment|/* tape_qic02_ioctl */
+multiline_comment|/* qic02_tape_ioctl */
 multiline_comment|/* These are (most) of the interface functions: */
-DECL|variable|tape_qic02_fops
+DECL|variable|qic02_tape_fops
 r_static
 r_struct
 id|file_operations
-id|tape_qic02_fops
+id|qic02_tape_fops
 op_assign
 (brace
-id|tape_qic02_lseek
+id|qic02_tape_lseek
 comma
 multiline_comment|/* not allowed */
-id|tape_qic02_read
+id|qic02_tape_read
 comma
 multiline_comment|/* read */
-id|tape_qic02_write
+id|qic02_tape_write
 comma
 multiline_comment|/* write */
-id|tape_qic02_readdir
+id|qic02_tape_readdir
 comma
 multiline_comment|/* not allowed */
 l_int|NULL
 comma
 multiline_comment|/* select ??? */
-id|tape_qic02_ioctl
+id|qic02_tape_ioctl
 comma
 multiline_comment|/* ioctl */
 l_int|NULL
 comma
 multiline_comment|/* mmap not allowed */
-id|tape_qic02_open
+id|qic02_tape_open
 comma
 multiline_comment|/* open */
-id|tape_qic02_release
+id|qic02_tape_release
 comma
 multiline_comment|/* release */
 l_int|NULL
@@ -8377,14 +9893,14 @@ multiline_comment|/* fsync */
 )brace
 suffix:semicolon
 multiline_comment|/* Attribute `SA_INTERRUPT&squot; makes the interrupt atomic with&n; * interrupts disabled. We could do without the atomic stuff, but&n; * then dma_transfer() would have to disable interrupts explicitly.&n; * System load is high enough as it is :-(&n; */
-DECL|variable|tape_qic02_sigaction
+DECL|variable|qic02_tape_sigaction
 r_static
 r_struct
 id|sigaction
-id|tape_qic02_sigaction
+id|qic02_tape_sigaction
 op_assign
 (brace
-id|tape_qic02_interrupt
+id|qic02_tape_interrupt
 comma
 l_int|0
 comma
@@ -8442,45 +9958,65 @@ r_return
 id|a
 suffix:semicolon
 )brace
-multiline_comment|/* init() is called from chr_dev_init() in kernel/chr_drv/mem.c */
-DECL|function|tape_qic02_init
-r_int
-id|tape_qic02_init
+DECL|function|qic02_release_resources
+r_static
+r_void
+id|qic02_release_resources
 c_func
 (paren
-r_int
-id|kmem_start
+r_void
 )paren
-multiline_comment|/* Shouldn&squot;t this be a caddr_t ? */
 (brace
-id|printk
+id|free_irq
 c_func
 (paren
-id|TPQIC_NAME
-l_string|&quot;: IRQ %d, DMA %d, IO %xh, IFC %s, %s, %s&bslash;n&quot;
-comma
-id|TAPE_QIC02_IRQ
-comma
-id|TAPE_QIC02_DMA
-comma
-id|TAPE_QIC02_PORT
-comma
-macro_line|#if TAPE_QIC02_IFC == WANGTEK
-l_string|&quot;Wangtek&quot;
-comma
-macro_line|#elif TAPE_QIC02_IFC == ARCHIVE
-l_string|&quot;Archive&quot;
-comma
-macro_line|#else
-macro_line|# error
-macro_line|#endif
-id|rcs_revision
-comma
-id|rcs_date
+id|QIC02_TAPE_IRQ
 )paren
 suffix:semicolon
+id|free_dma
+c_func
+(paren
+id|QIC02_TAPE_DMA
+)paren
+suffix:semicolon
+id|status_zombie
+op_assign
+id|YES
+suffix:semicolon
+)brace
+multiline_comment|/* qic02_release_resources */
+DECL|function|qic02_get_resources
+r_static
+r_int
+id|qic02_get_resources
+c_func
+(paren
+r_void
+)paren
+(brace
 multiline_comment|/* First perform some checks. If one of them fails,&n;&t; * the tape driver will not be registered to the system.&n;&t; */
-multiline_comment|/* Should do IRQ/DMA allocation in open(). Use free_irq() in release()&n;&t; * return -EBUSY, if allocation fails in open().&n;&t; * Make IRQ settable/readable through ioctls. DMA is trickier because&n;&t; * some bits change for different DMA numbers. Also, this would add &n;&t; * runtime overhead for having the dma channel number be a variable&n;&t; * rather than a constant. Probably need to make the DMA stuff #ifdef&squot;d&n;&t; * to choose between hardcoded and changeable DMA channel.&n;&t; *&n;&t; * Also, Linux needs a more generic way to set DMA/IRQ and other stuff.&n;&t; * Right now, this is done differently for every device. (setserial,&n;&t; * ctrlaltdel, setdfprm, setfdthr, tunelp, ((setterm))...)&n;&t; *&n;&t; * #include &lt;hint.h&gt;&n;&t; */
+r_if
+c_cond
+(paren
+id|QIC02_TAPE_IRQ
+OG
+l_int|16
+)paren
+(brace
+id|tpqputs
+c_func
+(paren
+id|TPQD_ALWAYS
+comma
+l_string|&quot;Bogus interrupt number.&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+multiline_comment|/* for DYNCONF, allocating DMA &amp; IRQ should not be done until &n;         * the config parameters have been set using MTSETCONFIG.&n;&t; */
 multiline_comment|/* get IRQ */
 r_if
 c_cond
@@ -8488,24 +10024,29 @@ c_cond
 id|irqaction
 c_func
 (paren
-id|TAPE_QIC02_IRQ
+id|QIC02_TAPE_IRQ
 comma
 op_amp
-id|tape_qic02_sigaction
+id|qic02_tape_sigaction
 )paren
 )paren
 (brace
 id|printk
 c_func
 (paren
-id|TPQIC_NAME
+id|TPQIC02_NAME
 l_string|&quot;: can&squot;t allocate IRQ%d for QIC-02 tape&bslash;n&quot;
 comma
-id|TAPE_QIC02_IRQ
+id|QIC02_TAPE_IRQ
 )paren
 suffix:semicolon
+id|status_zombie
+op_assign
+id|YES
+suffix:semicolon
 r_return
-id|kmem_start
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* After IRQ, allocate DMA channel */
@@ -8515,29 +10056,154 @@ c_cond
 id|request_dma
 c_func
 (paren
-id|TAPE_QIC02_DMA
+id|QIC02_TAPE_DMA
 )paren
 )paren
 (brace
 id|printk
 c_func
 (paren
-id|TPQIC_NAME
+id|TPQIC02_NAME
 l_string|&quot;: can&squot;t allocate DMA%d for QIC-02 tape&bslash;n&quot;
 comma
-id|TAPE_QIC02_DMA
+id|QIC02_TAPE_DMA
 )paren
 suffix:semicolon
 id|free_irq
 c_func
 (paren
-id|TAPE_QIC02_IRQ
+id|QIC02_TAPE_IRQ
+)paren
+suffix:semicolon
+id|status_zombie
+op_assign
+id|YES
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+id|TPQIC02_NAME
+l_string|&quot;: Settings: IRQ %d, DMA %d, IO 0x%x, IFC %s&bslash;n&quot;
+comma
+id|QIC02_TAPE_IRQ
+comma
+id|QIC02_TAPE_DMA
+comma
+(paren
+(paren
+id|QIC02_TAPE_IFC
+op_eq
+id|ARCHIVE
+)paren
+op_logical_or
+(paren
+id|QIC02_TAPE_IFC
+op_eq
+id|MOUNTAIN
+)paren
+)paren
+ques
+c_cond
+id|QIC02_CMD_PORT
+suffix:colon
+id|QIC02_STAT_PORT
+comma
+(paren
+id|QIC02_TAPE_IFC
+op_eq
+id|MOUNTAIN
+)paren
+ques
+c_cond
+l_string|&quot;Mountain&quot;
+suffix:colon
+(paren
+(paren
+id|QIC02_TAPE_IFC
+op_eq
+id|ARCHIVE
+)paren
+ques
+c_cond
+l_string|&quot;Archive&quot;
+suffix:colon
+l_string|&quot;Wangtek&quot;
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tape_reset
+c_func
+(paren
+l_int|0
+)paren
+op_ne
+id|TE_OK
+op_logical_or
+id|tp_sense
+c_func
+(paren
+id|TP_WRP
+op_or
+id|TP_POR
+op_or
+id|TP_CNI
+)paren
+op_ne
+id|TE_OK
+)paren
+(brace
+multiline_comment|/* No drive detected, so vanish */
+id|tpqputs
+c_func
+(paren
+id|TPQD_ALWAYS
+comma
+l_string|&quot;No drive detected -- releasing irq and dma.&quot;
+)paren
+suffix:semicolon
+id|status_dead
+op_assign
+id|YES
+suffix:semicolon
+id|qic02_release_resources
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return
-id|kmem_start
+op_minus
+l_int|1
 suffix:semicolon
 )brace
+multiline_comment|/* All should be ok now */
+id|status_zombie
+op_assign
+id|NO
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/* qic02_get_resources */
+multiline_comment|/* init() is called from chr_dev_init() in drivers/char/mem.c */
+DECL|function|qic02_tape_init
+r_int
+id|qic02_tape_init
+c_func
+(paren
+r_int
+id|kmem_start
+)paren
+multiline_comment|/* Shouldn&squot;t this be a caddr_t ? */
+(brace
 r_if
 c_cond
 (paren
@@ -8549,7 +10215,7 @@ l_int|6
 id|printk
 c_func
 (paren
-id|TPQIC_NAME
+id|TPQIC02_NAME
 l_string|&quot;: internal error: tpstatus struct incorrect!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -8576,7 +10242,7 @@ l_int|0x10000
 id|printk
 c_func
 (paren
-id|TPQIC_NAME
+id|TPQIC02_NAME
 l_string|&quot;: internal error: DMA buffer size out of range&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -8584,10 +10250,77 @@ r_return
 id|kmem_start
 suffix:semicolon
 )brace
+id|QIC02_TAPE_DEBUG
+op_assign
+id|TPQD_DEFAULT_FLAGS
+suffix:semicolon
+macro_line|#ifndef CONFIG_QIC02_DYNCONF
 id|printk
 c_func
 (paren
-id|TPQIC_NAME
+id|TPQIC02_NAME
+l_string|&quot;: IRQ %d, DMA %d, IO 0x%x, IFC %s, %s, %s&bslash;n&quot;
+comma
+id|QIC02_TAPE_IRQ
+comma
+id|QIC02_TAPE_DMA
+comma
+macro_line|# if QIC02_TAPE_IFC == WANGTEK
+id|QIC02_STAT_PORT
+comma
+l_string|&quot;Wangtek&quot;
+comma
+macro_line|# elif QIC02_TAPE_IFC == ARCHIVE
+id|QIC02_CMD_PORT
+comma
+l_string|&quot;Archive&quot;
+comma
+macro_line|# elif QIC02_TAPE_IFC == MOUNTAIN
+id|QIC02_CMD_PORT
+comma
+l_string|&quot;Mountain&quot;
+comma
+macro_line|# else
+macro_line|#  error
+macro_line|# endif
+id|rcs_revision
+comma
+id|rcs_date
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|qic02_get_resources
+c_func
+(paren
+)paren
+)paren
+r_return
+id|kmem_start
+suffix:semicolon
+macro_line|#else
+id|printk
+c_func
+(paren
+id|TPQIC02_NAME
+l_string|&quot;: Runtime config, %s, %s&bslash;n&quot;
+comma
+id|rcs_revision
+comma
+id|rcs_date
+)paren
+suffix:semicolon
+id|QIC02_TAPE_IRQ
+op_assign
+id|BOGUS_IRQ
+suffix:semicolon
+multiline_comment|/* invalid value */
+macro_line|#endif
+id|printk
+c_func
+(paren
+id|TPQIC02_NAME
 l_string|&quot;: DMA buffers: %u blocks&quot;
 comma
 id|NR_BLK_BUF
@@ -8604,7 +10337,7 @@ r_int
 r_int
 )paren
 op_amp
-id|tape_qic02_buf
+id|qic02_tape_buf
 comma
 id|TAPE_BLKSIZE
 )paren
@@ -8621,7 +10354,7 @@ r_int
 r_int
 )paren
 op_amp
-id|tape_qic02_buf
+id|qic02_tape_buf
 )paren
 suffix:semicolon
 macro_line|#ifndef CONFIG_MAX_16M
@@ -8638,7 +10371,7 @@ l_int|0x1000000
 id|printk
 c_func
 (paren
-id|TPQIC_NAME
+id|TPQIC02_NAME
 l_string|&quot;: DMA buffer *must* be in lower 16MB&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -8656,22 +10389,36 @@ c_func
 (paren
 id|QIC02_TAPE_MAJOR
 comma
-id|TPQIC_NAME
+id|TPQIC02_NAME
 comma
 op_amp
-id|tape_qic02_fops
+id|qic02_tape_fops
 )paren
 )paren
 (brace
 id|printk
 c_func
 (paren
-id|TPQIC_NAME
+id|TPQIC02_NAME
 l_string|&quot;: Unable to get chrdev major %d&bslash;n&quot;
 comma
 id|QIC02_TAPE_MAJOR
 )paren
 suffix:semicolon
+macro_line|#ifndef CONFIG_QIC02_DYNCONF
+id|free_irq
+c_func
+(paren
+id|QIC02_TAPE_IRQ
+)paren
+suffix:semicolon
+id|free_dma
+c_func
+(paren
+id|QIC02_TAPE_DMA
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 id|kmem_start
 suffix:semicolon
@@ -8681,7 +10428,7 @@ id|TIMEROFF
 suffix:semicolon
 id|timer_table
 (braket
-id|TAPE_QIC02_TIMER
+id|QIC02_TAPE_TIMER
 )braket
 dot
 id|expires
@@ -8690,13 +10437,14 @@ l_int|0
 suffix:semicolon
 id|timer_table
 (braket
-id|TAPE_QIC02_TIMER
+id|QIC02_TAPE_TIMER
 )braket
 dot
 id|fn
 op_assign
-id|tape_qic02_times_out
+id|qic02_tape_times_out
 suffix:semicolon
+macro_line|#ifndef CONFIG_QIC02_DYNCONF
 r_if
 c_cond
 (paren
@@ -8721,9 +10469,41 @@ op_ne
 id|TE_OK
 )paren
 (brace
+multiline_comment|/* No drive detected, so vanish */
+id|tpqputs
+c_func
+(paren
+id|TPQD_ALWAYS
+comma
+l_string|&quot;No drive detected -- driver going on vacation...&quot;
+)paren
+suffix:semicolon
 id|status_dead
 op_assign
 id|YES
+suffix:semicolon
+id|free_irq
+c_func
+(paren
+id|QIC02_TAPE_IRQ
+)paren
+suffix:semicolon
+id|free_dma
+c_func
+(paren
+id|QIC02_TAPE_DMA
+)paren
+suffix:semicolon
+id|unregister_chrdev
+c_func
+(paren
+id|QIC02_TAPE_MAJOR
+comma
+id|TPQIC02_NAME
+)paren
+suffix:semicolon
+r_return
+id|kmem_start
 suffix:semicolon
 )brace
 r_else
@@ -8740,6 +10520,8 @@ c_func
 id|tpqputs
 c_func
 (paren
+id|TPQD_ALWAYS
+comma
 l_string|&quot;exception detected&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -8758,10 +10540,11 @@ id|TP_CNI
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 multiline_comment|/* initialize generic status for ioctl requests */
 id|ioctl_status.mt_type
 op_assign
-id|TAPE_QIC02_DRIVE
+id|QIC02_TAPE_DRIVE
 suffix:semicolon
 multiline_comment|/* MT_IS* id nr */
 id|ioctl_status.mt_resid
@@ -8793,6 +10576,6 @@ r_return
 id|kmem_start
 suffix:semicolon
 )brace
-multiline_comment|/* tape_qic02_init */
-macro_line|#endif /* CONFIG_TAPE_QIC02 */
+multiline_comment|/* qic02_tape_init */
+macro_line|#endif /* CONFIG_QIC02_TAPE */
 eof

@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/ext_fs.h&gt;
 macro_line|#include &lt;linux/ext2_fs.h&gt;
 macro_line|#include &lt;linux/xia_fs.h&gt;
 macro_line|#include &lt;linux/msdos_fs.h&gt;
+macro_line|#include &lt;linux/umsdos_fs.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/nfs_fs.h&gt;
 macro_line|#include &lt;linux/iso_fs.h&gt;
@@ -130,6 +131,27 @@ id|file_system_type
 id|xiafs_read_super
 comma
 l_string|&quot;xiafs&quot;
+comma
+l_int|1
+comma
+l_int|NULL
+)brace
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_UMSDOS_FS
+id|register_filesystem
+c_func
+(paren
+op_amp
+(paren
+r_struct
+id|file_system_type
+)paren
+(brace
+id|UMSDOS_read_super
+comma
+l_string|&quot;umsdos&quot;
 comma
 l_int|1
 comma

@@ -68,6 +68,7 @@ id|socket_state
 suffix:semicolon
 DECL|macro|SO_ACCEPTCON
 mdefine_line|#define SO_ACCEPTCON&t;(1&lt;&lt;16)&t;&t;/* performed a listen&t;&t;*/
+macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * Internal representation of a socket. not all the fields are used by&n; * all configurations:&n; *&n; *&t;&t;server&t;&t;&t;client&n; * conn&t;&t;client connected to&t;server connected to&n; * iconn&t;list of clients&t;&t;-unused-&n; *&t;&t; awaiting connections&n; * wait&t;&t;sleep for clients,&t;sleep for connection,&n; *&t;&t;sleep for i/o&t;&t;sleep for i/o&n; */
 DECL|struct|socket
 r_struct
@@ -675,5 +676,6 @@ op_star
 id|ops
 )paren
 suffix:semicolon
+macro_line|#endif /* __KERNEL__ */
 macro_line|#endif&t;/* _LINUX_NET_H */
 eof

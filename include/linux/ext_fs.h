@@ -211,6 +211,7 @@ id|EXT_NAME_LEN
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#ifdef __KERNEL__
 r_extern
 r_int
 id|ext_open
@@ -765,5 +766,6 @@ r_struct
 id|inode_operations
 id|ext_symlink_inode_operations
 suffix:semicolon
+macro_line|#endif /*__KERNEL__ */
 macro_line|#endif
 eof

@@ -525,7 +525,7 @@ r_int
 r_int
 id|vc_report_mouse
 suffix:colon
-l_int|1
+l_int|2
 suffix:semicolon
 DECL|member|vc_tab_stop
 r_int
@@ -3342,6 +3342,11 @@ suffix:colon
 id|report_mouse
 op_assign
 id|on_off
+ques
+c_cond
+l_int|1
+suffix:colon
+l_int|0
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -3358,6 +3363,20 @@ c_func
 (paren
 id|currcons
 )paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|1000
+suffix:colon
+id|report_mouse
+op_assign
+id|on_off
+ques
+c_cond
+l_int|2
+suffix:colon
+l_int|0
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -8260,9 +8279,9 @@ id|v
 suffix:semicolon
 )brace
 multiline_comment|/* invoked via ioctl(TIOCLINUX) */
-DECL|function|mouse_reporting_p
+DECL|function|mouse_reporting
 r_int
-id|mouse_reporting_p
+id|mouse_reporting
 c_func
 (paren
 r_void
@@ -8274,17 +8293,7 @@ op_assign
 id|fg_console
 suffix:semicolon
 r_return
-(paren
-(paren
 id|report_mouse
-)paren
-ques
-c_cond
-l_int|0
-suffix:colon
-op_minus
-id|EINVAL
-)paren
 suffix:semicolon
 )brace
 multiline_comment|/* set the current selection. Invoked by ioctl(). */

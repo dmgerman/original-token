@@ -349,6 +349,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* end of planning stage */
+macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * Free area management&n; */
 r_extern
 r_int
@@ -988,7 +989,7 @@ DECL|macro|GFP_KERNEL
 mdefine_line|#define GFP_KERNEL&t;0x03
 DECL|macro|GFP_NOBUFFER
 mdefine_line|#define GFP_NOBUFFER&t;0x04
-multiline_comment|/* vm_ops not present page codes */
+multiline_comment|/*&n; * vm_ops not present page codes for shared memory.&n; *&n; * Will go away eventually..&n; */
 DECL|macro|SHM_SWP_TYPE
 mdefine_line|#define SHM_SWP_TYPE 0x41
 r_extern
@@ -999,13 +1000,47 @@ id|ulong
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/* swap cache stuff (in swap.c) */
+multiline_comment|/*&n; * swap cache stuff (in swap.c)&n; */
+DECL|macro|SWAP_CACHE_INFO
+mdefine_line|#define SWAP_CACHE_INFO
 r_extern
 r_int
 r_int
 op_star
 id|swap_cache
 suffix:semicolon
+macro_line|#ifdef SWAP_CACHE_INFO
+r_extern
+r_int
+r_int
+id|swap_cache_add_total
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|swap_cache_add_success
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|swap_cache_del_total
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|swap_cache_del_success
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|swap_cache_find_total
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|swap_cache_find_success
+suffix:semicolon
+macro_line|#endif
 DECL|function|in_swap_cache
 r_extern
 r_inline
@@ -1028,11 +1063,82 @@ id|PAGE_SHIFT
 )braket
 suffix:semicolon
 )brace
-DECL|function|swap_cache_invalidate
+DECL|function|find_in_swap_cache
 r_extern
 r_inline
-r_void
-id|swap_cache_invalidate
+r_int
+id|find_in_swap_cache
+(paren
+r_int
+r_int
+id|addr
+)paren
+(brace
+r_int
+r_int
+id|entry
+suffix:semicolon
+macro_line|#ifdef SWAP_CACHE_INFO
+id|swap_cache_find_total
+op_increment
+suffix:semicolon
+macro_line|#endif
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;xchgl %0,%1&quot;
+suffix:colon
+l_string|&quot;=m&quot;
+(paren
+id|swap_cache
+(braket
+id|addr
+op_rshift
+id|PAGE_SHIFT
+)braket
+)paren
+comma
+l_string|&quot;=r&quot;
+(paren
+id|entry
+)paren
+suffix:colon
+l_string|&quot;0&quot;
+(paren
+id|swap_cache
+(braket
+id|addr
+op_rshift
+id|PAGE_SHIFT
+)braket
+)paren
+comma
+l_string|&quot;1&quot;
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+macro_line|#ifdef SWAP_CACHE_INFO
+r_if
+c_cond
+(paren
+id|entry
+)paren
+id|swap_cache_find_success
+op_increment
+suffix:semicolon
+macro_line|#endif&t;
+r_return
+id|entry
+suffix:semicolon
+)brace
+DECL|function|delete_from_swap_cache
+r_extern
+r_inline
+r_int
+id|delete_from_swap_cache
 c_func
 (paren
 r_int
@@ -1040,15 +1146,77 @@ r_int
 id|addr
 )paren
 (brace
+r_int
+r_int
+id|entry
+suffix:semicolon
+macro_line|#ifdef SWAP_CACHE_INFO
+id|swap_cache_del_total
+op_increment
+suffix:semicolon
+macro_line|#endif&t;
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;xchgl %0,%1&quot;
+suffix:colon
+l_string|&quot;=m&quot;
+(paren
 id|swap_cache
 (braket
 id|addr
 op_rshift
 id|PAGE_SHIFT
 )braket
-op_assign
+)paren
+comma
+l_string|&quot;=r&quot;
+(paren
+id|entry
+)paren
+suffix:colon
+l_string|&quot;0&quot;
+(paren
+id|swap_cache
+(braket
+id|addr
+op_rshift
+id|PAGE_SHIFT
+)braket
+)paren
+comma
+l_string|&quot;1&quot;
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|entry
+)paren
+(brace
+macro_line|#ifdef SWAP_CACHE_INFO
+id|swap_cache_del_success
+op_increment
+suffix:semicolon
+macro_line|#endif
+id|swap_free
+c_func
+(paren
+id|entry
+)paren
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif /* __KERNEL__ */
 macro_line|#endif
 eof

@@ -149,14 +149,6 @@ id|jiffies
 op_plus
 id|waittime
 suffix:semicolon
-id|irq_number
-op_assign
-l_int|0
-suffix:semicolon
-id|irq_bitmap
-op_assign
-l_int|0
-suffix:semicolon
 id|irq_handled
 op_assign
 l_int|0
@@ -209,6 +201,14 @@ id|irqs_used
 op_or_assign
 op_complement
 id|irq_handled
+suffix:semicolon
+id|irq_number
+op_assign
+l_int|0
+suffix:semicolon
+id|irq_bitmap
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/* Hang out at least &lt;waittime&gt; jiffies waiting for bogus IRQ hits. */
 r_while

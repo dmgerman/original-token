@@ -1670,10 +1670,10 @@ id|mem_start
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if CONFIG_TAPE_QIC02
+macro_line|#if CONFIG_QIC02_TAPE
 id|mem_start
 op_assign
-id|tape_qic02_init
+id|qic02_tape_init
 c_func
 (paren
 id|mem_start

@@ -981,6 +981,37 @@ l_int|0
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|ISOFS_BLOCK_BITS
+mdefine_line|#define ISOFS_BLOCK_BITS 11
+DECL|macro|ISOFS_BLOCK_SIZE
+mdefine_line|#define ISOFS_BLOCK_SIZE 2048
+DECL|macro|ISOFS_BUFFER_SIZE
+mdefine_line|#define ISOFS_BUFFER_SIZE(INODE) ((INODE)-&gt;i_sb-&gt;s_blocksize)
+DECL|macro|ISOFS_BUFFER_BITS
+mdefine_line|#define ISOFS_BUFFER_BITS(INODE) ((INODE)-&gt;i_sb-&gt;s_blocksize_bits)
+macro_line|#if 0
+macro_line|#ifdef ISOFS_FIXED_BLOCKSIZE
+multiline_comment|/* We use these until the buffer cache supports 2048 */
+mdefine_line|#define ISOFS_BUFFER_BITS 10
+mdefine_line|#define ISOFS_BUFFER_SIZE 1024
+mdefine_line|#define ISOFS_BLOCK_NUMBER(X) (X&lt;&lt;1)
+macro_line|#else
+mdefine_line|#define ISOFS_BUFFER_BITS 11
+mdefine_line|#define ISOFS_BUFFER_SIZE 2048
+mdefine_line|#define ISOFS_BLOCK_NUMBER(X) (X)
+macro_line|#endif
+macro_line|#endif
+DECL|macro|ISOFS_SUPER_MAGIC
+mdefine_line|#define ISOFS_SUPER_MAGIC 0x9660
+DECL|macro|ISOFS_FILE_UNKNOWN
+mdefine_line|#define ISOFS_FILE_UNKNOWN 0
+DECL|macro|ISOFS_FILE_TEXT
+mdefine_line|#define ISOFS_FILE_TEXT 1
+DECL|macro|ISOFS_FILE_BINARY
+mdefine_line|#define ISOFS_FILE_BINARY 2
+DECL|macro|ISOFS_FILE_TEXT_M
+mdefine_line|#define ISOFS_FILE_TEXT_M 3
+macro_line|#ifdef __KERNEL__
 r_extern
 r_int
 id|isonum_711
@@ -1126,36 +1157,6 @@ id|inode
 op_star
 )paren
 suffix:semicolon
-DECL|macro|ISOFS_BLOCK_BITS
-mdefine_line|#define ISOFS_BLOCK_BITS 11
-DECL|macro|ISOFS_BLOCK_SIZE
-mdefine_line|#define ISOFS_BLOCK_SIZE 2048
-DECL|macro|ISOFS_BUFFER_SIZE
-mdefine_line|#define ISOFS_BUFFER_SIZE(INODE) ((INODE)-&gt;i_sb-&gt;s_blocksize)
-DECL|macro|ISOFS_BUFFER_BITS
-mdefine_line|#define ISOFS_BUFFER_BITS(INODE) ((INODE)-&gt;i_sb-&gt;s_blocksize_bits)
-macro_line|#if 0
-macro_line|#ifdef ISOFS_FIXED_BLOCKSIZE
-multiline_comment|/* We use these until the buffer cache supports 2048 */
-mdefine_line|#define ISOFS_BUFFER_BITS 10
-mdefine_line|#define ISOFS_BUFFER_SIZE 1024
-mdefine_line|#define ISOFS_BLOCK_NUMBER(X) (X&lt;&lt;1)
-macro_line|#else
-mdefine_line|#define ISOFS_BUFFER_BITS 11
-mdefine_line|#define ISOFS_BUFFER_SIZE 2048
-mdefine_line|#define ISOFS_BLOCK_NUMBER(X) (X)
-macro_line|#endif
-macro_line|#endif
-DECL|macro|ISOFS_SUPER_MAGIC
-mdefine_line|#define ISOFS_SUPER_MAGIC 0x9660
-DECL|macro|ISOFS_FILE_UNKNOWN
-mdefine_line|#define ISOFS_FILE_UNKNOWN 0
-DECL|macro|ISOFS_FILE_TEXT
-mdefine_line|#define ISOFS_FILE_TEXT 1
-DECL|macro|ISOFS_FILE_BINARY
-mdefine_line|#define ISOFS_FILE_BINARY 2
-DECL|macro|ISOFS_FILE_TEXT_M
-mdefine_line|#define ISOFS_FILE_TEXT_M 3
 multiline_comment|/* The stuff that follows may be totally unneeded. I have not checked to see &n; which prototypes we are still using.  */
 r_extern
 r_int
@@ -1504,5 +1505,6 @@ id|bh
 )paren
 suffix:semicolon
 macro_line|#endif /* LEAK_CHECK */
+macro_line|#endif /* __KERNEL__ */
 macro_line|#endif
 eof

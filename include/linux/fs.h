@@ -310,10 +310,12 @@ macro_line|#include &lt;linux/ext_fs_i.h&gt;
 macro_line|#include &lt;linux/ext2_fs_i.h&gt;
 macro_line|#include &lt;linux/hpfs_fs_i.h&gt;
 macro_line|#include &lt;linux/msdos_fs_i.h&gt;
+macro_line|#include &lt;linux/umsdos_fs_i.h&gt;
 macro_line|#include &lt;linux/iso_fs_i.h&gt;
 macro_line|#include &lt;linux/nfs_fs_i.h&gt;
 macro_line|#include &lt;linux/xia_fs_i.h&gt;
 macro_line|#include &lt;linux/sysv_fs_i.h&gt;
+macro_line|#ifdef __KERNEL__
 DECL|struct|inode
 r_struct
 id|inode
@@ -521,6 +523,11 @@ DECL|member|msdos_i
 r_struct
 id|msdos_inode_info
 id|msdos_i
+suffix:semicolon
+DECL|member|umsdos_i
+r_struct
+id|umsdos_inode_info
+id|umsdos_i
 suffix:semicolon
 DECL|member|isofs_i
 r_struct
@@ -1363,6 +1370,20 @@ comma
 r_int
 )paren
 suffix:semicolon
+DECL|member|smap
+r_int
+(paren
+op_star
+id|smap
+)paren
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|super_operations
@@ -1520,7 +1541,6 @@ id|next
 suffix:semicolon
 )brace
 suffix:semicolon
-macro_line|#ifdef __KERNEL__
 r_extern
 r_int
 id|register_filesystem

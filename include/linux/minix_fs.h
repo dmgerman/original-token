@@ -193,6 +193,7 @@ l_int|0
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#ifdef __KERNEL__
 r_extern
 r_int
 id|minix_lookup
@@ -677,5 +678,6 @@ r_struct
 id|inode_operations
 id|minix_symlink_inode_operations
 suffix:semicolon
+macro_line|#endif /* __KERNEL__ */
 macro_line|#endif
 eof

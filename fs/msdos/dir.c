@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/msdos_fs.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 DECL|function|msdos_dir_read
 r_static
 r_int
@@ -33,7 +34,6 @@ op_minus
 id|EISDIR
 suffix:semicolon
 )brace
-r_static
 r_int
 id|msdos_readdir
 c_func
@@ -149,7 +149,6 @@ multiline_comment|/* permission */
 )brace
 suffix:semicolon
 DECL|function|msdos_readdir
-r_static
 r_int
 id|msdos_readdir
 c_func
@@ -169,6 +168,7 @@ id|dirent
 op_star
 id|dirent
 comma
+multiline_comment|/* dirent in user space */
 r_int
 id|count
 )paren
@@ -379,6 +379,18 @@ id|ATTR_VOLUME
 )paren
 )paren
 (brace
+r_char
+id|bufname
+(braket
+l_int|13
+)braket
+suffix:semicolon
+r_char
+op_star
+id|ptname
+op_assign
+id|bufname
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -433,36 +445,30 @@ id|c
 op_ne
 l_char|&squot; &squot;
 )paren
+(brace
 id|last
 op_assign
 id|i
 op_plus
 l_int|1
 suffix:semicolon
-id|put_fs_byte
-c_func
-(paren
+op_star
+id|ptname
+op_increment
+op_assign
 id|c
-comma
-id|i
-op_plus
-id|dirent-&gt;d_name
-)paren
 suffix:semicolon
+)brace
 )brace
 id|i
 op_assign
 id|last
 suffix:semicolon
-id|put_fs_byte
-c_func
-(paren
+op_star
+id|ptname
+op_increment
+op_assign
 l_char|&squot;.&squot;
-comma
-id|i
-op_plus
-id|dirent-&gt;d_name
-)paren
 suffix:semicolon
 id|i
 op_increment
@@ -519,22 +525,20 @@ id|c
 op_ne
 l_char|&squot; &squot;
 )paren
+(brace
 id|last
 op_assign
 id|i
 op_plus
 l_int|1
 suffix:semicolon
-id|put_fs_byte
-c_func
-(paren
+op_star
+id|ptname
+op_increment
+op_assign
 id|c
-comma
-id|i
-op_plus
-id|dirent-&gt;d_name
-)paren
 suffix:semicolon
+)brace
 id|i
 op_increment
 suffix:semicolon
@@ -590,6 +594,13 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|bufname
+(braket
+id|i
+)braket
+op_assign
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
 id|put_fs_long
 c_func
 (paren
@@ -599,14 +610,16 @@ op_amp
 id|dirent-&gt;d_ino
 )paren
 suffix:semicolon
-id|put_fs_byte
+id|memcpy_tofs
 c_func
 (paren
-l_int|0
+id|dirent-&gt;d_name
+comma
+id|bufname
 comma
 id|i
 op_plus
-id|dirent-&gt;d_name
+l_int|1
 )paren
 suffix:semicolon
 id|put_fs_word

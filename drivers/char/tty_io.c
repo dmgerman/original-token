@@ -65,7 +65,7 @@ id|arg
 suffix:semicolon
 r_extern
 r_int
-id|mouse_reporting_p
+id|mouse_reporting
 c_func
 (paren
 r_void
@@ -6207,11 +6207,19 @@ suffix:semicolon
 r_case
 l_int|7
 suffix:colon
-r_return
-id|mouse_reporting_p
+id|put_fs_byte
+c_func
+(paren
+id|mouse_reporting
 c_func
 (paren
 )paren
+comma
+id|arg
+)paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 macro_line|#endif /* CONFIG_SELECTION */
 r_default

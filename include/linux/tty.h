@@ -2,6 +2,7 @@ macro_line|#ifndef _LINUX_TTY_H
 DECL|macro|_LINUX_TTY_H
 mdefine_line|#define _LINUX_TTY_H
 multiline_comment|/*&n; * &squot;tty.h&squot; defines some structures used by tty_io.c and some defines.&n; */
+macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/termios.h&gt;
 macro_line|#include &lt;linux/tqueue.h&gt;
@@ -1013,5 +1014,6 @@ r_int
 id|arg
 )paren
 suffix:semicolon
+macro_line|#endif /* __KERNEL__ */
 macro_line|#endif
 eof

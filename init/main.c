@@ -2562,6 +2562,34 @@ comma
 id|ORIG_VIDEO_LINES
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_UMSDOS_FS
+(brace
+multiline_comment|/*&n;&t;&t;&t;When mounting a umsdos fs as root, we detect&n;&t;&t;&t;the pseudo_root (/linux) and initialise it here.&n;&t;&t;&t;pseudo_root is defined in fs/umsdos/inode.c&n;&t;&t;*/
+r_extern
+r_struct
+id|inode
+op_star
+id|pseudo_root
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pseudo_root
+op_ne
+l_int|NULL
+)paren
+(brace
+id|current-&gt;fs-&gt;root
+op_assign
+id|pseudo_root
+suffix:semicolon
+id|current-&gt;fs-&gt;pwd
+op_assign
+id|pseudo_root
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif
 (paren
 r_void
 )paren

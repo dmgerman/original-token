@@ -1,0 +1,238 @@
+multiline_comment|/*&n; *  linux/fs/umsdos/file.c&n; *&n; *  Written 1993 by Jacques Gelinas&n; *&t;inpired from linux/fs/msdos/file.c Werner Almesberger&n; *&n; *  Extended MS-DOS regular file handling primitives&n; */
+macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/msdos_fs.h&gt;
+macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/fcntl.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/msdos_fs.h&gt;
+macro_line|#include &lt;linux/umsdos_fs.h&gt;
+DECL|macro|PRINTK
+mdefine_line|#define PRINTK(x)
+DECL|macro|Printk
+mdefine_line|#define Printk(x)&t;printk x
+multiline_comment|/*&n;&t;Read a file into user space memory&n;*/
+DECL|function|UMSDOS_file_read
+r_static
+r_int
+id|UMSDOS_file_read
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|filp
+comma
+r_char
+op_star
+id|buf
+comma
+r_int
+id|count
+)paren
+(brace
+multiline_comment|/* We have to set the access time because msdos don&squot;t care */
+r_int
+id|ret
+op_assign
+id|msdos_file_read
+c_func
+(paren
+id|inode
+comma
+id|filp
+comma
+id|buf
+comma
+id|count
+)paren
+suffix:semicolon
+id|inode-&gt;i_atime
+op_assign
+id|CURRENT_TIME
+suffix:semicolon
+id|inode-&gt;i_dirt
+op_assign
+l_int|1
+suffix:semicolon
+r_return
+id|ret
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t;Write a file from user space memory&n;*/
+DECL|function|UMSDOS_file_write
+r_static
+r_int
+id|UMSDOS_file_write
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|filp
+comma
+r_char
+op_star
+id|buf
+comma
+r_int
+id|count
+)paren
+(brace
+r_return
+id|msdos_file_write
+c_func
+(paren
+id|inode
+comma
+id|filp
+comma
+id|buf
+comma
+id|count
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t;Truncate a file to 0 length.&n;*/
+DECL|function|UMSDOS_truncate
+r_static
+r_void
+id|UMSDOS_truncate
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+)paren
+(brace
+id|PRINTK
+(paren
+(paren
+l_string|&quot;UMSDOS_truncate&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+id|msdos_truncate
+(paren
+id|inode
+)paren
+suffix:semicolon
+id|inode-&gt;i_ctime
+op_assign
+id|inode-&gt;i_mtime
+op_assign
+id|CURRENT_TIME
+suffix:semicolon
+id|inode-&gt;i_dirt
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t;See inode.c&n;&t;&n;&t;Some entry point are filled dynamicly with function pointers&n;&t;from the msdos file_operations and file_inode_operations.&n;&t;&n;&t;The idea is to have the code as independant as possible from&n;&t;the msdos file system.&n;*/
+DECL|variable|umsdos_file_operations
+r_struct
+id|file_operations
+id|umsdos_file_operations
+op_assign
+(brace
+l_int|NULL
+comma
+multiline_comment|/* lseek - default */
+id|UMSDOS_file_read
+comma
+multiline_comment|/* read */
+id|UMSDOS_file_write
+comma
+multiline_comment|/* write */
+l_int|NULL
+comma
+multiline_comment|/* readdir - bad */
+l_int|NULL
+comma
+multiline_comment|/* select - default */
+l_int|NULL
+comma
+multiline_comment|/* ioctl - default */
+id|msdos_mmap
+comma
+multiline_comment|/* mmap */
+l_int|NULL
+comma
+multiline_comment|/* no special open is needed */
+l_int|NULL
+comma
+multiline_comment|/* release */
+l_int|NULL
+multiline_comment|/* fsync */
+)brace
+suffix:semicolon
+DECL|variable|umsdos_file_inode_operations
+r_struct
+id|inode_operations
+id|umsdos_file_inode_operations
+op_assign
+(brace
+op_amp
+id|umsdos_file_operations
+comma
+multiline_comment|/* default file operations */
+l_int|NULL
+comma
+multiline_comment|/* create */
+l_int|NULL
+comma
+multiline_comment|/* lookup */
+l_int|NULL
+comma
+multiline_comment|/* link */
+l_int|NULL
+comma
+multiline_comment|/* unlink */
+l_int|NULL
+comma
+multiline_comment|/* symlink */
+l_int|NULL
+comma
+multiline_comment|/* mkdir */
+l_int|NULL
+comma
+multiline_comment|/* rmdir */
+l_int|NULL
+comma
+multiline_comment|/* mknod */
+l_int|NULL
+comma
+multiline_comment|/* rename */
+l_int|NULL
+comma
+multiline_comment|/* readlink */
+l_int|NULL
+comma
+multiline_comment|/* follow_link */
+l_int|NULL
+comma
+multiline_comment|/* bmap */
+id|UMSDOS_truncate
+comma
+multiline_comment|/* truncate */
+l_int|NULL
+comma
+multiline_comment|/* permission */
+id|msdos_smap
+multiline_comment|/* smap */
+)brace
+suffix:semicolon
+eof

@@ -680,7 +680,7 @@ c_func
 (paren
 l_string|&quot;xchgb %0,%1&quot;
 suffix:colon
-l_string|&quot;=r&quot;
+l_string|&quot;=q&quot;
 (paren
 id|reg
 )paren

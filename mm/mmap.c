@@ -34,9 +34,7 @@ r_int
 r_int
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * description of effects of mapping type and prot in current implementation.&n; * this is due to the current handling of page faults in memory.c. the expected&n; * behavior is in parens:&n; *&n; * map_type&t;prot&n; *&t;&t;PROT_NONE&t;PROT_READ&t;PROT_WRITE&t;PROT_EXEC&n; * MAP_SHARED&t;r: (no) yes&t;r: (yes) yes&t;r: (no) yes&t;r: (no) no&n; *&t;&t;w: (no) yes&t;w: (no) copy&t;w: (yes) yes&t;w: (no) no&n; *&t;&t;x: (no) no&t;x: (no) no&t;x: (no) no&t;x: (yes) no&n; *&t;&t;&n; * MAP_PRIVATE&t;r: (no) yes&t;r: (yes) yes&t;r: (no) yes&t;r: (no) no&n; *&t;&t;w: (no) copy&t;w: (no) copy&t;w: (copy) copy&t;w: (no) no&n; *&t;&t;x: (no) no&t;x: (no) no&t;x: (no) no&t;x: (yes) no&n; *&n; */
-DECL|macro|CODE_SPACE
-mdefine_line|#define CODE_SPACE(addr)&t;&bslash;&n; (PAGE_ALIGN(addr) &lt; current-&gt;start_code + current-&gt;end_code)
+multiline_comment|/*&n; * description of effects of mapping type and prot in current implementation.&n; * this is due to the limited x86 page protection hardware.  The expected&n; * behavior is in parens:&n; *&n; * map_type&t;prot&n; *&t;&t;PROT_NONE&t;PROT_READ&t;PROT_WRITE&t;PROT_EXEC&n; * MAP_SHARED&t;r: (no) no&t;r: (yes) yes&t;r: (no) yes&t;r: (no) yes&n; *&t;&t;w: (no) no&t;w: (no) no&t;w: (yes) yes&t;w: (no) no&n; *&t;&t;x: (no) no&t;x: (no) yes&t;x: (no) yes&t;x: (yes) yes&n; *&t;&t;&n; * MAP_PRIVATE&t;r: (no) no&t;r: (yes) yes&t;r: (no) yes&t;r: (no) yes&n; *&t;&t;w: (no) no&t;w: (no) no&t;w: (copy) copy&t;w: (no) no&n; *&t;&t;x: (no) no&t;x: (no) yes&t;x: (no) yes&t;x: (yes) yes&n; *&n; */
 DECL|function|do_mmap
 r_int
 id|do_mmap
@@ -377,10 +375,12 @@ c_cond
 op_logical_neg
 id|mask
 )paren
-r_return
-op_minus
-id|EINVAL
+multiline_comment|/* PROT_NONE */
+id|mask
+op_assign
+id|PAGE_PRESENT
 suffix:semicolon
+multiline_comment|/* none of PAGE_USER, PAGE_RW, PAGE_COW */
 id|do_munmap
 c_func
 (paren
