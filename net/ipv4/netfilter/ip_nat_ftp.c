@@ -564,6 +564,13 @@ id|pskb
 )paren
 comma
 id|newlen
+op_minus
+(paren
+op_star
+id|pskb
+)paren
+op_member_access_from_pointer
+id|len
 comma
 id|GFP_ATOMIC
 )paren

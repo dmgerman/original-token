@@ -3503,9 +3503,9 @@ op_star
 )paren
 suffix:semicolon
 DECL|macro|__getname
-mdefine_line|#define __getname()&t;((char *) __get_free_page(GFP_KERNEL))
+mdefine_line|#define __getname()&t;kmem_cache_alloc(names_cachep, SLAB_KERNEL)
 DECL|macro|putname
-mdefine_line|#define putname(name)&t;free_page((unsigned long)(name))
+mdefine_line|#define putname(name)&t;kmem_cache_free(names_cachep, (void *)(name))
 DECL|enumerator|BDEV_FILE
 DECL|enumerator|BDEV_SWAP
 DECL|enumerator|BDEV_FS

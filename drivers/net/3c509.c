@@ -805,7 +805,7 @@ l_int|0
 )brace
 suffix:semicolon
 macro_line|#endif /* CONFIG_ISAPNP */
-macro_line|#if defined(__ISAPNP__) || defined(MODULE)
+macro_line|#ifdef __ISAPNP__
 DECL|variable|nopnp
 r_static
 r_int
@@ -5028,6 +5028,7 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef __ISAPNP__
 id|MODULE_PARM
 c_func
 (paren
@@ -5036,6 +5037,7 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 r_int
 DECL|function|init_module
 id|init_module

@@ -306,6 +306,7 @@ suffix:semicolon
 id|u_int16_t
 id|redirpt
 suffix:semicolon
+multiline_comment|/* Assume worse case: any hook could change packet */
 (paren
 op_star
 id|pskb
@@ -314,6 +315,8 @@ op_member_access_from_pointer
 id|nfcache
 op_or_assign
 id|NFC_UNKNOWN
+op_or
+id|NFC_ALTERED
 suffix:semicolon
 (paren
 op_star

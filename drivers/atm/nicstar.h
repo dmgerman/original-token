@@ -10,6 +10,8 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/atmdev.h&gt;
 macro_line|#include &lt;linux/atm_nicstar.h&gt;
 multiline_comment|/* Options ********************************************************************/
+DECL|macro|NS_DEBUG_SPINLOCKS
+macro_line|#undef NS_DEBUG_SPINLOCKS
 DECL|macro|NS_MAX_CARDS
 mdefine_line|#define NS_MAX_CARDS 4&t;&t;/* Maximum number of NICStAR based cards&n;&t;&t;&t;&t;   controlled by the device driver. Must&n;                                   be &lt;= 5 */
 DECL|macro|RCQ_SUPPORT
@@ -1015,6 +1017,23 @@ r_char
 id|full
 suffix:semicolon
 multiline_comment|/* SCQ full indicator */
+DECL|member|lock
+id|spinlock_t
+id|lock
+suffix:semicolon
+multiline_comment|/* SCQ spinlock */
+macro_line|#ifdef NS_DEBUG_SPINLOCKS
+DECL|member|has_lock
+r_volatile
+r_int
+id|has_lock
+suffix:semicolon
+DECL|member|cpu_lock
+r_volatile
+r_int
+id|cpu_lock
+suffix:semicolon
+macro_line|#endif /* NS_DEBUG_SPINLOCKS */
 DECL|typedef|scq_info
 )brace
 id|scq_info
@@ -1316,20 +1335,38 @@ r_int
 id|intcnt
 suffix:semicolon
 multiline_comment|/* Interrupt counter */
-DECL|member|in_handler
+DECL|member|int_lock
+id|spinlock_t
+id|int_lock
+suffix:semicolon
+multiline_comment|/* Interrupt lock */
+DECL|member|res_lock
+id|spinlock_t
+id|res_lock
+suffix:semicolon
+multiline_comment|/* Card resource lock */
+macro_line|#ifdef NS_DEBUG_SPINLOCKS
+DECL|member|has_int_lock
 r_volatile
 r_int
-id|in_handler
-suffix:colon
-l_int|1
+id|has_int_lock
 suffix:semicolon
-DECL|member|in_poll
+DECL|member|cpu_int
 r_volatile
 r_int
-id|in_poll
-suffix:colon
-l_int|1
+id|cpu_int
 suffix:semicolon
+DECL|member|has_res_lock
+r_volatile
+r_int
+id|has_res_lock
+suffix:semicolon
+DECL|member|cpu_res
+r_volatile
+r_int
+id|cpu_res
+suffix:semicolon
+macro_line|#endif /* NS_DEBUG_SPINLOCKS */
 DECL|typedef|ns_dev
 )brace
 id|ns_dev

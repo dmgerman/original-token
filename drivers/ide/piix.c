@@ -971,6 +971,7 @@ id|byte
 id|xfer_rate
 )paren
 suffix:semicolon
+macro_line|#if defined(CONFIG_BLK_DEV_IDEDMA) &amp;&amp; defined(CONFIG_PIIX_TUNING)
 multiline_comment|/*&n; *&n; */
 DECL|function|piix_dma_2_pio
 r_static
@@ -1057,6 +1058,7 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif /* defined(CONFIG_BLK_DEV_IDEDMA) &amp;&amp; (CONFIG_PIIX_TUNING) */
 multiline_comment|/*&n; *  Based on settings done by AMI BIOS&n; *  (might be usefull if drive is not registered in CMOS for any reason).&n; */
 DECL|function|piix_tune_drive
 r_static

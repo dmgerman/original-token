@@ -443,6 +443,7 @@ id|mddev
 )paren
 (brace
 r_int
+r_int
 id|cur
 op_assign
 l_int|0
@@ -581,7 +582,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;raid0 : nb_zone is %d.&bslash;n&quot;
+l_string|&quot;raid0 : nb_zone is %ld.&bslash;n&quot;
 comma
 id|nb_zone
 )paren
@@ -593,15 +594,15 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;raid0 : Allocating %d bytes for hash.&bslash;n&quot;
+l_string|&quot;raid0 : Allocating %ld bytes for hash.&bslash;n&quot;
 comma
+id|nb_zone
+op_star
 r_sizeof
 (paren
 r_struct
 id|raid0_hash
 )paren
-op_star
-id|nb_zone
 )paren
 suffix:semicolon
 id|conf-&gt;hash_table

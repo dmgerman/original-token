@@ -123,6 +123,7 @@ r_int
 id|hook_mask
 )paren
 (brace
+multiline_comment|/* FORWARD isn&squot;t always valid, but it&squot;s nice to be able to do --RR */
 r_if
 c_cond
 (paren
@@ -141,13 +142,19 @@ l_int|1
 op_lshift
 id|NF_IP_LOCAL_IN
 )paren
+op_or
+(paren
+l_int|1
+op_lshift
+id|NF_IP_FORWARD
+)paren
 )paren
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;ipt_mac: only valid for PRE_ROUTING or LOCAL_IN.&bslash;n&quot;
+l_string|&quot;ipt_mac: only valid for PRE_ROUTING, LOCAL_IN or FORWARD.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return

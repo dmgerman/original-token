@@ -41,9 +41,8 @@ DECL|macro|SLAB_NO_REAP
 mdefine_line|#define&t;SLAB_NO_REAP&t;&t;0x00001000UL&t;/* never reap from the cache */
 DECL|macro|SLAB_HWCACHE_ALIGN
 mdefine_line|#define&t;SLAB_HWCACHE_ALIGN&t;0x00002000UL&t;/* align objs on a h/w cache lines */
-macro_line|#if&t;0
-mdefine_line|#define&t;SLAB_HIGH_PACK&t;&t;0x00004000UL&t;/* XXX */
-macro_line|#endif
+DECL|macro|SLAB_CACHE_DMA
+mdefine_line|#define SLAB_CACHE_DMA&t;&t;0x00004000UL&t;/* use GFP_DMA memory */
 multiline_comment|/* flags passed to a constructor func */
 DECL|macro|SLAB_CTOR_CONSTRUCTOR
 mdefine_line|#define&t;SLAB_CTOR_CONSTRUCTOR&t;0x001UL&t;&t;/* if not set, then deconstructor */
@@ -69,12 +68,23 @@ r_void
 )paren
 suffix:semicolon
 r_extern
+r_void
+id|kmem_cpucache_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
 id|kmem_cache_t
 op_star
 id|kmem_find_general_cachep
 c_func
 (paren
 r_int
+comma
+r_int
+id|gfpflags
 )paren
 suffix:semicolon
 r_extern
@@ -188,18 +198,8 @@ r_void
 op_star
 )paren
 suffix:semicolon
-r_extern
-r_void
-id|kfree_s
-c_func
-(paren
-r_const
-r_void
-op_star
-comma
-r_int
-)paren
-suffix:semicolon
+DECL|macro|kfree_s
+mdefine_line|#define kfree_s(objp,s)&t;&t;kfree(objp)
 r_extern
 r_void
 id|kmem_cache_reap
@@ -210,11 +210,55 @@ r_int
 suffix:semicolon
 r_extern
 r_int
-id|get_slabinfo
+id|slabinfo_read_proc
 c_func
 (paren
 r_char
 op_star
+id|page
+comma
+r_char
+op_star
+op_star
+id|start
+comma
+id|off_t
+id|off
+comma
+r_int
+id|count
+comma
+r_int
+op_star
+id|eof
+comma
+r_void
+op_star
+id|data
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|slabinfo_write_proc
+c_func
+(paren
+r_struct
+id|file
+op_star
+id|file
+comma
+r_const
+r_char
+op_star
+id|buffer
+comma
+r_int
+r_int
+id|count
+comma
+r_void
+op_star
+id|data
 )paren
 suffix:semicolon
 multiline_comment|/* System wide caches */
@@ -227,6 +271,11 @@ r_extern
 id|kmem_cache_t
 op_star
 id|mm_cachep
+suffix:semicolon
+r_extern
+id|kmem_cache_t
+op_star
+id|names_cachep
 suffix:semicolon
 macro_line|#endif&t;/* __KERNEL__ */
 macro_line|#endif&t;/* _LINUX_SLAB_H */

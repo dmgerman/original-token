@@ -321,13 +321,6 @@ c_func
 id|kfree
 )paren
 suffix:semicolon
-DECL|variable|kfree_s
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|kfree_s
-)paren
-suffix:semicolon
 DECL|variable|vfree
 id|EXPORT_SYMBOL
 c_func
@@ -1018,11 +1011,11 @@ c_func
 id|locks_mandatory_area
 )paren
 suffix:semicolon
-DECL|variable|__dput
+DECL|variable|dput
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|__dput
+id|dput
 )paren
 suffix:semicolon
 DECL|variable|have_submounts

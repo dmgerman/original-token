@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/in6.h&gt;
 macro_line|#include &lt;linux/inetdevice.h&gt;
 macro_line|#include &lt;linux/igmp.h&gt;
+macro_line|#include &lt;linux/netfilter_ipv4.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;net/icmp.h&gt;
@@ -2471,6 +2472,28 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* Need this wrapper because NF_HOOK takes the function address */
+DECL|function|do_ip_send
+r_static
+r_inline
+r_int
+id|do_ip_send
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+)paren
+(brace
+r_return
+id|ip_send
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+)brace
 DECL|function|ipgre_tunnel_xmit
 r_static
 r_int
@@ -3561,10 +3584,20 @@ suffix:semicolon
 id|stats-&gt;tx_packets
 op_increment
 suffix:semicolon
-id|ip_send
+id|NF_HOOK
 c_func
 (paren
+id|PF_INET
+comma
+id|NF_IP_LOCAL_OUT
+comma
 id|skb
+comma
+l_int|NULL
+comma
+id|rt-&gt;u.dst.dev
+comma
+id|do_ip_send
 )paren
 suffix:semicolon
 id|tunnel-&gt;recursion

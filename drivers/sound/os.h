@@ -8,12 +8,8 @@ DECL|macro|MANUAL_PNP
 mdefine_line|#define MANUAL_PNP
 DECL|macro|DO_TIMINGS
 macro_line|#undef  DO_TIMINGS
-macro_line|#ifdef MODULE
-DECL|macro|__NO_VERSION__
-mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
-macro_line|#endif
 macro_line|#if LINUX_VERSION_CODE &gt; 131328
 DECL|macro|LINUX21X
 mdefine_line|#define LINUX21X

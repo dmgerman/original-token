@@ -876,17 +876,26 @@ l_int|1
 suffix:colon
 multiline_comment|/* partial */
 multiline_comment|/* We don&squot;t usually drop packets.  After all, this is&n;&t;&t;   connection tracking, not packet filtering.&n;&t;&t;   However, it is neccessary for accurate tracking in&n;&t;&t;   this case. */
-id|DEBUGP
+r_if
+c_cond
+(paren
+id|net_ratelimit
 c_func
 (paren
-l_string|&quot;conntrack_ftp: partial `%.*s&squot;&bslash;n&quot;
-comma
-(paren
-r_int
 )paren
-id|datalen
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;conntrack_ftp: partial %u+%u&bslash;n&quot;
 comma
-id|data
+id|ntohl
+c_func
+(paren
+id|tcph-&gt;seq
+)paren
+comma
+id|datalen
 )paren
 suffix:semicolon
 r_return

@@ -1937,7 +1937,7 @@ comma
 id|NF_IP_LOCAL_OUT
 )braket
 op_assign
-id|NF_IP_PRE_ROUTING
+id|NF_IP_POST_ROUTING
 )brace
 suffix:semicolon
 r_int
@@ -2778,8 +2778,17 @@ comma
 r_enum
 id|ip_nat_manip_type
 id|maniptype
+comma
+id|__u32
+op_star
+id|nfcache
 )paren
 (brace
+op_star
+id|nfcache
+op_or_assign
+id|NFC_ALTERED
+suffix:semicolon
 id|find_nat_proto
 c_func
 (paren
@@ -3113,6 +3122,14 @@ id|i
 )braket
 dot
 id|maniptype
+comma
+op_amp
+(paren
+op_star
+id|pskb
+)paren
+op_member_access_from_pointer
+id|nfcache
 )paren
 suffix:semicolon
 )brace
@@ -3312,7 +3329,7 @@ suffix:colon
 l_string|&quot;REPLY&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* Note: May not be from a NAT&squot;d host, but probably safest to&n;&t;   do translation always as if it came from the host itself&n;&t;   (even though a &quot;host unreachable&quot; coming from the host&n;&t;   itself is a bit wierd).&n;&n;&t;   More explanation: some people use NAT for anonomizing.&n;&t;   Also, CERT recommends dropping all packets from private IP&n;&t;   addresses (although ICMP errors from internal links with&n;&t;   such addresses are not too uncommon, as Alan Cox points&n;&t;   out) */
+multiline_comment|/* Note: May not be from a NAT&squot;d host, but probably safest to&n;&t;   do translation always as if it came from the host itself&n;&t;   (even though a &quot;host unreachable&quot; coming from the host&n;&t;   itself is a bit wierd).&n;&n;&t;   More explanation: some people use NAT for anonymizing.&n;&t;   Also, CERT recommends dropping all packets from private IP&n;&t;   addresses (although ICMP errors from internal links with&n;&t;   such addresses are not too uncommon, as Alan Cox points&n;&t;   out) */
 id|READ_LOCK
 c_func
 (paren
@@ -3475,6 +3492,9 @@ id|i
 )braket
 dot
 id|maniptype
+comma
+op_amp
+id|skb-&gt;nfcache
 )paren
 suffix:semicolon
 multiline_comment|/* Outer packet needs to have IP header NATed like&n;                   it&squot;s a reply. */
@@ -3483,15 +3503,6 @@ r_else
 r_if
 c_cond
 (paren
-id|info-&gt;manips
-(braket
-id|i
-)braket
-dot
-id|direction
-op_eq
-id|dir
-op_logical_and
 id|info-&gt;manips
 (braket
 id|i
@@ -3557,6 +3568,9 @@ id|i
 )braket
 dot
 id|maniptype
+comma
+op_amp
+id|skb-&gt;nfcache
 )paren
 suffix:semicolon
 )brace

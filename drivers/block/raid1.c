@@ -2126,14 +2126,6 @@ id|mirror_info
 op_star
 id|mirror
 suffix:semicolon
-id|DECLARE_WAITQUEUE
-c_func
-(paren
-id|wait
-comma
-id|current
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren

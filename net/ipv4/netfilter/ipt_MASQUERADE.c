@@ -545,9 +545,13 @@ c_cond
 id|event
 op_eq
 id|NETDEV_DOWN
+op_logical_or
+id|event
+op_eq
+id|NETDEV_CHANGEADDR
 )paren
 (brace
-multiline_comment|/* Device was downed.  Search entire table for&n;&t;&t;   conntracks which were associated with that device,&n;&t;&t;   and forget them. */
+multiline_comment|/* Device was downed/changed (diald)  Search entire table for&n;&t;&t;   conntracks which were associated with that device,&n;&t;&t;   and forget them. */
 id|IP_NF_ASSERT
 c_func
 (paren

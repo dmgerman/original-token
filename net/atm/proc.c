@@ -416,7 +416,7 @@ r_if
 c_cond
 (paren
 op_star
-id|addr-&gt;sas_addr.pub
+id|addr-&gt;sas_addr.prv
 )paren
 (brace
 op_star
@@ -1269,7 +1269,7 @@ op_eq
 l_int|4
 ques
 c_cond
-l_string|&quot;N/A@%p%6s&quot;
+l_string|&quot;N/A@%p%10s&quot;
 suffix:colon
 l_string|&quot;N/A@%p%2s&quot;
 comma
@@ -1284,7 +1284,7 @@ c_func
 (paren
 id|buf
 comma
-l_string|&quot;%3d %3d %5d &quot;
+l_string|&quot;%3d %3d %5d         &quot;
 comma
 id|vcc-&gt;dev-&gt;number
 comma
@@ -2035,7 +2035,7 @@ c_func
 (paren
 id|buf
 comma
-l_string|&quot;Itf VPI VCI   State      Remote&bslash;n&quot;
+l_string|&quot;Itf VPI VCI           State      Remote&bslash;n&quot;
 )paren
 suffix:semicolon
 id|left

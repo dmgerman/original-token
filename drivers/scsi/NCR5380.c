@@ -6615,10 +6615,12 @@ r_int
 r_char
 id|tmp
 suffix:semicolon
+macro_line|#if defined(PSEUDO_DMA) &amp;&amp; !defined(UNSAFE)
 r_int
 r_int
 id|flags
 suffix:semicolon
+macro_line|#endif
 r_int
 id|foo
 suffix:semicolon

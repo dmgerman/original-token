@@ -2450,6 +2450,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|kmem_cpucache_init
+c_func
+(paren
+)paren
+suffix:semicolon
 id|kernel_thread
 c_func
 (paren

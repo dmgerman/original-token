@@ -1322,6 +1322,7 @@ id|APM_STATE_OFF
 suffix:semicolon
 macro_line|#endif
 )brace
+macro_line|#ifdef CONFIG_APM_DO_ENABLE
 DECL|function|apm_enable_power_management
 r_static
 r_int
@@ -1397,6 +1398,7 @@ r_return
 id|APM_SUCCESS
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|apm_get_power_status
 r_static
 r_int

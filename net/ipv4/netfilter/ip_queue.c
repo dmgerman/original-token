@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * This is a module which is used for queueing IPv4 packets and&n; * communicating with userspace via netlink.&n; *&n; * (C) 2000 James Morris, this code is GPL.&n; *&n; * 2000-03-27: Simplified code (thanks to Andi Kleen for clues). (JM)&n; * 2000-05-20: Fixed notifier problems (following Miguel Freitas&squot; report). (JM)&n; *&n; */
+multiline_comment|/*&n; * This is a module which is used for queueing IPv4 packets and&n; * communicating with userspace via netlink.&n; *&n; * (C) 2000 James Morris, this code is GPL.&n; *&n; * 2000-03-27: Simplified code (thanks to Andi Kleen for clues). (JM)&n; * 2000-05-20: Fixed notifier problems (following Miguel Freitas&squot; report). (JM)&n; * 2000-06-19: Fixed so nfmark is copied to metadata (reported by Sebastian &n; *             Zander). (JM)&n; *&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -1705,6 +1705,10 @@ suffix:semicolon
 id|pm-&gt;timestamp_usec
 op_assign
 id|e-&gt;skb-&gt;stamp.tv_usec
+suffix:semicolon
+id|pm-&gt;mark
+op_assign
+id|e-&gt;skb-&gt;nfmark
 suffix:semicolon
 id|pm-&gt;hook
 op_assign

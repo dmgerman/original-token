@@ -1307,29 +1307,38 @@ id|neigh_ops
 id|clip_neigh_ops
 op_assign
 (brace
+id|family
+suffix:colon
 id|AF_INET
 comma
-multiline_comment|/* family */
+id|destructor
+suffix:colon
 id|clip_neigh_destroy
 comma
-multiline_comment|/* destructor */
+id|solicit
+suffix:colon
 id|clip_neigh_solicit
 comma
-multiline_comment|/* solicit */
+id|error_report
+suffix:colon
 id|clip_neigh_error
 comma
-multiline_comment|/* error_report */
+id|output
+suffix:colon
 id|dev_queue_xmit
 comma
-multiline_comment|/* output */
+id|connected_output
+suffix:colon
 id|dev_queue_xmit
 comma
-multiline_comment|/* connected_output */
+id|hh_output
+suffix:colon
 id|dev_queue_xmit
 comma
-multiline_comment|/* hh_output */
+id|queue_xmit
+suffix:colon
 id|dev_queue_xmit
-multiline_comment|/* queue_xmit */
+comma
 )brace
 suffix:semicolon
 DECL|function|clip_constructor
@@ -1755,6 +1764,9 @@ c_func
 id|skb
 )paren
 suffix:semicolon
+id|clip_priv-&gt;stats.tx_dropped
+op_increment
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1802,8 +1814,18 @@ macro_line|#endif
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;clip_start_xmit: NO NEIGHBOUR !&bslash;n&quot;
 )paren
+suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+id|clip_priv-&gt;stats.tx_dropped
+op_increment
 suffix:semicolon
 r_return
 l_int|0
@@ -2087,14 +2109,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|old
-)paren
-r_return
-l_int|0
-suffix:semicolon
 id|spin_lock_irqsave
 c_func
 (paren
@@ -2284,6 +2298,13 @@ suffix:semicolon
 id|vcc-&gt;pop
 op_assign
 id|clip_pop
+suffix:semicolon
+id|skb_queue_head_init
+c_func
+(paren
+op_amp
+id|copy
+)paren
 suffix:semicolon
 id|skb_migrate
 c_func
@@ -3051,7 +3072,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-id|NETDEV_DOWN
+id|NETDEV_GOING_DOWN
 suffix:colon
 id|DPRINTK
 c_func
@@ -3118,6 +3139,9 @@ id|NETDEV_REBOOT
 suffix:colon
 r_case
 id|NETDEV_REGISTER
+suffix:colon
+r_case
+id|NETDEV_DOWN
 suffix:colon
 id|DPRINTK
 c_func

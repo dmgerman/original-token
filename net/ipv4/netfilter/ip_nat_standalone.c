@@ -120,7 +120,6 @@ id|IP_OFFSET
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME: One day, fill in properly. --RR */
 (paren
 op_star
 id|pskb
@@ -129,8 +128,6 @@ op_member_access_from_pointer
 id|nfcache
 op_or_assign
 id|NFC_UNKNOWN
-op_or
-id|NFC_ALTERED
 suffix:semicolon
 multiline_comment|/* If we had a hardware checksum before, it&squot;s now invalid */
 r_if

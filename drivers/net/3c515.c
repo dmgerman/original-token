@@ -1387,7 +1387,6 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-macro_line|#endif
 DECL|variable|nopnp
 r_static
 r_int
@@ -1395,6 +1394,7 @@ id|nopnp
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#endif
 r_static
 r_int
 id|corkscrew_scan
@@ -1760,12 +1760,13 @@ id|cards_found
 op_assign
 l_int|0
 suffix:semicolon
-r_int
-id|i
-suffix:semicolon
 r_static
 r_int
 id|ioaddr
+suffix:semicolon
+macro_line|#ifdef __ISAPNP__
+r_int
+id|i
 suffix:semicolon
 r_static
 r_int
@@ -1773,6 +1774,7 @@ id|pnp_cards
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef __ISAPNP__
 r_if
 c_cond

@@ -13,7 +13,7 @@ id|net_device
 op_star
 id|clip_devs
 suffix:semicolon
-multiline_comment|/*&n; * Moves all skbs from &quot;from&quot; to &quot;to&quot;. The operation is atomic for &quot;from&quot;, but&n; * not for &quot;to&quot;. &quot;to&quot; may only be accessed after skb_migrate finishes.&n; */
+multiline_comment|/*&n; * Appends all skbs from &quot;from&quot; to &quot;to&quot;. The operation is atomic with respect&n; * to all other skb operations on &quot;from&quot; or &quot;to&quot;.&n; */
 r_void
 id|skb_migrate
 c_func

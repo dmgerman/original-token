@@ -824,6 +824,7 @@ r_int
 id|magic2
 comma
 r_int
+r_int
 id|cmd
 comma
 r_void

@@ -9457,10 +9457,6 @@ suffix:semicolon
 id|md_clear_page
 c_func
 (paren
-(paren
-r_int
-r_int
-)paren
 id|tmp-&gt;b_data
 )paren
 suffix:semicolon

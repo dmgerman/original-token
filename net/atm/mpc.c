@@ -995,7 +995,7 @@ op_plus
 op_star
 id|len
 comma
-l_string|&quot;%%u.%u.%u.%u&bslash;n     %-7d %-7d %-7d %-7d %-7d&bslash;n     %-7d %-7d %-7d %-7d %-7d&bslash;n&quot;
+l_string|&quot;%u.%u.%u.%u&bslash;n     %-7d %-7d %-7d %-7d %-7d&bslash;n     %-7d %-7d %-7d %-7d %-7d&bslash;n&quot;
 comma
 id|NIPQUAD
 c_func

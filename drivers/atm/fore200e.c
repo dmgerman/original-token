@@ -11034,10 +11034,8 @@ id|FORE200E_VERSION
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#if 0 /* XXX uncomment this to forbid module unloading */
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* for each configured bus interface */
 r_for
 c_loop
@@ -11145,7 +11143,6 @@ id|fore200e
 suffix:semicolon
 )brace
 )brace
-macro_line|#if 0 /* XXX uncomment this to forbid module unloading */
 r_if
 c_cond
 (paren
@@ -11155,7 +11152,6 @@ l_int|0
 )paren
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 id|link
 suffix:semicolon

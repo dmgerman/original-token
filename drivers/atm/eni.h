@@ -97,11 +97,6 @@ id|sk_buff_head
 id|backlog
 suffix:semicolon
 multiline_comment|/* queue of waiting TX buffers */
-DECL|member|backlog_len
-id|atomic_t
-id|backlog_len
-suffix:semicolon
-multiline_comment|/* length of backlog in bytes */
 )brace
 suffix:semicolon
 DECL|struct|eni_vcc

@@ -210,7 +210,7 @@ c_func
 l_string|&quot;LISTEN REL&bslash;n&quot;
 )paren
 suffix:semicolon
-id|sigd_enq
+id|sigd_enq2
 c_func
 (paren
 l_int|NULL
@@ -222,9 +222,13 @@ comma
 l_int|NULL
 comma
 l_int|NULL
+comma
+op_amp
+id|vcc-&gt;qos
+comma
+l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/* @@@ should include&n;&t;&t;&t;&t;&t;&t;&t;       the reason */
 id|dev_kfree_skb
 c_func
 (paren
@@ -1558,7 +1562,7 @@ c_cond
 id|error
 )paren
 (brace
-id|sigd_enq
+id|sigd_enq2
 c_func
 (paren
 l_int|NULL
@@ -1570,9 +1574,13 @@ comma
 l_int|NULL
 comma
 l_int|NULL
+comma
+op_amp
+id|old_vcc-&gt;qos
+comma
+id|error
 )paren
 suffix:semicolon
-multiline_comment|/* @@@ should include the reason */
 r_return
 id|error
 op_eq
@@ -1793,25 +1801,11 @@ comma
 id|current
 )paren
 suffix:semicolon
-r_struct
-id|atm_qos
-id|save_qos
-suffix:semicolon
 id|vcc-&gt;reply
 op_assign
 id|WAITING
 suffix:semicolon
-id|save_qos
-op_assign
-id|vcc-&gt;qos
-suffix:semicolon
-multiline_comment|/* @@@ really gross hack ... */
-id|vcc-&gt;qos
-op_assign
-op_star
-id|qos
-suffix:semicolon
-id|sigd_enq
+id|sigd_enq2
 c_func
 (paren
 id|vcc
@@ -1824,11 +1818,11 @@ l_int|NULL
 comma
 op_amp
 id|vcc-&gt;local
+comma
+id|qos
+comma
+l_int|0
 )paren
-suffix:semicolon
-id|vcc-&gt;qos
-op_assign
-id|save_qos
 suffix:semicolon
 id|add_wait_queue
 c_func

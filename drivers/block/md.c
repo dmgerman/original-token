@@ -1885,10 +1885,6 @@ suffix:semicolon
 id|md_clear_page
 c_func
 (paren
-(paren
-r_int
-r_int
-)paren
 id|mddev-&gt;sb
 )paren
 suffix:semicolon
@@ -1948,10 +1944,6 @@ suffix:semicolon
 id|md_clear_page
 c_func
 (paren
-(paren
-r_int
-r_int
-)paren
 id|rdev-&gt;sb
 )paren
 suffix:semicolon

@@ -48,6 +48,8 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#ifdef CONFIG_KERNELD
 macro_line|#include &lt;linux/kerneld.h&gt;
 macro_line|#endif
+DECL|macro|LOCAL_END_REQUEST
+mdefine_line|#define LOCAL_END_REQUEST
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/blkpg.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;

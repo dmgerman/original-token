@@ -95,6 +95,7 @@ id|tk_rqstp
 suffix:semicolon
 multiline_comment|/* RPC request */
 DECL|member|tk_status
+r_volatile
 r_int
 id|tk_status
 suffix:semicolon
@@ -129,7 +130,19 @@ comma
 DECL|member|tk_suid_retry
 id|tk_suid_retry
 suffix:semicolon
-multiline_comment|/*&n;&t; * callback&t;to be executed after waking up&n;&t; * action&t;next procedure for async tasks&n;&t; * exit&t;&t;exit async task and report to caller&n;&t; */
+multiline_comment|/*&n;&t; * timeout_fn   to be executed by timer bottom half&n;&t; * callback&t;to be executed after waking up&n;&t; * action&t;next procedure for async tasks&n;&t; * exit&t;&t;exit async task and report to caller&n;&t; */
+DECL|member|tk_timeout_fn
+r_void
+(paren
+op_star
+id|tk_timeout_fn
+)paren
+(paren
+r_struct
+id|rpc_task
+op_star
+)paren
+suffix:semicolon
 DECL|member|tk_callback
 r_void
 (paren
@@ -213,26 +226,35 @@ r_int
 id|tk_lock
 suffix:semicolon
 multiline_comment|/* Task lock counter */
-DECL|member|tk_wakeup
+DECL|member|tk_active
 r_int
-r_int
-id|tk_wakeup
+r_char
+id|tk_active
 suffix:colon
 l_int|1
 comma
+multiline_comment|/* Task has been activated */
+DECL|member|tk_wakeup
+id|tk_wakeup
+suffix:colon
+l_int|1
+suffix:semicolon
 multiline_comment|/* Task waiting to wake up */
+DECL|member|tk_running
+r_volatile
+r_int
+r_char
+id|tk_running
+suffix:colon
+l_int|1
+comma
+multiline_comment|/* Task is running */
 DECL|member|tk_sleeping
 id|tk_sleeping
 suffix:colon
 l_int|1
-comma
-multiline_comment|/* Task is truly asleep */
-DECL|member|tk_active
-id|tk_active
-suffix:colon
-l_int|1
 suffix:semicolon
-multiline_comment|/* Task has been activated */
+multiline_comment|/* Task is truly asleep */
 macro_line|#ifdef RPC_DEBUG
 DECL|member|tk_pid
 r_int
@@ -261,32 +283,24 @@ op_star
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * RPC task flags&n; */
-DECL|macro|RPC_TASK_RUNNING
-mdefine_line|#define RPC_TASK_RUNNING&t;0x0001&t;&t;/* is running */
 DECL|macro|RPC_TASK_ASYNC
-mdefine_line|#define RPC_TASK_ASYNC&t;&t;0x0002&t;&t;/* is an async task */
-DECL|macro|RPC_TASK_CALLBACK
-mdefine_line|#define RPC_TASK_CALLBACK&t;0x0004&t;&t;/* invoke callback */
+mdefine_line|#define RPC_TASK_ASYNC&t;&t;0x0001&t;&t;/* is an async task */
 DECL|macro|RPC_TASK_SWAPPER
-mdefine_line|#define RPC_TASK_SWAPPER&t;0x0008&t;&t;/* is swapping in/out */
+mdefine_line|#define RPC_TASK_SWAPPER&t;0x0002&t;&t;/* is swapping in/out */
 DECL|macro|RPC_TASK_SETUID
-mdefine_line|#define RPC_TASK_SETUID&t;&t;0x0010&t;&t;/* is setuid process */
+mdefine_line|#define RPC_TASK_SETUID&t;&t;0x0004&t;&t;/* is setuid process */
 DECL|macro|RPC_TASK_CHILD
-mdefine_line|#define RPC_TASK_CHILD&t;&t;0x0020&t;&t;/* is child of other task */
+mdefine_line|#define RPC_TASK_CHILD&t;&t;0x0008&t;&t;/* is child of other task */
 DECL|macro|RPC_CALL_REALUID
-mdefine_line|#define RPC_CALL_REALUID&t;0x0040&t;&t;/* try using real uid */
+mdefine_line|#define RPC_CALL_REALUID&t;0x0010&t;&t;/* try using real uid */
 DECL|macro|RPC_CALL_MAJORSEEN
-mdefine_line|#define RPC_CALL_MAJORSEEN&t;0x0080&t;&t;/* major timeout seen */
+mdefine_line|#define RPC_CALL_MAJORSEEN&t;0x0020&t;&t;/* major timeout seen */
 DECL|macro|RPC_TASK_ROOTCREDS
-mdefine_line|#define RPC_TASK_ROOTCREDS&t;0x0100&t;&t;/* force root creds */
+mdefine_line|#define RPC_TASK_ROOTCREDS&t;0x0040&t;&t;/* force root creds */
 DECL|macro|RPC_TASK_DYNAMIC
-mdefine_line|#define RPC_TASK_DYNAMIC&t;0x0200&t;&t;/* task was kmalloc&squot;ed */
+mdefine_line|#define RPC_TASK_DYNAMIC&t;0x0080&t;&t;/* task was kmalloc&squot;ed */
 DECL|macro|RPC_TASK_KILLED
-mdefine_line|#define RPC_TASK_KILLED&t;&t;0x0400&t;&t;/* task was killed */
-DECL|macro|RPC_TASK_NFSWRITE
-mdefine_line|#define RPC_TASK_NFSWRITE&t;0x1000&t;&t;/* an NFS writeback */
-DECL|macro|RPC_IS_RUNNING
-mdefine_line|#define RPC_IS_RUNNING(t)&t;((t)-&gt;tk_flags &amp; RPC_TASK_RUNNING)
+mdefine_line|#define RPC_TASK_KILLED&t;&t;0x0100&t;&t;/* task was killed */
 DECL|macro|RPC_IS_ASYNC
 mdefine_line|#define RPC_IS_ASYNC(t)&t;&t;((t)-&gt;tk_flags &amp; RPC_TASK_ASYNC)
 DECL|macro|RPC_IS_SETUID
@@ -295,16 +309,18 @@ DECL|macro|RPC_IS_CHILD
 mdefine_line|#define RPC_IS_CHILD(t)&t;&t;((t)-&gt;tk_flags &amp; RPC_TASK_CHILD)
 DECL|macro|RPC_IS_SWAPPER
 mdefine_line|#define RPC_IS_SWAPPER(t)&t;((t)-&gt;tk_flags &amp; RPC_TASK_SWAPPER)
-DECL|macro|RPC_DO_CALLBACK
-mdefine_line|#define RPC_DO_CALLBACK(t)&t;((t)-&gt;tk_flags &amp; RPC_TASK_CALLBACK)
 DECL|macro|RPC_DO_ROOTOVERRIDE
 mdefine_line|#define RPC_DO_ROOTOVERRIDE(t)&t;((t)-&gt;tk_flags &amp; RPC_TASK_ROOTCREDS)
 DECL|macro|RPC_ASSASSINATED
 mdefine_line|#define RPC_ASSASSINATED(t)&t;((t)-&gt;tk_flags &amp; RPC_TASK_KILLED)
+DECL|macro|RPC_IS_RUNNING
+mdefine_line|#define RPC_IS_RUNNING(t)&t;((t)-&gt;tk_running)
 DECL|macro|RPC_IS_SLEEPING
 mdefine_line|#define RPC_IS_SLEEPING(t)&t;((t)-&gt;tk_sleeping)
 DECL|macro|RPC_IS_ACTIVATED
 mdefine_line|#define RPC_IS_ACTIVATED(t)&t;((t)-&gt;tk_active)
+DECL|macro|RPC_DO_CALLBACK
+mdefine_line|#define RPC_DO_CALLBACK(t)&t;((t)-&gt;tk_callback != NULL)
 multiline_comment|/*&n; * RPC synchronization objects&n; */
 DECL|struct|rpc_wait_queue
 r_struct
@@ -541,7 +557,7 @@ r_int
 )paren
 suffix:semicolon
 r_int
-id|rpc_lock_task
+id|__rpc_lock_task
 c_func
 (paren
 r_struct

@@ -1214,6 +1214,10 @@ id|test_bit
 (paren
 id|ultra
 comma
+(paren
+id|hrz_flags
+op_star
+)paren
 op_amp
 id|dev-&gt;flags
 )paren

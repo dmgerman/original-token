@@ -147,12 +147,15 @@ op_star
 id|rq_next
 suffix:semicolon
 multiline_comment|/* free list */
-DECL|member|rq_damaged
+DECL|member|rq_received
+r_volatile
 r_int
 r_char
-id|rq_damaged
+id|rq_received
+suffix:colon
+l_int|1
 suffix:semicolon
-multiline_comment|/* reply being received */
+multiline_comment|/* receive completed */
 multiline_comment|/*&n;&t; * For authentication (e.g. auth_des)&n;&t; */
 DECL|member|rq_creddata
 id|u32
@@ -282,8 +285,9 @@ id|RPC_MAXREQS
 )braket
 suffix:semicolon
 DECL|member|connected
+r_volatile
 r_int
-r_int
+r_char
 id|connected
 suffix:colon
 l_int|1
@@ -293,9 +297,11 @@ DECL|member|write_space
 id|write_space
 suffix:colon
 l_int|1
-comma
+suffix:semicolon
 multiline_comment|/* TCP: can send */
 DECL|member|shutdown
+r_int
+r_char
 id|shutdown
 suffix:colon
 l_int|1

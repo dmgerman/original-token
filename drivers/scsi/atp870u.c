@@ -9289,9 +9289,6 @@ id|count
 op_assign
 l_int|0
 suffix:semicolon
-r_int
-id|result
-suffix:semicolon
 r_static
 r_int
 r_int

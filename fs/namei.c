@@ -2,6 +2,7 @@ multiline_comment|/*&n; *  linux/fs/namei.c&n; *&n; *  Copyright (C) 1991, 1992 
 multiline_comment|/*&n; * Some corrections by tytso.&n; */
 multiline_comment|/* [Feb 1997 T. Schoebel-Theuer] Complete rewrite of the pathname&n; * lookup logic.&n; */
 multiline_comment|/* [Feb-Apr 2000, AV] Rewrite to the new namespace architecture.&n; */
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
@@ -8584,4 +8585,59 @@ id|page_follow_link
 comma
 )brace
 suffix:semicolon
+multiline_comment|/* SLAB cache for name blocks */
+DECL|variable|names_cachep
+id|kmem_cache_t
+op_star
+id|names_cachep
+suffix:semicolon
+DECL|function|namecache_init
+r_static
+r_int
+id|__init
+id|namecache_init
+c_func
+(paren
+r_void
+)paren
+(brace
+id|names_cachep
+op_assign
+id|kmem_cache_create
+c_func
+(paren
+l_string|&quot;names_cache&quot;
+comma
+id|PAGE_SIZE
+comma
+l_int|0
+comma
+id|SLAB_HWCACHE_ALIGN
+comma
+l_int|NULL
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|names_cachep
+)paren
+id|panic
+c_func
+(paren
+l_string|&quot;Cannot create names cache&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+id|module_init
+c_func
+(paren
+id|namecache_init
+)paren
 eof

@@ -1088,10 +1088,6 @@ op_star
 l_int|1000
 )paren
 (brace
-r_volatile
-r_int
-id|x
-op_assign
 id|STATUS
 suffix:semicolon
 r_if
