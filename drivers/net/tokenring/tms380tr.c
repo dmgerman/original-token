@@ -9772,6 +9772,7 @@ r_break
 suffix:semicolon
 multiline_comment|/* Return to tms380tr_interrupt */
 )brace
+macro_line|#if 0&t;/* This might happen for multicast or broadcast packets.&n;&t;   The upper layers are expected to handle this, not here */
 multiline_comment|/* Drop frames sent by myself */
 r_if
 c_cond
@@ -9811,6 +9812,7 @@ suffix:semicolon
 )brace
 )brace
 r_else
+macro_line|#endif
 (brace
 id|tms380tr_update_rcv_stats
 c_func

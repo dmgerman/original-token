@@ -13392,6 +13392,13 @@ op_amp
 id|s-&gt;open_sem
 )paren
 suffix:semicolon
+id|spin_lock_init
+c_func
+(paren
+op_amp
+id|s-&gt;lock
+)paren
+suffix:semicolon
 id|s-&gt;magic
 op_assign
 id|CM_MAGIC

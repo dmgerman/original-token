@@ -541,10 +541,6 @@ id|olympic_copy_all_options
 comma
 id|olympic_message_level
 suffix:semicolon
-DECL|member|olympic_multicast_set
-id|__u8
-id|olympic_multicast_set
-suffix:semicolon
 DECL|member|olympic_addr_table_addr
 DECL|member|olympic_parms_addr
 id|__u16

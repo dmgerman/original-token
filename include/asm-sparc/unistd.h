@@ -149,14 +149,14 @@ DECL|macro|__NR_munmap
 mdefine_line|#define __NR_munmap              73 /* Common                                      */
 DECL|macro|__NR_mprotect
 mdefine_line|#define __NR_mprotect            74 /* Common                                      */
-DECL|macro|__NR_setregid32
-mdefine_line|#define __NR_setregid32          75 /* Linux sparc32, madvise under SunOS          */
+DECL|macro|__NR_madvise
+mdefine_line|#define __NR_madvise             75 /* Common                                      */
 DECL|macro|__NR_vhangup
 mdefine_line|#define __NR_vhangup             76 /* Common                                      */
 DECL|macro|__NR_truncate64
 mdefine_line|#define __NR_truncate64&t;&t; 77 /* Linux sparc32 Specific&t;&t;&t;   */
-DECL|macro|__NR_getgroups32
-mdefine_line|#define __NR_getgroups32         78 /* Linux sparc32, mincore under SunOS          */
+DECL|macro|__NR_mincore
+mdefine_line|#define __NR_mincore             78 /* Common                                      */
 DECL|macro|__NR_getgroups
 mdefine_line|#define __NR_getgroups           79 /* Common                                      */
 DECL|macro|__NR_setgroups
@@ -223,12 +223,14 @@ DECL|macro|__NR_setresgid32
 mdefine_line|#define __NR_setresgid32        110 /* Linux Specific, sigsetmask under SunOS&t;   */
 DECL|macro|__NR_getresgid32
 mdefine_line|#define __NR_getresgid32        111 /* Linux Specific, sigpause under SunOS&t;   */
-multiline_comment|/* #define __NR_sigstack        112    SunOS Specific                              */
+DECL|macro|__NR_setregid32
+mdefine_line|#define __NR_setregid32         112 /* Linux sparc32, sigstack under SunOS         */
 DECL|macro|__NR_recvmsg
 mdefine_line|#define __NR_recvmsg            113 /* Common                                      */
 DECL|macro|__NR_sendmsg
 mdefine_line|#define __NR_sendmsg            114 /* Common                                      */
-multiline_comment|/* #define __NR_vtrace          115    SunOS Specific                              */
+DECL|macro|__NR_getgroups32
+mdefine_line|#define __NR_getgroups32        115 /* Linux sparc32, vtrace under SunOS           */
 DECL|macro|__NR_gettimeofday
 mdefine_line|#define __NR_gettimeofday       116 /* Common                                      */
 DECL|macro|__NR_getrusage

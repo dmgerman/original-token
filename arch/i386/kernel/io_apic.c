@@ -5172,6 +5172,18 @@ c_func
 id|mp_ExtINT
 )paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;..TIMER: vector=%d pin1=%d pin2=%d&bslash;n&quot;
+comma
+id|vector
+comma
+id|pin1
+comma
+id|pin2
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * Ok, does IRQ0 through the IOAPIC work?&n;&t; */
 r_if
 c_cond

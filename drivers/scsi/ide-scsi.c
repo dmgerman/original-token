@@ -2948,6 +2948,32 @@ op_ne
 l_int|NULL
 )paren
 (brace
+macro_line|#ifndef CONFIG_BLK_DEV_IDETAPE
+multiline_comment|/*&n;&t;&t;&t; * The Onstream DI-30 does not handle clean emulation, yet.&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|strstr
+c_func
+(paren
+id|drive-&gt;id-&gt;model
+comma
+l_string|&quot;OnStream DI-30&quot;
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;ide-tape: ide-scsi emulation is not supported for %s.&bslash;n&quot;
+comma
+id|drive-&gt;id-&gt;model
+)paren
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_BLK_DEV_IDETAPE */
 r_if
 c_cond
 (paren

@@ -2681,7 +2681,8 @@ suffix:semicolon
 r_void
 id|ide_scan_pcibus
 (paren
-r_void
+r_int
+id|scan_direction
 )paren
 id|__init
 suffix:semicolon

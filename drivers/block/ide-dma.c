@@ -1060,7 +1060,7 @@ id|hwif-&gt;udma_four
 )paren
 op_logical_and
 (paren
-id|id-&gt;word93
+id|id-&gt;hw_config
 op_amp
 l_int|0x2000
 )paren

@@ -8753,7 +8753,7 @@ l_int|4
 )paren
 op_logical_and
 (paren
-id|drive-&gt;id-&gt;word93
+id|drive-&gt;id-&gt;hw_config
 op_amp
 l_int|0x2000
 )paren

@@ -81,11 +81,11 @@ r_static
 id|__u16
 id|vendor
 op_assign
-l_int|0
+l_int|0x05f9
 comma
 id|product
 op_assign
-l_int|0
+l_int|0xffff
 suffix:semicolon
 id|MODULE_PARM
 c_func

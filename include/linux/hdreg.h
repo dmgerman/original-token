@@ -88,9 +88,9 @@ mdefine_line|#define WIN_CHECKPOWERMODE1&t;0xE5
 DECL|macro|WIN_CHECKPOWERMODE2
 mdefine_line|#define WIN_CHECKPOWERMODE2&t;0x98
 DECL|macro|WIN_DOORLOCK
-mdefine_line|#define WIN_DOORLOCK&t;&t;0xde&t;/* lock door on removable drives */
+mdefine_line|#define WIN_DOORLOCK&t;&t;0xDE&t;/* lock door on removable drives */
 DECL|macro|WIN_DOORUNLOCK
-mdefine_line|#define WIN_DOORUNLOCK&t;&t;0xdf&t;/* unlock door on removable drives */
+mdefine_line|#define WIN_DOORUNLOCK&t;&t;0xDF&t;/* unlock door on removable drives */
 DECL|macro|WIN_MULTREAD
 mdefine_line|#define WIN_MULTREAD&t;&t;0xC4&t;/* read sectors using multiple mode */
 DECL|macro|WIN_MULTWRITE
@@ -104,24 +104,30 @@ mdefine_line|#define WIN_IDENTIFY_DMA&t;0xEE&t;/* same as WIN_IDENTIFY, but DMA 
 DECL|macro|WIN_SETFEATURES
 mdefine_line|#define WIN_SETFEATURES&t;&t;0xEF&t;/* set special drive features */
 DECL|macro|WIN_READDMA
-mdefine_line|#define WIN_READDMA&t;&t;0xc8&t;/* read sectors using DMA transfers */
+mdefine_line|#define WIN_READDMA&t;&t;0xC8&t;/* read sectors using DMA transfers */
 DECL|macro|WIN_WRITEDMA
-mdefine_line|#define WIN_WRITEDMA&t;&t;0xca&t;/* write sectors using DMA transfers */
+mdefine_line|#define WIN_WRITEDMA&t;&t;0xCA&t;/* write sectors using DMA transfers */
+DECL|macro|WIN_QUEUED_SERVICE
+mdefine_line|#define WIN_QUEUED_SERVICE&t;0xA2&t;/* */
+DECL|macro|WIN_READDMA_QUEUED
+mdefine_line|#define WIN_READDMA_QUEUED&t;0xC7&t;/* read sectors using Queued DMA transfers */
+DECL|macro|WIN_WRITEDMA_QUEUED
+mdefine_line|#define WIN_WRITEDMA_QUEUED&t;0xCC&t;/* write sectors using Queued DMA transfers */
 DECL|macro|WIN_READ_BUFFER
 mdefine_line|#define WIN_READ_BUFFER&t;&t;0xE4&t;/* force read only 1 sector */
 DECL|macro|WIN_WRITE_BUFFER
 mdefine_line|#define WIN_WRITE_BUFFER&t;0xE8&t;/* force write only 1 sector */
 DECL|macro|WIN_SMART
-mdefine_line|#define WIN_SMART&t;&t;0xb0&t;/* self-monitoring and reporting */
+mdefine_line|#define WIN_SMART&t;&t;0xB0&t;/* self-monitoring and reporting */
 multiline_comment|/* Additional drive command codes used by ATAPI devices. */
 DECL|macro|WIN_PIDENTIFY
 mdefine_line|#define WIN_PIDENTIFY&t;&t;0xA1&t;/* identify ATAPI device&t;*/
 DECL|macro|WIN_SRST
 mdefine_line|#define WIN_SRST&t;&t;0x08&t;/* ATAPI soft reset command */
 DECL|macro|WIN_PACKETCMD
-mdefine_line|#define WIN_PACKETCMD&t;&t;0xa0&t;/* Send a packet command. */
+mdefine_line|#define WIN_PACKETCMD&t;&t;0xA0&t;/* Send a packet command. */
 DECL|macro|EXABYTE_ENABLE_NEST
-mdefine_line|#define EXABYTE_ENABLE_NEST&t;0xf0
+mdefine_line|#define EXABYTE_ENABLE_NEST&t;0xF0
 multiline_comment|/* WIN_SMART sub-commands */
 DECL|macro|SMART_READ_VALUES
 mdefine_line|#define SMART_READ_VALUES&t;0xd0
@@ -575,109 +581,149 @@ r_int
 id|eide_pio_iordy
 suffix:semicolon
 multiline_comment|/* min cycle time (ns), with IORDY */
+macro_line|#if 0
+r_int
+r_int
+id|words69_74
+(braket
+l_int|6
+)braket
+suffix:semicolon
+multiline_comment|/* reserved words 69-74 */
+macro_line|#else
 DECL|member|word69
 r_int
 r_int
 id|word69
 suffix:semicolon
+multiline_comment|/* reserved (word 69) */
 DECL|member|word70
 r_int
 r_int
 id|word70
 suffix:semicolon
+multiline_comment|/* reserved (word 70) */
 multiline_comment|/* HDIO_GET_IDENTITY currently returns only words 0 through 70 */
 DECL|member|word71
 r_int
 r_int
 id|word71
 suffix:semicolon
+multiline_comment|/* reserved (word 71) */
 DECL|member|word72
 r_int
 r_int
 id|word72
 suffix:semicolon
+multiline_comment|/* reserved (word 72) */
 DECL|member|word73
 r_int
 r_int
 id|word73
 suffix:semicolon
+multiline_comment|/* reserved (word 73) */
 DECL|member|word74
 r_int
 r_int
 id|word74
 suffix:semicolon
-DECL|member|word75
+multiline_comment|/* reserved (word 74) */
+macro_line|#endif
+DECL|member|queue_depth
 r_int
 r_int
-id|word75
+id|queue_depth
 suffix:semicolon
+multiline_comment|/*  */
+macro_line|#if 0
+r_int
+r_int
+id|words76_79
+(braket
+l_int|4
+)braket
+suffix:semicolon
+multiline_comment|/* reserved words 76-79 */
+macro_line|#else
 DECL|member|word76
 r_int
 r_int
 id|word76
 suffix:semicolon
+multiline_comment|/* reserved (word 76) */
 DECL|member|word77
 r_int
 r_int
 id|word77
 suffix:semicolon
+multiline_comment|/* reserved (word 77) */
 DECL|member|word78
 r_int
 r_int
 id|word78
 suffix:semicolon
+multiline_comment|/* reserved (word 78) */
 DECL|member|word79
 r_int
 r_int
 id|word79
 suffix:semicolon
-DECL|member|word80
+multiline_comment|/* reserved (word 79) */
+macro_line|#endif
+DECL|member|major_rev_num
 r_int
 r_int
-id|word80
+id|major_rev_num
 suffix:semicolon
-DECL|member|word81
+multiline_comment|/*  */
+DECL|member|minor_rev_num
 r_int
 r_int
-id|word81
+id|minor_rev_num
 suffix:semicolon
-DECL|member|command_sets
+multiline_comment|/*  */
+DECL|member|command_set_1
 r_int
 r_int
-id|command_sets
+id|command_set_1
 suffix:semicolon
 multiline_comment|/* bits 0:Smart 1:Security 2:Removable 3:PM */
-DECL|member|word83
+DECL|member|command_set_2
 r_int
 r_int
-id|word83
+id|command_set_2
 suffix:semicolon
 multiline_comment|/* bits 14:Smart Enabled 13:0 zero */
-DECL|member|word84
+DECL|member|cfsse
 r_int
 r_int
-id|word84
+id|cfsse
 suffix:semicolon
-DECL|member|word85
+multiline_comment|/* command set-feature supported extensions */
+DECL|member|cfs_enable_1
 r_int
 r_int
-id|word85
+id|cfs_enable_1
 suffix:semicolon
-DECL|member|word86
+multiline_comment|/* command set-feature enabled */
+DECL|member|cfs_enable_2
 r_int
 r_int
-id|word86
+id|cfs_enable_2
 suffix:semicolon
-DECL|member|word87
+multiline_comment|/* command set-feature enabled */
+DECL|member|csf_default
 r_int
 r_int
-id|word87
+id|csf_default
 suffix:semicolon
+multiline_comment|/* command set-feature default */
 DECL|member|dma_ultra
 r_int
 r_int
 id|dma_ultra
 suffix:semicolon
+multiline_comment|/*  */
 DECL|member|word89
 r_int
 r_int
@@ -690,24 +736,34 @@ r_int
 id|word90
 suffix:semicolon
 multiline_comment|/* reserved (word 90) */
-DECL|member|word91
+DECL|member|CurAPMvalues
 r_int
 r_int
-id|word91
+id|CurAPMvalues
 suffix:semicolon
-multiline_comment|/* reserved (word 91) */
+multiline_comment|/* current APM values */
 DECL|member|word92
 r_int
 r_int
 id|word92
 suffix:semicolon
 multiline_comment|/* reserved (word 92) */
-DECL|member|word93
+DECL|member|hw_config
 r_int
 r_int
-id|word93
+id|hw_config
 suffix:semicolon
-multiline_comment|/* reserved (word 93) */
+multiline_comment|/* hardware config */
+macro_line|#if 0
+r_int
+r_int
+id|words94_126
+(braket
+l_int|34
+)braket
+suffix:semicolon
+multiline_comment|/* reserved words 94-126 */
+macro_line|#else
 DECL|member|word94
 r_int
 r_int
@@ -906,24 +962,31 @@ r_int
 id|word126
 suffix:semicolon
 multiline_comment|/* reserved (word 126) */
+macro_line|#endif
 DECL|member|word127
 r_int
 r_int
 id|word127
 suffix:semicolon
 multiline_comment|/* reserved (word 127) */
-DECL|member|security
+DECL|member|dlf
 r_int
 r_int
-id|security
+id|dlf
 suffix:semicolon
-multiline_comment|/* bits 0:support 1:enabled 2:locked 3:frozen */
+multiline_comment|/* device lock function&n;&t;&t;&t;&t;&t; * 15:9&t;reserved&n;&t;&t;&t;&t;&t; * 8&t;security level 1:max 0:high&n;&t;&t;&t;&t;&t; * 7:6&t;reserved&n;&t;&t;&t;&t;&t; * 5&t;enhanced erase&n;&t;&t;&t;&t;&t; * 4&t;expire&n;&t;&t;&t;&t;&t; * 3&t;frozen&n;&t;&t;&t;&t;&t; * 2&t;locked&n;&t;&t;&t;&t;&t; * 1&t;en/disabled&n;&t;&t;&t;&t;&t; * 0&t;capability&n;&t;&t;&t;&t;&t; */
+DECL|member|csfo
+r_int
+r_int
+id|csfo
+suffix:semicolon
+multiline_comment|/* current set features options&n;&t;&t;&t;&t;&t; * 15:4&t;reserved&n;&t;&t;&t;&t;&t; * 3&t;auto reassign&n;&t;&t;&t;&t;&t; * 2&t;reverting&n;&t;&t;&t;&t;&t; * 1&t;read-look-ahead&n;&t;&t;&t;&t;&t; * 0&t;write cache&n;&t;&t;&t;&t;&t; */
 DECL|member|reserved
 r_int
 r_int
 id|reserved
 (braket
-l_int|127
+l_int|126
 )braket
 suffix:semicolon
 )brace

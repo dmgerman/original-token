@@ -367,6 +367,7 @@ id|request
 op_star
 id|rq
 suffix:semicolon
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -399,6 +400,70 @@ id|stat
 )paren
 suffix:semicolon
 )brace
+macro_line|#else&t;/* new way for dealing with premature shared PCI interrupts */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|OK_STAT
+c_func
+(paren
+id|stat
+op_assign
+id|GET_STAT
+c_func
+(paren
+)paren
+comma
+id|DATA_READY
+comma
+id|BAD_R_STAT
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|stat
+op_amp
+(paren
+id|ERR_STAT
+op_or
+id|DRQ_STAT
+)paren
+)paren
+(brace
+r_return
+id|ide_error
+c_func
+(paren
+id|drive
+comma
+l_string|&quot;read_intr&quot;
+comma
+id|stat
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* no data yet, so wait for another interrupt */
+id|ide_set_handler
+c_func
+(paren
+id|drive
+comma
+op_amp
+id|read_intr
+comma
+id|WAIT_CMD
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+r_return
+id|ide_started
+suffix:semicolon
+)brace
+macro_line|#endif
 id|msect
 op_assign
 id|drive-&gt;mult_count
@@ -518,9 +583,14 @@ r_if
 c_cond
 (paren
 (paren
+(paren
+r_int
+)paren
+(paren
 id|rq-&gt;current_nr_sectors
 op_sub_assign
 id|nsect
+)paren
 )paren
 op_le
 l_int|0
@@ -706,7 +776,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
+(paren
+r_int
+)paren
 id|rq-&gt;current_nr_sectors
+)paren
 op_le
 l_int|0
 )paren
@@ -755,18 +830,10 @@ r_return
 id|ide_stopped
 suffix:semicolon
 )brace
-id|printk
-c_func
-(paren
-l_string|&quot;%s: write_intr error2: nr_sectors=%ld, stat=0x%02x&bslash;n&quot;
-comma
-id|drive-&gt;name
-comma
-id|rq-&gt;nr_sectors
-comma
-id|stat
-)paren
+r_return
+id|ide_stopped
 suffix:semicolon
+multiline_comment|/* the original code did this here (?) */
 )brace
 r_return
 id|ide_error
@@ -804,6 +871,7 @@ c_func
 id|drive
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;This may look a bit odd, but remember wrq is a copy of the&n;&t; *&t;request not the original. The pointers are real however so the&n;&t; *&t;bh&squot;s are not copies. Remember that or bad stuff will happen&n;&t; *&n;&t; *&t;At the point we are called the drive has asked us for the&n;&t; *&t;data, and its our job to feed it, walking across bh boundaries&n;&t; *&t;if need be.&n;&t; */
 r_struct
 id|request
 op_star
@@ -895,14 +963,20 @@ r_if
 c_cond
 (paren
 (paren
+(paren
+r_int
+)paren
+(paren
 id|rq-&gt;nr_sectors
 op_sub_assign
 id|nsect
+)paren
 )paren
 op_le
 l_int|0
 )paren
 (brace
+macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
@@ -915,6 +989,7 @@ comma
 id|rq-&gt;nr_sectors
 )paren
 suffix:semicolon
+macro_line|#endif
 id|spin_unlock_irqrestore
 c_func
 (paren
@@ -976,9 +1051,15 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: buffer list corrupted&bslash;n&quot;
+l_string|&quot;%s: buffer list corrupted (%ld, %ld, %d)&bslash;n&quot;
 comma
 id|drive-&gt;name
+comma
+id|rq-&gt;current_nr_sectors
+comma
+id|rq-&gt;nr_sectors
+comma
+id|nsect
 )paren
 suffix:semicolon
 id|ide_end_request
@@ -996,6 +1077,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
+multiline_comment|/* Fix the pointer.. we ate data */
 id|rq-&gt;buffer
 op_add_assign
 id|nsect
@@ -1085,6 +1167,7 @@ op_amp
 id|DRQ_STAT
 )paren
 (brace
+multiline_comment|/*&n;&t;&t;&t; *&t;The drive wants data. Remember rq is the copy&n;&t;&t;&t; *&t;of the request&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1124,6 +1207,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
+multiline_comment|/*&n;&t;&t;&t; *&t;If the copy has all the blocks completed then&n;&t;&t;&t; *&t;we can end the original request.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1167,6 +1251,10 @@ id|ide_stopped
 suffix:semicolon
 )brace
 )brace
+r_return
+id|ide_stopped
+suffix:semicolon
+multiline_comment|/* the original code did this here (?) */
 )brace
 r_return
 id|ide_error
@@ -1193,39 +1281,19 @@ id|drive
 (brace
 id|byte
 id|stat
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|OK_STAT
+c_func
+(paren
+id|stat
 op_assign
 id|GET_STAT
 c_func
 (paren
 )paren
-suffix:semicolon
-macro_line|#if 0
-r_if
-c_cond
-(paren
-id|OK_STAT
-c_func
-(paren
-id|stat
-comma
-id|READY_STAT
-comma
-id|BAD_STAT
-)paren
-op_logical_or
-id|drive-&gt;mult_req
-op_eq
-l_int|0
-)paren
-(brace
-macro_line|#else
-r_if
-c_cond
-(paren
-id|OK_STAT
-c_func
-(paren
-id|stat
 comma
 id|READY_STAT
 comma
@@ -1233,7 +1301,6 @@ id|BAD_STAT
 )paren
 )paren
 (brace
-macro_line|#endif
 id|drive-&gt;mult_count
 op_assign
 id|drive-&gt;mult_req
@@ -1282,24 +1349,37 @@ id|drive
 (brace
 id|byte
 id|stat
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|OK_STAT
+c_func
+(paren
+id|stat
 op_assign
 id|GET_STAT
 c_func
 (paren
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|OK_STAT
-c_func
-(paren
-id|stat
 comma
 id|READY_STAT
 comma
 id|BAD_STAT
+)paren
+)paren
+r_return
+id|ide_stopped
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|stat
+op_amp
+(paren
+id|ERR_STAT
+op_or
+id|DRQ_STAT
 )paren
 )paren
 r_return
@@ -1313,8 +1393,21 @@ comma
 id|stat
 )paren
 suffix:semicolon
+id|ide_set_handler
+c_func
+(paren
+id|drive
+comma
+op_amp
+id|set_geometry_intr
+comma
+id|WAIT_CMD
+comma
+l_int|NULL
+)paren
+suffix:semicolon
 r_return
-id|ide_stopped
+id|ide_started
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * recal_intr() is invoked on completion of a WIN_RESTORE (recalibrate) cmd.&n; */
@@ -1824,7 +1917,7 @@ c_func
 id|drive
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * Ugh.. this part looks ugly because we MUST set up&n;&t;&t;&t; * the interrupt handler before outputting the first block&n;&t;&t;&t; * of data to be written.  If we hit an error (corrupted buffer list)&n;&t;&t;&t; * in ide_multwrite(), then we need to remove the handler/timer&n;&t;&t;&t; * before returning.  Fortunately, this NEVER happens (right?).&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * Ugh.. this part looks ugly because we MUST set up&n;&t;&t;&t; * the interrupt handler before outputting the first block&n;&t;&t;&t; * of data to be written.  If we hit an error (corrupted buffer list)&n;&t;&t;&t; * in ide_multwrite(), then we need to remove the handler/timer&n;&t;&t;&t; * before returning.  Fortunately, this NEVER happens (right?).&n;&t;&t;&t; *&n;&t;&t;&t; * Except when you get an error it seems...&n;&t;&t;&t; */
 id|hwgroup-&gt;wrq
 op_assign
 op_star
@@ -3899,7 +3992,7 @@ l_int|4
 )paren
 op_logical_and
 (paren
-id|id-&gt;word93
+id|id-&gt;hw_config
 op_amp
 l_int|0x2000
 )paren

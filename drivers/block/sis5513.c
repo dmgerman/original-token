@@ -1231,7 +1231,7 @@ id|byte
 id|xfer_rate
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * ((id-&gt;word93 &amp; 0x2000) &amp;&amp; (HWIF(drive)-&gt;udma_four))&n; */
+multiline_comment|/*&n; * ((id-&gt;hw_config &amp; 0x2000) &amp;&amp; (HWIF(drive)-&gt;udma_four))&n; */
 DECL|function|config_chipset_for_dma
 r_static
 r_int
@@ -1319,7 +1319,7 @@ id|udma_66
 op_assign
 (paren
 (paren
-id|id-&gt;word93
+id|id-&gt;hw_config
 op_amp
 l_int|0x2000
 )paren
@@ -2795,6 +2795,12 @@ id|i
 )braket
 dot
 id|name
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if

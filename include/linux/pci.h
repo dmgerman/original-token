@@ -1619,6 +1619,8 @@ id|i
 suffix:semicolon
 DECL|macro|pci_for_each_dev
 mdefine_line|#define pci_for_each_dev(dev) &bslash;&n;&t;for(dev = pci_dev_g(pci_devices.next); dev != pci_dev_g(&amp;pci_devices); dev = pci_dev_g(dev-&gt;global_list.next))
+DECL|macro|pci_for_each_dev_reverse
+mdefine_line|#define pci_for_each_dev_reverse(dev) &bslash;&n;&t;for(dev = pci_dev_g(pci_devices.prev); dev != pci_dev_g(&amp;pci_devices); dev = pci_dev_g(dev-&gt;global_list.prev))
 multiline_comment|/* Helper functions for low-level code (drivers/pci/setup.c) */
 r_int
 id|pci_claim_resource

@@ -7756,6 +7756,13 @@ c_func
 id|__usb_get_extra_descriptor
 )paren
 suffix:semicolon
+DECL|variable|usb_get_device_descriptor
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|usb_get_device_descriptor
+)paren
+suffix:semicolon
 DECL|variable|usb_get_string
 id|EXPORT_SYMBOL
 c_func

@@ -2760,6 +2760,9 @@ id|dev-&gt;type
 r_case
 id|ARPHRD_ETHER
 suffix:colon
+r_case
+id|ARPHRD_IEEE802_TR
+suffix:colon
 r_if
 c_cond
 (paren
@@ -5112,9 +5115,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|dev-&gt;type
 op_ne
 id|ARPHRD_ETHER
+)paren
+op_logical_and
+(paren
+id|dev-&gt;type
+op_ne
+id|ARPHRD_IEEE802_TR
+)paren
 )paren
 (brace
 multiline_comment|/* Alas, we support only Ethernet autoconfiguration. */
@@ -8954,6 +8965,9 @@ r_break
 suffix:semicolon
 r_case
 id|ARPHRD_ETHER
+suffix:colon
+r_case
+id|ARPHRD_IEEE802_TR
 suffix:colon
 id|addrconf_dev_config
 c_func

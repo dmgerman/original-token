@@ -15,7 +15,10 @@ macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/list.h&gt;
-macro_line|#if 0  /* control */
+DECL|macro|DEBUG_INGRESS
+macro_line|#undef DEBUG_INGRESS
+macro_line|#ifdef DEBUG_INGRESS  /* control */
+DECL|macro|DPRINTK
 mdefine_line|#define DPRINTK(format,args...) printk(KERN_DEBUG format,##args)
 macro_line|#else
 DECL|macro|DPRINTK
@@ -75,6 +78,7 @@ op_star
 id|old
 )paren
 (brace
+macro_line|#ifdef DEBUG_INGRESS
 r_struct
 id|ingress_qdisc_data
 op_star
@@ -86,6 +90,7 @@ c_func
 id|sch
 )paren
 suffix:semicolon
+macro_line|#endif
 id|DPRINTK
 c_func
 (paren
@@ -148,6 +153,7 @@ id|u32
 id|classid
 )paren
 (brace
+macro_line|#ifdef DEBUG_INGRESS
 r_struct
 id|ingress_qdisc_data
 op_star
@@ -159,6 +165,7 @@ c_func
 id|sch
 )paren
 suffix:semicolon
+macro_line|#endif
 id|DPRINTK
 c_func
 (paren
@@ -257,6 +264,7 @@ op_star
 id|arg
 )paren
 (brace
+macro_line|#ifdef DEBUG_INGRESS
 r_struct
 id|ingress_qdisc_data
 op_star
@@ -268,6 +276,7 @@ c_func
 id|sch
 )paren
 suffix:semicolon
+macro_line|#endif
 id|DPRINTK
 c_func
 (paren
@@ -313,6 +322,7 @@ op_star
 id|walker
 )paren
 (brace
+macro_line|#ifdef DEBUG_INGRESS
 r_struct
 id|ingress_qdisc_data
 op_star
@@ -324,6 +334,7 @@ c_func
 id|sch
 )paren
 suffix:semicolon
+macro_line|#endif
 id|DPRINTK
 c_func
 (paren
@@ -554,6 +565,7 @@ op_star
 id|sch
 )paren
 (brace
+macro_line|#ifdef DEBUG_INGRESS
 r_struct
 id|ingress_qdisc_data
 op_star
@@ -565,6 +577,7 @@ c_func
 id|sch
 )paren
 suffix:semicolon
+macro_line|#endif
 id|DPRINTK
 c_func
 (paren

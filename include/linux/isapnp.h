@@ -355,6 +355,8 @@ multiline_comment|/* next resource */
 )brace
 suffix:semicolon
 macro_line|#if defined(CONFIG_ISAPNP) || defined(CONFIG_ISAPNP_MODULE)
+DECL|macro|__ISAPNP__
+mdefine_line|#define __ISAPNP__
 multiline_comment|/* lowlevel configuration */
 r_int
 id|isapnp_present

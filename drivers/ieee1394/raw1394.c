@@ -3260,7 +3260,7 @@ id|fi-&gt;listen_channels
 op_amp
 (paren
 l_int|1ULL
-OL
+op_lshift
 id|i
 )paren
 )paren

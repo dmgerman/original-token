@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/block/hpt366.c&t;&t;Version 0.14&t;Dec. 13, 1999&n; *&n; * Copyright (C) 1999&t;&t;&t;Andre Hedrick &lt;andre@suse.com&gt;&n; * May be copied or modified under the terms of the GNU General Public License&n; *&n; * Thanks to HighPoint Technologies for their assistance, and hardware.&n; * Special Thanks to Jon Burchmore in SanDiego for the deep pockets, his&n; * donation of an ABit BP6 mainboard, processor, and memory acellerated&n; * development and support.&n; */
+multiline_comment|/*&n; * linux/drivers/block/hpt366.c&t;&t;Version 0.15&t;Dec. 22, 1999&n; *&n; * Copyright (C) 1999&t;&t;&t;Andre Hedrick &lt;andre@suse.com&gt;&n; * May be copied or modified under the terms of the GNU General Public License&n; *&n; * Thanks to HighPoint Technologies for their assistance, and hardware.&n; * Special Thanks to Jon Burchmore in SanDiego for the deep pockets, his&n; * donation of an ABit BP6 mainboard, processor, and memory acellerated&n; * development and support.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
@@ -23,6 +23,8 @@ id|bad_ata66_4
 )braket
 op_assign
 (brace
+l_string|&quot;QUANTUM FIREBALLP KA9.1&quot;
+comma
 l_string|&quot;WDC AC310200R&quot;
 comma
 l_int|NULL
@@ -447,6 +449,12 @@ suffix:semicolon
 DECL|variable|hpt363_shared_irq
 id|byte
 id|hpt363_shared_irq
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|hpt363_shared_pin
+id|byte
+id|hpt363_shared_pin
 op_assign
 l_int|0
 suffix:semicolon
@@ -1978,17 +1986,6 @@ op_star
 id|drive
 )paren
 (brace
-macro_line|#if 0
-id|byte
-id|reg50h
-op_assign
-l_int|0
-comma
-id|reg52h
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
 r_switch
 c_cond
 (paren
@@ -2005,10 +2002,36 @@ c_func
 id|drive
 )paren
 suffix:semicolon
-macro_line|#if 0
 r_case
-id|ide_dma_lostirq
+id|ide_dma_timeout
 suffix:colon
+multiline_comment|/* ide_do_reset(drive); */
+r_if
+c_cond
+(paren
+l_int|0
+)paren
+(brace
+id|byte
+id|reg50h
+op_assign
+l_int|0
+comma
+id|reg52h
+op_assign
+l_int|0
+suffix:semicolon
+(paren
+r_void
+)paren
+id|ide_dmaproc
+c_func
+(paren
+id|ide_dma_off_quietly
+comma
+id|drive
+)paren
+suffix:semicolon
 id|pci_read_config_byte
 c_func
 (paren
@@ -2020,36 +2043,10 @@ id|drive
 op_member_access_from_pointer
 id|pci_dev
 comma
-l_int|0x52
+l_int|0x50
 comma
 op_amp
-id|reg52h
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;%s: (ide_dma_lostirq) reg52h=0x%02x&bslash;n&quot;
-comma
-id|drive-&gt;name
-comma
-id|reg52h
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|ide_dma_timeout
-suffix:colon
-(paren
-r_void
-)paren
-id|ide_dmaproc
-c_func
-(paren
-id|ide_dma_off_quietly
-comma
-id|drive
+id|reg50h
 )paren
 suffix:semicolon
 id|pci_read_config_byte
@@ -2214,10 +2211,9 @@ comma
 id|drive
 )paren
 suffix:semicolon
-r_return
-l_int|1
+)brace
+r_break
 suffix:semicolon
-macro_line|#endif
 r_default
 suffix:colon
 r_break
@@ -2518,6 +2514,25 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+(paren
+id|PCI_FUNC
+c_func
+(paren
+id|hwif-&gt;pci_dev-&gt;devfn
+)paren
+op_amp
+l_int|1
+)paren
+op_logical_and
+(paren
+id|hpt363_shared_pin
+)paren
+)paren
+(brace
+)brace
 macro_line|#endif
 id|hwif-&gt;tuneproc
 op_assign
@@ -2535,26 +2550,6 @@ op_assign
 op_amp
 id|hpt366_dmaproc
 suffix:semicolon
-macro_line|#if 0
-id|hwif-&gt;drives
-(braket
-l_int|0
-)braket
-dot
-id|autotune
-op_assign
-l_int|0
-suffix:semicolon
-id|hwif-&gt;drives
-(braket
-l_int|1
-)braket
-dot
-id|autotune
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
 )brace
 r_else
 (brace

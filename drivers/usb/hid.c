@@ -4667,7 +4667,12 @@ l_int|3
 op_plus
 l_int|1
 op_plus
-id|report_enum-&gt;numbered
+id|hid-&gt;report_enum
+(braket
+id|HID_INPUT_REPORT
+)braket
+dot
+id|numbered
 suffix:semicolon
 r_char
 id|rdata
@@ -4681,6 +4686,8 @@ id|urb
 suffix:semicolon
 r_int
 id|read
+comma
+id|j
 suffix:semicolon
 id|memset
 c_func
@@ -4812,7 +4819,7 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-r_continue
+r_return
 suffix:semicolon
 )brace
 id|hid_irq

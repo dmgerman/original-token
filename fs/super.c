@@ -3944,7 +3944,7 @@ r_return
 id|error
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Alters the mount flags of a mounted file system. Only the mount point&n; * is used as a reference - file system type and the device are ignored.&n; * FS-specific mount options can&squot;t be altered by remounting.&n; */
+multiline_comment|/*&n; * Alters the mount flags of a mounted file system. Only the mount point&n; * is used as a reference - file system type and the device are ignored.&n; */
 DECL|function|do_remount_sb
 r_static
 r_int

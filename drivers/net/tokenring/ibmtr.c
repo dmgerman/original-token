@@ -8303,6 +8303,12 @@ r_if
 c_cond
 (paren
 id|IPv4_p
+op_logical_and
+(paren
+id|skb-&gt;protocol
+op_eq
+id|ETH_P_IP
+)paren
 )paren
 (brace
 id|skb-&gt;csum
