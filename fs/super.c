@@ -612,6 +612,17 @@ op_assign
 id|lptr
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|tofree
+op_eq
+id|mru_vfsmnt
+)paren
+id|mru_vfsmnt
+op_assign
+l_int|NULL
+suffix:semicolon
 id|kfree
 c_func
 (paren

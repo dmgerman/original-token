@@ -310,6 +310,10 @@ r_int
 id|page
 suffix:semicolon
 r_int
+r_int
+id|fixup
+suffix:semicolon
+r_int
 id|write
 suffix:semicolon
 multiline_comment|/* get the address */
@@ -570,12 +574,20 @@ op_amp
 id|mm-&gt;mmap_sem
 )paren
 suffix:semicolon
-multiline_comment|/* is there valid exception data? Return to indicated handler if so */
+multiline_comment|/* Are we prepared to handle this fault?  */
 r_if
 c_cond
 (paren
-id|tsk-&gt;tss.ex.count
-op_eq
+(paren
+id|fixup
+op_assign
+id|search_exception_table
+c_func
+(paren
+id|regs-&gt;eip
+)paren
+)paren
+op_ne
 l_int|0
 )paren
 (brace
@@ -586,20 +598,12 @@ l_string|&quot;Exception at %lx (%lx)&bslash;n&quot;
 comma
 id|regs-&gt;eip
 comma
-id|regs-&gt;edx
+id|fixup
 )paren
-suffix:semicolon
-id|tsk-&gt;tss.ex.count
-op_decrement
 suffix:semicolon
 id|regs-&gt;eip
 op_assign
-id|regs-&gt;edx
-suffix:semicolon
-id|regs-&gt;edx
-op_assign
-op_minus
-id|EFAULT
+id|fixup
 suffix:semicolon
 r_return
 suffix:semicolon

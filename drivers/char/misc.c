@@ -652,6 +652,7 @@ macro_line|#endif
 macro_line|#include &lt;linux/symtab_end.h&gt;
 )brace
 suffix:semicolon
+macro_line|#if defined(CONFIG_PROC_FS) &amp;&amp; !defined(MODULE)
 DECL|variable|proc_misc
 r_static
 r_struct
@@ -686,6 +687,7 @@ multiline_comment|/* get_info */
 comma
 )brace
 suffix:semicolon
+macro_line|#endif
 DECL|function|misc_init
 r_int
 id|misc_init

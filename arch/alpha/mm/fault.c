@@ -71,7 +71,10 @@ comma
 r_int
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * This routine handles page faults.  It determines the address,&n; * and the problem, and then passes it off to handle_mm_fault().&n; *&n; * mmcsr:&n; *&t;0 = translation not valid&n; *&t;1 = access violation&n; *&t;2 = fault-on-read&n; *&t;3 = fault-on-execute&n; *&t;4 = fault-on-write&n; *&n; * cause:&n; *&t;-1 = instruction fetch&n; *&t;0 = load&n; *&t;1 = store&n; */
+multiline_comment|/*&n; * This routine handles page faults.  It determines the address,&n; * and the problem, and then passes it off to handle_mm_fault().&n; *&n; * mmcsr:&n; *&t;0 = translation not valid&n; *&t;1 = access violation&n; *&t;2 = fault-on-read&n; *&t;3 = fault-on-execute&n; *&t;4 = fault-on-write&n; *&n; * cause:&n; *&t;-1 = instruction fetch&n; *&t;0 = load&n; *&t;1 = store&n; *&n; * Registers $9 through $15 are saved in a block just prior to `regs&squot; and&n; * are saved and restored around the call to allow exception code to&n; * modify them.&n; */
+multiline_comment|/* Macro for exception fixup code to access integer registers.  */
+DECL|macro|dpf_reg
+mdefine_line|#define dpf_reg(r) &bslash;&n;&t;(((unsigned long *)regs)[(r) &lt;= 8 ? (r) : (r) &lt;= 15 ? (r)-16 : &bslash;&n;&t;&t;&t;&t; (r) &lt;= 18 ? (r)+8 : (r)-10])
 DECL|function|do_page_fault
 id|asmlinkage
 r_void
@@ -89,20 +92,9 @@ comma
 r_int
 id|cause
 comma
-r_int
-r_int
-id|a3
-comma
-r_int
-r_int
-id|a4
-comma
-r_int
-r_int
-id|a5
-comma
 r_struct
 id|pt_regs
+op_star
 id|regs
 )paren
 (brace
@@ -124,6 +116,9 @@ op_star
 id|mm
 op_assign
 id|tsk-&gt;mm
+suffix:semicolon
+r_int
+id|fixup
 suffix:semicolon
 id|down
 c_func
@@ -287,38 +282,52 @@ op_amp
 id|mm-&gt;mmap_sem
 )paren
 suffix:semicolon
-multiline_comment|/* Did we have an exception handler installed? */
+multiline_comment|/* Are we prepared to handle this fault as an exception?  */
 r_if
 c_cond
 (paren
-id|current-&gt;tss.ex.count
-op_eq
-l_int|1
+(paren
+id|fixup
+op_assign
+id|search_exception_table
+c_func
+(paren
+id|regs-&gt;pc
+)paren
+)paren
+op_ne
+l_int|0
 )paren
 (brace
+r_int
+r_int
+id|newpc
+suffix:semicolon
+id|newpc
+op_assign
+id|fixup_exception
+c_func
+(paren
+id|dpf_reg
+comma
+id|fixup
+comma
+id|regs-&gt;pc
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
 l_string|&quot;Taking exception at %lx (%lx)&bslash;n&quot;
 comma
-id|regs.pc
+id|regs-&gt;pc
 comma
-id|regs.r28
+id|newpc
 )paren
 suffix:semicolon
-id|current-&gt;tss.ex.count
+id|regs-&gt;pc
 op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* return to the address in r28 */
-(paren
-op_amp
-id|regs
-)paren
-op_member_access_from_pointer
-id|pc
-op_assign
-id|regs.r28
+id|newpc
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -329,7 +338,6 @@ c_cond
 id|user_mode
 c_func
 (paren
-op_amp
 id|regs
 )paren
 )paren
@@ -337,13 +345,14 @@ id|regs
 id|printk
 c_func
 (paren
-l_string|&quot;%s: memory violation at pc=%08lx rp=%08lx (bad address = %08lx)&bslash;n&quot;
+l_string|&quot;%s: memory violation at pc=%08lx ra=%08lx &quot;
+l_string|&quot;(bad address = %08lx)&bslash;n&quot;
 comma
 id|tsk-&gt;comm
 comma
-id|regs.pc
+id|regs-&gt;pc
 comma
-id|regs.r26
+id|regs-&gt;r26
 comma
 id|address
 )paren
@@ -353,7 +362,6 @@ c_func
 (paren
 l_string|&quot;oops&quot;
 comma
-op_amp
 id|regs
 comma
 id|cause
@@ -375,7 +383,8 @@ id|printk
 c_func
 (paren
 id|KERN_ALERT
-l_string|&quot;Unable to handle kernel paging request at virtual address %016lx&bslash;n&quot;
+l_string|&quot;Unable to handle kernel paging request at &quot;
+l_string|&quot;virtual address %016lx&bslash;n&quot;
 comma
 id|address
 )paren
@@ -385,7 +394,6 @@ c_func
 (paren
 l_string|&quot;Oops&quot;
 comma
-op_amp
 id|regs
 comma
 id|cause

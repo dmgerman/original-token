@@ -8337,13 +8337,6 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_BAYCOM
-id|baycom_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 id|pty_init
 c_func
 (paren

@@ -3846,6 +3846,30 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|pt_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|sm_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|baycom_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
 DECL|variable|proc_net_dev
 r_static
@@ -3950,6 +3974,20 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#if defined(CONFIG_SDLA)
 id|sdla_setup
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#if defined(CONFIG_BAYCOM)
+id|baycom_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#if defined(CONFIG_SOUNDMODEM)
+id|sm_init
 c_func
 (paren
 )paren

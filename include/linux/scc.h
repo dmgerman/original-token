@@ -1,8 +1,7 @@
-multiline_comment|/* $Id: scc.h,v 1.26 1996/10/09 16:35:56 jreuter Exp jreuter $ */
+multiline_comment|/* $Id: scc.h,v 1.28 1996/10/30 20:01:15 jreuter Exp jreuter $ */
 macro_line|#ifndef&t;_SCC_H
 DECL|macro|_SCC_H
 mdefine_line|#define&t;_SCC_H
-macro_line|#include &lt;linux/if_ether.h&gt;
 multiline_comment|/* selection of hardware types */
 DECL|macro|PA0HZP
 mdefine_line|#define PA0HZP&t;&t;0x00&t;/* hardware type for PA0HZP SCC card and compatible */
@@ -16,9 +15,6 @@ DECL|macro|DRSI
 mdefine_line|#define DRSI&t;&t;0x08&t;/* hardware type for DRSI PC*Packet card */
 DECL|macro|BAYCOM
 mdefine_line|#define BAYCOM&t;&t;0x10&t;/* hardware type for BayCom (U)SCC */
-multiline_comment|/* Paranoia check... */
-DECL|macro|SCC_PARANOIA_CHECK
-mdefine_line|#define SCC_PARANOIA_CHECK&t;/* tell the user if something is going wrong */
 multiline_comment|/* DEV ioctl() commands */
 DECL|macro|SIOCSCCRESERVED
 mdefine_line|#define SIOCSCCRESERVED (SIOCDEVPRIVATE+0)
@@ -138,21 +134,6 @@ DECL|macro|TXS_WAIT
 mdefine_line|#define TXS_WAIT&t;5&t;/* Waiting for Mintime to expire */
 DECL|macro|TXS_TIMEOUT
 mdefine_line|#define TXS_TIMEOUT&t;6&t;/* We had a transmission timeout */
-DECL|macro|TX_ON
-mdefine_line|#define TX_ON&t;&t;1&t;/* command for scc_key_trx() */
-DECL|macro|TX_OFF
-mdefine_line|#define TX_OFF&t;&t;0&t;/* dto */
-multiline_comment|/* Vector masks in RR2B */
-DECL|macro|VECTOR_MASK
-mdefine_line|#define VECTOR_MASK&t;0x06
-DECL|macro|TXINT
-mdefine_line|#define TXINT&t;&t;0x00
-DECL|macro|EXINT
-mdefine_line|#define EXINT&t;&t;0x02
-DECL|macro|RXINT
-mdefine_line|#define RXINT&t;&t;0x04
-DECL|macro|SPINT
-mdefine_line|#define SPINT&t;&t;0x06
 DECL|typedef|io_port
 r_typedef
 r_int
@@ -160,110 +141,6 @@ r_int
 id|io_port
 suffix:semicolon
 multiline_comment|/* type definition for an &squot;io port address&squot; */
-macro_line|#ifdef SCC_DELAY
-DECL|macro|Inb
-mdefine_line|#define Inb(port)&t;inb_p(port)
-DECL|macro|Outb
-mdefine_line|#define Outb(port, val)&t;outb_p(val, port)
-macro_line|#else
-DECL|macro|Inb
-mdefine_line|#define Inb(port)&t;inb(port)
-DECL|macro|Outb
-mdefine_line|#define Outb(port, val)&t;outb(val, port)
-macro_line|#endif
-DECL|macro|TIMER_OFF
-mdefine_line|#define TIMER_OFF 65535U
-multiline_comment|/* SCC channel control structure for KISS */
-DECL|struct|scc_kiss
-r_struct
-id|scc_kiss
-(brace
-DECL|member|txdelay
-r_int
-r_char
-id|txdelay
-suffix:semicolon
-multiline_comment|/* Transmit Delay 10 ms/cnt */
-DECL|member|persist
-r_int
-r_char
-id|persist
-suffix:semicolon
-multiline_comment|/* Persistence (0-255) as a % */
-DECL|member|slottime
-r_int
-r_char
-id|slottime
-suffix:semicolon
-multiline_comment|/* Delay to wait on persistence hit */
-DECL|member|tailtime
-r_int
-r_char
-id|tailtime
-suffix:semicolon
-multiline_comment|/* Delay after last byte written */
-DECL|member|fulldup
-r_int
-r_char
-id|fulldup
-suffix:semicolon
-multiline_comment|/* Full Duplex mode 0=CSMA 1=DUP 2=ALWAYS KEYED */
-DECL|member|waittime
-r_int
-r_char
-id|waittime
-suffix:semicolon
-multiline_comment|/* Waittime before any transmit attempt */
-DECL|member|maxkeyup
-r_int
-r_int
-id|maxkeyup
-suffix:semicolon
-multiline_comment|/* Maximum time to transmit (seconds) */
-DECL|member|mintime
-r_int
-r_char
-id|mintime
-suffix:semicolon
-multiline_comment|/* Minimal offtime after MAXKEYUP timeout (seconds) */
-DECL|member|idletime
-r_int
-r_int
-id|idletime
-suffix:semicolon
-multiline_comment|/* Maximum idle time in ALWAYS KEYED mode (seconds) */
-DECL|member|maxdefer
-r_int
-r_int
-id|maxdefer
-suffix:semicolon
-multiline_comment|/* Timer for CSMA channel busy limit */
-DECL|member|tx_inhibit
-r_int
-r_char
-id|tx_inhibit
-suffix:semicolon
-multiline_comment|/* Transmit is not allowed when set */
-DECL|member|group
-r_int
-r_char
-id|group
-suffix:semicolon
-multiline_comment|/* Group ID for AX.25 TX interlocking */
-DECL|member|mode
-r_int
-r_char
-id|mode
-suffix:semicolon
-multiline_comment|/* &squot;normal&squot; or &squot;hwctrl&squot; mode (unused) */
-DECL|member|softdcd
-r_int
-r_char
-id|softdcd
-suffix:semicolon
-multiline_comment|/* Use DPLL instead of DCD pin for carrier detect */
-)brace
-suffix:semicolon
 multiline_comment|/* SCC statistical information */
 DECL|struct|scc_stat
 r_struct
@@ -467,6 +344,124 @@ id|bufsize
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#ifdef __KERNEL__
+DECL|macro|TX_ON
+mdefine_line|#define TX_ON&t;&t;1&t;/* command for scc_key_trx() */
+DECL|macro|TX_OFF
+mdefine_line|#define TX_OFF&t;&t;0&t;/* dto */
+multiline_comment|/* Vector masks in RR2B */
+DECL|macro|VECTOR_MASK
+mdefine_line|#define VECTOR_MASK&t;0x06
+DECL|macro|TXINT
+mdefine_line|#define TXINT&t;&t;0x00
+DECL|macro|EXINT
+mdefine_line|#define EXINT&t;&t;0x02
+DECL|macro|RXINT
+mdefine_line|#define RXINT&t;&t;0x04
+DECL|macro|SPINT
+mdefine_line|#define SPINT&t;&t;0x06
+macro_line|#ifdef SCC_DELAY
+DECL|macro|Inb
+mdefine_line|#define Inb(port)&t;inb_p(port)
+DECL|macro|Outb
+mdefine_line|#define Outb(port, val)&t;outb_p(val, port)
+macro_line|#else
+DECL|macro|Inb
+mdefine_line|#define Inb(port)&t;inb(port)
+DECL|macro|Outb
+mdefine_line|#define Outb(port, val)&t;outb(val, port)
+macro_line|#endif
+multiline_comment|/* SCC channel control structure for KISS */
+DECL|struct|scc_kiss
+r_struct
+id|scc_kiss
+(brace
+DECL|member|txdelay
+r_int
+r_char
+id|txdelay
+suffix:semicolon
+multiline_comment|/* Transmit Delay 10 ms/cnt */
+DECL|member|persist
+r_int
+r_char
+id|persist
+suffix:semicolon
+multiline_comment|/* Persistence (0-255) as a % */
+DECL|member|slottime
+r_int
+r_char
+id|slottime
+suffix:semicolon
+multiline_comment|/* Delay to wait on persistence hit */
+DECL|member|tailtime
+r_int
+r_char
+id|tailtime
+suffix:semicolon
+multiline_comment|/* Delay after last byte written */
+DECL|member|fulldup
+r_int
+r_char
+id|fulldup
+suffix:semicolon
+multiline_comment|/* Full Duplex mode 0=CSMA 1=DUP 2=ALWAYS KEYED */
+DECL|member|waittime
+r_int
+r_char
+id|waittime
+suffix:semicolon
+multiline_comment|/* Waittime before any transmit attempt */
+DECL|member|maxkeyup
+r_int
+r_int
+id|maxkeyup
+suffix:semicolon
+multiline_comment|/* Maximum time to transmit (seconds) */
+DECL|member|mintime
+r_int
+r_char
+id|mintime
+suffix:semicolon
+multiline_comment|/* Minimal offtime after MAXKEYUP timeout (seconds) */
+DECL|member|idletime
+r_int
+r_int
+id|idletime
+suffix:semicolon
+multiline_comment|/* Maximum idle time in ALWAYS KEYED mode (seconds) */
+DECL|member|maxdefer
+r_int
+r_int
+id|maxdefer
+suffix:semicolon
+multiline_comment|/* Timer for CSMA channel busy limit */
+DECL|member|tx_inhibit
+r_int
+r_char
+id|tx_inhibit
+suffix:semicolon
+multiline_comment|/* Transmit is not allowed when set */
+DECL|member|group
+r_int
+r_char
+id|group
+suffix:semicolon
+multiline_comment|/* Group ID for AX.25 TX interlocking */
+DECL|member|mode
+r_int
+r_char
+id|mode
+suffix:semicolon
+multiline_comment|/* &squot;normal&squot; or &squot;hwctrl&squot; mode (unused) */
+DECL|member|softdcd
+r_int
+r_char
+id|softdcd
+suffix:semicolon
+multiline_comment|/* Use DPLL instead of DCD pin for carrier detect */
+)brace
+suffix:semicolon
 multiline_comment|/* SCC channel structure */
 DECL|struct|scc_channel
 r_struct
@@ -567,11 +562,10 @@ id|scc_modem
 id|modem
 suffix:semicolon
 multiline_comment|/* modem information */
-DECL|member|tx_next_buff
+DECL|member|tx_queue
 r_struct
-id|sk_buff
-op_star
-id|tx_next_buff
+id|sk_buff_head
+id|tx_queue
 suffix:semicolon
 multiline_comment|/* next tx buffer */
 DECL|member|rx_buff
@@ -610,5 +604,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif
+macro_line|#endif /* defined(__KERNEL__) */
+macro_line|#endif /* defined(_SCC_H) */
 eof

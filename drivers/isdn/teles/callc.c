@@ -2,6 +2,7 @@ multiline_comment|/* $Id: callc.c,v 1.13 1996/06/24 17:15:55 fritz Exp $&n; *&n;
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;teles.h&quot;
+macro_line|#include &lt;asm/uaccess.h&gt;
 r_extern
 r_struct
 id|IsdnCard

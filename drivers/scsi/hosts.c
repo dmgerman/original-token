@@ -161,14 +161,6 @@ macro_line|#ifdef CONFIG_SCSI_ADVANSYS
 id|ADVANSYS
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_SCSI_EATA_DMA
-id|EATA_DMA
-comma
-macro_line|#endif
-macro_line|#ifdef CONFIG_SCSI_EATA_PIO
-id|EATA_PIO
-comma
-macro_line|#endif
 multiline_comment|/* BusLogic must come before aha1542.c */
 macro_line|#ifdef CONFIG_SCSI_BUSLOGIC
 id|BUSLOGIC
@@ -244,6 +236,14 @@ comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_NCR53C8XX
 id|NCR53C8XX
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_EATA_DMA
+id|EATA_DMA
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_EATA_PIO
+id|EATA_PIO
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_7000FASST

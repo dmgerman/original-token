@@ -6718,6 +6718,10 @@ l_int|1
 op_logical_and
 op_logical_neg
 (paren
+id|SCpnt-&gt;host-&gt;last_reset
+OG
+l_int|0
+op_logical_and
 id|jiffies
 OL
 id|SCpnt-&gt;host-&gt;last_reset

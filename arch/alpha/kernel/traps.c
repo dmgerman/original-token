@@ -721,6 +721,9 @@ id|unaligned
 l_int|2
 )braket
 suffix:semicolon
+multiline_comment|/* Macro for exception fixup code to access integer registers.  */
+DECL|macro|una_reg
+mdefine_line|#define una_reg(r)  (regs.regs[(r) &gt;= 16 &amp;&amp; (r) &lt;= 18 ? (r)+19 : (r)])
 DECL|function|do_entUna
 id|asmlinkage
 r_void
@@ -768,6 +771,28 @@ id|last_time
 op_assign
 l_int|0
 suffix:semicolon
+r_int
+id|error
+comma
+id|tmp1
+comma
+id|tmp2
+comma
+id|tmp3
+comma
+id|tmp4
+suffix:semicolon
+r_int
+r_int
+id|pc
+op_assign
+id|regs.pc
+op_minus
+l_int|4
+suffix:semicolon
+r_int
+id|fixup
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -803,9 +828,7 @@ c_func
 (paren
 l_string|&quot;kernel: unaligned trap at %016lx: %p %lx %ld&bslash;n&quot;
 comma
-id|regs.pc
-op_minus
-l_int|4
+id|pc
 comma
 id|va
 comma
@@ -819,13 +842,13 @@ id|last_time
 op_assign
 id|jiffies
 suffix:semicolon
-op_increment
 id|unaligned
 (braket
 l_int|0
 )braket
 dot
 id|count
+op_increment
 suffix:semicolon
 id|unaligned
 (braket
@@ -839,8 +862,6 @@ r_int
 r_int
 )paren
 id|va
-op_minus
-l_int|4
 suffix:semicolon
 id|unaligned
 (braket
@@ -849,81 +870,150 @@ l_int|0
 dot
 id|pc
 op_assign
-id|regs.pc
+id|pc
 suffix:semicolon
-multiline_comment|/* $16-$18 are PAL-saved, and are offset by 19 entries */
-r_if
-c_cond
-(paren
-id|reg
-op_ge
-l_int|16
-op_logical_and
-id|reg
-op_le
-l_int|18
-)paren
-id|reg
-op_add_assign
-l_int|19
-suffix:semicolon
-(brace
-multiline_comment|/* Set up an exception handler address just in case we are&n;&t;&t;   handling an unaligned fixup within get_user().  Notice&n;&t;&t;   that we do *not* change the exception count because we&n;&t;&t;   only want to bounce possible exceptions on through.  */
-id|__label__
-id|handle_ex
-suffix:semicolon
-r_register
-r_void
-op_star
-id|ex_vector
-id|__asm__
-c_func
-(paren
-l_string|&quot;$28&quot;
-)paren
-suffix:semicolon
-id|__asm__
-id|__volatile__
-(paren
-l_string|&quot;&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|ex_vector
-)paren
-suffix:colon
-l_string|&quot;0&quot;
-(paren
-op_logical_and
-id|handle_ex
-)paren
-)paren
-suffix:semicolon
+multiline_comment|/* We don&squot;t want to use the generic get/put unaligned macros as&n;&t;   we want to trap exceptions.  Only if we actually get an&n;&t;   exception will we decide whether we should have caught it.  */
 r_switch
 c_cond
 (paren
 id|opcode
 )paren
 (brace
+macro_line|#ifdef __HAVE_CPU_BWX
+r_case
+l_int|0x0c
+suffix:colon
+multiline_comment|/* ldwu */
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;1:&t;ldq_u %1,0(%3)&bslash;n&quot;
+l_string|&quot;2:&t;ldq_u %2,1(%3)&bslash;n&quot;
+l_string|&quot;&t;extwl %1,%3,%1&bslash;n&quot;
+l_string|&quot;&t;extwh %2,%3,%2&bslash;n&quot;
+l_string|&quot;3:&bslash;n&quot;
+l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
+l_string|&quot;&t;.gprel32 1b&bslash;n&quot;
+l_string|&quot;&t;lda %1,3b-1b(%0)&bslash;n&quot;
+l_string|&quot;&t;.gprel32 2b&bslash;n&quot;
+l_string|&quot;&t;lda %2,3b-2b(%0)&bslash;n&quot;
+l_string|&quot;.text&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|error
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|tmp1
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|tmp2
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|va
+)paren
+comma
+l_string|&quot;0&quot;
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+r_goto
+id|got_exception
+suffix:semicolon
+id|una_reg
+c_func
+(paren
+id|reg
+)paren
+op_assign
+id|tmp1
+op_or
+id|tmp2
+suffix:semicolon
+r_return
+suffix:semicolon
+macro_line|#endif
 r_case
 l_int|0x28
 suffix:colon
 multiline_comment|/* ldl */
-op_star
-(paren
-id|reg
-op_plus
-id|regs.regs
-)paren
-op_assign
-id|get_unaligned
+id|__asm__
+id|__volatile__
 c_func
 (paren
+l_string|&quot;1:&t;ldq_u %1,0(%3)&bslash;n&quot;
+l_string|&quot;2:&t;ldq_u %2,3(%3)&bslash;n&quot;
+l_string|&quot;&t;extll %1,%3,%1&bslash;n&quot;
+l_string|&quot;&t;extlh %2,%3,%2&bslash;n&quot;
+l_string|&quot;3:&bslash;n&quot;
+l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
+l_string|&quot;&t;.gprel32 1b&bslash;n&quot;
+l_string|&quot;&t;lda %1,3b-1b(%0)&bslash;n&quot;
+l_string|&quot;&t;.gprel32 2b&bslash;n&quot;
+l_string|&quot;&t;lda %2,3b-2b(%0)&bslash;n&quot;
+l_string|&quot;.text&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|error
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|tmp1
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|tmp2
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|va
+)paren
+comma
+l_string|&quot;0&quot;
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+r_goto
+id|got_exception
+suffix:semicolon
+id|una_reg
+c_func
+(paren
+id|reg
+)paren
+op_assign
 (paren
 r_int
-op_star
 )paren
-id|va
+(paren
+id|tmp1
+op_or
+id|tmp2
 )paren
 suffix:semicolon
 r_return
@@ -932,45 +1022,238 @@ r_case
 l_int|0x29
 suffix:colon
 multiline_comment|/* ldq */
-op_star
-(paren
-id|reg
-op_plus
-id|regs.regs
-)paren
-op_assign
-id|get_unaligned
+id|__asm__
+id|__volatile__
 c_func
 (paren
+l_string|&quot;1:&t;ldq_u %1,0(%3)&bslash;n&quot;
+l_string|&quot;2:&t;ldq_u %2,7(%3)&bslash;n&quot;
+l_string|&quot;&t;extql %1,%3,%1&bslash;n&quot;
+l_string|&quot;&t;extqh %2,%3,%2&bslash;n&quot;
+l_string|&quot;3:&bslash;n&quot;
+l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
+l_string|&quot;&t;.gprel32 1b&bslash;n&quot;
+l_string|&quot;&t;lda %1,3b-1b(%0)&bslash;n&quot;
+l_string|&quot;&t;.gprel32 2b&bslash;n&quot;
+l_string|&quot;&t;lda %2,3b-2b(%0)&bslash;n&quot;
+l_string|&quot;.text&quot;
+suffix:colon
+l_string|&quot;=r&quot;
 (paren
-r_int
-op_star
+id|error
 )paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|tmp1
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|tmp2
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
 id|va
 )paren
+comma
+l_string|&quot;0&quot;
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+r_goto
+id|got_exception
+suffix:semicolon
+id|una_reg
+c_func
+(paren
+id|reg
+)paren
+op_assign
+id|tmp1
+op_or
+id|tmp2
 suffix:semicolon
 r_return
 suffix:semicolon
+multiline_comment|/* Note that the store sequences do not indicate that they change&n;&t;   memory because it _should_ be affecting nothing in this context.&n;&t;   (Otherwise we have other, much larger, problems.)  */
+macro_line|#ifdef __HAVE_CPU_BWX
+r_case
+l_int|0x0d
+suffix:colon
+multiline_comment|/* stw */
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;1:&t;ldq_u %2,1(%5)&bslash;n&quot;
+l_string|&quot;2:&t;ldq_u %1,0(%5)&bslash;n&quot;
+l_string|&quot;&t;inswh %6,%5,%4&bslash;n&quot;
+l_string|&quot;&t;inswl %6,%5,%3&bslash;n&quot;
+l_string|&quot;&t;mskwh %2,%5,%2&bslash;n&quot;
+l_string|&quot;&t;mskwl %1,%5,%1&bslash;n&quot;
+l_string|&quot;&t;or %2,%4,%2&bslash;n&quot;
+l_string|&quot;&t;or %1,%3,%1&bslash;n&quot;
+l_string|&quot;3:&t;stq_u %2,1(%5)&bslash;n&quot;
+l_string|&quot;4:&t;stq_u %1,0(%5)&bslash;n&quot;
+l_string|&quot;5:&bslash;n&quot;
+l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
+l_string|&quot;&t;.gprel32 1b&bslash;n&quot;
+l_string|&quot;&t;lda %2,5b-1b(%0)&bslash;n&quot;
+l_string|&quot;&t;.gprel32 2b&bslash;n&quot;
+l_string|&quot;&t;lda %1,5b-2b(%0)&bslash;n&quot;
+l_string|&quot;&t;.gprel32 3b&bslash;n&quot;
+l_string|&quot;&t;lda $31,5b-3b(%0)&bslash;n&quot;
+l_string|&quot;&t;.gprel32 4b&bslash;n&quot;
+l_string|&quot;&t;lda $31,5b-4b(%0)&bslash;n&quot;
+l_string|&quot;.text&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|error
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|tmp1
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|tmp2
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|tmp3
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|tmp4
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|va
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|una_reg
+c_func
+(paren
+id|reg
+)paren
+)paren
+comma
+l_string|&quot;0&quot;
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+r_goto
+id|got_exception
+suffix:semicolon
+r_return
+suffix:semicolon
+macro_line|#endif
 r_case
 l_int|0x2c
 suffix:colon
 multiline_comment|/* stl */
-id|put_unaligned
+id|__asm__
+id|__volatile__
 c_func
 (paren
-op_star
+l_string|&quot;1:&t;ldq_u %2,3(%5)&bslash;n&quot;
+l_string|&quot;2:&t;ldq_u %1,0(%5)&bslash;n&quot;
+l_string|&quot;&t;inslh %6,%5,%4&bslash;n&quot;
+l_string|&quot;&t;insll %6,%5,%3&bslash;n&quot;
+l_string|&quot;&t;msklh %2,%5,%2&bslash;n&quot;
+l_string|&quot;&t;mskll %1,%5,%1&bslash;n&quot;
+l_string|&quot;&t;or %2,%4,%2&bslash;n&quot;
+l_string|&quot;&t;or %1,%3,%1&bslash;n&quot;
+l_string|&quot;3:&t;stq_u %2,3(%5)&bslash;n&quot;
+l_string|&quot;4:&t;stq_u %1,0(%5)&bslash;n&quot;
+l_string|&quot;5:&bslash;n&quot;
+l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;
+l_string|&quot;&t;.gprel32 1b&bslash;n&quot;
+l_string|&quot;&t;lda %2,5b-1b(%0)&bslash;n&quot;
+l_string|&quot;&t;.gprel32 2b&bslash;n&quot;
+l_string|&quot;&t;lda %1,5b-2b(%0)&bslash;n&quot;
+l_string|&quot;&t;.gprel32 3b&bslash;n&quot;
+l_string|&quot;&t;lda $31,5b-3b(%0)&bslash;n&quot;
+l_string|&quot;&t;.gprel32 4b&bslash;n&quot;
+l_string|&quot;&t;lda $31,5b-4b(%0)&bslash;n&quot;
+l_string|&quot;.text&quot;
+suffix:colon
+l_string|&quot;=r&quot;
 (paren
-id|reg
-op_plus
-id|regs.regs
+id|error
 )paren
 comma
+l_string|&quot;=&amp;r&quot;
 (paren
-r_int
-op_star
+id|tmp1
 )paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|tmp2
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|tmp3
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|tmp4
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
 id|va
 )paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|una_reg
+c_func
+(paren
+id|reg
+)paren
+)paren
+comma
+l_string|&quot;0&quot;
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+r_goto
+id|got_exception
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -978,28 +1261,155 @@ r_case
 l_int|0x2d
 suffix:colon
 multiline_comment|/* stq */
-id|put_unaligned
+id|__asm__
+id|__volatile__
 c_func
 (paren
-op_star
+l_string|&quot;1:&t;ldq_u %2,7(%5)&bslash;n&quot;
+l_string|&quot;2:&t;ldq_u %1,0(%5)&bslash;n&quot;
+l_string|&quot;&t;insqh %6,%5,%4&bslash;n&quot;
+l_string|&quot;&t;insql %6,%5,%3&bslash;n&quot;
+l_string|&quot;&t;mskqh %2,%5,%2&bslash;n&quot;
+l_string|&quot;&t;mskql %1,%5,%1&bslash;n&quot;
+l_string|&quot;&t;or %2,%4,%2&bslash;n&quot;
+l_string|&quot;&t;or %1,%3,%1&bslash;n&quot;
+l_string|&quot;3:&t;stq_u %2,7(%5)&bslash;n&quot;
+l_string|&quot;4:&t;stq_u %1,0(%5)&bslash;n&quot;
+l_string|&quot;5:&bslash;n&quot;
+l_string|&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&bslash;t&quot;
+l_string|&quot;&t;.gprel32 1b&bslash;n&quot;
+l_string|&quot;&t;lda %2,5b-1b(%0)&bslash;n&quot;
+l_string|&quot;&t;.gprel32 2b&bslash;n&quot;
+l_string|&quot;&t;lda %1,5b-2b(%0)&bslash;n&quot;
+l_string|&quot;&t;.gprel32 3b&bslash;n&quot;
+l_string|&quot;&t;lda $31,5b-3b(%0)&bslash;n&quot;
+l_string|&quot;&t;.gprel32 4b&bslash;n&quot;
+l_string|&quot;&t;lda $31,5b-4b(%0)&bslash;n&quot;
+l_string|&quot;.text&quot;
+suffix:colon
+l_string|&quot;=r&quot;
 (paren
-id|reg
-op_plus
-id|regs.regs
+id|error
 )paren
 comma
+l_string|&quot;=&amp;r&quot;
 (paren
-r_int
-op_star
+id|tmp1
 )paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|tmp2
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|tmp3
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|tmp4
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
 id|va
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|una_reg
+c_func
+(paren
+id|reg
+)paren
+)paren
+comma
+l_string|&quot;0&quot;
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+r_goto
+id|got_exception
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;Bad unaligned kernel access at %016lx: %p %lx %ld&bslash;n&quot;
+comma
+id|pc
+comma
+id|va
+comma
+id|opcode
+comma
+id|reg
+)paren
+suffix:semicolon
+id|do_exit
+c_func
+(paren
+id|SIGSEGV
 )paren
 suffix:semicolon
 r_return
 suffix:semicolon
-multiline_comment|/* We&squot;ll only get back here if we are handling a&n;&t;&t;   valid exception.  */
-id|handle_ex
+id|got_exception
 suffix:colon
+multiline_comment|/* Ok, we caught the exception, but we don&squot;t want it.  Is there&n;&t;   someone to pass it along to?  */
+r_if
+c_cond
+(paren
+(paren
+id|fixup
+op_assign
+id|search_exception_table
+c_func
+(paren
+id|pc
+)paren
+)paren
+op_ne
+l_int|0
+)paren
+(brace
+r_int
+r_int
+id|newpc
+suffix:semicolon
+id|newpc
+op_assign
+id|fixup_exception
+c_func
+(paren
+id|una_reg
+comma
+id|fixup
+comma
+id|pc
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Forwarding unaligned exception at %lx (%lx)&bslash;n&quot;
+comma
+id|pc
+comma
+id|newpc
+)paren
+suffix:semicolon
 (paren
 op_amp
 id|regs
@@ -1007,29 +1417,29 @@ id|regs
 op_member_access_from_pointer
 id|pc
 op_assign
-op_star
-(paren
-l_int|28
-op_plus
-id|regs.regs
-)paren
+id|newpc
 suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-)brace
+multiline_comment|/* Yikes!  No one to forward the exception to.  */
 id|printk
 c_func
 (paren
-l_string|&quot;Bad unaligned kernel access at %016lx: %p %lx %ld&bslash;n&quot;
+l_string|&quot;%s: unhandled unaligned exception at pc=%lx ra=%lx&quot;
+l_string|&quot; (bad address = %p)&bslash;n&quot;
 comma
-id|regs.pc
+id|current-&gt;comm
+comma
+id|pc
+comma
+id|una_reg
+c_func
+(paren
+l_int|26
+)paren
 comma
 id|va
-comma
-id|opcode
-comma
-id|reg
 )paren
 suffix:semicolon
 id|do_exit

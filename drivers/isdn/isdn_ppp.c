@@ -1,5 +1,6 @@
 multiline_comment|/* $Id: isdn_ppp.c,v 1.14 1996/08/12 16:26:47 hipp Exp $&n; *&n; * Linux ISDN subsystem, functions for synchronous PPP (linklevel).&n; *&n; * Copyright 1995,96 by Michael Hipp (Michael.Hipp@student.uni-tuebingen.de)&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdn_ppp.c,v $&n; * Revision 1.14  1996/08/12 16:26:47  hipp&n; * code cleanup&n; * changed connection management from minors to slots&n; *&n; * Revision 1.13  1996/07/01 19:47:24  hipp&n; * Fixed memory leak in VJ handling and more VJ changes&n; *&n; * Revision 1.12  1996/06/24 17:42:03  fritz&n; * Minor bugfixes.&n; *&n; * Revision 1.11  1996/06/16 17:46:05  tsbogend&n; * changed unsigned long to u32 to make Alpha people happy&n; *&n; * Revision 1.10  1996/06/11 14:50:29  hipp&n; * Lot of changes and bugfixes.&n; * New scheme to resend packets to busy LL devices.&n; *&n; * Revision 1.9  1996/05/18 01:37:01  fritz&n; * Added spelling corrections and some minor changes&n; * to stay in sync with kernel.&n; *&n; * Revision 1.8  1996/05/06 11:34:55  hipp&n; * fixed a few bugs&n; *&n; * Revision 1.7  1996/04/30 11:07:42  fritz&n; * Added Michael&squot;s ippp-bind patch.&n; *&n; * Revision 1.6  1996/04/30 09:33:09  fritz&n; * Removed compatibility-macros.&n; *&n; * Revision 1.5  1996/04/20 16:32:32  fritz&n; * Changed ippp_table to an array of pointers, allocating each part&n; * separately.&n; *&n; * Revision 1.4  1996/02/19 15:25:50  fritz&n; * Bugfix: Sync-PPP packets got compressed twice, when resent due to&n; * send-queue-full reject.&n; *&n; * Revision 1.3  1996/02/11 02:27:12  fritz&n; * Lot of Bugfixes my Michael.&n; * Moved calls to skb_push() into isdn_net_header()&n; * Fixed a possible race-condition in isdn_ppp_timer_timeout().&n; *&n; * Revision 1.2  1996/01/22 05:08:06  fritz&n; * Merged in Michael&squot;s patches for MP.&n; * Minor changes in isdn_ppp_xmit.&n; *&n; * Revision 1.1  1996/01/09 04:11:29  fritz&n; * Initial revision&n; *&n; */
 multiline_comment|/* TODO: right tbusy handling when using MP */
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
@@ -1359,7 +1360,7 @@ c_func
 (paren
 id|val
 comma
-id|arg
+id|argp
 )paren
 )paren
 )paren
@@ -2267,9 +2268,6 @@ r_struct
 id|ippp_buf_queue
 op_star
 id|b
-suffix:semicolon
-r_int
-id|r
 suffix:semicolon
 r_int
 r_int
@@ -6491,9 +6489,6 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-r_int
-id|err
-suffix:semicolon
 id|res
 op_assign
 (paren
@@ -6650,6 +6645,8 @@ id|cmd
 (brace
 r_int
 id|error
+op_assign
+l_int|0
 suffix:semicolon
 r_char
 op_star

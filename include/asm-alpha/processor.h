@@ -14,18 +14,6 @@ DECL|macro|MCA_bus
 mdefine_line|#define MCA_bus 0
 DECL|macro|MCA_bus__is_a_macro
 mdefine_line|#define MCA_bus__is_a_macro /* for versions in ksyms.c */
-multiline_comment|/*&n; * The VM exception save area. We need to save only the&n; * exception count, so that the exception handling can know&n; * whether the system is set up to handle exceptions..&n; */
-DECL|struct|exception_struct
-r_struct
-id|exception_struct
-(brace
-DECL|member|count
-r_int
-r_int
-id|count
-suffix:semicolon
-)brace
-suffix:semicolon
 DECL|struct|thread_struct
 r_struct
 id|thread_struct
@@ -76,23 +64,24 @@ comma
 id|res2
 suffix:semicolon
 multiline_comment|/* the fields below are Linux-specific: */
-multiline_comment|/*&n;&t; * bit 0:    perform syscall argument validation (get/set_fs)&n;&t; * bit 1..5: IEEE_TRAP_ENABLE bits (see fpu.h)&n;&t; */
+multiline_comment|/* bit 1..5: IEEE_TRAP_ENABLE bits (see fpu.h) */
 DECL|member|flags
 r_int
 r_int
 id|flags
 suffix:semicolon
-DECL|member|ex
-r_struct
-id|exception_struct
-id|ex
+multiline_comment|/* perform syscall argument validation (get/set_fs) */
+DECL|member|fs
+r_int
+r_int
+id|fs
 suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|INIT_MMAP
 mdefine_line|#define INIT_MMAP { &amp;init_mm, 0xfffffc0000000000,  0xfffffc0010000000, &bslash;&n;&t;PAGE_SHARED, VM_READ | VM_WRITE | VM_EXEC }
 DECL|macro|INIT_TSS
-mdefine_line|#define INIT_TSS  { &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, &bslash;&n;&t;{ 0 } &bslash;&n;}
+mdefine_line|#define INIT_TSS  { &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, &bslash;&n;&t;0 &bslash;&n;}
 DECL|macro|alloc_kernel_stack
 mdefine_line|#define alloc_kernel_stack()    __get_free_page(GFP_KERNEL)
 DECL|macro|free_kernel_stack

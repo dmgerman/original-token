@@ -2,7 +2,7 @@ multiline_comment|/*&n; *      Copyright (C) 1993-1995 Bas Laarhoven.&n;&n; This
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/ftape.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &quot;tracing.h&quot;
 macro_line|#include &quot;ftape-eof.h&quot;
 macro_line|#include &quot;ftape-io.h&quot;
