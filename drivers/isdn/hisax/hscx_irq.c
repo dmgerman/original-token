@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: hscx_irq.c,v 1.12 1999/07/01 08:11:42 keil Exp $&n;&n; * hscx_irq.c     low level b-channel stuff for Siemens HSCX&n; *&n; * Author     Karsten Keil (keil@isdn4linux.de)&n; *&n; * This is an include file for fast inline IRQ stuff&n; *&n; * $Log: hscx_irq.c,v $&n; * Revision 1.12  1999/07/01 08:11:42  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 1.11  1998/11/15 23:54:49  keil&n; * changes from 2.0&n; *&n; * Revision 1.10  1998/08/13 23:36:35  keil&n; * HiSax 3.1 - don&squot;t work stable with current LinkLevel&n; *&n; * Revision 1.9  1998/06/24 14:44:51  keil&n; * Fix recovery of TX IRQ loss&n; *&n; * Revision 1.8  1998/04/10 10:35:22  paul&n; * fixed (silly?) warnings from egcs on Alpha.&n; *&n; * Revision 1.7  1998/02/12 23:07:37  keil&n; * change for 2.1.86 (removing FREE_READ/FREE_WRITE from [dev]_kfree_skb()&n; *&n; * Revision 1.6  1997/10/29 19:01:07  keil&n; * changes for 2.1&n; *&n; * Revision 1.5  1997/10/01 09:21:35  fritz&n; * Removed old compatibility stuff for 2.0.X kernels.&n; * From now on, this code is for 2.1.X ONLY!&n; * Old stuff is still in the separate branch.&n; *&n; * Revision 1.4  1997/08/15 17:48:02  keil&n; * cosmetic&n; *&n; * Revision 1.3  1997/07/27 21:38:36  keil&n; * new B-channel interface&n; *&n; * Revision 1.2  1997/06/26 11:16:19  keil&n; * first version&n; *&n; *&n; */
+multiline_comment|/* $Id: hscx_irq.c,v 1.13 1999/10/14 20:25:28 keil Exp $&n;&n; * hscx_irq.c     low level b-channel stuff for Siemens HSCX&n; *&n; * Author     Karsten Keil (keil@isdn4linux.de)&n; *&n; * This is an include file for fast inline IRQ stuff&n; *&n; * $Log: hscx_irq.c,v $&n; * Revision 1.13  1999/10/14 20:25:28  keil&n; * add a statistic for error monitoring&n; *&n; * Revision 1.12  1999/07/01 08:11:42  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 1.11  1998/11/15 23:54:49  keil&n; * changes from 2.0&n; *&n; * Revision 1.10  1998/08/13 23:36:35  keil&n; * HiSax 3.1 - don&squot;t work stable with current LinkLevel&n; *&n; * Revision 1.9  1998/06/24 14:44:51  keil&n; * Fix recovery of TX IRQ loss&n; *&n; * Revision 1.8  1998/04/10 10:35:22  paul&n; * fixed (silly?) warnings from egcs on Alpha.&n; *&n; * Revision 1.7  1998/02/12 23:07:37  keil&n; * change for 2.1.86 (removing FREE_READ/FREE_WRITE from [dev]_kfree_skb()&n; *&n; * Revision 1.6  1997/10/29 19:01:07  keil&n; * changes for 2.1&n; *&n; * Revision 1.5  1997/10/01 09:21:35  fritz&n; * Removed old compatibility stuff for 2.0.X kernels.&n; * From now on, this code is for 2.1.X ONLY!&n; * Old stuff is still in the separate branch.&n; *&n; * Revision 1.4  1997/08/15 17:48:02  keil&n; * cosmetic&n; *&n; * Revision 1.3  1997/07/27 21:38:36  keil&n; * new B-channel interface&n; *&n; * Revision 1.2  1997/06/26 11:16:19  keil&n; * first version&n; *&n; *&n; */
 r_static
 r_inline
 r_void
@@ -755,6 +755,7 @@ op_amp
 l_int|0x80
 )paren
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -770,6 +771,12 @@ comma
 l_string|&quot;HSCX invalid frame&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef ERROR_STATISTIC
+id|bcs-&gt;err_inv
+op_increment
+suffix:semicolon
+macro_line|#endif
+)brace
 r_if
 c_cond
 (paren
@@ -781,6 +788,7 @@ l_int|0x40
 op_logical_and
 id|bcs-&gt;mode
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -798,6 +806,12 @@ comma
 id|bcs-&gt;mode
 )paren
 suffix:semicolon
+macro_line|#ifdef ERROR_STATISTIC
+id|bcs-&gt;err_rdo
+op_increment
+suffix:semicolon
+macro_line|#endif
+)brace
 r_if
 c_cond
 (paren
@@ -808,6 +822,7 @@ op_amp
 l_int|0x20
 )paren
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -823,6 +838,12 @@ comma
 l_string|&quot;HSCX CRC error&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef ERROR_STATISTIC
+id|bcs-&gt;err_crc
+op_increment
+suffix:semicolon
+macro_line|#endif
+)brace
 id|WriteHSCXCMDR
 c_func
 (paren
@@ -937,12 +958,6 @@ l_string|&quot;HSCX: receive out of memory&bslash;n&quot;
 suffix:semicolon
 r_else
 (brace
-id|SET_SKB_FREE
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
 id|memcpy
 c_func
 (paren
@@ -1033,12 +1048,6 @@ l_string|&quot;HiSax: receive out of memory&bslash;n&quot;
 suffix:semicolon
 r_else
 (brace
-id|SET_SKB_FREE
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
 id|memcpy
 c_func
 (paren
@@ -1132,12 +1141,10 @@ comma
 id|bcs-&gt;hw.hscx.count
 )paren
 suffix:semicolon
-id|idev_kfree_skb
+id|dev_kfree_skb
 c_func
 (paren
 id|bcs-&gt;tx_skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|bcs-&gt;hw.hscx.count
@@ -1280,6 +1287,11 @@ id|bcs
 suffix:semicolon
 r_else
 (brace
+macro_line|#ifdef ERROR_STATISTIC
+id|bcs-&gt;err_tx
+op_increment
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Here we lost an TX interrupt, so&n;&t;&t;&t;&t;   * restart transmitting the whole frame.&n;&t;&t;&t;&t; */
 r_if
 c_cond
@@ -1436,6 +1448,11 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* Here we lost an TX interrupt, so&n;&t;&t;&t;&t;   * restart transmitting the whole frame.&n;&t;&t;&t;&t; */
+macro_line|#ifdef ERROR_STATISTIC
+id|bcs-&gt;err_tx
+op_increment
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren

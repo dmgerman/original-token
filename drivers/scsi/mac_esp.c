@@ -13,18 +13,23 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;NCR53C9x.h&quot;
 macro_line|#include &quot;mac_esp.h&quot;
-macro_line|#include &quot;../../arch/m68k/mac/via6522.h&quot;  /* huh? */
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/macints.h&gt;
 macro_line|#include &lt;asm/machw.h&gt;
+macro_line|#include &lt;asm/mac_via.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/macintosh.h&gt;
+DECL|macro|mac_turnon_irq
+mdefine_line|#define mac_turnon_irq(x)&t;mac_enable_irq(x)
+DECL|macro|mac_turnoff_irq
+mdefine_line|#define mac_turnoff_irq(x)&t;mac_disable_irq(x)
 r_extern
 r_inline
 r_void
@@ -1054,6 +1059,14 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#endif
 )brace
+id|__setup
+c_func
+(paren
+l_string|&quot;mac53c9x=&quot;
+comma
+id|mac_esp_setup
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * ESP address &squot;detection&squot;&n; */
 DECL|function|get_base
 r_int

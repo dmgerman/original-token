@@ -772,12 +772,6 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
-id|SET_SKB_FREE
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
 id|skb_reserve
 c_func
 (paren
@@ -834,12 +828,10 @@ c_cond
 id|skb
 )paren
 (brace
-id|idev_kfree_skb
+id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 )brace

@@ -3,7 +3,6 @@ macro_line|#ifndef _LINUX_ISDN_PPP_H
 DECL|macro|_LINUX_ISDN_PPP_H
 mdefine_line|#define _LINUX_ISDN_PPP_H
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &lt;linux/isdn_compat.h&gt;
 DECL|macro|CALLTYPE_INCOMING
 mdefine_line|#define CALLTYPE_INCOMING 0x1
 DECL|macro|CALLTYPE_OUTGOING
@@ -720,19 +719,10 @@ op_star
 id|last
 suffix:semicolon
 multiline_comment|/* pointer to (current) last used packet in queue */
-macro_line|#ifdef COMPAT_HAS_NEW_WAITQ
 DECL|member|wq
 id|wait_queue_head_t
 id|wq
 suffix:semicolon
-macro_line|#else
-DECL|member|wq
-r_struct
-id|wait_queue
-op_star
-id|wq
-suffix:semicolon
-macro_line|#endif
 DECL|member|tk
 r_struct
 id|task_struct

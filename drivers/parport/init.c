@@ -753,6 +753,13 @@ c_func
 id|parport_wait_peripheral
 )paren
 suffix:semicolon
+DECL|variable|parport_poll_peripheral
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|parport_poll_peripheral
+)paren
+suffix:semicolon
 DECL|variable|parport_wait_event
 id|EXPORT_SYMBOL
 c_func

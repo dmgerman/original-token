@@ -586,6 +586,10 @@ r_int
 id|inout
 )paren
 suffix:semicolon
+DECL|macro|PROC_INODE_PROPER
+mdefine_line|#define PROC_INODE_PROPER(inode) ((inode)-&gt;i_ino &amp; ~0xffff)
+DECL|macro|PROC_INODE_OPENPROM
+mdefine_line|#define PROC_INODE_OPENPROM(inode) &bslash;&n;&t;((inode-&gt;i_ino &gt;= PROC_OPENPROM_FIRST) &bslash;&n;&t;    &amp;&amp; (inode-&gt;i_ino &lt; PROC_OPENPROM_FIRST + PROC_NOPENPROM))
 macro_line|#ifdef CONFIG_PROC_FS
 r_extern
 r_struct
@@ -653,6 +657,11 @@ r_struct
 id|proc_dir_entry
 op_star
 id|proc_root_driver
+suffix:semicolon
+r_extern
+r_struct
+id|proc_dir_entry
+id|proc_root_kcore
 suffix:semicolon
 r_extern
 r_struct
@@ -1139,18 +1148,6 @@ c_func
 r_struct
 id|inode
 op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|proc_permission
-c_func
-(paren
-r_struct
-id|inode
-op_star
-comma
-r_int
 )paren
 suffix:semicolon
 r_extern

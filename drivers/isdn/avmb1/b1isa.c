@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: b1isa.c,v 1.4 1999/08/22 20:26:24 calle Exp $&n; * &n; * Module for AVM B1 ISA-card.&n; * &n; * (c) Copyright 1999 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; * $Log: b1isa.c,v $&n; * Revision 1.4  1999/08/22 20:26:24  calle&n; * backported changes from kernel 2.3.14:&n; * - several #include &quot;config.h&quot; gone, others come.&n; * - &quot;struct device&quot; changed to &quot;struct net_device&quot; in 2.3.14, added a&n; *   define in isdn_compat.h for older kernel versions.&n; *&n; * Revision 1.3  1999/07/09 15:05:40  keil&n; * compat.h is now isdn_compat.h&n; *&n; * Revision 1.2  1999/07/05 15:09:49  calle&n; * - renamed &quot;appl_release&quot; to &quot;appl_released&quot;.&n; * - version und profile data now cleared on controller reset&n; * - extended /proc interface, to allow driver and controller specific&n; *   informations to include by driver hackers.&n; *&n; * Revision 1.1  1999/07/01 15:26:27  calle&n; * complete new version (I love it):&n; * + new hardware independed &quot;capi_driver&quot; interface that will make it easy to:&n; *   - support other controllers with CAPI-2.0 (i.e. USB Controller)&n; *   - write a CAPI-2.0 for the passive cards&n; *   - support serial link CAPI-2.0 boxes.&n; * + wrote &quot;capi_driver&quot; for all supported cards.&n; * + &quot;capi_driver&quot; (supported cards) now have to be configured with&n; *   make menuconfig, in the past all supported cards where included&n; *   at once.&n; * + new and better informations in /proc/capi/&n; * + new ioctl to switch trace of capi messages per controller&n; *   using &quot;avmcapictrl trace [contr] on|off|....&quot;&n; * + complete testcircle with all supported cards and also the&n; *   PCMCIA cards (now patch for pcmcia-cs-3.0.13 needed) done.&n; *&n; *&n; */
+multiline_comment|/*&n; * $Id: b1isa.c,v 1.5 1999/11/05 16:38:01 calle Exp $&n; * &n; * Module for AVM B1 ISA-card.&n; * &n; * (c) Copyright 1999 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; * $Log: b1isa.c,v $&n; * Revision 1.5  1999/11/05 16:38:01  calle&n; * Cleanups before kernel 2.4:&n; * - Changed all messages to use card-&gt;name or driver-&gt;name instead of&n; *   constant string.&n; * - Moved some data from struct avmcard into new struct avmctrl_info.&n; *   Changed all lowlevel capi driver to match the new structur.&n; *&n; * Revision 1.4  1999/08/22 20:26:24  calle&n; * backported changes from kernel 2.3.14:&n; * - several #include &quot;config.h&quot; gone, others come.&n; * - &quot;struct device&quot; changed to &quot;struct net_device&quot; in 2.3.14, added a&n; *   define in isdn_compat.h for older kernel versions.&n; *&n; * Revision 1.3  1999/07/09 15:05:40  keil&n; * compat.h is now isdn_compat.h&n; *&n; * Revision 1.2  1999/07/05 15:09:49  calle&n; * - renamed &quot;appl_release&quot; to &quot;appl_released&quot;.&n; * - version und profile data now cleared on controller reset&n; * - extended /proc interface, to allow driver and controller specific&n; *   informations to include by driver hackers.&n; *&n; * Revision 1.1  1999/07/01 15:26:27  calle&n; * complete new version (I love it):&n; * + new hardware independed &quot;capi_driver&quot; interface that will make it easy to:&n; *   - support other controllers with CAPI-2.0 (i.e. USB Controller)&n; *   - write a CAPI-2.0 for the passive cards&n; *   - support serial link CAPI-2.0 boxes.&n; * + wrote &quot;capi_driver&quot; for all supported cards.&n; * + &quot;capi_driver&quot; (supported cards) now have to be configured with&n; *   make menuconfig, in the past all supported cards where included&n; *   at once.&n; * + new and better informations in /proc/capi/&n; * + new ioctl to switch trace of capi messages per controller&n; *   using &quot;avmcapictrl trace [contr] on|off|....&quot;&n; * + complete testcircle with all supported cards and also the&n; *   PCMCIA cards (now patch for pcmcia-cs-3.0.13 needed) done.&n; *&n; *&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
@@ -8,7 +8,6 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/capi.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;linux/isdn_compat.h&gt;
 macro_line|#include &quot;capicmd.h&quot;
 macro_line|#include &quot;capiutil.h&quot;
 macro_line|#include &quot;capilli.h&quot;
@@ -19,7 +18,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.4 $&quot;
+l_string|&quot;$Revision: 1.5 $&quot;
 suffix:semicolon
 multiline_comment|/* ------------------------------------------------------------- */
 id|MODULE_AUTHOR
@@ -131,17 +130,23 @@ op_star
 id|ctrl
 )paren
 (brace
-id|avmcard
+id|avmctrl_info
 op_star
-id|card
+id|cinfo
 op_assign
 (paren
-id|avmcard
+id|avmctrl_info
 op_star
 )paren
 (paren
 id|ctrl-&gt;driverdata
 )paren
+suffix:semicolon
+id|avmcard
+op_star
+id|card
+op_assign
+id|cinfo-&gt;card
 suffix:semicolon
 r_int
 r_int
@@ -188,6 +193,12 @@ suffix:semicolon
 id|kfree
 c_func
 (paren
+id|card-&gt;ctrlinfo
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
 id|card
 )paren
 suffix:semicolon
@@ -212,6 +223,10 @@ op_star
 id|p
 )paren
 (brace
+id|avmctrl_info
+op_star
+id|cinfo
+suffix:semicolon
 id|avmcard
 op_star
 id|card
@@ -268,6 +283,69 @@ id|avmcard
 )paren
 )paren
 suffix:semicolon
+id|cinfo
+op_assign
+(paren
+id|avmctrl_info
+op_star
+)paren
+id|kmalloc
+c_func
+(paren
+r_sizeof
+(paren
+id|avmctrl_info
+)paren
+comma
+id|GFP_ATOMIC
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|cinfo
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;b1isa: no memory.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|card
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
+)brace
+id|memset
+c_func
+(paren
+id|cinfo
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|avmctrl_info
+)paren
+)paren
+suffix:semicolon
+id|card-&gt;ctrlinfo
+op_assign
+id|cinfo
+suffix:semicolon
+id|cinfo-&gt;card
+op_assign
+id|card
+suffix:semicolon
 id|sprintf
 c_func
 (paren
@@ -318,6 +396,12 @@ suffix:semicolon
 id|kfree
 c_func
 (paren
+id|card-&gt;ctrlinfo
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
 id|card
 )paren
 suffix:semicolon
@@ -346,6 +430,12 @@ id|KERN_WARNING
 l_string|&quot;b1isa: irq %d not valid.&bslash;n&quot;
 comma
 id|card-&gt;irq
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|card-&gt;ctrlinfo
 )paren
 suffix:semicolon
 id|kfree
@@ -386,6 +476,12 @@ id|KERN_WARNING
 l_string|&quot;b1isa: illegal port 0x%x.&bslash;n&quot;
 comma
 id|card-&gt;port
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|card-&gt;ctrlinfo
 )paren
 suffix:semicolon
 id|kfree
@@ -432,6 +528,12 @@ comma
 id|card-&gt;port
 comma
 id|retval
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|card-&gt;ctrlinfo
 )paren
 suffix:semicolon
 id|kfree
@@ -503,6 +605,12 @@ suffix:semicolon
 id|kfree
 c_func
 (paren
+id|card-&gt;ctrlinfo
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
 id|card
 )paren
 suffix:semicolon
@@ -511,7 +619,7 @@ op_minus
 id|EBUSY
 suffix:semicolon
 )brace
-id|card-&gt;ctrl
+id|cinfo-&gt;capi_ctrl
 op_assign
 id|di
 op_member_access_from_pointer
@@ -522,14 +630,14 @@ id|driver
 comma
 id|card-&gt;name
 comma
-id|card
+id|cinfo
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-id|card-&gt;ctrl
+id|cinfo-&gt;capi_ctrl
 )paren
 (brace
 id|printk
@@ -553,6 +661,12 @@ c_func
 id|card-&gt;port
 comma
 id|AVMB1_PORTLEN
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|card-&gt;ctrlinfo
 )paren
 suffix:semicolon
 id|kfree
@@ -585,12 +699,12 @@ op_star
 id|ctrl
 )paren
 (brace
-id|avmcard
+id|avmctrl_info
 op_star
-id|card
+id|cinfo
 op_assign
 (paren
-id|avmcard
+id|avmctrl_info
 op_star
 )paren
 (paren
@@ -601,7 +715,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|card
+id|cinfo
 )paren
 r_return
 l_string|&quot;&quot;
@@ -609,40 +723,50 @@ suffix:semicolon
 id|sprintf
 c_func
 (paren
-id|card-&gt;infobuf
+id|cinfo-&gt;infobuf
 comma
 l_string|&quot;%s %s 0x%x %d&quot;
 comma
-id|card-&gt;cardname
+id|cinfo-&gt;cardname
 (braket
 l_int|0
 )braket
 ques
 c_cond
-id|card-&gt;cardname
+id|cinfo-&gt;cardname
 suffix:colon
 l_string|&quot;-&quot;
 comma
-id|card-&gt;version
+id|cinfo-&gt;version
 (braket
 id|VER_DRIVER
 )braket
 ques
 c_cond
-id|card-&gt;version
+id|cinfo-&gt;version
 (braket
 id|VER_DRIVER
 )braket
 suffix:colon
 l_string|&quot;-&quot;
 comma
-id|card-&gt;port
+id|cinfo-&gt;card
+ques
+c_cond
+id|cinfo-&gt;card-&gt;port
+suffix:colon
+l_int|0x0
 comma
-id|card-&gt;irq
+id|cinfo-&gt;card
+ques
+c_cond
+id|cinfo-&gt;card-&gt;irq
+suffix:colon
+l_int|0
 )paren
 suffix:semicolon
 r_return
-id|card-&gt;infobuf
+id|cinfo-&gt;infobuf
 suffix:semicolon
 )brace
 multiline_comment|/* ------------------------------------------------------------- */

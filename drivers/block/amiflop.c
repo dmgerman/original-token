@@ -9534,7 +9534,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|request_irq
 c_func
 (paren
@@ -9578,7 +9577,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|request_irq
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;fs/proc/kcore.c kernel ELF/AOUT core dumper&n; *&n; *&t;Modelled on fs/exec.c:aout_core_dump()&n; *&t;Jeremy Fitzhardinge &lt;jeremy@sw.oz.au&gt;&n; *&t;Implemented by David Howells &lt;David.Howells@nexor.co.uk&gt;&n; *&t;Modified and incorporated into 2.3.x by Tigran Aivazian &lt;tigran@sco.com&gt;&n; */
+multiline_comment|/*&n; *&t;fs/proc/kcore.c kernel ELF/AOUT core dumper&n; *&n; *&t;Modelled on fs/exec.c:aout_core_dump()&n; *&t;Jeremy Fitzhardinge &lt;jeremy@sw.oz.au&gt;&n; *&t;Implemented by David Howells &lt;David.Howells@nexor.co.uk&gt;&n; *&t;Modified and incorporated into 2.3.x by Tigran Aivazian &lt;tigran@sco.com&gt;&n; *&t;Support to dump module&squot;s data structures (ELF only), Tigran Aivazian &lt;tigran@sco.com&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
@@ -6,6 +6,8 @@ macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/a.out.h&gt;
 macro_line|#include &lt;linux/elf.h&gt;
 macro_line|#include &lt;linux/elfcore.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#ifdef CONFIG_KCORE_AOUT
 DECL|function|read_kcore
@@ -1133,18 +1135,14 @@ op_star
 id|page
 suffix:semicolon
 multiline_comment|/* work out how much file we allow to be read */
+id|proc_root_kcore.size
+op_assign
 id|size
 op_assign
+id|get_kcore_size
+c_func
 (paren
-(paren
-r_int
 )paren
-id|high_memory
-op_minus
-id|PAGE_OFFSET
-)paren
-op_plus
-id|PAGE_SIZE
 suffix:semicolon
 id|acc
 op_assign

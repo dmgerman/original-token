@@ -8,9 +8,6 @@ macro_line|#include &quot;hscx.h&quot;
 macro_line|#include &quot;isdnl1.h&quot;
 macro_line|#include &quot;ipac.h&quot;
 macro_line|#include &lt;linux/pci.h&gt;
-macro_line|#ifndef COMPAT_HAS_NEW_PCI
-macro_line|#include &lt;linux/bios32.h&gt;
-macro_line|#endif
 r_extern
 r_const
 r_char
@@ -2755,7 +2752,6 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef COMPAT_HAS_NEW_PCI
 DECL|variable|__initdata
 r_static
 r_struct
@@ -2766,16 +2762,6 @@ id|__initdata
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#else
-DECL|variable|__initdata
-r_static
-r_int
-id|pci_index
-id|__initdata
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
 r_static
 r_int
 DECL|function|setup_gazelpci
@@ -2820,7 +2806,6 @@ id|found
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef COMPAT_HAS_NEW_PCI
 r_if
 c_cond
 (paren
@@ -2842,7 +2827,6 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#endif
 id|seekcard
 op_assign
 id|GAZEL_R685
@@ -2862,7 +2846,6 @@ id|nbseek
 op_increment
 )paren
 (brace
-macro_line|#ifdef COMPAT_HAS_NEW_PCI
 r_if
 c_cond
 (paren
@@ -2887,119 +2870,27 @@ id|dev_tel-&gt;irq
 suffix:semicolon
 id|pci_ioaddr0
 op_assign
-id|get_pcibase
-c_func
-(paren
-id|dev_tel
-comma
+id|dev_tel-&gt;resource
+(braket
 l_int|1
-)paren
+)braket
+dot
+id|start
 suffix:semicolon
 id|pci_ioaddr1
 op_assign
-id|get_pcibase
-c_func
-(paren
-id|dev_tel
-comma
+id|dev_tel-&gt;resource
+(braket
 l_int|2
-)paren
+)braket
+dot
+id|start
 suffix:semicolon
 id|found
 op_assign
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#else
-r_for
-c_loop
-(paren
-suffix:semicolon
-id|pci_index
-OL
-l_int|0xff
-suffix:semicolon
-id|pci_index
-op_increment
-)paren
-(brace
-id|u_char
-id|pci_bus
-comma
-id|pci_device_fn
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|pcibios_find_device
-c_func
-(paren
-id|GAZEL_MANUFACTURER
-comma
-id|seekcard
-comma
-id|pci_index
-comma
-op_amp
-id|pci_bus
-comma
-op_amp
-id|pci_device_fn
-)paren
-op_ne
-id|PCIBIOS_SUCCESSFUL
-)paren
-r_break
-suffix:semicolon
-multiline_comment|/* get IRQ */
-id|pcibios_read_config_byte
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_INTERRUPT_LINE
-comma
-op_amp
-id|pci_irq
-)paren
-suffix:semicolon
-multiline_comment|/* get IO address */
-id|pcibios_read_config_dword
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_BASE_ADDRESS_1
-comma
-op_amp
-id|pci_ioaddr0
-)paren
-suffix:semicolon
-id|pcibios_read_config_dword
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_BASE_ADDRESS_2
-comma
-op_amp
-id|pci_ioaddr1
-)paren
-suffix:semicolon
-id|found
-op_assign
-l_int|1
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-macro_line|#endif /* COMPAT_HAS_NEW_PCI */
 r_if
 c_cond
 (paren
@@ -3034,12 +2925,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-macro_line|#ifndef COMPAT_HAS_NEW_PCI
-id|pci_index
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
 )brace
 )brace
 r_if
@@ -3266,9 +3151,11 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
-id|__init
-DECL|function|setup_gazel
 id|setup_gazel
 c_func
 (paren
@@ -3276,6 +3163,7 @@ r_struct
 id|IsdnCard
 op_star
 id|card
+)paren
 )paren
 (brace
 r_struct

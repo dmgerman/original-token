@@ -556,19 +556,6 @@ comma
 l_string|&quot;MANUFACTURER_RESP&quot;
 )brace
 comma
-macro_line|#if 0
-multiline_comment|/* CAPI 2.0 */
-(brace
-(brace
-l_int|0x05
-comma
-l_int|0x80
-)brace
-comma
-l_string|&quot;LISTEN_REQ (CAPI 2.0)&quot;
-)brace
-comma
-macro_line|#endif
 macro_line|#endif
 (brace
 (brace

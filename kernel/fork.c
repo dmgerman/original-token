@@ -2616,6 +2616,15 @@ id|p-&gt;vfork_sem
 op_assign
 l_int|NULL
 suffix:semicolon
+id|sema_init
+c_func
+(paren
+op_amp
+id|p-&gt;exit_sem
+comma
+l_int|1
+)paren
+suffix:semicolon
 id|p-&gt;sigpending
 op_assign
 l_int|0

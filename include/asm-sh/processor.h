@@ -386,6 +386,46 @@ r_return
 id|t-&gt;pc
 suffix:semicolon
 )brace
+DECL|function|get_wchan
+r_static
+r_inline
+r_int
+r_int
+id|get_wchan
+c_func
+(paren
+r_struct
+id|task_struct
+op_star
+id|p
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|p
+op_logical_or
+id|p
+op_eq
+id|current
+op_logical_or
+id|p-&gt;state
+op_eq
+id|TASK_RUNNING
+)paren
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/* FIXME: here the actual wchan calculation should sit */
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|macro|KSTK_EIP
+mdefine_line|#define KSTK_EIP(tsk)  ((tsk)-&gt;thread.pc)
+DECL|macro|KSTK_ESP
+mdefine_line|#define KSTK_ESP(tsk)  ((tsk)-&gt;thread.sp)
 DECL|macro|THREAD_SIZE
 mdefine_line|#define THREAD_SIZE (2*PAGE_SIZE)
 r_extern

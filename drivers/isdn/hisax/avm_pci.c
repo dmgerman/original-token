@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: avm_pci.c,v 1.11 1999/08/11 21:01:18 keil Exp $&n;&n; * avm_pci.c    low level stuff for AVM Fritz!PCI and ISA PnP isdn cards&n; *              Thanks to AVM, Berlin for informations&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; *&n; * $Log: avm_pci.c,v $&n; * Revision 1.11  1999/08/11 21:01:18  keil&n; * new PCI codefix&n; *&n; * Revision 1.10  1999/08/10 16:01:44  calle&n; * struct pci_dev changed in 2.3.13. Made the necessary changes.&n; *&n; * Revision 1.9  1999/07/12 21:04:57  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 1.8  1999/07/01 08:11:19  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 1.7  1999/02/22 18:26:30  keil&n; * Argh ! ISAC address was only set with PCI&n; *&n; * Revision 1.6  1998/11/27 19:59:28  keil&n; * set subtype for Fritz!PCI&n; *&n; * Revision 1.5  1998/11/27 12:56:45  keil&n; * forgot to update setup function name&n; *&n; * Revision 1.4  1998/11/15 23:53:19  keil&n; * Fritz!PnP; changes from 2.0&n; *&n; * Revision 1.3  1998/09/27 23:53:39  keil&n; * Fix error handling&n; *&n; * Revision 1.2  1998/09/27 12:54:55  keil&n; * bcs assign was lost in setstack, very bad results&n; *&n; * Revision 1.1  1998/08/20 13:47:30  keil&n; * first version&n; *&n; *&n; *&n; */
+multiline_comment|/* $Id: avm_pci.c,v 1.12 1999/09/04 06:20:05 keil Exp $&n;&n; * avm_pci.c    low level stuff for AVM Fritz!PCI and ISA PnP isdn cards&n; *              Thanks to AVM, Berlin for informations&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; *&n; * $Log: avm_pci.c,v $&n; * Revision 1.12  1999/09/04 06:20:05  keil&n; * Changes from kernel set_current_state()&n; *&n; * Revision 1.11  1999/08/11 21:01:18  keil&n; * new PCI codefix&n; *&n; * Revision 1.10  1999/08/10 16:01:44  calle&n; * struct pci_dev changed in 2.3.13. Made the necessary changes.&n; *&n; * Revision 1.9  1999/07/12 21:04:57  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 1.8  1999/07/01 08:11:19  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 1.7  1999/02/22 18:26:30  keil&n; * Argh ! ISAC address was only set with PCI&n; *&n; * Revision 1.6  1998/11/27 19:59:28  keil&n; * set subtype for Fritz!PCI&n; *&n; * Revision 1.5  1998/11/27 12:56:45  keil&n; * forgot to update setup function name&n; *&n; * Revision 1.4  1998/11/15 23:53:19  keil&n; * Fritz!PnP; changes from 2.0&n; *&n; * Revision 1.3  1998/09/27 23:53:39  keil&n; * Fix error handling&n; *&n; * Revision 1.2  1998/09/27 12:54:55  keil&n; * bcs assign was lost in setstack, very bad results&n; *&n; * Revision 1.1  1998/08/20 13:47:30  keil&n; * first version&n; *&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/config.h&gt;
@@ -6,9 +6,6 @@ macro_line|#include &quot;hisax.h&quot;
 macro_line|#include &quot;isac.h&quot;
 macro_line|#include &quot;isdnl1.h&quot;
 macro_line|#include &lt;linux/pci.h&gt;
-macro_line|#ifndef COMPAT_HAS_NEW_PCI
-macro_line|#include &lt;linux/bios32.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/interrupt.h&gt;
 r_extern
 r_const
@@ -25,7 +22,7 @@ r_char
 op_star
 id|avm_pci_rev
 op_assign
-l_string|&quot;$Revision: 1.11 $&quot;
+l_string|&quot;$Revision: 1.12 $&quot;
 suffix:semicolon
 DECL|macro|AVM_FRITZ_PCI
 mdefine_line|#define  AVM_FRITZ_PCI&t;&t;1
@@ -2231,12 +2228,10 @@ comma
 id|bcs-&gt;hw.hdlc.count
 )paren
 suffix:semicolon
-id|idev_kfree_skb
+id|dev_kfree_skb
 c_func
 (paren
 id|bcs-&gt;tx_skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|bcs-&gt;hw.hdlc.count
@@ -2975,12 +2970,10 @@ c_cond
 id|bcs-&gt;tx_skb
 )paren
 (brace
-id|idev_kfree_skb
+id|dev_kfree_skb
 c_func
 (paren
 id|bcs-&gt;tx_skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|bcs-&gt;tx_skb
@@ -3745,9 +3738,11 @@ op_plus
 l_int|2
 )paren
 suffix:semicolon
-id|current-&gt;state
-op_assign
+id|set_current_state
+c_func
+(paren
 id|TASK_INTERRUPTIBLE
+)paren
 suffix:semicolon
 id|schedule_timeout
 c_func
@@ -3788,9 +3783,11 @@ op_plus
 l_int|3
 )paren
 suffix:semicolon
-id|current-&gt;state
-op_assign
+id|set_current_state
+c_func
+(paren
 id|TASK_INTERRUPTIBLE
+)paren
 suffix:semicolon
 id|schedule_timeout
 c_func
@@ -3970,7 +3967,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef COMPAT_HAS_NEW_PCI
 DECL|variable|__initdata
 r_static
 r_struct
@@ -3981,19 +3977,11 @@ id|__initdata
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#else
-DECL|variable|__initdata
-r_static
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
-id|pci_index
-id|__initdata
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
-r_int
-id|__init
-DECL|function|setup_avm_pcipnp
 id|setup_avm_pcipnp
 c_func
 (paren
@@ -4001,6 +3989,7 @@ r_struct
 id|IsdnCard
 op_star
 id|card
+)paren
 )paren
 (brace
 id|u_int
@@ -4085,7 +4074,6 @@ suffix:semicolon
 r_else
 (brace
 macro_line|#if CONFIG_PCI
-macro_line|#ifdef COMPAT_HAS_NEW_PCI
 r_if
 c_cond
 (paren
@@ -4149,13 +4137,12 @@ suffix:semicolon
 )brace
 id|cs-&gt;hw.avm.cfg_reg
 op_assign
-id|get_pcibase
-c_func
-(paren
-id|dev_avm
-comma
+id|dev_avm-&gt;resource
+(braket
 l_int|1
-)paren
+)braket
+dot
+id|start
 op_amp
 id|PCI_BASE_ADDRESS_IO_MASK
 suffix:semicolon
@@ -4195,141 +4182,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#else
-r_for
-c_loop
-(paren
-suffix:semicolon
-id|pci_index
-OL
-l_int|255
-suffix:semicolon
-id|pci_index
-op_increment
-)paren
-(brace
-r_int
-r_char
-id|pci_bus
-comma
-id|pci_device_fn
-suffix:semicolon
-r_int
-r_int
-id|ioaddr
-suffix:semicolon
-r_int
-r_char
-id|irq
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|pcibios_find_device
-(paren
-id|PCI_VENDOR_AVM
-comma
-id|PCI_FRITZPCI_ID
-comma
-id|pci_index
-comma
-op_amp
-id|pci_bus
-comma
-op_amp
-id|pci_device_fn
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-r_continue
-suffix:semicolon
-)brace
-id|pcibios_read_config_byte
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_INTERRUPT_LINE
-comma
-op_amp
-id|irq
-)paren
-suffix:semicolon
-id|pcibios_read_config_dword
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_BASE_ADDRESS_1
-comma
-op_amp
-id|ioaddr
-)paren
-suffix:semicolon
-id|cs-&gt;irq
-op_assign
-id|irq
-suffix:semicolon
-id|cs-&gt;hw.avm.cfg_reg
-op_assign
-id|ioaddr
-op_amp
-id|PCI_BASE_ADDRESS_IO_MASK
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|cs-&gt;hw.avm.cfg_reg
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;FritzPCI: No IO-Adr for PCI card found&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-id|cs-&gt;subtyp
-op_assign
-id|AVM_FRITZ_PCI
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|pci_index
-op_eq
-l_int|255
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;FritzPCI: No PCI card found&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-id|pci_index
-op_increment
-suffix:semicolon
-macro_line|#endif /* COMPAT_HAS_NEW_PCI */
 id|cs-&gt;irq_flags
 op_or_assign
 id|SA_SHIRQ

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isac.c,v 1.23 1999/08/25 16:50:52 keil Exp $&n;&n; * isac.c   ISAC specific routines&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; *&t;&t;This file is (c) under GNU PUBLIC LICENSE&n; *&t;&t;For changes and modifications please read&n; *&t;&t;../../../Documentation/isdn/HiSax.cert&n; *&n; * $Log: isac.c,v $&n; * Revision 1.23  1999/08/25 16:50:52  keil&n; * Fix bugs which cause 2.3.14 hangs (waitqueue init)&n; *&n; * Revision 1.22  1999/08/09 19:04:40  keil&n; * Fix race condition - Thanks to Christer Weinigel&n; *&n; * Revision 1.21  1999/07/12 21:05:17  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 1.20  1999/07/09 08:23:06  keil&n; * Fix ISAC lost TX IRQ handling&n; *&n; * Revision 1.19  1999/07/01 08:11:43  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 1.18  1998/11/15 23:54:51  keil&n; * changes from 2.0&n; *&n; * Revision 1.17  1998/08/13 23:36:37  keil&n; * HiSax 3.1 - don&squot;t work stable with current LinkLevel&n; *&n; * Revision 1.16  1998/05/25 12:58:01  keil&n; * HiSax golden code from certification, Don&squot;t use !!!&n; * No leased lines, no X75, but many changes.&n; *&n; * Revision 1.15  1998/04/15 16:45:32  keil&n; * new init code&n; *&n; * Revision 1.14  1998/04/10 10:35:26  paul&n; * fixed (silly?) warnings from egcs on Alpha.&n; *&n; * Revision 1.13  1998/03/07 22:57:01  tsbogend&n; * made HiSax working on Linux/Alpha&n; *&n; * Revision 1.12  1998/02/12 23:07:40  keil&n; * change for 2.1.86 (removing FREE_READ/FREE_WRITE from [dev]_kfree_skb()&n; *&n; * Revision 1.11  1998/02/09 10:54:49  keil&n; * fixes for leased mode&n; *&n; * Revision 1.10  1998/02/02 13:37:37  keil&n; * new init&n; *&n; * Revision 1.9  1997/11/06 17:09:07  keil&n; * New 2.1 init code&n; *&n; * Revision 1.8  1997/10/29 19:00:03  keil&n; * new layer1,changes for 2.1&n; *&n; * Revision 1.7  1997/10/01 09:21:37  fritz&n; * Removed old compatibility stuff for 2.0.X kernels.&n; * From now on, this code is for 2.1.X ONLY!&n; * Old stuff is still in the separate branch.&n; *&n; * Revision 1.6  1997/08/15 17:47:08  keil&n; * avoid oops because a uninitialised timer&n; *&n; * Revision 1.5  1997/08/07 17:48:49  keil&n; * fix wrong parenthesis&n; *&n; * Revision 1.4  1997/07/30 17:11:59  keil&n; * fixed Timer3&n; *&n; * Revision 1.3  1997/07/27 21:37:40  keil&n; * T3 implemented; supervisor l1timer; B-channel TEST_LOOP&n; *&n; * Revision 1.2  1997/06/26 11:16:15  keil&n; * first version&n; *&n; *&n; */
+multiline_comment|/* $Id: isac.c,v 1.24 1999/10/14 20:25:28 keil Exp $&n;&n; * isac.c   ISAC specific routines&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; *&t;&t;This file is (c) under GNU PUBLIC LICENSE&n; *&t;&t;For changes and modifications please read&n; *&t;&t;../../../Documentation/isdn/HiSax.cert&n; *&n; * $Log: isac.c,v $&n; * Revision 1.24  1999/10/14 20:25:28  keil&n; * add a statistic for error monitoring&n; *&n; * Revision 1.23  1999/08/25 16:50:52  keil&n; * Fix bugs which cause 2.3.14 hangs (waitqueue init)&n; *&n; * Revision 1.22  1999/08/09 19:04:40  keil&n; * Fix race condition - Thanks to Christer Weinigel&n; *&n; * Revision 1.21  1999/07/12 21:05:17  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 1.20  1999/07/09 08:23:06  keil&n; * Fix ISAC lost TX IRQ handling&n; *&n; * Revision 1.19  1999/07/01 08:11:43  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 1.18  1998/11/15 23:54:51  keil&n; * changes from 2.0&n; *&n; * Revision 1.17  1998/08/13 23:36:37  keil&n; * HiSax 3.1 - don&squot;t work stable with current LinkLevel&n; *&n; * Revision 1.16  1998/05/25 12:58:01  keil&n; * HiSax golden code from certification, Don&squot;t use !!!&n; * No leased lines, no X75, but many changes.&n; *&n; * Revision 1.15  1998/04/15 16:45:32  keil&n; * new init code&n; *&n; * Revision 1.14  1998/04/10 10:35:26  paul&n; * fixed (silly?) warnings from egcs on Alpha.&n; *&n; * Revision 1.13  1998/03/07 22:57:01  tsbogend&n; * made HiSax working on Linux/Alpha&n; *&n; * Revision 1.12  1998/02/12 23:07:40  keil&n; * change for 2.1.86 (removing FREE_READ/FREE_WRITE from [dev]_kfree_skb()&n; *&n; * Revision 1.11  1998/02/09 10:54:49  keil&n; * fixes for leased mode&n; *&n; * Revision 1.10  1998/02/02 13:37:37  keil&n; * new init&n; *&n; * Revision 1.9  1997/11/06 17:09:07  keil&n; * New 2.1 init code&n; *&n; * Revision 1.8  1997/10/29 19:00:03  keil&n; * new layer1,changes for 2.1&n; *&n; * Revision 1.7  1997/10/01 09:21:37  fritz&n; * Removed old compatibility stuff for 2.0.X kernels.&n; * From now on, this code is for 2.1.X ONLY!&n; * Old stuff is still in the separate branch.&n; *&n; * Revision 1.6  1997/08/15 17:47:08  keil&n; * avoid oops because a uninitialised timer&n; *&n; * Revision 1.5  1997/08/07 17:48:49  keil&n; * fix wrong parenthesis&n; *&n; * Revision 1.4  1997/07/30 17:11:59  keil&n; * fixed Timer3&n; *&n; * Revision 1.3  1997/07/27 21:37:40  keil&n; * T3 implemented; supervisor l1timer; B-channel TEST_LOOP&n; *&n; * Revision 1.2  1997/06/26 11:16:15  keil&n; * first version&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;hisax.h&quot;
@@ -1098,6 +1098,7 @@ id|exval
 op_amp
 l_int|0x40
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -1113,6 +1114,12 @@ comma
 l_string|&quot;ISAC RDO&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef ERROR_STATISTIC
+id|cs-&gt;err_rx
+op_increment
+suffix:semicolon
+macro_line|#endif
+)brace
 r_if
 c_cond
 (paren
@@ -1123,6 +1130,7 @@ op_amp
 l_int|0x20
 )paren
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -1138,6 +1146,12 @@ comma
 l_string|&quot;ISAC CRC error&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef ERROR_STATISTIC
+id|cs-&gt;err_crc
+op_increment
+suffix:semicolon
+macro_line|#endif
+)brace
 id|cs
 op_member_access_from_pointer
 id|writeisac
@@ -1238,12 +1252,6 @@ l_string|&quot;HiSax: D receive out of memory&bslash;n&quot;
 suffix:semicolon
 r_else
 (brace
-id|SET_SKB_FREE
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
 id|memcpy
 c_func
 (paren
@@ -1407,12 +1415,10 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|idev_kfree_skb
+id|dev_kfree_skb
 c_func
 (paren
 id|cs-&gt;tx_skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|cs-&gt;tx_cnt
@@ -1697,6 +1703,11 @@ id|KERN_WARNING
 l_string|&quot;HiSax: ISAC XDU&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef ERROR_STATISTIC
+id|cs-&gt;err_tx
+op_increment
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -3221,12 +3232,10 @@ c_cond
 id|cs-&gt;tx_skb
 )paren
 (brace
-id|idev_kfree_skb
+id|dev_kfree_skb
 c_func
 (paren
 id|cs-&gt;tx_skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|cs-&gt;tx_skb
@@ -3511,12 +3520,10 @@ c_cond
 id|cs-&gt;tx_skb
 )paren
 (brace
-id|idev_kfree_skb
+id|dev_kfree_skb
 c_func
 (paren
 id|cs-&gt;tx_skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|cs-&gt;tx_cnt

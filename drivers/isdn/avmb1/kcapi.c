@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: kcapi.c,v 1.6 1999/07/20 06:41:49 calle Exp $&n; * &n; * Kernel CAPI 2.0 Module&n; * &n; * (c) Copyright 1999 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; * $Log: kcapi.c,v $&n; * Revision 1.6  1999/07/20 06:41:49  calle&n; * Bugfix: After the redesign of the AVM B1 driver, the driver didn&squot;t even&n; *         compile, if not selected as modules.&n; *&n; * Revision 1.5  1999/07/09 15:05:48  keil&n; * compat.h is now isdn_compat.h&n; *&n; * Revision 1.4  1999/07/08 14:15:17  calle&n; * Forgot to count down ncards in drivercb_detach_ctr.&n; *&n; * Revision 1.3  1999/07/06 07:42:02  calle&n; * - changes in /proc interface&n; * - check and changed calls to [dev_]kfree_skb and [dev_]alloc_skb.&n; *&n; * Revision 1.2  1999/07/05 15:09:52  calle&n; * - renamed &quot;appl_release&quot; to &quot;appl_released&quot;.&n; * - version und profile data now cleared on controller reset&n; * - extended /proc interface, to allow driver and controller specific&n; *   informations to include by driver hackers.&n; *&n; * Revision 1.1  1999/07/01 15:26:42  calle&n; * complete new version (I love it):&n; * + new hardware independed &quot;capi_driver&quot; interface that will make it easy to:&n; *   - support other controllers with CAPI-2.0 (i.e. USB Controller)&n; *   - write a CAPI-2.0 for the passive cards&n; *   - support serial link CAPI-2.0 boxes.&n; * + wrote &quot;capi_driver&quot; for all supported cards.&n; * + &quot;capi_driver&quot; (supported cards) now have to be configured with&n; *   make menuconfig, in the past all supported cards where included&n; *   at once.&n; * + new and better informations in /proc/capi/&n; * + new ioctl to switch trace of capi messages per controller&n; *   using &quot;avmcapictrl trace [contr] on|off|....&quot;&n; * + complete testcircle with all supported cards and also the&n; *   PCMCIA cards (now patch for pcmcia-cs-3.0.13 needed) done.&n; *&n; */
+multiline_comment|/*&n; * $Id: kcapi.c,v 1.10 1999/10/26 15:30:32 calle Exp $&n; * &n; * Kernel CAPI 2.0 Module&n; * &n; * (c) Copyright 1999 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; * $Log: kcapi.c,v $&n; * Revision 1.10  1999/10/26 15:30:32  calle&n; * Generate error message if user want to add card, but driver module is&n; * not loaded.&n; *&n; * Revision 1.9  1999/10/11 22:04:12  keil&n; * COMPAT_NEED_UACCESS (no include in isdn_compat.h)&n; *&n; * Revision 1.8  1999/09/10 17:24:18  calle&n; * Changes for proposed standard for CAPI2.0:&n; * - AK148 &quot;Linux Exention&quot;&n; *&n; * Revision 1.7  1999/09/04 06:20:05  keil&n; * Changes from kernel set_current_state()&n; *&n; * Revision 1.6  1999/07/20 06:41:49  calle&n; * Bugfix: After the redesign of the AVM B1 driver, the driver didn&squot;t even&n; *         compile, if not selected as modules.&n; *&n; * Revision 1.5  1999/07/09 15:05:48  keil&n; * compat.h is now isdn_compat.h&n; *&n; * Revision 1.4  1999/07/08 14:15:17  calle&n; * Forgot to count down ncards in drivercb_detach_ctr.&n; *&n; * Revision 1.3  1999/07/06 07:42:02  calle&n; * - changes in /proc interface&n; * - check and changed calls to [dev_]kfree_skb and [dev_]alloc_skb.&n; *&n; * Revision 1.2  1999/07/05 15:09:52  calle&n; * - renamed &quot;appl_release&quot; to &quot;appl_released&quot;.&n; * - version und profile data now cleared on controller reset&n; * - extended /proc interface, to allow driver and controller specific&n; *   informations to include by driver hackers.&n; *&n; * Revision 1.1  1999/07/01 15:26:42  calle&n; * complete new version (I love it):&n; * + new hardware independed &quot;capi_driver&quot; interface that will make it easy to:&n; *   - support other controllers with CAPI-2.0 (i.e. USB Controller)&n; *   - write a CAPI-2.0 for the passive cards&n; *   - support serial link CAPI-2.0 boxes.&n; * + wrote &quot;capi_driver&quot; for all supported cards.&n; * + &quot;capi_driver&quot; (supported cards) now have to be configured with&n; *   make menuconfig, in the past all supported cards where included&n; *   at once.&n; * + new and better informations in /proc/capi/&n; * + new ioctl to switch trace of capi messages per controller&n; *   using &quot;avmcapictrl trace [contr] on|off|....&quot;&n; * + complete testcircle with all supported cards and also the&n; *   PCMCIA cards (now patch for pcmcia-cs-3.0.13 needed) done.&n; *&n; */
 DECL|macro|CONFIG_AVMB1_COMPAT
 mdefine_line|#define CONFIG_AVMB1_COMPAT
 macro_line|#include &lt;linux/config.h&gt;
@@ -13,7 +13,7 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/tqueue.h&gt;
 macro_line|#include &lt;linux/capi.h&gt;
 macro_line|#include &lt;linux/kernelcapi.h&gt;
-macro_line|#include &lt;linux/isdn_compat.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &quot;capicmd.h&quot;
 macro_line|#include &quot;capiutil.h&quot;
 macro_line|#include &quot;capilli.h&quot;
@@ -26,7 +26,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.6 $&quot;
+l_string|&quot;$Revision: 1.10 $&quot;
 suffix:semicolon
 multiline_comment|/* ------------------------------------------------------------- */
 DECL|macro|CARD_FREE
@@ -227,7 +227,7 @@ id|driver_serial
 id|CAPI_SERIAL_LEN
 )braket
 op_assign
-l_string|&quot;4711&quot;
+l_string|&quot;0004711&quot;
 suffix:semicolon
 DECL|variable|capi_manufakturer
 r_static
@@ -3481,7 +3481,7 @@ r_void
 id|notify_up
 c_func
 (paren
-id|__u16
+id|__u32
 id|contr
 )paren
 (brace
@@ -3548,7 +3548,7 @@ r_void
 id|notify_down
 c_func
 (paren
-id|__u16
+id|__u32
 id|contr
 )paren
 (brace
@@ -3613,7 +3613,7 @@ op_star
 id|dummy
 )paren
 (brace
-id|__u16
+id|__u32
 id|contr
 suffix:semicolon
 r_for
@@ -4986,10 +4986,10 @@ suffix:semicolon
 multiline_comment|/* ------------------------------------------------------------- */
 multiline_comment|/* -------- CAPI2.0 Interface ---------------------------------- */
 multiline_comment|/* ------------------------------------------------------------- */
-DECL|function|capi_installed
+DECL|function|capi_isinstalled
 r_static
-r_int
-id|capi_installed
+id|__u16
+id|capi_isinstalled
 c_func
 (paren
 r_void
@@ -5026,11 +5026,11 @@ op_eq
 id|CARD_RUNNING
 )paren
 r_return
-l_int|1
+id|CAPI_NOERROR
 suffix:semicolon
 )brace
 r_return
-l_int|0
+id|CAPI_REGNOTINSTALLED
 suffix:semicolon
 )brace
 DECL|function|capi_register
@@ -5415,7 +5415,7 @@ id|capi_ncci
 op_star
 id|np
 suffix:semicolon
-r_int
+id|__u32
 id|contr
 suffix:semicolon
 r_int
@@ -5937,7 +5937,7 @@ id|__u16
 id|capi_get_manufacturer
 c_func
 (paren
-id|__u16
+id|__u32
 id|contr
 comma
 id|__u8
@@ -5990,7 +5990,7 @@ op_ne
 id|CARD_RUNNING
 )paren
 r_return
-l_int|0x2002
+id|CAPI_REGNOTINSTALLED
 suffix:semicolon
 id|strncpy
 c_func
@@ -6018,7 +6018,7 @@ id|__u16
 id|capi_get_version
 c_func
 (paren
-id|__u16
+id|__u32
 id|contr
 comma
 r_struct
@@ -6065,7 +6065,7 @@ op_ne
 id|CARD_RUNNING
 )paren
 r_return
-l_int|0x2002
+id|CAPI_REGNOTINSTALLED
 suffix:semicolon
 id|memcpy
 c_func
@@ -6101,7 +6101,7 @@ id|__u16
 id|capi_get_serial
 c_func
 (paren
-id|__u16
+id|__u32
 id|contr
 comma
 id|__u8
@@ -6154,7 +6154,7 @@ op_ne
 id|CARD_RUNNING
 )paren
 r_return
-l_int|0x2002
+id|CAPI_REGNOTINSTALLED
 suffix:semicolon
 id|strncpy
 c_func
@@ -6186,7 +6186,7 @@ id|__u16
 id|capi_get_profile
 c_func
 (paren
-id|__u16
+id|__u32
 id|contr
 comma
 r_struct
@@ -6232,7 +6232,7 @@ op_ne
 id|CARD_RUNNING
 )paren
 r_return
-l_int|0x2002
+id|CAPI_REGNOTINSTALLED
 suffix:semicolon
 id|memcpy
 c_func
@@ -6442,11 +6442,34 @@ c_cond
 (paren
 op_logical_neg
 id|driver
-op_logical_or
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;kcapi: driver not loaded.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 op_logical_neg
 id|driver-&gt;add_card
 )paren
 (brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;kcapi: driver has no add card function.&bslash;n&quot;
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EIO
@@ -6706,9 +6729,11 @@ op_ne
 id|CARD_RUNNING
 )paren
 (brace
-id|current-&gt;state
-op_assign
+id|set_current_state
+c_func
+(paren
 id|TASK_INTERRUPTIBLE
+)paren
 suffix:semicolon
 id|schedule_timeout
 c_func
@@ -6826,9 +6851,11 @@ OG
 id|CARD_DETECTED
 )paren
 (brace
-id|current-&gt;state
-op_assign
+id|set_current_state
+c_func
+(paren
 id|TASK_INTERRUPTIBLE
+)paren
 suffix:semicolon
 id|schedule_timeout
 c_func
@@ -7074,9 +7101,11 @@ op_ne
 id|CARD_FREE
 )paren
 (brace
-id|current-&gt;state
-op_assign
+id|set_current_state
+c_func
+(paren
 id|TASK_INTERRUPTIBLE
+)paren
 suffix:semicolon
 id|schedule_timeout
 c_func
@@ -7269,7 +7298,7 @@ id|capi_interface
 id|avmb1_interface
 op_assign
 (brace
-id|capi_installed
+id|capi_isinstalled
 comma
 id|capi_register
 comma
@@ -7532,6 +7561,26 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_ISDN_DRV_AVMB1_T1PCI
+r_extern
+r_int
+id|t1pci_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_ISDN_DRV_AVMB1_C4
+r_extern
+r_int
+id|c4_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 multiline_comment|/*&n; * init / exit functions&n; */
 macro_line|#ifdef MODULE
@@ -7691,6 +7740,26 @@ macro_line|#ifdef CONFIG_ISDN_DRV_AVMB1_B1PCMCIA
 r_void
 )paren
 id|b1pcmcia_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_ISDN_DRV_AVMB1_T1PCI
+(paren
+r_void
+)paren
+id|t1pci_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_ISDN_DRV_AVMB1_C4
+(paren
+r_void
+)paren
+id|c4_init
 c_func
 (paren
 )paren

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: teleint.c,v 1.9 1999/07/12 21:05:30 keil Exp $&n;&n; * teleint.c     low level stuff for TeleInt isdn cards&n; *&n; * Author     Karsten Keil (keil@isdn4linux.de)&n; *&n; *&n; * $Log: teleint.c,v $&n; * Revision 1.9  1999/07/12 21:05:30  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 1.8  1999/07/01 08:12:12  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 1.7  1998/11/15 23:55:26  keil&n; * changes from 2.0&n; *&n; * Revision 1.6  1998/04/15 16:45:31  keil&n; * new init code&n; *&n; * Revision 1.5  1998/02/02 13:40:47  keil&n; * fast io&n; *&n; * Revision 1.4  1997/11/08 21:35:53  keil&n; * new l1 init&n; *&n; * Revision 1.3  1997/11/06 17:09:30  keil&n; * New 2.1 init code&n; *&n; * Revision 1.2  1997/10/29 18:55:53  keil&n; * changes for 2.1.60 (irq2dev_map)&n; *&n; * Revision 1.1  1997/09/11 17:32:32  keil&n; * new&n; *&n; *&n; */
+multiline_comment|/* $Id: teleint.c,v 1.11 1999/09/04 06:20:06 keil Exp $&n;&n; * teleint.c     low level stuff for TeleInt isdn cards&n; *&n; * Author     Karsten Keil (keil@isdn4linux.de)&n; *&n; *&n; * $Log: teleint.c,v $&n; * Revision 1.11  1999/09/04 06:20:06  keil&n; * Changes from kernel set_current_state()&n; *&n; * Revision 1.10  1999/08/31 11:20:27  paul&n; * various spelling corrections (new checksums may be needed, Karsten!)&n; *&n; * Revision 1.9  1999/07/12 21:05:30  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 1.8  1999/07/01 08:12:12  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 1.7  1998/11/15 23:55:26  keil&n; * changes from 2.0&n; *&n; * Revision 1.6  1998/04/15 16:45:31  keil&n; * new init code&n; *&n; * Revision 1.5  1998/02/02 13:40:47  keil&n; * fast io&n; *&n; * Revision 1.4  1997/11/08 21:35:53  keil&n; * new l1 init&n; *&n; * Revision 1.3  1997/11/06 17:09:30  keil&n; * New 2.1 init code&n; *&n; * Revision 1.2  1997/10/29 18:55:53  keil&n; * changes for 2.1.60 (irq2dev_map)&n; *&n; * Revision 1.1  1997/09/11 17:32:32  keil&n; * new&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;hisax.h&quot;
@@ -19,7 +19,7 @@ r_char
 op_star
 id|TeleInt_revision
 op_assign
-l_string|&quot;$Revision: 1.9 $&quot;
+l_string|&quot;$Revision: 1.11 $&quot;
 suffix:semicolon
 DECL|macro|byteout
 mdefine_line|#define byteout(addr,val) outb(val,addr)
@@ -114,7 +114,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;TeleInt Busy not inaktive&bslash;n&quot;
+l_string|&quot;TeleInt Busy not inactive&bslash;n&quot;
 )paren
 suffix:semicolon
 id|restore_flags
@@ -251,7 +251,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;TeleInt Busy not inaktive&bslash;n&quot;
+l_string|&quot;TeleInt Busy not inactive&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -362,7 +362,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;TeleInt Busy not inaktive&bslash;n&quot;
+l_string|&quot;TeleInt Busy not inactive&bslash;n&quot;
 )paren
 suffix:semicolon
 id|restore_flags
@@ -492,7 +492,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;TeleInt Busy not inaktive&bslash;n&quot;
+l_string|&quot;TeleInt Busy not inactive&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1150,9 +1150,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|current-&gt;state
-op_assign
+id|set_current_state
+c_func
+(paren
 id|TASK_INTERRUPTIBLE
+)paren
 suffix:semicolon
 id|schedule_timeout
 c_func
@@ -1182,9 +1184,11 @@ id|cs-&gt;hw.hfc.cirm
 )paren
 suffix:semicolon
 multiline_comment|/* Reset Off */
-id|current-&gt;state
-op_assign
+id|set_current_state
+c_func
+(paren
 id|TASK_INTERRUPTIBLE
+)paren
 suffix:semicolon
 id|schedule_timeout
 c_func
@@ -1327,9 +1331,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
-id|__init
-DECL|function|setup_TeleInt
 id|setup_TeleInt
 c_func
 (paren
@@ -1337,6 +1343,7 @@ r_struct
 id|IsdnCard
 op_star
 id|card
+)paren
 )paren
 (brace
 r_struct

@@ -257,7 +257,6 @@ id|pcbit_dev
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef COMPAT_HAS_NEW_WAITQ
 id|init_waitqueue_head
 c_func
 (paren
@@ -265,7 +264,6 @@ op_amp
 id|dev-&gt;set_running_wq
 )paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2221,49 +2219,6 @@ id|dev-&gt;b2-&gt;s_refnum
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if 0&t;
-r_if
-c_cond
-(paren
-id|dev-&gt;b1-&gt;s_refnum
-op_eq
-id|refnum
-)paren
-id|chan
-op_assign
-id|dev-&gt;b1
-suffix:semicolon
-r_else
-(brace
-r_if
-c_cond
-(paren
-id|dev-&gt;b2-&gt;s_refnum
-op_eq
-id|refnum
-)paren
-id|chan
-op_assign
-id|dev-&gt;b2
-suffix:semicolon
-r_else
-(brace
-id|chan
-op_assign
-l_int|NULL
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;Connection Confirm - refnum doesn&squot;t match chan&bslash;n&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-)brace
-macro_line|#else
 multiline_comment|/* We just try to find a channel in the right state */
 r_if
 c_cond
@@ -2306,7 +2261,6 @@ r_break
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
 r_if
 c_cond
 (paren

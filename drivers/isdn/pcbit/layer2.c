@@ -1203,16 +1203,6 @@ id|KERN_DEBUG
 l_string|&quot;pcbit_receive: Type 0 frame and read_frame != NULL&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#if 0
-id|pcbit_l2_error
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-macro_line|#else
 multiline_comment|/* discard previous queued frame */
 r_if
 c_cond
@@ -1235,7 +1225,6 @@ id|dev-&gt;read_frame
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#endif
 )brace
 id|frame
 op_assign
@@ -1526,7 +1515,6 @@ c_func
 l_string|&quot;Type 1 frame and no frame queued&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#if 1
 multiline_comment|/* usually after an error: toss frame */
 id|dev-&gt;readptr
 op_add_assign
@@ -1547,14 +1535,6 @@ id|dev-&gt;readptr
 op_sub_assign
 id|BANKLEN
 suffix:semicolon
-macro_line|#else
-id|pcbit_l2_error
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-macro_line|#endif
 r_return
 suffix:semicolon
 )brace

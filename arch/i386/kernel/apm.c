@@ -4592,10 +4592,12 @@ id|acpi_power_off
 op_assign
 id|apm_power_off
 suffix:semicolon
+macro_line|#ifdef CONFIG_MAGIC_SYSRQ
 id|sysrq_power_off
 op_assign
 id|apm_power_off
 suffix:semicolon
+macro_line|#endif
 id|apm_mainloop
 c_func
 (paren

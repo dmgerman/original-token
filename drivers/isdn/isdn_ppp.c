@@ -1,8 +1,5 @@
-multiline_comment|/* $Id: isdn_ppp.c,v 1.52 1999/08/22 20:26:07 calle Exp $&n; *&n; * Linux ISDN subsystem, functions for synchronous PPP (linklevel).&n; *&n; * Copyright 1995,96 by Michael Hipp (Michael.Hipp@student.uni-tuebingen.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Log: isdn_ppp.c,v $&n; * Revision 1.52  1999/08/22 20:26:07  calle&n; * backported changes from kernel 2.3.14:&n; * - several #include &quot;config.h&quot; gone, others come.&n; * - &quot;struct device&quot; changed to &quot;struct net_device&quot; in 2.3.14, added a&n; *   define in isdn_compat.h for older kernel versions.&n; *&n; * Revision 1.51  1999/08/18 16:19:17  hipp&n; * applied MPPP-resize-headroom patch&n; *&n; * Revision 1.50  1999/08/16 07:11:41  hipp&n; * Additional VJ decomp-buffer-size increased from 40 to 128&n; *&n; * Revision 1.49  1999/07/06 07:47:11  calle&n; * bugfix: dev_alloc_skb only reserve 16 bytes. We need to look at the&n; *  &t;hdrlen the driver want. So I changed dev_alloc_skb calls&n; *         to alloc_skb and skb_reserve.&n; *&n; * Revision 1.48  1999/07/01 08:29:56  keil&n; * compatibility to 2.3 kernel&n; *&n; * Revision 1.47  1999/04/18 14:06:59  fritz&n; * Removed TIMRU stuff.&n; *&n; * Revision 1.46  1999/04/12 12:33:35  fritz&n; * Changes from 2.0 tree.&n; *&n; * Revision 1.45  1998/12/30 17:48:24  paul&n; * fixed syncPPP callback out&n; *&n; * Revision 1.44  1998/10/30 17:55:34  he&n; * dialmode for x25iface and multulink ppp&n; *&n; * Revision 1.43  1998/10/29 17:23:54  hipp&n; * Minor MPPP fixes, verboser logging.&n; *&n; * Revision 1.42  1998/07/20 11:30:07  hipp&n; * Readded compression check&n; *&n; * Revision 1.41  1998/07/08 16:50:57  hipp&n; * Compression changes&n; *&n; * Revision 1.40  1998/04/06 19:07:27  hipp&n; * added check, whether compression is enabled.&n; *&n; * Revision 1.39  1998/03/25 22:46:53  hipp&n; * Some additional CCP changes.&n; *&n; * Revision 1.38  1998/03/24 16:33:06  hipp&n; * More CCP changes. BSD compression now &quot;works&quot; on a local loopback link.&n; * Moved some isdn_ppp stuff from isdn.h to isdn_ppp.h&n; *&n; * Revision 1.37  1998/03/22 18:50:49  hipp&n; * Added BSD Compression for syncPPP .. UNTESTED at the moment&n; *&n; * Revision 1.36  1998/03/09 17:46:30  he&n; * merged in 2.1.89 changes&n; *&n; * Revision 1.35  1998/03/07 18:21:11  cal&n; * Dynamic Timeout-Rule-Handling vs. 971110 included&n; *&n; * Revision 1.34  1998/02/25 17:49:48  he&n; * Changed return codes caused be failing copy_{to,from}_user to -EFAULT&n; *&n; * Revision 1.33  1998/02/20 17:11:54  fritz&n; * Changes for recent kernels.&n; *&n; * Revision 1.32  1998/01/31 19:29:55  calle&n; * Merged changes from and for 2.1.82, not tested only compiled ...&n; *&n; * Revision 1.31  1997/10/09 21:29:01  fritz&n; * New HL&lt;-&gt;LL interface:&n; *   New BSENT callback with nr. of bytes included.&n; *   Sending without ACK.&n; *   New L1 error status (not yet in use).&n; *   Cleaned up obsolete structures.&n; * Implemented Cisco-SLARP.&n; * Changed local net-interface data to be dynamically allocated.&n; * Removed old 2.0 compatibility stuff.&n; *&n; * Revision 1.30  1997/10/01 09:20:38  fritz&n; * Removed old compatibility stuff for 2.0.X kernels.&n; * From now on, this code is for 2.1.X ONLY!&n; * Old stuff is still in the separate branch.&n; *&n; * Revision 1.29  1997/08/21 23:11:44  fritz&n; * Added changes for kernels &gt;= 2.1.45&n; *&n; * Revision 1.28  1997/06/17 13:05:57  hipp&n; * Applied Eric&squot;s underflow-patches (slightly modified)&n; * more compression changes (but disabled at the moment)&n; * changed one copy_to_user() to run with enabled IRQs&n; * a few MP changes&n; * changed &squot;proto&squot; handling in the isdn_ppp receive code&n; *&n; * Revision 1.27  1997/03/30 16:51:17  calle&n; * changed calls to copy_from_user/copy_to_user and removed verify_area&n; * were possible.&n; *&n; * Revision 1.26  1997/02/23 16:53:44  hipp&n; * minor cleanup&n; * some initial changes for future PPP compresion&n; * added AC,PC compression for outgoing frames&n; *&n; * Revision 1.25  1997/02/12 20:37:35  hipp&n; * New ioctl() PPPIOCGCALLINFO, minor cleanup&n; *&n; * Revision 1.24  1997/02/11 18:32:56  fritz&n; * Bugfix in isdn_ppp_free_mpqueue().&n; *&n; * Revision 1.23  1997/02/10 11:12:19  fritz&n; * More changes for Kernel 2.1.X compatibility.&n; *&n; * Revision 1.22  1997/02/06 15:03:51  hipp&n; * changed GFP_KERNEL kmalloc to GFP_ATOMIC in isdn_ppp_fill_mpqueue()&n; *&n; * Revision 1.21  1997/02/03 23:29:38  fritz&n; * Reformatted according CodingStyle&n; * Bugfix: removed isdn_ppp_skb_destructor, used by upper layers.&n; * Misc changes for Kernel 2.1.X compatibility.&n; *&n; * Revision 1.20  1996/10/30 12:21:58  fritz&n; * Cosmetic fix: Compiler warning when compiling without MPP.&n; *&n; * Revision 1.19  1996/10/25 19:03:21  hipp&n; * changed/added some defines to (re)allow compilation without MP/VJ&n; *&n; * Revision 1.18  1996/10/22 23:14:00  fritz&n; * Changes for compatibility to 2.0.X and 2.1.X kernels.&n; *&n; * Revision 1.17  1996/10/22 09:39:49  hipp&n; * a few MP changes and bugfixes&n; *&n; * Revision 1.16  1996/09/23 01:58:10  fritz&n; * Fix: With syncPPP encapsulation, discard LCP packets&n; *      when calculating hangup timeout.&n; *&n; * Revision 1.15  1996/09/07 12:50:12  hipp&n; * bugfixes (unknown device after failed dial attempt, minor bugs)&n; *&n; * Revision 1.14  1996/08/12 16:26:47  hipp&n; * code cleanup&n; * changed connection management from minors to slots&n; *&n; * Revision 1.13  1996/07/01 19:47:24  hipp&n; * Fixed memory leak in VJ handling and more VJ changes&n; *&n; * Revision 1.12  1996/06/24 17:42:03  fritz&n; * Minor bugfixes.&n; *&n; * Revision 1.11  1996/06/16 17:46:05  tsbogend&n; * changed unsigned long to u32 to make Alpha people happy&n; *&n; * Revision 1.10  1996/06/11 14:50:29  hipp&n; * Lot of changes and bugfixes.&n; * New scheme to resend packets to busy LL devices.&n; *&n; * Revision 1.9  1996/05/18 01:37:01  fritz&n; * Added spelling corrections and some minor changes&n; * to stay in sync with kernel.&n; *&n; * Revision 1.8  1996/05/06 11:34:55  hipp&n; * fixed a few bugs&n; *&n; * Revision 1.7  1996/04/30 11:07:42  fritz&n; * Added Michael&squot;s ippp-bind patch.&n; *&n; * Revision 1.6  1996/04/30 09:33:09  fritz&n; * Removed compatibility-macros.&n; *&n; * Revision 1.5  1996/04/20 16:32:32  fritz&n; * Changed ippp_table to an array of pointers, allocating each part&n; * separately.&n; *&n; * Revision 1.4  1996/02/19 15:25:50  fritz&n; * Bugfix: Sync-PPP packets got compressed twice, when resent due to&n; * send-queue-full reject.&n; *&n; * Revision 1.3  1996/02/11 02:27:12  fritz&n; * Lot of Bugfixes my Michael.&n; * Moved calls to skb_push() into isdn_net_header()&n; * Fixed a possible race-condition in isdn_ppp_timer_timeout().&n; *&n; * Revision 1.2  1996/01/22 05:08:06  fritz&n; * Merged in Michael&squot;s patches for MP.&n; * Minor changes in isdn_ppp_xmit.&n; *&n; * Revision 1.1  1996/01/09 04:11:29  fritz&n; * Initial revision&n; *&n; */
+multiline_comment|/* $Id: isdn_ppp.c,v 1.60 1999/11/04 20:29:55 he Exp $&n; *&n; * Linux ISDN subsystem, functions for synchronous PPP (linklevel).&n; *&n; * Copyright 1995,96 by Michael Hipp (Michael.Hipp@student.uni-tuebingen.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Log: isdn_ppp.c,v $&n; * Revision 1.60  1999/11/04 20:29:55  he&n; * applied Andre Beck&squot;s reset_free fix&n; *&n; * Revision 1.59  1999/10/31 15:59:50  he&n; * more skb headroom checks&n; *&n; * Revision 1.58  1999/10/30 13:13:01  keil&n; * Henners isdn_ppp_skb_push:under fix&n; *&n; * Revision 1.57  1999/10/05 22:47:17  he&n; * Removed dead ISDN_SYNCPPP_READDRESS code (obsoleted by sysctl_ip_dynaddr&n; * and network address translation)&n; *&n; * Revision 1.56  1999/09/29 16:01:06  he&n; * replaced dev_alloc_skb() for downstream skbs by equivalent alloc_skb()&n; *&n; * Revision 1.55  1999/09/23 22:07:51  detabc&n; *&n; * make ipc_head common usable (for use compressor with raw-ip)&n; * add function before netif_rx(). needed for ipv4-tcp-keepalive-detect.&n; * ~&n; *&n; * Revision 1.54  1999/09/13 23:25:17  he&n; * serialized xmitting frames from isdn_ppp and BSENT statcallb&n; *&n; * Revision 1.53  1999/08/31 11:18:14  paul&n; * various spelling corrections (new checksums may be needed, Karsten!)&n; *&n; * Revision 1.52  1999/08/22 20:26:07  calle&n; * backported changes from kernel 2.3.14:&n; * - several #include &quot;config.h&quot; gone, others come.&n; * - &quot;struct device&quot; changed to &quot;struct net_device&quot; in 2.3.14, added a&n; *   define in isdn_compat.h for older kernel versions.&n; *&n; * Revision 1.51  1999/08/18 16:19:17  hipp&n; * applied MPPP-resize-headroom patch&n; *&n; * Revision 1.50  1999/08/16 07:11:41  hipp&n; * Additional VJ decomp-buffer-size increased from 40 to 128&n; *&n; * Revision 1.49  1999/07/06 07:47:11  calle&n; * bugfix: dev_alloc_skb only reserve 16 bytes. We need to look at the&n; *  &t;hdrlen the driver want. So I changed dev_alloc_skb calls&n; *         to alloc_skb and skb_reserve.&n; *&n; * Revision 1.48  1999/07/01 08:29:56  keil&n; * compatibility to 2.3 kernel&n; *&n; * Revision 1.47  1999/04/18 14:06:59  fritz&n; * Removed TIMRU stuff.&n; *&n; * Revision 1.46  1999/04/12 12:33:35  fritz&n; * Changes from 2.0 tree.&n; *&n; * Revision 1.45  1998/12/30 17:48:24  paul&n; * fixed syncPPP callback out&n; *&n; * Revision 1.44  1998/10/30 17:55:34  he&n; * dialmode for x25iface and multulink ppp&n; *&n; * Revision 1.43  1998/10/29 17:23:54  hipp&n; * Minor MPPP fixes, verboser logging.&n; *&n; * Revision 1.42  1998/07/20 11:30:07  hipp&n; * Readded compression check&n; *&n; * Revision 1.41  1998/07/08 16:50:57  hipp&n; * Compression changes&n; *&n; * Revision 1.40  1998/04/06 19:07:27  hipp&n; * added check, whether compression is enabled.&n; *&n; * Revision 1.39  1998/03/25 22:46:53  hipp&n; * Some additional CCP changes.&n; *&n; * Revision 1.38  1998/03/24 16:33:06  hipp&n; * More CCP changes. BSD compression now &quot;works&quot; on a local loopback link.&n; * Moved some isdn_ppp stuff from isdn.h to isdn_ppp.h&n; *&n; * Revision 1.37  1998/03/22 18:50:49  hipp&n; * Added BSD Compression for syncPPP .. UNTESTED at the moment&n; *&n; * Revision 1.36  1998/03/09 17:46:30  he&n; * merged in 2.1.89 changes&n; *&n; * Revision 1.35  1998/03/07 18:21:11  cal&n; * Dynamic Timeout-Rule-Handling vs. 971110 included&n; *&n; * Revision 1.34  1998/02/25 17:49:48  he&n; * Changed return codes caused be failing copy_{to,from}_user to -EFAULT&n; *&n; * Revision 1.33  1998/02/20 17:11:54  fritz&n; * Changes for recent kernels.&n; *&n; * Revision 1.32  1998/01/31 19:29:55  calle&n; * Merged changes from and for 2.1.82, not tested only compiled ...&n; *&n; * Revision 1.31  1997/10/09 21:29:01  fritz&n; * New HL&lt;-&gt;LL interface:&n; *   New BSENT callback with nr. of bytes included.&n; *   Sending without ACK.&n; *   New L1 error status (not yet in use).&n; *   Cleaned up obsolete structures.&n; * Implemented Cisco-SLARP.&n; * Changed local net-interface data to be dynamically allocated.&n; * Removed old 2.0 compatibility stuff.&n; *&n; * Revision 1.30  1997/10/01 09:20:38  fritz&n; * Removed old compatibility stuff for 2.0.X kernels.&n; * From now on, this code is for 2.1.X ONLY!&n; * Old stuff is still in the separate branch.&n; *&n; * Revision 1.29  1997/08/21 23:11:44  fritz&n; * Added changes for kernels &gt;= 2.1.45&n; *&n; * Revision 1.28  1997/06/17 13:05:57  hipp&n; * Applied Eric&squot;s underflow-patches (slightly modified)&n; * more compression changes (but disabled at the moment)&n; * changed one copy_to_user() to run with enabled IRQs&n; * a few MP changes&n; * changed &squot;proto&squot; handling in the isdn_ppp receive code&n; *&n; * Revision 1.27  1997/03/30 16:51:17  calle&n; * changed calls to copy_from_user/copy_to_user and removed verify_area&n; * were possible.&n; *&n; * Revision 1.26  1997/02/23 16:53:44  hipp&n; * minor cleanup&n; * some initial changes for future PPP compresion&n; * added AC,PC compression for outgoing frames&n; *&n; * Revision 1.25  1997/02/12 20:37:35  hipp&n; * New ioctl() PPPIOCGCALLINFO, minor cleanup&n; *&n; * Revision 1.24  1997/02/11 18:32:56  fritz&n; * Bugfix in isdn_ppp_free_mpqueue().&n; *&n; * Revision 1.23  1997/02/10 11:12:19  fritz&n; * More changes for Kernel 2.1.X compatibility.&n; *&n; * Revision 1.22  1997/02/06 15:03:51  hipp&n; * changed GFP_KERNEL kmalloc to GFP_ATOMIC in isdn_ppp_fill_mpqueue()&n; *&n; * Revision 1.21  1997/02/03 23:29:38  fritz&n; * Reformatted according CodingStyle&n; * Bugfix: removed isdn_ppp_skb_destructor, used by upper layers.&n; * Misc changes for Kernel 2.1.X compatibility.&n; *&n; * Revision 1.20  1996/10/30 12:21:58  fritz&n; * Cosmetic fix: Compiler warning when compiling without MPP.&n; *&n; * Revision 1.19  1996/10/25 19:03:21  hipp&n; * changed/added some defines to (re)allow compilation without MP/VJ&n; *&n; * Revision 1.18  1996/10/22 23:14:00  fritz&n; * Changes for compatibility to 2.0.X and 2.1.X kernels.&n; *&n; * Revision 1.17  1996/10/22 09:39:49  hipp&n; * a few MP changes and bugfixes&n; *&n; * Revision 1.16  1996/09/23 01:58:10  fritz&n; * Fix: With syncPPP encapsulation, discard LCP packets&n; *      when calculating hangup timeout.&n; *&n; * Revision 1.15  1996/09/07 12:50:12  hipp&n; * bugfixes (unknown device after failed dial attempt, minor bugs)&n; *&n; * Revision 1.14  1996/08/12 16:26:47  hipp&n; * code cleanup&n; * changed connection management from minors to slots&n; *&n; * Revision 1.13  1996/07/01 19:47:24  hipp&n; * Fixed memory leak in VJ handling and more VJ changes&n; *&n; * Revision 1.12  1996/06/24 17:42:03  fritz&n; * Minor bugfixes.&n; *&n; * Revision 1.11  1996/06/16 17:46:05  tsbogend&n; * changed unsigned long to u32 to make Alpha people happy&n; *&n; * Revision 1.10  1996/06/11 14:50:29  hipp&n; * Lot of changes and bugfixes.&n; * New scheme to resend packets to busy LL devices.&n; *&n; * Revision 1.9  1996/05/18 01:37:01  fritz&n; * Added spelling corrections and some minor changes&n; * to stay in sync with kernel.&n; *&n; * Revision 1.8  1996/05/06 11:34:55  hipp&n; * fixed a few bugs&n; *&n; * Revision 1.7  1996/04/30 11:07:42  fritz&n; * Added Michael&squot;s ippp-bind patch.&n; *&n; * Revision 1.6  1996/04/30 09:33:09  fritz&n; * Removed compatibility-macros.&n; *&n; * Revision 1.5  1996/04/20 16:32:32  fritz&n; * Changed ippp_table to an array of pointers, allocating each part&n; * separately.&n; *&n; * Revision 1.4  1996/02/19 15:25:50  fritz&n; * Bugfix: Sync-PPP packets got compressed twice, when resent due to&n; * send-queue-full reject.&n; *&n; * Revision 1.3  1996/02/11 02:27:12  fritz&n; * Lot of Bugfixes my Michael.&n; * Moved calls to skb_push() into isdn_net_header()&n; * Fixed a possible race-condition in isdn_ppp_timer_timeout().&n; *&n; * Revision 1.2  1996/01/22 05:08:06  fritz&n; * Merged in Michael&squot;s patches for MP.&n; * Minor changes in isdn_ppp_xmit.&n; *&n; * Revision 1.1  1996/01/09 04:11:29  fritz&n; * Initial revision&n; *&n; */
 multiline_comment|/* TODO: right tbusy handling when using MP */
-multiline_comment|/*&n; * experimental for dynamic addressing: readdress IP frames&n; */
-DECL|macro|ISDN_SYNCPPP_READDRESS
-macro_line|#undef ISDN_SYNCPPP_READDRESS
 DECL|macro|CONFIG_ISDN_CCP
 mdefine_line|#define CONFIG_ISDN_CCP 1
 macro_line|#include &lt;linux/config.h&gt;
@@ -249,6 +246,17 @@ id|is
 suffix:semicolon
 r_static
 r_void
+id|isdn_ppp_ccp_reset_free
+c_func
+(paren
+r_struct
+id|ippp_struct
+op_star
+id|is
+)paren
+suffix:semicolon
+r_static
+r_void
 id|isdn_ppp_ccp_reset_free_state
 c_func
 (paren
@@ -425,7 +433,7 @@ r_char
 op_star
 id|isdn_ppp_revision
 op_assign
-l_string|&quot;$Revision: 1.52 $&quot;
+l_string|&quot;$Revision: 1.60 $&quot;
 suffix:semicolon
 DECL|variable|ippp_table
 r_static
@@ -763,16 +771,6 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* link is down .. set lp to NULL */
-macro_line|#ifdef ISDN_SYNCPPP_READDRESS
-id|is-&gt;old_pa_addr
-op_assign
-l_int|0x0
-suffix:semicolon
-id|is-&gt;old_pa_dstaddr
-op_assign
-l_int|0x0
-suffix:semicolon
-macro_line|#endif
 id|lp-&gt;ppp_slot
 op_assign
 op_minus
@@ -1149,18 +1147,6 @@ id|IPPP_CONNECT
 op_or
 id|IPPP_NOBLOCK
 suffix:semicolon
-macro_line|#ifndef COMPAT_HAS_NEW_WAITQ
-r_if
-c_cond
-(paren
-id|ippp_table
-(braket
-id|lp-&gt;ppp_slot
-)braket
-op_member_access_from_pointer
-id|wq
-)paren
-macro_line|#endif
 id|wake_up_interruptible
 c_func
 (paren
@@ -1211,21 +1197,11 @@ id|ippp_table
 id|slot
 )braket
 suffix:semicolon
-macro_line|#ifdef COMPAT_HAS_NEW_WAITQ
 r_if
 c_cond
 (paren
 id|is-&gt;state
 )paren
-macro_line|#else
-r_if
-c_cond
-(paren
-id|is-&gt;state
-op_logical_and
-id|is-&gt;wq
-)paren
-macro_line|#endif
 id|wake_up_interruptible
 c_func
 (paren
@@ -1352,15 +1328,6 @@ id|ippp_table
 id|slot
 )braket
 suffix:semicolon
-macro_line|#if 0
-r_if
-c_cond
-(paren
-id|is-&gt;debug
-op_amp
-l_int|0x1
-)paren
-macro_line|#endif
 id|printk
 c_func
 (paren
@@ -1461,7 +1428,6 @@ id|is-&gt;tk
 op_assign
 id|current
 suffix:semicolon
-macro_line|#ifdef COMPAT_HAS_NEW_WAITQ
 id|init_waitqueue_head
 c_func
 (paren
@@ -1469,13 +1435,6 @@ op_amp
 id|is-&gt;wq
 )paren
 suffix:semicolon
-macro_line|#else
-id|is-&gt;wq
-op_assign
-l_int|NULL
-suffix:semicolon
-multiline_comment|/* read() wait queue */
-macro_line|#endif
 id|is-&gt;first
 op_assign
 id|is-&gt;rq
@@ -1763,23 +1722,20 @@ id|is-&gt;link_decomp_stat
 op_assign
 l_int|NULL
 suffix:semicolon
+multiline_comment|/* Clean up if necessary */
 r_if
 c_cond
 (paren
 id|is-&gt;reset
 )paren
 (brace
-id|kfree
+id|isdn_ppp_ccp_reset_free
 c_func
 (paren
-id|is-&gt;reset
+id|is
 )paren
 suffix:semicolon
 )brace
-id|is-&gt;reset
-op_assign
-l_int|NULL
-suffix:semicolon
 multiline_comment|/* this slot is ready for new connections */
 id|is-&gt;state
 op_assign
@@ -2356,14 +2312,6 @@ id|val
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#if 0
-r_case
-id|PPPIOCGSTAT
-suffix:colon
-multiline_comment|/* read PPP statistic information */
-r_break
-suffix:semicolon
-macro_line|#endif
 r_case
 id|PPPIOCGIDLE
 suffix:colon
@@ -3351,13 +3299,6 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-macro_line|#ifndef COMPAT_HAS_NEW_WAITQ
-r_if
-c_cond
-(paren
-id|is-&gt;wq
-)paren
-macro_line|#endif
 id|wake_up_interruptible
 c_func
 (paren
@@ -3696,6 +3637,10 @@ r_int
 id|hl
 suffix:semicolon
 r_int
+r_int
+id|flags
+suffix:semicolon
+r_int
 id|cnt
 suffix:semicolon
 r_struct
@@ -3822,6 +3767,17 @@ id|skb
 )paren
 suffix:semicolon
 multiline_comment|/* keeps CCP/compression states in sync */
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3885,6 +3841,12 @@ op_assign
 id|skb
 suffix:semicolon
 )brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 )brace
 )brace
 r_return
@@ -4346,7 +4308,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;isdn_ppp_receice: net_dev != master&bslash;n&quot;
+l_string|&quot;isdn_ppp_receive: net_dev != master&bslash;n&quot;
 )paren
 suffix:semicolon
 id|net_dev
@@ -6121,6 +6083,10 @@ comma
 op_star
 id|ipts
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -6177,28 +6143,6 @@ id|SC_ENABLE_IP
 )paren
 (brace
 multiline_comment|/* PPP connected ? */
-macro_line|#ifdef ISDN_SYNCPPP_READDRESS
-r_if
-c_cond
-(paren
-op_logical_neg
-id|ipts-&gt;old_pa_addr
-)paren
-id|ipts-&gt;old_pa_addr
-op_assign
-id|mdev-&gt;pa_addr
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|ipts-&gt;old_pa_dstaddr
-)paren
-id|ipts-&gt;old_pa_dstaddr
-op_assign
-id|mdev-&gt;pa_dstaddr
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -6236,85 +6180,6 @@ id|proto
 op_assign
 id|PPP_IP
 suffix:semicolon
-macro_line|#ifdef ISDN_SYNCPPP_READDRESS
-r_if
-c_cond
-(paren
-id|ipts-&gt;old_pa_addr
-op_ne
-id|mdev-&gt;pa_addr
-)paren
-(brace
-r_struct
-id|iphdr
-op_star
-id|ipfr
-suffix:semicolon
-id|ipfr
-op_assign
-(paren
-r_struct
-id|iphdr
-op_star
-)paren
-id|skb-&gt;data
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ipts-&gt;debug
-op_amp
-l_int|0x4
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;IF-address changed from %lx to %lx&bslash;n&quot;
-comma
-id|ipts-&gt;old_pa_addr
-comma
-id|mdev-&gt;pa_addr
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|ipfr-&gt;version
-op_eq
-l_int|4
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|ipfr-&gt;saddr
-op_eq
-id|ipts-&gt;old_pa_addr
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;readdressing %lx to %lx&bslash;n&quot;
-comma
-id|ipfr-&gt;saddr
-comma
-id|mdev-&gt;pa_addr
-)paren
-suffix:semicolon
-id|ipfr-&gt;saddr
-op_assign
-id|mdev-&gt;pa_addr
-suffix:semicolon
-)brace
-)brace
-)brace
-multiline_comment|/* dstaddr change not so important */
-macro_line|#endif
 r_break
 suffix:semicolon
 r_case
@@ -6406,7 +6271,7 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t; * after this line .. requeueing in the device queue is no longer allowed!!!&n;&t; */
-multiline_comment|/* Pull off the fake header we stuck on earlier to keep&n;     * the fragemntation code happy.&n;     * this will break the ISDN_SYNCPPP_READDRESS hack a few lines&n;     * above. So, enabling this is no longer allowed&n;     */
+multiline_comment|/* Pull off the fake header we stuck on earlier to keep&n;     * the fragemntation code happy.&n;     */
 id|skb_pull
 c_func
 (paren
@@ -6489,7 +6354,10 @@ id|lp-&gt;isdn_device
 )braket
 op_member_access_from_pointer
 id|interface-&gt;hl_hdrlen
+op_plus
+id|IPPP_MAX_HEADER
 suffix:semicolon
+multiline_comment|/* &n;&t;&t; * Note: hl might still be insufficient because the method&n;&t;&t; * above does not account for a possibible MPPP slave channel&n;&t;&t; * which had larger HL header space requirements than the&n;&t;&t; * master.&n;&t;&t; */
 id|new_skb
 op_assign
 id|alloc_skb
@@ -7130,6 +6998,17 @@ id|lp-&gt;ppp_slot
 )paren
 suffix:semicolon
 )brace
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -7150,7 +7029,7 @@ c_cond
 id|lp-&gt;sav_skb
 )paren
 (brace
-multiline_comment|/* whole sav_skb processing with disabled IRQs ?? */
+multiline_comment|/* should never happen as sav_skb are sent with disabled IRQs) */
 id|printk
 c_func
 (paren
@@ -7173,6 +7052,12 @@ op_assign
 id|skb
 suffix:semicolon
 )brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -7469,48 +7354,6 @@ op_or
 id|SC_IN_SHORT_SEQ
 )paren
 suffix:semicolon
-macro_line|#if 0
-r_if
-c_cond
-(paren
-id|ippp_table
-(braket
-id|nlp-&gt;ppp_slot
-)braket
-op_member_access_from_pointer
-id|mpppcfg
-op_ne
-id|ippp_table
-(braket
-id|lp-&gt;ppp_slot
-)braket
-op_member_access_from_pointer
-id|mpppcfg
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;isdn_ppp_bundle: different MP options %04x and %04x&bslash;n&quot;
-comma
-id|ippp_table
-(braket
-id|nlp-&gt;ppp_slot
-)braket
-op_member_access_from_pointer
-id|mpppcfg
-comma
-id|ippp_table
-(braket
-id|lp-&gt;ppp_slot
-)braket
-op_member_access_from_pointer
-id|mpppcfg
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 id|restore_flags
 c_func
 (paren
@@ -8868,19 +8711,6 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-macro_line|#if 0
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;ippp, dev_ioctl: cmd %#08x , %d &bslash;n&quot;
-comma
-id|cmd
-comma
-id|lp-&gt;ppp_slot
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -9419,6 +9249,12 @@ id|p
 suffix:semicolon
 r_int
 id|count
+comma
+id|hl
+suffix:semicolon
+r_int
+r_int
+id|flags
 suffix:semicolon
 r_int
 id|cnt
@@ -9432,14 +9268,27 @@ op_assign
 id|is-&gt;lp
 suffix:semicolon
 multiline_comment|/* Alloc large enough skb */
+id|hl
+op_assign
+id|dev-&gt;drv
+(braket
+id|lp-&gt;isdn_device
+)braket
+op_member_access_from_pointer
+id|interface-&gt;hl_hdrlen
+suffix:semicolon
 id|skb
 op_assign
-id|dev_alloc_skb
+id|alloc_skb
 c_func
 (paren
 id|len
 op_plus
+id|hl
+op_plus
 l_int|16
+comma
+id|GFP_ATOMIC
 )paren
 suffix:semicolon
 r_if
@@ -9459,6 +9308,14 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|skb_reserve
+c_func
+(paren
+id|skb
+comma
+id|hl
+)paren
+suffix:semicolon
 multiline_comment|/* We may need to stuff an address and control field first */
 r_if
 c_cond
@@ -9620,6 +9477,17 @@ id|count
 op_assign
 id|skb-&gt;len
 suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -9683,6 +9551,12 @@ op_assign
 id|skb
 suffix:semicolon
 )brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/* Allocate the reset state vector */
 DECL|function|isdn_ppp_ccp_reset_alloc
@@ -9703,13 +9577,6 @@ r_struct
 id|ippp_ccp_reset
 op_star
 id|r
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;ippp_ccp: allocating reset data structure&bslash;n&quot;
-)paren
 suffix:semicolon
 id|r
 op_assign
@@ -9732,6 +9599,14 @@ op_logical_neg
 id|r
 )paren
 (brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;ippp_ccp: failed to allocate reset data&quot;
+l_string|&quot; structure - no mem&bslash;n&quot;
+)paren
+suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
@@ -9750,12 +9625,96 @@ id|ippp_ccp_reset
 )paren
 )paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;ippp_ccp: allocated reset data structure %p&bslash;n&quot;
+comma
+id|r
+)paren
+suffix:semicolon
 id|is-&gt;reset
 op_assign
 id|r
 suffix:semicolon
 r_return
 id|r
+suffix:semicolon
+)brace
+multiline_comment|/* Destroy the reset state vector. Kill all pending timers first. */
+DECL|function|isdn_ppp_ccp_reset_free
+r_static
+r_void
+id|isdn_ppp_ccp_reset_free
+c_func
+(paren
+r_struct
+id|ippp_struct
+op_star
+id|is
+)paren
+(brace
+r_int
+r_int
+id|id
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;ippp_ccp: freeing reset data structure %p&bslash;n&quot;
+comma
+id|is-&gt;reset
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|id
+op_assign
+l_int|0
+suffix:semicolon
+id|id
+OL
+l_int|256
+suffix:semicolon
+id|id
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|is-&gt;reset-&gt;rs
+(braket
+id|id
+)braket
+)paren
+(brace
+id|isdn_ppp_ccp_reset_free_state
+c_func
+(paren
+id|is
+comma
+(paren
+r_int
+r_char
+)paren
+id|id
+)paren
+suffix:semicolon
+)brace
+)brace
+id|kfree
+c_func
+(paren
+id|is-&gt;reset
+)paren
+suffix:semicolon
+id|is-&gt;reset
+op_assign
+l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/* Free a given state and clear everything up for later reallocation */
@@ -11092,24 +11051,9 @@ id|type
 )paren
 (brace
 multiline_comment|/* type=1 =&gt; Link compression */
-macro_line|#if 0
-id|compressor
-op_assign
-id|is-&gt;link_compressor
-suffix:semicolon
-id|stat
-op_assign
-id|is-&gt;link_comp_stat
-suffix:semicolon
-id|new_proto
-op_assign
-id|PPP_LINK_COMP
-suffix:semicolon
-macro_line|#else
 r_return
 id|skb_in
 suffix:semicolon
-macro_line|#endif
 )brace
 r_else
 (brace
@@ -11184,7 +11128,7 @@ suffix:semicolon
 multiline_comment|/* Allow for at least 150 % expansion (for now) */
 id|skb_out
 op_assign
-id|dev_alloc_skb
+id|alloc_skb
 c_func
 (paren
 id|skb_in-&gt;len
@@ -11194,6 +11138,14 @@ op_div
 l_int|2
 op_plus
 l_int|32
+op_plus
+id|skb_headroom
+c_func
+(paren
+id|skb_in
+)paren
+comma
+id|GFP_ATOMIC
 )paren
 suffix:semicolon
 r_if
@@ -11207,6 +11159,18 @@ r_return
 id|skb_in
 suffix:semicolon
 )brace
+id|skb_reserve
+c_func
+(paren
+id|skb_out
+comma
+id|skb_headroom
+c_func
+(paren
+id|skb_in
+)paren
+)paren
+suffix:semicolon
 id|ret
 op_assign
 (paren
@@ -12468,6 +12432,34 @@ l_string|&quot;decompressor&quot;
 comma
 id|num
 )paren
+suffix:semicolon
+)brace
+multiline_comment|/* If is has no valid reset state vector, we cannot allocate a&n;&t;   decompressor. The decompressor would cause reset transactions&n;&t;   sooner or later, and they need that vector. */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|data-&gt;flags
+op_amp
+id|IPPP_COMP_FLAG_XMIT
+)paren
+op_logical_and
+op_logical_neg
+id|is-&gt;reset
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;ippp_ccp: no reset data structure - can&squot;t&quot;
+l_string|&quot; allow decompression.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENOMEM
 suffix:semicolon
 )brace
 r_while

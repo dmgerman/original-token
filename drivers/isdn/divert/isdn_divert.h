@@ -1,4 +1,4 @@
-multiline_comment|/* &n; * $Id: isdn_divert.h,v 1.3 1999/08/22 20:26:37 calle Exp $&n; *&n; * Header for the diversion supplementary ioctl interface.&n; *&n; * Copyright 1998       by Werner Cornelius (werner@ikt.de)&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdn_divert.h,v $&n; * Revision 1.3  1999/08/22 20:26:37  calle&n; * backported changes from kernel 2.3.14:&n; * - several #include &quot;config.h&quot; gone, others come.&n; * - &quot;struct device&quot; changed to &quot;struct net_device&quot; in 2.3.14, added a&n; *   define in isdn_compat.h for older kernel versions.&n; *&n; * Revision 1.2  1999/07/04 21:37:33  werner&n; * Ported from kernel version 2.0&n; *&n; *&n; *&n; */
+multiline_comment|/* &n; * $Id: isdn_divert.h,v 1.4 1999/09/02 13:24:12 paul Exp $&n; *&n; * Header for the diversion supplementary ioctl interface.&n; *&n; * Copyright 1998       by Werner Cornelius (werner@ikt.de)&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdn_divert.h,v $&n; * Revision 1.4  1999/09/02 13:24:12  paul&n; * cosmetics; text following #endif is not ANSI C&n; *&n; * Revision 1.3  1999/08/22 20:26:37  calle&n; * backported changes from kernel 2.3.14:&n; * - several #include &quot;config.h&quot; gone, others come.&n; * - &quot;struct device&quot; changed to &quot;struct net_device&quot; in 2.3.14, added a&n; *   define in isdn_compat.h for older kernel versions.&n; *&n; * Revision 1.2  1999/07/04 21:37:33  werner&n; * Ported from kernel version 2.0&n; *&n; */
 macro_line|#include &lt;linux/ioctl.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 multiline_comment|/******************************************/
@@ -232,7 +232,7 @@ macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/isdnif.h&gt;
 macro_line|#include &lt;linux/isdn_divertif.h&gt;
 DECL|macro|AUTODEL_TIME
-mdefine_line|#define AUTODEL_TIME 30 /* timeout in s to delete internal entrys */
+mdefine_line|#define AUTODEL_TIME 30 /* timeout in s to delete internal entries */
 multiline_comment|/**************************************************/
 multiline_comment|/* structure keeping ascii info for device output */
 multiline_comment|/**************************************************/
@@ -379,5 +379,5 @@ id|ulong
 op_star
 )paren
 suffix:semicolon
-macro_line|#endif __KERNEL__
+macro_line|#endif /* __KERNEL__ */
 eof

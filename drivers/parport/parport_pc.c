@@ -314,9 +314,10 @@ r_return
 op_minus
 id|EBUSY
 suffix:semicolon
-id|current-&gt;state
-op_assign
+id|__set_current_state
+(paren
 id|TASK_INTERRUPTIBLE
+)paren
 suffix:semicolon
 id|schedule_timeout
 (paren

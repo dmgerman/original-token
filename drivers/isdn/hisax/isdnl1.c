@@ -707,12 +707,10 @@ comma
 id|skb-&gt;len
 )paren
 suffix:semicolon
-id|idev_kfree_skb
+id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 r_return
@@ -749,12 +747,10 @@ comma
 l_string|&quot;D-channel frame wrong EA0/EA1&quot;
 )paren
 suffix:semicolon
-id|idev_kfree_skb
+id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 r_return
@@ -940,12 +936,10 @@ id|stptr-&gt;next
 suffix:semicolon
 )brace
 )brace
-id|idev_kfree_skb
+id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 )brace
@@ -1011,12 +1005,10 @@ c_cond
 op_logical_neg
 id|found
 )paren
-id|idev_kfree_skb
+id|dev_kfree_skb
 c_func
 (paren
 id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 )brace

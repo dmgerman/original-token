@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isdn_v110.c,v 1.2 1998/02/22 19:44:25 fritz Exp $&n;&n; * Linux ISDN subsystem, V.110 related functions (linklevel).&n; *&n; * Copyright by Thomas Pfeiffer (pfeiffer@pds.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Log: isdn_v110.c,v $&n; * Revision 1.2  1998/02/22 19:44:25  fritz&n; * Bugfixes and improvements regarding V.110, V.110 now running.&n; *&n; * Revision 1.1  1998/02/20 17:32:09  fritz&n; * First checkin (not yet completely functionable).&n; *&n; */
+multiline_comment|/* $Id: isdn_v110.c,v 1.3 1999/10/30 09:49:28 keil Exp $&n;&n; * Linux ISDN subsystem, V.110 related functions (linklevel).&n; *&n; * Copyright by Thomas Pfeiffer (pfeiffer@pds.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Log: isdn_v110.c,v $&n; * Revision 1.3  1999/10/30 09:49:28  keil&n; * Reinit of v110 structs&n; *&n; * Revision 1.2  1998/02/22 19:44:25  fritz&n; * Bugfixes and improvements regarding V.110, V.110 now running.&n; *&n; * Revision 1.1  1998/02/20 17:32:09  fritz&n; * First checkin (not yet completely functionable).&n; *&n; */
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -12,7 +12,7 @@ r_char
 op_star
 id|isdn_v110_revision
 op_assign
-l_string|&quot;$Revision: 1.2 $&quot;
+l_string|&quot;$Revision: 1.3 $&quot;
 suffix:semicolon
 DECL|macro|V110_38400
 mdefine_line|#define V110_38400 255
@@ -683,7 +683,6 @@ id|v
 suffix:semicolon
 )brace
 multiline_comment|/* isdn_v110_close frees private V.110 data structures */
-r_static
 r_void
 DECL|function|isdn_v110_close
 id|isdn_v110_close
@@ -711,62 +710,6 @@ id|KERN_DEBUG
 l_string|&quot;v110 close&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#if 0
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;isdn_v110_close: nbytes=%d&bslash;n&quot;
-comma
-id|v-&gt;nbytes
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;isdn_v110_close: nbits=%d&bslash;n&quot;
-comma
-id|v-&gt;nbits
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;isdn_v110_close: key=%d&bslash;n&quot;
-comma
-id|v-&gt;key
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;isdn_v110_close: SyncInit=%d&bslash;n&quot;
-comma
-id|v-&gt;SyncInit
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;isdn_v110:close: decodelen=%d&bslash;n&quot;
-comma
-id|v-&gt;decodelen
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;isdn_v110_close: framelen=%d&bslash;n&quot;
-comma
-id|v-&gt;framelen
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#endif
 id|kfree
 c_func

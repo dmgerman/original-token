@@ -2129,6 +2129,10 @@ l_string|&quot;Atari Builtin&quot;
 suffix:semicolon
 id|fix-&gt;smem_start
 op_assign
+(paren
+r_int
+r_int
+)paren
 id|real_screen_base
 suffix:semicolon
 id|fix-&gt;smem_len
@@ -3713,6 +3717,10 @@ l_string|&quot;Atari Builtin&quot;
 suffix:semicolon
 id|fix-&gt;smem_start
 op_assign
+(paren
+r_int
+r_int
+)paren
 id|real_screen_base
 suffix:semicolon
 id|fix-&gt;smem_len
@@ -7891,6 +7899,10 @@ l_string|&quot;Atari Builtin&quot;
 suffix:semicolon
 id|fix-&gt;smem_start
 op_assign
+(paren
+r_int
+r_int
+)paren
 id|real_screen_base
 suffix:semicolon
 id|fix-&gt;smem_len
@@ -9576,6 +9588,10 @@ l_string|&quot;Unknown Extern&quot;
 suffix:semicolon
 id|fix-&gt;smem_start
 op_assign
+(paren
+r_int
+r_int
+)paren
 id|external_addr
 suffix:semicolon
 id|fix-&gt;smem_len
@@ -11179,6 +11195,10 @@ l_int|0
 suffix:semicolon
 id|display-&gt;screen_base
 op_assign
+(paren
+r_void
+op_star
+)paren
 id|fix.smem_start
 suffix:semicolon
 id|display-&gt;visual

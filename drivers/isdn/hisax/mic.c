@@ -833,9 +833,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
-id|__init
-DECL|function|setup_mic
 id|setup_mic
 c_func
 (paren
@@ -843,6 +845,7 @@ r_struct
 id|IsdnCard
 op_star
 id|card
+)paren
 )paren
 (brace
 r_int

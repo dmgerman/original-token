@@ -1,4 +1,4 @@
-multiline_comment|/* &n; * $Id: isdn_divert.c,v 1.4 1999/08/25 20:02:21 werner Exp $&n; *&n; * DSS1 main diversion supplementary handling for i4l.&n; *&n; * Copyright 1999       by Werner Cornelius (werner@isdn4linux.de)&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdn_divert.c,v $&n; * Revision 1.4  1999/08/25 20:02:21  werner&n; * Changed return values for stat_icall(w) from 3-&gt;4 and 4-&gt;5 because of conflicts&n; * with existing software definitions. (PtP incomplete called party number)&n; *&n; * Revision 1.3  1999/08/22 20:26:35  calle&n; * backported changes from kernel 2.3.14:&n; * - several #include &quot;config.h&quot; gone, others come.&n; * - &quot;struct device&quot; changed to &quot;struct net_device&quot; in 2.3.14, added a&n; *   define in isdn_compat.h for older kernel versions.&n; *&n; * Revision 1.2  1999/07/04 21:37:32  werner&n; * Ported from kernel version 2.0&n; *&n; *&n; *&n; */
+multiline_comment|/* &n; * $Id: isdn_divert.c,v 1.5 1999/08/31 11:20:04 paul Exp $&n; *&n; * DSS1 main diversion supplementary handling for i4l.&n; *&n; * Copyright 1999       by Werner Cornelius (werner@isdn4linux.de)&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdn_divert.c,v $&n; * Revision 1.5  1999/08/31 11:20:04  paul&n; * various spelling corrections (new checksums may be needed, Karsten!)&n; *&n; * Revision 1.4  1999/08/25 20:02:21  werner&n; * Changed return values for stat_icall(w) from 3-&gt;4 and 4-&gt;5 because of conflicts&n; * with existing software definitions. (PtP incomplete called party number)&n; *&n; * Revision 1.3  1999/08/22 20:26:35  calle&n; * backported changes from kernel 2.3.14:&n; * - several #include &quot;config.h&quot; gone, others come.&n; * - &quot;struct device&quot; changed to &quot;struct net_device&quot; in 2.3.14, added a&n; *   define in isdn_compat.h for older kernel versions.&n; *&n; * Revision 1.2  1999/07/04 21:37:32  werner&n; * Ported from kernel version 2.0&n; *&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
@@ -2394,7 +2394,7 @@ c_func
 (paren
 id|ic-&gt;parm.setup.eazmsn
 comma
-l_string|&quot;Testtext direkt&quot;
+l_string|&quot;Testtext direct&quot;
 )paren
 suffix:semicolon
 id|ic-&gt;parm.setup.screen
@@ -3883,92 +3883,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-macro_line|#if 0
-id|sprintf
-c_func
-(paren
-id|st
-comma
-l_string|&quot;0x%lx 0x%lx&quot;
-comma
-id|ic-&gt;arg
-comma
-id|ic-&gt;parm.dss1_io.ll_id
-)paren
-suffix:semicolon
-id|p
-op_assign
-id|st
-op_plus
-id|strlen
-c_func
-(paren
-id|st
-)paren
-suffix:semicolon
-id|p1
-op_assign
-id|ic-&gt;parm.dss1_io.data
-suffix:semicolon
-id|i
-op_assign
-id|ic-&gt;parm.dss1_io.datalen
-suffix:semicolon
-r_while
-c_loop
-(paren
-(paren
-id|i
-OG
-l_int|0
-)paren
-op_logical_and
-(paren
-id|p
-op_minus
-id|st
-OL
-l_int|530
-)paren
-)paren
-(brace
-id|p
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|p
-comma
-l_string|&quot; %02x&quot;
-comma
-(paren
-op_star
-id|p1
-op_increment
-)paren
-op_amp
-l_int|0xFF
-)paren
-suffix:semicolon
-id|i
-op_decrement
-suffix:semicolon
-)brace
-id|sprintf
-c_func
-(paren
-id|p
-comma
-l_string|&quot;&bslash;n&quot;
-)paren
-suffix:semicolon
-id|put_info_buffer
-c_func
-(paren
-id|st
-)paren
-suffix:semicolon
-macro_line|#endif
 r_break
 suffix:semicolon
 r_default

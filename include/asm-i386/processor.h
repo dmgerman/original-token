@@ -1054,6 +1054,21 @@ l_int|3
 )braket
 suffix:semicolon
 )brace
+r_int
+r_int
+id|get_wchan
+c_func
+(paren
+r_struct
+id|task_struct
+op_star
+id|p
+)paren
+suffix:semicolon
+DECL|macro|KSTK_EIP
+mdefine_line|#define KSTK_EIP(tsk)&t;(((unsigned long *)(4096+(unsigned long)(tsk)))[1019])
+DECL|macro|KSTK_ESP
+mdefine_line|#define KSTK_ESP(tsk)&t;(((unsigned long *)(4096+(unsigned long)(tsk)))[1022])
 DECL|macro|THREAD_SIZE
 mdefine_line|#define THREAD_SIZE (2*PAGE_SIZE)
 DECL|macro|alloc_task_struct

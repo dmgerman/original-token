@@ -614,4 +614,11 @@ id|screen_info
 )paren
 suffix:semicolon
 macro_line|#endif
+DECL|variable|get_wchan
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|get_wchan
+)paren
+suffix:semicolon
 eof

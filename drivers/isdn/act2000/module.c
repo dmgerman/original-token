@@ -1,12 +1,12 @@
-multiline_comment|/* $Id: module.c,v 1.9 1999/04/12 13:13:56 fritz Exp $&n; *&n; * ISDN lowlevel-module for the IBM ISDN-S0 Active 2000.&n; *&n; * Copyright 1998 by Fritz Elfert (fritz@isdn4linux.de)&n; * Thanks to Friedemann Baitinger and IBM Germany&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: module.c,v $&n; * Revision 1.9  1999/04/12 13:13:56  fritz&n; * Made cards pointer static to avoid name-clash.&n; *&n; * Revision 1.8  1998/11/05 22:12:51  fritz&n; * Changed mail-address.&n; *&n; * Revision 1.7  1998/02/12 23:06:52  keil&n; * change for 2.1.86 (removing FREE_READ/FREE_WRITE from [dev]_kfree_skb()&n; *&n; * Revision 1.6  1998/01/31 22:10:42  keil&n; * changes for 2.1.82&n; *&n; * Revision 1.5  1997/10/09 22:23:04  fritz&n; * New HL&lt;-&gt;LL interface:&n; *   New BSENT callback with nr. of bytes included.&n; *   Sending without ACK.&n; *&n; * Revision 1.4  1997/09/25 17:25:43  fritz&n; * Support for adding cards at runtime.&n; * Support for new Firmware.&n; *&n; * Revision 1.3  1997/09/24 23:11:45  fritz&n; * Optimized IRQ load and polling-mode.&n; *&n; * Revision 1.2  1997/09/24 19:44:17  fritz&n; * Added MSN mapping support, some cleanup.&n; *&n; * Revision 1.1  1997/09/23 18:00:13  fritz&n; * New driver for IBM Active 2000.&n; *&n; */
+multiline_comment|/* $Id: module.c,v 1.11 1999/10/30 09:48:04 keil Exp $&n; *&n; * ISDN lowlevel-module for the IBM ISDN-S0 Active 2000.&n; *&n; * Copyright 1998 by Fritz Elfert (fritz@isdn4linux.de)&n; * Thanks to Friedemann Baitinger and IBM Germany&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: module.c,v $&n; * Revision 1.11  1999/10/30 09:48:04  keil&n; * miss one prefix act2000&n; *&n; * Revision 1.10  1999/10/24 18:46:05  fritz&n; * Changed isa_ prefix to act2000_isa_ to prevent name-clash in latest&n; * kernels.&n; *&n; * Revision 1.9  1999/04/12 13:13:56  fritz&n; * Made cards pointer static to avoid name-clash.&n; *&n; * Revision 1.8  1998/11/05 22:12:51  fritz&n; * Changed mail-address.&n; *&n; * Revision 1.7  1998/02/12 23:06:52  keil&n; * change for 2.1.86 (removing FREE_READ/FREE_WRITE from [dev]_kfree_skb()&n; *&n; * Revision 1.6  1998/01/31 22:10:42  keil&n; * changes for 2.1.82&n; *&n; * Revision 1.5  1997/10/09 22:23:04  fritz&n; * New HL&lt;-&gt;LL interface:&n; *   New BSENT callback with nr. of bytes included.&n; *   Sending without ACK.&n; *&n; * Revision 1.4  1997/09/25 17:25:43  fritz&n; * Support for adding cards at runtime.&n; * Support for new Firmware.&n; *&n; * Revision 1.3  1997/09/24 23:11:45  fritz&n; * Optimized IRQ load and polling-mode.&n; *&n; * Revision 1.2  1997/09/24 19:44:17  fritz&n; * Added MSN mapping support, some cleanup.&n; *&n; * Revision 1.1  1997/09/23 18:00:13  fritz&n; * New driver for IBM Active 2000.&n; *&n; */
 macro_line|#include &quot;act2000.h&quot;
 macro_line|#include &quot;act2000_isa.h&quot;
 macro_line|#include &quot;capi.h&quot;
-DECL|variable|isa_ports
+DECL|variable|act2000_isa_ports
 r_static
 r_int
 r_int
-id|isa_ports
+id|act2000_isa_ports
 (braket
 )braket
 op_assign
@@ -42,7 +42,7 @@ comma
 )brace
 suffix:semicolon
 DECL|macro|ISA_NRPORTS
-mdefine_line|#define ISA_NRPORTS (sizeof(isa_ports)/sizeof(unsigned short))
+mdefine_line|#define ISA_NRPORTS (sizeof(act2000_isa_ports)/sizeof(unsigned short))
 DECL|variable|cards
 r_static
 id|act2000_card
@@ -822,7 +822,7 @@ id|card-&gt;bus
 r_case
 id|ACT2000_BUS_ISA
 suffix:colon
-id|isa_send
+id|act2000_isa_send
 c_func
 (paren
 id|card
@@ -870,7 +870,7 @@ id|card-&gt;bus
 r_case
 id|ACT2000_BUS_ISA
 suffix:colon
-id|isa_receive
+id|act2000_isa_receive
 c_func
 (paren
 id|card
@@ -1050,7 +1050,7 @@ id|ACT2000_BUS_ISA
 suffix:colon
 id|ret
 op_assign
-id|isa_download
+id|act2000_isa_download
 c_func
 (paren
 id|card
@@ -3187,11 +3187,6 @@ id|ISDN_FEATURE_L2_X75I
 op_or
 id|ISDN_FEATURE_L2_HDLC
 op_or
-macro_line|#if 0
-multiline_comment|/* Not yet! New Firmware is on the way ... */
-id|ISDN_FEATURE_L2_TRANS
-op_or
-macro_line|#endif
 id|ISDN_FEATURE_L3_TRANS
 op_or
 id|ISDN_FEATURE_P_UNKNOWN
@@ -3426,7 +3421,7 @@ id|card-&gt;bus
 r_case
 id|ACT2000_BUS_ISA
 suffix:colon
-id|isa_release
+id|act2000_isa_release
 c_func
 (paren
 id|card
@@ -3563,10 +3558,10 @@ op_increment
 r_if
 c_cond
 (paren
-id|isa_detect
+id|act2000_isa_detect
 c_func
 (paren
-id|isa_ports
+id|act2000_isa_ports
 (braket
 id|i
 )braket
@@ -3579,7 +3574,7 @@ c_func
 id|KERN_INFO
 l_string|&quot;act2000: Detected ISA card at port 0x%x&bslash;n&quot;
 comma
-id|isa_ports
+id|act2000_isa_ports
 (braket
 id|i
 )braket
@@ -3590,7 +3585,7 @@ c_func
 (paren
 id|bus
 comma
-id|isa_ports
+id|act2000_isa_ports
 (braket
 id|i
 )braket
@@ -3668,7 +3663,7 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|isa_detect
+id|act2000_isa_detect
 c_func
 (paren
 id|p-&gt;port
@@ -3689,7 +3684,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|isa_config_port
+id|act2000_isa_config_port
 c_func
 (paren
 id|p
@@ -3723,7 +3718,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|isa_config_irq
+id|act2000_isa_config_irq
 c_func
 (paren
 id|p

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: bkm_a4t.c,v 1.7 1999/08/22 20:26:55 calle Exp $&n; * bkm_a4t.c    low level stuff for T-Berkom A4T&n; *              derived from the original file sedlbauer.c&n; *              derived from the original file niccy.c&n; *              derived from the original file netjet.c&n; *&n; * Author       Roland Klabunde (R.Klabunde@Berkom.de)&n; *&n; * $Log: bkm_a4t.c,v $&n; * Revision 1.7  1999/08/22 20:26:55  calle&n; * backported changes from kernel 2.3.14:&n; * - several #include &quot;config.h&quot; gone, others come.&n; * - &quot;struct device&quot; changed to &quot;struct net_device&quot; in 2.3.14, added a&n; *   define in isdn_compat.h for older kernel versions.&n; *&n; * Revision 1.6  1999/08/11 21:01:22  keil&n; * new PCI codefix&n; *&n; * Revision 1.5  1999/08/10 16:01:46  calle&n; * struct pci_dev changed in 2.3.13. Made the necessary changes.&n; *&n; * Revision 1.4  1999/07/14 11:43:14  keil&n; * correct PCI_SUBSYSTEM_VENDOR_ID&n; *&n; * Revision 1.3  1999/07/12 21:04:58  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 1.2  1999/07/01 08:07:53  keil&n; * Initial version&n; *&n; *&n; */
+multiline_comment|/* $Id: bkm_a4t.c,v 1.8 1999/09/04 06:20:05 keil Exp $&n; * bkm_a4t.c    low level stuff for T-Berkom A4T&n; *              derived from the original file sedlbauer.c&n; *              derived from the original file niccy.c&n; *              derived from the original file netjet.c&n; *&n; * Author       Roland Klabunde (R.Klabunde@Berkom.de)&n; *&n; * $Log: bkm_a4t.c,v $&n; * Revision 1.8  1999/09/04 06:20:05  keil&n; * Changes from kernel set_current_state()&n; *&n; * Revision 1.7  1999/08/22 20:26:55  calle&n; * backported changes from kernel 2.3.14:&n; * - several #include &quot;config.h&quot; gone, others come.&n; * - &quot;struct device&quot; changed to &quot;struct net_device&quot; in 2.3.14, added a&n; *   define in isdn_compat.h for older kernel versions.&n; *&n; * Revision 1.6  1999/08/11 21:01:22  keil&n; * new PCI codefix&n; *&n; * Revision 1.5  1999/08/10 16:01:46  calle&n; * struct pci_dev changed in 2.3.13. Made the necessary changes.&n; *&n; * Revision 1.4  1999/07/14 11:43:14  keil&n; * correct PCI_SUBSYSTEM_VENDOR_ID&n; *&n; * Revision 1.3  1999/07/12 21:04:58  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 1.2  1999/07/01 08:07:53  keil&n; * Initial version&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/config.h&gt;
@@ -9,9 +9,6 @@ macro_line|#include &quot;jade.h&quot;
 macro_line|#include &quot;isdnl1.h&quot;
 macro_line|#include &quot;bkm_ax.h&quot;
 macro_line|#include &lt;linux/pci.h&gt;
-macro_line|#ifndef COMPAT_HAS_NEW_PCI
-macro_line|#include &lt;linux/bios32.h&gt;
-macro_line|#endif
 r_extern
 r_const
 r_char
@@ -26,7 +23,7 @@ r_char
 op_star
 id|bkm_a4t_revision
 op_assign
-l_string|&quot;$Revision: 1.7 $&quot;
+l_string|&quot;$Revision: 1.8 $&quot;
 suffix:semicolon
 r_static
 r_inline
@@ -909,9 +906,11 @@ op_assign
 l_int|0xFF
 suffix:semicolon
 multiline_comment|/* all in */
-id|current-&gt;state
-op_assign
+id|set_current_state
+c_func
+(paren
 id|TASK_INTERRUPTIBLE
+)paren
 suffix:semicolon
 id|schedule_timeout
 c_func
@@ -932,9 +931,11 @@ id|sysRESET
 op_or
 l_int|0xFF
 suffix:semicolon
-id|current-&gt;state
-op_assign
+id|set_current_state
+c_func
+(paren
 id|TASK_INTERRUPTIBLE
+)paren
 suffix:semicolon
 id|schedule_timeout
 c_func
@@ -970,9 +971,11 @@ id|g_A4T_JADE_BOOTR
 op_or
 id|g_A4T_ISAR_BOOTR
 suffix:semicolon
-id|current-&gt;state
-op_assign
+id|set_current_state
+c_func
+(paren
 id|TASK_INTERRUPTIBLE
+)paren
 suffix:semicolon
 id|schedule_timeout
 c_func
@@ -998,9 +1001,11 @@ op_or
 id|g_A4T_ISAR_RES
 )paren
 suffix:semicolon
-id|current-&gt;state
-op_assign
+id|set_current_state
+c_func
+(paren
 id|TASK_INTERRUPTIBLE
+)paren
 suffix:semicolon
 id|schedule_timeout
 c_func
@@ -1155,7 +1160,6 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef COMPAT_HAS_NEW_PCI
 DECL|variable|__initdata
 r_static
 r_struct
@@ -1166,19 +1170,11 @@ id|__initdata
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#else
-DECL|variable|__initdata
-r_static
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
-id|pci_index
-id|__initdata
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
-r_int
-id|__init
-DECL|function|setup_bkm_a4t
 id|setup_bkm_a4t
 c_func
 (paren
@@ -1186,6 +1182,7 @@ r_struct
 id|IsdnCard
 op_star
 id|card
+)paren
 )paren
 (brace
 r_struct
@@ -1215,17 +1212,6 @@ op_star
 id|pI20_Regs
 suffix:semicolon
 macro_line|#if CONFIG_PCI
-macro_line|#ifndef COMPAT_HAS_NEW_PCI
-id|u_char
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|pci_irq
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
 macro_line|#endif
 id|strcpy
 c_func
@@ -1268,7 +1254,6 @@ l_int|0
 )paren
 suffix:semicolon
 macro_line|#if CONFIG_PCI
-macro_line|#ifdef COMPAT_HAS_NEW_PCI
 r_if
 c_cond
 (paren
@@ -1348,13 +1333,12 @@ l_int|1
 suffix:semicolon
 id|pci_memaddr
 op_assign
-id|get_pcibase
-c_func
-(paren
-id|dev_a4t
-comma
+id|dev_a4t-&gt;resource
+(braket
 l_int|0
-)paren
+)braket
+dot
+id|start
 suffix:semicolon
 id|cs-&gt;irq
 op_assign
@@ -1362,115 +1346,6 @@ id|dev_a4t-&gt;irq
 suffix:semicolon
 )brace
 )brace
-macro_line|#else
-r_for
-c_loop
-(paren
-suffix:semicolon
-id|pci_index
-OL
-l_int|0xff
-suffix:semicolon
-id|pci_index
-op_increment
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|pcibios_find_device
-c_func
-(paren
-id|I20_VENDOR_ID
-comma
-id|I20_DEVICE_ID
-comma
-id|pci_index
-comma
-op_amp
-id|pci_bus
-comma
-op_amp
-id|pci_device_fn
-)paren
-op_eq
-id|PCIBIOS_SUCCESSFUL
-)paren
-(brace
-id|u_int
-id|sub_sys_id
-op_assign
-l_int|0
-suffix:semicolon
-id|pcibios_read_config_dword
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_SUBSYSTEM_VENDOR_ID
-comma
-op_amp
-id|sub_sys_id
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|sub_sys_id
-op_eq
-(paren
-(paren
-id|A4T_SUBSYS_ID
-op_lshift
-l_int|16
-)paren
-op_or
-id|A4T_SUBVEN_ID
-)paren
-)paren
-(brace
-id|found
-op_assign
-l_int|1
-suffix:semicolon
-id|pcibios_read_config_byte
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_INTERRUPT_LINE
-comma
-op_amp
-id|pci_irq
-)paren
-suffix:semicolon
-id|cs-&gt;irq
-op_assign
-id|pci_irq
-suffix:semicolon
-id|pcibios_read_config_dword
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_BASE_ADDRESS_0
-comma
-op_amp
-id|pci_memaddr
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-)brace
-)brace
-macro_line|#endif&t;&t;&t;&t;/* COMPAT_HAS_NEW_PCI */
 r_if
 c_cond
 (paren
@@ -1496,11 +1371,6 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifndef COMPAT_HAS_NEW_PCI
-id|pci_index
-op_increment
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren

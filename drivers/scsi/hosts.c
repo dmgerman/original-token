@@ -70,8 +70,11 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_MAC_SCSI_OLD
 macro_line|#include &quot;mac_scsi.h&quot;
 macro_line|#endif
+macro_line|#ifdef CONFIG_SUN3_SCSI
+macro_line|#include &quot;sun3_scsi.h&quot;
+macro_line|#endif
 macro_line|#ifdef CONFIG_MAC_SCSI
-macro_line|#include &quot;mac_scsinew.h&quot;
+macro_line|#include &quot;mac_scsi.h&quot;
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_MAC_ESP
 macro_line|#include &quot;mac_esp.h&quot;
@@ -336,6 +339,10 @@ macro_line|#ifdef CONFIG_MAC_SCSI
 id|MAC_NCR5380
 comma
 macro_line|#endif
+macro_line|#endif
+macro_line|#ifdef CONFIG_SUN3_SCSI
+id|SUN3_NCR5380
+comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_MVME16x_SCSI
 id|MVME16x_SCSI

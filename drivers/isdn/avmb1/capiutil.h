@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: capiutil.h,v 1.2 1997/05/18 09:24:19 calle Exp $&n; * &n; * CAPI 2.0 defines &amp; types&n; * &n; * From CAPI 2.0 Development Kit AVM 1995 (capi20.h)&n; * Rewritten for Linux 1996 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; * $Log: capiutil.h,v $&n; * Revision 1.2  1997/05/18 09:24:19  calle&n; * added verbose disconnect reason reporting to avmb1.&n; * some fixes in capi20 interface.&n; * changed info messages for B1-PCI&n; *&n; * Revision 1.1  1997/03/04 21:50:35  calle&n; * Frirst version in isdn4linux&n; *&n; * Revision 2.2  1997/02/12 09:31:39  calle&n; * new version&n; *&n; * Revision 1.1  1997/01/31 10:32:20  calle&n; * Initial revision&n; *&n; * &n; */
+multiline_comment|/*&n; * $Id: capiutil.h,v 1.4 1999/09/15 08:16:03 calle Exp $&n; * &n; * CAPI 2.0 defines &amp; types&n; * &n; * From CAPI 2.0 Development Kit AVM 1995 (capi20.h)&n; * Rewritten for Linux 1996 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; * $Log: capiutil.h,v $&n; * Revision 1.4  1999/09/15 08:16:03  calle&n; * Implementation of 64Bit extention complete.&n; *&n; * Revision 1.3  1999/09/07 09:02:53  calle&n; * SETDATA removed. Now inside the kernel the datapart of DATA_B3_REQ and&n; * DATA_B3_IND is always directly after the CAPI message. The &quot;Data&quot; member&n; * ist never used inside the kernel.&n; *&n; * Revision 1.2  1997/05/18 09:24:19  calle&n; * added verbose disconnect reason reporting to avmb1.&n; * some fixes in capi20 interface.&n; * changed info messages for B1-PCI&n; *&n; * Revision 1.1  1997/03/04 21:50:35  calle&n; * Frirst version in isdn4linux&n; *&n; * Revision 2.2  1997/02/12 09:31:39  calle&n; * new version&n; *&n; * Revision 1.1  1997/01/31 10:32:20  calle&n; * Initial revision&n; *&n; * &n; */
 macro_line|#ifndef __CAPIUTIL_H__
 DECL|macro|__CAPIUTIL_H__
 mdefine_line|#define __CAPIUTIL_H__
@@ -25,8 +25,8 @@ DECL|macro|CAPIMSG_DATALEN
 mdefine_line|#define CAPIMSG_DATALEN(m)&t;(m[16] | (m[17]&lt;&lt;8))
 DECL|macro|CAPIMSG_SETAPPID
 mdefine_line|#define&t;CAPIMSG_SETAPPID(m, applid) &bslash;&n;&t;do { &bslash;&n;&t;&t;((__u8 *)m)[2] = (__u16)(applid) &amp; 0xff; &bslash;&n;&t;&t;((__u8 *)m)[3] = ((__u16)(applid) &gt;&gt; 8) &amp; 0xff; &bslash;&n;&t;} while (0)
-DECL|macro|CAPIMSG_SETDATA
-mdefine_line|#define&t;CAPIMSG_SETDATA(m, data) &bslash;&n;&t;do { &bslash;&n;&t;&t;((__u8 *)m)[12] = (__u32)(data) &amp; 0xff; &bslash;&n;&t;&t;((__u8 *)m)[13] = ((__u32)(data) &gt;&gt; 8) &amp; 0xff; &bslash;&n;&t;&t;((__u8 *)m)[14] = ((__u32)(data) &gt;&gt; 16) &amp; 0xff; &bslash;&n;&t;&t;((__u8 *)m)[15] = ((__u32)(data) &gt;&gt; 24) &amp; 0xff; &bslash;&n;&t;} while (0)
+DECL|macro|CAPIMSG_SETLEN
+mdefine_line|#define&t;CAPIMSG_SETLEN(m, len) &bslash;&n;&t;do { &bslash;&n;&t;&t;((__u8 *)m)[0] = (__u16)(len) &amp; 0xff; &bslash;&n;&t;&t;((__u8 *)m)[1] = ((__u16)(len) &gt;&gt; 8) &amp; 0xff; &bslash;&n;&t;} while (0)
 multiline_comment|/*----- basic-type definitions -----*/
 DECL|typedef|_cstruct
 r_typedef

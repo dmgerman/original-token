@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: kernelcapi.h,v 1.3 1999/07/01 15:26:56 calle Exp $&n; * &n; * Kernel CAPI 2.0 Interface for Linux&n; * &n; * (c) Copyright 1997 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; * $Log: kernelcapi.h,v $&n; * Revision 1.3  1999/07/01 15:26:56  calle&n; * complete new version (I love it):&n; * + new hardware independed &quot;capi_driver&quot; interface that will make it easy to:&n; *   - support other controllers with CAPI-2.0 (i.e. USB Controller)&n; *   - write a CAPI-2.0 for the passive cards&n; *   - support serial link CAPI-2.0 boxes.&n; * + wrote &quot;capi_driver&quot; for all supported cards.&n; * + &quot;capi_driver&quot; (supported cards) now have to be configured with&n; *   make menuconfig, in the past all supported cards where included&n; *   at once.&n; * + new and better informations in /proc/capi/&n; * + new ioctl to switch trace of capi messages per controller&n; *   using &quot;avmcapictrl trace [contr] on|off|....&quot;&n; * + complete testcircle with all supported cards and also the&n; *   PCMCIA cards (now patch for pcmcia-cs-3.0.13 needed) done.&n; *&n; * Revision 1.2  1999/06/21 15:24:26  calle&n; * extend information in /proc.&n; *&n; * Revision 1.1  1997/03/04 21:27:33  calle&n; * First version in isdn4linux&n; *&n; * Revision 2.2  1997/02/12 09:31:39  calle&n; * new version&n; *&n; * Revision 1.1  1997/01/31 10:32:20  calle&n; * Initial revision&n; *&n; * &n; */
+multiline_comment|/*&n; * $Id: kernelcapi.h,v 1.4 1999/09/10 17:24:19 calle Exp $&n; * &n; * Kernel CAPI 2.0 Interface for Linux&n; * &n; * (c) Copyright 1997 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; * $Log: kernelcapi.h,v $&n; * Revision 1.4  1999/09/10 17:24:19  calle&n; * Changes for proposed standard for CAPI2.0:&n; * - AK148 &quot;Linux Exention&quot;&n; *&n; * Revision 1.3  1999/07/01 15:26:56  calle&n; * complete new version (I love it):&n; * + new hardware independed &quot;capi_driver&quot; interface that will make it easy to:&n; *   - support other controllers with CAPI-2.0 (i.e. USB Controller)&n; *   - write a CAPI-2.0 for the passive cards&n; *   - support serial link CAPI-2.0 boxes.&n; * + wrote &quot;capi_driver&quot; for all supported cards.&n; * + &quot;capi_driver&quot; (supported cards) now have to be configured with&n; *   make menuconfig, in the past all supported cards where included&n; *   at once.&n; * + new and better informations in /proc/capi/&n; * + new ioctl to switch trace of capi messages per controller&n; *   using &quot;avmcapictrl trace [contr] on|off|....&quot;&n; * + complete testcircle with all supported cards and also the&n; *   PCMCIA cards (now patch for pcmcia-cs-3.0.13 needed) done.&n; *&n; * Revision 1.2  1999/06/21 15:24:26  calle&n; * extend information in /proc.&n; *&n; * Revision 1.1  1997/03/04 21:27:33  calle&n; * First version in isdn4linux&n; *&n; * Revision 2.2  1997/02/12 09:31:39  calle&n; * new version&n; *&n; * Revision 1.1  1997/01/31 10:32:20  calle&n; * Initial revision&n; *&n; * &n; */
 macro_line|#ifndef __KERNELCAPI_H__
 DECL|macro|__KERNELCAPI_H__
 mdefine_line|#define __KERNELCAPI_H__
@@ -44,11 +44,11 @@ DECL|struct|capi_interface
 r_struct
 id|capi_interface
 (brace
-DECL|member|capi_installed
-r_int
+DECL|member|capi_isinstalled
+id|__u16
 (paren
 op_star
-id|capi_installed
+id|capi_isinstalled
 )paren
 (paren
 r_void
@@ -56,7 +56,6 @@ r_void
 suffix:semicolon
 DECL|member|capi_register
 id|__u16
-c_func
 (paren
 op_star
 id|capi_register
@@ -73,7 +72,6 @@ id|applidp
 suffix:semicolon
 DECL|member|capi_release
 id|__u16
-c_func
 (paren
 op_star
 id|capi_release
@@ -85,7 +83,6 @@ id|applid
 suffix:semicolon
 DECL|member|capi_put_message
 id|__u16
-c_func
 (paren
 op_star
 id|capi_put_message
@@ -102,7 +99,6 @@ id|msg
 suffix:semicolon
 DECL|member|capi_get_message
 id|__u16
-c_func
 (paren
 op_star
 id|capi_get_message
@@ -120,7 +116,6 @@ id|msgp
 suffix:semicolon
 DECL|member|capi_set_signal
 id|__u16
-c_func
 (paren
 op_star
 id|capi_set_signal
@@ -148,13 +143,12 @@ id|param
 suffix:semicolon
 DECL|member|capi_get_manufacturer
 id|__u16
-c_func
 (paren
 op_star
 id|capi_get_manufacturer
 )paren
 (paren
-id|__u16
+id|__u32
 id|contr
 comma
 id|__u8
@@ -166,13 +160,12 @@ id|CAPI_MANUFACTURER_LEN
 suffix:semicolon
 DECL|member|capi_get_version
 id|__u16
-c_func
 (paren
 op_star
 id|capi_get_version
 )paren
 (paren
-id|__u16
+id|__u32
 id|contr
 comma
 r_struct
@@ -189,7 +182,7 @@ op_star
 id|capi_get_serial
 )paren
 (paren
-id|__u16
+id|__u32
 id|contr
 comma
 id|__u8
@@ -207,7 +200,7 @@ op_star
 id|capi_get_profile
 )paren
 (paren
-id|__u16
+id|__u32
 id|contr
 comma
 r_struct
@@ -261,7 +254,7 @@ r_int
 r_int
 id|cmd
 comma
-id|__u16
+id|__u32
 id|contr
 comma
 r_void

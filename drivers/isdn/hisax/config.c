@@ -1,12 +1,9 @@
-multiline_comment|/* $Id: config.c,v 2.33 1999/08/30 11:57:52 keil Exp $&n;&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *              based on the teles driver from Jan den Ouden&n; *&n; *&n; * $Log: config.c,v $&n; * Revision 2.33  1999/08/30 11:57:52  keil&n; * Fix broken avm pcmcia&n; *&n; * Revision 2.32  1999/08/28 22:11:10  keil&n; * __setup function should be static&n; *&n; * Revision 2.31  1999/08/25 16:47:43  keil&n; * Support new __setup; allow to add FEATURES after register_isdn&n; *&n; * Revision 2.30  1999/08/05 20:43:14  keil&n; * ISAR analog modem support&n; *&n; * Revision 2.29  1999/07/21 14:46:00  keil&n; * changes from EICON certification&n; *&n; * Revision 2.28  1999/07/14 12:38:36  werner&n; * Added changes for echo channel handling&n; *&n; * Revision 2.27  1999/07/12 21:05:00  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 2.26  1999/07/08 21:27:17  keil&n; * version 3.2&n; *&n; * Revision 2.25  1999/07/05 23:51:44  werner&n; * Allow limiting of available HiSax B-chans per card. Controlled by hisaxctrl&n; * hisaxctrl id 10 &lt;nr. of chans 0-2&gt;&n; *&n; * Revision 2.24  1999/07/01 08:11:26  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 2.23  1999/02/17 10:53:02  cpetig&n; * Added Hisax_closecard to exported symbols.&n; * As indicated by Oliver Schoett &lt;os@sdm.de&gt;.&n; *&n; * If anyone is annoyed by exporting symbols deep inside the code, please&n; * contact me.&n; *&n; * Revision 2.22  1999/02/04 21:41:53  keil&n; * Fix printk msg&n; *&n; * Revision 2.21  1999/02/04 10:48:52  keil&n; * Fix readstat bug&n; *&n; * Revision 2.20  1998/11/15 23:54:28  keil&n; * changes from 2.0&n; *&n; * Revision 2.19  1998/08/13 23:36:18  keil&n; * HiSax 3.1 - don&squot;t work stable with current LinkLevel&n; *&n; * Revision 2.18  1998/07/30 21:01:37  niemann&n; * Fixed Sedlbauer Speed Fax PCMCIA missing isdnl3new&n; *&n; * Revision 2.17  1998/07/15 15:01:26  calle&n; * Support for AVM passive PCMCIA cards:&n; *    A1 PCMCIA, FRITZ!Card PCMCIA and FRITZ!Card PCMCIA 2.0&n; *&n; * Revision 2.16  1998/05/25 14:10:03  keil&n; * HiSax 3.0&n; * X.75 and leased are working again.&n; *&n; * Revision 2.15  1998/05/25 12:57:43  keil&n; * HiSax golden code from certification, Don&squot;t use !!!&n; * No leased lines, no X75, but many changes.&n; *&n; * Revision 2.14  1998/04/15 16:38:25  keil&n; * Add S0Box and Teles PCI support&n; *&n; * Revision 2.13  1998/03/09 23:19:23  keil&n; * Changes for PCMCIA&n; *&n; * Revision 2.12  1998/02/11 17:28:02  keil&n; * Niccy PnP/PCI support&n; *&n; * Revision 2.11  1998/02/09 21:26:13  keil&n; * fix export module for 2.1&n; *&n; * Revision 2.10  1998/02/09 18:46:05  keil&n; * Support for Sedlbauer PCMCIA (Marcus Niemann)&n; *&n; * Revision 2.9  1998/02/03 23:31:28  keil&n; * add AMD7930 support&n; *&n; * Revision 2.8  1998/02/02 13:32:59  keil&n; * New card support&n; *&n; * Revision 2.7  1998/01/31 21:41:44  keil&n; * changes for newer 2.1 kernels&n; *&n; * Revision 2.6  1997/11/08 21:35:43  keil&n; * new l1 init&n; *&n; * Revision 2.5  1997/11/06 17:15:08  keil&n; * New 2.1 init; PCMCIA wrapper changes&n; *&n; * Revision 2.4  1997/10/29 19:07:52  keil&n; * changes for 2.1&n; *&n; * Revision 2.3  1997/10/01 09:21:33  fritz&n; * Removed old compatibility stuff for 2.0.X kernels.&n; * From now on, this code is for 2.1.X ONLY!&n; * Old stuff is still in the separate branch.&n; *&n; * Revision 2.2  1997/09/11 17:24:46  keil&n; * Add new cards&n; *&n; * Revision 2.1  1997/07/27 21:41:35  keil&n; * version change&n; *&n; * Revision 2.0  1997/06/26 11:06:28  keil&n; * New card and L1 interface.&n; * Eicon.Diehl Diva and Dynalink IS64PH support&n; *&n; * old changes removed /KKe&n; *&n; */
+multiline_comment|/* $Id: config.c,v 2.40 1999/10/30 13:09:45 keil Exp $&n;&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *              based on the teles driver from Jan den Ouden&n; *&n; *&n; * $Log: config.c,v $&n; * Revision 2.40  1999/10/30 13:09:45  keil&n; * Version 3.3c&n; *&n; * Revision 2.39  1999/10/16 14:44:45  keil&n; * Fix module parm if only NICCY was selected&n; *&n; * Revision 2.38  1999/10/14 20:25:28  keil&n; * add a statistic for error monitoring&n; *&n; * Revision 2.37  1999/09/20 12:11:08  keil&n; * Fix hang if no protocol was selected&n; *&n; * Revision 2.36  1999/09/07 05:43:58  werner&n; *&n; * Added io as parameter 0 for HFC-PCI cards, if manual selection needed.&n; *&n; * Revision 2.35  1999/09/04 06:35:09  keil&n; * Winbond W6692 support&n; *&n; * Revision 2.34  1999/09/04 06:20:06  keil&n; * Changes from kernel set_current_state()&n; *&n; * Revision 2.33  1999/08/30 11:57:52  keil&n; * Fix broken avm pcmcia&n; *&n; * Revision 2.32  1999/08/28 22:11:10  keil&n; * __setup function should be static&n; *&n; * Revision 2.31  1999/08/25 16:47:43  keil&n; * Support new __setup; allow to add FEATURES after register_isdn&n; *&n; * Revision 2.30  1999/08/05 20:43:14  keil&n; * ISAR analog modem support&n; *&n; * Revision 2.29  1999/07/21 14:46:00  keil&n; * changes from EICON certification&n; *&n; * Revision 2.28  1999/07/14 12:38:36  werner&n; * Added changes for echo channel handling&n; *&n; * Revision 2.27  1999/07/12 21:05:00  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 2.26  1999/07/08 21:27:17  keil&n; * version 3.2&n; *&n; * Revision 2.25  1999/07/05 23:51:44  werner&n; * Allow limiting of available HiSax B-chans per card. Controlled by hisaxctrl&n; * hisaxctrl id 10 &lt;nr. of chans 0-2&gt;&n; *&n; * Revision 2.24  1999/07/01 08:11:26  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 2.23  1999/02/17 10:53:02  cpetig&n; * Added Hisax_closecard to exported symbols.&n; * As indicated by Oliver Schoett &lt;os@sdm.de&gt;.&n; *&n; * If anyone is annoyed by exporting symbols deep inside the code, please&n; * contact me.&n; *&n; * Revision 2.22  1999/02/04 21:41:53  keil&n; * Fix printk msg&n; *&n; * Revision 2.21  1999/02/04 10:48:52  keil&n; * Fix readstat bug&n; *&n; * Revision 2.20  1998/11/15 23:54:28  keil&n; * changes from 2.0&n; *&n; * Revision 2.19  1998/08/13 23:36:18  keil&n; * HiSax 3.1 - don&squot;t work stable with current LinkLevel&n; *&n; * Revision 2.18  1998/07/30 21:01:37  niemann&n; * Fixed Sedlbauer Speed Fax PCMCIA missing isdnl3new&n; *&n; * Revision 2.17  1998/07/15 15:01:26  calle&n; * Support for AVM passive PCMCIA cards:&n; *    A1 PCMCIA, FRITZ!Card PCMCIA and FRITZ!Card PCMCIA 2.0&n; *&n; * Revision 2.16  1998/05/25 14:10:03  keil&n; * HiSax 3.0&n; * X.75 and leased are working again.&n; *&n; * Revision 2.15  1998/05/25 12:57:43  keil&n; * HiSax golden code from certification, Don&squot;t use !!!&n; * No leased lines, no X75, but many changes.&n; *&n; * Revision 2.14  1998/04/15 16:38:25  keil&n; * Add S0Box and Teles PCI support&n; *&n; * Revision 2.13  1998/03/09 23:19:23  keil&n; * Changes for PCMCIA&n; *&n; * Revision 2.12  1998/02/11 17:28:02  keil&n; * Niccy PnP/PCI support&n; *&n; * Revision 2.11  1998/02/09 21:26:13  keil&n; * fix export module for 2.1&n; *&n; * Revision 2.10  1998/02/09 18:46:05  keil&n; * Support for Sedlbauer PCMCIA (Marcus Niemann)&n; *&n; * Revision 2.9  1998/02/03 23:31:28  keil&n; * add AMD7930 support&n; *&n; * Revision 2.8  1998/02/02 13:32:59  keil&n; * New card support&n; *&n; * Revision 2.7  1998/01/31 21:41:44  keil&n; * changes for newer 2.1 kernels&n; *&n; * Revision 2.6  1997/11/08 21:35:43  keil&n; * new l1 init&n; *&n; * Revision 2.5  1997/11/06 17:15:08  keil&n; * New 2.1 init; PCMCIA wrapper changes&n; *&n; * Revision 2.4  1997/10/29 19:07:52  keil&n; * changes for 2.1&n; *&n; * Revision 2.3  1997/10/01 09:21:33  fritz&n; * Removed old compatibility stuff for 2.0.X kernels.&n; * From now on, this code is for 2.1.X ONLY!&n; * Old stuff is still in the separate branch.&n; *&n; * Revision 2.2  1997/09/11 17:24:46  keil&n; * Add new cards&n; *&n; * Revision 2.1  1997/07/27 21:41:35  keil&n; * version change&n; *&n; * Revision 2.0  1997/06/26 11:06:28  keil&n; * New card and L1 interface.&n; * Eicon.Diehl Diva and Dynalink IS64PH support&n; *&n; * old changes removed /KKe&n; *&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &lt;linux/isdn_compat.h&gt;
-macro_line|#ifdef COMPAT_HAS_NEW_SETUP
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#endif
 macro_line|#include &quot;hisax.h&quot;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
@@ -16,7 +13,7 @@ DECL|macro|HISAX_STATUS_BUFSIZE
 mdefine_line|#define HISAX_STATUS_BUFSIZE 4096
 DECL|macro|INCLUDE_INLINE_FUNCS
 mdefine_line|#define INCLUDE_INLINE_FUNCS
-multiline_comment|/*&n; * This structure array contains one entry per card. An entry looks&n; * like this:&n; *&n; * { type, protocol, p0, p1, p2, NULL }&n; *&n; * type&n; *    1 Teles 16.0       p0=irq p1=membase p2=iobase&n; *    2 Teles  8.0       p0=irq p1=membase&n; *    3 Teles 16.3       p0=irq p1=iobase&n; *    4 Creatix PNP      p0=irq p1=IO0 (ISAC)  p2=IO1 (HSCX)&n; *    5 AVM A1 (Fritz)   p0=irq p1=iobase&n; *    6 ELSA PC          [p0=iobase] or nothing (autodetect)&n; *    7 ELSA Quickstep   p0=irq p1=iobase&n; *    8 Teles PCMCIA     p0=irq p1=iobase&n; *    9 ITK ix1-micro    p0=irq p1=iobase&n; *   10 ELSA PCMCIA      p0=irq p1=iobase&n; *   11 Eicon.Diehl Diva p0=irq p1=iobase&n; *   12 Asuscom ISDNLink p0=irq p1=iobase&n; *   13 Teleint          p0=irq p1=iobase&n; *   14 Teles 16.3c      p0=irq p1=iobase&n; *   15 Sedlbauer speed  p0=irq p1=iobase&n; *   15 Sedlbauer PC/104&t;p0=irq p1=iobase&n; *   15 Sedlbauer speed pci&t;no parameter&n; *   16 USR Sportster internal  p0=irq  p1=iobase&n; *   17 MIC card                p0=irq  p1=iobase&n; *   18 ELSA Quickstep 1000PCI  no parameter&n; *   19 Compaq ISDN S0 ISA card p0=irq  p1=IO0 (HSCX)  p2=IO1 (ISAC) p3=IO2&n; *   20 Travers Technologies NETjet PCI card&n; *   21 TELES PCI               no parameter&n; *   22 Sedlbauer Speed Star    p0=irq p1=iobase&n; *   23 reserved&n; *   24 Dr Neuhaus Niccy PnP/PCI card p0=irq p1=IO0 p2=IO1 (PnP only)&n; *   25 Teles S0Box             p0=irq p1=iobase (from isapnp setup)&n; *   26 AVM A1 PCMCIA (Fritz)   p0=irq p1=iobase&n; *   27 AVM PnP/PCI &t;&t;p0=irq p1=iobase (PCI no parameter)&n; *   28 Sedlbauer Speed Fax+ &t;p0=irq p1=iobase (from isapnp setup)&n; *   29 Siemens I-Surf          p0=irq p1=iobase p2=memory (from isapnp setup)   &n; *   30 ACER P10                p0=irq p1=iobase (from isapnp setup)   &n; *   31 HST Saphir              p0=irq  p1=iobase&n; *   32 Telekom A4T             none&n; *   33 Scitel Quadro&t;&t;p0=subcontroller (4*S0, subctrl 1...4)&n; *   34&t;Gazel ISDN cards&n; *   35 HFC 2BDS0 PCI           none&n; * protocol can be either ISDN_PTYPE_EURO or ISDN_PTYPE_1TR6 or ISDN_PTYPE_NI1&n; *&n; *&n; */
+multiline_comment|/*&n; * This structure array contains one entry per card. An entry looks&n; * like this:&n; *&n; * { type, protocol, p0, p1, p2, NULL }&n; *&n; * type&n; *    1 Teles 16.0       p0=irq p1=membase p2=iobase&n; *    2 Teles  8.0       p0=irq p1=membase&n; *    3 Teles 16.3       p0=irq p1=iobase&n; *    4 Creatix PNP      p0=irq p1=IO0 (ISAC)  p2=IO1 (HSCX)&n; *    5 AVM A1 (Fritz)   p0=irq p1=iobase&n; *    6 ELSA PC          [p0=iobase] or nothing (autodetect)&n; *    7 ELSA Quickstep   p0=irq p1=iobase&n; *    8 Teles PCMCIA     p0=irq p1=iobase&n; *    9 ITK ix1-micro    p0=irq p1=iobase&n; *   10 ELSA PCMCIA      p0=irq p1=iobase&n; *   11 Eicon.Diehl Diva p0=irq p1=iobase&n; *   12 Asuscom ISDNLink p0=irq p1=iobase&n; *   13 Teleint          p0=irq p1=iobase&n; *   14 Teles 16.3c      p0=irq p1=iobase&n; *   15 Sedlbauer speed  p0=irq p1=iobase&n; *   15 Sedlbauer PC/104&t;p0=irq p1=iobase&n; *   15 Sedlbauer speed pci&t;no parameter&n; *   16 USR Sportster internal  p0=irq  p1=iobase&n; *   17 MIC card                p0=irq  p1=iobase&n; *   18 ELSA Quickstep 1000PCI  no parameter&n; *   19 Compaq ISDN S0 ISA card p0=irq  p1=IO0 (HSCX)  p2=IO1 (ISAC) p3=IO2&n; *   20 Travers Technologies NETjet PCI card&n; *   21 TELES PCI               no parameter&n; *   22 Sedlbauer Speed Star    p0=irq p1=iobase&n; *   23 reserved&n; *   24 Dr Neuhaus Niccy PnP/PCI card p0=irq p1=IO0 p2=IO1 (PnP only)&n; *   25 Teles S0Box             p0=irq p1=iobase (from isapnp setup)&n; *   26 AVM A1 PCMCIA (Fritz)   p0=irq p1=iobase&n; *   27 AVM PnP/PCI &t;&t;p0=irq p1=iobase (PCI no parameter)&n; *   28 Sedlbauer Speed Fax+ &t;p0=irq p1=iobase (from isapnp setup)&n; *   29 Siemens I-Surf          p0=irq p1=iobase p2=memory (from isapnp setup)   &n; *   30 ACER P10                p0=irq p1=iobase (from isapnp setup)   &n; *   31 HST Saphir              p0=irq  p1=iobase&n; *   32 Telekom A4T             none&n; *   33 Scitel Quadro&t;&t;p0=subcontroller (4*S0, subctrl 1...4)&n; *   34&t;Gazel ISDN cards&n; *   35 HFC 2BDS0 PCI           none&n; *   36 Winbond 6692 PCI        none&n; *&n; * protocol can be either ISDN_PTYPE_EURO or ISDN_PTYPE_1TR6 or ISDN_PTYPE_NI1&n; *&n; *&n; */
 DECL|variable|CardType
 r_const
 r_char
@@ -98,6 +95,8 @@ l_string|&quot;Gazel&quot;
 comma
 l_string|&quot;HFC 2BDS0 PCI&quot;
 comma
+l_string|&quot;Winbond 6692&quot;
+comma
 )brace
 suffix:semicolon
 r_void
@@ -128,7 +127,6 @@ comma
 r_int
 )paren
 suffix:semicolon
-macro_line|#ifdef COMPAT_HAS_NEW_SYMTAB
 DECL|variable|elsa_init_pcmcia
 id|EXPORT_SYMBOL
 c_func
@@ -136,25 +134,6 @@ c_func
 id|elsa_init_pcmcia
 )paren
 suffix:semicolon
-macro_line|#else
-DECL|variable|hisax_syms_elsa
-r_static
-r_struct
-id|symbol_table
-id|hisax_syms_elsa
-op_assign
-(brace
-macro_line|#include &lt;linux/symtab_begin.h&gt;
-id|X
-c_func
-(paren
-id|elsa_init_pcmcia
-)paren
-comma
-macro_line|#include &lt;linux/symtab_end.h&gt;
-)brace
-suffix:semicolon
-macro_line|#endif /* COMPAT_HAS_NEW_SYMTAB */
 macro_line|#endif /* CONFIG_HISAX_ELSA */
 macro_line|#ifdef CONFIG_HISAX_AVM_A1
 DECL|macro|DEFAULT_CARD
@@ -190,7 +169,6 @@ comma
 r_int
 )paren
 suffix:semicolon
-macro_line|#ifdef COMPAT_HAS_NEW_SYMTAB
 DECL|variable|avm_a1_init_pcmcia
 id|EXPORT_SYMBOL
 c_func
@@ -205,31 +183,6 @@ c_func
 id|HiSax_closecard
 )paren
 suffix:semicolon
-macro_line|#else
-DECL|variable|hisax_syms_avm_a1
-r_static
-r_struct
-id|symbol_table
-id|hisax_syms_avm_a1
-op_assign
-(brace
-macro_line|#include &lt;linux/symtab_begin.h&gt;
-id|X
-c_func
-(paren
-id|avm_a1_init_pcmcia
-)paren
-comma
-id|X
-c_func
-(paren
-id|HiSax_closecard
-)paren
-comma
-macro_line|#include &lt;linux/symtab_end.h&gt;
-)brace
-suffix:semicolon
-macro_line|#endif /* COMPAT_HAS_NEW_SYMTAB */
 macro_line|#endif /* CONFIG_HISAX_AVM_A1_PCMCIA */
 macro_line|#ifdef CONFIG_HISAX_FRITZPCI
 DECL|macro|DEFAULT_CARD
@@ -345,7 +298,6 @@ comma
 r_int
 )paren
 suffix:semicolon
-macro_line|#ifdef COMPAT_HAS_NEW_SYMTAB
 DECL|variable|sedl_init_pcmcia
 id|EXPORT_SYMBOL
 c_func
@@ -353,25 +305,6 @@ c_func
 id|sedl_init_pcmcia
 )paren
 suffix:semicolon
-macro_line|#else
-DECL|variable|hisax_syms_sedl
-r_static
-r_struct
-id|symbol_table
-id|hisax_syms_sedl
-op_assign
-(brace
-macro_line|#include &lt;linux/symtab_begin.h&gt;
-id|X
-c_func
-(paren
-id|sedl_init_pcmcia
-)paren
-comma
-macro_line|#include &lt;linux/symtab_end.h&gt;
-)brace
-suffix:semicolon
-macro_line|#endif /* COMPAT_HAS_NEW_SYMTAB */
 macro_line|#endif /* CONFIG_HISAX_SEDLBAUER */
 macro_line|#ifdef CONFIG_HISAX_SPORTSTER
 DECL|macro|DEFAULT_CARD
@@ -492,6 +425,16 @@ DECL|macro|DEFAULT_CARD
 mdefine_line|#define DEFAULT_CARD ISDN_CTYPE_GAZEL
 DECL|macro|DEFAULT_CFG
 mdefine_line|#define DEFAULT_CFG {15,0x180,0,0}
+macro_line|#endif
+macro_line|#ifdef CONFIG_HISAX_W6692
+DECL|macro|DEFAULT_CARD
+macro_line|#undef DEFAULT_CARD
+DECL|macro|DEFAULT_CFG
+macro_line|#undef DEFAULT_CFG
+DECL|macro|DEFAULT_CARD
+mdefine_line|#define DEFAULT_CARD ISDN_CTYPE_W6692
+DECL|macro|DEFAULT_CFG
+mdefine_line|#define DEFAULT_CFG {0,0,0,0}
 macro_line|#endif
 macro_line|#ifdef CONFIG_HISAX_1TR6
 DECL|macro|DEFAULT_PROTO
@@ -788,7 +731,6 @@ id|HISAX_INITDATA
 op_assign
 id|HiSaxID
 suffix:semicolon
-macro_line|#ifdef COMPAT_HAS_NEW_SYMTAB
 id|MODULE_AUTHOR
 c_func
 (paren
@@ -843,7 +785,7 @@ comma
 l_string|&quot;s&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_HISAX_16_3&t;/* For Creatix/Teles PnP */
+macro_line|#ifdef IO0_IO1
 id|MODULE_PARM
 c_func
 (paren
@@ -860,8 +802,7 @@ comma
 l_string|&quot;1-8i&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_HISAX_16_3 */
-macro_line|#endif /* COMPAT_HAS_NEW_SYMTAB */
+macro_line|#endif /* IO0_IO1 */
 macro_line|#endif /* MODULE */
 DECL|variable|nrcards
 r_int
@@ -994,7 +935,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;HiSax: Version 3.3a (module)&bslash;n&quot;
+l_string|&quot;HiSax: Version 3.3c (module)&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#else
@@ -1002,7 +943,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;HiSax: Version 3.3a (kernel)&bslash;n&quot;
+l_string|&quot;HiSax: Version 3.3c (kernel)&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1144,7 +1085,6 @@ macro_line|#ifdef MODULE
 DECL|macro|HiSax_init
 mdefine_line|#define HiSax_init init_module
 macro_line|#else
-macro_line|#ifdef COMPAT_HAS_NEW_SETUP
 DECL|macro|MAX_ARG
 mdefine_line|#define MAX_ARG&t;(HISAX_MAX_CARDS*5)
 r_static
@@ -1190,29 +1130,6 @@ comma
 id|ints
 )paren
 suffix:semicolon
-macro_line|#else
-r_void
-id|__init
-id|HiSax_setup
-c_func
-(paren
-r_char
-op_star
-id|str
-comma
-r_int
-op_star
-id|ints
-)paren
-(brace
-r_int
-id|i
-comma
-id|j
-comma
-id|argc
-suffix:semicolon
-macro_line|#endif        
 id|argc
 op_assign
 id|ints
@@ -1427,7 +1344,6 @@ op_assign
 id|HiSaxID
 suffix:semicolon
 )brace
-macro_line|#ifdef COMPAT_HAS_NEW_SETUP
 r_return
 l_int|1
 suffix:semicolon
@@ -1440,9 +1356,6 @@ comma
 id|HiSax_setup
 )paren
 suffix:semicolon
-macro_line|#else
-)brace
-macro_line|#endif /* COMPAT_HAS_NEW_SETUP */
 macro_line|#endif /* MODULES */
 macro_line|#if CARD_TELES0
 r_extern
@@ -1743,7 +1656,7 @@ id|card
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if&t;CARD_BKM_A4T
+macro_line|#if CARD_BKM_A4T
 r_extern
 r_int
 id|setup_bkm_a4t
@@ -1756,7 +1669,7 @@ id|card
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if&t;CARD_SCT_QUADRO
+macro_line|#if CARD_SCT_QUADRO
 r_extern
 r_int
 id|setup_sct_quadro
@@ -1773,6 +1686,19 @@ macro_line|#if CARD_GAZEL
 r_extern
 r_int
 id|setup_gazel
+c_func
+(paren
+r_struct
+id|IsdnCard
+op_star
+id|card
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#if CARD_W6692
+r_extern
+r_int
+id|setup_w6692
 c_func
 (paren
 r_struct
@@ -2935,12 +2861,10 @@ c_cond
 id|csta-&gt;tx_skb
 )paren
 (brace
-id|idev_kfree_skb
+id|dev_kfree_skb
 c_func
 (paren
 id|csta-&gt;tx_skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|csta-&gt;tx_skb
@@ -3138,9 +3062,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|current-&gt;state
-op_assign
+id|set_current_state
+c_func
+(paren
 id|TASK_INTERRUPTIBLE
+)paren
 suffix:semicolon
 multiline_comment|/* Timeout 10ms */
 id|schedule_timeout
@@ -4125,6 +4051,21 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
+macro_line|#if CARD_W6692
+r_case
+id|ISDN_CTYPE_W6692
+suffix:colon
+id|ret
+op_assign
+id|setup_w6692
+c_func
+(paren
+id|card
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
 r_default
 suffix:colon
 id|printk
@@ -4694,6 +4635,9 @@ c_func
 id|i
 )paren
 suffix:semicolon
+id|nrcards
+op_decrement
+suffix:semicolon
 )brace
 )brace
 r_return
@@ -4858,6 +4802,9 @@ c_func
 (paren
 r_int
 id|cardnr
+comma
+r_int
+id|sel
 )paren
 (brace
 r_struct
@@ -4871,23 +4818,6 @@ id|cardnr
 )braket
 dot
 id|cs
-suffix:semicolon
-r_struct
-id|PStack
-op_star
-id|stptr
-suffix:semicolon
-r_struct
-id|l3_process
-op_star
-id|pc
-suffix:semicolon
-r_int
-id|j
-comma
-id|i
-op_assign
-l_int|1
 suffix:semicolon
 id|printk
 c_func
@@ -4950,7 +4880,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;HiSax: HW_Flags %x bc0 flg %x bc0 flg %x&bslash;n&quot;
+l_string|&quot;HiSax: HW_Flags %x bc0 flg %x bc1 flg %x&bslash;n&quot;
 comma
 id|cs-&gt;HW_Flags
 comma
@@ -5011,263 +4941,195 @@ dot
 id|channel
 )paren
 suffix:semicolon
+macro_line|#ifdef ERROR_STATISTIC
 id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;HiSax: cs setstack_d 0x%lX&bslash;n&quot;
+l_string|&quot;HiSax: dc errors(rx,crc,tx) %d,%d,%d&bslash;n&quot;
 comma
-(paren
-id|ulong
-)paren
-id|cs-&gt;setstack_d
+id|cs-&gt;err_rx
+comma
+id|cs-&gt;err_crc
+comma
+id|cs-&gt;err_tx
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;HiSax: cs stl 0x%lX&bslash;n&quot;
+l_string|&quot;HiSax: bc0 errors(inv,rdo,crc,tx) %d,%d,%d,%d&bslash;n&quot;
 comma
-(paren
-id|ulong
-)paren
-op_amp
-(paren
-id|cs-&gt;stlist
-)paren
+id|cs-&gt;bcs
+(braket
+l_int|0
+)braket
+dot
+id|err_inv
+comma
+id|cs-&gt;bcs
+(braket
+l_int|0
+)braket
+dot
+id|err_rdo
+comma
+id|cs-&gt;bcs
+(braket
+l_int|0
+)braket
+dot
+id|err_crc
+comma
+id|cs-&gt;bcs
+(braket
+l_int|0
+)braket
+dot
+id|err_tx
 )paren
 suffix:semicolon
-id|stptr
-op_assign
-id|cs-&gt;stlist
-suffix:semicolon
-r_while
-c_loop
+id|printk
+c_func
 (paren
-id|stptr
-op_ne
-l_int|NULL
+id|KERN_DEBUG
+l_string|&quot;HiSax: bc1 errors(inv,rdo,crc,tx) %d,%d,%d,%d&bslash;n&quot;
+comma
+id|cs-&gt;bcs
+(braket
+l_int|1
+)braket
+dot
+id|err_inv
+comma
+id|cs-&gt;bcs
+(braket
+l_int|1
+)braket
+dot
+id|err_rdo
+comma
+id|cs-&gt;bcs
+(braket
+l_int|1
+)braket
+dot
+id|err_crc
+comma
+id|cs-&gt;bcs
+(braket
+l_int|1
+)braket
+dot
+id|err_tx
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sel
+op_eq
+l_int|99
 )paren
 (brace
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;HiSax: dst%d 0x%lX&bslash;n&quot;
-comma
-id|i
-comma
-(paren
-id|ulong
-)paren
-id|stptr
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;HiSax: dst%d stp 0x%lX&bslash;n&quot;
-comma
-id|i
-comma
-(paren
-id|ulong
-)paren
-id|stptr-&gt;l1.stlistp
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;HiSax: dst%d l1.l1hw 0x%lX&bslash;n&quot;
-comma
-id|i
-comma
-(paren
-id|ulong
-)paren
-id|stptr-&gt;l1.l1hw
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;HiSax:   tei %d sapi %d&bslash;n&quot;
-comma
-id|stptr-&gt;l2.tei
-comma
-id|stptr-&gt;l2.sap
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;HiSax:      man 0x%lX&bslash;n&quot;
-comma
-(paren
-id|ulong
-)paren
-id|stptr-&gt;ma.layer
-)paren
-suffix:semicolon
-id|pc
-op_assign
-id|stptr-&gt;l3.proc
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|pc
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;HiSax: l3proc %x 0x%lX&bslash;n&quot;
-comma
-id|pc-&gt;callref
-comma
-(paren
-id|ulong
-)paren
-id|pc
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;HiSax:    state %d  st 0x%lX chan 0x%lX&bslash;n&quot;
-comma
-id|pc-&gt;state
-comma
-(paren
-id|ulong
-)paren
-id|pc-&gt;st
-comma
-(paren
-id|ulong
-)paren
-id|pc-&gt;chan
-)paren
-suffix:semicolon
-id|pc
-op_assign
-id|pc-&gt;next
-suffix:semicolon
-)brace
-id|stptr
-op_assign
-id|stptr-&gt;next
-suffix:semicolon
-id|i
-op_increment
-suffix:semicolon
-)brace
-r_for
-c_loop
-(paren
-id|j
+id|cs-&gt;err_rx
 op_assign
 l_int|0
 suffix:semicolon
-id|j
-OL
-l_int|2
-suffix:semicolon
-id|j
-op_increment
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;HiSax: ch%d 0x%lX&bslash;n&quot;
-comma
-id|j
-comma
-(paren
-id|ulong
-)paren
-op_amp
-id|cs-&gt;channel
-(braket
-id|j
-)braket
-)paren
-suffix:semicolon
-id|stptr
+id|cs-&gt;err_crc
 op_assign
-id|cs-&gt;channel
+l_int|0
+suffix:semicolon
+id|cs-&gt;err_tx
+op_assign
+l_int|0
+suffix:semicolon
+id|cs-&gt;bcs
 (braket
-id|j
+l_int|0
 )braket
 dot
-id|b_st
-suffix:semicolon
-id|i
+id|err_inv
 op_assign
+l_int|0
+suffix:semicolon
+id|cs-&gt;bcs
+(braket
+l_int|0
+)braket
+dot
+id|err_rdo
+op_assign
+l_int|0
+suffix:semicolon
+id|cs-&gt;bcs
+(braket
+l_int|0
+)braket
+dot
+id|err_crc
+op_assign
+l_int|0
+suffix:semicolon
+id|cs-&gt;bcs
+(braket
+l_int|0
+)braket
+dot
+id|err_tx
+op_assign
+l_int|0
+suffix:semicolon
+id|cs-&gt;bcs
+(braket
 l_int|1
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|stptr
-op_ne
-l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;HiSax:  b_st%d 0x%lX&bslash;n&quot;
-comma
-id|i
-comma
-(paren
-id|ulong
-)paren
-id|stptr
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;HiSax:    man 0x%lX&bslash;n&quot;
-comma
-(paren
-id|ulong
-)paren
-id|stptr-&gt;ma.layer
-)paren
-suffix:semicolon
-id|stptr
+)braket
+dot
+id|err_inv
 op_assign
-id|stptr-&gt;next
+l_int|0
 suffix:semicolon
-id|i
-op_increment
+id|cs-&gt;bcs
+(braket
+l_int|1
+)braket
+dot
+id|err_rdo
+op_assign
+l_int|0
+suffix:semicolon
+id|cs-&gt;bcs
+(braket
+l_int|1
+)braket
+dot
+id|err_crc
+op_assign
+l_int|0
+suffix:semicolon
+id|cs-&gt;bcs
+(braket
+l_int|1
+)braket
+dot
+id|err_tx
+op_assign
+l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif
 )brace
-)brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
-id|__init
-DECL|function|HiSax_init
 id|HiSax_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int
@@ -5292,15 +5154,6 @@ id|ISDN_CTYPE_ELSA_PCMCIA
 )paren
 (brace
 multiline_comment|/* we have exported  and return in this case */
-macro_line|#ifndef COMPAT_HAS_NEW_SYMTAB
-id|register_symtab
-c_func
-(paren
-op_amp
-id|hisax_syms_elsa
-)paren
-suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -5319,15 +5172,6 @@ id|ISDN_CTYPE_SEDLBAUER_PCMCIA
 )paren
 (brace
 multiline_comment|/* we have to export  and return in this case */
-macro_line|#ifndef COMPAT_HAS_NEW_SYMTAB
-id|register_symtab
-c_func
-(paren
-op_amp
-id|hisax_syms_sedl
-)paren
-suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -5346,15 +5190,6 @@ id|ISDN_CTYPE_A1_PCMCIA
 )paren
 (brace
 multiline_comment|/* we have to export  and return in this case */
-macro_line|#ifndef COMPAT_HAS_NEW_SYMTAB
-id|register_symtab
-c_func
-(paren
-op_amp
-id|hisax_syms_avm_a1
-)paren
-suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -5650,6 +5485,9 @@ macro_line|#endif
 r_case
 id|ISDN_CTYPE_ELSA
 suffix:colon
+r_case
+id|ISDN_CTYPE_HFC_PCI
+suffix:colon
 id|cards
 (braket
 id|i
@@ -5823,6 +5661,9 @@ id|ISDN_CTYPE_AMD7930
 suffix:colon
 r_case
 id|ISDN_CTYPE_TELESPCI
+suffix:colon
+r_case
+id|ISDN_CTYPE_W6692
 suffix:colon
 r_break
 suffix:semicolon
@@ -5998,22 +5839,6 @@ l_int|NULL
 (brace
 multiline_comment|/* Install only, if at least one card found */
 macro_line|#ifdef MODULE
-macro_line|#ifndef COMPAT_HAS_NEW_SYMTAB
-multiline_comment|/* No symbols to export, hide all symbols */
-id|register_symtab
-c_func
-(paren
-l_int|NULL
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;HiSax: module installed&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif /* COMPAT_HAS_NEW_SYMTAB */
 macro_line|#endif /* MODULE */
 r_return
 (paren
@@ -6179,17 +6004,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|id
-)paren
-multiline_comment|/* If id= string used */
-id|HiSax_id
-op_assign
-id|id
-suffix:semicolon
-multiline_comment|/* Initialize all 8 structs, even though we only accept&n;&t;   two pcmcia cards&n;&t;   */
+multiline_comment|/* Initialize all structs, even though we only accept&n;&t;   two pcmcia cards&n;&t;   */
 r_for
 c_loop
 (paren
@@ -6483,17 +6298,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|id
-)paren
-multiline_comment|/* If id= string used */
-id|HiSax_id
-op_assign
-id|id
-suffix:semicolon
-multiline_comment|/* Initialize all 8 structs, even though we only accept&n;&t;   two pcmcia cards&n;&t;   */
+multiline_comment|/* Initialize all structs, even though we only accept&n;&t;   two pcmcia cards&n;&t;   */
 r_for
 c_loop
 (paren
@@ -6787,17 +6592,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|id
-)paren
-multiline_comment|/* If id= string used */
-id|HiSax_id
-op_assign
-id|id
-suffix:semicolon
-multiline_comment|/* Initialize all 16 structs, even though we only accept&n;&t;   two pcmcia cards&n;&t;   */
+multiline_comment|/* Initialize all structs, even though we only accept&n;&t;   two pcmcia cards&n;&t;   */
 r_for
 c_loop
 (paren
@@ -6807,7 +6602,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-l_int|16
+id|HISAX_MAX_CARDS
 suffix:semicolon
 id|i
 op_increment

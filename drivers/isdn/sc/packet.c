@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  $Id: packet.c,v 1.4 1998/02/12 23:08:50 keil Exp $&n; *  Copyright (C) 1996  SpellCaster Telecommunications Inc.&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  For more information, please contact gpl-info@spellcast.com or write:&n; *&n; *     SpellCaster Telecommunications Inc.&n; *     5621 Finch Avenue East, Unit #3&n; *     Scarborough, Ontario  Canada&n; *     M1B 2T9&n; *     +1 (416) 297-8565&n; *     +1 (416) 297-6433 Facsimile&n; */
+multiline_comment|/*&n; *  $Id: packet.c,v 1.5 1999/08/31 11:20:41 paul Exp $&n; *  Copyright (C) 1996  SpellCaster Telecommunications Inc.&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  For more information, please contact gpl-info@spellcast.com or write:&n; *&n; *     SpellCaster Telecommunications Inc.&n; *     5621 Finch Avenue East, Unit #3&n; *     Scarborough, Ontario  Canada&n; *     M1B 2T9&n; *     +1 (416) 297-8565&n; *     +1 (416) 297-6433 Facsimile&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;includes.h&quot;
@@ -158,7 +158,7 @@ id|card
 id|pr_debug
 c_func
 (paren
-l_string|&quot;Invalid param: %d is not a valid card id&bslash;n&quot;
+l_string|&quot;invalid param: %d is not a valid card id&bslash;n&quot;
 comma
 id|card
 )paren
@@ -171,7 +171,7 @@ suffix:semicolon
 id|pr_debug
 c_func
 (paren
-l_string|&quot;%s: Send Packet: frst = 0x%x nxt = %d  f = %d n = %d&bslash;n&quot;
+l_string|&quot;%s: sndpkt: frst = 0x%x nxt = %d  f = %d n = %d&bslash;n&quot;
 comma
 id|adapter
 (braket
@@ -249,7 +249,7 @@ id|free_sendbufs
 id|pr_debug
 c_func
 (paren
-l_string|&quot;%s: Out out TX buffers&bslash;n&quot;
+l_string|&quot;%s: out of TX buffers&bslash;n&quot;
 comma
 id|adapter
 (braket
@@ -275,7 +275,7 @@ id|BUFFER_SIZE
 id|pr_debug
 c_func
 (paren
-l_string|&quot;%s: Data overflows buffer size (data &gt; buffer)&bslash;n&quot;
+l_string|&quot;%s: data overflows buffer size (data &gt; buffer)&bslash;n&quot;
 comma
 id|adapter
 (braket
@@ -326,7 +326,7 @@ multiline_comment|/* sk_buff size */
 id|pr_debug
 c_func
 (paren
-l_string|&quot;%s: Writing %d bytes to buffer offset 0x%x&bslash;n&quot;
+l_string|&quot;%s: writing %d bytes to buffer offset 0x%x&bslash;n&quot;
 comma
 id|adapter
 (braket
@@ -360,7 +360,7 @@ multiline_comment|/*&n;&t; * sendmessage&n;&t; */
 id|pr_debug
 c_func
 (paren
-l_string|&quot;%s: Send Packet size=%d, buf_offset=0x%x buf_indx=%d&bslash;n&quot;
+l_string|&quot;%s: sndpkt size=%d, buf_offset=0x%x buf_indx=%d&bslash;n&quot;
 comma
 id|adapter
 (braket
@@ -432,7 +432,7 @@ id|status
 id|pr_debug
 c_func
 (paren
-l_string|&quot;%s: Failed to send packet, status = %d&bslash;n&quot;
+l_string|&quot;%s: failed to send packet, status = %d&bslash;n&quot;
 comma
 id|adapter
 (braket
@@ -519,7 +519,7 @@ suffix:semicolon
 id|pr_debug
 c_func
 (paren
-l_string|&quot;%s: Packet sent successfully&bslash;n&quot;
+l_string|&quot;%s: packet sent successfully&bslash;n&quot;
 comma
 id|adapter
 (braket
@@ -592,7 +592,7 @@ id|card
 id|pr_debug
 c_func
 (paren
-l_string|&quot;Invalid param: %d is not a valid card id&bslash;n&quot;
+l_string|&quot;invalid param: %d is not a valid card id&bslash;n&quot;
 comma
 id|card
 )paren
@@ -618,7 +618,7 @@ suffix:colon
 id|pr_debug
 c_func
 (paren
-l_string|&quot;%s: Error status code: 0x%x&bslash;n&quot;
+l_string|&quot;%s: error status code: 0x%x&bslash;n&quot;
 comma
 id|adapter
 (braket
@@ -743,7 +743,7 @@ multiline_comment|/*&n;&t; &t; * Recycle the buffer&n;&t; &t; */
 id|pr_debug
 c_func
 (paren
-l_string|&quot;%s: Buffer size : %d&bslash;n&quot;
+l_string|&quot;%s: buffer size : %d&bslash;n&quot;
 comma
 id|adapter
 (braket
@@ -853,7 +853,7 @@ id|card
 id|pr_debug
 c_func
 (paren
-l_string|&quot;Invalid param: %d is not a valid card id&bslash;n&quot;
+l_string|&quot;invalid param: %d is not a valid card id&bslash;n&quot;
 comma
 id|card
 )paren
@@ -867,7 +867,7 @@ multiline_comment|/*&n;&t; * Calculate the buffer offsets (send/recv/send/recv)&
 id|pr_debug
 c_func
 (paren
-l_string|&quot;%s: Seting up channel buffer space in shared RAM&bslash;n&quot;
+l_string|&quot;%s: setting up channel buffer space in shared RAM&bslash;n&quot;
 comma
 id|adapter
 (braket
@@ -914,7 +914,7 @@ suffix:semicolon
 id|pr_debug
 c_func
 (paren
-l_string|&quot;%s: Calculating buffer space: %d buffers, %d big&bslash;n&quot;
+l_string|&quot;%s: calculating buffer space: %d buffers, %d big&bslash;n&quot;
 comma
 id|adapter
 (braket
@@ -939,7 +939,7 @@ l_int|2
 id|pr_debug
 c_func
 (paren
-l_string|&quot;%s: Not enough buffer space&bslash;n&quot;
+l_string|&quot;%s: not enough buffer space&bslash;n&quot;
 comma
 id|adapter
 (braket
@@ -971,7 +971,7 @@ suffix:semicolon
 id|pr_debug
 c_func
 (paren
-l_string|&quot;%s: Channel buffer offset from Shared RAM: 0x%x&bslash;n&quot;
+l_string|&quot;%s: channel buffer offset from shared RAM: 0x%x&bslash;n&quot;
 comma
 id|adapter
 (braket
@@ -1056,7 +1056,7 @@ suffix:semicolon
 id|pr_debug
 c_func
 (paren
-l_string|&quot;%s: Send buffer setup complete: first=0x%x n=%d f=%d, nxt=%d&bslash;n&quot;
+l_string|&quot;%s: send buffer setup complete: first=0x%x n=%d f=%d, nxt=%d&bslash;n&quot;
 comma
 id|adapter
 (braket
@@ -1126,7 +1126,7 @@ multiline_comment|/*&n;&t; * Prep the receive buffers&n;&t; */
 id|pr_debug
 c_func
 (paren
-l_string|&quot;%s: Adding %d RecvBuffers:&bslash;n&quot;
+l_string|&quot;%s: adding %d RecvBuffers:&bslash;n&quot;
 comma
 id|adapter
 (braket
@@ -1198,7 +1198,7 @@ suffix:semicolon
 id|pr_debug
 c_func
 (paren
-l_string|&quot;%s: Adding RcvBuffer #%d offset=0x%x sz=%d buffsz:%d&bslash;n&quot;
+l_string|&quot;%s: adding RcvBuffer #%d offset=0x%x sz=%d bufsz:%d&bslash;n&quot;
 comma
 id|adapter
 (braket

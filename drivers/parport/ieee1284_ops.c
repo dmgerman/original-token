@@ -236,9 +236,10 @@ id|parport_release
 id|dev
 )paren
 suffix:semicolon
-id|current-&gt;state
-op_assign
+id|set_current_state
+(paren
 id|TASK_INTERRUPTIBLE
+)paren
 suffix:semicolon
 id|schedule_timeout
 (paren
@@ -1627,9 +1628,10 @@ id|parport_release
 id|dev
 )paren
 suffix:semicolon
-id|current-&gt;state
-op_assign
+id|set_current_state
+(paren
 id|TASK_INTERRUPTIBLE
+)paren
 suffix:semicolon
 id|schedule_timeout
 (paren

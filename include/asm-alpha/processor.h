@@ -278,6 +278,131 @@ DECL|macro|release_segments
 mdefine_line|#define release_segments(mm)&t;&t;do { } while (0)
 DECL|macro|forget_segments
 mdefine_line|#define forget_segments()&t;&t;do { } while (0)
+multiline_comment|/*&n; * These bracket the sleeping functions..&n; */
+r_extern
+r_void
+id|scheduling_functions_start_here
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|scheduling_functions_end_here
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+DECL|macro|first_sched
+mdefine_line|#define first_sched&t;((unsigned long) scheduling_functions_start_here)
+DECL|macro|last_sched
+mdefine_line|#define last_sched&t;((unsigned long) scheduling_functions_end_here)
+DECL|function|get_wchan
+r_static
+r_inline
+r_int
+r_int
+id|get_wchan
+c_func
+(paren
+r_struct
+id|task_struct
+op_star
+id|p
+)paren
+(brace
+r_int
+r_int
+id|schedule_frame
+suffix:semicolon
+r_int
+r_int
+id|pc
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|p
+op_logical_or
+id|p
+op_eq
+id|current
+op_logical_or
+id|p-&gt;state
+op_eq
+id|TASK_RUNNING
+)paren
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/*&n;&t; * This one depends on the frame size of schedule().  Do a&n;&t; * &quot;disass schedule&quot; in gdb to find the frame size.  Also, the&n;&t; * code assumes that sleep_on() follows immediately after&n;&t; * interruptible_sleep_on() and that add_timer() follows&n;&t; * immediately after interruptible_sleep().  Ugly, isn&squot;t it?&n;&t; * Maybe adding a wchan field to task_struct would be better,&n;&t; * after all...&n;&t; */
+id|pc
+op_assign
+id|thread_saved_pc
+c_func
+(paren
+op_amp
+id|p-&gt;thread
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pc
+op_ge
+id|first_sched
+op_logical_and
+id|pc
+OL
+id|last_sched
+)paren
+(brace
+id|schedule_frame
+op_assign
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+id|p-&gt;thread.ksp
+)paren
+(braket
+l_int|6
+)braket
+suffix:semicolon
+r_return
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+id|schedule_frame
+)paren
+(braket
+l_int|12
+)braket
+suffix:semicolon
+)brace
+r_return
+id|pc
+suffix:semicolon
+)brace
+DECL|macro|last_sched
+macro_line|#undef last_sched
+DECL|macro|first_sched
+macro_line|#undef first_sched
+multiline_comment|/*&n;* See arch/alpha/kernel/ptrace.c for details.&n;*/
+DECL|macro|PT_REG
+mdefine_line|#define PT_REG(reg)&t;&t;(PAGE_SIZE - sizeof(struct pt_regs)&t;&bslash;&n;&t;&t;&t;&t; + (long)&amp;((struct pt_regs *)0)-&gt;reg)
+DECL|macro|KSTK_EIP
+mdefine_line|#define KSTK_EIP(tsk) &bslash;&n;    (*(unsigned long *)(PT_REG(pc) + PAGE_SIZE + (unsigned long)(tsk)))
+DECL|macro|KSTK_ESP
+mdefine_line|#define KSTK_ESP(tsk)&t;((tsk) == current ? rdusp() : (tsk)-&gt;thread.usp)
 multiline_comment|/* NOTE: The task struct and the stack go together!  */
 DECL|macro|alloc_task_struct
 mdefine_line|#define alloc_task_struct() &bslash;&n;        ((struct task_struct *) __get_free_pages(GFP_KERNEL,1))

@@ -91,27 +91,6 @@ id|adapter
 (braket
 )braket
 suffix:semicolon
-macro_line|#if 0
-r_static
-r_char
-op_star
-id|ChannelStates
-(braket
-)braket
-op_assign
-(brace
-l_string|&quot;Idle&quot;
-comma
-l_string|&quot;Ready&quot;
-comma
-l_string|&quot;Connecting&quot;
-comma
-l_string|&quot;Connected&quot;
-comma
-l_string|&quot;Disconnecting&quot;
-)brace
-suffix:semicolon
-macro_line|#endif
 r_int
 id|GetStatus
 c_func
@@ -225,7 +204,7 @@ id|EngineUp
 id|pr_debug
 c_func
 (paren
-l_string|&quot;%s: SCIOCLOAD: Command Failed, LoadProc while engine running.&bslash;n&quot;
+l_string|&quot;%s: SCIOCLOAD: command failed, LoadProc while engine running.&bslash;n&quot;
 comma
 id|adapter
 (braket
@@ -307,7 +286,7 @@ id|status
 id|pr_debug
 c_func
 (paren
-l_string|&quot;%s: SCIOCLOAD: Command Failed, status = %d&bslash;n&quot;
+l_string|&quot;%s: SCIOCLOAD: command failed, status = %d&bslash;n&quot;
 comma
 id|adapter
 (braket
@@ -329,7 +308,7 @@ r_else
 id|pr_debug
 c_func
 (paren
-l_string|&quot;%s: SCIOCLOAD: Command Sucessful&bslash;n&quot;
+l_string|&quot;%s: SCIOCLOAD: command successful&bslash;n&quot;
 comma
 id|adapter
 (braket
@@ -375,7 +354,7 @@ id|EngineUp
 id|pr_debug
 c_func
 (paren
-l_string|&quot;%s: SCIOCSTART: Command Failed, Engine already running.&bslash;n&quot;
+l_string|&quot;%s: SCIOCSTART: command failed, engine already running.&bslash;n&quot;
 comma
 id|adapter
 (braket
@@ -469,7 +448,7 @@ suffix:semicolon
 id|pr_debug
 c_func
 (paren
-l_string|&quot;%s: SCIOCSETSWITCH: Setting switch type to %d&bslash;n&quot;
+l_string|&quot;%s: SCIOCSETSWITCH: setting switch type to %d&bslash;n&quot;
 comma
 id|adapter
 (braket
@@ -525,7 +504,7 @@ id|rcvmsg.rsp_status
 id|pr_debug
 c_func
 (paren
-l_string|&quot;%s: SCIOCSETSWITCH: Command Successful&bslash;n&quot;
+l_string|&quot;%s: SCIOCSETSWITCH: command successful&bslash;n&quot;
 comma
 id|adapter
 (braket
@@ -544,7 +523,7 @@ r_else
 id|pr_debug
 c_func
 (paren
-l_string|&quot;%s: SCIOCSETSWITCH: Command Failed (status = %d)&bslash;n&quot;
+l_string|&quot;%s: SCIOCSETSWITCH: command failed (status = %d)&bslash;n&quot;
 comma
 id|adapter
 (braket
@@ -630,7 +609,7 @@ id|rcvmsg.rsp_status
 id|pr_debug
 c_func
 (paren
-l_string|&quot;%s: SCIOCGETSWITCH: Command Sucessful&bslash;n&quot;
+l_string|&quot;%s: SCIOCGETSWITCH: command successful&bslash;n&quot;
 comma
 id|adapter
 (braket
@@ -646,7 +625,7 @@ r_else
 id|pr_debug
 c_func
 (paren
-l_string|&quot;%s: SCIOCGETSWITCH: Command Failed (status = %d)&bslash;n&quot;
+l_string|&quot;%s: SCIOCGETSWITCH: command failed (status = %d)&bslash;n&quot;
 comma
 id|adapter
 (braket
@@ -771,7 +750,7 @@ id|status
 id|pr_debug
 c_func
 (paren
-l_string|&quot;%s: SCIOCGETSPID: Command Sucessful&bslash;n&quot;
+l_string|&quot;%s: SCIOCGETSPID: command successful&bslash;n&quot;
 comma
 id|adapter
 (braket
@@ -787,7 +766,7 @@ r_else
 id|pr_debug
 c_func
 (paren
-l_string|&quot;%s: SCIOCGETSPID: Command Failed (status = %d)&bslash;n&quot;
+l_string|&quot;%s: SCIOCGETSPID: command failed (status = %d)&bslash;n&quot;
 comma
 id|adapter
 (braket
@@ -905,7 +884,7 @@ suffix:semicolon
 id|pr_debug
 c_func
 (paren
-l_string|&quot;%s: SCIOCSETSPID: Setting channel %d spid to %s&bslash;n&quot;
+l_string|&quot;%s: SCIOCSETSPID: setting channel %d spid to %s&bslash;n&quot;
 comma
 id|adapter
 (braket
@@ -963,7 +942,7 @@ id|rcvmsg.rsp_status
 id|pr_debug
 c_func
 (paren
-l_string|&quot;%s: SCIOCSETSPID: Command Successful&bslash;n&quot;
+l_string|&quot;%s: SCIOCSETSPID: command successful&bslash;n&quot;
 comma
 id|adapter
 (braket
@@ -982,7 +961,7 @@ r_else
 id|pr_debug
 c_func
 (paren
-l_string|&quot;%s: SCIOCSETSPID: Command Failed (status = %d)&bslash;n&quot;
+l_string|&quot;%s: SCIOCSETSPID: command failed (status = %d)&bslash;n&quot;
 comma
 id|adapter
 (braket
@@ -1068,7 +1047,7 @@ id|status
 id|pr_debug
 c_func
 (paren
-l_string|&quot;%s: SCIOCGETDN: Command Sucessful&bslash;n&quot;
+l_string|&quot;%s: SCIOCGETDN: command successful&bslash;n&quot;
 comma
 id|adapter
 (braket
@@ -1084,7 +1063,7 @@ r_else
 id|pr_debug
 c_func
 (paren
-l_string|&quot;%s: SCIOCGETDN: Command Failed (status = %d)&bslash;n&quot;
+l_string|&quot;%s: SCIOCGETDN: command failed (status = %d)&bslash;n&quot;
 comma
 id|adapter
 (braket
@@ -1202,7 +1181,7 @@ suffix:semicolon
 id|pr_debug
 c_func
 (paren
-l_string|&quot;%s: SCIOCSETDN: Setting channel %d dn to %s&bslash;n&quot;
+l_string|&quot;%s: SCIOCSETDN: setting channel %d dn to %s&bslash;n&quot;
 comma
 id|adapter
 (braket
@@ -1260,7 +1239,7 @@ id|rcvmsg.rsp_status
 id|pr_debug
 c_func
 (paren
-l_string|&quot;%s: SCIOCSETDN: Command Successful&bslash;n&quot;
+l_string|&quot;%s: SCIOCSETDN: command successful&bslash;n&quot;
 comma
 id|adapter
 (braket
@@ -1279,7 +1258,7 @@ r_else
 id|pr_debug
 c_func
 (paren
-l_string|&quot;%s: SCIOCSETDN: Command Failed (status = %d)&bslash;n&quot;
+l_string|&quot;%s: SCIOCSETDN: command failed (status = %d)&bslash;n&quot;
 comma
 id|adapter
 (braket
@@ -1312,7 +1291,7 @@ op_member_access_from_pointer
 id|devicename
 )paren
 suffix:semicolon
-multiline_comment|/*&t;&t;adapter[card]-&gt;trace = !adapter[card]-&gt;trace; &n;&t;&t;pr_debug(&quot;%s: SCIOCTRACE: Tracing turned %s&bslash;n&quot;, adapter[card]-&gt;devicename,&n;&t;&t;&t;adapter[card]-&gt;trace ? &quot;ON&quot; : &quot;OFF&quot;); */
+multiline_comment|/*&t;&t;adapter[card]-&gt;trace = !adapter[card]-&gt;trace; &n;&t;&t;pr_debug(&quot;%s: SCIOCTRACE: tracing turned %s&bslash;n&quot;, adapter[card]-&gt;devicename,&n;&t;&t;&t;adapter[card]-&gt;trace ? &quot;ON&quot; : &quot;OFF&quot;); */
 r_break
 suffix:semicolon
 r_case
@@ -1448,7 +1427,7 @@ id|rcvmsg.rsp_status
 id|pr_debug
 c_func
 (paren
-l_string|&quot;%s: SCIOCGETSPEED: Command Sucessful&bslash;n&quot;
+l_string|&quot;%s: SCIOCGETSPEED: command successful&bslash;n&quot;
 comma
 id|adapter
 (braket
@@ -1464,7 +1443,7 @@ r_else
 id|pr_debug
 c_func
 (paren
-l_string|&quot;%s: SCIOCGETSPEED: Command Failed (status = %d)&bslash;n&quot;
+l_string|&quot;%s: SCIOCGETSPEED: command failed (status = %d)&bslash;n&quot;
 comma
 id|adapter
 (braket

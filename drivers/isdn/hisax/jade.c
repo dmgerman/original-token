@@ -1173,12 +1173,10 @@ c_cond
 id|bcs-&gt;tx_skb
 )paren
 (brace
-id|idev_kfree_skb
+id|dev_kfree_skb
 c_func
 (paren
 id|bcs-&gt;tx_skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|bcs-&gt;tx_skb

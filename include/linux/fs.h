@@ -471,6 +471,7 @@ macro_line|#include &lt;linux/qnx4_fs_i.h&gt;
 macro_line|#include &lt;linux/bfs_fs_i.h&gt;
 macro_line|#include &lt;linux/udf_fs_i.h&gt;
 macro_line|#include &lt;linux/ncp_fs_i.h&gt;
+macro_line|#include &lt;linux/proc_fs_i.h&gt;
 multiline_comment|/*&n; * Attribute flags.  These should be or-ed together to figure out what&n; * has been changed!&n; */
 DECL|macro|ATTR_MODE
 mdefine_line|#define ATTR_MODE&t;1
@@ -848,6 +849,11 @@ DECL|member|ncpfs_i
 r_struct
 id|ncp_inode_info
 id|ncpfs_i
+suffix:semicolon
+DECL|member|proc_i
+r_struct
+id|proc_inode_info
+id|proc_i
 suffix:semicolon
 DECL|member|socket_i
 r_struct

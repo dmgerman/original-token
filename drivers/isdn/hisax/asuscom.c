@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: asuscom.c,v 1.7 1999/07/12 21:04:53 keil Exp $&n;&n; * asuscom.c     low level stuff for ASUSCOM NETWORK INC. ISDNLink cards&n; *&n; * Author     Karsten Keil (keil@isdn4linux.de)&n; *&n; * Thanks to  ASUSCOM NETWORK INC. Taiwan and  Dynalink NL for informations&n; *&n; *&n; * $Log: asuscom.c,v $&n; * Revision 1.7  1999/07/12 21:04:53  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 1.6  1999/07/01 08:11:18  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 1.5  1998/11/15 23:54:19  keil&n; * changes from 2.0&n; *&n; * Revision 1.4  1998/06/18 23:18:20  keil&n; * Support for new IPAC card&n; *&n; * Revision 1.3  1998/04/15 16:46:53  keil&n; * new init code&n; *&n; * Revision 1.2  1998/02/02 13:27:06  keil&n; * New&n; *&n; *&n; */
+multiline_comment|/* $Id: asuscom.c,v 1.8 1999/09/04 06:20:05 keil Exp $&n;&n; * asuscom.c     low level stuff for ASUSCOM NETWORK INC. ISDNLink cards&n; *&n; * Author     Karsten Keil (keil@isdn4linux.de)&n; *&n; * Thanks to  ASUSCOM NETWORK INC. Taiwan and  Dynalink NL for informations&n; *&n; *&n; * $Log: asuscom.c,v $&n; * Revision 1.8  1999/09/04 06:20:05  keil&n; * Changes from kernel set_current_state()&n; *&n; * Revision 1.7  1999/07/12 21:04:53  keil&n; * fix race in IRQ handling&n; * added watchdog for lost IRQs&n; *&n; * Revision 1.6  1999/07/01 08:11:18  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 1.5  1998/11/15 23:54:19  keil&n; * changes from 2.0&n; *&n; * Revision 1.4  1998/06/18 23:18:20  keil&n; * Support for new IPAC card&n; *&n; * Revision 1.3  1998/04/15 16:46:53  keil&n; * new init code&n; *&n; * Revision 1.2  1998/02/02 13:27:06  keil&n; * New&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;hisax.h&quot;
@@ -20,7 +20,7 @@ r_char
 op_star
 id|Asuscom_revision
 op_assign
-l_string|&quot;$Revision: 1.7 $&quot;
+l_string|&quot;$Revision: 1.8 $&quot;
 suffix:semicolon
 DECL|macro|byteout
 mdefine_line|#define byteout(addr,val) outb(val,addr)
@@ -1240,9 +1240,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|current-&gt;state
-op_assign
+id|set_current_state
+c_func
+(paren
 id|TASK_INTERRUPTIBLE
+)paren
 suffix:semicolon
 id|schedule_timeout
 c_func
@@ -1285,9 +1287,11 @@ l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* Reset Off */
-id|current-&gt;state
-op_assign
+id|set_current_state
+c_func
+(paren
 id|TASK_INTERRUPTIBLE
+)paren
 suffix:semicolon
 id|schedule_timeout
 c_func
@@ -1455,9 +1459,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
-id|__init
-DECL|function|setup_asuscom
 id|setup_asuscom
 c_func
 (paren
@@ -1465,6 +1471,7 @@ r_struct
 id|IsdnCard
 op_star
 id|card
+)paren
 )paren
 (brace
 r_int

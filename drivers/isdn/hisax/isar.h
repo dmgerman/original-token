@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isar.h,v 1.5 1999/08/25 16:59:59 keil Exp $&n; * isar.h   ISAR (Siemens PSB 7110) specific defines&n; *&n; * Author Karsten Keil (keil@isdn4linux.de)&n; *&n; *&n; * $Log: isar.h,v $&n; * Revision 1.5  1999/08/25 16:59:59  keil&n; * Make ISAR V32bis modem running&n; * Make LL-&gt;HL interface open for additional commands&n; *&n; * Revision 1.4  1999/08/05 20:43:20  keil&n; * ISAR analog modem support&n; *&n; * Revision 1.3  1999/07/01 08:11:46  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 1.2  1998/11/15 23:54:54  keil&n; * changes from 2.0&n; *&n; * Revision 1.1  1998/08/13 23:33:48  keil&n; * First version, only init&n; *&n; *&n; */
+multiline_comment|/* $Id: isar.h,v 1.6 1999/10/14 20:25:29 keil Exp $&n; * isar.h   ISAR (Siemens PSB 7110) specific defines&n; *&n; * Author Karsten Keil (keil@isdn4linux.de)&n; *&n; *&n; * $Log: isar.h,v $&n; * Revision 1.6  1999/10/14 20:25:29  keil&n; * add a statistic for error monitoring&n; *&n; * Revision 1.5  1999/08/25 16:59:59  keil&n; * Make ISAR V32bis modem running&n; * Make LL-&gt;HL interface open for additional commands&n; *&n; * Revision 1.4  1999/08/05 20:43:20  keil&n; * ISAR analog modem support&n; *&n; * Revision 1.3  1999/07/01 08:11:46  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 1.2  1998/11/15 23:54:54  keil&n; * changes from 2.0&n; *&n; * Revision 1.1  1998/08/13 23:33:48  keil&n; * First version, only init&n; *&n; *&n; */
 DECL|macro|ISAR_IRQMSK
 mdefine_line|#define ISAR_IRQMSK&t;0x04
 DECL|macro|ISAR_IRQSTA
@@ -272,6 +272,12 @@ DECL|macro|HDLC_FST
 mdefine_line|#define HDLC_FST&t;0x20
 DECL|macro|HDLC_ERROR
 mdefine_line|#define HDLC_ERROR&t;0x1c
+DECL|macro|HDLC_ERR_FAD
+mdefine_line|#define HDLC_ERR_FAD&t;0x10
+DECL|macro|HDLC_ERR_RER
+mdefine_line|#define HDLC_ERR_RER&t;0x08
+DECL|macro|HDLC_ERR_CER
+mdefine_line|#define HDLC_ERR_CER&t;0x01
 DECL|macro|SART_NMD
 mdefine_line|#define SART_NMD&t;0x01
 DECL|macro|BSTAT_RDM0
@@ -282,6 +288,10 @@ DECL|macro|BSTAT_RDM2
 mdefine_line|#define BSTAT_RDM2&t;0x4
 DECL|macro|BSTAT_RDM3
 mdefine_line|#define BSTAT_RDM3&t;0x8
+DECL|macro|BSTEV_TBO
+mdefine_line|#define BSTEV_TBO&t;0x1f
+DECL|macro|BSTEV_RBO
+mdefine_line|#define BSTEV_RBO&t;0x2f
 r_extern
 r_int
 id|ISARVersion

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: act2000_isa.c,v 1.8 1999/01/05 18:29:25 he Exp $&n; *&n; * ISDN lowlevel-module for the IBM ISDN-S0 Active 2000 (ISA-Version).&n; *&n; * Copyright 1998 by Fritz Elfert (fritz@isdn4linux.de)&n; * Thanks to Friedemann Baitinger and IBM Germany&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: act2000_isa.c,v $&n; * Revision 1.8  1999/01/05 18:29:25  he&n; * merged remaining schedule_timeout() changes from 2.1.127&n; *&n; * Revision 1.7  1998/11/05 22:12:41  fritz&n; * Changed mail-address.&n; *&n; * Revision 1.6  1998/06/17 19:51:09  he&n; * merged with 2.1.10[34] (cosmetics and udelay() -&gt; mdelay())&n; * brute force fix to avoid Ugh&squot;s in isdn_tty_write()&n; * cleaned up some dead code&n; *&n; * Revision 1.5  1998/02/12 23:06:47  keil&n; * change for 2.1.86 (removing FREE_READ/FREE_WRITE from [dev]_kfree_skb()&n; *&n; * Revision 1.4  1997/10/09 22:23:00  fritz&n; * New HL&lt;-&gt;LL interface:&n; *   New BSENT callback with nr. of bytes included.&n; *   Sending without ACK.&n; *&n; * Revision 1.3  1997/09/25 17:25:38  fritz&n; * Support for adding cards at runtime.&n; * Support for new Firmware.&n; *&n; * Revision 1.2  1997/09/24 23:11:44  fritz&n; * Optimized IRQ load and polling-mode.&n; *&n; * Revision 1.1  1997/09/23 18:00:05  fritz&n; * New driver for IBM Active 2000.&n; *&n; */
+multiline_comment|/* $Id: act2000_isa.c,v 1.10 1999/10/24 18:46:05 fritz Exp $&n; *&n; * ISDN lowlevel-module for the IBM ISDN-S0 Active 2000 (ISA-Version).&n; *&n; * Copyright 1998 by Fritz Elfert (fritz@isdn4linux.de)&n; * Thanks to Friedemann Baitinger and IBM Germany&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: act2000_isa.c,v $&n; * Revision 1.10  1999/10/24 18:46:05  fritz&n; * Changed isa_ prefix to act2000_isa_ to prevent name-clash in latest&n; * kernels.&n; *&n; * Revision 1.9  1999/09/04 06:20:04  keil&n; * Changes from kernel set_current_state()&n; *&n; * Revision 1.8  1999/01/05 18:29:25  he&n; * merged remaining schedule_timeout() changes from 2.1.127&n; *&n; * Revision 1.7  1998/11/05 22:12:41  fritz&n; * Changed mail-address.&n; *&n; * Revision 1.6  1998/06/17 19:51:09  he&n; * merged with 2.1.10[34] (cosmetics and udelay() -&gt; mdelay())&n; * brute force fix to avoid Ugh&squot;s in isdn_tty_write()&n; * cleaned up some dead code&n; *&n; * Revision 1.5  1998/02/12 23:06:47  keil&n; * change for 2.1.86 (removing FREE_READ/FREE_WRITE from [dev]_kfree_skb()&n; *&n; * Revision 1.4  1997/10/09 22:23:00  fritz&n; * New HL&lt;-&gt;LL interface:&n; *   New BSENT callback with nr. of bytes included.&n; *   Sending without ACK.&n; *&n; * Revision 1.3  1997/09/25 17:25:38  fritz&n; * Support for adding cards at runtime.&n; * Support for new Firmware.&n; *&n; * Revision 1.2  1997/09/24 23:11:44  fritz&n; * Optimized IRQ load and polling-mode.&n; *&n; * Revision 1.1  1997/09/23 18:00:05  fritz&n; * New driver for IBM Active 2000.&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;act2000.h&quot;
@@ -47,10 +47,10 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-DECL|variable|isa_irqs
+DECL|variable|act2000_isa_irqs
 r_static
 r_int
-id|isa_irqs
+id|act2000_isa_irqs
 (braket
 )braket
 op_assign
@@ -71,11 +71,11 @@ l_int|15
 )brace
 suffix:semicolon
 DECL|macro|ISA_NRIRQS
-mdefine_line|#define ISA_NRIRQS (sizeof(isa_irqs)/sizeof(int))
+mdefine_line|#define ISA_NRIRQS (sizeof(act2000_isa_irqs)/sizeof(int))
 r_static
 r_void
-DECL|function|isa_delay
-id|isa_delay
+DECL|function|act2000_isa_delay
+id|act2000_isa_delay
 c_func
 (paren
 r_int
@@ -87,9 +87,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|current-&gt;state
-op_assign
+id|set_current_state
+c_func
+(paren
 id|TASK_INTERRUPTIBLE
+)paren
 suffix:semicolon
 id|schedule_timeout
 c_func
@@ -106,8 +108,8 @@ suffix:semicolon
 multiline_comment|/*&n; * Reset Controller, then try to read the Card&squot;s signature.&n; + Return:&n; *   1 = Signature found.&n; *   0 = Signature not found.&n; */
 r_static
 r_int
-DECL|function|isa_reset
-id|isa_reset
+DECL|function|act2000_isa_reset
+id|act2000_isa_reset
 c_func
 (paren
 r_int
@@ -239,8 +241,8 @@ id|found
 suffix:semicolon
 )brace
 r_int
-DECL|function|isa_detect
-id|isa_detect
+DECL|function|act2000_isa_detect
+id|act2000_isa_detect
 c_func
 (paren
 r_int
@@ -282,7 +284,7 @@ id|ISA_REGION
 )paren
 id|ret
 op_assign
-id|isa_reset
+id|act2000_isa_reset
 c_func
 (paren
 id|portbase
@@ -300,8 +302,8 @@ suffix:semicolon
 )brace
 r_static
 r_void
-DECL|function|isa_interrupt
-id|isa_interrupt
+DECL|function|act2000_isa_interrupt
+id|act2000_isa_interrupt
 c_func
 (paren
 r_int
@@ -379,7 +381,7 @@ comma
 id|ISA_PORT_SIS
 )paren
 suffix:semicolon
-id|isa_receive
+id|act2000_isa_receive
 c_func
 (paren
 id|card
@@ -434,8 +436,8 @@ suffix:semicolon
 )brace
 r_static
 r_void
-DECL|function|isa_select_irq
-id|isa_select_irq
+DECL|function|act2000_isa_select_irq
+id|act2000_isa_select_irq
 c_func
 (paren
 id|act2000_card
@@ -543,8 +545,8 @@ suffix:semicolon
 )brace
 r_static
 r_void
-DECL|function|isa_enable_irq
-id|isa_enable_irq
+DECL|function|act2000_isa_enable_irq
+id|act2000_isa_enable_irq
 c_func
 (paren
 id|act2000_card
@@ -552,7 +554,7 @@ op_star
 id|card
 )paren
 (brace
-id|isa_select_irq
+id|act2000_isa_select_irq
 c_func
 (paren
 id|card
@@ -570,8 +572,8 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Install interrupt handler, enable irq on card.&n; * If irq is -1, choose next free irq, else irq is given explicitely.&n; */
 r_int
-DECL|function|isa_config_irq
-id|isa_config_irq
+DECL|function|act2000_isa_config_irq
+id|act2000_isa_config_irq
 c_func
 (paren
 id|act2000_card
@@ -678,13 +680,13 @@ op_logical_neg
 id|request_irq
 c_func
 (paren
-id|isa_irqs
+id|act2000_isa_irqs
 (braket
 id|i
 )braket
 comma
 op_amp
-id|isa_interrupt
+id|act2000_isa_interrupt
 comma
 l_int|0
 comma
@@ -696,7 +698,7 @@ l_int|NULL
 (brace
 id|card-&gt;irq
 op_assign
-id|isa_irqs
+id|act2000_isa_irqs
 (braket
 id|i
 )braket
@@ -730,7 +732,7 @@ c_func
 id|irq
 comma
 op_amp
-id|isa_interrupt
+id|act2000_isa_interrupt
 comma
 l_int|0
 comma
@@ -786,7 +788,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|isa_select_irq
+id|act2000_isa_select_irq
 c_func
 (paren
 id|card
@@ -815,8 +817,8 @@ l_int|0
 suffix:semicolon
 )brace
 r_int
-DECL|function|isa_config_port
-id|isa_config_port
+DECL|function|act2000_isa_config_port
+id|act2000_isa_config_port
 c_func
 (paren
 id|act2000_card
@@ -892,8 +894,8 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Release ressources, used by an adaptor.&n; */
 r_void
-DECL|function|isa_release
-id|isa_release
+DECL|function|act2000_isa_release
+id|act2000_isa_release
 c_func
 (paren
 id|act2000_card
@@ -974,8 +976,8 @@ suffix:semicolon
 )brace
 r_static
 r_int
-DECL|function|isa_writeb
-id|isa_writeb
+DECL|function|act2000_isa_writeb
+id|act2000_isa_writeb
 c_func
 (paren
 id|act2000_card
@@ -1040,8 +1042,8 @@ suffix:semicolon
 )brace
 r_static
 r_int
-DECL|function|isa_readb
-id|isa_readb
+DECL|function|act2000_isa_readb
+id|act2000_isa_readb
 c_func
 (paren
 id|act2000_card
@@ -1107,8 +1109,8 @@ l_int|1
 suffix:semicolon
 )brace
 r_void
-DECL|function|isa_receive
-id|isa_receive
+DECL|function|act2000_isa_receive
+id|act2000_isa_receive
 c_func
 (paren
 id|act2000_card
@@ -1143,7 +1145,7 @@ r_while
 c_loop
 (paren
 op_logical_neg
-id|isa_readb
+id|act2000_isa_readb
 c_func
 (paren
 id|card
@@ -1236,7 +1238,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;isa_receive: no memory&bslash;n&quot;
+l_string|&quot;act2000_isa_receive: no memory&bslash;n&quot;
 )paren
 suffix:semicolon
 id|test_and_clear_bit
@@ -1294,7 +1296,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;isa_receive: Invalid CAPI msg&bslash;n&quot;
+l_string|&quot;act2000_isa_receive: Invalid CAPI msg&bslash;n&quot;
 )paren
 suffix:semicolon
 (brace
@@ -1362,7 +1364,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;isa_receive: %s&bslash;n&quot;
+l_string|&quot;act2000_isa_receive: %s&bslash;n&quot;
 comma
 id|tmp
 )paren
@@ -1491,8 +1493,8 @@ id|card-&gt;ilock
 suffix:semicolon
 )brace
 r_void
-DECL|function|isa_send
-id|isa_send
+DECL|function|act2000_isa_send
+id|act2000_isa_send
 c_func
 (paren
 id|act2000_card
@@ -1666,7 +1668,7 @@ id|skb-&gt;len
 r_if
 c_cond
 (paren
-id|isa_writeb
+id|act2000_isa_writeb
 c_func
 (paren
 id|card
@@ -1679,17 +1681,6 @@ id|skb-&gt;data
 )paren
 (brace
 multiline_comment|/* Fifo is full, but more data to send */
-macro_line|#if 0
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;isa_send: %d bytes&bslash;n&quot;
-comma
-id|l
-)paren
-suffix:semicolon
-macro_line|#endif
 id|test_and_clear_bit
 c_func
 (paren
@@ -1780,24 +1771,13 @@ id|card-&gt;sbuf
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#if 0
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;isa_send: %d bytes&bslash;n&quot;
-comma
-id|l
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 )brace
 multiline_comment|/*&n; * Get firmware ID, check for &squot;ISDN&squot; signature.&n; */
 r_static
 r_int
-DECL|function|isa_getid
-id|isa_getid
+DECL|function|act2000_isa_getid
+id|act2000_isa_getid
 c_func
 (paren
 id|act2000_card
@@ -1844,7 +1824,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|isa_readb
+id|act2000_isa_readb
 c_func
 (paren
 id|card
@@ -1959,7 +1939,7 @@ id|KERN_DEBUG
 l_string|&quot;Enabling Interrupts ...&bslash;n&quot;
 )paren
 suffix:semicolon
-id|isa_enable_irq
+id|act2000_isa_enable_irq
 c_func
 (paren
 id|card
@@ -1972,8 +1952,8 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Download microcode into card, check Firmware signature.&n; */
 r_int
-DECL|function|isa_download
-id|isa_download
+DECL|function|act2000_isa_download
+id|act2000_isa_download
 c_func
 (paren
 id|act2000_card
@@ -2019,7 +1999,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|isa_reset
+id|act2000_isa_reset
 c_func
 (paren
 id|card-&gt;port
@@ -2029,7 +2009,7 @@ r_return
 op_minus
 id|ENXIO
 suffix:semicolon
-id|isa_delay
+id|act2000_isa_delay
 c_func
 (paren
 id|HZ
@@ -2190,7 +2170,7 @@ id|l
 r_if
 c_cond
 (paren
-id|isa_writeb
+id|act2000_isa_writeb
 c_func
 (paren
 id|card
@@ -2243,7 +2223,7 @@ c_func
 id|buf
 )paren
 suffix:semicolon
-id|isa_delay
+id|act2000_isa_delay
 c_func
 (paren
 id|HZ
@@ -2253,7 +2233,7 @@ l_int|2
 suffix:semicolon
 r_return
 (paren
-id|isa_getid
+id|act2000_isa_getid
 c_func
 (paren
 id|card

@@ -818,9 +818,11 @@ op_plus
 id|RESET_OFFSET
 )paren
 suffix:semicolon
-id|current-&gt;state
-op_assign
+id|set_current_state
+c_func
+(paren
 id|TASK_INTERRUPTIBLE
+)paren
 suffix:semicolon
 id|schedule_timeout
 c_func
@@ -2411,9 +2413,11 @@ comma
 id|pgport
 )paren
 suffix:semicolon
-id|current-&gt;state
-op_assign
+id|set_current_state
+c_func
+(paren
 id|TASK_INTERRUPTIBLE
+)paren
 suffix:semicolon
 id|schedule_timeout
 c_func
@@ -2439,16 +2443,6 @@ comma
 id|sig
 )paren
 suffix:semicolon
-macro_line|#if 0
-multiline_comment|/*&n; * For Gary: &n; * If it&squot;s a timing problem, it should be gone with the above schedule()&n; * Another possible reason may be the missing volatile in the original&n; * code. readl() does this for us.&n; */
-id|printk
-c_func
-(paren
-l_string|&quot;&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* Hack! Doesn&squot;t work without this !!!??? */
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2470,9 +2464,11 @@ comma
 id|pgport
 )paren
 suffix:semicolon
-id|current-&gt;state
-op_assign
+id|set_current_state
+c_func
+(paren
 id|TASK_INTERRUPTIBLE
+)paren
 suffix:semicolon
 id|schedule_timeout
 c_func
@@ -2498,15 +2494,6 @@ comma
 id|sig
 )paren
 suffix:semicolon
-macro_line|#if 0
-id|printk
-c_func
-(paren
-l_string|&quot;&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* Hack! Doesn&squot;t work without this !!!??? */
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2651,9 +2638,11 @@ OL
 l_int|100
 )paren
 (brace
-id|current-&gt;state
-op_assign
+id|set_current_state
+c_func
+(paren
 id|TASK_INTERRUPTIBLE
+)paren
 suffix:semicolon
 id|schedule_timeout
 c_func

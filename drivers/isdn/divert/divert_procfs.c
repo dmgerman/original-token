@@ -1,19 +1,16 @@
-multiline_comment|/* &n; * $Id: divert_procfs.c,v 1.4 1999/08/06 07:42:48 calle Exp $&n; *&n; * Filesystem handling for the diversion supplementary services.&n; *&n; * Copyright 1998       by Werner Cornelius (werner@isdn4linux.de)&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: divert_procfs.c,v $&n; * Revision 1.4  1999/08/06 07:42:48  calle&n; * Added COMPAT_HAS_NEW_WAITQ for rd_queue for newer kernels.&n; *&n; * Revision 1.3  1999/07/05 20:21:41  werner&n; * changes to use diversion sources for all kernel versions.&n; * removed static device, only proc filesystem used&n; *&n; * Revision 1.2  1999/07/04 21:37:31  werner&n; * Ported from kernel version 2.0&n; *&n; *&n; *&n; */
+multiline_comment|/* &n; * $Id: divert_procfs.c,v 1.5 1999/09/14 20:31:01 werner Exp $&n; *&n; * Filesystem handling for the diversion supplementary services.&n; *&n; * Copyright 1998       by Werner Cornelius (werner@isdn4linux.de)&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: divert_procfs.c,v $&n; * Revision 1.5  1999/09/14 20:31:01  werner&n; *&n; * Removed obsoleted functions for proc fs and synced with new ones.&n; *&n; * Revision 1.4  1999/08/06 07:42:48  calle&n; * Added COMPAT_HAS_NEW_WAITQ for rd_queue for newer kernels.&n; *&n; * Revision 1.3  1999/07/05 20:21:41  werner&n; * changes to use diversion sources for all kernel versions.&n; * removed static device, only proc filesystem used&n; *&n; * Revision 1.2  1999/07/04 21:37:31  werner&n; * Ported from kernel version 2.0&n; *&n; *&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
-macro_line|#if (LINUX_VERSION_CODE &gt;= 0x020117) 
 macro_line|#include &lt;linux/poll.h&gt;
-macro_line|#endif
 macro_line|#ifdef CONFIG_PROC_FS
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#else
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#endif
 macro_line|#include &lt;linux/isdnif.h&gt;
-macro_line|#include &lt;linux/isdn_compat.h&gt;
 macro_line|#include &quot;isdn_divert.h&quot;
 multiline_comment|/*********************************/
 multiline_comment|/* Variables for interface queue */
@@ -45,24 +42,11 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* pointer to last entry */
-macro_line|#ifdef COMPAT_HAS_NEW_WAITQ
 DECL|variable|rd_queue
 r_static
 id|wait_queue_head_t
 id|rd_queue
 suffix:semicolon
-macro_line|#else
-DECL|variable|rd_queue
-r_static
-r_struct
-id|wait_queue
-op_star
-id|rd_queue
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Queue IO */
-macro_line|#endif
 multiline_comment|/*********************************/
 multiline_comment|/* put an info buffer into queue */
 multiline_comment|/*********************************/
@@ -257,31 +241,7 @@ multiline_comment|/* put_info_buffer */
 multiline_comment|/**********************************/
 multiline_comment|/* deflection device read routine */
 multiline_comment|/**********************************/
-macro_line|#if (LINUX_VERSION_CODE &lt; 0x020117)
 DECL|function|isdn_divert_read
-r_static
-r_int
-id|isdn_divert_read
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|file
-comma
-r_char
-op_star
-id|buf
-comma
-id|RWARG
-id|count
-)paren
-macro_line|#else
 r_static
 id|ssize_t
 id|isdn_divert_read
@@ -303,7 +263,6 @@ id|loff_t
 op_star
 id|off
 )paren
-macro_line|#endif
 (brace
 r_struct
 id|divert_info
@@ -437,32 +396,7 @@ multiline_comment|/* isdn_divert_read */
 multiline_comment|/**********************************/
 multiline_comment|/* deflection device write routine */
 multiline_comment|/**********************************/
-macro_line|#if (LINUX_VERSION_CODE &lt; 0x020117)
 DECL|function|isdn_divert_write
-r_static
-r_int
-id|isdn_divert_write
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|file
-comma
-r_const
-r_char
-op_star
-id|buf
-comma
-id|RWARG
-id|count
-)paren
-macro_line|#else
 r_static
 id|ssize_t
 id|isdn_divert_write
@@ -485,7 +419,6 @@ id|loff_t
 op_star
 id|off
 )paren
-macro_line|#endif
 (brace
 r_return
 op_minus
@@ -496,73 +429,6 @@ multiline_comment|/* isdn_divert_write */
 multiline_comment|/***************************************/
 multiline_comment|/* select routines for various kernels */
 multiline_comment|/***************************************/
-macro_line|#if (LINUX_VERSION_CODE &lt; 0x020117)
-DECL|function|isdn_divert_select
-r_static
-r_int
-id|isdn_divert_select
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|file
-comma
-r_int
-id|type
-comma
-id|select_table
-op_star
-id|st
-)paren
-(brace
-r_if
-c_cond
-(paren
-op_star
-(paren
-(paren
-r_struct
-id|divert_info
-op_star
-op_star
-)paren
-id|file-&gt;private_data
-)paren
-)paren
-r_return
-l_int|1
-suffix:semicolon
-r_else
-(brace
-r_if
-c_cond
-(paren
-id|st
-)paren
-id|select_wait
-c_func
-(paren
-op_amp
-(paren
-id|rd_queue
-)paren
-comma
-id|st
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-)brace
-multiline_comment|/* isdn_divert_select */
-macro_line|#else
 DECL|function|isdn_divert_poll
 r_static
 r_int
@@ -627,7 +493,6 @@ id|mask
 suffix:semicolon
 )brace
 multiline_comment|/* isdn_divert_poll */
-macro_line|#endif
 multiline_comment|/****************/
 multiline_comment|/* Open routine */
 multiline_comment|/****************/
@@ -712,24 +577,7 @@ multiline_comment|/* isdn_divert_open */
 multiline_comment|/*******************/
 multiline_comment|/* close routine   */
 multiline_comment|/*******************/
-macro_line|#if (LINUX_VERSION_CODE &lt; 0x020117)
 DECL|function|isdn_divert_close
-r_static
-r_void
-id|isdn_divert_close
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|ino
-comma
-r_struct
-id|file
-op_star
-id|filep
-)paren
-macro_line|#else
 r_static
 r_int
 id|isdn_divert_close
@@ -745,7 +593,6 @@ id|file
 op_star
 id|filep
 )paren
-macro_line|#endif
 (brace
 r_struct
 id|divert_info
@@ -832,12 +679,9 @@ suffix:semicolon
 )brace
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#if (LINUX_VERSION_CODE &lt; 0x020117)
-macro_line|#else
 r_return
 l_int|0
 suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/* isdn_divert_close */
 multiline_comment|/*********/
@@ -1222,36 +1066,13 @@ multiline_comment|/* success */
 )brace
 multiline_comment|/* isdn_divert_ioctl */
 macro_line|#ifdef CONFIG_PROC_FS
-macro_line|#if (LINUX_VERSION_CODE &lt; 0x020117)
 r_static
-id|LSTYPE
+id|loff_t
 DECL|function|isdn_divert_lseek
 id|isdn_divert_lseek
 c_func
 (paren
 r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|file
-comma
-id|LSARG
-id|offset
-comma
-r_int
-id|orig
-)paren
-macro_line|#else
-r_static
-id|loff_t
-id|isdn_divert_lseek
-c_func
-(paren
-r_struct
 id|file
 op_star
 id|file
@@ -1262,48 +1083,12 @@ comma
 r_int
 id|orig
 )paren
-macro_line|#endif
 (brace
 r_return
 op_minus
 id|ESPIPE
 suffix:semicolon
 )brace
-macro_line|#if (LINUX_VERSION_CODE &lt; 0x020117)
-DECL|variable|isdn_fops
-r_static
-r_struct
-id|file_operations
-id|isdn_fops
-op_assign
-(brace
-id|isdn_divert_lseek
-comma
-id|isdn_divert_read
-comma
-id|isdn_divert_write
-comma
-l_int|NULL
-comma
-multiline_comment|/* isdn_readdir */
-id|isdn_divert_select
-comma
-multiline_comment|/* isdn_select */
-id|isdn_divert_ioctl
-comma
-multiline_comment|/* isdn_ioctl */
-l_int|NULL
-comma
-multiline_comment|/* isdn_mmap */
-id|isdn_divert_open
-comma
-id|isdn_divert_close
-comma
-l_int|NULL
-multiline_comment|/* fsync */
-)brace
-suffix:semicolon
-macro_line|#else
 DECL|variable|isdn_fops
 r_static
 r_struct
@@ -1340,65 +1125,63 @@ l_int|NULL
 multiline_comment|/* fsync */
 )brace
 suffix:semicolon
-macro_line|#endif  /* kernel &gt;= 2.1 */
-multiline_comment|/*&n; * proc directories can do almost nothing..&n; */
-DECL|variable|proc_isdn_inode_ops
+DECL|variable|divert_file_inode_operations
 r_struct
 id|inode_operations
-id|proc_isdn_inode_ops
+id|divert_file_inode_operations
 op_assign
 (brace
 op_amp
 id|isdn_fops
 comma
-multiline_comment|/* isdn divert special file-ops */
+multiline_comment|/* default proc file-ops */
 l_int|NULL
 comma
-multiline_comment|/* create */
+multiline_comment|/* create&t;*/
 l_int|NULL
 comma
-multiline_comment|/* lookup */
+multiline_comment|/* lookup&t;*/
 l_int|NULL
 comma
-multiline_comment|/* link */
+multiline_comment|/* link&t;&t;*/
 l_int|NULL
 comma
-multiline_comment|/* unlink */
+multiline_comment|/* unlink&t;*/
 l_int|NULL
 comma
-multiline_comment|/* symlink */
+multiline_comment|/* symlink&t;*/
 l_int|NULL
 comma
-multiline_comment|/* mkdir */
+multiline_comment|/* mkdir&t;*/
 l_int|NULL
 comma
-multiline_comment|/* rmdir */
+multiline_comment|/* rmdir&t;   */
 l_int|NULL
 comma
-multiline_comment|/* mknod */
+multiline_comment|/* mknod&t;   */
 l_int|NULL
 comma
-multiline_comment|/* rename */
+multiline_comment|/* rename&t;   */
 l_int|NULL
 comma
-multiline_comment|/* readlink */
+multiline_comment|/* readlink&t;   */
 l_int|NULL
 comma
 multiline_comment|/* follow_link */
 l_int|NULL
 comma
-multiline_comment|/* readpage */
+multiline_comment|/* readpage&t;   */
 l_int|NULL
 comma
-multiline_comment|/* writepage */
+multiline_comment|/* writepage   */
 l_int|NULL
 comma
-multiline_comment|/* bmap */
+multiline_comment|/* bmap&t;   */
 l_int|NULL
 comma
-multiline_comment|/* truncate */
+multiline_comment|/* truncate&t;   */
 l_int|NULL
-multiline_comment|/* permission */
+multiline_comment|/* permission  */
 )brace
 suffix:semicolon
 multiline_comment|/****************************/
@@ -1408,110 +1191,17 @@ DECL|variable|isdn_proc_entry
 r_static
 r_struct
 id|proc_dir_entry
+op_star
 id|isdn_proc_entry
 op_assign
-(brace
-l_int|0
-comma
-l_int|4
-comma
-l_string|&quot;isdn&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-op_amp
-id|proc_dir_inode_operations
-comma
 l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-)brace
 suffix:semicolon
 DECL|variable|isdn_divert_entry
 r_static
 r_struct
 id|proc_dir_entry
+op_star
 id|isdn_divert_entry
-op_assign
-(brace
-l_int|0
-comma
-l_int|6
-comma
-l_string|&quot;divert&quot;
-comma
-id|S_IFREG
-op_or
-id|S_IRUGO
-comma
-l_int|1
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-op_amp
-id|proc_isdn_inode_ops
-comma
-l_int|NULL
-)brace
-suffix:semicolon
-multiline_comment|/*****************************************************************/
-multiline_comment|/* variables used for automatic determining existence of proc fs */
-multiline_comment|/*****************************************************************/
-DECL|variable|proc_reg_dynamic
-r_static
-r_int
-(paren
-op_star
-id|proc_reg_dynamic
-)paren
-(paren
-r_struct
-id|proc_dir_entry
-op_star
-comma
-r_struct
-id|proc_dir_entry
-op_star
-)paren
-op_assign
-l_int|NULL
-suffix:semicolon
-DECL|variable|proc_unreg
-r_static
-r_int
-(paren
-op_star
-id|proc_unreg
-)paren
-(paren
-r_struct
-id|proc_dir_entry
-op_star
-comma
-r_int
-)paren
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -1530,7 +1220,6 @@ r_void
 r_int
 id|i
 suffix:semicolon
-macro_line|#ifdef COMPAT_HAS_NEW_WAITQ
 id|init_waitqueue_head
 c_func
 (paren
@@ -1538,183 +1227,72 @@ op_amp
 id|rd_queue
 )paren
 suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_PROC_FS
-macro_line|#if (LINUX_VERSION_CODE &lt; 0x020117)
-(paren
-r_void
-op_star
-)paren
-id|proc_reg_dynamic
-op_assign
-id|get_module_symbol
-c_func
-(paren
-l_string|&quot;&quot;
-comma
-l_string|&quot;proc_register_dynamic&quot;
-)paren
-suffix:semicolon
-(paren
-r_void
-op_star
-)paren
-id|proc_unreg
-op_assign
-id|get_module_symbol
-c_func
-(paren
-l_string|&quot;&quot;
-comma
-l_string|&quot;proc_unregister&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|proc_unreg
-)paren
-(brace
-id|i
-op_assign
-id|proc_reg_dynamic
-c_func
-(paren
-op_amp
-id|proc_net
-comma
-op_amp
 id|isdn_proc_entry
+op_assign
+id|create_proc_entry
+c_func
+(paren
+l_string|&quot;isdn&quot;
+comma
+id|S_IFDIR
+op_or
+id|S_IRUGO
+op_or
+id|S_IXUGO
+comma
+id|proc_net
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|i
+op_logical_neg
+id|isdn_proc_entry
 )paren
 r_return
-id|i
+op_minus
+l_int|1
 suffix:semicolon
-id|i
+id|isdn_divert_entry
 op_assign
-id|proc_reg_dynamic
+id|create_proc_entry
 c_func
 (paren
-op_amp
-id|isdn_proc_entry
+l_string|&quot;divert&quot;
 comma
-op_amp
+id|S_IFREG
+op_or
+id|S_IRUGO
+comma
+id|isdn_proc_entry
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
 id|isdn_divert_entry
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|i
-)paren
 (brace
-id|proc_unreg
+id|remove_proc_entry
 c_func
 (paren
-op_amp
-id|proc_net
+l_string|&quot;isdn&quot;
 comma
-id|isdn_proc_entry.low_ino
+id|proc_net
 )paren
 suffix:semicolon
 r_return
-id|i
+op_minus
+l_int|1
 suffix:semicolon
 )brace
-)brace
-multiline_comment|/* proc exists */
-macro_line|#else
-(paren
-r_void
-op_star
-)paren
-id|proc_reg_dynamic
+id|isdn_divert_entry-&gt;ops
 op_assign
-id|get_module_symbol
-c_func
-(paren
-l_string|&quot;&quot;
-comma
-l_string|&quot;proc_register&quot;
-)paren
-suffix:semicolon
-(paren
-r_void
-op_star
-)paren
-id|proc_unreg
-op_assign
-id|get_module_symbol
-c_func
-(paren
-l_string|&quot;&quot;
-comma
-l_string|&quot;proc_unregister&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|proc_unreg
-)paren
-(brace
-id|i
-op_assign
-id|proc_reg_dynamic
-c_func
-(paren
-id|proc_net
-comma
 op_amp
-id|isdn_proc_entry
-)paren
+id|divert_file_inode_operations
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|i
-)paren
-r_return
-id|i
-suffix:semicolon
-id|i
-op_assign
-id|proc_reg_dynamic
-c_func
-(paren
-op_amp
-id|isdn_proc_entry
-comma
-op_amp
-id|isdn_divert_entry
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|i
-)paren
-(brace
-id|proc_unreg
-c_func
-(paren
-id|proc_net
-comma
-id|isdn_proc_entry.low_ino
-)paren
-suffix:semicolon
-r_return
-id|i
-suffix:semicolon
-)brace
-)brace
-multiline_comment|/* proc exists */
-macro_line|#endif
 macro_line|#endif CONFIG_PROC_FS
 r_return
 l_int|0
@@ -1737,65 +1315,22 @@ r_int
 id|i
 suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
-r_if
-c_cond
-(paren
-id|proc_unreg
-)paren
-(brace
-id|i
-op_assign
-id|proc_unreg
+id|remove_proc_entry
 c_func
 (paren
-op_amp
+l_string|&quot;divert&quot;
+comma
 id|isdn_proc_entry
-comma
-id|isdn_divert_entry.low_ino
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|i
-)paren
-r_return
-id|i
-suffix:semicolon
-macro_line|#if (LINUX_VERSION_CODE &lt; 0x020117)
-id|i
-op_assign
-id|proc_unreg
+id|remove_proc_entry
 c_func
 (paren
-op_amp
-id|proc_net
+l_string|&quot;isdn&quot;
 comma
-id|isdn_proc_entry.low_ino
-)paren
-suffix:semicolon
-macro_line|#else
-id|i
-op_assign
-id|proc_unreg
-c_func
-(paren
 id|proc_net
-comma
-id|isdn_proc_entry.low_ino
 )paren
 suffix:semicolon
-macro_line|#endif
-r_if
-c_cond
-(paren
-id|i
-)paren
-r_return
-id|i
-suffix:semicolon
-)brace
-multiline_comment|/* proc exists */
 macro_line|#endif CONFIG_PROC_FS
 r_return
 l_int|0

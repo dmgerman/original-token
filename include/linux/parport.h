@@ -1607,6 +1607,27 @@ r_char
 id|val
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|parport_poll_peripheral
+(paren
+r_struct
+id|parport
+op_star
+id|port
+comma
+r_int
+r_char
+id|mask
+comma
+r_int
+r_char
+id|val
+comma
+r_int
+id|usec
+)paren
+suffix:semicolon
 multiline_comment|/* For architectural drivers */
 r_extern
 r_void

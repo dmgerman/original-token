@@ -2163,6 +2163,41 @@ id|irqaction
 op_star
 id|action
 suffix:semicolon
+macro_line|#if 1
+multiline_comment|/*&n;&t; * Sanity-check: shared interrupts should REALLY pass in&n;&t; * a real dev-ID, otherwise we&squot;ll have trouble later trying&n;&t; * to figure out which interrupt is which (messes up the&n;&t; * interrupt freeing logic etc).&n;&t; */
+r_if
+c_cond
+(paren
+id|irqflags
+op_amp
+id|SA_SHIRQ
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|dev_id
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;Bad boy: %s (at 0x%x) called us without a dev_id!&bslash;n&quot;
+comma
+id|devname
+comma
+(paren
+op_amp
+id|irq
+)paren
+(braket
+op_minus
+l_int|1
+)braket
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 r_if
 c_cond
 (paren

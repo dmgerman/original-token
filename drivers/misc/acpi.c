@@ -3922,7 +3922,7 @@ id|SA_SHIRQ
 comma
 l_string|&quot;acpi&quot;
 comma
-l_int|NULL
+id|acpi_facp
 )paren
 )paren
 (brace
@@ -4033,7 +4033,7 @@ c_func
 (paren
 id|acpi_facp-&gt;sci_int
 comma
-l_int|NULL
+id|acpi_facp
 )paren
 suffix:semicolon
 id|acpi_destroy_tables

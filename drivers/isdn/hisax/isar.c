@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isar.c,v 1.5 1999/08/25 16:59:55 keil Exp $&n;&n; * isar.c   ISAR (Siemens PSB 7110) specific routines&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; *&n; * $Log: isar.c,v $&n; * Revision 1.5  1999/08/25 16:59:55  keil&n; * Make ISAR V32bis modem running&n; * Make LL-&gt;HL interface open for additional commands&n; *&n; * Revision 1.4  1999/08/05 20:43:18  keil&n; * ISAR analog modem support&n; *&n; * Revision 1.3  1999/07/01 08:11:45  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 1.2  1998/11/15 23:54:53  keil&n; * changes from 2.0&n; *&n; * Revision 1.1  1998/08/13 23:33:47  keil&n; * First version, only init&n; *&n; *&n; */
+multiline_comment|/* $Id: isar.c,v 1.7 1999/10/14 20:25:29 keil Exp $&n;&n; * isar.c   ISAR (Siemens PSB 7110) specific routines&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; *&n; * $Log: isar.c,v $&n; * Revision 1.7  1999/10/14 20:25:29  keil&n; * add a statistic for error monitoring&n; *&n; * Revision 1.6  1999/08/31 11:20:20  paul&n; * various spelling corrections (new checksums may be needed, Karsten!)&n; *&n; * Revision 1.5  1999/08/25 16:59:55  keil&n; * Make ISAR V32bis modem running&n; * Make LL-&gt;HL interface open for additional commands&n; *&n; * Revision 1.4  1999/08/05 20:43:18  keil&n; * ISAR analog modem support&n; *&n; * Revision 1.3  1999/07/01 08:11:45  keil&n; * Common HiSax version for 2.0, 2.1, 2.2 and 2.3 kernel&n; *&n; * Revision 1.2  1998/11/15 23:54:53  keil&n; * changes from 2.0&n; *&n; * Revision 1.1  1998/08/13 23:33:47  keil&n; * First version, only init&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;hisax.h&quot;
@@ -2605,12 +2605,6 @@ id|ireg-&gt;clsb
 )paren
 )paren
 (brace
-id|SET_SKB_FREE
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
 id|rcv_mbox
 c_func
 (paren
@@ -2752,6 +2746,28 @@ comma
 id|ireg-&gt;clsb
 )paren
 suffix:semicolon
+macro_line|#ifdef ERROR_STATISTIC
+r_if
+c_cond
+(paren
+id|ireg-&gt;cmsb
+op_amp
+id|HDLC_ERR_RER
+)paren
+id|bcs-&gt;err_inv
+op_increment
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ireg-&gt;cmsb
+op_amp
+id|HDLC_ERR_CER
+)paren
+id|bcs-&gt;err_crc
+op_increment
+suffix:semicolon
+macro_line|#endif
 id|bcs-&gt;hw.isar.rcvidx
 op_assign
 l_int|0
@@ -2859,12 +2875,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|SET_SKB_FREE
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
 id|memcpy
 c_func
 (paren
@@ -3364,12 +3374,10 @@ comma
 id|bcs-&gt;hw.isar.txcnt
 )paren
 suffix:semicolon
-id|idev_kfree_skb
+id|dev_kfree_skb
 c_func
 (paren
 id|bcs-&gt;tx_skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|bcs-&gt;hw.isar.txcnt
@@ -4404,20 +4412,47 @@ suffix:semicolon
 r_case
 id|ISAR_IIS_BSTEV
 suffix:colon
-id|cs
-op_member_access_from_pointer
-id|BC_Write_Reg
+macro_line|#ifdef ERROR_STATISTIC
+r_if
+c_cond
+(paren
+(paren
+id|bcs
+op_assign
+id|sel_bcs_isar
 c_func
 (paren
 id|cs
 comma
-l_int|1
-comma
-id|ISAR_IIA
-comma
-l_int|0
+id|ireg-&gt;iis
+op_rshift
+l_int|6
 )paren
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|ireg-&gt;cmsb
+op_eq
+id|BSTEV_TBO
+)paren
+id|bcs-&gt;err_tx
+op_increment
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ireg-&gt;cmsb
+op_eq
+id|BSTEV_RBO
+)paren
+id|bcs-&gt;err_rdo
+op_increment
+suffix:semicolon
+)brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -4438,6 +4473,22 @@ l_int|6
 comma
 id|ireg-&gt;cmsb
 )paren
+suffix:semicolon
+id|cs
+op_member_access_from_pointer
+id|BC_Write_Reg
+c_func
+(paren
+id|cs
+comma
+l_int|1
+comma
+id|ISAR_IIA
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_break
 suffix:semicolon
 r_case
 id|ISAR_IIS_PSTEV
@@ -5748,7 +5799,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;isar modeisar analog funktions only with DP1&bslash;n&quot;
+l_string|&quot;isar modeisar analog works only with DP1&bslash;n&quot;
 )paren
 suffix:semicolon
 id|debugl1
@@ -5756,7 +5807,7 @@ c_func
 (paren
 id|cs
 comma
-l_string|&quot;isar modeisar analog funktions only with DP1&quot;
+l_string|&quot;isar modeisar analog works only with DP1&quot;
 )paren
 suffix:semicolon
 r_return
@@ -6547,12 +6598,10 @@ c_cond
 id|bcs-&gt;tx_skb
 )paren
 (brace
-id|idev_kfree_skb
+id|dev_kfree_skb
 c_func
 (paren
 id|bcs-&gt;tx_skb
-comma
-id|FREE_WRITE
 )paren
 suffix:semicolon
 id|bcs-&gt;tx_skb
@@ -6890,7 +6939,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;HiSax: invalid ioclt %d&bslash;n&quot;
+l_string|&quot;HiSax: invalid ioctl %d&bslash;n&quot;
 comma
 (paren
 r_int

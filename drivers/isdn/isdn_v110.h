@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isdn_v110.h,v 1.1 1998/02/20 17:32:11 fritz Exp $&n;&n; * Linux ISDN subsystem, V.110 related functions (linklevel).&n; *&n; * Copyright by Thomas Pfeiffer (pfeiffer@pds.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Log: isdn_v110.h,v $&n; * Revision 1.1  1998/02/20 17:32:11  fritz&n; * First checkin (not yet completely functionable).&n; *&n; */
+multiline_comment|/* $Id: isdn_v110.h,v 1.2 1999/10/30 09:49:28 keil Exp $&n;&n; * Linux ISDN subsystem, V.110 related functions (linklevel).&n; *&n; * Copyright by Thomas Pfeiffer (pfeiffer@pds.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Log: isdn_v110.h,v $&n; * Revision 1.2  1999/10/30 09:49:28  keil&n; * Reinit of v110 structs&n; *&n; * Revision 1.1  1998/02/20 17:32:11  fritz&n; * First checkin (not yet completely functionable).&n; *&n; */
 macro_line|#ifndef _isdn_v110_h_
 DECL|macro|_isdn_v110_h_
 mdefine_line|#define _isdn_v110_h_
@@ -43,6 +43,16 @@ r_int
 comma
 id|isdn_ctrl
 op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|isdn_v110_close
+c_func
+(paren
+id|isdn_v110_stream
+op_star
+id|v
 )paren
 suffix:semicolon
 macro_line|#endif

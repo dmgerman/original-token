@@ -1444,6 +1444,12 @@ id|code
 )paren
 suffix:semicolon
 macro_line|#endif
+id|task_lock
+c_func
+(paren
+id|tsk
+)paren
+suffix:semicolon
 id|sem_exit
 c_func
 (paren
@@ -1497,6 +1503,12 @@ suffix:semicolon
 id|exit_notify
 c_func
 (paren
+)paren
+suffix:semicolon
+id|task_unlock
+c_func
+(paren
+id|tsk
 )paren
 suffix:semicolon
 macro_line|#ifdef DEBUG_PROC_TREE

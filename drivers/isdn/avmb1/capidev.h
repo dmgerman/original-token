@@ -20,19 +20,10 @@ r_struct
 id|sk_buff_head
 id|recv_queue
 suffix:semicolon
-macro_line|#ifdef COMPAT_HAS_NEW_WAITQ
 DECL|member|recv_wait
 id|wait_queue_head_t
 id|recv_wait
 suffix:semicolon
-macro_line|#else
-DECL|member|recv_wait
-r_struct
-id|wait_queue
-op_star
-id|recv_wait
-suffix:semicolon
-macro_line|#endif
 DECL|member|errcode
 id|__u16
 id|errcode

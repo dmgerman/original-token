@@ -66,7 +66,7 @@ mdefine_line|#define VENDOR( vendor, name )&t;&t;static struct pci_device_info _
 DECL|macro|ENDVENDOR
 mdefine_line|#define ENDVENDOR()&t;&t;&t;};
 DECL|macro|DEVICE
-mdefine_line|#define DEVICE( vendor, device, name )&t;{ PCI_DEVICE_ID_##device, 0, __devicestr_##vendor##device },
+mdefine_line|#define DEVICE( vendor, device, name )&t;{ 0x##device, 0, __devicestr_##vendor##device },
 macro_line|#include &quot;devlist.h&quot;
 DECL|variable|pci_vendor_list
 r_static
@@ -80,7 +80,7 @@ id|pci_vendor_list
 op_assign
 (brace
 DECL|macro|VENDOR
-mdefine_line|#define VENDOR( vendor, name )&t;&t;{ PCI_VENDOR_ID_##vendor, sizeof(__devices_##vendor) / sizeof(struct pci_device_info), __vendorstr_##vendor, __devices_##vendor },
+mdefine_line|#define VENDOR( vendor, name )&t;&t;{ 0x##vendor, sizeof(__devices_##vendor) / sizeof(struct pci_device_info), __vendorstr_##vendor, __devices_##vendor },
 DECL|macro|ENDVENDOR
 mdefine_line|#define ENDVENDOR()
 DECL|macro|DEVICE

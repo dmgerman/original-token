@@ -1856,6 +1856,12 @@ op_star
 id|oldsig
 suffix:semicolon
 multiline_comment|/*&n;&t; * Make sure we have a private signal table&n;&t; */
+id|task_lock
+c_func
+(paren
+id|current
+)paren
+suffix:semicolon
 id|oldsig
 op_assign
 id|current-&gt;sig
@@ -2017,6 +2023,12 @@ c_func
 id|current-&gt;files
 )paren
 suffix:semicolon
+id|task_unlock
+c_func
+(paren
+id|current
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -2040,6 +2052,12 @@ suffix:colon
 id|current-&gt;sig
 op_assign
 id|oldsig
+suffix:semicolon
+id|task_unlock
+c_func
+(paren
+id|current
+)paren
 suffix:semicolon
 r_return
 id|retval

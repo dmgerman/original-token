@@ -571,7 +571,6 @@ op_amp
 id|cs-&gt;dc.isac.arcofitimer
 )paren
 suffix:semicolon
-macro_line|#ifdef COMPAT_HAS_NEW_WAITQ
 id|init_waitqueue_head
 c_func
 (paren
@@ -579,7 +578,6 @@ op_amp
 id|cs-&gt;dc.isac.arcofi_wait
 )paren
 suffix:semicolon
-macro_line|#endif
 id|test_and_set_bit
 c_func
 (paren

@@ -173,7 +173,6 @@ suffix:semicolon
 macro_line|#endif
 DECL|variable|shm_prm
 r_int
-r_int
 id|shm_prm
 (braket
 l_int|3

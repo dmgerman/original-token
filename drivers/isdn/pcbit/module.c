@@ -353,7 +353,6 @@ l_string|&quot;PCBIT-D module unloaded&bslash;n&quot;
 suffix:semicolon
 )brace
 macro_line|#else
-macro_line|#ifdef COMPAT_HAS_NEW_SETUP
 DECL|macro|MAX_PARA
 mdefine_line|#define MAX_PARA&t;(MAX_PCBIT_CARDS * 2)
 macro_line|#include &lt;linux/init.h&gt;
@@ -400,28 +399,6 @@ comma
 id|ints
 )paren
 suffix:semicolon
-macro_line|#else
-r_void
-id|pcbit_setup
-c_func
-(paren
-r_char
-op_star
-id|str
-comma
-r_int
-op_star
-id|ints
-)paren
-(brace
-r_int
-id|i
-comma
-id|j
-comma
-id|argc
-suffix:semicolon
-macro_line|#endif
 id|argc
 op_assign
 id|ints
@@ -499,7 +476,6 @@ id|i
 op_increment
 suffix:semicolon
 )brace
-macro_line|#ifdef COMPAT_HAS_NEW_SETUP
 r_return
 l_int|1
 suffix:semicolon
@@ -512,8 +488,5 @@ comma
 id|pcbit_setup
 )paren
 suffix:semicolon
-macro_line|#else
-)brace
-macro_line|#endif
 macro_line|#endif
 eof

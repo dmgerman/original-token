@@ -1,5 +1,5 @@
 multiline_comment|/* 82596.c: A generic 82596 ethernet driver for linux. */
-multiline_comment|/*&n;   Based on Apricot.c&n;   Written 1994 by Mark Evans.&n;   This driver is for the Apricot 82596 bus-master interface&n;&n;   Modularised 12/94 Mark Evans&n;&n;&n;   Modified to support the 82596 ethernet chips on 680x0 VME boards.&n;   by Richard Hirst &lt;richard@sleepie.demon.co.uk&gt;&n;   Renamed to be 82596.c&n;&n;   *** Untested on Apricot hardware, and may require some hacking&n;   *** to make it work.  The old 82596.c reported hasn&squot;t worked&n;   *** since 1.3.xx anyway.  I have been unable to find any users&n;   *** of Apricot hardware to test this on.&n;&n;   Most of my modifications relate to the braindead big-endian&n;   implementation by Intel.  When the i596 is operating in&n;   &squot;big-endian&squot; mode, it thinks a 32 bit value of 0x12345678&n;   should be stored as 0x56781234.  This is a real pain, when&n;   you have linked lists which are shared by the 680x0 and the&n;   i596.&n;&n;   Driver skeleton&n;   Written 1993 by Donald Becker.&n;   Copyright 1993 United States Government as represented by the Director,&n;   National Security Agency. This software may only be used and distributed&n;   according to the terms of the GNU Public License as modified by SRC,&n;   incorporated herein by reference.&n;&n;   The author may be reached as becker@super.org or&n;   C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;&n; */
+multiline_comment|/*&n;   Based on Apricot.c&n;   Written 1994 by Mark Evans.&n;   This driver is for the Apricot 82596 bus-master interface&n;&n;   Modularised 12/94 Mark Evans&n;&n;&n;   Modified to support the 82596 ethernet chips on 680x0 VME boards.&n;   by Richard Hirst &lt;richard@sleepie.demon.co.uk&gt;&n;   Renamed to be 82596.c&n;&n;   980825:  Changed to receive directly in to sk_buffs which are&n;   allocated at open() time.  Eliminates copy on incoming frames&n;   (small ones are still copied).  Shared data now held in a&n;   non-cached page, so we can run on 68060 in copyback mode.&n;&n;   TBD:&n;   * look at deferring rx frames rather than discarding (as per tulip)&n;   * handle tx ring full as per tulip&n;   * performace test to tune rx_copybreak&n;&n;   Most of my modifications relate to the braindead big-endian&n;   implementation by Intel.  When the i596 is operating in&n;   &squot;big-endian&squot; mode, it thinks a 32 bit value of 0x12345678&n;   should be stored as 0x56781234.  This is a real pain, when&n;   you have linked lists which are shared by the 680x0 and the&n;   i596.&n;&n;   Driver skeleton&n;   Written 1993 by Donald Becker.&n;   Copyright 1993 United States Government as represented by the Director,&n;   National Security Agency. This software may only be used and distributed&n;   according to the terms of the GNU Public License as modified by SRC,&n;   incorporated herein by reference.&n;&n;   The author may be reached as becker@super.org or&n;   C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;&n; */
 DECL|variable|version
 r_static
 r_const
@@ -27,11 +27,23 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
-macro_line|#include &lt;asm/pgtable.h&gt;&t;/*?? */
-macro_line|#ifdef CONFIG_MVME16x_NET
+macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#if defined(CONFIG_MVME16x_NET) || defined(CONFIG_MVME16x_NET_MODULE)
+DECL|macro|ENABLE_MVME16x_NET
+mdefine_line|#define ENABLE_MVME16x_NET
+macro_line|#endif
+macro_line|#if defined(CONFIG_BVME6000_NET) || defined(CONFIG_BVME6000_NET_MODULE)
+DECL|macro|ENABLE_BVME6000_NET
+mdefine_line|#define ENABLE_BVME6000_NET
+macro_line|#endif
+macro_line|#if defined(CONFIG_APRICOT) || defined(CONFIG_APRICOT_MODULE)
+DECL|macro|ENABLE_APRICOT
+mdefine_line|#define ENABLE_APRICOT
+macro_line|#endif
+macro_line|#ifdef ENABLE_MVME16x_NET
 macro_line|#include &lt;asm/mvme16xhw.h&gt;
 macro_line|#endif
-macro_line|#ifdef CONFIG_BVME6000_NET
+macro_line|#ifdef ENABLE_BVME6000_NET
 macro_line|#include &lt;asm/bvme6000hw.h&gt;
 macro_line|#endif
 multiline_comment|/*&n; * Define various macros for Channel Attention, word swapping etc., dependent&n; * on architecture.  MVME and BVME are 680x0 based, otherwise it is Intel.&n; */
@@ -57,6 +69,8 @@ mdefine_line|#define MACH_IS_APRICOT&t;0
 macro_line|#else
 DECL|macro|WSWAPrfd
 mdefine_line|#define WSWAPrfd(x)&t;x
+DECL|macro|WSWAPrbd
+mdefine_line|#define WSWAPrbd(x)&t;((struct i596_rbd *)(x))
 DECL|macro|WSWAPiscp
 mdefine_line|#define WSWAPiscp(x)&t;((struct i596_iscp *)(x))
 DECL|macro|WSWAPscb
@@ -66,7 +80,7 @@ mdefine_line|#define WSWAPcmd(x)&t;x
 DECL|macro|WSWAPtbd
 mdefine_line|#define WSWAPtbd(x)&t;x
 DECL|macro|WSWAPchar
-mdefine_line|#define WSWAPchar(x)&t;x
+mdefine_line|#define WSWAPchar(x)&t;((char *)(x))
 DECL|macro|ISCP_BUSY
 mdefine_line|#define ISCP_BUSY&t;0x0001
 DECL|macro|MACH_IS_APRICOT
@@ -81,20 +95,14 @@ DECL|macro|PORT_ALTSCP
 mdefine_line|#define PORT_ALTSCP&t;&t;0x02&t;/* alternate SCB address */
 DECL|macro|PORT_ALTDUMP
 mdefine_line|#define PORT_ALTDUMP&t;&t;0x03&t;/* Alternate DUMP address */
-macro_line|#ifndef HAVE_ALLOC_SKB
-DECL|macro|alloc_skb
-mdefine_line|#define alloc_skb(size, priority) (struct sk_buff *) kmalloc(size,priority)
-DECL|macro|kfree_skbmem
-mdefine_line|#define kfree_skbmem(buff, size) kfree_s(buff,size)
-macro_line|#endif
-DECL|macro|APRICOT_DEBUG
-mdefine_line|#define APRICOT_DEBUG 2
-macro_line|#ifdef APRICOT_DEBUG
+DECL|macro|I82596_DEBUG
+mdefine_line|#define I82596_DEBUG 1
+macro_line|#ifdef I82596_DEBUG
 DECL|variable|i596_debug
 r_int
 id|i596_debug
 op_assign
-id|APRICOT_DEBUG
+id|I82596_DEBUG
 suffix:semicolon
 macro_line|#else
 DECL|variable|i596_debug
@@ -104,6 +112,18 @@ op_assign
 l_int|1
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* Copy frames shorter than rx_copybreak, otherwise pass on up in&n; * a full sized sk_buff.  Value of 100 stolen from tulip.c (!alpha).&n; */
+DECL|variable|rx_copybreak
+r_static
+r_int
+id|rx_copybreak
+op_assign
+l_int|100
+suffix:semicolon
+DECL|macro|PKT_BUF_SZ
+mdefine_line|#define PKT_BUF_SZ&t;1536
+DECL|macro|MAX_MC_CNT
+mdefine_line|#define MAX_MC_CNT&t;64
 DECL|macro|I596_TOTAL_SIZE
 mdefine_line|#define I596_TOTAL_SIZE 17
 DECL|macro|I596_NULL
@@ -314,7 +334,9 @@ op_star
 id|next
 suffix:semicolon
 DECL|member|rbd
-r_int
+r_struct
+id|i596_rbd
+op_star
 id|rbd
 suffix:semicolon
 DECL|member|count
@@ -327,15 +349,53 @@ r_int
 r_int
 id|size
 suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|i596_rbd
+r_struct
+id|i596_rbd
+(brace
+DECL|member|count
+r_int
+r_int
+id|count
+suffix:semicolon
+DECL|member|zero1
+r_int
+r_int
+id|zero1
+suffix:semicolon
+DECL|member|next
+r_struct
+id|i596_rbd
+op_star
+id|next
+suffix:semicolon
 DECL|member|data
 r_char
+op_star
 id|data
-(braket
-l_int|1532
-)braket
+suffix:semicolon
+DECL|member|size
+r_int
+r_int
+id|size
+suffix:semicolon
+DECL|member|zero2
+r_int
+r_int
+id|zero2
+suffix:semicolon
+DECL|member|skb
+r_struct
+id|sk_buff
+op_star
+id|skb
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|TX_RING_SIZE
+mdefine_line|#define TX_RING_SIZE 16
 DECL|macro|RX_RING_SIZE
 mdefine_line|#define RX_RING_SIZE 16
 DECL|struct|i596_scb
@@ -496,6 +556,27 @@ r_struct
 id|i596_cmd
 id|tdr
 suffix:semicolon
+DECL|member|mc_cmd
+r_struct
+id|i596_cmd
+id|mc_cmd
+suffix:semicolon
+multiline_comment|/* Keep these three together!!! */
+DECL|member|mc_cnt
+r_int
+id|mc_cnt
+suffix:semicolon
+multiline_comment|/* Keep these three together!!! */
+DECL|member|mc_addrs
+r_char
+id|mc_addrs
+(braket
+id|MAX_MC_CNT
+op_star
+l_int|6
+)braket
+suffix:semicolon
+multiline_comment|/* Keep these three together!!! */
 DECL|member|stat
 r_int
 r_int
@@ -547,6 +628,42 @@ DECL|member|stats
 r_struct
 id|net_device_stats
 id|stats
+suffix:semicolon
+DECL|member|rfds
+r_struct
+id|i596_rfd
+id|rfds
+(braket
+id|RX_RING_SIZE
+)braket
+suffix:semicolon
+DECL|member|rbds
+r_struct
+id|i596_rbd
+id|rbds
+(braket
+id|RX_RING_SIZE
+)braket
+suffix:semicolon
+DECL|member|tx_cmds
+r_struct
+id|tx_cmd
+id|tx_cmds
+(braket
+id|TX_RING_SIZE
+)braket
+suffix:semicolon
+DECL|member|tbds
+r_struct
+id|i596_tbd
+id|tbds
+(braket
+id|TX_RING_SIZE
+)braket
+suffix:semicolon
+DECL|member|next_tx_cmd
+r_int
+id|next_tx_cmd
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -709,6 +826,13 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+DECL|variable|rx_ring_size
+r_static
+r_int
+id|rx_ring_size
+op_assign
+id|RX_RING_SIZE
+suffix:semicolon
 DECL|variable|ticks_limit
 r_static
 r_int
@@ -737,7 +861,7 @@ op_star
 id|dev
 )paren
 (brace
-macro_line|#ifdef CONFIG_MVME16x_NET
+macro_line|#ifdef ENABLE_MVME16x_NET
 r_if
 c_cond
 (paren
@@ -759,7 +883,7 @@ l_int|1
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#ifdef CONFIG_BVME6000_NET
+macro_line|#ifdef ENABLE_BVME6000_NET
 r_if
 c_cond
 (paren
@@ -782,7 +906,7 @@ id|dev-&gt;base_addr
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#ifdef CONFIG_APRICOT_i596
+macro_line|#ifdef ENABLE_APRICOT
 r_if
 c_cond
 (paren
@@ -828,7 +952,7 @@ op_star
 id|x
 )paren
 (brace
-macro_line|#ifdef CONFIG_MVME16x_NET
+macro_line|#ifdef ENABLE_MVME16x_NET
 r_if
 c_cond
 (paren
@@ -885,7 +1009,7 @@ l_int|16
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#ifdef CONFIG_BVME6000_NET
+macro_line|#ifdef ENABLE_BVME6000_NET
 r_if
 c_cond
 (paren
@@ -962,7 +1086,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 )brace
-macro_line|#if defined(CONFIG_MVME16x_NET) || defined(CONFIG_BVME6000_NET)
+macro_line|#if defined(ENABLE_MVME16x_NET) || defined(ENABLE_BVME6000_NET)
 DECL|function|i596_error
 r_static
 r_void
@@ -1154,7 +1278,7 @@ macro_line|#endif
 DECL|function|init_rx_bufs
 r_static
 r_inline
-r_int
+r_void
 id|init_rx_bufs
 c_func
 (paren
@@ -1162,9 +1286,6 @@ r_struct
 id|net_device
 op_star
 id|dev
-comma
-r_int
-id|num
 )paren
 (brace
 r_struct
@@ -1187,14 +1308,10 @@ id|i596_rfd
 op_star
 id|rfd
 suffix:semicolon
-id|lp-&gt;scb.rfd
-op_assign
-(paren
 r_struct
-id|i596_rfd
+id|i596_rbd
 op_star
-)paren
-id|I596_NULL
+id|rbd
 suffix:semicolon
 r_if
 c_cond
@@ -1204,123 +1321,214 @@ OG
 l_int|1
 )paren
 id|printk
-c_func
 (paren
 l_string|&quot;%s: init_rx_bufs %d.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
-id|num
+id|rx_ring_size
 )paren
 suffix:semicolon
+multiline_comment|/* First build the Receive Buffer Descriptor List */
 r_for
 c_loop
 (paren
 id|i
 op_assign
 l_int|0
+comma
+id|rbd
+op_assign
+id|lp-&gt;rbds
 suffix:semicolon
 id|i
 OL
-id|num
+id|rx_ring_size
 suffix:semicolon
 id|i
 op_increment
+comma
+id|rbd
+op_increment
 )paren
 (brace
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|rfd
-op_assign
-(paren
 r_struct
-id|i596_rfd
+id|sk_buff
 op_star
-)paren
-id|kmalloc
+id|skb
+op_assign
+id|dev_alloc_skb
 c_func
 (paren
-r_sizeof
-(paren
-r_struct
-id|i596_rfd
+id|PKT_BUF_SZ
 )paren
-comma
-id|GFP_KERNEL
-)paren
-)paren
-)paren
-r_break
-suffix:semicolon
-id|rfd-&gt;stat
-op_assign
-l_int|0x0000
-suffix:semicolon
-id|rfd-&gt;rbd
-op_assign
-id|I596_NULL
-suffix:semicolon
-id|rfd-&gt;count
-op_assign
-l_int|0
-suffix:semicolon
-id|rfd-&gt;size
-op_assign
-l_int|1532
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|i
+id|skb
 op_eq
+l_int|NULL
+)paren
+id|panic
+c_func
+(paren
+l_string|&quot;82596: alloc_skb() failed&quot;
+)paren
+suffix:semicolon
+id|skb-&gt;dev
+op_assign
+id|dev
+suffix:semicolon
+id|rbd-&gt;next
+op_assign
+id|WSWAPrbd
+c_func
+(paren
+id|rbd
+op_plus
+l_int|1
+)paren
+suffix:semicolon
+id|rbd-&gt;skb
+op_assign
+id|skb
+suffix:semicolon
+id|rbd-&gt;data
+op_assign
+id|WSWAPchar
+c_func
+(paren
+id|skb-&gt;tail
+)paren
+suffix:semicolon
+id|rbd-&gt;size
+op_assign
+id|PKT_BUF_SZ
+suffix:semicolon
+macro_line|#ifdef __mc68000__
+id|cache_clear
+c_func
+(paren
+id|virt_to_phys
+c_func
+(paren
+id|skb-&gt;tail
+)paren
+comma
+id|PKT_BUF_SZ
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+id|lp-&gt;rbds
+(braket
+id|rx_ring_size
+op_minus
+l_int|1
+)braket
+dot
+id|next
+op_assign
+id|WSWAPrbd
+c_func
+(paren
+id|lp-&gt;rbds
+)paren
+suffix:semicolon
+multiline_comment|/* Now build the Receive Frame Descriptor List */
+r_for
+c_loop
+(paren
+id|i
+op_assign
 l_int|0
+comma
+id|rfd
+op_assign
+id|lp-&gt;rfds
+suffix:semicolon
+id|i
+OL
+id|rx_ring_size
+suffix:semicolon
+id|i
+op_increment
+comma
+id|rfd
+op_increment
 )paren
 (brace
-id|rfd-&gt;cmd
+id|rfd-&gt;rbd
 op_assign
-id|CMD_EOL
-suffix:semicolon
-id|lp-&gt;rx_tail
-op_assign
-id|rfd
-suffix:semicolon
-)brace
-r_else
-id|rfd-&gt;cmd
-op_assign
-l_int|0x0000
+(paren
+r_struct
+id|i596_rbd
+op_star
+)paren
+id|I596_NULL
 suffix:semicolon
 id|rfd-&gt;next
-op_assign
-id|lp-&gt;scb.rfd
-suffix:semicolon
-id|lp-&gt;scb.rfd
 op_assign
 id|WSWAPrfd
 c_func
 (paren
 id|rfd
+op_plus
+l_int|1
 )paren
+suffix:semicolon
+id|rfd-&gt;cmd
+op_assign
+id|CMD_FLEX
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|i
-op_ne
-l_int|0
-)paren
-id|lp-&gt;rx_tail-&gt;next
-op_assign
 id|lp-&gt;scb.rfd
-suffix:semicolon
-r_return
+op_assign
+id|WSWAPrfd
+c_func
 (paren
-id|i
+id|lp-&gt;rfds
 )paren
+suffix:semicolon
+id|lp-&gt;rfds
+(braket
+l_int|0
+)braket
+dot
+id|rbd
+op_assign
+id|WSWAPrbd
+c_func
+(paren
+id|lp-&gt;rbds
+)paren
+suffix:semicolon
+id|rfd
+op_assign
+id|lp-&gt;rfds
+op_plus
+id|rx_ring_size
+op_minus
+l_int|1
+suffix:semicolon
+id|lp-&gt;rx_tail
+op_assign
+id|rfd
+suffix:semicolon
+id|rfd-&gt;next
+op_assign
+id|WSWAPrfd
+c_func
+(paren
+id|lp-&gt;rfds
+)paren
+suffix:semicolon
+id|rfd-&gt;cmd
+op_assign
+id|CMD_EOL
+op_or
+id|CMD_FLEX
 suffix:semicolon
 )brace
 DECL|function|remove_rx_bufs
@@ -1349,54 +1557,51 @@ op_star
 id|dev-&gt;priv
 suffix:semicolon
 r_struct
-id|i596_rfd
+id|i596_rbd
 op_star
-id|rfd
-op_assign
-id|WSWAPrfd
-c_func
-(paren
-id|lp-&gt;scb.rfd
-)paren
+id|rbd
 suffix:semicolon
-id|lp-&gt;rx_tail-&gt;next
-op_assign
-(paren
-r_struct
-id|i596_rfd
-op_star
-)paren
-id|I596_NULL
+r_int
+id|i
 suffix:semicolon
-r_do
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+comma
+id|rbd
+op_assign
+id|lp-&gt;rbds
+suffix:semicolon
+id|i
+OL
+id|rx_ring_size
+suffix:semicolon
+id|i
+op_increment
+comma
+id|rbd
+op_increment
+)paren
 (brace
-id|lp-&gt;scb.rfd
-op_assign
-id|rfd-&gt;next
-suffix:semicolon
-id|kfree
-c_func
+r_if
+c_cond
 (paren
-id|rfd
+id|rbd-&gt;skb
+op_eq
+l_int|NULL
 )paren
+r_break
 suffix:semicolon
-id|rfd
-op_assign
-id|WSWAPrfd
+id|dev_kfree_skb
 c_func
 (paren
-id|lp-&gt;scb.rfd
+id|rbd-&gt;skb
 )paren
 suffix:semicolon
 )brace
-r_while
-c_loop
-(paren
-id|rfd
-op_ne
-id|lp-&gt;rx_tail
-)paren
-suffix:semicolon
 )brace
 DECL|function|init_i596_mem
 r_static
@@ -1423,7 +1628,7 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-macro_line|#if !defined(CONFIG_MVME16x_NET) &amp;&amp; !defined(CONFIG_BVME6000_NET)
+macro_line|#if !defined(ENABLE_MVME16x_NET) &amp;&amp; !defined(ENABLE_BVME6000_NET)
 r_int
 id|ioaddr
 op_assign
@@ -1439,8 +1644,11 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-macro_line|#if defined(CONFIG_MVME16x_NET) || defined(CONFIG_BVME6000_NET)
-macro_line|#ifdef CONFIG_MVME16x_NET
+r_int
+id|i
+suffix:semicolon
+macro_line|#if defined(ENABLE_MVME16x_NET) || defined(ENABLE_BVME6000_NET)
+macro_line|#ifdef ENABLE_MVME16x_NET
 r_if
 c_cond
 (paren
@@ -1475,17 +1683,17 @@ l_int|0x2a
 op_assign
 l_int|0x40
 suffix:semicolon
+multiline_comment|/* Following disables snooping.  Snooping is not required&n;&t;&t; * as we make appropriate use of non-cached pages for&n;&t;&t; * shared data, and cache_push/cache_clear.&n;&t;&t; */
 id|pcc2
 (braket
 l_int|0x2b
 )braket
 op_assign
-l_int|0x40
+l_int|0x00
 suffix:semicolon
-multiline_comment|/* Set snooping bits now! */
 )brace
 macro_line|#endif
-macro_line|#ifdef CONFIG_BVME6000_NET
+macro_line|#ifdef ENABLE_BVME6000_NET
 r_if
 c_cond
 (paren
@@ -1541,7 +1749,7 @@ op_amp
 id|lp-&gt;scp
 )paren
 suffix:semicolon
-macro_line|#else
+macro_line|#elif defined(ENABLE_APRICOT)
 multiline_comment|/* change the scp address */
 id|outw
 c_func
@@ -1616,7 +1824,7 @@ id|lp-&gt;last_cmd
 op_assign
 id|jiffies
 suffix:semicolon
-macro_line|#ifdef CONFIG_MVME16x_NET
+macro_line|#ifdef ENABLE_MVME16x_NET
 r_if
 c_cond
 (paren
@@ -1627,7 +1835,7 @@ op_assign
 l_int|0x00000054
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_BVME6000_NET
+macro_line|#ifdef ENABLE_BVME6000_NET
 r_if
 c_cond
 (paren
@@ -1638,7 +1846,7 @@ op_assign
 l_int|0x0000004c
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_APRICOT_i596
+macro_line|#ifdef ENABLE_APRICOT
 r_if
 c_cond
 (paren
@@ -1705,7 +1913,7 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-macro_line|#if !defined(CONFIG_MVME16x_NET) &amp;&amp; !defined(CONFIG_BVME6000_NET)
+macro_line|#if defined(ENABLE_APRICOT)
 (paren
 r_void
 )paren
@@ -1763,11 +1971,94 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+multiline_comment|/* Ensure rx frame/buffer descriptors are tidy */
+multiline_comment|/* Bit naff doing this here as well as in init_rx_bufs() */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|rx_ring_size
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|lp-&gt;rfds
+(braket
+id|i
+)braket
+dot
+id|rbd
+op_assign
+(paren
+r_struct
+id|i596_rbd
+op_star
+)paren
+id|I596_NULL
+suffix:semicolon
+id|lp-&gt;rfds
+(braket
+id|i
+)braket
+dot
+id|cmd
+op_assign
+id|CMD_FLEX
+suffix:semicolon
+)brace
+id|lp-&gt;rfds
+(braket
+id|rx_ring_size
+op_minus
+l_int|1
+)braket
+dot
+id|cmd
+op_assign
+id|CMD_EOL
+op_or
+id|CMD_FLEX
+suffix:semicolon
+id|lp-&gt;scb.rfd
+op_assign
+id|WSWAPrfd
+c_func
+(paren
+id|lp-&gt;rfds
+)paren
+suffix:semicolon
+id|lp-&gt;rfds
+(braket
+l_int|0
+)braket
+dot
+id|rbd
+op_assign
+id|WSWAPrbd
+c_func
+(paren
+id|lp-&gt;rbds
+)paren
+suffix:semicolon
+id|lp-&gt;rx_tail
+op_assign
+id|lp-&gt;rfds
+op_plus
+id|rx_ring_size
+op_minus
+l_int|1
+suffix:semicolon
 id|lp-&gt;scb.command
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef CONFIG_MVME16x_NET
+macro_line|#ifdef ENABLE_MVME16x_NET
 r_if
 c_cond
 (paren
@@ -1812,7 +2103,7 @@ l_int|0x55
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#ifdef CONFIG_BVME6000_NET
+macro_line|#ifdef ENABLE_BVME6000_NET
 r_if
 c_cond
 (paren
@@ -2022,6 +2313,11 @@ id|i596_rfd
 op_star
 id|rfd
 suffix:semicolon
+r_struct
+id|i596_rbd
+op_star
+id|rbd
+suffix:semicolon
 r_int
 id|frames
 op_assign
@@ -2035,7 +2331,6 @@ OG
 l_int|3
 )paren
 id|printk
-c_func
 (paren
 l_string|&quot;i596_rx()&bslash;n&quot;
 )paren
@@ -2048,7 +2343,7 @@ c_func
 id|lp-&gt;scb.rfd
 )paren
 suffix:semicolon
-multiline_comment|/* Reference next frame descriptor to check */
+multiline_comment|/* Ref next frame to check */
 r_while
 c_loop
 (paren
@@ -2059,7 +2354,16 @@ op_amp
 id|STAT_C
 )paren
 (brace
-multiline_comment|/* Loop while we have complete frames */
+multiline_comment|/* Loop while complete frames */
+id|rbd
+op_assign
+id|WSWAPrbd
+c_func
+(paren
+id|rfd-&gt;rbd
+)paren
+suffix:semicolon
+multiline_comment|/* Ref associated buffer desc */
 r_if
 c_cond
 (paren
@@ -2070,7 +2374,11 @@ l_int|2
 id|print_eth
 c_func
 (paren
-id|rfd-&gt;data
+id|WSWAPchar
+c_func
+(paren
+id|rbd-&gt;data
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -2087,7 +2395,7 @@ multiline_comment|/* a good frame */
 r_int
 id|pkt_len
 op_assign
-id|rfd-&gt;count
+id|rbd-&gt;count
 op_amp
 l_int|0x3fff
 suffix:semicolon
@@ -2096,15 +2404,151 @@ id|sk_buff
 op_star
 id|skb
 op_assign
-id|dev_alloc_skb
-c_func
-(paren
-id|pkt_len
-)paren
+id|rbd-&gt;skb
+suffix:semicolon
+r_int
+id|rx_in_place
+op_assign
+l_int|0
 suffix:semicolon
 id|frames
 op_increment
 suffix:semicolon
+multiline_comment|/* Check if the packet is long enough to just accept&n;&t;&t;&t; * without copying to a properly sized skbuff.&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|pkt_len
+OG
+id|rx_copybreak
+)paren
+(brace
+r_struct
+id|sk_buff
+op_star
+id|newskb
+suffix:semicolon
+r_char
+op_star
+id|temp
+suffix:semicolon
+multiline_comment|/* Get fresh skbuff to replace filled one. */
+id|newskb
+op_assign
+id|dev_alloc_skb
+c_func
+(paren
+id|PKT_BUF_SZ
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|newskb
+op_eq
+l_int|NULL
+)paren
+(brace
+id|skb
+op_assign
+l_int|NULL
+suffix:semicolon
+multiline_comment|/* drop pkt */
+r_goto
+id|memory_squeeze
+suffix:semicolon
+)brace
+multiline_comment|/* Pass up the skb already on the Rx ring. */
+id|temp
+op_assign
+id|skb_put
+c_func
+(paren
+id|skb
+comma
+id|pkt_len
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|WSWAPchar
+c_func
+(paren
+id|rbd-&gt;data
+)paren
+op_ne
+id|temp
+)paren
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;%s: Internal consistency error &quot;
+l_string|&quot;-- the skbuff addresses do not match&quot;
+l_string|&quot; in i596_rx: %p vs. %p / %p.&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+id|WSWAPchar
+c_func
+(paren
+id|rbd-&gt;data
+)paren
+comma
+id|skb-&gt;head
+comma
+id|temp
+)paren
+suffix:semicolon
+id|rx_in_place
+op_assign
+l_int|1
+suffix:semicolon
+id|rbd-&gt;skb
+op_assign
+id|newskb
+suffix:semicolon
+id|newskb-&gt;dev
+op_assign
+id|dev
+suffix:semicolon
+id|rbd-&gt;data
+op_assign
+id|WSWAPchar
+c_func
+(paren
+id|newskb-&gt;tail
+)paren
+suffix:semicolon
+macro_line|#ifdef __mc68000__
+id|cache_clear
+c_func
+(paren
+id|virt_to_phys
+c_func
+(paren
+id|newskb-&gt;tail
+)paren
+comma
+id|PKT_BUF_SZ
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+r_else
+id|skb
+op_assign
+id|dev_alloc_skb
+c_func
+(paren
+id|pkt_len
+op_plus
+l_int|2
+)paren
+suffix:semicolon
+id|memory_squeeze
+suffix:colon
 r_if
 c_cond
 (paren
@@ -2113,8 +2557,8 @@ op_eq
 l_int|NULL
 )paren
 (brace
+multiline_comment|/* XXX tulip.c can defer packets here!! */
 id|printk
-c_func
 (paren
 l_string|&quot;%s: i596_rx Memory squeeze, dropping packet.&bslash;n&quot;
 comma
@@ -2131,6 +2575,22 @@ id|skb-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|rx_in_place
+)paren
+(brace
+multiline_comment|/* 16 byte align the data fields */
+id|skb_reserve
+c_func
+(paren
+id|skb
+comma
+l_int|2
+)paren
+suffix:semicolon
 id|memcpy
 c_func
 (paren
@@ -2142,11 +2602,16 @@ comma
 id|pkt_len
 )paren
 comma
-id|rfd-&gt;data
+id|WSWAPchar
+c_func
+(paren
+id|rbd-&gt;data
+)paren
 comma
 id|pkt_len
 )paren
 suffix:semicolon
+)brace
 id|skb-&gt;protocol
 op_assign
 id|eth_type_trans
@@ -2157,6 +2622,24 @@ comma
 id|dev
 )paren
 suffix:semicolon
+id|skb-&gt;len
+op_assign
+id|pkt_len
+suffix:semicolon
+macro_line|#ifdef __mc68000__
+id|cache_clear
+c_func
+(paren
+id|virt_to_phys
+c_func
+(paren
+id|rbd-&gt;skb-&gt;tail
+)paren
+comma
+id|pkt_len
+)paren
+suffix:semicolon
+macro_line|#endif
 id|netif_rx
 c_func
 (paren
@@ -2263,26 +2746,66 @@ op_increment
 suffix:semicolon
 )brace
 multiline_comment|/* Clear the buffer descriptor count and EOF + F flags */
-id|rfd-&gt;stat
+r_if
+c_cond
+(paren
+id|rbd
+op_ne
+(paren
+r_struct
+id|i596_rbd
+op_star
+)paren
+id|I596_NULL
+)paren
+id|rbd-&gt;count
 op_assign
 l_int|0
 suffix:semicolon
-id|rfd-&gt;count
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot;%s: Null rbd - oops!&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+multiline_comment|/* Tidy the frame descriptor, marking it as end of list */
+id|rfd-&gt;rbd
+op_assign
+(paren
+r_struct
+id|i596_rbd
+op_star
+)paren
+id|I596_NULL
+suffix:semicolon
+id|rfd-&gt;stat
 op_assign
 l_int|0
 suffix:semicolon
 id|rfd-&gt;cmd
 op_assign
 id|CMD_EOL
+op_or
+id|CMD_FLEX
 suffix:semicolon
-id|lp-&gt;rx_tail-&gt;cmd
+id|rfd-&gt;count
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* Remove end-of-list from old end descriptor */
+id|lp-&gt;rx_tail-&gt;cmd
+op_assign
+id|CMD_FLEX
+suffix:semicolon
+multiline_comment|/* Update last frame descriptor to reference the one just&n;&t;&t; * processed */
 id|lp-&gt;rx_tail
 op_assign
 id|rfd
 suffix:semicolon
+multiline_comment|/* Update record of next frame descriptor to process */
 id|lp-&gt;scb.rfd
 op_assign
 id|rfd-&gt;next
@@ -2295,7 +2818,7 @@ c_func
 id|lp-&gt;scb.rfd
 )paren
 suffix:semicolon
-multiline_comment|/* Next frame descriptor to check */
+multiline_comment|/* Next frame desc. to check */
 )brace
 r_if
 c_cond
@@ -2305,7 +2828,6 @@ OG
 l_int|3
 )paren
 id|printk
-c_func
 (paren
 l_string|&quot;frames %d&bslash;n&quot;
 comma
@@ -2434,12 +2956,11 @@ op_star
 )paren
 id|I596_NULL
 suffix:semicolon
-id|kfree
-c_func
-(paren
-id|tx_cmd
-)paren
+id|tx_cmd-&gt;cmd.command
+op_assign
+l_int|0
 suffix:semicolon
+multiline_comment|/* Mark as free */
 r_break
 suffix:semicolon
 )brace
@@ -2455,12 +2976,6 @@ id|i596_cmd
 op_star
 )paren
 id|I596_NULL
-suffix:semicolon
-id|kfree
-c_func
-(paren
-id|ptr
-)paren
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -2926,9 +3441,6 @@ op_star
 id|dev
 )paren
 (brace
-r_int
-id|i
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2959,7 +3471,7 @@ id|i596_interrupt
 comma
 l_int|0
 comma
-l_string|&quot;apricot&quot;
+l_string|&quot;i82596&quot;
 comma
 id|dev
 )paren
@@ -2968,7 +3480,7 @@ r_return
 op_minus
 id|EAGAIN
 suffix:semicolon
-macro_line|#ifdef CONFIG_MVME16x_NET
+macro_line|#ifdef ENABLE_MVME16x_NET
 r_if
 c_cond
 (paren
@@ -2988,7 +3500,7 @@ id|i596_error
 comma
 l_int|0
 comma
-l_string|&quot;apricot_error&quot;
+l_string|&quot;i82596_error&quot;
 comma
 id|dev
 )paren
@@ -2999,54 +3511,12 @@ id|EAGAIN
 suffix:semicolon
 )brace
 macro_line|#endif
-r_if
-c_cond
-(paren
-(paren
-id|i
-op_assign
 id|init_rx_bufs
 c_func
 (paren
 id|dev
-comma
-id|RX_RING_SIZE
-)paren
-)paren
-OL
-id|RX_RING_SIZE
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;%s: only able to allocate %d receive buffers&bslash;n&quot;
-comma
-id|dev-&gt;name
-comma
-id|i
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|i
-OL
-l_int|4
-)paren
-(brace
-id|free_irq
-c_func
-(paren
-id|dev-&gt;irq
-comma
-id|dev
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EAGAIN
-suffix:semicolon
-)brace
 id|dev-&gt;tbusy
 op_assign
 l_int|0
@@ -3111,6 +3581,11 @@ r_struct
 id|tx_cmd
 op_star
 id|tx_cmd
+suffix:semicolon
+r_struct
+id|i596_tbd
+op_star
+id|tbd
 suffix:semicolon
 r_if
 c_cond
@@ -3248,9 +3723,17 @@ l_int|3
 id|printk
 c_func
 (paren
-l_string|&quot;%s: i596_start_xmit() called&bslash;n&quot;
+l_string|&quot;%s: i596_start_xmit(%x,%x) called&bslash;n&quot;
 comma
 id|dev-&gt;name
+comma
+id|skb-&gt;len
+comma
+(paren
+r_int
+r_int
+)paren
+id|skb-&gt;data
 )paren
 suffix:semicolon
 multiline_comment|/* Block a timer-based transmit from overlapping.  This could better be&n;&t;   done with atomic_swap(1, dev-&gt;tbusy), but set_bit() works as well. */
@@ -3300,43 +3783,25 @@ id|jiffies
 suffix:semicolon
 id|tx_cmd
 op_assign
-(paren
-r_struct
-id|tx_cmd
-op_star
-)paren
-id|kmalloc
-c_func
-(paren
-(paren
-r_sizeof
-(paren
-r_struct
-id|tx_cmd
-)paren
+id|lp-&gt;tx_cmds
 op_plus
-r_sizeof
-(paren
-r_struct
-id|i596_tbd
-)paren
-)paren
-comma
-id|GFP_ATOMIC
-)paren
+id|lp-&gt;next_tx_cmd
+suffix:semicolon
+id|tbd
+op_assign
+id|lp-&gt;tbds
+op_plus
+id|lp-&gt;next_tx_cmd
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|tx_cmd
-op_eq
-l_int|NULL
+id|tx_cmd-&gt;cmd.command
 )paren
 (brace
 id|printk
-c_func
 (paren
-l_string|&quot;%s: i596_xmit Memory squeeze, dropping packet.&bslash;n&quot;
+l_string|&quot;%s: xmit ring full, dropping packet.&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
@@ -3353,21 +3818,17 @@ suffix:semicolon
 )brace
 r_else
 (brace
-r_struct
-id|i596_tbd
-op_star
-id|tbd
+r_if
+c_cond
+(paren
+op_increment
+id|lp-&gt;next_tx_cmd
+op_eq
+id|TX_RING_SIZE
+)paren
+id|lp-&gt;next_tx_cmd
 op_assign
-(paren
-r_struct
-id|i596_tbd
-op_star
-)paren
-(paren
-id|tx_cmd
-op_plus
-l_int|1
-)paren
+l_int|0
 suffix:semicolon
 id|tx_cmd-&gt;tbd
 op_assign
@@ -3422,6 +3883,20 @@ c_func
 id|skb-&gt;data
 )paren
 suffix:semicolon
+macro_line|#ifdef __mc68000__
+id|cache_push
+c_func
+(paren
+id|virt_to_phys
+c_func
+(paren
+id|skb-&gt;data
+)paren
+comma
+id|length
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -3465,7 +3940,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-"&f;"
 DECL|function|print_eth
 r_static
 r_void
@@ -3627,7 +4101,7 @@ id|eth_addr
 l_int|6
 )braket
 suffix:semicolon
-macro_line|#ifdef CONFIG_MVME16x_NET
+macro_line|#ifdef ENABLE_MVME16x_NET
 r_if
 c_cond
 (paren
@@ -3640,6 +4114,7 @@ id|probed
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef XXX_FIXME
 r_if
 c_cond
 (paren
@@ -3658,6 +4133,7 @@ r_return
 id|ENODEV
 suffix:semicolon
 )brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -3697,7 +4173,7 @@ id|MVME16x_IRQ_I596
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#ifdef CONFIG_BVME6000_NET
+macro_line|#ifdef ENABLE_BVME6000_NET
 r_if
 c_cond
 (paren
@@ -3785,7 +4261,7 @@ id|BVME_IRQ_I596
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#ifdef CONFIG_APRICOT_INTEL
+macro_line|#ifdef ENABLE_APRICOT
 r_int
 id|checksum
 op_assign
@@ -3966,7 +4442,7 @@ c_func
 id|version
 )paren
 suffix:semicolon
-multiline_comment|/* The APRICOT-specific entries in the device structure. */
+multiline_comment|/* The 82596-specific entries in the device structure. */
 id|dev-&gt;open
 op_assign
 op_amp
@@ -3997,21 +4473,14 @@ op_assign
 (paren
 r_int
 )paren
-id|kmalloc
+id|__get_free_pages
 c_func
 (paren
-r_sizeof
-(paren
-r_struct
-id|i596_private
-)paren
-op_plus
-l_int|0x0f
+id|GFP_ATOMIC
 comma
-id|GFP_KERNEL
+l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/* align for scp */
 id|dev-&gt;priv
 op_assign
 (paren
@@ -4019,13 +4488,7 @@ r_void
 op_star
 )paren
 (paren
-(paren
 id|dev-&gt;mem_start
-op_plus
-l_int|0xf
-)paren
-op_amp
-l_int|0xfffffff0
 )paren
 suffix:semicolon
 id|lp
@@ -4043,9 +4506,8 @@ c_cond
 id|i596_debug
 )paren
 id|printk
-c_func
 (paren
-l_string|&quot;%s: lp at 0x%08lx, lp-&gt;scb at 0x%08lx&bslash;n&quot;
+l_string|&quot;%s: lp at 0x%08lx (%d bytes), lp-&gt;scb at 0x%08lx&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -4054,6 +4516,12 @@ r_int
 r_int
 )paren
 id|lp
+comma
+r_sizeof
+(paren
+r_struct
+id|i596_private
+)paren
 comma
 (paren
 r_int
@@ -4081,6 +4549,60 @@ id|i596_private
 )paren
 )paren
 suffix:semicolon
+macro_line|#ifdef __mc68000__
+id|cache_push
+c_func
+(paren
+id|virt_to_phys
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
+(paren
+id|dev-&gt;mem_start
+)paren
+)paren
+comma
+l_int|4096
+)paren
+suffix:semicolon
+id|cache_clear
+c_func
+(paren
+id|virt_to_phys
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
+(paren
+id|dev-&gt;mem_start
+)paren
+)paren
+comma
+l_int|4096
+)paren
+suffix:semicolon
+id|kernel_set_cachemode
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
+(paren
+id|dev-&gt;mem_start
+)paren
+comma
+l_int|4096
+comma
+id|IOMAP_NOCACHE_SER
+)paren
+suffix:semicolon
+macro_line|#endif
 id|lp-&gt;scb.command
 op_assign
 l_int|0
@@ -4154,7 +4676,7 @@ id|ack_cmd
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef CONFIG_BVME6000_NET
+macro_line|#ifdef ENABLE_BVME6000_NET
 r_if
 c_cond
 (paren
@@ -4576,12 +5098,11 @@ op_star
 )paren
 id|I596_NULL
 suffix:semicolon
-id|kfree
-c_func
-(paren
-id|tx_cmd
-)paren
+id|tx_cmd-&gt;cmd.command
+op_assign
+l_int|0
 suffix:semicolon
+multiline_comment|/* Mark free */
 r_break
 suffix:semicolon
 )brace
@@ -4597,12 +5118,6 @@ id|i596_cmd
 op_star
 )paren
 id|I596_NULL
-suffix:semicolon
-id|kfree
-c_func
-(paren
-id|ptr
-)paren
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -4953,7 +5468,7 @@ id|lp-&gt;scb.command
 op_assign
 id|ack_cmd
 suffix:semicolon
-macro_line|#ifdef CONFIG_MVME16x_NET
+macro_line|#ifdef ENABLE_MVME16x_NET
 r_if
 c_cond
 (paren
@@ -4983,7 +5498,7 @@ l_int|0x08
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#ifdef CONFIG_BVME6000_NET
+macro_line|#ifdef ENABLE_BVME6000_NET
 r_if
 c_cond
 (paren
@@ -5015,7 +5530,7 @@ l_int|3
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#ifdef CONFIG_APRICOT_INTEL
+macro_line|#ifdef ENABLE_APRICOT
 (paren
 r_void
 )paren
@@ -5221,7 +5736,7 @@ c_func
 id|lp
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_MVME16x_NET
+macro_line|#ifdef ENABLE_MVME16x_NET
 r_if
 c_cond
 (paren
@@ -5266,7 +5781,7 @@ suffix:semicolon
 multiline_comment|/* Set snooping bits now! */
 )brace
 macro_line|#endif
-macro_line|#ifdef CONFIG_BVME6000_NET
+macro_line|#ifdef ENABLE_BVME6000_NET
 r_if
 c_cond
 (paren
@@ -5378,6 +5893,8 @@ r_int
 id|config
 op_assign
 l_int|0
+comma
+id|cnt
 suffix:semicolon
 r_if
 c_cond
@@ -5580,6 +6097,33 @@ id|lp-&gt;set_conf
 suffix:semicolon
 )brace
 )brace
+id|cnt
+op_assign
+id|dev-&gt;mc_count
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|cnt
+OG
+id|MAX_MC_CNT
+)paren
+(brace
+id|cnt
+op_assign
+id|MAX_MC_CNT
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;%s: Only %d multicast addresses supported&quot;
+comma
+id|dev-&gt;name
+comma
+id|cnt
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -5600,48 +6144,9 @@ id|cp
 suffix:semicolon
 id|cmd
 op_assign
-(paren
-r_struct
-id|i596_cmd
-op_star
-)paren
-id|kmalloc
-c_func
-(paren
-r_sizeof
-(paren
-r_struct
-id|i596_cmd
-)paren
-op_plus
-l_int|2
-op_plus
-id|dev-&gt;mc_count
-op_star
-l_int|6
-comma
-id|GFP_ATOMIC
-)paren
+op_amp
+id|lp-&gt;mc_cmd
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|cmd
-op_eq
-l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;%s: set_multicast Memory squeeze.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 id|cmd-&gt;command
 op_assign
 id|CmdMulticastList
@@ -5688,6 +6193,8 @@ id|dmi
 op_assign
 id|dev-&gt;mc_list
 suffix:semicolon
+id|cnt
+op_logical_and
 id|dmi
 op_ne
 l_int|NULL
@@ -5695,6 +6202,9 @@ suffix:semicolon
 id|dmi
 op_assign
 id|dmi-&gt;next
+comma
+id|cnt
+op_decrement
 )paren
 (brace
 id|memcpy
@@ -5826,13 +6336,13 @@ id|netdev_entry
 id|i596_drv
 op_assign
 (brace
-l_string|&quot;apricot&quot;
+l_string|&quot;i82596&quot;
 comma
 id|i82596_probe
 comma
 id|I596_TOTAL_SIZE
 comma
-id|apricot_portlist
+id|i596_portlist
 )brace
 suffix:semicolon
 macro_line|#endif
@@ -5850,16 +6360,16 @@ l_int|0
 comma
 )brace
 suffix:semicolon
-DECL|variable|dev_apricot
+DECL|variable|dev_82596
 r_static
 r_struct
 id|net_device
-id|dev_apricot
+id|dev_82596
 op_assign
 (brace
 id|devicename
 comma
-multiline_comment|/* device name inserted by /linux/drivers/net/net_init.c */
+multiline_comment|/* device name inserted by drivers/net/net_init.c */
 l_int|0
 comma
 l_int|0
@@ -5868,10 +6378,11 @@ l_int|0
 comma
 l_int|0
 comma
-l_int|0x300
+l_int|0
 comma
-l_int|10
+l_int|0
 comma
+multiline_comment|/* base, irq */
 l_int|0
 comma
 l_int|0
@@ -5883,6 +6394,7 @@ comma
 id|i82596_probe
 )brace
 suffix:semicolon
+macro_line|#ifdef ENABLE_APRICOT
 DECL|variable|io
 r_static
 r_int
@@ -5905,6 +6417,23 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
+id|MODULE_PARM
+c_func
+(paren
+id|debug
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+DECL|variable|debug
+r_static
+r_int
+id|debug
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
 DECL|function|init_module
 r_int
 id|init_module
@@ -5913,13 +6442,26 @@ c_func
 r_void
 )paren
 (brace
-id|dev_apricot.base_addr
+macro_line|#ifdef ENABLE_APRICOT
+id|dev_82596.base_addr
 op_assign
 id|io
 suffix:semicolon
-id|dev_apricot.irq
+id|dev_82596.irq
 op_assign
 id|irq
+suffix:semicolon
+macro_line|#endif
+r_if
+c_cond
+(paren
+id|debug
+op_ge
+l_int|0
+)paren
+id|i596_debug
+op_assign
+id|debug
 suffix:semicolon
 r_if
 c_cond
@@ -5928,7 +6470,7 @@ id|register_netdev
 c_func
 (paren
 op_amp
-id|dev_apricot
+id|dev_82596
 )paren
 op_ne
 l_int|0
@@ -5953,32 +6495,52 @@ id|unregister_netdev
 c_func
 (paren
 op_amp
-id|dev_apricot
+id|dev_82596
 )paren
 suffix:semicolon
-id|kfree
+macro_line|#ifdef __mc68000__
+multiline_comment|/* XXX This assumes default cache mode to be IOMAP_FULL_CACHING,&n;&t; * XXX which may be invalid (CONFIG_060_WRITETHROUGH)&n;&t; */
+id|kernel_set_cachemode
 c_func
 (paren
 (paren
-r_void
-op_star
+id|u32
 )paren
-id|dev_apricot.mem_start
+(paren
+id|dev_82596.mem_start
+)paren
+comma
+l_int|4096
+comma
+id|IOMAP_FULL_CACHING
 )paren
 suffix:semicolon
-id|dev_apricot.priv
+macro_line|#endif
+id|free_page
+(paren
+(paren
+id|u32
+)paren
+(paren
+id|dev_82596.mem_start
+)paren
+)paren
+suffix:semicolon
+id|dev_82596.priv
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#ifdef ENABLE_APRICOT
 multiline_comment|/* If we don&squot;t do this, we can&squot;t re-insmod it later. */
 id|release_region
 c_func
 (paren
-id|dev_apricot.base_addr
+id|dev_82596.base_addr
 comma
 id|I596_TOTAL_SIZE
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 macro_line|#endif&t;&t;&t;&t;/* MODULE */
 "&f;"
