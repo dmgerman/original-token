@@ -4586,7 +4586,6 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * filemap_nopage() is invoked via the vma operations vector for a&n; * mapped memory region to read in file data during a page fault.&n; *&n; * The goto&squot;s are kind of ugly, but this streamlines the normal case of having&n; * it in the page cache, and handles the special cases reasonably without&n; * having a lot of duplicated code.&n; */
 DECL|function|filemap_nopage
-r_static
 r_struct
 id|page
 op_star
@@ -5878,7 +5877,6 @@ id|error
 suffix:semicolon
 )brace
 DECL|function|filemap_sync
-r_static
 r_int
 id|filemap_sync
 c_func

@@ -292,4 +292,9 @@ r_struct
 id|pci_socket_ops
 id|yenta_operations
 suffix:semicolon
+r_extern
+r_struct
+id|pci_socket_ops
+id|ricoh_operations
+suffix:semicolon
 eof

@@ -3343,6 +3343,8 @@ id|dev-&gt;vendor
 comma
 id|dev-&gt;device
 comma
+id|dev
+op_member_access_from_pointer
 r_class
 comma
 id|hdr_type

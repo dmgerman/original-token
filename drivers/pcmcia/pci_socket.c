@@ -39,7 +39,7 @@ comma
 l_int|0
 comma
 op_amp
-id|yenta_operations
+id|ricoh_operations
 )brace
 comma
 (brace

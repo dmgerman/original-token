@@ -37,6 +37,7 @@ suffix:semicolon
 r_static
 r_void
 id|arcrimi_command
+c_func
 (paren
 r_struct
 id|net_device
@@ -50,6 +51,7 @@ suffix:semicolon
 r_static
 r_int
 id|arcrimi_status
+c_func
 (paren
 r_struct
 id|net_device
@@ -60,6 +62,7 @@ suffix:semicolon
 r_static
 r_void
 id|arcrimi_setmask
+c_func
 (paren
 r_struct
 id|net_device
@@ -73,6 +76,7 @@ suffix:semicolon
 r_static
 r_int
 id|arcrimi_reset
+c_func
 (paren
 r_struct
 id|net_device
@@ -100,6 +104,7 @@ suffix:semicolon
 r_static
 r_void
 id|arcrimi_copy_to_card
+c_func
 (paren
 r_struct
 id|net_device

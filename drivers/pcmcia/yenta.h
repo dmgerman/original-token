@@ -3,43 +3,6 @@ DECL|macro|__YENTA_H
 mdefine_line|#define __YENTA_H
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;pci_socket.h&quot;
-multiline_comment|/*&n; * Generate easy-to-use ways of reading a cardbus sockets&n; * regular memory space (&quot;cb_xxx&quot;), configuration space&n; * (&quot;config_xxx&quot;) and compatibility space (&quot;exca_xxxx&quot;)&n; */
-DECL|macro|cb_readb
-mdefine_line|#define cb_readb(sock,reg)&t;&t;readb((sock)-&gt;base + (reg))
-DECL|macro|cb_readw
-mdefine_line|#define cb_readw(sock,reg)&t;&t;readw((sock)-&gt;base + (reg))
-DECL|macro|cb_readl
-mdefine_line|#define cb_readl(sock,reg)&t;&t;readl((sock)-&gt;base + (reg))
-DECL|macro|cb_writeb
-mdefine_line|#define cb_writeb(sock,reg,val)&t;&t;writeb((val), (sock)-&gt;base + (reg))
-DECL|macro|cb_writew
-mdefine_line|#define cb_writew(sock,reg,val)&t;&t;writew((val), (sock)-&gt;base + (reg))
-DECL|macro|cb_writel
-mdefine_line|#define cb_writel(sock,reg,val)&t;&t;writel((val), (sock)-&gt;base + (reg))
-DECL|macro|config_readb
-mdefine_line|#define config_readb(sock,offset)&t;({ __u8 __val; pci_read_config_byte((sock)-&gt;dev, (offset), &amp;__val); __val; })
-DECL|macro|config_readw
-mdefine_line|#define config_readw(sock,offset)&t;({ __u16 __val; pci_read_config_word((sock)-&gt;dev, (offset), &amp;__val); __val; })
-DECL|macro|config_readl
-mdefine_line|#define config_readl(sock,offset)&t;({ __u32 __val; pci_read_config_dword((sock)-&gt;dev, (offset), &amp;__val); __val; })
-DECL|macro|config_writeb
-mdefine_line|#define config_writeb(sock,offset,val)&t;pci_write_config_byte((sock)-&gt;dev, (offset), (val))
-DECL|macro|config_writew
-mdefine_line|#define config_writew(sock,offset,val)&t;pci_write_config_word((sock)-&gt;dev, (offset), (val))
-DECL|macro|config_writel
-mdefine_line|#define config_writel(sock,offset,val)&t;pci_write_config_dword((sock)-&gt;dev, (offset), (val))
-DECL|macro|exca_readb
-mdefine_line|#define exca_readb(sock,reg)&t;&t;cb_readb((sock),(reg)+0x0800)
-DECL|macro|exca_readw
-mdefine_line|#define exca_readw(sock,reg)&t;&t;cb_readw((sock),(reg)+0x0800)
-DECL|macro|exca_readl
-mdefine_line|#define exca_readl(sock,reg)&t;&t;cb_readl((sock),(reg)+0x0800)
-DECL|macro|exca_writeb
-mdefine_line|#define exca_writeb(sock,reg,val)&t;cb_writeb((sock),(reg)+0x0800,(val))
-DECL|macro|exca_writew
-mdefine_line|#define exca_writew(sock,reg,val)&t;cb_writew((sock),(reg)+0x0800,(val))
-DECL|macro|exca_writel
-mdefine_line|#define exca_writel(sock,reg,val)&t;cb_writel((sock),(reg)+0x0800,(val))
 DECL|macro|CB_SOCKET_EVENT
 mdefine_line|#define CB_SOCKET_EVENT&t;&t;0x00
 DECL|macro|CB_CSTSEVENT
@@ -128,26 +91,34 @@ DECL|macro|CB_CVSTEST
 mdefine_line|#define    CB_CVSTEST&t;&t;0x00004000&t;/* Card VS test */
 DECL|macro|CB_SOCKET_CONTROL
 mdefine_line|#define CB_SOCKET_CONTROL&t;0x10
-DECL|macro|CB_VPPCTRL
-mdefine_line|#define    CB_VPPCTRL&t;&t;0&t;&t;/* Shift for Vpp */
-DECL|macro|CB_VCCCTRL
-mdefine_line|#define    CB_VCCCTRL&t;&t;4&t;&t;/* Shift for Vcc */
-DECL|macro|CB_STOPCLK
-mdefine_line|#define    CB_STOPCLK&t;&t;0x00000080&t;/* CLKRUN can slow CB clock when idle */
-DECL|macro|CB_PWRBITS
-mdefine_line|#define    CB_PWRBITS&t;&t;0x7
-DECL|macro|CB_PWROFF
-mdefine_line|#define    CB_PWROFF&t;&t;0x0
-DECL|macro|CB_PWR12V
-mdefine_line|#define    CB_PWR12V&t;&t;0x1&t;/* Only valid for Vpp */
-DECL|macro|CB_PWR5V
-mdefine_line|#define    CB_PWR5V&t;&t;0x2
-DECL|macro|CB_PWR3V
-mdefine_line|#define    CB_PWR3V&t;&t;0x3
-DECL|macro|CB_PWRXV
-mdefine_line|#define    CB_PWRXV&t;&t;0x4
-DECL|macro|CB_PWRYV
-mdefine_line|#define    CB_PWRYV&t;&t;0x5
+DECL|macro|CB_SC_VPP_MASK
+mdefine_line|#define  CB_SC_VPP_MASK&t;&t;0x00000007
+DECL|macro|CB_SC_VPP_OFF
+mdefine_line|#define   CB_SC_VPP_OFF&t;&t;0x00000000
+DECL|macro|CB_SC_VPP_12V
+mdefine_line|#define   CB_SC_VPP_12V&t;&t;0x00000001
+DECL|macro|CB_SC_VPP_5V
+mdefine_line|#define   CB_SC_VPP_5V&t;&t;0x00000002
+DECL|macro|CB_SC_VPP_3V
+mdefine_line|#define   CB_SC_VPP_3V&t;&t;0x00000003
+DECL|macro|CB_SC_VPP_XV
+mdefine_line|#define   CB_SC_VPP_XV&t;&t;0x00000004
+DECL|macro|CB_SC_VPP_YV
+mdefine_line|#define   CB_SC_VPP_YV&t;&t;0x00000005
+DECL|macro|CB_SC_VCC_MASK
+mdefine_line|#define  CB_SC_VCC_MASK&t;&t;0x00000070
+DECL|macro|CB_SC_VCC_OFF
+mdefine_line|#define   CB_SC_VCC_OFF&t;&t;0x00000000
+DECL|macro|CB_SC_VCC_5V
+mdefine_line|#define   CB_SC_VCC_5V&t;&t;0x00000020
+DECL|macro|CB_SC_VCC_3V
+mdefine_line|#define   CB_SC_VCC_3V&t;&t;0x00000030
+DECL|macro|CB_SC_VCC_XV
+mdefine_line|#define   CB_SC_VCC_XV&t;&t;0x00000040
+DECL|macro|CB_SC_VCC_YV
+mdefine_line|#define   CB_SC_VCC_YV&t;&t;0x00000050
+DECL|macro|CB_SC_CCLK_STOP
+mdefine_line|#define  CB_SC_CCLK_STOP&t;0x00000080
 DECL|macro|CB_SOCKET_POWER
 mdefine_line|#define CB_SOCKET_POWER&t;&t;0x20
 DECL|macro|CB_SKTACCES
@@ -185,6 +156,8 @@ DECL|macro|CB_BRIDGE_PREFETCH1
 mdefine_line|#define   CB_BRIDGE_PREFETCH1&t;0x00000200
 DECL|macro|CB_BRIDGE_POSTEN
 mdefine_line|#define   CB_BRIDGE_POSTEN&t;0x00000400
+DECL|macro|CB_LEGACY_MODE_BASE
+mdefine_line|#define CB_LEGACY_MODE_BASE&t;0x44
 multiline_comment|/*&n; * ExCA area extensions in Yenta&n; */
 DECL|macro|CB_MEM_PAGE
 mdefine_line|#define CB_MEM_PAGE(map)&t;(0x40 + (map))

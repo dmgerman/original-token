@@ -1727,7 +1727,7 @@ suffix:semicolon
 id|pcibios_read_config_dword
 c_func
 (paren
-id|s-&gt;cap.cardbus
+id|s-&gt;cap.cb_dev-&gt;subordinate-&gt;number
 comma
 l_int|0
 comma

@@ -24,7 +24,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/rtnetlink.h&gt;
 macro_line|#include &lt;net/br.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
-macro_line|#include &lt;linux/br.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#ifndef min
 DECL|macro|min
 mdefine_line|#define min(a, b) (((a) &lt;= (b)) ? (a) : (b))

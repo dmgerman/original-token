@@ -1,6 +1,6 @@
 multiline_comment|/*&n; * Linux ARCnet driver - RFC1201 (standard) packet encapsulation&n; * &n; * Written 1994-1999 by Avery Pennarun.&n; * Derived from skeleton.c by Donald Becker.&n; *&n; * Special thanks to Contemporary Controls, Inc. (www.ccontrols.com)&n; *  for sponsoring the further development of this driver.&n; *&n; * **********************&n; *&n; * The original copyright of skeleton.c was as follows:&n; *&n; * skeleton.c Written 1993 by Donald Becker.&n; * Copyright 1993 United States Government as represented by the&n; * Director, National Security Agency.  This software may only be used&n; * and distributed according to the terms of the GNU Public License as&n; * modified by SRC, incorporated herein by reference.&n; *&n; * **********************&n; *&n; * For more details, see drivers/net/arcnet.c&n; *&n; * **********************&n; */
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/config.h&gt;  /* for CONFIG_INET */
+macro_line|#include &lt;linux/config.h&gt;&t;/* for CONFIG_INET */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
@@ -213,7 +213,7 @@ id|rfc1201_proto
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* MODULE */
+macro_line|#endif&t;&t;&t;&t;/* MODULE */
 multiline_comment|/*&n; * Determine a packet&squot;s protocol ID.&n; * &n; * With ARCnet we have to convert everything to Ethernet-style stuff.&n; */
 DECL|function|type_trans
 r_static
@@ -502,8 +502,8 @@ id|soft-&gt;split_flag
 op_eq
 l_int|0xFF
 )paren
-multiline_comment|/* Exception Packet */
 (brace
+multiline_comment|/* Exception Packet */
 r_if
 c_cond
 (paren
@@ -573,8 +573,8 @@ c_cond
 op_logical_neg
 id|soft-&gt;split_flag
 )paren
-multiline_comment|/* not split */
 (brace
+multiline_comment|/* not split */
 id|BUGMSG
 c_func
 (paren
@@ -590,8 +590,8 @@ c_cond
 (paren
 id|in-&gt;skb
 )paren
-multiline_comment|/* already assembling one! */
 (brace
+multiline_comment|/* already assembling one! */
 id|BUGMSG
 c_func
 (paren
@@ -749,7 +749,7 @@ id|pkt-&gt;soft
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * ARP packets have problems when sent from some DOS systems: the&n;&t; * source address is always 0!  So we take the hardware source addr&n;&t; * (which is impossible to fumble) and insert it ourselves.&n;&t; */
+multiline_comment|/*&n;&t;&t; * ARP packets have problems when sent from some DOS systems: the&n;&t;&t; * source address is always 0!  So we take the hardware source addr&n;&t;&t; * (which is impossible to fumble) and insert it ourselves.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -806,8 +806,8 @@ op_logical_neg
 op_star
 id|cptr
 )paren
-multiline_comment|/* is saddr = 00? */
 (brace
+multiline_comment|/* is saddr = 00? */
 id|BUGMSG
 c_func
 (paren
@@ -897,9 +897,9 @@ id|skb
 suffix:semicolon
 )brace
 r_else
-multiline_comment|/* split packet */
 (brace
-multiline_comment|/*&n;&t; * NOTE: MSDOS ARP packet correction should only need to apply to&n;&t; * unsplit packets, since ARP packets are so short.&n;&t; *&n;&t; * My interpretation of the RFC1201 document is that if a packet is&n;&t; * received out of order, the entire assembly process should be&n;&t; * aborted.&n;&t; *&n;&t; * The RFC also mentions &quot;it is possible for successfully received&n;&t; * packets to be retransmitted.&quot; As of 0.40 all previously received&n;&t; * packets are allowed, not just the most recent one.&n;&t; *&n;&t; * We allow multiple assembly processes, one for each ARCnet card&n;&t; * possible on the network.  Seems rather like a waste of memory,&n;&t; * but there&squot;s no other way to be reliable.&n;&t; */
+multiline_comment|/* split packet */
+multiline_comment|/*&n;&t;&t; * NOTE: MSDOS ARP packet correction should only need to apply to&n;&t;&t; * unsplit packets, since ARP packets are so short.&n;&t;&t; *&n;&t;&t; * My interpretation of the RFC1201 document is that if a packet is&n;&t;&t; * received out of order, the entire assembly process should be&n;&t;&t; * aborted.&n;&t;&t; *&n;&t;&t; * The RFC also mentions &quot;it is possible for successfully received&n;&t;&t; * packets to be retransmitted.&quot; As of 0.40 all previously received&n;&t;&t; * packets are allowed, not just the most recent one.&n;&t;&t; *&n;&t;&t; * We allow multiple assembly processes, one for each ARCnet card&n;&t;&t; * possible on the network.  Seems rather like a waste of memory,&n;&t;&t; * but there&squot;s no other way to be reliable.&n;&t;&t; */
 id|BUGMSG
 c_func
 (paren
@@ -968,8 +968,8 @@ id|soft-&gt;split_flag
 op_amp
 l_int|1
 )paren
-multiline_comment|/* first packet in split */
 (brace
+multiline_comment|/* first packet in split */
 id|BUGMSG
 c_func
 (paren
@@ -985,8 +985,8 @@ c_cond
 (paren
 id|in-&gt;skb
 )paren
-multiline_comment|/* already assembling one! */
 (brace
+multiline_comment|/* already assembling one! */
 id|BUGMSG
 c_func
 (paren
@@ -1148,8 +1148,8 @@ suffix:semicolon
 multiline_comment|/* end result won&squot;t be split */
 )brace
 r_else
-multiline_comment|/* not first packet */
 (brace
+multiline_comment|/* not first packet */
 r_int
 id|packetnum
 op_assign
@@ -1164,7 +1164,7 @@ l_int|1
 op_plus
 l_int|1
 suffix:semicolon
-multiline_comment|/*&n;&t;     * if we&squot;re not assembling, there&squot;s no point trying to&n;&t;     * continue.&n;&t;     */
+multiline_comment|/*&n;&t;&t;&t; * if we&squot;re not assembling, there&squot;s no point trying to&n;&t;&t;&t; * continue.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1215,8 +1215,8 @@ id|packetnum
 op_ne
 id|in-&gt;lastpacket
 )paren
-multiline_comment|/* not the right flag! */
 (brace
+multiline_comment|/* not the right flag! */
 multiline_comment|/* harmless duplicate? ignore. */
 r_if
 c_cond
@@ -1550,7 +1550,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     * Set the source hardware address.&n;     *&n;     * This is pretty pointless for most purposes, but it can help in&n;     * debugging.  ARCnet does not allow us to change the source address in&n;     * the actual packet sent)&n;     */
+multiline_comment|/*&n;&t; * Set the source hardware address.&n;&t; *&n;&t; * This is pretty pointless for most purposes, but it can help in&n;&t; * debugging.  ARCnet does not allow us to change the source address in&n;&t; * the actual packet sent)&n;&t; */
 id|pkt-&gt;hard.source
 op_assign
 op_star
@@ -1583,7 +1583,7 @@ id|IFF_NOARP
 )paren
 )paren
 (brace
-multiline_comment|/* &n;&t; * FIXME: fill in the last byte of the dest ipaddr here to better&n;&t; * comply with RFC1051 in &quot;noarp&quot; mode.  For now, always broadcasting&n;&t; * will probably at least get packets sent out :)&n;&t; */
+multiline_comment|/* &n;&t;&t; * FIXME: fill in the last byte of the dest ipaddr here to better&n;&t;&t; * comply with RFC1051 in &quot;noarp&quot; mode.  For now, always broadcasting&n;&t;&t; * will probably at least get packets sent out :)&n;&t;&t; */
 id|pkt-&gt;hard.dest
 op_assign
 l_int|0
@@ -1680,8 +1680,8 @@ id|softlen
 OG
 id|MTU
 )paren
-multiline_comment|/* exception packet - add an extra header */
 (brace
+multiline_comment|/* exception packet - add an extra header */
 r_struct
 id|arc_rfc1201
 id|excsoft

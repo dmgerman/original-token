@@ -42,6 +42,7 @@ suffix:semicolon
 r_static
 r_void
 id|com20020_command
+c_func
 (paren
 r_struct
 id|net_device
@@ -55,6 +56,7 @@ suffix:semicolon
 r_static
 r_int
 id|com20020_status
+c_func
 (paren
 r_struct
 id|net_device
@@ -65,6 +67,7 @@ suffix:semicolon
 r_static
 r_void
 id|com20020_setmask
+c_func
 (paren
 r_struct
 id|net_device
@@ -78,6 +81,7 @@ suffix:semicolon
 r_static
 r_int
 id|com20020_reset
+c_func
 (paren
 r_struct
 id|net_device
@@ -105,6 +109,7 @@ suffix:semicolon
 r_static
 r_void
 id|com20020_copy_to_card
+c_func
 (paren
 r_struct
 id|net_device
@@ -646,7 +651,7 @@ id|dev-&gt;set_multicast_list
 op_assign
 id|com20020_set_mc_list
 suffix:semicolon
-multiline_comment|/* Fill in the fields of the device structure with generic&n;     * values.&n;     */
+multiline_comment|/* Fill in the fields of the device structure with generic&n;&t; * values.&n;&t; */
 id|arcdev_setup
 c_func
 (paren
@@ -1322,7 +1327,7 @@ id|_SETUP
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * FIXME: put this somewhere!&n; * &n;&t;if ((dstatus = inb(_DIAGSTAT)) &amp; NEWNXTIDflag)&n;&t;{&n;&t;    REGNXTID;&n;&t;    SETCONF(lp-&gt;config);&n;&t;    BUGMSG(D_EXTRA, &quot;New NextID detected: %X&bslash;n&quot;, inb(ioaddr + 7));&n;&t;}&n;*/
+multiline_comment|/*&n; * FIXME: put this somewhere!&n; * &n; if ((dstatus = inb(_DIAGSTAT)) &amp; NEWNXTIDflag)&n; {&n; REGNXTID;&n; SETCONF(lp-&gt;config);&n; BUGMSG(D_EXTRA, &quot;New NextID detected: %X&bslash;n&quot;, inb(ioaddr + 7));&n; }&n; */
 macro_line|#ifdef MODULE
 DECL|variable|com20020_check
 id|EXPORT_SYMBOL

@@ -14,6 +14,8 @@ macro_line|#include &lt;asm/io.h&gt;
 DECL|macro|VERSION
 mdefine_line|#define VERSION &quot;arcnet: COM20020 PCI support&bslash;n&quot;
 macro_line|#ifdef MODULE
+DECL|macro|MAX_CARDS
+mdefine_line|#define MAX_CARDS&t;16
 DECL|variable|cards
 r_static
 r_struct
@@ -21,7 +23,7 @@ id|net_device
 op_star
 id|cards
 (braket
-l_int|16
+id|MAX_CARDS
 )braket
 suffix:semicolon
 DECL|variable|numcards
@@ -344,6 +346,23 @@ id|SA_SHIRQ
 )paren
 (brace
 macro_line|#ifdef MODULE
+r_if
+c_cond
+(paren
+id|numcards
+op_eq
+id|MAX_CARDS
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;com20020pci: Too many cards. Ignoring.&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
 id|cards
 (braket
 id|numcards

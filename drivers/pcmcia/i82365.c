@@ -8702,9 +8702,9 @@ comma
 l_string|&quot;i82365&quot;
 )paren
 suffix:semicolon
-id|s-&gt;cap.cb_bus
+id|s-&gt;cap.cb_dev
 op_assign
-id|dev-&gt;subordinate
+id|dev
 suffix:semicolon
 id|add_socket
 c_func

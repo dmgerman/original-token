@@ -26,6 +26,7 @@ suffix:semicolon
 r_static
 r_void
 id|com90io_command
+c_func
 (paren
 r_struct
 id|net_device
@@ -39,6 +40,7 @@ suffix:semicolon
 r_static
 r_int
 id|com90io_status
+c_func
 (paren
 r_struct
 id|net_device
@@ -49,6 +51,7 @@ suffix:semicolon
 r_static
 r_void
 id|com90io_setmask
+c_func
 (paren
 r_struct
 id|net_device
@@ -62,6 +65,7 @@ suffix:semicolon
 r_static
 r_int
 id|com90io_reset
+c_func
 (paren
 r_struct
 id|net_device
@@ -89,6 +93,7 @@ suffix:semicolon
 r_static
 r_void
 id|com90io_copy_to_card
+c_func
 (paren
 r_struct
 id|net_device

@@ -272,6 +272,10 @@ DECL|macro|VIDEO_TYPE_SUNPCI
 mdefine_line|#define VIDEO_TYPE_SUNPCI       0x51    /* Sun PCI based frame buffer. */
 DECL|macro|VIDEO_TYPE_PMAC
 mdefine_line|#define VIDEO_TYPE_PMAC&t;&t;0x60&t;/* PowerMacintosh frame buffer. */
+DECL|macro|VIDEO_TYPE_SGI
+mdefine_line|#define VIDEO_TYPE_SGI          0x70    /* Various SGI graphics hardware */
+DECL|macro|VIDEO_TYPE_MIPS_G364
+mdefine_line|#define VIDEO_TYPE_MIPS_G364&t;0x71    /* MIPS Magnum 4000 G364 video  */
 multiline_comment|/*&n; * This character is the same as _POSIX_VDISABLE: it cannot be used as&n; * a c_cc[] character, but indicates that a particular special character&n; * isn&squot;t in use (eg VINTR has no character etc)&n; */
 DECL|macro|__DISABLED_CHAR
 mdefine_line|#define __DISABLED_CHAR &squot;&bslash;0&squot;

@@ -1121,6 +1121,42 @@ c_func
 id|block_symlink
 )paren
 suffix:semicolon
+multiline_comment|/* for stackable file systems (lofs, wrapfs, etc.) */
+DECL|variable|add_to_page_cache
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|add_to_page_cache
+)paren
+suffix:semicolon
+DECL|variable|filemap_nopage
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|filemap_nopage
+)paren
+suffix:semicolon
+DECL|variable|filemap_swapout
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|filemap_swapout
+)paren
+suffix:semicolon
+DECL|variable|filemap_sync
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|filemap_sync
+)paren
+suffix:semicolon
+DECL|variable|remove_inode_page
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|remove_inode_page
+)paren
+suffix:semicolon
 macro_line|#if !defined(CONFIG_NFSD) &amp;&amp; defined(CONFIG_NFSD_MODULE)
 DECL|variable|do_nfsservctl
 id|EXPORT_SYMBOL
@@ -2352,6 +2388,7 @@ c_func
 id|strnicmp
 )paren
 suffix:semicolon
+multiline_comment|/* init task, for moving kthread roots - ought to export a function ?? */
 DECL|variable|init_task_union
 id|EXPORT_SYMBOL
 c_func

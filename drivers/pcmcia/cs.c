@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/compile.h&gt;
+macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 DECL|macro|IN_CARD_SERVICES
@@ -4549,7 +4550,7 @@ id|s-&gt;socket.Vpp
 suffix:semicolon
 id|config-&gt;Option
 op_assign
-id|s-&gt;cap.cardbus
+id|s-&gt;cap.cb_dev-&gt;subordinate-&gt;number
 suffix:semicolon
 r_if
 c_cond

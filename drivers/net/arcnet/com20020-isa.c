@@ -157,7 +157,7 @@ op_logical_neg
 id|dev-&gt;irq
 )paren
 (brace
-multiline_comment|/* if we do this, we&squot;re sure to get an IRQ since the&n;&t; * card has just reset and the NORXflag is on until&n;&t; * we tell it to start receiving.&n;&t; */
+multiline_comment|/* if we do this, we&squot;re sure to get an IRQ since the&n;&t;&t; * card has just reset and the NORXflag is on until&n;&t;&t; * we tell it to start receiving.&n;&t;&t; */
 id|BUGMSG
 c_func
 (paren

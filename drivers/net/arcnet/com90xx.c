@@ -36,6 +36,7 @@ suffix:semicolon
 r_static
 r_void
 id|com90xx_command
+c_func
 (paren
 r_struct
 id|net_device
@@ -49,6 +50,7 @@ suffix:semicolon
 r_static
 r_int
 id|com90xx_status
+c_func
 (paren
 r_struct
 id|net_device
@@ -59,6 +61,7 @@ suffix:semicolon
 r_static
 r_void
 id|com90xx_setmask
+c_func
 (paren
 r_struct
 id|net_device
@@ -72,6 +75,7 @@ suffix:semicolon
 r_static
 r_int
 id|com90xx_reset
+c_func
 (paren
 r_struct
 id|net_device
@@ -99,6 +103,7 @@ suffix:semicolon
 r_static
 r_void
 id|com90xx_copy_to_card
+c_func
 (paren
 r_struct
 id|net_device
@@ -404,7 +409,7 @@ op_increment
 op_assign
 id|count
 suffix:semicolon
-multiline_comment|/* Stage 1: abandon any reserved ports, or ones with status==0xFF&n;     * (empty), and reset any others by reading the reset port.&n;     */
+multiline_comment|/* Stage 1: abandon any reserved ports, or ones with status==0xFF&n;&t; * (empty), and reset any others by reading the reset port.&n;&t; */
 id|numprint
 op_assign
 op_minus
@@ -651,7 +656,7 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-multiline_comment|/* Stage 2: we have now reset any possible ARCnet cards, so we can&squot;t&n;     * do anything until they finish.  If D_INIT, print the list of&n;     * cards that are left.&n;     */
+multiline_comment|/* Stage 2: we have now reset any possible ARCnet cards, so we can&squot;t&n;&t; * do anything until they finish.  If D_INIT, print the list of&n;&t; * cards that are left.&n;&t; */
 id|numprint
 op_assign
 op_minus
@@ -735,7 +740,7 @@ c_func
 id|RESETtime
 )paren
 suffix:semicolon
-multiline_comment|/* Stage 3: abandon any shmem addresses that don&squot;t have the signature&n;     * 0xD1 byte in the right place, or are read-only.&n;     */
+multiline_comment|/* Stage 3: abandon any shmem addresses that don&squot;t have the signature&n;&t; * 0xD1 byte in the right place, or are read-only.&n;&t; */
 id|numprint
 op_assign
 op_minus
@@ -931,7 +936,7 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-multiline_comment|/* By writing 0x42 to the TESTvalue location, we also make&n;&t; * sure no &quot;mirror&quot; shmem areas show up - if they occur&n;&t; * in another pass through this loop, they will be discarded&n;&t; * because *cptr != TESTvalue.&n;&t; */
+multiline_comment|/* By writing 0x42 to the TESTvalue location, we also make&n;&t;&t; * sure no &quot;mirror&quot; shmem areas show up - if they occur&n;&t;&t; * in another pass through this loop, they will be discarded&n;&t;&t; * because *cptr != TESTvalue.&n;&t;&t; */
 id|isa_writeb
 c_func
 (paren
@@ -1041,7 +1046,7 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-multiline_comment|/* Stage 4: something of a dummy, to report the shmems that are&n;     * still possible after stage 3.&n;     */
+multiline_comment|/* Stage 4: something of a dummy, to report the shmems that are&n;&t; * still possible after stage 3.&n;&t; */
 id|numprint
 op_assign
 op_minus
@@ -1119,7 +1124,7 @@ comma
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* Stage 5: for any ports that have the correct status, can disable&n;     * the RESET flag, and (if no irq is given) generate an autoirq,&n;     * register an ARCnet device.&n;     *&n;     * Currently, we can only register one device per probe, so quit&n;     * after the first one is found.&n;     */
+multiline_comment|/* Stage 5: for any ports that have the correct status, can disable&n;&t; * the RESET flag, and (if no irq is given) generate an autoirq,&n;&t; * register an ARCnet device.&n;&t; *&n;&t; * Currently, we can only register one device per probe, so quit&n;&t; * after the first one is found.&n;&t; */
 id|numprint
 op_assign
 op_minus
@@ -1337,7 +1342,7 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-multiline_comment|/* skip this completely if an IRQ was given, because maybe&n;&t; * we&squot;re on a machine that locks during autoirq!&n;&t; */
+multiline_comment|/* skip this completely if an IRQ was given, because maybe&n;&t;&t; * we&squot;re on a machine that locks during autoirq!&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1348,7 +1353,7 @@ op_logical_neg
 id|dev-&gt;irq
 )paren
 (brace
-multiline_comment|/* if we do this, we&squot;re sure to get an IRQ since the&n;&t;     * card has just reset and the NORXflag is on until&n;&t;     * we tell it to start receiving.&n;&t;     */
+multiline_comment|/* if we do this, we&squot;re sure to get an IRQ since the&n;&t;&t;&t; * card has just reset and the NORXflag is on until&n;&t;&t;&t; * we tell it to start receiving.&n;&t;&t;&t; */
 id|airqmask
 op_assign
 id|probe_irq_on
@@ -1458,7 +1463,7 @@ id|openparen
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* Everything seems okay.  But which shmem, if any, puts&n;&t; * back its signature byte when the card is reset?&n;&t; *&n;&t; * If there are multiple cards installed, there might be&n;&t; * multiple shmems still in the list.&n;&t; */
+multiline_comment|/* Everything seems okay.  But which shmem, if any, puts&n;&t;&t; * back its signature byte when the card is reset?&n;&t;&t; *&n;&t;&t; * If there are multiple cards installed, there might be&n;&t;&t; * multiple shmems still in the list.&n;&t;&t; */
 macro_line|#ifdef FAST_PROBE
 r_if
 c_cond
@@ -1860,7 +1865,7 @@ id|err_free_dev
 suffix:semicolon
 )brace
 multiline_comment|/* find the real shared memory start/end points, including mirrors */
-multiline_comment|/* guess the actual size of one &quot;memory mirror&quot; - the number of&n;     * bytes between copies of the shared memory.  On most cards, it&squot;s&n;     * 2k (or there are no mirrors at all) but on some, it&squot;s 4k.&n;     */
+multiline_comment|/* guess the actual size of one &quot;memory mirror&quot; - the number of&n;&t; * bytes between copies of the shared memory.  On most cards, it&squot;s&n;&t; * 2k (or there are no mirrors at all) but on some, it&squot;s 4k.&n;&t; */
 id|mirror_size
 op_assign
 id|MIRROR_SIZE

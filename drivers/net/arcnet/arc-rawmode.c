@@ -1,6 +1,6 @@
 multiline_comment|/*&n; * Linux ARCnet driver - &quot;raw mode&quot; packet encapsulation (no soft headers)&n; * &n; * Written 1994-1999 by Avery Pennarun.&n; * Derived from skeleton.c by Donald Becker.&n; *&n; * Special thanks to Contemporary Controls, Inc. (www.ccontrols.com)&n; *  for sponsoring the further development of this driver.&n; *&n; * **********************&n; *&n; * The original copyright of skeleton.c was as follows:&n; *&n; * skeleton.c Written 1993 by Donald Becker.&n; * Copyright 1993 United States Government as represented by the&n; * Director, National Security Agency.  This software may only be used&n; * and distributed according to the terms of the GNU Public License as&n; * modified by SRC, incorporated herein by reference.&n; *&n; * **********************&n; *&n; * For more details, see drivers/net/arcnet.c&n; *&n; * **********************&n; */
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/config.h&gt;  /* for CONFIG_INET */
+macro_line|#include &lt;linux/config.h&gt;&t;/* for CONFIG_INET */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
@@ -191,7 +191,7 @@ id|rawmode_proto
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* MODULE */
+macro_line|#endif&t;&t;&t;&t;/* MODULE */
 multiline_comment|/* packet receiver */
 DECL|function|rx
 r_static
@@ -474,7 +474,7 @@ comma
 id|hdr_size
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * Set the source hardware address.&n;     *&n;     * This is pretty pointless for most purposes, but it can help in&n;     * debugging.  ARCnet does not allow us to change the source address in&n;     * the actual packet sent)&n;     */
+multiline_comment|/*&n;&t; * Set the source hardware address.&n;&t; *&n;&t; * This is pretty pointless for most purposes, but it can help in&n;&t; * debugging.  ARCnet does not allow us to change the source address in&n;&t; * the actual packet sent)&n;&t; */
 id|pkt-&gt;hard.source
 op_assign
 op_star
@@ -493,7 +493,7 @@ id|IFF_NOARP
 )paren
 )paren
 (brace
-multiline_comment|/* &n;&t; * FIXME: fill in the last byte of the dest ipaddr here to better&n;&t; * comply with RFC1051 in &quot;noarp&quot; mode.&n;&t; */
+multiline_comment|/* &n;&t;&t; * FIXME: fill in the last byte of the dest ipaddr here to better&n;&t;&t; * comply with RFC1051 in &quot;noarp&quot; mode.&n;&t;&t; */
 id|pkt-&gt;hard.dest
 op_assign
 l_int|0

@@ -7,7 +7,7 @@ macro_line|#include &lt;linux/if_arcnet.h&gt;
 macro_line|#ifdef __KERNEL__
 macro_line|#ifndef bool
 DECL|macro|bool
-macro_line|# define bool int
+mdefine_line|#define bool int
 macro_line|#endif
 multiline_comment|/*&n; * RECON_THRESHOLD is the maximum number of RECON messages to receive&n; * within one minute before printing a &quot;cabling problem&quot; warning. The&n; * default value should be fine.&n; *&n; * After that, a &quot;cabling restored&quot; message will be printed on the next IRQ&n; * if no RECON messages have been received for 10 seconds.&n; *&n; * Do not define RECON_THRESHOLD at all if you want to disable this feature.&n; */
 DECL|macro|RECON_THRESHOLD
@@ -396,7 +396,7 @@ r_int
 id|basename_len
 suffix:semicolon
 multiline_comment|/* name length without suffix (&squot;arc0e&squot; -&gt; 4) */
-multiline_comment|/*&n;     * Buffer management: an ARCnet card has 4 x 512-byte buffers, each of&n;     * which can be used for either sending or receiving.  The new dynamic&n;     * buffer management routines use a simple circular queue of available&n;     * buffers, and take them as they&squot;re needed.  This way, we simplify&n;     * situations in which we (for example) want to pre-load a transmit&n;     * buffer, or start receiving while we copy a received packet to&n;     * memory.&n;     * &n;     * The rules: only the interrupt handler is allowed to _add_ buffers to&n;     * the queue; thus, this doesn&squot;t require a lock.  Both the interrupt&n;     * handler and the transmit function will want to _remove_ buffers, so&n;     * we need to handle the situation where they try to do it at the same&n;     * time.&n;     * &n;     * If next_buf == first_free_buf, the queue is empty.  Since there are&n;     * only four possible buffers, the queue should never be full.&n;     */
+multiline_comment|/*&n;&t; * Buffer management: an ARCnet card has 4 x 512-byte buffers, each of&n;&t; * which can be used for either sending or receiving.  The new dynamic&n;&t; * buffer management routines use a simple circular queue of available&n;&t; * buffers, and take them as they&squot;re needed.  This way, we simplify&n;&t; * situations in which we (for example) want to pre-load a transmit&n;&t; * buffer, or start receiving while we copy a received packet to&n;&t; * memory.&n;&t; * &n;&t; * The rules: only the interrupt handler is allowed to _add_ buffers to&n;&t; * the queue; thus, this doesn&squot;t require a lock.  Both the interrupt&n;&t; * handler and the transmit function will want to _remove_ buffers, so&n;&t; * we need to handle the situation where they try to do it at the same&n;&t; * time.&n;&t; * &n;&t; * If next_buf == first_free_buf, the queue is empty.  Since there are&n;&t; * only four possible buffers, the queue should never be full.&n;&t; */
 DECL|member|buf_lock
 id|atomic_t
 id|buf_lock
@@ -658,7 +658,7 @@ id|desc
 suffix:semicolon
 macro_line|#else
 DECL|macro|arcnet_dump_skb
-macro_line|# define arcnet_dump_skb(dev,skb,desc) ;
+mdefine_line|#define arcnet_dump_skb(dev,skb,desc) ;
 macro_line|#endif
 macro_line|#if (ARCNET_DEBUG_MAX &amp; D_RX) || (ARCNET_DEBUG_MAX &amp; D_TX)
 r_void
@@ -680,7 +680,7 @@ id|desc
 suffix:semicolon
 macro_line|#else
 DECL|macro|arcnet_dump_packet
-macro_line|# define arcnet_dump_packet(dev, bufnum, desc) ;
+mdefine_line|#define arcnet_dump_packet(dev, bufnum, desc) ;
 macro_line|#endif
 r_void
 id|arcnet_unregister_proto
@@ -777,6 +777,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif /* __KERNEL__ */
-macro_line|#endif /* _LINUX_ARCDEVICE_H */
+macro_line|#endif&t;&t;&t;&t;/* __KERNEL__ */
+macro_line|#endif&t;&t;&t;&t;/* _LINUX_ARCDEVICE_H */
 eof

@@ -1033,8 +1033,8 @@ id|lp-&gt;buf_lock.counter
 )paren
 suffix:semicolon
 r_else
-multiline_comment|/* we can continue */
 (brace
+multiline_comment|/* we can continue */
 r_if
 c_cond
 (paren
@@ -1271,7 +1271,7 @@ id|dev-&gt;flags
 op_assign
 id|IFF_BROADCAST
 suffix:semicolon
-multiline_comment|/*&n;     * Put in this stuff here, so we don&squot;t have to export the symbols to&n;     * the chipset drivers.&n;     */
+multiline_comment|/*&n;&t; * Put in this stuff here, so we don&squot;t have to export the symbols to&n;&t; * the chipset drivers.&n;&t; */
 id|dev-&gt;open
 op_assign
 id|arcnet_open
@@ -1398,7 +1398,7 @@ comma
 l_string|&quot;arcnet_open: resetting card.&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* try to put the card in a defined state - if it fails the first&n;     * time, actually reset it.&n;     */
+multiline_comment|/* try to put the card in a defined state - if it fails the first&n;&t; * time, actually reset it.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1851,7 +1851,7 @@ comma
 id|len
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * if the dest addr isn&squot;t provided, we can&squot;t choose an encapsulation!&n;     * Store the packet type (eg. ETH_P_IP) for now, and we&squot;ll push on a&n;     * real header when we do rebuild_header. &n;     */
+multiline_comment|/*&n;&t; * if the dest addr isn&squot;t provided, we can&squot;t choose an encapsulation!&n;&t; * Store the packet type (eg. ETH_P_IP) for now, and we&squot;ll push on a&n;&t; * real header when we do rebuild_header. &n;&t; */
 r_if
 c_cond
 (paren
@@ -2240,7 +2240,7 @@ c_cond
 id|dev-&gt;tbusy
 )paren
 (brace
-multiline_comment|/*&n;&t; * If we get here, some higher level has decided we are broken.&n;&t; * There should really be a &quot;kick me&quot; function call instead. &n;&t; */
+multiline_comment|/*&n;&t;&t; * If we get here, some higher level has decided we are broken.&n;&t;&t; * There should really be a &quot;kick me&quot; function call instead. &n;&t;&t; */
 r_int
 r_int
 id|flags
@@ -2302,8 +2302,8 @@ id|status
 op_amp
 id|TXFREEflag
 )paren
-multiline_comment|/* transmit _DID_ finish */
 (brace
+multiline_comment|/* transmit _DID_ finish */
 id|BUGMSG
 c_func
 (paren
@@ -2361,7 +2361,7 @@ l_int|3
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * interrupt handler will set dev-&gt;tbusy = 0 when it notices the&n;&t; * transmit has been canceled.&n;&t; */
+multiline_comment|/*&n;&t;&t; * interrupt handler will set dev-&gt;tbusy = 0 when it notices the&n;&t;&t; * transmit has been canceled.&n;&t;&t; */
 multiline_comment|/* make sure we didn&squot;t miss a TX IRQ */
 id|AINTMASK
 c_func
@@ -2458,7 +2458,7 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* don&squot;t try again */
 )brace
-multiline_comment|/*&n;     * Block a timer-based transmit from overlapping.  This could better be&n;     * done with atomic_swap(1, dev-&gt;tbusy), but set_bit() works as well. &n;     */
+multiline_comment|/*&n;&t; * Block a timer-based transmit from overlapping.  This could better be&n;&t; * done with atomic_swap(1, dev-&gt;tbusy), but set_bit() works as well. &n;&t; */
 r_if
 c_cond
 (paren
@@ -2873,7 +2873,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     * RESET flag was enabled - if !dev-&gt;start, we must clear it right&n;     * away (but nothing else).&n;     */
+multiline_comment|/*&n;&t; * RESET flag was enabled - if !dev-&gt;start, we must clear it right&n;&t; * away (but nothing else).&n;&t; */
 r_if
 c_cond
 (paren
@@ -2962,7 +2962,7 @@ id|didsomething
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t; * RESET flag was enabled - card is resetting and if RX is&n;&t; * disabled, it&squot;s NOT because we just got a packet.&n;&t; * &n;&t; * The card is in an undefined state.  Clear it out and start over.&n;&t; */
+multiline_comment|/*&n;&t;&t; * RESET flag was enabled - card is resetting and if RX is&n;&t;&t; * disabled, it&squot;s NOT because we just got a packet.&n;&t;&t; * &n;&t;&t; * The card is in an undefined state.  Clear it out and start over.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2997,7 +2997,7 @@ multiline_comment|/* get out of the interrupt handler! */
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/* &n;&t; * RX is inhibited - we must have received something. Prepare to&n;&t; * receive into the next buffer.&n;&t; * &n;&t; * We don&squot;t actually copy the received packet from the card until&n;&t; * after the transmit handler runs (and possibly launches the next&n;&t; * tx); this should improve latency slightly if we get both types&n;&t; * of interrupts at once. &n;&t; */
+multiline_comment|/* &n;&t;&t; * RX is inhibited - we must have received something. Prepare to&n;&t;&t; * receive into the next buffer.&n;&t;&t; * &n;&t;&t; * We don&squot;t actually copy the received packet from the card until&n;&t;&t; * after the transmit handler runs (and possibly launches the next&n;&t;&t; * tx); this should improve latency slightly if we get both types&n;&t;&t; * of interrupts at once. &n;&t;&t; */
 id|recbuf
 op_assign
 op_minus
@@ -3437,7 +3437,7 @@ comma
 id|lp-&gt;network_down
 )paren
 suffix:semicolon
-multiline_comment|/* if network is marked up;&n;&t;&t; * and first_recon and last_recon are 60+ apart;&n;&t;&t; * and the average no. of recons counted is&n;&t;&t; *    &gt; RECON_THRESHOLD/min;&n;&t;&t; * then print a warning message.&n;&t;&t; */
+multiline_comment|/* if network is marked up;&n;&t;&t;&t;&t; * and first_recon and last_recon are 60+ apart;&n;&t;&t;&t;&t; * and the average no. of recons counted is&n;&t;&t;&t;&t; *    &gt; RECON_THRESHOLD/min;&n;&t;&t;&t;&t; * then print a warning message.&n;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -3902,7 +3902,7 @@ comma
 id|length
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * If any worthwhile packets have been received, a mark_bh(NET_BH) has&n;     * been done by netif_rx and Linux will handle them after we return.&n;     */
+multiline_comment|/*&n;&t; * If any worthwhile packets have been received, a mark_bh(NET_BH) has&n;&t; * been done by netif_rx and Linux will handle them after we return.&n;&t; */
 )brace
 multiline_comment|/* &n; * Get the current statistics.  This may be called with the card open or&n; * closed.&n; */
 DECL|function|arcnet_get_stats
