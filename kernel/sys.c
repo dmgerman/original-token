@@ -629,7 +629,7 @@ suffix:semicolon
 id|pg_table
 op_assign
 (paren
-l_int|0xA00000
+l_int|0xA0000
 op_rshift
 id|PAGE_SHIFT
 )paren

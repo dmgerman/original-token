@@ -763,7 +763,7 @@ c_cond
 (paren
 id|memory_end
 OG
-l_int|16
+id|MAX_MEGABYTES
 op_star
 l_int|1024
 op_star
@@ -771,7 +771,7 @@ l_int|1024
 )paren
 id|memory_end
 op_assign
-l_int|16
+id|MAX_MEGABYTES
 op_star
 l_int|1024
 op_star

@@ -14,7 +14,7 @@ mdefine_line|#define MINIX_HEADER 32
 DECL|macro|GCC_HEADER
 mdefine_line|#define GCC_HEADER 1024
 DECL|macro|SYS_SIZE
-mdefine_line|#define SYS_SIZE 0x5000
+mdefine_line|#define SYS_SIZE 0x7000
 DECL|macro|DEFAULT_MAJOR_ROOT
 mdefine_line|#define DEFAULT_MAJOR_ROOT 0
 DECL|macro|DEFAULT_MINOR_ROOT

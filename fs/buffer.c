@@ -8,7 +8,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#ifdef CONFIG_BLK_DEV_SR
+macro_line|#if defined(CONFIG_BLK_DEV_SR) &amp;&amp; defined(CONFIG_SCSI)
 r_extern
 r_int
 id|check_cdrom_media_change
@@ -458,7 +458,7 @@ id|bh
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#ifdef CONFIG_BLK_DEV_SR
+macro_line|#if defined(CONFIG_BLK_DEV_SR) &amp;&amp; defined(CONFIG_SCSI)
 r_case
 l_int|11
 suffix:colon

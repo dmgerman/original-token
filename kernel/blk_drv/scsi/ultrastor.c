@@ -1,6 +1,6 @@
-multiline_comment|/*&n; *&t;ultrastor.c&t;Copyright (C) 1991, 1992 David B. Gentzel&n; *&t;Low-level SCSI driver for UltraStor 14F&n; *&t;by David B. Gentzel, Whitfield Software Services, Carnegie, PA&n; *&t;    (gentzel@nova.enet.dec.com)&n; *&t;Thanks to UltraStor for providing the necessary documentation&n; */
+multiline_comment|/*&n; *&t;ultrastor.c&t;Copyright (C) 1992 David B. Gentzel&n; *&t;Low-level SCSI driver for UltraStor 14F&n; *&t;by David B. Gentzel, Whitfield Software Services, Carnegie, PA&n; *&t;    (gentzel@nova.enet.dec.com)&n; *&t;Thanks to UltraStor for providing the necessary documentation&n; */
 multiline_comment|/*&n; * NOTES:&n; *    The UltraStor 14F is an intelligent, high performance ISA SCSI-2 host&n; *    adapter.  It is essentially an ISA version of the UltraStor 24F EISA&n; *    adapter.  It supports first-party DMA, command queueing, and&n; *    scatter/gather I/O.  It can also emulate the standard AT MFM/RLL/IDE&n; *    interface for use with OS&squot;s which don&squot;t support SCSI.&n; *&n; *    This driver may also work (with some small changes) with the UltraStor&n; *    24F.  I have no way of confirming this...&n; *&n; *    Places flagged with a triple question-mark are things which are either&n; *    unfinished, questionable, or wrong.&n; */
-multiline_comment|/*&n; * CAVEATS: ???&n; *    This driver is VERY stupid.  It takes no advantage of much of the power&n; *    of the UltraStor controller.  We just sit-and-spin while waiting for&n; *    commands to complete.  I hope to go back and beat it into shape, but&n; *    PLEASE, anyone else who would like to, please make improvements!&n; *&n; *    By defining NO_QUEUEING in ultrastor.h, you disable the queueing feature&n; *    of the mid-level SCSI driver.  Once I&squot;m satisfied that the queueing&n; *    version is as stable as the non-queueing version, I&squot;ll eliminate this&n; *    option.&n; */
+multiline_comment|/*&n; * CAVEATS: ???&n; *    This driver is VERY stupid.  It takes no advantage of much of the power&n; *    of the UltraStor controller.  I hope to go back and beat it into shape,&n; *    but PLEASE, anyone else who would like to, please make improvements!&n; *&n; *    By defining NO_QUEUEING in ultrastor.h, you disable the queueing feature&n; *    of the mid-level SCSI driver.  Once I&squot;m satisfied that the queueing&n; *    version is as stable as the non-queueing version, I&squot;ll eliminate this&n; *    option.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_SCSI_ULTRASTOR
 macro_line|#include &lt;linux/stddef.h&gt;
@@ -509,11 +509,13 @@ comma
 )brace
 suffix:semicolon
 macro_line|#endif
+r_static
 r_void
 id|ultrastor_interrupt
 c_func
 (paren
-r_void
+r_int
+id|cpl
 )paren
 suffix:semicolon
 DECL|variable|ultrastor_done
@@ -1045,58 +1047,54 @@ op_assign
 id|config.ha_scsi_id
 suffix:semicolon
 macro_line|#ifndef NO_QUEUEING
-id|set_intr_gate
-c_func
-(paren
-l_int|0x20
-op_plus
-id|config.interrupt
-comma
+(brace
+r_struct
+id|sigaction
+id|sa
+suffix:semicolon
+id|sa.sa_handler
+op_assign
 id|ultrastor_interrupt
-)paren
 suffix:semicolon
-multiline_comment|/* gate to PIC 2 */
-id|outb_p
-c_func
-(paren
-id|inb_p
-c_func
-(paren
-l_int|0x21
-)paren
-op_amp
-op_complement
-id|BIT
-c_func
-(paren
-l_int|2
-)paren
-comma
-l_int|0x21
-)paren
+id|sa.sa_mask
+op_assign
+l_int|0
 suffix:semicolon
-multiline_comment|/* enable the interrupt */
-id|outb
-c_func
+id|sa.sa_flags
+op_assign
+id|SA_INTERRUPT
+suffix:semicolon
+multiline_comment|/* ??? Do we really need this? */
+id|sa.sa_restorer
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
 (paren
-id|inb_p
-c_func
-(paren
-l_int|0xA1
-)paren
-op_amp
-op_complement
-id|BIT
+id|irqaction
 c_func
 (paren
 id|config.interrupt
-op_minus
-l_int|8
-)paren
 comma
-l_int|0xA1
+op_amp
+id|sa
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Unable to get IRQ%u for UltraStor controller&bslash;n&quot;
+comma
+id|config.interrupt
 )paren
 suffix:semicolon
+r_return
+id|FALSE
+suffix:semicolon
+)brace
+)brace
 macro_line|#endif
 r_return
 id|TRUE
@@ -1129,11 +1127,11 @@ id|OP_SCSI
 comma
 id|DTD_SCSI
 comma
-id|FALSE
+l_int|0
 comma
-id|TRUE
+l_int|1
 comma
-id|FALSE
+l_int|0
 multiline_comment|/* This stuff doesn&squot;t change */
 )brace
 suffix:semicolon
@@ -1682,19 +1680,21 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifndef NO_QUEUEING
-DECL|function|ultrastor_interrupt_service
+DECL|function|ultrastor_interrupt
+r_static
 r_void
-id|ultrastor_interrupt_service
+id|ultrastor_interrupt
 c_func
 (paren
-r_void
+r_int
+id|cpl
 )paren
 (brace
 macro_line|#if (ULTRASTOR_DEBUG &amp; UD_INTERRUPT)
 id|printk
 c_func
 (paren
-l_string|&quot;US14F: interrupt_service: called: status = %08X&bslash;n&quot;
+l_string|&quot;US14F: interrupt: called: status = %08X&bslash;n&quot;
 comma
 (paren
 id|mscp.adapter_status
@@ -1716,7 +1716,7 @@ l_int|0
 id|panic
 c_func
 (paren
-l_string|&quot;US14F: interrupt_service: unexpected interrupt!&bslash;n&quot;
+l_string|&quot;US14F: interrupt: unexpected interrupt!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_else
@@ -1775,134 +1775,11 @@ macro_line|#if (ULTRASTOR_DEBUG &amp; UD_INTERRUPT)
 id|printk
 c_func
 (paren
-l_string|&quot;US14F: interrupt_service: returning&bslash;n&quot;
+l_string|&quot;US14F: interrupt: returning&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
 )brace
-id|__asm__
-c_func
-(paren
-"&quot;"
-id|_ultrastor_interrupt
-suffix:colon
-id|cld
-id|pushl
-op_mod
-id|eax
-id|pushl
-op_mod
-id|ecx
-id|pushl
-op_mod
-id|edx
-id|push
-op_mod
-id|ds
-id|push
-op_mod
-id|es
-id|push
-op_mod
-id|fs
-id|movl
-"$"
-l_int|0x10
-comma
-op_mod
-id|eax
-id|mov
-op_mod
-id|ax
-comma
-op_mod
-id|ds
-id|mov
-op_mod
-id|ax
-comma
-op_mod
-id|es
-id|movl
-"$"
-l_int|0x17
-comma
-op_mod
-id|eax
-id|mov
-op_mod
-id|ax
-comma
-op_mod
-id|fs
-id|movb
-"$"
-l_int|0x20
-comma
-op_mod
-id|al
-id|outb
-op_mod
-id|al
-comma
-"$"
-l_int|0xA0
-macro_line|# EOI to interrupt controller #1
-id|outb
-op_mod
-id|al
-comma
-"$"
-l_int|0x80
-macro_line|# give port chance to breathe
-id|outb
-op_mod
-id|al
-comma
-"$"
-l_int|0x80
-id|outb
-op_mod
-id|al
-comma
-"$"
-l_int|0x80
-id|outb
-op_mod
-id|al
-comma
-"$"
-l_int|0x80
-id|outb
-op_mod
-id|al
-comma
-"$"
-l_int|0x20
-id|call
-id|_ultrastor_interrupt_service
-id|pop
-op_mod
-id|fs
-id|pop
-op_mod
-id|es
-id|pop
-op_mod
-id|ds
-id|popl
-op_mod
-id|edx
-id|popl
-op_mod
-id|ecx
-id|popl
-op_mod
-id|eax
-id|iret
-"&quot;"
-)paren
-suffix:semicolon
 macro_line|#endif
 macro_line|#endif
 eof

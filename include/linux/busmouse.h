@@ -47,7 +47,7 @@ multiline_comment|/*--------- MICROSOFT BUSMOUSE ITEMS -------------*/
 DECL|macro|MS_MSE_DATA_PORT
 mdefine_line|#define&t;MS_MSE_DATA_PORT&t;        0x23d
 DECL|macro|MS_MSE_SIGNATURE_PORT
-mdefine_line|#define&t;MS_MSE_SIGNATURE_PORT&t;        0x23d
+mdefine_line|#define&t;MS_MSE_SIGNATURE_PORT&t;        0x23e
 DECL|macro|MS_MSE_CONTROL_PORT
 mdefine_line|#define&t;MS_MSE_CONTROL_PORT&t;        0x23c
 DECL|macro|MS_MSE_CONFIG_PORT

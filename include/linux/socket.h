@@ -74,6 +74,17 @@ DECL|macro|SO_OOBINLINE
 mdefine_line|#define SO_OOBINLINE   10
 DECL|macro|SO_NO_CHECK
 mdefine_line|#define SO_NO_CHECK    11
+DECL|macro|SO_PRIORITY
+mdefine_line|#define SO_PRIORITY    12
+DECL|macro|SO_LINGER
+mdefine_line|#define SO_LINGER      13
+multiline_comment|/* the different priorities */
+DECL|macro|SOPRI_INTERACTIVE
+mdefine_line|#define SOPRI_INTERACTIVE&t;0
+DECL|macro|SOPRI_NORMAL
+mdefine_line|#define SOPRI_NORMAL&t;&t;1
+DECL|macro|SOPRI_BACKGROUND
+mdefine_line|#define SOPRI_BACKGROUND&t;2
 multiline_comment|/* setsockoptions level */
 DECL|macro|SOL_SOCKET
 mdefine_line|#define SOL_SOCKET&t;1

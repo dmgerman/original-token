@@ -1,6 +1,7 @@
 multiline_comment|/*&n; *  linux/fs/ext/dir.c&n; *&n; *  Copyright (C) 1992 Remy Card (card@masi.ibp.fr)&n; *&n; *  from&n; *&n; *  linux/fs/minix/dir.c&n; *&n; *  Copyright (C) 1991, 1992 Linus Torvalds&n; *&n; *  ext directory handling functions&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/ext_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
@@ -247,6 +248,50 @@ id|filp-&gt;f_pos
 op_add_assign
 id|de-&gt;rec_len
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|de-&gt;rec_len
+OL
+l_int|8
+op_logical_or
+id|de-&gt;rec_len
+op_mod
+l_int|4
+op_ne
+l_int|0
+op_logical_or
+id|de-&gt;rec_len
+OL
+id|de-&gt;name_len
+op_plus
+l_int|8
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;ext_readdir: bad directory entry&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;dev=%d, dir=%d, offset=%d, rec_len=%d, name_len=%d&bslash;n&quot;
+comma
+id|inode-&gt;i_dev
+comma
+id|inode-&gt;i_ino
+comma
+id|offset
+comma
+id|de-&gt;rec_len
+comma
+id|de-&gt;name_len
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

@@ -216,6 +216,8 @@ c_func
 (paren
 l_string|&quot;  Logical part %d start %d size %d end %d&bslash;n&bslash;r&quot;
 comma
+id|mask
+op_amp
 id|current_minor
 comma
 id|hd-&gt;part
@@ -366,6 +368,17 @@ r_int
 r_int
 id|first_sector
 suffix:semicolon
+r_int
+id|mask
+op_assign
+(paren
+l_int|1
+op_lshift
+id|hd-&gt;minor_shift
+)paren
+op_minus
+l_int|1
+suffix:semicolon
 id|first_sector
 op_assign
 id|hd-&gt;part
@@ -412,13 +425,17 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s%d :&bslash;n&bslash;r&quot;
+l_string|&quot;%s%c :&bslash;n&bslash;r&quot;
 comma
 id|hd-&gt;major_name
 comma
+l_char|&squot;a&squot;
+op_plus
+(paren
 id|minor
 op_rshift
 id|hd-&gt;minor_shift
+)paren
 )paren
 suffix:semicolon
 id|current_minor
@@ -634,10 +651,12 @@ c_cond
 (paren
 id|current_minor
 op_amp
-l_int|0x3f
+id|mask
 )paren
 op_ge
-l_int|60
+id|mask
+op_minus
+l_int|2
 )paren
 r_break
 suffix:semicolon
@@ -677,6 +696,8 @@ c_func
 l_string|&quot; DM part %d start %d size %d end %d&bslash;n&bslash;r&quot;
 comma
 id|current_minor
+op_amp
+id|mask
 comma
 id|hd-&gt;part
 (braket
