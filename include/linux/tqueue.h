@@ -65,6 +65,8 @@ suffix:semicolon
 r_extern
 id|task_queue
 id|tq_timer
+comma
+id|tq_immediate
 suffix:semicolon
 macro_line|#ifdef INCLUDE_INLINE_FUNCS
 DECL|variable|tq_last

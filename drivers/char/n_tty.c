@@ -2873,15 +2873,14 @@ id|tty-&gt;read_cnt
 op_minus
 l_int|1
 suffix:semicolon
-multiline_comment|/*&n;&t; * If we are doing input canonicalization, let as many&n;&t; * characters through as possible, so that the excess&n;&t; * characters can be &quot;beeped&quot;.&n;&t; */
+multiline_comment|/*&n;&t; * If we are doing input canonicalization, and there are no&n;&t; * pending newlines, let characters through without limit, so&n;&t; * that erase characters will be handled.  Other excess&n;&t; * characters will be beeped.&n;&t; */
 r_if
 c_cond
 (paren
-id|L_ICANON
-c_func
-(paren
-id|tty
-)paren
+id|tty-&gt;icanon
+op_logical_and
+op_logical_neg
+id|tty-&gt;canon_data
 )paren
 r_return
 id|N_TTY_BUF_SIZE

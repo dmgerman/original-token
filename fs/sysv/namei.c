@@ -193,10 +193,6 @@ id|buffer_head
 op_star
 id|bh
 suffix:semicolon
-r_char
-op_star
-id|bh_data
-suffix:semicolon
 op_star
 id|res_dir
 op_assign
@@ -272,9 +268,6 @@ comma
 id|block
 comma
 l_int|0
-comma
-op_amp
-id|bh_data
 )paren
 suffix:semicolon
 r_if
@@ -315,7 +308,7 @@ id|sysv_dir_entry
 op_star
 )paren
 (paren
-id|bh_data
+id|bh-&gt;b_data
 op_plus
 id|offset
 )paren
@@ -586,10 +579,6 @@ id|buffer_head
 op_star
 id|bh
 suffix:semicolon
-r_char
-op_star
-id|bh_data
-suffix:semicolon
 r_struct
 id|sysv_dir_entry
 op_star
@@ -685,9 +674,6 @@ comma
 id|block
 comma
 l_int|1
-comma
-op_amp
-id|bh_data
 )paren
 suffix:semicolon
 r_if
@@ -709,7 +695,7 @@ id|sysv_dir_entry
 op_star
 )paren
 (paren
-id|bh_data
+id|bh-&gt;b_data
 op_plus
 id|offset
 )paren
@@ -957,20 +943,6 @@ op_minus
 id|ENOSPC
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|inode-&gt;i_sb-&gt;sv_block_size_ratio_bits
-op_eq
-l_int|0
-)paren
-multiline_comment|/* block_size == BLOCK_SIZE ? */
-id|inode-&gt;i_op
-op_assign
-op_amp
-id|sysv_file_inode_operations_with_bmap
-suffix:semicolon
-r_else
 id|inode-&gt;i_op
 op_assign
 op_amp
@@ -1202,20 +1174,6 @@ c_func
 id|inode-&gt;i_mode
 )paren
 )paren
-r_if
-c_cond
-(paren
-id|inode-&gt;i_sb-&gt;sv_block_size_ratio_bits
-op_eq
-l_int|0
-)paren
-multiline_comment|/* block_size == BLOCK_SIZE ? */
-id|inode-&gt;i_op
-op_assign
-op_amp
-id|sysv_file_inode_operations_with_bmap
-suffix:semicolon
-r_else
 id|inode-&gt;i_op
 op_assign
 op_amp
@@ -1452,10 +1410,6 @@ comma
 op_star
 id|dir_block
 suffix:semicolon
-r_char
-op_star
-id|bh_data
-suffix:semicolon
 r_struct
 id|sysv_dir_entry
 op_star
@@ -1583,9 +1537,6 @@ comma
 l_int|0
 comma
 l_int|1
-comma
-op_amp
-id|bh_data
 )paren
 suffix:semicolon
 r_if
@@ -1627,7 +1578,7 @@ id|sysv_dir_entry
 op_star
 )paren
 (paren
-id|bh_data
+id|dir_block-&gt;b_data
 op_plus
 l_int|0
 op_star
@@ -1655,7 +1606,7 @@ id|sysv_dir_entry
 op_star
 )paren
 (paren
-id|bh_data
+id|dir_block-&gt;b_data
 op_plus
 l_int|1
 op_star
@@ -1838,10 +1789,6 @@ id|buffer_head
 op_star
 id|bh
 suffix:semicolon
-r_char
-op_star
-id|bh_data
-suffix:semicolon
 r_struct
 id|sysv_dir_entry
 op_star
@@ -1902,9 +1849,6 @@ comma
 l_int|0
 comma
 l_int|0
-comma
-op_amp
-id|bh_data
 )paren
 suffix:semicolon
 r_if
@@ -1924,7 +1868,7 @@ id|sysv_dir_entry
 op_star
 )paren
 (paren
-id|bh_data
+id|bh-&gt;b_data
 op_plus
 l_int|0
 op_star
@@ -1956,7 +1900,7 @@ id|sysv_dir_entry
 op_star
 )paren
 (paren
-id|bh_data
+id|bh-&gt;b_data
 op_plus
 l_int|1
 op_star
@@ -2009,9 +1953,6 @@ comma
 id|block
 comma
 l_int|0
-comma
-op_amp
-id|bh_data
 )paren
 suffix:semicolon
 r_if
@@ -2041,7 +1982,7 @@ id|sysv_dir_entry
 op_star
 )paren
 (paren
-id|bh_data
+id|bh-&gt;b_data
 op_plus
 id|offset
 )paren
@@ -2794,9 +2735,6 @@ comma
 l_int|0
 comma
 l_int|1
-comma
-op_amp
-id|name_block_data
 )paren
 suffix:semicolon
 r_if
@@ -2833,6 +2771,10 @@ suffix:semicolon
 id|sb
 op_assign
 id|inode-&gt;i_sb
+suffix:semicolon
+id|name_block_data
+op_assign
+id|name_block-&gt;b_data
 suffix:semicolon
 id|i
 op_assign
@@ -3402,10 +3344,6 @@ comma
 op_star
 id|dir_bh
 suffix:semicolon
-r_char
-op_star
-id|dir_bh_data
-suffix:semicolon
 r_struct
 id|sysv_dir_entry
 op_star
@@ -3807,9 +3745,6 @@ comma
 l_int|0
 comma
 l_int|0
-comma
-op_amp
-id|dir_bh_data
 )paren
 suffix:semicolon
 r_if
@@ -3827,7 +3762,7 @@ c_cond
 id|PARENT_INO
 c_func
 (paren
-id|dir_bh_data
+id|dir_bh-&gt;b_data
 )paren
 op_ne
 id|old_dir-&gt;i_ino
@@ -3996,7 +3931,7 @@ id|dir_bh
 id|PARENT_INO
 c_func
 (paren
-id|dir_bh_data
+id|dir_bh-&gt;b_data
 )paren
 op_assign
 id|new_dir-&gt;i_ino

@@ -62,6 +62,9 @@ comma
 DECL|enumerator|NET_BH
 id|NET_BH
 comma
+DECL|enumerator|IMMEDIATE_BH
+id|IMMEDIATE_BH
+comma
 DECL|enumerator|KEYBOARD_BH
 id|KEYBOARD_BH
 )brace

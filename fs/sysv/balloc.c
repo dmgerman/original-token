@@ -4,7 +4,7 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/sysv_fs.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
-multiline_comment|/* We don&squot;t trust the value of&n;   sb-&gt;sv_sbd-&gt;s_tfree = *sb-&gt;sv_sb_total_free_blocks&n;   but we nevertheless keep it up to date. */
+multiline_comment|/* We don&squot;t trust the value of&n;   sb-&gt;sv_sbd2-&gt;s_tfree = *sb-&gt;sv_sb_total_free_blocks&n;   but we nevertheless keep it up to date. */
 DECL|function|sysv_free_block
 r_void
 id|sysv_free_block
@@ -116,49 +116,16 @@ r_int
 op_star
 id|flc_blocks
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sb-&gt;sv_block_size_ratio_bits
-OG
-l_int|0
-)paren
-multiline_comment|/* block_size &lt; BLOCK_SIZE ? */
 id|bh
 op_assign
-id|bread
+id|sv_getblk
 c_func
 (paren
+id|sb
+comma
 id|sb-&gt;s_dev
 comma
-(paren
 id|block
-op_rshift
-id|sb-&gt;sv_block_size_ratio_bits
-)paren
-op_plus
-id|sb-&gt;sv_block_base
-comma
-id|BLOCK_SIZE
-)paren
-suffix:semicolon
-r_else
-id|bh
-op_assign
-id|getblk
-c_func
-(paren
-id|sb-&gt;s_dev
-comma
-(paren
-id|block
-op_rshift
-id|sb-&gt;sv_block_size_ratio_bits
-)paren
-op_plus
-id|sb-&gt;sv_block_base
-comma
-id|BLOCK_SIZE
 )paren
 suffix:semicolon
 r_if
@@ -171,7 +138,7 @@ id|bh
 id|printk
 c_func
 (paren
-l_string|&quot;sysv_free_block: getblk() or bread() failed&bslash;n&quot;
+l_string|&quot;sysv_free_block: getblk() failed&bslash;n&quot;
 )paren
 suffix:semicolon
 id|unlock_super
@@ -186,16 +153,6 @@ suffix:semicolon
 id|bh_data
 op_assign
 id|bh-&gt;b_data
-op_plus
-(paren
-(paren
-id|block
-op_amp
-id|sb-&gt;sv_block_size_ratio_1
-)paren
-op_lshift
-id|sb-&gt;sv_block_size_bits
-)paren
 suffix:semicolon
 r_switch
 c_cond
@@ -415,49 +372,16 @@ l_int|0
 )paren
 (brace
 multiline_comment|/* Applies only to Coherent FS */
-r_if
-c_cond
-(paren
-id|sb-&gt;sv_block_size_ratio_bits
-OG
-l_int|0
-)paren
-multiline_comment|/* block_size &lt; BLOCK_SIZE ? */
 id|bh
 op_assign
-id|bread
+id|sv_getblk
 c_func
 (paren
+id|sb
+comma
 id|sb-&gt;s_dev
 comma
-(paren
 id|block
-op_rshift
-id|sb-&gt;sv_block_size_ratio_bits
-)paren
-op_plus
-id|sb-&gt;sv_block_base
-comma
-id|BLOCK_SIZE
-)paren
-suffix:semicolon
-r_else
-id|bh
-op_assign
-id|getblk
-c_func
-(paren
-id|sb-&gt;s_dev
-comma
-(paren
-id|block
-op_rshift
-id|sb-&gt;sv_block_size_ratio_bits
-)paren
-op_plus
-id|sb-&gt;sv_block_base
-comma
-id|BLOCK_SIZE
 )paren
 suffix:semicolon
 r_if
@@ -470,7 +394,7 @@ id|bh
 id|printk
 c_func
 (paren
-l_string|&quot;sysv_free_block: getblk() or bread() failed&bslash;n&quot;
+l_string|&quot;sysv_free_block: getblk() failed&bslash;n&quot;
 )paren
 suffix:semicolon
 id|unlock_super
@@ -482,31 +406,17 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|bh_data
-op_assign
-id|bh-&gt;b_data
-op_plus
-(paren
-(paren
-id|block
-op_amp
-id|sb-&gt;sv_block_size_ratio_1
-)paren
-op_lshift
-id|sb-&gt;sv_block_size_bits
-)paren
-suffix:semicolon
 id|memset
 c_func
 (paren
-id|bh_data
+id|bh-&gt;b_data
 comma
 l_int|0
 comma
 id|sb-&gt;sv_block_size
 )paren
 suffix:semicolon
-multiline_comment|/* this implies ((struct ..._freelist_chunk *) bh_data)-&gt;flc_count = 0; */
+multiline_comment|/* this implies ((struct ..._freelist_chunk *) bh-&gt;b_data)-&gt;flc_count = 0; */
 id|mark_buffer_dirty
 c_func
 (paren
@@ -529,32 +439,17 @@ multiline_comment|/* still *sb-&gt;sv_sb_flc_count = 0 */
 )brace
 r_else
 (brace
-r_if
-c_cond
-(paren
-id|sb-&gt;sv_block_size_ratio_bits
-op_eq
-l_int|0
-)paren
-(brace
-multiline_comment|/* block_size == BLOCK_SIZE ? */
 multiline_comment|/* Throw away block&squot;s contents */
 id|bh
 op_assign
-id|get_hash_table
+id|sv_get_hash_table
 c_func
 (paren
+id|sb
+comma
 id|sb-&gt;s_dev
 comma
-(paren
 id|block
-op_rshift
-id|sb-&gt;sv_block_size_ratio_bits
-)paren
-op_plus
-id|sb-&gt;sv_block_base
-comma
-id|BLOCK_SIZE
 )paren
 suffix:semicolon
 r_if
@@ -572,7 +467,6 @@ c_func
 id|bh
 )paren
 suffix:semicolon
-)brace
 )brace
 r_if
 c_cond
@@ -631,12 +525,27 @@ suffix:semicolon
 id|mark_buffer_dirty
 c_func
 (paren
-id|sb-&gt;sv_bh
+id|sb-&gt;sv_bh1
 comma
 l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* super-block has been modified */
+r_if
+c_cond
+(paren
+id|sb-&gt;sv_bh1
+op_ne
+id|sb-&gt;sv_bh2
+)paren
+id|mark_buffer_dirty
+c_func
+(paren
+id|sb-&gt;sv_bh2
+comma
+l_int|1
+)paren
+suffix:semicolon
 id|sb-&gt;s_dirt
 op_assign
 l_int|1
@@ -825,7 +734,7 @@ op_logical_neg
 (paren
 id|bh
 op_assign
-id|sysv_bread
+id|sv_bread
 c_func
 (paren
 id|sb
@@ -833,9 +742,6 @@ comma
 id|sb-&gt;s_dev
 comma
 id|block
-comma
-op_amp
-id|bh_data
 )paren
 )paren
 )paren
@@ -863,6 +769,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+id|bh_data
+op_assign
+id|bh-&gt;b_data
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -1083,49 +993,16 @@ id|bh
 suffix:semicolon
 )brace
 multiline_comment|/* Now the free list head in the superblock is valid again. */
-r_if
-c_cond
-(paren
-id|sb-&gt;sv_block_size_ratio_bits
-OG
-l_int|0
-)paren
-multiline_comment|/* block_size &lt; BLOCK_SIZE ? */
 id|bh
 op_assign
-id|bread
+id|sv_getblk
 c_func
 (paren
+id|sb
+comma
 id|sb-&gt;s_dev
 comma
-(paren
 id|block
-op_rshift
-id|sb-&gt;sv_block_size_ratio_bits
-)paren
-op_plus
-id|sb-&gt;sv_block_base
-comma
-id|BLOCK_SIZE
-)paren
-suffix:semicolon
-r_else
-id|bh
-op_assign
-id|getblk
-c_func
-(paren
-id|sb-&gt;s_dev
-comma
-(paren
-id|block
-op_rshift
-id|sb-&gt;sv_block_size_ratio_bits
-)paren
-op_plus
-id|sb-&gt;sv_block_base
-comma
-id|BLOCK_SIZE
 )paren
 suffix:semicolon
 r_if
@@ -1138,7 +1015,7 @@ id|bh
 id|printk
 c_func
 (paren
-l_string|&quot;sysv_new_block: getblk() or bread() failed&bslash;n&quot;
+l_string|&quot;sysv_new_block: getblk() failed&bslash;n&quot;
 )paren
 suffix:semicolon
 id|unlock_super
@@ -1151,28 +1028,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|bh_data
-op_assign
-id|bh-&gt;b_data
-op_plus
-(paren
-(paren
-id|block
-op_amp
-id|sb-&gt;sv_block_size_ratio_1
-)paren
-op_lshift
-id|sb-&gt;sv_block_size_bits
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|sb-&gt;sv_block_size_ratio_bits
-op_eq
-l_int|0
-)paren
-multiline_comment|/* block_size == BLOCK_SIZE ? */
 r_if
 c_cond
 (paren
@@ -1200,7 +1055,7 @@ suffix:semicolon
 id|memset
 c_func
 (paren
-id|bh_data
+id|bh-&gt;b_data
 comma
 l_int|0
 comma
@@ -1258,12 +1113,27 @@ suffix:semicolon
 id|mark_buffer_dirty
 c_func
 (paren
-id|sb-&gt;sv_bh
+id|sb-&gt;sv_bh1
 comma
 l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* super-block has been modified */
+r_if
+c_cond
+(paren
+id|sb-&gt;sv_bh1
+op_ne
+id|sb-&gt;sv_bh2
+)paren
+id|mark_buffer_dirty
+c_func
+(paren
+id|sb-&gt;sv_bh2
+comma
+l_int|1
+)paren
+suffix:semicolon
 id|sb-&gt;s_dirt
 op_assign
 l_int|1
@@ -1437,7 +1307,7 @@ op_logical_neg
 (paren
 id|bh
 op_assign
-id|sysv_bread
+id|sv_bread
 c_func
 (paren
 id|sb
@@ -1445,9 +1315,6 @@ comma
 id|sb-&gt;s_dev
 comma
 id|block
-comma
-op_amp
-id|bh_data
 )paren
 )paren
 )paren
@@ -1461,6 +1328,10 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+id|bh_data
+op_assign
+id|bh-&gt;b_data
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -1807,7 +1678,7 @@ suffix:semicolon
 id|mark_buffer_dirty
 c_func
 (paren
-id|sb-&gt;sv_bh
+id|sb-&gt;sv_bh2
 comma
 l_int|1
 )paren

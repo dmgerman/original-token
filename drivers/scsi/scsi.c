@@ -421,6 +421,15 @@ l_string|&quot;3110&quot;
 comma
 multiline_comment|/* Locks sometimes if polled for lun != 0 */
 (brace
+l_string|&quot;MEDIAVIS&quot;
+comma
+l_string|&quot;CDR-H93MV&quot;
+comma
+l_string|&quot;1.31&quot;
+)brace
+comma
+multiline_comment|/* Locks up if polled for lun != 0 */
+(brace
 l_int|NULL
 comma
 l_int|NULL

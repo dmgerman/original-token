@@ -54,6 +54,13 @@ c_func
 id|tq_timer
 )paren
 suffix:semicolon
+DECL|variable|tq_immediate
+id|DECLARE_TASK_QUEUE
+c_func
+(paren
+id|tq_immediate
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * phase-lock loop variables&n; */
 DECL|variable|time_status
 r_int
@@ -2442,6 +2449,24 @@ id|tq_timer
 )paren
 suffix:semicolon
 )brace
+DECL|function|immediate_bh
+r_void
+id|immediate_bh
+c_func
+(paren
+r_void
+op_star
+id|unused
+)paren
+(brace
+id|run_task_queue
+c_func
+(paren
+op_amp
+id|tq_immediate
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * The int argument is really a (struct pt_regs *), in case the&n; * interrupt wants to know from where it was called. The timer&n; * irq uses this to decide if it should update the user or system&n; * times.&n; */
 DECL|function|do_timer
 r_static
@@ -3591,6 +3616,15 @@ dot
 id|routine
 op_assign
 id|tqueue_bh
+suffix:semicolon
+id|bh_base
+(braket
+id|IMMEDIATE_BH
+)braket
+dot
+id|routine
+op_assign
+id|immediate_bh
 suffix:semicolon
 r_if
 c_cond

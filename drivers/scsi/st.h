@@ -193,6 +193,8 @@ DECL|macro|ST_EOM_OK
 mdefine_line|#define&t;ST_EOM_OK&t;2
 DECL|macro|ST_EOM_ERROR
 mdefine_line|#define ST_EOM_ERROR&t;3
+DECL|macro|ST_EOD
+mdefine_line|#define ST_EOD&t;&t;4
 multiline_comment|/* Values of rw */
 DECL|macro|ST_IDLE
 mdefine_line|#define&t;ST_IDLE&t;&t;0

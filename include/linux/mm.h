@@ -912,6 +912,16 @@ comma
 r_int
 )paren
 suffix:semicolon
+r_extern
+r_int
+r_int
+id|get_unmapped_area
+c_func
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
 DECL|macro|read_swap_page
 mdefine_line|#define read_swap_page(nr,buf) &bslash;&n;&t;rw_swap_page(READ,(nr),(buf))
 DECL|macro|write_swap_page
@@ -969,6 +979,8 @@ DECL|macro|GFP_KERNEL
 mdefine_line|#define GFP_KERNEL&t;0x03
 DECL|macro|GFP_NOBUFFER
 mdefine_line|#define GFP_NOBUFFER&t;0x04
+DECL|macro|GFP_NFS
+mdefine_line|#define GFP_NFS&t;&t;0x05
 multiline_comment|/*&n; * vm_ops not present page codes for shared memory.&n; *&n; * Will go away eventually..&n; */
 DECL|macro|SHM_SWP_TYPE
 mdefine_line|#define SHM_SWP_TYPE 0x41

@@ -783,12 +783,24 @@ r_int
 id|s_rev_level
 suffix:semicolon
 multiline_comment|/* Revision level */
+DECL|member|s_def_resuid
+r_int
+r_int
+id|s_def_resuid
+suffix:semicolon
+multiline_comment|/* Default uid for reserved blocks */
+DECL|member|s_def_resgid
+r_int
+r_int
+id|s_def_resgid
+suffix:semicolon
+multiline_comment|/* Default gid for reserved blocks */
 DECL|member|s_reserved
 r_int
 r_int
 id|s_reserved
 (braket
-l_int|236
+l_int|235
 )braket
 suffix:semicolon
 multiline_comment|/* Padding to the end of the block */
@@ -802,6 +814,10 @@ DECL|macro|EXT2_OS_MASIX
 mdefine_line|#define EXT2_OS_MASIX&t;&t;2
 DECL|macro|EXT2_CURRENT_REV
 mdefine_line|#define EXT2_CURRENT_REV&t;0
+DECL|macro|EXT2_DEF_RESUID
+mdefine_line|#define&t;EXT2_DEF_RESUID&t;&t;0
+DECL|macro|EXT2_DEF_RESGID
+mdefine_line|#define&t;EXT2_DEF_RESGID&t;&t;0
 multiline_comment|/*&n; * Structure of a directory entry&n; */
 DECL|macro|EXT2_NAME_LEN
 mdefine_line|#define EXT2_NAME_LEN 255

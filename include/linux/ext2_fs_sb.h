@@ -151,6 +151,16 @@ r_int
 r_int
 id|s_mount_opt
 suffix:semicolon
+DECL|member|s_resuid
+r_int
+r_int
+id|s_resuid
+suffix:semicolon
+DECL|member|s_resgid
+r_int
+r_int
+id|s_resgid
+suffix:semicolon
 DECL|member|s_mount_state
 r_int
 r_int

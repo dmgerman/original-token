@@ -67,6 +67,12 @@ mdefine_line|#define MTTELL&t;23&t;/* tell block (Tandberg, etc.) */
 DECL|macro|MTSETDRVBUFFER
 mdefine_line|#define MTSETDRVBUFFER 24 /* set the drive buffering according to SCSI-2 */
 multiline_comment|/* ordinary buffered operation with code 1 */
+DECL|macro|MTFSS
+mdefine_line|#define MTFSS&t;25&t;/* space forward over setmarks */
+DECL|macro|MTBSS
+mdefine_line|#define MTBSS&t;26&t;/* space backward over setmarks */
+DECL|macro|MTWSM
+mdefine_line|#define MTWSM&t;27&t;/* write setmarks */
 multiline_comment|/* structure for MTIOCGET - mag tape get status command */
 DECL|struct|mtget
 r_struct

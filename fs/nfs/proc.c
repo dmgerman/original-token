@@ -84,25 +84,6 @@ r_int
 id|size
 )paren
 (brace
-macro_line|#if 0
-multiline_comment|/* Allow for the NFS crap as well as buffer */
-r_return
-(paren
-r_int
-op_star
-)paren
-id|kmalloc
-c_func
-(paren
-id|size
-op_plus
-id|NFS_SLACK_SPACE
-comma
-id|GFP_KERNEL
-)paren
-suffix:semicolon
-macro_line|#else 
-multiline_comment|/* If kmalloc fails, then we will give an EIO to user level.&n;&t;   (Please correct me, I am wron here... ??) This is not&n;&t;   desirable, but it is also not desirable to execute the&n;&t;   following code: Just loop until we get memory, call schedule(),&n;&t;   so that other processes are run inbetween (and hopefully give&n;&t;   some memory back).&t;&t;Florian&n;&t;*/
 r_int
 op_star
 id|i
@@ -125,12 +106,11 @@ id|size
 op_plus
 id|NFS_SLACK_SPACE
 comma
-id|GFP_KERNEL
+id|GFP_NFS
 )paren
 )paren
 )paren
 (brace
-multiline_comment|/* printk(&quot;NFS: call schedule&bslash;n&quot;); */
 id|schedule
 c_func
 (paren
@@ -140,7 +120,6 @@ suffix:semicolon
 r_return
 id|i
 suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|nfs_rpc_free
 r_static

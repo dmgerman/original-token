@@ -61,44 +61,6 @@ multiline_comment|/* select - default */
 l_int|NULL
 comma
 multiline_comment|/* ioctl - default */
-id|sysv_mmap
-comma
-multiline_comment|/* mmap */
-l_int|NULL
-comma
-multiline_comment|/* no special open is needed */
-l_int|NULL
-comma
-multiline_comment|/* release */
-id|sysv_sync_file
-multiline_comment|/* fsync */
-)brace
-suffix:semicolon
-DECL|variable|sysv_file_operations_with_bmap
-r_static
-r_struct
-id|file_operations
-id|sysv_file_operations_with_bmap
-op_assign
-(brace
-l_int|NULL
-comma
-multiline_comment|/* lseek - default */
-id|sysv_file_read
-comma
-multiline_comment|/* read */
-id|sysv_file_write
-comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir - bad */
-l_int|NULL
-comma
-multiline_comment|/* select - default */
-l_int|NULL
-comma
-multiline_comment|/* ioctl - default */
 id|generic_mmap
 comma
 multiline_comment|/* mmap */
@@ -155,59 +117,6 @@ multiline_comment|/* readlink */
 l_int|NULL
 comma
 multiline_comment|/* follow_link */
-l_int|NULL
-comma
-multiline_comment|/* bmap */
-id|sysv_truncate
-comma
-multiline_comment|/* truncate */
-l_int|NULL
-multiline_comment|/* permission */
-)brace
-suffix:semicolon
-DECL|variable|sysv_file_inode_operations_with_bmap
-r_struct
-id|inode_operations
-id|sysv_file_inode_operations_with_bmap
-op_assign
-(brace
-op_amp
-id|sysv_file_operations_with_bmap
-comma
-multiline_comment|/* default file operations */
-l_int|NULL
-comma
-multiline_comment|/* create */
-l_int|NULL
-comma
-multiline_comment|/* lookup */
-l_int|NULL
-comma
-multiline_comment|/* link */
-l_int|NULL
-comma
-multiline_comment|/* unlink */
-l_int|NULL
-comma
-multiline_comment|/* symlink */
-l_int|NULL
-comma
-multiline_comment|/* mkdir */
-l_int|NULL
-comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
-l_int|NULL
-comma
-multiline_comment|/* rename */
-l_int|NULL
-comma
-multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
 id|sysv_bmap
 comma
 multiline_comment|/* bmap */
@@ -216,23 +125,6 @@ comma
 multiline_comment|/* truncate */
 l_int|NULL
 multiline_comment|/* permission */
-)brace
-suffix:semicolon
-DECL|struct|sysv_buffer
-r_struct
-id|sysv_buffer
-(brace
-DECL|member|bh
-r_struct
-id|buffer_head
-op_star
-id|bh
-suffix:semicolon
-DECL|member|bh_data
-r_char
-op_star
-id|bh_data
-suffix:semicolon
 )brace
 suffix:semicolon
 DECL|function|sysv_file_read
@@ -284,15 +176,15 @@ suffix:semicolon
 r_int
 id|bhrequest
 comma
-id|bhreqi
-comma
 id|uptodate
 suffix:semicolon
 r_struct
-id|sysv_buffer
+id|buffer_head
+op_star
 op_star
 id|bhb
 comma
+op_star
 op_star
 id|bhe
 suffix:semicolon
@@ -305,7 +197,8 @@ id|NBUF
 )braket
 suffix:semicolon
 r_struct
-id|sysv_buffer
+id|buffer_head
+op_star
 id|buflist
 (braket
 id|NBUF
@@ -485,7 +378,7 @@ op_minus
 id|block
 suffix:semicolon
 )brace
-multiline_comment|/* We do this in a two stage process.  We first try and request&n;&t;   as many blocks as we can, then we wait for the first one to&n;&t;   complete, and then we try and wrap up as many as are actually&n;&t;   done.  This routine is rather generic, in that it can be used&n;&t;   in a filesystem by substituting the appropriate function in&n;&t;   for getblk.&n;&n;&t;   This routine is optimized to make maximum use of the various&n;&t;   buffers and caches.&n;&n;&t;   We must remove duplicates from the bhreq array as ll_rw_block&n;&t;   doesn&squot;t like duplicate requests (it hangs in wait_on_buffer...).&n;&t; */
+multiline_comment|/* We do this in a two stage process.  We first try and request&n;&t;   as many blocks as we can, then we wait for the first one to&n;&t;   complete, and then we try and wrap up as many as are actually&n;&t;   done.  This routine is rather generic, in that it can be used&n;&t;   in a filesystem by substituting the appropriate function in&n;&t;   for getblk.&n;&n;&t;   This routine is optimized to make maximum use of the various&n;&t;   buffers and caches.&n;&t; */
 r_do
 (brace
 id|bhrequest
@@ -505,7 +398,8 @@ id|blocks
 op_decrement
 id|blocks
 suffix:semicolon
-id|bhb-&gt;bh
+op_star
+id|bhb
 op_assign
 id|sysv_getblk
 c_func
@@ -516,69 +410,35 @@ id|block
 op_increment
 comma
 l_int|0
-comma
-op_amp
-id|bhb-&gt;bh_data
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|bhb-&gt;bh
+op_star
+id|bhb
 op_logical_and
 op_logical_neg
-id|bhb-&gt;bh-&gt;b_uptodate
+(paren
+op_star
+id|bhb
+)paren
+op_member_access_from_pointer
+id|b_uptodate
 )paren
 (brace
 id|uptodate
 op_assign
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sb-&gt;sv_block_size_ratio_bits
-OG
-l_int|0
-)paren
-multiline_comment|/* block_size &lt; BLOCK_SIZE ? */
-r_for
-c_loop
-(paren
-id|bhreqi
-op_assign
-l_int|0
-suffix:semicolon
-id|bhreqi
-OL
-id|bhrequest
-suffix:semicolon
-id|bhreqi
-op_increment
-)paren
-r_if
-c_cond
-(paren
-id|bhreq
-(braket
-id|bhreqi
-)braket
-op_eq
-id|bhb-&gt;bh
-)paren
-r_goto
-id|notreq
-suffix:semicolon
 id|bhreq
 (braket
 id|bhrequest
 op_increment
 )braket
 op_assign
-id|bhb-&gt;bh
-suffix:semicolon
-id|notreq
-suffix:colon
+op_star
+id|bhb
 suffix:semicolon
 )brace
 r_if
@@ -637,27 +497,35 @@ multiline_comment|/* Finish off all I/O that has actually completed */
 r_if
 c_cond
 (paren
-id|bhe-&gt;bh
+op_star
+id|bhe
 )paren
 (brace
 id|wait_on_buffer
 c_func
 (paren
-id|bhe-&gt;bh
+op_star
+id|bhe
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-id|bhe-&gt;bh-&gt;b_uptodate
+(paren
+op_star
+id|bhe
+)paren
+op_member_access_from_pointer
+id|b_uptodate
 )paren
 (brace
 multiline_comment|/* read error? */
 id|brelse
 c_func
 (paren
-id|bhe-&gt;bh
+op_star
+id|bhe
 )paren
 suffix:semicolon
 r_if
@@ -719,7 +587,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|bhe-&gt;bh
+op_star
+id|bhe
 )paren
 (brace
 id|memcpy_tofs
@@ -729,7 +598,12 @@ id|buf
 comma
 id|offset
 op_plus
-id|bhe-&gt;bh_data
+(paren
+op_star
+id|bhe
+)paren
+op_member_access_from_pointer
+id|b_data
 comma
 id|chars
 )paren
@@ -737,7 +611,8 @@ suffix:semicolon
 id|brelse
 c_func
 (paren
-id|bhe-&gt;bh
+op_star
+id|bhe
 )paren
 suffix:semicolon
 id|buf
@@ -799,10 +674,16 @@ id|bhb
 op_logical_and
 (paren
 op_logical_neg
-id|bhe-&gt;bh
+op_star
+id|bhe
 op_logical_or
 op_logical_neg
-id|bhe-&gt;bh-&gt;b_lock
+(paren
+op_star
+id|bhe
+)paren
+op_member_access_from_pointer
+id|b_lock
 )paren
 )paren
 suffix:semicolon
@@ -827,7 +708,8 @@ id|bhb
 id|brelse
 c_func
 (paren
-id|bhe-&gt;bh
+op_star
+id|bhe
 )paren
 suffix:semicolon
 r_if
@@ -926,10 +808,6 @@ id|bh
 suffix:semicolon
 r_char
 op_star
-id|bh_data
-suffix:semicolon
-r_char
-op_star
 id|p
 suffix:semicolon
 r_if
@@ -978,20 +856,6 @@ multiline_comment|/*&n; * ok, append may not work when many processes are writin
 r_if
 c_cond
 (paren
-id|sb-&gt;sv_block_size_ratio_bits
-OG
-l_int|0
-)paren
-multiline_comment|/* block_size &lt; BLOCK_SIZE ? */
-id|coh_lock_inode
-c_func
-(paren
-id|inode
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
 id|filp-&gt;f_flags
 op_amp
 id|O_APPEND
@@ -1028,9 +892,6 @@ op_rshift
 id|sb-&gt;sv_block_size_bits
 comma
 l_int|1
-comma
-op_amp
-id|bh_data
 )paren
 suffix:semicolon
 r_if
@@ -1084,7 +945,7 @@ c_cond
 (paren
 id|c
 op_ne
-id|BLOCK_SIZE
+id|sb-&gt;sv_block_size
 op_logical_and
 op_logical_neg
 id|bh-&gt;b_uptodate
@@ -1135,7 +996,7 @@ r_break
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* now either c==BLOCK_SIZE or bh-&gt;b_uptodate */
+multiline_comment|/* now either c==sb-&gt;sv_block_size or bh-&gt;b_uptodate */
 id|p
 op_assign
 (paren
@@ -1144,7 +1005,7 @@ op_amp
 id|sb-&gt;sv_block_size_1
 )paren
 op_plus
-id|bh_data
+id|bh-&gt;b_data
 suffix:semicolon
 id|pos
 op_add_assign
@@ -1217,20 +1078,6 @@ suffix:semicolon
 id|inode-&gt;i_dirt
 op_assign
 l_int|1
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|sb-&gt;sv_block_size_ratio_bits
-OG
-l_int|0
-)paren
-multiline_comment|/* block_size &lt; BLOCK_SIZE ? */
-id|coh_unlock_inode
-c_func
-(paren
-id|inode
-)paren
 suffix:semicolon
 r_return
 id|written

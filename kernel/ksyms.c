@@ -21,6 +21,7 @@ macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/serial.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#ifdef CONFIG_INET
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
@@ -530,6 +531,12 @@ c_func
 id|del_timer
 )paren
 comma
+id|X
+c_func
+(paren
+id|tq_immediate
+)paren
+comma
 multiline_comment|/* dma handling */
 id|X
 c_func
@@ -590,6 +597,30 @@ id|X
 c_func
 (paren
 id|xtime
+)paren
+comma
+id|X
+c_func
+(paren
+id|loops_per_sec
+)paren
+comma
+id|X
+c_func
+(paren
+id|kill_proc
+)paren
+comma
+id|X
+c_func
+(paren
+id|kill_pg
+)paren
+comma
+id|X
+c_func
+(paren
+id|kill_sl
 )paren
 comma
 multiline_comment|/* misc */

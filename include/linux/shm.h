@@ -65,13 +65,18 @@ suffix:semicolon
 multiline_comment|/* array of ptrs to frames -&gt; SHMMAX */
 DECL|member|attaches
 r_struct
-id|shm_desc
+id|vm_area_struct
 op_star
 id|attaches
 suffix:semicolon
 multiline_comment|/* descriptors for attaches */
 )brace
 suffix:semicolon
+multiline_comment|/* permission flag for shmget */
+DECL|macro|SHM_R
+mdefine_line|#define SHM_R&t;&t;0400&t;/* or S_IRUGO from &lt;linux/stat.h&gt; */
+DECL|macro|SHM_W
+mdefine_line|#define SHM_W&t;&t;0200&t;/* or S_IWUGO from &lt;linux/stat.h&gt; */
 multiline_comment|/* mode for attach */
 DECL|macro|SHM_RDONLY
 mdefine_line|#define&t;SHM_RDONLY&t;010000&t;/* read-only access */
@@ -112,7 +117,7 @@ suffix:semicolon
 suffix:semicolon
 multiline_comment|/* address range for shared memory attaches if no address passed to shmat() */
 DECL|macro|SHM_RANGE_START
-mdefine_line|#define SHM_RANGE_START&t;0x40000000
+mdefine_line|#define SHM_RANGE_START&t;0x50000000
 DECL|macro|SHM_RANGE_END
 mdefine_line|#define SHM_RANGE_END&t;0x60000000
 multiline_comment|/* format of page table entries that correspond to shared memory pages&n;   currently out in swap space (see also mm/swap.c):&n;   bit 0 (PAGE_PRESENT) is  = 0&n;   bits 7..1 (SWP_TYPE) are = SHM_SWP_TYPE&n;   bits 31..8 are used like this:&n;   bits 14..8 (SHM_ID) the id of the shared memory segment&n;   bits 29..15 (SHM_IDX) the index of the page within the shared memory segment&n;                    (actually only bits 24..15 get used since SHMMAX is so low)&n;   bit 31 (SHM_READ_ONLY) flag whether the page belongs to a read-only attach&n;*/
@@ -186,52 +191,6 @@ DECL|member|swap_successes
 id|ulong
 id|swap_successes
 suffix:semicolon
-)brace
-suffix:semicolon
-multiline_comment|/*&n; * Per process internal structure for managing segments.&n; * A shmat will add to and shmdt will remove from the list.&n; */
-DECL|struct|shm_desc
-r_struct
-id|shm_desc
-(brace
-DECL|member|task
-r_struct
-id|task_struct
-op_star
-id|task
-suffix:semicolon
-multiline_comment|/* attacher */
-DECL|member|shm_sgn
-r_int
-r_int
-id|shm_sgn
-suffix:semicolon
-multiline_comment|/* signature for this attach */
-DECL|member|start
-r_int
-r_int
-id|start
-suffix:semicolon
-multiline_comment|/* virt addr of attach, multiple of SHMLBA */
-DECL|member|end
-r_int
-r_int
-id|end
-suffix:semicolon
-multiline_comment|/* multiple of SHMLBA */
-DECL|member|task_next
-r_struct
-id|shm_desc
-op_star
-id|task_next
-suffix:semicolon
-multiline_comment|/* next attach for task */
-DECL|member|seg_next
-r_struct
-id|shm_desc
-op_star
-id|seg_next
-suffix:semicolon
-multiline_comment|/* next attach for segment */
 )brace
 suffix:semicolon
 macro_line|#endif /* __KERNEL__ */

@@ -30,20 +30,6 @@ DECL|macro|MAX_TASKS_PER_USER
 mdefine_line|#define MAX_TASKS_PER_USER (NR_TASKS/2)
 DECL|macro|MIN_TASKS_LEFT_FOR_ROOT
 mdefine_line|#define MIN_TASKS_LEFT_FOR_ROOT 4
-r_extern
-r_int
-id|shm_fork
-c_func
-(paren
-r_struct
-id|task_struct
-op_star
-comma
-r_struct
-id|task_struct
-op_star
-)paren
-suffix:semicolon
 DECL|variable|last_pid
 r_int
 id|last_pid
@@ -409,6 +395,21 @@ id|tmp-&gt;vm_inode
 id|tmp-&gt;vm_inode-&gt;i_count
 op_increment
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|tmp-&gt;vm_ops
+op_logical_and
+id|tmp-&gt;vm_ops-&gt;open
+)paren
+id|tmp-&gt;vm_ops
+op_member_access_from_pointer
+id|open
+c_func
+(paren
+id|tmp
+)paren
+suffix:semicolon
 op_star
 id|p
 op_assign
@@ -585,6 +586,7 @@ id|p
 r_return
 l_int|1
 suffix:semicolon
+r_return
 id|dup_mmap
 c_func
 (paren
@@ -606,6 +608,7 @@ id|p
 r_return
 l_int|1
 suffix:semicolon
+r_return
 id|dup_mmap
 c_func
 (paren
@@ -614,15 +617,6 @@ id|p
 suffix:semicolon
 multiline_comment|/* wrong.. */
 )brace
-r_return
-id|shm_fork
-c_func
-(paren
-id|current
-comma
-id|p
-)paren
-suffix:semicolon
 )brace
 DECL|function|copy_fs
 r_static
@@ -1131,6 +1125,10 @@ id|p
 )paren
 r_goto
 id|bad_fork_cleanup
+suffix:semicolon
+id|p-&gt;semundo
+op_assign
+l_int|NULL
 suffix:semicolon
 id|copy_files
 c_func

@@ -317,6 +317,11 @@ id|B
 (paren
 id|OPT_GUS
 )paren
+op_or
+id|B
+(paren
+id|OPT_MSS
+)paren
 comma
 l_int|0
 comma

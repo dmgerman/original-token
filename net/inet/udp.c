@@ -670,7 +670,7 @@ id|skb-&gt;data
 suffix:semicolon
 id|saddr
 op_assign
-l_int|0
+id|sk-&gt;saddr
 suffix:semicolon
 id|dev
 op_assign

@@ -13,13 +13,6 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 r_extern
 r_void
-id|shm_exit
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
 id|sem_exit
 (paren
 r_void
@@ -1975,16 +1968,6 @@ c_cond
 id|current-&gt;semundo
 )paren
 id|sem_exit
-c_func
-(paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|current-&gt;shm
-)paren
-id|shm_exit
 c_func
 (paren
 )paren

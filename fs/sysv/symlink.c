@@ -132,10 +132,6 @@ id|buffer_head
 op_star
 id|bh
 suffix:semicolon
-r_char
-op_star
-id|bh_data
-suffix:semicolon
 op_star
 id|res_inode
 op_assign
@@ -240,9 +236,6 @@ comma
 l_int|0
 comma
 l_int|0
-comma
-op_amp
-id|bh_data
 )paren
 )paren
 )paren
@@ -279,7 +272,7 @@ op_assign
 id|open_namei
 c_func
 (paren
-id|bh_data
+id|bh-&gt;b_data
 comma
 id|flag
 comma
@@ -380,9 +373,6 @@ comma
 l_int|0
 comma
 l_int|0
-comma
-op_amp
-id|bh_data
 )paren
 suffix:semicolon
 id|iput
@@ -399,6 +389,10 @@ id|bh
 )paren
 r_return
 l_int|0
+suffix:semicolon
+id|bh_data
+op_assign
+id|bh-&gt;b_data
 suffix:semicolon
 id|i
 op_assign

@@ -917,13 +917,7 @@ op_star
 id|tty
 suffix:semicolon
 multiline_comment|/* NULL if no tty */
-multiline_comment|/* shm stuff */
-DECL|member|shm
-r_struct
-id|shm_desc
-op_star
-id|shm
-suffix:semicolon
+multiline_comment|/* ipc stuff */
 DECL|member|semundo
 r_struct
 id|sem_undo
@@ -989,7 +983,7 @@ DECL|macro|COPYFD
 mdefine_line|#define COPYFD&t;&t;0x00000200&t;/* set if fd&squot;s should be copied, not shared (NI) */
 multiline_comment|/*&n; *  INIT_TASK is used to set up the first task table, touch at&n; * your own risk!. Base=0, limit=0x1fffff (=2MB)&n; */
 DECL|macro|INIT_TASK
-mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,15,15,0,0,0,0, &bslash;&n;/* debugregs */ { 0, },            &bslash;&n;/* exec domain */&amp;default_exec_domain, &bslash;&n;/* binfmt */&t;NULL, &bslash;&n;/* schedlink */&t;&amp;init_task,&amp;init_task, &bslash;&n;/* signals */&t;{{ 0, },}, &bslash;&n;/* stack */&t;0,(unsigned long) &amp;init_kernel_stack, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0, &bslash;&n;/* suppl grps*/ {NOGROUP,}, &bslash;&n;/* proc links*/ &amp;init_task,&amp;init_task,NULL,NULL,NULL,NULL, &bslash;&n;/* uid etc */&t;0,0,0,0,0,0,0,0, &bslash;&n;/* timeout */&t;0,0,0,0,0,0,0,0,0,0,0,0, &bslash;&n;/* rlimits */   { {LONG_MAX, LONG_MAX}, {LONG_MAX, LONG_MAX},  &bslash;&n;&t;&t;  {LONG_MAX, LONG_MAX}, {LONG_MAX, LONG_MAX},  &bslash;&n;&t;&t;  {       0, LONG_MAX}, {LONG_MAX, LONG_MAX}}, &bslash;&n;/* math */&t;0, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* vm86_info */&t;NULL, 0, 0, 0, 0, &bslash;&n;/* fs info */&t;0,NULL, &bslash;&n;/* ipc */&t;NULL, NULL, &bslash;&n;/* ldt */&t;NULL, &bslash;&n;/* tss */&t;INIT_TSS, &bslash;&n;/* fs */&t;{ INIT_FS }, &bslash;&n;/* files */&t;{ INIT_FILES }, &bslash;&n;/* mm */&t;{ INIT_MM } &bslash;&n;}
+mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,15,15,0,0,0,0, &bslash;&n;/* debugregs */ { 0, },            &bslash;&n;/* exec domain */&amp;default_exec_domain, &bslash;&n;/* binfmt */&t;NULL, &bslash;&n;/* schedlink */&t;&amp;init_task,&amp;init_task, &bslash;&n;/* signals */&t;{{ 0, },}, &bslash;&n;/* stack */&t;0,(unsigned long) &amp;init_kernel_stack, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0, &bslash;&n;/* suppl grps*/ {NOGROUP,}, &bslash;&n;/* proc links*/ &amp;init_task,&amp;init_task,NULL,NULL,NULL,NULL, &bslash;&n;/* uid etc */&t;0,0,0,0,0,0,0,0, &bslash;&n;/* timeout */&t;0,0,0,0,0,0,0,0,0,0,0,0, &bslash;&n;/* rlimits */   { {LONG_MAX, LONG_MAX}, {LONG_MAX, LONG_MAX},  &bslash;&n;&t;&t;  {LONG_MAX, LONG_MAX}, {LONG_MAX, LONG_MAX},  &bslash;&n;&t;&t;  {       0, LONG_MAX}, {LONG_MAX, LONG_MAX}}, &bslash;&n;/* math */&t;0, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* vm86_info */&t;NULL, 0, 0, 0, 0, &bslash;&n;/* fs info */&t;0,NULL, &bslash;&n;/* ipc */&t;NULL, &bslash;&n;/* ldt */&t;NULL, &bslash;&n;/* tss */&t;INIT_TSS, &bslash;&n;/* fs */&t;{ INIT_FS }, &bslash;&n;/* files */&t;{ INIT_FILES }, &bslash;&n;/* mm */&t;{ INIT_MM } &bslash;&n;}
 macro_line|#ifdef __KERNEL__
 r_extern
 r_struct
