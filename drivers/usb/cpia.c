@@ -16,6 +16,7 @@ macro_line|#include &quot;cpia.h&quot;
 DECL|macro|CPIA_DEBUG
 mdefine_line|#define CPIA_DEBUG&t;/* Gobs of debugging info */
 multiline_comment|/* Video Size 384 x 288 x 3 bytes for RGB */
+multiline_comment|/* 384 because xawtv tries to grab 384 even though we tell it 352 is our max */
 DECL|macro|MAX_FRAME_SIZE
 mdefine_line|#define MAX_FRAME_SIZE (384 * 288 * 3)
 multiline_comment|/*******************************/
@@ -1245,6 +1246,67 @@ id|HZ
 suffix:semicolon
 )brace
 macro_line|#ifdef NOTUSED
+DECL|function|usb_cpia_set_compression_target
+r_static
+r_int
+id|usb_cpia_set_compression_target
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+id|dev
+comma
+r_int
+id|target
+comma
+r_int
+id|targetfr
+comma
+r_int
+id|targetq
+)paren
+(brace
+r_return
+id|usb_control_msg
+c_func
+(paren
+id|dev
+comma
+id|usb_sndctrlpipe
+c_func
+(paren
+id|dev
+comma
+l_int|0
+)paren
+comma
+id|USB_REQ_CPIA_SET_COMPRESSION_TARGET
+comma
+id|USB_TYPE_VENDOR
+op_or
+id|USB_RECIP_DEVICE
+comma
+(paren
+id|targetfr
+op_lshift
+l_int|8
+)paren
+op_plus
+id|target
+comma
+id|targetq
+comma
+l_int|NULL
+comma
+l_int|0
+comma
+id|HZ
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+macro_line|#ifdef NOTUSED
 DECL|function|usb_cpia_initstreamcap
 r_static
 r_int
@@ -1468,6 +1530,7 @@ r_int
 r_int
 id|l
 suffix:semicolon
+multiline_comment|/* Grab the current frame and the previous frame */
 id|frame
 op_assign
 op_amp
@@ -1613,15 +1676,16 @@ op_eq
 l_int|0xFFFFFFFF
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;found end of frame&bslash;n&quot;
-)paren
-suffix:semicolon
 id|data
 op_add_assign
 l_int|4
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;cpia: EOF while scanning for magic&bslash;n&quot;
+)paren
 suffix:semicolon
 r_goto
 id|error
@@ -1801,16 +1865,6 @@ op_lshift
 l_int|8
 )paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;line %d, %d bytes long&bslash;n&quot;
-comma
-id|frame-&gt;curline
-comma
-id|len
-)paren
-suffix:semicolon
 multiline_comment|/* Check to make sure it&squot;s nothing outrageous */
 r_if
 c_cond
@@ -1830,7 +1884,17 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;cpia: bad length, resynching&bslash;n&quot;
+l_string|&quot;cpia: bad length, resynching (expected %d, got %d)&bslash;n&quot;
+comma
+(paren
+id|frame-&gt;hdrwidth
+op_star
+l_int|2
+)paren
+op_plus
+l_int|1
+comma
+id|len
 )paren
 suffix:semicolon
 r_goto
@@ -1878,62 +1942,6 @@ c_func
 (paren
 id|KERN_INFO
 l_string|&quot;cpia: lost synch&bslash;n&quot;
-)paren
-suffix:semicolon
-id|end
-op_assign
-id|data
-op_plus
-id|len
-op_minus
-l_int|1
-op_minus
-l_int|4
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;%02X %02X %02X %02X %02X %02X %02X %02X&bslash;n&quot;
-comma
-id|end
-(braket
-l_int|0
-)braket
-comma
-id|end
-(braket
-l_int|1
-)braket
-comma
-id|end
-(braket
-l_int|2
-)braket
-comma
-id|end
-(braket
-l_int|3
-)braket
-comma
-id|end
-(braket
-l_int|4
-)braket
-comma
-id|end
-(braket
-l_int|5
-)braket
-comma
-id|end
-(braket
-l_int|6
-)braket
-comma
-id|end
-(braket
-l_int|7
-)braket
 )paren
 suffix:semicolon
 r_goto
@@ -2187,7 +2195,6 @@ id|fp
 op_add_assign
 l_int|6
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;f[0] = f[1] = f[2] = *data;&n;&t;&t;&t;&t;&t;&t;f += 3;&n;&t;&t;&t;&t;&t;&t;data += 2;&n;&t;&t;&t;&t;&t;&t;fp += 3;&n;*/
 )brace
 )brace
 )brace
@@ -2379,6 +2386,14 @@ suffix:semicolon
 )brace
 id|nextframe
 suffix:colon
+macro_line|#ifdef CPIA_DEBUG
+id|printk
+c_func
+(paren
+l_string|&quot;cpia: marking as success&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2401,18 +2416,10 @@ id|data
 op_eq
 l_int|0xFFFFFFFF
 )paren
-(brace
 id|data
 op_add_assign
 l_int|4
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;end of frame found normally&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
 id|frame-&gt;grabstate
 op_assign
 id|FRAME_DONE
@@ -2445,6 +2452,14 @@ id|out
 suffix:semicolon
 id|error
 suffix:colon
+macro_line|#ifdef CPIA_DEBUG
+id|printk
+c_func
+(paren
+l_string|&quot;cpia: marking as error&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 id|frame-&gt;grabstate
 op_assign
 id|FRAME_ERROR
@@ -2478,22 +2493,6 @@ id|frame-&gt;wq
 suffix:semicolon
 id|out
 suffix:colon
-id|printk
-c_func
-(paren
-l_string|&quot;scanned %d bytes, %d left&bslash;n&quot;
-comma
-id|data
-op_minus
-id|cpia-&gt;scratch
-comma
-id|scratch_left
-c_func
-(paren
-id|data
-)paren
-)paren
-suffix:semicolon
 multiline_comment|/* Grab the remaining */
 id|l
 op_assign
@@ -2741,7 +2740,7 @@ id|cpia-&gt;streaming
 id|printk
 c_func
 (paren
-l_string|&quot;oops, not streaming, but interrupt&bslash;n&quot;
+l_string|&quot;cpia: oops, not streaming, but interrupt&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2771,14 +2770,6 @@ c_func
 id|cpia
 comma
 id|sbuf-&gt;isodesc
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;%d bytes received&bslash;n&quot;
-comma
-id|len
 )paren
 suffix:semicolon
 multiline_comment|/* If we don&squot;t have a frame we&squot;re current working on, complain */
@@ -2924,6 +2915,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;usb_set_interface error&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3254,54 +3246,10 @@ comma
 id|err
 )paren
 suffix:semicolon
-macro_line|#ifdef CPIA_DEBUG
-id|printk
-c_func
-(paren
-l_string|&quot;done scheduling&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#if 0
-r_if
-c_cond
-(paren
-id|usb_cpia_grab_frame
-c_func
-(paren
-id|dev
-comma
-l_int|120
-)paren
-OL
-l_int|0
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;cpia_grab_frame error&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EBUSY
-suffix:semicolon
-)brace
-macro_line|#endif
 id|cpia-&gt;streaming
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#ifdef CPIA_DEBUG
-id|printk
-c_func
-(paren
-l_string|&quot;now streaming&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -3325,10 +3273,6 @@ op_logical_neg
 id|cpia-&gt;streaming
 )paren
 r_return
-suffix:semicolon
-id|cpia-&gt;streaming
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* Turn off continuous grab */
 r_if
@@ -3356,33 +3300,6 @@ r_return
 multiline_comment|/* -EBUSY */
 suffix:semicolon
 )brace
-macro_line|#if 0
-r_if
-c_cond
-(paren
-id|usb_cpia_grab_frame
-c_func
-(paren
-id|cpia-&gt;dev
-comma
-l_int|0
-)paren
-OL
-l_int|0
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;cpia_grab_frame error&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-multiline_comment|/* -EBUSY */
-suffix:semicolon
-)brace
-macro_line|#endif
 multiline_comment|/* Set packet size to 0 */
 r_if
 c_cond
@@ -3434,6 +3351,10 @@ dot
 id|isodesc
 )paren
 suffix:semicolon
+id|cpia-&gt;streaming
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/* Delete them all */
 id|usb_free_isoc
 c_func
@@ -3483,97 +3404,51 @@ id|width
 comma
 id|height
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;new frame %d&bslash;n&quot;
-comma
-id|framenum
-)paren
-suffix:semicolon
+multiline_comment|/* If we&squot;re not grabbing a frame right now and the other frame is */
+multiline_comment|/*  ready to be grabbed into, then use it instead */
 r_if
 c_cond
 (paren
-id|framenum
+id|cpia-&gt;curframe
 op_eq
 op_minus
 l_int|1
 )paren
 (brace
-r_int
-id|i
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|CPIA_NUMFRAMES
-suffix:semicolon
-id|i
-op_increment
-)paren
 r_if
 c_cond
 (paren
 id|cpia-&gt;frame
 (braket
-id|i
+(paren
+id|framenum
+op_minus
+l_int|1
+op_plus
+id|CPIA_NUMFRAMES
+)paren
+op_mod
+id|CPIA_NUMFRAMES
 )braket
 dot
 id|grabstate
 op_eq
 id|FRAME_READY
 )paren
-r_break
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|i
-op_ge
-id|CPIA_NUMFRAMES
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;no frame ready&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 id|framenum
 op_assign
-id|i
-suffix:semicolon
-id|printk
-c_func
 (paren
-l_string|&quot;using frame %d&bslash;n&quot;
-comma
 id|framenum
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|cpia-&gt;curframe
-op_ne
 op_minus
 l_int|1
-op_logical_and
-id|cpia-&gt;curframe
-op_ne
-id|framenum
+op_plus
+id|CPIA_NUMFRAMES
 )paren
+op_mod
+id|CPIA_NUMFRAMES
+suffix:semicolon
+)brace
+r_else
 r_return
 l_int|0
 suffix:semicolon
@@ -3592,6 +3467,18 @@ suffix:semicolon
 id|height
 op_assign
 id|frame-&gt;height
+suffix:semicolon
+id|frame-&gt;grabstate
+op_assign
+id|FRAME_GRABBING
+suffix:semicolon
+id|frame-&gt;scanstate
+op_assign
+id|STATE_SCANNING
+suffix:semicolon
+id|cpia-&gt;curframe
+op_assign
+id|framenum
 suffix:semicolon
 multiline_comment|/* Make sure it&squot;s not too big */
 r_if
@@ -3677,11 +3564,11 @@ comma
 id|cpia-&gt;compress
 ques
 c_cond
-l_int|1
+id|COMP_AUTO
 suffix:colon
-l_int|0
+id|COMP_DISABLED
 comma
-l_int|0
+id|DONT_DECIMATE
 )paren
 OL
 l_int|0
@@ -3719,7 +3606,7 @@ c_func
 (paren
 id|cpia-&gt;dev
 comma
-l_int|1
+id|WAIT_FOR_NEXT_FRAME
 )paren
 OL
 l_int|0
@@ -3737,18 +3624,6 @@ op_minus
 id|EBUSY
 suffix:semicolon
 )brace
-id|frame-&gt;grabstate
-op_assign
-id|FRAME_GRABBING
-suffix:semicolon
-id|frame-&gt;scanstate
-op_assign
-id|STATE_SCANNING
-suffix:semicolon
-id|cpia-&gt;curframe
-op_assign
-id|framenum
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -4238,14 +4113,12 @@ suffix:semicolon
 multiline_comment|/*  &quot;  */
 id|b.minwidth
 op_assign
-l_int|176
+l_int|8
 suffix:semicolon
-multiline_comment|/* QCIF */
 id|b.minheight
 op_assign
-l_int|144
+l_int|4
 suffix:semicolon
-multiline_comment|/*  &quot;   */
 r_if
 c_cond
 (paren
@@ -5047,14 +4920,23 @@ suffix:colon
 r_case
 id|FRAME_GRABBING
 suffix:colon
+r_case
+id|FRAME_ERROR
+suffix:colon
 id|redo
 suffix:colon
 r_do
 (brace
-id|printk
+id|init_waitqueue_head
 c_func
 (paren
-l_string|&quot;enter sleeping&bslash;n&quot;
+op_amp
+id|cpia-&gt;frame
+(braket
+id|frame
+)braket
+dot
+id|wq
 )paren
 suffix:semicolon
 id|interruptible_sleep_on
@@ -5067,12 +4949,6 @@ id|frame
 )braket
 dot
 id|wq
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;back from sleeping&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if
@@ -5167,15 +5043,17 @@ id|frame
 )paren
 suffix:semicolon
 macro_line|#endif
+id|cpia-&gt;frame
+(braket
+id|frame
+)braket
+dot
+id|grabstate
+op_assign
+id|FRAME_UNUSED
+suffix:semicolon
 r_return
-id|cpia_new_frame
-c_func
-(paren
-id|cpia
-comma
-op_minus
-l_int|1
-)paren
+l_int|0
 suffix:semicolon
 )brace
 r_case
@@ -5660,6 +5538,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;cpia: Firmware v%d.%d, VC Hardware v%d.%d&bslash;n&quot;
 comma
 id|version
@@ -5801,6 +5680,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;cpia: VP v%d rev %d&bslash;n&quot;
 comma
 id|version
@@ -5817,6 +5697,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;cpia: Camera Head ID %04X&bslash;n&quot;
 comma
 (paren
@@ -5897,11 +5778,11 @@ c_func
 (paren
 id|dev
 comma
-id|CPIA_CIF
+id|FORMAT_CIF
 comma
-l_int|1
+id|FORMAT_422
 comma
-id|CPIA_YUYV
+id|FORMAT_YUYV
 )paren
 OL
 l_int|0
@@ -5927,9 +5808,9 @@ c_func
 (paren
 id|dev
 comma
-l_int|0
+id|COMP_DISABLED
 comma
-l_int|0
+id|DONT_DECIMATE
 )paren
 OL
 l_int|0
@@ -6083,6 +5964,7 @@ multiline_comment|/* We found a CPiA */
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;USB CPiA camera found&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -6111,6 +5993,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;couldn&squot;t kmalloc cpia struct&bslash;n&quot;
 )paren
 suffix:semicolon

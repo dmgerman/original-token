@@ -83,6 +83,10 @@ DECL|macro|USB_REQ_CPIA_GRAB_FRAME
 mdefine_line|#define USB_REQ_CPIA_GRAB_FRAME&t;&t;&t;0xC1
 DECL|macro|USB_REQ_CPIA_UPLOAD_FRAME
 mdefine_line|#define USB_REQ_CPIA_UPLOAD_FRAME&t;&t;0xC2
+DECL|macro|WAIT_FOR_NEXT_FRAME
+mdefine_line|#define  WAIT_FOR_NEXT_FRAME&t;&t;&t;0
+DECL|macro|FORCE_FRAME_UPLOAD
+mdefine_line|#define  FORCE_FRAME_UPLOAD&t;&t;&t;1
 DECL|macro|USB_REQ_CPIA_SET_GRAB_MODE
 mdefine_line|#define USB_REQ_CPIA_SET_GRAB_MODE&t;&t;0xC3
 DECL|macro|USB_REQ_CPIA_INIT_STREAM_CAP
@@ -95,12 +99,38 @@ DECL|macro|USB_REQ_CPIA_END_STREAM_CAP
 mdefine_line|#define USB_REQ_CPIA_END_STREAM_CAP&t;&t;0xC7
 DECL|macro|USB_REQ_CPIA_SET_FORMAT
 mdefine_line|#define USB_REQ_CPIA_SET_FORMAT&t;&t;&t;0xC8
+DECL|macro|FORMAT_QCIF
+mdefine_line|#define  FORMAT_QCIF&t;0
+DECL|macro|FORMAT_CIF
+mdefine_line|#define  FORMAT_CIF&t;1
+DECL|macro|FORMAT_YUYV
+mdefine_line|#define  FORMAT_YUYV&t;0
+DECL|macro|FORMAT_UYVY
+mdefine_line|#define  FORMAT_UYVY&t;1
+DECL|macro|FORMAT_420
+mdefine_line|#define  FORMAT_420&t;0
+DECL|macro|FORMAT_422
+mdefine_line|#define  FORMAT_422&t;1
 DECL|macro|USB_REQ_CPIA_SET_ROI
 mdefine_line|#define USB_REQ_CPIA_SET_ROI&t;&t;&t;0xC9
 DECL|macro|USB_REQ_CPIA_SET_COMPRESSION
 mdefine_line|#define USB_REQ_CPIA_SET_COMPRESSION&t;&t;0xCA
+DECL|macro|COMP_DISABLED
+mdefine_line|#define  COMP_DISABLED&t;0
+DECL|macro|COMP_AUTO
+mdefine_line|#define  COMP_AUTO&t;1
+DECL|macro|COMP_MANUAL
+mdefine_line|#define  COMP_MANUAL&t;2
+DECL|macro|DONT_DECIMATE
+mdefine_line|#define  DONT_DECIMATE&t;0
+DECL|macro|DECIMATE
+mdefine_line|#define  DECIMATE&t;1
 DECL|macro|USB_REQ_CPIA_SET_COMPRESSION_TARGET
 mdefine_line|#define USB_REQ_CPIA_SET_COMPRESSION_TARGET&t;0xCB
+DECL|macro|TARGET_QUALITY
+mdefine_line|#define  TARGET_QUALITY&t;&t;0
+DECL|macro|TARGET_FRAMERATE
+mdefine_line|#define  TARGET_FRAMERATE&t;1
 DECL|macro|USB_REQ_CPIA_SET_YUV_THRESH
 mdefine_line|#define USB_REQ_CPIA_SET_YUV_THRESH&t;&t;0xCC
 DECL|macro|USB_REQ_CPIA_SET_COMPRESSION_PARAMS
@@ -122,14 +152,6 @@ mdefine_line|#define USB_REQ_CPIA_ABORT_STREAM&t;&t;0xE9
 DECL|macro|USB_REQ_CPIA_DOWNLOAD_DRAM
 mdefine_line|#define USB_REQ_CPIA_DOWNLOAD_DRAM&t;&t;0xEA
 multiline_comment|/* #define USB_REQ_CPIA_NULL_CMD&t;&t;0x?? */
-DECL|macro|CPIA_QCIF
-mdefine_line|#define CPIA_QCIF&t;0
-DECL|macro|CPIA_CIF
-mdefine_line|#define CPIA_CIF&t;1
-DECL|macro|CPIA_YUYV
-mdefine_line|#define CPIA_YUYV&t;0
-DECL|macro|CPIA_UYVY
-mdefine_line|#define CPIA_UYVY&t;1
 DECL|macro|STREAM_BUF_SIZE
 mdefine_line|#define STREAM_BUF_SIZE&t;&t;(PAGE_SIZE * 4)
 multiline_comment|/* #define STREAM_BUF_SIZE&t;(FRAMES_PER_DESC * FRAME_SIZE_PER_DESC) */

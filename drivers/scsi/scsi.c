@@ -845,6 +845,17 @@ id|BLIST_NOLUN
 comma
 multiline_comment|/* Locks sometimes if polled for lun != 0 */
 (brace
+l_string|&quot;QUANTUM&quot;
+comma
+l_string|&quot;FIREBALL ST4.3S&quot;
+comma
+l_string|&quot;0F0C&quot;
+comma
+id|BLIST_NOLUN
+)brace
+comma
+multiline_comment|/* Locks up when polled for lun != 0 */
+(brace
 l_string|&quot;MEDIAVIS&quot;
 comma
 l_string|&quot;CDR-H93MV&quot;

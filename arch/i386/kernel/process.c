@@ -21,9 +21,6 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/reboot.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#if defined(CONFIG_APM) &amp;&amp; defined(CONFIG_APM_POWER_OFF)
-macro_line|#include &lt;linux/apm_bios.h&gt;
-macro_line|#endif
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -85,6 +82,19 @@ r_void
 (paren
 op_star
 id|acpi_idle
+)paren
+(paren
+r_void
+)paren
+op_assign
+l_int|NULL
+suffix:semicolon
+multiline_comment|/*&n; * Power off function, if any&n; */
+DECL|variable|acpi_power_off
+r_void
+(paren
+op_star
+id|acpi_power_off
 )paren
 (paren
 r_void
@@ -852,13 +862,16 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#if defined(CONFIG_APM) &amp;&amp; defined(CONFIG_APM_POWER_OFF)
-id|apm_power_off
+r_if
+c_cond
+(paren
+id|acpi_power_off
+)paren
+id|acpi_power_off
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|show_regs
 r_void

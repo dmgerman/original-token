@@ -7178,7 +7178,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|vma-&gt;vm_offset
+id|vma-&gt;vm_pgoff
 op_ne
 l_int|0
 )paren

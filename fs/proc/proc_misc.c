@@ -613,6 +613,8 @@ suffix:semicolon
 multiline_comment|/*&n; * display in kilobytes.&n; */
 DECL|macro|K
 mdefine_line|#define K(x) ((x) &lt;&lt; (PAGE_SHIFT - 10))
+DECL|macro|B
+mdefine_line|#define B(x) ((x) &lt;&lt; PAGE_SHIFT)
 id|si_meminfo
 c_func
 (paren
@@ -638,13 +640,13 @@ l_string|&quot;        total:    used:    free:  shared: buffers:  cached:&bslas
 l_string|&quot;Mem:  %8lu %8lu %8lu %8lu %8lu %8u&bslash;n&quot;
 l_string|&quot;Swap: %8lu %8lu %8lu&bslash;n&quot;
 comma
-id|K
+id|B
 c_func
 (paren
 id|i.totalram
 )paren
 comma
-id|K
+id|B
 c_func
 (paren
 id|i.totalram
@@ -652,25 +654,25 @@ op_minus
 id|i.freeram
 )paren
 comma
-id|K
+id|B
 c_func
 (paren
 id|i.freeram
 )paren
 comma
-id|K
+id|B
 c_func
 (paren
 id|i.sharedram
 )paren
 comma
-id|K
+id|B
 c_func
 (paren
 id|i.bufferram
 )paren
 comma
-id|K
+id|B
 c_func
 (paren
 id|atomic_read
@@ -681,13 +683,13 @@ id|page_cache_size
 )paren
 )paren
 comma
-id|K
+id|B
 c_func
 (paren
 id|i.totalswap
 )paren
 comma
-id|K
+id|B
 c_func
 (paren
 id|i.totalswap
@@ -695,7 +697,7 @@ op_minus
 id|i.freeswap
 )paren
 comma
-id|K
+id|B
 c_func
 (paren
 id|i.freeswap
@@ -832,6 +834,8 @@ suffix:semicolon
 r_return
 id|len
 suffix:semicolon
+DECL|macro|B
+macro_line|#undef B
 DECL|macro|K
 macro_line|#undef K
 )brace

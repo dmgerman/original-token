@@ -168,6 +168,13 @@ c_func
 id|acpi_idle
 )paren
 suffix:semicolon
+DECL|variable|acpi_power_off
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|acpi_power_off
+)paren
+suffix:semicolon
 DECL|variable|__down_failed
 id|EXPORT_SYMBOL_NOVERS
 c_func

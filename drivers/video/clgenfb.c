@@ -10405,7 +10405,7 @@ id|size
 suffix:semicolon
 id|printk
 (paren
-l_string|&quot;dp-&gt;addrs[%d].address = $lx, dp-&gt;addrs[%d].size = %lx&bslash;n&quot;
+l_string|&quot;dp-&gt;addrs[%d].address = %lx, dp-&gt;addrs[%d].size = %lx&bslash;n&quot;
 comma
 id|i
 comma

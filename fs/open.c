@@ -3083,7 +3083,7 @@ c_func
 (paren
 id|files
 comma
-l_int|0
+id|fd
 )paren
 suffix:semicolon
 r_if

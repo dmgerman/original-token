@@ -50,6 +50,10 @@ DECL|macro|ACPI_SLP_TYP2
 mdefine_line|#define ACPI_SLP_TYP2 0x1000
 DECL|macro|ACPI_SLP_EN
 mdefine_line|#define ACPI_SLP_EN   0x2000
+DECL|macro|ACPI_SLP_TYP_MASK
+mdefine_line|#define ACPI_SLP_TYP_MASK  0x1c00
+DECL|macro|ACPI_SLP_TYP_SHIFT
+mdefine_line|#define ACPI_SLP_TYP_SHIFT 10
 multiline_comment|/* PM_TMR masks */
 DECL|macro|ACPI_TMR_MASK
 mdefine_line|#define ACPI_TMR_MASK&t;0x00ffffff
@@ -85,6 +89,9 @@ DECL|macro|ACPI_TMR_VAL_EXT
 mdefine_line|#define ACPI_TMR_VAL_EXT  0x00000100
 DECL|macro|ACPI_DCK_CAP
 mdefine_line|#define ACPI_DCK_CAP&t;  0x00000200
+multiline_comment|/* FACS flags */
+DECL|macro|ACPI_S4BIOS
+mdefine_line|#define ACPI_S4BIOS&t;  0x00000001
 DECL|struct|acpi_rsdp
 r_struct
 id|acpi_rsdp
@@ -332,6 +339,36 @@ id|flags
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|struct|acpi_facs
+r_struct
+id|acpi_facs
+(brace
+DECL|member|signature
+id|__u32
+id|signature
+suffix:semicolon
+DECL|member|length
+id|__u32
+id|length
+suffix:semicolon
+DECL|member|hw_signature
+id|__u32
+id|hw_signature
+suffix:semicolon
+DECL|member|fw_wake_vector
+id|__u32
+id|fw_wake_vector
+suffix:semicolon
+DECL|member|global_lock
+id|__u32
+id|global_lock
+suffix:semicolon
+DECL|member|flags
+id|__u32
+id|flags
+suffix:semicolon
+)brace
+suffix:semicolon
 multiline_comment|/*&n; * Sysctl declarations&n; */
 r_enum
 (brace
@@ -375,8 +412,14 @@ comma
 DECL|enumerator|ACPI_P_LVL3_LAT
 id|ACPI_P_LVL3_LAT
 comma
+DECL|enumerator|ACPI_S5_SLP_TYP
+id|ACPI_S5_SLP_TYP
 )brace
 suffix:semicolon
+DECL|macro|ACPI_P_LVL_DISABLED
+mdefine_line|#define ACPI_P_LVL_DISABLED&t;0x80
+DECL|macro|ACPI_SLP_TYP_DISABLED
+mdefine_line|#define ACPI_SLP_TYP_DISABLED&t;(~0UL)
 multiline_comment|/*&n; * PIIX4-specific ACPI info (for systems with PIIX4 but no ACPI tables)&n; */
 DECL|macro|ACPI_PIIX4_INT_MODEL
 mdefine_line|#define ACPI_PIIX4_INT_MODEL&t;0x00
@@ -438,6 +481,16 @@ r_void
 (paren
 op_star
 id|acpi_idle
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+(paren
+op_star
+id|acpi_power_off
 )paren
 (paren
 r_void

@@ -1995,7 +1995,11 @@ c_func
 (paren
 id|server
 comma
-l_int|0x8006
+id|htons
+c_func
+(paren
+l_int|0x0680
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* get all */

@@ -946,13 +946,7 @@ suffix:semicolon
 id|get_page
 c_func
 (paren
-id|mem_map
-op_plus
-id|MAP_NR
-c_func
-(paren
 id|page
-)paren
 )paren
 suffix:semicolon
 op_increment

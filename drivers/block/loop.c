@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/drivers/block/loop.c&n; *&n; *  Written by Theodore Ts&squot;o, 3/29/93&n; * &n; * Copyright 1993 by Theodore Ts&squot;o.  Redistribution of this file is&n; * permitted under the GNU Public License.&n; *&n; * DES encryption plus some minor changes by Werner Almesberger, 30-MAY-1993&n; * more DES encryption plus IDEA encryption by Nicholas J. Leon, June 20, 1996&n; *&n; * Modularized and updated for 1.1.16 kernel - Mitch Dsouza 28th May 1994&n; * Adapted for 1.3.59 kernel - Andries Brouwer, 1 Feb 1996&n; *&n; * Fixed do_loop_request() re-entrancy - Vincent.Renardias@waw.com Mar 20, 1997&n; *&n; * Handle sparse backing files correctly - Kenn Humborg, Jun 28, 1998&n; *&n; * Loadable modules and other fixes by AK, 1998&n; *&n; * Make real block number available to downstream transfer functions, enables&n; * CBC (and relatives) mode encryption requiring unique IVs per data block. &n; * Reed H. Petty, rhp@draper.net&n; *&n; * Maximum number of loop devices now dynamic via max_loop module parameter.&n; * Still fixed at 8 devices when compiled into the kernel normally.&n; * Russell Kroll &lt;rkroll@exploits.org&gt; 19990701&n; * &n; * Still To Fix:&n; * - Advisory locking is ignored here. &n; * - Should use an own CAP_* category instead of CAP_SYS_ADMIN &n; * - Should use the underlying filesystems/devices read function if possible&n; *   to support read ahead (and for write)&n; *&n; * WARNING/FIXME:&n; * - The block number as IV passing to low level transfer functions is broken:&n; *   it passes the underlying device&squot;s block number instead of the&n; *   offset. This makes it change for a given block when the file is &n; *   moved/restored/copied and also doesn&squot;t work over NFS. &n; */
+multiline_comment|/*&n; *  linux/drivers/block/loop.c&n; *&n; *  Written by Theodore Ts&squot;o, 3/29/93&n; * &n; * Copyright 1993 by Theodore Ts&squot;o.  Redistribution of this file is&n; * permitted under the GNU Public License.&n; *&n; * DES encryption plus some minor changes by Werner Almesberger, 30-MAY-1993&n; * more DES encryption plus IDEA encryption by Nicholas J. Leon, June 20, 1996&n; *&n; * Modularized and updated for 1.1.16 kernel - Mitch Dsouza 28th May 1994&n; * Adapted for 1.3.59 kernel - Andries Brouwer, 1 Feb 1996&n; *&n; * Fixed do_loop_request() re-entrancy - Vincent.Renardias@waw.com Mar 20, 1997&n; *&n; * Handle sparse backing files correctly - Kenn Humborg, Jun 28, 1998&n; *&n; * Loadable modules and other fixes by AK, 1998&n; *&n; * Make real block number available to downstream transfer functions, enables&n; * CBC (and relatives) mode encryption requiring unique IVs per data block. &n; * Reed H. Petty, rhp@draper.net&n; *&n; * Maximum number of loop devices now dynamic via max_loop module parameter.&n; * Russell Kroll &lt;rkroll@exploits.org&gt; 19990701&n; * &n; * Maximum number of loop devices when compiled-in now selectable by passing&n; * max_loop=&lt;1-255&gt; to the kernel on boot.&n; * Erik I. Bols&#xfffd;, &lt;eriki@himolde.no&gt;, Oct 31, 1999&n; *&n; * Still To Fix:&n; * - Advisory locking is ignored here. &n; * - Should use an own CAP_* category instead of CAP_SYS_ADMIN &n; * - Should use the underlying filesystems/devices read function if possible&n; *   to support read ahead (and for write)&n; *&n; * WARNING/FIXME:&n; * - The block number as IV passing to low level transfer functions is broken:&n; *   it passes the underlying device&squot;s block number instead of the&n; *   offset. This makes it change for a given block when the file is &n; *   moved/restored/copied and also doesn&squot;t work over NFS. &n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -3181,15 +3181,14 @@ l_int|255
 id|printk
 (paren
 id|KERN_WARNING
-l_string|&quot;loop: max_loop must be between 1 and 255&bslash;n&quot;
+l_string|&quot;loop: invalid max_loop (must be between 1 and 255), using default (8)&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
-op_minus
-id|EINVAL
+id|max_loop
+op_assign
+l_int|8
 suffix:semicolon
 )brace
-macro_line|#ifndef MODULE
 id|printk
 c_func
 (paren
@@ -3199,7 +3198,6 @@ comma
 id|MAJOR_NR
 )paren
 suffix:semicolon
-macro_line|#else
 id|printk
 c_func
 (paren
@@ -3209,7 +3207,6 @@ comma
 id|max_loop
 )paren
 suffix:semicolon
-macro_line|#endif
 id|loop_dev
 op_assign
 id|kmalloc
@@ -3468,5 +3465,43 @@ id|loop_blksizes
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
+macro_line|#ifndef MODULE
+DECL|function|max_loop_setup
+r_static
+r_int
+id|__init
+id|max_loop_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+)paren
+(brace
+id|max_loop
+op_assign
+id|simple_strtol
+c_func
+(paren
+id|str
+comma
+l_int|NULL
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+id|__setup
+c_func
+(paren
+l_string|&quot;max_loop=&quot;
+comma
+id|max_loop_setup
+)paren
+suffix:semicolon
 macro_line|#endif
 eof

@@ -16,6 +16,8 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/desc.h&gt;
+multiline_comment|/*&n; * Make APM look as much as just another ACPI module as possible..&n; */
+macro_line|#include &lt;linux/acpi.h&gt;
 DECL|variable|apm_register_callback
 id|EXPORT_SYMBOL
 c_func
@@ -4583,6 +4585,13 @@ op_complement
 id|APM_BIOS_DISENGAGED
 suffix:semicolon
 )brace
+multiline_comment|/* Install our power off handler.. */
+macro_line|#ifdef CONFIG_APM_POWER_OFF
+id|acpi_power_off
+op_assign
+id|apm_power_off
+suffix:semicolon
+macro_line|#endif
 id|apm_mainloop
 c_func
 (paren

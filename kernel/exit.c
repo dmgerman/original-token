@@ -1640,6 +1640,10 @@ id|flag
 op_assign
 l_int|0
 suffix:semicolon
+id|current-&gt;state
+op_assign
+id|TASK_INTERRUPTIBLE
+suffix:semicolon
 id|read_lock
 c_func
 (paren
@@ -2030,10 +2034,6 @@ id|current
 r_goto
 id|end_wait4
 suffix:semicolon
-id|current-&gt;state
-op_assign
-id|TASK_INTERRUPTIBLE
-suffix:semicolon
 id|schedule
 c_func
 (paren
@@ -2050,6 +2050,10 @@ id|ECHILD
 suffix:semicolon
 id|end_wait4
 suffix:colon
+id|current-&gt;state
+op_assign
+id|TASK_RUNNING
+suffix:semicolon
 id|remove_wait_queue
 c_func
 (paren

@@ -2444,6 +2444,8 @@ id|dest32
 suffix:semicolon
 id|u8
 id|pixel
+op_assign
+l_int|0
 suffix:semicolon
 r_switch
 c_cond

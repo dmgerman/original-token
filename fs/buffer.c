@@ -3423,7 +3423,7 @@ op_assign
 id|nr_lru_pages
 op_plus
 id|nr_free_pages
-op_plus
+op_minus
 id|nr_free_highpages
 suffix:semicolon
 id|hard_dirty_limit
@@ -5250,6 +5250,10 @@ id|bh
 )paren
 (brace
 r_struct
+id|buffer_head
+op_star
+id|old_bh
+suffix:semicolon
 id|old_bh
 op_assign
 id|get_hash_table

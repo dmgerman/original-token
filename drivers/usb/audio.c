@@ -1,5 +1,5 @@
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *      audio.c  --  USB Audio Class driver&n; *&n; *      Copyright (C) 1999&n; *          Alan Cox (alan@lxorguk.ukuu.org.uk)&n; *          Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *      This program is free software; you can redistribute it and/or modify&n; *      it under the terms of the GNU General Public License as published by&n; *      the Free Software Foundation; either version 2 of the License, or&n; *      (at your option) any later version.&n; *&n; *&n; * 1999-09-07:  Alan Cox&n; *              Parsing Audio descriptor patch&n; * 1999-09-08:  Thomas Sailer&n; *              Added OSS compatible data io functions; both parts of the&n; *              driver remain to be glued together&n; * 1999-09-10:  Thomas Sailer&n; *              Beautified the driver. Added sample format conversions.&n; *              Still not properly glued with the parsing code.&n; *              The parsing code seems to have its problems btw,&n; *              Since it parses all available configs but doesn&squot;t&n; *              store which iface/altsetting belongs to which config.&n; * 1999-09-20:  Thomas Sailer&n; *              Threw out Alan&squot;s parsing code and implemented my own one.&n; *              You cannot reasonnably linearly parse audio descriptors,&n; *              especially the AudioClass descriptors have to be considered&n; *              pointer lists. Mixer parsing untested, due to lack of device.&n; *              First stab at synch pipe implementation, the Dallas USB DAC&n; *              wants to use an Asynch out pipe. usb_audio_state now basically&n; *              only contains lists of mixer and wave devices. We can therefore&n; *              now have multiple mixer/wave devices per USB device.&n; *&n; */
+multiline_comment|/*&n; *      audio.c  --  USB Audio Class driver&n; *&n; *      Copyright (C) 1999&n; *          Alan Cox (alan@lxorguk.ukuu.org.uk)&n; *          Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *      This program is free software; you can redistribute it and/or modify&n; *      it under the terms of the GNU General Public License as published by&n; *      the Free Software Foundation; either version 2 of the License, or&n; *      (at your option) any later version.&n; *&n; *&n; * 1999-09-07:  Alan Cox&n; *              Parsing Audio descriptor patch&n; * 1999-09-08:  Thomas Sailer&n; *              Added OSS compatible data io functions; both parts of the&n; *              driver remain to be glued together&n; * 1999-09-10:  Thomas Sailer&n; *              Beautified the driver. Added sample format conversions.&n; *              Still not properly glued with the parsing code.&n; *              The parsing code seems to have its problems btw,&n; *              Since it parses all available configs but doesn&squot;t&n; *              store which iface/altsetting belongs to which config.&n; * 1999-09-20:  Thomas Sailer&n; *              Threw out Alan&squot;s parsing code and implemented my own one.&n; *              You cannot reasonnably linearly parse audio descriptors,&n; *              especially the AudioClass descriptors have to be considered&n; *              pointer lists. Mixer parsing untested, due to lack of device.&n; *              First stab at synch pipe implementation, the Dallas USB DAC&n; *              wants to use an Asynch out pipe. usb_audio_state now basically&n; *              only contains lists of mixer and wave devices. We can therefore&n; *              now have multiple mixer/wave devices per USB device.&n; * 1999-10-31:  Thomas Sailer&n; *              Audio can now be unloaded if it is not in use by any mixer&n; *              or dsp client (formerly you had to disconnect the audio devices&n; *              from the USB port)&n; *              Finally, about three months after ordering, my &quot;Maxxtro SPK222&quot;&n; *              speakers arrived, isn&squot;t disdata a great mail order company 8-)&n; *              Parse class specific endpoint descriptor of the audiostreaming&n; *              interfaces and take the endpoint attributes from there.&n; *              Unbelievably, the Philips USB DAC has a sampling rate range&n; *              of over a decade, yet does not support the sampling rate control!&n; *              No wonder it sounds so bad, has very audible sampling rate&n; *              conversion distortion. Don&squot;t try to listen to it using&n; *              decent headphones!&n; *              &quot;Let&squot;s make things better&quot; -&gt; but please Philips start with your&n; *              own stuff!!!!&n; *&n; *&n; */
 multiline_comment|/*&n; * Strategy:&n; *&n; * Alan Cox and Thomas Sailer are starting to dig at opposite ends and&n; * are hoping to meet in the middle, just like tunnel diggers :)&n; * Alan tackles the descriptor parsing, Thomas the actual data IO and the&n; * OSS compatible interface.&n; *&n; * Data IO implementation issues&n; *&n; * A mmap&squot;able ring buffer per direction is implemented, because&n; * almost every OSS app expects it. It is however impractical to&n; * transmit/receive USB data directly into and out of the ring buffer,&n; * due to alignment and synchronisation issues. Instead, the ring buffer&n; * feeds a constant time delay line that handles the USB issues.&n; *&n; * Now we first try to find an alternate setting that exactly matches&n; * the sample format requested by the user. If we find one, we do not&n; * need to perform any sample rate conversions. If there is no matching&n; * altsetting, we choose the closest one and perform sample format&n; * conversions. We never do sample rate conversion; these are too&n; * expensive to be performed in the kernel.&n; *&n; * Current status:&n; * - The IO code seems to work a couple of frames, but then gets&n; *   UHCI into a &quot;complaining&quot; mode, i.e. uhci won&squot;t work again until&n; *   removed and reloaded, it will not even notice disconnect/reconnect&n; *   events.&n; *   It seems to work more stably on OHCI-HCD.&n; *&n; * Generally: Due to the brokenness of the Audio Class spec&n; * it seems generally impossible to write a generic Audio Class driver,&n; * so a reasonable driver should implement the features that are actually&n; * used.&n; *&n; * Parsing implementation issues&n; *&n; * One cannot reasonably parse the AudioClass descriptors linearly.&n; * Therefore the current implementation features routines to look&n; * for a specific descriptor in the descriptor list.&n; *&n; * How does the parsing work? First, all interfaces are searched&n; * for an AudioControl class interface. If found, the config descriptor&n; * that belongs to the current configuration is fetched from the device.&n; * Then the HEADER descriptor is fetched. It contains a list of&n; * all AudioStreaming and MIDIStreaming devices. This list is then walked,&n; * and all AudioStreaming interfaces are classified into input and output&n; * interfaces (according to the endpoint0 direction in altsetting1) (MIDIStreaming&n; * is currently not supported). The input &amp; output list is then used&n; * to group inputs and outputs together and issued pairwise to the&n; * AudioStreaming class parser. Finally, all OUTPUT_TERMINAL descriptors&n; * are walked and issued to the mixer construction routine.&n; *&n; * The AudioStreaming parser simply enumerates all altsettings belonging&n; * to the specified interface. It looks for AS_GENERAL and FORMAT_TYPE&n; * class specific descriptors to extract the sample format/sample rate&n; * data. Only sample format types PCM and PCM8 are supported right now, and&n; * only FORMAT_TYPE_I is handled. The isochronous data endpoint needs to&n; * be the first endpoint of the interface, and the optional synchronisation&n; * isochronous endpoint the second one.&n; *&n; * Mixer construction works as follows: The various TERMINAL and UNIT&n; * descriptors span a tree from the root (OUTPUT_TERMINAL) through the&n; * intermediate nodes (UNITs) to the leaves (INPUT_TERMINAL). We walk&n; * that tree in a depth first manner. FEATURE_UNITs may contribute volume,&n; * bass and treble sliders to the mixer, MIXER_UNITs volume sliders.&n; * The terminal type encoded in the INPUT_TERMINALs feeds a heuristic&n; * to determine &quot;meaningful&quot; OSS slider numbers, however we will see&n; * how well this works in practice. Other features are not used at the&n; * moment, they seem less often used. Also, it seems difficult at least&n; * to construct recording source switches from SELECTOR_UNITs, but&n; * since there are not many USB ADC&squot;s available, we leave that for later.&n; */
 multiline_comment|/*****************************************************************************/
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -128,6 +128,11 @@ DECL|member|altsetting
 r_int
 r_char
 id|altsetting
+suffix:semicolon
+DECL|member|attributes
+r_int
+r_char
+id|attributes
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -8620,6 +8625,9 @@ id|data
 l_int|3
 )braket
 suffix:semicolon
+r_int
+id|ret
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -8760,7 +8768,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: device %d interface %d altsetting %d invalid synch pipe&bslash;n&quot;
+l_string|&quot;usbaudio: device %d interface %d altsetting %d invalid synch pipe&bslash;n&quot;
 comma
 id|dev-&gt;devnum
 comma
@@ -8867,6 +8875,112 @@ id|fmt-&gt;sratehi
 r_return
 l_int|0
 suffix:semicolon
+id|ep
+op_assign
+id|usb_pipeendpoint
+c_func
+(paren
+id|u-&gt;datapipe
+)paren
+op_or
+(paren
+id|u-&gt;datapipe
+op_amp
+id|USB_DIR_IN
+)paren
+suffix:semicolon
+multiline_comment|/* if endpoint has pitch control, enable it */
+r_if
+c_cond
+(paren
+id|fmt-&gt;attributes
+op_amp
+l_int|0x02
+)paren
+(brace
+id|data
+(braket
+l_int|0
+)braket
+op_assign
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|ret
+op_assign
+id|usb_control_msg
+c_func
+(paren
+id|dev
+comma
+id|usb_sndctrlpipe
+c_func
+(paren
+id|dev
+comma
+l_int|0
+)paren
+comma
+id|SET_CUR
+comma
+id|USB_TYPE_CLASS
+op_or
+id|USB_RECIP_ENDPOINT
+op_or
+id|USB_DIR_OUT
+comma
+id|PITCH_CONTROL
+op_lshift
+l_int|8
+comma
+id|ep
+comma
+id|data
+comma
+l_int|1
+comma
+id|HZ
+)paren
+)paren
+OL
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;usbaudio: failure (error %d) to set output pitch control device %d interface %u endpoint 0x%x to %u&bslash;n&quot;
+comma
+id|ret
+comma
+id|dev-&gt;devnum
+comma
+id|u-&gt;interface
+comma
+id|ep
+comma
+id|d-&gt;srate
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/* if endpoint has sampling rate control, set it */
+r_if
+c_cond
+(paren
+id|fmt-&gt;attributes
+op_amp
+l_int|0x01
+)paren
+(brace
 id|data
 (braket
 l_int|0
@@ -8892,23 +9006,12 @@ id|d-&gt;srate
 op_rshift
 l_int|16
 suffix:semicolon
-id|ep
-op_assign
-id|usb_pipeendpoint
-c_func
-(paren
-id|u-&gt;datapipe
-)paren
-op_or
-(paren
-id|u-&gt;datapipe
-op_amp
-id|USB_DIR_IN
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
+id|ret
+op_assign
 id|usb_control_msg
 c_func
 (paren
@@ -8942,6 +9045,7 @@ l_int|3
 comma
 id|HZ
 )paren
+)paren
 OL
 l_int|0
 )paren
@@ -8950,9 +9054,13 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usbaudio: failure to set input sampling frequency device %d endpoint 0x%x to %u&bslash;n&quot;
+l_string|&quot;usbaudio: failure (error %d) to set input sampling frequency device %d interface %u endpoint 0x%x to %u&bslash;n&quot;
+comma
+id|ret
 comma
 id|dev-&gt;devnum
+comma
+id|u-&gt;interface
 comma
 id|ep
 comma
@@ -8967,6 +9075,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
+id|ret
+op_assign
 id|usb_control_msg
 c_func
 (paren
@@ -9000,6 +9111,7 @@ l_int|3
 comma
 id|HZ
 )paren
+)paren
 OL
 l_int|0
 )paren
@@ -9008,9 +9120,13 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usbaudio: failure to get input sampling frequency device %d endpoint 0x%x&bslash;n&quot;
+l_string|&quot;usbaudio: failure (error %d) to get input sampling frequency device %d interface %u endpoint 0x%x&bslash;n&quot;
+comma
+id|ret
 comma
 id|dev-&gt;devnum
+comma
+id|u-&gt;interface
 comma
 id|ep
 )paren
@@ -9024,7 +9140,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;usb_audio: set_format_in: device %d interface %d altsetting %d srate req: %u real %u&bslash;n&quot;
+l_string|&quot;usbaudio: set_format_in: device %d interface %d altsetting %d srate req: %u real %u&bslash;n&quot;
 comma
 id|dev-&gt;devnum
 comma
@@ -9083,6 +9199,7 @@ op_lshift
 l_int|16
 )paren
 suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -9156,6 +9273,9 @@ id|data
 (braket
 l_int|3
 )braket
+suffix:semicolon
+r_int
+id|ret
 suffix:semicolon
 r_if
 c_cond
@@ -9297,7 +9417,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: device %d interface %d altsetting %d invalid synch pipe&bslash;n&quot;
+l_string|&quot;usbaudio: device %d interface %d altsetting %d invalid synch pipe&bslash;n&quot;
 comma
 id|dev-&gt;devnum
 comma
@@ -9404,6 +9524,112 @@ id|fmt-&gt;sratehi
 r_return
 l_int|0
 suffix:semicolon
+id|ep
+op_assign
+id|usb_pipeendpoint
+c_func
+(paren
+id|u-&gt;datapipe
+)paren
+op_or
+(paren
+id|u-&gt;datapipe
+op_amp
+id|USB_DIR_IN
+)paren
+suffix:semicolon
+multiline_comment|/* if endpoint has pitch control, enable it */
+r_if
+c_cond
+(paren
+id|fmt-&gt;attributes
+op_amp
+l_int|0x02
+)paren
+(brace
+id|data
+(braket
+l_int|0
+)braket
+op_assign
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|ret
+op_assign
+id|usb_control_msg
+c_func
+(paren
+id|dev
+comma
+id|usb_sndctrlpipe
+c_func
+(paren
+id|dev
+comma
+l_int|0
+)paren
+comma
+id|SET_CUR
+comma
+id|USB_TYPE_CLASS
+op_or
+id|USB_RECIP_ENDPOINT
+op_or
+id|USB_DIR_OUT
+comma
+id|PITCH_CONTROL
+op_lshift
+l_int|8
+comma
+id|ep
+comma
+id|data
+comma
+l_int|1
+comma
+id|HZ
+)paren
+)paren
+OL
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;usbaudio: failure (error %d) to set output pitch control device %d interface %u endpoint 0x%x to %u&bslash;n&quot;
+comma
+id|ret
+comma
+id|dev-&gt;devnum
+comma
+id|u-&gt;interface
+comma
+id|ep
+comma
+id|d-&gt;srate
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/* if endpoint has sampling rate control, set it */
+r_if
+c_cond
+(paren
+id|fmt-&gt;attributes
+op_amp
+l_int|0x01
+)paren
+(brace
 id|data
 (braket
 l_int|0
@@ -9429,23 +9655,12 @@ id|d-&gt;srate
 op_rshift
 l_int|16
 suffix:semicolon
-id|ep
-op_assign
-id|usb_pipeendpoint
-c_func
-(paren
-id|u-&gt;datapipe
-)paren
-op_or
-(paren
-id|u-&gt;datapipe
-op_amp
-id|USB_DIR_IN
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
+id|ret
+op_assign
 id|usb_control_msg
 c_func
 (paren
@@ -9479,6 +9694,7 @@ l_int|3
 comma
 id|HZ
 )paren
+)paren
 OL
 l_int|0
 )paren
@@ -9487,9 +9703,13 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usbaudio: failure to set output sampling frequency device %d endpoint 0x%x to %u&bslash;n&quot;
+l_string|&quot;usbaudio: failure (error %d) to set output sampling frequency device %d interface %u endpoint 0x%x to %u&bslash;n&quot;
+comma
+id|ret
 comma
 id|dev-&gt;devnum
+comma
+id|u-&gt;interface
 comma
 id|ep
 comma
@@ -9504,6 +9724,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
+id|ret
+op_assign
 id|usb_control_msg
 c_func
 (paren
@@ -9537,6 +9760,7 @@ l_int|3
 comma
 id|HZ
 )paren
+)paren
 OL
 l_int|0
 )paren
@@ -9545,9 +9769,13 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usbaudio: failure to get output sampling frequency device %d endpoint 0x%x&bslash;n&quot;
+l_string|&quot;usbaudio: failure (error %d) to get output sampling frequency device %d interface %u endpoint 0x%x&bslash;n&quot;
+comma
+id|ret
 comma
 id|dev-&gt;devnum
+comma
+id|u-&gt;interface
 comma
 id|ep
 )paren
@@ -9561,7 +9789,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;usb_audio: set_format_out: device %d interface %d altsetting %d srate req: %u real %u&bslash;n&quot;
+l_string|&quot;usbaudio: set_format_out: device %d interface %d altsetting %d srate req: %u real %u&bslash;n&quot;
 comma
 id|dev-&gt;devnum
 comma
@@ -9620,6 +9848,7 @@ op_lshift
 l_int|16
 )paren
 suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -10481,7 +10710,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: mixer request device %u if %u unit %u ch %u selector %u failed&bslash;n&quot;
+l_string|&quot;usbaudio: mixer request device %u if %u unit %u ch %u selector %u failed&bslash;n&quot;
 comma
 id|dev-&gt;devnum
 comma
@@ -10665,8 +10894,6 @@ c_func
 (paren
 id|s
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
 DECL|function|prog_dmabuf_in
@@ -10912,6 +11139,8 @@ suffix:semicolon
 id|s-&gt;count
 op_increment
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 id|up
 c_func
 (paren
@@ -10971,6 +11200,8 @@ c_func
 (paren
 id|s
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -12981,7 +13212,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|vma-&gt;vm_offset
+id|vma-&gt;vm_pgoff
 op_ne
 l_int|0
 )paren
@@ -15010,6 +15241,8 @@ suffix:semicolon
 id|s-&gt;count
 op_increment
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 id|up
 c_func
 (paren
@@ -15192,6 +15425,8 @@ c_func
 op_amp
 id|open_wait
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -15839,6 +16074,9 @@ r_int
 r_char
 op_star
 id|fmt
+comma
+op_star
+id|csep
 suffix:semicolon
 r_int
 r_int
@@ -15984,7 +16222,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: device %u interface %u altsetting %u does not have an endpoint&bslash;n&quot;
+l_string|&quot;usbaudio: device %u interface %u altsetting %u does not have an endpoint&bslash;n&quot;
 comma
 id|dev-&gt;devnum
 comma
@@ -16029,7 +16267,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: device %u interface %u altsetting %u first endpoint not isochronous in&bslash;n&quot;
+l_string|&quot;usbaudio: device %u interface %u altsetting %u first endpoint not isochronous in&bslash;n&quot;
 comma
 id|dev-&gt;devnum
 comma
@@ -16070,7 +16308,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: device %u interface %u altsetting %u FORMAT_TYPE descriptor not found&bslash;n&quot;
+l_string|&quot;usbaudio: device %u interface %u altsetting %u FORMAT_TYPE descriptor not found&bslash;n&quot;
 comma
 id|dev-&gt;devnum
 comma
@@ -16120,7 +16358,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: device %u interface %u altsetting %u format not supported&bslash;n&quot;
+l_string|&quot;usbaudio: device %u interface %u altsetting %u format not supported&bslash;n&quot;
 comma
 id|dev-&gt;devnum
 comma
@@ -16185,7 +16423,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: device %u interface %u altsetting %u FORMAT_TYPE descriptor not found&bslash;n&quot;
+l_string|&quot;usbaudio: device %u interface %u altsetting %u FORMAT_TYPE descriptor not found&bslash;n&quot;
 comma
 id|dev-&gt;devnum
 comma
@@ -16236,7 +16474,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: device %u interface %u altsetting %u FORMAT_TYPE descriptor not supported&bslash;n&quot;
+l_string|&quot;usbaudio: device %u interface %u altsetting %u FORMAT_TYPE descriptor not supported&bslash;n&quot;
 comma
 id|dev-&gt;devnum
 comma
@@ -16270,7 +16508,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: device %u interface %u altsetting %u unsupported channels %u framesize %u&bslash;n&quot;
+l_string|&quot;usbaudio: device %u interface %u altsetting %u unsupported channels %u framesize %u&bslash;n&quot;
 comma
 id|dev-&gt;devnum
 comma
@@ -16287,6 +16525,61 @@ id|fmt
 (braket
 l_int|5
 )braket
+)paren
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
+id|csep
+op_assign
+id|find_descriptor
+c_func
+(paren
+id|buffer
+comma
+id|buflen
+comma
+l_int|NULL
+comma
+id|USB_DT_CS_ENDPOINT
+comma
+id|asifin
+comma
+id|i
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|csep
+op_logical_or
+id|csep
+(braket
+l_int|0
+)braket
+OL
+l_int|7
+op_logical_or
+id|csep
+(braket
+l_int|2
+)braket
+op_ne
+id|EP_GENERAL
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;usbaudio: device %u interface %u altsetting %u no or invalid class specific endpoint descriptor&bslash;n&quot;
+comma
+id|dev-&gt;devnum
+comma
+id|asifin
+comma
+id|i
 )paren
 suffix:semicolon
 r_continue
@@ -16476,11 +16769,18 @@ op_assign
 id|k
 suffix:semicolon
 )brace
+id|fp-&gt;attributes
+op_assign
+id|csep
+(braket
+l_int|3
+)braket
+suffix:semicolon
 id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;usb_audio: device %u interface %u altsetting %u: format 0x%08x sratelo %u sratehi %u&bslash;n&quot;
+l_string|&quot;usbaudio: device %u interface %u altsetting %u: format 0x%08x sratelo %u sratehi %u attributes 0x%02x&bslash;n&quot;
 comma
 id|dev-&gt;devnum
 comma
@@ -16493,6 +16793,8 @@ comma
 id|fp-&gt;sratelo
 comma
 id|fp-&gt;sratehi
+comma
+id|fp-&gt;attributes
 )paren
 suffix:semicolon
 )brace
@@ -16562,7 +16864,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: device %u interface %u altsetting %u does not have an endpoint&bslash;n&quot;
+l_string|&quot;usbaudio: device %u interface %u altsetting %u does not have an endpoint&bslash;n&quot;
 comma
 id|dev-&gt;devnum
 comma
@@ -16606,7 +16908,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: device %u interface %u altsetting %u first endpoint not isochronous out&bslash;n&quot;
+l_string|&quot;usbaudio: device %u interface %u altsetting %u first endpoint not isochronous out&bslash;n&quot;
 comma
 id|dev-&gt;devnum
 comma
@@ -16647,7 +16949,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: device %u interface %u altsetting %u FORMAT_TYPE descriptor not found&bslash;n&quot;
+l_string|&quot;usbaudio: device %u interface %u altsetting %u FORMAT_TYPE descriptor not found&bslash;n&quot;
 comma
 id|dev-&gt;devnum
 comma
@@ -16697,7 +16999,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: device %u interface %u altsetting %u format not supported&bslash;n&quot;
+l_string|&quot;usbaudio: device %u interface %u altsetting %u format not supported&bslash;n&quot;
 comma
 id|dev-&gt;devnum
 comma
@@ -16762,7 +17064,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: device %u interface %u altsetting %u FORMAT_TYPE descriptor not found&bslash;n&quot;
+l_string|&quot;usbaudio: device %u interface %u altsetting %u FORMAT_TYPE descriptor not found&bslash;n&quot;
 comma
 id|dev-&gt;devnum
 comma
@@ -16813,7 +17115,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: device %u interface %u altsetting %u FORMAT_TYPE descriptor not supported&bslash;n&quot;
+l_string|&quot;usbaudio: device %u interface %u altsetting %u FORMAT_TYPE descriptor not supported&bslash;n&quot;
 comma
 id|dev-&gt;devnum
 comma
@@ -16847,7 +17149,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: device %u interface %u altsetting %u unsupported channels %u framesize %u&bslash;n&quot;
+l_string|&quot;usbaudio: device %u interface %u altsetting %u unsupported channels %u framesize %u&bslash;n&quot;
 comma
 id|dev-&gt;devnum
 comma
@@ -16864,6 +17166,61 @@ id|fmt
 (braket
 l_int|5
 )braket
+)paren
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
+id|csep
+op_assign
+id|find_descriptor
+c_func
+(paren
+id|buffer
+comma
+id|buflen
+comma
+l_int|NULL
+comma
+id|USB_DT_CS_ENDPOINT
+comma
+id|asifout
+comma
+id|i
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|csep
+op_logical_or
+id|csep
+(braket
+l_int|0
+)braket
+OL
+l_int|7
+op_logical_or
+id|csep
+(braket
+l_int|2
+)braket
+op_ne
+id|EP_GENERAL
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;usbaudio: device %u interface %u altsetting %u no or invalid class specific endpoint descriptor&bslash;n&quot;
+comma
+id|dev-&gt;devnum
+comma
+id|asifout
+comma
+id|i
 )paren
 suffix:semicolon
 r_continue
@@ -17053,11 +17410,18 @@ op_assign
 id|k
 suffix:semicolon
 )brace
+id|fp-&gt;attributes
+op_assign
+id|csep
+(braket
+l_int|3
+)braket
+suffix:semicolon
 id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;usb_audio: device %u interface %u altsetting %u: format 0x%08x sratelo %u sratehi %u&bslash;n&quot;
+l_string|&quot;usbaudio: device %u interface %u altsetting %u: format 0x%08x sratelo %u sratehi %u attributes 0x%02x&bslash;n&quot;
 comma
 id|dev-&gt;devnum
 comma
@@ -17070,6 +17434,8 @@ comma
 id|fp-&gt;sratelo
 comma
 id|fp-&gt;sratehi
+comma
+id|fp-&gt;attributes
 )paren
 suffix:semicolon
 )brace
@@ -17119,7 +17485,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: cannot register dsp&bslash;n&quot;
+l_string|&quot;usbaudio: cannot register dsp&bslash;n&quot;
 )paren
 suffix:semicolon
 id|kfree
@@ -17254,7 +17620,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: invalid OSS mixer channel %u&bslash;n&quot;
+l_string|&quot;usbaudio: invalid OSS mixer channel %u&bslash;n&quot;
 comma
 id|nr
 )paren
@@ -17282,7 +17648,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;usb_audio: OSS mixer channel %u already in use&bslash;n&quot;
+l_string|&quot;usbaudio: OSS mixer channel %u already in use&bslash;n&quot;
 comma
 id|nr
 )paren
@@ -18733,7 +19099,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: mixer request device %u if %u unit %u ch %u selector %u failed&bslash;n&quot;
+l_string|&quot;usbaudio: mixer request device %u if %u unit %u ch %u selector %u failed&bslash;n&quot;
 comma
 id|dev-&gt;devnum
 comma
@@ -19013,7 +19379,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: unit %u invalid MIXER_UNIT descriptor&bslash;n&quot;
+l_string|&quot;usbaudio: unit %u invalid MIXER_UNIT descriptor&bslash;n&quot;
 comma
 id|mixer
 (braket
@@ -19039,7 +19405,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: mixer unit %u: too many input pins&bslash;n&quot;
+l_string|&quot;usbaudio: mixer unit %u: too many input pins&bslash;n&quot;
 comma
 id|mixer
 (braket
@@ -19186,7 +19552,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: unit %u invalid MIXER_UNIT descriptor (bitmap too small)&bslash;n&quot;
+l_string|&quot;usbaudio: unit %u invalid MIXER_UNIT descriptor (bitmap too small)&bslash;n&quot;
 comma
 id|mixer
 (braket
@@ -19437,7 +19803,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: unit %u invalid SELECTOR_UNIT descriptor&bslash;n&quot;
+l_string|&quot;usbaudio: unit %u invalid SELECTOR_UNIT descriptor&bslash;n&quot;
 comma
 id|selector
 (braket
@@ -19506,7 +19872,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: selector unit %u: input pins with varying channel numbers&bslash;n&quot;
+l_string|&quot;usbaudio: selector unit %u: input pins with varying channel numbers&bslash;n&quot;
 comma
 id|selector
 (braket
@@ -19652,6 +20018,13 @@ id|ftr
 )paren
 (brace
 r_struct
+id|usb_device
+op_star
+id|dev
+op_assign
+id|state-&gt;s-&gt;usbdev
+suffix:semicolon
+r_struct
 id|mixerchannel
 op_star
 id|ch
@@ -19661,6 +20034,13 @@ r_int
 id|chftr
 comma
 id|mchftr
+suffix:semicolon
+r_int
+r_char
+id|data
+(braket
+l_int|1
+)braket
 suffix:semicolon
 id|usb_audio_recurseunit
 c_func
@@ -19685,7 +20065,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: feature unit %u source has no channels&bslash;n&quot;
+l_string|&quot;usbaudio: feature unit %u source has no channels&bslash;n&quot;
 comma
 id|ftr
 (braket
@@ -19707,7 +20087,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;usb_audio: feature unit %u: OSS mixer interface does not support more than 2 channels&bslash;n&quot;
+l_string|&quot;usbaudio: feature unit %u: OSS mixer interface does not support more than 2 channels&bslash;n&quot;
 comma
 id|ftr
 (braket
@@ -19741,7 +20121,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: unit %u: invalid FEATURE_UNIT descriptor&bslash;n&quot;
+l_string|&quot;usbaudio: unit %u: invalid FEATURE_UNIT descriptor&bslash;n&quot;
 comma
 id|ftr
 (braket
@@ -19976,11 +20356,7 @@ c_func
 (paren
 id|state
 comma
-id|getvolchannel
-c_func
-(paren
-id|state
-)paren
+id|SOUND_MIXER_BASS
 )paren
 suffix:semicolon
 r_if
@@ -20086,11 +20462,7 @@ c_func
 (paren
 id|state
 comma
-id|getvolchannel
-c_func
-(paren
-id|state
-)paren
+id|SOUND_MIXER_TREBLE
 )paren
 suffix:semicolon
 r_if
@@ -20125,6 +20497,111 @@ id|state
 )paren
 suffix:semicolon
 )brace
+)brace
+multiline_comment|/* if there are mute controls, unmute them */
+r_if
+c_cond
+(paren
+(paren
+id|chftr
+op_amp
+l_int|1
+)paren
+op_logical_or
+(paren
+id|mchftr
+op_amp
+l_int|1
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;usbaudio: unmuting feature unit %u interface %u&bslash;n&quot;
+comma
+id|ftr
+(braket
+l_int|3
+)braket
+comma
+id|state-&gt;ctrlif
+)paren
+suffix:semicolon
+id|data
+(braket
+l_int|0
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|usb_control_msg
+c_func
+(paren
+id|dev
+comma
+id|usb_sndctrlpipe
+c_func
+(paren
+id|dev
+comma
+l_int|0
+)paren
+comma
+id|SET_CUR
+comma
+id|USB_RECIP_INTERFACE
+op_or
+id|USB_TYPE_CLASS
+op_or
+id|USB_DIR_OUT
+comma
+(paren
+id|MUTE_CONTROL
+op_lshift
+l_int|8
+)paren
+op_or
+l_int|0xff
+comma
+id|state-&gt;ctrlif
+op_or
+(paren
+id|ftr
+(braket
+l_int|3
+)braket
+op_lshift
+l_int|8
+)paren
+comma
+id|data
+comma
+l_int|1
+comma
+id|HZ
+)paren
+OL
+l_int|0
+)paren
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;usbaudio: failure to unmute feature unit %u interface %u&bslash;n&quot;
+comma
+id|ftr
+(braket
+l_int|3
+)braket
+comma
+id|state-&gt;ctrlif
+)paren
+suffix:semicolon
 )brace
 )brace
 DECL|function|usb_audio_recurseunit
@@ -20171,7 +20648,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: mixer path recursion detected, unit %d!&bslash;n&quot;
+l_string|&quot;usbaudio: mixer path recursion detected, unit %d!&bslash;n&quot;
 comma
 id|unitid
 )paren
@@ -20206,7 +20683,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: unit %d not found!&bslash;n&quot;
+l_string|&quot;usbaudio: unit %d not found!&bslash;n&quot;
 comma
 id|unitid
 )paren
@@ -20253,7 +20730,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: unit %u: invalid INPUT_TERMINAL descriptor&bslash;n&quot;
+l_string|&quot;usbaudio: unit %u: invalid INPUT_TERMINAL descriptor&bslash;n&quot;
 comma
 id|unitid
 )paren
@@ -20332,7 +20809,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: unit %u: invalid MIXER_UNIT descriptor&bslash;n&quot;
+l_string|&quot;usbaudio: unit %u: invalid MIXER_UNIT descriptor&bslash;n&quot;
 comma
 id|unitid
 )paren
@@ -20380,7 +20857,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: unit %u: invalid SELECTOR_UNIT descriptor&bslash;n&quot;
+l_string|&quot;usbaudio: unit %u: invalid SELECTOR_UNIT descriptor&bslash;n&quot;
 comma
 id|unitid
 )paren
@@ -20428,7 +20905,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: unit %u: invalid FEATURE_UNIT descriptor&bslash;n&quot;
+l_string|&quot;usbaudio: unit %u: invalid FEATURE_UNIT descriptor&bslash;n&quot;
 comma
 id|unitid
 )paren
@@ -20540,7 +21017,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: unit %u: invalid PROCESSING_UNIT descriptor&bslash;n&quot;
+l_string|&quot;usbaudio: unit %u: invalid PROCESSING_UNIT descriptor&bslash;n&quot;
 comma
 id|unitid
 )paren
@@ -20610,7 +21087,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: unit %u: invalid EXTENSION_UNIT descriptor&bslash;n&quot;
+l_string|&quot;usbaudio: unit %u: invalid EXTENSION_UNIT descriptor&bslash;n&quot;
 comma
 id|unitid
 )paren
@@ -20724,7 +21201,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: unit %u: unexpected type 0x%02x&bslash;n&quot;
+l_string|&quot;usbaudio: unit %u: unexpected type 0x%02x&bslash;n&quot;
 comma
 id|unitid
 comma
@@ -20833,7 +21310,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;usb_audio: constructing mixer for Terminal %u type 0x%04x&bslash;n&quot;
+l_string|&quot;usbaudio: constructing mixer for Terminal %u type 0x%04x&bslash;n&quot;
 comma
 id|oterm
 (braket
@@ -20878,7 +21355,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;usb_audio: no mixer controls found for Terminal %u&bslash;n&quot;
+l_string|&quot;usbaudio: no mixer controls found for Terminal %u&bslash;n&quot;
 comma
 id|oterm
 (braket
@@ -20987,7 +21464,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: cannot register mixer&bslash;n&quot;
+l_string|&quot;usbaudio: cannot register mixer&bslash;n&quot;
 )paren
 suffix:semicolon
 id|kfree
@@ -21174,7 +21651,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: device %d audiocontrol interface %u no HEADER found&bslash;n&quot;
+l_string|&quot;usbaudio: device %d audiocontrol interface %u no HEADER found&bslash;n&quot;
 comma
 id|dev-&gt;devnum
 comma
@@ -21205,7 +21682,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: device %d audiocontrol interface %u HEADER error&bslash;n&quot;
+l_string|&quot;usbaudio: device %d audiocontrol interface %u HEADER error&bslash;n&quot;
 comma
 id|dev-&gt;devnum
 comma
@@ -21229,7 +21706,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;usb_audio: device %d audiocontrol interface %u has no AudioStreaming and MidiStreaming interfaces&bslash;n&quot;
+l_string|&quot;usbaudio: device %d audiocontrol interface %u has no AudioStreaming and MidiStreaming interfaces&bslash;n&quot;
 comma
 id|dev-&gt;devnum
 comma
@@ -21275,7 +21752,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: device %d audiocontrol interface %u interface %u does not exist&bslash;n&quot;
+l_string|&quot;usbaudio: device %d audiocontrol interface %u interface %u does not exist&bslash;n&quot;
 comma
 id|dev-&gt;devnum
 comma
@@ -21312,7 +21789,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: device %d audiocontrol interface %u interface %u is not an AudioClass interface&bslash;n&quot;
+l_string|&quot;usbaudio: device %d audiocontrol interface %u interface %u is not an AudioClass interface&bslash;n&quot;
 comma
 id|dev-&gt;devnum
 comma
@@ -21341,7 +21818,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;usb_audio: device %d audiocontrol interface %u interface %u MIDIStreaming not supported&bslash;n&quot;
+l_string|&quot;usbaudio: device %d audiocontrol interface %u interface %u MIDIStreaming not supported&bslash;n&quot;
 comma
 id|dev-&gt;devnum
 comma
@@ -21370,7 +21847,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: device %d audiocontrol interface %u interface %u invalid AudioClass subtype&bslash;n&quot;
+l_string|&quot;usbaudio: device %d audiocontrol interface %u interface %u invalid AudioClass subtype&bslash;n&quot;
 comma
 id|dev-&gt;devnum
 comma
@@ -21394,7 +21871,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: device %d audiocontrol interface %u altsetting 0 not zero bandwidth&bslash;n&quot;
+l_string|&quot;usbaudio: device %d audiocontrol interface %u altsetting 0 not zero bandwidth&bslash;n&quot;
 comma
 id|dev-&gt;devnum
 comma
@@ -21421,7 +21898,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: device %d audiocontrol interface %u interface %u has no endpoint&bslash;n&quot;
+l_string|&quot;usbaudio: device %d audiocontrol interface %u interface %u has no endpoint&bslash;n&quot;
 comma
 id|dev-&gt;devnum
 comma
@@ -21517,7 +21994,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;usb_audio: device %d audiocontrol interface %u has %u input and %u output AudioStreaming interfaces&bslash;n&quot;
+l_string|&quot;usbaudio: device %d audiocontrol interface %u has %u input and %u output AudioStreaming interfaces&bslash;n&quot;
 comma
 id|dev-&gt;devnum
 comma
@@ -21755,8 +22232,6 @@ op_amp
 id|open_sem
 )paren
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 id|s
 suffix:semicolon
@@ -21860,7 +22335,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;usb_audio: vendor id 0x%04x, product id 0x%04x contains no AudioControl interface&bslash;n&quot;
+l_string|&quot;usbaudio: vendor id 0x%04x, product id 0x%04x contains no AudioControl interface&bslash;n&quot;
 comma
 id|dev-&gt;descriptor.idVendor
 comma
@@ -21903,7 +22378,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: cannot find active configuration number of device %d&bslash;n&quot;
+l_string|&quot;usbaudio: cannot find active configuration number of device %d&bslash;n&quot;
 comma
 id|dev-&gt;devnum
 )paren
@@ -21939,7 +22414,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: cannot get first 8 bytes of config descriptor %d of device %d&bslash;n&quot;
+l_string|&quot;usbaudio: cannot get first 8 bytes of config descriptor %d of device %d&bslash;n&quot;
 comma
 id|i
 comma
@@ -21972,7 +22447,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: invalid config descriptor %d of device %d&bslash;n&quot;
+l_string|&quot;usbaudio: invalid config descriptor %d of device %d&bslash;n&quot;
 comma
 id|i
 comma
@@ -22050,7 +22525,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usb_audio: cannot get config descriptor %d of device %d&bslash;n&quot;
+l_string|&quot;usbaudio: cannot get config descriptor %d of device %d&bslash;n&quot;
 comma
 id|i
 comma

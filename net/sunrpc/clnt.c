@@ -2062,6 +2062,8 @@ id|task-&gt;tk_action
 op_assign
 id|call_decode
 suffix:semicolon
+r_return
+suffix:semicolon
 )brace
 id|task-&gt;tk_status
 op_assign
