@@ -171,7 +171,6 @@ c_func
 r_struct
 id|file
 op_star
-id|file
 )paren
 suffix:semicolon
 r_extern
@@ -182,8 +181,7 @@ c_func
 r_struct
 id|file
 op_star
-id|file
 )paren
 suffix:semicolon
-macro_line|#endif
+macro_line|#endif /* __LINUX_FILE_H */
 eof

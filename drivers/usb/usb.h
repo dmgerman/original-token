@@ -207,6 +207,44 @@ DECL|macro|USB_RT_PORT
 mdefine_line|#define USB_RT_PORT&t;&t;&t;(USB_TYPE_CLASS | USB_RECIP_OTHER)
 DECL|macro|USB_RT_HIDD
 mdefine_line|#define USB_RT_HIDD&t;&t;&t;(USB_TYPE_CLASS | USB_RECIP_INTERFACE)
+multiline_comment|/* &n; * Status codes &n; */
+DECL|macro|USB_ST_NOERROR
+mdefine_line|#define USB_ST_NOERROR&t;&t;0x0
+DECL|macro|USB_ST_CRC
+mdefine_line|#define USB_ST_CRC&t;&t;0x1
+DECL|macro|USB_ST_BITSTUFF
+mdefine_line|#define USB_ST_BITSTUFF&t;&t;0x2
+DECL|macro|USB_ST_DTMISMATCH
+mdefine_line|#define USB_ST_DTMISMATCH&t;0x3
+DECL|macro|USB_ST_STALL
+mdefine_line|#define USB_ST_STALL&t;&t;0x4
+DECL|macro|USB_ST_TIMEOUT
+mdefine_line|#define USB_ST_TIMEOUT&t;&t;0x5
+DECL|macro|USB_ST_PIDCHECK
+mdefine_line|#define USB_ST_PIDCHECK&t;&t;0x6
+DECL|macro|USB_ST_PIDUNDEF
+mdefine_line|#define USB_ST_PIDUNDEF&t;&t;0x7
+DECL|macro|USB_ST_DATAOVERRUN
+mdefine_line|#define USB_ST_DATAOVERRUN&t;0x8
+DECL|macro|USB_ST_DATAUNDERRUN
+mdefine_line|#define USB_ST_DATAUNDERRUN&t;0x9
+DECL|macro|USB_ST_RESERVED1
+mdefine_line|#define USB_ST_RESERVED1&t;0xA
+DECL|macro|USB_ST_RESERVED2
+mdefine_line|#define USB_ST_RESERVED2&t;0xB
+DECL|macro|USB_ST_BUFFEROVERRUN
+mdefine_line|#define USB_ST_BUFFEROVERRUN&t;0xC
+DECL|macro|USB_ST_BUFFERUNDERRUN
+mdefine_line|#define USB_ST_BUFFERUNDERRUN&t;0xD
+DECL|macro|USB_ST_RESERVED3
+mdefine_line|#define USB_ST_RESERVED3&t;0xE
+DECL|macro|USB_ST_RESERVED4
+mdefine_line|#define USB_ST_RESERVED4&t;0xF
+multiline_comment|/* internal errors */
+DECL|macro|USB_ST_REMOVED
+mdefine_line|#define USB_ST_REMOVED&t;&t;0x100
+DECL|macro|USB_ST_INTERNALERROR
+mdefine_line|#define USB_ST_INTERNALERROR&t;-1
 multiline_comment|/*&n; * USB device number allocation bitmap. There&squot;s one bitmap&n; * per USB tree.&n; */
 DECL|struct|usb_devmap
 r_struct
@@ -503,9 +541,13 @@ id|__u8
 id|bNbrPorts
 suffix:semicolon
 DECL|member|wHubCharacteristics
-id|__u16
+id|__u8
 id|wHubCharacteristics
+(braket
+l_int|2
+)braket
 suffix:semicolon
+multiline_comment|/* __u16 but not aligned! */
 DECL|member|bPwrOn2PwrGood
 id|__u8
 id|bPwrOn2PwrGood
@@ -627,7 +669,7 @@ comma
 r_int
 r_int
 comma
-r_void
+id|devrequest
 op_star
 comma
 r_void
@@ -665,6 +707,28 @@ r_int
 (paren
 op_star
 id|request_irq
+)paren
+(paren
+r_struct
+id|usb_device
+op_star
+comma
+r_int
+r_int
+comma
+id|usb_device_irq
+comma
+r_int
+comma
+r_void
+op_star
+)paren
+suffix:semicolon
+DECL|member|remove_irq
+r_int
+(paren
+op_star
+id|remove_irq
 )paren
 (paren
 r_struct
@@ -744,10 +808,15 @@ id|maxpacketsize
 suffix:semicolon
 multiline_comment|/* Maximum packet size */
 DECL|member|toggle
-id|__u16
+r_int
 id|toggle
 suffix:semicolon
 multiline_comment|/* one bit for each endpoint */
+DECL|member|halted
+r_int
+id|halted
+suffix:semicolon
+multiline_comment|/* endpoint halts */
 DECL|member|actconfig
 r_struct
 id|usb_config_descriptor
@@ -1036,7 +1105,14 @@ mdefine_line|#define usb_gettoggle(dev, ep) (((dev)-&gt;toggle &gt;&gt; ep) &amp
 DECL|macro|usb_dotoggle
 mdefine_line|#define&t;usb_dotoggle(dev, ep)&t;((dev)-&gt;toggle ^= (1 &lt;&lt;&t;ep))
 DECL|macro|usb_settoggle
-mdefine_line|#define usb_settoggle(dev, ep, bit) ((dev)-&gt;toggle = ((dev)-&gt;toggle &amp; (0xfffe &lt;&lt; ep)) | (bit &lt;&lt; ep))
+mdefine_line|#define usb_settoggle(dev, ep, bit) ((dev)-&gt;toggle = ((dev)-&gt;toggle &amp; ~(1 &lt;&lt; ep)) | ((bit) &lt;&lt; ep))
+multiline_comment|/* Endpoint halt */
+DECL|macro|usb_endpoint_halt
+mdefine_line|#define usb_endpoint_halt(dev, ep) ((dev)-&gt;halted |= (1 &lt;&lt; (ep)))
+DECL|macro|usb_endpoint_running
+mdefine_line|#define usb_endpoint_running(dev, ep) ((dev)-&gt;halted &amp;= ~(1 &lt;&lt; (ep)))
+DECL|macro|usb_endpoint_halted
+mdefine_line|#define usb_endpoint_halted(dev, ep) ((dev)-&gt;halted &amp; (1 &lt;&lt; (ep)))
 DECL|function|__create_pipe
 r_static
 r_inline
@@ -1314,6 +1390,61 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+r_int
+id|usb_clear_halt
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+id|dev
+comma
+r_int
+id|endp
+)paren
+suffix:semicolon
+DECL|function|usb_string
+r_static
+r_inline
+r_char
+op_star
+id|usb_string
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+id|dev
+comma
+r_int
+id|index
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|index
+op_le
+id|dev-&gt;maxstring
+op_logical_and
+id|dev-&gt;stringindex
+op_logical_and
+id|dev-&gt;stringindex
+(braket
+id|index
+)braket
+)paren
+r_return
+id|dev-&gt;stringindex
+(braket
+id|index
+)braket
+suffix:semicolon
+r_else
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * Debugging helpers..&n; */
 r_void
 id|usb_show_device_descriptor

@@ -584,6 +584,8 @@ DECL|macro|BTTV_PIXVIEWPLAYTV
 mdefine_line|#define BTTV_PIXVIEWPLAYTV 0x10
 DECL|macro|BTTV_WINVIEW_601
 mdefine_line|#define BTTV_WINVIEW_601   0x11
+DECL|macro|BTTV_AVEC_INTERCAP
+mdefine_line|#define BTTV_AVEC_INTERCAP 0x12
 DECL|macro|AUDIO_TUNER
 mdefine_line|#define AUDIO_TUNER        0x00
 DECL|macro|AUDIO_RADIO
@@ -608,6 +610,8 @@ DECL|macro|TDA9840
 mdefine_line|#define TDA9840            0x03
 DECL|macro|TEA6300
 mdefine_line|#define TEA6300            0x04
+DECL|macro|TEA6320
+mdefine_line|#define TEA6320            0x05
 DECL|macro|I2C_TSA5522
 mdefine_line|#define I2C_TSA5522        0xc2
 DECL|macro|I2C_TDA9840
@@ -623,7 +627,7 @@ mdefine_line|#define I2C_STBEE          0xae
 DECL|macro|I2C_VHX
 mdefine_line|#define I2C_VHX &t;   0xc0
 DECL|macro|I2C_TEA6300
-mdefine_line|#define I2C_TEA6300        0x80
+mdefine_line|#define I2C_TEA6300        0x80 /* same as TEA6320 */
 DECL|macro|TDA9840_SW
 mdefine_line|#define TDA9840_SW&t;   0x00
 DECL|macro|TDA9840_LVADJ
@@ -668,6 +672,31 @@ DECL|macro|TEA6300_FA
 mdefine_line|#define TEA6300_FA         0x04&t;&t;/* fader control */
 DECL|macro|TEA6300_SW
 mdefine_line|#define TEA6300_SW         0x05&t;&t;/* mute and source switch */
+DECL|macro|TEA6320_V
+mdefine_line|#define TEA6320_V          0x00
+DECL|macro|TEA6320_FFR
+mdefine_line|#define TEA6320_FFR        0x01  /* volume front right */
+DECL|macro|TEA6320_FFL
+mdefine_line|#define TEA6320_FFL        0x02  /* volume front left */
+DECL|macro|TEA6320_FRR
+mdefine_line|#define TEA6320_FRR        0x03  /* volume rear right */
+DECL|macro|TEA6320_FRL
+mdefine_line|#define TEA6320_FRL        0x04  /* volume rear left */
+DECL|macro|TEA6320_BA
+mdefine_line|#define TEA6320_BA         0x05  /* bass */
+DECL|macro|TEA6320_TR
+mdefine_line|#define TEA6320_TR         0x06  /* treble */
+DECL|macro|TEA6320_S
+mdefine_line|#define TEA6320_S          0x07  /* switch register */
+multiline_comment|/* values for those registers: */
+DECL|macro|TEA6320_S_SA
+mdefine_line|#define TEA6320_S_SA       0x01  /* stereo A input */
+DECL|macro|TEA6320_S_SB
+mdefine_line|#define TEA6320_S_SB       0x02  /* stereo B */
+DECL|macro|TEA6320_S_SC
+mdefine_line|#define TEA6320_S_SC       0x04  /* stereo C */
+DECL|macro|TEA6320_S_GMU
+mdefine_line|#define TEA6320_S_GMU      0x80  /* general mute */
 DECL|macro|PT2254_L_CHANEL
 mdefine_line|#define PT2254_L_CHANEL 0x10
 DECL|macro|PT2254_R_CHANEL

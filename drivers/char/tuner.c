@@ -427,6 +427,34 @@ comma
 l_int|732
 )brace
 comma
+(brace
+l_string|&quot;Alps HSBH1&quot;
+comma
+id|TEMIC
+comma
+id|NTSC
+comma
+l_int|16
+op_star
+l_float|137.25
+comma
+l_int|16
+op_star
+l_float|385.25
+comma
+l_int|0x01
+comma
+l_int|0x02
+comma
+l_int|0x08
+comma
+l_int|0x8e
+comma
+l_int|0xc2
+comma
+l_int|732
+)brace
+comma
 )brace
 suffix:semicolon
 multiline_comment|/* ---------------------------------------------------------------------- */

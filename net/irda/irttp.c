@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irttp.c&n; * Version:       1.2&n; * Description:   Tiny Transport Protocol (TTP) implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:31 1997&n; * Modified at:   Mon May 10 17:12:53 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irttp.c&n; * Version:       1.2&n; * Description:   Tiny Transport Protocol (TTP) implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:31 1997&n; * Modified at:   Mon May 31 10:29:56 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -9,6 +9,7 @@ macro_line|#include &lt;net/irda/irmod.h&gt;
 macro_line|#include &lt;net/irda/irlmp.h&gt;
 macro_line|#include &lt;net/irda/irttp.h&gt;
 DECL|variable|irttp
+r_static
 r_struct
 id|irttp_cb
 op_star
@@ -196,19 +197,6 @@ id|skb
 )paren
 suffix:semicolon
 r_static
-r_struct
-id|sk_buff
-op_star
-id|irttp_reassemble_skb
-c_func
-(paren
-r_struct
-id|tsap_cb
-op_star
-id|self
-)paren
-suffix:semicolon
-r_static
 r_void
 id|irttp_start_todo_timer
 c_func
@@ -220,6 +208,19 @@ id|self
 comma
 r_int
 id|timeout
+)paren
+suffix:semicolon
+r_static
+r_struct
+id|sk_buff
+op_star
+id|irttp_reassemble_skb
+c_func
+(paren
+r_struct
+id|tsap_cb
+op_star
+id|self
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Function irttp_init (void)&n; *&n; *    Initialize the IrTTP layer. Called by module initialization code&n; *&n; */
@@ -1094,11 +1095,9 @@ id|self-&gt;connected
 )paren
 )paren
 (brace
-id|DEBUG
+id|ERROR
 c_func
 (paren
-l_int|4
-comma
 id|__FUNCTION__
 l_string|&quot;(), No data, or not connected&bslash;n&quot;
 )paren
@@ -1125,11 +1124,9 @@ id|self-&gt;max_seg_size
 )paren
 )paren
 (brace
-id|DEBUG
+id|ERROR
 c_func
 (paren
-l_int|1
-comma
 id|__FUNCTION__
 l_string|&quot;(), SAR disabled, and data is to large for IrLAP!&bslash;n&quot;
 )paren
@@ -1162,11 +1159,9 @@ id|self-&gt;tx_max_sdu_size
 )paren
 )paren
 (brace
-id|DEBUG
+id|ERROR
 c_func
 (paren
-l_int|1
-comma
 id|__FUNCTION__
 l_string|&quot;(), SAR enabled, &quot;
 l_string|&quot;but data is larger than TxMaxSduSize!&bslash;n&quot;
@@ -1256,15 +1251,6 @@ op_assign
 l_int|0x00
 suffix:semicolon
 multiline_comment|/* Clear more bit */
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;(), queueing original skb&bslash;n&quot;
-)paren
-suffix:semicolon
 id|skb_queue_tail
 c_func
 (paren
@@ -1368,34 +1354,8 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|__u8
-op_star
-id|frame
-suffix:semicolon
 r_int
 id|n
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self
-op_ne
-l_int|NULL
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self-&gt;magic
-op_eq
-id|TTP_TSAP_MAGIC
-comma
-r_return
-suffix:semicolon
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1520,39 +1480,11 @@ id|flags
 )paren
 suffix:semicolon
 multiline_comment|/* &n;&t;&t; *  More bit must be set by the data_request() or fragment() &n;&t;&t; *  functions&n;&t;&t; */
-id|frame
-op_assign
 id|skb-&gt;data
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;(), More=%s&bslash;n&quot;
-comma
-id|frame
-(braket
-l_int|0
-)braket
-op_amp
-l_int|0x80
-ques
-c_cond
-l_string|&quot;TRUE&quot;
-suffix:colon
-l_string|&quot;FALSE&quot;
-)paren
-suffix:semicolon
-id|frame
 (braket
 l_int|0
 )braket
 op_or_assign
-(paren
-id|__u8
-)paren
 (paren
 id|n
 op_amp
@@ -1930,14 +1862,7 @@ op_star
 id|self
 suffix:semicolon
 r_int
-id|more
-suffix:semicolon
-r_int
 id|n
-suffix:semicolon
-id|__u8
-op_star
-id|frame
 suffix:semicolon
 id|self
 op_assign
@@ -1974,26 +1899,9 @@ l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|skb
-op_ne
-l_int|NULL
-comma
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)paren
-suffix:semicolon
-id|frame
-op_assign
-id|skb-&gt;data
-suffix:semicolon
 id|n
 op_assign
-id|frame
+id|skb-&gt;data
 (braket
 l_int|0
 )braket
@@ -2001,28 +1909,6 @@ op_amp
 l_int|0x7f
 suffix:semicolon
 multiline_comment|/* Extract the credits */
-id|more
-op_assign
-id|frame
-(braket
-l_int|0
-)braket
-op_amp
-l_int|0x80
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|3
-comma
-id|__FUNCTION__
-l_string|&quot;(), got %d credits, TSAP sel=%02x&bslash;n&quot;
-comma
-id|n
-comma
-id|self-&gt;stsap_sel
-)paren
-suffix:semicolon
 id|self-&gt;stats.rx_packets
 op_increment
 suffix:semicolon
@@ -2034,13 +1920,11 @@ id|skb-&gt;len
 op_eq
 l_int|1
 )paren
-(brace
-multiline_comment|/* Dataless flowdata TTP-PDU */
 id|self-&gt;send_credit
 op_add_assign
 id|n
 suffix:semicolon
-)brace
+multiline_comment|/* Dataless flowdata TTP-PDU */
 r_else
 (brace
 multiline_comment|/* Deal with inbound credit */
@@ -2768,6 +2652,25 @@ l_int|0
 op_amp
 l_int|0x80
 suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|skb-&gt;len
+op_ge
+id|TTP_HEADER
+comma
+r_return
+suffix:semicolon
+)paren
+suffix:semicolon
+id|skb_pull
+c_func
+(paren
+id|skb
+comma
+id|TTP_HEADER
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2892,6 +2795,32 @@ comma
 id|self-&gt;tx_max_sdu_size
 )paren
 suffix:semicolon
+multiline_comment|/* Remove parameters */
+id|ASSERT
+c_func
+(paren
+id|skb-&gt;len
+op_ge
+(paren
+id|plen
+op_plus
+l_int|1
+)paren
+comma
+r_return
+suffix:semicolon
+)paren
+suffix:semicolon
+id|skb_pull
+c_func
+(paren
+id|skb
+comma
+id|plen
+op_plus
+l_int|1
+)paren
+suffix:semicolon
 )brace
 id|DEBUG
 c_func
@@ -2906,14 +2835,6 @@ comma
 id|self-&gt;avail_credit
 comma
 id|self-&gt;remote_credit
-)paren
-suffix:semicolon
-id|skb_pull
-c_func
-(paren
-id|skb
-comma
-id|TTP_HEADER
 )paren
 suffix:semicolon
 r_if
@@ -3107,6 +3028,25 @@ l_int|0
 op_amp
 l_int|0x80
 suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|skb-&gt;len
+op_ge
+id|TTP_HEADER
+comma
+r_return
+suffix:semicolon
+)paren
+suffix:semicolon
+id|skb_pull
+c_func
+(paren
+id|skb
+comma
+id|TTP_HEADER
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3227,6 +3167,32 @@ l_int|0
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* Remove parameters */
+id|ASSERT
+c_func
+(paren
+id|skb-&gt;len
+op_ge
+(paren
+id|plen
+op_plus
+l_int|1
+)paren
+comma
+r_return
+suffix:semicolon
+)paren
+suffix:semicolon
+id|skb_pull
+c_func
+(paren
+id|skb
+comma
+id|plen
+op_plus
+l_int|1
+)paren
+suffix:semicolon
 id|DEBUG
 c_func
 (paren
@@ -3250,15 +3216,6 @@ comma
 id|n
 )paren
 suffix:semicolon
-id|skb_pull
-c_func
-(paren
-id|skb
-comma
-l_int|1
-)paren
-suffix:semicolon
-multiline_comment|/* Remove TTP header */
 r_if
 c_cond
 (paren
@@ -5072,15 +5029,6 @@ r_if
 c_cond
 (paren
 (paren
-id|skb_queue_empty
-c_func
-(paren
-op_amp
-id|self-&gt;tx_queue
-)paren
-)paren
-op_logical_and
-(paren
 id|self-&gt;remote_credit
 OL
 id|LOW_THRESHOLD
@@ -5091,17 +5039,17 @@ id|self-&gt;avail_credit
 OG
 l_int|0
 )paren
-)paren
-(brace
-id|DEBUG
+op_logical_and
+(paren
+id|skb_queue_empty
 c_func
 (paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;(), sending credit!&bslash;n&quot;
+op_amp
+id|self-&gt;tx_queue
 )paren
-suffix:semicolon
+)paren
+)paren
+(brace
 id|irttp_give_credit
 c_func
 (paren

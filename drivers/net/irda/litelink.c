@@ -1,29 +1,17 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      litelink.c&n; * Version:       1.0&n; * Description:   Driver for the Parallax LiteLink dongle&n; * Status:        Stable&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Fri May  7 12:50:33 1999&n; * Modified at:   Mon May 10 15:12:18 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      litelink.c&n; * Version:       1.0&n; * Description:   Driver for the Parallax LiteLink dongle&n; * Status:        Stable&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Fri May  7 12:50:33 1999&n; * Modified at:   Wed May 19 07:25:15 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;asm/ioctls.h&gt;
-macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;net/irda/irda.h&gt;
 macro_line|#include &lt;net/irda/irmod.h&gt;
 macro_line|#include &lt;net/irda/irda_device.h&gt;
 macro_line|#include &lt;net/irda/dongle.h&gt;
-r_static
-r_void
-id|litelink_reset
-c_func
-(paren
-r_struct
-id|irda_device
-op_star
-id|dev
-comma
-r_int
-id|unused
-)paren
-suffix:semicolon
+DECL|macro|MIN_DELAY
+mdefine_line|#define MIN_DELAY 25      /* 15 us, but wait a little more to be sure */
+DECL|macro|MAX_DELAY
+mdefine_line|#define MAX_DELAY 10000   /* 1 ms */
 r_static
 r_void
 id|litelink_open
@@ -72,9 +60,6 @@ r_struct
 id|irda_device
 op_star
 id|dev
-comma
-r_int
-id|unused
 )paren
 suffix:semicolon
 r_static
@@ -287,7 +272,7 @@ multiline_comment|/* Sleep a minimum of 15 us */
 id|udelay
 c_func
 (paren
-l_int|15
+id|MIN_DELAY
 )paren
 suffix:semicolon
 multiline_comment|/* Go back to normal mode */
@@ -305,7 +290,7 @@ multiline_comment|/* Sleep a minimum of 15 us */
 id|udelay
 c_func
 (paren
-l_int|15
+id|MIN_DELAY
 )paren
 suffix:semicolon
 multiline_comment|/* Cycle through avaiable baudrates until we reach the correct one */
@@ -346,7 +331,7 @@ multiline_comment|/* Sleep a minimum of 15 us */
 id|udelay
 c_func
 (paren
-l_int|15
+id|MIN_DELAY
 )paren
 suffix:semicolon
 multiline_comment|/* Set DTR, Set RTS */
@@ -364,7 +349,7 @@ multiline_comment|/* Sleep a minimum of 15 us */
 id|udelay
 c_func
 (paren
-l_int|15
+id|MIN_DELAY
 )paren
 suffix:semicolon
 )brace
@@ -380,21 +365,8 @@ r_struct
 id|irda_device
 op_star
 id|idev
-comma
-r_int
-id|unused
 )paren
 (brace
-r_struct
-id|irtty_cb
-op_star
-id|self
-suffix:semicolon
-r_struct
-id|tty_struct
-op_star
-id|tty
-suffix:semicolon
 id|ASSERT
 c_func
 (paren
@@ -432,7 +404,7 @@ multiline_comment|/* Sleep a minimum of 15 us */
 id|udelay
 c_func
 (paren
-l_int|15
+id|MIN_DELAY
 )paren
 suffix:semicolon
 multiline_comment|/* Clear RTS to reset dongle */
@@ -450,7 +422,7 @@ multiline_comment|/* Sleep a minimum of 15 us */
 id|udelay
 c_func
 (paren
-l_int|15
+id|MIN_DELAY
 )paren
 suffix:semicolon
 multiline_comment|/* Go back to normal mode */
@@ -468,7 +440,7 @@ multiline_comment|/* Sleep a minimum of 15 us */
 id|udelay
 c_func
 (paren
-l_int|15
+id|MIN_DELAY
 )paren
 suffix:semicolon
 multiline_comment|/* This dongles speed defaults to 115200 bps */

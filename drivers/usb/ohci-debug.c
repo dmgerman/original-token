@@ -449,7 +449,12 @@ id|ed
 r_int
 id|stat
 op_assign
+id|le32_to_cpup
+c_func
+(paren
+op_amp
 id|ed-&gt;status
+)paren
 suffix:semicolon
 r_int
 id|skip
@@ -522,7 +527,12 @@ r_int
 id|halted
 op_assign
 (paren
+id|le32_to_cpup
+c_func
+(paren
+op_amp
 id|ed-&gt;_head_td
+)paren
 op_amp
 l_int|1
 )paren
@@ -531,7 +541,12 @@ r_int
 id|toggle
 op_assign
 (paren
+id|le32_to_cpup
+c_func
+(paren
+op_amp
 id|ed-&gt;_head_td
+)paren
 op_amp
 l_int|2
 )paren
@@ -634,7 +649,11 @@ c_func
 id|KERN_DEBUG
 l_string|&quot;     tail_td    =  0x%x&bslash;n&quot;
 comma
-id|ed-&gt;tail_td
+id|ed_tail_td
+c_func
+(paren
+id|ed
+)paren
 )paren
 suffix:semicolon
 id|printk
@@ -656,7 +675,12 @@ c_func
 id|KERN_DEBUG
 l_string|&quot;     next_ed    =  0x%x&bslash;n&quot;
 comma
+id|le32_to_cpup
+c_func
+(paren
+op_amp
 id|ed-&gt;next_ed
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -673,16 +697,26 @@ id|td
 )paren
 (brace
 r_int
+id|info
+op_assign
+id|le32_to_cpup
+c_func
+(paren
+op_amp
+id|td-&gt;info
+)paren
+suffix:semicolon
+r_int
 id|td_round
 op_assign
-id|td-&gt;info
+id|info
 op_amp
 id|OHCI_TD_ROUND
 suffix:semicolon
 r_int
 id|td_dir
 op_assign
-id|td-&gt;info
+id|info
 op_amp
 id|OHCI_TD_D
 suffix:semicolon
@@ -690,7 +724,7 @@ r_int
 id|td_int_delay
 op_assign
 (paren
-id|td-&gt;info
+id|info
 op_amp
 id|OHCI_TD_IOC_DELAY
 )paren
@@ -701,7 +735,7 @@ r_int
 id|td_toggle
 op_assign
 (paren
-id|td-&gt;info
+id|info
 op_amp
 id|OHCI_TD_DT
 )paren
@@ -724,7 +758,7 @@ op_assign
 id|OHCI_TD_CC_GET
 c_func
 (paren
-id|td-&gt;info
+id|info
 )paren
 suffix:semicolon
 id|printk
@@ -740,7 +774,7 @@ c_func
 id|KERN_DEBUG
 l_string|&quot;      info     =  0x%x&bslash;n&quot;
 comma
-id|td-&gt;info
+id|info
 )paren
 suffix:semicolon
 id|printk
@@ -872,7 +906,12 @@ c_func
 id|KERN_DEBUG
 l_string|&quot;      cur_buf  =  0x%x&bslash;n&quot;
 comma
+id|le32_to_cpup
+c_func
+(paren
+op_amp
 id|td-&gt;cur_buf
+)paren
 )paren
 suffix:semicolon
 id|printk
@@ -881,7 +920,12 @@ c_func
 id|KERN_DEBUG
 l_string|&quot;      next_td  =  0x%x&bslash;n&quot;
 comma
+id|le32_to_cpup
+c_func
+(paren
+op_amp
 id|td-&gt;next_td
+)paren
 )paren
 suffix:semicolon
 id|printk
@@ -890,7 +934,12 @@ c_func
 id|KERN_DEBUG
 l_string|&quot;      buf_end  =  0x%x&bslash;n&quot;
 comma
+id|le32_to_cpup
+c_func
+(paren
+op_amp
 id|td-&gt;buf_end
+)paren
 )paren
 suffix:semicolon
 id|printk
@@ -1189,13 +1238,17 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;    int_table[%2d]  == %p&bslash;n&quot;
+l_string|&quot;    int_table[%2d]  == %x&bslash;n&quot;
 comma
 id|idx
 comma
+id|le32_to_cpup
+c_func
+(paren
 id|hcca-&gt;int_table
 op_plus
 id|idx
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -1205,7 +1258,12 @@ c_func
 id|KERN_DEBUG
 l_string|&quot;    frame_no          == %d&bslash;n&quot;
 comma
+id|le16_to_cpup
+c_func
+(paren
+op_amp
 id|hcca-&gt;frame_no
+)paren
 )paren
 suffix:semicolon
 id|printk
@@ -1214,7 +1272,12 @@ c_func
 id|KERN_DEBUG
 l_string|&quot;    donehead          == 0x%08x&bslash;n&quot;
 comma
+id|le32_to_cpup
+c_func
+(paren
+op_amp
 id|hcca-&gt;donehead
+)paren
 )paren
 suffix:semicolon
 )brace

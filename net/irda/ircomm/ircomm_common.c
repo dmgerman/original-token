@@ -17,7 +17,7 @@ r_char
 op_star
 id|revision_date
 op_assign
-l_string|&quot;Sun Apr 18 00:40:19 1999&quot;
+l_string|&quot;Tue May 18 03:11:39 1999&quot;
 suffix:semicolon
 r_static
 r_void
@@ -722,17 +722,25 @@ id|ircomm
 id|i
 )braket
 op_member_access_from_pointer
-id|max_txbuff_size
+id|max_header_size
 op_assign
-id|COMM_DEFAULT_DATA_SIZE
+id|COMM_MAX_HEADER_SIZE
 suffix:semicolon
-multiline_comment|/* 64 */
 id|ircomm
 (braket
 id|i
 )braket
 op_member_access_from_pointer
-id|max_sdu_size
+id|tx_max_sdu_size
+op_assign
+id|COMM_DEFAULT_SDU_SIZE
+suffix:semicolon
+id|ircomm
+(braket
+id|i
+)braket
+op_member_access_from_pointer
+id|rx_max_sdu_size
 op_assign
 id|SAR_DISABLE
 suffix:semicolon
@@ -746,7 +754,9 @@ op_assign
 id|dev_alloc_skb
 c_func
 (paren
-id|COMM_DEFAULT_DATA_SIZE
+id|COMM_DEFAULT_SDU_SIZE
+op_plus
+id|COMM_MAX_HEADER_SIZE
 )paren
 suffix:semicolon
 r_if
@@ -785,7 +795,7 @@ id|i
 op_member_access_from_pointer
 id|ctrl_skb
 comma
-id|COMM_HEADER_SIZE
+id|COMM_MAX_HEADER_SIZE
 )paren
 suffix:semicolon
 )brace
@@ -1157,11 +1167,15 @@ id|max_sdu_size
 op_eq
 id|SAR_DISABLE
 )paren
-id|self-&gt;max_txbuff_size
+id|self-&gt;tx_max_sdu_size
 op_assign
+(paren
 id|qos-&gt;data_size.value
 op_minus
 id|max_header_size
+op_minus
+id|COMM_HEADER_SIZE
+)paren
 suffix:semicolon
 r_else
 (brace
@@ -1170,17 +1184,19 @@ c_func
 (paren
 id|max_sdu_size
 op_ge
-id|COMM_DEFAULT_DATA_SIZE
+id|COMM_DEFAULT_SDU_SIZE
 comma
 r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-id|self-&gt;max_txbuff_size
+multiline_comment|/* use fragmentation */
+id|self-&gt;tx_max_sdu_size
 op_assign
 id|max_sdu_size
+op_minus
+id|COMM_HEADER_SIZE
 suffix:semicolon
-multiline_comment|/* use fragmentation */
 )brace
 id|self-&gt;qos
 op_assign
@@ -1189,6 +1205,8 @@ suffix:semicolon
 id|self-&gt;max_header_size
 op_assign
 id|max_header_size
+op_plus
+id|COMM_HEADER_SIZE
 suffix:semicolon
 id|self-&gt;null_modem_mode
 op_assign
@@ -1309,16 +1327,22 @@ id|max_sdu_size
 op_eq
 id|SAR_DISABLE
 )paren
-id|self-&gt;max_txbuff_size
+id|self-&gt;tx_max_sdu_size
 op_assign
+(paren
 id|qos-&gt;data_size.value
 op_minus
 id|max_header_size
+op_minus
+id|COMM_HEADER_SIZE
+)paren
 suffix:semicolon
 r_else
-id|self-&gt;max_txbuff_size
+id|self-&gt;tx_max_sdu_size
 op_assign
 id|max_sdu_size
+op_minus
+id|COMM_HEADER_SIZE
 suffix:semicolon
 id|self-&gt;qos
 op_assign
@@ -1327,6 +1351,8 @@ suffix:semicolon
 id|self-&gt;max_header_size
 op_assign
 id|max_header_size
+op_plus
+id|COMM_HEADER_SIZE
 suffix:semicolon
 id|ircomm_do_event
 c_func
@@ -2320,7 +2346,7 @@ id|self-&gt;daddr
 comma
 l_int|NULL
 comma
-id|self-&gt;max_sdu_size
+id|self-&gt;rx_max_sdu_size
 comma
 id|userdata
 )paren
@@ -2422,9 +2448,9 @@ id|self
 comma
 id|qos
 comma
-l_int|0
+id|self-&gt;tx_max_sdu_size
 comma
-l_int|0
+id|self-&gt;max_header_size
 comma
 id|skb
 )paren
@@ -2494,9 +2520,9 @@ id|self
 comma
 l_int|NULL
 comma
-id|SAR_DISABLE
+id|self-&gt;tx_max_sdu_size
 comma
-l_int|0
+id|self-&gt;max_header_size
 comma
 id|skb
 )paren
@@ -2554,7 +2580,7 @@ c_func
 (paren
 id|self-&gt;tsap
 comma
-id|self-&gt;max_sdu_size
+id|self-&gt;rx_max_sdu_size
 comma
 id|skb
 )paren
@@ -4066,7 +4092,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;():start discovering..&bslash;n&quot;
@@ -4386,7 +4412,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;():sending connect_request...&bslash;n&quot;
@@ -4398,7 +4424,7 @@ id|servicetype
 suffix:semicolon
 multiline_comment|/* ircomm_control_request(self, SERVICETYPE); */
 multiline_comment|/*servictype*/
-id|self-&gt;max_sdu_size
+id|self-&gt;rx_max_sdu_size
 op_assign
 id|SAR_DISABLE
 suffix:semicolon
@@ -4477,7 +4503,9 @@ op_assign
 id|dev_alloc_skb
 c_func
 (paren
-id|COMM_DEFAULT_DATA_SIZE
+id|COMM_DEFAULT_SDU_SIZE
+op_plus
+id|COMM_MAX_HEADER_SIZE
 )paren
 suffix:semicolon
 r_if
@@ -4494,7 +4522,7 @@ c_func
 (paren
 id|userdata
 comma
-id|COMM_HEADER_SIZE
+id|COMM_MAX_HEADER_SIZE
 )paren
 suffix:semicolon
 )brace
@@ -4503,18 +4531,7 @@ id|self-&gt;null_modem_mode
 op_assign
 l_int|1
 suffix:semicolon
-id|self-&gt;max_sdu_size
-op_assign
-id|max_sdu_size
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|max_sdu_size
-op_ne
-id|SAR_DISABLE
-)paren
-id|self-&gt;max_txbuff_size
+id|self-&gt;rx_max_sdu_size
 op_assign
 id|max_sdu_size
 suffix:semicolon
@@ -4967,7 +4984,9 @@ op_assign
 id|dev_alloc_skb
 c_func
 (paren
-id|COMM_DEFAULT_DATA_SIZE
+id|COMM_DEFAULT_SDU_SIZE
+op_plus
+id|COMM_MAX_HEADER_SIZE
 )paren
 suffix:semicolon
 id|ASSERT
@@ -4986,7 +5005,7 @@ c_func
 (paren
 id|skb
 comma
-id|COMM_HEADER_SIZE
+id|COMM_MAX_HEADER_SIZE
 )paren
 suffix:semicolon
 id|self-&gt;ctrl_skb

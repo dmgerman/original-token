@@ -7813,6 +7813,8 @@ id|dpnt
 suffix:semicolon
 r_int
 id|i
+comma
+id|j
 suffix:semicolon
 r_int
 id|max_p
@@ -7863,17 +7865,17 @@ suffix:semicolon
 r_for
 c_loop
 (paren
-id|i
+id|j
 op_assign
 id|max_p
 op_minus
 l_int|1
 suffix:semicolon
-id|i
+id|j
 op_ge
 l_int|0
 suffix:semicolon
-id|i
+id|j
 op_decrement
 )paren
 (brace
@@ -7882,7 +7884,7 @@ id|index
 op_assign
 id|start
 op_plus
-id|i
+id|j
 suffix:semicolon
 id|kdev_t
 id|devi
@@ -7977,7 +7979,7 @@ suffix:semicolon
 id|SD_GENDISK
 c_func
 (paren
-id|start
+id|i
 )paren
 dot
 id|nr_real

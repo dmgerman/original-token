@@ -194,7 +194,7 @@ DECL|member|inuse
 r_int
 id|inuse
 suffix:semicolon
-multiline_comment|/* Inuse? */
+multiline_comment|/* Inuse? (b0) Remove (b1)*/
 DECL|member|qh
 r_struct
 id|uhci_qh
@@ -207,6 +207,13 @@ id|uhci_td
 op_star
 id|first
 suffix:semicolon
+DECL|member|dev
+r_struct
+id|usb_device
+op_star
+id|dev
+suffix:semicolon
+multiline_comment|/* the owning device */
 )brace
 id|__attribute__
 c_func

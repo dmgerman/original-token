@@ -1,17 +1,18 @@
-multiline_comment|/*********************************************************************&n; *&t;&t;  &n; * Filename:&t;  irport.c&n; * Version:&t;  0.9&n; * Description:   Serial driver for IrDA. &n; * Status:&t;  Experimental.&n; * Author:&t;  Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:&t;  Sun Aug  3 13:49:59 1997&n; * Modified at:   Sat May 23 23:15:20 1998&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:&t;  serial.c by Linus Torvalds &n; * &n; *     Copyright (c) 1997,1998 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; *     NOTICE:&n; *&n; *     This driver is ment to be a small half duplex serial driver to be&n; *     used for IR-chipsets that has a UART (16550) compatibility mode. If&n; *     your chipset is is UART only, you should probably use IrTTY instead&n; *     since the Linux serial driver is probably more robust and optimized.&n; *&n; *     The functions in this file may be used by FIR drivers, but this&n; *     driver knows nothing about FIR drivers so don&squot;t ever insert such&n; *     code into this file. Instead you should code your FIR driver in a&n; *     separate file, and then call the functions in this file if&n; *     necessary. This is becase it is difficult to use the Linux serial&n; *     driver with a FIR driver becase they must share interrupts etc. Most&n; *     FIR chipsets can function in advanced SIR mode, and you should&n; *     probably use that mode instead of the UART compatibility mode (and&n; *     then just forget about this file)&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; * &n; * Filename:&t;  irport.c&n; * Version:&t;  1.0&n; * Description:   Half duplex serial port SIR driver for IrDA. &n; * Status:&t;  Experimental.&n; * Author:&t;  Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:&t;  Sun Aug  3 13:49:59 1997&n; * Modified at:   Tue Jun  1 10:02:42 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:&t;  serial.c by Linus Torvalds &n; * &n; *     Copyright (c) 1997, 1998, 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *&n; *     This driver is ment to be a small half duplex serial driver to be&n; *     used for IR-chipsets that has a UART (16550) compatibility mode. &n; *     Eventually it will replace irtty, because of irtty has some &n; *     problems that is hard to get around when we don&squot;t have control&n; *     over the serial driver. This driver may also be used by FIR &n; *     drivers to handle SIR mode for them.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/skbuff.h&gt;
+macro_line|#include &lt;linux/serial_reg.h&gt;
+macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;linux/skbuff.h&gt;
-macro_line|#include &lt;linux/serial_reg.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;net/irda/irda.h&gt;
 macro_line|#include &lt;net/irda/irmod.h&gt;
 macro_line|#include &lt;net/irda/wrapper.h&gt;
@@ -194,17 +195,6 @@ r_struct
 id|device
 op_star
 id|dev
-)paren
-suffix:semicolon
-r_static
-r_void
-id|irport_wait_until_sent
-c_func
-(paren
-r_struct
-id|irda_device
-op_star
-id|idev
 )paren
 suffix:semicolon
 r_static
@@ -515,6 +505,14 @@ id|idev-&gt;io.fifo_size
 op_assign
 l_int|16
 suffix:semicolon
+id|idev-&gt;netdev.base_addr
+op_assign
+id|iobase
+suffix:semicolon
+id|idev-&gt;netdev.irq
+op_assign
+id|irq
+suffix:semicolon
 multiline_comment|/* Lock the port that we need */
 id|ret
 op_assign
@@ -545,7 +543,7 @@ comma
 id|idev-&gt;io.iobase2
 )paren
 suffix:semicolon
-multiline_comment|/* w83977af_cleanup( self-&gt;idev);  */
+multiline_comment|/* irport_cleanup(self-&gt;idev);  */
 r_return
 op_minus
 id|ENODEV
@@ -680,15 +678,6 @@ op_star
 id|idev
 )paren
 (brace
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
-suffix:semicolon
 id|ASSERT
 c_func
 (paren
@@ -715,7 +704,7 @@ l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
-multiline_comment|/* Release the PORT that this driver is using */
+multiline_comment|/* Release the IO-port that this driver is using */
 id|DEBUG
 c_func
 (paren
@@ -756,10 +745,36 @@ r_void
 id|irport_start
 c_func
 (paren
+r_struct
+id|irda_device
+op_star
+id|idev
+comma
 r_int
 id|iobase
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|idev-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|irport_stop
+c_func
+(paren
+id|idev
+comma
+id|iobase
+)paren
+suffix:semicolon
 multiline_comment|/* Initialize UART */
 id|outb
 c_func
@@ -792,15 +807,24 @@ multiline_comment|/* Turn on interrups */
 id|outb
 c_func
 (paren
-(paren
 id|UART_IER_RLSI
 op_or
 id|UART_IER_RDI
-)paren
+op_or
+id|UART_IER_THRI
 comma
 id|iobase
 op_plus
 id|UART_IER
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|idev-&gt;lock
+comma
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -809,10 +833,28 @@ r_void
 id|irport_stop
 c_func
 (paren
+r_struct
+id|irda_device
+op_star
+id|idev
+comma
 r_int
 id|iobase
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|idev-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
 multiline_comment|/* Reset UART */
 id|outb
 c_func
@@ -833,6 +875,15 @@ comma
 id|iobase
 op_plus
 id|UART_IER
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|idev-&gt;lock
+comma
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -861,7 +912,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function irport_change_speed (idev, speed)&n; *&n; *    Set speed of port to specified baudrate&n; *&n; */
+multiline_comment|/*&n; * Function irport_change_speed (idev, speed)&n; *&n; *    Set speed of IrDA port to specified baudrate&n; *&n; */
 DECL|function|irport_change_speed
 r_void
 id|irport_change_speed
@@ -876,6 +927,10 @@ r_int
 id|speed
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_int
 id|iobase
 suffix:semicolon
@@ -932,6 +987,15 @@ id|idev-&gt;io.baudrate
 op_assign
 id|speed
 suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|idev-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
 multiline_comment|/* Turn off interrupts */
 id|outb
 c_func
@@ -952,7 +1016,22 @@ suffix:semicolon
 id|fcr
 op_assign
 id|UART_FCR_ENABLE_FIFO
-op_or
+suffix:semicolon
+multiline_comment|/* &n;&t; * Use trigger level 1 to avoid 3 ms. timeout delay at 9600 bps, and&n;&t; * almost 1,7 ms at 19200 bps. At speeds above that we can just forget&n;&t; * about this timeout since it will always be fast enough. &n;&t; */
+r_if
+c_cond
+(paren
+id|idev-&gt;io.baudrate
+OL
+l_int|38400
+)paren
+id|fcr
+op_or_assign
+id|UART_FCR_TRIGGER_1
+suffix:semicolon
+r_else
+id|fcr
+op_or_assign
 id|UART_FCR_TRIGGER_14
 suffix:semicolon
 multiline_comment|/* IrDA ports use 8N1 */
@@ -1020,17 +1099,28 @@ id|UART_FCR
 )paren
 suffix:semicolon
 multiline_comment|/* Enable FIFO&squot;s */
-multiline_comment|/* Turn on receive interrups */
+multiline_comment|/* Turn on interrups */
 id|outb
 c_func
 (paren
 id|UART_IER_RLSI
 op_or
 id|UART_IER_RDI
+op_or
+id|UART_IER_THRI
 comma
 id|iobase
 op_plus
 id|UART_IER
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|self-&gt;lock
+comma
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -1055,6 +1145,9 @@ suffix:semicolon
 r_int
 id|iobase
 suffix:semicolon
+r_int
+id|fcr
+suffix:semicolon
 id|ASSERT
 c_func
 (paren
@@ -1075,6 +1168,15 @@ id|IRDA_DEVICE_MAGIC
 comma
 r_return
 suffix:semicolon
+)paren
+suffix:semicolon
+id|DEBUG
+c_func
+(paren
+l_int|4
+comma
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Finished with frame?  */
@@ -1132,21 +1234,39 @@ c_func
 id|NET_BH
 )paren
 suffix:semicolon
+id|fcr
+op_assign
+id|UART_FCR_ENABLE_FIFO
+op_or
+id|UART_FCR_CLEAR_RCVR
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|idev-&gt;io.baudrate
+OL
+l_int|38400
+)paren
+id|fcr
+op_or_assign
+id|UART_FCR_TRIGGER_1
+suffix:semicolon
+r_else
+id|fcr
+op_or_assign
+id|UART_FCR_TRIGGER_14
+suffix:semicolon
+multiline_comment|/* &n;&t;&t; * Reset Rx FIFO to make sure that all reflected transmit data&n;&t;&t; * will be discarded&n;&t;&t; */
 id|outb
 c_func
 (paren
-id|UART_FCR_ENABLE_FIFO
-op_or
-id|UART_FCR_TRIGGER_14
-op_or
-id|UART_FCR_CLEAR_RCVR
+id|fcr
 comma
 id|iobase
 op_plus
 id|UART_FCR
 )paren
 suffix:semicolon
-multiline_comment|/* Enable FIFO&squot;s */
 multiline_comment|/* Turn on receive interrupts */
 id|outb
 c_func
@@ -1162,7 +1282,7 @@ id|UART_IER
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Function irport_write (driver)&n; *&n; *    &n; *&n; */
+multiline_comment|/*&n; * Function irport_write (driver)&n; *&n; *    Fill Tx FIFO with transmit data&n; *&n; */
 DECL|function|irport_write
 r_static
 r_int
@@ -1256,21 +1376,6 @@ id|actual
 op_increment
 suffix:semicolon
 )brace
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;(), fifo_size %d ; %d sent of %d&bslash;n&quot;
-comma
-id|fifo_size
-comma
-id|actual
-comma
-id|len
-)paren
-suffix:semicolon
 r_return
 id|actual
 suffix:semicolon
@@ -1298,23 +1403,16 @@ op_star
 id|idev
 suffix:semicolon
 r_int
+r_int
+id|flags
+suffix:semicolon
+r_int
 id|actual
 op_assign
 l_int|0
 suffix:semicolon
 r_int
 id|iobase
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|5
-comma
-id|__FUNCTION__
-l_string|&quot;(), dev=%p&bslash;n&quot;
-comma
-id|dev
-)paren
 suffix:semicolon
 id|ASSERT
 c_func
@@ -1382,9 +1480,62 @@ id|dev-&gt;tbusy
 op_eq
 id|FALSE
 )paren
+(brace
+r_int
+id|tickssofar
+op_assign
+id|jiffies
+op_minus
+id|dev-&gt;trans_start
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tickssofar
+OL
+l_int|5
+)paren
 r_return
 op_minus
 id|EBUSY
+suffix:semicolon
+id|WARNING
+c_func
+(paren
+l_string|&quot;%s: transmit timed out&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+id|irport_start
+c_func
+(paren
+id|idev
+comma
+id|iobase
+)paren
+suffix:semicolon
+id|irport_change_speed
+c_func
+(paren
+id|idev
+comma
+id|idev-&gt;io.baudrate
+)paren
+suffix:semicolon
+id|dev-&gt;trans_start
+op_assign
+id|jiffies
+suffix:semicolon
+)brace
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|idev-&gt;lock
+comma
+id|flags
+)paren
 suffix:semicolon
 multiline_comment|/* Init tx buffer */
 id|idev-&gt;tx_buff.data
@@ -1423,6 +1574,15 @@ op_plus
 id|UART_IER
 )paren
 suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|idev-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|dev_kfree_skb
 c_func
 (paren
@@ -1454,21 +1614,15 @@ id|boguscount
 op_assign
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|idev
-)paren
-r_return
-suffix:semicolon
-id|DEBUG
+id|ASSERT
 c_func
 (paren
-l_int|4
+id|idev
+op_ne
+l_int|NULL
 comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
+r_return
+suffix:semicolon
 )paren
 suffix:semicolon
 id|iobase
@@ -1581,10 +1735,9 @@ op_logical_neg
 id|idev
 )paren
 (brace
-id|printk
+id|WARNING
 c_func
 (paren
-id|KERN_WARNING
 id|__FUNCTION__
 l_string|&quot;() irq %d for unknown device.&bslash;n&quot;
 comma
@@ -1594,6 +1747,13 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|spin_lock
+c_func
+(paren
+op_amp
+id|idev-&gt;lock
+)paren
+suffix:semicolon
 id|idev-&gt;netdev.interrupt
 op_assign
 l_int|1
@@ -1631,22 +1791,70 @@ op_plus
 id|UART_LSR
 )paren
 suffix:semicolon
+id|DEBUG
+c_func
+(paren
+l_int|4
+comma
+id|__FUNCTION__
+l_string|&quot;(), iir=%02x, lsr=%02x, iobase=%#x&bslash;n&quot;
+comma
+id|iir
+comma
+id|lsr
+comma
+id|iobase
+)paren
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|iir
+)paren
+(brace
+r_case
+id|UART_IIR_RLSI
+suffix:colon
+id|DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), RLSI&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|UART_IIR_RDI
+suffix:colon
 r_if
 c_cond
 (paren
-(paren
-id|iir
+id|lsr
 op_amp
-id|UART_IIR_THRI
+id|UART_LSR_DR
 )paren
-op_logical_and
+multiline_comment|/* Receive interrupt */
+id|irport_receive
+c_func
+(paren
+id|idev
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|UART_IIR_THRI
+suffix:colon
+r_if
+c_cond
 (paren
 id|lsr
 op_amp
 id|UART_LSR_THRE
 )paren
-)paren
-(brace
 multiline_comment|/* Transmitter ready for data */
 id|irport_write_wakeup
 c_func
@@ -1654,30 +1862,22 @@ c_func
 id|idev
 )paren
 suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-(paren
-id|iir
-op_amp
-id|UART_IIR_RDI
-)paren
-op_logical_and
-(paren
-id|lsr
-op_amp
-id|UART_LSR_DR
-)paren
-)paren
-(brace
-multiline_comment|/* Receive interrupt */
-id|irport_receive
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|DEBUG
 c_func
 (paren
-id|idev
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), unhandled IIR=%#x&bslash;n&quot;
+comma
+id|iir
 )paren
+suffix:semicolon
+r_break
 suffix:semicolon
 )brace
 multiline_comment|/* Make sure we don&squot;t stay here to long */
@@ -1707,6 +1907,13 @@ suffix:semicolon
 id|idev-&gt;netdev.interrupt
 op_assign
 l_int|0
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|idev-&gt;lock
+)paren
 suffix:semicolon
 )brace
 DECL|function|irport_net_init
@@ -1801,12 +2008,20 @@ op_star
 id|idev
 )paren
 )paren
-(brace
 r_return
 op_minus
 id|EAGAIN
 suffix:semicolon
-)brace
+id|irport_start
+c_func
+(paren
+id|idev
+comma
+id|iobase
+)paren
+suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 multiline_comment|/* Ready to play! */
 id|dev-&gt;tbusy
 op_assign
@@ -1820,12 +2035,20 @@ id|dev-&gt;start
 op_assign
 l_int|1
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-id|irport_start
+multiline_comment|/* Change speed to make sure dongles follow us again */
+r_if
+c_cond
+(paren
+id|idev-&gt;change_speed
+)paren
+id|idev
+op_member_access_from_pointer
+id|change_speed
 c_func
 (paren
-id|iobase
+id|idev
+comma
+l_int|9600
 )paren
 suffix:semicolon
 r_return
@@ -1888,12 +2111,6 @@ id|iobase
 op_assign
 id|idev-&gt;io.iobase2
 suffix:semicolon
-id|irport_stop
-c_func
-(paren
-id|iobase
-)paren
-suffix:semicolon
 multiline_comment|/* Stop device */
 id|dev-&gt;tbusy
 op_assign
@@ -1902,6 +2119,14 @@ suffix:semicolon
 id|dev-&gt;start
 op_assign
 l_int|0
+suffix:semicolon
+id|irport_stop
+c_func
+(paren
+id|idev
+comma
+id|iobase
+)paren
 suffix:semicolon
 id|free_irq
 c_func
@@ -1917,8 +2142,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Function irport_wait_until_sent (idev)&n; *&n; *    Delay exectution until finished transmitting&n; *&n; */
 DECL|function|irport_wait_until_sent
-r_static
 r_void
 id|irport_wait_until_sent
 c_func
@@ -1929,6 +2154,40 @@ op_star
 id|idev
 )paren
 (brace
+r_int
+id|iobase
+suffix:semicolon
+id|iobase
+op_assign
+id|idev-&gt;io.iobase2
+suffix:semicolon
+multiline_comment|/* Wait until Tx FIFO is empty */
+r_while
+c_loop
+(paren
+op_logical_neg
+(paren
+id|inb
+c_func
+(paren
+id|iobase
+op_plus
+id|UART_LSR
+)paren
+op_amp
+id|UART_LSR_THRE
+)paren
+)paren
+(brace
+id|DEBUG
+c_func
+(paren
+l_int|2
+comma
+id|__FUNCTION__
+l_string|&quot;(), waiting!&bslash;n&quot;
+)paren
+suffix:semicolon
 id|current-&gt;state
 op_assign
 id|TASK_INTERRUPTIBLE
@@ -1936,14 +2195,16 @@ suffix:semicolon
 id|schedule_timeout
 c_func
 (paren
+id|MSECS_TO_JIFFIES
+c_func
+(paren
 l_int|60
-op_star
-id|HZ
-op_div
-l_int|1000
+)paren
 )paren
 suffix:semicolon
 )brace
+)brace
+multiline_comment|/*&n; * Function irport_is_receiving (idev)&n; *&n; *    Returns true is we are currently receiving data&n; *&n; */
 DECL|function|irport_is_receiving
 r_static
 r_int
@@ -2180,6 +2441,18 @@ c_func
 id|irq
 comma
 l_string|&quot;1-4i&quot;
+)paren
+suffix:semicolon
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Dag Brattli &lt;dagb@cs.uit.no&gt;&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;Half duplex serial driver for IrDA SIR mode&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Function cleanup_module (void)&n; *&n; *    &n; *&n; */

@@ -1724,8 +1724,6 @@ id|d_alloc_root
 c_func
 (paren
 id|dir
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 r_if
@@ -2088,9 +2086,12 @@ multiline_comment|/*&n;&t; * Add the parent to the dir cache before releasing th
 r_if
 c_cond
 (paren
+op_logical_neg
+id|IS_ROOT
+c_func
+(paren
 id|dentry
-op_ne
-id|dentry-&gt;d_parent
+)paren
 )paren
 (brace
 r_struct
@@ -4274,10 +4275,11 @@ suffix:semicolon
 r_while
 c_loop
 (paren
+op_logical_neg
+id|IS_ROOT
+c_func
 (paren
 id|tdentry
-op_ne
-id|tdentry-&gt;d_parent
 )paren
 )paren
 suffix:semicolon

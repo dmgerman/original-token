@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlan_eth.c&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Thu Oct 15 08:37:58 1998&n; * Modified at:   Mon May 10 20:23:49 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       skeleton.c by Donald Becker &lt;becker@CESDIS.gsfc.nasa.gov&gt;&n; *                slip.c by Laurence Culhane,   &lt;loz@holmes.demon.co.uk&gt;&n; *                          Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlan_eth.c&n; * Version:       &n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Thu Oct 15 08:37:58 1998&n; * Modified at:   Mon May 31 19:57:08 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       skeleton.c by Donald Becker &lt;becker@CESDIS.gsfc.nasa.gov&gt;&n; *                slip.c by Laurence Culhane,   &lt;loz@holmes.demon.co.uk&gt;&n; *                          Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/inetdevice.h&gt;
@@ -35,7 +35,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -93,9 +93,10 @@ c_func
 id|dev
 )paren
 suffix:semicolon
+multiline_comment|/* &n;&t; * Lets do all queueing in IrTTP instead of this device driver.&n;&t; * Queueing here as well can introduce some strange latency&n;&t; * problems, which we will avoid by setting the queue size to 0.&n;&t; */
 id|dev-&gt;tx_queue_len
 op_assign
-id|TTP_MAX_QUEUE
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -206,7 +207,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -309,7 +310,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -410,6 +411,9 @@ id|irlan_cb
 op_star
 id|self
 suffix:semicolon
+r_int
+id|ret
+suffix:semicolon
 id|self
 op_assign
 (paren
@@ -443,52 +447,16 @@ l_int|0
 suffix:semicolon
 )paren
 suffix:semicolon
-multiline_comment|/* Lock transmit buffer */
+multiline_comment|/* Check if IrTTP can accept more frames */
 r_if
 c_cond
 (paren
-id|irda_lock
-c_func
-(paren
-(paren
-r_void
-op_star
-)paren
-op_amp
 id|dev-&gt;tbusy
-)paren
-op_eq
-id|FALSE
-)paren
-(brace
-multiline_comment|/*&n;&t;&t; * If we get here, some higher level has decided we are broken.&n;&t;&t; * There should really be a &quot;kick me&quot; function call instead.&n;&t;&t; */
-r_int
-id|tickssofar
-op_assign
-id|jiffies
-op_minus
-id|dev-&gt;trans_start
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|tickssofar
-OL
-l_int|5
 )paren
 r_return
 op_minus
 id|EBUSY
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;trans_start
-op_assign
-id|jiffies
-suffix:semicolon
-)brace
 multiline_comment|/* skb headroom large enough to contain all IrDA-headers? */
 r_if
 c_cond
@@ -553,19 +521,14 @@ id|dev-&gt;trans_start
 op_assign
 id|jiffies
 suffix:semicolon
-id|self-&gt;stats.tx_packets
-op_increment
-suffix:semicolon
-id|self-&gt;stats.tx_bytes
-op_add_assign
-id|skb-&gt;len
-suffix:semicolon
 multiline_comment|/* Now queue the packet in the transport layer */
 r_if
 c_cond
 (paren
 id|self-&gt;use_udata
 )paren
+id|ret
+op_assign
 id|irttp_udata_request
 c_func
 (paren
@@ -575,10 +538,8 @@ id|skb
 )paren
 suffix:semicolon
 r_else
-(brace
-r_if
-c_cond
-(paren
+id|ret
+op_assign
 id|irttp_data_request
 c_func
 (paren
@@ -586,30 +547,36 @@ id|self-&gt;tsap_data
 comma
 id|skb
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
 OL
 l_int|0
 )paren
 (brace
-multiline_comment|/*   &n;&t;&t;&t; * IrTTPs tx queue is full, so we just have to&n;&t;&t;&t; * drop the frame! You might think that we should&n;&t;&t;&t; * just return -1 and don&squot;t deallocate the frame,&n;&t;&t;&t; * but that is dangerous since it&squot;s possible that&n;&t;&t;&t; * we have replaced the original skb with a new&n;&t;&t;&t; * one with larger headroom, and that would really&n;&t;&t;&t; * confuse do_dev_queue_xmit() in dev.c! I have&n;&t;&t;&t; * tried :-) DB &n;&t;&t;&t; */
+multiline_comment|/*   &n;&t;&t; * IrTTPs tx queue is full, so we just have to&n;&t;&t; * drop the frame! You might think that we should&n;&t;&t; * just return -1 and don&squot;t deallocate the frame,&n;&t;&t; * but that is dangerous since it&squot;s possible that&n;&t;&t; * we have replaced the original skb with a new&n;&t;&t; * one with larger headroom, and that would really&n;&t;&t; * confuse do_dev_queue_xmit() in dev.c! I have&n;&t;&t; * tried :-) DB &n;&t;&t; */
 id|dev_kfree_skb
 c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
-op_increment
 id|self-&gt;stats.tx_dropped
-suffix:semicolon
-r_return
-l_int|0
+op_increment
 suffix:semicolon
 )brace
-)brace
-id|dev-&gt;tbusy
-op_assign
-l_int|0
+r_else
+(brace
+id|self-&gt;stats.tx_packets
+op_increment
 suffix:semicolon
-multiline_comment|/* Finished! */
+id|self-&gt;stats.tx_bytes
+op_add_assign
+id|skb-&gt;len
+suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -716,13 +683,6 @@ id|skb-&gt;dev
 )paren
 suffix:semicolon
 multiline_comment|/* Remove eth header */
-id|netif_rx
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-multiline_comment|/* Eat it! */
 id|self-&gt;stats.rx_packets
 op_increment
 suffix:semicolon
@@ -730,6 +690,13 @@ id|self-&gt;stats.rx_bytes
 op_add_assign
 id|skb-&gt;len
 suffix:semicolon
+id|netif_rx
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+multiline_comment|/* Eat it! */
 r_return
 l_int|0
 suffix:semicolon
@@ -761,15 +728,6 @@ r_struct
 id|device
 op_star
 id|dev
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
 suffix:semicolon
 id|self
 op_assign
@@ -914,9 +872,9 @@ suffix:semicolon
 multiline_comment|/* return 0; */
 )brace
 multiline_comment|/*&n; * Function irlan_etc_send_gratuitous_arp (dev)&n; *&n; *    Send gratuitous ARP to announce that we have changed&n; *    hardware address, so that all peers updates their ARP tables&n; */
-DECL|function|irlan_etc_send_gratuitous_arp
+DECL|function|irlan_eth_send_gratuitous_arp
 r_void
-id|irlan_etc_send_gratuitous_arp
+id|irlan_eth_send_gratuitous_arp
 c_func
 (paren
 r_struct
@@ -990,13 +948,11 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
 )paren
-suffix:semicolon
-r_return
 suffix:semicolon
 id|ASSERT
 c_func
@@ -1020,6 +976,27 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
+multiline_comment|/* Check if data channel has been connected yet */
+r_if
+c_cond
+(paren
+id|self-&gt;client.state
+op_ne
+id|IRLAN_DATA
+)paren
+(brace
+id|DEBUG
+c_func
+(paren
+l_int|1
+comma
+id|__FUNCTION__
+l_string|&quot;(), delaying!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1029,15 +1006,12 @@ id|IFF_PROMISC
 )paren
 (brace
 multiline_comment|/* Enable promiscuous mode */
-id|DEBUG
+id|WARNING
 c_func
 (paren
-l_int|0
-comma
-l_string|&quot;Promiscous mode not implemented&bslash;n&quot;
+l_string|&quot;Promiscous mode not implemented by IrLAN!&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* outw(MULTICAST|PROMISC, ioaddr); */
 )brace
 r_else
 r_if
@@ -1128,16 +1102,6 @@ id|dev-&gt;flags
 op_amp
 id|IFF_BROADCAST
 )paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;(), Setting broadcast filter&bslash;n&quot;
-)paren
-suffix:semicolon
 id|irlan_set_broadcast_filter
 c_func
 (paren
@@ -1146,18 +1110,7 @@ comma
 id|TRUE
 )paren
 suffix:semicolon
-)brace
 r_else
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;(), Clearing broadcast filter&bslash;n&quot;
-)paren
-suffix:semicolon
 id|irlan_set_broadcast_filter
 c_func
 (paren
@@ -1166,7 +1119,6 @@ comma
 id|FALSE
 )paren
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n; * Function irlan_get_stats (dev)&n; *&n; *    Get the current statistics for this device&n; *&n; */
 DECL|function|irlan_eth_get_stats

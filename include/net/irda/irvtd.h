@@ -57,6 +57,14 @@ op_star
 id|comm
 suffix:semicolon
 multiline_comment|/* ircomm instance */
+DECL|member|tx_max_sdu_size
+id|__u32
+id|tx_max_sdu_size
+suffix:semicolon
+DECL|member|max_header_size
+id|__u32
+id|max_header_size
+suffix:semicolon
 multiline_comment|/* &n;&t; * These members are used for compatibility with usual serial device.&n;&t; * See linux/serial.h&n;&t; */
 DECL|member|flags
 r_int
@@ -97,10 +105,15 @@ DECL|member|tx_wait
 id|wait_queue_head_t
 id|tx_wait
 suffix:semicolon
-DECL|member|timer
+DECL|member|tx_timer
 r_struct
 id|timer_list
-id|timer
+id|tx_timer
+suffix:semicolon
+DECL|member|rx_timer
+r_struct
+id|timer_list
+id|rx_timer
 suffix:semicolon
 DECL|member|pgrp
 r_int

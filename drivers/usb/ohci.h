@@ -118,9 +118,9 @@ mdefine_line|#define td_force_toggle(b)&t;(((b) | 2) &lt;&lt; 24)
 DECL|macro|OHCI_TD_ERRCNT
 mdefine_line|#define OHCI_TD_ERRCNT&t;(3 &lt;&lt; 26)&t;/* error count */
 DECL|macro|td_errorcount
-mdefine_line|#define td_errorcount(td)&t;(((td).info &gt;&gt; 26) &amp; 3)
+mdefine_line|#define td_errorcount(td)&t;((le32_to_cpup(&amp;(td).info) &gt;&gt; 26) &amp; 3)
 DECL|macro|clear_td_errorcount
-mdefine_line|#define clear_td_errorcount(td)&t;((td)-&gt;info &amp;= ~(__u32)OHCI_TD_ERRCNT)
+mdefine_line|#define clear_td_errorcount(td)&t;((td)-&gt;info &amp;= cpu_to_le32(~(__u32)OHCI_TD_ERRCNT))
 DECL|macro|OHCI_TD_CC
 mdefine_line|#define OHCI_TD_CC&t;(0xf &lt;&lt; 28)&t;/* condition code */
 DECL|macro|OHCI_TD_CC_GET
@@ -128,11 +128,11 @@ mdefine_line|#define OHCI_TD_CC_GET(td_i) (((td_i) &gt;&gt; 28) &amp; 0xf)
 DECL|macro|OHCI_TD_CC_NEW
 mdefine_line|#define OHCI_TD_CC_NEW&t;(OHCI_TD_CC)&t;/* set this on all unaccessed TDs! */
 DECL|macro|td_cc_notaccessed
-mdefine_line|#define td_cc_notaccessed(td)&t;(((td).info &gt;&gt; 29) == 7)
+mdefine_line|#define td_cc_notaccessed(td)&t;((le32_to_cpup(&amp;(td).info) &gt;&gt; 29) == 7)
 DECL|macro|td_cc_accessed
-mdefine_line|#define td_cc_accessed(td)&t;(((td).info &gt;&gt; 29) != 7)
+mdefine_line|#define td_cc_accessed(td)&t;((le32_to_cpup(&amp;(td).info) &gt;&gt; 29) != 7)
 DECL|macro|td_cc_noerror
-mdefine_line|#define td_cc_noerror(td)&t;((((td).info) &amp; OHCI_TD_CC) == 0)
+mdefine_line|#define td_cc_noerror(td)&t;(((le32_to_cpup(&amp;(td).info)) &amp; OHCI_TD_CC) == 0)
 DECL|macro|td_active
 mdefine_line|#define td_active(td)&t;(!td_cc_noerror((td)) &amp;&amp; (td_errorcount((td)) &lt; 3))
 DECL|macro|td_done
@@ -190,17 +190,19 @@ l_int|16
 suffix:semicolon
 multiline_comment|/* get the head_td */
 DECL|macro|ed_head_td
-mdefine_line|#define ed_head_td(ed)&t;((ed)-&gt;_head_td &amp; 0xfffffff0)
+mdefine_line|#define ed_head_td(ed)&t;(le32_to_cpup(&amp;(ed)-&gt;_head_td) &amp; 0xfffffff0)
+DECL|macro|ed_tail_td
+mdefine_line|#define ed_tail_td(ed)&t;(le32_to_cpup(&amp;(ed)-&gt;tail_td))
 multiline_comment|/* save the carry &amp; halted flag while setting the head_td */
 DECL|macro|set_ed_head_td
-mdefine_line|#define set_ed_head_td(ed, td)&t;((ed)-&gt;_head_td = (td) | ((ed)-&gt;_head_td &amp; 3))
+mdefine_line|#define set_ed_head_td(ed, td)&t;((ed)-&gt;_head_td = cpu_to_le32((td)) &bslash;&n;&t;&t;&t;&t; | ((ed)-&gt;_head_td &amp; cpu_to_le32(3)))
 multiline_comment|/* Control the ED&squot;s halted flag */
 DECL|macro|ohci_halt_ed
-mdefine_line|#define ohci_halt_ed(ed)&t;((ed)-&gt;_head_td |= 1)
+mdefine_line|#define ohci_halt_ed(ed)&t;((ed)-&gt;_head_td |= cpu_to_le32(1))
 DECL|macro|ohci_unhalt_ed
-mdefine_line|#define ohci_unhalt_ed(ed)&t;((ed)-&gt;_head_td &amp;= ~(__u32)1)
+mdefine_line|#define ohci_unhalt_ed(ed)&t;((ed)-&gt;_head_td &amp;= cpu_to_le32(~(__u32)1))
 DECL|macro|ohci_ed_halted
-mdefine_line|#define ohci_ed_halted(ed)&t;((ed)-&gt;_head_td &amp; 1)
+mdefine_line|#define ohci_ed_halted(ed)&t;((ed)-&gt;_head_td &amp; cpu_to_le32(1))
 DECL|macro|OHCI_ED_SKIP
 mdefine_line|#define OHCI_ED_SKIP&t;(1 &lt;&lt; 14)
 DECL|macro|OHCI_ED_MPS
@@ -239,9 +241,9 @@ multiline_comment|/*&n; * We&squot;ll use this status flag for to mark if an ED 
 DECL|macro|ED_ALLOCATED
 mdefine_line|#define ED_ALLOCATED&t;(1 &lt;&lt; 31)
 DECL|macro|ed_allocated
-mdefine_line|#define ed_allocated(ed)&t;((ed).status &amp; ED_ALLOCATED)
+mdefine_line|#define ed_allocated(ed)&t;(le32_to_cpup(&amp;(ed).status) &amp; ED_ALLOCATED)
 DECL|macro|allocate_ed
-mdefine_line|#define allocate_ed(ed)&t;&t;((ed)-&gt;status |= ED_ALLOCATED)
+mdefine_line|#define allocate_ed(ed)&t;&t;((ed)-&gt;status |= cpu_to_le32(ED_ALLOCATED))
 multiline_comment|/*&n; * The HCCA (Host Controller Communications Area) is a 256 byte&n; * structure defined in the OHCI spec. that the host controller is&n; * told the base address of.  It must be 256-byte aligned.&n; */
 DECL|macro|NUM_INTS
 mdefine_line|#define NUM_INTS 32&t;/* part of the OHCI standard */

@@ -711,8 +711,6 @@ id|d_alloc_root
 c_func
 (paren
 id|root_inode
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Check whether somebody else completed the super block.&n;&t; */

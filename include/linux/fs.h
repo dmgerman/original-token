@@ -123,13 +123,13 @@ DECL|macro|MS_ODD_RENAME
 mdefine_line|#define MS_ODD_RENAME   32768    /* Temporary stuff; will go away as soon&n;&t;&t;&t;&t;  * as nfs_rename() will be cleaned up&n;&t;&t;&t;&t;  */
 multiline_comment|/*&n; * Flags that can be altered by MS_REMOUNT&n; */
 DECL|macro|MS_RMT_MASK
-mdefine_line|#define MS_RMT_MASK (MS_RDONLY|MS_NOSUID|MS_NODEV|MS_NOEXEC|MS_SYNCHRONOUS|MS_MANDLOCK|MS_NOATIME|MS_NODIRATIME)
+mdefine_line|#define MS_RMT_MASK&t;(MS_RDONLY|MS_NOSUID|MS_NODEV|MS_NOEXEC|&bslash;&n;&t;&t;&t;MS_SYNCHRONOUS|MS_MANDLOCK|MS_NOATIME|MS_NODIRATIME)
 multiline_comment|/*&n; * Magic mount flag number. Has to be or-ed to the flag values.&n; */
 DECL|macro|MS_MGC_VAL
 mdefine_line|#define MS_MGC_VAL 0xC0ED0000&t;/* magic flag number to indicate &quot;new&quot; flags */
 DECL|macro|MS_MGC_MSK
 mdefine_line|#define MS_MGC_MSK 0xffff0000&t;/* magic flag number mask */
-multiline_comment|/*&n; * Note that read-only etc flags are inode-specific: setting some file-system&n; * flags just means all the inodes inherit those flags by default. It might be&n; * possible to override it selectively if you really wanted to with some&n; * ioctl() that is not currently implemented.&n; *&n; * Exception: MS_RDONLY is always applied to the entire file system.&n; *&n; * Unfortunately, it is possible to change a filesystems flags with it mounted&n; * with files in use.  This means that all of the inodes will not have their&n; * i_flags updated.  Hence, i_flags no longer inherit the superblock mount&n; * flags, so these have to be checked separately. -- rmk@arm.uk.linux.org&n; */
+multiline_comment|/*&n; * Note that nosuid etc flags are inode-specific: setting some file-system&n; * flags just means all the inodes inherit those flags by default. It might be&n; * possible to override it selectively if you really wanted to with some&n; * ioctl() that is not currently implemented.&n; *&n; * Exception: MS_RDONLY is always applied to the entire file system.&n; *&n; * Unfortunately, it is possible to change a filesystems flags with it mounted&n; * with files in use.  This means that all of the inodes will not have their&n; * i_flags updated.  Hence, i_flags no longer inherit the superblock mount&n; * flags, so these have to be checked separately. -- rmk@arm.uk.linux.org&n; */
 DECL|macro|__IS_FLG
 mdefine_line|#define __IS_FLG(inode,flg) (((inode)-&gt;i_sb &amp;&amp; (inode)-&gt;i_sb-&gt;s_flags &amp; (flg)) &bslash;&n;&t;&t;&t;&t;|| (inode)-&gt;i_flags &amp; (flg))
 DECL|macro|IS_RDONLY
@@ -192,7 +192,6 @@ mdefine_line|#define FIGETBSZ   _IO(0x00,2)&t;/* get the block size used for bma
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
-macro_line|#include &lt;asm/bitops.h&gt;
 r_extern
 r_void
 id|update_atime
@@ -200,7 +199,6 @@ id|update_atime
 r_struct
 id|inode
 op_star
-id|inode
 )paren
 suffix:semicolon
 DECL|macro|UPDATE_ATIME
@@ -415,21 +413,16 @@ c_func
 r_struct
 id|buffer_head
 op_star
-id|bh
 comma
 id|kdev_t
-id|dev
 comma
 r_int
-id|block
 comma
 id|bh_end_io_t
 op_star
-id|handler
 comma
 r_void
 op_star
-id|dev_id
 )paren
 suffix:semicolon
 DECL|function|buffer_uptodate
@@ -1255,12 +1248,10 @@ c_func
 (paren
 r_int
 r_int
-id|fd
 comma
 r_struct
 id|flock
 op_star
-id|l
 )paren
 suffix:semicolon
 r_extern
@@ -1270,16 +1261,13 @@ c_func
 (paren
 r_int
 r_int
-id|fd
 comma
 r_int
 r_int
-id|cmd
 comma
 r_struct
 id|flock
 op_star
-id|l
 )paren
 suffix:semicolon
 multiline_comment|/* fs/locks.c */
@@ -1293,7 +1281,6 @@ id|file
 op_star
 comma
 id|fl_owner_t
-id|id
 )paren
 suffix:semicolon
 r_extern
@@ -1363,7 +1350,6 @@ id|file_lock
 op_star
 )paren
 suffix:semicolon
-macro_line|#include &lt;linux/stat.h&gt;
 DECL|struct|fasync_struct
 r_struct
 id|fasync_struct
@@ -2653,7 +2639,6 @@ c_func
 r_struct
 id|inode
 op_star
-id|inode
 )paren
 suffix:semicolon
 r_extern
@@ -2662,23 +2647,18 @@ id|locks_mandatory_area
 c_func
 (paren
 r_int
-id|read_write
 comma
 r_struct
 id|inode
 op_star
-id|inode
 comma
 r_struct
 id|file
 op_star
-id|filp
 comma
 id|loff_t
-id|offset
 comma
 r_int
-id|count
 )paren
 suffix:semicolon
 DECL|function|locks_verify_locked
@@ -2896,7 +2876,6 @@ c_func
 r_const
 r_char
 op_star
-id|filename
 )paren
 suffix:semicolon
 DECL|macro|__getname
@@ -2911,10 +2890,8 @@ c_func
 r_struct
 id|fasync_struct
 op_star
-id|fa
 comma
 r_int
-id|sig
 )paren
 suffix:semicolon
 r_extern
@@ -2941,12 +2918,10 @@ c_func
 (paren
 r_int
 r_int
-id|major
 comma
 r_const
 r_char
 op_star
-id|name
 )paren
 suffix:semicolon
 r_extern
@@ -2957,12 +2932,10 @@ c_func
 r_struct
 id|inode
 op_star
-id|inode
 comma
 r_struct
 id|file
 op_star
-id|filp
 )paren
 suffix:semicolon
 r_extern
@@ -2972,7 +2945,6 @@ id|blkdev_release
 r_struct
 id|inode
 op_star
-id|inode
 )paren
 suffix:semicolon
 r_extern
@@ -3010,12 +2982,10 @@ c_func
 (paren
 r_int
 r_int
-id|major
 comma
 r_const
 r_char
 op_star
-id|name
 )paren
 suffix:semicolon
 r_extern
@@ -3026,12 +2996,10 @@ c_func
 r_struct
 id|inode
 op_star
-id|inode
 comma
 r_struct
 id|file
 op_star
-id|filp
 )paren
 suffix:semicolon
 r_extern
@@ -3051,7 +3019,6 @@ id|bdevname
 c_func
 (paren
 id|kdev_t
-id|dev
 )paren
 suffix:semicolon
 r_extern
@@ -3061,7 +3028,6 @@ id|cdevname
 c_func
 (paren
 id|kdev_t
-id|dev
 )paren
 suffix:semicolon
 r_extern
@@ -3071,7 +3037,6 @@ id|kdevname
 c_func
 (paren
 id|kdev_t
-id|dev
 )paren
 suffix:semicolon
 r_extern
@@ -3096,7 +3061,6 @@ c_func
 r_struct
 id|inode
 op_star
-id|inode
 )paren
 suffix:semicolon
 r_extern
@@ -3113,7 +3077,6 @@ c_func
 r_struct
 id|inode
 op_star
-id|inode
 )paren
 suffix:semicolon
 r_extern
@@ -3124,7 +3087,6 @@ c_func
 r_struct
 id|inode
 op_star
-id|inode
 )paren
 suffix:semicolon
 r_extern
@@ -3172,7 +3134,6 @@ c_func
 r_const
 r_char
 op_star
-id|name
 )paren
 suffix:semicolon
 r_extern
@@ -3191,7 +3152,6 @@ id|fs_may_mount
 c_func
 (paren
 id|kdev_t
-id|dev
 )paren
 suffix:semicolon
 r_extern
@@ -3208,7 +3168,6 @@ c_func
 r_struct
 id|buffer_head
 op_star
-id|buf
 )paren
 suffix:semicolon
 r_extern
@@ -3219,10 +3178,8 @@ c_func
 r_struct
 id|buffer_head
 op_star
-id|buf
 comma
 r_int
-id|flag
 )paren
 suffix:semicolon
 r_extern
@@ -3262,10 +3219,8 @@ c_func
 r_struct
 id|buffer_head
 op_star
-id|bh
 comma
 r_int
-id|on
 )paren
 suffix:semicolon
 DECL|function|mark_buffer_clean
@@ -3368,7 +3323,6 @@ id|check_disk_change
 c_func
 (paren
 id|kdev_t
-id|dev
 )paren
 suffix:semicolon
 r_extern
@@ -3379,7 +3333,6 @@ c_func
 r_struct
 id|super_block
 op_star
-id|sb
 )paren
 suffix:semicolon
 r_extern
@@ -3398,7 +3351,6 @@ id|invalidate_buffers
 c_func
 (paren
 id|kdev_t
-id|dev
 )paren
 suffix:semicolon
 r_extern
@@ -3407,7 +3359,6 @@ id|floppy_is_wp
 c_func
 (paren
 r_int
-id|minor
 )paren
 suffix:semicolon
 r_extern
@@ -3416,7 +3367,6 @@ id|sync_inodes
 c_func
 (paren
 id|kdev_t
-id|dev
 )paren
 suffix:semicolon
 r_extern
@@ -3427,7 +3377,6 @@ c_func
 r_struct
 id|inode
 op_star
-id|inode
 )paren
 suffix:semicolon
 r_extern
@@ -3436,7 +3385,6 @@ id|sync_dev
 c_func
 (paren
 id|kdev_t
-id|dev
 )paren
 suffix:semicolon
 r_extern
@@ -3445,7 +3393,6 @@ id|fsync_dev
 c_func
 (paren
 id|kdev_t
-id|dev
 )paren
 suffix:semicolon
 r_extern
@@ -3454,7 +3401,6 @@ id|sync_supers
 c_func
 (paren
 id|kdev_t
-id|dev
 )paren
 suffix:semicolon
 r_extern
@@ -3465,10 +3411,8 @@ c_func
 r_struct
 id|inode
 op_star
-id|inode
 comma
 r_int
-id|block
 )paren
 suffix:semicolon
 r_extern
@@ -3493,10 +3437,8 @@ c_func
 r_struct
 id|inode
 op_star
-id|inode
 comma
 r_int
-id|mask
 )paren
 suffix:semicolon
 r_extern
@@ -3507,7 +3449,6 @@ c_func
 r_struct
 id|inode
 op_star
-id|inode
 )paren
 suffix:semicolon
 r_extern
@@ -3518,7 +3459,6 @@ c_func
 r_struct
 id|inode
 op_star
-id|inode
 )paren
 suffix:semicolon
 r_extern
@@ -3531,13 +3471,10 @@ c_func
 r_const
 r_char
 op_star
-id|pathname
 comma
 r_int
-id|flag
 comma
 r_int
-id|mode
 )paren
 suffix:semicolon
 r_extern
@@ -3550,13 +3487,10 @@ c_func
 r_const
 r_char
 op_star
-id|filename
 comma
 r_int
-id|mode
 comma
 id|dev_t
-id|dev
 )paren
 suffix:semicolon
 r_extern
@@ -3671,7 +3605,6 @@ c_func
 r_struct
 id|inode
 op_star
-id|inode
 )paren
 suffix:semicolon
 r_extern
@@ -3787,13 +3720,10 @@ id|find_buffer
 c_func
 (paren
 id|kdev_t
-id|dev
 comma
 r_int
-id|block
 comma
 r_int
-id|size
 )paren
 suffix:semicolon
 r_extern
@@ -3864,7 +3794,6 @@ c_func
 r_struct
 id|buffer_head
 op_star
-id|buf
 )paren
 suffix:semicolon
 DECL|function|bforget
@@ -3898,10 +3827,8 @@ id|set_blocksize
 c_func
 (paren
 id|kdev_t
-id|dev
 comma
 r_int
-id|size
 )paren
 suffix:semicolon
 r_extern
@@ -3911,7 +3838,6 @@ id|get_hardblocksize
 c_func
 (paren
 id|kdev_t
-id|dev
 )paren
 suffix:semicolon
 r_extern
@@ -3922,13 +3848,10 @@ id|bread
 c_func
 (paren
 id|kdev_t
-id|dev
 comma
 r_int
-id|block
 comma
 r_int
-id|size
 )paren
 suffix:semicolon
 r_extern
@@ -3939,21 +3862,16 @@ id|breada
 c_func
 (paren
 id|kdev_t
-id|dev
 comma
 r_int
-id|block
 comma
 r_int
-id|size
 comma
 r_int
 r_int
-id|pos
 comma
 r_int
 r_int
-id|filesize
 )paren
 suffix:semicolon
 r_extern
@@ -4080,7 +3998,6 @@ id|get_super
 c_func
 (paren
 id|kdev_t
-id|dev
 )paren
 suffix:semicolon
 r_extern
@@ -4089,7 +4006,6 @@ id|put_super
 c_func
 (paren
 id|kdev_t
-id|dev
 )paren
 suffix:semicolon
 r_int
@@ -4098,7 +4014,6 @@ id|generate_cluster
 c_func
 (paren
 id|kdev_t
-id|dev
 comma
 r_int
 id|b
@@ -4106,7 +4021,6 @@ id|b
 )braket
 comma
 r_int
-id|size
 )paren
 suffix:semicolon
 r_int
@@ -4115,7 +4029,6 @@ id|generate_cluster_swab32
 c_func
 (paren
 id|kdev_t
-id|dev
 comma
 r_int
 id|b
@@ -4123,7 +4036,6 @@ id|b
 )braket
 comma
 r_int
-id|size
 )paren
 suffix:semicolon
 r_extern
@@ -4157,12 +4069,10 @@ id|change_root
 c_func
 (paren
 id|kdev_t
-id|new_root_dev
 comma
 r_const
 r_char
 op_star
-id|put_old
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -4258,7 +4168,6 @@ comma
 r_struct
 id|dentry
 op_star
-id|dir
 )paren
 suffix:semicolon
 r_extern
@@ -4273,7 +4182,6 @@ comma
 r_struct
 id|dentry
 op_star
-id|dir
 )paren
 suffix:semicolon
 r_extern
@@ -4308,5 +4216,5 @@ multiline_comment|/* kludge to get SCSI modules working */
 macro_line|#include &lt;linux/minix_fs.h&gt;
 macro_line|#include &lt;linux/minix_fs_sb.h&gt;
 macro_line|#endif /* __KERNEL__ */
-macro_line|#endif
+macro_line|#endif /* _LINUX_FS_H */
 eof

@@ -3210,8 +3210,6 @@ id|sb
 comma
 id|EXT2_ROOT_INO
 )paren
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 r_if

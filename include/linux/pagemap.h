@@ -40,6 +40,8 @@ DECL|macro|PAGE_CACHE_SIZE
 mdefine_line|#define PAGE_CACHE_SIZE&t;&t;PAGE_SIZE
 DECL|macro|PAGE_CACHE_MASK
 mdefine_line|#define PAGE_CACHE_MASK&t;&t;PAGE_MASK
+DECL|macro|PAGE_CACHE_ALIGN
+mdefine_line|#define PAGE_CACHE_ALIGN(addr)&t;(((addr)+PAGE_CACHE_SIZE-1)&amp;PAGE_CACHE_MASK)
 DECL|macro|page_cache_alloc
 mdefine_line|#define page_cache_alloc()&t;__get_free_page(GFP_USER)
 DECL|macro|page_cache_free

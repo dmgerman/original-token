@@ -337,8 +337,6 @@ id|s
 comma
 id|sz
 )paren
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 r_if

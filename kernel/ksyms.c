@@ -1793,11 +1793,11 @@ c_func
 id|setup_arg_pages
 )paren
 suffix:semicolon
-DECL|variable|copy_strings
+DECL|variable|copy_strings_kernel
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|copy_strings
+id|copy_strings_kernel
 )paren
 suffix:semicolon
 DECL|variable|do_execve

@@ -112,6 +112,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#&t;endif
+macro_line|#&t;ifdef CONFIG_USB_SCSI
+id|usb_scsi_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#&t;endif
 macro_line|#endif
 r_return
 l_int|0

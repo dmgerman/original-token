@@ -418,8 +418,6 @@ id|d_alloc_root
 c_func
 (paren
 id|root
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 id|unlock_super
@@ -516,10 +514,7 @@ c_func
 id|sb
 )paren
 suffix:semicolon
-id|sb_info-&gt;sbi_vcomm-&gt;vc_inuse
-op_assign
-l_int|0
-suffix:semicolon
+multiline_comment|/*&t;sb_info-&gt;sbi_vcomm-&gt;vc_inuse = 0; You can not do this: psdev_release would see usagecount == 0 and would refuse to decrease MOD_USE_COUNT --pavel */
 id|coda_super_info.sbi_sb
 op_assign
 l_int|NULL

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      discovery.c&n; * Version:       0.1&n; * Description:   Routines for handling discoveries at the IrLMP layer&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Apr  6 15:33:50 1999&n; * Modified at:   Sun May  9 22:40:43 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Modified at:   Fri May 28  3:11 CST 1999&n; * Modified by:   Horst von Brand &lt;vonbrand@sleipnir.valparaiso.cl&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      discovery.c&n; * Version:       0.1&n; * Description:   Routines for handling discoveries at the IrLMP layer&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Apr  6 15:33:50 1999&n; * Modified at:   Fri May 28 20:46:38 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Modified at:   Fri May 28  3:11 CST 1999&n; * Modified by:   Horst von Brand &lt;vonbrand@sleipnir.valparaiso.cl&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; * &n; *     This program is distributed in the hope that it will be useful,&n; *     but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *     GNU General Public License for more details.&n; * &n; *     You should have received a copy of the GNU General Public License &n; *     along with this program; if not, write to the Free Software &n; *     Foundation, Inc., 59 Temple Place, Suite 330, Boston, &n; *     MA 02111-1307 USA&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/irda.h&gt;
@@ -710,7 +710,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;  name: %s,&quot;
+l_string|&quot;name: %s,&quot;
 comma
 id|discovery-&gt;info
 )paren
@@ -724,9 +724,20 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot; hint: &quot;
+l_string|&quot; hint: 0x%02x%02x&quot;
+comma
+id|discovery-&gt;hints.byte
+(braket
+l_int|0
+)braket
+comma
+id|discovery-&gt;hints.byte
+(braket
+l_int|1
+)braket
 )paren
 suffix:semicolon
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -969,6 +980,7 @@ comma
 l_string|&quot;IrOBEX &quot;
 )paren
 suffix:semicolon
+macro_line|#endif&t;&t;
 id|len
 op_add_assign
 id|sprintf

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      wrapper.c&n; * Version:       1.2&n; * Description:   IrDA SIR async wrapper layer&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Sun May  2 21:58:00 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Modified at:   Fri May 28  3:11 CST 1999&n; * Modified by:   Horst von Brand &lt;vonbrand@sleipnir.valparaiso.cl&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      wrapper.c&n; * Version:       1.2&n; * Description:   IrDA SIR async wrapper layer&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Fri May 28 20:30:24 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Modified at:   Fri May 28  3:11 CST 1999&n; * Modified by:   Horst von Brand &lt;vonbrand@sleipnir.valparaiso.cl&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
@@ -677,7 +677,7 @@ r_break
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Function state_begin_frame (idev, byte)&n; *&n; *    &n; *&n; */
+multiline_comment|/*&n; * Function state_begin_frame (idev, byte)&n; *&n; *    Begin of frame detected&n; *&n; */
 DECL|function|state_begin_frame
 r_static
 r_void
@@ -713,6 +713,15 @@ id|idev-&gt;rx_buff.state
 op_assign
 id|LINK_ESCAPE
 suffix:semicolon
+multiline_comment|/* Time to initialize receive buffer */
+id|idev-&gt;rx_buff.data
+op_assign
+id|idev-&gt;rx_buff.head
+suffix:semicolon
+id|idev-&gt;rx_buff.len
+op_assign
+l_int|0
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -733,7 +742,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-multiline_comment|/* Got first byte of frame */
+multiline_comment|/* Time to initialize receive buffer */
 id|idev-&gt;rx_buff.data
 op_assign
 id|idev-&gt;rx_buff.head
@@ -889,7 +898,7 @@ r_break
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Function state_inside_frame (idev, byte)&n; *&n; *    &n; *&n; */
+multiline_comment|/*&n; * Function state_inside_frame (idev, byte)&n; *&n; *    Handle bytes received within a frame&n; *&n; */
 DECL|function|state_inside_frame
 r_static
 r_void

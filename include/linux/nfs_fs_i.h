@@ -43,6 +43,16 @@ id|nfs_wreq
 op_star
 id|writeback
 suffix:semicolon
+multiline_comment|/* Readdir caching information. */
+DECL|member|cookies
+r_void
+op_star
+id|cookies
+suffix:semicolon
+DECL|member|direof
+id|u32
+id|direof
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Legal inode flag values&n; */

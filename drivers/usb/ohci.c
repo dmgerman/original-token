@@ -67,10 +67,60 @@ id|ohci_edtd_lock
 op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
-multiline_comment|/*&n; * Add a TD to the end of the TD list on a given ED.  This function&n; * does NOT advance the ED&squot;s tail_td pointer beyond the given TD.  To&n; * add multiple TDs, call this function once for each TD.  Do not&n; * &quot;simply&quot; update tail_td yourself... This function does more than&n; * that.&n; * &n; * If this ED is on the controller, you MUST set its SKIP flag before&n; * calling this function.&n; *&n; * Important!  This function needs locking and atomicity as it works&n; * in parallel with the HC&squot;s DMA.  Locking ohci_edtd_lock while using&n; * the function is a must.&n; *&n; * This function can be called by the interrupt handler.&n; */
+DECL|macro|FIELDS_OF_ED
+mdefine_line|#define FIELDS_OF_ED(e)&t;le32_to_cpup(&amp;e-&gt;status), le32_to_cpup(&amp;e-&gt;tail_td), &bslash;&n;&t;&t;&t;le32_to_cpup(&amp;e-&gt;_head_td), le32_to_cpup(&amp;e-&gt;next_ed)
+DECL|macro|FIELDS_OF_TD
+mdefine_line|#define FIELDS_OF_TD(t)&t;le32_to_cpup(&amp;t-&gt;info), le32_to_cpup(&amp;t-&gt;cur_buf), &bslash;&n;&t;&t;&t;le32_to_cpup(&amp;t-&gt;next_td), le32_to_cpup(&amp;t-&gt;buf_end)
+DECL|variable|cc_names
+r_static
+r_const
+r_char
+op_star
+id|cc_names
+(braket
+l_int|16
+)braket
+op_assign
+(brace
+l_string|&quot;no error&quot;
+comma
+l_string|&quot;CRC error&quot;
+comma
+l_string|&quot;bit stuff error&quot;
+comma
+l_string|&quot;data toggle mismatch&quot;
+comma
+l_string|&quot;stall&quot;
+comma
+l_string|&quot;device not responding&quot;
+comma
+l_string|&quot;PID check failed&quot;
+comma
+l_string|&quot;unexpected PID&quot;
+comma
+l_string|&quot;data overrun&quot;
+comma
+l_string|&quot;data underrun&quot;
+comma
+l_string|&quot;reserved (10)&quot;
+comma
+l_string|&quot;reserved (11)&quot;
+comma
+l_string|&quot;buffer overrun&quot;
+comma
+l_string|&quot;buffer underrun&quot;
+comma
+l_string|&quot;not accessed (14)&quot;
+comma
+l_string|&quot;not accessed&quot;
+)brace
+suffix:semicolon
+multiline_comment|/*&n; * Add a chain of TDs to the end of the TD list on a given ED.&n; *&n; * This function uses the first TD of the chain as the new dummy TD&n; * for the ED, and uses the old dummy TD instead of the first TD&n; * of the chain.  The reason for this is that this makes it possible&n; * to update the TD chain without needing any locking between the&n; * CPU and the OHCI controller.&n; *&n; * The return value is the pointer to the new first TD (the old&n; * dummy TD).&n; *&n; * Important!  This function is not re-entrant w.r.t. each ED.&n; * Locking ohci_edtd_lock while using the function is a must&n; * if there is any possibility of another CPU or an interrupt routine&n; * calling this function with the same ED.&n; *&n; * This function can be called by the interrupt handler.&n; */
 DECL|function|ohci_add_td_to_ed
 r_static
-r_void
+r_struct
+id|ohci_td
+op_star
 id|ohci_add_td_to_ed
 c_func
 (paren
@@ -78,6 +128,11 @@ r_struct
 id|ohci_td
 op_star
 id|td
+comma
+r_struct
+id|ohci_td
+op_star
+id|last_td
 comma
 r_struct
 id|ohci_ed
@@ -88,10 +143,13 @@ id|ed
 r_struct
 id|ohci_td
 op_star
-id|dummy_td
+id|t
 comma
 op_star
-id|prev_td
+id|dummy_td
+suffix:semicolon
+id|u32
+id|new_dummy
 suffix:semicolon
 r_if
 c_cond
@@ -107,114 +165,99 @@ c_func
 l_string|&quot;eek! an ED without a dummy_td&bslash;n&quot;
 )paren
 suffix:semicolon
+r_return
+id|td
+suffix:semicolon
 )brace
-multiline_comment|/* The ED&squot;s tail_td is constant, always pointing to the&n;&t; * dummy_td.  The reason the ED never processes the dummy is&n;&t; * that it stops processing TDs as soon as head_td == tail_td.&n;&t; * When it advances to this last dummy TD it conveniently stops. */
+multiline_comment|/* Get a pointer to the current dummy TD. */
 id|dummy_td
 op_assign
 id|bus_to_virt
 c_func
 (paren
-id|ed-&gt;tail_td
-)paren
-suffix:semicolon
-multiline_comment|/* Dummy&squot;s data pointer is used to point to the previous TD */
-r_if
-c_cond
-(paren
-id|ed_head_td
+id|ed_tail_td
 c_func
 (paren
 id|ed
 )paren
-op_ne
-id|ed-&gt;tail_td
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|t
+op_assign
+id|td
+suffix:semicolon
+suffix:semicolon
+id|t
+op_assign
+id|bus_to_virt
+c_func
+(paren
+id|le32_to_cpup
+c_func
+(paren
+op_amp
+id|t-&gt;next_td
+)paren
+)paren
 )paren
 (brace
-id|prev_td
+id|t-&gt;ed
 op_assign
+id|ed
+suffix:semicolon
+r_if
+c_cond
 (paren
-r_struct
-id|ohci_td
+id|t
+op_eq
+id|last_td
+)paren
+r_break
+suffix:semicolon
+)brace
+multiline_comment|/* Make the last TD point back to the first, since it&n;&t; * will become the new dummy TD. */
+id|new_dummy
+op_assign
+id|cpu_to_le32
+c_func
+(paren
+id|virt_to_bus
+c_func
+(paren
+id|td
+)paren
+)paren
+suffix:semicolon
+id|last_td-&gt;next_td
+op_assign
+id|new_dummy
+suffix:semicolon
+multiline_comment|/* Copy the contents of the first TD into the dummy */
 op_star
-)paren
-id|dummy_td-&gt;data
-suffix:semicolon
-)brace
-r_else
-(brace
-multiline_comment|/* if the ED is empty, previous is meaningless */
-multiline_comment|/* We&squot;ll be inserting into the head of the list */
-id|prev_td
+id|dummy_td
 op_assign
-l_int|NULL
-suffix:semicolon
-)brace
-multiline_comment|/* Store the new back pointer and set up this TD&squot;s next */
-id|dummy_td-&gt;data
-op_assign
+op_star
 id|td
 suffix:semicolon
-id|td-&gt;next_td
-op_assign
+multiline_comment|/* Turn the first TD into a dummy */
+id|make_dumb_td
+c_func
+(paren
+id|td
+)paren
+suffix:semicolon
+multiline_comment|/* Set the HC&squot;s tail pointer to the new dummy */
 id|ed-&gt;tail_td
-suffix:semicolon
-multiline_comment|/* Store the TD pointer back to the ED */
-id|td-&gt;ed
 op_assign
-id|ed
+id|new_dummy
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|prev_td
-)paren
-(brace
-multiline_comment|/* No previous TD? then insert us at the head */
-r_if
-c_cond
-(paren
-id|ed_head_td
-c_func
-(paren
-id|ed
-)paren
-op_ne
-id|ed-&gt;tail_td
-)paren
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;Suspicious ED...&bslash;n&quot;
-)paren
+r_return
+id|dummy_td
 suffix:semicolon
-id|set_ed_head_td
-c_func
-(paren
-id|ed
-comma
-id|virt_to_bus
-c_func
-(paren
-id|td
-)paren
-)paren
-suffix:semicolon
-multiline_comment|/* put it on the ED */
-)brace
-r_else
-(brace
-multiline_comment|/* add the TD to the end */
-id|prev_td-&gt;next_td
-op_assign
-id|virt_to_bus
-c_func
-(paren
-id|td
-)paren
-suffix:semicolon
-)brace
+multiline_comment|/* replacement head of chain */
 )brace
 multiline_comment|/* ohci_add_td_to_ed() */
 DECL|function|ohci_start_control
@@ -370,17 +413,14 @@ id|hw_listhead_p
 suffix:semicolon
 multiline_comment|/* if the list is not empty, insert this ED at the front */
 multiline_comment|/* XXX should they go on the end? */
-r_if
-c_cond
+id|ed-&gt;next_ed
+op_assign
+id|cpu_to_le32
+c_func
 (paren
 id|listhead
 )paren
-(brace
-id|ed-&gt;next_ed
-op_assign
-id|listhead
 suffix:semicolon
-)brace
 multiline_comment|/* update the hardware listhead pointer */
 id|writel
 c_func
@@ -558,10 +598,14 @@ id|int_ed-&gt;next_ed
 suffix:semicolon
 id|int_ed-&gt;next_ed
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|virt_to_bus
 c_func
 (paren
 id|ed
+)paren
 )paren
 suffix:semicolon
 id|spin_unlock_irqrestore
@@ -639,12 +683,17 @@ id|ed_type
 )paren
 (brace
 id|__u32
+op_star
 id|hw_listcurrent
 suffix:semicolon
 multiline_comment|/* tell the controller to skip this ED */
 id|ed-&gt;status
 op_or_assign
+id|cpu_to_le32
+c_func
+(paren
 id|OHCI_ED_SKIP
+)paren
 suffix:semicolon
 r_switch
 c_cond
@@ -657,11 +706,8 @@ id|HCD_ED_CONTROL
 suffix:colon
 id|hw_listcurrent
 op_assign
-id|readl
-c_func
-(paren
+op_amp
 id|regs-&gt;ed_controlcurrent
-)paren
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -670,11 +716,8 @@ id|HCD_ED_BULK
 suffix:colon
 id|hw_listcurrent
 op_assign
-id|readl
-c_func
-(paren
+op_amp
 id|regs-&gt;ed_bulkcurrent
-)paren
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -686,11 +729,8 @@ id|HCD_ED_INT
 suffix:colon
 id|hw_listcurrent
 op_assign
-id|readl
-c_func
-(paren
+op_amp
 id|regs-&gt;ed_periodcurrent
-)paren
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -709,7 +749,11 @@ c_func
 id|ed
 )paren
 op_eq
+id|readl
+c_func
+(paren
 id|hw_listcurrent
+)paren
 )paren
 (brace
 id|DECLARE_WAITQUEUE
@@ -724,9 +768,15 @@ macro_line|#ifdef OHCI_DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;Waiting a frame for OHC to finish with ED %p&bslash;n&quot;
+l_string|&quot;Waiting a frame for OHC to finish with ED %p [%x %x %x %x]&bslash;n&quot;
 comma
 id|ed
+comma
+id|FIELDS_OF_ED
+c_func
+(paren
+id|ed
+)paren
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -976,7 +1026,12 @@ op_assign
 id|bus_to_virt
 c_func
 (paren
+id|le32_to_cpup
+c_func
+(paren
+op_amp
 id|cur-&gt;next_ed
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -1152,7 +1207,11 @@ suffix:semicolon
 multiline_comment|/* set the &quot;skip me bit&quot; in this ED */
 id|ed-&gt;status
 op_or_assign
+id|cpu_to_le32
+c_func
+(paren
 id|OHCI_ED_SKIP
+)paren
 suffix:semicolon
 multiline_comment|/* XXX Assuming this list will never be circular */
 id|head_td
@@ -1221,7 +1280,12 @@ op_assign
 id|bus_to_virt
 c_func
 (paren
+id|le32_to_cpup
+c_func
+(paren
+op_amp
 id|head_td-&gt;next_td
+)paren
 )paren
 suffix:semicolon
 r_for
@@ -1265,7 +1329,12 @@ op_assign
 id|bus_to_virt
 c_func
 (paren
+id|le32_to_cpup
+c_func
+(paren
+op_amp
 id|cur_td-&gt;next_td
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -1290,8 +1359,12 @@ suffix:semicolon
 multiline_comment|/* unset the &quot;skip me bit&quot; in this ED */
 id|ed-&gt;status
 op_and_assign
+id|cpu_to_le32
+c_func
+(paren
 op_complement
 id|OHCI_ED_SKIP
+)paren
 suffix:semicolon
 id|spin_unlock_irqrestore
 c_func
@@ -1402,7 +1475,11 @@ suffix:semicolon
 multiline_comment|/* mark the new TDs as unaccessed */
 id|new_td-&gt;info
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|OHCI_TD_CC_NEW
+)paren
 suffix:semicolon
 multiline_comment|/* mark it as allocated */
 id|allocate_td
@@ -1504,7 +1581,11 @@ suffix:semicolon
 multiline_comment|/* all new EDs start with the SKIP bit set */
 id|new_ed-&gt;status
 op_or_assign
+id|cpu_to_le32
+c_func
+(paren
 id|OHCI_ED_SKIP
+)paren
 suffix:semicolon
 multiline_comment|/* mark it as allocated */
 id|allocate_ed
@@ -1551,41 +1632,102 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|ed-&gt;tail_td
-op_eq
+id|ed_head_td
+c_func
+(paren
+id|ed
+)paren
+op_ne
 l_int|0
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;yikes! an ED without a dummy_td&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-r_else
-id|ohci_free_td
-c_func
-(paren
-(paren
 r_struct
 id|ohci_td
 op_star
-)paren
+id|td
+comma
+op_star
+id|tail_td
+comma
+op_star
+id|next_td
+suffix:semicolon
+id|td
+op_assign
 id|bus_to_virt
 c_func
 (paren
-id|ed-&gt;tail_td
+id|ed_head_td
+c_func
+(paren
+id|ed
 )paren
 )paren
 suffix:semicolon
+id|tail_td
+op_assign
+id|bus_to_virt
+c_func
+(paren
+id|ed_tail_td
+c_func
+(paren
+id|ed
+)paren
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+suffix:semicolon
+suffix:semicolon
+)paren
+(brace
+id|next_td
+op_assign
+id|bus_to_virt
+c_func
+(paren
+id|le32_to_cpup
+c_func
+(paren
+op_amp
+id|td-&gt;next_td
+)paren
+)paren
+suffix:semicolon
+id|ohci_free_td
+c_func
+(paren
+id|td
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|td
+op_eq
+id|tail_td
+)paren
+r_break
+suffix:semicolon
+id|td
+op_assign
+id|next_td
+suffix:semicolon
+)brace
+)brace
 id|ed-&gt;status
 op_and_assign
+id|cpu_to_le32
+c_func
+(paren
 op_complement
 (paren
 id|__u32
 )paren
 id|ED_ALLOCATED
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* ohci_free_ed() */
@@ -1630,6 +1772,9 @@ id|completed
 multiline_comment|/* hardware fields */
 id|td-&gt;info
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|OHCI_TD_CC_NEW
 op_or
 (paren
@@ -1645,6 +1790,7 @@ id|OHCI_TD_DT
 )paren
 op_or
 id|flags
+)paren
 suffix:semicolon
 id|td-&gt;cur_buf
 op_assign
@@ -1657,10 +1803,14 @@ ques
 c_cond
 l_int|0
 suffix:colon
+id|cpu_to_le32
+c_func
+(paren
 id|virt_to_bus
 c_func
 (paren
 id|data
+)paren
 )paren
 suffix:semicolon
 id|td-&gt;buf_end
@@ -1674,11 +1824,20 @@ ques
 c_cond
 l_int|0
 suffix:colon
+id|cpu_to_le32
+c_func
+(paren
+id|le32_to_cpup
+c_func
+(paren
+op_amp
 id|td-&gt;cur_buf
+)paren
 op_plus
 id|len
 op_minus
 l_int|1
+)paren
 suffix:semicolon
 multiline_comment|/* driver fields */
 id|td-&gt;data
@@ -1758,7 +1917,11 @@ c_func
 id|ed
 )paren
 op_ne
-id|ed-&gt;tail_td
+id|ed_tail_td
+c_func
+(paren
+id|ed
+)paren
 )paren
 id|printk
 c_func
@@ -1813,10 +1976,14 @@ suffix:semicolon
 multiline_comment|/* flag it as a dummy */
 id|ed-&gt;tail_td
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|virt_to_bus
 c_func
 (paren
 id|dummy_td
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -1827,7 +1994,11 @@ op_assign
 id|bus_to_virt
 c_func
 (paren
-id|ed-&gt;tail_td
+id|ed_tail_td
+c_func
+(paren
+id|ed
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -1859,7 +2030,9 @@ id|ed-&gt;tail_td
 suffix:semicolon
 id|ed-&gt;status
 op_assign
-"&bslash;"
+id|cpu_to_le32
+c_func
+(paren
 id|ed_set_maxpacket
 c_func
 (paren
@@ -1889,6 +2062,7 @@ c_cond
 id|OHCI_ED_F_NORM
 suffix:colon
 id|OHCI_ED_F_ISOC
+)paren
 )paren
 suffix:semicolon
 id|allocate_ed
@@ -1956,6 +2130,17 @@ op_star
 id|interrupt_ed
 suffix:semicolon
 multiline_comment|/* endpoint descriptor for this irq */
+r_int
+id|maxps
+op_assign
+id|usb_maxpacket
+c_func
+(paren
+id|usb
+comma
+id|pipe
+)paren
+suffix:semicolon
 multiline_comment|/* Get an ED and TD */
 id|interrupt_ed
 op_assign
@@ -2025,13 +2210,7 @@ id|dev
 comma
 id|interrupt_ed
 comma
-id|usb_maxpacket
-c_func
-(paren
-id|usb
-comma
-id|pipe
-)paren
+id|maxps
 comma
 id|usb_pipeslow
 c_func
@@ -2050,6 +2229,23 @@ multiline_comment|/* normal TDs */
 )paren
 suffix:semicolon
 multiline_comment|/* Fill in the TD */
+r_if
+c_cond
+(paren
+id|maxps
+OG
+r_sizeof
+(paren
+id|dev-&gt;data
+)paren
+)paren
+id|maxps
+op_assign
+r_sizeof
+(paren
+id|dev-&gt;data
+)paren
+suffix:semicolon
 id|ohci_fill_new_td
 c_func
 (paren
@@ -2069,10 +2265,9 @@ id|TOGGLE_AUTO
 comma
 id|OHCI_TD_ROUND
 comma
-op_amp
 id|dev-&gt;data
 comma
-id|DATA_BUF_LEN
+id|maxps
 comma
 id|dev_id
 comma
@@ -2081,9 +2276,13 @@ id|handler
 suffix:semicolon
 multiline_comment|/*&n;&t; * TODO: be aware of how the OHCI controller deals with DMA&n;&t; * spanning more than one page.&n;&t; */
 multiline_comment|/*&n;&t; *  Put the TD onto our ED and make sure its ready to run&n;&t; */
+id|td
+op_assign
 id|ohci_add_td_to_ed
 c_func
 (paren
+id|td
+comma
 id|td
 comma
 id|interrupt_ed
@@ -2091,8 +2290,12 @@ id|interrupt_ed
 suffix:semicolon
 id|interrupt_ed-&gt;status
 op_and_assign
+id|cpu_to_le32
+c_func
+(paren
 op_complement
 id|OHCI_ED_SKIP
+)paren
 suffix:semicolon
 id|ohci_unhalt_ed
 c_func
@@ -2100,7 +2303,7 @@ c_func
 id|interrupt_ed
 )paren
 suffix:semicolon
-multiline_comment|/* Linus did this. see asm/system.h; scary concept... I don&squot;t&n;&t; * know if its needed here or not but it won&squot;t hurt. */
+multiline_comment|/* Make sure all the stores above get done before&n;&t; * the store which tells the OHCI about the new ed. */
 id|wmb
 c_func
 (paren
@@ -2200,7 +2403,7 @@ r_int
 r_int
 id|pipe
 comma
-r_void
+id|devrequest
 op_star
 id|cmd
 comma
@@ -2263,7 +2466,42 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
-macro_line|#ifdef OHCI_DEBUG 
+id|devrequest
+id|our_cmd
+suffix:semicolon
+multiline_comment|/* byte-swap fields of cmd if necessary */
+id|our_cmd
+op_assign
+op_star
+id|cmd
+suffix:semicolon
+id|cpu_to_le16s
+c_func
+(paren
+op_amp
+id|our_cmd.value
+)paren
+suffix:semicolon
+id|cpu_to_le16s
+c_func
+(paren
+op_amp
+id|our_cmd.index
+)paren
+suffix:semicolon
+id|cpu_to_le16s
+c_func
+(paren
+op_amp
+id|our_cmd.length
+)paren
+suffix:semicolon
+macro_line|#ifdef OHCI_DEBUG
+r_if
+c_cond
+(paren
+id|MegaDebug
+)paren
 id|printk
 c_func
 (paren
@@ -2372,7 +2610,7 @@ multiline_comment|/* normal TDs */
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Build the control TD&n;&t; */
-multiline_comment|/*&n;&t; * Set the not accessed condition code, allow odd sized data,&n;&t; * and set the data transfer type to SETUP.  Setup DATA always&n;&t; * uses a DATA0 packet.&n;&t; *&n;&t; * The setup packet contains a devrequest (usb.h) which&n;&t; * will always be 8 bytes long.  FIXME: the cmd parameter&n;&t; * should be a pointer to one of these instead of a void* !!!&n;&t; */
+multiline_comment|/*&n;&t; * Set the not accessed condition code, allow odd sized data,&n;&t; * and set the data transfer type to SETUP.  Setup DATA always&n;&t; * uses a DATA0 packet.&n;&t; *&n;&t; * The setup packet contains a devrequest (usb.h) which&n;&t; * will always be 8 bytes long.&n;&t; */
 id|ohci_fill_new_td
 c_func
 (paren
@@ -2384,7 +2622,8 @@ id|TOGGLE_DATA0
 comma
 id|OHCI_TD_IOC_OFF
 comma
-id|cmd
+op_amp
+id|our_cmd
 comma
 l_int|8
 comma
@@ -2438,10 +2677,14 @@ suffix:semicolon
 multiline_comment|/* link to the next TD */
 id|setup_td-&gt;next_td
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|virt_to_bus
 c_func
 (paren
 id|data_td
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -2533,10 +2776,14 @@ suffix:semicolon
 )brace
 id|data_td-&gt;next_td
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|virt_to_bus
 c_func
 (paren
 id|status_td
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -2602,49 +2849,15 @@ comma
 id|flags
 )paren
 suffix:semicolon
-id|control_ed-&gt;status
-op_or_assign
-id|OHCI_ED_SKIP
-suffix:semicolon
+id|setup_td
+op_assign
 id|ohci_add_td_to_ed
 c_func
 (paren
 id|setup_td
 comma
-id|control_ed
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|data_td
-op_ne
-id|status_td
-)paren
-id|ohci_add_td_to_ed
-c_func
-(paren
-id|data_td
-comma
-id|control_ed
-)paren
-suffix:semicolon
-id|ohci_add_td_to_ed
-c_func
-(paren
 id|status_td
 comma
-id|control_ed
-)paren
-suffix:semicolon
-id|control_ed-&gt;status
-op_and_assign
-op_complement
-id|OHCI_ED_SKIP
-suffix:semicolon
-id|ohci_unhalt_ed
-c_func
-(paren
 id|control_ed
 )paren
 suffix:semicolon
@@ -2915,32 +3128,6 @@ id|dev-&gt;ohci
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/* clean up */
-id|ohci_free_td
-c_func
-(paren
-id|setup_td
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|data_td
-op_ne
-id|status_td
-)paren
-id|ohci_free_td
-c_func
-(paren
-id|data_td
-)paren
-suffix:semicolon
-id|ohci_free_td
-c_func
-(paren
-id|status_td
-)paren
-suffix:semicolon
 multiline_comment|/* remove the control ED from the HC */
 id|ohci_remove_control_ed
 c_func
@@ -2957,14 +3144,129 @@ id|control_ed
 )paren
 suffix:semicolon
 multiline_comment|/* return it to the pool */
-macro_line|#if 0
+macro_line|#ifdef OHCI_DEBUG
+r_if
+c_cond
+(paren
+id|completion_status
+op_ne
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;ohci_control_msg: %s on cmd %x %x %x %x %x&bslash;n&quot;
+comma
+id|cc_names
+(braket
+id|completion_status
+op_amp
+l_int|0xf
+)braket
+comma
+id|cmd-&gt;requesttype
+comma
+id|cmd-&gt;request
+comma
+id|cmd-&gt;value
+comma
+id|cmd-&gt;index
+comma
+id|cmd-&gt;length
+)paren
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|usb_pipeout
+c_func
+(paren
+id|pipe
+)paren
+)paren
+(brace
+r_int
+r_char
+op_star
+id|q
+op_assign
+id|data
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
 id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;leaving ohci_control_msg&bslash;n&quot;
+l_string|&quot;ctrl msg %x %x %x %x %x returned:&quot;
+comma
+id|cmd-&gt;requesttype
+comma
+id|cmd-&gt;request
+comma
+id|cmd-&gt;value
+comma
+id|cmd-&gt;index
+comma
+id|cmd-&gt;length
 )paren
 suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|len
+suffix:semicolon
+op_increment
+id|i
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|i
+op_mod
+l_int|16
+op_eq
+l_int|0
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
+id|KERN_DEBUG
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot; %x&quot;
+comma
+id|q
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
 macro_line|#endif
 r_return
 id|completion_status
@@ -3105,8 +3407,12 @@ id|idx
 )braket
 dot
 id|status
-op_or_assign
+op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|OHCI_ED_SKIP
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Link them together&n;&t; */
@@ -4128,7 +4434,12 @@ l_int|NULL
 suffix:semicolon
 id|td_list_hc
 op_assign
+id|le32_to_cpup
+c_func
+(paren
+op_amp
 id|hcca-&gt;donehead
+)paren
 op_amp
 l_int|0xfffffff0
 suffix:semicolon
@@ -4165,7 +4476,12 @@ id|td_list
 suffix:semicolon
 id|td_list_hc
 op_assign
+id|le32_to_cpup
+c_func
+(paren
+op_amp
 id|td_list-&gt;next_td
+)paren
 op_amp
 l_int|0xfffffff0
 suffix:semicolon
@@ -4225,6 +4541,20 @@ id|next_td
 op_assign
 id|td-&gt;next_dl_td
 suffix:semicolon
+r_int
+id|cc
+op_assign
+id|OHCI_TD_CC_GET
+c_func
+(paren
+id|le32_to_cpup
+c_func
+(paren
+op_amp
+id|td-&gt;info
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4242,6 +4572,149 @@ l_string|&quot;yikes! reaping a dummy TD&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* FIXME: munge td-&gt;info into a future standard status format */
+r_if
+c_cond
+(paren
+id|cc
+op_ne
+l_int|0
+op_logical_and
+id|ohci_ed_halted
+c_func
+(paren
+id|td-&gt;ed
+)paren
+op_logical_and
+id|td-&gt;completed
+op_eq
+l_int|0
+)paren
+(brace
+multiline_comment|/*&n;&t;&t;&t; * There was an error on this TD and the ED&n;&t;&t;&t; * is halted, and this was not the last TD&n;&t;&t;&t; * of the transaction, so there will be TDs&n;&t;&t;&t; * to clean off the ED.&n;&t;&t;&t; * (We assume that a TD with a non-NULL completed&n;&t;&t;&t; * field is the last one of a transaction.&n;&t;&t;&t; * Ultimately we should have a flag in the TD&n;&t;&t;&t; * to say that it is the last one.)&n;&t;&t;&t; */
+r_struct
+id|ohci_ed
+op_star
+id|ed
+op_assign
+id|td-&gt;ed
+suffix:semicolon
+r_struct
+id|ohci_td
+op_star
+id|tail_td
+op_assign
+id|bus_to_virt
+c_func
+(paren
+id|ed_tail_td
+c_func
+(paren
+id|ed
+)paren
+)paren
+suffix:semicolon
+r_struct
+id|ohci_td
+op_star
+id|ntd
+suffix:semicolon
+id|ohci_free_td
+c_func
+(paren
+id|td
+)paren
+suffix:semicolon
+id|td
+op_assign
+id|ntd
+op_assign
+id|bus_to_virt
+c_func
+(paren
+id|ed_head_td
+c_func
+(paren
+id|ed
+)paren
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|td
+op_ne
+id|tail_td
+)paren
+(brace
+id|ntd
+op_assign
+id|bus_to_virt
+c_func
+(paren
+id|le32_to_cpup
+c_func
+(paren
+op_amp
+id|td-&gt;next_td
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|td-&gt;completed
+op_ne
+l_int|0
+)paren
+r_break
+suffix:semicolon
+id|ohci_free_td
+c_func
+(paren
+id|td
+)paren
+suffix:semicolon
+id|td
+op_assign
+id|ntd
+suffix:semicolon
+)brace
+multiline_comment|/* Set the ED head past the ones we cleaned&n;&t;&t;&t;   off, and clear the halted flag */
+id|set_ed_head_td
+c_func
+(paren
+id|ed
+comma
+id|virt_to_bus
+c_func
+(paren
+id|ntd
+)paren
+)paren
+suffix:semicolon
+id|ohci_unhalt_ed
+c_func
+(paren
+id|ed
+)paren
+suffix:semicolon
+multiline_comment|/* If we didn&squot;t find a TD with a completion&n;&t;&t;&t;   routine, give up */
+r_if
+c_cond
+(paren
+id|td
+op_eq
+id|tail_td
+)paren
+(brace
+id|td
+op_assign
+id|next_td
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
+)brace
 multiline_comment|/* Check if TD should be re-queued */
 r_if
 c_cond
@@ -4258,11 +4731,7 @@ op_member_access_from_pointer
 id|completed
 c_func
 (paren
-id|OHCI_TD_CC_GET
-c_func
-(paren
-id|td-&gt;info
-)paren
+id|cc
 comma
 id|td-&gt;data
 comma
@@ -4271,10 +4740,14 @@ id|td-&gt;dev_id
 )paren
 )paren
 (brace
-multiline_comment|/* Mark the TD as active again:&n;&t;&t;&t; * Set the not accessed condition code&n;&t;&t;&t; * Reset the Error count&n;&t;&t;&t; * [FIXME: report errors to the device&squot;s driver]&n;&t;&t;&t; */
+multiline_comment|/* Mark the TD as active again:&n;&t;&t;&t; * Set the not accessed condition code&n;&t;&t;&t; * Reset the Error count&n;&t;&t;&t; */
 id|td-&gt;info
 op_or_assign
+id|cpu_to_le32
+c_func
+(paren
 id|OHCI_TD_CC_NEW
+)paren
 suffix:semicolon
 id|clear_td_errorcount
 c_func
@@ -4282,19 +4755,35 @@ c_func
 id|td
 )paren
 suffix:semicolon
+multiline_comment|/* reset the toggle field to TOGGLE_AUTO (0) */
+id|td-&gt;info
+op_and_assign
+id|cpu_to_le32
+c_func
+(paren
+op_complement
+id|OHCI_TD_DT
+)paren
+suffix:semicolon
 multiline_comment|/* point it back to the start of the data buffer */
 id|td-&gt;cur_buf
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|virt_to_bus
 c_func
 (paren
 id|td-&gt;data
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* insert it back on its ED */
 id|ohci_add_td_to_ed
 c_func
 (paren
+id|td
+comma
 id|td
 comma
 id|td-&gt;ed
@@ -4420,7 +4909,11 @@ c_cond
 (paren
 id|hcca-&gt;donehead
 op_amp
+id|cpu_to_le32
+c_func
+(paren
 l_int|1
+)paren
 )paren
 (brace
 id|context
@@ -4449,6 +4942,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* Disable HC interrupts */
+multiline_comment|/* why? - paulus */
 id|writel
 c_func
 (paren
@@ -4479,6 +4973,7 @@ id|hcca-&gt;donehead
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* XXX already done in ohci_reverse_donelist */
 id|writel
 c_func
 (paren
@@ -4940,6 +5435,20 @@ c_func
 id|GFP_KERNEL
 )paren
 suffix:semicolon
+id|memset
+c_func
+(paren
+id|dev-&gt;hcca
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+r_struct
+id|ohci_hcca
+)paren
+)paren
+suffix:semicolon
 multiline_comment|/* Tell the controller where the HCCA is */
 id|writel
 c_func
@@ -5043,6 +5552,9 @@ id|ED_INT_32
 dot
 id|next_ed
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|virt_to_bus
 c_func
 (paren
@@ -5052,6 +5564,7 @@ id|dev-&gt;ed
 id|ED_INT_16
 )braket
 )paren
+)paren
 suffix:semicolon
 id|dev-&gt;ed
 (braket
@@ -5060,6 +5573,9 @@ id|ED_INT_16
 dot
 id|next_ed
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|virt_to_bus
 c_func
 (paren
@@ -5069,6 +5585,7 @@ id|dev-&gt;ed
 id|ED_INT_8
 )braket
 )paren
+)paren
 suffix:semicolon
 id|dev-&gt;ed
 (braket
@@ -5077,6 +5594,9 @@ id|ED_INT_8
 dot
 id|next_ed
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|virt_to_bus
 c_func
 (paren
@@ -5086,6 +5606,7 @@ id|dev-&gt;ed
 id|ED_INT_4
 )braket
 )paren
+)paren
 suffix:semicolon
 id|dev-&gt;ed
 (braket
@@ -5094,6 +5615,9 @@ id|ED_INT_4
 dot
 id|next_ed
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|virt_to_bus
 c_func
 (paren
@@ -5103,6 +5627,7 @@ id|dev-&gt;ed
 id|ED_INT_2
 )braket
 )paren
+)paren
 suffix:semicolon
 id|dev-&gt;ed
 (braket
@@ -5111,6 +5636,9 @@ id|ED_INT_2
 dot
 id|next_ed
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|virt_to_bus
 c_func
 (paren
@@ -5119,6 +5647,7 @@ id|dev-&gt;ed
 (braket
 id|ED_INT_1
 )braket
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Initialize the polling table to call interrupts at the&n;&t; * intended intervals.  Note that these EDs are just&n;&t; * placeholders.  They have their SKIP bit set and are used as&n;&t; * list heads to insert real EDs onto.&n;&t; */
@@ -5127,6 +5656,9 @@ id|dev-&gt;hcca-&gt;int_table
 l_int|0
 )braket
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|virt_to_bus
 c_func
 (paren
@@ -5135,6 +5667,7 @@ id|dev-&gt;ed
 (braket
 id|ED_INT_1
 )braket
+)paren
 )paren
 suffix:semicolon
 r_for
@@ -5164,6 +5697,9 @@ id|dev-&gt;hcca-&gt;int_table
 id|i
 )braket
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|virt_to_bus
 c_func
 (paren
@@ -5172,6 +5708,7 @@ id|dev-&gt;ed
 (braket
 id|ED_INT_32
 )braket
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -5186,6 +5723,9 @@ id|dev-&gt;hcca-&gt;int_table
 id|i
 )braket
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|virt_to_bus
 c_func
 (paren
@@ -5194,6 +5734,7 @@ id|dev-&gt;ed
 (braket
 id|ED_INT_16
 )braket
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -5208,6 +5749,9 @@ id|dev-&gt;hcca-&gt;int_table
 id|i
 )braket
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|virt_to_bus
 c_func
 (paren
@@ -5216,6 +5760,7 @@ id|dev-&gt;ed
 (braket
 id|ED_INT_8
 )braket
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -5230,6 +5775,9 @@ id|dev-&gt;hcca-&gt;int_table
 id|i
 )braket
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|virt_to_bus
 c_func
 (paren
@@ -5238,6 +5786,7 @@ id|dev-&gt;ed
 (braket
 id|ED_INT_4
 )braket
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -5252,6 +5801,9 @@ id|dev-&gt;hcca-&gt;int_table
 id|i
 )braket
 op_assign
+id|cpu_to_le32
+c_func
+(paren
 id|virt_to_bus
 c_func
 (paren
@@ -5260,6 +5812,7 @@ id|dev-&gt;ed
 (braket
 id|ED_INT_2
 )braket
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -5308,6 +5861,12 @@ id|ohci
 )paren
 suffix:semicolon
 macro_line|#endif
+id|printk
+c_func
+(paren
+l_string|&quot;alloc_ohci done&bslash;n&quot;
+)paren
+suffix:semicolon
 r_return
 id|ohci
 suffix:semicolon

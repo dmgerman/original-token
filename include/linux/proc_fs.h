@@ -590,6 +590,9 @@ comma
 DECL|enumerator|PROC_SCSI_I2O
 id|PROC_SCSI_I2O
 comma
+DECL|enumerator|PROC_SCSI_USB_SCSI
+id|PROC_SCSI_USB_SCSI
+comma
 DECL|enumerator|PROC_SCSI_SCSI_DEBUG
 id|PROC_SCSI_SCSI_DEBUG
 comma

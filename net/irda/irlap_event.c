@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap_event.c&n; * Version:       0.8&n; * Description:   IrLAP state machine implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Aug 16 00:59:29 1997&n; * Modified at:   Sun May  9 22:44:32 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;,&n; *                        Thomas Davis &lt;ratbert@radiks.net&gt;&n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap_event.c&n; * Version:       0.8&n; * Description:   IrLAP state machine implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Aug 16 00:59:29 1997&n; * Modified at:   Mon May 31 21:55:42 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli &lt;dagb@cs.uit.no&gt;,&n; *                        Thomas Davis &lt;ratbert@radiks.net&gt;&n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -916,15 +916,6 @@ c_cond
 id|self-&gt;disconnect_pending
 )paren
 (brace
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(), disconnecting!&bslash;n&quot;
-)paren
-suffix:semicolon
 id|self-&gt;disconnect_pending
 op_assign
 id|FALSE
@@ -2879,32 +2870,6 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self
-op_ne
-l_int|NULL
-comma
-r_return
-op_minus
-id|ENODEV
-suffix:semicolon
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self-&gt;magic
-op_eq
-id|LAP_MAGIC
-comma
-r_return
-op_minus
-id|EBADR
-suffix:semicolon
-)paren
-suffix:semicolon
 id|DEBUG
 c_func
 (paren
@@ -2932,30 +2897,6 @@ id|event
 r_case
 id|SEND_I_CMD
 suffix:colon
-id|ASSERT
-c_func
-(paren
-id|skb
-op_ne
-l_int|NULL
-comma
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)paren
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;(), Window=%d&bslash;n&quot;
-comma
-id|self-&gt;window
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t;&t; *  Only send frame if send-window &gt; 0.&n;&t;&t; */
 r_if
 c_cond
@@ -3038,15 +2979,6 @@ OG
 l_int|0
 )paren
 (brace
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;(), window &gt; 1&bslash;n&quot;
-)paren
-suffix:semicolon
 id|irlap_send_data_primary
 c_func
 (paren
@@ -3066,15 +2998,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;(), window &lt;= 1&bslash;n&quot;
-)paren
-suffix:semicolon
 id|irlap_send_data_primary_poll
 c_func
 (paren
@@ -3480,32 +3403,6 @@ id|ns_status
 suffix:semicolon
 r_int
 id|nr_status
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self
-op_ne
-l_int|NULL
-comma
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self-&gt;magic
-op_eq
-id|LAP_MAGIC
-comma
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)paren
 suffix:semicolon
 r_switch
 c_cond
@@ -4173,39 +4070,6 @@ suffix:semicolon
 r_case
 id|RECV_RR_RSP
 suffix:colon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;(), RECV_RR_FRAME: &quot;
-l_string|&quot;Retrans:%d, nr=%d, va=%d, vs=%d, vr=%d&bslash;n&quot;
-comma
-id|self-&gt;retry_count
-comma
-id|info-&gt;nr
-comma
-id|self-&gt;va
-comma
-id|self-&gt;vs
-comma
-id|self-&gt;vr
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|info
-op_ne
-l_int|NULL
-comma
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)paren
-suffix:semicolon
 multiline_comment|/*  &n;&t;&t; *  If you get a RR, the remote isn&squot;t busy anymore, &n;&t;&t; *  no matter what the NR &n;&t;&t; */
 id|self-&gt;remote_busy
 op_assign
@@ -4339,10 +4203,6 @@ comma
 id|CMD_FRAME
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; *  Start only if not running, DB&n;&t;&t;&t; *  TODO: Should this one be here?&n;&t;&t;&t; */
-multiline_comment|/* if ( !self-&gt;final_timer.prev) */
-multiline_comment|/* &t;&t;&t;&t;irda_start_timer( FINAL_TIMER, self-&gt;final_timeout);  */
-multiline_comment|/* Keep state */
 id|irlap_next_state
 c_func
 (paren
@@ -5550,15 +5410,6 @@ OG
 l_int|0
 )paren
 (brace
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;(), window &gt; 1&bslash;n&quot;
-)paren
-suffix:semicolon
 id|irlap_send_data_secondary
 c_func
 (paren
@@ -5578,14 +5429,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;(), window &lt;= 1&bslash;n&quot;
-)paren
-suffix:semicolon
 id|irlap_send_data_secondary_final
 c_func
 (paren

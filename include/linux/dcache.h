@@ -3,8 +3,6 @@ DECL|macro|__LINUX_DCACHE_H
 mdefine_line|#define __LINUX_DCACHE_H
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * linux/include/linux/dcache.h&n; *&n; * Dirent cache data structures&n; *&n; * (C) Copyright 1997 Thomas Schoebel-Theuer,&n; * with heavy changes by Linus Torvalds&n; */
-DECL|macro|D_MAXLEN
-mdefine_line|#define D_MAXLEN 1024
 DECL|macro|IS_ROOT
 mdefine_line|#define IS_ROOT(x) ((x) == (x)-&gt;d_parent)
 multiline_comment|/*&n; * &quot;quick string&quot; -- eases parameter passing, but more importantly&n; * saves &quot;metadata&quot; about the string (ie length and the hash).&n; */
@@ -489,13 +487,11 @@ c_func
 r_struct
 id|dentry
 op_star
-id|parent
 comma
 r_const
 r_struct
 id|qstr
 op_star
-id|name
 )paren
 suffix:semicolon
 r_extern
@@ -588,12 +584,6 @@ c_func
 r_struct
 id|inode
 op_star
-id|root_inode
-comma
-r_struct
-id|dentry
-op_star
-id|old_root
 )paren
 suffix:semicolon
 multiline_comment|/* test whether root is busy without destroying dcache */
@@ -616,7 +606,6 @@ c_func
 r_struct
 id|dentry
 op_star
-id|entry
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * This adds the entry to the hash queues and initializes &quot;d_inode&quot;.&n; * The entry was actually filled in earlier during &quot;d_alloc()&quot;&n; */
@@ -662,12 +651,10 @@ c_func
 r_struct
 id|dentry
 op_star
-id|entry
 comma
 r_struct
 id|dentry
 op_star
-id|newdentry
 )paren
 suffix:semicolon
 multiline_comment|/* appendix may either be NULL or be used for transname suffixes */
@@ -681,12 +668,10 @@ c_func
 r_struct
 id|dentry
 op_star
-id|dir
 comma
 r_struct
 id|qstr
 op_star
-id|name
 )paren
 suffix:semicolon
 multiline_comment|/* validate &quot;insecure&quot; dentry pointer */
@@ -698,20 +683,16 @@ c_func
 r_struct
 id|dentry
 op_star
-id|dentry
 comma
 r_struct
 id|dentry
 op_star
-id|dparent
 comma
 r_int
 r_int
-id|hash
 comma
 r_int
 r_int
-id|len
 )paren
 suffix:semicolon
 multiline_comment|/* write full pathname into buffer and return start of pathname */
@@ -724,14 +705,11 @@ c_func
 r_struct
 id|dentry
 op_star
-id|entry
 comma
 r_char
 op_star
-id|buf
 comma
 r_int
-id|buflen
 )paren
 suffix:semicolon
 multiline_comment|/* Allocation counts.. */

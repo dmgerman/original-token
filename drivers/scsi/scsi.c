@@ -2711,9 +2711,9 @@ comma
 r_void
 op_star
 )paren
-id|scsi_result
+l_int|NULL
 comma
-l_int|256
+l_int|0
 comma
 id|scan_scsis_done
 comma

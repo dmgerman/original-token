@@ -1,12 +1,9 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      tekram.c&n; * Version:       1.1&n; * Description:   Implementation of the Tekram IrMate IR-210B dongle&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Wed Oct 21 20:02:35 1998&n; * Modified at:   Mon May 10 16:10:17 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      tekram.c&n; * Version:       1.2&n; * Description:   Implementation of the Tekram IrMate IR-210B dongle&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Wed Oct 21 20:02:35 1998&n; * Modified at:   Sun May 16 14:33:42 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;asm/ioctls.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
-macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;net/irda/irda.h&gt;
 macro_line|#include &lt;net/irda/irda_device.h&gt;
 macro_line|#include &lt;net/irda/irtty.h&gt;
@@ -20,9 +17,6 @@ r_struct
 id|irda_device
 op_star
 id|dev
-comma
-r_int
-id|unused
 )paren
 suffix:semicolon
 r_static
@@ -91,7 +85,7 @@ mdefine_line|#define TEKRAM_19200  0x03
 DECL|macro|TEKRAM_9600
 mdefine_line|#define TEKRAM_9600   0x04
 DECL|macro|TEKRAM_PW
-mdefine_line|#define TEKRAM_PW 0x10 /* Pulse select bit */
+mdefine_line|#define TEKRAM_PW     0x10 /* Pulse select bit */
 DECL|variable|dongle
 r_static
 r_struct
@@ -291,7 +285,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-l_int|34800
+l_int|38400
 suffix:colon
 id|byte
 op_assign
@@ -324,6 +318,13 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+multiline_comment|/* Need to reset the dongle and go to 9600 bps before programming */
+id|tekram_reset
+c_func
+(paren
+id|idev
+)paren
+suffix:semicolon
 multiline_comment|/* Set DTR, Clear RTS */
 id|irda_device_set_dtr_rts
 c_func
@@ -391,9 +392,6 @@ r_struct
 id|irda_device
 op_star
 id|idev
-comma
-r_int
-id|unused
 )paren
 (brace
 id|ASSERT
@@ -487,7 +485,22 @@ c_func
 l_int|50
 )paren
 suffix:semicolon
-multiline_comment|/* Finished! */
+multiline_comment|/* Make sure the IrDA chip also goes to defalt speed */
+r_if
+c_cond
+(paren
+id|idev-&gt;change_speed
+)paren
+id|idev
+op_member_access_from_pointer
+id|change_speed
+c_func
+(paren
+id|idev
+comma
+l_int|9600
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function tekram_init_qos (qos)&n; *&n; *    Initialize QoS capabilities&n; *&n; */
 DECL|function|tekram_init_qos

@@ -1720,11 +1720,6 @@ r_struct
 id|inode
 op_star
 id|root_inode
-comma
-r_struct
-id|dentry
-op_star
-id|old_root
 )paren
 (brace
 r_struct

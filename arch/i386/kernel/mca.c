@@ -188,36 +188,48 @@ op_assign
 (brace
 l_int|NULL
 comma
-multiline_comment|/* array_lseek */
+multiline_comment|/* llseek */
 id|proc_mca_read
 comma
-multiline_comment|/* array_read */
+multiline_comment|/* read */
 l_int|NULL
 comma
-multiline_comment|/* array_write */
+multiline_comment|/* write */
 l_int|NULL
 comma
-multiline_comment|/* array_readdir */
+multiline_comment|/* readdir */
 l_int|NULL
 comma
-multiline_comment|/* array_poll */
+multiline_comment|/* poll */
 l_int|NULL
 comma
-multiline_comment|/* array_ioctl */
+multiline_comment|/* ioctl */
 l_int|NULL
 comma
 multiline_comment|/* mmap */
 l_int|NULL
 comma
-multiline_comment|/* no special open code */
+multiline_comment|/* open */
 l_int|NULL
 comma
 multiline_comment|/* flush */
 l_int|NULL
 comma
-multiline_comment|/* no special release code */
+multiline_comment|/* release */
 l_int|NULL
-multiline_comment|/* can&squot;t fsync */
+comma
+multiline_comment|/* fsync */
+l_int|NULL
+comma
+multiline_comment|/* fascync */
+l_int|NULL
+comma
+multiline_comment|/* check_media_change */
+l_int|NULL
+comma
+multiline_comment|/* revalidate */
+l_int|NULL
+multiline_comment|/* lock */
 )brace
 suffix:semicolon
 DECL|variable|proc_mca_inode_operations
@@ -230,7 +242,7 @@ op_assign
 op_amp
 id|proc_mca_operations
 comma
-multiline_comment|/* default base directory file-ops */
+multiline_comment|/* default file-ops */
 l_int|NULL
 comma
 multiline_comment|/* create */
@@ -277,7 +289,16 @@ l_int|NULL
 comma
 multiline_comment|/* truncate */
 l_int|NULL
+comma
 multiline_comment|/* permission */
+l_int|NULL
+comma
+multiline_comment|/* smap */
+l_int|NULL
+comma
+multiline_comment|/* updatepage */
+l_int|NULL
+multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 macro_line|#endif
@@ -536,20 +557,14 @@ c_func
 l_string|&quot;Micro Channel bus detected.&bslash;n&quot;
 )paren
 suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 multiline_comment|/* Allocate MCA_info structure (at address divisible by 8) */
 id|mca_info
 op_assign
+(paren
+r_struct
+id|MCA_info
+op_star
+)paren
 id|kmalloc
 c_func
 (paren
@@ -576,15 +591,34 @@ c_func
 l_string|&quot;Failed to allocate memory for mca_info!&quot;
 )paren
 suffix:semicolon
-id|restore_flags
+r_return
+suffix:semicolon
+)brace
+id|memset
+c_func
+(paren
+id|mca_info
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+r_struct
+id|MCA_info
+)paren
+)paren
+suffix:semicolon
+id|save_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-r_return
+id|cli
+c_func
+(paren
+)paren
 suffix:semicolon
-)brace
 multiline_comment|/* Make sure adapter setup is off */
 id|outb_p
 c_func
@@ -2662,6 +2696,11 @@ suffix:semicolon
 )brace
 id|node
 op_assign
+(paren
+r_struct
+id|proc_dir_entry
+op_star
+)paren
 id|kmalloc
 c_func
 (paren
@@ -2691,6 +2730,20 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|memset
+c_func
+(paren
+id|node
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+r_struct
+id|proc_dir_entry
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3459,7 +3512,7 @@ l_int|0x0000ffff
 suffix:semicolon
 id|start
 op_assign
-l_int|0
+l_int|NULL
 suffix:semicolon
 id|dp
 op_assign
@@ -3516,7 +3569,7 @@ c_cond
 (paren
 id|start
 op_ne
-l_int|0
+l_int|NULL
 )paren
 (brace
 multiline_comment|/* We have had block-adjusting processing! */

@@ -1,12 +1,9 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      actisys.c&n; * Version:       0.8&n; * Description:   Implementation for the ACTiSYS IR-220L and IR-220L+ &n; *                dongles&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Wed Oct 21 20:02:35 1998&n; * Modified at:   Mon May 10 15:12:54 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      actisys.c&n; * Version:       0.8&n; * Description:   Implementation for the ACTiSYS IR-220L and IR-220L+ &n; *                dongles&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Wed Oct 21 20:02:35 1998&n; * Modified at:   Sun May 16 14:35:11 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;asm/ioctls.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
-macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;net/irda/irda.h&gt;
 macro_line|#include &lt;net/irda/irmod.h&gt;
 macro_line|#include &lt;net/irda/irda_device.h&gt;
@@ -20,9 +17,6 @@ r_struct
 id|irda_device
 op_star
 id|dev
-comma
-r_int
-id|unused
 )paren
 suffix:semicolon
 r_static
@@ -62,20 +56,6 @@ id|dev
 comma
 r_int
 id|baudrate
-)paren
-suffix:semicolon
-r_static
-r_void
-id|actisys_reset
-c_func
-(paren
-r_struct
-id|irda_device
-op_star
-id|dev
-comma
-r_int
-id|unused
 )paren
 suffix:semicolon
 r_static
@@ -521,9 +501,6 @@ r_struct
 id|irda_device
 op_star
 id|idev
-comma
-r_int
-id|unused
 )paren
 (brace
 id|ASSERT

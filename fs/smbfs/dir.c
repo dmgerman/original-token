@@ -1165,9 +1165,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|IS_ROOT
+c_func
+(paren
 id|dentry
-op_eq
-id|dentry-&gt;d_parent
+)paren
 )paren
 r_break
 suffix:semicolon

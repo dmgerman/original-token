@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlan_common.c&n; * Version:       0.9&n; * Description:   IrDA LAN Access Protocol Implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:37 1997&n; * Modified at:   Sun May  9 11:48:49 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997, 1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlan_common.c&n; * Version:       0.9&n; * Description:   IrDA LAN Access Protocol Implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:37 1997&n; * Modified at:   Mon May 31 14:25:19 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997, 1999 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -874,6 +874,13 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
+id|skb_queue_head_init
+c_func
+(paren
+op_amp
+id|self-&gt;client.txq
+)paren
+suffix:semicolon
 id|irlan_next_client_state
 c_func
 (paren
@@ -922,7 +929,7 @@ id|self
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -1324,15 +1331,6 @@ id|irlan_cb
 op_star
 id|self
 suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|2
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
-suffix:semicolon
 id|self
 op_assign
 (paren
@@ -1401,10 +1399,34 @@ c_func
 id|self
 )paren
 suffix:semicolon
+multiline_comment|/* Open broadcast and multicast filter by default */
+id|irlan_set_broadcast_filter
+c_func
+(paren
+id|self
+comma
+id|TRUE
+)paren
+suffix:semicolon
+id|irlan_set_multicast_filter
+c_func
+(paren
+id|self
+comma
+id|TRUE
+)paren
+suffix:semicolon
 multiline_comment|/* Ready to transfer Ethernet frames */
 id|self-&gt;dev.tbusy
 op_assign
 l_int|0
+suffix:semicolon
+id|irlan_eth_send_gratuitous_arp
+c_func
+(paren
+op_amp
+id|self-&gt;dev
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irlan_client_disconnect_indication (handle)&n; *&n; *    Callback function for the IrTTP layer. Indicates a disconnection of&n; *    the specified connection (handle)&n; */
@@ -1613,8 +1635,6 @@ suffix:colon
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/* Stop IP from transmitting more packets */
-multiline_comment|/* irlan_client_flow_indication(handle, FLOW_STOP, priv); */
 id|irlan_do_client_event
 c_func
 (paren
@@ -1659,7 +1679,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -1718,10 +1738,7 @@ id|notify.connect_confirm
 op_assign
 id|irlan_connect_confirm
 suffix:semicolon
-id|notify.flow_indication
-op_assign
-id|irlan_eth_flow_indication
-suffix:semicolon
+multiline_comment|/*notify.flow_indication       = irlan_eth_flow_indication;*/
 id|notify.disconnect_indication
 op_assign
 id|irlan_disconnect_indication
@@ -2076,19 +2093,16 @@ id|obj
 comma
 l_string|&quot;CompCnt&quot;
 comma
-l_int|2
+l_int|1
 )paren
 suffix:semicolon
-id|irias_add_string_attrib
-c_func
+r_if
+c_cond
 (paren
-id|obj
-comma
-l_string|&quot;Comp#01&quot;
-comma
-l_string|&quot;PNP8294&quot;
+id|self-&gt;provider.access_type
+op_eq
+id|ACCESS_PEER
 )paren
-suffix:semicolon
 id|irias_add_string_attrib
 c_func
 (paren
@@ -2097,6 +2111,17 @@ comma
 l_string|&quot;Comp#02&quot;
 comma
 l_string|&quot;PNP8389&quot;
+)paren
+suffix:semicolon
+r_else
+id|irias_add_string_attrib
+c_func
+(paren
+id|obj
+comma
+l_string|&quot;Comp#01&quot;
+comma
+l_string|&quot;PNP8294&quot;
 )paren
 suffix:semicolon
 id|irias_add_string_attrib
@@ -2116,6 +2141,131 @@ id|obj
 )paren
 suffix:semicolon
 )brace
+)brace
+multiline_comment|/*&n; * Function irlan_run_ctrl_tx_queue (self)&n; *&n; *    Try to send the next command in the control transmit queue&n; *&n; */
+DECL|function|irlan_run_ctrl_tx_queue
+r_int
+id|irlan_run_ctrl_tx_queue
+c_func
+(paren
+r_struct
+id|irlan_cb
+op_star
+id|self
+)paren
+(brace
+r_struct
+id|sk_buff
+op_star
+id|skb
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|irda_lock
+c_func
+(paren
+op_amp
+id|self-&gt;client.tx_busy
+)paren
+op_eq
+id|FALSE
+)paren
+r_return
+op_minus
+id|EBUSY
+suffix:semicolon
+id|skb
+op_assign
+id|skb_dequeue
+c_func
+(paren
+op_amp
+id|self-&gt;client.txq
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|skb
+)paren
+(brace
+id|self-&gt;client.tx_busy
+op_assign
+id|FALSE
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|self-&gt;client.tsap_ctrl
+op_eq
+l_int|NULL
+)paren
+(brace
+id|self-&gt;client.tx_busy
+op_assign
+id|FALSE
+suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+r_return
+id|irttp_data_request
+c_func
+(paren
+id|self-&gt;client.tsap_ctrl
+comma
+id|skb
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Function irlan_ctrl_data_request (self, skb)&n; *&n; *    This function makes sure that commands on the control channel is being&n; *    sent in a command/response fashion&n; */
+DECL|function|irlan_ctrl_data_request
+r_void
+id|irlan_ctrl_data_request
+c_func
+(paren
+r_struct
+id|irlan_cb
+op_star
+id|self
+comma
+r_struct
+id|sk_buff
+op_star
+id|skb
+)paren
+(brace
+multiline_comment|/* Queue command */
+id|skb_queue_tail
+c_func
+(paren
+op_amp
+id|self-&gt;client.txq
+comma
+id|skb
+)paren
+suffix:semicolon
+multiline_comment|/* Try to send command */
+id|irlan_run_ctrl_tx_queue
+c_func
+(paren
+id|self
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irlan_get_provider_info (self)&n; *&n; *    Send Get Provider Information command to peer IrLAN layer&n; *&n; */
 DECL|function|irlan_get_provider_info
@@ -2221,10 +2371,11 @@ op_assign
 l_int|0x00
 suffix:semicolon
 multiline_comment|/* Zero parameters */
-id|irttp_data_request
+multiline_comment|/* irttp_data_request(self-&gt;client.tsap_ctrl, skb); */
+id|irlan_ctrl_data_request
 c_func
 (paren
-id|self-&gt;client.tsap_ctrl
+id|self
 comma
 id|skb
 )paren
@@ -2356,10 +2507,11 @@ l_string|&quot;DIRECT&quot;
 suffix:semicolon
 multiline_comment|/* irlan_insert_string_param(skb, &quot;MODE&quot;, &quot;UNRELIABLE&quot;); */
 multiline_comment|/* &t;self-&gt;use_udata = TRUE; */
-id|irttp_data_request
+multiline_comment|/* irttp_data_request(self-&gt;client.tsap_ctrl, skb); */
+id|irlan_ctrl_data_request
 c_func
 (paren
-id|self-&gt;client.tsap_ctrl
+id|self
 comma
 id|skb
 )paren
@@ -2415,6 +2567,16 @@ comma
 r_return
 suffix:semicolon
 )paren
+suffix:semicolon
+multiline_comment|/* Check if the TSAP is still there */
+r_if
+c_cond
+(paren
+id|self-&gt;client.tsap_ctrl
+op_eq
+l_int|NULL
+)paren
+r_return
 suffix:semicolon
 id|skb
 op_assign
@@ -2478,10 +2640,11 @@ comma
 id|self-&gt;dtsap_sel_data
 )paren
 suffix:semicolon
-id|irttp_data_request
+multiline_comment|/* irttp_data_request(self-&gt;client.tsap_ctrl, skb); */
+id|irlan_ctrl_data_request
 c_func
 (paren
-id|self-&gt;client.tsap_ctrl
+id|self
 comma
 id|skb
 )paren
@@ -2621,10 +2784,11 @@ comma
 l_string|&quot;FILTER&quot;
 )paren
 suffix:semicolon
-id|irttp_data_request
+multiline_comment|/* irttp_data_request(self-&gt;client.tsap_ctrl, skb); */
+id|irlan_ctrl_data_request
 c_func
 (paren
-id|self-&gt;client.tsap_ctrl
+id|self
 comma
 id|skb
 )paren
@@ -2783,10 +2947,11 @@ comma
 l_string|&quot;NONE&quot;
 )paren
 suffix:semicolon
-id|irttp_data_request
+multiline_comment|/* irttp_data_request(self-&gt;client.tsap_ctrl, skb); */
+id|irlan_ctrl_data_request
 c_func
 (paren
-id|self-&gt;client.tsap_ctrl
+id|self
 comma
 id|skb
 )paren
@@ -2945,10 +3110,11 @@ comma
 l_string|&quot;NONE&quot;
 )paren
 suffix:semicolon
-id|irttp_data_request
+multiline_comment|/* irttp_data_request(self-&gt;client.tsap_ctrl, skb); */
+id|irlan_ctrl_data_request
 c_func
 (paren
-id|self-&gt;client.tsap_ctrl
+id|self
 comma
 id|skb
 )paren
@@ -3088,10 +3254,11 @@ comma
 l_string|&quot;DYNAMIC&quot;
 )paren
 suffix:semicolon
-id|irttp_data_request
+multiline_comment|/* irttp_data_request(self-&gt;client.tsap_ctrl, skb); */
+id|irlan_ctrl_data_request
 c_func
 (paren
-id|self-&gt;client.tsap_ctrl
+id|self
 comma
 id|skb
 )paren
@@ -3212,10 +3379,11 @@ comma
 l_string|&quot;802.3&quot;
 )paren
 suffix:semicolon
-id|irttp_data_request
+multiline_comment|/* irttp_data_request(self-&gt;client.tsap_ctrl, skb); */
+id|irlan_ctrl_data_request
 c_func
 (paren
-id|self-&gt;client.tsap_ctrl
+id|self
 comma
 id|skb
 )paren
@@ -4314,11 +4482,10 @@ suffix:semicolon
 r_case
 l_int|1
 suffix:colon
-id|printk
+id|WARNING
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;Insufficient resources&bslash;n&quot;
+l_string|&quot;IrLAN: Insufficient resources&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -4326,11 +4493,10 @@ suffix:semicolon
 r_case
 l_int|2
 suffix:colon
-id|printk
+id|WARNING
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;Invalid command format&bslash;n&quot;
+l_string|&quot;IrLAN: Invalid command format&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -4338,11 +4504,10 @@ suffix:semicolon
 r_case
 l_int|3
 suffix:colon
-id|printk
+id|WARNING
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;Command not supported&bslash;n&quot;
+l_string|&quot;IrLAN: Command not supported&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -4350,11 +4515,10 @@ suffix:semicolon
 r_case
 l_int|4
 suffix:colon
-id|printk
+id|WARNING
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;Parameter not supported&bslash;n&quot;
+l_string|&quot;IrLAN: Parameter not supported&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -4362,11 +4526,10 @@ suffix:semicolon
 r_case
 l_int|5
 suffix:colon
-id|printk
+id|WARNING
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;Value not supported&bslash;n&quot;
+l_string|&quot;IrLAN: Value not supported&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -4374,11 +4537,10 @@ suffix:semicolon
 r_case
 l_int|6
 suffix:colon
-id|printk
+id|WARNING
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;Not open&bslash;n&quot;
+l_string|&quot;IrLAN: Not open&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -4386,11 +4548,10 @@ suffix:semicolon
 r_case
 l_int|7
 suffix:colon
-id|printk
+id|WARNING
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;Authentication required&bslash;n&quot;
+l_string|&quot;IrLAN: Authentication required&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -4398,11 +4559,10 @@ suffix:semicolon
 r_case
 l_int|8
 suffix:colon
-id|printk
+id|WARNING
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;Invalid password&bslash;n&quot;
+l_string|&quot;IrLAN: Invalid password&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -4410,11 +4570,10 @@ suffix:semicolon
 r_case
 l_int|9
 suffix:colon
-id|printk
+id|WARNING
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;Protocol error&bslash;n&quot;
+l_string|&quot;IrLAN: Protocol error&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -4422,11 +4581,10 @@ suffix:semicolon
 r_case
 l_int|255
 suffix:colon
-id|printk
+id|WARNING
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;Asynchronous status&bslash;n&quot;
+l_string|&quot;IrLAN: Asynchronous status&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break

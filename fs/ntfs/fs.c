@@ -4565,8 +4565,6 @@ id|sb
 comma
 id|FILE_ROOT
 )paren
-comma
-l_int|NULL
 )paren
 )paren
 )paren

@@ -1608,8 +1608,6 @@ id|sb
 comma
 id|sb-&gt;u.adfs_sb.s_root
 )paren
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 r_if
@@ -1667,11 +1665,6 @@ id|sb
 suffix:semicolon
 id|error_free_bh
 suffix:colon
-r_if
-c_cond
-(paren
-id|bh
-)paren
 id|brelse
 c_func
 (paren

@@ -24,8 +24,15 @@ c_func
 r_void
 )paren
 suffix:semicolon
-DECL|macro|UDP_NO_CHECK
-mdefine_line|#define UDP_NO_CHECK&t;0
+multiline_comment|/* Note: this must match &squot;valbool&squot; in sock_setsockopt */
+DECL|macro|UDP_CSUM_NOXMIT
+mdefine_line|#define UDP_CSUM_NOXMIT&t;&t;1
+multiline_comment|/* Used by SunRPC/xprt layer. */
+DECL|macro|UDP_CSUM_NORCV
+mdefine_line|#define UDP_CSUM_NORCV&t;&t;2
+multiline_comment|/* Default, as per the RFC, is to always do csums. */
+DECL|macro|UDP_CSUM_DEFAULT
+mdefine_line|#define UDP_CSUM_DEFAULT&t;0
 r_extern
 r_struct
 id|proto

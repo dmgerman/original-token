@@ -1,12 +1,9 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      girbil.c&n; * Version:       1.1&n; * Description:   Implementation for the Greenwich GIrBIL dongle&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Feb  6 21:02:33 1999&n; * Modified at:   Mon May 10 16:01:33 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      girbil.c&n; * Version:       1.1&n; * Description:   Implementation for the Greenwich GIrBIL dongle&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Feb  6 21:02:33 1999&n; * Modified at:   Tue Jun  1 08:47:41 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;asm/ioctls.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
-macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;net/irda/irda.h&gt;
 macro_line|#include &lt;net/irda/irmod.h&gt;
 macro_line|#include &lt;net/irda/irda_device.h&gt;
@@ -21,9 +18,6 @@ r_struct
 id|irda_device
 op_star
 id|dev
-comma
-r_int
-id|unused
 )paren
 suffix:semicolon
 r_static
@@ -412,9 +406,6 @@ r_struct
 id|irda_device
 op_star
 id|idev
-comma
-r_int
-id|unused
 )paren
 (brace
 id|__u8
@@ -465,7 +456,11 @@ suffix:semicolon
 id|schedule_timeout
 c_func
 (paren
-l_int|2
+id|MSECS_TO_JIFFIES
+c_func
+(paren
+l_int|20
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* Set DTR and clear RTS to enter command mode */
@@ -486,7 +481,11 @@ suffix:semicolon
 id|schedule_timeout
 c_func
 (paren
-l_int|2
+id|MSECS_TO_JIFFIES
+c_func
+(paren
+l_int|20
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* Write control byte */
@@ -508,7 +507,11 @@ suffix:semicolon
 id|schedule_timeout
 c_func
 (paren
-l_int|2
+id|MSECS_TO_JIFFIES
+c_func
+(paren
+l_int|20
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* Go back to normal mode */
@@ -520,6 +523,22 @@ comma
 id|TRUE
 comma
 id|TRUE
+)paren
+suffix:semicolon
+multiline_comment|/* Make sure the IrDA chip also goes to defalt speed */
+r_if
+c_cond
+(paren
+id|idev-&gt;change_speed
+)paren
+id|idev
+op_member_access_from_pointer
+id|change_speed
+c_func
+(paren
+id|idev
+comma
+l_int|9600
 )paren
 suffix:semicolon
 )brace
@@ -555,9 +574,8 @@ id|IR_115200
 suffix:semicolon
 id|qos-&gt;min_turn_time.bits
 op_and_assign
-l_int|0xfe
+l_int|0x03
 suffix:semicolon
-multiline_comment|/* All except 0 ms */
 )brace
 macro_line|#ifdef MODULE
 id|MODULE_AUTHOR

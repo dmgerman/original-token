@@ -516,9 +516,11 @@ c_cond
 (paren
 id|inode
 op_logical_and
-id|dentry-&gt;d_parent
-op_eq
+id|IS_ROOT
+c_func
+(paren
 id|dentry
+)paren
 )paren
 (brace
 r_if

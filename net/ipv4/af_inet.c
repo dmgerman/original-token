@@ -1070,7 +1070,7 @@ id|IPPROTO_UDP
 suffix:semicolon
 id|sk-&gt;no_check
 op_assign
-id|UDP_NO_CHECK
+id|UDP_CSUM_DEFAULT
 suffix:semicolon
 id|sk-&gt;ip_pmtudisc
 op_assign

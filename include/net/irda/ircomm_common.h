@@ -116,12 +116,12 @@ DECL|macro|IRCOMM_MAGIC
 mdefine_line|#define IRCOMM_MAGIC            0x434f4d4d
 DECL|macro|COMM_INIT_CTRL_PARAM
 mdefine_line|#define COMM_INIT_CTRL_PARAM    3          /* length of initial control parameters */
-DECL|macro|COMM_HEADER
-mdefine_line|#define COMM_HEADER             1          /* length of clen field */
 DECL|macro|COMM_HEADER_SIZE
-mdefine_line|#define COMM_HEADER_SIZE        (TTP_MAX_HEADER+COMM_HEADER)
-DECL|macro|COMM_DEFAULT_DATA_SIZE
-mdefine_line|#define COMM_DEFAULT_DATA_SIZE  64
+mdefine_line|#define COMM_HEADER_SIZE        1          /* length of clen field */
+DECL|macro|COMM_MAX_HEADER_SIZE
+mdefine_line|#define COMM_MAX_HEADER_SIZE    (TTP_MAX_HEADER+COMM_HEADER_SIZE)
+DECL|macro|COMM_DEFAULT_SDU_SIZE
+mdefine_line|#define COMM_DEFAULT_SDU_SIZE   (64 - COMM_HEADER_SIZE)
 DECL|macro|IRCOMM_MAX_CONNECTION
 mdefine_line|#define IRCOMM_MAX_CONNECTION   1          /* Don&squot;t change for now */
 DECL|macro|UNKNOWN
@@ -270,13 +270,13 @@ DECL|member|ttp_stop
 r_int
 id|ttp_stop
 suffix:semicolon
-DECL|member|max_txbuff_size
-r_int
-id|max_txbuff_size
-suffix:semicolon
-DECL|member|max_sdu_size
+DECL|member|tx_max_sdu_size
 id|__u32
-id|max_sdu_size
+id|tx_max_sdu_size
+suffix:semicolon
+DECL|member|rx_max_sdu_size
+id|__u32
+id|rx_max_sdu_size
 suffix:semicolon
 DECL|member|max_header_size
 id|__u8

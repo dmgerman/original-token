@@ -3890,8 +3890,6 @@ id|sb
 comma
 id|UFS_ROOTINO
 )paren
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Read cylinder group structures&n;&t; */

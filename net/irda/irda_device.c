@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irda_device.c&n; * Version:       0.5&n; * Description:   Abstract device driver layer and helper functions&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Wed Sep  2 20:22:08 1998&n; * Modified at:   Mon May 10 23:02:47 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Modified at:   Fri May 28  3:11 CST 1999&n; * Modified by:   Horst von Brand &lt;vonbrand@sleipnir.valparaiso.cl&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irda_device.c&n; * Version:       0.5&n; * Description:   Abstract device driver layer and helper functions&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Wed Sep  2 20:22:08 1998&n; * Modified at:   Tue Jun  1 09:05:13 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Modified at:   Fri May 28  3:11 CST 1999&n; * Modified by:   Horst von Brand &lt;vonbrand@sleipnir.valparaiso.cl&gt;&n; * &n; *     Copyright (c) 1998-1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
@@ -300,6 +300,20 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_TOSHIBA_FIR
+id|toshoboe_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_SMC_IRCC_FIR
+id|ircc_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_ESI_DONGLE
 id|esi_init
 c_func
@@ -323,6 +337,13 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_GIRBIL_DONGLE
 id|girbil_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_GIRBIL_DONGLE
+id|litelink_init
 c_func
 (paren
 )paren
@@ -525,6 +546,10 @@ op_amp
 id|self-&gt;media_busy_timer
 )paren
 suffix:semicolon
+id|self-&gt;lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
+suffix:semicolon
 multiline_comment|/* A pointer to the low level implementation */
 id|self-&gt;priv
 op_assign
@@ -665,7 +690,7 @@ suffix:semicolon
 id|MESSAGE
 c_func
 (paren
-l_string|&quot;IrDA: Registred device %s&bslash;n&quot;
+l_string|&quot;IrDA: Registered device %s&bslash;n&quot;
 comma
 id|self-&gt;name
 )paren
@@ -1008,6 +1033,11 @@ r_int
 id|speed
 )paren
 (brace
+r_int
+id|n
+op_assign
+l_int|0
+suffix:semicolon
 id|ASSERT
 c_func
 (paren
@@ -1034,9 +1064,21 @@ multiline_comment|/*&n;&t; *  Is is possible to change speed yet? Wait until the
 r_if
 c_cond
 (paren
+op_logical_neg
 id|self-&gt;wait_until_sent
 )paren
 (brace
+id|ERROR
+c_func
+(paren
+l_string|&quot;IrDA: wait_until_sent() &quot;
+l_string|&quot;has not implemented by the IrDA device driver!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+multiline_comment|/* Make sure all transmitted data has actually been sent */
 id|self
 op_member_access_from_pointer
 id|wait_until_sent
@@ -1045,6 +1087,65 @@ c_func
 id|self
 )paren
 suffix:semicolon
+multiline_comment|/* Make sure nobody tries to transmit during the speed change */
+r_while
+c_loop
+(paren
+id|irda_lock
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
+op_amp
+id|self-&gt;netdev.tbusy
+)paren
+op_eq
+id|FALSE
+)paren
+(brace
+id|WARNING
+c_func
+(paren
+id|__FUNCTION__
+l_string|&quot;(), device locked!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|current-&gt;state
+op_assign
+id|TASK_INTERRUPTIBLE
+suffix:semicolon
+id|schedule_timeout
+c_func
+(paren
+id|MSECS_TO_JIFFIES
+c_func
+(paren
+l_int|10
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|n
+op_increment
+OG
+l_int|10
+)paren
+(brace
+id|WARNING
+c_func
+(paren
+id|__FUNCTION__
+l_string|&quot;(), breaking loop!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+)brace
 r_if
 c_cond
 (paren
@@ -1082,17 +1183,10 @@ op_assign
 id|speed
 suffix:semicolon
 )brace
-)brace
-r_else
-(brace
-id|WARNING
-c_func
-(paren
-l_string|&quot;IrDA: wait_until_sent() &quot;
-l_string|&quot;has not implemented by the IrDA device driver!&bslash;n&quot;
-)paren
+id|self-&gt;netdev.tbusy
+op_assign
+id|FALSE
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n; * Function irda_device_change_speed (self, speed)&n; *&n; *    Change the speed of the currently used irda_device&n; *&n; */
 DECL|function|irda_device_change_speed
@@ -1110,15 +1204,6 @@ r_int
 id|speed
 )paren
 (brace
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
-suffix:semicolon
 id|ASSERT
 c_func
 (paren
@@ -1340,15 +1425,6 @@ r_struct
 id|irda_device
 op_star
 id|self
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
 suffix:semicolon
 id|ASSERT
 c_func
@@ -1603,6 +1679,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|macro|SIOCSDONGLE
+mdefine_line|#define SIOCSDONGLE     SIOCDEVPRIVATE
 DECL|function|irda_device_net_ioctl
 r_static
 r_int
@@ -2001,6 +2079,24 @@ macro_line|#endif
 r_break
 suffix:semicolon
 macro_line|#endif
+r_case
+id|SIOCSDONGLE
+suffix:colon
+multiline_comment|/* Set dongle */
+multiline_comment|/* Initialize dongle */
+id|irda_device_init_dongle
+c_func
+(paren
+id|self
+comma
+(paren
+r_int
+)paren
+id|rq-&gt;ifr_data
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
 r_default
 suffix:colon
 id|ret
@@ -2253,6 +2349,22 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/* Check if we&squot;re already using a dongle */
+r_if
+c_cond
+(paren
+id|self-&gt;dongle
+)paren
+(brace
+id|self-&gt;dongle
+op_member_access_from_pointer
+id|close
+c_func
+(paren
+id|self
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* Set the dongle to be used by this driver */
 id|self-&gt;dongle
 op_assign
@@ -2287,8 +2399,6 @@ id|reset
 c_func
 (paren
 id|self
-comma
-l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* Set to default baudrate */

@@ -1,4 +1,4 @@
-multiline_comment|/* cadet.c - A video4linux driver for the ADS Cadet AM/FM Radio Card &n; *&n; * by Fred Gleason &lt;fredg@wava.com&gt;&n; * Version 0.3.1&n; *&n; * (Loosely) based on code for the Aztech radio card by&n; *&n; * Russell Kroll    (rkroll@exploits.org)&n; * Quay Ly&n; * Donald Song&n; * Jason Lewis      (jlewis@twilight.vtc.vsc.edu) &n; * Scott McGrath    (smcgrath@twilight.vtc.vsc.edu)&n; * William McGrath  (wmcgrath@twilight.vtc.vsc.edu)&n; *&n;*/
+multiline_comment|/* cadet.c - A video4linux driver for the ADS Cadet AM/FM Radio Card &n; *&n; * by Fred Gleason &lt;fredg@wava.com&gt;&n; * Version 0.3.2&n; *&n; * (Loosely) based on code for the Aztech radio card by&n; *&n; * Russell Kroll    (rkroll@exploits.org)&n; * Quay Ly&n; * Donald Song&n; * Jason Lewis      (jlewis@twilight.vtc.vsc.edu) &n; * Scott McGrath    (smcgrath@twilight.vtc.vsc.edu)&n; * William McGrath  (wmcgrath@twilight.vtc.vsc.edu)&n; *&n;*/
 macro_line|#include &lt;linux/module.h&gt;&t;/* Modules &t;&t;&t;*/
 macro_line|#include &lt;linux/init.h&gt;&t;&t;/* Initdata&t;&t;&t;*/
 macro_line|#include &lt;linux/ioport.h&gt;&t;/* check_region, request_region&t;*/
@@ -2496,7 +2496,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;ADS Cadet Radio Card at %x&bslash;n&quot;
+l_string|&quot;ADS Cadet Radio Card at 0x%x&bslash;n&quot;
 comma
 id|io
 )paren
@@ -2559,13 +2559,10 @@ id|io
 comma
 l_int|2
 )paren
+op_ge
+l_int|0
 )paren
 (brace
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)brace
 id|cadet_setfreq
 c_func
 (paren
@@ -2586,6 +2583,7 @@ l_int|1410
 r_return
 id|io
 suffix:semicolon
+)brace
 )brace
 )brace
 r_return

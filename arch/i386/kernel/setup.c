@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/i386/kernel/setup.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *&n; *  Enhanced CPU type detection by Mike Jagdis, Patrick St. Jean&n; *  and Martin Mares, November 1997.&n; *&n; *  Force Cyrix 6x86(MX) and M II processors to report MTRR capability&n; *  and fix against Cyrix &quot;coma bug&quot; by&n; *      Zoltan Boszormenyi &lt;zboszor@mol.hu&gt; February 1999.&n; * &n; *  Force Centaur C6 processors to report MTRR capability.&n; *      Bart Hartgers &lt;bart@etpmod.phys.tue.nl&gt;, May 199.&n; */
+multiline_comment|/*&n; *  linux/arch/i386/kernel/setup.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *&n; *  Enhanced CPU type detection by Mike Jagdis, Patrick St. Jean&n; *  and Martin Mares, November 1997.&n; *&n; *  Force Cyrix 6x86(MX) and M II processors to report MTRR capability&n; *  and fix against Cyrix &quot;coma bug&quot; by&n; *      Zoltan Boszormenyi &lt;zboszor@mol.hu&gt; February 1999.&n; * &n; *  Force Centaur C6 processors to report MTRR capability.&n; *      Bart Hartgers &lt;bart@etpmod.phys.tue.nl&gt;, May 199.&n; *&n; *  Intel Mobile Pentium II detection fix. Sean Gilley, June 1999.&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of initialization&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -2840,7 +2840,7 @@ l_int|NULL
 comma
 l_string|&quot;Pentium II (Deschutes)&quot;
 comma
-l_string|&quot;Celeron (Mendocino)&quot;
+l_string|&quot;Mobile Pentium II&quot;
 comma
 l_int|NULL
 comma
@@ -3390,7 +3390,7 @@ id|model_names
 id|c-&gt;x86_model
 )braket
 suffix:semicolon
-multiline_comment|/* Names for the Pentium II processors */
+multiline_comment|/* Names for the Pentium II Celeron processors &n;                           detectable only by also checking the cache size */
 r_if
 c_cond
 (paren
@@ -3415,24 +3415,45 @@ id|x86
 op_eq
 l_int|6
 )paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|c-&gt;x86_model
+op_eq
+l_int|6
 op_logical_and
+id|c-&gt;x86_cache_size
+op_eq
+l_int|128
+)paren
+(brace
+id|p
+op_assign
+l_string|&quot;Celeron (Mendocino)&quot;
+suffix:semicolon
+)brace
+r_else
+(brace
+r_if
+c_cond
 (paren
 id|c-&gt;x86_model
 op_eq
 l_int|5
-)paren
 op_logical_and
-(paren
 id|c-&gt;x86_cache_size
 op_eq
 l_int|0
-)paren
 )paren
 (brace
 id|p
 op_assign
 l_string|&quot;Celeron (Covington)&quot;
 suffix:semicolon
+)brace
+)brace
 )brace
 )brace
 )brace

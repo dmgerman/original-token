@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/*&n; * SLAB caches for signal bits.&n; */
 DECL|macro|DEBUG_SIG
@@ -1165,7 +1166,7 @@ c_func
 (paren
 id|signal_queue_cachep
 comma
-id|GFP_KERNEL
+id|GFP_ATOMIC
 )paren
 suffix:semicolon
 )brace
@@ -1491,6 +1492,12 @@ op_amp
 id|t-&gt;blocked
 comma
 id|sig
+)paren
+suffix:semicolon
+id|recalc_sigpending
+c_func
+(paren
+id|t
 )paren
 suffix:semicolon
 id|spin_unlock_irqrestore

@@ -936,8 +936,6 @@ id|s
 comma
 id|EFS_ROOTINODE
 )paren
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 id|unlock_super

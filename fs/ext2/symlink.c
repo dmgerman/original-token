@@ -200,12 +200,6 @@ op_assign
 id|bh-&gt;b_data
 suffix:semicolon
 )brace
-id|UPDATE_ATIME
-c_func
-(paren
-id|inode
-)paren
-suffix:semicolon
 id|base
 op_assign
 id|lookup_dentry

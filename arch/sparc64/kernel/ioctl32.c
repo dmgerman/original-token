@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ioctl32.c,v 1.62 1999/05/01 09:17:44 davem Exp $&n; * ioctl32.c: Conversion between 32bit and 64bit native ioctls.&n; *&n; * Copyright (C) 1997  Jakub Jelinek  (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * ioctls.&n; */
+multiline_comment|/* $Id: ioctl32.c,v 1.62.2.1 1999/06/09 04:53:03 davem Exp $&n; * ioctl32.c: Conversion between 32bit and 64bit native ioctls.&n; *&n; * Copyright (C) 1997  Jakub Jelinek  (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * ioctls.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -28,6 +28,7 @@ macro_line|#include &lt;linux/vt_kern.h&gt;
 macro_line|#include &lt;linux/fb.h&gt;
 macro_line|#include &lt;linux/ext2_fs.h&gt;
 macro_line|#include &lt;linux/videodev.h&gt;
+macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;scsi/scsi.h&gt;
 multiline_comment|/* Ugly hack. */
 DECL|macro|__KERNEL__
@@ -1990,6 +1991,112 @@ id|ifcbuf
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|function|dev_ifname32
+r_static
+r_int
+id|dev_ifname32
+c_func
+(paren
+r_int
+r_int
+id|fd
+comma
+r_int
+r_int
+id|arg
+)paren
+(brace
+r_struct
+id|device
+op_star
+id|dev
+suffix:semicolon
+r_struct
+id|ifreq32
+id|ifr32
+suffix:semicolon
+r_int
+id|err
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|copy_from_user
+c_func
+(paren
+op_amp
+id|ifr32
+comma
+(paren
+r_struct
+id|ifreq32
+op_star
+)paren
+id|arg
+comma
+r_sizeof
+(paren
+r_struct
+id|ifreq32
+)paren
+)paren
+)paren
+r_return
+op_minus
+id|EFAULT
+suffix:semicolon
+id|dev
+op_assign
+id|dev_get_by_index
+c_func
+(paren
+id|ifr32.ifr_ifindex
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|dev
+)paren
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+id|err
+op_assign
+id|copy_to_user
+c_func
+(paren
+(paren
+r_struct
+id|ifreq32
+op_star
+)paren
+id|arg
+comma
+op_amp
+id|ifr32
+comma
+r_sizeof
+(paren
+r_struct
+id|ifreq32
+)paren
+)paren
+suffix:semicolon
+r_return
+(paren
+id|err
+ques
+c_cond
+op_minus
+id|EFAULT
+suffix:colon
+l_int|0
+)paren
+suffix:semicolon
+)brace
 DECL|function|dev_ifconf
 r_static
 r_inline
@@ -11753,6 +11860,22 @@ c_cond
 id|cmd
 )paren
 (brace
+r_case
+id|SIOCGIFNAME
+suffix:colon
+id|error
+op_assign
+id|dev_ifname32
+c_func
+(paren
+id|fd
+comma
+id|arg
+)paren
+suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
 r_case
 id|SIOCGIFCONF
 suffix:colon

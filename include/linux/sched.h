@@ -1238,7 +1238,6 @@ c_func
 r_struct
 id|task_struct
 op_star
-id|p
 )paren
 suffix:semicolon
 r_void
@@ -1248,7 +1247,6 @@ c_func
 r_struct
 id|task_struct
 op_star
-id|p
 )paren
 suffix:semicolon
 macro_line|#include &lt;asm/current.h&gt;
@@ -1408,7 +1406,6 @@ id|in_group_p
 c_func
 (paren
 id|gid_t
-id|grp
 )paren
 suffix:semicolon
 r_extern
@@ -1438,7 +1435,6 @@ c_func
 (paren
 id|sigset_t
 op_star
-id|block
 comma
 id|siginfo_t
 op_star
@@ -1454,7 +1450,6 @@ comma
 r_struct
 id|siginfo
 op_star
-id|info
 comma
 r_struct
 id|task_struct
@@ -1471,7 +1466,6 @@ comma
 r_struct
 id|siginfo
 op_star
-id|info
 comma
 r_struct
 id|task_struct
@@ -1488,7 +1482,6 @@ comma
 r_struct
 id|siginfo
 op_star
-id|info
 comma
 id|pid_t
 )paren
@@ -1503,7 +1496,6 @@ comma
 r_struct
 id|siginfo
 op_star
-id|info
 comma
 id|pid_t
 )paren
@@ -1518,7 +1510,6 @@ comma
 r_struct
 id|siginfo
 op_star
-id|info
 comma
 id|pid_t
 )paren
@@ -1533,7 +1524,6 @@ comma
 r_struct
 id|siginfo
 op_star
-id|info
 comma
 r_int
 )paren
@@ -1546,7 +1536,6 @@ c_func
 r_struct
 id|task_struct
 op_star
-id|tsk
 comma
 r_int
 )paren
@@ -1557,12 +1546,10 @@ id|force_sig
 c_func
 (paren
 r_int
-id|sig
 comma
 r_struct
 id|task_struct
 op_star
-id|p
 )paren
 suffix:semicolon
 r_extern
@@ -1571,15 +1558,12 @@ id|send_sig
 c_func
 (paren
 r_int
-id|sig
 comma
 r_struct
 id|task_struct
 op_star
-id|p
 comma
 r_int
-id|priv
 )paren
 suffix:semicolon
 r_extern
@@ -1624,18 +1608,15 @@ id|do_sigaction
 c_func
 (paren
 r_int
-id|sig
 comma
 r_const
 r_struct
 id|k_sigaction
 op_star
-id|act
 comma
 r_struct
 id|k_sigaction
 op_star
-id|oact
 )paren
 suffix:semicolon
 r_extern
@@ -1646,15 +1627,12 @@ c_func
 r_const
 id|stack_t
 op_star
-id|ss
 comma
 id|stack_t
 op_star
-id|oss
 comma
 r_int
 r_int
-id|sp
 )paren
 suffix:semicolon
 DECL|function|signal_pending
@@ -1919,7 +1897,6 @@ c_func
 (paren
 r_int
 r_int
-id|irq
 comma
 r_void
 (paren
@@ -1939,16 +1916,13 @@ op_star
 comma
 r_int
 r_int
-id|flags
 comma
 r_const
 r_char
 op_star
-id|device
 comma
 r_void
 op_star
-id|dev_id
 )paren
 suffix:semicolon
 r_extern
@@ -1958,11 +1932,9 @@ c_func
 (paren
 r_int
 r_int
-id|irq
 comma
 r_void
 op_star
-id|dev_id
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * This has now become a routine instead of a macro, it sets a flag if&n; * it returns true (to do BSD-style accounting where the process is flagged&n; * if it uses root privs). The implication of this is that you should do&n; * normal permissions checks first, and check suser() last.&n; *&n; * [Dec 1997 -- Chris Evans]&n; * For correctness, the above considerations need to be extended to&n; * fsuser(). This is done, along with moving fsuser() checks to be&n; * last.&n; *&n; * These will be removed, but in the mean time, when the SECURE_NOROOT &n; * flag is set, uids don&squot;t grant privilege.&n; */

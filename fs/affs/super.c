@@ -2897,8 +2897,6 @@ id|d_alloc_root
 c_func
 (paren
 id|root_inode
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 r_if

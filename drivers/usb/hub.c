@@ -1130,7 +1130,8 @@ suffix:semicolon
 )brace
 id|portstatus
 op_assign
-op_star
+id|le16_to_cpup
+c_func
 (paren
 (paren
 r_int
@@ -1144,7 +1145,8 @@ l_int|0
 suffix:semicolon
 id|portchange
 op_assign
-op_star
+id|le16_to_cpup
+c_func
 (paren
 (paren
 r_int
@@ -1391,7 +1393,8 @@ suffix:semicolon
 )brace
 id|portstatus
 op_assign
-op_star
+id|le16_to_cpup
+c_func
 (paren
 (paren
 r_int
@@ -1405,7 +1408,8 @@ l_int|0
 suffix:semicolon
 id|portchange
 op_assign
-op_star
+id|le16_to_cpup
+c_func
 (paren
 (paren
 r_int

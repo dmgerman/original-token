@@ -1470,8 +1470,6 @@ id|QNX4_ROOT_INO
 op_star
 id|QNX4_INODES_PER_BLOCK
 )paren
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 r_if

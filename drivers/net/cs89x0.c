@@ -3672,7 +3672,7 @@ id|dev
 )paren
 ques
 c_cond
-l_string|&quot;IRQ conflict&quot;
+l_string|&quot;IRQ conflict ?&quot;
 suffix:colon
 l_string|&quot;network cable problem&quot;
 )paren

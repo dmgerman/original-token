@@ -159,6 +159,7 @@ c_cond
 id|scancode
 )paren
 (brace
+macro_line|#ifndef CONFIG_MAC_KEYBOARD
 r_if
 c_cond
 (paren
@@ -176,6 +177,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif /* CONFIG_MAC_KEYBOARD */
 id|handle_scancode
 c_func
 (paren
@@ -689,6 +691,17 @@ r_struct
 id|usb_keyboard
 op_star
 id|kbd
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;descriptor.bNumConfigurations
+OL
+l_int|1
+)paren
+r_return
+op_minus
+l_int|1
 suffix:semicolon
 id|interface
 op_assign

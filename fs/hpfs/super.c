@@ -2827,8 +2827,6 @@ id|s
 comma
 id|s-&gt;s_hpfs_root
 )paren
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 id|hpfs_unlock_iget
